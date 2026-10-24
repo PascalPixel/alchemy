@@ -1203,8 +1203,8 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   FieldCamera_GetScriptObject()->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(232), 1);
   FieldCamera_WaitForArrival();
-  ObjectEvent_SetSpriteColorById(LOCALID_SATUROS, 0xF);
-  ObjectEvent_SetSpriteColorById(LOCALID_ALEX, 0xF);
+  ObjectEvent_SetSpriteColorById(LOCALID_SATUROS, SPRITE_COLOR_HIDDEN);
+  ObjectEvent_SetSpriteColorById(LOCALID_ALEX, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetPosition(LOCALID_SATUROS, PIXELS(240), PIXELS(208));
   ObjectEvent_SetPosition(LOCALID_ALEX, PIXELS(232), PIXELS(208));
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_SOUTH + FACING_STEP, 0);
@@ -1316,8 +1316,8 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   FieldCamera_WaitForArrival();
   Import_ObjectEventSetAnimation(LOCALID_SATUROS, 1);
   Import_ObjectEventSetAnimation(LOCALID_ALEX, 1);
-  ObjectEvent_SetSpriteColorById(LOCALID_SATUROS, 0xF);
-  ObjectEvent_SetSpriteColorById(LOCALID_ALEX, 0xF);
+  ObjectEvent_SetSpriteColorById(LOCALID_SATUROS, SPRITE_COLOR_HIDDEN);
+  ObjectEvent_SetSpriteColorById(LOCALID_ALEX, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetPosition(LOCALID_SATUROS, PIXELS(120), PIXELS(152));
   ObjectEvent_SetPosition(LOCALID_ALEX, PIXELS(112), PIXELS(160));
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_SOUTH + FACING_STEP, 0);
@@ -1552,8 +1552,8 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
   left = ObjectEvent_GetById(LOCALID_SATUROS);
   right = ObjectEvent_GetById(LOCALID_ALEX);
   Sound_PlaySong(SE_WARP);
-  ObjectEvent_SetSpriteColorById(LOCALID_SATUROS, 0x100);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_ALEX, 0x100);
+  ObjectEvent_SetSpriteColorById(LOCALID_SATUROS, SPRITE_COLOR_BLINK);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_ALEX, SPRITE_COLOR_BLINK);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SATUROS), 0);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ALEX), 0);
   options = &optionsStorage;
@@ -1647,12 +1647,12 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
                         options);
     }
     if (i == 20) {
-      ObjectEvent_SetSpriteColorById(LOCALID_SATUROS, 0x100);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_ALEX, 0x100);
+      ObjectEvent_SetSpriteColorById(LOCALID_SATUROS, SPRITE_COLOR_BLINK);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_ALEX, SPRITE_COLOR_BLINK);
     }
   }
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SATUROS, 0);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_ALEX, 0);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SATUROS, SPRITE_COLOR_NORMAL);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_ALEX, SPRITE_COLOR_NORMAL);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SATUROS),
                              SPRITE_FLAG_SHADOW);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ALEX),
@@ -1844,7 +1844,7 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   }
   sprite = spark->sprite;
   ObjectEvent_SetScript(spark, gMercuryLighthouseAerie_SparkScript);
-  ObjectEvent_SetSpriteColor(spark, 3);
+  ObjectEvent_SetSpriteColor(spark, SPRITE_COLOR_BGR);
   spark->motionFlags = tick;
   angle = Import_RandomNext() & 0x0ffff000;
   spark->timer = angle;

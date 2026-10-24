@@ -882,7 +882,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
     tretSpeaker->motionFlags = 0;
     tretSpeaker->y.fixed = -PIXELS(10);
   }
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_TRET, 15);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_TRET, SPRITE_COLOR_HIDDEN);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   if (gSaveBlock.warpDest != TRET_TREE_INTERIORS_AFTER_FIGHT_TRET)
     FieldScheduler_AddCallback(TretPalette_UpdateMapTint, TASK_PRIORITY_MAP);

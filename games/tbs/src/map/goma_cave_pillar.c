@@ -183,7 +183,7 @@ GomaCavePillar_UpdateFragment(union ObjectEventOrEffect *fieldObject) {
 /// Applies child value 15 at the end of a fragment's lifetime.
 static s32 GomaCavePillar_FinishFragment(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
-  ObjectEvent_SetSpriteColor(objectEvent, 15);
+  ObjectEvent_SetSpriteColor(objectEvent, SPRITE_COLOR_HIDDEN);
   return 0;
 }
 

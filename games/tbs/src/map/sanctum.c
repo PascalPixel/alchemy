@@ -849,7 +849,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     FieldScript_WaitFrames(40);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
     Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);
-    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, 0x100);
+    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, SPRITE_COLOR_BLINK);
     Sanctum_ShowHealerAfterimage();
     Script_PlaySong(SE_WISE_ONE_QUEST);
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
@@ -866,7 +866,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
     FieldScript_WaitFrames(96);
     FieldScript_WaitFrames(32);
-    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, 0);
+    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, SPRITE_COLOR_NORMAL);
     FieldScript_WaitFrames(30);
     // Return to the gathering and finish the departure conversation.
     Sanctum_HideHealerAfterimage();
@@ -923,7 +923,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     FieldScript_WaitFrames(60);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
     Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);
-    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, 0x100);
+    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, SPRITE_COLOR_BLINK);
     Sanctum_ShowHealerAfterimage();
     Script_PlaySong(SE_WISE_ONE_QUEST);
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
@@ -951,7 +951,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     FieldScript_WaitFrames(32);
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
     FieldScript_WaitFrames(128);
-    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, 0);
+    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, SPRITE_COLOR_NORMAL);
     FieldScript_WaitFrames(30);
     Sanctum_HideHealerAfterimage();
     Import_ObjectEventSetAnimation(LOCALID_HEALER, 1);
@@ -1308,7 +1308,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   FieldScript_WaitFrames(40);
   Script_ShowMessage(LOCALID_WISE_ONE, 0);
   FieldScript_WaitFrames(60);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_WISE_ONE, 0x100);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_WISE_ONE, SPRITE_COLOR_BLINK);
   Script_PlaySong(SONG_FADE_OUT_BGM);
   Script_PlaySong(SE_MATERIALIZE);
   // Shrink the Wise One amid sparks before restoring the room.
@@ -1321,7 +1321,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
     wiseOne->scaleY += -Q16_ONE / 100;
   }
   Script_PlaySong(SE_STOP_ACTION_SE);
-  ObjectEvent_SetSpriteColorById(LOCALID_WISE_ONE, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_WISE_ONE, SPRITE_COLOR_NORMAL);
   ObjectEvent_SetPosition(LOCALID_WISE_ONE, 0, 0);
   FieldScript_WaitFrames(40);
   FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);

@@ -1777,7 +1777,7 @@ static void MercuryLighthouse_RaiseObjectEventWithSparks(s32 localId) {
   objectEvent = ObjectEvent_GetById(localId);
   objectEvent->motionFlags = 0;
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
-  ObjectEvent_SetSpriteColorById(localId, 0x100);
+  ObjectEvent_SetSpriteColorById(localId, SPRITE_COLOR_BLINK);
   Sound_PlaySong(SE_RISE_WITH_SPARKS);
   options = &optionsStorage;
   options->priority = 1;
@@ -2609,7 +2609,8 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_UPPER_GATE_FROM_STONE_DOORS_STATUE_FALLS:
       FieldScript_Start();
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_FALLEN_STATUE), 1);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, 15);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER,
+                                       SPRITE_COLOR_HIDDEN);
       ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
       ObjectEvent_GetById(LOCALID_FALLEN_STATUE)->y.fixed = PIXELS(144);
       ObjectEvent_GetById(LOCALID_FALLEN_STATUE)->motionFlags = 0;

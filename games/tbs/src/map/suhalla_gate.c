@@ -471,11 +471,13 @@ static void EventScript_SoldierVanishes(void) {
   beat = 0;
   // Six slow blinks are followed by twelve fast ones.
   do {
-    ObjectEvent_SetSpriteColorById(LOCALID_VANISHING_SOLDIER, 0);
+    ObjectEvent_SetSpriteColorById(LOCALID_VANISHING_SOLDIER,
+                                   SPRITE_COLOR_NORMAL);
     ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_VANISHING_SOLDIER), 1);
     WaitFrames(4);
 
-    ObjectEvent_SetSpriteColorById(LOCALID_VANISHING_SOLDIER, 15);
+    ObjectEvent_SetSpriteColorById(LOCALID_VANISHING_SOLDIER,
+                                   SPRITE_COLOR_HIDDEN);
     ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_VANISHING_SOLDIER), 0);
     beat++;
     WaitFrames(4);
@@ -483,11 +485,13 @@ static void EventScript_SoldierVanishes(void) {
 
   beat = 0;
   do {
-    ObjectEvent_SetSpriteColorById(LOCALID_VANISHING_SOLDIER, 0);
+    ObjectEvent_SetSpriteColorById(LOCALID_VANISHING_SOLDIER,
+                                   SPRITE_COLOR_NORMAL);
     ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_VANISHING_SOLDIER), 1);
     WaitFrames(2);
 
-    ObjectEvent_SetSpriteColorById(LOCALID_VANISHING_SOLDIER, 15);
+    ObjectEvent_SetSpriteColorById(LOCALID_VANISHING_SOLDIER,
+                                   SPRITE_COLOR_HIDDEN);
     ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_VANISHING_SOLDIER), 0);
     beat++;
     WaitFrames(2);

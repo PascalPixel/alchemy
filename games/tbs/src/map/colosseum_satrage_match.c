@@ -1130,7 +1130,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
   Colosso_ShowItemIcon(LOCALID_PRIZE_B, ITEM_COTTON_SHIRT);
   Colosso_ShowItemIcon(LOCALID_PRIZE_A, ITEM_CHAIN_MAIL);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_OPPONENT, 1);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_OPPONENT, SPRITE_COLOR_GRB);
   // The race, the friends' turns, the tour, and the battle's result.
   switch (gSaveBlock.warpDest) {
   case COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND:

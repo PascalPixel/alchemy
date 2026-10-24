@@ -1077,16 +1077,16 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 40);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
   FieldScript_WaitFrames(20);
-  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 2);
-  ObjectEvent_SetSpriteColorById(LOCALID_FIRST_BOARD, 2);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_RBG);
+  ObjectEvent_SetSpriteColorById(LOCALID_FIRST_BOARD, SPRITE_COLOR_RBG);
   ObjectEvent_SetSpeed(LOCALID_FIRST_BOARD, PIXELS(3) / 10, PIXELS(3) / 20);
   ObjectEvent_MoveToAndWait(LOCALID_FIRST_BOARD, 390, 832);
   FieldScript_WaitFrames(80);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_MoveToAndWait(LOCALID_FIRST_BOARD, 402, 828);
   FieldScript_WaitFrames(80);
-  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_SetSpriteColorById(LOCALID_FIRST_BOARD, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_NORMAL);
+  ObjectEvent_SetSpriteColorById(LOCALID_FIRST_BOARD, SPRITE_COLOR_NORMAL);
   ObjectEvent_SetPosition(LOCALID_FIRST_BOARD, PIXELS(390), PIXELS(842));
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gVale_LeaderHammers);
@@ -1104,16 +1104,16 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 30);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 20);
-  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 2);
-  ObjectEvent_SetSpriteColorById(LOCALID_FIRST_BOARD, 2);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_RBG);
+  ObjectEvent_SetSpriteColorById(LOCALID_FIRST_BOARD, SPRITE_COLOR_RBG);
   ObjectEvent_SetSpeed(LOCALID_FIRST_BOARD, PIXELS(3) / 10, PIXELS(3) / 20);
   ObjectEvent_MoveToAndWait(LOCALID_FIRST_BOARD, 390, 832);
   FieldScript_WaitFrames(80);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_MoveToAndWait(LOCALID_FIRST_BOARD, 377, 828);
   FieldScript_WaitFrames(80);
-  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_SetSpriteColorById(LOCALID_FIRST_BOARD, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_NORMAL);
+  ObjectEvent_SetSpriteColorById(LOCALID_FIRST_BOARD, SPRITE_COLOR_NORMAL);
   ObjectEvent_SetPosition(LOCALID_FIRST_BOARD, 0, 0);
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gVale_LeaderHammers);
@@ -1132,16 +1132,16 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 30);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH + FACING_STEP,
                             20);
-  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 2);
-  ObjectEvent_SetSpriteColorById(LOCALID_SECOND_BOARD, 2);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_RBG);
+  ObjectEvent_SetSpriteColorById(LOCALID_SECOND_BOARD, SPRITE_COLOR_RBG);
   ObjectEvent_SetSpeed(LOCALID_SECOND_BOARD, PIXELS(3) / 10, PIXELS(3) / 20);
   ObjectEvent_MoveToAndWait(LOCALID_SECOND_BOARD, 390, 832);
   FieldScript_WaitFrames(80);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_MoveToAndWait(LOCALID_SECOND_BOARD, 360, 842);
   FieldScript_WaitFrames(80);
-  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_SetSpriteColorById(LOCALID_SECOND_BOARD, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_NORMAL);
+  ObjectEvent_SetSpriteColorById(LOCALID_SECOND_BOARD, SPRITE_COLOR_NORMAL);
   ObjectEvent_SetPosition(LOCALID_SECOND_BOARD, 0, 0);
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gVale_LeaderHammers);
@@ -1723,7 +1723,7 @@ static void EventScript_GaretMeetsHisSister(void) {
   s32 msg;
 
   FieldScript_Start();
-  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_NORMAL);
   ObjectEvent_FaceObjectEvent(LOCALID_GARETS_SISTER_AFTER_KALAY,
                               LOCALID_PARTY_LEADER, 20);
   msg = MsgValeAh;
@@ -2239,8 +2239,8 @@ static void EventScript_MendingTheRoof(void) {
   Task_Remove(Vale_UpdateGaretPaletteAndEffects);
   Task_Remove(Vale_CycleOpeningPillarPalette);
   WaitFrames(1);
-  ObjectEvent_SetSpriteColorById(LOCALID_GARET, 0);
-  ObjectEvent_SetSpriteColorById(LOCALID_OPENING_PILLAR, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_GARET, SPRITE_COLOR_NORMAL);
+  ObjectEvent_SetSpriteColorById(LOCALID_OPENING_PILLAR, SPRITE_COLOR_NORMAL);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   Vale_VanishMoveHand(moveHand);
@@ -2500,8 +2500,8 @@ static void EventScript_RoofMended(void) {
   Task_Remove(callbackA);
   Task_Remove(callbackB);
   WaitFrames(1);
-  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_SetSpriteColorById(LOCALID_FIRST_BOARD, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_NORMAL);
+  ObjectEvent_SetSpriteColorById(LOCALID_FIRST_BOARD, SPRITE_COLOR_NORMAL);
   ObjectEvent_SetPosition(LOCALID_FIRST_BOARD, 0, 0);
   FieldScript_WaitFrames(20);
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
@@ -2544,8 +2544,8 @@ static void EventScript_RoofMended(void) {
   Task_Remove(callbackC);
   Task_Remove(callbackD);
   WaitFrames(1);
-  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_SetSpriteColorById(LOCALID_SECOND_BOARD, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_NORMAL);
+  ObjectEvent_SetSpriteColorById(LOCALID_SECOND_BOARD, SPRITE_COLOR_NORMAL);
   ObjectEvent_SetPosition(LOCALID_SECOND_BOARD, 0, 0);
   FieldScript_WaitFrames(20);
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
@@ -2590,8 +2590,8 @@ static void EventScript_RoofMended(void) {
   Task_Remove(callbackE);
   Task_Remove(callbackF);
   WaitFrames(1);
-  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_SetSpriteColorById(LOCALID_THIRD_BOARD, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_NORMAL);
+  ObjectEvent_SetSpriteColorById(LOCALID_THIRD_BOARD, SPRITE_COLOR_NORMAL);
   ObjectEvent_SetPosition(LOCALID_THIRD_BOARD, 0, 0);
   FieldScript_WaitFrames(20);
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);

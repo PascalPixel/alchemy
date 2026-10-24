@@ -815,7 +815,8 @@ s32 KolimaForestTree_Initialize(void) {
   tretsWrathfulSide = ObjectEvent_GetById(LOCALID_TRETS_WRATHFUL_SIDE);
   laurelBlank = ObjectEvent_GetById(LOCALID_INVISIBLE_LAUREL);
   WaitFrames(1);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_TRETS_WRATHFUL_SIDE, 15);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_TRETS_WRATHFUL_SIDE,
+                                   SPRITE_COLOR_HIDDEN);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   gSaveBlock.retreatMap = (s32)&MapId_KolimaForestEntrance;

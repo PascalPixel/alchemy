@@ -147,9 +147,9 @@ KolimaForestEntrance_TwinkleGroundSparkle(struct Object *interpreter) {
   s16 *counter = &objectEvent->timer;
   *counter = (*counter + (((u32)Import_RandomNext() * 100) >> 16));
   if (*counter > 1000)
-    ObjectEvent_SetSpriteColor(objectEvent, 7);
+    ObjectEvent_SetSpriteColor(objectEvent, SPRITE_COLOR_WHITE);
   else
-    ObjectEvent_SetSpriteColor(objectEvent, 10);
+    ObjectEvent_SetSpriteColor(objectEvent, SPRITE_COLOR_RED_TINT);
   if (*counter > 1200) {
     u16 z = 0;
     *counter = z;

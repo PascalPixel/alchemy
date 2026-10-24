@@ -867,7 +867,7 @@ s32 Imil_Initialize(void) {
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     warpDest = gSaveBlock.warpDest;
     if (warpDest == IMIL_INTERIORS_HOUSE_SOUTHWEST) {
-      ObjectEvent_ConfigureSpriteColor(LOCALID_CRATE, 15);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_CRATE, SPRITE_COLOR_HIDDEN);
       ObjectEvent_GetById(LOCALID_CRATE)->collisionFlags |= 8;
       ObjectMotion_SetActionVariant(LOCALID_CRATE, 1);
       if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
@@ -1213,7 +1213,7 @@ UNUSED static void Imil_SwayAndSpark(struct ObjectEvent *objectEvent) {
       spark->scaleY = 3 * Q16_ONE / 5;
       spark->priorityFlags = 2;
       spark->motionFlags = 0;
-      ObjectEvent_SetSpriteColor(spark, 9);
+      ObjectEvent_SetSpriteColor(spark, SPRITE_COLOR_BLUE_TINT);
       ObjectEvent_SetScript(spark, gImil_SparkScript);
     }
   }
@@ -1249,7 +1249,7 @@ static void Imil_InitializeRisingEffect(struct ObjectEvent *work) {
   sprite = work->sprite;
   sprite->image.priority = 1;
 
-  ObjectEvent_SetSpriteColor(work, 9);
+  ObjectEvent_SetSpriteColor(work, SPRITE_COLOR_BLUE_TINT);
   ObjectEvent_SetSpriteFlags(work, 0);
 
   work->scaleX = Q16_ONE / 2;

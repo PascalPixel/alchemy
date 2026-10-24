@@ -700,9 +700,9 @@ static void EventScript_DoraWakesIsaac(void) {
       (struct Object *)ObjectEvent_GetById(LOCALID_PARTY_LEADER), SPRITE_TUNIC);
   GameFlag_Set(FLAG_ISAAC_WEARS_TUNIC);
   Sound_PlaySong(SE_RECOVERY);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, 7);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_WHITE);
   FieldScript_WaitFrames(10);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_NORMAL);
   FieldScript_WaitFrames(20);
   ObjectEvent_GetById(LOCALID_DORA)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 534, 688);

@@ -400,16 +400,18 @@ s32 TolbiSpring_Initialize(void) {
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 9);
     if (gSaveBlock.warpDest == TOLBI_GAME_ROOMS_LUCKY_DICE_FROM_TOLBI) {
       ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT,
-                                       1);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_SPRING_DICE_ATTENDANT, 2);
+                                       SPRITE_COLOR_GRB);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_SPRING_DICE_ATTENDANT,
+                                       SPRITE_COLOR_RBG);
     }
     // Lucky Dice returns here to report the change in the party's coins.
     if (gSaveBlock.warpDest == TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_DICE &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       FieldScript_Start();
       ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT,
-                                       1);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_SPRING_DICE_ATTENDANT, 2);
+                                       SPRITE_COLOR_GRB);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_SPRING_DICE_ATTENDANT,
+                                       SPRITE_COLOR_RBG);
       FieldScript_StartScreenTransition();
       FieldScript_WaitTransitionFrames();
       FieldScript_WaitFrames(10);

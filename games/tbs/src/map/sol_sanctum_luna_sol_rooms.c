@@ -1315,7 +1315,7 @@ static void EventScript_RiseToElementalStarRoom(void) {
     sprite = 0;
     objectEvent->motionFlags = (u32)sprite;
     Sound_PlaySong(SE_ASCEND);
-    ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 0x100);
+    ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_BLINK);
     sprite = objectEvent->sprite;
     frame = 0;
     sprite->flags = 0;
@@ -1356,7 +1356,7 @@ static void EventScript_RiseToElementalStarRoom(void) {
       objectEvent->motionFlags = frame;
     }
     Sound_PlaySong(SE_ASCEND);
-    ObjectEvent_SetSpriteColorById(LOCALID_KRADEN, 0x100);
+    ObjectEvent_SetSpriteColorById(LOCALID_KRADEN, SPRITE_COLOR_BLINK);
     sprite = objectEvent->sprite;
     sprite->flags = 0;
     do {

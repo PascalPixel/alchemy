@@ -19,7 +19,7 @@ UNUSED static void *ObjectEvent_PrepareObject(s32 x, s32 y, s32 z, s32 type) {
     objectEvent->motionFlags = 0;
     objectEvent->collisionFlags = 8;
     ObjectEvent_SetSpriteFlags(objectEvent, 0);
-    ObjectEvent_SetSpriteColor(objectEvent, 14);
+    ObjectEvent_SetSpriteColor(objectEvent, SPRITE_COLOR_BLACK);
     ObjectEvent_SetBlendMode(objectEvent, OBJECT_BLEND_TRANSLUCENT);
     return objectEvent;
   }
@@ -37,7 +37,7 @@ UNUSED static void *ObjectEvent_CreateConfiguredObject(s32 x, s32 y, s32 z,
     objectEvent->motionFlags = 0;
     objectEvent->collisionFlags = 8;
     ObjectEvent_SetSpriteFlags(objectEvent, 0);
-    ObjectEvent_SetSpriteColor(objectEvent, 15);
+    ObjectEvent_SetSpriteColor(objectEvent, SPRITE_COLOR_HIDDEN);
     objectEvent->priorityFlags =
         (objectEvent->priorityFlags & ~OBJ_EVENT_PRIORITY_AUTOMATIC) |
         OBJ_EVENT_PRIORITY_UNDERFOOT;

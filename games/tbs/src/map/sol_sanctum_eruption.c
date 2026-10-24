@@ -605,7 +605,7 @@ static void SolSanctumEruption_RaiseAndShrinkObjectEvent(s32 localId) {
   objectEvent = ObjectEvent_GetById(localId);
   target = ObjectEvent_GetById(localId);
   ObjectEvent_SetSpriteFlags(target, 0);
-  ObjectEvent_SetSpriteColorById(localId, 0x100);
+  ObjectEvent_SetSpriteColorById(localId, SPRITE_COLOR_BLINK);
   objectEvent->motionFlags = 0;
   Script_PlaySong(SE_ASCEND);
   // Rise at full size, then shrink the object event and its shadow together.
@@ -770,7 +770,7 @@ static void SolSanctumEruption_StepEmbers(void) {
           landedEmber->targetX = OBJ_EVENT_NO_TARGET;
           landedEmber->targetY = OBJ_EVENT_NO_TARGET;
           landedEmber->targetZ = OBJ_EVENT_NO_TARGET;
-          ObjectEvent_SetSpriteColor(landedEmber, 15);
+          ObjectEvent_SetSpriteColor(landedEmber, SPRITE_COLOR_HIDDEN);
         } else if (gEmberState[emberIndex] == 20) {
           gEmberState[emberIndex] = 0;
         }
@@ -812,7 +812,7 @@ static void SolSanctumEruption_StepEmbers(void) {
       z = Iwram_MulQ16(Trig_Sin((u16)angle),
                        ((Import_RandomNext() & 63) << 16) + PIXELS(8));
       Object_SetPosition(ember, x + PIXELS(325), 0, z + PIXELS(286));
-      ObjectEvent_SetSpriteColor(ember, 0);
+      ObjectEvent_SetSpriteColor(ember, SPRITE_COLOR_NORMAL);
       gEmberTimer = 30;
       return;
     }
@@ -859,7 +859,7 @@ static inline void SolSanctumEruption_FinishMaterialization(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_WISE_ONE, 3);
   Task_Remove(SolSanctumEruption_UpdateWiseOnePalette);
   WaitFrames(1);
-  ObjectEvent_SetSpriteColorById(LOCALID_WISE_ONE, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_WISE_ONE, SPRITE_COLOR_NORMAL);
 }
 
 /// Elemental Star Room, collapsing: left behind, Isaac and Garet face the Wise
@@ -1351,7 +1351,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     star->scaleX = Q16_ONE;
     star->scaleY = Q16_ONE;
   }
-  ObjectEvent_SetSpriteColorById(LOCALID_WISE_ONE, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_WISE_ONE, SPRITE_COLOR_NORMAL);
   SolSanctumEruption_SetMaterializationTint(0, 20, 0);
   // The Wise One: "Return it to its bag." and the Elemental Stars are moving
   // away from here.

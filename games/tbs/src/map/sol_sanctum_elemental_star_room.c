@@ -595,7 +595,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   felix->scaleY = Q16_ONE / 10;
   shadow->scaleX = Q16_ONE / 10;
   shadow->scaleY = Q16_ONE / 10;
-  ObjectEvent_SetSpriteColorById(LOCALID_FELIX_MASKED, 0x100);
+  ObjectEvent_SetSpriteColorById(LOCALID_FELIX_MASKED, SPRITE_COLOR_BLINK);
   ObjectEvent_SetPosition(LOCALID_FELIX_MASKED, PIXELS(471), PIXELS(290));
   motionFlags = &felix->motionFlags;
   *motionFlags = zero;
@@ -644,7 +644,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
     i |= *flags;
     *flags = i;
   }
-  ObjectEvent_ConfigureSpriteColor(LOCALID_FELIX_MASKED, 0);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_FELIX_MASKED, SPRITE_COLOR_NORMAL);
   ObjectEvent_SetSpeed(LOCALID_FELIX_MASKED, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_WalkToAndWait(LOCALID_FELIX_MASKED, 471, 306);
   FieldScript_WaitFrames(40);
@@ -1031,7 +1031,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   alex = ObjectEvent_Get(LOCALID_ALEX);
   ObjectEvent_SetSpriteFlags(alex, 0);
-  ObjectEvent_SetSpriteColorById(LOCALID_ALEX, 15);
+  ObjectEvent_SetSpriteColorById(LOCALID_ALEX, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetPosition(LOCALID_ALEX, PIXELS(392), PIXELS(454));
   SolSanctumElementalStarRoom_AnimateAlexReappearing();
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH + FACING_STEP, 10);
@@ -1076,7 +1076,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_ALEX, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_NORTH, 20);
-  ObjectEvent_SetSpriteColorById(LOCALID_ALEX, 0x100);
+  ObjectEvent_SetSpriteColorById(LOCALID_ALEX, SPRITE_COLOR_BLINK);
   alex = ObjectEvent_Get(LOCALID_ALEX);
   ObjectEvent_SetSpriteFlags(alex, 0);
   objectEvent = ObjectEvent_GetById(LOCALID_ALEX);
@@ -1143,7 +1143,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   ObjectEvent_SetSpeed(LOCALID_ALEX, PIXELS(12) / 5, PIXELS(6) / 5);
   Object_SetPosition(objectEvent, PIXELS(460), 0, PIXELS(360));
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_ALEX);
-  ObjectEvent_SetSpriteColorById(LOCALID_ALEX, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_ALEX, SPRITE_COLOR_NORMAL);
   alex = ObjectEvent_Get(LOCALID_ALEX);
   ObjectEvent_SetSpriteFlags(alex, SPRITE_FLAG_SHADOW);
   FieldScript_WaitFrames(30);
@@ -1467,7 +1467,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   *leaderSprite = 0;
   rising->scaleX = Q16_ONE / 10;
   rising->scaleY = Q16_ONE / 10;
-  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 0x100);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_BLINK);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(471), PIXELS(290));
   leaderMotion = &rising->motionFlags;
   *leaderMotion = 0;
@@ -1506,7 +1506,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
     objectEvent->priorityFlags = flags;
   }
   // Finish Isaac's arrival and let the companions inspect the room.
-  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_NORMAL);
   {
     s32 shown = 1;
 
@@ -1600,7 +1600,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   rising->scaleY = Q16_ONE / 10;
   shadow->scaleX = Q16_ONE / 10;
   shadow->scaleY = Q16_ONE / 10;
-  ObjectEvent_SetSpriteColorById(LOCALID_KRADEN, 0x100);
+  ObjectEvent_SetSpriteColorById(LOCALID_KRADEN, SPRITE_COLOR_BLINK);
   ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(471), PIXELS(290));
   kradenMotion = &rising->motionFlags;
   *kradenMotion = zero;
@@ -1642,7 +1642,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
     s32 flags = 1 | objectEvent->priorityFlags;
     objectEvent->priorityFlags = flags;
   }
-  ObjectEvent_SetSpriteColorById(LOCALID_KRADEN, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_KRADEN, SPRITE_COLOR_NORMAL);
   {
     s32 shown = 1;
 
@@ -2292,9 +2292,9 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
                         options);
     }
     if (frame == 20)
-      ObjectEvent_ConfigureSpriteColor(LOCALID_ALEX, 0x100);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_ALEX, SPRITE_COLOR_BLINK);
   }
-  ObjectEvent_ConfigureSpriteColor(LOCALID_ALEX, 0);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_ALEX, SPRITE_COLOR_NORMAL);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ALEX),
                              SPRITE_FLAG_SHADOW);
 }

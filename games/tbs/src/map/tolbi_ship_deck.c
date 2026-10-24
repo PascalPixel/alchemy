@@ -1314,7 +1314,8 @@ static void TolbiShipDeck_ApplyEntryState(void) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
     TolbiShipDeck_CopyUnderwayCells();
     TolbiShipDeck_CopyAnchoredCells();
-    ObjectEvent_ConfigureSpriteColor(LOCALID_ARRIVED_FIRST_PASSENGER + 1, 2);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_ARRIVED_FIRST_PASSENGER + 1,
+                                     SPRITE_COLOR_RBG);
   } else if (GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
     TolbiShipDeck_CopyUnderwayCells();
     TolbiShipDeck_CopyAnchoredCells();
@@ -1614,7 +1615,7 @@ static void TolbiShipDeck_DepartWithParty(void) {
       (struct ObjectEventTemplate *)gTolbiShipDeck_CrewObjectEventTemplates);
   WaitFrames(1);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(232), PIXELS(636));
-  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   ObjectEvent_SetSpriteFlags(record, 0);
   WaitFrames(1);
@@ -1675,7 +1676,7 @@ static void TolbiShipDeck_SightSeaMonsters(void) {
   FieldScript_CallWithLastActiveObjectId(
       (struct ObjectEventTemplate *)gTolbiShipDeck_CrewObjectEventTemplates);
   WaitFrames(1);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
@@ -1709,7 +1710,7 @@ static void TolbiShipDeck_MonstersBoard(void) {
           gTolbiShipDeck_MonstersBoardObjectEventTemplates);
   WaitFrames(1);
   ObjectEvent_SetPosition(LOCALID_SEA_OURANOS, PIXELS(248), PIXELS(728));
-  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
@@ -1744,9 +1745,12 @@ static void TolbiShipDeck_MonstersBoard(void) {
   ObjectEvent_SetActionScript(LOCALID_SEA_FIRST_ATTACK_MONSTER, shared);
   ObjectEvent_SetActionScript(LOCALID_SEA_FIRST_ATTACK_MONSTER + 1, shared);
   ObjectEvent_SetActionScript(LOCALID_SEA_FIRST_ATTACK_MONSTER + 2, shared);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_ATTACK_MONSTER, 3);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_ATTACK_MONSTER + 1, 3);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_ATTACK_MONSTER + 2, 3);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_ATTACK_MONSTER,
+                                   SPRITE_COLOR_BGR);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_ATTACK_MONSTER + 1,
+                                   SPRITE_COLOR_BGR);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_ATTACK_MONSTER + 2,
+                                   SPRITE_COLOR_BGR);
   do {
     WaitFrames(1);
   } while (ObjectEvent_GetById(LOCALID_SEA_FIRST_ATTACK_MONSTER)->timer == 0);
@@ -1774,7 +1778,7 @@ static void TolbiShipDeck_MonstersBoard(void) {
 static void TolbiShipDeck_MonstersAttackCrew(void) {
 
   FieldScript_Start();
-  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   FieldScript_CallWithLastActiveObjectId(
       (struct ObjectEventTemplate *)gTolbiShipDeck_CrewObjectEventTemplates);
@@ -1907,7 +1911,7 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   const s32 *sailorActions;
 
   FieldScript_Start();
-  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   ObjectEvent_SetSpriteFlags(record, 0);
   FieldScript_CallWithLastActiveObjectId(
@@ -1952,12 +1956,18 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
                               gTolbiShipDeck_HopActions);
   ObjectEvent_SetActionScript(LOCALID_SEA_THIRD_ATTACK_MONSTER + 1,
                               gTolbiShipDeck_HopActions);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_LEAPING_MONSTER, 3);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_LEAPING_MONSTER + 1, 3);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_LEAPING_MONSTER + 2, 3);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_LEAPING_MONSTER + 3, 3);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_THIRD_ATTACK_MONSTER, 3);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_THIRD_ATTACK_MONSTER + 1, 3);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_LEAPING_MONSTER,
+                                   SPRITE_COLOR_BGR);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_LEAPING_MONSTER + 1,
+                                   SPRITE_COLOR_BGR);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_LEAPING_MONSTER + 2,
+                                   SPRITE_COLOR_BGR);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_LEAPING_MONSTER + 3,
+                                   SPRITE_COLOR_BGR);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_THIRD_ATTACK_MONSTER,
+                                   SPRITE_COLOR_BGR);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_THIRD_ATTACK_MONSTER + 1,
+                                   SPRITE_COLOR_BGR);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldScript_StartScreenTransition();
@@ -2223,7 +2233,7 @@ static void TolbiShipDeck_SightLand(void) {
   struct ObjectEvent *record;
 
   FieldScript_Start();
-  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   ObjectEvent_SetSpriteFlags(record, 0);
   FieldScript_CallWithLastActiveObjectId(
@@ -2391,7 +2401,7 @@ static void TolbiShipDeck_RowersDisembark(void) {
   }
 
   FieldScript_Start();
-  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (record != 0) {
@@ -2462,7 +2472,7 @@ static void TolbiShipDeck_RowersDisembark(void) {
   FieldScript_WaitFrames(40);
   Import_ObjectEventSetPosition(LOCALID_PARTY_LEADER, 216 << 16, 146 << 18);
   WaitFrames(1);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_NORMAL);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 216, 150 << 2);
@@ -2884,7 +2894,7 @@ static void TolbiShipDeck_SightIsland(void) {
   ObjectEvent_SetPosition(LOCALID_SEA_SEAN, PIXELS(204), PIXELS(526));
   ObjectEvent_Get(LOCALID_SEA_SEAN)->facing = FACING_NORTHWEST + FACING_STEP;
   ObjectEvent_SetPosition(LOCALID_SEA_CREW_MEMBER, 0, 0);
-  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_PARTY_LEADER), 0);
   WaitFrames(1);
   gFieldWork->transition =

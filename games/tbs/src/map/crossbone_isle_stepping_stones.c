@@ -1444,7 +1444,8 @@ static void EventScript_FreezeThirdPuddle(void) {
           (void (*)(union ObjectEventOrEffect *))set;
       MapGrid_CopyCellAttributes(17, 13, 1, 1, 18, 13);
       GameFlag_Clear(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN + 1);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_PUDDLE, 0);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_PUDDLE,
+                                       SPRITE_COLOR_NORMAL);
       ObjectEvent_SetBuiltinAction(LOCALID_SECOND_PUDDLE,
                                    OBJ_EVENT_ACTION_IDLE);
     } else {
@@ -1696,7 +1697,8 @@ s32 Map_Initialize(void) {
     // Restore CrossboneIsleDragonStatue's moved pillar, frozen puddles, and
     // raised pillar pair.
     OBJECT_ANIMATION(LOCALID_SINKING_BOULDER, 2);
-    ObjectEvent_ConfigureSpriteColor(LOCALID_SINKING_BOULDER, 6);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_SINKING_BOULDER,
+                                     SPRITE_COLOR_GREY);
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
 #if TBS_PATCH_1

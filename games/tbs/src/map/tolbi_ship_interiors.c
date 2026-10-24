@@ -704,7 +704,7 @@ static s32 TolbiShipInteriors_LayFlat(struct Object *interpreter) {
   sprite->image.priority = 1;
   sprite->shadow.priority = 1;
   work->priorityFlags = (work->priorityFlags & ~1) | 2;
-  ObjectEvent_SetSpriteColor(work, 15);
+  ObjectEvent_SetSpriteColor(work, SPRITE_COLOR_HIDDEN);
   return 1;
 }
 
@@ -2411,9 +2411,11 @@ s32 TolbiShipInteriors_ApplyEntryState(void) {
   case TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_CAPTAINS_ROOM_CALL_TO_OARS:
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0 &&
         GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
-      ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_HOLD_SECOND_GUIDE, 2);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_HOLD_SECOND_GUIDE,
+                                       SPRITE_COLOR_RBG);
     } else if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
-      ObjectEvent_ConfigureSpriteColor(LOCALID_HOLD_SECOND_GUIDE, 2);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_HOLD_SECOND_GUIDE,
+                                       SPRITE_COLOR_RBG);
     }
     break;
   case TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_PASSENGER_HOLD:
@@ -2427,12 +2429,14 @@ s32 TolbiShipInteriors_ApplyEntryState(void) {
   case TOLBI_SHIP_INTERIORS_FROM_WORLD_MAP:
   case TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_WORLD_MAP_ISLAND:
   case TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SWITCH_TEAMS:
-    ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_SECOND_GUIDE, 2);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_SECOND_GUIDE,
+                                     SPRITE_COLOR_RBG);
     break;
   case TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK:
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0 &&
         GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
-      ObjectEvent_ConfigureSpriteColor(LOCALID_QUARTERS_SECOND_GUIDE, 2);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_QUARTERS_SECOND_GUIDE,
+                                       SPRITE_COLOR_RBG);
     }
     break;
   }
@@ -2482,9 +2486,12 @@ s32 TolbiShipInteriors_ApplyEntryState(void) {
                                   gTolbiShipInteriors_MonsterBob);
       ObjectEvent_SetActionScript(LOCALID_ROWING_FIRST_MONSTER + 2,
                                   gTolbiShipInteriors_MonsterBob);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_FIRST_MONSTER, 3);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_FIRST_MONSTER + 1, 3);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_FIRST_MONSTER + 2, 3);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_FIRST_MONSTER,
+                                       SPRITE_COLOR_BGR);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_FIRST_MONSTER + 1,
+                                       SPRITE_COLOR_BGR);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_FIRST_MONSTER + 2,
+                                       SPRITE_COLOR_BGR);
       FieldScript_End();
     } else {
       TolbiShipInteriors_StartFirstAttack();
@@ -2521,8 +2528,10 @@ s32 TolbiShipInteriors_ApplyEntryState(void) {
                                   gTolbiShipInteriors_MonsterBob);
       ObjectEvent_SetActionScript(LOCALID_ROWING_FIRST_MONSTER + 1,
                                   gTolbiShipInteriors_MonsterBob);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_FIRST_MONSTER, 3);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_FIRST_MONSTER + 1, 3);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_FIRST_MONSTER,
+                                       SPRITE_COLOR_BGR);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_FIRST_MONSTER + 1,
+                                       SPRITE_COLOR_BGR);
       FieldScript_End();
     } else {
       TolbiShipInteriors_StartThirdAttack();
@@ -3114,9 +3123,12 @@ static void TolbiShipInteriors_StartFirstAttack(void) {
   ObjectEvent_SetActionScript(LOCALID_ROWING_FIRST_MONSTER, entryScript);
   ObjectEvent_SetActionScript(LOCALID_ROWING_FIRST_MONSTER + 1, entryScript);
   ObjectEvent_SetActionScript(LOCALID_ROWING_FIRST_MONSTER + 2, entryScript);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_FIRST_MONSTER, 3);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_FIRST_MONSTER + 1, 3);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_FIRST_MONSTER + 2, 3);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_FIRST_MONSTER,
+                                   SPRITE_COLOR_BGR);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_FIRST_MONSTER + 1,
+                                   SPRITE_COLOR_BGR);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_FIRST_MONSTER + 2,
+                                   SPRITE_COLOR_BGR);
   TolbiShipInteriors_ReportMonstersBelowdecks();
   FieldScript_End();
 }
@@ -4005,8 +4017,10 @@ static void TolbiShipInteriors_StartThirdAttack(void) {
   entryScript = gTolbiShipInteriors_MonsterBob;
   ObjectEvent_SetActionScript(LOCALID_ROWING_FIRST_MONSTER, entryScript);
   ObjectEvent_SetActionScript(LOCALID_ROWING_FIRST_MONSTER + 1, entryScript);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_FIRST_MONSTER, 3);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_FIRST_MONSTER + 1, 3);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_FIRST_MONSTER,
+                                   SPRITE_COLOR_BGR);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_FIRST_MONSTER + 1,
+                                   SPRITE_COLOR_BGR);
   TolbiShipInteriors_ReportMonstersBelowdecks();
   FieldScript_End();
 }
@@ -4049,7 +4063,7 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   ObjectEvent_SetPosition(LOCALID_ROWING_CREWMAN, PIXELS(472), PIXELS(152));
   Import_ObjectEventSetAnimation(LOCALID_ROWING_DRUMMER, 5);
   ObjectEvent_SetPosition(LOCALID_ROWING_KAJA, PIXELS(440), PIXELS(134));
-  ObjectEvent_SetSpriteColorById(LOCALID_ROWING_KAJA, 15);
+  ObjectEvent_SetSpriteColorById(LOCALID_ROWING_KAJA, SPRITE_COLOR_HIDDEN);
   objectEvent = ObjectEvent_GetById(LOCALID_ROWING_KAJA);
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   TolbiShipInteriors_InstallRowingDeckObjectEvents(16);
@@ -4096,7 +4110,7 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHEAST, 0);
   ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHWEST, 20);
-  ObjectEvent_SetSpriteColorById(LOCALID_ROWING_KAJA, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_ROWING_KAJA, SPRITE_COLOR_NORMAL);
   objectEvent = ObjectEvent_GetById(LOCALID_ROWING_KAJA);
   ObjectEvent_SetSpriteFlags(objectEvent, 1);
   ObjectEvent_SetSpeed(LOCALID_ROWING_KAJA, PIXELS(1), PIXELS(1) / 2);
@@ -4228,14 +4242,14 @@ static void TolbiShipInteriors_ReachIsland(void) {
   TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_OARS, 0, 0);
   ObjectEvent_SetPosition(LOCALID_ROWING_CREWMAN, PIXELS(472), PIXELS(152));
   ObjectEvent_SetPosition(LOCALID_ROWING_KAJA, PIXELS(440), PIXELS(134));
-  ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_KAJA, 15);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_KAJA, SPRITE_COLOR_HIDDEN);
   objectEvent = ObjectEvent_GetById(LOCALID_ROWING_KAJA);
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   TolbiShipInteriors_InstallRowingDeckObjectEvents(16);
   Import_ObjectEventSetAnimation(LOCALID_ROWING_DRUMMER, 5);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(438), -1, PIXELS(174), 0x1000001);
   TolbiShipInteriors_RunSceneCommand(SHIP_OPEN_SCREEN, 1, 20);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_KAJA, 0);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_KAJA, SPRITE_COLOR_NORMAL);
   objectEvent = ObjectEvent_GetById(LOCALID_ROWING_KAJA);
   ObjectEvent_SetSpriteFlags(objectEvent, 1);
   ObjectEvent_SetSpeed(LOCALID_ROWING_KAJA, PIXELS(1), PIXELS(1) / 2);

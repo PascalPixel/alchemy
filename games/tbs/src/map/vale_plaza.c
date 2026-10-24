@@ -626,7 +626,8 @@ static void EventScript_DemonstratePsynergy(void) {
     Task_Remove(ValePlaza_UpdateShowingStrongmanPsynergy);
     WaitFrames(1);
     Map_EndCutscenePsynergy();
-    ObjectEvent_ConfigureSpriteColor(LOCALID_STRONGMAN_SHOWING_PSYNERGY, 0);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_STRONGMAN_SHOWING_PSYNERGY,
+                                     SPRITE_COLOR_NORMAL);
     FieldScript_WaitFrames(40);
     FieldScript_SetMessageId(MsgValeBeholdPowerPsynergy);
     FieldScript_ShowMessageAndWait(LOCALID_STRONGMAN_SHOWING_PSYNERGY, 0);
@@ -741,8 +742,9 @@ static void EventScript_BoyLiftsSmallRock(void) {
   Task_Remove(ValePlaza_UpdateSmallRockPalette);
   WaitFrames(1);
   Script_PlaySong(SE_RATTLE);
-  ObjectEvent_SetSpriteColorById(LOCALID_STORM_ROCK_LIFTING_BOY, 0);
-  ObjectEvent_SetSpriteColorById(LOCALID_STORM_SMALL_ROCK, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_STORM_ROCK_LIFTING_BOY,
+                                 SPRITE_COLOR_NORMAL);
+  ObjectEvent_SetSpriteColorById(LOCALID_STORM_SMALL_ROCK, SPRITE_COLOR_NORMAL);
   FieldScript_WaitFrames(40);
   Map_EndCutscenePsynergy();
   ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_STORM_ROCK_LIFTING_BOY,
@@ -1366,7 +1368,7 @@ static void ValePlaza_FightTravelers(void) {
 
   // Garet, still out of sight, calls Isaac to wait; the travelers turn and
   // look down at Isaac.
-  ObjectEvent_ConfigureSpriteColor(LOCALID_STORM_GARET, 15);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_STORM_GARET, SPRITE_COLOR_HIDDEN);
   objectEvent = ObjectEvent_GetById(LOCALID_STORM_GARET);
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   ObjectEvent_SetPosition(LOCALID_STORM_GARET, 0, PIXELS(331));
@@ -1404,7 +1406,7 @@ static void ValePlaza_FightTravelers(void) {
   ObjectMotion_ArmCallback(LOCALID_SECOND_TRAVELER, southSouthwestFacing, 0);
   // Garet runs in from the west. The first traveler asks whether Isaac was
   // eavesdropping; whatever he answers, Garet thinks they look scary.
-  ObjectEvent_ConfigureSpriteColor(LOCALID_STORM_GARET, 0);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_STORM_GARET, SPRITE_COLOR_NORMAL);
   objectEvent = ObjectEvent_GetById(LOCALID_STORM_GARET);
   ObjectEvent_SetSpriteFlags(objectEvent, 1);
   ObjectEvent_SetPosition(LOCALID_STORM_GARET, 0, PIXELS(331));

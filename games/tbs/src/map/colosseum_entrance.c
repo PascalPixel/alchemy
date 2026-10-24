@@ -1530,7 +1530,7 @@ static void ColosseumEntrance_UpdateEntranceCells(void) {
     row = 8;
     MapGrid_CopyCellAttributes(14, 8, 2, 1, column, row);
   } else {
-    ObjectEvent_ConfigureSpriteColor(LOCALID_LUCKY_GUESS_MAN, 2);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_LUCKY_GUESS_MAN, SPRITE_COLOR_RBG);
     if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
       column = 14;
       row = 11;
@@ -2035,13 +2035,13 @@ static void ColosseumEntrance_CelebrateBothWins(void) {
 /// The warriors' child values and their waiting actions in the Colosseum's
 /// waiting room.
 static void ColosseumEntrance_InitializeContestants(void) {
-  ObjectEvent_ConfigureSpriteColor(LOCALID_MORGAN, 3);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_AZART, 0);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_GALAHAD, 4);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SATRAGE, 1);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_DEKKA, 5);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_NAVAMPA, 2);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_BUFORD, 6);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_MORGAN, SPRITE_COLOR_BGR);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_AZART, SPRITE_COLOR_NORMAL);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_GALAHAD, SPRITE_COLOR_GBR);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SATRAGE, SPRITE_COLOR_GRB);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_DEKKA, SPRITE_COLOR_BRG);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_NAVAMPA, SPRITE_COLOR_RBG);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_BUFORD, SPRITE_COLOR_GREY);
   ObjectEvent_SetActionById(LOCALID_AZART, 10);
   ObjectEvent_SetActionById(LOCALID_GALAHAD, 20);
   Import_ObjectEventSetAnimation(LOCALID_SATRAGE, 0);

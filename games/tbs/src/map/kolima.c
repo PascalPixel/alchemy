@@ -213,9 +213,9 @@ static s32 Kolima_UpdateTimedAppearance(struct Object *interpreter) {
   s32 appearanceTimer = (u16)objectEvent->timer + ((u32)scaledRandom >> 16);
   objectEvent->timer = appearanceTimer;
   if ((s16)appearanceTimer > 1000) {
-    ObjectEvent_SetSpriteColor(objectEvent, 7);
+    ObjectEvent_SetSpriteColor(objectEvent, SPRITE_COLOR_WHITE);
   } else {
-    ObjectEvent_SetSpriteColor(objectEvent, 10);
+    ObjectEvent_SetSpriteColor(objectEvent, SPRITE_COLOR_RED_TINT);
   }
   if ((s16)objectEvent->timer > 1200) {
     objectEvent->timer = 0;

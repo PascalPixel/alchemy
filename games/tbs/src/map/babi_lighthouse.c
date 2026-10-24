@@ -307,7 +307,7 @@ static void BabiLighthouse_FallToWarp(s32 warp) {
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   leader->velocityY = -0x50000;
   ObjectEvent_WaitUntilIdle(ObjectEvent_Get(LOCALID_PARTY_LEADER));
-  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Import_ScriptRequestWarp(warp);
   FieldScript_End();
 }
@@ -1364,8 +1364,8 @@ s32 BabiLighthouse_SetupMap(void) {
   } else if (mapCopy == (s32)&MapId_BabiLighthouseEntry) {
     // Set up the movable ledge pillars and the staggered object event
     // animations.
-    ObjectEvent_SetSpriteColorById(LOCALID_LEFT_PILLAR, 6);
-    ObjectEvent_SetSpriteColorById(LOCALID_RIGHT_PILLAR, 6);
+    ObjectEvent_SetSpriteColorById(LOCALID_LEFT_PILLAR, SPRITE_COLOR_GREY);
+    ObjectEvent_SetSpriteColorById(LOCALID_RIGHT_PILLAR, SPRITE_COLOR_GREY);
 #if TBS_PATCH_2
     ((union ObjectEventOrEffect *)ObjectEvent_GetById(LOCALID_LEFT_PILLAR))
         ->objectEvent.update = BabiLighthouse_MatchLeaderPriority;

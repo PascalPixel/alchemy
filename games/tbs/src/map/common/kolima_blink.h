@@ -12,9 +12,9 @@
 static s32 Kolima_FlickerCurseDust(struct Object *interpreter) {
   struct ObjectEvent *speck = (struct ObjectEvent *)interpreter;
   if ((gFrameCount >> 1) & 1) {
-    ObjectEvent_SetSpriteColor(speck, 10);
+    ObjectEvent_SetSpriteColor(speck, SPRITE_COLOR_RED_TINT);
   } else {
-    ObjectEvent_SetSpriteColor(speck, 7);
+    ObjectEvent_SetSpriteColor(speck, SPRITE_COLOR_WHITE);
   }
   return 0;
 }

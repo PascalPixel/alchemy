@@ -1179,7 +1179,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
   Colosso_ShowItemIcon(LOCALID_PRIZE_A, ITEM_CLAYMORE);
   Colosso_ShowItemIcon(LOCALID_PRIZE_B, ITEM_HUNTERS_SWORD);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_OPPONENT, 2);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_OPPONENT, SPRITE_COLOR_RBG);
 
   // Warp destinations: the race (1), the friends' turns, the tour, and the end
   // of Colosso after a win (4) or a loss (5).

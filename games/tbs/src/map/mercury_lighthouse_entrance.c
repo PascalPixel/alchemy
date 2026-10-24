@@ -556,7 +556,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     Map_QueueMusic(SE_AMBIENT_WATER);
     break;
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_PIPE:
-    ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 15);
+    ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
     ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_PARTY_LEADER), 0);
     FieldScript_Start();
     MapGrid_CenterOnFollowedPoint();

@@ -1111,9 +1111,9 @@ void PagedList_DrawPageNumbers(struct Window *window, s32 itemCount,
 
     for (page = 0; page < pageCount; page++) {
       if (page == selectedPage)
-        Window_SetTilemapEntryFar(window, tile, x, -1, 2); // palette 14
+        Window_SetTilemapEntryFar(window, tile, x, -1, TILEMAP_ENTRY_HIGHLIGHT);
       else
-        Window_SetTilemapEntryFar(window, tile, x, -1, 3); // palette 15
+        Window_SetTilemapEntryFar(window, tile, x, -1, TILEMAP_ENTRY_WINDOW);
       tile++;
       x++;
     }
@@ -1179,14 +1179,15 @@ void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
   }
 }
 
-/// Copies the first sprite palette into background palette 14, then colour 4
+/// Lends the highlight palette (background palette 14) to the element icons:
+/// copies the first sprite palette, the icons' colours, into it, then colour 4
 /// of background palette 15, the window's row colour, over its colour 14 (as
 /// SummaryScreen_Run does for palettes 0 and 1). The Details window draws its
 /// element icons (window tiles 1 to 4) in palette 14, so ItemMenu_ShowDetails
 /// calls this first, as do ItemMenu_OpenDetail and Item_PrepareUsePalette,
 /// which nothing calls. It replaces the row highlight until
 /// Palette_LightenBankHighlight(14) makes it again.
-void Palette_CopyObjectBankToBackground14(void) {
+void Palette_LoadIconsIntoHighlight(void) {
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
           DMA_ENABLE << 16 | 16, REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(14, 14),

@@ -19,6 +19,7 @@ struct ScreenPoint;
 /// reads it (see ObjectSystem_Initialize's XXX).
 extern s32 gCamera_UnreadWord1;
 /// The second IWRAM word the scrolling camera's setup clears; also unread.
+/// With no reader to give them a role, the two are numbered in IWRAM order.
 extern s32 gCamera_UnreadWord2;
 extern const s32 gObject_DefaultScript[];
 extern const u8 gWorldMap_BattleEnvironments[];

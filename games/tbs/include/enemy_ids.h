@@ -22,6 +22,7 @@ enum EnemyId {
   ENEMY_SLIME_SOL_SANCTUM = 18,
   /// Level 3: the Slime of the world map's first encounter region, around
   /// Vale and Vault (formations 23 and 27), and of Goma Cave (formation 32).
+  /// Fought in both, it has no one place to be named for.
   ENEMY_SLIME_2 = 19,
   ENEMY_OOZE = 20,
   ENEMY_SLIME_BEAST = 21,

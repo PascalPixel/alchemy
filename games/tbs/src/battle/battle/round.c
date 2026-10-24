@@ -5,8 +5,10 @@
 
 #include "../battle_internal.h"
 
-/// Background palette 14, which takes palette 15 brightened.
-#define BG_PALETTE_14 ((u16 *)&BG_PLTT_COLOR(14, 0))
+/// Background palette 14, the highlight palette: the window screens fill it
+/// with palette 15, the window palette, with a colour changed
+/// (Palette_LightenBankHighlight), and this pulse with palette 15 brightened.
+#define HIGHLIGHT_PALETTE ((u16 *)&BG_PLTT_COLOR(14, 0))
 
 /// Pulses BG palette 14's colours: each takes the matching colour of
 /// palette 15 brightened by up to twelve steps, rising and falling with the
@@ -16,7 +18,7 @@ void Palette_UpdatePulseBrightness(void) {
   s32 remainingColors;
   s32 channelMask;
 
-  palette = BG_PALETTE_14;
+  palette = HIGHLIGHT_PALETTE;
   channelMask = 31;
   remainingColors = 15;
   do {

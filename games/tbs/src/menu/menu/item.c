@@ -2038,7 +2038,7 @@ s32 ItemMenu_OpenDetail(s32 itemIndex) {
   struct ItemMenuWork *menu = gMenuWork;
 
   Window_UpdateOrCreate(&menu->equipWindow, 0, 0, 13, 10, 2);
-  Palette_CopyObjectBankToBackground14();
+  Palette_LoadIconsIntoHighlight();
 
   if (menu->selectedItems[itemIndex] != 0)
     ItemMenu_DrawItemDetails(menu->equipWindow, menu->selectedItems[itemIndex]);
@@ -2076,7 +2076,7 @@ s32 ItemMenu_ShowDetails(s32 value) {
     struct WindowSprite *cursor = menu->cursor;
     cursor->motion = ICON_HIDDEN;
   }
-  Palette_CopyObjectBankToBackground14();
+  Palette_LoadIconsIntoHighlight();
   WaitFrames(1);
 
   for (;;) {

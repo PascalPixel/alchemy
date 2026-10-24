@@ -141,7 +141,9 @@ enum HeapSlot {
   /// BattleAnim_BuildBlitter writes, called as a DrawRectangle and released
   /// before its canvas, or the world map's copy of Transform_UpdateVertices.
   HEAP_SLOT_RAM_CODE = 46,
-  /// A second routine as HEAP_SLOT_RAM_CODE, released before it.
+  /// A second routine as HEAP_SLOT_RAM_CODE, released before it: always a
+  /// BattleAnim_BuildBlitter routine, the second of a pair whose first is in
+  /// HEAP_SLOT_RAM_CODE.
   HEAP_SLOT_RAM_CODE_2 = 47,
   /// Copied field row drawer or window tile decoder, released after each call.
   HEAP_SLOT_RAM_CODE_TEMP = 49,

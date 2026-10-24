@@ -138,9 +138,11 @@ enum {
   WINDOW_SPRITE_MOTION_SHRINK_HALF = 12, ///< the same at half the scale
   WINDOW_SPRITE_MOTION_HIDDEN = 13,      ///< not drawn
   /// Three motions WindowSprite_UpdateAll runs alike: a hop down and back.
-  /// Only the second is set, on a shop's next-page arrow.
+  /// Only the second is set, on a shop's next-page arrow (its previous-page
+  /// arrow takes WINDOW_SPRITE_MOTION_HOP_UP); nothing sets the other two, so
+  /// they keep their place among the three as their names.
   WINDOW_SPRITE_MOTION_HOP_DOWN = 14,
-  WINDOW_SPRITE_MOTION_HOP_DOWN_2 = 15,
+  WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE = 15,
   WINDOW_SPRITE_MOTION_HOP_DOWN_3 = 16,
   WINDOW_SPRITE_MOTION_HOP_UP = 17,
   WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT = 18,
@@ -347,6 +349,22 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode);
 // scope, as in window.c above its definition: PartyStatus_Draw passes four of
 // its five arguments, and in one file, with its definition first, it would not
 // compile. Split evidence for window|screens.
+
+/// How Window_SetTilemapEntry writes its value (its mode argument): as given,
+/// or as a tile number in one of the palettes the menus keep for their
+/// windows.
+enum TilemapEntryMode {
+  TILEMAP_ENTRY_PLAIN, ///< as given, palette bits included
+  TILEMAP_ENTRY_NONE,  ///< nothing
+  /// In palette 14, the highlight Palette_LightenBankHighlight makes for the
+  /// selected row or page.
+  TILEMAP_ENTRY_HIGHLIGHT,
+  TILEMAP_ENTRY_WINDOW, ///< in palette 15, the window palette
+  /// In palette 1, which the summary screen and the party rearranging fill
+  /// with the element icons' colours for the rows that are not highlighted
+  /// (SummaryScreen_Run, MemberChooser_RunRearrange).
+  TILEMAP_ENTRY_ICON
+};
 void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
                             u32 mode);
 void WindowSprite_UpdateScaleAnimation(struct WindowSprite *sprite);

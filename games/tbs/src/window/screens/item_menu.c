@@ -96,7 +96,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     s32 y = i * 2;
 
     iconSprite = &sprites[i];
-    MenuSprite_Initialize(sprites[i], MENU_SPRITE_SIZE_16);
+    MenuSprite_Initialize(sprites[i], MENU_SPRITE_SHAPE_16X16);
     iconSprite->oam.f.x = window->x * 8 + 8;
     iconSprite->oam.f.y = (y + window->y) * 8 + 4;
   }
@@ -213,7 +213,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
      * the spill slots of the cursor address and row * 2 as the native frame
      * does; without it, 28 of 770 instructions differ in tbs-en. */
     sprite = &cursorStorage;
-    ((u32 *)sprite)[1] = MENU_SPRITE_SIZE_16;
+    ((u32 *)sprite)[1] = MENU_SPRITE_SHAPE_16X16;
     ((u32 *)sprite)[2] = 0;
     sprite->tile = VramCache_Reload(cursorHandle, (s32)gPointingHandTiles);
     sprite->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;

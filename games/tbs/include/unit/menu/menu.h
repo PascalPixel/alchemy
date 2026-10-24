@@ -74,7 +74,7 @@ void PagedList_DrawPageNumbers(struct Window *window, s32 itemCount,
                                s32 pageSize, s32 selectedPage, s32 rightEdge);
 void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
                                s32 width, s32 height, u32 palette);
-void Palette_CopyObjectBankToBackground14(void);
+void Palette_LoadIconsIntoHighlight(void);
 void Menu_SetPageIcons(s32 pageSize, s32 first, struct Window *window, s32 x,
                        s32 y);
 void Text_DrawWorkValueWithLabel(struct Window *window);

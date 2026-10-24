@@ -8,7 +8,7 @@
 /// Copies the first sprite palette into background palette 14 and makes a
 /// highlight palette in bank 13. Nothing calls it.
 void Item_PrepareUsePalette(void) {
-  Palette_CopyObjectBankToBackground14();
+  Palette_LoadIconsIntoHighlight();
   Palette_LightenBankHighlight(13);
 }
 

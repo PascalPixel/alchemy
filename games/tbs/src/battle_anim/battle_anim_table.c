@@ -793,7 +793,8 @@ u8 gEruption_Counts[][3] = {{16, 8, 72}, {32, 16, 80}, {128, 32, 88}};
 u16 gEruption_PuffCells[] = BLAST_CELLS;
 u16 gEruption_PuffSizes[] = BLAST_CELL_SIZES;
 
-// Unreferenced cell layouts, from 6x6 through 20x20.
+// Unreferenced cell layouts, from 6x6 through 20x20. gUnused_SheetCells6 is
+// the first six offsets of gUnused_SheetCells, named for its length.
 u16 gUnused_SheetCells6[] = {0, 36, 100, 200, 344, 540};
 u16 gUnused_SheetCells[] = {0,   36,   100,  200,  344, 540,
                             796, 1120, 1520, 1900, 2300};

@@ -275,7 +275,7 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
                                     24);
       zero = 0;
       icon->kind = zero;
-      icon->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_2;
+      icon->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
       icon->animationStep = zero;
     }
     pageSlot = 0;

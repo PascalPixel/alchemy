@@ -4,32 +4,32 @@
 
 #include "../screens_internal.h"
 
-/// Says whether member `unit` can use inventory entry `item` in battle: 0
+/// Says whether member `unit` can use inventory entry `itemId` in battle: 0
 /// yes; 1 no, "Using this will have no effect." (no item, an item that only
 /// teaches Psynergy while equipped, one with no action, or equipment the
 /// member cannot equip); 2 not in battle, "Cannot be used during battle."
 /// (its action lacks BATTLE_OK). A broken item (INVENTORY_BROKEN) is not
 /// tested here. The item command lists the usable items first by it.
-s32 Item_ClassifyUseAbility(s32 unit, s32 item) {
+s32 Item_ClassifyUseAbility(s32 unit, s32 itemId) {
   s32 itemUseStatus;
-  struct ItemDefinition *definition;
+  struct ItemDefinition *item;
 
-  if (item == 0) {
+  if (itemId == 0) {
     return 1;
   }
-  definition = Item_GetDirectFar(item);
+  item = Item_GetDirectFar(itemId);
   itemUseStatus = 1;
   // Equipment that grants Psynergy.
-  if (definition->useType == 3) {
+  if (item->useType == 3) {
     return itemUseStatus;
   }
-  if (definition->abilityId == 0) {
+  if (item->abilityId == 0) {
     return itemUseStatus;
   }
-  if ((definition->type != 0) && (Item_CanUnitEquip(unit, item) == 0)) {
+  if ((item->type != 0) && (Item_CanUnitEquip(unit, itemId) == 0)) {
     return itemUseStatus;
   }
-  if ((BATTLE_OK & Ability_Get(definition->abilityId)->flags) == 0) {
+  if ((BATTLE_OK & Ability_Get(item->abilityId)->flags) == 0) {
     return 2;
   }
   return 0;

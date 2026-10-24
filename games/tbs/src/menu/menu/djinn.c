@@ -612,14 +612,14 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
   s32 listIndex;
   s32 row;
   s32 element;
-  struct WindowWork *windowWork;
+  struct WindowWork *work;
   s32 lineIndex;
   s32 canChangeState;
   u16 *entries;
 
   menu = HEAP_SLOT_BLOCK(HEAP_SLOT_MENU);
-  windowWork = HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW);
-  windowWork->holdTilemapUpload = 1;
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW);
+  work->holdTilemapUpload = 1;
   listIndex = 0;
   if (menu->memberCount != 0) {
     do {
@@ -669,7 +669,7 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
   }
   Window_DrawDividerLineFar(menu->listWindow, 0, 10, 28, 10);
   ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->dirty = 1;
-  windowWork->holdTilemapUpload = 0;
+  work->holdTilemapUpload = 0;
 }
 
 /// Sets the palette of a rectangle of window's interior, (x, y) and its size in

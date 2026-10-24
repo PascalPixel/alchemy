@@ -554,13 +554,13 @@ static void LunpaFortress_OpenToadonpaDoor(s32 doorIndex) {
 /// LunpaFortressToadonpa: facing a cell door with the Cell Key opens it with a
 /// rumble. After Donpa's judgment the fifth, Dodonpa's cell, stays shut.
 static void EventScript_UnlockToadonpaDoor(void) {
-  struct FieldWork *fieldWork;
+  struct FieldWork *work;
   s32 doorTrigger;
   s32 doorIndex;
 
-  fieldWork = gFieldWork;
+  work = gFieldWork;
   if (PartyInventory_FindMember(ITEM_CELL_KEY) != -1) {
-    doorTrigger = fieldWork->coordEvent;
+    doorTrigger = work->coordEvent;
     doorIndex = doorTrigger - MB_LUNPA_FORTRESS_FIRST_DOOR;
     if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) == 0 || doorIndex != 4) {
       LunpaFortress_OpenToadonpaDoor(doorIndex);
@@ -595,12 +595,12 @@ static void LunpaFortress_OpenCaveDoor(s32 doorIndex) {
 /// LunpaFortressCave: facing a cell door with the Cell Key opens it with a
 /// rumble.
 static void EventScript_UnlockCaveDoor(void) {
-  struct FieldWork *fieldWork;
+  struct FieldWork *work;
   s32 doorTrigger;
 
-  fieldWork = gFieldWork;
+  work = gFieldWork;
   if (PartyInventory_FindMember(ITEM_CELL_KEY) != -1) {
-    doorTrigger = fieldWork->coordEvent;
+    doorTrigger = work->coordEvent;
     LunpaFortress_OpenCaveDoor(doorTrigger - MB_LUNPA_FORTRESS_FIRST_DOOR);
     SE(SE_GATE_MOVE);
     MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
@@ -623,12 +623,12 @@ static void LunpaFortress_OpenUpperFloorDoor(s32 doorIndex) {
 /// LunpaFortressUpperFloor: facing a cell door with the Cell Key opens it with
 /// a rumble.
 static void EventScript_UnlockUpperFloorDoor(void) {
-  struct FieldWork *fieldWork;
+  struct FieldWork *work;
   s32 doorTrigger;
 
-  fieldWork = gFieldWork;
+  work = gFieldWork;
   if (PartyInventory_FindMember(ITEM_CELL_KEY) != -1) {
-    doorTrigger = fieldWork->coordEvent;
+    doorTrigger = work->coordEvent;
     LunpaFortress_OpenUpperFloorDoor(doorTrigger -
                                      MB_LUNPA_FORTRESS_FIRST_DOOR);
     SE(SE_GATE_MOVE);
@@ -656,12 +656,12 @@ static void LunpaFortress_OpenGroundFloorDoor(s32 doorIndex) {
 /// LunpaFortressGroundFloor: facing a cell door with the Cell Key opens it with
 /// a rumble.
 static void EventScript_UnlockGroundFloorDoor(void) {
-  struct FieldWork *fieldWork;
+  struct FieldWork *work;
   s32 doorTrigger;
 
-  fieldWork = gFieldWork;
+  work = gFieldWork;
   if (PartyInventory_FindMember(ITEM_CELL_KEY) != -1) {
-    doorTrigger = fieldWork->coordEvent;
+    doorTrigger = work->coordEvent;
     LunpaFortress_OpenGroundFloorDoor(doorTrigger -
                                       MB_LUNPA_FORTRESS_FIRST_DOOR);
     SE(SE_GATE_MOVE);
@@ -1093,9 +1093,9 @@ static s32 LunpaFortress_IsLeaderOutsideUpperHall(void) {
 /// uncloaked leader raises RAISED_UPPER_HALL_SPOTTED.
 static void LunpaFortress_CheckUpperHallGuard(void) {
 
-  struct FieldWork *fieldWork;
+  struct FieldWork *work;
 
-  fieldWork = gFieldWork;
+  work = gFieldWork;
   if (Script_GetFlag(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED) == 0) {
     if (LunpaFortress_IsLeaderOutsideUpperHall() == 0) {
       if (gSaveBlock.cloaked == 0) {
@@ -1106,7 +1106,7 @@ static void LunpaFortress_CheckUpperHallGuard(void) {
         }
       }
       if (GameFlag_Get(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED) != 0) {
-        fieldWork->raisedEvent = RAISED_UPPER_HALL_SPOTTED;
+        work->raisedEvent = RAISED_UPPER_HALL_SPOTTED;
       }
     }
   }
@@ -1124,7 +1124,7 @@ static void EventScript_UpperHallGuardThrowsPartyOut(void) {
 /// RAISED_ENTRANCE_GUARD_SPOTTED, once.
 static void LunpaFortress_CheckEntranceGuard(void) {
 
-  struct FieldWork *fieldWork = gFieldWork;
+  struct FieldWork *work = gFieldWork;
 
   if (LunpaFortress_CanGuardSeeLeader(LOCALID_GROUND_FLOOR_ENTRANCE_GUARD) !=
           0 &&
@@ -1133,7 +1133,7 @@ static void LunpaFortress_CheckEntranceGuard(void) {
     s32 caughtTrigger;
 
     Task_Remove(LunpaFortress_CheckEntranceGuard);
-    raisedTrigger = &fieldWork->raisedEvent;
+    raisedTrigger = &work->raisedEvent;
     caughtTrigger = RAISED_ENTRANCE_GUARD_SPOTTED;
     *raisedTrigger = caughtTrigger;
   }
@@ -1144,9 +1144,9 @@ static void LunpaFortress_CheckEntranceGuard(void) {
 /// RAISED_SENTRIES_SPOTTED, once for both.
 static void LunpaFortress_CheckFirstEntranceSentry(void) {
 
-  struct FieldWork *fieldWork;
+  struct FieldWork *work;
 
-  fieldWork = gFieldWork;
+  work = gFieldWork;
   if (Script_GetFlag(FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY) == 0) {
     if (LunpaFortress_CanGuardSeeLeader(LOCALID_GROUND_FLOOR_FIRST_SENTRY) !=
         0) {
@@ -1154,7 +1154,7 @@ static void LunpaFortress_CheckFirstEntranceSentry(void) {
         GameFlag_Set(FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY);
         Task_Remove(LunpaFortress_CheckFirstEntranceSentry);
         Task_Remove(LunpaFortress_CheckSecondEntranceSentry);
-        fieldWork->raisedEvent = RAISED_SENTRIES_SPOTTED;
+        work->raisedEvent = RAISED_SENTRIES_SPOTTED;
       }
     }
   }
@@ -1163,9 +1163,9 @@ static void LunpaFortress_CheckFirstEntranceSentry(void) {
 /// The second sentry, as the first.
 static void LunpaFortress_CheckSecondEntranceSentry(void) {
 
-  struct FieldWork *fieldWork;
+  struct FieldWork *work;
 
-  fieldWork = gFieldWork;
+  work = gFieldWork;
   if (Script_GetFlag(FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY) == 0) {
     if (LunpaFortress_CanGuardSeeLeader(LOCALID_GROUND_FLOOR_SECOND_SENTRY) !=
         0) {
@@ -1173,7 +1173,7 @@ static void LunpaFortress_CheckSecondEntranceSentry(void) {
         GameFlag_Set(FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY);
         Task_Remove(LunpaFortress_CheckSecondEntranceSentry);
         Task_Remove(LunpaFortress_CheckFirstEntranceSentry);
-        fieldWork->raisedEvent = RAISED_SENTRIES_SPOTTED;
+        work->raisedEvent = RAISED_SENTRIES_SPOTTED;
       }
     }
   }

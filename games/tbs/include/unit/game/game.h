@@ -38,7 +38,7 @@ s32 Party_AdjustShopCredit(s32 amount);
 s32 Party_AdjustShopGifts(s32 amount);
 
 struct ItemDefinition *Item_GetDirect(s32 item);
-s32 Item_CanUnitEquipDirect(s32 unitId, s32 item);
+s32 Item_CanUnitEquipDirect(s32 unitId, s32 itemId);
 s32 Item_IsCompatibleWithUnit(s32 unit, s32 item);
 s32 Item_GetEquipmentGroup(s32 itemId);
 s32 Inventory_GetQuantity(s32 unitId, s32 slot);

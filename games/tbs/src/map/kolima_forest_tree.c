@@ -367,7 +367,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   do {
     WaitFrames(1);
   } while (leader->velocityY <= 0);
-  Script_PlaySong(SE_SURPRISE);
+  Script_PlaySong(SE_RATTLE);
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_COLLAPSE);
   FieldScript_WaitFrames(120);
   Task_Remove(KolimaForestTree_SpawnRejectionSpark);

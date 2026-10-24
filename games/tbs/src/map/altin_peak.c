@@ -1173,7 +1173,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
     ObjectEvent_WalkToAndWait(LOCALID_GARET, 792, 110);
     FieldScript_WaitFrames(1);
     ObjectEvent_GetById(LOCALID_GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
-    Script_PlaySong(SE_SURPRISE);
+    Script_PlaySong(SE_RATTLE);
     MapGrid_SetShake(PIXELS(2), PIXELS(1), Q16_ONE);
     ObjectEvent_GetById(LOCALID_GARET)->steeringFlags &=
         ~OBJ_EVENT_FACES_MOTION;
@@ -2407,7 +2407,7 @@ static void AltinPeak_StopCartAndJumpOff(struct ObjectEvent *objectEvent) {
   struct ObjectEvent *leader;
 
   Sound_PlaySong(SE_STOP_ACTION_SE);
-  Sound_PlaySong(SE_CLUNK);
+  Sound_PlaySong(SE_CRUNCH);
   x = objectEvent->x.fixed & 0xfff00000;
   centerZ = PIXELS(8);
   z = objectEvent->z.fixed & 0xfff00000;

@@ -742,7 +742,7 @@ static void EventScript_BoyLiftsSmallRock(void) {
   Task_Remove(ValePlaza_UpdateRockLiftingBoyPsynergy);
   Task_Remove(ValePlaza_UpdateSmallRockPalette);
   WaitFrames(1);
-  Script_PlaySong(SE_SURPRISE);
+  Script_PlaySong(SE_RATTLE);
   ObjectEvent_SetSpriteColorById(LOCALID_STORM_ROCK_LIFTING_BOY, 0);
   ObjectEvent_SetSpriteColorById(LOCALID_STORM_SMALL_ROCK, 0);
   FieldScript_WaitFrames(40);

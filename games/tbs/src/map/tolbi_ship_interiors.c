@@ -2949,7 +2949,7 @@ static void TolbiShipInteriors_CastOff(void) {
   ObjectMotion_Launch(LOCALID_QUARTERS_CAPTAIN, 4, 20);
   anchorCharm = TolbiShipInteriors_PlaceAnchorCharm();
   FieldScript_WaitFrames(20);
-  Script_PlaySong(SE_SURGE);
+  Script_PlaySong(SE_RISING_CHIMES);
   ObjectEvent_SetScript(anchorCharm, gTolbiShipInteriors_AnchorCharmPulse);
   FieldScript_WaitFrames(40);
   ObjectMotion_SetAnimationAndWait(LOCALID_QUARTERS_CAPTAIN, 3);

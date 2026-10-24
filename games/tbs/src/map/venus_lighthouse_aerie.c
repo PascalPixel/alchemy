@@ -1557,7 +1557,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   ObjectEvent_RunRepeatedMotion(LOCALID_SATUROS, 2);
   Script_Wait(20);
   ObjectEvent_Get(LOCALID_SATUROS)->scaleX = -Q16_ONE;
-  Script_PlaySong(SE_SURPRISE);
+  Script_PlaySong(SE_RATTLE);
   ObjectEvent_SetAnimation(LOCALID_SATUROS, SATUROS_ANIMATION_BREATHE);
   Script_Wait(20);
   ObjectEvent_SetAnimation(LOCALID_MENARDI, ANIM_STAND);
@@ -1570,7 +1570,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   ObjectEvent_WalkToAndWait(LOCALID_MENARDI, 292, 186);
   ObjectEvent_Get(LOCALID_MENARDI)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   ObjectEvent_Get(LOCALID_MENARDI)->scaleX = -Q16_ONE;
-  Script_PlaySong(SE_SURPRISE);
+  Script_PlaySong(SE_RATTLE);
   ObjectEvent_SetAnimation(LOCALID_MENARDI, MENARDI_ANIMATION_STAND_WINDSWEPT);
   Script_Wait(20);
   ObjectEvent_RunRepeatedMotion(LOCALID_MENARDI, 2);

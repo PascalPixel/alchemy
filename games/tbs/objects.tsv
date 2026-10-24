@@ -288,7 +288,7 @@ main	rom_tail_00	games/tbs/sound/songs/se_gate_move	.rodata
 main	rom_tail_00	games/tbs/sound/songs/se_door_open	.rodata
 main	rom_tail_00	games/tbs/sound/songs/se_door_close	.rodata
 main	rom_tail_00	games/tbs/sound/songs/se_160	.rodata
-main	rom_tail_00	games/tbs/sound/songs/se_surprise	.rodata
+main	rom_tail_00	games/tbs/sound/songs/se_rattle	.rodata
 main	rom_tail_00	games/tbs/sound/songs/se_wave	.rodata
 main	rom_tail_00	games/tbs/sound/songs/se_rush	.rodata
 main	rom_tail_00	games/tbs/sound/songs/se_scatter	.rodata
@@ -340,7 +340,7 @@ main	rom_tail_00	games/tbs/sound/songs/se_hidden_passage_open	.rodata
 main	rom_tail_00	games/tbs/sound/songs/se_mercury_lighthouse_mechanism	.rodata
 main	rom_tail_00	games/tbs/sound/songs/se_power_up	.rodata
 main	rom_tail_00	games/tbs/sound/songs/se_heavy_stop	.rodata
-main	rom_tail_00	games/tbs/sound/songs/se_surge	.rodata
+main	rom_tail_00	games/tbs/sound/songs/se_rising_chimes	.rodata
 main	rom_tail_00	games/tbs/sound/songs/se_splash_small	.rodata
 main	rom_tail_00	games/tbs/sound/songs/se_burst	.rodata
 main	rom_tail_00	games/tbs/sound/songs/se_floor_switch	.rodata
@@ -358,7 +358,7 @@ main	rom_tail_00	games/tbs/sound/songs/se_sparkling_passage	.rodata
 main	rom_tail_00	games/tbs/sound/songs/se_splash	.rodata
 main	rom_tail_00	games/tbs/sound/songs/se_water_drain	.rodata
 main	rom_tail_00	games/tbs/sound/songs/se_water_level	.rodata
-main	rom_tail_00	games/tbs/sound/songs/se_clunk	.rodata
+main	rom_tail_00	games/tbs/sound/songs/se_crunch	.rodata
 main	rom_tail_00	games/tbs/sound/songs/se_cart_roll	.rodata
 main	rom_tail_00	games/tbs/sound/songs/se_run_back	.rodata
 main	rom_tail_00	games/tbs/sound/songs/se_235	.rodata

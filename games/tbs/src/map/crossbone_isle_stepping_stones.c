@@ -837,7 +837,7 @@ static void EventScript_FlipWaterSwitch(void) {
   waterRaised = Script_GetFlag(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED);
   // Raise or drain the water before redrawing the logs' footprints.
   if (waterRaised == 0) {
-    SE(SE_CLUNK);
+    SE(SE_CRUNCH);
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_SwitchCloseSteps, 84, 24);
     WAIT(30);
     SE(SE_LOG_FALL);
@@ -857,7 +857,7 @@ static void EventScript_FlipWaterSwitch(void) {
     MapGrid_CopyCellAttributes(24, 3, 1, 1, 24, 8);
     GameFlag_Set(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED);
   } else {
-    SE(SE_CLUNK);
+    SE(SE_CRUNCH);
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_SwitchOpenSteps, 84, 24);
     WAIT(30);
     SE(SE_WATER_DRAIN);

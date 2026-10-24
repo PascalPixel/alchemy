@@ -255,7 +255,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   FieldCamera_MoveWithinMapBounds(PIXELS(264), -1, PIXELS(448), 1);
   FieldCamera_WaitForArrival();
   FieldMessage_Show(MsgFieldFlippedSwitch, 1);
-  Sound_PlaySong(SE_CLUNK);
+  Sound_PlaySong(SE_CRUNCH);
   if (*gKolimaForestFloodgateLayout == 0) {
     ObjectEvent_SetPosition(LOCALID_FLOODGATE_SPRAY, PIXELS(256), PIXELS(462));
     MapGrid_CopyCells(77, 34, 1, 2, 83, 25);

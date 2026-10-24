@@ -1560,7 +1560,7 @@ static void EventScript_StepOnFloorSwitch(void) {
     MapGrid_CopyCellsTo(52, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(52, 117, 41, 117, 3, 5);
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH);
-    Sound_PlaySong(SE_SURPRISE);
+    Sound_PlaySong(SE_RATTLE);
     leader->motionFlags &= ~OBJ_EVENT_FOLLOWS_TERRAIN;
     leader->groundHeight = -PIXELS(2);
     leader->y.fixed = -PIXELS(2);
@@ -1834,7 +1834,7 @@ static void EventScript_StepOnWallSwitch(void) {
     leader->y.fixed = -PIXELS(2);
     if (!Script_GetFlag(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED)) {
       FieldScript_Start();
-      Sound_PlaySong(SE_SURPRISE);
+      Sound_PlaySong(SE_RATTLE);
       GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED);
       MapGrid_CopyCellsTo(26, 33, 19, 33, 1, 1);
       FieldScript_WaitFrames(30);
@@ -2396,7 +2396,7 @@ static void EventScript_StepOnWestWallSwitch(void) {
     if (!GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
       FieldScript_Start();
       MapGrid_CopyCellsTo(63, 29, 33, 20, 1, 1);
-      Sound_PlaySong(SE_SURPRISE);
+      Sound_PlaySong(SE_RATTLE);
       MapGrid_CopyCellsTo(44, 83, 44, 80, 3, 3);
       FieldScript_WaitFrames(30);
       MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
@@ -2470,7 +2470,7 @@ static void EventScript_StepOnEastWallSwitch(void) {
     if (!GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED)) {
       FieldScript_Start();
       MapGrid_CopyCellsTo(63, 29, 49, 20, 1, 1);
-      Sound_PlaySong(SE_SURPRISE);
+      Sound_PlaySong(SE_RATTLE);
       FieldScript_WaitFrames(30);
       MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
       Sound_PlaySong(SE_HEAVY_MOVE);

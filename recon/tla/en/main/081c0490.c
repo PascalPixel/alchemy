@@ -1,51 +1,16 @@
+// Draft, differ 18 of 10 with the game profile, and identical with old_agbcc
+// -O2 -mthumb-interwork (2026-10-24): the work copy of the sound library's
+// MPlayContinue, as ☀️'s Audio_ResumePlayer (games/tbs/src/sound/audio.c),
+// in pret's form; old_agbcc drops the lock's raise and restore, as the
+// listing does. Adopting it needs a file the sound route (SOUND_C) compiles
+// at this place, between noop_stub_work_copy.c and the driver's
+// midi_key_to_frequency.s: a routing change, Pascal's (K1).
 #include "audio_engine.h"
-#include "ram_buffer.h"
 
-void Sound_Mixer(void);
-void AudioEngine_Initialize(struct SoundWork *work);
-void CgbAudio_Initialize(struct CgbNote *notes);
-void AudioEngine_SetMode(u32 mode);
-void AudioEngine_RunMixerTick(void);
-void MusicPlayer_Initialize(struct SoundPlayer *player,
-                            struct SoundTrack *tracks, u8 count);
-void MusicPlayer_StartSong(struct SoundPlayer *player,
-                           const struct SequenceHeader *header);
-void MusicPlayer_Stop(struct SoundPlayer *player);
-void MusicPlayer_StartFadeOut(struct SoundPlayer *player, u16 speed);
-void Audio_ResumePlayer(struct SoundPlayer *player);
-void AudioCommand_InvokeSlot35(void *block);
-extern struct SoundWork gSound_Work;
-extern struct CgbNote gSound_CgbNotes[4];
-extern u8 gSound_WorkBytes[];
-extern const struct PlayerSlot gSound_PlayerSlots[];
-extern const struct SongEntry gSound_SongTable[];
-extern u8 Sound_PlayerCount;
-
-void MusicTrack_OperateWorkByte(struct SoundPlayer *player,
-                                struct SoundTrack *track);
-void MusicTrack_SetLfoSpeedFromCommand(struct SoundPlayer *player,
-                                       struct SoundTrack *track);
-void MusicTrack_SetModulationFromCommand(struct SoundPlayer *player,
-                                         struct SoundTrack *track);
-void MusicTrack_DispatchStreamCommand(struct SoundPlayer *player,
-                                      struct SoundTrack *track);
-void MusicTrack_ReleaseKey(struct SoundPlayer *player,
-                           struct SoundTrack *track);
-void AudioEngine_SetPcmRate(u32 mode);
-void MusicTrack_Stop(struct SoundPlayer *player, struct SoundTrack *track);
-void MusicPlayer_StepFade(struct SoundPlayer *player);
-void MusicTrack_CalculateOutput(struct SoundPlayer *player,
-                           struct SoundTrack *track);
-void Cgb_UpdateChannels(void);
-void CgbChannel_Mute(u8 channel);
-s32 Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine);
-extern SoundCommand gSound_CommandTable[36];
-extern u8 Sound_MaxLines;
-
-void Audio_ResumePlayer(struct SoundPlayer *player) {
+void Func_081c0490(struct SoundPlayer *player) {
   if (player->lock == SOUND_LOCK) {
     player->lock++;
-    player->status &= 0x7fffffff;
+    player->status &= ~SOUND_PLAYER_PAUSED;
     player->lock = SOUND_LOCK;
   }
 }

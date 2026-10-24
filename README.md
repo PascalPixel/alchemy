@@ -1,6 +1,6 @@
 # 🌋 Alchemy
 
-Alchemy is a [decompilation](https://en.wikipedia.org/wiki/Decompiler) of the Game Boy Advance games ☀️ **[Golden Sun: The Broken Seal](games/tbs/README.md)** and ⚓️ **Golden Sun: The Lost Age**.
+Alchemy is a [decompilation](https://en.wikipedia.org/wiki/Decompiler) of the Game Boy Advance games ☀️ **[Golden Sun: The Broken Seal](https://alchemy.pascalpixel.com/tbs)** and ⚓️ **Golden Sun: The Lost Age**.
 
 ## Progress
 

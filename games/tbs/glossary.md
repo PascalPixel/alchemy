@@ -91,7 +91,7 @@ ground, a summon's arrival. It decides when a hit shows, never what it does
 Alchemy is C and assembly written by hand that compiles back into exactly the
 bytes on the cartridges, checked against `rom.sha1`, so the source sometimes
 keeps an unusual form where plainer C would behave the same
-([README](../../README.md), [Matching](src/MATCHING.md)).
+([Introduction](../README.md), [Matching](src/MATCHING.md)).
 
 ### The original
 

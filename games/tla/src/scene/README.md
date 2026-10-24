@@ -51,9 +51,3 @@ Lost Age's code has so far:
 | `Exit_` | the exit the Gabomba Statue scene sets |
 | `Blend_`, `Frame_`, `Speed_` | writing the blend alpha, the frame count modulo 6, and setting an actor's speed |
 | `Mem_`, `Pool_`, `Words_` | allocating from a scene's memory pool, and copying words |
-
-## Evidence and open questions
-
-- XXX: which functions several ⚓️ overlays carry as copies, as ☀️'s do in
-  its `common/` headers; ⚓️ has no such headers yet.
-- XXX: what the scene table's sixth column means.

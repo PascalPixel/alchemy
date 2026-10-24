@@ -48,8 +48,6 @@
 /// backgrounds alone, the clouds drifting behind the pillars), and
 /// once Mt. Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED) the room rumbles and
 /// shakes, as the rest of the sanctum does.
-///
-/// Open questions: none.
 
 #include "save_block.h"
 #include "version.h"

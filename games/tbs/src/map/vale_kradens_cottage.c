@@ -65,8 +65,6 @@
 /// FLAG_SHOW_LOCATION_NAME, so the area name is not shown again. The jar's row
 /// finds nothing on the stormy night, and after Kalay it is there only from the
 /// third patch on.
-///
-/// Open questions: none.
 
 #include "save_block.h"
 #include "unit/import.h"

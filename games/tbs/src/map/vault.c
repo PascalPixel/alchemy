@@ -38,16 +38,6 @@
 /// The rope bridge in the town's south-east spans a path that runs under it,
 /// and stepping onto either end of it or off its west end switches the cells
 /// beneath it between the deck and the path (common/vault_toggle.h).
-///
-/// Open questions:
-/// - XXX (no evidence): what the ivy placed at (0, 0) with
-///   MOVEMENT_TYPE_RESET_ACTION, object event 22, the row after
-///   LOCALID_WOMAN_WANTING_THE_ROOF_FIXED, was for; it is drawn above the map's
-///   top edge where no camera shows it, is not solid, and only the engine's
-///   passes over every object event touch it (render probe vault-ivy, watching
-///   ObjectEvent_GetByLocalId for it while the town loads, while the leader
-///   walks and while Whirlwind is cast; vault_revisit.c's table has the same
-///   row), so nothing in the ROM says what it was meant to do.
 
 #include "save_block.h"
 #include "animspr.h"
@@ -1374,6 +1364,9 @@ struct ObjectEventTemplate gVault_ObjectEventTemplates[] = {
         PIXELS(152), 0, PIXELS(296), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, IF_FLAG_SET(FLAG_VAULT_SUSPECTS_MIND_READ), (s32)gVault_WomanWantingTheRoofFixedRoute,
         PIXELS(168), 0, PIXELS(312), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+    // XXX (no evidence): what this ivy was for; it stands above the map's top
+    // edge where no camera shows it, is not solid, and only the engine's passes
+    // over every object event touch it (render probe vault-ivy).
     { SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { VENUS_DJINNI, FLAG_DJINNI(DJINNI_SAP), MOVEMENT_TYPE_STAND,

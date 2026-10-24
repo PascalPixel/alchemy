@@ -48,9 +48,6 @@
 /// of its own, that the trap adds and removes. A third statue-room scene, the
 /// lit quarters flashing for Kraden
 /// (SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights), is never reached.
-///
-/// Open questions:
-/// - None.
 
 #include "save_block.h"
 #include "unit/map/sol_sanctum_luna_sol_rooms.h"

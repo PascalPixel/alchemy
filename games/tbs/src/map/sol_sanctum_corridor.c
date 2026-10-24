@@ -9,9 +9,6 @@
 /// (common/sol_sanctum_init_zoom.h), is the one MapId_SolSanctumMaze shares:
 /// once Mt. Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED), the passage rumbles
 /// and shakes.
-///
-/// Open questions:
-/// - None.
 
 #include "unit/map/sol_sanctum_corridor.h"
 #include "unit/map/common/sol_sanctum_init_zoom.h"

@@ -29,14 +29,6 @@
 /// others), so talking across one reaches the merchant's map event. Entering by
 /// ROOM_GATE_TO_SUHALLA makes the house the place a defeated party wakes and
 /// hides the location name.
-///
-/// Open questions:
-/// - XXX (no evidence): what ROOM_NINTH_UNUSED was meant for, a warp
-/// destination no
-///   warp leads to; its camera box takes half the crate room and half the
-///   house at Suhalla Gate, and it stands the leader in the empty dark between
-///   them (https://alchemy.pascalpixel.com/places/lunpa-suhalla/map-9.png), so
-///   the map holds no room of its own for it.
 
 #include "save_block.h"
 #include "script_layer.h"
@@ -71,6 +63,9 @@ const struct MapWarpDest gInteriorWarpDests[] = {
     { ROOM_INN, CONDITION_ALWAYS, 288, 0, 840, FACING_NORTH, 0, 40, 656, 368, 944, 0 },
     { ROOM_TEMPLE, CONDITION_ALWAYS, 688, 0, 280, FACING_NORTH, 0, 568, 32, 808, 304, 0 },
     { ROOM_CRATE_ROOM, CONDITION_ALWAYS, 560, 0, 880, FACING_NORTH, 0, 400, 656, 640, 912, 0 },
+    // XXX (no evidence): what this warp destination was meant for; no warp
+    // leads to it, and it stands the leader in the empty dark between the crate
+    // room and the house at Suhalla Gate.
     { ROOM_NINTH_UNUSED, CONDITION_ALWAYS, 672, 0, 888, FACING_NORTH, 0, 520, 656, 760, 896, 0 },
     { ROOM_GATE_TO_SUHALLA, CONDITION_ALWAYS, 832, 0, 848, FACING_NORTH, 0, 680, 656, 920, 896, 0 },
     { ROOM_TEMPLE_SECOND_WARP_DEST, CONDITION_ALWAYS, 688, 0, 184, FACING_NORTH, 0, 568, 32, 808, 288, 0 },

@@ -39,14 +39,6 @@
 /// (XIAN_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) or the Sanctum
 /// (XIAN_FROM_SANCTUM_WEST) clears FLAG_SHOW_LOCATION_NAME, so the name is not
 /// shown again.
-///
-/// Open questions:
-///
-/// - XXX (no evidence): why Xian places three crates as object events
-///   (LOCALID_FIRST_CRATE on) that Xian_Initialize makes invisible
-///   (SPRITE_COLOR_HIDDEN), not solid and never a target, so that the player
-///   neither sees nor meets them; nothing in the ROM reads them again, so only
-///   the authors' intent would explain them.
 #include "save_block.h"
 #include "djinn_ids.h"
 #include "unit/import.h"
@@ -863,6 +855,7 @@ s32 Xian_Initialize(void) {
   }
   // Set the three crates up as ObjectEvent_CreateConfiguredObject sets up
   // its objects: still, not solid, never a target and hidden.
+  // XXX (no evidence): what the crates are for; nothing reads them again.
   for (crateIndex = 0; crateIndex <= 2; crateIndex++) {
     struct ObjectEvent *objectEvent;
     objectEvent = ObjectEvent_GetById(crateIndex + LOCALID_FIRST_CRATE);

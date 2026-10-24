@@ -16,8 +16,6 @@
 /// north into its arch, the leader steps in and sinks out of sight as if down
 /// steps behind it, to SE_STAIRS_DOWN, and comes out walking down from a
 /// doorway in the room of steps (render probe maze-exit).
-///
-/// Open questions: none.
 
 #include "unit/map/sol_sanctum_maze.h"
 #include "unit/map/common/sol_sanctum_init_zoom.h"

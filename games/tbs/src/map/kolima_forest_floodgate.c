@@ -23,8 +23,6 @@
 /// and the river falls; flipping it back closes the gate in churning spray
 /// (SPLASH_ANIMATION_CHURN) and the river rises
 /// (places/kolima-forest-floodgate/events/KolimaForestFloodgate_FlipFloodgateSwitch.gif).
-///
-/// Open questions: none.
 
 #include "speaker.h"
 #include "flags.h"

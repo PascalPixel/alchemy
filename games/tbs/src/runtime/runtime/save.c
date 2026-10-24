@@ -131,6 +131,8 @@ u32 Save_SelectWriteSector(s32 mode) {
         index = SAVE_SECTOR_COUNT;
       }
     } else {
+      // XXX: likely chosen at random to spread the flash chip's wear, because
+      // nothing else in the code needs it; the bytes don't say so.
       index = Random16() % count;
       index = empty[index];
     }

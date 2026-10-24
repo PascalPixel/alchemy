@@ -493,6 +493,8 @@ static void MenuTest_GivePartyDjinn(void) {
   s32 pass;
   s32 characterIndex;
 
+  // XXX (no evidence): what this loop was for; whatever it once fed is gone
+  // from every edition.
   for (pass = 0; pass < 16; pass++) {
     for (characterIndex = 0; characterIndex < 256; characterIndex++) {
       fillBuffer[characterIndex] = 0;

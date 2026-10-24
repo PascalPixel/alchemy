@@ -58,8 +58,6 @@
 /// the debug menus' map selector, which warps to any map and warp destination
 /// by number, reaches KALAY_TOLBI_DOCKS_WARP_DEST_AFTER_COLOSSO, which sets
 /// FLAG_COLOSSO_OVER as Babi Palace's BABI_PALACE_AFTER_COLOSSO does.
-///
-/// Open questions: none.
 
 #include "save_block.h"
 #include "djinn_ids.h"

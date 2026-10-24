@@ -22,8 +22,6 @@
 /// EventScript_IodemCallsOut (FLAG_IODEM_ASKED_TO_MEET), which sends the party
 /// outside, where Iodem gives it the Black Orb (lalivero.c). A barrel holds a
 /// Lucky Medal.
-///
-/// Open questions: none.
 
 #include "action_script.h"
 #include "save_block.h"

@@ -117,6 +117,8 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   shop = gMenuWork;
   shop->shopType = ShopStock_GetType(stockRow);
   // Xian's shops are the warriors' shops, which greet differently.
+  // XXX (no evidence): why by row number rather than a column of the row; the
+  // stock row's s16 type column could have carried it.
   if (stockRow == SHOP_STOCK_ROW_XIAN_WEAPONS)
     shop->warriorShop = 1;
   if (stockRow == SHOP_STOCK_ROW_XIAN_ARMOR)

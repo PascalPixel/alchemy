@@ -4,6 +4,9 @@
 #include "callback_scheduler.h"
 #include "dma.h"
 
+// XXX: what the work block in heap slot 39 holds, and what this family does;
+// its callers and the block's readers would settle it.
+
 extern const u8 gData_080f0c04[];
 
 void Func_080d8a00(void);

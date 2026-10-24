@@ -83,13 +83,6 @@
 /// FLAG_KALAY_TUNNEL_OPEN opens the passage. The getters choose each map's
 /// tables; the cave and the passage have no object event templates, and an
 /// empty set serves any other map number.
-///
-/// Open questions:
-///
-/// - XXX (no evidence): whether the man waiting in the treasure room
-///   (LOCALID_WAITING_MAN) is Bunza; likely, because he is drawn with
-///   SPRITE_BUNZA, which every other map places beside Hammet as Bunza, but his
-///   lines never name him.
 
 #include "save_block.h"
 #include "unit/field/field.h"
@@ -281,6 +274,8 @@ enum KalayTunnelLocalId {
   /// ★ Named from what the player sees: the second stone statue, east of the
   /// first (its render)
   LOCALID_SECOND_STATUE,
+  // XXX (no evidence): whether he is Bunza; likely, because every other map
+  // places SPRITE_BUNZA beside Hammet as Bunza, but his lines never name him.
   /// A man drawn with SPRITE_BUNZA who waits here once FLAG_KALAY_TUNNEL_OPEN
   /// is set.
   /// ★ Named from the game: "Layana was very hard on all of you, wasn't she?"

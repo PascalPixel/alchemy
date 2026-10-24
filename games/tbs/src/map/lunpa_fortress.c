@@ -84,8 +84,6 @@
 /// Blade and a Shamshir on LunpaFortressGroundFloor's first four rows, and
 /// copies of West Lunpa Cave's warps and object event templates, which these
 /// maps never read.
-///
-/// Open questions: none.
 
 #include "save_block.h"
 #include "script_layer.h"

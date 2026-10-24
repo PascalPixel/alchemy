@@ -57,13 +57,6 @@
 /// The three maps share one warp table, a run of warps for each map, and
 /// the Colosseum's warps are how its arrivals chain into one another and into
 /// the finals stages.
-///
-/// Open questions:
-/// - XXX (no evidence): what the Colosseum's warp destinations 3 and 8 were
-/// made
-///   for; no warp or code enters by them, only the debug map selector can, and
-///   ColosseumEntrance_GetObjectEventTemplates gives warp destination 8 the
-///   soldiers' table, as it gives the arrivals of the finals day.
 
 #include "save_block.h"
 #include "map_ids.h"
@@ -388,8 +381,9 @@ ColosseumEntrance_GetObjectEventTemplates(void) {
     case COLOSSEUM_CLEARED_TRIAL_FROM_STANDS:
       table = gColosseumTrialGroundsObjectEventTemplates;
       break;
-    // Warp destination 8 has a table row but no warp leads to it (see the
-    // open questions).
+    // XXX (no evidence): what warp destinations 3 and 8 were made for; no warp
+    // or code enters by them, only the debug map selector can, and 8 takes the
+    // soldiers' table, as the arrivals of the finals day do.
     case 8:
     case COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST:
     case COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH:

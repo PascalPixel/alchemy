@@ -56,8 +56,6 @@
 /// Map_Initialize restores each map as its flags say: the ivy and plants on the
 /// island, the sliding logs' footprints, the corridor's sunk pillars and the
 /// chests the mimics leave.
-///
-/// Open questions: none.
 
 #include "save_block.h"
 #include "version.h"

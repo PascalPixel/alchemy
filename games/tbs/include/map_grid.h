@@ -44,6 +44,8 @@ enum MetatileBehavior {
 /// One cell of a map layer: its metatile and flags, its metatile behavior and
 /// its shape, an index into the shape table.
 struct MapGridCell {
+  // XXX (no evidence): what the four flag bits mark; the grids set them, but
+  // no code reads them, so only Camelot's map tools could say.
   /// bits: 15..12 flags (15..14 read by MapGrid_GetCellHighFlags) | 11..0
   /// metatile
   u16 metatileAndFlags;

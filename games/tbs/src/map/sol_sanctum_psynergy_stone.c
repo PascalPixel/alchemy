@@ -9,9 +9,6 @@
 /// Map_ResetFlagsOnEnter puts it back whenever the party enters another
 /// map section. Retreat does not work here, and once Mt. Aleph has erupted the
 /// room rumbles and shakes, as the rest of the sanctum does.
-///
-/// Open questions:
-/// - None.
 
 #include "unit/map/sol_sanctum_psynergy_stone.h"
 #include "battle.h"

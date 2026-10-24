@@ -40,8 +40,3 @@ Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
 `UiGlyph_`, `UiIcon_`, `UiMessage_`, `UiText_`, `UiTextResource_`,
 `UiTimedNotice_`, `UiWindow_` and `UiWork_`, with `AnimationObject_` here and
 in `battle/effect`.
-
-## Evidence and open questions
-
-- XXX: where ⚓️'s window object begins and ends, and so whether `window/`
-  and `text/` will move to their own folder as in ☀️.

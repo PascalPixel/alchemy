@@ -44,8 +44,6 @@
 /// (https://alchemy.pascalpixel.com/places/vale-interiors-shops/sleep-z.gif:
 /// two cycles, the screen with the grandfather and the three letters boxed and
 /// the cycle's frame written, beside the sprites alone).
-///
-/// Open questions: none.
 
 #include "action_script.h"
 #include "save_block.h"

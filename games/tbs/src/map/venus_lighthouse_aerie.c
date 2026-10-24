@@ -53,8 +53,6 @@
 /// A lost battle returns to VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT, which gives
 /// the Shaman's Rod back to whoever carried it and leaves for Lalivero Sanctum
 /// (VENUS_LIGHTHOUSE_AERIE_TO_LALIVERO_SHOPS).
-///
-/// Open questions: none.
 
 #include "action_script.h"
 #include "save_block.h"

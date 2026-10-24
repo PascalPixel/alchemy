@@ -59,8 +59,6 @@
 /// (EventScript_StartFootprints, EventScript_StopFootprints; the snow is in
 /// places/bilibin-cave-ice/map-1.png). Its chests hold a Vial, a Psy Crystal
 /// and Water of Life.
-///
-/// Open questions: none.
 
 #include "action_script.h"
 #include "save_block.h"

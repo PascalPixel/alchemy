@@ -26,8 +26,6 @@
 /// foot of the cliff on the grounds' south edge, which the earlier editions
 /// show bare (renders of tbs-en and tbs-fr); no warp or map event answers that
 /// opening, so the ivy only hides a way in that leads nowhere.
-///
-/// Open questions: none.
 
 #include "save_block.h"
 #include "map_ids.h"

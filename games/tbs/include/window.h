@@ -102,6 +102,9 @@ enum { WINDOW_SPRITE_COUNT = 64 };
 struct WindowWork {
   u16 tilemap[640]; ///< the windows' BG tilemap, 32 by 20 tiles
   struct Window windows[WINDOW_COUNT]; ///< 12 in Japanese, 8 in the others
+  // XXX (no evidence): why three text printers, and why the international
+  // editions gave up four windows when they doubled textBuffer; only Camelot's
+  // sources could say how the counts were chosen.
   struct TextPrinter printers[3]; ///< the text printers, NULL work when free
   struct WindowSprite sprites[WINDOW_SPRITE_COUNT];
   struct WindowSpriteList freeSprites; ///< the sprites not in any window
@@ -126,6 +129,8 @@ struct WindowWork {
   u16 unusedAfterLineSpacing; ///< set to 1 with the text style; not read
   u16 outline;                ///< the current printer's, copied in to draw
   u16 colour;                 ///< the current printer's, copied in to draw
+  // XXX: likely doubled in the international editions for their longer text;
+  // the bytes show only the change.
   u16 textBuffer[TEXT_BUFFER_MASK + 1]; ///< decoded text, a ring of codes
   u16 letterSpacing;                    ///< pixels between sprite glyphs; 9
   u16 textBufferEnd;    ///< where the next code goes in textBuffer

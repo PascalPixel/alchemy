@@ -83,8 +83,6 @@
 /// is missing. If she was, stepping up to them (coord event 13) plays
 /// EventScript_JillGivesHardNut, which gives the leader a Hard Nut
 /// (FLAG_BILIBIN_JILL_GIFT_RECEIVED); from then on the three turn to watch him.
-///
-/// Open questions: none.
 
 #include "save_block.h"
 #include "djinn_ids.h"

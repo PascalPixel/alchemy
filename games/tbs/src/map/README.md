@@ -471,7 +471,7 @@ is the name the map writes (`MsgVaultWelcomeToVaultTheTownAt`).
 - **update hook**: an object event's `update`, run each frame with the object
   event.
 
-## Evidence and open questions
+## Evidence
 
 A map's name is its map section's area name from `gMapSec_NameRules`, or for a
 room the game leaves unnamed, what the player sees there; its functions

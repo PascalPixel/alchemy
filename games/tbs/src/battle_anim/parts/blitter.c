@@ -297,6 +297,9 @@ s32 BattleAnim_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   const u32 *codeEnd;
   s32 wordCount;
 
+  // XXX: likely generated because one routine testing every option for every
+  // pixel would be too slow, and IWRAM too small to keep one blitter for each
+  // combination; neither the code nor its comments say so.
 #define PUT(word) wordCount++
 #define COPY(n)                                                                \
   wordCount += (n);                                                            \

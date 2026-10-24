@@ -24,14 +24,6 @@
 /// still trapped (lamakan_desert.c), picks whether Feizhi thanks the party and
 /// Master Hama or Hama alone, and what Mind Read hears from each of them.
 /// Arriving here clears FLAG_SHOW_LOCATION_NAME.
-///
-/// Open questions:
-///
-/// - XXX (no evidence): why XianInteriors_Initialize places still objects of
-///   SPRITE_CHEST's sheet in the inn and the shops that it hides
-///   (ObjectEvent_CreateConfiguredObject draws them SPRITE_COLOR_HIDDEN, not
-///   solid and never a target), as Xian does its crates; nothing the player
-///   sees or meets shows them, so only the authors' intent would explain them.
 
 #include "save_block.h"
 #include "unit/map/xian_interiors.h"
@@ -305,6 +297,8 @@ s32 XianInteriors_Initialize(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   warpDest = gSaveBlock.warpDest;
+  // XXX (no evidence): what these hidden chests are for; the player neither
+  // sees nor meets them.
   if (warpDest == XIAN_INTERIORS_INN_SOUTH ||
       warpDest == XIAN_INTERIORS_INN_FROM_INN_GUEST_ROOMS) {
     ObjectEvent_CreateConfiguredObject(PIXELS(248), 0, PIXELS(417),

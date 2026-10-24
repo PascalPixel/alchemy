@@ -108,6 +108,9 @@ s32 Task_Add(TaskFunc callback, s32 order) {
   struct Task *task;
   s32 i;
 
+  // XXX: whether the game ever adds a task during a pass, which would shift
+  // the tasks after it by one; a probe here while Task_RunPass runs, across a
+  // playthrough, would settle it.
   index = -1;
   task = gTasks;
   // DEAD: nothing uses the status read here; its load is in the ROM.

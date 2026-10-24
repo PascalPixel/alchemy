@@ -45,15 +45,6 @@
 /// jumps the crevice at row 17 (coord events 10 and 11) from either side
 /// either way, and the pillar settles at the same height in each of columns
 /// 41 to 44 either way.
-///
-/// Open questions:
-/// - XXX (no evidence): what flags 0x9a3, 0x9a4 and 0x9a6 hold;
-///   EventScript_LeaveToWorldMapEast rearranges them only with FLAG_MAP_TEMP_04
-///   set, which nothing in the game sets, and no other code reads them.
-/// - XXX (no evidence): why arriving from the world map's east side makes the
-///   drop's cell change; the change has no effect that play shows (the
-///   screen, the leader's jumps and the pillar's height are the same either
-///   way), so neither the ROM nor a render can show what it was for.
 
 #include "save_block.h"
 #include "heap_slots.h"
@@ -355,6 +346,8 @@ static void EventScript_LeaveToWorldMapEast(void) {
 
   work = gFieldWork;
   SCRIPT_START();
+  // XXX (no evidence): what flags 0x9a3, 0x9a4 and 0x9a6 hold; only this
+  // block, which nothing reaches, touches them.
   if (GameFlag_Get(FLAG_MAP_TEMP_04) != 0) {
     GameFlag_Clear(0x9a3);
     Script_ClearFlag(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
@@ -524,6 +517,8 @@ s32 Map_Initialize(void) {
     }
   }
   if (gSaveBlock.mapId == (s32)&MapId_GondowanCave) {
+    // XXX (no evidence): why this arrival changes the drop's cell; the
+    // change has no effect that play shows.
     if (gSaveBlock.warpDest == GONDOWAN_CAVE_FROM_WORLD_MAP_EAST) {
       MapGrid_CopyCellAttributes(108, 17, 1, 1, 107, 17);
     }

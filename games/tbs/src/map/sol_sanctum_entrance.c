@@ -43,8 +43,6 @@
 /// and the three MB_SOL_ENTRANCE_DOOR cells before it plain ground, so the
 /// leader walks up to the door and stops, and searching it finds it "tightly
 /// locked" (render probe sol-entrance).
-///
-/// Open questions: none.
 
 #include "save_block.h"
 #include "unit/field/field.h"

@@ -65,9 +65,6 @@
 /// which moves the pillar the leader faces one cell unless another object event
 /// or the terrain is in the way, and the water drops run as map callbacks
 /// started by Map_Initialize.
-///
-/// Open questions:
-/// - None.
 
 #include "save_block.h"
 #include "unit/field/field.h"

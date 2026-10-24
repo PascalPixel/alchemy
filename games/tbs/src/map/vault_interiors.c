@@ -56,8 +56,6 @@
 /// makes them MB_VAULT_INTERIORS_CORNERING_START, and every later arrival
 /// with FLAG_VAULT_SUSPECTS_APPROACHED set rewrites them again (render probe
 /// vault-interiors: the room has no GUESTS_ROOM cell once the flag is set).
-///
-/// Open questions: none.
 
 #include "save_block.h"
 #include "flags.h"

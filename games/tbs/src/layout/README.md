@@ -28,7 +28,7 @@ Once loaded, a cell is one 32-bit word, `struct MapGridCell` in
 | Bits of the cell word | Field | Meaning |
 | --- | --- | --- |
 | 0 to 11 | `metatileAndFlags` | the metatile drawn in the cell |
-| 12 to 15 | `metatileAndFlags` | four flag bits ([below](#evidence-and-open-questions)) |
+| 12 to 15 | `metatileAndFlags` | four flag bits ([below](#evidence)) |
 | 16 to 23 | `behavior` | the metatile behavior |
 | 24 to 31 | `shape` | the shape, a row of the layout's shape table |
 
@@ -473,13 +473,13 @@ Colosso lettering, which differs by edition, is placed after the paths.
 
 ## Design
 
-The grid is stored as whole planes rather than as cell words. [XXX](../../glossary.md#xxx): likely
-to keep each plane's long runs of one value together for the packer,
-because a behavior plane is mostly runs of open ground and walls, as
+The grid is stored as whole planes rather than as cell words, likely to keep
+each plane's long runs of one value together for the packer, because a
+behavior plane is mostly runs of open ground and walls, as
 `layout_003`'s is; the bytes show only the layout.
 
 The treasure spots are the one part stored unpacked, and the loader reads them in
-place rather than copying them. XXX: likely because only
+place rather than copying them, likely because only
 `Field_PlaceTreasureSpots` reads them, once as the map loads.
 
 One grid serves all three layers, so every layout takes the same 64 KB of cells,
@@ -506,7 +506,7 @@ gives its layouts.
 - A **plane** is one value per cell over the whole 128 by 128 grid.
 - A **treasure spot** is a cell where a chest or a Psynergy Stone can stand.
 
-## Evidence and open questions
+## Evidence
 
 The game keeps no names for any of this, so each part is named for what the
 code does with it: the 16-pixel pictures become BG map entries, so they are
@@ -537,12 +537,3 @@ behavior lookups, takes the metatile number's 12 bits or the cell's other
 bytes alone, so a layout drawn with the bits cleared looks the same. Only
 the unused `MapGrid_GetCellHighFlags` and Crossbone Isle's stepping stones,
 which copy them along with the rest of a cell, name them.
-
-The [Design](#design) section gives two reasons only as likely: why the
-grid is stored as planes and why the treasure spots are not packed.
-
-- XXX (no evidence): why the grid is stored as planes and the treasure spots
-  unpacked; only Camelot's tools would show what the packing was chosen for.
-- XXX (no evidence): why the grids set the four bits above a cell's metatile
-  number; no code in the game reads them, so only Camelot's map tools could
-  say what they marked.

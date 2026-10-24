@@ -453,7 +453,7 @@ its family's name (`ObjectCamera`, `Layout`, `WorldMap`), and a part undefines
 its macros at its end. [Matching](../MATCHING.md) explains why some sites keep
 an unusual spelling.
 
-## Evidence and open questions
+## Evidence
 
 The command names (`SC_WAIT`, `SC_SYNC` and the rest) are the macros of
 `objcmd.h`, named from what each handler does; the struct views are named from

@@ -59,8 +59,6 @@
 ///   the healer worries about earthquakes on Mt. Aleph.
 /// - Sanctum, the name the game gives every other warp destination, which
 ///   leaves only SANCTUM_UNUSED; no warp leads there, and it places nobody.
-///
-/// Open questions: none.
 
 #include "speaker.h"
 #include "flags.h"

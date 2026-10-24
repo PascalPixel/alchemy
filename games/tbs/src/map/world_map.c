@@ -79,10 +79,6 @@
 ///
 /// WORLD_MAP_FROM_DEBUG, the debug menus' warp destination, turns encounters
 /// off.
-///
-/// Open questions:
-/// - XXX (no evidence): what flag 0x85c records, set the first time the party
-///   leaves Vale; no code in either game reads it.
 
 #include "action_script.h"
 #include "version.h"
@@ -918,6 +914,8 @@ s32 WorldMap_Initialize(void) {
     case WORLD_MAP_FROM_VALE_PLAZA:
       if (Script_GetFlag(FLAG_VALE_PARTY_LEFT) == 0) {
         GameFlag_Set(FLAG_VALE_PARTY_LEFT);
+        // XXX (no evidence): what this flag records; no code in either game
+        // reads it.
         GameFlag_Set(0x85c);
       }
       break;

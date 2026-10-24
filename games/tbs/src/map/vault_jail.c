@@ -18,11 +18,6 @@
 ///   Lunpa, and arriving this way clears FLAG_SHOW_LOCATION_NAME, so no area
 ///   name is shown. The room uses the thieves' tables, so its chests and warp
 ///   sit in the same map event table as the thieves' talk and the Vault door.
-///
-/// Open questions:
-/// - XXX (no evidence): why arriving from Lunpa hides the area name, which
-///   gMapSec_NameRules gives as "Lunpa" for that warp destination; the code
-///   shows only that it does.
 
 #include "save_block.h"
 #include "unit/map/vault_jail.h"
@@ -246,6 +241,8 @@ s32 Map_Initialize(void) {
   warpDest = gSaveBlock.warpDest;
 
   if (warpDest == VAULT_JAIL_FROM_LUNPA) {
+    // XXX (no evidence): why, when gMapSec_NameRules gives "Lunpa" for this
+    // warp destination.
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   } else if (warpDest == VAULT_JAIL_FROM_VAULT_REVISIT) {
     ObjectEvent_GetById(LOCALID_PRISONER)->collisionFlags |=

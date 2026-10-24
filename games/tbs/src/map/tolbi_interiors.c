@@ -46,9 +46,6 @@
 /// the passengers confront the tour guide on the Tolbi docks
 /// (FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED). Barrels hold a Vial and a Lucky
 /// Medal, and searching the ovens shows what is cooking.
-///
-/// Open questions:
-/// - None.
 
 #include "save_block.h"
 #include "unit/map/tolbi_interiors.h"

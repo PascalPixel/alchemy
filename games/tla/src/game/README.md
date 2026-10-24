@@ -35,8 +35,3 @@ Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
 `GameFlag_`, `Item_`, `ItemCounter_`, `LinkBattle_`, `Object_`, `Owner_`,
 `Party_`, `PartyInventory_`, `Runtime_`, `Summon_`, `SummonDefinition_` and
 `Unit_`. Only `FlagBits_`, testing a flag's bits, is The Lost Age's own so far.
-
-## Evidence and open questions
-
-- XXX: what `item/encode_banked_id.c` encodes, and whether ⚓️'s item ids are
-  wider than ☀️'s 9 bits.

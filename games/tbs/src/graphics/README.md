@@ -225,14 +225,9 @@ animations, maps, layouts, windows and menus.
 - **tile ring**: the credits' 32 rows of text tiles, 16 on screen at a time,
   reused as the text scrolls.
 
-## Evidence and open questions
+## Evidence
 
 The pictures are named for what they show, from the maps and battle
 animations that load them, and the decoders for the format each unpacks,
 proven in their headers. The credits' and the title's functions are named for
 what they draw.
-
-- XXX (no evidence): why the credits use the flash library's four cells
-  rather than globals of their own; the ROM's code shows only that both reach
-  the same addresses, no other code uses them, and only Camelot's link map or
-  source could say whether the sharing was meant.

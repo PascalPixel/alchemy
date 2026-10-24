@@ -14,8 +14,6 @@
 /// The map's name, Glade, is ours, for what sets the map apart: open grass
 /// and stumps ringed by trees, with no cliff or river
 /// (places/kolima-forest-glade_cursed/map-0.png).
-///
-/// Open questions: none.
 
 #include "speaker.h"
 #include "flags.h"

@@ -1,3 +1,5 @@
+@ XXX: what the sixth column, flag, means; the code that reads the table would
+@ settle it.
 	.macro scene name, code:req, area:req, kind:req, map:req, flag:req
 	.ifnb \name
 	.global SceneId_\name

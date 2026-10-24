@@ -32,15 +32,6 @@
 /// roof, and draws the thatch whole where vault.c's town shows the hole the
 /// fiery rock burnt in it (render probe vault-revisit, the town before and
 /// after).
-///
-/// Open questions:
-/// - XXX (no evidence): why Map_Initialize, as vault.c's does, creates a still
-///   object of sprite 223 (spr_223.png, a wooden crate) at (128, 420), on the
-///   well, that shows nothing: its 32-by-64 sprite entry is in the sprite list
-///   but its tiles in video memory are blank, it is neither solid nor a target
-///   (OBJ_EVENT_NOT_TARGETED), and nothing refers to it (render probe
-///   vault-revisit); nothing in the ROM or a render says what it was meant to
-///   show.
 
 #include "save_block.h"
 #include "djinn_ids.h"
@@ -664,7 +655,7 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 /// Sets up Vault as the party finds it after reaching Kalay.
 /// On arrival it restores the passage's metatile behaviors
 /// (common/vault_toggle.h), creates the still object of sprite 223 on the well
-/// that shows nothing (an open question), mends the inn's roof, which vault.c
+/// that shows nothing, mends the inn's roof, which vault.c
 /// leaves holed, and hooks the two children round the well to
 /// Vault_UpdateWalkingVillager. The dog waits at the hidden passage once it has
 /// shown it. Coming in by a gate (WARP_DEST_DEFAULT to
@@ -683,7 +674,9 @@ s32 Map_Initialize(void) {
   // Keep the bridge deck after a battle, and mend the inn's roof.
   if (GameFlag_Get(FLAG_VAULT_ON_BRIDGE))
     MapGrid_CopyCellAttributes(55, 26, 4, 2, 23, 26);
-  // A still object on the well that shows nothing (an open question).
+  // A still object on the well that shows nothing. XXX (no evidence): what it
+  // was meant to show; its tiles in video memory are blank and nothing refers
+  // to it.
   ObjectEvent_CreateConfiguredObject(PIXELS(128), 0, PIXELS(420), 223);
   MapGrid_CopyCellsTo(45, 41, 8, 45, 3, 3);
   WaitFrames(1);

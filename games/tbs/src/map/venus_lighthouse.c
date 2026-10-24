@@ -74,8 +74,6 @@
 /// between them. The FLAG_MAP_TEMP_ states last only until the next change of
 /// map other than a return from battle. Every arrival sets
 /// FLAG_VENUS_LIGHTHOUSE_LIT.
-///
-/// Open questions: none.
 
 #include "action_script.h"
 #include "save_block.h"

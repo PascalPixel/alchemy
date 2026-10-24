@@ -376,7 +376,7 @@ Frame, VBlank, IWRAM, EWRAM, heap slot, task, sprite and OAM are in the
 - **payload** and **block**: each VBlank two linked consoles trade a 24-byte
   payload, and bulk data rides on it in 20-byte blocks (`serial.c`).
 
-## Evidence and open questions
+## Evidence
 
 The names come from what the code does: `WaitFrames` from its loop, `Task_`
 from the table it keeps, the heap's from its two pointers and its heap slots,
@@ -398,22 +398,3 @@ camera with a glide, Lucky Wheels and the link countdown open instant windows
 (`WINDOW_FLAG_INSTANT`), and battle playback's sprite respawn tests
 `gTasksRunning`. The tenth path is the debug map selector, which only the
 unused `DebugMapSelect_Schedule` would add as a task.
-
-- [XXX](../../glossary.md#xxx): likely the VBlank handler's display writes
-  come first so that they land inside the vertical blank, and the mixer last
-  because it is long and need only finish within the frame; the bytes don't
-  say so.
-- XXX: whether the game ever adds a task during a pass, which would shift the
-  tasks after it by one; a probe on `Task_Add` while `Task_RunPass` runs,
-  across a playthrough, would settle it.
-- XXX: why `IoWriteQueue_FlushPending` runs its routine from the stack rather
-  than a heap block; a block allocated inside the interrupt would sit above
-  the frame's scratch block and be released with it, but the bytes don't say
-  that was the reason.
-- XXX: likely the save code's random choice of sector is meant to spread the
-  flash chip's wear, because nothing else in the code needs it; the bytes
-  don't say so.
-- XXX (no evidence): what the five empty exports after the screen fades
-  (`Stub_ReservedNoOpA` to `E`) were for; they are empty in both games,
-  nothing calls them, and each is reached only through a bare veneer, so no
-  code shows what they were to do.

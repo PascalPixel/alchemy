@@ -52,9 +52,3 @@ Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
 | `BattleLink_` | a link battle's transfer state |
 | `VramBlock_` | loading a resource into a VRAM block, and block 93's load and reset in the graphics and scene code |
 | `Reg_` | writing a halfword register, as ☀️'s `Io_` does |
-
-## Evidence and open questions
-
-- XXX: two banks do not open with a far-call file (`rom_main_00` opens with
-  a resource decoder, `rom_main_05` with field code); whether they have no
-  table or have it elsewhere is not settled.

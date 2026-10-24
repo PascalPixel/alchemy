@@ -47,12 +47,6 @@
 /// TOLBI_TO_BABI_PALACE_ENTRANCE leads to Babi's Palace,
 /// TOLBI_TO_COLOSSEUM_ENTRANCE to the Colosseum Entrance and TOLBI_TO_WORLD_MAP
 /// out onto the world map.
-///
-/// Open questions:
-/// - XXX (no evidence): whether the four messages after
-///   MsgTolbiSpringOhThereAreAlwaysScalpersAt (`The finals are about to
-///   start.` and the rest) were the festival family's finals-day lines; no
-///   row or code shows them, and the family repeats its festival lines.
 
 #include "unit/map/tolbi.h"
 #include "djinn_ids.h"
@@ -972,8 +966,10 @@ struct MapEvent gTolbiEventsFinalsDay[] = {
     { MAP_EVENT_TALK, LOCALID_TOLBI_WOULD_BE_FIGHTER, CONDITION_ALWAYS, MSGNO(MsgTolbiTheTrialsWereSoRivetingThe) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_XIAN_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiIHaveSeatsToTheFinals) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_OVERSLEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiIOversleptAgainSoICant) },
-    // The family repeats its festival lines on finals day; the file's open
-    // questions ask whether four unused messages were meant for it.
+    // The family repeats its festival lines on finals day. XXX (no evidence):
+    // whether the four messages after MsgTolbiSpringOhThereAreAlwaysScalpersAt
+    // (`The finals are about to start.` and the rest) were meant for it; no row
+    // or code shows them.
     { MAP_EVENT_TALK, LOCALID_TOLBI_FATHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToFather) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_MOTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToMother) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_CRYING_BOY, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToCryingBoy) },

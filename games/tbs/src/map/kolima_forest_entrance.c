@@ -29,8 +29,6 @@
 /// FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER: the log is in the river. Like
 /// every map temp flag it is cleared when the party next comes in, so the log
 /// is back on the bank, but a battle keeps it.
-///
-/// Open questions: none.
 
 #include "action_script.h"
 #include "flags.h"

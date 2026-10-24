@@ -57,16 +57,6 @@
 /// while the party goes between them. On every arrival ValeCave_ApplyEntryState
 /// rebuilds the cells of each puzzle already solved and, once Kite has run
 /// behind its ledge, puts it back there.
-///
-/// Open questions:
-/// - XXX (no evidence): why ValeCave_ApplyEntryState creates still objects of
-///   sprite 223 (spr_223.png, a wooden crate) at (120, 232) and SPRITE_CHEST at
-///   (642, 552) in the second room that show nothing: the sprites alone hold
-///   neither (render probe vale-cave), the crates seen there are the layout's,
-///   no chest is drawn at the second, and neither object is solid or a target
-///   (OBJ_EVENT_NOT_TARGETED); Vault creates the same kind of object on its
-///   well (vault_revisit.c), and nothing in the ROM says what they were meant
-///   to show.
 
 #include "save_block.h"
 #include "djinn_ids.h"
@@ -925,7 +915,9 @@ static void ValeCave_ApplyEntryState(void) {
       ObjectMotion_SetActionVariant(LOCALID_SECOND_STANDING_LOG, 3);
       ObjectMotion_SetActionVariant(LOCALID_SECOND_STANDING_CRATES, 3);
       // A still object of sprite 223 (spr_223.png, a wooden crate) that shows
-      // nothing (an open question).
+      // nothing. XXX (no evidence): what it and the chest below were meant to
+      // show; the sprites alone hold neither, and neither object is solid or a
+      // target.
       ObjectEvent_CreateConfiguredObject(PIXELS(120), 0, PIXELS(232), 223);
       break;
     case VALE_CAVE_KITE_EAST_FROM_WEST:
@@ -953,8 +945,8 @@ static void ValeCave_ApplyEntryState(void) {
     case VALE_CAVE_KITE_SOUTH_FROM_WEST:
     case VALE_CAVE_KITE_SOUTH_FROM_EAST:
     case VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH:
-      // The holes' part: a still chest object that shows nothing (an open
-      // question), the riding log's passage, and the holes already filled.
+      // The holes' part: a still chest object that shows nothing, the riding
+      // log's passage, and the holes already filled.
       ObjectEvent_CreateConfiguredObject(PIXELS(642), 0, PIXELS(552),
                                          SPRITE_CHEST);
       MapGrid_CopyCellAttributes(23, 34, 13, 3, 0, 34);

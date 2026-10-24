@@ -77,12 +77,6 @@
 /// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_EAST_NORTHEAST
 /// each have two rows, chosen by whether the channels upstairs run
 /// (FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN).
-///
-/// Open questions:
-/// - XXX (no evidence): what the two unused six-statue warp destinations
-///   (MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_UNUSED_NORTH and _MIDDLE) were
-///   for; no warp or code leads to them, so nothing in the ROM shows them in
-///   use.
 
 #include "action_script.h"
 #include "animspr.h"
@@ -883,6 +877,8 @@ struct MapWarpDest gMercuryLighthouseEntrance_WarpDests[] = {
     { MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_PIPE, CONDITION_ALWAYS, 744, 0, 600, FACING_SOUTH, 0, 544, 512, 784, 720, 0 },
     { MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_BEFORE_LIZARD_MAN, CONDITION_ALWAYS, 136, 0, 296, FACING_NORTH, 0, 16, 32, 256, 320, 0 },
     { MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN, CONDITION_ALWAYS, 136, 0, 168, FACING_NORTH, 0, 16, 32, 256, 320, 0 },
+    // XXX (no evidence): what the next two warp destinations were for; no warp
+    // or code leads to them.
     { MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_UNUSED_NORTH, CONDITION_ALWAYS, 136, 0, 152, FACING_SOUTH, 0, 16, 32, 256, 320, 0 },
     { MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_UNUSED_MIDDLE, CONDITION_ALWAYS, 136, 0, 232, FACING_EAST, 0, 16, 32, 256, 320, 0 },
     { MAP_TABLE_END },

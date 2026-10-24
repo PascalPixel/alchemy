@@ -34,8 +34,6 @@
 /// https://alchemy.pascalpixel.com/places/sol-sanctum-eruption/departing-shadow.gif:
 /// the departures, the platform's object event boxed on the screen, beside the
 /// sprites and the sprites without it, where the shadow is gone).
-///
-/// Open questions: none.
 
 #include "action_script.h"
 #include "save_block.h"

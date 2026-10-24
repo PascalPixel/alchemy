@@ -16,6 +16,10 @@
 #include "graphics.h"
 #include "unit/window/window.h"
 
+// XXX: likely ARM code run from RAM for speed, as is the tree walker, because
+// ARM code fetched from the cartridge's 16-bit bus is slow; nothing in the code
+// says so.
+
 /// The pixel rows text may reach: four tiles, the battle message window's
 /// interior; a glyph is cut off below it.
 #define TEXT_CANVAS_PIXEL_HEIGHT 32

@@ -51,12 +51,6 @@
 /// - FLAG_LUNPA_FORTRESS_GATES_GARET_WARNING: Garet's warning is under way.
 /// - FLAG_LUNPA_FORTRESS_GATES_GUARDS_CAUGHT_PARTY: the guards are marching
 ///   the party down.
-///
-/// Open questions:
-/// - XXX (no evidence): where GATE_WARP_THIRD, the gates' third road, was meant
-///   to lead; gGateWarps has no row for it, so the engine's fallback sends it
-///   to LunpaFortressGroundFloor's default warp destination, and nothing else
-///   in the ROM names a destination for it.
 
 #include "save_block.h"
 #include "version.h"
@@ -1241,6 +1235,9 @@ struct MapEvent gLunpaReopenedEvents[] = {
 // clang-format off
 struct MapEvent gGateEvents[] = {
     { MAP_EVENT_WARP, MB_LUNPA_FORTRESS_GATES_LUNPA_ROAD, CONDITION_ALWAYS, LUNPA_FORTRESS_GATES_TO_LUNPA },
+    // XXX (no evidence): where the third road was meant to lead; gGateWarps
+    // has no row for it, so the engine sends it to LunpaFortressGroundFloor's
+    // default warp destination.
     { MAP_EVENT_WARP, MB_LUNPA_FORTRESS_GATES_THIRD_ROAD, CONDITION_ALWAYS, GATE_WARP_THIRD },
     { PSYNERGY_IN_AREA(ABILITY_CLOAK, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CastCloak) },
     { PSYNERGY_IN_AREA(ABILITY_CLOAK, PSYNERGY_PHASE_AFTER_END), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CloakFades) },

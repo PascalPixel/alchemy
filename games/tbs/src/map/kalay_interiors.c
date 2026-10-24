@@ -25,8 +25,6 @@
 /// - Kalay Sanctum (MapId_KalaySanctum), whose healer offers the
 ///   Sanctum's services when spoken to across the counter. Its warp leads
 ///   back into the town (KALAY_FROM_KALAY_SANCTUM).
-///
-/// Open questions: none.
 
 #include "save_block.h"
 #include "map_ids.h"

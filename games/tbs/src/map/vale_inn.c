@@ -61,20 +61,6 @@
 /// the same numbers, leading to the rest of Vale (ValePlaza,
 /// ValeKradensCottage, Vale and ValeStormyNight) or between this map's own
 /// parts.
-///
-/// Open questions:
-/// - XXX (no evidence): what LOCALID_INVISIBLE_AFTER_KALAY, the blank object
-/// event
-///   beside the burly man at the inn back from Kalay, was meant to do; it draws
-///   nothing once the setup turns off its shadow, and though it is solid it
-///   stands where the innkeeper and the burly man already close the way (the
-///   leader walking north between them stops at the man with it and without it,
-///   render probe vale-inn), so nothing the player can do shows a use.
-/// - XXX (no evidence): whether the talk row of EventScript_RemarkIsaacHasGrown
-///   was meant to test FLAG_VALE_MAN_SAW_ISAAC_GROWN, as its Mind Read row
-///   does; the tables show only what plays (the same line either way, the
-///   script setting the man's flag only before the innkeeper's welcome), not
-///   what was intended.
 
 #include "save_block.h"
 #include "vram_cache.h"
@@ -209,10 +195,12 @@ enum ValeInnAfterKalayLocalId {
   /// illness.
   /// ★ Named from the game: "You've grown so much" (MsgValeYouveGrownSoMuch)
   LOCALID_MAN_ISAAC_HAS_GROWN = LOCALID_FIRST_PLACED + 8,
+  // XXX (no evidence): what the next was meant to do; nothing the player can
+  // do shows a use.
   /// SPRITE_BLANK, a solid object event that draws nothing, beside
   /// LOCALID_MAN_ISAAC_HAS_GROWN; no event answers it, the setup takes away the
   /// shadow its blank sprite would draw, and it closes no way the innkeeper
-  /// and the man do not (an open question).
+  /// and the man do not.
   LOCALID_INVISIBLE_AFTER_KALAY
 };
 
@@ -1731,6 +1719,8 @@ struct MapEvent gValeInn_EventsAfterKalay[] = {
     { MAP_EVENT_TALK, LOCALID_YOUNG_MAN_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeYouTraveledAroundTheEasternEdge) },
     { MAP_EVENT_TALK, LOCALID_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgValeArentYouGladToSeeThe) },
     { MAP_EVENT_TALK, LOCALID_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToInnkeeper) },
+    // XXX (no evidence): whether this row was meant to test
+    // FLAG_VALE_MAN_SAW_ISAAC_GROWN, as the Mind Read row does.
     { MAP_EVENT_TALK, LOCALID_MAN_ISAAC_HAS_GROWN, FLAG_VALE_INNKEEPER_WELCOMED_ISAAC, EVENT_SCRIPT(EventScript_RemarkIsaacHasGrown) },
     { MAP_EVENT_TALK, LOCALID_MAN_ISAAC_HAS_GROWN, CONDITION_ALWAYS, MSGNO(MsgValeYouveGrownSoMuch) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeIPromisedIdBecomeAGreat) },

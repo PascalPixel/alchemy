@@ -40,8 +40,6 @@
 /// talking. The shopkeepers open their shops only when spoken to across the
 /// counter. A jar, two barrels and a wooden box keep the first visit's flags,
 /// so what the party took then stays taken, and two bookcases can be read.
-///
-/// Open questions: none.
 
 #include "save_block.h"
 #include "unit/map/vault_interiors_revisit.h"

@@ -52,9 +52,6 @@
 /// - At Tolbi (TOLBI_SHIP_DECK_FROM_WORLD_MAP): the passengers who rowed come
 ///   up one by one to thank the leader, and TOLBI_SHIP_DECK_TO_TOLBI_DOCKS
 ///   leads ashore to Tolbi Docks (MapId_TolbiDocks).
-///
-/// Open questions:
-/// - None.
 
 #include "action_script.h"
 #include "flags.h"

@@ -79,8 +79,6 @@
 /// brightens, redraws the cells of the hidden path and uses the eye up
 /// (FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET). The first room's inscription points the
 /// way: `The dragon's flame illuminates the path of truth in darkness.`
-///
-/// Open questions: none.
 
 #include "action_script.h"
 #include "save_block.h"

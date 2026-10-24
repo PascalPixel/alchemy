@@ -15,9 +15,3 @@ which explains the window system it belongs to.
 - **Compiler.** K2's options on top of ☀️'s (`CFLAGS_tla` in the
   `Makefile`): `-mthumb-split-constants`, `-mthumb-call-via-lr` and
   `-mtune=arm9tdmi`, without `-mthumb-interwork`.
-
-## Evidence and open questions
-
-- XXX: why this one file sits here and the rest of the window code under
-  `graphics/`, and whether the rest moves here once its object boundaries
-  are known.

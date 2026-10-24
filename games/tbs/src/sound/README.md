@@ -225,7 +225,7 @@ are data in `games/tbs/sound`.
 - **reverb code**: one of the five versions of the IWRAM mixer's last step
   (`enum SoundReverbCode`), copied in when music starts.
 
-## Evidence and open questions
+## Evidence
 
 The driver's names are pret's for MusicPlayer2000, each checked against the
 same routine in pokeemerald's `src/m4a.c`, `src/m4a_1.s` and

@@ -39,13 +39,6 @@
 /// KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP), and the way back,
 /// KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_FLOODGATE, leads to the Floodgate
 /// Switch's map (MapId_KolimaForestFloodgate).
-///
-/// Open questions:
-/// - XXX (no evidence): why Tret and Laurel each have a blank object event that
-/// only
-///   selects whose face KolimaForestTree_PlayGesture moves, likely left from a
-///   version where those object events were drawn; the ROM keeps no such
-///   version, and nothing reads the object events but that function.
 
 #include "speaker.h"
 #include "save_block.h"
@@ -99,6 +92,8 @@ enum {
   /// ★ Named from the game: "Oh! Laurel, you were given powers, too?"
   /// (MsgKolimaWasIndeedAngryPeopleHad)
   LOCALID_LAUREL,
+  // XXX (no evidence): why these exist; likely left from a version where
+  // they were drawn, but the ROM keeps no such version.
   /// Blank object events 28 pixels up at Tret's and Laurel's spots, never
   /// targeted;
   /// nothing addresses them but KolimaForestTree_PlayGesture, which takes one

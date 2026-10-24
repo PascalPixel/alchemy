@@ -304,7 +304,7 @@ comment on what differs.
   (`PAGE_ARROW_`), which each screen's loop slides back and forth.
 - `unk` plus an offset, such as `unk180`: a field whose meaning is not known.
 
-## Evidence and open questions
+## Evidence
 
 Screen and prefix names follow what each screen shows in the English
 release. The menu's two flags are named from what sets and tests them, and
@@ -328,12 +328,3 @@ reads the window's place through `NULL`, which on this console is the BIOS.
 Code outside the BIOS reading it gets the last BIOS instruction fetched
 instead; read as a width, that value is over 30 tiles, so `Window_DrawFrame`
 draws nothing.
-
-- XXX (no evidence): why the [Start](../../menus.md#start) watcher's flag is a game flag
-  (`FLAG_MENU_START_PRESSED`) rather than a variable; the task that sets it
-  and every test are in the menu's own code, so nothing in the ROM needs it to
-  be a flag, and only Camelot's sources could say why it is one.
-- XXX (no evidence): why the Japanese edition leaves the field's tasks running
-  behind the Item and Psynergy screens, and the English one behind the
-  Psynergy screen; the patches only add the calls, and only Camelot's sources
-  could say why the first editions left them out.

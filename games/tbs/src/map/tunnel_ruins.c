@@ -56,8 +56,6 @@
 /// (https://alchemy.pascalpixel.com/places/tunnel-ruins-lady-statues/balance.png:
 /// the balance as each warp destination sets it up, each platform labelled with
 /// its weight and height in pixels and each stone with its letter).
-///
-/// Open questions: none.
 
 #include "action_script.h"
 #include "version.h"

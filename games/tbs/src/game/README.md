@@ -280,7 +280,7 @@ units are part of the save file.
 - **flag**: one of the 4,096 bits of `gGameFlagBytes`, by number; the named
   ones are in `flags.h`.
 
-## Evidence and open questions
+## Evidence
 
 The label columns are the English names from `games/tbs/text/en.po`, by the
 message each row's id reaches. The columns are named from what the code reads

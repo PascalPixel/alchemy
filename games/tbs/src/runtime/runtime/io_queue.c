@@ -42,6 +42,9 @@ void IoWriteQueue_FlushPending(void) {
   struct IoWriteQueue *queue;
   u32 count;
 
+  // XXX: why the routine runs from the stack rather than a heap block; a block
+  // allocated inside the interrupt would sit above the frame's scratch block
+  // and be released with it, but the bytes don't say that was the reason.
   queue = &gIoWriteQueue;
   count = queue->count;
   if (count != 0) {

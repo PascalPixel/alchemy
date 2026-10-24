@@ -46,12 +46,6 @@
 /// Babi sending Iodem with the party, to meet at Gondowan Passage. The Cloak
 /// Ball on show is an object event drawn from the item's icon until the party
 /// takes it (BabiPalace_OfferCloakBall, FLAG_BABI_PALACE_CLOAK_BALL).
-///
-/// Open questions:
-/// - XXX (no evidence): what BABI_PALACE_AFTER_BABI_SAVED and
-///   BABI_PALACE_AFTER_COLOSSO were made for; only the debug map selector,
-///   which enters any map by warp destination number, reaches them, and nothing
-///   in the ROM says why they set the story flags they set.
 
 #include "save_block.h"
 #include "heap.h"
@@ -2503,6 +2497,9 @@ s32 BabiPalace_ApplyEntryState(void) {
   s32 set;
 
   BabiPalace_CloseDoors();
+  // XXX (no evidence): what BABI_PALACE_AFTER_BABI_SAVED and
+  // BABI_PALACE_AFTER_COLOSSO were made for; only the debug map selector
+  // reaches them, and nothing in the ROM says why they set these story flags.
   if (gSaveBlock.warpDest == BABI_PALACE_AFTER_BABI_SAVED) {
     GameFlag_Set(FLAG_BABI_SAVED);
   }

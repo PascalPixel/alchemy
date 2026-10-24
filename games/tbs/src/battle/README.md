@@ -658,7 +658,7 @@ The parts give the same locals the same names: `battle` or `work` for
 `struct BattleObject`, `object` for that object's `struct Object`, `record`
 for one of its sprites, and `plan`.
 
-## Evidence and open questions
+## Evidence
 
 Abilities and enemies are named from the label columns of their tables,
 `ability` and `enemy`, which follow the English release's text. The formulas

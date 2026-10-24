@@ -144,7 +144,7 @@ the end of the ring it carries on from the start, over whatever was there, so
 several windows can show text at once with nothing set aside, and a message
 stays readable until enough later text has run over it. The index wraps
 through `TEXT_BUFFER_MASK` (511, or 255 in Japanese); no message in the game
-is longer than the ring ([Evidence and open questions](#evidence-and-open-questions)).
+is longer than the ring ([Evidence](#evidence)).
 
 ## Typing
 
@@ -348,10 +348,11 @@ Mia, the second Felix, Jenna and Sheba as well.
 [Menus, windows and shops](../../menus.md) explains why messages are unpacked
 ahead of typing and why every window shares one tilemap. The two routines that
 work per pixel or per bit, the canvas renderer and the tree walker, are ARM
-code (the processor's full 32-bit instructions) copied into RAM, while the
-rest is Thumb code run from ROM; why is an open question (below). The work
-block's two layouts are one struct whose array sizes come from
-`tbs_edition.h`, so the code that reads it is the same in every edition.
+code (the processor's full 32-bit instructions) copied into RAM, likely for
+speed, since ARM code fetched from the cartridge's 16-bit bus is slow; the
+rest is Thumb code run from ROM. The work block's two layouts are one struct
+whose array sizes come from `tbs_edition.h`, so the code that reads it is the
+same in every edition.
 
 Many of the window functions' names are shared with
 [The Lost Age](../../glossary.md#the-two-games)'s copies of these files and
@@ -386,7 +387,7 @@ so renaming one changes other folders too.
 - **file menu**: the list of the three save files (`FileMenu_SelectFile`).
 - `unk` plus an offset, such as `unk10`: a field whose meaning is not known.
 
-## Evidence and open questions
+## Evidence
 
 Windows, text printers and window sprites are named from how their structs
 are used, the control codes from what the decoder and the printer do with each,
@@ -396,12 +397,6 @@ typed on the first frame follows from the English glyph widths
 (`graphics/font/text.tsv`) and the pairing rule in `TextPrinter_Step`, and
 agrees with the recording of the window opening
 (`guides/window/window-open.png`).
-
-[XXX](../../glossary.md#xxx): likely the canvas renderer and the tree walker
-are ARM code run from RAM for speed, because ARM code fetched from the
-cartridge's 16-bit bus is slow; nothing in the code says so. XXX: the likely
-reason the text buffer was doubled in the international editions is their
-longer text; the bytes show only the change.
 
 A message longer than the ring would be cut, its terminator landing on its own
 start, but no message is that long. Counting each control code and line break
@@ -415,8 +410,3 @@ resets the text style and read by nothing: the text printer has no field to
 copy into it (`TextPrinter_ApplyStyle` copies only the colour, outline and
 line spacing), no text control code writes it, and the glyph code, all C,
 reads the style through its named fields.
-
-- XXX (no evidence): why there are three text printers, and why the international
-  editions gave up four windows when they doubled the ring; the code shows
-  only the counts each edition uses, and only Camelot's sources could say how
-  they were chosen.

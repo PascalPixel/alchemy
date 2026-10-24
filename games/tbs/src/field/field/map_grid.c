@@ -193,6 +193,9 @@ struct LayoutHeader {
   struct LayoutLayer layers[3];
   // Offsets from the header's start: type-01 packed data, but for the
   // treasure spots, which are read in place.
+  // XXX (no evidence): why the cells are packed as planes and the treasure
+  // spots left unpacked; only Camelot's tools would show what the packing was
+  // chosen for.
   s32 metatiles; ///< the metatiles, staged and unpacked into gMetatiles
   s32 shapes;    ///< the shapes, into Ram_MapGridShapes
   s32 cells;     ///< the cells, into Ram_MapGridCellBuffer

@@ -117,6 +117,9 @@ s32 ItemMenu_Run(void) {
   Palette_LightenBankHighlight(14);
   Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
   screen->questionWindow = Window_CreateFar(13, 0, 17, 3, 2);
+  // XXX (no evidence): why the Japanese edition leaves the field's tasks
+  // running behind this screen, as the first editions do behind the Psynergy
+  // screen; the patches only add the calls.
 #if TBS_PATCH_1
   // Save the window tiles the menu draws over, and fill them with colour 3
   // (0x33333333: eight 4-bit pixels of colour 3 a word).

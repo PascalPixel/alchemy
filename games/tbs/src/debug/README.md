@@ -46,7 +46,7 @@ sprite viewer: its only way in is a [veneer](../../glossary.md#veneer) at the
 end of the field bank's [far-call](../../glossary.md#far-call) table
 (`system/far_call/FIELD.S`) whose address no instruction or pointer in the ROM
 holds, and the table's row in the resource directory is passed only to stubs
-that do nothing ([System](../system/README.md#evidence-and-open-questions)).
+that do nothing ([System](../system/README.md#evidence)).
 The rooms still count as reachable rather than
 [unused](../../glossary.md#unused), since the debug map selector reaches them,
 as it reaches every map.
@@ -218,7 +218,7 @@ palette editor the same debug mode opens is in
 - Each room is an overlay in the same 32 KB overlay area as every map.
 - The item browsers cover item numbers 0 to 269.
 
-## Evidence and open questions
+## Evidence
 
 The game gives the rooms no names, so their map ids (`TestRoom0` to
 `TestRoom7`, `IncreaseItemAndLevel` and `MenuTest`) and functions are named for
@@ -231,13 +231,3 @@ eight layouts are one placeholder copied eight times: each `layout.s` places
 the same data, borrowed from layouts 0 and 1 and tileset 68, and differs only
 in its labels, so the rooms are reserved slots never given their own content,
 which is why one overlay serves them all.
-
-- XXX (no evidence): what the 56 words at the head of the Djinn room's data
-  (`gTestRoom_WarpDestsHead`, eight rows of seven) and the same words in the
-  menu test room (`gDebugItemPromptHead`) hold; no code reads them, since an
-  overlay's data is reached only through its entries and none returns them,
-  and no other data in the ROM has their layout.
-- XXX (no evidence): what the Japanese loop in `MenuTest_GivePartyDjinn` was
-  for; it fills a buffer nothing reads with 32 to 47 copies of a letter, so it
-  changes nothing the code or the player can see, and whatever it once fed is
-  gone from every edition.

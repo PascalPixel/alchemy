@@ -54,15 +54,6 @@
 /// keeps SPRITE_APE's own colours, while the Killer Ape is the same sprite a
 /// fifth larger with its colours rotated (SPRITE_COLOR_BRG). The rocks Move
 /// settles are SPRITE_TURNING_ROCK drawn in greys (SPRITE_COLOR_GREY).
-///
-/// Open questions:
-///
-/// - XXX (no evidence): why the third area places two crates (SPRITE_CRATE's
-///   sheet) at the river on some warp destinations, made by
-///   ObjectEvent_CreateConfiguredObject, which hides them
-///   (SPRITE_COLOR_HIDDEN) and leaves them not solid and never a target; the
-///   player neither sees nor meets them, so only the authors' intent would
-///   explain them.
 
 #include "action_script.h"
 #include "save_block.h"
@@ -1713,6 +1704,8 @@ s32 MogallForest_Initialize(void) {
     case MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_EAST:
     case MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_SOUTH:
     case MOGALL_FOREST_KILLER_APE_RIVER_FROM_BRIDGES:
+      // XXX (no evidence): what these two crates are for; they are hidden, not
+      // solid and never a target, so the player neither sees nor meets them.
       ObjectEvent_CreateConfiguredObject(PIXELS(734), 0, PIXELS(370),
                                          SPRITE_CRATE);
       ObjectEvent_CreateConfiguredObject(PIXELS(754), 0, PIXELS(370),

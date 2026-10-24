@@ -58,8 +58,6 @@
 /// COLOSSEUM_AZART_MATCH_AFTER_MATCH_LOST, and
 /// COLOSSEUM_AZART_MATCH_TO_BABI_PALACE wakes the party in Babi's Palace, where
 /// Isaac's friends tell him he was only dreaming of the finals.
-///
-/// Open questions: none.
 
 #include "action_script.h"
 #include "version.h"

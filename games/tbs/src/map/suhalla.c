@@ -22,9 +22,6 @@
 ///
 /// - FLAG_SUHALLA_SPROUT_GROWN: Growth has grown the sprout; a return that
 ///   keeps the party's position, as after a battle, draws it grown again.
-///
-/// Open questions:
-/// - None.
 
 #include "save_block.h"
 #include "unit/map/suhalla.h"

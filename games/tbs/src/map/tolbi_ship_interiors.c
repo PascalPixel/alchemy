@@ -92,9 +92,6 @@
 /// A travelling healer opens a Sanctum in the hold. At Tolbi
 /// (FLAG_TOLBI_SHIP_REACHED_TOLBI) the captain's quarters and the hold have
 /// their own object event templates.
-///
-/// Open questions:
-/// - None.
 
 #include "action_script.h"
 #include "flags.h"

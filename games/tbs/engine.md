@@ -187,13 +187,3 @@ them.
 - An overlay has the 32 KB of the overlay area, and a bank the space up to the
   next bank's fixed start.
 - Eight music players; song numbers are 12 bits, 0 to 4,095.
-
-## Open questions
-
-- XXX: likely Camelot linked each bank on its own against the others'
-  tables, because fixed starts and tables are what that would need; the ROM
-  shows only the result.
-- XXX (no evidence): why every bank calls the runtime bank's functions
-  directly, when it reaches every other bank through its table; the ROM shows
-  only the direct calls, and only Camelot's build could say how the runtime
-  was linked.

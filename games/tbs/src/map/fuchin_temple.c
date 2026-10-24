@@ -47,13 +47,6 @@
 ///   FLAG_HSU_RESCUED, Hama and the boy monk in her room are away.
 ///   FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM_TO_LAMA_TEMPLE leads back into Lama
 ///   Temple.
-///
-/// Open questions:
-///
-/// - XXX (no evidence): why Map_Initialize places a crate painted solid black
-///   and translucent (ObjectEvent_PrepareObject) over the lattice door to Feh's
-///   house in his school; the school's renders are the same with and without
-///   it, so nothing the player sees shows what it was for.
 #include "save_block.h"
 #include "map_ids.h"
 #include "unit/map/fuchin_temple.h"
@@ -2439,6 +2432,8 @@ s32 Map_Initialize(void) {
       // Feh's house (FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_TO_HOUSE). The
       // school's render is the same with and without it; drawn plain, it covers
       // the door.
+      // XXX (no evidence): why it is there; nothing the player sees shows what
+      // it was for.
       ObjectEvent_PrepareObject(PIXELS(304), PIXELS(24), PIXELS(224),
                                 SPRITE_CRATE);
       OBJECT_ANIMATION(LOCALID_KICKING_STUDENT, ANIM_STUDENT_KICKS);

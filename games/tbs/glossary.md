@@ -143,8 +143,8 @@ collects them.
 
 ### XXX
 
-`XXX:` marks what isn't known yet, with the evidence that would settle it; each
-folder guide gathers its open questions in its last section.
+`XXX:` marks, in a comment at the code it concerns, what isn't known yet, with
+the evidence that would settle it.
 
 ## The engine
 

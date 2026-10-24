@@ -52,9 +52,6 @@
 /// stops the lightning first, and each door plays its opening cells before it;
 /// gValeStormyNight_Warps gives each warp's destination. Two cells start a
 /// battle once each (slots 2 and 3 of ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
-///
-/// Open questions:
-/// - None.
 
 #include "action_script.h"
 #include "save_block.h"

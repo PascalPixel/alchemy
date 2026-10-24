@@ -33,7 +33,3 @@ Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
 | --- | --- |
 | `Stream_` | reading halfwords from a byte stream |
 | `BattleMap_` | the view a scene entrance sets for the battle map |
-
-## Evidence and open questions
-
-- XXX: what the second Psynergy test room tests that the first does not.

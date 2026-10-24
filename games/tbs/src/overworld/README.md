@@ -327,7 +327,7 @@ Djinn joining effects as well as Psynergy.
 - **mode**: `work->mode` is `OBJECT_SYSTEM_LAYOUT` on a town or dungeon map
   and `OBJECT_SYSTEM_WORLD_MAP` on the world map.
 
-## Evidence and open questions
+## Evidence
 
 The field kinds are named from the `type` column of `abilities.tsv` and the
 Psynergy the English release gives each; the requests from what the loop does
@@ -336,8 +336,8 @@ with each; the encounter columns from what
 `encounter_zones.c` from the maps whose rules select them.
 
 Random battles stop while Jenna is in the party with more than 130 experience
-points. [XXX](../../glossary.md#xxx): likely a cap on how strong the party can
-grow before the journey begins, because the rule can act nowhere else.
+points, likely as a cap on how strong the party can grow before the journey
+begins, because the rule can act nowhere else.
 
 `Field_CountRequests` adds the requests together (`talk` twice) and tests the
 sum, so a negative event code raised with a positive request can hide both.
@@ -360,9 +360,3 @@ that nothing else uses.
 through a bare [veneer](../../glossary.md#veneer) in
 `system/far_call/OVERWORLD.S`, which has no symbol for code to call
 ([`field_services/messages.c`](field_services/messages.c)).
-
-- XXX (no evidence): what units `FieldScript_ShowSpeakerMessage` and
-  `FieldScript_ShowMessageAtPosition` expected; they clamp a position to 8 to
-  312 and 20 to 220, more than the 240 by 160 screen, and pass it to a window
-  service that takes tiles, and with no caller in the ROM nothing shows what
-  they were given.

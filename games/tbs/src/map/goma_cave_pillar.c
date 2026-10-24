@@ -40,12 +40,6 @@
 /// GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_EAST).
 /// WARP_DEST_STUMP_FALL, which no warp names and only the debug map selector
 /// reaches, plays the stump being pushed to the edge and falling.
-///
-/// Open questions:
-/// - XXX (no evidence): why the mask that hides the falling stump is drawn
-///   black and translucent rather than in SPRITE_COLOR_HIDDEN, when either
-///   would hide it the same way behind the floor; nothing in the ROM says,
-///   so only the original source could.
 #include "action_script.h"
 #include "version.h"
 #include "heap_slots.h"
@@ -371,6 +365,8 @@ static void EventScript_PushStumpOver(void) {
     overlayObjectEvent->layer = 1;
     spriteObjectEvent = ObjectEvent_GetById(LOCALID_MASK_FOR_STUMP);
     ObjectEvent_SetSpriteFlags(spriteObjectEvent, 0);
+    // XXX (no evidence): why the mask is drawn black and translucent rather
+    // than in SPRITE_COLOR_HIDDEN, which would hide the stump the same way.
     ObjectEvent_ConfigureSpriteColor(LOCALID_MASK_FOR_STUMP,
                                      SPRITE_COLOR_BLACK);
     blendObjectEvent = ObjectEvent_GetById(LOCALID_MASK_FOR_STUMP);

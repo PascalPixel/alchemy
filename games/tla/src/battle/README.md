@@ -55,8 +55,3 @@ Those only The Lost Age's code has so far:
 | `FlagEntries_` | the table of flag entries, 20 bytes each and ended by a zero flag |
 | `Tutorial_` | the message a Djinni's gift shows |
 | `ViewMove_` | saving and restoring the sprites near the scene's main object |
-
-## Evidence and open questions
-
-- XXX: which of these files belong to one original object, and so where the
-  parts of a future `battle.c` and `effect.c` begin and end.

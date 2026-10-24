@@ -56,11 +56,6 @@
 /// loads this overlay and the same map. The setup does nothing for it, and no
 /// warp, table or code leads there; only the debug map selector, which
 /// reaches every map, can.
-///
-/// Open questions:
-/// - XXX (no evidence): what MercuryLighthouseAerie_UnusedAlexCastsPly was
-///   for, Ply cast on the lift's statue; nothing calls it, so neither the ROM
-///   nor a render shows it in a scene.
 
 #include "save_block.h"
 #include "map_ids.h"
@@ -1774,6 +1769,8 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
 /// Nothing calls it. In the game, Alex and Saturos warp over to the lift and
 /// ride it down without it (MercuryLighthouseAerie_AlexAppears).
 UNUSED static void MercuryLighthouseAerie_UnusedAlexCastsPly(void) {
+  // XXX (no evidence): what this was for; nothing calls it, so neither the
+  // ROM nor a render shows it in a scene.
   FieldEffect_LoadActionEffectResources(ABILITY_PLY, 1);
   FieldEffect_SetupObjectPair(LOCALID_ALEX, LOCALID_LIFT_STATUE);
   FieldEffect_StartCast();

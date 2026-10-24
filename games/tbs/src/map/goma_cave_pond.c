@@ -16,8 +16,6 @@
 /// way of it.
 /// The flag is a map-section temp flag, so the stump is back up in the room
 /// above once the party leaves Goma Cave's four maps.
-///
-/// Open questions: none.
 #include "unit/map/goma_cave_pond.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"

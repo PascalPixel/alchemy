@@ -48,13 +48,6 @@
 /// Isaac in the arena, but he falls asleep, exhausted, and they leave him to
 /// sleep; both warps lead to Babi's Palace, where he wakes long after the
 /// finals.
-///
-/// Open questions:
-/// - XXX (no evidence): what ColosseumNavampaMatch_UnusedWarriorTalk's
-///   messages were meant to be; the Japanese and English catalogs hold the
-///   same run after MsgColossoDidntThinkBattles (spectators' lines, the inn's
-///   `Inn Full` sign, the stage announcements), so neither shipped the lines
-///   it was written for.
 
 #include "action_script.h"
 #include "version.h"

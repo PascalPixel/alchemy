@@ -98,8 +98,7 @@ table opens `rom_tail_01`, after the sound code and the music. A caller uses
 the jump's `...Far` name: `Sound_PlaySongFar` reaches `Sound_PlaySong`. The
 runtime bank is the exception: other banks call its functions directly, and
 its table, `FarCall_RuntimeTable` (`WaitFramesFar` for `WaitFrames`), right
-after the cartridge header, serves the overlays. Why is an open question in
-[Engine](../../engine.md#open-questions).
+after the cartridge header, serves the overlays.
 
 A table's entries keep their order. A row added in the middle moves every
 later entry, and the bank's code, by 8 bytes: callers follow through their
@@ -297,7 +296,7 @@ the flash library in `save/`.
 - **resident code**: code, mostly ARM, copied into IWRAM at power-up
   (`.iwram_runtime`) or when sound starts (`.iwram_mixer`).
 
-## Evidence and open questions
+## Evidence
 
 The names follow what each piece does in the link: the far-call tables are
 named for the bank they open, the stubs for their target with `Far` added, and
@@ -307,25 +306,3 @@ literals in the ROM's code. No build step compares a `FIXED_ADDRESS` literal
 with its symbol's linked address; a one-off comparison of all 27 uses with the
 six Broken Seal linker maps found every literal equal to its symbol in each
 edition its `#if` selects.
-
-- [XXX](../../glossary.md#xxx) (no evidence): why the overlay packer stores
-  each call's target as an offset from the overlay's start; likely so the
-  overlays compress better under LZ, since every call to one routine then has
-  the same bytes, but the ROM holds only the packed result, so only Camelot's
-  tools could say.
-- XXX (no evidence): whether Camelot linked the banks separately; the fixed
-  bank starts and the tables are what a separate link needs, but one link with
-  fixed starts leaves the same bytes, so only Camelot's build could say.
-- XXX (no evidence): whether the 25 unused directory rows were left for later
-  resources; they are empty in the ROM and nothing reads them, so they show
-  only that they are spare.
-- XXX (no evidence): why the directory's first 19 rows point at pieces of the
-  program: the start of the ROM (`Rom_Start`, row 0), the directory itself
-  (row 1), the build stamp (row 2), and from row 3 every bank's far-call table
-  but the runtime's, the sound and resource tables twice each. The build stamp
-  is read through its row (`System_CopyBuildStamp`), but the far-call rows are
-  only passed to stubs that do nothing (`Stub_NoOpHook`, `Stub_ReturnZero`),
-  from the title screen, Lucky Dice, Lucky Wheels and the sprite viewer. Those
-  calls look like a leftover of loading banks as resources, but The Lost Age's
-  stubs are empty too and nothing in either ROM loads a bank through its row,
-  so only Camelot's sources could say.

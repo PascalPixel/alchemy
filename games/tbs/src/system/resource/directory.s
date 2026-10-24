@@ -54,6 +54,10 @@
 	.balign 4
 	.global Resource_DirectoryTable
 Resource_DirectoryTable:
+@ XXX (no evidence): why the first 19 rows point at pieces of the program;
+@ only the build stamp's is read, the far-call rows go only to stubs that do
+@ nothing (Stub_NoOpHook, Stub_ReturnZero), and nothing in either game loads a
+@ bank through its row.
 	resource , Rom_Start
 	resource , Resource_DirectoryTable
 	group Resource, BuildStamp
@@ -304,6 +308,8 @@ Resource_DirectoryTable:
 	overlays 3AB, 3AC, 3AD, 3AE, 3AF, 3B0, 3B1, 3B2, 3B3, 3B4, 3B5, 3B6
 	overlays 3B7, 3B8, 3B9, 3BA, 3BB, 3BC, 3BD, 3BE, 3BF, 3C0, 3C1, 3C2
 	overlays 3C3, 3C4, 3C5, 3C6, 3C7, 3C8, 3C9, 3CA, 3CB, 3CC, 3CD, 3CE
+@ XXX (no evidence): whether these rows were left for later resources; they
+@ are empty and nothing reads them.
 	unused 25
 
 @ Build timestamp: year, month, day, hour, minute and second, two digits each

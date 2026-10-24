@@ -29,8 +29,6 @@
 /// the screen beside BG3 alone, the split marked in red). Casting Reveal sets
 /// the blend and the window again as at entry. The overlay also keeps three
 /// unused hooks and a link-cable input exchange no table reaches.
-///
-/// Open questions: none.
 
 #include "unit/map/tret_tree_branch.h"
 #include "unit/overworld/overworld.h"

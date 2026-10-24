@@ -52,9 +52,3 @@ Age's code has so far:
 | `MapCell_`, `Tilemap_` | a map cell's collision code and attributes, and decoding staged tilemap buffers |
 | `WaveScroll_` | the wave scroll's line offsets |
 | `Vitals_` | the HP and PP ratios |
-
-## Evidence and open questions
-
-- XXX: what the scene table's sixth column means.
-- XXX: what the work blocks in heap slots 39 and 40 hold, and what their
-  code does.

@@ -25,9 +25,6 @@
 /// (Weather_StartLightningFlash). The map sets
 /// FLAG_VALE_RETURNED_FROM_MT_ALEPH but never reads it; Sol Sanctum's entrance
 /// map does (sol_sanctum_entrance.c).
-///
-/// Open questions:
-/// - None.
 
 #include "save_block.h"
 #include "unit/map/vale_eruption.h"

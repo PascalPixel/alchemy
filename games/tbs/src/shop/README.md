@@ -317,7 +317,7 @@ other screens:
   select and animate (`partyMemberIcons`, `Shop_ChooseMember`).
 - `unk` plus an offset: a field whose meaning is not known.
 
-## Evidence and open questions
+## Evidence
 
 The counters are named for what the player meets at them, the stock row's
 columns from what `shop/artifacts.c` reads from each, the actions and services
@@ -337,8 +337,3 @@ Inn row 9 is taken to be Tolbi's by three facts:
 - Tolbi is the one town with an inn door and no inn opened, since its inns
   are always full (`MsgTolbiInteriorsIsaacCheckedTheSignInnFull`), so its row
   costs nothing and nothing reads it.
-
-- XXX (no evidence): why Xian's rows are the warriors' shops
-  (`shop->warriorShop`) by number rather than by a column of the row; the
-  stock row's type column is an `s16` that could have carried it, and only
-  Camelot's sources could say why it doesn't.

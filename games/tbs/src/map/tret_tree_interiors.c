@@ -56,8 +56,6 @@
 /// ends; casting Reveal stops it), and scales the first layer of the map grid
 /// to the room. Two chests hold a Healing Ring and a Nut, and a Psynergy Stone
 /// lies here (bg events 100 to 102).
-///
-/// Open questions: none.
 
 #include "speaker.h"
 #include "version.h"

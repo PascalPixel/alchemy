@@ -616,10 +616,9 @@ remove its tasks before it returns.
 
 A blitter handles one of sixteen mirror and clip combinations in one of four
 modes, at the canvas size it was built for, and an animation builds only the
-one or two it draws with. [XXX](../../glossary.md#xxx): likely generated
-because a single routine testing every option for every pixel would be too
-slow, and IWRAM too small to keep one for each combination; neither the code
-nor its comments say so.
+one or two it draws with, likely because a single routine testing every option
+for every pixel would be too slow, and IWRAM too small to keep one for each
+combination; neither the code nor its comments say so.
 
 Because pixels are levels rather than colours, the transfer can fade the whole
 canvas with byte arithmetic, and one picture can be drawn in another palette.
@@ -747,7 +746,7 @@ Anything else that reaches the handler (an item, another animation that hands
 over to it) is a sentence in the next paragraph. A function no row reaches,
 such as a runner, has no reach line; its comment says what calls it.
 
-## Evidence and open questions
+## Evidence
 
 A handler's name comes from the abilities that reach its kind, read from
 `gAbilityAnimations` and named as the English release names them; a runner is

@@ -49,8 +49,6 @@
 ///   he says that for a while he thought no one would ever cross it again,
 ///   Kolima_RestoreBridgeState draws it down on every later visit, and the
 ///   bridge on the world map is drawn down with the same flag.
-///
-/// Open questions: none.
 
 #include "action_script.h"
 #include "djinn_ids.h"

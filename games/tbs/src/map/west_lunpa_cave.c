@@ -39,9 +39,6 @@
 ///
 /// Unused: a fourth puddle stands at the map's origin, outside the cave's
 /// camera bounds, so Frost can never reach it (EventScript_UnusedFreezePuddle).
-///
-/// Open questions:
-/// - None.
 
 #include "save_block.h"
 #include "map_ids.h"

@@ -37,8 +37,6 @@
 /// https://alchemy.pascalpixel.com/places/sol-sanctum-elemental-star-room/rising-shadow.gif:
 /// Isaac's arrival, the platform's object event boxed on the screen, beside the
 /// sprites and the sprites without it, where the shadow is gone).
-///
-/// Open questions: none.
 
 #include "save_block.h"
 #include "unit/import.h"

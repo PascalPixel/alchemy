@@ -51,8 +51,6 @@
 /// two cycles, the copied cells outlined and tinted by what each does, a wall,
 /// a jump across or open ground, under the phase in words, the lifts lining
 /// up or parting, and the frames to its next change).
-///
-/// Open questions: none.
 
 #include "action_script.h"
 #include "save_block.h"

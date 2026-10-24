@@ -43,8 +43,6 @@
 /// inn until the water has drained. Each merchant opens across the counter once
 /// the shop has dried, and a cook from Xian paces between his pots
 /// (gAltinInteriors_CookScript).
-///
-/// Open questions: none.
 
 #include "save_block.h"
 #include "version.h"

@@ -36,8 +36,6 @@
 /// (KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE). Searching finds a turban,
 /// the symbol of Kalay's soldiers, and two books, `Business and You` and `The
 /// Good Host`; a chest holds a Water Jacket and a barrel a Nut.
-///
-/// Open questions: none.
 #include "save_block.h"
 #include "map_ids.h"
 #include "unit/map/hammet_palace.h"

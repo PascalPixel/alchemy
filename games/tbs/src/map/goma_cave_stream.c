@@ -27,8 +27,6 @@
 ///   river. It has no object events and only its two warps: back south into
 ///   MapId_GomaCaveStream and out onto the world map toward Bilibin
 ///   (GOMA_CAVE_BRIDGE_TO_WORLD_MAP).
-///
-/// Open questions: none.
 #include "save_block.h"
 #include "unit/map/goma_cave_stream.h"
 #include "unit/map/common/effect_spawn.h"

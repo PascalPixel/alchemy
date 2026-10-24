@@ -32,9 +32,6 @@
 /// Unused: the cactus steak line at the Smoke Bomb's oven, whose item row
 /// always answers first, and the warp destination
 /// SUHALLA_INTERIORS_HOUSE_WEST_UNUSED, to which no warp leads.
-///
-/// Open questions:
-/// - None.
 
 #include "save_block.h"
 #include "script_layer.h"

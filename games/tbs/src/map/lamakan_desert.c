@@ -45,14 +45,6 @@
 /// trapped (FLAG_HSU_RESCUED clear) sets FLAG_HSU_RESCUED and
 /// FLAG_HSU_RESCUED_WITHOUT_PARTY, which xian_interiors.c reads to have Feizhi
 /// thank Master Hama alone.
-///
-/// Open questions:
-///
-/// - XXX (no evidence): why the patched editions (TBS_PATCH_3) set
-///   FLAG_KALAY_REACHED on coming back from the Manticore's battle, so that a
-///   party that has beaten the Manticore counts as having reached Kalay before
-///   it enters the town; the code shows the effect, but only Camelot's notes
-///   for the patch would say what it fixed.
 
 #include "vram_cache.h"
 #include "unit/import.h"
@@ -265,6 +257,8 @@ const struct ObjectEventTemplate *LamakanDesert_GetObjectEventTemplates(void) {
   if (gSaveBlock.mapId == (s32)&MapId_LamakanDesertManticore) {
     if (gSaveBlock.warpDest == LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE) {
       GameFlag_Set(FLAG_LAMAKAN_MANTICORE_BEATEN);
+      // XXX (no evidence): what this patch fixed; only Camelot's notes for
+      // the patch would say.
 #if TBS_PATCH_3
       GameFlag_Set(FLAG_KALAY_REACHED);
 #endif

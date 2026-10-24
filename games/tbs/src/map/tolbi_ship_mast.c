@@ -45,12 +45,6 @@
 ///
 /// At sea the lookout says he is the lookout, not an oarsman; at the island he
 /// warns of monsters and wonders at its treasures.
-///
-/// Open questions:
-/// - XXX (no evidence): what the eight words after
-///   gTolbiShipMast_BirdDeparture6's SC_END were; nothing reads them, since the
-///   script stops at SC_END and only this overlay can name its data (O3), and
-///   as sixteen halfwords they form no table any code here indexes.
 
 #include "action_script.h"
 #include "save_block.h"
@@ -1044,7 +1038,9 @@ u32 gTolbiShipMast_BirdDeparture6[] = {
     SC_MOVE(PIXELS(152), 0, PIXELS(196)),
     SC_CALL(TolbiShipMast_ShrinkAndStopObjectEvent),
     SC_END,
-    // Unidentified words following the script terminator.
+    // Unidentified words following the script terminator. XXX (no evidence):
+    // what they were; nothing reads them, and as sixteen halfwords they form no
+    // table any code here indexes.
     0x9090000, 0xd70090d, 0xdb315cb, 0x15f5164c,
     0x1f0e1aad, 0x1f6f227a, 0x23f223b1, 0x2bf727f4,
 };

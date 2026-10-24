@@ -1267,6 +1267,8 @@ s32 Audio_PlayCueReturnOne(s32 cue) {
 void Menu_CancelSoundTick(void) {
   if (gKeysPressed & KEY_START) {
     Sound_PlaySongFar(SE_MENU_CANCEL);
+    // XXX (no evidence): why this is a game flag rather than a variable;
+    // nothing outside the menu's own code sets or tests it.
     GameFlag_SetFar(FLAG_MENU_START_PRESSED);
     Task_Remove(Menu_CancelSoundTick);
   }

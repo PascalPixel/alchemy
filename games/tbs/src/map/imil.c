@@ -63,11 +63,6 @@
 ///   village in their hands, Megan and Justin. Searching finds an Empty
 ///   Bottle, a Sleep Bomb and Lucky Pepper, the last from the oven with the
 ///   stew, whose find always answers first, so the stew's line is unused.
-///
-/// Open questions:
-/// - XXX (no evidence): what Imil_UpdateCountdownArc and Imil_SwayAndSpark were
-///   for; nothing in the game gives them to an object event, so neither the ROM
-///   nor a render shows them in use.
 
 #include "action_script.h"
 #include "animspr.h"
@@ -1166,6 +1161,8 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
 /// Unused: an update hook that moves an effect around its stored origin until
 /// its timer runs out; no object event is given it.
 UNUSED static void Imil_UpdateCountdownArc(struct ObjectEvent *objectEvent) {
+  // XXX (no evidence): what this and Imil_SwayAndSpark were for; no object
+  // event is given either, so neither the ROM nor a render shows them in use.
   s32 buf[3];
   s32 *b;
   s32 n;

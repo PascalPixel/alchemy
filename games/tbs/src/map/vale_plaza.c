@@ -80,8 +80,6 @@
 /// (https://alchemy.pascalpixel.com/places/vale-gate/psynergy-display.gif: the
 /// strongman's display by day, the screen with him boxed beside the sprites
 /// alone and the 16 sprite palettes).
-///
-/// Open questions: none.
 
 #include "save_block.h"
 #include "flags.h"

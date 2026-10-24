@@ -19,8 +19,6 @@
 /// choose one of two replies, the party boards, the ship sails east as the
 /// curtains close (Curtain_Start), and the game goes to the clear screen by the
 /// title's TITLE_FROM_LEMURIAN_SHIP, keeping the music (FLAG_KEEP_MUSIC).
-///
-/// Open questions: none.
 
 #include "action_script.h"
 #include "version.h"

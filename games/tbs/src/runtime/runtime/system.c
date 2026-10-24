@@ -100,6 +100,8 @@ s32 System_GetLanguage(void) {
 }
 #endif
 
+// XXX (no evidence): what the five reserved exports A to E were for; they are
+// empty in both games and nothing calls them.
 /// Unused: reserved empty export A in the runtime far-call table; no source
 /// caller.
 UNUSED void Stub_ReservedNoOpA(void) {}
@@ -233,6 +235,10 @@ void Overlay_Load(u32 index, void *destination) {
   void (*patchBranches)(void *, s32);
   s32 codeSize;
 
+  // XXX (no evidence): why the packer stores each call's target as an offset
+  // from the overlay's start; likely so the overlays compress better, since
+  // every call to one routine then has the same bytes, but only Camelot's
+  // tools could say.
   codeSize = Decompress_TaggedLz(Resource_GetTableEntry(index), destination);
   RamCode_Load(patchBranches, Resource_PatchThumbBranch,
                Resource_PatchThumbBranchCodeSize);

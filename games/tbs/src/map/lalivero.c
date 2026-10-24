@@ -26,13 +26,6 @@
 /// MapId_LaliveroFaransHouse; the world map lies east and west; and a jar, a
 /// stone pillar and a chest hold a Water of Life, a Psy Crystal and a Warrior's
 /// Helm.
-///
-/// Open questions:
-/// - XXX (no evidence): why the first visit's map events open the Warrior's
-///   Helm chest only facing west, from the foot of the vine east of it, when
-///   the second opens it from any side; the chest and the ground around it are
-///   the same on both visits (their renders), and nothing in the ROM records
-///   the reason.
 
 #include "save_block.h"
 #include "djinn_ids.h"
@@ -1166,6 +1159,9 @@ struct MapEvent gLaliveroEvents[] = {
     { MAP_EVENT_TALK, LOCALID_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToTorch) },
     { BG_EVENT(BG_EVENT_JAR), 100, FLAG_LALIVERO_WATER_OF_LIFE, FIND_ITEM(ITEM_WATER_OF_LIFE) },
     { BG_EVENT(BG_EVENT_STONE_PILLAR), 101, FLAG_LALIVERO_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
+    // XXX (no evidence): why this chest opens only facing west, when
+    // gLaliveroEventsAfterLighthouse opens it from any side; the chest and the
+    // ground around it are the same on both visits.
     { BG_EVENT_CHEST_FACING(FACING_WEST), 102, FLAG_LALIVERO_WARRIORS_HELM, FIND_ITEM(ITEM_WARRIORS_HELM) },
     { MAP_EVENTS_END },
 };

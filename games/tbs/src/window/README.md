@@ -249,7 +249,7 @@ top of the screen for a second and a half.
 
 `MapNamePopup_Show` draws the name, from `MapSec_GetNameIndexFar`, as tiles in
 a window centred across the screen, opened with `WINDOW_FLAG_INSTANT`. It keeps
-the window and a countdown in the event work (`gFieldWork`), and
+the window and a countdown in the field work (`gFieldWork`), and
 `MapNamePopup_Update`, a main-loop task, closes it when the countdown ends.
 Opening the field menu hides it at once (`MapNamePopup_HideFar`).
 

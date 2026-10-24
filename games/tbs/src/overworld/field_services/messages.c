@@ -6,7 +6,7 @@
 
 #ifndef UBFIX
 /// The heap slots from the window work's onward, seen as the window work and,
-/// twelve slots on, the event work in HEAP_SLOT_FIELD.
+/// twelve slots on, the field work in HEAP_SLOT_FIELD.
 struct HeapSlotsFromWindowView {
   u8 *window;
   u8 *slotsBetween[11]; ///< the eleven heap slots after the window work's

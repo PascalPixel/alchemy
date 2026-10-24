@@ -4,16 +4,16 @@
 
 #include "../window_internal.h"
 
-/// The area name notice's fields, which live in the event work block
+/// The area name notice's fields, which live in the field work block
 /// (gFieldWork, a map's work), for as long as the map runs.
 struct TimedNoticeWork {
-  u8 eventWork[0x230];   ///< the event work's other fields
+  u8 fieldWork[0x230];   ///< the field work's other fields
   struct Window *window; ///< the notice's window; it may since have closed
   u16 countdown;         ///< frames left to show it, from 90
 };
 
 /// Shows the area's name in a window near the top of the screen for 90 frames.
-/// The event work owns the window and countdown until a task closes it.
+/// The field work owns the window and countdown until a task closes it.
 /// The window is centred across the screen and in its top 10 rows, and opens
 /// at once; MapNamePopup_Update counts it down each frame in the main loop's
 /// pass.

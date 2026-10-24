@@ -84,7 +84,7 @@ closes the menu so the field can cast it at whatever the leader faces
 the chosen Psynergy is used; `_APPLY` calls `Ability_ApplyToTargets` and takes
 the PP with `Unit_AddPpFar`. In its shortcut modes (`PSYNERGY_MODE_SET_L`,
 `_SET_R`) the same list sets the Psynergy the L or R button casts on the
-field. For the field, the screen writes the event work's `psynergy`
+field. For the field, the screen writes the field work's `psynergy`
 (`gFieldWork`), one 16-bit word, and returns 1:
 
 ```
@@ -122,7 +122,7 @@ is a `struct Window` that `struct ItemMenuWork` points to: the party row and
 the question along the top, the chosen member's
 [status panel](#the-status-panel) on the left, their items on the right with
 the button help under them, and the line along the bottom. An item to use
-outside the menu is written to the event work's `item` and `itemArgument`, and
+outside the menu is written to the field work's `item` and `itemArgument`, and
 `ItemMenu_Run` returns 1. Nothing sets `ITEM_STEP_IDLE` or
 `ITEM_STEP_QUANTITY`.
 

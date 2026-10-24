@@ -186,7 +186,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   struct WeatherWork *sparkles;
 #ifndef UBFIX
   struct WeatherWork **particleWorkSlot;
-  struct FieldWork **eventWorkSlot;
+  struct FieldWork **fieldWorkSlot;
 #endif
 
 #ifdef UBFIX
@@ -211,14 +211,14 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   // UB: these are separate work-pointer globals. The native sequence reaches
   // the field heap slot through the particle heap slot; named globals add
   // four bytes and change this scene's register allocation in tbs-en.
-  eventWorkSlot = (struct FieldWork **)((u8 *)particleWorkSlot - 8);
+  fieldWorkSlot = (struct FieldWork **)((u8 *)particleWorkSlot - 8);
 #endif
   FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(156), 0);
   MapGrid_CenterOnFollowedPoint();
 #ifdef UBFIX
   gFieldWork->transitionFrames = 8;
 #else
-  (*eventWorkSlot)->transitionFrames = 8;
+  (*fieldWorkSlot)->transitionFrames = 8;
 #endif
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();

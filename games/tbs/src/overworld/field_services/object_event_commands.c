@@ -937,7 +937,7 @@ s32 ObjectEvent_ReadActiveValue(s32 localId) {
   struct Object *entry;
 
   localId &= 0x0fff;
-  // BUG: the -1 sentinel becomes index 4095, beyond the event work. All
+  // BUG: the -1 sentinel becomes index 4095, beyond the field work. All
   // indices from 66 to 4095 lie outside the object event table.
   if (localId >= 66)
     return -1;

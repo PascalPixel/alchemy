@@ -1,11 +1,15 @@
-// Draft, differ 21 of 115: the debug warp menu's selection loop, a sibling of
-// Func_08040d70 over nine rows 16 pixels apart: Up and Down move the cursor,
-// A runs the chosen preset's warp from gDebugWarp_Presets, B cancels (-1).
-// Left: the native reads gInput.pressed again for the A test where the draft
-// reuses the B test's load (no volatile view added), the window's copy to r8
-// placed after building -1 instead of before, and the closing -1 and warp
-// pointer in r0 rather than r4/r3 (register choice). Tried: y written with
-// multiplies (combine folds it into (y + index * 2) * 8, differ 35).
+// Near miss, differ 2 of 115 (38 before): the debug warp menu's selection
+// loop, a sibling of Func_08040d70 over nine rows 16 pixels apart: Up and
+// Down move the cursor, A runs the chosen preset's warp from
+// gDebugWarp_Presets, B cancels (-1). Two devices to tag on adoption, found
+// by alchemy permute and by hand: the Down mask as a temporary (temporary;
+// 38 to 6) and the presets' handlers typed as returning s32, which puts the
+// handler in r0 for the call (signature; 6 to 2; they return nothing).
+// Left: the native builds the -1 fully (movs; negs) before copying the
+// window to r8; this copies between them. The window taken through a
+// temporary an asm rewrites after the -1 hoists the -1 above the calls
+// (differ 23). Tried: y written with multiplies (combine folds it into
+// (y + index * 2) * 8, differ 35).
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -18,7 +22,7 @@ struct ScreenWork {
 
 struct DebugWarpPreset {
   const u8 *name;
-  void (*warp)(void);
+  s32 (*warp)(void);
 };
 
 extern const struct DebugWarpPreset gDebugWarp_Presets[];
@@ -36,6 +40,7 @@ s32 Func_080410f8(s32 index) {
   struct ScreenWork *work;
   struct UiWindow *window;
   s32 moved;
+  u32 down;
 
   Func_0804101c();
   work = Ram_HeapSlots->unkd0[0];
@@ -71,7 +76,8 @@ s32 Func_080410f8(s32 index) {
       moved = 1;
       Audio_PlayCue(111);
     }
-    if (gInput.repeat & 128) {
+    down = 128;
+    if (gInput.repeat & down) {
       index++;
       moved = 1;
       Audio_PlayCue(111);

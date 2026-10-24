@@ -745,18 +745,6 @@ Menu_ConfirmSelection:
 	.thumb_func
 UiTextResource_Initialize:
 	.incbin "baserom.gba", 0x0003f678, 0x00000074
-	.section .rom.0003f7cc, "ax"
-	.global Menu_RunTopSelection
-	.type Menu_RunTopSelection, %function
-	.thumb_func
-Menu_RunTopSelection:
-	.incbin "baserom.gba", 0x0003f7cc, 0x00000088
-	.section .rom.0003f854, "ax"
-	.global UiWindow_OpenMode1AndWaitFrame
-	.type UiWindow_OpenMode1AndWaitFrame, %function
-	.thumb_func
-UiWindow_OpenMode1AndWaitFrame:
-	.incbin "baserom.gba", 0x0003f854, 0x00000010
 	.section .rom.0003fa14, "ax"
 	.global Func_0803f9c0
 	.type Func_0803f9c0, %function

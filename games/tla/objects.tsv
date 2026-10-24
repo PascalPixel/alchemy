@@ -1236,12 +1236,6 @@ main	rom_main_02	recon/tla/ja/rom	.rom.00042388	ja
 main	rom_main_02	games/tla/src/graphics/render/from_resource	.text
 main	rom_main_02	games/tla/src/graphics/render/loaded	.text
 main	rom_main_02	games/tla/src/graphics/render/output	.text
-main	rom_main_02	recon/tla/it/rom	.rom.0004256c	it
-main	rom_main_02	recon/tla/fr/rom	.rom.00042558	fr
-main	rom_main_02	recon/tla/es/rom	.rom.00042574	es
-main	rom_main_02	recon/tla/de/rom	.rom.0004255c	de
-main	rom_main_02	recon/tla/raw/08042508		en
-main	rom_main_02	recon/tla/ja/rom	.rom.0004264c	ja
 main	rom_main_02	games/tla/src/graphics/window/runtime_set_byte5_and_reset_halfword_c	.text
 main	rom_main_02	recon/tla/it/rom	.rom.000425de	it
 main	rom_main_02	recon/tla/fr/rom	.rom.000425ca	fr

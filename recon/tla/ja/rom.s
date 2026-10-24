@@ -705,13 +705,6 @@ UiText_DrawNumberAtOffset:
 	.thumb_func
 UiText_DrawNumberInWindow:
 	.incbin "baserom.gba", 0x00042388, 0x000000d0
-	.section .rom.0004264c, "ax"
-	.balign 4
-	.global Ui_LoadCharacterEntryForSlot
-	.type Ui_LoadCharacterEntryForSlot, %function
-	.thumb_func
-Ui_LoadCharacterEntryForSlot:
-	.incbin "baserom.gba", 0x0004264c, 0x00000064
 	.section .rom.000426be, "ax"
 	.incbin "baserom.gba", 0x000426be, 0x00000002
 	.section .rom.00042824, "ax"

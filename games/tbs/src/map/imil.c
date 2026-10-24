@@ -1032,7 +1032,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   ObjectEvent_SetActionScript(LOCALID_OLD_MAN, table);
   Script_ShowMessageAndWait(LOCALID_OLD_MAN, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_MIA, FACING_WEST, 20);
-  ObjectEvent_FaceDirection(LOCALID_OLD_WOMAN, 0, 10);
+  ObjectEvent_FaceDirection(LOCALID_OLD_WOMAN, FACING_EAST, 10);
   ObjectMotion_SetAnimationAndWait(LOCALID_OLD_WOMAN, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_OLD_WOMAN, 0, 40);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
@@ -1062,7 +1062,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   FieldScript_WaitFrames(40);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(LOCALID_OLD_WOMAN, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_OLD_WOMAN, FACING_EAST, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_OLD_WOMAN, ANIM_NOD);
   Script_ShowMessageAndWait(LOCALID_OLD_WOMAN, 0, 10);
   ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
@@ -1100,7 +1100,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   ObjectEvent_SetAttachedEffect(LOCALID_MIA, ATTACHED_EFFECT_IN_FRONT |
                                                  ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(LOCALID_MIA, 0, 10);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_EAST, 10);
   ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(2), PIXELS(1));
   ObjectEvent_WalkToAndWait(LOCALID_MIA, 202, 198);
   FieldScript_WaitFrames(40);

@@ -684,7 +684,8 @@ static void SolSanctumEntrance_ApplyEntryState(void) {
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     gSolSanctumEntrance_RumbleTimer = 0;
-    Task_AddCallback(SolSanctumEntrance_UpdateEruptionRumbles, 0xc80);
+    Task_AddCallback(SolSanctumEntrance_UpdateEruptionRumbles,
+                     TASK_PRIORITY_MAP);
   }
   if (GameFlag_Get(FLAG_VALE_RETURNED_FROM_MT_ALEPH) != 0) {
     MapGrid_CopyCellAttributes(5, 6, 1, 1, 6, 6);

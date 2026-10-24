@@ -117,6 +117,7 @@
 #include "macros.h"
 #include "flags.h"
 #include "songs.h"
+#include "heap.h"
 
 // Where Garet lands after his jump once Dora has gone in, at the roof's end
 // (EventScript_RoofMended): two pixels further south in the TBS_PATCH_2

@@ -3578,7 +3578,7 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
       }
       if (extraBursts == 3)
         FieldScheduler_AddCallback(VenusLighthouse_EmitWestPassageParticles,
-                                   3200);
+                                   TASK_PRIORITY_MAP);
     }
     MapGrid_CopyCellsTo(53, row + 12, 26, row + 12, 3, 1);
     rowOffset += 0x100000;
@@ -3641,7 +3641,8 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
       extraBursts++;
       goto again;
     }
-    FieldScheduler_AddCallback(VenusLighthouse_EmitEastPassageParticles, 3200);
+    FieldScheduler_AddCallback(VenusLighthouse_EmitEastPassageParticles,
+                               TASK_PRIORITY_MAP);
     MapGrid_CopyCellsTo(58, row + 12, 34, row + 12, 3, 1);
     rowOffset += 0x100000;
     row++;

@@ -713,7 +713,8 @@ static void HeatGauge_CountStep(void) {
     params.startScaleY = 0x8000;
     dx = 0;
     params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
-    if (objectEvent->facing != 0 && objectEvent->facing != 0x8000) {
+    if (objectEvent->facing != FACING_EAST &&
+        objectEvent->facing != FACING_WEST) {
       z = objectEvent->z.fixed;
       dx = 0x20000 - ((((z >> 20) & 1) * 5) << 16);
     } else {
@@ -1194,7 +1195,7 @@ void HeatGauge_Start(void) {
   VramCache_Load((s16)slot, 0x480, 0);
   gHeatGaugeSlide = 0;
   gHeatGauge_Held = 0;
-  FieldScheduler_AddCallback(HeatGauge_Draw, 0xc76);
+  FieldScheduler_AddCallback(HeatGauge_Draw, TASK_PRIORITY_MAP - 10);
 }
 
 /// While held (1), the gauge stays on screen.

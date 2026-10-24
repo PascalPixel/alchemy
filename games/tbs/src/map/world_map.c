@@ -1188,7 +1188,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   ObjectEvent_SetAttachedEffect(LOCALID_CARAVAN_MAN, ATTACHED_EFFECT_IN_FRONT |
                                                          ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(60);
-  ObjectEvent_FaceDirection(LOCALID_CARAVAN_MAN, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_CARAVAN_MAN, FACING_EAST, 20);
   ObjectMotion_SetVariantCallback(LOCALID_CARAVAN_MAN, 3);
   Script_ShowMessageAndWait(LOCALID_CARAVAN_MAN, 0, 20);
   ObjectEvent_SetPosition(LOCALID_CARAVAN_HAMMET, PIXELS(5656), PIXELS(1784));
@@ -1219,7 +1219,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_CARAVAN_HAMMET, 0,
                             40);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_CARAVAN_MAN, 1);
-  ObjectEvent_FaceDirection(LOCALID_CARAVAN_MAN, 0, 10);
+  ObjectEvent_FaceDirection(LOCALID_CARAVAN_MAN, FACING_EAST, 10);
   Script_ShowMessageAndWait(LOCALID_CARAVAN_MAN, 0, 10);
   ObjectEvent_ShowEmote(LOCALID_CARAVAN_HAMMET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                         60);
@@ -1244,7 +1244,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   ObjectEvent_ShowEmote(LOCALID_CARAVAN_MAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                         0);
   ObjectEvent_FaceDirection(LOCALID_CARAVAN_HAMMET, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(LOCALID_CARAVAN_MAN, 0, 40);
+  ObjectEvent_FaceDirection(LOCALID_CARAVAN_MAN, FACING_EAST, 40);
   ObjectEvent_FaceDirection(LOCALID_CARAVAN_HAMMET,
                             FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_CARAVAN_MAN, FACING_NORTHWEST + FACING_STEP,
@@ -1308,7 +1308,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   ObjectMotion_Launch(LOCALID_CARAVAN_HAMMET, 4, 40);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_CARAVAN_HAMMET, 0,
                             10);
-  ObjectEvent_FaceDirection(LOCALID_CARAVAN_MAN, 0, 10);
+  ObjectEvent_FaceDirection(LOCALID_CARAVAN_MAN, FACING_EAST, 10);
   Script_ShowMessageAndWait(LOCALID_CARAVAN_MAN, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_CARAVAN_HAMMET, FACING_NORTH, 40);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_CARAVAN_HAMMET, 0,

@@ -305,8 +305,8 @@ enum {
 /// SPRITE_PUDDLE's animation once Frost has frozen it into an ice pillar.
 enum { PUDDLE_ANIMATION_FROZEN = 5 };
 
-// The spray's direction (0 east, 0x8000 west) and origin, and the water's
-// flicker timer.
+// The spray's direction (FACING_EAST or FACING_WEST) and origin, and the
+// water's flicker timer.
 extern s32 gAltinPeak_SprayDirection;
 extern s32 gAltinPeak_SprayOrigin[3];
 extern u16 gAltinPeak_FlickerTimer;
@@ -1192,11 +1192,11 @@ static void AltinPeak_ReadFallingRockSign(void) {
                           0);
     ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
-    ObjectEvent_FaceDirection(LOCALID_GARET, 0, 20);
-    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, 0, 0);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST, 20);
+    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
     ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 40);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
-    ObjectEvent_FaceDirection(LOCALID_GARET, 0, 40);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST, 40);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
     ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 40);
     ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -1206,7 +1206,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
     ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(5) / 2, PIXELS(5) / 4);
     Import_ObjectEventSetAnimation(LOCALID_GARET, 5);
     ObjectEvent_MoveToAndWait(LOCALID_GARET, 796, 138);
-    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, 0, 0);
+    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
     ObjectEvent_MoveToAndWait(LOCALID_GARET, 804, 140);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
     ObjectEvent_MoveToAndWait(LOCALID_GARET, 804, 166);
@@ -1531,7 +1531,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   Import_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST,
                                  WATER_BEAST_ANIMATION_SPIT);
   // End the route with a spray gust and a short skippable wait.
-  AltinPeak_StartSpitting(PIXELS(130), 0, PIXELS(168), 0);
+  AltinPeak_StartSpitting(PIXELS(130), 0, PIXELS(168), FACING_EAST);
   FieldScript_WaitFrames(60);
   for (waitedFrames = 0; waitedFrames < 60 && gKeysPressed == 0;
        waitedFrames++) {
@@ -1628,7 +1628,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
       objectEvent->facing = opened;
       Import_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST,
                                      WATER_BEAST_ANIMATION_SPIT);
-      AltinPeak_StartSpitting(PIXELS(130), 0, PIXELS(168), 0);
+      AltinPeak_StartSpitting(PIXELS(130), 0, PIXELS(168), FACING_EAST);
       return;
     }
     if (GameFlag_Get(FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN) == 0) {
@@ -1698,7 +1698,7 @@ static void AltinPeak_RestoreSecondWaterBeastRoom(void) {
                                        SPRITE_COLOR_RBG);
         Import_ObjectEventSetAnimation(LOCALID_SECOND_WATER_BEAST,
                                        WATER_BEAST_ANIMATION_SPIT);
-        AltinPeak_StartSpitting(PIXELS(238), 0, PIXELS(418), 0x8000);
+        AltinPeak_StartSpitting(PIXELS(238), 0, PIXELS(418), FACING_WEST);
       }
     }
   }
@@ -1752,7 +1752,7 @@ static void AltinPeak_RestoreThirdWaterBeastRoom(void) {
                                      SPRITE_COLOR_RBG);
       Import_ObjectEventSetAnimation(LOCALID_THIRD_WATER_BEAST,
                                      WATER_BEAST_ANIMATION_SPIT);
-      AltinPeak_StartSpitting(PIXELS(748), PIXELS(8), PIXELS(280), 0x8000);
+      AltinPeak_StartSpitting(PIXELS(748), PIXELS(8), PIXELS(280), FACING_WEST);
     }
   }
   AltinPeak_MarkObjectEventTerrainCell(LOCALID_THIRD_WATER_BEAST_ROOM_PUDDLE);
@@ -2031,8 +2031,8 @@ static void AltinPeak_SpawnSpray(void) {
   Object_SelectAnimation(&spray->objectEvent, 1);
 }
 
-/// A water beast starts spitting water from (x, y, z) toward facing (east, 0,
-/// or west, 0x8000), with its sound (SE_AMBIENT_WATER).
+/// A water beast starts spitting water from (x, y, z) toward facing
+/// (FACING_EAST or FACING_WEST), with its sound (SE_AMBIENT_WATER).
 static void AltinPeak_StartSpitting(s32 x, s32 y, s32 z, s32 facing) {
   SET_VECTOR(gAltinPeak_SprayOrigin, x, y, z);
   gAltinPeak_SprayDirection = facing;

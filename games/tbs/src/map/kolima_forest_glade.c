@@ -41,6 +41,7 @@
 #include "ability_ids.h"
 #include "map_tables.h"
 #include "item_ids.h"
+#include "heap.h"
 
 /// Kolima Forest's object events, numbering the rows of
 /// gKolimaForestGlade_ObjectEventTemplates.

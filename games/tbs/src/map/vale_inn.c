@@ -1155,10 +1155,10 @@ static void EventScript_ShowMythrilBag(void) {
   sprite->image.palette = 0;
   // Load the item icon into the temporary object event before animating the
   // bag.
-  glyph = AllocHeapSlot(17, sizeof(*glyph));
+  glyph = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*glyph));
   Icon_DrawItem(ITEM_MYTHRIL_BAG);
   VramCache_Load(sprite->slot, 128, glyph->tiles);
-  FreeHeapSlot(17);
+  FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
   FieldScript_StartScreenTransition();
   // Walk the presenter into view, then wait for both bag scripts to finish.

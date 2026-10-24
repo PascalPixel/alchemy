@@ -1332,7 +1332,7 @@ static void LunpaFortress_CheckUpperFloorDoorApproach(void) {
     s32 playerZ = leader->z.fixed / PIXELS(16);
 
     if (playerX == 16 && playerZ > 55 && playerZ <= 58 &&
-        (leader->facing == 0xc000 || leader->facing == 0x4000)) {
+        (leader->facing == FACING_NORTH || leader->facing == FACING_SOUTH)) {
       s16 *touchedTrigger = &gFieldWork->coordEvent;
       s32 doorTrigger = MB_LUNPA_FORTRESS_FIRST_DOOR;
 

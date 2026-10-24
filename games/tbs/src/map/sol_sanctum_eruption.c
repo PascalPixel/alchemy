@@ -72,6 +72,7 @@
 #include "macros.h"
 #include "flags.h"
 #include "songs.h"
+#include "heap.h"
 #include "io_reg.h"
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
@@ -1320,7 +1321,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
       ObjectEvent_Create(OBJECT_ELEMENTAL_STAR, starOrigin->x.fixed,
                          starOrigin->y.fixed + PIXELS(36), starOrigin->z.fixed);
   if (star != NULL) {
-    iconPixels = AllocHeapSlot(17, 0x608);
+    iconPixels = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     starSprite = star->sprite;
     starSprite->flags = 0;
     starSprite->count = 0;
@@ -1329,7 +1330,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     starSprite->image.priority = 1;
     Icon_DrawItem(ITEM_MARS_STAR);
     VramCache_Load(starSprite->slot, 128, iconPixels + 0x400);
-    FreeHeapSlot(17);
+    FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
     Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
                                    ANIM_LEADER_ARMS_RAISED);
     ItemDisplay_ShowPicture(star, 3);

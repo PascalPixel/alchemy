@@ -794,7 +794,7 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
   // Increase the chance of showing the alternate scroll on each scanline.
   sShakeChance = 0;
   FieldScheduler_AddCallback(CrossboneIsleSteppingStones_PrepareWaterScroll,
-                             0xc80);
+                             TASK_PRIORITY_MAP);
   WaitFrames(1);
   Irq_SetHandler(1, 0, CrossboneIsleSteppingStones_JitterBackgroundScroll);
   Sound_PlaySong(SE_WATER_LEVEL);
@@ -1208,7 +1208,8 @@ static void EventScript_PushOrClimbDown(void) {
 /// follows the leader, and the leader's rise counter starts.
 static void EventScript_StartRising(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  ((struct FadeOverlayWork *)HEAP_SLOT_BLOCK(36))->objectEvent = leader;
+  ((struct FadeOverlayWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY))
+      ->objectEvent = leader;
   leader->riseCounter = 1;
 }
 
@@ -1217,7 +1218,8 @@ static void EventScript_StartRising(void) {
 static void EventScript_StopRising(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
-  ((struct FadeOverlayWork *)HEAP_SLOT_BLOCK(36))->objectEvent = NULL;
+  ((struct FadeOverlayWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY))
+      ->objectEvent = NULL;
   leader->riseCounter = 0;
 }
 
@@ -1426,7 +1428,7 @@ static void EventScript_FreezeThirdPuddle(void) {
     WAIT(20);
     // The third puddle freezes while the previously frozen second puddle thaws.
     FieldScheduler_AddCallback(CrossboneIsleSteppingStones_SpawnFrostParticle,
-                               0xc80);
+                               TASK_PRIORITY_MAP);
     WAIT(40);
     if (Script_GetFlag(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN +
                        1) != 0) {

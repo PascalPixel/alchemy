@@ -76,6 +76,7 @@
 #include "fixed_math.h"
 #include "flags.h"
 #include "songs.h"
+#include "heap.h"
 #include "script.h"
 
 // Map-section temp flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the

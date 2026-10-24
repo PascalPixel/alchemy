@@ -96,6 +96,7 @@
 #include "fixed_math.h"
 #include "macros.h"
 #include "songs.h"
+#include "heap.h"
 #include "audio_engine_symbols.h"
 
 #if TBS_PATCH_3
@@ -372,8 +373,8 @@ static void EventScript_JumpAcrossRoofGap(void) {
   struct ObjectEvent *leader;
 #endif
 
-  if (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing >= 0xa000 &&
-      ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing <= 0xe000) {
+  if (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing >= FACING_NORTHWEST &&
+      ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing <= FACING_NORTHEAST) {
 #if TBS_PATCH_1
     Field_TryJumpForward();
 #else
@@ -388,8 +389,10 @@ static void EventScript_JumpAcrossRoofGap(void) {
     x = 42;
     z = 85;
     MapGrid_CopyCellAttributes(41, 85, 1, 1, x, z);
-  } else if (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing >= 0x2000 &&
-             ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing <= 0x6000) {
+  } else if (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing >=
+                 FACING_SOUTHEAST &&
+             ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing <=
+                 FACING_SOUTHWEST) {
 #if TBS_PATCH_1
     Field_TryJumpForward();
 #else
@@ -437,7 +440,7 @@ static void EventScript_TalkToWeaponMerchant(void) {
   s32 leaderFacing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
 
   FieldScript_Start();
-  if (leaderFacing >= 0xa001 && leaderFacing <= 0xdfff) {
+  if (leaderFacing > FACING_NORTHWEST && leaderFacing < FACING_NORTHEAST) {
     Shop_Run(4, LOCALID_WEAPON_MERCHANT);
   } else {
     if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -459,7 +462,7 @@ static void EventScript_TalkToArmorMerchant(void) {
   s32 leaderFacing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
 
   FieldScript_Start();
-  if (leaderFacing >= 0xa001 && leaderFacing <= 0xdfff) {
+  if (leaderFacing > FACING_NORTHWEST && leaderFacing < FACING_NORTHEAST) {
     Shop_Run(5, LOCALID_ARMOR_MERCHANT);
   } else {
     if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -481,7 +484,7 @@ static void EventScript_TalkToInnkeeper(void) {
   s32 leaderFacing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
 
   FieldScript_Start();
-  if (leaderFacing >= 0xa001 && leaderFacing <= 0xdfff) {
+  if (leaderFacing > FACING_NORTHWEST && leaderFacing < FACING_NORTHEAST) {
     Inn_CheckIn(1, LOCALID_INNKEEPER);
   } else {
     if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -601,7 +604,7 @@ static void EventScript_TalkToItemMerchant(void) {
   s32 leaderFacing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
 
   FieldScript_Start();
-  if (leaderFacing >= 0xa001 && leaderFacing <= 0xdfff) {
+  if (leaderFacing > FACING_NORTHWEST && leaderFacing < FACING_NORTHEAST) {
     Shop_Run(6, LOCALID_ITEM_MERCHANT);
   } else if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     FieldScript_SetMessageId(MsgVaultDidJustArriveInTown);
@@ -778,7 +781,7 @@ static void EventScript_SuspectedThiefDodges(void) {
                                   PIXELS(7) / 4);
   switch (objectEvent->timer) {
   case 4:
-    if (facing > 0x2000 && facing < 0xa000) {
+    if (facing > FACING_SOUTHEAST && facing < FACING_NORTHWEST) {
       ObjectEvent_SetActionScript(
           LOCALID_SUSPECTED_THIEF,
           gVaultInteriors_SuspectAlongToSouthEastCorner);
@@ -792,7 +795,7 @@ static void EventScript_SuspectedThiefDodges(void) {
     break;
   case 0:
   case 2:
-    if (facing > 0x2000 && facing < 0xa000) {
+    if (facing > FACING_SOUTHEAST && facing < FACING_NORTHWEST) {
       VaultInteriors_ApplySecondSuspectRoute(objectEvent, routePair, routePair,
                                              1);
     } else {
@@ -802,7 +805,7 @@ static void EventScript_SuspectedThiefDodges(void) {
     break;
   case 1:
   case 3:
-    if (facing > 0x6000 && facing < 0xe000) {
+    if (facing > FACING_SOUTHWEST && facing < FACING_NORTHEAST) {
       VaultInteriors_ApplySecondSuspectRoute(objectEvent, routePair, routePair,
                                              1);
     } else {
@@ -3599,7 +3602,7 @@ static void VaultInteriors_StartObjectEventStops(void) {
   ObjectEvent_SetSpeed(LOCALID_SUSPECTED_THIEF, PIXELS(3) / 2, PIXELS(3) / 2);
   gVaultInteriors_StopTimer = 0;
   FieldScheduler_AddOrUpdateCallback(VaultInteriors_UpdateObjectEventStops,
-                                     0xc94);
+                                     TASK_PRIORITY_MAP + 20);
   // Flag 0x1ff holds nothing: no table, script or function sets or reads it,
   // and render probe flag-reads sees no read of it, so clearing it changes
   // nothing.

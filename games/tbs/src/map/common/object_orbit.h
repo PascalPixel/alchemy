@@ -48,11 +48,11 @@ void Map_FloatNut(s32 id) {
   objectEvent->priorityFlags &= 0xfe;
   objectEvent->visible = 1;
 
-  transfer = AllocHeapSlot(17, 0x608);
+  transfer = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   Icon_DrawItem(ITEM_NUT);
   transfer += 0x400;
   VramCache_Load(sprite->palette, 128, transfer);
-  FreeHeapSlot(17);
+  FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
 
   objectEvent->orbitCenterX = objectEvent->x;
   objectEvent->orbitAngle = zero;

@@ -1310,10 +1310,10 @@ static void Kalay_PrepareTown(void) {
     nut->mode = found;
     nut->y = PIXELS(10);
     nut->visible = 1;
-    heap = AllocHeapSlot(17, 0x608);
+    heap = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Icon_DrawItem(ITEM_NUT);
     VramCache_Load(sprite->palette, 128, heap + 0x400);
-    FreeHeapSlot(17);
+    FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
     nut->orbitAngle = found;
     nut->orbitCenterX = nut->x;
     nut->orbitCenterY = nut->y;
@@ -2071,7 +2071,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_WalkToAndWait(LOCALID_HAMMET, 284, 198);
   ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_WEST, 10);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMMET, ANIM_NOD);
-  ObjectEvent_FaceDirection(LOCALID_TUNNEL_GUARD, 0, 10);
+  ObjectEvent_FaceDirection(LOCALID_TUNNEL_GUARD, FACING_EAST, 10);
   ObjectMotion_SetAnimationAndWait(LOCALID_TUNNEL_GUARD, ANIM_NOD);
   ObjectEvent_SetSpeed(LOCALID_TUNNEL_GUARD, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_TUNNEL_GUARD, 268, 198);
@@ -2083,7 +2083,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   MapGrid_CopyCellAttributes(71, 60, 2, 1, 16, 11);
   FieldScript_WaitFrames(20);
   ObjectEvent_WalkToAndWait(LOCALID_TUNNEL_GUARD, 246, 198);
-  ObjectEvent_FaceDirection(LOCALID_TUNNEL_GUARD, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_TUNNEL_GUARD, FACING_EAST, 20);
   FieldCamera_GetScriptObject()->motionFlags = 0;
   FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
   FieldCamera_MoveTo(PIXELS(248), -1, PIXELS(170), 1);

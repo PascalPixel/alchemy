@@ -93,6 +93,7 @@
 #include "fixed_math.h"
 #include "flags.h"
 #include "songs.h"
+#include "heap.h"
 #include "script.h"
 
 /// A chest searched while facing the given way.

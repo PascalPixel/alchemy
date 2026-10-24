@@ -71,6 +71,7 @@
 #include "text/msg_ids.h"
 #include "object_event.h"
 #include "macros.h"
+#include "heap.h"
 
 static void Lunpa_WatchForUncloakedParty(void);
 

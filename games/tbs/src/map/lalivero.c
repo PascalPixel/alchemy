@@ -681,7 +681,7 @@ static void EventScript_IodemGivesBlackOrb(void) {
   ObjectEvent_Get(LOCALID_IODEM)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkByAndWait(LOCALID_IODEM, 0, -16);
   ObjectEvent_Get(LOCALID_IODEM)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
-  ObjectEvent_FaceDirection(LOCALID_IODEM, 0x4100, 0);
+  ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTH + 0x100, 0);
   FieldScript_WaitFrames(30);
   FieldScript_WaitFrames(10);
   ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);

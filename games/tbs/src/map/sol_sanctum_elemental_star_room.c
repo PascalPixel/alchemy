@@ -77,6 +77,7 @@
 #include "io_reg.h"
 #include "flags.h"
 #include "songs.h"
+#include "heap.h"
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
 
@@ -2215,10 +2216,10 @@ static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y,
   sprite->image.palette = 0;
   objectEvent->velocityY = PIXELS(5) / 2;
   objectEvent->gravity = PIXELS(1) / 4;
-  glyph = AllocHeapSlot(17, sizeof(*glyph));
+  glyph = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*glyph));
   Icon_DrawItem(item);
   VramCache_Load(sprite->slot, 128, glyph->tiles);
-  FreeHeapSlot(17);
+  FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
   Sound_PlaySong(MUS_TREASURE_FOUND);
   ItemDisplay_ShowPicture(objectEvent, 3);
   Inventory_Discard(member, slot);

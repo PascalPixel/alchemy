@@ -122,6 +122,7 @@
 #include "io_reg.h"
 #include "flags.h"
 #include "songs.h"
+#include "heap.h"
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
 #include "map_grid.h"
@@ -1656,10 +1657,10 @@ static void ImilFuchinFalls_PlaceDragonsEye(void) {
     sprite->image.palette = 0;
     objectEvent->motionFlags = clear;
     objectEvent->retainSpriteCache = 1;
-    glyph = AllocHeapSlot(17, sizeof(*glyph));
+    glyph = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*glyph));
     Icon_DrawItem(ITEM_DRAGONS_EYE);
     VramCache_Load(sprite->slot, 128, glyph->tiles);
-    FreeHeapSlot(17);
+    FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
     gImilFuchinFalls_DragonsEye = objectEvent;
   }
 }

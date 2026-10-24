@@ -96,6 +96,7 @@
 #include "action_script.h"
 #include "flags.h"
 #include "songs.h"
+#include "heap.h"
 #include "audio_engine_symbols.h"
 #include "macros.h"
 #include "save_block.h"
@@ -2600,7 +2601,8 @@ static void TolbiShipInteriors_SetUpCaptainsQuarters(void) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND)) {
     objectEvent = ObjectEvent_GetById(LOCALID_QUARTERS_KAJA);
     TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_QUARTERS_CREW, 0, 0);
-    TolbiShipInteriors_PlaceObjectEvent(LOCALID_QUARTERS_CAPTAIN, 456, 652, 0);
+    TolbiShipInteriors_PlaceObjectEvent(LOCALID_QUARTERS_CAPTAIN, 456, 652,
+                                        FACING_EAST);
     x = 0x1e0;
     TolbiShipInteriors_PlaceObjectEvent(LOCALID_QUARTERS_KAJA, x, 600,
                                         FACING_NORTHWEST + FACING_STEP);
@@ -2622,7 +2624,8 @@ static void TolbiShipInteriors_SetUpCaptainsQuarters(void) {
                                         FACING_NORTH + FACING_STEP);
     TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_QUARTERS_CREW, 0, 0);
   } else if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED)) {
-    TolbiShipInteriors_PlaceObjectEvent(LOCALID_QUARTERS_CAPTAIN, 456, 648, 0);
+    TolbiShipInteriors_PlaceObjectEvent(LOCALID_QUARTERS_CAPTAIN, 456, 648,
+                                        FACING_EAST);
     TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_QUARTERS_CREW, 0, 0);
   } else if (GameFlag_Get(FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL)) {
     heading = FACING_NORTHWEST + FACING_STEP;
@@ -2658,9 +2661,11 @@ static void TolbiShipInteriors_SetUpHold(void) {
     ObjectEvent_SetActionScript(LOCALID_SEA_HOLD_HEAD_GUIDE,
                                 gTolbiShipInteriors_LookAroundScript);
     TolbiShipInteriors_PlaceObjectEvent(LOCALID_SEA_HOLD_SWEATING_PASSENGER,
-                                        184, 480, 0xb000);
+                                        184, 480,
+                                        FACING_NORTHWEST + FACING_STEP);
     TolbiShipInteriors_PlaceObjectEvent(LOCALID_SEA_HOLD_STARED_AT_PASSENGER,
-                                        170, 488, 0xb000);
+                                        170, 488,
+                                        FACING_NORTHWEST + FACING_STEP);
     TolbiShipInteriors_PlaceObjectEvent(LOCALID_SEA_HOLD_WARRIOR, 136, 488,
                                         FACING_NORTH + FACING_STEP);
     TolbiShipInteriors_PlaceObjectEvent(LOCALID_SEA_HOLD_MUSCLE_ADMIRER, 120,
@@ -2698,9 +2703,9 @@ static void TolbiShipInteriors_SetUpRowingDeck(void) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
     TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_FIRST_OARSMEN, 4, 0);
     TolbiShipInteriors_PlaceObjectEvent(LOCALID_ROWING_CREWMAN, 412, 222,
-                                        12288);
+                                        FACING_SOUTHEAST + FACING_STEP);
     TolbiShipInteriors_PlaceObjectEvent(LOCALID_ROWING_DRUMMER, 458, 161,
-                                        32768);
+                                        FACING_WEST);
   } else {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
       ObjectEvent_SetPosition(LOCALID_ROWING_CREWMAN, PIXELS(472), PIXELS(152));
@@ -2858,7 +2863,7 @@ static void TolbiShipInteriors_AskForReplacementOarsmen(void) {
   ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTH, 20);
   // Let the full party respond to the request for replacement oarsmen.
   TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY_EAST_AND_WEST, 0, 60);
-  TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY, 0x4000, 20);
+  TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY, FACING_SOUTH, 20);
   TolbiShipInteriors_RunSceneCommand(SHIP_PLAY_PARTY_ANIMATION, 1, 20);
   ObjectEvent_FaceDirection(LOCALID_ROWING_KAJA, FACING_SOUTH + FACING_STEP,
                             20);
@@ -2880,7 +2885,7 @@ static void TolbiShipInteriors_AskForReplacementOarsmen(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_ROWING_FIRST_OARSMAN + 3, 3);
   TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY_EAST_AND_WEST, 0, 40);
   TolbiShipInteriors_RunSceneCommand(SHIP_PLAY_PARTY_ANIMATION, 1, 0);
-  TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY, 0x4000, 20);
+  TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY, FACING_SOUTH, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_ROWING_KAJA, 4);
   TolbiShipInteriors_Say(LOCALID_ROWING_KAJA);
   ObjectEvent_ShowEmote(LOCALID_ROWING_CREWMAN, EMOTE_IN_FRONT | EMOTE_WINCE,
@@ -2931,7 +2936,7 @@ static void TolbiShipInteriors_AskForReplacementOarsmen(void) {
   ObjectEvent_FaceDirection(LOCALID_ROWING_KAJA, FACING_EAST, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_ROWING_KAJA, 1);
   TolbiShipInteriors_Say(LOCALID_ROWING_KAJA);
-  TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY, 0x8000, 20);
+  TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY, FACING_WEST, 20);
   TolbiShipInteriors_RunSceneCommand(SHIP_PLAY_PARTY_ANIMATION, 1, 0);
   ObjectEvent_WalkToAndWait(LOCALID_ROWING_KAJA, 408, 134);
   ObjectEvent_WalkTo(LOCALID_ROWING_KAJA, 440, 134);
@@ -3285,10 +3290,10 @@ static struct ObjectEvent *TolbiShipInteriors_PlaceAnchorCharm(void) {
   sprite->count = set;
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
-  buffer = AllocHeapSlot(17, 0x608);
+  buffer = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   Icon_DrawItem(ITEM_ANCHOR_CHARM);
   VramCache_Load(sprite->slot, 128, buffer + 0x400);
-  FreeHeapSlot(17);
+  FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
   GameFlag_Set(FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN);
   gTolbiShipInteriors_AnchorObject = objectEvent;
   return objectEvent;
@@ -3651,17 +3656,18 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
     TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_OURANOS_AND_SEAN, 0, 0);
     break;
   case SHIP_SETUP_MONSTER_ENCOUNTER:
-    TolbiShipInteriors_PlaceObjectEvent(LOCALID_ROWING_CREWMAN, 416, 328, 0);
+    TolbiShipInteriors_PlaceObjectEvent(LOCALID_ROWING_CREWMAN, 416, 328,
+                                        FACING_EAST);
     TolbiShipInteriors_PlaceObjectEvent(LOCALID_ROWING_DRUMMER, 448, 352,
                                         FACING_NORTH + FACING_STEP);
     TolbiShipInteriors_PlaceObjectEvent(LOCALID_ROWING_FIRST_OARSMAN, 454, 248,
                                         FACING_SOUTHEAST + FACING_STEP);
-    TolbiShipInteriors_PlaceObjectEvent(arg, 408, 290, 0);
-    TolbiShipInteriors_PlaceObjectEvent(opt, 408, 342, 0);
+    TolbiShipInteriors_PlaceObjectEvent(arg, 408, 290, FACING_EAST);
+    TolbiShipInteriors_PlaceObjectEvent(opt, 408, 342, FACING_EAST);
     TolbiShipInteriors_PlaceObjectEvent(LOCALID_ROWING_FIRST_OARSMAN + 3, 420,
                                         356, FACING_NORTH + FACING_STEP);
     TolbiShipInteriors_PlaceObjectEvent(LOCALID_ROWING_FIRST_OARSMAN + 4, 408,
-                                        304, 0);
+                                        304, FACING_EAST);
     TolbiShipInteriors_PlaceObjectEvent(LOCALID_ROWING_FIRST_OARSMAN + 5, 418,
                                         378, FACING_NORTH + FACING_STEP);
     TolbiShipInteriors_PlaceObjectEvent(LOCALID_ROWING_FIRST_OARSMAN + 6, 440,
@@ -3859,7 +3865,7 @@ static void TolbiShipInteriors_ReportMonstersBelowdecks(void) {
   FieldMessage_ShowCentered(message, 1, 10);
   FieldScript_WaitFrames(10);
   TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY_EAST_AND_WEST, 0, 40);
-  TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY, 0x4000, 20);
+  TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY, FACING_SOUTH, 20);
   FieldCamera_SetSpeed(PIXELS(18) / 5, PIXELS(9) / 20);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(440), -1, PIXELS(320),
                                        0x10000014);
@@ -3886,10 +3892,11 @@ static void TolbiShipInteriors_ReportMonstersBelowdecks(void) {
 static void TolbiShipInteriors_ReactToMonsterAttack(void) {
   const s32 *action;
 
-  TolbiShipInteriors_PlaceObjectEvent(LOCALID_PARTY_LEADER, 444, 300, 0);
-  TolbiShipInteriors_PlaceObjectEvent(LOCALID_GARET, 458, 310, 0);
-  TolbiShipInteriors_PlaceObjectEvent(LOCALID_IVAN, 444, 330, 0);
-  TolbiShipInteriors_PlaceObjectEvent(LOCALID_MIA, 432, 310, 0);
+  TolbiShipInteriors_PlaceObjectEvent(LOCALID_PARTY_LEADER, 444, 300,
+                                      FACING_EAST);
+  TolbiShipInteriors_PlaceObjectEvent(LOCALID_GARET, 458, 310, FACING_EAST);
+  TolbiShipInteriors_PlaceObjectEvent(LOCALID_IVAN, 444, 330, FACING_EAST);
+  TolbiShipInteriors_PlaceObjectEvent(LOCALID_MIA, 432, 310, FACING_EAST);
   TolbiShipInteriors_PlaceObjectEvent(LOCALID_ROWING_KAJA, 440, 134,
                                       FACING_WEST);
   TolbiShipInteriors_PlaceObjectEvent(LOCALID_ROWING_FIRST_OARSMAN, 454, 248,
@@ -3906,7 +3913,7 @@ static void TolbiShipInteriors_ReactToMonsterAttack(void) {
   TolbiShipInteriors_RunSceneCommand(SHIP_PLAY_PARTY_ANIMATION, 1, 20);
   FieldScript_SetMessageId(MsgTolbiShipHeyAreYouOk);
   TolbiShipInteriors_Say(LOCALID_ROWING_KAJA);
-  TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY, 0xc000, 0);
+  TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY, FACING_NORTH, 0);
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(176), 1);
   ObjectEvent_SetSpeed(LOCALID_ROWING_KAJA, PIXELS(8) / 5, PIXELS(4) / 5);
@@ -3926,7 +3933,7 @@ static void TolbiShipInteriors_ReactToMonsterAttack(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_ROWING_KAJA, 1);
   TolbiShipInteriors_Say(LOCALID_ROWING_KAJA);
   TolbiShipInteriors_RunSceneCommand(SHIP_SHOW_PARTY_EMOTE, 2, 60);
-  TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY, 0xe000, 60);
+  TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY, FACING_NORTHEAST, 60);
   ObjectEvent_FaceDirection(LOCALID_ROWING_KAJA, FACING_EAST, 40);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_ROWING_KAJA, 1);
   Import_ObjectEventSetAnimation(LOCALID_ROWING_KAJA, 2);
@@ -3936,7 +3943,7 @@ static void TolbiShipInteriors_ReactToMonsterAttack(void) {
   TolbiShipInteriors_Turn(LOCALID_ROWING_KAJA, FACING_NORTH + FACING_STEP);
   ObjectMotion_SetVariantCallback(LOCALID_ROWING_KAJA, 2);
   Script_ShowMessageAndWait(LOCALID_ROWING_KAJA, 0, 20);
-  TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY, 0xc000, 20);
+  TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY, FACING_NORTH, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_ROWING_KAJA, 4);
   FieldScript_WaitFrames(40);
   Script_ShowMessageAndWait(LOCALID_ROWING_KAJA, 0, 80);
@@ -4205,11 +4212,13 @@ static void TolbiShipInteriors_ShakeWhileKrakenAboard(void) {
 static void TolbiShipInteriors_ShowCaptainsQuartersBeforeIsland(void) {
   FieldScript_Start();
   TolbiShipInteriors_RunSceneCommand(SHIP_SETUP_CAPTAINS_QUARTERS, 1, 0);
-  TolbiShipInteriors_PlaceObjectEvent(LOCALID_QUARTERS_KAJA, 468, 616, 32768);
+  TolbiShipInteriors_PlaceObjectEvent(LOCALID_QUARTERS_KAJA, 468, 616,
+                                      FACING_WEST);
   TolbiShipInteriors_RunSceneCommand(SHIP_OPEN_SCREEN, 1, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_QUARTERS_KAJA, 2);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(LOCALID_QUARTERS_CAPTAIN, 53248, 80);
+  ObjectEvent_FaceDirection(LOCALID_QUARTERS_CAPTAIN,
+                            FACING_NORTH + FACING_STEP, 80);
   ObjectEvent_FaceDirection(LOCALID_QUARTERS_CAPTAIN, FACING_EAST, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_QUARTERS_CAPTAIN, 3);
   FieldScript_WaitFrames(20);

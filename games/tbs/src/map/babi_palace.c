@@ -767,7 +767,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 184, 120);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
     Script_Wait(10);
-    FieldMotion_LaunchFromFocusedObject(LOCALID_GARET, 16, 0, 0x8000);
+    FieldMotion_LaunchFromFocusedObject(LOCALID_GARET, 16, 0, FACING_WEST);
     ObjectEvent_RefreshSelectorById(LOCALID_GARET);
     Script_Wait(10);
     Script_ShowMessage(LOCALID_GARET, 0);
@@ -781,7 +781,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Script_Wait(20);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
     Script_Wait(20);
-    FieldMotion_LaunchFromFocusedObject(LOCALID_IVAN, -16, 0, 0);
+    FieldMotion_LaunchFromFocusedObject(LOCALID_IVAN, -16, 0, FACING_EAST);
     ObjectEvent_RefreshSelectorById(LOCALID_IVAN);
     Script_Wait(10);
     Script_ShowMessage(LOCALID_IVAN, 0);
@@ -795,7 +795,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Script_Wait(20);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
     Script_Wait(20);
-    FieldMotion_LaunchFromFocusedObject(LOCALID_MIA, 16, 0, 0x8000);
+    FieldMotion_LaunchFromFocusedObject(LOCALID_MIA, 16, 0, FACING_WEST);
     ObjectEvent_RefreshSelectorById(LOCALID_MIA);
     Script_Wait(10);
     Script_ShowMessage(LOCALID_MIA, 0);
@@ -1445,9 +1445,9 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 208, 0x2f8);
   Script_Wait(10);
   FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(736), 1);
-  FieldMotion_LaunchFromFocusedObject(LOCALID_GARET, -16, 16, 0xc000);
-  FieldMotion_LaunchFromFocusedObject(LOCALID_MIA, 0, 24, 0xc000);
-  FieldMotion_LaunchFromFocusedObject(LOCALID_IVAN, 16, 16, 0xc000);
+  FieldMotion_LaunchFromFocusedObject(LOCALID_GARET, -16, 16, FACING_NORTH);
+  FieldMotion_LaunchFromFocusedObject(LOCALID_MIA, 0, 24, FACING_NORTH);
+  FieldMotion_LaunchFromFocusedObject(LOCALID_IVAN, 16, 16, FACING_NORTH);
   ObjectEvent_WaitForMove(LOCALID_GARET);
   Script_Wait(30);
   Script_Wait(10);

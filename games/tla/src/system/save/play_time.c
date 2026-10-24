@@ -9,9 +9,11 @@
 
 u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width);
 
+// XXX: what shows this clock; the overlays that call Func_08038400 would
+// settle it.
+
 /// Writes frames (60 a second) as "HHH:MM:SS:CC" into out and returns out.
 /// Reached only through the far call Func_08038400.
-/// XXX: what shows it; the overlays that call Func_08038400 would settle it.
 u8 *Func_080430c4(u32 frames, u8 *out) {
   u8 digits[16];
   u8 *digitsCursor;

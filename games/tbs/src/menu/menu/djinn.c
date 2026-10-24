@@ -113,8 +113,8 @@ s32 DjinnMenu_Run(void) {
   Resource_LoadPairedBlocksIfAvailable();
   ItemMenu_Initialize(0, 3, 0, 7);
   Menu_SetFirstObjectRowCoordinates(0);
-  Palette_LightenBankHighlight(14);
-  menu->helpWindow = Window_CreateFar(13, 0, 17, 5, 2);
+  Palette_LightenBankHighlight(HIGHLIGHT_PALETTE);
+  menu->helpWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
   menu->pairEntries[0] = 255;
   zero = 0;
   menu->selectedColumn[0] = zero;
@@ -505,13 +505,15 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
   Iwram_CopyWords(BG_CHAR_BLOCK(1) + DJINN_BACKDROP_FRAME_TILE * TILE_SIZE_4BPP,
                   gMenu_BackdropFrameTile, TILE_SIZE_4BPP);
   Dma_Set((const void *)Palette_GetBasicSpriteColors(),
-          (void *)&BG_PLTT_COLOR(5, 0), DMA_ENABLE << 16 | 16, REG_DMA3);
-  BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
-  Dma_Set((void *)&BG_PLTT_COLOR(15, 0), (void *)&BG_PLTT_COLOR(7, 0),
+          (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_ENABLE << 16 | 16, REG_DMA3);
+  BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
+      BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
+  Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0),
+          (void *)&BG_PLTT_COLOR(7, 0), DMA_ENABLE << 16 | 16, REG_DMA3);
   DjinnMenu_AdjustPaletteBank(8);
-  BG_PLTT_COLOR(7, 4) = BG_PLTT_COLOR(15, 4);
-  BG_PLTT_COLOR(6, 4) = BG_PLTT_COLOR(15, 4);
+  BG_PLTT_COLOR(7, 4) = BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
+  BG_PLTT_COLOR(6, 4) = BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
 #ifdef UBFIX
   DjinnMenu_DrawElementList(&backdrop->list);
 #else
@@ -644,7 +646,7 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
         // Colour 2 when not set; colour 4 over it when it is neither set nor
         // ready to set, that is recovering (or held by a summon).
         if ((entries[listIndex] & DJINN_ENTRY_IS_SET) == 0)
-          Text_SetColorFar(2);
+          Text_SetColorFar(TEXT_COLOR_RED);
         canChangeState = 0;
         if (Djinn_CanSetFar((entries[listIndex] & DJINN_ENTRY_MEMBER) >> 8,
                             (entries[listIndex] & DJINN_ENTRY_ELEMENT) >> 5,
@@ -654,7 +656,7 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
                            entries[listIndex] & DJINN_ENTRY_INDEX))
           canChangeState = 1;
         if (!canChangeState)
-          Text_SetColorFar(4);
+          Text_SetColorFar(TEXT_COLOR_YELLOW);
         Window_SetTilemapEntryFar(
             menu->listWindow,
             ((entries[listIndex] & DJINN_ENTRY_ELEMENT) >> 5) +
@@ -780,8 +782,8 @@ s32 DjinnMenu_ShowHelp(void) {
   Window_SetRectPalette(1, 1, 11, 3, 6);
   Window_SetInteriorRectPalette((void *)menu->listWindow, 0, 0, 28, 10, 6);
   list = Window_CreateFar(0, 9, 8, 10, 6);
-  helpWindow = Window_CreateFar(8, 12, 22, 7, 2);
-  statusWindow = Window_CreateFar(8, 9, 22, 3, 2);
+  helpWindow = Window_CreateFar(8, 12, 22, 7, WINDOW_FLAG_INSTANT);
+  statusWindow = Window_CreateFar(8, 9, 22, 3, WINDOW_FLAG_INSTANT);
   Window_MarkVisibleTextTilesFar();
   helpIndex = 0;
   listMessage = MsgDjinnInfoTopic;
@@ -794,8 +796,9 @@ s32 DjinnMenu_ShowHelp(void) {
     Text_DrawMessageFar(selection + MsgDjinnInfoTopic, statusWindow, 0, 0);
     printer = (struct TextPrinter *)Message_OpenDecodedFar(
         helpWindow, selection + MsgDjinnInfoText);
-    Window_SetInteriorPaletteBitRect(list, 0, previous, 6, 1, 15);
-    Window_SetInteriorPaletteBitRect(list, 0, selection, 6, 1, 14);
+    Window_SetInteriorPaletteBitRect(list, 0, previous, 6, 1, WINDOW_PALETTE);
+    Window_SetInteriorPaletteBitRect(list, 0, selection, 6, 1,
+                                     HIGHLIGHT_PALETTE);
     previous = selection;
     for (;;) {
       MenuCursor_Position(-12, (list->y + selection) * 8 + 8);
@@ -860,7 +863,7 @@ s32 DjinnMenu_ShowHelp(void) {
     WindowSprite_PrepareForRedrawFar(menu->statusWindow);
     ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 0;
   }
-  Task_Add(Menu_UpdateEntryObjectTransforms, 0xc80);
+  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PRIORITY_MAIN_LOOP);
   return result;
 }
 
@@ -968,7 +971,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     fromX = (u16)((u32)sourceCursor % (u32)10);
     fromY = (u16)((u32)sourceCursor / (u32)10);
     Window_SetInteriorPaletteBitRect(menu->listWindow, fromX * 7 + 1, fromY + 2,
-                                     DJINN_CURSOR_WIDTH, 1, 14);
+                                     DJINN_CURSOR_WIDTH, 1, HIGHLIGHT_PALETTE);
     Window_SetInteriorRectPalette(menu->listWindow, fromX * 7 + 1, 2,
                                   DJINN_CURSOR_WIDTH, 7, 6);
     for (n = 0; n < menu->memberCount; n++) {
@@ -1132,7 +1135,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (!(columnFlags[memberColumn] & DJINN_COLUMN_ON_HEADER))
         Window_SetInteriorPaletteBitRect(menu->listWindow, memberColumn * 7 + 1,
                                          djinnRow + 2, DJINN_CURSOR_WIDTH, 1,
-                                         14);
+                                         HIGHLIGHT_PALETTE);
       ((struct WindowWork *)gWindowWork[0])->dirty = 1;
     }
     if (columnFlags[memberColumn] & DJINN_COLUMN_ON_HEADER)
@@ -1469,7 +1472,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         result = DJINN_RESULT_HELP;
         Window_SetInteriorPaletteBitRect(menu->listWindow, memberColumn * 7 + 1,
                                          djinnRow + 2, DJINN_CURSOR_WIDTH, 1,
-                                         15);
+                                         WINDOW_PALETTE);
         Sound_PlaySongFar(SE_MENU_CONFIRM);
         break;
       }
@@ -1479,7 +1482,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (columnFlags[memberColumn] & DJINN_COLUMN_EMPTY)
         continue;
       Window_SetInteriorPaletteBitRect(menu->listWindow, memberColumn * 7 + 1,
-                                       djinnRow + 2, DJINN_CURSOR_WIDTH, 1, 15);
+                                       djinnRow + 2, DJINN_CURSOR_WIDTH, 1,
+                                       WINDOW_PALETTE);
       if (columnFlags[memberColumn] & DJINN_COLUMN_EMPTY)
         continue;
       if (columnFlags[memberColumn] & DJINN_COLUMN_ON_HEADER) {
@@ -1505,7 +1509,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (columnFlags[memberColumn] & DJINN_COLUMN_EMPTY)
         continue;
       Window_SetInteriorPaletteBitRect(menu->listWindow, memberColumn * 7 + 1,
-                                       djinnRow + 2, DJINN_CURSOR_WIDTH, 1, 15);
+                                       djinnRow + 2, DJINN_CURSOR_WIDTH, 1,
+                                       WINDOW_PALETTE);
       djinnRow++;
       count = backdrop->list.counts[memberColumn];
       if (count == 0)
@@ -1528,7 +1533,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (!(columnFlags[memberColumn] & DJINN_COLUMN_EMPTY))
         Window_SetInteriorPaletteBitRect(menu->listWindow, memberColumn * 7 + 1,
                                          djinnRow + 2, DJINN_CURSOR_WIDTH, 1,
-                                         15);
+                                         WINDOW_PALETTE);
       memberColumn--;
       memberColumn = Menu_WrapIndex(memberColumn, menu->memberCount);
       if (mode == DJINN_SELECT_DJINNI) {
@@ -1552,7 +1557,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (!(columnFlags[memberColumn] & DJINN_COLUMN_EMPTY))
         Window_SetInteriorPaletteBitRect(menu->listWindow, memberColumn * 7 + 1,
                                          djinnRow + 2, DJINN_CURSOR_WIDTH, 1,
-                                         15);
+                                         WINDOW_PALETTE);
       memberColumn++;
       memberColumn = Menu_WrapIndex(memberColumn, menu->memberCount);
       if (mode == DJINN_SELECT_DJINNI) {
@@ -1878,9 +1883,9 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
       Icon_CreateWithLoadedResource(window, x * 8, (y + line * 2) * 8 + 4,
                                     actions[first] & PSYNERGY_ABILITY_MASK);
       if (actions[first] & 0x8000)
-        Text_SetColorFar(4);
+        Text_SetColorFar(TEXT_COLOR_YELLOW);
       else if (actions[first] & 0x4000)
-        Text_SetColorFar(2);
+        Text_SetColorFar(TEXT_COLOR_RED);
       else
         Text_SetColorFar(TEXT_COLOR_NORMAL);
       Text_DrawMessageAsTilesFar(MsgAbilityName +
@@ -1898,13 +1903,13 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
 
       lines = 0;
       if (gained) {
-        Text_SetColorFar(4);
+        Text_SetColorFar(TEXT_COLOR_YELLOW);
         Text_DrawMessageAsTilesFar(MsgPsynergyGained, window, x * 8,
                                    y * 8 + 88);
         lines = 1;
       }
       if (lost) {
-        Text_SetColorFar(2);
+        Text_SetColorFar(TEXT_COLOR_RED);
         Text_DrawMessageAsTilesFar(MsgPsynergyLost, window, x * 8,
                                    (y + lines) * 8 + 88);
         lines++;

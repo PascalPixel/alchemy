@@ -127,7 +127,7 @@ void FieldEffect_StartFadeOverlay(void *object) {
   Dma_Fill32Cell(fill, 0x11111111, tiles, 0x200);
   VramCache_Load(94, 0x200, tiles);
   FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
-  Task_Add(FadeOverlay_DrawMarks, 0xc80);
+  Task_Add(FadeOverlay_DrawMarks, TASK_PRIORITY_MAIN_LOOP);
   Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
                  BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
              &REG_BLDCNT);

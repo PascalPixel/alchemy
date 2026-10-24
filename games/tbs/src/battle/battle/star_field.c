@@ -290,8 +290,8 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   Io_Write16(Q_8_8(1), &REG_BG2PD);
   BattleAnim_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
   BattleAnim_BuildBlitterFar(HEAP_SLOT_RAM_CODE_2, 7, 7, 3, 2);
-  Task_Add(STAR_FIELD_UPDATE_CALLBACK, 0xc80);
-  return Task_Add(STAR_FIELD_UPLOAD_CALLBACK, 0xc80);
+  Task_Add(STAR_FIELD_UPDATE_CALLBACK, TASK_PRIORITY_MAIN_LOOP);
+  return Task_Add(STAR_FIELD_UPLOAD_CALLBACK, TASK_PRIORITY_MAIN_LOOP);
 }
 
 /// Ends a star field: clears BG2's tiles in character block 1, frees its
@@ -395,7 +395,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   IoWriteQueue_Store16((u32)&REG_BLDCNT,
                        BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   WaitFrames(1);
-  Io_Write16(WIN_RANGE(0, 240), &REG_WIN0H);
+  Io_Write16(WIN_RANGE(0, DISPLAY_WIDTH), &REG_WIN0H);
   Io_Write16(WIN_RANGE(16, 136), &REG_WIN0V);
   Io_Write16(WININ_WIN0_ALL, &REG_WININ);
   Io_Write16(WINOUT_WIN01_BG0 | WINOUT_WIN01_OBJ, &REG_WINOUT);

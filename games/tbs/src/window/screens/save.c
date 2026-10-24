@@ -264,7 +264,7 @@ s16 Save_WriteCurrentFile(void) {
   if (file != -1) {
     error = Save_InitializeWork();
     if (error != 0) {
-      FieldMessage_Show(MsgNoBackupMemory, 1);
+      FieldMessage_Show(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
       result = SAVE_ERROR_NO_MEMORY;
     } else {
       Save_BuildFileSummary();
@@ -277,7 +277,7 @@ s16 Save_WriteCurrentFile(void) {
         half = (char *)half + SAVE_RECORD_BYTES;
         error |= Save_WriteRecord(current + SAVE_FILE_COUNT, half);
         if (error != 0) {
-          FieldMessage_Show(MsgSaveFailed, 1);
+          FieldMessage_Show(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
           result = SAVE_ERROR_WRITE;
         }
       }
@@ -296,7 +296,7 @@ s32 Save_WriteFile(s32 file) {
 
   error = Save_InitializeWork();
   if (error != 0) {
-    FieldMessage_Show(MsgNoBackupMemory, 1);
+    FieldMessage_Show(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = SAVE_ERROR_NO_MEMORY;
   } else {
     void *half = &gSaveBuffer;
@@ -305,7 +305,7 @@ s32 Save_WriteFile(s32 file) {
     half = (char *)half + SAVE_RECORD_BYTES;
     error |= Save_WriteRecord(file + SAVE_FILE_COUNT, half);
     if (error != 0) {
-      FieldMessage_Show(MsgSaveFailed, 1);
+      FieldMessage_Show(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
       result = SAVE_ERROR_WRITE;
     }
   }
@@ -333,14 +333,14 @@ s32 Save_ProcessSelectedFile(void) {
     return -1;
   error = Save_InitializeWork();
   if (error != 0) {
-    FieldMessage_Show(MsgNoBackupMemory, 1);
+    FieldMessage_Show(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = SAVE_ERROR_NO_MEMORY;
   } else {
     error = Save_ReadRecord(gSaveSlot, record);
     // A failed read is reported, but the record is still written below from
     // whatever the buffer holds.
     if (error != 0) {
-      FieldMessage_Show(MsgSaveFailed, 1);
+      FieldMessage_Show(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
       result = SAVE_ERROR_READ;
     }
     // The stamp's place in the record is its place in the save buffer.
@@ -349,7 +349,7 @@ s32 Save_ProcessSelectedFile(void) {
     Iwram_CopyWords(stamp, gBattleArenaRecord, 16);
     error = Save_WriteRecord(gSaveSlot, record);
     if (error != 0) {
-      FieldMessage_Show(MsgSaveFailed, 1);
+      FieldMessage_Show(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
       result = SAVE_ERROR_WRITE;
     }
   }
@@ -381,7 +381,7 @@ UNUSED s32 Save_ConfirmAndProcessSelectedFile(void) {
     Sound_PlaySongFar(MUS_SAVED);
     result = Save_ProcessSelectedFile();
     if (result >= 0) {
-      FieldMessage_Show(MsgGameSaved, 1);
+      FieldMessage_Show(MsgGameSaved, FIELD_MESSAGE_ZOOM);
     }
   }
   return result;
@@ -400,7 +400,7 @@ s32 Save_CopyFile(void) {
   result = 0;
   error = Save_InitializeWork();
   if (error != 0) {
-    FieldMessage_Show(MsgNoBackupMemory, 1);
+    FieldMessage_Show(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = SAVE_ERROR_NO_MEMORY;
   } else {
     Save_LoadFileSummaries();
@@ -415,21 +415,21 @@ s32 Save_CopyFile(void) {
       upper = (u8 *)lower + SAVE_RECORD_BYTES;
       error |= Save_ReadRecord(file + SAVE_FILE_COUNT, upper);
       if (error != 0) {
-        FieldMessage_Show(MsgLoadFailed, 1);
+        FieldMessage_Show(MsgLoadFailed, FIELD_MESSAGE_ZOOM);
         result = SAVE_ERROR_READ;
       } else {
         file = Save_FindFreeFile();
         if (file == SAVE_NO_FREE_FILE) {
-          FieldMessage_Show(MsgEraseFailed, 1);
+          FieldMessage_Show(MsgEraseFailed, FIELD_MESSAGE_ZOOM);
           result = SAVE_ERROR_NO_FILE;
         } else {
           error = Save_WriteRecord(file, lower);
           error |= Save_WriteRecord(file + SAVE_FILE_COUNT, upper);
           if (error != 0) {
-            FieldMessage_Show(MsgEraseFailed, 1);
+            FieldMessage_Show(MsgEraseFailed, FIELD_MESSAGE_ZOOM);
             result = SAVE_ERROR_WRITE;
           } else {
-            FieldMessage_Show(MsgFileCopied, 1);
+            FieldMessage_Show(MsgFileCopied, FIELD_MESSAGE_ZOOM);
           }
         }
       }
@@ -451,7 +451,7 @@ s32 Save_EraseSelectedFile(void) {
 
   error = Save_InitializeWork();
   if (error != 0) {
-    FieldMessage_Show(MsgNoBackupMemory, 1);
+    FieldMessage_Show(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = SAVE_ERROR_NO_MEMORY;
   } else {
     Save_LoadFileSummaries();
@@ -470,10 +470,10 @@ s32 Save_EraseSelectedFile(void) {
         error = Save_DeleteRecord(file);
         error |= Save_DeleteRecord(file + SAVE_FILE_COUNT);
         if (error != 0) {
-          FieldMessage_Show(MsgEraseFailed, 1);
+          FieldMessage_Show(MsgEraseFailed, FIELD_MESSAGE_ZOOM);
           result = SAVE_ERROR_ERASE;
         } else {
-          FieldMessage_Show(MsgFileErased, 1);
+          FieldMessage_Show(MsgFileErased, FIELD_MESSAGE_ZOOM);
         }
       }
     }
@@ -499,7 +499,7 @@ void FileMenu_UpdatePulse(void) {
   s32 i;
 
   tick = (s32 *)&gVBlankCount;
-  palette = &BG_PLTT_COLOR(14, 8);
+  palette = &BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 8);
   i = 0;
   do {
 #ifdef UBFIX
@@ -545,7 +545,9 @@ void FileMenu_UpdatePulse(void) {
 #if TBS_PATCH_1
 
 /// Starts the palette glow (FileMenu_UpdatePulse) as a task.
-void FileMenu_StartPulse(void) { Task_Add(FileMenu_UpdatePulse, 0xC80); }
+void FileMenu_StartPulse(void) {
+  Task_Add(FileMenu_UpdatePulse, TASK_PRIORITY_MAIN_LOOP);
+}
 
 void FileMenu_StopPulse(void) { Task_Remove(FileMenu_UpdatePulse); }
 
@@ -673,7 +675,8 @@ void FileMenu_PlacePartySprites(void) {
       position.height = 500 << 16;
       position.y = (menu->partyMemberY[index] << 16) + (500 << 16);
       position.groundHeight = 0;
-      Object_ApplyProjectedPlacementFar(sprite, &position, &scale, 0x4000);
+      Object_ApplyProjectedPlacementFar(sprite, &position, &scale,
+                                        FACING_SOUTH);
     }
     index += 1;
     if (index > 3) {
@@ -745,7 +748,8 @@ void FileMenu_PlaceDjinnSprites(void) {
       position.height = height;
       position.y = (menu->positionsY[index] << 16) + height;
       position.groundHeight = 0;
-      Object_ApplyProjectedPlacementFar(sprite, &position, &scale, 0x4000);
+      Object_ApplyProjectedPlacementFar(sprite, &position, &scale,
+                                        FACING_SOUTH);
     }
     index++;
   } while (index <= 3);
@@ -956,7 +960,7 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
   // The file list, and the mode's sprite above it.
   Dma_Fill32(0, spriteWork, sizeof(*spriteWork));
   FileMenu_StartPulse();
-  fileList = Window_Create(1, 2, 28, 7, 2);
+  fileList = Window_Create(1, 2, 28, 7, WINDOW_FLAG_INSTANT);
   summary = save->summary;
   y = 0;
   for (i = 0; i < SAVE_FILE_COUNT; i++, y += 16, summary++) {
@@ -1034,7 +1038,7 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
 
   // The file list, and the mode's sprite above it.
   Dma_Fill32(0, spriteWork, sizeof(*spriteWork));
-  fileList = Window_Create(1, 2, 28, 7, 2);
+  fileList = Window_Create(1, 2, 28, 7, WINDOW_FLAG_INSTANT);
 
   for (i = 0, summary = save->summary; i < SAVE_FILE_COUNT; i++, summary++) {
     if (save->summary[i].level == 0) {
@@ -1080,11 +1084,11 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
         WindowColor_Apply(save->summary[selectedFile].windowHue,
                           save->summary[selectedFile].windowBrightness);
         if (summaryWindow == NULL)
-          summaryWindow = Window_Create(1, 10, 14, 9, 2);
+          summaryWindow = Window_Create(1, 10, 14, 9, WINDOW_FLAG_INSTANT);
         FileMenu_DrawSummary(summaryWindow, &save->summary[selectedFile]);
         WaitFrames(1);
         if (partyWindow == NULL)
-          partyWindow = Window_Create(16, 10, 13, 3, 2);
+          partyWindow = Window_Create(16, 10, 13, 3, WINDOW_FLAG_INSTANT);
         FileMenu_HidePartySprites();
         FileMenu_ShowPartySprites(partyWindow, 0, 0,
                                   &save->summary[selectedFile]);
@@ -1095,7 +1099,7 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
                 (s8)save->summary[selectedFile].djinn[3] !=
             0) {
           if (djinnWindow == NULL)
-            djinnWindow = Window_Create(16, 14, 13, 5, 2);
+            djinnWindow = Window_Create(16, 14, 13, 5, WINDOW_FLAG_INSTANT);
           FileMenu_DrawDjinnCounts(djinnWindow, &save->summary[selectedFile]);
           FileMenu_HideDjinnSprites();
           FileMenu_ShowDjinnSprites(djinnWindow, 0, 0);
@@ -1204,7 +1208,7 @@ s32 Save_ToChosenFile(void) {
   result = 0;
   error = Save_InitializeWork();
   if (error != 0) {
-    FieldMessage_Show(MsgNoBackupMemory, 1);
+    FieldMessage_Show(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = SAVE_ERROR_NO_MEMORY;
   } else {
     Save_LoadFileSummaries();
@@ -1214,7 +1218,9 @@ s32 Save_ToChosenFile(void) {
       result = file;
     } else {
       if (work->summary[file].level != 0) {
-        FieldMessage_Show(MsgOverwriteConfirm, 13);
+        FieldMessage_Show(MsgOverwriteConfirm, FIELD_MESSAGE_ZOOM |
+                                                   FIELD_MESSAGE_KEEP_OPEN |
+                                                   FIELD_MESSAGE_LOWER);
         while (TextPrinter_AllFinished() == 0) {
           WaitFrames(1);
         }
@@ -1226,7 +1232,9 @@ s32 Save_ToChosenFile(void) {
       }
       gSaveSlot = file;
       Sound_PlaySongFar(MUS_SAVED);
-      FieldMessage_Show(MsgSaving, 13);
+      FieldMessage_Show(MsgSaving, FIELD_MESSAGE_ZOOM |
+                                       FIELD_MESSAGE_KEEP_OPEN |
+                                       FIELD_MESSAGE_LOWER);
       while (TextPrinter_AllFinished() == 0) {
         WaitFrames(1);
       }
@@ -1237,10 +1245,11 @@ s32 Save_ToChosenFile(void) {
                                 gSaveBuffer + SAVE_RECORD_BYTES);
       TextPrinter_CloseFinishedWindows();
       if (error != 0) {
-        FieldMessage_Show(MsgSaveFailed, 1);
+        FieldMessage_Show(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
         result = SAVE_ERROR_WRITE;
       } else {
-        FieldMessage_Show(MsgGameSaved, 9);
+        FieldMessage_Show(MsgGameSaved,
+                          FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
       }
     }
   }
@@ -1259,7 +1268,7 @@ s32 Save_LoadRecordIntoWork(s32 mode) {
   s32 error = Save_InitializeWork();
 
   if (error != 0) {
-    FieldMessage_Show(MsgNoBackupMemory, 1);
+    FieldMessage_Show(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = SAVE_ERROR_NO_MEMORY;
   } else {
     s32 file;
@@ -1275,7 +1284,7 @@ s32 Save_LoadRecordIntoWork(s32 mode) {
       half = (char *)half + SAVE_RECORD_BYTES;
       error |= Save_ReadRecord(file + SAVE_FILE_COUNT, half);
       if (error != 0) {
-        FieldMessage_Show(MsgLoadFailed, 1);
+        FieldMessage_Show(MsgLoadFailed, FIELD_MESSAGE_ZOOM);
         result = SAVE_ERROR_READ;
       } else {
         gPlayTimeFrames = gSaveBlock.playTime;

@@ -41,9 +41,9 @@ struct WindowSprite *MenuTitle_Create(s32 picture, struct Window *window, s32 x,
   // 0x4000 is the wide shape of attribute 0, which with size 2 is 32x16, 8
   // tiles. Neither sprite is checked for NULL.
   MenuTitle_Load(picture, slot);
-  first = WindowSprite_Create(slot, 0x80004000, window, x, y);
+  first = WindowSprite_Create(slot, OUTPUT_SIZE_32X16, window, x, y);
   first->sentinel = 0xFD;
-  second = WindowSprite_Create(slot, 0x80004000, window, x + 32, y);
+  second = WindowSprite_Create(slot, OUTPUT_SIZE_32X16, window, x + 32, y);
   second->sentinel = 0xFD;
   // The right half's tiles, after the left half's 8.
   second->oam.index += 8;
@@ -163,7 +163,7 @@ s32 Menu_BuildLocalizedPatternTiles(void) {
           patternIndex * RANGE_PATTERN_PAIR_WORDS;
       s32 row;
 
-      Iwram_FillWords(tile, 64, 0x44444444);
+      Iwram_FillWords(tile, 64, TEXT_CANVAS_BACKGROUND_WORD);
       for (row = 1; row <= 7; row++) {
         s32 sourcePattern = patternIndex;
 
@@ -559,5 +559,5 @@ UNUSED void Graphics_InstallBg1VCountHandler(void) {
   do {
     address = (u32)CommandRow_PutBg1InFront;
   } while (0);
-  Irq_SetHandler(2, 136, (InterruptHandler)address);
+  Irq_SetHandler(IRQ_VCOUNT, 136, (InterruptHandler)address);
 }

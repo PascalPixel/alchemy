@@ -31,7 +31,7 @@ static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
     return;
   }
 #endif
-  MessageArgument_PushFar(item, 2);
+  MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
   FieldMessage_ShowFar(MsgColossoIsaacGotItem, flags);
 }
 
@@ -110,7 +110,7 @@ void FieldScript_Start(void) {
   runtime->unusedAfterMessage = 0xFFFF;
   runtime->unusedBeforeCamera[0] = -1;
   runtime->unusedBeforeCamera[1] = -1;
-  Task_Add(FieldScript_UpdateDebugSkip, 0xC80);
+  Task_Add(FieldScript_UpdateDebugSkip, TASK_PRIORITY_MAIN_LOOP);
   // XXX (no evidence): what flag 0x132 marks; it is cleared at every script,
   // and no code or table in the game sets or tests it.
   GameFlag_ClearFar(0x132);
@@ -260,10 +260,10 @@ s32 Party_CheckItemLimit(s32 item) {
     heldQuantity += Inventory_CountItemFar(gSaveBlock.party[partyIndex], item);
 
   if (heldQuantity >= partyCount * 30) {
-    MessageArgument_PushFar(item, 2);
-    FieldMessage_ShowFar(MsgCannotCarryMore, 1);
-    MessageArgument_PushFar(item, 2);
-    FieldMessage_ShowFar(MsgCannotCarryMore + 1, 1);
+    MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+    FieldMessage_ShowFar(MsgCannotCarryMore, FIELD_MESSAGE_ZOOM);
+    MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+    FieldMessage_ShowFar(MsgCannotCarryMore + 1, FIELD_MESSAGE_ZOOM);
     return -1;
   }
   return 0;
@@ -296,29 +296,30 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   if (owner == -1) {
     // Every bag is full: "But you can't carry any more items."
     ItemGift_ShowGotItem(item, 1);
-    FieldMessage_ShowFar(MsgCannotCarryAnyMore, 1);
+    FieldMessage_ShowFar(MsgCannotCarryAnyMore, FIELD_MESSAGE_ZOOM);
   retry:
-    FieldMessage_ShowFar(MsgWhatWillYouDrop, 1);
+    FieldMessage_ShowFar(MsgWhatWillYouDrop, FIELD_MESSAGE_ZOOM);
     result = ItemPicker_RunFar(&member, &slot);
     if (result == -1) {
       // Cancelled: drop the new item instead, unless it is indispensable
       // ("That <item>'s valuable! You must get it!").
       if (Item_GetDirectFar(item)->flags & ITEM_INDISPENSABLE) {
-        MessageArgument_PushFar(item, 2);
-        FieldMessage_ShowFar(MsgWhatWillYouDrop + 4, 1);
+        MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+        FieldMessage_ShowFar(MsgWhatWillYouDrop + 4, FIELD_MESSAGE_ZOOM);
         goto retry;
       }
       // "Drop the <item>?"
-      MessageArgument_PushFar(item, 2);
-      FieldMessage_ShowFar(MsgWhatWillYouDrop + 1, 5);
+      MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+      FieldMessage_ShowFar(MsgWhatWillYouDrop + 1,
+                           FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN);
       result = FieldYesNo_Ask(1);
       TextPrinter_CloseFinishedWindowsFar();
       if (result != 0)
         goto retry;
       // "Isaac drops the <item>."
       Item_AdjustCounterFar(item, 1);
-      MessageArgument_PushFar(item, 2);
-      FieldMessage_ShowFar(MsgWhatWillYouDrop + 2, 1);
+      MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+      FieldMessage_ShowFar(MsgWhatWillYouDrop + 2, FIELD_MESSAGE_ZOOM);
       work->message = savedMessage;
       return owner;
     } else {
@@ -338,9 +339,9 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       // Editions at TBS_PATCH_1 alone skip the check.
 #if !(TBS_PATCH_1 && !TBS_PATCH_2)
       if (Inventory_CountItemFar(member, item) > 29) {
-        MessageArgument_PushFar(member, 1);
-        MessageArgument_PushFar(item, 2);
-        FieldMessage_ShowFar(MsgWhatWillYouDrop + 7, 1);
+        MessageArgument_PushFar(member, MESSAGE_ARGUMENT_ACTOR);
+        MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+        FieldMessage_ShowFar(MsgWhatWillYouDrop + 7, FIELD_MESSAGE_ZOOM);
         goto retry;
       }
 #endif
@@ -351,9 +352,11 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       if (owner == gSaveBlock.leaderLocalId) {
         ItemGift_ShowGotItem(item, 3);
       } else {
-        MessageArgument_PushFar(item, 2);
-        MessageArgument_PushFar(owner, 1);
-        FieldMessage_ShowFar(MsgGaveItemToMember, 3);
+        MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+        MessageArgument_PushFar(owner, MESSAGE_ARGUMENT_ACTOR);
+        FieldMessage_ShowFar(MsgGaveItemToMember,
+                             FIELD_MESSAGE_ZOOM |
+                                 FIELD_MESSAGE_WAITING_FOR_SOUND);
       }
       work->message = savedMessage;
       return owner;
@@ -364,8 +367,8 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
     Sound_PlaySongFar(MUS_TREASURE_FOUND);
     ItemGift_ShowGotItem(item, 3);
     if (owner != gSaveBlock.leaderLocalId) {
-      MessageArgument_PushFar(item, 2);
-      MessageArgument_PushFar(owner, 1);
+      MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+      MessageArgument_PushFar(owner, MESSAGE_ARGUMENT_ACTOR);
       FieldMessage_ShowFar(GIFT_RECEIVED_MESSAGE, GIFT_RECEIVED_MESSAGE_MODE);
     }
     work->message = savedMessage;
@@ -478,9 +481,10 @@ void Party_LearnAbility(s32 unit, s32 ability) {
   // Declared without parameters: unit and ability pass through in r0 and r1.
   Unit_LearnPsynergyFar();
   Sound_PlaySongFar(MUS_TREASURE_FOUND);
-  MessageArgument_PushFar(unit, 1);
-  MessageArgument_PushFar(ability, 4);
-  FieldMessage_ShowFar(MsgAbilityLearned, 3);
+  MessageArgument_PushFar(unit, MESSAGE_ARGUMENT_ACTOR);
+  MessageArgument_PushFar(ability, MESSAGE_ARGUMENT_ABILITY);
+  FieldMessage_ShowFar(MsgAbilityLearned,
+                       FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_WAITING_FOR_SOUND);
 }
 
 /// The script command "open screen": starts the script's screen transition and
@@ -510,11 +514,12 @@ void FieldScript_WaitTransitionFrames(void) {
 }
 
 /// Makes the script leave for the given warp destination of the given map:
-/// raises the warp request 999 and writes gSaveBlock.mapId and warpDest. Called
-/// by the title, the main menu, the Battle Arena, the debug battle command
-/// and five map scripts (the Lemurian ship and the world map among them).
+/// raises the warp request WARP_NONE and writes gSaveBlock.mapId and warpDest.
+/// Called by the title, the main menu, the Battle Arena, the debug battle
+/// command and five map scripts (the Lemurian ship and the world map among
+/// them).
 void FieldScript_SetDestination(s32 mapId, s32 warpDest) {
-  gFieldWork->warp = 999;
+  gFieldWork->warp = WARP_NONE;
   gSaveBlock.mapId = mapId;
   gSaveBlock.warpDest = warpDest;
 }
@@ -524,7 +529,7 @@ void FieldScript_SetDestination(s32 mapId, s32 warpDest) {
 /// far-call table; nothing in ☀️ names it.
 void FieldScript_SetSavedDestination(u16 mapId, u16 warpDest) {
   struct FieldWork *state = gFieldWork;
-  state->warp = 999;
+  state->warp = WARP_NONE;
   gSaveBlock.savedMap = mapId;
   gSaveBlock.savedWarpDest = warpDest;
 }

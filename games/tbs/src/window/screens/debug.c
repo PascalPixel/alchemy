@@ -5,13 +5,14 @@
 
 #include "../screens_internal.h"
 
-/// Schedules the debug map and warp destination selector; 0xc80 is a task
-/// priority, not a number of frames to wait. Nothing in the game calls it.
+/// Schedules the debug map and warp destination selector;
+/// TASK_PRIORITY_MAIN_LOOP is a task priority, not a number of frames to wait.
+/// Nothing in the game calls it.
 UNUSED void DebugMapSelect_Schedule(void) {
 #ifdef UBFIX
-  Task_Add(DebugMapSelect_Run, 0xC80);
+  Task_Add(DebugMapSelect_Run, TASK_PRIORITY_MAIN_LOOP);
 #else
-  Task_Add((TaskFunc)DebugMapSelect_Run, 0xC80);
+  Task_Add((TaskFunc)DebugMapSelect_Run, TASK_PRIORITY_MAIN_LOOP);
 #endif
 }
 
@@ -57,7 +58,7 @@ s16 DebugMapSelect_Run(void) {
   selectedField = 0;
   mapId = gSaveBlock.defaultMap;
   warpDest = gSaveBlock.defaultWarpDest;
-  window = Window_Create(0, 7, 30, 5, 2);
+  window = Window_Create(0, 7, 30, 5, WINDOW_FLAG_INSTANT);
   DebugMapSelect_DrawRow(window, mapId, &warpDest);
   MenuArrow_Create(&cursor, &cursorSlot);
 
@@ -180,7 +181,7 @@ s32 DebugFlagEditor_Run(void) {
   window = 0;
   cursor[0] = 0;
   cursor[1] = 0;
-  window = Window_Create(1, 0, 28, 20, 2);
+  window = Window_Create(1, 0, 28, 20, WINDOW_FLAG_INSTANT);
   DebugFlagEditor_DrawTable(window, page);
   MenuArrow_Create(&cursorSprite, &cursorSlot);
   for (;;) {
@@ -336,7 +337,7 @@ s32 PauseMenu_Run(void) {
       return PauseMenu_Run();
     }
   } else if (result == PAUSE_MENU_SLEEP) {
-    FieldMessage_Show(MsgSleepMode, 1);
+    FieldMessage_Show(MsgSleepMode, FIELD_MESSAGE_ZOOM);
     gSleepRequested = result;
   } else if (result == PAUSE_MENU_CHANGE_SETTINGS) {
     if (OptionMenu_Run() == -1) {
@@ -398,7 +399,7 @@ s32 DebugBrowser_Icons(void) {
       page = (page + 8) % 8;
       mode = (mode + 3) % 3;
       Window_Close(window, 2);
-      window = Window_Create(10, 0, 18, 12, 2);
+      window = Window_Create(10, 0, 18, 12, WINDOW_FLAG_INSTANT);
       if (mode == 0)
         Text_DrawStringInWindow(gDebugMenu_ItemTitle, window, 0, 0);
       else if (mode == 1)
@@ -467,7 +468,7 @@ s32 DebugBrowser_Portraits(void) {
   work = WINDOW_WORK;
   redraw = 1;
   portrait = Portrait_OpenWindow(0, 0, 10, 5);
-  window = Window_Create(10, 10, 14, 3, 2);
+  window = Window_Create(10, 10, 14, 3, WINDOW_FLAG_INSTANT);
   index = 0;
   for (i = 0; gPortrait_CharacterMap[i * 2] != -1; i++) {
   }

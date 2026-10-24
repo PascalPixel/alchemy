@@ -196,7 +196,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   // 0x296 of palette 15 between the two.
   row = (mode == DJINN_COMPARE_GIVE);
   if ((menu->pairEntries[0] & DJINN_ENTRY_IS_SET) == 0) {
-    Text_SetColorFar(2);
+    Text_SetColorFar(TEXT_COLOR_RED);
   }
   Text_DrawMessageAsTilesFar(
       DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
@@ -210,7 +210,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
 
   if (mode == DJINN_COMPARE_TRADE) {
     if ((menu->pairEntries[1] & DJINN_ENTRY_IS_SET) == 0) {
-      Text_SetColorFar(2);
+      Text_SetColorFar(TEXT_COLOR_RED);
     }
     Text_DrawMessageAsTilesFar(
         DJINN_ELEMENT(menu->pairEntries[1]) * DJINN_PER_ELEMENT +
@@ -222,7 +222,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     Text_SetColorFar(TEXT_COLOR_NORMAL);
   } else if (mode - 2 <= 1) {
     if ((menu->pairEntries[0] & DJINN_ENTRY_IS_SET) != 0) {
-      Text_SetColorFar(2);
+      Text_SetColorFar(TEXT_COLOR_RED);
     }
     Text_DrawMessageAsTilesFar(
         DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
@@ -486,7 +486,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       u32 fill;
 
       tile = (void *)0x060052c0;
-      fill = 0x44444444;
+      fill = TEXT_CANVAS_BACKGROUND_WORD;
       if ((frame & 4) != 0) {
         Iwram_CopyWords(tile, gMenu_BackdropFrameTile, 32);
       } else {
@@ -543,7 +543,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   // figures grow in again from phase 0.
   DjinnFigures_SetSlotPhase(0, 0);
   DjinnFigures_SetSlotPhase(1, 0);
-  Task_Add(Menu_UpdateEntryObjectTransforms, 0xc80);
+  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PRIORITY_MAIN_LOOP);
 
   ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);
@@ -676,7 +676,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
       if (frame & 4)
         Iwram_CopyWords((void *)0x060052c0, gMenu_BackdropFrameTile, 32);
       else
-        Iwram_FillWords((void *)0x060052c0, 32, 0x44444444);
+        Iwram_FillWords((void *)0x060052c0, 32, TEXT_CANVAS_BACKGROUND_WORD);
     }
     if (pressedKeys & KEY_START) {
       Sound_PlaySongFar(SE_MENU_CANCEL);
@@ -703,7 +703,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     }
     WaitFrames(1);
   }
-  Task_Add(Menu_UpdateEntryObjectTransforms, 0xc80);
+  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PRIORITY_MAIN_LOOP);
   ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);
   WaitFrames(1);

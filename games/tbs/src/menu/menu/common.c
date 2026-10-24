@@ -459,7 +459,7 @@ UNUSED s32 Icon_CreateWithResource(struct Window *window, s32 unused, s32 x,
   block = VramCache_FindFreeEntry();
   if (block != 0) {
     VramCache_Load(block, ICON_TILE_BYTES, gIcon_ResourceTiles);
-    icon = (s32)WindowSprite_CreateFar(block, ICON_SPRITE_16X16, window, x, y);
+    icon = (s32)WindowSprite_CreateFar(block, OUTPUT_SIZE_16X16, window, x, y);
   }
   return icon;
 }
@@ -485,7 +485,7 @@ s32 Icon_CreateWithResourceVariant(struct Window *window, s32 x, s32 y) {
   if (block != 0) {
 #endif
     VramCache_Load(block, ICON_TILE_BYTES, gIcon_ResourceTiles);
-    icon = (s32)WindowSprite_CreateFar(block, ICON_SPRITE_16X16, window, x, y);
+    icon = (s32)WindowSprite_CreateFar(block, OUTPUT_SIZE_16X16, window, x, y);
   }
   return icon;
 }
@@ -644,7 +644,8 @@ void Menu_UpdateEntryObjectTransforms(void) {
       position.height = placeY;
       position.y = (menu->rowPositions[i] << 16) + placeY; // always 482
       position.groundHeight = 0;
-      Object_ApplyProjectedPlacementFar(figure, &position, &scale, 0x4000);
+      Object_ApplyProjectedPlacementFar(figure, &position, &scale,
+                                        FACING_SOUTH);
     }
   }
 }
@@ -1076,9 +1077,9 @@ void Palette_LightenBankHighlight(s32 bank) {
 
   // Both transfers copy the same 32 bytes, first as 16 halfwords and then as
   // 8 words.
-  Dma_Set((const void *)&BG_PLTT_COLOR(15, 0), palette, DMA_ENABLE << 16 | 16,
-          REG_DMA3);
-  Dma_Set((const void *)&BG_PLTT_COLOR(15, 0), palette,
+  Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
+          DMA_ENABLE << 16 | 16, REG_DMA3);
+  Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   // BGR555: five bits a channel, 0 to 31, red lowest.
   blue = palette[4] >> 10;
@@ -1193,11 +1194,12 @@ void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
 /// element icons (window tiles 1 to 4) in palette 14, so ItemMenu_ShowDetails
 /// calls this first, as do ItemMenu_OpenDetail and Item_PrepareUsePalette,
 /// which nothing calls. It replaces the row highlight until
-/// Palette_LightenBankHighlight(14) makes it again.
+/// Palette_LightenBankHighlight(HIGHLIGHT_PALETTE) makes it again.
 void Palette_LoadIconsIntoHighlight(void) {
-  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
           DMA_ENABLE << 16 | 16, REG_DMA3);
-  Dma_Set((const void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(14, 14),
+  Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
+          (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
           DMA_ENABLE << 16 | 1, REG_DMA3);
 }
 
@@ -1287,7 +1289,7 @@ void Menu_CancelSoundTick(void) {
 void Menu_CancelSoundReset(void) {
   GameFlag_ClearFar(FLAG_MENU_START_PRESSED);
   // TASK_PRIORITY_MAIN_LOOP: once a frame in the main loop.
-  Task_Add(Menu_CancelSoundTick, 0xC80);
+  Task_Add(Menu_CancelSoundTick, TASK_PRIORITY_MAIN_LOOP);
 }
 
 /// Stops watching for Start, if Start has not removed the watch already.

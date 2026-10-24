@@ -487,11 +487,9 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
 }
 
 /// Shows a message in a window centred on the screen, waits until it is typed
-/// out and closes it. flags: bit 0 zooms the window, bit 1 sets busy while it
-/// shows, bit 2 leaves the window open, bit 3 puts it 4 tiles lower, bit 5
-/// holds the tilemap upload off afterwards, bit 6 puts it 12 tiles lower.
-/// Without bit 3 or 6 the window goes above or below the player's character,
-/// away from where it stands on screen.
+/// out and closes it, as its enum FieldMessageFlag flags say. Without
+/// FIELD_MESSAGE_LOWER or FIELD_MESSAGE_LOWEST the window goes above or below
+/// the player's character, away from where it stands on screen.
 void FieldMessage_Show(s32 message, s32 flags) {
   struct WindowWork *state = WINDOW_WORK;
   s32 zoom;

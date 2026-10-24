@@ -257,7 +257,7 @@ s32 Field_RunEventAction(const void *event, s32 param, s32 target) {
     }
     if (GameFlag_GetFar(FLAG_NOTHING_HAPPENS) != 0) {
       FieldScript_Start();
-      FieldMessage_ShowFar(MsgNothingHappens, 1);
+      FieldMessage_ShowFar(MsgNothingHappens, FIELD_MESSAGE_ZOOM);
       FieldScript_End();
     }
   }

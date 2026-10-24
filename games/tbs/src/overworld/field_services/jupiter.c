@@ -6,7 +6,7 @@
 
 /// A Jupiter Djinni joins the party: it bounces three times, spins, leaps out
 /// of sight and bursts into 24 light particles that circle and close in on the
-/// leader, who turns to the camera and plays animation 28. Called by
+/// leader, who turns to the camera and plays ANIM_LEADER_ARMS_RAISED. Called by
 /// Djinn_JoinParty for a Jupiter Djinni, which then clears the Djinni's object
 /// event slot; the Djinni's object is released here. Uses all 24 field effect
 /// sprites (FieldEffect_InitializeSlots), tints the field palette and fades it
@@ -65,11 +65,11 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
     effect++;
   } while (remainingParticles >= 0);
 
-  // The leader turns to face south (0x4000) and plays animation 28.
   WaitFrames(60);
-  ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, 0x4000, 0);
+  ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, FACING_SOUTH, 0);
   WaitFrames(20);
-  Object_SelectAnimationFar(ObjectEvent_GetById(gSaveBlock.leaderLocalId), 28);
+  Object_SelectAnimationFar(ObjectEvent_GetById(gSaveBlock.leaderLocalId),
+                            ANIM_LEADER_ARMS_RAISED);
   WaitFrames(40);
   Sound_PlaySongFar(SE_SCATTER);
   WaitFrames(100);

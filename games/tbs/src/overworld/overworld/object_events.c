@@ -288,7 +288,7 @@ void ObjectEvent_ResetForObject(struct ObjectEventTemplate *table) {
     object->groundHeight = object->y;
     object->motionFlags = 0;
     Object_SetSpriteFlagsFar((struct Object *)object, 0);
-    Object_SelectAnimationFar(object, 12);
+    Object_SelectAnimationFar(object, ANIM_LEADER_CLING);
   } else {
     gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
   }

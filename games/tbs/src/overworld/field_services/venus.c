@@ -5,8 +5,8 @@
 #include "../field_services_internal.h"
 
 /// A Venus Djinni joins the party: it hops twice, spins and leaps, then shrinks
-/// away; the leader turns to the camera and plays animation 28 while 24
-/// particles rise round it (FieldEffect_UpdateRadialSpread). Then 24 motes
+/// away; the leader turns to the camera and plays ANIM_LEADER_ARMS_RAISED while
+/// 24 particles rise round it (FieldEffect_UpdateRadialSpread). Then 24 motes
 /// spiral down onto the leader from 120 pixels above
 /// (FieldEffect_UpdateDescendingOrbitObject) and 8 sparks burst from the
 /// leader. Called by Djinn_JoinParty for a Venus Djinni, which then clears the
@@ -50,9 +50,10 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   Object_SelectAnimationFar(djinni, 3);
   // The leader turns to face the camera (angle 0x4000).
   WaitFrames(90);
-  ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, 0x4000, 0);
+  ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, FACING_SOUTH, 0);
   WaitFrames(20);
-  Object_SelectAnimationFar(ObjectEvent_GetById(gSaveBlock.leaderLocalId), 28);
+  Object_SelectAnimationFar(ObjectEvent_GetById(gSaveBlock.leaderLocalId),
+                            ANIM_LEADER_ARMS_RAISED);
   WaitFrames(30);
   MapGrid_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
 

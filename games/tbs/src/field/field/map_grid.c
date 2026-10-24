@@ -382,12 +382,13 @@ s32 MapGrid_LoadLayout(s32 index) {
   REG_DISPCNT = displayFlags;
   // UB: Task_Add returns s32; call it through its declared type.
 #ifdef UBFIX
-  Task_Add(MapGrid_UpdateLayerScroll, 0xc85);
+  Task_Add(MapGrid_UpdateLayerScroll, TASK_PRIORITY_MAIN_LOOP + 5);
 #else
   /* FAKEMATCH(wrapper): called through a cast to the void call the bytes
    * show, which loads the task function before its priority; as a call by its
    * prototype, 2 of 349 instructions differ in tbs-en. */
-  ((void (*)(void (*)(void), s32))Task_Add)(MapGrid_UpdateLayerScroll, 0xc85);
+  ((void (*)(void (*)(void), s32))Task_Add)(MapGrid_UpdateLayerScroll,
+                                            TASK_PRIORITY_MAIN_LOOP + 5);
 #endif
   return 2;
 }
@@ -485,8 +486,8 @@ void MapGrid_RenderMetatileColumn(u32 layer, s32 tileX, s32 tileY) {
 /// automatic scroll (wrapping at its period), draws the metatile column or row
 /// that scrolls into view, and sets its BG scroll.
 ///
-/// Added as a task by MapGrid_LoadLayout (priority 0xc85),
-/// and called by MapGrid_CenterOnFollowedPoint. Sets map->viewX and viewY,
+/// Added as a task by MapGrid_LoadLayout (priority TASK_PRIORITY_MAIN_LOOP +
+/// 5), and called by MapGrid_CenterOnFollowedPoint. Sets map->viewX and viewY,
 /// decays map->shakeX and shakeY, advances each drifting layer's phase, and
 /// writes each layer's position and gBgScroll entry.
 void MapGrid_UpdateLayerScroll(void) {

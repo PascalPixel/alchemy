@@ -9,7 +9,7 @@
 /// copy the rest into WIN0H and WIN1H one word each HBlank, so that every line
 /// of the screen gets its own window edges.
 ///
-/// A task (priority 0x480) that ScreenTransition_Start,
+/// A task (priority TASK_PRIORITY_VBLANK) that ScreenTransition_Start,
 /// ScreenTransition_Finish and ScreenTransition_InitializeBattleEffectState
 /// add for a window transition, and ScreenTransition_UpdateScanlineTable
 /// removes when it ends.
@@ -27,8 +27,8 @@ void FieldEffect_StartWindowHBlankDma(void) {
   Io_Write16(*scanlineData++, &REG_WINOUT);
   Io_Write16(*scanlineData++, &REG_WIN0H);
   Io_Write16(*scanlineData++, &REG_WIN1H);
-  Io_Write16(WIN_RANGE(0, 160), &REG_WIN0V);
-  Io_Write16(WIN_RANGE(0, 160), &REG_WIN1V);
+  Io_Write16(WIN_RANGE(0, DISPLAY_HEIGHT), &REG_WIN0V);
+  Io_Write16(WIN_RANGE(0, DISPLAY_HEIGHT), &REG_WIN1V);
   // HBlank repeats one word: both horizontal window bounds for the next line.
   Dma_Set(scanlineData, (void *)&REG_WIN0H, DMA_HBLANK_WORD_PER_LINE,
           (volatile u32 *)dma0);
@@ -67,7 +67,7 @@ extern struct TransitionShape gScreenTransition_Shapes[];
 /// whether the transition opens or closes; its low 5 bits are its progress.
 /// The mode is an enum WindowTransitionMode.
 ///
-/// A task (priority 0xc80), added with
+/// A task (priority TASK_PRIORITY_MAIN_LOOP), added with
 /// FieldEffect_StartWindowHBlankDma; it removes both and stops DMA 0 when a
 /// transition with no next mode ends. Writes the hidden page of the
 /// transition state (HEAP_SLOT_SCREEN_TRANSITION) and then flips state->page.
@@ -569,8 +569,8 @@ void ScreenTransition_InitializeBattleEffectState(s32 mode) {
   state->value = 0;
   state->mask = 0x3f3f;
   state->active = 1;
-  Task_Add(ScreenTransition_UpdateScanlineTable, 0xc80);
-  Task_Add(FieldEffect_StartWindowHBlankDma, 0x480);
+  Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PRIORITY_VBLANK);
 }
 
 /// Unused: suspends the window transition's two callbacks. Nothing calls it,
@@ -620,11 +620,11 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     WaitFrames(1);
     break;
   case TRANSITION_BACKDROP_FADE:
-    PaletteFade_SetSource(0x8000, PLTT_BACKDROP);
+    PaletteFade_SetSource(PALETTE_TINT_FROM_SOURCE, PLTT_BACKDROP);
     PaletteFade_StartInterpolation(frames);
     WaitFrames(1);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
-                        0x20000);
+                        IO_WRITE_16);
     PaletteFade_SetBackdrop(0);
     return;
   // The window, dissolve and centre-line kinds open from value 0 (closed) to
@@ -636,11 +636,11 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     state->value = 0;
     state->mask = 63;
     state->active = 1;
-    Task_Add(ScreenTransition_UpdateScanlineTable, 0xc80);
-    Task_Add(FieldEffect_StartWindowHBlankDma, 0x480);
+    Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PRIORITY_MAIN_LOOP);
+    Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PRIORITY_VBLANK);
     WaitFrames(1);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
-                        0x20000);
+                        IO_WRITE_16);
     state->start = 0;
     state->end = 32;
     state->duration = frames;
@@ -654,9 +654,9 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     state->value = 32;
     ScreenTransition_FillTilemapAndSolidTile(15);
     WaitFrames(1);
-    Task_Add(ScreenTransition_UpdateFrame, 0xc80);
+    Task_Add(ScreenTransition_UpdateFrame, TASK_PRIORITY_MAIN_LOOP);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
-                        0x20000);
+                        IO_WRITE_16);
     state->start = 0;
     state->end = 32;
     state->duration = frames;
@@ -672,15 +672,15 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     display->secondLine = 80;
     WaitFrames(1);
     if (variant == 0) {
-      Task_Add(ScreenTransition_Update, 0xc80);
-      Irq_SetHandler(1, 0, ScreenTransition_UpdateScanline);
+      Task_Add(ScreenTransition_Update, TASK_PRIORITY_MAIN_LOOP);
+      Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
       state->start = 80;
       state->end = 0;
       state->duration = frames;
       state->step = 0;
     } else {
-      Task_Add(ScreenTransition_UpdateFromCentre, 0xc80);
-      Irq_SetHandler(1, 0, ScreenTransition_UpdateScanline);
+      Task_Add(ScreenTransition_UpdateFromCentre, TASK_PRIORITY_MAIN_LOOP);
+      Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
       state->start = 80;
       state->end = 0;
       state->duration = frames;
@@ -690,7 +690,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
   }
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
-                      0x20000);
+                      IO_WRITE_16);
 }
 
 /// Fades the screen out over frames frames, as ScreenTransition_Start fades
@@ -715,7 +715,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     ScreenFade_ToBlack(frames);
     break;
   case TRANSITION_BACKDROP_FADE:
-    PaletteFade_SetTarget(0x8000, 0);
+    PaletteFade_SetTarget(PALETTE_TINT_FROM_SOURCE, 0);
     PaletteFade_StartInterpolation(frames);
     break;
   case TRANSITION_WINDOW: {
@@ -725,8 +725,8 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     state->value = 32;
     state->mask = 63;
     state->active = 1;
-    Task_Add(ScreenTransition_UpdateScanlineTable, 0xc80);
-    Task_Add(FieldEffect_StartWindowHBlankDma, 0x480);
+    Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PRIORITY_MAIN_LOOP);
+    Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PRIORITY_VBLANK);
     WaitFrames(1);
     state->start = 32;
     state->end = 64;
@@ -741,7 +741,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     state->value = 32;
     ScreenTransition_FillTilemapAndSolidTile(0);
     WaitFrames(1);
-    Task_Add(ScreenTransition_UpdateFrame, 0xc80);
+    Task_Add(ScreenTransition_UpdateFrame, TASK_PRIORITY_MAIN_LOOP);
     state->start = 32;
     state->end = 64;
     state->duration = frames;
@@ -752,15 +752,15 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     struct ScreenTransitionState *state =
         ScreenTransition_AllocateAndClearState();
     if (variant == 0) {
-      Task_Add(ScreenTransition_Update, 0xc80);
-      Irq_SetHandler(1, 0, ScreenTransition_UpdateScanline);
+      Task_Add(ScreenTransition_Update, TASK_PRIORITY_MAIN_LOOP);
+      Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
       state->start = 0;
       state->end = 80;
       state->duration = frames;
       state->step = 0;
     } else {
-      Task_Add(ScreenTransition_UpdateFromCentre, 0xc80);
-      Irq_SetHandler(1, 0, ScreenTransition_UpdateScanline);
+      Task_Add(ScreenTransition_UpdateFromCentre, TASK_PRIORITY_MAIN_LOOP);
+      Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
       state->start = 0;
       state->end = 80;
       state->duration = frames;
@@ -813,7 +813,7 @@ void ScreenTransition_Update(void) {
     if (*step >= *duration) {
       *duration = 0;
       Task_Remove(ScreenTransition_Update);
-      Irq_SetHandler(1, 0, 0);
+      Irq_SetHandler(IRQ_HBLANK, 0, 0);
       return;
     } else {
       s32 delta = state->end - state->start;
@@ -853,7 +853,7 @@ void ScreenTransition_UpdateFromCentre(void) {
     if (*step >= *duration) {
       *duration = 0;
       Task_Remove(ScreenTransition_UpdateFromCentre);
-      Irq_SetHandler(1, 0, 0);
+      Irq_SetHandler(IRQ_HBLANK, 0, 0);
       return;
     } else {
       s32 delta = state->end - state->start;
@@ -1033,6 +1033,6 @@ void ScreenTransition_InitializeState(s32 value) {
   ScreenTransition_FillTilemapAndSolidTile(0);
   state->mode = value;
   state->value = 0;
-  Task_Add(ScreenTransition_UpdateFrame, 0xc80);
+  Task_Add(ScreenTransition_UpdateFrame, TASK_PRIORITY_MAIN_LOOP);
   WaitFrames(0x78);
 }

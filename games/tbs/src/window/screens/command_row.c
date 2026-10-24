@@ -119,8 +119,8 @@ s32 BattleCommandRow_Run(s32 mode) {
   }
   // BG1 shows the icons: behind the other layers above line 136, in front
   // from there down (CommandRow_PutBg1Behind).
-  Task_Add(CommandRow_PutBg1Behind, 0x480);
-  Irq_SetHandler(2, 136, CommandRow_PutBg1InFront);
+  Task_Add(CommandRow_PutBg1Behind, TASK_PRIORITY_VBLANK);
+  Irq_SetHandler(IRQ_VCOUNT, 136, CommandRow_PutBg1InFront);
 
   for (;;) {
     // 304 to 336 in 8.8 (1.19 to 1.31 times), over 16 frames.
@@ -358,11 +358,11 @@ s32 BattleCommandRow_Run(s32 mode) {
   work->dirty = 1;
   WaitFrames(1);
   Task_Remove(CommandRow_PutBg1Behind);
-  Irq_SetHandler(2, 0, 0);
+  Irq_SetHandler(IRQ_VCOUNT, 0, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON,
-                      0x20000);
+                      IO_WRITE_16);
   Free(selectionUi);
   work->holdTilemapUpload = 0;
   WaitFrames(1);
@@ -370,9 +370,9 @@ s32 BattleCommandRow_Run(s32 mode) {
 }
 
 /// Switches the UI tilemap entries of the `width` x `height` tile rectangle
-/// at screen tile (x, y) to palette 15 or 14 by bit 12, keeping the rest of
-/// each entry: the menus' row highlight. `paletteBit` is the palette number,
-/// of which only the low bit counts (15 plain, 14 highlighted). Clipped as
+/// at screen tile (x, y) to WINDOW_PALETTE or HIGHLIGHT_PALETTE by bit 12,
+/// keeping the rest of each entry: the menus' row highlight. `paletteBit` is
+/// the palette, of which only the low bit counts. Clipped as
 /// Window_SetTextTileBitRect clips; each row changed is marked for
 /// upload.
 void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
@@ -431,7 +431,7 @@ s32 PartyStatus_HighlightMembers(u16 *ids) {
   s32 j;
 
   count = BattleUnit_ListIdsFar(1, 0);
-  Window_HighlightRect(29 - count * 6, 0, 25, 5, 15);
+  Window_HighlightRect(29 - count * 6, 0, 25, 5, WINDOW_PALETTE);
   i = 0;
   // The loop over ids is written with goto (MATCHING.md): as
   // for (i = 0; i < 4 && ids[i] != 0xff; i++), or as a do-while loop inside
@@ -445,7 +445,7 @@ s32 PartyStatus_HighlightMembers(u16 *ids) {
       }
     }
     if (j != 4)
-      Window_HighlightRect(29 - (count - j) * 6, 0, 7, 5, 14);
+      Window_HighlightRect(29 - (count - j) * 6, 0, 7, 5, HIGHLIGHT_PALETTE);
     if (++i < 4 && ids[i] != 0xff)
       goto next_id;
   }

@@ -317,8 +317,8 @@ u32 Unit_GetExperienceForLevel(s32 unitId, s32 level) {
     if (level <= 0) {
       return 0;
     }
-    if (level <= 99 && unit->id <= 7) {
-      return gCharacter_LevelExpTable[unit->id * 99 + level - 1];
+    if (level <= UNIT_LEVEL_MAX && unit->id <= 7) {
+      return gCharacter_LevelExpTable[unit->id * UNIT_LEVEL_MAX + level - 1];
     }
   }
   return -1;
@@ -351,7 +351,7 @@ struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
   gains->def = 0;
   gains->agi = 0;
   gains->luck = 0;
-  if (level < 99) {
+  if (level < UNIT_LEVEL_MAX) {
     unit->level++;
     gains->level = level + 1;
     requiredExperience = Unit_GetExperienceForLevel(unitId, unit->level);

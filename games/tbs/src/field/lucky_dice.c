@@ -395,10 +395,10 @@ void LuckyDice_Run(void) {
   REG_BG1VOFS = 0xff60;
   REG_BG2HOFS = 0;
   REG_BG2VOFS = 0xff60;
-  REG_WIN0H = WIN_RANGE(0, 240);
-  REG_WIN0V = WIN_RANGE(0, 160);
-  REG_WIN1H = WIN_RANGE(0, 240);
-  REG_WIN1V = WIN_RANGE(0, 160);
+  REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
+  REG_WIN0V = WIN_RANGE(0, DISPLAY_HEIGHT);
+  REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
+  REG_WIN1V = WIN_RANGE(0, DISPLAY_HEIGHT);
 
   // Start aiming with both dice at the throwing line and two lucky numbers.
   state = LUCKY_DICE_AIM;

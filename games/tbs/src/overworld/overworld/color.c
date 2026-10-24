@@ -379,7 +379,7 @@ void PaletteFade_Initialize(void) {
   Dma_Set((void *)OBJ_PLTT, &work->palette[COLOR_HALF],
           (DMA_ENABLE | DMA_32BIT) << 16 | (COLOR_HALF / 2), REG_DMA3);
   PaletteFade_Build(PALETTE_TINT_NONE, work->palette, work->target, 0);
-  Task_Add(PaletteFade_Update, 0xc8f);
+  Task_Add(PaletteFade_Update, TASK_PRIORITY_MAIN_LOOP + 15);
 }
 
 /// Stops the palette fade and frees it. Reached only through a bare far-call

@@ -260,8 +260,10 @@ s32 NamingScreen_EditMemberName(s32 member) {
 
   // The keyboard, the name and the portrait.
   Window_LoadGraphics();
-  keyboardWindow = (struct Window *)Window_Create(3, 6, 24, 9, 2);
-  nameWindow = (struct Window *)Window_Create(8, 3, NAME_LABEL_WIDTH, 3, 2);
+  keyboardWindow =
+      (struct Window *)Window_Create(3, 6, 24, 9, WINDOW_FLAG_INSTANT);
+  nameWindow = (struct Window *)Window_Create(8, 3, NAME_LABEL_WIDTH, 3,
+                                              WINDOW_FLAG_INSTANT);
   Portrait_OpenWindow(Portrait_GetForSpeaker(member), 0, 3, 1);
   Window_CopyTilemapRegion(keyboardWindow, gNamingScreen_KeyboardTilemap);
 #if NAME_KEY_LABELS
@@ -318,8 +320,9 @@ s32 NamingScreen_EditMemberName(s32 member) {
   }
   // The key under the cursor flashes between palette 15 and palette 14, a
   // copy of it with colour 4 grey.
-  palette = (u16 *)&BG_PLTT_COLOR(14, 0);
-  Dma_Set((void *)&BG_PLTT_COLOR(15, 0), palette, DMA_COPY32(8), REG_DMA3);
+  palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
+  Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette, DMA_COPY32(8),
+          REG_DMA3);
   palette[4] = 0x6318;
   end = (u8 *)(originalLength + (s32)editedName);
   while (1) {
@@ -333,9 +336,11 @@ s32 NamingScreen_EditMemberName(s32 member) {
         width = NAME_END_KEY_WIDTH;
     }
     // Flash the key under the cursor, then move the cursor and the caret.
-    Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1, 14);
+    Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1,
+                           HIGHLIGHT_PALETTE);
     WaitFrames(1);
-    Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1, 15);
+    Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1,
+                           WINDOW_PALETTE);
     if (cursorDirty) {
       cursorDirty = 0;
       MenuCursor_SetFar(&keyCursor.cursor,
@@ -536,8 +541,9 @@ s32 NamingScreen_EditMemberName(s32 member) {
 
   // The keyboard, the name and the portrait.
   Window_LoadGraphics();
-  keyboardWindow = (struct Window *)Window_Create(3, 6, 24, 13, 2);
-  nameWindow = (struct Window *)Window_Create(8, 3, 8, 3, 2);
+  keyboardWindow =
+      (struct Window *)Window_Create(3, 6, 24, 13, WINDOW_FLAG_INSTANT);
+  nameWindow = (struct Window *)Window_Create(8, 3, 8, 3, WINDOW_FLAG_INSTANT);
   Portrait_OpenWindow(Portrait_GetForSpeaker(member), 0, 3, 1);
   Window_CopyTilemapRegion(keyboardWindow, gNamingScreen_KeyboardTilemap);
   Window_DrawDividerLine(keyboardWindow, 18, 0, 18, 12);
@@ -588,8 +594,9 @@ s32 NamingScreen_EditMemberName(s32 member) {
   }
   // The key under the cursor flashes between palette 15 and palette 14, a
   // copy of it with colour 4 grey.
-  palette = (u16 *)&BG_PLTT_COLOR(14, 0);
-  Dma_Set((void *)&BG_PLTT_COLOR(15, 0), palette, DMA_COPY32(8), REG_DMA3);
+  palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
+  Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette, DMA_COPY32(8),
+          REG_DMA3);
   palette[4] = 0x6318;
   while (1) {
     s32 width = 1;
@@ -604,9 +611,11 @@ s32 NamingScreen_EditMemberName(s32 member) {
         width = 3;
     }
     // Flash the key under the cursor, then move the cursor and the caret.
-    Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1, 14);
+    Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1,
+                           HIGHLIGHT_PALETTE);
     WaitFrames(1);
-    Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1, 15);
+    Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1,
+                           WINDOW_PALETTE);
     if (cursorDirty) {
       cursorDirty = 0;
       MenuCursor_SetFar(&keyCursor.cursor,

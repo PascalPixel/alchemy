@@ -207,7 +207,8 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 member) {
   cursorPosition.y = 0;
   // The stat grid and its explanation have separate lifetimes and redraws.
   statusWindow = Window_Create(0, 0, 30, 20, 6);
-  helpWindow = Window_Create(0, 14, 30, 6, 10);
+  helpWindow = Window_Create(0, 14, 30, 6,
+                             WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS);
   Window_MarkVisibleTextTiles();
 
   for (;;) {
@@ -246,7 +247,7 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 member) {
     }
 
     Window_HighlightRect(statusWindow->x, statusWindow->y, statusWindow->width,
-                         statusWindow->height, 15);
+                         statusWindow->height, WINDOW_PALETTE);
 
     if (statusCount != 0) {
       if ((u32)cursor.group <= STATUS_CURSOR_COMBAT_STATS) {
@@ -338,7 +339,7 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 member) {
       cursor.row = cursorStop->row;
       Window_HighlightRect(statusWindow->x + cursorStop->highlightColumn + 1,
                            statusWindow->y + cursorStop->highlightRow + 1,
-                           cursorStop->highlightWidth, 1, 14);
+                           cursorStop->highlightWidth, 1, HIGHLIGHT_PALETTE);
     } else if (cursor.group == STATUS_CURSOR_COMBAT_STATS) {
       cursor.helpEntry = gBattleSummaryScreen_EquipmentCursors
                              [cursor.groupPositions[cursor.group]]

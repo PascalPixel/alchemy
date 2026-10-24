@@ -83,12 +83,11 @@ void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
   perspective->zoom = inverse;
   perspective->zoomTransitionFrames = frames;
   perspective->zoomTransitionStep = 0;
-  // 0xc94: a main-loop callback (high byte 0xc, as TASK_PRIORITY_MAIN_LOOP)
-  // at priority 0x94.
 #ifdef UBFIX
-  Task_Add(FieldEffect_StepRatioTransition, 0xc94);
+  Task_Add(FieldEffect_StepRatioTransition, TASK_PRIORITY_MAIN_LOOP + 20);
 #else
-  Task_Add((TaskFunc)FieldEffect_StepRatioTransition, 0xc94);
+  Task_Add((TaskFunc)FieldEffect_StepRatioTransition,
+           TASK_PRIORITY_MAIN_LOOP + 20);
 #endif
 }
 

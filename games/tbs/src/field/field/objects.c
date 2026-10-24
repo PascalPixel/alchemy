@@ -180,17 +180,17 @@ void ObjectSystem_Initialize(s32 controlMode) {
   ObjectSystem_Configure(controlMode);
   Dma_Fill32Cell(fill, 0, objectPool, OBJECT_COUNT * sizeof(*objectPool));
   Dma_Fill32Cell(fill, 0, system, sizeof(*system));
-  // The task runner runs higher priorities first: the objects move (0xc8a)
-  // before the camera follows them (0xc80).
+  // The task runner runs higher priorities first: the objects move before
+  // the camera follows them.
   if (controlMode == OBJECT_SYSTEM_BATTLE)
-    Task_Add(Object_UpdateAllMotion, 0xc8a);
+    Task_Add(Object_UpdateAllMotion, TASK_PRIORITY_MAIN_LOOP + 10);
   else
-    Task_Add(Object_UpdateAllThumb, 0xc8a);
+    Task_Add(Object_UpdateAllThumb, TASK_PRIORITY_MAIN_LOOP + 10);
   if (controlMode >= OBJECT_SYSTEM_WORLD_MAP &&
       controlMode <= OBJECT_SYSTEM_BATTLE) {
-    Task_Add(ObjectSystem_ProjectSprites, 0xc80);
+    Task_Add(ObjectSystem_ProjectSprites, TASK_PRIORITY_MAIN_LOOP);
   } else {
-    Task_Add(ObjectSystem_PlaceSprites, 0xc80);
+    Task_Add(ObjectSystem_PlaceSprites, TASK_PRIORITY_MAIN_LOOP);
     // XXX (no evidence): what the scrolling camera resets here; nothing in
     // the game reads these two IWRAM words, by name or by address.
     gCamera_UnreadWord2 = 0;
@@ -575,7 +575,7 @@ void Anim_ApplyChildValues(struct Object *object, u32 param) {
 void ObjectSystem_SuspendProjectionAndShowSprites(void) {
   Task_SuspendAll(ObjectSystem_PlaceSprites);
   Task_SuspendAll(ObjectSystem_ProjectSprites);
-  PaletteFade_SetTargetFar(0x10000, 1);
+  PaletteFade_SetTargetFar(PALETTE_TINT_NONE, 1);
   PaletteFade_StartInterpolationFar(1);
   WaitFrames(1);
   REG_DISPCNT =

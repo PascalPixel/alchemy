@@ -87,7 +87,9 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   drawnFirstEntry = -1;
   drawnRow = -1;
   cursorHandle = VramCache_AllocEntry(128);
-  messageWindow = Window_Create(0, 5, 30, 4, 42);
+  messageWindow = Window_Create(0, 5, 30, 4,
+                                WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                                    WINDOW_FLAG_FRAMED_CANVAS);
   iconCount = 0;
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
   window = Window_Create(15, 9, 15, BATTLE_LIST_ROWS * 2 + 1, 6);
@@ -117,7 +119,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
       Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
-                           window->width - 2, 1, 15);
+                           window->width - 2, 1, WINDOW_PALETTE);
       Text_FillCanvasBackground();
       if (count != 0) {
         if (Item_ClassifyUseAbility(member,
@@ -146,15 +148,15 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
             break;
           }
           Item_GetDirectFar(item);
-          Text_SetColor(15);
+          Text_SetColor(TEXT_COLOR_WHITE);
           if (Item_ClassifyUseAbility(member, item) != 0) {
-            Text_SetColor(4);
+            Text_SetColor(TEXT_COLOR_YELLOW);
           } else if ((item & INVENTORY_BROKEN) != 0) {
-            Text_SetColor(2);
+            Text_SetColor(TEXT_COLOR_RED);
           }
           Text_DrawMessageAsTiles((item & INVENTORY_ITEM_ID_MASK) + MsgItemName,
                                   window, 16, i * 16);
-          Text_SetColor(15);
+          Text_SetColor(TEXT_COLOR_WHITE);
           sprites[i].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[i]);
         }
         iconCount = i;
@@ -174,7 +176,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
       }
 
       Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
-                           window->width - 2, 1, 14);
+                           window->width - 2, 1, HIGHLIGHT_PALETTE);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
     }

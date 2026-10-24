@@ -89,12 +89,12 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
   struct BattleBackgroundWork *transition = gBattleBackgroundWork;
 
   if (transition->mode == BATTLE_BACKGROUND_NONE) {
-    Task_Add(BattleBackground_ShowZoomedPage, 0x4ff);
+    Task_Add(BattleBackground_ShowZoomedPage, TASK_PRIORITY_VBLANK + 127);
   }
   transition->mode = mode;
 
   if (mode == BATTLE_BACKGROUND_FIXED) {
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, BATTLE_BG1CNT, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, BATTLE_BG1CNT, IO_WRITE_16);
   }
 
   // BG palette 5 is the battle windows' second text palette
@@ -103,9 +103,10 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
   // first sprite palette's colours through it. Text in a palette other than
   // the UI's is drawn over colour 14 (Text_DrawStringAsTiles), so colour 14
   // takes the window background, the UI palette's colour 4.
-  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
+  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
-  *(u16 *)&BG_PLTT_COLOR(5, 14) = *(u16 *)&BG_PLTT_COLOR(15, 4);
+  *(u16 *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
+      *(u16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
 
   if (fade == 0x80) {
     Dma_Set(gBattleWork->palette, BATTLE_BG_PALETTE, DMA_COPY_HALFWORDS(128),
@@ -204,15 +205,16 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
     Graphics_ScaleRgb555Clamped(
         palette, BATTLE_BG_PALETTE,
         battle->brightness = 0x10000 - level * BACKGROUND_LEVEL_STEP, 128);
-  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
+  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
-  *(u16 *)&BG_PLTT_COLOR(5, 14) = *(u16 *)&BG_PLTT_COLOR(15, 4);
+  *(u16 *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
+      *(u16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   Graphics_BuildSequentialTileTable(BG_SCREEN_BLOCK(7));
   BattleTransition_BuildTilemap(BG_SCREEN_BLOCK(31));
   // Clears BG1's last row, 0x7c0 bytes in, which BuildTilemap leaves.
   Iwram_ClearWords((BG_SCREEN_BLOCK(31) + 0x7c0), 64);
   if (view->mode == BATTLE_BACKGROUND_NONE)
-    Task_Add(BattleBackground_ShowZoomedPage, 0x4ff);
+    Task_Add(BattleBackground_ShowZoomedPage, TASK_PRIORITY_VBLANK + 127);
   view->mode = mode;
   if (mode == BATTLE_BACKGROUND_FIXED)
     REG_BG1CNT = BATTLE_BG1CNT;
@@ -599,7 +601,7 @@ void BattleHighlight_ClearAllSpriteModes(void) {
 /// gBattleHighlight_BlendRamp.
 /// The ramp's first sixteen steps play once, then its second sixteen over
 /// and over. Runs each frame as a task in the VBlank pass
-/// (priority 0x480), added by BattleHighlight_SetModes while
+/// (priority TASK_PRIORITY_VBLANK), added by BattleHighlight_SetModes while
 /// BattleWork.highlightMode is set; writes REG_BLDCNT, REG_BLDALPHA,
 /// REG_BLDY and BattleWork.highlightStep.
 void BattleBackground_StepHighlightBlend(void) {
@@ -671,7 +673,7 @@ void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
     }
     WaitFrames(1);
     IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
-    Task_Add(BattleBackground_StepHighlightBlend, 0x480);
+    Task_Add(BattleBackground_StepHighlightBlend, TASK_PRIORITY_VBLANK);
   }
 }
 

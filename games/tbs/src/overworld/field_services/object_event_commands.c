@@ -595,7 +595,7 @@ void ObjectEvent_JumpDownLedge(s32 localId, s32 pose, s32 param) {
     Sound_PlaySongFar(SE_FLOOR_SWITCH);
     // From here pose counts frames.
     pose = 0;
-    ObjectMotion_ArmCallback(localId, 0x5000, 0);
+    ObjectMotion_ArmCallback(localId, FACING_SOUTH + FACING_STEP, 0);
     *objectFlags = 0;
     do {
       nextY = object->y + 0xFFFE0000;

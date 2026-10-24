@@ -116,7 +116,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   // background, colour 4; in another palette (WindowWork.textPalette, as the
   // party status window sets for its numbers) shade 1 takes the colour itself
   // and shade 3 colour 1, over colour 14.
-  if (paletteBits == 0xF000) {
+  if (paletteBits == WINDOW_PALETTE << 12) {
     pens[1] = gFont_ColorPens[work->colour & 15];
     pens[3] = 3;
     Iwram_FillWords(canvas, 0x800, 0x04040404);

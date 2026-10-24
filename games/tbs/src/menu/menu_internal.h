@@ -220,18 +220,14 @@ enum StatusPanelKind {
 #endif
 
 // Text colours of the status panel's numbers.
-#define TEXT_COLOR_LOW_HP 4  ///< HP under a quarter of the maximum
-#define TEXT_COLOR_NO_HP 2   ///< HP 0
-#define TEXT_COLOR_NORMAL 15 ///< the window text's default colour
+#define TEXT_COLOR_LOW_HP                                                      \
+  TEXT_COLOR_YELLOW                     ///< HP under a quarter of the maximum
+#define TEXT_COLOR_NO_HP TEXT_COLOR_RED ///< HP 0
+#define TEXT_COLOR_NORMAL TEXT_COLOR_WHITE ///< the window text's default colour
 
 /// WindowSprite.motion as the menu sets it: shown, or hidden but kept.
 #define ICON_SHOWN 1   ///< WINDOW_SPRITE_MOTION_STILL
 #define ICON_HIDDEN 13 ///< WINDOW_SPRITE_MOTION_HIDDEN
-
-/// WindowSprite_CreateFar's sprite attributes for the menu's 16x16 icons:
-/// OAM attribute 0 in the low half (shape square) and attribute 1 in the high
-/// half (size 1).
-#define ICON_SPRITE_16X16 0x40000000
 
 /// The Djinn change DjinnMenu_DrawStatPreview previews, with the Djinn in the
 /// work's sides removePairSlot and addPairSlot.

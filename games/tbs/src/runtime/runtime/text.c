@@ -187,16 +187,16 @@ void Window_LoadGraphics(void) {
   // 0x800 words: 8 KB, 256 tiles of 4 bits a pixel
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),
           BG_CHAR_BLOCK(0), DMA_COPY_WORDS(0x800), REG_DMA3);
-  Dma_Set(gWindow_Palette, (void *)&BG_PLTT_COLOR(15, 0),
+  Dma_Set(gWindow_Palette, (void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0),
           DMA_ENABLE << 16 | 0x10, REG_DMA3);
   Io_Write16(0, &PLTT_BACKDROP);
-  Io_Write16(RGB(0, 12, 16), &BG_PLTT_COLOR(15, 4));
-  Io_Write16(RGB(0, 11, 14), &BG_PLTT_COLOR(15, 5));
-  Io_Write16(RGB(0, 10, 12), &BG_PLTT_COLOR(15, 6));
-  Io_Write16(RGB(0, 9, 10), &BG_PLTT_COLOR(15, 7));
-  Io_Write16(RGB(0, 13, 18), &BG_PLTT_COLOR(15, 8));
-  Io_Write16(RGB(0, 14, 20), &BG_PLTT_COLOR(15, 9));
-  Io_Write16(RGB(0, 15, 22), &BG_PLTT_COLOR(15, 10));
+  Io_Write16(RGB(0, 12, 16), &BG_PLTT_COLOR(WINDOW_PALETTE, 4));
+  Io_Write16(RGB(0, 11, 14), &BG_PLTT_COLOR(WINDOW_PALETTE, 5));
+  Io_Write16(RGB(0, 10, 12), &BG_PLTT_COLOR(WINDOW_PALETTE, 6));
+  Io_Write16(RGB(0, 9, 10), &BG_PLTT_COLOR(WINDOW_PALETTE, 7));
+  Io_Write16(RGB(0, 13, 18), &BG_PLTT_COLOR(WINDOW_PALETTE, 8));
+  Io_Write16(RGB(0, 14, 20), &BG_PLTT_COLOR(WINDOW_PALETTE, 9));
+  Io_Write16(RGB(0, 15, 22), &BG_PLTT_COLOR(WINDOW_PALETTE, 10));
   // 0xe0 halfwords: 224 colours, sprite palettes 0 to 13
   Dma_Set(gBasicSpritePalettes, (void *)OBJ_PLTT, DMA_ENABLE << 16 | 0xe0,
           REG_DMA3);

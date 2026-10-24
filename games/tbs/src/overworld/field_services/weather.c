@@ -164,7 +164,7 @@ void Weather_StartRain(void) {
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
   Io_Write16(BLEND_ALPHA(8, 16), &REG_BLDALPHA);
   Io_Write16(0, &REG_BLDY);
-  Task_Add(Weather_UpdateRain, 0xc80);
+  Task_Add(Weather_UpdateRain, TASK_PRIORITY_MAIN_LOOP);
 }
 
 /// A particle's first word, seen as a value or a link.
@@ -294,7 +294,7 @@ void FieldMotes_Start(void) {
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
   Io_Write16(BLEND_ALPHA(8, 16), &REG_BLDALPHA);
   Io_Write16(0, &REG_BLDY);
-  Task_Add(FieldMotes_Update, 0xc80);
+  Task_Add(FieldMotes_Update, TASK_PRIORITY_MAIN_LOOP);
 }
 
 /// Task: the sparkles. Now and then (1 frame in 256) a sparkle
@@ -454,11 +454,11 @@ void FieldEffect_InitializeSparkles(void) {
     i++;
     sparkle++;
   } while (i < WEATHER_PARTICLE_COUNT);
-  Task_Add(FieldEffect_UpdateSparkles, 0xc80);
+  Task_Add(FieldEffect_UpdateSparkles, TASK_PRIORITY_MAIN_LOOP);
 }
 
 /// Starts the storm's lightning (Weather_UpdateLightning): builds the dark
-/// (0x10003, PALETTE_TINT_WARM) and lit (0x10005, PALETTE_TINT_PALE)
+/// (PALETTE_TINT_WARM) and lit (PALETTE_TINT_PALE)
 /// BG colours and their 12-step fade, and arms the first burst to end in 600
 /// frames, repeating. The work is heap block HEAP_SLOT_FIELD_BLEND, which the
 /// other lightning calls look up again. Vale's storm scenes call it.
@@ -470,13 +470,13 @@ void Weather_StartLightning(void) {
       AllocHeapSlotEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
   buffers = gPaletteFadeWork;
   Dma_Fill32(0, work, sizeof(struct FieldBlendWork));
-  PaletteFade_Build(0x10003, buffers, work, 1);
-  PaletteFade_Build(0x10005, buffers, work->to, 1);
+  PaletteFade_Build(PALETTE_TINT_WARM, buffers, work, 1);
+  PaletteFade_Build(PALETTE_TINT_PALE, buffers, work->to, 1);
   PaletteFade_CalculateSteps(work->to, work->from, work->delta, 12);
   PaletteFade_Build((s32)work, 0, buffers->target, 1);
   work->timer = 600;
   work->enabled = 1;
-  Task_Add(Weather_UpdateLightning, 0xc80);
+  Task_Add(Weather_UpdateLightning, TASK_PRIORITY_MAIN_LOOP);
 }
 
 /// Stops the lightning: no flash for 0x7fff frames, and none after.
@@ -527,5 +527,5 @@ void Weather_StartLightningFlash(s32 from, s32 to) {
   PaletteFade_Build((s32)work, 0, buffers->target, 1);
   work->timer = 120;
   work->enabled = 0;
-  Task_Add(Weather_UpdateLightning, 0xc80);
+  Task_Add(Weather_UpdateLightning, TASK_PRIORITY_MAIN_LOOP);
 }

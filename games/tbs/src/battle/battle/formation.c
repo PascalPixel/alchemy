@@ -135,8 +135,8 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   targetLevel += (s8)GameFlag_GetByteFar(FLAG_MONSTER_BATTLE_WINS);
   if (targetLevel <= 0)
     targetLevel = 1;
-  if (targetLevel > 99)
-    targetLevel = 99;
+  if (targetLevel > UNIT_LEVEL_MAX)
+    targetLevel = UNIT_LEVEL_MAX;
 
   for (candidateOrUnitIndex = 0; candidateOrUnitIndex <= 31;
        candidateOrUnitIndex++)
@@ -200,10 +200,10 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
 /// stat changes by a fixed amount a level, kept between 70 percent of what it
 /// was and its cap.
 /// A level is worth 9.7 HP, 1.5 PP, 12.3 Attack, 3.3 Defense, 5.1 Agility and
-/// 15 power in each element; HP and PP are capped at 9999, the other stats at
-/// 999 and power at 200. Changes the unit's base stats and level and works
-/// out its stats again (Unit_Calculate). Called by
-/// BattleFormation_BuildEnemyList for each enemy of a monster battle.
+/// 15 power in each element; HP and PP are capped at UNIT_HP_MAX, the other
+/// stats at UNIT_STAT_MAX and power at UNIT_ELEMENT_MAX. Changes the unit's
+/// base stats and level and works out its stats again (Unit_Calculate). Called
+/// by BattleFormation_BuildEnemyList for each enemy of a monster battle.
 #ifdef UBFIX
 void BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
 #else
@@ -222,40 +222,40 @@ s32 BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
   value = unit->baseHp;
   value += levels * 97 / 10;
   minimumStat = base->baseHp * 7 / 10;
-  CLAMP(value, minimumStat, 9999);
+  CLAMP(value, minimumStat, UNIT_HP_MAX);
   unit->baseHp = value;
 
   value = unit->basePp;
   value += levels * 15 / 10;
   minimumStat = base->basePp * 7 / 10;
-  CLAMP(value, minimumStat, 9999);
+  CLAMP(value, minimumStat, UNIT_HP_MAX);
   unit->basePp = value;
 
   minimumStat = levels * 123 / 10;
   value = unit->baseAttack;
   value += minimumStat;
   minimumStat = base->baseAttack * 7 / 10;
-  CLAMP(value, minimumStat, 999);
+  CLAMP(value, minimumStat, UNIT_STAT_MAX);
   unit->baseAttack = value;
 
   minimumStat = levels * 33 / 10;
   value = unit->baseDefense;
   value += minimumStat;
   minimumStat = base->baseDefense * 7 / 10;
-  CLAMP(value, minimumStat, 999);
+  CLAMP(value, minimumStat, UNIT_STAT_MAX);
   unit->baseDefense = value;
 
   minimumStat = levels * 51 / 10;
   value = unit->baseAgility;
   value += minimumStat;
   minimumStat = base->baseAgility * 7 / 10;
-  CLAMP(value, minimumStat, 999);
+  CLAMP(value, minimumStat, UNIT_STAT_MAX);
   unit->baseAgility = value;
 
   for (element = 0; element < ELEMENT_COUNT; element++) {
     value = unit->baseElement[element].power + levels * 15;
     minimumStat = base->element[element].power * 7 / 10;
-    CLAMP(value, minimumStat, 200);
+    CLAMP(value, minimumStat, UNIT_ELEMENT_MAX);
     unit->baseElement[element].power = value;
   }
 

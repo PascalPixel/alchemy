@@ -173,8 +173,10 @@ s32 PartyStatus_DrawBars(struct Window *window, s32 x, s32 y, s32 length) {
 
   if (work->battleMode == WINDOW_FIELD) {
     Dma_Set((const void *)Palette_GetBasicSpriteColors(),
-            (void *)&BG_PLTT_COLOR(14, 0), DMA_COPY16(16), REG_DMA3);
-    BG_PLTT_COLOR(14, 14) = BG_PLTT_COLOR(15, 4);
+            (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0), DMA_COPY16(16),
+            REG_DMA3);
+    BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR) =
+        BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   }
   x += window->x;
   y += window->y;
@@ -306,22 +308,20 @@ void PartyStatus_Draw(s32 flags) {
     s32 current;
 
     if (hp == 0)
-      Text_SetColor(2);
+      Text_SetColor(TEXT_COLOR_RED);
     else if (hp <= hpMax / 4)
-      Text_SetColor(4);
+      Text_SetColor(TEXT_COLOR_YELLOW);
     else
-      Text_SetColor(15);
-    // The numbers' tiles take BG palette 14 in the field and 5 in battle
-    // (WindowWork.textPalette); the name keeps palette 15.
-    work->textPalette = 14;
+      Text_SetColor(TEXT_COLOR_WHITE);
+    work->textPalette = HIGHLIGHT_PALETTE;
     if (work->battleMode != WINDOW_FIELD)
-      work->textPalette = 5;
+      work->textPalette = BASIC_COLORS_PALETTE;
     Text_DrawPrefixedNumberAtOffset(
         hp, window, (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8 + 8, 0);
-    work->textPalette = 15;
+    work->textPalette = WINDOW_PALETTE;
     Text_DrawStringAtOffset(unit->name, window,
                             (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8);
-    Text_SetColor(15);
+    Text_SetColor(TEXT_COLOR_WHITE);
     if (unit->hpMax != 0) {
       // A member with any HP left shows at least one pixel of bar.
       current = unit->hp;
@@ -332,9 +332,9 @@ void PartyStatus_Draw(s32 flags) {
                            barLength);
     }
     if (flags & PARTY_STATUS_SHOW_PP) {
-      work->textPalette = 14;
+      work->textPalette = HIGHLIGHT_PALETTE;
       if (work->battleMode != WINDOW_FIELD)
-        work->textPalette = 5;
+        work->textPalette = BASIC_COLORS_PALETTE;
       Text_DrawPrefixedNumberAtOffset(unit->pp, window,
                                       (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8,
                                       y * 8 + 16, 1);
@@ -348,7 +348,7 @@ void PartyStatus_Draw(s32 flags) {
       }
     }
   }
-  work->textPalette = 15;
+  work->textPalette = WINDOW_PALETTE;
 
   // The Djinn column: each element's icon and its count of standby Djinn.
   if (work->battleMode != WINDOW_FIELD && (flags & PARTY_STATUS_SHOW_DJINN)) {

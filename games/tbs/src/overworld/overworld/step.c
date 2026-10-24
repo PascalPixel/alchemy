@@ -399,7 +399,7 @@ void Party_AddHp(s32 amount, s32 percent) {
 
   // Damage of more than 10 plays the heavier impact sound.
   if (amount < 0) {
-    PaletteFade_SetSource(0x1ff, 0);
+    PaletteFade_SetSource(RGB(31, 15, 0), 0);
     PaletteFade_StartInterpolation(4);
     if (amount < -10)
       Sound_PlaySongFar(SE_HEAVY_IMPACT);
@@ -466,7 +466,7 @@ s32 Party_ApplyPoisonDamage(void) {
   }
 
   if (worstPoison != 0) {
-    PaletteFade_SetSource(0x1ff, 0);
+    PaletteFade_SetSource(RGB(31, 15, 0), 0);
     PaletteFade_StartInterpolation(4);
     Sound_PlaySongFar(SE_IMPACT);
   }

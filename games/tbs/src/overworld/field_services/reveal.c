@@ -95,8 +95,8 @@ void FieldEffect_RunReveal(void) {
   state->centreY = target->z.fixed - target->y.fixed;
   // From the plain colours (PALETTE_TINT_NONE, 0x10000) the BG palettes
   // turn grey (PALETTE_TINT_GRAYSCALE, 0x10001) in one frame.
-  PaletteFade_SetSource(0x10000, 0);
-  PaletteFade_SetTarget(0x10001, 1);
+  PaletteFade_SetSource(PALETTE_TINT_NONE, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_GRAYSCALE, 1);
   PaletteFade_StartInterpolation(1);
   // Not in the English release.
 #if !(TBS_PATCH_1 && !TBS_PATCH_2)
@@ -123,7 +123,7 @@ void FieldEffect_RunReveal(void) {
     state->value = frame;
     frame++;
   } while (frame <= 18);
-  Task_Add(FieldEffect_WatchLeaderDistance, 0xc80);
+  Task_Add(FieldEffect_WatchLeaderDistance, TASK_PRIORITY_MAIN_LOOP);
 }
 
 /// Ends Reveal if it is running: stops its watch, brings the colours back

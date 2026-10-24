@@ -69,7 +69,7 @@ s32 Icon_CreateWithLoadedResource(struct Window *window, s32 x, s32 y,
   // 0x60 is VRAM_CACHE_ENTRY_COUNT: no slot free.
   if (slot != 0x60) {
     Icon_LoadResourceIntoSlot(resourceId, slot);
-    WindowSprite_CreateFar(slot, ICON_SPRITE_16X16, window, x, y);
+    WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, x, y);
   }
 #ifdef UBFIX
   return 0;
@@ -94,7 +94,7 @@ s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
     resource = (u16)menu->resourceSlots[0];
   else
     resource = (u16)menu->resourceSlots[1];
-  object = WindowSprite_CreateFar(resource, ICON_SPRITE_16X16, targetWindow,
+  object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, targetWindow,
                                   targetX, y);
   if (object == 0) {
     /* FAKEMATCH(dead): a test whose two arms both return -1, which emits
@@ -132,7 +132,7 @@ s32 Icon_DrawVariantWithTileOffset(struct Window *window, s32 x, s32 y,
     resource = (u16)menu->resourceSlots[1];
     y -= 4;
   }
-  object = WindowSprite_CreateFar(resource, ICON_SPRITE_16X16, targetWindow,
+  object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, targetWindow,
                                   targetX, y);
   if (object == 0) {
     /* FAKEMATCH(dead): a test whose two arms both return -1, which emits

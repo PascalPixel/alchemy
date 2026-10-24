@@ -48,7 +48,7 @@ void FieldEffect_StartMindReadWave(s32 x, s32 y) {
   work->targetId = y;
   work->delay = 8;
   FieldEffect_GreyMindReadPalette();
-  Task_Add(FieldEffect_UpdateMindReadWave, 0xc80);
+  Task_Add(FieldEffect_UpdateMindReadWave, TASK_PRIORITY_MAIN_LOOP);
 }
 
 /// Stops the wave effect: restores the caster's colours and the palettes and
@@ -265,7 +265,7 @@ void FieldEffect_GreyMindReadPalette(void) {
   // Window mode 1: messages show as thoughts until
   // FieldEffect_RestoreMindReadPalette clears it.
   ((struct WindowWork *)gWindowWork[0])->mindRead = 1;
-  p = &BG_PLTT_COLOR(15, 1);
+  p = &BG_PLTT_COLOR(WINDOW_PALETTE, 1);
   *p = MIND_READ_GREY;
   p += 2;
   *p = MIND_READ_GREY;
@@ -288,7 +288,7 @@ void FieldEffect_GreyMindReadPalette(void) {
   p += 1;
   *p = MIND_READ_GREY;
   // 0x480 is TASK_PRIORITY_VBLANK.
-  Task_Add(FieldEffect_ArmBg0HBlankDma, 0x480);
+  Task_Add(FieldEffect_ArmBg0HBlankDma, TASK_PRIORITY_VBLANK);
 }
 
 /// Stops the BG0 scanline scroll and restores BG palette 15.
@@ -298,10 +298,10 @@ void FieldEffect_RestoreMindReadPalette(void) {
   work = gWindowWork[0];
   Task_Remove(FieldEffect_ArmBg0HBlankDma);
   // Palette 15's white, black and two greys.
-  BG_PLTT_COLOR(15, 1) = RGB(31, 31, 31);
-  BG_PLTT_COLOR(15, 3) = 0;
-  BG_PLTT_COLOR(15, 11) = RGB(10, 10, 10);
-  BG_PLTT_COLOR(15, 12) = RGB(20, 20, 20);
+  BG_PLTT_COLOR(WINDOW_PALETTE, 1) = RGB(31, 31, 31);
+  BG_PLTT_COLOR(WINDOW_PALETTE, 3) = 0;
+  BG_PLTT_COLOR(WINDOW_PALETTE, 11) = RGB(10, 10, 10);
+  BG_PLTT_COLOR(WINDOW_PALETTE, 12) = RGB(20, 20, 20);
   WindowColor_ApplyFar(gSaveBlock.windowColor[0], gSaveBlock.windowColor[1]);
   ((struct WindowWork *)work)->mindRead = 0;
 }

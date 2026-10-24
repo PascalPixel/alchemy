@@ -1013,7 +1013,8 @@ static s32 BattleArena_EnterBattle(void) {
         FreeHeapSlot(HEAP_SLOT_ENEMY_UNITS);
         BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
         BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
-        FieldScheduler_AddCallback((TaskFunc)BattleArena_PollPeerReady, 0xc80);
+        FieldScheduler_AddCallback((TaskFunc)BattleArena_PollPeerReady,
+                                   TASK_PRIORITY_MAIN_LOOP);
         Task_SetFlags((TaskFunc)BattleArena_PollPeerReady, 1);
         GameFlag_Clear(FLAG_BATTLE_ARENA_PARTNER_ASKED);
         GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_AGREED);
@@ -1190,7 +1191,7 @@ static s32 BattleArena_ReportWinTallies(s32 localId) {
     tally = &gSaveBlock.linkTallies[LINK_TALLY_LINKED_WINS];
     if (*tally != 0) {
       MessageArgument_ClearAll();
-      MessageArgument_Push(*tally, 5);
+      MessageArgument_Push(*tally, MESSAGE_ARGUMENT_NUMBER);
       FieldScript_SetMessageId(messageBase + 1);
       FieldScript_ShowMessageAndWait(localId, 0);
     } else {
@@ -1202,7 +1203,7 @@ static s32 BattleArena_ReportWinTallies(s32 localId) {
     tally = &gSaveBlock.linkTallies[LINK_TALLY_LINKED_STREAK];
     if (*tally != 0) {
       MessageArgument_ClearAll();
-      MessageArgument_Push(*tally, 5);
+      MessageArgument_Push(*tally, MESSAGE_ARGUMENT_NUMBER);
       FieldScript_SetMessageId(messageBase + 1);
       FieldScript_ShowMessageAndWait(localId, 0);
     } else {
@@ -1228,7 +1229,7 @@ static s32 BattleArena_ChooseDebugPartyPreset(s32 localId) {
   ObjectMotion_SetAngleToward(localId, gSaveBlock.leaderLocalId, 0);
   FieldScript_SetMessageId(MsgLobbyChooseParameters);
   FieldScript_ShowMessageAndWait(localId, 0);
-  window = Window_Create(0, 0, 6, 4, 2);
+  window = Window_Create(0, 0, 6, 4, WINDOW_FLAG_INSTANT);
   presetIndex = 0;
   displayedPreset = -1;
   for (;;) {
@@ -1445,7 +1446,8 @@ static s32 BattleArena_ReportMonsterRecord(s32 localId) {
   state = &gSaveBlock;
   ObjectMotion_SetAngleToward(localId, state->leaderLocalId, 0);
   if (state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] != 0) {
-    MessageArgument_Push(state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK], 5);
+    MessageArgument_Push(state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK],
+                         MESSAGE_ARGUMENT_NUMBER);
     FieldScript_SetMessageId(MsgLobbyWonNumberConsecutive);
   } else {
     FieldScript_SetMessageId(MsgLobbyCantWaitSee);
@@ -1607,7 +1609,7 @@ s32 BattleArena_RunRoundResult(void) {
       GameFlag_Clear(FLAG_MONSTER_BATTLE);
       FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
       MessageArgument_Push(gSaveBlock.linkTallies[LINK_TALLY_MONSTER_STREAK],
-                           5);
+                           MESSAGE_ARGUMENT_NUMBER);
       if (gSaveBlock.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] <
           gSaveBlock.linkTallies[LINK_TALLY_MONSTER_STREAK]) {
         gSaveBlock.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] =
@@ -1631,7 +1633,8 @@ s32 BattleArena_RunRoundResult(void) {
     FieldScript_WaitTransitionFrames();
     BattleArena_WriteSlotValue(LOBBY_SLOT_ALONE);
     ObjectMotion_SetAngleToward(LOCALID_ATTENDANT, gSaveBlock.leaderLocalId, 0);
-    MessageArgument_Push(gSaveBlock.linkTallies[LINK_TALLY_MONSTER_STREAK], 5);
+    MessageArgument_Push(gSaveBlock.linkTallies[LINK_TALLY_MONSTER_STREAK],
+                         MESSAGE_ARGUMENT_NUMBER);
     if (gSaveBlock.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] <
         gSaveBlock.linkTallies[LINK_TALLY_MONSTER_STREAK]) {
       gSaveBlock.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] =
@@ -1724,7 +1727,7 @@ s32 BattleArena_RunRoundResult(void) {
   }
   // Resume polling and restore the party unless continuing a monster run.
   callback = (TaskFunc)BattleArena_PollPeerReady;
-  FieldScheduler_AddCallback(callback, 0xc80);
+  FieldScheduler_AddCallback(callback, TASK_PRIORITY_MAIN_LOOP);
   Task_SetFlags(callback, 1);
   if (gSaveBlock.warpDest != 8 || !GameFlag_Get(FLAG_MONSTER_BATTLE)) {
     Party_RestoreHpPp(1);

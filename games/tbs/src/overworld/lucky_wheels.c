@@ -1052,10 +1052,10 @@ void LuckyWheels_Run(void) {
   REG_BG2VOFS = 0xff60;
   REG_WIN0H = WIN_RANGE(40, 200);
   REG_WIN0V = WIN_RANGE(24, 120);
-  REG_WIN0H = WIN_RANGE(0, 240);
-  REG_WIN0V = WIN_RANGE(0, 160);
-  REG_WIN1H = WIN_RANGE(0, 240);
-  REG_WIN1V = WIN_RANGE(0, 160);
+  REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
+  REG_WIN0V = WIN_RANGE(0, DISPLAY_HEIGHT);
+  REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
+  REG_WIN1V = WIN_RANGE(0, DISPLAY_HEIGHT);
 
   {
     u16 *shade = (u16 *)(work->sheet + 0x200);
@@ -1150,8 +1150,8 @@ void LuckyWheels_Run(void) {
       Text_DrawMessageAsTilesFar(message + 1, state->window, 0, 8);
     }
     work->transferPending = 0;
-    Task_Add(LuckyWheels_RunFrame, 0x480);
-    Task_Add(LuckyWheels_TransferCanvas, 0x480);
+    Task_Add(LuckyWheels_RunFrame, TASK_PRIORITY_VBLANK);
+    Task_Add(LuckyWheels_TransferCanvas, TASK_PRIORITY_VBLANK);
 
     for (frame = 0; state->state != LUCKY_WHEELS_DONE; frame++) {
       if (frame <= 16) {

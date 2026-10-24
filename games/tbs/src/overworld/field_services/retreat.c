@@ -99,13 +99,13 @@ void FieldEffect_UpdateRadialLaunch(struct FieldEffectSprite *effect) {
 ///
 /// Abilities: Retreat (FIELD_PSYNERGY_RETREAT).
 ///
-/// The caster turns south, plays animation 28 with its colours cycling,
-/// spins up for 70 frames (FieldEffect_UpdateSpinAngle), then rises and shrinks
-/// out of sight (FieldEffect_UpdateDescendingObject) as the particles fly. It
-/// is hidden, not released, and the effect opens a script (FieldScript_Start)
-/// it does not end: the Retreat warp raised before it (WARP_RETREAT, by
-/// Field_UsePsynergy or Field_UseItem) then leaves the map. Called by
-/// FieldEffect_Run and FieldEffect_DispatchRequestKind.
+/// The caster turns south, plays ANIM_LEADER_ARMS_RAISED with its colours
+/// cycling, spins up for 70 frames (FieldEffect_UpdateSpinAngle), then rises
+/// and shrinks out of sight (FieldEffect_UpdateDescendingObject) as the
+/// particles fly. It is hidden, not released, and the effect opens a script
+/// (FieldScript_Start) it does not end: the Retreat warp raised before it
+/// (WARP_RETREAT, by Field_UsePsynergy or Field_UseItem) then leaves the map.
+/// Called by FieldEffect_Run and FieldEffect_DispatchRequestKind.
 void FieldEffect_RunRetreat(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct ObjectEvent *objectEvent = effectWork->mainObject;
@@ -118,11 +118,11 @@ void FieldEffect_RunRetreat(void) {
   FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
   FieldEffect_FadeToEffectColor();
   WaitFrames(10);
-  ObjectMotion_ArmCallback(effectWork->firstObjectId, 0x4000, 0);
+  ObjectMotion_ArmCallback(effectWork->firstObjectId, FACING_SOUTH, 0);
   WaitFrames(30);
   objectEvent->update = Object_CycleSpriteColors;
   Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
-  Object_SelectAnimationFar(objectEvent, 28);
+  Object_SelectAnimationFar(objectEvent, ANIM_LEADER_ARMS_RAISED);
   WaitFrames(40);
 
   // Start spinning.

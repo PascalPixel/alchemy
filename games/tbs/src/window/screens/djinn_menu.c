@@ -91,7 +91,9 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   previewPages = 0;
   redraw = 0;
   alreadySelected = 0;
-  messageWindow = Window_Create(0, 4, 30, 4, 42);
+  messageWindow = Window_Create(0, 4, 30, 4,
+                                WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                                    WINDOW_FLAG_FRAMED_CANVAS);
   Text_UseExtraTiles(1);
   listWindow = Window_Create(21, 9, 9, 11, 6);
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
@@ -152,10 +154,13 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       standbyElements = 0;
       work->holdTilemapUpload = 1;
       Window_HighlightRect(listWindow->x + 1, listWindow->y + drawnRow * 2 + 1,
-                           listWindow->width - 2, 1, 15);
+                           listWindow->width - 2, 1, WINDOW_PALETTE);
       if (previewPage != 0) {
         Window_Close(messageWindow, 1);
-        messageWindow = Window_Create(0, 4, 30, 4, 42);
+        messageWindow =
+            Window_Create(0, 4, 30, 4,
+                          WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                              WINDOW_FLAG_FRAMED_CANVAS);
         Text_FillCanvasBackground();
       }
       redraw = 0;
@@ -239,7 +244,10 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       if (previewPage == 0) {
         work->holdTilemapUpload = 1;
         Window_Close(messageWindow, 1);
-        messageWindow = Window_Create(0, 4, 30, 4, 42);
+        messageWindow =
+            Window_Create(0, 4, 30, 4,
+                          WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                              WINDOW_FLAG_FRAMED_CANVAS);
         work->holdTilemapUpload = (u8)previewPage;
       }
       Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
@@ -253,9 +261,9 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
                                  (s32)((encodedDjinn & 0xf00) >> 8) + 0x5001, 0,
                                  j * 2, 0);
           if (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK) {
-            Text_SetColor(4);
+            Text_SetColor(TEXT_COLOR_YELLOW);
           } else if (encodedDjinn & DJINN_ENTRY_STANDBY) {
-            Text_SetColor(2);
+            Text_SetColor(TEXT_COLOR_RED);
           }
           Text_DrawMessageAsTiles((s32)(((encodedDjinn & 0xf00) >> 8) * 20 +
                                         (encodedDjinn & 0xff)) +
@@ -267,7 +275,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
                       DJINN_ENTRY_RECOVERY_SHIFT),
                 DJINN_RECOVERY_DIGITS, listWindow, DJINN_RECOVERY_X, j * 16);
           }
-          Text_SetColor(15);
+          Text_SetColor(TEXT_COLOR_WHITE);
           j++;
           if (j >= BATTLE_LIST_ROWS) {
             break;
@@ -288,7 +296,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       }
       Window_HighlightRect(listWindow->x + 1,
                            listWindow->y + selectedRow * 2 + 1,
-                           listWindow->width - 2, 1, 14);
+                           listWindow->width - 2, 1, HIGHLIGHT_PALETTE);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
     }
@@ -311,10 +319,10 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       }
       if ((gKeysHeld & KEY_R) == 0) {
         Window_SetTilemapEntry(
-            listWindow, 0xf334,
+            listWindow, LIST_TILE_PAGES_LEFT,
             listWindow->width - (djinnCount + 4) / BATTLE_LIST_ROWS - 3, -1, 0);
-        Window_SetTilemapEntry(listWindow, 0xf335, listWindow->width - 2, -1,
-                               0);
+        Window_SetTilemapEntry(listWindow, LIST_TILE_PAGES_RIGHT,
+                               listWindow->width - 2, -1, 0);
       } else {
         Window_SetTilemapEntry(
             listWindow, WINDOW_TILE_FRAME_TOP,
@@ -415,10 +423,10 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
                                    previewWindow->width - previewPages + i - 2,
                                    -1, 0);
           }
-          Window_SetTilemapEntry(previewWindow, 0xf334,
+          Window_SetTilemapEntry(previewWindow, LIST_TILE_PAGES_LEFT,
                                  previewWindow->width - previewPages - 3, -1,
                                  0);
-          Window_SetTilemapEntry(previewWindow, 0xf335,
+          Window_SetTilemapEntry(previewWindow, LIST_TILE_PAGES_RIGHT,
                                  previewWindow->width - 2, -1, 0);
           Window_MarkTilemapRow(work, previewWindow->y);
         }
@@ -544,7 +552,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       Iwram_CopyWords((void *)0x06006500, gDjinnMenu_BlinkTile, 32);
       Iwram_CopyWords((void *)0x06006520, gDjinnMenu_BlinkTile, 32);
     } else {
-      Iwram_FillWords((void *)0x06006500, 32, 0x44444444);
+      Iwram_FillWords((void *)0x06006500, 32, TEXT_CANVAS_BACKGROUND_WORD);
       Iwram_CopyWords((void *)0x06006520, gDjinnMenu_BlinkTile, 32);
     }
     WaitFrames(1);
@@ -553,7 +561,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   // Leave the Djinn column in palette 15.
   if (CURSOR_OWNER->flags & 2) {
     Window_HighlightRect(CURSOR_OWNER->window->x + 1,
-                         CURSOR_OWNER->window->y + 1, 4, 4, 15);
+                         CURSOR_OWNER->window->y + 1, 4, 4, WINDOW_PALETTE);
   }
   // Restore the party strip before releasing the Djinn menu's resources.
   VramCache_FreeEntry(cursorSlot);

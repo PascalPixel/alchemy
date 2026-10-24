@@ -243,7 +243,7 @@ void *IconMenu_Open(void) {
   void *work;
   work = AllocHeapSlotEwram(HEAP_SLOT_ICON_MENU, 152);
   Dma_Fill32(0, work, 152);
-  Task_Add(IconMenu_DrawIcons, 0xc76);
+  Task_Add(IconMenu_DrawIcons, TASK_PRIORITY_MAIN_LOOP - 10);
   return work;
 }
 
@@ -441,7 +441,7 @@ void IconMenu_Center(s32 row, s32 width, s32 resourceBase) {
     entry->y = row * 8;
     x += 3;
   }
-  work->window = Window_Create(x, row, work->width, 3, 2);
+  work->window = Window_Create(x, row, work->width, 3, WINDOW_FLAG_INSTANT);
 }
 
 /// Places icons at three-tile intervals from (x, y), then creates their label
@@ -461,7 +461,7 @@ void IconMenu_LayoutIcons(s32 x, s32 y, s32 width, s32 resourceBase) {
     entry->x = x << 3;
     x += 3;
   }
-  work->window = Window_Create(x, y, work->width, 3, 2);
+  work->window = Window_Create(x, y, work->width, 3, WINDOW_FLAG_INSTANT);
 }
 
 /// Reads the signed command-position mapping used by the icon menu.
@@ -756,39 +756,42 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   IconMenu_Center(17, 5, 0);
 #endif
   if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD) {
-    Task_Add(Menu_DrawModeLabel, 0xc76);
+    Task_Add(Menu_DrawModeLabel, TASK_PRIORITY_MAIN_LOOP - 10);
     work->previousMode = 0xffff;
     window = Window_Create(RESOURCE_MODE0_WINDOW_X, 0,
-                           RESOURCE_MODE0_WINDOW_WIDTH, 4, 2);
+                           RESOURCE_MODE0_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
     message = MsgPasswordSelection;
     upper = &work->upperWindow;
     *upper = window;
     Text_DrawMessage(message, window, 0, 4);
 #if LANGUAGE != LANGUAGE_JAPANESE
-    window = Window_Create(RESOURCE_MODE1_WINDOW_X, 4,
-                           RESOURCE_MODE1_WINDOW_WIDTH, 12, 2);
+    window =
+        Window_Create(RESOURCE_MODE1_WINDOW_X, 4, RESOURCE_MODE1_WINDOW_WIDTH,
+                      12, WINDOW_FLAG_INSTANT);
     work->lowerWindow = window;
     Text_DrawMessage(message + 1, window, 8, 0);
     Text_DrawMessage(message + 2, work->lowerWindow, 8, 11);
     message += 3;
     Text_DrawMessage(message, work->lowerWindow, 8, 22);
 #else
-    window = Window_Create(5, 4, 21, 12, 2);
+    window = Window_Create(5, 4, 21, 12, WINDOW_FLAG_INSTANT);
     work->lowerWindow = window;
     Text_DrawMessage(message + 1, window, 0, 4);
     message += 2;
     Text_DrawMessage(message, work->lowerWindow, 0, 16);
 #endif
   } else {
-    Task_Add(Menu_DrawModeIndicator, 0xc76);
+    Task_Add(Menu_DrawModeIndicator, TASK_PRIORITY_MAIN_LOOP - 10);
     work->previousMode = 0xffff;
-    window = Window_Create(TRANSFER_METHOD_WINDOW_X, 0,
-                           TRANSFER_METHOD_WINDOW_WIDTH, 4, 2);
+    window =
+        Window_Create(TRANSFER_METHOD_WINDOW_X, 0, TRANSFER_METHOD_WINDOW_WIDTH,
+                      4, WINDOW_FLAG_INSTANT);
     upper = &work->upperWindow;
     *upper = window;
     Text_DrawMessage(MsgTransferMethod, window, TRANSFER_METHOD_LABEL_X, 4);
-    work->lowerWindow = Window_Create(TRANSFER_HELP_WINDOW_X, 5,
-                                      TRANSFER_HELP_WINDOW_WIDTH, 7, 2);
+    work->lowerWindow =
+        Window_Create(TRANSFER_HELP_WINDOW_X, 5, TRANSFER_HELP_WINDOW_WIDTH, 7,
+                      WINDOW_FLAG_INSTANT);
   }
   result = IconMenu_Run(0);
   if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD)

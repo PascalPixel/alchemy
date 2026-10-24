@@ -133,8 +133,8 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define DJINN_PREVIEW_HELP_X 24
 #endif
 
-// The second of the two UI tiles before a Psynergy's PP cost in the lists
-// (the first is tile 0x1f).
+// The two UI tiles of the PP label before a Psynergy's cost in the lists.
+#define PSYNERGY_COST_FIRST_TILE WINDOW_TILE(0x1f)
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
 #define PSYNERGY_COST_SECOND_TILE 0xf005
@@ -282,12 +282,6 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define ENTRY19_COMMAND_LABEL_WIDTH 8
 #endif
 
-/// OAM attribute bits a window sprite is created with: the size field of
-/// attribute 1 (bits 30-31 of the first word). A square sprite of size 1 is
-/// 16x16 pixels, of size 2 32x32.
-#define OUTPUT_SIZE_16X16 0x40000000
-#define OUTPUT_SIZE_32X32 0x80000000
-
 // The two portrait slots of the UI work (WindowWork.portraitPictures and
 // portraitSprites), and their palette.
 #define PORTRAIT_SLOT_COUNT 2
@@ -309,7 +303,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 /// and arrows, and the summon list's element icon. The digit and arrow tiles
 /// are built when the party's commands open (Battle_CollectPartyCommands).
 enum {
-  /// Element icon: + enum Element, in BG palette 5.
+  /// Element icon: + enum Element, in BASIC_COLORS_PALETTE.
   LIST_TILE_SUMMON_ELEMENT = 0x5001,
   /// Page n's number: + n gives digit n + 1, tile 0x301 on, the UI digits
   /// with colour 1 drawn as 10 (Graphics_ExpandVramTilesByColorTable).

@@ -136,9 +136,9 @@ static void MenuTest_BrowseMessageRange(s32 messageId, s32 messageCount) {
   for (messageIndex = 0; messageIndex < messageCount; messageIndex++) {
     // Supply sample name, item and number substitutions before each message:
     // Garet, the Virtuous Armlet and 123456.
-    MessageArgument_Push(GARET, 1);
-    MessageArgument_Push(ITEM_VIRTUOUS_ARMLET, 2);
-    MessageArgument_Push(0x1e240, 5);
+    MessageArgument_Push(GARET, MESSAGE_ARGUMENT_ACTOR);
+    MessageArgument_Push(ITEM_VIRTUOUS_ARMLET, MESSAGE_ARGUMENT_ITEM);
+    MessageArgument_Push(0x1e240, MESSAGE_ARGUMENT_NUMBER);
     MenuTest_ShowMessageAndWait(messageId);
     for (;;) {
       if ((gKeysHeld & KEY_B) != 0) {
@@ -265,7 +265,7 @@ s32 MenuTest_GetEvents(void) { return (s32)gMenuTest_Events; }
 static void MenuTest_RaisePartyLevels(void) {
   s32 *targetLevel;
 
-  FieldMessage_Show(MsgDebugWentLevel, 1);
+  FieldMessage_Show(MsgDebugWentLevel, FIELD_MESSAGE_ZOOM);
   targetLevel = &gMenuTest_SlotOffsets;
   Unit_LevelUpTo(ISAAC, *targetLevel);
   Unit_LevelUpTo(GARET, *targetLevel);
@@ -282,7 +282,7 @@ static void MenuTest_RaisePartyLevels(void) {
 static void MenuTest_GiveConsumableTestStock(void) {
   // A repeated-grant loop shrinks this native function from 0x626 to 0x12c;
   // retain the individual calls and their original insertion order.
-  FieldMessage_Show(MsgDebugGotItem, 1);
+  FieldMessage_Show(MsgDebugGotItem, FIELD_MESSAGE_ZOOM);
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
@@ -509,7 +509,7 @@ static void MenuTest_GivePartyDjinn(void) {
   }
 #endif
   // Add and set each element in separate passes, preserving recovery updates.
-  FieldMessage_Show(MsgDebugGotDjinni, 1);
+  FieldMessage_Show(MsgDebugGotDjinni, FIELD_MESSAGE_ZOOM);
   Djinn_Give(ISAAC, ELEMENT_VENUS, 0);
   Djinn_Give(ISAAC, ELEMENT_VENUS, 1);
   Djinn_Give(ISAAC, ELEMENT_VENUS, 2);
@@ -578,7 +578,7 @@ static void MenuTest_DamageAndAfflictParty(void) {
   // curse (0x130).
   u8 *record;
 
-  FieldMessage_Show(MsgDebugBodyTornApart, 1);
+  FieldMessage_Show(MsgDebugBodyTornApart, FIELD_MESSAGE_ZOOM);
   FieldUnit_AddHp(ISAAC, -100);
   FieldUnit_AddHp(GARET, -100);
   FieldUnit_AddHp(IVAN, -33);
@@ -601,7 +601,7 @@ static void MenuTest_DamageAndAfflictParty(void) {
 /// to Jenna: `You got sturdy equipment!`, then weapons and armor for each of
 /// the four, from the Gaia Blade to the Glittering Tiara.
 static void MenuTest_GiveEquipmentTestStock(void) {
-  FieldMessage_Show(MsgDebugGotSturdyEquipment, 1);
+  FieldMessage_Show(MsgDebugGotSturdyEquipment, FIELD_MESSAGE_ZOOM);
   Inventory_AddItem(ISAAC, ITEM_SPIKED_ARMOR);
   Inventory_AddItem(ISAAC, ITEM_ASURAS_ARMOR);
   Inventory_AddItem(ISAAC, ITEM_EARTH_SHIELD);
@@ -652,16 +652,17 @@ static void MenuTest_SelectItem(void) {
 
   itemCount = DEBUG_ITEM_COUNT;
   Sound_PlaySong(SE_MENU_CONFIRM);
-  window = Window_Create(0, 0, 30, 7, 2);
-  details = Window_Create(0, 8, 13, 10, 2);
+  window = Window_Create(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
+  details = Window_Create(0, 8, 13, 10, WINDOW_FLAG_INSTANT);
   selectedItemId = 1;
   redraw = 1;
   // Reuse the item palette for both debug windows: sprite palette 0 into BG
   // palette 14, and BG palette 15's colour 4 over BG palette 14's colour 14,
   // as the level room's browser does.
-  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
           DMA_ENABLE << 16 | 0x10, REG_DMA3);
-  Dma_Set((const void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(14, 14),
+  Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
+          (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
           DMA_ENABLE << 16 | 1, REG_DMA3);
   WaitFrames(1);
   while (1) {
@@ -743,7 +744,7 @@ UNUSED static void MenuTest_OpenItemBrowser(void) { MenuTest_SelectItem(); }
 static void MenuTest_GiveTreasureTestStock(void) {
   // Sharing the duplicate grants through a counted loop shrinks this function
   // from 0x194 to 0x120; retain the original calls.
-  FieldMessage_Show(MsgDebugGotTreasure, 1);
+  FieldMessage_Show(MsgDebugGotTreasure, FIELD_MESSAGE_ZOOM);
   Inventory_AddItem(ISAAC, ITEM_HERMES_WATER);
   Inventory_AddItem(ISAAC, ITEM_HALT_GEM);
   Inventory_AddItem(ISAAC, ITEM_VENUS_STAR);

@@ -225,7 +225,7 @@ s32 Warp_PlayArrival(void) {
         }
         Sound_PlaySongFar(SE_DOOR_CLOSE);
         leader->y = leader->groundHeight;
-        Object_SelectAnimationFar(leader, 22);
+        Object_SelectAnimationFar(leader, ANIM_LEADER_LEAN_BACK);
         FieldScript_WaitFrames(15);
         FieldCamera_FollowObjectEvent(leaderId, 1);
         result = 3;

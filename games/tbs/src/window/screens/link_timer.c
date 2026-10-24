@@ -158,7 +158,9 @@ s32 Message_ShowLocalizedAndWait(void) {
     }
   }
   if (result != 0) {
-    window = Window_Create(0, 7, 30, 4, 42);
+    window = Window_Create(0, 7, 30, 4,
+                           WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                               WINDOW_FLAG_FRAMED_CANVAS);
     Text_FillCanvasBackground();
     BATTLE_MENU_MESSAGE_COPY(MsgNoTimeToRun, buffer,
                              BATTLE_MENU_MESSAGE_CAPACITY);

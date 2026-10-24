@@ -127,7 +127,7 @@ void BattleTransition_BuildTilemap(void *tilemap) {
 /// background is BATTLE_BACKGROUND_ZOOMED: its first line's BG2CNT now, the
 /// rest by HBlank DMA 0, and its affine parameters into BG2PA to BG2Y. Runs
 /// each frame as a task, in the VBlank pass at its highest
-/// priority (0x4ff), added by BattleBackground_Load and
+/// priority (TASK_PRIORITY_VBLANK + 127), added by BattleBackground_Load and
 /// BattleBackground_SetMode; BattleCamera_SetRange builds the
 /// pages.
 void BattleBackground_ShowZoomedPage(void) {
@@ -350,9 +350,9 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
       gBgScroll[1].y = 32;
       gBgScroll[1].x = 8;
       WaitFrames(1);
-      REG_WIN0H = WIN_RANGE(0, 240);
+      REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
       REG_WIN0V = WIN_RANGE(0, 136);
-      REG_WIN1H = WIN_RANGE(0, 240);
+      REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
       REG_WIN1V = WIN_RANGE(0, 136);
       REG_WININ = BATTLE_WININ;
       REG_WINOUT = BATTLE_WINOUT;
@@ -363,12 +363,10 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
                                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
       // The opening runs from the callbacks while the status window opens
       // and the encounter is announced.
-      // The timer in the main-loop pass (3200 is 0xc80), the rows in the
-      // VBlank pass (0x480).
       BattleCamera_SetView(0, 0, 0, 180);
       *timer = start;
-      Task_Add(BattleTransition_AdvanceTimer, 3200);
-      Task_Add(BattleTransition_DrawRows, 0x480);
+      Task_Add(BattleTransition_AdvanceTimer, TASK_PRIORITY_MAIN_LOOP);
+      Task_Add(BattleTransition_DrawRows, TASK_PRIORITY_VBLANK);
       Irq_SetHandler(IRQ_VCOUNT, 32, BattleTransition_ClearBg0Vofs);
       gBgScroll[0].y = 32;
       WaitFrames(1);
@@ -407,7 +405,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                         DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_WIN0_ON |
                             DISPCNT_WIN1_ON,
-                        0x20000);
+                        IO_WRITE_16);
     WaitFrames(1);
     {
       s32 start = 0;

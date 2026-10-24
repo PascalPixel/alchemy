@@ -12,11 +12,12 @@
 /// places the camera at its position (or at the one it follows) with its yaw,
 /// pitch and distance, and, unless its flag holds the background, refreshes the
 /// background's zoom. Runs as a task that
-/// Battle_Run adds with priority 0xc7f: in the main-loop pass, after
-/// the tasks of priority 0xc80 (the objects' camera, the sprite priorities and
-/// playback). Changes battle->linkMisses and linkPaused,
-/// the camera's yaw and gBattleBackgroundWork's frame count, the transform
-/// state, and through BattleCamera_SetRange the background's affine page.
+/// Battle_Run adds with priority TASK_PRIORITY_MAIN_LOOP - 1: in the main-loop
+/// pass, after the tasks of priority TASK_PRIORITY_MAIN_LOOP (the objects'
+/// camera, the sprite priorities and playback). Changes battle->linkMisses and
+/// linkPaused, the camera's yaw and gBattleBackgroundWork's frame count, the
+/// transform state, and through BattleCamera_SetRange the background's affine
+/// page.
 void BattleCamera_Update(void) {
   // UB: indexing past scalar gBattleCamera reaches other heap slots. Named
   // slots add four bytes in the native EN trial (0xf8 to 0xfc).

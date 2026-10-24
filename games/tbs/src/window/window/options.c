@@ -88,19 +88,19 @@ UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
 /// window tint.
 /// Nothing calls it.
 UNUSED void WindowColor_WritePalette(struct OptionMenuWork *work) {
-  *(s16 *)&BG_PLTT_COLOR(15, 4) =
+  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 4) =
       WindowColor_ScaleTint(work, 0xEEEE, 0xCCCC, 0x11110);
-  *(s16 *)&BG_PLTT_COLOR(15, 5) =
+  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 5) =
       WindowColor_ScaleTint(work, 0xD555, 0xBBBB, 0xEEEE);
-  *(s16 *)&BG_PLTT_COLOR(15, 6) =
+  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 6) =
       WindowColor_ScaleTint(work, 0xBBBB, 0xAAAA, 0xCCCC);
-  *(s16 *)&BG_PLTT_COLOR(15, 7) =
+  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 7) =
       WindowColor_ScaleTint(work, 0xA221, 0x9999, 0xAAAA);
-  *(s16 *)&BG_PLTT_COLOR(15, 8) =
+  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 8) =
       WindowColor_ScaleTint(work, 0x10888, 0xDDDD, 0x13333);
-  *(s16 *)&BG_PLTT_COLOR(15, 9) =
+  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 9) =
       WindowColor_ScaleTint(work, 0x12221, 0xEEEE, 0x15555);
-  *(s16 *)&BG_PLTT_COLOR(15, 10) =
+  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 10) =
       WindowColor_ScaleTint(work, 0x13BBB, 0x10000, 0x17777);
 }
 
@@ -184,13 +184,20 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   // 4 to 7 grow darker, from about 0.93, 0.8 and 1.07 to 0.63, 0.6 and 0.67,
   // and 8 to 10 lighter, up to about 1.23, 1 and 1.47. Colour 4 is the
   // windows' background.
-  BG_PLTT_COLOR(15, 4) = Color_ScaleComponents(rgb, 0xeeee, 0xcccc, 0x11110);
-  BG_PLTT_COLOR(15, 5) = Color_ScaleComponents(rgb, 0xd555, 0xbbbb, 0xeeee);
-  BG_PLTT_COLOR(15, 6) = Color_ScaleComponents(rgb, 0xbbbb, 0xaaaa, 0xcccc);
-  BG_PLTT_COLOR(15, 7) = Color_ScaleComponents(rgb, 0xa221, 0x9999, 0xaaaa);
-  BG_PLTT_COLOR(15, 8) = Color_ScaleComponents(rgb, 0x10888, 0xdddd, 0x13333);
-  BG_PLTT_COLOR(15, 9) = Color_ScaleComponents(rgb, 0x12221, 0xeeee, 0x15555);
-  BG_PLTT_COLOR(15, 10) = Color_ScaleComponents(rgb, 0x13bbb, 0x10000, 0x17777);
+  BG_PLTT_COLOR(WINDOW_PALETTE, 4) =
+      Color_ScaleComponents(rgb, 0xeeee, 0xcccc, 0x11110);
+  BG_PLTT_COLOR(WINDOW_PALETTE, 5) =
+      Color_ScaleComponents(rgb, 0xd555, 0xbbbb, 0xeeee);
+  BG_PLTT_COLOR(WINDOW_PALETTE, 6) =
+      Color_ScaleComponents(rgb, 0xbbbb, 0xaaaa, 0xcccc);
+  BG_PLTT_COLOR(WINDOW_PALETTE, 7) =
+      Color_ScaleComponents(rgb, 0xa221, 0x9999, 0xaaaa);
+  BG_PLTT_COLOR(WINDOW_PALETTE, 8) =
+      Color_ScaleComponents(rgb, 0x10888, 0xdddd, 0x13333);
+  BG_PLTT_COLOR(WINDOW_PALETTE, 9) =
+      Color_ScaleComponents(rgb, 0x12221, 0xeeee, 0x15555);
+  BG_PLTT_COLOR(WINDOW_PALETTE, 10) =
+      Color_ScaleComponents(rgb, 0x13bbb, 0x10000, 0x17777);
 }
 
 /// The rows of the unused three-row settings cursor (OptionMenuWork.page).
@@ -327,7 +334,7 @@ void OptionMenu_InitializeWork(void) {
   work->optionCount[3] = 2;
   work->option[4] = gSaveBlock.idleSleepEnabled;
   work->optionCount[4] = 2;
-  Task_Add(OptionMenu_AnimateCursors, 0xc80);
+  Task_Add(OptionMenu_AnimateCursors, TASK_PRIORITY_MAIN_LOOP);
 }
 
 /// Stops the option menu's per-frame callback and frees its work block.
@@ -356,7 +363,8 @@ struct Window *OptionMenu_Open(void) {
   s32 labelMessage;
 
   work = gOptionMenuWork;
-  window = Window_Create(OPTION_WINDOW_X, 5, OPTION_WINDOW_WIDTH, 14, 2);
+  window = Window_Create(OPTION_WINDOW_X, 5, OPTION_WINDOW_WIDTH, 14,
+                         WINDOW_FLAG_INSTANT);
   Window_DrawDividerLine(window, 0, 2, OPTION_WINDOW_WIDTH - 1, 2);
   Window_DrawDividerLine(window, 0, 4, OPTION_WINDOW_WIDTH - 1, 4);
   Window_DrawDividerLine(window, 0, 7, OPTION_WINDOW_WIDTH - 1, 7);
@@ -379,16 +387,16 @@ struct Window *OptionMenu_Open(void) {
   x = VramCache_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 128, gPointingHandTiles);
-    marker = WindowSprite_Create(x, 0x40000000, window, 0, 0);
+    marker = WindowSprite_Create(x, OUTPUT_SIZE_16X16, window, 0, 0);
     work->cursor.sprite = marker;
     x = window->x * 8;
     y = window->y * 8 + 12;
     MenuCursor_SetPositionImmediateFar(&work->cursor.cursor, x, y);
   }
 
-  // The ends of both sliders: 32x16 sprites (0x40004000, the wide shape at
-  // size 1), the right end 4 tiles into the picture; the hue slider's in
-  // palette 14, the brightness slider's in 15.
+  // The ends of both sliders: OUTPUT_SIZE_32X8 sprites, the right end 4 tiles
+  // into the picture; the hue slider's in palette 14, the brightness slider's
+  // in 15.
   x = VramCache_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     Dma_Set(gOptionMenu_SliderPalette,
@@ -396,17 +404,19 @@ struct Window *OptionMenu_Open(void) {
             REG_DMA3);
     VramCache_Load(x, 256, gOptionMenu_SliderTiles);
     y = 0;
-    marker = WindowSprite_Create(x, 0x40004000, window, OPTION_SLIDER_X - 6, y);
+    marker = WindowSprite_Create(x, OUTPUT_SIZE_32X8, window,
+                                 OPTION_SLIDER_X - 6, y);
     marker->oam.palette = SLIDER_PALETTE;
-    marker =
-        WindowSprite_Create(x, 0x40004000, window, OPTION_SLIDER_X + 26, y);
+    marker = WindowSprite_Create(x, OUTPUT_SIZE_32X8, window,
+                                 OPTION_SLIDER_X + 26, y);
     marker->oam.index += 4;
     marker->oam.palette = SLIDER_PALETTE;
     y = 16;
-    marker = WindowSprite_Create(x, 0x40004000, window, OPTION_SLIDER_X - 6, y);
+    marker = WindowSprite_Create(x, OUTPUT_SIZE_32X8, window,
+                                 OPTION_SLIDER_X - 6, y);
     marker->oam.palette = 15;
-    marker =
-        WindowSprite_Create(x, 0x40004000, window, OPTION_SLIDER_X + 26, y);
+    marker = WindowSprite_Create(x, OUTPUT_SIZE_32X8, window,
+                                 OPTION_SLIDER_X + 26, y);
     marker->oam.index += 4;
     marker->oam.palette = 15;
   }
@@ -416,7 +426,7 @@ struct Window *OptionMenu_Open(void) {
   x = VramCache_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 256, 0);
-    marker = WindowSprite_Create(x, 0x40000000, window, 0, 0);
+    marker = WindowSprite_Create(x, OUTPUT_SIZE_16X16, window, 0, 0);
     marker->oam.fullColor = 1;
     work->marker[0].sprite = marker;
     x = window->x * 8 + OPTION_SLIDER_X;
@@ -428,7 +438,7 @@ struct Window *OptionMenu_Open(void) {
   x = VramCache_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 256, 0);
-    marker = WindowSprite_Create(x, 0x40000000, window, 0, 0);
+    marker = WindowSprite_Create(x, OUTPUT_SIZE_16X16, window, 0, 0);
     marker->oam.fullColor = 1;
     work->marker[1].sprite = marker;
     x = window->x * 8 + OPTION_SLIDER_X;
@@ -486,7 +496,8 @@ s32 OptionMenu_Run(void) {
   selectedOption = 0;
   OptionMenu_InitializeWork();
   work = gOptionMenuWork;
-  helpWindow = Window_Create(OPTION_WINDOW_X, 2, OPTION_WINDOW_WIDTH, 3, 2);
+  helpWindow = Window_Create(OPTION_WINDOW_X, 2, OPTION_WINDOW_WIDTH, 3,
+                             WINDOW_FLAG_INSTANT);
   settingsWindow = OptionMenu_Open();
   // Picture 7 of gMenuTitlePictures, the Setup heading.
   pair = MenuTitle_Create(7, settingsWindow, 64, -48);
@@ -665,7 +676,7 @@ void PauseMenu_Initialize(void) {
   void *work;
   work = AllocHeapSlotEwram(HEAP_SLOT_OPTION_MENU, 0x628);
   Dma_Fill32(0, work, 0x628);
-  Task_Add(PauseMenu_AnimateCursor, 3200);
+  Task_Add(PauseMenu_AnimateCursor, TASK_PRIORITY_MAIN_LOOP);
 }
 
 /// Stops the pause menu's per-frame callback and frees its work block.
@@ -711,7 +722,7 @@ struct Window *PauseMenu_Open(void) {
     top = 1;
     height = 19;
   }
-  window = Window_Create(5, top, 20, height, 2);
+  window = Window_Create(5, top, 20, height, WINDOW_FLAG_INSTANT);
   for (i = 1; i < rows; i++)
     Window_DrawDividerLine(window, 0, i * 3, 19, i * 3);
   y = 4;
@@ -738,7 +749,7 @@ struct Window *PauseMenu_Open(void) {
   if (cacheSlot < RESOURCE_SLOTS) {
     VramCache_Load(cacheSlot, 128, gPointingHandTiles);
     work->cursor.sprite =
-        WindowSprite_Create(cacheSlot, 0x40000000, window, 0, 0);
+        WindowSprite_Create(cacheSlot, OUTPUT_SIZE_16X16, window, 0, 0);
     x = window->x * 8;
     y = window->y * 8 + 16;
     MenuCursor_SetPositionImmediateFar(&work->cursor.cursor, x, y);

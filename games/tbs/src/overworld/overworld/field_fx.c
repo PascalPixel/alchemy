@@ -207,8 +207,8 @@ void Object_DestroyIfPresent(void *object) {
 }
 
 /// Raises a found item's picture to 36 pixels above the party leader, who
-/// holds it up (animation 28) facing the screen. Called by Field_SearchCell for
-/// what a search finds, by ItemDisplay_ShowPicture and by
+/// holds it up (ANIM_LEADER_ARMS_RAISED) facing the screen. Called by
+/// Field_SearchCell for what a search finds, by ItemDisplay_ShowPicture and by
 /// ItemDisplay_ShowItem.
 void ItemDisplay_RaiseAboveLeader(struct Object *object) {
   struct Object *leader;
@@ -224,7 +224,7 @@ void ItemDisplay_RaiseAboveLeader(struct Object *object) {
   object->motionFlags = 0;
   Object_SetMoveTargetFar(object, leader->x, leader->y + (36 << 16), leader->z);
   WaitFrames(3);
-  Object_SelectAnimationFar(leader, 28);
+  Object_SelectAnimationFar(leader, ANIM_LEADER_ARMS_RAISED);
   Object_InitializeFar((struct Object *)object, gFieldEffect_RisingPulseScript);
   // Angle 0x4000, a quarter turn, faces the screen.
   leader->facing = 0x4000;

@@ -151,8 +151,8 @@ s32 Sanctum_Run(s32 unitId) {
     Portrait_CreateFar(2, 0, 0, listWindow, -4, -4);
   }
 
-  cursorAnchor =
-      WindowSprite_CreateFar(shop->cursorIcon, 0x40000000, listWindow, 0, 0);
+  cursorAnchor = WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16,
+                                        listWindow, 0, 0);
   cursorAnchor->motion = 1;
   cursorAnchor->kind = 0;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);

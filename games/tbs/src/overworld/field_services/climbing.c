@@ -155,7 +155,7 @@ s32 Field_ClimbDown(void) {
       // 1 pixel a frame, in free flight (no motion flags) with no shadow.
       ObjectMotion_SetPositionAndCommit(gSaveBlock.leaderLocalId, gridX, gridZ);
       object->speedLimit = 0x10000;
-      ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, 0xc000, 0);
+      ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, FACING_NORTH, 0);
       ObjectEvent_RefreshSelectorById(gSaveBlock.leaderLocalId);
       object->steeringFlags = OBJ_EVENT_FACES_MOTION;
       object->motionFlags = 0;
@@ -172,7 +172,7 @@ s32 Field_ClimbDown(void) {
     // Let go of the wall and fall: ground following and gravity again
     // after a hop of 4 pixels a frame, the ground taken as
     // where the leader is until the ground is read, and the shadow back.
-    Object_SelectAnimationFar(object, 10);
+    Object_SelectAnimationFar(object, ANIM_LEADER_CLIMB);
     object->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
     object->velocityY = 0x40000;
     object->groundHeight = object->y;
@@ -246,7 +246,7 @@ s32 Field_ClimbUp(void) {
       Object_SetSpriteFlagsFar((struct Object *)object, spriteFlags);
       object->speedLimit = 0x10000;
       object->velocityY = 0;
-      Object_SelectAnimationFar(object, 12);
+      Object_SelectAnimationFar(object, ANIM_LEADER_CLING);
       WaitFrames(4);
       gSaveBlock.movementMode = LEADER_MOVEMENT_CLIMB;
       object->steeringFlags = OBJ_EVENT_FACES_MOTION;

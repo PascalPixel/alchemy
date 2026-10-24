@@ -79,7 +79,7 @@ s32 Map_Run(s32 warpDest) {
   }
   Field_PlaceTreasureSpots();
   PaletteFade_Initialize();
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   // The default fade is from the backdrop colour over 16 frames; the map's
   // initialization may choose another.
   work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -175,9 +175,11 @@ s32 Map_Run(s32 warpDest) {
             Leader_StopMoving();
             WorldMap_StartScript();
             for (i = 0; i < work->fallenCount; i++) {
-              Object_SelectAnimationFar(objectEvent, 22);
-              MessageArgument_PushFar(work->fallenOwners[i], 1);
-              FieldMessage_ShowFar(MsgFieldStrengthExhausted, 1);
+              Object_SelectAnimationFar(objectEvent, ANIM_LEADER_LEAN_BACK);
+              MessageArgument_PushFar(work->fallenOwners[i],
+                                      MESSAGE_ARGUMENT_ACTOR);
+              FieldMessage_ShowFar(MsgFieldStrengthExhausted,
+                                   FIELD_MESSAGE_ZOOM);
             }
             if (work->survivorCount == 0) {
               // The whole party fell: back to the last sanctum with 1 HP.
@@ -189,10 +191,11 @@ s32 Map_Run(s32 warpDest) {
                 else
                   Object_SelectAnimationFar(objectEvent, 37);
               } else {
-                Object_SelectAnimationFar(objectEvent, 19);
+                Object_SelectAnimationFar(objectEvent, ANIM_COLLAPSE);
               }
               Sound_PlaySongFar(MUS_DEFEAT);
-              FieldMessage_ShowFar(MsgFieldPartyAnnihilated, 1);
+              FieldMessage_ShowFar(MsgFieldPartyAnnihilated,
+                                   FIELD_MESSAGE_ZOOM);
               vitals = Unit_GetFar(gSaveBlock.leaderLocalId);
               vitals->hp = 1;
               Unit_UpdateGauges(vitals);
@@ -349,7 +352,8 @@ s32 Map_Run(s32 warpDest) {
               PauseMenu_RunFar(0);
               ctrl->wait = 0;
             } else {
-              FieldMessage_ShowFar(MsgFieldPauseUnavailable, 1);
+              FieldMessage_ShowFar(MsgFieldPauseUnavailable,
+                                   FIELD_MESSAGE_ZOOM);
             }
           }
           WorldMap_EndScript();

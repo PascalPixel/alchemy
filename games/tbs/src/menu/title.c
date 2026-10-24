@@ -301,26 +301,26 @@ static void Title_RevealScreen(s32 unused) {
   FieldScript_WaitFrames(30);
   gTitleRevealFrame = 0;
   Title_LoadSprites(0);
-  FieldScheduler_AddCallback(Title_UpdateSpriteReveal, 0xc80);
+  FieldScheduler_AddCallback(Title_UpdateSpriteReveal, TASK_PRIORITY_MAIN_LOOP);
   // Show BG0, BG2 and the sprites. BG1 to BG3 start fully darkened (BLDY
   // 16), so the logo on BG2 is black; the semi-transparent lettering is
   // blended onto the layers under it at full weight (BLEND_ALPHA(16, 16)).
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON |
                           DISPCNT_OBJ_ON,
-                      0x20000);
+                      IO_WRITE_16);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
                       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
                           BLDCNT_EFFECT_DARKEN | BLDCNT_TGT2_BG0 |
                           BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
                           BLDCNT_TGT2_BD,
-                      0x20000);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16, 0x20000);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 16), 0x20000);
+                      IO_WRITE_16);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16, IO_WRITE_16);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 16), IO_WRITE_16);
   FieldScript_WaitFrames(120);
   // Lift the darkening in 17 steps of three frames, down to BLDY 0.
   for (brightnessStep = 0; brightnessStep <= 16; brightnessStep++) {
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16 - brightnessStep, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16 - brightnessStep, IO_WRITE_16);
     WaitFrames(3);
   }
   // Open the screen in one frame, then set 60-frame transitions for what

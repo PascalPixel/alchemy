@@ -374,7 +374,7 @@ void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
     if (mode != CENTERED_MESSAGE_BARE)
       messageWindow = Window_Create(x, y, width, height, 0);
     else {
-      messageWindow = Window_Create(x, y, 0, 0, 2);
+      messageWindow = Window_Create(x, y, 0, 0, WINDOW_FLAG_INSTANT);
       messageWindow->width = mode;
       messageWindow->height = mode;
     }
@@ -583,10 +583,10 @@ struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
   negativeFour = -4;
   offset = negativeFour;
   if (((struct WindowWork *)work)->mindRead != 0) {
-    window = Window_Create(x, y, 6, 5, 2);
+    window = Window_Create(x, y, 6, 5, WINDOW_FLAG_INSTANT);
     offset = 0;
   } else {
-    window = Window_Create(x, y, 5, 5, 2);
+    window = Window_Create(x, y, 5, 5, WINDOW_FLAG_INSTANT);
   }
   if (window != 0) {
     Portrait_Create(speaker, portraitOption, -1, window, offset, negativeFour);

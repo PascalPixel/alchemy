@@ -59,8 +59,8 @@ s32 PsynergyMenu_Run(void) {
   Window_InitializeWork(0);
   menu->memberCount = Party_ListMembersFar(menu->memberTable);
   ItemMenu_Initialize(0, 3, 0, 7);
-  menu->messageWindow = Window_CreateFar(13, 0, 17, 3, 2);
-  Palette_LightenBankHighlight(14);
+  menu->messageWindow = Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
+  Palette_LightenBankHighlight(HIGHLIGHT_PALETTE);
   Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
 #if TBS_PATCH_2
   Menu_SuspendFieldTasks();
@@ -773,7 +773,7 @@ void PsynergyMenu_CreateEntryGrid(void) {
   window = MenuCursor_Create(menu);
   PsynergyMenu_InitializeEntryObjects((void *)window, 2, 2, 8, 0);
 
-  window = Window_CreateFar(0, 5, 30, 15, 2);
+  window = Window_CreateFar(0, 5, 30, 15, WINDOW_FLAG_INSTANT);
   menu->psynergyWindow = window;
   menu->selectedColumn = 0;
   menu->selectedRow = 0;
@@ -974,15 +974,13 @@ s32 PsynergyMenu_DrawDetailPage(struct Window *window, s32 *work,
   rowIndex = 0;
   do {
     if (rowIndex == state->row) {
-      Render_SetTilemapFlagRect((void *)menu->psynergyWindow,
-                                PSYNERGY_DETAIL_ROW_X, rowIndex * 2 + 1,
-                                PSYNERGY_DETAIL_ROW_WIDTH, 1,
-                                14); // highlighted
+      Render_SetTilemapFlagRect(
+          (void *)menu->psynergyWindow, PSYNERGY_DETAIL_ROW_X, rowIndex * 2 + 1,
+          PSYNERGY_DETAIL_ROW_WIDTH, 1, HIGHLIGHT_PALETTE);
     } else {
       Render_SetTilemapFlagRect((void *)menu->psynergyWindow,
                                 PSYNERGY_DETAIL_ROW_X, rowIndex * 2 + 1,
-                                PSYNERGY_DETAIL_ROW_WIDTH, 1,
-                                15); // normal
+                                PSYNERGY_DETAIL_ROW_WIDTH, 1, WINDOW_PALETTE);
     }
     rowIndex++;
   } while (rowIndex < LIST_PAGE_SIZE);

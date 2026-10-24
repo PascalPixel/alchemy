@@ -40,7 +40,7 @@ void FieldEffect_RunLiftOnTarget(s32 unused) {
   pos[1] = y;
   z = effectWork->z;
   pos[2] = z;
-  pair[0] = FieldEffect_SpawnItemBreakMode3(x + 0x200000, y, z, 0x8000);
+  pair[0] = FieldEffect_SpawnItemBreakMode3(x + 0x200000, y, z, FACING_WEST);
   pair[1] =
       FieldEffect_SpawnItemBreakMode3(pos[0] - 0x200000, pos[1], pos[2], 0);
 

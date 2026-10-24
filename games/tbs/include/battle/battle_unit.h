@@ -246,6 +246,16 @@ enum AbilityUse {
 #define GUARD_DEFEND 1
 #define GUARD_TOTAL_DEFENSE 2
 
+// The caps on a unit's level and stats.
+#define UNIT_LEVEL_MAX 99
+#define UNIT_HP_MAX 9999           ///< maximum HP and PP, an enemy's
+#define UNIT_CHARACTER_HP_MAX 1999 ///< maximum HP and PP, a character's
+#define UNIT_STAT_MAX 999          ///< Attack, Defense and Agility
+#define UNIT_LUCK_MAX 99
+#define UNIT_ELEMENT_MAX 200 ///< elemental power and resistance
+#define UNIT_HP_REGEN_MAX 10000
+#define UNIT_PP_REGEN_MAX 200
+
 /// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
 /// Djinn and statuses.
 struct Unit {

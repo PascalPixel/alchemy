@@ -114,9 +114,9 @@ s32 ItemMenu_Run(void) {
   screen->partyCount = Party_ListMembersFar(screen->memberIds);
   ItemMenu_Initialize(0, 3, 0, 7);
   Resource_LoadPairedBlocks();
-  Palette_LightenBankHighlight(14);
+  Palette_LightenBankHighlight(HIGHLIGHT_PALETTE);
   Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
-  screen->questionWindow = Window_CreateFar(13, 0, 17, 3, 2);
+  screen->questionWindow = Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
   // XXX (no evidence): why the Japanese edition leaves the field's tasks
   // running behind this screen, as the first editions do behind the Psynergy
   // screen; the patches only add the calls.
@@ -1196,7 +1196,8 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   Window_SetBounds(window, 13, 5, 17, 12);
   WindowSprite_RedrawSavedRectFar((void *)menu->itemWindow);
   Unit_GetFar(menu->memberIds[menu->sideIndex[0]]);
-  Task_Add(EquipmentMenu_UpdateCompatibilityIndicators, 0xc80);
+  Task_Add(EquipmentMenu_UpdateCompatibilityIndicators,
+           TASK_PRIORITY_MAIN_LOOP);
   while (!GameFlag_GetFar(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       redraw = 0;
@@ -1774,7 +1775,8 @@ s32 ItemMenu_ChooseCommand(void) {
         ItemMenu_DrawEquipPreview(menu->sideMember[0], menu->selectedSlots[0],
                                   0, menu->sideMember[0]);
         if (commandIndex == ITEM_COMMAND_GIVE) {
-          Task_Add(&EquipmentMenu_UpdateCompatibilityIndicators, 0xc80);
+          Task_Add(&EquipmentMenu_UpdateCompatibilityIndicators,
+                   TASK_PRIORITY_MAIN_LOOP);
         }
       } else if (commandIndex != 0) {
         menu->equipPreview = 0;
@@ -1918,7 +1920,8 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
     commandStates[ITEM_COMMAND_DROP] = ITEM_COMMAND_STATE_DISABLED;
 }
 
-#define TEXT_COLOR_DISABLED 14 ///< the grey of a command that refuses A
+#define TEXT_COLOR_DISABLED                                                    \
+  TEXT_COLOR_GREY ///< the grey of a command that refuses A
 
 /// Writes the six command names into window, the disabled ones in grey.
 void ItemMenu_DrawCommands(const s8 *commandStates, struct Window *window) {
@@ -2069,7 +2072,8 @@ s32 ItemMenu_ShowDetails(s32 value) {
 #if TBS_PATCH_1
   itemIcon->motion = ICON_HIDDEN;
 #endif
-  window = Window_CreateFar(0, 0, ITEM_QUANTITY_WINDOW_WIDTH, 10, 2);
+  window = Window_CreateFar(0, 0, ITEM_QUANTITY_WINDOW_WIDTH, 10,
+                            WINDOW_FLAG_INSTANT);
   // Hide the party figures (without their placement callback they are not
   // drawn) and the status panel's portrait (the work's cursor), which the
   // window covers, meanwhile.
@@ -2115,11 +2119,10 @@ s32 ItemMenu_ShowDetails(s32 value) {
   WaitFrames(1);
   Window_CloseFar((void *)window, 1);
   WindowSprite_RedrawSavedRectFar(menu->mainWindow);
-  Palette_LightenBankHighlight(14);
-  // TASK_PRIORITY_MAIN_LOOP, as PsynergyMenu_InitializeEntryObjects
-  // schedules it.
+  Palette_LightenBankHighlight(HIGHLIGHT_PALETTE);
+  // As PsynergyMenu_InitializeEntryObjects schedules it.
   {
-    s32 priority = 0xc80;
+    s32 priority = TASK_PRIORITY_MAIN_LOOP;
 
     Task_Add(Menu_UpdateEntryObjectTransforms, priority);
   }
@@ -2464,8 +2467,8 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   block = VramCache_FindFreeEntry();
   if (block != 96) { // 96 (VRAM_CACHE_ENTRY_COUNT): no free VRAM block
     VramCache_Load(block, 256, 0);
-    WindowSprite_CreateFar(block, 0x40004000, window, 48, 32);
-    rightDial = WindowSprite_CreateFar(block, 0x40004000, window, 80, 32);
+    WindowSprite_CreateFar(block, OUTPUT_SIZE_32X8, window, 48, 32);
+    rightDial = WindowSprite_CreateFar(block, OUTPUT_SIZE_32X8, window, 80, 32);
     rightDial->oam.index += 4;
     MenuCursor_Slide(ITEM_GIVE_CURSOR_X, 40);
     while (!GameFlag_GetFar(FLAG_MENU_START_PRESSED)) {
@@ -2568,7 +2571,7 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
   s32 selection = 1;
   s32 changed = 1;
 
-  window = Window_CreateFar(13, 3, 17, 10, 2);
+  window = Window_CreateFar(13, 3, 17, 10, WINDOW_FLAG_INSTANT);
   itemId = item & INVENTORY_ITEM_ID_MASK;
   Item_GetDirectFar(itemId);
   Text_DrawMessageAsTilesFar(itemId + MsgItemName, window, 24, 0);
@@ -2781,10 +2784,10 @@ s32 ItemMenu_DrawItemDetailPage(struct Window *window, void *memberWork,
   do {
     if (row == pageState->row) {
       Render_SetTilemapFlagRect((void *)menu->itemWindow, 1, row * 2 + 1, 14, 1,
-                                14); // highlighted
+                                HIGHLIGHT_PALETTE);
     } else {
       Render_SetTilemapFlagRect((void *)menu->itemWindow, 1, row * 2 + 1, 14, 1,
-                                15); // normal
+                                WINDOW_PALETTE);
     }
     row++;
   } while (row < LIST_PAGE_SIZE);

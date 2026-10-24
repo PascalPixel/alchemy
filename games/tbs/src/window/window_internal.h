@@ -89,6 +89,7 @@
 #include "frame.h"
 #include "macros.h"
 #include "flags.h"
+#include "ability_ids.h"
 
 // Edition-specific text and window layout values. The possessives
 // (gLocalizedWord_ItemPossessives) are by number in Spanish, singular and
@@ -128,18 +129,14 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 
 // WindowWork owns three text printers, each with four line gaps.
 #define TEXT_PRINTER_COUNT 3
-#define TEXT_PRINTER_LINE_COUNT 4    ///< lines a page; spacing has one gap each
-#define TEXT_DEFAULT_COLOR 15        ///< a text printer's text colour at start
+#define TEXT_PRINTER_LINE_COUNT 4 ///< lines a page; spacing has one gap each
+#define TEXT_DEFAULT_COLOR                                                     \
+  TEXT_COLOR_WHITE                   ///< a text printer's text colour at start
 #define TEXT_DEFAULT_LINE_SPACING 10 ///< a text printer's line spacing at start
-/// The palette of the text tiles (WindowWork.textPalette), the UI palette.
-#define WINDOW_PALETTE 15
 
 // Window animation lengths.
 #define WINDOW_OPEN_FRAMES 8
 #define WINDOW_CLOSE_FRAMES 4
-/// Eight 4bpp pixels of colour 4, the window background, for filling the
-/// text canvas a word at a time.
-#define TEXT_CANVAS_BACKGROUND_WORD 0x44444444
 
 // Scratch capacities are in bytes unless the name says halfwords.
 #define TEXT_NUMBER_BUFFER_SIZE 16 ///< String_FormatNumber writes 14 of them
@@ -162,8 +159,9 @@ enum {
   TEXT_PAUSE_LONG = 4,    ///< a 60-frame pause
   TEXT_PAUSE_SHORT = 5,   ///< a 20-frame pause a button can cut short
   TEXT_PAUSE_LONGEST = 6, ///< a 120-frame pause a button can cut short
-  TEXT_COLORS_RESET = 7,  ///< colour 15, style 0 and line spacing 10 again
-  TEXT_COLOR = 8,         ///< the next entry is the text colour
+  TEXT_COLORS_RESET =
+      7, ///< TEXT_DEFAULT_COLOR, style 0 and TEXT_DEFAULT_LINE_SPACING again
+  TEXT_COLOR = 8, ///< the next entry is the text colour
   /// The next entry is the text style (enum TextStyle).
   TEXT_OUTLINE = 9,
   /// The next entry is the line spacing; a glyph sprite sits half of it below

@@ -168,7 +168,8 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
       Sound_PlaySongFar(SE_156);
 
     // Drop the formation objects to a height of 64 pixels, and from frame
-    // 48 to 96 wave objects 3 and 4 through three poses.
+    // 48 to 96 take the two halves of Cybele's face through three poses:
+    // her mouth opens as the thorns fly and shuts again.
     speed += 0x4000;
     height += speed;
     if (height > 64 << 16)
@@ -179,9 +180,9 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
       s32 pose = (frame - 48) / 24 % 3;
 
       Sprite_StartAnimFar(work->animations[3],
-                          gCybele_ObjectPoses[pose][CYBELE_POSE_OBJECT3]);
+                          gCybele_ObjectPoses[pose][CYBELE_POSE_FACE_LEFT]);
       Sprite_StartAnimFar(work->animations[4],
-                          gCybele_ObjectPoses[pose][CYBELE_POSE_OBJECT4]);
+                          gCybele_ObjectPoses[pose][CYBELE_POSE_FACE_RIGHT]);
     }
 
     // Frames 72 to 127: thorn i flies from frame 72 + i until it reaches

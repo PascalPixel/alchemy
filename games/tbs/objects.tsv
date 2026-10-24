@@ -16,7 +16,7 @@ main	iwram	games/tbs/src/system/iwram	.sym_iwram
 main	rom_main_00	games/tbs/src/system/resource/decode_byte_lz
 main	rom_main_00	games/tbs/src/system/iwram_entry	.text
 main	rom_main_00	games/tbs/src/runtime/trig
-main	rom_main_00	games/tbs/src/system/resource/decode_01	.text .rodata .text.decode_2_loop
+main	rom_main_00	games/tbs/src/system/resource/decode_tagged_lz	.text .rodata .text.decode_2_loop
 main	rom_main_00	games/tbs/src/system/heapfree	.text .text.* .rodata .data .padding
 main	rom_main_00	games/tbs/src/runtime/runtime	.text
 main	rom_main_00	games/tbs/src/system/cpu_set	.text .padding .text.sound_vsync_on

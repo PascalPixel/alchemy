@@ -368,10 +368,10 @@ go to DMA3) and bits 18 and 19 the operation (`IO_WRITE_SET` ORs the value in,
 `IoWriteQueue_Store`, `SetBits` and `ClearBits` writers each add one entry.
 
 `IoWriteQueue_FlushPending` copies `Resource_ExecuteTransfer`
-(`system/resource/decode_01.s`), the ARM routine that carries the entries out,
-onto the stack, which is in IWRAM, and runs it there. ARM code runs fastest
-from IWRAM, whose 32-bit bus fetches each 4-byte ARM instruction in one read,
-where the cartridge's 16-bit bus takes two and waits on each.
+(`system/resource/decode_tagged_lz.s`), the ARM routine that carries the
+entries out, onto the stack, which is in IWRAM, and runs it there. ARM code
+runs fastest from IWRAM, whose 32-bit bus fetches each 4-byte ARM instruction
+in one read, where the cartridge's 16-bit bus takes two and waits on each.
 
 | Name | Value | Meaning |
 | --- | --- | --- |

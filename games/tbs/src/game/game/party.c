@@ -16,8 +16,8 @@
 
 /// Fills battle unit `unitId` (0x80 to 0x86) with enemy `enemyId`: stats,
 /// name with its suffix letter, the items it carries, rewards and elements.
-/// The Djinn the party fights (ENEMY_VENUS_DJINNI to ENEMY_JUPITER_DJINNI_4)
-/// are put on the party's side.
+/// The Djinn the party fights (ENEMY_VENUS_DJINNI_QUARTZ to
+/// ENEMY_JUPITER_DJINNI_LUFF) are put on the party's side.
 /// Returns 0 for an id out of range, 1 otherwise; enemy ids 173 to 250, past
 /// the table's 165 rows but within the check, are filled from row 0. Called by
 /// the battle set-up (Battle_Run, BattleFormation_BuildEnemyList) and
@@ -92,20 +92,20 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   Unit_Calculate(unitId);
   unit->side = BATTLE_SIDE_ENEMY;
   switch (unit->id) {
-  case ENEMY_VENUS_DJINNI:
-  case ENEMY_VENUS_DJINNI_2:
-  case ENEMY_VENUS_DJINNI_3:
-  case ENEMY_MERCURY_DJINNI:
-  case ENEMY_MERCURY_DJINNI_2:
-  case ENEMY_MERCURY_DJINNI_3:
-  case ENEMY_MERCURY_DJINNI_4:
-  case ENEMY_MARS_DJINNI:
-  case ENEMY_MARS_DJINNI_2:
-  case ENEMY_MARS_DJINNI_3:
-  case ENEMY_JUPITER_DJINNI:
-  case ENEMY_JUPITER_DJINNI_2:
-  case ENEMY_JUPITER_DJINNI_3:
-  case ENEMY_JUPITER_DJINNI_4:
+  case ENEMY_VENUS_DJINNI_QUARTZ:
+  case ENEMY_VENUS_DJINNI_VINE:
+  case ENEMY_VENUS_DJINNI_UNUSED_BANE:
+  case ENEMY_MERCURY_DJINNI_SLEET:
+  case ENEMY_MERCURY_DJINNI_SPRITZ:
+  case ENEMY_MERCURY_DJINNI_HAIL:
+  case ENEMY_MERCURY_DJINNI_DEW:
+  case ENEMY_MARS_DJINNI_FORGE:
+  case ENEMY_MARS_DJINNI_CORONA:
+  case ENEMY_MARS_DJINNI_FLASH:
+  case ENEMY_JUPITER_DJINNI_BREEZE:
+  case ENEMY_JUPITER_DJINNI_ZEPHYR:
+  case ENEMY_JUPITER_DJINNI_SQUALL:
+  case ENEMY_JUPITER_DJINNI_LUFF:
     unit->side = BATTLE_SIDE_PARTY;
     break;
   }

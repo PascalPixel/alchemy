@@ -61,7 +61,7 @@ extern u8 gNumberBufferHexEnd[];
 extern u8 gLink_TimeLabelString[];
 /// Each resource's ROM address by resource id (Resource_GetTableEntry).
 extern void *Resource_DirectoryTable[];
-/// The size of Resource_PatchThumbBranch (decode_01.s).
+/// The size of Resource_PatchThumbBranch (decode_tagged_lz.s).
 extern u8 Resource_PatchThumbBranchCodeSize[];
 /// The first five 256-byte colour tables of SpriteColorMode, indexed by pixel.
 extern const u8 gSpriteColorTables[][256];
@@ -170,7 +170,7 @@ extern const u8 gBasicSpritePalettes[];
 extern u8 Tile_CopyStrided[];
 /// The size of Tile_CopyStrided (convert_map.s).
 extern u8 Tile_CopyStridedCodeSize[];
-/// The size of Resource_ExecuteTransfer (decode_01.s).
+/// The size of Resource_ExecuteTransfer (decode_tagged_lz.s).
 extern u8 TransferCommandExecutor_Size[];
 void _call_via_r2(s32 arg0, s32 arg1, s32 target);
 void Iwram_Halt(void);

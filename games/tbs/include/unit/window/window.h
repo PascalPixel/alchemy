@@ -137,9 +137,11 @@ enum {
       11, ///< shrinks from 1.5 times to its size, once
   WINDOW_SPRITE_MOTION_SHRINK_HALF = 12, ///< the same at half the scale
   WINDOW_SPRITE_MOTION_HIDDEN = 13,      ///< not drawn
-  WINDOW_SPRITE_MOTION_HOP_DOWN = 14,    ///< hops down and back
-  WINDOW_SPRITE_MOTION_HOP_DOWN_2 = 15,  ///< as WINDOW_SPRITE_MOTION_HOP_DOWN
-  WINDOW_SPRITE_MOTION_HOP_DOWN_3 = 16,  ///< as WINDOW_SPRITE_MOTION_HOP_DOWN
+  /// Three motions WindowSprite_UpdateAll runs alike: a hop down and back.
+  /// Only the second is set, on a shop's next-page arrow.
+  WINDOW_SPRITE_MOTION_HOP_DOWN = 14,
+  WINDOW_SPRITE_MOTION_HOP_DOWN_2 = 15,
+  WINDOW_SPRITE_MOTION_HOP_DOWN_3 = 16,
   WINDOW_SPRITE_MOTION_HOP_UP = 17,
   WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT = 18,
 };

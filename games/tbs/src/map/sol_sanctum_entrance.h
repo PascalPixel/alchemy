@@ -49,7 +49,9 @@ enum {
   LOCALID_FIRST_FIXED_STATUE
 };
 
-/// The second relief room's row of six, each of which can be pushed.
+/// The second relief room's row of six, each of which can be pushed a cell
+/// east or west; alike, they are numbered west to east, each starting 64 pixels
+/// east of the one before (SolSanctumEntrance_RestoreInteriorState).
 enum {
   /// ★ Named from the game: "More statues..."
   /// (MsgSolSanctumMoreStatuesOutOfReach)

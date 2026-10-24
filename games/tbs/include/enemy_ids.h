@@ -11,11 +11,17 @@
 
 /// The enemies the code tests by id, each named by its row of
 /// enemies.c: an enemy id is the row plus ENEMY_ID_FIRST. Where several
-/// rows share a name and each is fought in one place (its formation in
-/// formations.c, chosen from a scripted or mimic zone of encounter_zones.c),
-/// each takes that place; the others take `_2` onwards in row order.
+/// rows share a name, each takes what tells its battle apart: the one place
+/// it is fought (its formation in formations.c, chosen from a zone of
+/// encounter_zones.c), the prize a Colosso finalist carries, or the Djinni a
+/// Djinni battle is with; a row fought in several places takes `_2` onwards in
+/// row order.
 enum EnemyId {
-  ENEMY_SLIME = 18,
+  /// Level 2: fought only in Sol Sanctum (formations 11 to 14 and 16).
+  /// ★ Named from its area name: Sol Sanctum
+  ENEMY_SLIME_SOL_SANCTUM = 18,
+  /// Level 3: the Slime of the world map's first encounter region, around
+  /// Vale and Vault (formations 23 and 27), and of Goma Cave (formation 32).
   ENEMY_SLIME_2 = 19,
   ENEMY_OOZE = 20,
   ENEMY_SLIME_BEAST = 21,
@@ -53,12 +59,30 @@ enum EnemyId {
   ENEMY_LIZARD_KING = 129,
   ENEMY_LIVING_STATUE = 130,
   ENEMY_HYDROS_STATUE = 131,
-  ENEMY_AZART = 132,
-  ENEMY_AZART_2 = 133,
-  ENEMY_SATRAGE = 134,
-  ENEMY_SATRAGE_2 = 135,
-  ENEMY_NAVAMPA = 136,
-  ENEMY_NAVAMPA_2 = 137,
+  /// The Colosso finalists, two rows each: whoever reaches a match's arena
+  /// first takes its better prize, and the battle (ENCOUNTER_ZONE_COLOSSO,
+  /// one formation a row) is with the opponent carrying what he took.
+  /// Azart having reached the arena first: defense 20, against 2 without the
+  /// shield.
+  /// ★ Named from the game: "Iron Shield" (MsgItemName)
+  ENEMY_AZART_IRON_SHIELD = 132,
+  /// Azart having reached the arena second.
+  /// ★ Named from the game: "Padded Gloves" (MsgItemName)
+  ENEMY_AZART_PADDED_GLOVES = 133,
+  /// Satrage having reached the arena first: defense 28, against 6 without
+  /// the mail.
+  /// ★ Named from the game: "Chain Mail" (MsgItemName)
+  ENEMY_SATRAGE_CHAIN_MAIL = 134,
+  /// Satrage having reached the arena second.
+  /// ★ Named from the game: "Cotton Shirt" (MsgItemName)
+  ENEMY_SATRAGE_COTTON_SHIRT = 135,
+  /// Navampa having reached the arena first: attack 274, against 232 without
+  /// the Claymore.
+  /// ★ Named from the game: "Claymore" (MsgItemName)
+  ENEMY_NAVAMPA_CLAYMORE = 136,
+  /// Navampa having reached the arena second.
+  /// ★ Named from the game: "Hunter's Sword" (MsgItemName)
+  ENEMY_NAVAMPA_HUNTERS_SWORD = 137,
   ENEMY_ANT_LION = 138,
   ENEMY_TOADONPA = 141,
   ENEMY_TORNADO_LIZARD = 144,
@@ -92,21 +116,53 @@ enum EnemyId {
   /// chest on Crossbone Isle's pirate ship (FIND_MIMIC, slot 7) (its render)
   ENEMY_MIMIC_PIRATE_SHIP = 157,
   /// The Djinn the party fights, each element's in order of level;
-  /// BattleUnit_Set puts them on the party's side.
-  ENEMY_VENUS_DJINNI = 158,
-  ENEMY_VENUS_DJINNI_2 = 159,
-  ENEMY_VENUS_DJINNI_3 = 160,
-  ENEMY_MERCURY_DJINNI = 161,
-  ENEMY_MERCURY_DJINNI_2 = 162,
-  ENEMY_MERCURY_DJINNI_3 = 163,
-  ENEMY_MERCURY_DJINNI_4 = 164,
-  ENEMY_MARS_DJINNI = 165,
-  ENEMY_MARS_DJINNI_2 = 166,
-  ENEMY_MARS_DJINNI_3 = 167,
-  ENEMY_JUPITER_DJINNI = 168,
-  ENEMY_JUPITER_DJINNI_2 = 169,
-  ENEMY_JUPITER_DJINNI_3 = 170,
-  ENEMY_JUPITER_DJINNI_4 = 171
+  /// BattleUnit_Set puts them on the party's side. A Djinni's battle is a slot
+  /// of its element's zone (gEncounter_AreaEntryTable), which Djinn who join
+  /// without a fight share; each row is named for the one Djinni whose map
+  /// starts its battle (Field_RequestDjinnBattle).
+  /// Level 12, in Mogall Forest.
+  /// ★ Named from the game: "Quartz" (MsgDjinnName)
+  ENEMY_VENUS_DJINNI_QUARTZ = 158,
+  /// Level 15, on the world map.
+  /// ★ Named from the game: "Vine" (MsgDjinnName)
+  ENEMY_VENUS_DJINNI_VINE = 159,
+  /// Unused: level 23, the battle of Bane's slot, but Bane joins on Crossbone
+  /// Isle without a fight (Djinn_JoinParty), so no battle reaches this row.
+  /// ★ Named from the game: "Bane" (MsgDjinnName)
+  ENEMY_VENUS_DJINNI_UNUSED_BANE = 160,
+  /// Level 10, in Mercury Lighthouse.
+  /// ★ Named from the game: "Sleet" (MsgDjinnName)
+  ENEMY_MERCURY_DJINNI_SLEET = 161,
+  /// Level 13, on Altin Peak.
+  /// ★ Named from the game: "Spritz" (MsgDjinnName)
+  ENEMY_MERCURY_DJINNI_SPRITZ = 162,
+  /// Level 18, on the world map.
+  /// ★ Named from the game: "Hail" (MsgDjinnName)
+  ENEMY_MERCURY_DJINNI_HAIL = 163,
+  /// Level 24, at Suhalla Gate.
+  /// ★ Named from the game: "Dew" (MsgDjinnName)
+  ENEMY_MERCURY_DJINNI_DEW = 164,
+  /// Level 5, in Goma Cave.
+  /// ★ Named from the game: "Forge" (MsgDjinnName)
+  ENEMY_MARS_DJINNI_FORGE = 165,
+  /// Level 13, on the world map.
+  /// ★ Named from the game: "Corona" (MsgDjinnName)
+  ENEMY_MARS_DJINNI_CORONA = 166,
+  /// Level 22, in the Suhalla Desert.
+  /// ★ Named from the game: "Flash" (MsgDjinnName)
+  ENEMY_MARS_DJINNI_FLASH = 167,
+  /// Level 8, in Tret Tree.
+  /// ★ Named from the game: "Breeze" (MsgDjinnName)
+  ENEMY_JUPITER_DJINNI_BREEZE = 168,
+  /// Level 11, in Fuchin Falls Cave.
+  /// ★ Named from the game: "Zephyr" (MsgDjinnName)
+  ENEMY_JUPITER_DJINNI_ZEPHYR = 169,
+  /// Level 18, in Altmiller Cave.
+  /// ★ Named from the game: "Squall" (MsgDjinnName)
+  ENEMY_JUPITER_DJINNI_SQUALL = 170,
+  /// Level 25, in Babi Lighthouse.
+  /// ★ Named from the game: "Luff" (MsgDjinnName)
+  ENEMY_JUPITER_DJINNI_LUFF = 171
 };
 
 #endif

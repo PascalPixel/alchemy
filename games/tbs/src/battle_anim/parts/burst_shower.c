@@ -193,11 +193,11 @@ void BattleAnim_RunBurstShower(struct BattleAnimArgs *effect, s32 mode) {
 
   // The faces leave shorter trails than the bursts.
   if (mode == BURST_SHOWER_MODE_FACES) {
-    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
-    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   }
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
 
   for (i = 0; i != 64; i++) {
     work->particles[i].variant = -1;

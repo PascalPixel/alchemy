@@ -73,7 +73,7 @@ void BattleAnim_RunFrost(struct BattleAnimArgs *effect) {
     seed->y = ((Random16() & 31) - 64) << 16;
   }
 
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // On side 1 the canvas moves 112 pixels right, over the party.
   if (work->effect->side == 1)
     REG_BG2X = -0x7000;

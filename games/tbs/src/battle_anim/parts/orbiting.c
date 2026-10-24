@@ -144,9 +144,9 @@ UNUSED void BattleAnim_RunOrbitingSkulls(void) {
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   // The first transfer mode is overwritten at once.
   ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   draw[0] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
   // Put the canvas on the targets' side of the screen: at one texel a pixel
   // it covers screen x 0 to 127 for enemy targets and 112 to 239 for the
   // party.
@@ -279,7 +279,7 @@ UNUSED void BattleAnim_RunTargetBursts(struct BattleAnimArgs *effect) {
     puff->variant = 0;
   }
 
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != TARGET_BURSTS_FRAMES; frame++) {
     s32 member;

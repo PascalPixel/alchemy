@@ -109,7 +109,7 @@ void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element) {
   }
   REG_BG2X = offsetX << 8;
   // Trails keep half a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != work->effect->targetCount * 16 + 116; frame++) {
     struct BattleCamera *camera = gBattleCamera;

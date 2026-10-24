@@ -150,7 +150,7 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   // Trails: each transfer keeps 3/4 of every canvas level.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Rocks: x is the column, y counts down from 128 by z pixels a frame (2
   // to 17, and 8 to 15 for a rock restarted from frame 88), velocityX

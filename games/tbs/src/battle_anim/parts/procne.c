@@ -96,7 +96,7 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
                       graphics);
 
   // Trails keep half of each pixel a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // wave is where the block of objects sways, from (128, 40); drift is a
   // push from each comet.

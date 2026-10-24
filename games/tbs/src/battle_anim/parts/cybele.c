@@ -464,7 +464,8 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
                    BLDCNT_TGT2_ALL;
       REG_BG2PA = Q_8_8(0.5);
       REG_BG2X = 0;
-      ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+      ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                          CANVAS_FADE_THREE_QUARTERS);
       ANIM_FOR_EACH_TARGET(i, work->effect) {
         struct Object *object =
             GetBattleObjectSlotFar(work->effect->targets[i])->object;

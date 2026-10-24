@@ -89,7 +89,7 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              Ram_MapGridCellBuffer, 1, 0);
   BattleAnim_FetchRectangleBlitters(work->effect->side, draw);
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Seed the embers (particles 8 to 47) and flashes (48 to 63) thrown at the
   // strike, and the eight puffs (0 to 7) on an arc, each starting two frames

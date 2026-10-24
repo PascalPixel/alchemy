@@ -108,7 +108,7 @@ void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
   } while (col != RAGNAROK_SEEDED);
 
   // Each transfer keeps 3/4 of every canvas level, for an afterimage.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   frame = 0;
   do {

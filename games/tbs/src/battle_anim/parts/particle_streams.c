@@ -42,7 +42,7 @@ void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
 /// background colour 0 at each horizontal blank, so the backdrop colour
 /// changes line by line.
 ///
-/// Runs each frame as a task (priority 0x4fe) that
+/// Runs each frame as a task (priority TASK_PRIORITY_VBLANK + 0x7e) that
 /// BattleAnim_RunParticleStreams adds for its rise and removes after it; the
 /// rise rewrites the 160 colours, its heat lines, every frame. Stops DMA 0
 /// and sets it up again, so the table is read from line 0.
@@ -192,7 +192,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
   BattleAnim_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
   // The rising formation: two animated objects in Outer Space, otherwise one
@@ -221,7 +221,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
                     128);
   // The map picture, 32x16 tiles of 8x8 pixels (256x128, 0x2000 words), all
   // colour 1; its first 0x7800 bytes, 256x120 pixels, are what BG1 shows.
-  fill = 0x01010101;
+  fill = CANVAS_FILL_WORD(1);
   Dma_Set((void *)&fill, Ram_MapGridCellBuffer, DMA_FILL_WORDS(0x2000),
           REG_DMA3);
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapGridCellBuffer, 0x7800);
@@ -263,8 +263,8 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
   work->scrollInterval = 2;
   work->scrollStepX = direction << 7;
   work->scrollStepY = 256;
-  Task_Add(BattleAnim_AdvanceBg2OnInterval, 0x4ff);
-  Task_Add(BattleAnim_FlushPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_AdvanceBg2OnInterval, TASK_PRIORITY_VBLANK + 0x7f);
+  Task_Add(BattleAnim_FlushPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
   for (i = 0; i != 128; i++)
     offsets[i] = Random16() & 63;
   {
@@ -316,8 +316,8 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
     draw = slots[HEAP_SLOT_RAM_CODE - HEAP_SLOT_BATTLE_BACKGROUND];
     // Each copy darkens every pixel of the map by 2 levels (four bytes of 2
     // in one word, as the other darkening animations write theirs).
-    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x02020202);
-    Task_Add(BattleAnim_ArmPaletteHBlankDma, 0x4fe);
+    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
+    Task_Add(BattleAnim_ArmPaletteHBlankDma, TASK_PRIORITY_VBLANK + 0x7e);
     ANIM_FREE_PARTICLES(i, work->particles, 64);
     view->busy = 1;
     work->frame = 0;
@@ -551,7 +551,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
     ember->variant = 0;
   }
   // Each copy refills the canvas with level 16.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0x10101010);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
 
   // The burst shakes while the formation keeps climbing and growing. The
   // background brightens from frame 36; on frame 48 Outer Space's objects are

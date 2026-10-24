@@ -214,8 +214,8 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *effect, u32 mode) {
   REG_BG2X = canvasShiftX << 8;
   // Each transfer keeps half of every level, so the flares leave trails.
   work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = 50;
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  work->transferValue = CANVAS_FADE_HALF;
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
   if (work->effect->side == 1)
     drawFlags = ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X;
   else
@@ -529,7 +529,7 @@ void BattleAnim_RunStatReduction(struct BattleAnimArgs *effect, s32 mode) {
   }
 
   BattleAnim_FetchRectangleBlitters(work->effect->side, draw = blitters);
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != work->effect->targetCount * 4 + 64; frame++) {
     camera = gBattleCamera;

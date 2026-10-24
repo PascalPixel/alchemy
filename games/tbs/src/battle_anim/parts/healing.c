@@ -286,8 +286,8 @@ void BattleAnim_RunHealingMotes(struct BattleAnimArgs *effect, u32 mode) {
   // Each transfer keeps 75% of every canvas pixel, so the motes leave
   // trails.
   work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = 75;
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  work->transferValue = CANVAS_FADE_THREE_QUARTERS;
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
 
   for (frame = 0; frame != frameCount; frame++) {
     struct BattleCamera *camera = gBattleCamera;

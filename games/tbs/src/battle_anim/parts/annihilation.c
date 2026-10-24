@@ -79,8 +79,8 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
   } while (i != 64);
 
   Projection_ScaledUnit(work->effect->targets[0], &origin);
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
-  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != ANNIHILATION_FRAMES; frame++) {
     if (frame == 8)
@@ -137,7 +137,7 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
     // The strike fills the canvas with level 63, a flash that the transfer
     // then fades.
     if (frame == 8) {
-      Dma_Fill32(0x3f3f3f3f, canvas, CANVAS_BYTES);
+      Dma_Fill32(CANVAS_FILL_WORD(63), canvas, CANVAS_BYTES);
     }
     ANIM_VIEW_FROM_CAMERA(camera);
     // Shards shrink as their lives run down, from mote size 7 to 2, and fall

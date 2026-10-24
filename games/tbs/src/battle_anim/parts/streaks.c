@@ -153,7 +153,7 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
   }
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
   // Halve the canvas each frame, so streaks leave a trail.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   source = GetBattleObjectSlotFar(work->effect->user)->object;
   {
@@ -357,7 +357,7 @@ void BattleAnim_RunMoteFountain(struct BattleAnimArgs *effect, s32 mode) {
     resource = (s32)&ResourceId_EarthWallSheet;
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
   // Trails keep 3/4 a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Every mote starts 5 pixels above the user with a random direction and
   // speed, mostly upwards, and a life of 48 to 79 frames; the healing mode

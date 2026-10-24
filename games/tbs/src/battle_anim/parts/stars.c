@@ -67,9 +67,9 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   // Trails keep 75% of each pixel a frame.
   work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = 75;
+  work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   draw[0] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE);
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
 
   source = GetBattleObjectSlotFar(work->effect->user)->object;
   target = GetBattleObjectSlotFar(work->effect->targets[0])->object;
@@ -247,9 +247,9 @@ void BattleAnim_RunShiningStar(struct BattleAnimArgs *effect) {
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   // Trails keep half of each pixel a frame.
   work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = 50;
+  work->transferValue = CANVAS_FADE_HALF;
   draw[0] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE);
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
 
   source = GetBattleObjectSlotFar(work->effect->user)->object;
   target = GetBattleObjectSlotFar(work->effect->targets[0])->object;

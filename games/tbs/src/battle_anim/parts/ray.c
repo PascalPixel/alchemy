@@ -81,7 +81,7 @@ void BattleAnim_RunRay(struct BattleAnimArgs *effect) {
     spark->variant = 0;
   }
 
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlaySongFar(SE_ITEM_BREAK);
 
   for (frame = 0; frame != 64; frame++) {
@@ -91,7 +91,7 @@ void BattleAnim_RunRay(struct BattleAnimArgs *effect) {
     if (frame < 16) {
       // Fill the canvas with level 16, not 0, on frames 2, 7 and 12.
       if (frame % 5 == 2)
-        Iwram_FillWords(canvas, CANVAS_BYTES, 0x10101010);
+        Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
       for (bolt = 0; bolt != RAY_COUNT; bolt++) {
         s32 angle;
         s32 x;

@@ -80,7 +80,7 @@ void BattleAnim_RunPlasma(struct BattleAnimArgs *effect) {
   }
   sparks = PARTICLES;
   // Trails keep half of each pixel a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   count = gPlasma_Counts[work->effect->variant];
 
   // The last pillar strikes on frame (count - 1) * 8; the animation runs on
@@ -112,7 +112,7 @@ void BattleAnim_RunPlasma(struct BattleAnimArgs *effect) {
       // The flash fills the canvas with level 16.
       if (frame == start) {
         Sound_PlaySongFar(SE_HEAVY_IMPACT);
-        Iwram_FillWords(canvas, CANVAS_BYTES, 0x10101010);
+        Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
       }
       if (frame >= start && frame < start + 9) {
         if (frame >= start + 1 && frame < start + 2)
@@ -343,7 +343,7 @@ void BattleAnim_RunSparkGroups(struct BattleAnimArgs *effect, s32 mode) {
     }
   }
   // Trails keep 3/4 a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0;
        frame != gPlasma_Shapes[work->effect->variant][SPARK_GROUPS_BURSTS] *
@@ -366,7 +366,7 @@ void BattleAnim_RunSparkGroups(struct BattleAnimArgs *effect, s32 mode) {
      * IWRAM call layer; as Iwram_FillWords, 3 of 776 instructions differ in
      * tbs-en. */
     if (work->effect->variant == SPARK_GROUPS_SEVERE_BLOW && frame == 4)
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     if (mode == SPARK_GROUPS_DYNAMITE || mode == SPARK_GROUPS_RISING) {
       if (frame == 2)
         ANIM_SHOW_DAMAGE(SE_CRASH);

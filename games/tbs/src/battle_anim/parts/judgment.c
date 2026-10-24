@@ -123,7 +123,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
   draw[0] = (DrawRectangle)CANVAS_SLOT(cache, HEAP_SLOT_RAM_CODE);
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
   // Setup: wipe the battle away, change the battle background behind it, wipe
   // back.
   BattleAnim_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
@@ -201,7 +201,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
   }
 
   // Trails keep 50% a frame.
-  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
 
@@ -215,7 +215,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
      * instructions differ in tbs-en. */
     slots = (DrawRectangle *)gHeapSlots;
     if (frame == 143) {
-      Iwram_FillWords(canvas, CANVAS_BYTES, 0x2a2a2a2a);
+      Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(42));
       Sound_PlaySongFar(SE_CRASH);
     }
     if (frame == 80) {
@@ -415,7 +415,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
 
       n = (frame - 144) / 2;
       r = frame * 10 - 1424;
-      work->transferValue = 75;
+      work->transferValue = CANVAS_FADE_THREE_QUARTERS;
       if (n <= 6) {
         // The 8x16 mote of dimmed copy n in JudgmentWork's ramp.
         s32 cell = n * MOTE_SET_BYTES + gBattleAnim_MoteCells[7] +
@@ -504,7 +504,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
   ring = 0;
   sx = 8;
   rings = 2;
-  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Clear the wave picture over the gathering's pictures (shift is still 0).
   fill = shift;
@@ -538,8 +538,8 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
     if (gKeysRepeat & (KEY_A | KEY_B)) {
       if (frame >= 5 && frame < 150) {
         frame = 150;
-        IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, Q_8_8(0.5), 0x20000);
-        IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, 0, 0x30000);
+        IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_16);
+        IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, 0, IO_WRITE_32);
         Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
                                    work->sheet + JUDGMENT_SHEET_EXPLOSION, 1,
                                    0);
@@ -555,8 +555,8 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
     // IO_WRITE_32), which VBlank writes once this frame is finished; clear
     // the canvas and load the explosion and flash pictures.
     if (frame == 64) {
-      IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, Q_8_8(0.5), 0x20000);
-      IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, 0, 0x30000);
+      IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_16);
+      IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, 0, IO_WRITE_32);
       fill = 0;
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
       Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
@@ -576,7 +576,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
 
     // Frames 69, 182 and 238 flash the whole canvas.
     if (frame == 69) {
-      fill = 0x3f3f3f3f;
+      fill = CANVAS_FILL_WORD(63);
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
     }
 
@@ -597,7 +597,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
       rings = 4;
       squash = 8;
       Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
-      fill = 0x3f3f3f3f;
+      fill = CANVAS_FILL_WORD(63);
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                (s32)&ResourceId_BeachBackdrop, 0);
@@ -609,7 +609,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
     if (frame == 214) {
       fill = 0;
       Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
-      fill = 0x3f3f3f3f;
+      fill = CANVAS_FILL_WORD(63);
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                (s32)&ResourceId_ForestBackdrop, 0);
@@ -630,7 +630,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
       BattleAnim_SetupBlendedDisplay();
       fill = 0;
       Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
-      fill = 0x01010101;
+      fill = CANVAS_FILL_WORD(1);
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
       view->busy = 0;
       REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -674,7 +674,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
     }
 
     if (frame == 182) {
-      fill = 0x3f3f3f3f;
+      fill = CANVAS_FILL_WORD(63);
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
     }
 
@@ -920,7 +920,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
     }
 
     if (frame == 238) {
-      fill = 0x3f3f3f3f;
+      fill = CANVAS_FILL_WORD(63);
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
     }
 
@@ -933,7 +933,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
 
     if (frame >= 246 && frame < 280) {
       shift += 8;
-      ANIM_SET_TRANSFER(work, CANVAS_COPY, 75);
+      ANIM_SET_TRANSFER(work, CANVAS_COPY, CANVAS_FADE_THREE_QUARTERS);
     }
 
     // From frame 214 each live debris object is placed from its particle (x

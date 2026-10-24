@@ -71,7 +71,7 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                     COMPOSITE_TRANSPARENT);
   draw[1] = (DrawRectangle)ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
-  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, TASK_PRIORITY_VBLANK);
   // Redraw from blank each frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, zero);
   // swing is the point the panel sways about, in 16.16 pixels: the first
@@ -190,7 +190,7 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
             canvas, work->sheet + 0x15d2, CONDEMN_PANEL_X(panelColumn, 1),
             CONDEMN_PANEL_Y(panelRow, 1) + screenY, 99, 69);
         if ((frame - 88) <= 1U) {
-          Iwram_FillWords(canvas, CANVAS_BYTES, 0x3F3F3F3F);
+          Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         }
         if ((frame - 90) <= 1U) {
           draw[work->effect->side](

@@ -182,7 +182,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// Sets the transfer, then starts copying the canvas to VRAM once a frame.
 #define ANIM_START_TRANSFER(work, mode, value)                                 \
   (ANIM_SET_TRANSFER(work, mode, value),                                       \
-   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER))
+   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK))
 
 /// Ends a frame of a canvas animation: marks the canvas ready for the transfer
 /// callback, then waits for the next frame. Nearly every animation loop ends
@@ -240,13 +240,6 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// takes the right edge as 240, so the span is not empty in itself; the
 /// animations write it only on lines outside window 0's vertical range.
 #define WINDOW_SPAN_INVERTED WIN_RANGE(1, 0)
-
-/// The task priority of every per-frame animation task
-/// (Task_Add sorts the frame's tasks by priority).
-#define ANIM_CALLBACK_ORDER 0x480
-/// The priority of the battle's own playback, which the palette fade and
-/// the element streaks take.
-#define ANIM_PLAYBACK_ORDER 0xc80
 
 /// Ram_MapGridCellBuffer as the unused BattleAnim_ConvertBackgroundToBlueRamp
 /// (bind.c) uses it: a working copy of the battle background's picture, the

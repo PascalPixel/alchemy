@@ -84,7 +84,7 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
                     COMPOSITE_LIGHTEN);
   draw[1] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   // Trails keep 3/4 a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Four times as many chips are freed as the burst uses.
   for (i = 0; i != PLANET_DIVER_CLEARED_CHIPS; i++)
@@ -288,9 +288,9 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
   draw[0] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
   draw[1] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
-  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, TASK_PRIORITY_VBLANK);
   // 4 off every pixel each frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 
   // Every skull starts up to 64 pixels from its centre on each axis.
   for (i = 0; i != HAUNT_SCATTERED; i++) {
@@ -416,9 +416,9 @@ void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP,
                     COMPOSITE_LIGHTEN);
   draw[1] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
-  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, TASK_PRIORITY_VBLANK);
   // Trails keep half a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // On the party's side the canvas is scrolled 104 texels (BG2X is 20.8),
   // and the spirals are drawn 112 further left.
   // The ripple below rewrites BG2X after every line with a 112-texel lead,

@@ -91,7 +91,7 @@ void BattleAnim_RunVolcano(struct BattleAnimArgs *effect) {
   }
 
   // Trails keep half of each pixel a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != VOLCANO_FRAMES; frame++) {
     camera = gBattleCamera;

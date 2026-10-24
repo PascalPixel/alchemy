@@ -422,11 +422,11 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
   // half for the others.
   work->transferMode = CANVAS_COPY_AND_FADE;
   if (mode == CASTING_IMPACT_IMPACT_BAD_OMEN) {
-    work->transferValue = 75;
+    work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   } else {
-    work->transferValue = 50;
+    work->transferValue = CANVAS_FADE_HALF;
   }
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
   /* FAKEMATCH(temporary): the results named by pointers set inside their
    * calls; as &targetPos, &casterPos and blitters used directly, 69 of 3070
    * instructions differ in tbs-en. */
@@ -691,7 +691,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
       mode == CASTING_IMPACT_IMPACT_HEAT_MIRAGE ||
       mode == CASTING_IMPACT_IMPACT_MURK ||
       mode == CASTING_IMPACT_IMPACT_BLINDING_SMOG) {
-    Task_Add(BattleAnim_ArmBg2AffineHBlankDma, ANIM_CALLBACK_ORDER);
+    Task_Add(BattleAnim_ArmBg2AffineHBlankDma, TASK_PRIORITY_VBLANK);
   }
 
   // The impact lasts 20, 32, 40, 48, 64 or 80 frames, by mode.
@@ -1121,7 +1121,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
                     CASTING_IMPACT_IMAGE_X(work->effect->side, 1),
                     imageY + gCastingImpact_ImageY[1], 99, 69);
         if (frame == 4 || frame == 5) {
-          Iwram_FillWords(canvas, CANVAS_BYTES, 0x3f3f3f3f);
+          Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         }
         if (frame == 6 || frame == 7) {
           blitters[0](canvas, work->sheet + (57 * 98 + 99 * 69),
@@ -1170,7 +1170,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
         }
       }
       if (frame == 4 || frame == 5) {
-        Iwram_FillWords(canvas, CANVAS_BYTES, 0x3f3f3f3f);
+        Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       }
       if (frame <= 3) {
         if (work->effect->side == 1) {

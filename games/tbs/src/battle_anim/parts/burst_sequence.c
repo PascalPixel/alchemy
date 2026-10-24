@@ -180,7 +180,7 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *effect, s32 mode) {
 
   Projection_ScaledUnit(work->effect->targets[0], &targetPos);
   // Trails: each transfer keeps 3/4 of every canvas level.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Motes wait 25 pixels above the target, set to fly towards the middle
   // of the field at up to 16 pixels a frame. Strike i releases PARTICLES
@@ -255,7 +255,7 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *effect, s32 mode) {
         // The hit; the last strike ends the attack.
         // A flash row fills the canvas with level 47.
         if (gBurstSequence_Styles[mode][BURST_SEQUENCE_FLASH] == 1)
-          Iwram_FillWords(canvas, CANVAS_BYTES, 0x2f2f2f2f);
+          Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(47));
         BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 4);
         if (i == bursts - 1) {

@@ -82,11 +82,11 @@ void BattleAnim_RunFlare(struct BattleAnimArgs *effect) {
   // Trails keep half of each level, or three quarters for Flare Storm.
   work->transferMode = CANVAS_COPY_AND_FADE;
   if (work->effect->variant == ANIM_VARIANT_STRONGEST) {
-    work->transferValue = 75;
+    work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   } else {
-    work->transferValue = 50;
+    work->transferValue = CANVAS_FADE_HALF;
   }
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
   Sound_PlaySongFar(SE_WHOOSH);
   frame = 0;
   do {

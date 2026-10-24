@@ -72,7 +72,7 @@ void BattleAnim_RunTitanBlade(struct BattleAnimArgs *effect) {
                              work->sheet + TITAN_BLADE_FLASH_CELLS, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The flashes: flash i sits i * 2 pixels from the ring's centre at a
   // random angle and lives 25 to 40 frames; only the first 16 are drawn.
@@ -380,10 +380,10 @@ void BattleAnim_RunTitanBlade(struct BattleAnimArgs *effect) {
     // The canvas flashes, filled with level 63, as the sword lands and as it
     // strikes.
     if (frame == 9) {
-      Iwram_FillWords(canvas, CANVAS_BYTES, 0x3F3F3F3F);
+      Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
     if (frame == 60) {
-      Iwram_FillWords(canvas, CANVAS_BYTES, 0x3F3F3F3F);
+      Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
 
     BattleCamera_Shake(16, 16);

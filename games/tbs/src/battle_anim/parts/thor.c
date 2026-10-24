@@ -150,8 +150,8 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
   // The dusk clouds scroll a pixel every other frame; busy keeps the battle
   // camera off BG1's scroll meanwhile.
   view->busy = 1;
-  Task_Add(BattleAnim_AdvanceScrollOnInterval, ANIM_CALLBACK_ORDER);
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_AdvanceScrollOnInterval, TASK_PRIORITY_VBLANK);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
   work->transferMode = CANVAS_COPY;
   BattleAnim_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
@@ -165,7 +165,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
   blitters = (DrawRectangle *)gHeapSlots;
   blit[0] = blitters[HEAP_SLOT_RAM_CODE];
   ANIM_SHOW_WIDE_CANVAS(15);
-  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // One row of the beam: brightest in the middle, darker to each side,
   // capped at level 63.
@@ -206,9 +206,9 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
     // The frame before the beam fills the canvas with level 26 (0x1a in each
     // byte) instead of fading it.
     if (frame == 150) {
-      ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0x1a1a1a1a);
+      ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(26));
     } else {
-      ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+      ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
     }
     // Place the circle and lines: they turn over the clouds until frame
     // 128, then sink and shrink into the sky with growing dots (past 22
@@ -412,7 +412,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
       work->particles[i].y = Random16() & 63;
       work->particles[i].variant = -(Random16() & 15);
     }
-    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     Sound_PlaySongFar(SE_CRASH);
     // The pillar is 48 pixels wide at canvas x 36 and reaches from the top
     // down to line 112; its sparks start at its foot, x 60.
@@ -473,7 +473,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
         s32 mirrorX;
         for (i = 0; i != 6; i++) {
           if (frame == i * 8 + 80) {
-            Iwram_FillWords(canvas, CANVAS_BYTES, 0x10101010);
+            Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
           }
         }
         for (i = 0; i != THOR_BOLTS; i++) {

@@ -132,7 +132,7 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet,
                              Ram_MapGridCellBuffer, 1, 0);
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
   // Scroll BG1 so the first target falls at canvas x 96 on side 0 and 32 on
@@ -396,7 +396,7 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
     gBgScroll[1].y = 80;
     work->fadeFrames = 24;
     work->fadeStep = 0;
-    Task_Add(Palette_StepFadeTransfer, ANIM_PLAYBACK_ORDER);
+    Task_Add(Palette_StepFadeTransfer, TASK_PRIORITY_MAIN_LOOP);
     Sound_PlaySongFar(SE_POWER_UP);
     for (frame = 0; frame != 32; frame++) {
       BattleCamera_SetViewAtPairMidpointFar(work->effect->user,
@@ -437,7 +437,7 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
   // turned around once more).
   Iwram_ClearWords(canvas, canvasBytes);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), canvasBytes);
-  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
   Projection_ScaledUnit(work->effect->targets[0], &anchor);

@@ -475,7 +475,7 @@ void BattleAnim_RunThorn(struct BattleAnimArgs *effect) {
   work->transferValue = 0;
   drawFlip =
       ((DrawRectangle *)slots)[HEAP_SLOT_RAM_CODE_2 - HEAP_SLOT_BATTLE_ANIM];
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
   frameCount = gGrowth_Counts[work->effect->variant] * 8 + 56;
 
   // Mark the dust free: 1024 entries, though only the first 64 are used.

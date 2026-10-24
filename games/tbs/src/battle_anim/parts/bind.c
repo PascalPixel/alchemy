@@ -178,7 +178,7 @@ void BattleAnim_RunBind(struct BattleAnimArgs *effect) {
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet + 0x2000);
   // 4 off every pixel each frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
   Projection_ScaledUnit(work->effect->targets[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
@@ -217,7 +217,7 @@ void BattleAnim_RunBind(struct BattleAnimArgs *effect) {
                       COMPOSITE_LIGHTEN);
     draw[1] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
     if (frame > 16 && (frame & 15) == 0)
-      work->transferValue += 0x01010101;
+      work->transferValue += CANVAS_FILL_WORD(1);
 
     // Only the first target is drawn.
     for (member = 0; member != 1; member++) {
@@ -346,7 +346,7 @@ void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD);
   Decompress_TaggedLz(palette, work->sheet + 0x1000);
   // 4 off every pixel each frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
   Projection_ScaledUnit(work->effect->targets[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
@@ -368,7 +368,7 @@ void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *effect) {
                       COMPOSITE_LIGHTEN);
     draw[1] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
     if (frame > 16 && (frame & 15) == 0)
-      work->transferValue += 0x01010101;
+      work->transferValue += CANVAS_FILL_WORD(1);
 
     // Only the first target is drawn.
     for (member = 0; member != 1; member++) {

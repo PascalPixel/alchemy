@@ -82,7 +82,7 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *effect) {
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0; // background palette 0, colour 1
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
   REG_WININ = ANIM_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
   BattleAnim_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_WIN0H = WIN_RANGE(240, 240); // an empty window
@@ -101,7 +101,7 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *effect) {
   // The formation: nine objects from resource object 372, sprite priority 1.
   BattleAnim_SpawnObjects(9, 0x174, 1);
   ANIM_SHOW_WIDE_CANVAS(16);
-  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // Mark the chips unthrown. Their positions here are never drawn: each chip
   // gets a new one when its wave throws it. The window's edge (from frame 0),
@@ -143,7 +143,7 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *effect) {
           inset[line] = Random16() & 63;
         }
         *edge = 0;
-        Task_Add(BattleAnim_BuildWindowEdgeTable, ANIM_CALLBACK_ORDER);
+        Task_Add(BattleAnim_BuildWindowEdgeTable, TASK_PRIORITY_VBLANK);
       }
       *edge += edgeSpeed;
       edgeSpeed += 3;

@@ -51,7 +51,7 @@ void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet,
                              work->sheet + HELM_SPLITTER_STAR_CELLS, 1, 0);
   BattleAnim_FetchRectangleBlitters(work->effect->side, draw);
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // Free the spark pool before moving the user: the pointer walks the
   // variant word of each seven-word Particle. Only the first 16 sparks are
@@ -293,7 +293,7 @@ void BattleAnim_RunImpactBurst(s32 formation, s32 x, s32 y) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlareImage,
                              work->sheet + IMPACT_BURST_SHARD_CELLS, 0, 0);
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // Large sparks fly in random directions at 2 to 4 pixels a frame, the
   // vertical part doubled, and live 16 to 31 frames; only the first 30 are

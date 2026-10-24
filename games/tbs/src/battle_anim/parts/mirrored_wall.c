@@ -124,7 +124,7 @@ void BattleAnim_RunMirroredWall(struct BattleAnimArgs *effect, s32 mode) {
                     COMPOSITE_LIGHTEN);
   draw[1] = slots[HEAP_SLOT_RAM_CODE_2];
   // Trails keep half a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // Recovery sets no shake but still applies BattleCamera_Shake's 16 below,
   // which does nothing while shakeFrames is 0.

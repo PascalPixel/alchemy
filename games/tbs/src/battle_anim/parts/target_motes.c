@@ -199,9 +199,9 @@ void BattleAnim_RunTargetMotes(struct BattleAnimArgs *effect, u32 mode) {
   else
     total = work->effect->targetCount * 8 + 32;
   if (TARGET_MOTES_RIPPLE(mode))
-    Task_Add(BattleAnim_ArmBg2AffineHBlankDma, ANIM_CALLBACK_ORDER);
+    Task_Add(BattleAnim_ArmBg2AffineHBlankDma, TASK_PRIORITY_VBLANK);
   // Trails keep 75% of each pixel a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlaySongFar(SE_SWIRL);
 
   // Target n's turn starts on frame n * 8; the animation ends 64 frames (wide
@@ -529,7 +529,7 @@ void BattleAnim_RunCurse(struct BattleAnimArgs *effect) {
   work->transferMode = CANVAS_COPY_AND_CLEAR;
   work->transferValue = 0;
   draw[0] = (DrawRectangle)CANVAS_SLOT(slot, HEAP_SLOT_RAM_CODE);
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
   // Each flame starts at a random point of its animation.
   ANIM_FOR_EACH_TARGET(i, work->effect) {
     work->particles[i].variant = Random16() & 63;

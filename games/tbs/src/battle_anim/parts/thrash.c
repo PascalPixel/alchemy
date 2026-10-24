@@ -141,7 +141,7 @@ void BattleAnim_RunFlashingStrike(struct BattleAnimArgs *effect, s32 mode) {
       draw[0](canvas, Ram_MapGridCellBuffer + FLASHING_STRIKE_PICTURE_BYTES, 0,
               0, 120, 120);
     if (frame >= 16 && frame <= 19)
-      Iwram_FillWords(canvas, CANVAS_BYTES, 0x3f3f3f3f);
+      Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     if (frame == 18)
       ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 20) {

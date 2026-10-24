@@ -83,7 +83,7 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *effect) {
   BG_PLTT[0] = 0;
   BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
   BattleAnim_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleAnim_SelectLivingTargets(work->effect);
   // The formation: nine objects from resource object 370, sprite priority 1.
@@ -108,7 +108,7 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *effect) {
   work->scrollInterval = 4;
   work->scrollStepX = -1;
   work->scrollStepY = 0;
-  Task_Add(BattleAnim_AdvanceScrollOnInterval, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_AdvanceScrollOnInterval, TASK_PRIORITY_VBLANK);
   view->busy = 1;
   BattleAnim_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   ANIM_SHOW_WIDE_CANVAS(16);
@@ -135,7 +135,7 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *effect) {
     }
   }
   // Trails: each transfer keeps half of every canvas level.
-  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
   // The gathering: 220 frames, or until A or B is pressed.

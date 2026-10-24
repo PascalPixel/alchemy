@@ -448,10 +448,10 @@ s32 MainMenu_Run(void) {
   gFieldWork->transition = blendStarted;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
-  // Warp destination 2, after the credits (Title_Run): save the cleared game,
-  // then the world map's warp destination 72. Cancelling the file choice asks
+  // MAIN_MENU_FROM_TITLE, after the credits (Title_Run): save the cleared game,
+  // then WORLD_MAP_FROM_MAIN_MENU. Cancelling the file choice asks
   // again.
-  if (gSaveBlock.warpDest == 2) {
+  if (gSaveBlock.warpDest == MAIN_MENU_FROM_TITLE) {
   L_ask:
     FieldMessage_Show(MsgSaveAdventureQuestion,
                       FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN);
@@ -537,7 +537,7 @@ menu_top:;
     }
     Party_StartChildhood();
     gSaveBlock.mapId = (s32)&MapId_ValeInn;
-    gSaveBlock.warpDest = 20;
+    gSaveBlock.warpDest = VALE_INN_FROM_VALE_PLAZA_SOUTHEAST;
     goto leave;
   }
   // Continue a file where it was saved, except: a file from another build of

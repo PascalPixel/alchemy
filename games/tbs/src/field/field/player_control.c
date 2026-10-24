@@ -894,13 +894,14 @@ s32 Object_MoveByKeys(struct Object *interpreter) {
     position.z = 0;
     Vector_AddPolarOffset(0x80000, angle, &position);
     // The step's depth becomes height: pad up climbs, pad down descends, and
-    // the object's angle becomes 0xc000 going up the map and 0x4000 going down.
+    // the object's angle becomes FACING_NORTH going up the map and FACING_SOUTH
+    // going down.
     position.x += object->x;
     deltaZ = position.z;
     if (deltaZ < 0)
-      object->facing = 0xc000;
+      object->facing = FACING_NORTH;
     if (deltaZ > 0)
-      object->facing = 0x4000;
+      object->facing = FACING_SOUTH;
     position.y = object->y - position.z;
     position.z = object->z;
     // The cells (16 pixels, 0x100000) under the object and the step; a step

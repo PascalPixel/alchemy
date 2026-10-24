@@ -227,7 +227,7 @@ void ItemDisplay_RaiseAboveLeader(struct Object *object) {
   Object_SelectAnimationFar(leader, ANIM_LEADER_ARMS_RAISED);
   Object_InitializeFar((struct Object *)object, gFieldEffect_RisingPulseScript);
   // Angle 0x4000, a quarter turn, faces the screen.
-  leader->facing = 0x4000;
+  leader->facing = FACING_SOUTH;
 }
 
 /// Shows a found item's picture: flags bit 0 adds sparkles and bit 1 raises it

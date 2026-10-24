@@ -397,7 +397,7 @@ void Object_UpdateAllThumb(void) {
 
         // As a signed halfword the difference is the shorter way round.
         facingStep = (s16)(ArcTan2(z, x) - object->facing);
-        maximumFacingStep = 0x1000;
+        maximumFacingStep = FACING_STEP;
         if (facingStep > maximumFacingStep)
           facingStep = maximumFacingStep;
         maximumFacingStep = -0x1000;
@@ -669,7 +669,7 @@ void Object_UpdateAllMotion(void) {
       if (x != 0 || z != 0) {
         facingStep = (s16)(ArcTan2(z, x) - object->facing);
         if (facingStep > 0x1000)
-          facingStep = 0x1000;
+          facingStep = FACING_STEP;
         if (facingStep < -0x1000)
           facingStep = -0x1000;
         object->facing += facingStep;

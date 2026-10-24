@@ -1048,8 +1048,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       // The Djinni's figure, its element's: animation 1 for one on standby or
       // recovering, 2 for one that is set. A recovering one gets
       // DjinnFigures_SetSlotPosition's negative mark, which
-      // DjinnFigures_UpdateBottomRow turns into facing 0x8000 rather than
-      // 0x4000. On a header the figure goes off screen (y 200).
+      // DjinnFigures_UpdateBottomRow turns into FACING_WEST rather than
+      // FACING_SOUTH. On a header the figure goes off screen (y 200).
       if (selectedRow == -1) {
         DjinnFigures_SetSlotPosition(mode, 0, 200, 0);
       } else if (mode == DJINN_SELECT_DJINNI) {

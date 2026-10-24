@@ -322,8 +322,8 @@ struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z) {
     Object_SetPositionAndResetMotion(object, x, y, z);
     // Up to 2 pixels a frame, gaining 1 a frame; unit scale; following the
     // ground and falling; turning to face its motion; keeping a quarter of its
-    // speed when it bounces; facing down the screen (0x4000, the heading
-    // gWorldMap_KeyHeadings gives Down).
+    // speed when it bounces; facing down the screen (FACING_SOUTH, the
+    // heading gWorldMap_KeyHeadings gives Down).
     object->script = (s32 *)gObject_DefaultScript;
     object->speedLimit = 0x20000;
     object->scriptCursor = 0;
@@ -336,7 +336,7 @@ struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z) {
     object->collisionFlags = 0;
     object->steeringFlags = OBJ_EVENT_FACES_MOTION;
     objectEvent->riseBaseY = 0;
-    object->facing = 0x4000;
+    object->facing = FACING_SOUTH;
     // Its home position, in pixels.
     scripted->homeX = x / 65536;
     scripted->homeZ = z / 65536;

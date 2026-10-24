@@ -1393,7 +1393,7 @@ s32 PsynergyMenu_DrawRangePage(struct Window *window, s32 unused,
     if (row == state->row) {
       ability =
           Ability_Get(menu->psynergies[base + row] & PSYNERGY_ABILITY_MASK);
-      if (ability->element != 4) {
+      if (ability->element != ELEMENT_NONE) {
         Window_SetTilemapEntryFar(window, ability->element + 1, 24,
                                   row * 2 + LIST_FIRST_ROW, 0);
         Render_SetTilemapFlagRect(window, 9, row * 2 + LIST_FIRST_ROW, 15, 1,
@@ -1407,7 +1407,7 @@ s32 PsynergyMenu_DrawRangePage(struct Window *window, s32 unused,
     } else {
       ability =
           Ability_Get(menu->psynergies[base + row] & PSYNERGY_ABILITY_MASK);
-      if (ability->element != 4) {
+      if (ability->element != ELEMENT_NONE) {
         Window_SetTilemapEntryFar(window, ability->element + 1, 24,
                                   row * 2 + LIST_FIRST_ROW, TILEMAP_ENTRY_ICON);
         Render_SetTilemapFlagRect(window, 9, row * 2 + LIST_FIRST_ROW, 15, 1,

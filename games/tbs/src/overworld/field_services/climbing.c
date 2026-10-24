@@ -180,7 +180,7 @@ s32 Field_ClimbDown(void) {
     FieldScript_WaitFrames(6);
     gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
     object->steeringFlags = OBJ_EVENT_FACES_MOTION;
-    object->facing = 0xc000;
+    object->facing = FACING_NORTH;
   }
 
   FieldScript_End();

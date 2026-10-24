@@ -500,7 +500,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
         iconSprite->oam.f.tile = Resource_LoadIndexedEntryToBuffer(
-            summon->abilityId & 0x3fff, handle);
+            summon->abilityId & ACTION_ID_MASK, handle);
         state->iconShown[1] = 1;
         if (ok == 0) {
           Text_SetColor(TEXT_COLOR_RED);

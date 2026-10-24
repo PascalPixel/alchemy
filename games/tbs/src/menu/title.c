@@ -84,7 +84,7 @@ s32 Title_Run(void) {
 
   // After 120 frames, the logo waits up to 3600 frames (a minute) for a key
   // press.
-  if (gSaveBlock.warpDest == 10) {
+  if (gSaveBlock.warpDest == TITLE_FROM_WORLD_MAP) {
     ObjectEvent_GetById(gSaveBlock.leaderLocalId)->motionFlags = 0;
     Sound_PlaySong(MUS_ENDING_LOGO);
     Title_RevealScreen(0);
@@ -100,7 +100,7 @@ s32 Title_Run(void) {
     FieldScript_SetDestination((s32)&MapId_Title, TITLE_AFTER_RUN);
     return 0;
   }
-  if (gSaveBlock.warpDest == 9) {
+  if (gSaveBlock.warpDest == TITLE_FROM_LEMURIAN_SHIP) {
     Sound_PlaySong(MUS_ENDING);
     // The credits: Credits_Run, through the scroll far-call
     // table.
@@ -118,7 +118,7 @@ s32 Title_Run(void) {
   // evidence): what the call once did; the stub is empty in every edition, so
   // only an earlier build of the game would show.
   Stub_NoOpHook((s32)&ResourceId_TitleFarCalls);
-  if (gSaveBlock.warpDest == 2) {
+  if (gSaveBlock.warpDest == TITLE_AFTER_RUN) {
     for (;;) {
       Sound_PlaySong(MUS_SILENCE);
       // The Nintendo logo, then the Camelot logo (Title_ShowCamelotLogo).

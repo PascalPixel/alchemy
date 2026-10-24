@@ -584,10 +584,9 @@ void CgbSound(void) {
   s32 envelopeControl;
   u32 byteMask = 0xff;
 
-  // Periodically compensate with a second software envelope step: once in
-  // every 15 frames, 16 steps in 15 frames, 63.7 a second. XXX: likely to keep
-  // near the hardware envelope's 64 steps a second, because the frame alone
-  // gives 59.7.
+  // A second software envelope step once in every 15 frames, 16 steps in 15
+  // frames: 63.7 a second, close to the 64 a second the hardware steps its own
+  // envelopes, where one step a frame would give 59.7.
   if (work->cgbTick)
     work->cgbTick--;
   else
@@ -819,10 +818,10 @@ void CgbSound(void) {
         envelopeControl &= 0xf;
         *volumeEnvelopeRegister = (note->level << 4) + envelopeControl;
         *triggerRegister = note->trigger | 0x80;
-        // XXX: CGB_CHANNEL_SQUARE_1 is restarted a second time unless NR10 bit
-        // 3 is set (a falling sweep, or 8 alone, no sweep); why is not known.
-        // How the hardware starts a rising sweep, tested on a console, would
-        // say.
+        // CGB_CHANNEL_SQUARE_1 is restarted a second time unless NR10 bit 3 is
+        // set (a falling sweep, or 8 alone, no sweep), as in pret's m4a.c.
+        // XXX (no evidence): why; the reason lies in how the sound hardware
+        // starts a rising sweep, which neither the ROM nor a render shows.
         if (channel == CGB_CHANNEL_SQUARE_1 && !(*sweepOrWaveControl & 8))
           *triggerRegister = note->trigger | 0x80;
       }

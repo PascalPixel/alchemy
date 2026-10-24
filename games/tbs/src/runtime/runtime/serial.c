@@ -160,7 +160,7 @@ s32 Serial_PollAndTransfer(void *send, void *receive) {
   status = gSerialWork.currentMask | (gSerialWork.receivedMask << 8);
   if (gSerialWork.mode == SERIAL_MODE_CLOCKING)
     status |= LINK_STATUS_CLOCKING;
-  result = Serial_AddParentFlag(status);
+  result = Serial_AddErrorFlag(status);
   if (((control << 26) >> 30) > 1)
     result |= LINK_STATUS_EXTRA_CONSOLE;
   return result;
@@ -205,7 +205,7 @@ s32 Serial_PollStatus(void) {
   status = gSerialWork.currentMask | (gSerialWork.receivedMask << 8);
   if (gSerialWork.mode == SERIAL_MODE_CLOCKING)
     status |= LINK_STATUS_CLOCKING;
-  result = Serial_AddParentFlag(status);
+  result = Serial_AddErrorFlag(status);
   if (((control << 26) >> 30) > 1)
     result |= LINK_STATUS_EXTRA_CONSOLE;
   return result;
@@ -218,8 +218,8 @@ s32 Serial_PollStatus(void) {
 ///   bits 0 and 1 : consoles 0 and 1 heard from this frame
 ///   0x80         : this console clocks the transfers (LINK_STATUS_CLOCKING)
 ///   bits 8 and 9 : consoles 0 and 1 heard from since the link began
-///   0x1000       : SIOCNT's bit 6 was set at the last transfer interrupt
-///                  (isParent)
+///   0x1000       : the last transfer interrupt found SIOCNT's error bit
+///                  set (LINK_STATUS_ERROR)
 ///   0x2000       : SIOCNT's multiplayer id is 2 or more
 /// So LINK_STATUS_HEARD_BOTH is what the block transfer and
 /// Serial_WaitForStatusMask(LINK_STATUS_HEARD_BOTH) wait for.
@@ -239,7 +239,7 @@ s32 Serial_ExchangePayloads(void *send, void *receive) {
   status = gSerialWork.currentMask | (gSerialWork.receivedMask << 8);
   if (gSerialWork.mode == SERIAL_MODE_CLOCKING)
     status |= LINK_STATUS_CLOCKING;
-  result = Serial_AddParentFlag(status);
+  result = Serial_AddErrorFlag(status);
   // SIOCNT bits 4 and 5, the multiplayer id
   if (((control << 26) >> 30) > 1)
     result |= LINK_STATUS_EXTRA_CONSOLE;
@@ -334,7 +334,7 @@ u8 Serial_CollectReceivedPayloads(void *payload) {
       sum += packet[k];
     // A good packet's halfwords, its complemented checksum included, sum to
     // 0xffff. Its payload is taken only when the packet completed since the
-    // last frame with flag bit 1 (isParent at a transfer) never set.
+    // last frame with flag bit 1 (transferError at a transfer) never set.
     if (flags[i] == 1 && (s16)sum == -1) {
       Dma_Set(gSerialWork.pendingBuffer[i] + 2,
               (u8 *)payload + i * SERIAL_PAYLOAD_BYTES, DMA_COPY_WORDS(6),
@@ -380,10 +380,9 @@ void Serial_HandleTransferInterrupt(void) {
 #endif
   sioControl = &REG_SIOCNT;
   sendState = &gSerialWork;
-  // SIOCNT's bit 6. XXX: likely the multiplayer error flag, which public
-  // hardware documentation puts at bit 6, rather than parent, because a
-  // packet received while it is set is refused (flag bit 1, below)
-  sendState->isParent = (*sioControl << 25) >> 31;
+  // SIOCNT's error bit (SIO_ERROR): a packet heard while it is set is refused
+  // (flag bit 1, below)
+  sendState->transferError = (*sioControl << 25) >> 31;
 
   if (sendState->sendIndex == -1) {
     u32 idleWord = SERIAL_IDLE_HALFWORD;
@@ -425,7 +424,7 @@ receive_loop:
     }
   }
   tailState = &gSerialWork;
-  if (tailState->isParent != 0)
+  if (tailState->transferError != 0)
     tailState->channelFlags[channel] |= 2;
   if (tailState->receiveIndex[channel] <= SERIAL_PACKET_HALFWORDS)
     tailState->receiveIndex[channel]++;

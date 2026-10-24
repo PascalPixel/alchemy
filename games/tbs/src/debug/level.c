@@ -239,10 +239,10 @@ static void IncreaseItemAndLevel_SelectItem(void) {
   redraw = 1;
   window = Window_Create(0, 0, 30, 7, 2);
   details = Window_Create(0, 8, ITEM_DEBUG_DETAILS_WIDTH, 10, 2);
-  // Copy the existing sprite palette into the debug window palettes: sprite
-  // palette 0 into BG palette 14, then BG palette 15's colour 4 over BG
-  // palette 14's colour 14, as the battle background does for BG palette 5.
-  // XXX: which layer draws with palette 14 here would say why.
+  // Lend BG palette 14, the menus' highlight palette, to the item icons, as
+  // Palette_LoadIconsIntoHighlight does: sprite palette 0 into it, then BG
+  // palette 15's colour 4 over its colour 14. ItemMenu_DrawItemDetails draws
+  // the details window's element icons in palette 14.
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
           DMA_ENABLE << 16 | 0x10, REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(14, 14),

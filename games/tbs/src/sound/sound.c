@@ -189,32 +189,29 @@ void SoundTest_Run(void) {
   s32 cues[3] = {0, 80, 100};
   s32 reverbCode;
   s32 row;
-  s32 timer;
+  s32 clipTimer;
 
   row = 0;
   reverbCode = SOUND_REVERB_NORMAL;
   /* FAKEMATCH(one-pass): the block keeps the state-address load after
-   * reverbCode setup and the state store before timer setup. Plain store:
+   * reverbCode setup and the state store before clipTimer setup. Plain store:
    * differ 8 or more in nine statement orders. */
-  // XXX: this overwrites the first four digits of the build stamp copy; why
-  // the audio test clears them is not known.
+  // XXX (no evidence): why the audio test clears the first four digits of the
+  // build stamp copy; nothing in the game reads that copy.
   do {
     gBuildStamp[0] = 0;
   } while (0);
-  timer = 20;
+  clipTimer = 20;
 
   for (;;) {
-    // XXX: timer counts down from 20 and restarts while gSoundTestRestartTimer
-    // is set, but nothing reads it, and no code but this test names the flag;
-    // what sets it, and what both were for, is not known. ⚓️'s copy of this
-    // test (games/tla/src/sound/audio_test.c) only clears its flag too, so a
-    // writer of the flag in either game would settle it.
-    if (timer != 0)
-      timer--;
+    // A 20-frame countdown, restarted whenever the mixer has clipped a sample
+    // since the last frame; nothing reads it.
+    if (clipTimer != 0)
+      clipTimer--;
 
-    if (gSoundTestRestartTimer != 0) {
-      gSoundTestRestartTimer = 0;
-      timer = 20;
+    if (gSoundMixerClipped != 0) {
+      gSoundMixerClipped = 0;
+      clipTimer = 20;
     }
 
     if (gKeysRepeat & KEY_SELECT) {
@@ -270,10 +267,9 @@ void Sound_Initialize(void) {
   gBgmFadeRequested = 0;
   gSoundCommandMask = 0;
   playerVolume = gMusicPlayerLastSong;
-  // XXX: gSound_UnreadByte is cleared here and named nowhere else in ☀️; what it
-  // holds is not known. ⚓️'s twin (gData_02005804, also after
-  // gBgmRestoreDelay) is only cleared as well; a read of either byte
-  // would settle it.
+  // XXX (no evidence): what gSound_UnreadByte holds; no code in either game
+  // reads it or its Lost Age twin (gData_02005804, also after
+  // gBgmRestoreDelay), and no literal in the ROM but this one points at it.
   gSound_UnreadByte = 0;
   remaining = MUSIC_PLAYER_COUNT - 1;
   do {

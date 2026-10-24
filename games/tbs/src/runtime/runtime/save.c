@@ -131,8 +131,9 @@ u32 Save_SelectWriteSector(s32 mode) {
         index = SAVE_SECTOR_COUNT;
       }
     } else {
-      // XXX: likely chosen at random to spread the flash chip's wear, because
-      // nothing else in the code needs it; the bytes don't say so.
+      // A free sector at random, so the writes spread over the free sectors
+      // and no sector of the flash chip wears out first; nothing else depends
+      // on which free sector a record takes.
       index = Random16() % count;
       index = empty[index];
     }

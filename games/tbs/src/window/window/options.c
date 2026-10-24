@@ -416,7 +416,7 @@ struct Window *OptionMenu_Open(void) {
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 256, 0);
     marker = WindowSprite_Create(x, 0x40000000, window, 0, 0);
-    marker->oam.palette256 = 1;
+    marker->oam.fullColor = 1;
     work->marker[0].sprite = marker;
     x = window->x * 8 + OPTION_SLIDER_X;
     x += work->option[0] * 60 / work->optionCount[0];
@@ -428,7 +428,7 @@ struct Window *OptionMenu_Open(void) {
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 256, 0);
     marker = WindowSprite_Create(x, 0x40000000, window, 0, 0);
-    marker->oam.palette256 = 1;
+    marker->oam.fullColor = 1;
     work->marker[1].sprite = marker;
     x = window->x * 8 + OPTION_SLIDER_X;
     x += work->option[1] * 60 / work->optionCount[1];

@@ -33,10 +33,10 @@ s32 FieldEffect_GetAnimationValue(s32 id) {
 
   if (object->spriteStorageKind != OBJECT_SPRITE_ONE ||
       (sprite = (struct SpeakerSprite *)object->sprite) == NULL ||
-      sprite->value28 == NULL) {
+      sprite->firstEntry == NULL) {
     return 0;
   }
-  return *sprite->value28;
+  return *sprite->firstEntry;
 }
 
 /// Returns the voice of sprite id's messages: the first of its four blip

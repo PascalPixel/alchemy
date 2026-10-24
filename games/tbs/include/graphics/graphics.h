@@ -154,8 +154,8 @@ extern const struct ArticleTable gArticle_Table;
 /// One row's masks for a pair of bar-pattern tiles: a word XORed into each
 /// tile's row.
 struct TileMask {
-  u32 word0;
-  u32 word1;
+  u32 firstTile;
+  u32 secondTile;
 };
 /// The six row patterns that mark the battle menus' range icons, colour 5
 /// over a colour-4 fill, read by Menu_BuildLocalizedPatternTiles.

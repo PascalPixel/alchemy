@@ -389,7 +389,7 @@ struct SaveMenuMapLocalState {
   u8 mapAndInventory[0x100]; ///< gMapLocalState, then gInventorySnapshot
   /// The play time in frames, which Save_BuildFileSummary copies here
   /// when saving.
-  s32 word100;
+  s32 playTime;
 };
 
 /// A console's link payload as the cable transfer reads it from
@@ -569,7 +569,7 @@ menu_top:;
       GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
       GameFlag_Set(0x13e);
     } else if (state->playTime !=
-               ((struct SaveMenuMapLocalState *)gMapLocalState)->word100) {
+               ((struct SaveMenuMapLocalState *)gMapLocalState)->playTime) {
       FieldMessage_Show(MsgSaveDataCorrupted, 9);
       FieldMessage_Show(MsgSaveDataCorrupted + 1, 13);
       if (YesNoMenu_Run(1, 0, 0, YES) != YES) {

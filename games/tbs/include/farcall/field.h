@@ -165,7 +165,7 @@ void Object_SetSpriteFlagsFar(struct Object *object, u32 flags);
 void Object_SetSpriteBlendModeFar(struct Object *object, u32 mode);
 /// Changes the screen shake, leaving alone an axis whose argument is negative.
 /// Amplitudes are in 16.16 pixels, the decay a 16.16 factor per frame.
-void MapGrid_SetScreenShakeFar(s32 value0, s32 value1, s32 value2);
+void MapGrid_SetScreenShakeFar(s32 shakeX, s32 shakeY, s32 shakeDecay);
 /// Waits until the shake dies down below 1/256 pixel, or 300 frames pass, and
 /// then stops it.
 void MapGrid_WaitForShakeToSettleFar(void);

@@ -84,7 +84,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
   s32 *viewInverse;
   s32 *viewRipple;
   s32 *viewLeader;
-  s32 *viewInverse7;
+  s32 *viewLeaderLow;
 #endif
   struct Object *object;
   u32 i;
@@ -500,9 +500,9 @@ void ScreenTransition_UpdateScanlineTable(void) {
     ax = grid->viewX & 0xffff0000;
     cameraY = grid->viewY & 0xffff0000;
 #else
-    viewInverse7 = &grid->viewX;
-    ax = viewInverse7[0] & 0xffff0000;
-    cameraY = viewInverse7[1] & 0xffff0000;
+    viewLeaderLow = &grid->viewX;
+    ax = viewLeaderLow[0] & 0xffff0000;
+    cameraY = viewLeaderLow[1] & 0xffff0000;
 #endif
     object = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
     centerX = (object->x - ax) / 0x10000;

@@ -368,10 +368,10 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   /* FAKEMATCH(dead): an unused array for the frame's 40 bytes; without it, 2
    * of 249 instructions differ in tbs-en. */
   UNUSED s32 spare[10];
-  struct ScreenPoint position;
-  struct ScreenPoint position2;
-  struct BattleStagingWork launch;
-  struct BattleStagingWork launch2;
+  struct ScreenPoint starFieldPosition;
+  struct ScreenPoint streakPosition;
+  struct BattleStagingWork pillarLaunch;
+  struct BattleStagingWork burstLaunch;
   /* FAKEMATCH(temporary): one variable holds HEAP_SLOT_CAMERA's address, the
    * battle work's base and later IME's; as battle =
    * gHeapSlots[HEAP_SLOT_BATTLE] with ime set only in the loop, 61 of 249
@@ -405,7 +405,8 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
     // (its origin queued to BG2X and BG2Y with interrupts off).
     IoWriteQueue_Store16((u32)&REG_BLDALPHA, BLEND_ALPHA(14, 16));
     ElementGlow_InitializeStarField(element);
-    for (frame = 0, projectedPosition = &position; frame <= 44; frame++) {
+    for (frame = 0, projectedPosition = &starFieldPosition; frame <= 44;
+         frame++) {
       brightness = &battle->brightness;
       ime = &REG_IME;
       work = gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
@@ -430,10 +431,10 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
     BattleAnim_StartElementStreaksFar(element);
     for (frame = 0; frame < 40; frame++) {
       effectWork = gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
-      BattleMotion_ProjectScaledPosition(unitId,
-                                         ScreenPoint_Coordinates(&position2));
-      effectWork->trackedCanvas.origin.x = (64U - (u32)position2.x) << 8;
-      effectWork->trackedCanvas.origin.y = (64U - (u32)position2.y) << 8;
+      BattleMotion_ProjectScaledPosition(
+          unitId, ScreenPoint_Coordinates(&streakPosition));
+      effectWork->trackedCanvas.origin.x = (64U - (u32)streakPosition.x) << 8;
+      effectWork->trackedCanvas.origin.y = (64U - (u32)streakPosition.y) << 8;
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X,
                           (u32)&effectWork->trackedCanvas.origin.x,
                           DMA_COPY_WORDS(2));
@@ -444,25 +445,25 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   } else if (mode == GLOW_PILLAR) {
     // The pillar and the burst run an animation with the unit as its actor and
     // only target.
-    launch.effect.prelude = 0;
-    launch.effect.kind = element;
-    launch.effect.variant = variant;
-    launch.effect.user = unitId;
-    launch.effect.targets[0] = unitId;
-    launch.effect.firstTarget = unitId;
-    launch.effect.targetCount = 1;
-    launch.effect.range = 1;
-    BattleAnim_RunElementPillarFar(&launch.effect);
+    pillarLaunch.effect.prelude = 0;
+    pillarLaunch.effect.kind = element;
+    pillarLaunch.effect.variant = variant;
+    pillarLaunch.effect.user = unitId;
+    pillarLaunch.effect.targets[0] = unitId;
+    pillarLaunch.effect.firstTarget = unitId;
+    pillarLaunch.effect.targetCount = 1;
+    pillarLaunch.effect.range = 1;
+    BattleAnim_RunElementPillarFar(&pillarLaunch.effect);
   } else {
-    launch2.effect.kind = element;
-    launch2.effect.prelude = 0;
-    launch2.effect.variant = 0;
-    launch2.effect.user = unitId;
-    launch2.effect.targets[0] = unitId;
-    launch2.effect.firstTarget = unitId;
-    launch2.effect.targetCount = 1;
-    launch2.effect.range = 1;
-    BattleAnim_RunElementBurstFar(&launch2.effect);
+    burstLaunch.effect.kind = element;
+    burstLaunch.effect.prelude = 0;
+    burstLaunch.effect.variant = 0;
+    burstLaunch.effect.user = unitId;
+    burstLaunch.effect.targets[0] = unitId;
+    burstLaunch.effect.firstTarget = unitId;
+    burstLaunch.effect.targetCount = 1;
+    burstLaunch.effect.range = 1;
+    BattleAnim_RunElementBurstFar(&burstLaunch.effect);
   }
 }
 

@@ -121,12 +121,12 @@ s32 Serial_PollAndTransfer(void *send, void *receive) {
   control = *siocnt;
   switch (gSerialWork.phase) {
   case SERIAL_PHASE_SEARCHING: {
-    u8 mask30 = control & SIO_ID;
+    u8 multiplayerId = control & SIO_ID;
     u8 mode;
 
     // The parent waits here until SIO_MULTI_SD is set with SIO_START clear;
     // a child connects at once.
-    if (mask30 == 0 &&
+    if (multiplayerId == 0 &&
         (mode = control & (SIO_START | SIO_MULTI_SD)) == SERIAL_MODE_CLOCKING) {
       u8 serialError = control & SIO_MULTI_SI;
 
@@ -144,7 +144,7 @@ s32 Serial_PollAndTransfer(void *send, void *receive) {
         REG_TM3CNT = SERIAL_TIMER_RELOAD;
         gSerialWork.mode = mode;
       }
-    } else if (mask30 == 0) {
+    } else if (multiplayerId == 0) {
       break;
     }
     gSerialWork.phase = SERIAL_PHASE_CONNECTED;

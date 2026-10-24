@@ -46,9 +46,9 @@ struct OamData {
   u16 affineMode : 2; ///< 0 plain, 1 affine, 3 affine at double size
   u16 objectMode : 2; ///< an enum ObjMode
   u16 mosaic : 1;
-  u16 palette256 : 1; ///< 256 colours instead of a 16-colour palette
-  u16 shape : 2;      ///< 0 square, 1 wide, 2 tall
-  u16 x : 9;          ///< screen pixels
+  u16 fullColor : 1; ///< 256 colours instead of a 16-colour palette
+  u16 shape : 2;     ///< 0 square, 1 wide, 2 tall
+  u16 x : 9;         ///< screen pixels
   /// The affine matrix; for a plain sprite, 8 mirrors it left to right and 16
   /// top to bottom.
   u16 matrix : 5;

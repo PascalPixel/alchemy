@@ -229,16 +229,16 @@ void Party_ShowJoinedMessage(s32 member) {
 void Party_ShowPairJoinedMessage(s32 first, s32 second) {
   u8 *work = gWindowWork[0];
   struct Window *window;
-  s32 sprite2[3];
-  s32 sprite1[3];
-  s32 *entry1;
-  s32 *entry2;
-  s32 handle1, palette, handle2;
+  s32 secondOam[3];
+  s32 firstOam[3];
+  s32 *firstEntry;
+  s32 *secondEntry;
+  s32 firstHandle, palette, secondHandle;
   u32 zero;
   s32 *p;
 
   window = NULL;
-  entry1 = sprite1;
+  firstEntry = firstOam;
   window = Window_Create(1, 1, 28, 5, 0);
   zero = 0;
 
@@ -254,19 +254,19 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
 
     Icon_LoadWithPalette(
         Portrait_GetForSpeaker(Party_LookupCharacterValueByFlag32(first)), 0,
-        &handle1, &palette, 14, zero);
+        &firstHandle, &palette, 14, zero);
     // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
     // a link word, attributes 0 and 1 (32x32 at y 12) and attribute 2.
-    p = entry1;
+    p = firstEntry;
     *p++ = zero;
     *p++ = 0x800c000c;
     *p = palette | 0xe000;
 
-    entry2 = sprite2;
+    secondEntry = secondOam;
     Icon_LoadWithPalette(
         Portrait_GetForSpeaker(Party_LookupCharacterValueByFlag32(second)), 0,
-        &handle2, &palette, 15, zero);
-    p = entry2;
+        &secondHandle, &palette, 15, zero);
+    p = secondEntry;
     *p++ = zero;
     *p++ = 0x802c000c;
     *p = palette | 0xf000;
@@ -283,16 +283,16 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     Sound_PlaySongFar(MUS_JOINED);
 
     do {
-      Oam_AddSpriteAtDepth(entry1, 250);
-      Oam_AddSpriteAtDepth(entry2, 250);
+      Oam_AddSpriteAtDepth(firstEntry, 250);
+      Oam_AddSpriteAtDepth(secondEntry, 250);
       WaitFrames(1);
     } while (Sound_GetBgmRestoreDelayFar() != 0 &&
              (gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
     Window_Close(window, 2);
     WaitFrames(1);
-    VramCache_FreeEntry(handle1);
-    VramCache_FreeEntry(handle2);
+    VramCache_FreeEntry(firstHandle);
+    VramCache_FreeEntry(secondHandle);
   }
 }
 

@@ -57,9 +57,9 @@ void Window_ClearInteriorTilesFar(const struct Window *window, u32 left,
 /// corners, joining the frame and crossing the lines it meets.
 void Window_DrawDividerLineFar(struct Window *win, u32 x1, u32 y1, u32 x2,
                                u32 y2);
-/// Decodes message arg0 and draws it all at once into the text canvas arg1 at
-/// pixel (arg2, arg3), overwriting the ring of decoded text.
-void Text_DrawMessageFar(s32 arg0, struct Window *arg1, s32 arg2, s32 arg3);
+/// Decodes message and draws it all at once into window's text canvas at
+/// pixel (x, y), overwriting the ring of decoded text.
+void Text_DrawMessageFar(s32 message, struct Window *window, s32 x, s32 y);
 #ifndef OWN_Text_DrawMessageAsTilesFar
 /// Decodes the message numbered character and draws it as tiles in a window's
 /// interior at pixel (offsetX, offsetY), offsetY rounded down to a tile row;
@@ -67,30 +67,29 @@ void Text_DrawMessageFar(s32 arg0, struct Window *arg1, s32 arg2, s32 arg3);
 void Text_DrawMessageAsTilesFar(s32 character, const struct Window *position,
                                 u32 offsetX, u32 offsetY);
 #endif
-/// Draws a byte string of at most 255 characters into the text canvas arg1 at
-/// pixel (arg2, arg3).
-void Text_DrawStringFar(const u8 *text, struct Window *arg1, s32 arg2,
-                        s32 arg3);
+/// Draws a byte string of at most 255 characters into window's text canvas at
+/// pixel (x, y).
+void Text_DrawStringFar(const u8 *text, struct Window *window, s32 x, s32 y);
 /// Draws a byte string of at most 255 characters as tiles in a window's
 /// interior at pixel (offsetX, offsetY).
 void Text_DrawStringAtOffsetFar(const u8 *text, const struct Window *window,
                                 s32 offsetX, s32 offsetY);
 /// Draws a byte string straight into a window's tilemap, (x, y) being pixels of
 /// its interior rounded down to tiles.
-void Text_DrawStringInWindowFar(const u8 *text, struct Window *arg1, u32 x,
+void Text_DrawStringInWindowFar(const u8 *text, struct Window *window, u32 x,
                                 u32 y);
-/// Draws the number arg0, arg1 digits wide as String_FormatNumber pads it, into
-/// the text canvas arg2 at pixel (arg3, arg4).
-void Text_DrawNumberFar(s32 arg0, s32 arg1, struct Window *arg2, s32 arg3,
-                        s32 arg4);
+/// Draws value, width digits wide as String_FormatNumber pads it, into
+/// window's text canvas at pixel (x, y).
+void Text_DrawNumberFar(s32 value, s32 width, struct Window *window, s32 x,
+                        s32 y);
 /// Draws a number, padded as String_FormatNumber pads it, as tiles in a
 /// window's interior.
-void Text_DrawNumberAtOffsetFar(s32 arg0, s32 arg1, const struct Window *arg2,
-                                s32 arg3, s32 arg4);
+void Text_DrawNumberAtOffsetFar(s32 value, s32 width,
+                                const struct Window *window, s32 x, s32 y);
 /// Draws a number, padded as String_FormatNumber pads it, into a window's
 /// tilemap.
-void Text_DrawNumberInWindowFar(s32 arg0, s32 arg1, struct Window *arg2,
-                                s32 arg3, s32 arg4);
+void Text_DrawNumberInWindowFar(s32 value, s32 width, struct Window *window,
+                                s32 x, s32 y);
 /// Sets the colour (0 to 15) text is drawn in from now on; the menus colour HP
 /// figures with it and put colour 15 back after.
 void Text_SetColorFar(s32 param);
@@ -110,14 +109,14 @@ struct WindowSprite *WindowSprite_CreateFromResourceFar(s32 mode, s32 resource,
 /// the first free one (Portrait_Create). Returns NULL when the character has
 /// no portrait or both slots are taken.
 struct WindowSprite *Portrait_CreateFar(s32 object_kind, s32 position, s32 side,
-                                        struct Window *arg3, s32 arg4,
-                                        s32 arg5);
+                                        struct Window *window, s32 x, s32 y);
 /// Reloads the portrait in slot so it shows character, keeping its sprite, as
 /// the field menus change a portrait already on screen.
 void Portrait_ReloadFar(u32 slot, s32 character, s32 value);
-/// Opens a portrait window at tile (x, y) for the speaker arg0, at once.
+/// Opens a portrait window at tile (x, y) for speaker, at once.
 /// Returns 0 when the speaker has no portrait.
-struct Window *Portrait_OpenWindowFar(s32 arg0, s32 arg1, s32 x, s32 y);
+struct Window *Portrait_OpenWindowFar(s32 speaker, s32 portraitOption, s32 x,
+                                      s32 y);
 /// Closes at once the portrait window showing speaker entry, if one is open.
 void Portrait_CloseWindowFar(u32 entry);
 /// Decodes message no and fits a window for its first page on the screen near
@@ -319,7 +318,7 @@ void Graphics_ExpandVramTilesByColorTableFar(u16 *dst);
 void Text_UseExtraTilesFar(s32 flag);
 /// Opens the field command menu and moves its cursor to a command's icon, as
 /// the world map's scenes show it picking Djinn. Returns the icon's position.
-s32 Menu_AnimateSelectionToEntryFar(s32 arg0, s32 arg1);
+s32 Menu_AnimateSelectionToEntryFar(s32 start, s32 command);
 /// Returns the first entry of gWindowSprite_PointerTiles, whatever no is.
 s32 WindowSprite_GetPointerTilesFar(s32 no);
 /// Types a message into an open window from its top left, without voice blips.

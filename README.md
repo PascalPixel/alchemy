@@ -1,10 +1,10 @@
 # 🌋 Alchemy
 
-Alchemy is a decompilation of the Game Boy Advance games ☀️ **[Golden Sun: The Broken Seal](games/tbs/README.md)** and ⚓️ **Golden Sun: The Lost Age**. [Camelot](games/tbs/glossary.md#camelot) never released the games’ source code, so Alchemy writes it again: C code that compiles back into exactly the same cartridges. With it, anyone can read how Golden Sun works, see every image, hear every song, and view every line of dialogue.
+Alchemy is a [decompilation](https://en.wikipedia.org/wiki/Decompiler) of the Game Boy Advance games ☀️ **[Golden Sun: The Broken Seal](games/tbs/README.md)** and ⚓️ **Golden Sun: The Lost Age**.
 
 ## Why
 
-Hi, I’m Pascal Pixel! Golden Sun is my favorite game, and I started Alchemy in July 2026 as a hobby, to enjoy making things again after a burnout. I do this by managing AI agents, and it’s not unlike managing human engineers, just without the meetings 😝 Their rules are in [AGENTS.md](AGENTS.md).
+Hi, I’m Pascal Pixel, an engineer recovering from a burnout. Golden Sun is my favorite game and I wanted to know how it works, so I’m decompiling it with [AI agents](AGENTS.md).
 
 ## Progress
 

@@ -29,7 +29,6 @@ SECTIONS
         "*/resource_69a_overlay.o"(.text.x02009104)
         "*/resource_69a_overlay.o"(.text.x02009230)
         "*/games/tla/src/scene/jupiter_lighthouse_room_1/s1474.o"(.text)
-        "*/resource_69a_overlay.o"(.text.x020094fc)
         "*/resource_69a_overlay.o"(.text.x0200956c)
         "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
         "*/resource_69a_overlay.o"(.text.x02009704)

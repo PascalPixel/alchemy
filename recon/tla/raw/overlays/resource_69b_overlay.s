@@ -2315,61 +2315,6 @@ Func_02001950:
 	.4byte 0x11111111
 .L_02009b90:
 	.4byte Func_02001824
-	.section .text.x02009c1c,"ax",%progbits
-	.global Func_02001c1c
-	.thumb_func
-Func_02001c1c:
-	push {r5, r6, lr}
-	mov r6, r8
-	push {r6}
-	ldr r3, .L_02009c88
-	movs r1, #133
-	lsls r1, r1, #2
-	adds r3, r3, r1
-	mov r8, r0
-	ldr r0, [r3]
-	sub sp, #8
-	bl Object_GetById
-	mov r2, r8
-	ldrh r1, [r2, #6]
-	movs r2, #64
-	ldr r6, [r0, #8]
-	adds r3, r2, #0
-	ands r3, r1
-	lsls r3, r3, #16
-	mov r1, r8
-	asrs r3, r3, #16
-	asrs r6, r6, #20
-	orrs r6, r3
-	ldrh r3, [r1, #8]
-	ldr r5, [r0, #16]
-	ands r2, r3
-	lsls r2, r2, #16
-	asrs r2, r2, #16
-	asrs r5, r5, #20
-	orrs r5, r2
-	bl Func_02001b94
-	movs r0, #161
-	bl Func_0200232c
-	mov r3, r8
-	movs r2, #8
-	ldrsh r1, [r3, r2]
-	movs r2, #6
-	ldrsh r0, [r3, r2]
-	adds r1, #1
-	movs r2, #1
-	movs r3, #1
-	str r6, [sp, #0]
-	str r5, [sp, #4]
-	bl Func_02002204
-	movs r0, #12
-	bl FieldEvent_WaitFrames
-	add sp, #8
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, pc}
-.L_02009c88:
-	.4byte gPartyState
 	.section .text.x02009c8c,"ax",%progbits
 	.global Func_02001c8c
 	.thumb_func

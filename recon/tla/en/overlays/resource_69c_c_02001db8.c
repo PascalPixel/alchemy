@@ -1,9 +1,6 @@
-// Drafts of overlay 69C Func_02001d48 and Func_02001db8 (first written
-// 2026-10-12); overlay 6A3 has the same two functions at 0200c13c and 0200c1ac.
-// Func_02001d48: differ 2 of 49 (one reordered row): the native loads object->x
-// (ldr r6, [r0, #8]) before it copies the mask 64 for the first and; the draft
-// copies first. Measured: one statement or two for each cell, one-pass blocks
-// on the x load, on both loads and on the masked event x (differ 4, 33, 57).
+// Draft of overlay 69C Func_02001db8 (first written 2026-10-12); overlay 6A3
+// has the same function at 0200c1ac. Its sibling Func_02001d48 is adopted in
+// games/tla/src/scene/jupiter_lighthouse_room_3/s1cc0.c.
 // Func_02001db8: differ 18 of 131, order only, at four places: the base and
 // offset registers of the first currentOwner address are exchanged; the pool
 // zero for motionFlags loads between the two halves of 0x4000 in the native and
@@ -31,22 +28,6 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-
-void Func_02001d48(struct PushEvent *event) {
-  struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
-  s32 x;
-  s32 z;
-
-  x = object->x >> 20;
-  x |= (s16)(event->x & 64);
-  z = object->z >> 20;
-  z |= (s16)(event->z & 64);
-
-  Func_02001cc0();
-  Func_02002470(161);
-  Func_02002328(event->x, event->z + 1, 1, 1, x, z);
-  FieldEvent_WaitFrames(12);
-}
 
 void Func_02001db8(struct PushEvent *event) {
   struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);

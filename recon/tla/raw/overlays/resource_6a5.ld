@@ -45,7 +45,6 @@ SECTIONS
         "*/resource_6a5_overlay.o"(.text.x0200cd9c)
         "*/resource_6a5_overlay.o"(.text.x0200cec8)
         "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s510c.o"(.text)
-        "*/resource_6a5_overlay.o"(.text.x0200d194)
         "*/resource_6a5_overlay.o"(.text.x0200d204)
         "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
         "*/resource_6a5_overlay.o"(.text.x0200d39c)

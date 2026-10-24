@@ -30,7 +30,6 @@ SECTIONS
         "*/resource_699_overlay.o"(.text.x0200925c)
         "*/resource_699_overlay.o"(.text.x02009388)
         "*/games/tla/src/scene/jupiter_lighthouse_basement/s15cc.o"(.text)
-        "*/resource_699_overlay.o"(.text.x02009654)
         "*/resource_699_overlay.o"(.text.x020096c4)
         "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
         "*/resource_699_overlay.o"(.text.x0200985a)

@@ -77,7 +77,6 @@ SECTIONS
         "*/resource_6aa_overlay.o"(.text.x0200bcf8)
         "*/resource_6aa_overlay.o"(.text.x0200be24)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s4068.o"(.text)
-        "*/resource_6aa_overlay.o"(.text.x0200c0f0)
         "*/resource_6aa_overlay.o"(.text.x0200c160)
         "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
         "*/resource_6aa_overlay.o"(.text.x0200c2f8)

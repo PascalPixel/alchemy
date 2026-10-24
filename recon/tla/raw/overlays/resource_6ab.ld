@@ -69,7 +69,6 @@ SECTIONS
         "*/resource_6ab_overlay.o"(.text.x0200b804)
         "*/resource_6ab_overlay.o"(.text.x0200b930)
         "*/games/tla/src/scene/mars_lighthouse_star_room/s3b74.o"(.text)
-        "*/resource_6ab_overlay.o"(.text.x0200bbfc)
         "*/resource_6ab_overlay.o"(.text.x0200bc6c)
         "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
         "*/resource_6ab_overlay.o"(.text.x0200be02)

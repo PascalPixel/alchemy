@@ -32,7 +32,6 @@ SECTIONS
         "*/resource_6a4_overlay.o"(.text.x0200a040)
         "*/resource_6a4_overlay.o"(.text.x0200a16c)
         "*/games/tla/src/scene/jupiter_lighthouse_aerie/s23b0.o"(.text)
-        "*/resource_6a4_overlay.o"(.text.x0200a438)
         "*/resource_6a4_overlay.o"(.text.x0200a4a8)
         "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
         "*/resource_6a4_overlay.o"(.text.x0200a640)

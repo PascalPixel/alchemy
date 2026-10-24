@@ -60,7 +60,7 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
   BattleAnim_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
-  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   // Trails keep 3/4 a frame.
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
@@ -452,7 +452,8 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *effect) {
 
       i = frame / 2;
       n = i % 4;
-      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
+                        COMPOSITE_LIGHTEN);
       draw[1] = ((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2];
       draw[1](canvas, work->sheet + n * (17 * 64), 47, ground.y - 64, 17, 64);
       n = frame / 4 % 3;
@@ -460,7 +461,7 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *effect) {
       draw[1](canvas, glow, 40, ground.y - 36, 24, 43);
       FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
+                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
       draw[1] = ((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2];
       n = i % 4;
       draw[1](canvas, work->sheet + n * (17 * 64), 64, ground.y - 64, 17, 64);
@@ -637,7 +638,7 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
                     COMPOSITE_TRANSPARENT);
   slotTable = gHeapSlots;
   draw[0] = slotTable[HEAP_SLOT_RAM_CODE];
-  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   draw[1] = slotTable[HEAP_SLOT_RAM_CODE_2];
 
   // Each piece flies out from (32, 60) at a quarter of its distance from
@@ -1023,7 +1024,7 @@ void BattleAnim_RunElementBurst(struct BattleAnimArgs *effect) {
       for (i = 0; i != 4; i++) {
         ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           gDeathPlunge_DrawFlags[i] | ANIM_CLIP_BOUNDS,
-                          BLITTER_MAX);
+                          COMPOSITE_LIGHTEN);
         draw[1] = *slot;
         draw[1](canvas, work->sheet + (picture << 10), gDeathPlunge_X[i] + 32,
                 ground.y + gDeathPlunge_Y[i] - 32, 32, 32);

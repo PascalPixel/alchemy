@@ -453,12 +453,14 @@ as one code, before the arguments are filled in, the longest message of each
 edition's text is the Lucky Dice rules, at 200 of the Japanese ring's 256
 codes and at most 446 (Italian) of the others' 512. The two bytes before the
 argument table, `padding` in `struct WindowWork`, align `argumentValues` to a word
-in every edition, and nothing reads them.
+in every edition, and nothing reads them. The halfword after `lineSpacing`,
+`unusedAfterLineSpacing`, is set to 1 whenever `Text_ResetStyle` resets the
+text style and read by nothing: the text printer has no field to copy into it
+(`TextPrinter_ApplyStyle` copies only the colour, outline and line spacing),
+no text control code writes it, and the glyph code, all C, reads the style
+through its named fields.
 
 - XXX (no evidence): why there are three text printers, and why the international
   editions gave up four windows when they doubled the ring; the code shows
   only the counts each edition uses, and only Camelot's sources could say how
   they were chosen.
-- XXX: what `WindowWork.unknownAfterLineSpacing` holds; `Text_ResetStyle`
-  sets it to 1 beside the text style and no C reads it, so a read in the
-  glyph assembly or a text control code that changes it would settle it.

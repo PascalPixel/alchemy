@@ -362,23 +362,24 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
       high = gJudgment_BurstHeights[n];
       cell = gJudgment_BurstCells[n] + JUDGMENT_SHEET_BURST;
 
-      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
+                        COMPOSITE_LIGHTEN);
       (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(
           canvas, work->sheet + cell, 60 - high, 80 - high * 2, high, high * 2);
       FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
+                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
       (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(
           canvas, work->sheet + cell, 60, 80 - high * 2, high, high * 2);
       FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
+                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_LIGHTEN);
       (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(
           canvas, work->sheet + cell, 60 - high, 80, high, high * 2);
       FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y,
-                        BLITTER_MAX);
+                        COMPOSITE_LIGHTEN);
       (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(
           canvas, work->sheet + cell, 60, 80, high, high * 2);
       FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
@@ -423,7 +424,8 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
          * is hoisted into fp; as the literals 4, 8 and 16, 331 of 2455
          * instructions differ in tbs-en. */
         s32 high = 8;
-        ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+        ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
+                          COMPOSITE_LIGHTEN);
         blit = slots[HEAP_SLOT_RAM_CODE_2];
         for (i = 0; i != 128; i++) {
           s32 angle = i << 9;
@@ -458,7 +460,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
   }
 
   FreeHeapSlot(HEAP_SLOT_RAM_CODE);
-  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   Resource_LoadAndDecompress((s32)&ResourceId_BlueCrescentSheet,
                              work->sheet + JUDGMENT_SHEET_FLARE_A, 1, 1);
@@ -686,23 +688,24 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
       } else {
         sheet = work->sheet + JUDGMENT_SHEET_FLARE_B;
       }
-      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
+                        COMPOSITE_LIGHTEN);
       (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(canvas, sheet, 36,
                                                             top - 24, 24, 24);
       FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
+                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
       (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(canvas, sheet, 59,
                                                             top - 24, 24, 24);
       FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
+                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_LIGHTEN);
       (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(canvas, sheet, 36,
                                                             top - 1, 24, 24);
       FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y,
-                        BLITTER_MAX);
+                        COMPOSITE_LIGHTEN);
       (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(canvas, sheet, 59,
                                                             top - 1, 24, 24);
       FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);

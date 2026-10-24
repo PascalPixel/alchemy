@@ -518,12 +518,22 @@ The header's last two bytes (`pad0` and `pad1` in `layout.inc`, `reserved` in
 `struct LayoutHeader`) are 0 in every layout of both games, and nothing
 reads them: the loader is the only code that reads the header.
 
+The four bits above a cell's metatile number are set all over the game's
+grids: of the cells the layouts write out, bit 15 is set in about 59,000 and
+bit 14 in about 33,000, in more than 150 layouts, and bits 12 and 13 in about
+1,200 and 500, in some 25. Nothing gives them a meaning. `Tile_ConvertMapGrid`
+carries them through when it numbers the placeholder metatiles, and every
+other reader, from the scroll code that draws the metatiles to the height and
+behavior lookups, takes the metatile number's 12 bits or the cell's other
+bytes alone, so a layout drawn with the bits cleared looks the same. Only
+the unused `MapGrid_GetCellHighFlags` and Crossbone Isle's stepping stones,
+which copy them along with the rest of a cell, name them.
+
 The [Design](#design) section gives two reasons only as likely: why the
 grid is stored as planes and why the treasure spots are not packed.
 
 - XXX (no evidence): why the grid is stored as planes and the treasure spots
   unpacked; only Camelot's tools would show what the packing was chosen for.
-- XXX: what the four flag bits above a cell's metatile number mean; the
-  field engine never reads them, so a map whose cells set them, rendered
-  with each bit cleared, would settle it.
-
+- XXX (no evidence): why the grids set the four bits above a cell's metatile
+  number; no code in the game reads them, so only Camelot's map tools could
+  say what they marked.

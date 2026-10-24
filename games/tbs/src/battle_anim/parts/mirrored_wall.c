@@ -28,14 +28,14 @@ enum MirroredWallMode {
 /// out  : [0] keeps the higher colour index, [1] adds the colours (up to 63).
 void BattleAnim_FetchRectangleBlitters(s32 flip, BlitterPair out) {
   if (flip == 0) {
-    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
     out[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
     out[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   } else {
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                      BLITTER_MAX);
+                      COMPOSITE_LIGHTEN);
     out[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_ADDITIVE);
@@ -117,11 +117,11 @@ void BattleAnim_RunMirroredWall(struct BattleAnimArgs *effect, s32 mode) {
 
   // The left half as drawn, the right half mirrored, keeping the higher
   // colour.
-  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   slots = gHeapSlots;
   draw[0] = slots[HEAP_SLOT_RAM_CODE];
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                    BLITTER_MAX);
+                    COMPOSITE_LIGHTEN);
   draw[1] = slots[HEAP_SLOT_RAM_CODE_2];
   // Trails keep half a frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);

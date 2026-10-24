@@ -212,9 +212,9 @@ void BattleAnim_RunGround(struct BattleAnimArgs *effect) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (work->effect->side == 1)
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                      BLITTER_MAX);
+                      COMPOSITE_LIGHTEN);
   else
-    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
@@ -305,7 +305,7 @@ void BattleAnim_RunGround(struct BattleAnimArgs *effect) {
             s32 chipY;
 
             ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, chip->velocityY,
-                              BLITTER_MAX);
+                              COMPOSITE_LIGHTEN);
             draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
             if (chip->velocityY & 4)
               chipX = x - gHail_ChipWidths[chip->velocityX] -

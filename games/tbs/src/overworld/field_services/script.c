@@ -107,9 +107,9 @@ void FieldScript_Start(void) {
   runtime->choiceWidth = 0;
   runtime->transitionFrames = 0x10;
   runtime->fastForward = 0;
-  runtime->unk1da = 0xFFFF;
-  runtime->unk1dc = -1;
-  runtime->unk1de = -1;
+  runtime->unusedAfterMessage = 0xFFFF;
+  runtime->unusedBeforeCamera[0] = -1;
+  runtime->unusedBeforeCamera[1] = -1;
   Task_Add(FieldScript_UpdateDebugSkip, 0xC80);
   // XXX: flag 0x132 is cleared at every script and nothing in ☀️ names it; the
   // map scripts or overlays that set or test 0x132 would settle its meaning.

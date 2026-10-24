@@ -26,9 +26,9 @@ enum {
   TARGET_STRIKE_FLAGS,        ///< STRIKE_SMOKE and so on
   TARGET_STRIKE_COLOR,        ///< background palette, a STRIKE_COLOR_
   TARGET_STRIKE_IMAGE_FRAMES, ///< frames each strike image is shown
-  TARGET_STRIKE_COMPOSITE,    ///< how the columns are drawn (BLITTER_MAX or
-                              ///< _ADDITIVE)
-  TARGET_STRIKE_FRAMES        ///< length of the animation in frames
+  TARGET_STRIKE_COMPOSITE, ///< how the columns are drawn (COMPOSITE_LIGHTEN or
+                           ///< _ADDITIVE)
+  TARGET_STRIKE_FRAMES     ///< length of the animation in frames
 };
 // STRIKE_KIND_*, the STRIKE_SMOKE flags, the STRIKE_COLOR_ palettes and enum
 // TargetStrikeStyle are in battle_anim_table.h.
@@ -284,7 +284,8 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
         // party, its right edge stands as far to the left.
         if (work->effect->side == 1) {
           ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
-                            ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
+                            ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                            COMPOSITE_LIGHTEN);
           ANIM_BLITTERS[HEAP_SLOT_RAM_CODE](
               canvas, work->sheet + gTargetStrike_Offsets[picture],
               targetPosition.x / 2 - (gTargetStrike_Reach[picture] / 2) -
@@ -292,7 +293,8 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
               targetPosition.y - (gTargetStrike_Heights[picture] / 2),
               gTargetStrike_Widths[picture], gTargetStrike_Heights[picture]);
         } else {
-          ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+          ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
+                            COMPOSITE_LIGHTEN);
           ANIM_BLITTERS[HEAP_SLOT_RAM_CODE](
               canvas, work->sheet + gTargetStrike_Offsets[picture],
               targetPosition.x / 2 + (gTargetStrike_Reach[picture] / 2) - 8,
@@ -463,7 +465,7 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
     }
 
     ANIM_VIEW_FROM_CAMERA(camera);
-    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
     draw[0] = ANIM_BLITTERS[HEAP_SLOT_RAM_CODE];
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);

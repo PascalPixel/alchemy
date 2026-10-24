@@ -211,10 +211,10 @@ void BattleAnim_RunBind(struct BattleAnimArgs *effect) {
     }
     // The blitters, plain and mirrored, keeping the brighter pixel; from
     // frame 32 the canvas darkens one level faster every 16 frames.
-    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
     draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                      BLITTER_MAX);
+                      COMPOSITE_LIGHTEN);
     draw[1] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += 0x01010101;
@@ -362,10 +362,10 @@ void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *effect) {
       BattleMotion_ApproachTargetFar(work->effect->user,
                                      work->effect->targets[0], 16, 0);
     BattleAnim_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
-    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
     draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                      BLITTER_MAX);
+                      COMPOSITE_LIGHTEN);
     draw[1] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += 0x01010101;

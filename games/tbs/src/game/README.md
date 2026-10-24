@@ -341,7 +341,13 @@ Nothing gives one: the shops' stock table (`shop/artifacts.c`) and the
 `enemies.c` carries or drops one, and the debug item browser covers 0 to 269
 and skips items without an icon. They are filler to 324 rows.
 
+The save block's byte after the Speech option, `unusedAfterSpeech`, is set to 1
+by a new game and read by nothing in the game: the option menu keeps only the
+window colour, message speed, Speech and auto-sleep, and no map reaches the
+save block by offset there. A cleared file sent by cable sends the 4,100
+bytes from `gSaveBuffer`, which hold the game flags and the save block, this
+byte included, to The Lost Age.
 
-- XXX: what `SaveBlock.unk20b` holds; a new game sets it to 1 and no C reads
-  it, so a read in a map overlay or The Lost Age's use of the save's byte
-  would settle it.
+- XXX: whether The Lost Age reads `unusedAfterSpeech` from a file sent by
+  cable; its code that unpacks the received save, still a draft under
+  `recon/tla`, would settle it.

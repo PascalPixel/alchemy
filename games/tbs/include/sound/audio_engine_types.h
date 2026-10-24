@@ -172,13 +172,14 @@ struct SoundChannel {
   u8 levelLeft;  ///< The envelope's left level, written by the mixer.
   u8 echoLevel;  ///< After release, the level held.
   u8 echoLength; ///< Frames the echo lasts.
-  u8 unk0e[2];   ///< XXX: not named by TBS code (see the README).
+  u8 dummy1;     ///< Unused by this driver, as in pret's.
+  u8 dummy2;     ///< Unused by this driver, as in pret's.
   u8 gate;       ///< Ticks until the note is released.
   u8 songKey;    ///< The key as the song wrote it.
   u8 velocity;   ///< 0 to 127, from the note command.
   u8 priority;   ///< A new note of higher priority takes this one's place.
   u8 rhythmPan;  ///< A rhythm voice's pan.
-  u8 unk15[3];   ///< XXX: not named by TBS code (see the README).
+  u8 dummy3[3];  ///< Unused by this driver, as in pret's.
   /// The low byte of the word at 0x18 in which the mixer keeps a PCM note's
   /// samples left.
   u8 samplesLeftLow;
@@ -204,7 +205,12 @@ struct SoundChannel {
   struct SoundChannel *previous;
   /// The note started before this one in the track's list; NULL at the end.
   struct SoundChannel *next;
-  u8 unk38[8]; ///< XXX: not named by TBS code (see the README).
+  u32 dummy4; ///< Unused by this driver, as in pret's.
+  /// pret's later mixer keeps the index of the compressed-sample block it last
+  /// decoded here; this driver plays no compressed samples and never touches
+  /// it.
+  u16 xpi;
+  u16 xpc; ///< Unused by this driver, as in pret's.
 };
 
 /// A note on one of the four CGB channels of the hardware: its state and
@@ -230,13 +236,15 @@ struct CgbChannel {
   u8 counter;      ///< Frames left in the current envelope step.
   u8 echoLevel;    ///< After release, the level held is peak * echoLevel / 256.
   u8 echoLength;   ///< Frames the echo lasts.
-  u8 unk0e[2];     ///< XXX: not named by TBS code (see the README).
+  u8 dummy1;       ///< Unused by this driver, as in pret's.
+  u8 dummy2;       ///< Unused by this driver, as in pret's.
   u8 gate;         ///< Ticks until the note is released.
   u8 songKey;      ///< The key as the song wrote it.
   u8 velocity;     ///< 0 to 127, from the note command.
   u8 priority;     ///< A new note of higher priority takes the channel.
   u8 rhythmPan;    ///< A rhythm voice's pan.
-  u8 unk15[4];     ///< XXX: not named by TBS code (see the README).
+  u8 dummy3[3];    ///< Unused by this driver, as in pret's.
+  u8 dummy5;       ///< Unused by this driver, as in pret's.
   u8 sustainLevel; ///< (peak * sustain + 15) / 16.
   u8 trigger;      ///< Value for NRx4: 7 restart, 6 length on, 2..0 frequency.
   u8 panBits;      ///< NR51 bits this note sets: one side or both.
@@ -254,7 +262,7 @@ struct CgbChannel {
   struct MusicPlayerTrack *track; ///< As in SoundChannel.
   struct SoundChannel *previous;  ///< As in SoundChannel.
   struct SoundChannel *next;      ///< As in SoundChannel.
-  u8 unk38[8]; ///< XXX: not named by TBS code (see the README).
+  u8 dummy4[8];                   ///< Unused by this driver, as in pret's.
 };
 
 enum SoundChannelFlag {
@@ -369,9 +377,15 @@ struct MusicPlayerTrack {
   /// Copied from the player's voice table by the voice command, or set a field
   /// at a time by extended commands.
   struct ToneData voice;
-  /// XXX: not named by TBS code; zeroed with the first 64 bytes at reset (see
-  /// the README).
-  u8 unk30[0x10];
+  /// Unused by this driver, as in pret's; the track's reset clears it with the
+  /// rest of its first 64 bytes.
+  ///@{
+  u8 gap[10];
+  u16 timer;
+  /// pret's later ply_note copies it into a new note's samples left; this
+  /// driver's never reads it.
+  u32 unk_3C;
+  ///@}
   /// The next command byte in the song's data, from the header's track
   /// pointer; a track's commands end at a finish command (0xB1).
   const u8 *cursor;
@@ -383,7 +397,7 @@ struct MusicPlayerTrack {
 /// each track's commands start.
 struct SongHeader {
   u8 trackCount; ///< At most 16; 0 in the empty songs.
-  u8 unk01;      ///< 0 in every song; ags-music refuses another block count.
+  u8 blockCount; ///< 0 in every song; ags-music refuses another.
   u8 priority;   ///< Becomes the player's priority.
   /// With bit 7 set, passed to m4aSoundMode (bits 6..0 the reverb);
   /// ags-music's reverb field.
@@ -406,7 +420,7 @@ struct MusicPlayerInfo {
   /// gMPlayTable, 0 for every player.
   u8 checkPriority;
   u32 ticks;      ///< Song ticks played since the song started.
-  u8 unk10[8];    ///< XXX: not named by TBS code (see the README).
+  u8 gap[8];      ///< Unused by this driver, as in pret's.
   u8 *workBytes;  ///< gMPlayMemAccArea, which the work-byte command uses.
   u16 tempo;      ///< Twice the tempo command's byte; 150 at start.
   u16 tempoScale; ///< 256 plays at the song's tempo.
@@ -419,7 +433,7 @@ struct MusicPlayerInfo {
   /// bits: 8..4 level, 0 to 0x100 in steps of 16 | 1 fade in | 0 pause at the
   /// end (MusicPlayerFadeFlag).
   u16 fadeVolume;
-  u8 unk2a[2]; ///< XXX: not named by TBS code (see the README).
+  u8 padding[2]; ///< Up to the word tracks starts on; implicit in pret's.
   struct MusicPlayerTrack *tracks; ///< trackCount tracks.
   const struct ToneData *voices;   ///< The song's voice table.
   /// ID_NUMBER when free; raised while the music player is changed or ticked.
@@ -443,8 +457,8 @@ struct SoundInfo {
   u8 reverb;       ///< 0 to 127 (mode bits 6..0); 0 skips the reverb pass.
   u8 pcmNoteCount; ///< PCM notes in use, 8 at start (mode bits 11..8).
   u8 volume;       ///< PCM volume 0 to 15, 15 at start (mode bits 15..12).
-  u8 rate;  ///< 1 to 12, indexes gPcmSamplesPerVBlankTable (mode bits 19..16).
-  u8 unk09; ///< XXX: not named by TBS code (see the README).
+  u8 rate; ///< 1 to 12, indexes gPcmSamplesPerVBlankTable (mode bits 19..16).
+  u8 mode; ///< Unused by this driver, as in pret's.
   /// Counts 14 down to 0 once a CGB update; at 0 the envelopes take an extra
   /// step.
   u8 cgbTick;
@@ -452,7 +466,7 @@ struct SoundInfo {
   /// Nonzero: the mixer stops taking notes once the scanline passes this
   /// many lines after its start. gMaxLines, 0.
   u8 lineLimit;
-  u8 unk0d[3];      ///< XXX: not named by TBS code (see the README).
+  u8 gap[3];        ///< Unused by this driver, as in pret's.
   u32 frameSamples; ///< Samples mixed a frame, from gPcmSamplesPerVBlankTable.
   u32 outputRate;   ///< Samples a second: frameSamples * 59.7275, rounded.
   /// 2^23 / outputRate, rounded; a note's frequency times it is its step a
@@ -473,7 +487,7 @@ struct SoundInfo {
   /// The hook pret's MusicPlayer2000 calls ExtVolPit; set to
   /// DummyFunc by SoundInit, and no TBS code calls it.
   void (*externalVolumePitch)(void);
-  u8 unk40[0x10]; ///< XXX: not named by TBS code (see the README).
+  u8 gap2[16];                      ///< Unused by this driver, as in pret's.
   struct SoundChannel pcmNotes[12]; ///< pcmNoteCount of them play.
   /// Right (0, DMA 1 to FIFO A) and left (1, DMA 2 to FIFO B) samples,
   /// transferPeriod frames of frameSamples each.

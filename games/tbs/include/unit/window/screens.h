@@ -156,7 +156,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
 s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 member);
 s32 BattleDjinnMenu_Run(s32 member, s32 unused);
 s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby);
-s32 Item_ClassifyUseAbility(s32 unit, s32 item);
+s32 Item_ClassifyUseAbility(s32 unit, s32 itemId);
 void Vram_CopyTile(u32 source_tile, u32 destination_tile);
 s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count);
 s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count);

@@ -119,8 +119,7 @@ struct SaveBlock {
   /// The voice sound option: 1, as on a new game, plays each speaker's voice
   /// sound as their message types (Speaker_GetVoice).
   u8 speech;
-  /// XXX: 1 on a new game and never read (see the game README).
-  u8 unk20b;
+  u8 unusedAfterSpeech;          ///< 1 on a new game; nothing reads it
   u8 messageSpeed;               ///< 0 to 2; 1 on a new game
   u8 unusedAfterMessageSpeed[2]; ///< no code names it
   /// Set on saving at the end of the game, marking the file cleared: its data

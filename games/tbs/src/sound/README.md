@@ -334,8 +334,13 @@ table: `MUSIC_PLAYER_MENU_SE` the interface's (`SE_MENU_CONFIRM`,
 actions (`SE_CAST`, `SE_IMPACT`, `SE_HEAVY_IMPACT`, `SE_DOOR_OPEN`). A
 floating effect therefore never cuts those off.
 
-- XXX: what the bytes no C names in the driver's structures hold (`SoundChannel` and
-  `CgbChannel` `unk0e`, `unk15` and `unk38`, `MusicPlayerTrack.unk30`,
-  `MusicPlayerInfo.unk10` and `unk2a`, `SoundInfo.unk09`, `unk0d` and `unk40`); a
-  pass over the mixer and channel assembly (`mixer.s`, `clear_buffer.s`,
-  `channel_update_entry.s`) for loads and stores at those offsets.
+The driver's structures keep pret's names for the bytes nothing uses: the
+notes' `dummy1` to `dummy5`, `xpi` and `xpc`, a track's `gap`, `timer` and
+`unk_3C`, a music player's `gap`, and the driver work's `mode`, `gap` and
+`gap2`. No C in the game names them, and the library assembly (`mixer.s`,
+`clear_buffer.s`, `channel_update_entry.s`) loads and stores at none of
+their offsets: every access at those offsets there is to another structure's
+field at the same place. pret's later driver uses two of them: its mixer
+keeps the index of the compressed-sample block it last decoded in a note's
+`xpi`, and its `ply_note` copies a track's `unk_3C` into a new note. The
+game's driver is the older one, with neither step.

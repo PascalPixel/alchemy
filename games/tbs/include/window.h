@@ -123,9 +123,9 @@ struct WindowWork {
   u8 holdTilemapUpload; ///< while set, the tilemap is not uploaded
   u8 textPalette;  ///< text tiles' palette; 15 by default, 14 or 5 for low HP
   u16 lineSpacing; ///< the current printer's, copied in to draw
-  u16 unknownAfterLineSpacing; ///< set to 1 with the text style; not read
-  u16 outline;                 ///< the current printer's, copied in to draw
-  u16 colour;                  ///< the current printer's, copied in to draw
+  u16 unusedAfterLineSpacing; ///< set to 1 with the text style; not read
+  u16 outline;                ///< the current printer's, copied in to draw
+  u16 colour;                 ///< the current printer's, copied in to draw
   u16 textBuffer[TEXT_BUFFER_MASK + 1]; ///< decoded text, a ring of codes
   u16 letterSpacing;                    ///< pixels between sprite glyphs; 9
   u16 textBufferEnd;    ///< where the next code goes in textBuffer

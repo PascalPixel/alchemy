@@ -32,7 +32,7 @@
       COPY_FROM(BattleAnim_TransparentForward, 4);                             \
     }                                                                          \
     break;                                                                     \
-  case BLITTER_MAX:                                                            \
+  case COMPOSITE_LIGHTEN:                                                      \
     if (((flags) & COMPOSITE_FLIP_X) != 0) {                                   \
       COPY_FROM(BattleAnim_MaxReverse, 4);                                     \
     } else {                                                                   \
@@ -206,7 +206,7 @@
       COPY_FROM(BattleAnim_Transparent8Forward, 25);                           \
     }                                                                          \
     break;                                                                     \
-  case BLITTER_MAX:                                                            \
+  case COMPOSITE_LIGHTEN:                                                      \
     if ((flags & COMPOSITE_FLIP_X) != 0) {                                     \
       COPY_TWICE(BattleAnim_Max4Reverse, 16);                                  \
     } else {                                                                   \
@@ -280,7 +280,7 @@
 /// widthShift, heightShift: the canvas's width and height as powers of two.
 /// flags: the COMPOSITE_CLIP_ and COMPOSITE_FLIP_ bits.
 /// mode: how source pixels combine with the canvas (COMPOSITE_COPY,
-/// COMPOSITE_TRANSPARENT, BLITTER_MAX or COMPOSITE_ADDITIVE).
+/// COMPOSITE_TRANSPARENT, COMPOSITE_LIGHTEN or COMPOSITE_ADDITIVE).
 ///
 /// Returns nonzero when the walk ended exactly at gBattleAnim_MoteCells, the
 /// end of the template; no caller reads it.

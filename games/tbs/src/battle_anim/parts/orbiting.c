@@ -142,7 +142,7 @@ UNUSED void BattleAnim_RunOrbitingSkulls(void) {
   skulls = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
   Iwram_CopyWords((void *)BG_PLTT, skulls, 128);
   Decompress_TaggedLz(skulls + 128, work->sheet);
-  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   // The first transfer mode is overwritten at once.
   ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
@@ -255,7 +255,7 @@ UNUSED void BattleAnim_RunTargetBursts(struct BattleAnimArgs *effect) {
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
   drawBurst = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
-  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   drawSmoke = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
 
   // Six puffs for each target: five scatter at random, up to 2 pixels a

@@ -955,7 +955,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
           ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             gCastingImpact_GlintDrawFlags[drawFlags & 3] |
                                 ANIM_CLIP_BOUNDS,
-                            BLITTER_MAX);
+                            COMPOSITE_LIGHTEN);
           ((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2](
               canvas, Ram_MapGridCellBuffer + gBattleAnim_GlintCells[image],
               imageX, imageY + 56, gBattleAnim_GlintCellWidths[image],
@@ -990,7 +990,8 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
           fall = 0;
         while (scroll > 104)
           scroll -= 104;
-        ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+        ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
+                          COMPOSITE_LIGHTEN);
         draw = (DrawRectangle *)gHeapSlots;
         draw += HEAP_SLOT_RAM_CODE_2;
         columnX = originX - 8;
@@ -1035,13 +1036,15 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
       if (frame >= 4 && frame <= 23) {
         pairX = targetScreen->x / 2;
         height = 48;
-        ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+        ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
+                          COMPOSITE_LIGHTEN);
         slotDraw = (DrawRectangle *)gHeapSlots;
         CastingImpact_DrawImage(canvas, Ram_MapGridCellBuffer, pairX - 24, 48,
                                 24, height, slotDraw + HEAP_SLOT_RAM_CODE_2);
         FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
         ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                          ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
+                          ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                          COMPOSITE_LIGHTEN);
         CastingImpact_DrawImage(canvas, Ram_MapGridCellBuffer, pairX, 48, 24,
                                 height, slotDraw + HEAP_SLOT_RAM_CODE_2);
         FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);

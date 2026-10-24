@@ -666,7 +666,7 @@ void BattleCamera_SetDefaultView(void) {
   camera->distance = 255 << 17;
   SET_VECTOR(camera->focus, 0, 0, 0);
   camera->followPosition = 0;
-  camera->unk18 = 0;
+  camera->followEye = 0;
 
   Transform_Reset();
   Transform_ApplyPosition(&camera->focus[0]);

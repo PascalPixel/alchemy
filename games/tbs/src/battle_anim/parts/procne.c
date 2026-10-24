@@ -82,7 +82,7 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
   work->effect = effect;
 
   BattleAnim_StartCanvasLayer(0);
-  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   draw[0] = (DrawRectangle)slots[HEAP_SLOT_RAM_CODE - HEAP_SLOT_BATTLE_CANVAS];
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
   draw[1] =

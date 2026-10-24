@@ -115,7 +115,8 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
       s32 step = (frame - 16) / 2;
       s32 strip;
 
-      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
+                        COMPOSITE_LIGHTEN);
       blitters[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
       if (step > 2)
         step = 2;

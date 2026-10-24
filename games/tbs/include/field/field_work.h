@@ -98,11 +98,10 @@ struct FieldWork {
   s32 fastForward; ///< debug: skip timed script waits and object event messages
   u8 unusedAfterFastForward[8]; ///< no code names it
   s16 message; ///< the next message, advanced as each window opens
-  /// XXX: set to 0xffff by FieldScript_Start and never read (see the field
-  /// README).
-  u16 unk1da;
-  s16 unk1dc; ///< XXX: set to -1 by FieldScript_Start and never read
-  s16 unk1de; ///< XXX: set to -1 by FieldScript_Start and never read
+  /// Set to 0xffff by FieldScript_Start at each script; nothing reads it.
+  u16 unusedAfterMessage;
+  /// Both set to -1 by FieldScript_Start at each script; nothing reads them.
+  s16 unusedBeforeCamera[2];
   struct Object
       *camera; ///< the object the map view follows, which has no local id
   u8 unusedAfterCamera[0x10]; ///< no code names it
@@ -156,9 +155,8 @@ STATIC_ASSERT(offsetof(struct FieldWork, transitionFrames) == 0x1c8);
 STATIC_ASSERT(offsetof(struct FieldWork, fastForward) == 0x1cc);
 STATIC_ASSERT(offsetof(struct FieldWork, message) == 0x1d8);
 STATIC_ASSERT(offsetof(struct FieldWork, camera) == 0x1e0);
-STATIC_ASSERT(offsetof(struct FieldWork, unk1da) == 0x1da);
-STATIC_ASSERT(offsetof(struct FieldWork, unk1dc) == 0x1dc);
-STATIC_ASSERT(offsetof(struct FieldWork, unk1de) == 0x1de);
+STATIC_ASSERT(offsetof(struct FieldWork, unusedAfterMessage) == 0x1da);
+STATIC_ASSERT(offsetof(struct FieldWork, unusedBeforeCamera) == 0x1dc);
 STATIC_ASSERT(offsetof(struct FieldWork, speaker) == 0x1f4);
 STATIC_ASSERT(offsetof(struct FieldWork, messageWindow) == 0x1f8);
 STATIC_ASSERT(offsetof(struct FieldWork, sideWindow) == 0x1fc);

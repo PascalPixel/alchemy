@@ -213,14 +213,15 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *effect, s32 mode) {
     // Arcs and waves; odd strikes are drawn flipped upside down, and on
     // side 1 both are mirrored.
     if (work->effect->side == 0) {
-      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
+                        COMPOSITE_LIGHTEN);
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
+                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_LIGHTEN);
     } else {
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                        BLITTER_MAX);
+                        COMPOSITE_LIGHTEN);
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP,
-                        BLITTER_MAX);
+                        COMPOSITE_LIGHTEN);
     }
     draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
     draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
@@ -288,7 +289,8 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *effect, s32 mode) {
     // Only the first 512 are drawn; strikes never reach past 288.
     ANIM_VIEW_FROM_CAMERA(camera);
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
-    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
+                      COMPOSITE_LIGHTEN);
     draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
     draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
     for (i = 0; i != 512; i++) {

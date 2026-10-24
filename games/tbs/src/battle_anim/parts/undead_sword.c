@@ -92,7 +92,7 @@ void BattleAnim_RunUndeadSword(struct BattleAnimArgs *effect) {
       if (height > 0) {
         if (height > 80) {
           height = 80;
-          mode = BLITTER_MAX;
+          mode = COMPOSITE_LIGHTEN;
         } else {
           mode = COMPOSITE_ADDITIVE;
         }

@@ -58,7 +58,7 @@ void BattleAnim_RunTitanBlade(struct BattleAnimArgs *effect) {
   Projection_Unit(work->effect->targets[0], &screenPosition);
   canvasCenterX = screenPosition.x / 2;
 
-  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   blitters[0] = slots[HEAP_SLOT_RAM_CODE - HEAP_SLOT_BATTLE_ANIM];
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
                     COMPOSITE_TRANSPARENT);

@@ -39,7 +39,7 @@ void BattleAnim_RunBreak(struct BattleAnimArgs *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
-  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   draw = (DrawRectangle)ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
 
   ANIM_FREE_PARTICLES(i, PARTICLES, 8 * DRAIN_ICE_SHARDS_PER_TARGET);
@@ -197,7 +197,7 @@ void BattleAnim_RunDrain(struct BattleAnimArgs *effect) {
 
   // Draw with the maximum blend, and lower every canvas pixel by 4 on each
   // transfer so the motes leave fading trails.
-  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   draw = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
   Sound_PlaySongFar(SE_142);

@@ -804,7 +804,11 @@ enemies' column, and `BattleSprite_HasHeavyImpact` reads the class bit that
 makes a beam blow land with `SE_HEAVY_IMPACT`, which only the Mars Lighthouse
 bosses set (Saturos's second fight, Menardi and the Fusion Dragon).
 
-- XXX: what `BattleCamera.unk18` and `BattleBackgroundWork`'s
-  `unk18` and `unk1c` hold; the battle's setup clears them and no C reads
-  them, so a reader in the battle animations or a watch on them through a
-  battle would settle it.
+The battle camera has a second point it can follow besides `followPosition`:
+`followEye`, which `ObjectSystem_ProjectSprites` would use in place of the eye
+when it turns the sprites to face the camera. Every camera setup (the
+battle's, the world map's and Lucky Dice's) clears it and nothing sets it, so
+the sprites always face the real eye. The last two words of
+`BattleBackgroundWork`, `unusedAfterFlag`, are cleared when a battle starts;
+no code in the battle, its animations or the field reads them, since every
+reader of the slot goes through the struct's named fields.

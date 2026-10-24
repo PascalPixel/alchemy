@@ -12,13 +12,13 @@ struct ItemDefinition *Item_GetDirect(s32 item) {
          (item & INVENTORY_ITEM_ID_MASK);
 }
 
-/// Returns whether the character can equip `item`: bit classId of the item's
+/// Returns whether the character can equip `itemId`: bit classId of the item's
 /// equipMask. Units past the eight characters cannot. Inventory_Equip checks
 /// it first.
-s32 Item_CanUnitEquipDirect(s32 unitId, s32 item) {
+s32 Item_CanUnitEquipDirect(s32 unitId, s32 itemId) {
   struct Unit *unit = Unit_Get(unitId);
-  struct ItemDefinition *itemDefinition = Item_GetDirect(item);
-  s32 equipMask = itemDefinition->equipMask;
+  struct ItemDefinition *item = Item_GetDirect(itemId);
+  s32 equipMask = item->equipMask;
 
   if (unit->id >= 8) {
     return 0;

@@ -209,7 +209,7 @@ s32 WorldMap_InitializePerspective(void) {
   *distance = farPlane;
   perspective->zoom = 0x10000;
   zoomTransitionFrames = &perspective->zoomTransitionFrames;
-  camera->unk18 = 0;
+  camera->followEye = 0;
   camera->followPosition = 0;
   *zoomTransitionFrames = 0;
   // A first view from the origin at pitch and yaw 0, so the scanline

@@ -872,18 +872,6 @@ Func_08042f10:
 	.thumb_func
 Func_08042ff0:
 	.incbin "baserom.gba", 0x00043044, 0x000000d4
-	.section .rom.00043118, "ax"
-	.global Func_080430c4
-	.type Func_080430c4, %function
-	.thumb_func
-Func_080430c4:
-	.incbin "baserom.gba", 0x00043118, 0x000000ec
-	.section .rom.00043204, "ax"
-	.global Text_FormatPlayTime
-	.type Text_FormatPlayTime, %function
-	.thumb_func
-Text_FormatPlayTime:
-	.incbin "baserom.gba", 0x00043204, 0x00000080
 	.section .rom.000432f8, "ax"
 	.balign 4
 	.global Func_080432a4

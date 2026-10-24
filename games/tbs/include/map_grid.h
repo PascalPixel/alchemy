@@ -97,7 +97,7 @@ enum MapGridLayerIndex {
 
 /// The map work in HEAP_SLOT_MAP_GRID (struct MapGridScrollWork), seen as its
 /// tileset animations, blend script and layers' cells.
-struct MapGridState {
+struct MapGridScrollAnimView {
   /// MapGridScrollWork's origin, shake and script; not named through this view.
   ///@{
   s32 *origin;
@@ -130,11 +130,11 @@ struct MapGridState {
 };
 
 STATIC_ASSERT(sizeof(struct TilesetAnim) == 12);
-STATIC_ASSERT(offsetof(struct MapGridState, flags) == 0x14);
-STATIC_ASSERT(offsetof(struct MapGridState, wideTiles) == 0x16);
-STATIC_ASSERT(offsetof(struct MapGridState, animations) == 0x18);
-STATIC_ASSERT(offsetof(struct MapGridState, blend) == 0xd8);
-STATIC_ASSERT(offsetof(struct MapGridState, layers) == 0x130);
+STATIC_ASSERT(offsetof(struct MapGridScrollAnimView, flags) == 0x14);
+STATIC_ASSERT(offsetof(struct MapGridScrollAnimView, wideTiles) == 0x16);
+STATIC_ASSERT(offsetof(struct MapGridScrollAnimView, animations) == 0x18);
+STATIC_ASSERT(offsetof(struct MapGridScrollAnimView, blend) == 0xd8);
+STATIC_ASSERT(offsetof(struct MapGridScrollAnimView, layers) == 0x130);
 
 /// A position on the world map, as its walkability check reads it.
 struct WorldPosition {
@@ -147,10 +147,10 @@ struct WorldPosition {
 /// its four tile entries. MapGrid_LoadLayout decodes them in.
 extern u32 gMetatiles[];
 
-/// The map's layer data, 16 KB of EWRAM at 0x02028000. A tileset
+/// The tileset animations' tiles, 16 KB of EWRAM at 0x02028000. A tileset
 /// animation's source tiles numbered 0x600 and up (0x200 and up for 64-byte
 /// tiles) are read from here, tile 0x600 (0x200) at its first byte.
-extern u8 gMapGridLayerData[];
+extern u8 gMapGridAnimTiles[];
 
 /// The map's shape table, 16 KB of EWRAM at 0x0202c000: 4-byte entries
 /// that MapGridCell.shape indexes.
@@ -164,14 +164,15 @@ extern u8 gBgTileBuffer[];
 
 /// HEAP_SLOT_WORLD_MAP_FRAME under its own name, which no code reads; the world
 /// map keeps its struct WorldMapFrameWork in the slot.
-extern u8 *gTileAnimationPages;
+extern u8 *gWorldMapFrameWork;
 
 /// A row of gLayouts: a layout's resources, counted from
-/// ResourceId_Layout001: its header, palette, three tilesets and layer data.
+/// ResourceId_Layout001: its header, palette, three tilesets and the tileset
+/// animations' tiles.
 struct LayoutResources {
   /// Offsets from ResourceId_Layout001: the header, the palette, the
-  /// tilesets for char blocks 1, 2 and 3, and the layer data
-  /// (gMapGridLayerData).
+  /// tilesets for char blocks 1, 2 and 3, and the tileset animations' tiles
+  /// (gMapGridAnimTiles).
   u16 resources[6];
 };
 

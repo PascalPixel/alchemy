@@ -1,7 +1,7 @@
 /// @file
-/// Suhalla (MapId_Suhalla, area name Suhalla), the desert village of
-/// Gondowan at the edge of the Suhalla Desert, on the way from Gondowan
-/// Passage to Lalivero.
+/// Suhalla (MapId_Suhalla, area name Suhalla), the desert village of Gondowan
+/// at the edge of the Suhalla Desert, on the way from Gondowan Passage to
+/// Lalivero.
 ///
 /// Its people come in two sets, each an object event template table and a map
 /// event table, chosen by FLAG_BABI_SPOKE_AFTER_COLOSSO: before Babi's audience
@@ -20,8 +20,8 @@
 /// and two jars hold a Hard Nut, a Lucky Medal and coins, and Growth grows a
 /// sprout and changes its cell. Its map flag:
 ///
-/// - FLAG_MAP_TEMP_01: Growth has grown the sprout; a return that keeps the
-///   party's position, as after a battle, draws it grown again.
+/// - FLAG_SUHALLA_SPROUT_GROWN: Growth has grown the sprout; a return that
+///   keeps the party's position, as after a battle, draws it grown again.
 ///
 /// Open questions:
 /// - None.
@@ -47,6 +47,10 @@
 #include "item_ids.h"
 #include "songs.h"
 #include "flags.h"
+
+/// Growth has grown the sprout; a return that keeps the party's position draws
+/// it grown again.
+#define FLAG_SUHALLA_SPROUT_GROWN FLAG_MAP_TEMP_01
 
 /// The sprout's animation once Growth has grown it.
 enum { SPROUT_ANIMATION_GROWN = 4 };
@@ -160,11 +164,11 @@ static void EventScript_AskIfBroughtBySandstorm(s32 localId) {
   FieldScript_ShowMessageAndWait(localId, 0);
 }
 
-/// Growth on Suhalla's sprout: the plant grows, and its cell takes the
-/// metatile behavior of the grown plant's cell. Sets FLAG_MAP_TEMP_01.
+/// Growth on Suhalla's sprout: the plant grows, and its cell takes the metatile
+/// behavior of the grown plant's cell. Sets FLAG_SUHALLA_SPROUT_GROWN.
 static void EventScript_GrowSprout(void) {
   MapGrid_CopyCellAttributes(25, 9, 1, 1, 4, 9);
-  GameFlag_Set(FLAG_MAP_TEMP_01);
+  GameFlag_Set(FLAG_SUHALLA_SPROUT_GROWN);
 }
 
 /// Walking north into one of Suhalla's doors (SUHALLA_TO_INN,
@@ -183,7 +187,7 @@ static void EventScript_EnterDoor(void) {
   // Walk through the opening while the warp transition counts down.
   ObjectEvent_WalkBy(LOCALID_PARTY_LEADER, 0, -16);
   gFieldWork->transitionFrames = 16;
-  Engine_ScriptRequestWarp(warpTrigger);
+  Import_ScriptRequestWarp(warpTrigger);
 }
 
 /// The same through the wide door of SUHALLA_TO_SANCTUM, into Suhalla Sanctum.
@@ -197,7 +201,7 @@ static void EventScript_EnterWideDoor(void) {
   MapGrid_AnimateCells(gSuhallaWideDoorOpenSteps, cellX, cellZ);
   ObjectEvent_WalkBy(LOCALID_PARTY_LEADER, 0, -16);
   gFieldWork->transitionFrames = 16;
-  Engine_ScriptRequestWarp(warpTrigger);
+  Import_ScriptRequestWarp(warpTrigger);
 }
 
 /// Suhalla's doors, people, treasure and sprout, before or after Babi's
@@ -224,9 +228,9 @@ s32 Map_Initialize(void) {
   work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 24;
 
-  if (GameFlag_Get(FLAG_MAP_TEMP_01) != 0) {
+  if (GameFlag_Get(FLAG_SUHALLA_SPROUT_GROWN) != 0) {
     EventScript_GrowSprout();
-    Engine_ObjectEventSetAnimation(LOCALID_SPROUT, SPROUT_ANIMATION_GROWN);
+    Import_ObjectEventSetAnimation(LOCALID_SPROUT, SPROUT_ANIMATION_GROWN);
   }
   return 0;
 }
@@ -352,7 +356,7 @@ struct MapEvent gSuhallaEvents[] = {
     { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_SUHALLA_CHEST_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
     { BG_EVENT(BG_EVENT_JAR), 101, FLAG_SUHALLA_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { BG_EVENT(BG_EVENT_JAR), 102, FLAG_SUHALLA_JAR_COINS, FIND_COINS(5) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_SPROUT, FLAG_MAP_TEMP_01, EVENT_SCRIPT(EventScript_GrowSprout) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_SPROUT, FLAG_SUHALLA_SPROUT_GROWN, EVENT_SCRIPT(EventScript_GrowSprout) },
     { MAP_EVENTS_END },
 };
 
@@ -384,7 +388,7 @@ struct MapEvent gSuhallaEventsLater[] = {
     { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_SUHALLA_CHEST_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
     { BG_EVENT(BG_EVENT_JAR), 101, FLAG_SUHALLA_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { BG_EVENT(BG_EVENT_JAR), 102, FLAG_SUHALLA_JAR_COINS, FIND_COINS(5) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_SPROUT, FLAG_MAP_TEMP_01, EVENT_SCRIPT(EventScript_GrowSprout) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_SPROUT, FLAG_SUHALLA_SPROUT_GROWN, EVENT_SCRIPT(EventScript_GrowSprout) },
     { MAP_EVENTS_END },
 };
 // clang-format on

@@ -15,7 +15,7 @@
 
 /// Field music of Vale, of Vault, and of Altin once
 /// FLAG_HYDROS_STATUES_DEFEATED is set.
-#define MUS_000 0
+#define MUS_VALE 0
 /// Field music of Lunpa, the Lunpa Fortress Gates and the Vault jail; of
 /// Bilibin, the Bilibin Barricade, Kolima, Kolima Bridge, Kolima Forest and the
 /// Tret Tree once FLAG_KOLIMA_CURSE_LIFTED is set; of Tolbi and the Colosseum
@@ -37,7 +37,7 @@
 /// Field music of Fuchin Temple, Xian and Lama Temple.
 #define MUS_005 5
 /// Field music of Kalay, the Kalay docks and the Tolbi docks.
-#define MUS_006 6
+#define MUS_KALAY 6
 /// Field music at the start of each Colosso match, and as Tret is restored.
 #define MUS_007 7
 /// Field music of the Colosso matches, and as Donpa judges Dodonpa in the Lunpa
@@ -60,8 +60,9 @@
 /// finds the heart of Sol Sanctum, and after the battle with Tret.
 #define MUS_021 21
 /// Field music of Mercury Lighthouse's aerie, the Elemental Star room, the
-/// Lemurian ship, Venus Lighthouse's aerie once FLAG_MAPSEC_TEMP_51 is set
-/// there, and the world map reached from one of its warp destinations.
+/// Lemurian ship, Venus Lighthouse's aerie once its second battle has begun
+/// (FLAG_AERIE_SECOND_BATTLE_BEGUN in venus_lighthouse_aerie.c), and the world
+/// map reached from one of its warp destinations.
 #define MUS_022 22
 /// Field music of Altin Peak and the Lunpa Fortress, and of Vale once the
 /// stormy night's monster is fought (FLAG_VALE_STORM_MONSTER_FOUGHT); it also
@@ -78,7 +79,7 @@
 /// Lighthouse (FLAG_SATUROS_BEATEN_AT_MERCURY).
 #define MUS_026 26
 /// Field music of Mercury Lighthouse and the Venus Lighthouse entry.
-#define MUS_027 27
+#define MUS_MERCURY_LIGHTHOUSE 27
 /// Field music of Fuchin Falls Cave, Crossbone Isle's cave, Babi Lighthouse and
 /// the Tunnel Ruins' rooms of lady statues; it also plays on the Tolbi-bound
 /// ship as the party discusses launching without an anchor.
@@ -88,16 +89,17 @@
 /// plays as Alex appears at Mercury Lighthouse, in the fight with Tret, on the
 /// ship's mast, and as Saturos and Menardi are confronted at Venus Lighthouse.
 #define MUS_029 29
-/// Field music of Venus Lighthouse's aerie once FLAG_MAPSEC_TEMP_50 is set
-/// there; it also plays as Babi meets the party in Altmiller Cave and after the
-/// Colosso, and as Iodem questions the wounded soldiers in Suhalla.
+/// Field music of Venus Lighthouse's aerie once its first battle has begun
+/// (FLAG_AERIE_FIRST_BATTLE_BEGUN in venus_lighthouse_aerie.c); it also plays
+/// as Babi meets the party in Altmiller Cave and after the Colosso, and as
+/// Iodem questions the wounded soldiers in Suhalla.
 #define MUS_030 30
 /// Unused: nothing in ☀️ plays it; TRACKS_ALL names it among the songs of
 /// nine or more tracks.
 #define MUS_040 40
 /// Field music of the Tolbi-bound ship, and of the world map reached from seven
 /// of its warp destinations.
-#define MUS_041 41
+#define MUS_TOLBI_BOUND_SHIP 41
 /// Field music of the world map, and of Goma Cave's entrance, the Bilibin Cave
 /// entrance, the Alpine Crossing, Crossbone Isle, the Gondowan Passage and the
 /// Kalay Tunnel entrance; it also plays after Flint is met.
@@ -108,7 +110,7 @@
 /// The music of every battle gEncounter_BattleMusic lists no other song for.
 #define MUS_BATTLE 50
 /// Battle music gEncounter_BattleMusic gives the Mystery Man and Mystery Woman
-/// who catch Isaac at Vale Gate (ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, slot 4)
+/// who catch Isaac in Vale's plaza (ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, slot 4)
 /// and Saturos at Mercury Lighthouse's aerie
 /// (ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2); Battle_Run plays
 /// it, then MUS_COLOSSO_BATTLE, for a battle with no music of its own.
@@ -444,7 +446,7 @@
 /// (its render)
 #define SE_THUNDER 171
 /// The louder thunderclap lightning on the field plays in place of SE_THUNDER
-/// (struct LightningWork's loud).
+/// (struct FieldBlendWork's loud).
 /// ★ Named from what the player sees: lightning flashing over the stormy night
 /// (its render)
 #define SE_THUNDER_LOUD 172
@@ -535,7 +537,7 @@
 /// Annihilation, Atalanta, Gaia, Procne, Ragnarok, Titan Blade and other battle
 /// animations.
 #define SE_212 212
-/// A pushed log or pillar coming to rest, after SE_STOP_SLOT3 cuts
+/// A pushed log or pillar coming to rest, after SE_STOP_ACTION_SE cuts
 /// SE_HEAVY_MOVE: the Colosso matches, Kolima Forest's floodgate, Vale Cave,
 /// and the maps' pushed objects (ObjectEvent_MoveAndRedraw).
 /// ★ Named from what the player sees: a pushed log or pillar stopping (its
@@ -592,7 +594,7 @@
 /// floodgate, and Altin Peak's cart stopping.
 #define SE_232 232
 /// Altin Peak's cart rolling, on player 3: as it sets off, after each turn and
-/// as a countdown runs out; SE_STOP_SLOT3 cuts it.
+/// as a countdown runs out; SE_STOP_ACTION_SE cuts it.
 #define SE_CART_ROLL 233
 /// Kyle and Dora turning back on the stormy night.
 #define SE_234 234
@@ -606,11 +608,11 @@
 #define SE_COLOSSO_GO 237
 /// A thing pushed one cell: the Colosso matches and Vault Cave's pillar.
 #define SE_238 238
-/// A pushed log, pillar or wall moving, on player 3 until SE_STOP_SLOT3 cuts
-/// it: the Colosso, Kolima Forest's floodgate, Vale Cave, Venus Lighthouse's
-/// sliding walls and the maps' pushed objects; SE_HEAVY_STOP follows.
-/// ★ Named from what the player sees: a log rolling or a pillar or wall
-/// sliding (its render)
+/// A pushed log, pillar or wall moving, on player 3 until SE_STOP_ACTION_SE
+/// cuts it: the Colosso, Kolima Forest's floodgate, Vale Cave, Venus
+/// Lighthouse's sliding walls and the maps' pushed objects; SE_HEAVY_STOP
+/// follows. ★ Named from what the player sees: a log rolling or a pillar or
+/// wall sliding (its render)
 #define SE_HEAVY_MOVE 239
 /// A log pushed over: Kolima Forest, Mogall Forest, Vale Cave, the Colosso,
 /// Crossbone Isle, and monsters attacking the Tolbi-bound ship.
@@ -638,7 +640,7 @@
 /// The first voice blip of a message: an object event's voice is 0x100 plus its
 /// sprite's value (Speaker_GetVoice), and every few letters typed play
 /// it plus the letter code's low two bits (TextPrinter_Step).
-#define SE_256 256
+#define SE_VOICE_FIRST 256
 #define SE_257 257 ///< voice blip
 #define SE_258 258 ///< voice blip
 #define SE_259 259 ///< voice blip
@@ -673,12 +675,12 @@
 /// A song with no tracks on player 3, which stops the loop playing there: every
 /// map change (unless FLAG_SKIP_MAP_CHANGE_SOUND), a rolling log or cart
 /// stopping, a battle starting on the field.
-#define SE_STOP_SLOT3 288
+#define SE_STOP_ACTION_SE 288
 /// An effect pair spawned in the eruption at Sol Sanctum.
 #define SE_292 292
 /// A song with no tracks on player 5, which stops what plays there; played
 /// before each queued map sound (Map_QueueMusic).
-#define SE_STOP_SLOT5 298
+#define SE_STOP_MUSIC_PLAYER_5 298
 /// Tolbi Spring: 50 frames into a toss.
 #define SE_300 300
 /// Tolbi Spring: a tossed coin meeting one of the moving obstacles.

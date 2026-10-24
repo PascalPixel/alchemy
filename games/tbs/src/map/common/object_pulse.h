@@ -24,7 +24,7 @@ static s32 Map_SquashAndStretch(struct Object *interpreter) {
   case 0:
     state->scaleX = 0x10000;
     state->scaleY = 0x10000;
-    state->timer = (Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60);
+    state->timer = (Math_RemainderUnsigned(Import_RandomNext(), 90) + 60);
     break;
   }
   state->timer--;

@@ -382,7 +382,7 @@ with the background layers `BG0` to `BG3`.
 ### Warp
 
 A way out of a map. Taking one ends the map: the warp names where it
-leads (`VALE_GATE_TO_WORLD_MAP` in `map_warps.h`), and the first row for it
+leads (`VALE_PLAZA_TO_WORLD_MAP` in `map_warps.h`), and the first row for it
 in the map's warp table whose condition holds gives the next map and the
 warp destination there. A warp is taken from a cell, from a warp region
 (a box on the map) or by a script. [The front
@@ -391,7 +391,7 @@ page](README.md#warps-and-warp-destinations) explains them.
 ### Warp destination
 
 Where the party arrives in a map: a position, a facing and the camera's
-limits, named by where the party comes from (`VALE_GATE_FROM_SANCTUM`). A
+limits, named by where the party comes from (`VALE_PLAZA_FROM_SANCTUM`). A
 map's initialization often tests it, to play the part of a sequence the
 last map sent the party to.
 

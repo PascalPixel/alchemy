@@ -107,11 +107,11 @@ struct WindowSprite *WindowSprite_CreateFromResourceFar(s32 mode, s32 resource,
                                                         struct Window *input,
                                                         s32 x, s32 y);
 /// Shows a character's 32 by 32 portrait in a window, in portrait slot side or
-/// the first free one (CreateSideObject). Returns NULL when the character has
+/// the first free one (Portrait_Create). Returns NULL when the character has
 /// no portrait or both slots are taken.
-struct WindowSprite *SideObject_CreateFar(s32 object_kind, s32 position,
-                                          s32 side, struct Window *arg3,
-                                          s32 arg4, s32 arg5);
+struct WindowSprite *Portrait_CreateFar(s32 object_kind, s32 position, s32 side,
+                                        struct Window *arg3, s32 arg4,
+                                        s32 arg5);
 /// Reloads the portrait in slot so it shows character, keeping its sprite, as
 /// the field menus change a portrait already on screen.
 void Portrait_ReloadFar(u32 slot, s32 character, s32 value);
@@ -158,7 +158,7 @@ void BattleMessage_ShowAndWaitFar(s32 argument);
 void BattleMessage_OpenFar(s32 argument);
 /// Returns the portrait of a character, or the sprite of another speaker, or -1
 /// when the speaker has none.
-s32 Localization_LookupEntryIdFar(u32 value);
+s32 Portrait_GetForSpeakerFar(u32 value);
 /// Runs the field menu until the player picks a screen that leaves it, and
 /// returns that screen's result; Map_Run ignores it.
 s32 FieldMenu_RunFar(void);
@@ -200,7 +200,7 @@ void Text_DrawWideStringAtOffsetFar(u16 *text, struct Window *window, s32 x,
                                     s32 y);
 /// Writes each scan line's window frame extent into a page of the screen
 /// transition's window table, as a window transition runs.
-void Win_FillScanlineSpansFar(void *dst);
+void ScanlineWindow_FillSpansFar(void *dst);
 /// Redraws a window's empty frame at its current rectangle.
 void WindowSprite_RedrawSavedRectFar(struct Window *window);
 /// Releases every sprite in a list of window sprites, or a window's, and
@@ -336,7 +336,7 @@ void Window_DrawFrameFar(s32 x, s32 y, u32 width, u32 height);
 void Window_EraseBorderRectFar(s32 x, s32 y, u32 width, u32 height);
 /// Draws the menus' two page arrows into the tiles at VRAM offset, sliding
 /// outward and back over eight frames.
-void Link_DrawShiftedTilePairFar(s32 offset);
+void Link_DrawPageArrowsFar(s32 offset);
 /// Shows `<member> joined your party.` with the member's portrait while the
 /// join fanfare plays, until it ends or a button is pressed.
 void Party_ShowJoinedMessageFar();

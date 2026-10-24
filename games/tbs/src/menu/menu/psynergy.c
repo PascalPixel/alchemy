@@ -61,7 +61,7 @@ s32 PsynergyMenu_Run(void) {
   ItemMenu_Initialize(0, 3, 0, 7);
   menu->messageWindow = Window_CreateFar(13, 0, 17, 3, 2);
   Palette_LightenBankHighlight(14);
-  Link_DrawShiftedTilePairFar(PAGE_ARROW_VRAM);
+  Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
 #if TBS_PATCH_2
   Menu_SuspendFieldTasks();
   Iwram_CopyWords(saved, PSYNERGY_PROMPT_TILES, PSYNERGY_PROMPT_TILES_SIZE);
@@ -783,7 +783,7 @@ void PsynergyMenu_CreateEntryGrid(void) {
   cursor = (struct WindowSprite *)Icon_CreateWithResourceVariant(window, 0, 4);
   cursor->motion = ICON_HIDDEN;
   menu->entryGridCursor = cursor;
-  SideObject_CreateFar(0, 0, 0, window, 0, 0);
+  Portrait_CreateFar(0, 0, 0, window, 0, 0);
 
   y = 8;
   index = 0;

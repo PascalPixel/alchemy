@@ -21,13 +21,13 @@ struct MapSecNameRule;
 /// Battlefield (x, y) pixel pairs by place: 0 to 3 the party's column at x 80,
 /// 32 pixels apart, and 5 to 10 a column at x -80, 20 apart (battle_data.s).
 extern const s8 gBattlePlacement_StepPairs[];
-/// Read as a halfword by ObjectGroup_SetActionForOthers: the local id of the
+/// Read as a halfword by ObjectEvent_SetOthersPaused: the local id of the
 /// player's object, which it leaves alone.
 extern u8 gPlayerObjectId[];
 /// Each weapon's kind: bits 15..9 the kind, which indexes the
 /// gBattleUnit_WeaponAnimations tables, and 8..0 the item id; ended by 0xffff
 /// (BattleUnit_GetWeaponKind).
-extern u16 gResource_SlotAssignments[];
+extern u16 gBattleUnit_WeaponKinds[];
 struct BattleObject;
 
 struct SpriteAnim;
@@ -42,10 +42,10 @@ struct BattleSideOrder;
 struct BattleLocationRule;
 struct BattleObject;
 struct BattleTurn;
-struct BattleViewWork;
+struct BattleBackgroundWork;
 struct BattleSummonState;
 struct Unit;
-struct EffectDescriptor;
+struct MapEventView;
 struct FieldEffectSprite;
 struct EnemyDefinition;
 struct ObjectEvent;
@@ -61,12 +61,6 @@ struct BattleSource;
 struct TransitionActorList;
 struct MindReadWork;
 
-/// A world position, as Camera_WorldToScreen converts it to the screen.
-struct EffectVector {
-  s32 x; ///< 16.16 fixed-point pixels
-  s32 y; ///< 16.16 fixed-point pixels
-  s32 z; ///< 16.16 fixed-point pixels
-};
 /// One of the star field's three rings, moving outward on the animation canvas.
 struct Ring {
   s32 x;         ///< 1/1024 canvas pixels
@@ -75,13 +69,7 @@ struct Ring {
   s32 velocityY; ///< 1/1024 canvas pixels per frame
   s32 age;       ///< frames
 };
-/// The position an item-break animation spawns its objects and shards from.
-struct ScatterPosition {
-  s32 x; ///< 16.16 fixed-point pixels
-  s32 y; ///< 16.16 fixed-point pixels
-  s32 z; ///< 16.16 fixed-point pixels
-};
-extern u8 gAnim_ChildPaletteCycle[];
+extern u8 gMindRead_CasterPaletteCycle[];
 /// The weights an enemy picks among its eight actions by, one table for each
 /// weighted action strategy (enum EnemyActionStrategy, battle_internal.h):
 /// even, falling by 6, or falling steeply from 113 to 5.
@@ -100,8 +88,8 @@ extern s32 gBattleKnockback_VelocityY[];
 /// A fixed formation's places by order, as offsets from the middle place:
 /// 0, -1, 1, -2, 2 and so on out to 4.
 extern s8 gBattleParty_CenterOrderOffsets[];
-/// Round-end effects go to the party (BATTLE_SIDES_PARTY), then the enemies
-/// (BATTLE_SIDES_ENEMIES).
+/// Round-end effects go to the party (BATTLE_SIDE_MASK_PARTY), then the enemies
+/// (BATTLE_SIDE_MASK_ENEMIES).
 extern const struct BattleSideOrder gBattleParty_RoundEndSideOrder;
 /// A lone SC_END: a battle unit's object script, which BattleObject_Make
 /// starts.
@@ -164,11 +152,11 @@ extern u8 *gEnemyUnits;
 /// battle's parent sends it as the round's gBattleRandomSeed.
 extern u32 gRandomSeed;
 #endif
-#ifndef OWN_gBattleViewWork
+#ifndef OWN_gBattleBackgroundWork
 /// The HEAP_SLOT_BATTLE_BACKGROUND heap slot: the camera's turn, which
 /// staging.c, auto_battle.c and round.c set for each action, and the
 /// background's display mode.
-extern struct BattleViewWork *gBattleViewWork;
+extern struct BattleBackgroundWork *gBattleBackgroundWork;
 #endif
 /// SC_FACE_LINK every frame, forever: the script of an object event told to
 /// keep facing its linked object.
@@ -176,7 +164,7 @@ extern const u8 gObjectMotion_LinkedActionScript[];
 /// Where the party returns after a defeat: {map, warp destination (-1 any),
 /// return map, return warp destination} rows, ended by map -1
 /// (Map_SetDefeatReturnPoint).
-extern const s16 gParty_PairResolveRules[];
+extern const s16 gDefeatReturnPoints[];
 /// Isaac's weapon sprite by weapon kind (BattleUnit_LookupWeaponValueByClass).
 extern u16 gBattleUnit_WeaponAnimationsIsaac[];
 /// Battle backgrounds by map: a background word (bit 31 set, resource id below)
@@ -187,8 +175,9 @@ extern s32 gBattleBackground_Maps[];
 /// (battle_anim_composite.s); none of it runs where it is.
 extern const u32 gBlitterTemplate[];
 /// The message voice's rate by message speed option: 1, 3, then 10
-/// (Message_SetVoiceFromObjectEvent).
-extern u8 gUi_RenderResultValues[];
+/// (Message_SetVoiceFromObjectEvent). The same values as
+/// gMessageSpeed_VoiceGaps, which the text printer reads, in a copy of its own.
+extern u8 gMessageSpeed_VoiceRates[];
 extern const u16 gWorldMap_CursorDirectionAngles[];
 extern const u8 gWorldMap_MarkerBlendCycle[];
 /// The world map's map section markers, {tile << 16 | flag, map section} for

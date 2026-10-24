@@ -1,45 +1,44 @@
 /// @file
 /// Altmiller Cave, where the party finds Babi while Tolbi searches for him
-/// during Colosso (babi_palace.c). Its six maps share this overlay and the
-/// area name Altmiller Cave:
+/// during Colosso (babi_palace.c). Its six maps share this overlay and the area
+/// name Altmiller Cave:
 ///
-/// - AltmillerCaveEntrance (MapId_AltmillerCaveEntrance): the dark passage
-///   in from the world map and the chamber beyond it.
-/// - AltmillerCaveBabi (MapId_AltmillerCaveBabi): the invisible Babi, who
-///   asks for his draught (AltmillerCave_MeetInvisibleBabi) and drinks it
+/// - AltmillerCaveEntrance (MapId_AltmillerCaveEntrance): the dark passage in
+///   from the world map and the chamber beyond it.
+/// - AltmillerCaveBabi (MapId_AltmillerCaveBabi): the invisible Babi, who asks
+///   for his draught (AltmillerCave_MeetInvisibleBabi) and drinks it
 ///   (AltmillerCave_RestoreBabiAndInviteParty), and a chest that is a Mimic.
 /// - AltmillerCaveVialChest (MapId_AltmillerCaveVialChest) and
-///   AltmillerCaveCookieChest (MapId_AltmillerCaveCookieChest): a chest
-///   each.
-/// - AltmillerCaveSquall (MapId_AltmillerCaveSquall): Squall, a Jupiter
-///   Djinni, three fallen columns to push, a stone pillar for Move and a
-///   puddle for Frost.
+///   AltmillerCaveCookieChest (MapId_AltmillerCaveCookieChest): a chest each.
+/// - AltmillerCaveSquall (MapId_AltmillerCaveSquall): Squall, a Jupiter Djinni,
+///   three fallen columns to push, a stone pillar for Move and a puddle for
+///   Frost.
 /// - AltmillerCaveDraught (MapId_AltmillerCaveDraught): three more fallen
-///   columns, the rock puzzle (AltmillerCave_TurnRock) and the chest that
-///   holds the Mystic Draught behind the wall the puzzle opens.
+///   columns, the rock puzzle (AltmillerCave_TurnRock) and the chest that holds
+///   the Mystic Draught behind the wall the puzzle opens.
 ///
-/// The rooms share one warp destination table and one warp table, and the
-/// other getters choose by gSaveBlock.mapId. AltmillerCave_Initialize sends an
-/// entry from outside the cave (warp destination 0) to the room's first warp
+/// The rooms share one warp destination table and one warp table, and the other
+/// getters choose by gSaveBlock.mapId. AltmillerCave_Initialize sends an entry
+/// from outside the cave (warp destination 0) to the room's first warp
 /// destination, darkens the dark rooms and puts back what the party has done.
 /// Saving Babi (FLAG_BABI_SAVED) is the story flag the rest of Tolbi waits on;
 /// the overlay's own state is in map temp flags and gMapLocalState, so it
 /// starts over on every ordinary arrival.
 ///
-/// Every room but the two lit ones is dark (FLAG_DARK): BG1 is blended over
-/// the rest (ALTMILLER_CAVE_DARKNESS_BLEND), and the light around the party is
-/// a display window, an ellipse around the leader inside which the layers are
-/// drawn differently (AltmillerCave_InitializeDarkness). In an evenly dark
-/// room BG1 covers everything outside it and is only blended inside it.
-/// AltmillerCaveEntrance darkens by steps instead
-/// (FLAG_DARKNESS_BY_STEPS): coord events 60 to 65 each set a level, kept in
-/// gMapLocalState byte 4, from the lightest at the mouth to the darkest by the
-/// inner chamber, and blends outside the light while BG1 is left out inside
-/// it. AltmillerCave_ApplyFadeBlend gives BG1 no weight and the layers under
-/// it 16 sixteenths at level 0, two fewer at each level after, down to 6 at
-/// level 5. Where one level meets the next, a cell of each lies side by
-/// side, so the level is that of the cell the leader last stepped on, in
-/// either direction
+/// Every room but the two lit ones is dark (FLAG_ALTMILLER_CAVE_DARK): BG1 is
+/// blended over the rest (ALTMILLER_CAVE_DARKNESS_BLEND), and the light around
+/// the party is a display window, an ellipse around the leader inside which the
+/// layers are drawn differently (AltmillerCave_InitializeDarkness). In an
+/// evenly dark room BG1 covers everything outside it and is only blended inside
+/// it. AltmillerCaveEntrance darkens by steps instead
+/// (FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS): coord events 60 to 65 each set a
+/// level, kept in gMapLocalState byte 4, from the lightest at the mouth to the
+/// darkest by the inner chamber, and blends outside the light while BG1 is left
+/// out inside it. AltmillerCave_ApplyFadeBlend gives BG1 no weight and the
+/// layers under it 16 sixteenths at level 0, two fewer at each level after,
+/// down to 6 at level 5. Where one level meets the next, a cell of each lies
+/// side by side, so the level is that of the cell the leader last stepped on,
+/// in either direction
 /// (https://alchemy.pascalpixel.com/places/altmiller-cave-entrance/darkness-levels.png:
 /// the passage's map with each cell labelled with the level it sets, over the
 /// same moment drawn at each of the six levels). Reveal lights a dark room
@@ -49,9 +48,9 @@
 /// The rock puzzle keeps the rounds matched in gMapLocalState byte 0 and its
 /// state and the light at the top in struct RockPuzzle after it. Turning the
 /// leftmost rock and then the rightmost brings out the ring of five lights; the
-/// ring spins (AltmillerCave_SpinLights, a task) and stops with one
-/// light at the top, and turning that light's rock spins it on to a different
-/// light. A wrong rock puts the lights away. The third match bursts the wall
+/// ring spins (AltmillerCave_SpinLights, a task) and stops with one light at
+/// the top, and turning that light's rock spins it on to a different light. A
+/// wrong rock puts the lights away. The third match bursts the wall
 /// (AltmillerCave_ReleaseWallBurst). Coming up to the rocks from the pillar
 /// cave (ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) starts the puzzle over.
 ///
@@ -202,17 +201,17 @@ enum {
   /// AltmillerCaveDraught.
   /// ★ Named from what the player sees: the cave dark but for a small circle of
   /// light around the party (its render)
-  FLAG_DARK = FLAG_MAP_TEMP_00,
+  FLAG_ALTMILLER_CAVE_DARK = FLAG_MAP_TEMP_00,
   /// AltmillerCaveEntrance darkens by steps as the party walks in.
   /// ★ Named from its area name: Altmiller Cave
-  FLAG_DARKNESS_BY_STEPS = FLAG_MAP_TEMP_01,
+  FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS = FLAG_MAP_TEMP_01,
   /// Frost has frozen AltmillerCaveSquall's puddle.
   /// ★ Named from what the player sees: a small puddle of water in the middle
   /// of the room (its render)
-  FLAG_PUDDLE_FROZEN = FLAG_MAP_TEMP_11,
+  FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN = FLAG_MAP_TEMP_11,
   /// AltmillerCaveSquall's pillar stands where Move opens the passage.
   /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
-  FLAG_PILLAR_IN_PLACE = FLAG_MAP_TEMP_12
+  FLAG_ALTMILLER_CAVE_PILLAR_IN_PLACE = FLAG_MAP_TEMP_12
 };
 
 /// The darkness: BG1 blended over every layer, at the weights
@@ -434,7 +433,7 @@ static void AltmillerCave_InitializeDarkness(void) {
     s32 value = ALTMILLER_CAVE_LIGHT_STEPS;
     *slot = value;
   }
-  if (GameFlag_Get(FLAG_DARKNESS_BY_STEPS) != 0) {
+  if (GameFlag_Get(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS) != 0) {
     {
       s16 *slot = &state->mask;
       s32 value = ALTMILLER_CAVE_STEPS_LIGHT_WININ;
@@ -477,11 +476,11 @@ static void AltmillerCave_StartReveal(void) {
     REG_BLDALPHA = alpha;
   }
   if (gSaveBlock.mapId == (s32)&MapId_AltmillerCaveDraught) {
-    ObjectGroup_ConfigureChildValue(LOCALID_BLUE_ROCK, COLOR_BLUE);
-    ObjectGroup_ConfigureChildValue(LOCALID_GREEN_ROCK, COLOR_GREEN);
-    ObjectGroup_ConfigureChildValue(LOCALID_WHITE_ROCK, COLOR_WHITE);
-    ObjectGroup_ConfigureChildValue(LOCALID_YELLOW_ROCK, COLOR_YELLOW);
-    ObjectGroup_ConfigureChildValue(LOCALID_RED_ROCK, COLOR_RED);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_BLUE_ROCK, COLOR_BLUE);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_GREEN_ROCK, COLOR_GREEN);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_WHITE_ROCK, COLOR_WHITE);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_YELLOW_ROCK, COLOR_YELLOW);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_RED_ROCK, COLOR_RED);
   }
 }
 
@@ -491,16 +490,16 @@ static void AltmillerCave_EndReveal(void) {
   struct FieldEffectWork *effectWork =
       (struct FieldEffectWork *)gFieldEffectWork;
 
-  if (GameFlag_Get(FLAG_DARK) != 0) {
+  if (GameFlag_Get(FLAG_ALTMILLER_CAVE_DARK) != 0) {
     AltmillerCave_InitializeDarkness();
     effectWork->childOption = 1;
   }
   if (gSaveBlock.mapId == (s32)&MapId_AltmillerCaveDraught) {
-    ObjectGroup_ConfigureChildValue(LOCALID_BLUE_ROCK, COLOR_NONE);
-    ObjectGroup_ConfigureChildValue(LOCALID_GREEN_ROCK, COLOR_NONE);
-    ObjectGroup_ConfigureChildValue(LOCALID_WHITE_ROCK, COLOR_NONE);
-    ObjectGroup_ConfigureChildValue(LOCALID_YELLOW_ROCK, COLOR_NONE);
-    ObjectGroup_ConfigureChildValue(LOCALID_RED_ROCK, COLOR_NONE);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_BLUE_ROCK, COLOR_NONE);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_GREEN_ROCK, COLOR_NONE);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_WHITE_ROCK, COLOR_NONE);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_YELLOW_ROCK, COLOR_NONE);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_RED_ROCK, COLOR_NONE);
   }
 }
 
@@ -540,7 +539,7 @@ static void AltmillerCave_UpdateMovedObstacle(void) {
     objectEvent->priorityFlags = 2;
     MapGrid_CopyCellAttributes(30, 20, 1, 1, 32, 20);
 #if TBS_PATCH_1
-    GameFlag_Set(FLAG_PILLAR_IN_PLACE);
+    GameFlag_Set(FLAG_ALTMILLER_CAVE_PILLAR_IN_PLACE);
 #endif
   }
 }
@@ -584,7 +583,7 @@ static void AltmillerCave_FreezePuddle(void) {
       puddle->motionFlags = motionFlags;
       puddle->priorityFlags = blocked;
     }
-    GameFlag_Set(FLAG_PUDDLE_FROZEN);
+    GameFlag_Set(FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN);
   }
 }
 
@@ -612,10 +611,10 @@ static void AltmillerCave_HopSelectedObjectEvent(void) {
   if (FieldObject_CheckMovementCollision(objectEvent, &destination.position) ==
       0) {
     FieldScript_Start();
-    ObjectDispatch_SelectAnimation(objectEvent, ANIM_LEADER_SPRING);
+    Object_SelectAnimation(objectEvent, ANIM_LEADER_SPRING);
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
-    ObjectDispatch_SelectAnimation(objectEvent, ANIM_LEADER_LEAP);
+    Object_SelectAnimation(objectEvent, ANIM_LEADER_LEAP);
     objectEvent->speed = PIXELS(3);
     objectEvent->acceleration = PIXELS(2);
     objectEvent->velocityY = PIXELS(4);
@@ -624,7 +623,7 @@ static void AltmillerCave_HopSelectedObjectEvent(void) {
     ObjectMotion_SetPositionAndCommit(LOCALID_PARTY_LEADER,
                                       components[0].part.pixel,
                                       components[2].part.pixel);
-    ObjectDispatch_SelectAnimation(objectEvent, ANIM_LEADER_SPRING);
+    Object_SelectAnimation(objectEvent, ANIM_LEADER_SPRING);
     ObjectEvent_SetSpriteFlags(objectEvent, 1);
     objectEvent->motionFlags = motionFlags;
     FieldScript_End();
@@ -644,7 +643,7 @@ static void AltmillerCave_MoveStagedObjectEventToClearPosition(void) {
 
 /// Update callback of the light at the top of the stopped ring: it pulses
 /// through four sizes.
-static void AltmillerCave_PulseLight(union FieldObject *fieldObject) {
+static void AltmillerCave_PulseLight(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *light = (struct ObjectEvent *)fieldObject;
   s32 scale = gAltmillerCave_PulseScales[(light->timer >> 2) & 3];
 
@@ -994,10 +993,10 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   ObjectEvent_Get(LOCALID_GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   ObjectEvent_Get(LOCALID_MIA)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   ObjectEvent_Get(LOCALID_IVAN)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_STAND);
   WaitFrames(1);
   AltmillerCave_FacePartyNorth();
   FieldScript_WaitFrames(30);
@@ -1083,7 +1082,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   FieldScript_WaitFrames(150);
   Field_DispatchTypeHandler(2);
   FieldEffect_StopCasterHook();
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_STAND);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
   FieldScript_WaitFrames(40);
@@ -1215,7 +1214,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
   FieldScript_WaitFrames(30);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(30);
   Script_OpenMessage(LOCALID_BABI, 0);
@@ -1385,9 +1384,9 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   AltmillerCave_FacePartyNorth();
   FieldScript_WaitFrames(30);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(30);
   FieldScript_WaitFrames(10);
@@ -1406,7 +1405,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   ObjectEvent_ShowEmote(LOCALID_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Script_ShowMessage(LOCALID_BABI, 0);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_SOLDIER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_SOLDIER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_SECOND_SOLDIER, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
@@ -1421,8 +1420,8 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   ObjectEvent_WalkBy(LOCALID_SECOND_SOLDIER, 0, 48);
   ObjectEvent_WalkByAndWait(LOCALID_BABI, -16, 0);
   ObjectEvent_WalkByAndWait(LOCALID_BABI, 0, 32);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_SOLDIER, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_SECOND_SOLDIER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_SOLDIER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_SECOND_SOLDIER, ANIM_STAND);
   ObjectMotion_EnableActionAndResetMotion(LOCALID_PARTY_LEADER);
   ObjectMotion_EnableActionAndResetMotion(LOCALID_GARET);
   ObjectMotion_EnableActionAndResetMotion(LOCALID_MIA);
@@ -1535,7 +1534,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   FieldScript_WaitFrames(30);
   ObjectMotion_SetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_SOLDIER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_SOLDIER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_SECOND_SOLDIER, ANIM_NOD);
   FieldScript_WaitFrames(40);
   ObjectEvent_FaceDirection(LOCALID_FIRST_SOLDIER, FACING_EAST, 0);
@@ -1650,9 +1649,9 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     FieldScript_WaitFrames(30);
     Script_ShowMessage(LOCALID_IVAN, 0);
     FieldScript_WaitFrames(20);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
     FieldScript_WaitFrames(30);
   } else {
@@ -1680,7 +1679,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_GARET, leader->x.part.pixel,
@@ -1688,7 +1687,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_IVAN, leader->x.part.pixel,
@@ -1696,7 +1695,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IVAN);
   ObjectEvent_SetPosition(LOCALID_IVAN, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_MIA, leader->x.part.pixel,
@@ -1965,14 +1964,14 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_MIA, 0);
   ObjectMotion_SetAngleToward(LOCALID_IVAN, LOCALID_MIA, 0);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(30);
   Sound_PlaySong(SONG_FADE_OUT_BGM);
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectMotion_ResetAndSetPosition(LOCALID_GARET, leader->x.part.pixel,
@@ -1980,7 +1979,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectMotion_ResetAndSetPosition(LOCALID_IVAN, leader->x.part.pixel,
@@ -1988,7 +1987,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IVAN);
   ObjectEvent_SetPosition(LOCALID_IVAN, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectMotion_ResetAndSetPosition(LOCALID_MIA, leader->x.part.pixel,
@@ -2070,7 +2069,8 @@ const struct MapEvent *AltmillerCave_GetEvents(void) {
 
 /// Update callback of AltmillerCaveDraught's obstacles: drawn on the leader's
 /// sprite priority.
-static void AltmillerCave_MatchLeaderPriority(union FieldObject *fieldObject) {
+static void
+AltmillerCave_MatchLeaderPriority(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   if (objectEvent != NULL) {
     objectEvent->priorityFlags = 0;
@@ -2116,25 +2116,25 @@ s32 AltmillerCave_Initialize(void) {
           ALTMILLER_CAVE_DRAUGHT_FROM_ALTMILLER_CAVE_COOKIE_CHEST;
     }
   }
-  GameFlag_Set(FLAG_DARK);
-  Script_ClearFlag(FLAG_DARKNESS_BY_STEPS);
+  GameFlag_Set(FLAG_ALTMILLER_CAVE_DARK);
+  Script_ClearFlag(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS);
   if (gSaveBlock.mapId == (s32)&MapId_AltmillerCaveEntrance) {
     if (gSaveBlock.warpDest == ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         *(u8 *)((u32)gMapLocalState + 4) = 0;
       }
-      GameFlag_Set(FLAG_DARKNESS_BY_STEPS);
+      GameFlag_Set(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS);
     }
     if (gSaveBlock.warpDest == ALTMILLER_CAVE_ENTRANCE_FROM_TORCH_CHAMBER) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         *(u8 *)((u32)gMapLocalState + 4) = 5;
       }
-      GameFlag_Set(FLAG_DARKNESS_BY_STEPS);
+      GameFlag_Set(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS);
     }
   }
   if (gSaveBlock.mapId == (s32)&MapId_AltmillerCaveBabi) {
     if (GameFlag_Get(FLAG_BABI_SAVED)) {
-      Engine_ObjectEventSetPosition(LOCALID_INVISIBLE_BABI, 0, 0);
+      Import_ObjectEventSetPosition(LOCALID_INVISIBLE_BABI, 0, 0);
     } else {
       objectEvent = ObjectEvent_GetById(LOCALID_INVISIBLE_BABI);
       objectEvent->sprite->image.priority = 1;
@@ -2144,10 +2144,10 @@ s32 AltmillerCave_Initialize(void) {
   }
   // Restore AltmillerCaveSquall's moved obstacles and frozen puddle.
   if (gSaveBlock.mapId == (s32)&MapId_AltmillerCaveSquall) {
-    GameFlag_Clear(FLAG_DARK);
+    GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_RedrawObstacleFootprints();
-    if (GameFlag_Get(FLAG_PUDDLE_FROZEN)) {
-      Engine_ObjectEventSetAnimation(LOCALID_SQUALL_ROOM_PUDDLE,
+    if (GameFlag_Get(FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN)) {
+      Import_ObjectEventSetAnimation(LOCALID_SQUALL_ROOM_PUDDLE,
                                      PUDDLE_ANIMATION_FROZEN);
       MapGrid_CopyCellAttributes(76, 16, 1, 1, 73, 17);
     } else {
@@ -2157,14 +2157,14 @@ s32 AltmillerCave_Initialize(void) {
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SQUALL_ROOM_PUDDLE),
                                0);
 #if TBS_PATCH_1
-    if (GameFlag_Get(FLAG_PILLAR_IN_PLACE)) {
+    if (GameFlag_Get(FLAG_ALTMILLER_CAVE_PILLAR_IN_PLACE)) {
       MapGrid_CopyCellAttributes(30, 20, 1, 1, 32, 20);
     }
 #endif
   }
   // Rebuild the final rock puzzle from its saved phase and chosen light.
   if (gSaveBlock.mapId == (s32)&MapId_AltmillerCaveDraught) {
-    GameFlag_Clear(FLAG_DARK);
+    GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     // UB: the callbacks are stored through an s32 view of update, which keeps
     // the warp destination read below the last store (as ->update, one store
@@ -2212,18 +2212,18 @@ s32 AltmillerCave_Initialize(void) {
       objectEvent->scaleY = Q16_ONE;
       ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_FIRST_LIGHT + i),
                                  0);
-      Engine_ObjectEventSetAnimation(LOCALID_FIRST_LIGHT + i, i + 1);
+      Import_ObjectEventSetAnimation(LOCALID_FIRST_LIGHT + i, i + 1);
     }
-    ObjectGroup_ConfigureChildValue(LOCALID_BLUE_LIGHT, COLOR_BLUE);
-    ObjectGroup_ConfigureChildValue(LOCALID_GREEN_LIGHT, COLOR_GREEN);
-    ObjectGroup_ConfigureChildValue(LOCALID_WHITE_LIGHT, COLOR_WHITE);
-    ObjectGroup_ConfigureChildValue(LOCALID_YELLOW_LIGHT, COLOR_YELLOW);
-    ObjectGroup_ConfigureChildValue(LOCALID_RED_LIGHT, COLOR_RED);
-    ObjectGroup_ConfigureChildValue(LOCALID_BLUE_ROCK, COLOR_NONE);
-    ObjectGroup_ConfigureChildValue(LOCALID_GREEN_ROCK, COLOR_NONE);
-    ObjectGroup_ConfigureChildValue(LOCALID_WHITE_ROCK, COLOR_NONE);
-    ObjectGroup_ConfigureChildValue(LOCALID_YELLOW_ROCK, COLOR_NONE);
-    ObjectGroup_ConfigureChildValue(LOCALID_RED_ROCK, COLOR_NONE);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_BLUE_LIGHT, COLOR_BLUE);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_GREEN_LIGHT, COLOR_GREEN);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_WHITE_LIGHT, COLOR_WHITE);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_YELLOW_LIGHT, COLOR_YELLOW);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_RED_LIGHT, COLOR_RED);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_BLUE_ROCK, COLOR_NONE);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_GREEN_ROCK, COLOR_NONE);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_WHITE_ROCK, COLOR_NONE);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_YELLOW_ROCK, COLOR_NONE);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_RED_ROCK, COLOR_NONE);
     ObjectEvent_GetById(LOCALID_BLUE_ROCK)->sprite->image.priority = 3;
     ObjectEvent_GetById(LOCALID_RED_ROCK)->sprite->image.priority = 3;
     ObjectEvent_GetById(LOCALID_BLUE_ROCK)->priorityFlags =
@@ -2233,7 +2233,7 @@ s32 AltmillerCave_Initialize(void) {
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_BLUE_ROCK), 0);
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_RED_ROCK), 0);
   }
-  if (GameFlag_Get(FLAG_DARK)) {
+  if (GameFlag_Get(FLAG_ALTMILLER_CAVE_DARK)) {
     AltmillerCave_InitializeDarkness();
   } else {
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
@@ -2261,14 +2261,14 @@ AltmillerCave_UpdateWallFragment(struct FieldEffectSprite *fragment) {
     position[2] = z;
     fragment->x = x;
     position[0] = x;
-    Vector_AddPolarOffset(PIXELS(120), Engine_RandomNext(), position);
+    Vector_AddPolarOffset(PIXELS(120), Import_RandomNext(), position);
     fragment->targetX = position[0];
     fragment->targetZ = position[2];
     fragment->acceleration = PIXELS(5);
     fragment->speedMax = PIXELS(5);
     fragment->turnStepLimited = currentPhase;
     (*phase)++;
-    if ((gFrameTick & 3) == 0)
+    if ((gVBlankCount & 3) == 0)
       Sound_PlaySong(SE_HEAVY_IMPACT);
   } else if (currentPhase == 1) {
     if (FieldEffectSprite_HasPendingTarget(fragment) == 0) {
@@ -2286,7 +2286,7 @@ AltmillerCave_UpdateWallFragment(struct FieldEffectSprite *fragment) {
 /// cells open to the passage, and the shaking calms.
 static void AltmillerCave_ReleaseWallBurst(void) {
   struct FieldEffectWork *effectWork;
-  struct EffectVector position;
+  struct Vector3 position;
   struct FieldEffectSprite *fragment;
   s32 fragmentIndex;
 
@@ -2306,8 +2306,8 @@ static void AltmillerCave_ReleaseWallBurst(void) {
     FieldEffectSprite_SetCallback(fragment, AltmillerCave_UpdateWallFragment);
     FieldEffectSprite_SetObjectMode(fragment, 7);
     Sprite_SetAnimColorModes(fragment->object,
-                             (u32)(Engine_RandomNext() * 7) >> 16);
-    scale = Math_DivideUnsigned(Engine_RandomNext(), 3) + 3 * Q16_ONE / 2;
+                             (u32)(Import_RandomNext() * 7) >> 16);
+    scale = Math_DivideUnsigned(Import_RandomNext(), 3) + 3 * Q16_ONE / 2;
     fragment->scaleY = scale;
     fragment->scaleX = scale;
     WaitFrames(1);
@@ -2641,15 +2641,15 @@ struct MapEvent gAltmillerCave_VialChestEvents[] = {
 struct MapEvent gAltmillerCave_SquallEvents[] = {
     {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 30, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_VIAL_CHEST},
     {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 31, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_COOKIE_CHEST},
-    {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 72, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedObjectEvent)},
-    {COORD_EVENT_WALKING_INTO(FACING_WEST), 73, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedObjectEvent)},
-    {COORD_EVENT_WALKING_INTO(FACING_NORTH), 74, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedObjectEvent)},
-    {COORD_EVENT_WALKING_INTO(FACING_EAST), 75, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedObjectEvent)},
+    {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 72, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedObjectEvent)},
+    {COORD_EVENT_WALKING_INTO(FACING_WEST), 73, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedObjectEvent)},
+    {COORD_EVENT_WALKING_INTO(FACING_NORTH), 74, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedObjectEvent)},
+    {COORD_EVENT_WALKING_INTO(FACING_EAST), 75, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedObjectEvent)},
     {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 71, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_MoveStagedObjectEventToClearPosition)},
     {COORD_EVENT_WALKING_INTO(FACING_EAST), 77, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_AdvanceObstacleAndCheckPassage)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_SQUALL_ROOM_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_UpdateMovedObstacle)},
-    {PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_SQUALL_ROOM_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_CheckFrostTargetCollision)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_SQUALL_ROOM_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_FreezePuddle)},
+    {PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_SQUALL_ROOM_PUDDLE, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_CheckFrostTargetCollision)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_SQUALL_ROOM_PUDDLE, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_FreezePuddle)},
     {MAP_EVENT_TALK, LOCALID_SQUALL, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_StartDjinnBattle)},
     {MAP_EVENTS_END},
 };

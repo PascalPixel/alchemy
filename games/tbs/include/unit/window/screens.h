@@ -22,14 +22,14 @@ WindowSprite_CreateWithTransform(s32 icon, struct Window *input, s32 x, s32 y);
 struct WindowSprite *WindowSprite_CreateFromTable(s32 table_entry,
                                                   struct Window *input, s32 x,
                                                   s32 y);
-struct WindowSprite *CreateSideObject(s32 character, s32 unused, s32 side,
-                                      struct Window *window, s32 x, s32 y);
+struct WindowSprite *Portrait_Create(s32 character, s32 unused, s32 side,
+                                     struct Window *window, s32 x, s32 y);
 void Portrait_Reload(u32 side, s32 character, s32 unused);
 void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode);
 void WindowSprite_SetInvertedSentinel(void *sprite, s32 priority);
-void Win_FillScanlineSpans(void *spans);
-void Win_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width, u32 height,
-                             s32 value);
+void ScanlineWindow_FillSpans(void *spans);
+void BgScreen_FillRect(s32 unused0, s32 unused1, u32 width, u32 height,
+                       s32 value);
 
 void PartyStatus_BuildLayoutBounds(s32 flags);
 void PartyStatus_CreateWindow(s32 flags);
@@ -80,8 +80,8 @@ s32 NamingScreen_CountLetters(const u8 *name);
 void Window_CopyTilemapRegion(const struct Window *window, const void *source);
 void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
                             s32 width, s32 height, u32 palette);
-void Resource_CopyFixedBlockB(s32 slot);
-void Resource_CopyFixedBlockA(s32 slot);
+void NamingScreen_LoadPointingHandTiles(s32 slot);
+void NamingScreen_LoadCaretTiles(s32 slot);
 s32 Text_SetString(const u8 *str);
 void Text_DrawPaddedLabel(struct Window *window, u8 *name);
 s32 NamingScreen_EditMemberName(s32 member);
@@ -90,10 +90,10 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn);
 s32 Party_LookupCharacterValueByFlag32(u32 index);
 void Party_ShowJoinedMessage(s32 member);
 void Party_ShowPairJoinedMessage(s32 first, s32 second);
-void Heading_Load(s32 picture, s32 slot);
-struct WindowSprite *Heading_Create(s32 picture, struct Window *window, s32 x,
-                                    s32 y);
-void Heading_Bob(struct WindowSprite *obj);
+void MenuTitle_Load(s32 picture, s32 slot);
+struct WindowSprite *MenuTitle_Create(s32 picture, struct Window *window, s32 x,
+                                      s32 y);
+void MenuTitle_Bob(struct WindowSprite *obj);
 void CommandIcon_Load(s32 icon, s32 slot, s32 remap);
 struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
                                         struct Window *window, s32 x, s32 y);
@@ -103,7 +103,7 @@ struct BattleAction;
 struct AbilityDefinition;
 struct GlyphPalette;
 struct PsynergyEntry;
-struct SelectionWork;
+struct BattleCommandRowWork;
 
 #ifdef UBFIX
 void Menu_BuildLocalizedPatternTiles(void);
@@ -116,7 +116,7 @@ int Window_DrawThreeTileColumn(struct Window *window, s32 arg1, s32 arg2,
 #endif
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
                                    s32 shift);
-void Link_DrawShiftedTilePair(s32 offset);
+void Link_DrawPageArrows(s32 offset);
 void Graphics_ExpandVramTilesByColorTable(u16 *dst);
 s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index);
 s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index);
@@ -127,7 +127,7 @@ void Icon_Decompress(GlyphTransfer *work);
 struct Window *Link_CreateCountdownLabelWindow(void);
 s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1);
 void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile);
-void Text_DrawCharacter(struct SelectionWork *work, s32 index, u32 kind);
+void Text_DrawCharacter(struct BattleCommandRowWork *work, s32 index, u32 kind);
 void Graphics_SetBg1Priority3(void);
 void Graphics_SetBg1Priority0(void);
 void Graphics_InstallBg1VCountHandler(void);

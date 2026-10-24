@@ -9,8 +9,8 @@
 #include "field_work.h"
 #include "heap_slots.h"
 
-void Engine_ObjectEventSetAnimation();
-void Engine_ObjectEventSetPosition(u32 localId, s32 x, s32 z);
-void Engine_ScriptRequestWarp();
+void Import_ObjectEventSetAnimation();
+void Import_ObjectEventSetPosition(u32 localId, s32 x, s32 z);
+void Import_ScriptRequestWarp();
 
 #endif

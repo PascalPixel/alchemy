@@ -12,7 +12,7 @@
 /// then clears the Djinni's object event slot. Uses all 24 field effect
 /// sprites, tints the field palette red and fades it back at the end.
 void Djinn_RunMarsJoinEffect(s32 djinniId) {
-  struct EffectVector position;
+  struct Vector3 position;
   s32 scale;
   s32 remaining;
   struct ObjectEvent *djinni;
@@ -49,7 +49,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   djinni->timer = 0;
   WaitFrames(80);
   djinni->update = FieldEffect_ShrinkObjectAndDestroySlow;
-  ObjectDispatch_SelectAnimationFar(djinni, 3);
+  Object_SelectAnimationFar(djinni, 3);
 
   // The sparks start where the Djinni is on screen.
   position.x = djinni->x.fixed;
@@ -78,8 +78,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   WaitFrames(60);
   ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, 0x4000, 0);
   WaitFrames(20);
-  ObjectDispatch_SelectAnimationFar(
-      ObjectEvent_GetById(gSaveBlock.leaderLocalId), 28);
+  Object_SelectAnimationFar(ObjectEvent_GetById(gSaveBlock.leaderLocalId), 28);
 
   // Every spark still in use stops its fountain. The cursor walks
   // the slots' state bytes; a slot's active flag is 5 bytes after its state.
@@ -143,9 +142,10 @@ DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkObjectAndDestroyFast, 0xFFFFFC00)
 /// leader on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a
 /// pixel a frame, and is released 20 pixels above the leader's feet. Set by
 /// FieldEffect_RunVenusDjinnCapture in venus.c.
-void FieldEffect_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
+void FieldEffect_UpdateDescendingOrbitObject(
+    union ObjectEventOrEffect *fieldObject) {
   struct Object *mote = (struct Object *)fieldObject;
-  struct EffectVector position;
+  struct Vector3 position;
   struct Object *leader;
   s32 timer;
   s16 frames;
@@ -164,7 +164,7 @@ void FieldEffect_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
   y = mote->y + 0xFFFF0000;
   mote->y = y;
   if (y < leader->y + 0x140000)
-    ObjectDispatch_ReleaseFar((struct Object *)mote);
+    Object_ReleaseFar((struct Object *)mote);
 }
 
 /// Field effect sprite callback of a Venus Djinni's particles: each starts on
@@ -175,7 +175,7 @@ void FieldEffect_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
 /// odd frame plays SE_144. It speeds up by 1 pixel a frame to at most 5,
 /// straight at its target.
 void FieldEffect_UpdateRadialSpread(struct FieldEffectSprite *effect) {
-  struct EffectVector position;
+  struct Vector3 position;
   struct Object *source;
   s32 state;
   u32 random;
@@ -207,7 +207,7 @@ void FieldEffect_UpdateRadialSpread(struct FieldEffectSprite *effect) {
     effect->turnStepLimited = state;
     effect->state++;
 
-    if ((gFrameTick & 1) != 0)
+    if ((gVBlankCount & 1) != 0)
       Sound_PlaySongFar(SE_144);
   } else if (state == VENUS_PARTICLE_RISING) {
     if (FieldEffectSprite_HasPendingTarget(effect) == 0)

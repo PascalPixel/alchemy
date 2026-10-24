@@ -3,22 +3,22 @@
 /// ransom, and the cave below it. Four maps share this overlay and the area
 /// name Lunpa Fortress:
 ///
-/// - LunpaFortressGroundFloor (MapId_LunpaFortressGroundFloor): inside the
-///   door from the Lunpa Fortress Gates. An entrance guard, two sentries, the
-///   upper hall's guard and a patrolling guard keep watch; Dodonpa's men and
-///   the people of the fortress talk, and chests and a barrel hold an Elixir,
-///   a Lucky Medal, a Mythril Circlet, coins and a Vial.
+/// - LunpaFortressGroundFloor (MapId_LunpaFortressGroundFloor): inside the door
+///   from the Lunpa Fortress Gates. An entrance guard, two sentries, the upper
+///   hall's guard and a patrolling guard keep watch; Dodonpa's men and the
+///   people of the fortress talk, and chests and a barrel hold an Elixir, a
+///   Lucky Medal, a Mythril Circlet, coins and a Vial.
 /// - LunpaFortressUpperFloor (MapId_LunpaFortressUpperFloor): where Donpa
 ///   sleeps. A patrolling pair and a hall patrol keep watch, three guards and
 ///   then three more together fight the party as Brigands, the Cell Key hangs
 ///   here, and Dodonpa's family and the women he brought here talk. After the
 ///   rescue Donpa gives the party Tonic, a Mercury Djinni.
-/// - LunpaFortressCave (MapId_LunpaFortressCave): the cave whose switches
-///   and passage ivy hides, with a stack of crates to push into its hole.
-/// - LunpaFortressToadonpa (MapId_LunpaFortressToadonpa): Hammet's cell,
-///   where Dodonpa frees Toadonpa on the party (EventScript_FindHammet) and
-///   Donpa judges him after the battle (EventScript_DonpaJudgesDodonpa), which
-///   sets FLAG_DODONPA_LOCKED_UP and changes all of Lunpa.
+/// - LunpaFortressCave (MapId_LunpaFortressCave): the cave whose switches and
+///   passage ivy hides, with a stack of crates to push into its hole.
+/// - LunpaFortressToadonpa (MapId_LunpaFortressToadonpa): Hammet's cell, where
+///   Dodonpa frees Toadonpa on the party (EventScript_FindHammet) and Donpa
+///   judges him after the battle (EventScript_DonpaJudgesDodonpa), which sets
+///   FLAG_DODONPA_LOCKED_UP and changes all of Lunpa.
 ///
 /// The getters choose by gSaveBlock.mapId; LunpaFortressCave and
 /// LunpaFortressToadonpa share one warp table. Every return through the Lunpa
@@ -27,8 +27,8 @@
 ///
 /// The guards are the fortress's mechanism. A guard on screen sees the leader
 /// along his row or column, within six cells (LunpaFortress_CanGuardSeeLeader),
-/// unless Cloak is on, and each guard has a watcher, a callback that the
-/// warp destination the party arrives by starts
+/// unless Cloak is on, and each guard has a watcher, a callback that the warp
+/// destination the party arrives by starts
 /// (LunpaFortress_InitializeGroundFloor, LunpaFortress_InitializeUpperFloor). A
 /// watcher that sees the leader raises one of the RAISED_*_SPOTTED map events,
 /// whose script has the guard challenge the party and throw it out to the gates
@@ -40,46 +40,50 @@
 /// pixel every frame: in the dark corridors that layer holds the circles of
 /// light the patrols carry, which flicker as they shake
 /// (https://alchemy.pascalpixel.com/places/lunpa-fortress-upper-floor/map-1.png
-/// shows the pair's two circles). Each has stretches of its rounds where
-/// it cannot see the leader. On the upper floor the pair walk east and west
-/// between 88 and 192 pixels across, one 192 and one 288 pixels down; each
-/// sees a leader in his own column up to six rows away, or within a row of
-/// his up to six columns away, whatever stands between them, but never one
-/// in rows 5 to 7 from column 10 west, at the passage's top, or in columns 8
-/// and 9 below row 22 (LunpaFortress_IsLeaderInPatrolSafeZone)
+/// shows the pair's two circles). Each has stretches of its rounds where it
+/// cannot see the leader. On the upper floor the pair walk east and west
+/// between 88 and 192 pixels across, one 192 and one 288 pixels down; each sees
+/// a leader in his own column up to six rows away, or within a row of his up to
+/// six columns away, whatever stands between them, but never one in rows 5 to 7
+/// from column 10 west, at the passage's top, or in columns 8 and 9 below row
+/// 22 (LunpaFortress_IsLeaderInPatrolSafeZone)
 /// (https://alchemy.pascalpixel.com/places/lunpa-fortress-upper-floor/patrol-sight.png:
-/// the west passage with the pair's rounds in yellow, every cell either
-/// guard sees from some point of his round in red, and the cells they never
-/// look at in green). The guards who fight instead pick one of four
-/// challenges, by gLunpaFortressRandomPick, drawn on every arrival.
+/// the west passage with the pair's rounds in yellow, every cell either guard
+/// sees from some point of his round in red, and the cells they never look at
+/// in green). The guards who fight instead pick one of four challenges, by
+/// gLunpaFortressRandomPick, drawn on every arrival.
 ///
-/// The Cell Key opens the cell doors of all four maps, facing each door
-/// with it in the party, and each opened door is remembered in a map-section
-/// temp flag from FLAG_MAPSEC_TEMP_50 (TOADONPA_DOOR_FLAG and the others). In
-/// LunpaFortressCave, Whirlwind blows away the ivy that hides two switches
-/// and a passage; the switches show in the wall only while Reveal lasts, and
+/// The Cell Key opens the cell doors of all four maps, facing each door with it
+/// in the party, and each opened door is remembered in a map-section temp flag
+/// from FLAG_MAPSEC_TEMP_50 (TOADONPA_DOOR_FLAG and the others). In
+/// LunpaFortressCave, Whirlwind blows away the ivy that hides two switches and
+/// a passage; the switches show in the wall only while Reveal lasts, and
 /// searching one opens its passage.
 ///
 /// Map temp flags:
-/// - FLAG_MAP_TEMP_14: a guard has spotted the party; FLAG_MAP_TEMP_15 is
-///   set beside it and never read.
-/// - FLAG_MAP_TEMP_17 and FLAG_MAP_TEMP_18: LunpaFortressCave's first and
+/// - FLAG_LUNPA_FORTRESS_PARTY_SPOTTED: a guard has spotted the party;
+///   FLAG_MAP_TEMP_15 is set beside it and never read.
+/// - FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNDER_IVY and
+///   FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNDER_IVY: LunpaFortressCave's first and
 ///   second switches are still hidden by their ivy.
-/// - FLAG_MAP_TEMP_24 and FLAG_MAP_TEMP_25: the entrance guard or the
+/// - FLAG_LUNPA_FORTRESS_ENTRANCE_GUARD_CAUGHT_PARTY and
+///   FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY: the entrance guard or the
 ///   sentries have thrown the party out.
-/// - FLAG_MAP_TEMP_26 and FLAG_MAP_TEMP_27: the startled old man has
-///   promised to keep quiet, and has been startled.
-/// - FLAG_MAP_TEMP_70: EventScript_FindHammet is under way.
+/// - FLAG_LUNPA_FORTRESS_OLD_MAN_PROMISED_SILENCE and
+///   FLAG_LUNPA_FORTRESS_OLD_MAN_STARTLED: the startled old man has promised to
+///   keep quiet, and has been startled.
+/// - FLAG_LUNPA_FORTRESS_FINDING_HAMMET: EventScript_FindHammet is under way.
 ///
-/// Map-section temp flags: FLAG_MAPSEC_TEMP_01 once Donpa has judged Dodonpa,
-/// FLAG_MAPSEC_TEMP_13 once his attendant has told of him, FLAG_MAPSEC_TEMP_14
-/// once she has shown his reward, and FLAG_MAPSEC_TEMP_50 to
-/// FLAG_MAPSEC_TEMP_5C for the opened cell doors.
+/// Map-section temp flags: FLAG_LUNPA_FORTRESS_DODONPA_JUDGED once Donpa has
+/// judged Dodonpa, FLAG_LUNPA_FORTRESS_ATTENDANT_TOLD_OF_DONPA once his
+/// attendant has told of him, FLAG_LUNPA_FORTRESS_REWARD_SHOWN once she has
+/// shown his reward, and FLAG_MAPSEC_TEMP_50 to FLAG_MAPSEC_TEMP_5C for the
+/// opened cell doors.
 ///
-/// Unused: four item pickups that set out an Arctic Blade, a Masamune, a
-/// Silver Blade and a Shamshir on LunpaFortressGroundFloor's first four rows,
-/// and copies of West Lunpa Cave's warps and object event templates, which
-/// these maps never read.
+/// Unused: four item pickups that set out an Arctic Blade, a Masamune, a Silver
+/// Blade and a Shamshir on LunpaFortressGroundFloor's first four rows, and
+/// copies of West Lunpa Cave's warps and object event templates, which these
+/// maps never read.
 ///
 /// Open questions: none.
 
@@ -264,7 +268,7 @@ enum {
   /// him walk onto the jar, and with this object event he stops 14 pixels short
   /// of it. A blank sprite draws only its shadow, which
   /// LunpaFortress_InitializeCave turns off.
-  LOCALID_BLANK_CAVE_JAR,
+  LOCALID_INVISIBLE_CAVE_JAR,
   /// A stack of wooden crates (the sprite of the crates at the Bilibin
   /// Barricade and on Tolbi Docks), pushed or moved with Move onto its hole.
   /// ★ Named from what the player sees: a stack of two wooden crates
@@ -284,9 +288,9 @@ enum {
   /// chest's own cells already stop him, so the middle object event changes
   /// nothing. Map_Initialize turns off the shadows their blank sprites would
   /// draw and lays them underfoot.
-  LOCALID_BLANK_TOADONPA_WEST_JAR = LOCALID_FIRST_PLACED,
-  LOCALID_BLANK_TOADONPA_CHEST,
-  LOCALID_BLANK_TOADONPA_EAST_JAR,
+  LOCALID_INVISIBLE_TOADONPA_WEST_JAR = LOCALID_FIRST_PLACED,
+  LOCALID_INVISIBLE_TOADONPA_CHEST,
+  LOCALID_INVISIBLE_TOADONPA_EAST_JAR,
   /// The monster Dodonpa frees on the party (EventScript_FindHammet).
   /// ★ Named from the game: "Toadonpa" (MsgEnemyName)
   LOCALID_TOADONPA_BOSS,
@@ -302,7 +306,7 @@ enum {
   LOCALID_TOADONPA_DONPA,
   /// A blank sprite (SPRITE_BLANK_LARGE) laid underfoot with Toadonpa and
   /// moving with it, drawn 4/5 as wide.
-  LOCALID_BLANK_TOADONPA_BOSS_PART,
+  LOCALID_INVISIBLE_TOADONPA_BOSS_PART,
   /// One of Dodonpa's men, a man with brown hair
   /// (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), placed by Dodonpa's cell after
   /// Donpa's judgment. Read with Mind Read: "Actually, Dodonpa's in here, but
@@ -312,7 +316,7 @@ enum {
   LOCALID_TOADONPA_CELL_GUARD,
   /// An invisible object event that stands before Dodonpa's cell after Donpa's
   /// judgment; talking to it or reading its mind reaches Dodonpa.
-  LOCALID_BLANK_TOADONPA_DODONPA
+  LOCALID_INVISIBLE_TOADONPA_DODONPA
 };
 
 /// The metatile behaviors the fortress's map events answer: the cell doors
@@ -384,6 +388,30 @@ static void LunpaFortress_RestoreCaveDoors(void);
 static void LunpaFortress_RestoreToadonpaDoors(void);
 
 #include "common/object_staged_object_event.h"
+
+/// Donpa has judged Dodonpa, so Hammet's cell no longer starts the trap.
+#define FLAG_LUNPA_FORTRESS_DODONPA_JUDGED FLAG_MAPSEC_TEMP_01
+/// Donpa's attendant has told the party of Donpa and his spoiled son.
+#define FLAG_LUNPA_FORTRESS_ATTENDANT_TOLD_OF_DONPA FLAG_MAPSEC_TEMP_13
+/// Donpa's attendant has shown the party his reward, Tonic, and stands beside
+/// it.
+#define FLAG_LUNPA_FORTRESS_REWARD_SHOWN FLAG_MAPSEC_TEMP_14
+/// A guard has spotted the party.
+#define FLAG_LUNPA_FORTRESS_PARTY_SPOTTED FLAG_MAP_TEMP_14
+/// LunpaFortressCave's first switch is still hidden by its ivy.
+#define FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNDER_IVY FLAG_MAP_TEMP_17
+/// LunpaFortressCave's second switch is still hidden by its ivy.
+#define FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNDER_IVY FLAG_MAP_TEMP_18
+/// The entrance guard has thrown the party out.
+#define FLAG_LUNPA_FORTRESS_ENTRANCE_GUARD_CAUGHT_PARTY FLAG_MAP_TEMP_24
+/// The sentries have spotted the party and thrown it out.
+#define FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY FLAG_MAP_TEMP_25
+/// The startled old man has promised to keep quiet.
+#define FLAG_LUNPA_FORTRESS_OLD_MAN_PROMISED_SILENCE FLAG_MAP_TEMP_26
+/// The startled old man has been startled once.
+#define FLAG_LUNPA_FORTRESS_OLD_MAN_STARTLED FLAG_MAP_TEMP_27
+/// EventScript_FindHammet is under way.
+#define FLAG_LUNPA_FORTRESS_FINDING_HAMMET FLAG_MAP_TEMP_70
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
   s16 mapId = gSaveBlock.mapId;
@@ -744,7 +772,7 @@ static void EventScript_TakeCellKey(void) {
   OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_STAND);
   PartyInventory_GiveItem(ITEM_CELL_KEY, 0);
   GameFlag_Set(FLAG_LUNPA_FORTRESS_CELL_KEY);
-  Engine_ObjectEventSetPosition(LOCALID_UPPER_FLOOR_CELL_KEY, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_UPPER_FLOOR_CELL_KEY, 0, 0);
 }
 /// Where the patrolling pair cannot see the leader: the west end of their
 /// corridor and the cells below its gap.
@@ -816,10 +844,11 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
       PATROL_ITEM_REQUEST(work) != 0) {
     firstGuard->paused = 1;
     secondGuard->paused = 1;
-  } else if (!Script_GetFlag(FLAG_MAP_TEMP_14)) {
+  } else if (!Script_GetFlag(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED)) {
     firstGuard->paused = 0;
     secondGuard->paused = 0;
-    if (!GameFlag_Get(FLAG_MAP_TEMP_14) && firstGuard->paused == 0) {
+    if (!GameFlag_Get(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED) &&
+        firstGuard->paused == 0) {
       patrolLayer->phaseX = PAIRED_PATROL_LAYER_ORIGIN_X - firstGuard->x.fixed;
     }
     if (!LunpaFortress_IsLeaderInPatrolSafeZone()) {
@@ -839,15 +868,15 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
       if (gSaveBlock.cloaked == 0) {
         if (LunpaFortress_CanGuardSeeLeader(LOCALID_UPPER_FLOOR_FIRST_PATROL)) {
           GameFlag_Set(FLAG_MAP_TEMP_15);
-          GameFlag_Set(FLAG_MAP_TEMP_14);
+          GameFlag_Set(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED);
         }
         if (LunpaFortress_CanGuardSeeLeader(
                 LOCALID_UPPER_FLOOR_SECOND_PATROL)) {
           GameFlag_Set(FLAG_MAP_TEMP_15);
-          GameFlag_Set(FLAG_MAP_TEMP_14);
+          GameFlag_Set(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED);
         }
       }
-      if (GameFlag_Get(FLAG_MAP_TEMP_14)) {
+      if (GameFlag_Get(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED)) {
         SetFieldWorkValue(&PATROL_RAISED_EVENT(work),
                           RAISED_PATROL_PAIR_SPOTTED);
       }
@@ -932,9 +961,10 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
   if (GameFlag_Get(FLAG_MENU_OPEN) || PATROL_PSYNERGY_REQUEST(work) != 0 ||
       PATROL_ITEM_REQUEST(work) != 0) {
     guard->paused = 1;
-  } else if (!Script_GetFlag(FLAG_MAP_TEMP_14)) {
+  } else if (!Script_GetFlag(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED)) {
     guard->paused = 0;
-    if (!GameFlag_Get(FLAG_MAP_TEMP_14) && guard->paused == 0) {
+    if (!GameFlag_Get(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED) &&
+        guard->paused == 0) {
       patrolLayer->phaseX = 0x3400000 - guard->x.fixed;
       patrolLayer->phaseY = 0x2400000 - guard->z.fixed;
     }
@@ -948,10 +978,10 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
       if (gSaveBlock.cloaked == 0) {
         if (LunpaFortress_CanGuardSeeLeader(LOCALID_UPPER_FLOOR_HALL_PATROL)) {
           GameFlag_Set(FLAG_MAP_TEMP_15);
-          GameFlag_Set(FLAG_MAP_TEMP_14);
+          GameFlag_Set(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED);
         }
       }
-      if (GameFlag_Get(FLAG_MAP_TEMP_14)) {
+      if (GameFlag_Get(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED)) {
         SetFieldWorkValue(&PATROL_RAISED_EVENT(work),
                           RAISED_HALL_PATROL_SPOTTED);
       }
@@ -1011,9 +1041,10 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
   if (GameFlag_Get(FLAG_MENU_OPEN) || PATROL_PSYNERGY_REQUEST(work) != 0 ||
       PATROL_ITEM_REQUEST(work) != 0) {
     guard->paused = 1;
-  } else if (!Script_GetFlag(FLAG_MAP_TEMP_14)) {
+  } else if (!Script_GetFlag(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED)) {
     guard->paused = 0;
-    if (!GameFlag_Get(FLAG_MAP_TEMP_14) && guard->paused == 0) {
+    if (!GameFlag_Get(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED) &&
+        guard->paused == 0) {
       patrolLayer->phaseX = 0x2f00000 - guard->x.fixed;
       patrolLayer->phaseY = 0x1f00000 - guard->z.fixed;
     }
@@ -1027,10 +1058,10 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
         if (LunpaFortress_CanGuardSeeLeader(
                 LOCALID_GROUND_FLOOR_PATROL_GUARD)) {
           GameFlag_Set(FLAG_MAP_TEMP_15);
-          GameFlag_Set(FLAG_MAP_TEMP_14);
+          GameFlag_Set(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED);
         }
       }
-      if (GameFlag_Get(FLAG_MAP_TEMP_14)) {
+      if (GameFlag_Get(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED)) {
         SetFieldWorkValue(&PATROL_RAISED_EVENT(work),
                           RAISED_GROUND_FLOOR_PATROL_SPOTTED);
       }
@@ -1065,16 +1096,16 @@ static void LunpaFortress_CheckUpperHallGuard(void) {
   struct FieldWork *fieldWork;
 
   fieldWork = gFieldWork;
-  if (Script_GetFlag(FLAG_MAP_TEMP_14) == 0) {
+  if (Script_GetFlag(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED) == 0) {
     if (LunpaFortress_IsLeaderOutsideUpperHall() == 0) {
       if (gSaveBlock.cloaked == 0) {
         if (LunpaFortress_CanGuardSeeLeader(
                 LOCALID_GROUND_FLOOR_UPPER_HALL_GUARD) != 0) {
           GameFlag_Set(FLAG_MAP_TEMP_15);
-          GameFlag_Set(FLAG_MAP_TEMP_14);
+          GameFlag_Set(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED);
         }
       }
-      if (GameFlag_Get(FLAG_MAP_TEMP_14) != 0) {
+      if (GameFlag_Get(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED) != 0) {
         fieldWork->raisedEvent = RAISED_UPPER_HALL_SPOTTED;
       }
     }
@@ -1116,11 +1147,11 @@ static void LunpaFortress_CheckFirstEntranceSentry(void) {
   struct FieldWork *fieldWork;
 
   fieldWork = gFieldWork;
-  if (Script_GetFlag(FLAG_MAP_TEMP_25) == 0) {
+  if (Script_GetFlag(FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY) == 0) {
     if (LunpaFortress_CanGuardSeeLeader(LOCALID_GROUND_FLOOR_FIRST_SENTRY) !=
         0) {
       if (gSaveBlock.cloaked == 0) {
-        GameFlag_Set(FLAG_MAP_TEMP_25);
+        GameFlag_Set(FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY);
         Task_Remove(LunpaFortress_CheckFirstEntranceSentry);
         Task_Remove(LunpaFortress_CheckSecondEntranceSentry);
         fieldWork->raisedEvent = RAISED_SENTRIES_SPOTTED;
@@ -1135,11 +1166,11 @@ static void LunpaFortress_CheckSecondEntranceSentry(void) {
   struct FieldWork *fieldWork;
 
   fieldWork = gFieldWork;
-  if (Script_GetFlag(FLAG_MAP_TEMP_25) == 0) {
+  if (Script_GetFlag(FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY) == 0) {
     if (LunpaFortress_CanGuardSeeLeader(LOCALID_GROUND_FLOOR_SECOND_SENTRY) !=
         0) {
       if (gSaveBlock.cloaked == 0) {
-        GameFlag_Set(FLAG_MAP_TEMP_25);
+        GameFlag_Set(FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY);
         Task_Remove(LunpaFortress_CheckSecondEntranceSentry);
         Task_Remove(LunpaFortress_CheckFirstEntranceSentry);
         fieldWork->raisedEvent = RAISED_SENTRIES_SPOTTED;
@@ -1314,7 +1345,7 @@ static void UNUSED LunpaFortress_UnusedFirstPatrolThrowsPartyOut(void) {
     MESSAGE_SET(challengeMessage + 1);
   }
   MESSAGE_PUT(LOCALID_UPPER_FLOOR_FIRST_PATROL, 0);
-  Engine_ScriptRequestWarp(WARP_THROWN_OUT);
+  Import_ScriptRequestWarp(WARP_THROWN_OUT);
   FieldScript_FinishScreenTransition();
   SCRIPT_END();
 }
@@ -1348,7 +1379,7 @@ static void LunpaFortress_GuardThrowsPartyOut(s32 localId) {
   MESSAGE_PUT(localId, 0);
   FieldScript_FinishScreenTransition();
   WAIT(60);
-  Engine_ScriptRequestWarp(WARP_THROWN_OUT);
+  Import_ScriptRequestWarp(WARP_THROWN_OUT);
   SCRIPT_END();
 }
 
@@ -1457,7 +1488,7 @@ static void EventScript_FightWestGuard(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 2);
-  Engine_ObjectEventSetPosition(LOCALID_UPPER_FLOOR_WEST_GUARD, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_UPPER_FLOOR_WEST_GUARD, 0, 0);
   SCRIPT_END();
   GameFlag_Set(FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN);
 }
@@ -1475,7 +1506,7 @@ static void EventScript_FightHallGuard(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 2);
-  Engine_ObjectEventSetPosition(LOCALID_UPPER_FLOOR_HALL_GUARD, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_UPPER_FLOOR_HALL_GUARD, 0, 0);
   SCRIPT_END();
   GameFlag_Set(FLAG_LUNPA_FORTRESS_MIDDLE_GUARD_BEATEN);
 }
@@ -1579,7 +1610,7 @@ static void EventScript_FightEastGuard(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 2);
-  Engine_ObjectEventSetPosition(LOCALID_UPPER_FLOOR_EAST_GUARD, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_UPPER_FLOOR_EAST_GUARD, 0, 0);
   SCRIPT_END();
   GameFlag_Set(FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN);
 }
@@ -1607,9 +1638,9 @@ static void EventScript_EntranceGuardThrowsPartyOut(void) {
   MESSAGE_PUT(LOCALID_GROUND_FLOOR_ENTRANCE_GUARD, 0);
   FieldScript_FinishScreenTransition();
   WAIT(60);
-  Engine_ScriptRequestWarp(WARP_THROWN_OUT);
+  Import_ScriptRequestWarp(WARP_THROWN_OUT);
   SCRIPT_END();
-  GameFlag_Set(FLAG_MAP_TEMP_24);
+  GameFlag_Set(FLAG_LUNPA_FORTRESS_ENTRANCE_GUARD_CAUGHT_PARTY);
 }
 
 /// LunpaFortressGroundFloor, coord event 51 between the sentries or seen by
@@ -1636,9 +1667,9 @@ static void EventScript_SentriesThrowPartyOut(void) {
   MESSAGE_PUT(LOCALID_GROUND_FLOOR_FIRST_SENTRY, 0);
   FieldScript_FinishScreenTransition();
   WAIT(60);
-  Engine_ScriptRequestWarp(WARP_THROWN_OUT);
+  Import_ScriptRequestWarp(WARP_THROWN_OUT);
   SCRIPT_END();
-  GameFlag_Set(FLAG_MAP_TEMP_25);
+  GameFlag_Set(FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY);
 }
 
 /// The first switch's passage opens.
@@ -1723,8 +1754,8 @@ static void EventScript_HideSwitches(void) {
 /// away.
 static void EventScript_BlowAwayFirstSwitchIvy(void) {
   GameFlag_Set(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_IVY_BLOWN_AWAY);
-  GameFlag_Clear(FLAG_MAP_TEMP_17);
-  Engine_ObjectEventSetPosition(LOCALID_CAVE_FIRST_SWITCH_IVY, 0, 0);
+  GameFlag_Clear(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNDER_IVY);
+  Import_ObjectEventSetPosition(LOCALID_CAVE_FIRST_SWITCH_IVY, 0, 0);
 }
 
 /// LunpaFortressCave, Whirlwind on the ivy over the passage: it blows away and
@@ -1732,15 +1763,15 @@ static void EventScript_BlowAwayFirstSwitchIvy(void) {
 static void EventScript_BlowAwayPassageIvy(void) {
   GameFlag_Set(FLAG_LUNPA_FORTRESS_PASSAGE_IVY_BLOWN_AWAY);
   LunpaFortress_OpenIvyPassage();
-  Engine_ObjectEventSetPosition(LOCALID_CAVE_PASSAGE_IVY, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_CAVE_PASSAGE_IVY, 0, 0);
 }
 
 /// LunpaFortressCave, Whirlwind on the ivy over the second switch: it blows
 /// away.
 static void EventScript_BlowAwaySecondSwitchIvy(void) {
   GameFlag_Set(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_IVY_BLOWN_AWAY);
-  GameFlag_Clear(FLAG_MAP_TEMP_18);
-  Engine_ObjectEventSetPosition(LOCALID_CAVE_SECOND_SWITCH_IVY, 0, 0);
+  GameFlag_Clear(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNDER_IVY);
+  Import_ObjectEventSetPosition(LOCALID_CAVE_SECOND_SWITCH_IVY, 0, 0);
 }
 
 static void UNUSED LunpaFortress_DoNothingE(void) {}
@@ -1782,7 +1813,7 @@ static void LunpaFortress_ActivateLeverTrap(void) {
   MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
   SE(SE_RUMBLE);
   WAIT(80);
-  SE(SE_STOP_SLOT3);
+  SE(SE_STOP_ACTION_SE);
   WAIT(5);
   SE(SE_145);
   MapGrid_CopyCells(16, 75, 7, 4, 26, 55);
@@ -1804,9 +1835,9 @@ static void LunpaFortress_RevealMonster(void) {
   MESSAGE_SET(MsgLunpaPrepareBecomeMonster);
   MESSAGE_PUT(LOCALID_TOADONPA_DODONPA, 0);
   OBJECT_SPEED(LOCALID_TOADONPA_BOSS, PIXELS(1), PIXELS(1) / 2);
-  OBJECT_SPEED(LOCALID_BLANK_TOADONPA_BOSS_PART, PIXELS(1), PIXELS(1) / 2);
+  OBJECT_SPEED(LOCALID_INVISIBLE_TOADONPA_BOSS_PART, PIXELS(1), PIXELS(1) / 2);
   OBJECT_WALK(LOCALID_TOADONPA_BOSS, 472, 180);
-  OBJECT_WALK(LOCALID_BLANK_TOADONPA_BOSS_PART, 472, 180);
+  OBJECT_WALK(LOCALID_INVISIBLE_TOADONPA_BOSS_PART, 472, 180);
   FieldCamera_FollowObjectEvent(LOCALID_TOADONPA_BOSS, 1);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_TOADONPA_BOSS);
   OBJECT_ANIMATION(LOCALID_TOADONPA_BOSS, 4);
@@ -1837,9 +1868,9 @@ static void LunpaFortress_PositionPartyForMonster(void) {
 static void EventScript_FindHammet(void) {
   s32 messageBase;
 
-  if (GameFlag_Get(FLAG_MAPSEC_TEMP_01) != 0)
+  if (GameFlag_Get(FLAG_LUNPA_FORTRESS_DODONPA_JUDGED) != 0)
     return;
-  GameFlag_Set(FLAG_MAP_TEMP_70);
+  GameFlag_Set(FLAG_LUNPA_FORTRESS_FINDING_HAMMET);
   SCRIPT_START();
   // A retry skips the introduction but repeats Dodonpa's trap and battle.
   if (Script_GetFlag(FLAG_LUNPA_FORTRESS_TRAP_SEEN) != 0) {
@@ -2114,7 +2145,7 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   s32 punishmentMessage;
   s32 donpaMessage;
 
-  GameFlag_Set(FLAG_MAPSEC_TEMP_01);
+  GameFlag_Set(FLAG_LUNPA_FORTRESS_DODONPA_JUDGED);
   GameFlag_Set(FLAG_DODONPA_LOCKED_UP);
   MapGrid_CopyCells(16, 75, 7, 4, 26, 55);
   LunpaFortress_OpenToadonpaDoor(4);
@@ -2133,8 +2164,8 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   OBJECT_DIR(LOCALID_TOADONPA_HAMMET, FACING_NORTHWEST + FACING_STEP, 0);
   OBJECT_POSITION_SET(LOCALID_TOADONPA_BOSS, 448, 237);
   OBJECT_DIR(LOCALID_TOADONPA_BOSS, FACING_WEST, 0);
-  OBJECT_POSITION_SET(LOCALID_BLANK_TOADONPA_BOSS_PART, 448, 238);
-  ObjectMotion_SetActionVariant(LOCALID_BLANK_TOADONPA_BOSS_PART, 3);
+  OBJECT_POSITION_SET(LOCALID_INVISIBLE_TOADONPA_BOSS_PART, 448, 238);
+  ObjectMotion_SetActionVariant(LOCALID_INVISIBLE_TOADONPA_BOSS_PART, 3);
   OBJECT_ANIMATION(LOCALID_TOADONPA_BOSS, 3);
   OBJECT_POSITION_SET(LOCALID_TOADONPA_DODONPA, 458, 243);
   OBJECT_DIR(LOCALID_TOADONPA_DODONPA, FACING_SOUTH, 0);
@@ -2281,12 +2312,13 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   OBJECT_SPEED(LOCALID_IVAN, PIXELS(1) / 10, PIXELS(1) / 20);
   ObjectEvent_SetDestinationOffset(LOCALID_IVAN, -24, 0);
   OBJECT_SPEED(LOCALID_TOADONPA_BOSS, PIXELS(1) / 10, PIXELS(1) / 20);
-  OBJECT_SPEED(LOCALID_BLANK_TOADONPA_BOSS_PART, PIXELS(1) / 10,
+  OBJECT_SPEED(LOCALID_INVISIBLE_TOADONPA_BOSS_PART, PIXELS(1) / 10,
                PIXELS(1) / 20);
   ObjectEvent_SetDestinationOffset(LOCALID_TOADONPA_BOSS, -24, 0);
-  ObjectEvent_SetDestinationOffset(LOCALID_BLANK_TOADONPA_BOSS_PART, -24, 0);
+  ObjectEvent_SetDestinationOffset(LOCALID_INVISIBLE_TOADONPA_BOSS_PART, -24,
+                                   0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  SE(SE_STOP_SLOT3);
+  SE(SE_STOP_ACTION_SE);
   WAIT(60);
   OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   OBJECT_DIR(LOCALID_GARET, FACING_NORTH, 0);
@@ -2777,7 +2809,7 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   FieldScript_FinishScreenTransition();
   WAIT(1);
   WAIT(210);
-  Engine_ScriptRequestWarp(LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_GATES);
+  Import_ScriptRequestWarp(LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_GATES);
   SCRIPT_END();
 }
 
@@ -2875,7 +2907,7 @@ static void EventScript_TalkToAttendant(void) {
     MESSAGE_PUT(LOCALID_UPPER_FLOOR_DODONPAS_WIFE, 0);
     SCRIPT_END();
   } else {
-    if (GameFlag_Get(FLAG_MAPSEC_TEMP_13) != 0) {
+    if (GameFlag_Get(FLAG_LUNPA_FORTRESS_ATTENDANT_TOLD_OF_DONPA) != 0) {
       MESSAGE_SET(MsgLunpaMaybeDodonpasEyes);
       MESSAGE_OPEN(LOCALID_UPPER_FLOOR_ATTENDANT, 0);
       SCRIPT_END();
@@ -2925,7 +2957,7 @@ static void EventScript_TalkToAttendant(void) {
       ObjectMotion_SetAnimationAndWait(LOCALID_UPPER_FLOOR_ATTENDANT, 3);
       MESSAGE_SET(familyMessage + 2);
       MESSAGE_OPEN(LOCALID_UPPER_FLOOR_ATTENDANT, 0);
-      GameFlag_Set(FLAG_MAPSEC_TEMP_13);
+      GameFlag_Set(FLAG_LUNPA_FORTRESS_ATTENDANT_TOLD_OF_DONPA);
       SCRIPT_END();
     }
   }
@@ -2961,7 +2993,7 @@ static void EventScript_TalkToDonpa(void) {
 
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     if (GameFlag_Get(FLAG_LUNPA_FORTRESS_REWARD_TAKEN) == 0 &&
-        Script_GetFlag(FLAG_MAPSEC_TEMP_14) == 0) {
+        Script_GetFlag(FLAG_LUNPA_FORTRESS_REWARD_SHOWN) == 0) {
       rewardMessage = MsgLunpaThankHelpDodonpa;
       MESSAGE_SET(rewardMessage);
       MESSAGE_PUT(LOCALID_UPPER_FLOOR_DONPA, 0);
@@ -3006,7 +3038,7 @@ static void EventScript_TalkToDonpa(void) {
       WAIT(60);
       OBJECT_ANIMATION(LOCALID_UPPER_FLOOR_ATTENDANT, 3);
       WAIT(30);
-      GameFlag_Set(FLAG_MAPSEC_TEMP_14);
+      GameFlag_Set(FLAG_LUNPA_FORTRESS_REWARD_SHOWN);
     } else {
       MESSAGE_SET(MsgLunpaWellWorriedDodonpa);
       MESSAGE_PUT(LOCALID_UPPER_FLOOR_DONPA, 0);
@@ -3062,13 +3094,13 @@ static void EventScript_TalkToStartledOldMan(void) {
   s32 frightMessage;
   s32 purposeMessage;
 
-  if (Script_GetFlag(FLAG_MAP_TEMP_26) != 0) {
+  if (Script_GetFlag(FLAG_LUNPA_FORTRESS_OLD_MAN_PROMISED_SILENCE) != 0) {
     MESSAGE_SET(MsgLunpaWontTellAnyone);
     MESSAGE_PUT(LOCALID_GROUND_FLOOR_STARTLED_OLD_MAN, 0);
   } else {
     SCRIPT_START();
     OBJECT_FACE(LOCALID_GROUND_FLOOR_STARTLED_OLD_MAN, LOCALID_PARTY_LEADER, 0);
-    if (GameFlag_Get(FLAG_MAP_TEMP_27) == 0) {
+    if (GameFlag_Get(FLAG_LUNPA_FORTRESS_OLD_MAN_STARTLED) == 0) {
       ObjectMotion_Launch(LOCALID_GROUND_FLOOR_STARTLED_OLD_MAN, 4, 0);
       ObjectMotion_EnableActionAndResetMotion(
           LOCALID_GROUND_FLOOR_STARTLED_OLD_MAN);
@@ -3095,12 +3127,12 @@ static void EventScript_TalkToStartledOldMan(void) {
     if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
       MESSAGE_SET(purposeMessage + 2);
       MESSAGE_OPEN(LOCALID_GROUND_FLOOR_STARTLED_OLD_MAN, 0);
-      GameFlag_Set(FLAG_MAP_TEMP_26);
+      GameFlag_Set(FLAG_LUNPA_FORTRESS_OLD_MAN_PROMISED_SILENCE);
     } else {
       MESSAGE_SET(purposeMessage + 3);
       MESSAGE_OPEN(LOCALID_GROUND_FLOOR_STARTLED_OLD_MAN, 0);
     }
-    GameFlag_Set(FLAG_MAP_TEMP_27);
+    GameFlag_Set(FLAG_LUNPA_FORTRESS_OLD_MAN_STARTLED);
     SCRIPT_END();
   }
 }
@@ -3110,7 +3142,7 @@ static void EventScript_TalkToStartledOldMan(void) {
 /// instead.
 static void EventScript_ReadStartledResidentsThoughts(void) {
 
-  if (GameFlag_Get(FLAG_MAP_TEMP_26)) {
+  if (GameFlag_Get(FLAG_LUNPA_FORTRESS_OLD_MAN_PROMISED_SILENCE)) {
     MESSAGE_SET(MsgLunpaMaybeMerchantReason);
     MESSAGE_PUT(LOCALID_GROUND_FLOOR_STARTLED_OLD_MAN, 0);
   } else {
@@ -3148,7 +3180,7 @@ static void EventScript_ReadJailedDodonpasThoughts(void) {
 s32 Map_Initialize(void) {
   struct ObjectEvent *mapObjectEvent;
 
-  gLunpaFortressRandomPick = (u32)Engine_RandomNext() * 7 >> 16;
+  gLunpaFortressRandomPick = (u32)Import_RandomNext() * 7 >> 16;
   if (gSaveBlock.mapId == (s32)&MapId_LunpaFortressGroundFloor) {
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     LunpaFortress_InitializeGroundFloor();
@@ -3164,15 +3196,15 @@ s32 Map_Initialize(void) {
     OBJECT_DIR(LOCALID_TOADONPA_HAMMET, FACING_EAST, 0);
     OBJECT_ANIMATION(LOCALID_TOADONPA_HAMMET, 0);
     LunpaFortress_RestoreToadonpaDoors();
-    mapObjectEvent = ObjectEvent_Get(LOCALID_BLANK_TOADONPA_WEST_JAR);
+    mapObjectEvent = ObjectEvent_Get(LOCALID_INVISIBLE_TOADONPA_WEST_JAR);
     if (mapObjectEvent != 0)
       ObjectEvent_SetSpriteFlags(mapObjectEvent, 0);
     mapObjectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-    mapObjectEvent = ObjectEvent_Get(LOCALID_BLANK_TOADONPA_CHEST);
+    mapObjectEvent = ObjectEvent_Get(LOCALID_INVISIBLE_TOADONPA_CHEST);
     if (mapObjectEvent != 0)
       ObjectEvent_SetSpriteFlags(mapObjectEvent, 0);
     mapObjectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-    mapObjectEvent = ObjectEvent_Get(LOCALID_BLANK_TOADONPA_EAST_JAR);
+    mapObjectEvent = ObjectEvent_Get(LOCALID_INVISIBLE_TOADONPA_EAST_JAR);
     if (mapObjectEvent != 0)
       ObjectEvent_SetSpriteFlags(mapObjectEvent, 0);
     mapObjectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -3190,12 +3222,12 @@ s32 Map_Initialize(void) {
         OBJECT_DIR(LOCALID_TOADONPA_CELL_GUARD, FACING_SOUTH + FACING_STEP, 0);
         OBJECT_POSITION_SET(LOCALID_TOADONPA_DODONPA, 456, 288);
         OBJECT_DIR(LOCALID_TOADONPA_DODONPA, FACING_SOUTH + FACING_STEP, 0);
-        OBJECT_POSITION_SET(LOCALID_BLANK_TOADONPA_DODONPA, 456, 320);
+        OBJECT_POSITION_SET(LOCALID_INVISIBLE_TOADONPA_DODONPA, 456, 320);
         ObjectEvent_SetSpriteFlags(
-            ObjectEvent_Get(LOCALID_BLANK_TOADONPA_DODONPA), 0);
+            ObjectEvent_Get(LOCALID_INVISIBLE_TOADONPA_DODONPA), 0);
       }
     }
-    mapObjectEvent = ObjectEvent_Get(LOCALID_BLANK_TOADONPA_BOSS_PART);
+    mapObjectEvent = ObjectEvent_Get(LOCALID_INVISIBLE_TOADONPA_BOSS_PART);
     if (mapObjectEvent != 0)
       ObjectEvent_SetSpriteFlags(mapObjectEvent, 0);
     mapObjectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -3257,11 +3289,11 @@ static void LunpaFortress_InitializeGroundFloor(void) {
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     break;
   }
-  ObjectGroup_ConfigureChildValue(LOCALID_GROUND_FLOOR_PATROL_GUARD, 1);
-  ObjectGroup_ConfigureChildValue(LOCALID_GROUND_FLOOR_UPPER_HALL_GUARD, 1);
-  ObjectGroup_ConfigureChildValue(LOCALID_GROUND_FLOOR_SECOND_SENTRY, 1);
-  ObjectGroup_ConfigureChildValue(LOCALID_GROUND_FLOOR_ENTRANCE_GUARD, 1);
-  ObjectGroup_ConfigureChildValue(LOCALID_GROUND_FLOOR_FIRST_SENTRY, 1);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_GROUND_FLOOR_PATROL_GUARD, 1);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_GROUND_FLOOR_UPPER_HALL_GUARD, 1);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_GROUND_FLOOR_SECOND_SENTRY, 1);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_GROUND_FLOOR_ENTRANCE_GUARD, 1);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_GROUND_FLOOR_FIRST_SENTRY, 1);
   WaitFrames(1);
 }
 
@@ -3272,9 +3304,9 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   struct ObjectEvent *keyObjectEvent;
 
   LunpaFortress_RestoreUpperFloorDoors();
-  ObjectGroup_ConfigureChildValue(LOCALID_UPPER_FLOOR_FIRST_PATROL, 1);
-  ObjectGroup_ConfigureChildValue(LOCALID_UPPER_FLOOR_SECOND_PATROL, 1);
-  ObjectGroup_ConfigureChildValue(LOCALID_UPPER_FLOOR_HALL_PATROL, 1);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_UPPER_FLOOR_FIRST_PATROL, 1);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_UPPER_FLOOR_SECOND_PATROL, 1);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_UPPER_FLOOR_HALL_PATROL, 1);
   if (GameFlag_Get(FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN)) {
     OBJECT_POSITION_SET(LOCALID_UPPER_FLOOR_WEST_GUARD, 0, 0);
   }
@@ -3309,7 +3341,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     MapGrid_SetShownLayers(LUNPA_FORTRESS_ROOM_LAYERS);
     ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_UPPER_FLOOR_DONPA), 0);
-    if (GameFlag_Get(FLAG_MAPSEC_TEMP_14)) {
+    if (GameFlag_Get(FLAG_LUNPA_FORTRESS_REWARD_SHOWN)) {
       OBJECT_POSITION_SET(LOCALID_UPPER_FLOOR_ATTENDANT, 872, 120);
     }
     break;
@@ -3366,11 +3398,11 @@ static void LunpaFortress_InitializeCave(void) {
   if (GameFlag_Get(FLAG_LUNPA_FORTRESS_CRATES_MOVED)) {
     LunpaFortress_RestoreLoweredCrates();
   }
-  Script_SetFlag(FLAG_MAP_TEMP_17);
-  Script_SetFlag(FLAG_MAP_TEMP_18);
+  Script_SetFlag(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNDER_IVY);
+  Script_SetFlag(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNDER_IVY);
   if (GameFlag_Get(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_IVY_BLOWN_AWAY)) {
     OBJECT_POSITION_SET(LOCALID_CAVE_FIRST_SWITCH_IVY, 0, 0);
-    GameFlag_Clear(FLAG_MAP_TEMP_17);
+    GameFlag_Clear(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNDER_IVY);
   }
   if (GameFlag_Get(FLAG_LUNPA_FORTRESS_PASSAGE_IVY_BLOWN_AWAY)) {
     OBJECT_POSITION_SET(LOCALID_CAVE_PASSAGE_IVY, 0, 0);
@@ -3378,7 +3410,7 @@ static void LunpaFortress_InitializeCave(void) {
   }
   if (GameFlag_Get(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_IVY_BLOWN_AWAY)) {
     OBJECT_POSITION_SET(LOCALID_CAVE_SECOND_SWITCH_IVY, 0, 0);
-    GameFlag_Clear(FLAG_MAP_TEMP_18);
+    GameFlag_Clear(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNDER_IVY);
   }
   if (GameFlag_Get(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED)) {
     LunpaFortress_OpenFirstSwitchPassage();
@@ -3399,7 +3431,7 @@ static void LunpaFortress_InitializeCave(void) {
   if (mapObjectEvent != 0) {
     mapObjectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
-  mapObjectEvent = ObjectEvent_Get(LOCALID_BLANK_CAVE_JAR);
+  mapObjectEvent = ObjectEvent_Get(LOCALID_INVISIBLE_CAVE_JAR);
   if (mapObjectEvent != 0) {
     ObjectEvent_SetSpriteFlags(mapObjectEvent, 0);
   }
@@ -3408,7 +3440,7 @@ static void LunpaFortress_InitializeCave(void) {
   if (mapObjectEvent != 0) {
     mapObjectEvent->collisionFlags |= OBJ_EVENT_NEAR_PSYNERGY;
   }
-  ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_BLANK_CAVE_JAR), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_INVISIBLE_CAVE_JAR), 0);
   SCRIPT_END();
   MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
 }
@@ -3934,8 +3966,8 @@ struct MapEvent gLunpaFortressGroundFloorEvents[] = {
     { COORD_EVENT_FACING(FACING_SOUTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 1, GROUND_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(EventScript_UnlockGroundFloorDoor) },
     { COORD_EVENT_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 2, GROUND_FLOOR_DOOR_FLAG + 2, EVENT_SCRIPT(EventScript_UnlockGroundFloorDoor) },
     { COORD_EVENT_FACING(FACING_SOUTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 2, GROUND_FLOOR_DOOR_FLAG + 2, EVENT_SCRIPT(EventScript_UnlockGroundFloorDoor) },
-    { MAP_EVENT_COORD, 50, FLAG_MAP_TEMP_24, EVENT_SCRIPT(EventScript_EntranceGuardThrowsPartyOut) },
-    { MAP_EVENT_COORD, 51, FLAG_MAP_TEMP_25, EVENT_SCRIPT(EventScript_SentriesThrowPartyOut) },
+    { MAP_EVENT_COORD, 50, FLAG_LUNPA_FORTRESS_ENTRANCE_GUARD_CAUGHT_PARTY, EVENT_SCRIPT(EventScript_EntranceGuardThrowsPartyOut) },
+    { MAP_EVENT_COORD, 51, FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY, EVENT_SCRIPT(EventScript_SentriesThrowPartyOut) },
     { MAP_EVENT_TALK, LOCALID_GROUND_FLOOR_MAN_WONDERING_ABOUT_DONPA, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpaResting) },
     { MAP_EVENT_TALK, LOCALID_GROUND_FLOOR_WOMAN_SEEKING_DODONPA, CONDITION_ALWAYS, MSGNO(MsgLunpaWhereIsDodonpa) },
     { MAP_EVENT_TALK, LOCALID_GROUND_FLOOR_FEASTING_MAN, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetBuysDrink) },
@@ -4038,8 +4070,8 @@ struct MapEvent gLunpaFortressCaveEvents[] = {
     { COORD_EVENT_FACING(FACING_SOUTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 2, CAVE_DOOR_FLAG + 2, EVENT_SCRIPT(EventScript_UnlockCaveDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 50, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CratesSink) },
     { COORD_EVENT_WALKING, 70, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushCrates) },
-    { BG_EVENT(BG_EVENT_SILENT), 51, FLAG_MAP_TEMP_18, EVENT_SCRIPT(EventScript_FlipSecondSwitch) },
-    { BG_EVENT(BG_EVENT_SILENT), 52, FLAG_MAP_TEMP_17, EVENT_SCRIPT(EventScript_FlipFirstSwitch) },
+    { BG_EVENT(BG_EVENT_SILENT), 51, FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNDER_IVY, EVENT_SCRIPT(EventScript_FlipSecondSwitch) },
+    { BG_EVENT(BG_EVENT_SILENT), 52, FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNDER_IVY, EVENT_SCRIPT(EventScript_FlipFirstSwitch) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealSwitches) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HideSwitches) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_CAVE_FIRST_SWITCH_IVY, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_BlowAwayFirstSwitchIvy) },
@@ -4059,7 +4091,7 @@ struct MapEvent gLunpaFortressEventsOther[] = {
     { COORD_EVENT_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 2, TOADONPA_DOOR_FLAG + 2, EVENT_SCRIPT(EventScript_UnlockToadonpaDoor) },
     { COORD_EVENT_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 3, TOADONPA_DOOR_FLAG + 3, EVENT_SCRIPT(EventScript_UnlockToadonpaDoor) },
     { COORD_EVENT_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 4, TOADONPA_DOOR_FLAG + 4, EVENT_SCRIPT(EventScript_UnlockToadonpaDoor) },
-    { MAP_EVENT_COORD, 20, FLAG_MAP_TEMP_70, EVENT_SCRIPT(EventScript_FindHammet) },
+    { MAP_EVENT_COORD, 20, FLAG_LUNPA_FORTRESS_FINDING_HAMMET, EVENT_SCRIPT(EventScript_FindHammet) },
     { MAP_EVENT_TALK, LOCALID_TOADONPA_CELL_GUARD, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetStillInside) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOADONPA_CELL_GUARD, CONDITION_ALWAYS, MSGNO(MsgLunpaDodonpaSecretlyInside) },
     // XXX: these two rows give LOCALID_TOADONPA_HAMMET Dodonpa's lines from his cell,
@@ -4067,8 +4099,8 @@ struct MapEvent gLunpaFortressEventsOther[] = {
     // the party can reach them is not known.
     { MAP_EVENT_TALK, LOCALID_TOADONPA_HAMMET, CONDITION_ALWAYS, MSGNO(MsgLunpaWrongTurnOver) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOADONPA_HAMMET, CONDITION_ALWAYS, MSGNO(MsgLunpaCantBelieveWhen) },
-    { MAP_EVENT_TALK, LOCALID_BLANK_TOADONPA_DODONPA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToJailedDodonpa) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_BLANK_TOADONPA_DODONPA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadJailedDodonpasThoughts) },
+    { MAP_EVENT_TALK, LOCALID_INVISIBLE_TOADONPA_DODONPA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToJailedDodonpa) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_INVISIBLE_TOADONPA_DODONPA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadJailedDodonpasThoughts) },
     { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_LUNPA_FORTRESS_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
     { MAP_EVENTS_END },
 };

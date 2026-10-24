@@ -40,7 +40,7 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
 s32 BattleCommandRow_Run(s32 mode) {
   u8 party[4];
   struct WindowWork *work;
-  struct SelectionWork *selectionUi;
+  struct BattleCommandRowWork *selectionUi;
   struct BattleMenuWork *navigation;
   s32 stripDirty, tradeCount, pulseScale, command;
   s32 entryIndex;
@@ -120,7 +120,7 @@ s32 BattleCommandRow_Run(s32 mode) {
   // BG1 shows the icons: behind the other layers above line 136, in front
   // from there down (Graphics_SetBg1Priority3).
   Task_Add(Graphics_SetBg1Priority3, 0x480);
-  Runtime_SetIrqHandler(2, 136, Graphics_SetBg1Priority0);
+  Irq_SetHandler(2, 136, Graphics_SetBg1Priority0);
 
   for (;;) {
     // 304 to 336 in 8.8 (1.19 to 1.31 times), over 16 frames.
@@ -233,7 +233,7 @@ s32 BattleCommandRow_Run(s32 mode) {
     // Only the selected icon is drawn as a sprite: double-size affine (mode
     // 3), on layer 0xf1, moved with the pulse. The others are BG1 tiles.
     for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++) {
-      struct SelectionEntry *entry = &selectionUi->entries[entryIndex];
+      struct BattleCommandRowIcon *entry = &selectionUi->entries[entryIndex];
       if (entryIndex == selectionUi->selectedIndex) {
         entry->sprite.oam.f.affineIndex = selectionUi->affineIndex;
         entry->sprite.oam.f.affine = 3;
@@ -358,7 +358,7 @@ s32 BattleCommandRow_Run(s32 mode) {
   work->dirty = 1;
   WaitFrames(1);
   Task_Remove(Graphics_SetBg1Priority3);
-  Runtime_SetIrqHandler(2, 0, 0);
+  Irq_SetHandler(2, 0, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON,

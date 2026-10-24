@@ -3,20 +3,20 @@
 /// places in one map (MapId_Sanctum): the warp destination the party arrives at
 /// decides which, and Sanctum_GetObjectEventTemplates and Sanctum_GetEvents
 /// choose that place's tables by it. Spoken to from the front, each place's
-/// healer opens the Sanctum's services (Sanctum_Run); from any other
-/// side the healer talks. Each place's door leads back out to its own town.
+/// healer opens the Sanctum's services (Sanctum_Run); from any other side the
+/// healer talks. Each place's door leads back out to its own town.
 ///
 /// - Vale Sanctum (SANCTUM_FROM_VALE, SANCTUM_FROM_VALE_ERUPTION,
 ///   SANCTUM_VALE_UNUSED and SANCTUM_FROM_QUEST_RESTART), the Great Healer's,
-///   entered from Vale at
-///   SANCTUM_FROM_VALE. Before the trip up Mt. Aleph, the Great Healer and two
-///   other healers (LOCALID_WEST_HEALER and LOCALID_EAST_HEALER) speak of
-///   Psynergy. After the eruption the Great Healer brings Isaac and Garet in
-///   from Vale (vale_eruption.c) to SANCTUM_FROM_VALE_ERUPTION, where Dora, the
-///   Mayor and the healers hear what happened on the mountain, acted out in
-///   sepia (Sanctum_ReenactSolSanctum): the palette fade turns every
-///   background and sprite palette to PALETTE_TINT_SEPIA for the account
-///   and fades back to PALETTE_TINT_NONE over 60 frames after it
+///   entered from Vale at SANCTUM_FROM_VALE. Before the trip up Mt. Aleph, the
+///   Great Healer and two other healers (LOCALID_WEST_HEALER and
+///   LOCALID_EAST_HEALER) speak of Psynergy. After the eruption the Great
+///   Healer brings Isaac and Garet in from Vale (vale_eruption.c) to
+///   SANCTUM_FROM_VALE_ERUPTION, where Dora, the Mayor and the healers hear
+///   what happened on the mountain, acted out in sepia
+///   (Sanctum_ReenactSolSanctum): the palette fade turns every background and
+///   sprite palette to PALETTE_TINT_SEPIA for the account and fades back to
+///   PALETTE_TINT_NONE over 60 frames after it
 ///   (https://alchemy.pascalpixel.com/places/sanctum/account-sepia.gif: the
 ///   account's first ten seconds and its last five, beside the 16 background
 ///   and 16 sprite palettes). The Great Healer asks Isaac to take on the Wise
@@ -26,16 +26,16 @@
 ///   while effects circle him (Sanctum_SpawnOrbitingEffect)
 ///   (https://alchemy.pascalpixel.com/places/sanctum/healer-afterimages.gif:
 ///   the screen, the healer boxed, beside the sprites and the sprites without
-///   the afterimage). Accepting plays
-///   Sanctum_ReceiveWiseOnesMission and sets FLAG_SANCTUM_QUEST_ACCEPTED, and
-///   SANCTUM_TO_VALE_GATE takes the two to MapId_ValeGate (vale_gate.c).
-///   Refusing leaves the room to gSanctum_QuestEvents: the Great Healer asks
-///   again when spoken to (EventScript_ReconsiderQuest), the door draws a
-///   warning (FLAG_MAP_TEMP_00), and leaving anyway ends the game
+///   the afterimage). Accepting plays Sanctum_ReceiveWiseOnesMission and sets
+///   FLAG_SANCTUM_QUEST_ACCEPTED, and SANCTUM_TO_VALE_PLAZA takes the two to
+///   MapId_ValePlaza (vale_plaza.c). Refusing leaves the room to
+///   gSanctum_QuestEvents: the Great Healer asks again when spoken to
+///   (EventScript_ReconsiderQuest), the door draws a warning
+///   (FLAG_SANCTUM_WARNED_BEFORE_LEAVING), and leaving anyway ends the game
 ///   (EventScript_LeaveAfterRefusing): `And so the world began drifting toward
 ///   its fated destruction...` From there the player can start again from the
 ///   Great Healer, by SANCTUM_TO_QUEST_RESTART to SANCTUM_FROM_QUEST_RESTART,
-///   which skips the account (FLAG_MAP_TEMP_01), or leave by
+///   which skips the account (FLAG_SANCTUM_QUEST_RESTARTED), or leave by
 ///   SANCTUM_TO_MAIN_MENU to MapId_MainMenu. After the party has left Vale
 ///   (FLAG_VALE_PARTY_LEFT), and again after it has reached Kalay
 ///   (FLAG_KALAY_REACHED), the three talk of what the eruption and the Wise One
@@ -105,6 +105,13 @@
 #include "songs.h"
 #include "audio_engine_symbols.h"
 
+/// After the quest is refused, the Great Healer has warned that stepping
+/// outside the village is final.
+#define FLAG_SANCTUM_WARNED_BEFORE_LEAVING FLAG_MAP_TEMP_00
+/// The party is starting again from the Great Healer after refusing the quest,
+/// so the account of Sol Sanctum is skipped.
+#define FLAG_SANCTUM_QUEST_RESTARTED FLAG_MAP_TEMP_01
+
 // Map flags, in Vale Sanctum: 00 is set once the Great Healer has
 // warned Isaac that leaving the village cannot be undone; 01 marks the visit
 // after a refusal (SANCTUM_FROM_QUEST_RESTART), which skips the account of Sol
@@ -125,7 +132,7 @@ enum SanctumLocalId {
   // quest).
   /// The western of Vale Sanctum's two other healers, men with long brown hair
   /// and beards in long robes, as Mind Read hears a villager in
-  /// vale_interiors_shops.c call the Sanctum's people: "The healers
+  /// vale_shops.c call the Sanctum's people: "The healers
   /// are supposed to guard Sol Sanctum." Before the quest: "Our Psynergy was
   /// given to us by the sacred power of Mt. Aleph."
   /// ★ Named from the game: "The healers are supposed to guard"
@@ -175,7 +182,8 @@ static void Sanctum_RequestQuestAcceptance(void);
 static void Sanctum_ReceiveWiseOnesMission(void);
 static void Sanctum_ShowHealerAfterimage(void);
 static void Sanctum_HideHealerAfterimage(void);
-static void Sanctum_UpdateHealerAfterimage(union FieldObject *fieldObject);
+static void
+Sanctum_UpdateHealerAfterimage(union ObjectEventOrEffect *fieldObject);
 static void Sanctum_SpawnOrbitingEffect(s32 localId, s32 angleStep);
 static s32 Sanctum_ChooseRestartOption(void);
 static void Sanctum_ReenactSolSanctum(void);
@@ -188,10 +196,11 @@ static void Sanctum_RestoreQuestFloor(void);
 #ifdef UBFIX
 /// Faces the object event whose ID this callback stores in the timer field.
 static void
-Sanctum_FaceObjectEventNamedByTimer(union FieldObject *fieldObject) {
+Sanctum_FaceObjectEventNamedByTimer(union ObjectEventOrEffect *fieldObject) {
 #else
 /// Faces the object event whose ID this callback stores in the timer field.
-static s32 Sanctum_FaceObjectEventNamedByTimer(union FieldObject *fieldObject) {
+static s32
+Sanctum_FaceObjectEventNamedByTimer(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *target;
@@ -302,7 +311,7 @@ static void EventScript_TalkAboutGoldenStatue(void) {
     FieldScript_SetMessageId(MsgSanctumPolishedGoldStatueReturnedUs);
   }
 
-  Engine_ObjectEventSetAnimation(LOCALID_SANCTUM_MEMBER, 1);
+  Import_ObjectEventSetAnimation(LOCALID_SANCTUM_MEMBER, 1);
   ObjectEvent_LinkPair(LOCALID_SANCTUM_MEMBER, LOCALID_PARTY_LEADER, 0);
   FieldScript_WaitFrames(2);
   FieldScript_ShowMessageAndWait(LOCALID_SANCTUM_MEMBER, 0);
@@ -327,7 +336,7 @@ static void EventScript_ReadMindAboutGoldenStatue(void) {
   }
 
   ObjectMotion_EnableActionAndResetMotion(LOCALID_SANCTUM_MEMBER);
-  Engine_ObjectEventSetAnimation(LOCALID_SANCTUM_MEMBER, 1);
+  Import_ObjectEventSetAnimation(LOCALID_SANCTUM_MEMBER, 1);
   FieldScript_WaitFrames(2);
   FieldScript_ShowMessageAndWait(LOCALID_SANCTUM_MEMBER, 0);
   ObjectEvent_SetBuiltinAction(LOCALID_SANCTUM_MEMBER, 2);
@@ -389,7 +398,7 @@ static void EventScript_ReconsiderQuest(void) {
         Sound_PlaySong(MUS_086);
         Sound_WaitForSong();
         GameFlag_Set(FLAG_SANCTUM_QUEST_ACCEPTED);
-        Engine_ScriptRequestWarp(SANCTUM_TO_VALE_GATE);
+        Import_ScriptRequestWarp(SANCTUM_TO_VALE_PLAZA);
       }
     }
   }
@@ -447,9 +456,9 @@ static void EventScript_AskAboutPsynergyChanges(void) {
 /// Sets up the place for its warp destination and plays its opening scene.
 /// Vault Sanctum places LOCALID_GOLD_STATUE once the thieves are jailed; Vale
 /// Sanctum's quest visits (SANCTUM_FROM_VALE_ERUPTION, and
-/// SANCTUM_FROM_QUEST_RESTART after a refusal, which sets FLAG_MAP_TEMP_01)
-/// restore the floor and play the request, unless the party is returning after
-/// a battle.
+/// SANCTUM_FROM_QUEST_RESTART after a refusal, which sets
+/// FLAG_SANCTUM_QUEST_RESTARTED) restore the floor and play the request, unless
+/// the party is returning after a battle.
 s32 Sanctum_Initialize(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -478,7 +487,7 @@ s32 Sanctum_Initialize(void) {
     break;
   case SANCTUM_FROM_QUEST_RESTART:
     Sanctum_RestoreQuestFloor();
-    GameFlag_Set(FLAG_MAP_TEMP_01);
+    GameFlag_Set(FLAG_SANCTUM_QUEST_RESTARTED);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       Sanctum_RequestQuestAcceptance();
     }
@@ -489,9 +498,9 @@ s32 Sanctum_Initialize(void) {
 }
 
 /// Vale Sanctum: heading for the door after refusing the quest (metatile
-/// behavior 2, until FLAG_MAP_TEMP_00 is set, which it sets). The Great Healer
-/// warns that the choice is final: "Once you step outside the village, you
-/// cannot take back your decision."
+/// behavior 2, until FLAG_SANCTUM_WARNED_BEFORE_LEAVING is set, which it sets).
+/// The Great Healer warns that the choice is final: "Once you step outside the
+/// village, you cannot take back your decision."
 static void EventScript_WarnBeforeLeaving(void) {
   FieldScript_Start();
   FieldCamera_SetSpeedParameters(PIXELS(1), PIXELS(1) / 8);
@@ -504,7 +513,7 @@ static void EventScript_WarnBeforeLeaving(void) {
   FieldScript_WaitFrames(20);
   FieldScript_SetMessageId(MsgSanctumOnceStepOutsideVillageCannot);
   FieldScript_ShowMessageAndWait(LOCALID_HEALER, 0);
-  GameFlag_Set(FLAG_MAP_TEMP_00);
+  GameFlag_Set(FLAG_SANCTUM_WARNED_BEFORE_LEAVING);
   FieldScript_End();
 }
 
@@ -517,13 +526,13 @@ static void EventScript_LeaveAfterRefusing(void) {
   struct PaletteFade *paletteWork;
 
   FieldScript_Start();
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_HEALER, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_EAST_HEALER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, 0);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, 0);
+  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_EAST_HEALER, 0);
   PaletteFade_SetTarget(PALETTE_TINT_SEPIA, PALETTES_ALL);
   PaletteFade_StartInterpolation(120);
   FieldScript_WaitFrames(180);
@@ -546,10 +555,10 @@ static void EventScript_LeaveAfterRefusing(void) {
   FieldScript_WaitFrames(60);
   if (Sanctum_ChooseRestartOption() == 0) {
     FieldScript_End();
-    Engine_ScriptRequestWarp(SANCTUM_TO_QUEST_RESTART);
+    Import_ScriptRequestWarp(SANCTUM_TO_QUEST_RESTART);
   } else {
     FieldScript_End();
-    Engine_ScriptRequestWarp(SANCTUM_TO_MAIN_MENU);
+    Import_ScriptRequestWarp(SANCTUM_TO_MAIN_MENU);
   }
 }
 
@@ -557,10 +566,11 @@ static void EventScript_LeaveAfterRefusing(void) {
 // Plain void changes 66 to 64 bytes in tbs-en.
 #ifdef UBFIX
 /// Keeps this object event at the party leader's drawing priority.
-static void Sanctum_MatchLeaderPriority(union FieldObject *fieldObject) {
+static void
+Sanctum_MatchLeaderPriority(union ObjectEventOrEffect *fieldObject) {
 #else
 /// Keeps this object event at the party leader's drawing priority.
-static s32 Sanctum_MatchLeaderPriority(union FieldObject *fieldObject) {
+static s32 Sanctum_MatchLeaderPriority(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   objectEvent->sprite->image.priority =
@@ -577,11 +587,11 @@ static s32 Sanctum_MatchLeaderPriority(union FieldObject *fieldObject) {
 /// Has Isaac, Garet, Dora, the Mayor and the two healers nod, waiting for the
 /// last of them.
 static inline void Sanctum_NodAll(void) {
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, 3);
-  Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
-  Engine_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, 3);
+  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
+  Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
   ObjectMotion_SetAnimationAndWait(LOCALID_EAST_HEALER, 3);
 }
 
@@ -611,13 +621,13 @@ static inline void Sanctum_ShowAllEmotes(void) {
 /// Great Healer explains the Wise One's warning, and asks Isaac to accept
 /// responsibility for the fate of the land. Accepting plays
 /// Sanctum_ReceiveWiseOnesMission, sets FLAG_SANCTUM_QUEST_ACCEPTED and takes
-/// SANCTUM_TO_VALE_GATE; refusing leaves the room to gSanctum_QuestEvents.
+/// SANCTUM_TO_VALE_PLAZA; refusing leaves the room to gSanctum_QuestEvents.
 static void Sanctum_RequestQuestAcceptance(void) {
   u32 effectIndex;
 
   FieldScript_Start();
   // A repeat visit skips the account of Sol Sanctum.
-  if (GameFlag_Get(FLAG_MAP_TEMP_01) != 0) {
+  if (GameFlag_Get(FLAG_SANCTUM_QUEST_RESTARTED) != 0) {
     ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_HEALER, 0);
     ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
     ObjectEvent_FaceObjectEvent(LOCALID_DORA, LOCALID_PARTY_LEADER, 0);
@@ -647,8 +657,8 @@ static void Sanctum_RequestQuestAcceptance(void) {
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_StartInterpolation(60);
     FieldScript_WaitFrames(100);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
     FieldScript_WaitFrames(30);
     ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER,
                                 LOCALID_GARETS_GRANDFATHER, 0);
@@ -670,7 +680,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     FieldScript_SetMessageId(MsgSanctumWeHadIdeaTrueSanctum);
     Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
     FieldScript_WaitFrames(10);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
     FieldScript_WaitFrames(30);
     ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, 3);
@@ -716,11 +726,11 @@ static void Sanctum_RequestQuestAcceptance(void) {
       Script_ShowMessage(LOCALID_WEST_HEALER, 0);
     }
     FieldScript_WaitFrames(20);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_DORA, 3);
-    Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
-    Engine_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_DORA, 3);
+    Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
+    Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
     ObjectMotion_SetAnimationAndWait(LOCALID_EAST_HEALER, 3);
     FieldScript_WaitFrames(30);
     ObjectEvent_ShowEmote(LOCALID_GARETS_GRANDFATHER,
@@ -840,8 +850,8 @@ static void Sanctum_RequestQuestAcceptance(void) {
     FieldScript_WaitFrames(20);
     FieldScript_WaitFrames(40);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
-    Engine_ObjectEventSetAnimation(LOCALID_HEALER, 0);
-    ObjectEvent_SetChildValue(LOCALID_HEALER, 0x100);
+    Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);
+    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, 0x100);
     Sanctum_ShowHealerAfterimage();
     Script_PlaySong(SE_196);
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
@@ -858,11 +868,11 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
     FieldScript_WaitFrames(96);
     FieldScript_WaitFrames(32);
-    ObjectEvent_SetChildValue(LOCALID_HEALER, 0);
+    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, 0);
     FieldScript_WaitFrames(30);
     // Return to the gathering and finish the departure conversation.
     Sanctum_HideHealerAfterimage();
-    Engine_ObjectEventSetAnimation(LOCALID_HEALER, 1);
+    Import_ObjectEventSetAnimation(LOCALID_HEALER, 1);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
     FieldScript_WaitFrames(20);
     Script_ShowMessage(LOCALID_HEALER, 0);
@@ -896,26 +906,26 @@ static void Sanctum_RequestQuestAcceptance(void) {
     FieldScript_WaitFrames(30);
     ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
     FieldScript_WaitFrames(20);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
     ObjectEvent_LinkPair(LOCALID_WEST_HEALER, LOCALID_EAST_HEALER, 0);
     FieldScript_WaitFrames(20);
-    Engine_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
-    Engine_ObjectEventSetAnimation(LOCALID_EAST_HEALER, 3);
+    Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
+    Import_ObjectEventSetAnimation(LOCALID_EAST_HEALER, 3);
     ObjectMotion_WaitForAnimationChange(LOCALID_EAST_HEALER);
     FieldScript_WaitFrames(30);
     ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
     ObjectEvent_LinkPair(LOCALID_GARET, LOCALID_GARETS_GRANDFATHER, 0);
     FieldScript_WaitFrames(20);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_DORA, 3);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_DORA, 3);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
     ObjectMotion_WaitForAnimationChange(LOCALID_GARETS_GRANDFATHER);
     FieldScript_WaitFrames(60);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
-    Engine_ObjectEventSetAnimation(LOCALID_HEALER, 0);
-    ObjectEvent_SetChildValue(LOCALID_HEALER, 0x100);
+    Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);
+    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, 0x100);
     Sanctum_ShowHealerAfterimage();
     Script_PlaySong(SE_196);
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
@@ -943,10 +953,10 @@ static void Sanctum_RequestQuestAcceptance(void) {
     FieldScript_WaitFrames(32);
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
     FieldScript_WaitFrames(128);
-    ObjectEvent_SetChildValue(LOCALID_HEALER, 0);
+    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, 0);
     FieldScript_WaitFrames(30);
     Sanctum_HideHealerAfterimage();
-    Engine_ObjectEventSetAnimation(LOCALID_HEALER, 1);
+    Import_ObjectEventSetAnimation(LOCALID_HEALER, 1);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
     FieldScript_WaitFrames(30);
     ObjectEvent_ShowEmote(LOCALID_GARETS_GRANDFATHER,
@@ -1000,12 +1010,12 @@ static void Sanctum_RequestQuestAcceptance(void) {
     FieldScript_WaitFrames(20);
     Script_ShowMessage(LOCALID_HEALER, 0);
     FieldScript_WaitFrames(20);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_DORA, 3);
-    Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
-    Engine_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
-    Engine_ObjectEventSetAnimation(LOCALID_EAST_HEALER, 3);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_DORA, 3);
+    Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
+    Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
+    Import_ObjectEventSetAnimation(LOCALID_EAST_HEALER, 3);
     ObjectMotion_WaitForAnimationChange(LOCALID_EAST_HEALER);
     FieldScript_WaitFrames(20);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDFATHER, 1);
@@ -1170,7 +1180,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Script_PlaySong(MUS_086);
     Sound_WaitForSong();
     GameFlag_Set(FLAG_SANCTUM_QUEST_ACCEPTED);
-    Engine_ScriptRequestWarp(SANCTUM_TO_VALE_GATE);
+    Import_ScriptRequestWarp(SANCTUM_TO_VALE_PLAZA);
   } else {
     FieldScript_WaitFrames(30);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDFATHER, 1);
@@ -1185,7 +1195,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
         Sanctum_MatchLeaderPriority;
 #else
     ObjectEvent_GetById(LOCALID_EAST_HEALER)->update =
-        (void (*)(union FieldObject *))Sanctum_MatchLeaderPriority;
+        (void (*)(union ObjectEventOrEffect *))Sanctum_MatchLeaderPriority;
 #endif
   }
   FieldScript_End();
@@ -1220,12 +1230,12 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   ObjectEvent_FaceObjectEvent(LOCALID_EAST_HEALER, LOCALID_PARTY_LEADER, 0);
   ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_DORA, 3);
   FieldScript_WaitFrames(60);
-  Engine_ObjectEventSetAnimation(LOCALID_HEALER, 3);
-  Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
-  Engine_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
+  Import_ObjectEventSetAnimation(LOCALID_HEALER, 3);
+  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
+  Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
   ObjectMotion_SetAnimationAndWait(LOCALID_EAST_HEALER, 3);
   FieldScript_WaitFrames(50);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_HEALER, 0);
@@ -1277,10 +1287,10 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   ObjectEvent_SetPosition(LOCALID_WISE_ONE, PIXELS(200), PIXELS(8));
   ObjectEvent_SetSpeed(LOCALID_WISE_ONE, PIXELS(2) / 5, PIXELS(1) / 5);
   ObjectEvent_MoveToAndWait(LOCALID_WISE_ONE, 200, 72);
-  Script_PlaySong(SE_STOP_SLOT3);
+  Script_PlaySong(SE_STOP_ACTION_SE);
   FieldScript_WaitFrames(30);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
-  Engine_ObjectEventSetAnimation(LOCALID_HEALER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);
   Sanctum_ShowHealerAfterimage();
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_WISE_ONE, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_WISE_ONE, 0);
@@ -1300,7 +1310,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   FieldScript_WaitFrames(40);
   Script_ShowMessage(LOCALID_WISE_ONE, 0);
   FieldScript_WaitFrames(60);
-  ObjectGroup_ConfigureChildValue(LOCALID_WISE_ONE, 0x100);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_WISE_ONE, 0x100);
   Script_PlaySong(SONG_FADE_OUT_BGM);
   Script_PlaySong(SE_308);
   // Shrink the Wise One amid sparks before restoring the room.
@@ -1312,8 +1322,8 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
     wiseOne = ObjectEvent_GetById(LOCALID_WISE_ONE);
     wiseOne->scaleY += -Q16_ONE / 100;
   }
-  Script_PlaySong(SE_STOP_SLOT3);
-  ObjectEvent_SetChildValue(LOCALID_WISE_ONE, 0);
+  Script_PlaySong(SE_STOP_ACTION_SE);
+  ObjectEvent_SetSpriteColorById(LOCALID_WISE_ONE, 0);
   ObjectEvent_SetPosition(LOCALID_WISE_ONE, 0, 0);
   FieldScript_WaitFrames(40);
   FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
@@ -1322,7 +1332,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   PaletteFade_StartInterpolation(60);
   FieldScript_WaitFrames(120);
   Sanctum_HideHealerAfterimage();
-  Engine_ObjectEventSetAnimation(LOCALID_HEALER, 1);
+  Import_ObjectEventSetAnimation(LOCALID_HEALER, 1);
   Script_PlaySong(MUS_002);
   FieldScript_WaitFrames(60);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
@@ -1347,7 +1357,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 3);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceObjectEvent(LOCALID_HEALER, LOCALID_PARTY_LEADER, 0);
@@ -1515,7 +1525,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_EAST_HEALER, 0);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
+  Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
   ObjectMotion_SetAnimationAndWait(LOCALID_EAST_HEALER, 3);
   FieldScript_WaitFrames(20);
   ObjectEvent_WalkTo(LOCALID_WEST_HEALER, 200, 0x110);
@@ -1534,7 +1544,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(30);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_DORA, 0);
@@ -1584,9 +1594,9 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
   FieldScript_WaitFrames(30);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, 3);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, 3);
   FieldScript_WaitFrames(30);
-  Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
+  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
 }
 
 /// Copies the healer into the afterimage object event.
@@ -1598,10 +1608,10 @@ static void Sanctum_ShowHealerAfterimage(void) {
 
   objectEvent = ObjectEvent_GetById(LOCALID_HEALER);
   if (objectEvent != 0) {
-    Engine_ObjectEventSetPosition(LOCALID_HEALER_AFTERIMAGE,
+    Import_ObjectEventSetPosition(LOCALID_HEALER_AFTERIMAGE,
                                   objectEvent->x.fixed, objectEvent->z.fixed);
   }
-  Engine_ObjectEventSetAnimation(LOCALID_HEALER_AFTERIMAGE, 0);
+  Import_ObjectEventSetAnimation(LOCALID_HEALER_AFTERIMAGE, 0);
   afterimage = ObjectEvent_GetById(LOCALID_HEALER_AFTERIMAGE);
   objectEvent = ObjectEvent_GetById(LOCALID_HEALER);
   afterimage->facing = objectEvent->facing;
@@ -1627,11 +1637,12 @@ static void Sanctum_ShowHealerAfterimage(void) {
 static void Sanctum_HideHealerAfterimage(void) {
   struct ObjectEvent *state = ObjectEvent_GetById(LOCALID_HEALER_AFTERIMAGE);
   state->update = 0;
-  Engine_ObjectEventSetPosition(LOCALID_HEALER_AFTERIMAGE, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_HEALER_AFTERIMAGE, 0, 0);
 }
 
 /// Cycles the afterimage through four offsets from the healer.
-static void Sanctum_UpdateHealerAfterimage(union FieldObject *fieldObject) {
+static void
+Sanctum_UpdateHealerAfterimage(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *healer;
 
@@ -1657,7 +1668,8 @@ static void Sanctum_UpdateHealerAfterimage(union FieldObject *fieldObject) {
 }
 
 /// Advances an effect around its linked object event on an elliptical path.
-static void Sanctum_UpdateOrbitingEffect(union FieldObject *fieldObject) {
+static void
+Sanctum_UpdateOrbitingEffect(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *effect = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *anchor = effect->linkedObject;
   u16 *angle = &effect->timer;
@@ -1731,13 +1743,13 @@ static s32 Sanctum_ChooseRestartOption(void) {
   s32 text;
   s32 choice;
 
-  Engine_ObjectEventSetPosition(LOCALID_HEALER, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_WEST_HEALER, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_EAST_HEALER, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_DORA, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_GARETS_GRANDFATHER, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_PARTY_LEADER, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_HEALER, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_WEST_HEALER, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_EAST_HEALER, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_DORA, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_GARETS_GRANDFATHER, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_PARTY_LEADER, 0, 0);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(1);
   FieldScript_WaitFrames(1);
@@ -1758,7 +1770,7 @@ static s32 Sanctum_ChooseRestartOption(void) {
     if (gKeysRepeat & KEYS_VERTICAL) {
       choice ^= 1;
     }
-    x = gSanctum_CursorBob[(gFrameTick >> 1) & 15] + CURSOR_X;
+    x = gSanctum_CursorBob[(gVBlankCount >> 1) & 15] + CURSOR_X;
     FieldMenuArrow_SetPosition(&cursor, x, (choice << 4) + 60);
     FieldScript_WaitFrames(1);
   }
@@ -1789,7 +1801,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   FieldScript_WaitFrames(1);
   ObjectEvent_GetById(LOCALID_GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
       OBJ_EVENT_FACES_MOTION;
   ObjectEvent_GetById(LOCALID_GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
@@ -1812,23 +1824,23 @@ static void Sanctum_ReenactSolSanctum(void) {
   FieldScript_WaitFrames(10);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(15);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, 3);
-  Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
-  Engine_ObjectEventSetAnimation(LOCALID_HEALER, 3);
-  Engine_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, 3);
+  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
+  Import_ObjectEventSetAnimation(LOCALID_HEALER, 3);
+  Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
   ObjectMotion_SetAnimationAndWait(LOCALID_EAST_HEALER, 3);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_GARETS_GRANDFATHER,
                               0);
   ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
   ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_DORA, 0);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_EAST, 0);
@@ -1878,16 +1890,16 @@ static void Sanctum_ReenactSolSanctum(void) {
   ObjectEvent_GetById(LOCALID_HEALER)->update =
       Sanctum_FaceObjectEventNamedByTimer;
 #else
-  ObjectEvent_GetById(LOCALID_HEALER)->update =
-      (void (*)(union FieldObject *))Sanctum_FaceObjectEventNamedByTimer;
+  ObjectEvent_GetById(LOCALID_HEALER)->update = (void (*)(
+      union ObjectEventOrEffect *))Sanctum_FaceObjectEventNamedByTimer;
 #endif
   ObjectEvent_GetById(LOCALID_GARETS_GRANDFATHER)->timer = GARET;
 #ifdef UBFIX
   ObjectEvent_GetById(LOCALID_GARETS_GRANDFATHER)->update =
       Sanctum_FaceObjectEventNamedByTimer;
 #else
-  ObjectEvent_GetById(LOCALID_GARETS_GRANDFATHER)->update =
-      (void (*)(union FieldObject *))Sanctum_FaceObjectEventNamedByTimer;
+  ObjectEvent_GetById(LOCALID_GARETS_GRANDFATHER)->update = (void (*)(
+      union ObjectEventOrEffect *))Sanctum_FaceObjectEventNamedByTimer;
 #endif
   ObjectMotion_SetPositionAndReset(LOCALID_GARET, 196, 180);
   ObjectMotion_SetPositionAndReset(LOCALID_GARET, 184, 184);
@@ -1909,7 +1921,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   FieldEffect_SpawnLinked(LOCALID_HEALER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                           0);
   FieldScript_WaitFrames(60);
-  Engine_ObjectEventSetAnimation(LOCALID_HEALER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);
   FieldEffect_SpawnLinked(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
                           0);
   FieldScript_WaitFrames(60);
@@ -1938,7 +1950,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
   ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
@@ -2001,21 +2013,21 @@ static void Sanctum_ReenactSolSanctum(void) {
   ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
   ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, 3);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, 3);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, 3);
   FieldScript_WaitFrames(30);
   ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(10);
   ObjectMotion_ArmCallback(LOCALID_GARET, FACING_EAST, 0);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   FieldScript_WaitFrames(60);
 }
 
@@ -2053,7 +2065,7 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
 }
 
 /// Moves a spark upward, cycles its scale, and expires its lifetime.
-static void Sanctum_UpdateRisingSpark(union FieldObject *fieldObject) {
+static void Sanctum_UpdateRisingSpark(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *spark = &fieldObject->objectEvent;
   s32 scale;
   s32 timer;
@@ -2093,20 +2105,20 @@ static void Sanctum_SpawnObjectEventSpark(s32 id) {
   objectEvent = ObjectEvent_GetById(id);
   if (objectEvent == 0)
     return;
-  randomOffset = Math_RemainderUnsigned(Engine_RandomNext(), 20);
+  randomOffset = Math_RemainderUnsigned(Import_RandomNext(), 20);
   x = objectEvent->x.fixed;
   x += randomOffset << 16;
   x += -PIXELS(10);
   spark = ObjectEvent_Create(
       0x11e, x,
-      objectEvent->y.fixed + ((Engine_RandomNext() & 15) << 16) + -PIXELS(8),
+      objectEvent->y.fixed + ((Import_RandomNext() & 15) << 16) + -PIXELS(8),
       objectEvent->z.fixed);
   if (spark == 0)
     return;
   sprite = spark->sprite;
   spark->motionFlags = 0;
-  spark->timer = Math_RemainderUnsigned(Engine_RandomNext(), 10) + 5;
-  spark->work = Math_RemainderUnsigned(Engine_RandomNext(), 60) + 30;
+  spark->timer = Math_RemainderUnsigned(Import_RandomNext(), 10) + 5;
+  spark->work = Math_RemainderUnsigned(Import_RandomNext(), 60) + 30;
   spark->update = Sanctum_UpdateRisingSpark;
   sprite->flags = 0;
   sprite->image.priority = objectEvent->sprite->image.priority;
@@ -2367,7 +2379,7 @@ u32 gSanctum_Warps[] = {
     MAP_WARP(SANCTUM_TO_VAULT, Vault, VAULT_FROM_SANCTUM),
     MAP_WARP(SANCTUM_TO_VAULT_REVISIT, VaultRevisit, VAULT_REVISIT_FROM_SANCTUM),
     MAP_WARP(SANCTUM_TO_QUEST_RESTART, Sanctum, SANCTUM_FROM_QUEST_RESTART),
-    MAP_WARP(SANCTUM_TO_VALE_GATE, ValeGate, VALE_GATE_FROM_SANCTUM),
+    MAP_WARP(SANCTUM_TO_VALE_PLAZA, ValePlaza, VALE_PLAZA_FROM_SANCTUM),
     MAP_WARP(SANCTUM_TO_ALTIN, Altin, ALTIN_FROM_SANCTUM),
     MAP_WARP(SANCTUM_TO_BILIBIN, Bilibin, BILIBIN_FROM_SANCTUM),
     MAP_WARP(SANCTUM_TO_XIAN, Xian, XIAN_FROM_SANCTUM_WEST),
@@ -2472,7 +2484,7 @@ struct MapEvent gSanctum_QuestEvents[] = {
     { MAP_EVENT_TALK, LOCALID_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumWasItRightToRefuseWhen) },
     { MAP_EVENT_TALK, LOCALID_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumItsClearThatTheGreatHealer) },
     { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveAfterRefusing) },
-    { MAP_EVENT_COORD, 2, FLAG_MAP_TEMP_00, EVENT_SCRIPT(EventScript_WarnBeforeLeaving) },
+    { MAP_EVENT_COORD, 2, FLAG_SANCTUM_WARNED_BEFORE_LEAVING, EVENT_SCRIPT(EventScript_WarnBeforeLeaving) },
     { MAP_EVENTS_END },
 };
 

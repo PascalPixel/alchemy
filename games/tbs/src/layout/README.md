@@ -239,7 +239,7 @@ one go.
 Each map's row of `gMapHeaders` ([`field/map_headers.s`](../field/map_headers.s))
 gives a layout number, which picks a row of `gLayouts`
 ([`field/layouts.c`](../field/layouts.c)): the layout's header, palette,
-its tileset's three sheets of tiles and layer data. `MapGrid_LoadLayout`
+its tileset's three sheets of tiles and its tileset animations' tiles. `MapGrid_LoadLayout`
 ([`field/field/map_grid.c`](../field/field/map_grid.c)) decodes each part
 into a fixed buffer in [EWRAM](../../glossary.md#iwram-and-ewram): the metatiles into `gMetatiles`, the
 shapes into `gMapGridShapes`, the grid into `Ram_MapGridCellBuffer`, and
@@ -370,9 +370,9 @@ the channel's script, `stop` (`0xfeff`) halts the channel, and `end`
 (`0xffff`) loops it to its start. A source tile below a threshold is copied from
 elsewhere in video memory, and one from the threshold on from RAM, at
 `Ram_DecodeBuffer` plus the tile's offset, which lands in
-`gMapGridLayerData`. The threshold is tile 1,536 for 16-colour tiles, 32
+`gMapGridAnimTiles`. The threshold is tile 1,536 for 16-colour tiles, 32
 bytes each, and tile 512 for a layout whose animations copy 256-colour
-tiles, 64 bytes each (`MapGridState.wideTiles`).
+tiles, 64 bytes each (`MapGridScrollAnimView.wideTiles`).
 
 The blend script changes how the layers blend over time. `control` sets
 `REG_BLDCNT`; `level` sets `REG_BLDALPHA`, or `REG_BLDY` when the control's
@@ -485,7 +485,7 @@ gives its layouts.
 - 4,095 metatiles a layout: a cell's metatile number has 12 bits, and 4,095
   is the placeholder.
 - 256 shapes a layout, since a cell names its shape in one byte.
-- 16 tileset animation channels (`struct MapGridState`).
+- 16 tileset animation channels (`struct MapGridScrollAnimView`).
 - `TREASURE_SPOT_MAX` (10) chests and Psynergy Stones placed on a map.
 
 ## Words used here

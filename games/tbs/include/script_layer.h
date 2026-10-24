@@ -61,7 +61,7 @@ extern u8 *gColossoWork;
 enum { TASK_PRIORITY_MAP = 3200 };
 
 /// Animation numbers of an object event's sprite, for
-/// Engine_ObjectEventSetAnimation.
+/// Import_ObjectEventSetAnimation.
 enum ObjectEventAnimation {
   /// Standing still: nearly every sprite's first frame held, without the
   /// blinks and small gestures of ANIM_STAND.
@@ -143,34 +143,34 @@ struct MapGridCellAnimation {
   u16 y; ///< destination cell row
 };
 
-// The imports below keep a name of their own: the maps' calls of these
-// routines were compiled against declarations that differ from the routines'
-// own, as the bytes measure. Engine_ScriptRequestWarp,
-// Engine_ObjectEventSetPosition, Engine_ObjectEventSetAnimation and
-// Engine_RandomNext are called with differing argument counts, so they keep
+// The imports below keep a name of their own, prefixed Import_: the maps' calls
+// of these routines were compiled against declarations that differ from the
+// routines' own, as the bytes measure. Import_ScriptRequestWarp,
+// Import_ObjectEventSetPosition, Import_ObjectEventSetAnimation and
+// Import_RandomNext are called with differing argument counts, so they keep
 // old-style declarations; FieldScript_SetWarpRequest also takes a u16 and
 // Random16 returns a u32, where the maps pass and read an int. Imil's and Sol
 // Sanctum's Psynergy Stone room's calls of GameFlag_Set, which returns the
-// flag, compile only as calls of a void routine (Engine_GameFlagSet), where
+// flag, compile only as calls of a void routine (Import_GameFlagSet), where
 // every other map's match through GameFlag_Set itself, and the maps pass
 // FieldScript_ShowTwoMessagesAndWait eleven arguments where it takes ten
-// (Engine_ScriptShowTwoMessagesAndWait).
+// (Import_ScriptShowTwoMessagesAndWait).
 /// Sets the field's warp request (FieldScript_SetWarpRequest); 999 leaves for
 /// gSaveBlock's map and warp destination.
-void Engine_ScriptRequestWarp();
+void Import_ScriptRequestWarp();
 /// Puts an object event at rest at (x, z), in 16.16 pixels; one that follows
 /// the ground keeps its height above the terrain
 /// (ObjectMotion_SetHorizontalPositionWithTerrain).
-void Engine_ObjectEventSetPosition();
+void Import_ObjectEventSetPosition();
 /// Switches an object event's sprite to an ObjectEventAnimation
 /// (ObjectEvent_SetModeById).
-void Engine_ObjectEventSetAnimation();
+void Import_ObjectEventSetAnimation();
 /// Sets a game flag (GameFlag_Set), for the two maps whose calls compile only
 /// as calls of a void routine.
-void Engine_GameFlagSet(s32 flag);
+void Import_GameFlagSet(s32 flag);
 /// Advances the game's random number generator and returns 0 to 0xffff
 /// (Random16).
-s32 Engine_RandomNext();
+s32 Import_RandomNext();
 /// The remainder of an unsigned division, from the ARM routine in IWRAM that
 /// also serves as __umodsi3 (IwramUnsignedRemainder).
 u32 Math_RemainderUnsigned(u32 dividend, u32 divisor);
@@ -200,7 +200,7 @@ static inline void ObjectEvent_SetBuiltinAction(s32 localId, s32 action) {
 /// position, until A, B, L or R closes both
 /// (FieldScript_ShowTwoMessagesAndWait). The routine takes ten arguments and
 /// never reads flags.
-void Engine_ScriptShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg,
+void Import_ScriptShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg,
                                          s32 extra, s32 other_speaker,
                                          s32 otherX, s32 other_y, s32 other_arg,
                                          s32 other_extra, s32 flags);
@@ -247,7 +247,7 @@ static inline struct ObjectEvent *ObjectEvent_Get(s32 localId) {
 /// Places an object event at a point at once, without walking it there.
 static inline void ObjectEvent_SetPosition(s32 localId, s32 fixed_x,
                                            s32 fixed_z) {
-  Engine_ObjectEventSetPosition(localId, fixed_x, fixed_z);
+  Import_ObjectEventSetPosition(localId, fixed_x, fixed_z);
 }
 
 /// Sets how fast an object event moves, and how quickly it gets up to speed,
@@ -364,7 +364,7 @@ static inline void Script_PlaySong(s32 cue) { Sound_PlaySong(cue); }
 #endif
 
 /// A random number from 0 to 0xffff for a script.
-static inline s32 Random_Next(void) { return Engine_RandomNext(); }
+static inline s32 Random_Next(void) { return Import_RandomNext(); }
 
 /// Signed division written as a call; the `/` compiles to __divsi3.
 static inline s32 Math_Divide(s32 dividend, s32 divisor) {
@@ -379,7 +379,7 @@ static inline s32 Math_Divide(s32 dividend, s32 divisor) {
 /// flags.
 static inline void ObjectEvent_SetSpriteFlags(struct ObjectEvent *objectEvent,
                                               s32 flags) {
-  ObjectDispatch_SetSingleChildFlags((struct Object *)objectEvent, flags);
+  Object_SetSpriteFlags((struct Object *)objectEvent, flags);
 }
 
 /// Sends an object toward a point, where it coasts to a stop.
@@ -391,7 +391,7 @@ static inline void Object_SetPosition(struct ObjectEvent *objectEvent,
 /// Releases an object and its sprites, and empties its place in the object
 /// table.
 static inline void ObjectEvent_Release(struct ObjectEvent *objectEvent) {
-  ObjectDispatch_Release((struct Object *)objectEvent);
+  Object_Release((struct Object *)objectEvent);
 }
 
 /// Sets the colour mode (SpriteColorMode) of a one-sprite object's layers,
@@ -412,17 +412,17 @@ static inline struct ObjectEvent *ObjectEvent_Create(s32 type, s32 fixed_x,
 /// Starts an object on a sprite script from its first command.
 static inline void ObjectEvent_SetScript(struct ObjectEvent *objectEvent,
                                          const s32 *script) {
-  ObjectDispatch_Initialize((struct Object *)objectEvent, script);
+  Object_Initialize((struct Object *)objectEvent, script);
 }
 
-/// OAM blend modes for ObjectDispatch_SetChildBlendMode:
+/// OAM blend modes for Object_SetSpriteBlendMode:
 /// OBJECT_BLEND_TRANSLUCENT alpha-blends the sprite with what lies behind it.
 enum ObjectBlendMode { OBJECT_BLEND_NORMAL = 0, OBJECT_BLEND_TRANSLUCENT = 1 };
 
 /// Sets a one-sprite object's OAM blend mode, an ObjectBlendMode.
 static inline void ObjectEvent_SetBlendMode(struct ObjectEvent *objectEvent,
                                             s32 mode) {
-  ObjectDispatch_SetChildBlendMode((struct Object *)objectEvent, mode);
+  Object_SetSpriteBlendMode((struct Object *)objectEvent, mode);
 }
 
 /// Plays a cell animation, such as a door opening, and holds the script until
@@ -458,8 +458,8 @@ static inline void Script_ShowMessageAndWait(s32 speaker, s32 flags,
 
 /// Sets a sprite param on every part of an object event's sprite, or makes it
 /// blink.
-static inline void ObjectEvent_SetChildValue(s32 localId, s32 value) {
-  ObjectGroup_ConfigureChildValue(localId, value);
+static inline void ObjectEvent_SetSpriteColorById(s32 localId, s32 value) {
+  ObjectEvent_ConfigureSpriteColor(localId, value);
 }
 
 /// Not used in TBS.
@@ -509,7 +509,7 @@ static inline void Script_ShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y,
                                                  s32 otherSpeaker, s32 otherX,
                                                  s32 otherY, s32 otherArg,
                                                  s32 otherExtra, s32 flags) {
-  Engine_ScriptShowTwoMessagesAndWait(speaker, x, y, arg, extra, otherSpeaker,
+  Import_ScriptShowTwoMessagesAndWait(speaker, x, y, arg, extra, otherSpeaker,
                                       otherX, otherY, otherArg, otherExtra,
                                       flags);
 }

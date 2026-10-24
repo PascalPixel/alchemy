@@ -1,36 +1,36 @@
 /// @file
 /// Five of the side rooms of Crossbone Isle Cave, the cave beneath Crossbone
 /// Isle. Each opens off one of the nine floors the cave descends through
-/// (crossbone_isle.c) through two doors, east and west: the floor's
-/// east door leads in at the room's `_EAST` warp destination
+/// (crossbone_isle.c) through two doors, east and west: the floor's east door
+/// leads in at the room's `_EAST` warp destination
 /// (CROSSBONE_ISLE_STEPPING_STONES_FROM_CROSSBONE_ISLE_FIRST_FLOOR_EAST in the
 /// first) and its west door at the `_WEST` one, and the warps of the same names
 /// lead back out. Each is a puzzle with four chests, and all five take the area
 /// name Crossbone Isle Cave. In the order the party meets them:
 ///
-/// - MapId_CrossboneIsleSteppingStones, off the first floor: stepping
-///   stones over a pit; walking into a pillar jumps two cells across it where
-///   the cells allow, and otherwise pushes it (EventScript_JumpOrPushPillar).
-/// - MapId_CrossboneIsleIcePillars, off the second floor:
-///   pillars of ice to push, standing and lying across a floor of spikes.
-/// - MapId_CrossboneIsleFloodgate, off the fifth floor: a cave
-///   with a stream and a floodgate across it, and seven logs to roll. The
-///   switch beside the floodgate (EventScript_FlipWaterSwitch) closes it, so
-///   the water backs up and floats the logs higher, or opens it to drain them
-///   back down; the water level lasts only while the party stays
-///   (WATER_RAISED_FLAG, kept through a battle).
-/// - MapId_CrossboneIsleStackedPillars, off the seventh floor, a cave of
-///   cliffs and ladders: four pillars that Move and Carry shift, and that
-///   settle and redraw their footprints after every push
-///   (EventScript_MovePillar), a ladder, and pillars to jump across.
-/// - MapId_CrossboneIsleDragonStatue, off the eighth floor, by a dragon
-///   statue: three puddles that Frost freezes into pillars of ice. Frost on
-///   the third makes the pillar in it rise and thaws a frozen second puddle,
-///   and the third freezes only if the leader was not standing on it; a boulder
-///   moved with Move sinks into place at column 16.
+/// - MapId_CrossboneIsleSteppingStones, off the first floor: stepping stones
+///   over a pit; walking into a pillar jumps two cells across it where the
+///   cells allow, and otherwise pushes it (EventScript_JumpOrPushPillar).
+/// - MapId_CrossboneIsleIcePillars, off the second floor: pillars of ice to
+///   push, standing and lying across a floor of spikes.
+/// - MapId_CrossboneIsleFloodgate, off the fifth floor: a cave with a stream
+///   and a floodgate across it, and seven logs to roll. The switch beside the
+///   floodgate (EventScript_FlipWaterSwitch) closes it, so the water backs up
+///   and floats the logs higher, or opens it to drain them back down; the water
+///   level lasts only while the party stays
+///   (FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED, kept through a battle).
+/// - MapId_CrossboneIsleStackedPillars, off the seventh floor, a cave of cliffs
+///   and ladders: four pillars that Move and Carry shift, and that settle and
+///   redraw their footprints after every push (EventScript_MovePillar), a
+///   ladder, and pillars to jump across.
+/// - MapId_CrossboneIsleDragonStatue, off the eighth floor, by a dragon statue:
+///   three puddles that Frost freezes into pillars of ice. Frost on the third
+///   makes the pillar in it rise and thaws a frozen second puddle, and the
+///   third freezes only if the leader was not standing on it; a boulder moved
+///   with Move sinks into place at column 16.
 ///
-/// The other three side rooms are in crossbone_isle_keys.c, and the
-/// ninth floor's in crossbone_isle.c.
+/// The other three side rooms are in crossbone_isle_keys.c, and the ninth
+/// floor's in crossbone_isle.c.
 ///
 /// Open questions: none.
 
@@ -135,16 +135,17 @@ enum CrossboneIsleSteppingStonesLocalId {
 };
 
 /// CrossboneIsleFloodgate: the water has been raised.
-#define WATER_RAISED_FLAG FLAG_MAP_TEMP_00
+#define FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED FLAG_MAP_TEMP_00
 /// CrossboneIsleStackedPillars: the first pillar's footprint flag, the four
 /// pillars' from this one.
-#define FIRST_PILLAR_FOOTPRINT_FLAG FLAG_MAP_TEMP_00
+#define FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_FOOTPRINT FLAG_MAP_TEMP_00
 // CrossboneIsleDragonStatue: FLAG_MAP_TEMP_00 to 02 the three puddles are
 // frozen, 03 the leader stood on the third when Frost began, 04 the sinking
 // pillar has sunk.
-#define FIRST_FROZEN_PUDDLE_FLAG FLAG_MAP_TEMP_00
-#define LEADER_ON_THIRD_PUDDLE_FLAG FLAG_MAP_TEMP_03
-#define PILLAR_SUNK_FLAG FLAG_MAP_TEMP_04
+#define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN FLAG_MAP_TEMP_00
+#define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_LEADER_ON_THIRD_PUDDLE               \
+  FLAG_MAP_TEMP_03
+#define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_PILLAR_SUNK FLAG_MAP_TEMP_04
 
 /// A copied map cell, also read in the two flag pairs the pillar redraw keeps.
 union CrossboneIslePillarCell {
@@ -297,7 +298,7 @@ static s32 CrossboneIsleSteppingStones_DrawRaisedFootprint(s32 localId) {
   cellZ = probe.position.z;
   MapGrid_CopyCellAttributes(2, 2, width, depth, cellX, cellZ);
 
-  ObjectDispatch_SelectAnimation(objectEvent, 4);
+  Object_SelectAnimation(objectEvent, 4);
   mask = 2;
   objectEvent->priorityFlags |= mask;
 
@@ -346,7 +347,7 @@ static s32 CrossboneIsleSteppingStones_RestoreGroundFootprint(s32 localId) {
         0, probe.position.x, probe.position.z, width, depth, MB_WALL);
   }
 
-  ObjectDispatch_SelectAnimation(objectEvent, 1);
+  Object_SelectAnimation(objectEvent, 1);
   objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_UNDERFOOT;
 
   return 1;
@@ -512,11 +513,11 @@ UNUSED static void CrossboneIsleSteppingStones_SpawnUnusedLeaderParticle(void) {
     settings->palette = 10;
     settings->startScaleX = 7 * Q16_ONE / 10;
     settings->startScaleY = 7 * Q16_ONE / 10;
-    drawX = Engine_RandomNext();
+    drawX = Import_RandomNext();
     x = leader->x.fixed + ((((u32)((drawX << 4) + drawX) >> 16) - 8) << 16);
-    drawZ = Engine_RandomNext();
+    drawZ = Import_RandomNext();
     z = leader->z.fixed + ((((u32)((drawZ << 4) + drawZ) >> 16) - 8) << 16);
-    drawY = Engine_RandomNext();
+    drawY = Import_RandomNext();
     velocityY = Math_Divide(
         (((u32)((drawY << 2) + drawY) >> 16) << 16) + PIXELS(3), 10);
     FieldEffect_Spawn(x, leader->y.fixed, z, 0, velocityY, cycleFrame,
@@ -580,10 +581,10 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
     if (PushedObject_FindAtTile(position, leader) == 0 &&
         FieldObject_CheckMovementCollision(leader, position) == 0) {
       SCRIPT_START();
-      ObjectDispatch_SelectAnimation(leader, 6);
+      Object_SelectAnimation(leader, 6);
       WaitFrames(6);
       Sound_PlaySong(SE_JUMP);
-      ObjectDispatch_SelectAnimation(leader, 7);
+      Object_SelectAnimation(leader, 7);
       leader->speed = PIXELS(3);
       leader->acceleration = PIXELS(2);
       leader->velocityY = PIXELS(4);
@@ -591,7 +592,7 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
       ObjectEvent_SetSpriteFlags(leader, 0);
       ObjectMotion_SetPositionAndCommit(LOCALID_PARTY_LEADER, position->x >> 16,
                                         position->z >> 16);
-      ObjectDispatch_SelectAnimation(leader, 6);
+      Object_SelectAnimation(leader, 6);
       ObjectEvent_SetSpriteFlags(leader, 1);
       *flags = savedMotionFlags;
       SCRIPT_END();
@@ -604,7 +605,7 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
 /// Moves the particle while damping its velocity, growing it, and advancing
 /// rotation.
 static void CrossboneIsleSteppingStones_UpdateDampedParticle(
-    union FieldObject *fieldObject) {
+    union ObjectEventOrEffect *fieldObject) {
   s32 velocityX;
   s32 velocityY;
   s32 velocityZ;
@@ -628,7 +629,7 @@ static void CrossboneIsleSteppingStones_UpdateDampedParticle(
 static s32
 CrossboneIsleSteppingStones_SetChildValueFromTimer(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
-  ObjectGroup_SetChildValue(objectEvent, objectEvent->timer & 15);
+  ObjectEvent_SetSpriteColor(objectEvent, objectEvent->timer & 15);
   return 0;
 }
 
@@ -728,7 +729,7 @@ static void CrossboneIsleSteppingStones_JitterBackgroundScroll(void) {
   volatile u32 *reg = (volatile u32 *)&REG_BG1HOFS;
 
   if (line == 227 || line <= 46) {
-    if ((u32)(Engine_RandomNext() * 100) >> 16 < sShakeChance) {
+    if ((u32)(Import_RandomNext() * 100) >> 16 < sShakeChance) {
       src = ((u32 *)sShakenScroll);
     }
   }
@@ -767,7 +768,7 @@ static void CrossboneIsleSteppingStones_PrepareWaterScroll(void) {
 static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
   s32 waterRaised;
 
-  waterRaised = GameFlag_Get(WATER_RAISED_FLAG);
+  waterRaised = GameFlag_Get(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED);
   if (waterRaised == 0) {
     MapGrid_DrawCellPanel(10, 19, 16, 5, waterRaised, 10, 31);
     MapGrid_DrawCellPanel(10, 51, 16, 5, 1, 10, 31);
@@ -782,8 +783,7 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
   FieldScheduler_AddCallback(CrossboneIsleSteppingStones_PrepareWaterScroll,
                              0xc80);
   WaitFrames(1);
-  Runtime_SetIrqHandler(1, 0,
-                        CrossboneIsleSteppingStones_JitterBackgroundScroll);
+  Irq_SetHandler(1, 0, CrossboneIsleSteppingStones_JitterBackgroundScroll);
   Sound_PlaySong(SE_WATER_LEVEL);
   sShakeChance = 0;
   do {
@@ -791,7 +791,7 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
   } while (++sShakeChance <= 100);
   // Commit the water tiles, then remove both scroll callbacks.
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  if (GameFlag_Get(WATER_RAISED_FLAG) == 0) {
+  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED) == 0) {
     MapGrid_CopyCellsTo(0, 32, 32, 0, 32, 32);
     MapGrid_CopyCellsTo(32, 32, 64, 0, 32, 32);
   } else {
@@ -799,7 +799,7 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
     MapGrid_CopyCellsTo(32, 64, 64, 0, 32, 32);
   }
   WaitFrames(1);
-  Runtime_SetIrqHandler(1, 0, 0);
+  Irq_SetHandler(1, 0, 0);
   WaitFrames(1);
   Task_Remove(CrossboneIsleSteppingStones_PrepareWaterScroll);
   MapGrid_CenterOnFollowedPoint();
@@ -819,7 +819,7 @@ static void EventScript_FlipWaterSwitch(void) {
   FieldCamera_MoveTo(PIXELS(281), -1, PIXELS(432), 1);
   FieldCamera_WaitForArrival();
   FieldMessage_Show(MsgFieldFlippedSwitch, 1);
-  waterRaised = Script_GetFlag(WATER_RAISED_FLAG);
+  waterRaised = Script_GetFlag(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED);
   // Raise or drain the water before redrawing the logs' footprints.
   if (waterRaised == 0) {
     SE(SE_232);
@@ -840,7 +840,7 @@ static void EventScript_FlipWaterSwitch(void) {
     CrossboneIsleSteppingStones_AnimateWaterLevel();
     CrossboneIsleSteppingStones_DrawFloatingLogs();
     MapGrid_CopyCellAttributes(24, 3, 1, 1, 24, 8);
-    GameFlag_Set(WATER_RAISED_FLAG);
+    GameFlag_Set(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED);
   } else {
     SE(SE_232);
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_SwitchOpenSteps, 84, 24);
@@ -863,7 +863,7 @@ static void EventScript_FlipWaterSwitch(void) {
     CrossboneIsleSteppingStones_RestoreGroundFootprint(LOCALID_FIRST_LOG + 6);
     CrossboneIsleSteppingStones_RestoreGroundFootprint(LOCALID_FIRST_LOG + 7);
     MapGrid_CopyCellAttributes(24, 4, 1, 1, 24, 8);
-    GameFlag_Clear(WATER_RAISED_FLAG);
+    GameFlag_Clear(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED);
   }
   SCRIPT_END();
 }
@@ -926,12 +926,12 @@ static s32 CrossboneIsleSteppingStones_SyncPriorityIfAhead(
 /// Keeps each moving pillar's priority and collision flags consistent with the
 /// leader.
 static void CrossboneIsleSteppingStones_UpdateObjectEventPriority(
-    union FieldObject *fieldObject) {
+    union ObjectEventOrEffect *fieldObject) {
 #else
 /// Keeps each moving pillar's priority and collision flags consistent with the
 /// leader.
 static s32 CrossboneIsleSteppingStones_UpdateObjectEventPriority(
-    union FieldObject *fieldObject) {
+    union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -1214,12 +1214,12 @@ static void EventScript_StopRising(void) {
 /// Keeps the frozen puddle's underfoot flag consistent with the leader's height
 /// and depth.
 static void CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority(
-    union FieldObject *fieldObject) {
+    union ObjectEventOrEffect *fieldObject) {
 #else
 /// Puts the frozen puddle under the leader when it is behind and below the
 /// leader.
 static s32 CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority(
-    union FieldObject *fieldObject) {
+    union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *ref = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -1247,12 +1247,13 @@ static void CrossboneIsleSteppingStones_FreezePuddle(s32 id) {
 #ifdef UBFIX
   objectEvent->update = CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
 #else
-  objectEvent->update = (void (*)(union FieldObject *))
+  objectEvent->update = (void (*)(union ObjectEventOrEffect *))
       CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
 #endif
   MapGrid_CopyCellAttributes(20, 14, 1, 1, objectEvent->x.fixed >> 20,
                              objectEvent->z.fixed >> 20);
-  GameFlag_Set(FIRST_FROZEN_PUDDLE_FLAG + id - LOCALID_FIRST_PUDDLE);
+  GameFlag_Set(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN + id -
+               LOCALID_FIRST_PUDDLE);
   ObjectEvent_SetActionScript(id, gCrossboneIsleSteppingStones_ActionTable);
   SCRIPT_END();
 }
@@ -1280,10 +1281,10 @@ static void EventScript_FrostStartsOnThirdPuddle(void) {
   effects = gFieldEffectWork;
   if (puddle->x.fixed >> 20 == leader->x.fixed >> 20 &&
       puddle->z.fixed >> 20 == leader->z.fixed >> 20) {
-    GameFlag_Set(LEADER_ON_THIRD_PUDDLE_FLAG);
+    GameFlag_Set(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_LEADER_ON_THIRD_PUDDLE);
     effects[53] = 1;
   } else {
-    GameFlag_Clear(LEADER_ON_THIRD_PUDDLE_FLAG);
+    GameFlag_Clear(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_LEADER_ON_THIRD_PUDDLE);
   }
 }
 
@@ -1324,16 +1325,16 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
   settings->startScaleY = Q16_ONE / 2;
   settings->targetScaleX = 8 * Q16_ONE / 5;
   settings->targetScaleY = 8 * Q16_ONE / 5;
-  draw = Engine_RandomNext();
+  draw = Import_RandomNext();
   mask = 0x0ffff000;
   mask &= draw;
   settings->rotation = mask;
   settings->update = CrossboneIsleSteppingStones_UpdateDampedParticle;
 
-  draw = Engine_RandomNext();
+  draw = Import_RandomNext();
   velocityX = -(((draw * 5) >> 16) * PIXELS(1) + PIXELS(6));
   velocityX /= 2;
-  draw = Engine_RandomNext();
+  draw = Import_RandomNext();
   velocityY = -(((draw * 5) >> 16) * PIXELS(1) + PIXELS(5));
 
   FieldEffect_Spawn(
@@ -1347,12 +1348,12 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
 // Plain void changes 172 to 168 bytes in tbs-en.
 #ifdef UBFIX
 /// Emits a randomized particle from the thawing puddle every eight frames.
-static void
-CrossboneIsleSteppingStones_SpawnThawParticle(union FieldObject *fieldObject) {
+static void CrossboneIsleSteppingStones_SpawnThawParticle(
+    union ObjectEventOrEffect *fieldObject) {
 #else
 /// Emits a randomized particle from the thawing puddle every eight frames.
-static s32
-CrossboneIsleSteppingStones_SpawnThawParticle(union FieldObject *fieldObject) {
+static s32 CrossboneIsleSteppingStones_SpawnThawParticle(
+    union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct EffectOptions options;
@@ -1376,12 +1377,12 @@ CrossboneIsleSteppingStones_SpawnThawParticle(union FieldObject *fieldObject) {
   settings->startScaleY = 7 * Q16_ONE / 10;
 
   x = objectEvent->x.fixed +
-      (((((u32)Engine_RandomNext() * 17) >> 16) - 8) << 16);
-  y = objectEvent->y.fixed + ((((u32)Engine_RandomNext() * 17) >> 16) << 16);
+      (((((u32)Import_RandomNext() * 17) >> 16) - 8) << 16);
+  y = objectEvent->y.fixed + ((((u32)Import_RandomNext() * 17) >> 16) << 16);
   z = objectEvent->z.fixed +
-      (((((u32)Engine_RandomNext() * 17) >> 16) - 8) << 16);
+      (((((u32)Import_RandomNext() * 17) >> 16) - 8) << 16);
   scale = Math_Divide(
-      (((u32)Engine_RandomNext() * 5) >> 16) * PIXELS(1) + PIXELS(3), 10);
+      (((u32)Import_RandomNext() * 5) >> 16) * PIXELS(1) + PIXELS(3), 10);
 
   FieldEffect_Spawn(x, y, z, 0, scale, phase,
                     EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
@@ -1400,9 +1401,9 @@ CrossboneIsleSteppingStones_SpawnThawParticle(union FieldObject *fieldObject) {
 static void EventScript_FreezeThirdPuddle(void) {
   s32 set;
 
-  set = GameFlag_Get(LEADER_ON_THIRD_PUDDLE_FLAG);
+  set = GameFlag_Get(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_LEADER_ON_THIRD_PUDDLE);
   if (set == 0) {
-    GameFlag_Set(FIRST_FROZEN_PUDDLE_FLAG + 2);
+    GameFlag_Set(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN + 2);
     SCRIPT_START();
     FieldCamera_SetSpeedParameters(PIXELS(3) / 5, PIXELS(3) / 40);
     FieldCamera_MoveWithinMapBounds(PIXELS(312), -1, PIXELS(184), 1);
@@ -1414,21 +1415,23 @@ static void EventScript_FreezeThirdPuddle(void) {
     FieldScheduler_AddCallback(CrossboneIsleSteppingStones_SpawnFrostParticle,
                                0xc80);
     WAIT(40);
-    if (Script_GetFlag(FIRST_FROZEN_PUDDLE_FLAG + 1) != 0) {
+    if (Script_GetFlag(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN +
+                       1) != 0) {
 #ifdef UBFIX
       ObjectEvent_GetById(LOCALID_SECOND_PUDDLE)->update =
           CrossboneIsleSteppingStones_SpawnThawParticle;
 #else
-      ObjectEvent_GetById(LOCALID_SECOND_PUDDLE)->update = (void (*)(
-          union FieldObject *))CrossboneIsleSteppingStones_SpawnThawParticle;
+      ObjectEvent_GetById(LOCALID_SECOND_PUDDLE)->update =
+          (void (*)(union ObjectEventOrEffect *))
+              CrossboneIsleSteppingStones_SpawnThawParticle;
 #endif
       OBJECT_ANIMATION(LOCALID_SECOND_PUDDLE, 6);
       ObjectMotion_WaitForAnimationChange(LOCALID_SECOND_PUDDLE);
       ObjectEvent_GetById(LOCALID_SECOND_PUDDLE)->update =
-          (void (*)(union FieldObject *))set;
+          (void (*)(union ObjectEventOrEffect *))set;
       MapGrid_CopyCellAttributes(17, 13, 1, 1, 18, 13);
-      GameFlag_Clear(FIRST_FROZEN_PUDDLE_FLAG + 1);
-      ObjectGroup_ConfigureChildValue(LOCALID_SECOND_PUDDLE, 0);
+      GameFlag_Clear(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN + 1);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_PUDDLE, 0);
       ObjectEvent_SetBuiltinAction(LOCALID_SECOND_PUDDLE,
                                    OBJ_EVENT_ACTION_IDLE);
     } else {
@@ -1469,14 +1472,15 @@ static void EventScript_MoveSinkingPillar(void) {
   PushedObject_FillGridAttributeRectangle(
       2, (pillar->x.fixed >> 20), (pillar->z.fixed >> 20), 1, 1, MB_WALL);
   if ((pillar->x.fixed >> 20) == 16) {
-    alreadyLowered = Script_GetFlag(PILLAR_SUNK_FLAG);
+    alreadyLowered =
+        Script_GetFlag(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_PILLAR_SUNK);
     if (alreadyLowered == 0) {
       WAIT(10);
       Sound_PlaySong(SE_159);
       pillar->motionFlags = alreadyLowered;
       pillar->groundHeight = -PIXELS(2);
       pillar->y.fixed = -PIXELS(2);
-      GameFlag_Set(PILLAR_SUNK_FLAG);
+      GameFlag_Set(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_PILLAR_SUNK);
     }
   }
   SCRIPT_END();
@@ -1537,14 +1541,14 @@ static void CrossboneIsleSteppingStones_RestoreFlaggedPillar(s32 localId) {
   struct ObjectEvent *objectEvent;
 
   objectEvent = ObjectEvent_GetById(localId);
-  if (GameFlag_Get(FIRST_FROZEN_PUDDLE_FLAG + localId - LOCALID_FIRST_PUDDLE) !=
-      0) {
-    ObjectDispatch_SelectAnimation(objectEvent, 5);
+  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN +
+                   localId - LOCALID_FIRST_PUDDLE) != 0) {
+    Object_SelectAnimation(objectEvent, 5);
 #ifdef UBFIX
     objectEvent->update =
         CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
 #else
-    objectEvent->update = (void (*)(union FieldObject *))
+    objectEvent->update = (void (*)(union ObjectEventOrEffect *))
         CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
 #endif
     MapGrid_CopyCellAttributes(20, 14, 1, 1, objectEvent->x.fixed >> 20,
@@ -1563,7 +1567,7 @@ static void CrossboneIsleSteppingStones_InitializePillarPriority(s32 id) {
 #ifdef UBFIX
   objectEvent->update = CrossboneIsleSteppingStones_UpdateObjectEventPriority;
 #else
-  objectEvent->update = (void (*)(union FieldObject *))
+  objectEvent->update = (void (*)(union ObjectEventOrEffect *))
       CrossboneIsleSteppingStones_UpdateObjectEventPriority;
 #endif
 }
@@ -1622,7 +1626,7 @@ s32 Map_Initialize(void) {
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 6);
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 7);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0 &&
-        GameFlag_Get(WATER_RAISED_FLAG) != 0) {
+        GameFlag_Get(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED) != 0) {
       MapGrid_CopyCellsTo(79, 34, 84, 24, 1, 2);
       MapGrid_CopyCellsTo(0, 32, 32, 0, 32, 32);
       MapGrid_CopyCellsTo(32, 32, 64, 0, 32, 32);
@@ -1653,7 +1657,7 @@ s32 Map_Initialize(void) {
         entry[0] = 0;
         entry[1] = 0;
         entry[2] = 0;
-        entry[4] = i + FIRST_PILLAR_FOOTPRINT_FLAG;
+        entry[4] = i + FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_FOOTPRINT;
         entry += 5;
       }
     }
@@ -1678,7 +1682,7 @@ s32 Map_Initialize(void) {
     // Restore CrossboneIsleDragonStatue's moved pillar, frozen puddles, and
     // raised pillar pair.
     OBJECT_ANIMATION(LOCALID_SINKING_BOULDER, 2);
-    ObjectGroup_ConfigureChildValue(LOCALID_SINKING_BOULDER, 6);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_SINKING_BOULDER, 6);
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
 #if TBS_PATCH_1
@@ -1697,7 +1701,8 @@ s32 Map_Initialize(void) {
     CrossboneIsleSteppingStones_PrepLoweredObjectEvent(LOCALID_RISING_PILLAR);
     ObjectEvent_GetById(LOCALID_RISING_PILLAR)->collisionFlags |=
         OBJ_EVENT_NOT_TARGETED;
-    if (GameFlag_Get(FIRST_FROZEN_PUDDLE_FLAG + 2) == 0) {
+    if (GameFlag_Get(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN +
+                     2) == 0) {
       ObjectEvent_GetById(LOCALID_THIRD_PUDDLE)->scaleX = 3 * Q16_ONE / 2;
       ObjectEvent_GetById(LOCALID_THIRD_PUDDLE)->scaleY = 3 * Q16_ONE / 2;
       ObjectEvent_GetById(LOCALID_THIRD_PUDDLE)->sprite->image.priority = 3;
@@ -1708,17 +1713,17 @@ s32 Map_Initialize(void) {
   return 0;
 }
 
-s32 gShortEffectScript[] = {
+s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gMediumEffectScript[] = {
+s32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gLongEffectScript[] = {
+s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
@@ -1749,10 +1754,10 @@ s32 gPushedObject_FootprintBounds[] = {
     -8, -32, 8, 32,
 };
 
-const s32 *gEffectScripts[] = {
-    gShortEffectScript,
-    gMediumEffectScript,
-    gLongEffectScript,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 /// The glint of a puddle Frost has frozen in CrossboneIsleDragonStatue: the
@@ -1989,14 +1994,14 @@ struct MapEvent gCrossboneIsleStackedPillarsEvents[] = {
     { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { BG_EVENT_CHEST_FACING(FACING_EAST), 102, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
     { BG_EVENT(BG_EVENT_CHEST), 103, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_WICKED_MACE, FIND_ITEM(ITEM_WICKED_MACE) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR, FIRST_PILLAR_FOOTPRINT_FLAG, EVENT_SCRIPT(EventScript_MovePillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR + 1, FIRST_PILLAR_FOOTPRINT_FLAG + 1, EVENT_SCRIPT(EventScript_MovePillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR + 2, FIRST_PILLAR_FOOTPRINT_FLAG + 2, EVENT_SCRIPT(EventScript_MovePillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR + 3, FIRST_PILLAR_FOOTPRINT_FLAG + 3, EVENT_SCRIPT(EventScript_MovePillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_FIRST_PILLAR, FIRST_PILLAR_FOOTPRINT_FLAG, EVENT_SCRIPT(EventScript_MovePillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_FIRST_PILLAR + 1, FIRST_PILLAR_FOOTPRINT_FLAG + 1, EVENT_SCRIPT(EventScript_MovePillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_FIRST_PILLAR + 2, FIRST_PILLAR_FOOTPRINT_FLAG + 2, EVENT_SCRIPT(EventScript_MovePillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_FIRST_PILLAR + 3, FIRST_PILLAR_FOOTPRINT_FLAG + 3, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_FOOTPRINT, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR + 1, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_FOOTPRINT + 1, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR + 2, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_FOOTPRINT + 2, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR + 3, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_FOOTPRINT + 3, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_FIRST_PILLAR, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_FOOTPRINT, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_FIRST_PILLAR + 1, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_FOOTPRINT + 1, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_FIRST_PILLAR + 2, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_FOOTPRINT + 2, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_FIRST_PILLAR + 3, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_FOOTPRINT + 3, EVENT_SCRIPT(EventScript_MovePillar) },
     { MAP_EVENTS_END },
 };
 // clang-format on
@@ -2018,22 +2023,27 @@ struct MapEvent gCrossboneIsleDragonStatueEvents[] = {
     {BG_EVENT(BG_EVENT_CHEST), 103,
      FLAG_CROSSBONE_ISLE_DRAGON_STATUE_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB)},
     {PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
-     LOCALID_SINKING_BOULDER, PILLAR_SUNK_FLAG,
+     LOCALID_SINKING_BOULDER, FLAG_CROSSBONE_ISLE_DRAGON_STATUE_PILLAR_SUNK,
      EVENT_SCRIPT(EventScript_StartMovingSinkingPillar)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_SINKING_BOULDER,
-     PILLAR_SUNK_FLAG, EVENT_SCRIPT(EventScript_MoveSinkingPillar)},
+     FLAG_CROSSBONE_ISLE_DRAGON_STATUE_PILLAR_SUNK,
+     EVENT_SCRIPT(EventScript_MoveSinkingPillar)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_FIRST_PUDDLE,
-     FIRST_FROZEN_PUDDLE_FLAG, EVENT_SCRIPT(EventScript_FreezeFirstPuddle)},
+     FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN,
+     EVENT_SCRIPT(EventScript_FreezeFirstPuddle)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_SECOND_PUDDLE,
-     FIRST_FROZEN_PUDDLE_FLAG + 1,
+     FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN + 1,
      EVENT_SCRIPT(EventScript_FreezeSecondPuddle)},
     {PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST),
-     LOCALID_THIRD_PUDDLE, FIRST_FROZEN_PUDDLE_FLAG + 2,
+     LOCALID_THIRD_PUDDLE,
+     FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN + 2,
      EVENT_SCRIPT(EventScript_FrostStartsOnThirdPuddle)},
     {PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS),
-     LOCALID_THIRD_PUDDLE, FIRST_FROZEN_PUDDLE_FLAG + 2,
+     LOCALID_THIRD_PUDDLE,
+     FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN + 2,
      EVENT_SCRIPT(EventScript_FrostRaisesPillar)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_THIRD_PUDDLE,
-     FIRST_FROZEN_PUDDLE_FLAG + 2, EVENT_SCRIPT(EventScript_FreezeThirdPuddle)},
+     FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN + 2,
+     EVENT_SCRIPT(EventScript_FreezeThirdPuddle)},
     {MAP_EVENTS_END},
 };

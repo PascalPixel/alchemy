@@ -9,7 +9,7 @@
 #include "static_assert.h"
 
 struct Sprite;
-union FieldObject;
+union ObjectEventOrEffect;
 
 /// One of the 64 objects (HEAP_SLOT_OBJECTS): its script, position, motion
 /// toward a target, sprites and update hook.
@@ -126,8 +126,8 @@ struct Object {
   /// The object its action script follows or faces.
   struct Object *linkedObject;
   /// The update hook (ObjectEvent.update), which the unused
-  /// ObjectDispatch_SetUpdateValue sets as a word.
-  void (*update)(union FieldObject *fieldObject);
+  /// Object_SetUpdateValue sets as a word.
+  void (*update)(union ObjectEventOrEffect *fieldObject);
 };
 
 STATIC_ASSERT(sizeof(struct Object) == 0x70);

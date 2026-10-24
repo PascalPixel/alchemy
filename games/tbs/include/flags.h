@@ -39,7 +39,7 @@
 #define FLAG_SYSTEM_FIRST 0x100
 #define FLAG_SYSTEM_LAST 0x1ff ///< the last of the 256 system flags
 /// The next map change is silent: the map loader clears it in place of
-/// playing SE_STOP_SLOT3, once. The world map sets it after its lighthouse
+/// playing SE_STOP_ACTION_SE, once. The world map sets it after its lighthouse
 /// transition.
 #define FLAG_SKIP_MAP_CHANGE_SOUND 0x101
 /// Set as a battle starts, cleared as a field map starts.
@@ -142,7 +142,7 @@
 #define FLAG_LINK_BATTLE 0x16c
 /// In debug mode, with it set, holding R as an action is planned defeats every
 /// enemy, and R with Select the party (BattleTurn_Build); that is its
-/// only reader. Vale Gate's debug story preset sets it, and so do the
+/// only reader. The debug story preset for Vale's plaza sets it, and so do the
 /// Colosseum's escorts as they swap Mia in for Jenna. XXX: likely a debug
 /// switch at the Colosseum too, because Jenna is never in the party there in
 /// normal play; a reader outside the debug keys would say otherwise.
@@ -619,7 +619,7 @@
 /// ★ Named from the game: "Lucky Medal" (MsgItemName)
 #define FLAG_BABI_PALACE_LUCKY_MEDAL 0xf9f
 /// A jar in the scholars' room, which is drawn on Vale's layout
-/// (vale_interiors_inn.c).
+/// (vale_inn.c).
 /// ★ Named from the game: "Hard Nut" (MsgItemName)
 #define FLAG_BABI_PALACE_HARD_NUT 0xf9e
 // Bilibin
@@ -1166,7 +1166,7 @@
 /// Douse has stopped the sandstorm that chases the party in the second map,
 /// for good.
 /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
-#define FLAG_SUHALLA_DESERT_CHASING_STORM_DOUSED 0x9b7
+#define FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_DOUSED 0x9b7
 // The desert's chests, set once each is opened or its mimic beaten.
 /// ★ Named from the game: "Virtuous Armlet" (MsgItemName)
 #define FLAG_SUHALLA_DESERT_VIRTUOUS_ARMLET 0xfb1
@@ -1227,9 +1227,9 @@
 /// (MsgTolbiShipReachedIslandRowers)
 #define FLAG_TOLBI_SHIP_AT_ISLAND 0x8a0
 /// The lookout has sighted the monsters of one of the ship's attacks, and the
-/// ship's map section plays MUS_029, the monsters' theme, instead of MUS_041.
-/// It is cleared when the party fights them on the rowing deck. ★ Named from
-/// the game: "Monsters sighted!" (MsgTolbiShipAvast)
+/// ship's map section plays MUS_029, the monsters' theme, instead of
+/// MUS_TOLBI_BOUND_SHIP. It is cleared when the party fights them on the rowing
+/// deck. ★ Named from the game: "Monsters sighted!" (MsgTolbiShipAvast)
 #define FLAG_TOLBI_SHIP_MONSTERS_SIGHTED 0x8f0
 /// At anchor off the island, the party has agreed to Sean and Ouranos' request
 /// to scout it for monsters, so the tour group can know whether it is safe to
@@ -1405,7 +1405,7 @@
 /// The jar's Elixir by the cottage; after Kalay it is searchable only from the
 /// third patch.
 /// ★ Named from the game: "Elixir" (MsgItemName)
-#define FLAG_VALE_KRADEN_JAR_ELIXIR 0xf41
+#define FLAG_VALE_KRADENS_COTTAGE_JAR_ELIXIR 0xf41
 
 // Vale, the plaza
 /// A villager asked whether Isaac is going to Kraden's cottage.
@@ -1470,11 +1470,11 @@
 /// (MsgValeNoBrother)
 #define FLAG_VALE_STORM_SAW_FELIX_HANGING_ON 0x83a
 /// The Boulder has come down the river and swept away Felix, his parents and
-/// Kyle, as Jenna came back with help (ValeStorm_ShowBoulderSweepingDownriver);
-/// Dora, Jenna, Garet and the villager are left at the bank. Afterwards Dora
-/// says "No... It can't be. Kyle..." and Jenna "Don't leave me all alone...".
-/// ★ Named from the game: "Please... Don't leave me all alone..."
-/// (MsgValeMomDadFelixPleaseDontLeave)
+/// Kyle, as Jenna came back with help
+/// (ValeStormyNight_ShowBoulderSweepingDownriver); Dora, Jenna, Garet and the
+/// villager are left at the bank. Afterwards Dora says "No... It can't be.
+/// Kyle..." and Jenna "Don't leave me all alone...". ★ Named from the game:
+/// "Please... Don't leave me all alone..." (MsgValeMomDadFelixPleaseDontLeave)
 #define FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY 0x841
 /// After the Boulder swept Kyle, Jenna's parents and Felix away, Isaac has
 /// gone for help and Garet has set off after him. Arriving among the villagers
@@ -1553,15 +1553,15 @@
 #define FLAG_GARET_CAME_HOME 0x81d
 // The houses' containers, set once each is searched (not on the stormy night)
 /// ★ Named from the game: "Antidote" (MsgItemName)
-#define FLAG_VALE_INTERIORS_SHOPS_BARREL_ANTIDOTE 0xf42
+#define FLAG_VALE_SHOPS_BARREL_ANTIDOTE 0xf42
 /// ★ Named from the game: "coin" (MsgGotCoins)
-#define FLAG_VALE_INTERIORS_SHOPS_JAR_6_COINS 0xf43
+#define FLAG_VALE_SHOPS_JAR_6_COINS 0xf43
 /// ★ Named from the game: "coin" (MsgGotCoins)
-#define FLAG_VALE_INTERIORS_SHOPS_JAR_2_COINS 0xf44
+#define FLAG_VALE_SHOPS_JAR_2_COINS 0xf44
 /// ★ Named from the game: "Smoke Bomb" (MsgItemName)
-#define FLAG_VALE_INTERIORS_SHOPS_JAR_SMOKE_BOMB 0xf45
+#define FLAG_VALE_SHOPS_JAR_SMOKE_BOMB 0xf45
 /// ★ Named from the game: "coin" (MsgGotCoins)
-#define FLAG_VALE_INTERIORS_SHOPS_JAR_3_COINS 0xf46
+#define FLAG_VALE_SHOPS_JAR_3_COINS 0xf46
 
 // Vale during the eruption
 /// Isaac and Garet have come back down the mountain to the villagers waiting

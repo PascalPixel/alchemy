@@ -25,7 +25,7 @@ static void ObjectEvent_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
     objectEvent->acceleration = 0x8000;
     Object_SetPosition(objectEvent, x, objectEvent->y.fixed, z);
   }
-  ObjectDispatch_SelectAnimation(objectEvent, 27);
+  Object_SelectAnimation(objectEvent, 27);
   {
     x = ((other->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
     z = ((other->z.fixed + (dz << 16)) & 0xFFF00000) + 0x80000;
@@ -35,9 +35,9 @@ static void ObjectEvent_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
     Object_SetPosition(other, x, other->y.fixed, z);
   }
   if (dx < 0 || dz < 0) {
-    ObjectDispatch_SelectAnimation(other, 4);
+    Object_SelectAnimation(other, 4);
   } else {
-    ObjectDispatch_SelectAnimation(other, 3);
+    Object_SelectAnimation(other, 3);
   }
   Object_WaitForMove(objectEvent);
   FieldScript_End();

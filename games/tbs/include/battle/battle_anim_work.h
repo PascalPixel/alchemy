@@ -12,7 +12,7 @@
 struct Sprite;
 
 /// Two adjacent affine background coordinates, queued together for BG2X/BG2Y.
-struct BattleCanvasOrigin {
+struct BattleBg2Origin {
   s32 x; ///< BG2X, 8 fractional bits
   s32 y; ///< BG2Y, 8 fractional bits
   /// 1 once the coordinates are queued, 0 before the first; nothing in the
@@ -20,8 +20,8 @@ struct BattleCanvasOrigin {
   s32 queued;
 };
 
-STATIC_ASSERT(sizeof(struct BattleCanvasOrigin) == 0x0c);
-STATIC_ASSERT(offsetof(struct BattleCanvasOrigin, y) == 0x04);
+STATIC_ASSERT(sizeof(struct BattleBg2Origin) == 0x0c);
+STATIC_ASSERT(offsetof(struct BattleBg2Origin, y) == 0x04);
 
 /// How BattleAnim_ProcessPendingGraphicsTransfer moves the animation's
 /// 128x128 canvas into VRAM once a frame (work->transferMode); the canvas
@@ -60,7 +60,7 @@ struct BattleAnimWork {
     /// The tracked elemental scene stages its origin inside the image area.
     struct {
       u8 image[0x13c4];
-      struct BattleCanvasOrigin origin;
+      struct BattleBg2Origin origin;
     } trackedCanvas;
   };
   struct Particle particles[64]; ///< free while variant is -1
@@ -109,7 +109,7 @@ struct BattleAnimWork {
   ///@}
   struct Sprite *animations[16]; ///< the animation's sprites
   /// Each target's flash timer in frames, for effect->actors[n]: set by
-  /// ObjectGroup_UpdateMembers, counted down by ObjectGroup_TickMemberTimers.
+  /// BattleAnim_TintBattler, counted down by BattleAnim_TickBattlerTints.
   u8 actorTimers[8];
   s32 framesSinceTransfer; ///< 1 on a canvas copy's frame, then counts up
   /// 1 once the animation has drawn a frame (ANIM_PRESENT_FRAME); the canvas

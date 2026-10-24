@@ -12,7 +12,7 @@
 /// sprites (FieldEffect_InitializeSlots), tints the field palette and fades it
 /// back at the end.
 void Djinn_RunJupiterJoinEffect(s32 djinniId) {
-  struct EffectVector position;
+  struct Vector3 position;
   struct Object *djinni;
   struct FieldEffectWork *effectWork;
   struct FieldEffectSprite *effect;
@@ -46,7 +46,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   position.y = djinni->y;
   position.z = djinni->z;
   Camera_WorldToScreen(&position);
-  ObjectDispatch_ReleaseFar((struct Object *)djinni);
+  Object_ReleaseFar((struct Object *)djinni);
   Sound_PlaySongFar(SE_164);
   effect = effectWork->sprites;
   remainingParticles = 23;
@@ -69,8 +69,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   WaitFrames(60);
   ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, 0x4000, 0);
   WaitFrames(20);
-  ObjectDispatch_SelectAnimationFar(
-      ObjectEvent_GetById(gSaveBlock.leaderLocalId), 28);
+  Object_SelectAnimationFar(ObjectEvent_GetById(gSaveBlock.leaderLocalId), 28);
   WaitFrames(40);
   Sound_PlaySongFar(SE_164);
   WaitFrames(100);
@@ -81,10 +80,11 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
 /// Per-frame update: makes an object pulse, switching its scale between the
 /// two values of gFieldEffect_PulseScales every 4 frames. The Mars Djinni's
 /// joining sets it on the leader, and clears it to end the pulse.
-void FieldEffect_SetObjectAlternatingWords(union FieldObject *fieldObject) {
+void FieldEffect_SetObjectAlternatingWords(
+    union ObjectEventOrEffect *fieldObject) {
   u8 *object = (u8 *)fieldObject;
   u32 *table = gFieldEffect_PulseScales;
-  u32 index = ((u32)gFrameTick >> 2) & 1;
+  u32 index = ((u32)gVBlankCount >> 2) & 1;
   u32 scale = table[index];
   ((struct Object *)object)->scaleX = scale;
   ((struct Object *)object)->scaleY = scale;
@@ -94,7 +94,7 @@ void FieldEffect_SetObjectAlternatingWords(union FieldObject *fieldObject) {
 /// just over 1/8 (0x2040), 0x50 more each frame for 52 frames. The caller
 /// zeroes the frame count first (Object.spinRampFrames), as the Mars Djinni's
 /// joining does.
-void FieldEffect_AdvanceAngleWithRamp(union FieldObject *fieldObject) {
+void FieldEffect_AdvanceAngleWithRamp(union ObjectEventOrEffect *fieldObject) {
   void *obj = (void *)fieldObject;
   struct Object *spin = obj;
   u32 step;
@@ -117,7 +117,7 @@ DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkObjectAndDestroySlow, 0xFFFFFE40)
 /// pixels of one 20 pixels over the leader, until it is freed once it arrives.
 void FieldEffect_UpdatePhasedRadialParticle(struct FieldEffectSprite *effect) {
   struct Object *owner;
-  struct EffectVector position;
+  struct Vector3 position;
   s32 state;
 
   owner = (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
@@ -146,7 +146,7 @@ void FieldEffect_UpdatePhasedRadialParticle(struct FieldEffectSprite *effect) {
         owner->sprite->image.priority;
     effect->flags = 0;
     effect->age = 0;
-    if ((gFrameTick & 1) != 0)
+    if ((gVBlankCount & 1) != 0)
       Sound_PlaySongFar(SE_HEAVY_IMPACT);
   } else if (state == MARS_SPARK_RISING) {
     if ((s16)effect->age == 3) {
@@ -177,7 +177,7 @@ void FieldEffect_UpdatePhasedRadialParticle(struct FieldEffectSprite *effect) {
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->state++;
-    if ((gFrameTick & 1) != 0)
+    if ((gVBlankCount & 1) != 0)
       Sound_PlaySongFar(SE_145);
   } else if (state == MARS_SPARK_SWARMING) {
     if (FieldEffectSprite_HasPendingTarget(effect) == 0)

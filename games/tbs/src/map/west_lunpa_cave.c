@@ -1,7 +1,7 @@
 /// @file
-/// West Lunpa Cave (MapId_WestLunpaCave, area name West Lunpa Cave), the
-/// cave between Lunpa and the world map, with a gate across it, where the
-/// party meets Bunza on the way out of Lunpa with Hammet.
+/// West Lunpa Cave (MapId_WestLunpaCave, area name West Lunpa Cave), the cave
+/// between Lunpa and the world map, with a gate across it, where the party
+/// meets Bunza on the way out of Lunpa with Hammet.
 ///
 /// The party comes in from the world map (WEST_LUNPA_CAVE_FROM_WORLD_MAP) and
 /// from Lunpa (WEST_LUNPA_CAVE_FROM_LUNPA);
@@ -17,12 +17,14 @@
 /// puzzle-solved tune. Frost also freezes a puddle to the south into a pillar
 /// that can be climbed, and one to the north. Its map flags:
 ///
-/// - FLAG_MAP_TEMP_00: the gate's puddle is frozen, propping the gate open.
-/// - FLAG_MAP_TEMP_01: the lowering switch has lowered the gate.
-/// - FLAG_MAP_TEMP_02: the gate is raised.
-/// - FLAG_MAP_TEMP_03: the north puddle is frozen.
-/// - FLAG_MAP_TEMP_04: the south puddle is frozen into a pillar, which
-///   changes one cell's metatile behavior.
+/// - FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN: the gate's puddle is frozen,
+///   propping the gate open.
+/// - FLAG_WEST_LUNPA_CAVE_GATE_LOWERED: the lowering switch has lowered the
+///   gate.
+/// - FLAG_WEST_LUNPA_CAVE_GATE_RAISED: the gate is raised.
+/// - FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN: the north puddle is frozen.
+/// - FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN: the south puddle is frozen into
+///   a pillar, which changes one cell's metatile behavior.
 ///
 /// Once Donpa has let the party leave Lunpa Fortress with Hammet
 /// (FLAG_DODONPA_LOCKED_UP), stepping onto
@@ -51,26 +53,38 @@
 #include "text/msg_ids.h"
 #include "fixed_math.h"
 
+/// The gate's puddle is frozen into a pillar, propping the gate open.
+#define FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN FLAG_MAP_TEMP_00
+/// The lowering switch has lowered the gate.
+#define FLAG_WEST_LUNPA_CAVE_GATE_LOWERED FLAG_MAP_TEMP_01
+/// The gate is raised.
+#define FLAG_WEST_LUNPA_CAVE_GATE_RAISED FLAG_MAP_TEMP_02
+/// The north puddle is frozen into a pillar.
+#define FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN FLAG_MAP_TEMP_03
+/// The south puddle is frozen into a pillar that can be climbed.
+#define FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN FLAG_MAP_TEMP_04
+
 static void Reunion_Converse(void);
 static void WagonChoice_Run(void);
-static u8 Leader_AnswersYes(void);
-static u8 Garet_AsksIfNotRiding(void);
-static u8 Garet_AsksAboutUnfinishedBusiness(void);
+static u8 WestLunpaCave_LeaderAnswersYes(void);
+static u8 WestLunpaCave_GaretAsksIfNotRiding(void);
+static u8 WestLunpaCave_GaretAsksAboutUnfinishedBusiness(void);
 static u8 Party_ConfirmsStaying(void);
-static u8 Bunza_AsksAboutUnfinishedBusiness(void);
-static u8 Garet_ChecksNothingLeftToDo(void);
-static u8 Mia_AsksIfRidingAfterAll(void);
-static u8 Bunza_CannotWait(void);
-static u8 Garet_AsksAboutThingsToDo(void);
+static u8 WestLunpaCave_BunzaAsksAboutUnfinishedBusiness(void);
+static u8 WestLunpaCave_GaretChecksNothingLeftToDo(void);
+static u8 WestLunpaCave_MiaAsksIfRidingAfterAll(void);
+static u8 WestLunpaCave_BunzaCannotWait(void);
+static u8 WestLunpaCave_GaretAsksAboutThingsToDo(void);
 static void Party_StaysBehind(void);
 static void Party_RidesWagon(void);
 
 // The cave's map flags, the state of its gate puzzle:
-// FLAG_MAP_TEMP_00: the gate puddle is frozen, propping the gate open.
-// FLAG_MAP_TEMP_01: the lowering switch has lowered the gate.
-// FLAG_MAP_TEMP_02: the gate is raised.
-// FLAG_MAP_TEMP_03: the north puddle is frozen into a pillar.
-// FLAG_MAP_TEMP_04: the south puddle is frozen into a pillar.
+// FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN: the gate puddle is frozen, propping
+// the gate open. FLAG_WEST_LUNPA_CAVE_GATE_LOWERED: the lowering switch has
+// lowered the gate. FLAG_WEST_LUNPA_CAVE_GATE_RAISED: the gate is raised.
+// FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN: the north puddle is frozen into a
+// pillar. FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN: the south puddle is frozen
+// into a pillar.
 
 const struct MapWarpDest *Map_GetWarpDests(void) { return gCaveWarpDests; }
 
@@ -113,16 +127,16 @@ static void EventScript_FreezeSouthPuddle(void) {
     puddle->motionFlags = 0;
   }
   MapGrid_CopyCellAttributes(7, 32, 1, 1, 8, 32);
-  GameFlag_Set(FLAG_MAP_TEMP_04);
+  GameFlag_Set(FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN);
 }
 
 /// Animates the raised gate resting on the frozen pillar, then opens the way
 /// through its metatile behaviors.
-static void Gate_DrawPropped(void) {
+static void WestLunpaCave_GateDrawPropped(void) {
   struct ObjectEvent *pillar;
 
   pillar = ObjectEvent_Get(LOCALID_GATE_PUDDLE);
-  Engine_ObjectEventSetAnimation(LOCALID_GATE_PUDDLE, PUDDLE_ANIMATION_FROZEN);
+  Import_ObjectEventSetAnimation(LOCALID_GATE_PUDDLE, PUDDLE_ANIMATION_FROZEN);
   if (pillar != NULL) {
     ObjectEvent_SetSpriteFlags(pillar, 0);
     pillar->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
@@ -148,29 +162,29 @@ static void EventScript_FreezeGatePuddle(void) {
   struct ObjectEvent *pillar;
 
   pillar = ObjectEvent_Get(LOCALID_GATE_PUDDLE);
-  GameFlag_Set(FLAG_MAP_TEMP_00);
+  GameFlag_Set(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN);
   if (pillar != NULL) {
     ObjectEvent_SetSpriteFlags(pillar, 0);
     pillar->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
   }
-  if (Script_GetFlag(FLAG_MAP_TEMP_02) == 0) {
+  if (Script_GetFlag(FLAG_WEST_LUNPA_CAVE_GATE_RAISED) == 0) {
     Script_PlaySong(SE_GATE_MOVE);
-    Gate_DrawPropped();
+    WestLunpaCave_GateDrawPropped();
     Script_PlaySong(MUS_PUZZLE_SOLVED);
-    GameFlag_Set(FLAG_MAP_TEMP_02);
+    GameFlag_Set(FLAG_WEST_LUNPA_CAVE_GATE_RAISED);
   }
 }
 
 /// In West Lunpa Cave, Frost on the north puddle: its pillar stays frozen when
 /// the party returns.
 static void EventScript_FreezeNorthPuddle(void) {
-  GameFlag_Set(FLAG_MAP_TEMP_03);
+  GameFlag_Set(FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN);
 }
 
 /// Lowers the gate in four-frame steps and restores the blocked cell
 /// attributes.
-static void Gate_Lower(void) {
-  if (GameFlag_Get(FLAG_MAP_TEMP_02) != 0) {
+static void WestLunpaCave_GateLower(void) {
+  if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_GATE_RAISED) != 0) {
     MapGrid_CopyCells(41, 86, 2, 6, 21, 57);
     WaitFrames(4);
     MapGrid_CopyCells(43, 86, 2, 6, 21, 57);
@@ -196,19 +210,19 @@ static void Gate_Lower(void) {
 /// the gate comes down, unless it is down already or a frozen pillar props it
 /// open. "flipped the switch."
 static void EventScript_FlipLoweringSwitch(void) {
-  if (Script_GetFlag(FLAG_MAP_TEMP_01) == 0) {
-    if (GameFlag_Get(FLAG_MAP_TEMP_00) == 0) {
+  if (Script_GetFlag(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED) == 0) {
+    if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN) == 0) {
       FieldMessage_Show(MsgFieldFlippedSwitch, 1);
       Script_PlaySong(SE_GATE_MOVE);
-      Gate_Lower();
-      GameFlag_Set(FLAG_MAP_TEMP_01);
-      GameFlag_Clear(FLAG_MAP_TEMP_02);
+      WestLunpaCave_GateLower();
+      GameFlag_Set(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED);
+      GameFlag_Clear(FLAG_WEST_LUNPA_CAVE_GATE_RAISED);
     }
   }
 }
 
 /// Raises the unpropped gate and restores its passable cell attributes.
-static void Gate_Raise(void) {
+static void WestLunpaCave_GateRaise(void) {
   MapGrid_CopyCells(41, 87, 2, 5, 21, 59);
   WaitFrames(4);
   MapGrid_CopyCells(2, 93, 1, 1, 24, 62);
@@ -226,13 +240,13 @@ static void Gate_Raise(void) {
 /// the gate goes up, unless it is up already or propped open. "flipped the
 /// switch."
 static void EventScript_FlipRaisingSwitch(void) {
-  if (GameFlag_Get(FLAG_MAP_TEMP_00) == 0) {
-    if (Script_GetFlag(FLAG_MAP_TEMP_02) == 0) {
+  if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN) == 0) {
+    if (Script_GetFlag(FLAG_WEST_LUNPA_CAVE_GATE_RAISED) == 0) {
       FieldMessage_Show(MsgFieldFlippedSwitch, 1);
       Script_PlaySong(SE_GATE_MOVE);
-      Gate_Raise();
-      GameFlag_Set(FLAG_MAP_TEMP_02);
-      GameFlag_Clear(FLAG_MAP_TEMP_01);
+      WestLunpaCave_GateRaise();
+      GameFlag_Set(FLAG_WEST_LUNPA_CAVE_GATE_RAISED);
+      GameFlag_Clear(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED);
     }
   }
 }
@@ -259,7 +273,7 @@ static void EventScript_HammetFindsBunza(void) {
     ObjectEvent_SetSpeed(LOCALID_BUNZA, PIXELS(3) / 2, PIXELS(3) / 4);
     ObjectEvent_WalkTo(LOCALID_BUNZA, 184, 400);
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_BUNZA);
-    Engine_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_STAND);
     ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH - FACING_STEP, 0);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 1);
     FieldScript_WaitFrames(30);
@@ -339,10 +353,10 @@ static void EventScript_HammetFindsBunza(void) {
     ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
     ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
     ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
-    Engine_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_WALK);
+    Import_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_WALK);
     ObjectEvent_WalkBy(LOCALID_HAMMET, 0, -16);
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_HAMMET);
-    Engine_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_STAND);
     FieldScript_SetMessageId(recognition + RECOGNITION_HAMMET_NAMES_BUNZA);
     Script_ShowMessage(LOCALID_HAMMET, 0);
     ObjectEvent_ShowEmote(LOCALID_BUNZA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
@@ -390,7 +404,7 @@ static void Reunion_Converse(void) {
   ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_EAST, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_STAND);
   FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
   WaitFrames(1);
   MapGrid_CenterOnFollowedPoint();
@@ -430,9 +444,9 @@ static void Reunion_Converse(void) {
   FieldScript_SetMessageId(reunion + REUNION_HAMMET_THANKS_PARTY);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_HAMMET, 0);
   FieldScript_WaitFrames(30);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(120);
   ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_SOUTH - FACING_STEP, 0);
   FieldScript_WaitFrames(30);
@@ -581,7 +595,7 @@ static void Reunion_Converse(void) {
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_IVAN, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_BUNZA);
   ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH - FACING_STEP, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_STAND);
   ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   FieldScript_SetMessageId(reunion + REUNION_BUNZA_WARNS_OF_SEARCH);
@@ -656,14 +670,14 @@ static void Reunion_Converse(void) {
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
   ObjectEvent_LinkPair(LOCALID_HAMMET, LOCALID_IVAN, 0);
   FieldScript_WaitFrames(60);
-  Engine_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(60);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   ObjectEvent_FaceObjectEvent(LOCALID_BUNZA, LOCALID_PARTY_LEADER, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_NOD);
   FieldScript_WaitFrames(60);
   WagonChoice_Run();
 }
@@ -698,34 +712,34 @@ static void WagonChoice_Run(void) {
   ObjectMotion_SetAngleToward(LOCALID_BUNZA, LOCALID_PARTY_LEADER, 0);
 
 ask_to_ride:
-  if (Leader_AnswersYes()) {
+  if (WestLunpaCave_LeaderAnswersYes()) {
   ask_about_business:
-    if (!Bunza_AsksAboutUnfinishedBusiness()) {
+    if (!WestLunpaCave_BunzaAsksAboutUnfinishedBusiness()) {
       goto ride;
     }
     insisted = FALSE;
-    if (!Garet_AsksAboutThingsToDo()) {
+    if (!WestLunpaCave_GaretAsksAboutThingsToDo()) {
     insist_nothing_left:
       insisted = TRUE;
     check_nothing_left:
-      Garet_ChecksNothingLeftToDo();
+      WestLunpaCave_GaretChecksNothingLeftToDo();
       if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
                                                        0) == 0) {
         goto ride;
       }
     }
-    if (Bunza_CannotWait() || !insisted) {
+    if (WestLunpaCave_BunzaCannotWait() || !insisted) {
       goto stay;
     }
     goto check_nothing_left;
   } else {
-    if (Garet_AsksIfNotRiding()) {
-      if (Garet_AsksAboutUnfinishedBusiness()) {
+    if (WestLunpaCave_GaretAsksIfNotRiding()) {
+      if (WestLunpaCave_GaretAsksAboutUnfinishedBusiness()) {
         goto stay;
       }
       goto insist_nothing_left;
     }
-    if (Mia_AsksIfRidingAfterAll()) {
+    if (WestLunpaCave_MiaAsksIfRidingAfterAll()) {
       goto ask_about_business;
     }
     confusion = MsgLunpaTotallyConfusedChanged;
@@ -744,13 +758,13 @@ stay:
 }
 
 /// The scene menu encodes Yes as zero; expose it as a Boolean to the dialogue.
-static u8 Leader_AnswersYes(void) {
+static u8 WestLunpaCave_LeaderAnswersYes(void) {
   return FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
                                                       0) == 0;
 }
 
 /// Asks whether the party really intends to refuse the ride.
-static u8 Garet_AsksIfNotRiding(void) {
+static u8 WestLunpaCave_GaretAsksIfNotRiding(void) {
   FieldScript_SetMessageId(MsgLunpaGaretAsksIfNotRiding);
   FieldMessage_ShowAtObject(LOCALID_GARET, 0);
   return FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
@@ -758,7 +772,7 @@ static u8 Garet_AsksIfNotRiding(void) {
 }
 
 /// Asks whether unfinished business explains the refusal to ride.
-static u8 Garet_AsksAboutUnfinishedBusiness(void) {
+static u8 WestLunpaCave_GaretAsksAboutUnfinishedBusiness(void) {
   FieldScript_SetMessageId(MsgLunpaGaretAsksAboutUnfinishedBusiness);
   FieldMessage_ShowAtObject(LOCALID_GARET, 0);
   return FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
@@ -769,7 +783,7 @@ static u8 Garet_AsksAboutUnfinishedBusiness(void) {
 static u8 Party_ConfirmsStaying(void) { return TRUE; }
 
 /// Lets Bunza check whether the party has unfinished business before leaving.
-static u8 Bunza_AsksAboutUnfinishedBusiness(void) {
+static u8 WestLunpaCave_BunzaAsksAboutUnfinishedBusiness(void) {
   FieldScript_SetMessageId(MsgLunpaBunzaAsksAboutUnfinishedBusiness);
   FieldMessage_ShowAtObject(LOCALID_BUNZA, 0);
   return FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
@@ -777,14 +791,14 @@ static u8 Bunza_AsksAboutUnfinishedBusiness(void) {
 }
 
 /// Opens Garet's confirmation prompt; WagonChoice_Run collects the answer.
-static u8 Garet_ChecksNothingLeftToDo(void) {
+static u8 WestLunpaCave_GaretChecksNothingLeftToDo(void) {
   FieldScript_SetMessageId(MsgLunpaGaretChecksNothingLeft);
   FieldMessage_ShowAtObject(LOCALID_GARET, 0);
   return TRUE;
 }
 
 /// Asks whether the party has changed its mind about taking the wagon.
-static u8 Mia_AsksIfRidingAfterAll(void) {
+static u8 WestLunpaCave_MiaAsksIfRidingAfterAll(void) {
   FieldScript_SetMessageId(MsgLunpaMiaAsksIfRidingAfter);
   FieldMessage_ShowAtObject(LOCALID_MIA, 0);
   return FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
@@ -792,7 +806,7 @@ static u8 Mia_AsksIfRidingAfterAll(void) {
 }
 
 /// Explains that Bunza cannot wait and asks again about the party's business.
-static u8 Bunza_CannotWait(void) {
+static u8 WestLunpaCave_BunzaCannotWait(void) {
   s32 warning;
 
   ObjectEvent_FaceObjectEvent(LOCALID_IVAN, LOCALID_PARTY_LEADER, 0);
@@ -813,7 +827,7 @@ static u8 Bunza_CannotWait(void) {
 }
 
 /// Asks the leader to confirm that something still needs doing here.
-static u8 Garet_AsksAboutThingsToDo(void) {
+static u8 WestLunpaCave_GaretAsksAboutThingsToDo(void) {
   FieldScript_SetMessageId(MsgLunpaGaretAsksAboutThingsTo);
   FieldMessage_ShowAtObject(LOCALID_GARET, 0);
   return FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
@@ -847,22 +861,22 @@ static void Party_StaysBehind(void) {
   ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH - FACING_STEP, 0);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(60);
   ObjectEvent_SetDestinationOffset(LOCALID_HAMMET, -16, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_HAMMET);
-  Engine_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_STAND);
   FieldScript_WaitFrames(40);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMMET, ANIM_NOD);
   ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_SOUTH + FACING_STEP, 0);
   FieldScript_WaitFrames(30);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   ObjectEvent_WalkTo(LOCALID_BUNZA, 156, 528);
   FieldScript_WaitFrames(20);
   ObjectEvent_WalkTo(LOCALID_HAMMET, 164, 528);
@@ -901,7 +915,7 @@ static void Party_StaysBehind(void) {
 
   // Merge the companions back into the leader and restore player camera
   // control.
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_GARET, leader->x.part.pixel,
@@ -909,7 +923,7 @@ static void Party_StaysBehind(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_IVAN, leader->x.part.pixel,
@@ -917,7 +931,7 @@ static void Party_StaysBehind(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IVAN);
   ObjectEvent_SetPosition(LOCALID_IVAN, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_MIA, leader->x.part.pixel,
@@ -956,22 +970,22 @@ static void Party_RidesWagon(void) {
   Script_ShowMessage(LOCALID_BUNZA, 0);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMMET, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(80);
   ObjectEvent_SetDestinationOffset(LOCALID_HAMMET, -16, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_HAMMET);
-  Engine_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_STAND);
   FieldScript_WaitFrames(40);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMMET, ANIM_NOD);
   ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_SOUTH + FACING_STEP, 0);
   FieldScript_WaitFrames(30);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   ObjectEvent_WalkTo(LOCALID_BUNZA, 152, 528);
   FieldScript_WaitFrames(20);
   ObjectEvent_WalkTo(LOCALID_HAMMET, 160, 528);
@@ -993,7 +1007,7 @@ static void Party_RidesWagon(void) {
   ObjectEvent_SetPosition(LOCALID_HAMMET, 0, 0);
   ObjectEvent_SetPosition(LOCALID_BUNZA, 0, 0);
 
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_GARET, leader->x.part.pixel,
@@ -1001,7 +1015,7 @@ static void Party_RidesWagon(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_IVAN, leader->x.part.pixel,
@@ -1009,7 +1023,7 @@ static void Party_RidesWagon(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IVAN);
   ObjectEvent_SetPosition(LOCALID_IVAN, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_MIA, leader->x.part.pixel,
@@ -1024,7 +1038,7 @@ static void Party_RidesWagon(void) {
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 168, 640);
   FieldScript_WaitFrames(60);
   FieldScript_FinishScreenTransition();
-  Engine_ScriptRequestWarp(WEST_LUNPA_CAVE_BY_WAGON);
+  Import_ScriptRequestWarp(WEST_LUNPA_CAVE_BY_WAGON);
 }
 
 /// Restores the gate and frozen puddles from the persistent puzzle flags.
@@ -1037,21 +1051,21 @@ s32 Map_Initialize(void) {
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_GATE_PUDDLE), 0);
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_NORTH_PUDDLE), 0);
     ObjectEvent_GetById(LOCALID_NORTH_PUDDLE)->scaleY = 19 * Q16_ONE / 20;
-    if (GameFlag_Get(FLAG_MAP_TEMP_01) != 0) {
-      Gate_Lower();
+    if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED) != 0) {
+      WestLunpaCave_GateLower();
     }
-    if (GameFlag_Get(FLAG_MAP_TEMP_02) != 0) {
-      Gate_Raise();
+    if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_GATE_RAISED) != 0) {
+      WestLunpaCave_GateRaise();
     }
-    if (GameFlag_Get(FLAG_MAP_TEMP_00) != 0) {
-      Gate_DrawPropped();
+    if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN) != 0) {
+      WestLunpaCave_GateDrawPropped();
     }
-    if (GameFlag_Get(FLAG_MAP_TEMP_03) != 0) {
-      Engine_ObjectEventSetAnimation(LOCALID_NORTH_PUDDLE,
+    if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN) != 0) {
+      Import_ObjectEventSetAnimation(LOCALID_NORTH_PUDDLE,
                                      PUDDLE_ANIMATION_FROZEN);
     }
-    if (GameFlag_Get(FLAG_MAP_TEMP_04) != 0) {
-      Engine_ObjectEventSetAnimation(LOCALID_SOUTH_PUDDLE,
+    if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN) != 0) {
+      Import_ObjectEventSetAnimation(LOCALID_SOUTH_PUDDLE,
                                      PUDDLE_ANIMATION_FROZEN);
     }
   }

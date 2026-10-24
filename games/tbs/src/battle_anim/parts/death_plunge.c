@@ -78,9 +78,9 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
   z = user->z + percent * (target->z - user->z) / 100;
   userHeight = BattleUnit_GetEffectHeightFar(work->effect->user);
   targetHeight = BattleUnit_GetEffectHeightFar(work->effect->targets[0]);
-  ObjectDispatch_StartIdleFar((struct Object *)user);
+  Object_StartIdleFar((struct Object *)user);
   Object_SetMoveTargetFar((struct Object *)user, x, 0, z);
-  ObjectDispatch_SelectAnimationFar(user, POSE_LEAP);
+  Object_SelectAnimationFar(user, POSE_LEAP);
   user->snapToTarget = 1;
   user->steeringFlags = 1;
   user->acceleration = 2 << 16;
@@ -89,7 +89,7 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
   for (frame = 0; frame != DEATH_PLUNGE_FRAMES; frame++) {
     struct BattleCamera *camera;
 
-    camera = gCameraWork;
+    camera = gBattleCamera;
     ANIM_VIEW_FROM_CAMERA(camera);
 
     // Frame 0: both leap at 15 pixels a frame. Frame 11: both turn upside
@@ -112,8 +112,8 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
     // Frame 54: the target flashes and both bounce; the user heads back
     // towards the middle of the field.
     if (frame == 54) {
-      ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
-                                POSE_DAMAGE, 0, 10);
+      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+                             POSE_DAMAGE, 0, 10);
       target->velocityY = 8 << 16;
       target->gravity = 0xab85;
       user->velocityY = 5 << 16;
@@ -121,7 +121,7 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
       user->acceleration = 1 << 16;
       user->speedLimit = 2 << 16;
       user->steeringFlags = 0;
-      ObjectDispatch_StartIdleFar((struct Object *)user);
+      Object_StartIdleFar((struct Object *)user);
       Object_SetMoveTargetFar((struct Object *)user, 0, 0, user->z);
     }
     ANIM_VIEW_FROM_CAMERA(camera);
@@ -156,7 +156,7 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
       user->scaleY = -user->scaleY;
       user->y -= userHeight;
       target->y -= targetHeight;
-      ObjectDispatch_SelectAnimationFar(user, 0);
+      Object_SelectAnimationFar(user, 0);
     }
     // The cues: the damage with a heavy impact on the hit, and a shake on
     // the leap and on the frame before the hit.
@@ -329,8 +329,8 @@ UNUSED void BattleAnim_RunBladeRain(struct BattleAnimArgs *effect) {
     // pose for 2 frames and the screen shakes; every 8 frames the hit
     // sound plays.
     if (frame >= 23 && frame <= 87 && (frame & 3) == 0) {
-      ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
-                                POSE_DAMAGE, 0, 2);
+      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+                             POSE_DAMAGE, 0, 2);
       work->shakeFrames = 1;
       if ((frame & 7) == 0)
         Sound_PlaySongFar(SE_IMPACT);
@@ -379,7 +379,7 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *effect) {
                                                 sizeof *work);
   canvas = (void *)AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   sheet = (u8 *)AllocHeapSlot(HEAP_SLOT_BATTLE_SHEET, 0x60e);
-  camera = gCameraWork;
+  camera = gBattleCamera;
   work->effect = effect;
   BattleAnim_StartCanvasLayer(0);
   // Palette_StepFadeTransfer darkens the battle background for 24 frames.
@@ -439,8 +439,8 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *effect) {
     if (frame > 49)
       REG_BLDALPHA = BLEND_ALPHA(112 - frame * 2, 16);
     if (frame == 16)
-      ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
-                                -1, 0, 20);
+      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE, -1,
+                             0, 20);
 
     // The pillar: its left half at x 47 and its mirrored right half at x
     // 64, keeping the brighter pixel. The pillar (17x64) cycles through four
@@ -559,7 +559,7 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
   s32 frame;
   BlitterPair draw;
   struct BattleWork *battle;
-  struct BattleViewWork *view;
+  struct BattleBackgroundWork *view;
   void **slots;
   void **slotTable;
   s32 targetRadius;
@@ -676,8 +676,8 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
                       0x20000);
   Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0), 0x100, 0x7fff7fff);
   Sound_PlaySongFar(SE_212);
-  ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
-                            POSE_CAST, 0, 30);
+  BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+                         POSE_CAST, 0, 30);
 
   for (frame = 0; frame != SHATTERING_OPENING_FRAMES; frame++) {
     // Frame loop. The cues: the shatter sound three times by frame 3, the
@@ -687,7 +687,7 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
     if (frame == 3)
       Sound_PlaySongFar(SE_212);
     if (frame == 28)
-      ObjectGroup_UpdateMembers(work->effect->targets[0], -1, POSE_CAST, -1, 0);
+      BattleAnim_TintBattler(work->effect->targets[0], -1, POSE_CAST, -1, 0);
     if (frame == 32)
       Sound_PlaySongFar(SE_149);
     if (frame == 5)
@@ -891,7 +891,7 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
   // fade, then free the slots in the reverse of the order they were taken.
   ANIM_RELEASE_BLITTERS();
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
-  ObjectGroup_UpdateMembers(work->effect->targets[0], -1, POSE_STANDING, -1, 0);
+  BattleAnim_TintBattler(work->effect->targets[0], -1, POSE_STANDING, -1, 0);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = 32;
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, battle->background, 0);
@@ -1004,8 +1004,8 @@ void BattleAnim_RunElementBurst(struct BattleAnimArgs *effect) {
       REG_BLDALPHA = BLEND_ALPHA(0x70 - frame * 2, 16);
     if (frame == 26) {
       Sound_PlaySongFar(SE_212);
-      ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
-                                -1, 0, 20);
+      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE, -1,
+                             0, 20);
     }
     // Frames 28 to 48: the burst of light (48x48), seven images, three
     // frames each.

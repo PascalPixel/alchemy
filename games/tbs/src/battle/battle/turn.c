@@ -15,9 +15,9 @@ u32 BattleUnit_IsListed(u32 unitId) {
   s32 unitCount;
   s32 unitIndex;
 
-  side = BATTLE_SIDES_PARTY;
+  side = BATTLE_SIDE_MASK_PARTY;
   if (unitId > ALLY_MAX)
-    side = BATTLE_SIDES_ENEMIES;
+    side = BATTLE_SIDE_MASK_ENEMIES;
   unitCount = BattleUnit_ListIds(side, list);
 
   for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
@@ -48,9 +48,9 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
   s32 enemySide;
 
   standbyCount = 0;
-  sideMask = BATTLE_SIDES_PARTY;
+  sideMask = BATTLE_SIDE_MASK_PARTY;
   if (unitId > ALLY_MAX)
-    sideMask = BATTLE_SIDES_ENEMIES;
+    sideMask = BATTLE_SIDE_MASK_ENEMIES;
   unitCount = BattleUnit_ListIds(sideMask, unitIds);
   enemySide = DJINN_RECOVERY_PARTY;
   if (unitId > ALLY_MAX)
@@ -516,9 +516,9 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
         BattlePlayback_Push(PLAYBACK_MESSAGE, MsgDjinnSet);
         BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, request->unitId);
         Sound_PlaySongFar(SE_212);
-        ObjectDispatch_SelectAnimationFar(
-            BattleObject_Get(request->unitId)->object, POSE_CAST);
-        ObjectDispatch_SetAnimationSpeedFar(
+        Object_SelectAnimationFar(BattleObject_Get(request->unitId)->object,
+                                  POSE_CAST);
+        Object_SetAnimationSpeedFar(
             (struct Object *)BattleObject_Get(request->unitId)->object, 32);
         ElementGlow_Play(request->unitId, DJINN_ELEMENT(request->parameter),
                          GLOW_BURST, 0);

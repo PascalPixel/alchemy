@@ -30,7 +30,7 @@ void System_Initialize(void) {
   // install the resident runtime before any service can use its work blocks
   Dma_Fill32(0, (void *)0x03000000, 0x7800);
   InitHeap();
-  Runtime_InstallIwramAndIrqs();
+  System_InstallIwramAndIrqs();
   // UB: the count and its pad are cleared with one word store
 #ifdef UBFIX
   gIoWriteQueue.count = 0;
@@ -45,9 +45,9 @@ void System_Initialize(void) {
   Window_LoadGraphics();
   DebugText_Clear();
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON;
-  Runtime_SetIrqHandler(IRQ_VBLANK, 1, (void (*)(void))System_VBlankHandler);
+  Irq_SetHandler(IRQ_VBLANK, 1, (void (*)(void))System_VBlankHandler);
 #if defined(SYSTEM_HALT_ON_GAMEPAK_IRQ)
-  Runtime_SetIrqHandler(IRQ_GAMEPAK, 1, Iwram_Halt);
+  Irq_SetHandler(IRQ_GAMEPAK, 1, Iwram_Halt);
 #endif
   Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
   // Start audio and frame services only after the interrupt handlers are ready.
@@ -63,7 +63,7 @@ void System_Initialize(void) {
 
 /// Unused: waits out frames forever; the frame loop still runs the
 /// tasks. Nothing in ☀️ calls it.
-UNUSED void Runtime_IdleForever(void) {
+UNUSED void System_IdleForever(void) {
   for (;;) {
     (void)gKeysPressed;
     WaitFrames(1);
@@ -102,28 +102,28 @@ s32 System_GetLanguage(void) {
 
 /// Unused: reserved empty export A in the runtime far-call table; no source
 /// caller.
-UNUSED void RuntimeDispatch_ReservedNoOpA(void) {}
+UNUSED void Stub_ReservedNoOpA(void) {}
 
 /// Unused: reserved empty export B in the runtime far-call table; no source
 /// caller.
-UNUSED void RuntimeDispatch_ReservedNoOpB(void) {}
+UNUSED void Stub_ReservedNoOpB(void) {}
 
 /// Unused: reserved empty export C in the runtime far-call table; no source
 /// caller.
-UNUSED void RuntimeDispatch_ReservedNoOpC(void) {}
+UNUSED void Stub_ReservedNoOpC(void) {}
 
 /// Unused: reserved empty export D in the runtime far-call table; no source
 /// caller.
-UNUSED void RuntimeDispatch_ReservedNoOpD(void) {}
+UNUSED void Stub_ReservedNoOpD(void) {}
 
 /// Unused: reserved empty export E in the runtime far-call table; no source
 /// caller.
-UNUSED void RuntimeDispatch_ReservedNoOpE(void) {}
+UNUSED void Stub_ReservedNoOpE(void) {}
 
 /// An exported stub that ignores its arguments and reports 0. The sprite
 /// viewer calls it with a resource id and a far-call table, so its choice of
 /// resource set changes nothing.
-s32 RuntimeDispatch_ReturnZero(s32 unused0, const u8 *unused1) { return 0; }
+s32 Stub_ReturnZero(s32 unused0, const u8 *unused1) { return 0; }
 
 /// The build stamp's twelve digit characters copied to IWRAM, and a zero word
 /// after them that ends the string.
@@ -147,7 +147,7 @@ void System_CopyBuildStamp(void) {
 /// An exported stub that does nothing with its argument. The title screen,
 /// Lucky Dice and Lucky Wheels (LuckyWheels_Run) call it with a far-call
 /// resource id.
-void RuntimeDispatch_NoOpHook(s32 unused) {}
+void Stub_NoOpHook(s32 unused) {}
 
 /// Returns the ROM address of resource `index` from the resource directory.
 /// Called throughout the game before decoding a resource.
@@ -241,7 +241,7 @@ void Overlay_Load(u32 index, void *destination) {
 }
 
 /// The handler of every interrupt nobody has claimed.
-void Runtime_IgnoreInterrupt(void) {}
+void Irq_Ignore(void) {}
 
 /// Copies the resident code to IWRAM, points the BIOS interrupt vector
 /// (gIrqVector) at its dispatcher, installs the default handler table and
@@ -249,7 +249,7 @@ void Runtime_IgnoreInterrupt(void) {}
 /// Spanish and Italian editions, the cartridge-removed interrupt, which halts
 /// the game). Called by System_Initialize; it clears IME first and sets it
 /// again at the end.
-void Runtime_InstallIwramAndIrqs(void) {
+void System_InstallIwramAndIrqs(void) {
   u8 *iwram;
 
   // Keep interrupts masked while replacing both the dispatcher and its table.
@@ -258,7 +258,7 @@ void Runtime_InstallIwramAndIrqs(void) {
   // 0x1400 bytes of resident code and data
   Dma_Set(IwramRuntime_Rom, iwram, DMA_COPY_WORDS(0x500), REG_DMA3);
   gIrqVector = iwram;
-  Dma_Set(gRuntime_IrqHandlers, gIrqHandlers, DMA_COPY_WORDS(IRQ_COUNT),
+  Dma_Set(gDefaultIrqHandlers, gIrqHandlers, DMA_COPY_WORDS(IRQ_COUNT),
           REG_DMA3);
   Io_Write16(0, &REG_DISPSTAT);
   // Disarmed until System_Initialize arms the soft-reset keys

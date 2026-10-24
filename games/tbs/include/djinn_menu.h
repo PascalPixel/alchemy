@@ -96,12 +96,12 @@ struct DjinnMenuWork {
   /// to be chosen
   u16 pending;
   s16 completionFlag; ///< ItemMenuWork's; not named here
-  /// DjinnFiguresWork's animations, the figures the Djinn screen
+  /// ItemMenuFiguresView's animations, the figures the Djinn screen
   /// moves through that view.
   struct Sprite *figures[4];
   u16 slotX[4];
   u16 slotY[4];
-  s32 figurePhases[4]; ///< DjinnFiguresWork's phases; not named here
+  s32 figurePhases[4]; ///< ItemMenuFiguresView's phases; not named here
   /// The Djinn chosen in each side: index in their element, element, member.
   ///@{
   u8 pairIndex[2];

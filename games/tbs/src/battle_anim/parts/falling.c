@@ -174,8 +174,8 @@ void BattleAnim_RunIce(struct BattleAnimArgs *effect) {
           work->shakeFrames = 2;
           shard->variant = 0;
           ANIM_FOR_EACH_TARGET(k, work->effect)
-          ObjectGroup_UpdateMembers(work->effect->targets[k],
-                                    SPRITE_COLOR_BLUE_TINT, POSE_DAMAGE, k, 8);
+          BattleAnim_TintBattler(work->effect->targets[k],
+                                 SPRITE_COLOR_BLUE_TINT, POSE_DAMAGE, k, 8);
         }
       }
       if (shard->variant != -1) {
@@ -226,7 +226,7 @@ void BattleAnim_RunIce(struct BattleAnimArgs *effect) {
           puff->variant--;
       }
     }
-    ObjectGroup_TickMemberTimers();
+    BattleAnim_TickBattlerTints();
     // Shakes while work->shakeFrames, which each landing sets to 2, lasts.
     BattleCamera_Shake(4, 4);
     ANIM_PRESENT_FRAME(work);
@@ -406,8 +406,8 @@ void BattleAnim_RunDouse(struct BattleAnimArgs *effect) {
           if ((i & 3) == 0)
             Sound_PlaySongFar(SE_132);
           ANIM_FOR_EACH_TARGET(k, work->effect)
-          ObjectGroup_UpdateMembers(work->effect->targets[k],
-                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 2);
+          BattleAnim_TintBattler(work->effect->targets[k], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, k, 2);
         }
       } else {
         if (bolt->variant >= 0 && bolt->variant <= 3)

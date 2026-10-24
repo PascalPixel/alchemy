@@ -25,7 +25,7 @@ enum GrowingColumnsMode {
 };
 
 /// One growing column, laid over a struct Particle in work->particles.
-struct DualColumn {
+struct ParticleGrowthColumnView {
   s32 x; ///< the root, in canvas pixels
   s32 y; ///< the root's row: 108 to 115, lower for later columns
   s32 z; ///< the Particle's z and velocityX, unused here
@@ -63,9 +63,9 @@ void BattleAnim_RunPunji(struct BattleAnimArgs *effect) {
 /// end; the scene fades out over 16 frames, and nothing grows in its last 4.
 ///
 /// Called by BattleAnim_RunGrowth and BattleAnim_RunPunji.
-/// work->particles holds the 16 columns (struct DualColumn) and PARTICLES
-/// the dust. Writes REG_BG2PA, REG_BLDCNT, REG_BLDALPHA and, on side 1,
-/// REG_BG2X; sets work->shakeFrames as each column appears.
+/// work->particles holds the 16 columns (struct ParticleGrowthColumnView) and
+/// PARTICLES the dust. Writes REG_BG2PA, REG_BLDCNT, REG_BLDALPHA and, on side
+/// 1, REG_BG2X; sets work->shakeFrames as each column appears.
 ///
 /// effect: the targets; variant picks the number of columns
 ///         (gGrowth_ColumnCounts): 4 for Growth and Punji, 8 for Mad Growth,
@@ -89,13 +89,13 @@ void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *effect, s32 mode) {
 
   u8 *variantCursor;
 
-  struct DualColumn *setup;
+  struct ParticleGrowthColumnView *setup;
   s32 x;
   s32 height;
   s32 limit;
 
   s32 puffCells;
-  struct DualColumn *column;
+  struct ParticleGrowthColumnView *column;
   s32 length;
   s32 reach;
   s8 pillarHeight;
@@ -150,7 +150,7 @@ void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *effect, s32 mode) {
   // of its gGrowth_ColumnX, each length random and capped by its shape. All
   // 16 are placed, whatever the variant's count.
   i = 0;
-  setup = (struct DualColumn *)work->particles;
+  setup = (struct ParticleGrowthColumnView *)work->particles;
   do {
     x = (gGrowth_ColumnX[i] + (7 & Random16())) - 4;
     setup->y = i / 2 + 108;
@@ -190,8 +190,9 @@ void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *effect, s32 mode) {
         i = 0;
         if (gGrowth_ColumnCounts[work->effect->variant] != 0) {
           do {
-            column = (struct DualColumn *)((u8 *)work->particles +
-                                           i * sizeof(struct DualColumn));
+            column = (struct ParticleGrowthColumnView
+                          *)((u8 *)work->particles +
+                             i * sizeof(struct ParticleGrowthColumnView));
             start = i * 4 + 8;
             if (frame == i * 4 + 9) {
               work->shakeFrames = 2;
@@ -243,9 +244,8 @@ void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *effect, s32 mode) {
                   if (!(i & 1)) {
                     Sound_PlaySongFar(SE_IMPACT);
                   }
-                  ObjectGroup_UpdateMembers(work->effect->targets[n],
-                                            SPRITE_COLOR_WHITE, POSE_DAMAGE, n,
-                                            3);
+                  BattleAnim_TintBattler(work->effect->targets[n],
+                                         SPRITE_COLOR_WHITE, POSE_DAMAGE, n, 3);
                 }
                 n++;
               } while (n != work->effect->targetCount);
@@ -385,8 +385,8 @@ void BattleAnim_RunVine(struct BattleAnimArgs *effect) {
     if (frame == 32) {
       Sound_PlaySongFar(SE_143);
       ANIM_FOR_EACH_TARGET(i, work->effect)
-      ObjectGroup_UpdateMembers(work->effect->targets[i], SPRITE_COLOR_WHITE,
-                                POSE_DAMAGE, i, 16);
+      BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+                             POSE_DAMAGE, i, 16);
     }
     i = 0;
     column = work->particles;
@@ -564,8 +564,8 @@ void BattleAnim_RunThorn(struct BattleAnimArgs *effect) {
       ANIM_FOR_EACH_TARGET(j, work->effect) {
         if (frame == start + 4) {
           Sound_PlaySongFar(SE_132);
-          ObjectGroup_UpdateMembers(work->effect->targets[j],
-                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 3);
+          BattleAnim_TintBattler(work->effect->targets[j], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, j, 3);
         }
       }
     }

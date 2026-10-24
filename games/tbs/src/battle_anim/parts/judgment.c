@@ -80,7 +80,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
   struct SpriteScale scale;
   void *canvas;
   struct BattleAnimWork *work;
-  struct BattleViewWork *view;
+  struct BattleBackgroundWork *view;
   DrawRectangle draw[2];
   s32 frame;
   u8 *ramp;
@@ -911,8 +911,8 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
     // test and the targets' reaction.
     if (frame > 319) {
       ANIM_FOR_EACH_TARGET(i, work->effect) {
-        ObjectGroup_UpdateMembers(work->effect->targets[i], SPRITE_COLOR_BLACK,
-                                  POSE_DAMAGE, -1, 0);
+        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_BLACK,
+                               POSE_DAMAGE, -1, 0);
       }
     }
 

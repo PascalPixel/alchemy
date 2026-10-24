@@ -169,7 +169,7 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
     piece = record->objectEvent;
 
     if (*gKolimaForestFloodgateLayout == 1) {
-      ObjectDispatch_SelectAnimation(piece, 4);
+      Object_SelectAnimation(piece, 4);
       piece->priorityFlags =
           OBJ_EVENT_PRIORITY_AUTOMATIC | OBJ_EVENT_PRIORITY_UNDERFOOT;
       piece->motionFlags = 0;
@@ -181,7 +181,7 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
         MapGrid_CopyCells(70, 40, 4, 1, record->x + 32, record->z);
       }
     } else {
-      ObjectDispatch_SelectAnimation(piece, 1);
+      Object_SelectAnimation(piece, 1);
       piece->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
       piece->motionFlags = OBJ_EVENT_FALLS;
       piece->y.fixed = 0;
@@ -214,7 +214,7 @@ static void KolimaForestFloodgate_ShakeLines(void) {
   destination = (volatile u32 *)&REG_BG1HOFS;
 
   if (line == 227 || line <= 52) {
-    if ((((u32)Engine_RandomNext() * 100) >> 16) <
+    if ((((u32)Import_RandomNext() * 100) >> 16) <
         gKolimaForestFloodgate_ShakeChance) {
       source = gKolimaForestFloodgate_ShakeScroll;
     }
@@ -267,7 +267,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
     MapGrid_CopyCells(67, 34, 2, 5, 79, 25);
     WaitFrames(6);
     MapGrid_CopyCells(69, 34, 2, 5, 79, 25);
-    Engine_ObjectEventSetAnimation(LOCALID_FLOODGATE_SPRAY,
+    Import_ObjectEventSetAnimation(LOCALID_FLOODGATE_SPRAY,
                                    SPLASH_ANIMATION_BURST);
     Sound_PlaySong(SE_240);
     WaitFrames(6);
@@ -292,7 +292,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
     WaitFrames(30);
     MapGrid_CopyCells(65, 45, 2, 4, 15, 28);
     MapGrid_CopyCells(71, 50, 2, 5, 79, 25);
-    Engine_ObjectEventSetAnimation(LOCALID_FLOODGATE_SPRAY,
+    Import_ObjectEventSetAnimation(LOCALID_FLOODGATE_SPRAY,
                                    SPLASH_ANIMATION_CHURN);
     Sound_PlaySong(SE_230);
     WaitFrames(6);
@@ -319,7 +319,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   FieldScheduler_AddCallback(KolimaForestFloodgate_CaptureShakeScroll,
                              TASK_PRIORITY_MAP);
   WaitFrames(1);
-  Runtime_SetIrqHandler(IRQ_HBLANK, 0, KolimaForestFloodgate_ShakeLines);
+  Irq_SetHandler(IRQ_HBLANK, 0, KolimaForestFloodgate_ShakeLines);
   Sound_PlaySong(SE_WATER_LEVEL);
   gKolimaForestFloodgate_ShakeChance = 0;
   do {
@@ -338,7 +338,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
     MapGrid_DrawCellPanel(41, 83, 16, 5, 2, 9, 19);
   }
   WaitFrames(1);
-  Runtime_SetIrqHandler(IRQ_HBLANK, 0, 0);
+  Irq_SetHandler(IRQ_HBLANK, 0, 0);
   WaitFrames(1);
   Task_Remove(KolimaForestFloodgate_CaptureShakeScroll);
   *(u16 *)gKolimaForestFloodgateLayout ^= 1;
@@ -352,21 +352,21 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
 static void KolimaForestFloodgate_PushShortLogWest(void) {
 
   FieldScript_Start();
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_PUSH);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_PUSH);
   FieldScript_WaitFrames(6);
   Sound_PlaySong(SE_HEAVY_MOVE);
   ObjectEvent_SetSpeed(LOCALID_SHORT_LOG, PIXELS(1) / 2, PIXELS(1) / 5);
-  Engine_ObjectEventSetAnimation(LOCALID_SHORT_LOG, 2);
+  Import_ObjectEventSetAnimation(LOCALID_SHORT_LOG, 2);
   ObjectMotion_ResetAndSetPosition(LOCALID_SHORT_LOG, 72, 176);
   FieldScript_WaitFrames(6);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
   ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, -8, 0);
   FieldScript_WaitFrames(24);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_SHORT_LOG);
-  Engine_ObjectEventSetAnimation(LOCALID_SHORT_LOG, 1);
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Import_ObjectEventSetAnimation(LOCALID_SHORT_LOG, 1);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
   Sound_PlaySong(SE_HEAVY_STOP);
   MapGrid_CopyCellAttributes(5, 9, 1, 4, 6, 9);
   MapGrid_CopyCellAttributes(0, 0, 1, 4, 4, 9);
@@ -379,21 +379,21 @@ static void KolimaForestFloodgate_PushShortLogWest(void) {
 static void KolimaForestFloodgate_PushShortLogEast(void) {
 
   FieldScript_Start();
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_PUSH);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_PUSH);
   FieldScript_WaitFrames(6);
   Sound_PlaySong(SE_HEAVY_MOVE);
   ObjectEvent_SetSpeed(LOCALID_SHORT_LOG, PIXELS(1) / 2, PIXELS(1) / 5);
-  Engine_ObjectEventSetAnimation(LOCALID_SHORT_LOG, 2);
+  Import_ObjectEventSetAnimation(LOCALID_SHORT_LOG, 2);
   ObjectMotion_ResetAndSetPosition(LOCALID_SHORT_LOG, 104, 176);
   FieldScript_WaitFrames(6);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
   ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, 8, 0);
   FieldScript_WaitFrames(24);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_SHORT_LOG);
-  Engine_ObjectEventSetAnimation(LOCALID_SHORT_LOG, 1);
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Import_ObjectEventSetAnimation(LOCALID_SHORT_LOG, 1);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
   Sound_PlaySong(SE_HEAVY_STOP);
   MapGrid_CopyCellAttributes(5, 9, 1, 4, 4, 9);
   MapGrid_CopyCellAttributes(0, 0, 1, 4, 6, 9);
@@ -427,7 +427,7 @@ s32 KolimaForestFloodgate_Initialize(void) {
   KolimaForestFloodgate_StampLogCells(gKolimaForestFloodgate_DefaultRecords,
                                       MB_WALL);
   KolimaForestFloodgate_DrawWaterLevel();
-  Engine_ObjectEventSetAnimation(LOCALID_FLOODGATE_SPRAY, 0);
+  Import_ObjectEventSetAnimation(LOCALID_FLOODGATE_SPRAY, 0);
   ObjectEvent_GetById(LOCALID_FLOODGATE_SPRAY)->motionFlags = 0;
   objectEvent = ObjectEvent_GetById(LOCALID_SIGN);
   objectEvent->radius = 8;
@@ -459,7 +459,7 @@ static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
     if (objectEvent == NULL)
       return;
     entry->objectEvent = objectEvent;
-    ObjectDispatch_SelectAnimation(objectEvent, 1);
+    Object_SelectAnimation(objectEvent, 1);
     ObjectEvent_SetSpriteFlags(objectEvent, 0);
     objectEvent->collisionFlags = 0;
     objectEvent->radius = 32;
@@ -593,27 +593,27 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   objectEvent = run->objectEvent;
   quarter = facing / 0x4000;
   FieldScript_Start();
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_PUSH);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_PUSH);
   FieldScript_WaitFrames(6);
   objectEvent->speed = PIXELS(1) / 2;
   objectEvent->acceleration = PIXELS(1) / 5;
   Script_PlaySong(SE_HEAVY_MOVE);
-  ObjectDispatch_SelectAnimation(
-      objectEvent, gKolimaForestFloodgate_PushAnimations[quarter]);
+  Object_SelectAnimation(objectEvent,
+                         gKolimaForestFloodgate_PushAnimations[quarter]);
   Object_SetPosition(objectEvent, x, 0, z);
   FieldScript_WaitFrames(6);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(*work));
-  ObjectDispatch_StartCamera((struct Object *)work->camera, (s32)objectEvent);
+  Object_StartCamera((struct Object *)work->camera, (s32)objectEvent);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER,
                                    gKolimaForestFloodgate_PushStepX[quarter],
                                    gKolimaForestFloodgate_PushStepZ[quarter]);
   FieldScript_WaitFrames(24);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   Object_WaitForMove(objectEvent);
-  ObjectDispatch_SelectAnimation(objectEvent, 1);
-  Script_PlaySong(SE_STOP_SLOT3);
+  Object_SelectAnimation(objectEvent, 1);
+  Script_PlaySong(SE_STOP_ACTION_SE);
   Script_PlaySong(SE_HEAVY_STOP);
   FieldScript_WaitFrames(15);
   FieldScript_End();

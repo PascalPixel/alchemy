@@ -1,20 +1,20 @@
 /// @file
-/// Hammet Palace (MapId_HammetPalace), the rooms of Lord Hammet's palace
-/// in Kalay. The map before its door, also Hammet Palace in the game's area
-/// names, is kalay.c's HammetPalaceGrounds.
+/// Hammet Palace (MapId_HammetPalace), the rooms of Lord Hammet's palace in
+/// Kalay. The map before its door, also Hammet Palace in the game's area names,
+/// is kalay.c's HammetPalaceGrounds.
 ///
-/// Two cutscenes in the room where Lady Layana stands frame the party's
-/// part in Hammet's rescue from Lunpa, and between them three flags pick where
-/// she stands and what she says:
+/// Two cutscenes in the room where Lady Layana stands frame the party's part in
+/// Hammet's rescue from Lunpa, and between them three flags pick where she
+/// stands and what she says:
 ///
 /// - Ivan's report (HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS),
 ///   when the guards at the door bring the party in (kalay.c); it ends by
 ///   setting FLAG_IVAN_REPORTED_TO_LAYANA.
 /// - Between the two, until the party has heard in Lunpa that Hammet is held
-///   there (map-section temp flag FLAG_MAPSEC_TEMP_21, set by kalay.c's
-///   cutscenes), Layana talks of Dodonpa's spies. Afterwards she stands
-///   elsewhere in her room, and the first time they speak she scolds `Isaac,
-///   you sneaked into Lunpa? That's far too dangerous!`
+///   there (map-section temp flag FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA, set by
+///   kalay.c's cutscenes), Layana talks of Dodonpa's spies. Afterwards she
+///   stands elsewhere in her room, and the first time they speak she scolds
+///   `Isaac, you sneaked into Lunpa? That's far too dangerous!`
 ///   (FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS); from then on she talks of
 ///   Dodonpa's greed.
 /// - Hammet's homecoming (HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM, the
@@ -64,6 +64,10 @@
 #include "songs.h"
 #include "script.h"
 #include "palbuf.h"
+
+/// The party has heard in Lunpa that Hammet is held there, or has freed him, so
+/// Layana waits elsewhere in her room.
+#define FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA FLAG_MAPSEC_TEMP_21
 
 /// The palace's object events, numbered in the order of
 /// gHammetPalaceObjectEventTemplates from LOCALID_FIRST_PLACED; its rows for
@@ -191,9 +195,9 @@ static void EventScript_AskWhetherSilkTradeHasEnded(void) {
 
 /// Layana scolds Isaac for sneaking into Lunpa. It's the first talk with her in
 /// Hammet Palace after the party has heard in Lunpa that Hammet is held there
-/// (map-section temp flag FLAG_MAPSEC_TEMP_21). `Isaac, you sneaked into Lunpa?
-/// That's far too dangerous!` She is glad Hammet is unhurt, but asks the party
-/// not to go back, and to fulfill their quest.
+/// (map-section temp flag FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA). `Isaac, you
+/// sneaked into Lunpa? That's far too dangerous!` She is glad Hammet is unhurt,
+/// but asks the party not to go back, and to fulfill their quest.
 static void EventScript_LayanaScoldsLunpaVisit(void) {
 
   SCRIPT_START();
@@ -236,7 +240,7 @@ static void EventScript_LeaveThroughDoor(void) {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 3, -16);
   }
   WAIT(16);
-  Engine_ScriptRequestWarp(work->coordEvent);
+  Import_ScriptRequestWarp(work->coordEvent);
   // Restore the layer entries before returning control to the field engine.
   TilesetAnim_Pause(1);
   TilesetAnim_Pause(2);
@@ -258,8 +262,8 @@ s32 Map_Initialize(void) {
 /// (HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM), Hammet stands beside her
 /// once he is free, and his homecoming plays the first time; before that she
 /// stands elsewhere once the party has heard of him in Lunpa
-/// (FLAG_MAPSEC_TEMP_21). By the door to the underground passage
-/// (HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING and
+/// (FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA). By the door to the underground
+/// passage (HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING and
 /// HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM) the door is drawn open once
 /// FLAG_KALAY_TUNNEL_OPEN is set.
 /// HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS is Ivan's report.
@@ -284,9 +288,9 @@ static void HammetPalace_SetUpWarpDest(void) {
         HammetPalace_HammetsHomecoming();
       }
     } else {
-      Engine_ObjectEventSetPosition(LOCALID_HAMMET, 0, 0);
-      if (GameFlag_Get(FLAG_MAPSEC_TEMP_21) != 0) {
-        Engine_ObjectEventSetPosition(LOCALID_LAYANA, waitingX, waitingZ);
+      Import_ObjectEventSetPosition(LOCALID_HAMMET, 0, 0);
+      if (GameFlag_Get(FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA) != 0) {
+        Import_ObjectEventSetPosition(LOCALID_LAYANA, waitingX, waitingZ);
         objectEvent = ObjectEvent_GetById(LOCALID_LAYANA);
         facing = FACING_NORTH + FACING_STEP;
         objectEvent->facing = facing;
@@ -307,7 +311,7 @@ static void HammetPalace_SetUpWarpDest(void) {
     break;
 
   case HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS:
-    Engine_ObjectEventSetPosition(LOCALID_HAMMET, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_HAMMET, 0, 0);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       HammetPalace_IvanReportsToLayana();
     }
@@ -1145,7 +1149,7 @@ struct MapEvent gHammetPalaceEvents[] = {
     { MAP_EVENT_WARP, 12, CONDITION_ALWAYS, HAMMET_PALACE_BEDROOM_TO_LANDING },
     { MAP_EVENT_WARP, 13, CONDITION_ALWAYS, HAMMET_PALACE_LANDING_TO_ENTRANCE_ROOM },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveThroughDoor) },
-    { MAP_EVENT_TALK, LOCALID_LAYANA, FLAG_MAPSEC_TEMP_21, MSGNO(MsgHammetPalaceDodonpaIsAVeryShrewdMan) },
+    { MAP_EVENT_TALK, LOCALID_LAYANA, FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA, MSGNO(MsgHammetPalaceDodonpaIsAVeryShrewdMan) },
     { MAP_EVENT_TALK, LOCALID_LAYANA, FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS, EVENT_SCRIPT(EventScript_LayanaScoldsLunpaVisit) },
     { MAP_EVENT_TALK, LOCALID_LAYANA, FLAG_DODONPA_LOCKED_UP, MSGNO(MsgHammetPalaceDodonpaPlansToUseHammetTo) },
     { MAP_EVENT_TALK, LOCALID_LAYANA, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceNoOneInKalayKnowsHammet) },

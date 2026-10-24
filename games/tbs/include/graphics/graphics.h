@@ -36,9 +36,9 @@ extern u8 gScreenFadeStartLevel;
 /* FAKEMATCH(volatile): ScreenFade_Update loads the target twice, for the level
  * and for the delta; as plain u8, 11 of 46 instructions differ in tbs-en. */
 extern volatile u8 gScreenFadeTargetLevel; ///< the brightness the fade ends at
-/// The two page arrow tiles, 4bpp, that Link_DrawShiftedTilePair slides
+/// The two page arrow tiles, 4bpp, that Link_DrawPageArrows slides
 /// outward over the window frame's top edge.
-extern u8 gRomShiftedTilePair[];
+extern u8 gPageArrowTiles[];
 /// Transform_BuildLookAt's ARM dot product, seven words it copies onto its
 /// stack to run.
 extern const u32 RelocatedQ16DotProduct[];
@@ -51,7 +51,7 @@ extern u8 Decompress_ByteLzCodeSize[];
 /// string, drawn by the unit summary in menu/menu/common.c.
 extern const u8 gStatusPanel_PpRowString[];
 /// A one-entry table of sprite tiles: the pointing hand cursor
-/// (gResource_FixedBlockBTiles), returned by WindowSprite_GetPointerTiles.
+/// (gPointingHandTiles), returned by WindowSprite_GetPointerTiles.
 extern s32 gWindowSprite_PointerTiles[];
 /// The Japanese status panel's HP row, "HP    /", the slash already in its
 /// cell at 48.
@@ -84,7 +84,7 @@ struct EffectLaunch;
 struct GlyphPalette;
 struct NumberRow;
 struct PaletteCycleWork;
-struct RenderInput;
+struct GlyphRect;
 struct WindowSprite;
 struct MenuCursor;
 struct TileMask;
@@ -205,7 +205,7 @@ extern const u8 gNamingScreen_SemivoicedMarkRanges[];
 extern const u8 gNamingScreen_KeyboardTilemap[];
 /// 224 zeroed bytes right after Render_DecodeFrame's code and tables; its
 /// address ends the stretch the field sprites' draw copies to RAM.
-extern const u8 gRender_DecodeFrameBuffer[];
+extern const u8 gRender_DecodeFrameEnd[];
 /// The type-2 resource decoder's ARM entry: it returns 4 unless the stream's
 /// first byte says type 2.
 extern const u8 Decompress_Type2Commands[];
@@ -225,9 +225,9 @@ extern u8 Decompress_Type01CodeSize[];
 extern u8 Decompress_HalfwordsCodeSize[];
 /// The pointing hand cursor, a 16x16 sprite, shared by the battle menus, the
 /// naming screen and the talk choices.
-extern u8 gResource_FixedBlockBTiles[];
+extern u8 gPointingHandTiles[];
 /// The 16x16 sprite the naming screen shows as its name caret.
-extern const u8 gResource_FixedBlockATiles[];
+extern const u8 gNamingScreen_CaretTiles[];
 /// Decodes a credits slide's packed picture into 8bpp tiles, adding a palette
 /// offset to each pixel; it relocates its own command table wherever it's
 /// copied.
@@ -240,7 +240,7 @@ extern const u8 Text_DecodeSymbol[];
 /// Text_DecodeSymbol, which the message decoders copy into heap slot
 /// TEXT_WORK_BLOCK.
 extern u8 Text_DecodeSymbolCodeSize[];
-/// Tile_BuildMetatiles, copied to the heap by Win_FillScanlineSpans for
+/// Tile_BuildMetatiles, copied to the heap by ScanlineWindow_FillSpans for
 /// each frame of a window transition.
 extern u8 Tile_BuildMetatilesCodeSize[];
 /// Interleaves a layout's three decoded cell planes into cell words, for
@@ -268,9 +268,9 @@ extern const u8 gTitle_PromptTiles[];
 /// The eight scales, in 1/65536, that WindowSprite_Pulse pulses the
 /// options menu's selected icon through.
 extern s32 gWindowSprite_PulseScales[];
-/// The pixel offsets Heading_Bob moves a sprite pair up and down
+/// The pixel offsets MenuTitle_Bob moves a sprite pair up and down
 /// by.
-extern const u8 gHeadingBobOffsets[];
+extern const u8 gMenuTitleBobOffsets[];
 /// The icon count's digits: 0 to 9, then the tens 1 to 3.
 extern u8 *gIcon_DigitPointers[];
 /// The three icon frames; frame 2 is the one item and Psynergy icons share.
@@ -290,7 +290,7 @@ extern const u8 gWindowSprite_CursorFrameTiles[];
 extern const s8 gWindowSprite_WobbleOffsets[][2];
 /// For each of the 16 text colours, the pen the font's light shade takes in
 /// the UI palette.
-extern const u8 gText_ColorPens[];
+extern const u8 gFont_ColorPens[];
 /// Glyph_DrawArm, copied to the heap for each character drawn.
 extern u8 Glyph_DrawCodeSize[];
 /// Each main font glyph's width in pixels, from the space (0x20) on.

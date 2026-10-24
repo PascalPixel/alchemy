@@ -146,8 +146,8 @@ AlchemyUncreditedEnd_render_decode_1:
 	.4byte 0x00000000
 	.4byte gSpriteColorTables - 0xe0
 	.4byte gSpriteColorTables - 0x100
-	.global gRender_DecodeFrameBuffer
-gRender_DecodeFrameBuffer:
+	.global gRender_DecodeFrameEnd
+gRender_DecodeFrameEnd:
 	.space 224, 0
 .syntax unified
 	.section .text.draw_map,"ax",%progbits

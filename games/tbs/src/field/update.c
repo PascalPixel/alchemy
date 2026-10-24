@@ -18,7 +18,7 @@
 #define IwramRatioMulQ14                                                       \
   IWRAM_ENTRY(s32 (*)(s32 divisor, s32 value), Iwram_RatioMulQ14Offset)
 
-extern struct ScriptMotionObject *gObjects;
+extern struct ObjectArmView *gObjects;
 
 // Far-call stubs copied to RAM together with this code (updfar.s).
 s32 ArcTan2FarArm(s32 z, s32 x);
@@ -34,10 +34,10 @@ s32 Iwram_RatioMulQ14FarArm(s32 divisor, s32 value);
 /// Object_RunUpdateAllFromHeap copies and runs it, and nothing calls that;
 /// the field runs Object_UpdateAllThumb instead.
 void Object_UpdateAll(void) {
-  struct ScriptMotionObject *object;
+  struct ObjectArmView *object;
   s32 y;
   s32 arrived;
-  struct ScriptMotionObject *nextObject;
+  struct ObjectArmView *nextObject;
   s32 nextSlot;
   s32 slot;
   s32 x;
@@ -59,7 +59,7 @@ void Object_UpdateAll(void) {
     if (object->script == NULL)
       continue;
     if (object->update != NULL)
-      object->update((union FieldObject *)object);
+      object->update((union ObjectEventOrEffect *)object);
     if (object->script == NULL)
       continue;
     if (object->paused != 0)

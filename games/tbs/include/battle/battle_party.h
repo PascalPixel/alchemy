@@ -21,10 +21,10 @@ enum BattleUnitListMark {
 };
 
 /// Which sides a unit list takes, as BattleUnit_ListLiving reads it.
-enum BattleSides {
-  BATTLE_SIDES_PARTY = 1,
-  BATTLE_SIDES_ENEMIES = 2,
-  BATTLE_SIDES_BOTH = BATTLE_SIDES_PARTY | BATTLE_SIDES_ENEMIES
+enum BattleSideMask {
+  BATTLE_SIDE_MASK_PARTY = 1,
+  BATTLE_SIDE_MASK_ENEMIES = 2,
+  BATTLE_SIDE_MASK_BOTH = BATTLE_SIDE_MASK_PARTY | BATTLE_SIDE_MASK_ENEMIES
 };
 
 /// The Djinn recovery list's two tables (Djinn_GetRecoveryTableFar): the

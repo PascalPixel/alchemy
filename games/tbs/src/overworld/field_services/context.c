@@ -68,7 +68,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
   s32 level;
 
   Sound_PlaySongFar(gSaveBlock.battleMusic);
-  Sound_PlaySongFar(SE_STOP_SLOT3);
+  Sound_PlaySongFar(SE_STOP_ACTION_SE);
   Sound_PlaySongFar(SE_147);
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     // On the world map the flash colours BG palette colour 243 instead, and
@@ -128,7 +128,7 @@ void Warp_PrepareExitAnimation(s32 animation) {
   object->velocityZ = zero;
   object->targetX = OBJ_EVENT_NO_TARGET;
   object->targetZ = OBJ_EVENT_NO_TARGET;
-  ObjectDispatch_SelectAnimationFar(object, animation);
+  Object_SelectAnimationFar(object, animation);
   WaitFrames(18);
 }
 
@@ -169,7 +169,7 @@ void Warp_EndArrivalAnimation(s32 animation) {
   eff->colorMode = SPRITE_COLOR_HIDDEN;
   leader->x = (leader->x & mask) + 0x80000;
   leader->z &= mask;
-  ObjectDispatch_SelectAnimationFar(leader, animation);
+  Object_SelectAnimationFar(leader, animation);
   WaitFrames(30);
   // Back to one sprite part, with its shadow, walking 8 pixels south at 1
   // pixel a frame.
@@ -225,7 +225,7 @@ s32 Warp_PlayArrival(void) {
         }
         Sound_PlaySongFar(SE_159);
         leader->y = leader->groundHeight;
-        ObjectDispatch_SelectAnimationFar(leader, 22);
+        Object_SelectAnimationFar(leader, 22);
         FieldScript_WaitFrames(15);
         FieldCamera_FollowObjectEvent(leaderId, 1);
         result = 3;

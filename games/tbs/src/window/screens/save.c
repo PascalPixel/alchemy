@@ -107,7 +107,7 @@ s32 Save_CountRecordsExcludingFlagged(s32 excludeSent) {
 /// Loads the save file summaries for the title menu and returns how many files
 /// there are: plus 100 when every file has its send flag set, or
 /// SAVE_ERROR_NO_MEMORY when the backup memory cannot be read. Sets
-/// gTitleExtraOptionEnabled, which offers Battle, when a file has any of game
+/// gTitleBattleOptionEnabled, which offers Battle, when a file has any of game
 /// flags 48-127 set, and gTitleSendOptionEnabled, which offers Send, when a
 /// file has its send flag set and R and Left are held.
 /// FileMenu_SelectAction reads all three.
@@ -128,7 +128,7 @@ s32 Save_ScanRecordFlags(void) {
     // 0x1070 and flag offsets 1 and 2.
     flags = (s8 *)&gSaveWork->summary[0].party[4];
     gTitleSendOptionEnabled = 0;
-    (*(s16 *)&gTitleExtraOptionEnabled) = 0;
+    (*(s16 *)&gTitleBattleOptionEnabled) = 0;
     for (i = 0; i < SAVE_FILE_COUNT; i++) {
       if (flags[i * sizeof(struct SaveFileSummary) +
                 SUMMARY_DISTANCE(party[4], sendFlag)] != 0) {
@@ -137,7 +137,7 @@ s32 Save_ScanRecordFlags(void) {
       }
       if (flags[i * sizeof(struct SaveFileSummary) +
                 SUMMARY_DISTANCE(party[4], flagCount)] != 0) {
-        (*(s16 *)&gTitleExtraOptionEnabled) = 1;
+        (*(s16 *)&gTitleBattleOptionEnabled) = 1;
       }
     }
 
@@ -170,7 +170,7 @@ u32 Save_BuildFileSummary(void) {
 
   // The summary's 16-byte header comes before the save buffer.
   summary = (struct SaveFileSummary *)((u32)gSaveBuffer - 16);
-  gSaveBlock.buildStamp = Runtime_GetBuildStampTimeFar(0);
+  gSaveBlock.buildStamp = BuildStamp_GetTimeFar(0);
   gSaveBlock.playTime = gPlayTimeFrames;
   // A second copy of the play time, 256 bytes from gMapLocalState: past its
   // 0x78 bytes, in gInventorySnapshot's last word. gMapLocalState opens the
@@ -313,10 +313,10 @@ s32 Save_WriteFile(s32 file) {
   return result;
 }
 
-/// Writes the 64-byte save stamp (gSaveStamp, which lies in the first half of
-/// the save buffer) into the current file's first record, leaving the rest of
-/// the record as it was saved. Returns 0, -1 when no file is chosen, or a
-/// SAVE_ERROR_* after showing its message. The Battle Arena saves its battle
+/// Writes the 64-byte save stamp (gBattleArenaRecord, which lies in the first
+/// half of the save buffer) into the current file's first record, leaving the
+/// rest of the record as it was saved. Returns 0, -1 when no file is chosen, or
+/// a SAVE_ERROR_* after showing its message. The Battle Arena saves its battle
 /// results this way (BattleArena_SaveBattleResults). The record's 4 KB buffer
 /// is taken from the EWRAM pool and freed before it returns, except when
 /// no file is chosen.
@@ -344,9 +344,9 @@ s32 Save_ProcessSelectedFile(void) {
       result = SAVE_ERROR_READ;
     }
     // The stamp's place in the record is its place in the save buffer.
-    stamp = (u8 *)record + (s32)gSaveStamp;
+    stamp = (u8 *)record + (s32)gBattleArenaRecord;
     stamp -= (s32)gSaveBuffer;
-    Iwram_CopyWords(stamp, gSaveStamp, 16);
+    Iwram_CopyWords(stamp, gBattleArenaRecord, 16);
     error = Save_WriteRecord(gSaveSlot, record);
     if (error != 0) {
       FieldMessage_Show(MsgSaveFailed, 1);
@@ -498,7 +498,7 @@ void FileMenu_UpdatePulse(void) {
   s32 sine;
   s32 i;
 
-  tick = (s32 *)&gFrameTick;
+  tick = (s32 *)&gVBlankCount;
   palette = &BG_PLTT_COLOR(14, 8);
   i = 0;
   do {
@@ -686,7 +686,7 @@ void FileMenu_PlacePartySprites(void) {
 /// (x, y) inside `window`, and starts placing them every frame
 /// (FileMenu_PlaceDjinnSprites). Does nothing when `window` is NULL.
 void FileMenu_ShowDjinnSprites(struct Window *window, s32 x, s32 y) {
-  struct DjinnFiguresWork *menu = gMenuWork;
+  struct ItemMenuFiguresView *menu = gMenuWork;
   s32 i;
 
   if (window != NULL) {
@@ -711,7 +711,7 @@ void FileMenu_ShowDjinnSprites(struct Window *window, s32 x, s32 y) {
 
 /// Stops placing the Djinn sprites of the file menu and releases them.
 void FileMenu_HideDjinnSprites(void) {
-  struct DjinnFiguresWork *menu = gMenuWork;
+  struct ItemMenuFiguresView *menu = gMenuWork;
   s32 i;
 
   Task_Remove(FileMenu_PlaceDjinnSprites);
@@ -726,7 +726,7 @@ void FileMenu_HideDjinnSprites(void) {
 /// A task: draws each Djinn sprite of the file menu at its
 /// place, at scale 1.0, for this frame.
 void FileMenu_PlaceDjinnSprites(void) {
-  struct DjinnFiguresWork *menu = gMenuWork;
+  struct ItemMenuFiguresView *menu = gMenuWork;
   struct SpriteScale scale;
   struct SpritePlacement position;
   s32 index;
@@ -829,7 +829,7 @@ void FileMenu_DrawSummary(struct Window *window,
 
 /// What the file menu is choosing a file for, which decides the files
 /// the cursor may stop on. Each mode also indexes the heading the menu shows
-/// (gHeadingPictures: Save, Continue, Copy, Erase, Battle,
+/// (gMenuTitlePictures: Save, Continue, Copy, Erase, Battle,
 /// Link).
 enum FileMenuMode {
   FILE_MENU_SAVE,     ///< saving: any file, empty ones too
@@ -894,7 +894,7 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
   djinnWindow = NULL;
   summaryDirty = 1;
   work = *(gHeapSlots + HEAP_SLOT_WINDOW);
-  buildStamp = Runtime_GetBuildStampTimeFar();
+  buildStamp = BuildStamp_GetTimeFar();
   // Start on the first file the mode allows.
   // BUG: when none is, the jump to done returns FILE_MENU_NO_FILE without
   // releasing spriteWork's HEAP_SLOT_MENU block.
@@ -1060,7 +1060,7 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
   Window_DrawDividerLine(fileList, 0, 4, 27, 4);
   vramSlot = VramCache_FindFreeEntry();
   if (vramSlot < VRAM_CACHE_ENTRY_COUNT) {
-    VramCache_Load(vramSlot, 128, gResource_FixedBlockBTiles);
+    VramCache_Load(vramSlot, 128, gPointingHandTiles);
     x = -12;
     y = selectedFile * 16 + 4;
     cursorSprite =
@@ -1070,7 +1070,7 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
   }
   cursorStyle = 1;
 #endif
-  modePicture = Heading_Create(menuMode, fileList, 72, -24);
+  modePicture = MenuTitle_Create(menuMode, fileList, 72, -24);
 
   while (1) {
     // Show the file under the cursor after it moves.
@@ -1129,7 +1129,7 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
     }
     MenuCursor_AdvanceFar(&fileCursor);
 #endif
-    Heading_Bob(modePicture);
+    MenuTitle_Bob(modePicture);
     WaitFrames(1);
     // Up and down move to the previous or next file the mode allows; saving
     // allows every file, an empty one too.
@@ -1289,7 +1289,7 @@ s32 Save_LoadRecordIntoWork(s32 mode) {
   return result;
 }
 
-/// Loads the pointing hand cursor's tiles (gResource_FixedBlockBTiles, 128
+/// Loads the pointing hand cursor's tiles (gPointingHandTiles, 128
 /// bytes) into a free VRAM slot and returns the slot, which the caller frees
 /// with VramCache_FreeEntry. The slot is not checked: with the cache full
 /// the load is given VRAM_CACHE_ENTRY_COUNT. Colosso's markers
@@ -1299,6 +1299,6 @@ s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
   s32 slot;
 
   slot = VramCache_FindFreeEntry();
-  VramCache_Load(slot, 0x80, gResource_FixedBlockBTiles);
+  VramCache_Load(slot, 0x80, gPointingHandTiles);
   return slot;
 }

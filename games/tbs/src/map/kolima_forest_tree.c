@@ -104,9 +104,9 @@ enum {
   /// nothing addresses them but KolimaForestTree_PlayGesture, which takes one
   /// to say whose face to move.
   /// ★ Named from the game: "Tret" (MsgEnemyName)
-  LOCALID_TRET_BLANK,
+  LOCALID_INVISIBLE_TRET,
   /// ★ Named from the game: "Laurel" (MsgDebugGlyphName)
-  LOCALID_LAUREL_BLANK,
+  LOCALID_INVISIBLE_LAUREL,
   /// An invisible object event on Tret's spot that answers for him:
   /// talking to it, Mind Read on it and Hermes' Water used on it reach Tret.
   /// ★ Named from the game: "The Water of Hermes seeped into Tret."
@@ -184,7 +184,7 @@ UNUSED static void KolimaForestTree_ExitTouchedRegion(void) {
   work = gFieldWork;
   FieldScript_Start();
   ObjectMotion_CommitPositionAndActivate(LOCALID_PARTY_LEADER, 0, 0);
-  Engine_ScriptRequestWarp(work->coordEvent);
+  Import_ScriptRequestWarp(work->coordEvent);
   FieldScript_End();
 }
 
@@ -202,7 +202,8 @@ const struct MapEvent *KolimaForestTree_GetEvents(void) {
 /// party, and Laurel says, "We shall protect the forest from now on."
 static void KolimaForestTree_TalkToLaurel(void) {
   FieldScript_Start();
-  KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_OPEN_EYES);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL,
+                               FACE_GESTURE_OPEN_EYES);
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     FieldScript_SetMessageId(MsgKolimaForestKolimaAlive);
     FieldScript_ShowMessageAndWait(LOCALID_LAUREL, 0);
@@ -212,21 +213,26 @@ static void KolimaForestTree_TalkToLaurel(void) {
   } else {
     FieldScript_SetMessageId(MsgKolimaWho);
     FieldScript_ShowMessageThenWait(LOCALID_LAUREL, 0, 20);
-    KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_CLOSE_EYES);
+    KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL,
+                                 FACE_GESTURE_CLOSE_EYES);
     FieldScript_WaitFrames(60);
-    KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_OPEN_EYES);
+    KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL,
+                                 FACE_GESTURE_OPEN_EYES);
     FieldScript_ShowMessageThenWait(LOCALID_LAUREL, 0, 10);
     ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
     FieldScript_WaitFrames(40);
     FieldScript_ShowMessageAndWait(LOCALID_LAUREL, 0);
-    KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_CLOSE_EYES);
+    KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL,
+                                 FACE_GESTURE_CLOSE_EYES);
     FieldScript_WaitFrames(80);
     FieldScript_ShowMessageThenWait(LOCALID_LAUREL, 0, 20);
-    KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_OPEN_EYES);
+    KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL,
+                                 FACE_GESTURE_OPEN_EYES);
     FieldScript_ShowMessageThenWait(LOCALID_LAUREL, 0, 20);
     GameFlag_Set(FLAG_MET_LAUREL);
   }
-  KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_CLOSE_EYES);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL,
+                               FACE_GESTURE_CLOSE_EYES);
   FieldScript_End();
 }
 
@@ -241,16 +247,20 @@ static void KolimaForestTree_TalkToTret(void) {
 
   FieldScript_Start();
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
-    KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
+    KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET,
+                                 FACE_GESTURE_OPEN_EYES);
     FieldScript_SetMessageId(MsgKolimaNowHaveSuchPowerAxe);
     Script_ShowMessage(LOCALID_TRET, 0);
-    KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_CLOSE_EYES);
+    KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET,
+                                 FACE_GESTURE_CLOSE_EYES);
   } else {
     if (GameFlag_Get(FLAG_TRET_DEFEATED) != 0) {
-      KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
+      KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET,
+                                   FACE_GESTURE_OPEN_EYES);
       FieldScript_SetMessageId(MsgKolimaSilence2);
       Script_ShowMessage(LOCALID_TRET, 0);
-      KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_CLOSE_EYES);
+      KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET,
+                                   FACE_GESTURE_CLOSE_EYES);
       waterHolder = PartyInventory_FindMember(ITEM_HERMES_WATER);
       if (waterHolder != -1) {
         u16 *menuRequest = &gFieldWork->menu;
@@ -344,7 +354,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 1);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(2));
   Script_PlaySong(SE_IMPACT);
   leader->velocityY = PIXELS(5);
@@ -358,7 +368,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
     WaitFrames(1);
   } while (leader->velocityY <= 0);
   Script_PlaySong(SE_161);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_COLLAPSE);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_COLLAPSE);
   FieldScript_WaitFrames(120);
   Task_Remove(KolimaForestTree_SpawnRejectionSpark);
   WaitFrames(40);
@@ -389,15 +399,15 @@ static void KolimaForestTree_RejectHermesWater(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
   FieldScript_WaitFrames(40);
   ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   FieldScript_WaitFrames(20);
 }
 
 /// Gives all four companions the same nod, waiting on Ivan's animation.
 static __inline__ void KolimaForestTree_NodTogether(void) {
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
 }
 
@@ -507,7 +517,7 @@ static void KolimaForestTree_RestoreTret(void) {
   FieldCamera_MoveTo(PIXELS(328), PIXELS(8), PIXELS(212), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(40);
-  KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET, FACE_GESTURE_OPEN_EYES);
   FieldScript_WaitFrames(40);
   Script_PlaySong(MUS_007);
   // Tret and Laurel discover that their powers have returned.
@@ -518,11 +528,11 @@ static void KolimaForestTree_RestoreTret(void) {
   ObjectMotion_SetVariantCallback(LOCALID_MIA, 2);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
   KolimaForestTree_FaceParty(FACING_NORTH, 20);
-  KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_LOOK_LEFT);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET, FACE_GESTURE_LOOK_LEFT);
   FieldScript_WaitFrames(20);
-  KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_LOOK_RIGHT);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET, FACE_GESTURE_LOOK_RIGHT);
   FieldScript_WaitFrames(40);
-  KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET, FACE_GESTURE_OPEN_EYES);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_TRET, 0);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
@@ -533,27 +543,33 @@ static void KolimaForestTree_RestoreTret(void) {
   FieldCamera_MoveTo(PIXELS(234), 0, PIXELS(232), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(40);
-  KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_OPEN_EYES);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL,
+                               FACE_GESTURE_OPEN_EYES);
   FieldScript_WaitFrames(40);
-  KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_LOOK_RIGHT);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL,
+                               FACE_GESTURE_LOOK_RIGHT);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_LAUREL, 0, 20);
-  KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_LOOK_LEFT);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL,
+                               FACE_GESTURE_LOOK_LEFT);
   FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 0);
   ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTHWEST, 0);
   ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHWEST, 20);
-  KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_LOOK_RIGHT);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL,
+                               FACE_GESTURE_LOOK_RIGHT);
   FieldScript_WaitFrames(20);
-  KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_LOOK_LEFT);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL,
+                               FACE_GESTURE_LOOK_LEFT);
   FieldScript_WaitFrames(20);
-  KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_LOOK_RIGHT);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL,
+                               FACE_GESTURE_LOOK_RIGHT);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_LAUREL, 0, 10);
-  KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_CLOSE_EYES);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET, FACE_GESTURE_CLOSE_EYES);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(SPEAKER_WINDOW_BELOW | LOCALID_TRET, 0);
-  KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET, FACE_GESTURE_OPEN_EYES);
   FieldScript_WaitFrames(20);
   Script_OpenMessage(SPEAKER_WINDOW_BELOW | LOCALID_TRET, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
@@ -568,7 +584,7 @@ static void KolimaForestTree_RestoreTret(void) {
     ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_SHAKE_HEAD);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_SHAKE_HEAD);
     Script_ShowMessage(LOCALID_GARET, 0);
     if (includeMia != 0) {
       ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
@@ -585,7 +601,7 @@ static void KolimaForestTree_RestoreTret(void) {
   FieldCamera_MoveTo(PIXELS(328), PIXELS(8), PIXELS(212), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(20);
-  KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_CLOSE_EYES);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET, FACE_GESTURE_CLOSE_EYES);
   FieldScript_WaitFrames(20);
   KolimaPalette_Restore(0);
   PaletteFade_StartInterpolation(1);
@@ -608,7 +624,7 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaPalette_Restore(0);
   PaletteFade_StartInterpolation(20);
   FieldScript_WaitFrames(40);
-  KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET, FACE_GESTURE_OPEN_EYES);
   FieldScript_WaitFrames(10);
   FieldScript_SetMessageId(MsgKolimaShouldDoPeopleKolimaCursed);
   Script_ShowMessage(SPEAKER_WINDOW_BELOW | LOCALID_TRET, 0);
@@ -629,7 +645,7 @@ static void KolimaForestTree_RestoreTret(void) {
     gFieldWork->message += 1;
   }
   Script_ShowMessage(LOCALID_GARET, 0);
-  KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_BLINK);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET, FACE_GESTURE_BLINK);
   FieldScript_WaitFrames(20);
   // Explain the curse and how the falling Psynergy Stones changed the forest.
   FieldScript_SetMessageId(MsgKolimaWasIndeedAngryPeopleHad);
@@ -638,33 +654,37 @@ static void KolimaForestTree_RestoreTret(void) {
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
   Script_ShowMessage(SPEAKER_WINDOW_BELOW | LOCALID_TRET, 0);
   KolimaForestTree_NodTogether();
-  KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_BLINK);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET, FACE_GESTURE_BLINK);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | LOCALID_TRET, 0, 20);
-  KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_CLOSE_EYES);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL,
+                               FACE_GESTURE_CLOSE_EYES);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_LAUREL, 0, 20);
-  KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_LOOK_RIGHT);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL,
+                               FACE_GESTURE_LOOK_RIGHT);
   FieldScript_WaitFrames(40);
-  KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_OPEN_EYES);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL,
+                               FACE_GESTURE_OPEN_EYES);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_LAUREL, 0, 20);
-  KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_LOOK_LEFT);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET, FACE_GESTURE_LOOK_LEFT);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(SPEAKER_WINDOW_BELOW | LOCALID_TRET, 0);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-  KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK,
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL,
                                FACE_GESTURE_HALF_CLOSE_EYES);
   FieldScript_WaitFrames(60);
-  KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_LOOK_RIGHT);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL,
+                               FACE_GESTURE_LOOK_RIGHT);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_LAUREL, 0, 20);
-  KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK,
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET,
                                FACE_GESTURE_HALF_CLOSE_EYES);
   FieldScript_WaitFrames(40);
-  KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_LOOK_LEFT);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET, FACE_GESTURE_LOOK_LEFT);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_TRET, 0, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
@@ -672,19 +692,21 @@ static void KolimaForestTree_RestoreTret(void) {
   Script_ShowMessage(LOCALID_GARET, 0);
   ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 20);
   Script_ShowMessage(SPEAKER_WINDOW_BELOW | LOCALID_IVAN, 0);
-  KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_BLINK);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL, FACE_GESTURE_BLINK);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_LAUREL, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 10);
   Script_ShowMessageAndWait(LOCALID_GARET, 0, 20);
-  KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET, FACE_GESTURE_OPEN_EYES);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | LOCALID_TRET, 0, 10);
-  KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_LOOK_LEFT);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET, FACE_GESTURE_LOOK_LEFT);
   FieldScript_WaitFrames(20);
-  KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_LOOK_RIGHT);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL,
+                               FACE_GESTURE_LOOK_RIGHT);
   FieldScript_WaitFrames(40);
-  KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_CLOSE_EYES);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL,
+                               FACE_GESTURE_CLOSE_EYES);
   FieldScript_WaitFrames(20);
   KolimaPalette_Restore(0);
   PaletteFade_StartInterpolation(1);
@@ -707,7 +729,7 @@ static void KolimaForestTree_RestoreTret(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 10);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
-  KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_BLINK);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET, FACE_GESTURE_BLINK);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(SPEAKER_WINDOW_BELOW | LOCALID_TRET, 0);
   ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
@@ -724,20 +746,21 @@ static void KolimaForestTree_RestoreTret(void) {
   FieldScript_WaitFrames(60);
   KolimaPalette_Restore(0);
   PaletteFade_StartInterpolation(40);
-  KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_LOOK_LEFT);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET, FACE_GESTURE_LOOK_LEFT);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | LOCALID_TRET, 0, 20);
-  KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_LOOK_RIGHT);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL,
+                               FACE_GESTURE_LOOK_RIGHT);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_LAUREL, 0);
   Script_ShowMessage(SPEAKER_WINDOW_BELOW | LOCALID_TRET, 0);
-  KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_BLINK);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL, FACE_GESTURE_BLINK);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_LAUREL, 0, 10);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
   ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
   ObjectMotion_SetVariantCallback(LOCALID_MIA, 2);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
-  KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET, FACE_GESTURE_OPEN_EYES);
   Script_OpenMessage(SPEAKER_WINDOW_BELOW | LOCALID_TRET, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
@@ -747,11 +770,12 @@ static void KolimaForestTree_RestoreTret(void) {
     gFieldWork->message += 1;
   }
   FieldScript_WaitFrames(10);
-  KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_LOOK_LEFT);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET, FACE_GESTURE_LOOK_LEFT);
   FieldScript_WaitFrames(20);
-  KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_LOOK_RIGHT);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL,
+                               FACE_GESTURE_LOOK_RIGHT);
   FieldScript_WaitFrames(40);
-  KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET, FACE_GESTURE_OPEN_EYES);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | LOCALID_TRET, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
@@ -767,13 +791,13 @@ static void KolimaForestTree_RestoreTret(void) {
     ObjectEvent_SetActionScript(LOCALID_MIA, finalActions);
   }
   ObjectEvent_RunActionScriptAndWait(LOCALID_IVAN, finalActions);
-  KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_BLINK);
-  KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_BLINK);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET, FACE_GESTURE_BLINK);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET, FACE_GESTURE_BLINK);
   FieldScript_WaitFrames(20);
   FieldScript_SetMessageId(MsgKolimaOweGreatDebtHaveSaved);
   Script_ShowMessage(SPEAKER_WINDOW_BELOW | LOCALID_TRET, 0);
-  KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_BLINK);
-  KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_BLINK);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL, FACE_GESTURE_BLINK);
+  KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_LAUREL, FACE_GESTURE_BLINK);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_LAUREL, 0, 10);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
@@ -791,11 +815,11 @@ s32 KolimaForestTree_Initialize(void) {
   struct ObjectEvent *tretsWrathfulSide;
   struct ObjectEvent *laurelBlank;
 
-  tretBlank = ObjectEvent_GetById(LOCALID_TRET_BLANK);
+  tretBlank = ObjectEvent_GetById(LOCALID_INVISIBLE_TRET);
   tretsWrathfulSide = ObjectEvent_GetById(LOCALID_TRETS_WRATHFUL_SIDE);
-  laurelBlank = ObjectEvent_GetById(LOCALID_LAUREL_BLANK);
+  laurelBlank = ObjectEvent_GetById(LOCALID_INVISIBLE_LAUREL);
   WaitFrames(1);
-  ObjectGroup_ConfigureChildValue(LOCALID_TRETS_WRATHFUL_SIDE, 15);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_TRETS_WRATHFUL_SIDE, 15);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   gSaveBlock.retreatMap = (s32)&MapId_KolimaForestEntrance;
@@ -808,8 +832,8 @@ s32 KolimaForestTree_Initialize(void) {
   ObjectEvent_GetById(LOCALID_LAUREL_STAND_IN)->radius = 6;
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_TRETS_WRATHFUL_SIDE),
                              0);
-  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_TRET_BLANK), 0);
-  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_LAUREL_BLANK), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_INVISIBLE_TRET), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_INVISIBLE_LAUREL), 0);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_TRET), 0);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_LAUREL), 0);
   ObjectMotion_SetActionVariant(LOCALID_TRET, 2);
@@ -821,13 +845,13 @@ s32 KolimaForestTree_Initialize(void) {
   laurelBlank->y.fixed = PIXELS(28);
   tretsWrathfulSide->motionFlags = 0;
   tretsWrathfulSide->y.fixed = PIXELS(28);
-  Engine_ObjectEventSetAnimation(LOCALID_LAUREL, LAUREL_FACE_CLOSED);
-  Engine_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_CLOSED);
+  Import_ObjectEventSetAnimation(LOCALID_LAUREL, LAUREL_FACE_CLOSED);
+  Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_CLOSED);
   ObjectEvent_GetById(LOCALID_TRET)->collisionFlags |= OBJ_EVENT_NOT_TARGETED;
   ObjectEvent_GetById(LOCALID_LAUREL)->collisionFlags |= OBJ_EVENT_NOT_TARGETED;
-  ObjectEvent_GetById(LOCALID_TRET_BLANK)->collisionFlags |=
+  ObjectEvent_GetById(LOCALID_INVISIBLE_TRET)->collisionFlags |=
       OBJ_EVENT_NOT_TARGETED;
-  ObjectEvent_GetById(LOCALID_LAUREL_BLANK)->collisionFlags |=
+  ObjectEvent_GetById(LOCALID_INVISIBLE_LAUREL)->collisionFlags |=
       OBJ_EVENT_NOT_TARGETED;
   ObjectEvent_GetById(LOCALID_TRETS_WRATHFUL_SIDE)->collisionFlags |=
       OBJ_EVENT_NOT_TARGETED;
@@ -866,7 +890,7 @@ static void KolimaForestTree_SpawnRejectionSpark(void) {
   effect->speed = PIXELS(4);
   effect->acceleration = PIXELS(4);
   effect->motionFlags = phase;
-  ObjectDispatch_SelectAnimation(effect, 2);
+  Object_SelectAnimation(effect, 2);
   Object_SetPosition(effect, targetX, 0, targetZ);
   ObjectEvent_SetScript(effect, gKolimaForestTreeEffectScript);
 }
@@ -893,64 +917,64 @@ static void KolimaForestTree_UpdateHealingPalette(void) {
 static __inline__ void KolimaForestTree_AlternateFaceFrames(s32 localId,
                                                             s32 firstFrame,
                                                             s32 secondFrame) {
-  Engine_ObjectEventSetAnimation(localId, firstFrame);
+  Import_ObjectEventSetAnimation(localId, firstFrame);
   WaitFrames(6);
-  Engine_ObjectEventSetAnimation(localId, secondFrame);
+  Import_ObjectEventSetAnimation(localId, secondFrame);
   WaitFrames(6);
-  Engine_ObjectEventSetAnimation(localId, firstFrame);
+  Import_ObjectEventSetAnimation(localId, firstFrame);
   WaitFrames(6);
-  Engine_ObjectEventSetAnimation(localId, secondFrame);
+  Import_ObjectEventSetAnimation(localId, secondFrame);
   WaitFrames(6);
-  Engine_ObjectEventSetAnimation(localId, firstFrame);
+  Import_ObjectEventSetAnimation(localId, firstFrame);
 }
 
 /// Plays one of Tret's or Laurel's face gestures, chosen by the blank object
 /// event at their spot.
 static void KolimaForestTree_PlayGesture(s32 blankLocalId, s32 gesture) {
-  if (blankLocalId == LOCALID_TRET_BLANK) {
+  if (blankLocalId == LOCALID_INVISIBLE_TRET) {
     switch (gesture) {
     case FACE_GESTURE_CLOSE_EYES:
-      Engine_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_OPEN);
+      Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_OPEN);
       WaitFrames(6);
-      Engine_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_CLOSED);
+      Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_CLOSED);
       break;
     case FACE_GESTURE_OPEN_EYES:
-      Engine_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_OPEN);
+      Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_OPEN);
       break;
     case FACE_GESTURE_LOOK_LEFT:
-      Engine_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_OPEN);
+      Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_OPEN);
       WaitFrames(6);
-      Engine_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_LOOK_LEFT);
+      Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_LOOK_LEFT);
       break;
     case FACE_GESTURE_LOOK_RIGHT:
-      Engine_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_OPEN);
+      Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_OPEN);
       WaitFrames(6);
-      Engine_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_LOOK_RIGHT);
+      Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_LOOK_RIGHT);
       break;
     case FACE_GESTURE_BLINK:
       KolimaForestTree_AlternateFaceFrames(LOCALID_TRET, TRET_FACE_OPEN,
                                            TRET_FACE_CLOSED);
       break;
     case FACE_GESTURE_HALF_CLOSE_EYES:
-      Engine_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_OPEN);
+      Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_OPEN);
       WaitFrames(6);
-      Engine_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_HALF_CLOSED);
+      Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_HALF_CLOSED);
       break;
     case FACE_GESTURE_WRATHFUL_CLOSE_EYES:
-      Engine_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
+      Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
       WaitFrames(6);
-      Engine_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_CLOSED);
+      Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_CLOSED);
       break;
     case FACE_GESTURE_WRATHFUL_LOOK_RIGHT:
-      Engine_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
+      Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
       WaitFrames(6);
-      Engine_ObjectEventSetAnimation(LOCALID_TRET,
+      Import_ObjectEventSetAnimation(LOCALID_TRET,
                                      TRET_FACE_WRATHFUL_LOOK_RIGHT);
       break;
     case FACE_GESTURE_WRATHFUL_LOOK_LEFT:
-      Engine_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
+      Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
       WaitFrames(6);
-      Engine_ObjectEventSetAnimation(LOCALID_TRET,
+      Import_ObjectEventSetAnimation(LOCALID_TRET,
                                      TRET_FACE_WRATHFUL_LOOK_LEFT);
       break;
     case FACE_GESTURE_WRATHFUL_BLINK:
@@ -959,37 +983,37 @@ static void KolimaForestTree_PlayGesture(s32 blankLocalId, s32 gesture) {
       break;
     case FACE_GESTURE_WRATHFUL_OPEN_EYES:
     case FACE_GESTURE_WRATHFUL_STARE:
-      Engine_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
+      Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
       break;
     }
   } else {
     switch (gesture) {
     case FACE_GESTURE_CLOSE_EYES:
-      Engine_ObjectEventSetAnimation(LOCALID_LAUREL, LAUREL_FACE_OPEN);
+      Import_ObjectEventSetAnimation(LOCALID_LAUREL, LAUREL_FACE_OPEN);
       WaitFrames(6);
-      Engine_ObjectEventSetAnimation(LOCALID_LAUREL, LAUREL_FACE_CLOSED);
+      Import_ObjectEventSetAnimation(LOCALID_LAUREL, LAUREL_FACE_CLOSED);
       break;
     case FACE_GESTURE_OPEN_EYES:
-      Engine_ObjectEventSetAnimation(LOCALID_LAUREL, LAUREL_FACE_OPEN);
+      Import_ObjectEventSetAnimation(LOCALID_LAUREL, LAUREL_FACE_OPEN);
       break;
     case FACE_GESTURE_LOOK_LEFT:
-      Engine_ObjectEventSetAnimation(LOCALID_LAUREL, LAUREL_FACE_OPEN);
+      Import_ObjectEventSetAnimation(LOCALID_LAUREL, LAUREL_FACE_OPEN);
       WaitFrames(6);
-      Engine_ObjectEventSetAnimation(LOCALID_LAUREL, LAUREL_FACE_LOOK_LEFT);
+      Import_ObjectEventSetAnimation(LOCALID_LAUREL, LAUREL_FACE_LOOK_LEFT);
       break;
     case FACE_GESTURE_LOOK_RIGHT:
-      Engine_ObjectEventSetAnimation(LOCALID_LAUREL, LAUREL_FACE_OPEN);
+      Import_ObjectEventSetAnimation(LOCALID_LAUREL, LAUREL_FACE_OPEN);
       WaitFrames(6);
-      Engine_ObjectEventSetAnimation(LOCALID_LAUREL, LAUREL_FACE_LOOK_RIGHT);
+      Import_ObjectEventSetAnimation(LOCALID_LAUREL, LAUREL_FACE_LOOK_RIGHT);
       break;
     case FACE_GESTURE_BLINK:
       KolimaForestTree_AlternateFaceFrames(LOCALID_LAUREL, LAUREL_FACE_OPEN,
                                            LAUREL_FACE_CLOSED);
       break;
     case FACE_GESTURE_HALF_CLOSE_EYES:
-      Engine_ObjectEventSetAnimation(LOCALID_LAUREL, LAUREL_FACE_OPEN);
+      Import_ObjectEventSetAnimation(LOCALID_LAUREL, LAUREL_FACE_OPEN);
       WaitFrames(6);
-      Engine_ObjectEventSetAnimation(LOCALID_LAUREL, LAUREL_FACE_HALF_CLOSED);
+      Import_ObjectEventSetAnimation(LOCALID_LAUREL, LAUREL_FACE_HALF_CLOSED);
       break;
     }
   }
@@ -998,7 +1022,8 @@ static void KolimaForestTree_PlayGesture(s32 blankLocalId, s32 gesture) {
 
 /// Expands a spark along its spiral for 120 frames, then releases its cache
 /// slot.
-static void KolimaForestTree_UpdateOrbitSpark(union FieldObject *fieldObject) {
+static void
+KolimaForestTree_UpdateOrbitSpark(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *spark = &fieldObject->objectEvent;
   s32 position[3];
   s32 age = spark->timer;
@@ -1044,7 +1069,7 @@ static void KolimaForestTree_SpawnOrbitSparks(void) {
         spark->motionFlags = 0;
         spark->sprite->image.priority = 1;
         ObjectEvent_SetSpriteFlags(spark, 0);
-        ObjectDispatch_SelectAnimation(spark, 1);
+        Object_SelectAnimation(spark, 1);
         spark->timer = 0;
         spark->work = (sparkIndex * 60 * Q16_ONE) / 360;
         spark->targetX = gKolimaForestTreeSparkOrigin[0];

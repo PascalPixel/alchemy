@@ -326,7 +326,7 @@ struct LuckyWheelsWork {
   u8 unused[4]; ///< no code names it
   s32 timer;
   s32 winningLines[7];
-  struct OamShadow oam[128];
+  struct OamWords oam[128];
   struct Window *window;
   struct Window *subWindow;
   u8 unusedAfterWindows[8]; ///< no code names it
@@ -339,7 +339,7 @@ struct LuckyWheelsWork {
 /// gSaveBlock seen from +12, the base the bytes load: wonPrizes is
 /// gSaveBlock.wonPrizes (through the field itself LuckyWheels_RunFrame differs
 /// 12)
-struct ReelSave {
+struct SaveBlockWonPrizesView {
   u8 beforeWonPrizes[0x120]; ///< gSaveBlock from summonMask to wonPrizes
   s8 wonPrizes[16];
 };
@@ -352,7 +352,7 @@ struct ReelSave {
 /// title letters of a win, the frame, the hold lamps, the spin counter, the
 /// paylines, the wheel symbols, the lever and the bottom bar.
 void LuckyWheels_RunFrame(void) {
-  /* FAKEMATCH(volatile): struct OamShadow's volatile words (oambuf.h) keep
+  /* FAKEMATCH(volatile): struct OamWords's volatile words (oambuf.h) keep
    * each list loop's offset givs; as plain u32 words, 1242 of 1729
    * instructions differ in tbs-en. */
   struct LuckyWheelsWork *work;
@@ -414,7 +414,8 @@ void LuckyWheels_RunFrame(void) {
                                  work->subWindow, LUCKY_WHEELS_COIN_X, 0);
       Text_DrawNumberInWindowFar(work->bet, 2, work->subWindow, 64, 8);
       if (work->pressed & KEY_B) {
-        struct ReelSave *save = (struct ReelSave *)((u8 *)&gSaveBlock + 12);
+        struct SaveBlockWonPrizesView *save =
+            (struct SaveBlockWonPrizesView *)((u8 *)&gSaveBlock + 12);
 
         work->state = LUCKY_WHEELS_DONE;
         save->wonPrizes[0] = -2;
@@ -627,7 +628,8 @@ void LuckyWheels_RunFrame(void) {
       }
 
       if (stoppedReels == 5) {
-        struct ReelSave *save = (struct ReelSave *)((u8 *)&gSaveBlock + 12);
+        struct SaveBlockWonPrizesView *save =
+            (struct SaveBlockWonPrizesView *)((u8 *)&gSaveBlock + 12);
         s32 hits = 0;
 
         for (col = 0; col != 7; col++) {
@@ -962,7 +964,7 @@ void LuckyWheels_Run(void) {
   void *canvas;
   struct BattleAnimWork *work;
   struct LuckyWheelsWork *state;
-  struct ReelSave *save;
+  struct SaveBlockWonPrizesView *save;
   u8 *entry;
   u8 *tiles;
   s32 frame;
@@ -978,8 +980,8 @@ void LuckyWheels_Run(void) {
   state = AllocHeapSlotEwram(LUCKY_WHEELS_HEAP_SLOT,
                              sizeof(struct LuckyWheelsWork));
   tiles = Ram_MapGridCellBuffer;
-  save = (struct ReelSave *)((u8 *)&gSaveBlock + 12);
-  RuntimeDispatch_NoOpHook((s32)&ResourceId_BattleAnimFarCalls);
+  save = (struct SaveBlockWonPrizesView *)((u8 *)&gSaveBlock + 12);
+  Stub_NoOpHook((s32)&ResourceId_BattleAnimFarCalls);
   save->wonPrizes[0] = -1;
   state->repeat = 0;
   state->bet = 1;

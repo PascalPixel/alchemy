@@ -23,7 +23,7 @@ void FieldCamera_FollowObjectEvent(s32 localId, s32 keepPosition) {
   grid = gMapGridWork[0];
   if (subject != 0) {
     grid->origin = &camera->x;
-    ObjectDispatch_StartCameraFar((struct Object *)camera, (s32)subject);
+    Object_StartCameraFar((struct Object *)camera, (s32)subject);
     if (keepPosition == 0) {
       SET_POSITION(camera, subject->x, subject->y, subject->z);
       WaitFrames(1);
@@ -80,7 +80,7 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
   maximumX = grid->maxX + 0xFF880000;
   maximumZ = grid->maxY + cameraY + 0xFFC00000;
   grid->origin = &camera->x;
-  ObjectDispatch_StartIdleFar((struct Object *)camera);
+  Object_StartIdleFar((struct Object *)camera);
   if (positionX == -1) {
     positionX = camera->x;
   }
@@ -153,7 +153,7 @@ UNUSED void FieldCamera_FollowObject(struct Object *target,
                                                    sizeof(struct FieldWork)))
                ->camera;
   if (target != NULL) {
-    ObjectDispatch_StartCameraFar((struct Object *)camera, 0);
+    Object_StartCameraFar((struct Object *)camera, 0);
     camera->linkedObject = target;
     if (keepCurrentPosition == 0) {
       SET_POSITION(camera, target->x, target->y, target->z);

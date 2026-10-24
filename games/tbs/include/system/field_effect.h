@@ -76,7 +76,7 @@ struct FieldEffect {
   s32 countdown;
   /// Called each frame while the effect is live: the spawner sets
   /// FieldEffect_UpdateMotionScaleAndSpin, or options.update.
-  void (*update)(union FieldObject *fieldObject);
+  void (*update)(union ObjectEventOrEffect *fieldObject);
 };
 
 STATIC_ASSERT(offsetof(struct FieldEffect, scaleRateX) == 0x30);
@@ -87,7 +87,7 @@ STATIC_ASSERT(offsetof(struct FieldEffect, countdown) == 0x68);
 STATIC_ASSERT(offsetof(struct FieldEffect, update) == 0x6c);
 
 /// An object on the field, read as an object event or as an effect.
-union FieldObject {
+union ObjectEventOrEffect {
   struct ObjectEvent objectEvent;
   struct FieldEffect effect;
 };
@@ -103,7 +103,9 @@ union FieldObject {
 /// map/common/effect_spawn.h): a script number in the low bits and which of
 /// struct EffectOptions' fields to use.
 enum EffectSpawnFlags {
-  /// An EffectScript, picking one of gEffectScripts; the object's mode is this
+  /// An EffectDuration, picking one of gFieldEffect_DurationScripts; the
+  /// object's mode is
+  /// this
   /// plus 1.
   EFFECT_SCRIPT_MASK = 0x0f,
   EFFECT_USE_PALETTE = 0x10000,  ///< options.palette, as its group child value
@@ -119,10 +121,10 @@ enum EffectSpawnFlags {
   EFFECT_USE_UPDATE = 0x1000000     ///< options.update
 };
 
-/// The scripts EFFECT_SCRIPT_MASK picks from gEffectScripts, in a map's
-/// spawner and the resident one alike: each holds the effect for a while, then
-/// frees it.
-enum EffectScript {
+/// The scripts EFFECT_SCRIPT_MASK picks from gFieldEffect_DurationScripts, in a
+/// map's spawner and the resident one alike: each holds the effect for a while,
+/// then frees it.
+enum EffectDuration {
   EFFECT_SCRIPT_SHORT =
       0, ///< 22 one-frame repeats in a map, 24 frames resident
   EFFECT_SCRIPT_MEDIUM = 1, ///< 44 repeats in a map, 46 frames resident
@@ -132,7 +134,7 @@ enum EffectScript {
 /// The three scripts a map's own effect spawner picks from by
 /// EFFECT_SCRIPT_MASK, wrapped so that the spawner can copy them into its frame
 /// whole.
-struct EffectScripts {
+struct EffectDurationScripts {
   const s32 *script[3];
 };
 
@@ -140,7 +142,7 @@ struct EffectScripts {
 /// (or EFFECT_SCALE_TO_TARGET) is set.
 struct EffectOptions {
   s32 priority;      ///< the sprite's priority
-  s32 palette;       ///< passed to ObjectGroup_SetChildValue
+  s32 palette;       ///< passed to ObjectEvent_SetSpriteColor
   s32 startScaleX;   ///< 16.16 fixed point, 0x10000 full size
   s32 startScaleY;   ///< 16.16 fixed point, 0x10000 full size
   s32 targetScaleX;  ///< 16.16 fixed point, 0x10000 full size
@@ -149,7 +151,8 @@ struct EffectOptions {
   const s32 *script; ///< the object script, run in mode 1
   u16 rotation;      ///< 1/65536 turns
   u16 spin;          ///< 1/65536 turns per frame
-  void (*update)(union FieldObject *fieldObject); ///< replaces the update hook
+  void (*update)(
+      union ObjectEventOrEffect *fieldObject); ///< replaces the update hook
 };
 
 STATIC_ASSERT(offsetof(struct EffectOptions, type) == 0x18);

@@ -301,7 +301,7 @@ static void EventScript_IodemRejoins(void) {
                                        leader->z.part.pixel);
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IODEM);
-  Engine_ObjectEventSetPosition(LOCALID_IODEM, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_IODEM, 0, 0);
   WAIT(20);
   GameFlag_Set(FLAG_IODEM_FOLLOWING_PARTY);
   SCRIPT_END();
@@ -363,7 +363,7 @@ static void EventScript_LeaveToWorldMapEast(void) {
     GameFlag_Set(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
     GameFlag_Set(0x9a4);
   }
-  Engine_ScriptRequestWarp(work->coordEvent);
+  Import_ScriptRequestWarp(work->coordEvent);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   SCRIPT_END();
@@ -428,7 +428,8 @@ static void EventScript_MovePillar(void) {
 static UNUSED void GondowanCave_UnusedObjectEventCallback(void) {}
 
 /// Rotates the sprite during the airborne part of the leap.
-static void GondowanCave_RotateLeapingObject(union FieldObject *fieldObject) {
+static void
+GondowanCave_RotateLeapingObject(union ObjectEventOrEffect *fieldObject) {
   fieldObject->objectEvent.sprite->rotation -= 0x400;
 }
 
@@ -507,7 +508,7 @@ static UNUSED void GondowanCave_UnusedMapCallback(void) {}
 /// Lift on the boulder in GondowanCave also takes away the
 /// invisible object event beside it.
 static void EventScript_LiftBoulder(void) {
-  Engine_ObjectEventSetPosition(LOCALID_BOULDER_GAP, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_BOULDER_GAP, 0, 0);
 }
 
 /// Sets up the map as the party enters. Gondowan Passage blocks Retreat and
@@ -540,17 +541,17 @@ s32 Map_Initialize(void) {
   return 0;
 }
 
-s32 gShortEffectScript[] = {
+s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gMediumEffectScript[] = {
+s32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gLongEffectScript[] = {
+s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
@@ -582,10 +583,10 @@ s32 gPushedObject_FootprintBounds[] = {
     -8, -32, 8, 32,
 };
 
-const s32 *gEffectScripts[] = {
-    gShortEffectScript,
-    gMediumEffectScript,
-    gLongEffectScript,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 struct MapWarpDest gGondowanCaveWarpDestsOther[] = {

@@ -130,13 +130,13 @@ void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
 }
 
 /// Loads the pointing hand cursor's tiles into VRAM slot `slot`.
-void Resource_CopyFixedBlockB(s32 slot) {
-  VramCache_Load(slot, 0x80, gResource_FixedBlockBTiles);
+void NamingScreen_LoadPointingHandTiles(s32 slot) {
+  VramCache_Load(slot, 0x80, gPointingHandTiles);
 }
 
-/// Loads the 16x16 sprite gResource_FixedBlockATiles into VRAM slot `slot`.
-void Resource_CopyFixedBlockA(s32 slot) {
-  VramCache_Load(slot, 0x80, gResource_FixedBlockATiles);
+/// Loads the 16x16 sprite gNamingScreen_CaretTiles into VRAM slot `slot`.
+void NamingScreen_LoadCaretTiles(s32 slot) {
+  VramCache_Load(slot, 0x80, gNamingScreen_CaretTiles);
 }
 
 // The naming screen: a keyboard window of letter keys, with a column of
@@ -296,7 +296,7 @@ s32 NamingScreen_EditMemberName(s32 member) {
   keyColumn = NAME_COMMAND_COLUMN;
   keyRow = 5;
   if (vramSlot <= 95) {
-    VramCache_Load(vramSlot, 128, gResource_FixedBlockBTiles);
+    VramCache_Load(vramSlot, 128, gPointingHandTiles);
     sprite =
         WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
     keyCursor.sprite = sprite;
@@ -306,7 +306,7 @@ s32 NamingScreen_EditMemberName(s32 member) {
   }
   vramSlot = VramCache_FindFreeEntry();
   if (vramSlot <= 95) {
-    VramCache_Load(vramSlot, 128, gResource_FixedBlockATiles);
+    VramCache_Load(vramSlot, 128, gNamingScreen_CaretTiles);
     sprite =
         WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
     nameCaret.sprite = sprite;
@@ -350,7 +350,7 @@ s32 NamingScreen_EditMemberName(s32 member) {
     MenuCursor_AdvanceFar(&keyCursor.cursor);
     MenuCursor_MoveTowardTargetFar(&nameCaret.cursor);
     {
-      u32 frame = (gFrameTick >> 1) & 7;
+      u32 frame = (gVBlankCount >> 1) & 7;
 
       sprite = nameCaret.sprite;
       sprite->oam.x = sprite->x + gNamingScreen_CaretWave[frame];
@@ -566,7 +566,7 @@ s32 NamingScreen_EditMemberName(s32 member) {
   vramSlot = VramCache_FindFreeEntry();
   keyRow = 10;
   if (vramSlot <= 95) {
-    VramCache_Load(vramSlot, 128, gResource_FixedBlockBTiles);
+    VramCache_Load(vramSlot, 128, gPointingHandTiles);
     sprite =
         WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
     keyCursor.sprite = sprite;
@@ -576,7 +576,7 @@ s32 NamingScreen_EditMemberName(s32 member) {
   }
   vramSlot = VramCache_FindFreeEntry();
   if (vramSlot <= 95) {
-    VramCache_Load(vramSlot, 128, gResource_FixedBlockATiles);
+    VramCache_Load(vramSlot, 128, gNamingScreen_CaretTiles);
     sprite =
         WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
     nameCaret.sprite = sprite;
@@ -621,7 +621,7 @@ s32 NamingScreen_EditMemberName(s32 member) {
     MenuCursor_AdvanceFar(&keyCursor.cursor);
     MenuCursor_MoveTowardTargetFar(&nameCaret.cursor);
     {
-      u32 frame = (gFrameTick >> 1) & 7;
+      u32 frame = (gVBlankCount >> 1) & 7;
 
       sprite = nameCaret.sprite;
       sprite->oam.x = sprite->x + gNamingScreen_CaretWave[frame];

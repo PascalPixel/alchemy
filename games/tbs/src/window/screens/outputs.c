@@ -115,7 +115,7 @@ struct WindowSprite *WindowSprite_CreateWithTransform(s32 icon,
   return sprite;
 }
 
-/// Loads the pattern at the start of gHeadingPictures into a
+/// Loads the pattern at the start of gMenuTitlePictures into a
 /// free VRAM slot and shows it as a 16x16 sprite at (x, y) in `window`.
 /// `tableEntry` is passed on to the loader, which loads that same pattern for
 /// every value. Returns NULL when no slot is free.
@@ -128,7 +128,7 @@ struct WindowSprite *WindowSprite_CreateFromTable(s32 tableEntry,
   slot = VramCache_FindFreeEntry();
   sprite = NULL;
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
-    RenderResource_LoadTableEntry(tableEntry, 0, slot);
+    Resource_LoadTableEntry(tableEntry, 0, slot);
     sprite = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
   }
   return sprite;
@@ -143,8 +143,8 @@ struct WindowSprite *WindowSprite_CreateFromTable(s32 tableEntry,
 /// the portrait and its VRAM slot (WindowWork.portraitPictures and
 /// portraitSprites); the message windows' speaker portraits come through here
 /// (window/messages.c).
-struct WindowSprite *CreateSideObject(s32 character, s32 unused, s32 side,
-                                      struct Window *window, s32 x, s32 y) {
+struct WindowSprite *Portrait_Create(s32 character, s32 unused, s32 side,
+                                     struct Window *window, s32 x, s32 y) {
   struct WindowWork *work = WINDOW_WORK;
   struct WindowSprite *portrait = NULL;
   s32 slot;
@@ -254,7 +254,7 @@ typedef void (*WindowSpanRoutine)(u16 *spans, u16 *tilemap);
 /// of the first 80 lines only.
 /// XXX: likely meant to cover all 160 lines, because each line takes 4 bytes;
 /// what the lower half then shows is not established.
-void Win_FillScanlineSpans(void *spans) {
+void ScanlineWindow_FillSpans(void *spans) {
   void *tilemap = gWindowWork[0];
 
   if (tilemap == NULL) {
@@ -271,8 +271,8 @@ void Win_FillScanlineSpans(void *spans) {
 /// Fills the top-left `width` x `height` tiles of the 32-tile-wide BG screen
 /// block at 0x06002000 with the tilemap entry `value`. The first two
 /// parameters are ignored.
-void Win_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width, u32 height,
-                             s32 value) {
+void BgScreen_FillRect(s32 unused0, s32 unused1, u32 width, u32 height,
+                       s32 value) {
   u32 row = 0;
   s16 *dst = (s16 *)WINDOW_TILEMAP_VRAM;
 

@@ -191,7 +191,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     ((u32 *)iconSprite)[1] = 0x40000000;
     ((u32 *)iconSprite)[2] = 0;
     iconSprite->oam.f.tile =
-        VramCache_Reload(cursorHandle, (s32)gResource_FixedBlockBTiles);
+        VramCache_Reload(cursorHandle, (s32)gPointingHandTiles);
     iconSprite->oam.f.x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
     iconSprite->oam.f.y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     if (count != 0) {

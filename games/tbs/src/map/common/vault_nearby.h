@@ -18,9 +18,10 @@
 // void differs in 13 bytes of the 152-byte function. Keep the unused
 // native result in matching builds.
 #ifdef UBFIX
-static void Vault_UpdateWalkingVillager(union FieldObject *fieldObject) {
+static void
+Vault_UpdateWalkingVillager(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 Vault_UpdateWalkingVillager(union FieldObject *fieldObject) {
+static s32 Vault_UpdateWalkingVillager(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *self = (struct ObjectEvent *)fieldObject;
   u8 **globals = gWindowWork;

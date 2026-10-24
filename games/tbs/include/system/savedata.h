@@ -1,5 +1,5 @@
-#ifndef GUARD_SAVEDATA_H
-#define GUARD_SAVEDATA_H
+#ifndef ALCHEMY_SAVEDATA_H
+#define ALCHEMY_SAVEDATA_H
 
 /// @file
 /// The save data's signature and header template, and the link test words.

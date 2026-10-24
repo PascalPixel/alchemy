@@ -413,7 +413,7 @@ STATIC_ASSERT(offsetof(struct Unit, haunt) == 0x140);
 STATIC_ASSERT(offsetof(struct Unit, enemyId) == 0x14a);
 
 /// Clamps a gauge ratio to 0..0x4000, where 0x4000 means full.
-static __inline__ s32 Gauge_Clamp(s32 ratio) {
+static __inline__ s32 Unit_ClampGauge(s32 ratio) {
   s32 clamped;
 
   if (ratio > 0x4000)
@@ -431,10 +431,10 @@ static __inline__ s32 Gauge_Clamp(s32 ratio) {
 // are scheduled across the store before them.
 #define Unit_UpdateGauges(unit)                                                \
   do {                                                                         \
-    (unit)->hpGauge = Gauge_Clamp(((unit)->hp << 14) / (unit)->hpMax);         \
+    (unit)->hpGauge = Unit_ClampGauge(((unit)->hp << 14) / (unit)->hpMax);     \
     if ((unit)->hpGauge == 0 && (unit)->hp != 0)                               \
       (unit)->hpGauge = 1;                                                     \
-    (unit)->ppGauge = Gauge_Clamp(((unit)->pp << 14) / (unit)->ppMax);         \
+    (unit)->ppGauge = Unit_ClampGauge(((unit)->pp << 14) / (unit)->ppMax);     \
     if ((unit)->ppGauge == 0 && (unit)->pp != 0)                               \
       (unit)->ppGauge = 1;                                                     \
   } while (0)

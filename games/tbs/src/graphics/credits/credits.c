@@ -204,7 +204,7 @@ void Credits_BuildBackgroundTilemap(u32 *destination) {
 /// value), moving the pictures a pixel right; a picture is as wide as its
 /// map, 256 pixels, so it wraps without a seam.
 void Credits_ScrollBackgrounds(void) {
-  if ((gFrameTick & 3) == 0) {
+  if ((gVBlankCount & 3) == 0) {
     u32 decrement = 0xffff;
 
     gBgScroll[2].x += decrement;
@@ -215,7 +215,7 @@ void Credits_ScrollBackgrounds(void) {
 /// Crossfades the credits' battle backgrounds through alternating tile banks
 /// while the staff names scroll over it, then restores the display for the
 /// following screen. Reached through the scroll far-call table at the end of
-/// the game: Title_Run calls it as CreditsFar_Entry00 when the ending arrives
+/// the game: Title_Run calls it as Import_CreditsRun when the ending arrives
 /// at TITLE_FROM_LEMURIAN_SHIP, MUS_ENDING playing, before the main menu.
 /// Its waits come to 11223 frames, about 3 minutes 8 seconds, besides the
 /// loads: a 300-frame lead, then 33 slides of a 64-frame fade and a 267-frame
@@ -280,12 +280,12 @@ s32 Credits_Run(void) {
 }
 
 /// One eight-byte OAM entry in the credits' private sprite buffer.
-struct DisplayScrollObject {
+struct CreditsOamEntry {
   u32 attr01; ///< Attribute 0 in the low half, attribute 1 in the high half.
   u32 attr2;  ///< Attribute 2 in the low half; the unused high half stays zero.
 };
 
-STATIC_ASSERT(sizeof(struct DisplayScrollObject) == 8);
+STATIC_ASSERT(sizeof(struct CreditsOamEntry) == 8);
 
 /// Credits scroll position in pixels, in the low half of a flash work cell.
 extern u16 gFlash_Handler3;
@@ -300,7 +300,7 @@ extern u16 gFlash_Handler3;
 // UB: the native casts alias the flash declarations and store a pointer through
 // a declared u16. UBFIX gives these assembler-backed cells their credits views.
 #ifdef UBFIX
-extern struct DisplayScrollObject *gFlashNumRemainingBytes;
+extern struct CreditsOamEntry *gFlashNumRemainingBytes;
 extern s16 gFlash;
 extern s16 gFlash_Handler0;
 
@@ -308,8 +308,7 @@ extern s16 gFlash_Handler0;
 #define CREDITS_LAST_LINE_POSITION gFlash
 #define CREDITS_END_OF_TEXT gFlash_Handler0
 #else
-#define SCROLL_OBJECTS                                                         \
-  (*(struct DisplayScrollObject **)&gFlashNumRemainingBytes)
+#define SCROLL_OBJECTS (*(struct CreditsOamEntry **)&gFlashNumRemainingBytes)
 #define CREDITS_LAST_LINE_POSITION (*(s16 *)&gFlash)
 #define CREDITS_END_OF_TEXT (*(s16 *)&gFlash_Handler0)
 #endif
@@ -953,6 +952,10 @@ const void *gCredits_Lines[] = {
 
 #include "glyph_widths.h"
 
+/// A credits line has been drawn, so its scratch buffer holds the shadow row to
+/// carry.
+#define FLAG_CREDITS_LINE_DRAWN FLAG_MAP_TEMP_00
+
 /// A VBlank task added by Credits_InitTextSprites: maps the
 /// visible sixteen rows onto the tile ring and uploads their sprites. Advances
 /// one pixel every fourth frame until the end-of-text latch stops the scroll.
@@ -979,7 +982,7 @@ void Credits_UpdateTextSprites(void) {
     }
   }
   Dma_Set(SCROLL_OBJECTS, OAM, DMA_COPY_WORDS(OAM_SIZE / 4), REG_DMA3);
-  if (CREDITS_END_OF_TEXT == 0 && (gFrameTick & 3) == 0)
+  if (CREDITS_END_OF_TEXT == 0 && (gVBlankCount & 3) == 0)
     gFlash_Handler3++;
 }
 
@@ -1021,7 +1024,7 @@ void Credits_InitTextSprites(void) {
   u32 column;
 
   SCROLL_OBJECTS =
-      AllocEwram(CREDITS_OAM_ENTRIES * sizeof(struct DisplayScrollObject));
+      AllocEwram(CREDITS_OAM_ENTRIES * sizeof(struct CreditsOamEntry));
   // Solid border sprites immediately after the ring mask the partial text
   // rows at the top and bottom of the window.
   Dma_Fill32Cell(dmaFill, 0, (void *)OBJ_VRAM0, CREDITS_RING_BYTES);
@@ -1107,15 +1110,15 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
 #endif
     return -1;
   }
-  // The ninth raster row holds the shadow below this line. Carry it into
-  // the next line before clearing the rest of the reused scratch buffer.
-  // The buffer comes back at the same address each call (Free rewinds the
-  // pool), so the last line's ninth row is still there. FLAG_MAP_TEMP_00,
-  // here a line has been drawn, is clear on entering the map
-  // (Map_ResetFlagsOnEnter), so the first line starts from a clean buffer.
-  if (!GameFlag_GetFar(FLAG_MAP_TEMP_00)) {
+  // The ninth raster row holds the shadow below this line. Carry it into the
+  // next line before clearing the rest of the reused scratch buffer. The buffer
+  // comes back at the same address each call (Free rewinds the pool), so the
+  // last line's ninth row is still there. FLAG_CREDITS_LINE_DRAWN, here a line
+  // has been drawn, is clear on entering the map (Map_ResetFlagsOnEnter), so
+  // the first line starts from a clean buffer.
+  if (!GameFlag_GetFar(FLAG_CREDITS_LINE_DRAWN)) {
     Iwram_FillWords(linePixels, CREDITS_BUFFER_BYTES, 0);
-    GameFlag_SetFar(FLAG_MAP_TEMP_00);
+    GameFlag_SetFar(FLAG_CREDITS_LINE_DRAWN);
   } else {
     Iwram_CopyWords(linePixels, linePixels + 0x800, 0x100);
     Iwram_FillWords(linePixels + 0x100, 0x800, 0);

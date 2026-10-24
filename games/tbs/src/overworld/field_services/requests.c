@@ -52,7 +52,7 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
   // DJINN_NO_HOP rides along: it tells ObjectEvent_PlaceMapObjectEvents to put
   // the Djinni back 32 pixels north of the leader, not at its template's
   // position.
-  state->pendingDjinnEvent = (no + DJINNI_EVENT_0) | skipHop;
+  state->pendingDjinnEvent = (no + DJINNI_BATTLE_EVENT_FIRST) | skipHop;
   work->battle = Encounter_GetDjinnFormation(no);
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     struct Object *leader = ObjectEvent_GetByLocalId(state->leaderLocalId);
@@ -92,8 +92,8 @@ void FieldScript_RequestDestination(u16 mapId, u16 warpDest) {
   work->warp = 999;
 }
 
-/// Plays SE_STOP_SLOT5, then soundId (SONG_FADE_OUT_ACTION_SE for -1), and
-/// remembers soundId for Map_PlayQueuedMusic in the field work's
+/// Plays SE_STOP_MUSIC_PLAYER_5, then soundId (SONG_FADE_OUT_ACTION_SE for -1),
+/// and remembers soundId for Map_PlayQueuedMusic in the field work's
 /// queuedSound; -1 is remembered as none, so it plays SONG_FADE_OUT_ACTION_SE
 /// now and nothing later. About 30 maps reach it through the far alias, and the
 /// ground particles (weather.c) queue SE_170 with it.
@@ -102,7 +102,7 @@ void Map_QueueMusic(s32 soundId) {
   if ((s16)soundId == -1) {
     soundId = SONG_FADE_OUT_ACTION_SE;
   }
-  Sound_PlaySongFar(SE_STOP_SLOT5);
+  Sound_PlaySongFar(SE_STOP_MUSIC_PLAYER_5);
   Sound_PlaySongFar(soundId);
 }
 

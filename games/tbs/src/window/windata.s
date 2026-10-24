@@ -4,8 +4,8 @@
 	.global gFont_GlyphWidths
 gFont_GlyphWidths:
 	.include "games/tbs/src/graphics/window/glyph_widths.inc"
-	.global gText_ColorPens
-gText_ColorPens:
+	.global gFont_ColorPens
+gFont_ColorPens:
 	.byte 0, 3
 	.byte 13, 13
 	.byte 14, 4
@@ -109,8 +109,8 @@ gCharacter_SpriteTable:
 	.global gCharacter_ChildSpriteTable
 gCharacter_ChildSpriteTable:
 	.2byte 18, 19, 2, 3, 36, 48, 6, 7	@ child Isaac, child Garet, ...
-	.global gHeadingBobOffsets
-gHeadingBobOffsets:
+	.global gMenuTitleBobOffsets
+gMenuTitleBobOffsets:
 	.ifdef TBS_EDITION_ES
 	.byte 0, 0, 1, 2, 3, 3, 2, 1
 	.else
@@ -134,8 +134,8 @@ gMenu_BarPatternRows:
 	.4byte 0x05055050, 0x00000505
 	.4byte 0x05055050, 0x00050505
 	.4byte 0x05055050, 0x05050505
-	.global gRomShiftedTilePair
-gRomShiftedTilePair:
+	.global gPageArrowTiles
+gPageArrowTiles:
 	.incbin "games/tbs/src/graphics/window/shiftpr.4bpp"
 	.global gGraphics_ExpandNibbleTable
 gGraphics_ExpandNibbleTable:
@@ -333,23 +333,23 @@ gMenu_ColonString:
 gMenu_HexDigitsString:
 	.asciz "0123456789ABCDEF"
 	.balign 4, 0
-	.global gWorkspace_ItemTitle
-gWorkspace_ItemTitle:
+	.global gDebugMenu_ItemTitle
+gDebugMenu_ItemTitle:
 	.asciz "ITEM"
 	.balign 4, 0
-	.global gWorkspace_EnergyTitle
-gWorkspace_EnergyTitle:
+	.global gDebugMenu_EnergyTitle
+gDebugMenu_EnergyTitle:
 	.asciz "ENERGY"
 	.balign 4, 0
-	.global gWorkspace_StatusTitle
-gWorkspace_StatusTitle:
+	.global gDebugMenu_StatusTitle
+gDebugMenu_StatusTitle:
 	.asciz "STATUS"
 	.balign 4, 0
-	.global gWorkspace_PageLabel
-gWorkspace_PageLabel:
+	.global gDebugMenu_PageLabel
+gDebugMenu_PageLabel:
 	.asciz "PAGE:"
 	.balign 4, 0
-	.global gWorkspace_RangeDash
-gWorkspace_RangeDash:
+	.global gDebugMenu_RangeDash
+gDebugMenu_RangeDash:
 	.asciz "-"
 	.balign 4, 0

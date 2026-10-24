@@ -89,8 +89,8 @@ static inline s32 FieldUnit_AddHp(s32 owner, s32 delta) {
 /// and the title screen and main menu reach the decoder through it; main-image
 /// code calls Decompress_Type01 without it, LuckyDice_Run through call.h's
 /// Value2.
-static inline s32 FieldResource_DecodeType01(const void *source,
-                                             void *destination) {
+static inline s32 FieldDecompress_Type01(const void *source,
+                                         void *destination) {
   return Decompress_Type01(source, destination);
 }
 

@@ -8,12 +8,12 @@
 #include "unit/field/field.h"
 #include "types.h"
 
-extern const s32 gObjectDispatch_KeyCheckScript[];
-extern const s32 gObjectDispatch_KeysScript[];
-extern const s32 gObjectDispatch_PlayerScript[];
-extern const s32 gObjectDispatch_WorldMapScript[];
-extern const s32 gObjectDispatch_CameraScript[];
-extern const s32 gObjectDispatch_ApproachLinkScript[];
-extern const s32 gObjectDispatch_EndScript[];
+extern const s32 gObject_KeyCheckScript[];
+extern const s32 gObject_KeysScript[];
+extern const s32 gObject_PlayerScript[];
+extern const s32 gObject_WorldMapScript[];
+extern const s32 gObject_CameraScript[];
+extern const s32 gObject_ApproachLinkScript[];
+extern const s32 gObject_IdleScript[];
 
 #endif

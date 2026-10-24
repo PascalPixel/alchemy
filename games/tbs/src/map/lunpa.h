@@ -144,14 +144,14 @@ enum { SPARKLE_SCALE_X = 0x13333, SPARKLE_SCALE_Y = 0x18000 };
 /// Where Retreat at the gates sends the party (SaveBlock.retreatWarpDest).
 enum { GATE_RETREAT_WARP_DEST = 10 };
 
-enum CatchLine {
+enum CatchMessage {
   CATCH_LEFT_GUARD_CHALLENGES,
   CATCH_RIGHT_GUARD_WONDERS,
   CATCH_LEFT_GUARD_REFUSES_ENTRY,
   CATCH_RIGHT_GUARD_SENDS_PARTY_OFF
 };
 
-enum RecognitionLine { RECOGNITION_SEEN_THAT_MAN, RECOGNITION_IMPOSSIBLE };
+enum RecognitionMessage { RECOGNITION_SEEN_THAT_MAN, RECOGNITION_IMPOSSIBLE };
 
 enum { ANIM_SPRAWLED = 19 };
 

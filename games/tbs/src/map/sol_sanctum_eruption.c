@@ -1,16 +1,16 @@
 /// @file
 /// Elemental Star Room (MapId_SolSanctumEruption), the chamber of
-/// MapId_SolSanctumElementalStarRoom (sol_sanctum_elemental_star_room.c) as
-/// it collapses once the Mars Star is taken: one scripted scene, with no events
-/// of its own.
+/// MapId_SolSanctumElementalStarRoom (sol_sanctum_elemental_star_room.c) as it
+/// collapses once the Mars Star is taken: one scripted scene, with no events of
+/// its own.
 ///
 /// SolSanctumEruption_Initialize plays it on arrival at
 /// SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, in two parts:
 /// - SolSanctumEruption_PlayHostageScene: the chamber quakes, the Wise One
 ///   appears and stills it, and Saturos's group leaves with Jenna and Kraden,
 ///   rising out of the chamber one by one. Jenna leaves the party.
-/// - SolSanctumEruption_PlayWiseOneRescue: the Wise One has Isaac keep the
-///   Mars Star, then sends Isaac and Garet away in a white flash. It sets
+/// - SolSanctumEruption_PlayWiseOneRescue: the Wise One has Isaac keep the Mars
+///   Star, then sends Isaac and Garet away in a white flash. It sets
 ///   FLAG_SOL_SANCTUM_ERUPTED, which every room of Sol Sanctum tests from then
 ///   on, and FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED, and takes
 ///   SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS to the Luna and Sol
@@ -21,16 +21,16 @@
 /// a varying rate (SolSanctumEruption_StepEmbers and
 /// SolSanctumEruption_UpdateEmberFrequency, callbacks the first part adds and
 /// the second removes); once Saturos's group starts to leave
-/// (FLAG_MAP_TEMP_46), they fall silently. The breaking floor's cells flicker
-/// by callback until the Wise One holds them, ten arcs of light rise at each of
-/// the chamber's four corners as the Wise One tells of the stars
-/// (SolSanctumEruption_RaiseElementalArcs), and the Wise One glows through a
-/// cycle of palettes.
+/// (FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING), they fall silently. The
+/// breaking floor's cells flicker by callback until the Wise One holds them,
+/// ten arcs of light rise at each of the chamber's four corners as the Wise One
+/// tells of the stars (SolSanctumEruption_RaiseElementalArcs), and the Wise One
+/// glows through a cycle of palettes.
 ///
-/// Saturos's group and their hostages leave one by one from the platform
-/// where the party arrived (SolSanctumEruption_RaiseAndShrinkObjectEvent): each
-/// walks onto it, rises 30 pixels at full size, then rises on as he shrinks
-/// away, over a shadow that shrinks with him (LOCALID_PLATFORM_SHADOW;
+/// Saturos's group and their hostages leave one by one from the platform where
+/// the party arrived (SolSanctumEruption_RaiseAndShrinkObjectEvent): each walks
+/// onto it, rises 30 pixels at full size, then rises on as he shrinks away,
+/// over a shadow that shrinks with him (LOCALID_PLATFORM_SHADOW;
 /// https://alchemy.pascalpixel.com/places/sol-sanctum-eruption/departing-shadow.gif:
 /// the departures, the platform's object event boxed on the screen, beside the
 /// sprites and the sprites without it, where the shadow is gone).
@@ -78,6 +78,10 @@
 #include "item_ids.h"
 #include "fx_work.h"
 
+/// Saturos's group has started to leave, and the embers fall without their
+/// sound.
+#define FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING FLAG_MAP_TEMP_46
+
 static void SolSanctumEruption_RaiseAndShrinkObjectEvent(s32 localId);
 static void SolSanctumEruption_ThrowEruptionRing(void);
 static void SolSanctumEruption_ResetEmberEmission(void);
@@ -101,8 +105,8 @@ static void SolSanctumEruption_SpawnEffectPair(struct ObjectEvent *parent);
 static void SolSanctumEruption_UpdateWiseOnePalette(void);
 
 // Map flags, cleared on every ordinary arrival:
-// - FLAG_MAP_TEMP_46: set as Saturos's group starts to leave; from then on
-//   the embers fall without their sound (SE_246).
+// - FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING: set as Saturos's group starts to
+//   leave; from then on the embers fall without their sound (SE_246).
 
 /// The four corners of the chamber where SolSanctumEruption_RaiseElementalArcs
 /// raises lights, in the order the Wise One's scene visits them.
@@ -170,7 +174,8 @@ static inline void SolSanctumEruption_PlaceHostageGroup(void) {
 /// as hostages, and the Wise One then rescues Isaac and Garet. Called by
 /// SolSanctumEruption_Initialize at
 /// SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, the cut from
-/// MapId_SolSanctumElementalStarRoom. Sets FLAG_MAP_TEMP_46, plays
+/// MapId_SolSanctumElementalStarRoom. Sets
+/// FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING, plays
 /// SolSanctumEruption_PlayWiseOneRescue and then removes Jenna from the party.
 static void SolSanctumEruption_PlayHostageScene(void) {
   void ObjectEvent_ShowEmote();
@@ -185,9 +190,9 @@ static void SolSanctumEruption_PlayHostageScene(void) {
 #endif
 
 #ifdef UBFIX
-  sparkles = gParticleWork;
+  sparkles = gWeatherWork;
 #else
-  particleWorkSlot = &gParticleWork;
+  particleWorkSlot = &gWeatherWork;
   sparkles = *particleWorkSlot;
 #endif
   FieldScript_Start();
@@ -357,10 +362,10 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Script_ShowMessage(LOCALID_FELIX, 0);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MENARDI, 2);
   Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_ALEX, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_ALEX, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
   ObjectEvent_LinkPair(LOCALID_SATUROS, LOCALID_MENARDI, 40);
-  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 10);
   // Jenna: "What about Isaac and Garet? You can't just leave them here!"
   ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -379,7 +384,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_WEST, 10);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MENARDI, 2);
   Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_NOD);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 40);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_NORTHWEST + FACING_STEP, 60);
   ObjectMotion_SetAnimationAndWait(LOCALID_ALEX, ANIM_NOD);
@@ -402,7 +407,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ObjectMotion_SetVariantCallback(LOCALID_FELIX, 3);
   Script_ShowMessageAndWait(LOCALID_FELIX, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_NORTHWEST + FACING_STEP, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_ALEX, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_ALEX, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 10);
   ObjectMotion_SetVariantCallback(LOCALID_FELIX, 3);
   Script_ShowMessageAndWait(LOCALID_FELIX, 0, 10);
@@ -427,7 +432,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   FieldScript_WaitFrames(20);
   ObjectEvent_LinkPair(LOCALID_SATUROS, LOCALID_MENARDI, 0);
   FieldScript_WaitFrames(30);
-  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MENARDI, ANIM_NOD);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_NORTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_NORTHWEST + FACING_STEP, 0);
@@ -460,7 +465,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   ObjectEvent_ShowEmote(LOCALID_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   ObjectEvent_LinkPair(LOCALID_SATUROS, LOCALID_MENARDI, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MENARDI, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectEvent_SetSpeed(LOCALID_SATUROS, PIXELS(3) / 5, PIXELS(3) / 10);
@@ -469,8 +474,8 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ObjectEvent_WalkTo(LOCALID_SATUROS, 491, 348);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MENARDI);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_SATUROS);
-  Engine_ObjectEventSetAnimation(LOCALID_MENARDI, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_MENARDI, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_NORTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_SOUTHEAST + FACING_STEP, 10);
@@ -517,7 +522,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   FieldScript_WaitFrames(20);
   ObjectEvent_WalkTo(LOCALID_JENNA, 432, 316);
   ObjectEvent_WalkToAndWait(LOCALID_FELIX, 422, 311);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_SOUTHEAST + FACING_STEP, 20);
   // Felix leads Jenna aside. Saturos: "Master Kraden, you will be joining us,
@@ -549,7 +554,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   FieldCamera_MoveTo(PIXELS(472), -1, PIXELS(300), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(40);
-  GameFlag_Set(FLAG_MAP_TEMP_46);
+  GameFlag_Set(FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING);
   // One by one they rise out of the chamber: Saturos, Kraden, Menardi, then
   // Jenna ("Isaac, Garet! Don't die!") and Felix, and last Alex, who regrets
   // leaving the Mars Star.
@@ -598,7 +603,7 @@ static void SolSanctumEruption_RaiseAndShrinkObjectEvent(s32 localId) {
   objectEvent = ObjectEvent_GetById(localId);
   target = ObjectEvent_GetById(localId);
   ObjectEvent_SetSpriteFlags(target, 0);
-  ObjectEvent_SetChildValue(localId, 0x100);
+  ObjectEvent_SetSpriteColorById(localId, 0x100);
   objectEvent->motionFlags = 0;
   Script_PlaySong(SE_201);
   // Rise at full size, then shrink the object event and its shadow together.
@@ -665,7 +670,7 @@ static void SolSanctumEruption_ThrowEruptionRing(void) {
     objectEvent = ObjectEvent_GetById(crystalIndex);
     ObjectMotion_EnableActionAndResetMotion(crystalIndex);
     ObjectEvent_SetSpriteFlags(objectEvent, 0);
-    ObjectDispatch_SelectAnimation(objectEvent, 2);
+    Object_SelectAnimation(objectEvent, 2);
     objectEvent->sprite->image.priority = 0;
     objectEvent->motionFlags = 0;
     objectEvent->speed = PIXELS(8);
@@ -734,7 +739,7 @@ static void SolSanctumEruption_StepEmbers(void) {
   s32 x;
   s32 z;
 
-  sparkles = gParticleWork;
+  sparkles = gWeatherWork;
   shakePixels = (u32)gEmberTimer / 10;
   if (shakePixels != 0) {
     sparkles->stopped = 0;
@@ -754,7 +759,7 @@ static void SolSanctumEruption_StepEmbers(void) {
           landedEmber->targetZ == OBJ_EVENT_NO_TARGET) {
         gEmberState[emberIndex]++;
         if (gEmberState[emberIndex] == 2)
-          ObjectDispatch_SelectAnimation(landedEmber, 3);
+          Object_SelectAnimation(landedEmber, 3);
         if (gEmberState[emberIndex] == 19) {
           landedEmber->x.fixed = 0;
           landedEmber->y.fixed = 0;
@@ -763,7 +768,7 @@ static void SolSanctumEruption_StepEmbers(void) {
           landedEmber->targetX = OBJ_EVENT_NO_TARGET;
           landedEmber->targetY = OBJ_EVENT_NO_TARGET;
           landedEmber->targetZ = OBJ_EVENT_NO_TARGET;
-          ObjectGroup_SetChildValue(landedEmber, 15);
+          ObjectEvent_SetSpriteColor(landedEmber, 15);
         } else if (gEmberState[emberIndex] == 20) {
           gEmberState[emberIndex] = 0;
         }
@@ -776,10 +781,10 @@ static void SolSanctumEruption_StepEmbers(void) {
   if (gEmberMask & gFrameCount)
     return;
   for (emberIndex = 0; emberIndex < 16; emberIndex++) {
-    angle = Math_RemainderUnsigned(Engine_RandomNext(), 0xffff);
+    angle = Math_RemainderUnsigned(Import_RandomNext(), 0xffff);
     ember = ObjectEvent_GetById(emberIndex + 16);
     if (gEmberState[emberIndex] == 0) {
-      if (GameFlag_Get(FLAG_MAP_TEMP_46) == 0)
+      if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING) == 0)
         Sound_PlaySong(SE_246);
       gEmberState[emberIndex] = 1;
       ember->motionFlags = 0;
@@ -787,25 +792,25 @@ static void SolSanctumEruption_StepEmbers(void) {
       ember->acceleration = PIXELS(1);
       ObjectEvent_SetSpriteFlags(ember, 0);
       ember->sprite->image.priority = 1;
-      ObjectDispatch_SelectAnimation(ember, 2);
+      Object_SelectAnimation(ember, 2);
       ObjectEvent_SetScript(ember, gEruption_EmberScript);
       ember->x.fixed =
           Iwram_MulQ16(Trig_Cos((u16)angle),
-                       (((u32)(Engine_RandomNext() << 8) >> 16) << 16) +
+                       (((u32)(Import_RandomNext() << 8) >> 16) << 16) +
                            PIXELS(256)) +
           PIXELS(325);
       ember->y.fixed = 0;
       ember->z.fixed =
           Iwram_MulQ16(Trig_Sin((u16)angle),
-                       (((u32)(Engine_RandomNext() << 8) >> 16) << 16) +
+                       (((u32)(Import_RandomNext() << 8) >> 16) << 16) +
                            PIXELS(256)) +
           PIXELS(302);
       x = Iwram_MulQ16(Trig_Cos((u16)angle),
-                       ((Engine_RandomNext() & 63) << 16) + PIXELS(8));
+                       ((Import_RandomNext() & 63) << 16) + PIXELS(8));
       z = Iwram_MulQ16(Trig_Sin((u16)angle),
-                       ((Engine_RandomNext() & 63) << 16) + PIXELS(8));
+                       ((Import_RandomNext() & 63) << 16) + PIXELS(8));
       Object_SetPosition(ember, x + PIXELS(325), 0, z + PIXELS(286));
-      ObjectGroup_SetChildValue(ember, 0);
+      ObjectEvent_SetSpriteColor(ember, 0);
       gEmberTimer = 30;
       return;
     }
@@ -824,25 +829,25 @@ static void SolSanctumEruption_UpdateEmberFrequency(void) {
   if (gEmberLevel != 0) {
     gEmberLevel--;
   } else {
-    gEmberLevel = (u32)(Engine_RandomNext() << 2) >> 16;
+    gEmberLevel = (u32)(Import_RandomNext() << 2) >> 16;
   }
   emissionLevel = gEmberLevel;
   switch (emissionLevel) {
   case 3:
     gEmberMask = emissionLevel;
-    gEmberLevelTimer = ((u32)(Engine_RandomNext() * 20) >> 16) + 40;
+    gEmberLevelTimer = ((u32)(Import_RandomNext() * 20) >> 16) + 40;
     break;
   case 2:
     gEmberMask = 15;
-    gEmberLevelTimer = ((u32)(Engine_RandomNext() * 40) >> 16) + 80;
+    gEmberLevelTimer = ((u32)(Import_RandomNext() * 40) >> 16) + 80;
     break;
   case 1:
     gEmberMask = 63;
-    gEmberLevelTimer = ((u32)(Engine_RandomNext() * 80) >> 16) + 160;
+    gEmberLevelTimer = ((u32)(Import_RandomNext() * 80) >> 16) + 160;
     break;
   default:
     gEmberMask = 127;
-    gEmberLevelTimer = ((u32)(Engine_RandomNext() * 160) >> 16) + 320;
+    gEmberLevelTimer = ((u32)(Import_RandomNext() * 160) >> 16) + 320;
     break;
   }
 }
@@ -852,7 +857,7 @@ static inline void SolSanctumEruption_FinishMaterialization(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_WISE_ONE, 3);
   Task_Remove(SolSanctumEruption_UpdateWiseOnePalette);
   WaitFrames(1);
-  ObjectEvent_SetChildValue(LOCALID_WISE_ONE, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_WISE_ONE, 0);
 }
 
 /// Elemental Star Room, collapsing: left behind, Isaac and Garet face the Wise
@@ -878,7 +883,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   u32 frame;
   s32 flickerDelay;
 
-  sparkles = gParticleWork;
+  sparkles = gWeatherWork;
   wiseOne = ObjectEvent_Get(LOCALID_WISE_ONE);
   // Clear the ember object events and bring Isaac and Garet back into view.
   Task_Remove(SolSanctumEruption_UpdateEmberFrequency);
@@ -1000,7 +1005,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     FieldScript_WaitFrames(60);
     ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST + FACING_STEP, 0);
     FieldScript_WaitFrames(10);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_SHAKE_HEAD);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_SHAKE_HEAD);
     FieldScript_SetMessageId(MsgSolSanctumThanksALot);
   } else {
     FieldScript_WaitFrames(10);
@@ -1010,11 +1015,11 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     FieldScript_WaitFrames(60);
     ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST + FACING_STEP, 0);
     FieldScript_WaitFrames(10);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_SHAKE_HEAD);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_SHAKE_HEAD);
     FieldScript_SetMessageId(MsgSolSanctumTheyllBeSafe);
   }
   Script_ShowMessageAndWait(LOCALID_GARET, 0, 40);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(40);
 
@@ -1090,7 +1095,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(2) / 5, PIXELS(1) / 5);
   ObjectEvent_WalkTo(LOCALID_GARET, 220, 150);
   ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, 246, 150);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST + FACING_STEP, 0);
   FieldScript_WaitFrames(60);
@@ -1108,7 +1113,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   } else {
     ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST + FACING_STEP, 0);
     FieldScript_WaitFrames(10);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_SHAKE_HEAD);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_SHAKE_HEAD);
     FieldScript_SetMessageId(MsgSolSanctumQuitActingTough);
   }
   FieldScript_WaitFrames(20);
@@ -1139,7 +1144,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 0);
   FieldScript_WaitFrames(30);
   ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   FieldScript_WaitFrames(40);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST, 0);
   FieldScript_WaitFrames(4);
@@ -1323,10 +1328,10 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     Icon_DrawItem(ITEM_MARS_STAR);
     VramCache_Load(starSprite->slot, 128, iconPixels + 0x400);
     FreeHeapSlot(17);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
                                    ANIM_LEADER_ARMS_RAISED);
     ItemDisplay_ShowPicture(star, 3);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
                                    ANIM_LEADER_ARMS_RAISED);
   }
   SolSanctumEruption_SetMaterializationTint(1, 20, 0);
@@ -1344,7 +1349,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     star->scaleX = Q16_ONE;
     star->scaleY = Q16_ONE;
   }
-  ObjectEvent_SetChildValue(LOCALID_WISE_ONE, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_WISE_ONE, 0);
   SolSanctumEruption_SetMaterializationTint(0, 20, 0);
   // The Wise One: "Return it to its bag." and the Elemental Stars are moving
   // away from here.
@@ -1353,7 +1358,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   if (star != NULL) {
     ObjectEvent_Release(star);
   }
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 60);
@@ -1534,7 +1539,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Map_EndCutscenePsynergy();
   GameFlag_Set(FLAG_SOL_SANCTUM_ERUPTED);
   GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED);
-  Engine_ScriptRequestWarp(SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS);
+  Import_ScriptRequestWarp(SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS);
   // Flag 0x100 marks nothing: it is set nowhere else and read nowhere, by no
   // table, script or function, and render probe flag-reads, watching every
   // flag test and every byte and nibble read in the maps after the
@@ -1548,7 +1553,7 @@ static void SolSanctumEruption_PlaceBeforeStar(s32 localId) {
   struct ObjectEvent *objectEvent;
 
   objectEvent = ObjectEvent_GetById(localId);
-  Engine_ObjectEventSetPosition(localId, PIXELS(232), PIXELS(125));
+  Import_ObjectEventSetPosition(localId, PIXELS(232), PIXELS(125));
   objectEvent->facing = FACING_SOUTH;
   ObjectMotion_SetActionVariant(localId, 3);
 }
@@ -1592,7 +1597,7 @@ static void SolSanctumEruption_DrawSecondCollapseTiles(s32 alternate) {
 /// a callback while the floor breaks up, until the Wise One holds it.
 static void SolSanctumEruption_FlickerFirstCollapseTiles(void) {
   if ((gFrameCount & 1) == 0) {
-    if ((u32)Math_RemainderUnsigned(Engine_RandomNext(), 100) > 50) {
+    if ((u32)Math_RemainderUnsigned(Import_RandomNext(), 100) > 50) {
       SolSanctumEruption_DrawFirstCollapseTiles(1);
     } else {
       SolSanctumEruption_DrawFirstCollapseTiles(0);
@@ -1603,7 +1608,7 @@ static void SolSanctumEruption_FlickerFirstCollapseTiles(void) {
 /// Randomly alternates the second tile patch on even frames, as the first.
 static void SolSanctumEruption_FlickerSecondCollapseTiles(void) {
   if ((gFrameCount & 1) == 0) {
-    if ((u32)Math_RemainderUnsigned(Engine_RandomNext(), 100) > 50) {
+    if ((u32)Math_RemainderUnsigned(Import_RandomNext(), 100) > 50) {
       SolSanctumEruption_DrawSecondCollapseTiles(1);
     } else {
       SolSanctumEruption_DrawSecondCollapseTiles(0);
@@ -1673,7 +1678,7 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
     sprite = objectEvent->sprite;
     sprite->flags = clear;
     sprite->image.priority = 1;
-    ObjectDispatch_SelectAnimation(objectEvent, 6);
+    Object_SelectAnimation(objectEvent, 6);
     WaitFrames(6);
   }
   if (corner == CHAMBER_NORTHWEST) {

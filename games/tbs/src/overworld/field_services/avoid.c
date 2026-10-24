@@ -33,7 +33,8 @@ void FieldEffect_BlinkAvoidCaster(void) {
 /// FieldEffect_RunAvoid makes it the caster's callback; it counts the caster's
 /// step and turns its angle. The arcs draw with the tiles FieldEffect_RunAvoid
 /// loads into scene->arcTileSlot.
-void FieldEffect_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
+void FieldEffect_UpdatePairedArcSpawner(
+    union ObjectEventOrEffect *fieldObject) {
   struct Object *caster = (struct Object *)fieldObject;
   s16 phase;
   s32 elapsedFrames;
@@ -140,11 +141,9 @@ void FieldEffect_RunAvoid(void) {
   // Back to the caster's own look: outlined while Cloak is on, else with its
   // shadow.
   if (gSaveBlock.cloaked != 0)
-    ObjectDispatch_SetSingleChildFlagsFar((struct Object *)object,
-                                          SPRITE_FLAG_OUTLINED);
+    Object_SetSpriteFlagsFar((struct Object *)object, SPRITE_FLAG_OUTLINED);
   else
-    ObjectDispatch_SetSingleChildFlagsFar((struct Object *)object,
-                                          SPRITE_FLAG_SHADOW);
+    Object_SetSpriteFlagsFar((struct Object *)object, SPRITE_FLAG_SHADOW);
   Anim_ApplyChildValuesFar((struct Object *)object, SPRITE_COLOR_NORMAL);
   VramCache_FreeEntry(effectWork->arcTileSlot);
   FieldMessage_ShowFar(MsgMonstersAttackLess, 1);

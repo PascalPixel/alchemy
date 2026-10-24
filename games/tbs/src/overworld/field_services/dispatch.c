@@ -244,12 +244,11 @@ s32 Field_RunEventAction(const void *event, s32 param, s32 target) {
 
   if (event != NULL) {
     // Every routine's address is above 0x10000, so one word holds either.
-    script = ((const struct EffectDescriptor *)event)->result;
+    script = ((const struct MapEventView *)event)->result;
     if (script != 0) {
       if (script < 0x10000) {
         FieldScript_Start();
-        FieldScript_SetMessageId(
-            ((const struct EffectDescriptor *)event)->result);
+        FieldScript_SetMessageId(((const struct MapEventView *)event)->result);
         FieldScript_ShowMessageAndWait(target, 0);
         FieldScript_End();
       } else {
@@ -269,7 +268,7 @@ s32 Field_RunEventAction(const void *event, s32 param, s32 target) {
 /// frame % 6, which cycles its colours. Move, Lift and Carry give it to the
 /// target they hold, Retreat to its caster. A sprite that keeps its VRAM
 /// cache entry (retainCacheEntry) is left alone.
-void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject) {
+void Object_CycleSpriteColors(union ObjectEventOrEffect *fieldObject) {
   struct Object *owner = (struct Object *)fieldObject;
   s32 kind;
   struct Sprite *animation;
@@ -380,7 +379,7 @@ struct Object *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   object = Object_CreateFar(kind, x, y, z);
   if (object != NULL) {
     if (object->spriteStorageKind == OBJECT_SPRITE_NONE) {
-      ObjectDispatch_ReleaseFar((struct Object *)object);
+      Object_ReleaseFar((struct Object *)object);
       return NULL;
     }
     object->groundHeight =
@@ -388,8 +387,8 @@ struct Object *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
     object->motionFlags = 4;
     object->priorityFlags = 4;
     object->sprite->image.priority = 0;
-    ObjectDispatch_SetSingleChildFlagsFar((struct Object *)object, 0);
-    ObjectDispatch_SelectAnimationFar(object, 1);
+    Object_SetSpriteFlagsFar((struct Object *)object, 0);
+    Object_SelectAnimationFar(object, 1);
   }
   return object;
 }
@@ -398,8 +397,7 @@ struct Object *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
 /// player's and except. FieldEffect_StartCast pauses them
 /// (animation speed 0) while an effect plays and lets them go again at
 /// normal speed.
-void ObjectGroup_SetActionForOthers(struct Object *except, s32 state,
-                                    s32 value) {
+void ObjectEvent_SetOthersPaused(struct Object *except, s32 state, s32 value) {
   s16 *player;
   struct Object *object;
   s32 localId;
@@ -410,7 +408,7 @@ void ObjectGroup_SetActionForOthers(struct Object *except, s32 state,
     object = ObjectEvent_GetByLocalId(localId);
     if (localId != *player && object != NULL && object != except) {
       object->paused = state;
-      ObjectDispatch_SetAnimationSpeedFar((struct Object *)object, value);
+      Object_SetAnimationSpeedFar((struct Object *)object, value);
     }
     localId++;
   } while (localId <= OBJECT_LAST);

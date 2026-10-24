@@ -146,7 +146,7 @@ void Debug_SelectAbilityPair(void) {
     // NULL for the writes below. 0x40000000 is a 16x16 sprite.
     slot = VramCache_FindFreeEntry();
     if (slot != 0) {
-      VramCache_Load(slot, 128, gResource_FixedBlockBTiles);
+      VramCache_Load(slot, 128, gPointingHandTiles);
       cursor = WindowSprite_Create(slot, 0x40000000, win, 0, 0);
     }
     /* FAKEMATCH(temporary): the title message passed through slot; as the

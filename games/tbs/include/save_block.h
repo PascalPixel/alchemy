@@ -37,7 +37,7 @@ enum BattleType {
   BATTLE_TYPE_NORMAL = 0,
   /// A battle the party cannot run from: a Mimic's
   /// (overworld/overworld/events.c) and the travelers' fight in Vale
-  /// (ValeGate_FightTravelers, map/vale_gate.c).
+  /// (ValePlaza_FightTravelers, map/vale_plaza.c).
   BATTLE_TYPE_NO_ESCAPE = 2,
   /// The battles a script starts. Here and in a link battle the command menu
   /// itself refuses to run, with MsgNoTimeToRun ("This is no time to be
@@ -60,7 +60,7 @@ enum BattleType {
 /// new game sets its defaults (SaveBlock_InitializeDefaults), and the field,
 /// battle, menus and maps read and write it directly.
 struct SaveBlock {
-  /// Runtime_GetBuildStampTime's value when the game was last saved; its low
+  /// BuildStamp_GetTime's value when the game was last saved; its low
   /// half goes into the file's summary.
   u32 buildStamp;
   u32 playTime; ///< frames, copied from gPlayTimeFrames when saving
@@ -160,8 +160,8 @@ struct SaveBlock {
   s16 hazardDamage;
   s16 hazardSteps; ///< reset on entering a new map section
   ///@}
-  /// The Djinni battle pending (DJINNI_EVENT_0 plus its number, flags in bits
-  /// 15 to 11), resolved on returning to the field.
+  /// The Djinni battle pending (DJINNI_BATTLE_EVENT_FIRST plus its number,
+  /// flags in bits 15 to 11), resolved on returning to the field.
   s16 pendingDjinnEvent;
   s16 runResult;      ///< the last battle's result; -1 for a defeat
   s32 encounterSteps; ///< the encounter count, reset with a new map section
@@ -183,8 +183,8 @@ struct SaveBlock {
   /// reports, 3 cleared on choosing a monster battle; the others not named by
   /// TBS code.
   u16 linkTallies[8];
-  u8 unusedAfterTallies[4]; ///< no code names it
-  u32 startStamp;           ///< Runtime_GetBuildStampTime's value at a new game
+  u8 unusedAfterTallies[4];    ///< no code names it
+  u32 startStamp;              ///< BuildStamp_GetTime's value at a new game
   u8 unusedAfterStartStamp[4]; ///< no code names it
   struct Unit units[8];        ///< the characters
 };

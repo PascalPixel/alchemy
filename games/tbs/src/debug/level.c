@@ -93,7 +93,7 @@ u8 *IncreaseItemAndLevel_GetWarpDests(void) {
 }
 
 /// The room has no warp regions: its regions entry returns none.
-s32 MapData_ReturnZero(void) { return 0; }
+s32 Map_GetWarpRegions(void) { return 0; }
 
 u8 *IncreaseItemAndLevel_GetWarps(void) {
   return (u8 *)gIncreaseItemAndLevel_Warps;
@@ -473,7 +473,7 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
 UNUSED static void IncreaseItemAndLevel_RequestWarp(void) {
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
   gFieldWork->transitionFrames = 24;
-  Engine_ScriptRequestWarp();
+  Import_ScriptRequestWarp();
 }
 
 /// Starts the window transition and edition-specific object event
@@ -488,8 +488,8 @@ s32 IncreaseItemAndLevel_Initialize(void) {
 #if TBS_PATCH_1
   ObjectEvent_GetById(LOCALID_LEVEL_EDITOR)->scaleY = 0x19999;
   ObjectEvent_GetById(LOCALID_LEVEL_EDITOR)->scaleX = 0x19999;
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_EMOTE_TESTER, 5);
-  Engine_ObjectEventSetAnimation(LOCALID_SECOND_EMOTE_TESTER, 2);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_EMOTE_TESTER, 5);
+  Import_ObjectEventSetAnimation(LOCALID_SECOND_EMOTE_TESTER, 2);
 #else
   ObjectEvent_GetById(LOCALID_LEVEL_EDITOR)->scaleY = 0x1b333;
   ObjectEvent_GetById(LOCALID_LEVEL_EDITOR)->scaleX = 0x1b333;
@@ -505,8 +505,8 @@ s32 IncreaseItemAndLevel_Initialize(void) {
 /// to (312, 416).
 static void IncreaseItemAndLevel_RunMotionTest(void) {
   FieldScript_Start();
-  Engine_ObjectEventSetAnimation(LOCALID_PORTRAIT_BROWSER, ANIM_WALK);
-  Engine_ObjectEventSetAnimation(LOCALID_LEVEL_EDITOR, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_PORTRAIT_BROWSER, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_LEVEL_EDITOR, ANIM_SHAKE_HEAD);
   ObjectMotion_WaitForAnimationChange(LOCALID_PORTRAIT_BROWSER);
   ObjectEvent_SetPosition(LOCALID_LEVEL_EDITOR, PIXELS(312), PIXELS(416));
   FieldScript_End();

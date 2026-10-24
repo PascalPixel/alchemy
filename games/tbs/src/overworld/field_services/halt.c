@@ -15,7 +15,7 @@ void FieldEffect_UpdateRadialCamera(struct FieldEffectSprite *effect) {
   // Retain the immediate OUT_AND_BACK_FLYING_OUT to OUT_AND_BACK_AIM_BACK
   // transition on arrival.
   struct FieldEffectWork *effectWork;
-  struct EffectVector pos;
+  struct Vector3 pos;
   s8 *statePointer;
   s16 angle;
   s32 state;
@@ -85,16 +85,16 @@ void FieldEffect_RunHalt(void) {
   struct Object *caster = effectWork->mainObject;
   struct Object *orb;
   struct FieldEffectSprite *effect;
-  struct EffectVector pos;
-  struct EffectVector from;
-  struct EffectVector to;
+  struct Vector3 pos;
+  struct Vector3 from;
+  struct Vector3 to;
   s32 step;
   s32 i;
 
   effectWork->y = caster->y;
   orb = (struct Object *)Object_Spawn(250, 0, 0, 0);
   step = 0;
-  ObjectDispatch_SelectAnimationFar(orb, 0);
+  Object_SelectAnimationFar(orb, 0);
   if (orb == 0)
     return;
 
@@ -126,7 +126,7 @@ void FieldEffect_RunHalt(void) {
   // Three low tones and a high one, 10 frames apart, as the orb changes to
   // its second animation.
   WaitFrames(5);
-  ObjectDispatch_SelectAnimationFar(orb, 1);
+  Object_SelectAnimationFar(orb, 1);
   Sound_PlaySongFar(SE_TRIPLE_TONE_LOW);
   WaitFrames(10);
   Sound_PlaySongFar(SE_TRIPLE_TONE_LOW);
@@ -142,7 +142,7 @@ void FieldEffect_RunHalt(void) {
     pos.x = orb->x;
     pos.y = orb->y + (8 << 16);
     pos.z = orb->z;
-    Camera_WorldToScreen((struct EffectVector *)&pos.x);
+    Camera_WorldToScreen((struct Vector3 *)&pos.x);
     Vector_AddPolarOffset(4 << 16, Random16(), &pos.x);
     FieldEffectSprite_Initialize(effect, SPRITE_SPARKLE, pos.x, pos.z);
     FieldEffectSprite_SetCallback(effect, FieldEffect_UpdateRadialCamera);
@@ -154,7 +154,7 @@ void FieldEffect_RunHalt(void) {
   pos.y = orb->y + (8 << 16);
   pos.z = orb->z;
   WaitFrames(8);
-  ObjectDispatch_ReleaseFar((struct Object *)orb);
+  Object_ReleaseFar((struct Object *)orb);
   WaitFrames(4);
   WaitFrames(30);
   FieldEffect_FadeFromEffectColor();
@@ -164,7 +164,7 @@ void FieldEffect_RunHalt(void) {
 /// eight params at random. FieldEffect_PauseObject sets it, and
 /// FieldEffect_ResumeObject looks for it to know the object was paused this
 /// way.
-void FieldEffect_UpdatePausedObject(union FieldObject *fieldObject) {
+void FieldEffect_UpdatePausedObject(union ObjectEventOrEffect *fieldObject) {
   void *object = (void *)fieldObject;
   s8 *table = gFieldEffect_RandomChildValues;
   s32 random = Random16();
@@ -195,7 +195,7 @@ void FieldEffect_PauseObject(s32 localId) {
     }
     objectEvent->update = FieldEffect_UpdatePausedObject;
     objectEvent->paused = 1;
-    ObjectDispatch_SetAnimationSpeedFar((struct Object *)objectEvent, 0);
+    Object_SetAnimationSpeedFar((struct Object *)objectEvent, 0);
   }
 }
 
@@ -210,12 +210,13 @@ void FieldEffect_ResumeObject(s32 localId) {
   if (objectEvent != 0) {
     if (objectEvent->update == FieldEffect_UpdatePausedObject) {
       struct SaveBlock *state = &gSaveBlock;
-      objectEvent->update = (void (*)(union FieldObject *))state->pausedUpdate;
+      objectEvent->update =
+          (void (*)(union ObjectEventOrEffect *))state->pausedUpdate;
       state->pausedUpdate = 0;
       Anim_ApplyChildValuesFar((struct Object *)objectEvent, state->pausedPose);
     }
     objectEvent->paused = 0;
-    ObjectDispatch_SetAnimationSpeedFar((struct Object *)objectEvent, 16);
+    Object_SetAnimationSpeedFar((struct Object *)objectEvent, 16);
   }
 }
 

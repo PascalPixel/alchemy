@@ -6,7 +6,7 @@
 #include "../battle_internal.h"
 
 // The value Select picks in the debug value editor
-// (Runtime_AdjustDebugValueWithButtons), which the international editions
+// (Battle_AdjustDebugValue), which the international editions
 // changed.
 #if TBS_PATCH_1
 #define DEBUG_SELECT_VALUE 0x18f
@@ -81,12 +81,12 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
 /// BATTLE_BACKGROUND_FIXED by ElementGlow_Play and the battle animations'
 /// canvas layers (canvas.c), and with BATTLE_BACKGROUND_ZOOMED by
 /// BattleStaging_DispatchAction and Battle_ProcessRoundEnd. Sets
-/// BattleViewWork.mode (enum BattleBackgroundMode), adds
+/// BattleBackgroundWork.mode (enum BattleBackgroundMode), adds
 /// BattleBackground_ShowZoomedPage when it was BATTLE_BACKGROUND_NONE,
 /// and copies the first sprite palette to BG palette 5. unusedResource is not
 /// read.
 void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
-  struct BattleViewWork *transition = gBattleViewWork;
+  struct BattleBackgroundWork *transition = gBattleBackgroundWork;
 
   if (transition->mode == BATTLE_BACKGROUND_NONE) {
     Task_Add(BattleBackground_ShowZoomedPage, 0x4ff);
@@ -145,9 +145,9 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
 /// Called once by Battle_Run before BattleBackground_Load.
 void BattleBackground_Init(void) {
   struct BattleAffineHdma *work;
-  struct BattleViewWork *state;
+  struct BattleBackgroundWork *state;
   work = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_SCANLINES, sizeof *work);
-  state = gBattleViewWork;
+  state = gBattleBackgroundWork;
   Dma_Fill32(0, work, sizeof *work);
   state->mode = BATTLE_BACKGROUND_NONE;
 }
@@ -167,10 +167,11 @@ typedef void (*BitDecoder)(const u8 *source, void *destination);
 /// BitDecoder_DecodeImage (HEAP_SLOT_RAM_CODE_TEMP) unpacks. Called with
 /// BATTLE_BACKGROUND_FIXED by
 /// Battle_Run as the battle opens, and by the Atalanta and Boreas
-/// animations for their violet sky. Sets BattleViewWork.mode, and adds
+/// animations for their violet sky. Sets BattleBackgroundWork.mode, and adds
 /// BattleBackground_ShowZoomedPage when it was BATTLE_BACKGROUND_NONE.
 void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
-  struct BattleViewWork *view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleBackgroundWork *view =
+      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   u8 *backgroundData = Resource_GetTableEntry(resourceId);
   struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   u16 *palette;
@@ -222,13 +223,14 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
 /// BATTLE_BACKGROUND_FIXED (or secondMode is) and not busy, it also sets BG1's
 /// horizontal scroll. Called by BattleCamera_SetView, by
 /// BattleCamera_Update and the shoulder-key camera
-/// (DEFINE_ADJUST_CAMERA) while BattleViewWork.flag is 0, by
+/// (DEFINE_ADJUST_CAMERA) while BattleBackgroundWork.flag is 0, by
 /// Battle_Run and by BattleCamera_SetCommandView. Does nothing before
 /// HEAP_SLOT_BATTLE_SCANLINES is allocated, and builds no page unless the
 /// mode is BATTLE_BACKGROUND_ZOOMED.
 void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
                            s32 scale) {
-  struct BattleViewWork *view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleBackgroundWork *view =
+      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   struct BattleAffineHdma *scanlines =
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SCANLINES);
   struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
@@ -312,7 +314,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 #ifndef UBFIX
   s32 zoom;
 #endif
-  struct BattleCamera *camera = gCameraWork;
+  struct BattleCamera *camera = gBattleCamera;
   s32 *focus = camera->focus;
   s32 scale = (zoom << 16) / 100;
   s32 renderBounds[3];
@@ -364,7 +366,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 /// effects. Writes the camera's pos and eye, gProjection, and the plane's
 /// next page.
 void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
-  struct BattleCamera *camera = gCameraWork;
+  struct BattleCamera *camera = gBattleCamera;
   s32 *focus = camera->focus;
   s32 scale = (zoom << 16) / 100;
   s32 renderBounds[3];
@@ -494,7 +496,7 @@ s32 BattleBackground_DivideBy16(s32 value) { return value / 16; }
 /// d-pad (1 left and right, 100 up and down) until A takes it as the result;
 /// with Select held, returns DEBUG_SELECT_VALUE instead.
 /// Nothing in TBS calls it; it returns selectedValue unchanged otherwise.
-s32 Runtime_AdjustDebugValueWithButtons(s32 selectedValue) {
+s32 Battle_AdjustDebugValue(s32 selectedValue) {
   struct BattleWork *battle;
 
   if (gKeysHeld & KEY_START) {
@@ -567,7 +569,7 @@ void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
 /// left as they are; nothing calls it.
 void BattleHighlight_SetOtherSpriteModes(s32 selectedUnitId) {
   s16 unitIds[14];
-  s32 unitCount = BattleUnit_ListIds(BATTLE_SIDES_BOTH, unitIds);
+  s32 unitCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
   s32 unitIndex;
 
   for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
@@ -581,7 +583,7 @@ void BattleHighlight_SetOtherSpriteModes(s32 selectedUnitId) {
 /// BattleHighlight_SetModes when the highlight stops.
 void BattleHighlight_ClearAllSpriteModes(void) {
   s16 unitIds[14];
-  s32 unitCount = BattleUnit_ListIds(BATTLE_SIDES_BOTH, unitIds);
+  s32 unitCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
   s32 unitIndex;
 
   for (unitIndex = 0; unitIndex < unitCount; unitIndex++)
@@ -643,7 +645,7 @@ void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
     REG_BLDY = 0;
     Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
 
-    unitCount = BattleUnit_ListIds(BATTLE_SIDES_BOTH, unitIds);
+    unitCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
     for (unitIndex = 0; unitIndex < unitCount; unitIndex++)
       BattleHighlight_SetSpriteMode(unitIds[unitIndex], mode & 1);
 

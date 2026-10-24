@@ -25,8 +25,8 @@ enum {
   BGM_DEFAULT_RAMP_STEP = 4,
   /// The track mask of every music command here. It selects tracks 0 to 7
   /// only, though the music player has 10 (sound/music_player_table.s) and
-  /// MUS_006,
-  /// MUS_022, MUS_028, MUS_029, MUS_040, MUS_041, MUS_WORLD_MAP,
+  /// MUS_KALAY,
+  /// MUS_022, MUS_028, MUS_029, MUS_040, MUS_TOLBI_BOUND_SHIP, MUS_WORLD_MAP,
   /// MUS_VENUS_LIGHTHOUSE and MUS_074 use 9 or more: their tracks 8 and 9
   /// keep their volume and pitch through the ramps and under a fanfare.
   TRACKS_ALL = 0xff,
@@ -204,16 +204,16 @@ void SoundTest_Run(void) {
   timer = 20;
 
   for (;;) {
-    // XXX: timer counts down from 20 and restarts while gSoundClipFlag is
-    // set, but nothing reads it, and no code but this test names the flag;
+    // XXX: timer counts down from 20 and restarts while gSoundTestRestartTimer
+    // is set, but nothing reads it, and no code but this test names the flag;
     // what sets it, and what both were for, is not known. ⚓️'s copy of this
     // test (games/tla/src/sound/audio_test.c) only clears its flag too, so a
     // writer of the flag in either game would settle it.
     if (timer != 0)
       timer--;
 
-    if (gSoundClipFlag != 0) {
-      gSoundClipFlag = 0;
+    if (gSoundTestRestartTimer != 0) {
+      gSoundTestRestartTimer = 0;
       timer = 20;
     }
 
@@ -270,11 +270,11 @@ void Sound_Initialize(void) {
   gBgmFadeRequested = 0;
   gSoundCommandMask = 0;
   playerVolume = gMusicPlayerLastSong;
-  // XXX: gEwram_Data1 is cleared here and named nowhere else in ☀️; what it
+  // XXX: gSound_UnreadByte is cleared here and named nowhere else in ☀️; what it
   // holds is not known. ⚓️'s twin (gData_02005804, also after
   // gBgmRestoreDelay) is only cleared as well; a read of either byte
   // would settle it.
-  gEwram_Data1 = 0;
+  gSound_UnreadByte = 0;
   remaining = MUSIC_PLAYER_COUNT - 1;
   do {
     remaining--;

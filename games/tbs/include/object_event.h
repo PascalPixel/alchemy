@@ -30,7 +30,7 @@ enum MapTransitionStyle {
 
 #include "animspr.h"
 
-union FieldObject;
+union ObjectEventOrEffect;
 
 /// An object event: a person or thing on the field with a position, motion
 /// toward a target, sprites and an update callback.
@@ -96,12 +96,12 @@ struct ObjectEvent {
   /// or it is off screen (ObjectSystem_PlaceSprites).
   u8 retainSpriteCache;
   u8 repeatCount; ///< the object script's SC_LOOP count (Object.repeatCount)
-  u16 wait;       ///< the object script's wait, in frames (ScriptMotionObject)
-  /// Frames a solid object has refused its move (ScriptMotionObject's
+  u16 wait;       ///< the object script's wait, in frames (ObjectArmView)
+  /// Frames a solid object has refused its move (ObjectArmView's
   /// refused); SC_SYNC stops waiting after 60.
   u8 refused;
   /// Nonzero skips steering, terrain, gravity and floating; its velocity
-  /// still moves it (ScriptMotionObject.frozen).
+  /// still moves it (ObjectArmView.frozen).
   u8 frozen;
   u8 riseCounter; ///< not read by the engine; map code's own counter
   u8 riseEnabled; ///< not read by the engine; map code's own state
@@ -114,7 +114,7 @@ struct ObjectEvent {
   /// The object its action script follows or faces.
   struct ObjectEvent *linkedObject;
   /// Called each frame before the object's script, while the object is live.
-  void (*update)(union FieldObject *fieldObject);
+  void (*update)(union ObjectEventOrEffect *fieldObject);
 };
 
 STATIC_ASSERT(offsetof(struct ObjectEvent, facing) == 0x06);

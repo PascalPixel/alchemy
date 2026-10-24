@@ -173,8 +173,8 @@ done:
 /// A view of struct WindowSprite with its sprite cell (from offset 0x10) as the
 /// member attr, for the code that moves and queues the sprite. Its fields are
 /// WindowSprite's.
-struct SpriteOutput {
-  struct SpriteOutput *next;
+struct WindowSpriteCellView {
+  struct WindowSpriteCellView *next;
   u8 kind;
   u8 active;         ///< its WINDOW_SPRITE_MOTION_ motion
   u16 x;             ///< screen pixels, where the motion is centred
@@ -186,17 +186,17 @@ struct SpriteOutput {
   struct CursorSprite attr; ///< the sprite cell queued each frame
 };
 
-STATIC_ASSERT(offsetof(struct SpriteOutput, x) ==
+STATIC_ASSERT(offsetof(struct WindowSpriteCellView, x) ==
               offsetof(struct WindowSprite, x));
-STATIC_ASSERT(offsetof(struct SpriteOutput, y) ==
+STATIC_ASSERT(offsetof(struct WindowSpriteCellView, y) ==
               offsetof(struct WindowSprite, y));
-STATIC_ASSERT(offsetof(struct SpriteOutput, active) ==
+STATIC_ASSERT(offsetof(struct WindowSpriteCellView, active) ==
               offsetof(struct WindowSprite, motion));
-STATIC_ASSERT(offsetof(struct SpriteOutput, animationStep) ==
+STATIC_ASSERT(offsetof(struct WindowSpriteCellView, animationStep) ==
               offsetof(struct WindowSprite, animationStep));
-STATIC_ASSERT(offsetof(struct SpriteOutput, index) ==
+STATIC_ASSERT(offsetof(struct WindowSpriteCellView, index) ==
               offsetof(struct WindowSprite, index));
-STATIC_ASSERT(offsetof(struct SpriteOutput, attr) ==
+STATIC_ASSERT(offsetof(struct WindowSpriteCellView, attr) ==
               offsetof(struct WindowSprite, link));
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
@@ -209,7 +209,7 @@ STATIC_ASSERT(offsetof(struct SpriteOutput, attr) ==
 void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
   void *work = gWindowWork[0];
   u8 *base = work;
-  struct SpriteOutput *out;
+  struct WindowSpriteCellView *out;
   s32 idx;
   u16 *slot;
   struct CursorSprite *attr;
@@ -272,7 +272,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
    * with the native ip to r8 copy; as base = work, 2 of 141 instructions
    * differ in tbs-ja. */
   u8 *base = (u8 *)((unsigned long)work ^ tile);
-  struct SpriteOutput *out;
+  struct WindowSpriteCellView *out;
   s32 idx;
   u16 *slot;
   struct CursorSprite *attr;
@@ -288,7 +288,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
   if (mode == GLYPH_DRAW_PAGE_ARROW) {
     s32 column;
     u16 left;
-    out = (struct SpriteOutput *)WindowSprite_AcquireFree();
+    out = (struct WindowSpriteCellView *)WindowSprite_AcquireFree();
     if (out == NULL)
       return;
     idx =
@@ -480,14 +480,14 @@ void WindowSprite_UpdateAll(void) {
   struct AffineTransform effect;
 
   for (no = 0; no != WINDOW_COUNT; window++, no++) {
-    struct SpriteOutput *windowSprite;
+    struct WindowSpriteCellView *windowSprite;
     u32 phase;
 
     if (!(window->flags & WINDOW_FLAG_OPEN))
       continue;
-    windowSprite = (struct SpriteOutput *)window->sprites.head;
+    windowSprite = (struct WindowSpriteCellView *)window->sprites.head;
     // The page arrow's frame: one of 8, each shown for 4 frames.
-    phase = (gFrameTick >> 2) & 7;
+    phase = (gVBlankCount >> 2) & 7;
     while (windowSprite != NULL) {
       struct CursorSprite *sprite = &windowSprite->attr;
 
@@ -511,7 +511,7 @@ void WindowSprite_UpdateAll(void) {
           sprite->size = 0;
           sprite->shape = 2;
           sprite->y = windowSprite->y +
-                      gWindowSprite_CursorBobOffsets[gFrameTick % 80] + 2;
+                      gWindowSprite_CursorBobOffsets[gVBlankCount % 80] + 2;
           sprite->affine = 0;
           sprite->affineIndex = 0;
         }
@@ -519,7 +519,7 @@ void WindowSprite_UpdateAll(void) {
       case WINDOW_SPRITE_MOTION_SHAKE:
         // Every other frame each axis moves -1 to 1 pixels from its place:
         // half the sum of two random 0 to 2, less 1.
-        if (gFrameTick & 1) {
+        if (gVBlankCount & 1) {
           sprite->x =
               windowSprite->x +
               (s32)(((Random16() * 3 >> 16) + (Random16() * 3 >> 16)) >> 1) - 1;
@@ -563,7 +563,7 @@ void WindowSprite_UpdateAll(void) {
         break;
       case WINDOW_SPRITE_MOTION_WOBBLE:
         // One step of the 20 of gWindowSprite_WobbleOffsets every other frame.
-        if (gFrameTick & 1)
+        if (gVBlankCount & 1)
           windowSprite->animationStep++;
         sprite->x =
             windowSprite->x +
@@ -629,7 +629,7 @@ void WindowSprite_UpdateAll(void) {
         Oam_AddSpriteAtDepth(sprite, windowSprite->sentinel);
       }
       windowSprite = windowSprite->next;
-      phase = (gFrameTick >> 2) & 7;
+      phase = (gVBlankCount >> 2) & 7;
     }
   }
 }

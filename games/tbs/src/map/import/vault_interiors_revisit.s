@@ -19,7 +19,7 @@
 	.set import.FieldScript_AskYesNoWithObjectEventAnimation, 1
 	.set import.ObjectEvent_GetById, 1
 	.set import.ObjectMotion_EnableActionAndSetCallback, 1
-	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Import_ObjectEventSetAnimation, 1
 	.set import.ObjectMotion_SetAnimationAndWait, 1
 	.set import.ObjectMotion_SetVarCbAndRefresh, 1
 	.set import.ObjectEvent_LinkPair, 1

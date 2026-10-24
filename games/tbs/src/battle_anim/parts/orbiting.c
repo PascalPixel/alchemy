@@ -51,7 +51,7 @@ UNUSED void BattleAnim_RunSwirlingStars(struct BattleAnimArgs *effect) {
   for (frame = 0; frame != SWIRLING_STARS_FRAMES; frame++) {
     struct BattleCamera *camera;
 
-    camera = gCameraWork;
+    camera = gBattleCamera;
     ANIM_VIEW_FROM_CAMERA(camera);
     Transform_ApplyPosition(center);
     star = PARTICLES;
@@ -286,7 +286,7 @@ UNUSED void BattleAnim_RunTargetBursts(struct BattleAnimArgs *effect) {
     s32 member;
     struct BattleCamera *camera;
 
-    camera = gCameraWork;
+    camera = gBattleCamera;
     ANIM_FOR_EACH_TARGET(member, work->effect) {
       struct Object *effect;
 

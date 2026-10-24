@@ -290,7 +290,7 @@ void BattleAnim_RunHealingMotes(struct BattleAnimArgs *effect, u32 mode) {
   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
 
   for (frame = 0; frame != frameCount; frame++) {
-    struct BattleCamera *camera = gCameraWork;
+    struct BattleCamera *camera = gBattleCamera;
 
     if (frame == HEALING_DAMAGE_FRAME)
       ANIM_SHOW_DAMAGE(0);
@@ -332,9 +332,9 @@ void BattleAnim_RunHealingMotes(struct BattleAnimArgs *effect, u32 mode) {
       if (frame == start + HEALING_SOUND_DELAY)
         Sound_PlaySongFar(SE_RECOVERY);
       if (frame == start + HEALING_TINT_DELAY)
-        ObjectGroup_UpdateMembers(work->effect->targets[member],
-                                  SPRITE_COLOR_WHITE, -1, member,
-                                  HEALING_TINT_FRAMES);
+        BattleAnim_TintBattler(work->effect->targets[member],
+                               SPRITE_COLOR_WHITE, -1, member,
+                               HEALING_TINT_FRAMES);
 
       // From the target's start, its frame of reference turns 1/128 of a
       // circle a frame. Cure offsets the yaw by 40 frames a target where the

@@ -79,22 +79,7 @@ void StartFlashTimer(u8 index);
 struct SpriteAnim;
 struct Sprite;
 struct SelectionNode;
-struct T;
 
-/// A placeholder layout no code in the tree uses.
-struct S {
-  s32 f00;
-  s32 f04;
-  s32 f08;
-  s32 f0c;
-  u8 pad10[32];
-  s32 f30;
-  s32 f34;
-  s32 f38;
-  s32 f3c;
-  u8 pad40[16];
-  struct T *f50;
-};
 /// The 152 bytes of IWRAM-resident sound code (0x03000bd8, not the mixer at
 /// 0x03007000) that Sound_LoadReverbCode overwrites with a reverb code
 /// from IwramSoundReverbCodes.
@@ -180,7 +165,7 @@ extern const u32 BattleAnim_CopyReverse[];
 extern const u32 BattleAnim_CopyForward[];
 /// The basic sprite palettes 0 to 13, 224 colours
 /// (Palette_LoadBasicSpriteColors).
-extern const u8 gSystem_BasicColorPalette[];
+extern const u8 gBasicSpritePalettes[];
 /// The sprite tile uploader, run from HEAP_SLOT_FRAME_UPLOADER.
 extern u8 Tile_CopyStrided[];
 /// The size of Tile_CopyStrided (convert_map.s).

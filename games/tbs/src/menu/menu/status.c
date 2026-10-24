@@ -196,7 +196,7 @@ s32 SummaryScreen_Run(void) {
     menu->rowX[index] = 130 + index * 32;
     menu->rowY[index] = 128;
   }
-  Link_DrawShiftedTilePairFar(PAGE_ARROW_VRAM);
+  Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
   // Run the pages.
   Menu_CancelSoundReset();
   menu->page = SUMMARY_SCREEN_PAGE_STATUS;
@@ -708,7 +708,7 @@ void SummaryScreen_ShowMemberStatus(s32 member, s32 frame) {
     window = menu->statusWindow;
   }
   if (created != 0) {
-    cursor = SideObject_CreateFar(member, 0, 0, window, 0, 0);
+    cursor = Portrait_CreateFar(member, 0, 0, window, 0, 0);
     menu->statusCursor = cursor;
     // The portrait goes to depth slot 240, as the category sprites do.
     if ((cursor->sentinel = 0xF0, menu->page) == SUMMARY_SCREEN_PAGE_CHOOSER) {
@@ -1112,7 +1112,7 @@ void SummaryScreen_DrawStatusAilments(struct Window *window, s32 memberId,
 
 #if TBS_PATCH_1
 /// Spins for 256 loop passes (international editions only). Nothing calls it.
-void Runtime_RunBusyWaitDelay(void) {
+void Menu_BusyWait(void) {
   s32 count = 0xff;
 
   // Written with goto (MATCHING.md): as a do-while loop, the loop optimizer

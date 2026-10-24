@@ -18,11 +18,11 @@ void *Djinn_GetRecoveryTable(s32 enemySide);
 u32 Party_GetAverageLevel(void);
 struct Unit *Unit_Get(u32 unitId);
 const u8 *Enemy_GetDefinition(s32 selector);
-void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
-                                  s32 direction);
+void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
+                                 s32 direction);
 void Unit_Calculate(s32 unitId);
 void GameFlag_RefreshLureCap(void);
-u32 Runtime_GetBuildStampTime(void);
+u32 BuildStamp_GetTime(void);
 void SaveBlock_InitializeDefaults(void);
 void Party_StartChildhood(void);
 void Party_EndChildhood(void);
@@ -62,7 +62,7 @@ s32 PartyInventory_Discard(s32 itemId);
 s32 Inventory_Break(s32 unitId, s32 slot);
 s32 Inventory_Repair(s32 unitId, s32 slot);
 u8 Item_GetTargetMode(s32 itemId);
-s32 ItemCounter_Adjust(s32 index, s32 delta);
+s32 RareItemStock_Adjust(s32 index, s32 delta);
 s32 Item_AdjustCounter(s32 itemId, s32 delta);
 s32 Inventory_CountItem(s32 unitId, s32 itemId);
 s32 PartyInventory_CountItem(s32 itemId);

@@ -24,7 +24,7 @@
 /// until theirs dry (the item merchant's after the first drop, the armor
 /// merchant's after the second). A water beast, drawn with its green and blue
 /// swapped (SPRITE_COLOR_RBG), spits water at the houses, its sound and its
-/// spray (Spray_Initialize) running from Altin_ApplyWaterLevel, until the
+/// spray (Altin_SprayInitialize) running from Altin_ApplyWaterLevel, until the
 /// party
 /// steps near it (Altin_ScareOffBeast): it stops, cries out and hops away
 /// into the flood for good (FLAG_ALTIN_WATER_BEAST_LEFT). Doors (coord events 2
@@ -236,13 +236,13 @@ enum AltinHouseLocalId {
 enum {
   /// ★ Named from the game: "The guests in Room One moved back home when the
   /// waters receded." (MsgAltinTheGuestsInRoomOneMoved)
-  FLAG_WATER_DROPPED_ONCE = FLAG_MAP_TEMP_40,
+  FLAG_ALTIN_WATER_DROPPED_ONCE = FLAG_MAP_TEMP_40,
   /// ★ Named from the game: "The guests in Room Two also went home after the
   /// waters receded." (MsgAltinTheGuestsInRoomTwoAlso)
-  FLAG_WATER_DROPPED_TWICE = FLAG_MAP_TEMP_41,
+  FLAG_ALTIN_WATER_DROPPED_TWICE = FLAG_MAP_TEMP_41,
   /// ★ Named from the game: "Thank goodness the water has receded."
   /// (MsgAltinThankGoodnessWaterHasReceded)
-  FLAG_WATER_DRAINED = FLAG_MAP_TEMP_42
+  FLAG_ALTIN_WATER_DRAINED = FLAG_MAP_TEMP_42
 };
 
 enum { SHOP_ALTIN_WEAPONS = 19, SHOP_ALTIN_ARMOR = 20, SHOP_ALTIN_ITEMS = 21 };
@@ -289,7 +289,7 @@ enum {
 
 static void Altin_ApplyWaterLevel(void);
 static void AltinInteriors_PlaceSheltering(void);
-static void Beast_SpawnSpray(void);
+static void Altin_BeastSpawnSpray(void);
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
   s16 mapId = gSaveBlock.mapId;
@@ -393,7 +393,7 @@ static void Altin_TalkToThirstyOldWoman(void) {
     FieldScript_SetMessageId(MsgAltinOnesWhoDefeatedWaterBeasts);
     Script_AskYesNo(LOCALID_THIRSTY_OLD_WOMAN, 0);
   } else {
-    Engine_ObjectEventSetAnimation(LOCALID_THIRSTY_OLD_WOMAN, ANIM_SHAKE_HEAD);
+    Import_ObjectEventSetAnimation(LOCALID_THIRSTY_OLD_WOMAN, ANIM_SHAKE_HEAD);
     FieldScript_SetMessageId(MsgAltinWeCantDrinkWaterMonsters);
     Script_ShowMessageAndWait(LOCALID_THIRSTY_OLD_WOMAN, 0, 10);
     if (GameFlag_Get(FLAG_ALTIN_WATER_BEAST_LEFT) == 0) {
@@ -478,7 +478,7 @@ static void AltinInteriors_AskAboutMineBeasts(void) {
 
 /// Returns whether the party leader faces north, toward a shop counter: its
 /// facing lies strictly between northwest and northeast, measured in 16 bits.
-static s32 Leader_FacesCounter(void) {
+static s32 Altin_LeaderFacesCounter(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
   if (ALTIN_FACES_COUNTER(leader->facing)) {
@@ -492,7 +492,7 @@ static s32 Leader_FacesCounter(void) {
 /// counter.
 static void AltinInteriors_TalkToWeaponMerchant(void) {
 
-  if (GameFlag_Get(FLAG_WATER_DRAINED) == 0) {
+  if (GameFlag_Get(FLAG_ALTIN_WATER_DRAINED) == 0) {
     FieldScript_Start();
     FieldScript_SetMessageId(MsgAltinDoWantWeapons);
 
@@ -501,7 +501,7 @@ static void AltinInteriors_TalkToWeaponMerchant(void) {
     return;
   }
 
-  if (Leader_FacesCounter() != 0) {
+  if (Altin_LeaderFacesCounter() != 0) {
     Shop_Run(SHOP_ALTIN_WEAPONS, LOCALID_WEAPON_MERCHANT);
     return;
   }
@@ -520,7 +520,7 @@ static void AltinInteriors_TalkToWeaponMerchant(void) {
 /// his counter in the houses.
 static void Altin_TalkToArmorMerchant(void) {
 
-  if (GameFlag_Get(FLAG_WATER_DROPPED_TWICE) == 0) {
+  if (GameFlag_Get(FLAG_ALTIN_WATER_DROPPED_TWICE) == 0) {
     FieldScript_Start();
     FieldScript_SetMessageId(MsgAltinMyStoreSubmergedWantSell);
     FieldScript_ShowMessageAndWait(LOCALID_FLOODED_ARMOR_MERCHANT, 0);
@@ -528,7 +528,7 @@ static void Altin_TalkToArmorMerchant(void) {
     return;
   }
 
-  if (Leader_FacesCounter() != 0) {
+  if (Altin_LeaderFacesCounter() != 0) {
     Shop_Run(SHOP_ALTIN_ARMOR, LOCALID_ARMOR_MERCHANT);
     return;
   }
@@ -544,7 +544,7 @@ static void Altin_TalkToArmorMerchant(void) {
 
 /// Altin's item merchant, the same way: she reopens after the first drop.
 static void Altin_TalkToItemMerchant(void) {
-  if (GameFlag_Get(FLAG_WATER_DROPPED_ONCE) == 0) {
+  if (GameFlag_Get(FLAG_ALTIN_WATER_DROPPED_ONCE) == 0) {
     FieldScript_Start();
     FieldScript_SetMessageId(MsgAltinWillDoIfMyMerchandise);
     FieldScript_ShowMessageAndWait(LOCALID_FLOODED_ITEM_MERCHANT, 0);
@@ -552,7 +552,7 @@ static void Altin_TalkToItemMerchant(void) {
     return;
   }
 
-  if (Leader_FacesCounter() != 0) {
+  if (Altin_LeaderFacesCounter() != 0) {
     Shop_Run(SHOP_ALTIN_ITEMS, LOCALID_ITEM_MERCHANT);
     return;
   }
@@ -652,7 +652,7 @@ static void Altin_EnterDoor(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   if (doorIndex == DOOR_STRAIGHT_IN) {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, 0);
   } else {
@@ -664,7 +664,7 @@ static void Altin_EnterDoor(void) {
     }
   }
   FieldScript_WaitFrames(10);
-  Engine_ScriptRequestWarp(work->coordEvent);
+  Import_ScriptRequestWarp(work->coordEvent);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_End();
@@ -680,7 +680,7 @@ static void Altin_WalkThroughDoorway(void) {
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   Script_PlaySong(SE_MAP_EXIT);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -16);
-  Engine_ScriptRequestWarp(work->coordEvent);
+  Import_ScriptRequestWarp(work->coordEvent);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_End();
@@ -689,7 +689,7 @@ static void Altin_WalkThroughDoorway(void) {
 /// Update callback of the hopping water beast in Altin's village: once a
 /// second it leaps up, falls back with a splash that shakes the screen
 /// briefly, and stands while on the ground.
-static void Beast_Hop(union FieldObject *fieldObject) {
+static void Altin_BeastHop(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *beast = &fieldObject->objectEvent;
   s16 *shakeFrames = (s16 *)&beast->work;
 
@@ -701,7 +701,7 @@ static void Beast_Hop(union FieldObject *fieldObject) {
       MapGrid_SetShake(-1, -1, 0xe666);
   }
   if (beast->velocityY == 0) {
-    ObjectDispatch_SelectAnimation(beast, 1);
+    Object_SelectAnimation(beast, 1);
     beast->y.fixed += -0x18000;
     if (beast->y.fixed < beast->groundHeight) {
       if (fieldObject->effect.countdown != 0) {
@@ -719,7 +719,7 @@ static void Beast_Hop(union FieldObject *fieldObject) {
   if (beast->timer == 0) {
     Script_PlaySong(SE_JUMP);
     fieldObject->effect.countdown = 1;
-    ObjectDispatch_SelectAnimation(beast, 2);
+    Object_SelectAnimation(beast, 2);
     beast->velocityY = 0x30000;
   }
   if (++beast->timer == WATER_BEAST_HOP_PERIOD)
@@ -727,14 +727,14 @@ static void Beast_Hop(union FieldObject *fieldObject) {
 }
 
 /// The water beast hops away across the flood and dives in with a splash.
-static void Beast_HopAway(void) {
+static void Altin_BeastHopAway(void) {
   struct ObjectEvent *beast;
 
   beast = ObjectEvent_GetById(LOCALID_WATER_BEAST);
   beast->timer = 0;
   beast->work = 0;
   beast->gravity = 0x6666;
-  beast->update = Beast_Hop;
+  beast->update = Altin_BeastHop;
   ObjectEvent_SetSpeed(LOCALID_WATER_BEAST, 0x13333, 0x9999);
   ObjectEvent_MoveToAndWait(LOCALID_WATER_BEAST, 28, 460);
   ObjectEvent_MoveToAndWait(LOCALID_WATER_BEAST, 24, 448);
@@ -744,7 +744,7 @@ static void Beast_HopAway(void) {
   FieldScript_WaitFrames(4);
   MapGrid_SetShake(-1, -1, 0xe666);
   FieldScript_WaitFrames(40);
-  Engine_ObjectEventSetAnimation(LOCALID_WATER_BEAST, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_WATER_BEAST, ANIM_STAND);
 }
 
 /// After Move: remembers whether the pillar now stands in map column 22, the
@@ -765,17 +765,17 @@ s32 Map_Initialize(void) {
   s16 mapId;
 
   if (GameFlag_Get(FLAG_ALTIN_MINE_FIRST_DRAIN) != 0) {
-    GameFlag_Set(FLAG_WATER_DROPPED_ONCE);
+    GameFlag_Set(FLAG_ALTIN_WATER_DROPPED_ONCE);
   }
 
   if (GameFlag_Get(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0 ||
       GameFlag_Get(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
-    GameFlag_Set(FLAG_WATER_DROPPED_TWICE);
+    GameFlag_Set(FLAG_ALTIN_WATER_DROPPED_TWICE);
   }
 
   if (GameFlag_Get(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0 &&
       GameFlag_Get(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
-    GameFlag_Set(FLAG_WATER_DRAINED);
+    GameFlag_Set(FLAG_ALTIN_WATER_DRAINED);
   }
 
   mapId = gSaveBlock.mapId;
@@ -798,18 +798,18 @@ static void Altin_ApplyWaterLevel(void) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   // Select the water-level layout area and remove villagers whose areas are
   // flooded.
-  if (GameFlag_Get(FLAG_WATER_DRAINED) != 0) {
+  if (GameFlag_Get(FLAG_ALTIN_WATER_DRAINED) != 0) {
     MapGrid_CopyCellsTo(64, 32, 0, 32, 32, 32);
     MapGrid_CopyCellAttributes(64, 32, 32, 32, 0, 0);
     ObjectEvent_DestroyById(LOCALID_FLOODED_ARMOR_MERCHANT);
     ObjectEvent_DestroyById(LOCALID_FLOODED_ITEM_MERCHANT);
-  } else if (Script_GetFlag(FLAG_WATER_DROPPED_TWICE) != 0) {
+  } else if (Script_GetFlag(FLAG_ALTIN_WATER_DROPPED_TWICE) != 0) {
     MapGrid_CopyCellsTo(64, 0, 0, 32, 32, 32);
     MapGrid_CopyCellAttributes(64, 0, 32, 32, 0, 0);
     ObjectEvent_DestroyById(LOCALID_OLD_MAN_ROCK_FLUSHED_OUT);
     ObjectEvent_DestroyById(LOCALID_FLOODED_ARMOR_MERCHANT);
     ObjectEvent_DestroyById(LOCALID_FLOODED_ITEM_MERCHANT);
-  } else if (GameFlag_Get(FLAG_WATER_DROPPED_ONCE) != 0) {
+  } else if (GameFlag_Get(FLAG_ALTIN_WATER_DROPPED_ONCE) != 0) {
     MapGrid_CopyCellsTo(0, 64, 0, 32, 32, 32);
     MapGrid_CopyCellAttributes(0, 64, 32, 32, 0, 0);
     ObjectEvent_DestroyById(LOCALID_STRONGMAN_GUARDIAN_STATUES);
@@ -827,10 +827,10 @@ static void Altin_ApplyWaterLevel(void) {
     ObjectEvent_DestroyById(LOCALID_WATER_BEAST);
   } else {
     Map_QueueMusic(SE_170);
-    ObjectEvent_SetChildValue(LOCALID_WATER_BEAST, SPRITE_COLOR_RBG);
-    Engine_ObjectEventSetAnimation(LOCALID_WATER_BEAST,
+    ObjectEvent_SetSpriteColorById(LOCALID_WATER_BEAST, SPRITE_COLOR_RBG);
+    Import_ObjectEventSetAnimation(LOCALID_WATER_BEAST,
                                    WATER_BEAST_ANIMATION_SPIT);
-    FieldScheduler_AddCallback(Beast_SpawnSpray, TASK_PRIORITY_MAP);
+    FieldScheduler_AddCallback(Altin_BeastSpawnSpray, TASK_PRIORITY_MAP);
   }
   if (gSaveBlock.warpDest == ALTIN_FROM_SANCTUM) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
@@ -842,9 +842,9 @@ static void Altin_ApplyWaterLevel(void) {
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_STONE_STATUE), 0);
   // Hide the three crates, which stay solid, and draw them under the object
   // events.
-  ObjectEvent_SetChildValue(LOCALID_FIRST_CRATE, SPRITE_COLOR_HIDDEN);
-  ObjectGroup_ConfigureChildValue(LOCALID_SECOND_CRATE, SPRITE_COLOR_HIDDEN);
-  ObjectEvent_SetChildValue(LOCALID_THIRD_CRATE, SPRITE_COLOR_HIDDEN);
+  ObjectEvent_SetSpriteColorById(LOCALID_FIRST_CRATE, SPRITE_COLOR_HIDDEN);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_CRATE, SPRITE_COLOR_HIDDEN);
+  ObjectEvent_SetSpriteColorById(LOCALID_THIRD_CRATE, SPRITE_COLOR_HIDDEN);
   ObjectEvent_GetById(LOCALID_FIRST_CRATE)->collisionFlags |=
       OBJ_EVENT_NOT_TARGETED;
   ObjectEvent_GetById(LOCALID_SECOND_CRATE)->collisionFlags |=
@@ -875,21 +875,21 @@ static void Altin_ApplyWaterLevel(void) {
 static void AltinInteriors_PlaceSheltering(void) {
   struct ObjectEvent *objectEvent;
 
-  if (GameFlag_Get(FLAG_WATER_DROPPED_ONCE) == 0) {
+  if (GameFlag_Get(FLAG_ALTIN_WATER_DROPPED_ONCE) == 0) {
     ObjectEvent_SetPosition(LOCALID_ROOM_ONE_GUEST, PIXELS(808), PIXELS(727));
     ObjectEvent_GetById(LOCALID_ROOM_ONE_GUEST)->facing =
         FACING_SOUTH - FACING_STEP;
     ObjectEvent_SetPosition(LOCALID_ROOM_ONE_SECOND_GUEST, PIXELS(794),
                             PIXELS(825));
   }
-  if (GameFlag_Get(FLAG_WATER_DROPPED_TWICE) == 0) {
+  if (GameFlag_Get(FLAG_ALTIN_WATER_DROPPED_TWICE) == 0) {
     ObjectEvent_SetPosition(LOCALID_ROOM_TWO_GUEST, PIXELS(560), PIXELS(710));
     ObjectEvent_GetById(LOCALID_ROOM_TWO_GUEST)->facing =
         FACING_EAST + FACING_STEP;
     ObjectEvent_SetPosition(LOCALID_ROOM_TWO_SECOND_GUEST, PIXELS(576),
                             PIXELS(710));
   }
-  if (GameFlag_Get(FLAG_WATER_DRAINED) == 0) {
+  if (GameFlag_Get(FLAG_ALTIN_WATER_DRAINED) == 0) {
     ObjectEvent_SetPosition(LOCALID_WEAPON_MERCHANT, PIXELS(295), PIXELS(744));
     ObjectEvent_GetById(LOCALID_WEAPON_MERCHANT)->facing =
         FACING_NORTHWEST + FACING_STEP;
@@ -909,11 +909,11 @@ static void AltinInteriors_PlaceSheltering(void) {
 
 /// Gives a new spray particle its look: SPRITE_DUST_PUFF standing still, drawn
 /// with its red and blue swapped so the dust is water, on sprite priority 1
-/// and at 0.3 scale. Spray_Drift turns some white as they fade.
-static void Spray_Initialize(struct ObjectEvent *spray) {
+/// and at 0.3 scale. Altin_SprayDrift turns some white as they fade.
+static void Altin_SprayInitialize(struct ObjectEvent *spray) {
   spray->motionFlags = 0;
   spray->sprite->image.priority = 1;
-  ObjectGroup_SetChildValue(spray, SPRITE_COLOR_BGR);
+  ObjectEvent_SetSpriteColor(spray, SPRITE_COLOR_BGR);
   ObjectEvent_SetSpriteFlags(spray, 0);
   spray->scaleX = WATER_SPRAY_START_SCALE;
   spray->scaleY = WATER_SPRAY_START_SCALE;
@@ -922,12 +922,12 @@ static void Spray_Initialize(struct ObjectEvent *spray) {
 /// Update callback of a spray particle: it drifts and grows with a random
 /// wobble, then curls upward and flattens as its movement timer runs down.
 /// The separate lifetime releases it after 20 updates.
-static void Spray_Drift(union FieldObject *fieldObject) {
+static void Altin_SprayDrift(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *spray = &fieldObject->objectEvent;
   spray->x.fixed += WATER_SPRAY_LATERAL_STEP(
-      spray->timer, (s16)((s32)(((u32)Engine_RandomNext() * 2) >> 16) - 1));
+      spray->timer, (s16)((s32)(((u32)Import_RandomNext() * 2) >> 16) - 1));
   if (spray->timer <= 3) {
-    spray->z.fixed += -(((u32)Engine_RandomNext() * 0x8000) >> 16) - 0x10000;
+    spray->z.fixed += -(((u32)Import_RandomNext() * 0x8000) >> 16) - 0x10000;
     spray->scaleX += 0x2666;
     spray->scaleY += -0xa3d;
   } else {
@@ -935,12 +935,12 @@ static void Spray_Drift(union FieldObject *fieldObject) {
     spray->scaleX += 0x7ae;
     spray->scaleY += 0x7ae;
   }
-  if (((u32)Engine_RandomNext() * spray->timer) >> 16 == 0)
-    ObjectGroup_SetChildValue(spray, SPRITE_COLOR_WHITE);
+  if (((u32)Import_RandomNext() * spray->timer) >> 16 == 0)
+    ObjectEvent_SetSpriteColor(spray, SPRITE_COLOR_WHITE);
   if (spray->timer != 0)
     spray->timer--;
   else
-    spray->timer = (((u32)Engine_RandomNext() * 5) >> 16) * 2 + 2;
+    spray->timer = (((u32)Import_RandomNext() * 5) >> 16) * 2 + 2;
   if (--fieldObject->effect.countdown == 0) {
     spray->update = 0;
     ObjectEvent_Release(spray);
@@ -949,18 +949,18 @@ static void Spray_Drift(union FieldObject *fieldObject) {
 
 /// Task while the water beast spits: every fourth frame a spray
 /// particle starts from its spout, living 20 frames.
-static void Beast_SpawnSpray(void) {
-  union FieldObject *spray;
+static void Altin_BeastSpawnSpray(void) {
+  union ObjectEventOrEffect *spray;
   if ((gFrameCount & 3) == 0) {
-    spray = ((union FieldObject *)ObjectEvent_Create(
+    spray = ((union ObjectEventOrEffect *)ObjectEvent_Create(
         SPRITE_DUST_PUFF, PIXELS(64), 0, PIXELS(400)));
     if (spray != 0) {
       spray->objectEvent.timer = WATER_SPRAY_LIFETIME;
       spray->objectEvent.work = 0;
       spray->effect.countdown = WATER_SPRAY_LIFETIME;
-      Spray_Initialize(&spray->objectEvent);
-      spray->objectEvent.update = Spray_Drift;
-      ObjectDispatch_SelectAnimation(&spray->objectEvent, 1);
+      Altin_SprayInitialize(&spray->objectEvent);
+      spray->objectEvent.update = Altin_SprayDrift;
+      Object_SelectAnimation(&spray->objectEvent, 1);
     }
   }
 }
@@ -973,10 +973,10 @@ static void Altin_ScareOffBeast(void) {
   FieldCamera_MoveTo(PIXELS(63), -1, PIXELS(450), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(30);
-  Engine_ObjectEventSetAnimation(LOCALID_WATER_BEAST, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_WATER_BEAST, ANIM_STAND);
   // The spitting stops: its sound and its spray end.
   Map_QueueMusic(-1);
-  Task_Remove(Beast_SpawnSpray);
+  Task_Remove(Altin_BeastSpawnSpray);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_WATER_BEAST, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
@@ -988,7 +988,7 @@ static void Altin_ScareOffBeast(void) {
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_WATER_BEAST, FACING_NORTHWEST + FACING_STEP,
                             40);
-  Beast_HopAway();
+  Altin_BeastHopAway();
   FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 1);
   FieldCamera_WaitForArrival();
   ObjectMotion_SetAnimationAndWait(LOCALID_THIRSTY_OLD_WOMAN, ANIM_SHAKE_HEAD);
@@ -1324,16 +1324,16 @@ struct MapEvent gAltinInteriors_Events[] = {
     {MAP_EVENT_WARP, 7, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_SOUTHWEST},
     {MAP_EVENT_WARP, 8, CONDITION_ALWAYS, ALTIN_INTERIORS_INN_TO_INN_UPSTAIRS},
     {MAP_EVENT_WARP, 9, CONDITION_ALWAYS, ALTIN_INTERIORS_INN_UPSTAIRS_TO_INN},
-    {MAP_EVENT_TALK, LOCALID_ROOM_ONE_GUEST, FLAG_WATER_DROPPED_ONCE, MSGNO(MsgAltinNoMatterWhatHappensIdNever)},
+    {MAP_EVENT_TALK, LOCALID_ROOM_ONE_GUEST, FLAG_ALTIN_WATER_DROPPED_ONCE, MSGNO(MsgAltinNoMatterWhatHappensIdNever)},
     {MAP_EVENT_TALK, LOCALID_ROOM_ONE_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinOhNoTheWholeHouseIs)},
     {MAP_EVENT_TALK, LOCALID_ROOM_ONE_GUEST, CONDITION_ALWAYS, MSGNO(MsgAltinIHearThatSilkRoadIs)},
-    {MAP_EVENT_TALK, LOCALID_ROOM_ONE_SECOND_GUEST, FLAG_WATER_DROPPED_ONCE, MSGNO(MsgAltinOfCourseOurHouseWillBe)},
+    {MAP_EVENT_TALK, LOCALID_ROOM_ONE_SECOND_GUEST, FLAG_ALTIN_WATER_DROPPED_ONCE, MSGNO(MsgAltinOfCourseOurHouseWillBe)},
     {MAP_EVENT_TALK, LOCALID_ROOM_ONE_SECOND_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIfTheMonsterThatDidThis)},
     {MAP_EVENT_TALK, LOCALID_ROOM_ONE_SECOND_GUEST, CONDITION_ALWAYS, EVENT_SCRIPT(AltinInteriors_AskAboutXianGirl)},
-    {MAP_EVENT_TALK, LOCALID_ROOM_TWO_GUEST, FLAG_WATER_DROPPED_TWICE, MSGNO(MsgAltinNotManyPeopleComeUpSilk)},
+    {MAP_EVENT_TALK, LOCALID_ROOM_TWO_GUEST, FLAG_ALTIN_WATER_DROPPED_TWICE, MSGNO(MsgAltinNotManyPeopleComeUpSilk)},
     {MAP_EVENT_TALK, LOCALID_ROOM_TWO_GUEST, FLAG_HYDROS_STATUES_DEFEATED, EVENT_SCRIPT(AltinInteriors_AskAboutWayWest)},
     {MAP_EVENT_TALK, LOCALID_ROOM_TWO_GUEST, CONDITION_ALWAYS, MSGNO(MsgAltinAncientRuinsAndTreasureDefinitelyGo)},
-    {MAP_EVENT_TALK, LOCALID_ROOM_TWO_SECOND_GUEST, FLAG_WATER_DROPPED_TWICE, MSGNO(MsgAltinItsBeenALongTimeSince)},
+    {MAP_EVENT_TALK, LOCALID_ROOM_TWO_SECOND_GUEST, FLAG_ALTIN_WATER_DROPPED_TWICE, MSGNO(MsgAltinItsBeenALongTimeSince)},
     {MAP_EVENT_TALK, LOCALID_ROOM_TWO_SECOND_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinDontBeTooHarshOnThose)},
     {MAP_EVENT_TALK, LOCALID_ROOM_TWO_SECOND_GUEST, CONDITION_ALWAYS, MSGNO(MsgAltinIfOnlyTheyHadLeftA)},
     {MAP_EVENT_TALK, LOCALID_MAN_BACK_IN_HIS_HOMETOWN, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIDidntWantToLeaveMy)},
@@ -1350,25 +1350,25 @@ struct MapEvent gAltinInteriors_Events[] = {
     {MAP_EVENT_TALK, LOCALID_WOMAN_FORMER_GLORY, CONDITION_ALWAYS, MSGNO(MsgAltinThereIsAnEndlessDesertWest)},
     {MAP_EVENT_TALK, LOCALID_COOK, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinICameFromXianICook)},
     {MAP_EVENT_TALK, LOCALID_COOK, CONDITION_ALWAYS, MSGNO(MsgAltinWestOfTheMountainsIsVery)},
-    {MAP_EVENT_TALK, LOCALID_MAN_WAITING_TO_GO_HOME, FLAG_WATER_DROPPED_ONCE, MSGNO(MsgAltinNoneOfUsCanGoHome)},
-    {MAP_EVENT_TALK, LOCALID_MAN_WAITING_TO_GO_HOME, FLAG_WATER_DROPPED_TWICE, MSGNO(MsgAltinTheGuestsInRoomOneMoved)},
+    {MAP_EVENT_TALK, LOCALID_MAN_WAITING_TO_GO_HOME, FLAG_ALTIN_WATER_DROPPED_ONCE, MSGNO(MsgAltinNoneOfUsCanGoHome)},
+    {MAP_EVENT_TALK, LOCALID_MAN_WAITING_TO_GO_HOME, FLAG_ALTIN_WATER_DROPPED_TWICE, MSGNO(MsgAltinTheGuestsInRoomOneMoved)},
     {MAP_EVENT_TALK, LOCALID_MAN_WAITING_TO_GO_HOME, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinTheGuestsInRoomTwoAlso)},
     {MAP_EVENT_TALK, LOCALID_MAN_WAITING_TO_GO_HOME, CONDITION_ALWAYS, EVENT_SCRIPT(AltinInteriors_AskAboutMineBeasts)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_ONE_GUEST, FLAG_WATER_DROPPED_ONCE,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_ONE_GUEST, FLAG_ALTIN_WATER_DROPPED_ONCE,
         MSGNO(MsgAltinLeavingAltinForTolbiWellThats)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_ONE_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinItsGoingToTakeALot)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_ONE_GUEST, CONDITION_ALWAYS,
         MSGNO(MsgAltinTheMerchantsMustBeHavingA)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_ONE_SECOND_GUEST, FLAG_WATER_DROPPED_ONCE, MSGNO(MsgAltinNowIFinallyHaveAnExcuse)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_ONE_SECOND_GUEST, FLAG_ALTIN_WATER_DROPPED_ONCE, MSGNO(MsgAltinNowIFinallyHaveAnExcuse)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_ONE_SECOND_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinOneBlowsNotEnoughJabJab)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_ONE_SECOND_GUEST, CONDITION_ALWAYS,
         MSGNO(MsgAltinIWonderWhatBusinessThatGirl)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_TWO_GUEST, FLAG_WATER_DROPPED_TWICE, MSGNO(MsgAltinOfCourseYouCantGoWest)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_TWO_GUEST, FLAG_ALTIN_WATER_DROPPED_TWICE, MSGNO(MsgAltinOfCourseYouCantGoWest)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_TWO_GUEST, FLAG_HYDROS_STATUES_DEFEATED,
         MSGNO(MsgAltinIThoughtTheVillageWasDone)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_TWO_GUEST, CONDITION_ALWAYS,
         MSGNO(MsgAltinTheySayYouCanStillFind)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_TWO_SECOND_GUEST, FLAG_WATER_DROPPED_TWICE,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_TWO_SECOND_GUEST, FLAG_ALTIN_WATER_DROPPED_TWICE,
         MSGNO(MsgAltinIHateSittingAroundLikeThis)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_TWO_SECOND_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinImJustGladToGetMy)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_TWO_SECOND_GUEST, CONDITION_ALWAYS,
@@ -1384,7 +1384,7 @@ struct MapEvent gAltinInteriors_Events[] = {
         MSGNO(MsgAltinMomAndPopKnowSomethingAbout)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_KISSING_GIRL, CONDITION_ALWAYS,
         MSGNO(MsgAltinIWonderIfMomAndPop)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WEAPON_MERCHANT, FLAG_WATER_DRAINED, MSGNO(MsgAltinCripesIsThisHowMyWeapon)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WEAPON_MERCHANT, FLAG_ALTIN_WATER_DRAINED, MSGNO(MsgAltinCripesIsThisHowMyWeapon)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WEAPON_MERCHANT, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinOnlyAMerchantKnowsTheJoy)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WEAPON_MERCHANT, CONDITION_ALWAYS,
         MSGNO(MsgAltinIveHeardOfAPassageIn)},
@@ -1404,7 +1404,7 @@ struct MapEvent gAltinInteriors_Events[] = {
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_COOK, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIBecameACookAfterI)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_COOK, CONDITION_ALWAYS,
         MSGNO(MsgAltinNoOneCanGoWestOf)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_WAITING_TO_GO_HOME, FLAG_WATER_DROPPED_ONCE, MSGNO(MsgAltinMostOfTheVillageIsStill)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_WAITING_TO_GO_HOME, FLAG_ALTIN_WATER_DROPPED_ONCE, MSGNO(MsgAltinMostOfTheVillageIsStill)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_WAITING_TO_GO_HOME, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinItLooksLikeTheWaterHas)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_WAITING_TO_GO_HOME, CONDITION_ALWAYS,
         MSGNO(MsgAltinItWillTakeSomeTimeBefore)},

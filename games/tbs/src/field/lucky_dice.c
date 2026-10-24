@@ -38,9 +38,9 @@ s32 LuckyDice_Start(void) {
 /// pitched to 152 and 510 units away, following nothing. Recomputes the eye
 /// and sets the projection's focal length (250), near plane and far plane.
 /// Called only by LuckyDice_Run, once the camera's heap block is allocated;
-/// writes gCameraWork's fields and gProjection.
+/// writes gBattleCamera's fields and gProjection.
 void Camera_ResetViewDefaults(void) {
-  struct BattleCamera *camera = gCameraWork;
+  struct BattleCamera *camera = gBattleCamera;
   s32 offset[3];
   u32 nearPlane;
   u32 focalLength;
@@ -181,7 +181,7 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 /// its sprites and windows. The allocation extends beyond these members.
 struct LuckyDiceSprites {
   u8 filler[200];                ///< Lucky Dice never touches these bytes
-  struct OamShadow oam[128];     ///< copied to OAM each frame
+  struct OamWords oam[128];      ///< copied to OAM each frame
   struct Window *coinsWindow;    ///< the player's coins
   struct Window *winningsWindow; ///< the winnings of the last throw
   struct Window *helpWindow;     ///< the Throw and Quit buttons
@@ -281,7 +281,7 @@ void LuckyDice_Run(void) {
 #endif
   u16 *spritePalette;
   struct BattleAnimWork *diceWork;
-  /* FAKEMATCH(volatile): the OAM shadow it builds is struct OamShadow, whose
+  /* FAKEMATCH(volatile): the OAM shadow it builds is struct OamWords, whose
    * words are volatile (oambuf.h); as plain u32 words, 1550 of 2046
    * instructions differ in tbs-en. */
   struct LuckyDiceSprites *sprites;
@@ -328,7 +328,7 @@ void LuckyDice_Run(void) {
   diceWork = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_ANIM, sizeof(*diceWork));
   sprites = AllocHeapSlotEwram(HEAP_SLOT_LUCKY_DICE_SPRITES, 0x618);
   camera = AllocHeapSlotEwram(HEAP_SLOT_CAMERA, sizeof(*camera));
-  RuntimeDispatch_NoOpHook((s32)&ResourceId_BattleAnimFarCalls);
+  Stub_NoOpHook((s32)&ResourceId_BattleAnimFarCalls);
   Camera_ResetViewDefaults();
   Task_ResetAll();
   gOamCopyEnabled = 0;

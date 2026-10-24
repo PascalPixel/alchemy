@@ -134,7 +134,8 @@ void BattleBackground_ShowZoomedPage(void) {
   struct BattleAffineHdma *scanlines;
   u16 *line;
 
-  if (((struct BattleViewWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND))
+  if (((struct BattleBackgroundWork *)HEAP_SLOT_BLOCK(
+           HEAP_SLOT_BATTLE_BACKGROUND))
           ->mode == BATTLE_BACKGROUND_ZOOMED) {
     scanlines = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SCANLINES);
     line = scanlines->lines[scanlines->page];
@@ -277,7 +278,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
   struct BattleStagingWork work;
   u16 unitIds[14];
   u16 visibleUnitIds[14];
-  struct BattleViewWork *view;
+  struct BattleBackgroundWork *view;
   s32 *timer;
   u16 *tilemap;
   s32 tile;
@@ -367,7 +368,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
       *timer = start;
       Task_Add(BattleTransition_AdvanceTimer, 3200);
       Task_Add(BattleTransition_DrawRows, 0x480);
-      Runtime_SetIrqHandler(IRQ_VCOUNT, 32, BattleTransition_ClearBg0Vofs);
+      Irq_SetHandler(IRQ_VCOUNT, 32, BattleTransition_ClearBg0Vofs);
       gBgScroll[0].y = 32;
       WaitFrames(1);
       PartyStatus_CreateWindowFar(gBattleWork->partyStatus);
@@ -381,7 +382,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
       Task_Remove(BattleTransition_AdvanceTimer);
       Task_Remove(BattleTransition_DrawRows);
       gBgScroll[0].y = start;
-      Runtime_SetIrqHandler(IRQ_VCOUNT, 0, 0);
+      Irq_SetHandler(IRQ_VCOUNT, 0, 0);
     }
   } else {
     // The storm: every unit but the Fusion Dragon drawn at 0.7
@@ -389,7 +390,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
     battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
     view->secondMode = BATTLE_BACKGROUND_FIXED;
     view->busy = 0;
-    count = BattleUnit_ListIds(BATTLE_SIDES_BOTH, (u16 *)unitIds);
+    count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, (u16 *)unitIds);
     for (index = 0; index != count; index++) {
       // The list's index taken as a unit id: 0 to 7, then 128 onward.
       // BUG: unitIds is never read. A gap among party ids can make
@@ -413,14 +414,14 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
       // The enemies alone take part in the shattering opening.
       battle->background = (u32)&ResourceId_VenusLighthouseAerieStormBackdrop;
       work.effect.targetCount =
-          BattleUnit_ListIds(BATTLE_SIDES_ENEMIES, work.effect.targets);
+          BattleUnit_ListIds(BATTLE_SIDE_MASK_ENEMIES, work.effect.targets);
       work.effect.targets[work.effect.targetCount] = BATTLE_UNIT_LIST_END;
       BattleObject_SpawnObjectsForList(work.effect.targets, 0);
       BattleAnim_RunShatteringOpeningFar(&work.effect);
       BattleCamera_SetView(0, 0, 0, 100);
       *timer = start;
     }
-    Runtime_SetIrqHandler(IRQ_VCOUNT, 32, BattleTransition_ClearBg0Vofs);
+    Irq_SetHandler(IRQ_VCOUNT, 32, BattleTransition_ClearBg0Vofs);
     WaitFrames(1);
     WaitFrames(20);
     PartyStatus_CreateWindowFar(gBattleWork->partyStatus);
@@ -430,10 +431,12 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
     // semi-transparent sprites.
     REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
     visibleUnits = visibleUnitIds;
-    visibleCount = BattleUnit_ListIds(BATTLE_SIDES_BOTH, (u16 *)visibleUnits);
+    visibleCount =
+        BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, (u16 *)visibleUnits);
     visibleUnitIds[visibleCount] = BATTLE_UNIT_LIST_END;
     BattleObject_SpawnObjectsForList(visibleUnits, 0);
-    visibleCount = BattleUnit_ListIds(BATTLE_SIDES_PARTY, (u16 *)visibleUnits);
+    visibleCount =
+        BattleUnit_ListIds(BATTLE_SIDE_MASK_PARTY, (u16 *)visibleUnits);
     for (index = 0; index != visibleCount; index++)
       BattleHighlight_SetSpriteMode(visibleUnits[index],
                                     SPRITE_SEMI_TRANSPARENT);
@@ -446,10 +449,10 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
     BattleIntro_AnnounceEncounter(enemyCount);
     gBgScroll[0].y = 0;
     WaitFrames(1);
-    Runtime_SetIrqHandler(IRQ_VCOUNT, 0, 0);
+    Irq_SetHandler(IRQ_VCOUNT, 0, 0);
   }
   // Both: the battle's own BG1 and display.
-  Runtime_SetIrqHandler(IRQ_VCOUNT, 0, 0);
+  Irq_SetHandler(IRQ_VCOUNT, 0, 0);
   REG_BG1CNT = BATTLE_BG1CNT;
   WaitFrames(1);
   REG_BG1CNT = BATTLE_BG1CNT;

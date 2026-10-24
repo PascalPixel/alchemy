@@ -171,8 +171,8 @@ void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *effect, s32 mode) {
         Sprite_StartAnimFar(work->animations[4], 11);
       }
       ANIM_FOR_EACH_TARGET(i, work->effect) {
-        ObjectGroup_UpdateMembers(work->effect->targets[i],
-                                  SPRITE_COLOR_RED_TINT, POSE_DAMAGE, -1, 0);
+        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_RED_TINT,
+                               POSE_DAMAGE, -1, 0);
         BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
                                        KNOCKBACK_HURL);
       }
@@ -393,8 +393,8 @@ void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *effect, s32 mode) {
     }
     if (frame == 138) {
       ANIM_FOR_EACH_TARGET(i, work->effect) {
-        ObjectGroup_UpdateMembers(work->effect->targets[i],
-                                  SPRITE_COLOR_RED_TINT, POSE_DAMAGE, -1, 0);
+        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_RED_TINT,
+                               POSE_DAMAGE, -1, 0);
         BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
                                        KNOCKBACK_HURL);
       }

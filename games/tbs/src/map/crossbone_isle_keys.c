@@ -5,31 +5,31 @@
 /// with four chests each. All three take the area name Crossbone Isle Cave. In
 /// the order the party meets them:
 ///
-/// - MapId_CrossboneIsleKeys, off the third floor, a room of locked doors.
-///   Four Blue Keys lie about it until Catch takes them, and a Red Key shows
-///   only while Reveal lasts. Walking into one of the four blue doors in a row
-///   with a Blue Key opens it and uses the key up (four flags from
+/// - MapId_CrossboneIsleKeys, off the third floor, a room of locked doors. Four
+///   Blue Keys lie about it until Catch takes them, and a Red Key shows only
+///   while Reveal lasts. Walking into one of the four blue doors in a row with
+///   a Blue Key opens it and uses the key up (four flags from
 ///   FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN), and the Red Key opens the red
 ///   door beyond them (FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN). The keys taken and
 ///   the doors opened are restored on entry.
-/// - MapId_CrossboneIsleStatues, off the fourth, where five statues of a
-///   robed woman wait, lit in circles by braziers in the dark. As the leader
-///   crosses each one's stretch of the room it steps out after him unless he is
-///   hidden by Cloak, and goes back home once he is past
-///   (PURSUER_AFTER_LEADER_FLAG while one is after him); Halt stops one where
-///   it stands, and Reveal clears the translucent layer over the room while it
-///   lasts. Each statue's home and the stretch of floor that sets it after the
-///   leader are drawn over the room's render in
+/// - MapId_CrossboneIsleStatues, off the fourth, where five statues of a robed
+///   woman wait, lit in circles by braziers in the dark. As the leader crosses
+///   each one's stretch of the room it steps out after him unless he is hidden
+///   by Cloak, and goes back home once he is past
+///   (FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER while one is after him); Halt
+///   stops one where it stands, and Reveal clears the translucent layer over
+///   the room while it lasts. Each statue's home and the stretch of floor that
+///   sets it after the leader are drawn over the room's render in
 ///   https://alchemy.pascalpixel.com/places/crossbone-isle-statues/stretches.png:
 ///   the first, second and fifth start from per-frame checks of the leader's
 ///   cell, the third and fourth from coord events in the three cells around
 ///   their homes and the three south of them.
-/// - MapId_CrossboneIsleBane, off the sixth, where Bane, a Venus Djinni,
-///   hides. Five pillars to push or move with Move, a ladder and a puddle that
-///   Frost freezes into a pillar of ice make a way across the room. The first
-///   three times the party comes near, Bane flees, the third time to the room's
-///   last corner (FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE to _LAST_ESCAPE); there
-///   it runs to whichever spot the leader steps toward unless Halt holds it.
+/// - MapId_CrossboneIsleBane, off the sixth, where Bane, a Venus Djinni, hides.
+///   Five pillars to push or move with Move, a ladder and a puddle that Frost
+///   freezes into a pillar of ice make a way across the room. The first three
+///   times the party comes near, Bane flees, the third time to the room's last
+///   corner (FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE to _LAST_ESCAPE); there it
+///   runs to whichever spot the leader steps toward unless Halt holds it.
 ///   Talked to while Halt holds it, Bane joins the party.
 ///
 /// Open questions: none.
@@ -191,16 +191,16 @@ enum CrossboneIsleBaneLocalId {
 enum { PASSAGE_INDEX_MASK = 0xff, PASSAGE_PLAY_OPENING = 0x100 };
 
 /// CrossboneIsleBane: the puddle is frozen.
-#define BANE_PUDDLE_FROZEN_FLAG FLAG_MAP_TEMP_00
+#define FLAG_CROSSBONE_ISLE_BANE_PUDDLE_FROZEN FLAG_MAP_TEMP_00
 /// CrossboneIsleBane: the chest on the second pillar has reached the ladder.
-#define BANE_CHEST_AT_LADDER_FLAG FLAG_MAP_TEMP_06
+#define FLAG_CROSSBONE_ISLE_BANE_CHEST_AT_LADDER FLAG_MAP_TEMP_06
 /// CrossboneIsleBane: the leader last looked east from the ladder, which gives
 /// the ladder cell its other metatile behaviors.
-#define BANE_LOOKED_EAST_FLAG FLAG_MAP_TEMP_07
+#define FLAG_CROSSBONE_ISLE_BANE_LOOKED_EAST FLAG_MAP_TEMP_07
 // The Move events of CrossboneIsleBane's pillars also test FLAG_MAP_TEMP_01
 // and 03 to 05, which nothing sets.
 /// CrossboneIsleStatues: a statue is after the leader.
-#define PURSUER_AFTER_LEADER_FLAG FLAG_MAP_TEMP_20
+#define FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER FLAG_MAP_TEMP_20
 
 /// Publishes the next raised-event trigger.
 static __inline__ void MapLocalState_StoreStep(s16 *field, s32 step) {
@@ -271,10 +271,10 @@ static void EventScript_HaltPursuer(void) {}
 // Plain void changes 38 to 36 bytes in tbs-en.
 #ifdef UBFIX
 static void
-CrossboneIsleKeys_FaceBaneTowardLeader(union FieldObject *fieldObject) {
+CrossboneIsleKeys_FaceBaneTowardLeader(union ObjectEventOrEffect *fieldObject) {
 #else
 static s32
-CrossboneIsleKeys_FaceBaneTowardLeader(union FieldObject *fieldObject) {
+CrossboneIsleKeys_FaceBaneTowardLeader(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = &fieldObject->objectEvent;
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -361,7 +361,7 @@ static void EventScript_BaneSecondEscape(void) {
       spinningDjinni = ObjectEvent_GetById(LOCALID_BANE);
       spinningDjinni->sprite->rotation = 0xf800;
       spinningDjinni->facing = 0;
-      ObjectDispatch_SetAnimationSpeed((struct Object *)spinningDjinni, 0);
+      Object_SetAnimationSpeed((struct Object *)spinningDjinni, 0);
       ObjectEvent_SetScript(spinningDjinni,
                             gCrossboneIsleKeys_BaneSquashScript);
       SCRIPT_END();
@@ -383,7 +383,7 @@ static void EventScript_BaneLastEscape(void) {
     // Restore the sprite before the last jump and winding escape path.
     djinni = ObjectEvent_GetById(LOCALID_BANE);
     djinni->sprite->rotation = 0;
-    ObjectDispatch_SetAnimationSpeed((struct Object *)djinni, 16);
+    Object_SetAnimationSpeed((struct Object *)djinni, 16);
     SE(SE_JUMP);
     djinni = ObjectEvent_GetById(LOCALID_BANE);
     djinni->velocityY = PIXELS(8);
@@ -416,8 +416,8 @@ static void EventScript_BaneLastEscape(void) {
 #ifdef UBFIX
     djinni->update = CrossboneIsleKeys_FaceBaneTowardLeader;
 #else
-    djinni->update =
-        (void (*)(union FieldObject *))CrossboneIsleKeys_FaceBaneTowardLeader;
+    djinni->update = (void (*)(
+        union ObjectEventOrEffect *))CrossboneIsleKeys_FaceBaneTowardLeader;
 #endif
     SCRIPT_END();
   }
@@ -479,14 +479,14 @@ const struct MapEvent *Map_GetEvents(void) {
 }
 
 /// Unused: walking south into CrossboneIsleKeys's third or fourth blue door
-/// looks at what is ahead.
+/// jumps the leader forward where he can (Field_TryJumpForward).
 ///
 /// Both rows that name it follow a plain coord event row for the same door
 /// (EventScript_OpenThirdBlueDoor, EventScript_OpenFourthBlueDoor), which
-/// Map_FindEvent always finds first; those scripts look ahead themselves after
-/// a dozen steps pressed south against the door, so the player sees the same
-/// thing.
-static void EventScript_UnusedCheckLeaderAhead(void) { Field_TryJumpForward(); }
+/// Map_FindEvent always finds first; those scripts jump forward themselves
+/// after a dozen steps pressed south against the door, so the player sees the
+/// same thing.
+static void EventScript_UnusedJumpPastBlueDoor(void) { Field_TryJumpForward(); }
 
 /// Opens the selected blue door, playing its opening when asked.
 static void CrossboneIsleKeys_OpenBlueDoor(s32 passageInfo) {
@@ -615,7 +615,7 @@ static void EventScript_ShowRedKey(void) {
 
   MapGrid_CopyCells(25, 45, 1, 2, 25, 48);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_RED_KEY) == 0)
-    Engine_ObjectEventSetPosition(keyLocalId, x, z);
+    Import_ObjectEventSetPosition(keyLocalId, x, z);
   WAIT(1);
 }
 
@@ -633,7 +633,7 @@ static inline void CrossboneIsleKeys_CollectKey(s32 localId, s32 itemId,
   FieldEffect_StartEffectObject22(itemId, 3);
   OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_STAND);
   PartyInventory_GiveItem(itemId, 0);
-  Engine_ObjectEventSetPosition(localId, 0, 0);
+  Import_ObjectEventSetPosition(localId, 0, 0);
   GameFlag_Set(collectedFlag);
 }
 
@@ -674,10 +674,11 @@ static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
   s32 row = leader->z.fixed / PIXELS(16);
   struct FieldWork *work = gFieldWork;
 
-  if (!Script_GetFlag(PURSUER_AFTER_LEADER_FLAG) && gSaveBlock.cloaked == 0 &&
+  if (!Script_GetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER) &&
+      gSaveBlock.cloaked == 0 &&
       gSaveBlock.pausedObject != LOCALID_FIRST_STATUE &&
       (u32)(column - 21) <= 2 && row >= 10 && row <= 11) {
-    GameFlag_Set(PURSUER_AFTER_LEADER_FLAG);
+    GameFlag_Set(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
     work->raisedEvent = RAISED_FIRST_CHASE;
   }
 }
@@ -706,7 +707,7 @@ static void EventScript_DodgeFirstPursuer(void) {
   ObjectEvent_SetDestination(LOCALID_FIRST_STATUE, 360, 152);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FIRST_STATUE);
   SCRIPT_END();
-  GameFlag_Clear(PURSUER_AFTER_LEADER_FLAG);
+  GameFlag_Clear(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
 }
 
 /// Starts the second chase when the leader enters column ten.
@@ -716,11 +717,11 @@ static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
   s32 row = leader->z.fixed / PIXELS(16);
   struct FieldWork *work = gFieldWork;
 
-  if (Script_GetFlag(PURSUER_AFTER_LEADER_FLAG) == 0 &&
+  if (Script_GetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER) == 0 &&
       gSaveBlock.cloaked == 0 &&
       gSaveBlock.pausedObject != LOCALID_SECOND_STATUE && column == 10 &&
       (u32)(row - 16) <= 2) {
-    Script_SetFlag(PURSUER_AFTER_LEADER_FLAG);
+    Script_SetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
     MapLocalState_StoreStep(&work->raisedEvent, RAISED_SECOND_CHASE);
   }
 }
@@ -749,7 +750,7 @@ static void EventScript_DodgeSecondPursuer(void) {
   ObjectEvent_SetDestination(LOCALID_SECOND_STATUE, 168, 264);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_SECOND_STATUE);
   SCRIPT_END();
-  GameFlag_Clear(PURSUER_AFTER_LEADER_FLAG);
+  GameFlag_Clear(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
 }
 
 /// Moves a pursuer to the leader column and remembers its last column.
@@ -779,13 +780,13 @@ static void CrossboneIsleKeys_TrackPursuerColumn(s32 pursuerIndex) {
 
 /// Touching coord event 53 in CrossboneIsleStatues: the third pursuer keeps
 /// to the leader's column.
-static void EventScript_TrackThirdPursuerColumn(void) {
+static void EventScript_ThirdStatueShadowsLeader(void) {
   CrossboneIsleKeys_TrackPursuerColumn(0);
 }
 
 /// Touching coord event 54 in CrossboneIsleStatues: the fourth pursuer
 /// keeps to the leader's column.
-static void EventScript_TrackFourthPursuerColumn(void) {
+static void EventScript_FourthStatueShadowsLeader(void) {
   CrossboneIsleKeys_TrackPursuerColumn(1);
 }
 
@@ -877,9 +878,9 @@ static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
   struct SaveBlock *state = &gSaveBlock;
 
   if (state->pausedObject != LOCALID_FIFTH_STATUE &&
-      Script_GetFlag(PURSUER_AFTER_LEADER_FLAG) == 0 && state->cloaked == 0 &&
-      column == 19 && (u32)(row - 15) <= 1) {
-    Script_SetFlag(PURSUER_AFTER_LEADER_FLAG);
+      Script_GetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER) == 0 &&
+      state->cloaked == 0 && column == 19 && (u32)(row - 15) <= 1) {
+    Script_SetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
     MapLocalState_StoreStep(&work->raisedEvent, RAISED_FIFTH_CHASE);
   }
 }
@@ -907,12 +908,12 @@ static void EventScript_DodgeFifthPursuer(void) {
   ObjectEvent_SetDestination(LOCALID_FIFTH_STATUE, 312, 232);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FIFTH_STATUE);
   SCRIPT_END();
-  GameFlag_Clear(PURSUER_AFTER_LEADER_FLAG);
+  GameFlag_Clear(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
 }
 
 /// Reveal in CrossboneIsleStatues: the translucent layer over the room
 /// vanishes while it lasts.
-static void EventScript_StartRevealBlend(void) {
+static void EventScript_CastRevealInStatueRoom(void) {
   u32 coefficient = 208;
 
   coefficient <<= 4;
@@ -921,7 +922,7 @@ static void EventScript_StartRevealBlend(void) {
 
 /// Reveal wears off in CrossboneIsleStatues: the translucent layer
 /// returns.
-static void EventScript_EndRevealBlend(void) {
+static void EventScript_RevealEndsInStatueRoom(void) {
   u16 value = 0x0607;
 
   REG_BLDALPHA = value;
@@ -935,7 +936,7 @@ static void EventScript_UseLadder(void) {
   u16 facing = leader->facing;
 
   if (facing == FACING_NORTH) {
-    if (GameFlag_Get(BANE_CHEST_AT_LADDER_FLAG) != 0) {
+    if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_CHEST_AT_LADDER) != 0) {
       {
         s32 destinationColumn = 45;
         s32 destinationRow = 43;
@@ -943,12 +944,12 @@ static void EventScript_UseLadder(void) {
                                    destinationRow);
       }
     }
-    GameFlag_Clear(BANE_LOOKED_EAST_FLAG);
+    GameFlag_Clear(FLAG_CROSSBONE_ISLE_BANE_LOOKED_EAST);
     Field_ClimbUp();
   } else if (facing == FACING_SOUTH) {
     Field_ClimbDown();
   } else if (facing == FACING_EAST) {
-    if (GameFlag_Get(BANE_CHEST_AT_LADDER_FLAG) != 0) {
+    if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_CHEST_AT_LADDER) != 0) {
       {
         s32 destinationColumn = 45;
         s32 destinationRow = 43;
@@ -956,7 +957,7 @@ static void EventScript_UseLadder(void) {
                                    destinationRow);
       }
     }
-    GameFlag_Set(BANE_LOOKED_EAST_FLAG);
+    GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_LOOKED_EAST);
     Field_TryJumpForward();
   } else if (facing == FACING_WEST) {
     if (leader->y.fixed == 0) {
@@ -983,7 +984,7 @@ static void EventScript_FreezePuddle(void) {
     *motionFlags = 0;
     *priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
-  GameFlag_Set(BANE_PUDDLE_FROZEN_FLAG);
+  GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_PUDDLE_FROZEN);
 }
 
 /// Walking into CrossboneIsleBane's first pillar from the ladder side
@@ -1035,7 +1036,7 @@ static void CrossboneIsleKeys_RestoreWestUnderfootCell(void) {
 
 /// Move on CrossboneIsleBane's first pillar: its support cells are
 /// rebuilt from its height and column.
-static void EventScript_UpdateFirstPillarTerrain(void) {
+static void EventScript_MoveFirstPillar(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_FIRST_PILLAR);
   s32 x = objectEvent->x.fixed;
   s32 height = objectEvent->y.fixed;
@@ -1088,7 +1089,7 @@ static void EventScript_PushFirstPillar(void) {
 
   CrossboneIsleKeys_RestoreFirstPillarTerrain();
   PushedObject_AdvancePair();
-  EventScript_UpdateFirstPillarTerrain();
+  EventScript_MoveFirstPillar();
 }
 
 /// Leaves the chest where the second pillar has reached the ladder: the chest's
@@ -1097,18 +1098,18 @@ static void EventScript_PushFirstPillar(void) {
 static void CrossboneIsleKeys_ReleaseSecondPillarChest(void) {
   Task_Remove(CrossboneIsleKeys_FollowSecondPillar);
   OBJECT_POSITION_SET(LOCALID_SECOND_PILLAR_CHEST, 0, 0);
-  if (GameFlag_Get(BANE_LOOKED_EAST_FLAG) != 0) {
+  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_LOOKED_EAST) != 0) {
     MapGrid_CopyCellAttributes(58, 36, 1, 1, 45, 43);
   } else {
     MapGrid_CopyCellAttributes(46, 43, 1, 1, 45, 43);
   }
   CrossboneIsleKeys_PositionSecondPillarMarker();
-  GameFlag_Set(BANE_CHEST_AT_LADDER_FLAG);
+  GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_CHEST_AT_LADDER);
 }
 
 /// Move on CrossboneIsleBane's second pillar: the chest on top of it stays
 /// at the ladder cell once the pillar reaches it.
-static void EventScript_UpdateSecondPillarTerrain(void) {
+static void EventScript_MoveSecondPillar(void) {
   struct ObjectEvent *pillar = ObjectEvent_GetById(LOCALID_SECOND_PILLAR);
   s32 column = pillar->x.fixed / PIXELS(16);
   s32 row = pillar->z.fixed / PIXELS(16);
@@ -1122,7 +1123,7 @@ static void EventScript_UpdateSecondPillarTerrain(void) {
 /// the chest on top of it stays there.
 static void EventScript_PushSecondPillar(void) {
   PushedObject_AdvancePair();
-  EventScript_UpdateSecondPillarTerrain();
+  EventScript_MoveSecondPillar();
 }
 
 /// Restores the terrain at both ends of the third pillar row.
@@ -1148,7 +1149,7 @@ static void CrossboneIsleKeys_RestoreThirdPillarEastCell(void) {
 
 /// Move on CrossboneIsleBane's third pillar: its support is rebuilt
 /// from its height and destination.
-static void EventScript_UpdateThirdPillarTerrain(void) {
+static void EventScript_MoveThirdPillar(void) {
   struct ObjectEvent *pillar = ObjectEvent_GetById(LOCALID_THIRD_PILLAR);
   s32 heightCells = pillar->y.fixed / PIXELS(16);
   s32 column = pillar->x.fixed / PIXELS(16);
@@ -1175,7 +1176,7 @@ static void EventScript_UpdateThirdPillarTerrain(void) {
 static void EventScript_PushThirdPillar(void) {
   CrossboneIsleKeys_RestoreThirdPillarTerrain();
   PushedObject_AdvancePair();
-  EventScript_UpdateThirdPillarTerrain();
+  EventScript_MoveThirdPillar();
 }
 
 /// Walking into CrossboneIsleBane's third pillar (coord event 54): facing
@@ -1216,7 +1217,7 @@ static void CrossboneIsleKeys_RepaintFourthAndFifthPillarCells(void) {
 
 /// Move on CrossboneIsleBane's fourth pillar: the support row it
 /// shares with the fifth is refreshed.
-static void EventScript_UpdateFourthPillarTerrain(void) {
+static void EventScript_MoveFourthPillar(void) {
   CrossboneIsleKeys_RepaintFourthAndFifthPillarCells();
 }
 
@@ -1224,12 +1225,12 @@ static void EventScript_UpdateFourthPillarTerrain(void) {
 static void EventScript_PushFourthPillar(void) {
   CrossboneIsleKeys_RestoreFourthAndFifthPillarTerrain();
   PushedObject_AdvancePair();
-  EventScript_UpdateFourthPillarTerrain();
+  EventScript_MoveFourthPillar();
 }
 
 /// Move on CrossboneIsleBane's fifth pillar: the support row it shares
 /// with the fourth is refreshed.
-static void EventScript_UpdateFifthPillarTerrain(void) {
+static void EventScript_MoveFifthPillar(void) {
   CrossboneIsleKeys_RepaintFourthAndFifthPillarCells();
 }
 
@@ -1238,7 +1239,7 @@ static void EventScript_UpdateFifthPillarTerrain(void) {
 UNUSED static void CrossboneIsleKeys_MoveFifthPillar(void) {
   CrossboneIsleKeys_RestoreFourthAndFifthPillarTerrain();
   PushedObject_AdvancePair();
-  EventScript_UpdateFifthPillarTerrain();
+  EventScript_MoveFifthPillar();
 }
 
 /// Keeps the chest on top of the second pillar as the pillar moves.
@@ -1420,18 +1421,18 @@ static void CrossboneIsleKeys_InitializeBane(void) {
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_DEMON_AXE) != 0) {
     OBJECT_ANIMATION(LOCALID_SECOND_PILLAR_CHEST, 2);
   }
-  EventScript_UpdateFirstPillarTerrain();
-  EventScript_UpdateSecondPillarTerrain();
-  EventScript_UpdateThirdPillarTerrain();
-  EventScript_UpdateFourthPillarTerrain();
-  EventScript_UpdateFifthPillarTerrain();
+  EventScript_MoveFirstPillar();
+  EventScript_MoveSecondPillar();
+  EventScript_MoveThirdPillar();
+  EventScript_MoveFourthPillar();
+  EventScript_MoveFifthPillar();
 #if TBS_PATCH_1
   ObjectMotion_SetActionVariant(LOCALID_FIRST_PILLAR, 3);
 #endif
   ObjectEvent_GetById(LOCALID_FOURTH_PILLAR)->motionFlags = 0;
   ObjectEvent_GetById(LOCALID_FIFTH_PILLAR)->motionFlags = 0;
   CrossboneIsleKeys_RepaintFourthAndFifthPillarCells();
-  if (GameFlag_Get(BANE_PUDDLE_FROZEN_FLAG) != 0) {
+  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_PUDDLE_FROZEN) != 0) {
     EventScript_FreezePuddle();
     OBJECT_ANIMATION(LOCALID_PUDDLE, 5);
   }
@@ -1444,14 +1445,14 @@ static void CrossboneIsleKeys_InitializeBane(void) {
 #ifdef UBFIX
       djinni->update = CrossboneIsleKeys_FaceBaneTowardLeader;
 #else
-      djinni->update =
-          (void (*)(union FieldObject *))CrossboneIsleKeys_FaceBaneTowardLeader;
+      djinni->update = (void (*)(
+          union ObjectEventOrEffect *))CrossboneIsleKeys_FaceBaneTowardLeader;
 #endif
     } else if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0) {
       OBJECT_POSITION_SET(LOCALID_BANE, 888, 664);
       djinni = ObjectEvent_GetById(LOCALID_BANE);
       djinni->sprite->rotation = 0;
-      ObjectDispatch_SetAnimationSpeed((struct Object *)djinni, 16);
+      Object_SetAnimationSpeed((struct Object *)djinni, 16);
     } else if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {
       OBJECT_POSITION_SET(LOCALID_BANE, 584, 680);
     } else {
@@ -1638,8 +1639,8 @@ struct MapEvent gCrossboneIsleKeysRoomEvents[] = {
     { MAP_EVENT_COORD, 53, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenThirdBlueDoor) },
     { MAP_EVENT_COORD, 54, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenFourthBlueDoor) },
     // Unused: the plain coord event rows above answer codes 53 and 54 first.
-    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UnusedCheckLeaderAhead) },
-    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 54, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UnusedCheckLeaderAhead) },
+    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UnusedJumpPastBlueDoor) },
+    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 54, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UnusedJumpPastBlueDoor) },
     { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_CROSSBONE_ISLE_KEYS_333_COINS, FIND_COINS(333) },
     { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_CROSSBONE_ISLE_KEYS_FAIRY_RING, FIND_ITEM(ITEM_FAIRY_RING) },
     { BG_EVENT(BG_EVENT_CHEST), 102, FLAG_CROSSBONE_ISLE_KEYS_COOKIE, FIND_ITEM(ITEM_COOKIE) },
@@ -1650,15 +1651,15 @@ struct MapEvent gCrossboneIsleKeysRoomEvents[] = {
 struct MapEvent gCrossboneIsleStatuesEvents[] = {
     { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_EAST },
     { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_WEST },
-    { MAP_EVENT_COORD, 53, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TrackThirdPursuerColumn) },
-    { MAP_EVENT_COORD, 54, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TrackFourthPursuerColumn) },
+    { MAP_EVENT_COORD, 53, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ThirdStatueShadowsLeader) },
+    { MAP_EVENT_COORD, 54, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FourthStatueShadowsLeader) },
     { MAP_EVENT_COORD, 61, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DodgeThirdPursuer) },
     { MAP_EVENT_COORD, 62, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DodgeFourthPursuer) },
     { MAP_EVENT_RAISED, RAISED_FIFTH_CHASE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DodgeFifthPursuer) },
     { MAP_EVENT_RAISED, RAISED_SECOND_CHASE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DodgeSecondPursuer) },
     { MAP_EVENT_RAISED, RAISED_FIRST_CHASE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DodgeFirstPursuer) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StartRevealBlend) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EndRevealBlend) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CastRevealInStatueRoom) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealEndsInStatueRoom) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_HALT), LOCALID_FIRST_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HaltPursuer) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_HALT), LOCALID_SECOND_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HaltPursuer) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_HALT), LOCALID_THIRD_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HaltPursuer) },
@@ -1730,18 +1731,19 @@ struct MapEvent gCrossboneIsleBaneEvents[] = {
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_HALT), LOCALID_BANE, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_HaltBane)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_PUDDLE,
-     BANE_PUDDLE_FROZEN_FLAG, EVENT_SCRIPT(EventScript_FreezePuddle)},
+     FLAG_CROSSBONE_ISLE_BANE_PUDDLE_FROZEN,
+     EVENT_SCRIPT(EventScript_FreezePuddle)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR,
-     FLAG_MAP_TEMP_01, EVENT_SCRIPT(EventScript_UpdateFirstPillarTerrain)},
+     FLAG_MAP_TEMP_01, EVENT_SCRIPT(EventScript_MoveFirstPillar)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_SECOND_PILLAR,
-     BANE_CHEST_AT_LADDER_FLAG,
-     EVENT_SCRIPT(EventScript_UpdateSecondPillarTerrain)},
+     FLAG_CROSSBONE_ISLE_BANE_CHEST_AT_LADDER,
+     EVENT_SCRIPT(EventScript_MoveSecondPillar)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_THIRD_PILLAR,
-     FLAG_MAP_TEMP_03, EVENT_SCRIPT(EventScript_UpdateThirdPillarTerrain)},
+     FLAG_MAP_TEMP_03, EVENT_SCRIPT(EventScript_MoveThirdPillar)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FOURTH_PILLAR,
-     FLAG_MAP_TEMP_04, EVENT_SCRIPT(EventScript_UpdateFourthPillarTerrain)},
+     FLAG_MAP_TEMP_04, EVENT_SCRIPT(EventScript_MoveFourthPillar)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIFTH_PILLAR,
-     FLAG_MAP_TEMP_05, EVENT_SCRIPT(EventScript_UpdateFifthPillarTerrain)},
+     FLAG_MAP_TEMP_05, EVENT_SCRIPT(EventScript_MoveFifthPillar)},
     {BG_EVENT(BG_EVENT_CHEST), 104, FLAG_CROSSBONE_ISLE_BANE_666_COINS,
      FIND_COINS(666)},
     {BG_EVENT(BG_EVENT_CHEST), 105, FLAG_CROSSBONE_ISLE_BANE_WATER_OF_LIFE,

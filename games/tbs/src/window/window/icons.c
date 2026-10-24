@@ -202,20 +202,20 @@ s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 cacheSlot) {
   FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
   return 1;
 }
-extern const u8 *gHeadingPictures[];
+extern const u8 *gMenuTitlePictures[];
 
 /// Loads 32 bytes, one sprite tile, from the start of
-/// gHeadingPictures into the VRAM cache entry slot. Every value
+/// gMenuTitlePictures into the VRAM cache entry slot. Every value
 /// loads the same bytes: all four cases name the table itself.
 /// XXX: those bytes are the table's eight label pointers, not a picture, and
 /// what the cases were meant to load is not known. A use would settle it, but
 /// the one caller, WindowSprite_CreateFromTable, has no caller in the tree.
-s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot) {
+s32 Resource_LoadTableEntry(u32 value, s32 unused, u32 slot) {
   // Three more names of the one table: the ROM keeps a literal for each case,
   // and with one name the switch folds into a single load.
-  extern const u8 *PairSource1[] __asm__("gHeadingPictures"),
-      *PairSource2[] __asm__("gHeadingPictures"),
-      *PairSource3[] __asm__("gHeadingPictures");
+  extern const u8 *PairSource1[] __asm__("gMenuTitlePictures"),
+      *PairSource2[] __asm__("gMenuTitlePictures"),
+      *PairSource3[] __asm__("gMenuTitlePictures");
   void *source;
   switch (value) {
   case 1:
@@ -229,7 +229,7 @@ s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot) {
     break;
   case 0:
   default:
-    source = gHeadingPictures;
+    source = gMenuTitlePictures;
     break;
   }
   VramCache_Load(slot, 32, source);
@@ -313,7 +313,7 @@ void Icon_DrawMisc(u32 iconIndex) {
 /// free slot unless reuse is set) and its colours into the sprite palette
 /// named by palette. Returns the tile in *tile.
 /// This resource stores its palette before the encoded tile payload: 16
-/// colours, 32 bytes. Portraits (CreateSideObject) come through here.
+/// colours, 32 bytes. Portraits (Portrait_Create) come through here.
 void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                           s32 palette, s32 reuse) {
   GlyphTransfer *work;

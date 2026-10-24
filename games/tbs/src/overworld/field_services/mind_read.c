@@ -32,7 +32,7 @@ struct MindReadWork {
 ///
 /// The effect stays up until FieldEffect_FinishMindRead ends it
 /// after the after event; meanwhile the message windows show thoughts
-/// (Ui_FillBank15PaletteGrey sets the window mode).
+/// (FieldEffect_GreyMindReadPalette sets the window mode).
 void FieldEffect_StartMindReadWave(s32 x, s32 y) {
   struct MindReadWork *work;
 
@@ -47,7 +47,7 @@ void FieldEffect_StartMindReadWave(s32 x, s32 y) {
   work->sourceId = x;
   work->targetId = y;
   work->delay = 8;
-  Ui_FillBank15PaletteGrey();
+  FieldEffect_GreyMindReadPalette();
   Task_Add(FieldEffect_UpdateMindReadWave, 0xc80);
 }
 
@@ -57,7 +57,7 @@ void FieldEffect_FinishWaveAndReleaseHeapBlock(void) {
   void *work;
 
   work = *(void **)((u32)&gMindReadWork);
-  Ui_SetBank15PaletteAndClearRenderMode();
+  FieldEffect_RestoreMindReadPalette();
   Task_Remove(FieldEffect_UpdateMindReadWave);
   Anim_ApplyChildPalette((struct Object *)ObjectEvent_GetById(
                              ((struct MindReadWork *)work)->sourceId),
@@ -79,8 +79,8 @@ void FieldEffect_UpdateMindReadWave(void) {
   struct ObjectEvent *target;
   struct ObjectEvent *particle;
   struct WaveEffectSprite *sprite;
-  struct EffectVector from;
-  struct EffectVector to;
+  struct Vector3 from;
+  struct Vector3 to;
   struct AnimationMetadata *meta;
 
   if (work->delay != 0) {
@@ -240,7 +240,8 @@ s32 FixedPoint_Remainder(s32 value, s32 divisor) {
 /// Per-frame update: once the object has arrived (no destination left on any
 /// axis), frees it: gFieldEffect_UntargetedObjectScript is a lone SC_FREE.
 /// Mind Read's particles end this way at the caster.
-void FieldEffect_SetCallbackWhenTargetUnset(union FieldObject *fieldObject) {
+void FieldEffect_SetCallbackWhenTargetUnset(
+    union ObjectEventOrEffect *fieldObject) {
   struct Object *object = (struct Object *)fieldObject;
   s32 targetY;
   s32 targetX;
@@ -250,19 +251,19 @@ void FieldEffect_SetCallbackWhenTargetUnset(union FieldObject *fieldObject) {
   {
     targetY = object->targetY;
     if ((targetY == targetX) && (object->targetZ == targetY)) {
-      ObjectDispatch_InitializeFar((struct Object *)object,
-                                   gFieldEffect_UntargetedObjectScript);
+      Object_InitializeFar((struct Object *)object,
+                           gFieldEffect_UntargetedObjectScript);
     }
   }
 }
 
 /// Turns colours 1 and 3 to 12 of BG palette 15 grey and starts the BG0
 /// scanline scroll (FieldEffect_ArmBg0HBlankDma) at each VBlank.
-void Ui_FillBank15PaletteGrey(void) {
+void FieldEffect_GreyMindReadPalette(void) {
   volatile u16 *p;
 
   // Window mode 1: messages show as thoughts until
-  // Ui_SetBank15PaletteAndClearRenderMode clears it.
+  // FieldEffect_RestoreMindReadPalette clears it.
   ((struct WindowWork *)gWindowWork[0])->mindRead = 1;
   p = &BG_PLTT_COLOR(15, 1);
   *p = MIND_READ_GREY;
@@ -291,7 +292,7 @@ void Ui_FillBank15PaletteGrey(void) {
 }
 
 /// Stops the BG0 scanline scroll and restores BG palette 15.
-void Ui_SetBank15PaletteAndClearRenderMode(void) {
+void FieldEffect_RestoreMindReadPalette(void) {
   void *work;
 
   work = gWindowWork[0];

@@ -98,7 +98,7 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
     dx = 15 << 16;
 
   for (frame = 0; frame != PLANET_DIVER_FRAMES; frame++) {
-    struct BattleCamera *camera = gCameraWork;
+    struct BattleCamera *camera = gBattleCamera;
 
     ANIM_VIEW_FROM_CAMERA(camera);
     // Frame loop. The user's screen position is taken on frame 0 and from
@@ -136,7 +136,7 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
       actor->snapToTarget = 0;
       Object_SetMoveTargetFar((struct Object *)actor, actor->x * 3, 0,
                               actor->z);
-      ObjectDispatch_SelectAnimationFar(actor, POSE_LEAP);
+      Object_SelectAnimationFar(actor, POSE_LEAP);
       // A 4-frame shake: frame is 4 here.
       work->shakeFrames = frame;
       Sound_PlaySongFar(SE_136);
@@ -152,7 +152,7 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
       actor->velocityX = 0;
       actor->velocityY = 0;
       actor->z = target->z;
-      ObjectDispatch_StartIdleFar((struct Object *)actor);
+      Object_StartIdleFar((struct Object *)actor);
     }
     // From frame 18: fall 15 pixels across and 8 down a frame; on reaching
     // the ground, throw out 256 chips, and the target recoils and flashes
@@ -201,8 +201,8 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
         ANIM_SHOW_DAMAGE(SE_145);
         BattleMotion_ApplyKnockbackFar(work->effect->targets[0],
                                        KNOCKBACK_HURL);
-        ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
-                                  POSE_DAMAGE, 0, 8);
+        BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+                               POSE_DAMAGE, 0, 8);
       }
     }
 
@@ -302,7 +302,7 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
   for (frame = 0; frame != work->effect->targetCount * 32 + 96; frame++) {
     s32 *row;
 
-    camera = gCameraWork;
+    camera = gBattleCamera;
     // Frame loop: 32 frames a target, then 96 more. The battle shows the
     // damage on frame 96, whatever the number of targets.
     if (frame == 96)
@@ -335,8 +335,8 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
       if (frame > k * 32) {
         Transform_ApplyPitch(frame << 9);
         if (frame == k * 32 + 32)
-          ObjectGroup_UpdateMembers(work->effect->targets[k],
-                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 32);
+          BattleAnim_TintBattler(work->effect->targets[k], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, k, 32);
 
         // Each skull steps one pixel nearer the centre a frame (its
         // position less itself over its distance in pixels); skull i takes
@@ -438,7 +438,7 @@ void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {
     // way (16.16 >> 10 is a quarter in BG2X's 20.8; the products keep the
     // signed sine out of a left shift). The wave is 64 lines long (1/64 turn
     // a line) and moves up a line each frame.
-    camera = gCameraWork;
+    camera = gBattleCamera;
     row = work->bg2xLines;
     if (work->effect->side == 0) {
       s32 angle;
@@ -470,8 +470,8 @@ void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {
           s32 spin;
 
           if (frame == (member * 16) + 32) {
-            ObjectGroup_UpdateMembers(work->effect->targets[member], 0,
-                                      POSE_DAMAGE, -1, 0);
+            BattleAnim_TintBattler(work->effect->targets[member], 0,
+                                   POSE_DAMAGE, -1, 0);
           }
           SET_VECTOR(point, object->x, 40 << 16, object->z);
           Projection_Point(point, &screen);

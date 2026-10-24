@@ -331,7 +331,7 @@ s32 Terrain_GetFirstSampleC(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 /// ground, by the player control, and as MapGrid_GetTerrainHeightFar by the
 /// field map's objects, the Psynergy effects and about ten map overlays.
 s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {
-  struct MapGridState *work = gMapGridWork[0];
+  struct MapGridScrollAnimView *work = gMapGridWork[0];
   struct MapGridCell *cell;
   u8 *heightBytes;
 
@@ -364,7 +364,7 @@ s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {
 /// Called through MapGrid_GetCellAttributeLowNibbleFar by the Psynergy Move
 /// effect.
 s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
-  struct MapGridState *gridState = gMapGridWork[0];
+  struct MapGridScrollAnimView *gridState = gMapGridWork[0];
   struct MapGridCell *cells;
   s32 cellX;
   s32 cellY;
@@ -389,7 +389,7 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
 /// through MapGrid_GetMetatileBehaviorAtFar by the Psynergy climbing and by
 /// maps (Altin Peak, Colosso, Imil, Crossbone Isle).
 s32 MapGrid_GetMetatileBehaviorAt(s32 layer, s32 x, s32 y) {
-  struct MapGridState *gridState;
+  struct MapGridScrollAnimView *gridState;
   struct MapGridCell *cell;
 
   gridState = gMapGridWork[0];
@@ -410,7 +410,7 @@ s32 MapGrid_GetMetatileBehaviorAt(s32 layer, s32 x, s32 y) {
 /// (Colosso, Altin Peak, Crossbone Isle, Venus Lighthouse, Tolbi, Sol
 /// Sanctum).
 void MapGrid_SetMetatileBehaviorAt(u32 layer, s32 x, s32 y, u32 collisionCode) {
-  struct MapGridState *gridState = gMapGridWork[0];
+  struct MapGridScrollAnimView *gridState = gMapGridWork[0];
 
   x >>= 20;
   y >>= 20;
@@ -445,7 +445,7 @@ UNUSED s32 MapGrid_GetCellHighFlags(s32 x, s32 y) {
 /// grid from its start.
 s32 MapGrid_CheckCollision(struct Object *object,
                            struct FieldPosition *position) {
-  struct MapGridState *gridState;
+  struct MapGridScrollAnimView *gridState;
   s32 pixelX;
   s32 pixelZ;
   struct MapGridCell *cell;
@@ -499,7 +499,7 @@ s32 MapGrid_IsWallAt(struct WorldPosition *position) {
   s32 pixelY;
   s32 cellX;
   s32 cellY;
-  struct MapGridState *gridState;
+  struct MapGridScrollAnimView *gridState;
   struct MapGridCell *cell;
 
   pixelX = position->x / 65536;

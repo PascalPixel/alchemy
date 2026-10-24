@@ -296,7 +296,7 @@ void SelectionScreen_Draw(void) {
     // (0xfff0 is -16 in the 9-bit x, 0xf0 in the 8-bit y).
     commandSprite->x = node->x - 4;
     commandSprite->y =
-        node->y + (gMenuCursor_BobOffsets[(gFrameTick >> 1) & 15] >> 1) - 4;
+        node->y + (gMenuCursor_BobOffsets[(gVBlankCount >> 1) & 15] >> 1) - 4;
     if (transfer->scale != transfer->scaleEnd) {
       state->transform.scaleX = transfer->scale;
       state->transform.scaleY = transfer->scale;
@@ -358,7 +358,7 @@ void SelectionScreen_Draw(void) {
   if (cursor->kind != ICON_KIND_NONE) {
     entryIndex = (s32)gMenu_AnimatedCursorTiles;
     {
-      void *src = (void *)(entryIndex + (((gFrameTick >> 2) & 15) << 8));
+      void *src = (void *)(entryIndex + (((gVBlankCount >> 2) & 15) << 8));
 
       cursorEntry->tile = VramCache_Load(cursor->slot, 0x100, src);
     }
@@ -378,7 +378,7 @@ void SelectionScreen_Draw(void) {
       }
     }
     cursorEntry->y =
-        cursor->y + gMenuCursor_BobOffsets[(gFrameTick >> 2) & 15] - 32;
+        cursor->y + gMenuCursor_BobOffsets[(gVBlankCount >> 2) & 15] - 32;
     cursorEntry->x = cursor->x - 4;
     if (GameFlag_GetFar(FLAG_IN_BATTLE) != 0) {
       if (state->records[14].kind == ICON_KIND_COMMAND) {
@@ -396,7 +396,7 @@ void SelectionScreen_Draw(void) {
 /// outwards while it flashes after a scroll: the record's base holds the
 /// frames left of the nudge (8 after each scroll) and is the nudge in pixels.
 void SelectionScreen_DrawArrow(struct SelectionScreenWork *state, s32 side) {
-  u32 animationStep = (gFrameTick >> 2) & 7;
+  u32 animationStep = (gVBlankCount >> 2) & 7;
   struct SelectionSprite *arrow;
   const u8 *arrowTiles;
   const u8 *tmp;
@@ -1090,7 +1090,7 @@ s32 Resource_LoadByMode(s32 mode, s32 value) {
     result = VramCache_FindFreeEntry();
     if (result == VRAM_CACHE_ENTRY_COUNT)
       return -1;
-    RenderResource_LoadTableEntry(value, 0, result);
+    Resource_LoadTableEntry(value, 0, result);
     break;
   case ICON_KIND_ABILITY:
     Ability_LoadGlyph(value, 1, &result, &output, 0);
@@ -1137,7 +1137,7 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
     Icon_BuildMiscIconTiles(value, 0, result);
     break;
   case ICON_KIND_TABLE_ENTRY:
-    RenderResource_LoadTableEntry(value, 0, result);
+    Resource_LoadTableEntry(value, 0, result);
     break;
   }
 

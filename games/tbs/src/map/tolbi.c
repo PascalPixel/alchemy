@@ -120,18 +120,18 @@ static s32 Tolbi_KidStopForTarget(struct ObjectEvent *kid,
 
     if (ahead == facing || right == facing || left == facing || force != 0) {
       kid->paused = 1;
-      ObjectDispatch_SelectAnimation(kid, ANIM_STAND);
+      Object_SelectAnimation(kid, ANIM_STAND);
       stopped = 1;
     }
     if (target == ObjectEvent_GetById(LOCALID_PARTY_LEADER) &&
         (farRight == facing || farLeft == facing)) {
       kid->paused = 1;
-      ObjectDispatch_SelectAnimation(kid, ANIM_STAND);
+      Object_SelectAnimation(kid, ANIM_STAND);
       stopped = 1;
     }
   } else {
     kid->paused = 0;
-    ObjectDispatch_SelectAnimation(kid, ANIM_WALK);
+    Object_SelectAnimation(kid, ANIM_WALK);
   }
   return stopped;
 }
@@ -144,9 +144,9 @@ static s32 Tolbi_KidStopForTarget(struct ObjectEvent *kid,
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void removes its zero result; its aligned extent stays 152 bytes.
 #ifdef UBFIX
-static void Tolbi_UpdateKid(union FieldObject *fieldObject) {
+static void Tolbi_UpdateKid(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 Tolbi_UpdateKid(union FieldObject *fieldObject) {
+static s32 Tolbi_UpdateKid(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *self = &fieldObject->objectEvent;
   u8 **workAreas = gWindowWork;
@@ -211,7 +211,7 @@ static void Tolbi_GrowSprout(void) {
   sprout = ObjectEvent_GetById(LOCALID_TOLBI_SPROUT);
   ObjectEvent_SetSpriteFlags(sprout, 0);
   Field_SetMetatileBehaviorAt(0, PIXELS(544), PIXELS(288), MB_CLIMB);
-  GameFlag_Set(FLAG_MAP_TEMP_00);
+  GameFlag_Set(FLAG_TOLBI_SPROUT_GROWN);
 }
 
 /// Reveal uncovers the hidden chest: its map cell is drawn in and the chest
@@ -270,7 +270,7 @@ static void Tolbi_TalkToOlderBrother(void) {
     }
   }
   FieldScript_SetMessageId(msg);
-  Engine_ObjectEventSetAnimation(LOCALID_TOLBI_OLDER_BROTHER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_TOLBI_OLDER_BROTHER, 0);
   ObjectEvent_LinkPair(LOCALID_TOLBI_OLDER_BROTHER, LOCALID_PARTY_LEADER, 2);
   FieldScript_ShowMessageThenWait(LOCALID_TOLBI_OLDER_BROTHER, 0, 10);
   kid->facing = facing;
@@ -308,7 +308,7 @@ static void Tolbi_TalkToYoungerSister(void) {
     }
   }
   FieldScript_SetMessageId(msg);
-  Engine_ObjectEventSetAnimation(LOCALID_TOLBI_YOUNGER_SISTER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_TOLBI_YOUNGER_SISTER, 0);
   ObjectEvent_LinkPair(LOCALID_TOLBI_YOUNGER_SISTER, LOCALID_PARTY_LEADER, 2);
   FieldScript_ShowMessageThenWait(LOCALID_TOLBI_YOUNGER_SISTER, 0, 10);
   kid->facing = facing;
@@ -397,7 +397,7 @@ static void Tolbi_TalkToSnackVendor(void) {
     FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SNACK_VENDOR, 0);
     FieldEffect_StartEffectObject22(ITEM_CORN, 3);
     FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SNACK_VENDOR, 0);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
     PartyInventory_GiveItem(ITEM_CORN, 0);
   } else {
     FieldScript_SetMessageId(MsgTolbiFestivalLongerUsual);
@@ -427,12 +427,12 @@ static void Tolbi_EnterDoor(void) {
                        gTolbiDoors[door].y);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   if (door != TOLBI_TO_WEAPON_AND_ARMOR_SHOP - 1) {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -8);
     FieldScript_WaitFrames(10);
   }
-  Engine_ScriptRequestWarp(work->coordEvent);
+  Import_ScriptRequestWarp(work->coordEvent);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_End();
@@ -441,7 +441,7 @@ static void Tolbi_EnterDoor(void) {
 /// The update of LOCALID_TOLBI_OLD_MAN, who during the festival says he is 65
 /// and that Babi was already old when he was born: gives him the leader's
 /// sprite priority every frame, for both of his sprite parts.
-static void Tolbi_CopyLeaderPriority(union FieldObject *fieldObject) {
+static void Tolbi_CopyLeaderPriority(union ObjectEventOrEffect *fieldObject) {
   s32 priority;
 
   if (fieldObject != NULL) {
@@ -457,7 +457,7 @@ static void Tolbi_CopyLeaderPriority(union FieldObject *fieldObject) {
 /// update, and everything the flags have already changed.
 s32 Tolbi_ApplyEntryState(s32 unused) {
   struct ObjectEvent *objectEvent;
-  void (*kidUpdate)(union FieldObject *);
+  void (*kidUpdate)(union ObjectEventOrEffect *);
   s32 clearFlags;
 
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -471,12 +471,12 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
 #ifdef UBFIX
   kidUpdate = Tolbi_UpdateKid;
 #else
-  kidUpdate = (void (*)(union FieldObject *))Tolbi_UpdateKid;
+  kidUpdate = (void (*)(union ObjectEventOrEffect *))Tolbi_UpdateKid;
 #endif
   objectEvent->timer = KID_CHASES_YOUNGER;
   objectEvent->update = kidUpdate;
   clearFlags = 0;
-  Engine_ObjectEventSetPosition(LOCALID_TOLBI_YOUNGER_SISTER, PIXELS(368),
+  Import_ObjectEventSetPosition(LOCALID_TOLBI_YOUNGER_SISTER, PIXELS(368),
                                 PIXELS(320));
   ObjectEvent_SetActionScript(LOCALID_TOLBI_YOUNGER_SISTER,
                               gTolbiYoungerSisterRun);
@@ -492,13 +492,13 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
                             PIXELS(328));
   }
   // The puddle is frozen.
-  if (GameFlag_Get(FLAG_MAP_TEMP_01) != 0) {
+  if (GameFlag_Get(FLAG_TOLBI_PUDDLE_FROZEN) != 0) {
     Tolbi_FreezePuddle();
   }
   // The sprout has grown.
-  if (GameFlag_Get(FLAG_MAP_TEMP_00) != 0) {
+  if (GameFlag_Get(FLAG_TOLBI_SPROUT_GROWN) != 0) {
     Tolbi_GrowSprout();
-    Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SPROUT, 4);
+    Import_ObjectEventSetAnimation(LOCALID_TOLBI_SPROUT, 4);
   }
 
   // After Colosso the crowd has gone home and is moved off the map. On finals
@@ -518,7 +518,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
     if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
       ObjectEvent_SetPosition(LOCALID_TOLBI_SCALPER, PIXELS(280), PIXELS(80));
       ObjectEvent_FaceDirection(LOCALID_TOLBI_SCALPER, FACING_SOUTHEAST, 0);
-      Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SCALPER, ANIM_STAND);
+      Import_ObjectEventSetAnimation(LOCALID_TOLBI_SCALPER, ANIM_STAND);
     }
   }
   return 0;
@@ -554,7 +554,7 @@ static void Tolbi_TalkToSpringVisitor(void) {
 /// The gate to Tolbi Spring (MB_TOLBI_GATE_TO_SPRING), once the visitor at the
 /// gate has stepped aside.
 static void Tolbi_EnterSpring(void) {
-  Engine_ScriptRequestWarp(TOLBI_TO_TOLBI_SPRING);
+  Import_ScriptRequestWarp(TOLBI_TO_TOLBI_SPRING);
   FieldScript_End();
 }
 
@@ -562,7 +562,7 @@ static void Tolbi_EnterSpring(void) {
 static void Tolbi_RequestTouchedWarp(void) {
   s16 *trigger = &gFieldWork->coordEvent;
 
-  Engine_ScriptRequestWarp(*trigger);
+  Import_ScriptRequestWarp(*trigger);
 }
 
 /// Two soldiers searching for the missing Babi stop the party and show his
@@ -583,7 +583,7 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   // The soldiers come up to the party; the poster waits off to the side.
   ObjectEvent_SetPosition(LOCALID_TOLBI_SOLDIER_A, PIXELS(72), PIXELS(208));
   ObjectEvent_SetPosition(LOCALID_TOLBI_SOLDIER_B, PIXELS(56), PIXELS(208));
-  ObjectGroup_ConfigureChildValue(LOCALID_TOLBI_MISSING_PERSON_POSTER, 15);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_MISSING_PERSON_POSTER, 15);
   ObjectEvent_SetSpriteFlags(
       ObjectEvent_GetById(LOCALID_TOLBI_MISSING_PERSON_POSTER), 0);
   ObjectEvent_SetPosition(LOCALID_TOLBI_MISSING_PERSON_POSTER, PIXELS(95),
@@ -593,9 +593,9 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 64, 264);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_TOLBI_SOLDIER_A);
-  Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_A, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_B, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_A, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_B, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   ObjectMotion_SetAngleToward(LOCALID_TOLBI_SOLDIER_A, LOCALID_PARTY_LEADER, 0);
   ObjectMotion_SetAngleToward(LOCALID_TOLBI_SOLDIER_B, LOCALID_PARTY_LEADER, 0);
   FieldScript_WaitFrames(20);
@@ -633,7 +633,7 @@ static void Tolbi_MeetSearchingSoldiers(void) {
     ObjectEvent_FaceDirection(LOCALID_TOLBI_SOLDIER_A, FACING_SOUTH, 0);
     ObjectMotion_ArmCallback(LOCALID_TOLBI_SOLDIER_B, FACING_SOUTH, 0);
     FieldScript_WaitFrames(30);
-    Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_A, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_A, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_TOLBI_SOLDIER_B, ANIM_NOD);
     FieldScript_WaitFrames(20);
     ObjectEvent_SetSpeed(LOCALID_TOLBI_SOLDIER_A, PIXELS(9) / 5,
@@ -665,7 +665,7 @@ static void Tolbi_MeetSearchingSoldiers(void) {
     ObjectEvent_FaceDirection(LOCALID_TOLBI_SOLDIER_A, FACING_SOUTH, 0);
     ObjectEvent_FaceDirection(LOCALID_TOLBI_SOLDIER_B, FACING_SOUTH, 0);
     FieldScript_WaitFrames(30);
-    Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_A, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_A, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_TOLBI_SOLDIER_B, ANIM_NOD);
     FieldScript_WaitFrames(20);
     ObjectEvent_SetSpeed(LOCALID_TOLBI_SOLDIER_A, PIXELS(8) / 5, PIXELS(4) / 5);
@@ -673,9 +673,9 @@ static void Tolbi_MeetSearchingSoldiers(void) {
     ObjectMotion_ResetAndSetPositionInMode2(LOCALID_TOLBI_SOLDIER_A, 72, 184);
     ObjectMotion_SetPositionAndReset(LOCALID_TOLBI_SOLDIER_B, 56, 184);
   }
-  Engine_ObjectEventSetPosition(LOCALID_TOLBI_SOLDIER_A, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_TOLBI_SOLDIER_B, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_TOLBI_MISSING_PERSON_POSTER, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_TOLBI_SOLDIER_A, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_TOLBI_SOLDIER_B, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_TOLBI_MISSING_PERSON_POSTER, 0, 0);
   GameFlag_Set(FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI);
   FieldScript_End();
 }
@@ -689,11 +689,11 @@ static void Tolbi_FreezePuddle(void) {
     puddle->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
     puddle->motionFlags = 0;
   }
-  Engine_ObjectEventSetAnimation(LOCALID_TOLBI_PUDDLE, 5);
+  Import_ObjectEventSetAnimation(LOCALID_TOLBI_PUDDLE, 5);
   {
     MapGrid_CopyCellAttributes(36, 16, 1, 1, 34, 16);
   }
-  GameFlag_Set(FLAG_MAP_TEMP_01);
+  GameFlag_Set(FLAG_TOLBI_PUDDLE_FROZEN);
 }
 
 /// The action script of a mirrored object event: flips its sprite and passes 7
@@ -874,7 +874,7 @@ struct ObjectEventTemplate gTolbiObjectEventTemplates[] = {
 
 /// During the festival, before the finals.
 struct MapEvent gTolbiEventsFestival[] = {
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_TOLBI_SPROUT, FLAG_MAP_TEMP_00, EVENT_SCRIPT(Tolbi_GrowSprout) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_TOLBI_SPROUT, FLAG_TOLBI_SPROUT_GROWN, EVENT_SCRIPT(Tolbi_GrowSprout) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_SOUTH, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_NORTHWEST, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_INN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
@@ -935,7 +935,7 @@ struct MapEvent gTolbiEventsFestival[] = {
 // The international editions find the jar only when the party faces north.
     { TOLBI_JAR_SEARCH_KIND, MB_TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { BG_EVENT(BG_EVENT_CHEST), MB_TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_TOLBI_PUDDLE, FLAG_MAP_TEMP_01, EVENT_SCRIPT(Tolbi_FreezePuddle) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_TOLBI_PUDDLE, FLAG_TOLBI_PUDDLE_FROZEN, EVENT_SCRIPT(Tolbi_FreezePuddle) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RevealHiddenChest) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_HideRevealedChest) },
     { MAP_EVENTS_END },
@@ -943,7 +943,7 @@ struct MapEvent gTolbiEventsFestival[] = {
 
 /// On finals day.
 struct MapEvent gTolbiEventsFinalsDay[] = {
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_TOLBI_SPROUT, FLAG_MAP_TEMP_00, EVENT_SCRIPT(Tolbi_GrowSprout) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_TOLBI_SPROUT, FLAG_TOLBI_SPROUT_GROWN, EVENT_SCRIPT(Tolbi_GrowSprout) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_SOUTH, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_NORTHWEST, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_INN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
@@ -1004,7 +1004,7 @@ struct MapEvent gTolbiEventsFinalsDay[] = {
     { BG_EVENT(BG_EVENT_BARREL), MB_TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
     { BG_EVENT(BG_EVENT_JAR), MB_TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { BG_EVENT(BG_EVENT_CHEST), MB_TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_TOLBI_PUDDLE, FLAG_MAP_TEMP_01, EVENT_SCRIPT(Tolbi_FreezePuddle) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_TOLBI_PUDDLE, FLAG_TOLBI_PUDDLE_FROZEN, EVENT_SCRIPT(Tolbi_FreezePuddle) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RevealHiddenChest) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_HideRevealedChest) },
     { MAP_EVENTS_END },
@@ -1012,7 +1012,7 @@ struct MapEvent gTolbiEventsFinalsDay[] = {
 
 /// After Colosso has ended.
 struct MapEvent gTolbiEventsAfterColosso[] = {
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_TOLBI_SPROUT, FLAG_MAP_TEMP_00, EVENT_SCRIPT(Tolbi_GrowSprout) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_TOLBI_SPROUT, FLAG_TOLBI_SPROUT_GROWN, EVENT_SCRIPT(Tolbi_GrowSprout) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_SOUTH, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_NORTHWEST, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_INN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
@@ -1057,7 +1057,7 @@ struct MapEvent gTolbiEventsAfterColosso[] = {
     { BG_EVENT(BG_EVENT_BARREL), MB_TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
     { BG_EVENT(BG_EVENT_JAR), MB_TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { BG_EVENT(BG_EVENT_CHEST), MB_TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_TOLBI_PUDDLE, FLAG_MAP_TEMP_01, EVENT_SCRIPT(Tolbi_FreezePuddle) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_TOLBI_PUDDLE, FLAG_TOLBI_PUDDLE_FROZEN, EVENT_SCRIPT(Tolbi_FreezePuddle) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RevealHiddenChest) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_HideRevealedChest) },
     { MAP_EVENTS_END },

@@ -4,16 +4,16 @@
 
 #include "../screens_internal.h"
 
-extern const u8 *gHeadingPictures[];
+extern const u8 *gMenuTitlePictures[];
 
-/// Decompresses picture `picture` of gHeadingPictures, a 64x16
+/// Decompresses picture `picture` of gMenuTitlePictures, a 64x16
 /// heading (Save, Continue, Copy, Erase, Battle, Link, Pause, Setup) of 512
 /// bytes, into VRAM slot `slot`, through a 1 KB staging block in
 /// HEAP_SLOT_TILE_SCRATCH. The heap block is not freed when `slot` is not a
 /// valid VRAM slot.
-void Heading_Load(s32 picture, s32 slot) {
+void MenuTitle_Load(s32 picture, s32 slot) {
   void *stagingBuffer = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
-  const u8 *resource = gHeadingPictures[picture];
+  const u8 *resource = gMenuTitlePictures[picture];
 
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
     Decompress_ByteLz(resource, stagingBuffer);
@@ -22,14 +22,14 @@ void Heading_Load(s32 picture, s32 slot) {
   }
 }
 
-/// Shows heading `picture` of gHeadingPictures as two 32x16
+/// Shows heading `picture` of gMenuTitlePictures as two 32x16
 /// sprites side by side at (x, y) in `window`, on draw layer 253, and
 /// returns the left one (the right one follows it in the window's list).
 /// Returns NULL when no VRAM slot is free. The file menu shows its
 /// mode's heading this way (FileMenu_SelectFile), and window/options.c the
 /// option menu's Setup and the pause menu's Pause.
-struct WindowSprite *Heading_Create(s32 picture, struct Window *window, s32 x,
-                                    s32 y) {
+struct WindowSprite *MenuTitle_Create(s32 picture, struct Window *window, s32 x,
+                                      s32 y) {
   s32 slot;
   struct WindowSprite *first;
   struct WindowSprite *second;
@@ -40,7 +40,7 @@ struct WindowSprite *Heading_Create(s32 picture, struct Window *window, s32 x,
 
   // 0x4000 is the wide shape of attribute 0, which with size 2 is 32x16, 8
   // tiles. Neither sprite is checked for NULL.
-  Heading_Load(picture, slot);
+  MenuTitle_Load(picture, slot);
   first = WindowSprite_Create(slot, 0x80004000, window, x, y);
   first->sentinel = 0xFD;
   second = WindowSprite_Create(slot, 0x80004000, window, x + 32, y);
@@ -50,19 +50,19 @@ struct WindowSprite *Heading_Create(s32 picture, struct Window *window, s32 x,
   return first;
 }
 
-/// Bobs the two sprites of a pair (see Heading_Create) up and down
-/// by gHeadingBobOffsets, one step every four frames.
-void Heading_Bob(struct WindowSprite *obj) {
+/// Bobs the two sprites of a pair (see MenuTitle_Create) up and down
+/// by gMenuTitleBobOffsets, one step every four frames.
+void MenuTitle_Bob(struct WindowSprite *obj) {
   s32 value;
 
-  value = (u8)obj->y + gHeadingBobOffsets[(gFrameTick >> 2) & 7];
+  value = (u8)obj->y + gMenuTitleBobOffsets[(gVBlankCount >> 2) & 7];
   obj->oam.y = value;
   obj = obj->next;
-  /* FAKEMATCH(volatile): gFrameTick read again for the second sprite, as the
+  /* FAKEMATCH(volatile): gVBlankCount read again for the second sprite, as the
    * bytes do; read plainly, CSE reuses the first index and 20 of 22
    * instructions differ in tbs-en. */
-  value =
-      (u8)obj->y + gHeadingBobOffsets[(*(volatile u32 *)&gFrameTick >> 2) & 7];
+  value = (u8)obj->y +
+          gMenuTitleBobOffsets[(*(volatile u32 *)&gVBlankCount >> 2) & 7];
   obj->oam.y = value;
 }
 
@@ -77,7 +77,7 @@ void CommandIcon_Load(s32 icon, s32 slot, s32 remap) {
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
     Decompress_ByteLz((void *)((u32)offsetTable + offsetTable[icon]), buffer);
     if (remap != 0)
-      Runtime_RemapBytesByTableFar(buffer, 768);
+      SpriteColor_RemapPixelsFar(buffer, 768);
     VramCache_Load(slot, size, buffer);
     FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
   }
@@ -109,7 +109,7 @@ struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
 /// The option menu pulses its selected icon with it each frame
 /// (window/options.c).
 void WindowSprite_Pulse(struct WindowSprite *obj) {
-  s32 scale = gWindowSprite_PulseScales[(gFrameTick >> 1) & 7];
+  s32 scale = gWindowSprite_PulseScales[(gVBlankCount >> 1) & 7];
   struct AffineTransform effect;
 
   if (scale < 0)
@@ -255,7 +255,7 @@ void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
   } while (row <= 7);
 }
 
-/// Draws the two page arrows (gRomShiftedTilePair) into the two tiles at
+/// Draws the two page arrows (gPageArrowTiles) into the two tiles at
 /// VRAM address `offset`, sliding outward: the left arrow 2 or 3 pixels to
 /// the left, the right one as far to the right, eight frames each. They are
 /// drawn over the window frame's top edge tile (0x11) and top-right corner
@@ -263,7 +263,7 @@ void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
 /// 0x335 (LIST_TILE_PAGES_LEFT); the field menus (menu/menu, by far call)
 /// and the password pages of the title's Send (menu/main_menu.c) call it for
 /// PAGE_ARROW_VRAM.
-void Link_DrawShiftedTilePair(s32 offset) {
+void Link_DrawPageArrows(s32 offset) {
   s32 phase = (gFrameCount >> 2) & 3;
 
   // Phases 0 to 3 of a 16-frame cycle become shifts 2, 2, 3, 3.
@@ -274,10 +274,10 @@ void Link_DrawShiftedTilePair(s32 offset) {
     phase = 1;
   }
   phase++;
-  Graphics_MergeShiftedTileRows((u32 *)0x06000220, (u32 *)gRomShiftedTilePair,
+  Graphics_MergeShiftedTileRows((u32 *)0x06000220, (u32 *)gPageArrowTiles,
                                 (u32 *)offset, -phase);
   Graphics_MergeShiftedTileRows((u32 *)0x06000240,
-                                (u32 *)(gRomShiftedTilePair + 32),
+                                (u32 *)(gPageArrowTiles + 32),
                                 (u32 *)(offset + 32), phase);
 }
 
@@ -512,9 +512,10 @@ void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile) {
 /// from tile index * 16 (Text_LoadRemappedGlyph), and into the row's
 /// shared VRAM cache entry for its 32x32 sprite, which BattleCommandRow_Run
 /// shows only for the selected icon. The icon number is also its command
-/// (SelectionEntry.kind), which names its label.
-void Text_DrawCharacter(struct SelectionWork *work, s32 index, u32 icon) {
-  struct SelectionEntry *entry = &work->entries[index];
+/// (BattleCommandRowIcon.kind), which names its label.
+void Text_DrawCharacter(struct BattleCommandRowWork *work, s32 index,
+                        u32 icon) {
+  struct BattleCommandRowIcon *entry = &work->entries[index];
 
   Text_LoadRemappedGlyph(&work->palette, icon, index * 16);
   work->entries[index].kind = icon;
@@ -558,5 +559,5 @@ UNUSED void Graphics_InstallBg1VCountHandler(void) {
   do {
     address = (u32)Graphics_SetBg1Priority0;
   } while (0);
-  Runtime_SetIrqHandler(2, 136, (InterruptHandler)address);
+  Irq_SetHandler(2, 136, (InterruptHandler)address);
 }

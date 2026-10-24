@@ -99,7 +99,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   state = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_MENU, 260);
   Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
   Graphics_ExpandVramTilesByColorTable((u16 *)0x06006000);
-  Link_DrawShiftedTilePair(0x06006680);
+  Link_DrawPageArrows(0x06006680);
   Menu_BuildLocalizedPatternTiles();
   battle = gBattleWork;
   for (k = 0; k < 8; k++) {
@@ -188,9 +188,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 
       block = Alloc(12);
       if (gDebugMode != 0 && (gKeysHeld & KEY_START) != 0) {
-        selection = BATTLE_SIDES_ENEMIES;
+        selection = BATTLE_SIDE_MASK_ENEMIES;
       } else {
-        selection = BATTLE_SIDES_PARTY;
+        selection = BATTLE_SIDE_MASK_PARTY;
       }
       handle = BattleUnit_ListIdsFar(selection, block);
       WaitFrames(1);

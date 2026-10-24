@@ -31,7 +31,7 @@ FarCall_WindowTable:
 	overlay_veneer Text_SetStyle
 	export WindowSprite_CreateFar, WindowSprite_Create
 	export WindowSprite_CreateFromResourceFar, WindowSprite_CreateFromResource
-	export SideObject_CreateFar, CreateSideObject
+	export Portrait_CreateFar, Portrait_Create
 	export Portrait_ReloadFar, Portrait_Reload
 	overlay_veneer WindowSprite_SetMotion
 	overlay_veneer WindowSprite_SetInvertedSentinel
@@ -64,7 +64,7 @@ FarCall_WindowTable:
 	export BattleMessage_ShowAndWaitFar, BattleMessage_ShowAndWait
 	export BattleMessage_OpenFar, BattleMessage_Open
 	overlay_veneer MenuArrow_NoOpCallback4
-	export Localization_LookupEntryIdFar, Portrait_GetForSpeaker
+	export Portrait_GetForSpeakerFar, Portrait_GetForSpeaker
 	export FieldMenu_RunFar, FieldMenu_Run
 	export FileMenu_SelectActionFar, FileMenu_SelectAction
 	export IconMenu_ChooseSendOptionFar, IconMenu_ChooseSendOption
@@ -81,7 +81,7 @@ FarCall_WindowTable:
 	export Icon_DrawItemFar, Icon_DrawItem
 	export Text_DrawWideStringAtOffsetFar, Text_DrawWideStringAtOffset
 	overlay_veneer OptionMenu_SelectionNoOp
-	export Win_FillScanlineSpansFar, Win_FillScanlineSpans
+	export ScanlineWindow_FillSpansFar, ScanlineWindow_FillSpans
 	export WindowSprite_RedrawSavedRectFar, WindowSprite_RedrawSavedRect
 	export WindowSprite_ClearListFar, WindowSprite_ClearList
 	export Window_SetTilemapEntryFar, Window_SetTilemapEntry
@@ -105,8 +105,8 @@ FarCall_WindowTable:
 	overlay_veneer Save_WriteFile
 	export Save_ScanRecordFlagsFar, Save_ScanRecordFlags
 	export NamingScreen_EditMemberNameFar, NamingScreen_EditMemberName
-	overlay_veneer Resource_CopyFixedBlockB
-	overlay_veneer Resource_CopyFixedBlockA
+	overlay_veneer NamingScreen_LoadPointingHandTiles
+	overlay_veneer NamingScreen_LoadCaretTiles
 	overlay_veneer SelectionScreen_SetPosition
 	export DebugBrowser_IconsFar, DebugBrowser_Icons
 	export DebugBrowser_PortraitsFar, DebugBrowser_Portraits
@@ -115,13 +115,13 @@ FarCall_WindowTable:
 	export WindowColor_ApplyFar, WindowColor_Apply
 	overlay_veneer OptionMenu_Run
 	export PauseMenu_RunFar, PauseMenu_Run
-	overlay_veneer Win_FillScreenBlockRect
+	overlay_veneer BgScreen_FillRect
 	export Menu_SelectShopCommandFar, Menu_SelectShopCommand
 	export Menu_SelectSanctumServiceFar, Menu_SelectSanctumService
 	export YesNoMenu_RunFar, YesNoMenu_Run
 	export Menu_SelectCoinsOrMedalsFar, Menu_SelectCoinsOrMedals
 	export ColossoMenu_ChooseFar, ColossoMenu_Choose
-	overlay_veneer RenderResource_LoadTableEntry
+	overlay_veneer Resource_LoadTableEntry
 	export YesNoMenu_RunAtFar, YesNoMenu_RunAt
 	export Resource_LoadFixedBlockBIntoFreeSlotFar, Resource_LoadFixedBlockBIntoFreeSlot
 	export Text_MeasureMessageFar, Text_MeasureMessage
@@ -135,6 +135,6 @@ FarCall_WindowTable:
 	export Save_CountRecordsExcludingFlaggedFar, Save_CountRecordsExcludingFlagged
 	export Window_DrawFrameFar, Window_DrawFrame
 	export Window_EraseBorderRectFar, Window_EraseBorderRect
-	export Link_DrawShiftedTilePairFar, Link_DrawShiftedTilePair
+	export Link_DrawPageArrowsFar, Link_DrawPageArrows
 	export Party_ShowJoinedMessageFar, Party_ShowJoinedMessage
 	export Party_ShowPairJoinedMessageFar, Party_ShowPairJoinedMessage

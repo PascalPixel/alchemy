@@ -121,8 +121,8 @@ const u8 *Enemy_GetDefinition(s32 selector) {
 
 /// Copies `count` bytes from `first` to `second` when `direction` is set, and
 /// from `second` to `first` otherwise.
-void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
-                                  s32 direction) {
+void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
+                                 s32 direction) {
   s32 index;
 
   if (direction != 0) {
@@ -491,7 +491,7 @@ void GameFlag_RefreshLureCap(void) {
 /// SaveBlock_InitializeDefaults stores it as a new game's start stamp, and the
 /// file menu (FileMenu_SelectFile, Save_BuildFileSummary) and the main
 /// menu compare saves with it.
-u32 Runtime_GetBuildStampTime(void) {
+u32 BuildStamp_GetTime(void) {
   u8 *digits;
   s32 hourTens;
   s32 hourUnits;
@@ -538,7 +538,7 @@ u32 Runtime_GetBuildStampTime(void) {
 /// writes one byte through. gMapLocalState's 0x78 bytes and
 /// gInventorySnapshot's 0x8c come first, so firstSnapshotSlot is the first byte
 /// of gObjectEventSnapshot.
-struct MapLocalStateTail {
+struct MapLocalStateSnapshotView {
   u8 mapAndInventory[0x100]; ///< gMapLocalState, then most of
                              ///< gInventorySnapshot
   /// gInventorySnapshot's last word, past the 65 halfwords the snapshot
@@ -573,9 +573,10 @@ void SaveBlock_InitializeDefaults(void) {
   zero = 0;
   START_DMA(&zero, gGameFlagBytes,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x80);
-  ((struct MapLocalStateTail *)gMapLocalState)->firstSnapshotSlot = 0xff;
+  ((struct MapLocalStateSnapshotView *)gMapLocalState)->firstSnapshotSlot =
+      0xff;
   zero = 0;
-  START_DMA(&zero, gSaveStamp + 0x1c,
+  START_DMA(&zero, gBattleArenaRecord + 0x1c,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x298);
   // Build the characters, then install input and message defaults.
   Party_InitializeCharacters();
@@ -597,7 +598,7 @@ void SaveBlock_InitializeDefaults(void) {
   gSaveBlock.windowColor[0] = 0;
   gSaveBlock.windowColor[1] = 8;
   gSaveBlock.buildStamp = 0;
-  gSaveBlock.startStamp = Runtime_GetBuildStampTime();
+  gSaveBlock.startStamp = BuildStamp_GetTime();
   gPlayTimeFrames = 0;
   gSaveBlock.playTime = 0;
   gIdleSleepEnabled = 0;

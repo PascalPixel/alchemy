@@ -11,7 +11,7 @@
 /// rows play from the last: each comes down slantwise onto its spot and stays
 /// there for its last seven frames. They freeze while FLAG_WEATHER_HELD is set.
 /// Vale runs them with the lightning while FLAG_VALE_STORM is set
-/// (vale_gate.c).
+/// (vale_plaza.c).
 void Weather_UpdateRain(void) {
   struct MapGridScrollWork *view = gMapGridWork[0];
   struct WeatherWork *work = gMapGridWork[21];
@@ -71,11 +71,11 @@ void Weather_UpdateRain(void) {
 /// for the next. FLAG_WEATHER_HELD holds the next burst back, and a timer below
 /// 0 stops the lightning.
 void Weather_UpdateLightning(void) {
-  struct LightningWork *work = gLightningWork[0];
+  struct FieldBlendWork *work = gFieldBlendWork[0];
   // The palette fade is reached from the neighbouring lightning slot, the
   // spelling this site matched with; gPaletteFadeWork is not measured here.
   struct PaletteFade *target =
-      gLightningWork[HEAP_SLOT_PALETTE_FADE - HEAP_SLOT_LIGHTNING];
+      gFieldBlendWork[HEAP_SLOT_PALETTE_FADE - HEAP_SLOT_FIELD_BLEND];
   s16 *timer = &work->timer;
 
   if (*timer < 0)
@@ -168,7 +168,7 @@ void Weather_StartRain(void) {
 }
 
 /// A particle's first word, seen as a value or a link.
-union DustWord {
+union ParticleLinkWord {
   u32 value;
   void *link;
 };
@@ -439,10 +439,10 @@ void FieldEffect_InitializeSparkles(void) {
 
     attr = (u32)sparkle;
     *(u32 *)attr = clear;
-    attr += sizeof(union DustWord);
+    attr += sizeof(union ParticleLinkWord);
     leader = view->origin;
     *(u32 *)attr = 0x40000400;
-    attr += sizeof(union DustWord);
+    attr += sizeof(union ParticleLinkWord);
     *(u32 *)attr = 0xd400;
     attr = leader[0];
     z = leader[2];
@@ -460,15 +460,16 @@ void FieldEffect_InitializeSparkles(void) {
 /// Starts the storm's lightning (Weather_UpdateLightning): builds the dark
 /// (0x10003, PALETTE_TINT_WARM) and lit (0x10005, PALETTE_TINT_PALE)
 /// BG colours and their 12-step fade, and arms the first burst to end in 600
-/// frames, repeating. The work is heap block HEAP_SLOT_LIGHTNING, which the
+/// frames, repeating. The work is heap block HEAP_SLOT_FIELD_BLEND, which the
 /// other lightning calls look up again. Vale's storm scenes call it.
 void Weather_StartLightning(void) {
-  struct LightningWork *work;
+  struct FieldBlendWork *work;
   struct PaletteFade *buffers;
 
-  work = AllocHeapSlotEwram(HEAP_SLOT_LIGHTNING, sizeof(struct LightningWork));
+  work =
+      AllocHeapSlotEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
   buffers = gPaletteFadeWork;
-  Dma_Fill32(0, work, sizeof(struct LightningWork));
+  Dma_Fill32(0, work, sizeof(struct FieldBlendWork));
   PaletteFade_Build(0x10003, buffers, work, 1);
   PaletteFade_Build(0x10005, buffers, work->to, 1);
   PaletteFade_CalculateSteps(work->to, work->from, work->delta, 12);
@@ -480,8 +481,8 @@ void Weather_StartLightning(void) {
 
 /// Stops the lightning: no flash for 0x7fff frames, and none after.
 void Weather_StopLightning(void) {
-  struct LightningWork *state =
-      AllocHeapSlotEwram(HEAP_SLOT_LIGHTNING, sizeof(struct LightningWork));
+  struct FieldBlendWork *state =
+      AllocHeapSlotEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
   state->timer = 0x7FFF;
   state->enabled = 0;
 }
@@ -490,8 +491,8 @@ void Weather_StopLightning(void) {
 /// 12; Weather_UpdateLightning flashes at 11), then no more. Vale's storm
 /// and eruption scenes call it.
 void Weather_LastLightning(void) {
-  struct LightningWork *state =
-      AllocHeapSlotEwram(HEAP_SLOT_LIGHTNING, sizeof(struct LightningWork));
+  struct FieldBlendWork *state =
+      AllocHeapSlotEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
   state->timer = 12;
   state->enabled = 0;
 }
@@ -499,8 +500,8 @@ void Weather_LastLightning(void) {
 /// Restarts the lightning: the next burst ends in 128 frames, its first flash
 /// 118 frames from now, and bursts repeat.
 void Weather_ResumeLightning(void) {
-  struct LightningWork *state =
-      AllocHeapSlotEwram(HEAP_SLOT_LIGHTNING, sizeof(struct LightningWork));
+  struct FieldBlendWork *state =
+      AllocHeapSlotEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
   state->timer = 128;
   state->enabled = 1;
 }
@@ -511,13 +512,14 @@ void Weather_ResumeLightning(void) {
 /// Vale's eruption calls it with the warm and red tints
 /// (vale_eruption.c).
 void Weather_StartLightningFlash(s32 from, s32 to) {
-  struct LightningWork *work;
+  struct FieldBlendWork *work;
   struct PaletteFade *buffers;
   s16 *target;
 
-  work = AllocHeapSlotEwram(HEAP_SLOT_LIGHTNING, sizeof(struct LightningWork));
+  work =
+      AllocHeapSlotEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
   buffers = gPaletteFadeWork;
-  Dma_Fill32(0, work, sizeof(struct LightningWork));
+  Dma_Fill32(0, work, sizeof(struct FieldBlendWork));
   PaletteFade_Build(from, buffers, work, 1);
   target = work->to;
   PaletteFade_Build(to, buffers, target, 1);

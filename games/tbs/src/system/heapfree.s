@@ -46,7 +46,7 @@ Free:
 .L_heap_heads:
 	.4byte	gHeapSlots
 
-@ C2: Runtime_StopOnGamePakIrq has a reachable exit with no return or
+@ C2: Irq_StopOnGamePakRemoved has a reachable exit with no return or
 @ interworking branch: when (IE & IF & 0x2000) is zero, its final bne falls
 @ straight into Thumb System_Initialize while the CPU is still in ARM mode.
 @ Neither a procedure return nor a tail call can have this linkage.
@@ -66,8 +66,8 @@ Free:
 	.section .text.gamepak, "ax", %progbits
 	.balign 4
 	.arm
-	.global Runtime_StopOnGamePakIrq
-Runtime_StopOnGamePakIrq:
+	.global Irq_StopOnGamePakRemoved
+Irq_StopOnGamePakRemoved:
 	mov	ip, #0x04000000
 	add	r3, ip, #0x200
 	ldr	r2, [r3]

@@ -217,9 +217,9 @@ code matches only through it. [An object](../glossary.md#object)'s 112 bytes
 are `struct Object` almost everywhere, but `BattleObject_SpawnObjectsForList`
 reads them as `BattleSpriteObject`, with the sprite word untyped; `update.c`,
 ARM code built with GCC 2.95.2, which cannot read `Object`'s anonymous
-unions, keeps `ScriptMotionObject`; and the operand handlers of `SC_SET`,
+unions, keeps `ObjectArmView`; and the operand handlers of `SC_SET`,
 `SC_ADD` and `SC_CMP` keep `ScriptOperands`. The window sprites
-(`struct SpriteOutput`), the selection records (`struct GlyphCursor`), the
+(`struct WindowSpriteCellView`), the selection records (`struct GlyphCursor`), the
 menu cursors (`union MenuCursorRef`) and each menu screen's work
 (`ItemMenuWork`, `SummaryScreenWork` and the others) follow the same rule. A
 field's own type is likewise the one every site matches with: `Object.sprite`
@@ -228,7 +228,7 @@ load moves.
 
 ### Macros and their expansions
 
-- A macro and its expansion can compile differently. `SerialRuntime_Initialize`
+- A macro and its expansion can compile differently. `Serial_Initialize`
   writes `IRQ_LOCK` out as its steps, with the IME pointer set inside the
   save; as `IRQ_LOCK`, 1 of 123 instructions differs. Other sites keep
   arithmetic on `BLEND_ALPHA` rather than its `|` form, its operands written
@@ -292,7 +292,7 @@ load moves.
   another order. Helpers in Colosso and in `MapId_KolimaForestFloodgate` are
   called ahead of their definitions, with the correct declarations in their
   unit headers under `UBFIX`, and `script_layer.h` gathers the engine routines
-  the maps call that way (`Engine_GameFlagSet`).
+  the maps call that way (`Import_GameFlagSet`).
 - Code with no function type is called through a cast function pointer. Code
   copied to RAM is called through one too, or through `_call_via_r3`, the
   compiler library's call through r3, with the code's address as its fourth
@@ -312,10 +312,10 @@ slot of `gHeapSlots`, and many of those slots also have a name of their own
 (`gFieldWork`, `gPaletteFadeWork` and so on), so the same block can be reached
 several ways: `HEAP_SLOT_BLOCK(n)`, `gHeapSlots[n]`, `*(gHeapSlots + n)`, the
 slot's own name (`gWindowWork[0]`, `WINDOW_WORK`), from a neighbouring slot
-(`gLightningWork[HEAP_SLOT_PALETTE_FADE - HEAP_SLOT_LIGHTNING]` in
+(`gFieldBlendWork[HEAP_SLOT_PALETTE_FADE - HEAP_SLOT_FIELD_BLEND]` in
 `Weather_UpdateLightning`), through a base pointer (`slots[n - base]`,
 `ANIM_SLOT`, `ANIM_BLITTERS[n]`), or with `AllocHeapSlotEwram`, which returns
-the existing block. Indexing past a named pointer (`(void **)&gCameraWork`) is
+the existing block. Indexing past a named pointer (`(void **)&gBattleCamera`) is
 undefined behaviour, with its defined form behind `UBFIX`. Not every site has
 been measured against the other spellings; each keeps its spelling until it
 is, and its note says so.
@@ -328,7 +328,7 @@ is, and its note says so.
   `gPushedObject_FootprintBounds`); `gFont_MarkGlyphCodes` is placed the same
   way because a `const` extern changes the schedule of its reader.
 - One table can go by several extern names, given as `__asm__` labels, where
-  the ROM keeps a literal for each use (`RenderResource_LoadTableEntry`).
+  the ROM keeps a literal for each use (`Resource_LoadTableEntry`).
 - A local array of constants compiles to an anonymous read-only constant
   copied into the frame, and a struct copy of a named table to the same code;
   which one a site keeps decides where the data lands

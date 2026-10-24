@@ -24,7 +24,7 @@ s32 FixedSqrtFar(s32 value);
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, void *position);
 /// Installs `handler` for interrupt `irq` and enables it, or disables it for a
 /// null handler; `vcount` is the line a VCount interrupt fires on.
-void Runtime_SetIrqHandlerFar(u32 irq, s32 vcount, InterruptHandler handler);
+void Irq_SetHandlerFar(u32 irq, s32 vcount, InterruptHandler handler);
 /// Returns heap slot `kind`'s block, first allocating `size` bytes for it from
 /// IWRAM when they fit and EWRAM otherwise. Returns NULL when neither has room.
 void *AllocHeapSlotFar(s32 kind, s32 size);
@@ -33,7 +33,7 @@ void *AllocHeapSlotFar(s32 kind, s32 size);
 void *AllocHeapSlotEwramFar(s32 kind, s32 size);
 /// Allocates an uncleared short-lived buffer of `size` bytes, from IWRAM when
 /// it fits (Alloc); Free frees it and everything allocated after it.
-void *Runtime_BumpAllocateFar(s32 size);
+void *AllocFar(s32 size);
 /// Takes a short-lived buffer as Alloc does, but from EWRAM first, for
 /// buffers too large to want IWRAM.
 void *AllocEwramFar(s32 size);
@@ -68,7 +68,7 @@ void Window_LoadGraphicsFar(void);
 void *Resource_GetTableEntryFar(s32 index);
 /// Does nothing. The title screen, Lucky Dice and Lucky Wheels pass it a
 /// far-call resource id.
-void RuntimeDispatch_NoOpHookFar(s32 unused);
+void Stub_NoOpHookFar(s32 unused);
 /// Fades BG1 to BG3, the sprites and the backdrop out to black over `frames`
 /// frames; it only starts the screen fade.
 void ScreenFade_ToBlackFar(s32 frames);
@@ -76,24 +76,24 @@ void ScreenFade_ToBlackFar(s32 frames);
 void ScreenFade_WaitFar(void);
 /// Puts the serial port in multiplayer mode, installs the link interrupts and
 /// starts the per-frame exchange with a link partner.
-void SerialRuntime_InitializeFar(void);
+void Serial_InitializeFar(void);
 /// Looks for the link partner and, once connected, does one exchange of
 /// `send` and `receive`. Returns the link status.
-s32 SerialRuntime_PollAndTransferFar(void *send, void *receive);
+s32 Serial_PollAndTransferFar(void *send, void *receive);
 /// Stops the per-frame link exchange and removes the link interrupt handlers.
-void SerialRuntime_RemoveIrqHandlersFar(void);
+void Serial_RemoveIrqHandlersFar(void);
 /// Copies reverb code `code`'s mixer code (enum SoundReverbCode, anything
 /// else SOUND_REVERB_MONO) into IWRAM. Always returns 0.
 s32 Sound_LoadReverbCodeFar(s32 code);
 /// Starts sending `transferValue` bytes from `source` to the partner in 20-byte
 /// blocks; the size must be a multiple of 20. Returns -1 when a send is
 /// running.
-s32 SerialRuntime_StartSendFar(void *source, s32 transferValue);
+s32 Serial_StartSendFar(void *source, s32 transferValue);
 /// Starts storing the partner's blocks in `destination`, which needs room for
 /// the whole send. Returns -1 when a receive is running.
-s32 SerialRuntime_StartReceiveFar(void *destination);
+s32 Serial_StartReceiveFar(void *destination);
 /// Returns bit 0 while a send runs and bit 1 while a receive runs.
-s32 SerialRuntime_GetActiveTransfersFar(void);
+s32 Serial_GetActiveTransfersFar(void);
 /// Stores `mask` as the flags of the task running `callback`; bit 0 keeps it
 /// running while the overlay tasks are suspended. Returns its index, or -1.
 s32 Task_SetFlagsFar(TaskFunc callback, u32 mask);

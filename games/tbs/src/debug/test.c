@@ -63,7 +63,7 @@ enum MenuTestLocalId {
   /// `You got treasure!`
   /// ★ Named from the game: "Menardi" (MsgDebugGlyphName)
   LOCALID_MENARDI,
-  /// The sprite of Vale's armor merchant, 0x7d (vale_interiors_shops.c);
+  /// The sprite of Vale's armor merchant, 0x7d (vale_shops.c);
   /// opens
   /// the debug shop.
   /// ★ Named from the game: "Ask me anything about armor."
@@ -103,7 +103,7 @@ static __inline__ void MenuTest_RecalculateParty(void) {
 u8 *MenuTest_GetWarpDests(void) { return (u8 *)gMenuTest_WarpDests; }
 
 /// The room has no warp regions: its regions entry returns none.
-s32 MapData_ReturnZero(void) { return 0; }
+s32 Map_GetWarpRegions(void) { return 0; }
 
 u8 *MenuTest_GetWarps(void) { return (u8 *)gMenuTest_Warps; }
 

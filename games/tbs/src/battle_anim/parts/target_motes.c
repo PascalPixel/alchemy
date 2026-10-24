@@ -207,7 +207,7 @@ void BattleAnim_RunTargetMotes(struct BattleAnimArgs *effect, u32 mode) {
   // Target n's turn starts on frame n * 8; the animation ends 64 frames (wide
   // styles) or 32 after the last one starts.
   for (frame = 0; frame != total; frame++) {
-    struct BattleCamera *camera = gCameraWork;
+    struct BattleCamera *camera = gBattleCamera;
 
     // Demon Fire: the user steps up to the first target 46 frames before the
     // end and strikes it 32 frames before the end, shaking the screen.
@@ -345,9 +345,8 @@ void BattleAnim_RunTargetMotes(struct BattleAnimArgs *effect, u32 mode) {
 
         if (delay > 31)
           delay = 31;
-        ObjectGroup_UpdateMembers(work->effect->targets[member],
-                                  SPRITE_COLOR_WHITE, POSE_DAMAGE, member,
-                                  delay);
+        BattleAnim_TintBattler(work->effect->targets[member],
+                               SPRITE_COLOR_WHITE, POSE_DAMAGE, member, delay);
       }
     }
     BattleCamera_Shake(16, 16);
@@ -425,7 +424,7 @@ void BattleAnim_RunSleep(struct BattleAnimArgs *effect) {
   for (frame = 0; frame != SLEEP_FRAMES; frame++) {
     struct BattleCamera *camera;
 
-    camera = gCameraWork;
+    camera = gBattleCamera;
     if (frame == 80)
       ANIM_SHOW_DAMAGE(0);
     ANIM_FOR_EACH_TARGET(targetIndex, work->effect) {
@@ -437,8 +436,8 @@ void BattleAnim_RunSleep(struct BattleAnimArgs *effect) {
       SET_VECTOR(anchor, target->x, 160 << 14, target->z);
       Transform_ApplyPosition(anchor);
       if (frame == targetIndex * 16 + 64)
-        ObjectGroup_UpdateMembers(work->effect->targets[targetIndex], 0,
-                                  POSE_DAMAGE, -1, 0);
+        BattleAnim_TintBattler(work->effect->targets[targetIndex], 0,
+                               POSE_DAMAGE, -1, 0);
     }
     current = sheep;
     for (particleIndex = 0; particleIndex != SLEEP_SHEEP;

@@ -69,7 +69,7 @@ struct ItemMenuWork {
   struct WindowSprite *selectedItemIcon;
   u16 flags;          ///< 1 while the item's name and command grid are drawn
   s16 completionFlag; ///< set to 1 as item commands end; not read by name
-  /// DjinnFiguresWork's row of four figures and DjinnMenuWork's pair;
+  /// ItemMenuFiguresView's row of four figures and DjinnMenuWork's pair;
   /// not named here.
   u8 figureRow[0x36];
   s16 messageOffset; ///< the item use's result, after MsgItemUseResult

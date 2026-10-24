@@ -4,19 +4,19 @@
 	.set import.WaitFrames, 1
 	.set import.Task_Add, 1
 	.set import.Task_Remove, 1
-	.set import.Engine_RandomNext, 1
+	.set import.Import_RandomNext, 1
 	.set import.Trig_Sin, 1
 	.set import.AllocHeapSlotEwram, 1
 	.set import.AllocEwram, 1
 	.set import.VramCache_Load, 1
 	.set import.VramCache_FindFreeEntry, 1
 	.set import.Oam_AddSpriteAtDepth, 1
-	.set import.ObjectDispatch_SelectAnimation, 1
-	.set import.ObjectDispatch_Initialize, 1
+	.set import.Object_SelectAnimation, 1
+	.set import.Object_Initialize, 1
 	.set import.Object_CreateField, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
-	.set import.ObjectDispatch_SetSingleChildFlags, 1
+	.set import.Object_SetSpriteFlags, 1
 	.set import.MapGrid_SetScreenShake, 1
 	.set import.Inventory_AddItem, 1
 	.set import.GameFlag_Set, 1
@@ -30,7 +30,7 @@
 	.set import.ObjectEvent_RefreshSelectorById, 1
 	.set import.ObjectMotion_SetPositionAndReset, 1
 	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
-	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Import_ObjectEventSetAnimation, 1
 	.set import.ObjectMotion_SetAnimationAndWait, 1
 	.set import.ObjectMotion_SetVarCbAndRefresh, 1
 	.set import.FieldScript_SetMessageId, 1
@@ -42,7 +42,7 @@
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_WaitForArrival, 1
 	.set import.FieldScript_SetDestination, 1
-	.set import.Engine_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestWarp, 1
 	.set import.FieldScript_FinishScreenTransition, 1
 	.set import.FieldScript_WaitTransitionFrames, 1
 	.set import.Field_EndBusyAndReveal, 1

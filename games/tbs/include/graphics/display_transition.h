@@ -47,8 +47,8 @@ struct ScreenTransitionWin {
   s32 shakeX, shakeY, shakeDecay;
   u8 *script;
   ///@}
-  /// Display control bits ORed into DISPCNT; DisplayState_ClearFlags clears
-  /// those of backgrounds 1 to 3.
+  /// Display control bits ORed into DISPCNT; ScreenTransition_HideBackgrounds
+  /// clears those of backgrounds 1 to 3.
   u16 dispcnt;
   /// The map work's fields from fadeStep to its window rows
   /// (WorldMapView's); no transition names them.

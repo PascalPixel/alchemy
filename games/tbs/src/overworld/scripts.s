@@ -4,15 +4,15 @@
 	.global Object_CameraFollowScript
 Object_CameraFollowScript:
 	.4byte 11, 0, 1, 12, 65535, 0, 16
-	.global gObject_IdleScript
-gObject_IdleScript:
+	.global gField_LeaderScript
+gField_LeaderScript:
 	.4byte 16
 @ The party leader's object event template table (struct ObjectEventTemplate): {sprite,
 @ condition, behavior, x, y, z, facing, talk facing, flags}
 	.global gField_DefaultObjectEventTemplates
 gField_DefaultObjectEventTemplates:
 	.2byte 0, -1
-	.4byte gObject_IdleScript, 300 << 16, 0, 300 << 16
+	.4byte gField_LeaderScript, 300 << 16, 0, 300 << 16
 	.2byte 0x5bb0
 	.byte 0, 0
 	.2byte -1, 0
@@ -263,8 +263,8 @@ gFieldEffect_BurstParticleScriptB:
 	.global gObjectMotion_StepAngleScript
 gObjectMotion_StepAngleScript:
 	.4byte 34, ObjectMotion_StepAngle, 16
-	.global gUi_RenderResultValues
-gUi_RenderResultValues:
+	.global gMessageSpeed_VoiceRates
+gMessageSpeed_VoiceRates:
 	.byte 1, 3, 10, 0
 	.global gFieldEffect_LinkedObjectScript
 gFieldEffect_LinkedObjectScript:
@@ -334,8 +334,8 @@ gFieldEffect_TargetColors:
 	.global gFieldEffect_UntargetedObjectScript
 gFieldEffect_UntargetedObjectScript:
 	.4byte 27
-	.global gEffectScripts
-gEffectScripts:
+	.global gFieldEffect_DurationScripts
+gFieldEffect_DurationScripts:
 	.4byte gFieldEffect_ShortEffectScript, gFieldEffect_MediumEffectScript, gFieldEffect_LongEffectScript
 @ {tile << 16 | flag, map section name}
 	.global gRegionMap_MapSecMarkers

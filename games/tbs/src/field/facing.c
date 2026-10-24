@@ -96,13 +96,13 @@ const s32 gScriptObject_CycleTable[32] = {
 
 /// The idle script an object returns to when its own one ends: a lone SC_END,
 /// which reloads it. ObjectScript_End (SC_END) points an object here.
-const s32 gScript_MainScript[1] = {
+const s32 gObjectScript_EndScript[1] = {
     SC_END,
 };
 
 /// Halfwords that follow the main script; no code in The Broken Seal names
 /// them.
-const s16 gScript_MainScriptTail[8] = {
+const s16 gObjectScript_EndScriptTail[8] = {
     0x1000, -0x2000, 0x3000, -0x4000, 0x6000, -0x8000, 0x4000, 0x0,
 };
 

@@ -149,11 +149,11 @@ void ScreenTransition_UpdateScanlineTable(void) {
   }
 
   // Build the page not shown. Its line pairs start as the open UI windows'
-  // edges (Win_FillScanlineSpansFar; with no UI work, 0xe0e0 over the
+  // edges (ScanlineWindow_FillSpansFar; with no UI work, 0xe0e0 over the
   // first 80 lines only, as its XXX notes); each mode below then writes window
   // 0's edge of every pair and leaves window 1's.
   scanlineData = state->pages[1 ^ state->page];
-  Win_FillScanlineSpansFar(scanlineData + 2);
+  ScanlineWindow_FillSpansFar(scanlineData + 2);
 
   // Each mode writes WININ and WINOUT first. 0x7f7f shows every layer inside
   // both windows and 1 only background 0 outside them; a mode swaps the two
@@ -675,14 +675,14 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     WaitFrames(1);
     if (variant == 0) {
       Task_Add(ScreenTransition_Update, 0xc80);
-      Runtime_SetIrqHandler(1, 0, ScreenTransition_UpdateScanline);
+      Irq_SetHandler(1, 0, ScreenTransition_UpdateScanline);
       state->start = 80;
       state->end = 0;
       state->duration = frames;
       state->step = 0;
     } else {
       Task_Add(ScreenTransition_UpdateFromCentre, 0xc80);
-      Runtime_SetIrqHandler(1, 0, ScreenTransition_UpdateScanline);
+      Irq_SetHandler(1, 0, ScreenTransition_UpdateScanline);
       state->start = 80;
       state->end = 0;
       state->duration = frames;
@@ -755,14 +755,14 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
         ScreenTransition_AllocateAndClearState();
     if (variant == 0) {
       Task_Add(ScreenTransition_Update, 0xc80);
-      Runtime_SetIrqHandler(1, 0, ScreenTransition_UpdateScanline);
+      Irq_SetHandler(1, 0, ScreenTransition_UpdateScanline);
       state->start = 0;
       state->end = 80;
       state->duration = frames;
       state->step = 0;
     } else {
       Task_Add(ScreenTransition_UpdateFromCentre, 0xc80);
-      Runtime_SetIrqHandler(1, 0, ScreenTransition_UpdateScanline);
+      Irq_SetHandler(1, 0, ScreenTransition_UpdateScanline);
       state->start = 0;
       state->end = 80;
       state->duration = frames;
@@ -778,7 +778,8 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
 ///
 /// Reached only through its unnamed far-call veneer. ScreenTransition_Start
 /// ORs these bits into DISPCNT.
-void DisplayState_ClearFlags(s32 clearBg3, s32 clearBg2, s32 clearBg1) {
+void ScreenTransition_HideBackgrounds(s32 clearBg3, s32 clearBg2,
+                                      s32 clearBg1) {
   struct ScreenTransitionWin *state;
 
   state = gMapGridWork[0];
@@ -814,7 +815,7 @@ void ScreenTransition_Update(void) {
     if (*step >= *duration) {
       *duration = 0;
       Task_Remove(ScreenTransition_Update);
-      Runtime_SetIrqHandler(1, 0, 0);
+      Irq_SetHandler(1, 0, 0);
       return;
     } else {
       s32 delta = state->end - state->start;
@@ -854,7 +855,7 @@ void ScreenTransition_UpdateFromCentre(void) {
     if (*step >= *duration) {
       *duration = 0;
       Task_Remove(ScreenTransition_UpdateFromCentre);
-      Runtime_SetIrqHandler(1, 0, 0);
+      Irq_SetHandler(1, 0, 0);
       return;
     } else {
       s32 delta = state->end - state->start;

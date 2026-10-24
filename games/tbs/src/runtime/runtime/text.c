@@ -198,13 +198,13 @@ void Window_LoadGraphics(void) {
   Io_Write16(RGB(0, 14, 20), &BG_PLTT_COLOR(15, 9));
   Io_Write16(RGB(0, 15, 22), &BG_PLTT_COLOR(15, 10));
   // 0xe0 halfwords: 224 colours, sprite palettes 0 to 13
-  Dma_Set(gSystem_BasicColorPalette, (void *)OBJ_PLTT, DMA_ENABLE << 16 | 0xe0,
+  Dma_Set(gBasicSpritePalettes, (void *)OBJ_PLTT, DMA_ENABLE << 16 | 0xe0,
           REG_DMA3);
 }
 
 /// Loads the basic sprite palettes (palettes 0 to 13). Called by
 /// Window_LoadGraphics and the object event setup.
 void Palette_LoadBasicSpriteColors(void) {
-  Dma_Set(gSystem_BasicColorPalette, (void *)OBJ_PLTT, DMA_ENABLE << 16 | 0xe0,
+  Dma_Set(gBasicSpritePalettes, (void *)OBJ_PLTT, DMA_ENABLE << 16 | 0xe0,
           REG_DMA3);
 }

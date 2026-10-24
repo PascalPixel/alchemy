@@ -17,7 +17,7 @@ struct WindowSpriteList;
 struct SaveFileSummary;
 struct SelectionNode;
 struct SelectionScreenWork;
-struct SelectionWork;
+struct BattleCommandRowWork;
 struct MessageReader;
 struct TextPrinter;
 struct OptionMenuWork;
@@ -58,7 +58,7 @@ enum {
 
 // The two page arrows beside a paged list's page numbers, in the menus and
 // the main menu: tiles 0x128 and 0x129 of character block 0, which
-// Link_DrawShiftedTilePair slides back and forth each frame, and their
+// Link_DrawPageArrows slides back and forth each frame, and their
 // tilemap entries.
 #define PAGE_ARROW_TILE 0x128
 #define PAGE_ARROW_VRAM                                                        \
@@ -241,7 +241,7 @@ enum IconKind {
   /// An item's icon without the broken mark, for the equipment view.
   ICON_KIND_EQUIPMENT_ITEM = 7,
   ICON_KIND_PATTERN = 8, ///< one of the other icons (Icon_BuildMiscIconTiles)
-  /// The one tile RenderResource_LoadTableEntry loads.
+  /// The one tile Resource_LoadTableEntry loads.
   ICON_KIND_TABLE_ENTRY = 9
 };
 
@@ -352,7 +352,7 @@ void WindowSprite_UpdateAll(void);
 void Message_DecodeRawUnbounded(s32 message, u16 *buf);
 s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
 void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
-s32 *Runtime_ClearWordIfSet(s32 *p);
+s32 *Memory_ClearWordIfSet(s32 *p);
 void Window_CloseAll(s32 unused);
 void Window_StepSwellEffect(struct TextPrinter *printer);
 void MessageArgument_ClearAll(void);
@@ -402,7 +402,7 @@ void Icon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst,
 s32 ItemIcon_Compose(u32 code, u32 layers);
 s32 Icon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
 s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 slot);
-s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot);
+s32 Resource_LoadTableEntry(u32 value, s32 unused, u32 slot);
 void Icon_DrawItem(s32 code);
 void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
                        s32 reuse);

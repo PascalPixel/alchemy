@@ -230,7 +230,7 @@ walks the leader in and only then asks for the warp, and that can refuse
 instead, as Dora does once the party has left Vale. Coord events also climb
 the ladder beside Isaac's house (`EventScript_ClimbLadderOntoRoof` up,
 `EventScript_ClimbDownFromRoof` down) and put the upper path's cells
-back when the leader steps off it (`EventScript_ClearPathCellOverride`). Three
+back when the leader steps off it (`EventScript_StepOffUpperPath`). Three
 cells of the path at the top carry a behavior no row answers.
 
 ![In Vale, Isaac walks north into the ladder beside his house and climbs onto the roof](https://alchemy.pascalpixel.com/places/vale/events/Event_ClimbLadderOntoRoof.gif)
@@ -347,8 +347,8 @@ arrival and the map section's 256 when the party enters another map section
 ([the front page](../../README.md#game-flags) explains the ranges). Because
 the numbers are reused everywhere, each map says near its top (or beside a
 single use) what it keeps in them, and names those it gives a meaning in its own file
-(`FLAG_FIRST_PLANT_GROWN = FLAG_MAP_TEMP_40` in Crossbone Isle,
-`FLAG_WELCOMED_BACK = FLAG_MAPSEC_TEMP_00` in Vault's houses).
+(`FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN = FLAG_MAP_TEMP_40` in Crossbone Isle,
+`FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK = FLAG_MAPSEC_TEMP_00` in Vault's houses).
 
 The flags are in `games/tbs/include/flags.h`.
 

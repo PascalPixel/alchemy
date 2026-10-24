@@ -6,7 +6,7 @@
 
 extern const s32 gBattleArena_SlotValues[];
 u8 *BattleArena_GetWarpDests(void);
-s32 MapData_ReturnZero(void);
+s32 Map_GetWarpRegions(void);
 u8 *BattleArena_GetWarps(void);
 s32 BattleArena_SelectObjectEventTemplates(void);
 extern u32 gBattleArenaCallFrames;

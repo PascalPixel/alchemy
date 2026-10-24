@@ -9,7 +9,7 @@
 /// Per-frame update: spins by 0x1000 + timer * 0x50 a frame, speeding up
 /// (timer counts up) until timer * 0x50 reaches 0x1000: from 1/16 turn a
 /// frame to just over 1/8 in 52 frames, as FieldEffect_AdvanceAngleWithRamp.
-void FieldEffect_UpdateSpinAngle(union FieldObject *fieldObject) {
+void FieldEffect_UpdateSpinAngle(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   u32 step;
 
@@ -23,7 +23,8 @@ void FieldEffect_UpdateSpinAngle(union FieldObject *fieldObject) {
 /// pixel a frame; once its scale falls below 0x3000 (84 frames from full
 /// size) its sprites are hidden (spriteStorageKind 0), but it is not
 /// released. Retreat gives it to the caster.
-void FieldEffect_UpdateDescendingObject(union FieldObject *fieldObject) {
+void FieldEffect_UpdateDescendingObject(
+    union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   u32 scale;
 
@@ -49,7 +50,7 @@ enum RetreatParticleState {
 /// up the screen, at up to 5 pixels a frame, and starts again from the main
 /// object on arrival until it takes its last flight.
 void FieldEffect_UpdateRadialLaunch(struct FieldEffectSprite *effect) {
-  struct EffectVector pos;
+  struct Vector3 pos;
   struct ObjectEvent *main;
   s32 state;
   u32 spread;
@@ -108,7 +109,7 @@ void FieldEffect_UpdateRadialLaunch(struct FieldEffectSprite *effect) {
 void FieldEffect_RunRetreat(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct ObjectEvent *objectEvent = effectWork->mainObject;
-  struct EffectVector pos;
+  struct Vector3 pos;
   struct FieldEffectSprite *effect;
   u8 last;
   u32 i;
@@ -119,21 +120,21 @@ void FieldEffect_RunRetreat(void) {
   WaitFrames(10);
   ObjectMotion_ArmCallback(effectWork->firstObjectId, 0x4000, 0);
   WaitFrames(30);
-  objectEvent->update = ObjectGroup_ApplyRandomChildValues;
+  objectEvent->update = Object_CycleSpriteColors;
   Sound_PlaySongFar(SE_131);
-  ObjectDispatch_SelectAnimationFar(objectEvent, 28);
+  Object_SelectAnimationFar(objectEvent, 28);
   WaitFrames(40);
 
   // Start spinning.
   Sound_PlaySongFar(SE_220);
   Anim_ApplyChildValuesFar((struct Object *)objectEvent, SPRITE_COLOR_NORMAL);
-  ObjectDispatch_SelectAnimationFar(objectEvent, 3);
+  Object_SelectAnimationFar(objectEvent, 3);
   objectEvent->update = FieldEffect_UpdateSpinAngle;
   objectEvent->timer = 0;
   WaitFrames(70);
 
   // Start shrinking, and send particles from where it is on screen.
-  ObjectDispatch_SetSingleChildFlagsFar((struct Object *)objectEvent, 0);
+  Object_SetSpriteFlagsFar((struct Object *)objectEvent, 0);
   objectEvent->motionFlags = 0;
   objectEvent->update = FieldEffect_UpdateDescendingObject;
   objectEvent->targetX = OBJ_EVENT_NO_TARGET;
@@ -176,7 +177,7 @@ void FieldEffect_RunRetreat(void) {
 /// of it and up to 5 pixels further while small; released 10 pixels above
 /// the ground (4 on the world map, whose map is MapId_MainMenu).
 void FieldEffect_UpdateDescendingParticlePositiveArc(
-    union FieldObject *fieldObject) {
+    union ObjectEventOrEffect *fieldObject) {
   // One shared inline kernel with constant inversion grows the positive and
   // negative callbacks 0x74 -> 0x7c and 0x78 -> 0x7c in native English.
   struct ObjectEvent *particle = (struct ObjectEvent *)fieldObject;
@@ -192,7 +193,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(
 
   y = particle->y.fixed;
   if (y <= limit) {
-    ObjectDispatch_ReleaseFar((struct Object *)particle);
+    Object_ReleaseFar((struct Object *)particle);
     return;
   }
 
@@ -209,7 +210,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(
 /// As FieldEffect_UpdateDescendingParticlePositiveArc for the arc drawn upside
 /// down, 16 pixels in front of the object and up to 5 pixels nearer.
 void FieldEffect_UpdateDescendingParticleNegativeArc(
-    union FieldObject *fieldObject) {
+    union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *particle = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *source;
   s32 y;
@@ -223,7 +224,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(
 
   y = particle->y.fixed;
   if (y <= limit) {
-    ObjectDispatch_ReleaseFar((struct Object *)particle);
+    Object_ReleaseFar((struct Object *)particle);
     return;
   }
 

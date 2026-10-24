@@ -649,26 +649,26 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 371	text	games/tbs/src/map/import/world_map
 371	text	games/tbs/src/graphics/world_map/story
 371	bss	games/tbs/src/map/world_map	.bss COMMON
-372	text	games/tbs/src/map/entry/vale_storm
-372	text	games/tbs/src/map/vale_storm
-372	text	games/tbs/src/map/import/vale_storm
-372	bss	games/tbs/src/map/vale_storm	.bss COMMON
+372	text	games/tbs/src/map/entry/vale_stormy_night
+372	text	games/tbs/src/map/vale_stormy_night
+372	text	games/tbs/src/map/import/vale_stormy_night
+372	bss	games/tbs/src/map/vale_stormy_night	.bss COMMON
 373	text	games/tbs/src/map/entry/vale
 373	text	games/tbs/src/map/vale
 373	text	games/tbs/src/map/import/vale
 373	text	libgcc.a:_call_via_rX
-374	text	games/tbs/src/map/entry/vale_gate
-374	text	games/tbs/src/map/vale_gate
-374	text	games/tbs/src/map/import/vale_gate
-375	text	games/tbs/src/map/entry/vale_kraden
-375	text	games/tbs/src/map/vale_kraden
-375	text	games/tbs/src/map/import/vale_kraden
-376	text	games/tbs/src/map/entry/vale_interiors_shops
-376	text	games/tbs/src/map/vale_interiors_shops
-376	text	games/tbs/src/map/import/vale_interiors_shops
-377	text	games/tbs/src/map/entry/vale_interiors_inn
-377	text	games/tbs/src/map/vale_interiors_inn
-377	text	games/tbs/src/map/import/vale_interiors_inn
+374	text	games/tbs/src/map/entry/vale_plaza
+374	text	games/tbs/src/map/vale_plaza
+374	text	games/tbs/src/map/import/vale_plaza
+375	text	games/tbs/src/map/entry/vale_kradens_cottage
+375	text	games/tbs/src/map/vale_kradens_cottage
+375	text	games/tbs/src/map/import/vale_kradens_cottage
+376	text	games/tbs/src/map/entry/vale_shops
+376	text	games/tbs/src/map/vale_shops
+376	text	games/tbs/src/map/import/vale_shops
+377	text	games/tbs/src/map/entry/vale_inn
+377	text	games/tbs/src/map/vale_inn
+377	text	games/tbs/src/map/import/vale_inn
 378	text	games/tbs/src/map/entry/sanctum
 378	text	games/tbs/src/map/sanctum
 378	text	games/tbs/src/map/import/sanctum

@@ -26,7 +26,7 @@ extern const struct SummonDefinition gSummon_DefinitionTable[];
 
 struct AbilityDefinition;
 struct EnemyDefinition;
-struct PresetValues;
+struct EnemyElementPreset;
 
 /// The 519 abilities by ability id (abilities.tsv).
 extern const struct AbilityDefinition gAbilityDefinitions[];
@@ -60,7 +60,7 @@ extern const s16 gElement_PowerResistCurve[5][2];
 extern const struct EnemyDefinition gEnemy_Definitions[];
 /// The enemies' element presets (element_table.c): attack element, levels and
 /// base power and resistance.
-extern const struct PresetValues gEnemy_ElementPresetTable[];
+extern const struct EnemyElementPreset gEnemy_ElementPresetTable[];
 /// The game flags, 4096 bits in 512 bytes, saved with the game: flag n is bit
 /// n & 7 of byte GAME_FLAG_BYTE(n).
 extern u8 gGameFlagBytes[];
@@ -68,11 +68,11 @@ extern u8 gGameFlagBytes[];
 /// sentinel, four 15-slot inventories, the two shortcuts and the party order.
 extern u16 gInventorySnapshot[];
 /// How many of each rare item the shops may still sell, 0 to 99, by counter
-/// number (gItem_ArtifactSlotTable; ItemCounter_Adjust).
-extern u8 gItemCounters[128];
+/// number (gItem_ArtifactSlotTable; RareItemStock_Adjust).
+extern u8 gRareItemStock[128];
 /// The 64-byte save stamp, in the first half of the save buffer, that the
 /// Battle Arena writes into the current file alone.
-extern u8 gSaveStamp[];
+extern u8 gBattleArenaRecord[];
 /// Each item's rare item counter number plus one, or 0 for an ordinary item
 /// (Item_AdjustCounter).
 extern const u8 gItem_ArtifactSlotTable[];

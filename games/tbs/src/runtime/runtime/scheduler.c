@@ -12,16 +12,16 @@ typedef s32 (*KeyCallbackFn)(void);
 // sorted by their priority (see TASK_PRIORITY_MAIN_LOOP).
 
 /// Empties the task table: every slot gets no routine, priority
-/// TASK_PRIORITY_EMPTY and no flags. Clears gTasksReady while it works and
-/// sets it at the end, so neither pass runs a half-cleared table. Called by
+/// TASK_PRIORITY_EMPTY and no flags. Clears gTasksInitialized while it works
+/// and sets it at the end, so neither pass runs a half-cleared table. Called by
 /// System_Initialize and by the battle, Lucky Dice and other modes that start
 /// from a clean table.
 void Task_ResetAll(void) {
   struct Task *task = gTasks;
   s32 remaining;
 
-  gTasksReady = 0;
-  gTaskStatus = 0;
+  gTasksInitialized = 0;
+  gTasksRunning = 0;
   remaining = TASK_COUNT - 1;
   do {
     task->callback = 0;
@@ -30,7 +30,7 @@ void Task_ResetAll(void) {
     task++;
     remaining--;
   } while (remaining >= 0);
-  gTasksReady = 1;
+  gTasksInitialized = 1;
 }
 
 /// Unused: copies `byteCount` bytes a word at a time. Nothing in ☀️ calls it.
@@ -111,7 +111,7 @@ s32 Task_Add(TaskFunc callback, s32 order) {
   index = -1;
   task = gTasks;
   // DEAD: nothing uses the status read here; its load is in the ROM.
-  (void)gTaskStatus;
+  (void)gTasksRunning;
   IRQ_LOCK(savedInterruptState);
   // Update an existing callback before looking for an unused task slot.
   for (i = 0; i < TASK_COUNT; i++, task++) {
@@ -292,7 +292,7 @@ s32 Task_ResumeOverlayTasks(void) {
 /// `key`'s (TASK_PRIORITY_MAIN_LOOP or TASK_PRIORITY_VBLANK), in table order.
 /// Called once a frame by WaitFrames and once a VBlank by
 /// System_VBlankHandler. Nothing runs until Task_ResetAll has set
-/// gTasksReady.
+/// gTasksInitialized.
 void Task_RunPass(s32 key) {
   struct Task *task = gTasks;
   s32 remaining;
@@ -301,7 +301,7 @@ void Task_RunPass(s32 key) {
   // tasks through the sort, and a suspended task's odd high byte matches no
   // pass
   key >>= 8;
-  if (gTasksReady == 1) {
+  if (gTasksInitialized == 1) {
     remaining = TASK_COUNT + 1;
     task--;
     for (;;) {

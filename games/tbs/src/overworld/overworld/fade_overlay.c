@@ -7,7 +7,7 @@
 #ifndef UBFIX
 /// The map grid work in HEAP_SLOT_MAP_GRID, seen as the halfwords of its view
 /// position: the high halves are the view's x and z in whole pixels.
-struct FadeView {
+struct MapGridScrollCameraView {
   u8 beforeView[228]; ///< the map grid work up to its view position
   s16 camera[4];
 };
@@ -31,7 +31,8 @@ void FadeOverlay_DrawMarks(void) {
   // from .text+0x6cce in English; the object event's named fields match
   // plainly.
   s16 *camera =
-      ((struct FadeView *)HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID))->camera;
+      ((struct MapGridScrollCameraView *)HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID))
+          ->camera;
   s32 cameraX = camera[1];
   s32 cameraZ = camera[3];
 #endif

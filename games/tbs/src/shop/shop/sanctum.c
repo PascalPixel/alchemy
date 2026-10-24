@@ -146,7 +146,7 @@ s32 Sanctum_Run(s32 unitId) {
   }
   if (listWindow == 0) {
     listWindow = Window_CreateFar(0, 0, 5, 5, WINDOW_FLAG_INSTANT);
-    SideObject_CreateFar(2, 0, 0, listWindow, -4, -4);
+    Portrait_CreateFar(2, 0, 0, listWindow, -4, -4);
   }
 
   cursorAnchor =

@@ -21,10 +21,10 @@ static s32 PushedObject_RunStepEffect(struct FieldPosition *request) {
 
   if (ret == 0) {
     FieldScript_Start();
-    ObjectDispatch_SelectAnimation(objectEvent, 6);
+    Object_SelectAnimation(objectEvent, 6);
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
-    ObjectDispatch_SelectAnimation(objectEvent, 7);
+    Object_SelectAnimation(objectEvent, 7);
     objectEvent->speed = PIXELS(3);
     objectEvent->acceleration = PIXELS(2);
     objectEvent->velocityY = PIXELS(4);
@@ -34,10 +34,10 @@ static s32 PushedObject_RunStepEffect(struct FieldPosition *request) {
         LOCALID_PARTY_LEADER,
         ((union FieldCoordinate *)&request->x)->part.pixel,
         ((union FieldCoordinate *)&request->z)->part.pixel);
-    ObjectDispatch_SelectAnimation(objectEvent, 6);
+    Object_SelectAnimation(objectEvent, 6);
     ObjectEvent_SetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
     *flags = ret;
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_PLACED + 2, 7);
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_PLACED + 2, 7);
     objectEvent->y.fixed += -PIXELS(1);
     objectEvent->groundHeight += -PIXELS(1);
     WaitFrames(2);

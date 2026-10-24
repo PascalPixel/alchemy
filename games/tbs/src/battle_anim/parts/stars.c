@@ -62,8 +62,8 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
                     graphics);
-  ObjectDispatch_SelectAnimationFar(caster, POSE_LEAP);
-  ObjectDispatch_SetAnimationSpeedFar((struct Object *)caster, 48);
+  Object_SelectAnimationFar(caster, POSE_LEAP);
+  Object_SetAnimationSpeedFar((struct Object *)caster, 48);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
   // Trails keep 75% of each pixel a frame.
   work->transferMode = CANVAS_COPY_AND_FADE;
@@ -177,7 +177,7 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
           target->velocityY = 0x50000;
           target->gravity = 0xab85;
           target->steeringFlags = 0;
-          ObjectDispatch_StartIdleFar((struct Object *)target);
+          Object_StartIdleFar((struct Object *)target);
           if (target->x < 0)
             Object_SetMoveTargetFar((struct Object *)target,
                                     target->x - 0x280000, 0, target->z);
@@ -188,8 +188,8 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
             ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           } else {
             Sound_PlaySongFar(SE_HEAVY_IMPACT);
-            ObjectGroup_UpdateMembers(work->effect->targets[0],
-                                      SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
+            BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, 0, 8);
           }
           work->shakeFrames = 4;
         }
@@ -327,8 +327,8 @@ void BattleAnim_RunShiningStar(struct BattleAnimArgs *effect) {
           work->shakeFrames = 4;
           Sound_PlaySongFar(SE_HEAVY_IMPACT);
           ANIM_FOR_EACH_TARGET(j, work->effect)
-          ObjectGroup_UpdateMembers(work->effect->targets[j],
-                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 8);
+          BattleAnim_TintBattler(work->effect->targets[j], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, j, 8);
         }
         step->x += step->velocityX;
         step->y += step->velocityY;

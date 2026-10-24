@@ -143,7 +143,7 @@ struct BattleWork {
   /// The action being carried out, as BattleTurn_Build lays it out.
   struct BattleTurn turn;
   struct BattlePlaybackWork playback;
-  /// A value Runtime_AdjustDebugValueWithButtons edits with the d-pad while
+  /// A value Battle_AdjustDebugValue edits with the d-pad while
   /// Start is held.
   s32 debugValue;
 };

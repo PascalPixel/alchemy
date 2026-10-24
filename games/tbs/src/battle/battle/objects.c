@@ -29,7 +29,7 @@ void BattleObject_UpdateSpritePriorities(void) {
   struct Sprite **records;
 
   // Every unit's status icon.
-  BattleUnit_ListIds(BATTLE_SIDES_BOTH, unitIds);
+  BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
   unitIndex = 0;
   if (unitIds[unitIndex] != BATTLE_UNIT_LIST_END) {
     for (;;) {
@@ -43,7 +43,7 @@ void BattleObject_UpdateSpritePriorities(void) {
           record = GetMotionRecord(object, 0);
 
           if (record != 0) {
-            struct SpriteEntry *effect;
+            struct SpriteAnimHeadView *effect;
             s32 effectPriority = 0;
 
             // Off the ground.
@@ -65,7 +65,7 @@ void BattleObject_UpdateSpritePriorities(void) {
 
   // The camera's turn decides which side is in front: with the yaw in the
   // first half turn (as a signed halfword), the party.
-  if ((s16)gCameraWork->yaw >= 0) {
+  if ((s16)gBattleCamera->yaw >= 0) {
     sidePriorities[0] = 1;
     sidePriorities[1] = 2;
   } else {
@@ -75,7 +75,7 @@ void BattleObject_UpdateSpritePriorities(void) {
 
   // The party.
   {
-    count = BattleUnit_ListIds(BATTLE_SIDES_PARTY, unitIds);
+    count = BattleUnit_ListIds(BATTLE_SIDE_MASK_PARTY, unitIds);
     for (unitIndex = 0; unitIndex < count; unitIndex++) {
       struct BattleObject *slot = BattleObject_Get(unitIds[unitIndex]);
 
@@ -105,7 +105,7 @@ void BattleObject_UpdateSpritePriorities(void) {
 
   // The enemies.
   {
-    count = BattleUnit_ListIds(BATTLE_SIDES_ENEMIES, unitIds);
+    count = BattleUnit_ListIds(BATTLE_SIDE_MASK_ENEMIES, unitIds);
     for (unitIndex = 0; unitIndex < count; unitIndex++) {
       struct BattleObject *slot = BattleObject_Get(unitIds[unitIndex]);
 
@@ -268,7 +268,7 @@ s32 BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
       if (iconAnimation >= 0 && changed != 0) {
         // The handle is stored first and cleared again when registration fails.
         iconHandle = Sprite_AddAnimFar(record, iconAnimation);
-        battleObject->animationEntry = (struct SpriteEntry *)iconHandle;
+        battleObject->animationEntry = (struct SpriteAnimHeadView *)iconHandle;
         if (iconHandle == -1)
           battleObject->animationEntry = 0;
         icon = (struct SpriteAnim *)battleObject->animationEntry;
@@ -315,9 +315,9 @@ s32 BattleObject_UpdatePose(s32 unitId) {
     pose = POSE_ENEMY_DOWN - pose;
   }
 
-  ObjectDispatch_SelectAnimationFar(BattleObject_Get(unitId)->object, pose);
-  ObjectDispatch_SetAnimationSpeedFar(
-      (struct Object *)BattleObject_Get(unitId)->object, (unitId & 3) + 14);
+  Object_SelectAnimationFar(BattleObject_Get(unitId)->object, pose);
+  Object_SetAnimationSpeedFar((struct Object *)BattleObject_Get(unitId)->object,
+                              (unitId & 3) + 14);
 }
 
 /// Releases every sprite unitId's object holds and leaves it with none,
@@ -366,7 +366,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
   struct BattleObject *battleObject;
   struct BattleSpriteObject *object;
   struct Sprite *record;
-  struct SpriteEntry *entry;
+  struct SpriteAnimHeadView *entry;
   struct Sprite **records;
   s32 spriteId;
   s32 releasedUnitId;
@@ -381,9 +381,9 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
     }
   }
   // A frame passes between releasing and creating sprites, except inside a
-  // main-loop task (gTaskStatus is set while WaitFrames runs them),
+  // main-loop task (gTasksRunning is set while WaitFrames runs them),
   // which cannot wait.
-  if (gTaskStatus == 0)
+  if (gTasksRunning == 0)
     WaitFrames(1);
 
   for (unitIndex = 0; unitIndex < UNIT_MAX &&
@@ -440,15 +440,17 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
         object->spriteStorageKind = OBJECT_SPRITE_ONE;
         object->sprite = record;
         record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
-        entry = (struct SpriteEntry *)record->entries[0];
+        entry = (struct SpriteAnimHeadView *)record->entries[0];
         entry->priority = 1;
         entry->palette = battleObject->palette;
         if ((spriteId = battleObject->overlay) != 0) {
-          entry = (struct SpriteEntry *)Sprite_AddAnimFar(record, spriteId);
+          entry =
+              (struct SpriteAnimHeadView *)Sprite_AddAnimFar(record, spriteId);
           entry->priority = 1;
         }
         if ((spriteId = battleObject->animation) != 0) {
-          entry = (struct SpriteEntry *)Sprite_AddAnimFar(record, spriteId);
+          entry =
+              (struct SpriteAnimHeadView *)Sprite_AddAnimFar(record, spriteId);
           battleObject->animationEntry = entry;
           SpriteAnim_StartFar((struct SpriteAnim *)entry, 0);
           entry->priority = 3;
@@ -456,7 +458,8 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
         if ((spriteId = battleObject->effect) != 0) {
           if (record->width == 32)
             spriteId = NARROW_EFFECT_SPRITE;
-          entry = (struct SpriteEntry *)Sprite_AddAnimFar(record, spriteId);
+          entry =
+              (struct SpriteAnimHeadView *)Sprite_AddAnimFar(record, spriteId);
           battleObject->effectEntry = entry;
           entry->priority = 0;
           record->flags = 0;
@@ -577,7 +580,7 @@ void *BattleObject_DestroyAll(void) {
     }
     battleObject = BattleObject_Get(unitId);
     if ((battleObject != NULL) && (battleObject->active != 0)) {
-      ObjectDispatch_ReleaseFar((struct Object *)battleObject->object);
+      Object_ReleaseFar((struct Object *)battleObject->object);
       battleObject->object = NULL;
       battleObject->active = 0;
     }
@@ -605,7 +608,7 @@ void BattleCamera_ApplyTransform(void) {
 #else
 s32 BattleCamera_ApplyTransform(void) {
 #endif
-  struct BattleCamera *camera = gCameraWork;
+  struct BattleCamera *camera = gBattleCamera;
   Transform_Reset();
   if (GameFlag_GetFar(FLAG_CHOOSING_COMMANDS) != 0) {
     Iwram_TransformMatrix((s32 *)gBattleCamera_CommandMatrix);
@@ -652,7 +655,7 @@ void *GetMotionRecord(struct Object *object, s32 recordIndex) {
 /// Battle_GatherActions. Writes the camera's yaw, pitch,
 /// distance, position and eye, and the transform state.
 void BattleCamera_SetDefaultView(void) {
-  struct BattleCamera *camera = gCameraWork;
+  struct BattleCamera *camera = gBattleCamera;
   struct FixedPointPosition eyeOffset;
 
   // Yaw 0x3000 (in 1/65536 turns), pitch 0xfe00, and 510 pixels away

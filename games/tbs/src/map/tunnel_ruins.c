@@ -1,21 +1,21 @@
 /// @file
-/// The Tunnel Ruins under Babi Lighthouse, two maps of Psynergy puzzles with
-/// no story event between Babi Lighthouse and Venus Lighthouse. Both have the
-/// area name Tunnel Ruins, but for the rooms where Babi Lighthouse Entry's
-/// three drops land, which the area names call Babi Lighthouse:
+/// The Tunnel Ruins under Babi Lighthouse, two maps of Psynergy puzzles with no
+/// story event between Babi Lighthouse and Venus Lighthouse. Both have the area
+/// name Tunnel Ruins, but for the rooms where Babi Lighthouse Entry's three
+/// drops land, which the area names call Babi Lighthouse:
 ///
-/// - TunnelRuinsGreatStatue (MapId_TunnelRuinsGreatStatue): entered from
-///   Babi Lighthouse's stone door. A statue in the first room speaks to the
-///   leader's soul; the rooms after it hold two pairs of pillars to push or
-///   Move, three small pillars with three patches of ivy for Whirlwind, and two
-///   pillars that sink into the floor once moved onto their columns, each then
-///   carrying a puddle for Frost.
-/// - TunnelRuinsLadyStatues (MapId_TunnelRuinsLadyStatues): a pillar that
-///   Douse soaks, two balance platforms weighed with carved stones by Carry,
-///   two false statues that Reveal makes vanish, two pillars that keep their
-///   places between visits, the room of four walkways over a pit, and five
-///   coloured statues of a woman that open the door to Venus Lighthouse once
-///   all five stand on their marks (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN).
+/// - TunnelRuinsGreatStatue (MapId_TunnelRuinsGreatStatue): entered from Babi
+///   Lighthouse's stone door. A statue in the first room speaks to the leader's
+///   soul; the rooms after it hold two pairs of pillars to push or Move, three
+///   small pillars with three patches of ivy for Whirlwind, and two pillars
+///   that sink into the floor once moved onto their columns, each then carrying
+///   a puddle for Frost.
+/// - TunnelRuinsLadyStatues (MapId_TunnelRuinsLadyStatues): a pillar that Douse
+///   soaks, two balance platforms weighed with carved stones by Carry, two
+///   false statues that Reveal makes vanish, two pillars that keep their places
+///   between visits, the room of four walkways over a pit, and five coloured
+///   statues of a woman that open the door to Venus Lighthouse once all five
+///   stand on their marks (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN).
 ///
 /// The getters choose by gSaveBlock.mapId; the object event templates of
 /// TunnelRuinsLadyStatues answer any other map number, and
@@ -35,23 +35,23 @@
 /// FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR,
 /// FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR,
 /// FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST and
-/// FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST); the rest keep map flags,
-/// which mean different things in each map:
+/// FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST); the rest keep map flags, which
+/// mean different things in each map:
 ///
-/// - TunnelRuinsGreatStatue: FLAG_MAP_TEMP_00 and FLAG_MAP_TEMP_01 are
-///   ivy A and B blown away beside the small pillars, and in the sinking
-///   pillars' room the two pillars' puddles frozen; FLAG_MAP_TEMP_02 is the
-///   south-east pillar soaked by Douse.
+/// - TunnelRuinsGreatStatue: FLAG_MAP_TEMP_00 and FLAG_MAP_TEMP_01 are ivy A
+///   and B blown away beside the small pillars, and in the sinking pillars'
+///   room the two pillars' puddles frozen; FLAG_MAP_TEMP_02 is the south-east
+///   pillar soaked by Douse.
 /// - TunnelRuinsLadyStatues: FLAG_MAP_TEMP_00 to FLAG_MAP_TEMP_02 are the
-///   carved stones set on the balance, FLAG_MAP_TEMP_03 the pillar soaked by
-///   Douse and FLAG_MAP_TEMP_04 its puddle frozen.
+///   carved stones set on the balance, FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED
+///   the pillar soaked by Douse and FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN its
+///   puddle frozen.
 ///
 /// Each balance platform's timer is its weight: both start at 3, and a carved
 /// stone set on one adds one to it and takes one from the other, and
 /// gTunnelRuins_BalanceHeights turns each weight into the platform's height.
-/// Entering from the Great Statue's north sets the balance up empty; coming
-/// in by TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH sets all three stones on it,
-/// one
+/// Entering from the Great Statue's north sets the balance up empty; coming in
+/// by TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH sets all three stones on it, one
 /// stone on the west platform and two stacked on the east, weights 2 and 4
 /// (https://alchemy.pascalpixel.com/places/tunnel-ruins-lady-statues/balance.png:
 /// the balance as each warp destination sets it up, each platform labelled with
@@ -224,9 +224,9 @@ enum {
 };
 
 #ifdef UBFIX
-static void TunnelRuins_RideStoneBelow(union FieldObject *fieldObject);
+static void TunnelRuins_RideStoneBelow(union ObjectEventOrEffect *fieldObject);
 #else
-static s32 TunnelRuins_RideStoneBelow(union FieldObject *fieldObject);
+static s32 TunnelRuins_RideStoneBelow(union ObjectEventOrEffect *fieldObject);
 #endif
 static void TunnelRuins_UpdateFirstPillarCells(void);
 static void TunnelRuins_UpdateSecondPillarCells(void);
@@ -275,10 +275,10 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
   if (FieldObject_CheckMovementCollision(objectEvent, &adjacentTile) != 1 &&
       FieldObject_CheckMovementCollision(objectEvent, target) == 0) {
     SCRIPT_START();
-    ObjectDispatch_SelectAnimation(objectEvent, ANIM_LEADER_SPRING);
+    Object_SelectAnimation(objectEvent, ANIM_LEADER_SPRING);
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
-    ObjectDispatch_SelectAnimation(objectEvent, ANIM_LEADER_LEAP);
+    Object_SelectAnimation(objectEvent, ANIM_LEADER_LEAP);
 
     objectEvent->speed = PIXELS(3);
     objectEvent->acceleration = PIXELS(2);
@@ -289,7 +289,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
     ObjectMotion_SetPositionAndCommit(LOCALID_PARTY_LEADER,
                                       TunnelRuins_GetLandingPixel(target->x),
                                       TunnelRuins_GetLandingPixel(target->z));
-    ObjectDispatch_SelectAnimation(objectEvent, ANIM_LEADER_SPRING);
+    Object_SelectAnimation(objectEvent, ANIM_LEADER_SPRING);
     ObjectEvent_SetSpriteFlags(objectEvent, 1);
     WaitFrames(6);
 
@@ -333,7 +333,7 @@ static void TunnelRuins_UpdateTrackedObjectEvent(void) {
   s32 depthLimit;
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  effectWork = gObjectEventEffectWork;
+  effectWork = gFadeOverlayWork;
   depthLimit = 0;
   // Each tracked warp destination measures depth in eight-pixel steps.
   if (gSaveBlock.mapId == (s32)&MapId_TunnelRuinsGreatStatue) {
@@ -369,9 +369,11 @@ static void TunnelRuins_UpdateTrackedObjectEvent(void) {
 // While Douse rains on a pillar: its two frames alternate, and every fourth
 // frame a small splash appears on its top.
 #ifdef UBFIX
-static void TunnelRuins_SplashDousedPillar(union FieldObject *fieldObject) {
+static void
+TunnelRuins_SplashDousedPillar(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 TunnelRuins_SplashDousedPillar(union FieldObject *fieldObject) {
+static s32
+TunnelRuins_SplashDousedPillar(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct EffectOptions options;
@@ -379,9 +381,9 @@ static s32 TunnelRuins_SplashDousedPillar(union FieldObject *fieldObject) {
   s32 z;
 
   if (gFrameCount & 2)
-    ObjectDispatch_SelectAnimation(objectEvent, 1);
+    Object_SelectAnimation(objectEvent, 1);
   else
-    ObjectDispatch_SelectAnimation(objectEvent, 2);
+    Object_SelectAnimation(objectEvent, 2);
   if (gFrameCount & 3)
 #ifdef UBFIX
     return;
@@ -392,9 +394,9 @@ static s32 TunnelRuins_SplashDousedPillar(union FieldObject *fieldObject) {
   options.startScaleY = 3 * Q16_ONE / 10;
   options.palette = 5;
   x = objectEvent->x.fixed +
-      ((((u32)(Engine_RandomNext() * 7) >> 16) - 3) << 16);
+      ((((u32)(Import_RandomNext() * 7) >> 16) - 3) << 16);
   z = objectEvent->z.fixed +
-      ((((u32)(Engine_RandomNext() * 7) >> 16) - 3) << 16);
+      ((((u32)(Import_RandomNext() * 7) >> 16) - 3) << 16);
   FieldEffect_Spawn(x, objectEvent->y.fixed + PIXELS(16), z, 0, 0, 0,
                     EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
                         EFFECT_SCRIPT_MEDIUM,
@@ -412,9 +414,11 @@ static s32 TunnelRuins_SplashDousedPillar(union FieldObject *fieldObject) {
 // pillar while the pillar is in row 10 and the leader is above 48 pixels
 // down; otherwise the puddle is put away at the map's origin.
 #ifdef UBFIX
-static void TunnelRuins_PuddleFollowsPillar(union FieldObject *fieldObject) {
+static void
+TunnelRuins_PuddleFollowsPillar(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 TunnelRuins_PuddleFollowsPillar(union FieldObject *fieldObject) {
+static s32
+TunnelRuins_PuddleFollowsPillar(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *puddle = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -476,9 +480,9 @@ static void EventScript_HopDownStep(void) {
   u32 i;
 
   SCRIPT_START();
-  ObjectDispatch_SelectAnimation(leader, ANIM_LEADER_SPRING);
+  Object_SelectAnimation(leader, ANIM_LEADER_SPRING);
   ObjectMotion_WaitForAnimationChange(0);
-  ObjectDispatch_SelectAnimation(leader, 1);
+  Object_SelectAnimation(leader, 1);
   ObjectEvent_SetSpriteFlags(leader, 0);
   leader->motionFlags |= OBJ_EVENT_FALLS;
   Sound_PlaySong(SE_JUMP);
@@ -488,18 +492,19 @@ static void EventScript_HopDownStep(void) {
   WaitFrames(6);
   leader->motionFlags = 0;
   // Emit particles on alternate frames while the leader descends.
-  options.update = (void (*)(union FieldObject *))FieldEffect_AdvanceMotion;
+  options.update =
+      (void (*)(union ObjectEventOrEffect *))FieldEffect_AdvanceMotion;
   Sound_PlaySong(SE_LANDING_THUD);
   for (i = 0; i < 8; i++) {
     leader->y.fixed -= PIXELS(2);
     leader->targetY = leader->y.fixed;
     WaitFrames(1);
     if (i & 1) {
-      s32 horizontalRoll = (u32)Engine_RandomNext() % 10 - 5;
+      s32 horizontalRoll = (u32)Import_RandomNext() % 10 - 5;
       s32 velocityX = horizontalRoll * 0x3332;
       s32 velocityZ;
 
-      velocityZ = (u32)Engine_RandomNext() % 10 * -0x1999 - 0x7ffd;
+      velocityZ = (u32)Import_RandomNext() % 10 * -0x1999 - 0x7ffd;
       FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                         velocityX, 0, velocityZ,
                         EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM, &options);
@@ -516,16 +521,23 @@ static void EventScript_HopDownStep(void) {
 #define UPDATE_BY_RELATIVE_DEPTH ObjectEvent_SetFlagBitByRelativeDepth
 #else
 #define UPDATE_BY_RELATIVE_DEPTH                                               \
-  ((void (*)(union FieldObject *))ObjectEvent_SetFlagBitByRelativeDepth)
+  ((void (*)(union ObjectEventOrEffect *))ObjectEvent_SetFlagBitByRelativeDepth)
 #endif
 #ifdef UBFIX
 #define UPDATE_RIDE_STONE_BELOW TunnelRuins_RideStoneBelow
 #else
 #define UPDATE_RIDE_STONE_BELOW                                                \
-  ((void (*)(union FieldObject *))TunnelRuins_RideStoneBelow)
+  ((void (*)(union ObjectEventOrEffect *))TunnelRuins_RideStoneBelow)
 #endif
 
 #include "common/effect_radial.h"
+
+/// In TunnelRuinsLadyStatues, Douse has soaked the pillar, and its puddle
+/// follows it.
+#define FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED FLAG_MAP_TEMP_03
+/// In TunnelRuinsLadyStatues, Frost has frozen the soaked pillar's puddle into
+/// a pillar of ice.
+#define FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN FLAG_MAP_TEMP_04
 
 /// The warp destinations of TunnelRuinsGreatStatue, TunnelRuinsLadyStatues, or
 /// a table for any other map number.
@@ -694,7 +706,7 @@ static void EventScript_BlowAwayIvyC(void) {
 
 /// Hops west as EventScript_HopWest, except from cell (32, 50).
 /// Reached by walking west into metatile behavior 50 in TunnelRuinsGreatStatue.
-static void EventScript_HopWestUnlessAtCell32x50(void) {
+static void EventScript_HopWestBySmallPillars(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
   if ((objectEvent->x.fixed >> 20) != 32 ||
@@ -706,7 +718,7 @@ static void EventScript_HopWestUnlessAtCell32x50(void) {
 /// Hops north as EventScript_HopNorth, except from cell (30, 52).
 /// Reached by walking north into metatile behavior 50 in
 /// TunnelRuinsGreatStatue.
-static void EventScript_HopNorthUnlessAtCell30x52(void) {
+static void EventScript_HopNorthBySmallPillars(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
   if ((objectEvent->x.fixed >> 20) != 30 ||
@@ -757,7 +769,7 @@ static void EventScript_SinkNorthwestPillar(void) {
       ObjectEvent_Get(LOCALID_NORTHWEST_SINKING_PILLAR)->y.fixed -= PIXELS(1);
       randomX = Random_Next();
       randomX = ((((u32)(randomX << 4) >> 16) << 16) + PIXELS(736));
-      randomZ = Engine_RandomNext();
+      randomZ = Import_RandomNext();
       FieldEffect_Spawn(
           randomX, 0,
           ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) +
@@ -799,7 +811,7 @@ static void EventScript_FreezeNorthwestPillarPuddle(void) {
   u8 *flags;
 
   OBJECT_ANIMATION(LOCALID_NORTHWEST_PILLAR_PUDDLE, 1);
-  ObjectGroup_ConfigureChildValue(LOCALID_NORTHWEST_PILLAR_PUDDLE, 0);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_NORTHWEST_PILLAR_PUDDLE, 0);
   OBJECT_ANIMATION(LOCALID_NORTHWEST_PILLAR_PUDDLE, 2);
   flags = &ObjectEvent_GetById(LOCALID_NORTHWEST_PILLAR_PUDDLE)->priorityFlags;
   *flags &= ~OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -838,9 +850,9 @@ static void EventScript_SinkSoutheastPillar(void) {
       for (i = 0; i < 16; i++) {
         WaitFrames(3);
         ObjectEvent_Get(LOCALID_SOUTHEAST_SINKING_PILLAR)->y.fixed -= PIXELS(1);
-        randomX = Engine_RandomNext();
+        randomX = Import_RandomNext();
         effectX = ((((u32)(randomX << 4) >> 16) << 16) + PIXELS(768));
-        randomZ = Engine_RandomNext();
+        randomZ = Import_RandomNext();
         effectZ = ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) +
                    PIXELS(224));
         FieldEffect_Spawn(effectX, 0, effectZ, 0, 0, 0,
@@ -900,7 +912,7 @@ static void EventScript_FreezeSoutheastPillarPuddle(void) {
   u8 *flags;
 
   OBJECT_ANIMATION(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 1);
-  ObjectGroup_ConfigureChildValue(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 0);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 0);
   OBJECT_ANIMATION(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 2);
   flags = &ObjectEvent_GetById(LOCALID_SOUTHEAST_PILLAR_PUDDLE)->priorityFlags;
   *flags &= ~OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -925,9 +937,9 @@ static void EventScript_ReadFirstStatue(void) {
   SCRIPT_END();
 }
 
-/// Moving the Douse pillar (until its puddle is frozen): nothing more
-/// happens.
-/// Reached by Move on the Douse pillar until FLAG_MAP_TEMP_04 is set.
+/// Moving the Douse pillar (until its puddle is frozen): nothing more happens.
+/// Reached by Move on the Douse pillar until
+/// FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN is set.
 static void EventScript_MoveDousePillar(void) {
   SCRIPT_START();
   SCRIPT_END();
@@ -943,28 +955,27 @@ static void EventScript_PushDousePillar(void) {
 }
 
 /// As Douse begins on the pillar, water splashes on it and it is soaked; its
-/// puddle follows it from then on.
-/// Reached by Douse's first phase on the Douse pillar until it is soaked; sets
-/// FLAG_MAP_TEMP_03 and gives the puddle its update hook.
+/// puddle follows it from then on. Reached by Douse's first phase on the Douse
+/// pillar until it is soaked; sets FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED and
+/// gives the puddle its update hook.
 static void EventScript_DouseStartsOnPillar(void) {
   struct ObjectEvent *puddle;
 
   ObjectEvent_SetActionScript(LOCALID_DOUSE_PILLAR,
                               gTunnelRuins_DouseSplashScript);
-  GameFlag_Set(FLAG_MAP_TEMP_03);
+  GameFlag_Set(FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED);
   puddle = ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE);
 #ifdef UBFIX
   puddle->update = TunnelRuins_PuddleFollowsPillar;
 #else
   puddle->update =
-      (void (*)(union FieldObject *))TunnelRuins_PuddleFollowsPillar;
+      (void (*)(union ObjectEventOrEffect *))TunnelRuins_PuddleFollowsPillar;
 #endif
 }
 
 /// Frost on the pillar's puddle freezes it into a pillar of ice where it
-/// stands.
-/// Reached by Frost on the Douse pillar's puddle until FLAG_MAP_TEMP_04 is
-/// set; sets it.
+/// stands. Reached by Frost on the Douse pillar's puddle until
+/// FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN is set; sets it.
 static void EventScript_FreezeDousePuddle(void) {
   struct ObjectEvent *objectEvent;
   s32 column;
@@ -973,7 +984,7 @@ static void EventScript_FreezeDousePuddle(void) {
   SCRIPT_START();
   ObjectMotion_SetActionVariant(LOCALID_DOUSE_PUDDLE, 1);
   OBJECT_ANIMATION(LOCALID_DOUSE_PUDDLE, 1);
-  ObjectGroup_ConfigureChildValue(LOCALID_DOUSE_PUDDLE, 0);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_DOUSE_PUDDLE, 0);
   OBJECT_ANIMATION(LOCALID_DOUSE_PUDDLE, 2);
 
   {
@@ -981,7 +992,7 @@ static void EventScript_FreezeDousePuddle(void) {
     *flag &= ~OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
 
-  GameFlag_Set(FLAG_MAP_TEMP_04);
+  GameFlag_Set(FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN);
 
   column = ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE)->x.fixed;
   row = ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE)->z.fixed >> 20;
@@ -1001,9 +1012,9 @@ static void EventScript_FreezeDousePuddle(void) {
 // A carved stone set on the balance rides 16 pixels above what it rests on,
 // whose object event its timer holds.
 #ifdef UBFIX
-static void TunnelRuins_RideStoneBelow(union FieldObject *fieldObject) {
+static void TunnelRuins_RideStoneBelow(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 TunnelRuins_RideStoneBelow(union FieldObject *fieldObject) {
+static s32 TunnelRuins_RideStoneBelow(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *supportedObjectEvent = (struct ObjectEvent *)fieldObject;
   s16 *supportingLocalId = &supportedObjectEvent->timer;
@@ -1194,7 +1205,7 @@ static void EventScript_SetStoneOnBalance(void) {
           TunnelRuins_RideStoneBelow;
 #else
       ObjectEvent_Get(settledIndex + LOCALID_WEST_CARRY_STONE)->update =
-          (void (*)(union FieldObject *))TunnelRuins_RideStoneBelow;
+          (void (*)(union ObjectEventOrEffect *))TunnelRuins_RideStoneBelow;
 #endif
       TunnelRuins_SettleBalance(40);
       ObjectEvent_Get(settledIndex + LOCALID_WEST_CARRY_STONE)->priorityFlags |=
@@ -1610,8 +1621,8 @@ s32 TunnelRuins_Initialize(void) {
           ObjectEvent_GetById(LOCALID_NORTHWEST_PILLAR_PUDDLE), 0);
       ObjectEvent_SetSpriteFlags(
           ObjectEvent_GetById(LOCALID_SOUTHEAST_PILLAR_PUDDLE), 0);
-      ObjectGroup_ConfigureChildValue(LOCALID_NORTHWEST_PILLAR_PUDDLE, 15);
-      ObjectGroup_ConfigureChildValue(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 15);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_NORTHWEST_PILLAR_PUDDLE, 15);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 15);
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR)) {
         MapGrid_CopyCellsTo(59, 8, 49, 8, 1, 3);
         MapGrid_CopyCellAttributes(51, 8, 1, 1, 49, 8);
@@ -1625,7 +1636,7 @@ s32 TunnelRuins_Initialize(void) {
         OBJECT_POSITION_SET(LOCALID_NORTHWEST_PILLAR_PUDDLE, 744, 136);
       }
       if (GameFlag_Get(FLAG_MAP_TEMP_00)) {
-        ObjectGroup_ConfigureChildValue(LOCALID_NORTHWEST_PILLAR_PUDDLE, 0);
+        ObjectEvent_ConfigureSpriteColor(LOCALID_NORTHWEST_PILLAR_PUDDLE, 0);
         OBJECT_ANIMATION(LOCALID_NORTHWEST_PILLAR_PUDDLE, 5);
       }
       if (Script_GetFlag(FLAG_MAP_TEMP_02))
@@ -1640,12 +1651,12 @@ s32 TunnelRuins_Initialize(void) {
         OBJECT_POSITION_SET(LOCALID_SOUTHEAST_SINKING_PILLAR, 776, 232);
         ObjectEvent_GetById(LOCALID_SOUTHEAST_SINKING_PILLAR)->y.fixed =
             -PIXELS(16);
-        Engine_ObjectEventSetPosition(LOCALID_SOUTHEAST_PILLAR_PUDDLE,
+        Import_ObjectEventSetPosition(LOCALID_SOUTHEAST_PILLAR_PUDDLE,
                                       PIXELS(776), PIXELS(232));
         GameFlag_Set(FLAG_MAP_TEMP_02);
       }
       if (GameFlag_Get(FLAG_MAP_TEMP_01)) {
-        ObjectGroup_ConfigureChildValue(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 0);
+        ObjectEvent_ConfigureSpriteColor(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 0);
         OBJECT_ANIMATION(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 5);
       }
       break;
@@ -1684,8 +1695,8 @@ s32 TunnelRuins_Initialize(void) {
           BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE;
       gSaveBlock.retreatMap = (s32)&MapId_BabiLighthouseEntry;
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
-      ObjectGroup_ConfigureChildValue(LOCALID_EAST_PILLAR_A, 6);
-      ObjectGroup_ConfigureChildValue(LOCALID_EAST_PILLAR_B, 6);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_EAST_PILLAR_A, 6);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_EAST_PILLAR_B, 6);
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST))
         OBJECT_POSITION_SET(LOCALID_EAST_PILLAR_A, 728, 312);
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST))
@@ -1698,12 +1709,12 @@ s32 TunnelRuins_Initialize(void) {
       ObjectEvent_GetById(LOCALID_DOUSE_PILLAR)->motionFlags = 0;
       ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_DOUSE_PILLAR), 0);
       ObjectMotion_SetActionVariant(LOCALID_DOUSE_PUDDLE, 1);
-      ObjectGroup_ConfigureChildValue(LOCALID_DOUSE_PUDDLE, 15);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_DOUSE_PUDDLE, 15);
       ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE), 0);
       ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE)->motionFlags = 0;
-      if (!GameFlag_Get(FLAG_MAP_TEMP_04))
+      if (!GameFlag_Get(FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN))
         break;
-      ObjectGroup_ConfigureChildValue(LOCALID_DOUSE_PUDDLE, 0);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_DOUSE_PUDDLE, 0);
       OBJECT_ANIMATION(LOCALID_DOUSE_PUDDLE, 5);
       MapGrid_CopyCellAttributeRect(
           26, 8, 1, 1, ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE)->x.fixed >> 20,
@@ -1762,7 +1773,7 @@ s32 TunnelRuins_Initialize(void) {
             UPDATE_RIDE_STONE_BELOW;
         ObjectEvent_GetById(LOCALID_MIDDLE_CARRY_STONE)->priorityFlags |=
             OBJ_EVENT_PRIORITY_UNDERFOOT;
-        Engine_ObjectEventSetPosition(LOCALID_EAST_CARRY_STONE, PIXELS(136),
+        Import_ObjectEventSetPosition(LOCALID_EAST_CARRY_STONE, PIXELS(136),
                                       PIXELS(152));
         ObjectEvent_GetById(LOCALID_EAST_CARRY_STONE)->timer =
             LOCALID_BALANCE_WEST;
@@ -1814,11 +1825,11 @@ s32 TunnelRuins_Initialize(void) {
           ~OBJ_EVENT_FOLLOWS_TERRAIN;
       ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTH)->motionFlags &=
           ~OBJ_EVENT_FOLLOWS_TERRAIN;
-      ObjectGroup_ConfigureChildValue(LOCALID_LADY_STATUE_NORTHWEST, 4);
-      ObjectGroup_ConfigureChildValue(LOCALID_LADY_STATUE_NORTHEAST, 1);
-      ObjectGroup_ConfigureChildValue(LOCALID_LADY_STATUE_SOUTHWEST, 4);
-      ObjectGroup_ConfigureChildValue(LOCALID_LADY_STATUE_SOUTHEAST, 10);
-      ObjectGroup_ConfigureChildValue(LOCALID_LADY_STATUE_SOUTH, 0);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_LADY_STATUE_NORTHWEST, 4);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_LADY_STATUE_NORTHEAST, 1);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_LADY_STATUE_SOUTHWEST, 4);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_LADY_STATUE_SOUTHEAST, 10);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_LADY_STATUE_SOUTH, 0);
       OBJECT_ANIMATION(LOCALID_LADY_STATUE_NORTHWEST, 2);
       OBJECT_ANIMATION(LOCALID_LADY_STATUE_SOUTH, 2);
       MapGrid_CopyCellAttributeRect(
@@ -1872,17 +1883,17 @@ s32 gPushedObject_FootprintBounds[] = {
     -8,  -32, 8,  32, -32, -8,  32, 8,  -8,  -32, 8,  32,
 };
 
-s32 gShortEffectScript[] = {
+s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gMediumEffectScript[] = {
+s32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gLongEffectScript[] = {
+s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
@@ -1894,10 +1905,10 @@ u32 gTunnelRuins_BalanceHeights[] = {
     -PIXELS(64), -PIXELS(80), -PIXELS(80),
 };
 
-const s32 *gEffectScripts[] = {
-    gShortEffectScript,
-    gMediumEffectScript,
-    gLongEffectScript,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 s32 gTunnelRuins_ShrinkScript[] = {
@@ -2249,11 +2260,11 @@ struct MapEvent gTunnelRuinsGreatStatueEvents[] = {
     {COORD_EVENT_WALKING_INTO(FACING_EAST), 27, CONDITION_ALWAYS,
         EVENT_SCRIPT(EventScript_HopEast)},
     {COORD_EVENT_WALKING_INTO(FACING_WEST), 50, CONDITION_ALWAYS,
-        EVENT_SCRIPT(EventScript_HopWestUnlessAtCell32x50)},
+        EVENT_SCRIPT(EventScript_HopWestBySmallPillars)},
     {COORD_EVENT_WALKING_INTO(FACING_EAST), 50, CONDITION_ALWAYS,
         EVENT_SCRIPT(EventScript_HopEast)},
     {COORD_EVENT_WALKING_INTO(FACING_NORTH), 50, CONDITION_ALWAYS,
-        EVENT_SCRIPT(EventScript_HopNorthUnlessAtCell30x52)},
+        EVENT_SCRIPT(EventScript_HopNorthBySmallPillars)},
     {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 50, CONDITION_ALWAYS,
         EVENT_SCRIPT(EventScript_HopSouth)},
     {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopSouthOrPushSmallPillars)},
@@ -2340,9 +2351,9 @@ struct MapEvent gTunnelRuinsEventsOther[] = {
     {BG_EVENT(BG_EVENT_SILENT), 42, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadSecondStatue)},
     {BG_EVENT(BG_EVENT_CHEST), 100, FLAG_TUNNEL_RUINS_ORACLES_ROBE, FIND_ITEM(ITEM_ORACLES_ROBE)},
     {BG_EVENT(BG_EVENT_CHEST), 101, FLAG_TUNNEL_RUINS_ASURAS_ARMOR, FIND_ITEM(ITEM_ASURAS_ARMOR)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_DOUSE_PILLAR, FLAG_MAP_TEMP_04, EVENT_SCRIPT(EventScript_MoveDousePillar)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE) | 1 << 28, LOCALID_DOUSE_PILLAR, FLAG_MAP_TEMP_03, EVENT_SCRIPT(EventScript_DouseStartsOnPillar)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_DOUSE_PUDDLE, FLAG_MAP_TEMP_04, EVENT_SCRIPT(EventScript_FreezeDousePuddle)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_DOUSE_PILLAR, FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_MoveDousePillar)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE) | 1 << 28, LOCALID_DOUSE_PILLAR, FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED, EVENT_SCRIPT(EventScript_DouseStartsOnPillar)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_DOUSE_PUDDLE, FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeDousePuddle)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_WEST_CARRY_STONE, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_MIDDLE_CARRY_STONE, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_EAST_CARRY_STONE, CONDITION_ALWAYS, 0},

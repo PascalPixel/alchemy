@@ -56,7 +56,7 @@ enum SerialMode {
   SERIAL_MODE_CLOCKING = SIO_MULTI_SD
 };
 
-/// The link status bits SerialRuntime_ExchangePayloads returns.
+/// The link status bits Serial_ExchangePayloads returns.
 enum LinkStatus {
   LINK_STATUS_HEARD_BOTH = 3,  ///< both consoles heard from this frame
   LINK_STATUS_CLOCKING = 0x80, ///< this console clocks the transfers
@@ -155,7 +155,7 @@ extern struct SerialTransferState gSerialTransfer;
 extern struct SerialWork gSerialWork;
 extern u16 gSerialExchangeActive;
 extern s32 gSerialSendSource;
-/// volatile: tagged where it steers, in SerialRuntime_StepBlockTransfer (tbs
+/// volatile: tagged where it steers, in Serial_StepBlockTransfer (tbs
 /// runtime.c)
 extern volatile u16 gSerialSendSize;
 extern s32 gSerialReceiveDestination;
@@ -163,23 +163,23 @@ extern s32 gSerialReceiveDestination;
 /// battle.c) and BattleArena_ReceivePartyRecords (tbs battle_arena.c)
 extern volatile u16 gSerialReceivedSize;
 extern u8 gSerialPeerPayloads[4][24];
-/// volatile: tagged where it steers, in SerialRuntime_StepBlockTransfer (tbs
+/// volatile: tagged where it steers, in Serial_StepBlockTransfer (tbs
 /// runtime.c)
 extern volatile u8 gSerialBlockSequence;
 extern u8 gLinkExchangeState;
 /// Link status, updated by the VBlank exchange handler.
 /* FAKEMATCH(volatile): each mask test loads the status on its own; as plain
  * u16, 155 of 920 instructions differ in tbs-en (MainMenu_Run; 14 of 23 in
- * SerialRuntime_WaitForStatusMask). */
+ * Serial_WaitForStatusMask). */
 extern volatile u16 gLinkStatus;
 
-static inline s32 SerialRuntime_AddParentFlag(s32 status) {
+static inline s32 Serial_AddParentFlag(s32 status) {
   if (gSerialWork.isParent != 0)
     status |= LINK_STATUS_PARENT;
   return status;
 }
 
-static __inline__ void SerialRuntime_ResetTransferState(void) {
+static __inline__ void Serial_ResetTransferState(void) {
   struct SerialTransferState *state;
   volatile u16 *ime;
   u32 saved;

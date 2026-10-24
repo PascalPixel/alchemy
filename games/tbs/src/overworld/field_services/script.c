@@ -80,10 +80,10 @@ void Leader_StopMoving(void) {
   object->velocityX = 0;
   object->velocityZ = 0;
   if (gSaveBlock.movementMode == LEADER_MOVEMENT_CLIMB) {
-    ObjectDispatch_SelectAnimationFar(object, 0xC);
+    Object_SelectAnimationFar(object, 0xC);
     return;
   }
-  ObjectDispatch_SelectAnimationFar(object, 1);
+  Object_SelectAnimationFar(object, 1);
 }
 
 /// The script command "begin script": closes any map name popup, stops the
@@ -531,7 +531,7 @@ void FieldScript_SetSavedDestination(u16 mapId, u16 warpDest) {
 
 /// The script command "request warp": sets the field's warp request (999 leaves
 /// for gSaveBlock's mapId and warpDest). Map scripts reach it as
-/// Engine_ScriptRequestWarp (about 61 of them).
+/// Import_ScriptRequestWarp (about 61 of them).
 void FieldScript_SetWarpRequest(u16 request) {
   struct FieldWork *state = gFieldWork;
   state->warp = request;

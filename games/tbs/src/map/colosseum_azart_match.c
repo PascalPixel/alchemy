@@ -269,23 +269,23 @@ static void ColosseumAzartMatch_UpdateBrokenBridge(void) {
   case 66:
     MapGrid_CopyCellIndexRect(92, 31, 2, 2, 50, 38);
     MapGrid_CopyCellIndexRect(92, 31, 2, 2, 54, 38);
-    Engine_ObjectEventSetAnimation(LOCALID_BRIDGE_OPERATOR, 10);
+    Import_ObjectEventSetAnimation(LOCALID_BRIDGE_OPERATOR, 10);
     break;
   case 60:
     MapGrid_CopyCellIndexRect(92, 33, 2, 2, 50, 38);
     MapGrid_CopyCellIndexRect(92, 33, 2, 2, 54, 38);
     MapGrid_CopyCellAttributes(50, 25, 6, 1, 50, 12);
-    Engine_ObjectEventSetAnimation(LOCALID_BRIDGE_OPERATOR, 11);
+    Import_ObjectEventSetAnimation(LOCALID_BRIDGE_OPERATOR, 11);
     break;
   case 6:
     MapGrid_CopyCellIndexRect(92, 31, 2, 2, 50, 38);
     MapGrid_CopyCellIndexRect(92, 31, 2, 2, 54, 38);
-    Engine_ObjectEventSetAnimation(LOCALID_BRIDGE_OPERATOR, 10);
+    Import_ObjectEventSetAnimation(LOCALID_BRIDGE_OPERATOR, 10);
     break;
   case 0:
     MapGrid_CopyCellIndexRect(92, 29, 2, 2, 50, 38);
     MapGrid_CopyCellIndexRect(92, 29, 2, 2, 54, 38);
-    Engine_ObjectEventSetAnimation(LOCALID_BRIDGE_OPERATOR, 12);
+    Import_ObjectEventSetAnimation(LOCALID_BRIDGE_OPERATOR, 12);
     MapGrid_CopyCellAttributes(50, 24, 6, 1, 50, 12);
     gColosseumAzartMatch_Countdown = 120;
     break;
@@ -391,7 +391,7 @@ static void EventScript_DousePipe(void) {
   FieldScript_Start();
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   FieldCamera_MoveTo(PIXELS(600), -1, PIXELS(200), 1);
-  ObjectDispatch_SelectAnimation(objectEvent, 3);
+  Object_SelectAnimation(objectEvent, 3);
   FieldCamera_WaitForArrival();
   none = 0;
   objectEvent->motionFlags = none;
@@ -430,7 +430,7 @@ static void ColosseumAzartMatch_MoveObjectEventPairByOffset(s32 localId, s32 dx,
     leader->acceleration = PIXELS(1) / 2;
     Object_SetPosition(leader, x, leader->y.fixed, z);
   }
-  ObjectDispatch_SelectAnimation(leader, 27);
+  Object_SelectAnimation(leader, 27);
   {
     x = ((objectEvent->x.fixed + (dx << 16)) & 0xFFF00000) + PIXELS(8);
     z = ((objectEvent->z.fixed + (dz << 16)) & 0xFFF00000) + PIXELS(8);
@@ -440,14 +440,14 @@ static void ColosseumAzartMatch_MoveObjectEventPairByOffset(s32 localId, s32 dx,
     Object_SetPosition(objectEvent, x, objectEvent->y.fixed, z);
   }
   if (dx < 0 || dz < 0) {
-    ObjectDispatch_SelectAnimation(objectEvent, 4);
+    Object_SelectAnimation(objectEvent, 4);
   } else {
-    ObjectDispatch_SelectAnimation(objectEvent, 3);
+    Object_SelectAnimation(objectEvent, 3);
   }
   Sound_PlaySong(SE_226);
   Object_WaitForMove(leader);
-  ObjectDispatch_SelectAnimation(objectEvent, 2);
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Object_SelectAnimation(objectEvent, 2);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
   FieldScript_End();
 }
 
@@ -545,17 +545,17 @@ static void EventScript_PushPipeworksPillar(void) {
   objectEvent = ObjectEvent_GetById(LOCALID_PIPEWORKS_PIPE);
   GameFlag_Set(FLAG_PIPEWORKS_PIPE_PUSHED);
   FieldScript_Start();
-  Engine_ObjectEventSetAnimation(leaderId, ANIM_PUSH);
+  Import_ObjectEventSetAnimation(leaderId, ANIM_PUSH);
   FieldScript_WaitFrames(6);
   objectEvent->speed = PIXELS(1) / 2;
   objectEvent->acceleration = PIXELS(1) / 5;
   Script_PlaySong(SE_HEAVY_MOVE);
-  ObjectDispatch_SelectAnimation(objectEvent, 2);
+  Object_SelectAnimation(objectEvent, 2);
   Object_SetPosition(objectEvent, objectEvent->x.fixed - PIXELS(48), 0,
                      objectEvent->z.fixed);
   FieldScript_WaitFrames(6);
-  Engine_ObjectEventSetAnimation(leaderId, ANIM_WALK);
-  ObjectDispatch_StartCamera(
+  Import_ObjectEventSetAnimation(leaderId, ANIM_WALK);
+  Object_StartCamera(
       (struct Object *)((struct FieldWork *)AllocHeapSlotEwram(
                             HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
           ->camera,
@@ -563,10 +563,10 @@ static void EventScript_PushPipeworksPillar(void) {
   ObjectEvent_SetSpeed(leaderId, PIXELS(3) / 10, PIXELS(1) / 5);
   Object_SetPosition(leader, leader->x.fixed - PIXELS(24), 0, leader->z.fixed);
   ObjectMotion_CommitCurrentPositionAndActivate(leaderId);
-  Engine_ObjectEventSetAnimation(leaderId, ANIM_STAND);
+  Import_ObjectEventSetAnimation(leaderId, ANIM_STAND);
   Object_WaitForMove(objectEvent);
-  ObjectDispatch_SelectAnimation(objectEvent, 1);
-  Script_PlaySong(SE_STOP_SLOT3);
+  Object_SelectAnimation(objectEvent, 1);
+  Script_PlaySong(SE_STOP_ACTION_SE);
   Script_PlaySong(SE_HEAVY_STOP);
   FieldScript_WaitFrames(15);
   FieldScript_End();
@@ -594,7 +594,7 @@ static void EventScript_PushPipeworksPillar(void) {
   objectEvent->speed = PIXELS(4) / 5;
   Object_SetPosition(objectEvent, objectEvent->x.fixed, PIXELS(8),
                      objectEvent->z.fixed);
-  ObjectDispatch_SelectAnimation(objectEvent, 3);
+  Object_SelectAnimation(objectEvent, 3);
   ColosseumAzartMatch_AnimatePipeworksWater();
   objectEvent = ObjectEvent_GetById(LOCALID_PIPE_EAST);
   objectEvent->motionFlags = none;
@@ -615,11 +615,11 @@ UNUSED static void ColosseumAzartMatch_SetCourseFlag(void) {
 
 /// Reaching Colosseum Final 1's arena: the leader takes a prize (the Iron
 /// Shield if first, the Padded Gloves if second), and he and Azart face off and
-/// fight; the battle's group follows who took the shield.
-/// The arena's coord event row, in all three finals stages, waits on
-/// FLAG_MAP_TEMP_10 being clear, and nothing in the game sets it: no map
-/// code, no object script (none uses SC_FLAG_ON) and none of the main image's
-/// flag writers reaches it, so the arena is never closed.
+/// fight; the battle's group follows who took the shield. The arena's coord
+/// event row, in all three finals stages, waits on FLAG_COLOSSEUM_ARENA_CLOSED
+/// being clear, and nothing in the game sets it: no map code, no object script
+/// (none uses SC_FLAG_ON) and none of the main image's flag writers reaches it,
+/// so the arena is never closed.
 static void EventScript_ReachArena(void) {
   s32 approach;
   s32 n;
@@ -640,18 +640,18 @@ static void EventScript_ReachArena(void) {
   ObjectEvent_WalkTo(LOCALID_OPPONENT, 1320, 192);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 1288, 192);
-  Engine_ObjectEventSetAnimation(LOCALID_OPPONENT, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_OPPONENT, ANIM_STAND);
   ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_OPPONENT, 0);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_OPPONENT, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_OPPONENT, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(1));
   ObjectEvent_SetSpeed(LOCALID_OPPONENT, PIXELS(2), PIXELS(1));
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 1296, 192);
   ObjectEvent_WalkToAndWait(LOCALID_OPPONENT, 1312, 192);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
-  Engine_ObjectEventSetAnimation(LOCALID_OPPONENT,
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
+  Import_ObjectEventSetAnimation(LOCALID_OPPONENT,
                                  WARRIOR_ANIMATION_FIGHTING_STANCE);
   FieldScript_WaitFrames(10);
   /* FAKEMATCH(temporary): base, set to 0 at the top, keeps the + 1 unfolded;
@@ -702,13 +702,13 @@ static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, 0x4000, 0);
 #endif
   if (result < 0) {
-    Engine_ObjectEventSetAnimation(LOCALID_OPPONENT,
+    Import_ObjectEventSetAnimation(LOCALID_OPPONENT,
                                    WARRIOR_ANIMATION_ARMS_RAISED);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_CROUCH);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_CROUCH);
   } else {
-    Engine_ObjectEventSetAnimation(LOCALID_OPPONENT,
+    Import_ObjectEventSetAnimation(LOCALID_OPPONENT,
                                    WARRIOR_ANIMATION_DEFEATED);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
                                    ANIM_LEADER_ARMS_RAISED);
   }
   WaitFrames(1);
@@ -771,7 +771,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
   objectEvent->layer = 1;
   zero = 0;
   if (GameFlag_Get(FLAG_PLANT_GROWN)) {
-    ObjectDispatch_SelectAnimation(objectEvent, 4);
+    Object_SelectAnimation(objectEvent, 4);
     ObjectEvent_SetSpriteFlags(objectEvent, 0);
     objectEvent->collisionFlags = zero;
     objectEvent->priorityFlags = 3;
@@ -799,9 +799,9 @@ s32 ColosseumAzartMatch_Initialize(void) {
     objectEvent->acceleration = PIXELS(2) / 5;
     objectEvent->speed = PIXELS(4) / 5;
     objectEvent->y.fixed = PIXELS(8);
-    ObjectDispatch_SelectAnimation(objectEvent, 3);
+    Object_SelectAnimation(objectEvent, 3);
   } else {
-    ObjectDispatch_SelectAnimation(objectEvent, 2);
+    Object_SelectAnimation(objectEvent, 2);
   }
   ObjectEvent_GetById(LOCALID_PIPE_EAST)->priorityFlags = 2;
   Colosso_ShowItemIcon(LOCALID_PRIZE_A, ITEM_IRON_SHIELD);
@@ -851,11 +851,11 @@ s32 ColosseumAzartMatch_Initialize(void) {
     break;
   case COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON:
     ColosseumAzartMatch_RestoreMatchResult(1);
-    Engine_ScriptRequestWarp(COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_EAST);
+    Import_ScriptRequestWarp(COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_EAST);
     break;
   case COLOSSEUM_AZART_MATCH_AFTER_MATCH_LOST:
     ColosseumAzartMatch_RestoreMatchResult(-1);
-    Engine_ScriptRequestWarp(COLOSSEUM_AZART_MATCH_TO_BABI_PALACE);
+    Import_ScriptRequestWarp(COLOSSEUM_AZART_MATCH_TO_BABI_PALACE);
     break;
   }
   return 0;
@@ -879,7 +879,7 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(1), PIXELS(1) / 2);
-  Engine_ObjectEventSetPosition(LOCALID_PARTY_LEADER, x << 16,
+  Import_ObjectEventSetPosition(LOCALID_PARTY_LEADER, x << 16,
                                 (z << 16) - PIXELS(48));
   ObjectEvent_SetPosition(LOCALID_GARET, (x << 16) - PIXELS(16),
                           (z << 16) - PIXELS(40));
@@ -913,11 +913,11 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   if (Script_AskYesNo(guide, 0) == 0) {
     do {
       FieldScript_SetMessageId(MsgColossoWarriorsEnterFinalsWithoutAny);
-      Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+      Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
       FieldScript_WaitFrames(2);
-      Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+      Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
       FieldScript_WaitFrames(2);
-      Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+      Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
       FieldScript_WaitFrames(1);
       ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
       ObjectMotion_SetAnimationAndWait(guide, ANIM_NOD);
@@ -965,27 +965,27 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   Script_ShowMessage(LOCALID_IVAN, 0);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   Script_ShowMessage(LOCALID_MIA, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(1);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(2);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(1);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(6);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
     ObjectEvent_SetDestination(LOCALID_GARET, objectEvent->x.part.pixel,
                                objectEvent->z.part.pixel);
   }
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
     ObjectEvent_SetDestination(LOCALID_IVAN, objectEvent->x.part.pixel,
                                objectEvent->z.part.pixel);
   }
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
     ObjectEvent_SetDestination(LOCALID_MIA, objectEvent->x.part.pixel,
@@ -1050,7 +1050,7 @@ static void EventScript_TalkToRockAttendant(s32 localId) {
       ObjectEvent_ResetMotionFields(LOCALID_PARTY_LEADER);
       ColosseumAzartMatch_PushObjectAhead();
       ObjectEvent_ResetMotionFields(LOCALID_PARTY_LEADER);
-      Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
       FieldScript_ShowMessageAndWait(localId, 0);
       Colosso_RestoreWarrior(LOCALID_PARTY_LEADER);
       FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
@@ -1222,7 +1222,7 @@ static void EventScript_TalkToLumberAttendant(s32 localId) {
      * in tbs-en. */
     COLOSSEUM_AZART_MATCH_PLACE_STAGED_PAIR(LOCALID_LOG_EAST_WEST, 160, 0);
     FieldCamera_MoveTo(PIXELS(1088), -1, PIXELS(168), 1);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
     FieldScript_WaitFrames(10);
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 1192, 168);
@@ -1425,7 +1425,7 @@ static void ColosseumAzartMatch_WaitForStageReady(void) {
 
 /// Occasionally spawns an animated effect around the finish item.
 static void
-ColosseumAzartMatch_SpawnRandomEffect(union FieldObject *fieldObject) {
+ColosseumAzartMatch_SpawnRandomEffect(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   s32 position[3];
   u32 chance;
@@ -1433,7 +1433,7 @@ ColosseumAzartMatch_SpawnRandomEffect(union FieldObject *fieldObject) {
   if (objectEvent->velocityY >= -255 && objectEvent->velocityY <= 255) {
     objectEvent->motionFlags = 0;
   }
-  chance = Engine_RandomNext();
+  chance = Import_RandomNext();
   if (chance * 100 >> 16 <= 9) {
     struct ObjectEvent *effect;
     s32 radius;
@@ -1441,8 +1441,8 @@ ColosseumAzartMatch_SpawnRandomEffect(union FieldObject *fieldObject) {
 
     SET_VECTOR(position, objectEvent->x.fixed, objectEvent->y.fixed,
                objectEvent->z.fixed);
-    radius = Engine_RandomNext();
-    angle = Engine_RandomNext();
+    radius = Import_RandomNext();
+    angle = Import_RandomNext();
     Vector_AddPolarOffset(radius << 4, angle, position);
     {
       s32 x = position[0];
@@ -1455,8 +1455,8 @@ ColosseumAzartMatch_SpawnRandomEffect(union FieldObject *fieldObject) {
       effect->motionFlags = 0;
       ObjectEvent_SetSpriteFlags(effect, 0);
       ObjectEvent_SetScript(effect, gColosseumAzartMatch_ScriptA);
-      ObjectDispatch_SelectAnimation(effect, 1);
-      ObjectDispatch_SelectAnimation(effect, 0);
+      Object_SelectAnimation(effect, 1);
+      Object_SelectAnimation(effect, 0);
     }
   }
 }
@@ -1534,7 +1534,7 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
 
   MessageArgument_Push(gSaveBlock.leaderLocalId, 1);
   FieldMessage_Show(MsgColossoIsaacGotItem, 3);
-  ObjectDispatch_WaitForValue16(objectEvent);
+  Object_WaitForValue16(objectEvent);
 
   return flag;
 }
@@ -1567,7 +1567,7 @@ static void ColosseumAzartMatch_PushObjectAhead(void) {
   packedStep <<= 16;
   position.z = subject->z.fixed + packedStep;
 
-  target = MapData_FindSlotAtPosition(&position, subject);
+  target = ObjectEvent_FindAtPosition(&position, subject);
   if (target == 0) {
     return;
   }
@@ -1578,7 +1578,7 @@ static void ColosseumAzartMatch_PushObjectAhead(void) {
   packedStep <<= 16;
   position.z = target->z.fixed + packedStep;
 
-  blocker = MapData_FindSlotAtPosition(&position, target);
+  blocker = ObjectEvent_FindAtPosition(&position, target);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0) {
     return;
   }
@@ -1587,7 +1587,7 @@ static void ColosseumAzartMatch_PushObjectAhead(void) {
   position.y = target->y.fixed + PIXELS(16);
   position.z = target->z.fixed;
 
-  blocker = MapData_FindSlotAtPosition(&position, target);
+  blocker = ObjectEvent_FindAtPosition(&position, target);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0) {
     return;
   }
@@ -1605,7 +1605,7 @@ static void ColosseumAzartMatch_PushObjectAhead(void) {
     return;
   }
 
-  ObjectDispatch_SelectAnimation(subject, 8);
+  Object_SelectAnimation(subject, 8);
   WaitFrames(15);
 
   target->speed = PIXELS(1) / 5;
@@ -1618,17 +1618,22 @@ static void ColosseumAzartMatch_PushObjectAhead(void) {
 
   Sound_PlaySong(SE_238);
   Object_WaitForMove(target);
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
 
   target->x.fixed = position.x;
   target->z.fixed = position.z;
   target->velocityX = zero;
   target->velocityZ = zero;
 
-  ObjectDispatch_SelectAnimation(subject, 1);
+  Object_SelectAnimation(subject, 1);
 }
 
 #include "common/colosso_occupant.h"
+
+/// Closes the arena's coord event; nothing in the game sets it.
+#define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_MAP_TEMP_10
+/// The chest holding an Oil Drop has been opened.
+#define FLAG_COLOSSEUM_AZART_MATCH_OIL_DROP_CHEST_OPENED FLAG_MAPSEC_TEMP_09
 
 // clang-format off
 const u8 gColosso_LetteringPaletteOffsets[] = {
@@ -1796,9 +1801,9 @@ struct MapEvent gColosseumAzartMatch_Events[] = {
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogNorthSouth) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogEastWest) },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogEastWest) },
-    { MAP_EVENT_COORD, 50, FLAG_MAP_TEMP_10, EVENT_SCRIPT(EventScript_ReachArena) },
+    { MAP_EVENT_COORD, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT_SCRIPT(EventScript_ReachArena) },
     { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_MAPSEC_TEMP_08, FIND_ITEM(ITEM_NUT) },
-    { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_MAPSEC_TEMP_09, FIND_ITEM(ITEM_OIL_DROP) },
+    { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_COLOSSEUM_AZART_MATCH_OIL_DROP_CHEST_OPENED, FIND_ITEM(ITEM_OIL_DROP) },
     { BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_WEST, 103, FLAG_MAPSEC_TEMP_0A, FIND_ITEM(ITEM_NUT) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROCK_A, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleRocks) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROCK_B, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleRocks) },

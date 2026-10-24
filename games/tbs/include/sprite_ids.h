@@ -180,7 +180,7 @@ enum SpriteId {
   SPRITE_PUDDLE = 0xe3,
   /// Isaac's tunic: placed beside his bed on the stormy night, and drawn as a
   /// second layer over the child sprites of Isaac and Garet while
-  /// FLAG_ISAAC_WEARS_TUNIC is set (ObjectDispatch_RegisterChildMetadata).
+  /// FLAG_ISAAC_WEARS_TUNIC is set (Object_RegisterSpriteMetadata).
   /// ★ Named from the game: "Don't go out without your tunic!"
   /// (MsgValeComeOnHurry)
   SPRITE_TUNIC = 0xe2,

@@ -1,25 +1,25 @@
 /// @file
 /// Bilibin, the Bilibin Treasury and the Bilibin Barricade, three maps that
-/// share one overlay: MapId_Bilibin,
-/// MapId_BilibinTreasury and MapId_BilibinBarricade. The getters pick
-/// each map's tables by gSaveBlock.mapId, Bilibin_Initialize sets up the
-/// map being entered, and EventScript_PushStatueOrCrates serves all three.
+/// share one overlay: MapId_Bilibin, MapId_BilibinTreasury and
+/// MapId_BilibinBarricade. The getters pick each map's tables by
+/// gSaveBlock.mapId, Bilibin_Initialize sets up the map being entered, and
+/// EventScript_PushStatueOrCrates serves all three.
 ///
-/// Bilibin (MapId_Bilibin) is the town past Goma Cave, whose chief, Lord
-/// McCoy, has closed the road to Kolima. Almost everything here turns on
+/// Bilibin (MapId_Bilibin) is the town past Goma Cave, whose chief, Lord McCoy,
+/// has closed the road to Kolima. Almost everything here turns on
 /// FLAG_KOLIMA_CURSE_LIFTED, which the party sets in Kolima Forest when it
 /// heals Tret. Until then a man turned into a tree (LOCALID_TREE_MAN) stands at
-/// the entrance: a first look says it almost looks like a man, a second that
-/// it looks like a living person (FLAG_MAPSEC_TEMP_01 remembers the first until
-/// the party leaves Bilibin), and Mind Read hears `Help me... Somebody...`.
-/// Once the curse is lifted, Bilibin_RestoreVillageObjectEvents puts the man
-/// himself (LOCALID_FORMER_TREE_MAN) beside the empty spot and turns
-/// LOCALID_OLD_MAN_ASKS_ABOUT_SOUTHEAST and LOCALID_OLD_WOMAN_ROAD_BLOCKED
-/// about. Each of the ten villagers (LOCALID_YOUNG_MAN_WELCOME to
-/// LOCALID_VILLAGER_STRANGE_CREATURES) has two lines and two thoughts in
-/// gBilibinEvents, the row that needs the flag clear first, so the first row
-/// that matches picks the time; a few ask a yes-or-no question (the
-/// EventScript_AskAbout functions).
+/// the entrance: a first look says it almost looks like a man, a second that it
+/// looks like a living person (FLAG_BILIBIN_TREE_EXAMINED remembers the first
+/// until the party leaves Bilibin), and Mind Read hears `Help me...
+/// Somebody...`. Once the curse is lifted, Bilibin_RestoreVillageObjectEvents
+/// puts the man himself (LOCALID_FORMER_TREE_MAN) beside the empty spot and
+/// turns LOCALID_OLD_MAN_ASKS_ABOUT_SOUTHEAST and
+/// LOCALID_OLD_WOMAN_ROAD_BLOCKED about. Each of the ten villagers
+/// (LOCALID_YOUNG_MAN_WELCOME to LOCALID_VILLAGER_STRANGE_CREATURES) has two
+/// lines and two thoughts in gBilibinEvents, the row that needs the flag clear
+/// first, so the first row that matches picks the time; a few ask a yes-or-no
+/// question (the EventScript_AskAbout functions).
 ///
 /// Bilibin's doors (coord events 3 to 9, the numbers of the warps they take)
 /// open before the party walks in (EventScript_OpenDoorAndLeave): six lead into
@@ -30,22 +30,22 @@
 /// (LOCALID_IVY), gone when the party comes back out that way
 /// (BILIBIN_FROM_BILIBIN_TREASURY_WEST); its Whirlwind row runs no script, so
 /// Field_UsePsynergy only aims Whirlwind's effect at it and the ivy stays. And
-/// from the cell a statue
-/// (LOCALID_VILLAGE_STATUE) stands on, once Move or a push slides it aside.
-/// Bilibin_UpdateVillageStatueCells keeps the cells of the statue's lane in
-/// step and hops the leader clear if it lands on him; coming back out that way
-/// (BILIBIN_FROM_BILIBIN_TREASURY_EAST) the party finds the statue moved.
+/// from the cell a statue (LOCALID_VILLAGE_STATUE) stands on, once Move or a
+/// push slides it aside. Bilibin_UpdateVillageStatueCells keeps the cells of
+/// the statue's lane in step and hops the leader clear if it lands on him;
+/// coming back out that way (BILIBIN_FROM_BILIBIN_TREASURY_EAST) the party
+/// finds the statue moved.
 ///
-/// FLAG_MAPSEC_TEMP_04 is set while McCoy's gate guards have let the party in
-/// (FLAG_MCCOY_PALACE_ADMITTED) but it has not yet entered the palace
-/// (FLAG_MCCOY_PALACE_VISITED), for the garden's east guard to scold the party
-/// for keeping McCoy waiting. The garden is another map section (map_headers.s
-/// gives Bilibin 8 and the garden 9), so Map_ResetFlagsOnEnter clears the
-/// flag on the way in and the guard never sees it set.
+/// FLAG_BILIBIN_KEEPING_MCCOY_WAITING is set while McCoy's gate guards have let
+/// the party in (FLAG_MCCOY_PALACE_ADMITTED) but it has not yet entered the
+/// palace (FLAG_MCCOY_PALACE_VISITED), for the garden's east guard to scold the
+/// party for keeping McCoy waiting. The garden is another map section
+/// (map_headers.s gives Bilibin 8 and the garden 9), so Map_ResetFlagsOnEnter
+/// clears the flag on the way in and the guard never sees it set.
 ///
-/// The Bilibin Treasury (MapId_BilibinTreasury) is what its sign calls
-/// `McCoy's Hidden Warehouse`. Gust, a Jupiter Djinni, is placed there until he
-/// joins the party when spoken to (EventScript_GustJoins). A second statue
+/// The Bilibin Treasury (MapId_BilibinTreasury) is what its sign calls `McCoy's
+/// Hidden Warehouse`. Gust, a Jupiter Djinni, is placed there until he joins
+/// the party when spoken to (EventScript_GustJoins). A second statue
 /// (LOCALID_TREASURY_STATUE) slides along one column, and
 /// Bilibin_UpdateTreasuryStatueCells keeps the two cells it can stand on in
 /// step. Arriving by BILIBIN_TREASURY_UPPER_FROM_LOWER or
@@ -55,11 +55,11 @@
 ///
 /// The Bilibin Barricade (MapId_BilibinBarricade) is the road east to Kolima
 /// where McCoy's barricade stands, reached from the world map at either end.
-/// Its sign reads `This area is off-limits to all those without a permit.
-/// —Lord McCoy`, and a door there stays locked. A stack of crates
+/// Its sign reads `This area is off-limits to all those without a permit. —Lord
+/// McCoy`, and a door there stays locked. A stack of crates
 /// (LOCALID_BARRICADE_CRATES) slides a cell at a time under Move or a push, and
-/// Bilibin_UpdateCratesCells rewrites the ten cells of its lane after each
-/// move (its recording,
+/// Bilibin_UpdateCratesCells rewrites the ten cells of its lane after each move
+/// (its recording,
 /// places/bilibin-barricade/events/Bilibin_UpdateCratesCells.gif). By the river
 /// stand three trees, one on another's shoulders (LOCALID_BOTTOM_TREE,
 /// LOCALID_MIDDLE_TREE and LOCALID_JILL_TREE at one spot, 0, 32 and 48 pixels
@@ -234,7 +234,7 @@ enum BilibinBarricadeLocalId {
   /// Unused: a blank object event (SPRITE_BLANK_32) placed at the map's origin;
   /// no
   /// code or map event addresses it, so it never shows or answers anything.
-  LOCALID_BLANK_AT_ORIGIN,
+  LOCALID_INVISIBLE_AT_ORIGIN,
   /// The invisible object event (SPRITE_BLANK) that stands where the middle
   /// tree lies
   /// pushed down and answers for it.
@@ -256,13 +256,21 @@ enum BilibinTreasuryLocalId {
 };
 
 /// Counts frames between the ripples, one every 30 frames.
-struct SpawnCounter {
+struct BilibinRippleTimer {
   s16 frames;
 };
 
-struct SpawnCounter gBilibin_RippleTimer;
+struct BilibinRippleTimer gBilibin_RippleTimer;
 
 #include "common/object_facing.h"
+
+/// The party has looked once at the tree at Bilibin's entrance, so a second
+/// look says it looks like a living person.
+#define FLAG_BILIBIN_TREE_EXAMINED FLAG_MAPSEC_TEMP_01
+/// McCoy's gate guards have let the party in but it has not yet entered the
+/// palace; the garden guard who reads it is in another map section, so it is
+/// cleared before he can.
+#define FLAG_BILIBIN_KEEPING_MCCOY_WAITING FLAG_MAPSEC_TEMP_04
 
 const struct MapWarpDest *Bilibin_GetWarpDests(void) {
   s16 mapId = gSaveBlock.mapId;
@@ -364,16 +372,16 @@ static void EventScript_InspectHumanShapedTree(void) {
 
 /// Talking to the tree at Bilibin's entrance, before the curse is lifted: it
 /// almost looks like a man and, looked at again, like a living person.
-/// Map-section temp flag FLAG_MAPSEC_TEMP_01 remembers the first look until the
-/// party leaves Bilibin's map section.
+/// Map-section temp flag FLAG_BILIBIN_TREE_EXAMINED remembers the first look
+/// until the party leaves Bilibin's map section.
 static void EventScript_ExamineTreeMan(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgBilibinItsTreeButAlmostLooks);
-  if (Script_GetFlag(FLAG_MAPSEC_TEMP_01) != 0) {
+  if (Script_GetFlag(FLAG_BILIBIN_TREE_EXAMINED) != 0) {
     gFieldWork->message++;
   }
   Script_ShowMessage(LOCALID_TREE_MAN, 0);
-  GameFlag_Set(FLAG_MAPSEC_TEMP_01);
+  GameFlag_Set(FLAG_BILIBIN_TREE_EXAMINED);
   FieldScript_End();
 }
 
@@ -471,7 +479,7 @@ static void EventScript_OpenDoorAndLeave(void) {
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (warpIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
     ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -4);
   } else {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 3, -16);
@@ -482,7 +490,7 @@ static void EventScript_OpenDoorAndLeave(void) {
     ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 2);
   }
   FieldScript_WaitFrames(16);
-  Engine_ScriptRequestWarp(warpIndex + BILIBIN_TO_INN);
+  Import_ScriptRequestWarp(warpIndex + BILIBIN_TO_INN);
   FieldScript_End();
 }
 
@@ -511,7 +519,7 @@ static void EventScript_PullJillFromRiver(void) {
     leader->scaleX = -Q16_ONE;
     ObjectEvent_SetAttachedEffect(
         LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
     ObjectEvent_MoveToAndWait(LOCALID_JILL_TREE, 111, 196);
     leader->scaleX = Q16_ONE;
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 128, 185);
@@ -519,7 +527,7 @@ static void EventScript_PullJillFromRiver(void) {
     leader->scaleX = -Q16_ONE;
     ObjectEvent_SetAttachedEffect(
         LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
     ObjectEvent_MoveToAndWait(LOCALID_JILL_TREE, 121, 190);
     leader->scaleX = Q16_ONE;
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 141, 189);
@@ -527,7 +535,7 @@ static void EventScript_PullJillFromRiver(void) {
     leader->scaleX = -Q16_ONE;
     ObjectEvent_SetAttachedEffect(
         LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
     ObjectEvent_MoveToAndWait(LOCALID_JILL_TREE, 132, 186);
     leader->scaleX = Q16_ONE;
     ObjectEvent_Get(LOCALID_PARTY_LEADER)->steeringFlags |=
@@ -547,11 +555,10 @@ static void EventScript_PullJillFromRiver(void) {
   }
 }
 
-/// Checks ahead before the leader takes another step. It runs on walking into
-/// the cells beside the statue in the Bilibin Treasury or the crates at the
-/// Bilibin Barricade, and checks the blocked direction before allowing another
-/// movement step.
-static void EventScript_CheckAhead(void) { Field_TryJumpForward(); }
+/// Walking into the statue in the Bilibin Treasury or the crates at the
+/// Bilibin Barricade: the leader jumps forward onto them where he can
+/// (Field_TryJumpForward).
+static void EventScript_JumpOntoStatueOrCrates(void) { Field_TryJumpForward(); }
 
 /// Jill and her friends thank the leader with a Hard Nut. It happens on
 /// stepping up to them on the bank at the Bilibin Barricade, once the curse is
@@ -617,7 +624,7 @@ static void EventScript_JillGivesHardNut(void) {
                             FACING_SOUTHEAST + FACING_STEP, 10);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_JILL, 1);
   Script_ShowMessageAndWait(LOCALID_JILL, 0, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_GANG_MEMBER_EAST, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GANG_MEMBER_EAST, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GANG_MEMBER_WEST, ANIM_NOD);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_JILL, 0);
@@ -635,7 +642,7 @@ static void EventScript_JillGivesHardNut(void) {
   FieldEffect_StartEffectObject22(ITEM_HARD_NUT, 3);
   PartyInventory_GiveItem(ITEM_HARD_NUT, 0);
   ObjectMotion_SetAnimationAndWait(LOCALID_JILL, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_SetSpeed(LOCALID_JILL, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_GetById(LOCALID_JILL)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
@@ -650,8 +657,8 @@ static void EventScript_JillGivesHardNut(void) {
   FieldScript_WaitFrames(20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GANG_MEMBER_EAST, 2);
   Script_ShowMessageAndWait(LOCALID_GANG_MEMBER_EAST, 0, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_GANG_MEMBER_EAST, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GANG_MEMBER_WEST, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GANG_MEMBER_EAST, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GANG_MEMBER_WEST, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_JILL, ANIM_NOD);
   // From now on the three turn to face the leader wherever he goes.
   Object_SetTargetAndCallback(LOCALID_GANG_MEMBER_EAST,
@@ -685,14 +692,14 @@ s32 Bilibin_Initialize(void) {
 
 /// Sets up Bilibin: the tree or the man by FLAG_KOLIMA_CURSE_LIFTED, the ivy
 /// and the statue by the warp destination used, and map-section temp flag
-/// FLAG_MAPSEC_TEMP_04 for McCoy's garden guard.
+/// FLAG_BILIBIN_KEEPING_MCCOY_WAITING for McCoy's garden guard.
 static void Bilibin_RestoreVillageObjectEvents(void) {
 
   struct ObjectEvent *objectEvent;
   s16 warpDest;
 
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
-    Engine_ObjectEventSetPosition(LOCALID_TREE_MAN, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_TREE_MAN, 0, 0);
     ObjectEvent_FaceDirection(LOCALID_OLD_MAN_ASKS_ABOUT_SOUTHEAST,
                               FACING_SOUTHEAST + FACING_STEP, 0);
     ObjectEvent_FaceDirection(LOCALID_OLD_WOMAN_ROAD_BLOCKED,
@@ -720,7 +727,7 @@ static void Bilibin_RestoreVillageObjectEvents(void) {
   Bilibin_UpdateVillageStatueCells();
   if (GameFlag_Get(FLAG_MCCOY_PALACE_ADMITTED) != 0 &&
       GameFlag_Get(FLAG_MCCOY_PALACE_VISITED) == 0) {
-    GameFlag_Set(FLAG_MAPSEC_TEMP_04);
+    GameFlag_Set(FLAG_BILIBIN_KEEPING_MCCOY_WAITING);
   }
 }
 
@@ -794,7 +801,7 @@ static void Bilibin_RestoreRiverObjectEvents(void) {
     MapGrid_CopyCellAttributes(26, 15, 1, 3, 10, 15);
     if (GameFlag_Get(FLAG_BILIBIN_JILL_GIFT_RECEIVED) == 0) {
       if (GameFlag_Get(FLAG_BILIBIN_JILL_RESCUED) == 0) {
-        Engine_ObjectEventSetPosition(LOCALID_JILL, 0, 0);
+        Import_ObjectEventSetPosition(LOCALID_JILL, 0, 0);
         ObjectEvent_FaceDirection(LOCALID_GANG_MEMBER_EAST,
                                   FACING_NORTH + FACING_STEP, 0);
         ObjectEvent_FaceDirection(LOCALID_GANG_MEMBER_WEST,
@@ -922,7 +929,7 @@ static void EventScript_PushStatueOrCrates(void) {
         pushed->z.fixed + (gBilibin_FacingCellSteps[direction] << 16);
     if (FieldObject_CheckMovementCollision(pushed, &destination) <= 0) {
       // The leader leans on it, then both move together.
-      ObjectDispatch_SelectAnimation(leader, ANIM_PUSH);
+      Object_SelectAnimation(leader, ANIM_PUSH);
       WaitFrames(15);
       Sound_PlaySong(SE_PUSH);
       pushed->speed = PIXELS(1) / 5;
@@ -936,7 +943,7 @@ static void EventScript_PushStatueOrCrates(void) {
       pushed->z.fixed = destination.z;
       pushed->velocityX = 0;
       pushed->velocityZ = 0;
-      ObjectDispatch_SelectAnimation(leader, ANIM_STAND);
+      Object_SelectAnimation(leader, ANIM_STAND);
       // Each map derives its metatile behaviors from this same moved object
       // event.
       if (gSaveBlock.mapId == (s32)&MapId_BilibinBarricade)
@@ -1270,8 +1277,8 @@ struct MapEvent gBilibinBarricadeEvents[] = {
     { BG_EVENT(BG_EVENT_SILENT), 30, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgFieldDoorTightlyLocked)) },
     { MAP_EVENT_COORD, 13, FLAG_BILIBIN_JILL_GIFT_RECEIVED, EVENT_SCRIPT(EventScript_JillGivesHardNut) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_JILL_TREE, FLAG_BILIBIN_JILL_RESCUED, EVENT_SCRIPT(EventScript_PullJillFromRiver) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CheckAhead) },
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CheckAhead) },
+    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOntoStatueOrCrates) },
+    { COORD_EVENT_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOntoStatueOrCrates) },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatueOrCrates) },
     { COORD_EVENT_WALKING, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatueOrCrates) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_BARRICADE_CRATES, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateCratesCells) },
@@ -1287,9 +1294,9 @@ struct MapEvent gBilibinTreasuryEvents[] = {
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatueOrCrates) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatueOrCrates) },
     { COORD_EVENT_WALKING, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatueOrCrates) },
-    { COORD_EVENT_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CheckAhead) },
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CheckAhead) },
-    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CheckAhead) },
+    { COORD_EVENT_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOntoStatueOrCrates) },
+    { COORD_EVENT_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOntoStatueOrCrates) },
+    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOntoStatueOrCrates) },
     { MAP_EVENTS_END },
 };
 

@@ -217,7 +217,7 @@ void Game_Run(s32 mode) {
   table = gMapHeaders;
   // Choose the first map before initializing the per-map runtime.
   if (gDebugMode && mode == GAME_RUN_DEBUG_VALE) {
-    gSaveBlock.mapId = (s32)&MapId_ValeGate;
+    gSaveBlock.mapId = (s32)&MapId_ValePlaza;
     gSaveBlock.warpDest = mode;
   } else if (gDebugMode && mode == GAME_RUN_DEBUG_MAIN_MENU) {
     gSaveBlock.mapId = (s32)&MapId_MainMenu;
@@ -233,12 +233,12 @@ void Game_Run(s32 mode) {
   Task_ResetAll();
   Task_ResetAll();
   for (;;) {
-    // FLAG_SKIP_MAP_CHANGE_SOUND skips SE_STOP_SLOT3 for one map
+    // FLAG_SKIP_MAP_CHANGE_SOUND skips SE_STOP_ACTION_SE for one map
     // change, then clears itself.
     if (GameFlag_GetFar(FLAG_SKIP_MAP_CHANGE_SOUND))
       GameFlag_ClearFar(FLAG_SKIP_MAP_CHANGE_SOUND);
     else
-      Sound_PlaySongFar(SE_STOP_SLOT3);
+      Sound_PlaySongFar(SE_STOP_ACTION_SE);
     record = &table[gSaveBlock.mapId];
     warpDest = gSaveBlock.warpDest;
 
@@ -253,8 +253,8 @@ void Game_Run(s32 mode) {
     // Drop the tasks, the HBlank and VCount handlers (IRQs 1 and 2) and every
     // heap block the last map, battle or minigame left.
     Task_ResetAll();
-    Runtime_SetIrqHandler(1, 0, 0);
-    Runtime_SetIrqHandler(2, 0, 0);
+    Irq_SetHandler(1, 0, 0);
+    Irq_SetHandler(2, 0, 0);
     InitHeap();
     DebugText_Clear();
     VramCache_Reset();

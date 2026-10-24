@@ -126,7 +126,7 @@ void BattleAnim_RunDjinniEntrance(struct BattleAnimArgs *effect, s32 element,
   SET_VECTOR(step, (goal[0] - center[0]) / 40, (goal[1] - center[1]) / 40,
              (goal[2] - center[2]) / 40);
   for (frame = 0; frame != frameCount; frame++) {
-    struct BattleCamera *camera = gCameraWork;
+    struct BattleCamera *camera = gBattleCamera;
 
     // The long version fades the canvas out over its last 8 frames; the sound
     // plays on frame 8.
@@ -143,10 +143,9 @@ void BattleAnim_RunDjinniEntrance(struct BattleAnimArgs *effect, s32 element,
     Transform_ApplyPosition(center);
     // The user glows white from frame 0 to frame 24.
     if (frame == 0)
-      ObjectGroup_UpdateMembers(work->effect->user, SPRITE_COLOR_WHITE, -1, -1,
-                                0);
+      BattleAnim_TintBattler(work->effect->user, SPRITE_COLOR_WHITE, -1, -1, 0);
     if (frame == 24)
-      ObjectGroup_UpdateMembers(work->effect->user, 0, -1, -1, 0);
+      BattleAnim_TintBattler(work->effect->user, 0, -1, -1, 0);
     // Only the first 32 sparks are drawn. Spark i appears on frame i / 8 and
     // spins about the centre on one of four axes, (256 + 32i) / 65536 turn a
     // frame, drawn larger the nearer it is. From 24 frames after appearing
@@ -310,12 +309,10 @@ static inline void BattleAnim_RunVolleyWithAction(struct BattleAnimArgs *effect,
   struct Object *user;
 
   user = (struct Object *)GetBattleObjectSlotFar(effect->user)->object;
-  ObjectDispatch_SelectAnimationFar(user, POSE_LEAP);
-  ObjectDispatch_SetAnimationSpeedFar(user,
-                                      PROJECTILE_VOLLEY_ANIMATION_STEP_FAST);
+  Object_SelectAnimationFar(user, POSE_LEAP);
+  Object_SetAnimationSpeedFar(user, PROJECTILE_VOLLEY_ANIMATION_STEP_FAST);
   BattleAnim_RunProjectileVolley(effect, mode);
-  ObjectDispatch_SetAnimationSpeedFar(user,
-                                      PROJECTILE_VOLLEY_ANIMATION_STEP_NORMAL);
+  Object_SetAnimationSpeedFar(user, PROJECTILE_VOLLEY_ANIMATION_STEP_NORMAL);
 }
 
 /// From the user's action pose, one large comet in ice colours flies at each
@@ -767,9 +764,8 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
                 SET_POSITION(flash, screenPosition->x, screenPosition->y, 0);
                 if (mode != PROJECTILE_VOLLEY_SLEET)
                   work->shakeFrames = 2;
-                ObjectGroup_UpdateMembers(work->effect->targets[i],
-                                          SPRITE_COLOR_WHITE, POSE_DAMAGE, i,
-                                          8);
+                BattleAnim_TintBattler(work->effect->targets[i],
+                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 8);
                 if (mode != PROJECTILE_VOLLEY_SLEET &&
                     mode != PROJECTILE_VOLLEY_BLIZZARD &&
                     mode != PROJECTILE_VOLLEY_ICE_BLESSING) {
@@ -994,10 +990,10 @@ UNUSED void BattleAnim_InitializeRisingObject(s32 id) {
   object->bounce = 0;
   object->steeringFlags = 0;
   object->snapToTarget = 1;
-  ObjectDispatch_StartIdleFar((struct Object *)object);
+  Object_StartIdleFar((struct Object *)object);
   Object_SetMoveTargetFar((struct Object *)object, slot->anchorX, 0,
                           slot->anchorZ);
-  ObjectDispatch_SelectAnimationFar(object, POSE_STANDING);
+  Object_SelectAnimationFar(object, POSE_STANDING);
 }
 
 /// Moves a battler 80% of the way to another one over a number of frames,
@@ -1034,9 +1030,9 @@ void BattleAnim_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
   object->velocityY = 0;
   object->bounce = 0;
   object->steeringFlags = 1;
-  ObjectDispatch_StartIdleFar((struct Object *)object);
+  Object_StartIdleFar((struct Object *)object);
   Object_SetMoveTargetFar((struct Object *)object, x, 0, z);
-  ObjectDispatch_SelectAnimationFar(object, POSE_LEAP);
+  Object_SelectAnimationFar(object, POSE_LEAP);
 }
 
 #undef PROJECTILE_VOLLEY_ANIMATION_STEP_FAST

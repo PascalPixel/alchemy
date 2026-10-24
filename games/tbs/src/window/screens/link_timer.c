@@ -70,7 +70,7 @@ void UpdateLinkSessionCountdown(void) {
       i--;
       entry++;
     } while (i >= 0);
-    Link_DrawShiftedTilePair(0x06006680);
+    Link_DrawPageArrows(0x06006680);
 
     // Local battles still animate the UI, but do not run the link timer.
     if (state->linkTimer == 0)

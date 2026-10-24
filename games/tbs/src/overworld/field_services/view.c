@@ -117,9 +117,11 @@ void FieldScript_WaitForZoomTransition(void) {
 // consumer ignores the result. Plain void removes the native zero result and
 // changes its return register (three instructions in tbs-en).
 #ifdef UBFIX
-void FieldEffect_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
+void FieldEffect_CopyLinkedObjectPosition(
+    union ObjectEventOrEffect *fieldObject) {
 #else
-s32 FieldEffect_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
+s32 FieldEffect_CopyLinkedObjectPosition(
+    union ObjectEventOrEffect *fieldObject) {
 #endif
   void *self = (void *)fieldObject;
   struct ObjectEvent *objectEvent = self;
@@ -167,9 +169,9 @@ void FieldEffect_SpawnLinked(s32 localId, s32 emote, s32 wait) {
     if (bubble != 0) {
       struct Sprite *sprite;
 
-      ObjectDispatch_InitializeFar((struct Object *)bubble,
-                                   gFieldEffect_LinkedObjectScript);
-      ObjectDispatch_SelectAnimationFar(bubble, emote & 15);
+      Object_InitializeFar((struct Object *)bubble,
+                           gFieldEffect_LinkedObjectScript);
+      Object_SelectAnimationFar(bubble, emote & 15);
       bubble->motionFlags = 0;
       bubble->timer = 0;
       bubble->work = localId;
@@ -177,8 +179,8 @@ void FieldEffect_SpawnLinked(s32 localId, s32 emote, s32 wait) {
 #ifdef UBFIX
       bubble->update = FieldEffect_CopyLinkedObjectPosition;
 #else
-      bubble->update =
-          (void (*)(union FieldObject *))FieldEffect_CopyLinkedObjectPosition;
+      bubble->update = (void (*)(
+          union ObjectEventOrEffect *))FieldEffect_CopyLinkedObjectPosition;
 #endif
       sprite->flags = 0;
       bubble->linkedObject = target;
@@ -241,7 +243,7 @@ void FieldEffect_ConfigureLinkedObject(s32 localId, s32 flags) {
     effect = objectEvent->linkedObject;
     if (effect == 0)
       return;
-    ObjectDispatch_ReleaseFar((struct Object *)effect);
+    Object_ReleaseFar((struct Object *)effect);
     objectEvent->linkedObject = 0;
     return;
   }
@@ -252,14 +254,14 @@ void FieldEffect_ConfigureLinkedObject(s32 localId, s32 flags) {
   mode = flags & 3;
   switch (mode) {
   case ATTACHED_EFFECT_ATTACH:
-    ObjectDispatch_SelectAnimationFar(effect, 1);
+    Object_SelectAnimationFar(effect, 1);
     objectEvent->linkedObject = effect;
     effect->timer = 1;
     break;
   case ATTACHED_EFFECT_ONCE:
-    ObjectDispatch_SelectAnimationFar(effect, 2);
-    ObjectDispatch_InitializeFar((struct Object *)effect,
-                                 (const s32 *)gObjectMotion_WaitScript);
+    Object_SelectAnimationFar(effect, 2);
+    Object_InitializeFar((struct Object *)effect,
+                         (const s32 *)gObjectMotion_WaitScript);
     effect->timer = 1;
     break;
   }
@@ -269,8 +271,8 @@ void FieldEffect_ConfigureLinkedObject(s32 localId, s32 flags) {
 #ifdef UBFIX
   effect->update = FieldEffect_CopyLinkedObjectPosition;
 #else
-  effect->update =
-      (void (*)(union FieldObject *))FieldEffect_CopyLinkedObjectPosition;
+  effect->update = (void (*)(
+      union ObjectEventOrEffect *))FieldEffect_CopyLinkedObjectPosition;
 #endif
   visual = effect->sprite;
   visual->flags = 0;

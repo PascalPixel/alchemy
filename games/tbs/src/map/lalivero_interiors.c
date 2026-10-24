@@ -14,8 +14,8 @@
 /// MapId_LaliveroFaransHouse holds Faran's house, the inn and the way out to
 /// the wharf where Babi's ship lies (LALIVERO_FARANS_HOUSE_TO_LEMURIAN_SHIP).
 /// Before Venus Lighthouse an inn worker apologizes once for her distraction
-/// (EventScript_TalkToInnWorker, FLAG_INN_WORKER_APOLOGIZED) and goes back to
-/// her chores. The aerie of Venus Lighthouse leads in by
+/// (EventScript_TalkToInnWorker, FLAG_LALIVERO_INN_WORKER_APOLOGIZED) and goes
+/// back to her chores. The aerie of Venus Lighthouse leads in by
 /// LALIVERO_FARANS_HOUSE_FROM_VENUS_LIGHTHOUSE_AERIE, which plays
 /// EventScript_ReportToFaran: the party reports to Faran and Iodem, in one of
 /// two versions by FLAG_SAW_SHIP_AT_IDEJIMA. Coord event 51 afterwards plays
@@ -194,7 +194,7 @@ enum { ANIM_WORKER_LIE_ASLEEP = 6 };
 /// The map-section temp flag FLAG_MAPSEC_TEMP_00, which lasts until the party
 /// enters another map section: the inn worker has apologized. ★ Named from the
 /// game: "Oh, I'm sorry..." (MsgLaliveroImSorry)
-enum { FLAG_INN_WORKER_APOLOGIZED = FLAG_MAPSEC_TEMP_00 };
+enum { FLAG_LALIVERO_INN_WORKER_APOLOGIZED = FLAG_MAPSEC_TEMP_00 };
 
 /// LaliveroFaransHouse: the inn worker sighs between chores.
 static s32 InnWorker_Sigh(struct Object *interpreter) {
@@ -232,7 +232,7 @@ LaliveroInteriors_GetObjectEventTemplates(void) {
 /// The side the leader faces: the facing rounded to the nearest of east,
 /// south, west and north. Facing north, the leader is across the counter
 /// from a shopkeeper.
-static inline u16 Leader_GetSide(void) {
+static inline u16 LaliveroInteriors_LeaderGetSide(void) {
   return (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
 }
 
@@ -243,8 +243,8 @@ static inline u16 Leader_GetSide(void) {
 /// tell of the rough sea.
 static void EventScript_TalkToWeaponMerchant(s32 keeper) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  // Leader_GetSide's rounding, written with the mask 0xc000, which
-  // loads from the literal pool where the helper's builds the mask.
+  // LaliveroInteriors_LeaderGetSide's rounding, written with the mask 0xc000,
+  // which loads from the literal pool where the helper's builds the mask.
   u16 side = (leader->facing + 0x2000) & 0xc000;
 
   if (side == FACING_NORTH) {
@@ -271,7 +271,7 @@ static void EventScript_TalkToWeaponMerchant(s32 keeper) {
 /// Lalivero (LaliveroShops): the armor shop across the counter; otherwise
 /// small talk.
 static void EventScript_TalkToArmorMerchant(s32 keeper) {
-  if (Leader_GetSide() == FACING_NORTH) {
+  if (LaliveroInteriors_LeaderGetSide() == FACING_NORTH) {
     Shop_Run(LALIVERO_ARMOR_STOCK, keeper);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     FieldScript_SetMessageId(MsgLaliveroWantedSendShips);
@@ -285,7 +285,7 @@ static void EventScript_TalkToArmorMerchant(s32 keeper) {
 /// Lalivero (LaliveroShops): the item shop across the counter; otherwise
 /// small talk.
 static void EventScript_TalkToItemMerchant(s32 keeper) {
-  if (Leader_GetSide() == FACING_NORTH) {
+  if (LaliveroInteriors_LeaderGetSide() == FACING_NORTH) {
     Shop_Run(LALIVERO_ITEM_STOCK, keeper);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     FieldScript_SetMessageId(MsgLaliveroImpossibleGoOcean);
@@ -299,7 +299,7 @@ static void EventScript_TalkToItemMerchant(s32 keeper) {
 /// Lalivero Sanctum: the healer offers the Sanctum's services across the
 /// counter; otherwise small talk of Babi's lighthouse.
 static void EventScript_TalkToHealer(s32 healer) {
-  if (Leader_GetSide() == FACING_NORTH) {
+  if (LaliveroInteriors_LeaderGetSide() == FACING_NORTH) {
     Sanctum_Run(healer);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     FieldScript_SetMessageId(MsgLaliveroBabiLighthouseStruck);
@@ -313,7 +313,7 @@ static void EventScript_TalkToHealer(s32 healer) {
 /// Lalivero (LaliveroFaransHouse), the inn: a room for the night across the
 /// counter; otherwise small talk.
 static void EventScript_TalkToInnkeeper(s32 innkeeper) {
-  if (Leader_GetSide() == FACING_NORTH) {
+  if (LaliveroInteriors_LeaderGetSide() == FACING_NORTH) {
     Inn_CheckIn(LALIVERO_INN, innkeeper);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     FieldScript_SetMessageId(MsgLaliveroDidntKnowTime);
@@ -331,8 +331,8 @@ static void EventScript_TalkToInnkeeper(s32 innkeeper) {
 static void EventScript_TalkToInnWorker(void) {
   s16 side;
 
-  side = Leader_GetSide();
-  GameFlag_Set(FLAG_INN_WORKER_APOLOGIZED);
+  side = LaliveroInteriors_LeaderGetSide();
+  GameFlag_Set(FLAG_LALIVERO_INN_WORKER_APOLOGIZED);
   FieldScript_Start();
   Field_EndBusyAndReveal();
   FieldScript_SetMessageId(MsgLaliveroImSorry);
@@ -398,7 +398,7 @@ static void EventScript_LeaveBuilding(void) {
   struct FieldWork *work = gFieldWork;
   s16 *trigger = (s16 *)&work->coordEvent;
 
-  Engine_ScriptRequestWarp(*trigger);
+  Import_ScriptRequestWarp(*trigger);
   Sound_PlaySong(SE_MAP_EXIT);
 }
 
@@ -694,9 +694,9 @@ static void EventScript_ReportToFaran(void) {
   FieldScript_WaitFrames(30);
   FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(30);
   FieldScript_WaitFrames(10);
@@ -722,15 +722,15 @@ static void EventScript_ReportToFaran(void) {
   FieldScript_WaitFrames(30);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(30);
   // The others walk back into the leader.
   ObjectEvent_SetSpeed(LOCALID_GARET, 0x13333, 0x9999);
   ObjectEvent_SetSpeed(LOCALID_MIA, 0x13333, 0x9999);
   ObjectEvent_SetSpeed(LOCALID_IVAN, 0x13333, 0x9999);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectMotion_ResetAndSetPosition(LOCALID_GARET, leader->x.part.pixel,
@@ -738,7 +738,7 @@ static void EventScript_ReportToFaran(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectMotion_ResetAndSetPosition(LOCALID_MIA, leader->x.part.pixel,
@@ -746,14 +746,14 @@ static void EventScript_ReportToFaran(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
   ObjectEvent_SetPosition(LOCALID_MIA, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectMotion_ResetAndSetPosition(LOCALID_IVAN, leader->x.part.pixel,
                                      leader->z.part.pixel);
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IVAN);
-  Engine_ObjectEventSetPosition(LOCALID_IVAN, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_IVAN, 0, 0);
   FieldScript_WaitFrames(10);
   FieldScript_End();
 }
@@ -853,7 +853,7 @@ s32 Map_Initialize(void) {
     objectEvent->collisionFlags |= OBJ_EVENT_NEAR_TALK;
     objectEvent->priorityFlags = 0;
     objectEvent->sprite->image.priority = 2;
-    Engine_ObjectEventSetAnimation(LOCALID_NAPPING_WORKER,
+    Import_ObjectEventSetAnimation(LOCALID_NAPPING_WORKER,
                                    ANIM_WORKER_LIE_ASLEEP);
     warpDest = gSaveBlock.warpDest;
     if (warpDest == LALIVERO_SHOPS_SANCTUM) {
@@ -866,7 +866,7 @@ s32 Map_Initialize(void) {
     objectEvent->collisionFlags |= OBJ_EVENT_NEAR_TALK;
     objectEvent->priorityFlags = 0;
     objectEvent->sprite->image.priority = 2;
-    if (GameFlag_Get(FLAG_INN_WORKER_APOLOGIZED) != 0) {
+    if (GameFlag_Get(FLAG_LALIVERO_INN_WORKER_APOLOGIZED) != 0) {
       ObjectEvent_SetActionScript(LOCALID_INN_WORKER,
                                   gLaliveroInteriors_InnWorkerChores);
     }
@@ -1203,8 +1203,8 @@ struct MapEvent gLaliveroInteriors_FaransHouseEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FARANS_WIFE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsItsSoPainfulToEvenThink) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FARANS_SON, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIJustWishSomeoneWouldPlease) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WORRIED_YOUNG_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThatCoupleRaisedActorAsThough) },
-    { MAP_EVENT_TALK, LOCALID_INN_WORKER, FLAG_INN_WORKER_APOLOGIZED, EVENT_SCRIPT(EventScript_TalkToInnWorker) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_INN_WORKER, FLAG_INN_WORKER_APOLOGIZED, EVENT_SCRIPT(EventScript_TalkToInnWorker) },
+    { MAP_EVENT_TALK, LOCALID_INN_WORKER, FLAG_LALIVERO_INN_WORKER_APOLOGIZED, EVENT_SCRIPT(EventScript_TalkToInnWorker) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_INN_WORKER, FLAG_LALIVERO_INN_WORKER_APOLOGIZED, EVENT_SCRIPT(EventScript_TalkToInnWorker) },
     { MAP_EVENT_TALK, LOCALID_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToInnkeeper) },
     { MAP_EVENT_TALK, LOCALID_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWorkingLikeThisKeepsMyMind) },
     { MAP_EVENT_TALK, LOCALID_COOK, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeMustObeyTolbiThatsWhat) },

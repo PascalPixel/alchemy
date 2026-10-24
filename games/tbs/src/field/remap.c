@@ -5,7 +5,7 @@
 #include "field.h"
 
 // clang-format off
-const u8 gRuntime_ByteRemapTable[] = {
+const u8 gSpriteColorRemapTables[] = {
     // Table 0
     0, 1, 219, 87, 14, 219, 219, 14, 219, 130, 130, 220, 217, 13, 14, 15,
     220, 87, 217, 13, 219, 220, 87, 222, 222, 219, 219, 87, 222, 222, 14, 13,

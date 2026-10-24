@@ -220,7 +220,7 @@ void Battle_AwardSpoils(void) {
   // Experience and level ups: each member is copied before every level it
   // may gain, so that what the level brought can be read against the copy.
   unitIds = units;
-  count = BattleUnit_ListLiving(BATTLE_SIDES_PARTY, unitIds);
+  count = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, unitIds);
   beforeLevelUp = AllocEwram(sizeof(struct Unit));
   for (unitIndex = 0; unitIndex < count; unitIndex++) {
     unitId = unitIds[unitIndex];

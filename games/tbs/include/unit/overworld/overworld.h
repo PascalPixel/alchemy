@@ -7,15 +7,15 @@
 struct SpeakerDefinition;
 struct Object;
 struct ScreenTransitionState;
-struct Effect05Object;
-struct EffectDescriptor;
+struct ObjectEventDouseView;
+struct MapEventView;
 struct FieldEffectSprite;
-struct EffectVector;
+struct Vector3;
 struct ObjectEvent;
 struct OrbitEffect;
 struct ObjectEventTemplate;
 struct Window;
-union FieldObject;
+union ObjectEventOrEffect;
 
 /// gSaveBlock.movementMode: how the map loop hands the party leader back to
 /// the player (Map_Run).
@@ -31,7 +31,7 @@ enum LeaderMovementMode {
 /// Game_Run's mode: where the game starts.
 enum GameRunMode {
   GAME_RUN_TITLE = 0,          ///< the title screen, with a fresh save block
-  GAME_RUN_DEBUG_VALE = 1,     ///< in debug mode, MapId_ValeGate
+  GAME_RUN_DEBUG_VALE = 1,     ///< in debug mode, MapId_ValePlaza
   GAME_RUN_DEBUG_MAIN_MENU = 2 ///< in debug mode, the main menu
 };
 
@@ -62,7 +62,7 @@ enum WindowTransitionMode {
 enum EncounterZoneId {
   ENCOUNTER_ZONE_NONE = 0, ///< no battles
   /// The scripted battles of Vale's stormy night (its monsters, and the
-  /// travelers who catch Isaac at Vale Gate), Vault's thieves and the world
+  /// travelers who catch Isaac in Vale's plaza), Vault's thieves and the world
   /// map's Djinn tutorial battle.
   ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT = 12,
   /// The scripted battles of Tret Tree (Tret) and Mercury Lighthouse (the
@@ -123,13 +123,15 @@ void BattleBackground_SelectForEnvironment(s32 behavior);
 #ifdef UBFIX
 void Encounter_SelectBattleMusic(s32 zone, s32 slot);
 #endif
-void FieldEffect_ShrinkObjectAndDestroySlow(union FieldObject *fieldObject);
-void FieldEffect_ShrinkObjectAndDestroyFast(union FieldObject *fieldObject);
+void FieldEffect_ShrinkObjectAndDestroySlow(
+    union ObjectEventOrEffect *fieldObject);
+void FieldEffect_ShrinkObjectAndDestroyFast(
+    union ObjectEventOrEffect *fieldObject);
 void FieldEffect_RunLift(void);
 void FieldEffect_RunCarry(void);
 
 /// One of the map's events (the same 12 bytes as struct MapEvent).
-struct EffectDescriptor {
+struct MapEventView {
   s32 flags; ///< the low 4 bits are the kind (MapEventKind; 7 talks to
              ///< the object event the party stopped)
   u8 value;  ///< the target (a local id or a metatile behavior)
@@ -179,8 +181,8 @@ void PaletteEditor_Run(void);
 struct ObjectEventTemplate *Map_FindObjectEventTemplate(s32 id);
 s32 GameFlag_IsConditionActive(s32 condition);
 u32 Map_BgEventIgnoresCondition(s32 flags, s32 result);
-struct EffectDescriptor *Map_FindEvent(s32 kind, s32 target);
-void Runtime_CallWorkBlockEntry(void);
+struct MapEventView *Map_FindEvent(s32 kind, s32 target);
+void Overlay_CallInitialize(void);
 s32 Map_FindObjectEventTalkEvent(s32 id);
 s32 Map_TalkToObjectEvent(s32 id);
 s32 Map_RunRaisedEvent(s32 value);
@@ -215,14 +217,14 @@ void TreasureSpot_Hide(s32 id);
 void TreasureSpot_SetObjectEventPosition(s32 id, s32 x, s32 z);
 
 void TreasureSpot_MoveLeaderAway(void);
-void ItemDisplay_EmitSparkles(union FieldObject *fieldObject);
+void ItemDisplay_EmitSparkles(union ObjectEventOrEffect *fieldObject);
 struct Object *FieldEffect_StartRandomParticleEmitter(s32 localId, s32 item);
 void Object_DestroyIfPresent(void *object);
 void ItemDisplay_RaiseAboveLeader(struct Object *object);
 void ItemDisplay_ShowPicture(void *object, s32 flags);
 void FieldEffect_StartEffectObject22(s32 item, s32 flags);
 void FieldEffect_ClearRandomParticles(void);
-void Reveal_EmitSparkles(union FieldObject *fieldObject);
+void Reveal_EmitSparkles(union ObjectEventOrEffect *fieldObject);
 s32 Field_IsRevealActive(struct Object *interpreter);
 void FieldEffect_SpawnNearbyMarkers(void);
 
@@ -233,7 +235,7 @@ void ScreenTransition_SuspendCallbacks(void);
 struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void);
 void ScreenTransition_Start(s32 mode, s32 frames);
 void ScreenTransition_Finish(s32 mode, s32 frames);
-void DisplayState_ClearFlags(s32 clearBg3, s32 clearBg2, s32 clearBg1);
+void ScreenTransition_HideBackgrounds(s32 clearBg3, s32 clearBg2, s32 clearBg1);
 void ScreenTransition_Update(void);
 void ScreenTransition_UpdateFromCentre(void);
 void ScreenTransition_UpdateScanline(void);

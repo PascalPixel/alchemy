@@ -8,20 +8,20 @@
 ///   from the world map (FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP). A defeat
 ///   anywhere here returns the party to FUCHIN_TEMPLE_GROUNDS_AFTER_DEFEAT, in
 ///   front of the traveling healer. The monk beneath the falls guards the
-///   waterfall grotto: once Nyunpa has set his test
-///   (FLAG_NYUNPA_TEST_ACCEPTED) he leaps aside
-///   (FLAG_FUCHIN_FALLS_GROTTO_OPENED) and the grotto leads into Fuchin Falls
-///   Cave (FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE); back out with
-///   the Orb of Force (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), he sends the
-///   party on to Nyunpa (FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST).
+///   waterfall grotto: once Nyunpa has set his test (FLAG_NYUNPA_TEST_ACCEPTED)
+///   he leaps aside (FLAG_FUCHIN_FALLS_GROTTO_OPENED) and the grotto leads into
+///   Fuchin Falls Cave (FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE);
+///   back out with the Orb of Force (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), he
+///   sends the party on to Nyunpa (FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST).
 /// - Fuchin Temple (MapId_FuchinTempleInteriors, by
 ///   FUCHIN_TEMPLE_INTERIORS_FROM_FUCHIN_TEMPLE_GROUNDS or the default warp
 ///   destination), inside, where Nyunpa meditates. Mind Read on him offers the
 ///   test (EventScript_NyunpaOffersTest, again after
-///   FLAG_NYUNPA_TEST_DECLINED); back with the Orb, Map_Initialize plays his
-///   lesson on Ki (FuchinTemple_NyunpaTeachesKi, FLAG_NYUNPA_TAUGHT_FORCE).
-///   Once Mogall Forest has set FLAG_NYUNPA_ENLIGHTENED he sits withered
-///   (ANIM_NYUNPA_WITHERED) and Mind Read hears his last wish.
+///   FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED); back with the Orb,
+///   Map_Initialize plays his lesson on Ki (FuchinTemple_NyunpaTeachesKi,
+///   FLAG_NYUNPA_TAUGHT_FORCE). Once Mogall Forest has set
+///   FLAG_NYUNPA_ENLIGHTENED he sits withered (ANIM_NYUNPA_WITHERED) and Mind
+///   Read hears his last wish.
 /// - Xian (FuchinTempleInteriors, by
 ///   FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_FROM_XIAN and
 ///   FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_FROM_HOUSE), Master Feh's kung fu
@@ -34,10 +34,11 @@
 ///   Isaac's Chi (FLAG_FEH_WAITS_TO_SEE_CHI, or
 ///   FLAG_FEH_CHI_DEMONSTRATION_DECLINED after two refusals) and, seeing the
 ///   tree fall from the line, names it Ki (FLAG_FEH_SAW_KI). Moving the tree
-///   with Move or by hand only sets FLAG_FEH_SCHOOL_SAW_TREE_FALL. Once Hsu
-///   is known to be trapped (FLAG_XIAN_HEARD_HSU_TRAPPED),
-///   Map_GetObjectEventTemplates removes the tree and two students.
-///   FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_TO_XIAN leads out into Xian.
+///   with Move or by hand only sets
+///   FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL. Once Hsu is known to be
+///   trapped (FLAG_XIAN_HEARD_HSU_TRAPPED), Map_GetObjectEventTemplates removes
+///   the tree and two students. FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_TO_XIAN
+///   leads out into Xian.
 /// - Lama Temple (FuchinTempleInteriors, by
 ///   FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM_FROM_LAMA_TEMPLE), the room in which
 ///   Master Hama meditates. The first visit plays her lesson
@@ -49,10 +50,10 @@
 ///
 /// Open questions:
 ///
-/// - XXX (no evidence): why Map_Initialize places a crate painted solid
-///   black and translucent (ObjectEvent_PrepareObject) over the lattice door
-///   to Feh's house in his school; the school's renders are the same with and
-///   without it, so nothing the player sees shows what it was for.
+/// - XXX (no evidence): why Map_Initialize places a crate painted solid black
+///   and translucent (ObjectEvent_PrepareObject) over the lattice door to Feh's
+///   house in his school; the school's renders are the same with and without
+///   it, so nothing the player sees shows what it was for.
 #include "save_block.h"
 #include "map_ids.h"
 #include "unit/map/fuchin_temple.h"
@@ -89,16 +90,16 @@
 #include "io_reg.h"
 
 // Fuchin Temple's map-section temp flags, which last until the party enters
-// another map section; FLAG_MAPSEC_TEMP_50 is the Psynergy Stone outside,
-// which then refills.
+// another map section; FLAG_FUCHIN_TEMPLE_PSYNERGY_STONE is the Psynergy Stone
+// outside, which then refills.
 
 /// The party refused Nyunpa's test, so talking to him offers it again.
 /// ★ Named from the game: "Then I cannot tell you. Give up and go back from
 /// whence you came." (MsgXianThenCannotTellGiveUp)
-#define FLAG_NYUNPA_TEST_DECLINED FLAG_MAPSEC_TEMP_00
+#define FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED FLAG_MAPSEC_TEMP_00
 /// Feh's students saw the training tree fall, but not to Chi from the line.
 /// ★ Named from the game: "Look! The tree fell." (MsgXianLookTreeFell)
-#define FLAG_FEH_SCHOOL_SAW_TREE_FALL FLAG_MAPSEC_TEMP_01
+#define FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL FLAG_MAPSEC_TEMP_01
 
 /// The placed object events outside Fuchin Temple (FuchinTempleGrounds),
 /// numbered in the order of gFuchinTempleGroundsObjectEventTemplates.
@@ -230,6 +231,10 @@ static void FuchinTemple_AnimateRevealLesson(void);
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
+/// The Psynergy Stone outside the temple has been taken; it refills once the
+/// party enters another map section.
+#define FLAG_FUCHIN_TEMPLE_PSYNERGY_STONE FLAG_MAPSEC_TEMP_50
+
 /// Clears the scripted object event's sprite flags and completes the script
 /// command.
 static s32
@@ -243,9 +248,9 @@ FuchinTemple_ClearScriptedObjectEventSpriteFlags(struct Object *interpreter) {
 // UB: update hooks return void. The native produces an unused zero result;
 // plain void changes five instructions in the English build.
 #ifdef UBFIX
-static void FuchinTemple_FaceLeader(union FieldObject *fieldObject) {
+static void FuchinTemple_FaceLeader(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 FuchinTemple_FaceLeader(union FieldObject *fieldObject) {
+static s32 FuchinTemple_FaceLeader(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *player = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -432,15 +437,15 @@ static void EventScript_MonkAsksWhetherTestIsDone(void) {
 /// turn, guesses that they are following someone, warns of Mogall Forest and
 /// offers the test of the grotto. "Mmmm... Who is that? Who speaks to my mind?"
 /// Accepting it (FLAG_NYUNPA_TEST_ACCEPTED), he sends Isaac to the monk beneath
-/// the falls; refusing is remembered (FLAG_NYUNPA_TEST_DECLINED), and the next
-/// talk asks again.
+/// the falls; refusing is remembered (FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED),
+/// and the next talk asks again.
 static void EventScript_NyunpaOffersTest(void) {
   s32 alreadyDeclinedTrial;
   struct ObjectEvent *nyunpa;
 
   SCRIPT_START();
   // Revisit an earlier refusal, or introduce the offer through Mind Read.
-  alreadyDeclinedTrial = GameFlag_Get(FLAG_NYUNPA_TEST_DECLINED);
+  alreadyDeclinedTrial = GameFlag_Get(FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED);
   if (alreadyDeclinedTrial != 0) {
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 168, 504);
     WAIT(5);
@@ -532,7 +537,7 @@ static void EventScript_NyunpaOffersTest(void) {
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
     MESSAGE_SET(MsgXianThenCannotTellGiveUp);
     Script_ShowMessage(LOCALID_NYUNPA, 0);
-    GameFlag_Set(FLAG_NYUNPA_TEST_DECLINED);
+    GameFlag_Set(FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED);
   } else {
     // "Do not worry. You will be permitted to enter the grotto." Nyunpa
     // glows as he calls to the monk.
@@ -818,7 +823,7 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
   FuchinTemple_StudentWalksAroundTree();
   ObjectMotion_SetVarCbAndRefresh(LOCALID_TREE_STUDENT, 3);
   OBJECT_POSITION_SET(LOCALID_TRAINING_TREE, 232, 168);
-  Engine_ObjectEventSetPosition(LOCALID_TRAINING_TREE_TARGET, PIXELS(232),
+  Import_ObjectEventSetPosition(LOCALID_TRAINING_TREE_TARGET, PIXELS(232),
                                 PIXELS(168));
   ObjectEvent_GetById(LOCALID_TRAINING_TREE)->y.fixed = 0xc0000;
   ObjectEvent_GetById(LOCALID_TRAINING_TREE)->targetY = OBJ_EVENT_NO_TARGET;
@@ -865,7 +870,7 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
   FuchinTemple_StudentWalksAroundTree();
   ObjectMotion_SetVarCbAndRefresh(LOCALID_TREE_STUDENT, 3);
   OBJECT_POSITION_SET(LOCALID_TRAINING_TREE, 232, 168);
-  Engine_ObjectEventSetPosition(LOCALID_TRAINING_TREE_TARGET, PIXELS(232),
+  Import_ObjectEventSetPosition(LOCALID_TRAINING_TREE_TARGET, PIXELS(232),
                                 PIXELS(168));
   tree = ObjectEvent_GetById(LOCALID_TRAINING_TREE);
   tree->y.fixed = 0xc0000;
@@ -884,7 +889,7 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
   WAIT(40);
   ObjectMotion_SetPositionAndReset(LOCALID_TREE_STUDENT, 216, 152);
   OBJECT_DIR(LOCALID_TREE_STUDENT, FACING_SOUTH, 30);
-  GameFlag_Set(FLAG_FEH_SCHOOL_SAW_TREE_FALL);
+  GameFlag_Set(FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL);
 }
 
 /// Move on the training tree in Master Feh's school in Xian: it topples, and
@@ -1519,7 +1524,7 @@ static void EventScript_OpenLockedDoor(void) {
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 306, 248);
     OBJECT_WALK(LOCALID_PARTY_LEADER, 304, 216);
     WAIT(20);
-    Engine_ScriptRequestWarp(FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_TO_HOUSE);
+    Import_ScriptRequestWarp(FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_TO_HOUSE);
     SCRIPT_END();
   }
 }
@@ -1581,14 +1586,14 @@ static void FuchinTemple_SpawnGrottoEntryParticle(void) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
   options.palette = SPRITE_COLOR_WHITE;
-  paletteDraw = (u32)(Engine_RandomNext() * 7) >> 16;
+  paletteDraw = (u32)(Import_RandomNext() * 7) >> 16;
   if ((paletteDraw & 7) == 0)
     options.palette = SPRITE_COLOR_BRG;
 
   options.startScaleX = 0xb333;
   options.startScaleY = 0xcccc;
 
-  fallSpeed = ((u32)(Engine_RandomNext() * 8) >> 16) * 13107;
+  fallSpeed = ((u32)(Import_RandomNext() * 8) >> 16) * 13107;
 
   FieldEffect_Spawn(leader->x.fixed + ((8 - (gFrameCount & 15)) << 16),
                     leader->y.fixed + (192 << 13), leader->z.fixed, 0,
@@ -1596,9 +1601,9 @@ static void FuchinTemple_SpawnGrottoEntryParticle(void) {
                     &options);
 
   if ((gFrameCount & 1) != 0)
-    ObjectGroup_ConfigureChildValue(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   else
-    ObjectGroup_ConfigureChildValue(LOCALID_PARTY_LEADER, SPRITE_COLOR_GRB);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_GRB);
 }
 
 /// Unused: hops the leader one map cell north; nothing calls it.
@@ -1649,12 +1654,12 @@ static void EventScript_EnterWaterfallGrotto(void) {
   OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, 0, -6);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  ObjectGroup_ConfigureChildValue(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   ObjectEvent_SetSpriteFlags(leader, 0);
   Task_Remove(particleTask);
   FieldScript_WaitTransitionFrames();
-  Engine_ScriptRequestWarp(FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE);
+  Import_ScriptRequestWarp(FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE);
   SCRIPT_END();
 }
 
@@ -1664,7 +1669,7 @@ static void EventScript_EnterWaterfallGrotto(void) {
 /// FuchinTempleGrounds.
 static void EventScript_LeaveTemple(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  Engine_ScriptRequestWarp(FUCHIN_TEMPLE_INTERIORS_TO_FUCHIN_TEMPLE_GROUNDS);
+  Import_ScriptRequestWarp(FUCHIN_TEMPLE_INTERIORS_TO_FUCHIN_TEMPLE_GROUNDS);
 }
 
 /// Walking north into the temple door at Fuchin Temple (FuchinTempleGrounds,
@@ -1679,7 +1684,7 @@ static void EventScript_EnterTemple(void) {
   OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -16);
   WAIT(16);
-  Engine_ScriptRequestWarp(FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_TEMPLE_INTERIORS);
+  Import_ScriptRequestWarp(FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_TEMPLE_INTERIORS);
   SCRIPT_END();
 }
 
@@ -2403,9 +2408,9 @@ s32 Map_Initialize(void) {
         trainingTree->scaleY = 0x8000;
         trainingTree->sprite->rotation = 0x8000;
         if (GameFlag_Get(FLAG_FEIZHI_WENT_TO_HSU)) {
-          Engine_ObjectEventSetPosition(LOCALID_FEH, PIXELS(248), PIXELS(208));
+          Import_ObjectEventSetPosition(LOCALID_FEH, PIXELS(248), PIXELS(208));
           if (!GameFlag_Get(FLAG_FEH_SAW_KI)) {
-            Engine_ObjectEventSetPosition(LOCALID_MESSENGER_STUDENT,
+            Import_ObjectEventSetPosition(LOCALID_MESSENGER_STUDENT,
                                           PIXELS(256), PIXELS(240));
             ObjectEvent_GetById(LOCALID_FEH)->update = FuchinTemple_FaceLeader;
             ObjectEvent_GetById(LOCALID_PROUD_STUDENT)->update =
@@ -2443,8 +2448,8 @@ s32 Map_Initialize(void) {
       if (!GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED)) {
         FuchinTemple_RunHamasRevealLesson();
       } else if (!GameFlag_Get(FLAG_HSU_RESCUED)) {
-        Engine_ObjectEventSetPosition(LOCALID_HAMA, 0, 0);
-        Engine_ObjectEventSetPosition(LOCALID_HAMAS_BOY_MONK, 0, 0);
+        Import_ObjectEventSetPosition(LOCALID_HAMA, 0, 0);
+        Import_ObjectEventSetPosition(LOCALID_HAMAS_BOY_MONK, 0, 0);
       }
     }
   } else {
@@ -2518,14 +2523,14 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
 
 /// Hama's and Ivan's update hook during the Reveal lesson: they glow, drawn red
 /// and blue in turn every two frames.
-static void
-FuchinTemple_AlternateLessonChildEffect(union FieldObject *fieldObject) {
+static void FuchinTemple_AlternateLessonChildEffect(
+    union ObjectEventOrEffect *fieldObject) {
   if ((*(u32 *)&gFrameCount >> 1) & 1) {
-    ObjectGroup_SetChildValue((struct ObjectEvent *)fieldObject,
-                              SPRITE_COLOR_RED_TINT);
+    ObjectEvent_SetSpriteColor((struct ObjectEvent *)fieldObject,
+                               SPRITE_COLOR_RED_TINT);
   } else {
-    ObjectGroup_SetChildValue((struct ObjectEvent *)fieldObject,
-                              SPRITE_COLOR_BLUE_TINT);
+    ObjectEvent_SetSpriteColor((struct ObjectEvent *)fieldObject,
+                               SPRITE_COLOR_BLUE_TINT);
   }
 }
 
@@ -2561,11 +2566,11 @@ static void FuchinTemple_AnimateRevealLesson(void) {
       Sound_PlaySong(SE_246);
     }
     particleX = hama->x.fixed +
-                ((((u32)(Engine_RandomNext() * 3) << 4) >> 16) << 16) +
+                ((((u32)(Import_RandomNext() * 3) << 4) >> 16) << 16) +
                 0xfff40000;
     particleY = hama->y.fixed +
-                ((((u32)Engine_RandomNext() << 5) >> 16) << 16) + 0xfff00000;
-    riseSpeed = ((((u32)Engine_RandomNext() << 2) >> 16) << 15) + (128 << 8);
+                ((((u32)Import_RandomNext() << 5) >> 16) << 16) + 0xfff00000;
+    riseSpeed = ((((u32)Import_RandomNext() << 2) >> 16) << 15) + (128 << 8);
     FieldEffect_Spawn(
         particleX, particleY, hama->z.fixed, 0, riseSpeed, 0,
         EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
@@ -2579,29 +2584,29 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   WAIT(40);
   ObjectEvent_GetById(LOCALID_HAMA)->update = NULL;
   ObjectEvent_GetById(LOCALID_IVAN)->update = NULL;
-  ObjectGroup_ConfigureChildValue(LOCALID_HAMA, SPRITE_COLOR_NORMAL);
-  ObjectGroup_ConfigureChildValue(LOCALID_IVAN, SPRITE_COLOR_NORMAL);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_HAMA, SPRITE_COLOR_NORMAL);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_IVAN, SPRITE_COLOR_NORMAL);
 }
 
-s32 gShortEffectScript[] = {
+s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gMediumEffectScript[] = {
+s32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gLongEffectScript[] = {
+s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
-const s32 *gEffectScripts[] = {
-    gShortEffectScript,
-    gMediumEffectScript,
-    gLongEffectScript,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 s32 gFuchinTemple_JumpingStudentScript[] = {
@@ -2801,7 +2806,7 @@ struct MapEvent gFuchinTempleGroundsEvents[] = {
     { MAP_EVENT_TALK, LOCALID_WORRIED_BOY_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleNyunpaHasNotEatenInDays) },
     { MAP_EVENT_TALK, LOCALID_ADMIRING_BOY_MONK, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_BoyMonkSpeaksOfNyunpa) },
     { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
-    { BG_EVENT(BG_EVENT_SILENT), 110, FLAG_MAPSEC_TEMP_50, FIND_PSYNERGY_STONE },
+    { BG_EVENT(BG_EVENT_SILENT), 110, FLAG_FUCHIN_TEMPLE_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_YOUNG_MAN_FROM_KOLIMA, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleGemsFallingFromTheSkyMountains) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FALLS_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleIKnewMasterNyunpaWasFasting) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_BOY_MONK_READING_OMENS, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleMasterNyunpaReachedEnlightenmentDuringHis) },
@@ -2827,7 +2832,7 @@ struct MapEvent gFuchinTempleEvents[] = {
     { MAP_EVENT_TALK, LOCALID_NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTemple) },
     { MAP_EVENT_TALK, LOCALID_NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_TAUGHT_FORCE), MSGNO(MsgFuchinTempleUseThisEnergyToFindThe) },
     { MAP_EVENT_TALK, LOCALID_NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_TEST_ACCEPTED), MSGNO(MsgFuchinTempleSpeakToTheMonkStandingBeneath) },
-    { MAP_EVENT_TALK, LOCALID_NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_TEST_DECLINED), EVENT_SCRIPT(EventScript_NyunpaOffersTest) },
+    { MAP_EVENT_TALK, LOCALID_NYUNPA, IF_FLAG_SET(FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED), EVENT_SCRIPT(EventScript_NyunpaOffersTest) },
     { MAP_EVENT_TALK, LOCALID_NYUNPA, CONDITION_ALWAYS, MSGNO(MsgXianNyunpaMeditates) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), EVENT_SCRIPT(EventScript_ReadNyunpasLastWish) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_TAUGHT_FORCE), MSGNO(MsgFuchinTempleNowThatIHavePassedMy) },
@@ -2848,8 +2853,8 @@ struct MapEvent gFuchinTempleEvents[] = {
     { MAP_EVENT_TALK, LOCALID_WATCHING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleWhereDidFeizhiGoIAm) },
     { MAP_EVENT_TALK, LOCALID_TREE_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleMasterHsuIsLateICan) },
     { MAP_EVENT_TALK, LOCALID_MESSENGER_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleIWillLearnChiIWill) },
-    { MAP_EVENT_TALK, LOCALID_FEH, IF_FLAG_SET(FLAG_FEH_SCHOOL_SAW_TREE_FALL), MSGNO(MsgFuchinTempleWarriorUseYourChiFromThe) },
-    { MAP_EVENT_TALK, LOCALID_MESSENGER_STUDENT, IF_FLAG_SET(FLAG_FEH_SCHOOL_SAW_TREE_FALL), MSGNO(MsgFuchinTempleWarriorPleaseUseYourChiFrom) },
+    { MAP_EVENT_TALK, LOCALID_FEH, IF_FLAG_SET(FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL), MSGNO(MsgFuchinTempleWarriorUseYourChiFromThe) },
+    { MAP_EVENT_TALK, LOCALID_MESSENGER_STUDENT, IF_FLAG_SET(FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL), MSGNO(MsgFuchinTempleWarriorPleaseUseYourChiFrom) },
     { MAP_EVENT_TALK, LOCALID_FEH, IF_FLAG_SET(FLAG_FEH_WAITS_TO_SEE_CHI), MSGNO(MsgFuchinTempleWarriorLetMeSeeYourChi) },
     { MAP_EVENT_TALK, LOCALID_PROUD_STUDENT, IF_FLAG_SET(FLAG_FEH_WAITS_TO_SEE_CHI), MSGNO(MsgFuchinTempleFeizhiIsGoneItIsDangerous) },
     { MAP_EVENT_TALK, LOCALID_WATCHING_STUDENT, IF_FLAG_SET(FLAG_FEH_WAITS_TO_SEE_CHI), MSGNO(MsgFuchinTempleFeizhiIsStrongerThanSheLooks) },
@@ -2883,8 +2888,8 @@ struct MapEvent gFuchinTempleEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WATCHING_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleFeizhiIsNotInTheFeh) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TREE_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleFeizhiWorriesOnlyAboutMasterHsu) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MESSENGER_STUDENT, IF_FLAG_SET(FLAG_FEH_SAW_KI), MSGNO(MsgFuchinTempleLearningChiIsVeryHardMaster) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FEH, IF_FLAG_SET(FLAG_FEH_SCHOOL_SAW_TREE_FALL), MSGNO(MsgFuchinTempleWarriorTheRulesRequireYouTo) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MESSENGER_STUDENT, IF_FLAG_SET(FLAG_FEH_SCHOOL_SAW_TREE_FALL), MSGNO(MsgFuchinTempleSoCloseWarriorUseChiFrom) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FEH, IF_FLAG_SET(FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL), MSGNO(MsgFuchinTempleWarriorTheRulesRequireYouTo) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MESSENGER_STUDENT, IF_FLAG_SET(FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL), MSGNO(MsgFuchinTempleSoCloseWarriorUseChiFrom) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FEH, IF_FLAG_SET(FLAG_FEH_WAITS_TO_SEE_CHI), MSGNO(MsgFuchinTempleWarriorShowMeYourChiI) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_PROUD_STUDENT, IF_FLAG_SET(FLAG_FEH_WAITS_TO_SEE_CHI), MSGNO(MsgFuchinTempleFeizhiIKnowIKnowHow) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WATCHING_STUDENT, IF_FLAG_SET(FLAG_FEH_WAITS_TO_SEE_CHI), MSGNO(MsgFuchinTempleMyKickAndPunchAreVery) },

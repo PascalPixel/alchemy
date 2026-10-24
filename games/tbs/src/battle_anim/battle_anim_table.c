@@ -97,7 +97,7 @@ u8 gFalling_Counts[][4] = {
 
 /// Each streak style's animation, hit, motion and shake, by the STREAKS_
 /// columns (streaks.c).
-s8 gStreaks_Records[][4] = {
+s8 gStreaks_Styles[][4] = {
     // STREAKS_ANIMATE, STREAKS_HIT, STREAKS_MOTION, STREAKS_SHAKE
     {0, 1, 0, 0},  // STREAKS_STYLE_EMBER
     {0, 1, 4, 0},  // STREAKS_STYLE_LIME
@@ -113,7 +113,7 @@ s8 gStreaks_Tremble[] = {-1, -1, 1, 1, 1, 1, -1, -1};
 /// Each of the twelve target strike styles, by the TARGET_STRIKE_ columns
 /// (target_strike.c).
 // clang-format off
-u8 gTargetStrike_Records[][7] = {
+u8 gTargetStrike_Styles[][7] = {
     // TARGET_STRIKE_: KIND, HITS, FLAGS, COLOUR, IMAGE_FRAMES, COMPOSITE,
     // FRAMES
     [TARGET_STRIKE_STYLE_BLUE_SPARK_COLUMNS] =
@@ -230,7 +230,7 @@ u8 gDjinnBeams_HeadHeights[] = EARTH_WALL_CELL_HEIGHTS;
 
 /// Two bytes for each lobbed shell style (enum LobbedShellsMode,
 /// lobbed_shells.c).
-s8 gLobbedShells_Records[] = {
+s8 gLobbedShells_Styles[] = {
     // nonzero: the shells burst into shards, not smoke; unused
     0, 0, // LOBBED_SHELLS_BONE_CHILLER
     0, 0, // LOBBED_SHELLS_STICKY_GOO
@@ -938,7 +938,7 @@ u16 gSpire_ShardCells[] = {0,   55,   121,  221,  298,  368,  452,  673,
 /// Each burst scene mode (enum BurstSequenceMode), by the BURST_SEQUENCE_
 /// columns (burst_scene.c).
 // clang-format off
-u8 gBurstSequence_Records[][7] = {
+u8 gBurstSequence_Styles[][7] = {
     // BURST_SEQUENCE_: ARC_SHEET, PALETTE, STRIKES, MOTES, INTERVAL, FRAMES,
     // FLASH
     [BURST_SEQUENCE_BEAR_CLAW] =

@@ -11,12 +11,12 @@
 /// effects run and every unit returns to its spot. Returns 1 when the
 /// party got away, 0 otherwise, and -1 when the actor is already down.
 /// Called by Battle_Run for each action of the round, with a delay
-/// of 10 for the first. Resets the camera's view (gBattleViewWork's frames,
-/// flag and yaw, gBattleWork->brightness, the transform and projection),
-/// builds gBattleWork->turn, and marks the action done (request->unitId to
-/// BATTLE_UNIT_LIST_END) unless the party fled.
+/// of 10 for the first. Resets the camera's view (gBattleBackgroundWork's
+/// frames, flag and yaw, gBattleWork->brightness, the transform and
+/// projection), builds gBattleWork->turn, and marks the action done
+/// (request->unitId to BATTLE_UNIT_LIST_END) unless the party fled.
 s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
-  struct BattleViewWork *view;
+  struct BattleBackgroundWork *view;
   struct BattleWork *battle;
   struct BattleCamera *camera;
   struct Unit *unit;
@@ -108,7 +108,7 @@ s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
   BattleObject_DestroyAll();
   BattleUnit_ProcessTurnEnd(&battle->turn);
   BattleObject_Put();
-  unitCount = BattleUnit_ListIds(BATTLE_SIDES_BOTH, unitIds);
+  unitCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
   for (unitIndex = 0; unitIndex < unitCount; unitIndex++)
     BattleMotion_ReturnToSpot(unitIds[unitIndex]);
   request->unitId = BATTLE_UNIT_LIST_END;
@@ -175,11 +175,12 @@ s32 BattleStaging_BuildTargetList(struct BattleTurn *plan,
 /// enemy gets away 7 times in 10 and leaves the battle. Returns 1 when the
 /// party got away.
 /// Called by BattleStaging_DispatchAction for STAGING_FLEE. Turns the
-/// camera to the party's view and holds gBattleViewWork->busy while it
+/// camera to the party's view and holds gBattleBackgroundWork->busy while it
 /// runs; an enemy that gets away is taken out of the lists and its object
 /// released.
 s32 BattleStaging_RunFlee(struct BattleTurn *plan) {
-  struct BattleViewWork *view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleBackgroundWork *view =
+      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   struct BattleWork *scene = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   /* FAKEMATCH(temporary): completed cleared a halfword at a time, which keeps
    * partyMode a copy of its register (adds r2, r7, #0); as an s32 set to 0, 1
@@ -210,7 +211,8 @@ s32 BattleStaging_RunFlee(struct BattleTurn *plan) {
       BattleMessage_WaitForAdvance();
     } else {
       s16 unitIds[14];
-      s32 index = BattleUnit_ListLiving(BATTLE_SIDES_PARTY, (u16 *)unitIds) - 1;
+      s32 index =
+          BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, (u16 *)unitIds) - 1;
 
       while (index != -1) {
         struct Unit *unit = Unit_GetFar(unitIds[index]);
@@ -249,9 +251,9 @@ s32 BattleStaging_RunFlee(struct BattleTurn *plan) {
 /// ("blocked" or too little PP), the target side's units are readied alone
 /// and the animation plays during playback. Everyone fades back in.
 /// Called by BattleStaging_DispatchAction for STAGING_SUMMON (with
-/// STAGING_HIDE_ACTOR) and STAGING_FULL_SCREEN. Sets gBattleViewWork's yaw
-/// (and its frames, for a scene), REG_BLDCNT and REG_BLDALPHA for the fades,
-/// and the units' colour modes; schedules BattlePlayback_Run around the
+/// STAGING_HIDE_ACTOR) and STAGING_FULL_SCREEN. Sets gBattleBackgroundWork's
+/// yaw (and its frames, for a scene), REG_BLDCNT and REG_BLDALPHA for the
+/// fades, and the units' colour modes; schedules BattlePlayback_Run around the
 /// animation.
 /// @param mode STAGING_HIDE_ACTOR hides the actor too (the summons)
 s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
@@ -276,7 +278,7 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
   actor = plan->actorId;
   target = plan->targetIds[0];
   if (plan->animation & ANIM_SUMMON) {
-    struct BattleViewWork *view;
+    struct BattleBackgroundWork *view;
     s32 yaw;
 #ifdef UBFIX
     view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
@@ -289,7 +291,7 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
     view->targetYaw = yaw;
     view->frames = 60;
   } else {
-    struct BattleViewWork *view;
+    struct BattleBackgroundWork *view;
     s32 yaw;
 #ifdef UBFIX
     view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
@@ -310,7 +312,7 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
   PartyStatus_DrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
   object = BattleObject_Get(actor)->object;
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
-  count = BattleUnit_ListIds(BATTLE_SIDES_BOTH, units);
+  count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, units);
   for (i = 0; i != count; i++) {
     if (units[i] == BATTLE_UNIT_REMOVED)
       continue;
@@ -318,7 +320,7 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
       if ((target <= ALLY_MAX) != (units[i] <= ALLY_MAX))
         BattleHighlight_SetSpriteMode(units[i], SPRITE_SEMI_TRANSPARENT);
     } else {
-      ObjectDispatch_SelectAnimationFar(object, POSE_CAST);
+      Object_SelectAnimationFar(object, POSE_CAST);
     }
   }
   // The sound of a cast, as the caster raises its hand.
@@ -404,7 +406,7 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
   // Everyone back: the faded units fade in over 16 frames and every colour
   // mode is cleared.
   BattleObject_Put();
-  count = BattleUnit_ListIds(BATTLE_SIDES_BOTH, units);
+  count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, units);
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (i = 0; i != count; i++) {
     if (units[i] == BATTLE_UNIT_REMOVED || units[i] == actor)
@@ -453,7 +455,7 @@ s32 BattleStaging_RunActorEntries(struct BattleTurn *plan, s32 unused) {
 /// its playback, and a critical hit zooms in on the pair with only those two
 /// shown. Both then return. A miss "nimbly dodges the blow".
 /// Called by BattleStaging_DispatchAction for STAGING_ATTACK; mode is
-/// unused. Sets gBattleViewWork's yaw (and its flag for a critical hit's
+/// unused. Sets gBattleBackgroundWork's yaw (and its flag for a critical hit's
 /// zoom), the window registers (WIN0 and WIN1 to the battlefield, rows 16 to
 /// 136, both turned on), and schedules BattlePlayback_Run around the
 /// animation.
@@ -464,7 +466,7 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
   struct Unit *unit;
   s16 criticalPair[3];
   s32 critical;
-  struct BattleViewWork *view;
+  struct BattleBackgroundWork *view;
   s32 angle;
   s32 adjusted;
   s32 facingAngle;
@@ -475,7 +477,7 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
   s32 index;
   s32 zoomOnCritical;
 
-  view = gBattleViewWork;
+  view = gBattleBackgroundWork;
   {
     struct BattleTurn *savedPlan = plan;
 
@@ -527,7 +529,7 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
       SpriteAnim_SumCommandLengthsFar(animation->entries[0]->animationId, 2, 1);
   BattleMotion_ApproachTarget(work.effect.user, work.effect.targets[0], frames,
                               BattleSprite_GetAttackHop(unit->id) << 16);
-  ObjectDispatch_SetAnimationSpeedFar(
+  Object_SetAnimationSpeedFar(
       (struct Object *)BattleObject_Get(work.effect.user)->object, 16);
   BattleObject_Get(work.effect.targets[0]);
 
@@ -626,7 +628,7 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags) {
   struct BattleTurn *savedInput;
   struct Object *object;
   struct Sprite *animation;
-  struct BattleViewWork *view;
+  struct BattleBackgroundWork *view;
   s32 angle;
   s32 adjusted;
   s32 facingAngle;
@@ -635,7 +637,7 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags) {
   s32 frames;
   s32 missed;
 
-  view = gBattleViewWork;
+  view = gBattleBackgroundWork;
   savedInput = input;
   object = BattleObject_Get(savedInput->actorId)->object;
   z = object->z;
@@ -666,7 +668,7 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags) {
       SpriteAnim_SumCommandLengthsFar(animation->entries[0]->animationId, 2, 1);
   BattleMotion_ApproachTarget(work.effect.user, savedInput->targetIds[0],
                               frames, 0);
-  ObjectDispatch_SetAnimationSpeedFar(
+  Object_SetAnimationSpeedFar(
       (struct Object *)BattleObject_Get(work.effect.user)->object, 16);
   BattleObject_Get(savedInput->targetIds[0]);
 
@@ -696,7 +698,7 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags) {
 /// slot empties, later item commands of the same member this round follow
 /// their items to their new slots (or lose theirs, -1).
 /// Called by BattleStaging_DispatchAction for STAGING_ITEM, with the
-/// action's entry as selection. Sets gBattleViewWork's yaw and, while an
+/// action's entry as selection. Sets gBattleBackgroundWork's yaw and, while an
 /// animation plays, dims gBattleWork->brightness and BG palettes 6 to 13;
 /// changes the user's inventory (Inventory_RemoveFar, Inventory_BreakFar, or
 /// the Empty Bottle) and the parameters of gBattleWork->actions.
@@ -708,7 +710,7 @@ s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
   s32 inventoryEntry;
   struct Unit *unit;
   struct ItemDefinition *item;
-  struct BattleViewWork *view = gBattleViewWork;
+  struct BattleBackgroundWork *view = gBattleBackgroundWork;
   s32 targetYaw;
 
   // The camera turns to the user's side; the user raises the item
@@ -726,8 +728,8 @@ s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
   BattleStaging_BuildTargetList(plan, &work.effect);
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   object = BattleObject_Get(work.effect.user)->object;
-  ObjectDispatch_SelectAnimationFar(object, POSE_CAST);
-  ObjectDispatch_SetAnimationSpeedFar((struct Object *)object, 16);
+  Object_SelectAnimationFar(object, POSE_CAST);
+  Object_SetAnimationSpeedFar((struct Object *)object, 16);
   if (plan->targetIds[0] <= ALLY_MAX)
     work.effect.side = ANIM_SIDE_PARTY;
   else
@@ -776,7 +778,7 @@ s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
     WaitFrames(60);
   }
   BattlePlayback_WaitForReady();
-  ObjectDispatch_SelectAnimationFar(object, POSE_STANDING);
+  Object_SelectAnimationFar(object, POSE_STANDING);
   for (targetOrFadeIndex = 0; targetOrFadeIndex != work.effect.targetCount;
        targetOrFadeIndex++)
     BattleMotion_ReturnToSpot(work.effect.targets[targetOrFadeIndex]);
@@ -867,12 +869,12 @@ s32 BattleObject_SetColorMode(struct Object *object, s32 colorMode) {
 /// return to their spots.
 /// Called by BattleStaging_DispatchAction for STAGING_CAST
 /// (CAST_PSYNERGY), STAGING_DJINNI (CAST_DJINNI) and STAGING_ENEMY_CAST
-/// (CAST_ENEMY). Sets gBattleViewWork's yaw (and its frames for a fixed view),
-/// redraws the party status window without its PP row, and schedules
+/// (CAST_ENEMY). Sets gBattleBackgroundWork's yaw (and its frames for a fixed
+/// view), redraws the party status window without its PP row, and schedules
 /// BattlePlayback_Run around the animation.
 s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode) {
   struct BattleStagingWork work;
-  struct BattleViewWork *view = gBattleViewWork;
+  struct BattleBackgroundWork *view = gBattleBackgroundWork;
   struct Object *object;
   s32 isDjinni;
   s32 targetIndex;
@@ -922,8 +924,8 @@ s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode) {
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   PartyStatus_DrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
   object = BattleObject_Get(work.effect.user)->object;
-  ObjectDispatch_SelectAnimationFar(object, POSE_CAST);
-  ObjectDispatch_SetAnimationSpeedFar((struct Object *)object, 16);
+  Object_SelectAnimationFar(object, POSE_CAST);
+  Object_SetAnimationSpeedFar((struct Object *)object, 16);
   Sound_PlaySongFar(SE_CAST);
   if (mode & CAST_ENEMY)
     ElementGlow_Play(work.effect.user, plan->element, GLOW_STREAKS, 0);
@@ -966,7 +968,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode) {
       BattleBackground_RestorePalette();
     }
     BattlePlayback_WaitForReady();
-    ObjectDispatch_SelectAnimationFar(object, POSE_STANDING);
+    Object_SelectAnimationFar(object, POSE_STANDING);
     for (targetIndex = 0; targetIndex != work.effect.targetCount; targetIndex++)
       BattleMotion_ReturnToSpot(work.effect.targets[targetIndex]);
   }
@@ -986,8 +988,7 @@ void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
   s32 flashesRemaining;
 
   Unit_GetFar(unitId);
-  ObjectDispatch_SelectAnimationFar(BattleObject_Get(unitId)->object,
-                                    POSE_DAMAGE);
+  Object_SelectAnimationFar(BattleObject_Get(unitId)->object, POSE_DAMAGE);
 
   selected = selection;
   flashesRemaining = 1;

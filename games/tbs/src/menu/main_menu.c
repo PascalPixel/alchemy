@@ -141,7 +141,7 @@ static u16 MainMenu_CalculatePasswordCrc16(u32 byteCount, u8 *data);
 u8 *MainMenu_GetWarpDests(void) { return (u8 *)gMainMenu_WarpDests; }
 
 /// The warp regions entry: the main menu has no warp boxes.
-s32 MapData_ReturnZero(void) { return 0; }
+s32 Map_GetWarpRegions(void) { return 0; }
 
 u8 *MainMenu_GetWarps(void) { return (u8 *)gMainMenu_Warps; }
 
@@ -172,7 +172,7 @@ static void MainMenu_LoadBackground(void) {
   Dma_Set(resource, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x70,
           REG_DMA3);
   resource += 0x1c0;
-  FieldResource_DecodeType01(resource, Ram_MapGridCellBuffer);
+  FieldDecompress_Type01(resource, Ram_MapGridCellBuffer);
   Dma_Set((void *)Ram_MapGridCellBuffer, LOGO_TILES,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
   // Build the visible 30-column logo map, padding to the 32-cell screen stride.
@@ -535,7 +535,7 @@ menu_top:;
       }
     }
     Party_StartChildhood();
-    gSaveBlock.mapId = (s32)&MapId_ValeInteriorsInn;
+    gSaveBlock.mapId = (s32)&MapId_ValeInn;
     gSaveBlock.warpDest = 20;
     goto leave;
   }
@@ -555,7 +555,7 @@ menu_top:;
     Script_SetFlag(FLAG_KEEP_PARTY_POSITION);
     state = &gSaveBlock;
     WindowColor_Apply(state->windowColor[0], state->windowColor[1]);
-    if (state->buildStamp != Runtime_GetBuildStampTime()) {
+    if (state->buildStamp != BuildStamp_GetTime()) {
       state->mapId = state->savedMap;
       state->warpDest = state->savedWarpDest;
       GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
@@ -654,7 +654,7 @@ menu_top:;
       Text_DrawMessage(linkMessage, (struct Window *)v6, 0, 4);
       Text_DrawMessage((linkMessage + 1), (struct Window *)v6, 0, 16);
       Text_DrawMessage((linkMessage + 3), (struct Window *)v6, 0, 36);
-      SerialRuntime_Initialize();
+      Serial_Initialize();
       WaitFrames(10);
       {
         u16 *sync = (u16 *)gSerialTransfer.payload;
@@ -708,7 +708,7 @@ menu_top:;
 
       Text_DrawMessage(MsgClearSendingData, (struct Window *)v6, 0, 4);
       WaitFrames(10);
-      SerialRuntime_StartSend(gSaveBuffer, 0x1004);
+      Serial_StartSend(gSaveBuffer, 0x1004);
       WaitFrames(10);
       // Wait for the send to finish, at most 600000 frames (about 2.8
       // hours); ten frames in a row without both consoles is an error.
@@ -739,7 +739,7 @@ menu_top:;
         } while ((gKeysPressed & v5) == 0);
       }
       WaitFrames(10);
-      SerialRuntime_RemoveIrqHandlers();
+      Serial_RemoveIrqHandlers();
       WaitFrames(10);
 #if TBS_PATCH_4
       Window_Close((struct Window *)v6, 2);
@@ -804,7 +804,7 @@ menu_top:;
       // turn back and forth, wrapping round; B goes back to the level choice.
       // v7 is 1 when the page must be drawn again.
       for (;;) {
-        Link_DrawShiftedTilePair(PAGE_ARROW_VRAM);
+        Link_DrawPageArrows(PAGE_ARROW_VRAM);
         if ((gKeysPressed & KEY_B) != 0) {
           Sound_PlaySong(SE_MENU_CANCEL);
           WindowSprite_PrepareForRedraw(pageWindow);
@@ -949,7 +949,7 @@ UNUSED static void FileMenu_FillTileGrid(struct Window *window,
 
   shadow = ((struct WindowWork *)gWindowWork[0])->tilemap;
   decodedTiles = AllocEwram(0x300);
-  FieldResource_DecodeType01(compressedTiles, decodedTiles);
+  FieldDecompress_Type01(compressedTiles, decodedTiles);
   offset = (window->y * 32 + window->x) * 2;
   vram = (u16 *)(0x06002000 + offset);
   shadow = (u16 *)((u8 *)shadow + offset);

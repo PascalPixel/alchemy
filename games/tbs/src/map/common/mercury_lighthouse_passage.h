@@ -16,19 +16,20 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 warp) {
 #ifdef UBFIX
   v->update = MercuryLighthouse_TrailSparks;
 #else
-  v->update = (void (*)(union FieldObject *))MercuryLighthouse_TrailSparks;
+  v->update =
+      (void (*)(union ObjectEventOrEffect *))MercuryLighthouse_TrailSparks;
 #endif
   v->speed = PIXELS(1) / 5;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, 0, -6);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  ObjectGroup_ConfigureChildValue(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, 15);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   v->update = 0;
   FieldScript_WaitFrames(30);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Engine_ScriptRequestWarp(warp);
+  Import_ScriptRequestWarp(warp);
   FieldScript_End();
 }
 

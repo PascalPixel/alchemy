@@ -13,7 +13,7 @@
 ///
 ///   Power-up        system.c: System_Initialize
 ///   Frames          frame.c: WaitFrames, System_VBlankHandler,
-///                   Runtime_SetIrqHandler; scheduler.c:
+///                   Irq_SetHandler; scheduler.c:
 ///                   Task_Add
 ///   Screen          fade.c: ScreenFade_Start; render.c: Oam_BuildBuffer;
 ///                   vram_cache.c: VramCache_Load
@@ -22,8 +22,8 @@
 ///                   Transform_ProjectPoint
 ///   Saving          save.c: Save_WriteRecord,
 ///                   Save_ReadRecord
-///   Link cable      serial.c: SerialRuntime_Initialize,
-///                   SerialRuntime_ExchangePayloads
+///   Link cable      serial.c: Serial_Initialize,
+///                   Serial_ExchangePayloads
 
 #include "runtime_internal.h"
 

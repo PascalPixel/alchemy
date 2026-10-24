@@ -71,7 +71,7 @@ enum ValeEruptionLocalId {
   /// (MsgValeDoraHasBeenCrying)
   LOCALID_DORA = LOCALID_FIRST_PLACED + 2,
   /// Garet's sister, a young woman with an orange ponytail, whom Garet calls
-  /// Sis at the farewell (vale_gate.c). She calls the mayor Grandpa, and
+  /// Sis at the farewell (vale_plaza.c). She calls the mayor Grandpa, and
   /// LOCALID_GARETS_BROTHER calls her Sis. "Grandpa, we don't even know if he's
   /// up there!"
   /// ★ Named from the game: "we don't even know if he's up there"
@@ -145,12 +145,12 @@ static void EventScript_ReturnFromMtAleph(void) {
   const s32 *actionScript;
 
   FieldScript_Start();
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER, ANIM_STILL);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 1, ANIM_STILL);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 2, ANIM_STILL);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 3, ANIM_STILL);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 4, ANIM_STILL);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 5, ANIM_STILL);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER, ANIM_STILL);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 1, ANIM_STILL);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 2, ANIM_STILL);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 3, ANIM_STILL);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 4, ANIM_STILL);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 5, ANIM_STILL);
   ObjectEvent_WalkToAndWait(LOCALID_GARETS_SISTER, 265, 487);
   ObjectEvent_FaceDirection(LOCALID_GARETS_SISTER, FACING_NORTHWEST, 0);
   ObjectEvent_WalkToAndWait(LOCALID_GARETS_BROTHER, 256, 500);
@@ -248,21 +248,21 @@ static void EventScript_ReturnFromMtAleph(void) {
   FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
   FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(320), 1);
   FieldScript_WaitFrames(40);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 120, 320);
   ObjectEvent_MoveToAndWait(LOCALID_GARET, 104, 320);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(30);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldScript_WaitFrames(50);
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(3) / 2, PIXELS(3) / 4);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   ObjectEvent_MoveToAndWait(LOCALID_GARET, 105, 342);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   Script_ShowMessage(LOCALID_GARET, 0);
   FieldScript_WaitFrames(10);
@@ -274,23 +274,23 @@ static void EventScript_ReturnFromMtAleph(void) {
   Script_OpenMessage(LOCALID_GARET, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
     FieldScript_WaitFrames(60);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
     FieldScript_WaitFrames(50);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
     ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
     ObjectEvent_MoveToAndWait(LOCALID_GARET, 103, 320);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   } else {
     FieldScript_WaitFrames(60);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
     FieldScript_WaitFrames(50);
     ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
     ObjectEvent_MoveToAndWait(LOCALID_PARTY_LEADER, 120, 340);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   }
 
   // The villagers spot them: "Garet!" "Isaac!" Garet's brother cries "Garet!"
@@ -329,8 +329,8 @@ static void EventScript_ReturnFromMtAleph(void) {
   ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
   ObjectEvent_RefreshSelectorById(LOCALID_GARET);
   FieldScript_WaitFrames(50);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   ObjectEvent_RefreshSelectorById(LOCALID_GARET);
   FieldScript_WaitFrames(60);
 
@@ -349,10 +349,10 @@ static void EventScript_ReturnFromMtAleph(void) {
   FieldCamera_WaitForArrival();
   ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDFATHER, FACING_WEST, 0);
   ObjectEvent_SetSpeed(LOCALID_GREAT_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Engine_ObjectEventSetAnimation(LOCALID_GREAT_HEALER, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GREAT_HEALER, ANIM_WALK);
   ObjectEvent_MoveToAndWait(LOCALID_GREAT_HEALER, 265, 455);
   ObjectEvent_MoveToAndWait(LOCALID_GREAT_HEALER, 246, 455);
-  Engine_ObjectEventSetAnimation(LOCALID_GREAT_HEALER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GREAT_HEALER, ANIM_STAND);
   FieldScript_WaitFrames(30);
 
   // "Where have you been?" "What happened?"
@@ -372,7 +372,7 @@ static void EventScript_ReturnFromMtAleph(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST, 0);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(40);
   // Dora notices who is missing.
@@ -413,7 +413,7 @@ static void EventScript_ReturnFromMtAleph(void) {
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   FieldScript_WaitFrames(40);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(60);
 
@@ -443,7 +443,7 @@ static void EventScript_ReturnFromMtAleph(void) {
   FieldScript_WaitFrames(40);
   ObjectEvent_LinkPair(LOCALID_GREAT_HEALER, LOCALID_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(40);
-  Engine_ObjectEventSetAnimation(LOCALID_GREAT_HEALER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GREAT_HEALER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, ANIM_NOD);
   FieldScript_WaitFrames(30);
 
@@ -489,7 +489,7 @@ static void EventScript_ReturnFromMtAleph(void) {
   MapGrid_WaitForShakeToSettle();
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   GameFlag_Set(FLAG_VALE_RETURNED_FROM_MT_ALEPH);
-  Engine_ScriptRequestWarp(VALE_ERUPTION_TO_SANCTUM);
+  Import_ScriptRequestWarp(VALE_ERUPTION_TO_SANCTUM);
   FieldScript_End();
 }
 

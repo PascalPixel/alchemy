@@ -176,7 +176,7 @@ STATIC_ASSERT(offsetof(struct BattleMenuWork, chosenDjinn) == 0xe4);
   } while (0)
 
 extern struct BattleMenuWork *gBattleMenuWork;
-extern u8 gResource_FixedBlockBTiles[];
+extern u8 gPointingHandTiles[];
 extern const u8 gMenu_AnimatedCursorTiles[];
 
 #endif

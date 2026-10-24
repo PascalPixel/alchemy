@@ -5,8 +5,8 @@
 	.global gOamDepthLists
 gOamDepthLists:
 	.space 0x00000400
-	.global gFrameTick
-gFrameTick:
+	.global gVBlankCount
+gVBlankCount:
 	.space 0x00000004
 	.global gSavedStackSize
 gSavedStackSize:
@@ -14,8 +14,8 @@ gSavedStackSize:
 	.global gVramCacheBlockOwners
 gVramCacheBlockOwners:
 	.space 0x00000200
-	.global gTaskStatus
-gTaskStatus:
+	.global gTasksRunning
+gTasksRunning:
 	.space 0x00000010
 	.global gTasks
 gTasks:
@@ -89,8 +89,8 @@ gResetRequested:
 	.global gDebugTextCursor
 gDebugTextCursor:
 	.space 0x00000004
-	.global gIwram_Data1
-gIwram_Data1:
+	.global gCamera_UnreadWord1
+gCamera_UnreadWord1:
 	.space 0x00000004
 	.global gTransformStackDepth
 gTransformStackDepth:
@@ -138,8 +138,8 @@ gKeysHeldAtVBlank:
 	.global gOamCopyEnabled
 gOamCopyEnabled:
 	.space 0x00000004
-	.global gIwram_Data2
-gIwram_Data2:
+	.global gCamera_UnreadWord2
+gCamera_UnreadWord2:
 	.space 0x00000004
 	.global gDebugPaused
 gDebugPaused:
@@ -153,8 +153,8 @@ gVBlankDone:
 	.global gTransformStackTop
 gTransformStackTop:
 	.space 0x00000008
-	.global gTasksReady
-gTasksReady:
+	.global gTasksInitialized
+gTasksInitialized:
 	.ifdef TBS_EDITION_DE
 	.space 0x00000004
 	.else
@@ -190,8 +190,8 @@ gObjects:
 	.global gObjectSystemWork
 gObjectSystemWork:
 	.space 0x00000004
-	.global gTileAnimationPages
-gTileAnimationPages:
+	.global gWorldMapFrameWork
+gWorldMapFrameWork:
 	.space 0x00000004
 	.global gMapGridWork
 gMapGridWork:
@@ -199,8 +199,8 @@ gMapGridWork:
 	.global gBattleWork
 gBattleWork:
 	.space 0x0000000c
-	.global gCameraWork
-gCameraWork:
+	.global gBattleCamera
+gBattleCamera:
 	.space 0x0000000c
 	.global gWindowWork
 gWindowWork:
@@ -231,11 +231,11 @@ gFieldWork:
 	.global gPaletteCycleWork
 gPaletteCycleWork:
 	.space 0x00000004
-	.global gParticleWork
-gParticleWork:
+	.global gWeatherWork
+gWeatherWork:
 	.space 0x00000004
-	.global gLightningWork
-gLightningWork:
+	.global gFieldBlendWork
+gFieldBlendWork:
 	.space 0x00000004
 	.global gScreenTransitionWork
 gScreenTransitionWork:
@@ -246,8 +246,8 @@ gPaletteFadeWork:
 	.global gScanlineEffect
 gScanlineEffect:
 	.space 0x00000008
-	.global gObjectEventEffectWork
-gObjectEventEffectWork:
+	.global gFadeOverlayWork
+gFadeOverlayWork:
 	.space 0x00000004
 	.global gBattleMessageWork
 gBattleMessageWork:
@@ -258,8 +258,8 @@ gBattleAnimWork:
 	.global gBattleEntryTimer
 gBattleEntryTimer:
 	.space 0x00000008
-	.global gBattleViewWork
-gBattleViewWork:
+	.global gBattleBackgroundWork
+gBattleBackgroundWork:
 	.space 0x0000001c
 	.global gSaveWork
 gSaveWork:

@@ -51,10 +51,10 @@ s32 LinkBattle_ReceiveParty(void) {
   partySlot = 0;
   while (partySlot < LINK_PARTY_SIZE) {
     opponent = Unit_GetFar(partySlot + FIRST_ENEMY_UNIT);
-    if (SerialRuntime_StartReceive(opponent) == -1) {
+    if (Serial_StartReceive(opponent) == -1) {
       break;
     }
-    SerialRuntime_WaitForReceive();
+    Serial_WaitForReceive();
     if (opponent->side != 0) {
       memberCount += 1;
     }
@@ -90,9 +90,9 @@ s32 LinkBattle_ReceiveParty(void) {
 
   // The recovery packet follows all three party places.
   buffer = AllocEwram(LINK_PARTY_OFFER_BYTES);
-  if (SerialRuntime_StartReceive(
-          Djinn_GetRecoveryTableFar(DJINN_RECOVERY_OPPONENT)) != -1) {
-    SerialRuntime_WaitForReceive();
+  if (Serial_StartReceive(Djinn_GetRecoveryTableFar(DJINN_RECOVERY_OPPONENT)) !=
+      -1) {
+    Serial_WaitForReceive();
     WaitFrames(2);
   }
   Free(buffer);
@@ -133,17 +133,17 @@ s32 LinkBattle_SendParty(void) {
     ((struct Unit *)buffer)->side = BATTLE_SIDE_PARTY;
     // FIRST_ENEMY_UNIT + i, in a byte.
     battle->opponentSlots[unitIds[i]] = i - FIRST_ENEMY_UNIT;
-    if (SerialRuntime_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
+    if (Serial_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
-    SerialRuntime_WaitForSend();
+    Serial_WaitForSend();
     WaitFrames(2);
   }
   // Empty places up to three.
   for (; i < LINK_PARTY_SIZE; i++) {
     ((struct Unit *)buffer)->side = BATTLE_SIDE_NONE;
-    if (SerialRuntime_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
+    if (Serial_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
-    SerialRuntime_WaitForSend();
+    Serial_WaitForSend();
     WaitFrames(2);
   }
 
@@ -161,8 +161,8 @@ s32 LinkBattle_SendParty(void) {
   list = &((struct DjinnRecoveryTable *)buffer)->list;
   for (j = 0; j < list->count; j++)
     list->entries[j].unitId = battle->opponentSlots[list->entries[j].unitId];
-  if (SerialRuntime_StartSend(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
-    SerialRuntime_WaitForSend();
+  if (Serial_StartSend(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
+    Serial_WaitForSend();
     WaitFrames(1);
     WaitFrames(2);
   }

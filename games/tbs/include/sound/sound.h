@@ -65,10 +65,10 @@ extern u8 gBgmFadeRequested;
 /// Cleared by the audio test, SoundTest_Run (reached only
 /// through a sound far-call veneer), which restarts a 20-frame timer when it
 /// finds it set; no other code names it (see the XXX there).
-extern s32 gSoundClipFlag;
+extern s32 gSoundTestRestartTimer;
 /// An EWRAM byte Sound_Initialize clears and nothing else
 /// names.
-extern u8 gEwram_Data1;
+extern u8 gSound_UnreadByte;
 void m4aSoundInit(void);
 void m4aSongNumStart(u16 id);
 void m4aSoundVSync(void);

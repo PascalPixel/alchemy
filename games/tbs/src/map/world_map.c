@@ -1,6 +1,6 @@
 /// @file
-/// The World Map (MapId_WorldMap), the one perspective map (layout/world)
-/// that joins the map sections, and the only map of this overlay. Its code does
+/// The World Map (MapId_WorldMap), the one perspective map (layout/world) that
+/// joins the map sections, and the only map of this overlay. Its code does
 /// three kinds of work.
 ///
 /// It lets the party into the map sections. Each map section stands on the map
@@ -24,24 +24,23 @@
 /// Venus, a Mars and a Mercury Djinni, stand on the map and, talked to or
 /// walked near, fight once a random battle is nearly due. A whirlwind near
 /// Crossbone Isle (LOCALID_STORM, put away while the Tolbi-bound Ship lies at
-/// anchor off the island) lifts the party for 180 frames when walked into,
-/// as the Suhalla Desert's storms do: Douse on it brings the party down into
-/// a battle, and when the time runs out it drops the party outside Suhalla
+/// anchor off the island) lifts the party for 180 frames when walked into, as
+/// the Suhalla Desert's storms do: Douse on it brings the party down into a
+/// battle, and when the time runs out it drops the party outside Suhalla
 /// (WORLD_MAP_FROM_SUHALLA, FLAG_ARRIVE_FALLING). The Turtle Boots are buried
 /// in the ground (MB_WORLD_MAP_TURTLE_BOOTS).
 ///
-/// And it plays the story's moments on the map, each run by
-/// WorldMap_Initialize for the warp destination another map sends the party to.
-/// In story order:
-/// - Leaving Vale (WORLD_MAP_FROM_VALE_GATE) sets FLAG_VALE_PARTY_LEFT the
+/// And it plays the story's moments on the map, each run by WorldMap_Initialize
+/// for the warp destination another map sends the party to. In story order:
+/// - Leaving Vale (WORLD_MAP_FROM_VALE_PLAZA) sets FLAG_VALE_PARTY_LEFT the
 ///   first time.
-/// - Flint, the first Djinni, circles his spot until the party walks up to
-///   him (EventScript_MeetFlint); he joins, teaches how Djinn are set and put
-///   on standby, and a tutorial battle follows.
+/// - Flint, the first Djinni, circles his spot until the party walks up to him
+///   (EventScript_MeetFlint); he joins, teaches how Djinn are set and put on
+///   standby, and a tutorial battle follows.
 /// - Hammet's caravan: the first time the party touches Vault
-///   (WORLD_MAP_HAMMETS_CARAVAN_LEAVES), the caravan, cut off from Kalay by
-///   the destroyed bridge, turns north for Lunpa as the ground shakes and a
-///   rock falls beside it; then the party goes on into Vault. It sets
+///   (WORLD_MAP_HAMMETS_CARAVAN_LEAVES), the caravan, cut off from Kalay by the
+///   destroyed bridge, turns north for Lunpa as the ground shakes and a rock
+///   falls beside it; then the party goes on into Vault. It sets
 ///   FLAG_LUNPA_GUARDS_SUSPECT_KALAY.
 /// - Mercury Lighthouse lit (WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT): the
 ///   lighthouse transition (WorldMap_PlayLighthouseTransition), then Mercury
@@ -49,8 +48,8 @@
 /// - Bunza's wagon: out of West Lunpa Cave (WORLD_MAP_FROM_WEST_LUNPA_CAVE)
 ///   Bunza, Hammet and the leader board it and it rolls off
 ///   (FLAG_BUNZAS_WAGON_LEFT); at the Kalay Tunnel Entrance
-///   (WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH) it stops and the leader
-///   steps down.
+///   (WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH) it stops and the leader steps
+///   down.
 /// - The Tolbi-bound Ship's crossing of the Karagol Sea: between the ship's
 ///   maps (WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_FIRST_ATTACK to
 ///   _SAIL_TO_LAND) the map shows the ship sailing west and sends the party
@@ -61,9 +60,9 @@
 ///   WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI ends the crossing at Tolbi
 ///   (FLAG_TOLBI_SHIP_REACHED_TOLBI).
 /// - The Black Orb: out of Gateway Cave (WORLD_MAP_FROM_GATEWAY_CAVE) Iodem
-///   sees Babi's ship scuttled off the coast and gives Isaac the orb to use
-///   on it (FLAG_MAP_TEMP_34, FLAG_SAW_SHIP_AT_IDEJIMA), and calls him back
-///   if he walks into the cave again. Used on the wreck
+///   sees Babi's ship scuttled off the coast and gives Isaac the orb to use on
+///   it (FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER, FLAG_SAW_SHIP_AT_IDEJIMA), and
+///   calls him back if he walks into the cave again. Used on the wreck
 ///   (MB_WORLD_MAP_SHIPWRECK) the orb does nothing; Iodem takes it back and the
 ///   party must go on to Babi Lighthouse (FLAG_BLACK_ORB_RETURNED). A defeat
 ///   meanwhile returns to WORLD_MAP_AFTER_BLACK_ORB_DEFEAT, which discards the
@@ -141,6 +140,24 @@
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
 
+/// The falling rock of Hammet's caravan scene has landed and shattered.
+#define FLAG_WORLD_MAP_FALLING_ROCK_LANDED FLAG_MAP_TEMP_00
+/// Iodem has handed Isaac the Black Orb and waits for it to be used on the
+/// wreck off Gateway Cave.
+#define FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER FLAG_MAP_TEMP_34
+/// The map's ordinary object event templates (gWorldMapObjectEventTemplates)
+/// are in use rather than a scripted moment's.
+#define FLAG_WORLD_MAP_ORDINARY_OBJECT_EVENTS FLAG_MAP_TEMP_35
+/// The storm holds the party up in the air, where Douse can bring it down.
+#define FLAG_WORLD_MAP_CAUGHT_IN_STORM FLAG_MAP_TEMP_F0
+/// The storm is done with, or put away while the Tolbi-bound Ship lies off the
+/// island, and catches no one.
+#define FLAG_WORLD_MAP_STORM_GONE FLAG_MAP_TEMP_F1
+/// The first flag of a byte (read and written with FieldGameFlag_GetByte and
+/// FieldGameFlag_SetByte) counting the frames the storm keeps the party in the
+/// air.
+#define FLAG_WORLD_MAP_STORM_FRAMES_LEFT FLAG_MAP_TEMP_F8
+
 static s32 WorldMap_AlignToMap(struct Object *interpreter);
 static void WorldMap_BoardBunzasWagon(void);
 static void WorldMap_ShowHammetsCaravan(void);
@@ -156,7 +173,7 @@ static void WorldMap_SailIntoTolbi(void);
 static void WorldMap_StepDownFromBunzasWagon(void);
 static void WorldMap_RunBlackOrbScene(void);
 static void WorldMap_BlockGatewayCaveWarp(s32 localId);
-static void EventScript_IodemCallsLeaderBack(void);
+static void EventScript_IodemCallsIsaacBack(void);
 static void WorldMap_ShowEndingScene(void);
 static void WorldMap_ShakeVenusLighthouse(void);
 static void WorldMap_UpdateLighthouseQuake(void);
@@ -189,95 +206,95 @@ enum WorldMapLocalId {
   /// The Mercury Djinni Hail.
   /// ★ Named from the game: "Hail" (MsgDjinnName)
   LOCALID_HAIL,
-  /// Vale, whose warp leads to the town gate (MapId_ValeGate).
+  /// Vale, whose warp leads to the town gate (MapId_ValePlaza).
   /// ★ Named from the game: "Why's everyone hanging around the town gate?"
   /// (MsgValeWhysEveryoneHanging)
-  LOCALID_MAPSEC_VALE_GATE,
+  LOCALID_TO_VALE_PLAZA,
   /// ★ Named from its area name: Vault
-  LOCALID_MAPSEC_VAULT,
+  LOCALID_TO_VAULT,
   /// ★ Named from its area name: Altin
-  LOCALID_MAPSEC_ALTIN,
+  LOCALID_TO_ALTIN,
   /// ★ Named from its area name: Suhalla
-  LOCALID_MAPSEC_SUHALLA,
+  LOCALID_TO_SUHALLA,
   /// ★ Named from its area name: Lunpa
-  LOCALID_MAPSEC_LUNPA,
+  LOCALID_TO_LUNPA,
   /// ★ Named from its area name: Kalay Docks
-  LOCALID_MAPSEC_KALAY_DOCKS,
+  LOCALID_TO_KALAY_DOCKS,
   /// ★ Named from its area name: Tolbi Docks
-  LOCALID_MAPSEC_TOLBI_DOCKS,
+  LOCALID_TO_TOLBI_DOCKS,
   /// ★ Named from its area name: Imil
-  LOCALID_MAPSEC_IMIL,
+  LOCALID_TO_IMIL,
   /// ★ Named from its area name: Kolima
-  LOCALID_MAPSEC_KOLIMA,
+  LOCALID_TO_KOLIMA,
   /// ★ Named from its area name: Xian
-  LOCALID_MAPSEC_XIAN,
+  LOCALID_TO_XIAN,
   /// ★ Named from its area name: Lama Temple
-  LOCALID_MAPSEC_LAMA_TEMPLE,
+  LOCALID_TO_LAMA_TEMPLE,
   /// ★ Named from its area name: Fuchin Temple
-  LOCALID_MAPSEC_FUCHIN_TEMPLE,
+  LOCALID_TO_FUCHIN_TEMPLE,
   /// ★ Named from its area name: Bilibin
-  LOCALID_MAPSEC_BILIBIN,
+  LOCALID_TO_BILIBIN,
   /// ★ Named from its area name: Kalay
-  LOCALID_MAPSEC_KALAY,
+  LOCALID_TO_KALAY,
   /// ★ Named from its area name: Lalivero
-  LOCALID_MAPSEC_LALIVERO,
+  LOCALID_TO_LALIVERO,
   /// ★ Named from its area name: Tolbi
-  LOCALID_MAPSEC_TOLBI,
+  LOCALID_TO_TOLBI,
   /// ★ Named from its area name: Mercury Lighthouse
-  LOCALID_MAPSEC_MERCURY_LIGHTHOUSE,
+  LOCALID_TO_MERCURY_LIGHTHOUSE,
   /// After two pictures no event answers: a mountain north of Vale
   /// (SPRITE_WORLD_MAP_MOUNTAIN) and Venus Lighthouse, which is entered by
   /// the cells around it.
   /// ★ Named from its area name: Bilibin Barricade
-  LOCALID_MAPSEC_BILIBIN_BARRICADE = LOCALID_MAPSEC_MERCURY_LIGHTHOUSE + 3,
+  LOCALID_TO_BILIBIN_BARRICADE = LOCALID_TO_MERCURY_LIGHTHOUSE + 3,
   /// ★ Named from its area name: Road to Babi Lighthouse
-  LOCALID_MAPSEC_ROAD_TO_BABI_LIGHTHOUSE,
+  LOCALID_TO_ROAD_TO_BABI_LIGHTHOUSE,
   /// ★ Named from its area name: Goma Cave Entrance
-  LOCALID_MAPSEC_GOMA_CAVE_ENTRANCE,
+  LOCALID_TO_GOMA_CAVE_ENTRANCE,
   /// Goma Cave's way out, where a wooden bridge crosses the river
   /// (MapId_GomaCaveBridge).
   /// ★ Named from its area name: Goma Cave
-  LOCALID_MAPSEC_GOMA_CAVE_BRIDGE,
+  LOCALID_TO_GOMA_CAVE_BRIDGE,
   /// ★ Named from its area name: Altmiller Cave
-  LOCALID_MAPSEC_ALTMILLER_CAVE,
+  LOCALID_TO_ALTMILLER_CAVE,
   /// ★ Named from its area name: Gondowan Cave
-  LOCALID_MAPSEC_GONDOWAN_CAVE_NORTH,
+  LOCALID_TO_GONDOWAN_CAVE_NORTH,
   /// ★ Named from its area name: Gondowan Cave
-  LOCALID_MAPSEC_GONDOWAN_CAVE_SOUTH,
+  LOCALID_TO_GONDOWAN_CAVE_SOUTH,
   /// The way into Mogall Forest where the Killer Ape waits
   /// (MapId_MogallForestKillerApe).
   /// ★ Named from the game: "Killer Ape" (MsgEnemyName)
-  LOCALID_MAPSEC_MOGALL_FOREST_KILLER_APE,
+  LOCALID_TO_MOGALL_FOREST_KILLER_APE,
   /// ★ Named from its area name: Gateway Cave
-  LOCALID_MAPSEC_GATEWAY_CAVE,
+  LOCALID_TO_GATEWAY_CAVE,
   /// ★ Named from its area name: Bilibin Cave Entrance
-  LOCALID_MAPSEC_BILIBIN_CAVE_ENTRANCE,
+  LOCALID_TO_BILIBIN_CAVE_ENTRANCE,
   /// ★ Named from its area name: Bilibin Cave
-  LOCALID_MAPSEC_BILIBIN_CAVE,
+  LOCALID_TO_BILIBIN_CAVE,
   /// ★ Named from its area name: West Lunpa Cave
-  LOCALID_MAPSEC_WEST_LUNPA_CAVE,
+  LOCALID_TO_WEST_LUNPA_CAVE,
   /// ★ Named from its area name: Altin Peak
-  LOCALID_MAPSEC_ALTIN_PEAK,
+  LOCALID_TO_ALTIN_PEAK,
   /// ★ Named from its area name: Lamakan Desert
-  LOCALID_MAPSEC_LAMAKAN_DESERT_CAVE,
+  LOCALID_TO_LAMAKAN_DESERT_CAVE,
   /// ★ Named from its area name: Kolima Forest
-  LOCALID_MAPSEC_KOLIMA_FOREST,
+  LOCALID_TO_KOLIMA_FOREST,
   /// The way into Mogall Forest by its broken sign (MapId_MogallForestSign).
   /// ★ Named from the game: "The broken sign reads:"
   /// (MsgMogallForestBrokenSign)
-  LOCALID_MAPSEC_MOGALL_FOREST_SIGN,
+  LOCALID_TO_MOGALL_FOREST_SIGN,
   /// ★ Named from its area name: Kalay Tunnel Entrance
-  LOCALID_MAPSEC_KALAY_TUNNEL_ENTRANCE,
+  LOCALID_TO_KALAY_TUNNEL_ENTRANCE,
   /// After three signposts (SPRITE_SIGNPOST). Unused: they stand at
   /// the map's origin, out of the player's reach, and no code moves them.
   /// ★ Named from its area name: Kolima Bridge
-  LOCALID_MAPSEC_KOLIMA_BRIDGE = LOCALID_MAPSEC_KALAY_TUNNEL_ENTRANCE + 4,
+  LOCALID_TO_KOLIMA_BRIDGE = LOCALID_TO_KALAY_TUNNEL_ENTRANCE + 4,
   /// ★ Named from its area name: Gondowan Passage
-  LOCALID_MAPSEC_GONDOWAN_PASSAGE,
+  LOCALID_TO_GONDOWAN_PASSAGE,
   /// The Tolbi-bound Ship at anchor off Crossbone Isle, after the wreck of
   /// Babi's ship (SPRITE_SHIPWRECK), which stands off Gateway Cave.
   /// ★ Named from its area name: Tolbi-bound Ship
-  LOCALID_TOLBI_SHIP = LOCALID_MAPSEC_GONDOWAN_PASSAGE + 2,
+  LOCALID_TOLBI_SHIP = LOCALID_TO_GONDOWAN_PASSAGE + 2,
   /// The storm that lifts the party, as the Suhalla Desert's do.
   /// ★ Named from what the player sees: a white whirlwind spinning on the map,
   /// drawn as the Suhalla Desert's sandstorms, spr_289.png (its render)
@@ -343,7 +360,7 @@ enum WorldMapCaravanLocalId {
   /// A blank object event (SPRITE_BLANK) that the falling rock is held above as
   /// it drops (WorldMap_UpdateFallingRock); it grows from a tenth of its size
   /// as it moves (gCaravanRockGuideScript).
-  LOCALID_BLANK_ROCK_GUIDE = LOCALID_CARAVAN_FIRST_WAGON + 4,
+  LOCALID_INVISIBLE_ROCK_GUIDE = LOCALID_CARAVAN_FIRST_WAGON + 4,
   /// Drawn as the rocks in sol_sanctum_eruption.c; it lands by the caravan
   /// and shatters.
   /// ★ Named from the game: "being smashed by falling rocks here"
@@ -410,13 +427,13 @@ enum {
   ANIM_SHEBA_LIE = 8   ///< lying on her back (spr_006.tsv)
 };
 
-// The world map's map flags:
-// FLAG_MAP_TEMP_00: the falling rock has landed, in Hammet's caravan scene.
-// FLAG_MAP_TEMP_34: Iodem has handed over the Black Orb.
-// FLAG_MAP_TEMP_35: the map's ordinary object event templates are in use.
-// FLAG_MAP_TEMP_F0: the storm holds the party up in the air.
-// FLAG_MAP_TEMP_F1: the storm is done with, or put away.
-// FLAG_MAP_TEMP_F8: a byte: frames left in the air.
+// The world map's map flags: FLAG_WORLD_MAP_FALLING_ROCK_LANDED: the falling
+// rock has landed, in Hammet's caravan scene.
+// FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER: Iodem has handed over the Black Orb.
+// FLAG_WORLD_MAP_ORDINARY_OBJECT_EVENTS: the map's ordinary object event
+// templates are in use. FLAG_WORLD_MAP_CAUGHT_IN_STORM: the storm holds the
+// party up in the air. FLAG_WORLD_MAP_STORM_GONE: the storm is done with, or
+// put away. FLAG_WORLD_MAP_STORM_FRAMES_LEFT: a byte: frames left in the air.
 
 /// Walking near Vine, or talking to him: once a battle is nearly due, half the
 /// time Vine fights; otherwise the next step brings an ordinary battle.
@@ -427,7 +444,7 @@ static void EventScript_MeetVine(void) {
 
   if (gSaveBlock.encounterSteps >=
       Math_Divide(work->encounterThreshold * 9, 10)) {
-    if ((u32)Engine_RandomNext() < 0x8000) {
+    if ((u32)Import_RandomNext() < 0x8000) {
       Field_RequestDjinnBattle(DJINN_NO_HOP | LOCALID_VENUS_DJINNI,
                                DJINNI_VINE);
       work->encounterBias = 0;
@@ -469,7 +486,8 @@ static void EventScript_MeetHail(void) {
 
 /// The update hook of a sparkle around the Black Orb: it frees the sparkle on
 /// its second frame.
-static void WorldMap_ReleaseSparkAfterDelay(union FieldObject *fieldObject) {
+static void
+WorldMap_ReleaseSparkAfterDelay(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   if (objectEvent->timer <= 0) {
     objectEvent->timer++;
@@ -480,7 +498,8 @@ static void WorldMap_ReleaseSparkAfterDelay(union FieldObject *fieldObject) {
 
 /// The update hook of the Black Orb held up over the wreck: it swells and
 /// shrinks every four frames and gives off a sparkle every other frame.
-static void WorldMap_PulseOrbAndSpawnSparks(union FieldObject *fieldObject) {
+static void
+WorldMap_PulseOrbAndSpawnSparks(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *spark;
   s32 x;
@@ -506,7 +525,7 @@ static void WorldMap_PulseOrbAndSpawnSparks(union FieldObject *fieldObject) {
   spark->motionFlags = 0;
   spark->sprite->image.priority = 1;
   ObjectEvent_SetSpriteFlags(spark, 0);
-  ObjectDispatch_SelectAnimation(spark, 1);
+  Object_SelectAnimation(spark, 1);
   spark->timer = 0;
   spark->update = WorldMap_ReleaseSparkAfterDelay;
 }
@@ -515,7 +534,7 @@ static void WorldMap_PulseOrbAndSpawnSparks(union FieldObject *fieldObject) {
 /// flickers white and red and circles 16 pixels around his spot, bobbing 4
 /// pixels up and down, facing the way he goes. EventScript_MeetFlint stops him
 /// by setting his work to 1.
-static void WorldMap_CircleFlint(union FieldObject *fieldObject) {
+static void WorldMap_CircleFlint(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   s16 *angle;
 
@@ -569,8 +588,7 @@ static s32 WorldMap_SetUpKolimaBridge(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   WorldMap_AlignToMap(interpreter);
   if (GameFlag_Get(FLAG_KOLIMA_BRIDGE_LOWERED) != 0) {
-    ObjectDispatch_SelectAnimation(objectEvent,
-                                   WORLD_MAP_BRIDGE_ANIMATION_LOWERED);
+    Object_SelectAnimation(objectEvent, WORLD_MAP_BRIDGE_ANIMATION_LOWERED);
   }
   return 1;
 }
@@ -602,15 +620,15 @@ static s32 WorldMap_SetUpIodem(struct Object *interpreter) {
 /// Sets up the storm (LOCALID_STORM) as it is placed: it does not collide, and
 /// while the Tolbi-bound Ship lies at anchor off the island
 /// (FLAG_TOLBI_SHIP_AT_ISLAND) it is put away at the map's origin and
-/// FLAG_MAP_TEMP_F1 keeps it from catching the party.
-/// Called by its object script.
+/// FLAG_WORLD_MAP_STORM_GONE keeps it from catching the party. Called by its
+/// object script.
 static s32 WorldMap_SetUpStorm(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   ObjectEvent_SetColorMode(objectEvent, SPRITE_COLOR_RED_TINT);
   objectEvent->collisionFlags = 0;
   if (GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
-    GameFlag_Set(FLAG_MAP_TEMP_F1);
+    GameFlag_Set(FLAG_WORLD_MAP_STORM_GONE);
     objectEvent->x.fixed = 0;
     objectEvent->y.fixed = 0;
   }
@@ -630,7 +648,8 @@ static s32 WorldMap_BlinkObjectEventSprite(struct Object *interpreter) {
 /// Chooses the object events for the warp destination: each scripted moment has
 /// a table of its own while it is still to play, and every other arrival takes
 /// the map sections, the Djinn, the storm and Iodem
-/// (gWorldMapObjectEventTemplates) and sets FLAG_MAP_TEMP_35.
+/// (gWorldMapObjectEventTemplates) and sets
+/// FLAG_WORLD_MAP_ORDINARY_OBJECT_EVENTS.
 const struct ObjectEventTemplate *WorldMap_GetObjectEventTemplates(void) {
   switch (gSaveBlock.warpDest) {
   case WORLD_MAP_FROM_WEST_LUNPA_CAVE:
@@ -665,7 +684,7 @@ const struct ObjectEventTemplate *WorldMap_GetObjectEventTemplates(void) {
     break;
   }
 
-  GameFlag_Set(FLAG_MAP_TEMP_35);
+  GameFlag_Set(FLAG_WORLD_MAP_ORDINARY_OBJECT_EVENTS);
   return gWorldMapObjectEventTemplates;
 }
 
@@ -708,7 +727,7 @@ static void WorldMap_SelectWarpByZ(s32 trigger, s32 warpBefore, s32 warpAfter) {
 /// decides the warp, from the west WORLD_MAP_TO_BILIBIN_BARRICADE_WEST, from
 /// the east WORLD_MAP_TO_BILIBIN_BARRICADE_EAST.
 static void EventScript_EnterBilibinBarricade(void) {
-  WorldMap_SelectWarpByX(COORD_EVENT_MAPSEC(LOCALID_MAPSEC_BILIBIN_BARRICADE),
+  WorldMap_SelectWarpByX(COORD_EVENT_MAPSEC(LOCALID_TO_BILIBIN_BARRICADE),
                          WORLD_MAP_TO_BILIBIN_BARRICADE_WEST,
                          WORLD_MAP_TO_BILIBIN_BARRICADE_EAST);
 }
@@ -718,7 +737,7 @@ static void EventScript_EnterBilibinBarricade(void) {
 /// WORLD_MAP_TO_KOLIMA_BRIDGE_WEST and from the south by
 /// WORLD_MAP_TO_KOLIMA_BRIDGE_EAST.
 static void EventScript_EnterKolimaBridge(void) {
-  WorldMap_SelectWarpByZ(COORD_EVENT_MAPSEC(LOCALID_MAPSEC_KOLIMA_BRIDGE),
+  WorldMap_SelectWarpByZ(COORD_EVENT_MAPSEC(LOCALID_TO_KOLIMA_BRIDGE),
                          WORLD_MAP_TO_KOLIMA_BRIDGE_WEST,
                          WORLD_MAP_TO_KOLIMA_BRIDGE_EAST);
 }
@@ -727,7 +746,7 @@ static void EventScript_EnterKolimaBridge(void) {
 /// WORLD_MAP_TO_KALAY_DOCKS_NORTH, from the south
 /// WORLD_MAP_TO_KALAY_DOCKS_EAST.
 static void EventScript_EnterKalayDocks(void) {
-  WorldMap_SelectWarpByZ(COORD_EVENT_MAPSEC(LOCALID_MAPSEC_KALAY_DOCKS),
+  WorldMap_SelectWarpByZ(COORD_EVENT_MAPSEC(LOCALID_TO_KALAY_DOCKS),
                          WORLD_MAP_TO_KALAY_DOCKS_NORTH,
                          WORLD_MAP_TO_KALAY_DOCKS_EAST);
 }
@@ -736,7 +755,7 @@ static void EventScript_EnterKalayDocks(void) {
 /// WORLD_MAP_TO_GONDOWAN_PASSAGE_EAST, from the south
 /// WORLD_MAP_TO_GONDOWAN_PASSAGE_WEST.
 static void EventScript_EnterGondowanPassage(void) {
-  WorldMap_SelectWarpByZ(COORD_EVENT_MAPSEC(LOCALID_MAPSEC_GONDOWAN_PASSAGE),
+  WorldMap_SelectWarpByZ(COORD_EVENT_MAPSEC(LOCALID_TO_GONDOWAN_PASSAGE),
                          WORLD_MAP_TO_GONDOWAN_PASSAGE_EAST,
                          WORLD_MAP_TO_GONDOWAN_PASSAGE_WEST);
 }
@@ -745,7 +764,7 @@ static void EventScript_EnterGondowanPassage(void) {
 /// WORLD_MAP_TO_LALIVERO_WEST, from the south WORLD_MAP_TO_LALIVERO_EAST.
 static void EventScript_EnterLalivero(void) {
 
-  WorldMap_SelectWarpByZ(COORD_EVENT_MAPSEC(LOCALID_MAPSEC_LALIVERO),
+  WorldMap_SelectWarpByZ(COORD_EVENT_MAPSEC(LOCALID_TO_LALIVERO),
                          WORLD_MAP_TO_LALIVERO_WEST,
                          WORLD_MAP_TO_LALIVERO_EAST);
 }
@@ -821,10 +840,10 @@ static void WorldMap_UpdateLocationContacts(void) {
 /// it is Vault's door (WORLD_MAP_TO_VAULT_SOUTH).
 static void EventScript_EnterVault(void) {
   if (GameFlag_Get(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
-    Engine_ScriptRequestWarp(WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES);
+    Import_ScriptRequestWarp(WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES);
   } else {
     Sound_PlaySong(SE_MAP_EXIT);
-    Engine_ScriptRequestWarp(WORLD_MAP_TO_VAULT_SOUTH);
+    Import_ScriptRequestWarp(WORLD_MAP_TO_VAULT_SOUTH);
   }
 }
 
@@ -836,22 +855,21 @@ static void EventScript_EnterVault(void) {
 static void EventScript_ReturnToTolbiShip(void) {
 
   FieldScript_Start();
-  Engine_ScriptRequestWarp(WORLD_MAP_TO_TOLBI_SHIP_DECK_CROSSBONE_ISLE);
+  Import_ScriptRequestWarp(WORLD_MAP_TO_TOLBI_SHIP_DECK_CROSSBONE_ISLE);
 }
 
-/// The map's initialization: it runs the moment the warp destination
-/// selects, the story's moments listed at the top of this file. The two
-/// lighthouse warp destinations and WORLD_MAP_AFTER_BLACK_ORB_DEFEAT leave at
-/// once; every other arrival sets FLAG_RETREAT_BLOCKED, starts
-/// WorldMap_UpdateLocationContacts, opens the screen from a centre line, and
-/// until the Manticore of the Lamakan Desert is beaten
-/// (FLAG_LAMAKAN_MANTICORE_BEATEN) swaps in the 512-pixel tile south of Vault
-/// whose bridge over the river is broken in the middle (the world map laid
-/// flat with and without the swap). The arrivals by Crossbone
+/// The map's initialization: it runs the moment the warp destination selects,
+/// the story's moments listed at the top of this file. The two lighthouse warp
+/// destinations and WORLD_MAP_AFTER_BLACK_ORB_DEFEAT leave at once; every other
+/// arrival sets FLAG_RETREAT_BLOCKED, starts WorldMap_UpdateLocationContacts,
+/// opens the screen from a centre line, and until the Manticore of the Lamakan
+/// Desert is beaten (FLAG_LAMAKAN_MANTICORE_BEATEN) swaps in the 512-pixel tile
+/// south of Vault whose bridge over the river is broken in the middle (the
+/// world map laid flat with and without the swap). The arrivals by Crossbone
 /// Isle and from the Suhalla Desert's storm resume the time in the air a storm
-/// left (FLAG_MAP_TEMP_F8). WORLD_MAP_FROM_DEBUG turns encounters off, and
-/// leaving Vale the first time sets FLAG_VALE_PARTY_LEFT and flag 0x85c,
-/// which nothing reads.
+/// left (FLAG_WORLD_MAP_STORM_FRAMES_LEFT). WORLD_MAP_FROM_DEBUG turns
+/// encounters off, and leaving Vale the first time sets FLAG_VALE_PARTY_LEFT
+/// and flag 0x85c, which nothing reads.
 s32 WorldMap_Initialize(void) {
   struct SaveBlock *state = &gSaveBlock;
   s16 *warpDest = &state->warpDest;
@@ -872,7 +890,7 @@ s32 WorldMap_Initialize(void) {
   } else if (*warpDest == WORLD_MAP_AFTER_BLACK_ORB_DEFEAT) {
     FieldScript_Start();
     PartyInventory_Discard(ITEM_BLACK_ORB);
-    Engine_ScriptRequestWarp(WORLD_MAP_TO_LUNPA_INTERIORS);
+    Import_ScriptRequestWarp(WORLD_MAP_TO_LUNPA_INTERIORS);
   } else {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_CENTRE_LINE, 0);
@@ -887,7 +905,7 @@ s32 WorldMap_Initialize(void) {
     }
     // Each special warp destination resumes its travel or story sequence.
     switch (*warpDest) {
-    case WORLD_MAP_FROM_VALE_GATE:
+    case WORLD_MAP_FROM_VALE_PLAZA:
       if (Script_GetFlag(FLAG_VALE_PARTY_LEFT) == 0) {
         GameFlag_Set(FLAG_VALE_PARTY_LEFT);
         GameFlag_Set(0x85c);
@@ -896,7 +914,7 @@ s32 WorldMap_Initialize(void) {
     case WORLD_MAP_FROM_GATEWAY_CAVE:
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
         if (GameFlag_Get(FLAG_BLACK_ORB_RETURNED) == 0 &&
-            GameFlag_Get(FLAG_MAP_TEMP_34) != 0) {
+            GameFlag_Get(FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER) != 0) {
           gWorldMapIodem = LOCALID_IODEM;
           ObjectEvent_SetPosition(LOCALID_IODEM, PIXELS(6036), PIXELS(3400));
           ObjectEvent_GetById(gWorldMapIodem)->facing =
@@ -948,9 +966,9 @@ s32 WorldMap_Initialize(void) {
       break;
     case WORLD_MAP_FROM_TOLBI_SHIP_DECK_CROSSBONE_ISLE:
     case WORLD_MAP_FROM_CROSSBONE_ISLE:
-    case WORLD_MAP_FROM_SUHALLA_DESERT_STORM:
+    case WORLD_MAP_FROM_SUHALLA_DESERT_SANDSTORM:
       GameFlag_Set(FLAG_WORLD_MAP_LEFT);
-      if (FieldGameFlag_GetByte(FLAG_MAP_TEMP_F8) != 0) {
+      if (FieldGameFlag_GetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT) != 0) {
         gSaveBlock.movementMode = LEADER_MOVEMENT_AIRBORNE;
         FieldScheduler_AddCallback(WorldMap_UpdateStormTimer,
                                    TASK_PRIORITY_MAP);
@@ -1009,12 +1027,12 @@ static void WorldMap_BoardBunzasWagon(void) {
   ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_NORTH + FACING_STEP, 0);
   FieldScript_WaitFrames(60);
-  Engine_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_NOD);
   FieldScript_WaitFrames(120);
   ObjectEvent_SetPosition(LOCALID_WAGON, PIXELS(5880), PIXELS(1208));
   FieldScript_WaitFrames(60);
-  Engine_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_WALK);
   record = ObjectEvent_GetById(LOCALID_WAGON);
   if (record != 0) {
     ObjectEvent_SetDestination(LOCALID_HAMMET, record->x.part.pixel,
@@ -1023,7 +1041,7 @@ static void WorldMap_BoardBunzasWagon(void) {
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_HAMMET);
   ObjectEvent_SetPosition(LOCALID_HAMMET, 0, 0);
   FieldScript_WaitFrames(60);
-  Engine_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_WALK);
   record = ObjectEvent_GetById(LOCALID_WAGON);
   if (record != 0) {
     ObjectEvent_SetDestination(LOCALID_BUNZA, record->x.part.pixel,
@@ -1032,7 +1050,7 @@ static void WorldMap_BoardBunzasWagon(void) {
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_BUNZA);
   ObjectEvent_SetPosition(LOCALID_BUNZA, 0, 0);
   FieldScript_WaitFrames(60);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   record = ObjectEvent_GetById(LOCALID_WAGON);
   if (record != 0) {
     ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, record->x.part.pixel,
@@ -1049,7 +1067,7 @@ static void WorldMap_BoardBunzasWagon(void) {
   ObjectEvent_SetDestinationOffset(LOCALID_WAGON, 8, 88);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_WAGON);
   FieldScript_FinishScreenTransition();
-  Engine_ScriptRequestWarp(WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE_SOUTH);
+  Import_ScriptRequestWarp(WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE_SOUTH);
   FieldScript_End();
 }
 
@@ -1079,7 +1097,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
   ObjectEvent_SetPosition(LOCALID_CARAVAN_HAMMET, PIXELS(5848), PIXELS(1576));
   WaitFrames(1);
-  ObjectEvent_SetChildValue(LOCALID_CARAVAN_HAMMET, SPRITE_COLOR_HIDDEN);
+  ObjectEvent_SetSpriteColorById(LOCALID_CARAVAN_HAMMET, SPRITE_COLOR_HIDDEN);
   spriteObjectEvent = ObjectEvent_Get(LOCALID_CARAVAN_HAMMET);
   ObjectEvent_SetSpriteFlags(spriteObjectEvent, 0);
   ObjectEvent_SetSpeed(LOCALID_CARAVAN_FIRST_WAGON, PIXELS(8) / 5,
@@ -1142,10 +1160,10 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   FieldScript_WaitFrames(20);
   WorldMap_EndScript();
-  Engine_ObjectEventSetAnimation(LOCALID_CARAVAN_FIRST_WAGON, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_CARAVAN_FIRST_WAGON + 1, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_CARAVAN_FIRST_WAGON + 2, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_CARAVAN_FIRST_WAGON + 3, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_CARAVAN_FIRST_WAGON, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_CARAVAN_FIRST_WAGON + 1, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_CARAVAN_FIRST_WAGON + 2, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_CARAVAN_FIRST_WAGON + 3, ANIM_STAND);
   FieldCamera_MoveTo(PIXELS(5640), -1, PIXELS(1784), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(20);
@@ -1167,7 +1185,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Script_ShowMessageAndWait(LOCALID_CARAVAN_MAN, 0, 20);
   ObjectEvent_SetPosition(LOCALID_CARAVAN_HAMMET, PIXELS(5656), PIXELS(1784));
   WaitFrames(1);
-  ObjectEvent_SetChildValue(LOCALID_CARAVAN_HAMMET, SPRITE_COLOR_NORMAL);
+  ObjectEvent_SetSpriteColorById(LOCALID_CARAVAN_HAMMET, SPRITE_COLOR_NORMAL);
   spriteObjectEvent = ObjectEvent_Get(LOCALID_CARAVAN_HAMMET);
   ObjectEvent_SetSpriteFlags(spriteObjectEvent, SPRITE_FLAG_SHADOW);
   ObjectEvent_SetSpeed(LOCALID_CARAVAN_HAMMET, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1226,11 +1244,12 @@ static void WorldMap_ShowHammetsCaravan(void) {
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(5608), -1, PIXELS(1736), 1);
   FieldCamera_WaitForArrival();
-  ObjectEvent_SetPosition(LOCALID_BLANK_ROCK_GUIDE, PIXELS(5544), PIXELS(1704));
+  ObjectEvent_SetPosition(LOCALID_INVISIBLE_ROCK_GUIDE, PIXELS(5544),
+                          PIXELS(1704));
   WaitFrames(1);
-  ObjectEvent_SetSpeed(LOCALID_BLANK_ROCK_GUIDE, PIXELS(3) / 10,
+  ObjectEvent_SetSpeed(LOCALID_INVISIBLE_ROCK_GUIDE, PIXELS(3) / 10,
                        PIXELS(3) / 20);
-  ObjectEvent_SetActionScript(LOCALID_BLANK_ROCK_GUIDE,
+  ObjectEvent_SetActionScript(LOCALID_INVISIBLE_ROCK_GUIDE,
                               gCaravanRockGuideScript);
   FieldScript_WaitFrames(160);
   // The falling rock drops from 64 pixels up, and bounces as it lands.
@@ -1242,7 +1261,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   objectEvent->y.fixed = PIXELS(64);
   objectEvent->sprite->rotation = 0xf000;
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
-  ObjectDispatch_SelectAnimation(objectEvent, FALLING_ROCK_ANIMATION_TUMBLE);
+  Object_SelectAnimation(objectEvent, FALLING_ROCK_ANIMATION_TUMBLE);
   WaitFrames(1);
   spriteObjectEvent = ObjectEvent_Get(LOCALID_FALLING_ROCK);
   ObjectEvent_SetSpriteFlags(spriteObjectEvent, 0);
@@ -1252,7 +1271,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   } while (objectEvent->timer == 0);
   spriteObjectEvent = ObjectEvent_Get(LOCALID_FALLING_ROCK);
   ObjectEvent_SetSpriteFlags(spriteObjectEvent, 0);
-  spriteObjectEvent = ObjectEvent_Get(LOCALID_BLANK_ROCK_GUIDE);
+  spriteObjectEvent = ObjectEvent_Get(LOCALID_INVISIBLE_ROCK_GUIDE);
   ObjectEvent_SetSpriteFlags(spriteObjectEvent, 0);
   FieldScript_WaitFrames(10);
   spriteObjectEvent = ObjectEvent_Get(LOCALID_CARAVAN_MAN);
@@ -1275,7 +1294,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   FieldScript_WaitFrames(60);
   Task_Remove(WorldMap_UpdateFallingRock);
   WaitFrames(1);
-  ObjectEvent_SetPosition(LOCALID_BLANK_ROCK_GUIDE, 0, 0);
+  ObjectEvent_SetPosition(LOCALID_INVISIBLE_ROCK_GUIDE, 0, 0);
   ObjectEvent_SetPosition(LOCALID_FALLING_ROCK, 0, 0);
   ObjectEvent_FaceDirection(LOCALID_CARAVAN_HAMMET, FACING_WEST, 10);
   ObjectMotion_Launch(LOCALID_CARAVAN_HAMMET, 4, 40);
@@ -1344,10 +1363,10 @@ static void WorldMap_ShowHammetsCaravan(void) {
   FieldCamera_WaitForArrival();
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 80);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   spriteObjectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (spriteObjectEvent != 0) {
     ObjectEvent_SetDestination(LOCALID_GARET, spriteObjectEvent->x.part.pixel,
@@ -1362,7 +1381,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   GameFlag_Set(FLAG_LUNPA_GUARDS_SUSPECT_KALAY);
-  Engine_ScriptRequestWarp(WORLD_MAP_TO_VAULT_SOUTH);
+  Import_ScriptRequestWarp(WORLD_MAP_TO_VAULT_SOUTH);
   FieldScript_End();
 }
 
@@ -1404,24 +1423,23 @@ static void WorldMap_ShakeCameraWhereRockFalls(void) {
   WorldMap_MoveShakeCamera(PIXELS(5608), PIXELS(1736));
 }
 
-/// Keeps the falling rock above its guide as it drops, and lands it once.
-/// Run each frame while the rock falls in WorldMap_ShowHammetsCaravan; sets
-/// FLAG_MAP_TEMP_00 as it lands.
+/// Keeps the falling rock above its guide as it drops, and lands it once. Run
+/// each frame while the rock falls in WorldMap_ShowHammetsCaravan; sets
+/// FLAG_WORLD_MAP_FALLING_ROCK_LANDED as it lands.
 static void WorldMap_UpdateFallingRock(void) {
   struct ObjectEvent *objectEvent;
   struct ObjectEvent *guide;
 
   objectEvent = ObjectEvent_GetById(LOCALID_FALLING_ROCK);
-  guide = ObjectEvent_GetById(LOCALID_BLANK_ROCK_GUIDE);
+  guide = ObjectEvent_GetById(LOCALID_INVISIBLE_ROCK_GUIDE);
   objectEvent->x.fixed = guide->x.fixed;
   objectEvent->z.fixed = guide->z.fixed;
   if (objectEvent->y.fixed < PIXELS(10)) {
     objectEvent->y.fixed = PIXELS(10);
-    if (Script_GetFlag(FLAG_MAP_TEMP_00) == 0) {
+    if (Script_GetFlag(FLAG_WORLD_MAP_FALLING_ROCK_LANDED) == 0) {
       Script_PlaySong(SE_145);
-      ObjectDispatch_SelectAnimation(objectEvent,
-                                     FALLING_ROCK_ANIMATION_SHATTER);
-      GameFlag_Set(FLAG_MAP_TEMP_00);
+      Object_SelectAnimation(objectEvent, FALLING_ROCK_ANIMATION_SHATTER);
+      GameFlag_Set(FLAG_WORLD_MAP_FALLING_ROCK_LANDED);
       objectEvent->timer = 1;
     }
   }
@@ -1451,7 +1469,7 @@ static void WorldMap_SailToFirstMonsterAttack(void) {
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   GameFlag_Set(FLAG_TOLBI_SHIP_ROWING);
-  Engine_ScriptRequestWarp(WORLD_MAP_TO_TOLBI_SHIP_MAST_FIRST_ATTACK);
+  Import_ScriptRequestWarp(WORLD_MAP_TO_TOLBI_SHIP_MAST_FIRST_ATTACK);
   FieldScript_End();
 }
 
@@ -1482,7 +1500,7 @@ static inline void WorldMap_SailCrossingLeg(s32 warp) {
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   GameFlag_Set(FLAG_TOLBI_SHIP_ROWING);
-  Engine_ScriptRequestWarp(warp);
+  Import_ScriptRequestWarp(warp);
   FieldScript_End();
 }
 
@@ -1547,7 +1565,7 @@ static void WorldMap_SailUntilLandSighted(void) {
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   GameFlag_Set(FLAG_TOLBI_SHIP_ROWING);
-  Engine_ScriptRequestWarp(WORLD_MAP_TO_TOLBI_SHIP_MAST_LAND_HO);
+  Import_ScriptRequestWarp(WORLD_MAP_TO_TOLBI_SHIP_MAST_LAND_HO);
   FieldScript_End();
 }
 
@@ -1576,7 +1594,7 @@ static void WorldMap_SailIntoTolbi(void) {
   FieldScript_WaitTransitionFrames();
   GameFlag_Set(FLAG_TOLBI_SHIP_REACHED_TOLBI);
   GameFlag_Clear(FLAG_TOLBI_SHIP_ROWING);
-  Engine_ScriptRequestWarp(WORLD_MAP_TO_TOLBI_SHIP_DECK);
+  Import_ScriptRequestWarp(WORLD_MAP_TO_TOLBI_SHIP_DECK);
   FieldScript_End();
 }
 
@@ -1854,14 +1872,14 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   WaitFrames(1);
   Script_PlaySong(SE_RUMBLE);
   ObjectEvent_SetSpeed(LOCALID_KALAY_WAGON, PIXELS(8) / 5, PIXELS(2) / 5);
-  Engine_ObjectEventSetAnimation(LOCALID_KALAY_WAGON, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_KALAY_WAGON, ANIM_WALK);
   ObjectEvent_MoveToAndWait(LOCALID_KALAY_WAGON, 5485, 2136);
   FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
   FieldCamera_MoveTo(PIXELS(5560), -1, PIXELS(2136), 1);
   ObjectEvent_MoveToAndWait(LOCALID_KALAY_WAGON, 5534, 2136);
   ObjectEvent_MoveToAndWait(LOCALID_KALAY_WAGON, 5544, 2158);
   ObjectEvent_MoveToAndWait(LOCALID_KALAY_WAGON, 5608, 2168);
-  Engine_ObjectEventSetAnimation(LOCALID_KALAY_WAGON, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_KALAY_WAGON, ANIM_STAND);
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   FieldScript_WaitFrames(20);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(5592), PIXELS(2168));
@@ -1871,7 +1889,7 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 5576, 2168);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 40);
   Script_PlaySong(SE_RUMBLE);
-  Engine_ObjectEventSetAnimation(LOCALID_KALAY_WAGON, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_KALAY_WAGON, ANIM_WALK);
   ObjectEvent_MoveToAndWait(LOCALID_KALAY_WAGON, 5624, 2168);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 0);
   ObjectEvent_MoveToAndWait(LOCALID_KALAY_WAGON, 5624, 2104);
@@ -1889,17 +1907,17 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 5592, 2136);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Engine_ScriptRequestWarp(WORLD_MAP_TO_KALAY_EAST);
+  Import_ScriptRequestWarp(WORLD_MAP_TO_KALAY_EAST);
   FieldScript_End();
 }
 
 /// Out of Gateway Cave: Iodem sees Babi's ship scuttled off the coast, gives
-/// Isaac the Black Orb and prompts him to use it on the ship.
-/// Called by WorldMap_Initialize at WORLD_MAP_FROM_GATEWAY_CAVE until the Black
-/// Orb is handed back and before the wounded soldiers are seen in Lalivero
-/// (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN). Sets FLAG_MAP_TEMP_34 and
-/// FLAG_SAW_SHIP_AT_IDEJIMA, and turns Gateway Cave's warp into
-/// EventScript_IodemCallsLeaderBack.
+/// Isaac the Black Orb and prompts him to use it on the ship. Called by
+/// WorldMap_Initialize at WORLD_MAP_FROM_GATEWAY_CAVE until the Black Orb is
+/// handed back and before the wounded soldiers are seen in Lalivero
+/// (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN). Sets
+/// FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER and FLAG_SAW_SHIP_AT_IDEJIMA, and turns
+/// Gateway Cave's warp into EventScript_IodemCallsIsaacBack.
 static void WorldMap_RunBlackOrbScene(void) {
   struct ObjectEvent *leader;
 
@@ -1911,7 +1929,7 @@ static void WorldMap_RunBlackOrbScene(void) {
   WorldMap_StartScript();
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    Engine_ObjectEventSetPosition(gWorldMapIodem, leader->x.fixed,
+    Import_ObjectEventSetPosition(gWorldMapIodem, leader->x.fixed,
                                   leader->z.fixed);
   }
   ObjectEvent_SetSpeed(gWorldMapIodem, PIXELS(8) / 5, PIXELS(4) / 5);
@@ -1973,16 +1991,16 @@ static void WorldMap_RunBlackOrbScene(void) {
   WorldMap_EndScript();
   FieldEffect_ScheduleRatioTransition(Q16_ONE, 10);
   FieldScript_WaitFrames(20);
-  GameFlag_Set(FLAG_MAP_TEMP_34);
+  GameFlag_Set(FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER);
   GameFlag_Set(FLAG_SAW_SHIP_AT_IDEJIMA);
   gSaveBlock.savedMap = (s32)&MapId_WorldMap;
   gSaveBlock.savedWarpDest = WORLD_MAP_AFTER_BLACK_ORB_DEFEAT;
   FieldScript_End();
 }
 
-/// Turns Gateway Cave's warp (the map event of LOCALID_MAPSEC_GATEWAY_CAVE's
+/// Turns Gateway Cave's warp (the map event of LOCALID_TO_GATEWAY_CAVE's
 /// COORD_EVENT_MAPSEC) into a coord event that runs
-/// EventScript_IodemCallsLeaderBack, and stands Iodem (LOCALID_IODEM, whose
+/// EventScript_IodemCallsIsaacBack, and stands Iodem (LOCALID_IODEM, whose
 /// object event template row it finds by his sprite) at pixel (6036, 3400); the
 /// object event given is not used. Called by WorldMap_RunBlackOrbScene, and by
 /// WorldMap_Initialize when the party returns to WORLD_MAP_FROM_GATEWAY_CAVE
@@ -1994,9 +2012,9 @@ static void WorldMap_BlockGatewayCaveWarp(s32 localId) {
   while (1) {
     if (gWorldMapEvents[i].kind == MAP_EVENT_WARP &&
         gWorldMapEvents[i].trigger ==
-            COORD_EVENT_MAPSEC(LOCALID_MAPSEC_GATEWAY_CAVE)) {
+            COORD_EVENT_MAPSEC(LOCALID_TO_GATEWAY_CAVE)) {
       gWorldMapEvents[i].kind = MAP_EVENT_COORD;
-      gWorldMapEvents[i].value = (u32)EventScript_IodemCallsLeaderBack;
+      gWorldMapEvents[i].value = (u32)EventScript_IodemCallsIsaacBack;
     }
     if (gWorldMapEvents[i].kind == MAP_EVENTS_END)
       break;
@@ -2021,7 +2039,7 @@ static void WorldMap_RestoreGatewayCaveWarp(void) {
   while (1) {
     if (gWorldMapEvents[i].kind == MAP_EVENT_COORD &&
         gWorldMapEvents[i].trigger ==
-            COORD_EVENT_MAPSEC(LOCALID_MAPSEC_GATEWAY_CAVE)) {
+            COORD_EVENT_MAPSEC(LOCALID_TO_GATEWAY_CAVE)) {
       gWorldMapEvents[i].kind = MAP_EVENT_WARP;
       gWorldMapEvents[i].value = WORLD_MAP_TO_GATEWAY_CAVE;
       break;
@@ -2049,7 +2067,7 @@ static void EventScript_TalkAboutBlackOrb(void) {
 /// Babi's ship!"
 /// Reached by touching Gateway Cave while WorldMap_BlockGatewayCaveWarp has
 /// made it a coord event.
-static void EventScript_IodemCallsLeaderBack(void) {
+static void EventScript_IodemCallsIsaacBack(void) {
   FieldScript_Start();
   WorldMap_StartScript();
   FieldScript_SetMessageId(MsgWorldMapIsaacWhereGoingSaidUse);
@@ -2062,9 +2080,9 @@ static void EventScript_IodemCallsLeaderBack(void) {
 
 /// Searching the wreck off Gateway Cave: "The wreckage of a ship scuttled off
 /// the coast." While Iodem waits for the Black Orb to be used
-/// (FLAG_MAP_TEMP_34) the main menu opens as the search ends, so that the orb
-/// can be used.
-/// Reached by searching MB_WORLD_MAP_SHIPWRECK.
+/// (FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER) the main menu opens as the search
+/// ends, so that the orb can be used. Reached by searching
+/// MB_WORLD_MAP_SHIPWRECK.
 static void EventScript_SearchShipwreck(void) {
 
   FieldScript_Start();
@@ -2072,7 +2090,7 @@ static void EventScript_SearchShipwreck(void) {
   WorldMap_StartScript();
 #endif
   FieldMessage_Show(MsgWorldMapWreckageShipScuttledOffCoast, 1);
-  if (GameFlag_Get(FLAG_MAP_TEMP_34) != 0) {
+  if (GameFlag_Get(FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER) != 0) {
     gFieldWork->menu = 1;
   }
 #if !TBS_PATCH_3
@@ -2082,9 +2100,9 @@ static void EventScript_SearchShipwreck(void) {
 }
 
 /// Using the Black Orb on the shipwreck: nothing happens, the orb is taken back
-/// and the party is to press on to Babi Lighthouse.
-/// Reached by using the Black Orb on MB_WORLD_MAP_SHIPWRECK until it is handed
-/// back. Clears FLAG_MAP_TEMP_34 and sets FLAG_BLACK_ORB_RETURNED.
+/// and the party is to press on to Babi Lighthouse. Reached by using the Black
+/// Orb on MB_WORLD_MAP_SHIPWRECK until it is handed back. Clears
+/// FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER and sets FLAG_BLACK_ORB_RETURNED.
 static void EventScript_UseBlackOrb(void) {
   struct ObjectEvent *iodem;
   struct ObjectEvent *orb;
@@ -2104,7 +2122,7 @@ static void EventScript_UseBlackOrb(void) {
   iodem = NULL;
   ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   leader->paused = 0;
-  ObjectDispatch_StartIdle((struct Object *)leader);
+  Object_StartIdle((struct Object *)leader);
   if (leader->z.fixed > PIXELS(3432)) {
     if (leader->x.fixed > PIXELS(5998)) {
       Object_SetPosition(leader, PIXELS(5998), leader->y.fixed, PIXELS(3453));
@@ -2213,7 +2231,7 @@ static void EventScript_UseBlackOrb(void) {
   Script_Wait(20);
   WorldMap_RestoreGatewayCaveWarp();
   ObjectEvent_DestroyById(gWorldMapIodem);
-  GameFlag_Clear(FLAG_MAP_TEMP_34);
+  GameFlag_Clear(FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER);
   GameFlag_Set(FLAG_BLACK_ORB_RETURNED);
   Script_End();
 }
@@ -2244,8 +2262,8 @@ static void WorldMap_ShowEndingScene(void) {
   FieldScript_Start();
   FieldEffect_ScheduleRatioTransition(Q16_ONE, 300);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_JENNA_LIE);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_KRADEN_LIE);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_JENNA_LIE);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_KRADEN_LIE);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   WaitFrames(1);
   FieldEffect_ScheduleRatioTransition(3 * Q16_ONE / 2, 16);
@@ -2304,9 +2322,9 @@ static void WorldMap_ShowEndingScene(void) {
   FieldScript_WaitFrames(20);
   ObjectEvent_SetActionScript(LOCALID_ALEX, gEndingAlexWalk);
   FieldScript_WaitFrames(80);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
   ObjectMotion_Launch(LOCALID_KRADEN, 4, 40);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
   ObjectMotion_Launch(LOCALID_JENNA, 4, 60);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST + FACING_STEP, 40);
@@ -2318,8 +2336,8 @@ static void WorldMap_ShowEndingScene(void) {
   FieldCamera_MoveTo(PIXELS(7736), -1, PIXELS(3528), 1);
   ObjectEvent_SetActionScript(LOCALID_JENNA, gEndingJennaWalk);
   do {
-    Engine_ObjectEventSetAnimation(LOCALID_FELIX, ANIM_FELIX_LIE);
-    Engine_ObjectEventSetAnimation(LOCALID_SHEBA, ANIM_SHEBA_LIE);
+    Import_ObjectEventSetAnimation(LOCALID_FELIX, ANIM_FELIX_LIE);
+    Import_ObjectEventSetAnimation(LOCALID_SHEBA, ANIM_SHEBA_LIE);
     WaitFrames(1);
   } while (ObjectEvent_GetById(LOCALID_JENNA)->timer == 0);
   FieldScript_WaitFrames(20);
@@ -2341,7 +2359,7 @@ static void WorldMap_ShowEndingScene(void) {
   ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(8) / 5, PIXELS(4) / 5);
   ObjectEvent_WalkTo(LOCALID_KRADEN, 7804, 3512);
   ObjectEvent_WalkToAndWait(LOCALID_JENNA, 7788, 3544);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
   WorldMap_StartScript();
   FieldScript_WaitFrames(80);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 1);
@@ -2375,7 +2393,7 @@ static void WorldMap_ShakeVenusLighthouse(void) {
   gFieldWork->transitionFrames = 1;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
-  ObjectGroup_ConfigureChildValue(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   WaitFrames(1);
   FieldCamera_SetSpeedParameters(PIXELS(4), PIXELS(1) / 2);
@@ -2392,7 +2410,7 @@ static void WorldMap_ShakeVenusLighthouse(void) {
   PaletteFade_SetTarget(0, 0);
   PaletteFade_StartInterpolation(80);
   WaitFrames(90);
-  Engine_ScriptRequestWarp(WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE);
+  Import_ScriptRequestWarp(WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE);
   GameFlag_Set(FLAG_KEEP_MUSIC);
   FieldScript_End();
 }
@@ -2401,8 +2419,8 @@ static void WorldMap_ShakeVenusLighthouse(void) {
 /// spot in the QUAKE_DUST box, and every third frame moves the camera a pixel
 /// to one of four points around the lighthouse.
 static void WorldMap_UpdateLighthouseQuake(void) {
-  u32 x = (u32)Engine_RandomNext() * QUAKE_DUST_WIDTH >> 16;
-  u32 z = (u32)Engine_RandomNext() * QUAKE_DUST_DEPTH >> 16;
+  u32 x = (u32)Import_RandomNext() * QUAKE_DUST_WIDTH >> 16;
+  u32 z = (u32)Import_RandomNext() * QUAKE_DUST_DEPTH >> 16;
   struct ObjectEvent *objectEvent;
 
   objectEvent =
@@ -2410,18 +2428,18 @@ static void WorldMap_UpdateLighthouseQuake(void) {
                          0, PIXELS(z) + PIXELS(QUAKE_DUST_TOP));
   if (objectEvent != NULL) {
     struct Sprite *sprite = objectEvent->sprite;
-    s32 scale = (((u32)Engine_RandomNext() << 15) >> 16) + 6 * Q16_ONE / 5;
+    s32 scale = (((u32)Import_RandomNext() << 15) >> 16) + 6 * Q16_ONE / 5;
 
     sprite->flags = 0;
     sprite->image.priority = 2;
     objectEvent->motionFlags = 0;
     objectEvent->scaleX = scale;
     objectEvent->scaleY = scale;
-    ObjectDispatch_SelectAnimation(objectEvent, 1);
+    Object_SelectAnimation(objectEvent, 1);
     ObjectEvent_SetScript(objectEvent, gQuakeDustScript);
   }
   if (gFrameCount % 3 == 0) {
-    switch (((u32)Engine_RandomNext() << 2) >> 16) {
+    switch (((u32)Import_RandomNext() << 2) >> 16) {
     case 0:
       FieldCamera_MoveWithinMapBounds(PIXELS(6087), -1, PIXELS(3177), 1);
       break;
@@ -2450,7 +2468,7 @@ static void WorldMap_SailTolbiShipToIsland(void) {
   FieldScript_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   WaitFrames(1);
-  Engine_ObjectEventSetAnimation(LOCALID_CROSSING_SHIP, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_CROSSING_SHIP, ANIM_WALK);
   ObjectEvent_SetPosition(LOCALID_CROSSING_SHIP, PIXELS(4872), PIXELS(808));
   objectEvent = ObjectEvent_Get(LOCALID_CROSSING_SHIP);
   {
@@ -2474,11 +2492,11 @@ static void WorldMap_SailTolbiShipToIsland(void) {
   ObjectEvent_MoveToAndWait(LOCALID_CROSSING_SHIP, 4760, 456);
   ObjectEvent_SetSpeed(LOCALID_CROSSING_SHIP, PIXELS(1) / 10, PIXELS(1) / 20);
   ObjectEvent_MoveToAndWait(LOCALID_CROSSING_SHIP, 4760, 440);
-  Engine_ObjectEventSetAnimation(LOCALID_CROSSING_SHIP, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_CROSSING_SHIP, ANIM_STAND);
   FieldScript_WaitFrames(40);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Engine_ScriptRequestWarp(
+  Import_ScriptRequestWarp(
       WORLD_MAP_TO_TOLBI_SHIP_INTERIORS_ROWING_DECK_ISLAND);
 }
 
@@ -2540,13 +2558,13 @@ static void WorldMap_SpawnIslandWake(void) {
   objectEvent->scaleX = Q16_ONE / 2;
   objectEvent->scaleY = Q16_ONE / 2;
   sprite = objectEvent->sprite;
-  if (((u32)Engine_RandomNext() * 2 >> 16)) {
-    s32 back = (((u32)Engine_RandomNext() * 48) >> 16) << 16;
+  if (((u32)Import_RandomNext() * 2 >> 16)) {
+    s32 back = (((u32)Import_RandomNext() * 48) >> 16) << 16;
 
     objectEvent->x.fixed -= back >> 1;
     objectEvent->z.fixed -= back;
   } else {
-    value = (((u32)Engine_RandomNext() << 5) >> 16) << 16;
+    value = (((u32)Import_RandomNext() << 5) >> 16) << 16;
     objectEvent->x.fixed += value;
     value = (s32)value >> 1;
     objectEvent->z.fixed += value;
@@ -2555,8 +2573,8 @@ static void WorldMap_SpawnIslandWake(void) {
   sprite->image.priority = leader->sprite->image.priority;
   objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
   objectEvent->motionFlags = leader->motionFlags;
-  ObjectGroup_SetChildValue(objectEvent, SPRITE_COLOR_BLUE_TINT);
-  ObjectDispatch_SelectAnimation(objectEvent, 2);
+  ObjectEvent_SetSpriteColor(objectEvent, SPRITE_COLOR_BLUE_TINT);
+  Object_SelectAnimation(objectEvent, 2);
   ObjectEvent_SetScript(objectEvent, gIslandWakeScript);
 }
 
@@ -2577,7 +2595,7 @@ static void WorldMap_ShowIslandDrifting(void) {
   objectEvent->scaleY = 6 * Q16_ONE / 5;
   FieldCamera_FollowObjectEvent(LOCALID_DRIFTING_ISLAND, 1);
   WaitFrames(1);
-  ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   spriteObjectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   ObjectEvent_SetSpriteFlags(spriteObjectEvent, 0);
   spriteObjectEvent = ObjectEvent_Get(LOCALID_DRIFTING_ISLAND);
@@ -2597,12 +2615,12 @@ static void WorldMap_ShowIslandDrifting(void) {
   PLTT_BACKDROP = 0x7fff;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Engine_ScriptRequestWarp(WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT);
+  Import_ScriptRequestWarp(WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT);
 }
 
-/// Run each frame while a storm holds the party in the air: it spins the
-/// leader and counts the frames left in the byte at FLAG_MAP_TEMP_F8, paused
-/// while a menu is open, raising RAISED_STORM_TIME_UP at the last.
+/// Run each frame while a storm holds the party in the air: it spins the leader
+/// and counts the frames left in the byte at FLAG_WORLD_MAP_STORM_FRAMES_LEFT,
+/// paused while a menu is open, raising RAISED_STORM_TIME_UP at the last.
 static void WorldMap_UpdateStormTimer(void) {
 
   struct ObjectEvent *objectEvent;
@@ -2613,7 +2631,7 @@ static void WorldMap_UpdateStormTimer(void) {
   work = gFieldWork;
   objectEvent->facing = (gFrameCount << 12);
 
-  progress = FieldGameFlag_GetByte(FLAG_MAP_TEMP_F8);
+  progress = FieldGameFlag_GetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT);
   if (progress != 0) {
     if (progress == 1) {
       work->raisedEvent = RAISED_STORM_TIME_UP;
@@ -2621,12 +2639,12 @@ static void WorldMap_UpdateStormTimer(void) {
       progress -= 1;
     }
   }
-  FieldGameFlag_SetByte(FLAG_MAP_TEMP_F8, progress);
+  FieldGameFlag_SetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT, progress);
 }
 
-/// Draws the leader into the storm, lifts him and starts its timer.
-/// Called by EventScript_WalkIntoStorm. Sets FLAG_MAP_TEMP_F0 and gives the
-/// party 180 frames in the air (FLAG_MAP_TEMP_F8).
+/// Draws the leader into the storm, lifts him and starts its timer. Called by
+/// EventScript_WalkIntoStorm. Sets FLAG_WORLD_MAP_CAUGHT_IN_STORM and gives the
+/// party 180 frames in the air (FLAG_WORLD_MAP_STORM_FRAMES_LEFT).
 static void WorldMap_CatchInStorm(s32 targetLocalId) {
   s32 alreadyTraveling;
   struct ObjectEvent *objectEvent;
@@ -2635,12 +2653,12 @@ static void WorldMap_CatchInStorm(s32 targetLocalId) {
 
   id = gSaveBlock.leaderLocalId;
   objectEvent = ObjectEvent_GetById(id);
-  alreadyTraveling = Script_GetFlag(FLAG_MAP_TEMP_F0);
+  alreadyTraveling = Script_GetFlag(FLAG_WORLD_MAP_CAUGHT_IN_STORM);
   if (alreadyTraveling == 0) {
     FieldScript_Start();
     ObjectEvent_SetAttachedEffect(id, ATTACHED_EFFECT_IN_FRONT |
                                           ATTACHED_EFFECT_ATTACH);
-    Engine_ObjectEventSetAnimation(id, ANIM_LEADER_LOOK_AROUND);
+    Import_ObjectEventSetAnimation(id, ANIM_LEADER_LOOK_AROUND);
     record = ObjectEvent_GetById(targetLocalId);
     if (record != 0) {
       ObjectEvent_SetDestination(id, record->x.part.pixel,
@@ -2656,24 +2674,24 @@ static void WorldMap_CatchInStorm(s32 targetLocalId) {
     objectEvent->velocityY = alreadyTraveling;
     objectEvent->motionFlags = OBJ_EVENT_FLOATS;
     gSaveBlock.movementMode = LEADER_MOVEMENT_AIRBORNE;
-    GameFlag_Set(FLAG_MAP_TEMP_F0);
-    FieldGameFlag_SetByte(FLAG_MAP_TEMP_F8, 180);
+    GameFlag_Set(FLAG_WORLD_MAP_CAUGHT_IN_STORM);
+    FieldGameFlag_SetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT, 180);
     FieldScript_End();
     gFieldWork->battle = 0; // drop any battle this step rolled
   }
 }
 
-/// Walking into the storm: the party is lifted up into the air.
-/// Reached by walking onto MB_WORLD_MAP_STORM until the storm is done with
-/// (FLAG_MAP_TEMP_F1).
+/// Walking into the storm: the party is lifted up into the air. Reached by
+/// walking onto MB_WORLD_MAP_STORM until the storm is done with
+/// (FLAG_WORLD_MAP_STORM_GONE).
 static void EventScript_WalkIntoStorm(void) {
   WorldMap_CatchInStorm(LOCALID_STORM);
 }
 
 /// Starting to cast Douse on the storm: Douse's rain cloud gathers 80 pixels
-/// up, where the party floats (douse.c reads childOption).
-/// Reached by the first phase of Douse on the storm (LOCALID_STORM) while it
-/// holds the party in the air (FLAG_MAP_TEMP_F0).
+/// up, where the party floats (douse.c reads childOption). Reached by the first
+/// phase of Douse on the storm (LOCALID_STORM) while it holds the party in the
+/// air (FLAG_WORLD_MAP_CAUGHT_IN_STORM).
 static void EventScript_StartDousingStorm(void) {
   ((struct FieldEffectWork *)gFieldEffectWork)->childOption = 1;
 }
@@ -2681,17 +2699,17 @@ static void EventScript_StartDousingStorm(void) {
 /// Douse on the storm: the party comes down and the battle with what is in it
 /// begins (ENCOUNTER_ZONE_SCRIPTED, entries 5 and 7), as with the Suhalla
 /// Desert's storms. Reached by Douse on the storm (LOCALID_STORM) while it
-/// holds the party in the air. Clears FLAG_MAP_TEMP_F0, sets FLAG_MAP_TEMP_F1
-/// and empties the timer.
+/// holds the party in the air. Clears FLAG_WORLD_MAP_CAUGHT_IN_STORM, sets
+/// FLAG_WORLD_MAP_STORM_GONE and empties the timer.
 static void EventScript_DouseMapStorm(void) {
   struct ObjectEvent *selectedObjectEvent;
 
   if (gFieldWork->raisedEvent == RAISED_STORM_TIME_UP) {
     gFieldWork->raisedEvent = 0;
   }
-  GameFlag_Clear(FLAG_MAP_TEMP_F0);
-  GameFlag_Set(FLAG_MAP_TEMP_F1);
-  FieldGameFlag_SetByte(FLAG_MAP_TEMP_F8, 0);
+  GameFlag_Clear(FLAG_WORLD_MAP_CAUGHT_IN_STORM);
+  GameFlag_Set(FLAG_WORLD_MAP_STORM_GONE);
+  FieldGameFlag_SetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT, 0);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 5);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 7);
@@ -2801,8 +2819,8 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
   WaitFrames(1);
   GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
   WorldMap_StartStillView();
-  FieldResource_DecodeType01(gWorldMapPackedTiles, buffer);
-  FieldResource_DecodeType01(gWorldMapPackedFrames, buffer + 0x1000);
+  FieldDecompress_Type01(gWorldMapPackedTiles, buffer);
+  FieldDecompress_Type01(gWorldMapPackedFrames, buffer + 0x1000);
   IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT[14 * 16],
                       (u32)(gWorldMapPalettes + palette * 32),
                       DMA_ENABLE << 16 | 16);
@@ -3200,8 +3218,8 @@ s32 gWorldMapFlintScript[] = {
 struct MapWarpDest gWorldMapWarpDests[] = {
     {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 5656, 0, 1256, FACING_SOUTH, 0, -1,
      -1, -1, -1, 0},
-    {WORLD_MAP_FROM_VALE_GATE, CONDITION_ALWAYS, 5680, 0, 1226, FACING_SOUTH, 0,
-     -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_VALE_PLAZA, CONDITION_ALWAYS, 5680, 0, 1226, FACING_SOUTH,
+     0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_TITLE, CONDITION_ALWAYS, 5688, 0, 1224, FACING_SOUTH, 0, -1,
      -1, -1, -1, 0},
     {WORLD_MAP_FROM_VAULT_SOUTH, CONDITION_ALWAYS, 5848, 0, 1608, FACING_SOUTH,
@@ -3344,7 +3362,7 @@ struct MapWarpDest gWorldMapWarpDests[] = {
      FACING_WEST, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_CROSSBONE_ISLE, CONDITION_ALWAYS, 4576, 0, 508,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {WORLD_MAP_FROM_SUHALLA_DESERT_STORM, CONDITION_ALWAYS, 4392, 0, 328,
+    {WORLD_MAP_FROM_SUHALLA_DESERT_SANDSTORM, CONDITION_ALWAYS, 4392, 0, 328,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_AFTER_BLACK_ORB_DEFEAT, CONDITION_ALWAYS, 8, 0, 8, FACING_SOUTH,
      0, -1, -1, -1, -1, 0},
@@ -3365,7 +3383,7 @@ struct MapWarpDest gWorldMapWarpDests[] = {
 
 u32 gWorldMapWarps[] = {
     MAP_WARPS(WorldMap),
-    MAP_WARP(WORLD_MAP_TO_VALE_GATE, ValeGate, VALE_GATE_FROM_WORLD_MAP),
+    MAP_WARP(WORLD_MAP_TO_VALE_PLAZA, ValePlaza, VALE_PLAZA_FROM_WORLD_MAP),
     MAP_WARP(WORLD_MAP_TO_WORLD_MAP_FROM_TITLE, WorldMap, WORLD_MAP_FROM_TITLE),
     MAP_WARP(WORLD_MAP_TO_VAULT_SOUTH, Vault, VAULT_FROM_WORLD_MAP_SOUTH),
     MAP_WARP(WORLD_MAP_TO_GOMA_CAVE_ENTRANCE, GomaCaveEntrance,
@@ -3465,8 +3483,8 @@ u32 gWorldMapWarps[] = {
              TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS),
     MAP_WARP(WORLD_MAP_TO_CROSSBONE_ISLE, CrossboneIsle,
              CROSSBONE_ISLE_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_WORLD_MAP_FROM_VALE_GATE, WorldMap,
-             WORLD_MAP_FROM_VALE_GATE),
+    MAP_WARP(WORLD_MAP_TO_WORLD_MAP_FROM_VALE_PLAZA, WorldMap,
+             WORLD_MAP_FROM_VALE_PLAZA),
     MAP_WARP(WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES, WorldMap,
              WORLD_MAP_HAMMETS_CARAVAN_LEAVES),
     MAP_WARP(WORLD_MAP_TO_TOLBI_SHIP_MAST_FIRST_ATTACK, TolbiShipMast,
@@ -3610,7 +3628,7 @@ struct ObjectEventTemplate gWorldMapObjectEventTemplates[] = {
         PIXELS(6036), 0, PIXELS(3458), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SPRITE_SHIP, IF_FLAG_SET(FLAG_TOLBI_SHIP_AT_ISLAND), (s32)gWorldMapAlignToMapScript,
         PIXELS(4760), 0, PIXELS(440), FACING_NORTH, TALK_FACING_KEEP, 0 },
-    { SPRITE_SANDSTORM, FLAG_MAP_TEMP_F1, (s32)gWorldMapStormScript,
+    { SPRITE_SANDSTORM, FLAG_WORLD_MAP_STORM_GONE, (s32)gWorldMapStormScript,
         PIXELS(4392), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_IODEM, CONDITION_ALWAYS, (s32)gWorldMapIodemScript,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
@@ -3716,7 +3734,7 @@ struct ObjectEventTemplate gWorldMapObjectEventTemplatesBeforeShebasFall[] = {
 
 struct MapEvent gWorldMapEvents[] = {
     { MAP_EVENT_COORD, MB_WORLD_MAP_FLINT, FLAG_DJINNI(DJINNI_FLINT), EVENT_SCRIPT(EventScript_MeetFlint) },
-    { MAP_EVENT_COORD, MB_WORLD_MAP_STORM, FLAG_MAP_TEMP_F1, EVENT_SCRIPT(EventScript_WalkIntoStorm) },
+    { MAP_EVENT_COORD, MB_WORLD_MAP_STORM, FLAG_WORLD_MAP_STORM_GONE, EVENT_SCRIPT(EventScript_WalkIntoStorm) },
     { MAP_EVENT_TALK, LOCALID_VENUS_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MeetVine) },
     { MAP_EVENT_TALK, LOCALID_CORONA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MeetCorona) },
     { MAP_EVENT_TALK, LOCALID_HAIL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MeetHail) },
@@ -3740,46 +3758,46 @@ struct MapEvent gWorldMapEvents[] = {
     { MAP_EVENT_WARP, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_WEST, CONDITION_ALWAYS, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_WEST },
     { MAP_EVENT_WARP, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_EAST, CONDITION_ALWAYS, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_EAST },
     { MAP_EVENT_WARP, WORLD_MAP_TO_BILIBIN_BARRICADE_EAST, CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN_BARRICADE_EAST },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_VALE_GATE), CONDITION_ALWAYS, WORLD_MAP_TO_VALE_GATE },
-    { MAP_EVENT_COORD, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_VAULT), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterVault) },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_GOMA_CAVE_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_GOMA_CAVE_ENTRANCE },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_GOMA_CAVE_BRIDGE), CONDITION_ALWAYS, WORLD_MAP_TO_GOMA_CAVE_BRIDGE },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_BILIBIN), CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN },
-    { MAP_EVENT_COORD, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_BILIBIN_BARRICADE), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterBilibinBarricade) },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_KOLIMA), CONDITION_ALWAYS, WORLD_MAP_TO_KOLIMA_WEST },
-    { MAP_EVENT_COORD, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_KOLIMA_BRIDGE), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterKolimaBridge) },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_KOLIMA_FOREST), CONDITION_ALWAYS, WORLD_MAP_TO_KOLIMA_FOREST_ENTRANCE },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_BILIBIN_CAVE_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN_CAVE_ENTRANCE },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_BILIBIN_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN_CAVE_ICE },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_IMIL), CONDITION_ALWAYS, WORLD_MAP_TO_IMIL_SOUTH },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_MERCURY_LIGHTHOUSE), CONDITION_ALWAYS, WORLD_MAP_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_FUCHIN_TEMPLE), CONDITION_ALWAYS, WORLD_MAP_TO_FUCHIN_TEMPLE_GROUNDS },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_MOGALL_FOREST_SIGN), CONDITION_ALWAYS, WORLD_MAP_TO_MOGALL_FOREST_SIGN },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_MOGALL_FOREST_KILLER_APE), CONDITION_ALWAYS, WORLD_MAP_TO_MOGALL_FOREST_KILLER_APE },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_XIAN), CONDITION_ALWAYS, WORLD_MAP_TO_XIAN },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_ALTIN), CONDITION_ALWAYS, WORLD_MAP_TO_ALTIN },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_ALTIN_PEAK), CONDITION_ALWAYS, WORLD_MAP_TO_ALTIN_PEAK_WEST_EXIT },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_LAMA_TEMPLE), CONDITION_ALWAYS, WORLD_MAP_TO_LAMA_TEMPLE },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_LAMAKAN_DESERT_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_LAMAKAN_DESERT_CAVE },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_KALAY), CONDITION_ALWAYS, WORLD_MAP_TO_KALAY_EAST },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_LUNPA), CONDITION_ALWAYS, WORLD_MAP_TO_LUNPA },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_WEST_LUNPA_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_WEST_LUNPA_CAVE },
-    { MAP_EVENT_COORD, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_KALAY_DOCKS), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterKalayDocks) },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_TOLBI_DOCKS), CONDITION_ALWAYS, WORLD_MAP_TO_TOLBI_DOCKS },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_TOLBI), CONDITION_ALWAYS, WORLD_MAP_TO_TOLBI },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_ALTMILLER_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_ALTMILLER_CAVE_ENTRANCE },
-    { MAP_EVENT_COORD, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_GONDOWAN_PASSAGE), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterGondowanPassage) },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_KALAY_TUNNEL_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_GONDOWAN_CAVE_NORTH), CONDITION_ALWAYS, WORLD_MAP_TO_GONDOWAN_CAVE_NORTH },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_GONDOWAN_CAVE_SOUTH), CONDITION_ALWAYS, WORLD_MAP_TO_GONDOWAN_CAVE_SOUTH },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_SUHALLA), CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_GATEWAY_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_GATEWAY_CAVE },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_ROAD_TO_BABI_LIGHTHOUSE), CONDITION_ALWAYS, WORLD_MAP_TO_ROAD_TO_BABI_LIGHTHOUSE },
-    { MAP_EVENT_COORD, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_LALIVERO), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterLalivero) },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_VALE_PLAZA), CONDITION_ALWAYS, WORLD_MAP_TO_VALE_PLAZA },
+    { MAP_EVENT_COORD, COORD_EVENT_MAPSEC(LOCALID_TO_VAULT), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterVault) },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_GOMA_CAVE_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_GOMA_CAVE_ENTRANCE },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_GOMA_CAVE_BRIDGE), CONDITION_ALWAYS, WORLD_MAP_TO_GOMA_CAVE_BRIDGE },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_BILIBIN), CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN },
+    { MAP_EVENT_COORD, COORD_EVENT_MAPSEC(LOCALID_TO_BILIBIN_BARRICADE), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterBilibinBarricade) },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_KOLIMA), CONDITION_ALWAYS, WORLD_MAP_TO_KOLIMA_WEST },
+    { MAP_EVENT_COORD, COORD_EVENT_MAPSEC(LOCALID_TO_KOLIMA_BRIDGE), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterKolimaBridge) },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_KOLIMA_FOREST), CONDITION_ALWAYS, WORLD_MAP_TO_KOLIMA_FOREST_ENTRANCE },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_BILIBIN_CAVE_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN_CAVE_ENTRANCE },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_BILIBIN_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN_CAVE_ICE },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_IMIL), CONDITION_ALWAYS, WORLD_MAP_TO_IMIL_SOUTH },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_MERCURY_LIGHTHOUSE), CONDITION_ALWAYS, WORLD_MAP_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_FUCHIN_TEMPLE), CONDITION_ALWAYS, WORLD_MAP_TO_FUCHIN_TEMPLE_GROUNDS },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_MOGALL_FOREST_SIGN), CONDITION_ALWAYS, WORLD_MAP_TO_MOGALL_FOREST_SIGN },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_MOGALL_FOREST_KILLER_APE), CONDITION_ALWAYS, WORLD_MAP_TO_MOGALL_FOREST_KILLER_APE },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_XIAN), CONDITION_ALWAYS, WORLD_MAP_TO_XIAN },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_ALTIN), CONDITION_ALWAYS, WORLD_MAP_TO_ALTIN },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_ALTIN_PEAK), CONDITION_ALWAYS, WORLD_MAP_TO_ALTIN_PEAK_WEST_EXIT },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_LAMA_TEMPLE), CONDITION_ALWAYS, WORLD_MAP_TO_LAMA_TEMPLE },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_LAMAKAN_DESERT_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_LAMAKAN_DESERT_CAVE },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_KALAY), CONDITION_ALWAYS, WORLD_MAP_TO_KALAY_EAST },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_LUNPA), CONDITION_ALWAYS, WORLD_MAP_TO_LUNPA },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_WEST_LUNPA_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_WEST_LUNPA_CAVE },
+    { MAP_EVENT_COORD, COORD_EVENT_MAPSEC(LOCALID_TO_KALAY_DOCKS), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterKalayDocks) },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_TOLBI_DOCKS), CONDITION_ALWAYS, WORLD_MAP_TO_TOLBI_DOCKS },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_TOLBI), CONDITION_ALWAYS, WORLD_MAP_TO_TOLBI },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_ALTMILLER_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_ALTMILLER_CAVE_ENTRANCE },
+    { MAP_EVENT_COORD, COORD_EVENT_MAPSEC(LOCALID_TO_GONDOWAN_PASSAGE), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterGondowanPassage) },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_KALAY_TUNNEL_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_GONDOWAN_CAVE_NORTH), CONDITION_ALWAYS, WORLD_MAP_TO_GONDOWAN_CAVE_NORTH },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_GONDOWAN_CAVE_SOUTH), CONDITION_ALWAYS, WORLD_MAP_TO_GONDOWAN_CAVE_SOUTH },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_SUHALLA), CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_GATEWAY_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_GATEWAY_CAVE },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_ROAD_TO_BABI_LIGHTHOUSE), CONDITION_ALWAYS, WORLD_MAP_TO_ROAD_TO_BABI_LIGHTHOUSE },
+    { MAP_EVENT_COORD, COORD_EVENT_MAPSEC(LOCALID_TO_LALIVERO), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterLalivero) },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), MB_WORLD_MAP_TOLBI_SHIP, IF_FLAG_SET(FLAG_TOLBI_SHIP_AT_ISLAND), EVENT_SCRIPT(EventScript_ReturnToTolbiShip) },
     { MAP_EVENT_WARP | MAP_EVENT_FLAG_FACING | FACING_NORTH, MB_WORLD_MAP_CROSSBONE_ISLE, CONDITION_ALWAYS, WORLD_MAP_TO_CROSSBONE_ISLE },
-    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_STORM, IF_FLAG_SET(FLAG_MAP_TEMP_F0), EVENT_SCRIPT(EventScript_StartDousingStorm) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_STORM, IF_FLAG_SET(FLAG_MAP_TEMP_F0), EVENT_SCRIPT(EventScript_DouseMapStorm) },
+    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_STORM, IF_FLAG_SET(FLAG_WORLD_MAP_CAUGHT_IN_STORM), EVENT_SCRIPT(EventScript_StartDousingStorm) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_STORM, IF_FLAG_SET(FLAG_WORLD_MAP_CAUGHT_IN_STORM), EVENT_SCRIPT(EventScript_DouseMapStorm) },
     { MAP_EVENT_RAISED, RAISED_STORM_TIME_UP, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StormDropsParty) },
     { MAP_EVENTS_END },
 };

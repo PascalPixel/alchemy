@@ -3,32 +3,32 @@
 
 /// @file
 /// The words of an object's script as the motion loops index them, and
-/// ScriptMotionObject, struct Object as update.c reads it.
+/// ObjectArmView, struct Object as update.c reads it.
 
 #include "types.h"
 #include "static_assert.h"
 
-union FieldObject;
+union ObjectEventOrEffect;
 
 // UB: scripts have variable lengths, so a one-word member cannot describe
 // them. Keep the native view outside UBFIX: a flat word pointer changes one
 // Thumb load's base/index order; a pointer to an unbounded array does too.
 #ifdef UBFIX
-typedef s32 ScriptMotionWords;
+typedef s32 ObjectScriptWords;
 #else
 /// The words of an object's script, as its script pointer reads them.
-struct ScriptMotionWords {
+struct ObjectScriptWords {
   s32 word[1];
 };
-typedef struct ScriptMotionWords ScriptMotionWords;
+typedef struct ObjectScriptWords ObjectScriptWords;
 #endif
 
 /// struct Object, field for field, as Object_UpdateAll (update.c) reads it.
 /// update.c is ARM code built with GCC 2.95.2, which cannot read struct
 /// Object's anonymous unions, so it keeps this copy of the layout with the
 /// script as words and the bounce as a union (MATCHING.md).
-struct ScriptMotionObject {
-  const ScriptMotionWords *script; ///< null when the object is free
+struct ObjectArmView {
+  const ObjectScriptWords *script; ///< null when the object is free
   u16 scriptCursor;                ///< in words; read signed
   u16 facing;                      ///< 1/65536 turns
   s32 x;                           ///< 16.16 fixed-point pixels
@@ -93,20 +93,20 @@ struct ScriptMotionObject {
   u8 riseEnabled;
   s16 action;
   s16 footprintSide;
-  struct ScriptMotionObject *linkedObject;
+  struct ObjectArmView *linkedObject;
   ///@}
   /// Called each frame before its script.
-  void (*update)(union FieldObject *fieldObject);
+  void (*update)(union ObjectEventOrEffect *fieldObject);
 };
 
-STATIC_ASSERT(sizeof(struct ScriptMotionObject) == 0x70);
-STATIC_ASSERT(offsetof(struct ScriptMotionObject, script) == 0x00);
-STATIC_ASSERT(offsetof(struct ScriptMotionObject, scriptCursor) == 0x04);
-STATIC_ASSERT(offsetof(struct ScriptMotionObject, facing) == 0x06);
-STATIC_ASSERT(offsetof(struct ScriptMotionObject, vertical) == 0x44);
-STATIC_ASSERT(offsetof(struct ScriptMotionObject, arrivalAxis) == 0x56);
-STATIC_ASSERT(offsetof(struct ScriptMotionObject, wait) == 0x5e);
-STATIC_ASSERT(offsetof(struct ScriptMotionObject, frozen) == 0x61);
-STATIC_ASSERT(offsetof(struct ScriptMotionObject, update) == 0x6c);
+STATIC_ASSERT(sizeof(struct ObjectArmView) == 0x70);
+STATIC_ASSERT(offsetof(struct ObjectArmView, script) == 0x00);
+STATIC_ASSERT(offsetof(struct ObjectArmView, scriptCursor) == 0x04);
+STATIC_ASSERT(offsetof(struct ObjectArmView, facing) == 0x06);
+STATIC_ASSERT(offsetof(struct ObjectArmView, vertical) == 0x44);
+STATIC_ASSERT(offsetof(struct ObjectArmView, arrivalAxis) == 0x56);
+STATIC_ASSERT(offsetof(struct ObjectArmView, wait) == 0x5e);
+STATIC_ASSERT(offsetof(struct ObjectArmView, frozen) == 0x61);
+STATIC_ASSERT(offsetof(struct ObjectArmView, update) == 0x6c);
 
 #endif

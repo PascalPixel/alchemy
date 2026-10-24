@@ -90,7 +90,7 @@ static void KolimaForestGlade_PushLog(void) {
 /// FLAG_KOLIMA_FOREST_NUT_CAUGHT): it vanishes and the party finds a Nut.
 static void KolimaForestGlade_CatchNut(void) {
   FieldScript_Start();
-  Engine_ObjectEventSetPosition(LOCALID_NUT, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_NUT, 0, 0);
   GameFlag_Set(FLAG_KOLIMA_FOREST_NUT_CAUGHT);
   FieldEffect_StartEffectObject22(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
@@ -199,5 +199,5 @@ struct MapEvent gKolimaForestGlade_Events[] = {
 };
 
 // The .bss order follows the first declarations (externs in field.h).
-u8 gKolimaPalette_First[1792] __attribute__((section(".bss")));
-u8 gKolimaPalette_Second[896] __attribute__((section(".bss")));
+u8 gKolimaPalette_Healthy[1792] __attribute__((section(".bss")));
+u8 gKolimaPalette_Cursed[896] __attribute__((section(".bss")));

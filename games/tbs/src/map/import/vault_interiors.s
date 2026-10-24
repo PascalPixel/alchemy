@@ -3,14 +3,14 @@
 	.set import.WaitFrames, 1
 	.set import.Task_Add, 1
 	.set import.Task_Remove, 1
-	.set import.Engine_RandomNext, 1
+	.set import.Import_RandomNext, 1
 	.set import.ArcTan2, 1
 	.set import.AllocHeapSlot, 1
 	.set import.FreeHeapSlot, 1
 	.set import.VramCache_Load, 1
-	.set import.ObjectDispatch_SelectAnimation, 1
+	.set import.Object_SelectAnimation, 1
 	.set import.Object_CreateField, 1
-	.set import.ObjectDispatch_Release, 1
+	.set import.Object_Release, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
 	.set import.Object_SetMoveTarget, 1
 	.set import.MapGrid_CopyMetatileIndicesRect, 1
@@ -19,7 +19,7 @@
 	.ifdef TBS_EDITION_JA
 	.set import.MapGrid_CheckCollision, 1
 	.endif
-	.set import.ObjectDispatch_SetSingleChildFlags, 1
+	.set import.Object_SetSpriteFlags, 1
 	.set import.FieldMessage_Show, 1
 	.set import.Icon_DrawItem, 1
 	.set import.Unit_Get, 1
@@ -47,8 +47,8 @@
 	.set import.ObjectMotion_SetPositionAndReset, 1
 	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
 	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
-	.set import.Engine_ObjectEventSetPosition, 1
-	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Import_ObjectEventSetPosition, 1
+	.set import.Import_ObjectEventSetAnimation, 1
 	.set import.ObjectMotion_SetAnimationAndWait, 1
 	.set import.ObjectMotion_WaitForAnimationChange, 1
 	.set import.ObjectMotion_Launch, 1
@@ -67,7 +67,7 @@
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_WaitForArrival, 1
 	.set import.MapGrid_SetViewBounds, 1
-	.set import.Engine_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestWarp, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.FieldScript_SetNextDestination, 1
 	.set import.FieldScript_SetDefeatDestination, 1
@@ -89,7 +89,7 @@
 	.set import.FieldEffect_StopCasterHook, 1
 	.set import.FieldEffect_End, 1
 	.set import.FieldEffect_StartCast, 1
-	.set import.Ui_SetBank15PaletteAndClearRenderMode, 1
+	.set import.FieldEffect_RestoreMindReadPalette, 1
 	.set import.Map_PlayMusic, 1
 	.set import.Shop_Run, 1
 	.set import.Inn_CheckIn, 1

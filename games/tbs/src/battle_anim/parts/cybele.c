@@ -141,7 +141,7 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
   height = -(64 << 16);
   speed = 0;
   for (frame = 0; frame != CYBELE_FRAMES; frame++) {
-    struct BattleCamera *camera = gCameraWork;
+    struct BattleCamera *camera = gBattleCamera;
 
     // A or B skips the vines straight to the drop.
     if ((gKeysRepeat & (KEY_A | KEY_B)) != 0 && frame > 190 && frame <= 285) {
@@ -436,8 +436,8 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
         object->gravity = 0xab85;
       }
       if (frame == i * 5 + 302) {
-        ObjectGroup_UpdateMembers(work->effect->targets[i], SPRITE_COLOR_WHITE,
-                                  -1, i, 8);
+        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE, -1,
+                               i, 8);
         Sound_PlaySongFar(SE_HEAVY_IMPACT);
         work->shakeFrames = 8;
       }

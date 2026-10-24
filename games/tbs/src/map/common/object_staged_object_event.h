@@ -122,7 +122,7 @@ UNUSED static void PushedObject_AdvancePair(void) {
   if (next->riseCounter != 0)
     return;
 
-  ObjectDispatch_SelectAnimation(lead, 8);
+  Object_SelectAnimation(lead, 8);
   rate = 0x3333;
   WaitFrames(15);
   Sound_PlaySong(SE_PUSH);
@@ -144,7 +144,7 @@ UNUSED static void PushedObject_AdvancePair(void) {
   lead->velocityZ = 0;
   lead->x.fixed = lead->x.part.pixel << 16;
   lead->z.fixed = lead->z.part.pixel << 16;
-  ObjectDispatch_SelectAnimation(lead, 1);
+  Object_SelectAnimation(lead, 1);
 }
 
 /// Sets the metatile behavior of a width by height rectangle of cells, from
@@ -183,7 +183,8 @@ static s32 PushedObject_FillGridAttributeRectangle(u32 layer, s32 x, s32 z,
 /// The leader's movement callback while pushing a large thing: stop the leader
 /// when another object event that is not a large thing, or a wall, is in the
 /// way.
-static void PushedObject_StopBlockedMotion(union FieldObject *fieldObject) {
+static void
+PushedObject_StopBlockedMotion(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
 #else
 /// The leader's movement callback while pushing a large thing: stop the leader
@@ -400,9 +401,9 @@ found:
 /// Rolls the large thing to the position probe found: the leader pushes
 /// (animation 8), the thing rolls (animation 3 or 2 by the direction) with
 /// SE_HEAVY_MOVE while the leader follows half a cell, and it stops with
-/// SE_STOP_SLOT3 and SE_HEAVY_STOP. Its cells are blocked (metatile behavior
-/// 255) at its new place, through the map grid's layer 1 offset, and its old
-/// place is given back what was under it.
+/// SE_STOP_ACTION_SE and SE_HEAVY_STOP. Its cells are blocked (metatile
+/// behavior 255) at its new place, through the map grid's layer 1 offset, and
+/// its old place is given back what was under it.
 UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
   struct MapGridScrollWork *workspace;
   struct ObjectEvent *objectEvent;
@@ -461,7 +462,7 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
                                           horizontalExtent, verticalExtent,
                                           MB_NORMAL);
   ObjectMotion_SetSpeedParameters(0, 0x8000, 0x1999);
-  Engine_ObjectEventSetAnimation(0, ANIM_PUSH);
+  Import_ObjectEventSetAnimation(0, ANIM_PUSH);
   FieldScript_WaitFrames(15);
 
   {
@@ -483,19 +484,19 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
   ObjectEvent_GetById(0)->update = PushedObject_StopBlockedMotion;
 #else
   ObjectEvent_GetById(0)->update =
-      (void (*)(union FieldObject *))PushedObject_StopBlockedMotion;
+      (void (*)(union ObjectEventOrEffect *))PushedObject_StopBlockedMotion;
 #endif
   FieldScript_WaitFrames(4);
   if ((u32)(direction - 6) <= 7)
-    ObjectDispatch_SelectAnimation(objectEvent, 3);
+    Object_SelectAnimation(objectEvent, 3);
   else
-    ObjectDispatch_SelectAnimation(objectEvent, 2);
+    Object_SelectAnimation(objectEvent, 2);
 
   Sound_PlaySong(SE_HEAVY_MOVE);
   Object_SetPosition(objectEvent, probe.position.x, probe.position.y,
                      probe.position.z);
   ObjectMotion_CommitCurrentPositionAndActivate(0);
-  Engine_ObjectEventSetAnimation(0, 2);
+  Import_ObjectEventSetAnimation(0, 2);
   ObjectEvent_SetSpeed(0, 0x4ccc, 0x1999);
 
   {
@@ -507,17 +508,17 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
     probe.callback();
 
   ObjectMotion_CommitCurrentPositionAndActivate(0);
-  Engine_ObjectEventSetAnimation(0, 1);
+  Import_ObjectEventSetAnimation(0, 1);
   ObjectEvent_GetById(0)->update = NULL;
   Object_WaitForMove(objectEvent);
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
   Sound_PlaySong(SE_HEAVY_STOP);
 
   objectEvent->x.fixed = probe.position.x;
   objectEvent->z.fixed = probe.position.z;
   objectEvent->velocityX = 0;
   objectEvent->velocityZ = 0;
-  ObjectDispatch_SelectAnimation(objectEvent, 1);
+  Object_SelectAnimation(objectEvent, 1);
 
   {
     u8 *table = (u8 *)gPushedObject_FootprintBounds;

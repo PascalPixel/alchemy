@@ -112,8 +112,8 @@ void BattleAnim_RunSwirlSwipe(struct BattleAnimArgs *effect, s32 mode) {
         BattleMotion_ApplyKnockbackFar(work->effect->targets[0], KNOCKBACK_HOP);
       } else {
         Sound_PlaySongFar(SE_HEAVY_IMPACT);
-        ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
-                                  POSE_DAMAGE, 0, 4);
+        BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+                               POSE_DAMAGE, 0, 4);
       }
       work->shakeFrames = 8;
     }
@@ -220,10 +220,10 @@ void BattleAnim_RunSpiderWeb(struct BattleAnimArgs *effect) {
       ANIM_SHOW_DAMAGE(SE_143);
     ANIM_FOR_EACH_TARGET(i, work->effect) {
       if (frame == 10)
-        ObjectGroup_UpdateMembers(work->effect->targets[i], SPRITE_COLOR_WHITE,
-                                  -1, i, 8);
+        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE, -1,
+                               i, 8);
     }
-    ObjectGroup_TickMemberTimers();
+    BattleAnim_TickBattlerTints();
     work->transferPending = transparent;
     WaitFrames(1);
     frame++;

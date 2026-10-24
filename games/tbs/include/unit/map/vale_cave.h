@@ -22,7 +22,7 @@ extern s32 gPushedObject_DirectionSteps[];
 extern u32 gPushedObject_FootprintKinds[];
 extern s32 gPushedObject_FootprintBounds[];
 extern s32 gValeCave_WalkTargets[];
-extern const s32 *gEffectScripts[];
+extern const s32 *gFieldEffect_DurationScripts[];
 extern struct MapWarpDest gValeCave_WarpDestsOther[];
 extern struct MapWarpDest gValeCave_MouthWarpDests[];
 extern struct MapWarpDest gValeCave_KiteWarpDests[];

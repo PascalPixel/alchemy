@@ -5,4 +5,4 @@
 	overlay_veneer MainMenu_GetWarps
 	overlay_veneer MainMenu_GetObjectEventTemplates
 	overlay_veneer MainMenu_GetEvents
-	overlay_veneer MapData_ReturnZero
+	overlay_veneer Map_GetWarpRegions

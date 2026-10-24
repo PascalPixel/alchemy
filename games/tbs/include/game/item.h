@@ -141,7 +141,7 @@ struct ItemDefinition {
   s16 primaryBonus;   ///< Attack added while equipped
   s8 secondaryBonus;  ///< Defense added while equipped
   u8 unleashChance;   ///< in steps of 5 percent
-  u8 useType;         ///< what using it costs (ITEM_USE_)
+  u8 useType;         ///< what using it costs (an ITEM_USE_ value)
   u8 reserved0d;      ///< not named by TBS code
   u16 unleashAbility; ///< the action a weapon unleashes, or 0
 

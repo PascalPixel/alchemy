@@ -11,7 +11,7 @@
 ///
 /// This is Lift cast on a target, which FieldEffect_DispatchRequestKind calls.
 /// It leaves the target raised and floating (motion flag bit 2), with its
-/// update set to ObjectGroup_ApplyRandomChildValues.
+/// update set to Object_CycleSpriteColors.
 void FieldEffect_RunLiftOnTarget(s32 unused) {
   struct FieldEffectWork *effectWork;
   struct Object *caster;
@@ -32,7 +32,7 @@ void FieldEffect_RunLiftOnTarget(s32 unused) {
   // The caster's script starts 3 words into the common particle script, with
   // the target as its argument.
   caster->linkedObject = (struct Object *)target;
-  ObjectDispatch_InitializeFar(caster, gFieldEffect_CommonParticleScript + 3);
+  Object_InitializeFar(caster, gFieldEffect_CommonParticleScript + 3);
 
   x = effectWork->x;
   pos[0] = x;
@@ -55,7 +55,7 @@ void FieldEffect_RunLiftOnTarget(s32 unused) {
   }
 
   Object_WaitForMoveFar(pair[0]);
-  target->update = ObjectGroup_ApplyRandomChildValues;
+  target->update = Object_CycleSpriteColors;
   Sound_PlaySongFar(SE_130);
   target->motionFlags = OBJ_EVENT_FLOATS;
 
@@ -100,7 +100,7 @@ struct Object *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle) {
     fragment->scaleX = fragment->scaleY = 0x4000;
     fragment->acceleration = fragment->speedLimit = 0x30000; // 3 pixels a frame
     ((struct Sprite *)fragment->sprite)->image.priority = 0;
-    ObjectDispatch_SelectAnimationFar(fragment, 3);
+    Object_SelectAnimationFar(fragment, 3);
     scale = fragment->scaleX;
     if (scale < 0x10000) {
       do {
@@ -125,7 +125,7 @@ void FieldEffect_UpdateRadialBurst(struct FieldEffectSprite *effect) {
   // callback from 0xf8 to 0xfc bytes. OUT_AND_BACK_FLYING_OUT must enter
   // OUT_AND_BACK_AIM_BACK immediately.
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct EffectVector pos;
+  struct Vector3 pos;
   s32 state;
 
 again:
@@ -184,7 +184,7 @@ again:
 /// Returns 0, so the script moves on and frees the object.
 s32 SpawnHeavyImpactEffect(struct Object *interpreter) {
   struct Object *source = interpreter;
-  struct EffectVector pos;
+  struct Vector3 pos;
   struct Object *impact;
   struct Object *fragment;
   s32 fragmentIndex;
@@ -197,16 +197,16 @@ s32 SpawnHeavyImpactEffect(struct Object *interpreter) {
   if (impact != NULL) {
     impact->motionFlags = 0;
     impact->wait = 20;
-    ObjectDispatch_InitializeFar((struct Object *)impact,
-                                 gFieldEffect_CommonParticleScript);
+    Object_InitializeFar((struct Object *)impact,
+                         gFieldEffect_CommonParticleScript);
   }
 
   // Shards: 1 to 2 pixels a frame, 8 to 32 pixels in a random direction.
   for (fragmentIndex = 0; fragmentIndex < 12; fragmentIndex++) {
     fragment = Object_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
     if (fragment != NULL) {
-      ObjectDispatch_InitializeFar((struct Object *)fragment,
-                                   gFieldEffect_FragmentScript);
+      Object_InitializeFar((struct Object *)fragment,
+                           gFieldEffect_FragmentScript);
       fragment->speedLimit = Random16() + (1 << 16);
       fragment->acceleration = 1 << 16;
       fragment->motionFlags = 0;

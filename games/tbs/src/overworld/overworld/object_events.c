@@ -148,14 +148,13 @@ void FieldScript_SpawnObjectEventTemplates(struct ObjectEventTemplate *entry,
       // Dora's tunic overlays the young sprites with its child part.
       if (GameFlag_GetFar(FLAG_ISAAC_WEARS_TUNIC) &&
           (u32)(spriteId - ISAAC_CHILD) <= GARET_CHILD - ISAAC_CHILD)
-        ObjectDispatch_RegisterChildMetadataFar((struct Object *)object,
-                                                SPRITE_TUNIC);
+        Object_RegisterSpriteMetadataFar((struct Object *)object, SPRITE_TUNIC);
     } else if (!GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION)) {
       Object_SetPositionAndResetMotionFar(object, entry->x, entry->y, entry->z);
     }
 
     if (object) {
-      ObjectDispatch_SelectAnimationFar(object, 1);
+      Object_SelectAnimationFar(object, 1);
       // lastNo is the animation last selected, which selecting again skips: a
       // random 0 to 29 makes the second selection below restart animation 1
       // from its first frame, unless it happens to be 1. XXX: likely meant to
@@ -168,7 +167,7 @@ void FieldScript_SpawnObjectEventTemplates(struct ObjectEventTemplate *entry,
       // Solid.
       object->collisionFlags = 1;
       ObjectEvent_SetMovementType(object, entry->movement);
-      ObjectDispatch_SelectAnimationFar(object, 1);
+      Object_SelectAnimationFar(object, 1);
       ((struct Object *)object)->homeX = object->x / 0x10000;
       ((struct Object *)object)->homeZ = object->z / 0x10000;
       // An object event template with a height is lifted half a pixel more and
@@ -213,7 +212,7 @@ void ObjectEvent_DestroyAtIndex(s32 objectEventIndex) {
   void *object = ObjectEvent_GetByLocalId(objectEventIndex);
 
   if (object != NULL) {
-    ObjectDispatch_ReleaseFar(object);
+    Object_ReleaseFar(object);
 #ifdef UBFIX
     {
       void *empty = NULL;
@@ -286,8 +285,8 @@ void ObjectEvent_ResetForObject(struct ObjectEventTemplate *table) {
     object->y += height;
     object->groundHeight = object->y;
     object->motionFlags = 0;
-    ObjectDispatch_SetSingleChildFlagsFar((struct Object *)object, 0);
-    ObjectDispatch_SelectAnimationFar(object, 12);
+    Object_SetSpriteFlagsFar((struct Object *)object, 0);
+    Object_SelectAnimationFar(object, 12);
   } else {
     gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
   }
@@ -297,7 +296,7 @@ void ObjectEvent_ResetForObject(struct ObjectEventTemplate *table) {
   camera = Object_CreateFar(OBJECT_CREATE_NO_SPRITE << 12, object->x, object->y,
                             object->z);
   camera->groundHeight = object->groundHeight;
-  ObjectDispatch_StartCameraFar((struct Object *)camera, (s32)object);
+  Object_StartCameraFar((struct Object *)camera, (s32)object);
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     struct SpriteAnim *meta =
         (struct SpriteAnim *)Sprite_AddAnimFar(object->sprite, 23);
@@ -434,7 +433,7 @@ void ObjectEvent_ClearOutOfBounds(void) {
           sprite = (u8 *)objectEvent->sprite;
           flags = sprite[29];
           sprite[29] = flags & releaseCacheMask;
-          ObjectDispatch_ReleaseFar((struct Object *)objectEvent);
+          Object_ReleaseFar((struct Object *)objectEvent);
           sprite = NULL;
           *objectEventSlot = (struct ObjectEvent *)sprite;
         }
@@ -465,7 +464,7 @@ void ObjectEvent_Respawn(void) {
       // VRAM cache entry with the object event.
       objectEvent->spriteStorageKind = OBJECT_SPRITE_ONE;
       objectEvent->sprite->retainCacheEntry = 0;
-      ObjectDispatch_ReleaseFar((struct Object *)objectEvent);
+      Object_ReleaseFar((struct Object *)objectEvent);
       work->objectEvents[LOCALID_FIRST_PLACED + slotIndex] = 0;
     }
   }
@@ -622,9 +621,8 @@ void ObjectEvent_Restore(void) {
               REG_DMA3);
       animation = *animations;
       if (animation != 0)
-        ObjectDispatch_SelectAnimationFar(object, animation);
-      ObjectDispatch_SetSingleChildFlagsFar((struct Object *)object,
-                                            *spriteFlags);
+        Object_SelectAnimationFar(object, animation);
+      Object_SetSpriteFlagsFar((struct Object *)object, *spriteFlags);
       priority = *priorities;
       sprite->image.priority = priority;
       sprite->shadow.priority = priority;
@@ -637,7 +635,7 @@ void ObjectEvent_Restore(void) {
         camera->groundHeight = y;
         camera->y = y;
         cameraPosition[1] = y;
-        ObjectDispatch_StartIdleFar((struct Object *)object);
+        Object_StartIdleFar((struct Object *)object);
       }
     }
     snapshot++;

@@ -17,18 +17,18 @@ struct ScreenPoint;
 
 /// An IWRAM word the scrolling camera's setup clears; nothing in the tree
 /// reads it (see ObjectSystem_Initialize's XXX).
-extern s32 gIwram_Data1;
+extern s32 gCamera_UnreadWord1;
 /// The second IWRAM word the scrolling camera's setup clears; also unread.
-extern s32 gIwram_Data2;
-extern const s32 gObjectDispatch_DefaultScript[];
+extern s32 gCamera_UnreadWord2;
+extern const s32 gObject_DefaultScript[];
 extern const u8 gWorldMap_BattleEnvironments[];
 /// The size of Render_DecodeFrame, copied to HEAP_SLOT_FRAME_SCRATCH; an
 /// address equal to the size (constants.ld).
 extern u8 Render_DecodeFrameCodeSize[];
 /// Four 256-byte colour tables (remap0 to remap3), indexed by pixel: the
 /// SpriteColorMode tables after gSpriteColorTables' five, the
-/// first also remapping the command icons (Runtime_RemapBytesByTable).
-extern const u8 gRuntime_ByteRemapTable[];
+/// first also remapping the command icons (SpriteColor_RemapPixels).
+extern const u8 gSpriteColorRemapTables[];
 
 struct AbilityListEntry;
 struct BattleAnimArgs;
@@ -52,28 +52,8 @@ struct ObjectEventTemplate;
 struct MapWarpRegion;
 struct SparkleFrame;
 struct Swirl;
-struct TileRun2;
-struct V;
-union FieldObject;
+union ObjectEventOrEffect;
 
-/// An object event seen only as its priority flags at 0x23 (enum
-/// ObjectEventPriorityFlag). No code in the tree uses it.
-struct Flags35 {
-  u8 pad[35];
-  u8 flags;
-};
-/// An object event seen only as the coordinate at 0x08. No code in the tree
-/// uses it.
-struct OverlayObjectEventPosition {
-  u8 pad00[8];
-  s32 depthFixed; ///< 16.16 fixed-point pixels
-};
-/// An object event seen only as its priority flags at 0x23 (enum
-/// ObjectEventPriorityFlag). No code in the tree uses it.
-struct OverlayObjectEventState {
-  u8 pad00[35];
-  u8 flags;
-};
 /// The Colosso opponent's path player, at the start of gMapLocalState: the path
 /// in ColossoRaceWork is played back or recorded by Colosso_UpdatePathOpponent.
 struct PathRecorder {
@@ -82,37 +62,13 @@ struct PathRecorder {
   s16 localId;   ///< the local id moved along the path
   u16 pathIndex; ///< the next halfword of ColossoRaceWork.path, x then z
   /// Frames the object event has not moved; from 3 it stands
-  /// (ObjectDispatch_SelectAnimation 1).
+  /// (Object_SelectAnimation 1).
   s16 still;
-};
-/// A placeholder layout no code in the tree uses.
-struct Slot {
-  u16 f00;
-  u16 f02;
-  u16 f04;
-  u16 f06;
 };
 /// A Venus Lighthouse switch or pillar socket's map cell.
 struct SwitchCell {
   u32 x; ///< 16-pixel map cells
   u32 z; ///< 16-pixel map cells
-};
-/// A placeholder layout that only struct S, itself unused, points to.
-struct T {
-  u8 pad00[30];
-  u16 f1e;
-};
-/// A log in Kolima Forest lying across four map cells, from its first cell
-/// across or, when vertical, down. No code in the tree uses it; the bend reads
-/// its logs as struct FloodgateLog (kolima_forest_floodgate.h), of the same 12
-/// bytes.
-struct TileRun {
-  s16 id;
-  s16 x; ///< map cells
-  s16 y; ///< map cells
-  s16 vertical;
-  s16 unused08;
-  s16 unused0a;
 };
 /// Frames left on the water palette's current step (gAltinPeak_PaletteScript).
 extern s16 gAltinPeak_PaletteHold;
@@ -132,7 +88,7 @@ extern const u8 gFieldEffect_SparkleTiles[];
 extern const u8 gField_BgEventMessageOffsets[];
 /// The motes of light's 16 by 16 tiles, packed (FieldMotes_Start).
 extern const u8 gFieldEffect_MoteTiles[];
-extern s32 gFourObjectMotion_ResourceIds[];
+extern s32 gDjinnFigures_SpriteIds[];
 extern s32 gTolbiShipInteriors_ShakeTimer;
 /// The bend's water level in gMapLocalState's second halfword: 1 high (the logs
 /// float), 0 low; the floodgate switch flips it.
@@ -170,11 +126,11 @@ extern u32 gKolimaForestFloodgate_ShakeChance;
 /// The background scroll words captured each frame for the shaken lines.
 extern u32 gKolimaForestFloodgate_ShakeScroll[];
 /// The healthy colours: the first 448 colours (896 bytes) of the colour
-/// buffer, kept by KolimaPalette_SaveFirst; the array is 1792 bytes.
+/// buffer, kept by KolimaPalette_SaveHealthy; the array is 1792 bytes.
 /// MapId_KolimaForestGlade and MapId_KolimaForestCliff each define one.
-extern u8 gKolimaPalette_First[];
-/// The cursed colours, kept by KolimaPalette_SaveSecond.
-extern u8 gKolimaPalette_Second[];
+extern u8 gKolimaPalette_Healthy[];
+/// The cursed colours, kept by KolimaPalette_SaveCursed.
+extern u8 gKolimaPalette_Cursed[];
 /// Isaac's facing before Colosso_FadeInWarrior, which
 /// Colosso_RestoreWarrior puts back.
 extern s32 gColosso_WarriorStartAngle;
@@ -210,7 +166,7 @@ extern u16 gVaultInteriors_StopTimer;
 /// (constants.ld). Only the unused Object_RunUpdateAllFromHeap reads it, to
 /// copy the routine to the heap and run it once.
 extern u8 Object_UpdateAllCodeSize[];
-extern u8 gObjectGroup_BlinkChildValues[];
+extern u8 gObjectEvent_BlinkSpriteColors[];
 // The object motion scripts: actions 1 to 7, which
 // ObjectEvent_SetMovementType starts by number, and two turning scripts
 // with no action number.

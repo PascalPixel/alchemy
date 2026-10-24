@@ -4,16 +4,16 @@
 
 #include "../field_internal.h"
 
-/// Remaps byteCount bytes in place through gRuntime_ByteRemapTable. Called
-/// through Runtime_RemapBytesByTableFar by CommandIcon_Load, which
+/// Remaps byteCount bytes in place through gSpriteColorRemapTables. Called
+/// through SpriteColor_RemapPixelsFar by CommandIcon_Load, which
 /// remaps the colours of a command icon's first 768 bytes.
-void Runtime_RemapBytesByTable(u8 *bytes, s32 byteCount) {
+void SpriteColor_RemapPixels(u8 *bytes, s32 byteCount) {
   s32 remaining;
   u8 *cursor;
   u8 *remapTable;
 
   cursor = bytes;
-  remapTable = (u8 *)gRuntime_ByteRemapTable;
+  remapTable = (u8 *)gSpriteColorRemapTables;
   remaining = byteCount - 1;
   if (remaining != -1) {
     do {
@@ -210,7 +210,7 @@ struct LayoutHeader {
 /// Called through MapGrid_LoadLayoutFar when a map with a layout
 /// starts (index is gSaveBlock.map). Allocates and clears the map work in
 /// HEAP_SLOT_MAP_GRID; writes the BG palette (keeping the backdrop colour),
-/// char blocks 1 to 3, gMapGridLayerData, BG1CNT to BG3CNT, REG_MOSAIC,
+/// char blocks 1 to 3, gMapGridAnimTiles, BG1CNT to BG3CNT, REG_MOSAIC,
 /// REG_BLDCNT and REG_DISPCNT; and adds MapGrid_UpdateLayerScroll as a
 /// task.
 s32 MapGrid_LoadLayout(s32 index) {
@@ -334,8 +334,8 @@ s32 MapGrid_LoadLayout(s32 index) {
   } else {
     // One 16 KB buffer takes each resource in turn: the palette (0x1c0
     // bytes, 14 of the 16 BG palettes), the three 16 KB tilesets, and
-    // last the layer data, which decodes straight to gMapGridLayerData. Without
-    // the memory, nothing is loaded.
+    // last the tileset animations' tiles, which decode straight to
+    // gMapGridAnimTiles. Without the memory, nothing is loaded.
     graphicsBuffer = Alloc(0x4000);
     if (graphicsBuffer != NULL) {
       // Colour 0 of BG palette 0 is the backdrop; it survives the new palette.
@@ -362,7 +362,7 @@ s32 MapGrid_LoadLayout(s32 index) {
       Iwram_CopyWordsEntry(BG_CHAR_BLOCK(3), graphicsBuffer, 0x4000);
       Decompress_Type2(Resource_GetTableEntry(layoutResources->resources[5] +
                                               (u32)&ResourceId_Layout001),
-                       gMapGridLayerData);
+                       gMapGridAnimTiles);
       Free(graphicsBuffer);
     }
   }
@@ -1069,7 +1069,7 @@ void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
 /// REG_DISPCNT) from layerFlags, keeping its other flags. Called by Lunpa
 /// Fortress's map script through MapGrid_SetShownLayersFar.
 void MapGrid_SetShownLayers(u32 layerFlags) {
-  struct MapGridState *gridState = gMapGridWork[0];
+  struct MapGridScrollAnimView *gridState = gMapGridWork[0];
   u32 mask = layerFlags & (DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON);
   u32 flags = gridState->flags;
 

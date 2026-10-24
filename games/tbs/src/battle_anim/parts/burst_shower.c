@@ -338,8 +338,8 @@ void BattleAnim_RunBurstShower(struct BattleAnimArgs *effect, s32 mode) {
         // it back.
         if ((frame >= (i * 4) + 2) && ((frame & 7) == i)) {
           work->shakeFrames = 8;
-          ObjectGroup_UpdateMembers(work->effect->targets[i],
-                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 4);
+          BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 4);
         }
         i += 1;
       }
@@ -350,11 +350,11 @@ void BattleAnim_RunBurstShower(struct BattleAnimArgs *effect, s32 mode) {
         if ((frame >= (i * 4) + 16) && ((frame & 7) == i)) {
           work->shakeFrames = 8;
           if (mode == BURST_SHOWER_MODE_GREY) {
-            ObjectGroup_UpdateMembers(work->effect->targets[i],
-                                      SPRITE_COLOR_BLACK, POSE_DAMAGE, i, 4);
+            BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_BLACK,
+                                   POSE_DAMAGE, i, 4);
           } else {
-            ObjectGroup_UpdateMembers(work->effect->targets[i],
-                                      SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 4);
+            BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, i, 4);
           }
           BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
                                          KNOCKBACK_HURL);
@@ -367,7 +367,7 @@ void BattleAnim_RunBurstShower(struct BattleAnimArgs *effect, s32 mode) {
     // In the grey mode the flash timers never run down, so the targets stay
     // black.
     if (mode != BURST_SHOWER_MODE_GREY) {
-      ObjectGroup_TickMemberTimers();
+      BattleAnim_TickBattlerTints();
     }
     ANIM_PRESENT_FRAME(work);
     frame += 1;

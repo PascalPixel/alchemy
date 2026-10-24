@@ -70,7 +70,7 @@ and armour go up, and everyone is raised to level 30, Isaac to 50 in the
 international editions; in Japanese the coins are set to 777777. Each visit therefore adds to
 the shops' stock again, but changes a level only if it is still below the
 target, because `Unit_LevelUpTo` only ever raises one. None of the rooms has
-warp regions, so each answers that entry with `MapData_ReturnZero`.
+warp regions, so each answers that entry with `Map_GetWarpRegions`.
 
 | Room | Setup entry | What it does |
 | --- | --- | --- |
@@ -122,7 +122,7 @@ run this script. The room's six entries return such tables, one each:
 | warps | `TestRoom_GetWarps` | the ways out |
 | object event templates | `TestRoom_GetObjectEventTemplates` | the four Djinn |
 | map events | `TestRoom_GetEvents` | the four talk events |
-| warp regions | `MapData_ReturnZero` | none |
+| warp regions | `Map_GetWarpRegions` | none |
 
 | Local id | Name | Djinni |
 | --- | --- | --- |
@@ -217,8 +217,8 @@ as `gDebug_PaletteSwatchTiles` for `PaletteEditor_Run`, which opens with L on
 the Start menu in debug mode.
 
 Each room's functions take the room's prefix, except the
-initialize and warp region entries, which keep older names (`MapData_`,
-`Map_`, `CommandTable_`); the other four entries take the room's
+initialize and warp region entries, which take the map overlays' names
+(`Map_`, `CommandTable_`); the other four entries take the room's
 (`TestRoom_GetEvents`).
 
 ## How it fits with the rest of the game

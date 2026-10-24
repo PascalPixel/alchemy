@@ -33,7 +33,7 @@ void BattleMotion_ReturnToSpot(s32 unitId) {
   object->bounce = stopped;
   object->steeringFlags = stopped;
   object->snapToTarget = 1;
-  ObjectDispatch_StartIdleFar((struct Object *)object);
+  Object_StartIdleFar((struct Object *)object);
   Object_SetMoveTargetFar((struct Object *)object, battleObject->anchorX, 0,
                           battleObject->anchorZ);
   // z / 8, rounded toward zero, as BattleObject_Make turns a new object.
@@ -58,10 +58,10 @@ void BattleMotion_SetupEscapeObject(s32 unitId) {
   object->gravity = 0x7851;
   object->bounce = 0;
   object->steeringFlags = 0;
-  ObjectDispatch_StartIdleFar((struct Object *)object);
+  Object_StartIdleFar((struct Object *)object);
   Object_SetMoveTargetFar((struct Object *)object, battleObject->anchorX * 3, 0,
                           battleObject->anchorZ);
-  ObjectDispatch_SelectAnimationFar(object, POSE_STANDING);
+  Object_SelectAnimationFar(object, POSE_STANDING);
 }
 
 /// Sends the unit of startSlot leaping progress percent of the way toward
@@ -92,7 +92,7 @@ void BattleMotion_LeapToward(struct BattleObject *startSlot,
   start->bounce = 0;
   start->steeringFlags = 1;
   Object_SetMoveTargetFar((struct Object *)start, x, 0, startZ + zStep);
-  ObjectDispatch_SelectAnimationFar(start, POSE_LEAP);
+  Object_SelectAnimationFar(start, POSE_LEAP);
 }
 
 /// Sends a unit's object back to its spot. Nothing in the source calls it.
@@ -124,7 +124,7 @@ void BattleMotion_HopBack(s32 unitId) {
   object->gravity = 0x9999;
   object->bounce = 0;
   object->steeringFlags = 0;
-  ObjectDispatch_StartIdleFar((struct Object *)object);
+  Object_StartIdleFar((struct Object *)object);
   // anchorX * 3 / 2, rounded toward zero.
   scaledX = battleObject->anchorX * 3;
   Object_SetMoveTargetFar((struct Object *)object,
@@ -145,11 +145,11 @@ void BattleMotion_LeapBack(s32 unitId) {
   object->gravity = 0x9999;
   object->bounce = 0;
   object->steeringFlags = 0;
-  ObjectDispatch_StartIdleFar((struct Object *)object);
+  Object_StartIdleFar((struct Object *)object);
   Object_SetMoveTargetFar((struct Object *)object,
                           Iwram_MulQ16(battleObject->anchorX, 0x14ccc), 0,
                           battleObject->anchorZ);
-  ObjectDispatch_SelectAnimationFar(object, POSE_DAMAGE);
+  Object_SelectAnimationFar(object, POSE_DAMAGE);
 }
 
 /// Knocks unit id back by the speed, hop and distance of the knockback
@@ -174,13 +174,13 @@ void BattleMotion_ApplyKnockback(s32 unitId, s32 variant) {
     object->gravity = 0x9999;
     object->bounce = 0;
     object->steeringFlags = 0;
-    ObjectDispatch_StartIdleFar((struct Object *)object);
+    Object_StartIdleFar((struct Object *)object);
     anchorX = battleObject->anchorX;
     targetX = (anchorX * gBattleKnockback_DistancePercent[variant]) / 100;
     Object_SetMoveTargetFar((struct Object *)object, targetX, 0,
                             battleObject->anchorZ);
   }
-  ObjectDispatch_SelectAnimationFar(object, POSE_DAMAGE);
+  Object_SelectAnimationFar(object, POSE_DAMAGE);
 }
 
 /// Sends unit actorId three quarters of the way to unit targetId, arriving
@@ -223,9 +223,9 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
   object->velocityY = initialVelocityY;
   object->gravity = 0xab85;
   object->steeringFlags = 1;
-  ObjectDispatch_StartIdleFar((struct Object *)object);
+  Object_StartIdleFar((struct Object *)object);
   Object_SetMoveTargetFar((struct Object *)object, x, 0, z);
-  ObjectDispatch_SelectAnimationFar(object, POSE_LEAP);
+  Object_SelectAnimationFar(object, POSE_LEAP);
 }
 
 /// Restarts unit id's motion in POSE_LEAP. Nothing in the source calls it.
@@ -233,8 +233,8 @@ void BattleMotion_RestartLeap(s32 unitId) {
   struct Object *object;
 
   object = BattleObject_Get(unitId)->object;
-  ObjectDispatch_StartIdleFar((struct Object *)object);
-  ObjectDispatch_SelectAnimationFar(object, POSE_LEAP);
+  Object_StartIdleFar((struct Object *)object);
+  Object_SelectAnimationFar(object, POSE_LEAP);
 }
 
 /// Does nothing; BattleMotion_ApplyPairMidpoint, its only caller, passes it

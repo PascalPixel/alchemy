@@ -1,13 +1,14 @@
 /// @file
 /// Kolima Forest (MapId_KolimaForestCliff), the third of the forest's five
-/// maps, between MapId_KolimaForestGlade and MapId_KolimaForestFloodgate.
-/// Of its three logs, rolled by walking into them, the one pushed west to the
+/// maps, between MapId_KolimaForestGlade and MapId_KolimaForestFloodgate. Of
+/// its three logs, rolled by walking into them, the one pushed west to the
 /// water's edge tips into the river and floats there, cells the party can cross
 /// to the far side, and from the bank the leader can hop east (coord event 11,
 /// KolimaForest_HopEast). The forest keeps its cursed colours until Tret lifts
 /// the curse (FLAG_KOLIMA_CURSE_LIFTED).
 ///
-/// FLAG_MAP_TEMP_01: the log is in the river, until the party next comes in.
+/// FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER: the log is in the river, until the
+/// party next comes in.
 ///
 /// The map's name, Cliff, is ours, for what sets the map apart: a rock cliff
 /// runs across its north side above the river and the logs
@@ -56,6 +57,10 @@ enum {
 
 #include "common/object_staged_object_event.h"
 
+/// The river log has tipped into the river and floats there as ground the party
+/// can cross.
+#define FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER FLAG_MAP_TEMP_01
+
 const struct MapWarpDest *KolimaForestCliff_GetWarpDests(void) {
   return gKolimaForestCliffWarpDests;
 }
@@ -70,10 +75,10 @@ KolimaForestCliff_GetObjectEventTemplates(void) {
   return gKolimaForestCliffObjectEventTemplates;
 }
 
-/// Kolima Forest (MapId_KolimaForestCliff), walking into a log: it rolls
-/// ahead until something stops it. The river log, stopped at the bank (cell
-/// column 12), tips over with a splash and floats in the water; its cells
-/// become ground the party can cross (sets FLAG_MAP_TEMP_01).
+/// Kolima Forest (MapId_KolimaForestCliff), walking into a log: it rolls ahead
+/// until something stops it. The river log, stopped at the bank (cell column
+/// 12), tips over with a splash and floats in the water; its cells become
+/// ground the party can cross (sets FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER).
 static void KolimaForestCliff_PushLog(void) {
   struct PushedObjectProbe result;
   FieldScript_Start();
@@ -82,17 +87,17 @@ static void KolimaForestCliff_PushLog(void) {
     if (result.objectEventSlot == LOCALID_RIVER_LOG &&
         (result.position.x >> 20) == 12) {
       struct ObjectEvent *objectEvent;
-      Engine_ObjectEventSetAnimation(LOCALID_RIVER_LOG,
+      Import_ObjectEventSetAnimation(LOCALID_RIVER_LOG,
                                      LOG_ANIMATION_ROLL_WEST);
       ObjectMotion_OffsetPositionAndResetMotion(LOCALID_RIVER_LOG, -18, 6);
       FieldScript_WaitFrames(30);
       Sound_PlaySong(SE_240);
-      Engine_ObjectEventSetAnimation(LOCALID_RIVER_LOG, LOG_ANIMATION_DROP_IN);
+      Import_ObjectEventSetAnimation(LOCALID_RIVER_LOG, LOG_ANIMATION_DROP_IN);
       ObjectEvent_GetById(LOCALID_RIVER_LOG)->priorityFlags =
           OBJ_EVENT_PRIORITY_UNDERFOOT;
       MapGrid_CopyCellAttributes(32, 20, 2, 4, 11, 16);
       PushedObject_FillGridAttributeRectangle(2, 12, 16, 1, 4, MB_NORMAL);
-      GameFlag_Set(FLAG_MAP_TEMP_01);
+      GameFlag_Set(FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER);
       objectEvent = ObjectEvent_GetById(LOCALID_RIVER_LOG);
       ObjectEvent_SetSpriteFlags(objectEvent, 0);
     }
@@ -117,7 +122,7 @@ s32 KolimaForestCliff_Initialize(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Map_RedrawObjectEventFootprint(LOCALID_RIVER_LOG);
 
-  if (GameFlag_Get(FLAG_MAP_TEMP_01) != 0) {
+  if (GameFlag_Get(FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER) != 0) {
     ObjectEvent_GetById(LOCALID_RIVER_LOG)->priorityFlags =
         OBJ_EVENT_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(32, 20, 2, 4, 11, 16);
@@ -202,5 +207,5 @@ struct MapEvent gKolimaForestCliffEvents[] = {
 };
 
 // The .bss order follows the first declarations (externs in field.h).
-u8 gKolimaPalette_First[1792] __attribute__((section(".bss")));
-u8 gKolimaPalette_Second[896] __attribute__((section(".bss")));
+u8 gKolimaPalette_Healthy[1792] __attribute__((section(".bss")));
+u8 gKolimaPalette_Cursed[896] __attribute__((section(".bss")));

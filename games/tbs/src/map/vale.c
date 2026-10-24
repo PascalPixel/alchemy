@@ -1,14 +1,14 @@
 /// @file
-/// MapId_Vale, Isaac's village by day, outside the houses: the door of
-/// Isaac's house, the houses of Garet's family and of Jenna's grandparents,
-/// the Sanctum and the paths out to Mt. Aleph and Kraden's cottage. The
-/// object event templates and map events come in three sets, chosen by the
-/// story flags: before the party leaves Vale, after it has left
-/// (FLAG_VALE_PARTY_LEFT) and back from Kalay (FLAG_KALAY_REACHED);
-/// VALE_FROM_TITLE has a set of its own. In story order:
+/// MapId_Vale, Isaac's village by day, outside the houses: the door of Isaac's
+/// house, the houses of Garet's family and of Jenna's grandparents, the Sanctum
+/// and the paths out to Mt. Aleph and Kraden's cottage. The object event
+/// templates and map events come in three sets, chosen by the story flags:
+/// before the party leaves Vale, after it has left (FLAG_VALE_PARTY_LEFT) and
+/// back from Kalay (FLAG_KALAY_REACHED); VALE_FROM_TITLE has a set of its own.
+/// In story order:
 ///
 /// - The day the story begins, three years after the storm
-///   (vale_interiors_inn.c), which took Jenna's family and Isaac's father,
+///   (vale_inn.c), which took Jenna's family and Isaac's father,
 ///   Kyle. The game opens at VALE_FROM_TITLE with EventScript_MendingTheRoof:
 ///   under the caption "Three years later...", Isaac is mending the roof of his
 ///   house while Dora, his mother, calls up to him; Garet, who will travel with
@@ -16,10 +16,10 @@
 ///   that day before going to fetch Isaac to go to Kraden's.
 ///   VALE_TO_ROOF_MENDED brings the party back in at VALE_FROM_ROOF_MENDED,
 ///   where EventScript_RoofMended plays once (map section flag
-///   FLAG_MAPSEC_TEMP_08): Dora praises the roof, remembers Kyle, and sends the
-///   three off on their climb of Mt. Aleph with Kraden, the scholar who teaches
-///   them Alchemy (FLAG_MAP_TEMP_02); for the rest of that visit Dora frets
-///   about the hole clumsy Garet left.
+///   FLAG_VALE_ROOF_MENDED_SCENE_PLAYED): Dora praises the roof, remembers
+///   Kyle, and sends the three off on their climb of Mt. Aleph with Kraden, the
+///   scholar who teaches them Alchemy (FLAG_VALE_ROOF_JUST_MENDED); for the
+///   rest of that visit Dora frets about the hole clumsy Garet left.
 /// - Vale before the party leaves. Until Kraden has planned the visit to Sol
 ///   Sanctum (FLAG_SANCTUM_VISIT_PLANNED), Jenna stops Isaac on the path to Mt.
 ///   Aleph; a bearded man in a long robe jumps out to warn him against sneaking
@@ -34,41 +34,43 @@
 ///   later.
 /// - After the party has left Vale (FLAG_VALE_PARTY_LEFT): Dora will not open
 ///   the door of Isaac's house to him ("My Isaac would keep his promise... Go
-///   away."), and the villagers speak of the tremors and of Kraden, who has
-///   not come back.
+///   away."), and the villagers speak of the tremors and of Kraden, who has not
+///   come back.
 /// - Back from Kalay (FLAG_KALAY_REACHED): Garet meets his sister (map section
-///   flag FLAG_MAPSEC_TEMP_03) and asks one of his family to protect it while
-///   he is gone (FLAG_MAPSEC_TEMP_04), a young man asks whether Jenna is back
-///   (FLAG_VALE_ASKED_IF_JENNA_IS_BACK), another feels a tremor, another asks
-///   about the lack of travellers since the eruption (FLAG_MAPSEC_TEMP_07).
-///   Isaac's house opens again: Dora lies ill inside (vale_interiors_inn.c).
+///   flag FLAG_VALE_GARET_MET_SISTER) and asks one of his family to protect it
+///   while he is gone (FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY), a young man
+///   asks whether Jenna is back (FLAG_VALE_ASKED_IF_JENNA_IS_BACK), another
+///   feels a tremor, another asks about the lack of travellers since the
+///   eruption (FLAG_VALE_ASKED_ABOUT_TRAVELERS). Isaac's house opens again:
+///   Dora lies ill inside (vale_inn.c).
 ///
 /// In every set: a Nut to catch with Catch (FLAG_VALE_NUT_CAUGHT; LOCALID_NUT,
 /// or LOCALID_NUT_AFTER_KALAY), a pillar to push or Move, whose column the
-/// setup restores from FLAG_MAPSEC_TEMP_14 to _16, a ladder up onto the roof of
-/// Isaac's house, climbed on metatile behaviors 100 and 101 (FLAG_MAP_TEMP_04
-/// while on the roof), and cells of
-/// an upper path that change while the leader is on it (FLAG_MAP_TEMP_10);
-/// after a battle (FLAG_KEEP_PARTY_POSITION) the setup restores both. Warps:
-/// VALE_TO_SOL_ENTRANCE up Mt. Aleph to Sol Entrance (MapId_SolEntrance),
-/// VALE_TO_VALE_GATE to MapId_ValeGate, VALE_TO_VALE_KRADEN_NORTH and
-/// VALE_TO_VALE_KRADEN_SOUTH to MapId_ValeKraden, the doors
-/// VALE_TO_VALE_INTERIORS_SHOPS_EAST, VALE_TO_VALE_INTERIORS_SHOPS_SOUTH,
-/// VALE_TO_VALE_INTERIORS_SHOPS_NORTH, VALE_TO_VALE_INTERIORS_SHOPS_WEST and
-/// VALE_TO_VALE_INTERIORS_SHOPS_NORTH_SECOND_DOOR into the houses
-/// (MapId_ValeInteriorsShops, vale_interiors_shops.c),
-/// VALE_TO_VALE_INTERIORS_INN into Isaac's house (MapId_ValeInteriorsInn) and
+/// setup restores from FLAG_VALE_PILLAR_IN_WEST_COLUMN, _IN_MIDDLE_COLUMN and
+/// _IN_EAST_COLUMN, a ladder up onto the roof of Isaac's house, climbed on
+/// metatile behaviors 100 and 101 (FLAG_VALE_ON_ROOF while on the roof), and
+/// cells of an upper path that change while the leader is on it
+/// (FLAG_VALE_ON_UPPER_PATH); after a battle (FLAG_KEEP_PARTY_POSITION) the
+/// setup restores both. Warps: VALE_TO_SOL_ENTRANCE up Mt. Aleph to Sol
+/// Entrance (MapId_SolEntrance), VALE_TO_VALE_PLAZA to MapId_ValePlaza,
+/// VALE_TO_VALE_KRADENS_COTTAGE_NORTH and VALE_TO_VALE_KRADENS_COTTAGE_SOUTH to
+/// MapId_ValeKradensCottage, the doors VALE_TO_VALE_SHOPS_EAST,
+/// VALE_TO_VALE_SHOPS_SOUTH, VALE_TO_VALE_SHOPS_NORTH,
+/// VALE_TO_VALE_SHOPS_WEST and
+/// VALE_TO_VALE_SHOPS_NORTH_SECOND_DOOR into the houses
+/// (MapId_ValeShops, vale_shops.c),
+/// VALE_TO_VALE_INN into Isaac's house (MapId_ValeInn) and
 /// VALE_TO_SANCTUM into MapId_Sanctum. Two scenes no table reaches remain:
 /// EventScript_UnusedRoofMended, a copy of the roof's end, and
 /// EventScript_UnusedWaterBurstsByTheRiver, which sets map section flag
-/// FLAG_MAPSEC_TEMP_05. FLAG_MAP_TEMP_41 pauses the man who watches Isaac while
-/// a menu is open. The TBS_PATCH_4 editions also set Dora's sprite priority
-/// before Kalay.
+/// FLAG_VALE_UNUSED_WATER_BURST_SEEN. FLAG_VALE_MT_ALEPH_GUARD_PAUSED pauses
+/// the man who watches Isaac while a menu is open. The TBS_PATCH_4 editions
+/// also set Dora's sprite priority before Kalay.
 ///
 /// In the opening Garet trains his Psynergy on the pillar: his sprite flashes
-/// white, then cycles through its colour modes with sparks about him, while
-/// the hand of Move (LOCALID_OPENING_MOVE_HAND) pushes the pillar west, the
-/// pillar cycling its colour modes too, and sheds sparkles
+/// white, then cycles through its colour modes with sparks about him, while the
+/// hand of Move (LOCALID_OPENING_MOVE_HAND) pushes the pillar west, the pillar
+/// cycling its colour modes too, and sheds sparkles
 /// (https://alchemy.pascalpixel.com/places/vale/opening-move.gif: the screen,
 /// Garet, the pillar and the hand boxed, beside the sprites alone and the 16
 /// sprite palettes).
@@ -156,15 +158,16 @@ static void Vale_CycleFirstBoardPalette(void);
 static void Vale_CycleSecondBoardPalette(void);
 static void Vale_CycleThirdBoardPalette(void);
 #ifdef UBFIX
-static void Vale_HaveGuardWatchTheLeader(union FieldObject *fieldObject);
+static void
+Vale_HaveGuardWatchTheLeader(union ObjectEventOrEffect *fieldObject);
 #else
-static s32 Vale_HaveGuardWatchTheLeader(union FieldObject *fieldObject);
+static s32 Vale_HaveGuardWatchTheLeader(union ObjectEventOrEffect *fieldObject);
 #endif
-static void Vale_TrailSparkles(union FieldObject *fieldObject);
+static void Vale_TrailSparkles(union ObjectEventOrEffect *fieldObject);
 static void Vale_VanishMoveHand(struct ObjectEvent *emitter);
 static void Vale_UpdateParticlePosition(struct ObjectEvent *particle,
                                         s32 distance, s32 angle);
-static void EventScript_SettleMovedPillar(void);
+static void EventScript_MovePillarBelowCliff(void);
 static void Vale_PlayStepSound(void);
 static void Vale_SynchronizeAlephGuardPause(void);
 static void Vale_AdjustPillarPriorityForLeaderHeight(void);
@@ -235,9 +238,9 @@ enum ValeLocalId {
   /// in a green shirt and shorts (its render)
   LOCALID_GARETS_BROTHER,
   /// SPRITE_STONE_PILLAR, as Goma Cave's pillars: pushed
-  /// (EventScript_PushPillar) or
-  /// moved with Move, its column kept in FLAG_MAPSEC_TEMP_14 to _16
-  /// (EventScript_SettleMovedPillar).
+  /// (EventScript_PushPillar) or moved with Move, its column kept in
+  /// FLAG_VALE_PILLAR_IN_WEST_COLUMN, _IN_MIDDLE_COLUMN and _IN_EAST_COLUMN
+  /// (EventScript_MovePillarBelowCliff).
   /// ★ Named from what the player sees: a stone pillar of brown rock standing
   /// below the cliff north of the village (its render)
   LOCALID_PILLAR,
@@ -373,6 +376,39 @@ enum ValeAnimation {
 
 #include "common/object_staged_object_event.h"
 
+/// The roof of Isaac's house has just been mended; for the rest of the visit
+/// Dora frets about the hole Garet left.
+#define FLAG_VALE_ROOF_JUST_MENDED FLAG_MAP_TEMP_02
+/// The leader has climbed the ladder onto the roof of Isaac's house, whose
+/// cells are changed so it can be walked.
+#define FLAG_VALE_ON_ROOF FLAG_MAP_TEMP_04
+/// The leader is on the upper path, whose metatile behaviors are swapped until
+/// the leader steps off it.
+#define FLAG_VALE_ON_UPPER_PATH FLAG_MAP_TEMP_10
+/// The man guarding Mt. Aleph is paused while a menu is open.
+#define FLAG_VALE_MT_ALEPH_GUARD_PAUSED FLAG_MAP_TEMP_41
+/// Back from Kalay, Garet has met his sister.
+#define FLAG_VALE_GARET_MET_SISTER FLAG_MAPSEC_TEMP_03
+/// Back from Kalay, Garet has asked his brother to protect the family while he
+/// is gone.
+#define FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY FLAG_MAPSEC_TEMP_04
+/// Unused: the water has burst up by the river and the strongman has remembered
+/// Felix (EventScript_UnusedWaterBurstsByTheRiver, which nothing reaches).
+#define FLAG_VALE_UNUSED_WATER_BURST_SEEN FLAG_MAPSEC_TEMP_05
+/// Back from Kalay, the burly man has asked about the lack of travellers since
+/// the eruption.
+#define FLAG_VALE_ASKED_ABOUT_TRAVELERS FLAG_MAPSEC_TEMP_07
+/// EventScript_RoofMended has played, in which Dora praises the roof and sends
+/// the three off to Mt. Aleph.
+#define FLAG_VALE_ROOF_MENDED_SCENE_PLAYED FLAG_MAPSEC_TEMP_08
+/// The stone pillar below the cliff stands in its west column.
+#define FLAG_VALE_PILLAR_IN_WEST_COLUMN FLAG_MAPSEC_TEMP_14
+/// The stone pillar below the cliff stands in its middle column, where it
+/// starts.
+#define FLAG_VALE_PILLAR_IN_MIDDLE_COLUMN FLAG_MAPSEC_TEMP_15
+/// The stone pillar below the cliff stands in its east column.
+#define FLAG_VALE_PILLAR_IN_EAST_COLUMN FLAG_MAPSEC_TEMP_16
+
 const struct MapWarpDest *Vale_GetWarpDests(void) { return gVale_WarpDests; }
 
 const struct MapWarpRegion *Vale_GetRegions(void) { return NULL; }
@@ -395,7 +431,7 @@ const struct ObjectEventTemplate *Vale_GetObjectEventTemplates(void) {
 /// Catch on the Nut in Vale: the party gets it.
 static void EventScript_CatchNut(void) {
   FieldScript_Start();
-  Engine_ObjectEventSetPosition(LOCALID_NUT, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_NUT, 0, 0);
   GameFlag_Set(FLAG_VALE_NUT_CAUGHT);
   FieldEffect_StartEffectObject22(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
@@ -405,7 +441,7 @@ static void EventScript_CatchNut(void) {
 /// The same Nut after Kalay, where it is LOCALID_NUT_AFTER_KALAY.
 static void EventScript_CatchNutAfterKalay(void) {
   FieldScript_Start();
-  Engine_ObjectEventSetPosition(LOCALID_NUT_AFTER_KALAY, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_NUT_AFTER_KALAY, 0, 0);
   GameFlag_Set(FLAG_VALE_NUT_CAUGHT);
   FieldEffect_StartEffectObject22(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
@@ -492,11 +528,11 @@ static void EventScript_ArgueWithGaretsSister(void) {
 }
 
 /// Talking to Dora in Vale before the party leaves: right after the roof is
-/// mended (FLAG_MAP_TEMP_02) she frets about the hole clumsy Garet left;
-/// otherwise, since it will not rain for a while, Isaac can fix it later.
+/// mended (FLAG_VALE_ROOF_JUST_MENDED) she frets about the hole clumsy Garet
+/// left; otherwise, since it will not rain for a while, Isaac can fix it later.
 static void EventScript_DoraFretsAboutTheRoof(void) {
   FieldScript_Start();
-  if (GameFlag_Get(FLAG_MAP_TEMP_02) != 0) {
+  if (GameFlag_Get(FLAG_VALE_ROOF_JUST_MENDED) != 0) {
     FieldScript_SetMessageId(MsgValeIToldGaretItWas);
   } else {
     FieldScript_SetMessageId(MsgValeItWontRainForSome);
@@ -534,7 +570,7 @@ static void EventScript_ReactToAnotherTremor(void) {
 
 /// A burly grey-haired man asks about the lack of travellers since the
 /// eruption. He (LOCALID_MAN_MISSING_TRAVELERS) is in Vale back from Kalay, and
-/// the talk sets map section flag FLAG_MAPSEC_TEMP_07.
+/// the talk sets map section flag FLAG_VALE_ASKED_ABOUT_TRAVELERS.
 static void EventScript_AskAboutTheLackOfTravelers(void) {
   FieldScript_Start();
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MAN_MISSING_TRAVELERS, 2);
@@ -543,21 +579,21 @@ static void EventScript_AskAboutTheLackOfTravelers(void) {
                               LOCALID_PARTY_LEADER, 20);
   FieldScript_SetMessageId(MsgValeNoTravelersSinceTheEruption);
   FieldScript_AskYesNoAndShowResponse(LOCALID_MAN_MISSING_TRAVELERS, 0);
-  GameFlag_Set(FLAG_MAPSEC_TEMP_07);
+  GameFlag_Set(FLAG_VALE_ASKED_ABOUT_TRAVELERS);
   FieldScript_End();
 }
 
 /// Walking onto the upper path in Vale (metatile behavior 15): its cells'
-/// metatile behaviors change, remembered in FLAG_MAP_TEMP_10.
-static void EventScript_SetPathCellOverride(void) {
-  GameFlag_Set(FLAG_MAP_TEMP_10);
+/// metatile behaviors change, remembered in FLAG_VALE_ON_UPPER_PATH.
+static void EventScript_StepOntoUpperPath(void) {
+  GameFlag_Set(FLAG_VALE_ON_UPPER_PATH);
   MapGrid_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
 /// Walking off the upper path in Vale (metatile behavior 14) restores its
 /// cells' metatile behaviors.
-static void EventScript_ClearPathCellOverride(void) {
-  GameFlag_Clear(FLAG_MAP_TEMP_10);
+static void EventScript_StepOffUpperPath(void) {
+  GameFlag_Clear(FLAG_VALE_ON_UPPER_PATH);
   MapGrid_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
@@ -567,7 +603,7 @@ static void EventScript_EnterSanctum(void) {
   Script_PlaySong(SE_188);
   MapGrid_AnimateCells(gVale_SanctumDoorOpens, 45, 11);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 257, 420);
-  Engine_ScriptRequestWarp(VALE_TO_SANCTUM);
+  Import_ScriptRequestWarp(VALE_TO_SANCTUM);
 }
 
 /// The path to Mt. Aleph in Vale (metatile behavior 2): Jenna stops Isaac until
@@ -579,50 +615,52 @@ static void EventScript_ApproachMtAleph(void) {
     Vale_HaveJennaStopTheAlephDetour();
   } else {
     Sound_PlaySong(SE_MAP_EXIT);
-    Engine_ScriptRequestWarp(VALE_TO_SOL_ENTRANCE);
+    Import_ScriptRequestWarp(VALE_TO_SOL_ENTRANCE);
   }
 }
 
-/// Metatile behavior 3 in Vale takes the northern way out to MapId_ValeKraden.
-static void EventScript_WarpToValeKradenNorth(void) {
+/// Metatile behavior 3 in Vale takes the northern way out to
+/// MapId_ValeKradensCottage.
+static void EventScript_WarpToValeKradensCottageNorth(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  Engine_ScriptRequestWarp(VALE_TO_VALE_KRADEN_NORTH);
+  Import_ScriptRequestWarp(VALE_TO_VALE_KRADENS_COTTAGE_NORTH);
 }
 
-/// Metatile behavior 4 in Vale takes the southern way out to MapId_ValeKraden.
-static void EventScript_WarpToValeKradenSouth(void) {
+/// Metatile behavior 4 in Vale takes the southern way out to
+/// MapId_ValeKradensCottage.
+static void EventScript_WarpToValeKradensCottageSouth(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  Engine_ScriptRequestWarp(VALE_TO_VALE_KRADEN_SOUTH);
+  Import_ScriptRequestWarp(VALE_TO_VALE_KRADENS_COTTAGE_SOUTH);
 }
 
-/// Metatile behavior 5 in Vale takes the way out to MapId_ValeGate.
-static void EventScript_WarpToValeGate(void) {
+/// Metatile behavior 5 in Vale takes the way out to MapId_ValePlaza.
+static void EventScript_WarpToValePlaza(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  Engine_ScriptRequestWarp(VALE_TO_VALE_GATE);
+  Import_ScriptRequestWarp(VALE_TO_VALE_PLAZA);
 }
 
 /// The door of the house of Garet's family in Vale (metatile behavior 6): it
-/// opens and VALE_TO_VALE_INTERIORS_SHOPS_EAST leads in.
+/// opens and VALE_TO_VALE_SHOPS_EAST leads in.
 static void EventScript_EnterGaretsHouse(void) {
   Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_IsaacsDoorOpens, 54, 32);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 406, 727);
-  Engine_ScriptRequestWarp(VALE_TO_VALE_INTERIORS_SHOPS_EAST);
+  Import_ScriptRequestWarp(VALE_TO_VALE_SHOPS_EAST);
 }
 
 /// A house door in Vale (metatile behavior 7): it opens and
-/// VALE_TO_VALE_INTERIORS_SHOPS_SOUTH leads in, to the room ValeInteriorsShops
-/// enters from VALE_INTERIORS_SHOPS_FROM_VALE_SOUTH.
-static void EventScript_EnterValeInteriorsShops(void) {
+/// VALE_TO_VALE_SHOPS_SOUTH leads in, to the room ValeShops
+/// enters from VALE_SHOPS_FROM_VALE_SOUTH.
+static void EventScript_EnterValeShops(void) {
   Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_GrandparentsDoorOpens, 45, 39);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 262, 805);
-  Engine_ScriptRequestWarp(VALE_TO_VALE_INTERIORS_SHOPS_SOUTH);
+  Import_ScriptRequestWarp(VALE_TO_VALE_SHOPS_SOUTH);
 }
 
 /// The door of Isaac's house in Vale (metatile behavior 8): after the party has
 /// left and before Kalay, Dora will not open. "My Isaac would keep his
-/// promise... Go away." Otherwise VALE_TO_VALE_INTERIORS_INN leads in.
+/// promise... Go away." Otherwise VALE_TO_VALE_INN leads in.
 static void EventScript_EnterIsaacsHouse(void) {
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0 &&
       GameFlag_Get(FLAG_KALAY_REACHED) == 0) {
@@ -645,40 +683,40 @@ static void EventScript_EnterIsaacsHouse(void) {
     Sound_PlaySong(SE_DOOR_OPEN);
     MapGrid_PlayMetatileCopySequence(gVale_IsaacsDoorOpens, 50, 44);
     ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 340, 888);
-    Engine_ScriptRequestWarp(VALE_TO_VALE_INTERIORS_INN);
+    Import_ScriptRequestWarp(VALE_TO_VALE_INN);
   }
 }
 
 /// The door of the house of Jenna's grandparents in Vale (metatile behavior 9):
-/// it opens and VALE_TO_VALE_INTERIORS_SHOPS_NORTH leads in.
+/// it opens and VALE_TO_VALE_SHOPS_NORTH leads in.
 static void EventScript_EnterJennasGrandparentsHouse(void) {
   Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_GrandparentsDoorOpens, 49, 69);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 326, 1126);
-  Engine_ScriptRequestWarp(VALE_TO_VALE_INTERIORS_SHOPS_NORTH);
+  Import_ScriptRequestWarp(VALE_TO_VALE_SHOPS_NORTH);
 }
 
 /// A house door in Vale (metatile behavior 10): it opens and
-/// VALE_TO_VALE_INTERIORS_SHOPS_WEST leads in, to the room ValeInteriorsShops
-/// enters from VALE_INTERIORS_SHOPS_FROM_VALE_WEST.
-static void EventScript_EnterValeInteriorsShopsWest(void) {
+/// VALE_TO_VALE_SHOPS_WEST leads in, to the room ValeShops
+/// enters from VALE_SHOPS_FROM_VALE_WEST.
+static void EventScript_EnterValeShopsWest(void) {
   Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_WestHouseDoorOpens, 52, 76);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 374, 1238);
-  Engine_ScriptRequestWarp(VALE_TO_VALE_INTERIORS_SHOPS_WEST);
+  Import_ScriptRequestWarp(VALE_TO_VALE_SHOPS_WEST);
 }
 
 /// Unused: its row answers metatile behavior 11, which no cell of Vale's layout
 /// (layout/layout_000, the stormy night's too) carries, as
-/// EventScript_UnusedLeaveToValeInteriorsShopsWestBySecondDoor in vale_storm.c.
+/// EventScript_UnusedLeaveToValeShopsWestBySecondDoor in vale_stormy_night.c.
 /// It would have opened Isaac's door, walked the leader to the spot before it
-/// and taken VALE_TO_VALE_INTERIORS_SHOPS_NORTH_SECOND_DOOR into the house of
+/// and taken VALE_TO_VALE_SHOPS_NORTH_SECOND_DOOR into the house of
 /// Jenna's grandparents, whose way out returns by the other door.
 static void EventScript_UnusedEnterJennasGrandparentsHouseBySecondDoor(void) {
   Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_IsaacsDoorOpens, 35, 74);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 102, 1206);
-  Engine_ScriptRequestWarp(VALE_TO_VALE_INTERIORS_SHOPS_NORTH_SECOND_DOOR);
+  Import_ScriptRequestWarp(VALE_TO_VALE_SHOPS_NORTH_SECOND_DOOR);
 }
 
 /// On the path to Mt. Aleph in Vale, before the visit is planned: Jenna comes
@@ -712,7 +750,7 @@ static void Vale_HaveJennaStopTheAlephDetour(void) {
   }
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(2);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != NULL) {
     ObjectEvent_SetDestination(LOCALID_JENNA, objectEvent->x.part.pixel,
@@ -738,7 +776,7 @@ static void EventScript_WatchThePuppies(void) {
     grid = gMapGridWork[0];
     FieldScript_Start();
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
     FieldScript_WaitFrames(2);
     FieldScript_SetMessageId(MsgValeRrruffRrrruff);
     FieldScript_ShowMessageThenWait(LOCALID_FIRST_PUPPY, 0, 2);
@@ -795,22 +833,22 @@ static void EventScript_TurnBackFromThePuppies(void) {
 
 /// Metatile behavior 100 in Vale, at the foot of the ladder beside Isaac's
 /// house: walking north into it climbs the leader up onto the roof, whose cells
-/// change so it can be walked (FLAG_MAP_TEMP_04 set while there).
+/// change so it can be walked (FLAG_VALE_ON_ROOF set while there).
 static void EventScript_ClimbLadderOntoRoof(void) {
   FieldScript_Start();
   MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
   Vale_MoveObjectEventAlongLowerZPath(LOCALID_PARTY_LEADER, 10, 11, 1);
-  GameFlag_Set(FLAG_MAP_TEMP_04);
+  GameFlag_Set(FLAG_VALE_ON_ROOF);
   FieldScript_End();
 }
 
 /// Metatile behavior 101 in Vale, at the top of the ladder beside Isaac's
 /// house: walking south into it climbs the leader back down, and the roof's
-/// cells are put back (FLAG_MAP_TEMP_04 cleared).
+/// cells are put back (FLAG_VALE_ON_ROOF cleared).
 static void EventScript_ClimbDownFromRoof(void) {
   FieldScript_Start();
   Vale_MoveObjectEventAlongHigherZPath(LOCALID_PARTY_LEADER, 13, 10, 1);
-  GameFlag_Clear(FLAG_MAP_TEMP_04);
+  GameFlag_Clear(FLAG_VALE_ON_ROOF);
   MapGrid_CopyCellAttributes(49, 46, 8, 4, 20, 50);
   FieldScript_End();
 }
@@ -838,7 +876,7 @@ static void EventScript_WarnAgainstSneakingUpMtAleph(void) {
                        PIXELS(5) / 2);
   ObjectMotion_Launch(LOCALID_MAN_GUARDING_MT_ALEPH, 4, 0);
   ObjectEvent_WalkToAndWait(LOCALID_MAN_GUARDING_MT_ALEPH, 202, 395);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER,
                             FACING_NORTHWEST + FACING_STEP, 0);
@@ -861,7 +899,7 @@ static void EventScript_WarnAgainstSneakingUpMtAleph(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_RefreshSelectorById(LOCALID_MAN_GUARDING_MT_ALEPH);
   ObjectEvent_WalkToAndWait(LOCALID_MAN_GUARDING_MT_ALEPH, 256, 456);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_MAN_GUARDING_MT_ALEPH, FACING_SOUTH, 20);
   ObjectMotion_SetVariantCallback(LOCALID_MAN_GUARDING_MT_ALEPH, 2);
   FieldScript_WaitFrames(20);
@@ -872,7 +910,7 @@ static void EventScript_WarnAgainstSneakingUpMtAleph(void) {
   objectEvent->update = Vale_HaveGuardWatchTheLeader;
 #else
   objectEvent->update =
-      (void (*)(union FieldObject *))Vale_HaveGuardWatchTheLeader;
+      (void (*)(union ObjectEventOrEffect *))Vale_HaveGuardWatchTheLeader;
 #endif
   ObjectEvent_SetActionScript(LOCALID_MAN_GUARDING_MT_ALEPH,
                               gVale_AlephGuardPatrol);
@@ -929,7 +967,7 @@ static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
   objectEvent->update = Vale_HaveGuardWatchTheLeader;
 #else
   objectEvent->update =
-      (void (*)(union FieldObject *))Vale_HaveGuardWatchTheLeader;
+      (void (*)(union ObjectEventOrEffect *))Vale_HaveGuardWatchTheLeader;
 #endif
   ObjectEvent_SetActionScript(LOCALID_MAN_GUARDING_MT_ALEPH,
                               gVale_AlephGuardPatrol);
@@ -968,10 +1006,10 @@ static void EventScript_RepeatMtAlephWarningAtEitherPause(void) {
 /// Unused: another cut of EventScript_RoofMended, the end of the morning the
 /// story begins.
 ///
-/// No table names it. It plays the same lines as the scene the game uses,
-/// `Good job, Garet.` and `I was devastated when Kyle died...` among them, but
-/// frames them with its own camera and map grid cells, and sets
-/// FLAG_MAP_TEMP_02 as that scene does.
+/// No table names it. It plays the same lines as the scene the game uses, `Good
+/// job, Garet.` and `I was devastated when Kyle died...` among them, but frames
+/// them with its own camera and map grid cells, and sets
+/// FLAG_VALE_ROOF_JUST_MENDED as that scene does.
 UNUSED static void EventScript_UnusedRoofMended(void) {
   struct ObjectEvent *leader;
   struct ObjectEvent *objectEvent;
@@ -1002,7 +1040,7 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_WEST, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gVale_LeaderHammers);
   Vale_PlaceOrHideBoards(LOCALID_FIRST_BOARD, 2, 1);
   gFieldWork->transition = 0;
@@ -1029,18 +1067,18 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 40);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
   FieldScript_WaitFrames(20);
-  ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, 2);
-  ObjectEvent_SetChildValue(LOCALID_FIRST_BOARD, 2);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 2);
+  ObjectEvent_SetSpriteColorById(LOCALID_FIRST_BOARD, 2);
   ObjectEvent_SetSpeed(LOCALID_FIRST_BOARD, PIXELS(3) / 10, PIXELS(3) / 20);
   ObjectEvent_MoveToAndWait(LOCALID_FIRST_BOARD, 390, 832);
   FieldScript_WaitFrames(80);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_MoveToAndWait(LOCALID_FIRST_BOARD, 402, 828);
   FieldScript_WaitFrames(80);
-  ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_SetChildValue(LOCALID_FIRST_BOARD, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_FIRST_BOARD, 0);
   ObjectEvent_SetPosition(LOCALID_FIRST_BOARD, PIXELS(390), PIXELS(842));
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gVale_LeaderHammers);
   FieldScript_WaitFrames(200);
   MapGrid_CopyCellsTo(7, 102, 84, 41, 2, 1);
@@ -1048,7 +1086,7 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   ObjectEvent_SetBuiltinAction(LOCALID_PARTY_LEADER, OBJ_EVENT_ACTION_IDLE);
   leader->scaleX = Q16_ONE;
   leader->scaleY = Q16_ONE;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   FieldScript_WaitFrames(30);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
@@ -1056,18 +1094,18 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 30);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 20);
-  ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, 2);
-  ObjectEvent_SetChildValue(LOCALID_FIRST_BOARD, 2);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 2);
+  ObjectEvent_SetSpriteColorById(LOCALID_FIRST_BOARD, 2);
   ObjectEvent_SetSpeed(LOCALID_FIRST_BOARD, PIXELS(3) / 10, PIXELS(3) / 20);
   ObjectEvent_MoveToAndWait(LOCALID_FIRST_BOARD, 390, 832);
   FieldScript_WaitFrames(80);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_MoveToAndWait(LOCALID_FIRST_BOARD, 377, 828);
   FieldScript_WaitFrames(80);
-  ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_SetChildValue(LOCALID_FIRST_BOARD, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_FIRST_BOARD, 0);
   ObjectEvent_SetPosition(LOCALID_FIRST_BOARD, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gVale_LeaderHammers);
   FieldScript_WaitFrames(200);
   MapGrid_CopyCellsTo(6, 102, 83, 41, 1, 1);
@@ -1075,7 +1113,7 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   ObjectEvent_SetBuiltinAction(LOCALID_PARTY_LEADER, OBJ_EVENT_ACTION_IDLE);
   leader->scaleX = Q16_ONE;
   leader->scaleY = Q16_ONE;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   FieldScript_WaitFrames(30);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
@@ -1084,18 +1122,18 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 30);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH + FACING_STEP,
                             20);
-  ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, 2);
-  ObjectEvent_SetChildValue(LOCALID_SECOND_BOARD, 2);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 2);
+  ObjectEvent_SetSpriteColorById(LOCALID_SECOND_BOARD, 2);
   ObjectEvent_SetSpeed(LOCALID_SECOND_BOARD, PIXELS(3) / 10, PIXELS(3) / 20);
   ObjectEvent_MoveToAndWait(LOCALID_SECOND_BOARD, 390, 832);
   FieldScript_WaitFrames(80);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_MoveToAndWait(LOCALID_SECOND_BOARD, 360, 842);
   FieldScript_WaitFrames(80);
-  ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_SetChildValue(LOCALID_SECOND_BOARD, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_SECOND_BOARD, 0);
   ObjectEvent_SetPosition(LOCALID_SECOND_BOARD, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gVale_LeaderHammers);
   FieldScript_WaitFrames(200);
   MapGrid_CopyCellsTo(5, 103, 82, 42, 1, 1);
@@ -1191,7 +1229,7 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkTo(LOCALID_GARET, 369, 904);
   ObjectEvent_WalkToAndWait(LOCALID_JENNA, 392, 904);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   Vale_MoveObjectEventAlongLowerZPath(LOCALID_JENNA, 10, 11, 0);
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST, 0);
   Script_ShowMessageAndWait(LOCALID_JENNA, 0, 10);
@@ -1211,7 +1249,7 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_JENNA, 0, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 20);
@@ -1225,7 +1263,7 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   ObjectEvent_Get(LOCALID_JENNA)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_WEST, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 30);
   ObjectMotion_Launch(LOCALID_DORA, 4, 30);
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 20);
@@ -1265,19 +1303,19 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   ObjectMotion_SetVariantCallback(LOCALID_DORA, 2);
   FieldScript_WaitFrames(30);
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_NOD);
   FieldScript_WaitFrames(30);
   ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_NOD);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_NOD);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
@@ -1317,7 +1355,7 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 20);
   ObjectMotion_Launch(LOCALID_DORA, 4, 0);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 3);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_DORA_HANDS_UP);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_DORA_HANDS_UP);
   FieldScript_WaitFrames(5);
   Script_ShowTwoMessagesAndWait(LOCALID_DORA, 14, 2, 24, 2, LOCALID_GARET, 10,
                                 14, 4, 14, 0);
@@ -1341,7 +1379,7 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   ObjectMotion_SetVariantCallback(LOCALID_JENNA, 2);
   ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_GARET_STARTLED);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_GARET_STARTLED);
   ObjectMotion_Launch(LOCALID_GARET, 2, 5);
   MapGrid_SetShake(0, PIXELS(4), Q16_ONE);
   MapGrid_CopyCellsTo(1, 102, 83, 41, 1, 1);
@@ -1352,7 +1390,7 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
   ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_DORA_PEEK);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_DORA_PEEK);
   objectEvent->scaleY = 0x8000;
   ObjectEvent_SetPosition(LOCALID_DORA, PIXELS(364), PIXELS(811));
   for (i = 0; i != 5; i++) {
@@ -1398,7 +1436,7 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 3);
   ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_GARET), 1);
   ObjectMotion_Launch(LOCALID_GARET, 6, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(4), PIXELS(2));
   objectEvent = ObjectEvent_Get(LOCALID_GARET);
   objectEvent->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
@@ -1411,7 +1449,7 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 20);
   Script_ShowMessageAndWait(LOCALID_GARET, 0, 20);
   ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_GARET_STARTLED);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_GARET_STARTLED);
   ObjectMotion_Launch(LOCALID_GARET, 2, 5);
   ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_GARET), 0);
   MapGrid_CopyCellsTo(2, 102, 84, 41, 2, 1);
@@ -1504,8 +1542,8 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
                             objectEvent->z.part.pixel - 16);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 30);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(40);
   ObjectEvent_WalkToAndWait(LOCALID_JENNA, objectEvent->x.part.pixel,
@@ -1524,13 +1562,13 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 373, 887);
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 40);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
   FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(100);
-  GameFlag_Set(FLAG_MAP_TEMP_02);
+  GameFlag_Set(FLAG_VALE_ROOF_JUST_MENDED);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   *leaderMotion = leaderMotionFlags;
   FieldScript_End();
@@ -1561,16 +1599,16 @@ s32 Vale_Initialize(void) {
     objectEvent = ObjectEvent_GetById((GameFlag_Get(FLAG_KALAY_REACHED) != 0) +
                                       LOCALID_PILLAR);
     ObjectEvent_SetSpriteFlags(objectEvent, 0);
-    if (GameFlag_Get(FLAG_MAPSEC_TEMP_14)) {
+    if (GameFlag_Get(FLAG_VALE_PILLAR_IN_WEST_COLUMN)) {
       objectEvent->x.fixed = 181 << 17;
-    } else if (GameFlag_Get(FLAG_MAPSEC_TEMP_16)) {
+    } else if (GameFlag_Get(FLAG_VALE_PILLAR_IN_EAST_COLUMN)) {
       objectEvent->x.fixed = 197 << 17;
     } else {
       objectEvent->x.fixed = 189 << 17;
     }
     objectEvent->z.fixed = PIXELS(584);
     objectEvent->y.fixed = PIXELS(192);
-    EventScript_SettleMovedPillar();
+    EventScript_MovePillarBelowCliff();
     objectEvent->layer = 3;
     objectEvent->motionFlags = 0;
     FieldScheduler_AddCallback(Vale_AdjustPillarPriorityForLeaderHeight,
@@ -1578,11 +1616,11 @@ s32 Vale_Initialize(void) {
 #if TBS_PATCH_4
     if (GameFlag_Get(FLAG_KALAY_REACHED)) {
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-        if (GameFlag_Get(FLAG_MAP_TEMP_04)) {
+        if (GameFlag_Get(FLAG_VALE_ON_ROOF)) {
           MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
         }
-        if (GameFlag_Get(FLAG_MAP_TEMP_10)) {
-          EventScript_SetPathCellOverride();
+        if (GameFlag_Get(FLAG_VALE_ON_UPPER_PATH)) {
+          EventScript_StepOntoUpperPath();
         }
       }
     } else {
@@ -1596,9 +1634,9 @@ s32 Vale_Initialize(void) {
         objectEvent->scaleY = 0x28f;
       }
       if (GameFlag_Get(FLAG_MET_SATUROS_AND_MENARDI)) {
-        Engine_ObjectEventSetPosition(LOCALID_FIRST_PUPPY, 0, 0);
-        Engine_ObjectEventSetPosition(LOCALID_FIRST_PUPPY + 1, 0, 0);
-        Engine_ObjectEventSetPosition(LOCALID_FIRST_PUPPY + 2, 0, 0);
+        Import_ObjectEventSetPosition(LOCALID_FIRST_PUPPY, 0, 0);
+        Import_ObjectEventSetPosition(LOCALID_FIRST_PUPPY + 1, 0, 0);
+        Import_ObjectEventSetPosition(LOCALID_FIRST_PUPPY + 2, 0, 0);
       }
       set = GameFlag_Get(FLAG_VALE_PARTY_LEFT);
       if (set == 0) {
@@ -1618,7 +1656,7 @@ s32 Vale_Initialize(void) {
           }
         } else {
           ObjectEvent_GetById(LOCALID_MAN_GUARDING_MT_ALEPH)->paused = set;
-          GameFlag_Clear(FLAG_MAP_TEMP_41);
+          GameFlag_Clear(FLAG_VALE_MT_ALEPH_GUARD_PAUSED);
         }
         if (gSaveBlock.warpDest != VALE_FROM_TITLE &&
             !GameFlag_Get(FLAG_KALAY_REACHED)) {
@@ -1626,18 +1664,18 @@ s32 Vale_Initialize(void) {
                                      TASK_PRIORITY_MAP);
         }
       }
-      if (!Script_GetFlag(FLAG_MAPSEC_TEMP_08) &&
+      if (!Script_GetFlag(FLAG_VALE_ROOF_MENDED_SCENE_PLAYED) &&
           gSaveBlock.warpDest == VALE_FROM_ROOF_MENDED) {
         EventScript_RoofMended();
-        GameFlag_Set(FLAG_MAPSEC_TEMP_08);
+        GameFlag_Set(FLAG_VALE_ROOF_MENDED_SCENE_PLAYED);
       }
 #if TBS_PATCH_4
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-        if (GameFlag_Get(FLAG_MAP_TEMP_04)) {
+        if (GameFlag_Get(FLAG_VALE_ON_ROOF)) {
           MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
         }
-        if (GameFlag_Get(FLAG_MAP_TEMP_10)) {
-          EventScript_SetPathCellOverride();
+        if (GameFlag_Get(FLAG_VALE_ON_UPPER_PATH)) {
+          EventScript_StepOntoUpperPath();
         }
       }
       {
@@ -1652,11 +1690,11 @@ s32 Vale_Initialize(void) {
     }
 #if !TBS_PATCH_4
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-      if (GameFlag_Get(FLAG_MAP_TEMP_04)) {
+      if (GameFlag_Get(FLAG_VALE_ON_ROOF)) {
         MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
       }
-      if (GameFlag_Get(FLAG_MAP_TEMP_10)) {
-        EventScript_SetPathCellOverride();
+      if (GameFlag_Get(FLAG_VALE_ON_UPPER_PATH)) {
+        EventScript_StepOntoUpperPath();
       }
     }
 #endif
@@ -1668,13 +1706,14 @@ s32 Vale_Initialize(void) {
 }
 
 /// Back from Kalay, Garet meets his sister in Vale; sets map section flag
-/// FLAG_MAPSEC_TEMP_03. "Ah! It's been a while... You're back?" ("Sis...").
+/// FLAG_VALE_GARET_MET_SISTER. "Ah! It's been a while... You're back?"
+/// ("Sis...").
 static void EventScript_GaretMeetsHisSister(void) {
   struct ObjectEvent *record;
   s32 msg;
 
   FieldScript_Start();
-  ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_GARETS_SISTER_AFTER_KALAY,
                               LOCALID_PARTY_LEADER, 20);
   msg = MsgValeAh;
@@ -1701,7 +1740,7 @@ static void EventScript_GaretMeetsHisSister(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_SISTER_AFTER_KALAY, ANIM_NOD);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_GARETS_SISTER_AFTER_KALAY,
                      0);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_SISTER_AFTER_KALAY, 2);
@@ -1743,11 +1782,11 @@ static void EventScript_GaretMeetsHisSister(void) {
                             FACING_SOUTH + FACING_STEP, 20);
   Script_ShowMessageAndWait(
       SPEAKER_WINDOW_ABOVE | LOCALID_GARETS_SISTER_AFTER_KALAY, 0, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_SISTER_AFTER_KALAY, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (record != 0) {
     ObjectEvent_SetDestination(LOCALID_GARET, record->x.part.pixel,
@@ -1755,14 +1794,14 @@ static void EventScript_GaretMeetsHisSister(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
-  GameFlag_Set(FLAG_MAPSEC_TEMP_03);
+  GameFlag_Set(FLAG_VALE_GARET_MET_SISTER);
   FieldScript_End();
 }
 
 /// Back from Kalay, Garet asks one of his family in Vale
 /// (LOCALID_GARETS_BROTHER_AFTER_KALAY) to protect it while he is gone; sets
-/// map section flag FLAG_MAPSEC_TEMP_04. "WHATEVER YOU DO, you must protect the
-/// family while I'm gone."
+/// map section flag FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY. "WHATEVER YOU DO,
+/// you must protect the family while I'm gone."
 static void EventScript_GaretAsksToProtectFamily(void) {
   struct ObjectEvent *record;
 
@@ -1788,7 +1827,7 @@ static void EventScript_GaretAsksToProtectFamily(void) {
   ObjectEvent_FaceDirection(LOCALID_GARETS_BROTHER_AFTER_KALAY,
                             FACING_SOUTHEAST + FACING_STEP, 40);
   Script_ShowMessageAndWait(LOCALID_GARETS_BROTHER_AFTER_KALAY, 0, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_BROTHER_AFTER_KALAY, 1);
   ObjectEvent_FaceDirection(LOCALID_GARETS_BROTHER_AFTER_KALAY,
@@ -1839,7 +1878,7 @@ static void EventScript_GaretAsksToProtectFamily(void) {
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST + FACING_STEP, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (record != 0) {
     ObjectEvent_SetDestination(LOCALID_GARET, record->x.part.pixel,
@@ -1847,7 +1886,7 @@ static void EventScript_GaretAsksToProtectFamily(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
-  GameFlag_Set(FLAG_MAPSEC_TEMP_04);
+  GameFlag_Set(FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY);
   FieldScript_End();
 }
 
@@ -1855,11 +1894,11 @@ static void EventScript_GaretAsksToProtectFamily(void) {
 /// tremor shakes Vale and water bursts up three times north of the strongman by
 /// the river who remembers Felix.
 ///
-/// No table names it. He would have started, sniffled through
-/// `I still remember when Felix and I used to play here...*Sniff*`, turned to
-/// the leader to say that Felix must be protecting Jenna, and set map section
-/// flag FLAG_MAPSEC_TEMP_05. His talk and Mind Read rows show the same two
-/// lines.
+/// No table names it. He would have started, sniffled through `I still remember
+/// when Felix and I used to play here...*Sniff*`, turned to the leader to say
+/// that Felix must be protecting Jenna, and set map section flag
+/// FLAG_VALE_UNUSED_WATER_BURST_SEEN. His talk and Mind Read rows show the same
+/// two lines.
 UNUSED static void EventScript_UnusedWaterBurstsByTheRiver(void) {
   struct ObjectEvent *objectEvent;
   const s32 *actions;
@@ -1871,9 +1910,9 @@ UNUSED static void EventScript_UnusedWaterBurstsByTheRiver(void) {
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   objectEvent = ObjectEvent_Get(LOCALID_FIRST_WATER + 2);
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER + 1, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER + 2, 0);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_WATER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_WATER + 1, 0);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_WATER + 2, 0);
   WaitFrames(20);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   actions = gVale_UnusedWaterGrows;
@@ -1895,7 +1934,7 @@ UNUSED static void EventScript_UnusedWaterBurstsByTheRiver(void) {
   Script_ShowMessage(LOCALID_STRONGMAN_REMEMBERING_FELIX, 0);
   ObjectEvent_FaceDirection(LOCALID_STRONGMAN_REMEMBERING_FELIX, FACING_WEST,
                             10);
-  GameFlag_Set(FLAG_MAPSEC_TEMP_05);
+  GameFlag_Set(FLAG_VALE_UNUSED_WATER_BURST_SEEN);
   FieldScript_End();
 }
 
@@ -1922,11 +1961,11 @@ static void Vale_MoveObjectEventAlongLowerZPath(s32 localId,
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 10);
   objectEvent->motionFlags = 0;
   sprite->flags = 0;
-  Engine_ObjectEventSetAnimation(localId, approachAnimation);
+  Import_ObjectEventSetAnimation(localId, approachAnimation);
   ObjectEvent_SetSpeed(localId, PIXELS(3) / 10, PIXELS(3) / 20);
   ObjectEvent_MoveToAndWait(localId, 392, 875);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(localId, departureAnimation);
+  Import_ObjectEventSetAnimation(localId, departureAnimation);
   ObjectEvent_SetSpeed(localId, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_MoveToAndWait(localId, 392, 859);
   sprite->flags = 1;
@@ -1934,7 +1973,7 @@ static void Vale_MoveObjectEventAlongLowerZPath(s32 localId,
     objectEvent->motionFlags = 3;
   }
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(localId, ANIM_STAND);
+  Import_ObjectEventSetAnimation(localId, ANIM_STAND);
 }
 
 /// Climbs an object event down the ladder beside Isaac's house from the roof,
@@ -1959,19 +1998,19 @@ static void Vale_MoveObjectEventAlongHigherZPath(s32 localId,
   ObjectEvent_FaceDirection(localId, FACING_NORTH, 10);
   objectEvent->motionFlags = 0;
   sprite->flags = 0;
-  Engine_ObjectEventSetAnimation(localId, approachAnimation);
+  Import_ObjectEventSetAnimation(localId, approachAnimation);
   ObjectEvent_SetSpeed(localId, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_MoveToAndWait(localId, 392, 875);
   FieldScript_WaitFrames(10);
   ObjectEvent_SetSpeed(localId, PIXELS(3) / 10, PIXELS(3) / 20);
-  Engine_ObjectEventSetAnimation(localId, departureAnimation);
+  Import_ObjectEventSetAnimation(localId, departureAnimation);
   ObjectEvent_MoveToAndWait(localId, 392, 890);
   objectEvent->velocityY = 0x20000;
   sprite->flags = 1;
   if (restoreMotion != 0) {
     objectEvent->motionFlags = 3;
   }
-  Engine_ObjectEventSetAnimation(localId, ANIM_STAND);
+  Import_ObjectEventSetAnimation(localId, ANIM_STAND);
 }
 
 /// Mode 0 sets count boards from first on the roof by the hole, still and
@@ -1995,7 +2034,7 @@ static void Vale_PlaceOrHideBoards(s32 first, u32 count, s32 mode) {
   }
 
   for (i = 0; i < count; i++) {
-    Engine_ObjectEventSetPosition(selector, 0, 0);
+    Import_ObjectEventSetPosition(selector, 0, 0);
     selector++;
   }
 }
@@ -2054,7 +2093,7 @@ static void EventScript_MendingTheRoof(void) {
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   objectEvent = ObjectEvent_GetById(LOCALID_OPENING_SECOND_BOARD);
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gVale_LeaderHammers);
   ObjectSystem_SuspendProjectionAndShowSprites();
   message = MsgValeRepairCaption;
@@ -2081,7 +2120,7 @@ static void EventScript_MendingTheRoof(void) {
   ObjectEvent_WalkToAndWait(LOCALID_JENNA, 359, 1033);
   ObjectEvent_SetSpeed(LOCALID_OPENING_WOMAN, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_WalkTo(LOCALID_OPENING_WOMAN, 318, 947);
-  Engine_ObjectEventSetAnimation(LOCALID_OPENING_WOMAN, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_OPENING_WOMAN, ANIM_WALK);
   ObjectEvent_WalkToAndWait(LOCALID_JENNA, 412, 1033);
   ObjectEvent_WalkToAndWait(LOCALID_JENNA, 412, 1019);
   ObjectEvent_WalkToAndWait(LOCALID_JENNA, 374, 1008);
@@ -2119,7 +2158,7 @@ static void EventScript_MendingTheRoof(void) {
   FieldScript_WaitFrames(40);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | LOCALID_OPENING_DORA, 0,
                             40);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gVale_LeaderHammers);
   FieldCamera_FollowObjectEvent(LOCALID_JENNA, 1);
   FieldCamera_WaitForArrival();
@@ -2153,7 +2192,7 @@ static void EventScript_MendingTheRoof(void) {
   // Garet trains his Psynergy: the hand of Move pushes the pillar, shedding
   // sparkles.
   Map_StartCutscenePsynergy();
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_CAST_PSYNERGY);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_CAST_PSYNERGY);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_GARET, 0, 20);
   Script_PlaySong(SE_131);
   for (i = 0; i < 60; i++) {
@@ -2184,16 +2223,16 @@ static void EventScript_MendingTheRoof(void) {
   ObjectEvent_MoveToAndWait(LOCALID_OPENING_PILLAR, 378, 584);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_JENNA, 0, 10);
-  moveHand->update = (void (*)(union FieldObject *))stoppedMotionFlags;
+  moveHand->update = (void (*)(union ObjectEventOrEffect *))stoppedMotionFlags;
   ObjectMotion_SetActionVariant(LOCALID_GARET, 2);
   ObjectEvent_Get(LOCALID_GARET)->priorityFlags |= OBJ_EVENT_PRIORITY_AUTOMATIC;
   Task_Remove(Vale_UpdateGaretPaletteAndEffects);
   Task_Remove(Vale_CycleOpeningPillarPalette);
   WaitFrames(1);
-  ObjectEvent_SetChildValue(LOCALID_GARET, 0);
-  ObjectEvent_SetChildValue(LOCALID_OPENING_PILLAR, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_GARET, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_OPENING_PILLAR, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   Vale_VanishMoveHand(moveHand);
   Map_EndCutscenePsynergy();
 
@@ -2305,7 +2344,7 @@ static void EventScript_MendingTheRoof(void) {
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_JENNA);
   Script_ShowMessage(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_LEFT | LOCALID_GARET, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
   FieldScript_WaitFrames(60);
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST + FACING_STEP, 30);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
@@ -2321,7 +2360,7 @@ static void EventScript_MendingTheRoof(void) {
   FieldScript_WaitFrames(40);
   Script_ShowMessageAndWait(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_LEFT | LOCALID_GARET, 0, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_NOD);
   FieldScript_WaitFrames(10);
   ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(1) / 2, PIXELS(1) / 4);
@@ -2332,7 +2371,7 @@ static void EventScript_MendingTheRoof(void) {
   gFieldWork->transitionFrames = 60;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Engine_ScriptRequestWarp(VALE_TO_ROOF_MENDED);
+  Import_ScriptRequestWarp(VALE_TO_ROOF_MENDED);
   FieldScript_End();
 }
 
@@ -2376,7 +2415,7 @@ static void EventScript_RoofMended(void) {
   ObjectEvent_SetPosition(LOCALID_JENNA, PIXELS(298), PIXELS(760));
   turned = ObjectEvent_Get(LOCALID_JENNA);
   turned->facing = turnSide;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gVale_LeaderHammers);
   objectEvent = ObjectEvent_Get(LOCALID_FIRST_BOARD);
   objectEvent->motionFlags = 0;
@@ -2423,7 +2462,7 @@ static void EventScript_RoofMended(void) {
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 40);
   Map_StartCutscenePsynergy();
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_CAST_PSYNERGY);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_CAST_PSYNERGY);
   FieldScheduler_AddCallback(Vale_PlayStepSound, TASK_PRIORITY_MAP);
   for (i = 0; i < 40; i++) {
     Vale_FlashObjectEventAndSpawnEffects(leader);
@@ -2446,29 +2485,29 @@ static void EventScript_RoofMended(void) {
     record->priorityFlags =
         OBJ_EVENT_PRIORITY_AUTOMATIC | record->priorityFlags;
   }
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   Task_Remove(Vale_PlayStepSound);
   Task_Remove(callbackA);
   Task_Remove(callbackB);
   WaitFrames(1);
-  ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_SetChildValue(LOCALID_FIRST_BOARD, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_FIRST_BOARD, 0);
   ObjectEvent_SetPosition(LOCALID_FIRST_BOARD, 0, 0);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gVale_LeaderHammers);
   FieldScript_WaitFrames(120);
   MapGrid_CopyCellsTo(7, 102, 84, 41, 2, 1);
   ObjectEvent_SetBuiltinAction(LOCALID_PARTY_LEADER, OBJ_EVENT_ACTION_IDLE);
   leader->scaleX = Q16_ONE;
   leader->scaleY = Q16_ONE;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   FieldScript_WaitFrames(40);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 377, 843);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 40);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_CAST_PSYNERGY);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_CAST_PSYNERGY);
   Task_AddCallback(Vale_PlayStepSound, TASK_PRIORITY_MAP);
   for (i = 0; i < 40; i++) {
     Vale_FlashObjectEventAndSpawnEffects(leader);
@@ -2490,23 +2529,23 @@ static void EventScript_RoofMended(void) {
     record->priorityFlags =
         OBJ_EVENT_PRIORITY_AUTOMATIC | record->priorityFlags;
   }
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   Task_Remove(Vale_PlayStepSound);
   Task_Remove(callbackC);
   Task_Remove(callbackD);
   WaitFrames(1);
-  ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_SetChildValue(LOCALID_SECOND_BOARD, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_SECOND_BOARD, 0);
   ObjectEvent_SetPosition(LOCALID_SECOND_BOARD, 0, 0);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gVale_LeaderHammers);
   FieldScript_WaitFrames(120);
   MapGrid_CopyCellsTo(6, 102, 83, 41, 1, 1);
   ObjectEvent_SetBuiltinAction(LOCALID_PARTY_LEADER, OBJ_EVENT_ACTION_IDLE);
   leader->scaleX = Q16_ONE;
   leader->scaleY = Q16_ONE;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   FieldScript_WaitFrames(40);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 360, 855);
@@ -2514,7 +2553,7 @@ static void EventScript_RoofMended(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 30);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH + FACING_STEP,
                             20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_CAST_PSYNERGY);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_CAST_PSYNERGY);
   Task_AddCallback(Vale_PlayStepSound, TASK_PRIORITY_MAP);
   for (i = 0; i < 40; i++) {
     Vale_FlashObjectEventAndSpawnEffects(leader);
@@ -2536,16 +2575,16 @@ static void EventScript_RoofMended(void) {
     record->priorityFlags =
         OBJ_EVENT_PRIORITY_AUTOMATIC | record->priorityFlags;
   }
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   Task_Remove(Vale_PlayStepSound);
   Task_Remove(callbackE);
   Task_Remove(callbackF);
   WaitFrames(1);
-  ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_SetChildValue(LOCALID_THIRD_BOARD, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_THIRD_BOARD, 0);
   ObjectEvent_SetPosition(LOCALID_THIRD_BOARD, 0, 0);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gVale_LeaderHammers);
   FieldScript_WaitFrames(120);
   Map_EndCutscenePsynergy();
@@ -2632,7 +2671,7 @@ static void EventScript_RoofMended(void) {
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkTo(LOCALID_GARET, 369, 904);
   ObjectEvent_WalkToAndWait(LOCALID_JENNA, 392, 904);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   Vale_MoveObjectEventAlongLowerZPath(LOCALID_JENNA, 10, 11, 0);
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST, 0);
   Script_ShowMessageAndWait(LOCALID_JENNA, 0, 10);
@@ -2651,7 +2690,7 @@ static void EventScript_RoofMended(void) {
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 10);
   ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_NOD);
   Script_ShowMessageAndWait(LOCALID_JENNA, 0, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 20);
   Vale_MoveObjectEventAlongLowerZPath(LOCALID_GARET, 10, 11, 0);
@@ -2668,7 +2707,7 @@ static void EventScript_RoofMended(void) {
   }
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_WEST, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 30);
   ObjectMotion_Launch(LOCALID_DORA, 4, 30);
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 20);
@@ -2708,16 +2747,16 @@ static void EventScript_RoofMended(void) {
   ObjectMotion_SetVariantCallback(LOCALID_DORA, 2);
   FieldScript_WaitFrames(40);
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIM_NOD);
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
@@ -2754,7 +2793,7 @@ static void EventScript_RoofMended(void) {
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 10);
   ObjectMotion_Launch(LOCALID_DORA, 4, 0);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 3);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_DORA_HANDS_UP);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_DORA_HANDS_UP);
   FieldScript_WaitFrames(5);
   Script_ShowTwoMessagesAndWait(LOCALID_DORA, 14, 2, 24, 2, LOCALID_GARET, 10,
                                 14, 4, 14, none);
@@ -2783,7 +2822,7 @@ static void EventScript_RoofMended(void) {
   ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   ObjectMotion_SetVariantCallback(LOCALID_JENNA, 2);
   ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_GARET_STARTLED);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_GARET_STARTLED);
   ObjectMotion_Launch(LOCALID_GARET, 2, 5);
   Script_PlaySong(SE_143);
   MapGrid_SetShake(0, PIXELS(4), Q16_ONE);
@@ -2795,7 +2834,7 @@ static void EventScript_RoofMended(void) {
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
   ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_DORA_PEEK);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_DORA_PEEK);
   objectEvent->scaleY = 0x8000;
   ObjectEvent_SetPosition(LOCALID_DORA, PIXELS(364), PIXELS(811));
   for (i = 0; i != 5; i++) {
@@ -2838,7 +2877,7 @@ static void EventScript_RoofMended(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 3);
   ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_GARET), 1);
   ObjectMotion_Launch(LOCALID_GARET, 6, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(4), PIXELS(2));
   objectEvent = ObjectEvent_Get(LOCALID_GARET);
   objectEvent->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
@@ -2851,7 +2890,7 @@ static void EventScript_RoofMended(void) {
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 20);
   Script_ShowMessageAndWait(LOCALID_GARET, 0, 20);
   ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_GARET_STARTLED);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_GARET_STARTLED);
   ObjectMotion_Launch(LOCALID_GARET, 2, 5);
   ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_GARET), 0);
   MapGrid_CopyCellsTo(2, 102, 84, 41, 2, 1);
@@ -2945,8 +2984,8 @@ static void EventScript_RoofMended(void) {
                             objectEvent->z.part.pixel - 16);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 30);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(40);
   ObjectEvent_WalkToAndWait(LOCALID_JENNA, objectEvent->x.part.pixel,
@@ -2969,14 +3008,14 @@ static void EventScript_RoofMended(void) {
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 373, 887);
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 40);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
   FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(100);
   MapGrid_CopyCellAttributes(49, 46, 8, 4, 20, 50);
-  GameFlag_Set(FLAG_MAP_TEMP_02);
+  GameFlag_Set(FLAG_VALE_ROOF_JUST_MENDED);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
 #if TBS_PATCH_1
   leader->motionFlags = 3;
@@ -3054,7 +3093,7 @@ static s32 Vale_TestFacing(struct ObjectEvent *objectEvent,
   result = 0;
   if (objectEvent->paused == 1) {
     if (objectEvent->riseCounter == 0) {
-      ObjectDispatch_SelectAnimation(objectEvent, 1);
+      Object_SelectAnimation(objectEvent, 1);
       return 1;
     }
   }
@@ -3068,17 +3107,17 @@ static s32 Vale_TestFacing(struct ObjectEvent *objectEvent,
     dir = objectEvent->facing & 0xf000;
     if (angle == dir || right == dir || left == dir || force != 0) {
       objectEvent->paused = 1;
-      ObjectDispatch_SelectAnimation(objectEvent, 1);
+      Object_SelectAnimation(objectEvent, 1);
       result = 1;
       objectEvent->riseCounter = result;
     } else {
       objectEvent->paused = 0;
-      ObjectDispatch_SelectAnimation(objectEvent, 2);
+      Object_SelectAnimation(objectEvent, 2);
       objectEvent->riseCounter = 0;
     }
   } else {
     objectEvent->paused = 0;
-    ObjectDispatch_SelectAnimation(objectEvent, 2);
+    Object_SelectAnimation(objectEvent, 2);
     objectEvent->riseCounter = 0;
   }
   return result;
@@ -3089,9 +3128,11 @@ static s32 Vale_TestFacing(struct ObjectEvent *objectEvent,
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 48 to 44 bytes in tbs-en.
 #ifdef UBFIX
-static void Vale_HaveGuardWatchTheLeader(union FieldObject *fieldObject) {
+static void
+Vale_HaveGuardWatchTheLeader(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 Vale_HaveGuardWatchTheLeader(union FieldObject *fieldObject) {
+static s32
+Vale_HaveGuardWatchTheLeader(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *guard = &fieldObject->objectEvent;
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -3112,17 +3153,17 @@ static s32 Vale_HaveGuardWatchTheLeader(union FieldObject *fieldObject) {
 
 /// The Move hand's update hook in the opening: each frame it sheds a sparkle
 /// (SPRITE_SPARKLE) just below and around it, with SE_ITEM_BREAK.
-static void Vale_TrailSparkles(union FieldObject *fieldObject) {
+static void Vale_TrailSparkles(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *source = &fieldObject->objectEvent;
   s32 spawnPosition[3];
   s32 randomDistance;
   struct ObjectEvent *particle;
   SET_VECTOR(spawnPosition, source->x.fixed,
-             source->y.fixed - (Engine_RandomNext() << 4) - PIXELS(8),
+             source->y.fixed - (Import_RandomNext() << 4) - PIXELS(8),
              source->z.fixed);
-  randomDistance = Engine_RandomNext();
+  randomDistance = Import_RandomNext();
   Vector_AddPolarOffset(((randomDistance << 1) + randomDistance) << 4,
-                        Engine_RandomNext(), spawnPosition);
+                        Import_RandomNext(), spawnPosition);
   particle = ObjectEvent_Create(SPRITE_SPARKLE, spawnPosition[0],
                                 spawnPosition[1], spawnPosition[2]);
   if (particle != 0) {
@@ -3130,7 +3171,7 @@ static void Vale_TrailSparkles(union FieldObject *fieldObject) {
     particle->gravity = 0x1999;
     particle->wait = 12;
     ObjectEvent_SetSpriteFlags(particle, 0);
-    ObjectDispatch_SelectAnimation(particle, 0);
+    Object_SelectAnimation(particle, 0);
     ObjectEvent_SetScript(particle, gVale_SparkleScript);
     {
       struct Sprite *record = particle->sprite;
@@ -3168,17 +3209,17 @@ static void Vale_VanishMoveHand(struct ObjectEvent *emitter) {
       ObjectEvent_SetSpriteFlags(particle, 0);
       ObjectEvent_SetScript(particle, (const void *)&gVale_SparkleScript[1]);
 
-      verticalSpeed = Engine_RandomNext() + PIXELS(1);
+      verticalSpeed = Import_RandomNext() + PIXELS(1);
       particle->acceleration = Q16_ONE;
       particle->speed = verticalSpeed;
       particle->motionFlags = 2;
       particle->gravity = 0x0a3d;
 
-      particle->velocityY = Engine_RandomNext() - Engine_RandomNext();
+      particle->velocityY = Import_RandomNext() - Import_RandomNext();
 
       Vale_UpdateParticlePosition(particle,
-                                  ((Engine_RandomNext() * 3) << 3) + PIXELS(8),
-                                  Engine_RandomNext());
+                                  ((Import_RandomNext() * 3) << 3) + PIXELS(8),
+                                  Import_RandomNext());
     }
   }
 
@@ -3217,13 +3258,14 @@ static void EventScript_PushPillar(void) {
 #endif
   MapGrid_CopyCellAttributes(17, 0, 3, 1, 22, 36);
   PushedObject_AdvancePair();
-  EventScript_SettleMovedPillar();
+  EventScript_MovePillarBelowCliff();
 }
 
 /// Records where the pillar now stands and blocks its cell. After Move or a
-/// push, it records the pillar's column in FLAG_MAPSEC_TEMP_14 to _16 and
-/// blocks the cell the pillar now stands on.
-static void EventScript_SettleMovedPillar(void) {
+/// push, it records the pillar's column in FLAG_VALE_PILLAR_IN_WEST_COLUMN,
+/// _IN_MIDDLE_COLUMN and _IN_EAST_COLUMN and blocks the cell the pillar now
+/// stands on.
+static void EventScript_MovePillarBelowCliff(void) {
   struct ObjectEvent *objectEvent;
   s32 column;
 
@@ -3234,19 +3276,19 @@ static void EventScript_SettleMovedPillar(void) {
     objectEvent = ObjectEvent_GetById(LOCALID_PILLAR);
   if (objectEvent == NULL)
     return;
-  Script_ClearFlag(FLAG_MAPSEC_TEMP_14);
-  Script_ClearFlag(FLAG_MAPSEC_TEMP_15);
-  Script_ClearFlag(FLAG_MAPSEC_TEMP_16);
+  Script_ClearFlag(FLAG_VALE_PILLAR_IN_WEST_COLUMN);
+  Script_ClearFlag(FLAG_VALE_PILLAR_IN_MIDDLE_COLUMN);
+  Script_ClearFlag(FLAG_VALE_PILLAR_IN_EAST_COLUMN);
   column = objectEvent->x.fixed >> 20;
   if (column == 22) {
     MapGrid_CopyCellAttributes(17, 1, 1, 1, column, 36);
-    GameFlag_Set(FLAG_MAPSEC_TEMP_14);
+    GameFlag_Set(FLAG_VALE_PILLAR_IN_WEST_COLUMN);
   } else if (column == 23) {
     MapGrid_CopyCellAttributes(17, 1, 1, 1, column, 36);
-    GameFlag_Set(FLAG_MAPSEC_TEMP_15);
+    GameFlag_Set(FLAG_VALE_PILLAR_IN_MIDDLE_COLUMN);
   } else {
     MapGrid_CopyCellAttributes(17, 1, 1, 1, 24, 36);
-    GameFlag_Set(FLAG_MAPSEC_TEMP_16);
+    GameFlag_Set(FLAG_VALE_PILLAR_IN_EAST_COLUMN);
   }
 }
 
@@ -3268,16 +3310,16 @@ static void EventScript_SearchTheLockedDoor(void) {
 static void Vale_SynchronizeAlephGuardPause(void) {
   s32 pauseFlag;
 
-  if (Script_GetFlag(FLAG_MAP_TEMP_41) != 0) {
+  if (Script_GetFlag(FLAG_VALE_MT_ALEPH_GUARD_PAUSED) != 0) {
     pauseFlag = GameFlag_Get(FLAG_MENU_OPEN);
     if (pauseFlag == 0) {
       ObjectEvent_GetById(LOCALID_MAN_GUARDING_MT_ALEPH)->paused = pauseFlag;
-      GameFlag_Clear(FLAG_MAP_TEMP_41);
+      GameFlag_Clear(FLAG_VALE_MT_ALEPH_GUARD_PAUSED);
     }
   } else {
     if (GameFlag_Get(FLAG_MENU_OPEN) != 0) {
       ObjectEvent_GetById(LOCALID_MAN_GUARDING_MT_ALEPH)->paused = 1;
-      GameFlag_Set(FLAG_MAP_TEMP_41);
+      GameFlag_Set(FLAG_VALE_MT_ALEPH_GUARD_PAUSED);
     }
   }
 }
@@ -3522,15 +3564,15 @@ struct MapWarpDest gVale_WarpDests[] = {
     { 0, CONDITION_ALWAYS, 167, 0, 1281, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_FROM_SANCTUM, CONDITION_ALWAYS, 256, 0, 440, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_FROM_SOL_ENTRANCE, CONDITION_ALWAYS, 113, 0, 303, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_FROM_VALE_KRADEN_NORTH, CONDITION_ALWAYS, 38, 0, 636, FACING_EAST, 0, -1, -1, -1, -1, 0 },
-    { VALE_FROM_VALE_KRADEN_SOUTH, CONDITION_ALWAYS, 29, 0, 792, FACING_EAST, 0, -1, -1, -1, -1, 0 },
-    { VALE_FROM_VALE_GATE, CONDITION_ALWAYS, 458, 0, 1393, FACING_WEST, 0, -1, -1, -1, -1, 0 },
-    { VALE_FROM_VALE_INTERIORS_SHOPS_EAST, CONDITION_ALWAYS, 406, 0, 743, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_FROM_VALE_INTERIORS_SHOPS_SOUTH, CONDITION_ALWAYS, 262, 0, 821, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_FROM_VALE_INTERIORS_INN, CONDITION_ALWAYS, 340, 0, 904, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_FROM_VALE_INTERIORS_SHOPS_NORTH, CONDITION_ALWAYS, 326, 0, 1142, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_FROM_VALE_INTERIORS_SHOPS_WEST, CONDITION_ALWAYS, 374, 0, 1254, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_FROM_VALE_INTERIORS_SHOPS_NORTH_SECOND_DOOR, CONDITION_ALWAYS, 102, 0, 1222, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_KRADENS_COTTAGE_NORTH, CONDITION_ALWAYS, 38, 0, 636, FACING_EAST, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_KRADENS_COTTAGE_SOUTH, CONDITION_ALWAYS, 29, 0, 792, FACING_EAST, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_PLAZA, CONDITION_ALWAYS, 458, 0, 1393, FACING_WEST, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_SHOPS_EAST, CONDITION_ALWAYS, 406, 0, 743, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_SHOPS_SOUTH, CONDITION_ALWAYS, 262, 0, 821, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_INN, CONDITION_ALWAYS, 340, 0, 904, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_SHOPS_NORTH, CONDITION_ALWAYS, 326, 0, 1142, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_SHOPS_WEST, CONDITION_ALWAYS, 374, 0, 1254, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_SHOPS_NORTH_SECOND_DOOR, CONDITION_ALWAYS, 102, 0, 1222, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_FROM_TITLE, CONDITION_ALWAYS, 400, 0, 852, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { VALE_FROM_ROOF_MENDED, CONDITION_ALWAYS, 400, 0, 852, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { MAP_TABLE_END },
@@ -3539,15 +3581,15 @@ struct MapWarpDest gVale_WarpDests[] = {
 u32 gVale_Warps[] = {
     MAP_WARPS(Vale),
     MAP_WARP(VALE_TO_SOL_ENTRANCE, SolEntrance, SOL_ENTRANCE_FROM_VALE),
-    MAP_WARP(VALE_TO_VALE_GATE, ValeGate, VALE_GATE_FROM_VALE),
-    MAP_WARP(VALE_TO_VALE_KRADEN_NORTH, ValeKraden, VALE_KRADEN_FROM_VALE_NORTH),
-    MAP_WARP(VALE_TO_VALE_KRADEN_SOUTH, ValeKraden, VALE_KRADEN_FROM_VALE_SOUTH),
-    MAP_WARP(VALE_TO_VALE_INTERIORS_SHOPS_EAST, ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_EAST),
-    MAP_WARP(VALE_TO_VALE_INTERIORS_SHOPS_SOUTH, ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_SOUTH),
-    MAP_WARP(VALE_TO_VALE_INTERIORS_INN, ValeInteriorsInn, VALE_INTERIORS_INN_FROM_VALE),
-    MAP_WARP(VALE_TO_VALE_INTERIORS_SHOPS_NORTH, ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_NORTH),
-    MAP_WARP(VALE_TO_VALE_INTERIORS_SHOPS_WEST, ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_WEST),
-    MAP_WARP(VALE_TO_VALE_INTERIORS_SHOPS_NORTH_SECOND_DOOR, ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_NORTH),
+    MAP_WARP(VALE_TO_VALE_PLAZA, ValePlaza, VALE_PLAZA_FROM_VALE),
+    MAP_WARP(VALE_TO_VALE_KRADENS_COTTAGE_NORTH, ValeKradensCottage, VALE_KRADENS_COTTAGE_FROM_VALE_NORTH),
+    MAP_WARP(VALE_TO_VALE_KRADENS_COTTAGE_SOUTH, ValeKradensCottage, VALE_KRADENS_COTTAGE_FROM_VALE_SOUTH),
+    MAP_WARP(VALE_TO_VALE_SHOPS_EAST, ValeShops, VALE_SHOPS_FROM_VALE_EAST),
+    MAP_WARP(VALE_TO_VALE_SHOPS_SOUTH, ValeShops, VALE_SHOPS_FROM_VALE_SOUTH),
+    MAP_WARP(VALE_TO_VALE_INN, ValeInn, VALE_INN_FROM_VALE),
+    MAP_WARP(VALE_TO_VALE_SHOPS_NORTH, ValeShops, VALE_SHOPS_FROM_VALE_NORTH),
+    MAP_WARP(VALE_TO_VALE_SHOPS_WEST, ValeShops, VALE_SHOPS_FROM_VALE_WEST),
+    MAP_WARP(VALE_TO_VALE_SHOPS_NORTH_SECOND_DOOR, ValeShops, VALE_SHOPS_FROM_VALE_NORTH),
     MAP_WARP(VALE_TO_SANCTUM, Sanctum, SANCTUM_FROM_VALE),
     MAP_WARP(VALE_TO_ROOF_MENDED, Vale, VALE_FROM_ROOF_MENDED),
     MAP_WARPS_END,
@@ -3715,17 +3757,17 @@ struct MapEvent gVale_Events[] = {
     { MAP_EVENT_TALK, LOCALID_MAN_GUARDING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeMtAlephIsASacredPeak) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterSanctum) },
     { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ApproachMtAleph) },
-    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradenNorth) },
-    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradenSouth) },
-    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeGate) },
+    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradensCottageNorth) },
+    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradensCottageSouth) },
+    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlaza) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterGaretsHouse) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterValeInteriorsShops) },
+    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterValeShops) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterIsaacsHouse) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterJennasGrandparentsHouse) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterValeInteriorsShopsWest) },
+    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterValeShopsWest) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UnusedEnterJennasGrandparentsHouseBySecondDoor) },
-    { MAP_EVENT_COORD, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetPathCellOverride) },
-    { MAP_EVENT_COORD, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClearPathCellOverride) },
+    { MAP_EVENT_COORD, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOntoUpperPath) },
+    { MAP_EVENT_COORD, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOffUpperPath) },
     { MAP_EVENT_COORD, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WatchThePuppies) },
     { MAP_EVENT_COORD, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TurnBackFromThePuppies) },
     { MAP_EVENT_COORD, 50, FLAG_VALE_WARNED_AGAINST_MT_ALEPH, EVENT_SCRIPT(EventScript_WarnAgainstSneakingUpMtAleph) },
@@ -3735,7 +3777,7 @@ struct MapEvent gVale_Events[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbLadderOntoRoof) },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbDownFromRoof) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_CATCH), LOCALID_NUT, FLAG_VALE_NUT_CAUGHT, EVENT_SCRIPT(EventScript_CatchNut) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleMovedPillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MovePillarBelowCliff) },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
     { BG_EVENT(BG_EVENT_SILENT), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchTheLockedDoor) },
@@ -3765,17 +3807,17 @@ struct MapEvent gVale_EventsAfterLeaving[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_KEEPING_VALE_HIDDEN, CONDITION_ALWAYS, MSGNO(MsgValeThePeopleOfValeWillNever) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterSanctum) },
     { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ApproachMtAleph) },
-    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradenNorth) },
-    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradenSouth) },
-    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeGate) },
+    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradensCottageNorth) },
+    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradensCottageSouth) },
+    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlaza) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterGaretsHouse) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterValeInteriorsShops) },
+    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterValeShops) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterIsaacsHouse) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterJennasGrandparentsHouse) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterValeInteriorsShopsWest) },
+    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterValeShopsWest) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UnusedEnterJennasGrandparentsHouseBySecondDoor) },
-    { MAP_EVENT_COORD, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetPathCellOverride) },
-    { MAP_EVENT_COORD, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClearPathCellOverride) },
+    { MAP_EVENT_COORD, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOntoUpperPath) },
+    { MAP_EVENT_COORD, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOffUpperPath) },
     { MAP_EVENT_COORD, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WatchThePuppies) },
     { MAP_EVENT_COORD, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TurnBackFromThePuppies) },
     { MAP_EVENT_COORD, 50, FLAG_VALE_WARNED_AGAINST_MT_ALEPH, EVENT_SCRIPT(EventScript_WarnAgainstSneakingUpMtAleph) },
@@ -3785,7 +3827,7 @@ struct MapEvent gVale_EventsAfterLeaving[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbLadderOntoRoof) },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbDownFromRoof) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_CATCH), LOCALID_NUT, FLAG_VALE_NUT_CAUGHT, EVENT_SCRIPT(EventScript_CatchNut) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleMovedPillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MovePillarBelowCliff) },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
     { BG_EVENT(BG_EVENT_SILENT), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchTheLockedDoor) },
@@ -3793,9 +3835,9 @@ struct MapEvent gVale_EventsAfterLeaving[] = {
 };
 
 struct MapEvent gVale_EventsAfterKalay[] = {
-    { MAP_EVENT_TALK, LOCALID_GARETS_SISTER_AFTER_KALAY, FLAG_MAPSEC_TEMP_03, EVENT_SCRIPT(EventScript_GaretMeetsHisSister) },
+    { MAP_EVENT_TALK, LOCALID_GARETS_SISTER_AFTER_KALAY, FLAG_VALE_GARET_MET_SISTER, EVENT_SCRIPT(EventScript_GaretMeetsHisSister) },
     { MAP_EVENT_TALK, LOCALID_GARETS_SISTER_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeICanTellJustByLooking) },
-    { MAP_EVENT_TALK, LOCALID_GARETS_BROTHER_AFTER_KALAY, FLAG_MAPSEC_TEMP_04, EVENT_SCRIPT(EventScript_GaretAsksToProtectFamily) },
+    { MAP_EVENT_TALK, LOCALID_GARETS_BROTHER_AFTER_KALAY, FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY, EVENT_SCRIPT(EventScript_GaretAsksToProtectFamily) },
     { MAP_EVENT_TALK, LOCALID_GARETS_BROTHER_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeIWillDoMyBestTo) },
     { MAP_EVENT_TALK, LOCALID_YOUNG_MAN_ASKING_FOR_JENNA, FLAG_VALE_ASKED_IF_JENNA_IS_BACK, EVENT_SCRIPT(EventScript_AskWhetherJennaHasReturned) },
     { MAP_EVENT_TALK, LOCALID_YOUNG_MAN_ASKING_FOR_JENNA, CONDITION_ALWAYS, MSGNO(MsgValePromiseMeIsaacPromiseMeYoull) },
@@ -3804,9 +3846,9 @@ struct MapEvent gVale_EventsAfterKalay[] = {
     { MAP_EVENT_TALK, LOCALID_WOMAN_FEELING_TREMORS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReactToAnotherTremor) },
     { MAP_EVENT_TALK, LOCALID_GIRL_DOUBTING_SAFETY, CONDITION_ALWAYS, MSGNO(MsgValeTheySayTheDangerIsGone) },
     { MAP_EVENT_TALK, LOCALID_MAN_MISSING_TRAVELERS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutTheLackOfTravelers) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_GARETS_SISTER_AFTER_KALAY, FLAG_MAPSEC_TEMP_03, EVENT_SCRIPT(EventScript_GaretMeetsHisSister) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_GARETS_SISTER_AFTER_KALAY, FLAG_VALE_GARET_MET_SISTER, EVENT_SCRIPT(EventScript_GaretMeetsHisSister) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GARETS_SISTER_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeYouGuysAreWorkingSoHard) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_GARETS_BROTHER_AFTER_KALAY, FLAG_MAPSEC_TEMP_04, EVENT_SCRIPT(EventScript_GaretAsksToProtectFamily) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_GARETS_BROTHER_AFTER_KALAY, FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY, EVENT_SCRIPT(EventScript_GaretAsksToProtectFamily) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GARETS_BROTHER_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeICouldGoWithYouIf) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_YOUNG_MAN_ASKING_FOR_JENNA, FLAG_VALE_ASKED_IF_JENNA_IS_BACK, EVENT_SCRIPT(EventScript_AskWhetherJennaHasReturned) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_YOUNG_MAN_ASKING_FOR_JENNA, CONDITION_ALWAYS, MSGNO(MsgValeYouDidntBringJennaWithYou) },
@@ -3814,25 +3856,25 @@ struct MapEvent gVale_EventsAfterKalay[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_OLD_WOMAN_ON_THE_ERUPTION, CONDITION_ALWAYS, MSGNO(MsgValeTheEarthquakesArentCausedByEruptions) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_FEELING_TREMORS, CONDITION_ALWAYS, MSGNO(MsgValeAhhICantStandTheseEarthquakes) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GIRL_DOUBTING_SAFETY, CONDITION_ALWAYS, MSGNO(MsgValeTheSmokeFromMtAlephIsnt) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_MAN_MISSING_TRAVELERS, FLAG_MAPSEC_TEMP_07, EVENT_SCRIPT(EventScript_AskAboutTheLackOfTravelers) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_MAN_MISSING_TRAVELERS, FLAG_VALE_ASKED_ABOUT_TRAVELERS, EVENT_SCRIPT(EventScript_AskAboutTheLackOfTravelers) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_MISSING_TRAVELERS, CONDITION_ALWAYS, MSGNO(MsgValeHavingNoTravelersIsNoFun) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterSanctum) },
     { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ApproachMtAleph) },
-    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradenNorth) },
-    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradenSouth) },
-    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeGate) },
+    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradensCottageNorth) },
+    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradensCottageSouth) },
+    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlaza) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterGaretsHouse) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterValeInteriorsShops) },
+    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterValeShops) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterIsaacsHouse) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterJennasGrandparentsHouse) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterValeInteriorsShopsWest) },
+    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterValeShopsWest) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UnusedEnterJennasGrandparentsHouseBySecondDoor) },
-    { MAP_EVENT_COORD, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetPathCellOverride) },
-    { MAP_EVENT_COORD, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClearPathCellOverride) },
+    { MAP_EVENT_COORD, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOntoUpperPath) },
+    { MAP_EVENT_COORD, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOffUpperPath) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbLadderOntoRoof) },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbDownFromRoof) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_CATCH), LOCALID_NUT_AFTER_KALAY, FLAG_VALE_NUT_CAUGHT, EVENT_SCRIPT(EventScript_CatchNutAfterKalay) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_PILLAR_AFTER_KALAY, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleMovedPillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_PILLAR_AFTER_KALAY, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MovePillarBelowCliff) },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
     { BG_EVENT(BG_EVENT_SILENT), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchTheLockedDoor) },
@@ -3841,10 +3883,10 @@ struct MapEvent gVale_EventsAfterKalay[] = {
 // clang-format on
 
 // The doors' cell animations, from the layout's cells below the village, each
-// picture shown for two frames; vale_storm.c has the same four kinds. Each
-// table takes the name of a door it opens. The two of Jenna's grandparents'
-// kind and the west house's show their one open picture twice, where the
-// stormy night's show two.
+// picture shown for two frames; vale_stormy_night.c has the same four kinds.
+// Each table takes the name of a door it opens. The two of Jenna's
+// grandparents' kind and the west house's show their one open picture twice,
+// where the stormy night's show two.
 
 u16 gVale_SanctumDoorOpens[] = {
     MAPGRID_ANIMATION_STEP(0, 98, 2, 2, 2),

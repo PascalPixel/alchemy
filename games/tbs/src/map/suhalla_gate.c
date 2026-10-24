@@ -4,20 +4,19 @@
 /// in the order the pass is crossed:
 ///
 /// - SuhallaGateCheckpoint (MapId_SuhallaGateCheckpoint, area name Suhalla
-///   Gate): the gate itself, entered from the world map from the south and
-///   from the east, each into its own part of the map, with the house beside
-///   it (Gate to Suhalla, lunpa_interiors.c). Two soldiers keep the passage
-///   north.
-/// - SuhallaGateDew (MapId_SuhallaGateDew, area name Suhalla Gate): beyond
-///   the passage, in a west part and an east part, with Dew, a Mercury
-///   Djinni, and a chest.
-/// - Gateway Cave (MapId_GatewayCave, area name Gateway Cave): two caves
-///   out onto the world map, with a Psynergy Stone.
+///   Gate): the gate itself, entered from the world map from the south and from
+///   the east, each into its own part of the map, with the house beside it
+///   (Gate to Suhalla, lunpa_interiors.c). Two soldiers keep the passage north.
+/// - SuhallaGateDew (MapId_SuhallaGateDew, area name Suhalla Gate): beyond the
+///   passage, in a west part and an east part, with Dew, a Mercury Djinni, and
+///   a chest.
+/// - Gateway Cave (MapId_GatewayCave, area name Gateway Cave): two caves out
+///   onto the world map, with a Psynergy Stone.
 ///
 /// One warp table serves the three maps; the other getters choose by
-/// gSaveBlock.mapId, and SuhallaGateCheckpoint's object event templates also
-/// by FLAG_BABI_SPOKE_AFTER_COLOSSO. Its event table answers any map not
-/// otherwise named.
+/// gSaveBlock.mapId, and SuhallaGateCheckpoint's object event templates also by
+/// FLAG_BABI_SPOKE_AFTER_COLOSSO. Its event table answers any map not otherwise
+/// named.
 ///
 /// Before Babi's audience after Colosso the guards turn the party away for want
 /// of travel papers, and metatile behavior 10 before the passage brings them
@@ -35,9 +34,9 @@
 /// so that Retreat from the house leads back out that way, and leaving for the
 /// world map forgets it. From TBS_PATCH_3 on, the editions lay the wounded
 /// soldiers out without collision and patch the gate's cells around them, and
-/// Retreat always leads back to SuhallaGateCheckpoint. Gateway Cave's
-/// Psynergy Stone is kept in a map section flag (FLAG_MAPSEC_TEMP_50), so it is
-/// back whenever the party returns from another map section.
+/// Retreat always leads back to SuhallaGateCheckpoint. Gateway Cave's Psynergy
+/// Stone is kept in a map section flag (FLAG_GATEWAY_CAVE_PSYNERGY_STONE), so
+/// it is back whenever the party returns from another map section.
 ///
 /// Open questions: none.
 
@@ -68,6 +67,10 @@
 #include "songs.h"
 #include "item_ids.h"
 #include "fixed_math.h"
+
+/// Gateway Cave's Psynergy Stone has been found; a map section flag, so the
+/// stone is back once the party returns from another map section.
+#define FLAG_GATEWAY_CAVE_PSYNERGY_STONE FLAG_MAPSEC_TEMP_50
 
 #if TBS_PATCH_3
 #define SUHALLA_GATE_RETREAT_MAP(currentMap) ((s32)&MapId_SuhallaGateCheckpoint)
@@ -118,7 +121,7 @@ enum { SPROUT_ANIMATION_HALF_GROWN = 3, SPROUT_ANIMATION_GROWN = 4 };
 
 /// Suhalla Gate's second map (MapId_SuhallaGateDew): talking to Dew, a
 /// Mercury Djinni, starts its battle.
-static void EventScript_FightDjinni(void) {
+static void EventScript_FightDew(void) {
   Field_RequestDjinnBattle(LOCALID_DEW, DJINNI_DEW);
 }
 
@@ -189,7 +192,7 @@ s32 Map_Initialize(void) {
   mapId = gSaveBlock.mapId;
   if (mapId == (s32)&MapId_SuhallaGateCheckpoint) {
     if (GameFlag_Get(FLAG_SUHALLA_GATE_SOLDIER_VANISHED))
-      Engine_ObjectEventSetPosition(LOCALID_VANISHING_SOLDIER, 0, 0);
+      Import_ObjectEventSetPosition(LOCALID_VANISHING_SOLDIER, 0, 0);
 #if TBS_PATCH_3
     else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO))
       MapGrid_CopyCellAttributes(0, 0, 2, 1, 29, 18);
@@ -221,15 +224,15 @@ s32 Map_Initialize(void) {
     if (gSaveBlock.warpDest == SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST)
       GameFlag_Set(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST);
   } else if (mapId == (s32)&MapId_SuhallaGateDew) {
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT,
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT,
                                    SPROUT_ANIMATION_GROWN);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT + 1,
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT + 1,
                                    SPROUT_ANIMATION_GROWN);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT + 2,
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT + 2,
                                    SPROUT_ANIMATION_HALF_GROWN);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT + 3,
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT + 3,
                                    SPROUT_ANIMATION_GROWN);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT + 4,
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT + 4,
                                    SPROUT_ANIMATION_HALF_GROWN);
     // UB: the map places only object events up to LOCALID_DEW, so there is no
     // object event 15 and ObjectEvent_GetById returns NULL (watched in tbs-en
@@ -259,7 +262,7 @@ static void EventScript_EnterHouse(void) {
   MapGrid_CopyCellsTo(68, 36, 71, 8, cellSize, cellSize);
   WaitFrames(4);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 3, -16);
-  Engine_ScriptRequestWarp(warpTrigger);
+  Import_ScriptRequestWarp(warpTrigger);
 }
 
 /// The party leaves the checkpoint for the world map. In SuhallaGateCheckpoint
@@ -272,7 +275,7 @@ static void EventScript_LeaveForWorldMap(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   GameFlag_Clear(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);
   GameFlag_Clear(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST);
-  Engine_ScriptRequestWarp(warpTrigger);
+  Import_ScriptRequestWarp(warpTrigger);
 }
 
 /// In Suhalla Gate (MapId_SuhallaGateCheckpoint) before Babi's audience, each
@@ -286,7 +289,7 @@ static void EventScript_GuardsBlockPassage(void) {
   ObjectEvent_WalkToAndWait(LOCALID_EAST_GUARD, 152, 384);
   ObjectEvent_FaceDirection(LOCALID_WEST_GUARD, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_EAST_GUARD, FACING_SOUTH, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_WEST_GUARD, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_WEST_GUARD, ANIM_STAND);
   MapGrid_CopyCellAttributes(6, 27, 1, 1, 7, 27);
 #if TBS_PATCH_3
   MapGrid_CopyCellAttributes(11, 26, 1, 1, 7, 26);
@@ -398,7 +401,7 @@ static void EventScript_IodemQuestionsGuards(void) {
   Script_ShowMessageAndWait(LOCALID_IODEM, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTH + FACING_STEP, 10);
   Script_ShowMessageAndWait(LOCALID_IODEM, 0, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetDestination(LOCALID_IODEM, leader->x.part.pixel,
@@ -469,11 +472,11 @@ static void EventScript_SoldierVanishes(void) {
   beat = 0;
   // Six slow blinks are followed by twelve fast ones.
   do {
-    ObjectEvent_SetChildValue(LOCALID_VANISHING_SOLDIER, 0);
+    ObjectEvent_SetSpriteColorById(LOCALID_VANISHING_SOLDIER, 0);
     ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_VANISHING_SOLDIER), 1);
     WaitFrames(4);
 
-    ObjectEvent_SetChildValue(LOCALID_VANISHING_SOLDIER, 15);
+    ObjectEvent_SetSpriteColorById(LOCALID_VANISHING_SOLDIER, 15);
     ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_VANISHING_SOLDIER), 0);
     beat++;
     WaitFrames(4);
@@ -481,11 +484,11 @@ static void EventScript_SoldierVanishes(void) {
 
   beat = 0;
   do {
-    ObjectEvent_SetChildValue(LOCALID_VANISHING_SOLDIER, 0);
+    ObjectEvent_SetSpriteColorById(LOCALID_VANISHING_SOLDIER, 0);
     ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_VANISHING_SOLDIER), 1);
     WaitFrames(2);
 
-    ObjectEvent_SetChildValue(LOCALID_VANISHING_SOLDIER, 15);
+    ObjectEvent_SetSpriteColorById(LOCALID_VANISHING_SOLDIER, 15);
     ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_VANISHING_SOLDIER), 0);
     beat++;
     WaitFrames(2);
@@ -684,7 +687,7 @@ struct MapEvent gSuhallaGateDewEvents[] = {
      SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_EAST},
     {MAP_EVENT_WARP, 5, CONDITION_ALWAYS, SUHALLA_GATE_DEW_TO_GATEWAY_CAVE},
     {MAP_EVENT_TALK, LOCALID_DEW, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_FightDjinni)},
+     EVENT_SCRIPT(EventScript_FightDew)},
     {BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 100,
      FLAG_SUHALLA_GATE_MINT, FIND_ITEM(ITEM_MINT)},
     {BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_EAST, 100,
@@ -701,6 +704,7 @@ struct MapEvent gGatewayCaveEvents[] = {
     {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS,
      GATEWAY_CAVE_SOUTH_TO_NORTH},
     {MAP_EVENT_WARP, 4, CONDITION_ALWAYS, GATEWAY_CAVE_TO_WORLD_MAP},
-    {BG_EVENT(BG_EVENT_SILENT), 100, FLAG_MAPSEC_TEMP_50, FIND_PSYNERGY_STONE},
+    {BG_EVENT(BG_EVENT_SILENT), 100, FLAG_GATEWAY_CAVE_PSYNERGY_STONE,
+     FIND_PSYNERGY_STONE},
     {MAP_EVENTS_END},
 };

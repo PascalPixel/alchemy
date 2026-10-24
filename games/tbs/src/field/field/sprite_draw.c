@@ -62,7 +62,7 @@ s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
     code =
         AllocHeapSlot(HEAP_SLOT_FRAME_SCRATCH, (s32)Render_DecodeFrameCodeSize);
     Dma_Set(Render_DecodeFrame, code,
-            (((u32)gRender_DecodeFrameBuffer - (u32)Render_DecodeFrame) >> 2) |
+            (((u32)gRender_DecodeFrameEnd - (u32)Render_DecodeFrame) >> 2) |
                 (DMA_ENABLE | DMA_32BIT) << 16,
             REG_DMA3);
 #ifdef UBFIX

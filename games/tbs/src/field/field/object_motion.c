@@ -80,7 +80,7 @@ static __inline__ s32 ObjectMotion_Square(s32 value) { return value * value; }
 /// velocity, target, wait and facing.
 void Object_UpdateAllThumb(void) {
   struct Object *object;
-  const ScriptMotionWords *script;
+  const ObjectScriptWords *script;
   s32 objectsRemaining;
   s32 x;
   s32 y;
@@ -110,14 +110,14 @@ void Object_UpdateAllThumb(void) {
 
     // The script indexed as words, which compiles as the old word-array
     // member did.
-    script = (const ScriptMotionWords *)object->script;
+    script = (const ObjectScriptWords *)object->script;
     if (script == NULL)
       continue;
 
     // The hook runs even for a paused object, and may free it.
     if (object->update != NULL) {
-      object->update((union FieldObject *)object);
-      script = (const ScriptMotionWords *)object->script;
+      object->update((union ObjectEventOrEffect *)object);
+      script = (const ObjectScriptWords *)object->script;
     }
     if (script == NULL)
       continue;
@@ -142,7 +142,7 @@ void Object_UpdateAllThumb(void) {
         } else {
           object->scriptCursor++;
         }
-        script = (const ScriptMotionWords *)object->script;
+        script = (const ObjectScriptWords *)object->script;
       }
       if (object->script == NULL)
         continue;

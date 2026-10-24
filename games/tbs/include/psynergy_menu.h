@@ -68,10 +68,10 @@ struct PsynergyMenuWork {
   /// cancelled target
   u16 flags;
   u16 skipSlide; ///< 1 skips the cursor's next slide once
-  /// DjinnFiguresWork's figures and their x; not named here.
+  /// ItemMenuFiguresView's figures and their x; not named here.
   u8 figureRow[0x18];
   s16 slotY[4]; ///< screen pixels
-  /// DjinnFiguresWork's phases and DjinnMenuWork's pair; not named here.
+  /// ItemMenuFiguresView's phases and DjinnMenuWork's pair; not named here.
   u8 figurePhases[0x16];
   s16 useResult;   ///< the use's result message, after MsgItemUseResult
   s8 equipPreview; ///< ItemMenuWork's; not named here

@@ -5,4 +5,4 @@
 	overlay_veneer BattleArena_GetWarps
 	overlay_veneer BattleArena_SelectObjectEventTemplates
 	overlay_veneer BattleArena_GetEvents
-	overlay_veneer MapData_ReturnZero
+	overlay_veneer Map_GetWarpRegions

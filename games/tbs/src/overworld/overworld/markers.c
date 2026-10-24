@@ -94,20 +94,19 @@ void Field_PlaceTreasureSpots(void) {
           if (markerObjectEvent == NULL)
             continue;
           ObjectMotion_SnapToTerrain(markerObjectEvent);
-          ObjectDispatch_SetSingleChildFlagsFar(
-              (struct Object *)markerObjectEvent, 0);
+          Object_SetSpriteFlagsFar((struct Object *)markerObjectEvent, 0);
           // An opened chest shows open; an opened mimic's chest
           // is not placed at all. A mimic's flag is set only after its battle,
           // when the one enemy was defeated (Djinn_ResolvePendingEvent).
           if (GameFlag_GetFar(event->condition)) {
             if ((event->value & 0xfff00000) == 0x500000) {
-              ObjectDispatch_ReleaseFar((struct Object *)markerObjectEvent);
+              Object_ReleaseFar((struct Object *)markerObjectEvent);
               continue;
             }
-            ObjectDispatch_SelectAnimationFar(markerObjectEvent,
-                                              TREASURE_SPOT_CHEST_OPEN);
+            Object_SelectAnimationFar(markerObjectEvent,
+                                      TREASURE_SPOT_CHEST_OPEN);
           }
-          ObjectDispatch_StartIdleFar((struct Object *)markerObjectEvent);
+          Object_StartIdleFar((struct Object *)markerObjectEvent);
           markerObjectEvent->homeX = markerObjectEvent->x / 0x10000;
           markerObjectEvent->homeZ = markerObjectEvent->z / 0x10000;
           markerObjectEvent->priorityFlags = 1;
@@ -132,10 +131,9 @@ void Field_PlaceTreasureSpots(void) {
           if (markerObjectEvent == NULL)
             continue;
           ObjectMotion_SnapToTerrain(markerObjectEvent);
-          ObjectDispatch_SetSingleChildFlagsFar(
-              (struct Object *)markerObjectEvent, 0);
-          ObjectDispatch_StartIdleFar((struct Object *)markerObjectEvent);
-          ObjectDispatch_SelectAnimationFar(markerObjectEvent, 1);
+          Object_SetSpriteFlagsFar((struct Object *)markerObjectEvent, 0);
+          Object_StartIdleFar((struct Object *)markerObjectEvent);
+          Object_SelectAnimationFar(markerObjectEvent, 1);
           markerObjectEvent->homeX = markerObjectEvent->x / 0x10000;
           markerObjectEvent->homeZ = markerObjectEvent->z / 0x10000;
           markerObjectEvent->collisionFlags = 1;
@@ -195,7 +193,7 @@ static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
     marker = &gFieldWork->treasureSpots[slotIndex];
     object = marker->object;
     if (object != NULL)
-      ObjectDispatch_SelectAnimationFar(object, animation);
+      Object_SelectAnimationFar(object, animation);
     Sound_PlaySongFar(sound);
     WaitFrames(12);
   }
@@ -221,11 +219,11 @@ void TreasureSpot_LaunchMimic(s32 id) {
     object = marker->object;
     WaitFrames(18);
     if (object != NULL)
-      ObjectDispatch_SelectAnimationFar(object, TREASURE_SPOT_CHEST_MIMIC);
+      Object_SelectAnimationFar(object, TREASURE_SPOT_CHEST_MIMIC);
     Sound_PlaySongFar(SE_146);
     if (object != NULL) {
       object->velocityY = 8 << 16;
-      ObjectDispatch_SetSingleChildFlagsFar((struct Object *)object, 1);
+      Object_SetSpriteFlagsFar((struct Object *)object, 1);
     }
   }
 }
@@ -248,7 +246,7 @@ void TreasureSpot_ShowOpened(s32 id) {
     marker = &gFieldWork->treasureSpots[slotIndex];
     object = marker->object;
     if (object != NULL)
-      ObjectDispatch_SelectAnimationFar(object, TREASURE_SPOT_CHEST_OPEN);
+      Object_SelectAnimationFar(object, TREASURE_SPOT_CHEST_OPEN);
   }
 }
 

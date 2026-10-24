@@ -23,14 +23,14 @@ void *Colosso_FindObjectEventAhead(void) {
   position.z = (record->z.fixed & 0xfff00000) + 0x80000;
   Vector_AddPolarOffset(0x100000, facing, &position);
 
-  occupant = MapData_FindSlotAtPosition(&position, record);
+  occupant = ObjectEvent_FindAtPosition(&position, record);
   if (occupant == 0) {
     position.x = (record->x.fixed & 0xfff00000) + 0x80000;
     position.y = record->y.fixed;
     position.z = (record->z.fixed & 0xfff00000) + 0x80000;
     Vector_AddPolarOffset(0x200000, facing, &position);
 
-    occupant = MapData_FindSlotAtPosition(&position, record);
+    occupant = ObjectEvent_FindAtPosition(&position, record);
   }
 
   return occupant;

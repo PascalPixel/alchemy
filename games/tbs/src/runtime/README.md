@@ -47,7 +47,7 @@ function, in order:
 2. clears IWRAM up to `Ram_IwramHeapEnd`, leaving the stacks above it alone,
    and empties the heap (`InitHeap`);
 3. copies the resident runtime into IWRAM and points the interrupt vector at
-   its dispatcher (`Runtime_InstallIwramAndIrqs`);
+   its dispatcher (`System_InstallIwramAndIrqs`);
 4. copies the build stamp and loads the window graphics;
 5. installs `System_VBlankHandler`, arms the soft-reset keys, starts the
    sound driver, and empties the sprite VRAM cache and the task table;
@@ -217,7 +217,7 @@ start with 512 bytes above the heap, however deep the code that waits.
 `WaitFrames` must not be called from inside a task: the nested call would find
 its stack below the top again and overwrite `gSavedStack` and
 `gSavedStackSize`, which still hold the outer caller's frames. `WaitFrames`
-itself doesn't check, but it sets `gTaskStatus` while it runs the
+itself doesn't check, but it sets `gTasksRunning` while it runs the
 main-loop tasks, and code a task may reach tests it before waiting
 (`BattleObject_SpawnObjectsForList`). No task waits
 ([Evidence and open questions](#evidence-and-open-questions)).
@@ -437,11 +437,11 @@ once more. Link battles, the Battle Arena and the main menu's
 transfer use it.
 
 While the link is up, the VBlank handler trades a 24-byte payload with the
-partner (`SerialRuntime_ExchangePayloads`) in multiplayer mode, the parent
+partner (`Serial_ExchangePayloads`) in multiplayer mode, the parent
 console clocking the transfer from timer 3 a halfword at a time. Bulk data
 rides on the exchange in 20-byte blocks, one each way per VBlank
-(`SerialRuntime_StepBlockTransfer`, started by `SerialRuntime_StartSend` and
-`SerialRuntime_StartReceive`). The receiver stores a block only when its
+(`Serial_StepBlockTransfer`, started by `Serial_StartSend` and
+`Serial_StartReceive`). The receiver stores a block only when its
 sequence number is the one it expects; a block out of step makes it ask for
 the one it expects, and a sender that sees the request goes back to that
 block and sends the rest again, so a send's source must stay unchanged until
@@ -574,10 +574,10 @@ hook and each `SC_CALL` callback, finds nine tasks with a path of calls to
 (`ObjectMotion_ArmCallback`), the world map's lighthouse jitter moves the
 camera with a glide, Lucky Wheels and the link countdown open instant
 windows (`WINDOW_FLAG_INSTANT`), and battle playback's sprite respawn tests
-`gTaskStatus`. The tenth path is the debug map selector, which only
+`gTasksRunning`. The tenth path is the debug map selector, which only
 the unused `DebugMapSelect_Schedule` would add as a task.
 
 - XXX (no evidence): what the five empty exports after the screen fades
-  (`RuntimeDispatch_ReservedNoOpA` to `E`) were for; they are empty in both
+  (`Stub_ReservedNoOpA` to `E`) were for; they are empty in both
   games, nothing calls them, and each is reached only through a bare veneer,
   so no code shows what they were to do.

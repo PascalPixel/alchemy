@@ -218,7 +218,7 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 localId, s32 target,
   emitter = 0;
   if (targetObjectEvent != 0) {
     Sound_PlaySongFar(SE_124);
-    ObjectDispatch_SelectAnimationFar(targetObjectEvent, 4);
+    Object_SelectAnimationFar(targetObjectEvent, 4);
     WaitFrames(12);
     emitter = (s32)FieldEffect_StartRandomParticleEmitter(localId, itemId);
   }
@@ -242,7 +242,7 @@ void Anim_ApplyChildPalette(struct Object *object, s32 palette) {
     sprite = object->sprite;
     replacement = palette - 1;
     if (palette == 0)
-      replacement = gAnim_ChildPaletteCycle[(gFrameCount >> 1) & 7];
+      replacement = gMindRead_CasterPaletteCycle[(gFrameCount >> 1) & 7];
 
     partCount = sprite->count;
     if (partCount != 0) {

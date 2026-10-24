@@ -157,7 +157,8 @@ static void EventScript_FightForge(void) {
 
 /// Advances the fragment's selected coordinate plane and keeps its targets in
 /// step.
-static void GomaCavePillar_UpdateFragment(union FieldObject *fieldObject) {
+static void
+GomaCavePillar_UpdateFragment(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *fragment = (struct ObjectEvent *)fieldObject;
   // The object event's speed and acceleration slots carry the two selected axis
   // steps.
@@ -188,7 +189,7 @@ static void GomaCavePillar_UpdateFragment(union FieldObject *fieldObject) {
 /// Applies child value 15 at the end of a fragment's lifetime.
 static s32 GomaCavePillar_FinishFragment(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
-  ObjectGroup_SetChildValue(objectEvent, 15);
+  ObjectEvent_SetSpriteColor(objectEvent, 15);
   return 0;
 }
 
@@ -199,7 +200,7 @@ static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
                                          s32 planeAndPriority) {
   // A struct copy of the named table, which sits in the middle of .data; a
   // local array of the three scripts compiles to the same code.
-  struct EffectScripts table;
+  struct EffectDurationScripts table;
   struct ObjectEvent *leader;
   struct ObjectEvent *fragment;
   struct Sprite *sprite;
@@ -211,9 +212,9 @@ static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
   if (fragment == 0)
     return;
   sprite = fragment->sprite;
-  ObjectDispatch_SelectAnimation(fragment, (scriptAndChildValue + 1) & 15);
+  Object_SelectAnimation(fragment, (scriptAndChildValue + 1) & 15);
   ObjectEvent_SetScript(fragment, table.script[scriptAndChildValue & 15]);
-  ObjectGroup_SetChildValue(fragment, ((u32)scriptAndChildValue >> 16) & 15);
+  ObjectEvent_SetSpriteColor(fragment, ((u32)scriptAndChildValue >> 16) & 15);
   fragment->motionFlags = 0;
   sprite->flags = 0;
   fragment->update = GomaCavePillar_UpdateFragment;
@@ -290,7 +291,7 @@ static void GomaCavePillar_SpawnStumpDust(void) {
   framePhase = gFrameCount & 7;
   if (framePhase == 0) {
     firstXSource = ObjectEvent_GetById(LOCALID_STUMP);
-    firstRandomX = Engine_RandomNext();
+    firstRandomX = Import_RandomNext();
     fixedX = firstXSource->x.fixed;
     fixedX +=
         ((((u32)(((firstRandomX << 1) + firstRandomX) << 2)) >> 16) << 16);
@@ -298,7 +299,7 @@ static void GomaCavePillar_SpawnStumpDust(void) {
     firstZSource = ObjectEvent_GetById(LOCALID_STUMP);
     fixedZ = firstZSource->z.fixed;
     fixedZ += PIXELS(6);
-    firstRandomSpeed = Engine_RandomNext();
+    firstRandomSpeed = Import_RandomNext();
     firstSpeedBand = ((u32)((firstRandomSpeed << 2) + firstRandomSpeed) >> 16);
     // These shifts produce speedBand * 6553: a tenth-pixel falling step.
     firstBandScaled =
@@ -307,14 +308,14 @@ static void GomaCavePillar_SpawnStumpDust(void) {
     firstFallingSpeed -= firstBandScaled;
     firstFallingSpeed <<= 3;
     firstFallingSpeed += firstSpeedBand;
-    firstStyle = (u32)(Engine_RandomNext() << 1) >> 16;
+    firstStyle = (u32)(Import_RandomNext() << 1) >> 16;
     firstFallingSpeed = -firstFallingSpeed;
     GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, 0,
                                  firstFallingSpeed, firstStyle, framePhase);
     framePhase = gFrameCount & 15;
     if (framePhase == 0) {
       secondXSource = ObjectEvent_GetById(LOCALID_STUMP);
-      secondRandomX = Engine_RandomNext();
+      secondRandomX = Import_RandomNext();
       fixedX = secondXSource->x.fixed;
       fixedX +=
           ((((u32)(((secondRandomX << 1) + secondRandomX) << 2)) >> 16) << 16);
@@ -322,7 +323,7 @@ static void GomaCavePillar_SpawnStumpDust(void) {
       secondZSource = ObjectEvent_GetById(LOCALID_STUMP);
       fixedZ = secondZSource->z.fixed;
       fixedZ += PIXELS(6);
-      secondRandomSpeed = Engine_RandomNext();
+      secondRandomSpeed = Import_RandomNext();
       secondSpeedBand =
           ((u32)((secondRandomSpeed << 2) + secondRandomSpeed) >> 16);
       // Keep the same five falling speeds for the second fragment.
@@ -332,7 +333,7 @@ static void GomaCavePillar_SpawnStumpDust(void) {
       secondFallingSpeed -= secondBandScaled;
       secondFallingSpeed <<= 3;
       secondFallingSpeed += secondSpeedBand;
-      secondStyle = (u32)(Engine_RandomNext() << 1) >> 16;
+      secondStyle = (u32)(Import_RandomNext() << 1) >> 16;
       secondFallingSpeed = -secondFallingSpeed;
       GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, 0,
                                    secondFallingSpeed, secondStyle, framePhase);
@@ -370,10 +371,11 @@ static void EventScript_PushStumpOver(void) {
     overlayObjectEvent->layer = 1;
     spriteObjectEvent = ObjectEvent_GetById(LOCALID_MASK_FOR_STUMP);
     ObjectEvent_SetSpriteFlags(spriteObjectEvent, 0);
-    ObjectGroup_ConfigureChildValue(LOCALID_MASK_FOR_STUMP, SPRITE_COLOR_BLACK);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_MASK_FOR_STUMP,
+                                     SPRITE_COLOR_BLACK);
     blendObjectEvent = ObjectEvent_GetById(LOCALID_MASK_FOR_STUMP);
     ObjectEvent_SetBlendMode(blendObjectEvent, OBJECT_BLEND_TRANSLUCENT);
-    Engine_ObjectEventSetPosition(LOCALID_MASK_FOR_STUMP, PIXELS(414),
+    Import_ObjectEventSetPosition(LOCALID_MASK_FOR_STUMP, PIXELS(414),
                                   PIXELS(240));
     WAIT(10);
     // Dust falls while the stump rocks on the edge.
@@ -393,7 +395,7 @@ static void EventScript_PushStumpOver(void) {
     // It tips over the edge.
     ObjectMotion_SetSpeedParameters(LOCALID_STUMP, 5 * PIXELS(1) / 2,
                                     PIXELS(1) / 4);
-    Sound_PlaySong(SE_STOP_SLOT3);
+    Sound_PlaySong(SE_STOP_ACTION_SE);
     ObjectMotion_ResetAndSetPosition(LOCALID_STUMP, 416, 200);
     movedObjectEvent = ObjectEvent_GetById(LOCALID_STUMP);
     ObjectEvent_SetSpriteFlags(movedObjectEvent, 0);
@@ -401,14 +403,14 @@ static void EventScript_PushStumpOver(void) {
     WAIT(12);
     Sound_PlaySong(SE_189);
     xSource = ObjectEvent_GetById(LOCALID_STUMP);
-    randomX = Engine_RandomNext();
+    randomX = Import_RandomNext();
     fixedX = xSource->x.fixed;
     fixedX += ((((u32)(((randomX << 1) + randomX) << 2)) >> 16) << 16);
     heightSource = ObjectEvent_GetById(LOCALID_STUMP);
     zSource = ObjectEvent_GetById(LOCALID_STUMP);
     fixedZ = zSource->z.fixed;
     fixedZ += PIXELS(6);
-    randomSpeed = Engine_RandomNext();
+    randomSpeed = Import_RandomNext();
     speedBand = ((u32)((randomSpeed << 2) + randomSpeed) >> 16);
     // A last piece of dust, with the same tenth-pixel speed bands.
     bandScaled = (((speedBand << 1) + speedBand) << 2) + speedBand;
@@ -416,7 +418,7 @@ static void EventScript_PushStumpOver(void) {
     fallingSpeed -= bandScaled;
     fallingSpeed <<= 3;
     fallingSpeed += speedBand;
-    style = (u32)(Engine_RandomNext() << 1) >> 16;
+    style = (u32)(Import_RandomNext() << 1) >> 16;
     fallingSpeed = -fallingSpeed;
     GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, zero,
                                  fallingSpeed, style, zero);
@@ -426,8 +428,8 @@ static void EventScript_PushStumpOver(void) {
     MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
     MapGrid_WaitForShakeToSettle();
-    Engine_ObjectEventSetPosition(LOCALID_STUMP, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_MASK_FOR_STUMP, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_STUMP, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_MASK_FOR_STUMP, 0, 0);
     GameFlag_Set(FLAG_GOMA_CAVE_STUMP_FELL);
     MapGrid_CopyCellAttributes(21, 45, 4, 2, 21, 11);
   }
@@ -519,10 +521,10 @@ static void EventScript_JumpGapWest(void) {
   destination->z = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed;
   if (FieldObject_CheckMovementCollision(leader, destination) == 0) {
     SCRIPT_START();
-    ObjectDispatch_SelectAnimation(leader, ANIM_LEADER_SPRING);
+    Object_SelectAnimation(leader, ANIM_LEADER_SPRING);
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
-    ObjectDispatch_SelectAnimation(leader, ANIM_LEADER_LEAP);
+    Object_SelectAnimation(leader, ANIM_LEADER_LEAP);
     leader->speed = PIXELS(3);
     leader->acceleration = PIXELS(2);
     leader->velocityY = PIXELS(4);
@@ -531,7 +533,7 @@ static void EventScript_JumpGapWest(void) {
     ObjectMotion_SetPositionAndCommit(LOCALID_PARTY_LEADER,
                                       *(s16 *)((u8 *)destination + 2),
                                       *(s16 *)((u8 *)destination + 10));
-    ObjectDispatch_SelectAnimation(leader, ANIM_LEADER_SPRING);
+    Object_SelectAnimation(leader, ANIM_LEADER_SPRING);
     ObjectEvent_SetSpriteFlags(leader, 1);
     *motionFlags = savedMotionFlags;
     SCRIPT_END();
@@ -677,7 +679,7 @@ s32 gPushedObject_FootprintBounds[] = {
 
 /// The scripts a pillar fragment can run, chosen by the low bits of its spawn
 /// value.
-struct EffectScripts gGomaCavePillar_FragmentScripts = {{
+struct EffectDurationScripts gGomaCavePillar_FragmentScripts = {{
     gGomaCavePillar_FragmentScriptShort,
     gGomaCavePillar_FragmentScriptMedium,
     gGomaCavePillar_FragmentScriptLong,

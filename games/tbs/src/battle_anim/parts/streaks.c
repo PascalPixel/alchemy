@@ -9,8 +9,8 @@
 // turn, in one of five colours. The streaks are work->particles, one for each
 // target and streak, and their variant counts the frames since they set off.
 
-/// Column `n` of style `mode`'s row of gStreaks_Records, four flags a style.
-#define STREAKS_VALUE(mode, n) gStreaks_Records[(mode)][(n)]
+/// Column `n` of style `mode`'s row of gStreaks_Styles, four flags a style.
+#define STREAKS_VALUE(mode, n) gStreaks_Styles[(mode)][(n)]
 #define STREAKS_ANIMATE 0 ///< nonzero: the streak cycles through three images
 #define STREAKS_HIT 1     ///< nonzero: play the hit sound and flash the target
 #define STREAKS_MOTION                                                         \
@@ -20,7 +20,7 @@
 
 #define STREAKS_MAX 3 ///< streaks fired at each target
 
-/// The streak volley's styles: its colour and its row of gStreaks_Records.
+/// The streak volley's styles: its colour and its row of gStreaks_Styles.
 enum StreakStyle {
   STREAKS_STYLE_EMBER,  ///< Sonic Wave
   STREAKS_STYLE_LIME,   ///< Shriek, and the unused BattleAnim_RunLimeStreaks
@@ -87,7 +87,7 @@ UNUSED void BattleAnim_RunLimeStreaks(struct BattleAnimArgs *effect) {
 /// trembling target's x.
 ///
 /// mode : the style, 0 to 4: the streak colour (ember, lime, violet, red,
-///        cyan) and the row of gStreaks_Records that says how a hit looks.
+///        cyan) and the row of gStreaks_Styles that says how a hit looks.
 void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
   struct ScreenPoint position;
   void **slots;
@@ -244,8 +244,8 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
               struck->x += 0x8000;
             else
               struck->x -= 0x8000;
-            ObjectGroup_UpdateMembers(work->effect->targets[k], -1, POSE_DAMAGE,
-                                      -1, 0);
+            BattleAnim_TintBattler(work->effect->targets[k], -1, POSE_DAMAGE,
+                                   -1, 0);
           }
 
           // The hit: the first streak plays the hit sound and flashes the
@@ -256,12 +256,12 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
               Sound_PlaySongFar(SE_IMPACT);
               if (k == 0) // the first hit lets the battle show the damage
                 ANIM_SHOW_DAMAGE(-1);
-              ObjectGroup_UpdateMembers(work->effect->targets[k],
-                                        SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
+              BattleAnim_TintBattler(work->effect->targets[k],
+                                     SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
             }
             if (frame == k * STREAKS_TARGET_DELAY + 40)
-              ObjectGroup_UpdateMembers(work->effect->targets[k],
-                                        SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
+              BattleAnim_TintBattler(work->effect->targets[k],
+                                     SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
           }
           // The style's recoil motion, with a camera shake.
           if (STREAKS_VALUE(mode, STREAKS_MOTION) != -1 &&
@@ -424,8 +424,8 @@ void BattleAnim_RunMoteFountain(struct BattleAnimArgs *effect, s32 mode) {
       ANIM_FOR_EACH_TARGET(i, work->effect) {
         if (frame == i * 8 + 48) {
           ANIM_SHOW_DAMAGE(-1);
-          ObjectGroup_UpdateMembers(work->effect->targets[i],
-                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 8);
+          BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 8);
         }
       }
     } else {
@@ -433,8 +433,8 @@ void BattleAnim_RunMoteFountain(struct BattleAnimArgs *effect, s32 mode) {
         if (frame == i * 8 + 48) {
           Sound_PlaySongFar(SE_RECOVERY);
           ANIM_SHOW_DAMAGE(-1);
-          ObjectGroup_UpdateMembers(work->effect->targets[i],
-                                    SPRITE_COLOR_WHITE, -1, i, 8);
+          BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+                                 -1, i, 8);
         }
       }
     }

@@ -65,9 +65,9 @@ STATIC_ASSERT(offsetof(struct PaletteFade, delta) == 0x1880);
 STATIC_ASSERT(offsetof(struct PaletteFade, packed) == 0x2300);
 STATIC_ASSERT(offsetof(struct PaletteFade, page) == 0x2a00);
 
-extern u16 gPalette_ComponentCurve[32];
-extern u16 gPalette_ComponentCurveLight[32];
-extern u16 gPalette_ComponentCurveContrast[32];
+extern u16 gTitleIntro_ChannelCurve[32];
+extern u16 gTitleIntro_ChannelCurveLight[32];
+extern u16 gTitleIntro_ChannelCurveContrast[32];
 
 /// A palette tint, a palette fade's build mode: below 0x8000 one RGB555 colour
 /// for all.

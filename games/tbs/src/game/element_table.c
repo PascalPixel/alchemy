@@ -19,7 +19,7 @@ const struct ElementLevelBonus gElement_PowerResistByLevel[16] = {
 };
 
 /// The 44 enemy element presets, by EnemyDefinition.elementPreset.
-const struct PresetValues gEnemy_ElementPresetTable[] = {
+const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
     {
         .first = ELEMENT_NONE,
         .digits = {1, 1, 1, 1},

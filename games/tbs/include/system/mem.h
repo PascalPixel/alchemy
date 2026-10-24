@@ -9,10 +9,10 @@
 
 void FreeHeapSlot(s32 slot);
 void Free(void *buffer);
-void Runtime_FillFreeHeapWords(u32 value);
+void Heap_FillFreeWords(u32 value);
 
-static __inline__ void *Runtime_CallAlternatePool(void *(*allocate)(s32),
-                                                  s32 size) {
+static __inline__ void *Heap_CallAlternatePool(void *(*allocate)(s32),
+                                               s32 size) {
   /* FAKEMATCH(wrapper): the size passes through the inline's parameter and is
    * built again at the call, not shared with its other uses; as a direct call,
    * 13 of 34 instructions differ in tbs-en (Curtain_Start). */

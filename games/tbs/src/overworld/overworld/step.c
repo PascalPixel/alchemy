@@ -7,7 +7,7 @@
 // The fields of struct Unit that Field_ProcessStep reads (see its tag).
 #ifndef UBFIX
 /// A party member's battle unit, seen as the HP and poison a step reads.
-struct StepOwner {
+struct UnitHpPoisonView {
   u8 unitFieldsBeforeHp[0x38];
   s16 hp; ///< struct Unit's hp: current HP, 0 when downed
   u8 unitFieldsBeforePoison[0x131 - 0x3a];
@@ -70,7 +70,7 @@ s32 Field_CountRequests(void) {
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *work;
   struct Object *leader;
-  struct MapGridState *gridState;
+  struct MapGridScrollAnimView *gridState;
   union PolarOffsetPosition position;
   u8 *tile;
   s32 fixedX;
@@ -194,22 +194,22 @@ void Field_CheckWarpRegions(s32 positionX, s32 positionY, s32 positionZ) {
 /// (-1 when someone fell), work->currentCell and previousCell, walkingDistance,
 /// fallenOwners and survivorCount, and gSaveBlock's hazard and Avoid counts.
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
-  /* FAKEMATCH(wrapper): the party read through struct StepOwner, whose alias
-   * set keeps the load order and the 44-byte frame; as struct Unit, 2
-   * of 472 instructions differ in tbs-en. */
+  /* FAKEMATCH(wrapper): the party read through struct UnitHpPoisonView, whose
+   * alias set keeps the load order and the 44-byte frame; as struct Unit, 2 of
+   * 472 instructions differ in tbs-en. */
   struct FieldWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
-  struct MapGridState *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
+  struct MapGridScrollAnimView *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   s32 leaderId = gSaveBlock.leaderLocalId;
   struct Object *leader = (struct Object *)work->objectEvents[leaderId];
   s16 previousHp[8];
   struct MapGridCell *tile;
 #ifdef UBFIX
   // The defined form reads the struct Unit Unit_GetFar returns, rather
-  // than through the unrelated struct StepOwner; it compiles to the same size
-  // with a different register allocation (see the tag above).
+  // than through the unrelated struct UnitHpPoisonView; it compiles to the same
+  // size with a different register allocation (see the tag above).
   struct Unit *unitVitals;
 #else
-  struct StepOwner *unitVitals;
+  struct UnitHpPoisonView *unitVitals;
 #endif
   u32 partyCount;
   s32 partyHurt;
@@ -354,7 +354,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
 #ifdef UBFIX
       unitVitals = Unit_GetFar(gSaveBlock.party[i]);
 #else
-      unitVitals = (struct StepOwner *)Unit_GetFar(gSaveBlock.party[i]);
+      unitVitals = (struct UnitHpPoisonView *)Unit_GetFar(gSaveBlock.party[i]);
 #endif
       if (unitVitals->hp > 0) {
         work->survivorCount++;

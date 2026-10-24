@@ -92,8 +92,8 @@ static void Colosso_LoadLettering(s32 id) {
   off = gColosso_LetteringPaletteOffsets[id];
   if (id == COLOSSO_PICTURE_WON_LOSE_FOR_LOSS)
     id = COLOSSO_PICTURE_WON_LOSE;
-  FieldResource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Lettering),
-                             buf);
+  FieldDecompress_Type01(Resource_GetTableEntry((s32)&ResourceId_Lettering),
+                         buf);
   Dma_Set(buf + off, (void *)&OBJ_PLTT_COLOR(15, 0),
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   Vram_Load(gColosso_LetteringSlot, 0x400,

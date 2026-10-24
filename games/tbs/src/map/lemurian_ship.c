@@ -129,7 +129,7 @@ const struct ObjectEventTemplate *LemurianShip_GetObjectEventTemplates(void) {
 /// colour. Reached by stepping on metatile behavior 1 (gLemurianShipEvents);
 /// takes LEMURIAN_SHIP_TO_LALIVERO_FARANS_HOUSE.
 static void EventScript_LeaveTheShip(void) {
-  Engine_ScriptRequestWarp(gFieldWork->coordEvent);
+  Import_ScriptRequestWarp(gFieldWork->coordEvent);
   Io_Write16(0, &PLTT_BACKDROP);
 }
 
@@ -170,20 +170,20 @@ static void ShipGlow_CyclePalette(void) {
 /// A drop of spray rises and wobbles for its timer, then falls back by
 /// gSprayFallScript, which frees it.
 /// The update hook Ship_UpdateSwell gives each drop it creates.
-static void Spray_Update(union FieldObject *fieldObject) {
+static void LemurianShip_SprayUpdate(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *drop = (struct ObjectEvent *)fieldObject;
 
   if (drop->timer != 0) {
     s32 drift;
 
     drop->timer--;
-    drift = Engine_RandomNext();
-    drift -= Engine_RandomNext();
+    drift = Import_RandomNext();
+    drift -= Import_RandomNext();
     drop->x.fixed += drift;
     drop->y.fixed += 0xcccc;
   } else if ((s16)drop->work != 0) {
     drop->work = 0;
-    ObjectDispatch_SelectAnimation(drop, 1);
+    Object_SelectAnimation(drop, 1);
     drop->wait = 20;
     ObjectEvent_SetScript(drop, gSprayFallScript);
   }
@@ -272,14 +272,14 @@ static void Ship_UpdateSwell(void) {
     objectEvent = ObjectEvent_Create(SPRITE_WATER_DROP, position->x,
                                      position->y, position->z);
     if (objectEvent != 0) {
-      objectEvent->update = Spray_Update;
+      objectEvent->update = LemurianShip_SprayUpdate;
       objectEvent->timer = 60;
       objectEvent->work = 1;
       objectEvent->motionFlags = 0;
       objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
       objectEvent->sprite->image.priority = 2;
       ObjectEvent_SetSpriteFlags(objectEvent, OBJECT_BLEND_NORMAL);
-      ObjectDispatch_SelectAnimation(objectEvent, 0);
+      Object_SelectAnimation(objectEvent, 0);
     }
   }
 }
@@ -288,7 +288,7 @@ static void Ship_UpdateSwell(void) {
 /// the ship.
 /// Called by gLeaderBoardsShip as he steps on deck; the other members'
 /// boarding scripts call their own copies below.
-static s32 Leader_StepOnDeck(struct Object *interpreter) {
+static s32 LemurianShip_LeaderStepOnDeck(struct Object *interpreter) {
   s32 *deckY;
   struct ObjectEvent *objectEvent;
 
@@ -299,7 +299,7 @@ static s32 Leader_StepOnDeck(struct Object *interpreter) {
 }
 
 /// Remembers Garet's boarding height for the swell callback.
-static s32 Garet_StepOnDeck(struct Object *interpreter) {
+static s32 LemurianShip_GaretStepOnDeck(struct Object *interpreter) {
   s32 *deckY;
   struct ObjectEvent *objectEvent;
 
@@ -310,7 +310,7 @@ static s32 Garet_StepOnDeck(struct Object *interpreter) {
 }
 
 /// Remembers Mia's boarding height for the swell callback.
-static s32 Mia_StepOnDeck(struct Object *interpreter) {
+static s32 LemurianShip_MiaStepOnDeck(struct Object *interpreter) {
   s32 *deckY;
   struct ObjectEvent *objectEvent;
 
@@ -370,8 +370,8 @@ static void LemurianShip_SetSail(void) {
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
   ObjectMotion_ArmCallback(LOCALID_IVAN, FACING_SOUTH, 0);
   FieldScript_WaitFrames(60);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(60);
   // The first question, Garet's: will the journey be over once they find
@@ -501,8 +501,8 @@ static void LemurianShip_SetSail(void) {
   FieldScript_ShowMessageAndWait(LOCALID_MIA, 0);
   Sound_PlaySong(SONG_FADE_OUT_BGM);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(40);
   // Everyone boards by their own scripts, hopping up onto the deck (SE_153
@@ -541,9 +541,9 @@ static void LemurianShip_SetSail(void) {
   ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
   ObjectMotion_ArmCallback(LOCALID_MIA, FACING_WEST, 0);
   FieldScript_WaitFrames(40);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(30);
   // The ship sails east and the curtains close: the sea's layer scrolls
@@ -594,7 +594,8 @@ struct RippleScrollWork {
 };
 
 /// One line's ripple offset.
-static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base) {
+static __inline__ s32 LemurianShip_WaveOffset(s32 angle, s32 amplitude,
+                                              u16 base) {
   return (u16)(Iwram_MulQ16(gRippleSine[(angle >> 16) & 0xff], amplitude) /
                256) +
          base;
@@ -676,7 +677,7 @@ static void EventScript_RaiseTheShip(void) {
   REG_BG2CNT = cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
   REG_BG1CNT = cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
   gOrbGlowActive = 0;
-  Script_PlaySong(SE_STOP_SLOT3);
+  Script_PlaySong(SE_STOP_ACTION_SE);
   Task_Wait(1);
   // A flash of white; the swell starts as it clears.
   Script_PlaySong(SE_145);
@@ -824,7 +825,7 @@ void ScanlineEffect_BuildPage(void) {
   amplitude = work->amplitude[0];
   base = gBgScroll[3].x;
   for (i = 0; i != 160; i++) {
-    *line = Wave_Offset(angle, amplitude, base);
+    *line = LemurianShip_WaveOffset(angle, amplitude, base);
     angle += step;
     line += 2;
   }
@@ -833,7 +834,7 @@ void ScanlineEffect_BuildPage(void) {
   angle = (work->phase + y) * work->frequency[1];
   amplitude = work->amplitude[1];
   for (i = 0; i != 160; i++) {
-    *line = Wave_Offset(angle, amplitude, y);
+    *line = LemurianShip_WaveOffset(angle, amplitude, y);
     angle += step;
     line += 2;
   }
@@ -921,7 +922,7 @@ static void Curtain_Close(void) {
 static void Curtain_Start(void) {
   u8 *tiles;
 
-  tiles = Runtime_CallAlternatePool(AllocEwram, 0x100);
+  tiles = Heap_CallAlternatePool(AllocEwram, 0x100);
   sCurtainVramSlot = VramCache_FindFreeEntry();
   Dma_Fill32(0x11111111, tiles, 0x100);
   VramCache_Load(sCurtainVramSlot, 0x100, tiles);
@@ -1070,7 +1071,7 @@ s32 gLeaderBoardsShip[] = {
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(1),
-    SC_CALL(Leader_StepOnDeck),
+    SC_CALL(LemurianShip_LeaderStepOnDeck),
     SC_END,
 };
 
@@ -1092,7 +1093,7 @@ s32 gGaretBoardsShip[] = {
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(1),
-    SC_CALL(Garet_StepOnDeck),
+    SC_CALL(LemurianShip_GaretStepOnDeck),
     SC_END,
 };
 
@@ -1138,6 +1139,6 @@ s32 gMiaBoardsShip[] = {
     SC_MOVE_BY(0, 0, PIXELS(-8)),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_CALL(Mia_StepOnDeck),
+    SC_CALL(LemurianShip_MiaStepOnDeck),
     SC_END,
 };

@@ -306,9 +306,9 @@ s32 KolimaInteriors_Initialize(void) {
     MapGrid_CopyCellsTo(34, 43, 19, 23, width, height);
     MapGrid_CopyCellsTo(34, 94, 19, 83, width, height);
     MapGrid_CopyCellsTo(94, 34, 79, 23, width, height);
-    Engine_ObjectEventSetPosition(LOCALID_FATHER_WITH_A_SECRET, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_WIFE_KEPT_FROM_THE_SECRET, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_CHILD_TOLD_THE_SECRET, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_FATHER_WITH_A_SECRET, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_WIFE_KEPT_FROM_THE_SECRET, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_CHILD_TOLD_THE_SECRET, 0, 0);
   }
   return 0;
 }

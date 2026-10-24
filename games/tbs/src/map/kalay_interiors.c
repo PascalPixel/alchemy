@@ -376,11 +376,11 @@ static void KalayInteriors_OpenDoorAndExit(void) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   leader->motionFlags = 0;
 
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectMotion_CenterOnColumn(LOCALID_PARTY_LEADER, 3, -8);
   FieldScript_WaitFrames(10);
 
-  Engine_ScriptRequestWarp(work->coordEvent);
+  Import_ScriptRequestWarp(work->coordEvent);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_End();
@@ -431,8 +431,8 @@ static void KalayInteriors_ApplyRoomState(void) {
       ObjectEvent_DestroyById(LOCALID_SEAN);
       ObjectEvent_DestroyById(LOCALID_FOURTH_TOURIST);
     } else {
-      ObjectGroup_ConfigureChildValue(LOCALID_SECOND_TOUR_GUIDE,
-                                      SPRITE_COLOR_RBG);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_TOUR_GUIDE,
+                                       SPRITE_COLOR_RBG);
     }
     return;
   default:

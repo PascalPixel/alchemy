@@ -191,7 +191,7 @@ void SpriteAnim_Reset(struct SpriteAnim *layer) {
 /// four. The first anim also sets the sprite's size, scale and offsets.
 /// Returns the anim, 0 when no sprite anim is free, or -1 when the sprite
 /// has four anims already. Called by Sprite_Create for a sprite's
-/// first anim, by ObjectDispatch_RegisterChildMetadata and the sprite
+/// first anim, by Object_RegisterSpriteMetadata and the sprite
 /// viewer, and as Sprite_AddAnimFar by the battle, the Psynergy
 /// effects and the field map's object events.
 s32 Sprite_AddAnim(struct Sprite *sprite, s32 id) {
@@ -633,7 +633,7 @@ struct Sprite *Sprite_Create(s32 id) {
 
 /// Releases a sprite: its VRAM cache entry (unless retainCacheEntry is set),
 /// its four sprite anims, and then zeroes its 56 bytes. Called by
-/// ObjectDispatch_Release and, as Sprite_DestroyFar, by the battle
+/// Object_Release and, as Sprite_DestroyFar, by the battle
 /// and its animations, the Psynergy effects and the menus.
 void Sprite_Destroy(struct Sprite *sprite) {
   s32 remaining;

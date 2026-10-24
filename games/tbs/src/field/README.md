@@ -170,7 +170,7 @@ The script continues after the label. A label it cannot find, and `SC_TOP`
 (0), restart the script.
 
 `SC_END` does not free the object: it points the script at
-`gScript_MainScript`, a lone `SC_END`, so the object idles until something
+`gObjectScript_EndScript`, a lone `SC_END`, so the object idles until something
 gives it another script. `SC_FREE` frees the slot. A footprint is an object of
 `FIELD_SPRITE_FOOTPRINT` that the player's control starts on
 `gWorldMap_FootprintActions`, `SC_WAIT(120), SC_FREE`.
@@ -201,7 +201,7 @@ handlers are the rows of
 | `SC_SYNC` | `0x01` | wait until the object reaches its target |
 | `SC_CAMERA` | `0x0b` | follow the leader |
 | `SC_LOOP(n, to)` | `0x0c`, n, to | jump to label `to` n - 1 times, so what lies between runs n times |
-| `SC_END` | `0x10` | return to `gScript_MainScript` and idle |
+| `SC_END` | `0x10` | return to `gObjectScript_EndScript` and idle |
 | `SC_PLAYER` | `0x18` | the player's control on a town or dungeon map |
 | `SC_KEYS` | `0x19` | move 8 pixels a step by the direction pad |
 | `SC_WORLD` | `0x1a` | the player's control on the world map |
@@ -263,10 +263,10 @@ in the order `Sprite_ComposeFrame` uses.
 An anim can also be recoloured as it is drawn: its colour mode
 (`SpriteAnim.colorMode`, `enum SpriteColorMode`) either picks one of nine
 256-byte tables that map each pixel to another colour (the five
-`gSpriteColorTables`, then the four of `gRuntime_ByteRemapTable`,
+`gSpriteColorTables`, then the four of `gSpriteColorRemapTables`,
 which lie one after another), or paints every drawn pixel one colour. The
 first remap table also recolours the menus' command icons
-(`Runtime_RemapBytesByTable`).
+(`SpriteColor_RemapPixels`).
 
 A sprite is a `struct Sprite`, and each of its anims a
 `struct SpriteAnim`; the four remap tables are in `remap.c`.
@@ -552,12 +552,12 @@ reader does, as [Matching](../MATCHING.md#views-of-one-struct) explains:
 | View | Reader | What differs |
 | --- | --- | --- |
 | `ScriptOperands` (`include/field/action_script.h`) | `SC_SET`, `SC_ADD`, `SC_CMP` | every field at the width its operand handler reads, unsigned |
-| `ScriptMotionObject` (`include/script_motion.h`) | `Object_UpdateAll` (`update.c`) | ARM code built with GCC 2.95.2, which cannot read `Object`'s anonymous unions |
+| `ObjectArmView` (`include/script_motion.h`) | `Object_UpdateAll` (`update.c`) | ARM code built with GCC 2.95.2, which cannot read `Object`'s anonymous unions |
 | `BattleSpriteObject` (`include/battle/motobj.h`) | `BattleObject_SpawnObjectsForList` | the sprite word untyped |
 
-The update hook at offset 0x6c takes a `union FieldObject *`, through
+The update hook at offset 0x6c takes a `union ObjectEventOrEffect *`, through
 which a hook reads its object as an object event or as an effect.
-`ObjectEvent`, `FieldEffect` and `union FieldObject` stay because maps are
+`ObjectEvent`, `FieldEffect` and `union ObjectEventOrEffect` stay because maps are
 written through them; the views in the table stay because their readers compile to
 [the original](../../glossary.md#the-original)'s instructions only through
 them. [Camelot](../../glossary.md#camelot)'s source likely had one struct.

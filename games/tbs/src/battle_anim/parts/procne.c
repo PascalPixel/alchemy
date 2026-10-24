@@ -204,9 +204,8 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
         do {
           if (frame == gProcne_Frames[slot]) {
             object->velocityY = 0;
-            ObjectGroup_UpdateMembers(work->effect->targets[index],
-                                      SPRITE_COLOR_WHITE, POSE_DAMAGE, index,
-                                      8);
+            BattleAnim_TintBattler(work->effect->targets[index],
+                                   SPRITE_COLOR_WHITE, POSE_DAMAGE, index, 8);
           }
           slot++;
         } while (slot != 4);

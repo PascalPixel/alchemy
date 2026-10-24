@@ -4,11 +4,11 @@
 	.set import.__modsi3, 1
 	.set import.WaitFrames, 1
 	.set import.Task_Add, 1
-	.set import.Engine_RandomNext, 1
+	.set import.Import_RandomNext, 1
 	.set import.Trig_Sin, 1
 	.set import.Trig_Cos, 1
-	.set import.ObjectDispatch_SelectAnimation, 1
-	.set import.ObjectDispatch_SetAnimationSpeed, 1
+	.set import.Object_SelectAnimation, 1
+	.set import.Object_SetAnimationSpeed, 1
 	.set import.MapGrid_CopyMetatileIndicesRect, 1
 	.set import.Window_Create, 1
 	.set import.Window_Close, 1
@@ -31,9 +31,9 @@
 	.set import.FieldScript_AskYesNoWithObjectEventAnimation, 1
 	.set import.ObjectEvent_GetById, 1
 	.set import.ObjectMotion_SetPositionAndReset, 1
-	.set import.Engine_ObjectEventSetPosition, 1
-	.set import.Engine_ObjectEventSetAnimation, 1
-	.set import.ObjectGroup_ConfigureChildValue, 1
+	.set import.Import_ObjectEventSetPosition, 1
+	.set import.Import_ObjectEventSetAnimation, 1
+	.set import.ObjectEvent_ConfigureSpriteColor, 1
 	.set import.FieldScript_SetMessageId, 1
 	.set import.FieldMessage_ShowAtObject, 1
 	.set import.FieldScript_ShowMessageAndWait, 1

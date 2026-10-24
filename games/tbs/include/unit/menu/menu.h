@@ -197,7 +197,7 @@ void SummaryScreen_ShowMemberProgressMessage(struct Window *destination,
                                              s32 preserveVariant);
 void SummaryScreen_DrawStatusAilments(struct Window *window, s32 memberId,
                                       s32 mode);
-void Runtime_RunBusyWaitDelay(void);
+void Menu_BusyWait(void);
 void ItemMenu_DrawMemberStatus(struct Window *window, s32 memberId, s32 flags);
 s32 SummaryScreen_BuildAvailability(u8 *ailments, s32 requested, s32 memberId);
 s32 PagedList_Build(struct PagedList *result, s32 index);

@@ -264,8 +264,8 @@ void BattleAnim_RunRamses(struct BattleAnimArgs *effect) {
       ANIM_FOR_EACH_TARGET(i, work->effect) {
         BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
                                        KNOCKBACK_HURL);
-        ObjectGroup_UpdateMembers(work->effect->targets[i], SPRITE_COLOR_WHITE,
-                                  -1, i, 8);
+        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE, -1,
+                               i, 8);
       }
       work->shakeFrames = 8;
     }

@@ -2,13 +2,13 @@
 	.set overlay_imports, 1
 	.set import.WaitFrames, 1
 	.set import.Task_Add, 1
-	.set import.Engine_RandomNext, 1
+	.set import.Import_RandomNext, 1
 	.set import.Trig_Sin, 1
 	.set import.Trig_Cos, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
 	.set import.Object_SetMoveTarget, 1
 	.set import.Object_WaitForMove, 1
-	.set import.ObjectDispatch_SetSingleChildFlags, 1
+	.set import.Object_SetSpriteFlags, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
 	.set import.FieldScript_WaitFrames, 1
@@ -22,11 +22,11 @@
 	.set import.ObjectMotion_EnableActionAndResetMotion, 1
 	.set import.ObjectMotion_ResetAndSetPosition, 1
 	.set import.ObjectMotion_SetPositionAndReset, 1
-	.set import.Engine_ObjectEventSetPosition, 1
+	.set import.Import_ObjectEventSetPosition, 1
 	.set import.ObjectMotion_Launch, 1
 	.set import.ObjectMotion_SetVariantCallback, 1
 	.set import.ObjectMotion_SetVarCbAndRefresh, 1
-	.set import.ObjectGroup_ConfigureChildValue, 1
+	.set import.ObjectEvent_ConfigureSpriteColor, 1
 	.set import.FieldScript_SetMessageId, 1
 	.set import.FieldScript_ShowMessageThenWait, 1
 	.set import.ObjectMotion_ArmCallback, 1
@@ -36,7 +36,7 @@
 	.set import.FieldCamera_FollowObjectEvent, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_GetScriptObject, 1
-	.set import.Engine_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestWarp, 1
 	.set import.Field_ClimbDown, 1
 	.set import.Field_ClimbUp, 1
 	.set import.FieldScript_StartScreenTransition, 1

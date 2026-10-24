@@ -271,8 +271,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
     object->scaleX = Q16_ONE;
     object->scaleY = Q16_ONE;
   }
-  ObjectDispatch_InitializeFar((struct Object *)object,
-                               gBattleObject_EmptyScript);
+  Object_InitializeFar((struct Object *)object, gBattleObject_EmptyScript);
 }
 
 /// Reads the battlefield position of party place index from

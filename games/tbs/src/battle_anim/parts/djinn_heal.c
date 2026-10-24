@@ -73,7 +73,7 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
   SET_VECTOR(delta, (target[0] - position[0]) / 40,
              (target[1] - position[1]) / 40, (target[2] - position[2]) / 40);
   for (frame = 0; frame != DJINN_HEAL_SWIRL_FRAMES; frame++) {
-    struct BattleCamera *camera = gCameraWork;
+    struct BattleCamera *camera = gBattleCamera;
     if (frame == 8)
       Sound_PlaySongFar(SE_212);
     if (frame == 80)
@@ -87,10 +87,9 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
     Transform_ApplyPosition(position);
     // The user glows white for the first 24 frames.
     if (frame == 0)
-      ObjectGroup_UpdateMembers(work->effect->user, SPRITE_COLOR_WHITE, -1, -1,
-                                0);
+      BattleAnim_TintBattler(work->effect->user, SPRITE_COLOR_WHITE, -1, -1, 0);
     if (frame == 24)
-      ObjectGroup_UpdateMembers(work->effect->user, 0, -1, -1, 0);
+      BattleAnim_TintBattler(work->effect->user, 0, -1, -1, 0);
     // The swirl: 32 motes, mote i from frame i + 1, each turning about its
     // own axis (by i & 3: yaw, pitch, roll, or pitch and roll), its speed
     // damped to 60/64 each frame and, from 30 frames after it appears,
@@ -156,7 +155,7 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sheet, 0, 0);
   for (frame = 0; frame != work->effect->targetCount * 8 + 72; frame++) {
-    struct BattleCamera *camera = gCameraWork;
+    struct BattleCamera *camera = gBattleCamera;
     ANIM_VIEW_FROM_CAMERA(camera);
     // The Djinni sways 40 pixels either way in depth every 32 frames, and
     // flies up 4 pixels a frame for the last 32.
@@ -182,10 +181,10 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
       if (frame == start + 30)
         Sound_PlaySongFar(SE_RECOVERY);
       if (frame == start + 40)
-        ObjectGroup_UpdateMembers(work->effect->targets[member],
-                                  SPRITE_COLOR_WHITE, -1, -1, 0);
+        BattleAnim_TintBattler(work->effect->targets[member],
+                               SPRITE_COLOR_WHITE, -1, -1, 0);
       if (frame == start + 64)
-        ObjectGroup_UpdateMembers(work->effect->targets[member], 0, -1, -1, 0);
+        BattleAnim_TintBattler(work->effect->targets[member], 0, -1, -1, 0);
       if (frame > start) {
         Transform_ApplyYaw((frame - start) << 9);
         for (i = 0; i != 64; i++) {

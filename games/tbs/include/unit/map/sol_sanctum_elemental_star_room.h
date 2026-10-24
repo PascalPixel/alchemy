@@ -11,10 +11,10 @@ const struct ObjectEventTemplate *
 SolSanctumElementalStarRoom_GetObjectEventTemplates(void);
 const struct MapEvent *SolSanctumElementalStarRoom_GetEvents(void);
 s32 SolSanctumElementalStarRoom_Initialize(void);
-extern s32 gShortEffectScript[];
-extern s32 gMediumEffectScript[];
-extern s32 gLongEffectScript[];
-extern const s32 *gEffectScripts[];
+extern s32 gFieldEffect_ShortScript[];
+extern s32 gFieldEffect_MediumScript[];
+extern s32 gFieldEffect_LongScript[];
+extern const s32 *gFieldEffect_DurationScripts[];
 extern s32 gSolSanctumElementalStarRoom_AngleScript[];
 extern s32 gSolSanctumElementalStarRoom_PresentItemScript[];
 extern struct MapWarpDest gSolSanctumElementalStarRoom_WarpDests[];

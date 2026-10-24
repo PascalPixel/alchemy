@@ -38,7 +38,7 @@ void FieldEffect_CheckCloakTile(void) {
 #else
   // The named map slot avoids reading outside gFieldWork. It adds 4 bytes
   // to this function in the forced native EN build (0xc0 -> 0xc4).
-  tile = (u8 *)*(struct MapGridState **)(slot - 76); // gMapGridWork[0]
+  tile = (u8 *)*(struct MapGridScrollAnimView **)(slot - 76); // gMapGridWork[0]
 #endif
 
   // Whole metatiles or cells, rounded toward zero as a division would be.
@@ -59,7 +59,9 @@ void FieldEffect_CheckCloakTile(void) {
     tile = (u8 *)gMetatiles + ((tx + (ty << 5)) << 2);
   } else {
     if (leader->layer <= 2) {
-      tile = (u8 *)((struct MapGridState *)tile)->layers[leader->layer].cells;
+      tile = (u8 *)((struct MapGridScrollAnimView *)tile)
+                 ->layers[leader->layer]
+                 .cells;
     } else
       tile = (u8 *)gMapGridCellBuffer;
 
@@ -99,7 +101,7 @@ void FieldEffect_EndCloak(void) {
 
   Sound_PlaySongFar(SE_CAST);
   Task_Remove(FieldEffect_CheckCloakTile);
-  ObjectDispatch_SelectAnimationFar(object, 0);
+  Object_SelectAnimationFar(object, 0);
   object->update = 0;
 
   for (i = 0; i < 5; ++i) {
@@ -152,7 +154,7 @@ void FieldEffect_StartCloak(void) {
   void (*check)(void);
 
   Sound_PlaySongFar(SE_130);
-  ObjectDispatch_SelectAnimationFar(leader, 0);
+  Object_SelectAnimationFar(leader, 0);
   leader->update = 0;
   n = 0;
   do {

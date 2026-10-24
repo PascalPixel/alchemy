@@ -14,7 +14,7 @@
 #include "static_assert.h"
 
 /// The heap's 64 words in IWRAM (0x03001e50), seen as union HeapState. The
-/// work globals named in system/iwram.s (gBattleWork, gCameraWork,
+/// work globals named in system/iwram.s (gBattleWork, gBattleCamera,
 /// gFieldWork and others) are single slots of this table.
 extern void *gHeapSlots[64];
 
@@ -69,7 +69,7 @@ enum HeapSlot {
   HEAP_SLOT_BATTLE = 9,
   /// The battle background's scanline work (struct BattleAffineHdma).
   HEAP_SLOT_BATTLE_SCANLINES = 10,
-  /// The 3D camera (struct BattleCamera, gCameraWork) of a battle, the world
+  /// The 3D camera (struct BattleCamera, gBattleCamera) of a battle, the world
   /// map or Lucky Dice.
   HEAP_SLOT_CAMERA = 12,
   /// A scratch buffer, usually 1 KB, that a picture is decoded into and
@@ -97,10 +97,10 @@ enum HeapSlot {
   /// The running ground particles, motes or sparkles (struct
   /// WeatherWork).
   HEAP_SLOT_WEATHER = 29,
-  /// The field's colour blend work (gLightningWork): the struct
-  /// LightningWork the storm's lightning and Weather_StartLightningFlash
+  /// The field's colour blend work (gFieldBlendWork): the struct
+  /// FieldBlendWork the storm's lightning and Weather_StartLightningFlash
   /// allocate.
-  HEAP_SLOT_LIGHTNING = 30,
+  HEAP_SLOT_FIELD_BLEND = 30,
   /// The screen transition (struct ScreenTransitionState,
   /// gScreenTransitionWork): the window edges and dissolve of a map change.
   HEAP_SLOT_SCREEN_TRANSITION = 31,

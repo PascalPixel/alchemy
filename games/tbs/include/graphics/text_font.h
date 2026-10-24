@@ -1,5 +1,5 @@
-#ifndef GUARD_TEXT_FONT_H
-#define GUARD_TEXT_FONT_H
+#ifndef ALCHEMY_TEXT_FONT_H
+#define ALCHEMY_TEXT_FONT_H
 
 /// @file
 /// The kanji glyphs and the text marks drawn with characters.

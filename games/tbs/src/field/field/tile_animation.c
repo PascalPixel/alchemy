@@ -17,7 +17,7 @@ void TilesetAnim_Update(void) {
   // tbs-en, and a pointer to it swaps ip and lr. The retries stay gotos: as
   // an inner for (;;) loop with continue and break, loop.c reshapes the outer
   // loop.
-  struct MapGridState *gridState = gMapGridWork[0];
+  struct MapGridScrollAnimView *gridState = gMapGridWork[0];
   u32 channelIndex;
 
   for (channelIndex = 0; channelIndex <= 15; channelIndex++) {
@@ -58,7 +58,7 @@ void TilesetAnim_Update(void) {
       (gridState->animations + channelIndex)->timer = commands[1];
       // A source tile from 0x600 (0x200 for 64-byte tiles) is read from
       // RAM: both bases put tile 0x600 (0x200) at 0x02028000, the start of
-      // gMapGridLayerData. A lower one is copied within VRAM. The count is in
+      // gMapGridAnimTiles. A lower one is copied within VRAM. The count is in
       // tiles, eight words each (16 when wide).
       if (gridState->wideTiles == 0) {
         if (sourceTileOrOpcode >= 0x600)
@@ -92,7 +92,7 @@ void TilesetAnim_Update(void) {
 /// Map scripts and the Battle Arena (menu/battle_arena.c, tileset animation 5)
 /// reach it through TilesetAnim_ResumeFar.
 void TilesetAnim_Resume(u32 channelIndex) {
-  struct MapGridState *gridState = gMapGridWork[0];
+  struct MapGridScrollAnimView *gridState = gMapGridWork[0];
   struct TilesetAnim *channel = &gridState->animations[channelIndex];
 
   channel->paused = 0;
@@ -102,7 +102,7 @@ void TilesetAnim_Resume(u32 channelIndex) {
 /// Map scripts and the Battle Arena (menu/battle_arena.c, tileset animation 5)
 /// reach it through TilesetAnim_PauseFar.
 void TilesetAnim_Pause(u32 channelIndex) {
-  struct MapGridState *gridState = gMapGridWork[0];
+  struct MapGridScrollAnimView *gridState = gMapGridWork[0];
   struct TilesetAnim *channel = &gridState->animations[channelIndex];
 
   channel->paused = 1;
@@ -114,7 +114,7 @@ void TilesetAnim_Pause(u32 channelIndex) {
 /// starts. Called by MapGrid_LoadLayout with the map's own script, and by
 /// WorldMap_InitializePerspective with the world map's default one.
 void TilesetAnim_StartAll(const u16 *script) {
-  struct MapGridState *gridState;
+  struct MapGridScrollAnimView *gridState;
   s32 channelsStarted;
   u32 marker;
 
@@ -172,7 +172,7 @@ void TilesetAnim_ResumeAll(void) {
 void BlendScript_Run(void) {
   // The retries stay gotos: as a for (;;) loop with continue, loop.c hoists
   // blendControl's address and 118 bytes of tbs-en's code change.
-  struct MapGridState *gridState = gMapGridWork[0];
+  struct MapGridScrollAnimView *gridState = gMapGridWork[0];
   struct BlendScriptState *blend;
   u16 *commands;
   u32 instruction;
@@ -243,7 +243,7 @@ void BlendScript_Start(u16 *script) {
   // paused; a script that is only its end marker leaves the blend unset.
   hasScript = 0;
   zero = 0;
-  blend = &((struct MapGridState *)gMapGridWork[0])->blend;
+  blend = &((struct MapGridScrollAnimView *)gMapGridWork[0])->blend;
   Dma_Set((const void *)&zero, blend,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 3, REG_DMA3);
   if (*script != 0xffff) {

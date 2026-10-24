@@ -228,7 +228,7 @@ static void EventScript_ReadRightThiefMind(void) {
 /// a plain warp instead, VAULT_JAIL_TO_VAULT_REVISIT.
 static void EventScript_LeaveForVault(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  Engine_ScriptRequestWarp(VAULT_JAIL_TO_VAULT);
+  Import_ScriptRequestWarp(VAULT_JAIL_TO_VAULT);
 }
 
 /// Opens the map through a window transition and lets the party reach the

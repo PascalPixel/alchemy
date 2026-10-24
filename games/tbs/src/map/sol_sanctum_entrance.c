@@ -133,10 +133,10 @@
 #define FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_WEST 0x31b
 
 // Map flags, cleared on every ordinary arrival:
-// - FLAG_MAP_TEMP_34: set on entering the second relief room; the
-//   Move rows of the first relief room apply only while it is clear, which
-//   it always is there: only the second room's warp destinations set it, every
-//   ordinary warp destination into the first room clears it, and a return
+// - FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM: set on entering the second relief
+//   room; the Move rows of the first relief room apply only while it is clear,
+//   which it always is there: only the second room's warp destinations set it,
+//   every ordinary warp destination into the first room clears it, and a return
 //   after a battle comes back by the warp destination the party last came in
 //   by, so the condition never stops a Move.
 
@@ -293,12 +293,12 @@ static void EventScript_OpenDoorAndEnter(void) {
   ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 2);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 120, 98);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -8);
   FieldScript_WaitFrames(10);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Engine_ScriptRequestWarp(SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS);
+  Import_ScriptRequestWarp(SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS);
   FieldScript_End();
 }
 
@@ -456,10 +456,10 @@ static inline void SolSanctumEntrance_RecordStatueColumn(s32 column,
 }
 
 /// Sol Sanctum, the first relief room: Move on the west statue
-/// (LOCALID_WEST_STATUE) while FLAG_MAP_TEMP_34 is clear, and called by
-/// EventScript_PushStatue there. The column it stops in is saved: sets
-/// FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST or _AT_WEST, or clears both when it
-/// stands in neither column.
+/// (LOCALID_WEST_STATUE) while FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM is clear,
+/// and called by EventScript_PushStatue there. The column it stops in is saved:
+/// sets FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST or _AT_WEST, or clears both when
+/// it stands in neither column.
 static void EventScript_WestStatueMoved(void) {
   struct ObjectEvent *statue = ObjectEvent_GetById(LOCALID_WEST_STATUE);
   s32 column;
@@ -585,6 +585,10 @@ static void EventScript_RowStatue6Moved(void) {
 
 #include "common/object_findcell.h"
 
+/// The party has entered the second relief room, which turns off Move on the
+/// first relief room's statues.
+#define FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM FLAG_MAP_TEMP_34
+
 /// Sol Sanctum, the two relief rooms: walking into a statue's cell
 /// pushes it one cell, the leader behind it, if nothing is in the way, and its
 /// column is saved through the room's Moved events.
@@ -612,7 +616,7 @@ static void EventScript_PushStatue(void) {
                  statue->y.fixed, statue->z.fixed + (packedStep << 16));
     // Move only after the statue's proposed position passes collision.
     if (FieldObject_CheckMovementCollision(statue, destination) <= 0) {
-      ObjectDispatch_SelectAnimation(leader, ANIM_PUSH);
+      Object_SelectAnimation(leader, ANIM_PUSH);
       WaitFrames(15);
       Sound_PlaySong(SE_PUSH);
       statue->speed = PIXELS(1) / 5;
@@ -628,7 +632,7 @@ static void EventScript_PushStatue(void) {
       statue->z.fixed = destination->z;
       statue->velocityX = stoppedVelocity;
       statue->velocityZ = stoppedVelocity;
-      ObjectDispatch_SelectAnimation(leader, ANIM_STAND);
+      Object_SelectAnimation(leader, ANIM_STAND);
       // Save the moved statue in the flag set belonging to this room.
       switch (gSaveBlock.warpDest) {
       case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM:
@@ -696,17 +700,18 @@ static void SolSanctumEntrance_ApplyEntryState(void) {
   }
 }
 
-/// Sets up Sol Sanctum (MapId_SolSanctumReliefs): after the eruption its
-/// rooms rumble and shake. SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST
-/// and SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_ROOM show the first
+/// Sets up Sol Sanctum (MapId_SolSanctumReliefs): after the eruption its rooms
+/// rumble and shake. SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST and
+/// SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_ROOM show the first
 /// relief's passage once it is open; SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE, the
 /// way in, makes itself the Retreat point and plays Kraden's welcome until
 /// FLAG_SOL_SANCTUM_ENTERED is set. In the first relief room Kraden's talk of
 /// the hidden passage plays until FLAG_SEARCHING_FOR_HIDDEN_PASSAGE is set, and
 /// the two statues go back to their saved columns; in the second relief room
 /// Kraden sees the row of statues until FLAG_SOL_SANCTUM_MORE_STATUES_SEEN is
-/// set, the six go back to their columns, FLAG_MAP_TEMP_34 is set and the
-/// second relief's doorway shows once it is open.
+/// set, the six go back to their columns,
+/// FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM is set and the second relief's
+/// doorway shows once it is open.
 static void SolSanctumEntrance_RestoreInteriorState(void) {
   s32 warpDest;
   gFieldWork->transition =
@@ -790,7 +795,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_MORE_STATUES_SEEN) == 0)
       SolSanctumEntrance_KradenSeesStatuesOutOfReach();
     SolSanctumEntrance_RestoreRowStatueCells(1);
-    GameFlag_Set(FLAG_MAP_TEMP_34);
+    GameFlag_Set(FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM);
     if (GameFlag_Get(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET) != 0) {
       MapGrid_CopyCellsTo(0, 71, 100, 71, 1, 1);
       MapGrid_CopyCellsTo(122, 20, 120, 30, 1, 2);
@@ -814,7 +819,7 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   FieldScript_Start();
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldScript_StartScreenTransition();
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
   FieldScript_WaitFrames(4);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   // Gather the followers around the leader for Kraden's introduction.
@@ -835,19 +840,19 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(3) / 5, PIXELS(3) / 10);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_WALK);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_GARET, -16, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_JENNA, 16, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_KRADEN, 0, -32);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, 0);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, 0);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTH, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KRADEN);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
   FieldScript_WaitFrames(40);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
   FieldScript_WaitFrames(20);
@@ -861,19 +866,19 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Script_AskYesNo(SPEAKER_WINDOW_ABOVE | LOCALID_KRADEN, 0);
   FieldScript_WaitFrames(20);
   FieldCamera_MoveTo(PIXELS(1224), -1, PIXELS(148), 1);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_GARET, leader->x.part.pixel,
                                leader->z.part.pixel);
   }
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_JENNA, leader->x.part.pixel,
                                leader->z.part.pixel);
   }
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_KRADEN, leader->x.part.pixel,
@@ -884,9 +889,9 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   ObjectEvent_SetPosition(LOCALID_JENNA, 0, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KRADEN);
   ObjectEvent_SetPosition(LOCALID_KRADEN, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
   GameFlag_Set(FLAG_SOL_SANCTUM_ENTERED);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -912,31 +917,31 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   // Spread the party out while Kraden examines the room.
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL)
-    Engine_ObjectEventSetPosition(LOCALID_KRADEN, leader->x.fixed,
+    Import_ObjectEventSetPosition(LOCALID_KRADEN, leader->x.fixed,
                                   leader->z.fixed);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL)
-    Engine_ObjectEventSetPosition(LOCALID_JENNA, leader->x.fixed,
+    Import_ObjectEventSetPosition(LOCALID_JENNA, leader->x.fixed,
                                   leader->z.fixed);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL)
-    Engine_ObjectEventSetPosition(LOCALID_GARET, leader->x.fixed,
+    Import_ObjectEventSetPosition(LOCALID_GARET, leader->x.fixed,
                                   leader->z.fixed);
 
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(3) / 5, PIXELS(3) / 10);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_WALK);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_GARET, -16, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_JENNA, 16, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_KRADEN, 0, -16);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KRADEN);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, 0);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, 0);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST, 0);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 30);
@@ -954,20 +959,20 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 40);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
   ObjectMotion_OffsetPositionAndResetMotion(LOCALID_KRADEN, 0, -16);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KRADEN);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
   FieldScript_WaitFrames(6);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_WEST, 20);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_EAST, 20);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 40);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
   ObjectMotion_OffsetPositionAndResetMotion(LOCALID_KRADEN, 0, -32);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KRADEN);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
 
   // Survey both sides of the room before returning to Kraden.
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
@@ -979,7 +984,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   FieldCamera_WaitForArrival();
   FieldCamera_MoveTo(PIXELS(1718), -1, PIXELS(100), 1);
   FieldCamera_WaitForArrival();
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
   FieldCamera_MoveTo(PIXELS(1752), -1, PIXELS(150), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(40);
@@ -1080,32 +1085,32 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
 
   // Bring Kraden back and return the followers to the party.
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
   ObjectMotion_OffsetPositionAndResetMotion(LOCALID_KRADEN, 0, 48);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KRADEN);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
   FieldScript_WaitFrames(6);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
   ObjectMotion_ArmCallback(LOCALID_JENNA, FACING_NORTHWEST, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KRADEN);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(6);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL)
     ObjectMotion_ResetAndSetPosition(LOCALID_GARET, leader->x.part.pixel,
                                      leader->z.part.pixel);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL)
     ObjectMotion_ResetAndSetPosition(LOCALID_JENNA, leader->x.part.pixel,
                                      leader->z.part.pixel);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL)
     ObjectMotion_ResetAndSetPosition(LOCALID_KRADEN, leader->x.part.pixel,
@@ -1115,9 +1120,9 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
   ObjectEvent_SetPosition(LOCALID_JENNA, 0, 0);
   ObjectEvent_SetPosition(LOCALID_KRADEN, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
   GameFlag_Set(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   FieldScript_End();
@@ -1142,10 +1147,10 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
     ObjectEvent_SetPosition(LOCALID_KRADEN, leader->x.fixed, leader->z.fixed);
   }
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_KRADEN, 24, -10);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KRADEN);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
   FieldScript_WaitFrames(6);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 40);
@@ -1172,7 +1177,7 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH + FACING_STEP, 20);
   // Kraden: "Perhaps Psynergy is the key..."
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_KRADEN, 0, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_KRADEN, leader->x.part.pixel,
@@ -1307,7 +1312,7 @@ static void SolSanctumEntrance_UpdateEruptionRumbles(void) {
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
     }
   } else {
-    randomValue = Engine_RandomNext();
+    randomValue = Import_RandomNext();
     if (((u32)(((randomValue << 4) - randomValue) << 3) >> 16) == 0) {
       Script_PlaySong(SE_ITEM_BREAK);
       MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
@@ -1571,8 +1576,8 @@ struct MapEvent gSolSanctumReliefs_FirstReliefRoomEvents[] = {
     { MAP_EVENT_WARP, 14, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST },
     { MAP_EVENT_WARP, 15, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE },
     { MAP_EVENT_WARP, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_WEST_STATUE, FLAG_MAP_TEMP_34, EVENT_SCRIPT(EventScript_WestStatueMoved) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_EAST_STATUE, FLAG_MAP_TEMP_34, EVENT_SCRIPT(EventScript_EastStatueMoved) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_WEST_STATUE, FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM, EVENT_SCRIPT(EventScript_WestStatueMoved) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_EAST_STATUE, FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM, EVENT_SCRIPT(EventScript_EastStatueMoved) },
     { COORD_EVENT_WALKING, MB_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatue) },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), MB_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatue) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), MB_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatue) },

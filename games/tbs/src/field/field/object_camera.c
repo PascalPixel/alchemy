@@ -20,10 +20,10 @@ struct ObjectCameraPoint {
   s32 z; ///< 16.16 fixed-point pixels
 };
 
-/// The start of the 3D camera's work (heap slot HEAP_SLOT_CAMERA, gCameraWork,
-/// a struct BattleCamera), as the fixed camera reads it: the eye and target it
-/// looks from and at, or the points that stand in for them. The battle, the
-/// world map or Lucky Dice owns the block.
+/// The start of the 3D camera's work (heap slot HEAP_SLOT_CAMERA,
+/// gBattleCamera, a struct BattleCamera), as the fixed camera reads it: the eye
+/// and target it looks from and at, or the points that stand in for them. The
+/// battle, the world map or Lucky Dice owns the block.
 struct ObjectCameraFixed {
   struct ObjectCameraPoint eye;
   struct ObjectCameraPoint target;
@@ -219,7 +219,7 @@ void ObjectSystem_ProjectSprites(void) {
   // UB: camera and system work are separate globals, beyond gObjects.
   // Reading their named slots adds four bytes in the forced EN build.
 #ifdef UBFIX
-  camera = (struct ObjectCameraFixed *)gCameraWork;
+  camera = (struct ObjectCameraFixed *)gBattleCamera;
   system = gObjectSystemWork;
 #else
   camera = *(struct ObjectCameraFixed **)(((u8 *)&gObjects) + 0x1c);

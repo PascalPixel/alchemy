@@ -11,7 +11,7 @@
 // into smoke or shards, in seven colourings.
 
 /// The lobbed shells' styles (BattleAnim_RunLobbedShells), each named for the
-/// animation that plays it, and its row of gLobbedShells_Records.
+/// animation that plays it, and its row of gLobbedShells_Styles.
 enum LobbedShellsMode {
   LOBBED_SHELLS_BONE_CHILLER,  ///< blue, bursting into smoke
   LOBBED_SHELLS_STICKY_GOO,    ///< the spider web's colours, smoke
@@ -81,9 +81,9 @@ void BattleAnim_RunRottenBlood(struct BattleAnimArgs *effect) {
 #define LOBBED_SHELLS_SMOKE_CELLS 0x3e80 ///< the smoke pictures in the sheet
 
 /// Nonzero when the style's shells burst into shards instead of smoke: the
-/// first of the style's two entries in gLobbedShells_Records; the second is
+/// first of the style's two entries in gLobbedShells_Styles; the second is
 /// never read.
-#define LOBBED_SHELLS_SHATTER(mode) gLobbedShells_Records[(mode) * 2]
+#define LOBBED_SHELLS_SHATTER(mode) gLobbedShells_Styles[(mode) * 2]
 
 /// Lobs a shell from the user at each target in turn, 8 frames apart. Each
 /// tumbles through ten images as it flies and, when it lands, the target
@@ -99,7 +99,7 @@ void BattleAnim_RunRottenBlood(struct BattleAnimArgs *effect) {
 /// blitters and closes the canvas layer.
 ///
 /// mode: the style (enum LobbedShellsMode): its colours and its row of
-///       gLobbedShells_Records, which makes Rotten Blood's and Mad Spatter's
+///       gLobbedShells_Styles, which makes Rotten Blood's and Mad Spatter's
 ///       shells burst into shards.
 void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode) {
   struct ScreenPoint position;
@@ -221,8 +221,8 @@ void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode) {
           struct Particle *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS];
 
           if (frame == k * 8 + 17) {
-            ObjectGroup_UpdateMembers(work->effect->targets[k],
-                                      SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 16);
+            BattleAnim_TintBattler(work->effect->targets[k], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, k, 16);
             ANIM_SHOW_DAMAGE(SE_IMPACT);
           }
           /* FAKEMATCH(one-pass): an empty one-pass block ends the CSE block
@@ -252,7 +252,7 @@ void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode) {
             // bursts into target k's run of LOBBED_SHELLS_BURSTS.
             if (shot->y < 0) {
               s32 count;
-              s8 *records = gLobbedShells_Records;
+              s8 *records = gLobbedShells_Styles;
               s32 row;
 
               shot->y = 0;

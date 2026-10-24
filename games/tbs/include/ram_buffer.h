@@ -56,6 +56,6 @@
   ((void **)&gHeapSlots[HEAP_SLOT_BATTLE_ENTRY_TIMER])
 #define Ram_FieldEffectWork ((void **)&gHeapSlots[HEAP_SLOT_FIELD_EFFECT])
 
-#define Ram_LightningWorkOffset FIXED_OFFSET(0xc, gLightningWork, gFieldWork)
+#define Ram_FieldBlendWorkOffset FIXED_OFFSET(0xc, gFieldBlendWork, gFieldWork)
 
 #endif

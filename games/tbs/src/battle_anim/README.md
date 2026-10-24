@@ -814,7 +814,7 @@ different row of settings each.
 These attacks, such as Cannibal Fang, Poison Tail and Twin Beaks, are styles
 of `BattleAnim_RunTargetStrike` ([`target_strike.c`](parts/target_strike.c)).
 A style (`enum TargetStrikeStyle`, twelve of them) is a row of
-`gTargetStrike_Records`: its strike kind (`STRIKE_KIND_SLASH`, six pictures
+`gTargetStrike_Styles`: its strike kind (`STRIKE_KIND_SLASH`, six pictures
 sweeping across the target once per hit, or `STRIKE_KIND_COLUMN`, a column of
 light rising through its stages), its number of hits, its extras
 (`STRIKE_SMOKE`, `STRIKE_ABSORB`, `STRIKE_GLINTS`, `STRIKE_SPARKS`,
@@ -1025,7 +1025,7 @@ each.
 
 The work block holds no unknown fields. `unused7788` and `padding` (before the
 word-aligned `bg2x`) are never read or written in either game; `imageTail` is
-the end of `imageStorage`; and a `BattleCanvasOrigin`'s `queued` word is set
+the end of `imageStorage`; and a `BattleBg2Origin`'s `queued` word is set
 once its coordinates are queued, but the queue copies only `x` and `y` and
 nothing reads it. A particle's `variant` is each family's own, and each family
 says what it holds where it launches its particles.

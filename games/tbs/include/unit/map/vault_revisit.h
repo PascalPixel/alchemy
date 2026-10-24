@@ -13,7 +13,7 @@ s32 Map_Initialize(void);
 extern s32 gVaultRevisit_ShortEffectScript[];
 extern s32 gVaultRevisit_MediumEffectScript[];
 extern s32 gVaultRevisit_LongEffectScript[];
-extern const s32 *gEffectScripts[];
+extern const s32 *gFieldEffect_DurationScripts[];
 extern s32 gVaultRevisit_BoyRoundTheWellScript[];
 extern s32 gVaultRevisit_GirlRoundTheWellScript[];
 extern struct MapWarpDest gVaultRevisit_WarpDests[];

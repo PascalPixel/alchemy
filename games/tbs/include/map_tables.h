@@ -50,7 +50,7 @@ enum {
 /// A condition that holds while flag is set.
 #define IF_FLAG_SET(flag) ((flag) | CONDITION_FLAG_SET)
 
-/// Set once the party has left Vale (WORLD_MAP_FROM_VALE_GATE): Vale's
+/// Set once the party has left Vale (WORLD_MAP_FROM_VALE_PLAZA): Vale's
 /// maps then place their later object events and lines, the Sanctum takes
 /// another map event table and Healer line, and the Sol Sanctum approach moves
 /// its sentry, changes metatile behaviors and stops sending its way down to

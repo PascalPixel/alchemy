@@ -1,5 +1,5 @@
-#ifndef GUARD_RAMCODE_H
-#define GUARD_RAMCODE_H
+#ifndef ALCHEMY_RAMCODE_H
+#define ALCHEMY_RAMCODE_H
 
 /// @file
 /// Copying ARM routines to RAM to run them there.

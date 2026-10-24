@@ -48,7 +48,7 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
   s32 baseX;
   s32 grow;
   s32 savedX;
-  struct BattleViewWork *view;
+  struct BattleBackgroundWork *view;
   s32 shift;
   s32 wave;
   s32 frame;
@@ -463,8 +463,8 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
       // Frame 58: every target turns black in its damage pose.
       if (frame == 58) {
         ANIM_FOR_EACH_TARGET(i, work->effect) {
-          ObjectGroup_UpdateMembers(work->effect->targets[i],
-                                    SPRITE_COLOR_BLACK, POSE_DAMAGE, -1, 0);
+          BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_BLACK,
+                                 POSE_DAMAGE, -1, 0);
         }
       }
 

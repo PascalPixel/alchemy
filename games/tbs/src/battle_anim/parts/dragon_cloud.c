@@ -136,7 +136,7 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
   path = Resource_GetTableEntry((s32)&ResourceId_DualStreamPath);
 
   for (frame = 0; frame != DRAGON_CLOUD_FRAMES; frame++) {
-    camera = gCameraWork;
+    camera = gBattleCamera;
     if (frame == DRAGON_CLOUD_STRIKE_FRAME)
       ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 0)
@@ -229,8 +229,8 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
     }
     if (frame == DRAGON_CLOUD_STRIKE_FRAME) {
       work->shakeFrames = 8;
-      ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
-                                POSE_DAMAGE, 0, 8);
+      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+                             POSE_DAMAGE, 0, 8);
       BattleMotion_ApplyKnockbackFar(work->effect->targets[0], KNOCKBACK_HOP);
     }
     // After the strike the embers rise and fall back under a gravity of 1/8
@@ -277,8 +277,8 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
     }
     if (frame == 50) {
       work->shakeFrames = 12;
-      ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
-                                POSE_DAMAGE, 0, 8);
+      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+                             POSE_DAMAGE, 0, 8);
     }
     // The puffs, mirrored, two frames a cell; each starts when its variant
     // counts up to zero.

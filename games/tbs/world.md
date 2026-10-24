@@ -154,10 +154,10 @@ stores no offset: `ObjectScript_FindLabel` searches the script for the matching
 `SC_LABEL` word, looking through at most the first 1,024 words
 (`SCRIPT_LABEL_SEARCH_WORDS`) and starting the script again from the top
 when it finds none. `SC_END` leaves the object idling on
-`gScript_MainScript`; only `SC_FREE` frees the slot.
+`gObjectScript_EndScript`; only `SC_FREE` frees the slot.
 
 Different parts of the code read an object's 112 bytes through different
-structs (`Object`, `ScriptMotionObject`, `ObjectEvent` and others),
+structs (`Object`, `ObjectArmView`, `ObjectEvent` and others),
 each naming the fields that part uses. They stay apart because the build
 must reproduce the [original](glossary.md#the-original)'s instructions, and
 reading the same bytes through one merged struct makes the compiler choose

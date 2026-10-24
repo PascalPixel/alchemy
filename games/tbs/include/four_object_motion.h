@@ -12,7 +12,7 @@ struct Sprite;
 
 /// The menu work (HEAP_SLOT_MENU) as the row of four figures reads it: each
 /// figure's object, screen position and scale.
-struct DjinnFiguresWork {
+struct ItemMenuFiguresView {
   /// ItemMenuWork's fields before memberY; not named here.
   u8 beforeMemberY[0x144];
   /// Screen pixels: the party figures' memberY, which moves only the depth
@@ -30,10 +30,10 @@ struct DjinnFiguresWork {
   s32 phases[4];
 };
 
-STATIC_ASSERT(offsetof(struct DjinnFiguresWork, verticalOrigins) == 0x144);
-STATIC_ASSERT(offsetof(struct DjinnFiguresWork, animations) == 0x224);
-STATIC_ASSERT(offsetof(struct DjinnFiguresWork, positionsX) == 0x234);
-STATIC_ASSERT(offsetof(struct DjinnFiguresWork, positionsY) == 0x23c);
-STATIC_ASSERT(offsetof(struct DjinnFiguresWork, phases) == 0x244);
+STATIC_ASSERT(offsetof(struct ItemMenuFiguresView, verticalOrigins) == 0x144);
+STATIC_ASSERT(offsetof(struct ItemMenuFiguresView, animations) == 0x224);
+STATIC_ASSERT(offsetof(struct ItemMenuFiguresView, positionsX) == 0x234);
+STATIC_ASSERT(offsetof(struct ItemMenuFiguresView, positionsY) == 0x23c);
+STATIC_ASSERT(offsetof(struct ItemMenuFiguresView, phases) == 0x244);
 
 #endif

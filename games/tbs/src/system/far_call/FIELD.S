@@ -20,20 +20,20 @@ FarCall_FieldTable:
 	overlay_veneer SpriteAnim_Reset
 	export SpriteAnim_StartFar, SpriteAnim_Start
 	export ObjectSystem_InitializeFar, ObjectSystem_Initialize
-	export ObjectDispatch_SelectAnimationFar, ObjectDispatch_SelectAnimation
-	export ObjectDispatch_SetAnimationSpeedFar, ObjectDispatch_SetAnimationSpeed
-	overlay_veneer ObjectDispatch_SetAnimationAndSpeed
-	export ObjectDispatch_InitializeFar, ObjectDispatch_Initialize
-	export ObjectDispatch_StartPlayerControlFar, ObjectDispatch_StartPlayerControl
-	export ObjectDispatch_StartWorldMapControlFar, ObjectDispatch_StartWorldMapControl
-	export ObjectDispatch_StartMoveByKeysFar, ObjectDispatch_StartMoveByKeys
-	export ObjectDispatch_StartKeyCheckFar, ObjectDispatch_StartKeyCheck
-	overlay_veneer ObjectDispatch_FindFreeObject
+	export Object_SelectAnimationFar, Object_SelectAnimation
+	export Object_SetAnimationSpeedFar, Object_SetAnimationSpeed
+	overlay_veneer Object_SetAnimationAndSpeed
+	export Object_InitializeFar, Object_Initialize
+	export Object_StartPlayerControlFar, Object_StartPlayerControl
+	export Object_StartWorldMapControlFar, Object_StartWorldMapControl
+	export Object_StartMoveByKeysFar, Object_StartMoveByKeys
+	export Object_StartKeyCheckFar, Object_StartKeyCheck
+	overlay_veneer Object_FindFree
 	export Object_CreateFar, Object_CreateField
-	export ObjectDispatch_ReleaseFar, ObjectDispatch_Release
-	overlay_veneer ObjectDispatch_SetChildRotation
-	export ObjectDispatch_StartCameraFar, ObjectDispatch_StartCamera
-	overlay_veneer ObjectDispatch_StartApproachLink
+	export Object_ReleaseFar, Object_Release
+	overlay_veneer Object_SetSpriteRotation
+	export Object_StartCameraFar, Object_StartCamera
+	overlay_veneer Object_StartApproachLink
 	export Object_SetPositionAndResetMotionFar, Object_SetPositionAndResetMotion
 	export render_animated_tile_frameFar, SpriteDissolve_Step
 	export SpriteDissolve_RunFar, SpriteDissolve_Run
@@ -44,8 +44,8 @@ FarCall_FieldTable:
 	export MapGrid_CenterOnFollowedPointFar, MapGrid_CenterOnFollowedPoint
 	export WorldMap_UpdateCurrentTileBlockFar, WorldMap_UpdateCurrentTileBlock
 	export WorldMap_LoadGraphicsFar, WorldMap_LoadGraphics
-	export ObjectDispatch_StartIdleFar, ObjectDispatch_StartIdle
-	export ObjectDispatch_WaitForValue16Far, ObjectDispatch_WaitForValue16
+	export Object_StartIdleFar, Object_StartIdle
+	export Object_WaitForValue16Far, Object_WaitForValue16
 	export Object_SetMoveTargetFar, Object_SetMoveTarget
 	export Object_WaitForMoveFar, Object_WaitForMove
 	overlay_veneer MapGrid_GetScreenRelativePosition
@@ -64,16 +64,16 @@ FarCall_FieldTable:
 	export MapGrid_CopyCellIndexRectFar, MapGrid_CopyCellIndexRect
 	export WorldMap_SetWindowCellTileFar, WorldMap_SetWindowCellTile
 	export MapGrid_CheckCollisionFar, MapGrid_CheckCollision
-	export ObjectDispatch_SetSingleChildFlagsFar, ObjectDispatch_SetSingleChildFlags
-	export ObjectDispatch_SetChildBlendModeFar, ObjectDispatch_SetChildBlendMode
+	export Object_SetSpriteFlagsFar, Object_SetSpriteFlags
+	export Object_SetSpriteBlendModeFar, Object_SetSpriteBlendMode
 	export MapGrid_SetScreenShakeFar, MapGrid_SetScreenShake
 	export MapGrid_WaitForShakeToSettleFar, MapGrid_WaitForShakeToSettle
 	overlay_veneer Anim_SetIndexAndInitializeObjects
 	export ObjectSystem_SuspendProjectionAndShowSpritesFar, ObjectSystem_SuspendProjectionAndShowSprites
 	export ObjectSystem_ResumeProjectionAndHideLayersFar, ObjectSystem_ResumeProjectionAndHideLayers
-	overlay_veneer ObjectDispatch_SetChildFixedScale
+	overlay_veneer Object_SetSpriteScale
 	export MapGrid_IsWallAtFar, MapGrid_IsWallAt
-	export ObjectDispatch_RegisterChildMetadataFar, ObjectDispatch_RegisterChildMetadata
+	export Object_RegisterSpriteMetadataFar, Object_RegisterSpriteMetadata
 	export WorldMap_StartStillViewFar, WorldMap_StartStillView
 	export WorldMap_LoadAreaGraphicsFar, WorldMap_LoadAreaGraphics
 	export Anim_ApplyChildValuesFar, Anim_ApplyChildValues
@@ -85,7 +85,7 @@ FarCall_FieldTable:
 	export SpriteFrameCache_LoadFar, SpriteFrameCache_Load
 	export MapGrid_SetMetatileBehaviorAtFar, MapGrid_SetMetatileBehaviorAt
 	export Sprite_SetAnimSpeedFar, Sprite_SetAnimSpeed
-	export Runtime_RemapBytesByTableFar, Runtime_RemapBytesByTable
+	export SpriteColor_RemapPixelsFar, SpriteColor_RemapPixels
 	export TilesetAnim_SuspendAllFar, TilesetAnim_SuspendAll
 	export TilesetAnim_ResumeAllFar, TilesetAnim_ResumeAll
 	export ObjectScript_FindOverlappingEntryFar, ObjectScript_FindOverlappingEntry

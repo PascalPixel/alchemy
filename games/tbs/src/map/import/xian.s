@@ -6,14 +6,14 @@
 	.set import.Task_Remove, 1
 	.set import.ArcTan2, 1
 	.set import.Vector_AddPolarOffset, 1
-	.set import.ObjectDispatch_SelectAnimation, 1
-	.set import.ObjectDispatch_Initialize, 1
+	.set import.Object_SelectAnimation, 1
+	.set import.Object_Initialize, 1
 	.set import.Object_CreateField, 1
 	.set import.MapGrid_PlayMetatileCopySequence, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.MapGrid_CheckCollision, 1
-	.set import.ObjectDispatch_SetSingleChildFlags, 1
-	.set import.ObjectDispatch_SetChildBlendMode, 1
+	.set import.Object_SetSpriteFlags, 1
+	.set import.Object_SetSpriteBlendMode, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
 	.set import.GameFlag_Clear, 1
@@ -31,13 +31,13 @@
 	.set import.ObjectMotion_CenterOnColumn, 1
 	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
 	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
-	.set import.Engine_ObjectEventSetPosition, 1
-	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Import_ObjectEventSetPosition, 1
+	.set import.Import_ObjectEventSetAnimation, 1
 	.set import.ObjectMotion_SetVariantCallback, 1
 	.set import.ObjectMotion_SetVarCbAndRefresh, 1
 	.set import.ObjectMotion_SetAngleToward, 1
-	.set import.ObjectGroup_ConfigureChildValue, 1
-	.set import.ObjectGroup_SetChildValue, 1
+	.set import.ObjectEvent_ConfigureSpriteColor, 1
+	.set import.ObjectEvent_SetSpriteColor, 1
 	.set import.FieldScript_SetMessageId, 1
 	.set import.FieldScript_ShowMessageAndWait, 1
 	.set import.FieldScript_ShowMessageThenWait, 1
@@ -45,7 +45,7 @@
 	.set import.ObjectMotion_ArmCallback, 1
 	.set import.ObjectMotion_SetActionVariant, 1
 	.set import.FieldEffect_SpawnLinked, 1
-	.set import.Engine_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestWarp, 1
 	.set import.Djinn_JoinParty, 1
 	.set import.Map_QueueMusic, 1
 	.set import.Map_PlayQueuedMusic, 1

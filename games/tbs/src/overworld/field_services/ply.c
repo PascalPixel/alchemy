@@ -7,7 +7,7 @@
 /// Per-frame update: sways 4 pixels either side of anchorX, once every 128
 /// frames. The update of each spark FieldEffect_RunSparkEmitter sheds; it
 /// writes the spark's x and advances its phase.
-void FieldEffect_SwayParticle(union FieldObject *fieldObject) {
+void FieldEffect_SwayParticle(union ObjectEventOrEffect *fieldObject) {
   struct Object *obj = (struct Object *)fieldObject;
   s16 *phase;
 
@@ -21,10 +21,11 @@ void FieldEffect_SwayParticle(union FieldObject *fieldObject) {
 /// position, at a radius of as many pixels as frames are left; released when
 /// timer reaches 0. The update of FieldEffect_RunPly's eight spiralling
 /// particles; each one's work holds its starting angle.
-void FieldEffect_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
+void FieldEffect_UpdateShrinkingOrbitObject(
+    union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *particle = (struct ObjectEvent *)fieldObject;
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct EffectVector pos;
+  struct Vector3 pos;
   s16 remainingFrames;
   s32 decrementedTimer;
 
@@ -44,8 +45,8 @@ void FieldEffect_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
       particle->y.fixed = pos.y;
       particle->z.fixed = pos.z;
     } else {
-      ObjectDispatch_InitializeFar((struct Object *)particle,
-                                   gFieldEffect_CommonParticleScript);
+      Object_InitializeFar((struct Object *)particle,
+                           gFieldEffect_CommonParticleScript);
     }
   }
 }
@@ -55,7 +56,7 @@ void FieldEffect_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
 /// as it slowly falls. With phase -1 it stays where it is. The update
 /// FieldEffect_RunPly gives the centre particle; spawns SPRITE_SPARKLE for each
 /// spark.
-void FieldEffect_RunSparkEmitter(union FieldObject *fieldObject) {
+void FieldEffect_RunSparkEmitter(union ObjectEventOrEffect *fieldObject) {
   struct Object *emitter = (struct Object *)fieldObject;
   struct FieldEffectWork *effectWork;
   s16 *phase;
@@ -88,8 +89,8 @@ void FieldEffect_RunSparkEmitter(union FieldObject *fieldObject) {
       spark->targetX = spark->x;
       Anim_ApplyChildValuesFar((struct Object *)spark, SPRITE_COLOR_BLUE_TINT);
       spark->wait = 72;
-      ObjectDispatch_InitializeFar((struct Object *)spark,
-                                   gFieldEffect_CommonParticleScript);
+      Object_InitializeFar((struct Object *)spark,
+                           gFieldEffect_CommonParticleScript);
     }
   }
 }
@@ -205,7 +206,7 @@ void FieldEffect_RunPly(void) {
     ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)target,
                                                      0xc00000, 0xe800);
     Object_WaitForMoveFar(target);
-    ObjectDispatch_ReleaseFar((struct Object *)target);
+    Object_ReleaseFar((struct Object *)target);
   }
   // 0x60 is the VRAM cache's entry count, the value VramCache_FindFreeEntry
   // returns for no entry.

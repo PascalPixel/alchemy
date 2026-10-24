@@ -9,12 +9,12 @@
 	.set import.FreeHeapSlot, 1
 	.set import.AllocEwram, 1
 	.set import.Free, 1
-	.set import.SerialRuntime_Initialize, 1
-	.set import.SerialRuntime_RemoveIrqHandlers, 1
+	.set import.Serial_Initialize, 1
+	.set import.Serial_RemoveIrqHandlers, 1
 	.set import.Sound_LoadReverbCode, 1
-	.set import.SerialRuntime_StartSend, 1
-	.set import.SerialRuntime_StartReceive, 1
-	.set import.SerialRuntime_GetActiveTransfers, 1
+	.set import.Serial_StartSend, 1
+	.set import.Serial_StartReceive, 1
+	.set import.Serial_GetActiveTransfers, 1
 	.set import.Task_SetFlags, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
 	.set import.MapGrid_CopyMetatileIndicesRect, 1

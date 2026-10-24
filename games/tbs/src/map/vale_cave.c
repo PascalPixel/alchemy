@@ -1,37 +1,38 @@
 /// @file
-/// Vale Cave's overlay, which holds three rooms, each a map of its own: the
-/// way in, which the game still calls Vale, and two rooms of Vale Cave proper.
-/// Kite, a Jupiter Djinni, hides in the second. No story flag is read here
-/// and no message is shown: the cave is a side trip from the part of Vale
-/// around Kraden's cottage, a run of Psynergy puzzles whose progress lives in
-/// map and map section flags.
+/// Vale Cave's overlay, which holds three rooms, each a map of its own: the way
+/// in, which the game still calls Vale, and two rooms of Vale Cave proper.
+/// Kite, a Jupiter Djinni, hides in the second. No story flag is read here and
+/// no message is shown: the cave is a side trip from the part of Vale around
+/// Kraden's cottage, a run of Psynergy puzzles whose progress lives in map and
+/// map section flags.
 ///
-/// - Vale (MapId_ValeCaveMouth), the way in, a map section of its
-///   own (29). VALE_CAVE_MOUTH_TO_VALE_KRADEN_WEST and
-///   VALE_CAVE_MOUTH_TO_VALE_KRADEN_EAST lead back to Kraden's part of Vale
-///   (MapId_ValeKraden), whose VALE_KRADEN_TO_VALE_CAVE_MOUTH_WEST and
-///   VALE_KRADEN_TO_VALE_CAVE_MOUTH_EAST lead here;
+/// - Vale (MapId_ValeCaveMouth), the way in, a map section of its own (29).
+///   VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST and
+///   VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_EAST lead back to Kraden's part of
+///   Vale (MapId_ValeKradensCottage), whose
+///   VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST and
+///   VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST lead here;
 ///   VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE goes on into the cave. Each warp plays
 ///   the warp sound first (EventScript_LeaveRoom). On arrival
 ///   ValeCave_Initialize fades the room in from the backdrop and clears
 ///   FLAG_SHOW_LOCATION_NAME: entering a new map section sets that flag, but
 ///   this is still Vale.
-/// - Vale Cave (MapId_ValeCaveKite), one map in three parts, each
-///   with its own warp destinations and camera box; walking south into a
-///   ledge's cells hops the leader down it (EventScript_HopDownLedge). In the
-///   first part (VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH to
+/// - Vale Cave (MapId_ValeCaveKite), one map in three parts, each with its own
+///   warp destinations and camera box; walking south into a ledge's cells hops
+///   the leader down it (EventScript_HopDownLedge). In the first part
+///   (VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH to
 ///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST) Reveal shows a hidden cell while
 ///   it lasts (EventScript_RevealHiddenTile). In Kite's part
 ///   (VALE_CAVE_KITE_EAST_FROM_WEST to
-///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST), coming near
-///   makes Kite hop away (EventScript_KiteRunsOff) and then run behind a ledge
+///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST), coming near makes Kite hop away
+///   (EventScript_KiteRunsOff) and then run behind a ledge
 ///   (EventScript_KiteRunsBehindLedge, setting
 ///   FLAG_VALE_CAVE_KITE_BEHIND_LEDGE); from then on twelve metatile behaviors,
 ///   45 to 56 on the 23 cells round the ledge, each send it to its point of
 ///   gValeCave_WalkTargets on the ledge's far side as the leader walks round
 ///   (EventScript_KiteKeepsAway), so it cannot be reached until Halt stops it
-///   (https://alchemy.pascalpixel.com/places/vale-cave-kite/kite-ledge.gif:
-///   the leader walking the ring, twice the size, the cells of those metatile
+///   (https://alchemy.pascalpixel.com/places/vale-cave-kite/kite-ledge.gif: the
+///   leader walking the ring, twice the size, the cells of those metatile
 ///   behaviors outlined and numbered from 0 by behavior, the walk targets drawn
 ///   with the same numbers, and Kite boxed). A stopped Kite can be talked to
 ///   and joins the party (EventScript_TalkToKite), setting FLAG_KITE, which
@@ -40,30 +41,32 @@
 ///   (VALE_CAVE_KITE_SOUTH_FROM_WEST to
 ///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH) two stacks of crates sink into
 ///   holes in the floor once Move or a push leaves them over one
-///   (FLAG_MAP_TEMP_00 and _01), opening the way, and a log carries the leader
-///   along the passage when walked into from the west or the east
-///   (FLAG_VALE_CAVE_RIDING_LOG_EAST). Its warps lead back to the first room,
-///   on to the third, and between its own parts.
-/// - Vale Cave (MapId_ValeCaveLogs), the inner room, with three
-///   logs to push: one off a ledge (EventScript_PushLogOffLedge), one along the
-///   ledge until it drops at its edge (EventScript_PushLogOverEdge) and one
-///   north (EventScript_PushLogNorth), each clearing the cells it held. Its
-///   warps lead back into the second room and between its own parts.
+///   (FLAG_VALE_CAVE_WEST_CRATES_SUNK and FLAG_VALE_CAVE_EAST_CRATES_SUNK),
+///   opening the way, and a log carries the leader along the passage when
+///   walked into from the west or the east (FLAG_VALE_CAVE_RIDING_LOG_EAST).
+///   Its warps lead back to the first room, on to the third, and between its
+///   own parts.
+/// - Vale Cave (MapId_ValeCaveLogs), the inner room, with three logs to push:
+///   one off a ledge (EventScript_PushLogOffLedge), one along the ledge until
+///   it drops at its edge (EventScript_PushLogOverEdge) and one north
+///   (EventScript_PushLogNorth), each clearing the cells it held. Its warps
+///   lead back into the second room and between its own parts.
 ///
 /// Vale Cave's two rooms are one map section (30), so their map section flags
-/// (0x301, 0x302) last while the party goes between them. On every arrival
-/// ValeCave_ApplyEntryState rebuilds the cells of each puzzle already solved
-/// and, once Kite has run behind its ledge, puts it back there.
+/// (FLAG_VALE_CAVE_RIDING_LOG_EAST, FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) last
+/// while the party goes between them. On every arrival ValeCave_ApplyEntryState
+/// rebuilds the cells of each puzzle already solved and, once Kite has run
+/// behind its ledge, puts it back there.
 ///
 /// Open questions:
 /// - XXX (no evidence): why ValeCave_ApplyEntryState creates still objects of
-///   sprite 223 (spr_223.png, a wooden crate) at (120, 232) and SPRITE_CHEST
-///   at (642, 552) in the second room that show nothing: the sprites alone
-///   hold neither (render probe vale-cave), the crates seen there are the
-///   layout's, no chest is drawn at the second, and neither object is solid or
-///   a target (OBJ_EVENT_NOT_TARGETED); Vault creates the same kind of object
-///   on its well (vault_revisit.c), and nothing in the ROM says what they were
-///   meant to show.
+///   sprite 223 (spr_223.png, a wooden crate) at (120, 232) and SPRITE_CHEST at
+///   (642, 552) in the second room that show nothing: the sprites alone hold
+///   neither (render probe vale-cave), the crates seen there are the layout's,
+///   no chest is drawn at the second, and neither object is solid or a target
+///   (OBJ_EVENT_NOT_TARGETED); Vault creates the same kind of object on its
+///   well (vault_revisit.c), and nothing in the ROM says what they were meant
+///   to show.
 
 #include "save_block.h"
 #include "djinn_ids.h"
@@ -183,23 +186,27 @@ enum ValeCaveMetatileBehavior { MB_VALE_CAVE_FIRST_KITE_ROUTE = 45 };
 /// ★ Named from the game: "Kite" (MsgDjinnName)
 #define FLAG_KITE (FLAG_DJINNI(DJINNI_KITE))
 
-// The cave's map flags:
-// - FLAG_MAP_TEMP_00 and _01: in the second room, the western and eastern
-//   crates sunk into their holes, or, in Kite's part of it, its first and
-//   second escape.
-// - FLAG_MAP_TEMP_02 to _05: in the third room, the log pushed off the
-//   ledge, the log pushed over its edge, and the log slid north, ending on the
-//   northern or the southern row (row 20).
+// The cave's map flags: each room reuses them for its own puzzle, so the second
+// room's two have one name in the holes' part and another in Kite's.
+/// The holes' part: the western crates have sunk into their hole.
+#define FLAG_VALE_CAVE_WEST_CRATES_SUNK FLAG_MAP_TEMP_00
+/// The holes' part: the eastern crates have sunk into their hole.
+#define FLAG_VALE_CAVE_EAST_CRATES_SUNK FLAG_MAP_TEMP_01
+/// Kite's part: Kite has run off once (EventScript_KiteRunsOff).
+#define FLAG_VALE_CAVE_KITE_RAN_OFF FLAG_MAP_TEMP_00
+/// Kite's part: Kite has run behind the ledge
+/// (EventScript_KiteRunsBehindLedge).
+#define FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE FLAG_MAP_TEMP_01
 
 // The cave's map section flags. The second and third rooms are one map section,
 // so these last while the party goes between them; the first room is another.
 /// The riding log of the second room is at the eastern end of its passage.
 /// ★ Named from what the player sees: the log floating in the holes' part
 /// of the second room, which carries the leader along it (its render)
-#define FLAG_VALE_CAVE_RIDING_LOG_EAST 0x301
+#define FLAG_VALE_CAVE_RIDING_LOG_EAST FLAG_MAPSEC_TEMP_01
 /// Kite has run behind the ledge and keeps to its far side.
 /// ★ Named from the game: "Kite" (MsgDjinnName)
-#define FLAG_VALE_CAVE_KITE_BEHIND_LEDGE 0x302
+#define FLAG_VALE_CAVE_KITE_BEHIND_LEDGE FLAG_MAPSEC_TEMP_02
 
 static void ValeCave_CenterObjectEventOnCell(s32 localId, s32 column, s32 row);
 static void ValeCave_ApplyEntryState(void);
@@ -207,6 +214,18 @@ static void ValeCave_ApplyEntryState(void);
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 #include "common/object_staged_object_event.h"
+
+/// In the third room, the western log has been pushed off the ledge.
+#define FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE FLAG_MAP_TEMP_02
+/// In the third room, the eastern log has been pushed along the ledge and over
+/// its edge.
+#define FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE FLAG_MAP_TEMP_03
+/// In the third room, the southern log has been pushed north and stopped on the
+/// northern row.
+#define FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW FLAG_MAP_TEMP_04
+/// In the third room, the southern log has been pushed north and stopped on the
+/// southern row (row 20).
+#define FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW FLAG_MAP_TEMP_05
 
 /// In Vale Cave's second room, talking to Kite once Halt has stopped it: Kite,
 /// a Jupiter Djinni, joins the party.
@@ -240,10 +259,10 @@ ValeCave_WaitForObjectEventLanding(struct ObjectEvent *objectEvent) {
 // Plain void changes 38 to 36 bytes in tbs-en.
 #ifdef UBFIX
 static void
-ValeCave_FaceObjectEventTowardLeader(union FieldObject *fieldObject) {
+ValeCave_FaceObjectEventTowardLeader(union ObjectEventOrEffect *fieldObject) {
 #else
 static s32
-ValeCave_FaceObjectEventTowardLeader(union FieldObject *fieldObject) {
+ValeCave_FaceObjectEventTowardLeader(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -262,7 +281,7 @@ ValeCave_FaceObjectEventTowardLeader(union FieldObject *fieldObject) {
 #define VALE_CAVE_FACE_LEADER_CALLBACK ValeCave_FaceObjectEventTowardLeader
 #else
 #define VALE_CAVE_FACE_LEADER_CALLBACK                                         \
-  ((void (*)(union FieldObject *))ValeCave_FaceObjectEventTowardLeader)
+  ((void (*)(union ObjectEventOrEffect *))ValeCave_FaceObjectEventTowardLeader)
 #endif
 
 /// Selects warp destination positions and camera bounds for the current cave
@@ -328,8 +347,8 @@ ValeCave_SinkObjectWithParticles(s32 localId, s32 baseX, s32 baseZ,
   u32 frame;
 
   for (frame = 0; frame < 68; frame++) {
-    s32 particleX = (((u32)(Engine_RandomNext() * 17) >> 16) << 16) + baseX;
-    s32 particleZ = (((u32)(Engine_RandomNext() * 14) >> 16) << 16) + baseZ;
+    s32 particleX = (((u32)(Import_RandomNext() * 17) >> 16) << 16) + baseX;
+    s32 particleZ = (((u32)(Import_RandomNext() * 14) >> 16) << 16) + baseZ;
 
     FieldEffect_Spawn(particleX, 0, particleZ, 0, 0, 0,
                       EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
@@ -344,8 +363,8 @@ ValeCave_SinkObjectWithParticles(s32 localId, s32 baseX, s32 baseZ,
 /// dust.
 ///
 /// Reached by Move on LOCALID_WEST_CRATES in the second room, until
-/// FLAG_MAP_TEMP_00 is set. Over their hole (column 23) it sets
-/// FLAG_MAP_TEMP_00 and makes the hole's cells walkable.
+/// FLAG_VALE_CAVE_WEST_CRATES_SUNK is set. Over their hole (column 23) it sets
+/// FLAG_VALE_CAVE_WEST_CRATES_SUNK and makes the hole's cells walkable.
 static void EventScript_MoveWestCratesIntoHole(void) {
   struct EffectOptions options;
   struct EffectOptions *particleOptions;
@@ -376,9 +395,9 @@ static void EventScript_MoveWestCratesIntoHole(void) {
     MapGrid_CopyCellAttributes(23, 41, 1, 1, 23, 39);
     ObjectEvent_GetById(LOCALID_WEST_CRATES)->priorityFlags |=
         OBJ_EVENT_PRIORITY_UNDERFOOT;
-    GameFlag_Set(FLAG_MAP_TEMP_00);
+    GameFlag_Set(FLAG_VALE_CAVE_WEST_CRATES_SUNK);
     ObjectEvent_GetById(LOCALID_WEST_CRATES)->y.fixed = -PIXELS(8);
-    Engine_ObjectEventSetAnimation(LOCALID_WEST_CRATES, 2);
+    Import_ObjectEventSetAnimation(LOCALID_WEST_CRATES, 2);
     ObjectEvent_Release(leftEffect);
     ObjectEvent_Release(rightEffect);
     FieldScript_WaitFrames(30);
@@ -390,9 +409,9 @@ static void EventScript_MoveWestCratesIntoHole(void) {
 /// their hole, they sink into the floor.
 ///
 /// Reached by Move on LOCALID_EAST_CRATES in the second room, until
-/// FLAG_MAP_TEMP_01 is set, and from EventScript_PushEastCratesIntoHole. Over
-/// their hole (column 27) it sets FLAG_MAP_TEMP_01 and makes the hole's cells
-/// walkable.
+/// FLAG_VALE_CAVE_EAST_CRATES_SUNK is set, and from
+/// EventScript_PushEastCratesIntoHole. Over their hole (column 27) it sets
+/// FLAG_VALE_CAVE_EAST_CRATES_SUNK and makes the hole's cells walkable.
 static void EventScript_MoveEastCratesIntoHole(void) {
   struct EffectOptions options;
   struct EffectOptions *particleOptions;
@@ -422,9 +441,9 @@ static void EventScript_MoveEastCratesIntoHole(void) {
     MapGrid_CopyCellAttributes(31, 39, 2, 1, 27, 41);
     ObjectEvent_GetById(LOCALID_EAST_CRATES)->priorityFlags |=
         OBJ_EVENT_PRIORITY_UNDERFOOT;
-    GameFlag_Set(FLAG_MAP_TEMP_01);
+    GameFlag_Set(FLAG_VALE_CAVE_EAST_CRATES_SUNK);
     ObjectEvent_GetById(LOCALID_EAST_CRATES)->y.fixed = -PIXELS(8);
-    Engine_ObjectEventSetAnimation(LOCALID_EAST_CRATES, 2);
+    Import_ObjectEventSetAnimation(LOCALID_EAST_CRATES, 2);
     ObjectEvent_Release(leftEffect);
     ObjectEvent_Release(rightEffect);
     FieldScript_WaitFrames(30);
@@ -436,7 +455,7 @@ static void EventScript_MoveEastCratesIntoHole(void) {
 /// and sink if they are then over their hole.
 ///
 /// Reached by walking into metatile behavior 24 in the second room, until
-/// FLAG_MAP_TEMP_01 is set.
+/// FLAG_VALE_CAVE_EAST_CRATES_SUNK is set.
 static void EventScript_PushEastCratesIntoHole(void) {
   FieldScript_Start();
   PushedObject_AdvancePair();
@@ -472,10 +491,10 @@ static s32 EventScript_HopDownLedge(s32 unusedArgument) {
   if (FieldObject_CheckMovementCollision(
           leader, (struct FieldPosition *)landingPosition) == 0) {
     FieldScript_Start();
-    ObjectDispatch_SelectAnimation(leader, 6);
+    Object_SelectAnimation(leader, 6);
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
-    ObjectDispatch_SelectAnimation(leader, 7);
+    Object_SelectAnimation(leader, 7);
     leader->speed = PIXELS(3);
     leader->acceleration = PIXELS(2);
     leader->velocityY = PIXELS(4);
@@ -484,7 +503,7 @@ static s32 EventScript_HopDownLedge(s32 unusedArgument) {
     ObjectMotion_SetPositionAndCommit(LOCALID_PARTY_LEADER,
                                       landingPosition[0].part.pixel,
                                       landingPosition[2].part.pixel);
-    ObjectDispatch_SelectAnimation(leader, 6);
+    Object_SelectAnimation(leader, 6);
     ObjectEvent_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     *motionFlags = savedMotionFlags;
     FieldScript_End();
@@ -497,13 +516,13 @@ static s32 EventScript_HopDownLedge(s32 unusedArgument) {
 /// finds it; it notices the party and hops away up the ledge.
 ///
 /// Reached by stepping on metatile behavior 40 in the second room until Kite is
-/// caught (FLAG_KITE); runs once, setting FLAG_MAP_TEMP_00.
+/// caught (FLAG_KITE); runs once, setting FLAG_VALE_CAVE_KITE_RAN_OFF.
 static void EventScript_KiteRunsOff(void) {
 
   struct ObjectEvent *djinni;
 
-  if (Script_GetFlag(FLAG_MAP_TEMP_00) == 0) {
-    GameFlag_Set(FLAG_MAP_TEMP_00);
+  if (Script_GetFlag(FLAG_VALE_CAVE_KITE_RAN_OFF) == 0) {
+    GameFlag_Set(FLAG_VALE_CAVE_KITE_RAN_OFF);
     FieldScript_Start();
     FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
     FieldCamera_FollowObjectEvent(LOCALID_KITE, 1);
@@ -531,16 +550,16 @@ static void EventScript_KiteRunsOff(void) {
 /// behind the ledge and turns to watch the party.
 ///
 /// Reached by stepping on metatile behavior 41 in the second room until Kite is
-/// caught, once EventScript_KiteRunsOff has run. Sets FLAG_MAP_TEMP_01 and
-/// FLAG_VALE_CAVE_KITE_BEHIND_LEDGE, and gives Kite the update hook
-/// ValeCave_FaceObjectEventTowardLeader.
+/// caught, once EventScript_KiteRunsOff has run. Sets
+/// FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE and FLAG_VALE_CAVE_KITE_BEHIND_LEDGE,
+/// and gives Kite the update hook ValeCave_FaceObjectEventTowardLeader.
 static void EventScript_KiteRunsBehindLedge(void) {
 
   struct ObjectEvent *djinni;
 
-  if (GameFlag_Get(FLAG_MAP_TEMP_00) != 0) {
-    if (Script_GetFlag(FLAG_MAP_TEMP_01) == 0) {
-      GameFlag_Set(FLAG_MAP_TEMP_01);
+  if (GameFlag_Get(FLAG_VALE_CAVE_KITE_RAN_OFF) != 0) {
+    if (Script_GetFlag(FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE) == 0) {
+      GameFlag_Set(FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE);
       GameFlag_Set(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE);
       FieldScript_Start();
       ObjectEvent_SetAttachedEffect(LOCALID_KITE, ATTACHED_EFFECT_IN_FRONT |
@@ -604,7 +623,7 @@ static void EventScript_KiteKeepsAway(void) {
 /// Reached by Halt on Kite in the second room.
 static void EventScript_HaltKite(void) {
   FieldScript_Start();
-  Engine_ObjectEventSetAnimation(LOCALID_KITE, 0);
+  Import_ObjectEventSetAnimation(LOCALID_KITE, 0);
   FieldScript_End();
 }
 
@@ -612,7 +631,8 @@ static void EventScript_HaltKite(void) {
 /// edge the log falls off, opening the way.
 ///
 /// Reached by walking into metatile behavior 20 in the third room. When the log
-/// falls (column 17) it sets FLAG_MAP_TEMP_03 and clears the cells it held.
+/// falls (column 17) it sets FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE and
+/// clears the cells it held.
 static void EventScript_PushLogOverEdge(void) {
   struct ObjectEvent *movedLog;
   s32 stationaryMotion;
@@ -624,7 +644,7 @@ static void EventScript_PushLogOverEdge(void) {
     ObjectEvent_MoveAndRedraw(probe);
     // At the ledge's edge (column 17) the log slides west and drops.
     if ((probe.position.x >> 20) == 17) {
-      Engine_ObjectEventSetAnimation(probe.objectEventSlot, 3);
+      Import_ObjectEventSetAnimation(probe.objectEventSlot, 3);
       stationaryMotion = 0;
       ObjectEvent_GetById(probe.objectEventSlot)->motionFlags =
           stationaryMotion;
@@ -632,14 +652,14 @@ static void EventScript_PushLogOverEdge(void) {
       movedLog->bounce = stationaryMotion;
       ObjectMotion_OffsetPositionAndResetMotion(probe.objectEventSlot, -12, 0);
       ObjectMotion_CommitCurrentPositionAndActivate(probe.objectEventSlot);
-      Engine_ObjectEventSetAnimation(probe.objectEventSlot, 3);
+      Import_ObjectEventSetAnimation(probe.objectEventSlot, 3);
       ObjectMotion_SetActionVariant(LOCALID_EAST_LOG, 3);
       ObjectEvent_GetById(probe.objectEventSlot)->motionFlags =
           OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
       ObjectMotion_OffsetPositionAndResetMotion(probe.objectEventSlot, -6, 0);
       ValeCave_WaitForObjectEventLanding(
           ObjectEvent_GetById(probe.objectEventSlot));
-      Engine_ObjectEventSetAnimation(probe.objectEventSlot, 8);
+      Import_ObjectEventSetAnimation(probe.objectEventSlot, 8);
       {
         struct ObjectEvent *movedLog =
             ObjectEvent_GetById(probe.objectEventSlot);
@@ -658,18 +678,18 @@ static void EventScript_PushLogOverEdge(void) {
                                               stationaryMotion);
       PushedObject_FillGridAttributeRectangle(0, 16, 16, 1, clearedRows,
                                               stationaryMotion);
-      GameFlag_Set(FLAG_MAP_TEMP_03);
+      GameFlag_Set(FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE);
       Sound_PlaySong(SE_240);
     }
   }
   FieldScript_End();
 }
 
-/// In Vale Cave's third room, pushing the western log east: it falls off
-/// the ledge, opening the way.
+/// In Vale Cave's third room, pushing the western log east: it falls off the
+/// ledge, opening the way.
 ///
 /// Reached by walking east into metatile behavior 21 in the third room. Sets
-/// FLAG_MAP_TEMP_02 and clears the cells the log held.
+/// FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE and clears the cells the log held.
 static void EventScript_PushLogOffLedge(void) {
 
   struct ObjectEvent *pushedLog;
@@ -678,36 +698,36 @@ static void EventScript_PushLogOffLedge(void) {
   FieldScript_Start();
   FieldScript_WaitFrames(10);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_PUSH);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_PUSH);
   FieldScript_WaitFrames(15);
   ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, 8, 0);
   FieldScript_WaitFrames(4);
-  Script_PlaySong(SE_STOP_SLOT3);
+  Script_PlaySong(SE_STOP_ACTION_SE);
   Script_PlaySong(SE_HEAVY_MOVE);
   ObjectEvent_SetSpeed(LOCALID_WEST_LOG, PIXELS(1) / 2, PIXELS(1) / 10);
-  Engine_ObjectEventSetAnimation(LOCALID_WEST_LOG, 2);
+  Import_ObjectEventSetAnimation(LOCALID_WEST_LOG, 2);
   stationaryMotion = 0;
   ObjectEvent_GetById(LOCALID_WEST_LOG)->motionFlags = stationaryMotion;
   pushedLog = ObjectEvent_Get(LOCALID_WEST_LOG);
   pushedLog->bounce = stationaryMotion;
   ObjectMotion_OffsetPositionAndResetMotion(LOCALID_WEST_LOG, 12, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 1);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 1);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_WEST_LOG);
-  Script_PlaySong(SE_STOP_SLOT3);
+  Script_PlaySong(SE_STOP_ACTION_SE);
   Script_PlaySong(SE_HEAVY_STOP);
-  Engine_ObjectEventSetAnimation(LOCALID_WEST_LOG, 3);
+  Import_ObjectEventSetAnimation(LOCALID_WEST_LOG, 3);
   ObjectEvent_GetById(LOCALID_WEST_LOG)->motionFlags =
       OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
   ObjectMotion_OffsetPositionAndResetMotion(LOCALID_WEST_LOG, 6, 0);
   ValeCave_WaitForObjectEventLanding(ObjectEvent_Get(LOCALID_WEST_LOG));
-  Engine_ObjectEventSetAnimation(LOCALID_WEST_LOG, 8);
+  Import_ObjectEventSetAnimation(LOCALID_WEST_LOG, 8);
   ObjectMotion_SetActionVariant(LOCALID_WEST_LOG, 3);
   ObjectEvent_GetById(LOCALID_WEST_LOG)->priorityFlags =
       OBJ_EVENT_PRIORITY_UNDERFOOT;
   PushedObject_FillGridAttributeRectangle(0, 12, 16, 1, 4, MB_NORMAL);
   PushedObject_FillGridAttributeRectangle(0, 13, 16, 1, 4, MB_NORMAL);
-  GameFlag_Set(FLAG_MAP_TEMP_02);
+  GameFlag_Set(FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE);
   Script_PlaySong(SE_240);
   FieldScript_End();
 }
@@ -716,8 +736,8 @@ static void EventScript_PushLogOffLedge(void) {
 /// opening the way.
 ///
 /// Reached by walking into metatile behavior 22 in the third room. Sets
-/// FLAG_MAP_TEMP_05 when it stops on row 20, else FLAG_MAP_TEMP_04, and
-/// then opens the cells above it.
+/// FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW when it stops on row 20, else
+/// FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW, and then opens the cells above it.
 static void EventScript_PushLogNorth(void) {
   struct PushedObjectProbe probe;
 
@@ -725,12 +745,12 @@ static void EventScript_PushLogNorth(void) {
   if (PushedObject_FindClearPosition(&probe) != 0) {
     ObjectEvent_MoveAndRedraw(probe);
     // Slide into the new cell before replacing the metatile behavior footprint.
-    Engine_ObjectEventSetAnimation(LOCALID_SOUTH_LOG, 3);
+    Import_ObjectEventSetAnimation(LOCALID_SOUTH_LOG, 3);
     ObjectEvent_SetSpeed(LOCALID_SOUTH_LOG, PIXELS(1) / 4, PIXELS(1) / 2);
     ObjectMotion_OffsetPositionAndResetMotion(LOCALID_SOUTH_LOG, 0, -16);
     FieldScript_WaitFrames(45);
     Sound_PlaySong(SE_240);
-    Engine_ObjectEventSetAnimation(LOCALID_SOUTH_LOG, 8);
+    Import_ObjectEventSetAnimation(LOCALID_SOUTH_LOG, 8);
     {
       struct ObjectEvent *slidingLog = ObjectEvent_GetById(LOCALID_SOUTH_LOG);
       s32 clearedRows = 2;
@@ -741,9 +761,9 @@ static void EventScript_PushLogNorth(void) {
           0, 13, (probe.position.z >> 20) - 1, 4, clearedRows, emptyAttributes);
     }
     if ((probe.position.z >> 20) == 20) {
-      GameFlag_Set(FLAG_MAP_TEMP_05);
+      GameFlag_Set(FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW);
     } else {
-      GameFlag_Set(FLAG_MAP_TEMP_04);
+      GameFlag_Set(FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW);
       {
 
         MapGrid_CopyCellAttributes(14, 17, 2, 1, 14, 16);
@@ -796,13 +816,14 @@ s32 ValeCave_Initialize(void) {
 /// sound before leaving.
 ///
 /// Reached by stepping on metatile behaviors 1 to 3 in the first room; takes
-/// the warp of the same number (VALE_CAVE_MOUTH_TO_VALE_KRADEN_WEST,
-/// VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE or VALE_CAVE_MOUTH_TO_VALE_KRADEN_EAST).
+/// the warp of the same number (VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST,
+/// VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE or
+/// VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_EAST).
 static void EventScript_LeaveRoom(void) {
   s32 warpNumber = gFieldWork->coordEvent;
 
   Sound_PlaySong(SE_MAP_EXIT);
-  Engine_ScriptRequestWarp(warpNumber);
+  Import_ScriptRequestWarp(warpNumber);
 }
 
 /// Rebuilds the passage cells around the riding log's saved end.
@@ -871,8 +892,8 @@ static void ValeCave_CenterObjectEventOnCell(s32 localId, s32 column, s32 row) {
 /// Called by ValeCave_Initialize. In Kite's part of the second room
 /// (VALE_CAVE_KITE_EAST_FROM_WEST to VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST),
 /// while Kite is free and FLAG_VALE_CAVE_KITE_BEHIND_LEDGE is set, it sets
-/// FLAG_MAP_TEMP_00 (and _01 from VALE_CAVE_KITE_EAST_FROM_WEST) and puts
-/// Kite back behind the ledge.
+/// FLAG_VALE_CAVE_KITE_RAN_OFF (and FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE from
+/// VALE_CAVE_KITE_EAST_FROM_WEST) and puts Kite back behind the ledge.
 static void ValeCave_ApplyEntryState(void) {
   s32 southLogOnSouthernRow;
 
@@ -898,9 +919,9 @@ static void ValeCave_ApplyEntryState(void) {
       if (GameFlag_Get(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) == 0) {
         break;
       }
-      GameFlag_Set(FLAG_MAP_TEMP_00);
+      GameFlag_Set(FLAG_VALE_CAVE_KITE_RAN_OFF);
       if (gSaveBlock.warpDest == VALE_CAVE_KITE_EAST_FROM_WEST) {
-        GameFlag_Set(FLAG_MAP_TEMP_01);
+        GameFlag_Set(FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE);
       }
       WaitFrames(1);
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
@@ -920,10 +941,10 @@ static void ValeCave_ApplyEntryState(void) {
                                          SPRITE_CHEST);
       MapGrid_CopyCellAttributes(23, 34, 13, 3, 0, 34);
       ValeCave_UpdateRidingLogPassage();
-      if (GameFlag_Get(FLAG_MAP_TEMP_00) != 0) {
+      if (GameFlag_Get(FLAG_VALE_CAVE_WEST_CRATES_SUNK) != 0) {
         MapGrid_CopyCellAttributes(23, 41, 1, 1, 23, 39);
       }
-      if (GameFlag_Get(FLAG_MAP_TEMP_01) != 0) {
+      if (GameFlag_Get(FLAG_VALE_CAVE_EAST_CRATES_SUNK) != 0) {
         MapGrid_CopyCellAttributes(31, 39, 2, 1, 27, 41);
       }
       break;
@@ -935,22 +956,23 @@ static void ValeCave_ApplyEntryState(void) {
     case VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_EAST:
       // Each log already pushed leaves open floor; else its footprint
       // blocks its cells again.
-      if (GameFlag_Get(FLAG_MAP_TEMP_02) != 0) {
+      if (GameFlag_Get(FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE) != 0) {
         PushedObject_FillGridAttributeRectangle(0, 12, 16, 1, 4, MB_NORMAL);
         PushedObject_FillGridAttributeRectangle(0, 13, 16, 1, 4, MB_NORMAL);
       } else {
         Map_RedrawObjectEventFootprint(LOCALID_WEST_LOG);
       }
-      if (GameFlag_Get(FLAG_MAP_TEMP_03) != 0) {
+      if (GameFlag_Get(FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE) != 0) {
         PushedObject_FillGridAttributeRectangle(2, 16, 16, 1, 4, MB_NORMAL);
         PushedObject_FillGridAttributeRectangle(0, 16, 16, 1, 4, MB_NORMAL);
       } else {
         Map_RedrawObjectEventFootprint(LOCALID_EAST_LOG);
       }
-      southLogOnSouthernRow = GameFlag_Get(FLAG_MAP_TEMP_05);
+      southLogOnSouthernRow =
+          GameFlag_Get(FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW);
       if (southLogOnSouthernRow != 0) {
         PushedObject_FillGridAttributeRectangle(0, 13, 19, 4, 2, MB_NORMAL);
-      } else if (GameFlag_Get(FLAG_MAP_TEMP_04) != 0) {
+      } else if (GameFlag_Get(FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW) != 0) {
         PushedObject_FillGridAttributeRectangle(0, 13, 15, 4, 2,
                                                 southLogOnSouthernRow);
         MapGrid_CopyCellAttributes(14, 17, 2, 1, 14, 16);
@@ -969,14 +991,15 @@ static void ValeCave_ApplyEntryState(void) {
 ///
 /// Reached by stepping on metatile behavior 20 or 21 in the second room.
 static void EventScript_TouchRidingLog(void) {
-  Engine_ObjectEventSetAnimation(LOCALID_RIDING_LOG, 1);
-  Engine_ObjectEventSetAnimation(LOCALID_RIDING_LOG, 2);
+  Import_ObjectEventSetAnimation(LOCALID_RIDING_LOG, 1);
+  Import_ObjectEventSetAnimation(LOCALID_RIDING_LOG, 2);
 }
 
-// The lifetimes FieldEffect_Spawn gives its effects through gEffectScripts: an
-// effect waits 23, 45 or 127 frames, then is put away and freed.
-// FieldEffect_Spawn divides a change of scale by the loop count in each one's
-// fourth word, so that the effect reaches its scale as its time runs out.
+// The lifetimes FieldEffect_Spawn gives its effects through
+// gFieldEffect_DurationScripts: an effect waits 23, 45 or 127 frames, then is
+// put away and freed. FieldEffect_Spawn divides a change of scale by the loop
+// count in each one's fourth word, so that the effect reaches its scale as its
+// time runs out.
 
 s32 gValeCave_ShortEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
@@ -1041,7 +1064,7 @@ s32 gValeCave_WalkTargets[] = {
     760, 312,
 };
 
-const s32 *gEffectScripts[] = {
+const s32 *gFieldEffect_DurationScripts[] = {
     gValeCave_ShortEffectScript,
     gValeCave_MediumEffectScript,
     gValeCave_LongEffectScript,
@@ -1054,9 +1077,9 @@ struct MapWarpDest gValeCave_WarpDestsOther[] = {
 
 struct MapWarpDest gValeCave_MouthWarpDests[] = {
     { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, 16, 0, 336, 368, 0 },
-    { VALE_CAVE_MOUTH_FROM_VALE_KRADEN_WEST, CONDITION_ALWAYS, 104, 0, 344, FACING_NORTH, 0, 16, 0, 336, 368, 0 },
+    { VALE_CAVE_MOUTH_FROM_VALE_KRADENS_COTTAGE_WEST, CONDITION_ALWAYS, 104, 0, 344, FACING_NORTH, 0, 16, 0, 336, 368, 0 },
     { VALE_CAVE_MOUTH_FROM_VALE_CAVE_KITE, CONDITION_ALWAYS, 136, 0, 184, FACING_SOUTH, 0, 16, 0, 336, 368, 0 },
-    { VALE_CAVE_MOUTH_FROM_VALE_KRADEN_EAST, CONDITION_ALWAYS, 136, 0, 376, FACING_NORTH, 0, 16, 0, 336, 368, 0 },
+    { VALE_CAVE_MOUTH_FROM_VALE_KRADENS_COTTAGE_EAST, CONDITION_ALWAYS, 136, 0, 376, FACING_NORTH, 0, 16, 0, 336, 368, 0 },
     { MAP_TABLE_END },
 };
 
@@ -1087,9 +1110,9 @@ struct MapWarpDest gValeCave_LogsWarpDests[] = {
 
 u32 gValeCave_Warps[] = {
     MAP_WARPS(ValeCaveMouth),
-    MAP_WARP(VALE_CAVE_MOUTH_TO_VALE_KRADEN_WEST, ValeKraden, VALE_KRADEN_FROM_VALE_CAVE_MOUTH_WEST),
+    MAP_WARP(VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST, ValeKradensCottage, VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_WEST),
     MAP_WARP(VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE, ValeCaveKite, VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH),
-    MAP_WARP(VALE_CAVE_MOUTH_TO_VALE_KRADEN_EAST, ValeKraden, VALE_KRADEN_FROM_VALE_CAVE_MOUTH_EAST),
+    MAP_WARP(VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_EAST, ValeKradensCottage, VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST),
     MAP_WARPS(ValeCaveKite),
     MAP_WARP(VALE_CAVE_KITE_TO_VALE_CAVE_MOUTH, ValeCaveMouth, VALE_CAVE_MOUTH_FROM_VALE_CAVE_KITE),
     MAP_WARP(VALE_CAVE_KITE_WEST_TO_EAST, ValeCaveKite, VALE_CAVE_KITE_EAST_FROM_WEST),
@@ -1183,7 +1206,7 @@ struct MapEvent gValeCave_KiteEvents[] = {
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopDownLedge) },
     { MAP_EVENT_COORD, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TouchRidingLog) },
     { MAP_EVENT_COORD, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TouchRidingLog) },
-    { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 24, FLAG_MAP_TEMP_01, EVENT_SCRIPT(EventScript_PushEastCratesIntoHole) },
+    { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 24, FLAG_VALE_CAVE_EAST_CRATES_SUNK, EVENT_SCRIPT(EventScript_PushEastCratesIntoHole) },
     { MAP_EVENT_COORD, 40, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteRunsOff) },
     { MAP_EVENT_COORD, 41, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteRunsBehindLedge) },
     { MAP_EVENT_COORD, 45, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
@@ -1203,8 +1226,8 @@ struct MapEvent gValeCave_KiteEvents[] = {
     { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_VALE_CAVE_NUT, FIND_ITEM(ITEM_NUT) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealHiddenTile) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HideRevealedTile) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_WEST_CRATES, FLAG_MAP_TEMP_00, EVENT_SCRIPT(EventScript_MoveWestCratesIntoHole) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_EAST_CRATES, FLAG_MAP_TEMP_01, EVENT_SCRIPT(EventScript_MoveEastCratesIntoHole) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_WEST_CRATES, FLAG_VALE_CAVE_WEST_CRATES_SUNK, EVENT_SCRIPT(EventScript_MoveWestCratesIntoHole) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_EAST_CRATES, FLAG_VALE_CAVE_EAST_CRATES_SUNK, EVENT_SCRIPT(EventScript_MoveEastCratesIntoHole) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_HALT), LOCALID_KITE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HaltKite) },
     { MAP_EVENTS_END },
 };

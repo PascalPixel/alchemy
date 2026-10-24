@@ -250,7 +250,7 @@ Oam_BuildBufferKernel:
 .Loam_done:
 	pop	{r5, r6, r7, r8, r9, lr}
 	bx	lr
-	.4byte	gFrameTick
+	.4byte	gVBlankCount
 	.4byte	IwramFillWords
 	.4byte	gOamMatrixCount
 	.4byte	gOamMatrices

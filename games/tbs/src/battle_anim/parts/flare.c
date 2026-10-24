@@ -155,8 +155,8 @@ void BattleAnim_RunFlare(struct BattleAnimArgs *effect) {
     i = 0;
     while (i != work->effect->targetCount) {
       if (frame == (i * 8) + 16) {
-        ObjectGroup_UpdateMembers(work->effect->targets[i],
-                                  SPRITE_COLOR_RED_TINT, POSE_DAMAGE, i, 12);
+        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_RED_TINT,
+                               POSE_DAMAGE, i, 12);
       }
       i += 1;
     }

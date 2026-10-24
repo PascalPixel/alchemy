@@ -16,8 +16,8 @@ static s32 Map_UpdateFloatingNut(s32 *p) {
   p[2] = p[14] + Trig_Cos(p[12]) * 2;
   p[3] = p[15] + d;
   q[15] = Trig_Cos(p[12] + 0x8000) / 8;
-  a = Engine_RandomNext();
-  b = Engine_RandomNext();
+  a = Import_RandomNext();
+  b = Import_RandomNext();
   p[12] = p[12] + ((((u32)a << 9) >> 16) + (((u32)b << 9) >> 16)) + 0x400;
   return 0;
 }

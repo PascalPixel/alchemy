@@ -1,17 +1,17 @@
 /// @file
-/// Vale on the stormy night (MapId_ValeStorm), the prologue, when Isaac and
-/// Garet are children: a map of its own that stands in for MapId_Vale while
+/// Vale on the stormy night (MapId_ValeStormyNight), the prologue, when Isaac
+/// and Garet are children: a map of its own that stands in for MapId_Vale while
 /// FLAG_VALE_STORM is set, so that the doors that lead to Vale by day lead
-/// here. ValeStorm_Initialize sets the flag on every arrival, and vale_gate.c
-/// clears it when the night ends.
+/// here. ValeStormyNight_Initialize sets the flag on every arrival, and
+/// vale_plaza.c clears it when the night ends.
 ///
 /// The night is a chain of story flags. Each is set by one event and read by
-/// ValeStorm_Initialize, which rebuilds the map at that stage on the next
+/// ValeStormyNight_Initialize, which rebuilds the map at that stage on the next
 /// arrival:
 ///
 /// - FLAG_VALE_STORM_SENT_TO_PLAZA: EventScript_DoraSendsIsaacToThePlaza,
 /// played on
-///   the first arrival by VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA. Dora
+///   the first arrival by VALE_STORMY_NIGHT_FROM_VALE_INN_WITH_DORA. Dora
 ///   and Kyle send Isaac on to the plaza and go to help; until the flag is set
 ///   the lightning waits for the cutscene.
 /// - FLAG_VALE_STORM_FIRST_ROCK_FELL to FLAG_VALE_STORM_FOURTH_ROCK_FELL, with
@@ -21,35 +21,37 @@
 ///   _FELL flag puts back the rock and the metatile behaviors of the cells it
 ///   blocks; the _PASSED flag, cleared once the party leaves Vale, keeps the
 ///   script from running again.
-/// - FLAG_VALE_STORM_BUMPED_INTO_VILLAGER: ValeStorm_BumpIntoShovingMan, the
+/// - FLAG_VALE_STORM_BUMPED_INTO_VILLAGER: ValeStormyNight_BumpIntoShovingMan,
+/// the
 ///   first time Isaac tries the door of
-///   VALE_STORM_TO_VALE_INTERIORS_SHOPS_SOUTH.
+///   VALE_STORMY_NIGHT_TO_VALE_SHOPS_SOUTH.
 /// - FLAG_VALE_STORM_HEARD_GARET, then FLAG_VALE_STORM_GARET_JOINED: Garet is
 ///   trying to save his chest of valuables; talking to him, or walking off
-///   past him, brings him into the party (ValeStorm_GaretLeavesHisChest) and
-///   leaves the chest by his door. EventScript_UnusedGaretJoinsIsaac is a third
-///   way that never plays. With Garet along, a fallen rock and the path north
-///   to Mt. Aleph have him turn Isaac back.
+///   past him, brings him into the party (ValeStormyNight_GaretLeavesHisChest)
+///   and leaves the chest by his door. EventScript_UnusedGaretJoinsIsaac is a
+///   third way that never plays. With Garet along, a fallen rock and the path
+///   north to Mt. Aleph have him turn Isaac back.
 /// - FLAG_VALE_BOULDER_FELL: EventScript_WatchBoulderFall, the elders holding
 /// back
 ///   the Boulder with their Psynergy as it slips; from then on it rests where
 ///   it slipped to.
 /// - FLAG_VALE_STORM_SAW_FELIX_HANGING_ON: EventScript_WatchAttemptToSaveFelix
 /// and
-///   ValeStorm_DoraGoesForHelp, Felix clinging on in the river. The plaza
-///   (vale_gate.c) then sets FLAG_VALE_STORM_SENT_TO_AID_ELDERS and sends the
+///   ValeStormyNight_DoraGoesForHelp, Felix clinging on in the river. The plaza
+///   (vale_plaza.c) then sets FLAG_VALE_STORM_SENT_TO_AID_ELDERS and sends the
 ///   boys back.
 /// - FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY: EventScript_BoulderSweepsThemAway
 /// and
-///   ValeStorm_ShowBoulderSweepingDownriver, the Boulder carrying Felix, his
-///   parents and Kyle away down the river.
-/// - FLAG_VALE_STORM_GARET_LEFT: ValeStorm_GaretFollowsIsaac, as Isaac leaves
-///   for the plaza again; the night ends in vale_gate.c.
+///   ValeStormyNight_ShowBoulderSweepingDownriver, the Boulder carrying Felix,
+///   his parents and Kyle away down the river.
+/// - FLAG_VALE_STORM_GARET_LEFT: ValeStormyNight_GaretFollowsIsaac, as Isaac
+/// leaves
+///   for the plaza again; the night ends in vale_plaza.c.
 ///
 /// Every way out goes through Vale_RequestBackdropWarp (common/vale.h), which
 /// stops the lightning first, and each door plays its opening cells before it;
-/// gValeStorm_Warps gives each warp's destination. Two cells start a battle
-/// once each (slots 2 and 3 of ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
+/// gValeStormyNight_Warps gives each warp's destination. Two cells start a
+/// battle once each (slots 2 and 3 of ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
 ///
 /// Open questions:
 /// - None.
@@ -57,7 +59,7 @@
 #include "action_script.h"
 #include "save_block.h"
 #include "unit/import.h"
-#include "unit/map/vale_storm.h"
+#include "unit/map/vale_stormy_night.h"
 #include "unit/map/common/effect_psynergy.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
@@ -95,33 +97,33 @@
 #include "fx_work.h"
 
 static void EventScript_DoraSendsIsaacToThePlaza(void);
-static void ValeStorm_ApplyFirstRockCollision(void);
-static void ValeStorm_ApplySecondRockCollision(void);
-static void ValeStorm_ApplyThirdRockCollision(void);
-static void ValeStorm_ApplyFourthRockCollision(void);
-static void ValeStorm_BumpIntoShovingMan(void);
-static void ValeStorm_GaretLeavesHisChest(void);
-static void ValeStorm_GaretCommentsOnBlockedPath(s32 x, s32 y);
-static void ValeStorm_DoraGoesForHelp(void);
-static void ValeStorm_ShowBoulderSweepingDownriver(void);
-static void ValeStorm_FlashLightning(void);
-static void ValeStorm_UpdateBoulderShadow(void);
-static void ValeStorm_FlickerBoulderShadow(void);
-static void ValeStorm_GaretFollowsIsaac(void);
-static void ValeStorm_RebuildRiverbank(void);
+static void ValeStormyNight_ApplyFirstRockCollision(void);
+static void ValeStormyNight_ApplySecondRockCollision(void);
+static void ValeStormyNight_ApplyThirdRockCollision(void);
+static void ValeStormyNight_ApplyFourthRockCollision(void);
+static void ValeStormyNight_BumpIntoShovingMan(void);
+static void ValeStormyNight_GaretLeavesHisChest(void);
+static void ValeStormyNight_GaretCommentsOnBlockedPath(s32 x, s32 y);
+static void ValeStormyNight_DoraGoesForHelp(void);
+static void ValeStormyNight_ShowBoulderSweepingDownriver(void);
+static void ValeStormyNight_FlashLightning(void);
+static void ValeStormyNight_UpdateBoulderShadow(void);
+static void ValeStormyNight_FlickerBoulderShadow(void);
+static void ValeStormyNight_GaretFollowsIsaac(void);
+static void ValeStormyNight_RebuildRiverbank(void);
 static void
-ValeStorm_FlashPaletteAndSpawnEffects(struct ObjectEvent *objectEvent);
-static void ValeStorm_SpawnEffectPair(struct ObjectEvent *parent);
-static void ValeStorm_UpdateBoulderMapEffects(void);
-static void ValeStorm_CycleBoulderPalette(void);
-static void ValeStorm_CopyLeaderSpritePriority(void);
+ValeStormyNight_FlashPaletteAndSpawnEffects(struct ObjectEvent *objectEvent);
+static void ValeStormyNight_SpawnEffectPair(struct ObjectEvent *parent);
+static void ValeStormyNight_UpdateBoulderMapEffects(void);
+static void ValeStormyNight_CycleBoulderPalette(void);
+static void ValeStormyNight_CopyLeaderSpritePriority(void);
 
 /// The placed object events, numbered in the order of
-/// gValeStorm_ObjectEventTemplates; the elders holding back the Boulder
-/// (gValeStorm_BoulderWatchers) follow them.
+/// gValeStormyNight_ObjectEventTemplates; the elders holding back the Boulder
+/// (gValeStormyNight_BoulderWatchers) follow them.
 enum StormNightLocalId {
   /// The strongman who comes back to the river with Jenna, his Psynergy
-  /// restored at the Psynergy Stone (vale_gate.c); after the Boulder has
+  /// restored at the Psynergy Stone (vale_plaza.c); after the Boulder has
   /// passed he tries to go for help and cannot. "I... I'll go!", then "It's no
   /// use. I can't move..."
   /// ★ Named from the game: "I'll go!" (MsgValeIllGo)
@@ -137,7 +139,7 @@ enum StormNightLocalId {
   /// LOCALID_FIRST_ROCK + 4 and + 5 already lie there, and LOCALID_FIRST_ROCK +
   /// 6
   /// and + 7 lie there only once the Boulder has passed down the river
-  /// (ValeStorm_ShowBoulderSweepingDownriver).
+  /// (ValeStormyNight_ShowBoulderSweepingDownriver).
   /// ★ Named from the game: "can't even budge" (MsgValeRockCannotBeMoved)
   LOCALID_FIRST_ROCK,
   /// ★ Named from the game: "The Mt. Aleph Boulder is going to fall!"
@@ -166,13 +168,14 @@ enum StormNightLocalId {
   LOCALID_JENNA_CHILD,
   /// The Boulder's shadow (sprite 0x120, a black blob), drawn on alternate
   /// frames under the Boulder as it comes down the river, swelling and
-  /// shrinking with its bounds (ValeStorm_UpdateBoulderShadow), and twice its
-  /// size during the frozen flashes (ValeStorm_FlickerBoulderShadow).
+  /// shrinking with its bounds (ValeStormyNight_UpdateBoulderShadow), and twice
+  /// its
+  /// size during the frozen flashes (ValeStormyNight_FlickerBoulderShadow).
   /// ★ Named from what the player sees: a flickering black shadow under the
   /// Boulder, EventScript_BoulderSweepsThemAway.gif (its render)
   LOCALID_BOULDER_SHADOW,
   // The elders holding back the Boulder with their Psynergy ("Go aid the
-  // elders!", vale_gate.c), from gValeStorm_BoulderWatchers, which
+  // elders!", vale_plaza.c), from gValeStormyNight_BoulderWatchers, which
   // EventScript_WatchBoulderFall places after the map's own object events and
   // removes.
   // Two invisible object events stand on the spots of LOCALID_ELDER_EAST and
@@ -238,7 +241,7 @@ enum StormNightAnimation {
   ANIM_STRONGMAN_PROPPED_UP = 7,
   ANIM_STRONGMAN_PROPPED_UP_OTHER_WAY = 8,
   // The poses frozen in the lightning as the Boulder comes down the river
-  // (ValeStorm_ShowBoulderSweepingDownriver).
+  // (ValeStormyNight_ShowBoulderSweepingDownriver).
   ANIM_STRONGMAN_RUN = 5,    ///< in mid-stride (spr_116.png)
   ANIM_DORA_RUN = 9,         ///< in mid-stride (spr_031.png)
   ANIM_JENNA_RUN = 5,        ///< in mid-stride (spr_048.png)
@@ -263,39 +266,41 @@ enum StormNightMapSecFlag {
   /// does not play again.
   /// ★ Named from the game: "We can't get around this rock!"
   /// (MsgValeCantGetAroundThisRock)
-  FLAG_VALE_STORM_FIRST_ROCK_PASSED = 0x310,
+  FLAG_VALE_STORM_FIRST_ROCK_PASSED = FLAG_MAPSEC_TEMP_10,
   /// ★ Named from the game: "We can't get around this rock!"
   /// (MsgValeCantGetAroundThisRock)
-  FLAG_VALE_STORM_SECOND_ROCK_PASSED = 0x311,
+  FLAG_VALE_STORM_SECOND_ROCK_PASSED = FLAG_MAPSEC_TEMP_11,
   /// ★ Named from the game: "We can't get around this rock!"
   /// (MsgValeCantGetAroundThisRock)
-  FLAG_VALE_STORM_THIRD_ROCK_PASSED = 0x312,
+  FLAG_VALE_STORM_THIRD_ROCK_PASSED = FLAG_MAPSEC_TEMP_12,
   /// ★ Named from the game: "We can't get around this rock!"
   /// (MsgValeCantGetAroundThisRock)
-  FLAG_VALE_STORM_FOURTH_ROCK_PASSED = 0x313
+  FLAG_VALE_STORM_FOURTH_ROCK_PASSED = FLAG_MAPSEC_TEMP_13
 };
 
 // Map flags, cleared on every ordinary arrival:
-// - FLAG_MAP_TEMP_05: the door of Isaac's house, from which Dora and Isaac
-//   came, stands open.
-// - FLAG_MAP_TEMP_06: the stout man has run out of the door of
-//   VALE_STORM_TO_VALE_INTERIORS_SHOPS_SOUTH, leaving it open.
-// - FLAG_MAP_TEMP_10: the leader is on the upper path, whose metatile behaviors
-//   are swapped until the leader steps off it.
+// - FLAG_VALE_ISAACS_DOOR_OPEN: the door of Isaac's house, from which Dora and
+//   Isaac came, stands open.
+// - FLAG_VALE_SHOVING_MANS_DOOR_OPEN: the stout man has run out of the door of
+//   VALE_STORMY_NIGHT_TO_VALE_SHOPS_SOUTH, leaving it open.
+// - FLAG_VALE_ON_UPPER_PATH: the leader is on the upper path, whose metatile
+//   behaviors are swapped until the leader steps off it.
 
 static s32 sShakeDone;
 static s32 sShakeShift;
 
-/// The step of gValeStorm_LookAroundScript: the object event faces a random way
-/// every 20 to 39 frames, as everyone looks about once the Boulder has gone by.
-static s32 ValeStorm_RerollHeadingOnCountdown(struct Object *interpreter) {
+/// The step of gValeStormyNight_LookAroundScript: the object event faces a
+/// random way every 20 to 39 frames, as everyone looks about once the Boulder
+/// has gone by.
+static s32
+ValeStormyNight_RerollHeadingOnCountdown(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   s32 timer = objectEvent->timer;
   s32 countdown = (s16)timer;
 
   if (timer == 0) {
-    objectEvent->facing = Engine_RandomNext();
-    countdown = Math_RemainderUnsigned(Engine_RandomNext(), 20) + 20;
+    objectEvent->facing = Import_RandomNext();
+    countdown = Math_RemainderUnsigned(Import_RandomNext(), 20) + 20;
     objectEvent->timer = countdown;
   }
   objectEvent->timer = countdown - 1;
@@ -304,38 +309,51 @@ static s32 ValeStorm_RerollHeadingOnCountdown(struct Object *interpreter) {
 
 #include "common/object_pulse.h"
 
+/// The door of Isaac's house, from which Dora and Isaac came out into the
+/// storm, stands open.
+#define FLAG_VALE_ISAACS_DOOR_OPEN FLAG_MAP_TEMP_05
+/// The stout man has run out of his door and shoved Isaac, leaving the door
+/// open.
+#define FLAG_VALE_SHOVING_MANS_DOOR_OPEN FLAG_MAP_TEMP_06
+/// The leader is on the upper path, whose metatile behaviors are swapped until
+/// the leader steps off it.
+#define FLAG_VALE_ON_UPPER_PATH FLAG_MAP_TEMP_10
+
 /// Returns where the party appears;
-/// VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA is where Dora and Isaac come
-/// out of the door of their house, from MapId_ValeInteriorsInn's
-/// VALE_INTERIORS_INN_TO_VALE_STORM_WITH_DORA.
-const struct MapWarpDest *ValeStorm_GetWarpDests(void) {
-  return gValeStorm_WarpDests;
+/// VALE_STORMY_NIGHT_FROM_VALE_INN_WITH_DORA is where Dora and Isaac come
+/// out of the door of their house, from MapId_ValeInn's
+/// VALE_INN_TO_VALE_STORMY_NIGHT_WITH_DORA.
+const struct MapWarpDest *ValeStormyNight_GetWarpDests(void) {
+  return gValeStormyNight_WarpDests;
 }
 
-const struct MapWarpRegion *ValeStorm_GetRegions(void) { return NULL; }
+const struct MapWarpRegion *ValeStormyNight_GetRegions(void) { return NULL; }
 
-const u32 *ValeStorm_GetWarps(void) { return gValeStorm_Warps; }
+const u32 *ValeStormyNight_GetWarps(void) { return gValeStormyNight_Warps; }
 
-const struct ObjectEventTemplate *ValeStorm_GetObjectEventTemplates(void) {
-  return gValeStorm_ObjectEventTemplates;
+const struct ObjectEventTemplate *
+ValeStormyNight_GetObjectEventTemplates(void) {
+  return gValeStormyNight_ObjectEventTemplates;
 }
 
-const struct MapEvent *ValeStorm_GetEvents(void) { return gValeStorm_Events; }
+const struct MapEvent *ValeStormyNight_GetEvents(void) {
+  return gValeStormyNight_Events;
+}
 
 /// In Vale on the stormy night, swaps the upper path's metatile behaviors as
-/// the leader steps onto it.
-/// Reached by stepping on metatile behavior 15. Sets FLAG_MAP_TEMP_10,
-/// which ValeStorm_Initialize reads to swap them again.
-static void EventScript_SetPathCellOverride(void) {
-  GameFlag_Set(FLAG_MAP_TEMP_10);
+/// the leader steps onto it. Reached by stepping on metatile behavior 15. Sets
+/// FLAG_VALE_ON_UPPER_PATH, which ValeStormyNight_Initialize reads to swap them
+/// again.
+static void EventScript_StepOntoUpperPath(void) {
+  GameFlag_Set(FLAG_VALE_ON_UPPER_PATH);
   MapGrid_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
 /// In Vale on the stormy night, restores the upper path's metatile behaviors as
-/// the leader steps off it.
-/// Reached by stepping on metatile behavior 14. Clears FLAG_MAP_TEMP_10.
-static void EventScript_ClearPathCellOverride(void) {
-  GameFlag_Clear(FLAG_MAP_TEMP_10);
+/// the leader steps off it. Reached by stepping on metatile behavior 14. Clears
+/// FLAG_VALE_ON_UPPER_PATH.
+static void EventScript_StepOffUpperPath(void) {
+  GameFlag_Clear(FLAG_VALE_ON_UPPER_PATH);
   MapGrid_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
@@ -344,25 +362,24 @@ static void EventScript_ClearPathCellOverride(void) {
 /// Unused: on the stormy night, the Sanctum's door opens and the leader goes
 /// into a house of Vale.
 ///
-/// It takes VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SANCTUM_DOOR
-/// (MapId_ValeInteriorsShops, at VALE_INTERIORS_SHOPS_FROM_VALE_WEST, the
-/// house VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST and its second door lead to
+/// It takes VALE_STORMY_NIGHT_TO_VALE_SHOPS_WEST_SANCTUM_DOOR
+/// (MapId_ValeShops, at VALE_SHOPS_FROM_VALE_WEST, the
+/// house VALE_STORMY_NIGHT_TO_VALE_SHOPS_WEST and its second door lead to
 /// as well). No map event names it, and nothing
 /// else takes that warp.
-UNUSED static void ValeStorm_UnusedOpenSanctumDoor(void) {
+UNUSED static void ValeStormyNight_UnusedOpenSanctumDoor(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
-  MapGrid_PlayMetatileCopySequence(gValeStorm_SanctumDoorOpens, 45, 11);
+  MapGrid_PlayMetatileCopySequence(gValeStormyNight_SanctumDoorOpens, 45, 11);
   ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 257, 420);
   FieldScript_WaitFrames(3);
-  Vale_RequestBackdropWarp(
-      VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SANCTUM_DOOR);
+  Vale_RequestBackdropWarp(VALE_STORMY_NIGHT_TO_VALE_SHOPS_WEST_SANCTUM_DOOR);
 }
 
 /// Leaves through a warp the warp table doesn't list. In Vale on the stormy
 /// night, stepping on metatile behavior 2 requests warp 1, the one number the
 /// warp table leaves out; Map_TakeWarp therefore falls back to the first warp's
-/// map, Vale's MapId_ValeGate, at WARP_DEST_DEFAULT.
-static void EventScript_LeaveByMissingWarp(void) {
+/// map, Vale's MapId_ValePlaza, at WARP_DEST_DEFAULT.
+static void EventScript_LeaveNorthwestToValePlaza(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   Vale_RequestBackdropWarp(1);
 }
@@ -370,177 +387,178 @@ static void EventScript_LeaveByMissingWarp(void) {
 /// In Vale on the stormy night, leaves for the part of Vale around Kraden's
 /// cottage.
 /// Reached by stepping on metatile behavior 3; arrives at
-/// VALE_KRADEN_FROM_VALE_NORTH.
-static void EventScript_LeaveToValeKradenNorth(void) {
+/// VALE_KRADENS_COTTAGE_FROM_VALE_NORTH.
+static void EventScript_LeaveToValeKradensCottageNorth(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  Vale_RequestBackdropWarp(VALE_STORM_TO_VALE_KRADEN_NORTH);
+  Vale_RequestBackdropWarp(VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_NORTH);
 }
 
 /// In Vale on the stormy night, leaves for the part of Vale around Kraden's
 /// cottage by its second path.
 /// Reached by stepping on metatile behavior 4; arrives at
-/// VALE_KRADEN_FROM_VALE_SOUTH.
-static void EventScript_LeaveToValeKradenSouth(void) {
+/// VALE_KRADENS_COTTAGE_FROM_VALE_SOUTH.
+static void EventScript_LeaveToValeKradensCottageSouth(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  Vale_RequestBackdropWarp(VALE_STORM_TO_VALE_KRADEN_SOUTH);
+  Vale_RequestBackdropWarp(VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_SOUTH);
 }
 
 /// In Vale on the stormy night, leaves for the plaza, where the villagers have
-/// gathered (MapId_ValeGate).
-/// Reached by stepping on metatile behavior 5; arrives at VALE_GATE_FROM_VALE.
+/// gathered (MapId_ValePlaza).
+/// Reached by stepping on metatile behavior 5; arrives at VALE_PLAZA_FROM_VALE.
 /// After the Boulder swept them away, Garet first resolves to go after Isaac
-/// (ValeStorm_GaretFollowsIsaac).
-static void EventScript_LeaveToValeGate(void) {
+/// (ValeStormyNight_GaretFollowsIsaac).
+static void EventScript_LeaveToValePlaza(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   if (GameFlag_Get(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0 &&
       GameFlag_Get(FLAG_VALE_STORM_GARET_LEFT) == 0) {
-    ValeStorm_GaretFollowsIsaac();
+    ValeStormyNight_GaretFollowsIsaac();
   }
-  Vale_RequestBackdropWarp(VALE_STORM_TO_VALE_GATE);
+  Vale_RequestBackdropWarp(VALE_STORMY_NIGHT_TO_VALE_PLAZA);
 }
 
 /// In Vale on the stormy night, opens the door of Garet's house and goes in.
 /// Reached by walking north into metatile behavior 6; arrives at
-/// VALE_INTERIORS_SHOPS_FROM_VALE_EAST, the house where Garet's family lives.
-static void EventScript_LeaveToValeInteriorsShopsEast(void) {
+/// VALE_SHOPS_FROM_VALE_EAST, the house where Garet's family lives.
+static void EventScript_LeaveToValeShopsEast(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
-  MapGrid_PlayMetatileCopySequence(gValeStorm_IsaacsDoorOpens, 54, 32);
+  MapGrid_PlayMetatileCopySequence(gValeStormyNight_IsaacsDoorOpens, 54, 32);
   ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 406, 727);
   FieldScript_WaitFrames(3);
-  Vale_RequestBackdropWarp(VALE_STORM_TO_VALE_INTERIORS_SHOPS_EAST);
+  Vale_RequestBackdropWarp(VALE_STORMY_NIGHT_TO_VALE_SHOPS_EAST);
 }
 
 /// A stout man runs out of a house and shoves Isaac. In Vale on the stormy
 /// night, this is Isaac's first time at the door of
-/// VALE_STORM_TO_VALE_INTERIORS_SHOPS_SOUTH; afterwards the door opens as
+/// VALE_STORMY_NIGHT_TO_VALE_SHOPS_SOUTH; afterwards the door opens as
 /// usual. "Huh? Isaac?" Reached by walking north into metatile behavior 7. The
 /// shove plays until FLAG_VALE_STORM_BUMPED_INTO_VILLAGER or
-/// FLAG_VALE_STORM_SECOND_ROCK_FELL is set, and sets FLAG_MAP_TEMP_06;
-/// otherwise goes into a house of Vale (MapId_ValeInteriorsShops, at
-/// VALE_INTERIORS_SHOPS_FROM_VALE_SOUTH).
-static void EventScript_LeaveToValeInteriorsShops(void) {
-  if (Script_GetFlag(FLAG_MAP_TEMP_06) == 0) {
+/// FLAG_VALE_STORM_SECOND_ROCK_FELL is set, and sets
+/// FLAG_VALE_SHOVING_MANS_DOOR_OPEN; otherwise goes into a house of Vale
+/// (MapId_ValeShops, at VALE_SHOPS_FROM_VALE_SOUTH).
+static void EventScript_LeaveToValeShops(void) {
+  if (Script_GetFlag(FLAG_VALE_SHOVING_MANS_DOOR_OPEN) == 0) {
     Script_PlaySong(SE_DOOR_OPEN);
-    MapGrid_AnimateCells(gValeStorm_GrandparentsDoorOpens, 45, 39);
+    MapGrid_AnimateCells(gValeStormyNight_GrandparentsDoorOpens, 45, 39);
   }
   if (GameFlag_Get(FLAG_VALE_STORM_BUMPED_INTO_VILLAGER) == 0 &&
       GameFlag_Get(FLAG_VALE_STORM_SECOND_ROCK_FELL) == 0) {
-    ValeStorm_BumpIntoShovingMan();
-    GameFlag_Set(FLAG_MAP_TEMP_06);
+    ValeStormyNight_BumpIntoShovingMan();
+    GameFlag_Set(FLAG_VALE_SHOVING_MANS_DOOR_OPEN);
   } else {
     ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 262, 805);
     FieldScript_WaitFrames(3);
-    Vale_RequestBackdropWarp(VALE_STORM_TO_VALE_INTERIORS_SHOPS_SOUTH);
+    Vale_RequestBackdropWarp(VALE_STORMY_NIGHT_TO_VALE_SHOPS_SOUTH);
   }
 }
 
 /// Goes back into Isaac's house on the stormy night. It's the door he and Dora
 /// came out of in Vale, and it opens unless they left it open.
 /// Reached by walking north into metatile behavior 8; takes
-/// VALE_STORM_TO_VALE_INTERIORS_INN_ISAACS_HOUSE, to
-/// VALE_INTERIORS_INN_FROM_VALE in MapId_ValeInteriorsInn, where Vale's
-/// VALE_TO_VALE_INTERIORS_INN leads by day.
-static void EventScript_LeaveToValeInteriorsInn(void) {
-  if (GameFlag_Get(FLAG_MAP_TEMP_05) == 0) {
+/// VALE_STORMY_NIGHT_TO_VALE_INN_ISAACS_HOUSE, to
+/// VALE_INN_FROM_VALE in MapId_ValeInn, where Vale's
+/// VALE_TO_VALE_INN leads by day.
+static void EventScript_LeaveToValeInn(void) {
+  if (GameFlag_Get(FLAG_VALE_ISAACS_DOOR_OPEN) == 0) {
     Sound_PlaySong(SE_DOOR_OPEN);
-    MapGrid_PlayMetatileCopySequence(gValeStorm_IsaacsDoorOpens, 50, 44);
+    MapGrid_PlayMetatileCopySequence(gValeStormyNight_IsaacsDoorOpens, 50, 44);
   }
   ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 340, 888);
   FieldScript_WaitFrames(3);
-  Vale_RequestBackdropWarp(VALE_STORM_TO_VALE_INTERIORS_INN_ISAACS_HOUSE);
+  Vale_RequestBackdropWarp(VALE_STORMY_NIGHT_TO_VALE_INN_ISAACS_HOUSE);
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
 /// Reached by walking north into metatile behavior 9; arrives in a house of
-/// Vale at VALE_INTERIORS_SHOPS_FROM_VALE_NORTH.
-static void EventScript_LeaveToValeInteriorsShopsNorth(void) {
+/// Vale at VALE_SHOPS_FROM_VALE_NORTH.
+static void EventScript_LeaveToValeShopsNorth(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
-  MapGrid_PlayMetatileCopySequence(gValeStorm_GrandparentsDoorOpens, 49, 69);
+  MapGrid_PlayMetatileCopySequence(gValeStormyNight_GrandparentsDoorOpens, 49,
+                                   69);
   ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 326, 1126);
   FieldScript_WaitFrames(3);
-  Vale_RequestBackdropWarp(VALE_STORM_TO_VALE_INTERIORS_SHOPS_NORTH);
+  Vale_RequestBackdropWarp(VALE_STORMY_NIGHT_TO_VALE_SHOPS_NORTH);
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
 /// Reached by walking north into metatile behavior 10; takes
-/// VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST, to
-/// VALE_INTERIORS_SHOPS_FROM_VALE_WEST in MapId_ValeInteriorsShops, where
-/// Vale's VALE_TO_VALE_INTERIORS_SHOPS_WEST leads by day.
-static void EventScript_LeaveToValeInteriorsShopsWest(void) {
+/// VALE_STORMY_NIGHT_TO_VALE_SHOPS_WEST, to
+/// VALE_SHOPS_FROM_VALE_WEST in MapId_ValeShops, where
+/// Vale's VALE_TO_VALE_SHOPS_WEST leads by day.
+static void EventScript_LeaveToValeShopsWest(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
-  MapGrid_PlayMetatileCopySequence(gValeStorm_WestHouseDoorOpens, 52, 76);
+  MapGrid_PlayMetatileCopySequence(gValeStormyNight_WestHouseDoorOpens, 52, 76);
   ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 374, 1238);
   FieldScript_WaitFrames(3);
-  Vale_RequestBackdropWarp(VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST);
+  Vale_RequestBackdropWarp(VALE_STORMY_NIGHT_TO_VALE_SHOPS_WEST);
 }
 
 /// Unused: its row answers metatile behavior 11, which no cell of the stormy
 /// night's layout (layout/layout_000) carries. It would have opened Isaac's
-/// door, as EventScript_LeaveToValeInteriorsInnWest does for behavior 12,
+/// door, as EventScript_LeaveToValeInnWest does for behavior 12,
 /// walked the leader to the same spot and taken
-/// VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SECOND_DOOR into the house
-/// EventScript_LeaveToValeInteriorsShopsWest leads to
-/// (VALE_INTERIORS_SHOPS_FROM_VALE_WEST).
-static void EventScript_UnusedLeaveToValeInteriorsShopsWestBySecondDoor(void) {
+/// VALE_STORMY_NIGHT_TO_VALE_SHOPS_WEST_SECOND_DOOR into the house
+/// EventScript_LeaveToValeShopsWest leads to
+/// (VALE_SHOPS_FROM_VALE_WEST).
+static void EventScript_UnusedLeaveToValeShopsWestBySecondDoor(void) {
   Script_PlaySong(SE_DOOR_OPEN);
-  MapGrid_AnimateCells(gValeStorm_IsaacsDoorOpens, 35, 74);
+  MapGrid_AnimateCells(gValeStormyNight_IsaacsDoorOpens, 35, 74);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 102, 1206);
   FieldScript_WaitFrames(3);
-  Vale_RequestBackdropWarp(VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SECOND_DOOR);
+  Vale_RequestBackdropWarp(VALE_STORMY_NIGHT_TO_VALE_SHOPS_WEST_SECOND_DOOR);
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
 /// Reached by walking north into metatile behavior 12; arrives in another part
-/// of Vale at VALE_INTERIORS_INN_FROM_VALE_STORM_WEST.
-static void EventScript_LeaveToValeInteriorsInnWest(void) {
+/// of Vale at VALE_INN_FROM_VALE_STORMY_NIGHT_WEST.
+static void EventScript_LeaveToValeInnWest(void) {
   Script_PlaySong(SE_DOOR_OPEN);
-  MapGrid_AnimateCells(gValeStorm_IsaacsDoorOpens, 35, 73);
+  MapGrid_AnimateCells(gValeStormyNight_IsaacsDoorOpens, 35, 73);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 102, 1206);
   FieldScript_WaitFrames(3);
-  Vale_RequestBackdropWarp(VALE_STORM_TO_VALE_INTERIORS_INN_WEST);
+  Vale_RequestBackdropWarp(VALE_STORMY_NIGHT_TO_VALE_INN_WEST);
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
 /// Reached by walking north into metatile behavior 13; arrives in another part
-/// of Vale at VALE_INTERIORS_INN_FROM_VALE_STORM_EAST.
-static void EventScript_LeaveToValeInteriorsInnEast(void) {
+/// of Vale at VALE_INN_FROM_VALE_STORMY_NIGHT_EAST.
+static void EventScript_LeaveToValeInnEast(void) {
   Script_PlaySong(SE_DOOR_OPEN);
-  MapGrid_AnimateCells(gValeStorm_GrandparentsDoorOpens, 38, 72);
+  MapGrid_AnimateCells(gValeStormyNight_GrandparentsDoorOpens, 38, 72);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 146, 1182);
   FieldScript_WaitFrames(3);
-  Vale_RequestBackdropWarp(VALE_STORM_TO_VALE_INTERIORS_INN_EAST);
+  Vale_RequestBackdropWarp(VALE_STORMY_NIGHT_TO_VALE_INN_EAST);
 }
 
 /// Arriving in Vale on the stormy night: restores the fallen rocks, the river
 /// scene and the Boulder from their flags, starts the storm, and plays the
 /// scene with Dora and Kyle on the first arrival by
-/// VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA. Called by Map_Run once
+/// VALE_STORMY_NIGHT_FROM_VALE_INN_WITH_DORA. Called by Map_Run once
 /// the object events are placed. Sets FLAG_VALE_STORM; after a battle
 /// (FLAG_KEEP_PARTY_POSITION) the two doors close again. Garet, until he joins,
 /// is shown struggling with his things.
-s32 ValeStorm_Initialize(void) {
+s32 ValeStormyNight_Initialize(void) {
   Map_QueueMusic(SE_170);
-  Engine_ObjectEventSetPosition(LOCALID_FELIX_CHILD, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_FELIX_CHILD, 0, 0);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
-    GameFlag_Clear(FLAG_MAP_TEMP_05);
-    GameFlag_Clear(FLAG_MAP_TEMP_06);
+    GameFlag_Clear(FLAG_VALE_ISAACS_DOOR_OPEN);
+    GameFlag_Clear(FLAG_VALE_SHOVING_MANS_DOOR_OPEN);
   }
   // Restore the rocks that have already fallen.
   if (GameFlag_Get(FLAG_VALE_STORM_FIRST_ROCK_FELL) != 0) {
     ObjectEvent_SetPosition(LOCALID_FIRST_ROCK, PIXELS(334), PIXELS(932));
-    ValeStorm_ApplyFirstRockCollision();
+    ValeStormyNight_ApplyFirstRockCollision();
   }
   if (GameFlag_Get(FLAG_VALE_STORM_SECOND_ROCK_FELL) != 0) {
     ObjectEvent_SetPosition(LOCALID_FIRST_ROCK + 1, PIXELS(224), PIXELS(872));
-    ValeStorm_ApplySecondRockCollision();
+    ValeStormyNight_ApplySecondRockCollision();
   }
   if (GameFlag_Get(FLAG_VALE_STORM_THIRD_ROCK_FELL) != 0) {
     ObjectEvent_SetPosition(LOCALID_FIRST_ROCK + 2, PIXELS(64), PIXELS(703));
-    ValeStorm_ApplyThirdRockCollision();
+    ValeStormyNight_ApplyThirdRockCollision();
   }
   if (GameFlag_Get(FLAG_VALE_STORM_FOURTH_ROCK_FELL) != 0) {
     ObjectEvent_SetPosition(LOCALID_FIRST_ROCK + 3, PIXELS(432), PIXELS(1147));
-    ValeStorm_ApplyFourthRockCollision();
+    ValeStormyNight_ApplyFourthRockCollision();
   }
   // The rocks are big, so the leader can talk to them from further off: the
   // talk target search counts their distance at 10/13 (OBJ_EVENT_NEAR_TALK).
@@ -562,7 +580,7 @@ s32 ValeStorm_Initialize(void) {
       OBJ_EVENT_NEAR_TALK;
   // Garet walks with the party once he has joined.
   if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) != 0) {
-    Engine_ObjectEventSetPosition(LOCALID_GARET_CHILD, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_GARET_CHILD, 0, 0);
   }
   {
     struct ObjectEvent *objectEvent;
@@ -575,13 +593,13 @@ s32 ValeStorm_Initialize(void) {
   if (GameFlag_Get(FLAG_VALE_BOULDER_FELL) != 0) {
     ObjectEvent_SetPosition(LOCALID_BOULDER, PIXELS(114), PIXELS(333));
   } else {
-    ObjectEvent_SetActionScript(LOCALID_BOULDER, gValeStorm_BoulderWaits);
+    ObjectEvent_SetActionScript(LOCALID_BOULDER, gValeStormyNight_BoulderWaits);
   }
   // Restore the riverbank cast at the saved stage of the storm.
   if (GameFlag_Get(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0) {
     s32 facing;
     const s32 *table;
-    ValeStorm_RebuildRiverbank();
+    ValeStormyNight_RebuildRiverbank();
     ObjectEvent_SetPosition(LOCALID_DORA, PIXELS(165), PIXELS(1229));
     {
       struct ObjectEvent *objectEvent;
@@ -589,58 +607,58 @@ s32 ValeStorm_Initialize(void) {
       objectEvent = ObjectEvent_GetById(LOCALID_DORA);
       facing = FACING_NORTHEAST;
       objectEvent->facing = facing;
-      objectEvent->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
-      table = gValeStorm_SquashAndStretchScript;
+      objectEvent->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+      table = gValeStormyNight_SquashAndStretchScript;
       objectEvent->work = 1;
       ObjectEvent_SetActionScript(LOCALID_DORA, table);
     }
-    Engine_ObjectEventSetPosition(LOCALID_JENNA_CHILD, PIXELS(165),
+    Import_ObjectEventSetPosition(LOCALID_JENNA_CHILD, PIXELS(165),
                                   PIXELS(1254));
     {
       struct ObjectEvent *objectEvent;
 
       objectEvent = ObjectEvent_GetById(LOCALID_JENNA_CHILD);
       objectEvent->facing = facing;
-      objectEvent->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+      objectEvent->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
       objectEvent->work = 2;
       ObjectEvent_SetActionScript(LOCALID_JENNA_CHILD, table);
     }
-    Engine_ObjectEventSetPosition(LOCALID_GARET_CHILD, PIXELS(152),
+    Import_ObjectEventSetPosition(LOCALID_GARET_CHILD, PIXELS(152),
                                   PIXELS(1285));
     {
       struct ObjectEvent *objectEvent;
 
       objectEvent = ObjectEvent_GetById(LOCALID_GARET_CHILD);
       objectEvent->facing = facing;
-      objectEvent->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+      objectEvent->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
       objectEvent->work = 3;
       ObjectEvent_SetActionScript(LOCALID_GARET_CHILD, table);
     }
-    Engine_ObjectEventSetPosition(LOCALID_EXHAUSTED_STRONGMAN, PIXELS(184),
+    Import_ObjectEventSetPosition(LOCALID_EXHAUSTED_STRONGMAN, PIXELS(184),
                                   PIXELS(1304));
     {
       struct ObjectEvent *objectEvent;
 
       objectEvent = ObjectEvent_GetById(LOCALID_EXHAUSTED_STRONGMAN);
       objectEvent->facing = facing;
-      objectEvent->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+      objectEvent->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
       objectEvent->work = 4;
       ObjectEvent_SetActionScript(LOCALID_EXHAUSTED_STRONGMAN, table);
     }
-    Engine_ObjectEventSetAnimation(LOCALID_EXHAUSTED_STRONGMAN,
+    Import_ObjectEventSetAnimation(LOCALID_EXHAUSTED_STRONGMAN,
                                    ANIM_STRONGMAN_SPRAWLED);
     ObjectEvent_GetById(LOCALID_GARET_CHILD)->priorityFlags &=
         ~OBJ_EVENT_PRIORITY_AUTOMATIC;
     ObjectEvent_GetById(LOCALID_EXHAUSTED_STRONGMAN)->priorityFlags &=
         ~OBJ_EVENT_PRIORITY_AUTOMATIC;
-    FieldScheduler_AddCallback(ValeStorm_CopyLeaderSpritePriority,
+    FieldScheduler_AddCallback(ValeStormyNight_CopyLeaderSpritePriority,
                                TASK_PRIORITY_MAP);
-    Engine_ObjectEventSetPosition(LOCALID_JENNAS_FATHER, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_JENNAS_MOTHER, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_FELIX_CHILD, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_BOULDER, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_JENNAS_FATHER, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_JENNAS_MOTHER, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_FELIX_CHILD, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_BOULDER, 0, 0);
     if (GameFlag_Get(FLAG_VALE_STORM_GARET_LEFT) != 0) {
-      Engine_ObjectEventSetPosition(LOCALID_GARET_CHILD, 0, 0);
+      Import_ObjectEventSetPosition(LOCALID_GARET_CHILD, 0, 0);
     }
     // While they try to save Felix: Kyle and Jenna's parents at the river,
     // Felix in it.
@@ -648,54 +666,54 @@ s32 ValeStorm_Initialize(void) {
     const s32 *table;
     ObjectEvent_SetPosition(LOCALID_KYLE, PIXELS(192), PIXELS(1214));
     ObjectEvent_FaceDirection(LOCALID_KYLE, FACING_SOUTHEAST, 0);
-    Engine_ObjectEventSetAnimation(LOCALID_KYLE, ANIM_KYLE_REACH_OUT);
+    Import_ObjectEventSetAnimation(LOCALID_KYLE, ANIM_KYLE_REACH_OUT);
     {
       struct ObjectEvent *objectEvent;
 
       objectEvent = ObjectEvent_GetById(LOCALID_KYLE);
-      objectEvent->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+      objectEvent->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
     }
-    table = gValeStorm_SquashAndStretchScript;
+    table = gValeStormyNight_SquashAndStretchScript;
     ObjectEvent_SetActionScript(LOCALID_KYLE, table);
     ObjectEvent_SetPosition(LOCALID_JENNAS_FATHER, PIXELS(227), PIXELS(1214));
     ObjectEvent_FaceDirection(LOCALID_JENNAS_FATHER, FACING_SOUTH, 0);
-    Engine_ObjectEventSetAnimation(LOCALID_JENNAS_FATHER,
+    Import_ObjectEventSetAnimation(LOCALID_JENNAS_FATHER,
                                    ANIM_PARENT_REACH_OUT);
     {
       struct ObjectEvent *objectEvent;
 
       objectEvent = ObjectEvent_GetById(LOCALID_JENNAS_FATHER);
-      objectEvent->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+      objectEvent->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
     }
     ObjectEvent_SetActionScript(LOCALID_JENNAS_FATHER, table);
     ObjectEvent_SetPosition(LOCALID_JENNAS_MOTHER, PIXELS(247), PIXELS(1214));
     ObjectEvent_FaceDirection(LOCALID_JENNAS_MOTHER, FACING_SOUTH, 0);
-    Engine_ObjectEventSetAnimation(LOCALID_JENNAS_MOTHER,
+    Import_ObjectEventSetAnimation(LOCALID_JENNAS_MOTHER,
                                    ANIM_PARENT_REACH_OUT);
     {
       struct ObjectEvent *objectEvent;
 
       objectEvent = ObjectEvent_GetById(LOCALID_JENNAS_MOTHER);
-      objectEvent->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+      objectEvent->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
     }
     ObjectEvent_SetActionScript(LOCALID_JENNAS_MOTHER, table);
     ObjectEvent_SetPosition(LOCALID_FELIX_CHILD, PIXELS(243), PIXELS(1277));
     ObjectMotion_ArmCallback(LOCALID_FELIX_CHILD, FACING_NORTH, 0);
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_FELIX_CHILD), 0);
-    Engine_ObjectEventSetPosition(LOCALID_FIRST_ROCK + 6, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_FIRST_ROCK + 7, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_FIRST_ROCK + 6, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_FIRST_ROCK + 7, 0, 0);
   } else {
-    Engine_ObjectEventSetPosition(LOCALID_FIRST_ROCK + 6, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_FIRST_ROCK + 7, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_FIRST_ROCK + 6, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_FIRST_ROCK + 7, 0, 0);
   }
   // The lightning starts at once, except before Dora and Kyle's scene.
-  if (gSaveBlock.warpDest != VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA ||
+  if (gSaveBlock.warpDest != VALE_STORMY_NIGHT_FROM_VALE_INN_WITH_DORA ||
       GameFlag_Get(FLAG_VALE_STORM_SENT_TO_PLAZA) != 0) {
     Weather_StartRain();
     Weather_StartLightning();
   }
-  if (GameFlag_Get(FLAG_MAP_TEMP_10) != 0) {
-    EventScript_SetPathCellOverride();
+  if (GameFlag_Get(FLAG_VALE_ON_UPPER_PATH) != 0) {
+    EventScript_StepOntoUpperPath();
   }
   GameFlag_Set(FLAG_VALE_STORM);
   MapGrid_CopyCellAttributes(29, 24, 1, 2, 26, 46);
@@ -714,13 +732,13 @@ s32 ValeStorm_Initialize(void) {
   }
   WaitFrames(1);
   if (GameFlag_Get(FLAG_VALE_STORM_SENT_TO_PLAZA) == 0 &&
-      gSaveBlock.warpDest == VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA) {
+      gSaveBlock.warpDest == VALE_STORMY_NIGHT_FROM_VALE_INN_WITH_DORA) {
     EventScript_DoraSendsIsaacToThePlaza();
     return 0;
   }
   // Garet drags his chest out of his house until he joins, then the chest
   // stands by the door.
-  Engine_ObjectEventSetAnimation(LOCALID_FELIX_CHILD, ANIM_FELIX_CLING);
+  Import_ObjectEventSetAnimation(LOCALID_FELIX_CHILD, ANIM_FELIX_CLING);
   if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) == 0) {
     FieldScript_Start();
     ObjectEvent_SetAttachedEffect(
@@ -729,14 +747,14 @@ s32 ValeStorm_Initialize(void) {
     ObjectEvent_SetPosition(LOCALID_GARETS_CHEST, PIXELS(424), PIXELS(627));
     ObjectEvent_WalkTo(LOCALID_GARET_CHILD, 400, 619);
     ObjectEvent_WalkToAndWait(LOCALID_GARETS_CHEST, 424, 619);
-    Engine_ObjectEventSetAnimation(LOCALID_GARETS_CHEST, ANIM_WALK);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_GARET_DRAG);
+    Import_ObjectEventSetAnimation(LOCALID_GARETS_CHEST, ANIM_WALK);
+    Import_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_GARET_DRAG);
     FieldScript_End();
   } else {
     FieldScript_Start();
     ObjectEvent_SetPosition(LOCALID_GARETS_CHEST, PIXELS(424), PIXELS(627));
     ObjectEvent_WalkToAndWait(LOCALID_GARETS_CHEST, 424, 619);
-    Engine_ObjectEventSetAnimation(LOCALID_GARETS_CHEST, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_GARETS_CHEST, ANIM_NOD);
     FieldScript_End();
   }
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -748,13 +766,12 @@ s32 ValeStorm_Initialize(void) {
 }
 
 /// In Vale on the stormy night, Dora comes out into the storm with Isaac to
-/// Kyle, and the two send Isaac on to the plaza while they go to help.
-/// "Kyle... Will they be able to stop the Boulder?"
-/// Called by ValeStorm_Initialize on arrival by
-/// VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA until
+/// Kyle, and the two send Isaac on to the plaza while they go to help. "Kyle...
+/// Will they be able to stop the Boulder?" Called by ValeStormyNight_Initialize
+/// on arrival by VALE_STORMY_NIGHT_FROM_VALE_INN_WITH_DORA until
 /// FLAG_VALE_STORM_SENT_TO_PLAZA is set. Sets it and
-/// FLAG_MAP_TEMP_05, clears FLAG_SHOW_LOCATION_NAME, and
-/// removes Dora and Kyle.
+/// FLAG_VALE_ISAACS_DOOR_OPEN, clears FLAG_SHOW_LOCATION_NAME, and removes Dora
+/// and Kyle.
 static void EventScript_DoraSendsIsaacToThePlaza(void) {
   s32 message;
 
@@ -775,7 +792,7 @@ static void EventScript_DoraSendsIsaacToThePlaza(void) {
   Weather_ResumeLightning();
   // Dora and Isaac come out of the door.
   Script_PlaySong(SE_DOOR_OPEN);
-  MapGrid_AnimateCells(gValeStorm_IsaacsDoorOpens, 50, 44);
+  MapGrid_AnimateCells(gValeStormyNight_IsaacsDoorOpens, 50, 44);
   ObjectEvent_SetAttachedEffect(
       LOCALID_GARET_CHILD, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   ObjectEvent_SetSpeed(LOCALID_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -789,7 +806,7 @@ static void EventScript_DoraSendsIsaacToThePlaza(void) {
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 342, 890);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 342, 905);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 318, 905);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_STAND);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 1);
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_NORTH, 60);
   // Dora: "Kyle... Will they be able to stop the Boulder?" Kyle: "I don't think
@@ -851,12 +868,12 @@ static void EventScript_DoraSendsIsaacToThePlaza(void) {
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 297, 750);
   ObjectEvent_SetPosition(LOCALID_DORA, 0, 0);
   ObjectEvent_SetPosition(LOCALID_KYLE, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_KYLE, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_GARETS_CHEST, ANIM_WALK);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_GARET_DRAG);
+  Import_ObjectEventSetAnimation(LOCALID_KYLE, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARETS_CHEST, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_GARET_DRAG);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   GameFlag_Set(FLAG_VALE_STORM_SENT_TO_PLAZA);
-  GameFlag_Set(FLAG_MAP_TEMP_05);
+  GameFlag_Set(FLAG_VALE_ISAACS_DOOR_OPEN);
   FieldScript_End();
 }
 
@@ -908,7 +925,7 @@ static void EventScript_FirstRockFalls(void) {
       GameFlag_Set(FLAG_VALE_STORM_FIRST_ROCK_FELL);
     }
     // The rock now blocks the path.
-    ValeStorm_ApplyFirstRockCollision();
+    ValeStormyNight_ApplyFirstRockCollision();
     GameFlag_Set(FLAG_VALE_STORM_FIRST_ROCK_PASSED);
     if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) != 0) {
       if (GameFlag_Get(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) == 0) {
@@ -918,10 +935,10 @@ static void EventScript_FirstRockFalls(void) {
           leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
           if (leader->y.fixed > PIXELS(128)) {
             walkZ = 0x396;
-            ValeStorm_GaretCommentsOnBlockedPath(0x146, walkZ);
+            ValeStormyNight_GaretCommentsOnBlockedPath(0x146, walkZ);
             ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 291, walkZ);
           } else {
-            ValeStorm_GaretCommentsOnBlockedPath(0x14f, 0x3bd);
+            ValeStormyNight_GaretCommentsOnBlockedPath(0x14f, 0x3bd);
           }
           GameFlag_Set(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH);
         }
@@ -933,8 +950,8 @@ static void EventScript_FirstRockFalls(void) {
 
 /// Applies the metatile behaviors left by the first rock (LOCALID_FIRST_ROCK).
 /// Called by EventScript_FirstRockFalls and, once the rock has fallen, by
-/// ValeStorm_Initialize.
-static void ValeStorm_ApplyFirstRockCollision(void) {
+/// ValeStormyNight_Initialize.
+static void ValeStormyNight_ApplyFirstRockCollision(void) {
   MapGrid_CopyCellAttributes(29, 64, 1, 1, 21, 57);
   MapGrid_CopyCellAttributes(29, 64, 1, 1, 21, 58);
   MapGrid_CopyCellAttributes(29, 64, 1, 1, 22, 58);
@@ -982,7 +999,7 @@ static void EventScript_SecondRockFalls(void) {
       Map_PlayQueuedMusic();
       GameFlag_Set(FLAG_VALE_STORM_SECOND_ROCK_FELL);
     }
-    ValeStorm_ApplySecondRockCollision();
+    ValeStormyNight_ApplySecondRockCollision();
     GameFlag_Set(FLAG_VALE_STORM_SECOND_ROCK_PASSED);
     if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) != 0) {
       if (GameFlag_Get(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) == 0) {
@@ -991,10 +1008,10 @@ static void EventScript_SecondRockFalls(void) {
           // stands.
           leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
           if (leader->y.fixed > PIXELS(128)) {
-            ValeStorm_GaretCommentsOnBlockedPath(219, 0x34b);
+            ValeStormyNight_GaretCommentsOnBlockedPath(219, 0x34b);
             ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 179, 829);
           } else {
-            ValeStorm_GaretCommentsOnBlockedPath(214, 0x38c);
+            ValeStormyNight_GaretCommentsOnBlockedPath(214, 0x38c);
             ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 219, 911);
           }
           GameFlag_Set(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH);
@@ -1007,8 +1024,8 @@ static void EventScript_SecondRockFalls(void) {
 
 /// Applies the metatile behaviors left by the second rock (LOCALID_FIRST_ROCK +
 /// 1). Called by EventScript_SecondRockFalls and, once the rock has fallen, by
-/// ValeStorm_Initialize.
-static void ValeStorm_ApplySecondRockCollision(void) {
+/// ValeStormyNight_Initialize.
+static void ValeStormyNight_ApplySecondRockCollision(void) {
   MapGrid_CopyCellAttributes(29, 23, 1, 1, 15, 53);
   MapGrid_CopyCellAttributes(29, 23, 1, 1, 14, 53);
   MapGrid_CopyCellAttributes(29, 23, 1, 1, 13, 53);
@@ -1061,7 +1078,7 @@ static void EventScript_ThirdRockFalls(void) {
           OBJ_EVENT_PRIORITY_AUTOMATIC;
       leader->priorityFlags = flags;
     }
-    ValeStorm_ApplyThirdRockCollision();
+    ValeStormyNight_ApplyThirdRockCollision();
     GameFlag_Set(FLAG_VALE_STORM_THIRD_ROCK_PASSED);
     if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) != 0) {
       if (GameFlag_Get(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) == 0) {
@@ -1069,10 +1086,10 @@ static void EventScript_ThirdRockFalls(void) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
           if (ObjectEvent_Get(LOCALID_PARTY_LEADER)->z.fixed <= 0x2b4ffff) {
-            ValeStorm_GaretCommentsOnBlockedPath(62, 0x29d);
+            ValeStormyNight_GaretCommentsOnBlockedPath(62, 0x29d);
             ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 27, 627);
           } else {
-            ValeStorm_GaretCommentsOnBlockedPath(75, 0x2cb);
+            ValeStormyNight_GaretCommentsOnBlockedPath(75, 0x2cb);
             ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 67, 757);
           }
           GameFlag_Set(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH);
@@ -1085,8 +1102,8 @@ static void EventScript_ThirdRockFalls(void) {
 
 /// Applies the metatile behaviors left by the third rock (LOCALID_FIRST_ROCK +
 /// 2). Called by EventScript_ThirdRockFalls and, once the rock has fallen, by
-/// ValeStorm_Initialize.
-static void ValeStorm_ApplyThirdRockCollision(void) {
+/// ValeStormyNight_Initialize.
+static void ValeStormyNight_ApplyThirdRockCollision(void) {
   MapGrid_CopyCellAttributes(29, 22, 1, 1, 3, 42);
   MapGrid_CopyCellAttributes(29, 21, 1, 1, 2, 42);
   MapGrid_CopyCellAttributes(29, 21, 1, 1, 4, 42);
@@ -1130,7 +1147,7 @@ static void EventScript_FourthRockFalls(void) {
       Map_PlayQueuedMusic();
       GameFlag_Set(FLAG_VALE_STORM_FOURTH_ROCK_FELL);
     }
-    ValeStorm_ApplyFourthRockCollision();
+    ValeStormyNight_ApplyFourthRockCollision();
     GameFlag_Set(FLAG_VALE_STORM_FOURTH_ROCK_PASSED);
     if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) != 0) {
       if (GameFlag_Get(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) == 0) {
@@ -1139,10 +1156,10 @@ static void EventScript_FourthRockFalls(void) {
           // stands.
           leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
           if (leader->z.fixed <= 0x479ffff) {
-            ValeStorm_GaretCommentsOnBlockedPath(0x19c, 0x460);
+            ValeStormyNight_GaretCommentsOnBlockedPath(0x19c, 0x460);
             ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 414, 1068);
           } else {
-            ValeStorm_GaretCommentsOnBlockedPath(0x1bd, 0x494);
+            ValeStormyNight_GaretCommentsOnBlockedPath(0x1bd, 0x494);
             ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 447, 1227);
           }
           GameFlag_Set(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH);
@@ -1155,8 +1172,8 @@ static void EventScript_FourthRockFalls(void) {
 
 /// Applies the metatile behaviors left by the fourth rock (LOCALID_FIRST_ROCK +
 /// 3). Called by EventScript_FourthRockFalls and, once the rock has fallen, by
-/// ValeStorm_Initialize.
-static void ValeStorm_ApplyFourthRockCollision(void) {
+/// ValeStormyNight_Initialize.
+static void ValeStormyNight_ApplyFourthRockCollision(void) {
   MapGrid_CopyCellAttributes(29, 20, 1, 1, 26, 71);
   MapGrid_CopyCellAttributes(29, 20, 1, 1, 26, 70);
   MapGrid_CopyCellAttributes(29, 20, 1, 1, 27, 70);
@@ -1164,12 +1181,12 @@ static void ValeStorm_ApplyFourthRockCollision(void) {
   MapGrid_CopyCellAttributes(28, 22, 1, 1, 27, 72);
 }
 
-/// Stops the leader at the door of VALE_STORM_TO_VALE_INTERIORS_SHOPS_SOUTH for
+/// Stops the leader at the door of VALE_STORMY_NIGHT_TO_VALE_SHOPS_SOUTH for
 /// the first conversation of the night. A stout man runs out of the door,
 /// knocks Isaac back and runs off to the plaza. "Huh? Isaac?" Called by
-/// EventScript_LeaveToValeInteriorsShops. Sets
+/// EventScript_LeaveToValeShops. Sets
 /// FLAG_VALE_STORM_BUMPED_INTO_VILLAGER.
-static void ValeStorm_BumpIntoShovingMan(void) {
+static void ValeStormyNight_BumpIntoShovingMan(void) {
   s32 message;
 
   FieldScript_Start();
@@ -1179,7 +1196,7 @@ static void ValeStorm_BumpIntoShovingMan(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(1));
   ObjectMotion_Launch(LOCALID_PARTY_LEADER, 2, 0);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 282, 855);
-  Engine_ObjectEventSetAnimation(LOCALID_SHOVING_MAN, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_SHOVING_MAN, ANIM_STAND);
   ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 0);
   ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_SHOVING_MAN, 0);
   Map_PlayQueuedMusic();
@@ -1196,7 +1213,7 @@ static void ValeStorm_BumpIntoShovingMan(void) {
   FieldScript_SetMessageId((message + 4));
   Script_ShowMessageAndWait(LOCALID_SHOVING_MAN, 0, 20);
   ObjectEvent_RunActionScriptAndWait(LOCALID_SHOVING_MAN,
-                                     gValeStorm_ShovingManScript);
+                                     gValeStormyNight_ShovingManScript);
   GameFlag_Set(FLAG_VALE_STORM_BUMPED_INTO_VILLAGER);
   FieldScript_End();
 }
@@ -1227,7 +1244,7 @@ static void EventScript_HearGaretStruggling(void) {
 /// In Vale on the stormy night, walking away from him: Garet calls after
 /// Isaac, asking whether he will just leave him there.
 /// Reached by stepping on metatile behavior 31 once Isaac has heard Garet and
-/// before Garet joins; ValeStorm_GaretLeavesHisChest brings him along.
+/// before Garet joins; ValeStormyNight_GaretLeavesHisChest brings him along.
 static void EventScript_GaretCallsAfterIsaac(void) {
   if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) == 0 &&
       GameFlag_Get(FLAG_VALE_STORM_HEARD_GARET) != 0) {
@@ -1235,15 +1252,15 @@ static void EventScript_GaretCallsAfterIsaac(void) {
     ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET_CHILD, 2);
     FieldScript_WaitFrames(20);
     FieldScript_SetMessageId(MsgValeDontLeaveMeHere);
-    ValeStorm_GaretLeavesHisChest();
+    ValeStormyNight_GaretLeavesHisChest();
     FieldScript_End();
   }
 }
 
 /// In Vale on the stormy night, talking to Garet: whether to leave his things
 /// behind, or, after the river, the Boulder.
-/// Reached by talking to Garet: before he joins, ValeStorm_GaretLeavesHisChest
-/// brings him along.
+/// Reached by talking to Garet: before he joins,
+/// ValeStormyNight_GaretLeavesHisChest brings him along.
 static void EventScript_TalkToGaret(void) {
   if (GameFlag_Get(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0) {
     FieldScript_Start();
@@ -1257,7 +1274,7 @@ static void EventScript_TalkToGaret(void) {
     if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) == 0) {
       FieldScript_Start();
       FieldScript_SetMessageId(MsgValeWantDumpStuff);
-      ValeStorm_GaretLeavesHisChest();
+      ValeStormyNight_GaretLeavesHisChest();
       FieldScript_End();
     }
   }
@@ -1268,7 +1285,7 @@ static void EventScript_TalkToGaret(void) {
 /// has him decide a rock would cost him chest and life alike. Called by
 /// EventScript_GaretCallsAfterIsaac and EventScript_TalkToGaret; sets
 /// FLAG_VALE_STORM_GARET_JOINED.
-static void ValeStorm_GaretLeavesHisChest(void) {
+static void ValeStormyNight_GaretLeavesHisChest(void) {
   struct ObjectEvent *leader;
   s32 agreedToLeaveBelongings;
 
@@ -1286,8 +1303,8 @@ static void ValeStorm_GaretLeavesHisChest(void) {
   FieldScript_ShowMessageThenWait(LOCALID_GARET_CHILD, 0, 40);
   ObjectEvent_SetAttachedEffect(
       LOCALID_GARET_CHILD, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  Engine_ObjectEventSetAnimation(LOCALID_GARETS_CHEST, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARETS_CHEST, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_STAND);
   FieldScript_WaitFrames(40);
   ObjectMotion_SetAngleToward(LOCALID_GARET_CHILD, LOCALID_PARTY_LEADER, 0);
   FieldScript_WaitFrames(20);
@@ -1298,14 +1315,14 @@ static void ValeStorm_GaretLeavesHisChest(void) {
     FieldScript_SetMessageId(MsgValeRightDitchStuff);
   }
   FieldScript_ShowMessageAndWait(LOCALID_GARET_CHILD, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectMotion_ResetAndSetPosition(LOCALID_GARET_CHILD, leader->x.part.pixel,
                                      leader->z.part.pixel);
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET_CHILD);
-  Engine_ObjectEventSetPosition(LOCALID_GARET_CHILD, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_GARET_CHILD, 0, 0);
   FieldScript_PrepareObjectAndApplyValue(1, 1);
   GameFlag_Set(FLAG_VALE_STORM_GARET_JOINED);
 }
@@ -1319,9 +1336,9 @@ static void ValeStorm_GaretLeavesHisChest(void) {
 /// (behavior 31, EventScript_GaretCallsAfterIsaac), so Garet has always joined
 /// by then and the scene's first test, FLAG_VALE_STORM_GARET_JOINED, ends it.
 /// Its lines appear nowhere else: Garet runs up
-/// (gValeStorm_UnusedGaretRunsUpScript), heaves for breath, `*Hah* *Hah*`,
-/// while gValeStorm_UnusedGaretPantingScript swells and shrinks his sprite, and
-/// asks `Are you trapped, too?` before they leave together.
+/// (gValeStormyNight_UnusedGaretRunsUpScript), heaves for breath, `*Hah*
+/// *Hah*`, while gValeStormyNight_UnusedGaretPantingScript swells and shrinks
+/// his sprite, and asks `Are you trapped, too?` before they leave together.
 static void EventScript_UnusedGaretJoinsIsaac(void) {
   struct ObjectEvent *objectEvent;
   s32 message;
@@ -1339,12 +1356,12 @@ static void EventScript_UnusedGaretJoinsIsaac(void) {
     FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
     FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(588), 1);
     ObjectEvent_SetSpeed(LOCALID_GARET_CHILD, PIXELS(2), PIXELS(1));
-    ObjectEvent_RunActionScriptAndWait(LOCALID_GARET_CHILD,
-                                       gValeStorm_UnusedGaretRunsUpScript);
+    ObjectEvent_RunActionScriptAndWait(
+        LOCALID_GARET_CHILD, gValeStormyNight_UnusedGaretRunsUpScript);
     ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET_CHILD, 0);
     FieldScript_WaitFrames(30);
     ObjectEvent_SetActionScript(LOCALID_GARET_CHILD,
-                                gValeStorm_UnusedGaretPantingScript);
+                                gValeStormyNight_UnusedGaretPantingScript);
     Script_ShowMessage(LOCALID_GARET_CHILD, 0);
     objectEvent = ObjectEvent_Get(LOCALID_GARET_CHILD);
     objectEvent->scaleY = Q16_ONE;
@@ -1359,7 +1376,7 @@ static void EventScript_UnusedGaretJoinsIsaac(void) {
     ObjectMotion_SetAnimationAndWait(LOCALID_GARET_CHILD, ANIM_NOD);
     Script_ShowMessage(LOCALID_GARET_CHILD, 0);
     ObjectEvent_SetSpeed(LOCALID_GARET_CHILD, PIXELS(1), PIXELS(1) / 2);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_WALK);
+    Import_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_WALK);
     objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (objectEvent != 0) {
       ObjectEvent_SetDestination(LOCALID_GARET_CHILD, objectEvent->x.part.pixel,
@@ -1368,7 +1385,7 @@ static void EventScript_UnusedGaretJoinsIsaac(void) {
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET_CHILD);
     ObjectEvent_SetPosition(LOCALID_GARET_CHILD, 0, 0);
     FieldScript_PrepareObjectAndApplyValue(1, 1);
-    Engine_ObjectEventSetAnimation(LOCALID_GARETS_CHEST, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_GARETS_CHEST, ANIM_NOD);
     GameFlag_Set(FLAG_VALE_STORM_GARET_JOINED);
     FieldScript_End();
   }
@@ -1400,7 +1417,7 @@ static void EventScript_WarnAboutMtAleph(void) {
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_GARET_CHILD, FACING_SOUTH, 0);
   Script_ShowMessage(LOCALID_GARET_CHILD, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetDestination(LOCALID_GARET_CHILD, leader->x.part.pixel,
@@ -1414,7 +1431,7 @@ static void EventScript_WarnAboutMtAleph(void) {
 
 /// Brings Garet out to discuss a blocked path, then returns him to Isaac.
 /// Called by the four rock scripts; x and y are the pixels where Garet stands.
-static void ValeStorm_GaretCommentsOnBlockedPath(s32 x, s32 y) {
+static void ValeStormyNight_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   struct ObjectEvent *leaderAtStart;
   s32 speed = PIXELS(1);
   s32 acceleration = (PIXELS(1) / 2);
@@ -1422,7 +1439,7 @@ static void ValeStorm_GaretCommentsOnBlockedPath(s32 x, s32 y) {
 
   leaderAtStart = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leaderAtStart != 0) {
-    Engine_ObjectEventSetPosition(LOCALID_GARET_CHILD, leaderAtStart->x.fixed,
+    Import_ObjectEventSetPosition(LOCALID_GARET_CHILD, leaderAtStart->x.fixed,
                                   leaderAtStart->z.fixed);
   }
   ObjectMotion_SetSpeedParameters(LOCALID_GARET_CHILD, speed, acceleration);
@@ -1437,7 +1454,7 @@ static void ValeStorm_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET_CHILD, 2);
   FieldScript_ShowMessageAndWait(LOCALID_GARET_CHILD, 0);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_WALK);
   leaderAtEnd = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leaderAtEnd != 0) {
     ObjectMotion_ResetAndSetPosition(LOCALID_GARET_CHILD,
@@ -1445,7 +1462,7 @@ static void ValeStorm_GaretCommentsOnBlockedPath(s32 x, s32 y) {
                                      leaderAtEnd->z.part.pixel);
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET_CHILD);
-  Engine_ObjectEventSetPosition(LOCALID_GARET_CHILD, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_GARET_CHILD, 0, 0);
 }
 
 /// The Boulder slips toward the village and the elders tell the boys to run.
@@ -1454,7 +1471,7 @@ static void ValeStorm_GaretCommentsOnBlockedPath(s32 x, s32 y) {
 /// "Ahhh! The Boulder! It's falling!"
 /// Reached by stepping on metatile behavior 34 until FLAG_VALE_BOULDER_FELL is
 /// set, which this sets. The elders and their two stand-ins
-/// (gValeStorm_BoulderWatchers, LOCALID_ELDER_EAST_STAND_IN to
+/// (gValeStormyNight_BoulderWatchers, LOCALID_ELDER_EAST_STAND_IN to
 /// LOCALID_ELDER_WEST) are placed for the scene and removed after it.
 static void EventScript_WatchBoulderFall(void) {
   u32 i;
@@ -1467,7 +1484,7 @@ static void EventScript_WatchBoulderFall(void) {
 
   if (GameFlag_Get(FLAG_VALE_BOULDER_FELL) == 0) {
     FieldScript_Start();
-    FieldScript_CallWithLastActiveObjectId(gValeStorm_BoulderWatchers);
+    FieldScript_CallWithLastActiveObjectId(gValeStormyNight_BoulderWatchers);
     Map_StartCutscenePsynergy();
     WaitFrames(1);
     Script_PlaySong(SE_RUMBLE);
@@ -1484,9 +1501,9 @@ static void EventScript_WatchBoulderFall(void) {
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(1));
     ObjectEvent_SetSpeed(LOCALID_GARET_CHILD, PIXELS(2), PIXELS(1));
     ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
-                                gValeStorm_BoulderFallLeaderPath);
+                                gValeStormyNight_BoulderFallLeaderPath);
     ObjectEvent_RunActionScriptAndWait(LOCALID_GARET_CHILD,
-                                       gValeStorm_BoulderFallGaretPath);
+                                       gValeStormyNight_BoulderFallGaretPath);
     ObjectEvent_RefreshSelectorById(LOCALID_PARTY_LEADER);
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1504,13 +1521,13 @@ static void EventScript_WatchBoulderFall(void) {
         LOCALID_GARET_CHILD, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     FieldScript_WaitFrames(40);
     // Show the four elders holding back the Boulder.
-    Engine_ObjectEventSetAnimation(LOCALID_ELDER_EAST,
+    Import_ObjectEventSetAnimation(LOCALID_ELDER_EAST,
                                    ANIM_BEARDED_ELDER_HOLD_BACK);
-    Engine_ObjectEventSetAnimation(LOCALID_ELDER_WEST,
+    Import_ObjectEventSetAnimation(LOCALID_ELDER_WEST,
                                    ANIM_BEARDED_ELDER_HOLD_BACK);
-    Engine_ObjectEventSetAnimation(LOCALID_ELDER_FAR_EAST,
+    Import_ObjectEventSetAnimation(LOCALID_ELDER_FAR_EAST,
                                    ANIM_YOUNG_ELDER_HOLD_BACK);
-    Engine_ObjectEventSetAnimation(LOCALID_ELDER_FAR_WEST,
+    Import_ObjectEventSetAnimation(LOCALID_ELDER_FAR_WEST,
                                    ANIM_YOUNG_ELDER_HOLD_BACK);
     ObjectEvent_Get(LOCALID_ELDER_FAR_EAST)->scaleX = -Q16_ONE;
     ObjectMotion_SetActionVariant(LOCALID_ELDER_EAST, 2);
@@ -1525,23 +1542,23 @@ static void EventScript_WatchBoulderFall(void) {
     FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(331), 1);
     FieldCamera_WaitForArrival();
     for (i = 0; i < 40; i++) {
-      ValeStorm_FlashPaletteAndSpawnEffects(
+      ValeStormyNight_FlashPaletteAndSpawnEffects(
           ObjectEvent_Get(LOCALID_ELDER_EAST));
-      ValeStorm_FlashPaletteAndSpawnEffects(
+      ValeStormyNight_FlashPaletteAndSpawnEffects(
           ObjectEvent_Get(LOCALID_ELDER_WEST));
-      ValeStorm_FlashPaletteAndSpawnEffects(
+      ValeStormyNight_FlashPaletteAndSpawnEffects(
           ObjectEvent_Get(LOCALID_ELDER_FAR_EAST));
-      ValeStorm_FlashPaletteAndSpawnEffects(
+      ValeStormyNight_FlashPaletteAndSpawnEffects(
           ObjectEvent_Get(LOCALID_ELDER_FAR_WEST));
       WaitFrames(1);
     }
     // Run the palette effects while the boulder rocks back and forth.
     shakeShift = &sShakeShift;
-    updateEffects = ValeStorm_UpdateBoulderMapEffects;
+    updateEffects = ValeStormyNight_UpdateBoulderMapEffects;
     sShakeDone = 0;
     *shakeShift = 0;
     FieldScheduler_AddOrUpdateCallback(updateEffects, TASK_PRIORITY_MAP);
-    cycleBoulderPalette = ValeStorm_CycleBoulderPalette;
+    cycleBoulderPalette = ValeStormyNight_CycleBoulderPalette;
     FieldScheduler_AddCallback(cycleBoulderPalette, TASK_PRIORITY_MAP);
     FieldScript_WaitFrames(40);
     *shakeShift = 1;
@@ -1554,31 +1571,31 @@ static void EventScript_WatchBoulderFall(void) {
     ObjectEvent_SetSpeed(LOCALID_BOULDER, PIXELS(4) / 5, PIXELS(2) / 5);
     Script_PlaySong(SE_145);
     ObjectEvent_MoveToAndWait(LOCALID_BOULDER, 114, 333);
-    Engine_ObjectEventSetAnimation(LOCALID_BOULDER, ANIM_WALK);
+    Import_ObjectEventSetAnimation(LOCALID_BOULDER, ANIM_WALK);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     Script_PlaySong(SE_145);
     *shakeShift = 0;
     ObjectEvent_SetSpeed(LOCALID_BOULDER, PIXELS(2) / 5, PIXELS(1) / 5);
     ObjectEvent_MoveToAndWait(LOCALID_BOULDER, 114, 300);
-    Engine_ObjectEventSetAnimation(LOCALID_BOULDER, ANIM_WALK);
+    Import_ObjectEventSetAnimation(LOCALID_BOULDER, ANIM_WALK);
     MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
     Script_PlaySong(SE_145);
     *shakeShift = 2;
     ObjectEvent_SetSpeed(LOCALID_BOULDER, PIXELS(4) / 5, PIXELS(2) / 5);
     ObjectEvent_MoveToAndWait(LOCALID_BOULDER, 114, 333);
-    Engine_ObjectEventSetAnimation(LOCALID_BOULDER, ANIM_WALK);
+    Import_ObjectEventSetAnimation(LOCALID_BOULDER, ANIM_WALK);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     Script_PlaySong(SE_145);
     *shakeShift = 0;
     ObjectEvent_SetSpeed(LOCALID_BOULDER, PIXELS(2) / 5, PIXELS(1) / 5);
     ObjectEvent_MoveToAndWait(LOCALID_BOULDER, 114, 300);
-    Engine_ObjectEventSetAnimation(LOCALID_BOULDER, ANIM_WALK);
+    Import_ObjectEventSetAnimation(LOCALID_BOULDER, ANIM_WALK);
     MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
     Script_PlaySong(SE_145);
     *shakeShift = 2;
     ObjectEvent_SetSpeed(LOCALID_BOULDER, PIXELS(4) / 5, PIXELS(2) / 5);
     ObjectEvent_MoveToAndWait(LOCALID_BOULDER, 114, 333);
-    Engine_ObjectEventSetAnimation(LOCALID_BOULDER, ANIM_WALK);
+    Import_ObjectEventSetAnimation(LOCALID_BOULDER, ANIM_WALK);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     Script_PlaySong(SE_145);
     *shakeShift = 1;
@@ -1599,9 +1616,9 @@ static void EventScript_WatchBoulderFall(void) {
     // The westernmost elder stops straining, looks about and calls to the
     // boys, and the camera returns to Isaac.
     sShakeDone = 1;
-    Engine_ObjectEventSetAnimation(LOCALID_ELDER_FAR_WEST, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_ELDER_FAR_WEST, ANIM_STAND);
     WaitFrames(1);
-    ObjectEvent_SetChildValue(LOCALID_ELDER_FAR_WEST, 0);
+    ObjectEvent_SetSpriteColorById(LOCALID_ELDER_FAR_WEST, 0);
     ObjectEvent_ShowEmote(LOCALID_ELDER_FAR_WEST,
                           EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
     ObjectEvent_FaceDirection(LOCALID_ELDER_FAR_WEST, FACING_WEST, 40);
@@ -1612,7 +1629,7 @@ static void EventScript_WatchBoulderFall(void) {
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_ELDER_FAR_WEST, 2);
     ObjectMotion_Launch(LOCALID_ELDER_FAR_WEST, 4, 40);
-    Engine_ObjectEventSetAnimation(LOCALID_ELDER_FAR_WEST,
+    Import_ObjectEventSetAnimation(LOCALID_ELDER_FAR_WEST,
                                    ANIM_YOUNG_ELDER_CALL_OUT);
     FieldScript_WaitFrames(10);
     Script_ShowMessageAndWait(LOCALID_ELDER_FAR_WEST, 0, 20);
@@ -1633,10 +1650,10 @@ static void EventScript_WatchBoulderFall(void) {
     ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_GARET_CHILD, 0);
     FieldScript_WaitFrames(20);
     Map_EndCutscenePsynergy();
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_GARET_CHILD, ANIM_NOD);
     FieldScript_WaitFrames(20);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_WALK);
+    Import_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_WALK);
     movingObjectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (movingObjectEvent != 0) {
       ObjectEvent_SetDestination(LOCALID_GARET_CHILD,
@@ -1657,18 +1674,19 @@ static void EventScript_WatchBoulderFall(void) {
 }
 
 /// Sets the animation parameter of each entry of a one-sprite object event:
-/// mode - 1, or for mode 0 a value from gValeStorm_FrameModes by the frame
-/// count. Only ValeStorm_FlashBoulderMapAnimationEntries calls it.
-static void ValeStorm_SetObjectEventFrameMode(struct ObjectEvent *objectEvent,
-                                              s32 mode) {
+/// mode - 1, or for mode 0 a value from gValeStormyNight_FrameModes by the
+/// frame count. Only ValeStormyNight_FlashBoulderMapAnimationEntries calls it.
+static void
+ValeStormyNight_SetObjectEventFrameMode(struct ObjectEvent *objectEvent,
+                                        s32 mode) {
   if ((objectEvent->spriteStorageKind & 0xf) == 1) {
     struct Sprite *animation = objectEvent->sprite;
     s32 animationParameter = mode - 1;
     u8 count;
     if (mode == 0) {
       animationParameter =
-          gValeStorm_FrameModes[(gFrameCount >> 1) &
-                                (objectEvent->spriteStorageKind & 0xf)];
+          gValeStormyNight_FrameModes[(gFrameCount >> 1) &
+                                      (objectEvent->spriteStorageKind & 0xf)];
     }
     count = animation->count;
     if (count != 0) {
@@ -1688,24 +1706,24 @@ static void ValeStorm_SetObjectEventFrameMode(struct ObjectEvent *objectEvent,
 
 /// Unused: alternates the four elders between their normal and flashing frame
 /// modes; nothing calls it.
-UNUSED static void ValeStorm_FlashBoulderMapAnimationEntries(void) {
+UNUSED static void ValeStormyNight_FlashBoulderMapAnimationEntries(void) {
   if (((gFrameCount >> sShakeShift) & 3) != 0) {
-    ValeStorm_SetObjectEventFrameMode(ObjectEvent_GetById(LOCALID_ELDER_EAST),
-                                      1);
-    ValeStorm_SetObjectEventFrameMode(ObjectEvent_GetById(LOCALID_ELDER_WEST),
-                                      1);
-    ValeStorm_SetObjectEventFrameMode(
+    ValeStormyNight_SetObjectEventFrameMode(
+        ObjectEvent_GetById(LOCALID_ELDER_EAST), 1);
+    ValeStormyNight_SetObjectEventFrameMode(
+        ObjectEvent_GetById(LOCALID_ELDER_WEST), 1);
+    ValeStormyNight_SetObjectEventFrameMode(
         ObjectEvent_GetById(LOCALID_ELDER_FAR_EAST), 1);
-    ValeStorm_SetObjectEventFrameMode(
+    ValeStormyNight_SetObjectEventFrameMode(
         ObjectEvent_GetById(LOCALID_ELDER_FAR_WEST), 1);
   } else {
-    ValeStorm_SetObjectEventFrameMode(ObjectEvent_GetById(LOCALID_ELDER_EAST),
-                                      8);
-    ValeStorm_SetObjectEventFrameMode(ObjectEvent_GetById(LOCALID_ELDER_WEST),
-                                      8);
-    ValeStorm_SetObjectEventFrameMode(
+    ValeStormyNight_SetObjectEventFrameMode(
+        ObjectEvent_GetById(LOCALID_ELDER_EAST), 8);
+    ValeStormyNight_SetObjectEventFrameMode(
+        ObjectEvent_GetById(LOCALID_ELDER_WEST), 8);
+    ValeStormyNight_SetObjectEventFrameMode(
         ObjectEvent_GetById(LOCALID_ELDER_FAR_EAST), 8);
-    ValeStorm_SetObjectEventFrameMode(
+    ValeStormyNight_SetObjectEventFrameMode(
         ObjectEvent_GetById(LOCALID_ELDER_FAR_WEST), 8);
   }
 }
@@ -1715,7 +1733,7 @@ UNUSED static void ValeStorm_FlashBoulderMapAnimationEntries(void) {
 /// Kyle and her parents try to save him. "Oh no! My brother!" The rope will not
 /// reach and no one has Psynergy left, so they send for help. Reached by
 /// stepping on metatile behavior 35 until FLAG_VALE_STORM_SAW_FELIX_HANGING_ON
-/// is set, which this sets after ValeStorm_DoraGoesForHelp.
+/// is set, which this sets after ValeStormyNight_DoraGoesForHelp.
 static void EventScript_WatchAttemptToSaveFelix(void) {
   const s32 *pulseScript;
 
@@ -1725,13 +1743,13 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
   FieldScript_Start();
   ObjectEvent_SetPosition(LOCALID_KYLE, PIXELS(192), PIXELS(1214));
   ObjectEvent_FaceDirection(LOCALID_KYLE, FACING_SOUTHEAST, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_KYLE, ANIM_KYLE_REACH_OUT);
+  Import_ObjectEventSetAnimation(LOCALID_KYLE, ANIM_KYLE_REACH_OUT);
   {
     struct ObjectEvent *objectEvent;
     s32 pulseDelay;
     objectEvent = ObjectEvent_GetById(LOCALID_KYLE);
-    pulseDelay = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
-    pulseScript = gValeStorm_SquashAndStretchScript;
+    pulseDelay = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+    pulseScript = gValeStormyNight_SquashAndStretchScript;
     objectEvent->timer = pulseDelay;
     ObjectEvent_SetActionScript(LOCALID_KYLE, pulseScript);
   }
@@ -1739,23 +1757,23 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_SOUTHEAST, 0);
   ObjectEvent_SetPosition(LOCALID_JENNAS_FATHER, PIXELS(227), PIXELS(1214));
   ObjectEvent_FaceDirection(LOCALID_JENNAS_FATHER, FACING_SOUTH, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNAS_FATHER, ANIM_PARENT_REACH_OUT);
+  Import_ObjectEventSetAnimation(LOCALID_JENNAS_FATHER, ANIM_PARENT_REACH_OUT);
   {
     struct ObjectEvent *objectEvent;
     s32 pulseDelay;
     objectEvent = ObjectEvent_GetById(LOCALID_JENNAS_FATHER);
-    pulseDelay = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+    pulseDelay = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
     objectEvent->timer = pulseDelay;
     ObjectEvent_SetActionScript(LOCALID_JENNAS_FATHER, pulseScript);
   }
   ObjectEvent_SetPosition(LOCALID_JENNAS_MOTHER, PIXELS(250), PIXELS(1214));
   ObjectEvent_FaceDirection(LOCALID_JENNAS_MOTHER, FACING_SOUTH, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNAS_MOTHER, ANIM_PARENT_REACH_OUT);
+  Import_ObjectEventSetAnimation(LOCALID_JENNAS_MOTHER, ANIM_PARENT_REACH_OUT);
   {
     struct ObjectEvent *objectEvent;
     s32 pulseDelay;
     objectEvent = ObjectEvent_GetById(LOCALID_JENNAS_MOTHER);
-    pulseDelay = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
+    pulseDelay = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
     objectEvent->timer = pulseDelay;
     ObjectEvent_SetActionScript(LOCALID_JENNAS_MOTHER, pulseScript);
   }
@@ -1776,7 +1794,7 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
     struct ObjectEvent *leader;
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (leader != 0) {
-      Engine_ObjectEventSetPosition(LOCALID_GARET_CHILD, leader->x.fixed,
+      Import_ObjectEventSetPosition(LOCALID_GARET_CHILD, leader->x.fixed,
                                     leader->z.fixed);
     }
   }
@@ -1802,26 +1820,26 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
   FieldScript_WaitFrames(20);
   Sound_PlaySong(SE_HEAVY_IMPACT);
   ObjectMotion_Launch(LOCALID_FELIX_CHILD, 4, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_FELIX_CHILD, ANIM_FELIX_UNDER_WATER);
+  Import_ObjectEventSetAnimation(LOCALID_FELIX_CHILD, ANIM_FELIX_UNDER_WATER);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetPosition(LOCALID_FELIX_CHILD, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_FELIX_CHILD, 0, 0);
   FieldScript_WaitFrames(60);
   Map_PlayQueuedMusic();
-  Engine_ObjectEventSetAnimation(LOCALID_KYLE, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_KYLE, ANIM_STAND);
   {
     struct ObjectEvent *objectEvent;
     objectEvent = ObjectEvent_GetById(LOCALID_KYLE);
     objectEvent->scaleX = Q16_ONE;
     objectEvent->scaleY = Q16_ONE;
   }
-  Engine_ObjectEventSetAnimation(LOCALID_JENNAS_FATHER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_JENNAS_FATHER, ANIM_STAND);
   {
     struct ObjectEvent *objectEvent;
     objectEvent = ObjectEvent_GetById(LOCALID_JENNAS_FATHER);
     objectEvent->scaleX = Q16_ONE;
     objectEvent->scaleY = Q16_ONE;
   }
-  Engine_ObjectEventSetAnimation(LOCALID_JENNAS_MOTHER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_JENNAS_MOTHER, ANIM_STAND);
   {
     struct ObjectEvent *objectEvent;
     objectEvent = ObjectEvent_GetById(LOCALID_JENNAS_MOTHER);
@@ -1851,7 +1869,7 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
   FieldScript_WaitFrames(90);
   FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(1253), 1);
   FieldCamera_WaitForArrival();
-  Engine_ObjectEventSetPosition(LOCALID_FELIX_CHILD, PIXELS(243), PIXELS(1277));
+  Import_ObjectEventSetPosition(LOCALID_FELIX_CHILD, PIXELS(243), PIXELS(1277));
   WaitFrames(1);
   Sound_PlaySong(SE_106);
   {
@@ -1860,7 +1878,7 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
     objectEvent->velocityY = PIXELS(2);
   }
   FieldScript_WaitFrames(6);
-  Engine_ObjectEventSetAnimation(LOCALID_FELIX_CHILD, ANIM_FELIX_CLING);
+  Import_ObjectEventSetAnimation(LOCALID_FELIX_CHILD, ANIM_FELIX_CLING);
   FieldScript_WaitFrames(20);
   Map_PlayQueuedMusic();
   FieldScript_WaitFrames(20);
@@ -1898,12 +1916,12 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
       OBJ_EVENT_FACES_MOTION;
   ObjectMotion_ArmCallback(LOCALID_JENNA_CHILD, FACING_SOUTHWEST, 0);
   ObjectEvent_FaceDirection(LOCALID_JENNAS_MOTHER, FACING_WEST, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNAS_FATHER, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_JENNAS_FATHER, ANIM_SHAKE_HEAD);
   FieldScript_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | LOCALID_JENNAS_FATHER,
                                   0, 10);
   ObjectEvent_FaceDirection(LOCALID_KYLE, FACING_NORTH, 20);
   ObjectMotion_ArmCallback(LOCALID_KYLE, FACING_EAST, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_KYLE, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_KYLE, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | LOCALID_KYLE, 0, 10);
   ObjectEvent_ShowEmote(LOCALID_JENNAS_FATHER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                         0);
@@ -1921,7 +1939,7 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
   ObjectEvent_FaceDirection(LOCALID_JENNA_CHILD, FACING_WEST, 10);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_KYLE, 1);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | LOCALID_KYLE, 0, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_SHAKE_HEAD);
   FieldScript_ShowMessageThenWait(LOCALID_DORA, 0, 10);
   ObjectEvent_ShowEmote(LOCALID_KYLE, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   ObjectEvent_ShowEmote(LOCALID_JENNAS_FATHER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
@@ -1937,7 +1955,7 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
   ObjectMotion_ArmCallback(LOCALID_KYLE, FACING_EAST, 10);
   ObjectEvent_FaceDirection(LOCALID_JENNAS_FATHER, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_JENNAS_MOTHER, FACING_WEST, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNAS_FATHER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_JENNAS_FATHER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_JENNAS_MOTHER, ANIM_NOD);
   ObjectEvent_LinkPair(LOCALID_KYLE, LOCALID_DORA, 0);
   FieldScript_WaitFrames(20);
@@ -1965,7 +1983,7 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
   FieldScript_WaitFrames(20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 1);
   FieldScript_ShowMessageThenWait(LOCALID_DORA, 0, 10);
-  ValeStorm_DoraGoesForHelp();
+  ValeStormyNight_DoraGoesForHelp();
   GameFlag_Set(FLAG_VALE_STORM_SAW_FELIX_HANGING_ON);
   FieldScript_End();
 }
@@ -1974,7 +1992,7 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
 /// and sends Jenna to the plaza, then asks Isaac and Garet to help: a yes
 /// sends them after Jenna, a no to the plaza all the same. Called by
 /// EventScript_WatchAttemptToSaveFelix.
-static void ValeStorm_DoraGoesForHelp(void) {
+static void ValeStormyNight_DoraGoesForHelp(void) {
   struct ObjectEvent *villager;
   s32 random;
   const s32 *script;
@@ -1990,10 +2008,10 @@ static void ValeStorm_DoraGoesForHelp(void) {
                             FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_KYLE, FACING_NORTH + FACING_STEP, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA_CHILD, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNAS_FATHER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNAS_MOTHER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA_CHILD, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_JENNAS_FATHER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_JENNAS_MOTHER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_JENNAS_MOTHER, ANIM_NOD);
   FieldScript_WaitFrames(20);
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
@@ -2001,11 +2019,11 @@ static void ValeStorm_DoraGoesForHelp(void) {
   ObjectEvent_SetSpeed(LOCALID_JENNA_CHILD, PIXELS(8) / 5, PIXELS(4) / 5);
   ObjectEvent_SetSpeed(LOCALID_DORA, PIXELS(8) / 5, PIXELS(4) / 5);
   ObjectEvent_SetActionScript(LOCALID_JENNA_CHILD,
-                              gValeStorm_JennaRunsIntoRiversideHouse);
-  ObjectEvent_RunActionScriptAndWait(LOCALID_DORA,
-                                     gValeStorm_DoraRunsIntoRiversideHouse);
+                              gValeStormyNight_JennaRunsIntoRiversideHouse);
+  ObjectEvent_RunActionScriptAndWait(
+      LOCALID_DORA, gValeStormyNight_DoraRunsIntoRiversideHouse);
   Script_PlaySong(SE_DOOR_OPEN);
-  MapGrid_AnimateCells(gValeStorm_GrandparentsDoorOpens, 38, 72);
+  MapGrid_AnimateCells(gValeStormyNight_GrandparentsDoorOpens, 38, 72);
   FieldScript_WaitFrames(10);
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 149, 1175);
   ObjectEvent_SetPosition(LOCALID_DORA, 0, 0);
@@ -2016,41 +2034,41 @@ static void ValeStorm_DoraGoesForHelp(void) {
                             FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_JENNAS_MOTHER,
                             FACING_SOUTHEAST + FACING_STEP, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_KYLE, ANIM_KYLE_REACH_OUT);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNAS_FATHER, ANIM_PARENT_REACH_OUT);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNAS_MOTHER, ANIM_PARENT_REACH_OUT);
+  Import_ObjectEventSetAnimation(LOCALID_KYLE, ANIM_KYLE_REACH_OUT);
+  Import_ObjectEventSetAnimation(LOCALID_JENNAS_FATHER, ANIM_PARENT_REACH_OUT);
+  Import_ObjectEventSetAnimation(LOCALID_JENNAS_MOTHER, ANIM_PARENT_REACH_OUT);
   villager = ObjectEvent_Get(LOCALID_KYLE);
-  random = Engine_RandomNext();
+  random = Import_RandomNext();
   villager->timer = (Math_RemainderUnsigned(random, 90) + 60);
   villager = ObjectEvent_Get(LOCALID_JENNAS_FATHER);
-  random = Engine_RandomNext();
+  random = Import_RandomNext();
   villager->timer = (Math_RemainderUnsigned(random, 90) + 60);
   villager = ObjectEvent_Get(LOCALID_JENNAS_MOTHER);
-  random = Engine_RandomNext();
+  random = Import_RandomNext();
   villager->timer = (Math_RemainderUnsigned(random, 90) + 60);
-  script = gValeStorm_SquashAndStretchScript;
+  script = gValeStormyNight_SquashAndStretchScript;
   ObjectEvent_SetActionScript(LOCALID_KYLE, script);
   ObjectEvent_SetActionScript(LOCALID_JENNAS_FATHER, script);
   ObjectEvent_SetActionScript(LOCALID_JENNAS_MOTHER, script);
   ObjectEvent_RefreshSelectorById(LOCALID_JENNA_CHILD);
   FieldScript_WaitFrames(10);
   Script_PlaySong(SE_159);
-  MapGrid_AnimateCells(gValeStorm_GrandparentsDoorCloses, 38, 72);
+  MapGrid_AnimateCells(gValeStormyNight_GrandparentsDoorCloses, 38, 72);
   FieldScript_WaitFrames(30);
   Map_PlayQueuedMusic();
   FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(1225), 1);
   Script_PlaySong(SE_DOOR_OPEN);
-  MapGrid_AnimateCells(gValeStorm_IsaacsDoorOpens, 35, 73);
+  MapGrid_AnimateCells(gValeStormyNight_IsaacsDoorOpens, 35, 73);
   FieldScript_WaitFrames(20);
   Map_PlayQueuedMusic();
   ObjectEvent_SetActionScript(LOCALID_DORA,
-                              gValeStorm_DoraComesOutOfRiversideHouse);
+                              gValeStormyNight_DoraComesOutOfRiversideHouse);
   FieldScript_WaitFrames(20);
   ObjectEvent_SetActionScript(LOCALID_JENNA_CHILD,
-                              gValeStorm_JennaComesOutOfRiversideHouse);
+                              gValeStormyNight_JennaComesOutOfRiversideHouse);
   FieldScript_WaitFrames(40);
   Script_PlaySong(SE_159);
-  MapGrid_AnimateCells(gValeStorm_IsaacsDoorCloses, 35, 73);
+  MapGrid_AnimateCells(gValeStormyNight_IsaacsDoorCloses, 35, 73);
   ObjectEvent_RefreshSelectorById(LOCALID_JENNA_CHILD);
   Map_PlayQueuedMusic();
   FieldScript_WaitFrames(40);
@@ -2060,12 +2078,12 @@ static void ValeStorm_DoraGoesForHelp(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_JENNA_CHILD, ANIM_NOD);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_JENNA_CHILD, 0,
                             40);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_JENNA_CHILD, ANIM_NOD);
   FieldScript_WaitFrames(30);
-  ObjectEvent_SetActionScript(LOCALID_DORA, gValeStorm_DoraHeadsNorth);
+  ObjectEvent_SetActionScript(LOCALID_DORA, gValeStormyNight_DoraHeadsNorth);
   ObjectEvent_SetActionScript(LOCALID_JENNA_CHILD,
-                              gValeStorm_JennaHeadsForPlaza);
+                              gValeStormyNight_JennaHeadsForPlaza);
   FieldScript_WaitFrames(40);
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   FieldCamera_MoveTo(PIXELS(105), -1, PIXELS(1086), 1);
@@ -2099,25 +2117,25 @@ static void ValeStorm_DoraGoesForHelp(void) {
     FieldScript_SetMessageId((helpMessage + 1));
     Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | LOCALID_DORA, 0, 30);
     ObjectEvent_FaceDirection(LOCALID_GARET_CHILD, FACING_WEST, 20);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIM_NOD);
     FieldScript_WaitFrames(40);
   } else {
     ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 90);
     ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
-    Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_SHAKE_HEAD);
+    Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_SHAKE_HEAD);
     FieldScript_SetMessageId((helpMessage + 2));
     Script_ShowMessage(SPEAKER_WINDOW_BELOW | LOCALID_DORA, 0);
   }
-  ObjectEvent_SetActionScript(LOCALID_DORA, gValeStorm_DoraLeavesForHelp);
+  ObjectEvent_SetActionScript(LOCALID_DORA, gValeStormyNight_DoraLeavesForHelp);
   FieldScript_WaitFrames(90);
   ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET_CHILD, 0);
   FieldScript_WaitFrames(40);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET_CHILD, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_GARET_CHILD, leader->x.part.pixel,
@@ -2137,7 +2155,7 @@ static void EventScript_TalkAboutSavingFelix(void) {
   const s32 *pulseScript;
 
   FieldScript_Start();
-  Engine_ObjectEventSetAnimation(LOCALID_KYLE, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_KYLE, ANIM_STAND);
   FieldScript_WaitFrames(10);
   ObjectEvent_LinkPair(LOCALID_KYLE, LOCALID_PARTY_LEADER, 20);
   if (GameFlag_Get(FLAG_VALE_STORM_KYLE_GREETED_ISAAC) != 0) {
@@ -2151,14 +2169,14 @@ static void EventScript_TalkAboutSavingFelix(void) {
     FieldScript_ShowMessageThenWait(LOCALID_KYLE, 0, 10);
   }
   ObjectMotion_ArmCallback(LOCALID_KYLE, facing, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_KYLE, ANIM_KYLE_REACH_OUT);
+  Import_ObjectEventSetAnimation(LOCALID_KYLE, ANIM_KYLE_REACH_OUT);
   FieldScript_WaitFrames(10);
   {
     struct ObjectEvent *villager;
     s32 pulseDelay;
     villager = ObjectEvent_GetById(LOCALID_KYLE);
-    pulseDelay = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
-    pulseScript = gValeStorm_SquashAndStretchScript;
+    pulseDelay = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+    pulseScript = gValeStormyNight_SquashAndStretchScript;
     villager->timer = pulseDelay;
     ObjectEvent_SetActionScript(LOCALID_KYLE, pulseScript);
   }
@@ -2172,7 +2190,7 @@ static void EventScript_TalkAboutSavingFelix(void) {
 /// Psynergy is restored ("Mom! Dad! We're back!"), and as Dora calls everyone
 /// down to save Felix the Boulder comes down the river and sweeps away Felix,
 /// his parents and Kyle. Reached by stepping on metatile behavior 36 once
-/// FLAG_VALE_STORM_SENT_TO_AID_ELDERS is set (vale_gate.c), until
+/// FLAG_VALE_STORM_SENT_TO_AID_ELDERS is set (vale_plaza.c), until
 /// FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY is set, which this sets.
 static void EventScript_BoulderSweepsThemAway(void) {
   struct ObjectEvent *leader;
@@ -2193,7 +2211,7 @@ static void EventScript_BoulderSweepsThemAway(void) {
       ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 217, 1367);
       objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       if (objectEvent != 0) {
-        Engine_ObjectEventSetPosition(LOCALID_GARET_CHILD, objectEvent->x.fixed,
+        Import_ObjectEventSetPosition(LOCALID_GARET_CHILD, objectEvent->x.fixed,
                                       objectEvent->z.fixed);
       }
       ObjectEvent_WalkToAndWait(LOCALID_GARET_CHILD, 235, 1367);
@@ -2201,7 +2219,7 @@ static void EventScript_BoulderSweepsThemAway(void) {
                                 FACING_NORTHWEST + FACING_STEP, 0);
       objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       if (objectEvent != 0) {
-        Engine_ObjectEventSetPosition(LOCALID_JENNA_CHILD, objectEvent->x.fixed,
+        Import_ObjectEventSetPosition(LOCALID_JENNA_CHILD, objectEvent->x.fixed,
                                       objectEvent->z.fixed);
       }
       ObjectEvent_WalkToAndWait(LOCALID_JENNA_CHILD, 199, 1367);
@@ -2219,7 +2237,7 @@ static void EventScript_BoulderSweepsThemAway(void) {
       sprite->image.priority = 2;
       objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       if (objectEvent != 0) {
-        Engine_ObjectEventSetPosition(LOCALID_EXHAUSTED_STRONGMAN,
+        Import_ObjectEventSetPosition(LOCALID_EXHAUSTED_STRONGMAN,
                                       objectEvent->x.fixed,
                                       objectEvent->z.fixed);
       }
@@ -2237,7 +2255,8 @@ static void EventScript_BoulderSweepsThemAway(void) {
       FieldCamera_SetSpeedParameters(PIXELS(6) / 5, PIXELS(3) / 20);
       FieldCamera_MoveTo(PIXELS(101), -1, PIXELS(1197), 1);
       ObjectEvent_SetSpeed(LOCALID_DORA, PIXELS(7) / 5, PIXELS(7) / 10);
-      ObjectEvent_SetActionScript(LOCALID_DORA, gValeStorm_DoraRunsToRiver);
+      ObjectEvent_SetActionScript(LOCALID_DORA,
+                                  gValeStormyNight_DoraRunsToRiver);
       FieldScript_WaitFrames(60);
       FieldCamera_SetSpeedParameters(PIXELS(3) / 5, PIXELS(3) / 40);
       FieldCamera_MoveTo(PIXELS(187), -1, PIXELS(1328), 1);
@@ -2284,15 +2303,15 @@ static void EventScript_BoulderSweepsThemAway(void) {
       ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
       FieldScript_WaitFrames(20);
       FieldScript_ShowMessageThenWait(LOCALID_DORA, 0, 10);
-      Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-      Engine_ObjectEventSetAnimation(LOCALID_JENNA_CHILD, ANIM_NOD);
-      Engine_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_NOD);
+      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+      Import_ObjectEventSetAnimation(LOCALID_JENNA_CHILD, ANIM_NOD);
+      Import_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_NOD);
       automaticPriority = OBJ_EVENT_PRIORITY_AUTOMATIC;
       ObjectMotion_SetAnimationAndWait(LOCALID_EXHAUSTED_STRONGMAN, ANIM_NOD);
       leader->priorityFlags |= automaticPriority;
       objectEvent = ObjectEvent_GetById(LOCALID_EXHAUSTED_STRONGMAN);
       objectEvent->priorityFlags |= automaticPriority;
-      ValeStorm_ShowBoulderSweepingDownriver();
+      ValeStormyNight_ShowBoulderSweepingDownriver();
       GameFlag_Set(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY);
       FieldScript_End();
     }
@@ -2301,8 +2320,8 @@ static void EventScript_BoulderSweepsThemAway(void) {
 
 /// Places an object event and its targets at once, x doubling as its height.
 static __inline__ void
-ValeStorm_PlaceObjectEvent(struct ObjectEvent *objectEvent,
-                           s32 horizontalPosition, s32 groundPosition) {
+ValeStormyNight_PlaceObjectEvent(struct ObjectEvent *objectEvent,
+                                 s32 horizontalPosition, s32 groundPosition) {
   objectEvent->x.fixed = horizontalPosition;
   objectEvent->y.fixed = horizontalPosition;
   objectEvent->targetX = horizontalPosition;
@@ -2312,8 +2331,8 @@ ValeStorm_PlaceObjectEvent(struct ObjectEvent *objectEvent,
 }
 
 /// One crash of the Boulder coming down: a shake, SE_145 and a wait.
-static __inline__ void ValeStorm_PlayImpactBeat(s32 shakeAmplitude,
-                                                s32 frames) {
+static __inline__ void ValeStormyNight_PlayImpactBeat(s32 shakeAmplitude,
+                                                      s32 frames) {
   MapGrid_SetShake(shakeAmplitude, shakeAmplitude, Q16_ONE);
   Script_PlaySong(SE_145);
   Script_Wait(frames);
@@ -2322,14 +2341,14 @@ static __inline__ void ValeStorm_PlayImpactBeat(s32 shakeAmplitude,
 /// The Boulder comes down the river and carries Felix, his parents and Kyle
 /// away. The party gathers on the bank and hears it coming; the screen fades
 /// to the river upstream, where the camera follows the Boulder down
-/// (gValeStorm_BoulderRollsDownriver), and two frozen lightning flashes show
-/// the family and Kyle in its path. Then the bank is redrawn without them,
+/// (gValeStormyNight_BoulderRollsDownriver), and two frozen lightning flashes
+/// show the family and Kyle in its path. Then the bank is redrawn without them,
 /// with the rocks the Boulder left, and the party stands at the spot of
-/// VALE_STORM_FROM_BOULDER_PASSED. Called by
+/// VALE_STORMY_NIGHT_FROM_BOULDER_PASSED. Called by
 /// EventScript_BoulderSweepsThemAway, whose recording on the docs site
 /// (places/vale-storm/events/EventScript_BoulderSweepsThemAway.gif) shows the
 /// descent.
-static void ValeStorm_ShowBoulderSweepingDownriver(void) {
+static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   struct Sprite *objectEventVisual;
   struct Sprite *boulderShadowSprite;
   struct ObjectEvent *objectEvent;
@@ -2356,7 +2375,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(LOCALID_GARET_CHILD, PIXELS(6) / 5, PIXELS(3) / 5);
   // Bring the group to the riverbank as the lightning subsides.
-  entryActions = gValeStorm_ToRiverbankPath;
+  entryActions = gValeStormyNight_ToRiverbankPath;
   ObjectEvent_SetActionScript(LOCALID_EXHAUSTED_STRONGMAN, entryActions);
   Script_Wait(10);
   ObjectEvent_SetActionScript(LOCALID_JENNA_CHILD, entryActions);
@@ -2367,7 +2386,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   Weather_StopLightning();
   ObjectEvent_SetActionScript(LOCALID_GARET_CHILD, entryActions);
   Script_Wait(128);
-  EventScript_ClearPathCellOverride();
+  EventScript_StepOffUpperPath();
   FieldCamera_MoveTo(PIXELS(174), -1, PIXELS(1428), 1);
   Script_Wait(104);
   FieldCamera_MoveTo(PIXELS(153), -1, PIXELS(1325), 1);
@@ -2375,13 +2394,14 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_SOUTHEAST, 0);
   ObjectEvent_RefreshSelectorById(LOCALID_EXHAUSTED_STRONGMAN);
   ObjectEvent_SetActionScript(LOCALID_EXHAUSTED_STRONGMAN,
-                              gValeStorm_ExhaustedStrongmanGatherPath);
-  ObjectEvent_SetActionScript(LOCALID_JENNA_CHILD, gValeStorm_JennaGatherPath);
+                              gValeStormyNight_ExhaustedStrongmanGatherPath);
+  ObjectEvent_SetActionScript(LOCALID_JENNA_CHILD,
+                              gValeStormyNight_JennaGatherPath);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
-                              gValeStorm_LeaderGatherPath);
+                              gValeStormyNight_LeaderGatherPath);
   ObjectEvent_RunActionScriptAndWait(LOCALID_GARET_CHILD,
-                                     gValeStorm_GaretGatherPath);
-  ValeStorm_PlayImpactBeat(PIXELS(4), 20);
+                                     gValeStormyNight_GaretGatherPath);
+  ValeStormyNight_PlayImpactBeat(PIXELS(4), 20);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Script_Wait(60);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
@@ -2415,7 +2435,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   lookingObjectEvent = ObjectEvent_Get(LOCALID_DORA);
   random = Random_Next();
   lookingObjectEvent->timer = (Math_RemainderUnsigned(random, 20) + 20);
-  lookAroundActions = gValeStorm_LookAroundScript;
+  lookAroundActions = gValeStormyNight_LookAroundScript;
   ObjectEvent_SetActionScript(LOCALID_DORA, lookAroundActions);
   Script_Wait(30);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, lookAroundActions);
@@ -2424,16 +2444,16 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ObjectEvent_SetActionScript(LOCALID_EXHAUSTED_STRONGMAN, lookAroundActions);
   Script_Wait(10);
   Script_PlaySong(SONG_FADE_OUT_BGM);
-  ValeStorm_PlayImpactBeat(PIXELS(3), 30);
+  ValeStormyNight_PlayImpactBeat(PIXELS(3), 30);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Script_Wait(120);
-  ValeStorm_PlayImpactBeat(PIXELS(3), 40);
+  ValeStormyNight_PlayImpactBeat(PIXELS(3), 40);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   Script_Wait(60);
-  ValeStorm_PlayImpactBeat(PIXELS(4), 20);
+  ValeStormyNight_PlayImpactBeat(PIXELS(4), 20);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Script_Wait(60);
-  ValeStorm_PlayImpactBeat(PIXELS(3), 40);
+  ValeStormyNight_PlayImpactBeat(PIXELS(3), 40);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Script_Wait(60);
   Weather_StopLightning();
@@ -2446,7 +2466,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   PaletteFade_StartInterpolation(40);
   Task_Wait(40);
   // Stage the boulder and its shadow for the downriver camera shot.
-  ObjectEvent_SetChildValue(LOCALID_BOULDER, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_BOULDER, 0);
   currentObjectEvent = ObjectEvent_Get(LOCALID_BOULDER);
   ObjectEvent_SetSpriteFlags(currentObjectEvent, 0);
   currentObjectEvent = ObjectEvent_Get(LOCALID_BOULDER_SHADOW);
@@ -2455,7 +2475,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   boulderShadow->scaleY = 0xcccc;
   boulderShadow->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   boulderShadowSprite->image.priority = 1;
-  ValeStorm_PlaceObjectEvent(objectEvent, PIXELS(200), PIXELS(898));
+  ValeStormyNight_PlaceObjectEvent(objectEvent, PIXELS(200), PIXELS(898));
   objectEvent->motionFlags = stoppedMotion;
   objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   objectEventVisual->image.priority = 0;
@@ -2480,9 +2500,10 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   PaletteFade_StartInterpolation(30);
   Task_Wait(30);
   // Follow the boulder script until its eighth movement phase.
-  FieldScheduler_AddCallback(ValeStorm_UpdateBoulderShadow, TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(ValeStormyNight_UpdateBoulderShadow,
+                             TASK_PRIORITY_MAP);
   ObjectEvent_SetActionScript(LOCALID_BOULDER,
-                              gValeStorm_BoulderRollsDownriver);
+                              gValeStormyNight_BoulderRollsDownriver);
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(3) / 100);
   FieldCamera_MoveTo(PIXELS(175), PIXELS(96), PIXELS(1086), 1);
   do {
@@ -2505,7 +2526,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   currentObjectEvent->velocityY = resetValue;
   currentObjectEvent = FieldCamera_GetScriptObject();
   currentObjectEvent->velocityZ = resetValue;
-  Task_Remove(ValeStorm_UpdateBoulderShadow);
+  Task_Remove(ValeStormyNight_UpdateBoulderShadow);
   ObjectEvent_Stop(LOCALID_BOULDER);
   Task_Wait(1);
   ObjectEvent_SetAnimation(LOCALID_BOULDER, ANIM_STILL);
@@ -2544,13 +2565,14 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   objectEvent->targetX = OBJ_EVENT_NO_TARGET;
   objectEvent->targetY = OBJ_EVENT_NO_TARGET;
   objectEvent->targetZ = OBJ_EVENT_NO_TARGET;
-  ValeStorm_FlashLightning();
+  ValeStormyNight_FlashLightning();
   ObjectEvent_SetPosition(LOCALID_BOULDER_SHADOW, PIXELS(218), PIXELS(1176));
   FieldCamera_MoveTo(PIXELS(210), 0, PIXELS(1196), 0);
   MapGrid_CenterOnFollowedPoint();
   boulderShadow->scaleX = 2 * Q16_ONE;
   boulderShadow->scaleY = 2 * Q16_ONE;
-  FieldScheduler_AddCallback(ValeStorm_FlickerBoulderShadow, TASK_PRIORITY_MAP);
+  FieldScheduler_AddCallback(ValeStormyNight_FlickerBoulderShadow,
+                             TASK_PRIORITY_MAP);
   ObjectEvent_Stop(LOCALID_KYLE);
   ObjectEvent_Stop(LOCALID_JENNAS_FATHER);
   ObjectEvent_Stop(LOCALID_JENNAS_MOTHER);
@@ -2581,7 +2603,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ObjectEvent_SetAnimation(LOCALID_JENNAS_MOTHER, ANIM_PARENT_RECOIL);
   boulderShadow = ObjectEvent_Get(LOCALID_BOULDER_SHADOW);
   boulderShadowSprite = boulderShadow->sprite;
-  ValeStorm_FlashLightning();
+  ValeStormyNight_FlashLightning();
   objectEvent->y.fixed = PIXELS(48);
   objectEvent->x.fixed = PIXELS(214);
   objectEvent->z.fixed = PIXELS(1216);
@@ -2608,7 +2630,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   PaletteFade_StartInterpolation(80);
   Script_Wait(80);
   Script_Wait(100);
-  Task_Remove(ValeStorm_FlickerBoulderShadow);
+  Task_Remove(ValeStormyNight_FlickerBoulderShadow);
   boulderShadowSprite->scale = boulderShadow->scaleX;
   GameFlag_Clear(FLAG_WEATHER_HELD);
   TilesetAnim_Resume(0);
@@ -2618,14 +2640,14 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   TilesetAnim_Resume(4);
   TilesetAnim_Resume(5);
   // Restore the riverbank and the idle object event scripts.
-  ValeStorm_RebuildRiverbank();
+  ValeStormyNight_RebuildRiverbank();
   ObjectEvent_SetPosition(LOCALID_DORA, PIXELS(165), PIXELS(1229));
   ObjectEvent_SetAnimation(LOCALID_DORA, ANIM_STAND);
   objectEvent = ObjectEvent_Get(LOCALID_DORA);
   objectEvent->facing = FACING_NORTHEAST;
   random = Random_Next();
   objectEvent->timer = Math_RemainderUnsigned(random, 90) + 60;
-  departureActions = gValeStorm_SquashAndStretchScript;
+  departureActions = gValeStormyNight_SquashAndStretchScript;
   objectEvent->work = 1;
   ObjectEvent_SetActionScript(LOCALID_DORA, departureActions);
   ObjectEvent_SetPosition(LOCALID_JENNA_CHILD, PIXELS(165), PIXELS(1254));
@@ -2658,7 +2680,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
       ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectEvent_GetById(LOCALID_EXHAUSTED_STRONGMAN)->priorityFlags &=
       ~OBJ_EVENT_PRIORITY_AUTOMATIC;
-  FieldScheduler_AddCallback(ValeStorm_CopyLeaderSpritePriority,
+  FieldScheduler_AddCallback(ValeStormyNight_CopyLeaderSpritePriority,
                              TASK_PRIORITY_MAP);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(181), PIXELS(1273));
   currentObjectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
@@ -2689,7 +2711,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
 /// (FLAG_WEATHER_HELD) and pauses the map's tileset animations 0 to 5,
 /// shows the scene in PALETTE_TINT_WARM for two seconds, fades it to
 /// black, then lets the rain and the animations run again.
-static void ValeStorm_FlashLightning(void) {
+static void ValeStormyNight_FlashLightning(void) {
   WaitFrames(20);
   Script_SetFlag(FLAG_WEATHER_HELD);
   TilesetAnim_Pause(0);
@@ -2716,9 +2738,10 @@ static void ValeStorm_FlashLightning(void) {
 
 /// The callback that keeps LOCALID_BOULDER_SHADOW on the Boulder as it comes
 /// down the river: the shadow swells or shrinks by the step of
-/// gValeStorm_BoulderRollsDownriver the Boulder is on (its work value), shows
-/// on odd frames only, and the map shakes as the step's timer counts down.
-static void ValeStorm_UpdateBoulderShadow(void) {
+/// gValeStormyNight_BoulderRollsDownriver the Boulder is on (its work value),
+/// shows on odd frames only, and the map shakes as the step's timer counts
+/// down.
+static void ValeStormyNight_UpdateBoulderShadow(void) {
   struct ObjectEvent *source;
   struct ObjectEvent *shadow;
   struct Sprite *sprite;
@@ -2776,7 +2799,7 @@ static void ValeStorm_UpdateBoulderShadow(void) {
 
 /// The callback that moves LOCALID_BOULDER_SHADOW between two heights on
 /// alternate frames, during the frozen flashes.
-static void ValeStorm_FlickerBoulderShadow(void) {
+static void ValeStormyNight_FlickerBoulderShadow(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_BOULDER_SHADOW);
   u32 frame = gFrameCount;
   struct Sprite *sprite = objectEvent->sprite;
@@ -2806,10 +2829,10 @@ static void EventScript_StrongmanTriesToGoForHelp(void) {
     ObjectMotion_SetVarCbAndRefresh(LOCALID_EXHAUSTED_STRONGMAN, 2);
     FieldScript_WaitFrames(40);
     if ((s16)leader->facing >= 0) {
-      Engine_ObjectEventSetAnimation(LOCALID_EXHAUSTED_STRONGMAN,
+      Import_ObjectEventSetAnimation(LOCALID_EXHAUSTED_STRONGMAN,
                                      ANIM_STRONGMAN_PROPPED_UP);
     } else {
-      Engine_ObjectEventSetAnimation(LOCALID_EXHAUSTED_STRONGMAN,
+      Import_ObjectEventSetAnimation(LOCALID_EXHAUSTED_STRONGMAN,
                                      ANIM_STRONGMAN_PROPPED_UP_OTHER_WAY);
     }
     ObjectMotion_SetVarCbAndRefresh(LOCALID_EXHAUSTED_STRONGMAN, 2);
@@ -2817,8 +2840,8 @@ static void EventScript_StrongmanTriesToGoForHelp(void) {
     FieldScript_SetMessageId(MsgValeICantMoveGetHelp);
     Script_ShowMessage(LOCALID_EXHAUSTED_STRONGMAN, 0);
     ObjectEvent_SetActionScript(LOCALID_EXHAUSTED_STRONGMAN,
-                                gValeStorm_SquashAndStretchScript);
-    Engine_ObjectEventSetAnimation(LOCALID_EXHAUSTED_STRONGMAN,
+                                gValeStormyNight_SquashAndStretchScript);
+    Import_ObjectEventSetAnimation(LOCALID_EXHAUSTED_STRONGMAN,
                                    ANIM_STRONGMAN_SPRAWLED);
   } else {
     ObjectMotion_EnableActionAndResetMotion(LOCALID_EXHAUSTED_STRONGMAN);
@@ -2827,25 +2850,25 @@ static void EventScript_StrongmanTriesToGoForHelp(void) {
     ObjectEvent_FaceDirection(LOCALID_EXHAUSTED_STRONGMAN,
                               FACING_EAST + FACING_STEP, 0);
     if ((s16)leader->facing >= 0) {
-      Engine_ObjectEventSetAnimation(LOCALID_EXHAUSTED_STRONGMAN,
+      Import_ObjectEventSetAnimation(LOCALID_EXHAUSTED_STRONGMAN,
                                      ANIM_STRONGMAN_PROPPED_UP);
     } else {
-      Engine_ObjectEventSetAnimation(LOCALID_EXHAUSTED_STRONGMAN,
+      Import_ObjectEventSetAnimation(LOCALID_EXHAUSTED_STRONGMAN,
                                      ANIM_STRONGMAN_PROPPED_UP_OTHER_WAY);
     }
     FieldScript_WaitFrames(20);
     FieldScript_SetMessageId(MsgValeIllGo);
     Script_ShowMessageAndWait(LOCALID_EXHAUSTED_STRONGMAN, 0, 20);
-    Engine_ObjectEventSetAnimation(LOCALID_EXHAUSTED_STRONGMAN, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_EXHAUSTED_STRONGMAN, ANIM_STAND);
     ObjectMotion_Launch(LOCALID_EXHAUSTED_STRONGMAN, 4, 0);
     FieldScript_WaitFrames(80);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_EXHAUSTED_STRONGMAN, 2);
     FieldScript_WaitFrames(40);
     if ((s16)leader->facing >= 0) {
-      Engine_ObjectEventSetAnimation(LOCALID_EXHAUSTED_STRONGMAN,
+      Import_ObjectEventSetAnimation(LOCALID_EXHAUSTED_STRONGMAN,
                                      ANIM_STRONGMAN_PROPPED_UP);
     } else {
-      Engine_ObjectEventSetAnimation(LOCALID_EXHAUSTED_STRONGMAN,
+      Import_ObjectEventSetAnimation(LOCALID_EXHAUSTED_STRONGMAN,
                                      ANIM_STRONGMAN_PROPPED_UP_OTHER_WAY);
     }
     FieldScript_WaitFrames(2);
@@ -2855,8 +2878,8 @@ static void EventScript_StrongmanTriesToGoForHelp(void) {
     FieldScript_WaitFrames(20);
     Script_ShowMessage(LOCALID_EXHAUSTED_STRONGMAN, 0);
     ObjectEvent_SetActionScript(LOCALID_EXHAUSTED_STRONGMAN,
-                                gValeStorm_SquashAndStretchScript);
-    Engine_ObjectEventSetAnimation(LOCALID_EXHAUSTED_STRONGMAN,
+                                gValeStormyNight_SquashAndStretchScript);
+    Import_ObjectEventSetAnimation(LOCALID_EXHAUSTED_STRONGMAN,
                                    ANIM_STRONGMAN_SPRAWLED);
     GameFlag_Set(FLAG_VALE_STORM_STRONGMAN_TRIED_TO_GO);
   }
@@ -2865,14 +2888,14 @@ static void EventScript_StrongmanTriesToGoForHelp(void) {
 
 /// As Isaac leaves the river to get help, Garet will not let him go alone and
 /// goes after him. "I can't let him go alone..."
-/// Called by EventScript_LeaveToValeGate after the Boulder swept Felix, his
+/// Called by EventScript_LeaveToValePlaza after the Boulder swept Felix, his
 /// parents and Kyle away; sets FLAG_VALE_STORM_GARET_LEFT, which has the two
-/// meet the strangers on the way (vale_gate.c).
-static void ValeStorm_GaretFollowsIsaac(void) {
+/// meet the strangers on the way (vale_plaza.c).
+static void ValeStormyNight_GaretFollowsIsaac(void) {
   FieldScript_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   ObjectMotion_EnableActionAndResetMotion(LOCALID_GARET_CHILD);
-  Task_Remove(ValeStorm_CopyLeaderSpritePriority);
+  Task_Remove(ValeStormyNight_CopyLeaderSpritePriority);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 480, 1392);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET_CHILD, FACING_SOUTHEAST + FACING_STEP,
@@ -2903,9 +2926,9 @@ static void ValeStorm_GaretFollowsIsaac(void) {
 }
 
 /// Redraws the riverbank as the Boulder left it, pictures and metatile
-/// behaviors. Called by ValeStorm_ShowBoulderSweepingDownriver and, on later
-/// arrivals, by ValeStorm_Initialize.
-static void ValeStorm_RebuildRiverbank(void) {
+/// behaviors. Called by ValeStormyNight_ShowBoulderSweepingDownriver and, on
+/// later arrivals, by ValeStormyNight_Initialize.
+static void ValeStormyNight_RebuildRiverbank(void) {
   MapGrid_CopyCellsTo(16, 96, 11, 73, 6, 3);
   MapGrid_CopyCellsTo(16, 96, 34, 68, 14, 10);
   MapGrid_CopyCellsTo(16, 96, 64, 68, 7, 7);
@@ -2963,7 +2986,7 @@ static void EventScript_FightFourthMonster(void) {
 /// Psynergy sparks rises and falls every 16 frames plus 8 for each step of
 /// sShakeShift.
 static void
-ValeStorm_FlashPaletteAndSpawnEffects(struct ObjectEvent *objectEvent) {
+ValeStormyNight_FlashPaletteAndSpawnEffects(struct ObjectEvent *objectEvent) {
   s32 spawnInterval;
 
   if ((gFrameCount & 2) != 0) {
@@ -2976,15 +2999,15 @@ ValeStorm_FlashPaletteAndSpawnEffects(struct ObjectEvent *objectEvent) {
 
     spawnInterval = (sShakeShift << 3) + 16;
     if (Math_RemainderUnsigned(*frame, spawnInterval) == 0) {
-      ValeStorm_SpawnEffectPair(objectEvent);
+      ValeStormyNight_SpawnEffectPair(objectEvent);
     }
   }
 }
 
 /// An elder holding the Boulder: the sprite cycles through palettes 0 to 5,
-/// and sparks rise and fall as in ValeStorm_FlashPaletteAndSpawnEffects.
+/// and sparks rise and fall as in ValeStormyNight_FlashPaletteAndSpawnEffects.
 static void
-ValeStorm_CyclePaletteAndSpawnEffects(struct ObjectEvent *objectEvent) {
+ValeStormyNight_CyclePaletteAndSpawnEffects(struct ObjectEvent *objectEvent) {
   s32 paletteFrame;
   s32 spawnInterval;
 
@@ -2995,12 +3018,13 @@ ValeStorm_CyclePaletteAndSpawnEffects(struct ObjectEvent *objectEvent) {
   }
   spawnInterval = (sShakeShift << 3) + 16;
   if (Math_RemainderUnsigned(gFrameCount, spawnInterval) == 0) {
-    ValeStorm_SpawnEffectPair(objectEvent);
+    ValeStormyNight_SpawnEffectPair(objectEvent);
   }
 }
 
 /// Cycles the sprite through palettes 0 to 5, a step every second frame.
-static void ValeStorm_CycleObjectPalettes(struct ObjectEvent *objectEvent) {
+static void
+ValeStormyNight_CycleObjectPalettes(struct ObjectEvent *objectEvent) {
   s32 paletteFrame;
 
   if ((gFrameCount & 1) != 0) {
@@ -3014,7 +3038,7 @@ static void ValeStorm_CycleObjectPalettes(struct ObjectEvent *objectEvent) {
 
 /// Spawns a pair of Psynergy sparks on an elder, one rising and one falling
 /// (common/effect_vertical.h), with SE_JUMP.
-static void ValeStorm_SpawnEffectPair(struct ObjectEvent *parent) {
+static void ValeStormyNight_SpawnEffectPair(struct ObjectEvent *parent) {
   struct ObjectEvent *pair[2];
   struct ObjectEvent *child;
   struct Sprite *sprite;
@@ -3068,27 +3092,27 @@ static void ValeStorm_SpawnEffectPair(struct ObjectEvent *parent) {
 
 /// Cycles the four elders' palettes and effects while they hold the Boulder;
 /// the westernmost elder's stop once that elder lets go (sShakeDone).
-static void ValeStorm_UpdateBoulderMapEffects(void) {
-  ValeStorm_CyclePaletteAndSpawnEffects(
+static void ValeStormyNight_UpdateBoulderMapEffects(void) {
+  ValeStormyNight_CyclePaletteAndSpawnEffects(
       ObjectEvent_GetById(LOCALID_ELDER_EAST));
-  ValeStorm_CyclePaletteAndSpawnEffects(
+  ValeStormyNight_CyclePaletteAndSpawnEffects(
       ObjectEvent_GetById(LOCALID_ELDER_WEST));
-  ValeStorm_CyclePaletteAndSpawnEffects(
+  ValeStormyNight_CyclePaletteAndSpawnEffects(
       ObjectEvent_GetById(LOCALID_ELDER_FAR_EAST));
   if (sShakeDone == 0) {
-    ValeStorm_CyclePaletteAndSpawnEffects(
+    ValeStormyNight_CyclePaletteAndSpawnEffects(
         ObjectEvent_GetById(LOCALID_ELDER_FAR_WEST));
   }
 }
 
 /// The callback that cycles the Boulder's palettes while the elders hold it.
-static void ValeStorm_CycleBoulderPalette(void) {
-  ValeStorm_CycleObjectPalettes(ObjectEvent_GetById(LOCALID_BOULDER));
+static void ValeStormyNight_CycleBoulderPalette(void) {
+  ValeStormyNight_CycleObjectPalettes(ObjectEvent_GetById(LOCALID_BOULDER));
 }
 
 /// Keeps Garet and the man who came to help (LOCALID_EXHAUSTED_STRONGMAN) at
 /// the leader's sprite priority while they stand by the river.
-static void ValeStorm_CopyLeaderSpritePriority(void) {
+static void ValeStormyNight_CopyLeaderSpritePriority(void) {
   struct Sprite *sourceSprite;
 #if !TBS_PATCH_3
   struct Sprite *targetSprite;
@@ -3125,14 +3149,14 @@ static void EventScript_SearchValuablesChest(void) {
   FieldScript_End();
 }
 
-/// ValeStorm_SetObjectEventFrameMode's parameter for mode 0, by the frame
+/// ValeStormyNight_SetObjectEventFrameMode's parameter for mode 0, by the frame
 /// count.
-u8 gValeStorm_FrameModes[] = {7, 0, 0, 0};
+u8 gValeStormyNight_FrameModes[] = {7, 0, 0, 0};
 
 // The object events' scripts, positions in pixels.
 
 /// The stout man runs off toward the plaza after shoving Isaac.
-s32 gValeStorm_ShovingManScript[] = {
+s32 gValeStormyNight_ShovingManScript[] = {
     SC_ANIMATION(2), SC_MOVE(PIXELS(185), 0, PIXELS(824)),
     SC_SYNC,         SC_MOVE(PIXELS(179), 0, PIXELS(836)),
     SC_SYNC,         SC_MOVE(PIXELS(226), 0, PIXELS(840)),
@@ -3142,7 +3166,7 @@ s32 gValeStorm_ShovingManScript[] = {
 };
 
 /// Garet runs up to Isaac (EventScript_UnusedGaretJoinsIsaac).
-s32 gValeStorm_UnusedGaretRunsUpScript[] = {
+s32 gValeStormyNight_UnusedGaretRunsUpScript[] = {
     SC_ANIMATION(2), SC_MOVE(PIXELS(345), 0, PIXELS(612)),
     SC_SYNC,         SC_MOVE(PIXELS(311), 0, PIXELS(638)),
     SC_SYNC,         SC_MOVE(PIXELS(256), 0, PIXELS(608)),
@@ -3152,7 +3176,7 @@ s32 gValeStorm_UnusedGaretRunsUpScript[] = {
 
 /// Garet heaves for breath: his sprite stretches over 24 frames and settles
 /// over 12, for ever.
-s32 gValeStorm_UnusedGaretPantingScript[] = {
+s32 gValeStormyNight_UnusedGaretPantingScript[] = {
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, 192),
     SC_ADD(SW_SCALE_Y, 384),
@@ -3168,37 +3192,37 @@ s32 gValeStorm_UnusedGaretPantingScript[] = {
 };
 
 /// The Boulder on the mountainside, in animation 2 until it slips.
-s32 gValeStorm_BoulderWaits[] = {
+s32 gValeStormyNight_BoulderWaits[] = {
     SC_ANIMATION(2),
     SC_END,
 };
 
 /// Isaac and Garet run to where they see the elders hold the Boulder
 /// (EventScript_WatchBoulderFall), and face each other.
-s32 gValeStorm_BoulderFallLeaderPath[] = {
+s32 gValeStormyNight_BoulderFallLeaderPath[] = {
     SC_ANIMATION(2), SC_MOVE(PIXELS(94), 0, PIXELS(564)), SC_SYNC,
     SC_ANIMATION(1), SC_SET(SW_FACING, FACING_WEST),      SC_WAIT(30),
     SC_END,
 };
 
-s32 gValeStorm_BoulderFallGaretPath[] = {
+s32 gValeStormyNight_BoulderFallGaretPath[] = {
     SC_ANIMATION(2), SC_MOVE(PIXELS(76), 0, PIXELS(564)), SC_SYNC,
     SC_ANIMATION(1), SC_SET(SW_FACING, FACING_EAST),      SC_WAIT(30),
     SC_END,
 };
 
-// ValeStorm_DoraGoesForHelp: Jenna and Dora run into the house by the river by
-// its east door and come out by its west door; Jenna then heads for the plaza
-// and Dora north.
+// ValeStormyNight_DoraGoesForHelp: Jenna and Dora run into the house by the
+// river by its east door and come out by its west door; Jenna then heads for
+// the plaza and Dora north.
 
-s32 gValeStorm_DoraRunsIntoRiversideHouse[] = {
+s32 gValeStormyNight_DoraRunsIntoRiversideHouse[] = {
     SC_ANIMATION(2), SC_MOVE(PIXELS(178), 0, PIXELS(1190)),
     SC_SYNC,         SC_MOVE(PIXELS(149), 0, PIXELS(1194)),
     SC_SYNC,         SC_ANIMATION(1),
     SC_END,
 };
 
-s32 gValeStorm_JennaRunsIntoRiversideHouse[] = {
+s32 gValeStormyNight_JennaRunsIntoRiversideHouse[] = {
     SC_ANIMATION(2), SC_MOVE(PIXELS(198), 0, PIXELS(1176)),
     SC_SYNC,         SC_MOVE(PIXELS(170), 0, PIXELS(1195)),
     SC_SYNC,         SC_MOVE(PIXELS(149), 0, PIXELS(1194)),
@@ -3207,7 +3231,7 @@ s32 gValeStorm_JennaRunsIntoRiversideHouse[] = {
     SC_ANIMATION(1), SC_END,
 };
 
-s32 gValeStorm_DoraComesOutOfRiversideHouse[] = {
+s32 gValeStormyNight_DoraComesOutOfRiversideHouse[] = {
     SC_ANIMATION(2),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(30),
@@ -3222,7 +3246,7 @@ s32 gValeStorm_DoraComesOutOfRiversideHouse[] = {
     SC_END,
 };
 
-s32 gValeStorm_JennaComesOutOfRiversideHouse[] = {
+s32 gValeStormyNight_JennaComesOutOfRiversideHouse[] = {
     SC_ANIMATION(2),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(30),
@@ -3237,7 +3261,7 @@ s32 gValeStorm_JennaComesOutOfRiversideHouse[] = {
     SC_END,
 };
 
-s32 gValeStorm_DoraHeadsNorth[] = {
+s32 gValeStormyNight_DoraHeadsNorth[] = {
     SC_ANIMATION(2), SC_MOVE(PIXELS(50), 0, PIXELS(1214)),
     SC_SYNC,         SC_MOVE(PIXELS(46), 0, PIXELS(1130)),
     SC_SYNC,         SC_MOVE(PIXELS(67), 0, PIXELS(1100)),
@@ -3245,7 +3269,7 @@ s32 gValeStorm_DoraHeadsNorth[] = {
     SC_END,
 };
 
-s32 gValeStorm_JennaHeadsForPlaza[] = {
+s32 gValeStormyNight_JennaHeadsForPlaza[] = {
     SC_ANIMATION(2), SC_MOVE(PIXELS(153), 0, PIXELS(1251)),
     SC_SYNC,         SC_MOVE(PIXELS(177), 0, PIXELS(1357)),
     SC_SYNC,         SC_POSITION(0, 0, 0),
@@ -3253,7 +3277,7 @@ s32 gValeStorm_JennaHeadsForPlaza[] = {
 };
 
 /// Dora leaves to the west once she has asked the boys to help.
-s32 gValeStorm_DoraLeavesForHelp[] = {
+s32 gValeStormyNight_DoraLeavesForHelp[] = {
     SC_ANIMATION(2), SC_MOVE(PIXELS(123), 0, PIXELS(1078)),
     SC_SYNC,         SC_MOVE(PIXELS(148), 0, PIXELS(1078)),
     SC_SYNC,         SC_MOVE(PIXELS(148), 0, PIXELS(1064)),
@@ -3264,7 +3288,7 @@ s32 gValeStorm_DoraLeavesForHelp[] = {
 
 /// Dora runs down to the river when Jenna comes back
 /// (EventScript_BoulderSweepsThemAway).
-s32 gValeStorm_DoraRunsToRiver[] = {
+s32 gValeStormyNight_DoraRunsToRiver[] = {
     SC_ANIMATION(2), SC_MOVE(PIXELS(102), 0, PIXELS(1236)),
     SC_SYNC,         SC_MOVE(PIXELS(148), 0, PIXELS(1256)),
     SC_SYNC,         SC_MOVE(PIXELS(177), 0, PIXELS(1303)),
@@ -3274,7 +3298,7 @@ s32 gValeStorm_DoraRunsToRiver[] = {
 
 /// The way down to the riverbank that each of the party and the strongman
 /// takes in turn as the Boulder comes, then each one's place there.
-s32 gValeStorm_ToRiverbankPath[] = {
+s32 gValeStormyNight_ToRiverbankPath[] = {
     SC_ANIMATION(2), SC_MOVE(PIXELS(137), 0, PIXELS(1379)),
     SC_SYNC,         SC_MOVE(PIXELS(114), 0, PIXELS(1416)),
     SC_SYNC,         SC_MOVE(PIXELS(95), 0, PIXELS(1416)),
@@ -3287,7 +3311,7 @@ s32 gValeStorm_ToRiverbankPath[] = {
 
 // Where each one stops on the bank to hear the Boulder coming.
 
-s32 gValeStorm_ExhaustedStrongmanGatherPath[] = {
+s32 gValeStormyNight_ExhaustedStrongmanGatherPath[] = {
     SC_MOVE(PIXELS(184), 0, PIXELS(1309)),
     SC_SYNC,
     SC_ANIMATION(1),
@@ -3295,17 +3319,17 @@ s32 gValeStorm_ExhaustedStrongmanGatherPath[] = {
     SC_END,
 };
 
-s32 gValeStorm_JennaGatherPath[] = {
+s32 gValeStormyNight_JennaGatherPath[] = {
     SC_MOVE(PIXELS(165), 0, PIXELS(1306)), SC_SYNC, SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTHWEST),   SC_END,
 };
 
-s32 gValeStorm_LeaderGatherPath[] = {
+s32 gValeStormyNight_LeaderGatherPath[] = {
     SC_MOVE(PIXELS(183), 0, PIXELS(1325)), SC_SYNC, SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTHWEST),   SC_END,
 };
 
-s32 gValeStorm_GaretGatherPath[] = {
+s32 gValeStormyNight_GaretGatherPath[] = {
     SC_MOVE(PIXELS(166), 0, PIXELS(1325)),
     SC_SYNC,
     SC_ANIMATION(1),
@@ -3313,25 +3337,25 @@ s32 gValeStorm_GaretGatherPath[] = {
     SC_END,
 };
 
-/// Everyone on the bank looks about (ValeStorm_RerollHeadingOnCountdown).
-s32 gValeStorm_LookAroundScript[] = {
-    SC_CALL(ValeStorm_RerollHeadingOnCountdown),
+/// Everyone on the bank looks about (ValeStormyNight_RerollHeadingOnCountdown).
+s32 gValeStormyNight_LookAroundScript[] = {
+    SC_CALL(ValeStormyNight_RerollHeadingOnCountdown),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /// A squash and stretch every 60 to 149 frames (Map_SquashAndStretch), for
 /// the people straining at the river and, after the Boulder, those on the
 /// bank.
-s32 gValeStorm_SquashAndStretchScript[] = {
+s32 gValeStormyNight_SquashAndStretchScript[] = {
     SC_CALL(Map_SquashAndStretch),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /// The Boulder bounds down the river in nine steps. Each sets its step in
-/// SW_WORK, which ValeStorm_UpdateBoulderShadow reads and
-/// ValeStorm_ShowBoulderSweepingDownriver waits on, and two of its landings
-/// start a shake countdown in SW_TIMER.
-s32 gValeStorm_BoulderRollsDownriver[] = {
+/// SW_WORK, which ValeStormyNight_UpdateBoulderShadow reads and
+/// ValeStormyNight_ShowBoulderSweepingDownriver waits on, and two of its
+/// landings start a shake countdown in SW_TIMER.
+s32 gValeStormyNight_BoulderRollsDownriver[] = {
     SC_ANIMATION(2),
     SC_SET(SW_SPEED, PIXELS(3)),
     SC_SET(SW_ACCELERATION, PIXELS(1)),
@@ -3382,71 +3406,71 @@ s32 gValeStorm_BoulderRollsDownriver[] = {
     SC_END,
 };
 
-struct MapWarpDest gValeStorm_WarpDests[] = {
+struct MapWarpDest gValeStormyNight_WarpDests[] = {
     {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 167, 0, 1281, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {1, CONDITION_ALWAYS, 257, 0, 456, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {2, CONDITION_ALWAYS, 113, 0, 303, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VALE_STORM_FROM_VALE_KRADEN_NORTH, CONDITION_ALWAYS, 27, 0, 621,
-     FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {VALE_STORM_FROM_VALE_KRADEN_SOUTH, CONDITION_ALWAYS, 29, 0, 792,
-     FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {VALE_STORM_FROM_VALE_GATE, CONDITION_ALWAYS, 458, 0, 1393, FACING_WEST, 0,
-     -1, -1, -1, -1, 0},
-    {VALE_STORM_FROM_VALE_INTERIORS_SHOPS_EAST, CONDITION_ALWAYS, 406, 0, 743,
+    {VALE_STORMY_NIGHT_FROM_VALE_KRADENS_COTTAGE_NORTH, CONDITION_ALWAYS, 27, 0,
+     621, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {VALE_STORMY_NIGHT_FROM_VALE_KRADENS_COTTAGE_SOUTH, CONDITION_ALWAYS, 29, 0,
+     792, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {VALE_STORMY_NIGHT_FROM_VALE_PLAZA, CONDITION_ALWAYS, 458, 0, 1393,
+     FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {VALE_STORMY_NIGHT_FROM_VALE_SHOPS_EAST, CONDITION_ALWAYS, 406, 0, 743,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VALE_STORM_FROM_VALE_INTERIORS_SHOPS_SOUTH, CONDITION_ALWAYS, 262, 0, 821,
+    {VALE_STORMY_NIGHT_FROM_VALE_SHOPS_SOUTH, CONDITION_ALWAYS, 262, 0, 821,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VALE_STORM_FROM_VALE_INTERIORS_INN_ISAACS_HOUSE, CONDITION_ALWAYS, 340, 0,
+    {VALE_STORMY_NIGHT_FROM_VALE_INN_ISAACS_HOUSE, CONDITION_ALWAYS, 340, 0,
      904, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VALE_STORM_FROM_VALE_INTERIORS_SHOPS_NORTH, CONDITION_ALWAYS, 326, 0, 1142,
+    {VALE_STORMY_NIGHT_FROM_VALE_SHOPS_NORTH, CONDITION_ALWAYS, 326, 0, 1142,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VALE_STORM_FROM_VALE_INTERIORS_SHOPS_WEST, CONDITION_ALWAYS, 374, 0, 1254,
+    {VALE_STORMY_NIGHT_FROM_VALE_SHOPS_WEST, CONDITION_ALWAYS, 374, 0, 1254,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {11, CONDITION_ALWAYS, 102, 0, 1222, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VALE_STORM_FROM_VALE_INTERIORS_INN_WEST, CONDITION_ALWAYS, 101, 0, 1216,
+    {VALE_STORMY_NIGHT_FROM_VALE_INN_WEST, CONDITION_ALWAYS, 101, 0, 1216,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VALE_STORM_FROM_VALE_INTERIORS_INN_EAST, CONDITION_ALWAYS, 146, 0, 1193,
+    {VALE_STORMY_NIGHT_FROM_VALE_INN_EAST, CONDITION_ALWAYS, 146, 0, 1193,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA, CONDITION_ALWAYS, 335, 0,
-     908, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {VALE_STORM_FROM_BOULDER_PASSED, CONDITION_ALWAYS, 181, 0, 1273,
+    {VALE_STORMY_NIGHT_FROM_VALE_INN_WITH_DORA, CONDITION_ALWAYS, 335, 0, 908,
+     FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {VALE_STORMY_NIGHT_FROM_BOULDER_PASSED, CONDITION_ALWAYS, 181, 0, 1273,
      FACING_NORTHEAST, 0, -1, -1, -1, -1, 0},
     {MAP_TABLE_END},
 };
 
-u32 gValeStorm_Warps[] = {
-    MAP_WARPS(ValeStorm),
-    MAP_WARP(VALE_STORM_TO_VALE_GATE, ValeGate, VALE_GATE_FROM_VALE),
-    MAP_WARP(VALE_STORM_TO_VALE_KRADEN_NORTH, ValeKraden,
-             VALE_KRADEN_FROM_VALE_NORTH),
-    MAP_WARP(VALE_STORM_TO_VALE_KRADEN_SOUTH, ValeKraden,
-             VALE_KRADEN_FROM_VALE_SOUTH),
-    MAP_WARP(VALE_STORM_TO_VALE_INTERIORS_SHOPS_EAST, ValeInteriorsShops,
-             VALE_INTERIORS_SHOPS_FROM_VALE_EAST),
-    MAP_WARP(VALE_STORM_TO_VALE_INTERIORS_SHOPS_SOUTH, ValeInteriorsShops,
-             VALE_INTERIORS_SHOPS_FROM_VALE_SOUTH),
-    MAP_WARP(VALE_STORM_TO_VALE_INTERIORS_INN_ISAACS_HOUSE, ValeInteriorsInn,
-             VALE_INTERIORS_INN_FROM_VALE),
-    MAP_WARP(VALE_STORM_TO_VALE_INTERIORS_SHOPS_NORTH, ValeInteriorsShops,
-             VALE_INTERIORS_SHOPS_FROM_VALE_NORTH),
-    MAP_WARP(VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST, ValeInteriorsShops,
-             VALE_INTERIORS_SHOPS_FROM_VALE_WEST),
-    MAP_WARP(VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SECOND_DOOR,
-             ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_WEST),
-    MAP_WARP(VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SANCTUM_DOOR,
-             ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_WEST),
-    MAP_WARP(VALE_STORM_TO_VALE_INTERIORS_INN_WEST, ValeInteriorsInn,
-             VALE_INTERIORS_INN_FROM_VALE_STORM_WEST),
-    MAP_WARP(VALE_STORM_TO_VALE_INTERIORS_INN_EAST, ValeInteriorsInn,
-             VALE_INTERIORS_INN_FROM_VALE_STORM_EAST),
-    MAP_WARP(VALE_STORM_TO_BOULDER_PASSED, ValeStorm,
-             VALE_STORM_FROM_BOULDER_PASSED),
+u32 gValeStormyNight_Warps[] = {
+    MAP_WARPS(ValeStormyNight),
+    MAP_WARP(VALE_STORMY_NIGHT_TO_VALE_PLAZA, ValePlaza, VALE_PLAZA_FROM_VALE),
+    MAP_WARP(VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_NORTH,
+             ValeKradensCottage, VALE_KRADENS_COTTAGE_FROM_VALE_NORTH),
+    MAP_WARP(VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_SOUTH,
+             ValeKradensCottage, VALE_KRADENS_COTTAGE_FROM_VALE_SOUTH),
+    MAP_WARP(VALE_STORMY_NIGHT_TO_VALE_SHOPS_EAST, ValeShops,
+             VALE_SHOPS_FROM_VALE_EAST),
+    MAP_WARP(VALE_STORMY_NIGHT_TO_VALE_SHOPS_SOUTH, ValeShops,
+             VALE_SHOPS_FROM_VALE_SOUTH),
+    MAP_WARP(VALE_STORMY_NIGHT_TO_VALE_INN_ISAACS_HOUSE, ValeInn,
+             VALE_INN_FROM_VALE),
+    MAP_WARP(VALE_STORMY_NIGHT_TO_VALE_SHOPS_NORTH, ValeShops,
+             VALE_SHOPS_FROM_VALE_NORTH),
+    MAP_WARP(VALE_STORMY_NIGHT_TO_VALE_SHOPS_WEST, ValeShops,
+             VALE_SHOPS_FROM_VALE_WEST),
+    MAP_WARP(VALE_STORMY_NIGHT_TO_VALE_SHOPS_WEST_SECOND_DOOR, ValeShops,
+             VALE_SHOPS_FROM_VALE_WEST),
+    MAP_WARP(VALE_STORMY_NIGHT_TO_VALE_SHOPS_WEST_SANCTUM_DOOR, ValeShops,
+             VALE_SHOPS_FROM_VALE_WEST),
+    MAP_WARP(VALE_STORMY_NIGHT_TO_VALE_INN_WEST, ValeInn,
+             VALE_INN_FROM_VALE_STORMY_NIGHT_WEST),
+    MAP_WARP(VALE_STORMY_NIGHT_TO_VALE_INN_EAST, ValeInn,
+             VALE_INN_FROM_VALE_STORMY_NIGHT_EAST),
+    MAP_WARP(VALE_STORMY_NIGHT_TO_BOULDER_PASSED, ValeStormyNight,
+             VALE_STORMY_NIGHT_FROM_BOULDER_PASSED),
     MAP_WARPS_END,
 };
 
 // clang-format off
-struct ObjectEventTemplate gValeStorm_ObjectEventTemplates[] = {
+struct ObjectEventTemplate gValeStormyNight_ObjectEventTemplates[] = {
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3490,7 +3514,7 @@ struct ObjectEventTemplate gValeStorm_ObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gValeStorm_BoulderWatchers[] = {
+struct ObjectEventTemplate gValeStormyNight_BoulderWatchers[] = {
     { SPRITE_BLANK, CONDITION_ALWAYS, 7,
         PIXELS(124), 0, PIXELS(375), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3507,31 +3531,31 @@ struct ObjectEventTemplate gValeStorm_BoulderWatchers[] = {
 };
 // clang-format on
 
-struct MapEvent gValeStorm_Events[] = {
+struct MapEvent gValeStormyNight_Events[] = {
     {MAP_EVENT_COORD, 2, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_LeaveByMissingWarp)},
+     EVENT_SCRIPT(EventScript_LeaveNorthwestToValePlaza)},
     {MAP_EVENT_COORD, 3, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_LeaveToValeKradenNorth)},
+     EVENT_SCRIPT(EventScript_LeaveToValeKradensCottageNorth)},
     {MAP_EVENT_COORD, 4, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_LeaveToValeKradenSouth)},
+     EVENT_SCRIPT(EventScript_LeaveToValeKradensCottageSouth)},
     {MAP_EVENT_COORD, 5, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_LeaveToValeGate)},
+     EVENT_SCRIPT(EventScript_LeaveToValePlaza)},
     {COORD_EVENT_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_LeaveToValeInteriorsShopsEast)},
+     EVENT_SCRIPT(EventScript_LeaveToValeShopsEast)},
     {COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_LeaveToValeInteriorsShops)},
+     EVENT_SCRIPT(EventScript_LeaveToValeShops)},
     {COORD_EVENT_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_LeaveToValeInteriorsInn)},
+     EVENT_SCRIPT(EventScript_LeaveToValeInn)},
     {COORD_EVENT_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_LeaveToValeInteriorsShopsNorth)},
+     EVENT_SCRIPT(EventScript_LeaveToValeShopsNorth)},
     {COORD_EVENT_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_LeaveToValeInteriorsShopsWest)},
+     EVENT_SCRIPT(EventScript_LeaveToValeShopsWest)},
     {COORD_EVENT_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_UnusedLeaveToValeInteriorsShopsWestBySecondDoor)},
+     EVENT_SCRIPT(EventScript_UnusedLeaveToValeShopsWestBySecondDoor)},
     {COORD_EVENT_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_LeaveToValeInteriorsInnWest)},
+     EVENT_SCRIPT(EventScript_LeaveToValeInnWest)},
     {COORD_EVENT_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_LeaveToValeInteriorsInnEast)},
+     EVENT_SCRIPT(EventScript_LeaveToValeInnEast)},
     {MAP_EVENT_TALK, LOCALID_GARET_CHILD, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_TalkToGaret)},
     {MAP_EVENT_TALK, LOCALID_KYLE, CONDITION_ALWAYS,
@@ -3563,9 +3587,9 @@ struct MapEvent gValeStorm_Events[] = {
     {MAP_EVENT_TALK, LOCALID_FIRST_ROCK + 7, CONDITION_ALWAYS,
      MSGNO(MsgValeRockCannotBeMoved)},
     {MAP_EVENT_COORD, 15, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_SetPathCellOverride)},
+     EVENT_SCRIPT(EventScript_StepOntoUpperPath)},
     {MAP_EVENT_COORD, 14, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_ClearPathCellOverride)},
+     EVENT_SCRIPT(EventScript_StepOffUpperPath)},
     {MAP_EVENT_COORD, 41, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_FirstRockFalls)},
     {MAP_EVENT_COORD, 42, CONDITION_ALWAYS,
@@ -3604,45 +3628,46 @@ struct MapEvent gValeStorm_Events[] = {
 // are the day map's (vale.c), and each table takes the name of a door it
 // opens.
 
-/// The Sanctum's door (ValeStorm_UnusedOpenSanctumDoor).
-u16 gValeStorm_SanctumDoorOpens[] = {
+/// The Sanctum's door (ValeStormyNight_UnusedOpenSanctumDoor).
+u16 gValeStormyNight_SanctumDoorOpens[] = {
     MAPGRID_ANIMATION_STEP(0, 98, 2, 2, 2),
     MAPGRID_ANIMATION_STEP(2, 98, 2, 2, 2),
     MAPGRID_ANIMATION_STEPS_END,
 };
 
 /// The door of Isaac's house, and of Garet's and the house by the river.
-u16 gValeStorm_IsaacsDoorOpens[] = {
+u16 gValeStormyNight_IsaacsDoorOpens[] = {
     MAPGRID_ANIMATION_STEP(0, 96, 2, 2, 2),
     MAPGRID_ANIMATION_STEP(2, 96, 2, 2, 2),
     MAPGRID_ANIMATION_STEPS_END,
 };
 
 /// The door of the house of Jenna's grandparents, and two more of the kind.
-u16 gValeStorm_GrandparentsDoorOpens[] = {
+u16 gValeStormyNight_GrandparentsDoorOpens[] = {
     MAPGRID_ANIMATION_STEP(4, 98, 2, 2, 2),
     MAPGRID_ANIMATION_STEP(6, 98, 2, 2, 2),
     MAPGRID_ANIMATION_STEPS_END,
 };
 
-/// The door VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST goes through.
-u16 gValeStorm_WestHouseDoorOpens[] = {
+/// The door VALE_STORMY_NIGHT_TO_VALE_SHOPS_WEST goes through.
+u16 gValeStormyNight_WestHouseDoorOpens[] = {
     MAPGRID_ANIMATION_STEP(4, 96, 2, 2, 2),
     MAPGRID_ANIMATION_STEP(6, 96, 2, 2, 2),
     MAPGRID_ANIMATION_STEPS_END,
 };
 
-/// Shuts a door of gValeStorm_IsaacsDoorOpens's kind, with the shut picture
-/// of Isaac's door, after Dora and Jenna come out of the house by the river.
-u16 gValeStorm_IsaacsDoorCloses[] = {
+/// Shuts a door of gValeStormyNight_IsaacsDoorOpens's kind, with the shut
+/// picture of Isaac's door, after Dora and Jenna come out of the house by the
+/// river.
+u16 gValeStormyNight_IsaacsDoorCloses[] = {
     MAPGRID_ANIMATION_STEP(0, 96, 2, 2, 2),
     MAPGRID_ANIMATION_STEP(50, 44, 2, 2, 2),
     MAPGRID_ANIMATION_STEPS_END,
 };
 
-/// Shuts a door of gValeStorm_GrandparentsDoorOpens's kind behind Dora and
-/// Jenna as they go into the house by the river.
-u16 gValeStorm_GrandparentsDoorCloses[] = {
+/// Shuts a door of gValeStormyNight_GrandparentsDoorOpens's kind behind Dora
+/// and Jenna as they go into the house by the river.
+u16 gValeStormyNight_GrandparentsDoorCloses[] = {
     MAPGRID_ANIMATION_STEP(4, 98, 2, 2, 2),
     MAPGRID_ANIMATION_STEP(44, 108, 2, 2, 2),
     MAPGRID_ANIMATION_STEPS_END,

@@ -38,12 +38,12 @@ STATIC_ASSERT(offsetof(struct BattleCamera, pitch) == 0x34);
 STATIC_ASSERT(offsetof(struct BattleCamera, yaw) == 0x36);
 
 /// The HEAP_SLOT_CAMERA heap slot during a battle: the battle camera.
-extern struct BattleCamera *gCameraWork;
+extern struct BattleCamera *gBattleCamera;
 
 /// The HEAP_SLOT_BATTLE_BACKGROUND heap slot: the yaw the battle camera eases
 /// toward and the frames left to ease it, and how the battle background is
 /// shown.
-struct BattleViewWork {
+struct BattleBackgroundWork {
   s32 targetYaw; ///< 1/65536 turns
   s32 frames;    ///< frames left to ease the yaw, a sixteenth a frame
   s32 mode;      ///< enum BattleBackgroundMode
@@ -70,13 +70,13 @@ struct BattleStagingWork {
   u8 savedAnimationParameters[8][4];
 };
 
-STATIC_ASSERT(sizeof(struct BattleViewWork) == 0x20);
-STATIC_ASSERT(offsetof(struct BattleViewWork, mode) == 0x08);
-STATIC_ASSERT(offsetof(struct BattleViewWork, busy) == 0x10);
+STATIC_ASSERT(sizeof(struct BattleBackgroundWork) == 0x20);
+STATIC_ASSERT(offsetof(struct BattleBackgroundWork, mode) == 0x08);
+STATIC_ASSERT(offsetof(struct BattleBackgroundWork, busy) == 0x10);
 STATIC_ASSERT(sizeof(struct BattleStagingWork) == 0x54);
 STATIC_ASSERT(offsetof(struct BattleStagingWork, effect.targets) == 0x24);
 
-/// BattleViewWork.mode and secondMode: how the battle background is
+/// BattleBackgroundWork.mode and secondMode: how the battle background is
 /// shown.
 enum BattleBackgroundMode {
   /// Not loaded yet: the next load adds BattleBackground_ShowZoomedPage.

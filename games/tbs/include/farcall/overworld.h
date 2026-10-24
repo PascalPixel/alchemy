@@ -125,10 +125,10 @@ void ObjectMotion_SetAngleTowardFar(s32 firstId, s32 second_id, s32 wait);
 void ObjectEvent_LinkPairFar(s32 firstId, s32 second_id, s32 wait);
 /// Gives every sprite part of an object event a param, or with bit 8 set makes
 /// the object event blink until another param is given.
-void ObjectGroup_ConfigureChildValueFar(s32 objectId, s32 value);
+void ObjectEvent_ConfigureSpriteColorFar(s32 objectId, s32 value);
 /// Sets the param byte of every animated part of an object event's sprite; maps
 /// flash an object event by alternating 0 and 15.
-void ObjectGroup_SetChildValueFar(struct ObjectEvent *objectEvent, s32 value);
+void ObjectEvent_SetSpriteColorFar(struct ObjectEvent *objectEvent, s32 value);
 /// Links an object event to a target and starts a script on it; unless
 /// OBJ_EVENT_LINK_KEEP_MOTION is set it trails 40 pixels behind, fast enough to
 /// keep up and unable to block the target.
@@ -172,7 +172,7 @@ void FieldEffect_SpawnLinkedFar(s32 id, s32 mode, s32 wait);
 void FieldEffect_ConfigureLinkedObjectFar(s32 id, s32 flags);
 /// Makes the target object event's sprite show the source object event's
 /// graphics; neither is checked for NULL. The Tolbi ship deck uses it.
-void ObjectVisual_CopyAttributesFar(u32 targetId, u32 sourceId);
+void ObjectEvent_CopyGraphicsFar(u32 targetId, u32 sourceId);
 /// Makes the camera follow an object event; unless flag is set it jumps there
 /// at once and the map is redrawn around it.
 void FieldCamera_FollowObjectEventFar(s32 id, s32 flag);
@@ -325,7 +325,7 @@ void FieldEffect_StartMindReadWaveFar(s32 x, s32 y);
 /// Ends Mind Read's wave, restoring the caster's colours and the palettes.
 void FieldEffect_FinishWaveAndReleaseHeapBlockFar(void);
 /// Stops BG0's scanline scroll and restores BG palette 15.
-void Ui_SetBank15PaletteAndClearRenderModeFar(void);
+void FieldEffect_RestoreMindReadPaletteFar(void);
 /// Returns whether the map has a Psynergy event of this group for what the
 /// leader faces; nothing in ☀️ calls it.
 s32 FieldEffect_HasMatchingEvent5Far(s32 group);
@@ -374,7 +374,7 @@ void FieldEffectSprite_InitializeFar(struct FieldEffectSprite *effect, s32 kind,
 void FieldEffect_ClearOwnedSlotFar(struct FieldEffectSprite *effect);
 /// Converts a world position in 16.16 pixels to screen x and y, in place,
 /// using the world map's perspective there.
-void Camera_WorldToScreenFar(struct EffectVector *position);
+void Camera_WorldToScreenFar(struct Vector3 *position);
 /// Returns the blip sound that voices a sprite's messages, or 0 for none or
 /// with the Speech option off.
 s32 Speaker_GetVoiceFar(u32 id);
@@ -418,8 +418,8 @@ s32 MapSec_GetNameIndexFar(s32 mapId, s32 warpDest);
 /// Starts an object event's action script: an enum MovementType, or the script
 /// itself.
 void ObjectEvent_SetMovementTypeFar(struct Object *object, s32 kind);
-/// Plays SE_STOP_SLOT5 and then sound_id (SONG_FADE_OUT_ACTION_SE for -1), and
-/// remembers sound_id to play again later.
+/// Plays SE_STOP_MUSIC_PLAYER_5 and then sound_id (SONG_FADE_OUT_ACTION_SE for
+/// -1), and remembers sound_id to play again later.
 void Map_QueueMusicFar(s32 sound_id);
 /// Plays the sound Map_QueueMusic remembered, if any.
 void Map_PlayQueuedMusicFar(void);

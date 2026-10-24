@@ -20,7 +20,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   s8 *slotState;
   s32 remaining;
   s32 scale;
-  struct EffectVector position;
+  struct Vector3 position;
 
   leader = (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   djinni = (struct Object *)ObjectEvent_GetById(djinniId);
@@ -47,13 +47,12 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   Sound_PlaySongFar(SE_140);
   MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
   djinni->update = FieldEffect_ShrinkObjectAndDestroyFast;
-  ObjectDispatch_SelectAnimationFar(djinni, 3);
+  Object_SelectAnimationFar(djinni, 3);
   // The leader turns to face the camera (angle 0x4000).
   WaitFrames(90);
   ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, 0x4000, 0);
   WaitFrames(20);
-  ObjectDispatch_SelectAnimationFar(
-      ObjectEvent_GetById(gSaveBlock.leaderLocalId), 28);
+  Object_SelectAnimationFar(ObjectEvent_GetById(gSaveBlock.leaderLocalId), 28);
   WaitFrames(30);
   MapGrid_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
 
@@ -118,14 +117,14 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
       djinni->orbitAngle = (remaining << 16) / 24;
       djinni->update = FieldEffect_UpdateDescendingOrbitObject;
       djinni->motionFlags = 0;
-      ObjectDispatch_SelectAnimationFar(djinni, 7);
+      Object_SelectAnimationFar(djinni, 7);
       Anim_ApplyChildValuesFar((struct Object *)djinni,
                                SPRITE_COLOR_GREEN_TINT);
     }
   }
 
   WaitFrames(100);
-  Sound_PlaySongFar(SE_STOP_SLOT3);
+  Sound_PlaySongFar(SE_STOP_ACTION_SE);
   WaitFrames(1);
   Sound_PlaySongFar(SE_151);
   position.x = leader->x;
@@ -150,8 +149,8 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
                                                      0x200000, Random16());
     Anim_ApplyChildValuesFar((struct Object *)djinni, SPRITE_COLOR_GREEN_TINT);
     djinni->wait = 8;
-    ObjectDispatch_InitializeFar((struct Object *)djinni,
-                                 gFieldEffect_CommonParticleScript);
+    Object_InitializeFar((struct Object *)djinni,
+                         gFieldEffect_CommonParticleScript);
   }
 
   WaitFrames(15);
@@ -168,7 +167,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
 /// MercuryDropletState).
 void FieldEffect_UpdateRandomTargetParticle(struct FieldEffectSprite *effect) {
   struct Object *source;
-  struct EffectVector position;
+  struct Vector3 position;
   s8 *statePointer;
   s32 state;
 
@@ -224,6 +223,6 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldEffectSprite *effect) {
 /// Per-frame update of an afterimage: closes half the distance to the object
 /// it is linked to. Set on the Mercury Djinni's afterimages by
 /// FieldEffect_RunMercuryDjinnCapture.
-void FieldEffect_HalveDistanceToTarget(union FieldObject *fieldObject) {
+void FieldEffect_HalveDistanceToTarget(union ObjectEventOrEffect *fieldObject) {
   FieldEffect_MoveAfterimageHalfway(fieldObject);
 }

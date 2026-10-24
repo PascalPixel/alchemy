@@ -16,9 +16,14 @@
 #include "common/colosso_story_flags.h"
 #include "flags.h"
 
-// Map flags: FLAG_MAP_TEMP_00 is set once Growth has raised the sprout,
-// FLAG_MAP_TEMP_01 once Frost has frozen the puddle; both reset when the
-// party leaves the town.
+/// Growth has raised the sprout into a vine the leader can climb.
+#define FLAG_TOLBI_SPROUT_GROWN FLAG_MAP_TEMP_00
+/// Frost has frozen the puddle into an ice pillar.
+#define FLAG_TOLBI_PUDDLE_FROZEN FLAG_MAP_TEMP_01
+
+// Map flags: FLAG_TOLBI_SPROUT_GROWN is set once Growth has raised the sprout,
+// FLAG_TOLBI_PUDDLE_FROZEN once Frost has frozen the puddle; both reset when
+// the party leaves the town.
 
 /// Object events, numbered in the order of the object event templates from
 /// LOCALID_FIRST_PLACED. The townspeople the text gives no name are named by

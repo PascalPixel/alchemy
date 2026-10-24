@@ -156,7 +156,7 @@ u16 Color_ScaleComponents(s16 *rgb, s32 redScale, s32 greenScale,
 /// (FileMenu_SelectFile) shows the colours of the file under the cursor, and
 /// the saved ones for an empty file and on leaving. The main menu
 /// (menu/main_menu.c), the main loop's start (Game_Run), the end of the
-/// Mind Read wave (Ui_SetBank15PaletteAndClearRenderMode) and Vale and the
+/// Mind Read wave (FieldEffect_RestoreMindReadPalette) and Vale and the
 /// world map call it with the saved settings.
 void WindowColor_Apply(s32 phase, s32 brightness) {
   s16 rgb[3];
@@ -377,7 +377,7 @@ struct Window *OptionMenu_Open(void) {
 
   x = VramCache_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
-    VramCache_Load(x, 128, gResource_FixedBlockBTiles);
+    VramCache_Load(x, 128, gPointingHandTiles);
     marker = WindowSprite_Create(x, 0x40000000, window, 0, 0);
     work->cursor.sprite = marker;
     x = window->x * 8;
@@ -487,8 +487,8 @@ s32 OptionMenu_Run(void) {
   work = gOptionMenuWork;
   helpWindow = Window_Create(OPTION_WINDOW_X, 2, OPTION_WINDOW_WIDTH, 3, 2);
   settingsWindow = OptionMenu_Open();
-  // Picture 7 of gHeadingPictures, the Setup heading.
-  pair = Heading_Create(7, settingsWindow, 64, -48);
+  // Picture 7 of gMenuTitlePictures, the Setup heading.
+  pair = MenuTitle_Create(7, settingsWindow, 64, -48);
   WaitFrames(1);
   hue = &work->option[0];
   brightness = &work->option[1];
@@ -574,7 +574,7 @@ s32 OptionMenu_Run(void) {
       WindowSprite_ClearList(helpWindow);
       Text_DrawMessage(selectedOption + MsgOptionHelp, helpWindow, 0, 0);
     }
-    Heading_Bob(pair);
+    MenuTitle_Bob(pair);
     WaitFrames(1);
 
     // SELECT steps through the six colour presets (window/scales.c).
@@ -735,7 +735,7 @@ struct Window *PauseMenu_Open(void) {
   }
   cacheSlot = VramCache_FindFreeEntry();
   if (cacheSlot < RESOURCE_SLOTS) {
-    VramCache_Load(cacheSlot, 128, gResource_FixedBlockBTiles);
+    VramCache_Load(cacheSlot, 128, gPointingHandTiles);
     work->cursor.sprite =
         WindowSprite_Create(cacheSlot, 0x40000000, window, 0, 0);
     x = window->x * 8;
@@ -783,7 +783,7 @@ s32 PauseMenu_Choose(void) {
   PauseMenu_Initialize();
   work = gOptionMenuWork;
   window = PauseMenu_Open();
-  // Picture 6 of gHeadingPictures, the Pause heading, above
+  // Picture 6 of gMenuTitlePictures, the Pause heading, above
   // the window. Outside Japanese it sits 8 pixels lower in debug mode, over
   // the debug menu's taller window.
 #if TBS_PATCH_1
@@ -791,9 +791,9 @@ s32 PauseMenu_Choose(void) {
   if (gDebugMode != 0) {
     y = -0x10;
   }
-  pair = Heading_Create(6, window, 0x28, y);
+  pair = MenuTitle_Create(6, window, 0x28, y);
 #else
-  pair = Heading_Create(6, window, 0x28, -0x18);
+  pair = MenuTitle_Create(6, window, 0x28, -0x18);
 #endif
   WaitFrames(1);
   // The cursor starts where the block's page is, 0 after the fill.
@@ -833,7 +833,7 @@ s32 PauseMenu_Choose(void) {
       y = (((selectedEntry * 3) + top) * 8) + 0x10;
       MenuCursor_SetFar(&work->cursor.cursor, x, y, 3);
     }
-    Heading_Bob(pair);
+    MenuTitle_Bob(pair);
     WaitFrames(1);
     if (gKeysPressed & KEY_A) {
       result = selectedEntry;

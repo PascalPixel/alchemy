@@ -58,7 +58,7 @@ static void Colosso_UpdatePathOpponent(void) {
     if (x == 0 && z == 0) {
       s32 fz;
       rec->mode = PATH_RECORDER_FINISHED;
-      ObjectDispatch_SelectAnimation(objectEvent, 1);
+      Object_SelectAnimation(objectEvent, 1);
       if (work->gauge.finishX < objectEvent->x.fixed) {
         x = work->gauge.finishX + 0xc0000;
       } else {
@@ -103,9 +103,9 @@ static void Colosso_UpdatePathOpponent(void) {
       rec->still++;
     }
     if (rec->still > 2) {
-      ObjectDispatch_SelectAnimation(objectEvent, 1);
+      Object_SelectAnimation(objectEvent, 1);
     } else {
-      ObjectDispatch_SelectAnimation(objectEvent, 5);
+      Object_SelectAnimation(objectEvent, 5);
     }
   } else if (rec->mode == PATH_RECORDER_RECORD) {
     x = objectEvent->x.part.pixel;
@@ -155,8 +155,8 @@ static void Colosso_DrawGauge(void) {
     if (++gauge->level == 1) {
       Dma_Set(gColosso_GaugePalette, (void *)&OBJ_PLTT_COLOR(14, 0),
               (DMA_ENABLE << 16) | 0x10, REG_DMA3);
-      buf = Runtime_CallAlternatePool(AllocEwram, 512);
-      FieldResource_DecodeType01(gColosso_GaugeGraphics, buf);
+      buf = Heap_CallAlternatePool(AllocEwram, 512);
+      FieldDecompress_Type01(gColosso_GaugeGraphics, buf);
       VramCache_Load(gauge->vramBlock, 512, buf);
       Free(buf);
     }

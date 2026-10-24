@@ -45,7 +45,7 @@ extern u32 gCpuLoadPeak;
 // the world map's affine page by it) while WaitFrames counts it, so it is no
 // device.
 extern volatile u32 gFrameCount;
-extern u32 gFrameTick; ///< Counted up by every VBlank.
+extern u32 gVBlankCount; ///< Counted up by every VBlank.
 /// Run once by the next VBlank handler, which clears it first.
 extern void (*gVBlankCallback)(void);
 

@@ -50,7 +50,7 @@ void TreasureSpot_MoveLeaderAway(void) {
         leader->x = cellX + (8 << 16);
         leader->z = cellZ + (8 << 16);
         Vector_AddPolarOffset(20 << 16, (u16)ArcTan2(dz, dx),
-                              (struct EffectVector *)&leader->x);
+                              (struct Vector3 *)&leader->x);
         leader->targetX = OBJ_EVENT_NO_TARGET;
         leader->targetY = OBJ_EVENT_NO_TARGET;
         leader->targetZ = OBJ_EVENT_NO_TARGET;
@@ -71,9 +71,8 @@ static inline void Object_InitializeSparkle(struct Object *object) {
   // Sharing the offset and spawn as well changes literal/argument load order in
   // both emitters, without changing their sizes.
   if (object != 0) {
-    ObjectDispatch_InitializeFar((struct Object *)object,
-                                 gFieldEffect_ParticleScript);
-    ObjectDispatch_SelectAnimationFar(object, 0);
+    Object_InitializeFar((struct Object *)object, gFieldEffect_ParticleScript);
+    Object_SelectAnimationFar(object, 0);
     object->sprite->image.priority = 1;
   }
 }
@@ -82,7 +81,7 @@ static inline void Object_InitializeSparkle(struct Object *object) {
 /// within 16 pixels of it. Installed as the picture's update hook by
 /// FieldEffect_StartRandomParticleEmitter, ItemDisplay_ShowPicture
 /// and FieldEffect_StartEffectObject22.
-void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
+void ItemDisplay_EmitSparkles(union ObjectEventOrEffect *fieldObject) {
   struct Object *emitter = (struct Object *)fieldObject;
   union PolarOffsetPosition position;
   struct Object *object;
@@ -151,10 +150,10 @@ struct Object *FieldEffect_StartRandomParticleEmitter(s32 localId, s32 item) {
     do {
       if (effect->script != 0) {
         if (effect->update == Reveal_EmitSparkles) {
-          ObjectDispatch_ReleaseFar((struct Object *)effect);
+          Object_ReleaseFar((struct Object *)effect);
         }
         if (effect->script == gFieldEffect_ParticleScript) {
-          ObjectDispatch_ReleaseFar((struct Object *)effect);
+          Object_ReleaseFar((struct Object *)effect);
         }
       }
       work--;
@@ -168,8 +167,8 @@ struct Object *FieldEffect_StartRandomParticleEmitter(s32 localId, s32 item) {
   if (picture == 0)
     return 0;
 
-  ObjectDispatch_InitializeFar((struct Object *)picture,
-                               gFieldEffect_ParticleEmitterScript);
+  Object_InitializeFar((struct Object *)picture,
+                       gFieldEffect_ParticleEmitterScript);
   {
     struct Sprite *sprite = picture->sprite;
     void *iconBuffer;
@@ -204,7 +203,7 @@ struct Object *FieldEffect_StartRandomParticleEmitter(s32 localId, s32 item) {
 /// picture of an item nobody could carry.
 void Object_DestroyIfPresent(void *object) {
   if (object != 0)
-    ObjectDispatch_ReleaseFar(object);
+    Object_ReleaseFar(object);
 }
 
 /// Raises a found item's picture to 36 pixels above the party leader, who
@@ -225,9 +224,8 @@ void ItemDisplay_RaiseAboveLeader(struct Object *object) {
   object->motionFlags = 0;
   Object_SetMoveTargetFar(object, leader->x, leader->y + (36 << 16), leader->z);
   WaitFrames(3);
-  ObjectDispatch_SelectAnimationFar(leader, 28);
-  ObjectDispatch_InitializeFar((struct Object *)object,
-                               gFieldEffect_RisingPulseScript);
+  Object_SelectAnimationFar(leader, 28);
+  Object_InitializeFar((struct Object *)object, gFieldEffect_RisingPulseScript);
   // Angle 0x4000, a quarter turn, faces the screen.
   leader->facing = 0x4000;
 }
@@ -242,8 +240,8 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
   if (object != NULL) {
     leader = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
     if (flags & 1) {
-      ObjectDispatch_SetSingleChildFlagsFar(object, 0);
-      ObjectDispatch_InitializeFar(object, gFieldEffect_ParticleEmitterScript);
+      Object_SetSpriteFlagsFar(object, 0);
+      Object_InitializeFar(object, gFieldEffect_ParticleEmitterScript);
       ((struct Object *)object)->velocityY = 0x20000;
       ((struct Object *)object)->gravity = 0x4000;
       ((struct Object *)object)->update = ItemDisplay_EmitSparkles;
@@ -257,7 +255,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
     if (flags == 3) {
       WaitFrames(80);
     }
-    ObjectDispatch_SelectAnimationFar(leader, 1);
+    Object_SelectAnimationFar(leader, 1);
   }
 }
 
@@ -293,8 +291,8 @@ void FieldEffect_StartEffectObject22(s32 item, s32 flags) {
       ItemDisplay_RaiseAboveLeader((struct Object *)object);
 
     WaitFrames(80);
-    ObjectDispatch_SelectAnimationFar(leader, 1);
-    ObjectDispatch_ReleaseFar((struct Object *)object);
+    Object_SelectAnimationFar(leader, 1);
+    Object_ReleaseFar((struct Object *)object);
   }
 }
 
@@ -322,7 +320,7 @@ void FieldEffect_ClearRandomParticles(void) {
     do {
       if (effect->script != 0) {
         if (effect->script == gFieldEffect_ParticleScript)
-          ObjectDispatch_ReleaseFar((struct Object *)effect);
+          Object_ReleaseFar((struct Object *)effect);
       }
       remainingObjectEvents--;
       effect++;
@@ -335,7 +333,7 @@ void FieldEffect_ClearRandomParticles(void) {
 /// Each frame of a Reveal marker: one time in ten, a sparkle appears within 16
 /// pixels of it. Installed as the marker's update hook by
 /// FieldEffect_SpawnNearbyMarkers.
-void Reveal_EmitSparkles(union FieldObject *fieldObject) {
+void Reveal_EmitSparkles(union ObjectEventOrEffect *fieldObject) {
   const struct ObjectEvent *source = (const struct ObjectEvent *)fieldObject;
   union PolarOffsetPosition position;
   struct Object *object;
@@ -434,10 +432,9 @@ void FieldEffect_SpawnNearbyMarkers(void) {
               objectEvent = (struct Object *)Object_CreateFar(
                   22, (column << 20) + (8 << 16), 0, (row << 20) + (8 << 16));
               if (objectEvent != 0) {
-                ObjectDispatch_InitializeFar((struct Object *)objectEvent,
-                                             gFieldEffect_MarkerParticleScript);
-                ObjectDispatch_SetSingleChildFlagsFar(
-                    (struct Object *)objectEvent, 0);
+                Object_InitializeFar((struct Object *)objectEvent,
+                                     gFieldEffect_MarkerParticleScript);
+                Object_SetSpriteFlagsFar((struct Object *)objectEvent, 0);
                 ((struct Object *)objectEvent)->update = Reveal_EmitSparkles;
               }
             }

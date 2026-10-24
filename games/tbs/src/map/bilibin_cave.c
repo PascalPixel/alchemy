@@ -1,25 +1,25 @@
 /// @file
 /// The Bilibin Cave Entrance and Bilibin Cave, two map sections between Bilibin
 /// and Imil that share this overlay: the Bilibin Cave Entrance is
-/// MapId_BilibinCaveEntrance, and Bilibin Cave is MapId_BilibinCaveRapier
-/// and, beyond it, MapId_BilibinCaveIce, whose far end opens onto the world
-/// map farther north. No one speaks here: each map is a run of Psynergy
-/// puzzles, the getters pick its tables by gSaveBlock.mapId, and
-/// BilibinCave_Initialize restores what the party has already solved in the
-/// map being entered.
+/// MapId_BilibinCaveEntrance, and Bilibin Cave is MapId_BilibinCaveRapier and,
+/// beyond it, MapId_BilibinCaveIce, whose far end opens onto the world map
+/// farther north. No one speaks here: each map is a run of Psynergy puzzles,
+/// the getters pick its tables by gSaveBlock.mapId, and BilibinCave_Initialize
+/// restores what the party has already solved in the map being entered.
 ///
-/// At the Bilibin Cave Entrance, entered from the world map, Growth on a
-/// sprout (LOCALID_SPROUT) grows it into a vine and changes the metatile
-/// behavior of its cell (EventScript_GrowPlant); FLAG_MAPSEC_TEMP_05 keeps it
-/// grown until the party leaves the Bilibin Cave Entrance, into the cave beyond
-/// or out to the world map, since both are other map sections. Two warps lead
-/// on into Bilibin Cave. The south one's warp cell, at the cave mouth, lies
-/// under the ledge path that runs above the mouth, since the map grid has one
-/// cell for both: coord event 10, the ledge cells either side of it, turns the
-/// warp off so the leader can walk the ledge across it, and coord event 11, a
-/// step further out, turns it back on (EventScript_DisableWarpToCave,
-/// EventScript_EnableWarpToCave; its recording,
-/// places/bilibin-cave-entrance/events/EventScript_DisableWarpToCave.gif).
+/// At the Bilibin Cave Entrance, entered from the world map, Growth on a sprout
+/// (LOCALID_SPROUT) grows it into a vine and changes the metatile behavior of
+/// its cell (EventScript_GrowPlant); FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN
+/// keeps it grown until the party leaves the Bilibin Cave Entrance, into the
+/// cave beyond or out to the world map, since both are other map sections. Two
+/// warps lead on into Bilibin Cave. The south one's warp cell, at the cave
+/// mouth, lies under the ledge path that runs above the mouth, since the map
+/// grid has one cell for both: coord event 10, the ledge cells either side of
+/// it, turns the warp off so the leader can walk the ledge across it, and coord
+/// event 11, a step further out, turns it back on
+/// (EventScript_WalkOntoLedgeOverCaveMouth,
+/// EventScript_WalkOffLedgeOverCaveMouth; its recording,
+/// places/bilibin-cave-entrance/events/EventScript_WalkOntoLedgeOverCaveMouth.gif).
 ///
 /// In MapId_BilibinCaveRapier a fire burns between two torches, the west one
 /// cold and the east one lit (LOCALID_RAPIER_ROOM_FIRE), and Douse puts it out
@@ -47,11 +47,12 @@
 /// the fourth torch, put a cell west of (35, 23), moved onto it with Move, its
 /// cell outlined in yellow and the two rewritten cells in red, each labelled
 /// with what it does, encounter ground and then a jump across).
-/// FLAG_MAPSEC_TEMP_03 and FLAG_MAPSEC_TEMP_04 remember which torch stands
-/// there and FLAG_MAPSEC_TEMP_02 that the pillar has melted, so coming back
-/// from MapId_BilibinCaveRapier puts the torches and the pillar back; leaving
-/// Bilibin Cave resets them. Nine more pieces of ice only stand there: five
-/// pillars from LOCALID_FIRST_ICE_PILLAR and four lower pieces from
+/// FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR and
+/// FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR remember which torch stands there
+/// and FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED that the pillar has melted, so
+/// coming back from MapId_BilibinCaveRapier puts the torches and the pillar
+/// back; leaving Bilibin Cave resets them. Nine more pieces of ice only stand
+/// there: five pillars from LOCALID_FIRST_ICE_PILLAR and four lower pieces from
 /// LOCALID_FIRST_LOW_ICE. Coord event 20 covers the snow blown in at the cave's
 /// mouth to the world map, around BILIBIN_CAVE_ICE_FROM_WORLD_MAP, and makes
 /// the leader leave footprints; coord event 21, rimming it, stops them
@@ -91,6 +92,18 @@
 #include "flags.h"
 #include "songs.h"
 #include "map_grid_scroll.h"
+
+/// In Bilibin Cave's ice room, a movable torch has melted the third puddle's
+/// ice pillar.
+#define FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED FLAG_MAPSEC_TEMP_02
+/// In Bilibin Cave's ice room, the third torch stands beside the third puddle's
+/// ice pillar.
+#define FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR FLAG_MAPSEC_TEMP_03
+/// In Bilibin Cave's ice room, the fourth torch stands beside the third
+/// puddle's ice pillar.
+#define FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR FLAG_MAPSEC_TEMP_04
+/// At the Bilibin Cave Entrance, Growth has grown the sprout into a vine.
+#define FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN FLAG_MAPSEC_TEMP_05
 
 // BilibinCave_Initialize calls one of these for the map being entered.
 static void BilibinCave_RestoreEntrance(void);
@@ -231,13 +244,13 @@ const struct MapEvent *BilibinCave_GetEvents(void) {
 /// the way into Bilibin Cave: the way's cell (21, 14), the warp cell of
 /// BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH, takes the
 /// metatile behavior of source cell (1, 0), which has none.
-static void EventScript_DisableWarpToCave(void) {
+static void EventScript_WalkOntoLedgeOverCaveMouth(void) {
   MapGrid_CopyCellAttributes(1, 0, 1, 1, 21, 14);
 }
 
 /// Stepping on coord event 11 at the Bilibin Cave Entrance, a cell further out:
 /// the way's cell (21, 14) takes back the warp, from source cell (0, 0).
-static void EventScript_EnableWarpToCave(void) {
+static void EventScript_WalkOffLedgeOverCaveMouth(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 21, 14);
 }
 
@@ -281,7 +294,7 @@ static void EventScript_HideRevealedPath(void) {
 /// out: it goes out for good.
 static void EventScript_DouseRapierRoomFire(void) {
   FieldScript_Start();
-  Engine_ObjectEventSetPosition(LOCALID_RAPIER_ROOM_FIRE, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_RAPIER_ROOM_FIRE, 0, 0);
   GameFlag_Set(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED);
   FieldScript_End();
 }
@@ -310,7 +323,7 @@ static void EventScript_DouseIceRoomFire(void) {
 /// back into a puddle.
 static inline void BilibinCave_MeltFrostBack(s32 localId) {
   FieldScript_Start();
-  ObjectGroup_ConfigureChildValue(localId, 0);
+  ObjectEvent_ConfigureSpriteColor(localId, 0);
   FieldScript_WaitFrames(40);
   Sound_PlaySong(SE_HIDDEN_PASSAGE_OPEN);
   ObjectMotion_SetAnimationAndWait(localId, PUDDLE_ANIMATION_MELT);
@@ -330,16 +343,17 @@ static void EventScript_FreezeSecondPuddle(void) {
 }
 
 /// Frost on the third puddle in Bilibin Cave (MapId_BilibinCaveIce), while a
-/// torch beside it keeps it melted (FLAG_MAPSEC_TEMP_02).
+/// torch beside it keeps it melted (FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED).
 static void EventScript_FreezeThirdPuddle(void) {
   BilibinCave_MeltFrostBack(LOCALID_THIRD_PUDDLE);
 }
 
-/// A movable torch melts the ice pillar beside it. This runs after a push
-/// or Move in Bilibin Cave (MapId_BilibinCaveIce): while either movable torch
-/// stands on cell (35, 23) (FLAG_MAPSEC_TEMP_03 and FLAG_MAPSEC_TEMP_04), the
-/// ice pillar beside it melts with a sound, and FLAG_MAPSEC_TEMP_02 says so;
-/// when both leave, it freezes again.
+/// A movable torch melts the ice pillar beside it. This runs after a push or
+/// Move in Bilibin Cave (MapId_BilibinCaveIce): while either movable torch
+/// stands on cell (35, 23) (FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR and
+/// FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR), the ice pillar beside it melts
+/// with a sound, and FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED says so; when both
+/// leave, it freezes again.
 static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
   struct ObjectEvent *firstObjectEvent;
   struct ObjectEvent *secondObjectEvent;
@@ -351,19 +365,19 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
   secondObjectEvent = ObjectEvent_Get(LOCALID_FOURTH_TORCH);
   if ((firstObjectEvent->x.fixed >> 20) == 35 &&
       (firstObjectEvent->z.fixed >> 20) == 23) {
-    GameFlag_Set(FLAG_MAPSEC_TEMP_03);
+    GameFlag_Set(FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR);
   } else {
-    GameFlag_Clear(FLAG_MAPSEC_TEMP_03);
+    GameFlag_Clear(FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR);
   }
   if ((secondObjectEvent->x.fixed >> 20) == 35 &&
       (secondObjectEvent->z.fixed >> 20) == 23) {
-    GameFlag_Set(FLAG_MAPSEC_TEMP_04);
+    GameFlag_Set(FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR);
   } else {
-    GameFlag_Clear(FLAG_MAPSEC_TEMP_04);
+    GameFlag_Clear(FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR);
   }
-  if (GameFlag_Get(FLAG_MAPSEC_TEMP_03) != 0 ||
-      GameFlag_Get(FLAG_MAPSEC_TEMP_04) != 0) {
-    if (Script_GetFlag(FLAG_MAPSEC_TEMP_02) == 0) {
+  if (GameFlag_Get(FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR) != 0 ||
+      GameFlag_Get(FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR) != 0) {
+    if (Script_GetFlag(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) == 0) {
       FieldScript_Start();
       FieldScript_WaitFrames(40);
       Script_PlaySong(SE_HIDDEN_PASSAGE_OPEN);
@@ -374,9 +388,9 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
       MapGrid_CopyCellAttributes(0, 2, 1, 1, destinationCellX, 24);
       FieldScript_End();
     }
-    GameFlag_Set(FLAG_MAPSEC_TEMP_02);
+    GameFlag_Set(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED);
   } else {
-    if (Script_GetFlag(FLAG_MAPSEC_TEMP_02) != 0) {
+    if (Script_GetFlag(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) != 0) {
       FieldScript_Start();
       FieldScript_WaitFrames(40);
       Script_PlaySong(SE_220);
@@ -387,17 +401,17 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
       MapGrid_CopyCellAttributes(1, 2, 1, 1, destinationCellX, 24);
       FieldScript_End();
     }
-    GameFlag_Clear(FLAG_MAPSEC_TEMP_02);
+    GameFlag_Clear(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED);
   }
 }
 
 /// Growth on the sprout at the Bilibin Cave Entrance, until it has grown: it
 /// grows into a vine and its cell's metatile behavior changes;
-/// FLAG_MAPSEC_TEMP_05 keeps it grown.
+/// FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN keeps it grown.
 static void EventScript_GrowPlant(void) {
 
   MapGrid_CopyCellAttributes(31, 0, 1, 1, 8, 13);
-  GameFlag_Set(FLAG_MAPSEC_TEMP_05);
+  GameFlag_Set(FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN);
 }
 
 /// Stepping on coord event 20 in Bilibin Cave (MapId_BilibinCaveIce): from here
@@ -431,10 +445,10 @@ s32 BilibinCave_Initialize(void) {
 
 /// Sets up the Bilibin Cave Entrance: the vine Growth has grown, with its cell.
 static void BilibinCave_RestoreEntrance(void) {
-  if (GameFlag_Get(FLAG_MAPSEC_TEMP_05) != 0) {
+  if (GameFlag_Get(FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN) != 0) {
 
     MapGrid_CopyCellAttributes(31, 0, 1, 1, 8, 13);
-    Engine_ObjectEventSetAnimation(LOCALID_SPROUT, 0);
+    Import_ObjectEventSetAnimation(LOCALID_SPROUT, 0);
   }
 }
 
@@ -445,13 +459,13 @@ static void BilibinCave_RestoreRapierRoom(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 
-  Engine_ObjectEventSetAnimation(LOCALID_RAPIER_ROOM_WEST_TORCH,
+  Import_ObjectEventSetAnimation(LOCALID_RAPIER_ROOM_WEST_TORCH,
                                  TORCH_ANIMATION_UNLIT);
-  Engine_ObjectEventSetAnimation(LOCALID_RAPIER_ROOM_EAST_TORCH,
+  Import_ObjectEventSetAnimation(LOCALID_RAPIER_ROOM_EAST_TORCH,
                                  TORCH_ANIMATION_LIT);
 
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED) != 0) {
-    Engine_ObjectEventSetPosition(LOCALID_RAPIER_ROOM_FIRE, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_RAPIER_ROOM_FIRE, 0, 0);
   } else {
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_RAPIER_ROOM_FIRE),
                                0);
@@ -483,30 +497,30 @@ static void BilibinCave_RestoreIceRoom(void) {
   BilibinCave_ClearObjectEventSpriteFlags(LOCALID_FIRST_LOW_ICE + 1);
   BilibinCave_ClearObjectEventSpriteFlags(LOCALID_FIRST_LOW_ICE + 2);
   BilibinCave_ClearObjectEventSpriteFlags(LOCALID_FIRST_LOW_ICE + 3);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR,
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR,
                                  PUDDLE_ANIMATION_PILLAR);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR + 1,
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR + 1,
                                  PUDDLE_ANIMATION_PILLAR);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR + 2,
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR + 2,
                                  PUDDLE_ANIMATION_PILLAR);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR + 3,
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR + 3,
                                  PUDDLE_ANIMATION_PILLAR);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR + 4,
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR + 4,
                                  PUDDLE_ANIMATION_PILLAR);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_LOW_ICE,
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_LOW_ICE,
                                  PUDDLE_ANIMATION_LOW_ICE);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_LOW_ICE + 1,
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_LOW_ICE + 1,
                                  PUDDLE_ANIMATION_LOW_ICE);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_LOW_ICE + 2,
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_LOW_ICE + 2,
                                  PUDDLE_ANIMATION_LOW_ICE);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_LOW_ICE + 3,
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_LOW_ICE + 3,
                                  PUDDLE_ANIMATION_LOW_ICE);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_TORCH, TORCH_ANIMATION_LIT);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 1, TORCH_ANIMATION_LIT);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 2, TORCH_ANIMATION_LIT);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 3, TORCH_ANIMATION_LIT);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 4, TORCH_ANIMATION_LIT);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 5, TORCH_ANIMATION_LIT);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_TORCH, TORCH_ANIMATION_LIT);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 1, TORCH_ANIMATION_LIT);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 2, TORCH_ANIMATION_LIT);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 3, TORCH_ANIMATION_LIT);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 4, TORCH_ANIMATION_LIT);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 5, TORCH_ANIMATION_LIT);
   BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_ICE_PILLAR);
   BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_ICE_PILLAR + 1);
   BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_ICE_PILLAR + 2);
@@ -526,7 +540,7 @@ static void BilibinCave_RestoreIceRoom(void) {
   // priority.
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED) != 0) {
     ObjectEvent_SetPosition(LOCALID_ICE_ROOM_FIRE, 0, 0);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_PUDDLE,
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_PUDDLE,
                                    PUDDLE_ANIMATION_PILLAR);
     ObjectEvent_Get(LOCALID_FIRST_PUDDLE)->motionFlags = 0;
     ObjectEvent_Get(LOCALID_FIRST_PUDDLE)->y.fixed = -PIXELS(4);
@@ -535,33 +549,33 @@ static void BilibinCave_RestoreIceRoom(void) {
     ObjectMotion_SetActionVariant(LOCALID_FIRST_PUDDLE, 2);
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 18, 14);
   } else {
-    Engine_ObjectEventSetAnimation(LOCALID_ICE_ROOM_FIRE, 2);
+    Import_ObjectEventSetAnimation(LOCALID_ICE_ROOM_FIRE, 2);
     objectEvent = ObjectEvent_Get(LOCALID_ICE_ROOM_FIRE);
     ObjectEvent_SetSpriteFlags(objectEvent, 0);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_PUDDLE,
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_PUDDLE,
                                    PUDDLE_ANIMATION_PUDDLE);
   }
   // Rebuild the Frost target and return moved object events to their saved
   // cells.
-  Engine_ObjectEventSetAnimation(LOCALID_SECOND_PUDDLE,
+  Import_ObjectEventSetAnimation(LOCALID_SECOND_PUDDLE,
                                  PUDDLE_ANIMATION_PUDDLE);
-  if (GameFlag_Get(FLAG_MAPSEC_TEMP_02) != 0) {
+  if (GameFlag_Get(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) != 0) {
     destinationCellX = 36;
-    Engine_ObjectEventSetAnimation(LOCALID_THIRD_PUDDLE,
+    Import_ObjectEventSetAnimation(LOCALID_THIRD_PUDDLE,
                                    PUDDLE_ANIMATION_PUDDLE);
     MapGrid_CopyCellAttributes(0, 1, 1, 1, destinationCellX, 22);
     MapGrid_CopyCellAttributes(0, 2, 1, 1, destinationCellX, 24);
   } else {
     destinationCellX = 36;
-    Engine_ObjectEventSetAnimation(LOCALID_THIRD_PUDDLE,
+    Import_ObjectEventSetAnimation(LOCALID_THIRD_PUDDLE,
                                    PUDDLE_ANIMATION_PILLAR);
     MapGrid_CopyCellAttributes(1, 1, 1, 1, destinationCellX, 22);
     MapGrid_CopyCellAttributes(1, 2, 1, 1, destinationCellX, 24);
   }
-  if (GameFlag_Get(FLAG_MAPSEC_TEMP_03) != 0) {
+  if (GameFlag_Get(FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR) != 0) {
     ObjectEvent_SetPosition(LOCALID_THIRD_TORCH, PIXELS(570), PIXELS(376));
   }
-  if (GameFlag_Get(FLAG_MAPSEC_TEMP_04) != 0) {
+  if (GameFlag_Get(FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR) != 0) {
     ObjectEvent_SetPosition(LOCALID_FOURTH_TORCH, PIXELS(570), PIXELS(376));
   }
 }
@@ -572,7 +586,7 @@ static void BilibinCave_RestoreIceRoom(void) {
 /// Pushing one of the two movable torches in Bilibin Cave
 /// (MapId_BilibinCaveIce): it moves only when its next cell and movement
 /// probe are clear.
-static void EventScript_PushObjectEventAhead(void) {
+static void EventScript_PushTorch(void) {
   struct ObjectEvent *leader;
   struct ObjectEvent *target;
   struct ObjectEvent *blocker;
@@ -613,7 +627,7 @@ static void EventScript_PushObjectEventAhead(void) {
   if (FieldObject_CheckMovementCollision(target, &destination) > 0)
     return;
 
-  ObjectDispatch_SelectAnimation(leader, 8);
+  Object_SelectAnimation(leader, 8);
   WaitFrames(15);
   Sound_PlaySong(SE_PUSH);
 
@@ -635,7 +649,7 @@ static void EventScript_PushObjectEventAhead(void) {
 
   // Resume the leader and refresh the mechanism affected by the moved object
   // event.
-  ObjectDispatch_SelectAnimation(leader, ANIM_STAND);
+  Object_SelectAnimation(leader, ANIM_STAND);
   BilibinCave_UpdateThirdPuddleFromTorches();
 }
 
@@ -809,9 +823,9 @@ struct MapEvent gBilibinCaveEntranceEvents[] = {
     { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_WORLD_MAP },
     { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH },
     { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_NORTH },
-    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DisableWarpToCave) },
-    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnableWarpToCave) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_SPROUT, FLAG_MAPSEC_TEMP_05, EVENT_SCRIPT(EventScript_GrowPlant) },
+    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WalkOntoLedgeOverCaveMouth) },
+    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WalkOffLedgeOverCaveMouth) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_SPROUT, FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN, EVENT_SCRIPT(EventScript_GrowPlant) },
     { MAP_EVENTS_END },
 };
 
@@ -840,11 +854,11 @@ struct MapEvent gBilibinCaveIceEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_ICE_ROOM_FIRE, FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED, EVENT_SCRIPT(EventScript_DouseIceRoomFire) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_FIRST_PUDDLE, FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED, EVENT_SCRIPT(EventScript_FreezeFirstPuddle) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_SECOND_PUDDLE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FreezeSecondPuddle) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_THIRD_PUDDLE, IF_FLAG_SET(FLAG_MAPSEC_TEMP_02), EVENT_SCRIPT(EventScript_FreezeThirdPuddle) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_THIRD_PUDDLE, IF_FLAG_SET(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED), EVENT_SCRIPT(EventScript_FreezeThirdPuddle) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_THIRD_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateThirdPuddleFromTorches) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FOURTH_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateThirdPuddleFromTorches) },
-    { COORD_EVENT_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushObjectEventAhead) },
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushObjectEventAhead) },
+    { COORD_EVENT_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushTorch) },
+    { COORD_EVENT_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushTorch) },
     { BG_EVENT(BG_EVENT_CHEST), 100, 0xf5e, FIND_ITEM(ITEM_VIAL) },
     { BG_EVENT(BG_EVENT_CHEST), 101, 0xfc6, FIND_ITEM(ITEM_PSY_CRYSTAL) },
     { BG_EVENT(BG_EVENT_CHEST), 102, 0xfc7, FIND_ITEM(ITEM_WATER_OF_LIFE) },

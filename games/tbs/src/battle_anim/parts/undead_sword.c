@@ -74,8 +74,8 @@ void BattleAnim_RunUndeadSword(struct BattleAnimArgs *effect) {
       work->shakeFrames = 8;
       ANIM_SHOW_DAMAGE(SE_212);
       BattleMotion_ApplyKnockbackFar(work->effect->targets[0], KNOCKBACK_NUDGE);
-      ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
-                                POSE_DAMAGE, 0, 8);
+      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+                             POSE_DAMAGE, 0, 8);
     }
 
     // The columns grow 12 pixels a frame from frame 8 and shrink 6 a frame

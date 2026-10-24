@@ -7,7 +7,7 @@
 /// The object system's work (struct ObjectSystemWork, gObjectSystemWork in
 /// HEAP_SLOT_OBJECT_SYSTEM), seen as the flag that suspends sprite projection
 /// while the menu opens.
-struct MenuCtrl {
+struct ObjectSystemSuspendView {
   u16 used;     ///< ObjectSystemWork's; not named here
   u8 unused[2]; ///< ObjectSystemWork's; no code names it
   /// ObjectSystemWork's suspended: while nonzero, sprites not held are not
@@ -150,7 +150,7 @@ s32 Map_Run(s32 warpDest) {
       // Note where the leader is, for the requests to use.
       GameFlag_SetFar(FLAG_FIELD_HANDLING_REQUESTS);
       objectEvent = work->objectEvents[gSaveBlock.leaderLocalId];
-      ObjectDispatch_StartIdleFar((struct Object *)objectEvent);
+      Object_StartIdleFar((struct Object *)objectEvent);
       gSaveBlock.x = objectEvent->x.fixed;
       gSaveBlock.y = 0;
       gSaveBlock.z = objectEvent->z.fixed;
@@ -175,7 +175,7 @@ s32 Map_Run(s32 warpDest) {
             Leader_StopMoving();
             WorldMap_StartScript();
             for (i = 0; i < work->fallenCount; i++) {
-              ObjectDispatch_SelectAnimationFar(objectEvent, 22);
+              Object_SelectAnimationFar(objectEvent, 22);
               MessageArgument_PushFar(work->fallenOwners[i], 1);
               FieldMessage_ShowFar(MsgFieldStrengthExhausted, 1);
             }
@@ -185,11 +185,11 @@ s32 Map_Run(s32 warpDest) {
 
               if (gSaveBlock.leaderLocalId == 0) {
                 if (GameFlag_GetFar(FLAG_CHILDHOOD) != 0)
-                  ObjectDispatch_SelectAnimationFar(objectEvent, 21);
+                  Object_SelectAnimationFar(objectEvent, 21);
                 else
-                  ObjectDispatch_SelectAnimationFar(objectEvent, 37);
+                  Object_SelectAnimationFar(objectEvent, 37);
               } else {
-                ObjectDispatch_SelectAnimationFar(objectEvent, 19);
+                Object_SelectAnimationFar(objectEvent, 19);
               }
               Sound_PlaySongFar(MUS_DEFEAT);
               FieldMessage_ShowFar(MsgFieldPartyAnnihilated, 1);
@@ -332,7 +332,8 @@ s32 Map_Run(s32 warpDest) {
               // each) free, sprite drawing stays suspended while the menu
               // runs, and a frame passes so that the field's sprites give
               // their VRAM back before it opens.
-              struct MenuCtrl *ctrl = (struct MenuCtrl *)gObjectSystemWork;
+              struct ObjectSystemSuspendView *ctrl =
+                  (struct ObjectSystemSuspendView *)gObjectSystemWork;
               u8 *owner = gVramCacheBlockOwners;
               s32 free = 0;
               s32 n = 512;
@@ -364,13 +365,13 @@ s32 Map_Run(s32 warpDest) {
       objectEvent = work->objectEvents[gSaveBlock.leaderLocalId];
       if (objectEvent != NULL) {
         if (gSaveBlock.movementMode == LEADER_MOVEMENT_AIRBORNE)
-          ObjectDispatch_StartKeyCheckFar((struct Object *)objectEvent);
+          Object_StartKeyCheckFar((struct Object *)objectEvent);
         else if (gSaveBlock.movementMode == LEADER_MOVEMENT_CLIMB)
-          ObjectDispatch_StartMoveByKeysFar((struct Object *)objectEvent);
+          Object_StartMoveByKeysFar((struct Object *)objectEvent);
         else if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
-          ObjectDispatch_StartWorldMapControlFar((struct Object *)objectEvent);
+          Object_StartWorldMapControlFar((struct Object *)objectEvent);
         else
-          ObjectDispatch_StartPlayerControlFar((struct Object *)objectEvent);
+          Object_StartPlayerControlFar((struct Object *)objectEvent);
       }
       do {
         WaitFrames(1);
@@ -429,7 +430,8 @@ s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
                             (((probePosition.vector.z / 0x200000) & 31) << 5))
                            << 2);
     } else {
-      // MAPGRID_LAYER_GROUND's cells, MapGridState's layers[0].cells at 0x130.
+      // MAPGRID_LAYER_GROUND's cells, MapGridScrollAnimView's layers[0].cells
+      // at 0x130.
       cells = *(u8 **)(gridBytes + 0x130);
       cell = cells + (((probePosition.vector.x / 0x100000) +
                        ((probePosition.vector.z / 0x100000) << 7))

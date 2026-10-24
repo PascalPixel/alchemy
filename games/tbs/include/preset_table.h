@@ -1,15 +1,15 @@
-#ifndef GUARD_PRESET_TABLE_H
-#define GUARD_PRESET_TABLE_H
+#ifndef ALCHEMY_PRESET_TABLE_H
+#define ALCHEMY_PRESET_TABLE_H
 
 /// @file
-/// PresetValues, a row of preset values.
+/// EnemyElementPreset, a row of an enemy's element presets.
 
 #include "types.h"
 
 /// An enemy's element preset in gEnemy_ElementPresetTable: the element it
 /// attacks with, its level in each element, and its base power and resistance
 /// in each element as packed halfword pairs.
-struct PresetValues {
+struct EnemyElementPreset {
   s32 first; ///< the element it attacks with (Enemy_GetAttackElement)
   /// Its level in each element; Unit_GetElementLevels returns ten times each.
   u8 digits[4];
@@ -18,7 +18,7 @@ struct PresetValues {
   s32 values[4];
 };
 
-/// One of PresetValues.values: an element's base power and resistance.
+/// One of EnemyElementPreset.values: an element's base power and resistance.
 #define PRESET_STATS(power, resist) (((resist) << 16) | (power))
 
 #endif

@@ -246,7 +246,7 @@ s32 Map_Initialize(void) {
     MapGrid_CopyCellAttributes(74, 11, 1, 1, 73, 11);
   }
   if (GameFlag_Get(FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED) != 0) {
-    Engine_ObjectEventSetPosition(LOCALID_STUMP, PIXELS(136), PIXELS(196));
+    Import_ObjectEventSetPosition(LOCALID_STUMP, PIXELS(136), PIXELS(196));
     ObjectEvent_GetById(LOCALID_STUMP)->priorityFlags |=
         OBJ_EVENT_PRIORITY_UNDERFOOT;
     OBJECT_ANIMATION(LOCALID_STUMP, STUMP_ANIMATION_SINK);
@@ -263,7 +263,7 @@ s32 Map_Initialize(void) {
     }
   }
   if (GameFlag_Get(FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE) != 0) {
-    Engine_ObjectEventSetPosition(LOCALID_EAST_PILLAR, PIXELS(376),
+    Import_ObjectEventSetPosition(LOCALID_EAST_PILLAR, PIXELS(376),
                                   PIXELS(280));
     ObjectEvent_GetById(LOCALID_EAST_PILLAR)->priorityFlags =
         OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -525,7 +525,7 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
 }
 
 /// The leaping stump's update hook turns its sprite a fixed amount per frame.
-static void GomaCaveEntrance_SpinStump(union FieldObject *fieldObject) {
+static void GomaCaveEntrance_SpinStump(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent = &fieldObject->objectEvent;
   struct Sprite *state = objectEvent->sprite;
   s32 v = state->rotation - 0x800;
@@ -656,25 +656,25 @@ retry:
   }
 }
 
-s32 gShortEffectScript[] = {
+s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gMediumEffectScript[] = {
+s32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gLongEffectScript[] = {
+s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
-const s32 *gEffectScripts[] = {
-    gShortEffectScript,
-    gMediumEffectScript,
-    gLongEffectScript,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 s32 gGomaCaveEntranceTallIvyScript[] = {

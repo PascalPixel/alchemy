@@ -30,10 +30,10 @@ Iwram_Halt:
 
 	.section .rodata.irq_head,"a",%progbits
 	.balign 4
-	.global gRuntime_IrqHandlers
-gRuntime_IrqHandlers:
+	.global gDefaultIrqHandlers
+gDefaultIrqHandlers:
 	.rept 10
-	.4byte Runtime_IgnoreInterrupt
+	.4byte Irq_Ignore
 	.endr
 	.ifndef TBS_EDITION_EN
 	.if EDITION_INTERNATIONAL
@@ -44,11 +44,11 @@ gRuntime_IrqHandlers:
 	b	.L_irq_halt
 	.else
 	.section .rodata.irq_middle,"a",%progbits
-	.4byte Runtime_IgnoreInterrupt, Runtime_IgnoreInterrupt
+	.4byte Irq_Ignore, Irq_Ignore
 	.endif
 	.else
 	.section .rodata.irq_middle,"a",%progbits
-	.4byte Runtime_IgnoreInterrupt, Runtime_IgnoreInterrupt
+	.4byte Irq_Ignore, Irq_Ignore
 	.endif
 	.section .rodata.irq_tail,"a",%progbits
-	.4byte Input_HandleKeyInterrupt, Runtime_IgnoreInterrupt
+	.4byte Input_HandleKeyInterrupt, Irq_Ignore

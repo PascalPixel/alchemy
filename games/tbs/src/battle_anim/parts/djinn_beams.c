@@ -112,7 +112,7 @@ void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element) {
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
   for (frame = 0; frame != work->effect->targetCount * 16 + 116; frame++) {
-    struct BattleCamera *camera = gCameraWork;
+    struct BattleCamera *camera = gBattleCamera;
 
     // Frame loop. The last target's column is gone by frame count * 16 +
     // 88, and the loop runs 28 frames past that, while that target's last
@@ -200,10 +200,10 @@ void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element) {
 
         ANIM_VIEW_FROM_CAMERA(camera);
         if (frame == start + 72)
-          ObjectGroup_UpdateMembers(work->effect->targets[i], SPRITE_COLOR_GRB,
-                                    -1, -1, 0);
+          BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_GRB, -1,
+                                 -1, 0);
         if (frame == start + 88)
-          ObjectGroup_UpdateMembers(work->effect->targets[i], 0, -1, -1, 0);
+          BattleAnim_TintBattler(work->effect->targets[i], 0, -1, -1, 0);
         SET_VECTOR(ground, target->x, 0, target->z);
         Projection_Point(ground, &screenPosition);
         screenPosition.x += offsetX;

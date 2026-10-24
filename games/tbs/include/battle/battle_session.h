@@ -9,7 +9,7 @@
 #include "static_assert.h"
 
 struct Object;
-struct SpriteEntry;
+struct SpriteAnimHeadView;
 
 /// A unit's place on the battlefield: its sprite object, resources and
 /// animations, its anchor spot and scale, and the statuses it shows.
@@ -26,12 +26,13 @@ struct BattleObject {
   /// The unit sprite's SpriteColorMode: an enemy's own, 1 for a
   /// character on the enemy side (a link opponent), else 0.
   s32 palette;
-  s32 scale;                          ///< 16.16 fixed point, 0x10000 full size
-  u16 activeStatuses;                 ///< a bit per status with an icon (ICON_)
-  u8 shownStatus;                     ///< the status whose icon is shown
-  s8 cycleTimer;                      ///< frames until the next status icon
-  struct SpriteEntry *animationEntry; ///< the status icon's sprite, or NULL
-  struct SpriteEntry *effectEntry;    ///< the effect sprite, or NULL
+  s32 scale;          ///< 16.16 fixed point, 0x10000 full size
+  u16 activeStatuses; ///< a bit per status with an icon (ICON_)
+  u8 shownStatus;     ///< the status whose icon is shown
+  s8 cycleTimer;      ///< frames until the next status icon
+  struct SpriteAnimHeadView
+      *animationEntry;                    ///< the status icon's sprite, or NULL
+  struct SpriteAnimHeadView *effectEntry; ///< the effect sprite, or NULL
   /// Set by BattleObject_MarkForRelease: the object is released with the
   /// others by BattleObject_DestroyAll.
   s16 active;

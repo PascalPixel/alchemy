@@ -152,9 +152,9 @@ void FieldEffect_End(void) {
   // from inside it frees only the slots; the rest waits for its own.
   if (runtime->psynergyActing == 0) {
     s32 waited = 0;
-    void (*firstActiveUpdate)(union FieldObject *) =
+    void (*firstActiveUpdate)(union ObjectEventOrEffect *) =
         FieldEffect_UpdateScaledArcObjectB;
-    void (*secondActiveUpdate)(union FieldObject *) =
+    void (*secondActiveUpdate)(union ObjectEventOrEffect *) =
         FieldEffect_UpdateScaledArcObjectA;
     s32 active;
 
@@ -164,7 +164,7 @@ void FieldEffect_End(void) {
       active = 0;
       remaining = 0;
       while (remaining <= 63) {
-        void (*update)(union FieldObject *) = slot->update;
+        void (*update)(union ObjectEventOrEffect *) = slot->update;
 
         if (update == firstActiveUpdate || update == secondActiveUpdate) {
           active = 1;
@@ -213,7 +213,7 @@ void FieldEffect_StartCast(void) {
   caster = effectWork->mainObject;
   ability = (s16)effectWork->action;
   announcedAbility = ability;
-  ObjectDispatch_SelectAnimationFar(caster, 0x14);
+  Object_SelectAnimationFar(caster, 0x14);
   caster->targetX = caster->x.fixed;
   caster->targetY = caster->y.fixed;
   caster->targetZ = caster->z.fixed;
@@ -223,7 +223,7 @@ void FieldEffect_StartCast(void) {
     caster->update = FieldEffect_FlickerObjectAndTick;
   }
   if (effectWork->active != 0) {
-    ObjectGroup_SetActionForOthers((struct Object *)caster, 1, 0);
+    ObjectEvent_SetOthersPaused((struct Object *)caster, 1, 0);
     MessageArgument_PushFar(announcedAbility, 4);
     // The mode branches currently show the same message. Merging them shrinks
     // the native English function by 32 bytes, so keep this existing form.
@@ -232,13 +232,13 @@ void FieldEffect_StartCast(void) {
     } else {
       FieldMessage_ShowFar(MsgAbilityAnnounce, effectWork->messageMode);
     }
-    ObjectGroup_SetActionForOthers((struct Object *)caster, 0, 0x10);
+    ObjectEvent_SetOthersPaused((struct Object *)caster, 0, 0x10);
   }
   if (GameFlag_GetFar(0x140) != 0) {
     if (effectWork->visible != 0) {
       caster->update = FieldEffect_CycleObjectValueByCounter;
     }
-    ObjectDispatch_SelectAnimationFar(caster, 0x15);
+    Object_SelectAnimationFar(caster, 0x15);
   } else {
     FieldEffect_StopCasterHook();
   }
@@ -315,7 +315,7 @@ void FieldEffect_FadeFromEffectColor(void) {
 /// Converts a world position (16.16 pixels) to the screen: x and z receive
 /// the screen's x and y and y becomes 0. The world map uses its perspective
 /// projection.
-void Camera_WorldToScreen(struct EffectVector *position) {
+void Camera_WorldToScreen(struct Vector3 *position) {
 #ifdef UBFIX
   struct FieldWork *event = gFieldWork;
 

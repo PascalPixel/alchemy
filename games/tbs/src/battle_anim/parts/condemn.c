@@ -234,8 +234,7 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
       target->snapToTarget = 0;
       Object_SetMoveTargetFar((struct Object *)target, target->x << 1, 0,
                               target->z);
-      ObjectGroup_UpdateMembers(work->effect->targets[0], -1, POSE_DAMAGE, -1,
-                                0);
+      BattleAnim_TintBattler(work->effect->targets[0], -1, POSE_DAMAGE, -1, 0);
     }
     // Frame 120: the target, sent up at a pixel a frame with no gravity on
     // frame 88, gets the battle units' usual gravity back (0xab85, as

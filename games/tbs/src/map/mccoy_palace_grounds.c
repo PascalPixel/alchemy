@@ -60,10 +60,10 @@
 // UB: this calls a void function through an s32 function type, the call the
 // bytes show; UBFIX calls it as declared. Its use is tagged.
 #ifdef UBFIX
-#define MCCOY_GARDEN_SET_OBJ_EVENT_POSITION Engine_ObjectEventSetPosition
+#define MCCOY_GARDEN_SET_OBJ_EVENT_POSITION Import_ObjectEventSetPosition
 #else
 #define MCCOY_GARDEN_SET_OBJ_EVENT_POSITION                                    \
-  ((s32 (*)())Engine_ObjectEventSetPosition)
+  ((s32 (*)())Import_ObjectEventSetPosition)
 #endif
 
 /// The placed object events, numbered in the order of
@@ -153,7 +153,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 /// it to the party.
 static void EventScript_CatchFloatingNut(void) {
   FieldScript_Start();
-  Engine_ObjectEventSetPosition(LOCALID_FLOATING_NUT, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_FLOATING_NUT, 0, 0);
   GameFlag_Set(FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT);
   FieldEffect_StartEffectObject22(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
@@ -261,7 +261,7 @@ static void EventScript_TalkToEastGuard(void) {
                             60);
       ObjectMotion_SetVariantCallback(LOCALID_EAST_GUARD, 1);
       FieldScript_ShowMessageThenWait(LOCALID_EAST_GUARD, 0, 20);
-      Engine_ObjectEventSetAnimation(LOCALID_WEST_GUARD, ANIM_NOD);
+      Import_ObjectEventSetAnimation(LOCALID_WEST_GUARD, ANIM_NOD);
       ObjectMotion_SetAnimationAndWait(LOCALID_EAST_GUARD, ANIM_NOD);
       ObjectEvent_FaceDirection(LOCALID_WEST_GUARD,
                                 FACING_SOUTHEAST + FACING_STEP, 0);
@@ -315,10 +315,10 @@ static void EventScript_EnterPalace(void) {
   }
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -16);
   FieldScript_WaitFrames(16);
-  Engine_ScriptRequestWarp(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE);
+  Import_ScriptRequestWarp(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE);
   FieldScript_End();
 }
 
@@ -353,10 +353,10 @@ static void McCoyPalaceGrounds_RestoreStory(void) {
   }
   if (GameFlag_Get(FLAG_MCCOY_PALACE_ADMITTED) != 0) {
     ObjectEvent_SetPosition(LOCALID_WEST_GUARD, PIXELS(308), PIXELS(263));
-    Engine_ObjectEventSetPosition(LOCALID_EAST_GUARD, PIXELS(346), PIXELS(263));
+    Import_ObjectEventSetPosition(LOCALID_EAST_GUARD, PIXELS(346), PIXELS(263));
     if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
       if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-        Engine_ObjectEventSetPosition(LOCALID_WEST_GUARD, 0, 0);
+        Import_ObjectEventSetPosition(LOCALID_WEST_GUARD, 0, 0);
         Object_SetTargetAndCallback(LOCALID_EAST_GUARD,
                                     OBJ_EVENT_LINK_KEEP_MOTION |
                                         LOCALID_PARTY_LEADER,
@@ -429,7 +429,7 @@ static void EventScript_GuardsArrestParty(void) {
   ObjectEvent_FaceDirection(LOCALID_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP,
                             0);
   ObjectEvent_FaceDirection(LOCALID_EAST_GUARD, FACING_SOUTH + FACING_STEP, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_WEST_GUARD, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_WEST_GUARD, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_EAST_GUARD, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_WEST_GUARD, 1);
@@ -459,18 +459,18 @@ static void EventScript_GuardsArrestParty(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0xcccc, 0x6666);
   ObjectEvent_WalkTo(LOCALID_WEST_GUARD, 328, 262);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 328, 278);
-  Engine_ObjectEventSetAnimation(LOCALID_WEST_GUARD, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_WEST_GUARD, ANIM_STAND);
   McCoyPalaceGrounds_OpenGate();
   FieldScript_WaitFrames(40);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 328, 242);
   ObjectEvent_WalkToAndWait(LOCALID_WEST_GUARD, 328, 242);
-  Engine_ObjectEventSetPosition(LOCALID_WEST_GUARD, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_WEST_GUARD, 0, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  Engine_ObjectEventSetPosition(LOCALID_PARTY_LEADER, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_PARTY_LEADER, 0, 0);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Engine_ScriptRequestWarp(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST);
+  Import_ScriptRequestWarp(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST);
   FieldScript_End();
 }
 

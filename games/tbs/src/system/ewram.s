@@ -8,8 +8,8 @@ gGameFlagBytes:
 	.global gSaveBlock
 gSaveBlock:
 	.space 0x00000140
-	.global gItemCounters
-gItemCounters:
+	.global gRareItemStock
+gRareItemStock:
 	.space 0x000000fc
 	.global gOverflowItem
 gOverflowItem:
@@ -17,8 +17,8 @@ gOverflowItem:
 	.global gPlayerObjectId
 gPlayerObjectId:
 	.space 0x0000005a
-	.global gSaveStamp
-gSaveStamp:
+	.global gBattleArenaRecord
+gBattleArenaRecord:
 	.space 0x00000b1c
 	.global gMapLocalState
 gMapLocalState:
@@ -39,8 +39,8 @@ gSaveSlot:
 	.global gSerialSendSize
 gSerialSendSize:
 	.space 0x00000004
-	.global gTitleExtraOptionEnabled
-gTitleExtraOptionEnabled:
+	.global gTitleBattleOptionEnabled
+gTitleBattleOptionEnabled:
 	.space 0x00000004
 	.global gTitleSendOptionEnabled
 gTitleSendOptionEnabled:
@@ -84,8 +84,8 @@ gSavedStack:
 	.global gBgmRestoreDelay
 gBgmRestoreDelay:
 	.space 0x00000004
-	.global gEwram_Data1
-gEwram_Data1:
+	.global gSound_UnreadByte
+gSound_UnreadByte:
 	.space 0x00000004
 	.global gBgmVolume
 gBgmVolume:
@@ -238,10 +238,10 @@ gDecodeBuffer:
 	.size gMetatiles, 0x8000
 gMetatiles:
 	.space 0x00008000
-	.global gMapGridLayerData
-	.type gMapGridLayerData, %object
-	.size gMapGridLayerData, 0x4000
-gMapGridLayerData:
+	.global gMapGridAnimTiles
+	.type gMapGridAnimTiles, %object
+	.size gMapGridAnimTiles, 0x4000
+gMapGridAnimTiles:
 	.space 0x00004000
 	.global gMapGridShapes
 	.type gMapGridShapes, %object

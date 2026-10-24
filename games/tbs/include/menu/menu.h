@@ -39,7 +39,7 @@ struct PagedList;
 struct ObjectSystemWork;
 struct PsynergyEntry;
 struct PlacementDescriptor;
-struct RenderInput;
+struct GlyphRect;
 struct WindowSprite;
 struct SelectionScreenWork;
 struct MenuCursor;
@@ -77,10 +77,10 @@ extern struct ObjectSystemWork *gObjectSystemWork;
 extern u8 gNumberBuffer[];
 /// Heap slot 18: the selection screen while it runs.
 extern struct SelectionScreenWork *gSelectionScreenWork;
-#ifndef OWN_gTitleExtraOptionEnabled
+#ifndef OWN_gTitleBattleOptionEnabled
 /// Read as a halfword: nonzero offers Battle on the main menu, when a file
 /// has any of game flags 48 to 127 set.
-extern u8 gTitleExtraOptionEnabled[];
+extern u8 gTitleBattleOptionEnabled[];
 #endif
 /// The Japanese item menu's help: `L+A:`, before the arrange help.
 extern u8 gItemMenu_ArrangeKeysString[];
@@ -142,16 +142,16 @@ extern u8 gStatusPanel_LevelString[];
 extern u8 gMenuCursor_BobX[];
 extern u8 gMenuCursor_BobY[];
 /// A debug window's title: `ENERGY`.
-extern u8 gWorkspace_EnergyTitle[];
+extern u8 gDebugMenu_EnergyTitle[];
 /// A debug window's title: `ITEM`.
-extern u8 gWorkspace_ItemTitle[];
+extern u8 gDebugMenu_ItemTitle[];
 /// A debug window's label: `PAGE:`.
-extern u8 gWorkspace_PageLabel[];
+extern u8 gDebugMenu_PageLabel[];
 /// `-`, between the first and last entry numbers of a debug window's page
 /// (32 a page).
-extern u8 gWorkspace_RangeDash[];
+extern u8 gDebugMenu_RangeDash[];
 /// A debug window's title: `STATUS`.
-extern u8 gWorkspace_StatusTitle[];
+extern u8 gDebugMenu_StatusTitle[];
 /// The option menu's slider colours (slidpal).
 extern const u16 gOptionMenu_SliderPalette[];
 /// The option menu's slider, 32 by 8 (slider.4bpp32x8).
@@ -160,8 +160,8 @@ extern const u8 gOptionMenu_SliderTiles[];
 struct AbilityDefinition *Ability_GetData(s32 actionId);
 #endif
 s32 Item_FindSlot(s32 unitId, s32 item_id);
-void TitleFar_Entry20(s32 mode);
-void CreditsFar_Entry00(s32 mode);
+void Import_TitleShowCamelotLogo(s32 mode);
+void Import_CreditsRun(s32 mode);
 void Text_DrawAt(s32, s32, s32, s32);
 void Window_Clear(s32 window);
 void Window_Commit(s32 window);

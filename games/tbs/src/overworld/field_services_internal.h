@@ -99,12 +99,12 @@
 /// gSaveBlock.pendingDjinnEvent of Djinni 0 (requests.c, djinni.c): a Djinni
 /// battle's event is 300 plus the Djinni's number (element * 20 + index),
 /// with DJINN_NO_HOP (0x800) beside it.
-#define DJINNI_EVENT_0 300
+#define DJINNI_BATTLE_EVENT_FIRST 300
 
 /// Per-frame update of an afterimage: closes half the distance to the object
 /// it is linked to, on all three axes.
 static inline void
-FieldEffect_MoveAfterimageHalfway(union FieldObject *fieldObject) {
+FieldEffect_MoveAfterimageHalfway(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *afterimage = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *target = afterimage->linkedObject;
 
@@ -134,7 +134,7 @@ static __inline__ void FieldEffect_UpdateEffectSlots(void) {
 /// 0x3000 (3/16 of full size). step is negative: from full size the object
 /// lasts 0xd000 / -step frames, rounded down, plus one.
 #define DEFINE_SHRINK_AND_DESTROY(name, step)                                  \
-  void name(union FieldObject *fieldObject) {                                  \
+  void name(union ObjectEventOrEffect *fieldObject) {                          \
     void *obj = fieldObject;                                                   \
     s32 scale;                                                                 \
                                                                                \
@@ -143,7 +143,7 @@ static __inline__ void FieldEffect_UpdateEffectSlots(void) {
     ((struct Object *)obj)->facing = ((struct Object *)obj)->facing + 0x2000;  \
     ((struct Object *)obj)->scaleX = scale;                                    \
     if (scale < 0x3000) {                                                      \
-      ObjectDispatch_ReleaseFar(obj);                                          \
+      Object_ReleaseFar(obj);                                                  \
     }                                                                          \
   }
 
@@ -170,9 +170,9 @@ FieldEffect_InitializeFallingFragment(struct Object *fragment) {
   if (fragment != NULL) {
     fragment->motionFlags = OBJ_EVENT_FALLS;
     fragment->gravity = 0x1999;
-    ObjectDispatch_SelectAnimationFar(fragment, 0);
+    Object_SelectAnimationFar(fragment, 0);
     fragment->wait = 12;
-    ObjectDispatch_InitializeFar(fragment, gFieldEffect_CommonParticleScript);
+    Object_InitializeFar(fragment, gFieldEffect_CommonParticleScript);
   }
 }
 
@@ -188,7 +188,7 @@ FieldEffect_InitializeFallingFragment(struct Object *fragment) {
     struct FieldEffectWork *effectWork;                                        \
     struct Object *obj;                                                        \
     struct Object *pair[2];                                                    \
-    struct ScatterPosition pos;                                                \
+    struct Vector3 pos;                                                        \
     struct Object **walk;                                                      \
     s32 n;                                                                     \
     s32 dist;                                                                  \
@@ -219,8 +219,8 @@ FieldEffect_InitializeFallingFragment(struct Object *fragment) {
       obj =                                                                    \
           (struct Object *)Object_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);  \
       if (obj != 0) {                                                          \
-        ObjectDispatch_InitializeFar((struct Object *)obj,                     \
-                                     gFieldEffect_FragmentScript);             \
+        Object_InitializeFar((struct Object *)obj,                             \
+                             gFieldEffect_FragmentScript);                     \
         obj->speedLimit = Random16() + 0x20000;                                \
         obj->acceleration = 0x20000;                                           \
         obj->motionFlags = 0;                                                  \
@@ -230,8 +230,8 @@ FieldEffect_InitializeFallingFragment(struct Object *fragment) {
       }                                                                        \
     }                                                                          \
                                                                                \
-    ObjectDispatch_ReleaseFar((struct Object *)pair[0]);                       \
-    ObjectDispatch_ReleaseFar((struct Object *)pair[1]);                       \
+    Object_ReleaseFar((struct Object *)pair[0]);                               \
+    Object_ReleaseFar((struct Object *)pair[1]);                               \
     FieldEffect_FadeFromEffectColor();                                         \
   }
 

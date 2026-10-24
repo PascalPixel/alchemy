@@ -41,7 +41,7 @@ struct UiSpriteViewerLayer {
 /// the other modes turns an anim on or off. Pressing Start toggles the shadows;
 /// B turns the ring when it is rebuilt with Start held. Select starts over; it
 /// passes a far-call resource set (the alternate one unless B is held) to
-/// RuntimeDispatch_ReturnZero, a stub that ignores it.
+/// Stub_ReturnZero, a stub that ignores it.
 ///
 /// It has a bare veneer in the field far-call table, and no caller names it.
 /// Takes HEAP_SLOT_BATTLE for the ring of ten positions and runs
@@ -156,7 +156,7 @@ restart:
       SpriteViewer_SetGridColumnPriority(i, UI_SPRITE_VIEWER_HIDDEN_PRIORITY);
     }
     SpriteViewer_SetGridColumnColorMode(i, layers[i].colorMode);
-    Ui_FillGridColumnFromMetadata(i, layers[i].animationIndex);
+    SpriteViewer_StartStaggeredAnims(i, layers[i].animationIndex);
   }
   // The copies are drawn each frame by the task below, from the ring's
   // positions.
@@ -284,8 +284,8 @@ next:
                                            layers[selectedLayer].priority);
         SpriteViewer_SetGridColumnColorMode(selectedLayer,
                                             layers[selectedLayer].colorMode);
-        Ui_FillGridColumnFromMetadata(selectedLayer,
-                                      layers[selectedLayer].animationIndex);
+        SpriteViewer_StartStaggeredAnims(selectedLayer,
+                                         layers[selectedLayer].animationIndex);
       }
       goto next;
 
@@ -354,10 +354,10 @@ next:
       if (editMode == UI_SPRITE_VIEWER_EDIT_ANIMATION) {
         if (selectedLayer != 1) {
           if (layers[selectedLayer].enabled != 0) {
-            Ui_FillGridColumnFromMetadata(selectedLayer,
-                                          layers[selectedLayer].animationIndex);
+            SpriteViewer_StartStaggeredAnims(
+                selectedLayer, layers[selectedLayer].animationIndex);
             if (selectedLayer == 0) {
-              Ui_FillGridColumnFromMetadata(1, layers[1].animationIndex);
+              SpriteViewer_StartStaggeredAnims(1, layers[1].animationIndex);
             }
           }
           goto next;
@@ -372,16 +372,16 @@ next:
       }
     }
 
-    // RuntimeDispatch_ReturnZero ignores its arguments, so the resource set
+    // Stub_ReturnZero ignores its arguments, so the resource set
     // chosen here changes nothing in this build.
     if ((*repeatedKeys & KEY_SELECT) != 0) {
       Task_ResetAll();
       if ((*heldKeys & KEY_B) != 0) {
-        RuntimeDispatch_ReturnZero((s32)&ResourceId_ResourceFarCalls,
-                                   FarCall_ResourceTable);
+        Stub_ReturnZero((s32)&ResourceId_ResourceFarCalls,
+                        FarCall_ResourceTable);
       } else {
-        RuntimeDispatch_ReturnZero((s32)&ResourceId_ResourceFarCallsAlternate,
-                                   FarCall_ResourceTable);
+        Stub_ReturnZero((s32)&ResourceId_ResourceFarCallsAlternate,
+                        FarCall_ResourceTable);
       }
       goto restart;
     }
@@ -436,7 +436,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   // With B held the ring starts at an angle that turns with the frame
   // counter, a full turn every 256 frames.
   if ((gKeysHeld & KEY_B) != 0)
-    angle = (s16)(gFrameTick << 8);
+    angle = (s16)(gVBlankCount << 8);
   // 0x2aaa, 0x2000, 0x1999 and 0x4000 are a sixth, an eighth, a tenth and
   // a quarter of a turn; 0x380000 is 56 pixels. Unused positions of the ten
   // are skipped.
@@ -562,7 +562,7 @@ UI_DEFINE_SET_GRID_COLUMN(SpriteViewer_SetGridColumnPriority, priority)
 /// each one a frame (16 timer units) behind the last, so the copies are
 /// staggered. Also sets each copy's offsetY and clears its rotation.
 /// Called by SpriteViewer_Run.
-void Ui_FillGridColumnFromMetadata(s32 layerIndex, s32 animationIndex) {
+void SpriteViewer_StartStaggeredAnims(s32 layerIndex, s32 animationIndex) {
   s32 spriteIndex;
   struct Sprite *spriteGroup;
 

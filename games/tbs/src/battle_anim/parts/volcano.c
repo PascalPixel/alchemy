@@ -94,7 +94,7 @@ void BattleAnim_RunVolcano(struct BattleAnimArgs *effect) {
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
   for (frame = 0; frame != VOLCANO_FRAMES; frame++) {
-    camera = gCameraWork;
+    camera = gBattleCamera;
     if (work->effect->variant == ANIM_VARIANT_STRONGEST && frame < 64) {
       if (work->effect->side == 0)
         camera->yaw = camera->yaw + 192;
@@ -170,8 +170,8 @@ void BattleAnim_RunVolcano(struct BattleAnimArgs *effect) {
         if (frame == gVolcano_StartFrames[pillar]) {
           work->shakeFrames = 2;
           ANIM_FOR_EACH_TARGET(i, work->effect) {
-            ObjectGroup_UpdateMembers(work->effect->targets[i],
-                                      SPRITE_COLOR_RED_TINT, POSE_DAMAGE, i, 8);
+            BattleAnim_TintBattler(work->effect->targets[i],
+                                   SPRITE_COLOR_RED_TINT, POSE_DAMAGE, i, 8);
             BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
                                            KNOCKBACK_HOP);
           }

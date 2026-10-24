@@ -33,7 +33,7 @@ struct Object;
 struct EffectLaunch;
 struct ScreenPoint;
 struct FieldEffectSprite;
-struct EffectVector;
+struct Vector3;
 struct EnemyDefinition;
 struct ObjectEvent;
 struct FieldPosition;
@@ -42,7 +42,7 @@ struct ItemDefinition;
 struct LevelUpResult;
 struct MenuSprite;
 struct PolarOffsetOutput;
-struct RenderInput;
+struct GlyphRect;
 struct WindowSprite;
 struct MapEvent;
 struct ObjectEventTemplate;
@@ -60,7 +60,7 @@ struct WorldPosition;
 // blank-display runners (the warp destination in r0), Unit_LearnPsynergyFar
 // (called with none), Party_ShowJoinedMessageFar (two),
 // MapNamePopup_ShowFar, PauseMenu_RunFar and
-// Runtime_GetBuildStampTimeFar (one each). The near call Text_ResetStyle
+// BuildStamp_GetTimeFar (one each). The near call Text_ResetStyle
 // is declared the same way in unit/window/window.h (Window_Create passes it
 // one).
 #include "farcall/runtime.h"

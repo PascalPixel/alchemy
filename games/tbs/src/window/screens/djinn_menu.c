@@ -515,7 +515,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
      * at keeps the native reload; without it, 18 of 1201 instructions differ
      * in tbs-en. */
     sprite = &cursorStorage;
-    ((u32 *)sprite)[1] = MENU_SPRITE_SIZE_16;
+    ((u32 *)sprite)[1] = MENU_SPRITE_SHAPE_16X16;
     ((u32 *)sprite)[2] = 0;
     sprite->tile = VramCache_Reload(cursorSlot, (s32)gPointingHandTiles);
     sprite->x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;

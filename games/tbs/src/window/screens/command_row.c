@@ -118,9 +118,9 @@ s32 BattleCommandRow_Run(s32 mode) {
     } while (entryIndex < selectionUi->iconCount);
   }
   // BG1 shows the icons: behind the other layers above line 136, in front
-  // from there down (Graphics_SetBg1Priority3).
-  Task_Add(Graphics_SetBg1Priority3, 0x480);
-  Irq_SetHandler(2, 136, Graphics_SetBg1Priority0);
+  // from there down (CommandRow_PutBg1Behind).
+  Task_Add(CommandRow_PutBg1Behind, 0x480);
+  Irq_SetHandler(2, 136, CommandRow_PutBg1InFront);
 
   for (;;) {
     // 304 to 336 in 8.8 (1.19 to 1.31 times), over 16 frames.
@@ -357,7 +357,7 @@ s32 BattleCommandRow_Run(s32 mode) {
   // Restore the normal BG1 handler after clearing the command strip.
   work->dirty = 1;
   WaitFrames(1);
-  Task_Remove(Graphics_SetBg1Priority3);
+  Task_Remove(CommandRow_PutBg1Behind);
   Irq_SetHandler(2, 0, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |

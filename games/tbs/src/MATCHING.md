@@ -129,7 +129,7 @@ both turn on.
 
 `CAMELOT_ASM("proof")` marks the few handwritten instructions inside C, each
 an `asm` statement right after it whose instruction no C compiles to:
-`Dma_Set`, `Transform_SetIdentity`, `Iwram_Call2`, `WaitFrames`' stack switch,
+`Dma_Set`, `Transform_SetIdentity`, `Iwram_CallReturnIp`, `WaitFrames`' stack switch,
 `MulQ16`, and the `swi 2` and `swi 3` BIOS calls. The macro expands to
 nothing; it is there to be read, and its proof says why the `asm` is needed.
 

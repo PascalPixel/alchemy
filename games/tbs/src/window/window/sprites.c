@@ -344,15 +344,6 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
 
 #endif
 
-/// How Window_SetTilemapEntry writes its value (its mode argument).
-enum {
-  TILEMAP_ENTRY_PLAIN,      ///< as given, palette bits included
-  TILEMAP_ENTRY_NONE,       ///< nothing
-  TILEMAP_ENTRY_PALETTE_14, ///< the tile number in palette 14
-  TILEMAP_ENTRY_PALETTE_15, ///< the tile number in palette 15, the UI palette
-  TILEMAP_ENTRY_PALETTE_1   ///< the tile number in palette 1
-};
-
 #define TILEMAP_WIDTH 32
 #define TILEMAP_ENTRIES (TILEMAP_WIDTH * 20)
 
@@ -377,13 +368,13 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
     return;
 
   switch (mode) {
-  case TILEMAP_ENTRY_PALETTE_15:
+  case TILEMAP_ENTRY_WINDOW:
     palette = 0xf000;
     break;
-  case TILEMAP_ENTRY_PALETTE_14:
+  case TILEMAP_ENTRY_HIGHLIGHT:
     palette = 0xe000;
     break;
-  case TILEMAP_ENTRY_PALETTE_1:
+  case TILEMAP_ENTRY_ICON:
     palette = 0x1000;
     break;
   default:
@@ -394,9 +385,9 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
   switch (mode) {
   case TILEMAP_ENTRY_NONE:
     return;
-  case TILEMAP_ENTRY_PALETTE_14:
-  case TILEMAP_ENTRY_PALETTE_15:
-  case TILEMAP_ENTRY_PALETTE_1:
+  case TILEMAP_ENTRY_HIGHLIGHT:
+  case TILEMAP_ENTRY_WINDOW:
+  case TILEMAP_ENTRY_ICON:
     index = (window->y + y) * TILEMAP_WIDTH + (window->x + x);
     if ((u32)index >= TILEMAP_ENTRIES)
       return;
@@ -580,7 +571,7 @@ void WindowSprite_UpdateAll(void) {
             gWindowSprite_BounceOffsets[windowSprite->animationStep & 15];
         break;
       case WINDOW_SPRITE_MOTION_HOP_DOWN:
-      case WINDOW_SPRITE_MOTION_HOP_DOWN_2:
+      case WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE:
       case WINDOW_SPRITE_MOTION_HOP_DOWN_3:
         windowSprite->animationStep++;
         sprite->y =

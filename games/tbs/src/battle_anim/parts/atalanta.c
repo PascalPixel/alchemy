@@ -10,7 +10,8 @@
 
 /// The pictures in the slash sheet: five flash frames, then the slash in
 /// three parts. Each starts where the one before ends; the notes give the
-/// sizes the draws use.
+/// sizes the draws use. A flash picture's number is the frame of the flash it
+/// is drawn on.
 enum SlashSheetCell {
   ATALANTA_SLASH_FLASH_1 = 0x0000,        ///< 14x28
   ATALANTA_SLASH_FLASH_2 = 0x0188,        ///< 23x44

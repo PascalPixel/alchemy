@@ -1303,6 +1303,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreenWork *screen) {
 
 /// Six empty functions; nothing calls the first, the fourth or the fifth. The
 /// others are reached only through bare entries of the window far-call table.
+/// With no body or caller to give them a role, they are numbered in ROM order.
 UNUSED void MenuArrow_NoOpCallback(void) {}
 void MenuArrow_NoOpCallbackBank(void) {}
 void MenuArrow_NoOpCallback1(void) {}

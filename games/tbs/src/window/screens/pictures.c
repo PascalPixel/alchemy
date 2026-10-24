@@ -525,10 +525,10 @@ void Text_DrawCharacter(struct BattleCommandRowWork *work, s32 index,
 }
 
 /// Puts BG1 behind the other layers (priority 3). The command row runs it as
-/// a task each frame, with Graphics_SetBg1Priority0 at line
+/// a task each frame, with CommandRow_PutBg1InFront at line
 /// 136 (tile row 17, the top of the row's icons), so that BG1 is behind
 /// above the strip and in front from it down.
-void Graphics_SetBg1Priority3(void) {
+void CommandRow_PutBg1Behind(void) {
   u32 value = REG_BG1CNT;
 
   value &= ~BGCNT_PRIORITY(3);
@@ -538,7 +538,7 @@ void Graphics_SetBg1Priority3(void) {
 
 /// Brings BG1 to the front (priority 0): the command row's VCount handler,
 /// run at line 136, the top of its icon strip (tile row 17).
-void Graphics_SetBg1Priority0(void) {
+void CommandRow_PutBg1InFront(void) {
   u32 value = REG_BG1CNT;
 
   value &= ~BGCNT_PRIORITY(3);
@@ -546,7 +546,7 @@ void Graphics_SetBg1Priority0(void) {
 }
 
 /// Clears BG0's vertical scroll (0x04000012, REG_BG0VOFS) and installs
-/// Graphics_SetBg1Priority0 as the VCount handler at line 136, as the command
+/// CommandRow_PutBg1InFront as the VCount handler at line 136, as the command
 /// row does. Nothing calls it.
 UNUSED void Graphics_InstallBg1VCountHandler(void) {
   u32 address = 0x04000012;
@@ -557,7 +557,7 @@ UNUSED void Graphics_InstallBg1VCountHandler(void) {
    * its load ahead of the handler index; as a plain assignment, 2 of 10
    * instructions differ in tbs-en. */
   do {
-    address = (u32)Graphics_SetBg1Priority0;
+    address = (u32)CommandRow_PutBg1InFront;
   } while (0);
   Irq_SetHandler(2, 136, (InterruptHandler)address);
 }

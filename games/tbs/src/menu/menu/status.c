@@ -1071,10 +1071,10 @@ void SummaryScreen_DrawStatusAilments(struct Window *window, s32 memberId,
   // elemental levels, Power and Resist.
   Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (mode == 1 || hasDjinn == 1) {
-    Window_SetTilemapEntryFar(window, 1, 15, djinnRow, 4);
-    Window_SetTilemapEntryFar(window, 2, 19, djinnRow, 4);
-    Window_SetTilemapEntryFar(window, 3, 23, djinnRow, 4);
-    Window_SetTilemapEntryFar(window, 4, 27, djinnRow, 4);
+    Window_SetTilemapEntryFar(window, 1, 15, djinnRow, TILEMAP_ENTRY_ICON);
+    Window_SetTilemapEntryFar(window, 2, 19, djinnRow, TILEMAP_ENTRY_ICON);
+    Window_SetTilemapEntryFar(window, 3, 23, djinnRow, TILEMAP_ENTRY_ICON);
+    Window_SetTilemapEntryFar(window, 4, 27, djinnRow, TILEMAP_ENTRY_ICON);
   }
   if (hasDjinn)
     Text_DrawMessageAsTilesFar(MsgDjinnLabel, window, 64, djinnRow * 8 + 8);
@@ -1381,7 +1381,7 @@ s32 PsynergyMenu_DrawRangePage(struct Window *window, s32 unused,
 
   // Highlight the cursor's row. A Psynergy with an element shows its icon at
   // tile column 24, in palette 0 on the highlighted row and palette 1
-  // (mode 4) elsewhere, and the highlight leaves that column out.
+  // (TILEMAP_ENTRY_ICON) elsewhere, and the highlight leaves that column out.
   base = state->page * PAGE_ROWS;
   for (row = 0; row <= PAGE_ROWS - 1; row++) {
     if (row == state->row) {
@@ -1403,7 +1403,7 @@ s32 PsynergyMenu_DrawRangePage(struct Window *window, s32 unused,
           Ability_Get(menu->psynergies[base + row] & PSYNERGY_ABILITY_MASK);
       if (ability->element != 4) {
         Window_SetTilemapEntryFar(window, ability->element + 1, 24,
-                                  row * 2 + LIST_FIRST_ROW, 4);
+                                  row * 2 + LIST_FIRST_ROW, TILEMAP_ENTRY_ICON);
         Render_SetTilemapFlagRect(window, 9, row * 2 + LIST_FIRST_ROW, 15, 1,
                                   15);
         Render_SetTilemapFlagRect(window, 25, row * 2 + LIST_FIRST_ROW, 3, 1,
@@ -1667,8 +1667,8 @@ s32 ItemMenu_DrawEquipPage(struct Window *window, s32 unused,
   }
 
   // An item with an element shows its icon at tile column 27, in palette 0 on
-  // the highlighted row and palette 1 (mode 4) elsewhere, and the highlight
-  // stops short of it.
+  // the highlighted row and palette 1 (TILEMAP_ENTRY_ICON) elsewhere, and the
+  // highlight stops short of it.
   for (rowIndex = 0; rowIndex < PAGE_ROWS; rowIndex++) {
     if (rowIndex == state->row) {
       item = Item_GetDirectFar(menu->items[state->selectedIndex] &
@@ -1685,7 +1685,7 @@ s32 ItemMenu_DrawEquipPage(struct Window *window, s32 unused,
                                INVENTORY_ITEM_ID_MASK);
       if (item->element != ELEMENT_NONE) {
         Window_SetTilemapEntryFar(window, item->element + 1, 27,
-                                  rowIndex * 2 + 1, 4);
+                                  rowIndex * 2 + 1, TILEMAP_ENTRY_ICON);
         Render_SetTilemapFlagRect(window, 14, rowIndex * 2 + 1, 13, 1, 15);
       } else {
         Render_SetTilemapFlagRect(window, 14, rowIndex * 2 + 1, 14, 1, 15);

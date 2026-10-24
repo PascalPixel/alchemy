@@ -8,7 +8,9 @@ enum {
   ANIM_SHADOW_CACHE_ENTRY = 93,
   ANIM_SHADOW_TILE_BYTES = 16 * 8, ///< 16x8 pixels, 256 colours
   ANIM_OAM_FULL_COLOR = 1 << 13,
-  ANIM_OAM_PRIORITY_2 = 2 << 10,
+  /// Priority 2, the field's for its sprites: in front of a map layer at 3, or
+  /// at 2 since a sprite wins a tie, and behind one at 1.
+  ANIM_OAM_FIELD_PRIORITY = 2 << 10,
   ANIM_OAM_WIDE = 1 << 14
 };
 
@@ -606,21 +608,21 @@ struct Sprite *Sprite_Create(s32 id) {
 #ifdef UBFIX
   attributes[0] = 0;
   attributes[1] = shape | ANIM_OAM_FULL_COLOR;
-  attributes[2] = tile | ANIM_OAM_PRIORITY_2;
+  attributes[2] = tile | ANIM_OAM_FIELD_PRIORITY;
   attributes[3] = 0;
   attributes[4] = ANIM_OAM_FULL_COLOR | ANIM_OAM_WIDE;
   attributes[5] = (gVramCacheEntries[ANIM_SHADOW_CACHE_ENTRY].offset >> 5) |
-                  ANIM_OAM_PRIORITY_2;
+                  ANIM_OAM_FIELD_PRIORITY;
   memcpy(freeSprite, attributes, sizeof(attributes));
 #else
   attribute = (u32 *)freeSprite;
   *attribute++ = 0;
   *attribute++ = shape | ANIM_OAM_FULL_COLOR;
-  *attribute++ = tile | ANIM_OAM_PRIORITY_2;
+  *attribute++ = tile | ANIM_OAM_FIELD_PRIORITY;
   *attribute++ = 0;
   *attribute++ = ANIM_OAM_FULL_COLOR | ANIM_OAM_WIDE;
   *attribute = (gVramCacheEntries[ANIM_SHADOW_CACHE_ENTRY].offset >> 5) |
-               ANIM_OAM_PRIORITY_2;
+               ANIM_OAM_FIELD_PRIORITY;
 #endif
   if (Sprite_AddAnim(sprite, id) == -1) {
     /* FAKEMATCH(dead): a store of the byte it reloads keeps the -1 the native

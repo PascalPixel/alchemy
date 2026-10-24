@@ -179,7 +179,7 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
     IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
     IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
     Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
-    ((s32 *)prompt)[1] = MENU_SPRITE_SIZE_16;
+    ((s32 *)prompt)[1] = MENU_SPRITE_SHAPE_16X16;
     ((s32 *)prompt)[2] = 0;
     prompt->tile = VramCache_Reload(tileSlot, frameTiles);
     // Nudge it up and right every four frames.

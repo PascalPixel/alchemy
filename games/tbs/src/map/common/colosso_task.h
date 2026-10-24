@@ -48,10 +48,10 @@ enum ColossoLetteringCommand {
 /// The lettering pictures, in lettering.tsv's order (Colosso_LoadLettering).
 enum ColossoLetteringPicture {
   COLOSSO_PICTURE_LEND_A_HAND = 0,
-  COLOSSO_PICTURE_MATCH_1 = 1, ///< then Match 2 and Match 3
+  COLOSSO_PICTURE_MATCH_1 = 1, ///< "Match 1", then Match 2 and Match 3
   COLOSSO_PICTURE_WON_LOSE = 4,
-  COLOSSO_PICTURE_COUNT_3_2 = 5, ///< the 3 and the 2
-  COLOSSO_PICTURE_COUNT_1 = 6,
+  COLOSSO_PICTURE_COUNT_3_2 = 5, ///< the countdown's 3 and 2
+  COLOSSO_PICTURE_COUNT_1 = 6,   ///< the countdown's 1
   COLOSSO_PICTURE_GO = 7,
   /// COLOSSO_PICTURE_WON_LOSE in the palette a loss shows it in.
   COLOSSO_PICTURE_WON_LOSE_FOR_LOSS = 8

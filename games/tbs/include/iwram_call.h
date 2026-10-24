@@ -101,10 +101,11 @@ static inline s32 Iwram_CopyWords(volatile void *destination,
 }
 
 #ifdef MODERN
-/// r0/r1 are the routine's arguments; it returns through ip instead of lr.
+/// Calls an IWRAM routine that returns through ip instead of lr, with left and
+/// right in r0 and r1, and returns its r0.
 CAMELOT_ASM(
     "a call that returns through ip, which no procedure-call standard produces")
-static inline s32 Iwram_Call2(s32 left, s32 right, void *routine) {
+static inline s32 Iwram_CallReturnIp(s32 left, s32 right, void *routine) {
   s32 result;
 
   __asm__ volatile("mov r0, %1\n\t"
@@ -121,7 +122,7 @@ static inline s32 Iwram_Call2(s32 left, s32 right, void *routine) {
 #else
 CAMELOT_ASM(
     "a call that returns through ip, which no procedure-call standard produces")
-static __inline__ s32 Iwram_Call2(s32 left, s32 right, void *routine) {
+static __inline__ s32 Iwram_CallReturnIp(s32 left, s32 right, void *routine) {
   register s32 result __asm__("r0") = left;
   register s32 factor __asm__("r1") = right;
 
@@ -140,7 +141,7 @@ extern u8 IwramMulQ16ReturnIp[];
 /// (left * right) >> 16 with a 64-bit product: the 16.16 product of two 16.16
 /// numbers.
 #define Iwram_MulQ16(left, right)                                              \
-  Iwram_Call2((left), (right), IwramMulQ16ReturnIp)
+  Iwram_CallReturnIp((left), (right), IwramMulQ16ReturnIp)
 
 #define Iwram_CopyWordsOffset FIXED_OFFSET(0x1388, IwramCopyWords, IwramIrqMain)
 #define Iwram_RatioMulQ14Offset                                                \

@@ -18,7 +18,10 @@ enum SpriteId {
   /// counter, or that a map draws an item's icon on, as for the Nuts that
   /// Catch takes.
   SPRITE_BLANK = 0x16,
-  /// A blank 32-pixel square (spr_023.png holds no drawn pixel).
+  /// A blank 32-pixel square (spr_023.png holds no drawn pixel). Its one
+  /// object event, an unused one in Bilibin, gives it no role, so it keeps
+  /// its size as its name; SPRITE_BLANK_LARGE is the same size, used for
+  /// objects seen only by their shadows.
   SPRITE_BLANK_32 = 0x17,
   /// Rings spreading out on water: where someone wades (the field's own
   /// FIELD_SPRITE_RIPPLE), and around the leader at Mercury Lighthouse's pools,
@@ -506,14 +509,14 @@ enum SpriteId {
   /// and in Hammet's palace.
   /// ★ Named from what the player sees: a bald man in a red tunic with green
   /// sleeves (spr_124.png)
-  SPRITE_BALD_MAN_IN_RED_2 = 0x7e,
+  SPRITE_BALD_MAN_IN_RED_KALAY = 0x7e,
   /// A second number for SPRITE_YOUNG_MAN_IN_GREEN, whose frames and
   /// animations it borrows (sprites.tsv), so the player sees the same man. The
   /// first number keeps most towns' armor shops; this one stands in Kalay's
   /// houses and in Hammet's palace.
   /// ★ Named from what the player sees: a young man with brown hair in a
   /// green shirt (spr_125.png)
-  SPRITE_YOUNG_MAN_IN_GREEN_2 = 0x7f,
+  SPRITE_YOUNG_MAN_IN_GREEN_KALAY = 0x7f,
   /// ★ Named from what the player sees: a woman with red-brown hair in a pink
   /// dress and a white apron (spr_128.png)
   SPRITE_WOMAN_IN_PINK_APRON = 0x80,

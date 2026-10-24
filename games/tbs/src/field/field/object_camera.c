@@ -252,7 +252,7 @@ void ObjectSystem_ProjectSprites(void) {
   // draw slot here: 0 sorts it by distance (Render_PlaceProjectedSprite).
   object = gObjects;
   object += OBJECT_COUNT - 1;
-  fixedScale = 0x10000;
+  fixedScale = Q16_ONE;
   for (i = OBJECT_COUNT - 1; i >= 0; i--, object--) {
     if (object->script == 0)
       continue;

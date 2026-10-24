@@ -134,7 +134,7 @@ void DjinnFigures_UpdateBottomRow(void) {
         scale.x = -phase;
         scale.y = -phase;
       } else {
-        scale.x = phase + (s32)(0x10000 - phase) / 3;
+        scale.x = phase + (s32)(Q16_ONE - phase) / 3;
         scale.y = scale.x;
         menu->phases[objectIndex] = scale.x;
       }
@@ -175,7 +175,7 @@ void DjinnFigures_InitializeBottomRow(s32 unused0, s32 unused1) {
     if (animation != NULL)
       Sprite_StartAnimFar(animation, 2);
     state->animations[index] = animation;
-    state->phases[index] = 0x10000;
+    state->phases[index] = Q16_ONE;
     state->positionsX[index] = 0x10;
     state->positionsY[index] = 0xc8;
   }

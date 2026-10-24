@@ -50,7 +50,8 @@ void FieldEffect_RunCatch(void) {
   spawn.x = effectWork->x;
   spawn.y = effectWork->y + (32 << 16);
   spawn.z = effectWork->z;
-  object = (struct Object *)Object_Spawn(215, spawn.x, spawn.y, spawn.z);
+  object = (struct Object *)Object_Spawn(SPRITE_MOVE_HAND, spawn.x, spawn.y,
+                                         spawn.z);
   if (object == 0)
     return;
   FieldEffect_FadeToEffectColor();
@@ -70,7 +71,7 @@ void FieldEffect_RunCatch(void) {
     SET_POSITION(object, origin.x + (target.x - origin.x) * step / 10,
                  origin.y + (target.y - origin.y) * step / 10,
                  origin.z + (target.z - origin.z) * step / 10);
-    scale = FieldEffect_Interpolate(0x10000, 0x4000, step);
+    scale = FieldEffect_Interpolate(Q16_ONE, 0x4000, step);
     object->scaleX = scale;
     object->scaleY = scale;
     WaitFrames(1);
@@ -112,7 +113,7 @@ void FieldEffect_RunCatch(void) {
     SET_POSITION(object, target.x + (origin.x - target.x) * step / 10,
                  target.y + (origin.y - target.y) * step / 10,
                  target.z + (origin.z - target.z) * step / 10);
-    scale = FieldEffect_Interpolate(0x4000, 0x10000, step);
+    scale = FieldEffect_Interpolate(0x4000, Q16_ONE, step);
     object->scaleX = scale;
     object->scaleY = scale;
     WaitFrames(1);

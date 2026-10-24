@@ -172,7 +172,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
     // Each line shows one bar of the table's width at a random place on the
     // 240-pixel line.
     value = gScreenTransition_NoiseWidths[value];
-    for (i = 0; i < 160; i++) {
+    for (i = 0; i < DISPLAY_HEIGHT; i++) {
       leftEdge = (Random16() * (241 - value)) >> 16;
       scanlineData[0] = ((leftEdge << 8) | (leftEdge + value));
       scanlineData += 2;
@@ -232,7 +232,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
     // Each line's window runs from the left edge to 16 pixels per step of
     // progress plus up to 15 at random, at most 255.
     value &= 31;
-    for (i = 0; i < 160; i++) {
+    for (i = 0; i < DISPLAY_HEIGHT; i++) {
       horizontalExtent = (value << 4) + ((16 * Random16()) >> 16);
       if (horizontalExtent > 255) {
         horizontalExtent = 255;
@@ -275,7 +275,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
     // screen.
     value *= 5;
     radiusSquaredQ16 = (value * value) << 16;
-    for (i = 0; i < 160; i++) {
+    for (i = 0; i < DISPLAY_HEIGHT; i++) {
       value = i - 80;
       horizontalExtent =
           Iwram_Sqrt(radiusSquaredQ16 - ((value * value) << 16)) >> 8;
@@ -287,11 +287,11 @@ void ScreenTransition_UpdateScanlineTable(void) {
       if (right < 0) {
         right = 0;
       }
-      if (left > 240) {
-        left = 240;
+      if (left > DISPLAY_WIDTH) {
+        left = DISPLAY_WIDTH;
       }
-      if (right > 240) {
-        right = 240;
+      if (right > DISPLAY_WIDTH) {
+        right = DISPLAY_WIDTH;
       }
 #ifdef UBFIX
       edges = (left << 8) + right;
@@ -316,9 +316,9 @@ void ScreenTransition_UpdateScanlineTable(void) {
     }
     // Even lines' windows grow from the left edge and odd lines' from the
     // right, by up to 240 pixels over 32 steps.
-    value = (u32)(240 * (value & 31)) >> 5;
-    for (i = 0; i < 160; i += 2) {
-      oppositeEdges = ((240 - value) << 8) + 240;
+    value = (u32)(DISPLAY_WIDTH * (value & 31)) >> 5;
+    for (i = 0; i < DISPLAY_HEIGHT; i += 2) {
+      oppositeEdges = ((DISPLAY_WIDTH - value) << 8) + DISPLAY_WIDTH;
       scanlineData[0] = value;
       scanlineData[2] = oppositeEdges;
       scanlineData += 4;
@@ -338,8 +338,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
 #endif
     // Centred on the leader's place on screen, 16 pixels above its feet.
     object = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
-    centerX = (object->x - ax) / 0x10000;
-    centerY = ((object->z - object->y) - cameraY) / 0x10000 - 16;
+    centerX = (object->x - ax) / Q16_ONE;
+    centerY = ((object->z - object->y) - cameraY) / Q16_ONE - 16;
     // The frame counter is read here, where WINDOW_TRANSITION_RIPPLE forms
     // its index, and the value is not used.
     gFrameCount;
@@ -361,7 +361,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
     // ellipse 1.22 times as wide as it is tall.
     value *= 5;
     radiusSquaredQ16 = (value * value) << 16;
-    for (i = 0; i < 160; i++) {
+    for (i = 0; i < DISPLAY_HEIGHT; i++) {
       value = i - centerY;
       horizontalExtent =
           Iwram_Sqrt(radiusSquaredQ16 - ((value * value * 3) << 15)) >> 8;
@@ -373,11 +373,11 @@ void ScreenTransition_UpdateScanlineTable(void) {
       if (right < 0) {
         right = 0;
       }
-      if (left > 240) {
-        left = 240;
+      if (left > DISPLAY_WIDTH) {
+        left = DISPLAY_WIDTH;
       }
-      if (right > 240) {
-        right = 240;
+      if (right > DISPLAY_WIDTH) {
+        right = DISPLAY_WIDTH;
       }
       scanlineData[0] = ((left << 8) + right);
       scanlineData += 2;
@@ -396,8 +396,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     // Centred on state->centreX and centreY; each line's edges move out by
     // gScreenTransition_EdgeOffsets, indexed two entries a line and one a
     // frame, so the outline ripples.
-    centerX = (state->centreX - cameraX) / 0x10000;
-    centerY = (state->centreY - cameraY8) / 0x10000 - 16;
+    centerX = (state->centreX - cameraX) / Q16_ONE;
+    centerY = (state->centreY - cameraY8) / Q16_ONE - 16;
     k = -centerY * 2 + gFrameCount;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
@@ -409,7 +409,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
     }
     value *= 5;
     radiusSquaredQ16 = (value * value) << 16;
-    for (i = 0; i < 160; i++) {
+    for (i = 0; i < DISPLAY_HEIGHT; i++) {
       value = i - centerY;
       horizontalExtent =
           Iwram_Sqrt(radiusSquaredQ16 - ((value * value * 3) << 15)) >> 8;
@@ -421,8 +421,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
         right += delta;
         // An offset that closes the line leaves it with no window.
         if (left >= right) {
-          left = 240;
-          right = 240;
+          left = DISPLAY_WIDTH;
+          right = DISPLAY_WIDTH;
         }
       }
       if (left < 0) {
@@ -431,11 +431,11 @@ void ScreenTransition_UpdateScanlineTable(void) {
       if (right < 0) {
         right = 0;
       }
-      if (left > 240) {
-        left = 240;
+      if (left > DISPLAY_WIDTH) {
+        left = DISPLAY_WIDTH;
       }
-      if (right > 240) {
-        right = 240;
+      if (right > DISPLAY_WIDTH) {
+        right = DISPLAY_WIDTH;
       }
       scanlineData[0] = ((left << 8) + right);
       scanlineData += 2;
@@ -455,8 +455,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     cameraY = viewLeader[1] & 0xffff0000;
 #endif
     object = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
-    centerX = (object->x - ax) / 0x10000;
-    centerY = ((object->z - object->y) - cameraY) / 0x10000 - 16;
+    centerX = (object->x - ax) / Q16_ONE;
+    centerY = ((object->z - object->y) - cameraY) / Q16_ONE - 16;
     // As in WINDOW_TRANSITION_LEADER_INVERSE, the frame counter is read and
     // not used.
     gFrameCount;
@@ -470,7 +470,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
     }
     value *= 5;
     radiusSquaredQ16 = (value * value) << 16;
-    for (i = 0; i < 160; i++) {
+    for (i = 0; i < DISPLAY_HEIGHT; i++) {
       value = i - centerY;
       horizontalExtent =
           Iwram_Sqrt(radiusSquaredQ16 - ((value * value * 3) << 15)) >> 8;
@@ -482,11 +482,11 @@ void ScreenTransition_UpdateScanlineTable(void) {
       if (right < 0) {
         right = 0;
       }
-      if (left > 240) {
-        left = 240;
+      if (left > DISPLAY_WIDTH) {
+        left = DISPLAY_WIDTH;
       }
-      if (right > 240) {
-        right = 240;
+      if (right > DISPLAY_WIDTH) {
+        right = DISPLAY_WIDTH;
       }
       scanlineData[0] = ((left << 8) + right);
       scanlineData += 2;
@@ -505,10 +505,10 @@ void ScreenTransition_UpdateScanlineTable(void) {
     cameraY = viewLeaderLow[1] & 0xffff0000;
 #endif
     object = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
-    centerX = (object->x - ax) / 0x10000;
+    centerX = (object->x - ax) / Q16_ONE;
     // Centred 8 pixels above the leader's feet, not 16 as in
     // WINDOW_TRANSITION_LEADER.
-    centerY = ((object->z - object->y) - cameraY) / 0x10000 - 8;
+    centerY = ((object->z - object->y) - cameraY) / Q16_ONE - 8;
     // As in WINDOW_TRANSITION_LEADER_INVERSE, the frame counter is read and
     // not used.
     gFrameCount;
@@ -523,7 +523,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
     // sqrt(r * r - 0.75 * dy * dy): 1.15 times as tall as it is wide.
     value *= 5;
     radiusSquaredQ16 = (value * value) << 16;
-    for (i = 0; i < 160; i++) {
+    for (i = 0; i < DISPLAY_HEIGHT; i++) {
       value = i - centerY;
       horizontalExtent =
           Iwram_Sqrt(radiusSquaredQ16 - ((value * value * 3) << 14)) >> 8;
@@ -535,11 +535,11 @@ void ScreenTransition_UpdateScanlineTable(void) {
       if (right < 0) {
         right = 0;
       }
-      if (left > 240) {
-        left = 240;
+      if (left > DISPLAY_WIDTH) {
+        left = DISPLAY_WIDTH;
       }
-      if (right > 240) {
-        right = 240;
+      if (right > DISPLAY_WIDTH) {
+        right = DISPLAY_WIDTH;
       }
       scanlineData[0] = ((left << 8) + right);
       scanlineData += 2;

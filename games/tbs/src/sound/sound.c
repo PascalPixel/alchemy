@@ -89,7 +89,7 @@ void Sound_PlaySong(s32 id) {
     // A fanfare, on its own player (MUSIC_PLAYER_FANFARE): the music's tracks 0
     // to 7 go silent at once but keep playing, and fade back in once the
     // fanfare has ended (Sound_UpdateBgmRamps).
-    m4aMPlayVolumeControl(&gMPlayInfo_BGM, 255, 0);
+    m4aMPlayVolumeControl(&gMPlayInfo_BGM, TRACKS_ALL, 0);
     gBgmVolumeTarget = 0;
     gBgmVolume = 0;
     m4aSongNumStart(id);

@@ -270,7 +270,8 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
       ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
   void *iconBuffer = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   struct Object *object = (struct Object *)Object_CreateFar(
-      22, leader->x.fixed, leader->y.fixed + (36 << 16), leader->z.fixed);
+      SPRITE_BLANK, leader->x.fixed, leader->y.fixed + (36 << 16),
+      leader->z.fixed);
 
   if (object != 0) {
     struct Sprite *sprite = object->sprite;
@@ -430,7 +431,8 @@ void FieldEffect_SpawnNearbyMarkers(void) {
                * as a variable of its own, 9 of 163 instructions differ in
                * tbs-en. */
               objectEvent = (struct Object *)Object_CreateFar(
-                  22, (column << 20) + (8 << 16), 0, (row << 20) + (8 << 16));
+                  SPRITE_BLANK, (column << 20) + (8 << 16), 0,
+                  (row << 20) + (8 << 16));
               if (objectEvent != 0) {
                 Object_InitializeFar((struct Object *)objectEvent,
                                      gFieldEffect_MarkerParticleScript);

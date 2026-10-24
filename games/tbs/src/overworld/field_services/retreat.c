@@ -198,13 +198,13 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(
   }
 
   scale = particle->scaleX + 0xC00;
-  if (scale > 0x10000)
-    scale = 0x10000;
+  if (scale > Q16_ONE)
+    scale = Q16_ONE;
   particle->scaleX = scale;
   particle->scaleY = scale;
   particle->x.fixed = source->x.fixed;
   particle->y.fixed = y - 0x20000;
-  particle->z.fixed = source->z.fixed + ((0x10000 - scale) * 5) + 0x90000;
+  particle->z.fixed = source->z.fixed + ((Q16_ONE - scale) * 5) + 0x90000;
 }
 
 /// As FieldEffect_UpdateDescendingParticlePositiveArc for the arc drawn upside
@@ -229,13 +229,13 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(
   }
 
   scale = particle->scaleX + 0xC00;
-  if (scale > 0x10000)
-    scale = 0x10000;
+  if (scale > Q16_ONE)
+    scale = Q16_ONE;
   particle->scaleX = scale;
   particle->scaleY = -scale;
   particle->x.fixed = source->x.fixed;
   particle->y.fixed = y - 0x20000;
-  particle->z.fixed = source->z.fixed - ((0x10000 - scale) * 5) + 0x100000;
+  particle->z.fixed = source->z.fixed - ((Q16_ONE - scale) * 5) + 0x100000;
 }
 
 /// A falling arc's sprite (struct Sprite), seen as the image attributes, VRAM
@@ -293,7 +293,8 @@ void FieldEffect_SpawnDescendingArcParticles(struct ObjectEvent *arc) {
 
   for (arcIndex = 0; arcIndex <= 1; arcIndex++) {
     objectEvent = (struct ObjectEvent *)Object_CreateFar(
-        26, source->x.fixed, source->y.fixed + 0x400000, source->z.fixed);
+        SPRITE_GOLDEN_RINGS, source->x.fixed, source->y.fixed + 0x400000,
+        source->z.fixed);
     objectEvents[arcIndex] = objectEvent;
     if (objectEvent == NULL)
       continue;

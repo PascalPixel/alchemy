@@ -70,7 +70,8 @@ void FieldEffect_RunForce(void) {
   pos.y = caster->y.fixed + ABOVE;
   pos.z = caster->z.fixed;
   Vector_AddPolarOffset(8 << 16, effectWork->angle, &pos);
-  projectile = (struct ObjectEvent *)Object_Spawn(0xd7, pos.x, pos.y, pos.z);
+  projectile =
+      (struct ObjectEvent *)Object_Spawn(SPRITE_MOVE_HAND, pos.x, pos.y, pos.z);
   if (projectile == NULL) {
     FieldEffect_FadeFromEffectColor();
     return;
@@ -84,7 +85,7 @@ void FieldEffect_RunForce(void) {
   Object_SelectAnimationFar(projectile, 5);
   Anim_ApplyChildValuesFar((struct Object *)projectile, SPRITE_COLOR_BGR);
   scale = projectile->scaleX;
-  if (scale < 0x10000) {
+  if (scale < Q16_ONE) {
     do {
       scale += 0x500;
       projectile->scaleY = scale;
@@ -99,7 +100,8 @@ void FieldEffect_RunForce(void) {
   sharedAnimation = NULL;
   for (i = 2; i >= 0; i--) {
     copy = copies[i] = (struct ObjectEvent *)Object_Spawn(
-        0xd7, projectile->x.fixed, projectile->y.fixed, projectile->z.fixed);
+        SPRITE_MOVE_HAND, projectile->x.fixed, projectile->y.fixed,
+        projectile->z.fixed);
     if (copy != NULL) {
       copy->scaleY = 0xf000;
       copy->scaleX = 0xf000;

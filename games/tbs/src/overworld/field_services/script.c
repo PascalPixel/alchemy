@@ -73,7 +73,7 @@ void Leader_StopMoving(void) {
   struct Object *object;
 
   object = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
-  object->speedLimit = 0x10000;
+  object->speedLimit = Q16_ONE;
   object->acceleration = 0x8000;
   object->targetX = OBJ_EVENT_NO_TARGET;
   object->targetZ = OBJ_EVENT_NO_TARGET;

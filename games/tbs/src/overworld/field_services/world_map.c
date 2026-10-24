@@ -569,7 +569,7 @@ void FieldEffect_RunVisibilityTransition(void) {
         WaitFrames(1);
       } while (gKeysHeld & KEY_L);
     }
-    FieldEffect_ScheduleRatioTransition(0x10000, 6);
+    FieldEffect_ScheduleRatioTransition(Q16_ONE, 6);
     Task_ResumeOverlayTasks();
   }
 }

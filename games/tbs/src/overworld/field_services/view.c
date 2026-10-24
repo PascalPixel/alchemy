@@ -77,7 +77,7 @@ void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
           ->mode != OBJECT_SYSTEM_WORLD_MAP)
     return;
   {
-    inverse = Iwram_RatioMulQ14(zoom, 0x10000); // 1 / zoom
+    inverse = Iwram_RatioMulQ14(zoom, Q16_ONE); // 1 / zoom
   }
   perspective->previousZoom = perspective->zoom;
   perspective->zoom = inverse;

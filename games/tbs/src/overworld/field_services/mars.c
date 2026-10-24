@@ -67,7 +67,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
                                   FieldEffect_UpdatePhasedRadialParticle);
     FieldEffectSprite_SetObjectMode(effect, 7);
     Sprite_SetAnimColorModesFar(effect->object, SPRITE_COLOR_RED_TINT);
-    scale = Random16() / 3 + 0x10000; // 1.0 to 1.33
+    scale = Random16() / 3 + Q16_ONE; // 1.0 to 1.33
     effect->scaleY = scale;
     effect->scaleX = scale;
     remaining--;
@@ -127,8 +127,8 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   WaitFrames(10);
   effect = NULL;
   leader->update = (void *)effect;
-  leader->scaleX = 0x10000;
-  leader->scaleY = 0x10000;
+  leader->scaleX = Q16_ONE;
+  leader->scaleY = Q16_ONE;
   // Fade the palette back from the tint and free the field effect sprites.
   WaitFrames(30);
   Shop_RestoreFieldPaletteFar();
@@ -203,7 +203,7 @@ void FieldEffect_UpdateRadialSpread(struct FieldEffectSprite *effect) {
     Vector_AddPolarOffset(0x780000, FACING_NORTH, &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
-    effect->acceleration = 0x10000;
+    effect->acceleration = Q16_ONE;
     effect->speedMax = 0x50000;
     effect->turnStepLimited = state;
     effect->state++;

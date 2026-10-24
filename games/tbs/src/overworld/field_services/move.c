@@ -349,8 +349,8 @@ void *FieldEffect_StartItemBreak(void *object) {
   u32 jitter;
 
   angle = (source->facing + 0x2000) & 0xc000; // to the nearest quarter turn
-  parent = (struct Object *)Object_Spawn(215, source->x, source->y + (16 << 16),
-                                         source->z);
+  parent = (struct Object *)Object_Spawn(SPRITE_MOVE_HAND, source->x,
+                                         source->y + (16 << 16), source->z);
   if (parent == 0)
     return 0;
   parent->scaleY = 0x4000;
@@ -370,7 +370,7 @@ void *FieldEffect_StartItemBreak(void *object) {
                                           source->y + (16 << 16), source->z);
     if (child != 0) {
       Object_InitializeFar((struct Object *)child, gFieldEffect_FragmentScript);
-      speed = Random16() + 0x10000;
+      speed = Random16() + Q16_ONE;
       child->acceleration = 1 << 16;
       child->speedLimit = speed;
       child->motionFlags = 2;
@@ -437,7 +437,7 @@ void UpdateRisingParticleBurst(void *object) {
       /* FAKEMATCH(temporary): 1.0 in a block local set before the block's
        * calls, which loop.c hoists for both uses; as the constant at both
        * uses, 24 of 93 instructions differ in tbs-en. */
-      s32 unit = 0x10000;
+      s32 unit = Q16_ONE;
 
       Object_InitializeFar((struct Object *)child, gFieldEffect_FragmentScript);
       speed = Random16();

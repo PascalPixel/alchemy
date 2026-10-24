@@ -310,8 +310,8 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
 
         battleObject = BattleObject_Get(newUnitId);
         BattleObject_Make(battleObject, newUnitId,
-                          battleObject->anchorX / 0x10000,
-                          battleObject->anchorZ / 0x10000);
+                          battleObject->anchorX / Q16_ONE,
+                          battleObject->anchorZ / Q16_ONE);
       }
       BattleObject_Put();
       {

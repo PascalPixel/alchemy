@@ -45,11 +45,11 @@ redraw:
   tileEntry = swatchColumn;
   *tileEntry = EDITOR_HEX_DIGIT + palette;
   tileEntry += 32;
-  *tileEntry = 0xf000 | 'R';
+  *tileEntry = WINDOW_TILE('R');
   tileEntry += 32;
-  *tileEntry = 0xf000 | 'G';
+  *tileEntry = WINDOW_TILE('G');
   tileEntry += 32;
-  *tileEntry = 0xf000 | 'B';
+  *tileEntry = WINDOW_TILE('B');
   swatchColumn++;
   for (i = 1; i < 16; i++) {
     tileEntry = swatchColumn;

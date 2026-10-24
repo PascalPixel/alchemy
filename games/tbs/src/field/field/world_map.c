@@ -207,7 +207,7 @@ s32 WorldMap_InitializePerspective(void) {
   perspective->farPlane = farPlane;
   distance = &perspective->distance;
   *distance = farPlane;
-  perspective->zoom = 0x10000;
+  perspective->zoom = Q16_ONE;
   zoomTransitionFrames = &perspective->zoomTransitionFrames;
   camera->followEye = 0;
   camera->followPosition = 0;
@@ -253,7 +253,7 @@ s32 WorldMap_InitializePerspective(void) {
   Transform_ApplyPitch(*pitch);
   eyeOffset.x = 0;
   eyeOffset.y = 0;
-  eyeOffset.z = *distance + 0x10000;
+  eyeOffset.z = *distance + Q16_ONE;
   Iwram_TransformVector(&eyeOffset, camera->eye);
   REG_MOSAIC = 0;
   Io_Write16(DISPCNT_MODE_2 | DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
@@ -598,7 +598,7 @@ void WorldMap_UpdateView(void) {
   Transform_ApplyPitch(perspective->pitch);
   eyeOffset.x = 0;
   eyeOffset.y = 0;
-  eyeOffset.z = height + 0x10000;
+  eyeOffset.z = height + Q16_ONE;
   Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   Transform_Reset();
   Transform_SetLookAt(camera->eye, cameraPosition);

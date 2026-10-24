@@ -929,7 +929,7 @@ void LuckyWheels_InitializeTitle(void) {
     y += -0x80000;
   }
 
-  for (i = 0; i != 160; i++)
+  for (i = 0; i != DISPLAY_HEIGHT; i++)
     state->scanlineOffsets[i] = 0;
 
   for (i = 0; i != 40; i++) {

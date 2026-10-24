@@ -177,8 +177,8 @@ void Warp_EndArrivalAnimation(s32 animation) {
   SpriteAnim_ClearFar(spriteAnimation->entries[1]);
   spriteAnimation->entries[1] = (void *)zero;
   spriteAnimation->flags = SPRITE_FLAG_SHADOW;
-  leader->acceleration = 0x10000;
-  leader->speedLimit = 0x10000;
+  leader->acceleration = Q16_ONE;
+  leader->speedLimit = Q16_ONE;
   Object_SetMoveTargetFar(leader, leader->x, leader->y, leader->z + 0x80000);
   Object_WaitForMoveFar(leader);
 }

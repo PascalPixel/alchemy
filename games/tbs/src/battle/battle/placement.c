@@ -113,7 +113,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
     actor->scale = 0x1cccc;
     break;
   case ENEMY_BANDIT:
-    actor->scale = 0x10000;
+    actor->scale = Q16_ONE;
     break;
   case ENEMY_KRAKEN:
     actor->scale = 0x1b333;
@@ -155,7 +155,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
     actor->scale = 0x16666;
     break;
   case ENEMY_ORC_CAPTAIN:
-    actor->scale = 0x10000;
+    actor->scale = Q16_ONE;
     break;
   case ENEMY_ORC_LORD:
     actor->scale = 0x14000;

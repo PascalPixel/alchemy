@@ -64,7 +64,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   } else {
     Graphics_ScaleRgb555Clamped(
         palette, BATTLE_BG_PALETTE,
-        battle->brightness = 0x10000 - level * BACKGROUND_LEVEL_STEP, 128);
+        battle->brightness = Q16_ONE - level * BACKGROUND_LEVEL_STEP, 128);
   }
   {
     u32 saved = *savedInterruptEnable;
@@ -204,7 +204,7 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
   if (level >= 0)
     Graphics_ScaleRgb555Clamped(
         palette, BATTLE_BG_PALETTE,
-        battle->brightness = 0x10000 - level * BACKGROUND_LEVEL_STEP, 128);
+        battle->brightness = Q16_ONE - level * BACKGROUND_LEVEL_STEP, 128);
   Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   *(u16 *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
@@ -255,7 +255,7 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   // times the yaw, so the picture turns with the camera.
   panX = 0x800;
   wrap = 0;
-  if (scale >= 0x10000) {
+  if (scale >= Q16_ONE) {
     wrap = BGCNT_WRAP;
     panX = 0x6800 + -(s16)camera->yaw * 3;
   }
@@ -271,7 +271,7 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   // The affine parameters: a plain zoom, the reference point moved so the
   // centre stays put, 16 pixels up.
   line = scanlines->lines[scanlines->page ^ 1];
-  ratio = Iwram_RatioMulQ14(scale, 0x10000);
+  ratio = Iwram_RatioMulQ14(scale, Q16_ONE);
   step = ratio >> 8;
   affine = &scanlines->affine;
   affine->pa = step;
@@ -301,7 +301,7 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
     *line++ = wrap | BACKGROUND_PLANE_UPPER;
   for (; scanline < 136; scanline++)
     *line++ = wrap | BACKGROUND_PLANE_LOWER;
-  for (; scanline < 160; scanline++)
+  for (; scanline < DISPLAY_HEIGHT; scanline++)
     *line++ = BACKGROUND_PLANE_OFF;
   scanlines->page ^= 1;
 }

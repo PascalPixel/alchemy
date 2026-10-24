@@ -62,7 +62,7 @@ void ScanlineEffect_BuildPage(void) {
   step = work->stepX;
   phase = (work->frame + (u16)y3) * work->freqX;
   if (step == 0) {
-    for (scanline = 0; scanline != 160; scanline++) {
+    for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
       row[scanline * 6] = x3;
       row[scanline * 6 + 2] = x2;
       row[scanline * 6 + 4] = x1;
@@ -75,7 +75,7 @@ void ScanlineEffect_BuildPage(void) {
     // The sine is 4096 at its peak, so the wave reaches
     // 4096 * ampX / 0x10000 / 256 pixels: 16 for an ampX of 0x10000.
     amplitude = work->ampX;
-    for (scanline = 0; scanline != 160; scanline++) {
+    for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
       wave = Iwram_MulQ16(gScanlineEffect_WaveSine[(phase >> 16) & 255],
                           amplitude) /
              256;
@@ -92,7 +92,7 @@ void ScanlineEffect_BuildPage(void) {
   step = work->stepY;
   phase = (work->frame + (u16)y3) * work->freqY;
   if (step == 0) {
-    for (scanline = 0; scanline != 160; scanline++) {
+    for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
       row[scanline * 6] = y3;
       row[scanline * 6 + 2] = y2;
       row[scanline * 6 + 4] = y1;
@@ -103,7 +103,7 @@ void ScanlineEffect_BuildPage(void) {
     u16 c = y1;
 
     amplitude = work->ampY;
-    for (scanline = 0; scanline != 160; scanline++) {
+    for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
       wave = Iwram_MulQ16(gScanlineEffect_WaveSine[(phase >> 16) & 255],
                           amplitude) /
              256;

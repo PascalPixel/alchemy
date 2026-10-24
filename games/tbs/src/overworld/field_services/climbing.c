@@ -80,17 +80,17 @@ again:
         (platform = Object_FindNearestFacingTarget(
              leader, SPRITE_LOG_NORTH_SOUTH)) != NULL) {
       Object_SelectAnimationFar(platform, 7);
-      leader->y -= 0x10000;
-      leader->groundHeight -= 0x10000;
+      leader->y -= Q16_ONE;
+      leader->groundHeight -= Q16_ONE;
       WaitFrames(2);
-      leader->y -= 0x10000;
-      leader->groundHeight -= 0x10000;
+      leader->y -= Q16_ONE;
+      leader->groundHeight -= Q16_ONE;
       WaitFrames(10);
-      leader->y += 0x10000;
-      leader->groundHeight += 0x10000;
+      leader->y += Q16_ONE;
+      leader->groundHeight += Q16_ONE;
       WaitFrames(4);
-      leader->y += 0x10000;
-      leader->groundHeight += 0x10000;
+      leader->y += Q16_ONE;
+      leader->groundHeight += Q16_ONE;
     } else {
       WaitFrames(6);
     }
@@ -154,7 +154,7 @@ s32 Field_ClimbDown(void) {
       // Step to the middle of the cell, face north and climb down a cell at
       // 1 pixel a frame, in free flight (no motion flags) with no shadow.
       ObjectMotion_SetPositionAndCommit(gSaveBlock.leaderLocalId, gridX, gridZ);
-      object->speedLimit = 0x10000;
+      object->speedLimit = Q16_ONE;
       ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, FACING_NORTH, 0);
       ObjectEvent_RefreshSelectorById(gSaveBlock.leaderLocalId);
       object->steeringFlags = OBJ_EVENT_FACES_MOTION;
@@ -244,7 +244,7 @@ s32 Field_ClimbUp(void) {
       object->motionFlags = 0;
       spriteFlags &= 0xfe;
       Object_SetSpriteFlagsFar((struct Object *)object, spriteFlags);
-      object->speedLimit = 0x10000;
+      object->speedLimit = Q16_ONE;
       object->velocityY = 0;
       Object_SelectAnimationFar(object, ANIM_LEADER_CLING);
       WaitFrames(4);

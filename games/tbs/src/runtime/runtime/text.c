@@ -93,7 +93,7 @@ void DebugText_PrintBlanks(u32 count) {
   u32 index;
 
   for (index = 0; index < count; index++)
-    *dst++ = 0xf000;
+    *dst++ = WINDOW_TILE(0);
   gDebugTextCursor = dst;
 }
 

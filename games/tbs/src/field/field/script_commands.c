@@ -455,12 +455,12 @@ s32 FieldCamera_FollowLeaderInBounds(struct Object *interpreter) {
     } else {
       // The distance in the XZ plane: dy is computed as in
       // Object_SetMoveTarget but not used for the distance.
-      dx = (x - cameraObject->x) / 0x10000;
+      dx = (x - cameraObject->x) / Q16_ONE;
       /* FAKEMATCH(dead): this dy, overwritten below, ranks y above the bounds
        * in global allocation and keeps it in r5 as native; without it, 52 of
        * 224 instructions differ in tbs-en. */
-      dy = (y - cameraObject->y) / 0x10000;
-      dz = (z - cameraObject->z) / 0x10000;
+      dy = (y - cameraObject->y) / Q16_ONE;
+      dz = (z - cameraObject->z) / Q16_ONE;
       distance = Iwram_Sqrt(dx * dx + dz * dz) << 16;
       dx = x - cameraObject->x;
       dy = y - cameraObject->y;
@@ -572,7 +572,7 @@ s32 Object_Wander(struct Object *interpreter) {
   operands = &object->script[(s16)object->scriptCursor + 1];
   minimumDistance = *operands++;
   distanceRange = *operands++;
-  homeRadiusSquared = *operands / 0x10000;
+  homeRadiusSquared = *operands / Q16_ONE;
   attempts = 0;
   homeRadiusSquared = homeRadiusSquared * homeRadiusSquared;
 retry:
@@ -625,8 +625,8 @@ retry:
      * loaded x; as plain statements, 8 of 184 instructions differ in tbs-en.
      */
     do {
-      dx = candidatePosition.x / 0x10000 - object->homeX;
-      dz = candidatePosition.z / 0x10000 - object->homeZ;
+      dx = candidatePosition.x / Q16_ONE - object->homeX;
+      dz = candidatePosition.z / Q16_ONE - object->homeZ;
     } while (0);
     if (dx * dx + dz * dz > homeRadiusSquared)
       goto retry;
@@ -669,12 +669,12 @@ s32 ObjectScript_WanderNearHome(struct Object *interpreter) {
   operands = &object->script[(s16)object->scriptCursor + 1];
   minimumDistance = *operands++;
   distanceRange = *operands++;
-  homeRadiusSquared = *operands / 0x10000;
+  homeRadiusSquared = *operands / Q16_ONE;
   angle = object->facing;
   homeRadiusSquared *= homeRadiusSquared;
   attempts = 0;
-  dx = object->x / 0x10000 - object->homeX;
-  dz = object->z / 0x10000 - object->homeZ;
+  dx = object->x / Q16_ONE - object->homeX;
+  dz = object->z / Q16_ONE - object->homeZ;
   if (dx * dx + dz * dz <= homeRadiusSquared) {
   roam:
     attempts++;
@@ -730,8 +730,8 @@ s32 ObjectScript_WanderNearHome(struct Object *interpreter) {
       if (MapGrid_CheckCollision((struct Object *)object, &probePosition) !=
           COLLISION_NONE)
         goto roam;
-      dx = candidatePosition.x / 0x10000 - object->homeX;
-      dz = candidatePosition.z / 0x10000 - object->homeZ;
+      dx = candidatePosition.x / Q16_ONE - object->homeX;
+      dz = candidatePosition.z / Q16_ONE - object->homeZ;
       if (dx * dx + dz * dz > homeRadiusSquared)
         goto roam;
       object->collisionFlags |= 2;

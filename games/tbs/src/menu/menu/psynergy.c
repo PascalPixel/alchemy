@@ -962,12 +962,12 @@ s32 PsynergyMenu_DrawDetailPage(struct Window *window, s32 *work,
       MENU_DRAW_DESCRIPTION(description, menu->infoWindow, 0, 0);
     }
   } else {
-    // BUG: clears map flag 0x2ff instead of FLAG_MENU_INFO_KEPT, so a kept
+    // BUG: clears FLAG_MAP_TEMP_FF instead of FLAG_MENU_INFO_KEPT, so a kept
     // message keeps the descriptions away until another screen clears it.
 #ifdef BUGFIX
     GameFlag_ClearFar(FLAG_MENU_INFO_KEPT);
 #else
-    GameFlag_ClearFar(0x2ff);
+    GameFlag_ClearFar(FLAG_MAP_TEMP_FF);
 #endif
   }
 

@@ -369,10 +369,10 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
 
   switch (mode) {
   case TILEMAP_ENTRY_WINDOW:
-    palette = 0xf000;
+    palette = WINDOW_PALETTE << 12;
     break;
   case TILEMAP_ENTRY_HIGHLIGHT:
-    palette = 0xe000;
+    palette = HIGHLIGHT_PALETTE << 12;
     break;
   case TILEMAP_ENTRY_ICON:
     palette = 0x1000;

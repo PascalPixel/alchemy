@@ -634,7 +634,7 @@ void FileMenu_ShowPartySprites(struct Window *window, s32 x, s32 y,
         (x + window->x + i * FILE_MENU_SPRITE_SPACING) * 8 + 16;
     menu->partyMemberY[i] = (y + window->y) * 8 + 16;
     // 1.0 in 16.16.
-    menu->partyMemberScale[i] = 0x10000;
+    menu->partyMemberScale[i] = Q16_ONE;
   }
 
   priority = 200;
@@ -739,7 +739,7 @@ void FileMenu_PlaceDjinnSprites(void) {
     struct Sprite *sprite = menu->animations[index];
 
     if (sprite != NULL) {
-      s32 one = 0x10000;
+      s32 one = Q16_ONE;
       s32 height = 500 << 16;
 
       scale.x = one;

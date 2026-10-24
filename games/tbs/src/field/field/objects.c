@@ -327,11 +327,11 @@ struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z) {
     object->script = (s32 *)gObject_DefaultScript;
     object->speedLimit = 0x20000;
     object->scriptCursor = 0;
-    objectEvent->scaleX = 0x10000;
-    objectEvent->scaleY = 0x10000;
-    object->acceleration = 0x10000;
+    objectEvent->scaleX = Q16_ONE;
+    objectEvent->scaleY = Q16_ONE;
+    object->acceleration = Q16_ONE;
     object->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
-    motion->gravity = 0x10000;
+    motion->gravity = Q16_ONE;
     motion->bounce = 0x4000;
     object->collisionFlags = 0;
     object->steeringFlags = OBJ_EVENT_FACES_MOTION;

@@ -182,7 +182,7 @@ void FieldEffect_RunDouse(void) {
       t += step * (e - t) / 10;
       lightOrb->z = t;
     }
-    scale = FieldEffect_Interpolate(0x10000, 0x4000, step);
+    scale = FieldEffect_Interpolate(Q16_ONE, 0x4000, step);
     lightOrb->scaleX = scale;
     lightOrb->scaleY = scale;
     WaitFrames(1);
@@ -266,7 +266,7 @@ void FieldEffect_RunDouse(void) {
       t += step * (e - t) / 10;
       lightOrb->z = t;
     }
-    scale = FieldEffect_Interpolate(0x4000, 0x10000, step);
+    scale = FieldEffect_Interpolate(0x4000, Q16_ONE, step);
     lightOrb->scaleX = scale;
     lightOrb->scaleY = scale;
     WaitFrames(1);

@@ -969,7 +969,7 @@ void LuckyDice_Run(void) {
 
   // Fade out over 17 frames and free the work blocks.
   for (index = 0; index != 17; index++) {
-    scale = 0x10000 - (index << 12);
+    scale = Q16_ONE - (index << 12);
     LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, scale, 256);
     LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, scale, 256);
     WaitFrames(1);

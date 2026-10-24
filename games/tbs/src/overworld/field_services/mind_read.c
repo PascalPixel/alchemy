@@ -91,7 +91,7 @@ void FieldEffect_UpdateMindReadWave(void) {
   // The 160 scanlines' offsets, a sine wave of 4 pixels either way (a 16.16
   // sine >> 14), on the hidden page; then show that page.
   line = work->lines[work->page ^ 1];
-  for (scanline = 0; scanline < 160; scanline++)
+  for (scanline = 0; scanline < DISPLAY_HEIGHT; scanline++)
     *line++ =
         Trig_Sin(((u32)((work->phase + scanline * 8) << 16) / (u32)160)) >> 14;
   work->phase += 4;

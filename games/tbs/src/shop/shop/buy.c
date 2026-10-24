@@ -393,7 +393,7 @@ void Shop_DrawParty(struct Window *window, s32 selected, s32 itemId) {
         Sprite_StartAnimFar(shop->partyMemberIcons[memberIndex], 30);
       else
         Sprite_StartAnimFar(shop->partyMemberIcons[memberIndex], 1);
-      shop->partyMemberScale[memberIndex] = 0x10000;
+      shop->partyMemberScale[memberIndex] = Q16_ONE;
       if (!Item_IsCompatibleWithUnitFar(shop->partyMemberIds[memberIndex],
                                         itemId))
         shop->partyMemberScale[memberIndex] = 0xcccc;

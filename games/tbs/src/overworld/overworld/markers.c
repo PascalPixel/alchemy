@@ -107,8 +107,8 @@ void Field_PlaceTreasureSpots(void) {
                                       TREASURE_SPOT_CHEST_OPEN);
           }
           Object_StartIdleFar((struct Object *)markerObjectEvent);
-          markerObjectEvent->homeX = markerObjectEvent->x / 0x10000;
-          markerObjectEvent->homeZ = markerObjectEvent->z / 0x10000;
+          markerObjectEvent->homeX = markerObjectEvent->x / Q16_ONE;
+          markerObjectEvent->homeZ = markerObjectEvent->z / Q16_ONE;
           markerObjectEvent->priorityFlags = 1;
           markerObjectEvent->collisionFlags = 1;
           marker->id = event->trigger;
@@ -134,8 +134,8 @@ void Field_PlaceTreasureSpots(void) {
           Object_SetSpriteFlagsFar((struct Object *)markerObjectEvent, 0);
           Object_StartIdleFar((struct Object *)markerObjectEvent);
           Object_SelectAnimationFar(markerObjectEvent, 1);
-          markerObjectEvent->homeX = markerObjectEvent->x / 0x10000;
-          markerObjectEvent->homeZ = markerObjectEvent->z / 0x10000;
+          markerObjectEvent->homeX = markerObjectEvent->x / Q16_ONE;
+          markerObjectEvent->homeZ = markerObjectEvent->z / Q16_ONE;
           markerObjectEvent->collisionFlags = 1;
           markerObjectEvent->priorityFlags = 1;
           marker->object = (struct Object *)markerObjectEvent;

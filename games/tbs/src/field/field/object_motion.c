@@ -441,9 +441,9 @@ void Object_SetMoveTarget(struct Object *object, s32 x, s32 y, s32 z) {
   s32 squaredZ;
   u8 *arrivalAxis;
 
-  dx = (x - object->x) / 0x10000;
-  distance = (y - object->y) / 0x10000;
-  dz = (z - object->z) / 0x10000;
+  dx = (x - object->x) / Q16_ONE;
+  distance = (y - object->y) / Q16_ONE;
+  dz = (z - object->z) / Q16_ONE;
   squaredZ = dz * dz;
   distance = Iwram_Sqrt(dx * dx + distance * distance + squaredZ) << 16;
   // Under 16 whole pixels, measure again in 16.16 for sub-pixel accuracy.
@@ -455,7 +455,7 @@ void Object_SetMoveTarget(struct Object *object, s32 x, s32 y, s32 z) {
         FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(distance, distance) +
                   Iwram_MulQ16(dz, dz));
   }
-  if (distance < 0x10000) {
+  if (distance < Q16_ONE) {
     SET_POSITION(object, x, y, z);
     object->targetX = TARGET_UNSET;
     object->targetY = TARGET_UNSET;

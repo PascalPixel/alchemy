@@ -159,8 +159,8 @@ struct Object *Object_FindNearestFacingTarget(struct Object *self, s32 sprite) {
       if (self->y - entry->y > 0x2fffff)
         continue;
     }
-    pixelX = (entry->x - self->x) / 0x10000;
-    pixelZ = (entry->z - self->z) / 0x10000;
+    pixelX = (entry->x - self->x) / Q16_ONE;
+    pixelZ = (entry->z - self->z) / Q16_ONE;
     distance = Iwram_Sqrt(pixelX * pixelX + pixelZ * pixelZ);
     if (distance >= nearestDistance)
       continue;

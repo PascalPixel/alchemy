@@ -234,7 +234,7 @@ void FieldEffect_StartCast(void) {
     }
     ObjectEvent_SetOthersPaused((struct Object *)caster, 0, 0x10);
   }
-  if (GameFlag_GetFar(0x140) != 0) {
+  if (GameFlag_GetFar(FLAG_PSYNERGY_EFFECT) != 0) {
     if (effectWork->visible != 0) {
       caster->update = FieldEffect_CycleObjectValueByCounter;
     }

@@ -67,8 +67,8 @@ UNUSED void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
     }
     work->textTileState[tile] = 1;
     tile |= 0x80;
-    *entry = tile | 0xf000;
-    *mirror = tile | 0xf000;
+    *entry = WINDOW_TILE(tile);
+    *mirror = WINDOW_TILE(tile);
   }
   Dma_Set(pixels, BG_CHAR_BLOCK(0) + tile * TILE_SIZE_4BPP, DMA_COPY32(8),
           REG_DMA3);

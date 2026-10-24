@@ -95,7 +95,7 @@ s32 ElementGlow_UpdateStarField(void) {
       if (distance <= 0xfff) {
         spark->life = 0;
       } else {
-        scale = Iwram_RatioMulQ14(distance, 0x10000);
+        scale = Iwram_RatioMulQ14(distance, Q16_ONE);
         spark->life--;
         axisPosition = spark->motion;
         for (axis = 2; axis >= 0; axis--) {
@@ -114,7 +114,7 @@ s32 ElementGlow_UpdateStarField(void) {
     // them, while the field is young.
     if (life == 0 && work->frames <= 24) {
       angle = Random16();
-      radius = Random16() + 0x10000;
+      radius = Random16() + Q16_ONE;
       halfRadius = radius >> 1;
       spark->motion[0] = Iwram_MulQ16(Trig_Cos(angle), halfRadius);
       spark->motion[1] = Iwram_MulQ16(Trig_Sin(angle), halfRadius);
@@ -229,7 +229,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   // coordinate is mirrored, and the further out, the longer it lives.
   for (effectIndex = 0; effectIndex < 16; effectIndex++) {
     s32 angle = Random16();
-    u32 radius = Random16() + 0x10000;
+    u32 radius = Random16() + Q16_ONE;
     u32 halfRadius = radius >> 1;
 
     spark = &work->sparks[effectIndex];
@@ -328,8 +328,8 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
   u32 green;
   u32 blue;
 
-  if (scale > 0x10000)
-    scale = 0x10000;
+  if (scale > Q16_ONE)
+    scale = Q16_ONE;
   if (count > 0) {
     redMask = 0x1f;
     greenMask = 0x3e0;

@@ -52,7 +52,7 @@ s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
     s32 reciprocal;
     s32 xReciprocal;
 
-    reciprocal = Iwram_SignedDivide(0x10000, yScale);
+    reciprocal = Iwram_SignedDivide(Q16_ONE, yScale);
     xReciprocal = reciprocal;
     if (-xScale == yScale)
       xReciprocal = -reciprocal;

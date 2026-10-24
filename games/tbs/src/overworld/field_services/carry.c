@@ -301,7 +301,7 @@ struct Object *FieldEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle) {
   s32 scale;
 
   Sound_PlaySongFar(SE_ITEM_BREAK);
-  fragment = (struct Object *)Object_Spawn(215, x, y, z);
+  fragment = (struct Object *)Object_Spawn(SPRITE_MOVE_HAND, x, y, z);
   if (fragment != NULL) {
     fragment->scaleY = 0x4000;
     fragment->scaleX = 0x4000;
@@ -310,7 +310,7 @@ struct Object *FieldEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle) {
     fragment->steeringFlags = 0;
     Object_SelectAnimationFar(fragment, 1);
     scale = fragment->scaleX;
-    if (scale < 0x10000) {
+    if (scale < Q16_ONE) {
       do {
         scale += 0x800;
         fragment->scaleY = scale;

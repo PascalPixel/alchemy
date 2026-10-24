@@ -497,8 +497,8 @@ void Map_ApplyWarpDest(void) {
   if (warpDestEntry->cameraBottom != -1)
     grid->maxY = REGION_FIXED(warpDestEntry->cameraBottom);
 
-  if (grid->minX + (240 << 16) > grid->maxX)
-    grid->minX = grid->maxX - (240 << 16);
-  if (grid->minY + (160 << 16) > grid->maxY)
-    grid->minY = grid->maxY - (160 << 16);
+  if (grid->minX + (DISPLAY_WIDTH << 16) > grid->maxX)
+    grid->minX = grid->maxX - (DISPLAY_WIDTH << 16);
+  if (grid->minY + (DISPLAY_HEIGHT << 16) > grid->maxY)
+    grid->minY = grid->maxY - (DISPLAY_HEIGHT << 16);
 }

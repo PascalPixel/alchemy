@@ -33,8 +33,8 @@ void Weather_UpdateRain(void) {
     if (GameFlag_GetFar(FLAG_WEATHER_HELD))
       particle->timer++;
     frame = &gFieldEffect_GroundParticleFrames[5 * particle->timer];
-    x = (particle->positionX - cameraX) / 0x10000 + *frame++;
-    y = (particle->positionZ - particle->positionY - cameraZ) / 0x10000 +
+    x = (particle->positionX - cameraX) / Q16_ONE + *frame++;
+    y = (particle->positionZ - particle->positionY - cameraZ) / Q16_ONE +
         *frame++;
     if ((x >= -16 && x <= 239) && y >= -32 && y <= 159) {
       particle->priority = 1;
@@ -347,7 +347,7 @@ void FieldEffect_UpdateSparkles(void) {
       b = Random16();
       x = ((sparkle->positionX - cameraX) >> 16) + (((a & 1) + (b & 1)) >> 1);
       sx = x - 1;
-      sy = (sparkle->positionZ - sparkle->positionY - cameraZ) / 0x10000 +
+      sy = (sparkle->positionZ - sparkle->positionY - cameraZ) / Q16_ONE +
            *(const s16 *)frame;
       frame++;
       if ((u32)(x + 15) <= 255 && sy >= -32 && sy <= 159) {

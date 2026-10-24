@@ -71,8 +71,8 @@ void FieldEffectSprite_UpdateMotion(struct FieldEffectSprite *effect) {
   // The distance in whole pixels first; under 128 pixels, the exact 16.16
   // one decides whether it is within 8 pixels.
   if (effect->stopAtTarget != 0) {
-    pixelX = deltaX / 0x10000;
-    pixelZ = deltaZ / 0x10000;
+    pixelX = deltaX / Q16_ONE;
+    pixelZ = deltaZ / Q16_ONE;
     distance = Iwram_Sqrt(pixelX * pixelX + pixelZ * pixelZ) << 16;
     if (distance < 0x800000)
       distance = FixedSqrt(Iwram_MulQ16(deltaX, deltaX) +
@@ -164,10 +164,10 @@ void FieldEffectSprite_Initialize(struct FieldEffectSprite *effect, s32 kind,
   if (animation != NULL)
     animation->image.priority = 0;
   FieldEffectSprite_SetPosition(effect, x, z);
-  effect->scaleX = 0x10000;
+  effect->scaleX = Q16_ONE;
   effect->speedMax = 0x20000;
-  effect->scaleY = 0x10000;
-  effect->acceleration = 0x10000;
+  effect->scaleY = Q16_ONE;
+  effect->acceleration = Q16_ONE;
   effect->originX = x;
   effect->originZ = z;
   // BUG: Sprite_CreateFar can return NULL, but this and the animation

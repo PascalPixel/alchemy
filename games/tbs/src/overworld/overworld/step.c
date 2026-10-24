@@ -284,7 +284,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     accumulatedDistance = work->walkingDistance + stepDistance;
     work->walkingDistance = accumulatedDistance;
     if (accumulatedDistance > 0xffff) {
-      amount = accumulatedDistance / 0x10000;
+      amount = accumulatedDistance / Q16_ONE;
       work->walkingDistance = accumulatedDistance & 0xffff;
       Party_AddPp(amount, 0);
       if (DjinnRecovery_TickFar())
@@ -300,7 +300,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     if (gSaveBlock.hazardMode == HAZARD_COUNT_ON_CELLS &&
         event == MB_DESERT_SAND) {
       if (work->previousCell->behavior == MB_DESERT_SAND)
-        gSaveBlock.hazardSteps += leader->speedLimit / 0x10000;
+        gSaveBlock.hazardSteps += leader->speedLimit / Q16_ONE;
       else
         gSaveBlock.hazardSteps = gSaveBlock.hazardLimit / 2;
     }

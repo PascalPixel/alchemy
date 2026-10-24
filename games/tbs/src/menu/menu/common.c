@@ -574,7 +574,7 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
       tileX = originX + windowX;
       menu->tabX[i] = tileX * 8 + offsetX;
       menu->rowPositions[i] = (originY + window->y) * 8 + 16;
-      menu->memberScale[i] = 0x10000; // 1.0 in 16.16
+      menu->memberScale[i] = Q16_ONE;
       figure->image.priority = 0;
       figure->flags = 0;
       Sprite_StartAnimFar(figure, 1);

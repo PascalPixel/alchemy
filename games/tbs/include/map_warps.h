@@ -6101,6 +6101,10 @@ enum {
 /// MapId_BattleArena's warp destinations and warps.
 enum {
   BATTLE_ARENA_FROM_MAIN_MENU = 1,
+  BATTLE_ARENA_AFTER_MONSTER_WIN = 8,
+  BATTLE_ARENA_AFTER_MONSTER_LOSS = 9,
+  BATTLE_ARENA_AFTER_LINK_WIN = 10, ///< or after a linked battle broken off
+  BATTLE_ARENA_AFTER_LINK_LOSS = 11,
 };
 
 #endif

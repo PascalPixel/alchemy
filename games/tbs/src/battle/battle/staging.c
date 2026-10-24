@@ -46,7 +46,7 @@ s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
   view->frames = 60;
   battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   view->flag = 0;
-  battle->brightness = 0x10000;
+  battle->brightness = Q16_ONE;
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   Transform_Reset();
   Transform_SetLookAt(camera->eye, camera->focus);
@@ -765,7 +765,7 @@ s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
 
       if (targetOrFadeIndex < 20) {
         u16 *palette = battle->palette;
-        s32 value = 0x10000 - fade;
+        s32 value = Q16_ONE - fade;
 
         battle->brightness = value;
         Graphics_ScaleRgb555Clamped(palette, (u16 *)(BG_PLTT + 6 * 16), value,

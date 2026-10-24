@@ -45,7 +45,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   Sound_PlaySongFar(SE_HIGH_JUMP);
   ObjectMotion_Launch(djinniId, 8, 22);
   Sound_PlaySongFar(SE_SPIN);
-  MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
+  MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, Q16_ONE);
   djinni->update = FieldEffect_ShrinkObjectAndDestroyFast;
   Object_SelectAnimationFar(djinni, 3);
   // The leader turns to face the camera (angle 0x4000).
@@ -111,7 +111,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
     djinni = (struct Object *)Object_Spawn(SPRITE_PARTICLE, position.x,
                                            position.y, position.z);
     if (djinni != NULL) {
-      scale = Random16() / 3 + 0x10000;
+      scale = Random16() / 3 + Q16_ONE;
       djinni->scaleY = scale;
       djinni->scaleX = scale;
       djinni->orbitFrames = 100;
@@ -189,8 +189,8 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldEffectSprite *effect) {
     effect->z = position.z - 0x640000;
     effect->acceleration = 0x30000;
     effect->speedMax = Random16() * 3 + 0x30000;
-    effect->scaleX = 0x10000;
-    effect->scaleY = 0x10000;
+    effect->scaleX = Q16_ONE;
+    effect->scaleY = Q16_ONE;
     effect->turnStepLimited = state;
     effect->stopAtTarget = 1;
     (*statePointer)++;
@@ -203,7 +203,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldEffectSprite *effect) {
       effect->targetX = position.x;
       effect->targetZ = position.z;
       effect->stopAtTarget = 0;
-      effect->speed = 0x10000;
+      effect->speed = Q16_ONE;
       effect->acceleration = 0;
       effect->speedMax = Random16() + 0x23333;
       effect->scaleX = 0x8000;

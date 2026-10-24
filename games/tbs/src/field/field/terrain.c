@@ -409,7 +409,7 @@ s32 MapGrid_GetMetatileBehaviorAt(s32 layer, s32 x, s32 y) {
 /// Called through MapGrid_SetMetatileBehaviorAtFar by maps
 /// (Colosso, Altin Peak, Crossbone Isle, Venus Lighthouse, Tolbi, Sol
 /// Sanctum).
-void MapGrid_SetMetatileBehaviorAt(u32 layer, s32 x, s32 y, u32 collisionCode) {
+void MapGrid_SetMetatileBehaviorAt(u32 layer, s32 x, s32 y, u32 behavior) {
   struct MapGridScrollAnimView *gridState = gMapGridWork[0];
 
   x >>= 20;
@@ -419,7 +419,7 @@ void MapGrid_SetMetatileBehaviorAt(u32 layer, s32 x, s32 y, u32 collisionCode) {
     struct MapGridCell *cell = gridState->layers[layer & 3].cells;
 
     cell += x + (y << 7);
-    cell->behavior = collisionCode;
+    cell->behavior = behavior;
   }
 }
 

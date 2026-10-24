@@ -455,7 +455,7 @@ s32 Terrain_GetFirstSampleC(const u8 *heightBytes, s32 pixelX, s32 pixelY);
 s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y);
 s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y);
 s32 MapGrid_GetMetatileBehaviorAt(s32 layer, s32 x, s32 y);
-void MapGrid_SetMetatileBehaviorAt(u32 layer, s32 x, s32 y, u32 collisionCode);
+void MapGrid_SetMetatileBehaviorAt(u32 layer, s32 x, s32 y, u32 behavior);
 s32 MapGrid_GetCellHighFlags(s32 x, s32 y);
 s32 MapGrid_CheckCollision(struct Object *object,
                            struct FieldPosition *position);

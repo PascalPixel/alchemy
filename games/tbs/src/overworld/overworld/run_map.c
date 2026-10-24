@@ -409,7 +409,7 @@ s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
   union PolarOffsetPosition probePosition;
   u8 *cell;
   u8 *cells;
-  s32 collisionCode;
+  s32 behavior;
   s32 groundHeight;
   s32 result;
 
@@ -437,15 +437,15 @@ s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
                        ((probePosition.vector.z / 0x100000) << 7))
                       << 2);
     }
-    collisionCode = cell[2];
-    if (collisionCode >= MB_JAR && collisionCode <= MB_WELL) {
+    behavior = cell[2];
+    if (behavior >= MB_JAR && behavior <= MB_WELL) {
       groundHeight = MapGrid_GetTerrainHeightFar(
           leader->layer, probePosition.vector.x, probePosition.vector.z);
       if (groundHeight >= leader->y && groundHeight <= leader->y + 0x400000) {
-        result = collisionCode;
+        result = behavior;
       }
-    } else if (Map_FindEvent(MAP_EVENT_BG, collisionCode) != 0) {
-      result = collisionCode;
+    } else if (Map_FindEvent(MAP_EVENT_BG, behavior) != 0) {
+      result = behavior;
     }
   }
   return result;

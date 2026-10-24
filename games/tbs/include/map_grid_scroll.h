@@ -32,7 +32,7 @@ struct MapGridScrollWork {
   /// Screen shake amplitudes in 16.16 fixed-point pixels, and the 16.16
   /// factor that scales them each frame.
   s32 shakeX, shakeY, shakeDecay;
-  u8 *script;    ///< set from the layout's header; not read by name
+  u8 *markers;   ///< the layout's treasure spots, for Field_PlaceTreasureSpots
   u16 flags;     ///< REG_DISPCNT bits: objects and the BG1 to BG3 shown
   u8 wideTiles;  ///< nonzero: tileset animations copy 64-byte tiles
   u8 footprints; ///< nonzero: the leader leaves footprints

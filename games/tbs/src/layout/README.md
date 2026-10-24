@@ -513,8 +513,7 @@ code does with it: the 16-pixel pictures become BG map entries, so they are
 `metatiles`; the shapes feed the height functions; and the treasure spots are where
 `Field_PlaceTreasureSpots` puts chests and Psynergy Stones. The sixth offset is
 called the treasure spot list because that function is the only code that reads the
-pointer the loader stores to it, although `MapGridScrollWork`
-(`include/map_grid_scroll.h`) still names the field `script`.
+pointer the loader stores to it (`MapGridScrollWork.markers`).
 
 The pictures are drawn from the tables themselves: the haze from
 `layout_147`'s header, the shapes from its `shapes.tsv`, the chests from

@@ -23,7 +23,7 @@ struct MapGridMarkers {
   s32 *origin;
   s32 shakeX, shakeY, shakeDecay;
   ///@}
-  /// MapGridScrollWork's script, read here as (column, row, id) triples, ended
+  /// MapGridScrollWork's markers, read here as (column, row, id) triples, ended
   /// by 255, 255: a 16-pixel cell and the trigger of the map event there; NULL
   /// for a map with none.
   u8 *markers;

@@ -211,8 +211,7 @@ s32 WorldMap_GetBattleEnvironmentFar(struct WorldPosition *position,
 s32 SpriteFrameCache_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
 /// Writes `behavior` into the cell of `layer` under (x, y), given in 16.16
 /// pixels; before the map is set up it does nothing.
-void MapGrid_SetMetatileBehaviorAtFar(u32 layer, s32 x, s32 y,
-                                      u32 collisionCode);
+void MapGrid_SetMetatileBehaviorAtFar(u32 layer, s32 x, s32 y, u32 behavior);
 /// Sets the timer step of a sprite's animated sprite anims: 16 plays at normal
 /// speed, 0 stops them.
 void Sprite_SetAnimSpeedFar(struct Sprite *group, s32 val);

@@ -30,7 +30,9 @@ Field_Layout163:
 	.incbin "games/tbs/src/layout/layout_054/blend.script.lz"
 	.balign 4, 0
 .LField_Layout163_MARKERS:
-	.incbin "games/tbs/src/layout/layout_163/treasure_spots_ja.table"
+	treasure_spot 29, 12, 100
+	treasure_spot 5, 55, 101
+	treasure_spots_end
 	.else
 	layout_header 0, 0, 128, 128, 3, 1, 1, 0, 2, 2, 0, 0
 	layout_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
@@ -58,7 +60,9 @@ Field_Layout163:
 	.incbin "games/tbs/src/layout/layout_054/blend.script.lz"
 	.balign 4, 0
 .LField_Layout163_MARKERS:
-	.incbin "games/tbs/src/layout/layout_163/treasure_spots.table"
+	treasure_spot 29, 12, 100
+	treasure_spot 5, 55, 101
+	treasure_spots_end
 	.endif
 	.balign 4, 0
 	.global Tileset_Palette50

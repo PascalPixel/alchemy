@@ -16,3 +16,14 @@
 	.4byte 0
 	.endif
 	.endm
+
+@ A treasure spot (Field_PlaceTreasureSpots): its cell's column and row, and
+@ the trigger of the map event that says what is found there.
+	.macro treasure_spot column:req, row:req, trigger:req
+	.byte \column, \row, \trigger
+	.endm
+
+@ The end of a treasure spot list: column and row 255.
+	.macro treasure_spots_end
+	.byte 0xff, 0xff, 0xff
+	.endm

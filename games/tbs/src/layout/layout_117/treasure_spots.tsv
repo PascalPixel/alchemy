@@ -1,4 +1,0 @@
-x:u8	z:u8	event:u8
-0	1	100
-0	3	101
-0xff	0xff	0xff

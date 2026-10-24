@@ -25,5 +25,6 @@ Field_Layout092:
 	.incbin "games/tbs/src/layout/layout_091/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Layout092_MARKERS:
-	.incbin "games/tbs/src/layout/layout_092/treasure_spots.table"
+	treasure_spot 10, 15, 107
+	treasure_spots_end
 	.balign 4, 0

@@ -283,9 +283,7 @@ enum StormNightMapSecFlag {
 //   Isaac came, stands open.
 // - FLAG_VALE_SHOVING_MANS_DOOR_OPEN: the stout man has run out of the door of
 //   VALE_STORMY_NIGHT_TO_VALE_SHOPS_SOUTH, leaving it open.
-// - FLAG_VALE_ON_BRIDGE: the leader is on the bridge over the river, whose
-// metatile
-//   behaviors are swapped until the leader steps off it.
+// - FLAG_VALE_ON_BRIDGE: the leader is on the rope bridge over the river.
 
 static s32 sShakeDone;
 static s32 sShakeShift;
@@ -319,10 +317,12 @@ ValeStormyNight_RerollHeadingOnCountdown(struct Object *interpreter) {
 /// open.
 /// ★ Named from the game: "Oh... Sorry to shove you like that." (MsgValeHuh)
 #define FLAG_VALE_SHOVING_MANS_DOOR_OPEN FLAG_MAP_TEMP_06
-/// The leader is on the bridge over the river, whose metatile behaviors are
-/// swapped until the leader steps off it. ★ Named from what the player sees: a
-/// wooden bridge with rope rails over the river, above the waterfall (its
-/// render)
+/// The leader is on the rope bridge over the river. While it is set, the
+/// bridge's cells take the deck's shapes and metatile behaviors: its two middle
+/// rows walkable at the deck's height and its rails walls; stepping off puts
+/// back the river's, walled water between open banks.
+/// ★ Named from what the player sees: a wooden bridge with rope rails over the
+/// river, above the waterfall (its render)
 #define FLAG_VALE_ON_BRIDGE FLAG_MAP_TEMP_10
 
 /// Returns where the party appears;

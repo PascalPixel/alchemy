@@ -444,7 +444,7 @@ static void ColosseumAzartMatch_MoveObjectEventPairByOffset(s32 localId, s32 dx,
   } else {
     Object_SelectAnimation(objectEvent, 3);
   }
-  Sound_PlaySong(SE_226);
+  Sound_PlaySong(SE_LOG_PUSH);
   Object_WaitForMove(leader);
   Object_SelectAnimation(objectEvent, 2);
   Sound_PlaySong(SE_STOP_ACTION_SE);
@@ -1308,7 +1308,7 @@ static void ColosseumAzartMatch_ShowRoundIntroduction(s32 round) {
     FieldScript_WaitFrames(120);
     FieldScript_End();
   } else {
-    Sound_PlaySong(SE_247);
+    Sound_PlaySong(SE_COLOSSO_LETTERING);
     FieldScript_Start();
     FieldScript_StartScreenTransition();
     FieldScript_WaitTransitionFrames();
@@ -1348,7 +1348,7 @@ static void ColosseumAzartMatch_ShowMatchResult(s32 result) {
 
   s32 loser;
 
-  Sound_PlaySong(SE_247);
+  Sound_PlaySong(SE_COLOSSO_LETTERING);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   gColosseumAzartMatch_LetteringWon[13] = result * 60;
@@ -1356,7 +1356,7 @@ static void ColosseumAzartMatch_ShowMatchResult(s32 result) {
       (result < 0 ? -result : result) * 60;
   if (result < 0) {
     FieldScript_WaitFrames(30);
-    Sound_PlaySong(MUS_086);
+    Sound_PlaySong(MUS_INN);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE_FOR_LOSS);
     /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
      * show, which sets r1 before r0; as a direct call, 1 of 72 instructions
@@ -1616,7 +1616,7 @@ static void ColosseumAzartMatch_PushObjectAhead(void) {
   subject->acceleration = PIXELS(1) / 5;
   Object_SetPosition(subject, position.x, position.y, position.z);
 
-  Sound_PlaySong(SE_238);
+  Sound_PlaySong(SE_PUSH_STEP);
   Object_WaitForMove(target);
   Sound_PlaySong(SE_STOP_ACTION_SE);
 

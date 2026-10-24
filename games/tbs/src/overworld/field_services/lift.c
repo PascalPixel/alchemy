@@ -56,7 +56,7 @@ void FieldEffect_RunLiftOnTarget(s32 unused) {
 
   Object_WaitForMoveFar(pair[0]);
   target->update = Object_CycleSpriteColors;
-  Sound_PlaySongFar(SE_130);
+  Sound_PlaySongFar(SE_PSYNERGY_START);
   target->motionFlags = OBJ_EVENT_FLOATS;
 
   // Lift 32 pixels, a quarter pixel at a time.

@@ -148,7 +148,7 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
           ember->variant = 0;
           ember->x = screen.x;
           ember->y = screen.y;
-          Sound_PlaySongFar(SE_136);
+          Sound_PlaySongFar(SE_WHOOSH);
           BattleAnim_TintBattler(
               work->effect->targets[i % work->effect->targetCount],
               SPRITE_COLOR_RED_TINT, POSE_DAMAGE, i % work->effect->targetCount,

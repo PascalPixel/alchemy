@@ -38,9 +38,9 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
       (ObjectEvent_GetById(gSaveBlock.leaderLocalId)->facing + 0x2000) & 0xc000;
   FieldScript_Start();
   WaitFrames(10);
-  Sound_PlaySongFar(SE_173);
+  Sound_PlaySongFar(SE_NOTE_LOW);
   ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
-  Sound_PlaySongFar(SE_175);
+  Sound_PlaySongFar(SE_NOTE_HIGH);
   ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
   back = dir + 0x8000;
   WaitFrames(20);
@@ -114,7 +114,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   // frames freeze wherever it is, landed or not.
   ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)djinni,
                                                    64 << 16, dir + 0x8000);
-  Sound_PlaySongFar(SE_136);
+  Sound_PlaySongFar(SE_WHOOSH);
   ObjectMotion_Launch(djinniId, 12, 0);
   WaitFrames(24);
   djinni->motionFlags = 0;

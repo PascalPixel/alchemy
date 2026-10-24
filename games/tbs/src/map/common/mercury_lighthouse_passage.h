@@ -12,7 +12,7 @@
 static void MercuryLighthouse_LeaveThroughPassage(s32 warp) {
   struct ObjectEvent *v = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   FieldScript_Start();
-  Sound_PlaySong(SE_228);
+  Sound_PlaySong(SE_SPARKLING_PASSAGE);
 #ifdef UBFIX
   v->update = MercuryLighthouse_TrailSparks;
 #else
@@ -41,7 +41,7 @@ static void UNUSED MercuryLighthouse_DropLeaderToColumn(s32 column) {
   struct ObjectEvent *record;
 
   FieldScript_Start();
-  Sound_PlaySong(SE_228);
+  Sound_PlaySong(SE_SPARKLING_PASSAGE);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 2);
   ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, 0, -8);

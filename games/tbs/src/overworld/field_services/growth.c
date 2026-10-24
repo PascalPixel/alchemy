@@ -182,7 +182,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
       Object_SetMoveTargetFar((struct Object *)particle, pos[0], pos[1],
                               pos[2]);
     }
-    Sound_PlaySongFar(SE_131);
+    Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
     WaitFrames(2);
   }
   WaitFrames(8);

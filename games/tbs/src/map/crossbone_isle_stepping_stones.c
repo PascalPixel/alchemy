@@ -837,10 +837,10 @@ static void EventScript_FlipWaterSwitch(void) {
   waterRaised = Script_GetFlag(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED);
   // Raise or drain the water before redrawing the logs' footprints.
   if (waterRaised == 0) {
-    SE(SE_232);
+    SE(SE_CLUNK);
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_SwitchCloseSteps, 84, 24);
     WAIT(30);
-    SE(SE_240);
+    SE(SE_LOG_FALL);
     ObjectMotion_SetActionVariant(LOCALID_WATER, 1);
     ObjectEvent_GetById(LOCALID_WATER)->motionFlags = waterRaised;
     water = ObjectEvent_Get(LOCALID_WATER);
@@ -857,10 +857,10 @@ static void EventScript_FlipWaterSwitch(void) {
     MapGrid_CopyCellAttributes(24, 3, 1, 1, 24, 8);
     GameFlag_Set(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED);
   } else {
-    SE(SE_232);
+    SE(SE_CLUNK);
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_SwitchOpenSteps, 84, 24);
     WAIT(30);
-    SE(SE_230);
+    SE(SE_WATER_DRAIN);
     ObjectEvent_GetById(LOCALID_WATER)->motionFlags = 0;
     water = ObjectEvent_Get(LOCALID_WATER);
     water->y.fixed = -PIXELS(32);
@@ -1101,7 +1101,7 @@ static void EventScript_MovePillar(void) {
     if (*flags & 1) {
       if (MapGrid_GetMetatileBehaviorAt(2, objectEvent->x.fixed,
                                         objectEvent->z.fixed) == 50) {
-        Sound_PlaySong(SE_189);
+        Sound_PlaySong(SE_STONE_GRIND);
         // Both u8 accesses are alias set 0, and the view is no struct reference
         // (MEM_IN_STRUCT_P); as field stores, the loop is reallocated (100 of
         // 265 instructions differ in tbs-en).
@@ -1111,7 +1111,7 @@ static void EventScript_MovePillar(void) {
       } else if (MapGrid_GetMetatileBehaviorAt(2, objectEvent->x.fixed,
                                                objectEvent->z.fixed) == 51) {
         CrossboneIsleSteppingStones_StopAtGroundOrHeight(objectEvent, 0);
-        Sound_PlaySong(SE_189);
+        Sound_PlaySong(SE_STONE_GRIND);
         objectEvent->y.fixed = 0;
         objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
         CrossboneIsleSteppingStones_ShrinkPillar(id);
@@ -1332,7 +1332,7 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
   if ((gFrameCount & 2) != 0)
     return;
   if ((gFrameCount & 7) == 0)
-    Sound_PlaySong(SE_136);
+    Sound_PlaySong(SE_WHOOSH);
 
   settings = &options;
   settings->palette = 10;
@@ -1491,7 +1491,7 @@ static void EventScript_MoveSinkingPillar(void) {
         Script_GetFlag(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK);
     if (alreadyLowered == 0) {
       WAIT(10);
-      Sound_PlaySong(SE_159);
+      Sound_PlaySong(SE_DOOR_CLOSE);
       pillar->motionFlags = alreadyLowered;
       pillar->groundHeight = -PIXELS(2);
       pillar->y.fixed = -PIXELS(2);

@@ -552,7 +552,7 @@ static void EventScript_IodemGivesBlackOrb(void) {
 #endif
   // The door shuts.
   MapGrid_CopyCellIndexRect(32, 0, 1, 2, 4, 18);
-  Script_PlaySong(SE_159);
+  Script_PlaySong(SE_DOOR_CLOSE);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
   FieldScript_WaitFrames(10);
@@ -718,7 +718,7 @@ static void EventScript_IodemGivesBlackOrb(void) {
   FieldScript_WaitFrames(10);
   // The door shuts.
   MapGrid_CopyCellIndexRect(32, 0, 1, 2, 4, 18);
-  Script_PlaySong(SE_159);
+  Script_PlaySong(SE_DOOR_CLOSE);
   FieldScript_WaitFrames(50);
   // The others are eager to sail, then walk back into the leader.
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);

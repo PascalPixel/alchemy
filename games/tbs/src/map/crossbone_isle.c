@@ -514,7 +514,7 @@ static void EventScript_MovePillar(void) {
 
   WAIT(8);
   CrossboneIsle_SpawnPillarMovedBurst(LOCALID_SINKING_PILLAR);
-  Sound_PlaySong(SE_136);
+  Sound_PlaySong(SE_WHOOSH);
   WAIT(40);
 
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SINKING_PILLAR), 0);
@@ -547,7 +547,7 @@ static void EventScript_PushPillar(void) {
 /// (coord event 4): it opens, and the party goes through to the side room.
 static void EventScript_OpenWestDoor(void) {
   MapGrid_PlayMetatileCopySequence(gCrossboneIsle_EntranceCells, 37, 7);
-  Sound_PlaySong(SE_183);
+  Sound_PlaySong(SE_STONE_RUMBLE);
   Import_ScriptRequestWarp(CORRIDOR_TO_SIDE_ROOM_WEST);
 }
 
@@ -605,7 +605,7 @@ static void EventScript_OpenEastDoor(void) {
     SCRIPT_END();
   } else {
     MapGrid_PlayMetatileCopySequence(gCrossboneIsle_EntranceCells, 44, 7);
-    Sound_PlaySong(SE_183);
+    Sound_PlaySong(SE_STONE_RUMBLE);
     Import_ScriptRequestWarp(CORRIDOR_TO_SIDE_ROOM_EAST);
   }
 }
@@ -812,7 +812,7 @@ static void CrossboneIsle_MoveSelectedObjectEventAndLog(s32 localId,
   } else {
     Object_SelectAnimation(logObjectEvent, 3);
   }
-  Sound_PlaySong(SE_226);
+  Sound_PlaySong(SE_LOG_PUSH);
   Object_WaitForMove(selectedObjectEvent);
   Sound_PlaySong(SE_STOP_ACTION_SE);
   SCRIPT_END();

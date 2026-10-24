@@ -730,7 +730,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         break;
       }
 
-      Sound_PlaySongFar(SE_110);
+      Sound_PlaySongFar(SE_CHIME);
       command->unitId = (u16)actorId;
       // Draw the priority random value once, only for a nonzero agility.
       priority = unit->agi;

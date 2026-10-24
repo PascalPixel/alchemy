@@ -436,12 +436,12 @@ static void VaultRevisit_JumpObjectEventToAndWait(int localId, int x, int z,
   jumpingObjectEvent->gravity = PIXELS(1);
 }
 
-/// Searching the bell rings it (SE_100). The first ring since the party came in
-/// from the world map makes Sap jump out of hiding and walk to the bell, at
+/// Searching the bell rings it (SE_BELL). The first ring since the party came
+/// in from the world map makes Sap jump out of hiding and walk to the bell, at
 /// (408, 120), and sets FLAG_VAULT_SAP_CALLED_BY_BELL.
 static void EventScript_RingBell(void) {
   FieldScript_Start();
-  Script_PlaySong(SE_100);
+  Script_PlaySong(SE_BELL);
   FieldScript_WaitFrames(40);
   if (Script_GetFlag(FLAG_VAULT_SAP_CALLED_BY_BELL) == 0) {
     ObjectEvent_SetAttachedEffect(LOCALID_SAP, ATTACHED_EFFECT_IN_FRONT |

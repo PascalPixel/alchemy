@@ -58,7 +58,7 @@
 s32 LuckyWheels_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
   gRandomSeed = gSaveBlock.playTime;
-  Sound_PlaySongFar(MUS_009);
+  Sound_PlaySongFar(MUS_DJINN_LESSON);
   LuckyWheels_Run();
   return 0;
 }
@@ -599,7 +599,7 @@ void LuckyWheels_RunFrame(void) {
         Text_DrawMessageAsTilesFar(MsgSlotsStopReels, work->window, 0, 0);
       }
       if (work->timer == 16)
-        Sound_PlaySongFar(SE_306);
+        Sound_PlaySongFar(SE_LUCKY_WHEELS_STOP_PROMPT);
       if (work->timer > 56) {
         if (fx->frame > 31 || (work->pressed & KEY_R)) {
           fx->frame = 0;

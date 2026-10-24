@@ -41,9 +41,9 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   WaitFrames(30);
   // Unpause the Djinni, so its script and motion run.
   djinni->paused = 0;
-  Sound_PlaySongFar(SE_173);
+  Sound_PlaySongFar(SE_NOTE_LOW);
   ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
-  Sound_PlaySongFar(SE_175);
+  Sound_PlaySongFar(SE_NOTE_HIGH);
   ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
   WaitFrames(20);
 

@@ -176,7 +176,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void);
 /// The sound of the Lizard Man's sidestep, played by all three step scripts
 /// as he lands.
 static s32 MercuryLighthouseEntrance_PlayStepSound(struct Object *interpreter) {
-  Sound_PlaySong(SE_118);
+  Sound_PlaySong(SE_FOOTSTEP);
   return 0;
 }
 
@@ -332,7 +332,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
         effectData->type = effectType;
       }
       effectData->script = gMercuryLighthouseEntrance_SparkBurstScript;
-      Sound_PlaySong(SE_246);
+      Sound_PlaySong(SE_GLITTER);
       sparkX = 208 - ((u32)(Random_Next() << 4) >> 16);
       sparkZ = 560 - ((u32)(Random_Next() << 4) >> 16);
       speedRoll = ((u32)(Import_RandomNext() << 2) >> 16);
@@ -345,7 +345,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
       FieldScript_WaitFrames(4);
       sparkIndex++;
     } while ((u32)sparkIndex <= 14);
-    Sound_PlaySong(SE_220);
+    Sound_PlaySong(SE_SHIMMER);
     FieldScript_WaitFrames(60);
     // Persist the activated state and replace the pool's map cells.
     GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED);
@@ -511,7 +511,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     FieldScript_WaitTransitionFrames();
     FieldScript_WaitFrames(30);
     ObjectEvent_Get(LOCALID_PARTY_LEADER)->motionFlags = 3;
-    Sound_PlaySong(SE_204);
+    Sound_PlaySong(SE_DUST_PUFF);
     FieldScript_WaitFrames(24);
     // Scatter seventeen effects around the leader before the landing.
     objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
@@ -526,7 +526,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
                         velocity[2], EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
                         &options);
     }
-    Sound_PlaySong(SE_188);
+    Sound_PlaySong(SE_THUMP);
     ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER,
                                   ATTACHED_EFFECT_IN_FRONT |
                                       ATTACHED_EFFECT_ATTACH);
@@ -559,7 +559,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     // All four arrivals play the same sound.
     // Fall through.
   case MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_FROM_TWIN_FOUNTAINS:
-    Map_QueueMusic(SE_170);
+    Map_QueueMusic(SE_AMBIENT_WATER);
     break;
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_PIPE:
     ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 15);

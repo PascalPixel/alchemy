@@ -125,7 +125,7 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
   for (frame = 0; frame != 120; frame++) {
     wave = 0;
     if (frame == 0) {
-      Sound_PlaySongFar(SE_136);
+      Sound_PlaySongFar(SE_WHOOSH);
     }
     if (frame == 26) {
       Sound_PlaySongFar(SE_RUMBLE);
@@ -376,10 +376,10 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
       // Frame 8: BattleCamera_Shake shakes the screen for 8 frames.
       if (frame == 8) {
         work->shakeFrames = frame;
-        Sound_PlaySongFar(SE_145);
+        Sound_PlaySongFar(SE_CRASH);
       }
       if (frame == 11) {
-        Sound_PlaySongFar(SE_145);
+        Sound_PlaySongFar(SE_CRASH);
       }
       if (frame == 46) {
         Sound_PlaySongFar(SE_KIRIN);
@@ -437,7 +437,7 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
       } while (i != 192);
 
       if (frame == 48) {
-        Sound_PlaySongFar(SE_136);
+        Sound_PlaySongFar(SE_WHOOSH);
       }
       // From frame 41 the fire sheet, 16 jittered rows, slides off to the
       // left 12 pixels a frame over a canvas that keeps everything; from

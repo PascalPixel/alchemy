@@ -399,7 +399,7 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
     if (Script_GetFlag(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) != 0) {
       FieldScript_Start();
       FieldScript_WaitFrames(40);
-      Script_PlaySong(SE_220);
+      Script_PlaySong(SE_SHIMMER);
       destinationCellX = 36;
       ObjectMotion_SetAnimationAndWait(LOCALID_THIRD_PUDDLE,
                                        PUDDLE_ANIMATION_FREEZE);

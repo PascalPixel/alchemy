@@ -401,7 +401,7 @@ static void EventScript_PushStumpOver(void) {
     ObjectEvent_SetSpriteFlags(movedObjectEvent, 0);
     Task_Remove(fragmentCallback);
     WAIT(12);
-    Sound_PlaySong(SE_189);
+    Sound_PlaySong(SE_STONE_GRIND);
     xSource = ObjectEvent_GetById(LOCALID_STUMP);
     randomX = Import_RandomNext();
     fixedX = xSource->x.fixed;
@@ -448,7 +448,7 @@ static void GomaCavePillar_SettleEastPillar(void) {
     ObjectEvent_GetById(LOCALID_EAST_PILLAR)->y.fixed = -PIXELS(2);
     ObjectEvent_GetById(LOCALID_EAST_PILLAR)->targetY =
         ObjectEvent_GetById(LOCALID_EAST_PILLAR)->y.fixed;
-    Sound_PlaySong(SE_188);
+    Sound_PlaySong(SE_THUMP);
     GomaCavePillar_SpawnFragment(
         ObjectEvent_GetById(LOCALID_EAST_PILLAR)->x.fixed,
         ObjectEvent_GetById(LOCALID_EAST_PILLAR)->y.fixed,

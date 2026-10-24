@@ -33,7 +33,7 @@
 ///
 /// A jar holds a Lucky Medal. Five doors lead into the houses, shops and inn
 /// (MapId_XianInteriors, XIAN_TO_HOUSE to XIAN_TO_WEAPON_AND_ARMOR_SHOP),
-/// XIAN_TO_SANCTUM into Xian Sanctum, its sliding door playing SE_188,
+/// XIAN_TO_SANCTUM into Xian Sanctum, its sliding door playing SE_THUMP,
 /// XIAN_TO_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL into Master Feh's school, and
 /// XIAN_TO_WORLD_MAP out to the world map. Coming back from the school
 /// (XIAN_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) or the Sanctum
@@ -439,7 +439,7 @@ static void Xian_TalkToWaterCarrier(void) {
   Import_ObjectEventSetAnimation(LOCALID_WOMAN_CARRYING_WATER, ANIM_STAND);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_WOMAN_CARRYING_WATER, 2);
   FieldScript_WaitFrames(10);
-  Script_PlaySong(SE_228);
+  Script_PlaySong(SE_SPARKLING_PASSAGE);
   // Copy the wet terrain cell and grow the puddle into view.
   puddle->scaleX = 0x4ccc;
   puddle->scaleY = 0x4ccc;
@@ -585,7 +585,7 @@ static void Xian_TalkToKungFuStudent(void) {
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     FieldEffect_Spawn(PIXELS(192), 0, PIXELS(312), 0x3333, 0x1999, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-    Sound_PlaySong(SE_132);
+    Sound_PlaySong(SE_WATER);
     particleCallback = Xian_SpawnTrainingParticles;
     Task_AddCallback(particleCallback, TASK_PRIORITY_MAP);
     ObjectEvent_GetById(LOCALID_KUNG_FU_STUDENT)->velocityY = 0x60000;
@@ -616,7 +616,7 @@ static void Xian_TalkToKungFuStudent(void) {
     FieldEffect_Spawn(PIXELS(144), 0, PIXELS(312), reboundVelocity, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     ObjectEvent_RefreshSelectorById(LOCALID_TRAINING_TREE);
-    Sound_PlaySong(SE_124);
+    Sound_PlaySong(SE_CHEST_OPEN);
     FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0,
@@ -706,7 +706,7 @@ static void Xian_WalkThroughExit(s32 warpNumber) {
 
 /// Walking north into one of Xian's doors: it opens and the party goes in. Each
 /// door's metatile behavior is the number of the warp it leads by: five lead
-/// into the houses, shops and inn, XIAN_TO_SANCTUM into Xian Sanctum (SE_188)
+/// into the houses, shops and inn, XIAN_TO_SANCTUM into Xian Sanctum (SE_THUMP)
 /// and XIAN_TO_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL into Master Feh's school.
 static void Xian_OpenDoorAndLeave(void) {
   struct FieldWork *work = gFieldWork;
@@ -735,7 +735,7 @@ static void Xian_OpenDoorAndLeave(void) {
     MapGrid_PlayMetatileCopySequence(gXian_InnDoorOpens, 72, 7);
     break;
   case XIAN_TO_SANCTUM:
-    Sound_PlaySong(SE_188);
+    Sound_PlaySong(SE_THUMP);
     MapGrid_PlayMetatileCopySequence(gXian_SanctumDoorOpens, 69, 11);
     break;
   case XIAN_TO_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL:
@@ -761,7 +761,7 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   rotationCallback = Xian_RotateTrainingTree;
   FieldScheduler_AddCallback(rotationCallback, TASK_PRIORITY_MAP);
   ObjectEvent_RefreshSelectorById(LOCALID_TRAINING_TREE);
-  Sound_PlaySong(SE_124);
+  Sound_PlaySong(SE_CHEST_OPEN);
   FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
                     EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
   FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0,
@@ -829,11 +829,11 @@ static void Xian_MoveAsideForWaterCarrier(void) {
 
 const struct MapEvent *Xian_GetEvents(void) { return gXian_Events; }
 
-/// Queues and plays SE_169 and sets up the village as the story and this visit
-/// left it: after the news of Hsu (or, back from a battle, after her strike)
-/// the kung fu student stands where her strike leaves her; Feizhi is gone
-/// after the news or once she has seen the rockslide; back from a battle, the
-/// frozen puddle keeps its ice; the water carrier is hooked to
+/// Queues and plays SE_AMBIENT_WIND and sets up the village as the story and
+/// this visit left it: after the news of Hsu (or, back from a battle, after her
+/// strike) the kung fu student stands where her strike leaves her; Feizhi is
+/// gone after the news or once she has seen the rockslide; back from a battle,
+/// the frozen puddle keeps its ice; the water carrier is hooked to
 /// Xian_WatchWaterCarrierPath; and the training tree, its Force mark and the
 /// three crates are drawn under the object events.
 s32 Xian_Initialize(void) {
@@ -841,7 +841,7 @@ s32 Xian_Initialize(void) {
   u32 crateIndex;
 
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Map_QueueMusic(SE_169);
+  Map_QueueMusic(SE_AMBIENT_WIND);
   // Back from the school (XIAN_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) or the
   // Sanctum (XIAN_FROM_SANCTUM_WEST), the last two warp destinations, the name
   // is not shown.

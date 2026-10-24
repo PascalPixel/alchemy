@@ -838,7 +838,7 @@ static void EventScript_HurryToThePlaza(void) {
   FieldCamera_MoveWithinMapBounds(PIXELS(480), -1, PIXELS(444), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(20);
-  // They nod, Kyle runs back down, and the two turn back (SE_234).
+  // They nod, Kyle runs back down, and the two turn back (SE_RUN_BACK).
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_WEST, 20);
   Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
@@ -848,10 +848,10 @@ static void EventScript_HurryToThePlaza(void) {
   ObjectEvent_SetActionScript(LOCALID_DORA, gValeInn_DoraRunsBackScript);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
                               gValeInn_IsaacRunsBackScript);
-  Sound_PlaySong(SE_234);
+  Sound_PlaySong(SE_RUN_BACK);
   FieldScript_WaitFrames(20);
   // LOCALID_FLAME_AND_SMOKE flares up, turns to smoke and rises away
-  // (gValeInn_FlameRisesScript) as SE_202 plays.
+  // (gValeInn_FlameRisesScript) as SE_FLAME_FLARE plays.
   ObjectEvent_SetActionScript(LOCALID_FLAME_AND_SMOKE,
                               gValeInn_FlameRisesScript);
   alpha = &REG_BLDALPHA;
@@ -863,7 +863,7 @@ ramp:
   WaitFrames(1);
   if (++i <= 3)
     goto ramp;
-  Sound_PlaySong(SE_202);
+  Sound_PlaySong(SE_FLAME_FLARE);
   WaitFrames(10);
   for (i = 0; i <= 15; i++) {
     SetBlendAlpha(BLEND_ALPHA(15, 16) - i);

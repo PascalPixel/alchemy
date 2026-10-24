@@ -442,11 +442,11 @@ static void Kolima_LowerBridge(void) {
   ObjectEvent_SetSpeed(LOCALID_BRIDGE_VILLAGER, PIXELS(2), PIXELS(1));
   ObjectMotion_Launch(LOCALID_BRIDGE_VILLAGER, 2, 0);
   ObjectMotion_SetPositionAndCommit(LOCALID_BRIDGE_VILLAGER, 224, 197);
-  Sound_PlaySong(SE_176);
+  Sound_PlaySong(SE_KOLIMA_BRIDGE_HOP);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetPositionAndCommit(LOCALID_BRIDGE_VILLAGER, 234, 200);
   FieldScript_WaitFrames(10);
-  Sound_PlaySong(SE_198);
+  Sound_PlaySong(SE_KOLIMA_BRIDGE_POST);
   FieldScript_WaitFrames(30);
   // The drawbridge comes down in ever shorter steps.
   MapGrid_CopyCellsTo(91, 0, 72, 9, 5, 4);
@@ -458,7 +458,7 @@ static void Kolima_LowerBridge(void) {
   FieldScript_WaitFrames(6);
   MapGrid_CopyCellsTo(91, 13, 72, 9, 5, 6);
   FieldScript_WaitFrames(3);
-  Sound_PlaySong(SE_188);
+  Sound_PlaySong(SE_THUMP);
   // Ten puffs of dust where it lands, thrown alternately left and right.
   for (debrisIndex = 0; debrisIndex < 10; debrisIndex++) {
     struct ObjectEvent *debris = ObjectEvent_Create(
@@ -835,7 +835,7 @@ static void Kolima_WitnessForestCurse(void) {
   Kolima_FaceObjectEventAndWait(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 20);
   Kolima_FaceObjectEventAndWait(LOCALID_IVAN, FACING_NORTH, 10);
   Script_PlaySong(SONG_FADE_OUT_BGM);
-  Script_PlaySong(SE_206);
+  Script_PlaySong(SE_CURSE_FALL);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_StartInterpolation(1);
   WaitFrames(1);
@@ -923,7 +923,7 @@ static void Kolima_WitnessForestCurse(void) {
   *firstCurtainState = KOLIMA_DUST_CLOSING;
   FieldScheduler_AddCallback(Kolima_UpdateCurseDust, TASK_PRIORITY_MAP);
   FieldScript_WaitFrames(180);
-  Script_PlaySong(MUS_021);
+  Script_PlaySong(MUS_FOREST);
   Kolima_ShowMessageAndWait(LOCALID_GARET, 80);
   Kolima_ShowMessageAndWait(LOCALID_IVAN, 40);
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
@@ -975,7 +975,7 @@ static void Kolima_WitnessForestCurse(void) {
   gKolima_PendingPose = stagingValue;
   FieldScheduler_AddCallback(Kolima_AlternateProtectiveFieldHeights,
                              TASK_PRIORITY_MAP);
-  Script_PlaySong(SE_220);
+  Script_PlaySong(SE_SHIMMER);
   ObjectEvent_GetById(LOCALID_LEADER_PSYNERGY_FIELD)->priorityFlags &= 254;
   ObjectMotion_SetActionVariant(LOCALID_LEADER_PSYNERGY_FIELD, 2);
   ObjectEvent_SetPosition(LOCALID_LEADER_PSYNERGY_FIELD, PIXELS(120),
@@ -1224,7 +1224,7 @@ static void Kolima_WitnessForestCurse(void) {
     gFieldWork->message++;
   }
   Script_ShowMessage(LOCALID_GARET, 0);
-  Script_PlaySong(MUS_021);
+  Script_PlaySong(MUS_FOREST);
   PaletteFade_ApplyTarget(0x406218, 1);
   PaletteFade_StartInterpolation(60);
   WaitFrames(60);
@@ -1257,7 +1257,7 @@ static void Kolima_WitnessForestCurse(void) {
   ObjectMotion_SetActionVariant(LOCALID_IVAN, 3);
   ObjectMotion_SetActionVariant(LOCALID_MIA, 3);
   *secondCurtainState = KOLIMA_DUST_CLOSING_WIDE;
-  Script_PlaySong(SE_220);
+  Script_PlaySong(SE_SHIMMER);
   ObjectEvent_SetPosition(LOCALID_LEADER_PSYNERGY_FIELD, PIXELS(120),
                           PIXELS(248));
   growFieldActions = gKolima_ProtectiveFieldGrowActions;
@@ -1609,7 +1609,7 @@ static void Kolima_SpawnCurseSparkle(void) {
     return;
   }
   if (gKolima_EffectActive != 0) {
-    Sound_PlaySong(SE_200);
+    Sound_PlaySong(SE_SPARKLE_FALL);
   }
   sparkle = ObjectEvent_Create(SPRITE_GOLDEN_RINGS, spawnX, 0, spawnZ);
   if (sparkle == 0) {
@@ -1644,7 +1644,7 @@ static s32 Kolima_TriggerRegionScript(struct Object *interpreter) {
          objectEvent->x.fixed < PIXELS(122) &&
          objectEvent->z.fixed > PIXELS(194) &&
          objectEvent->z.fixed < PIXELS(277))) {
-      Sound_PlaySong(SE_106);
+      Sound_PlaySong(SE_DRIP);
       ObjectEvent_SetScript(objectEvent, gKolima_RegionScript);
       gKolima_PendingPose = 1;
     }
@@ -1661,7 +1661,7 @@ static s32 Kolima_TriggerRegionScript(struct Object *interpreter) {
          objectEvent->x.fixed < PIXELS(122) &&
          objectEvent->z.fixed > PIXELS(241) &&
          objectEvent->z.fixed < PIXELS(277))) {
-      Sound_PlaySong(SE_106);
+      Sound_PlaySong(SE_DRIP);
       ObjectEvent_SetScript(objectEvent, gKolima_RegionScript);
       gKolima_PendingPose = 1;
     }

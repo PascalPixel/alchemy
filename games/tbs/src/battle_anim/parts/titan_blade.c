@@ -143,13 +143,13 @@ void BattleAnim_RunTitanBlade(struct BattleAnimArgs *effect) {
     }
 
     if (frame == 4) {
-      Sound_PlaySongFar(SE_212);
+      Sound_PlaySongFar(SE_POWER_UP);
     }
     if (frame == 32) {
-      Sound_PlaySongFar(SE_164);
+      Sound_PlaySongFar(SE_SCATTER);
     }
     if (frame == 60) {
-      Sound_PlaySongFar(SE_145);
+      Sound_PlaySongFar(SE_CRASH);
       ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
 

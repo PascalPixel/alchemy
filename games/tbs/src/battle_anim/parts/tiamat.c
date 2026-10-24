@@ -263,7 +263,7 @@ void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *effect, s32 mode) {
     if (frame == 48)
       Sound_PlaySongFar(SE_RUMBLE);
     if (frame == 128)
-      Sound_PlaySongFar(SE_145);
+      Sound_PlaySongFar(SE_CRASH);
     // Flashes: one a frame, thrown to the left (mirrored by dir), 65 to 110
     // degrees round from straight down, at 2 to 6 pixels a frame.
     if (frame >= 129 && frame <= 175) {
@@ -427,7 +427,7 @@ void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *effect, s32 mode) {
           streak->x -= dir * 6;
           streak->y += 6;
           if (frame <= 47 && streak->y > 55)
-            Sound_PlaySongFar(SE_136);
+            Sound_PlaySongFar(SE_WHOOSH);
           draw[0](canvas, sheet + gBattleAnim_MoteCells[size - 1],
                   streak->x - size / 2, streak->y + 30, size, size * 2);
         } else {

@@ -226,7 +226,7 @@ s32 Map_Initialize(void) {
 
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   WAIT(10);
-  Map_QueueMusic(SE_170);
+  Map_QueueMusic(SE_AMBIENT_WATER);
   OBJECT_ANIMATION(LOCALID_SUNKEN_STUMP, STUMP_ANIMATION_SINK);
   ObjectEvent_GetById(LOCALID_SUNKEN_STUMP)->priorityFlags =
       OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -564,7 +564,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   stump->layer = 0;
   ObjectMotion_CommitCurrentPositionAndActivate(stumpId);
   ObjectEvent_WaitBelowHeight(stump, PIXELS(32));
-  Sound_PlaySong(SE_188);
+  Sound_PlaySong(SE_THUMP);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   Sound_PlaySong(SE_RUMBLE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);

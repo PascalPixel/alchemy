@@ -189,13 +189,13 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
     size = 2;
     count = frame * 2;
     if (frame == 16) {
-      Sound_PlaySongFar(SE_140);
+      Sound_PlaySongFar(SE_SPIN);
     }
     if (frame == 132) {
-      Sound_PlaySongFar(SE_131);
+      Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
     }
     if (frame == 151) {
-      Sound_PlaySongFar(SE_145);
+      Sound_PlaySongFar(SE_CRASH);
     }
     if (gKeysRepeat & (KEY_A | KEY_B)) {
       break;
@@ -413,7 +413,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
       work->particles[i].variant = -(Random16() & 15);
     }
     ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
-    Sound_PlaySongFar(SE_145);
+    Sound_PlaySongFar(SE_CRASH);
     // The pillar is 48 pixels wide at canvas x 36 and reaches from the top
     // down to line 112; its sparks start at its foot, x 60.
     pillarX = 60;

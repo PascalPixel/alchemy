@@ -636,7 +636,7 @@ static void Imil_OpenDoorAndExit(void) {
   }
   warp = (s16)(work->coordEvent - 50);
   if (warp == IMIL_TO_IMIL_INTERIORS_NORTHEAST) {
-    Sound_PlaySong(SE_188);
+    Sound_PlaySong(SE_THUMP);
   } else {
     Sound_PlaySong(SE_DOOR_OPEN);
   }
@@ -1091,13 +1091,13 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
   FieldScript_WaitFrames(10);
   Script_ShowMessage(LOCALID_MIA, 0);
-  Script_PlaySong(SE_131);
+  Script_PlaySong(SE_PSYNERGY_SPARKLE);
   // The lighthouse interrupts the visit; Mia leaves and the party follows.
   PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(31, 20, 31), 0);
   PaletteFade_StartInterpolation(10);
   WaitFrames(1);
-  Script_PlaySong(SE_220);
+  Script_PlaySong(SE_SHIMMER);
   WaitFrames(40);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(60);

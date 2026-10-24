@@ -249,7 +249,7 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *effect) {
       Sound_PlaySongFar(SE_HEAVY_IMPACT);
     }
     if (frame == 226) {
-      Sound_PlaySongFar(SE_145);
+      Sound_PlaySongFar(SE_CRASH);
     }
     Transform_Reset();
 
@@ -416,10 +416,10 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *effect) {
       }
     }
     if (frame >= 9 && frame < 72 && (frame & 3) == 0) {
-      Sound_PlaySongFar(SE_132);
+      Sound_PlaySongFar(SE_WATER);
     }
     if (frame == 72) {
-      Sound_PlaySongFar(SE_145);
+      Sound_PlaySongFar(SE_CRASH);
     }
     // From frame 65 a 40x80 block falls diagonally from the top right, 7
     // pixels left and 14 down a frame.

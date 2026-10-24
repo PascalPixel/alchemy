@@ -339,7 +339,7 @@ s32 DjinnMenu_RunScreen(void) {
       // Confirmed: apply it at once.
       // Fall through.
     case DJINN_STEP_APPLY_STANDBY:
-      Sound_PlaySongFar(SE_175);
+      Sound_PlaySongFar(SE_NOTE_HIGH);
       Djinn_PutOnStandbyFar(menu->shownMember[0], menu->pairElement[0],
                             menu->pairIndex[0]);
       result = (s32)DjinnRecovery_AddStandbyFar(
@@ -1347,7 +1347,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         continue;
       }
       if (djinn & DJINN_ENTRY_IS_SET) {
-        Sound_PlaySongFar(SE_175);
+        Sound_PlaySongFar(SE_NOTE_HIGH);
         Djinn_PutOnStandbyFar(DJINN_MEMBER(djinn), DJINN_ELEMENT(djinn),
                               DJINN_NUMBER(djinn));
         DjinnRecovery_AddStandbyFar(DJINN_MEMBER(djinn), DJINN_ELEMENT(djinn),
@@ -1427,7 +1427,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         if (setAll)
           Sound_PlaySongFar(SE_DJINNI_SET);
         else
-          Sound_PlaySongFar(SE_175);
+          Sound_PlaySongFar(SE_NOTE_HIGH);
         for (i = 0; i < menu->memberCount; i++) {
           for (j = 0; j < backdrop->list.counts[i]; j++) {
             u32 entry = backdrop->list.ids[i][j];

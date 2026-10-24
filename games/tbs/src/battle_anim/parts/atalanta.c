@@ -184,7 +184,7 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *effect) {
         s32 y = Q_16_16_TO_INT(slash->y);
 
         if (frame == i * 8 + 84)
-          Sound_PlaySongFar(SE_212);
+          Sound_PlaySongFar(SE_POWER_UP);
         if (frame >= i * 8 + 85) {
           slash->x += slash->velocityX;
           slash->y += slash->velocityY;

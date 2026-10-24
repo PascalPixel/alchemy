@@ -55,10 +55,10 @@
 ///   schedule (gVaultCave_ScheduleFrames) while the party pushes or Moves a
 ///   pillar (LOCALID_NORTHERN_PILLAR) onto its switch
 ///   (FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH). A water drop that lands on that
-///   pillar marks it struck (FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK, SE_204), and
-///   a struck pillar no longer opens the switch until the room is entered
-///   again. VAULT_CAVE_MOUTH_TO_VAULT_REVISIT leads out to Vault
-///   (VAULT_REVISIT_FROM_VAULT_CAVE_MOUTH).
+///   pillar marks it struck (FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK,
+///   SE_DUST_PUFF), and a struck pillar no longer opens the switch until the
+///   room is entered again. VAULT_CAVE_MOUTH_TO_VAULT_REVISIT leads out to
+///   Vault (VAULT_REVISIT_FROM_VAULT_CAVE_MOUTH).
 ///
 /// Each room has a door that only says it is locked
 /// (EventScript_ShowLockedDoor). The pushes share VaultCave_PushPillarAhead,
@@ -390,7 +390,7 @@ static void VaultCave_PushPillarAhead(void) {
   }
   Object_SelectAnimation(leader, ANIM_PUSH);
   WaitFrames(15);
-  Sound_PlaySong(SE_238);
+  Sound_PlaySong(SE_PUSH_STEP);
   pillar->speed = 0x3333;
   pillar->acceleration = 0x3333;
   Object_SetPosition(pillar, destination.x, destination.y, destination.z);
@@ -715,7 +715,7 @@ static void VaultCave_RunRumble(void) {
   }
   MapGrid_SetShake(0x30000, 0x30000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  Script_PlaySong(SE_163);
+  Script_PlaySong(SE_RUSH);
   // Scroll and shake for 480 frames before the final fade.
   for (frame = 479; frame >= 0; frame--) {
     u32 scrollDrift = (u32)(Random_Next() << 11) >> 16;
@@ -761,13 +761,13 @@ static void EventScript_FlipSwitch(void) {
     // Animate the switch face before the adjacent mechanism starts.
     destinationRow = 27;
     destinationColumn = 92;
-    Script_PlaySong(SE_155);
+    Script_PlaySong(SE_SWITCH);
     MapGrid_CopyCells(107, 27, 1, 1, destinationColumn, destinationRow);
     FieldScript_WaitFrames(39);
     MapGrid_CopyCells(108, 27, 1, 1, destinationColumn, destinationRow);
     FieldScript_WaitFrames(50);
     destinationColumn = 25;
-    Script_PlaySong(SE_156);
+    Script_PlaySong(SE_SWITCH_MECHANISM);
     MapGrid_CopyCells(1, 24, 1, 2, destinationColumn, destinationRow);
     FieldScript_WaitFrames(40);
     MapGrid_CopyCells(2, 24, 1, 2, destinationColumn, destinationRow);
@@ -839,7 +839,7 @@ static void VaultCave_UpdateTimedFallingObjects(void) {
           fallingObjectEvent->gravity = 0;
           fallingObjectEvent->velocityY = 0;
           fallingObjectEvent->paused = 0;
-          Script_PlaySong(SE_106);
+          Script_PlaySong(SE_DRIP);
         }
       }
     }
@@ -849,14 +849,14 @@ static void VaultCave_UpdateTimedFallingObjects(void) {
       Import_ObjectEventSetAnimation(LOCALID_NORTHERN_PILLAR, 1);
       if (Script_GetFlag(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
         GameFlag_Set(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK);
-        Script_PlaySong(SE_204);
+        Script_PlaySong(SE_DUST_PUFF);
       } else {
-        Script_PlaySong(SE_106);
+        Script_PlaySong(SE_DRIP);
       }
     }
     if (VaultCave_ResetFallingObjectAtObjectEventCell(
             LOCALID_PILLAR_SOUTH_OF_NORTHERN_SWITCH) != 0) {
-      Script_PlaySong(SE_106);
+      Script_PlaySong(SE_DRIP);
     }
   }
 }
@@ -897,7 +897,7 @@ static void VaultCave_UpdateFrostControlledFallingObjects(void) {
         fallingObjectEvent->y.fixed = PIXELS(255);
         fallingObjectEvent->gravity = 0;
         fallingObjectEvent->velocityY = 0;
-        Sound_PlaySong(SE_106);
+        Sound_PlaySong(SE_DRIP);
       } else {
         if (fallingObjectEvent->velocityY <= 0) {
           if (fallingObjectEvent->y.fixed > 0xffff) {
@@ -907,7 +907,7 @@ static void VaultCave_UpdateFrostControlledFallingObjects(void) {
         fallingObjectEvent->gravity = stateValue;
         fallingObjectEvent->velocityY = stateValue;
         fallingObjectEvent->y.fixed = PIXELS(255);
-        Sound_PlaySong(SE_106);
+        Sound_PlaySong(SE_DRIP);
       }
     }
   }

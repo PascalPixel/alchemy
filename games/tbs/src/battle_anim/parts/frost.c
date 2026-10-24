@@ -86,7 +86,7 @@ void BattleAnim_RunFrost(struct BattleAnimArgs *effect) {
     lowest = 120 << 16;
     highest = 0;
     if (frame == gFrost_Timings[work->effect->variant][FROST_FRAME] + 11)
-      ANIM_SHOW_DAMAGE(SE_132);
+      ANIM_SHOW_DAMAGE(SE_WATER);
     // The motes turn about (0, 0, 512), not about a target. That point is
     // behind the eye, so they are never projected (see the motes below).
     SET_VECTOR(point, 0, 0, 512 << 16);
@@ -98,7 +98,7 @@ void BattleAnim_RunFrost(struct BattleAnimArgs *effect) {
     // Frame 85 is Frost's burst; Tundra and Glacier play this sound 12 and 24
     // frames before theirs.
     if (frame == 85)
-      Sound_PlaySongFar(SE_136);
+      Sound_PlaySongFar(SE_WHOOSH);
     ANIM_FOR_EACH_TARGET(i, work->effect) {
       if (frame == i * 4 + 40)
         BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_BLUE_TINT,

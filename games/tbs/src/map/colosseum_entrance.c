@@ -1129,7 +1129,7 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
 
   FieldScript_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Script_PlaySong(SE_247);
+  Script_PlaySong(SE_COLOSSO_LETTERING);
   Import_ObjectEventSetAnimation(LOCALID_GROUNDS_FIRST_TORCH, ANIM_WALK);
   Import_ObjectEventSetAnimation(LOCALID_GROUNDS_FIRST_TORCH + 1, ANIM_WALK);
   Import_ObjectEventSetAnimation(LOCALID_GROUNDS_FIRST_TORCH + 2, ANIM_WALK);
@@ -1289,7 +1289,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
 
   FieldScript_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Script_PlaySong(SE_247);
+  Script_PlaySong(SE_COLOSSO_LETTERING);
   Import_ObjectEventSetAnimation(LOCALID_GROUNDS_FIRST_TORCH, ANIM_WALK);
   Import_ObjectEventSetAnimation(LOCALID_GROUNDS_FIRST_TORCH + 1, ANIM_WALK);
   Import_ObjectEventSetAnimation(LOCALID_GROUNDS_FIRST_TORCH + 2, ANIM_WALK);
@@ -1395,7 +1395,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   trialEffect->scaleX = Q16_ONE;
   trialEffect->scaleY = Q16_ONE;
   FieldScript_WaitFrames(10);
-  Script_PlaySong(SE_107);
+  Script_PlaySong(SE_TREMOR);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   FieldScript_WaitFrames(10);
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);

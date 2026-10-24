@@ -177,16 +177,16 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
     // converge (152 to 239), the beam of lines reaches the burst (from 176)
     // and the burst breaks into light (from 222).
     if (frame == 24) {
-      Sound_PlaySongFar(SE_162);
+      Sound_PlaySongFar(SE_WAVE);
     }
     if (frame == 76) {
-      Sound_PlaySongFar(SE_164);
+      Sound_PlaySongFar(SE_SCATTER);
     }
     if (frame == 154) {
-      Sound_PlaySongFar(SE_142);
+      Sound_PlaySongFar(SE_SWIRL);
     }
     if (frame == 222) {
-      Sound_PlaySongFar(SE_145);
+      Sound_PlaySongFar(SE_CRASH);
     }
     // Over the first 16 frames the window's right edge sweeps open by a
     // growing step, ragged by 128 random offsets: frame 1 starts the

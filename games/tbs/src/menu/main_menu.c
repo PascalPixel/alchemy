@@ -254,7 +254,7 @@ const u16 gMainMenu_ExtraCodeSequence[] = {
 /// The task that follows the two hidden codes each frame while
 /// the main menu runs. Each key must be held alone and then every
 /// key released; any other key starts that code over. A finished code sets
-/// its unlocked flag, which stays set, and plays SE_110.
+/// its unlocked flag, which stays set, and plays SE_CHIME.
 static void MainMenu_CheckButtonCodes(void) {
   if (gMainMenu_CodeUnlocked == 0) {
     if (gMainMenu_CodeHeld != 0) {
@@ -268,7 +268,7 @@ static void MainMenu_CheckButtonCodes(void) {
         if (MAIN_MENU_SEQUENCE_KEYS(
                 gMainMenu_CodeSequence)[gMainMenu_CodeProgress] == 0) {
           gMainMenu_CodeUnlocked = 1;
-          Sound_PlaySong(SE_110);
+          Sound_PlaySong(SE_CHIME);
         }
       } else {
         gMainMenu_CodeProgress = 0;
@@ -289,7 +289,7 @@ static void MainMenu_CheckButtonCodes(void) {
                 gMainMenu_ExtraCodeSequence)[gMainMenu_ExtraCodeProgress] ==
             0) {
           gMainMenu_ExtraCodeUnlocked = 1;
-          Sound_PlaySong(SE_110);
+          Sound_PlaySong(SE_CHIME);
         }
       } else {
         gMainMenu_ExtraCodeProgress = 0;

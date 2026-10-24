@@ -209,7 +209,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
     // push (in quarter turns): 2 pushing away from its side, 3 drawing toward
     // it, 1 sideways. Target and hand then move 16 pixels at 0.2 pixels a
     // frame, and a caster in the way is carried along with them.
-    Sound_PlaySongFar(SE_175);
+    Sound_PlaySongFar(SE_NOTE_HIGH);
     x = position.x;
     z = position.z;
     Object_SelectAnimationFar(
@@ -453,7 +453,7 @@ void UpdateRisingParticleBurst(void *object) {
                                                        dist, Random16());
     }
   }
-  Sound_PlaySongFar(SE_131);
+  Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
   Object_ReleaseFar((struct Object *)src);
 }
 

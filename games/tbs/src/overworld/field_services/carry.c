@@ -109,7 +109,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   // flag bit 2) with no shadow and its colours cycling.
   target->update = Object_CycleSpriteColors;
   Task_Add(FieldEffect_SpawnFallingParticles, 0xc80);
-  Sound_PlaySongFar(SE_130);
+  Sound_PlaySongFar(SE_PSYNERGY_START);
   target->motionFlags = 4;
   Object_SetSpriteFlagsFar((struct Object *)target, 0);
   if (hands[0] != NULL && hands[1] != NULL) {
@@ -189,7 +189,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
       s32 x;
       s32 z;
 
-      Sound_PlaySongFar(SE_175);
+      Sound_PlaySongFar(SE_NOTE_HIGH);
       x = p->x;
       z = p->z;
       Object_SelectAnimationFar(hands[0], 4);
@@ -227,9 +227,9 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   Object_SelectAnimationFar(hands[0], 4);
   Object_SelectAnimationFar(hands[1], 4);
   Task_Remove(FieldEffect_SpawnFallingParticles);
-  Sound_PlaySongFar(SE_135);
+  Sound_PlaySongFar(SE_CLICK);
   WaitFrames(15);
-  Sound_PlaySongFar(SE_135);
+  Sound_PlaySongFar(SE_CLICK);
   WaitFrames(15);
   SET_POSITION(p, target->x.fixed, target->y.fixed + (16 << 16),
                target->z.fixed);
@@ -253,7 +253,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
       }
     }
   }
-  Sound_PlaySongFar(SE_131);
+  Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
   Object_ReleaseFar((struct Object *)hands[0]);
   Object_ReleaseFar((struct Object *)hands[1]);
 

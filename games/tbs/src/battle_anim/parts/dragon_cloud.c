@@ -140,9 +140,9 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
     if (frame == DRAGON_CLOUD_STRIKE_FRAME)
       ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 0)
-      Sound_PlaySongFar(SE_136);
+      Sound_PlaySongFar(SE_WHOOSH);
     if (frame == 50)
-      Sound_PlaySongFar(SE_136);
+      Sound_PlaySongFar(SE_WHOOSH);
     // 1/256 of a turn a frame, then re-aim the turned camera at the field's
     // centre at 100% zoom, which also moves the battle background's plane.
     if (work->effect->side == 0) {

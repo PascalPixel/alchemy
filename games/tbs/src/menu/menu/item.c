@@ -597,7 +597,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
           ItemMenu_ShowMessage(MsgEquippedIt, 15, 14);
           item = Item_GetDirectFar(menu->selectedItems[0]);
           if ((item->flags & ITEM_CURSED) != 0) {
-            Sound_PlaySongFar(SE_103); // the curse sound
+            Sound_PlaySongFar(SE_CURSE);
             WindowSprite_ClearListFar(menu->descriptionWindow);
             ItemMenu_ShowMessage(MsgEquippedIt + 7, // "You were cursed!"
                                  ITEM_MODAL_SHORT_X, 14);
@@ -736,7 +736,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
             ItemMenu_ShowMessage(MsgEquippedIt, 15, 14);
             item = Item_GetDirectFar(menu->selectedItems[0]);
             if ((item->flags & ITEM_CURSED) != 0) {
-              Sound_PlaySongFar(SE_103); // the curse sound
+              Sound_PlaySongFar(SE_CURSE);
               WindowSprite_ClearListFar(menu->descriptionWindow);
               ItemMenu_ShowMessage(MsgEquippedIt + 7, // "You were cursed!"
                                    ITEM_MODAL_SHORT_X, 14);
@@ -782,7 +782,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_ShowMessage(MsgEquippedIt, 15, 8);
       item = Item_GetDirectFar(menu->selectedItems[0]);
       if ((item->flags & ITEM_CURSED) != 0) {
-        Sound_PlaySongFar(SE_103); // the curse sound
+        Sound_PlaySongFar(SE_CURSE);
         WindowSprite_ClearListFar(menu->descriptionWindow);
         ItemMenu_ShowMessage(MsgEquippedIt + 7, // "You were cursed!"
                              ITEM_MODAL_SHORT_X, 8);
@@ -1797,10 +1797,10 @@ s32 ItemMenu_ChooseCommand(void) {
       } else {
         switch (commandIndex) {
         case ITEM_COMMAND_USE:
-          Sound_PlaySongFar(SE_174); // Use
+          Sound_PlaySongFar(SE_NOTE_MID); // Use
           break;
         case ITEM_COMMAND_EQUIP:
-          Sound_PlaySongFar(SE_175); // Equip
+          Sound_PlaySongFar(SE_NOTE_HIGH); // Equip
           break;
         case ITEM_COMMAND_INSPECT:
         case ITEM_COMMAND_GIVE:
@@ -2661,7 +2661,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
         selection = (selection + rows) % rows;
       }
       if (gKeysPressed & KEY_A) {
-        Sound_PlaySongFar(SE_175); // the Equip sound
+        Sound_PlaySongFar(SE_NOTE_HIGH); // the Equip sound
         break;
       }
       if (gKeysPressed & KEY_B) {
@@ -2947,7 +2947,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
 
       if ((gKeysPressed & KEY_A) != 0 &&
           menu->items[state.selectedIndex] != 0) {
-        Sound_PlaySongFar(SE_173); // the item choice sound
+        Sound_PlaySongFar(SE_NOTE_LOW); // the item choice sound
         result = menu->items[state.selectedIndex];
         done = 1;
         break;

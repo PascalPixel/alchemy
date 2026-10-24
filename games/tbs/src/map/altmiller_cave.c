@@ -685,7 +685,7 @@ static void AltmillerCave_PlaceLights(s32 angle) {
 
 /// Task that spins the ring of lights: it speeds up, coasts, slows
 /// and stops with the chosen light at the top, which then pulses; a click
-/// (SE_135) sounds for each fifth of a turn.
+/// (SE_CLICK) sounds for each fifth of a turn.
 static void AltmillerCave_SpinLights(void) {
   struct LightWheel *wheel = gAltmillerCave_LightWheel;
   s32 moving = 1;
@@ -726,7 +726,7 @@ static void AltmillerCave_SpinLights(void) {
     gAltmillerCave_LightWheel->travel += gAltmillerCave_LightWheel->speed;
     if (gAltmillerCave_LightWheel->travel > 0x3000) {
       gAltmillerCave_LightWheel->travel = 0;
-      Sound_PlaySong(SE_135);
+      Sound_PlaySong(SE_CLICK);
     }
   }
   gAltmillerCave_LightWheel->ticks++;
@@ -774,23 +774,23 @@ static void AltmillerCave_TurnRock(s32 rock) {
   if (state == PUZZLE_START) {
     if (rock == LOCALID_BLUE_ROCK) {
       state = PUZZLE_LEFT_ROCK_TURNED;
-      Script_PlaySong(SE_110);
+      Script_PlaySong(SE_CHIME);
     } else {
       Script_PlaySong(SE_MENU_ERROR);
     }
     gMapLocalState[0] = 0;
   } else if (state == PUZZLE_LEFT_ROCK_TURNED) {
     if (rock == LOCALID_BLUE_ROCK) {
-      Script_PlaySong(SE_110);
+      Script_PlaySong(SE_CHIME);
     } else if (rock == LOCALID_RED_ROCK) {
-      // The lights grow in one by one, each with SE_151.
+      // The lights grow in one by one, each with SE_LIGHT_APPEAR.
       state = PUZZLE_LIGHTS_SHOWN;
-      Script_PlaySong(SE_110);
+      Script_PlaySong(SE_CHIME);
       Task_Wait(30);
       angle = gAltmillerCave_LightWheel->angle;
       for (i = 0; i < LIGHT_COUNT; i++) {
         AltmillerCave_PlaceLight(LOCALID_FIRST_LIGHT + i, PIXELS(24), angle);
-        Script_PlaySong(SE_151);
+        Script_PlaySong(SE_LIGHT_APPEAR);
         objectEvent = ObjectEvent_Get(LOCALID_FIRST_LIGHT + i);
         objectEvent->scaleX = 0;
         scale = 2 * Q16_ONE / 5;
@@ -816,7 +816,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
       Task_Wait(30);
       for (i = 0; i < LIGHT_COUNT; i++) {
         objectEvent = ObjectEvent_Get(LOCALID_FIRST_LIGHT + i);
-        Script_PlaySong(SE_151);
+        Script_PlaySong(SE_LIGHT_APPEAR);
         for (scale = objectEvent->scaleX; objectEvent->scaleX > 2 * Q16_ONE / 5;
              scale -= 3 * Q16_ONE / 64) {
           objectEvent->scaleY = scale;
@@ -826,7 +826,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
         ObjectEvent_SetPosition(LOCALID_FIRST_LIGHT + i, 0, 0);
       }
     } else {
-      Script_PlaySong(SE_110);
+      Script_PlaySong(SE_CHIME);
       correctRock = 1;
       Task_Wait(30);
     }
@@ -849,7 +849,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
         Task_Wait(1);
       }
       Task_Wait(10);
-      Script_PlaySong(SE_110);
+      Script_PlaySong(SE_CHIME);
     } else {
       // The third light matched: the ground shakes, the ring spirals in to
       // nothing, and the wall bursts.
@@ -863,7 +863,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
       FieldScript_WaitFrames(20);
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
       gAltmillerCave_LightWheel->phase = WHEEL_STOPPED;
-      Script_PlaySong(SE_190);
+      Script_PlaySong(SE_WARP);
       radius = PIXELS(24);
       angle = gAltmillerCave_LightWheel->angle;
       do {
@@ -974,7 +974,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     ObjectEvent_SetPosition(LOCALID_BABI, PIXELS(x), PIXELS(z));
   }
   objectEvent->sprite->flags = 0;
-  Script_PlaySong(MUS_030);
+  Script_PlaySong(MUS_BABI);
   ObjectEvent_SetSpeed(LOCALID_BABI, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkByAndWait(LOCALID_BABI, 32, 32);
   ObjectEvent_FaceDirection(LOCALID_BABI, FACING_SOUTH, 0);

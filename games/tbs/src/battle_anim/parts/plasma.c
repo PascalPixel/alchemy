@@ -369,10 +369,10 @@ void BattleAnim_RunSparkGroups(struct BattleAnimArgs *effect, s32 mode) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, 0x3f3f3f3f);
     if (mode == SPARK_GROUPS_DYNAMITE || mode == SPARK_GROUPS_RISING) {
       if (frame == 2)
-        ANIM_SHOW_DAMAGE(SE_145);
+        ANIM_SHOW_DAMAGE(SE_CRASH);
     } else {
       if (frame == 2)
-        Sound_PlaySongFar(SE_145);
+        Sound_PlaySongFar(SE_CRASH);
       if (frame == 24)
         ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }

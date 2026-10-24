@@ -181,7 +181,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
     animation->velocityY = 0xa0000;
     animation->gravity = 0x91eb;
     BattleAnim_TintBattler(work->effect->user, -1, POSE_LEAP, -1, 0);
-    Sound_PlaySongFar(SE_145);
+    Sound_PlaySongFar(SE_CRASH);
     direction = work->effect->side == 1 ? mode : -1;
   } else {
     direction = -1;
@@ -568,9 +568,9 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
     if (elapsed > 19)
       Palette_BrightenBgEntries(2, 2, 2);
     if (frame == 0)
-      Sound_PlaySongFar(SE_156);
+      Sound_PlaySongFar(SE_SWITCH_MECHANISM);
     if (frame == 40)
-      Sound_PlaySongFar(SE_145);
+      Sound_PlaySongFar(SE_CRASH);
     if (frame == 48) {
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         Sprite_DestroyFar(work->animations[0]);

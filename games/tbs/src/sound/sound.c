@@ -25,10 +25,10 @@ enum {
   BGM_DEFAULT_RAMP_STEP = 4,
   /// The track mask of every music command here. It selects tracks 0 to 7
   /// only, though the music player has 10 (sound/music_player_table.s) and
-  /// MUS_KALAY,
-  /// MUS_022, MUS_028, MUS_029, MUS_040, MUS_TOLBI_BOUND_SHIP, MUS_WORLD_MAP,
-  /// MUS_VENUS_LIGHTHOUSE and MUS_074 use 9 or more: their tracks 8 and 9
-  /// keep their volume and pitch through the ramps and under a fanfare.
+  /// MUS_KALAY, MUS_ELEMENTAL_STARS, MUS_DUNGEON, MUS_CONFRONTATION,
+  /// MUS_UNUSED, MUS_TOLBI_BOUND_SHIP, MUS_WORLD_MAP, MUS_VENUS_LIGHTHOUSE and
+  /// MUS_MAIN_MENU use 9 or more: their tracks 8 and 9 keep their volume and
+  /// pitch through the ramps and under a fanfare.
   TRACKS_ALL = 0xff,
   MUSIC_PLAYER_COUNT = 8, ///< gMusicPlayerLastSong' entries, one a player.
   /// VBlanks after a fanfare starts before the music waits for it to end.
@@ -358,7 +358,7 @@ void Sound_UpdateCommandMask(u32 command) {
 s32 Sound_GetCurrentBgm(void) { return gCurrentBgm; }
 
 /// Waits a frame at a time for fanfare restoration, giving up after 300
-/// frames. Called only by Vale's sanctum, after the fanfare (MUS_086) for
+/// frames. Called only by Vale's sanctum, after the fanfare (MUS_INN) for
 /// accepting the Great Healer's quest.
 void Sound_WaitForSong(void) {
   s32 framesWaited = 0;

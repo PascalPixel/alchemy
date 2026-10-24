@@ -543,7 +543,7 @@ static void EventScript_LeaveToValeInnEast(void) {
 /// (FLAG_KEEP_PARTY_POSITION) the two doors close again. Garet, until he joins,
 /// is shown struggling with his things.
 s32 ValeStormyNight_Initialize(void) {
-  Map_QueueMusic(SE_170);
+  Map_QueueMusic(SE_AMBIENT_WATER);
   Import_ObjectEventSetPosition(LOCALID_FELIX_CHILD, 0, 0);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
     GameFlag_Clear(FLAG_VALE_ISAACS_DOOR_OPEN);
@@ -904,12 +904,12 @@ static void EventScript_FirstRockFalls(void) {
     if (Script_GetFlag(FLAG_VALE_STORM_FIRST_ROCK_FELL) == 0) {
       rock = ObjectEvent_GetById(LOCALID_FIRST_ROCK);
       rockSprite = rock->sprite;
-      // A rumble (SE_RUMBLE, then SE_145), and the rock bounces down from the
+      // A rumble (SE_RUMBLE, then SE_CRASH), and the rock bounces down from the
       // east.
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
       Sound_PlaySong(SE_RUMBLE);
       WaitFrames(40);
-      Sound_PlaySong(SE_145);
+      Sound_PlaySong(SE_CRASH);
       rock->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
       rockSprite->image.priority = 1;
       ObjectEvent_SetPosition(LOCALID_FIRST_ROCK, PIXELS(473), PIXELS(932));
@@ -984,7 +984,7 @@ static void EventScript_SecondRockFalls(void) {
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
       Sound_PlaySong(SE_RUMBLE);
       WaitFrames(40);
-      Sound_PlaySong(SE_145);
+      Sound_PlaySong(SE_CRASH);
       ObjectEvent_SetPosition(LOCALID_FIRST_ROCK + 1, PIXELS(381), PIXELS(808));
       rock->speed = PIXELS(3) / 2;
       rock->acceleration = PIXELS(3) / 2;
@@ -1061,7 +1061,7 @@ static void EventScript_ThirdRockFalls(void) {
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
       Script_PlaySong(SE_RUMBLE);
       WaitFrames(40);
-      Script_PlaySong(SE_145);
+      Script_PlaySong(SE_CRASH);
       ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 3);
       ObjectEvent_Get(LOCALID_PARTY_LEADER)->priorityFlags |=
           OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -1135,7 +1135,7 @@ static void EventScript_FourthRockFalls(void) {
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
       Sound_PlaySong(SE_RUMBLE);
       WaitFrames(40);
-      Sound_PlaySong(SE_145);
+      Sound_PlaySong(SE_CRASH);
       ObjectEvent_SetPosition(LOCALID_FIRST_ROCK + 3, PIXELS(474),
                               PIXELS(1147));
       rock->speed = PIXELS(1);
@@ -1497,7 +1497,7 @@ static void EventScript_WatchBoulderFall(void) {
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     FieldScript_WaitFrames(30);
     MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
-    Script_PlaySong(SE_145);
+    Script_PlaySong(SE_CRASH);
     FieldScript_WaitFrames(30);
     objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
     if (objectEvent != NULL) {
@@ -1516,10 +1516,10 @@ static void EventScript_WatchBoulderFall(void) {
     ObjectEvent_ShowEmote(LOCALID_GARET_CHILD,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-    Script_PlaySong(SE_145);
+    Script_PlaySong(SE_CRASH);
     FieldScript_WaitFrames(40);
     MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-    Script_PlaySong(SE_145);
+    Script_PlaySong(SE_CRASH);
     FieldScript_WaitFrames(20);
     ObjectEvent_SetAttachedEffect(
         LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1575,35 +1575,35 @@ static void EventScript_WatchBoulderFall(void) {
     movingObjectEvent->y.fixed = boulderHeight;
     movingObjectEvent->targetY = boulderHeight;
     ObjectEvent_SetSpeed(LOCALID_BOULDER, PIXELS(4) / 5, PIXELS(2) / 5);
-    Script_PlaySong(SE_145);
+    Script_PlaySong(SE_CRASH);
     ObjectEvent_MoveToAndWait(LOCALID_BOULDER, 114, 333);
     Import_ObjectEventSetAnimation(LOCALID_BOULDER, ANIM_WALK);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-    Script_PlaySong(SE_145);
+    Script_PlaySong(SE_CRASH);
     *shakeShift = 0;
     ObjectEvent_SetSpeed(LOCALID_BOULDER, PIXELS(2) / 5, PIXELS(1) / 5);
     ObjectEvent_MoveToAndWait(LOCALID_BOULDER, 114, 300);
     Import_ObjectEventSetAnimation(LOCALID_BOULDER, ANIM_WALK);
     MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-    Script_PlaySong(SE_145);
+    Script_PlaySong(SE_CRASH);
     *shakeShift = 2;
     ObjectEvent_SetSpeed(LOCALID_BOULDER, PIXELS(4) / 5, PIXELS(2) / 5);
     ObjectEvent_MoveToAndWait(LOCALID_BOULDER, 114, 333);
     Import_ObjectEventSetAnimation(LOCALID_BOULDER, ANIM_WALK);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-    Script_PlaySong(SE_145);
+    Script_PlaySong(SE_CRASH);
     *shakeShift = 0;
     ObjectEvent_SetSpeed(LOCALID_BOULDER, PIXELS(2) / 5, PIXELS(1) / 5);
     ObjectEvent_MoveToAndWait(LOCALID_BOULDER, 114, 300);
     Import_ObjectEventSetAnimation(LOCALID_BOULDER, ANIM_WALK);
     MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-    Script_PlaySong(SE_145);
+    Script_PlaySong(SE_CRASH);
     *shakeShift = 2;
     ObjectEvent_SetSpeed(LOCALID_BOULDER, PIXELS(4) / 5, PIXELS(2) / 5);
     ObjectEvent_MoveToAndWait(LOCALID_BOULDER, 114, 333);
     Import_ObjectEventSetAnimation(LOCALID_BOULDER, ANIM_WALK);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-    Script_PlaySong(SE_145);
+    Script_PlaySong(SE_CRASH);
     *shakeShift = 1;
     FieldScript_WaitFrames(20);
     ObjectEvent_SetAttachedEffect(LOCALID_ELDER_EAST, ATTACHED_EFFECT_IN_FRONT |
@@ -1877,7 +1877,7 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
   FieldCamera_WaitForArrival();
   Import_ObjectEventSetPosition(LOCALID_FELIX_CHILD, PIXELS(243), PIXELS(1277));
   WaitFrames(1);
-  Sound_PlaySong(SE_106);
+  Sound_PlaySong(SE_DRIP);
   {
     struct ObjectEvent *objectEvent;
     objectEvent = ObjectEvent_GetById(LOCALID_FELIX_CHILD);
@@ -2058,7 +2058,7 @@ static void ValeStormyNight_DoraGoesForHelp(void) {
   ObjectEvent_SetActionScript(LOCALID_JENNAS_MOTHER, script);
   ObjectEvent_RefreshSelectorById(LOCALID_JENNA_CHILD);
   FieldScript_WaitFrames(10);
-  Script_PlaySong(SE_159);
+  Script_PlaySong(SE_DOOR_CLOSE);
   MapGrid_AnimateCells(gValeStormyNight_GrandparentsDoorCloses, 38, 72);
   FieldScript_WaitFrames(30);
   Map_PlayQueuedMusic();
@@ -2073,7 +2073,7 @@ static void ValeStormyNight_DoraGoesForHelp(void) {
   ObjectEvent_SetActionScript(LOCALID_JENNA_CHILD,
                               gValeStormyNight_JennaComesOutOfRiversideHouse);
   FieldScript_WaitFrames(40);
-  Script_PlaySong(SE_159);
+  Script_PlaySong(SE_DOOR_CLOSE);
   MapGrid_AnimateCells(gValeStormyNight_IsaacsDoorCloses, 35, 73);
   ObjectEvent_RefreshSelectorById(LOCALID_JENNA_CHILD);
   Map_PlayQueuedMusic();
@@ -2336,11 +2336,11 @@ ValeStormyNight_PlaceObjectEvent(struct ObjectEvent *objectEvent,
   objectEvent->targetZ = groundPosition;
 }
 
-/// One crash of the Boulder coming down: a shake, SE_145 and a wait.
+/// One crash of the Boulder coming down: a shake, SE_CRASH and a wait.
 static __inline__ void ValeStormyNight_PlayImpactBeat(s32 shakeAmplitude,
                                                       s32 frames) {
   MapGrid_SetShake(shakeAmplitude, shakeAmplitude, Q16_ONE);
-  Script_PlaySong(SE_145);
+  Script_PlaySong(SE_CRASH);
   Script_Wait(frames);
 }
 
@@ -3371,7 +3371,7 @@ s32 gValeStormyNight_BoulderRollsDownriver[] = {
     SC_SET(SW_SCALE_Y, 2 * Q16_ONE),
     SC_MOVE(PIXELS(256), PIXELS(128), PIXELS(931)),
     SC_SYNC,
-    SC_SE(SE_145),
+    SC_SE(SE_CRASH),
     SC_SET(SW_TIMER, 60),
     SC_SET(SW_WORK, 2),
     SC_MOVE(PIXELS(228), PIXELS(149), PIXELS(957)),
@@ -3385,7 +3385,7 @@ s32 gValeStormyNight_BoulderRollsDownriver[] = {
     SC_SET(SW_WORK, 5),
     SC_MOVE(PIXELS(146), PIXELS(96), PIXELS(1038)),
     SC_SYNC,
-    SC_SE(SE_145),
+    SC_SE(SE_CRASH),
     SC_SET(SW_SPEED, PIXELS(3) / 2),
     SC_SET(SW_ACCELERATION, PIXELS(1) / 2),
     SC_SET(SW_TIMER, 60),

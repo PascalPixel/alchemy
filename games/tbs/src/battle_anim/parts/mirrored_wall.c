@@ -130,10 +130,10 @@ void BattleAnim_RunMirroredWall(struct BattleAnimArgs *effect, s32 mode) {
   // which does nothing while shakeFrames is 0.
   if (mode == MIRRORED_WALL_RECOVERY) {
     work->shakeFrames = 0;
-    Sound_PlaySongFar(SE_212);
+    Sound_PlaySongFar(SE_POWER_UP);
   } else if (mode == MIRRORED_WALL_BERSERK) {
     work->shakeFrames = 8;
-    Sound_PlaySongFar(SE_212);
+    Sound_PlaySongFar(SE_POWER_UP);
   } else {
     work->shakeFrames = 32;
   }

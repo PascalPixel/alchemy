@@ -395,7 +395,7 @@ static void EventScript_ReconsiderQuest(void) {
         PaletteFade_SetTarget(RGB(0, 0, 0), PALETTES_ALL);
         PaletteFade_StartInterpolation(120);
         FieldScript_WaitFrames(120);
-        Sound_PlaySong(MUS_086);
+        Sound_PlaySong(MUS_INN);
         Sound_WaitForSong();
         GameFlag_Set(FLAG_SANCTUM_QUEST_ACCEPTED);
         Import_ScriptRequestWarp(SANCTUM_TO_VALE_PLAZA);
@@ -853,7 +853,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);
     ObjectEvent_SetSpriteColorById(LOCALID_HEALER, 0x100);
     Sanctum_ShowHealerAfterimage();
-    Script_PlaySong(SE_196);
+    Script_PlaySong(SE_WISE_ONE_QUEST);
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
     FieldScript_WaitFrames(32);
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
@@ -927,7 +927,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);
     ObjectEvent_SetSpriteColorById(LOCALID_HEALER, 0x100);
     Sanctum_ShowHealerAfterimage();
-    Script_PlaySong(SE_196);
+    Script_PlaySong(SE_WISE_ONE_QUEST);
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
     FieldScript_WaitFrames(32);
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
@@ -1177,7 +1177,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
     PaletteFade_StartInterpolation(120);
     FieldScript_WaitFrames(120);
-    Script_PlaySong(MUS_086);
+    Script_PlaySong(MUS_INN);
     Sound_WaitForSong();
     GameFlag_Set(FLAG_SANCTUM_QUEST_ACCEPTED);
     Import_ScriptRequestWarp(SANCTUM_TO_VALE_PLAZA);
@@ -1281,8 +1281,8 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
   FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(104), 1);
   FieldScript_WaitFrames(120);
-  Script_PlaySong(MUS_021);
-  Script_PlaySong(SE_308);
+  Script_PlaySong(MUS_FOREST);
+  Script_PlaySong(SE_MATERIALIZE);
   // The Wise One enters while the healer's afterimages appear.
   ObjectEvent_SetPosition(LOCALID_WISE_ONE, PIXELS(200), PIXELS(8));
   ObjectEvent_SetSpeed(LOCALID_WISE_ONE, PIXELS(2) / 5, PIXELS(1) / 5);
@@ -1312,7 +1312,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   FieldScript_WaitFrames(60);
   ObjectEvent_ConfigureSpriteColor(LOCALID_WISE_ONE, 0x100);
   Script_PlaySong(SONG_FADE_OUT_BGM);
-  Script_PlaySong(SE_308);
+  Script_PlaySong(SE_MATERIALIZE);
   // Shrink the Wise One amid sparks before restoring the room.
   for (sparkIndex = 0; sparkIndex < 32; sparkIndex++) {
     Sanctum_SpawnObjectEventSpark(LOCALID_WISE_ONE);
@@ -1333,7 +1333,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   FieldScript_WaitFrames(120);
   Sanctum_HideHealerAfterimage();
   Import_ObjectEventSetAnimation(LOCALID_HEALER, 1);
-  Script_PlaySong(MUS_002);
+  Script_PlaySong(MUS_TOWN_IN_TROUBLE);
   FieldScript_WaitFrames(60);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
   FieldScript_WaitFrames(20);

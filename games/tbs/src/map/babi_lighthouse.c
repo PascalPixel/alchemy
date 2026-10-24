@@ -248,7 +248,7 @@ static void BabiLighthouse_LandWithParticles(void) {
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(30);
-  Sound_PlaySong(SE_204);
+  Sound_PlaySong(SE_DUST_PUFF);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags =
       OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
   FieldScript_WaitFrames(24);
@@ -268,7 +268,7 @@ static void BabiLighthouse_LandWithParticles(void) {
                           EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
                       &options);
   }
-  Sound_PlaySong(SE_188);
+  Sound_PlaySong(SE_THUMP);
   ObjectEvent_SetAttachedEffect(
       LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
@@ -303,7 +303,7 @@ static void BabiLighthouse_FallToWarp(s32 warp) {
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(10);
-  Sound_PlaySong(SE_204);
+  Sound_PlaySong(SE_DUST_PUFF);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags =
       OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
@@ -1124,7 +1124,7 @@ static void BabiLighthouse_InspectTruthDoorSwitch(void) {
     if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
 
       FieldMessage_Show(MsgFieldFlippedSwitch, 1);
-      Sound_PlaySong(SE_155);
+      Sound_PlaySong(SE_SWITCH);
       MapGrid_CopyCellsLayered(35, 78, 1, 2, 17, 78);
       FieldScript_WaitFrames(10);
       MapGrid_CopyCellsLayered(34, 78, 1, 2, 17, 78);

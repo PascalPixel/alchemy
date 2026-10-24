@@ -21,7 +21,7 @@
 /// (SANCTUM_FROM_VALE_ERUPTION), where the Great Healer passes on the Wise
 /// One's quest (Sanctum_RequestQuestAcceptance). The tremors are
 /// MapGrid_SetShake calls, each with a flash (Weather_LastLightning) and
-/// SE_145, over a burst of red flashes on the warm colours
+/// SE_CRASH, over a burst of red flashes on the warm colours
 /// (Weather_StartLightningFlash). The map sets
 /// FLAG_VALE_RETURNED_FROM_MT_ALEPH but never reads it; Sol Sanctum's entrance
 /// map does (sol_sanctum_entrance.c).
@@ -173,14 +173,14 @@ static void EventScript_ReturnFromMtAleph(void) {
   FieldScript_WaitFrames(20);
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Weather_LastLightning();
-  Script_PlaySong(SE_145);
+  Script_PlaySong(SE_CRASH);
   FieldScript_WaitFrames(30);
   Weather_LastLightning();
-  Script_PlaySong(SE_145);
+  Script_PlaySong(SE_CRASH);
   FieldCamera_WaitForArrival();
   MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
   Weather_LastLightning();
-  Script_PlaySong(SE_145);
+  Script_PlaySong(SE_CRASH);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
   FieldScript_WaitFrames(60);
@@ -226,7 +226,7 @@ static void EventScript_ReturnFromMtAleph(void) {
   FieldScript_WaitFrames(60);
   MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
   Weather_LastLightning();
-  Script_PlaySong(SE_145);
+  Script_PlaySong(SE_CRASH);
   FieldScript_WaitFrames(60);
   ObjectEvent_LinkPair(LOCALID_GREAT_HEALER, LOCALID_GARETS_GRANDFATHER, 0);
   ObjectEvent_LinkPair(LOCALID_DORA, LOCALID_GARETS_SISTER, 0);
@@ -451,7 +451,7 @@ static void EventScript_ReturnFromMtAleph(void) {
   ObjectEvent_WalkToAndWait(LOCALID_GREAT_HEALER, 255, 445);
   FieldScript_WaitFrames(40);
   MapGrid_AnimateCells(gValeEruption_SanctumDoorOpens, 45, 11);
-  Script_PlaySong(SE_188);
+  Script_PlaySong(SE_THUMP);
   FieldScript_WaitFrames(30);
   ObjectEvent_WalkTo(LOCALID_GREAT_HEALER, 255, 390);
   FieldScript_WaitFrames(20);
@@ -479,7 +479,7 @@ static void EventScript_ReturnFromMtAleph(void) {
   FieldScript_WaitFrames(40);
   MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
   Weather_LastLightning();
-  Script_PlaySong(SE_145);
+  Script_PlaySong(SE_CRASH);
   FieldScript_WaitFrames(30);
   work = gFieldWork;
   work->transition = 0;

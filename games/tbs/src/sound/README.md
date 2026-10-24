@@ -124,8 +124,10 @@ is 4, so a full fade takes 64 frames.
 Songs with more than eight tracks are not fully silenced by a fanfare. The
 music commands here select only tracks 0 to 7 (`TRACKS_ALL`, one bit a
 track), though `gMPlayInfo_BGM` has 10, so tracks 8 and 9 keep their volume
-and pitch through the ramps and under a fanfare. Nine songs use them: music
-6, 22, 28, 29, 40 to 43 (`MUS_040` to `MUS_VENUS_LIGHTHOUSE`) and 74. The
+and pitch through the ramps and under a fanfare. Nine songs use them:
+`MUS_KALAY`, `MUS_ELEMENTAL_STARS`, `MUS_DUNGEON`, `MUS_CONFRONTATION`,
+`MUS_UNUSED`, `MUS_TOLBI_BOUND_SHIP`, `MUS_WORLD_MAP`, `MUS_VENUS_LIGHTHOUSE`
+and `MUS_MAIN_MENU`. The
 original game does the same, since this is its code.
 
 The ramps are globals of the song layer: `gBgmVolume`, `gBgmVolumeTarget`
@@ -295,8 +297,9 @@ same routine in pokeemerald's `src/m4a.c`, `src/m4a_1.s` and
 second entry of `ld_r3_tp_adr_i`), `Mixer_CallViaR3` (the `bx r3` at the end
 of `SoundMainRAM`), `SoundMainRAM_Rom` (the mixer's ROM copy), the
 `MPLAY_JUMP_` indices and the music players beyond `gMPlayInfo_BGM`. The song layer's come from what `Sound_PlaySong` does with each
-range of numbers, and the songs' from `songs.h`, where a song without a
-proven name keeps its number (`MUS_009`, `SE_188`).
+range of numbers, and the songs' from `songs.h`, named as pret names its songs: music by the
+place or moment the player knows it from (`MUS_DJINN_LESSON`), a sound effect
+by what it sounds like or the moment it marks (`SE_THUMP`).
 
 The reverb codes are the last step of `IwramSoundRenderFrame`'s loop. Each
 pass loads four words of the mix buffer, two 16-bit samples to a word, and

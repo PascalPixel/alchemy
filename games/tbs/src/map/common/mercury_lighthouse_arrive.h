@@ -30,7 +30,7 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
     ObjectEvent_SetSpriteFlags(record, 0);
     FieldScript_StartScreenTransition();
     FieldScript_WaitTransitionFrames();
-    Sound_PlaySong(SE_228);
+    Sound_PlaySong(SE_SPARKLING_PASSAGE);
 #ifdef UBFIX
     objectEvent->update = MercuryLighthouse_TrailSparks;
 #else

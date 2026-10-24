@@ -240,7 +240,7 @@ void BattleAnim_RunBurstShower(struct BattleAnimArgs *effect, s32 mode) {
     // The bursts aim at the targets in turn, one a frame.
     target = frame % work->effect->targetCount;
     if (frame == 4) {
-      Sound_PlaySongFar(SE_136);
+      Sound_PlaySongFar(SE_WHOOSH);
     }
     if (mode != BURST_SHOWER_MODE_GREY) {
       if (frame == 24) {

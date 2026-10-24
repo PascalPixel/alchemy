@@ -401,7 +401,7 @@ static void MogallForest_SpawnPuffRing(s32 id) {
   s32 z;
 
   objectEvent = ObjectEvent_GetById(id);
-  Sound_PlaySong(SE_188);
+  Sound_PlaySong(SE_THUMP);
   options = &optionsStorage;
   options->priority = 1;
   for (directionIndex = 0; directionIndex <= 16; directionIndex++) {
@@ -501,7 +501,7 @@ static void MogallForest_FirstArea_PushLog(void) {
       FieldScript_WaitFrames(45);
       Import_ObjectEventSetAnimation(LOCALID_FIRST_AREA_RIVER_LOG,
                                      MOGALL_FOREST_LOG_FALLING_IN);
-      Sound_PlaySong(SE_240);
+      Sound_PlaySong(SE_LOG_FALL);
       ObjectMotion_SetActionVariant(LOCALID_FIRST_AREA_RIVER_LOG, 1);
       ObjectEvent_GetById(LOCALID_FIRST_AREA_RIVER_LOG)->priorityFlags =
           OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -646,7 +646,7 @@ static void MogallForest_FirstArea_ApeAttacks(void) {
   ObjectMotion_SetVariantCallback(LOCALID_FIRST_AREA_ATTACKING_APE, 2);
   FieldEffect_SpawnLinked(LOCALID_FIRST_AREA_ATTACKING_APE,
                           EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Sound_PlaySong(SE_147);
+  Sound_PlaySong(SE_BEAST_CRY);
   FieldScript_WaitFrames(60);
 
   MogallForest_HopObjectEventTo(
@@ -753,7 +753,7 @@ static void MogallForest_SecondArea_PushLog(void) {
       FieldScript_WaitFrames(30);
       Import_ObjectEventSetAnimation(LOCALID_SECOND_AREA_RIVER_LOG,
                                      MOGALL_FOREST_LOG_FALLING_IN);
-      Sound_PlaySong(SE_240);
+      Sound_PlaySong(SE_LOG_FALL);
 
       ObjectEvent_GetById(LOCALID_SECOND_AREA_RIVER_LOG)->priorityFlags =
           OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -1010,7 +1010,7 @@ static void MogallForest_ThirdArea_PushLog(void) {
       FieldScript_WaitFrames(30);
       Import_ObjectEventSetAnimation(probe.objectEventSlot,
                                      MOGALL_FOREST_LOG_FALLING_IN);
-      Sound_PlaySong(SE_240);
+      Sound_PlaySong(SE_LOG_FALL);
       ObjectEvent_Get(probe.objectEventSlot)->priorityFlags =
           OBJ_EVENT_PRIORITY_UNDERFOOT;
     } else {
@@ -1146,7 +1146,7 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
   ObjectMotion_SetVariantCallback(LOCALID_THIRD_AREA_ATTACKING_APE, 2);
   FieldEffect_SpawnLinked(LOCALID_THIRD_AREA_ATTACKING_APE,
                           EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Sound_PlaySong(SE_147);
+  Sound_PlaySong(SE_BEAST_CRY);
   FieldScript_WaitFrames(60);
   leaderForX = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   leaderX = leaderForX->x.part.pixel;
@@ -1437,7 +1437,7 @@ static void MogallForest_KillerApeAttacks(void) {
   FieldScript_WaitFrames(30);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
-  Sound_PlaySong(SE_148);
+  Sound_PlaySong(SE_BOSS_ROAR);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_THIRD_AREA_EAST_APE, 2);
   FieldScript_WaitFrames(20);
   // Jump toward the leader, then enter the final creature encounter.

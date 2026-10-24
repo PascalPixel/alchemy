@@ -202,7 +202,7 @@ void BattleAnim_RunTargetMotes(struct BattleAnimArgs *effect, u32 mode) {
     Task_Add(BattleAnim_ArmBg2AffineHBlankDma, ANIM_CALLBACK_ORDER);
   // Trails keep 75% of each pixel a frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
-  Sound_PlaySongFar(SE_142);
+  Sound_PlaySongFar(SE_SWIRL);
 
   // Target n's turn starts on frame n * 8; the animation ends 64 frames (wide
   // styles) or 32 after the last one starts.
@@ -421,7 +421,7 @@ void BattleAnim_RunSleep(struct BattleAnimArgs *effect) {
     REG_BG2X = -0x7000;
   // Redraw from blank each frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  Sound_PlaySongFar(SE_142);
+  Sound_PlaySongFar(SE_SWIRL);
   for (frame = 0; frame != SLEEP_FRAMES; frame++) {
     struct BattleCamera *camera;
 
@@ -545,7 +545,7 @@ void BattleAnim_RunCurse(struct BattleAnimArgs *effect) {
       do {
         start = i << 4;
         if (frame == start) {
-          Sound_PlaySongFar(SE_143);
+          Sound_PlaySongFar(SE_CRACK);
         }
         if (frame >= start && frame < start + 72) {
           Projection_ScaledUnit(work->effect->targets[i], &screenPosition);

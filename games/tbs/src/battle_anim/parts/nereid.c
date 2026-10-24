@@ -169,11 +169,11 @@ void BattleAnim_RunNereid(struct BattleAnimArgs *effect) {
         }
       }
       if (frame == 0)
-        Sound_PlaySongFar(SE_164);
+        Sound_PlaySongFar(SE_SCATTER);
       if (frame == 32)
-        Sound_PlaySongFar(SE_145);
+        Sound_PlaySongFar(SE_CRASH);
       if (frame == 80)
-        Sound_PlaySongFar(SE_144);
+        Sound_PlaySongFar(SE_CLATTER);
 
       // The columns: a 104-pixel image scrolling up 16 pixels a frame,
       // drawn twice to wrap round.

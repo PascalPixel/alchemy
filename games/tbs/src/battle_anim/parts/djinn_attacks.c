@@ -111,7 +111,7 @@ void BattleAnim_RunMercury(struct BattleAnimArgs *effect) {
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   ANIM_FREE_PARTICLES(i, work->particles, 8);
   ANIM_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
-  Sound_PlaySongFar(SE_162);
+  Sound_PlaySongFar(SE_WAVE);
   frame = 0;
   do {
     if (frame == 56)
@@ -552,7 +552,7 @@ void BattleAnim_RunMars(struct BattleAnimArgs *effect) {
     index++;
   } while (index != MARS_FLAMES);
 
-  Sound_PlaySongFar(SE_136);
+  Sound_PlaySongFar(SE_WHOOSH);
   frame = 0;
   diveY = -172;
   do {
@@ -582,7 +582,7 @@ void BattleAnim_RunMars(struct BattleAnimArgs *effect) {
     // Djinni is no longer drawn, so the ember streaks take its place in the
     // sheet, with their palette.
     if (frame == MARS_STRIKE_FRAME) {
-      Sound_PlaySongFar(SE_145);
+      Sound_PlaySongFar(SE_CRASH);
       work->shakeFrames = 8;
       Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet,
                                  1, 1);

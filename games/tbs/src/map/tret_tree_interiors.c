@@ -325,7 +325,7 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   *sLastCocoon = -1;
   MapGrid_CopyCells(sourceColumn, sourceRow + 1, 1, 1, destinationColumn,
                     destinationRow);
-  SE(SE_206);
+  SE(SE_CURSE_FALL);
   SCRIPT_START();
   FieldScript_SetDestination((s32)&MapId_TretTreeInteriors, warpDest);
   OBJECT_ANIMATION(leaderLocalId, ANIM_LEADER_SPIN_AWAY);
@@ -337,7 +337,7 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   objectEvent->motionFlags = OBJ_EVENT_FALLS;
   objectEvent->groundHeight = -PIXELS(160);
   objectEvent->gravity = PIXELS(1) / 2;
-  SE(SE_204);
+  SE(SE_DUST_PUFF);
   WAIT(3);
   objectEvent->layer = 2;
   ObjectMotion_SetActionVariant(leaderLocalId, 3);
@@ -526,7 +526,7 @@ static void EventScript_FightTret(void) {
   SE(SONG_FADE_OUT_BGM);
   MESSAGE_SET(MsgTretHmHrooom);
   FieldScript_ShowMessageThenWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
-  SE(MUS_029);
+  SE(MUS_CONFRONTATION);
   OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   OBJECT_SPEED(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
   OBJECT_SPEED(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
@@ -689,7 +689,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   WAIT(40);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_OPEN_EYES);
   WAIT(60);
-  SE(MUS_021);
+  SE(MUS_FOREST);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_BLINK);
   Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
   OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -927,7 +927,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
     objectEvent->y.fixed = PIXELS(100);
     objectEvent->groundHeight = -PIXELS(160);
     objectEvent->gravity = PIXELS(1) / 2;
-    SE(SE_204);
+    SE(SE_DUST_PUFF);
     FieldScript_SetDestination((s32)&MapId_TretTreeInteriors, warpDest - 10);
     WAIT(20);
     objectEvent->layer = 2;
@@ -1145,7 +1145,7 @@ static void TretTreeInteriors_SpawnSwirlSparks(void) {
   case 20:
   case 30:
   case 40:
-    SE(SE_220);
+    SE(SE_SHIMMER);
     // Waves contain 6, 5, 4, 3 and 2 sparks. Divide degrees before
     // converting them to turns, preserving the original rounding.
     for (sparkIndex = 0; sparkIndex < 6 - wave; sparkIndex++) {
@@ -1225,7 +1225,7 @@ static void TretTreeInteriors_RunLandingDustScene(void) {
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
-  SE(SE_204);
+  SE(SE_DUST_PUFF);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags =
       OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
   WAIT(24);
@@ -1251,7 +1251,7 @@ static void TretTreeInteriors_RunLandingDustScene(void) {
                           EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
                       particleOptions);
   }
-  SE(SE_188);
+  SE(SE_THUMP);
   ObjectEvent_SetAttachedEffect(
       LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   OBJECT_ANIMATION(LOCALID_PARTY_LEADER, 22);

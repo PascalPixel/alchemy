@@ -194,7 +194,7 @@ s32 Object_UpdateLeaderControl(struct Object *interpreter) {
         freeBlocks++;
     }
     if (freeBlocks - 136 < 0)
-      Sound_PlaySongFar(SE_135);
+      Sound_PlaySongFar(SE_CLICK);
   }
   /* FAKEMATCH(volatile): the volatile read puts gDebugMode's address in r5 here
    * and at the test before it, as native; as gDebugMode != 0, 9 of 808

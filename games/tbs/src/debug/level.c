@@ -218,8 +218,8 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
 /// Browses nonempty item definitions and gives the selected item to the party.
 /// Talking to LOCALID_ITEM_BROWSER. Up and Down step one number, Right and Left
 /// ten, R and L thirty, passing over numbers whose item has no icon; A gives
-/// the item to the first member with room (SE_175), and B, or A with every bag
-/// full, closes the browser.
+/// the item to the first member with room (SE_NOTE_HIGH), and B, or A with
+/// every bag full, closes the browser.
 static void IncreaseItemAndLevel_SelectItem(void) {
   // Preserve independent key tests and the direction-specific empty-icon scans.
   // Ordinary while scans grow the native function from 0x29c to 0x2a0; retain
@@ -276,7 +276,7 @@ static void IncreaseItemAndLevel_SelectItem(void) {
         Sound_PlaySong(SE_MENU_CANCEL);
         break;
       }
-      Sound_PlaySong(SE_175);
+      Sound_PlaySong(SE_NOTE_HIGH);
     }
     if (gKeysPressed & KEY_B) {
       Sound_PlaySong(SE_MENU_CANCEL);

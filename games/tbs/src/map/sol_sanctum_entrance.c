@@ -283,7 +283,7 @@ static void EventScript_OpenDoorAndEnter(void) {
   // The door opens over three frames.
   width = 3;
   height = 2;
-  Script_PlaySong(SE_181);
+  Script_PlaySong(SE_BOOM);
   MapGrid_CopyCellsTo(16, 28, 21, 3, width, height);
   WaitFrames(10);
   MapGrid_CopyCellsTo(16, 30, 21, 3, width, height);
@@ -369,7 +369,7 @@ static void EventScript_SetFirstSmallJewel(void) {
       FieldMessage_Show(message, 1);
       FieldScript_WaitFrames(20);
       reliefWidth = 3;
-      Script_PlaySong(SE_183);
+      Script_PlaySong(SE_STONE_RUMBLE);
       MapGrid_CopyCellsTo(0, 29, 3, 1, reliefWidth, 2);
       MapGrid_CopyCellAttributes(0, 29, 3, 2, reliefWidth, oneCell);
       MapGrid_CopyCellsTo(1, 109, 4, 81, oneCell, oneCell);
@@ -429,7 +429,7 @@ static void EventScript_SetSecondSmallJewel(void) {
     message = MsgSolSanctumSetSmallGem;
     FieldMessage_Show(message, 1);
     FieldScript_WaitFrames(20);
-    Sound_PlaySong(SE_183);
+    Sound_PlaySong(SE_STONE_RUMBLE);
     MapGrid_CopyCellsTo(122, 20, 120, 30, 1, 2);
     MapGrid_CopyCellAttributes(122, 20, 1, 2, 120, 30);
     MapGrid_CenterOnFollowedPoint();

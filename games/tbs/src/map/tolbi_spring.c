@@ -492,7 +492,7 @@ static inline void TolbiSpring_ShowPrizeFrame(s32 sourceColumn, s32 sourceRow) {
 static void TolbiSpring_RevealPrize(s32 item) {
   FieldScript_Start();
   FieldScript_WaitFrames(30);
-  Sound_PlaySong(SE_148);
+  Sound_PlaySong(SE_BOSS_ROAR);
   FieldScript_WaitFrames(100);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   FieldScript_WaitFrames(40);
@@ -545,7 +545,7 @@ static void TolbiSpring_RiseAndFadeIn(void) {
   const u16 *alphaSteps;
   s32 stepIndex;
 
-  Sound_PlaySong(SE_216);
+  Sound_PlaySong(SE_BURST);
   // This value belongs to layer 1; its individual field remains unnamed.
   springLayer += offsetof(struct MapGridScrollAnimView, layers[1]) + 4;
   for (stepIndex = 0; stepIndex < 16; stepIndex++) {
@@ -1488,7 +1488,7 @@ static s32 TolbiSpring_RunToss(s32 tossKind) {
   toss->launchFrame = -1;
   for (sTossFrame = 0;; sTossFrame++) {
     if (sTossFrame == 50) {
-      Sound_PlaySong(SE_300);
+      Sound_PlaySong(SE_TOLBI_SPRING_TOSS);
     }
     // Release the token on the leader's throw frame.
     if (sTossFrame == 16) {

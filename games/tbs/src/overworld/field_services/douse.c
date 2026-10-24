@@ -213,7 +213,7 @@ void FieldEffect_RunDouse(void) {
         particle->callback = FieldEffect_SpawnRandomAngleTriplet;
         particle->flag = 2;
       }
-      Sound_PlaySongFar(SE_132);
+      Sound_PlaySongFar(SE_WATER);
       WaitFrames(6);
     }
     WaitFrames(10);

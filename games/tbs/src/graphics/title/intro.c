@@ -533,7 +533,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   s32 blankTile;
   s32 resourceId;
 
-  Sound_PlaySongFar(SE_110);
+  Sound_PlaySongFar(SE_CHIME);
   gOamCopyEnabled = 1;
   resourceId = (s32)&ResourceId_NintendoLogo;
   blankTile = 0x1ff;

@@ -505,8 +505,8 @@ static void LemurianShip_SetSail(void) {
   Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(40);
-  // Everyone boards by their own scripts, hopping up onto the deck (SE_153
-  // each); the camera follows up to the ship.
+  // Everyone boards by their own scripts, hopping up onto the deck
+  // (SE_HIGH_JUMP each); the camera follows up to the ship.
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x13333, 0x9999);
   ObjectEvent_SetSpeed(LOCALID_GARET, 0x13333, 0x9999);
   ObjectEvent_SetSpeed(LOCALID_IVAN, 0x13333, 0x9999);
@@ -626,7 +626,7 @@ static void EventScript_RaiseTheShip(void) {
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 312, 232);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   Script_Wait(40);
-  Script_PlaySong(SE_140);
+  Script_PlaySong(SE_SPIN);
   for (i = 0; i <= 15; i++) {
     Io_Write16(RGB(0, i, i * 2), &PLTT_BACKDROP);
     Script_Wait(10);
@@ -640,7 +640,7 @@ static void EventScript_RaiseTheShip(void) {
     u16 bright = BLEND_ALPHA(16, 16);
 
     for (flash = 0; flash < 3; flash++) {
-      Script_PlaySong(SE_212);
+      Script_PlaySong(SE_POWER_UP);
       REG_BLDALPHA = bright;
       Script_Wait(3);
       Io_Write16(BLEND_ALPHA(16, 8), &REG_BLDALPHA);
@@ -654,7 +654,7 @@ static void EventScript_RaiseTheShip(void) {
   FieldScheduler_AddCallback(Ship_UpdateSwell, TASK_PRIORITY_MAP);
   gSprayActive = 1;
   Script_Wait(20);
-  Script_PlaySong(SE_163);
+  Script_PlaySong(SE_RUSH);
   MapGrid_SetShake(0x10000, 0x10000, 0x10000);
   Script_Wait(60);
   gSprayActive = 1;
@@ -680,7 +680,7 @@ static void EventScript_RaiseTheShip(void) {
   Script_PlaySong(SE_STOP_ACTION_SE);
   Task_Wait(1);
   // A flash of white; the swell starts as it clears.
-  Script_PlaySong(SE_145);
+  Script_PlaySong(SE_CRASH);
   Io_Write16(BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN, &REG_BLDCNT);
   for (white = 0; white <= 16; white++) {
     REG_BLDY = white;

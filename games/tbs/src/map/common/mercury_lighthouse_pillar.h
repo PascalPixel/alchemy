@@ -180,7 +180,7 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
       sprite->flags = 0;
     }
   }
-  Sound_PlaySong(SE_130);
+  Sound_PlaySong(SE_PSYNERGY_START);
 }
 
 /// Coord event 11, the pool's heart: the column of light appears over the
@@ -371,7 +371,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
   if (to->behavior != state->poolBehavior)
     ObjectEvent_SetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
   else
-    Sound_PlaySong(SE_215);
+    Sound_PlaySong(SE_SPLASH_SMALL);
   WaitFrames(1);
   *flags = saved;
   if (to->behavior == state->poolBehavior && state->stepEffect == NULL) {

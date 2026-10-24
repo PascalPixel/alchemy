@@ -809,7 +809,7 @@ static void EventScript_EnterSparklingPassage(void) {
   work = gFieldWork;
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   FieldScript_Start();
-  Sound_PlaySong(SE_228);
+  Sound_PlaySong(SE_SPARKLING_PASSAGE);
 #ifdef UBFIX
   leader->update = VenusLighthouse_EmitPassageSparkTrail;
 #else
@@ -845,7 +845,7 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
     ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_PARTY_LEADER), 0);
     FieldScript_StartScreenTransition();
     FieldScript_WaitTransitionFrames();
-    Script_PlaySong(SE_228);
+    Script_PlaySong(SE_SPARKLING_PASSAGE);
 #ifdef UBFIX
     leader->update = VenusLighthouse_EmitPassageSparkTrail;
 #else
@@ -903,7 +903,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(30);
-  Script_PlaySong(SE_204);
+  Script_PlaySong(SE_DUST_PUFF);
   leader->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
   FieldScript_WaitFrames(24);
   options.palette = 7;
@@ -924,7 +924,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
                           EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM,
                       &options);
   }
-  Script_PlaySong(SE_188);
+  Script_PlaySong(SE_THUMP);
   ObjectEvent_SetAttachedEffect(
       LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
@@ -973,7 +973,7 @@ static s32 VenusLighthouse_TrailLight(union ObjectEventOrEffect *fieldObject) {
   if ((u32)(Import_RandomNext() * 6) >> 16 == 0) {
     if (objectEvent->targetX != OBJ_EVENT_NO_TARGET ||
         objectEvent->targetZ != OBJ_EVENT_NO_TARGET) {
-      Sound_PlaySong(SE_246);
+      Sound_PlaySong(SE_GLITTER);
     }
   }
   velocityY = 0;
@@ -1405,7 +1405,7 @@ static void EventScript_SearchStatue(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_PALE, 0);
   PaletteFade_StartInterpolation(120);
   FieldScript_WaitFrames(100);
-  Script_PlaySong(SE_142);
+  Script_PlaySong(SE_SWIRL);
   FieldScript_WaitFrames(30);
   PaletteFade_ApplyTarget(RGB(31, 31, 31), 0);
   PaletteFade_StartInterpolation(60);
@@ -1529,7 +1529,7 @@ static void EventScript_MovePillarOntoSwitch(void) {
   FieldScript_Start();
   if (pillar->x.fixed >> 20 == 42) {
     FieldScript_WaitFrames(30);
-    Sound_PlaySong(SE_188);
+    Sound_PlaySong(SE_THUMP);
     pillar->motionFlags = 0;
     switchHeight = -PIXELS(2);
     pillar->groundHeight = switchHeight;
@@ -1560,7 +1560,7 @@ static void EventScript_StepOnFloorSwitch(void) {
     MapGrid_CopyCellsTo(52, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(52, 117, 41, 117, 3, 5);
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH);
-    Sound_PlaySong(SE_161);
+    Sound_PlaySong(SE_SURPRISE);
     leader->motionFlags &= ~OBJ_EVENT_FOLLOWS_TERRAIN;
     leader->groundHeight = -PIXELS(2);
     leader->y.fixed = -PIXELS(2);
@@ -1834,7 +1834,7 @@ static void EventScript_StepOnWallSwitch(void) {
     leader->y.fixed = -PIXELS(2);
     if (!Script_GetFlag(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED)) {
       FieldScript_Start();
-      Sound_PlaySong(SE_161);
+      Sound_PlaySong(SE_SURPRISE);
       GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED);
       MapGrid_CopyCellsTo(26, 33, 19, 33, 1, 1);
       FieldScript_WaitFrames(30);
@@ -1879,7 +1879,7 @@ static void EventScript_StepOnWallSwitch(void) {
       MapGrid_CopyCellAttributes(15, 32, 3, 1, 9, 32);
       MapGrid_CopyCellAttributes(12, 32, 3, 1, 15, 32);
       Sound_PlaySong(SE_STOP_ACTION_SE);
-      Sound_PlaySong(SE_188);
+      Sound_PlaySong(SE_THUMP);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       MapGrid_WaitForShakeToSettle();
       gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
@@ -1939,7 +1939,7 @@ static void EventScript_MoveGatePillar(void) {
         pillar->bounce = gateOpened;
         MapGrid_CopyCellAttributes(43, 45, 1, 1, column, row);
         ObjectEvent_WaitUntilIdle(pillar);
-        Sound_PlaySong(SE_188);
+        Sound_PlaySong(SE_THUMP);
         pillar->motionFlags = gateOpened;
         pillar->y.fixed = -PIXELS(16);
         ObjectMotion_SetActionVariant(LOCALID_GATE_PILLAR, 3);
@@ -2060,7 +2060,7 @@ static void EventScript_MoveSwitchPillar(void) {
                                gVenusThirdFloorSockets[switchIndex].x,
                                gVenusThirdFloorSockets[switchIndex].z);
     ObjectEvent_WaitUntilIdle(pillar);
-    Sound_PlaySong(SE_188);
+    Sound_PlaySong(SE_THUMP);
     pillar->collisionFlags = 0;
     pillar->motionFlags = 0;
     pillar->y.fixed = -PIXELS(16);
@@ -2166,7 +2166,7 @@ static void VenusLighthouse_LowerFloatingPillars(s32 waitFrames) {
   ObjectMotion_SetSpeedParameters(LOCALID_BALANCE_EAST, PIXELS(1) / 2,
                                   PIXELS(1) / 4);
   if (waitFrames != 0) {
-    Sound_PlaySong(SE_180);
+    Sound_PlaySong(SE_SETTLE);
   }
   Object_SetPosition(westSupport, westSupport->x.fixed,
                      gVenusBalancePlatformHeights[westSupport->timer],
@@ -2228,7 +2228,7 @@ static void VenusLighthouse_StackFloatingPillar(s32 pillarId) {
   ObjectMotion_SetSpeedParameters(pillarId, PIXELS(4), PIXELS(2));
   Object_SetPosition(pillar, pillar->x.fixed, supportHeight, pillar->z.fixed);
   ObjectMotion_CommitCurrentPositionAndActivate(pillarId);
-  Sound_PlaySong(SE_188);
+  Sound_PlaySong(SE_THUMP);
   FieldEffect_SpawnNineRadialEffects(pillarId);
   FieldScript_WaitFrames(30);
 }
@@ -2396,7 +2396,7 @@ static void EventScript_StepOnWestWallSwitch(void) {
     if (!GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
       FieldScript_Start();
       MapGrid_CopyCellsTo(63, 29, 33, 20, 1, 1);
-      Sound_PlaySong(SE_161);
+      Sound_PlaySong(SE_SURPRISE);
       MapGrid_CopyCellsTo(44, 83, 44, 80, 3, 3);
       FieldScript_WaitFrames(30);
       MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
@@ -2432,7 +2432,7 @@ static void EventScript_StepOnWestWallSwitch(void) {
       layer->offsetX += PIXELS(1) / 2;
       layer->offsetX = layer->offsetX / PIXELS(1) << 16;
       Sound_PlaySong(SE_STOP_ACTION_SE);
-      Sound_PlaySong(SE_188);
+      Sound_PlaySong(SE_THUMP);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       MapGrid_WaitForShakeToSettle();
       gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
@@ -2470,7 +2470,7 @@ static void EventScript_StepOnEastWallSwitch(void) {
     if (!GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED)) {
       FieldScript_Start();
       MapGrid_CopyCellsTo(63, 29, 49, 20, 1, 1);
-      Sound_PlaySong(SE_161);
+      Sound_PlaySong(SE_SURPRISE);
       FieldScript_WaitFrames(30);
       MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
       Sound_PlaySong(SE_HEAVY_MOVE);
@@ -2505,7 +2505,7 @@ static void EventScript_StepOnEastWallSwitch(void) {
       layer->offsetX += PIXELS(1) / 2;
       layer->offsetX = layer->offsetX / PIXELS(1) << 16;
       Sound_PlaySong(SE_STOP_ACTION_SE);
-      Sound_PlaySong(SE_188);
+      Sound_PlaySong(SE_THUMP);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       MapGrid_WaitForShakeToSettle();
       gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
@@ -2606,7 +2606,7 @@ static void EventScript_MoveSocketPillar(void) {
                                gVenusFourthFloorSockets[switchIndex].x,
                                gVenusFourthFloorSockets[switchIndex].z);
     ObjectEvent_WaitUntilIdle(pillar);
-    Script_PlaySong(SE_188);
+    Script_PlaySong(SE_THUMP);
     pillar->collisionFlags = 0;
     *motionFlags = 0;
     pillar->y.fixed = -PIXELS(16);
@@ -2868,7 +2868,7 @@ s32 VenusLighthouse_Initialize(void) {
       VenusLighthouse_AnimatePairedTileWaves();
       break;
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_FROM_DRIFTING_FLOOR_HOLE:
-      Map_QueueMusic(SE_170);
+      Map_QueueMusic(SE_AMBIENT_WATER);
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
         VenusLighthouse_LandWithRadialDust();
       break;
@@ -2906,7 +2906,7 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_THUNDER_CROWN:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_PILLARS:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_PSYNERGY_STONE:
-      Map_QueueMusic(SE_170);
+      Map_QueueMusic(SE_AMBIENT_WATER);
       FieldEffect_StartFadeOverlay(0);
       WaitFrames(2);
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED)) {
@@ -2923,7 +2923,7 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_SOUTH:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_FROM_THUNDER_CROWN:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_FROM_DRIFTING_FLOOR:
-      Map_QueueMusic(SE_170);
+      Map_QueueMusic(SE_AMBIENT_WATER);
       break;
     }
   } else if (mapId == (s32)&MapId_VenusLighthouseSecondFloor) {
@@ -2931,7 +2931,7 @@ s32 VenusLighthouse_Initialize(void) {
     switch (gSaveBlock.warpDest) {
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_SPARKLING_PASSAGE_FROM_PILLAR_PIT:
       VenusLighthouse_ArriveThroughSparkPassage();
-      Map_QueueMusic(SE_170);
+      Map_QueueMusic(SE_AMBIENT_WATER);
       break;
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_EAST:
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR:
@@ -2978,7 +2978,7 @@ s32 VenusLighthouse_Initialize(void) {
       // fall through
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_WEST:
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_WALL_SWITCH_FROM_GATE:
-      Map_QueueMusic(SE_170);
+      Map_QueueMusic(SE_AMBIENT_WATER);
       BlendScript_Suspend();
       {
         s32 zero = 0;
@@ -3005,7 +3005,7 @@ s32 VenusLighthouse_Initialize(void) {
       gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
       break;
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_NORTH:
-      Map_QueueMusic(SE_170);
+      Map_QueueMusic(SE_AMBIENT_WATER);
       break;
     }
   } else if (mapId == (s32)&MapId_VenusLighthouseThirdFloor) {
@@ -3021,7 +3021,7 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_SOUTHWEST:
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_FROM_PILLAR_SOCKETS:
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_EAST_NORTHEAST:
-      Map_QueueMusic(SE_170);
+      Map_QueueMusic(SE_AMBIENT_WATER);
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
         MapGrid_CopyCells(53, 12, 3, 13, 26, 12);
         MapGrid_CopyCellsTo(81, 41, 89, 14, 9, 2);
@@ -3050,7 +3050,7 @@ s32 VenusLighthouse_Initialize(void) {
        * does not cross-jump with the second floor's same call; as a call by
        * its void prototype, 2 of 1431 instructions differ in tbs-en. */
       VENUS_LIGHTHOUSE_RUN_OPENING_SEQUENCE();
-      Map_QueueMusic(SE_170);
+      Map_QueueMusic(SE_AMBIENT_WATER);
       break;
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_FROM_DRIFTING_FLOOR:
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_FROM_WEST_ROOM:
@@ -3111,7 +3111,7 @@ s32 VenusLighthouse_Initialize(void) {
       EventScript_MoveSwitchPillar();
       break;
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_FROM_DRIFTING_FLOOR:
-      Map_QueueMusic(SE_170);
+      Map_QueueMusic(SE_AMBIENT_WATER);
       break;
     }
   } else if (mapId == (s32)&MapId_VenusLighthouseFourthFloor) {
@@ -3177,7 +3177,7 @@ s32 VenusLighthouse_Initialize(void) {
       break;
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_FROM_WALL_SWITCHES_WEST:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_FROM_WALL_SWITCHES_EAST:
-      Map_QueueMusic(SE_170);
+      Map_QueueMusic(SE_AMBIENT_WATER);
       break;
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST:
@@ -3204,7 +3204,7 @@ s32 VenusLighthouse_Initialize(void) {
       BlendScript_Suspend();
       Io_Write16(0, &REG_BLDCNT);
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
-        Map_QueueMusic(SE_170);
+        Map_QueueMusic(SE_AMBIENT_WATER);
         MapGrid_CopyCellsTo(36, 81, 32, 81, 3, 2);
         MapGrid_CopyCellsTo(36, 83, 36, 81, 3, 2);
         MapGrid_CopyCellAttributes(36, 17, 3, 1, 32, 17);
@@ -3454,11 +3454,11 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
   FieldScript_Start();
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  Map_QueueMusic(SE_170);
+  Map_QueueMusic(SE_AMBIENT_WATER);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(40);
-  Sound_PlaySong(SE_162);
+  Sound_PlaySong(SE_WAVE);
   extraBursts = 0;
   // Advance the first tile wave, holding its fourth row for three extra bursts.
   for (row = 0; row < 10; row++) {
@@ -3548,11 +3548,11 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
   FieldScript_Start();
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  Map_QueueMusic(SE_170);
+  Map_QueueMusic(SE_AMBIENT_WATER);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(40);
-  Sound_PlaySong(SE_162);
+  Sound_PlaySong(SE_WAVE);
   FieldCamera_SetSpeedParameters(PIXELS(1) / 2, PIXELS(1) / 16);
   FieldCamera_MoveWithinMapBounds(PIXELS(440), -1, PIXELS(360), 1);
   extraBursts = 0;
@@ -3614,11 +3614,11 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   FieldScript_Start();
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  Map_QueueMusic(SE_170);
+  Map_QueueMusic(SE_AMBIENT_WATER);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(40);
-  Sound_PlaySong(SE_162);
+  Sound_PlaySong(SE_WAVE);
   FieldCamera_SetSpeedParameters(PIXELS(1) / 2, PIXELS(1) / 16);
   FieldCamera_MoveWithinMapBounds(PIXELS(568), -1, PIXELS(360), 1);
   extraBursts = 0;
@@ -3682,7 +3682,7 @@ VenusLighthouse_UpdateRisingSpray(union ObjectEventOrEffect *fieldObject) {
   framePhase = gFrameCount & 3;
   if (framePhase == 0) {
     if ((gFrameCount & 7) == 0) {
-      Sound_PlaySong(SE_246);
+      Sound_PlaySong(SE_GLITTER);
     }
     particleX = objectEvent->x.fixed +
                 ((((u32)(Import_RandomNext() * 49) >> 16) - 24) << 16);
@@ -3724,7 +3724,7 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   leader->motionFlags = 0;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Script_PlaySong(SE_204);
+  Script_PlaySong(SE_DUST_PUFF);
   FieldScript_WaitFrames(30);
   leader->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
   FieldScript_WaitFrames(24);
@@ -3766,7 +3766,7 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 1);
   ObjectMotion_SetActionVariant(LOCALID_RISING_PLATFORM, 1);
   Script_PlaySong(SONG_FADE_OUT_BGM);
-  Script_PlaySong(SE_308);
+  Script_PlaySong(SE_MATERIALIZE);
   GameFlag_Set(FLAG_SKIP_MAP_CHANGE_SOUND);
   // Raise the leader, ground height and platform by the same pixel each
   // frame.

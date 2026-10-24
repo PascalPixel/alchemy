@@ -186,7 +186,7 @@ void BattleAnim_RunSpiderWeb(struct BattleAnimArgs *effect) {
                              1);
   // Redraw from blank each frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  Sound_PlaySongFar(SE_143);
+  Sound_PlaySongFar(SE_CRACK);
   // transparent is COMPOSITE_TRANSPARENT, and also the 1 that marks each
   // frame's canvas for transfer.
   frame = 0;
@@ -217,7 +217,7 @@ void BattleAnim_RunSpiderWeb(struct BattleAnimArgs *effect) {
     ANIM_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 64, 72, size, size);
     FreeHeapSlot(HEAP_SLOT_RAM_CODE);
     if (frame == 32)
-      ANIM_SHOW_DAMAGE(SE_143);
+      ANIM_SHOW_DAMAGE(SE_CRACK);
     ANIM_FOR_EACH_TARGET(i, work->effect) {
       if (frame == 10)
         BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE, -1,

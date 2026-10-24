@@ -375,7 +375,7 @@ static void EventScript_WalkThroughDoor(void) {
   hideDoorLayers = 0;
   if (work->coordEvent == 9) {
     if (GameFlag_Get(FLAG_MCCOYS_DOOR_OPEN) == 0) {
-      Sound_PlaySong(SE_188);
+      Sound_PlaySong(SE_THUMP);
       hideDoorLayers = 1;
     }
   } else {
@@ -486,7 +486,7 @@ static void McCoyPalace_ClaimReward(s32 chestLocalId, s32 itemId,
     GameFlag_Clear(FLAG_REWARD_OFFERED);
     GameFlag_Clear(FLAG_CHOOSING_REWARD);
   } else {
-    Sound_PlaySong(SE_125);
+    Sound_PlaySong(SE_CHEST_CLOSE);
     Import_ObjectEventSetAnimation(chestLocalId, CHEST_ANIMATION_PEEK_AND_SHUT);
   }
 
@@ -1168,7 +1168,7 @@ static void EventScript_CaptainHintsAtBarricade(void) {
   FieldScript_WaitFrames(20);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   GameFlag_Set(FLAG_MCCOYS_DOOR_OPEN);
-  Script_PlaySong(SE_188);
+  Script_PlaySong(SE_THUMP);
   TilesetAnim_Resume(1);
   TilesetAnim_Resume(2);
   Import_ObjectEventSetPosition(LOCALID_CAPTAIN, PIXELS(256), PIXELS(632));

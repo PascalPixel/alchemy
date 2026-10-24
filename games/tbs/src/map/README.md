@@ -467,8 +467,7 @@ their English text. Overlay numbers are their rows of the resource directory.
 
 Many functions in `common/` keep older descriptive names
 (`ObjectEvent_SetFlagBitByRelativeDepth`, `Map_`); each takes its name with the maps that
-call it, as those maps are humanized. A sound without a proven name keeps
-its number (`SE_188`), as `songs.h` says.
+call it, as those maps are humanized.
 
 The animated warps of `enum WarpStyle` play the leader's leaving and arrival
 animations, named in `enum ObjectEventAnimation` from Isaac's sprite

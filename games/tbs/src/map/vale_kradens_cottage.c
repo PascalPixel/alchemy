@@ -671,7 +671,7 @@ static void EventScript_MeetSaturosAndMenardi(void) {
   FieldCamera_MoveTo(PIXELS(215), -1, PIXELS(345), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(20);
-  Script_PlaySong(MUS_061);
+  Script_PlaySong(MUS_SATUROS_AND_MENARDI);
 
   // Saturos and Menardi talk of the elders and of using Kraden, stubborn
   // and cunning as he is.

@@ -90,7 +90,7 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
   Task_Add(BattleCamera_ApplyPhasedDelta, ANIM_CALLBACK_ORDER);
   // Trails keep 75% of each pixel a frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
-  Sound_PlaySongFar(SE_164);
+  Sound_PlaySongFar(SE_SCATTER);
 
   for (frame = 0;
        frame != gVortices_Counts[work->effect->variant][FROTH_FRAMES];
@@ -104,7 +104,7 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
     // 16 frames before the end the battle shows the damage, with sound 132
     // on each hit.
     if (frame == gVortices_Counts[work->effect->variant][FROTH_FRAMES] - 16)
-      ANIM_SHOW_DAMAGE(SE_132);
+      ANIM_SHOW_DAMAGE(SE_WATER);
     ANIM_VIEW_FROM_CAMERA(camera);
     for (i = 0; i != gVortices_Counts[work->effect->variant][FROTH_MOTE_COUNT];
          i++) {
@@ -149,7 +149,7 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
               work->effect->targets[i % work->effect->targetCount],
               KNOCKBACK_NUDGE);
           work->shakeFrames = 4;
-          Sound_PlaySongFar(SE_132);
+          Sound_PlaySongFar(SE_WATER);
         }
       }
       // The burst where a mote struck: two mirrored halves cycling three

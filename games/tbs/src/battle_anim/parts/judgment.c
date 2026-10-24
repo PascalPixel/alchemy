@@ -216,10 +216,10 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
     slots = (DrawRectangle *)gHeapSlots;
     if (frame == 143) {
       Iwram_FillWords(canvas, CANVAS_BYTES, 0x2a2a2a2a);
-      Sound_PlaySongFar(SE_145);
+      Sound_PlaySongFar(SE_CRASH);
     }
     if (frame == 80) {
-      Sound_PlaySongFar(SE_142);
+      Sound_PlaySongFar(SE_SWIRL);
     }
 
     // DEAD: frame starts at 0 and only grows, so the sparks are never drawn;
@@ -516,20 +516,20 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
   // shows the damage.
   for (frame = 0; frame != JUDGMENT_SWEEP_FRAMES; frame++) {
     if (frame == 66) {
-      Sound_PlaySongFar(SE_145);
+      Sound_PlaySongFar(SE_CRASH);
       Sound_PlaySongFar(SE_RUMBLE);
     }
     if (frame == 155) {
-      Sound_PlaySongFar(SE_162);
+      Sound_PlaySongFar(SE_WAVE);
     }
     if (frame == 217) {
-      Sound_PlaySongFar(SE_156);
+      Sound_PlaySongFar(SE_SWITCH_MECHANISM);
     }
     if (frame == 280) {
       Sound_PlaySongFar(SE_GATE_MOVE);
     }
     if (frame == 300) {
-      ANIM_SHOW_DAMAGE(SE_145);
+      ANIM_SHOW_DAMAGE(SE_CRASH);
     }
 
     // A or B jumps to the next part: 150, 214 or 280. The jump to the beach

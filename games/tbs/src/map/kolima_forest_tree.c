@@ -367,7 +367,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   do {
     WaitFrames(1);
   } while (leader->velocityY <= 0);
-  Script_PlaySong(SE_161);
+  Script_PlaySong(SE_SURPRISE);
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_COLLAPSE);
   FieldScript_WaitFrames(120);
   Task_Remove(KolimaForestTree_SpawnRejectionSpark);
@@ -481,18 +481,18 @@ static void KolimaForestTree_RestoreTret(void) {
   FieldCamera_SetSpeed(PIXELS(16) / 5, PIXELS(2) / 5);
   FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(254), 1);
   FieldCamera_WaitForArrival();
-  Script_PlaySong(SE_246);
+  Script_PlaySong(SE_GLITTER);
   FieldScript_WaitFrames(40);
   ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTHEAST, 20);
   FieldCamera_MoveTo(PIXELS(413), -1, PIXELS(261), 1);
   FieldCamera_WaitForArrival();
-  Script_PlaySong(SE_246);
+  Script_PlaySong(SE_GLITTER);
   FieldScript_WaitFrames(40);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTH, 20);
   FieldCamera_MoveTo(PIXELS(326), -1, PIXELS(384), 1);
   FieldCamera_WaitForArrival();
-  Script_PlaySong(SE_246);
+  Script_PlaySong(SE_GLITTER);
   if (*paletteFrame != 24) {
     do {
       WaitFrames(1);
@@ -519,7 +519,7 @@ static void KolimaForestTree_RestoreTret(void) {
   FieldScript_WaitFrames(40);
   KolimaForestTree_PlayGesture(LOCALID_INVISIBLE_TRET, FACE_GESTURE_OPEN_EYES);
   FieldScript_WaitFrames(40);
-  Script_PlaySong(MUS_007);
+  Script_PlaySong(MUS_COLOSSO_INTRO);
   // Tret and Laurel discover that their powers have returned.
   FieldScript_SetMessageId(MsgKolimaFeelGreatPowerSpreadingThrough);
   Script_ShowMessage(LOCALID_TRET, 0);
@@ -802,7 +802,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_LAUREL, 0, 10);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   GameFlag_Set(FLAG_KOLIMA_CURSE_LIFTED);
-  Script_PlaySong(MUS_001);
+  Script_PlaySong(MUS_TOWN);
   KolimaForestTree_ReplaceInventoryItem(ITEM_HERMES_WATER, ITEM_EMPTY_BOTTLE);
 }
 
@@ -876,7 +876,7 @@ static void KolimaForestTree_SpawnRejectionSpark(void) {
   if (phase != 0)
     return;
   if (gKolimaForestTreePlaySparkSound != 0)
-    Sound_PlaySong(SE_200);
+    Sound_PlaySong(SE_SPARKLE_FALL);
   effect = ObjectEvent_Create(SPRITE_GOLDEN_RINGS, spawnX, spawnY, spawnZ);
   if (effect == 0)
     return;
@@ -1058,7 +1058,7 @@ static void KolimaForestTree_SpawnOrbitSparks(void) {
   case 20:
   case 30:
   case 40:
-    Sound_PlaySong(SE_220);
+    Sound_PlaySong(SE_SHIMMER);
     for (sparkIndex = 0; sparkIndex <= 5; sparkIndex++) {
       spark = ObjectEvent_Create(
           SPRITE_SPARKLE, gKolimaForestTreeSparkOrigin[0],

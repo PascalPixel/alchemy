@@ -139,7 +139,7 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
       Object_SelectAnimationFar(actor, POSE_LEAP);
       // A 4-frame shake: frame is 4 here.
       work->shakeFrames = frame;
-      Sound_PlaySongFar(SE_136);
+      Sound_PlaySongFar(SE_WHOOSH);
     }
     // Frame 16: switch to the fireball images and line the user up with
     // the target's depth.
@@ -198,7 +198,7 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
           chip->life = (Random16() & 7) + 32;
         }
         work->shakeFrames = 8;
-        ANIM_SHOW_DAMAGE(SE_145);
+        ANIM_SHOW_DAMAGE(SE_CRASH);
         BattleMotion_ApplyKnockbackFar(work->effect->targets[0],
                                        KNOCKBACK_HURL);
         BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
@@ -297,7 +297,7 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
     PARTICLES[i].y = ((Random16() & 255) - 127) << 15;
     PARTICLES[i].z = ((Random16() & 255) - 127) << 15;
   }
-  Sound_PlaySongFar(SE_142);
+  Sound_PlaySongFar(SE_SWIRL);
 
   for (frame = 0; frame != work->effect->targetCount * 32 + 96; frame++) {
     s32 *row;

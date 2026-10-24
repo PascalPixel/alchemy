@@ -38,7 +38,7 @@ static void Vault_OpenDoorwayAndEnter(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   struct Sprite *sprite = objectEvent->sprite;
 
-  Sound_PlaySong(SE_188);
+  Sound_PlaySong(SE_THUMP);
   Vault_DrawDoorwayFrame(VAULT_DOOR_OPENING_FRAME_COLUMN);
   FieldScript_WaitFrames(4);
   Vault_DrawDoorwayFrame(VAULT_DOOR_OPEN_FRAME_COLUMN);

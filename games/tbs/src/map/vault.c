@@ -830,7 +830,7 @@ static void Vault_JumpObjectEventToAndWait(s32 localId, s32 x, s32 z,
 /// it; it joins in the town's later map (vault_revisit.c).
 static void EventScript_RingBell(void) {
   FieldScript_Start();
-  Script_PlaySong(SE_100);
+  Script_PlaySong(SE_BELL);
   FieldScript_WaitFrames(40);
   if (Script_GetFlag(FLAG_VAULT_SAP_CALLED_BY_BELL) == 0) {
     ObjectEvent_SetAttachedEffect(LOCALID_SAP, ATTACHED_EFFECT_IN_FRONT |

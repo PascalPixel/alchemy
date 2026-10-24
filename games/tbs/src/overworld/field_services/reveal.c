@@ -107,7 +107,7 @@ void FieldEffect_RunReveal(void) {
                                 FIELD_PSYNERGY_REVEAL, &eventTarget);
   if (event != NULL)
     Field_RunEventAction(event, gSaveBlock.leaderLocalId, eventTarget);
-  Sound_PlaySongFar(SE_131);
+  Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
 
   // Record the centre (in pixels) and the time in the event work, and put
   // markers nearby.

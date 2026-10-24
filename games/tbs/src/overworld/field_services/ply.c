@@ -144,7 +144,7 @@ void FieldEffect_RunPly(void) {
   // XXX: last is read with no check that any particle spawned; a map with
   // no free object slots would show whether this can be 0.
   resourceSlot = last->slot;
-  Sound_PlaySongFar(SE_130);
+  Sound_PlaySongFar(SE_PSYNERGY_START);
   // The last particle spawned 7 frames ago with 120 frames to live: wait
   // until the spiral is nearly closed.
   WaitFrames(110);
@@ -162,7 +162,7 @@ void FieldEffect_RunPly(void) {
     Anim_ApplyChildValuesFar((struct Object *)target, SPRITE_COLOR_WHITE);
   }
 
-  Sound_PlaySongFar(SE_131);
+  Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
   WaitFrames(12);
   if (target != 0) {
     // Switch its sprite param every 2 frames (10 one time in 4).

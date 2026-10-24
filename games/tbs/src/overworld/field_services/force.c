@@ -45,7 +45,7 @@ void FieldEffect_RunForce(void) {
   effectWork = gFieldEffectWork;
   target = effectWork->child;
   FieldEffect_FadeToEffectColor();
-  Sound_PlaySongFar(SE_130);
+  Sound_PlaySongFar(SE_PSYNERGY_START);
   effect = effectWork->sprites;
 
   // 12 flashes burst from over the caster's head, one every 2 frames.

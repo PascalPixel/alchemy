@@ -734,7 +734,7 @@ static void EventScript_HopNorthBySmallPillars(void) {
 /// Draws an impact frame of the passage and starts a decaying vertical shake.
 static __inline__ void TunnelRuins_AnimateLoweringImpact(s32 sourceColumn,
                                                          s32 column, s32 row) {
-  Sound_PlaySong(SE_188);
+  Sound_PlaySong(SE_THUMP);
   MapGrid_CopyCellsTo(sourceColumn, 8, column, row, 1, 3);
   MapGrid_SetShake(0, PIXELS(5), Q16_ONE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -1042,7 +1042,7 @@ static void TunnelRuins_SettleBalance(s32 wait) {
   OBJECT_SPEED(LOCALID_BALANCE_WEST, PIXELS(1) / 2, PIXELS(1) / 4);
   OBJECT_SPEED(LOCALID_BALANCE_EAST, PIXELS(1) / 2, PIXELS(1) / 4);
   if (wait != 0) {
-    Sound_PlaySong(SE_180);
+    Sound_PlaySong(SE_SETTLE);
   }
   Object_SetPosition(
       ObjectEvent_GetById(LOCALID_BALANCE_WEST),
@@ -1118,7 +1118,7 @@ static void TunnelRuins_DropStoneOnStack(s32 localId) {
   }
 
   ObjectMotion_CommitCurrentPositionAndActivate(localId);
-  Sound_PlaySong(SE_188);
+  Sound_PlaySong(SE_THUMP);
   FieldEffect_SpawnNineRadialEffects(localId);
   WAIT(30);
 }
@@ -1391,7 +1391,7 @@ static void EventScript_MoveLadyStatue(void) {
       FieldCamera_WaitForArrival();
       WAIT(30);
       GameFlag_Clear(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN);
-      Sound_PlaySong(SE_159);
+      Sound_PlaySong(SE_DOOR_CLOSE);
       MapGrid_AnimateCells(gTunnelRuins_DoorCloseSteps, 32, 46);
       MapGrid_CopyCellAttributes(31, 47, 1, 1, 32, 47);
       WAIT(40);

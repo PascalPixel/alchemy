@@ -592,7 +592,7 @@ void ObjectEvent_JumpDownLedge(s32 localId, s32 pose, s32 param) {
 
     // Turn and sink 2 pixels a frame for 14 frames, raising dust, in free
     // flight: no motion flags, so it neither falls nor follows the ground.
-    Sound_PlaySongFar(SE_217);
+    Sound_PlaySongFar(SE_FLOOR_SWITCH);
     // From here pose counts frames.
     pose = 0;
     ObjectMotion_ArmCallback(localId, 0x5000, 0);

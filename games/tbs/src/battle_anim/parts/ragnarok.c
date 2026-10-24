@@ -114,14 +114,14 @@ void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
   do {
     // Sounds and the first shake; the battle shows the damage on frame 40.
     if (frame == 4) {
-      Sound_PlaySongFar(SE_212);
+      Sound_PlaySongFar(SE_POWER_UP);
     }
     // An 8-frame shake from frame 8.
     if (frame == 8) {
       work->shakeFrames = frame;
     }
     if (frame == 18) {
-      Sound_PlaySongFar(SE_145);
+      Sound_PlaySongFar(SE_CRASH);
     }
     if (frame == 40) {
       ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);

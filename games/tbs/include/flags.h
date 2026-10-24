@@ -151,7 +151,7 @@
 /// toward, gFieldEffect_TargetColors[n], in place of the frame counter's pick
 /// (FieldEffect_FadeToEffectColor).
 #define FLAG_PSYNERGY_TINT(n) (0x148 + (n))
-/// In debug mode, each step beeps (SE_135) while fewer than 136 of the 512
+/// In debug mode, each step beeps (SE_CLICK) while fewer than 136 of the 512
 /// resource blocks are free.
 #define FLAG_DEBUG_RESOURCE_BEEP 350
 /// Encounters are rolled even where FLAG_NO_ENCOUNTERS,
@@ -1227,7 +1227,7 @@
 /// (MsgTolbiShipReachedIslandRowers)
 #define FLAG_TOLBI_SHIP_AT_ISLAND 0x8a0
 /// The lookout has sighted the monsters of one of the ship's attacks, and the
-/// ship's map section plays MUS_029, the monsters' theme, instead of
+/// ship's map section plays MUS_CONFRONTATION, the monsters' theme, instead of
 /// MUS_TOLBI_BOUND_SHIP. It is cleared when the party fights them on the rowing
 /// deck. ★ Named from the game: "Monsters sighted!" (MsgTolbiShipAvast)
 #define FLAG_TOLBI_SHIP_MONSTERS_SIGHTED 0x8f0
@@ -1398,7 +1398,8 @@
 /// ★ Named from the game: "Rockslide...destroyed fence... Monsters
 /// everywhere..." (MsgValeRockslideDestroyedFence)
 #define FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT 0x87e
-/// A monster was fought on the stormy night: Vale's music changes to MUS_023.
+/// A monster was fought on the stormy night: Vale's music changes to
+/// MUS_DANGER.
 /// ★ Named from the game: "Rockslide...destroyed fence... Monsters
 /// everywhere..." (MsgValeRockslideDestroyedFence)
 #define FLAG_VALE_STORM_MONSTER_FOUGHT 0x900

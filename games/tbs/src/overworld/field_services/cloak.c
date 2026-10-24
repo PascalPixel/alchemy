@@ -153,7 +153,7 @@ void FieldEffect_StartCloak(void) {
   u32 n;
   void (*check)(void);
 
-  Sound_PlaySongFar(SE_130);
+  Sound_PlaySongFar(SE_PSYNERGY_START);
   Object_SelectAnimationFar(leader, 0);
   leader->update = 0;
   n = 0;

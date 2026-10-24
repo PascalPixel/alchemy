@@ -397,7 +397,7 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
     work->fadeFrames = 24;
     work->fadeStep = 0;
     Task_Add(Palette_StepFadeTransfer, ANIM_PLAYBACK_ORDER);
-    Sound_PlaySongFar(SE_212);
+    Sound_PlaySongFar(SE_POWER_UP);
     for (frame = 0; frame != 32; frame++) {
       BattleCamera_SetViewAtPairMidpointFar(work->effect->user,
                                             work->effect->firstTarget, 130);

@@ -69,7 +69,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
 
   Sound_PlaySongFar(gSaveBlock.battleMusic);
   Sound_PlaySongFar(SE_STOP_ACTION_SE);
-  Sound_PlaySongFar(SE_147);
+  Sound_PlaySongFar(SE_BEAST_CRY);
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     // On the world map the flash colours BG palette colour 243 instead, and
     // the screen closes on the flickering centre line (style 4, variant 1);
@@ -223,7 +223,7 @@ s32 Warp_PlayArrival(void) {
         while (leader->y + leader->velocityY > leader->groundHeight) {
           WaitFrames(1);
         }
-        Sound_PlaySongFar(SE_159);
+        Sound_PlaySongFar(SE_DOOR_CLOSE);
         leader->y = leader->groundHeight;
         Object_SelectAnimationFar(leader, 22);
         FieldScript_WaitFrames(15);

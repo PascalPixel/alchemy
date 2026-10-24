@@ -341,7 +341,7 @@ void BattleAnim_RunImpactBurst(s32 formation, s32 x, s32 y) {
     if (frame == 4)
       Sound_PlaySongFar(SE_CAST);
     if (frame == 32)
-      Sound_PlaySongFar(SE_212);
+      Sound_PlaySongFar(SE_POWER_UP);
 
     // The flash: its first picture until frame 12, then the next every five
     // frames, eight in all.

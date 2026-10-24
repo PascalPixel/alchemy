@@ -378,7 +378,7 @@ static void EventScript_MonkLetsPartyIntoGrotto(void) {
   // The monk leaps aside and lands in a puff of dust.
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 168, 392);
   ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
-  Sound_PlaySong(SE_132);
+  Sound_PlaySong(SE_WATER);
   movingMonk = ObjectEvent_GetById(LOCALID_FALLS_MONK);
   movingMonk->velocityY = 0x140000;
   movingMonk = ObjectEvent_GetById(LOCALID_FALLS_MONK);
@@ -389,7 +389,7 @@ static void EventScript_MonkLetsPartyIntoGrotto(void) {
   movingMonk = ObjectEvent_GetById(LOCALID_FALLS_MONK);
   movingMonk->gravity = 0x10000;
   ObjectMotion_ArmCallback(LOCALID_FALLS_MONK, FACING_EAST, 0);
-  Sound_PlaySong(SE_132);
+  Sound_PlaySong(SE_WATER);
   // Three white puffs, with only the colour option set.
   options.palette = SPRITE_COLOR_WHITE;
   FieldEffect_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + 0x40000),
@@ -830,7 +830,7 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
   ObjectEvent_GetById(LOCALID_TRAINING_TREE)->targetY = OBJ_EVENT_NO_TARGET;
   ObjectEvent_GetById(LOCALID_TRAINING_TREE)->scaleX = 0xcccc;
   ObjectEvent_GetById(LOCALID_TRAINING_TREE)->sprite->rotation = 0x8000;
-  Sound_PlaySong(SE_124);
+  Sound_PlaySong(SE_CHEST_OPEN);
   WAIT(40);
   ObjectMotion_SetPositionAndReset(LOCALID_TREE_STUDENT, 216, 152);
   OBJECT_DIR(LOCALID_TREE_STUDENT, FACING_SOUTHEAST, 30);
@@ -886,7 +886,7 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
 
     sprite->rotation = rotation;
   }
-  Sound_PlaySong(SE_124);
+  Sound_PlaySong(SE_CHEST_OPEN);
   WAIT(40);
   ObjectMotion_SetPositionAndReset(LOCALID_TREE_STUDENT, 216, 152);
   OBJECT_DIR(LOCALID_TREE_STUDENT, FACING_SOUTH, 30);
@@ -1067,7 +1067,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FEH);
   OBJECT_DIR(LOCALID_FEH, FACING_SOUTH + FACING_STEP, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FEIZHI);
-  SE(SE_159);
+  SE(SE_DOOR_CLOSE);
   MapGrid_AnimateCells(gFuchinTemple_FehsDoorCloses, 78, 13);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
   ObjectEvent_FaceObjectEvent(LOCALID_WELCOMING_STUDENT, LOCALID_FEIZHI, 0);
@@ -1199,7 +1199,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
 
     sprite->rotation = rotation;
   }
-  SE(SE_124);
+  SE(SE_CHEST_OPEN);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
   OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
   ObjectEvent_WalkToAndWait(LOCALID_MESSENGER_STUDENT, 256, 240);
@@ -1490,7 +1490,7 @@ static void FuchinTemple_FehSeesChi(void) {
 
     sprite->rotation = rotation;
   }
-  SE(SE_124);
+  SE(SE_CHEST_OPEN);
   WAIT(40);
   ObjectEvent_WalkToAndWait(LOCALID_TREE_STUDENT, 216, 152);
   OBJECT_DIR(LOCALID_TREE_STUDENT, FACING_SOUTH, 30);
@@ -1677,7 +1677,7 @@ static void EventScript_LeaveTemple(void) {
 /// coord event 2): it opens, and Isaac walks inside, where Nyunpa meditates.
 static void EventScript_EnterTemple(void) {
   SCRIPT_START();
-  SE(SE_188);
+  SE(SE_THUMP);
   MapGrid_AnimateCells(gFuchinTemple_TempleDoorOpens, 77, 8);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   OBJECT_SPEED(LOCALID_PARTY_LEADER, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
@@ -2454,7 +2454,7 @@ s32 Map_Initialize(void) {
       }
     }
   } else {
-    Map_QueueMusic(SE_170);
+    Map_QueueMusic(SE_AMBIENT_WATER);
     ObjectEvent_GetById(LOCALID_FALLS_MONK)->collisionFlags |=
         OBJ_EVENT_NEAR_PSYNERGY;
     if (gSaveBlock.warpDest ==
@@ -2510,7 +2510,7 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
   for (shotIndex = 0; shotIndex < 8; shotIndex++) {
     WAIT(10);
     if (shotIndex & 1) {
-      Sound_PlaySong(SE_130);
+      Sound_PlaySong(SE_PSYNERGY_START);
     }
     FieldEffect_Spawn(nyunpa->x.fixed, nyunpa->y.fixed,
                       nyunpa->z.fixed + 0xffe80000, 0, 0x9999, 0,
@@ -2545,7 +2545,7 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   s32 particleY;
   s32 riseSpeed;
 
-  Sound_PlaySong(SE_131);
+  Sound_PlaySong(SE_PSYNERGY_SPARKLE);
   ObjectEvent_GetById(LOCALID_HAMA)->update =
       FuchinTemple_AlternateLessonChildEffect;
   WAIT(40);
@@ -2553,7 +2553,7 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(20, 2, 23), PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   WAIT(40);
-  Sound_PlaySong(SE_131);
+  Sound_PlaySong(SE_PSYNERGY_SPARKLE);
   ObjectEvent_GetById(LOCALID_IVAN)->update =
       FuchinTemple_AlternateLessonChildEffect;
   WAIT(120);
@@ -2564,7 +2564,7 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   options.type = 0x011d;
   for (particleIndex = 0; particleIndex < 64; particleIndex++) {
     if ((particleIndex & 3) == 0) {
-      Sound_PlaySong(SE_246);
+      Sound_PlaySong(SE_GLITTER);
     }
     particleX = hama->x.fixed +
                 ((((u32)(Import_RandomNext() * 3) << 4) >> 16) << 16) +
@@ -2577,7 +2577,7 @@ static void FuchinTemple_AnimateRevealLesson(void) {
         EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
     WaitFrames(2);
   }
-  Sound_PlaySong(SE_220);
+  Sound_PlaySong(SE_SHIMMER);
   WAIT(30);
   // Fade back and remove both hooks before the conversation resumes.
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_BG);

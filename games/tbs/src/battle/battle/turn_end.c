@@ -351,11 +351,11 @@ s32 Battle_ProcessRoundEnd(void) {
             BattlePlayback_Push(PLAYBACK_ABILITY_NAME,
                                 expiredEntry->element * DJINN_PER_ELEMENT +
                                     expiredEntry->index + ABILITY_DJINNI_FIRST);
-            BattlePlayback_Push(PLAYBACK_SOUND, SE_175);
+            BattlePlayback_Push(PLAYBACK_SOUND, SE_NOTE_HIGH);
             BattlePlayback_Push(PLAYBACK_DRAW_STATUS, 0);
             PUSH_MESSAGE(MsgDjinnSet);
             BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
-            Sound_PlaySongFar(SE_212);
+            Sound_PlaySongFar(SE_POWER_UP);
             Object_SelectAnimationFar(BattleObject_Get(unitId)->object,
                                       POSE_CAST);
             Object_SetAnimationSpeedFar(
@@ -420,7 +420,7 @@ s32 Battle_ProcessRoundEnd(void) {
             } else {
               BattleMessage_ShowAndWaitFar(MsgHpRecover);
             }
-            Sound_PlaySongFar(SE_175);
+            Sound_PlaySongFar(SE_NOTE_HIGH);
             BattleMessage_WaitForAdvance();
           }
           if (unit->ppRegen != 0 && unit->pp != unit->ppMax) {
@@ -436,7 +436,7 @@ s32 Battle_ProcessRoundEnd(void) {
             } else {
               BattleMessage_ShowAndWaitFar(MsgPpRecover);
             }
-            Sound_PlaySongFar(SE_175);
+            Sound_PlaySongFar(SE_NOTE_HIGH);
             BattleMessage_WaitForAdvance();
           }
         }
@@ -639,11 +639,11 @@ s32 BattleUnit_ProcessTurnEnd(struct BattleTurn *plan) {
         BattlePlayback_SchedulePhase(25);
         BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
         BattlePlayback_Push(PLAYBACK_NUMBER, gain);
-        BattlePlayback_Push(PLAYBACK_SOUND, SE_175);
+        BattlePlayback_Push(PLAYBACK_SOUND, SE_NOTE_HIGH);
         // MsgEarthPowerUp and the next three, in enum Element order.
         PUSH_MESSAGE(MsgEarthPowerUp + i);
         BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
-        Sound_PlaySongFar(SE_212);
+        Sound_PlaySongFar(SE_POWER_UP);
         Object_SelectAnimationFar(BattleObject_Get(unitId)->object, POSE_CAST);
         Object_SetAnimationSpeedFar(
             (struct Object *)BattleObject_Get(unitId)->object, 32);

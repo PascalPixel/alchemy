@@ -688,7 +688,7 @@ static void MenuTest_SelectItem(void) {
         Sound_PlaySong(SE_MENU_CANCEL);
         break;
       }
-      Sound_PlaySong(SE_175);
+      Sound_PlaySong(SE_NOTE_HIGH);
     }
     if (gKeysPressed & KEY_B) {
       Sound_PlaySong(SE_MENU_CANCEL);

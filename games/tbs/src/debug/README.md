@@ -174,25 +174,24 @@ The two Felixes, object events 16 (`LOCALID_FELIX`) and 17
 plain talk events: 16 opens a character selector whose choice nothing uses, 17
 an item browser. Everywhere else each has four talk rows that differ in the
 facing they ask for. A row's first word, `control` in `struct MapEvent`,
-carries it: bits 15 to 12 are the facing in sixteenths of a turn from east,
-bit 10 asks for it, and the kind in bits 3 to 0 is 0, `MAP_EVENT_TALK`:
+carries it, written with `TALK_EVENT_FACING`: the kind `MAP_EVENT_TALK`, the
+flag `MAP_EVENT_FLAG_FACING` that asks for a facing, and the facing itself:
 
 ```c
-{0xc400, LOCALID_FELIX, CONDITION_ALWAYS,
+{TALK_EVENT_FACING(FACING_NORTH), LOCALID_FELIX, CONDITION_ALWAYS,
  EVENT_SCRIPT(MenuTest_BrowseWeaponShopMessages)},
 ```
 
-`0xc400` is facing `0xc`, north, with bit 10 set. Most rows open a message
-browser that pages through one keeper's lines. To the south, 17 has no row in
-English; in German, Spanish, French and Italian it shows `MsgValeComeOnHurry`
-with no speaker.
+Most rows open a message browser that pages through one keeper's lines. To the
+south, 17 has no row in English; in German, Spanish, French and Italian it
+shows `MsgValeComeOnHurry` with no speaker.
 
-| Facing (bits 15 to 12) | Direction | Object event 16 | Object event 17 |
-| --- | --- | --- | --- |
-| `0xc` | north | the weapon shop's lines | the Warrior's weapon shop's lines |
-| `0x8` | west | the armour shop's lines | the Warrior's armour shop's lines |
-| `0x0` | east | the item shop's lines | the Warrior's item shop's lines |
-| `0x4` | south | the Sanctum's lines | no row in English; `MsgValeComeOnHurry` elsewhere |
+| Facing | Object event 16 | Object event 17 |
+| --- | --- | --- |
+| `FACING_NORTH` | the weapon shop's lines | the Warrior's weapon shop's lines |
+| `FACING_WEST` | the armour shop's lines | the Warrior's armour shop's lines |
+| `FACING_EAST` | the item shop's lines | the Warrior's item shop's lines |
+| `FACING_SOUTH` | the Sanctum's lines | no row in English; `MsgValeComeOnHurry` elsewhere |
 
 ## Design
 

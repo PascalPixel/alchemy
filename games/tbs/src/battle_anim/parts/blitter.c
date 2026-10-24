@@ -1,7 +1,17 @@
 /// @file
 /// The blitter builder, BattleAnim_BuildBlitter.
-/// The folder README describes the routine it writes, block by block, under
-/// "Blitters"; the fragments' registers and modes are described at the top of
+/// The builder walks gBlitterTemplate, a template of ARM words, and splices
+/// in the pixel fragments of the mode asked for from battle_anim_composite.s
+/// and battle_anim_composite_color.s. Some words are copied, some chosen by
+/// the flags, and some have the canvas width, height or a branch distance
+/// added. The routine has five blocks: the prologue (with BattleAnim_Mask for
+/// COMPOSITE_ADDITIVE), the vertical clip, the column set-up (a width mask,
+/// or clip words taking the width as an ARM immediate from
+/// gBattleAnim_BitOperands, battle_anim_bits.c), the row loop of eight pixels
+/// a pass between a leading and a trailing run, and the exit. Forward
+/// branches are patched when the walk reaches their target. The walk runs
+/// twice, once counting words and once into a block of that size. The
+/// fragments' registers and modes are described at the top of
 /// battle_anim_composite.s.
 
 #include "../battle_anim_internal.h"
@@ -55,7 +65,7 @@
 /// and the branch sites emptyRowsBranch, emptyColumnsBranch, rowLoop,
 /// skipBranch, partialRun and fullCellLoop.
 #define BLITTER_WALK()                                                         \
-  /* Block 1, the prologue (README, "Blitters"). */                            \
+  /* Block 1, the prologue (the file's opening comment). */                    \
   COPY(3);                                                                     \
   if (mode == COMPOSITE_ADDITIVE) {                                            \
     COPY_FROM(BattleAnim_Mask, 3);                                             \

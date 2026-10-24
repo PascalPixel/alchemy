@@ -421,9 +421,10 @@ void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   // On the party's side the canvas is scrolled 104 texels (BG2X is 20.8),
   // and the spirals are drawn 112 further left.
-  // XXX: the ripple below rewrites BG2X every line with a 112-texel lead,
-  // so whether this 104 ever shows is unknown; the HBlank DMA's start
-  // timing would settle it.
+  // The ripple below rewrites BG2X after every line with a 112-texel lead,
+  // and each frame's first line takes the table's last value, latched at
+  // VBlank, so this 104 can reach at most the top line before the DMA first
+  // runs; and no row reaches this animation.
   if (work->effect->side == 1) {
     REG_BG2X = -0x6800;
     offsetX = -112;

@@ -39,7 +39,8 @@ enum CanvasTransferMode {
   CANVAS_COPY_AND_DARKEN,  ///< copy, then lower each level by a byte of
                            ///< transferValue, stopping at 0
   CANVAS_COPY_AND_BRIGHTEN ///< copy, then raise each level by a byte of
-                           ///< transferValue, stopping at 63
+                           ///< transferValue, stopping at 63; no animation
+                           ///< uses it
 };
 
 /// The running battle animation's work: its canvas image, 64 particles, the

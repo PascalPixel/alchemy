@@ -839,7 +839,7 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   s32 messageA;
   s32 messageB;
 
-  Script_PlaySong(SE_SURPRISE);
+  Script_PlaySong(SE_RATTLE);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FELIX_MASKED, 3);
   FieldScript_WaitFrames(40);
   other = ObjectEvent_GetById(LOCALID_FELIX_MASKED);

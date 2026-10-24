@@ -258,11 +258,14 @@
 /// Each water drop landing in Vault Cave; also the curse's sparkles meeting
 /// Mia's Psynergy at Kolima and Kolima Forest's barrier, and the villagers
 /// trying to save Felix from the river on the stormy night.
+/// It sounds like a short high plink, a tone near 1.8 kHz gone in a tenth of a
+/// second.
 #define SE_DRIP 106
 /// Plays with a light shake of the screen: as the Wise One holds Sol Sanctum's
 /// breaking floor together, during the boulder chase on Altin Peak, as a
 /// Colosseum trial is cleared, as Psynergy is shown at the gate to Mt. Aleph,
 /// and as the ground shakes under Hammet's caravan on the world map.
+/// It sounds like a low rumble held until it is stopped.
 #define SE_TREMOR 107
 /// The low triple tone: Halt freezing an object event, and the link session
 /// countdown.
@@ -376,6 +379,8 @@
 /// The picture breaking up as stats fall (BattleAnim_RunStatReduction), and the
 /// Break, Vine, Spider Web and Curse battle animations; also a Venus Djinni's
 /// sparks landing and Vale's roof mended.
+/// It sounds like a sharp noise crack trailing into a low buzz for half a
+/// second.
 #define SE_CRACK 143
 /// The rocks of Altin Peak's boulder, the crates moved in the Lunpa Fortress,
 /// the Elemental Stars bagged, and the Eruption, Nereid and Prism battle
@@ -436,12 +441,15 @@
 /// Plays as Felix is unmasked, as Tret rejects the Hermes' Water, as Levitation
 /// is shown at the gate to Mt. Aleph, as Vale's roof is mended, at Venus
 /// Lighthouse's switches, and as Saturos and Menardi combine.
-#define SE_SURPRISE 161
+/// It sounds like a quick rattle: three short noise taps, low, faint and high,
+/// then middling, over a seventh of a second.
+#define SE_RATTLE 161
 /// Venus Lighthouse's tile waves, and the Mercury, Judgment and Neptune battle
 /// animations.
 #define SE_WAVE 162
 /// Whirlwind on the field, the Lemurian ship rising, and the rumble in Vault
 /// Cave.
+/// It sounds like a steady rushing noise held until it is stopped.
 #define SE_RUSH 163
 /// The light particles a joining Jupiter Djinni scatters, and the Neptune,
 /// Nereid, Titan Blade and Froth battle animations.
@@ -450,8 +458,11 @@
 #define SE_MAP_TRANSITION 167
 /// The ambient sound a map queues in Lama Temple, Xian and the Manticore's
 /// part of Lamakan Desert (Map_QueueMusic).
+/// It sounds like a steady quiet hiss, a little darker and softer than
+/// SE_AMBIENT_WATER on the same noise voice.
 /// XXX: likely wind, because none of the three has the water SE_AMBIENT_WATER
-/// plays beside; listening to its sequence would settle it.
+/// plays beside; the sequence alone can't tell wind from water, so a recording
+/// of one of the three maps would settle it.
 #define SE_AMBIENT_WIND 169
 /// The ambient sound a map queues (Map_QueueMusic) with the rain's ground
 /// particles (Weather_StartRain) and Altin's water-spitting beasts, and in
@@ -518,6 +529,7 @@
 /// Babi Lighthouse and Goma Cave; also Venus Lighthouse's pillars set down,
 /// landings in dust, Kolima's drawbridge coming down and the pursuers dodged on
 /// Crossbone Isle.
+/// It sounds like a low buzzing thud that dies away over a second.
 #define SE_THUMP 188
 /// Stone moving: Crossbone Isle's pillars, a stump pushed in Goma Cave, Mercury
 /// Lighthouse's pillars, and Sol Sanctum's centre statue.
@@ -570,18 +582,24 @@
 #define SE_HEAVY_STOP 213
 /// The elemental arcs rising in the eruption, and the Tolbi-bound ship casting
 /// off.
-#define SE_SURGE 214
+/// It sounds like bright chimes rising in three steps over high square-wave
+/// blips.
+#define SE_RISING_CHIMES 214
 /// Hopping across Mercury Lighthouse's pool, and the crates sinking in the
 /// Lunpa Fortress.
 #define SE_SPLASH_SMALL 215
 /// Mercury Lighthouse's randomized bursts, Tolbi Spring's rising coins, and the
 /// crates dropping into holes in Vale Cave.
+/// It sounds like a short burst of noise that trails off into a faint hiss for
+/// about two seconds.
 #define SE_BURST 216
 /// Mercury Lighthouse's floor switches and gates, the Colosso's
 /// moving walkway, and an object event jumping down a ledge.
 #define SE_FLOOR_SWITCH 217
 /// Mercury Lighthouse's fountain, and the storm carrying the party off in
 /// Suhalla Desert and dropping it on the world map.
+/// It sounds like a rushing noise that swells in and fades over about three
+/// seconds.
 #define SE_GUSH 219
 /// Frost on its target, Retreat spinning, Bilibin Cave's puddles, Fuchin
 /// Temple's Reveal lesson, Mia in Imil and at Mercury Lighthouse, the curse on
@@ -618,7 +636,9 @@
 #define SE_WATER_LEVEL 231
 /// The water rising or draining at Crossbone Isle and Kolima Forest's
 /// floodgate, and Altin Peak's cart stopping.
-#define SE_CLUNK 232
+/// It sounds like a quick crunch: a run of bright noise taps over a third of a
+/// second.
+#define SE_CRUNCH 232
 /// Altin Peak's cart rolling, on player 3: as it sets off, after each turn and
 /// as a countdown runs out; SE_STOP_ACTION_SE cuts it.
 #define SE_CART_ROLL 233

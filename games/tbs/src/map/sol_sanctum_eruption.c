@@ -1647,7 +1647,7 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
     break;
   }
   PaletteFade_StartInterpolation(60);
-  Script_PlaySong(SE_SURGE);
+  Script_PlaySong(SE_RISING_CHIMES);
   arcIndex = 0;
   clear = arcIndex;
   for (origin = &gEruption_ArcOrigins[0]; arcIndex <= 9;

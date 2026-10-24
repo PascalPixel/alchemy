@@ -2809,7 +2809,7 @@ static void EventScript_RoofMended(void) {
   FieldScript_WaitFrames(5);
   Script_ShowTwoMessagesAndWait(LOCALID_DORA, 14, 2, 24, 2, LOCALID_GARET, 10,
                                 14, 4, 14, none);
-  Script_PlaySong(SE_SURPRISE);
+  Script_PlaySong(SE_RATTLE);
   objectEvent = ObjectEvent_Get(LOCALID_DORA);
   objectEvent->sprite->flags = none;
   objectEvent->steeringFlags &= 0xfe;

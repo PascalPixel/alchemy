@@ -587,6 +587,8 @@ static void EventScript_RowStatue6Moved(void) {
 
 /// The party has entered the second relief room, which turns off Move on the
 /// first relief room's statues.
+/// ★ Named from the game: "It's a relief of a minotaur."
+/// (MsgSolSanctumMinotaurReliefOneEye)
 #define FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM FLAG_MAP_TEMP_34
 
 /// Sol Sanctum, the two relief rooms: walking into a statue's cell

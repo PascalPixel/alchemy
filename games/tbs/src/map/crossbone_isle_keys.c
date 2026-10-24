@@ -191,11 +191,17 @@ enum CrossboneIsleBaneLocalId {
 enum { PASSAGE_INDEX_MASK = 0xff, PASSAGE_PLAY_OPENING = 0x100 };
 
 /// CrossboneIsleBane: the puddle is frozen.
+/// ★ Named from what the player sees: a small blue puddle on the floor of the
+/// lowest hall (its render)
 #define FLAG_CROSSBONE_ISLE_BANE_PUDDLE_FROZEN FLAG_MAP_TEMP_00
 /// CrossboneIsleBane: the chest on the second pillar has reached the ladder.
+/// ★ Named from what the player sees: a chest on top of a pillar between two
+/// rows of spikes, below a ladder (its render)
 #define FLAG_CROSSBONE_ISLE_BANE_CHEST_AT_LADDER FLAG_MAP_TEMP_06
 /// CrossboneIsleBane: the leader last looked east from the ladder, which gives
 /// the ladder cell its other metatile behaviors.
+/// ★ Named from what the player sees: the ladder up the ledge beside the second
+/// pillar, from which the leader can face east and jump across (its render)
 #define FLAG_CROSSBONE_ISLE_BANE_LOOKED_EAST FLAG_MAP_TEMP_07
 // The Move events of CrossboneIsleBane's pillars also test FLAG_MAP_TEMP_01
 // and 03 to 05, which nothing sets.

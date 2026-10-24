@@ -70,6 +70,7 @@
 
 /// Gateway Cave's Psynergy Stone has been found; a map section flag, so the
 /// stone is back once the party returns from another map section.
+/// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
 #define FLAG_GATEWAY_CAVE_PSYNERGY_STONE FLAG_MAPSEC_TEMP_50
 
 #if TBS_PATCH_3

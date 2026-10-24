@@ -270,6 +270,8 @@ struct BilibinRippleTimer gBilibin_RippleTimer;
 /// McCoy's gate guards have let the party in but it has not yet entered the
 /// palace; the garden guard who reads it is in another map section, so it is
 /// cleared before he can.
+/// ★ Named from the game: "The master can be quite cranky. Hurry along, now!"
+/// (MsgBilibinMasterQuiteCranky)
 #define FLAG_BILIBIN_KEEPING_MCCOY_WAITING FLAG_MAPSEC_TEMP_04
 
 const struct MapWarpDest *Bilibin_GetWarpDests(void) {

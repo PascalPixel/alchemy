@@ -141,21 +141,31 @@
 #include "item_ids.h"
 
 /// The falling rock of Hammet's caravan scene has landed and shattered.
+/// ★ Named from the game: "being smashed by falling rocks here"
+/// (MsgWorldMapWeCantStayAnotherMinute)
 #define FLAG_WORLD_MAP_FALLING_ROCK_LANDED FLAG_MAP_TEMP_00
 /// Iodem has handed Isaac the Black Orb and waits for it to be used on the
 /// wreck off Gateway Cave.
+/// ★ Named from the game: "Black Orb" (MsgItemName)
 #define FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER FLAG_MAP_TEMP_34
 /// The map's ordinary object event templates (gWorldMapObjectEventTemplates)
 /// are in use rather than a scripted moment's.
+/// ★ Named from its area name: World Map
 #define FLAG_WORLD_MAP_ORDINARY_OBJECT_EVENTS FLAG_MAP_TEMP_35
 /// The storm holds the party up in the air, where Douse can bring it down.
+/// ★ Named from what the player sees: a white whirlwind spinning on the map
+/// near Crossbone Isle, drawn as the Suhalla Desert's sandstorms (its render)
 #define FLAG_WORLD_MAP_CAUGHT_IN_STORM FLAG_MAP_TEMP_F0
 /// The storm is done with, or put away while the Tolbi-bound Ship lies off the
 /// island, and catches no one.
+/// ★ Named from what the player sees: a white whirlwind spinning on the map
+/// near Crossbone Isle, drawn as the Suhalla Desert's sandstorms (its render)
 #define FLAG_WORLD_MAP_STORM_GONE FLAG_MAP_TEMP_F1
 /// The first flag of a byte (read and written with FieldGameFlag_GetByte and
 /// FieldGameFlag_SetByte) counting the frames the storm keeps the party in the
 /// air.
+/// ★ Named from what the player sees: a white whirlwind spinning on the map
+/// near Crossbone Isle, drawn as the Suhalla Desert's sandstorms (its render)
 #define FLAG_WORLD_MAP_STORM_FRAMES_LEFT FLAG_MAP_TEMP_F8
 
 static s32 WorldMap_AlignToMap(struct Object *interpreter);

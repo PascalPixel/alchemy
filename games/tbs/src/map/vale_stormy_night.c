@@ -283,7 +283,8 @@ enum StormNightMapSecFlag {
 //   Isaac came, stands open.
 // - FLAG_VALE_SHOVING_MANS_DOOR_OPEN: the stout man has run out of the door of
 //   VALE_STORMY_NIGHT_TO_VALE_SHOPS_SOUTH, leaving it open.
-// - FLAG_VALE_ON_UPPER_PATH: the leader is on the upper path, whose metatile
+// - FLAG_VALE_ON_BRIDGE: the leader is on the bridge over the river, whose
+// metatile
 //   behaviors are swapped until the leader steps off it.
 
 static s32 sShakeDone;
@@ -311,13 +312,18 @@ ValeStormyNight_RerollHeadingOnCountdown(struct Object *interpreter) {
 
 /// The door of Isaac's house, from which Dora and Isaac came out into the
 /// storm, stands open.
+/// ★ Named from the game: "This old house will fall apart if you stay much
+/// longer." (MsgValeAsStubbornAsYourFather)
 #define FLAG_VALE_ISAACS_DOOR_OPEN FLAG_MAP_TEMP_05
 /// The stout man has run out of his door and shoved Isaac, leaving the door
 /// open.
+/// ★ Named from the game: "Oh... Sorry to shove you like that." (MsgValeHuh)
 #define FLAG_VALE_SHOVING_MANS_DOOR_OPEN FLAG_MAP_TEMP_06
-/// The leader is on the upper path, whose metatile behaviors are swapped until
-/// the leader steps off it.
-#define FLAG_VALE_ON_UPPER_PATH FLAG_MAP_TEMP_10
+/// The leader is on the bridge over the river, whose metatile behaviors are
+/// swapped until the leader steps off it. ★ Named from what the player sees: a
+/// wooden bridge with rope rails over the river, above the waterfall (its
+/// render)
+#define FLAG_VALE_ON_BRIDGE FLAG_MAP_TEMP_10
 
 /// Returns where the party appears;
 /// VALE_STORMY_NIGHT_FROM_VALE_INN_WITH_DORA is where Dora and Isaac come
@@ -340,20 +346,20 @@ const struct MapEvent *ValeStormyNight_GetEvents(void) {
   return gValeStormyNight_Events;
 }
 
-/// In Vale on the stormy night, swaps the upper path's metatile behaviors as
+/// In Vale on the stormy night, swaps the bridge's metatile behaviors as
 /// the leader steps onto it. Reached by stepping on metatile behavior 15. Sets
-/// FLAG_VALE_ON_UPPER_PATH, which ValeStormyNight_Initialize reads to swap them
+/// FLAG_VALE_ON_BRIDGE, which ValeStormyNight_Initialize reads to swap them
 /// again.
-static void EventScript_StepOntoUpperPath(void) {
-  GameFlag_Set(FLAG_VALE_ON_UPPER_PATH);
+static void EventScript_StepOntoBridge(void) {
+  GameFlag_Set(FLAG_VALE_ON_BRIDGE);
   MapGrid_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
-/// In Vale on the stormy night, restores the upper path's metatile behaviors as
+/// In Vale on the stormy night, restores the bridge's metatile behaviors as
 /// the leader steps off it. Reached by stepping on metatile behavior 14. Clears
-/// FLAG_VALE_ON_UPPER_PATH.
-static void EventScript_StepOffUpperPath(void) {
-  GameFlag_Clear(FLAG_VALE_ON_UPPER_PATH);
+/// FLAG_VALE_ON_BRIDGE.
+static void EventScript_StepOffBridge(void) {
+  GameFlag_Clear(FLAG_VALE_ON_BRIDGE);
   MapGrid_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
@@ -712,8 +718,8 @@ s32 ValeStormyNight_Initialize(void) {
     Weather_StartRain();
     Weather_StartLightning();
   }
-  if (GameFlag_Get(FLAG_VALE_ON_UPPER_PATH) != 0) {
-    EventScript_StepOntoUpperPath();
+  if (GameFlag_Get(FLAG_VALE_ON_BRIDGE) != 0) {
+    EventScript_StepOntoBridge();
   }
   GameFlag_Set(FLAG_VALE_STORM);
   MapGrid_CopyCellAttributes(29, 24, 1, 2, 26, 46);
@@ -2386,7 +2392,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   Weather_StopLightning();
   ObjectEvent_SetActionScript(LOCALID_GARET_CHILD, entryActions);
   Script_Wait(128);
-  EventScript_StepOffUpperPath();
+  EventScript_StepOffBridge();
   FieldCamera_MoveTo(PIXELS(174), -1, PIXELS(1428), 1);
   Script_Wait(104);
   FieldCamera_MoveTo(PIXELS(153), -1, PIXELS(1325), 1);
@@ -3587,9 +3593,9 @@ struct MapEvent gValeStormyNight_Events[] = {
     {MAP_EVENT_TALK, LOCALID_FIRST_ROCK + 7, CONDITION_ALWAYS,
      MSGNO(MsgValeRockCannotBeMoved)},
     {MAP_EVENT_COORD, 15, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_StepOntoUpperPath)},
+     EVENT_SCRIPT(EventScript_StepOntoBridge)},
     {MAP_EVENT_COORD, 14, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_StepOffUpperPath)},
+     EVENT_SCRIPT(EventScript_StepOffBridge)},
     {MAP_EVENT_COORD, 41, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_FirstRockFalls)},
     {MAP_EVENT_COORD, 42, CONDITION_ALWAYS,

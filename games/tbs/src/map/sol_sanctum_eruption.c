@@ -80,6 +80,8 @@
 
 /// Saturos's group has started to leave, and the embers fall without their
 /// sound.
+/// ★ Named from the game: "Please...can we go now?"
+/// (MsgSolSanctumKradenCouldThatBeThe)
 #define FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING FLAG_MAP_TEMP_46
 
 static void SolSanctumEruption_RaiseAndShrinkObjectEvent(s32 localId);

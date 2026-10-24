@@ -50,6 +50,8 @@
 
 /// Growth has grown the sprout; a return that keeps the party's position draws
 /// it grown again.
+/// ★ Named from what the player sees: a small green sprout in the sand by the
+/// inn (its render)
 #define FLAG_SUHALLA_SPROUT_GROWN FLAG_MAP_TEMP_01
 
 /// The sprout's animation once Growth has grown it.

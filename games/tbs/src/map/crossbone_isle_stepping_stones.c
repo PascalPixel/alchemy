@@ -135,17 +135,32 @@ enum CrossboneIsleSteppingStonesLocalId {
 };
 
 /// CrossboneIsleFloodgate: the water has been raised.
+/// ★ Named from what the player sees: the stream's water risen behind the
+/// closed floodgate, floating the logs higher (its render)
 #define FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED FLAG_MAP_TEMP_00
-/// CrossboneIsleStackedPillars: the first pillar's footprint flag, the four
-/// pillars' from this one.
-#define FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_FOOTPRINT FLAG_MAP_TEMP_00
-// CrossboneIsleDragonStatue: FLAG_MAP_TEMP_00 to 02 the three puddles are
-// frozen, 03 the leader stood on the third when Frost began, 04 the sinking
-// pillar has sunk.
+/// CrossboneIsleStackedPillars: the first pillar has another pushed on top of
+/// it, so Move and Carry leave it be; the four pillars' flags follow from this
+/// one.
+/// ★ Named from what the player sees: two stacks of two grey stone pillars
+/// among the ladders and cliffs (its render)
+#define FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER         \
+  FLAG_MAP_TEMP_00
+/// CrossboneIsleDragonStatue: the first puddle is frozen; the second's and
+/// third's flags follow from this one.
+/// ★ Named from what the player sees: three small blue puddles on the cave
+/// floor (its render)
 #define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN FLAG_MAP_TEMP_00
+/// CrossboneIsleDragonStatue: the leader stood on the third puddle when Frost
+/// began, so it stays unfrozen.
+/// ★ Named from what the player sees: the third puddle, by the dragon statue,
+/// with a narrow dark pillar standing in it (its render)
 #define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_LEADER_ON_THIRD_PUDDLE               \
   FLAG_MAP_TEMP_03
-#define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_PILLAR_SUNK FLAG_MAP_TEMP_04
+/// CrossboneIsleDragonStatue: the boulder Move pushes has sunk into place at
+/// column 16.
+/// ★ Named from what the player sees: a round grey boulder below the two logs
+/// (its render)
+#define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK FLAG_MAP_TEMP_04
 
 /// A copied map cell, also read in the two flag pairs the pillar redraw keeps.
 union CrossboneIslePillarCell {
@@ -1473,14 +1488,14 @@ static void EventScript_MoveSinkingPillar(void) {
       2, (pillar->x.fixed >> 20), (pillar->z.fixed >> 20), 1, 1, MB_WALL);
   if ((pillar->x.fixed >> 20) == 16) {
     alreadyLowered =
-        Script_GetFlag(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_PILLAR_SUNK);
+        Script_GetFlag(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK);
     if (alreadyLowered == 0) {
       WAIT(10);
       Sound_PlaySong(SE_159);
       pillar->motionFlags = alreadyLowered;
       pillar->groundHeight = -PIXELS(2);
       pillar->y.fixed = -PIXELS(2);
-      GameFlag_Set(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_PILLAR_SUNK);
+      GameFlag_Set(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK);
     }
   }
   SCRIPT_END();
@@ -1657,7 +1672,8 @@ s32 Map_Initialize(void) {
         entry[0] = 0;
         entry[1] = 0;
         entry[2] = 0;
-        entry[4] = i + FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_FOOTPRINT;
+        entry[4] =
+            i + FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER;
         entry += 5;
       }
     }
@@ -1994,14 +2010,14 @@ struct MapEvent gCrossboneIsleStackedPillarsEvents[] = {
     { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { BG_EVENT_CHEST_FACING(FACING_EAST), 102, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
     { BG_EVENT(BG_EVENT_CHEST), 103, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_WICKED_MACE, FIND_ITEM(ITEM_WICKED_MACE) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_FOOTPRINT, EVENT_SCRIPT(EventScript_MovePillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR + 1, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_FOOTPRINT + 1, EVENT_SCRIPT(EventScript_MovePillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR + 2, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_FOOTPRINT + 2, EVENT_SCRIPT(EventScript_MovePillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR + 3, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_FOOTPRINT + 3, EVENT_SCRIPT(EventScript_MovePillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_FIRST_PILLAR, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_FOOTPRINT, EVENT_SCRIPT(EventScript_MovePillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_FIRST_PILLAR + 1, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_FOOTPRINT + 1, EVENT_SCRIPT(EventScript_MovePillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_FIRST_PILLAR + 2, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_FOOTPRINT + 2, EVENT_SCRIPT(EventScript_MovePillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_FIRST_PILLAR + 3, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_FOOTPRINT + 3, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR + 1, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER + 1, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR + 2, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER + 2, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR + 3, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER + 3, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_FIRST_PILLAR, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_FIRST_PILLAR + 1, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER + 1, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_FIRST_PILLAR + 2, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER + 2, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_FIRST_PILLAR + 3, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER + 3, EVENT_SCRIPT(EventScript_MovePillar) },
     { MAP_EVENTS_END },
 };
 // clang-format on
@@ -2023,10 +2039,10 @@ struct MapEvent gCrossboneIsleDragonStatueEvents[] = {
     {BG_EVENT(BG_EVENT_CHEST), 103,
      FLAG_CROSSBONE_ISLE_DRAGON_STATUE_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB)},
     {PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
-     LOCALID_SINKING_BOULDER, FLAG_CROSSBONE_ISLE_DRAGON_STATUE_PILLAR_SUNK,
+     LOCALID_SINKING_BOULDER, FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK,
      EVENT_SCRIPT(EventScript_StartMovingSinkingPillar)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_SINKING_BOULDER,
-     FLAG_CROSSBONE_ISLE_DRAGON_STATUE_PILLAR_SUNK,
+     FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK,
      EVENT_SCRIPT(EventScript_MoveSinkingPillar)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_FIRST_PUDDLE,
      FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN,

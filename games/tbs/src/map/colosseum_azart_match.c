@@ -1631,8 +1631,11 @@ static void ColosseumAzartMatch_PushObjectAhead(void) {
 #include "common/colosso_occupant.h"
 
 /// Closes the arena's coord event; nothing in the game sets it.
+/// ★ Named from the game: "This is the battle arena. After getting here, the
+/// warriors do battle." (MsgColossoWarriorsEnterFinalsWithoutAny)
 #define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_MAP_TEMP_10
 /// The chest holding an Oil Drop has been opened.
+/// ★ Named from the game: "Oil Drop" (MsgItemName)
 #define FLAG_COLOSSEUM_AZART_MATCH_OIL_DROP_CHEST_OPENED FLAG_MAPSEC_TEMP_09
 
 // clang-format off

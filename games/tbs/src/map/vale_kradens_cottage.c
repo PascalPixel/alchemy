@@ -53,7 +53,7 @@
 ///   climb the fence one day, and after Kalay (FLAG_KALAY_REACHED) a woman with
 ///   fair hair visits the empty cottage, missing Kraden.
 ///
-/// By day the cottage's gate (EventScript_EnterCottage) leads into the cottage
+/// By day the cottage's door (EventScript_EnterCottage) leads into the cottage
 /// (VALE_KRADENS_COTTAGE_TO_VALE_INN_NORTH, to MapId_ValeInn's
 /// VALE_INN_FROM_VALE_KRADENS_COTTAGE_NORTH),
 /// VALE_KRADENS_COTTAGE_TO_VALE_NORTH and VALE_KRADENS_COTTAGE_TO_VALE_SOUTH go
@@ -98,7 +98,7 @@
 #include "songs.h"
 #include "audio_engine_symbols.h"
 
-// FLAG_VALE_KRADENS_GATE_OPEN: the cottage's gate stands open since Kraden went
+// FLAG_VALE_KRADENS_DOOR_OPEN: the cottage's door stands open since Kraden went
 // in.
 
 /// The placed object events, numbered in the order of
@@ -147,8 +147,10 @@ enum ValeKradensCottageLocalId {
 
 #include "common/object_facing.h"
 
-/// The gate of Kraden's cottage stands open since Kraden set off.
-#define FLAG_VALE_KRADENS_GATE_OPEN FLAG_MAP_TEMP_42
+/// The door of Kraden's cottage stands open since Kraden set off.
+/// ★ Named from what the player sees: the arched wooden door of Kraden's
+/// thatched cottage (its render)
+#define FLAG_VALE_KRADENS_DOOR_OPEN FLAG_MAP_TEMP_42
 
 const struct MapWarpDest *ValeKradensCottage_GetWarpDests(void) {
   return gValeKradensCottage_WarpDests;
@@ -501,7 +503,7 @@ static void EventScript_KradenPlansSanctumVisit(void) {
                               20);
     ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTHWEST + FACING_STEP,
                               10);
-    // Kraden opens his gate and goes in to prepare; the screen closes and the
+    // Kraden opens his door and goes in to prepare; the screen closes and the
     // party follows him through VALE_KRADENS_COTTAGE_TO_VALE_INN_MYTHRIL_BAG.
     Script_PlaySong(SE_DOOR_OPEN);
     MapGrid_AnimateCells(gValeKradensCottage_GateCells, 43, 8);
@@ -527,8 +529,8 @@ static void EventScript_KradenPlansSanctumVisit(void) {
 ///
 /// Called by ValeKradensCottage_Initialize on
 /// VALE_KRADENS_COTTAGE_FROM_VALE_INN_SOUTH unless the party keeps its
-/// position. Sets FLAG_SANCTUM_VISIT_PLANNED and FLAG_VALE_KRADENS_GATE_OPEN
-/// (the gate stays open), and removes Kraden, Garet, Jenna, Saturos and
+/// position. Sets FLAG_SANCTUM_VISIT_PLANNED and FLAG_VALE_KRADENS_DOOR_OPEN
+/// (the door stays open), and removes Kraden, Garet, Jenna, Saturos and
 /// Menardi.
 static void EventScript_KradenSetsOff(void) {
   struct ObjectEvent *objectEvent;
@@ -549,7 +551,7 @@ static void EventScript_KradenSetsOff(void) {
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(40);
-  // Kraden comes out of the gate: this is their best bet.
+  // Kraden comes out of the door: this is their best bet.
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(230), PIXELS(220));
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 230, 232);
@@ -593,17 +595,17 @@ static void EventScript_KradenSetsOff(void) {
   GameFlag_Set(FLAG_SANCTUM_VISIT_PLANNED);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
-  GameFlag_Set(FLAG_VALE_KRADENS_GATE_OPEN);
+  GameFlag_Set(FLAG_VALE_KRADENS_DOOR_OPEN);
   FieldScript_End();
 }
 
-/// In Vale, walking into Kraden's cottage: the gate opens unless Kraden left
+/// In Vale, walking into Kraden's cottage: the door opens unless Kraden left
 /// it open.
 ///
 /// Reached by walking north into metatile behavior 3, by day and after Kalay;
 /// takes VALE_KRADENS_COTTAGE_TO_VALE_INN_NORTH into the cottage.
 static void EventScript_EnterCottage(void) {
-  if (GameFlag_Get(FLAG_VALE_KRADENS_GATE_OPEN) == 0) {
+  if (GameFlag_Get(FLAG_VALE_KRADENS_DOOR_OPEN) == 0) {
     Sound_PlaySong(SE_DOOR_OPEN);
     MapGrid_PlayMetatileCopySequence(gValeKradensCottage_GateCells, 43, 8);
   }
@@ -878,7 +880,7 @@ static void EventScript_OverhearKraden(void) {
     ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST + FACING_STEP, 0);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER,
                               FACING_NORTHWEST + FACING_STEP, 0);
-    // The camera goes up to the gate. Pacing, Kraden says they know more of
+    // The camera goes up to the door. Pacing, Kraden says they know more of
     // Sol Sanctum than Vale's elders.
     FieldCamera_MoveWithinMapBounds(PIXELS(232), -1, PIXELS(240), 1);
     FieldCamera_WaitForArrival();
@@ -946,7 +948,7 @@ static void EventScript_OverhearKraden(void) {
 /// rockslide covers. By day it removes the rocks and Garet, runs
 /// EventScript_KradenSetsOff from VALE_KRADENS_COTTAGE_FROM_VALE_INN_SOUTH,
 /// removes Kraden and the strangers once FLAG_SANCTUM_VISIT_PLANNED is set, and
-/// places the cottage visitor after Kalay. Clears FLAG_VALE_KRADENS_GATE_OPEN
+/// places the cottage visitor after Kalay. Clears FLAG_VALE_KRADENS_DOOR_OPEN
 /// when the party keeps its position.
 s32 ValeKradensCottage_Initialize(void) {
   struct ObjectEvent *objectEvent;
@@ -957,7 +959,7 @@ s32 ValeKradensCottage_Initialize(void) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
   if (Script_GetFlag(FLAG_KEEP_PARTY_POSITION) != 0) {
-    GameFlag_Clear(FLAG_VALE_KRADENS_GATE_OPEN);
+    GameFlag_Clear(FLAG_VALE_KRADENS_DOOR_OPEN);
   }
   // The rockslide chapter replaces residents with debris and a survivor.
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {

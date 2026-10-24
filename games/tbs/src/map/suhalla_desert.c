@@ -175,25 +175,49 @@ static u16 sSuhallaDesertSavedColor;
 
 /// The first sandstorm (LOCALID_FIRST_SANDSTORM) has risen on this visit; the
 /// four flags after it are the next four sandstorms'.
+/// ★ Named from the game: "The sandstorms suddenly increased... I hope no one
+/// gets caught in one and gets injured."
+/// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
 #define FLAG_SUHALLA_DESERT_FIRST_SANDSTORM_RISEN FLAG_MAP_TEMP_06
 /// The second sandstorm has risen on this visit.
+/// ★ Named from the game: "The sandstorms suddenly increased... I hope no one
+/// gets caught in one and gets injured."
+/// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
 #define FLAG_SUHALLA_DESERT_SECOND_SANDSTORM_RISEN FLAG_MAP_TEMP_07
 /// The third sandstorm has risen on this visit.
+/// ★ Named from the game: "The sandstorms suddenly increased... I hope no one
+/// gets caught in one and gets injured."
+/// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
 #define FLAG_SUHALLA_DESERT_THIRD_SANDSTORM_RISEN FLAG_MAP_TEMP_08
 /// The fourth sandstorm (LOCALID_FOURTH_SANDSTORM) has risen on this visit.
+/// ★ Named from the game: "The sandstorms suddenly increased... I hope no one
+/// gets caught in one and gets injured."
+/// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
 #define FLAG_SUHALLA_DESERT_FOURTH_SANDSTORM_RISEN FLAG_MAP_TEMP_09
 /// The fifth sandstorm (LOCALID_LAST_SANDSTORM) has risen on this visit.
+/// ★ Named from the game: "The sandstorms suddenly increased... I hope no one
+/// gets caught in one and gets injured."
+/// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
 #define FLAG_SUHALLA_DESERT_FIFTH_SANDSTORM_RISEN FLAG_MAP_TEMP_0A
 /// In SuhallaDesertSouth, the sandstorm that gives chase has set off after the
 /// leader.
+/// ★ Named from the game: "The sandstorms suddenly increased... I hope no one
+/// gets caught in one and gets injured."
+/// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
 #define FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_SET_OFF FLAG_MAP_TEMP_0E
 /// A sandstorm has caught the leader and lifts the party, and Douse can put it
 /// out.
+/// ★ Named from the game: "For some reason, anyone who gets caught in a
+/// sandstorm winds up here." (MsgSuhallaInteriorsForSomeReasonAnyoneWhoGets)
 #define FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM FLAG_MAP_TEMP_0F
 /// A byte flag: the frames left before the sandstorm that caught the leader
 /// carries the party away.
+/// ★ Named from the game: "For some reason, anyone who gets caught in a
+/// sandstorm winds up here." (MsgSuhallaInteriorsForSomeReasonAnyoneWhoGets)
 #define FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT FLAG_MAP_TEMP_10
 /// A byte flag: the local id of the sandstorm that caught the leader.
+/// ★ Named from the game: "For some reason, anyone who gets caught in a
+/// sandstorm winds up here." (MsgSuhallaInteriorsForSomeReasonAnyoneWhoGets)
 #define FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM FLAG_MAP_TEMP_18
 
 void Map_QueueMusic(s32 cue);

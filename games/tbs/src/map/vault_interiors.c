@@ -213,6 +213,7 @@ enum {
 // the guests' room:
 /// The party is cornering the two suspects in the guests' room, so talking to
 /// Ivan or the suspects does nothing.
+/// ★ Named from the game: "Uh-oh! I'm surrounded!" (MsgVaultImSurrounded)
 #define FLAG_VAULT_CORNERING_SUSPECTS FLAG_MAP_TEMP_50
 
 /// The inn's loft (VAULT_INTERIORS_LOFT_FROM_CRATE_ROOM and the two after the

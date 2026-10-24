@@ -220,13 +220,20 @@ static void Xian_SpawnTrainingParticles(void) {
 #include "common/object_distance.h"
 
 /// The water carrier has spilled her water.
+/// ★ Named from the game: "You made me spill my water!"
+/// (MsgXianDoingMadeMeSpillMy)
 #define FLAG_XIAN_WATER_SPILLED FLAG_MAP_TEMP_00
 /// Frost has frozen the spilled water into ice that can be stood on.
+/// ★ Named from the game: "You made me spill my water!"
+/// (MsgXianDoingMadeMeSpillMy)
 #define FLAG_XIAN_SPILLED_WATER_FROZEN FLAG_MAP_TEMP_01
 /// The kung fu student has shown her strike on the tree.
+/// ★ Named from the game: "Hoo-whaaa... Hachaaa!" (MsgXianHooWhaaaHachaaa)
 #define FLAG_XIAN_STRIKE_SHOWN FLAG_MAP_TEMP_02
 /// Force has made the kung fu student's tree jump once, which picks her second
 /// line.
+/// ★ Named from the game: "What happened? The tree jumped on its own!"
+/// (MsgXianWhaWhaHappened)
 #define FLAG_XIAN_TREE_JUMPED FLAG_MAP_TEMP_03
 
 /// Tracks a nearby target only within the object event's current facing sector.

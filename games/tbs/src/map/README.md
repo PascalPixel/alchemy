@@ -229,8 +229,8 @@ script, `EventScript_EnterIsaacsHouse` for Isaac's house, that opens the door,
 walks the leader in and only then asks for the warp, and that can refuse
 instead, as Dora does once the party has left Vale. Coord events also climb
 the ladder beside Isaac's house (`EventScript_ClimbLadderOntoRoof` up,
-`EventScript_ClimbDownFromRoof` down) and put the upper path's cells
-back when the leader steps off it (`EventScript_StepOffUpperPath`). Three
+`EventScript_ClimbDownFromRoof` down) and put the bridge's cells
+back when the leader steps off it (`EventScript_StepOffBridge`). Three
 cells of the path at the top carry a behavior no row answers.
 
 ![In Vale, Isaac walks north into the ladder beside his house and climbs onto the roof](https://alchemy.pascalpixel.com/places/vale/events/Event_ClimbLadderOntoRoof.gif)

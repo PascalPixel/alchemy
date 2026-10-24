@@ -165,70 +165,112 @@ static s16 *sLastCocoon;
 
 /// Cocoon 21 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
+/// ★ Named from what the player sees: golden cocoons on a spider web stretched
+/// across the floor (its render)
 #define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_1_TORN FLAG_MAP_TEMP_00
 /// Cocoon 22 has been torn by a first step, so the next step on it drops the
 /// leader to the room below (the layout draws it torn, and the setup sets this
 /// flag).
+/// ★ Named from what the player sees: golden cocoons on a spider web stretched
+/// across the floor (its render)
 #define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_2_TORN FLAG_MAP_TEMP_01
 /// Cocoon 23 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
+/// ★ Named from what the player sees: golden cocoons on a spider web stretched
+/// across the floor (its render)
 #define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_3_TORN FLAG_MAP_TEMP_02
 /// Cocoon 24 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
+/// ★ Named from what the player sees: golden cocoons on a spider web stretched
+/// across the floor (its render)
 #define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_4_TORN FLAG_MAP_TEMP_03
 /// Cocoon 25 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
+/// ★ Named from what the player sees: golden cocoons on a spider web stretched
+/// across the floor (its render)
 #define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_5_TORN FLAG_MAP_TEMP_04
 /// Cocoon 26 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
+/// ★ Named from what the player sees: golden cocoons on a spider web stretched
+/// across the floor (its render)
 #define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_6_TORN FLAG_MAP_TEMP_05
 /// Cocoon 27 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
+/// ★ Named from what the player sees: golden cocoons on a spider web stretched
+/// across the floor (its render)
 #define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_7_TORN FLAG_MAP_TEMP_06
 /// Cocoon 28 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
+/// ★ Named from what the player sees: golden cocoons on a spider web stretched
+/// across the floor (its render)
 #define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_8_TORN FLAG_MAP_TEMP_07
 /// Cocoon 29 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
+/// ★ Named from what the player sees: golden cocoons on a spider web stretched
+/// across the floor (its render)
 #define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_9_TORN FLAG_MAP_TEMP_08
 /// Cocoon 31 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
+/// ★ Named from what the player sees: golden cocoons on a spider web stretched
+/// across the floor (its render)
 #define FLAG_TRET_TREE_THIRD_FLOOR_WEST_COCOON_TORN FLAG_MAP_TEMP_09
 /// Cocoon 32 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
+/// ★ Named from what the player sees: golden cocoons on a spider web stretched
+/// across the floor (its render)
 #define FLAG_TRET_TREE_THIRD_FLOOR_EAST_COCOON_TORN FLAG_MAP_TEMP_0A
 /// Cocoon 50, the way down to Tret, has been torn by a first step, so the next
 /// step on it drops the leader to the room below.
+/// ★ Named from what the player sees: golden cocoons on a spider web stretched
+/// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_CENTER_COCOON_TORN FLAG_MAP_TEMP_0B
 /// Cocoon 51 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
+/// ★ Named from what the player sees: golden cocoons on a spider web stretched
+/// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_NORTHWEST_COCOON_TORN FLAG_MAP_TEMP_0C
 /// Cocoon 52 has been torn by a first step, so the next step on it drops the
 /// leader to the room below (the layout draws it torn, and the setup sets this
 /// flag).
+/// ★ Named from what the player sees: golden cocoons on a spider web stretched
+/// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_COCOON_TORN FLAG_MAP_TEMP_0D
 /// Cocoon 53 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
+/// ★ Named from what the player sees: golden cocoons on a spider web stretched
+/// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_NORTHEAST_COCOON_TORN FLAG_MAP_TEMP_0E
 /// Cocoon 54 has been torn by a first step, so the next step on it drops the
 /// leader to the room below (the layout draws it torn, and the setup sets this
 /// flag).
+/// ★ Named from what the player sees: golden cocoons on a spider web stretched
+/// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_WEST_COCOON_TORN FLAG_MAP_TEMP_0F
 /// Cocoon 55 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
+/// ★ Named from what the player sees: golden cocoons on a spider web stretched
+/// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_EAST_COCOON_TORN FLAG_MAP_TEMP_10
 /// Cocoon 56 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
+/// ★ Named from what the player sees: golden cocoons on a spider web stretched
+/// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHWEST_COCOON_TORN FLAG_MAP_TEMP_11
 /// Cocoon 57 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
+/// ★ Named from what the player sees: golden cocoons on a spider web stretched
+/// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_SOUTH_COCOON_TORN FLAG_MAP_TEMP_12
 /// Cocoon 58 has been torn by a first step, so the next step on it drops the
 /// leader to the room below (the layout draws it torn, and the setup sets this
 /// flag).
+/// ★ Named from what the player sees: golden cocoons on a spider web stretched
+/// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_COCOON_TORN FLAG_MAP_TEMP_13
 /// Cocoon 59 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
+/// ★ Named from what the player sees: golden cocoons on a spider web stretched
+/// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON_TORN FLAG_MAP_TEMP_14
 
 /// Returns the map's warp destinations, the cocoons' landing spots among them.

@@ -54,14 +54,24 @@
 #include "fixed_math.h"
 
 /// The gate's puddle is frozen into a pillar, propping the gate open.
+/// ★ Named from what the player sees: a small blue puddle beneath the green
+/// metal gate across the cave (its render)
 #define FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN FLAG_MAP_TEMP_00
 /// The lowering switch has lowered the gate.
+/// ★ Named from the game: "The gate in the cave can only be opened from the
+/// inside." (MsgLunpaEastGuardTrustsCaveGate)
 #define FLAG_WEST_LUNPA_CAVE_GATE_LOWERED FLAG_MAP_TEMP_01
 /// The gate is raised.
+/// ★ Named from the game: "The gate in the cave can only be opened from the
+/// inside." (MsgLunpaEastGuardTrustsCaveGate)
 #define FLAG_WEST_LUNPA_CAVE_GATE_RAISED FLAG_MAP_TEMP_02
 /// The north puddle is frozen into a pillar.
+/// ★ Named from what the player sees: a small blue puddle in the cave's
+/// northern passage, past the gate (its render)
 #define FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN FLAG_MAP_TEMP_03
 /// The south puddle is frozen into a pillar that can be climbed.
+/// ★ Named from what the player sees: a small blue puddle at the foot of the
+/// cave's southern passage (its render)
 #define FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN FLAG_MAP_TEMP_04
 
 static void Reunion_Converse(void);

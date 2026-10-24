@@ -48,34 +48,53 @@
 
 /// The attendant has asked the player to take part; every 300th call of
 /// BattleArena_PromptToParticipate clears it so she asks again.
+/// ★ Named from the game: "Would you like to apply?" (MsgLobbyPleaseSpeakWhen)
 #define FLAG_BATTLE_ARENA_ATTENDANT_ASKED FLAG_MAP_TEMP_00
 /// The linked partner has asked for a battle: its signature matches and it
 /// stands asked or in the circle.
+/// ★ Named from the game: "Your opponent has asked for a battle. Do you
+/// accept?" (MsgLobbyPleaseSpeakWhen)
 #define FLAG_BATTLE_ARENA_PARTNER_ASKED FLAG_MAP_TEMP_01
 /// The player has agreed to a battle.
+/// ★ Named from the game: "When you finish your preparations, please step into
+/// the circle!" (MsgLobbyPleaseSpeakWhen)
 #define FLAG_BATTLE_ARENA_PLAYER_AGREED FLAG_MAP_TEMP_02
 /// The party is on its way into the battle.
+/// ★ Named from the game: "Good luck!" (MsgLobbyGoodLuck)
 #define FLAG_BATTLE_ARENA_ENTERING_BATTLE FLAG_MAP_TEMP_03
 /// LOCALID_PARTY_ORDER_VISITOR has given the linked finals' limit of three
 /// allies, so the next talk explains how to change the party's order.
+/// ★ Named from the game: "You can change the order of your party in the status
+/// screen." (MsgLobbyChangeOrderParty)
 #define FLAG_BATTLE_ARENA_PARTY_ORDER_NEXT FLAG_MAP_TEMP_04
 /// The link was lost and the attendant has yet to say so.
+/// ★ Named from the game: "The link was disconnected."
+/// (MsgLobbyLinkDisconnected)
 #define FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED FLAG_MAP_TEMP_05
 /// The first of eight flags, one per character from Isaac, each set while that
 /// character is in the battle party (BattleArena_RunRoundResult).
 #define FLAG_BATTLE_ARENA_IN_PARTY_FIRST FLAG_MAP_TEMP_F0
 /// The attendant has explained the Battle Arena once; talking to her again
 /// offers to apply.
+/// ★ Named from the game: "Please speak to me when you want to fight in a
+/// battle." (MsgLobbyPleaseSpeakWhen)
 #define FLAG_BATTLE_ARENA_ATTENDANT_EXPLAINED FLAG_MAPSEC_TEMP_00
 /// This console is the link's child (multiplayer id 1), which receives the
 /// parties first.
+/// ★ Named from the game: "Test your skills in Linked Battles and Monster
+/// Battles!" (MsgFieldWelcomeToBattleArenaWherePeople)
 #define FLAG_BATTLE_ARENA_LINK_CHILD FLAG_MAPSEC_TEMP_02
 /// The link is up: both consoles were heard (LOBBY_LINK_READY_MASK).
+/// ★ Named from the game: "Your opponent has arrived!"
+/// (MsgLobbyOpponentArrived)
 #define FLAG_BATTLE_ARENA_LINK_UP FLAG_MAPSEC_TEMP_03
 /// A linked battle has ended since the leader last walked south of z 224, so
 /// the party and the visitors speak of it.
+/// ★ Named from the game: "Battle results were saved."
+/// (MsgLobbyBattleResultsSaved)
 #define FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED FLAG_MAPSEC_TEMP_04
 /// The last linked battle was won.
+/// ★ Named from the game: "Yeah! We won!" (MsgLobbyWonToldCountOn)
 #define FLAG_BATTLE_ARENA_LINK_BATTLE_WON FLAG_MAPSEC_TEMP_05
 
 // Link transfers use three unit records followed by one recovery-table record.

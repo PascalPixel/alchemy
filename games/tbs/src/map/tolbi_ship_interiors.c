@@ -133,6 +133,7 @@
 #include "map_header.h"
 
 /// The visible anchor charm has been created this visit.
+/// ★ Named from the game: "Anchor Charm" (MsgItemName)
 #define FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN FLAG_MAP_TEMP_00
 
 // Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party

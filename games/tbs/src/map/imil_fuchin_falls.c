@@ -272,10 +272,16 @@ ImilFuchinFalls_GetObjectEventTemplates(void) {
 #include "common/object_pairmove.h"
 
 /// The first room's first log lies at the east end of its track.
+/// ★ Named from what the player sees: golden logs floating on the cave's pool,
+/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_ENTRANCE_FIRST_LOG_EAST FLAG_MAPSEC_TEMP_01
 /// The first room's second log lies at the north end of its track.
+/// ★ Named from what the player sees: golden logs floating on the cave's pool,
+/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_ENTRANCE_SECOND_LOG_NORTH FLAG_MAPSEC_TEMP_02
 /// The first room's third log lies at the north end of its track.
+/// ★ Named from what the player sees: golden logs floating on the cave's pool,
+/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_ENTRANCE_THIRD_LOG_NORTH FLAG_MAPSEC_TEMP_03
 /// The second room's first log lies at the east end of its track.
 #define FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_EAST_END FLAG_MAPSEC_TEMP_04
@@ -283,27 +289,41 @@ ImilFuchinFalls_GetObjectEventTemplates(void) {
 /// of where it starts, unless it has since been pushed to the east end.
 #define FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_WEST_END FLAG_MAPSEC_TEMP_05
 /// The second room's second log lies at the south end of its track.
+/// ★ Named from what the player sees: golden logs floating on the cave's pool,
+/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_SECOND_LOG_SOUTH FLAG_MAPSEC_TEMP_06
 /// The second room's third log lies at the north end of its track.
+/// ★ Named from what the player sees: golden logs floating on the cave's pool,
+/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_THIRD_LOG_NORTH FLAG_MAPSEC_TEMP_07
 /// The third room's first log lies at the west end of its track.
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END                  \
   FLAG_MAPSEC_TEMP_08
 /// The third room's first log lies at its middle stop, where the third or
 /// fourth log blocked it.
+/// ★ Named from what the player sees: golden logs floating on the cave's pool,
+/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE FLAG_MAPSEC_TEMP_09
 /// The third room's second log lies at the west end of its track.
+/// ★ Named from what the player sees: golden logs floating on the cave's pool,
+/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_SECOND_LOG_WEST FLAG_MAPSEC_TEMP_0A
 /// The third room's third log lies at the north end of its track.
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END                 \
   FLAG_MAPSEC_TEMP_0B
 /// The third room's third log lies at its upper stop, a cell south of the north
 /// end.
+/// ★ Named from what the player sees: golden logs floating on the cave's pool,
+/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP                \
   FLAG_MAPSEC_TEMP_0C
 /// The third room's third log lies at its middle stop.
+/// ★ Named from what the player sees: golden logs floating on the cave's pool,
+/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE FLAG_MAPSEC_TEMP_0D
 /// The third room's third log lies at its lower stop; no move sets it.
+/// ★ Named from what the player sees: golden logs floating on the cave's pool,
+/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_LOWER_STOP                \
   FLAG_MAPSEC_TEMP_0E
 /// The third room's fourth log lies at the north end of its track.
@@ -311,18 +331,30 @@ ImilFuchinFalls_GetObjectEventTemplates(void) {
   FLAG_MAPSEC_TEMP_0F
 /// The third room's fourth log lies at its upper stop, a cell south of the
 /// north end.
+/// ★ Named from what the player sees: golden logs floating on the cave's pool,
+/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP               \
   FLAG_MAPSEC_TEMP_10
 /// The third room's fourth log lies at its middle stop.
+/// ★ Named from what the player sees: golden logs floating on the cave's pool,
+/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_MIDDLE FLAG_MAPSEC_TEMP_11
 /// The third room's fourth log lies at its lower stop; no move sets it.
+/// ★ Named from what the player sees: golden logs floating on the cave's pool,
+/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_LOWER_STOP               \
   FLAG_MAPSEC_TEMP_12
 /// The fourth room's first log lies at the south end of its track.
+/// ★ Named from what the player sees: golden logs floating on the cave's pool,
+/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_FIRST_LOG_SOUTH FLAG_MAPSEC_TEMP_13
 /// The fourth room's second log lies at the west end of its track.
+/// ★ Named from what the player sees: golden logs floating on the cave's pool,
+/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_SECOND_LOG_WEST FLAG_MAPSEC_TEMP_14
 /// The fourth room's third log lies at the east end of its track.
+/// ★ Named from what the player sees: golden logs floating on the cave's pool,
+/// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_THIRD_LOG_EAST FLAG_MAPSEC_TEMP_15
 
 /// Lets the log settle before rebuilding its room's metatile behaviors.

@@ -189,13 +189,19 @@ enum ValeCaveMetatileBehavior { MB_VALE_CAVE_FIRST_KITE_ROUTE = 45 };
 // The cave's map flags: each room reuses them for its own puzzle, so the second
 // room's two have one name in the holes' part and another in Kite's.
 /// The holes' part: the western crates have sunk into their hole.
+/// ★ Named from what the player sees: stacks of wooden crates at the edge of
+/// the cave's water (its render)
 #define FLAG_VALE_CAVE_WEST_CRATES_SUNK FLAG_MAP_TEMP_00
 /// The holes' part: the eastern crates have sunk into their hole.
+/// ★ Named from what the player sees: stacks of wooden crates at the edge of
+/// the cave's water (its render)
 #define FLAG_VALE_CAVE_EAST_CRATES_SUNK FLAG_MAP_TEMP_01
 /// Kite's part: Kite has run off once (EventScript_KiteRunsOff).
+/// ★ Named from the game: "Kite" (MsgDjinnName)
 #define FLAG_VALE_CAVE_KITE_RAN_OFF FLAG_MAP_TEMP_00
 /// Kite's part: Kite has run behind the ledge
 /// (EventScript_KiteRunsBehindLedge).
+/// ★ Named from the game: "Kite" (MsgDjinnName)
 #define FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE FLAG_MAP_TEMP_01
 
 // The cave's map section flags. The second and third rooms are one map section,
@@ -216,15 +222,27 @@ static void ValeCave_ApplyEntryState(void);
 #include "common/object_staged_object_event.h"
 
 /// In the third room, the western log has been pushed off the ledge.
+/// ★ Named from what the player sees: two logs standing north to south on the
+/// ledges either side of the water, and a third lying west to east south of it
+/// (its render)
 #define FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE FLAG_MAP_TEMP_02
 /// In the third room, the eastern log has been pushed along the ledge and over
 /// its edge.
+/// ★ Named from what the player sees: two logs standing north to south on the
+/// ledges either side of the water, and a third lying west to east south of it
+/// (its render)
 #define FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE FLAG_MAP_TEMP_03
 /// In the third room, the southern log has been pushed north and stopped on the
 /// northern row.
+/// ★ Named from what the player sees: two logs standing north to south on the
+/// ledges either side of the water, and a third lying west to east south of it
+/// (its render)
 #define FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW FLAG_MAP_TEMP_04
 /// In the third room, the southern log has been pushed north and stopped on the
 /// southern row (row 20).
+/// ★ Named from what the player sees: two logs standing north to south on the
+/// ledges either side of the water, and a third lying west to east south of it
+/// (its render)
 #define FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW FLAG_MAP_TEMP_05
 
 /// In Vale Cave's second room, talking to Kite once Halt has stopped it: Kite,

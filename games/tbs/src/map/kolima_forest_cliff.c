@@ -59,6 +59,8 @@ enum {
 
 /// The river log has tipped into the river and floats there as ground the party
 /// can cross.
+/// ★ Named from what the player sees: a log lying north to south beside the
+/// river that winds through the clearing (its render)
 #define FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER FLAG_MAP_TEMP_01
 
 const struct MapWarpDest *KolimaForestCliff_GetWarpDests(void) {

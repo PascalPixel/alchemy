@@ -95,12 +95,18 @@
 
 /// In Bilibin Cave's ice room, a movable torch has melted the third puddle's
 /// ice pillar.
+/// ★ Named from what the player sees: a tall pillar of ice beside the lit
+/// torches in the cave's east passage (its render)
 #define FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED FLAG_MAPSEC_TEMP_02
 /// In Bilibin Cave's ice room, the third torch stands beside the third puddle's
 /// ice pillar.
+/// ★ Named from what the player sees: golden torches burning on their stands
+/// near a pillar of ice (its render)
 #define FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR FLAG_MAPSEC_TEMP_03
 /// In Bilibin Cave's ice room, the fourth torch stands beside the third
 /// puddle's ice pillar.
+/// ★ Named from what the player sees: golden torches burning on their stands
+/// near a pillar of ice (its render)
 #define FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR FLAG_MAPSEC_TEMP_04
 /// At the Bilibin Cave Entrance, Growth has grown the sprout into a vine.
 #define FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN FLAG_MAPSEC_TEMP_05

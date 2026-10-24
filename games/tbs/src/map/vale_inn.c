@@ -132,6 +132,8 @@ static void ValeInn_DemonstrateCatch(void);
 
 /// Back from Kalay, Dora has got out of her sickbed on this visit to show Isaac
 /// she is well.
+/// ★ Named from the game: "Are you telling me you were surprised to see me in
+/// bed?" (MsgValeWhoToldIll)
 #define FLAG_VALE_DORA_OUT_OF_BED FLAG_MAP_TEMP_03
 
 /// Vale's placed object events, numbered by the rows of

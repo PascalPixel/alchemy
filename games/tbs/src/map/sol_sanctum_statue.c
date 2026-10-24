@@ -87,6 +87,9 @@
 #include "ability_ids.h"
 
 /// Both beams have opened the hole in the floor before the centre statue.
+/// ★ Named from what the player sees: the statue holding a bowl at the head of
+/// the hall, where the beams from the statues beside it meet on the floor
+/// before it (its render)
 #define FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN FLAG_MAP_TEMP_07
 
 // Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party

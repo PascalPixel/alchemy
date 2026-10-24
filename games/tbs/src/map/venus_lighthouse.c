@@ -943,6 +943,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
 
 /// In VenusLighthouseGroundFloor, the leader stands on the floor switch and
 /// holds it down.
+/// ★ Named from its area name: Venus Lighthouse
 #define FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH FLAG_MAP_TEMP_01
 
 // A light's update hook: every four frames a shrinking particle around it,

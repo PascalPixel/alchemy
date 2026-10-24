@@ -122,6 +122,8 @@ extern s32 gKolimaForestEntrance_SparkleSoundOn;
 
 /// The river log has tipped into the river and floats there as ground the party
 /// can cross.
+/// ★ Named from what the player sees: a log lying north to south beside the
+/// river (its render)
 #define FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER FLAG_MAP_TEMP_00
 
 /// The end of a field's growing: if a sparkle has burst on a field, the field

@@ -390,27 +390,47 @@ static void LunpaFortress_RestoreToadonpaDoors(void);
 #include "common/object_staged_object_event.h"
 
 /// Donpa has judged Dodonpa, so Hammet's cell no longer starts the trap.
+/// ★ Named from the game: "Huh? Donpa, didn't you just say you're going to lock
+/// up Dodonpa?" (MsgLunpaDad)
 #define FLAG_LUNPA_FORTRESS_DODONPA_JUDGED FLAG_MAPSEC_TEMP_01
 /// Donpa's attendant has told the party of Donpa and his spoiled son.
+/// ★ Named from the game: "Donpa knows that he coddled Dodonpa too much as a
+/// child." (MsgLunpaDonpaKnowsCoddled)
 #define FLAG_LUNPA_FORTRESS_ATTENDANT_TOLD_OF_DONPA FLAG_MAPSEC_TEMP_13
 /// Donpa's attendant has shown the party his reward, Tonic, and stands beside
 /// it.
+/// ★ Named from the game: "I have a little something for you, for your teaching
+/// Dodonpa his lesson." (MsgLunpaThankHelpDodonpa)
 #define FLAG_LUNPA_FORTRESS_REWARD_SHOWN FLAG_MAPSEC_TEMP_14
 /// A guard has spotted the party.
+/// ★ Named from the game: "How did you get in here?" (MsgLunpaWho2)
 #define FLAG_LUNPA_FORTRESS_PARTY_SPOTTED FLAG_MAP_TEMP_14
 /// LunpaFortressCave's first switch is still hidden by its ivy.
+/// ★ Named from what the player sees: a leafy green plant against the cave
+/// wall, which Whirlwind blows away (its render)
 #define FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNDER_IVY FLAG_MAP_TEMP_17
 /// LunpaFortressCave's second switch is still hidden by its ivy.
+/// ★ Named from what the player sees: a leafy green plant against the cave
+/// wall, which Whirlwind blows away (its render)
 #define FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNDER_IVY FLAG_MAP_TEMP_18
 /// The entrance guard has thrown the party out.
+/// ★ Named from the game: "No matter! You're on your way out now!"
+/// (MsgLunpaWho2)
 #define FLAG_LUNPA_FORTRESS_ENTRANCE_GUARD_CAUGHT_PARTY FLAG_MAP_TEMP_24
 /// The sentries have spotted the party and thrown it out.
+/// ★ Named from the game: "No matter! You're on your way out now!"
+/// (MsgLunpaWho2)
 #define FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY FLAG_MAP_TEMP_25
 /// The startled old man has promised to keep quiet.
+/// ★ Named from the game: "I won't tell anyone, but you should leave before the
+/// guards find you." (MsgLunpaWontTellAnyone)
 #define FLAG_LUNPA_FORTRESS_OLD_MAN_PROMISED_SILENCE FLAG_MAP_TEMP_26
 /// The startled old man has been startled once.
+/// ★ Named from the game: "Who goes there!" (MsgLunpaWhWhWho)
 #define FLAG_LUNPA_FORTRESS_OLD_MAN_STARTLED FLAG_MAP_TEMP_27
 /// EventScript_FindHammet is under way.
+/// ★ Named from the game: "I am a little late, but I have come to save you."
+/// (MsgLunpaTimeEat)
 #define FLAG_LUNPA_FORTRESS_FINDING_HAMMET FLAG_MAP_TEMP_70
 
 const struct MapWarpDest *Map_GetWarpDests(void) {

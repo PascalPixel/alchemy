@@ -17,8 +17,12 @@
 #include "flags.h"
 
 /// Growth has raised the sprout into a vine the leader can climb.
+/// ★ Named from what the player sees: a small green sprout at the foot of a
+/// cliff (its render)
 #define FLAG_TOLBI_SPROUT_GROWN FLAG_MAP_TEMP_00
 /// Frost has frozen the puddle into an ice pillar.
+/// ★ Named from what the player sees: a small puddle of water just north of the
+/// sprout (its render)
 #define FLAG_TOLBI_PUDDLE_FROZEN FLAG_MAP_TEMP_01
 
 // Map flags: FLAG_TOLBI_SPROUT_GROWN is set once Growth has raised the sprout,

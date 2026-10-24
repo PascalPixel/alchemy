@@ -83,6 +83,7 @@
 #include "common/colosso_story_flags.h"
 
 /// The spring has risen and faded into view this visit.
+/// ★ Named from its area name: Tolbi Spring
 #define FLAG_TOLBI_SPRING_RISEN FLAG_MAP_TEMP_00
 
 static void TolbiSpring_RiseAndFadeIn(void);

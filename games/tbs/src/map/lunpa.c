@@ -49,7 +49,7 @@
 /// - FLAG_LUNPA_FORTRESS_GATES_ENTERING_FORTRESS: the leader is going through
 ///   the fortress door.
 /// - FLAG_LUNPA_FORTRESS_GATES_GARET_WARNING: Garet's warning is under way.
-/// - FLAG_LUNPA_FORTRESS_GATES_GUARDS_MARCHING_PARTY: the guards are marching
+/// - FLAG_LUNPA_FORTRESS_GATES_GUARDS_CAUGHT_PARTY: the guards are marching
 ///   the party down.
 ///
 /// Open questions:
@@ -86,21 +86,36 @@ enum { PALETTE_TRANSLUCENT_EFFECT = 14, PALETTE_EFFECT = 15 };
 #include "common/effect_spawn.h"
 
 /// Frost has frozen the hidden puddle into an ice pillar to stand on.
+/// ★ Named from what the player sees: a small blue puddle that only Reveal
+/// shows (its render)
 #define FLAG_LUNPA_PUDDLE_FROZEN FLAG_MAP_TEMP_00
 /// The town's secrets are hidden: Reveal is not shining.
+/// ★ Named from the game: "Reveal" (MsgAbilityName)
 #define FLAG_LUNPA_SECRETS_HIDDEN FLAG_MAP_TEMP_01
 /// The hidden switch has opened the passage to the jail.
+/// ★ Named from the game: "At least those punks won't find the switch that
+/// opens the door. Heh heh! It's hidden too well in the wall!"
+/// (MsgLunpaHiddenDoorSwitch)
 #define FLAG_LUNPA_HIDDEN_PASSAGE_OPEN FLAG_MAP_TEMP_02
 /// The guards have stepped in front of the fortress door.
+/// ★ Named from the game: "Don't come any closer to the fortress!"
+/// (MsgLunpaGuardsWarnPartyAway)
 #define FLAG_LUNPA_FORTRESS_GATES_GUARDS_AT_DOOR FLAG_MAP_TEMP_40
 /// Cloak has been cast at the gates and has not yet faded.
+/// ★ Named from the game: "Cloak" (MsgAbilityName)
 #define FLAG_LUNPA_FORTRESS_GATES_CLOAK_CAST FLAG_MAP_TEMP_41
 /// The leader is going through the fortress door.
+/// ★ Named from what the player sees: the golden door set in the cliff at the
+/// top of the steps, past the two guards (its render)
 #define FLAG_LUNPA_FORTRESS_GATES_ENTERING_FORTRESS FLAG_MAP_TEMP_42
 /// Garet's warning against going back up to the fortress is under way.
+/// ★ Named from the game: "Don't be stupid! We can't go in there, remember?"
+/// (MsgLunpaGaretRefusesToReturn)
 #define FLAG_LUNPA_FORTRESS_GATES_GARET_WARNING FLAG_MAP_TEMP_43
 /// The guards have caught the party and are marching it down the steps.
-#define FLAG_LUNPA_FORTRESS_GATES_GUARDS_MARCHING_PARTY FLAG_MAP_TEMP_44
+/// ★ Named from the game: "That's strange. I've been on watch this whole time,
+/// so how did you get here?" (MsgLunpaGuardsCatchParty)
+#define FLAG_LUNPA_FORTRESS_GATES_GUARDS_CAUGHT_PARTY FLAG_MAP_TEMP_44
 
 /// How long an effect of common/effect_spawn.h lasts: 22, 44 or 126
 /// frames, then it moves away and is freed.
@@ -685,10 +700,10 @@ static void EventScript_GuardsCatchParty(void) {
   struct ObjectEvent *leader;
   s32 warningMessageBase;
 
-  if (Script_GetFlag(FLAG_LUNPA_FORTRESS_GATES_GUARDS_MARCHING_PARTY) != 0) {
+  if (Script_GetFlag(FLAG_LUNPA_FORTRESS_GATES_GUARDS_CAUGHT_PARTY) != 0) {
     return;
   }
-  GameFlag_Set(FLAG_LUNPA_FORTRESS_GATES_GUARDS_MARCHING_PARTY);
+  GameFlag_Set(FLAG_LUNPA_FORTRESS_GATES_GUARDS_CAUGHT_PARTY);
   FieldScript_Start();
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   ObjectEvent_FaceObjectEvent(LOCALID_LEFT_GUARD, LOCALID_PARTY_LEADER, 0);
@@ -767,7 +782,7 @@ static void EventScript_CloakFades(void) {
 #endif
   }
   Lunpa_ReopenGateway();
-  GameFlag_Clear(FLAG_LUNPA_FORTRESS_GATES_GUARDS_MARCHING_PARTY);
+  GameFlag_Clear(FLAG_LUNPA_FORTRESS_GATES_GUARDS_CAUGHT_PARTY);
 }
 
 /// Every frame at the Lunpa Fortress Gates: an uncloaked leader in front of

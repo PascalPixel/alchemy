@@ -2014,8 +2014,11 @@ static void ColosseumSatrageMatch_PushAdjacentObstacle(void) {
 #include "common/colosso_occupant.h"
 
 /// Closes the arena's coord event; nothing in the game sets it.
+/// ★ Named from the game: "This is the battle arena. After getting here, the
+/// warriors do battle." (MsgColossoWarriorsEnterFinalsWithoutAny)
 #define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_MAP_TEMP_10
 /// The chest holding a Smoke Bomb has been opened.
+/// ★ Named from the game: "Smoke Bomb" (MsgItemName)
 #define FLAG_COLOSSEUM_SATRAGE_MATCH_SMOKE_BOMB_CHEST_OPENED FLAG_MAPSEC_TEMP_39
 
 const u8 gColosseumSatrageMatch_RollLogScript[] = {2, 2, 3, 3};

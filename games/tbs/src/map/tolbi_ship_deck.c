@@ -341,9 +341,13 @@ enum TolbiShipDeckMetatileBehavior {
 #include "common/object_pulse.h"
 
 /// The door to the passengers' hold has been drawn open this visit.
+/// ★ Named from the game: "I saw some warriors in among the passengers
+/// belowdecks." (MsgTolbiTolbiShipThenTheyAreDangerous)
 #define FLAG_TOLBI_SHIP_DECK_PASSENGER_HOLD_DOOR_OPEN FLAG_MAP_TEMP_71
 /// The door to the captain's quarters has been drawn open this visit.
-#define FLAG_TOLBI_SHIP_DECK_CAPTAINS_ROOM_DOOR_OPEN FLAG_MAP_TEMP_72
+/// ★ Named from the game: "Where else? To the captain's quarters, of course."
+/// (MsgTolbiShipIfWeArentGoingSet)
+#define FLAG_TOLBI_SHIP_DECK_CAPTAINS_QUARTERS_DOOR_OPEN FLAG_MAP_TEMP_72
 
 /// An action-script call: shows the object event's sprite. Returns 0 to end the
 /// call.
@@ -954,10 +958,10 @@ static void TolbiShipDeck_OpenFirstDoor(void) {
 
 /// Opens the second door to below deck, once a visit.
 static void TolbiShipDeck_OpenSecondDoor(void) {
-  if (Script_GetFlag(FLAG_TOLBI_SHIP_DECK_CAPTAINS_ROOM_DOOR_OPEN) == 0) {
+  if (Script_GetFlag(FLAG_TOLBI_SHIP_DECK_CAPTAINS_QUARTERS_DOOR_OPEN) == 0) {
     Script_PlaySong(SE_DOOR_OPEN);
     MapGrid_CopyCellsTo(30, 108, 13, 108, 1, 2);
-    GameFlag_Set(FLAG_TOLBI_SHIP_DECK_CAPTAINS_ROOM_DOOR_OPEN);
+    GameFlag_Set(FLAG_TOLBI_SHIP_DECK_CAPTAINS_QUARTERS_DOOR_OPEN);
   }
 }
 
@@ -1308,7 +1312,7 @@ static void TolbiShipDeck_ApplyEntryState(void) {
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
     GameFlag_Clear(FLAG_TOLBI_SHIP_DECK_PASSENGER_HOLD_DOOR_OPEN);
-    GameFlag_Clear(FLAG_TOLBI_SHIP_DECK_CAPTAINS_ROOM_DOOR_OPEN);
+    GameFlag_Clear(FLAG_TOLBI_SHIP_DECK_CAPTAINS_QUARTERS_DOOR_OPEN);
   }
   if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
     TolbiShipDeck_CopyUnderwayCells();

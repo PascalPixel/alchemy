@@ -49,8 +49,8 @@
 /// setup restores from FLAG_VALE_PILLAR_IN_WEST_COLUMN, _IN_MIDDLE_COLUMN and
 /// _IN_EAST_COLUMN, a ladder up onto the roof of Isaac's house, climbed on
 /// metatile behaviors 100 and 101 (FLAG_VALE_ON_ROOF while on the roof), and
-/// cells of an upper path that change while the leader is on it
-/// (FLAG_VALE_ON_UPPER_PATH); after a battle (FLAG_KEEP_PARTY_POSITION) the
+/// cells of the bridge over the river that change while the leader is on it
+/// (FLAG_VALE_ON_BRIDGE); after a battle (FLAG_KEEP_PARTY_POSITION) the
 /// setup restores both. Warps: VALE_TO_SOL_ENTRANCE up Mt. Aleph to Sol
 /// Entrance (MapId_SolEntrance), VALE_TO_VALE_PLAZA to MapId_ValePlaza,
 /// VALE_TO_VALE_KRADENS_COTTAGE_NORTH and VALE_TO_VALE_KRADENS_COTTAGE_SOUTH to
@@ -381,11 +381,17 @@ enum ValeAnimation {
 #define FLAG_VALE_ROOF_JUST_MENDED FLAG_MAP_TEMP_02
 /// The leader has climbed the ladder onto the roof of Isaac's house, whose
 /// cells are changed so it can be walked.
+/// ★ Named from the game: "Haven't you finished mending the roof yet?"
+/// (MsgValeRepairCaption)
 #define FLAG_VALE_ON_ROOF FLAG_MAP_TEMP_04
-/// The leader is on the upper path, whose metatile behaviors are swapped until
-/// the leader steps off it.
-#define FLAG_VALE_ON_UPPER_PATH FLAG_MAP_TEMP_10
+/// The leader is on the bridge over the river, whose metatile behaviors are
+/// swapped until the leader steps off it. ★ Named from what the player sees: a
+/// wooden bridge with rope rails over the river, above the waterfall (its
+/// render)
+#define FLAG_VALE_ON_BRIDGE FLAG_MAP_TEMP_10
 /// The man guarding Mt. Aleph is paused while a menu is open.
+/// ★ Named from the game: "Mt. Aleph is a sacred peak."
+/// (MsgValeMtAlephIsASacredPeak)
 #define FLAG_VALE_MT_ALEPH_GUARD_PAUSED FLAG_MAP_TEMP_41
 /// Back from Kalay, Garet has met his sister.
 #define FLAG_VALE_GARET_MET_SISTER FLAG_MAPSEC_TEMP_03
@@ -394,6 +400,7 @@ enum ValeAnimation {
 #define FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY FLAG_MAPSEC_TEMP_04
 /// Unused: the water has burst up by the river and the strongman has remembered
 /// Felix (EventScript_UnusedWaterBurstsByTheRiver, which nothing reaches).
+/// ★ Named from the game: "I still remember when" (MsgValeIUsedToPlayHere)
 #define FLAG_VALE_UNUSED_WATER_BURST_SEEN FLAG_MAPSEC_TEMP_05
 /// Back from Kalay, the burly man has asked about the lack of travellers since
 /// the eruption.
@@ -402,11 +409,14 @@ enum ValeAnimation {
 /// the three off to Mt. Aleph.
 #define FLAG_VALE_ROOF_MENDED_SCENE_PLAYED FLAG_MAPSEC_TEMP_08
 /// The stone pillar below the cliff stands in its west column.
+/// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
 #define FLAG_VALE_PILLAR_IN_WEST_COLUMN FLAG_MAPSEC_TEMP_14
 /// The stone pillar below the cliff stands in its middle column, where it
 /// starts.
+/// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
 #define FLAG_VALE_PILLAR_IN_MIDDLE_COLUMN FLAG_MAPSEC_TEMP_15
 /// The stone pillar below the cliff stands in its east column.
+/// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
 #define FLAG_VALE_PILLAR_IN_EAST_COLUMN FLAG_MAPSEC_TEMP_16
 
 const struct MapWarpDest *Vale_GetWarpDests(void) { return gVale_WarpDests; }
@@ -583,17 +593,17 @@ static void EventScript_AskAboutTheLackOfTravelers(void) {
   FieldScript_End();
 }
 
-/// Walking onto the upper path in Vale (metatile behavior 15): its cells'
-/// metatile behaviors change, remembered in FLAG_VALE_ON_UPPER_PATH.
-static void EventScript_StepOntoUpperPath(void) {
-  GameFlag_Set(FLAG_VALE_ON_UPPER_PATH);
+/// Walking onto the bridge in Vale (metatile behavior 15): its cells'
+/// metatile behaviors change, remembered in FLAG_VALE_ON_BRIDGE.
+static void EventScript_StepOntoBridge(void) {
+  GameFlag_Set(FLAG_VALE_ON_BRIDGE);
   MapGrid_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
-/// Walking off the upper path in Vale (metatile behavior 14) restores its
+/// Walking off the bridge in Vale (metatile behavior 14) restores its
 /// cells' metatile behaviors.
-static void EventScript_StepOffUpperPath(void) {
-  GameFlag_Clear(FLAG_VALE_ON_UPPER_PATH);
+static void EventScript_StepOffBridge(void) {
+  GameFlag_Clear(FLAG_VALE_ON_BRIDGE);
   MapGrid_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
@@ -1577,7 +1587,7 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
 /// Vale's setup: plays the roof mending (VALE_FROM_TITLE) or its end (warp
 /// destination 17, once), floats the Nut, places the pillar by its column, sets
 /// the watching man going, removes the puppies once Saturos and Menardi have
-/// been met, and after a battle restores the roof's and the upper path's
+/// been met, and after a battle restores the roof's and the bridge's
 /// cells.
 s32 Vale_Initialize(void) {
   struct ObjectEvent *objectEvent;
@@ -1619,8 +1629,8 @@ s32 Vale_Initialize(void) {
         if (GameFlag_Get(FLAG_VALE_ON_ROOF)) {
           MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
         }
-        if (GameFlag_Get(FLAG_VALE_ON_UPPER_PATH)) {
-          EventScript_StepOntoUpperPath();
+        if (GameFlag_Get(FLAG_VALE_ON_BRIDGE)) {
+          EventScript_StepOntoBridge();
         }
       }
     } else {
@@ -1674,8 +1684,8 @@ s32 Vale_Initialize(void) {
         if (GameFlag_Get(FLAG_VALE_ON_ROOF)) {
           MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
         }
-        if (GameFlag_Get(FLAG_VALE_ON_UPPER_PATH)) {
-          EventScript_StepOntoUpperPath();
+        if (GameFlag_Get(FLAG_VALE_ON_BRIDGE)) {
+          EventScript_StepOntoBridge();
         }
       }
       {
@@ -1693,8 +1703,8 @@ s32 Vale_Initialize(void) {
       if (GameFlag_Get(FLAG_VALE_ON_ROOF)) {
         MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
       }
-      if (GameFlag_Get(FLAG_VALE_ON_UPPER_PATH)) {
-        EventScript_StepOntoUpperPath();
+      if (GameFlag_Get(FLAG_VALE_ON_BRIDGE)) {
+        EventScript_StepOntoBridge();
       }
     }
 #endif
@@ -3766,8 +3776,8 @@ struct MapEvent gVale_Events[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterJennasGrandparentsHouse) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterValeShopsWest) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UnusedEnterJennasGrandparentsHouseBySecondDoor) },
-    { MAP_EVENT_COORD, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOntoUpperPath) },
-    { MAP_EVENT_COORD, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOffUpperPath) },
+    { MAP_EVENT_COORD, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOntoBridge) },
+    { MAP_EVENT_COORD, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOffBridge) },
     { MAP_EVENT_COORD, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WatchThePuppies) },
     { MAP_EVENT_COORD, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TurnBackFromThePuppies) },
     { MAP_EVENT_COORD, 50, FLAG_VALE_WARNED_AGAINST_MT_ALEPH, EVENT_SCRIPT(EventScript_WarnAgainstSneakingUpMtAleph) },
@@ -3816,8 +3826,8 @@ struct MapEvent gVale_EventsAfterLeaving[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterJennasGrandparentsHouse) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterValeShopsWest) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UnusedEnterJennasGrandparentsHouseBySecondDoor) },
-    { MAP_EVENT_COORD, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOntoUpperPath) },
-    { MAP_EVENT_COORD, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOffUpperPath) },
+    { MAP_EVENT_COORD, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOntoBridge) },
+    { MAP_EVENT_COORD, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOffBridge) },
     { MAP_EVENT_COORD, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WatchThePuppies) },
     { MAP_EVENT_COORD, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TurnBackFromThePuppies) },
     { MAP_EVENT_COORD, 50, FLAG_VALE_WARNED_AGAINST_MT_ALEPH, EVENT_SCRIPT(EventScript_WarnAgainstSneakingUpMtAleph) },
@@ -3869,8 +3879,8 @@ struct MapEvent gVale_EventsAfterKalay[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterJennasGrandparentsHouse) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterValeShopsWest) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UnusedEnterJennasGrandparentsHouseBySecondDoor) },
-    { MAP_EVENT_COORD, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOntoUpperPath) },
-    { MAP_EVENT_COORD, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOffUpperPath) },
+    { MAP_EVENT_COORD, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOntoBridge) },
+    { MAP_EVENT_COORD, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOffBridge) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbLadderOntoRoof) },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbDownFromRoof) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_CATCH), LOCALID_NUT_AFTER_KALAY, FLAG_VALE_NUT_CAUGHT, EVENT_SCRIPT(EventScript_CatchNutAfterKalay) },

@@ -2375,12 +2375,17 @@ static void ColosseumNavampaMatch_PushObjectEventAhead(void) {
 #include "common/colosso_occupant.h"
 
 /// Closes the arena's coord event; nothing in the game sets it.
+/// ★ Named from the game: "This is the battle arena. After getting here, the
+/// warriors do battle." (MsgColossoWarriorsEnterFinalsWithoutAny)
 #define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_MAP_TEMP_10
 /// The chest holding a Smoke Bomb has been opened.
+/// ★ Named from the game: "Smoke Bomb" (MsgItemName)
 #define FLAG_COLOSSEUM_NAVAMPA_MATCH_SMOKE_BOMB_CHEST_OPENED FLAG_MAPSEC_TEMP_6A
 /// The chest holding a Nut has been opened.
+/// ★ Named from the game: "Nut" (MsgItemName)
 #define FLAG_COLOSSEUM_NAVAMPA_MATCH_NUT_CHEST_OPENED FLAG_MAPSEC_TEMP_6B
 /// The chest holding a Sleep Bomb has been opened.
+/// ★ Named from the game: "Sleep Bomb" (MsgItemName)
 #define FLAG_COLOSSEUM_NAVAMPA_MATCH_SLEEP_BOMB_CHEST_OPENED FLAG_MAPSEC_TEMP_6C
 
 /// The Moving Sidewalk Stage's log where Force has knocked it off the belt,

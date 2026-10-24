@@ -85,12 +85,18 @@
 
 /// The rooms of Sol and Luna show their plain colours (PALETTE_TINT_NONE), so a
 /// return after a battle keeps them.
+/// ★ Named from the game: "But a room for Luna and one for Sol?"
+/// (MsgSolSanctumRoomLunaOne)
 #define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED FLAG_MAP_TEMP_00
 /// The rooms of Sol and Luna show SOL_SANCTUM_BLUE_TINT, so a return after a
 /// battle keeps it.
+/// ★ Named from the game: "But a room for Luna and one for Sol?"
+/// (MsgSolSanctumRoomLunaOne)
 #define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED FLAG_MAP_TEMP_01
 /// The rooms of Sol and Luna show SOL_SANCTUM_WARM_TINT, so a return after a
 /// battle keeps it.
+/// ★ Named from the game: "But a room for Luna and one for Sol?"
+/// (MsgSolSanctumRoomLunaOne)
 #define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED FLAG_MAP_TEMP_02
 
 // Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the

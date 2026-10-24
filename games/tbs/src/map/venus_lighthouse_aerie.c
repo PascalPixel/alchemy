@@ -315,14 +315,22 @@ VenusLighthouseAerie_GetObjectEventTemplates(void) {
 #include "common/object_nearest.h"
 
 /// Saturos and Menardi slide together as they fuse.
+/// ★ Named from the game: "Fusion Dragon" (MsgEnemyName)
 #define FLAG_VENUS_AERIE_FUSION_SLIDING FLAG_MAP_TEMP_34
 /// Saturos and Menardi grow as they fuse.
+/// ★ Named from the game: "Fusion Dragon" (MsgEnemyName)
 #define FLAG_VENUS_AERIE_FUSION_GROWING FLAG_MAP_TEMP_35
 /// The beacon has erupted, and its particles rise higher.
+/// ★ Named from the game: "At long last, the time has come to light Venus
+/// Lighthouse's beacon." (MsgVenusLongLastTime)
 #define FLAG_VENUS_AERIE_BEACON_ERUPTED FLAG_MAP_TEMP_36
 /// The beacon's light has lifted the party and flashed white.
+/// ★ Named from the game: "At long last, the time has come to light Venus
+/// Lighthouse's beacon." (MsgVenusLongLastTime)
 #define FLAG_VENUS_AERIE_PARTY_LIFTED FLAG_MAP_TEMP_37
 /// The leader stands on one of the floating platforms.
+/// ★ Named from what the player sees: round pale blue platforms floating in the
+/// air between the lighthouse and the towers beside it (its render)
 #define FLAG_VENUS_AERIE_ON_PLATFORM FLAG_MAP_TEMP_50
 
 /// Walking off the edge of a platform: if the ground two cells ahead is clear,

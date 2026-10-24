@@ -233,6 +233,7 @@ static void FuchinTemple_AnimateRevealLesson(void);
 
 /// The Psynergy Stone outside the temple has been taken; it refills once the
 /// party enters another map section.
+/// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
 #define FLAG_FUCHIN_TEMPLE_PSYNERGY_STONE FLAG_MAPSEC_TEMP_50
 
 /// Clears the scripted object event's sprite flags and completes the script

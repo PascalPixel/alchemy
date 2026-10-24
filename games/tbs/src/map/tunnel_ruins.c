@@ -534,9 +534,13 @@ static void EventScript_HopDownStep(void) {
 
 /// In TunnelRuinsLadyStatues, Douse has soaked the pillar, and its puddle
 /// follows it.
+/// ★ Named from what the player sees: a grey pillar with a white top on an
+/// orange base, which Douse soaks (its render)
 #define FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED FLAG_MAP_TEMP_03
 /// In TunnelRuinsLadyStatues, Frost has frozen the soaked pillar's puddle into
 /// a pillar of ice.
+/// ★ Named from what the player sees: a small blue puddle, the room's only one,
+/// shown once Douse has soaked the pillar (its render)
 #define FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN FLAG_MAP_TEMP_04
 
 /// The warp destinations of TunnelRuinsGreatStatue, TunnelRuinsLadyStatues, or

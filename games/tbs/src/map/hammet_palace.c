@@ -67,6 +67,8 @@
 
 /// The party has heard in Lunpa that Hammet is held there, or has freed him, so
 /// Layana waits elsewhere in her room.
+/// ★ Named from the game: "you sneaked into Lunpa? That's far too dangerous!"
+/// (MsgKalayIsaacSneakedIntoLunpaThats)
 #define FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA FLAG_MAPSEC_TEMP_21
 
 /// The palace's object events, numbered in the order of

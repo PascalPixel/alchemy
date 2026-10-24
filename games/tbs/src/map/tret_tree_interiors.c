@@ -352,7 +352,9 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
 
 // The cocoons' coord events in Tret Tree, one per cocoon: each passes its
 // flag, the staging cell of its torn picture and its own number, the landing
-// warp destination, to TretTreeInteriors_StepOnCocoon.
+// warp destination, to TretTreeInteriors_StepOnCocoon. The second floor's nine
+// are alike, on one web, and keep their numbers 1 to 9 in the order of their
+// coord events and landing warp destinations, 21 to 29.
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.

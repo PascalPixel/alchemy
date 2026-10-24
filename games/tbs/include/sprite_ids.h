@@ -501,12 +501,16 @@ enum SpriteId {
   /// green shirt (spr_125.png)
   SPRITE_YOUNG_MAN_IN_GREEN = 0x7d,
   /// A second number for SPRITE_BALD_MAN_IN_RED, whose frames and animations
-  /// it borrows (sprites.tsv), placed in Kalay's houses and Hammet Palace.
+  /// it borrows (sprites.tsv), so the player sees the same man. The first
+  /// number keeps most towns' weapon shops; this one stands in Kalay's houses
+  /// and in Hammet's palace.
   /// ★ Named from what the player sees: a bald man in a red tunic with green
   /// sleeves (spr_124.png)
   SPRITE_BALD_MAN_IN_RED_2 = 0x7e,
   /// A second number for SPRITE_YOUNG_MAN_IN_GREEN, whose frames and
-  /// animations it borrows (sprites.tsv).
+  /// animations it borrows (sprites.tsv), so the player sees the same man. The
+  /// first number keeps most towns' armor shops; this one stands in Kalay's
+  /// houses and in Hammet's palace.
   /// ★ Named from what the player sees: a young man with brown hair in a
   /// green shirt (spr_125.png)
   SPRITE_YOUNG_MAN_IN_GREEN_2 = 0x7f,

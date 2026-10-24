@@ -152,7 +152,7 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
   if (mode == TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH)
     BattleAnim_StartCanvasLayer(0);
   else
-    BattleAnim_StartCanvasLayer(1);
+    BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   // The canvas adds its full colour to everything under it.
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 

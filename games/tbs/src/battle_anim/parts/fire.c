@@ -45,7 +45,7 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
   sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   if (effect->side == ANIM_SIDE_PARTY)
-    BattleAnim_StartCanvasLayer(1);
+    BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   else
     BattleAnim_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,

@@ -202,7 +202,7 @@ UNUSED void BattleAnim_RunBladeRain(struct BattleAnimArgs *effect) {
 
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  ANIM_START_NARROW_CANVAS(1);
+  ANIM_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   // Invisible to start with.
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
 
@@ -545,9 +545,9 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *effect) {
 /// BattleTransition_Run, as a battle opens. Allocates and
 /// frees its own work, canvas and sheet slots; sets up BG2 as the canvas
 /// itself, as BattleAnim_StartCanvasLayer would; draws the disc in
-/// Ram_MapGridCellBuffer and copies it over 0x7800 bytes of BG character block
-/// 2; writes background colours 1 to 63 and palettes 6 to 13; reloads the
-/// battle background on BG1 on frame 5, and on its way out restores
+/// Ram_MapGridCellBuffer and copies it over the BATTLE_BACKGROUND_BYTES of BG
+/// character block 2; writes background colours 1 to 63 and palettes 6 to 13;
+/// reloads the battle background on BG1 on frame 5, and on its way out restores
 /// gBgScroll[1], starts the battle's palette fade to BATTLE_BACKGROUND_ZOOMED
 /// and queues a DISPCNT without BG1.
 ///
@@ -666,8 +666,10 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
   // copy of the screen into it is overwritten at once), and background
   // palettes 6 to 13 turn white. BG1's scroll is saved and the battle's
   // background view marked busy while the battle background is replaced.
-  Iwram_CopyWords(Ram_MapGridCellBuffer, (void *)BG_CHAR_BLOCK(2), 0x7800);
-  Iwram_FillWords(Ram_MapGridCellBuffer, 0x7800, CANVAS_FILL_WORD(1));
+  Iwram_CopyWords(Ram_MapGridCellBuffer, (void *)BG_CHAR_BLOCK(2),
+                  BATTLE_BACKGROUND_BYTES);
+  Iwram_FillWords(Ram_MapGridCellBuffer, BATTLE_BACKGROUND_BYTES,
+                  CANVAS_FILL_WORD(1));
   view->busy = 1;
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
@@ -736,7 +738,8 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
 
     // Frame 4: the whole screen turns the disc's grey.
     if (frame == 4)
-      Iwram_FillWords((void *)BG_CHAR_BLOCK(2), 0x7800, CANVAS_FILL_WORD(2));
+      Iwram_FillWords((void *)BG_CHAR_BLOCK(2), BATTLE_BACKGROUND_BYTES,
+                      CANVAS_FILL_WORD(2));
 
     // Frames 0 to 3: grow the disc in the mask by 32 pixels of radius,
     // brighten its grey (colour 2), and copy the mask to the screen.
@@ -809,7 +812,8 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
           octantY++;
         }
       }
-      Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapGridCellBuffer, 0x7800);
+      Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapGridCellBuffer,
+                      BATTLE_BACKGROUND_BYTES);
     }
 
     // Draw the pieces up to frame 50; they start to fly and fall on frame

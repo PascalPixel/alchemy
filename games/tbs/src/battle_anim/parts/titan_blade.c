@@ -53,7 +53,7 @@ void BattleAnim_RunTitanBlade(struct BattleAnimArgs *effect) {
   sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_ANIM];
 
   work->effect = effect;
-  BattleAnim_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Projection_Unit(work->effect->targets[0], &screenPosition);
   canvasCenterX = screenPosition.x / 2;

@@ -435,7 +435,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
   if (mode == PROJECTILE_VOLLEY_ICE_BLESSING)
     BattleAnim_StartCanvasLayer(0);
   else
-    BattleAnim_StartCanvasLayer(1);
+    BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   if (work->effect->prelude == 1)
     BattleAnim_RunDjinniEntrance(effect, ELEMENT_MERCURY, work->effect->side,
                                  DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);

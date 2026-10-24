@@ -109,7 +109,7 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
   camera = ANIM_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleAnim_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
 
   // The upper half of a streak is its image flipped vertically; on the
   // party's side both halves are mirrored as well.
@@ -344,7 +344,7 @@ void BattleAnim_RunMoteFountain(struct BattleAnimArgs *effect, s32 mode) {
   if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING)
     BattleAnim_StartCanvasLayer(0);
   else
-    BattleAnim_StartCanvasLayer(1);
+    BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y,

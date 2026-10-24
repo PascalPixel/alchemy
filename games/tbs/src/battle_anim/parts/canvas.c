@@ -151,8 +151,8 @@ void BattleAnim_ProcessPendingGraphicsTransfer(void) {
 }
 
 /// Copies a full-screen picture to VRAM once the animation has finished drawing
-/// a frame: the 0x7800 bytes of Ram_MapGridCellBuffer into BG character block 2
-/// (0x06008000), the way transferMode says (every mode but
+/// a frame: the BATTLE_BACKGROUND_BYTES of Ram_MapGridCellBuffer into BG
+/// character block 2 (0x06008000), the way transferMode says (every mode but
 /// CANVAS_COPY_AND_BRIGHTEN).
 ///
 /// Runs each frame as a task added by
@@ -176,23 +176,25 @@ void BattleAnim_FlushPendingGraphicsTransfer(void) {
   transferMode = work->transferMode;
   switch (transferMode) {
   case CANVAS_COPY:
-    Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source, 0x7800);
+    Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source, BATTLE_BACKGROUND_BYTES);
     break;
   case CANVAS_COPY_AND_CLEAR:
-    Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source, 0x7800);
-    Iwram_FillWords(source, 0x7800, work->transferValue);
+    Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source, BATTLE_BACKGROUND_BYTES);
+    Iwram_FillWords(source, BATTLE_BACKGROUND_BYTES, work->transferValue);
     break;
   case CANVAS_COPY_AND_FADE:
     if (work->transferValue == CANVAS_FADE_HALF) {
-      PaletteFade_BackupAndHalve(source, (void *)BG_CHAR_BLOCK(2), 0x7800);
+      PaletteFade_BackupAndHalve(source, (void *)BG_CHAR_BLOCK(2),
+                                 BATTLE_BACKGROUND_BYTES);
     } else {
       PaletteFade_BackupAndScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(2),
-                                              0x7800);
+                                              BATTLE_BACKGROUND_BYTES);
     }
     break;
   case CANVAS_COPY_AND_DARKEN:
     PaletteFade_BackupAndDarken(source, work->transferValue,
-                                (void *)BG_CHAR_BLOCK(2), 0x7800);
+                                (void *)BG_CHAR_BLOCK(2),
+                                BATTLE_BACKGROUND_BYTES);
     break;
   }
 

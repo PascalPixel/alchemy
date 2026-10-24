@@ -514,7 +514,7 @@ void BattleAnim_RunCurse(struct BattleAnimArgs *effect) {
   canvas = slot[0];
   work = slot[-1];
   work->effect = effect;
-  ANIM_START_NARROW_CANVAS(1);
+  ANIM_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   // Drawn solid.
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work->sheet, 1,

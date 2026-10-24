@@ -110,7 +110,7 @@ void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *effect, s32 mode) {
 
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  BattleAnim_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;
   if (mode == GROWING_COLUMNS_PILLARS) {
@@ -350,7 +350,7 @@ void BattleAnim_RunVine(struct BattleAnimArgs *effect) {
   BattleAnim_RunDjinniEntrance(effect, ELEMENT_VENUS + DJINNI_ENTRANCE_LONG,
                                effect->side, DJINNI_ANCHOR_CENTRE, &originX,
                                &originY);
-  BattleAnim_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_GreenVineSheet, work->sheet, 1,
@@ -458,7 +458,7 @@ void BattleAnim_RunThorn(struct BattleAnimArgs *effect) {
   work = (struct BattleAnimWork *)*cursor++;
   canvas = (void *)*cursor;
   work->effect = effect;
-  BattleAnim_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);

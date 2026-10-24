@@ -242,9 +242,13 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// animations write it only on lines outside window 0's vertical range.
 #define WINDOW_SPAN_INVERTED WIN_RANGE(1, 0)
 
+/// The battle background's picture as BG1 shows it from BG character block 2:
+/// 256x120 pixels, one byte each.
+#define BATTLE_BACKGROUND_BYTES (256 * 120)
+
 /// Ram_MapGridCellBuffer as the unused BattleAnim_ConvertBackgroundToBlueRamp
 /// (bind.c) uses it: a working copy of the battle background's picture, the
-/// 0x7800 bytes of BG character block 2.
+/// BATTLE_BACKGROUND_BYTES of BG character block 2.
 #define BLUE_RAMP_PIXELS Ram_MapGridCellBuffer
 
 /// Caps a colour level at cap, and at 0 from below. Fades draw from darker

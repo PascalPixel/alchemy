@@ -172,7 +172,7 @@ void BattleAnim_RunSpiderWeb(struct BattleAnimArgs *effect) {
   canvas = *(void **)size;
   work = *(struct BattleAnimWork **)(size - 4);
   work->effect = effect;
-  BattleAnim_StartCanvasLayer(2);
+  BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(2));
   transparent = (s32)&REG_BLDALPHA;
   REG_BG2PA = Q_8_8(1);
   *(u16 *)transparent =

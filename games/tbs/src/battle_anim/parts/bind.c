@@ -21,7 +21,7 @@
 /// random numbers, one a column.
 ///
 /// Nothing calls it or takes its address. Writes background colours 32 to 63
-/// and then 96 to 127, the 0x7800 bytes of BG character block 2 (the
+/// and then 96 to 127, the BATTLE_BACKGROUND_BYTES of BG character block 2 (the
 /// battle background's picture) and Ram_MapGridCellBuffer, keeps its delays in
 /// the sheet slot, and waits a frame for each step of the edge.
 UNUSED void BattleAnim_ConvertBackgroundToBlueRamp(void) {
@@ -45,7 +45,8 @@ UNUSED void BattleAnim_ConvertBackgroundToBlueRamp(void) {
   // from 16.
   end = 0;
   speed = 16;
-  Iwram_CopyWords(BLUE_RAMP_PIXELS, (void *)BG_CHAR_BLOCK(2), 0x7800);
+  Iwram_CopyWords(BLUE_RAMP_PIXELS, (void *)BG_CHAR_BLOCK(2),
+                  BATTLE_BACKGROUND_BYTES);
   delayMask = 63;
   p = delays;
   do {
@@ -82,7 +83,8 @@ UNUSED void BattleAnim_ConvertBackgroundToBlueRamp(void) {
       } while (x != 256);
       row++;
     }
-    Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), BLUE_RAMP_PIXELS, 0x7800);
+    Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), BLUE_RAMP_PIXELS,
+                    BATTLE_BACKGROUND_BYTES);
     WaitFrames(1);
     // DEAD: never true, as the edge reaches only line 186 by the 27th frame;
     // the ROM keeps the test. Every column (120 lines, at most 63 late) is
@@ -104,8 +106,9 @@ UNUSED void BattleAnim_ConvertBackgroundToBlueRamp(void) {
   do {
     BLUE_RAMP_PIXELS[i] += 64;
     i++;
-  } while (i != 0x7800);
-  Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), BLUE_RAMP_PIXELS, 0x7800);
+  } while (i != BATTLE_BACKGROUND_BYTES);
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), BLUE_RAMP_PIXELS,
+                  BATTLE_BACKGROUND_BYTES);
   WaitFrames(1);
 }
 
@@ -158,7 +161,7 @@ void BattleAnim_RunBind(struct BattleAnimArgs *effect) {
   graphics = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleAnim_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   if (work->effect->prelude == 1)
     BattleAnim_RunDjinniEntrance(effect, ELEMENT_JUPITER, work->effect->side,
                                  DJINNI_ANCHOR_OVER_TARGET, &originX, &originY);

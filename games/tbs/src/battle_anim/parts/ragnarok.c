@@ -54,7 +54,7 @@ void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
   // changes nothing the game shows, so only the author's intent would say.
   effect->variant = ANIM_VARIANT_STRONGER;
   work->effect = effect;
-  BattleAnim_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleAnim_FetchRectangleBlitters(work->effect->side, blit);
   // The user takes its leap pose and animates fast until the end: an

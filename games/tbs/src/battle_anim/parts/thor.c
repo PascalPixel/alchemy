@@ -115,7 +115,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
   work->effect = effect;
   // Open the canvas and load the pictures. The light fan sheet is loaded
   // twice, to the same place; the second load changes nothing.
-  ANIM_START_NARROW_CANVAS(0x2000);
+  ANIM_START_NARROW_CANVAS(BGCNT_WRAP);
   Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesC,

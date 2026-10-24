@@ -167,7 +167,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
   // Begin: in Outer Space the user leaps up with a sound. The stream's
   // direction is 1 when that user stands on ANIM_SIDE_PARTY, otherwise -1.
   work->effect = effect;
-  ANIM_START_NARROW_CANVAS(0x2000);
+  ANIM_START_NARROW_CANVAS(BGCNT_WRAP);
   /* FAKEMATCH(temporary): mode tested through direction, so the arm reloads
    * mode where CSE would put 1; as if (mode == PARTICLE_STREAMS_OUTER_SPACE),
    * 1 of 1532 instructions differ in tbs-en. */
@@ -220,11 +220,12 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
                     Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
                     128);
   // The map picture, 32x16 tiles of 8x8 pixels (256x128, 0x2000 words), all
-  // colour 1; its first 0x7800 bytes, 256x120 pixels, are what BG1 shows.
+  // colour 1; its first BATTLE_BACKGROUND_BYTES are what BG1 shows.
   fill = CANVAS_FILL_WORD(1);
   Dma_Set((void *)&fill, Ram_MapGridCellBuffer, DMA_FILL_WORDS(0x2000),
           REG_DMA3);
-  Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapGridCellBuffer, 0x7800);
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapGridCellBuffer,
+                  BATTLE_BACKGROUND_BYTES);
   WaitFrames(1);
   REG_BLDCNT = 0;
   REG_BG2PA = Q_8_8(1);

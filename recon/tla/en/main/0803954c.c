@@ -1,3 +1,5 @@
+// Draft, differ 4 of 84 (2026-10-24): an empty asm after found->unk26 = 0
+// takes one reordered pair off. Left: instruction order only.
 // Near miss, differ 6 of 84: ☀️'s UiText_QueueRenderEntries. The native
 // starts the text-mode offset 0x138c (movs r1, #152) before the channel
 // stores and finishes it (lsls, adds) after them; agscc builds it whole
@@ -53,6 +55,7 @@ struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window,
     found->ended = 0;
     found->flags = flags;
     found->unk26 = 0;
+    __asm__ volatile("");
     if (*(s8 *)(work + UI_TEXT_MODE_OFFSET) != 0 && spacing != NULL)
       found->unk26 = spacing[3];
     if (spacing != NULL) {

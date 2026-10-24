@@ -1,3 +1,5 @@
+// Draft, differ 8 of 101 (2026-10-24): a one-pass block around the clearing
+// DMA takes one reordered pair off. Left: instruction order only.
 // Near miss, differ 10 of 101 (five swapped pairs, all else identical): The
 // Broken Seal's OptionMenu_InitializeWork on this game's party state. For each
 // option the native reads the saved byte one step earlier than here: movs r0,
@@ -47,7 +49,9 @@ void OptionMenu_InitializeWork(void) {
 
   work = (struct OptionWork *)Runtime_AllocateBlock(208, 0x628);
   zero = 0;
-  Dma_Set((const void *)&zero, work, 0x8500018a, REG_DMA3);
+  do {
+    Dma_Set((const void *)&zero, work, 0x8500018a, REG_DMA3);
+  } while (0);
   work->option[0] = gPartyState.paletteGlow[0];
   work->optionCount[0] = 24;
   work->option[1] = gPartyState.paletteGlow[1];

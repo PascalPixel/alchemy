@@ -1,3 +1,7 @@
+// Draft, differ 8 of 212 (2026-10-24): a one-pass block around the
+// records[1].base store and an empty asm after the status store, as in its
+// sibling 0803eb2c, take six rows off. Left: load-before-constant orders of
+// the same kind.
 // Near miss, differ 14 of 212, 2026-10-15: Menu_StepRight on the shared
 // SelectionScreen and SelectionNode of menu/select.h, which reads the row
 // targets baseX and baseY as the native does without the earlier draft's
@@ -69,7 +73,9 @@ void Menu_StepRight(struct SelectionScreen *state) {
       state->records[1].kind = 1;
     } else if (state->cursorIndex == 4 && end + 1 < state->count) {
       state->cursorIndex--;
-      state->records[1].base = 8;
+      do {
+        state->records[1].base = 8;
+      } while (0);
       state->top++;
       Menu_ScrollSelectionList(state, 1);
       if (state->top + state->cursorIndex + 2 == state->count)
@@ -80,6 +86,7 @@ void Menu_StepRight(struct SelectionScreen *state) {
     state->cursorIndex = 0;
   }
   state->status = 1;
+  __asm__ volatile("");
   Menu_LoadSelectionNodeResource(state, state->cursorIndex);
   WaitFrames(1);
   Menu_OpenSelectionWindow(state->head->kind, 0);

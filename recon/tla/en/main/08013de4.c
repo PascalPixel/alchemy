@@ -1,3 +1,8 @@
+// Draft, differ 2 of 48 (2026-10-24): one-pass blocks around the BLDCNT store
+// and the frames-left decrement order the two loads after them as the native
+// has them. Left: BLDY's address is finished before the quotient is added;
+// sched2 takes it for its extra dependant (the reload of the frames left
+// reuses its register).
 // Draft, differ 6 of 48: The Broken Seal's Fade_Update as it is.
 // Three schedules differ: the native loads &gBlendFramesLeft after the BLDCNT
 // store and &gBlendTargetLevel after the frame count's store, where this
@@ -39,7 +44,9 @@ void Fade_Update(void) {
         control = gBlendLayers | 0xc0;
         blendControl = &REG_BLDCNT;
       }
-      *blendControl = control;
+      do {
+        *blendControl = control;
+      } while (0);
     }
     {
       u8 *remaining = &gBlendFramesLeft;
@@ -47,7 +54,9 @@ void Fade_Update(void) {
       s32 level;
       s32 step;
 
-      (*remaining)--;
+      do {
+        (*remaining)--;
+      } while (0);
       level = gBlendTargetLevel;
       delta = gBlendStartLevel - gBlendTargetLevel;
       step = *remaining;

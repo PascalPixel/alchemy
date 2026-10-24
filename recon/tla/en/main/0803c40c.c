@@ -1,3 +1,5 @@
+// Draft, differ 6 of 146 (2026-10-24): an empty asm after the affine index
+// store takes one reordered pair off. Left: instruction order only.
 // Draft of RenderOutput_UpdateScaleAnimation: differ 8 of 146 (tla-en,
 // 2026-10-18). Its ☀️ twin is games/tbs/src/window/window.c's function of
 // the same name: it steps a window output's bounce or grow scale and builds
@@ -65,6 +67,7 @@ void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output) {
     effect.scaleY = scale;
     effect.angle = 0;
     sprite->affineIndex = AffineMatrix_BuildForEffect(&effect);
+    __asm__ volatile("");
     if (scale > 256) {
       sprite->affine = 3;
       /* FAKEMATCH: preserve the original unsigned halfword read at

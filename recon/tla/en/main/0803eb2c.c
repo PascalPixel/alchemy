@@ -1,3 +1,8 @@
+// Draft, differ 4 of 80 (2026-10-24): a one-pass block around the upScroll
+// store and an empty asm after the status store place the upScroll offset and
+// the reloads as the native has them. Left: in the else branch the native
+// reads the cursor before it builds 0xffff, and it builds the cursor offset
+// before the status store.
 // Near miss, differ 10 of 80 (2026-10-12): three scheduling differences, all
 // loads the listing takes before the 0xffff constant it adds, and the up-arrow
 // offset built after the store instead of before.
@@ -69,7 +74,9 @@ void Menu_MoveSelectionBackward(struct SelectionScreen *screen) {
   WaitFrames(1);
   cursor = screen->cursor;
   if (cursor == 1 && screen->top != 0) {
-    screen->upScroll = ARROW_SCROLL_FRAMES;
+    do {
+      screen->upScroll = ARROW_SCROLL_FRAMES;
+    } while (0);
     screen->top--;
     Menu_ScrollSelectionList(screen, 0);
     if (screen->top == 0) {
@@ -80,6 +87,7 @@ void Menu_MoveSelectionBackward(struct SelectionScreen *screen) {
     screen->cursor--;
   }
   screen->status = NODE_STATUS_SHOWN;
+  __asm__ volatile("");
   Menu_LoadSelectionNodeResource(screen, screen->cursor);
   WaitFrames(1);
   Menu_OpenSelectionWindow(screen->node->kind, 0);

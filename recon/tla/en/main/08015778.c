@@ -1,3 +1,7 @@
+// Draft, differ 6 of 82 (2026-10-24): an empty asm after the transform call
+// takes one reordered pair off. Left: the native forms the view's address
+// twice (mov r1, sp before the call, mov r6, sp after); here one copy serves
+// both.
 // Draft, differ 8 of 82: the native passes the view's address to the
 // transform as a fresh mov r1, sp and forms it again after the call (mov r6,
 // sp); here one copy in r6 is made before the call and r1 is copied from it,
@@ -31,6 +35,7 @@ s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen) {
   s32 x;
 
   Iwram_TransformVector(point, &view.x);
+  __asm__ volatile("");
   projection = &gCameraSceneParameters;
   depth = -view.z;
   if (depth >= projection->near && depth <= projection->far) {

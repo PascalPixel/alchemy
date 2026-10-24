@@ -19,106 +19,81 @@ throws away everything Vale had set up, loads the Sanctum's code and runs it
 until the party leaves again. The whole game is that loop, once for each map,
 not once a [frame](glossary.md#frame). A map can run for minutes; while it
 does, its code waits frame by frame and the engine keeps the screen moving
-([Engine](engine.md#waiting-and-tasks)). A battle or a minigame takes a map's
-place in the loop, and when it ends the game goes back to the map it started
-from, with everyone where they stood.
+([Engine](engine.md#waiting-and-tasks)).
 
-`Game_Run` ([overworld/map.c](src/overworld/overworld/map.c)) is the loop, and
-it never returns. Each pass first clears what the last map left: DMA channel 0
-(a map may leave it rewriting a display setting after every line, for a wave
-or a tilt), every [task](glossary.md#task), the HBlank and VCount handlers and
-the [heap](glossary.md#heap-and-pools). Then, for a field map:
+Each time round, the game first clears away whatever the last map left
+running: its per-frame jobs, its screen effects and all the memory it
+borrowed. Then it works out which flags the new map starts with, starts the
+map's music (unless a flag asks to keep the music already playing), unpacks
+the map's code and runs it. The map runs until the party takes a
+[warp](glossary.md#warp), a way out, and the warp names the next map and the
+place in it where the party appears.
 
-1. `Map_ResetFlagsOnEnter` clears the flags that last one map or one
-   [map section](glossary.md#map-section) ([Game flags](#game-flags)).
-2. The map's music starts, unless `FLAG_KEEP_MUSIC` or `FLAG_KEEP_MUSIC_HELD`
-   keeps what is playing.
-3. `Map_LoadOverlay` unpacks the map's code, its [overlay](glossary.md#overlay).
-4. `Map_Run` runs the map until the party takes a [warp](glossary.md#warp)
-   (`VALE_TO_SANCTUM`, say) and returns it.
-5. `Map_TakeWarp` looks the warp up to find the next map and the
-   [warp destination](glossary.md#warp-destination) there.
+A battle or a minigame takes a map's place in the loop. It has no code of its
+own to unpack, since its code is always loaded, and when it ends it reports a
+result rather than a warp. The game then goes back to the map the battle
+started from, with everyone standing where they stood; after a defeat it goes
+to the place a [script](glossary.md#script) chose for losing that battle, or
+else to the last save. A random battle starts the same way as walking through
+a door: the map names the battle as the next stop and leaves.
 
-A battle or minigame runs under a map number past the end of the map table
-(`RUN_BATTLE` and the rest below), with no overlay, since its code is in the
-[main image](glossary.md#main-image). It returns a result instead of a warp,
-and `Map_ReturnFromRun` picks where to go: after a defeat, the point a
-[script](glossary.md#script) set for losing that battle, or else the last
-save; otherwise the destination a script set, or else the map the battle
-started from, with `FLAG_KEEP_PARTY_POSITION` set so the party and the
-[object events](glossary.md#object-event) stand where they were. A random
-battle is a warp like any other: the map sets the next map to `RUN_BATTLE` and
-leaves. [Running a map](src/overworld/README.md) follows a field map from
-`Map_Run` to its warp.
+At power-on the loop starts with the title screen, and the main menu comes
+next. Both are rows of the map table, run like maps though the party never
+walks there.
 
-`System_Initialize` starts the loop at power-on with `GAME_RUN_TITLE`, so the
-first map is the title screen. The title and the main menu are the map table's
-first two rows, run like maps though the party never walks there.
-
-| Name | Value | Meaning |
-| --- | --- | --- |
-| `GAME_RUN_TITLE` | 0 | start at the title, with a fresh save block |
-| `GAME_RUN_DEBUG_VALE` | 1 | in debug mode, start at `MapId_ValePlaza` |
-| `GAME_RUN_DEBUG_MAIN_MENU` | 2 | in debug mode, start at the main menu |
-| `RUN_NONE` | 507 | the first map number with no row in the map table (rows 0 to 200) |
-| `RUN_LUCKY_WHEELS` | 508 | Lucky Wheels at Tolbi's spring |
-| `RUN_LUCKY_DICE` | 509 | Lucky Dice at Tolbi's spring |
-| `RUN_BATTLE` | 510 | a battle |
+The loop is `Game_Run`; one pass through a field map is
+`Map_ResetFlagsOnEnter`, `Map_LoadOverlay`, `Map_Run` and `Map_TakeWarp`, and
+a battle's return is `Map_ReturnFromRun`. [Running a map](src/overworld/README.md)
+follows a field map from its arrival to its warp.
 
 ## Maps and overlays
 
 Only one map's code is in memory at a time. Most of what a map needs (who
 stands there, what they say, its cutscenes) matters nowhere else, so each
-map's code is packed on the cartridge as an overlay and unpacked into the same
-32 KB of [EWRAM](glossary.md#iwram-and-ewram), `gOverlayArea`, over the map
-before it.
+map's code is packed on the cartridge as an [overlay](glossary.md#overlay)
+and unpacked into the same 32 KB of memory over the map before it. Overlays
+never call each other; code several maps need is copied into each.
 
-The engine knows a map only through six entry points at the start of its
-overlay (`struct MapEntries`): its initialization, and the functions that
-return its warp destinations, warps, object event templates,
-[map events](glossary.md#map-event) and warp regions. They are functions, not
-pointers to tables, so a map can return a different table as the story moves
-on. The overlay ends in an
-[import table](glossary.md#entry-table-and-import-table) for the main-image
-functions it calls. Overlays never call each other; code several maps need is
-compiled into each from `map/common/`. [Engine](engine.md#overlays) has the
-two tables and [Maps](src/map/README.md) how a map event is found.
+The rest of the game knows a map only through six questions it can ask the
+map's code: set yourself up; where can the party arrive; where do your warps
+lead; who stands here; what happens when the player talks, searches or steps
+somewhere (the [map events](glossary.md#map-event)); and which areas of you
+lead out. Each answer is a function rather than a fixed table, so a map can
+answer differently as the story moves on.
+
+The six questions are `struct MapEntries`, at the start of every overlay.
+[Engine](engine.md#overlays) describes how an overlay is loaded and
+[Maps](src/map/README.md) how a map event is found.
 
 ## The map table and map sections
 
 ![Isaac steps from the world map onto Vale's marker; the village's gate fades in with the name Vale in a small window at the top of the screen, and he walks up through the gate](https://alchemy.pascalpixel.com/guides/front/area-name.gif)
 
 Arriving at Vale from the world map shows the name "Vale" for a moment. The
-name belongs to Vale's map section, the group of maps the village is made of:
-walking between Vale's houses shows nothing, because the party stays in the
-same section. A map's code says what happens there; its map section chooses
-the music, the area name and which flags are kept while the party stays
-inside. The two are chosen separately: the Bilibin Barricade runs on
-Bilibin's code but is a map section of its own.
+name belongs to Vale's [map section](glossary.md#map-section), the group of
+maps the village is made of: walking between Vale's houses shows nothing,
+because the party stays in the same section. A map's code says what happens
+there; its map section chooses the music, the area name and which flags are
+kept while the party stays inside. The two are chosen separately: the Bilibin
+Barricade runs on Bilibin's code but is a map section of its own. The name
+shows for 90 frames, a second and a half, and a few maps hide it on purpose.
 
-The map table, `gMapHeaders` in [field/map_headers.s](src/field/map_headers.s),
-has one row (`struct MapHeader`) for each of the 201 maps: the overlay to
-load, the map section (`mapSec`), the map type (`mapType`) and the layout.
-Each row defines its map's id, `MapId_<Place>`, as its position, so code names
-a map by a symbol rather than a number. On a change of map section
-`Map_ResetFlagsOnEnter` sets `FLAG_SHOW_LOCATION_NAME`, and `Map_Run` then
-calls `MapNamePopup_Show` for `MAP_NAME_POPUP_FRAMES`. A few maps clear the
-flag first so that no name shows (`ValeCave_Initialize`).
+Every map is one row of the map table, which names the map's code, its map
+section, its layout and its type. A town, or a room inside one, is a safer
+kind of map: there the party regains no
+[PP](glossary.md#psynergy-and-pp) and recovers no
+[Djinn](glossary.md#djinn) as it walks, poison does no damage, Retreat (which
+takes the party back to where it entered the map section) doesn't work, and
+Avoid doesn't wear off.
 
-A `MAP_TYPE_TOWN` map, a town or one of its interiors, restores no
-[PP](glossary.md#psynergy-and-pp), recovers no [Djinn](glossary.md#djinn) and
-does no poison damage as the party walks. Retreat, which takes the party back
-to where it entered the map section, is blocked there, and Avoid doesn't wear
-off.
+The table is `gMapHeaders`, one `struct MapHeader` a row; code names each map
+by its row's symbol, `MapId_<Place>`.
 
-| Name | Value | Meaning |
-| --- | --- | --- |
-| maps | 201 | rows of `gMapHeaders` |
-| overlays | 96 | the maps' code, some shared by several maps |
-| map sections | 71 | groups of maps: their music, area name and kept flags |
-| `MAP_NAME_POPUP_FRAMES` | 90 | frames the area name shows |
-| `MAP_TYPE_FIELD` | 1 | every other map: dungeons, the world map |
-| `MAP_TYPE_TOWN` | 2 | a town or one of its interiors |
+| What | Count |
+| --- | --- |
+| maps | 201 |
+| overlays, the maps' code, some shared by several maps | 96 |
+| map sections | 71 |
 
 ## Warps and warp destinations
 
@@ -126,76 +101,54 @@ off.
 
 The path down from Sol Sanctum's entrance is one warp, but where it leads
 depends on the story: to Vale, or, on the night Mt. Aleph erupts, to the
-village in flames. A warp names where it goes; a row in the map's warp table
-turns it into a map and a warp destination, and a row can be made to count
-only while a flag is clear. The warp destination is where the party appears
-and which way it faces.
+village in flames. A warp only names where it goes. The map's warp table turns
+that name into a map and a [warp destination](glossary.md#warp-destination),
+the spot where the party appears and the way it faces, and a row of the table
+can be made to count only until a certain flag is set. The game takes the
+first row that counts.
 
-[map_warps.h](include/map_warps.h) names every way between maps. Warp
-destinations are named for where the party comes from
+The path in the recording has three rows: one to Vale that counts until the
+sanctum erupts, one to Vale erupting that counts until the party leaves the
+village, and one to Vale again for the rest of the game. A map's set-up often
+looks at the warp destination too, to play the part of a sequence the last
+map sent the party to.
+
+Every way between maps has a name in [map_warps.h](include/map_warps.h).
+Destinations are named for where the party comes from
 (`VALE_PLAZA_FROM_SANCTUM`) and warps for where they lead
-(`VALE_PLAZA_TO_WORLD_MAP`), so a door has the same name from both sides.
-`Map_TakeWarp` takes the first row for the warp taken; a `MAP_WARP_IF` row
-counts only while its flag is clear. These are the rows of the path in the
-recording ([sol_sanctum_entrance.c](src/map/sol_sanctum_entrance.c)):
-
-```c
-u32 gSolSanctumEntrance_Warps[] = {
-    MAP_WARPS(SolEntrance),
-    MAP_WARP_IF(SOL_ENTRANCE_TO_VALE, Vale, VALE_FROM_SOL_ENTRANCE,
-                FLAG_SOL_SANCTUM_ERUPTED),
-    MAP_WARP_IF(SOL_ENTRANCE_TO_VALE, ValeEruption,
-                VALE_ERUPTION_FROM_SOL_ENTRANCE, FLAG_VALE_PARTY_LEFT),
-    MAP_WARP_IF(SOL_ENTRANCE_TO_VALE, Vale, VALE_FROM_SOL_ENTRANCE,
-                WARP_FLAG_NONE),
-    ...
-```
-
-So the path leads to Vale until the sanctum erupts, to Vale erupting until
-the party leaves Vale, and to Vale again for the rest of the game. A map's
-initialization often tests the warp destination too, to play the part of a
-sequence the last map sent the party to.
+(`VALE_PLAZA_TO_WORLD_MAP`), so a door has the same name from both sides. The
+recording's rows are `gSolSanctumEntrance_Warps` in
+[sol_sanctum_entrance.c](src/map/sol_sanctum_entrance.c).
 
 ## Game flags
 
 ![In a small room of Sol Sanctum, Isaac searches the chest in front of him: a green Small Jewel rises out of it, he holds it over his head and a window reads "Isaac got a Small Jewel."](https://alchemy.pascalpixel.com/guides/front/chest.gif)
 
-The chest gives its Small Jewel once. Opening it sets a game flag,
-`FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND`, and the chest's row in the map's
-event table counts only while that flag is clear; from then on the chest is
-drawn open and searching it finds it empty. A map keeps nothing of its own
-between visits: whatever the game must remember, a chest or the end of a
-chapter, is a flag saved with the game.
+The chest gives its Small Jewel once. Opening it sets a game flag, and the
+chest's row in the map's event table counts only while that flag is clear;
+from then on the chest is drawn open and searching it finds it empty. A map
+keeps nothing of its own between visits: whatever the game must remember, a
+chest or the end of a chapter, is a flag saved with the game.
 
-The game flags are 4,096 bits in `gGameFlagBytes`, named in
-[flags.h](include/flags.h): the party and the Djinn first, then the flags the
-engine shares, then the story, then most chests and finds, each map section's
-together. Two ranges are scratch space a map never has to undo.
-`Map_ResetFlagsOnEnter` clears them on every arrival without
-`FLAG_KEEP_PARTY_POSITION`, which a return from battle sets:
+There are 4,096 flags, in a fixed order: the party and the Djinn first, then
+the ones the engine shares, then the story, then the chests and other finds,
+each map section's together. Two ranges are scratch space that a map never
+has to tidy up. A map's own 256 flags are cleared each time the party
+arrives, so a stone pillar pushed out of place is back where it was on the
+next visit; a map section's 256 are cleared only when the party enters
+another section. Neither is cleared when the party comes back from a battle,
+since it returns to the same moment. Entering a map section also sets the
+flag that puts its marker on the world map screen, and
+eight flags in a row can be read together as a small number, which is how
+counters live among the flags.
 
-- the map's own flags (`FLAG_MAP_TEMP_FIRST` to `FLAG_MAP_TEMP_LAST`) on every
-  such arrival, so a pillar kept in one is back in place next time;
-- the map section's flags (`FLAG_MAPSEC_TEMP_FIRST` to `FLAG_MAPSEC_TEMP_LAST`)
-  only on entering another map section.
+Because event rows and flags depend on each other, some of the game's code can
+never run; its comment opens with [`Unused:`](glossary.md#unused), and
+[Unused](https://alchemy.pascalpixel.com/tbs/unused) collects every case.
 
-Entering a map section also sets its `FLAG_MAPSEC_VISITED` flag, which puts
-its marker on the world map screen. Eight flags starting at a multiple of 8
-can be read as a byte, which is how counters live among the flags. Because
-rows and flags interact, some code can never run; its comment opens with
-[`Unused:`](glossary.md#unused), and [Unused](https://alchemy.pascalpixel.com/tbs/unused)
-collects every case. [Game rules](src/game/README.md#the-game-flags) has the
-layout and the calls.
-
-| Name | Value | Meaning |
-| --- | --- | --- |
-| `FLAG_DJINN_FIRST` | 48 | Flint's flag, the first Djinn flag |
-| `FLAG_KEEP_PARTY_POSITION` | 265 | keeps both scratch ranges, and the party where it was |
-| `FLAG_KEEP_MUSIC` | 282 | keeps the music for one map change |
-| `FLAG_KEEP_MUSIC_HELD` | 283 | keeps the music for as long as it is set |
-| `FLAG_MAPSEC_VISITED(group)` | 384 + group | the map section's marker on the world map screen |
-| `FLAG_MAP_TEMP_FIRST` to `_LAST` | 512 to 767 | the map's 256 flags |
-| `FLAG_MAPSEC_TEMP_FIRST` to `_LAST` | 768 to 1,023 | the map section's 256 flags |
+The flags are `gGameFlagBytes`, named in [flags.h](include/flags.h); the
+chest is `FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND`.
+[Game rules](src/game/README.md#the-game-flags) has the layout and the calls.
 
 ## How maps depend on the story
 
@@ -207,51 +160,32 @@ the flags which version of itself to be and returns that version's tables.
 The story is the order the flags are set in, and these maps show the forms
 the dependence takes, in [story order](glossary.md#the-places-in-story-order).
 
-- **One map that reads the flags.** Vale's gate,
-  [vale_plaza.c](src/map/vale_plaza.c), in the recording. `ValePlaza_GetEvents`
-  asks in order:
-
-  ```c
-  const struct MapEvent *ValePlaza_GetEvents(void) {
-    if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
-      return gValePlaza_EventsAfterKalay;
-    }
-    if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
-      return gValePlaza_EventsAfterLeaving;
-    }
-    if (gSaveBlock.warpDest == VALE_PLAZA_FROM_SANCTUM) {
-      return gValePlaza_DepartureEvents;
-    }
-    if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
-      return gValePlaza_StormEvents;
-    }
-    return gValePlaza_Events;
-  }
-  ```
-
-  Its warps and object event templates are chosen the same way.
+- **One map that reads the flags.** Vale's gate, in the recording, asks in
+  turn: has the party reached Kalay, has it left Vale, has it just come out
+  of the Sanctum, is this the stormy night? The first yes picks the people
+  and events; with no yes it is an ordinary day
+  (`ValePlaza_GetEvents` in [vale_plaza.c](src/map/vale_plaza.c)).
 - **One map per point in the story.** The prologue's stormy night elsewhere
-  in Vale is a map of its own, [vale_stormy_night.c](src/map/vale_stormy_night.c),
-  on its own layout, and it sets `FLAG_VALE_STORM` when it starts. A place that
-  changes completely gets a map; a place whose people change reads the flags.
-- **A map with no map events.** [vale_eruption.c](src/map/vale_eruption.c),
-  Vale while Mt. Aleph erupts, plays its whole sequence from its
-  initialization and leaves by its one warp.
-- **A row that lasts until its flag is set.** Each pedestal of the Elemental
-  Star room,
-  [sol_sanctum_elemental_star_room.c](src/map/sol_sanctum_elemental_star_room.c),
-  is a [bg event](glossary.md#bg-event) row that lasts until its star's flag
-  is set, so each star is taken once, as the chest above is opened once.
-- **A flag set by a warp destination.** The World Map's initialization sets
-  `FLAG_VALE_PARTY_LEFT` the first time the party arrives by
-  `WORLD_MAP_FROM_VALE_PLAZA`, and the gate's tables change from then on.
-- **One sequence cut into parts by warp destinations.**
-  [venus_lighthouse_aerie.c](src/map/venus_lighthouse_aerie.c) is one scripted
+  in Vale is a map of its own, on its own layout
+  ([vale_stormy_night.c](src/map/vale_stormy_night.c)). A place that changes
+  completely gets a map; a place whose people change reads the flags.
+- **A map with no map events.** Vale while Mt. Aleph erupts plays its whole
+  sequence as it starts and leaves by its one warp
+  ([vale_eruption.c](src/map/vale_eruption.c)).
+- **A row that lasts until its flag is set.** Each pedestal in the room of the
+  Elemental Stars offers its star until that star's flag is set, so each star
+  is taken once, as the chest above is opened once
+  ([sol_sanctum_elemental_star_room.c](src/map/sol_sanctum_elemental_star_room.c)).
+- **A flag set by arriving.** The first time the party reaches the World Map
+  from Vale, the World Map sets the flag that says the party has left, and
+  Vale's gate changes from then on.
+- **One sequence cut into parts.** The top of Venus Lighthouse is one scripted
   sequence broken by two battles and two trips to the World Map; each part
-  starts from the warp destination the part before sent the party to.
-- **The last map.** [lemurian_ship.c](src/map/lemurian_ship.c), at the edge of
-  Lalivero, ends the game by leaving for the title screen by
-  `TITLE_FROM_LEMURIAN_SHIP`.
+  starts from where the part before sent the party
+  ([venus_lighthouse_aerie.c](src/map/venus_lighthouse_aerie.c)).
+- **The last map.** The Lemurian ship at the edge of Lalivero ends the game by
+  sending the party to the title screen
+  ([lemurian_ship.c](src/map/lemurian_ship.c)).
 
 [Places](src/field/map_headers.s) lists every map in story order with what
 happens there.
@@ -260,28 +194,28 @@ happens there.
 
 ![The whole world map of The Broken Seal laid out flat: the land of mountains, rivers and forest that the story crosses, two small islands in the sea, and plain blocks where the map's data leaves squares blank](https://alchemy.pascalpixel.com/story/world.png)
 
-The World Map, [world_map.c](src/map/world_map.c), is a map like the others,
-drawn in perspective on the two background layers the hardware can scale and
-rotate. The picture above is the whole of it laid flat. The world is stored as
-squares 512 pixels on a side, and only the 2 by 2 squares around the party
-are unpacked at a time (`WorldMap_UpdateCurrentTileBlock`).
+The World Map is a map like the others, drawn in perspective on the two
+background layers the hardware can scale and rotate. The picture above is the
+whole of it laid flat. The world is stored as squares 512 pixels on a side,
+and only the four squares around the party are unpacked at a time.
 
-Its code does three kinds of work. Each town or dungeon is an object event on
-the map, and touching one raises the trigger its map event turns into that
-place's warp. It holds what the party meets on the map itself, three Djinn
-and a storm. And its initialization plays the story's moments between places,
-chosen by the warp destination the last map sent the party to.
+Its code does three kinds of work. Each town or dungeon is a figure standing
+on the map, and touching one takes the warp into that place. It holds what
+the party meets on the map itself: three Djinn and a storm. And it plays the
+story's moments between places, chosen by where the last map sent the party.
+The code is [world_map.c](src/map/world_map.c), and
 [World](world.md#the-world-map) explains how the tilt is drawn.
 
 ## How the code is organised
 
-The main image, the program the processor runs straight from the cartridge,
-is laid out by `main.ld` in fourteen banks, about 1 MB of the English
-cartridge, followed by the sound code, the music and the packed data. A caller
-in another bank goes through the bank's far-call table, by the function's name
-with `Far` added: `Game_Run` starts a battle with `Battle_RunFar`, which leads
-to `Battle_Run` in the `battle` bank. The [glossary](glossary.md#far-call) says
-how a far call works, and
+The main program runs straight from the cartridge and is laid out in fourteen
+banks, about 1 MB of the English cartridge, followed by the sound code, the
+music and the packed pictures and maps. Each bank starts at a fixed place, and
+code in one bank calls another bank only through a short list of entrances at
+that bank's start, so a bank can grow without moving the others. In the code
+an entrance has the function's name with `Far` added: the main loop starts a
+battle with `Battle_RunFar`, which leads to `Battle_Run` in the battle bank.
+The [glossary](glossary.md#far-call) says how such a call works, and
 [System](src/system/README.md#why-the-program-is-cut-into-banks) why the
 program is cut into banks.
 

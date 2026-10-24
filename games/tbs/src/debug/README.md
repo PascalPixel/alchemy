@@ -15,59 +15,47 @@ game; [the Djinn room](#the-djinn-room) shows one whole.
 
 ![With debug mode switched on, Start pressed with B held in Vale opens a one-line window naming a map; Left steps the number down past the World Map and the title screen and round to the level room, and A warps there, to a black room where a few testers stand](https://alchemy.pascalpixel.com/guides/debug/map-select.gif)
 
-The debug map selector is a one-line window that names a map and a warp
-destination by number; Left and Right step the number and A warps there. It
-reaches every map, the test rooms included, but the field opens it only in
-debug mode, when Start is pressed with B held, and the released game never
-turns debug mode on.
+The debug map selector is a one-line window that names a map and an arrival
+point by number; Left and Right step the number, R and L step it by ten, and
+A warps there. It reaches every map, the test rooms included, but the field
+opens it only in debug mode, when Start is pressed with B held, and the
+released game never turns debug mode on.
 
-Ten rows at the end of the map table (`games/tbs/src/field/map_headers.s`) run
-the rooms: `TestRoom0` to `TestRoom7` all run the Djinn room's overlay, each on
-its own [layout](../../glossary.md#layout), and `IncreaseItemAndLevel` and
-`MenuTest` run the other two. The selector, `DebugMapSelect_Run`
-([debug.c](../window/screens/debug.c), among the window bank's menus, since it
-is built from windows), starts at the current map; `Map_Run` opens it when the
-pause menu is asked for with B held and `gDebugMode` set.
-`DebugMapSelect_HandleRowInput` steps maps from 0 to 200 with wrapping, and R
-and L by ten.
+The last ten rows of the map table are the test rooms: eight of them run the
+Djinn room, each on a layout of its own, and the other two are the level room
+and the menu test room.
 
-| Map | Overlay | Room |
-| --- | --- | --- |
-| `TestRoom0` to `TestRoom7` | `0x3cc` | the Djinn room, each on its own layout |
-| `IncreaseItemAndLevel` | `0x3cd` | the level and browser room |
-| `MenuTest` | `0x3ce` | the menu test room |
+The selector is `DebugMapSelect_Run`, among the window bank's menus since it
+is built from windows ([debug.c](../window/screens/debug.c)); the rooms' maps
+are `TestRoom0` to `TestRoom7`, `IncreaseItemAndLevel` and `MenuTest`.
 
 ### Why debug mode stays off
 
-Only two pieces of code write `gDebugMode`: start-up, which clears it
-(`runtime/runtime/system.c`), and the [sprite](../../glossary.md#sprite-and-oam)
-viewer, `SpriteViewer_Run` (`field/field/sprite_viewer.c`). Nothing reaches the
-sprite viewer: its only way in is a [veneer](../../glossary.md#veneer) at the
-end of the field bank's [far-call](../../glossary.md#far-call) table
-(`system/far_call/FIELD.S`) whose address no instruction or pointer in the ROM
-holds, and the table's row in the resource directory is passed only to stubs
-that do nothing ([System](../system/README.md#evidence)).
-The rooms still count as reachable rather than
-[unused](../../glossary.md#unused), since the debug map selector reaches them,
-as it reaches every map.
+Only two pieces of code ever switch debug mode: start-up, which turns it off,
+and a [sprite](../../glossary.md#sprite-and-oam) viewer, which nothing in the
+game can reach. The sprite viewer's only way in is an entrance in the field
+bank's table whose address nothing on the cartridge holds. The rooms still
+count as reachable rather than [unused](../../glossary.md#unused), since the
+debug map selector reaches them, as it reaches every map.
+
+The switch is `gDebugMode`, and the viewer `SpriteViewer_Run`.
 
 ## Setup on every visit
 
-A map's start-up runs each time the [party](../../glossary.md#the-party)
+A map's set-up runs each time the [party](../../glossary.md#the-party)
 enters, not once. For a town that means placing its people; for a test room it
 means building the test setup again, so a second visit repeats the first.
 
-The Djinn room's (`TestRoom_Initialize`) does nothing. The level room's
-(`IncreaseItemAndLevel_Initialize`) draws the level editor (object event 11)
-1.6 times as large as the others by its sprite's scale (1.7 in Japanese) and,
-in the [international editions](../../glossary.md#editions), starts the emote
-testers' animations. The menu test room's (`MenuTest_Initialize`) builds a
-test party: Jenna leaves, Garet, Mia and Ivan join, the shops' counters for
-their rare weapons and armour go up, and everyone is raised to level 30, Isaac
-to 50 in the international editions; in Japanese the coins are set to 777777.
-Each visit adds to the shops' stock again but changes a level only while it is
-below the target, because `Unit_LevelUpTo` only ever raises one. None of the
-rooms has warp regions, so each answers that entry with `Map_GetWarpRegions`.
+The Djinn room's set-up does nothing. The level room's draws its level editor
+larger than everyone else in the room. The menu test room's builds a test
+party: Jenna leaves, Garet, Mia and Ivan join, the shops get more of their
+rare weapons and armour, and everyone is raised to level 30 (Isaac to 50
+outside the Japanese edition); in Japanese the coins are also set to
+777,777. Each visit adds to the shops' stock again, but changes a level only
+while it is below the target, because levels only ever go up.
+
+The set-ups are `TestRoom_Initialize`, `IncreaseItemAndLevel_Initialize` and
+`MenuTest_Initialize`.
 
 ## The Djinn room
 
@@ -77,47 +65,21 @@ Talking to one of the four Djinn plays the same capture the game plays
 anywhere else, and the room then forgets the Djinni was taken, so it stands
 there again next time.
 
-Flint, Fizz, Forge and Gust stand as
-[object events](../../glossary.md#object-event) 8 to 11, each placed only while
-its Djinni's flag is clear. Talking to one calls `Djinn_JoinParty`, the call
-the game uses everywhere, which plays the element's capture and gives that
-[element](../../glossary.md#the-four-elements)'s first Djinni to the member with
-the fewest Djinn; the room then clears the flag again (`GameFlag_Clear`).
-Those two calls are the room's whole import table. One Djinni's event row and
-script, from `rooms.c` (the script's helper written out):
+Flint, Fizz, Forge and Gust stand in the room only while their flags are
+clear. Talking to one runs a two-step script: give the party that
+[element](../../glossary.md#the-four-elements)'s first Djinni, with the same
+capture the game uses everywhere (the Djinni goes to the member with the
+fewest), then clear the Djinni's flag again. Those two calls are all the room
+needs from the rest of the game, so its import table holds just the two. Each
+Djinni is one row of the room's event table, which says: when the player
+talks to Flint, always, run Flint's script.
 
-```c
-static void TestRoom_ReceiveFlint(void) {
-  Djinn_JoinParty(LOCALID_FLINT, ELEMENT_VENUS, 0);
-  GameFlag_Clear(FLAG_DJINN_FIRST + ELEMENT_VENUS * DJINN_PER_ELEMENT);
-}
-
-struct MapEvent gTestRoom_Events[] = {
-    {MAP_EVENT_TALK, LOCALID_FLINT, CONDITION_ALWAYS,
-     EVENT_SCRIPT(TestRoom_ReceiveFlint)},
-    /* Fizz, Forge and Gust the same way */
-    {MAP_EVENTS_END},
-};
-```
-
-The row says: when the player talks (`MAP_EVENT_TALK`) to Flint, always, run
-this script. The room's six entries return such tables:
-
-| Entry | Djinn room | What it returns |
-| --- | --- | --- |
-| initialize | `TestRoom_Initialize` | runs the room's setup: nothing |
-| warp destinations | `TestRoom_GetWarpDests` | where the party arrives: one place |
-| warps | `TestRoom_GetWarps` | the ways out |
-| object event templates | `TestRoom_GetObjectEventTemplates` | the four Djinn |
-| map events | `TestRoom_GetEvents` | the four talk events |
-| warp regions | `Map_GetWarpRegions` | none |
-
-| Local id | Name | Djinni |
-| --- | --- | --- |
-| 8 | `LOCALID_FLINT` | Flint, Venus |
-| 9 | `LOCALID_FIZZ` | Fizz, Mercury |
-| 10 | `LOCALID_FORGE` | Forge, Mars |
-| 11 | `LOCALID_GUST` | Gust, Jupiter |
+The room answers the field's six questions with `TestRoom_Initialize`,
+`TestRoom_GetWarpDests`, `TestRoom_GetWarps`,
+`TestRoom_GetObjectEventTemplates`, `TestRoom_GetEvents` and
+`Map_GetWarpRegions` (none). The events are `gTestRoom_Events`, and each
+script, such as `TestRoom_ReceiveFlint`, calls `Djinn_JoinParty` and
+`GameFlag_Clear`.
 
 ## The level room
 
@@ -129,27 +91,17 @@ game, and a few test the emotes and Force, the
 [Psynergy](../../glossary.md#psynergy-and-pp) that pushes a thing from a
 distance.
 
-Object event 8 is the item browser, 9 the icon browser, 10 the portrait
-browser and 11 the level editor; in the international editions 12 is the
-ability browser and 13 and 14 test emotes. The level editor raises the party
-one level with A and five with Start or Select. The item browser steps through
-`ITEM_COUNT` item numbers by one with Up and Down, `BROWSER_ROW_STEP` with
-Right and Left and `BROWSER_PAGE_STEP` with R and L, skips numbers whose item
-has no icon, and gives the chosen item to the first member with room.
+The level editor raises the party one level with A and five with Start or
+Select. The item browser steps through the 270 item numbers, by one, ten or
+thirty at a time, skips numbers whose item has no icon, and gives the chosen item to
+the first member with room. The editions differ: the ability browser can be
+talked to only in English and German, though French, Spanish and Italian keep
+its code and its tester; and Force cast at the portrait browser runs a motion
+test in Japanese and shows the character-set captions elsewhere.
 
-The event table differs by edition. The ability browser has an event only in
-English and German (`TBS_PATCH_1` without `TBS_PATCH_3`); French, Spanish and
-Italian keep its code and its object event. Force cast at the portrait browser
-runs a motion test in Japanese and shows the three character-set caption rows
-elsewhere; in every edition a second event on the same person, run before the
-cast (`PSYNERGY_PHASE_BEFORE_CAST`), sets the effect's child mode, so Force's
-shot leaves the portrait browser where it stands.
-
-| Name | Value | Meaning |
-| --- | --- | --- |
-| `ITEM_COUNT` | 270 | the item browser's numbers, 0 to 269, wrapping |
-| `BROWSER_ROW_STEP` | 10 | numbers Right and Left move |
-| `BROWSER_PAGE_STEP` | 30 | numbers R and L move |
+The browsers are in [level.c](level.c), such as
+`IncreaseItemAndLevel_SelectItem`; the room's events are
+`gIncreaseItemAndLevel_Events`.
 
 ## The menu test room
 
@@ -160,48 +112,34 @@ is talked to from: a map event can ask which way the leader is facing, and the
 room uses that to fit four message tests into one person. The other people
 run the shop, message and inventory tests with the ready-made party.
 
-Garet raises the four to level 10, then 20 on the next talk, and so on
-(`gMenuTest_SlotOffsets`), which changes nothing until the target passes the 30
-set on entry; Jenna hands out test equipment, Ivan consumables, and Mia opens
-the naming screen for Isaac. The placed object events, from 8, open the screen
-for choosing an item to give up when the bags are full, give out Djinn and
-treasure, wound and afflict Isaac and Garet, and run a preset shop
-(`Shop_OpenDebugShop`) with 200000 coins, broken equipment and afflicted
-members.
+Garet raises the four to level 10, then 20 on the next talk, and so on, which
+changes nothing until the target passes the 30 set on entry. Jenna hands out
+test equipment, Ivan items to use, and Mia opens the naming screen for Isaac.
+The other people open the screen for choosing an item to give up when the
+bags are full, give out Djinn and treasure, wound and afflict Isaac and
+Garet, and run a ready-made shop with 200,000 coins, broken equipment and
+afflicted members.
 
-The two Felixes, object events 16 (`LOCALID_FELIX`) and 17
-(`LOCALID_SECOND_FELIX`), changed most between editions. In Japanese they are
-plain talk events: 16 opens a character selector whose choice nothing uses, 17
-an item browser. Everywhere else each has four talk rows that differ in the
-facing they ask for. A row's first word, `control` in `struct MapEvent`,
-carries it: bits 15 to 12 are the facing in sixteenths of a turn from east,
-bit 10 asks for it, and the kind in bits 3 to 0 is 0, `MAP_EVENT_TALK`:
+There are two Felixes, and they changed most between editions. In Japanese
+they are plain talkers: one opens a character selector whose choice nothing
+uses, the other an item browser. Everywhere else each answers four ways:
+facing him from below, from the right, from the left or from above, the
+player browses the lines of the weapon shop, the armour shop, the item shop
+or the Sanctum, and the second Felix the Warrior's shops in the same way.
+Facing the second Felix from above has no row in English; in the other four
+international editions it shows one line from Vale with no speaker.
 
-```c
-{0xc400, LOCALID_FELIX, CONDITION_ALWAYS,
- EVENT_SCRIPT(MenuTest_BrowseWeaponShopMessages)},
-```
-
-`0xc400` is facing `0xc`, north, with bit 10 set. Most rows open a message
-browser that pages through one keeper's lines. To the south, 17 has no row in
-English; in German, Spanish, French and Italian it shows `MsgValeComeOnHurry`
-with no speaker.
-
-| Facing (bits 15 to 12) | Direction | Object event 16 | Object event 17 |
-| --- | --- | --- | --- |
-| `0xc` | north | the weapon shop's lines | the Warrior's weapon shop's lines |
-| `0x8` | west | the armour shop's lines | the Warrior's armour shop's lines |
-| `0x0` | east | the item shop's lines | the Warrior's item shop's lines |
-| `0x4` | south | the Sanctum's lines | no row in English; `MsgValeComeOnHurry` elsewhere |
+The facing a row asks for is carried in its first word, as `gMenuTest_Events`
+shows; the browsers are `MenuTest_BrowseWeaponShopMessages` and its kin, and
+the shop `Shop_OpenDebugShop`.
 
 ## Design
 
-The palette editor's swatch, `swatch.png`, belongs to no room:
-`overworld/swatch.s` places it in the [main image](../../glossary.md#main-image)
-as `gDebug_PaletteSwatchTiles` for `PaletteEditor_Run`, which opens with L on
-the pause menu in debug mode. Each room's functions take the room's prefix,
-except the initialize and warp region entries, which take the map overlays'
-names (`Map_`, `CommandTable_`).
+The palette editor's swatch, `swatch.png`, belongs to no room: it is placed
+in the [main image](../../glossary.md#main-image) for the palette editor,
+which opens with L on the pause menu in debug mode
+(`PaletteEditor_Run`). Each room's functions take the room's prefix, except
+the set-up and warp region entries, which take the map overlays' names.
 
 ## How it fits with the rest of the game
 
@@ -231,3 +169,9 @@ eight layouts are one placeholder copied eight times: each `layout.s` places
 the same data, borrowed from layouts 0 and 1 and tileset 68, and differs only
 in its labels, so the rooms are reserved slots never given their own content,
 which is why one overlay serves them all.
+
+Only start-up (`runtime/runtime/system.c`) and `SpriteViewer_Run`
+(`field/field/sprite_viewer.c`) write `gDebugMode`. The sprite viewer's only
+way in is a [veneer](../../glossary.md#veneer) at the end of the field bank's
+[far-call](../../glossary.md#far-call) table (`system/far_call/FIELD.S`)
+whose address no instruction or pointer in the ROM holds.

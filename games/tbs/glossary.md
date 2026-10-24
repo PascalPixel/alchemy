@@ -141,11 +141,6 @@ something the game can never reach, with the reason; what only the debug menus
 reach is not unused. [Unused](https://alchemy.pascalpixel.com/tbs/unused)
 collects them.
 
-### XXX
-
-`XXX:` marks, in a comment at the code it concerns, what isn't known yet, with
-the evidence that would settle it.
-
 ## The engine
 
 ### Frame
@@ -220,22 +215,20 @@ is emptied before each map ([Runtime](src/runtime/README.md#the-heap)).
 
 ### Heap slot
 
-One of the 62 named words of `gHeapSlots` (`HEAP_SLOT_*`), each holding a heap
-block that has to be found again, such as the running map's state in
-`HEAP_SLOT_FIELD` (`gFieldWork`).
+One of 62 numbered places that each hold a heap block other code has to find
+again, such as the running map's state (`gHeapSlots`).
 
 ### Task
 
-A routine run once every frame, or once every VBlank, until it is removed: the
-windows' typing, the map's scrolling, a map's own callbacks. Up to 20 sit in
-`gTasks`, run in the order of their priority
+A short job run once every frame, or once every VBlank, until it is removed:
+the windows' typing, the map's scrolling, the lightning over Vale on the
+stormy night. Up to 20 at a time run, in the order of their priority
 ([Runtime](src/runtime/README.md#the-task-runner)).
 
 ### Song
 
-Every sound the game plays is asked for by a song number: below
-`SONG_FANFARE_FIRST` (80) music, then the fanfares, and from `SONG_SE_FIRST`
-(100) mostly sound effects
+Every sound the game plays is asked for by a song number: below 80 music,
+from 80 the fanfares, and from 100 the sound effects
 ([Sound](src/sound/README.md#what-a-song-number-means)).
 
 ## Maps
@@ -274,8 +267,8 @@ The picture of one cell: 2 by 2 of the console's 8-pixel tiles.
 ### Metatile behavior
 
 The byte of a cell that says what standing on it, walking into it or searching
-it does: a wall, a ledge, a jar. Behaviors from `MB_EVENT_FIRST` to
-`MB_EVENT_LAST` mean whatever the map's own event table says
+it does: a wall, a ledge, a jar. One range of behaviors means whatever the
+map's own event table says
 ([World](world.md#cells-and-metatile-behaviors)).
 
 ### Object

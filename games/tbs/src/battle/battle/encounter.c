@@ -80,8 +80,10 @@ s32 Battle_Run(s32 enemyGroup) {
   view->unusedAfterFlag[1] = 0;
   REG_DISPCNT = DISPCNT_MODE_1;
   GameFlag_SetFar(FLAG_IN_BATTLE);
-  // XXX: what flag 0x169 marks; nothing in the source reads it by number,
-  // so a reader through another name or a script would settle it.
+  // Flag 0x169 is set as every battle starts and never cleared; no code,
+  // script, flag range or byte read in this game reads it.
+  // XXX (no evidence): what it marks; with no reader in the ROM, nothing the
+  // game does shows its use.
   GameFlag_SetFar(0x169);
   Transform_Reset();
 
@@ -229,8 +231,10 @@ s32 Battle_Run(s32 enemyGroup) {
     Iwram_ClearWords(battle->actions, sizeof(battle->actions));
     VramCache_FreeEntry(battle->arrowTiles);
     if (GameFlag_GetFar(FLAG_AUTO_BATTLE) == 0) {
-      // XXX: likely free-memory probes left from debugging, because no
-      // caller here reads their results.
+      // The free-memory reads around the command menu change nothing: each
+      // only subtracts, and its result is dropped.
+      // XXX (no evidence): who read them; a debug build might have shown the
+      // figures, but nothing in the ROM keeps them.
       Heap_GetRemainingIwram();
       Heap_GetRemainingEwram();
       actionCount = Battle_GatherActions(battle->actions);

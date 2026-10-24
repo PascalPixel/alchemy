@@ -286,10 +286,10 @@ void BattleAnim_TintBattler(s32 actorId, s32 palette, s32 animation,
           do {
             struct SpriteAnim *part;
 
-            // Every part but the battler's effectEntry and animationEntry.
+            // Every part but the battler's shadowEntry and animationEntry.
             part = *parts++;
             if (part != NULL &&
-                part != (struct SpriteAnim *)slot->effectEntry &&
+                part != (struct SpriteAnim *)slot->shadowEntry &&
                 part != (struct SpriteAnim *)slot->animationEntry) {
               if (palette == 0)
                 part->colorMode = BattleObject_GetPaletteFar(actorId);

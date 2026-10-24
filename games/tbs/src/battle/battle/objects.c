@@ -8,7 +8,7 @@
 #define UNIT_MAX 14 ///< the party's and the enemies' units together
 
 /// Runs each frame of a battle: advances every unit's status icon, gives an
-/// airborne unit's effect layer (BATTLE_OBJ_NO_EFFECT, placement.c) priority
+/// airborne unit's shadow (BATTLE_SHADOW_SPRITE, placement.c) priority
 /// 9 and a grounded one's 0, and draws whichever side is nearer the camera in
 /// front. Runs as a task (main-loop priority 0xc80)
 /// that Battle_Run adds after the entry transition and removes as
@@ -39,19 +39,19 @@ void BattleObject_UpdateSpritePriorities(void) {
         object = slot->object;
 
         BattleStatusIcon_Cycle(slot);
-        if (slot->effectEntry != 0) {
+        if (slot->shadowEntry != 0) {
           record = GetMotionRecord(object, 0);
 
           if (record != 0) {
-            struct SpriteAnimHeadView *effect;
-            s32 effectPriority = 0;
+            struct SpriteAnimHeadView *shadow;
+            s32 shadowPriority = 0;
 
             // Off the ground.
             if (object->y != 0)
-              effectPriority = 9;
-            effect = slot->effectEntry;
-            if (effect->priority != effectPriority) {
-              effect->priority = effectPriority;
+              shadowPriority = 9;
+            shadow = slot->shadowEntry;
+            if (shadow->priority != shadowPriority) {
+              shadow->priority = shadowPriority;
               record->dirty = 1;
             }
           }
@@ -287,11 +287,10 @@ s32 BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
   }
 }
 
-// XXX: likely so that units side by side do not animate in step, because the
-// step follows nothing but the unit id.
 /// Sets unit id's pose to match its state: held (asleep, stunned or unable to
 /// move) or down, else standing; then its sprites' animation speed, a timer
-/// step of 14 to 17 by the unit id's low two bits (16 is normal speed).
+/// step of 14 to 17 by the unit id's low two bits (16 is normal speed), so
+/// units side by side, even two of one kind, sway out of step.
 /// Called by BattleObject_SpawnObjectsForList, BattlePlayback_RunAll,
 /// BattlePlayback_Run and Battle_ProcessRoundEnd.
 #ifdef UBFIX
@@ -321,7 +320,7 @@ s32 BattleObject_UpdatePose(s32 unitId) {
 }
 
 /// Releases every sprite unitId's object holds and leaves it with none,
-/// clearing the battle object's animationEntry and effectEntry. Called by
+/// clearing the battle object's animationEntry and shadowEntry. Called by
 /// BattleObject_SpawnObjectsForList; BATTLE.S also gives it an unnamed
 /// overlay veneer, which nothing in the source calls.
 void ReleaseBattleObjectRecords(s32 unitId) {
@@ -335,7 +334,7 @@ void ReleaseBattleObjectRecords(s32 unitId) {
     object = battleObject->object;
     if (object != NULL) {
       battleObject->animationEntry = 0;
-      battleObject->effectEntry = 0;
+      battleObject->shadowEntry = 0;
       recordIndex = 0;
       while ((record = GetMotionRecord(object, recordIndex)) != NULL) {
         Sprite_DestroyFar(record);
@@ -347,19 +346,19 @@ void ReleaseBattleObjectRecords(s32 unitId) {
   }
 }
 
-/// The effect layer a body 32 pixels wide takes instead of
-/// BattleObject.effect's (see BATTLE_OBJ_NO_EFFECT, placement.c).
-#define NARROW_EFFECT_SPRITE 0x1ff
+/// The shadow a body 32 pixels wide takes instead of
+/// BattleObject.shadow's (see BATTLE_SHADOW_SPRITE, placement.c).
+#define NARROW_SHADOW_SPRITE 0x1ff
 
 /// Readies the sprites of the units in list: releases those of every place
 /// list lacks, then creates each listed unit's sprites (body, weapon, status
-/// icon and effect; or the two parts of a two-part enemy) unless it has
+/// icon and shadow; or the two parts of a two-part enemy) unless it has
 /// them, building its status icons and setting its pose. With refreshPoses,
 /// sets every listed unit's pose again afterwards. Called by BattleObject_Put
 /// (refreshing) and BattleUnit_ListAllAndSubmit, by the staging and
 /// entry transition code, and through its far stub by
 /// BattleAnim_SelectLivingTargets. Writes the objects' sprites, their storage
-/// kind and height, and the battle objects' icon and effect entries.
+/// kind and height, and the battle objects' icon and shadow entries.
 void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
   s32 unitIndex;
   s32 unitId;
@@ -431,9 +430,9 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
       }
       record->flags = 0;
     } else {
-      // The body, then the weapon, the status icon and the effect on it.
-      // Entry priorities: 0 the effect, 1 the body and weapon, 3 the icon.
-      // Adding the effect layer clears the sprite's flags, its own shadow
+      // The body, then the weapon, the status icon and the shadow.
+      // Entry priorities: 0 the shadow, 1 the body and weapon, 3 the icon.
+      // Adding the shadow layer clears the sprite's flags, its own shadow
       // (bit 0) among them, as the two-part enemies' are cleared above.
       record = Sprite_CreateFar(battleObject->resource);
       if (record != 0) {
@@ -455,12 +454,12 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
           SpriteAnim_StartFar((struct SpriteAnim *)entry, 0);
           entry->priority = 3;
         }
-        if ((spriteId = battleObject->effect) != 0) {
+        if ((spriteId = battleObject->shadow) != 0) {
           if (record->width == 32)
-            spriteId = NARROW_EFFECT_SPRITE;
+            spriteId = NARROW_SHADOW_SPRITE;
           entry =
               (struct SpriteAnimHeadView *)Sprite_AddAnimFar(record, spriteId);
-          battleObject->effectEntry = entry;
+          battleObject->shadowEntry = entry;
           entry->priority = 0;
           record->flags = 0;
         }

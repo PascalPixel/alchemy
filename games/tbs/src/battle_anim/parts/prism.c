@@ -106,10 +106,13 @@ void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
           // A shattered crystal: its shards fly and spin, slowing down. A
           // shard draws one of three pictures of its kind (j % 5), stepping
           // every 96 of its spin (variant); shards 0 to 2 draw additively.
-          // XXX: kind 4 (shards 4, 9 and 14) asks for cells 12 to 14, past
-          // the twelve pictures of the gPrism_Shard tables, and reads
-          // whatever follows each table; the crystal sheet's picture would
-          // show whether a fifth kind was meant.
+          // Kind 4 (shards 4, 9 and 14) asks for cells 12 to 14, past the
+          // twelve pictures of the gPrism_Shard tables, and reads what follows
+          // each table: its heights are the zero bytes that follow
+          // gPrism_ShardHeights, and a blitter given no rows draws nothing,
+          // so those three shards of every crystal never show.
+          // XXX (no evidence): whether a fifth kind of shard was meant; the
+          // twelve pictures and their tables are all the ROM holds.
           for (j = 0; j != 16; j++) {
             cell = (j % 5) * 3 + (shards[i * 16 + j].variant / 96) % 3;
             shard = &shards[i * 16 + j];
@@ -174,10 +177,13 @@ void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
   ANIM_FINISH_CANVAS();
 }
 
-// XXX: the 64 entries, black first, are copied to colours 1 to 64, so each
-// level shows in the colour one above it and colour 64, the first of palette 4,
-// is overwritten too. Whether the canvas's levels are meant to be one off would
-// show in a capture of Thor or Bind against this palette.
+// The 64 entries, black first, are copied to colours 1 to 64, so level n shows
+// entry n - 1: half a level darker, at most one shade of 32 in each channel.
+// Colour 64 is overwritten too, but it is colour 0 of background palette 4,
+// which a 16-colour layer never draws; the canvas's levels stop at 63 and the
+// battlefield's colours start at 96 (BATTLE_BG_PALETTE).
+// XXX (no evidence): whether the shift by one was meant; on screen it is
+// within one shade, so neither the ROM nor a render tells the two apart.
 /// Rebuilds the background palette's first ramp as a grey ramp whose red,
 /// green and blue each sway with the frame, out of step by their phases
 /// (1/65536ths of a turn), so the animation shimmers through colours.

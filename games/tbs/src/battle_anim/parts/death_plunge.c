@@ -94,8 +94,9 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
 
     // Frame 0: both leap at 15 pixels a frame. Frame 11: both turn upside
     // down, raised by their own heights so they flip about their middles.
-    // XXX: verticalMotionStrength's units (0x91eb here, 0xab85 and 0x7851 on
-    // the bounce); the object motion code that reads it would settle them.
+    // Object.gravity is taken off velocityY each frame the object is above
+    // the ground (Object_UpdateAll), in 16.16 pixels a frame per frame: 0x91eb
+    // here is about 0.57, the bounce's 0xab85 and 0x7851 about 0.67 and 0.47.
     if (frame == 0) {
       target->velocityY = 15 << 16;
       target->gravity = 0x91eb;

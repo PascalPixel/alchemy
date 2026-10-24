@@ -4,10 +4,13 @@
 
 #include "../battle_internal.h"
 
-// XXX: _call_via_r0 is given the value of IwramIrqModeWord, the instruction
+// _call_via_r0 is given the value of IwramIrqModeWord, the instruction
 // `orr r3, r3, #0x92` in runtime.s, not its address, so it would branch to
-// 0xe3833092; a caller in another edition, or the same function in The Lost
-// Age, would show what it was meant to run.
+// 0xe3833092. The Lost Age's twin, between the same neighbours, calls its ARM
+// high-multiply helper with 5 and 0 before the three stops and nothing after
+// them, and nothing in either game calls the function.
+// XXX (no evidence): what the call was meant to run; neither game's copy
+// shows it, and no caller exists to say.
 /// Sets DMA3 three times over, stopping it, then calls the IRQ return
 /// instruction's word as a routine. Nothing in this game calls it.
 void Dma_StopAllThenRunHook(void) {

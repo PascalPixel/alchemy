@@ -15,7 +15,29 @@
 /// an animation kind's enumerator, the part that defines its handler and, where
 /// an ability selects it, the first one that does. README.md gives the words
 /// and prefixes the parts use, and ../MATCHING.md the spellings some sites
-/// keep to match. The shared machinery is in these parts:
+/// keep to match.
+///
+/// A reach line follows the sentence saying what the player sees, in a form
+/// the docs build reads to put each ability's recording beside its handler:
+/// `Abilities: ` and one or more groups separated by `; `, each a list of
+/// ability names separated by `, `, then a space and the animation the group
+/// selects in parentheses, and a full stop. A name is written as the comment
+/// above its entry in abilities.c writes it, once in its group even where
+/// several rows share it; where rows sharing a name select different
+/// animations (the two Blasts), the group's animation says which are meant. A
+/// group whose animation no row selects has `none` for its list. Names keep
+/// their rows' order, groups follow their animations' values, `none` groups
+/// come last, and the line reads as its lines joined by single spaces. The
+/// animation is an enumerator whose prefix says how it is reached:
+/// BATTLE_ANIM_ a row of the handler table, SUMMON_ANIM_ a row with
+/// ANIM_SUMMON, CASTING_IMPACT_ a row with ANIM_BY_ID_RANGE and a kind from
+/// 100 to 135 (the enumerator being the kind less 100), FIELD_PSYNERGY_ the
+/// fieldPsynergy field in abilities.c. Anything else that reaches a handler
+/// (an item, another animation handing over) is a sentence after it; a
+/// function no row reaches, such as a runner, has no reach line and says what
+/// calls it.
+///
+/// The shared machinery is in these parts:
 ///
 ///   Entry points    dispatch.c: BattleAnim_RunTableEffect,
 ///                   BattleAnim_RunSummonEffect; positions.c:

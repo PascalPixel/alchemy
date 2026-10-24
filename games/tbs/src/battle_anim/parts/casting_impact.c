@@ -1252,9 +1252,10 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
                        Random16() & 0xffff);
         }
         // Chip 63's y, not its radius, is set to 159, which sets it up to 159
-        // pixels off its line. XXX: likely meant as its radius, because 159
-        // is the largest the others draw (32 + 127) and chip 63 gives the
-        // last flinch.
+        // pixels off its line.
+        // XXX (no evidence): whether its radius was meant, as 159 is the
+        // largest the others draw (32 + 127) and chip 63 gives the last
+        // flinch; only the author's intent would say.
         CASTING_IMPACT_IMPACT_PARTICLES[63].y = 159;
       }
       {

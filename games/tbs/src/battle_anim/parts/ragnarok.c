@@ -49,9 +49,9 @@ void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
   sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
 
   user = GetBattleObjectSlotFar(effect->user)->object;
-  // XXX: why the variant is forced to the stronger one, as nothing in the
-  // animation or the battle reads it afterwards; the Lost Age's Ragnarok may
-  // show.
+  // Nothing in the animation or the battle reads the variant afterwards.
+  // XXX (no evidence): why it is forced to the stronger one; the store
+  // changes nothing the game shows, so only the author's intent would say.
   effect->variant = ANIM_VARIANT_STRONGER;
   work->effect = effect;
   BattleAnim_StartCanvasLayer(1);

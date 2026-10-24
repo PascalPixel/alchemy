@@ -133,8 +133,10 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   return 0;
 }
 
-// XXX: what it was for; a debug build or the Lost Age's twin of this part would
-// show whether the keys once chose an animation for enemy targets.
+// The Lost Age keeps the same empty function, and neither game calls it or
+// holds its address.
+// XXX (no evidence): what it was for, perhaps keys that once chose an
+// animation for enemy targets; only a debug build would show it.
 /// Reads the held keys when the first target is an enemy (id 128 or more)
 /// and does nothing with them. Nothing calls it.
 void BattleAnim_ProbeKeysForExtendedActor(void) {

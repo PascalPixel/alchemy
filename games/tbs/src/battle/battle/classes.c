@@ -27,8 +27,10 @@ s32 BattleSprite_GetSprite(s32 index) {
   return gBattleSprites[index].animation;
 }
 
-// XXX: likely a slip copied from BattleSprite_GetSprite, because no other
-// getter here returns another column for a bad index.
+// XXX (no evidence): whether returning the sprite is a slip copied from
+// BattleSprite_GetSprite, as no other getter here returns another column for a
+// bad index; only the author's intent would say, since the code behaves the
+// same either way for every class in range.
 /// Returns the class's sprite palette. For a class out of range it returns row
 /// 0's sprite, not a palette.
 /// Called by BattleObject_Make and EnemySprite_LoadIntoSlots.

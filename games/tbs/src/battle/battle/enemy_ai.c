@@ -148,10 +148,15 @@ select_again:
       useItem = 0;
       if (enemy->targetStrategy == TARGET_STRATEGY_MOST_HP) {
         request->command = COMMAND_ITEM;
-        // XXX: the parameter is the ability Can't Use, yet COMMAND_ITEM
-        // reads its parameter as an inventory slot (BattleTurn_Build);
-        // a Brigand or Rat Fighter (TARGET_STRATEGY_MOST_HP, item places) out
-        // of items would show what the player sees.
+        // The parameter is the ability Can't Use, yet COMMAND_ITEM reads its
+        // parameter as an inventory slot (BattleTurn_Build): slot 509, 1,018
+        // bytes past the actor's inventory. For the first three enemies that
+        // is the twelfth inventory slot of the enemy three places on, which no
+        // enemy fills, so the item is the empty one and the enemy defends
+        // (MsgActorDefends); for the others it lies past the enemy units.
+        // XXX: what a fourth to sixth enemy's turn shows; a Brigand or Rat
+        // Fighter (TARGET_STRATEGY_MOST_HP, item places) in such a place, out
+        // of items, would show it.
         request->parameter = ABILITY_CANT_USE;
         return;
       }

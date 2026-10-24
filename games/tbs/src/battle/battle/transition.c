@@ -147,8 +147,9 @@ void BattleBackground_ShowZoomedPage(void) {
   }
 }
 
-// XXX: no code in TBS names it; a task or table entry that reaches it would
-// show which transition used it.
+// Nothing in this game calls it, adds it as a task or holds its address.
+// XXX (no evidence): which transition used it; with no reference left in the
+// ROM, no transition the player sees runs it.
 /// Copies one of eight curtain tiles from gBattleTransition_CurtainVariants
 /// into CURTAIN_TILE(0), a new one every four frames while the transition timer
 /// (gBattleEntryTimer) runs from 1 to 32.

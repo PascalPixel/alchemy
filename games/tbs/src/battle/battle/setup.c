@@ -170,8 +170,9 @@ done:
   battle->enemyIds[count] = BATTLE_UNIT_LIST_END;
 }
 
-// XXX: what the tiles at 0x06000280 are; a caller in another image, or the
-// picture loaded there, would settle it.
+// XXX (no evidence): what the tiles at 0x06000280 are when it runs; The Lost
+// Age keeps the same function, and nothing in either game calls it or holds
+// its address, so no moment of play shows what it moves.
 /// Moves the 16 bytes at VRAM 0x06000290 down to 0x06000280 and clears the 20
 /// bytes from 0x0600028c. Nothing in the source calls it.
 s32 Battle_ShiftVramTiles(void) {

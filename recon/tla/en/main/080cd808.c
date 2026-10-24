@@ -1,15 +1,20 @@
-// Draft, differ 59 of 106 (2026-10-18), from the listing: the search
-// command. Collision codes 242 to 247 show their pair of messages from
+// Draft, differ 22 of 106 (59 before the gotos below), from the listing: the
+// search command. Collision codes 242 to 247 show their pair of messages from
 // Data_080eff22; otherwise the search event (kind 3) of the cell runs: its
 // "checked the ..." message, then its message or callback, or the matching
 // "found nothing" message. The messages are linker symbols the .po files do
 // not name yet: MsgSearchStart is message 3524 in English (3985 in German,
 // Spanish, French and Italian, 3525 in Japanese) and the base of the "X
 // checked the Y..." lines, MsgSearchEmpty 3567 (4028) the base of the
-// "found nothing" lines, MsgButFoundNothing 3615 (4076). Left: the id and
-// its index (id - 242) take r5 and r6 in the native, the result's two
-// paths are laid out the other way round, and six minutes of permute
-// found 52 at best.
+// "found nothing" lines, MsgButFoundNothing 3615 (4076). The native lays the
+// callback out before the message, both after the two tests, which the
+// gotos give (as if and else, 51; the tests the other way round, 26).
+// Left: the id and its index (id - 242) take r5 and r6 in the native, r1
+// and r5 here, and the second message sum is formed in r0 there (adds r0,
+// r5, r0) and in r5 here, then copied; and the native loads the event's
+// target halfword before the kind's mask. Tried: the index inline in the
+// test or the load, the message as u8 or u32, the sums the other way round
+// (all 22).
 #include "types.h"
 #include "party_state.h"
 
@@ -63,22 +68,25 @@ s32 Func_080cd808(s32 id) {
     }
     result = event->result;
     if ((result & 0xf000000) == 0) {
-      if ((result & 0xfff00000) == 0x400000) {
-        if (GameFlag_IsConditionActive(condition))
-          UiText_ShowPositionedMessageAndWaitFar((u16)event->result, 1);
-        else
-          UiText_ShowPositionedMessageAndWaitFar((s32)MsgButFoundNothing, 1);
-      }
-    } else {
-      if (GameFlag_IsConditionActive(condition))
-        ((void (*)(s32))event->result)(gPartyState.currentOwner);
-      if (GameFlag_Test(0x142))
-        UiText_ShowPositionedMessageAndWaitFar(kind + (s32)MsgSearchEmpty, 1);
+      if ((result & 0xfff00000) == 0x400000)
+        goto message;
+      goto done;
     }
+    if (GameFlag_IsConditionActive(condition))
+      ((void (*)(s32))event->result)(gPartyState.currentOwner);
+    if (GameFlag_Test(0x142))
+      UiText_ShowPositionedMessageAndWaitFar(kind + (s32)MsgSearchEmpty, 1);
+    goto done;
+  message:
+    if (GameFlag_IsConditionActive(condition))
+      UiText_ShowPositionedMessageAndWaitFar((u16)event->result, 1);
+    else
+      UiText_ShowPositionedMessageAndWaitFar((s32)MsgButFoundNothing, 1);
   } else {
     UiText_ShowPositionedMessageAndWaitFar((s32)MsgSearchStart + 5, 1);
     UiText_ShowPositionedMessageAndWaitFar((s32)MsgSearchEmpty + 5, 1);
   }
+done:
   GameFlag_ClearBit(0x142);
   return 0;
 }

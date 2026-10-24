@@ -1,10 +1,12 @@
-// Draft, differ 40 of 146 (2026-10-18): picks the Psynergy event (kind 5)
-// for kind in front of the controlled owner: the first facing match, else
-// the nearest of the area events (target | 0x100), else 0x200 for a
-// catch-all, else -1. Rewritten in Event_FindFacingTrigger's shape (☀️'s
-// loop foot, the facing test leaving through a goto). Left: the native keeps
-// selected in r11 and the catch-all on the stack (this draft swaps them),
-// and its first control word takes r1 with -1 in r0.
+// Draft, differ 20 of 146 (40 with fallback declared before selected): picks
+// the Psynergy event (kind 5) for kind in front of the controlled owner: the
+// first facing match, else the nearest of the area events (target | 0x100),
+// else 0x200 for a catch-all, else -1. Rewritten in
+// Event_FindFacingTrigger's shape (☀️'s loop foot, the facing test leaving
+// through a goto). Left: the native builds the shared -1 in r0 after storing
+// special, and loads each control word into r1; this builds -1 in r3 before
+// that store and loads the word into r0. Tried: flags declared elsewhere or
+// as u32 (no change).
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -40,9 +42,9 @@ s32 Func_080ce31c(s32 kind) {
   s32 focused = Func_080cb09c();
   s32 special = Func_080cb144();
   s32 best = 9999;
-  s32 fallback = -1;
-  s32 selected = -1;
   s32 nearby = -1;
+  s32 selected = -1;
+  s32 fallback = -1;
   s32 flags;
 
   flags = event->control;

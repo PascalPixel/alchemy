@@ -25,7 +25,7 @@ Field_Layout041:
 	.incbin "games/tbs/src/layout/layout_041/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Layout041_MARKERS:
-	.incbin "games/tbs/src/layout/layout_000/treasure_spots.table"
+	treasure_spots_end
 	.balign 4, 0
 	.global Tileset_Set32Palette
 Tileset_Set32Palette:

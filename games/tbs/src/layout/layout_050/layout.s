@@ -25,7 +25,10 @@ Field_Layout050:
 	.incbin "games/tbs/src/layout/layout_033/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Layout050_MARKERS:
-	.incbin "games/tbs/src/layout/layout_050/treasure_spots.table"
+	treasure_spot 32, 16, 100
+	treasure_spot 53, 36, 101
+	treasure_spot 52, 37, 102
+	treasure_spots_end
 	.global Tileset_Set40Palette
 Tileset_Set40Palette:
 	.incbin "games/tbs/src/graphics/tileset/set_40/palette.gbapal.lz"

@@ -35,7 +35,7 @@ Field_VenusEntrance:
 	.endif
 	.balign 4, 0
 .LField_VenusEntrance_MARKERS:
-	.incbin "games/tbs/src/layout/layout_000/treasure_spots.table"
+	treasure_spots_end
 	.balign 4, 0
 	.global Tileset_Palette49
 Tileset_Palette49:

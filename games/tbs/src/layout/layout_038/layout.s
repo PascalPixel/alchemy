@@ -28,7 +28,17 @@ Field_Layout038:
 	.incbin "games/tbs/src/layout/layout_018/blend.script.lz"
 	.balign 4, 0
 .LField_Layout038_MARKERS:
-	.incbin "games/tbs/src/layout/layout_038/treasure_spots.table"
+	treasure_spot 5, 7, 200
+	treasure_spot 6, 7, 200
+	treasure_spot 4, 23, 100
+	treasure_spot 25, 26, 201
+	treasure_spot 26, 26, 201
+	treasure_spot 27, 26, 201
+	treasure_spot 24, 37, 202
+	treasure_spot 25, 37, 202
+	treasure_spot 26, 37, 202
+	treasure_spot 22, 39, 101
+	treasure_spots_end
 	.balign 4, 0
 	.global Tileset_Set30Palette
 Tileset_Set30Palette:

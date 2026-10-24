@@ -28,7 +28,10 @@ Field_Layout127:
 	.incbin "games/tbs/src/layout/layout_020/blend.script.lz"
 	.balign 4, 0
 .LField_Layout127_MARKERS:
-	.incbin "games/tbs/src/layout/layout_127/treasure_spots.table"
+	treasure_spot 28, 5, 100
+	treasure_spot 48, 6, 101
+	treasure_spot 61, 13, 103
+	treasure_spots_end
 	.global Tileset_Set60Palette
 Tileset_Set60Palette:
 	.incbin "games/tbs/src/graphics/tileset/set_60/palette.gbapal.lz"

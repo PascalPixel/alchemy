@@ -22,7 +22,7 @@ Field_Layout045:
 	.incbin "games/tbs/src/layout/layout_045/map.grid.lz"
 	.balign 4, 0
 .LField_Layout045_MARKERS:
-	.incbin "games/tbs/src/layout/layout_000/treasure_spots.table"
+	treasure_spots_end
 	.balign 4, 0
 	.global Tileset_Set35Palette
 Tileset_Set35Palette:

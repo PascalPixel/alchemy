@@ -22,5 +22,6 @@ Field_Layout071:
 	.incbin "games/tbs/src/layout/layout_071/map.grid.lz"
 	.balign 4, 0
 .LField_Layout071_MARKERS:
-	.incbin "games/tbs/src/layout/layout_071/treasure_spots.table"
+	treasure_spot 8, 34, 100
+	treasure_spots_end
 	.balign 4, 0

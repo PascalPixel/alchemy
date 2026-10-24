@@ -155,7 +155,6 @@ main	rom_main_00	recon/tla/fr/rom	.rom.00015998	fr
 main	rom_main_00	recon/tla/es/rom	.rom.00015998	es
 main	rom_main_00	recon/tla/de/rom	.rom.00015998	de
 main	rom_main_00	recon/tla/raw/0801596c	.text	en
-main	rom_main_00	recon/tla/raw/08015ad0	.text	en
 main	rom_main_00	recon/tla/ja/rom	.rom.0001596c	ja
 main	rom_main_00	games/tla/src/system/save/sector	.text
 main	rom_main_00	recon/tla/it/rom	.rom.00015cd0	it

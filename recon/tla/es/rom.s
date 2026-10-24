@@ -88,7 +88,7 @@ Render_ProjectPoint:
 	.type Func_0801596c, %function
 	.thumb_func
 Func_0801596c:
-	.incbin "baserom.gba", 0x00015998, 0x000001b8
+	.incbin "baserom.gba", 0x00015998, 0x00000164
 	.section .rom.00015cd0, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00015cd0, 0x000001a0

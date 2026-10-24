@@ -33,6 +33,48 @@ u32 SaveState_WriteWorkspaceSlot(s32 sector);
 
 s32 SaveState_InvalidateSlot(s32 index);
 
+/// Picks the free slot to write record `mode` to, at random among every third
+/// of the 15 slots. The last free slot only goes to a record that already has
+/// a copy, so replacing a save always has room. Returns 15 when there is no
+/// slot to use.
+// As ☀️'s Save_SelectWriteSector.
+u32 SaveState_SelectWriteSlot(s32 mode) {
+  u32 empty[15];
+  s32 count;
+  u32 index;
+  u8 *slot;
+  u8 value;
+
+  slot = ((struct SaveWorkspace *)Ram_HeapSlots->serialWork)->occupied;
+  /* FAKEMATCH(one-pass): the count's clearing in a block of its own, so the
+   * workspace pointer loads before the prologue's sub sp; as count = 0, 2 of
+   * 39 instructions differ in tla-en. */
+  do {
+    count = 0;
+  } while (0);
+  index = 0;
+  do {
+    value = *slot;
+    slot += 3;
+    if (value == 0)
+      empty[count++] = index;
+    index += 3;
+  } while (index <= 14);
+  index = 15;
+  if (count != 0) {
+    if (count == 1) {
+      index = empty[0];
+      if (SaveState_FindLatestSlot(mode) == 15)
+        index = 15;
+    } else {
+      // A free slot at random, so the writes spread over the flash chip.
+      index = Random16() % count;
+      index = empty[index];
+    }
+  }
+  return index;
+}
+
 u32 SaveState_WriteWorkspaceSlot(s32 sector) {
   struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
   void (*progress)(s32) = work->progress;

@@ -42,7 +42,7 @@ Func_08015ca4:
 	bl SaveState_FindLatestSlot
 	mov r8, r0
 	mov r0, r10
-	bl Func_08015ad0
+	bl SaveState_SelectWriteSlot
 	adds r6, r0, #0
 	movs r0, #1
 	cmp r6, #14

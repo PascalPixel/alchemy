@@ -1,4 +1,9 @@
-// Near miss, differ 4 of 43 (two swapped pairs, all else identical): the native
+// Near miss, differ 2 of 43 with one device (2026-10-24; 4 without it): the
+// empty asm on the work pointer that clobbers r1 loads the work before 0x78f0
+// is started in r1, as the native does. Left: the effect load (ldr r3, [r5])
+// and sub sp, #24 tie in sched2 at priority 102, both class 3, and the stack
+// adjustment wins on its six dependents to the load's five.
+// Before: differ 4 of 43 (two swapped pairs, all else identical): the native
 // loads the effect work (ldr r5, [r3, #92]) before it starts the 0x78f0 offset
 // (movs r1, #240), and reads the effect (ldr r3, [r5]) before the frame is
 // opened (sub sp, #24); here both come one step later. Measured: a one-pass
@@ -20,8 +25,7 @@ struct BattleFxWorkTail {
   struct BattleEffectArgument *effect;
 };
 
-void EffectPosition_ProjectBattler(
-    s32 id, struct EffectPosition *position);
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 
 // Midpoint between the first and last targets.
 void Func_0815e22c(struct EffectPosition *position) {
@@ -30,9 +34,12 @@ void Func_0815e22c(struct EffectPosition *position) {
   struct EffectPosition last;
 
   work = (struct BattleFxWorkTail *)Ram_HeapSlots->battleFxWork[0];
+  /* FAKEMATCH(barrier): clobbering r1 loads the work before 0x78f0 is built
+   * in r1; as the plain load, 4 of 43 instructions differ in tla-en. */
+  __asm__("" : "+l"(work) : : "r1");
   EffectPosition_ProjectBattler(work->effect->actors[0], &first);
-  EffectPosition_ProjectBattler(
-      work->effect->actors[work->effect->count - 1], &last);
+  EffectPosition_ProjectBattler(work->effect->actors[work->effect->count - 1],
+                                &last);
   position->x = first.x + (last.x - first.x) / 2;
   position->y = first.y;
   position->depth = first.depth;

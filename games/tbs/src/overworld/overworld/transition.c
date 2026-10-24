@@ -998,9 +998,9 @@ void ScreenTransition_UpdateFrame(void) {
                       (DMA_ENABLE | DMA_32BIT) << 16 | 0x8);
 }
 
-/// Fills background screen block 4 with tile 0 in palette 15 and, unless color
-/// is -1, makes tile 0 solid color. The fill is 0x500 bytes: the block's first
-/// 20 rows of 32 entries, the screen's height.
+/// Fills background screen block 4 with tile 0 in WINDOW_PALETTE and, unless
+/// color is -1, makes tile 0 solid color. The fill is 0x500 bytes: the block's
+/// first 20 rows of 32 entries, the screen's height.
 ///
 /// Sets up the dissolve for ScreenTransition_Start (colour 15),
 /// ScreenTransition_Finish and ScreenTransition_InitializeState (colour 0).

@@ -190,10 +190,10 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
                                8);
   }
 
-  // The Djinni concerned, after its element icon (palette 5): in colour 2
-  // when it is not set. A trade adds the other Djinni below it; a set or
-  // standby shows the same Djinni again below in its new colour, with tile
-  // 0x296 of palette 15 between the two.
+  // The Djinni concerned, after its element icon (BASIC_COLORS_PALETTE): in
+  // TEXT_COLOR_RED when it is not set. A trade adds the other Djinni below it;
+  // a set or standby shows the same Djinni again below in its new colour, with
+  // tile 0x296 of WINDOW_PALETTE between the two.
   row = (mode == DJINN_COMPARE_GIVE);
   if ((menu->pairEntries[0] & DJINN_ENTRY_IS_SET) == 0) {
     Text_SetColorFar(TEXT_COLOR_RED);
@@ -405,8 +405,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     }
 
     // The Psynergy list's page numbers on the right window's top border:
-    // 0xf031 + n is the window font's digit n + 1 in palette 15 ('0' past the
-    // tenth page); less 0x1000, palette 14 for the page shown.
+    // 0xf031 + n is the window font's digit n + 1 in WINDOW_PALETTE ('0' past
+    // the tenth page); less 0x1000, HIGHLIGHT_PALETTE for the page shown.
     if (page <= DJINN_COMPARE_PAGE_RECEIVER) {
       list = menu->secondWindow;
       if (pageCounts[page] > 1) {

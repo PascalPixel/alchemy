@@ -97,12 +97,12 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, BATTLE_BG1CNT, IO_WRITE_16);
   }
 
-  // BG palette 5 is the battle windows' second text palette
+  // BASIC_COLORS_PALETTE is the battle windows' second text palette
   // (WindowWork.textPalette): the party status window's HP and PP, the
   // Psynergy list's names and costs and the element icons are drawn in the
   // first sprite palette's colours through it. Text in a palette other than
-  // the UI's is drawn over colour 14 (Text_DrawStringAsTiles), so colour 14
-  // takes the window background, the UI palette's colour 4.
+  // the UI's is drawn over TEXT_BACKGROUND_COLOR (Text_DrawStringAsTiles), so
+  // it takes WINDOW_BACKGROUND_COLOR.
   Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   *(u16 *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =

@@ -5,7 +5,7 @@
 #include "../runtime_internal.h"
 
 // Debug text: a 32x20-character screen of window font tiles in BG0, written
-// from gDebugTextCursor onwards; characters are tile numbers in palette 15.
+// from gDebugTextCursor onwards; characters are tile numbers in WINDOW_PALETTE.
 
 /// Writes `value` as eight hexadecimal digits to the number buffer. Called by
 /// DebugText_PrintHex.
@@ -84,7 +84,7 @@ void String_FormatDecimal(s32 number) {
   output[1] = 0;
 }
 
-/// Writes `count` blank characters (tile 0 in palette 15) at the debug text
+/// Writes `count` blank characters (tile 0 in WINDOW_PALETTE) at the debug text
 /// cursor and moves it on. Unlike DebugText_Print it writes even while debug
 /// text is off, and does not wrap at the end of the screen. Reached through
 /// the far-call table.
@@ -124,7 +124,7 @@ void DebugText_Print(const u8 *src) {
     src++;
 
     if (c != 0) {
-      // 0xf000 selects palette 15 in each screen entry; the end of the
+      // 0xf000 selects WINDOW_PALETTE in each screen entry; the end of the
       // 32x20-entry screen (0x500 bytes) wraps to its start
       u32 mask = 0xf000;
       addr = (u32)(BG_SCREEN_BLOCK(4) + 0x500);
@@ -180,7 +180,7 @@ void DebugText_Clear(void) {
 }
 
 /// Loads the window font and frame tiles into BG character block 0, the window
-/// palette into BG palette 15 with its gradient colours, and the basic sprite
+/// palette into WINDOW_PALETTE with its gradient colours, and the basic sprite
 /// palettes. Called by System_Initialize and by the modes that replace those
 /// graphics and must put them back (the debug battle, the palette editor).
 void Window_LoadGraphics(void) {

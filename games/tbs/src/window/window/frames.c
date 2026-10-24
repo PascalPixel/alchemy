@@ -257,8 +257,8 @@ s32 Window_IsClosed(struct Window *window) {
   return 0;
 }
 
-/// Resets the text style glyphs are drawn with: colour 15, no outline, line
-/// spacing 10 and letter spacing 9. Window_Create calls it for every new
+/// Resets the text style glyphs are drawn with: TEXT_DEFAULT_COLOR, no outline,
+/// line spacing 10 and letter spacing 9. Window_Create calls it for every new
 /// window, and Text_DrawWideStringAtOffset on TEXT_COLORS_RESET.
 void Text_ResetStyle(void) {
   struct WindowWork *state = WINDOW_WORK;

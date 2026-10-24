@@ -84,7 +84,7 @@ UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
   work->tint[2] = blue;
 }
 
-/// Writes window colours 4 to 10 of BG palette 15, each a fixed scale of the
+/// Writes window colours 4 to 10 of WINDOW_PALETTE, each a fixed scale of the
 /// window tint.
 /// Nothing calls it.
 UNUSED void WindowColor_WritePalette(struct OptionMenuWork *work) {
@@ -148,7 +148,7 @@ u16 Color_ScaleComponents(s16 *rgb, s32 redScale, s32 greenScale,
   return red + ((blue << 10) + (green << 5));
 }
 
-/// Sets the window colours (BG palette 15, colours 4 to 10) for a window hue
+/// Sets the window colours (WINDOW_PALETTE, colours 4 to 10) for a window hue
 /// (0 to 23) and brightness (0 to 14, 7 neutral).
 /// The live palette path leaves the saved colour settings untouched. The
 /// option screen calls it as the player changes the settings, and with the

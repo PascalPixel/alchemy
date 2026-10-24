@@ -8,7 +8,7 @@
 /// it opens with the storm instead of the curtain.
 #define TRANSITION_STORM_FORMATION 0x15b
 
-/// The curtain's map entries: tile 128 + n of CURTAIN_TILE, palette 15.
+/// The curtain's map entries: tile 128 + n of CURTAIN_TILE, WINDOW_PALETTE.
 #define TRANSITION_CURTAIN_ENTRY(n) (0xf080 + (n))
 
 /// Fades the screen to black over sixteen frames as every background's

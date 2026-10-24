@@ -2055,7 +2055,7 @@ s32 ItemMenu_OpenDetail(s32 itemIndex) {
 /// The item menu's Details screen: describes the item entry value in a large
 /// window (the whole top half after patch 1) and waits for A or B. Up and Down
 /// move an unused counter from 0 to 4. Returns the counter after A or Start,
-/// or -1 after B; ITEM_STEP_INSPECT ignores it. Borrows background palette 14
+/// or -1 after B; ITEM_STEP_INSPECT ignores it. Borrows HIGHLIGHT_PALETTE
 /// for the element icons and makes the highlight again before returning.
 s32 ItemMenu_ShowDetails(s32 value) {
 #if TBS_PATCH_1

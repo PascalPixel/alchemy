@@ -33,8 +33,10 @@ s32 String_FormatNumberToHalfwords(s16 *out, s32 value) {
 }
 
 // Preview marks are separate from the action ID in the low fourteen bits.
-#define DJINN_PREVIEW_ABILITY_GAINED 0x8000 ///< new with the change; colour 4
-#define DJINN_PREVIEW_ABILITY_LOST 0x4000   ///< gone with the change; colour 2
+#define DJINN_PREVIEW_ABILITY_GAINED                                           \
+  0x8000 ///< new with the change; TEXT_COLOR_YELLOW
+#define DJINN_PREVIEW_ABILITY_LOST                                             \
+  0x4000 ///< gone with the change; TEXT_COLOR_RED
 /// Entries of the change list: the new list's 32 and the lost ones after.
 #define DJINN_PREVIEW_ABILITY_CAPACITY 48
 
@@ -119,12 +121,12 @@ s32 WindowSprite_CreateAbilityIcon(struct Window *window, s32 x, s32 y,
 /// new one and returns it, or NULL when none could be opened. Page 0
 /// compares the class and stats, old against new, with an arrow by each stat
 /// that rises or falls; pages 1 on list, five a page, the unit's battle
-/// abilities after the change (unchanged ones in colour 15, new ones in
-/// colour 4) and then those it would lose (colour 2), and *pageCount is set
-/// to their number (at least 1).
-/// The Djinni is toggled and the unit recalculated (Unit_CalculateFar) only to
-/// measure: the unit is restored from a copy before it returns.
-/// BattleDjinnMenu_Run calls it as the cursor moves.
+/// abilities after the change (unchanged ones in TEXT_COLOR_WHITE, new ones in
+/// TEXT_COLOR_YELLOW) and then those it would lose (TEXT_COLOR_RED), and
+/// *pageCount is set to their number (at least 1). The Djinni is toggled and
+/// the unit recalculated (Unit_CalculateFar) only to measure: the unit is
+/// restored from a copy before it returns. BattleDjinnMenu_Run calls it as the
+/// cursor moves.
 struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
                                                  s32 encodedDjinn, s32 page,
                                                  s32 *pageCount) {
@@ -265,7 +267,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
     Text_DrawWideStringInWindow(numberText + 8, win, 5, 6);
 
     Window_DrawDividerLine(win, 0, 8, 19, 8);
-    // "R: Psynergy Gained" stands out in colour 2 when the Psynergy changes.
+    // "R: Psynergy Gained" stands out in TEXT_COLOR_RED when the Psynergy
+    // changes.
     if (gained != 0 || lost != 0)
       Text_SetColor(TEXT_COLOR_RED);
     Text_DrawMessageAsTiles(MsgBattleAdditionalPsynergyHelp, win,

@@ -147,7 +147,7 @@ void FieldEffect_UpdateMindReadWave(void) {
 }
 
 // What Mind Read's wave uses: BG0's scanline scroll, the hue cycle and BG
-// palette 15.
+// WINDOW_PALETTE.
 
 #define MIND_READ_GREY RGB(28, 28, 28)
 
@@ -257,7 +257,7 @@ void FieldEffect_SetCallbackWhenTargetUnset(
   }
 }
 
-/// Turns colours 1 and 3 to 12 of BG palette 15 grey and starts the BG0
+/// Turns colours 1 and 3 to 12 of WINDOW_PALETTE grey and starts the BG0
 /// scanline scroll (FieldEffect_ArmBg0HBlankDma) at each VBlank.
 void FieldEffect_GreyMindReadPalette(void) {
   volatile u16 *p;
@@ -291,7 +291,7 @@ void FieldEffect_GreyMindReadPalette(void) {
   Task_Add(FieldEffect_ArmBg0HBlankDma, TASK_PRIORITY_VBLANK);
 }
 
-/// Stops the BG0 scanline scroll and restores BG palette 15.
+/// Stops the BG0 scanline scroll and restores WINDOW_PALETTE.
 void FieldEffect_RestoreMindReadPalette(void) {
   void *work;
 

@@ -361,8 +361,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 
         // Psynergy: the member's abilities usable in battle, from its 32
         // action slots (pick keeps each one's slot); then the ability's
-        // window, colour 2 when the PP fall short and 9 while sealed, and
-        // its target; COMMAND_PSYNERGY with the ability as parameter.
+        // window, TEXT_COLOR_RED when the PP fall short and TEXT_COLOR_PINK
+        // while sealed, and its target; COMMAND_PSYNERGY with the ability as
+        // parameter.
         Sound_PlaySongFar(SE_MENU_CONFIRM);
         mode = 0;
         BATTLE_MENU_SET_CURSOR(mode, mode, mode);
@@ -462,8 +463,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         // Summon (the labels djinn_menu here and summon_menu under Djinn
         // have each other's names): the summon list from this command's
         // standby Djinn, the summon's window with its cost (its name in
-        // colour 2 and the error sound when it cannot be paid for), and its
-        // target; COMMAND_SUMMON with the summon as parameter.
+        // TEXT_COLOR_RED and the error sound when it cannot be paid for), and
+        // its target; COMMAND_SUMMON with the summon as parameter.
         Sound_PlaySongFar(SE_MENU_CONFIRM);
         BATTLE_MENU_SET_CURSOR(0, 0, 0);
       djinn_menu:
@@ -557,7 +558,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         // as parameter, kept in chosenDjinn so no later command takes it. A
         // set Djinni is unleashed: its ability's target, then in the
         // tutorial a hint. A standby one is set on the member itself
-        // ("Set Djinni", target mode 4, kind 7), its name in colour 2.
+        // ("Set Djinni", target mode 4, kind 7), its name in TEXT_COLOR_RED.
         Sound_PlaySongFar(SE_MENU_CONFIRM);
         BATTLE_MENU_SET_CURSOR(0, 0, 0);
       summon_menu:

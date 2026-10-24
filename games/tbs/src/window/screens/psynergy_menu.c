@@ -6,13 +6,13 @@
 
 /// The battle Psynergy list for unit `unitId`: `count` abilities of `actions`
 /// (ended by 0), five to a page, each with its icon, name, PP cost, element
-/// and range icon, in colour 4 when not usable in battle, colour 2 when the
-/// unit's PP fall short and colour 9 while its Psynergy is sealed; the
-/// window above describes the one under the cursor. Returns the chosen
-/// ability's place in `actions`, or -1 when cancelled, when the link
-/// battle's time runs out or when the list is empty. Only an ability not
-/// usable in battle is refused here, silently: one the PP cannot pay for, or
-/// a sealed member's, can be chosen. The Psynergy command runs it
+/// and range icon, in TEXT_COLOR_YELLOW when not usable in battle,
+/// TEXT_COLOR_RED when the unit's PP fall short and TEXT_COLOR_PINK while its
+/// Psynergy is sealed; the window above describes the one under the cursor.
+/// Returns the chosen ability's place in `actions`, or -1 when cancelled, when
+/// the link battle's time runs out or when the list is empty. Only an ability
+/// not usable in battle is refused here, silently: one the PP cannot pay for,
+/// or a sealed member's, can be chosen. The Psynergy command runs it
 /// (Battle_CollectPartyCommands), listing only abilities usable in battle.
 s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   struct WindowWork *work;

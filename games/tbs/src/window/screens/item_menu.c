@@ -50,11 +50,11 @@ void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
 
 /// The battle item list for unit `member`: `count` inventory entries (ended by
 /// 0), five to a page, each with its icon and name: plain when usable,
-/// colour 4 when Item_ClassifyUseAbility refuses it, colour 2 when broken;
-/// the window above names the one under the cursor (MsgItemPlainName), or
-/// says it cannot be used in battle. Returns the chosen entry's
-/// place in `entries`, or -1 when cancelled, when the link battle's time
-/// runs out, or when there are no items. A refused item stays on the list
+/// TEXT_COLOR_YELLOW when Item_ClassifyUseAbility refuses it, TEXT_COLOR_RED
+/// when broken; the window above names the one under the cursor
+/// (MsgItemPlainName), or says it cannot be used in battle. Returns the chosen
+/// entry's place in `entries`, or -1 when cancelled, when the link battle's
+/// time runs out, or when there are no items. A refused item stays on the list
 /// with its reason ("It's broken.", and the classifier's messages). The
 /// item command runs it (Battle_CollectPartyCommands).
 s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {

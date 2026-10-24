@@ -172,8 +172,9 @@ s32 SummaryScreen_Run(void) {
   Palette_LightenBankHighlight(HIGHLIGHT_PALETTE);
   // The first sprite palette into background palettes 0 and 1, for the
   // element icons drawn as window tiles: palette 0, for the highlighted row,
-  // takes the highlight (colour 4 of palette 14) as its colour 14, palette 1
-  // the plain row's colour 4 of palette 15 (PsynergyMenu_DrawRangePage).
+  // takes HIGHLIGHT_PALETTE's WINDOW_BACKGROUND_COLOR as its
+  // TEXT_BACKGROUND_COLOR, palette 1 WINDOW_PALETTE's
+  // (PsynergyMenu_DrawRangePage).
   Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_ENABLE << 16 | 16, REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(0, TEXT_BACKGROUND_COLOR),
@@ -1259,12 +1260,13 @@ static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 extern const struct TileMask gMenu_PatternRowMasks[];
 
 /// Builds the Psynergy range icons' tiles in the window tile area: two sets of
-/// six tile pairs (24 8x8 tiles), each a fill of colour 4 with the rows of
-/// gMenu_PatternRowMasks XORed in, the first set growing row by row and the
-/// second skipping its top row. Pair n is range icon n, at RANGE_ICON_TILE +
-/// 2n (tile 0x200, or 0x280 in the international editions, whose tiles start
-/// 0x1000 bytes further on), which PsynergyMenu_DrawRange draws. Called as
-/// the Status menu's Psynergy page opens (PsynergyMenu_SelectAction).
+/// six tile pairs (24 8x8 tiles), each a fill of WINDOW_BACKGROUND_COLOR with
+/// the rows of gMenu_PatternRowMasks XORed in, the first set growing row by row
+/// and the second skipping its top row. Pair n is range icon n, at
+/// RANGE_ICON_TILE + 2n (tile 0x200, or 0x280 in the international editions,
+/// whose tiles start 0x1000 bytes further on), which PsynergyMenu_DrawRange
+/// draws. Called as the Status menu's Psynergy page opens
+/// (PsynergyMenu_SelectAction).
 void Menu_BuildPatternTiles(void) {
 #if TBS_PATCH_1
   u32 *vram = (u32 *)(BG_CHAR_BLOCK(1) + 0x1000);

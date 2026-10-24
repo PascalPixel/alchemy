@@ -18,7 +18,7 @@
 /// The battle summon list: the summons the party holds enough Djinn for
 /// (Summon_ListLearnedFar, BattleSummonState.availableMask), four to a page,
 /// those `standby` can pay for first, each with its Djinn cost by element,
-/// the others in colour 2. Above it the summon's description, and the
+/// the others in TEXT_COLOR_RED. Above it the summon's description, and the
 /// standby Djinn of each element, the elements it needs blinking. `standby`
 /// is what the earlier commands this round leave
 /// (BattleMenuWork.standbyDjinn). Returns the chosen summon, even one that
@@ -182,7 +182,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
                               &glyph, 1);
             y = index * 2;
             sprites[index].oam.f.tile = glyph;
-            // A summon the party cannot afford is drawn in colour 2.
+            // A summon the party cannot afford is drawn in TEXT_COLOR_RED.
             if (!affordable)
               Text_SetColor(TEXT_COLOR_RED);
             Text_DrawMessageAsTiles(SummonDefinition_Get(id)->abilityId +

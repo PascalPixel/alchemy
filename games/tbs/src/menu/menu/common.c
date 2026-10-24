@@ -347,8 +347,8 @@ void Text_DrawNumberRightAligned(s32 number, struct Window *window, s32 x,
 
 /// Draws a character's HP and PP into window as two rows, "HP current/maximum"
 /// at pixel row 40 and "PP current/maximum" at row 48. Current HP is drawn in
-/// colour 4 when it is below a quarter of maximum HP and in colour 2 at 0;
-/// then the colour goes back to 15, the default text colour.
+/// TEXT_COLOR_LOW_HP when it is below a quarter of maximum HP and in
+/// TEXT_COLOR_NO_HP at 0; then the colour goes back to TEXT_COLOR_NORMAL.
 void StatusPanel_DrawHpPp(struct Unit *unit, struct Window *window) {
   // Each figure in turn, as an s16. Read straight from unit, the figures
   // compile differently.
@@ -1064,11 +1064,11 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
   return 0;
 }
 
-/// Copies the last background palette (15) into background palette bank and
-/// lightens its colour 4 by 9 steps in each channel: the highlight colour of
-/// the menu's selected rows. Each screen sets up bank 14 as it opens, and again
-/// after the Details window has borrowed it (ItemMenu_ShowDetails); only
-/// Item_PrepareUsePalette, which nothing calls, uses bank 13.
+/// Copies WINDOW_PALETTE into background palette bank and lightens its
+/// WINDOW_BACKGROUND_COLOR by 9 steps in each channel: the highlight colour of
+/// the menu's selected rows. Each screen sets up HIGHLIGHT_PALETTE as it opens,
+/// and again after the Details window has borrowed it (ItemMenu_ShowDetails);
+/// only Item_PrepareUsePalette, which nothing calls, uses bank 13.
 void Palette_LightenBankHighlight(s32 bank) {
   u16 *palette = (u16 *)&BG_PLTT_COLOR(bank, 0);
   u32 red;
@@ -1099,7 +1099,8 @@ void Palette_LightenBankHighlight(s32 bank) {
 
 /// Draws a paged list's page numbers on the top border of window, ending at
 /// tile rightEdge: one digit per page between the page arrows, selectedPage in
-/// palette 14 and the others in palette 15. Draws nothing for a single page.
+/// HIGHLIGHT_PALETTE and the others in WINDOW_PALETTE. Draws nothing for a
+/// single page.
 void PagedList_DrawPageNumbers(struct Window *window, s32 itemCount,
                                s32 pageSize, s32 selectedPage, s32 rightEdge) {
   s32 pageCount;
@@ -1130,14 +1131,14 @@ void PagedList_DrawPageNumbers(struct Window *window, s32 itemCount,
   }
 }
 
-/// Switches a rectangle of a window's text between palette 15 (normal) and 14
-/// (the highlight made by Palette_LightenBankHighlight): palette is the new
-/// palette number. Only bit 12 of each map entry is cleared before it is set,
-/// so this works between those two palettes. (x, y) and the size are in tiles
-/// inside the window's border; the rectangle is clipped to the screen's 30
-/// columns, and to its 20 rows only when it reaches row 29 (see the body).
-/// Used for the highlighted rows of the item, Psynergy and Status lists.
-/// Marks the whole tilemap for upload.
+/// Switches a rectangle of a window's text between WINDOW_PALETTE (normal) and
+/// HIGHLIGHT_PALETTE (the highlight made by Palette_LightenBankHighlight):
+/// palette is the new palette number. Only bit 12 of each map entry is cleared
+/// before it is set, so this works between those two palettes. (x, y) and the
+/// size are in tiles inside the window's border; the rectangle is clipped to
+/// the screen's 30 columns, and to its 20 rows only when it reaches row 29 (see
+/// the body). Used for the highlighted rows of the item, Psynergy and Status
+/// lists. Marks the whole tilemap for upload.
 void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
                                s32 width, s32 height, u32 palette) {
   struct WindowWork *work = (struct WindowWork *)gWindowWork[0];
@@ -1187,14 +1188,14 @@ void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
   }
 }
 
-/// Lends the highlight palette (background palette 14) to the element icons:
-/// copies the first sprite palette, the icons' colours, into it, then colour 4
-/// of background palette 15, the window's row colour, over its colour 14 (as
+/// Lends HIGHLIGHT_PALETTE to the element icons:
+/// copies the first sprite palette, the icons' colours, into it, then
+/// WINDOW_BACKGROUND_COLOR over its TEXT_BACKGROUND_COLOR (as
 /// SummaryScreen_Run does for palettes 0 and 1). The Details window draws its
-/// element icons (window tiles 1 to 4) in palette 14, so ItemMenu_ShowDetails
-/// calls this first, as do ItemMenu_OpenDetail and Item_PrepareUsePalette,
-/// which nothing calls. It replaces the row highlight until
-/// Palette_LightenBankHighlight(HIGHLIGHT_PALETTE) makes it again.
+/// element icons (window tiles 1 to 4) in HIGHLIGHT_PALETTE, so
+/// ItemMenu_ShowDetails calls this first, as do ItemMenu_OpenDetail and
+/// Item_PrepareUsePalette, which nothing calls. It replaces the row highlight
+/// until Palette_LightenBankHighlight(HIGHLIGHT_PALETTE) makes it again.
 void Palette_LoadIconsIntoHighlight(void) {
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
           DMA_ENABLE << 16 | 16, REG_DMA3);
@@ -1299,19 +1300,19 @@ void Menu_EnsureCancelSound(void) {
   }
 }
 
-/// Makes the text drawn after it colour 15 (TEXT_COLOR_NORMAL). Nothing calls
+/// Makes the text drawn after it TEXT_COLOR_NORMAL. Nothing calls
 /// it or the two after it; the status panel sets its colours with
 /// Text_SetColorFar.
 void WindowPalette_SetNormalTextColor(void) {
   Text_SetColorFar(TEXT_COLOR_NORMAL);
 }
 
-/// Makes the text drawn after it colour 2 (TEXT_COLOR_NO_HP).
+/// Makes the text drawn after it TEXT_COLOR_NO_HP.
 void WindowPalette_SetNoHpTextColor(void) {
   Text_SetColorFar(TEXT_COLOR_NO_HP);
 }
 
-/// Makes the text drawn after it colour 4 (TEXT_COLOR_LOW_HP).
+/// Makes the text drawn after it TEXT_COLOR_LOW_HP.
 void WindowPalette_SetLowHpTextColor(void) {
   Text_SetColorFar(TEXT_COLOR_LOW_HP);
 }

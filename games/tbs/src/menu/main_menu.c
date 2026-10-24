@@ -864,8 +864,8 @@ menu_top:;
             v5 = (v5 + 2);
             v7 = (v7 + 1);
           } while (v7 != 4);
-          // The page numbers beside the arrows, on palette 15: tile 0x301 + n
-          // is the digit n + 1, and 0x30b + n the same digit in the second
+          // The page numbers beside the arrows, on WINDOW_PALETTE: tile 0x301 +
+          // n is the digit n + 1, and 0x30b + n the same digit in the second
           // colouring, for the page shown.
           if (pageCount > 1) {
             v7 = 0;
@@ -973,7 +973,7 @@ UNUSED static void FileMenu_FillTileGrid(struct Window *window,
   Free(decodedTiles);
 }
 
-/// UNUSED: fills a 16-by-eight region with palette 15 tiles beginning at
+/// UNUSED: fills a 16-by-eight region with WINDOW_PALETTE tiles beginning at
 /// tile 32.
 UNUSED static void FileMenu_FillTileBlock(const struct Window *window) {
   s16 *mirror = ((struct WindowWork *)gWindowWork[0])->tilemap;

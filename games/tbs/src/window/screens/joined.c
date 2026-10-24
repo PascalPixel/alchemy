@@ -53,8 +53,8 @@ s32 ColossoMenu_Choose(s32 unused) {
     MenuCursor_SetPositionImmediateFar(&cursor, window->x * 8 - 3,
                                        window->y * 8 + 9);
   }
-  // The choice under the cursor flashes between palette 15 and palette 14,
-  // a copy of it with colour 4 grey.
+  // The choice under the cursor flashes between WINDOW_PALETTE and
+  // HIGHLIGHT_PALETTE, a copy of it with WINDOW_BACKGROUND_COLOR grey.
   palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
           DMA_COPY32(8), REG_DMA3);

@@ -484,7 +484,7 @@ s32 Save_EraseSelectedFile(void) {
 
 #if TBS_PATCH_1
 
-/// A task that makes colours 8-11 of BG palette 14 glow: each
+/// A task that makes colours 8-11 of HIGHLIGHT_PALETTE glow: each
 /// follows a sine wave of the frame counter, eight frames behind the one
 /// before. With n the sine as a whole number from -4 to 4 (Trig_Sin's 16.16
 /// result over 16384, rounded toward zero), the colour is red 22 + 2n, green
@@ -553,7 +553,7 @@ void FileMenu_StopPulse(void) { Task_Remove(FileMenu_UpdatePulse); }
 
 /// Fills the `width` x `height` tile rectangle at (x, y) inside `window`,
 /// clipped to the screen as Window_SetTextTileBitRect clips, with the
-/// tile entry 0xe006: tile 6 in BG palette 14, the palette
+/// tile entry 0xe006: tile 6 in HIGHLIGHT_PALETTE, the palette
 /// FileMenu_UpdatePulse animates. The file menu marks the file under
 /// the cursor with it.
 void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,

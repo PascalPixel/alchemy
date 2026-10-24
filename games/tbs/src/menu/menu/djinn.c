@@ -478,15 +478,16 @@ void DjinnMenu_AdjustPaletteBank(s32 brightnessDelta) {
 #define DJINN_BACKDROP_FRAME_TILE 150
 
 /// PsynergyList_Diff' marks on an action id: Psynergy the change gives,
-/// drawn in colour 4, and Psynergy it takes away, in colour 2.
+/// drawn in TEXT_COLOR_YELLOW, and Psynergy it takes away, in TEXT_COLOR_RED.
 #define DJINN_PREVIEW_GAINED 0x8000
 #define DJINN_PREVIEW_LOST 0x4000
 
 /// Draws the backdrop behind the Djinn menu's list: its window, tiles and
 /// palettes. First saves BG character block 1's first 8 KB and palettes 4 to 7
-/// in the backdrop, which DjinnMenu_Run puts back as the menu closes. Palette
-/// 5 gets the basic sprite colours, with the window background as colour 14,
-/// for the element icons (DJINN_ELEMENT_TILE); palette 7 a copy of 15; then
+/// in the backdrop, which DjinnMenu_Run puts back as the menu closes.
+/// BASIC_COLORS_PALETTE gets the basic sprite colours, with
+/// TEXT_BACKGROUND_COLOR the window background, for the element icons
+/// (DJINN_ELEMENT_TILE); palette 7 a copy of 15; then
 /// DjinnMenu_AdjustPaletteBank(8) makes 14, 4 and 6 from 15, 5 and 7.
 MenuBackdropResult Menu_OpenBackdropScreen(void) {
   // UB: the implicit int call conflicts with DrawElementList's void definition.
@@ -611,8 +612,9 @@ s32 DjinnMenu_BuildLists(void *table) {
 
 /// Draws each member's Djinn column, including set and recovering entries.
 /// Rebuilds table's lists first. Each name follows its element's icon: in the
-/// normal colour when set, colour 2 on standby and colour 4 while recovering.
-/// Holds the tilemap upload (holdTilemapUpload) until the list is drawn.
+/// normal colour when set, TEXT_COLOR_RED on standby and TEXT_COLOR_YELLOW
+/// while recovering. Holds the tilemap upload (holdTilemapUpload) until the
+/// list is drawn.
 void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
   struct DjinnMenuWork *menu;
   s32 listIndex;
@@ -643,8 +645,9 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
       for (listIndex = 0; listIndex < table->counts[row]; listIndex++) {
         if (element != (entries[listIndex] & DJINN_ENTRY_ELEMENT) >> 5)
           continue;
-        // Colour 2 when not set; colour 4 over it when it is neither set nor
-        // ready to set, that is recovering (or held by a summon).
+        // TEXT_COLOR_RED when not set; TEXT_COLOR_YELLOW over it when it is
+        // neither set nor ready to set, that is recovering (or held by a
+        // summon).
         if ((entries[listIndex] & DJINN_ENTRY_IS_SET) == 0)
           Text_SetColorFar(TEXT_COLOR_RED);
         canChangeState = 0;
@@ -680,8 +683,9 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
 
 /// Sets the palette of a rectangle of window's interior, (x, y) and its size in
 /// tiles from the interior's corner, through Window_HighlightRectFar.
-/// Only bit 12 of each map entry changes, so palette 15 and 14 swap (the row
-/// highlight) and so do 5 and 4 (the element icons).
+/// Only bit 12 of each map entry changes, so WINDOW_PALETTE and
+/// HIGHLIGHT_PALETTE swap (the row highlight) and so do 5 and 4 (the element
+/// icons).
 s32 Window_SetInteriorPaletteBitRect(const struct Window *window, s32 x, s32 y,
                                      s32 width, s32 height, s32 palette) {
   Window_HighlightRectFar(window->x + x + 1, window->y + y + 1, width, height,
@@ -691,8 +695,8 @@ s32 Window_SetInteriorPaletteBitRect(const struct Window *window, s32 x, s32 y,
 #endif
 }
 
-/// Moves each tile of a screen rectangle (in tiles) that shows palette 15 to
-/// palette, and marks each row changed for upload. Clipped as
+/// Moves each tile of a screen rectangle (in tiles) that shows WINDOW_PALETTE
+/// to palette, and marks each row changed for upload. Clipped as
 /// Render_SetTilemapFlagRect clips: to the screen's columns, and to its rows
 /// only once the rectangle reaches row 29. The Djinn menu dims its windows
 /// with palette 6 behind the help and the second chooser.
@@ -778,7 +782,7 @@ s32 DjinnMenu_ShowHelp(void) {
   message++;
   Text_DrawMessageAsTilesFar(message, menu->helpWindow, 0, 16);
   // Dim the party window and the Djinn list behind the help: palette 6 is
-  // palette 15's text 12 steps darker (Menu_OpenBackdropScreen).
+  // WINDOW_PALETTE's text 12 steps darker (Menu_OpenBackdropScreen).
   Window_SetRectPalette(1, 1, 11, 3, 6);
   Window_SetInteriorRectPalette((void *)menu->listWindow, 0, 0, 28, 10, 6);
   list = Window_CreateFar(0, 9, 8, 10, 6);
@@ -1664,9 +1668,9 @@ static __inline__ void Unit_Copy(struct Unit *destination,
 ///
 /// previewMode says the change (enum DjinnPreviewMode). Page 0 shows the
 /// stats, class and set Djinn counts, with an arrow beside each stat that
-/// changes; page n the nth page of the Psynergy list, new Psynergy in colour 4
-/// and lost Psynergy in colour 2. side is the portrait slot. The saved copy is
-/// a heap block freed before returning. Returns 1.
+/// changes; page n the nth page of the Psynergy list, new Psynergy in
+/// TEXT_COLOR_YELLOW and lost Psynergy in TEXT_COLOR_RED. side is the portrait
+/// slot. The saved copy is a heap block freed before returning. Returns 1.
 s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
                               s32 removePairSlot, s32 addPairSlot,
                               s32 previewMode, s32 page, s32 side) {
@@ -1793,7 +1797,7 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
       if (originalUnit->classId != unit->classId)
         column += 5;
       // Each element's icon and its count of set Djinn: 0xf030 + n is the
-      // window font's digit n (character 0x30 + n) in palette 15.
+      // window font's digit n (character 0x30 + n) in WINDOW_PALETTE.
       for (i = 0; i < 4; i++) {
         Window_SetTilemapEntryFar(window, DJINN_ELEMENT_TILE + i,
                                   column + i * 2, y + 5, 0);
@@ -1865,8 +1869,8 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
   }
 
   // Pages 1 on: the Psynergy after the change, five to a page (six with no
-  // change), then the key below: "* Psynergy Gained" in colour 4, "* Psynergy
-  // Lost" in colour 2, or "* No change".
+  // change), then the key below: "* Psynergy Gained" in TEXT_COLOR_YELLOW, "*
+  // Psynergy Lost" in TEXT_COLOR_RED, or "* No change".
   if (page > 0) {
     s32 rows;
     s32 first;

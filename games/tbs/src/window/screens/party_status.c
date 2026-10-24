@@ -150,8 +150,8 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
 // shadow; each pixel left of the length becomes colour 8 (shadow 13), the
 // rest colour 2 (shadow 12). Only the bottom row of each tile changes for an
 // empty bar, the bottom three otherwise. Outside battle it first loads the
-// basic colours into BG palette 14, its colour 14 taken from colour 4 of
-// palette 15.
+// basic colours into HIGHLIGHT_PALETTE, its TEXT_BACKGROUND_COLOR taken from
+// WINDOW_BACKGROUND_COLOR.
 // It is declared to return s32 but returns no value, and no caller reads one;
 // UBFIX makes it void, which changes the register its epilogue returns
 // through.
@@ -226,9 +226,9 @@ s32 PartyStatus_DrawBars(struct Window *window, s32 x, s32 y, s32 length) {
 
 /// Draws the party status window with `flags` (see PARTY_STATUS_*): each
 /// member's name, HP and optionally PP with their bars, and in battle the
-/// standby Djinn of each element. The HP is drawn in text colour 2 at zero and
-/// colour 4 at a quarter or less. When the flags change, the window is erased
-/// and laid out again first.
+/// standby Djinn of each element. The HP is drawn in TEXT_COLOR_RED at zero and
+/// TEXT_COLOR_YELLOW at a quarter or less. When the flags change, the window is
+/// erased and laid out again first.
 void PartyStatus_Draw(s32 flags) {
   // UB: the negative indices leave the single party-status heap slot.
   // Named members grow the EN function from 0x3d4 to 0x3dc bytes. Keep the

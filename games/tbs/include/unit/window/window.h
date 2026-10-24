@@ -107,8 +107,8 @@ enum TextColor {
 #define PAGE_ARROW_RIGHT WINDOW_TILE(PAGE_ARROW_TILE + 1)
 
 /// The window frame's tiles. While WindowWork.mindRead is set (a battle
-/// animation sets it while it greys palette 15 and scrolls BG0 by scanline) the
-/// corners are one rounded tile, flipped for each corner.
+/// animation sets it while it greys WINDOW_PALETTE and scrolls BG0 by scanline)
+/// the corners are one rounded tile, flipped for each corner.
 enum {
   WINDOW_TILE_BLANK = WINDOW_TILE(0x00),
   WINDOW_TILE_FRAME_TOP_LEFT = WINDOW_TILE(0x10),
@@ -396,10 +396,10 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode);
 enum TilemapEntryMode {
   TILEMAP_ENTRY_PLAIN, ///< as given, palette bits included
   TILEMAP_ENTRY_NONE,  ///< nothing
-  /// In palette 14, the highlight Palette_LightenBankHighlight makes for the
-  /// selected row or page.
+  /// In HIGHLIGHT_PALETTE, the highlight Palette_LightenBankHighlight makes for
+  /// the selected row or page.
   TILEMAP_ENTRY_HIGHLIGHT,
-  TILEMAP_ENTRY_WINDOW, ///< in palette 15, the window palette
+  TILEMAP_ENTRY_WINDOW, ///< in WINDOW_PALETTE
   /// In palette 1, which the summary screen and the party rearranging fill
   /// with the element icons' colours for the rows that are not highlighted
   /// (SummaryScreen_Run, MemberChooser_RunRearrange).

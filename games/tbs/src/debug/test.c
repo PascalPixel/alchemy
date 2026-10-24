@@ -657,8 +657,8 @@ static void MenuTest_SelectItem(void) {
   selectedItemId = 1;
   redraw = 1;
   // Reuse the item palette for both debug windows: sprite palette 0 into BG
-  // palette 14, and BG palette 15's colour 4 over BG palette 14's colour 14,
-  // as the level room's browser does.
+  // HIGHLIGHT_PALETTE, and WINDOW_BACKGROUND_COLOR over its
+  // TEXT_BACKGROUND_COLOR, as the level room's browser does.
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
           DMA_ENABLE << 16 | 0x10, REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),

@@ -138,7 +138,7 @@ static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 
 // Builds the twelve range icons Window_DrawThreeTileColumn draws, as BG
 // tiles 0x314 to 0x32b (at 0x06006280): icon n is a centre tile and an end
-// tile, filled with colour 4, then marked row by row by XOR with
+// tile, filled with WINDOW_BACKGROUND_COLOR, then marked row by row by XOR with
 // gMenu_BarPatternRows (its colour 5 turns the fill to colour 1). Rows 1 to 7
 // are marked; the first set grows its pattern with the row, the second skips
 // row 1. Battle_CollectPartyCommands builds them as the command menus open.

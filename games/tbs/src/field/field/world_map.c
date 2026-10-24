@@ -366,7 +366,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   Dma_Set(Ram_BgTileBuffer + 0x6000, BG_CHAR_BLOCK(3) + 0x2000,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[5]), gMapGridAnimTiles);
-  // BG1's map (screen block 5) is filled with tile 0x7f of palette 15, and
+  // BG1's map (screen block 5) is filled with tile 0x7f of WINDOW_PALETTE, and
   // screen block 6 numbers a 30 by 20 tile picture from tile 0x1a8, two
   // tile numbers a word, for the still view WorldMap_StartStillView shows.
   Dma_Fill32(0xf07ff07f, BG_SCREEN_BLOCK(5), 0x600);

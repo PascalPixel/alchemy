@@ -26,9 +26,9 @@
 #define DJINN_ENTRY_END 0x80000000 ///< ends the list
 
 /// The battle Djinn menu for unit `member`: its Djinn in element and number
-/// order, five to a page, set ones plain, standby ones in colour 2 and
-/// recovering ones in colour 4 with their turns, the one under the cursor
-/// described above the list with its change preview beside it
+/// order, five to a page, set ones plain, standby ones in TEXT_COLOR_RED and
+/// recovering ones in TEXT_COLOR_YELLOW with their turns, the one under the
+/// cursor described above the list with its change preview beside it
 /// (BattleDjinnMenu_ShowChangePreview; holding R shows the Psynergy pages, Left
 /// and Right turn them). Returns the chosen Djinni's entry (element << 8 |
 /// number, with DJINN_ENTRY_STANDBY when on standby), or -1 when cancelled,
@@ -533,7 +533,8 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
     }
     // In the party status window's Djinn column (PARTY_STATUS_SHOW_DJINN),
     // the element of a ready standby Djinni under the cursor blinks between
-    // palettes 14 and 15 every four frames; then the arrow tiles' blink.
+    // HIGHLIGHT_PALETTE and WINDOW_PALETTE every four frames; then the arrow
+    // tiles' blink.
     partyStatus = CURSOR_OWNER;
     blinkPhase = gFrameCount & 4;
     iconWindow = partyStatus->window;
@@ -558,7 +559,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
     WaitFrames(1);
   }
 
-  // Leave the Djinn column in palette 15.
+  // Leave the Djinn column in WINDOW_PALETTE.
   if (CURSOR_OWNER->flags & 2) {
     Window_HighlightRect(CURSOR_OWNER->window->x + 1,
                          CURSOR_OWNER->window->y + 1, 4, 4, WINDOW_PALETTE);

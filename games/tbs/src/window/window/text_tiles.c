@@ -111,11 +111,11 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   paletteBits = work->textPalette << 12;
   Iwram_ClearWords(pens, 16);
   // pens maps a font pixel, 1 or 3 (the font's two shades), to a colour; 0
-  // leaves the background. In the UI palette (15) shade 1 takes the colour's
-  // pen (gFont_ColorPens) and shade 3 colour 3, over the window
-  // background, colour 4; in another palette (WindowWork.textPalette, as the
+  // leaves the background. In WINDOW_PALETTE shade 1 takes the colour's
+  // pen (gFont_ColorPens) and shade 3 colour 3, over
+  // WINDOW_BACKGROUND_COLOR; in another palette (WindowWork.textPalette, as the
   // party status window sets for its numbers) shade 1 takes the colour itself
-  // and shade 3 colour 1, over colour 14.
+  // and shade 3 colour 1, over TEXT_BACKGROUND_COLOR.
   if (paletteBits == WINDOW_PALETTE << 12) {
     pens[1] = gFont_ColorPens[work->colour & 15];
     pens[3] = 3;
@@ -562,7 +562,7 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
 
 /// Sets the text colour (0 to 15) of drawn text. The menus colour the HP
 /// figures with it (menu/menu/common.c, screens/party_status.c), and
-/// set colour 15 back after.
+/// set TEXT_COLOR_WHITE back after.
 void Text_SetColor(s32 param) {
   struct WindowWork *work = WINDOW_WORK;
 

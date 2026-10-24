@@ -104,12 +104,6 @@ Func_08016180:
 	.thumb_func
 SerialRuntime_CollectReceivedPayloads:
 	.incbin "baserom.gba", 0x000165e0, 0x000000e0
-	.section .rom.000166c0, "ax"
-	.global SerialRuntime_HandleTransferInterrupt
-	.type SerialRuntime_HandleTransferInterrupt, %function
-	.thumb_func
-SerialRuntime_HandleTransferInterrupt:
-	.incbin "baserom.gba", 0x000166c0, 0x00000118
 	.section .rom.000169bc, "ax"
 	.global Func_08016990
 	.type Func_08016990, %function

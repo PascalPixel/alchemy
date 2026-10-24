@@ -11,6 +11,96 @@
 #include "serial_runtime.h"
 #include "irqlock.h"
 
+/// The serial and timer 3 interrupt: each one moves a halfword. It sends the
+/// next halfword of the outgoing packet (0xfefe between packets) and stores
+/// the halfword received from each console; a console's fourteenth halfword
+/// completes its packet. The parent then restarts timer 3 for the next.
+// As ☀️'s Serial_HandleTransferInterrupt.
+void SerialRuntime_HandleTransferInterrupt(void) {
+  struct SerialRuntime *sendState;
+  struct SerialRuntime *receiveState;
+  struct SerialRuntime *tailState;
+  u16 recv[4];
+  volatile u32 *sioControl;
+  s32 channel;
+
+  sioControl = &REG_SIOCNT;
+  *(u64 *)recv = *(volatile u64 *)REG_SIODATA32;
+  sendState = &gSerialRuntime;
+  {
+    s32 index;
+    u8 isParent = (*sioControl << 25) >> 31;
+
+    index = sendState->sendIndex;
+    /* FAKEMATCH(barrier): an empty asm after the send index's read, so it
+     * loads before the isParent store; as plain statements, 2 of 121
+     * instructions differ in tla-en. */
+    asm volatile("");
+    sendState->isParent = isParent;
+    if (index == -1) {
+      u32 idleWord = 0xfefe;
+      u16 *swap;
+
+      ((volatile u16 *)sioControl)[1] = idleWord;
+      swap = sendState->sendBuffer[1];
+      sendState->sendBuffer[1] = sendState->sendBuffer[0];
+      sendState->sendBuffer[0] = swap;
+    } else if (index >= 0) {
+      ((volatile u16 *)sioControl)[1] = sendState->sendBuffer[1][index];
+    }
+  }
+  receiveState = &gSerialRuntime;
+  if (receiveState->sendIndex <= 14)
+    receiveState->sendIndex++;
+
+  // The two receive channels share one backedge.
+  channel = 0;
+receive_loop:
+  {
+    s32 receiveIndex;
+    u16 *incoming;
+
+    if (recv[channel] == 0xfefe && receiveState->receiveIndex[channel] > 13) {
+      receiveState->receiveIndex[channel] = -1;
+    } else {
+      receiveIndex = receiveState->receiveIndex[channel];
+      incoming = receiveState->incomingBuffer[channel];
+      incoming[receiveIndex] = recv[channel];
+      if (receiveIndex == 13) {
+        u16 *swap = receiveState->readyBuffer[channel];
+
+        receiveState->readyBuffer[channel] = incoming;
+        receiveState->incomingBuffer[channel] = swap;
+        receiveState->channelFlags[channel] |= 1;
+      }
+    }
+  }
+  tailState = &gSerialRuntime;
+  if (tailState->isParent != 0)
+    tailState->channelFlags[channel] |= 2;
+  if (tailState->receiveIndex[channel] <= 14)
+    tailState->receiveIndex[channel]++;
+  channel++;
+  receiveState = tailState;
+  if (channel <= 1)
+    goto receive_loop;
+
+  if (tailState->mode == 8) {
+    volatile u16 *sio = &REG_SIOCNT16;
+    /* FAKEMATCH(pin): the 0x80 a halfword pinned to r2 behind a barrier, so
+     * SIOCNT's address loads before the timer store and the 0x80 before
+     * SIOCNT is read; as REG_SIOCNT16 |= 0x80 after an empty asm, 2 of 121
+     * instructions differ in tla-en. */
+    register u16 start asm("r2");
+
+    REG_TM3CNT_H = 0;
+    start = 0x80;
+    asm volatile("" : "+r"(start));
+    *sio |= start;
+    REG_TM3CNT_H = 0xc0;
+  }
+}
+
 void SerialRuntime_RemoveIrqHandlers(void) {
   gSerialExchangeActive = 0;
   Runtime_SetIrqHandler(7, 0, 0);

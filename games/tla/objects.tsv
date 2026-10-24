@@ -178,17 +178,11 @@ main	rom_main_00	games/tla/src/system/link/sio_time	.text
 main	rom_main_00	games/tla/src/system/link/serial_poll_status	.text
 main	rom_main_00	games/tla/src/system/link/sio_xchg	.text
 main	rom_main_00	recon/tla/it/rom	.rom.000165e0	it
-main	rom_main_00	recon/tla/it/rom	.rom.000166c0	it
 main	rom_main_00	recon/tla/fr/rom	.rom.000165e0	fr
-main	rom_main_00	recon/tla/fr/rom	.rom.000166c0	fr
 main	rom_main_00	recon/tla/es/rom	.rom.000165e0	es
-main	rom_main_00	recon/tla/es/rom	.rom.000166c0	es
 main	rom_main_00	recon/tla/de/rom	.rom.000165e0	de
-main	rom_main_00	recon/tla/de/rom	.rom.000166c0	de
 main	rom_main_00	recon/tla/raw/080165b4	.text	en
-main	rom_main_00	recon/tla/raw/08016694	.text	en
 main	rom_main_00	recon/tla/ja/rom	.rom.000165b4	ja
-main	rom_main_00	recon/tla/ja/rom	.rom.00016694	ja
 main	rom_main_00	games/tla/src/system/link/sio_intr	.text
 main	rom_main_00	games/tla/src/system/link/sio_wait	.text
 main	rom_main_00	games/tla/src/system/link/reset_transfer	.text

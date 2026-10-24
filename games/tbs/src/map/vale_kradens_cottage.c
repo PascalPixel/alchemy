@@ -98,9 +98,6 @@
 #include "songs.h"
 #include "audio_engine_symbols.h"
 
-// FLAG_VALE_KRADENS_DOOR_OPEN: the cottage's door stands open since Kraden went
-// in.
-
 /// The placed object events, numbered in the order of
 /// gValeKradensCottage_ObjectEventTemplates; Garet and Jenna, placed between
 /// Kraden and Saturos, keep their own slots.
@@ -147,7 +144,9 @@ enum ValeKradensCottageLocalId {
 
 #include "common/object_facing.h"
 
-/// The door of Kraden's cottage stands open since Kraden set off.
+/// The front door of Kraden's cottage stands open since Kraden set off, so
+/// walking in (metatile behavior 3, the warp into the cottage) skips its
+/// opening.
 /// ★ Named from what the player sees: the arched wooden door of Kraden's
 /// thatched cottage (its render)
 #define FLAG_VALE_KRADENS_DOOR_OPEN FLAG_MAP_TEMP_42
@@ -506,7 +505,7 @@ static void EventScript_KradenPlansSanctumVisit(void) {
     // Kraden opens his door and goes in to prepare; the screen closes and the
     // party follows him through VALE_KRADENS_COTTAGE_TO_VALE_INN_MYTHRIL_BAG.
     Script_PlaySong(SE_DOOR_OPEN);
-    MapGrid_AnimateCells(gValeKradensCottage_GateCells, 43, 8);
+    MapGrid_AnimateCells(gValeKradensCottage_DoorOpens, 43, 8);
     ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
     ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 232, 218);
     ObjectEvent_SetPosition(LOCALID_KRADEN, 0, 0);
@@ -545,7 +544,7 @@ static void EventScript_KradenSetsOff(void) {
   objectEvent->facing = facing;
   objectEvent = ObjectEvent_GetById(LOCALID_JENNA);
   objectEvent->facing = facing;
-  MapGrid_AnimateCells(gValeKradensCottage_GateCells, 43, 8);
+  MapGrid_AnimateCells(gValeKradensCottage_DoorOpens, 43, 8);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldScript_StartScreenTransition();
@@ -607,7 +606,7 @@ static void EventScript_KradenSetsOff(void) {
 static void EventScript_EnterCottage(void) {
   if (GameFlag_Get(FLAG_VALE_KRADENS_DOOR_OPEN) == 0) {
     Sound_PlaySong(SE_DOOR_OPEN);
-    MapGrid_PlayMetatileCopySequence(gValeKradensCottage_GateCells, 43, 8);
+    MapGrid_PlayMetatileCopySequence(gValeKradensCottage_DoorOpens, 43, 8);
   }
   ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 229, 217);
   Import_ScriptRequestWarp(VALE_KRADENS_COTTAGE_TO_VALE_INN_NORTH);
@@ -1349,7 +1348,9 @@ struct MapEvent gValeKradensCottage_EventsAfterKalay[] = {
 };
 // clang-format on
 
-u16 gValeKradensCottage_GateCells[] = {
+/// The cottage's arched front door opening: two pictures from the layout's
+/// cells below the village, drawn over the closed door on the middle layer.
+u16 gValeKradensCottage_DoorOpens[] = {
     MAPGRID_ANIMATION_STEP(2, 36, 2, 2, 1),
     MAPGRID_ANIMATION_STEP(4, 36, 2, 2, 1),
     MAPGRID_ANIMATION_STEPS_END,

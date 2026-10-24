@@ -20,6 +20,6 @@ extern struct ObjectEventTemplate gValeKradensCottage_ObjectEventTemplates[];
 extern struct MapEvent gValeKradensCottage_Events[];
 extern struct MapEvent gValeKradensCottage_StormEvents[];
 extern struct MapEvent gValeKradensCottage_EventsAfterKalay[];
-extern u16 gValeKradensCottage_GateCells[];
+extern u16 gValeKradensCottage_DoorOpens[];
 
 #endif

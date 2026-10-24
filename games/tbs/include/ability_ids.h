@@ -66,7 +66,7 @@ enum AbilityId {
   ABILITY_SONIC_WAVE = 0x1b3,
   /// Power 45 against the Bat's 5: the Rabid Bat's, the Clay Gargoyle's,
   /// the Ant Lion's and the Roach's.
-  /// ★ Named from the game: "Sonic Wave" (MsgAbilityName)
+  /// ★ Named from the game: "Sonic Wave" (MsgDjinnName)
   ABILITY_SONIC_WAVE_STRONG = 0x1b4,
   ABILITY_SHRIEK = 0x1b5,
   ABILITY_BANSHEE_HOWL = 0x1b6,

@@ -356,7 +356,7 @@ static void EventScript_BaneSecondEscape(void) {
       ObjectEvent_WalkToAndWait(LOCALID_BANE, 744, 664);
       ObjectEvent_WalkToAndWait(LOCALID_BANE, 824, 664);
       WAIT(10);
-      SE(SE_208);
+      SE(SE_BANE_ESCAPE);
       MapGrid_SetShake(PIXELS(4), PIXELS(2), Q16_ONE);
       WAIT(20);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -697,7 +697,7 @@ static void EventScript_DodgeFirstPursuer(void) {
   SCRIPT_START();
   OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(19) / 10, PIXELS(19) / 20);
   OBJECT_SPEED(LOCALID_FIRST_STATUE, PIXELS(19) / 10, PIXELS(19) / 20);
-  SE(SE_188);
+  SE(SE_THUMP);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetDestination(LOCALID_FIRST_STATUE, leader->x.part.pixel,
@@ -706,7 +706,7 @@ static void EventScript_DodgeFirstPursuer(void) {
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FIRST_STATUE);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, 24);
   WAIT(4);
-  SE(SE_188);
+  SE(SE_THUMP);
   ObjectEvent_SetDestinationOffset(LOCALID_FIRST_STATUE, 0,
                                    CROSSBONE_PURSUER_STEP_Z);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
@@ -740,7 +740,7 @@ static void EventScript_DodgeSecondPursuer(void) {
   SCRIPT_START();
   OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
   OBJECT_SPEED(LOCALID_SECOND_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
-  SE(SE_188);
+  SE(SE_THUMP);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetDestination(LOCALID_SECOND_STATUE, leader->x.part.pixel,
@@ -749,7 +749,7 @@ static void EventScript_DodgeSecondPursuer(void) {
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_SECOND_STATUE);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0,
                                    CROSSBONE_LEADER_STEP_Z);
-  SE(SE_188);
+  SE(SE_THUMP);
   WAIT(4);
   ObjectEvent_SetDestinationOffset(LOCALID_SECOND_STATUE, 0, 16);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
@@ -773,7 +773,7 @@ static void CrossboneIsleKeys_TrackPursuerColumn(s32 pursuerIndex) {
     return;
 
   ObjectMotion_SetSpeedParameters(pursuerId, PIXELS(9) / 2, PIXELS(9) / 4);
-  Sound_PlaySong(SE_188);
+  Sound_PlaySong(SE_THUMP);
   ObjectMotion_ResetAndSetPosition(pursuerId, (column << 4) + 8, 360);
 
   gCrossboneIsleKeys_SlotColumns[pursuerIndex] = column;
@@ -810,7 +810,7 @@ static void EventScript_DodgeThirdPursuer(void) {
     SCRIPT_START();
     OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
     OBJECT_SPEED(LOCALID_THIRD_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
-    SE(SE_188);
+    SE(SE_THUMP);
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (leader != 0) {
       ObjectEvent_SetDestination(LOCALID_THIRD_STATUE, leader->x.part.pixel,
@@ -820,7 +820,7 @@ static void EventScript_DodgeThirdPursuer(void) {
     ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0,
                                      CROSSBONE_LEADER_STEP_Z);
     WAIT(4);
-    SE(SE_188);
+    SE(SE_THUMP);
     ObjectEvent_SetDestinationOffset(LOCALID_THIRD_STATUE, 0, 16);
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
     ObjectEvent_SetDestination(LOCALID_THIRD_STATUE, 264, 360);
@@ -841,7 +841,7 @@ static void EventScript_DodgeFourthPursuer(void) {
     OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
     ObjectMotion_SetSpeedParameters(LOCALID_FOURTH_STATUE, PIXELS(17) / 10,
                                     PIXELS(17) / 20);
-    Sound_PlaySong(SE_188);
+    Sound_PlaySong(SE_THUMP);
     leaderColumn =
         ObjectEvent_GetById(LOCALID_PARTY_LEADER)->x.fixed / PIXELS(16);
     if (leaderColumn >
@@ -865,7 +865,7 @@ static void EventScript_DodgeFourthPursuer(void) {
     ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, 0,
                                               CROSSBONE_LEADER_STEP_Z);
     WAIT(4);
-    Sound_PlaySong(SE_188);
+    Sound_PlaySong(SE_THUMP);
     ObjectMotion_OffsetPositionAndResetMotion(LOCALID_FOURTH_STATUE, 0, 16);
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
     ObjectMotion_ResetAndSetPosition(LOCALID_FOURTH_STATUE, 344, 360);
@@ -899,7 +899,7 @@ static void EventScript_DodgeFifthPursuer(void) {
   SCRIPT_START();
   OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
   OBJECT_SPEED(LOCALID_FIFTH_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
-  SE(SE_188);
+  SE(SE_THUMP);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetDestination(LOCALID_FIFTH_STATUE, leader->x.part.pixel,
@@ -908,7 +908,7 @@ static void EventScript_DodgeFifthPursuer(void) {
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FIFTH_STATUE);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0,
                                    CROSSBONE_LEADER_STEP_Z);
-  SE(SE_188);
+  SE(SE_THUMP);
   ObjectEvent_SetDestinationOffset(LOCALID_FIFTH_STATUE, 0, 16);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   ObjectEvent_SetDestination(LOCALID_FIFTH_STATUE, 312, 232);

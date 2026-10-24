@@ -23,8 +23,8 @@ u32 gFallingEffectState __attribute__((section(".bss")));
 
 /// A map callback: every eighth frame a speck (its script
 /// gFallingEffectScript) starts 160 pixels up at a random point near the point
-/// the map view follows, with SE_246 every 64 frames. gFallingEffectState, an
-/// enum KolimaCurseDustState, shapes the fall.
+/// the map view follows, with SE_GLITTER every 64 frames. gFallingEffectState,
+/// an enum KolimaCurseDustState, shapes the fall.
 void Kolima_UpdateCurseDust(void) {
   struct ObjectEvent *objectEvent = NULL;
   s32 *origin;
@@ -57,7 +57,7 @@ void Kolima_UpdateCurseDust(void) {
       (objectEvent = ObjectEvent_Create(SPRITE_SPARKLE, 0, 0, 0)) != 0) {
     origin = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
     if ((gFrameCount & 63) == 0)
-      Sound_PlaySong(SE_246);
+      Sound_PlaySong(SE_GLITTER);
     if (gFallingEffectState != KOLIMA_DUST_CENTRED)
       x = origin[0] +
           (((u32)Import_RandomNext() * gFallingEffectWidth >> 16) << 8) +

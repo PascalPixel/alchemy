@@ -407,7 +407,7 @@ static void EventScript_MoveWestCratesIntoHole(void) {
     particleOptions->startScaleX = 3 * Q16_ONE / 5;
     particleOptions->startScaleY = 3 * Q16_ONE / 5;
     particleOptions->palette = 7;
-    Sound_PlaySong(SE_216);
+    Sound_PlaySong(SE_BURST);
     ValeCave_SinkObjectWithParticles(LOCALID_WEST_CRATES, PIXELS(368),
                                      PIXELS(624), particleOptions);
     MapGrid_CopyCellAttributes(23, 41, 1, 1, 23, 39);
@@ -453,7 +453,7 @@ static void EventScript_MoveEastCratesIntoHole(void) {
     particleOptions->startScaleX = 3 * Q16_ONE / 5;
     particleOptions->startScaleY = 3 * Q16_ONE / 5;
     particleOptions->palette = 7;
-    Sound_PlaySong(SE_216);
+    Sound_PlaySong(SE_BURST);
     ValeCave_SinkObjectWithParticles(LOCALID_EAST_CRATES, PIXELS(432),
                                      PIXELS(656), particleOptions);
     MapGrid_CopyCellAttributes(31, 39, 2, 1, 27, 41);
@@ -697,7 +697,7 @@ static void EventScript_PushLogOverEdge(void) {
       PushedObject_FillGridAttributeRectangle(0, 16, 16, 1, clearedRows,
                                               stationaryMotion);
       GameFlag_Set(FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE);
-      Sound_PlaySong(SE_240);
+      Sound_PlaySong(SE_LOG_FALL);
     }
   }
   FieldScript_End();
@@ -746,7 +746,7 @@ static void EventScript_PushLogOffLedge(void) {
   PushedObject_FillGridAttributeRectangle(0, 12, 16, 1, 4, MB_NORMAL);
   PushedObject_FillGridAttributeRectangle(0, 13, 16, 1, 4, MB_NORMAL);
   GameFlag_Set(FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE);
-  Script_PlaySong(SE_240);
+  Script_PlaySong(SE_LOG_FALL);
   FieldScript_End();
 }
 
@@ -767,7 +767,7 @@ static void EventScript_PushLogNorth(void) {
     ObjectEvent_SetSpeed(LOCALID_SOUTH_LOG, PIXELS(1) / 4, PIXELS(1) / 2);
     ObjectMotion_OffsetPositionAndResetMotion(LOCALID_SOUTH_LOG, 0, -16);
     FieldScript_WaitFrames(45);
-    Sound_PlaySong(SE_240);
+    Sound_PlaySong(SE_LOG_FALL);
     Import_ObjectEventSetAnimation(LOCALID_SOUTH_LOG, 8);
     {
       struct ObjectEvent *slidingLog = ObjectEvent_GetById(LOCALID_SOUTH_LOG);

@@ -147,7 +147,7 @@ void BattleAnim_RunIce(struct BattleAnimArgs *effect) {
     // Frame loop. 16 frames before the end, the battle shows the damage,
     // with sound 132 as each target is hit.
     if (frame == gFalling_IceCounts[work->effect->variant][ICE_FRAMES] - 16)
-      ANIM_SHOW_DAMAGE(SE_132);
+      ANIM_SHOW_DAMAGE(SE_WATER);
 
     // Shards: fall 8 pixels a frame down the slant; on landing, shatter
     // through five images, kicking up puffs in the middle of it.
@@ -358,7 +358,7 @@ void BattleAnim_RunDouse(struct BattleAnimArgs *effect) {
     // with sound 132 as each target is hit.
     if (frame ==
         gFalling_Counts[work->effect->variant][FALLING_BOLT_DURATION] - 64)
-      ANIM_SHOW_DAMAGE(SE_132);
+      ANIM_SHOW_DAMAGE(SE_WATER);
 
     // Bolts: fall 8 pixels a frame (4 across) until they pass y 80, then
     // flash for frames 0 to 3 and burst for 4 to 7; the count stops at 15.
@@ -404,7 +404,7 @@ void BattleAnim_RunDouse(struct BattleAnimArgs *effect) {
           // Every fourth bolt plays the hit sound, and every target
           // flashes white in its damage pose for 2 frames.
           if ((i & 3) == 0)
-            Sound_PlaySongFar(SE_132);
+            Sound_PlaySongFar(SE_WATER);
           ANIM_FOR_EACH_TARGET(k, work->effect)
           BattleAnim_TintBattler(work->effect->targets[k], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, k, 2);

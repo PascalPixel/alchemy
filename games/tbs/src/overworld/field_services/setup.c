@@ -219,7 +219,7 @@ void FieldEffect_StartCast(void) {
   caster->targetZ = caster->z.fixed;
   SET_VELOCITY(caster, 0, 0, 0);
   if (effectWork->visible != 0) {
-    Sound_PlaySongFar(SE_212);
+    Sound_PlaySongFar(SE_POWER_UP);
     caster->update = FieldEffect_FlickerObjectAndTick;
   }
   if (effectWork->active != 0) {

@@ -93,7 +93,7 @@ static void KolimaForestCliff_PushLog(void) {
                                      LOG_ANIMATION_ROLL_WEST);
       ObjectMotion_OffsetPositionAndResetMotion(LOCALID_RIVER_LOG, -18, 6);
       FieldScript_WaitFrames(30);
-      Sound_PlaySong(SE_240);
+      Sound_PlaySong(SE_LOG_FALL);
       Import_ObjectEventSetAnimation(LOCALID_RIVER_LOG, LOG_ANIMATION_DROP_IN);
       ObjectEvent_GetById(LOCALID_RIVER_LOG)->priorityFlags =
           OBJ_EVENT_PRIORITY_UNDERFOOT;

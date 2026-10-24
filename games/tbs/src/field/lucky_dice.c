@@ -23,13 +23,13 @@
 #include "macros.h"
 
 /// Starts the Lucky Dice minigame: leaves only the backdrop on screen, starts
-/// song MUS_009 and plays until the player quits. Returns 0. Reached through
-/// LuckyDice_StartFar from RunLuckyDice (overworld/overworld/map.c),
-/// which saves background palettes 14 and 15 around it and passes a
-/// warp destination this function does not take.
+/// song MUS_DJINN_LESSON and plays until the player quits. Returns 0. Reached
+/// through LuckyDice_StartFar from RunLuckyDice (overworld/overworld/map.c),
+/// which saves background palettes 14 and 15 around it and passes a warp
+/// destination this function does not take.
 s32 LuckyDice_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
-  Sound_PlaySongFar(MUS_009);
+  Sound_PlaySongFar(MUS_DJINN_LESSON);
   LuckyDice_Run();
   return 0;
 }

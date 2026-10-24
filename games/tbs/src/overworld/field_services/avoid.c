@@ -117,7 +117,7 @@ void FieldEffect_RunAvoid(void) {
     object->arcPhase = zero;
     object->arcFrames = zero;
   }
-  Sound_PlaySongFar(SE_140);
+  Sound_PlaySongFar(SE_SPIN);
   WaitFrames(15);
   object->arcPhase = 1;
   WaitFrames(10);
@@ -135,7 +135,7 @@ void FieldEffect_RunAvoid(void) {
   object->facing = angle;
   Task_Add(FieldEffect_BlinkAvoidCaster, 0xc80);
   WaitFrames(15);
-  Sound_PlaySongFar(SE_174);
+  Sound_PlaySongFar(SE_NOTE_MID);
   WaitFrames(55);
   Task_Remove(FieldEffect_BlinkAvoidCaster);
   // Back to the caster's own look: outlined while Cloak is on, else with its

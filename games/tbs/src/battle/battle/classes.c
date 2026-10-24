@@ -5,7 +5,7 @@
 #include "../battle_internal.h"
 
 /// Returns the class's defeat-sound kind, 0 to 4, or -1 for none; a fallen
-/// enemy's sound is SE_146 plus it.
+/// enemy's sound is SE_ENEMY_CRY plus it.
 /// Called by BattlePlayback_Run as an enemy falls. Reads any index
 /// unchecked.
 u32 BattleSprite_GetDefeatSound(s32 index) {

@@ -24,7 +24,7 @@ void BattleBackground_LoadFar(s32 mode, s32 resource, s32 level);
 /// none), for animations that dim the background.
 void BattleBackground_SetPaletteLevelFar(s32 unused, s32 level);
 /// Returns 1 for an enemy whose blow lands with SE_HEAVY_IMPACT instead of
-/// SE_133, and 0 out of range; the beam animations ask it.
+/// SE_IMPACT, and 0 out of range; the beam animations ask it.
 s32 BattleSprite_HasHeavyImpactFar(s32 index);
 /// Returns the height above a unit where its animations play, in 16.16 pixels.
 s32 BattleUnit_GetEffectHeightFar(s32 id);

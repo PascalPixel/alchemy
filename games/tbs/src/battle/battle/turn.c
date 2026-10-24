@@ -511,11 +511,11 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
             PLAYBACK_ABILITY_NAME,
             DJINN_ELEMENT(request->parameter) * DJINN_PER_ELEMENT +
                 DJINN_INDEX(request->parameter) + ABILITY_DJINNI_FIRST);
-        BattlePlayback_Push(PLAYBACK_SOUND, SE_175);
+        BattlePlayback_Push(PLAYBACK_SOUND, SE_NOTE_HIGH);
         BattlePlayback_Push(PLAYBACK_DRAW_STATUS, 0);
         BattlePlayback_Push(PLAYBACK_MESSAGE, MsgDjinnSet);
         BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, request->unitId);
-        Sound_PlaySongFar(SE_212);
+        Sound_PlaySongFar(SE_POWER_UP);
         Object_SelectAnimationFar(BattleObject_Get(request->unitId)->object,
                                   POSE_CAST);
         Object_SetAnimationSpeedFar(

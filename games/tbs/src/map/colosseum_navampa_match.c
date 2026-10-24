@@ -786,7 +786,7 @@ static void EventScript_RollLongLog(void) {
     MapGrid_CopyCellAttributes(86, 10, 1, 2, column, 10);
     MapGrid_CopyCellAttributes(86, 9, 1, 1, column, 12);
     Script_PlaySong(SE_STOP_ACTION_SE);
-    Script_PlaySong(SE_240);
+    Script_PlaySong(SE_LOG_FALL);
   } else {
     Object_SelectAnimation(log, 1);
     Script_PlaySong(SE_STOP_ACTION_SE);
@@ -809,7 +809,7 @@ ColosseumNavampaMatch_ShowActivatedSidewalkLayer(struct Object *interpreter) {
   TilesetAnim_Pause(1);
   TilesetAnim_Resume(2);
   Sound_PlaySong(SE_STOP_ACTION_SE);
-  Sound_PlaySong(SE_217);
+  Sound_PlaySong(SE_FLOOR_SWITCH);
   return 0;
 }
 
@@ -2058,7 +2058,7 @@ static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
     return;
   }
 
-  Sound_PlaySong(SE_247);
+  Sound_PlaySong(SE_COLOSSO_LETTERING);
   FieldScript_Start();
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -2101,7 +2101,7 @@ static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
 UNUSED static void ColosseumNavampaMatch_UnusedCountdown(s32 countdown) {
   s32 localId;
 
-  Sound_PlaySong(SE_247);
+  Sound_PlaySong(SE_COLOSSO_LETTERING);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   gColossoLetteringScriptWon[13] = countdown * 60;
@@ -2109,7 +2109,7 @@ UNUSED static void ColosseumNavampaMatch_UnusedCountdown(s32 countdown) {
       (countdown < 0 ? -countdown : countdown) * 60;
   if (countdown < 0) {
     FieldScript_WaitFrames(30);
-    Sound_PlaySong(MUS_086);
+    Sound_PlaySong(MUS_INN);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE_FOR_LOSS);
     /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
      * show, which sets r1 before r0; as a direct call, 1 of 72 instructions
@@ -2360,7 +2360,7 @@ static void ColosseumNavampaMatch_PushObjectEventAhead(void) {
   subject->acceleration = PIXELS(1) / 5;
   Object_SetPosition(subject, position.x, position.y, position.z);
 
-  Sound_PlaySong(SE_238);
+  Sound_PlaySong(SE_PUSH_STEP);
   Object_WaitForMove(target);
   Sound_PlaySong(SE_STOP_ACTION_SE);
 

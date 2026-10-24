@@ -289,7 +289,7 @@ static void SolSanctumStatue_OpenCentralHole(void) {
   {
     MapGrid_CopyCellsTo(0, 28, 17, 8, 2, 1);
   }
-  Sound_PlaySong(SE_200);
+  Sound_PlaySong(SE_SPARKLE_FALL);
   for (flash = 0; flash != 22; flash++) {
     MapGrid_CopyCellsTo(10, 61, 17, 40, 2, 1);
     FieldScript_WaitFrames(4);
@@ -1169,7 +1169,7 @@ static void EventScript_CenterStatueMoved(void) {
         ObjectEvent_SetSpeed(LOCALID_CENTER_STATUE, PIXELS(3), PIXELS(1));
         statue->motionFlags = 0;
         ObjectMotion_SetActionVariant(LOCALID_CENTER_STATUE, 3);
-        Sound_PlaySong(SE_189);
+        Sound_PlaySong(SE_STONE_GRIND);
         ObjectMotion_ResetAndSetPosition(LOCALID_CENTER_STATUE, 288, 178);
         FieldScript_WaitFrames(8);
         ObjectEvent_SetPosition(LOCALID_MOVED_CENTER_STATUE, PIXELS(288),
@@ -1200,7 +1200,7 @@ static void EventScript_CenterStatueMoved(void) {
         FieldScript_WaitFrames(10);
         MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
         FieldScript_WaitFrames(60);
-        Sound_PlaySong(SE_188);
+        Sound_PlaySong(SE_THUMP);
         if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0 &&
             GameFlag_Get(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) != 0 &&
             GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) != 0 &&
@@ -1622,10 +1622,10 @@ static void SolSanctumStatue_OpenSeal(void) {
     Sound_PlaySong(SE_SOL_SANCTUM_LIGHT_UP);
     COPY_CELLS(sSealOpening.open);
     for (pulse = 0; pulse != 20; pulse++) {
-      Sound_PlaySong(SE_246);
+      Sound_PlaySong(SE_GLITTER);
       COPY_CELLS(sSealOpening.pulseA);
       FieldScript_WaitFrames(4);
-      Sound_PlaySong(SE_246);
+      Sound_PlaySong(SE_GLITTER);
       COPY_CELLS(sSealOpening.pulseB);
       FieldScript_WaitFrames(4);
     }

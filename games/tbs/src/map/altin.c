@@ -626,8 +626,8 @@ static void Altin_EnterDoor(void) {
   column = *(s16 *)(doorBytes + coordinatesByteOffset);
   row = *(s16 *)(doorBytes + coordinatesByteOffset + 2);
   if (doorIndex == DOOR_SANCTUM) {
-    // The Sanctum's door slides open with SE_188, as Bilibin's does.
-    Script_PlaySong(SE_188);
+    // The Sanctum's door slides open with SE_THUMP, as Bilibin's does.
+    Script_PlaySong(SE_THUMP);
     MapGrid_CopyCellsTo(42, 33, column, row, 2, 2);
     rightColumn = column + 2;
     MapGrid_CopyCellsTo(42, 35, rightColumn, row, 2, 2);
@@ -821,12 +821,12 @@ static void Altin_ApplyWaterLevel(void) {
     ObjectEvent_DestroyById(LOCALID_STRONGMAN_GUARDIAN_STATUES);
     ObjectEvent_DestroyById(LOCALID_OLD_MAN_ROCK_FLUSHED_OUT);
   }
-  // Restore the remaining beast spitting water, with its sound (SE_170) and
-  // its spray.
+  // Restore the remaining beast spitting water, with its sound
+  // (SE_AMBIENT_WATER) and its spray.
   if (GameFlag_Get(FLAG_ALTIN_WATER_BEAST_LEFT) != 0) {
     ObjectEvent_DestroyById(LOCALID_WATER_BEAST);
   } else {
-    Map_QueueMusic(SE_170);
+    Map_QueueMusic(SE_AMBIENT_WATER);
     ObjectEvent_SetSpriteColorById(LOCALID_WATER_BEAST, SPRITE_COLOR_RBG);
     Import_ObjectEventSetAnimation(LOCALID_WATER_BEAST,
                                    WATER_BEAST_ANIMATION_SPIT);
@@ -983,7 +983,7 @@ static void Altin_ScareOffBeast(void) {
   ObjectEvent_FaceDirection(LOCALID_WATER_BEAST, FACING_EAST, 20);
   ObjectEvent_FaceDirection(LOCALID_WATER_BEAST, FACING_NORTH + FACING_STEP,
                             40);
-  Script_PlaySong(SE_147);
+  Script_PlaySong(SE_BEAST_CRY);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_WATER_BEAST, 2);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_WATER_BEAST, FACING_NORTHWEST + FACING_STEP,

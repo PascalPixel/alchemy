@@ -188,7 +188,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
   stump->layer = 0;
   ObjectMotion_CommitCurrentPositionAndActivate(stumpId);
   ObjectEvent_WaitBelowHeight(stump, 0);
-  Sound_PlaySong(SE_188);
+  Sound_PlaySong(SE_THUMP);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   Sound_PlaySong(SE_RUMBLE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);

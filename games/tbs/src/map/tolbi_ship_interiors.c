@@ -1805,7 +1805,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
 
   // Gather the captain's quarters's attention around the argument about
   // launching.
-  Script_PlaySong(MUS_028);
+  Script_PlaySong(MUS_DUNGEON);
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(456), -1, PIXELS(648),
                                        0x10000014);
@@ -2040,7 +2040,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   ObjectEvent_FaceDirection(LOCALID_QUARTERS_CAPTAIN,
                             FACING_SOUTH + FACING_STEP, 20);
   TolbiShipInteriors_Say(LOCALID_QUARTERS_CAPTAIN);
-  Script_PlaySong(MUS_028);
+  Script_PlaySong(MUS_DUNGEON);
   ObjectMotion_SetVariantCallback(LOCALID_QUARTERS_CAPTAIN, 3);
   TolbiShipInteriors_Say(LOCALID_QUARTERS_CAPTAIN);
   ObjectEvent_ShowEmote(LOCALID_QUARTERS_SECOND_GUIDE,
@@ -2949,7 +2949,7 @@ static void TolbiShipInteriors_CastOff(void) {
   ObjectMotion_Launch(LOCALID_QUARTERS_CAPTAIN, 4, 20);
   anchorCharm = TolbiShipInteriors_PlaceAnchorCharm();
   FieldScript_WaitFrames(20);
-  Script_PlaySong(SE_214);
+  Script_PlaySong(SE_SURGE);
   ObjectEvent_SetScript(anchorCharm, gTolbiShipInteriors_AnchorCharmPulse);
   FieldScript_WaitFrames(40);
   ObjectMotion_SetAnimationAndWait(LOCALID_QUARTERS_CAPTAIN, 3);
@@ -3027,7 +3027,7 @@ static void TolbiShipInteriors_ShowRowing(void) {
   FieldScript_WaitFrames(20);
   Import_ObjectEventSetAnimation(LOCALID_ROWING_DRUMMER, 7);
   FieldScript_WaitFrames(30);
-  Sound_PlaySong(SE_188);
+  Sound_PlaySong(SE_THUMP);
   FieldScript_WaitFrames(30);
   TolbiShipInteriors_InstallRowingDeckObjectEvents(16);
   FieldScript_WaitFrames(0x50);
@@ -3035,13 +3035,13 @@ static void TolbiShipInteriors_ShowRowing(void) {
   FieldScript_WaitFrames(0x3c);
   Import_ObjectEventSetAnimation(LOCALID_ROWING_DRUMMER, 7);
   FieldScript_WaitFrames(30);
-  Sound_PlaySong(SE_188);
+  Sound_PlaySong(SE_THUMP);
   FieldScript_WaitFrames(30);
   TolbiShipInteriors_InstallRowingDeckObjectEvents(16);
   FieldScript_WaitFrames(0x50);
   TolbiShipInteriors_InstallRowingDeckObjectEvents(0);
   FieldScript_WaitFrames(0x5a);
-  Sound_PlaySong(SE_188);
+  Sound_PlaySong(SE_THUMP);
   FieldScript_WaitFrames(30);
 
   gFieldWork->transition =
@@ -4059,16 +4059,16 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(438), -1, PIXELS(174), 0x1000001);
   TolbiShipInteriors_RunSceneCommand(SHIP_OPEN_SCREEN, 1, 20);
   Script_PlaySong(MUS_SILENCE);
-  Script_PlaySong(SE_181);
+  Script_PlaySong(SE_BOOM);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   FieldScript_WaitFrames(10);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   FieldScript_WaitFrames(80);
-  Script_PlaySong(SE_181);
+  Script_PlaySong(SE_BOOM);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   FieldScript_WaitFrames(10);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  Script_PlaySong(MUS_063);
+  Script_PlaySong(MUS_ERUPTION);
   GameFlag_Set(FLAG_KEEP_MUSIC);
   ObjectEvent_SetAttachedEffect(LOCALID_MIA, ATTACHED_EFFECT_IN_FRONT |
                                                  ATTACHED_EFFECT_ONCE);
@@ -4180,7 +4180,7 @@ static void TolbiShipInteriors_ShakeWhileKrakenAboard(void) {
   } else {
     value = Import_RandomNext();
     if (((u32)(((value << 4) - value) << 3) >> 16) == 0) {
-      Sound_PlaySong(SE_181);
+      Sound_PlaySong(SE_BOOM);
       MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
       *timer = 80;
     }

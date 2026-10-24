@@ -200,14 +200,15 @@ static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
 }
 
 /// Closes the chest of treasure spot id again (its item could not be carried),
-/// with SE_125. Called by Field_SearchCell.
+/// with SE_CHEST_CLOSE. Called by Field_SearchCell.
 void TreasureSpot_CloseChest(s32 id) {
-  SetMarkerAnimationAndPlaySound(id, TREASURE_SPOT_CHEST_CLOSING, SE_125);
+  SetMarkerAnimationAndPlaySound(id, TREASURE_SPOT_CHEST_CLOSING,
+                                 SE_CHEST_CLOSE);
 }
 
 /// Makes the chest of treasure spot id jump up as a mimic: after 18 frames it
-/// takes TREASURE_SPOT_CHEST_MIMIC, plays SE_146 and gets an upward velocityY
-/// of 8 << 16. Called by Field_SearchCell before the mimic's battle.
+/// takes TREASURE_SPOT_CHEST_MIMIC, plays SE_ENEMY_CRY and gets an upward
+/// velocityY of 8 << 16. Called by Field_SearchCell before the mimic's battle.
 void TreasureSpot_LaunchMimic(s32 id) {
   s32 slotIndex;
   struct TreasureSpot *marker;
@@ -220,7 +221,7 @@ void TreasureSpot_LaunchMimic(s32 id) {
     WaitFrames(18);
     if (object != NULL)
       Object_SelectAnimationFar(object, TREASURE_SPOT_CHEST_MIMIC);
-    Sound_PlaySongFar(SE_146);
+    Sound_PlaySongFar(SE_ENEMY_CRY);
     if (object != NULL) {
       object->velocityY = 8 << 16;
       Object_SetSpriteFlagsFar((struct Object *)object, 1);
@@ -228,10 +229,11 @@ void TreasureSpot_LaunchMimic(s32 id) {
   }
 }
 
-/// Opens the chest of treasure spot id with SE_124, and waits 12
+/// Opens the chest of treasure spot id with SE_CHEST_OPEN, and waits 12
 /// frames. Called by Field_SearchCell when a chest is searched.
 void TreasureSpot_OpenChest(s32 id) {
-  SetMarkerAnimationAndPlaySound(id, TREASURE_SPOT_CHEST_OPENING, SE_124);
+  SetMarkerAnimationAndPlaySound(id, TREASURE_SPOT_CHEST_OPENING,
+                                 SE_CHEST_OPEN);
 }
 
 /// Shows the chest of treasure spot id open, with no sound. Called by

@@ -72,7 +72,7 @@ void BattleAnim_RunUndeadSword(struct BattleAnimArgs *effect) {
     // Frame 10: the strike, with a second 8-frame shake.
     if (frame == 10) {
       work->shakeFrames = 8;
-      ANIM_SHOW_DAMAGE(SE_212);
+      ANIM_SHOW_DAMAGE(SE_POWER_UP);
       BattleMotion_ApplyKnockbackFar(work->effect->targets[0], KNOCKBACK_NUDGE);
       BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
                              POSE_DAMAGE, 0, 8);

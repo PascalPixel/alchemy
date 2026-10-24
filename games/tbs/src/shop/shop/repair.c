@@ -185,11 +185,11 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   // The hammer blows are 110 frames apart; the item stays hidden throughout,
   // 360 frames (six seconds) from the first wait to the last.
   WaitFrames(10);
-  Sound_PlaySongFar(SE_100);
+  Sound_PlaySongFar(SE_BELL);
   WaitFrames(110);
-  Sound_PlaySongFar(SE_100);
+  Sound_PlaySongFar(SE_BELL);
   WaitFrames(110);
-  Sound_PlaySongFar(SE_100);
+  Sound_PlaySongFar(SE_BELL);
   WaitFrames(110);
   Sound_PlaySongFar(SE_MENU_CONFIRM);
   WaitFrames(20);

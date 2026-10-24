@@ -107,7 +107,7 @@ void FieldEffect_RunFrostOnTarget(s32 unused) {
 ///
 /// The target's part runs only when a map event named the target
 /// (FieldEffect_DispatchRequestKind clears enabled) and no map script set
-/// childMode: it flashes, takes animation 2 with SE_220 unless childOption
+/// childMode: it flashes, takes animation 2 with SE_SHIMMER unless childOption
 /// is set, keeps glinting (FieldEffect_UpdateOrbitingParticleMain) and runs
 /// the map's Frost event. Called by FieldEffect_Run and
 /// FieldEffect_RunFrostOnTarget.
@@ -167,7 +167,7 @@ void FieldEffect_RunFrost(void) {
   WaitFrames(50);
 
   if (target != NULL && effectWork->enabled == 0) {
-    Sound_PlaySongFar(SE_212);
+    Sound_PlaySongFar(SE_POWER_UP);
 
     // Flash for 1 frame in every 5.
     remainingCycles = 15;
@@ -180,7 +180,7 @@ void FieldEffect_RunFrost(void) {
     } while (remainingCycles >= 0);
 
     if (effectWork->childOption == 0) {
-      Sound_PlaySongFar(SE_220);
+      Sound_PlaySongFar(SE_SHIMMER);
       Object_SelectAnimationFar(target, 2);
     }
 

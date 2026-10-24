@@ -92,7 +92,7 @@ void BattleAnim_RunBreak(struct BattleAnimArgs *effect) {
 
       offset = member * DRAIN_ICE_SHARDS_PER_TARGET * sizeof(struct Particle);
       if (frame == member * 20) {
-        Sound_PlaySongFar(SE_143);
+        Sound_PlaySongFar(SE_CRACK);
         BattleAnim_TintBattler(work->effect->targets[member],
                                SPRITE_COLOR_WHITE, -1, member, 20);
       }
@@ -200,7 +200,7 @@ void BattleAnim_RunDrain(struct BattleAnimArgs *effect) {
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   draw = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
-  Sound_PlaySongFar(SE_142);
+  Sound_PlaySongFar(SE_SWIRL);
 
   // Frame 0 plays the drain sound; target n bursts on frame n * 20; frame 40
   // starts the user's glow and frame 64 shows the damage. The last target's

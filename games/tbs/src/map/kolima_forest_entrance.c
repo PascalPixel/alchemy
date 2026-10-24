@@ -198,7 +198,7 @@ static void KolimaForestEntrance_PushLog(void) {
                                      LOG_ANIMATION_ROLL_WEST);
       ObjectEvent_SetDestinationOffset(LOCALID_RIVER_LOG, -18, 6);
       FieldScript_WaitFrames(30);
-      Sound_PlaySong(SE_240);
+      Sound_PlaySong(SE_LOG_FALL);
       Import_ObjectEventSetAnimation(LOCALID_RIVER_LOG, LOG_ANIMATION_DROP_IN);
       ObjectEvent_GetById(LOCALID_RIVER_LOG)->priorityFlags =
           OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -385,7 +385,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
                                               FACING_SOUTHWEST, 20);
   KolimaForestEntrance_FaceObjectEventAndWait(LOCALID_IVAN, FACING_NORTH, 10);
   Script_PlaySong(SONG_FADE_OUT_BGM);
-  Script_PlaySong(SE_206);
+  Script_PlaySong(SE_CURSE_FALL);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_StartInterpolation(1);
   WaitFrames(1);
@@ -465,7 +465,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   gFallingEffectState = KOLIMA_DUST_CLOSING;
   FieldScheduler_AddCallback(Kolima_UpdateCurseDust, TASK_PRIORITY_MAP);
   FieldScript_WaitFrames(180);
-  Script_PlaySong(MUS_021);
+  Script_PlaySong(MUS_FOREST);
   KolimaForestEntrance_ShowMessageAndWait(LOCALID_GARET, 80);
   KolimaForestEntrance_ShowMessageAndWait(LOCALID_IVAN, 40);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -509,7 +509,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   gKolimaForestEntrance_PsynergyFieldHit = 0;
   FieldScheduler_AddCallback(KolimaForestEntrance_FlickerPsynergyFields,
                              TASK_PRIORITY_MAP);
-  Script_PlaySong(SE_220);
+  Script_PlaySong(SE_SHIMMER);
   ObjectEvent_GetById(LOCALID_LEADER_PSYNERGY_FIELD)->priorityFlags &= 254;
   ObjectMotion_SetActionVariant(LOCALID_LEADER_PSYNERGY_FIELD, 2);
   ObjectEvent_SetPosition(LOCALID_LEADER_PSYNERGY_FIELD, PIXELS(253),
@@ -770,7 +770,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     gFieldWork->message += 1;
   }
   Script_ShowMessage(LOCALID_GARET, 0);
-  Script_PlaySong(MUS_021);
+  Script_PlaySong(MUS_FOREST);
   PaletteFade_ApplyTarget(0x406218, 1);
   PaletteFade_StartInterpolation(60);
   WaitFrames(60);
@@ -802,7 +802,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   ObjectMotion_SetActionVariant(LOCALID_IVAN, 3);
   ObjectMotion_SetActionVariant(LOCALID_MIA, 3);
   gFallingEffectState = KOLIMA_DUST_CLOSING_WIDE;
-  Script_PlaySong(SE_220);
+  Script_PlaySong(SE_SHIMMER);
   ObjectEvent_SetPosition(LOCALID_LEADER_PSYNERGY_FIELD, PIXELS(253),
                           PIXELS(603));
   growFieldAction = gKolimaForestEntrance_PsynergyFieldGrowAction;
@@ -1171,7 +1171,7 @@ static void KolimaForestEntrance_SpawnCurseSparkle(void) {
   if (framePhase != 0)
     return;
   if (gKolimaForestEntrance_SparkleSoundOn != 0)
-    Sound_PlaySong(SE_200);
+    Sound_PlaySong(SE_SPARKLE_FALL);
   sparkle = ObjectEvent_Create(SPRITE_GOLDEN_RINGS, spawnX, 0, spawnZ);
   if (sparkle == 0)
     return;
@@ -1218,7 +1218,7 @@ KolimaForestEntrance_BurstOnPsynergyField(struct Object *interpreter) {
                     sparkle->z.fixed < 0x2780000)))) {
     return 0;
   }
-  Sound_PlaySong(SE_106);
+  Sound_PlaySong(SE_DRIP);
   // UB: this routine returns void; call it through its declared type.
 #ifdef UBFIX
   ObjectEvent_SetScript(sparkle, gKolimaForestEntrance_SparkleBurstScript);

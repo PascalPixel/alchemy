@@ -149,7 +149,7 @@ s32 FieldEffect_CopyLinkedObjectPosition(
 
 /// The script command "object event show emote": shows an emote bubble (object
 /// 21) over an object event, then waits wait frames. The low 4 bits of emote
-/// pick the bubble (enum Emote; EMOTE_LIGHT_BULB also plays SE_110); with
+/// pick the bubble (enum Emote; EMOTE_LIGHT_BULB also plays SE_CHIME); with
 /// EMOTE_IN_FRONT the bubble takes sprite priority 1, otherwise the object
 /// event's. The bubble rides the object event and frees itself after 46 frames
 /// (gFieldEffect_LinkedObjectScript: 16 frames of squash and stretch, then 30),
@@ -158,7 +158,7 @@ void FieldEffect_SpawnLinked(s32 localId, s32 emote, s32 wait) {
   struct ObjectEvent *target;
 
   if ((emote & 0xff) == EMOTE_LIGHT_BULB) {
-    Sound_PlaySongFar(SE_110);
+    Sound_PlaySongFar(SE_CHIME);
   }
 
   target = ObjectEvent_GetByLocalId(localId);

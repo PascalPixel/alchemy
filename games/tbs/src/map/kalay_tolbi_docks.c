@@ -983,16 +983,16 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   ObjectEvent_SetAttachedEffect(LOCALID_TOUR_GUIDE, ATTACHED_EFFECT_IN_FRONT |
                                                         ATTACHED_EFFECT_ONCE);
   ObjectMotion_SetVariantCallback(LOCALID_TOUR_GUIDE, 2);
-  Script_PlaySong(SE_155);
+  Script_PlaySong(SE_SWITCH);
   FieldScript_WaitFrames(10);
-  Script_PlaySong(SE_155);
+  Script_PlaySong(SE_SWITCH);
   FieldScript_WaitFrames(10);
-  Script_PlaySong(SE_155);
+  Script_PlaySong(SE_SWITCH);
   FieldScript_WaitFrames(10);
   FieldScript_WaitFrames(20);
   ObjectEvent_SetSpeed(LOCALID_TOUR_GUIDE, 0x6666, 0x3333);
   ObjectMotion_Launch(LOCALID_TOUR_GUIDE, 6, 0);
-  Script_PlaySong(SE_159);
+  Script_PlaySong(SE_DOOR_CLOSE);
   ObjectEvent_WalkByAndWait(LOCALID_TOUR_GUIDE, -8, 0);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_ANGRY_YOUNG_MAN, 0);
@@ -1097,7 +1097,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   ObjectEvent_FaceDirection(LOCALID_ANGRY_YOUNG_MAN, FACING_SOUTH, 0);
   ObjectEvent_GetById(LOCALID_ANGRY_YOUNG_MAN)->steeringFlags |=
       OBJ_EVENT_FACES_MOTION;
-  Script_PlaySong(SE_159);
+  Script_PlaySong(SE_DOOR_CLOSE);
   FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_STRANDED_WOMAN, EMOTE_IN_FRONT | EMOTE_WINCE,
                         50);

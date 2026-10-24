@@ -128,7 +128,7 @@ void BattleAnim_RunFlashingStrike(struct BattleAnimArgs *effect, s32 mode) {
   else
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_COPY);
   draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
-  Sound_PlaySongFar(SE_212);
+  Sound_PlaySongFar(SE_POWER_UP);
   for (frame = 0; frame != 21; frame++) {
     if (frame <= 3)
       draw[0](canvas, work->imageStorage, 0, 0, 120, 120);

@@ -337,7 +337,7 @@ void BattlePlayback_Run(void) {
             kind--;
             if (kind < 0)
               kind = 0;
-            Sound_PlaySongFar(SE_146 + kind);
+            Sound_PlaySongFar(SE_ENEMY_CRY + kind);
           }
           events->timer = FELLED_FLASH;
         }
@@ -348,7 +348,7 @@ void BattlePlayback_Run(void) {
               BattleSprite_GetDefeatSound(Unit_GetFar(events->actorId)->id);
 
           if (kind >= 0)
-            Sound_PlaySongFar(SE_146 + kind);
+            Sound_PlaySongFar(SE_ENEMY_CRY + kind);
         }
         if (events->timer >= FELLED_FLASH)
           colorMode = (events->timer - FELLED_FLASH) / 8 % 5 + SPRITE_COLOR_GRB;

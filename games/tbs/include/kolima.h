@@ -20,7 +20,7 @@ extern s32 gKolima_PendingPose;
 /// Whether Mia was in the party as the curse struck, which decides her part
 /// in the scene; read from FLAG_IN_PARTY(MIA) as it begins.
 extern s32 gKolima_MiaInParty;
-/// Nonzero while the curse's sparkles fall: each new one plays SE_200.
+/// Nonzero while the curse's sparkles fall: each new one plays SE_SPARKLE_FALL.
 extern s32 gKolima_EffectActive;
 
 #endif

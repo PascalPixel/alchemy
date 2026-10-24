@@ -108,7 +108,7 @@ static void SolSanctumEruption_UpdateWiseOnePalette(void);
 
 // Map flags, cleared on every ordinary arrival:
 // - FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING: set as Saturos's group starts to
-//   leave; from then on the embers fall without their sound (SE_246).
+//   leave; from then on the embers fall without their sound (SE_GLITTER).
 
 /// The four corners of the chamber where SolSanctumEruption_RaiseElementalArcs
 /// raises lights, in the order the Wise One's scene visits them.
@@ -234,14 +234,14 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_StartInterpolation(4);
   FieldScript_WaitFrames(16);
-  Script_PlaySong(SE_144);
+  Script_PlaySong(SE_CLATTER);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(4);
   FieldScript_WaitFrames(4);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_StartInterpolation(4);
   FieldScript_WaitFrames(4);
-  Script_PlaySong(SE_144);
+  Script_PlaySong(SE_CLATTER);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(48);
   FieldScript_WaitFrames(48);
@@ -607,7 +607,7 @@ static void SolSanctumEruption_RaiseAndShrinkObjectEvent(s32 localId) {
   ObjectEvent_SetSpriteFlags(target, 0);
   ObjectEvent_SetSpriteColorById(localId, 0x100);
   objectEvent->motionFlags = 0;
-  Script_PlaySong(SE_201);
+  Script_PlaySong(SE_ASCEND);
   // Rise at full size, then shrink the object event and its shadow together.
   frame = 0;
   do {
@@ -615,7 +615,7 @@ static void SolSanctumEruption_RaiseAndShrinkObjectEvent(s32 localId) {
     FieldScript_WaitFrames(1);
     frame++;
   } while (frame != 60);
-  Script_PlaySong(SE_190);
+  Script_PlaySong(SE_WARP);
   frame = 0;
   do {
     objectEvent->y.fixed += PIXELS(1) / 10;
@@ -683,7 +683,7 @@ static void SolSanctumEruption_ThrowEruptionRing(void) {
     objectEvent->y.fixed = PIXELS(20);
     objectEvent->z.fixed = PIXELS(132);
   }
-  Sound_PlaySong(SE_145);
+  Sound_PlaySong(SE_CRASH);
   for (crystalIndex = 0; crystalIndex <= 15; crystalIndex++) {
     spun = ObjectEvent_GetById(crystalIndex + 16);
     sprite = spun->sprite;
@@ -787,7 +787,7 @@ static void SolSanctumEruption_StepEmbers(void) {
     ember = ObjectEvent_GetById(emberIndex + 16);
     if (gEmberState[emberIndex] == 0) {
       if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING) == 0)
-        Sound_PlaySong(SE_246);
+        Sound_PlaySong(SE_GLITTER);
       gEmberState[emberIndex] = 1;
       ember->motionFlags = 0;
       ember->speed = PIXELS(8);
@@ -1073,7 +1073,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   FieldScript_WaitFrames(10);
 
   // A violent tremor throws them aside.
-  Script_PlaySong(MUS_023);
+  Script_PlaySong(MUS_DANGER);
   SolSanctumEruption_SetMaterializationTint(1, 4, 0);
   sparkles->stopped = 0;
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
@@ -1223,7 +1223,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
 
   // The floor by the Wise One starts to break up; the Wise One glows and
   // holds it together with Psynergy.
-  Script_PlaySong(SE_107);
+  Script_PlaySong(SE_TREMOR);
   FieldScheduler_AddCallback(SolSanctumEruption_FlickerFirstCollapseTiles,
                              TASK_PRIORITY_MAP);
   FieldScript_WaitFrames(10);
@@ -1408,7 +1408,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   FieldScript_WaitFrames(20);
   // The floor breaks up again in two places; the Wise One floats to each and
   // holds it together.
-  Script_PlaySong(SE_107);
+  Script_PlaySong(SE_TREMOR);
   FieldScheduler_AddCallback(SolSanctumEruption_FlickerSecondCollapseTiles,
                              TASK_PRIORITY_MAP);
   FieldScript_WaitFrames(20);
@@ -1459,7 +1459,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   PaletteFade_ApplyTarget(0x20119e, 1);
   PaletteFade_StartInterpolation(20);
   FieldScript_WaitFrames(20);
-  Script_PlaySong(SE_107);
+  Script_PlaySong(SE_TREMOR);
   FieldScheduler_AddCallback(SolSanctumEruption_FlickerFirstCollapseTiles,
                              TASK_PRIORITY_MAP);
   FieldScript_WaitFrames(40);
@@ -1488,13 +1488,13 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   }
   SolSanctumEruption_DrawFirstCollapseTiles(0);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-  Script_PlaySong(SE_107);
-  Script_PlaySong(MUS_063);
+  Script_PlaySong(SE_TREMOR);
+  Script_PlaySong(MUS_ERUPTION);
   MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
   PaletteFade_ApplyTarget(0x20119e, 1);
   PaletteFade_StartInterpolation(20);
   FieldScript_WaitFrames(20);
-  Script_PlaySong(SE_107);
+  Script_PlaySong(SE_TREMOR);
   FieldScheduler_AddCallback(SolSanctumEruption_FlickerSecondCollapseTiles,
                              TASK_PRIORITY_MAP);
   SolSanctumEruption_FinishMaterialization();
@@ -1647,7 +1647,7 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
     break;
   }
   PaletteFade_StartInterpolation(60);
-  Script_PlaySong(SE_214);
+  Script_PlaySong(SE_SURGE);
   arcIndex = 0;
   clear = arcIndex;
   for (origin = &gEruption_ArcOrigins[0]; arcIndex <= 9;
@@ -1691,7 +1691,7 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
   WaitFrames(20);
   FieldScheduler_AddCallback(SolSanctumEruption_UpdateElementalArcs,
                              TASK_PRIORITY_MAP);
-  Script_PlaySong(SE_246);
+  Script_PlaySong(SE_GLITTER);
   gArcEffectTimers[0] = 1;
   WaitFrames(6);
   gArcEffectTimers[1] = 1;
@@ -1801,7 +1801,7 @@ static void SolSanctumEruption_RestoreCornerCellAttributes(void) {
 static void SolSanctumEruption_SetMaterializationTint(s32 enabled, s32 frames,
                                                       s32 waitFrames) {
   if (enabled == 1) {
-    Sound_PlaySong(SE_308);
+    Sound_PlaySong(SE_MATERIALIZE);
     PaletteFade_SetTarget(0x203a52, 1);
   } else {
     Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
@@ -1848,7 +1848,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct ObjectEvent *parent) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   s32 effectIndex;
 
-  Sound_PlaySong(SE_292);
+  Sound_PlaySong(SE_ERUPTION_COLUMNS);
   for (effectIndex = 0; effectIndex < 2; ++effectIndex) {
     child = ObjectEvent_Create(26, parent->x.fixed, parent->y.fixed,
                                parent->z.fixed);

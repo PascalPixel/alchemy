@@ -706,7 +706,7 @@ void SerialTest_Run(void) {
   s32 n;
   s32 tick;
 
-  Sound_PlaySongFar(MUS_003);
+  Sound_PlaySongFar(MUS_PALACE);
   Serial_Initialize();
   // Row 16, columns 0 to 19: tiles 0x80 to 0x93 in palette 15, the 20 tiles
   // at 0x06001000 that the received 640 bytes are copied to

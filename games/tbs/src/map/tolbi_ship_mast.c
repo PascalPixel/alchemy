@@ -28,8 +28,8 @@
 ///   departures he stands by.
 /// - The attacks: TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK, "Avast!
 ///   Monsters sighted!", as three monsters appear where a sparkle twinkles and
-///   close in (FLAG_TOLBI_SHIP_MONSTERS_SIGHTED, which plays MUS_029); Sean's
-///   "Monsters!" after a bird swoops at the lookout
+///   close in (FLAG_TOLBI_SHIP_MONSTERS_SIGHTED, which plays
+///   MUS_CONFRONTATION); Sean's "Monsters!" after a bird swoops at the lookout
 ///   (TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK); and a monster dropping in
 ///   beside the lookout (TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK). Each
 ///   leads below or to the deck.
@@ -503,7 +503,7 @@ static void TolbiShipMast_RunAvastScene(void) {
   ObjectEvent_SetActionScript(LOCALID_SPARKLE,
                               gTolbiShipMast_FollowCameraActions);
   FieldScript_WaitFrames(20);
-  Sound_PlaySong(MUS_029);
+  Sound_PlaySong(MUS_CONFRONTATION);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   ObjectMotion_EnableActionAndResetMotion(LOCALID_LOOKOUT);
   WaitFrames(1);
@@ -677,7 +677,7 @@ static void TolbiShipMast_ShowMonsters(void) {
   // The lookout jumps, the monsters' theme plays, and Sean cries out.
   ObjectMotion_Launch(LOCALID_LOOKOUT, 4, 20);
   ObjectMotion_Launch(LOCALID_LOOKOUT, 6, 40);
-  Script_PlaySong(MUS_029);
+  Script_PlaySong(MUS_CONFRONTATION);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   FieldScript_SetMessageId(MsgTolbiShipMonsters2);
   Script_ShowMessageAndWait(LOCALID_SEAN, 0, 20);
@@ -739,7 +739,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(300);
-  Script_PlaySong(SE_147);
+  Script_PlaySong(SE_BEAST_CRY);
   FieldScript_WaitFrames(100);
   // The birds fly off before the monster lands.
   TolbiShipMast_PrepareGroupDeparture();
@@ -772,7 +772,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
   WaitFrames(1);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_LOOKOUT, 1);
   ObjectEvent_FaceDirection(LOCALID_LOOKOUT, FACING_SOUTHEAST + FACING_STEP, 0);
-  Script_PlaySong(MUS_029);
+  Script_PlaySong(MUS_CONFRONTATION);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   // LOCALID_LANDING_MONSTER_SHADOW grows for 32 frames before
   // LOCALID_LANDING_MONSTER is placed above it.
@@ -797,7 +797,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
   objectEvent->gravity = PIXELS(3);
   FieldScript_WaitFrames(20);
   ObjectMotion_Launch(LOCALID_LOOKOUT, 6, 20);
-  Script_PlaySong(SE_147);
+  Script_PlaySong(SE_BEAST_CRY);
   FieldScript_WaitFrames(20);
   ObjectEvent_SetActionScript(LOCALID_LOOKOUT, gTolbiShipMast_WaveActions);
   FieldScript_WaitFrames(80);

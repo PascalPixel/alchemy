@@ -227,7 +227,7 @@ static void EventScript_LeaveThroughDoor(void) {
   SCRIPT_START();
   WAIT(10);
   if (work->coordEvent == 4) {
-    SE(SE_188);
+    SE(SE_THUMP);
   } else {
     SE(SE_DOOR_OPEN);
   }

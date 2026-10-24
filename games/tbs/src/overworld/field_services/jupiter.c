@@ -26,16 +26,16 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   effectWork = gFieldEffectWork;
   // Tint the screen yellow: PALETTE_TINT_CUSTOM | RGB(12, 12, 4).
   Shop_SaveAndTintFieldPaletteFar(0x20118c);
-  Sound_PlaySongFar(SE_173);
+  Sound_PlaySongFar(SE_NOTE_LOW);
   ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
-  Sound_PlaySongFar(SE_174);
+  Sound_PlaySongFar(SE_NOTE_MID);
   ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
-  Sound_PlaySongFar(SE_175);
+  Sound_PlaySongFar(SE_NOTE_HIGH);
   ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
   WaitFrames(20);
 
   // Spin, then leap high.
-  Sound_PlaySongFar(SE_140);
+  Sound_PlaySongFar(SE_SPIN);
   djinni->update = FieldEffect_AdvanceSpinAngle;
   WaitFrames(40);
   Sound_PlaySongFar(SE_HIGH_JUMP);
@@ -47,7 +47,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   position.z = djinni->z;
   Camera_WorldToScreen(&position);
   Object_ReleaseFar((struct Object *)djinni);
-  Sound_PlaySongFar(SE_164);
+  Sound_PlaySongFar(SE_SCATTER);
   effect = effectWork->sprites;
   remainingParticles = 23;
   // One a frame, each with a random sprite param of 0 to 6.
@@ -71,7 +71,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   WaitFrames(20);
   Object_SelectAnimationFar(ObjectEvent_GetById(gSaveBlock.leaderLocalId), 28);
   WaitFrames(40);
-  Sound_PlaySongFar(SE_164);
+  Sound_PlaySongFar(SE_SCATTER);
   WaitFrames(100);
   Shop_RestoreFieldPaletteFar();
   FieldEffect_ClearActiveSlotsAndScheduleUpdates();
@@ -178,7 +178,7 @@ void FieldEffect_UpdatePhasedRadialParticle(struct FieldEffectSprite *effect) {
     effect->targetZ = position.z;
     effect->state++;
     if ((gVBlankCount & 1) != 0)
-      Sound_PlaySongFar(SE_145);
+      Sound_PlaySongFar(SE_CRASH);
   } else if (state == MARS_SPARK_SWARMING) {
     if (FieldEffectSprite_HasPendingTarget(effect) == 0)
       effect->state--;

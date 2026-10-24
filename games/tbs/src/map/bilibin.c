@@ -466,7 +466,7 @@ static void EventScript_OpenDoorAndLeave(void) {
   }
   warpIndex = (((u16)work->coordEvent - BILIBIN_TO_INN) << 16) >> 16;
   if (warpIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
-    Script_PlaySong(SE_188);
+    Script_PlaySong(SE_THUMP);
   } else {
     Sound_PlaySong(SE_DOOR_OPEN);
   }

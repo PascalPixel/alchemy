@@ -625,7 +625,7 @@ static void Kalay_OpenDoorAndExit(void) {
 
 /// The palace door opens in two frames.
 static __inline__ void Kalay_AnimatePalaceDoor(void) {
-  Script_PlaySong(SE_188);
+  Script_PlaySong(SE_THUMP);
   MapGrid_CopyCellsTo(36, 23, 43, 12, 2, 2);
   WaitFrames(5);
   MapGrid_CopyCellsTo(39, 23, 43, 12, 2, 2);
@@ -694,7 +694,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Script_PlaySong(SONG_FADE_OUT_BGM);
     Message_SetVoiceFromObjectEvent(LOCALID_HEAD_GUIDE);
     FieldMessage_ShowCentered(MsgKalayOkListeningLets, 1, 0);
-    Script_PlaySong(MUS_009);
+    Script_PlaySong(MUS_DJINN_LESSON);
     FieldScript_WaitFrames(10);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
     if (work->coordEvent == 9) {
@@ -1372,7 +1372,8 @@ static void Kalay_PrepareTunnelEntrance(void) {
 /// (KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_WEST and
 /// KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_EAST) or by the stairs
 /// from the north-east room
-/// (KALAY_TUNNEL_PASSAGE_LONG_PATH_FROM_NORTHEAST_ROOM) starts SE_170.
+/// (KALAY_TUNNEL_PASSAGE_LONG_PATH_FROM_NORTHEAST_ROOM) starts
+/// SE_AMBIENT_WATER.
 static void Kalay_StartWindowTransition(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -1387,7 +1388,7 @@ static void Kalay_StartWindowTransition(void) {
   }
   if (gSaveBlock.warpDest <=
       KALAY_TUNNEL_PASSAGE_LONG_PATH_FROM_NORTHEAST_ROOM) {
-    Map_QueueMusic(SE_170);
+    Map_QueueMusic(SE_AMBIENT_WATER);
   }
 }
 
@@ -1537,7 +1538,7 @@ static void Kalay_PrepareTunnel(void) {
     switch (gSaveBlock.warpDest) {
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE:
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_WEST:
-      Map_QueueMusic(SE_170);
+      Map_QueueMusic(SE_AMBIENT_WATER);
       break;
     }
   }
@@ -1568,7 +1569,7 @@ static void Kalay_PrepareTunnel(void) {
     switch (gSaveBlock.warpDest) {
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_EAST:
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY:
-      Map_QueueMusic(SE_170);
+      Map_QueueMusic(SE_AMBIENT_WATER);
       break;
     }
   }
@@ -2082,7 +2083,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_FaceDirection(LOCALID_TUNNEL_GUARD, FACING_NORTH, 10);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_TUNNEL_GUARD, 2);
   // The guard opens the passage and Hammet goes in.
-  Script_PlaySong(SE_125);
+  Script_PlaySong(SE_CHEST_CLOSE);
   MapGrid_CopyCellsTo(71, 60, 76, 11, 2, 1);
   MapGrid_CopyCellAttributes(71, 60, 2, 1, 16, 11);
   FieldScript_WaitFrames(20);
@@ -2389,7 +2390,7 @@ static void Kalay_UpdateTunnelEmitters(void) {
              firstEmitter->x.part.pixel <= 245 && (gFrameCount & 1) == 0) {
     if (!Script_GetFlag(FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED)) {
       Map_QueueMusic(-1);
-      Script_PlaySong(SE_230);
+      Script_PlaySong(SE_WATER_DRAIN);
       GameFlag_Set(FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED);
     }
     Kalay_SpawnTunnelParticle(firstEmitter->x.fixed, firstEmitter->y.fixed,
@@ -2399,7 +2400,7 @@ static void Kalay_UpdateTunnelEmitters(void) {
       secondEmitter->x.part.pixel <= 709 && (gFrameCount & 1) == 0) {
     if (!Script_GetFlag(FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED)) {
       Map_QueueMusic(-1);
-      Script_PlaySong(SE_230);
+      Script_PlaySong(SE_WATER_DRAIN);
       GameFlag_Set(FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED);
     }
     Kalay_SpawnTunnelParticle(secondEmitter->x.fixed, secondEmitter->y.fixed,

@@ -612,7 +612,7 @@ static void EventScript_StepOffBridge(void) {
 /// The door of Vale Sanctum (metatile behavior 1): it opens, the leader walks
 /// in, and VALE_TO_SANCTUM leads into the Sanctum.
 static void EventScript_EnterSanctum(void) {
-  Script_PlaySong(SE_188);
+  Script_PlaySong(SE_THUMP);
   MapGrid_AnimateCells(gVale_SanctumDoorOpens, 45, 11);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 257, 420);
   Import_ScriptRequestWarp(VALE_TO_SANCTUM);
@@ -1710,7 +1710,7 @@ s32 Vale_Initialize(void) {
       }
     }
 #endif
-    Map_QueueMusic(SE_170);
+    Map_QueueMusic(SE_AMBIENT_WATER);
     MapGrid_CenterOnFollowedPoint();
     WaitFrames(1);
   }
@@ -2206,7 +2206,7 @@ static void EventScript_MendingTheRoof(void) {
   Map_StartCutscenePsynergy();
   Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_CAST_PSYNERGY);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_GARET, 0, 20);
-  Script_PlaySong(SE_131);
+  Script_PlaySong(SE_PSYNERGY_SPARKLE);
   for (i = 0; i < 60; i++) {
     Vale_FlashObjectEventAndSpawnEffects(ObjectEvent_GetById(LOCALID_GARET));
     WaitFrames(1);
@@ -2809,7 +2809,7 @@ static void EventScript_RoofMended(void) {
   FieldScript_WaitFrames(5);
   Script_ShowTwoMessagesAndWait(LOCALID_DORA, 14, 2, 24, 2, LOCALID_GARET, 10,
                                 14, 4, 14, none);
-  Script_PlaySong(SE_161);
+  Script_PlaySong(SE_SURPRISE);
   objectEvent = ObjectEvent_Get(LOCALID_DORA);
   objectEvent->sprite->flags = none;
   objectEvent->steeringFlags &= 0xfe;
@@ -2836,7 +2836,7 @@ static void EventScript_RoofMended(void) {
   ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
   Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_GARET_STARTLED);
   ObjectMotion_Launch(LOCALID_GARET, 2, 5);
-  Script_PlaySong(SE_143);
+  Script_PlaySong(SE_CRACK);
   MapGrid_SetShake(0, PIXELS(4), Q16_ONE);
   MapGrid_CopyCellsTo(1, 102, 83, 41, 1, 1);
   ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_GARET), 0);
@@ -2906,7 +2906,7 @@ static void EventScript_RoofMended(void) {
   ObjectMotion_Launch(LOCALID_GARET, 2, 5);
   ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_GARET), 0);
   MapGrid_CopyCellsTo(2, 102, 84, 41, 2, 1);
-  Script_PlaySong(SE_143);
+  Script_PlaySong(SE_CRACK);
   MapGrid_SetShake(0, PIXELS(4), Q16_ONE);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 3);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -3197,7 +3197,7 @@ static void Vale_TrailSparkles(union ObjectEventOrEffect *fieldObject) {
 }
 
 /// The Move hand rises, spins and shrinks for 31 frames, bursts into eight
-/// sparkles with SE_131, and is put out of sight.
+/// sparkles with SE_PSYNERGY_SPARKLE, and is put out of sight.
 static void Vale_VanishMoveHand(struct ObjectEvent *emitter) {
   s32 frameCountdown;
 
@@ -3235,7 +3235,7 @@ static void Vale_VanishMoveHand(struct ObjectEvent *emitter) {
     }
   }
 
-  Sound_PlaySong(SE_131);
+  Sound_PlaySong(SE_PSYNERGY_SPARKLE);
 
   emitter->x.fixed = 0;
   emitter->y.fixed = 0;
@@ -3304,11 +3304,11 @@ static void EventScript_MovePillarBelowCliff(void) {
   }
 }
 
-/// The callback that plays SE_131 every 16 frames while Isaac's Psynergy lifts
-/// a board at the roof's end.
+/// The callback that plays SE_PSYNERGY_SPARKLE every 16 frames while Isaac's
+/// Psynergy lifts a board at the roof's end.
 static void Vale_PlayStepSound(void) {
   if ((*(u32 *)&gFrameCount & 15) == 0)
-    Sound_PlaySong(SE_131);
+    Sound_PlaySong(SE_PSYNERGY_SPARKLE);
 }
 
 /// Searching a locked door in Vale (metatile behavior 24).

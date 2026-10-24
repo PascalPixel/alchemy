@@ -467,7 +467,7 @@ static void GondowanCave_RunSpinningLeap(s32 localId) {
   }
   objectEvent->update = GondowanCave_RotateLeapingObject;
   // Continue spinning through the first jump.
-  Sound_PlaySong(SE_136);
+  Sound_PlaySong(SE_WHOOSH);
   OBJECT_SPEED(localId, PIXELS(2), PIXELS(1));
   ObjectEvent_SetDestination(localId, 472, 288);
   objectEvent->gravity = 4 * PIXELS(1) / 5;

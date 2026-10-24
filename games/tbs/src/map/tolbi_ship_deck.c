@@ -386,7 +386,7 @@ static s32 TolbiShipDeck_HoverAndDiveAtOuranos(struct Object *interpreter) {
           objectEvent->targetY == objectEvent->targetX &&
           objectEvent->targetZ == objectEvent->targetY) {
         objectEvent->riseCounter++;
-        Script_PlaySong(SE_146);
+        Script_PlaySong(SE_ENEMY_CRY);
         if (objectEvent->riseEnabled != 0)
           ObjectEvent_FaceDirection(LOCALID_SEA_OURANOS,
                                     FACING_NORTH + FACING_STEP, 0);
@@ -482,7 +482,7 @@ static s32 TolbiShipDeck_HoverAndDiveAtSean(struct Object *interpreter) {
           objectEvent->targetY == objectEvent->targetX &&
           objectEvent->targetZ == objectEvent->targetY) {
         objectEvent->riseCounter++;
-        Script_PlaySong(SE_146);
+        Script_PlaySong(SE_ENEMY_CRY);
         if (objectEvent->riseEnabled != 0)
           ObjectEvent_FaceDirection(LOCALID_SEA_SEAN,
                                     FACING_NORTH + FACING_STEP, 0);
@@ -1726,7 +1726,7 @@ static void TolbiShipDeck_MonstersBoard(void) {
   TolbiShipDeck_Say(SPEAKER(LOCALID_SEA_OURANOS, 10));
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(12) / 5, PIXELS(6) / 5);
   FieldObjectMotion_ResetAndSetPosition(LOCALID_PARTY_LEADER, 154, 609);
-  Sound_PlaySong(SE_146);
+  Sound_PlaySong(SE_ENEMY_CRY);
   zero = 0;
   ObjectEvent_GetById(LOCALID_SEA_FIRST_ATTACK_MONSTER)->timer = zero;
   ObjectEvent_GetById(LOCALID_SEA_FIRST_ATTACK_MONSTER + 1)->timer = zero;
@@ -1846,12 +1846,12 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 174, 0x26c);
   ObjectMotion_SetPositionAndCommit(LOCALID_SEA_SECOND_ATTACK_MONSTER, 180,
                                     0x244);
-  Sound_PlaySong(SE_146);
+  Sound_PlaySong(SE_ENEMY_CRY);
   ObjectEvent_SetActionScript(LOCALID_SEA_SECOND_ATTACK_MONSTER,
                               gTolbiShipDeck_BobActions);
   ObjectEvent_SetActionScript(LOCALID_SEA_SECOND_ATTACK_MONSTER + 1,
                               gTolbiShipDeck_BobActions);
-  Sound_PlaySong(SE_240);
+  Sound_PlaySong(SE_LOG_FALL);
   ObjectEvent_SetPosition(LOCALID_SEA_SPLASH, PIXELS(134), PIXELS(594));
   ObjectEvent_SetActionScript(LOCALID_SEA_SPLASH, gTolbiShipDeck_SwellActions);
   FieldScript_WaitFrames(10);
@@ -1882,7 +1882,7 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   ObjectEvent_RunActionScriptAndWait(LOCALID_SEA_SECOND_ATTACK_MONSTER + 1,
                                      gTolbiShipDeck_MonsterGoesBelowActions);
   FieldScript_WaitFrames(20);
-  Sound_PlaySong(SE_147);
+  Sound_PlaySong(SE_BEAST_CRY);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   ObjectMotion_EnableActionAndResetMotion(LOCALID_SEA_FIRST_HOVERING_MONSTER);
@@ -1966,7 +1966,7 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(80);
-  Sound_PlaySong(SE_147);
+  Sound_PlaySong(SE_BEAST_CRY);
   // The shadow grows where the monster will land, then it drops from 80
   // pixels up.
   monster = ObjectEvent_GetById(LOCALID_SEA_FALLING_MONSTER_SHADOW);
@@ -1989,7 +1989,7 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   monster->bounce = 2 * Q16_ONE / 5;
   monster->gravity = PIXELS(2);
   FieldScript_WaitFrames(80);
-  Sound_PlaySong(SE_147);
+  Sound_PlaySong(SE_BEAST_CRY);
   Import_ObjectEventSetPosition(LOCALID_SEA_FALLING_MONSTER_SHADOW, 0, 0);
   record = ObjectEvent_GetById(LOCALID_SEA_THIRD_ATTACK_MONSTER + 2);
   ObjectEvent_SetSpriteFlags(record, 1);
@@ -2074,7 +2074,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   ObjectMotion_Launch(LOCALID_PARTY_LEADER, 2, 10);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 194, 624);
-  Sound_PlaySong(SE_181);
+  Sound_PlaySong(SE_BOOM);
   MapGrid_SetShake(0x40000, 0x40000, 0x10000);
   FieldScript_WaitFrames(20);
   MapGrid_SetShake(-1, -1, 0xe666);
@@ -2085,7 +2085,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
                        PIXELS(1));
   ObjectMotion_ResetAndSetPosition(LOCALID_INVISIBLE_SEA_CAMERA_TARGET, 216,
                                    612);
-  Sound_PlaySong(SE_149);
+  Sound_PlaySong(SE_MONSTER_ROAR);
   ObjectMotion_SetActionVariant(LOCALID_SEA_SEAN, 2);
   Import_ObjectEventSetAnimation(LOCALID_SEA_SEAN, 5);
   objectEvent = ObjectEvent_GetById(LOCALID_SEA_SEAN);
@@ -2133,7 +2133,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
   ObjectMotion_ArmCallback(LOCALID_MIA, FACING_NORTH, 20);
-  Sound_PlaySong(SE_149);
+  Sound_PlaySong(SE_MONSTER_ROAR);
   FieldScript_WaitFrames(40);
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);

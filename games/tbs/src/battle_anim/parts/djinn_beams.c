@@ -120,7 +120,7 @@ void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element) {
     // The sound on 64 and the damage on 80 come at fixed frames, whatever
     // the number of targets.
     if (frame == 64)
-      Sound_PlaySongFar(SE_212);
+      Sound_PlaySongFar(SE_POWER_UP);
     if (frame == 80)
       ANIM_SHOW_DAMAGE(0);
 

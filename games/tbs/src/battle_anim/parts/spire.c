@@ -85,7 +85,7 @@ void BattleAnim_RunSpire(struct BattleAnimArgs *effect) {
   // shows 30 frames after that rock lands.
   for (frame = 0; frame != gSpire_DropFrames[rockCount - 1] + 80; frame++) {
     if (frame == gSpire_DropFrames[rockCount - 1] + 48)
-      ANIM_SHOW_DAMAGE(SE_132);
+      ANIM_SHOW_DAMAGE(SE_WATER);
     for (i = 0; i != rockCount; i++) {
       rock = &work->particles[i];
       if (frame == gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {

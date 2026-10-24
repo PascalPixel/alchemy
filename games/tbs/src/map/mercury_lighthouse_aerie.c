@@ -643,7 +643,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   FieldScript_WaitFrames(40);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FELIX, 1);
   FieldScript_WaitFrames(20);
-  Script_PlaySong(MUS_061);
+  Script_PlaySong(MUS_SATUROS_AND_MENARDI);
   Script_ShowMessageAndWait(LOCALID_FELIX, 0, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MENARDI, 1);
   FieldScript_WaitFrames(20);
@@ -995,7 +995,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
   ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Script_ShowMessageAndWait(LOCALID_MIA, 0, 30);
-  Script_PlaySong(MUS_029);
+  Script_PlaySong(MUS_CONFRONTATION);
   FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_GetScriptObject()->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(168), 1);
@@ -1556,7 +1556,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
 
   left = ObjectEvent_GetById(LOCALID_SATUROS);
   right = ObjectEvent_GetById(LOCALID_ALEX);
-  Sound_PlaySong(SE_190);
+  Sound_PlaySong(SE_WARP);
   ObjectEvent_SetSpriteColorById(LOCALID_SATUROS, 0x100);
   ObjectEvent_ConfigureSpriteColor(LOCALID_ALEX, 0x100);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SATUROS), 0);
@@ -1613,7 +1613,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
 
   left = ObjectEvent_GetById(LOCALID_SATUROS);
   right = ObjectEvent_GetById(LOCALID_ALEX);
-  Sound_PlaySong(SE_190);
+  Sound_PlaySong(SE_WARP);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SATUROS), 0);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ALEX), 0);
   options = &optionsStorage;

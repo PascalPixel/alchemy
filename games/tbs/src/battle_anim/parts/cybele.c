@@ -163,9 +163,9 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
                                      KNOCKBACK_BOUNCE);
     }
     if (frame == 72)
-      Sound_PlaySongFar(SE_136);
+      Sound_PlaySongFar(SE_WHOOSH);
     if (frame == 140)
-      Sound_PlaySongFar(SE_156);
+      Sound_PlaySongFar(SE_SWITCH_MECHANISM);
 
     // Drop the formation objects to a height of 64 pixels, and from frame
     // 48 to 96 take the two halves of Cybele's face through three poses:

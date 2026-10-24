@@ -529,7 +529,7 @@ WorldMap_PulseOrbAndSpawnSparks(union ObjectEventOrEffect *fieldObject) {
   y = objectEvent->y.fixed;
   z = objectEvent->z.fixed;
   spark = ObjectEvent_Create(SPRITE_SPARKLE, x, y, z);
-  Sound_PlaySong(SE_246);
+  Sound_PlaySong(SE_GLITTER);
   if (spark == 0)
     return;
   spark->motionFlags = 0;
@@ -1236,7 +1236,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Script_ShowMessageAndWait(LOCALID_CARAVAN_MAN, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_CARAVAN_HAMMET, ANIM_NOD);
   WorldMap_EndScript();
-  Script_PlaySong(SE_107);
+  Script_PlaySong(SE_TREMOR);
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(4));
   // The ground shakes, and a rock falls beside Hammet and his man.
   WorldMap_ShakeCameraOverCaravan();
@@ -1288,7 +1288,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   spriteObjectEvent->velocityY = PIXELS(6);
   spriteObjectEvent = ObjectEvent_GetById(LOCALID_CARAVAN_HAMMET);
   spriteObjectEvent->velocityY = PIXELS(6);
-  Script_PlaySong(SE_145);
+  Script_PlaySong(SE_CRASH);
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(4));
   WorldMap_ShakeCameraWhereRockFalls();
   WorldMap_ShakeCameraWhereRockFalls();
@@ -1447,7 +1447,7 @@ static void WorldMap_UpdateFallingRock(void) {
   if (objectEvent->y.fixed < PIXELS(10)) {
     objectEvent->y.fixed = PIXELS(10);
     if (Script_GetFlag(FLAG_WORLD_MAP_FALLING_ROCK_LANDED) == 0) {
-      Script_PlaySong(SE_145);
+      Script_PlaySong(SE_CRASH);
       Object_SelectAnimation(objectEvent, FALLING_ROCK_ANIMATION_SHATTER);
       GameFlag_Set(FLAG_WORLD_MAP_FALLING_ROCK_LANDED);
       objectEvent->timer = 1;
@@ -1697,7 +1697,7 @@ static void EventScript_MeetFlint(void) {
     ObjectEvent_SetColorMode(djinni, SPRITE_COLOR_NORMAL);
     djinni->gravity = PIXELS(1);
     Script_ShowMessage(LOCALID_VENUS_DJINNI, 0);
-    Script_PlaySong(SE_131);
+    Script_PlaySong(SE_PSYNERGY_SPARKLE);
     FieldEffect_LoadActionEffectResources(140, 0);
     for (i = 59; i >= 0; i--) {
       if (gFrameCount & 2)
@@ -1786,7 +1786,7 @@ static void EventScript_MeetFlint(void) {
     Script_SetMessage(count);
     ObjectEvent_Jump(LOCALID_VENUS_DJINNI, 2, 20);
     Script_ShowMessage(LOCALID_VENUS_DJINNI, 0);
-    Script_PlaySong(MUS_009);
+    Script_PlaySong(MUS_DJINN_LESSON);
     WorldMap_ShowDjinnTutorial();
     WorldMap_EndScript();
     return;
@@ -2739,7 +2739,7 @@ static void EventScript_StormDropsParty(void) {
 
   FieldScript_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Script_PlaySong(SE_219);
+  Script_PlaySong(SE_GUSH);
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   other->motionFlags = 0;
   objectEvent->motionFlags = 0;
@@ -2843,7 +2843,7 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
   gFieldWork->transitionFrames = 16;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Sound_PlaySong(SE_246);
+  Sound_PlaySong(SE_GLITTER);
 
   // Fade through the inward frames, hold, then reverse the animation.
   gWorldMapBlend = BLEND_ALPHA(0, 14);

@@ -536,7 +536,7 @@ s32 Field_SearchCell(s32 tile) {
               FieldMessage_ShowFar(MsgGotPsynergyStone + 1, 1);
               PartyStatus_CloseFar();
               Object_SelectAnimationFar(object, 2);
-              Sound_PlaySongFar(SE_246);
+              Sound_PlaySongFar(SE_GLITTER);
               FieldScript_WaitFrames(30);
               FieldMessage_ShowFar(MsgGotPsynergyStone + 2, 1);
               TreasureSpot_Hide(tile);

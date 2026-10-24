@@ -233,7 +233,7 @@ s32 Field_ClimbUpFar(void);
 /// or climbing pose.
 void Leader_StopMovingFar(void);
 /// Puts 32 semi-transparent ground particles under the leader and queues
-/// SE_170.
+/// SE_AMBIENT_WATER.
 void Weather_StartRainFar(void);
 /// Starts the storm's lightning, bursts that repeat every 600 frames over
 /// Vale's storm maps.
@@ -272,9 +272,9 @@ void ScanlineEffect_InitWaveFar(s32 mode, s32 freqX, s32 stepX, s32 ampX,
                                 s32 freqY, s32 stepY, s32 ampY);
 /// Stops the scanline effect: removes its two callbacks and stops DMA 0.
 void ScanlineEffect_StopFar(void);
-/// Has the target object event present an item: SE_124, animation 4, then the
-/// item's picture with sparkles. Returns the picture, or 0 when either is
-/// missing.
+/// Has the target object event present an item: SE_CHEST_OPEN, animation 4,
+/// then the item's picture with sparkles. Returns the picture, or 0 when either
+/// is missing.
 s32 FieldEffect_PlayCueAndStartEmitterOnTargetFar(s32 effect, s32 target,
                                                   s32 mode);
 /// Shows a found item's picture, with sparkles or raised above the leader as

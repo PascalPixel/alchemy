@@ -301,7 +301,7 @@ static void LamaTemple_TalkToChiMonk(void) {
 /// it in Lama Temple slides it open and walks the leader through, into the room
 /// (LAMA_TEMPLE_TO_FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM).
 static void LamaTemple_EnterHamasRoom(void) {
-  Script_PlaySong(SE_188);
+  Script_PlaySong(SE_THUMP);
   MapGrid_AnimateCells(gLamaTemple_DoorOpenCells, DOOR_X, DOOR_Y);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0xcccc, 0x6666);
@@ -423,13 +423,13 @@ static void LamaTemple_RunHamasFarewell(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_TEMPLE_HAMA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_TEMPLE_HAMA, FACING_NORTH, 30);
-  // The door slides open with SE_188, Hama walks through, and it slides shut.
-  Script_PlaySong(SE_188);
+  // The door slides open with SE_THUMP, Hama walks through, and it slides shut.
+  Script_PlaySong(SE_THUMP);
   MapGrid_AnimateCells(gLamaTemple_DoorOpenCells, DOOR_X, DOOR_Y);
   ObjectEvent_SetSpeed(LOCALID_TEMPLE_HAMA, 0xcccc, 0x6666);
   ObjectEvent_WalkToAndWait(LOCALID_TEMPLE_HAMA, 136, 136);
   ObjectEvent_SetPosition(LOCALID_TEMPLE_HAMA, 0, 0);
-  Script_PlaySong(SE_188);
+  Script_PlaySong(SE_THUMP);
   MapGrid_AnimateCells(gLamaTemple_DoorCloseCells, DOOR_X, DOOR_Y);
   FieldScript_WaitFrames(60);
   Map_PlayQueuedMusic();
@@ -742,7 +742,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Import_ObjectEventSetAnimation(LOCALID_HAMA, ANIM_HAMA_PULL);
   Import_ObjectEventSetAnimation(LOCALID_FEIZHI, ANIM_FEIZHI_PULL);
   FieldScript_WaitFrames(20);
-  Script_PlaySong(SE_125);
+  Script_PlaySong(SE_CHEST_CLOSE);
   ObjectEvent_SetDestinationOffset(LOCALID_HAMA, 2, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_HSU, 2, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_FEIZHI, 2, 0);
@@ -751,7 +751,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Import_ObjectEventSetAnimation(LOCALID_HAMA, ANIM_HAMA_PULL);
   Import_ObjectEventSetAnimation(LOCALID_FEIZHI, ANIM_FEIZHI_PULL);
   FieldScript_WaitFrames(20);
-  Script_PlaySong(SE_125);
+  Script_PlaySong(SE_CHEST_CLOSE);
   ObjectEvent_SetDestinationOffset(LOCALID_HAMA, 4, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_HSU, 4, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_FEIZHI, 4, 0);
@@ -774,7 +774,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Import_ObjectEventSetAnimation(LOCALID_HAMA, ANIM_HAMA_PULL);
   Import_ObjectEventSetAnimation(LOCALID_FEIZHI, ANIM_FEIZHI_PULL);
   FieldScript_WaitFrames(20);
-  Script_PlaySong(SE_125);
+  Script_PlaySong(SE_CHEST_CLOSE);
   ObjectEvent_SetDestinationOffset(LOCALID_HAMA, 2, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_HSU, 2, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_FEIZHI, 2, 0);
@@ -783,7 +783,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Import_ObjectEventSetAnimation(LOCALID_HAMA, ANIM_HAMA_PULL);
   Import_ObjectEventSetAnimation(LOCALID_FEIZHI, ANIM_FEIZHI_PULL);
   FieldScript_WaitFrames(20);
-  Script_PlaySong(SE_125);
+  Script_PlaySong(SE_CHEST_CLOSE);
   ObjectEvent_SetDestinationOffset(LOCALID_HAMA, 4, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_HSU, 4, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_FEIZHI, 4, 0);
@@ -933,10 +933,10 @@ s32 Map_Initialize(void) {
 
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (gSaveBlock.mapId == MAP_LAMA_TEMPLE) {
-    // Lama Temple: the temple's queued sound (SE_169) plays, two monks
+    // Lama Temple: the temple's queued sound (SE_AMBIENT_WIND) plays, two monks
     // meditate and the mossy rock stands; the rock's own cell attributes are
     // saved at (21, 73) for Reveal to restore.
-    Map_QueueMusic(SE_169);
+    Map_QueueMusic(SE_AMBIENT_WIND);
     Import_ObjectEventSetAnimation(LOCALID_MEDITATING_MONK, ANIM_MONK_MEDITATE);
     Import_ObjectEventSetAnimation(LOCALID_MONK_SENSING_ANXIETY,
                                    ANIM_MONK_MEDITATE);

@@ -1425,7 +1425,7 @@ static void BabiPalace_WakeAfterFinals(void) {
 /// Learning that the party is bound for Venus Lighthouse, he sends Iodem
 /// with it, to meet at Gondowan Passage.
 static void BabiPalace_MeetBabiAfterColosso(void) {
-  Script_PlaySong(MUS_030);
+  Script_PlaySong(MUS_BABI);
   Script_Start();
   Script_SetMessage(MsgTolbiWaitingCompanions);
   FieldScript_StartScreenTransition();

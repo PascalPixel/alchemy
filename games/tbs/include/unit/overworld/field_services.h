@@ -217,7 +217,7 @@ enum Emote {
   EMOTE_ANGER_VEIN = 3, ///< the cross-shaped vein of anger
   EMOTE_HEART = 4,      ///< a red heart
   EMOTE_ELLIPSIS = 5,   ///< "..."
-  EMOTE_LIGHT_BULB = 6, ///< a lit bulb, with SE_110
+  EMOTE_LIGHT_BULB = 6, ///< a lit bulb, with SE_CHIME
   EMOTE_SCOWL = 7,      ///< a scowling face
   EMOTE_SMILE = 8,      ///< a smiling face
   /// A sweat drop; no map shows it, and the Japanese sheet has no tenth

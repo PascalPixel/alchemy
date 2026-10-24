@@ -100,7 +100,7 @@ void BattleAnim_RunGatheringLights(struct BattleAnimArgs *effect, s32 mode) {
   Task_Add(BattleAnim_ArmBg2AffineHBlankDma, ANIM_CALLBACK_ORDER);
   // Trails keep 3/4 a frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
-  Sound_PlaySongFar(SE_146);
+  Sound_PlaySongFar(SE_ENEMY_CRY);
 
   for (frame = 0;
        frame != gGatheringLights_Counts[mode][GATHERING_LIGHTS_FRAMES] +

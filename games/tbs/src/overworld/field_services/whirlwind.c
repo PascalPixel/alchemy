@@ -212,7 +212,7 @@ void FieldEffect_RunWhirlwind(void) {
   } while (step < steps);
   ball->scaleX = 0x1b333; // 1.7 wide
   ball->scaleY = 0x14ccc; // 1.3 high
-  Sound_PlaySongFar(SE_163);
+  Sound_PlaySongFar(SE_RUSH);
   WaitFrames(20);
   // Cleared by FieldEffect_DispatchRequestKind: cast on a target a map event
   // names, the target is blown away.
@@ -247,7 +247,7 @@ void FieldEffect_RunWhirlwind(void) {
   }
   Object_SelectAnimationFar(ball, 1);
   WaitFrames(30);
-  Sound_PlaySongFar(SE_136);
+  Sound_PlaySongFar(SE_WHOOSH);
   WaitFrames(20);
   // Every particle has left its orbit by now. Its wandering callback no
   // longer reads the anchor, so the orb can be released independently.

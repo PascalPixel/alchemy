@@ -86,7 +86,7 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
     if (frame == 8)
       ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (work->effect->variant != ANIM_VARIANT_BASIC && frame == 8)
-      Sound_PlaySongFar(SE_212);
+      Sound_PlaySongFar(SE_POWER_UP);
     Projection_ScaledUnit(work->effect->user, &position);
     // The fire streak, one picture a frame in front of the user, drawn
     // additively and mirrored for side 1 with a blitter made for this one

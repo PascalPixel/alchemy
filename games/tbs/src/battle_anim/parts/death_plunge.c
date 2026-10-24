@@ -163,7 +163,7 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
     if (frame == 54)
       ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 0) {
-      Sound_PlaySongFar(SE_136);
+      Sound_PlaySongFar(SE_WHOOSH);
       work->shakeFrames = 6;
     }
     if (frame == 53)
@@ -252,7 +252,7 @@ UNUSED void BattleAnim_RunBladeRain(struct BattleAnimArgs *effect) {
     blade->velocityY = 8 << 16;
     blade->x <<= 16;
   }
-  Sound_PlaySongFar(SE_212);
+  Sound_PlaySongFar(SE_POWER_UP);
   for (frame = 0; frame != BLADE_RAIN_FRAMES; frame++) {
     // Frame loop. Fade in over the first 16 frames, with blending off once
     // opaque, and out over the last 16.
@@ -428,7 +428,7 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *effect) {
     work->effect->variant = 1;
   if (work->effect->variant > 4)
     work->effect->variant = 4;
-  Sound_PlaySongFar(SE_212);
+  Sound_PlaySongFar(SE_POWER_UP);
 
   for (frame = 0; frame != ELEMENT_PILLAR_FRAMES; frame++) {
     // Frame loop. Keep the canvas centred on the unit's feet, fade out over
@@ -676,7 +676,7 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
                           BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31),
                       0x20000);
   Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0), 0x100, 0x7fff7fff);
-  Sound_PlaySongFar(SE_212);
+  Sound_PlaySongFar(SE_POWER_UP);
   BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
                          POSE_CAST, 0, 30);
 
@@ -684,15 +684,15 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
     // Frame loop. The cues: the shatter sound three times by frame 3, the
     // unit's flash ending on frame 28, and two more sounds on 5 and 32.
     if (frame == 2)
-      Sound_PlaySongFar(SE_212);
+      Sound_PlaySongFar(SE_POWER_UP);
     if (frame == 3)
-      Sound_PlaySongFar(SE_212);
+      Sound_PlaySongFar(SE_POWER_UP);
     if (frame == 28)
       BattleAnim_TintBattler(work->effect->targets[0], -1, POSE_CAST, -1, 0);
     if (frame == 32)
-      Sound_PlaySongFar(SE_149);
+      Sound_PlaySongFar(SE_MONSTER_ROAR);
     if (frame == 5)
-      Sound_PlaySongFar(SE_145);
+      Sound_PlaySongFar(SE_CRASH);
     // Frame 5: bring the battle background back on BG1. Level -1 leaves
     // palettes 6 to 13 white for the fade below, which steps them towards
     // battle->palette, the colours the load fills.
@@ -994,7 +994,7 @@ void BattleAnim_RunElementBurst(struct BattleAnimArgs *effect) {
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                     COMPOSITE_ADDITIVE);
   draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
-  Sound_PlaySongFar(SE_140);
+  Sound_PlaySongFar(SE_SPIN);
 
   for (frame = 0; frame != 56; frame++) {
     // Frame loop. Follow the unit, fade out over the last 6 frames, and on
@@ -1004,7 +1004,7 @@ void BattleAnim_RunElementBurst(struct BattleAnimArgs *effect) {
     if (frame > 49)
       REG_BLDALPHA = BLEND_ALPHA(0x70 - frame * 2, 16);
     if (frame == 26) {
-      Sound_PlaySongFar(SE_212);
+      Sound_PlaySongFar(SE_POWER_UP);
       BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE, -1,
                              0, 20);
     }

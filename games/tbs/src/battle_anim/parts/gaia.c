@@ -188,11 +188,11 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
   work->shakeFrames = 250;
   for (frame = 0; frame != GAIA_FRAMES; frame++) {
     if (frame == 0)
-      Sound_PlaySongFar(SE_212);
+      Sound_PlaySongFar(SE_POWER_UP);
     if (frame == 40)
       Sound_PlaySongFar(SE_RUMBLE);
     if (frame == 96)
-      Sound_PlaySongFar(SE_145);
+      Sound_PlaySongFar(SE_CRASH);
     if (frame == 120)
       ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 

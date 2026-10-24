@@ -75,9 +75,9 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
   for (frame = 0; frame != DJINN_HEAL_SWIRL_FRAMES; frame++) {
     struct BattleCamera *camera = gBattleCamera;
     if (frame == 8)
-      Sound_PlaySongFar(SE_212);
+      Sound_PlaySongFar(SE_POWER_UP);
     if (frame == 80)
-      Sound_PlaySongFar(SE_142);
+      Sound_PlaySongFar(SE_SWIRL);
     ANIM_VIEW_FROM_CAMERA(camera);
     if (frame >= 30 && frame < 70) {
       position[0] += delta[0];

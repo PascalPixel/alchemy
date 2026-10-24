@@ -1168,7 +1168,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
           if (ability->fieldPsynergy == 0) {
             Sound_PlaySongFar(SE_MENU_ERROR);
           } else {
-            Sound_PlaySongFar(SE_174); // the Use sound
+            Sound_PlaySongFar(SE_NOTE_MID); // the Use sound
             shortcutHelp = 1;
             menu->flags |= PSYNERGY_MENU_SHORTCUT_HELP;
             Window_ClearInteriorTilesFar((void *)window, 0, 88, 120, 96);
@@ -1188,7 +1188,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
       // and affordable.
       if ((gKeysPressed & KEY_A) != 0) {
         if (menu->mode != PSYNERGY_MODE_USE) {
-          Sound_PlaySongFar(SE_130); // the shortcut sound
+          Sound_PlaySongFar(SE_PSYNERGY_START); // the shortcut sound
           result = menu->psynergies[state.selectedIndex];
           done = 1;
           break;
@@ -1204,7 +1204,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
           if (ability->ppCost > memberUnit->pp) {
             Sound_PlaySongFar(SE_MENU_ERROR);
           } else {
-            Sound_PlaySongFar(SE_173); // the choice sound
+            Sound_PlaySongFar(SE_NOTE_LOW); // the choice sound
             result = menu->psynergies[state.selectedIndex];
             done = 1;
             break;
@@ -1258,7 +1258,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
         if (ability->fieldPsynergy == 0) {
           Sound_PlaySongFar(SE_MENU_ERROR);
         } else {
-          Sound_PlaySongFar(SE_130); // the shortcut sound
+          Sound_PlaySongFar(SE_PSYNERGY_START); // the shortcut sound
           if (PsynergyMenu_SetShortcut(menu->memberIds[sideIndex],
                                        menu->psynergies[state.selectedIndex],
                                        0) != 0) {
@@ -1279,7 +1279,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
           if (PsynergyMenu_SetShortcut(menu->memberIds[sideIndex],
                                        menu->psynergies[state.selectedIndex],
                                        1) != 0) {
-            Sound_PlaySongFar(SE_130); // the shortcut sound
+            Sound_PlaySongFar(SE_PSYNERGY_START); // the shortcut sound
             result = menu->psynergies[state.selectedIndex];
             menu->mode = PSYNERGY_MODE_SET_R;
             done = 1;

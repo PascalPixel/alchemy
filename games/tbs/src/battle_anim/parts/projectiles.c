@@ -134,7 +134,7 @@ void BattleAnim_RunDjinniEntrance(struct BattleAnimArgs *effect, s32 element,
     if (frame > 75)
       REG_BLDALPHA = BLEND_ALPHA(168 - frame * 2, 16);
     if (frame == 8)
-      Sound_PlaySongFar(SE_212);
+      Sound_PlaySongFar(SE_POWER_UP);
     ANIM_VIEW_FROM_CAMERA(camera);
     if (frame >= 6 && frame <= 45) {
       center[0] += step[0];
@@ -633,7 +633,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
         soundCooldown--;
       if (mode == PROJECTILE_VOLLEY_HEAT_WAVE) {
         if (frame == 4)
-          Sound_PlaySongFar(SE_136);
+          Sound_PlaySongFar(SE_WHOOSH);
         if (frame == 32)
           ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       } else if (mode == PROJECTILE_VOLLEY_SLEET) {
@@ -746,7 +746,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
                 } else if (mode != PROJECTILE_VOLLEY_HEAT_WAVE &&
                            soundCooldown == 0) {
                   soundCooldown = 8;
-                  Sound_PlaySongFar(SE_132);
+                  Sound_PlaySongFar(SE_WATER);
                 }
                 // The hit: the shot's flash starts where it was drawn, the
                 // screen shakes (but for Sleet), the target flashes and,

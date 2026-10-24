@@ -177,7 +177,7 @@ void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *effect, s32 mode) {
     fadeEnd = duration - 4;
     do {
       if (frame == cueFrame) {
-        ANIM_SHOW_DAMAGE(SE_132);
+        ANIM_SHOW_DAMAGE(SE_WATER);
       }
       if (frame >= fadeStart && frame < fadeEnd) {
         // Fade out over 16 frames, the canvas's share falling from 15/16 to
@@ -383,7 +383,7 @@ void BattleAnim_RunVine(struct BattleAnimArgs *effect) {
   do {
     // No ANIM_SHOW_DAMAGE here: the targets only flash, on frame 32.
     if (frame == 32) {
-      Sound_PlaySongFar(SE_143);
+      Sound_PlaySongFar(SE_CRACK);
       ANIM_FOR_EACH_TARGET(i, work->effect)
       BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
                              POSE_DAMAGE, i, 16);
@@ -485,7 +485,7 @@ void BattleAnim_RunThorn(struct BattleAnimArgs *effect) {
 
   for (frame = 0; frame != frameCount; frame++) {
     if (frame == frameCount - 64) {
-      ANIM_SHOW_DAMAGE(SE_132);
+      ANIM_SHOW_DAMAGE(SE_WATER);
     }
     if (frame >= frameCount - 16) {
       // Fade out over the last 16 frames, the canvas's share falling from
@@ -563,7 +563,7 @@ void BattleAnim_RunThorn(struct BattleAnimArgs *effect) {
       }
       ANIM_FOR_EACH_TARGET(j, work->effect) {
         if (frame == start + 4) {
-          Sound_PlaySongFar(SE_132);
+          Sound_PlaySongFar(SE_WATER);
           BattleAnim_TintBattler(work->effect->targets[j], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, j, 3);
         }

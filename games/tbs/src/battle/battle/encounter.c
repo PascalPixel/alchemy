@@ -152,11 +152,11 @@ s32 Battle_Run(s32 enemyGroup) {
   if (cue != 0) {
     Sound_PlaySongFar(cue);
     if (GameFlag_GetFar(FLAG_LINK_BATTLE) != 0) {
-      Sound_PlaySongFar(MUS_055);
+      Sound_PlaySongFar(MUS_BOULDER_CHASE);
       Sound_LoadReverbCode(SOUND_REVERB_NONE);
     }
   } else {
-    Sound_PlaySongFar(MUS_051);
+    Sound_PlaySongFar(MUS_SATUROS_BATTLE);
     Sound_PlaySongFar(MUS_COLOSSO_BATTLE);
   }
 

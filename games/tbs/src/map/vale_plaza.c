@@ -611,7 +611,7 @@ static void EventScript_DemonstratePsynergy(void) {
     }
     FieldScheduler_AddCallback(ValePlaza_UpdateShowingStrongmanPsynergy,
                                TASK_PRIORITY_MAP);
-    Sound_PlaySong(SE_107);
+    Sound_PlaySong(SE_TREMOR);
     for (i = 0; i != 180; i++) {
       if (Math_RemainderUnsigned(i, 10) == 0) {
         if ((1 & shakes) != 0) {
@@ -742,7 +742,7 @@ static void EventScript_BoyLiftsSmallRock(void) {
   Task_Remove(ValePlaza_UpdateRockLiftingBoyPsynergy);
   Task_Remove(ValePlaza_UpdateSmallRockPalette);
   WaitFrames(1);
-  Script_PlaySong(SE_161);
+  Script_PlaySong(SE_SURPRISE);
   ObjectEvent_SetSpriteColorById(LOCALID_STORM_ROCK_LIFTING_BOY, 0);
   ObjectEvent_SetSpriteColorById(LOCALID_STORM_SMALL_ROCK, 0);
   FieldScript_WaitFrames(40);
@@ -853,7 +853,7 @@ static void EventScript_OpenNorthwestDoor(void) {
 /// Reached by walking north into metatile behavior 2 after Kalay; the other
 /// tables have no such door.
 static void EventScript_OpenNortheastDoor(void) {
-  Script_PlaySong(SE_188);
+  Script_PlaySong(SE_THUMP);
   MapGrid_CopyCellsTo(0, 63, 51, 8, 2, 2);
   WaitFrames(10);
   MapGrid_CopyCellsTo(2, 63, 51, 8, 2, 2);
@@ -1306,7 +1306,7 @@ static void EventScript_MeetSurvivingTravelers(void) {
   FieldScript_ShowMessageAndWait(LOCALID_FIRST_TRAVELER, 0);
   // The travelers' theme starts; the camera rises to them and the second
   // traveler walks in.
-  Sound_PlaySong(MUS_061);
+  Sound_PlaySong(MUS_SATUROS_AND_MENARDI);
   camera->motionFlags = 0;
   FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   FieldCamera_MoveWithinMapBounds(PIXELS(109), PIXELS(176), PIXELS(281), 1);
@@ -2069,7 +2069,7 @@ static void ValePlaza_SpawnEffectPair(struct ObjectEvent *parent) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   s32 i;
 
-  Sound_PlaySong(SE_131);
+  Sound_PlaySong(SE_PSYNERGY_SPARKLE);
   for (i = 0; i < 2; ++i) {
     child = ObjectEvent_Create(26, parent->x.fixed, parent->y.fixed,
                                parent->z.fixed);

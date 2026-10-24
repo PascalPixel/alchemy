@@ -209,7 +209,7 @@ LamakanDesert_LeaderSpraySand(union ObjectEventOrEffect *fieldObject) {
   s32 phase;
 
   if ((gFrameCount & 7) == 0) {
-    Sound_PlaySong(SE_118);
+    Sound_PlaySong(SE_FOOTSTEP);
   }
   phase = gFrameCount & 15;
   if (phase != 0) {
@@ -965,7 +965,7 @@ static void LamakanDesert_MeetManticore(void) {
       ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
           OBJ_EVENT_FACES_MOTION;
       FieldScript_WaitFrames(30);
-      Script_PlaySong(SE_148);
+      Script_PlaySong(SE_BOSS_ROAR);
       ObjectMotion_SetVarCbAndRefresh(LOCALID_MANTICORE, 2);
       FieldScript_WaitFrames(20);
       ObjectEvent_SetSpeed(LOCALID_MANTICORE, 0x28000, 0x14000);
@@ -1017,7 +1017,7 @@ s32 LamakanDesert_Initialize(s32 a0, s32 a1) {
       MapGrid_CopyCells(43, 56, 4, 2, 116, 126);
     } else if (gSaveBlock.mapId == (s32)&MapId_LamakanDesertManticore) {
       v5 = 124;
-      Map_QueueMusic(SE_169);
+      Map_QueueMusic(SE_AMBIENT_WIND);
       MapGrid_CopyCells(8, 14, 4, 4, 64, v5);
       MapGrid_CopyCells(6, 18, 4, 4, 68, v5);
       MapGrid_CopyCells(10, 21, 4, 4, 72, v5);

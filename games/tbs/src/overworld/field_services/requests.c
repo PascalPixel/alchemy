@@ -96,7 +96,7 @@ void FieldScript_RequestDestination(u16 mapId, u16 warpDest) {
 /// and remembers soundId for Map_PlayQueuedMusic in the field work's
 /// queuedSound; -1 is remembered as none, so it plays SONG_FADE_OUT_ACTION_SE
 /// now and nothing later. About 30 maps reach it through the far alias, and the
-/// ground particles (weather.c) queue SE_170 with it.
+/// ground particles (weather.c) queue SE_AMBIENT_WATER with it.
 void Map_QueueMusic(s32 soundId) {
   gFieldWork->queuedSound = soundId;
   if ((s16)soundId == -1) {

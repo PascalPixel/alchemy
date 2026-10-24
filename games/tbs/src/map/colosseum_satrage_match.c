@@ -464,7 +464,7 @@ static void EventScript_KnockDownObstacle(void) {
   }
   Object_WaitForMove(obstacle);
   FieldScript_WaitFrames(2);
-  Sound_PlaySong(SE_240);
+  Sound_PlaySong(SE_LOG_FALL);
   {
     s32 rotation = 0;
 
@@ -577,7 +577,7 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
   } else {
     Object_SelectAnimation(log, 3);
   }
-  Sound_PlaySong(SE_226);
+  Sound_PlaySong(SE_LOG_PUSH);
   Object_WaitForMove(pusher);
   Sound_PlaySong(SE_STOP_ACTION_SE);
   Object_SelectAnimation(log, 2);
@@ -1618,7 +1618,7 @@ static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode) {
     return;
   }
 
-  Sound_PlaySong(SE_247);
+  Sound_PlaySong(SE_COLOSSO_LETTERING);
   FieldScript_Start();
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -1663,7 +1663,7 @@ static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
 
   s32 reactingLocalId;
 
-  Sound_PlaySong(SE_247);
+  Sound_PlaySong(SE_COLOSSO_LETTERING);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   gColosseumSatrageMatch_LetteringWon[13] = result * 60;
@@ -1671,7 +1671,7 @@ static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
       (result < 0 ? -result : result) * 60;
   if (result < 0) {
     FieldScript_WaitFrames(30);
-    Sound_PlaySong(MUS_086);
+    Sound_PlaySong(MUS_INN);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE_FOR_LOSS);
     /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
      * show, which sets r1 before r0; as a direct call, 1 of 72 instructions
@@ -1999,7 +1999,7 @@ static void ColosseumSatrageMatch_PushAdjacentObstacle(void) {
   pusher->acceleration = 0x3333;
   Object_SetPosition(pusher, destination.x, destination.y, destination.z);
 
-  Sound_PlaySong(SE_238);
+  Sound_PlaySong(SE_PUSH_STEP);
   Object_WaitForMove(obstacle);
   Sound_PlaySong(SE_STOP_ACTION_SE);
 

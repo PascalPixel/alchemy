@@ -717,7 +717,7 @@ static void EventScript_StormCarriesPartyAway(void) {
   storm = ObjectEvent_GetById(stormId);
   FieldScript_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Sound_PlaySong(SE_219);
+  Sound_PlaySong(SE_GUSH);
   // BUG: the native passes a local id where the sprite helper needs a pointer.
 #ifdef BUGFIX
   Object_SetSpriteFlags(selectedObjectEvent, 0);

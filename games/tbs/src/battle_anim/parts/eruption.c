@@ -128,7 +128,7 @@ void BattleAnim_RunEruption(struct BattleAnimArgs *effect, s32 mode) {
     camera = gBattleCamera;
     ANIM_VIEW_FROM_CAMERA(camera);
     if (frame == 2)
-      Sound_PlaySongFar(SE_144);
+      Sound_PlaySongFar(SE_CLATTER);
     if (frame == gEruption_Counts[variant][ERUPTION_FIELD_FRAMES] - 48)
       ANIM_SHOW_DAMAGE(SE_IMPACT);
 

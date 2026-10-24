@@ -769,7 +769,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
     Shop_DrawMemberItems(itemWindow, unitId);
 
   if (item->flags & ITEM_CURSED) {
-    Sound_PlaySongFar(SE_103);
+    Sound_PlaySongFar(SE_CURSE);
     TextPrinter_CloseFinishedWindowsFar();
     Message_OpenWindowFar(MsgBecameCursed, 8, 4, 2);
     while (TextPrinter_AllFinishedFar() == 0) {

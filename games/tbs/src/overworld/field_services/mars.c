@@ -36,15 +36,15 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   // note on each.
   ObjectMotion_ArmCallback(djinniId, 0x4000, 0);
   WaitFrames(20);
-  Sound_PlaySongFar(SE_173);
+  Sound_PlaySongFar(SE_NOTE_LOW);
   ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
-  Sound_PlaySongFar(SE_174);
+  Sound_PlaySongFar(SE_NOTE_MID);
   ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
-  Sound_PlaySongFar(SE_175);
+  Sound_PlaySongFar(SE_NOTE_HIGH);
   ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
   // Spin up for 80 frames, then spin and shrink away.
   WaitFrames(20);
-  Sound_PlaySongFar(SE_140);
+  Sound_PlaySongFar(SE_SPIN);
   djinni->update = FieldEffect_AdvanceAngleWithRamp;
   djinni->timer = 0;
   WaitFrames(80);
@@ -172,7 +172,7 @@ void FieldEffect_UpdateDescendingOrbitObject(
 /// pixels up the screen, over and over, until it is set to
 /// VENUS_PARTICLE_LAST_RISE and freed once it arrives. Set by
 /// FieldEffect_RunVenusDjinnCapture in venus.c; a particle that starts on an
-/// odd frame plays SE_144. It speeds up by 1 pixel a frame to at most 5,
+/// odd frame plays SE_CLATTER. It speeds up by 1 pixel a frame to at most 5,
 /// straight at its target.
 void FieldEffect_UpdateRadialSpread(struct FieldEffectSprite *effect) {
   struct Vector3 position;
@@ -208,7 +208,7 @@ void FieldEffect_UpdateRadialSpread(struct FieldEffectSprite *effect) {
     effect->state++;
 
     if ((gVBlankCount & 1) != 0)
-      Sound_PlaySongFar(SE_144);
+      Sound_PlaySongFar(SE_CLATTER);
   } else if (state == VENUS_PARTICLE_RISING) {
     if (FieldEffectSprite_HasPendingTarget(effect) == 0)
       effect->state--;

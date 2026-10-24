@@ -254,7 +254,7 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
   struct ObjectEvent *leader;
   GameFlag_Set(FLAG_IODEM_MET_WOUNDED_SOLDIERS);
   if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) == 0) {
-    Script_PlaySong(MUS_030);
+    Script_PlaySong(MUS_BABI);
     Script_Start();
     // Frame the speakers and bring the leader over before the dialogue.
     FieldCamera_MoveTo(PIXELS(368), -1, PIXELS(104), 1);
@@ -509,7 +509,7 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
     Script_Wait(20);
     ObjectEvent_SetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
     Script_Wait(30);
-    Script_PlaySong(MUS_030);
+    Script_PlaySong(MUS_BABI);
     ObjectEvent_SetSpeed(LOCALID_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
     ObjectEvent_SetAnimation(LOCALID_IODEM, ANIM_WALK);
     // Iodem walks into the leader and is hidden: he travels in the party.

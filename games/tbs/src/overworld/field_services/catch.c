@@ -86,7 +86,7 @@ void FieldEffect_RunCatch(void) {
     WaitFrames(1);
   }
   Object_SelectAnimationFar(object, 5);
-  Sound_PlaySongFar(SE_132);
+  Sound_PlaySongFar(SE_WATER);
   // XXX: why the caught object goes to (-9, -9) pixels, just off the map's
   // corner; the map code that reads it after Catch would settle it.
   if (child != 0)

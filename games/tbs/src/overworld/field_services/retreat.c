@@ -84,7 +84,7 @@ void FieldEffect_UpdateRadialLaunch(struct FieldEffectSprite *effect) {
     effect->state++;
 
     if ((gFrameCount & 2) != 0)
-      Sound_PlaySongFar(SE_246);
+      Sound_PlaySongFar(SE_GLITTER);
   } else if (state == RETREAT_PARTICLE_FLYING) {
     if (FieldEffectSprite_HasPendingTarget(effect) == 0)
       effect->state--;
@@ -121,12 +121,12 @@ void FieldEffect_RunRetreat(void) {
   ObjectMotion_ArmCallback(effectWork->firstObjectId, 0x4000, 0);
   WaitFrames(30);
   objectEvent->update = Object_CycleSpriteColors;
-  Sound_PlaySongFar(SE_131);
+  Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
   Object_SelectAnimationFar(objectEvent, 28);
   WaitFrames(40);
 
   // Start spinning.
-  Sound_PlaySongFar(SE_220);
+  Sound_PlaySongFar(SE_SHIMMER);
   Anim_ApplyChildValuesFar((struct Object *)objectEvent, SPRITE_COLOR_NORMAL);
   Object_SelectAnimationFar(objectEvent, 3);
   objectEvent->update = FieldEffect_UpdateSpinAngle;

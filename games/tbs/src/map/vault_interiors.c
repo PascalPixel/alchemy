@@ -1043,7 +1043,7 @@ static void EventScript_MeetIvan(void) {
     FieldScript_WaitFrames(40);
     VaultInteriors_EndMindRead();
     FieldScript_SetMessageId(MsgVaultDoPossessStrangePowers);
-    Script_PlaySong(MUS_060);
+    Script_PlaySong(MUS_IVAN);
     FieldScript_WaitFrames(30);
     VaultInteriors_PlayAnimationAndWait(LOCALID_IVAN, ANIM_NOD, 30);
     VaultInteriors_ShowMessageAndWait(LOCALID_IVAN, 30);
@@ -1092,7 +1092,7 @@ static void EventScript_MeetIvan(void) {
     Script_OpenMessage(LOCALID_IVAN, 0);
   } else {
     // Asked again: "Would you really? Would you help me find the rod?"
-    Script_PlaySong(MUS_060);
+    Script_PlaySong(MUS_IVAN);
     FieldScript_SetMessageId(MsgVaultWouldReallyWouldHelpMe);
     Script_OpenMessage(LOCALID_IVAN, 0);
   }
@@ -1395,10 +1395,10 @@ static void EventScript_FreeRooferAndConfrontThieves(void) {
   VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 1);
   VaultInteriors_ShowMessageAndWait(LOCALID_IVAN, 40);
-  // The thieves' leader appears at the ladder to MUS_061: "Looks like we've
-  // been found out!" Everyone turns.
+  // The thieves' leader appears at the ladder to MUS_SATUROS_AND_MENARDI:
+  // "Looks like we've been found out!" Everyone turns.
   ObjectEvent_SetPosition(LOCALID_THIEF_LEADER, PIXELS(744), PIXELS(408));
-  Sound_PlaySong(MUS_061);
+  Sound_PlaySong(MUS_SATUROS_AND_MENARDI);
   VaultInteriors_ShowMessageAndWait(LOCALID_THIEF_LEADER, 20);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
   ObjectMotion_SetVariantCallback(LOCALID_GARET, 1);
@@ -2906,7 +2906,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   FieldScript_WaitFrames(20);
   // The mayor opens the first chest and his urn rises out of it.
   ObjectMotion_SetVarCbAndRefresh(LOCALID_LOFT_MAYOR, 2);
-  Script_PlaySong(SE_124);
+  Script_PlaySong(SE_CHEST_OPEN);
   Import_ObjectEventSetAnimation(LOCALID_FIRST_CHEST, ANIM_SHAKE_HEAD);
   ObjectEvent_SetPosition(LOCALID_FOUND_URN, PIXELS(872), PIXELS(424));
   ObjectMotion_SetActionVariant(LOCALID_FOUND_URN, 1);
@@ -2936,7 +2936,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   // The villager opening the chests opens the second: the gold statue stolen
   // from the Sanctum.
   ObjectMotion_SetVarCbAndRefresh(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 2);
-  Script_PlaySong(SE_124);
+  Script_PlaySong(SE_CHEST_OPEN);
   Import_ObjectEventSetAnimation(LOCALID_SECOND_CHEST, ANIM_SHAKE_HEAD);
   ObjectEvent_GetById(LOCALID_FOUND_STATUE)->motionFlags = 0;
   ObjectMotion_SetActionVariant(LOCALID_FOUND_STATUE, 1);
@@ -3575,7 +3575,7 @@ static void VaultInteriors_UpdateObjectEventStops(void) {
 /// Arranges the chase, constrains its camera, and starts the route callback.
 ///
 /// Called by EventScript_StartCorneringSuspects. Starts
-/// VaultInteriors_UpdateObjectEventStops and the chase music, MUS_009.
+/// VaultInteriors_UpdateObjectEventStops and the chase music, MUS_DJINN_LESSON.
 static void VaultInteriors_StartObjectEventStops(void) {
   FieldScript_Start();
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(656), 1);
@@ -3607,7 +3607,7 @@ static void VaultInteriors_StartObjectEventStops(void) {
   // nothing.
   Script_ClearFlag(0x1ff);
   FieldScript_End();
-  Sound_PlaySong(MUS_009);
+  Sound_PlaySong(MUS_DJINN_LESSON);
 }
 
 // clang-format off

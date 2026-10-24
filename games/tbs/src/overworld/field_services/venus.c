@@ -44,7 +44,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   djinni->update = FieldEffect_AdvanceSpinAngle;
   Sound_PlaySongFar(SE_HIGH_JUMP);
   ObjectMotion_Launch(djinniId, 8, 22);
-  Sound_PlaySongFar(SE_140);
+  Sound_PlaySongFar(SE_SPIN);
   MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
   djinni->update = FieldEffect_ShrinkObjectAndDestroyFast;
   Object_SelectAnimationFar(djinni, 3);
@@ -126,7 +126,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   WaitFrames(100);
   Sound_PlaySongFar(SE_STOP_ACTION_SE);
   WaitFrames(1);
-  Sound_PlaySongFar(SE_151);
+  Sound_PlaySongFar(SE_LIGHT_APPEAR);
   position.x = leader->x;
   position.y = leader->y + 0x120000;
   position.z = leader->z;
@@ -161,9 +161,9 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
 /// Field effect sprite callback of a Mercury Djinni's droplets: each falls from
 /// 100 pixels above (on screen) to a random point 2 to 8 pixels round a spot 15
 /// to 20 pixels over the leader, at 3 to 6 pixels a frame, and where it lands
-/// splashes 12 pixels in a random direction, at half size, with SE_143. It then
-/// falls again 6 frames later, until FieldEffect_RunMercuryDjinnCapture sets
-/// MERCURY_DROPLET_LAST_FALL: its next splash is its last (enum
+/// splashes 12 pixels in a random direction, at half size, with SE_CRACK. It
+/// then falls again 6 frames later, until FieldEffect_RunMercuryDjinnCapture
+/// sets MERCURY_DROPLET_LAST_FALL: its next splash is its last (enum
 /// MercuryDropletState).
 void FieldEffect_UpdateRandomTargetParticle(struct FieldEffectSprite *effect) {
   struct Object *source;
@@ -207,7 +207,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldEffectSprite *effect) {
       effect->speedMax = Random16() + 0x23333;
       effect->scaleX = 0x8000;
       effect->scaleY = 0x8000;
-      Sound_PlaySongFar(SE_143);
+      Sound_PlaySongFar(SE_CRACK);
 
       if (*statePointer == MERCURY_DROPLET_FALLING)
         (*statePointer)--;

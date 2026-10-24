@@ -204,11 +204,11 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   return nearestLocalId;
 }
 
-/// If object event target exists, plays SE_124, gives it animation 4 and, 12
-/// frames later, shows itemId in front of object event with sparkles. Returns
-/// the picture's encoded object event pointer, or 0 when the target or picture
-/// is absent. Called by two map overlays: McCoy's palace, when a reward chest
-/// opens, and Vault's interiors, when Ivan finds the Shaman's Rod.
+/// If object event target exists, plays SE_CHEST_OPEN, gives it animation 4
+/// and, 12 frames later, shows itemId in front of object event with sparkles.
+/// Returns the picture's encoded object event pointer, or 0 when the target or
+/// picture is absent. Called by two map overlays: McCoy's palace, when a reward
+/// chest opens, and Vault's interiors, when Ivan finds the Shaman's Rod.
 s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 localId, s32 target,
                                                s32 itemId) {
   void *targetObjectEvent;
@@ -217,7 +217,7 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 localId, s32 target,
   targetObjectEvent = ObjectEvent_GetById(target);
   emitter = 0;
   if (targetObjectEvent != 0) {
-    Sound_PlaySongFar(SE_124);
+    Sound_PlaySongFar(SE_CHEST_OPEN);
     Object_SelectAnimationFar(targetObjectEvent, 4);
     WaitFrames(12);
     emitter = (s32)FieldEffect_StartRandomParticleEmitter(localId, itemId);

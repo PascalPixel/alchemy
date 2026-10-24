@@ -87,7 +87,7 @@ void BattleAnim_RunFlare(struct BattleAnimArgs *effect) {
     work->transferValue = 50;
   }
   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
-  Sound_PlaySongFar(SE_136);
+  Sound_PlaySongFar(SE_WHOOSH);
   frame = 0;
   do {
     // Frame 24 lets the battle show the damage, with SE_IMPACT as the hit

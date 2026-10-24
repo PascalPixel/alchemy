@@ -527,7 +527,7 @@ static void EventScript_CratesSink(void) {
   OBJECT_SPEED(LOCALID_CAVE_CRATES, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetDestination(LOCALID_CAVE_CRATES, 248, 376);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_CAVE_CRATES);
-  SE(SE_215);
+  SE(SE_SPLASH_SMALL);
   WAIT(60);
   LunpaFortress_LowerCrates();
   GameFlag_Set(FLAG_LUNPA_FORTRESS_CRATES_MOVED);
@@ -542,7 +542,7 @@ static void EventScript_MoveCrates(void) {
   if ((cratesObjectEvent->z.fixed >> 20) > 22) {
     MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-    SE(SE_144);
+    SE(SE_CLATTER);
     MapGrid_CopyCellAttributes(15, 20, 1, 1, 15, 22);
     MapGrid_CopyCellAttributes(17, 23, 1, 3, 15, 23);
     cratesObjectEvent = ObjectEvent_Get(LOCALID_CAVE_CRATES);
@@ -764,7 +764,7 @@ static s32 LunpaFortress_TryCollectDisplayedItem(s32 localId, s32 itemId) {
     OBJECT_ANIMATION(localId, 2);
     itemGiven = 1;
   } else {
-    SE(SE_125);
+    SE(SE_CHEST_CLOSE);
     OBJECT_ANIMATION(localId, 5);
   }
   ObjectEvent_Release((struct ObjectEvent *)itemEffect);
@@ -1728,7 +1728,7 @@ static void EventScript_FlipFirstSwitch(void) {
   if (gFieldWork->revealActive != 0) {
     if (Script_GetFlag(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED) == 0) {
       FieldMessage_Show(MsgFieldFlippedSwitch, 1);
-      SE(SE_188);
+      SE(SE_THUMP);
       WAIT(1);
       LunpaFortress_FlipHiddenSwitch(17, 82,
                                      LunpaFortress_OpenFirstSwitchPassage);
@@ -1744,7 +1744,7 @@ static void EventScript_FlipSecondSwitch(void) {
   if (gFieldWork->revealActive != 0) {
     if (Script_GetFlag(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_FLIPPED) == 0) {
       FieldMessage_Show(MsgFieldFlippedSwitch, 1);
-      SE(SE_188);
+      SE(SE_THUMP);
       WAIT(1);
       LunpaFortress_FlipHiddenSwitch(3, 55,
                                      LunpaFortress_OpenSecondSwitchPassage);
@@ -1835,7 +1835,7 @@ static void LunpaFortress_ActivateLeverTrap(void) {
   WAIT(80);
   SE(SE_STOP_ACTION_SE);
   WAIT(5);
-  SE(SE_145);
+  SE(SE_CRASH);
   MapGrid_CopyCells(16, 75, 7, 4, 26, 55);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1925,7 +1925,7 @@ static void EventScript_FindHammet(void) {
     ObjectEvent_SetDestinationOffset(LOCALID_TOADONPA_DODONPA, -8, 8);
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_TOADONPA_DODONPA);
     WAIT(60);
-    SE(SE_155);
+    SE(SE_SWITCH);
     FieldMessage_Show(messageBase + 1, 1);
     ObjectEvent_SetDestinationOffset(LOCALID_TOADONPA_DODONPA, 8, -8);
     LunpaFortress_ActivateLeverTrap();
@@ -1976,7 +1976,7 @@ static void EventScript_FindHammet(void) {
     OBJECT_EMOTE(LOCALID_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                  0);
     WAIT(110);
-    SE(MUS_060);
+    SE(MUS_IVAN);
     MESSAGE_SET(messageBase + 3);
     MESSAGE_PUT(LOCALID_TOADONPA_HAMMET, 0);
     WAIT(30);
@@ -2033,7 +2033,7 @@ static void EventScript_FindHammet(void) {
     OBJECT_DIR(LOCALID_MIA, FACING_SOUTH, 0);
     OBJECT_FACE(LOCALID_TOADONPA_HAMMET, LOCALID_TOADONPA_DODONPA, 0);
     WAIT(30);
-    SE(MUS_061);
+    SE(MUS_SATUROS_AND_MENARDI);
     FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
     ObjectEvent_PlaceCurrentWithinCameraBounds(LOCALID_TOADONPA_DODONPA, 1);
     FieldCamera_WaitForArrival();
@@ -2126,7 +2126,7 @@ static void EventScript_FindHammet(void) {
     ObjectEvent_SetDestinationOffset(LOCALID_TOADONPA_DODONPA, -8, 8);
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_TOADONPA_DODONPA);
     WAIT(60);
-    SE(SE_155);
+    SE(SE_SWITCH);
     FieldMessage_Show(MsgLunpaDodonpaPulledLever, 1);
     ObjectEvent_SetDestinationOffset(LOCALID_TOADONPA_DODONPA, 8, -8);
     OBJECT_FACE(LOCALID_TOADONPA_DODONPA, LOCALID_TOADONPA_BOSS, 0);
@@ -2320,7 +2320,7 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   OBJECT_ANIMATION(LOCALID_GARET, ANIM_NOD);
   OBJECT_ANIMATION(LOCALID_MIA, ANIM_NOD);
   WAIT(100);
-  SE(SE_226);
+  SE(SE_LOG_PUSH);
   OBJECT_ANIMATION(LOCALID_TOADONPA_DODONPA, 7);
   // Move the party and both monster parts together to free Dodonpa.
   OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(1) / 10, PIXELS(1) / 20);
@@ -2536,7 +2536,7 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   FieldCamera_MoveTo(0x1c80000, -1, 0xf00000, 1);
   ObjectMotion_SetVariantCallback(LOCALID_TOADONPA_DODONPA, 1);
   WAIT(60);
-  SE(MUS_008);
+  SE(MUS_COLOSSO);
   // Donpa takes charge and orders his son to remain imprisoned.
   donpaMessage = MsgLunpaDad;
   MESSAGE_SET(donpaMessage);

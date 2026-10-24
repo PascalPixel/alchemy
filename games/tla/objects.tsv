@@ -3805,8 +3805,13 @@ main	rom_main_05	recon/tla/raw/080e446c	.text	en
 main	rom_main_05	recon/tla/raw/080e4510	.text	en
 main	rom_main_05	games/tla/src/battle/effect/psynergy_effects_03	.text	en de es fr it
 main	rom_main_05	recon/tla/it/rom	.rom.000e459c	it
-main	rom_main_05	recon/tla/it/rom	.rom.000e4724	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000e959c	fr
+main	rom_main_05	recon/tla/es/rom	.rom.000ed59c	es
+main	rom_main_05	recon/tla/de/rom	.rom.000f15a8	de
+main	rom_main_05	recon/tla/raw/080e45a8	.text	en
+main	rom_main_05	recon/tla/ja/rom	.rom.000e4428	ja
+main	rom_main_05	games/tla/src/battle/effect/growing_particle	.text
+main	rom_main_05	recon/tla/it/rom	.rom.000e4724	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000e9724	fr
 main	rom_main_05	games/tla/src/battle/effect/psynergy_effects_09	.text	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000e9a28	fr
@@ -3819,14 +3824,9 @@ main	rom_main_05	recon/tla/fr/rom	.rom.000ec7f8	fr
 main	rom_main_05	games/tla/src/battle/effect/circle_pixel	.text	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000ecfe0	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000ed7b8	fr
-main	rom_main_05	recon/tla/es/rom	.rom.000ed59c	es
 main	rom_main_05	recon/tla/es/rom	.rom.000ed724	es
-main	rom_main_05	recon/tla/de/rom	.rom.000f15a8	de
 main	rom_main_05	recon/tla/de/rom	.rom.000f1730	de
-main	rom_main_05	recon/tla/raw/080e45a8	.text	en
-main	rom_main_05	recon/tla/raw/080e46ac	.text	en
 main	rom_main_05	recon/tla/raw/080e4730	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000e4428	ja
 main	rom_main_05	recon/tla/ja/rom	.rom.000e46ec	ja
 main	rom_main_05	games/tla/src/battle/effect/psynergy_effects_04	.text	ja en it
 main	rom_main_05	recon/tla/it/rom	.rom.000e4a28	it

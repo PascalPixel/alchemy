@@ -2,10 +2,6 @@
 
 Alchemy is a [decompilation](https://en.wikipedia.org/wiki/Decompiler) of the Game Boy Advance games ☀️ **[Golden Sun: The Broken Seal](games/tbs/README.md)** and ⚓️ **Golden Sun: The Lost Age**.
 
-## Why
-
-Hi, I’m Pascal Pixel, an engineer recovering from a burnout. Golden Sun is my favorite game and I wanted to know how it works, so I’m decompiling it with [AI agents](AGENTS.md).
-
 ## Progress
 
 The Broken Seal is fully rebuilt from this repository, in Japanese, English, German, French, Spanish, and Italian. The Lost Age is in progress, but the parts not yet rewritten still come from your own cartridge dump.
@@ -15,6 +11,10 @@ The Broken Seal is fully rebuilt from this repository, in Japanese, English, Ger
 ## Build
 
 [INSTALL.md](INSTALL.md) has the commands for Linux, macOS and Windows. Every build is checked against the original cartridges’ hashes in [rom.sha1](rom.sha1).
+
+## Why
+
+Hi, I’m Pascal Pixel, an engineer recovering from a burnout. Golden Sun is my favorite game and I wanted to know how it works, so I’m decompiling it with [AI agents](AGENTS.md).
 
 ## Acknowledgements
 

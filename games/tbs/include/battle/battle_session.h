@@ -49,8 +49,8 @@ enum BattleCommand {
   COMMAND_ENEMY_ABILITY = 4, ///< an enemy's ability
   COMMAND_DJINN = 5,
   COMMAND_SUMMON = 6,
-  COMMAND_TOTAL_DEFENSE =
-      7,            ///< an enemy's Total Defense (ABILITY_EFFECT_TOTAL_DEFENSE)
+  /// An enemy's Total Defense (ABILITY_EFFECT_TOTAL_DEFENSE).
+  COMMAND_TOTAL_DEFENSE = 7,
   COMMAND_NONE = 8, ///< nothing this turn
   COMMAND_FLEE = 99
 };

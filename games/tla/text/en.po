@@ -16723,11 +16723,11 @@ msgctxt "message"
 msgid "04112"
 msgstr "{button_icon:3}{button_icon:4}:Set shortcut"
 
-msgctxt "message"
+msgctxt "MsgShortcutSetL"
 msgid "04113"
 msgstr "A shortcut was set to {button_icon:3}."
 
-msgctxt "message"
+msgctxt "MsgShortcutSetR"
 msgid "04114"
 msgstr "A shortcut was set to {button_icon:4}."
 
@@ -16751,15 +16751,15 @@ msgctxt "message"
 msgid "04119"
 msgstr "{button_icon:4}:{argument_ability_name}"
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseOwner"
 msgid "04120"
 msgstr "Whose Psynergy?"
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseAbility"
 msgid "04121"
 msgstr "Which Psynergy?"
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseTarget"
 msgid "04122"
 msgstr "Use it on whom?"
 
@@ -16779,11 +16779,11 @@ msgctxt "message"
 msgid "04126"
 msgstr "You have no Psynergy."
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseForR"
 msgid "04127"
 msgstr "{button_icon:4}:Which Psynergy?"
 
-msgctxt "message"
+msgctxt "MsgPsynergyChooseForL"
 msgid "04128"
 msgstr "{button_icon:3}:Which Psynergy?"
 

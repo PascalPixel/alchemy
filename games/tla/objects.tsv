@@ -4309,7 +4309,6 @@ main	rom_main_06	recon/tla/raw/080fc558	.text	en
 main	rom_main_06	recon/tla/raw/080fc608	.text	en
 main	rom_main_06	recon/tla/raw/080fc6bc	.text	en
 main	rom_main_06	recon/tla/raw/080fcab8	.text	en
-main	rom_main_06	recon/tla/raw/080fcbd8	.text	en
 main	rom_main_06	recon/tla/ja/rom	.rom.000fc51c	ja
 main	rom_main_06	recon/tla/ja/rom	.rom.000fca7c	ja
 main	rom_main_06	games/tla/src/menu/item/psynergy_class	.text

@@ -1,7 +1,7 @@
 // First draft of Func_080fcab8: a second item picker an event script opens,
 // built as Func_080f94a4 (recon/tla/en/main/080f94a4.c, ☀️'s
 // ItemMenu_Run) without the window tile save: opens the item menu
-// over the field, runs the command loop Func_080fcbd8, and when it returns 1
+// over the field, runs the command loop PsynergyMenu_RunSteps, and when it returns 1
 // looks up the chosen item's action (BattleAction_Get, result unused) and records
 // owner << 10 | item in the event work at 0x166. Returns the loop's result.
 // No ☀️ twin. Differ 50 of 117, register choice only: the native builds the
@@ -41,7 +41,7 @@ void Link_DrawShiftedTilePairFar(void *tiles);
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void Menu_CancelSoundReset(void);
 void Menu_EnsureCancelSound(void);
-s32 Func_080fcbd8(s32 *ownerOut, s32 *targetOut, s32 *itemOut);
+s32 PsynergyMenu_RunSteps(s32 *ownerOut, s32 *targetOut, s32 *itemOut);
 void *BattleAction_Get(s32 action);
 void RenderOutput_ClearListFar(void *window);
 void ItemMenu_Close(void);
@@ -67,7 +67,7 @@ s32 Func_080fcab8(void) {
   Link_DrawShiftedTilePairFar((void *)0x06002500);
 
   Menu_CancelSoundReset();
-  result = Func_080fcbd8(&owner, &target, &item);
+  result = PsynergyMenu_RunSteps(&owner, &target, &item);
   Menu_EnsureCancelSound();
   if (result == 1) {
     u8 *event = Ram_HeapSlots->eventWork;

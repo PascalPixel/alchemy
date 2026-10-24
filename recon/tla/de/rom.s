@@ -2418,7 +2418,7 @@ Menu_HideEmptyEntryIcons:
 	.section .rom.00104ed4, "ax"
 	.incbin "baserom.gba", 0x00104ed4, 0x00000218
 	.section .rom.0010514c, "ax"
-	.incbin "baserom.gba", 0x0010514c, 0x00000544
+	.incbin "baserom.gba", 0x0010514c, 0x00000460
 	.section .rom.001057d8, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x001057d8, 0x0000012c

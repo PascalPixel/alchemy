@@ -4276,7 +4276,6 @@ main	rom_main_06	recon/tla/es/rom	.rom.00101140	es
 main	rom_main_06	recon/tla/de/rom	.rom.0010514c	de
 main	rom_main_06	recon/tla/raw/080fb104	.text	en
 main	rom_main_06	recon/tla/raw/080fb410	.text	en
-main	rom_main_06	recon/tla/raw/080fb554	.text	en
 main	rom_main_06	recon/tla/ja/rom	.rom.000fb03c	ja
 main	rom_main_06	games/tla/src/menu/item/usemode	.text
 main	rom_main_06	games/tla/src/menu/item/open_detail	.text

@@ -52,7 +52,7 @@ Func_080fb104:
 	bl Func_080fc12c
 	mov r0, r11
 	adds r1, r5, #0
-	bl Func_080fb554
+	bl ItemMenu_DrawCommands
 .L_080fb178:
 	ldr r1, [sp, #4]
 	mov r3, r8

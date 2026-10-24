@@ -3813,7 +3813,7 @@ Menu_HideEmptyEntryIcons:
 	.section .rom.000faed4, "ax"
 	.incbin "baserom.gba", 0x000faed4, 0x00000218
 	.section .rom.000fb14c, "ax"
-	.incbin "baserom.gba", 0x000fb14c, 0x00000534
+	.incbin "baserom.gba", 0x000fb14c, 0x00000450
 	.section .rom.000fb7c8, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000fb7c8, 0x0000012c

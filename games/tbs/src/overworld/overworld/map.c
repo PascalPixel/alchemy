@@ -155,7 +155,7 @@ void Map_ReturnFromRun(s32 result) {
 
 /// Returns the map section mapId belongs to. The maps of one map section share
 /// their music, area name and the flags kept while inside it.
-/// Called by Map_ChooseMusic.
+/// Called by MapSec_GetNameIndex.
 s32 Map_GetMapSec(s32 mapId) { return gMapHeaders[mapId].mapSec; }
 
 /// The last two 16-colour background palettes, which the minigame runners save

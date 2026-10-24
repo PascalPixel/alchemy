@@ -345,7 +345,7 @@ extern const struct MapSecNameRule gMapSec_NameRules[];
 s32 MapSec_GetNameIndex(s32 mapId, s32 warpDest) {
   const struct MapSecNameRule *rule = gMapSec_NameRules;
   s32 name = 0;
-  s32 group = Map_GetMapSec(mapId);
+  s32 mapSec = Map_GetMapSec(mapId);
 
   while (rule->id != -1) {
     if (rule->useMapId) {
@@ -356,7 +356,7 @@ s32 MapSec_GetNameIndex(s32 mapId, s32 warpDest) {
         }
       }
     } else {
-      if (rule->id == group) {
+      if (rule->id == mapSec) {
         if (rule->warpDest == -1 || rule->warpDest == warpDest) {
           name = rule->areaNameIndex;
           break;

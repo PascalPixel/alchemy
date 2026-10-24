@@ -3026,12 +3026,6 @@ main	rom_main_05	games/tla/src/field/common/object/angle	.text
 main	rom_main_05	games/tla/src/field/common/object/link_pair	.text
 main	rom_main_05	games/tla/src/field/common/object/child	.text
 main	rom_main_05	games/tla/src/field/common/object/part_attribute	.text
-main	rom_main_05	recon/tla/it/rom	.rom.000d3774	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000d8774	fr
-main	rom_main_05	recon/tla/es/rom	.rom.000dc774	es
-main	rom_main_05	recon/tla/de/rom	.rom.000e0780	de
-main	rom_main_05	recon/tla/raw/080d3780	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000d3760	ja
 main	rom_main_05	games/tla/src/field/common/object/step_angle	.text
 main	rom_main_05	games/tla/src/field/common/object/visual_attributes	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000d391c	it

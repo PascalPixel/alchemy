@@ -1509,12 +1509,6 @@ ObjectMotion_MoveToObject:
 	.thumb_func
 Func_080d3378:
 	.incbin "baserom.gba", 0x000e0378, 0x000000e8
-	.section .rom.000e0780, "ax"
-	.global Func_080d3780
-	.type Func_080d3780, %function
-	.thumb_func
-Func_080d3780:
-	.incbin "baserom.gba", 0x000e0780, 0x00000054
 	.section .rom.000e0940, "ax"
 	.balign 4
 	.global Func_080d3940

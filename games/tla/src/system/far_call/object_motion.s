@@ -124,7 +124,7 @@ Object_SetPartAttributeFar:
 	.global Func_080c8178
 	.thumb_func
 Func_080c8178:
-	overlay_veneer Func_080d3780
+	overlay_veneer Object_SetTargetAndCallback
 	.global EventRuntime_SetMessageFar
 	.thumb_func
 EventRuntime_SetMessageFar:

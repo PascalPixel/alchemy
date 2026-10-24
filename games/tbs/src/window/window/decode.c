@@ -32,10 +32,10 @@ struct ArticleTable {
 // or in German s or z; 2: the end of a sentence, so the next word is
 // capitalised; 0: anything else). With mode set (battle messages) the name is
 // set off with spaces and style codes: a space and line spacing 10 before it,
-// line spacing 8 and a space after. Only the Japanese decoder sets mode
-// (WindowWork.battleMode bit 1, which BattleMessage_Open sets while it
-// decodes); the others always pass 0. The write position wraps at 0x1ff, the
-// ring's mask (TEXT_BUFFER_MASK) outside Japanese.
+// line spacing 8 and a space after. Only the Japanese decoder sets mode, from
+// WindowWork.battleMode's WINDOW_BATTLE_MESSAGE, which BattleMessage_Open
+// sets while it decodes; the others always pass 0. The write position wraps at
+// 0x1ff, the ring's mask (TEXT_BUFFER_MASK) outside Japanese.
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
@@ -875,7 +875,7 @@ extern __inline__ u32 Message_AppendArticleName(s32 mode, u16 *name,
 }
 
 /// The Japanese Message_Decode, as above with no articles or
-/// plurals. A battle message (battleMode bit 1) has its names set off with
+/// plurals. A battle message (WINDOW_BATTLE_MESSAGE) has its names set off with
 /// spaces and style codes and each space doubled, and in battle the units of
 /// classes 122 and 125 are named Mystery Man and Mystery Woman.
 /// script -1 reuses lastMessageStart; clear consumes argument slots after
@@ -889,7 +889,7 @@ s32 Message_Decode(s32 script, s32 clear) {
   s32 running = 1;
   u32 writePosition = start;
   u16 *entry = work->textBuffer;
-  u8 mode = work->battleMode & 2;
+  u8 mode = work->battleMode & WINDOW_BATTLE_MESSAGE;
   s32 (*decode)(struct MessageReader *);
   s32 overflow = 0;
   u32 previousCode;
@@ -1090,7 +1090,8 @@ s32 Message_Decode(s32 script, s32 clear) {
                 MessageArgument_Lookup(MESSAGE_ARGUMENT_ACTOR, clear));
             // In battle a unit of class 122 is called Mystery Man and one of
             // class 125 Mystery Woman (MsgMysteryPersonName and the next).
-            if (work->battleMode != 0 && (unit->id == 122 || unit->id == 125)) {
+            if (work->battleMode != WINDOW_FIELD &&
+                (unit->id == 122 || unit->id == 125)) {
               message = MsgMysteryPersonName;
               if (unit->id == 125)
                 message++;

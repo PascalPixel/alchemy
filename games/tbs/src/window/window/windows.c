@@ -105,7 +105,7 @@ void WindowSystem_InitField(void) {
 
 /// Sets up the window system for battle, as
 /// WindowSystem_InitField does for the field, and marks the work
-/// block as in battle (battleMode 1). Battle_Run's setup
+/// block as in battle (WINDOW_BATTLE). Battle_Run's setup
 /// (battle/battle/encounter.c) passes loadGlyphTiles set only while
 /// FLAG_DJINN_LESSON is set: it reserves the glyph sprites' tiles, which
 /// only windows other than text canvases need. Unlike the field setup it does
@@ -141,7 +141,7 @@ void WindowSystem_InitBattle(s32 loadGlyphTiles) {
 #endif
   work->dirty = 1;
   work->glyphResource = NO_GLYPH_RESOURCE;
-  work->battleMode = 1;
+  work->battleMode = WINDOW_BATTLE;
   work->textPalette = WINDOW_PALETTE;
 #if TBS_PATCH_1
   fill = WINDOW_TILE_PAIR(WINDOW_TILE_BLANK);

@@ -2920,10 +2920,15 @@ static void EventScript_TalkToAttendant(void) {
   SCRIPT_START();
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     MESSAGE_SET(MsgLunpaDonpaGrateful);
-    // XXX: likely a slip for LOCALID_UPPER_FLOOR_ATTENDANT, because the line is
-    // the attendant's and Dodonpa's wife stands at the far side of the
-    // fortress.
+    // BUG: the line is the attendant's, but it names Dodonpa's wife, in the
+    // family room at the far side of the fortress, as the speaker: the window
+    // opens at the screen's lower left, away from the attendant, where her
+    // other lines open beside her.
+#ifdef BUGFIX
+    MESSAGE_PUT(LOCALID_UPPER_FLOOR_ATTENDANT, 0);
+#else
     MESSAGE_PUT(LOCALID_UPPER_FLOOR_DODONPAS_WIFE, 0);
+#endif
     SCRIPT_END();
   } else {
     if (GameFlag_Get(FLAG_LUNPA_FORTRESS_ATTENDANT_TOLD_OF_DONPA) != 0) {

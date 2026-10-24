@@ -346,8 +346,8 @@ by a new game and read by nothing in the game: the option menu keeps only the
 window colour, message speed, Speech and auto-sleep, and no map reaches the
 save block by offset there. A cleared file sent by cable sends the 4,100
 bytes from `gSaveBuffer`, which hold the game flags and the save block, this
-byte included, to The Lost Age.
-
-- XXX: whether The Lost Age reads `unusedAfterSpeech` from a file sent by
-  cable; its code that unpacks the received save, still a draft under
-  `recon/tla`, would settle it.
+byte included, to The Lost Age. The Lost Age does not read it either: its
+cable transfer copies the received flags over its own and the received save
+block whole into its own, 32 bytes further on, then reads only the window
+colour back from the copy. The byte lands on one that The Lost Age's new game
+sets to 1 and that none of its code, in the main image or any overlay, loads.

@@ -69,7 +69,7 @@ s32 SpriteFrameCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
     if (entryNumber == number)
       break;
   }
-  size = Decompress_Type01(Resource_GetTableEntry(resource), buffer);
+  size = Decompress_TaggedLz(Resource_GetTableEntry(resource), buffer);
 
   // Turn the frame-offset directory into pointers before the pixel payload.
   offset = buffer;

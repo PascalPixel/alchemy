@@ -60,11 +60,11 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
   sheet = Resource_GetTableEntry((s32)&ResourceId_CounterRevealSheet);
   Iwram_CopyWords((void *)BG_PLTT, sheet, 128);
   sheet = sheet + 128;
-  Decompress_Type01(sheet, work->sheet);
+  Decompress_TaggedLz(sheet, work->sheet);
   cells = Ram_MapGridCellBuffer;
   sheet = Resource_GetTableEntry((s32)&ResourceId_RedCrescentSheetA);
   sheet = sheet + 128;
-  Decompress_Type01(sheet, cells);
+  Decompress_TaggedLz(sheet, cells);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
                     COMPOSITE_TRANSPARENT);
   draw[0] = (DrawRectangle)ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);

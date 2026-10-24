@@ -52,7 +52,7 @@
 	import AllocEwram, AllocEwramFar
 	import Free, Sys_FreeFar
 	import Decompress_ByteLz, Decompress_ByteLzFar
-	import Decompress_Type01, Decompress_Type01Far
+	import Decompress_TaggedLz, Decompress_TaggedLzFar
 	import VramCache_FreeEntry, VramCache_FreeEntryFar
 	import VramCache_ReleaseVram, VramCache_ReleaseVramFar
 	import VramCache_Load, VramCache_LoadFar

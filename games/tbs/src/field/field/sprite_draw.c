@@ -245,8 +245,8 @@ s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
     // draw parameter.
     for (i = 0; i < drawCount; i++) {
       layer = animation->entries[*(u8 *)&drawOrder[i]];
-      if (layer->mode == SPRITE_FRAME_TYPE01) {
-        Decompress_Type01(layer->frames[layer->frame], pixels);
+      if (layer->mode == SPRITE_FRAME_TAGGED_LZ) {
+        Decompress_TaggedLz(layer->frames[layer->frame], pixels);
       } else if (layer->mode == SPRITE_FRAME_LZ) {
         if (layer->colorMode != 0) {
           unpacked = Alloc(0x400);

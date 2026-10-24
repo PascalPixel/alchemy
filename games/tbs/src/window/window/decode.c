@@ -301,7 +301,7 @@ struct ItemPossessiveTable {
 };
 extern const struct ItemPossessiveTable gLocalizedWord_ItemPossessives;
 extern const s8 gLocalizedWord_ItemGenders[];
-extern u8 *gLocalizedWord_Numbers[];
+extern u8 *gLocalizedWord_CountedNouns[];
 #endif
 #endif
 
@@ -691,7 +691,7 @@ s32 Message_Decode(s32 script, s32 clear) {
 #if (LANGUAGE == LANGUAGE_GERMAN)
           case MESSAGE_LOCALIZED_WORD:
             no = decode(&reader) - 1;
-            nameBytes = gLocalizedWord_Numbers[(no & 7) * 2 + plural];
+            nameBytes = gLocalizedWord_CountedNouns[(no & 7) * 2 + plural];
             while (*nameBytes != 0) {
               entry[writePosition] = *nameBytes++;
               writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;

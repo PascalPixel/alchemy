@@ -15,7 +15,7 @@
 /// Venus Djinni's colours; with a prelude, a Venus Djinni appears first.
 ///
 /// Abilities: Revive, Water of Life (BATTLE_ANIM_REVIVE); Quartz
-/// (BATTLE_ANIM_REVIVE_201).
+/// (BATTLE_ANIM_QUARTZ).
 void BattleAnim_RunRevive(struct BattleAnimArgs *effect) {
   BattleAnim_RunDjinnBeams(effect, ELEMENT_VENUS);
 }
@@ -71,18 +71,18 @@ void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element) {
   palette = Resource_GetTableEntry((s32)&ResourceId_EarthWallSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Decompress_Type01(palette, work->sheet);
+  Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_CrescentMoonSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Decompress_Type01(palette, work->sheet + DJINN_BEAMS_MOTE_CELLS);
+  Decompress_TaggedLz(palette, work->sheet + DJINN_BEAMS_MOTE_CELLS);
   if (element == ELEMENT_VENUS)
     palette = Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet);
   else
     palette = Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Decompress_Type01(palette, work->sheet + DJINN_BEAMS_DJINNI_CELLS);
+  Decompress_TaggedLz(palette, work->sheet + DJINN_BEAMS_DJINNI_CELLS);
 
   // The motes start 80 pixels up, up to 8 pixels off in z, each at a random
   // point of its sway. Target k uses PARTICLES 64k to 64k + 7 of the 512.

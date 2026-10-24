@@ -5,16 +5,16 @@
 
 extern const s8 gArticle_Empty[];
 #if LANGUAGE == LANGUAGE_GERMAN
-extern const u8 gLocalizedWord_Number0[];
-extern const u8 gLocalizedWord_Number1[];
-extern const u8 gLocalizedWord_Number2[];
-extern const u8 gLocalizedWord_Number3[];
-extern const u8 gLocalizedWord_Number4[];
-extern const u8 gLocalizedWord_Number5[];
-extern const u8 gLocalizedWord_Number6[];
-extern const u8 gLocalizedWord_Number7[];
-extern const u8 gLocalizedWord_Number8[];
-extern const u8 gLocalizedWord_Number9[];
+extern const u8 gLocalizedWord_Battles[];
+extern const u8 gLocalizedWord_Battle[];
+extern const u8 gLocalizedWord_Tickets[];
+extern const u8 gLocalizedWord_Ticket[];
+extern const u8 gLocalizedWord_Rounds[];
+extern const u8 gLocalizedWord_Round[];
+extern const u8 gLocalizedWord_Coins[];
+extern const u8 gLocalizedWord_Coin[];
+extern const u8 gLocalizedWord_Points[];
+extern const u8 gLocalizedWord_Point[];
 #endif
 extern u16 gFont_MarkGlyphCodes[];
 extern const u8 gWindowSprite_CursorBobOffsets[80];

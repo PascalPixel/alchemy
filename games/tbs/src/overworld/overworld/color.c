@@ -260,7 +260,7 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
         dst += 3;
       }
       break;
-    case PALETTE_TINT_WARM2: // half R + 6, two thirds G + 4, B - 6
+    case PALETTE_TINT_WARM_DARK: // half R + 6, two thirds G + 4, B - 6
       for (i = 0; i < colorCount; i++) {
         color = *src++;
         red = color & 31;

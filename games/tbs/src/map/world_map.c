@@ -2819,8 +2819,8 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
   WaitFrames(1);
   GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
   WorldMap_StartStillView();
-  FieldDecompress_Type01(gWorldMapPackedTiles, buffer);
-  FieldDecompress_Type01(gWorldMapPackedFrames, buffer + 0x1000);
+  FieldDecompress_TaggedLz(gWorldMapPackedTiles, buffer);
+  FieldDecompress_TaggedLz(gWorldMapPackedFrames, buffer + 0x1000);
   IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT[14 * 16],
                       (u32)(gWorldMapPalettes + palette * 32),
                       DMA_ENABLE << 16 | 16);

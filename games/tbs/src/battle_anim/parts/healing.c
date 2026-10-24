@@ -33,15 +33,15 @@ enum HealingMotesMode {
 /// centred on the first target.
 ///
 /// Abilities: Ply, Ply Well, Pure Ply, Herb, Nut, Vial, Potion, Soothing Water
-/// (BATTLE_ANIM_PLY); Fizz (BATTLE_ANIM_PLY_204).
+/// (BATTLE_ANIM_PLY); Fizz (BATTLE_ANIM_FIZZ).
 void BattleAnim_RunPly(struct BattleAnimArgs *effect) {
   BattleAnim_RunHealingMotes(effect, HEALING_MODE_PLY);
 }
 /// Healing motes tumble in on each target from all around it.
 ///
 /// Abilities: Wish, Wish Well, Pure Wish (BATTLE_ANIM_WISH); Regenerate
-/// (BATTLE_ANIM_WISH_44); Reflect (BATTLE_ANIM_WISH_45); Spritz
-/// (BATTLE_ANIM_WISH_206).
+/// (BATTLE_ANIM_REGENERATE); Reflect (BATTLE_ANIM_REFLECT); Spritz
+/// (BATTLE_ANIM_SPRITZ).
 void BattleAnim_RunWish(struct BattleAnimArgs *effect) {
   BattleAnim_RunHealingMotes(effect, HEALING_MODE_WISH);
 }
@@ -49,7 +49,7 @@ void BattleAnim_RunWish(struct BattleAnimArgs *effect) {
 /// sheet's colours.
 ///
 /// Abilities: Cure, Cure Well, Potent Cure, Corn (BATTLE_ANIM_CURE); Worms
-/// (BATTLE_ANIM_CURE_352).
+/// (BATTLE_ANIM_WORMS).
 void BattleAnim_RunCure(struct BattleAnimArgs *effect) {
   BattleAnim_RunHealingMotes(effect, HEALING_MODE_CURE);
 }
@@ -209,7 +209,7 @@ void BattleAnim_RunHealingMotes(struct BattleAnimArgs *effect, u32 mode) {
           Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet);
   }
   resource += 128;
-  Decompress_Type01(resource, work->sheet + HEALING_DJINNI_CELLS);
+  Decompress_TaggedLz(resource, work->sheet + HEALING_DJINNI_CELLS);
   BattleAnim_FetchRectangleBlitters(work->effect->side,
                                     draw = blit); // [0] maximum, [1] additive
 

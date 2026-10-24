@@ -61,12 +61,12 @@ void BattleAnim_RunNereid(struct BattleAnimArgs *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Decompress_Type01(palette, work->sheet);
+  Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_FirePillarSheetA);
   palette += 128;
-  Decompress_Type01(palette, work->sheet + NEREID_COLUMN_IMAGE);
-  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
-                    graphics);
+  Decompress_TaggedLz(palette, work->sheet + NEREID_COLUMN_IMAGE);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
+                      graphics);
   // Trails keep 75% of each pixel a frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   {

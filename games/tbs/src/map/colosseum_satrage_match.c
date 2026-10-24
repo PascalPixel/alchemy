@@ -1893,7 +1893,7 @@ void Map_BuildDescriptorAndInstallTask(s32 leaderId, s32 opponentId,
 
   // Upload the gauge graphics and keep only its VRAM slot after freeing
   // scratch.
-  FieldDecompress_Type01(gColosso_GaugeGraphics, graphics);
+  FieldDecompress_TaggedLz(gColosso_GaugeGraphics, graphics);
 
   vramSlot = VramCache_FindFreeEntry();
   work->gauge.vramBlock = vramSlot;
@@ -1909,7 +1909,7 @@ static void ColosseumSatrageMatch_StartOpponentPath(s32 pathResource) {
   struct ColossoRaceWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_COLOSSO_RACE);
   struct PathRecorder *recorder = (struct PathRecorder *)gMapLocalState;
 
-  FieldDecompress_Type01(Resource_GetTableEntry(pathResource), work->path);
+  FieldDecompress_TaggedLz(Resource_GetTableEntry(pathResource), work->path);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     recorder->mode = PATH_RECORDER_PLAY;
     recorder->mirror = 1;

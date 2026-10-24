@@ -27,8 +27,8 @@ enum StatReductionMode {
 /// colours.
 ///
 /// Abilities: Impact, High Impact, Demon Spear, Angel Spear
-/// (BATTLE_ANIM_IMPACT); Forge (BATTLE_ANIM_IMPACT_210); none
-/// (BATTLE_ANIM_IMPACT_46).
+/// (BATTLE_ANIM_IMPACT); Forge (BATTLE_ANIM_FORGE); none
+/// (BATTLE_ANIM_UNUSED_IMPACT).
 void BattleAnim_RunImpact(struct BattleAnimArgs *effect) {
   BattleAnim_RunStatBoost(effect, STAT_BOOST_IMPACT);
 }
@@ -36,7 +36,7 @@ void BattleAnim_RunImpact(struct BattleAnimArgs *effect) {
 /// colours.
 ///
 /// Abilities: Guard, Protect, Guardian, Protector (BATTLE_ANIM_GUARD); Corona
-/// (BATTLE_ANIM_GUARD_211).
+/// (BATTLE_ANIM_CORONA).
 void BattleAnim_RunGuard(struct BattleAnimArgs *effect) {
   BattleAnim_RunStatBoost(effect, STAT_BOOST_GUARD);
 }
@@ -44,7 +44,7 @@ void BattleAnim_RunGuard(struct BattleAnimArgs *effect) {
 /// colours.
 ///
 /// Abilities: Ward, Resist, Magic Shell, Magic Shield (BATTLE_ANIM_WARD);
-/// Breeze (BATTLE_ANIM_WARD_215).
+/// Breeze (BATTLE_ANIM_BREEZE).
 void BattleAnim_RunWard(struct BattleAnimArgs *effect) {
   BattleAnim_RunStatBoost(effect, STAT_BOOST_WARD);
 }
@@ -407,7 +407,7 @@ void BattleAnim_RunDull(struct BattleAnimArgs *effect) {
 /// darker copies, in the glow orb's colours.
 ///
 /// Abilities: Impair, Debilitate (BATTLE_ANIM_IMPAIR); none
-/// (BATTLE_ANIM_IMPAIR_47).
+/// (BATTLE_ANIM_UNUSED_IMPAIR).
 ///
 /// Meltdown's casting impact (CASTING_IMPACT_IMPACT_MELTDOWN) also ends by
 /// calling it.

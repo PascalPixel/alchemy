@@ -450,21 +450,23 @@ BattleAnimHandler gBattleAnim_Handlers[BATTLE_ANIM_COUNT - 1] = {
     [BATTLE_ANIM_DELUDE - 1] = BattleAnim_RunDelude, // target_motes.c: Delude
     [BATTLE_ANIM_UNUSED_ORBITING_SPIRALS - 1] =
         BattleAnim_RunUnusedOrbitingSpirals, // planet_diver.c
-    [BATTLE_ANIM_HEARTRENDER - 1] =
+    [BATTLE_ANIM_UNUSED_HEARTRENDER - 1] =
         BattleAnim_RunHeartrender, // target_motes.c: Heartrender
     [BATTLE_ANIM_PARALYZE - 1] =
         BattleAnim_RunParalyze,                    // target_motes.c: Paralyze
     [BATTLE_ANIM_SLEEP - 1] = BattleAnim_RunSleep, // target_motes.c: Sleep
     [BATTLE_ANIM_BIND - 1] = BattleAnim_RunBind,   // bind.c: Bind
     [BATTLE_ANIM_HAUNT - 1] = BattleAnim_RunHaunt, // planet_diver.c: Haunt
-    [BATTLE_ANIM_CONDEMN - 1] = BattleAnim_RunCondemn,  // condemn.c: Condemn
-    [BATTLE_ANIM_CURSE - 1] = BattleAnim_RunCurse,      // target_motes.c: Curse
-    [BATTLE_ANIM_DRAIN - 1] = BattleAnim_RunDrain,      // drain.c: Drain
-    [BATTLE_ANIM_BREAK - 1] = BattleAnim_RunBreak,      // drain.c: Break
-    [BATTLE_ANIM_WISH_44 - 1] = BattleAnim_RunWish,     // healing.c: Wish
-    [BATTLE_ANIM_WISH_45 - 1] = BattleAnim_RunWish,     // healing.c: Wish
-    [BATTLE_ANIM_IMPACT_46 - 1] = BattleAnim_RunImpact, // stat_change.c: Impact
-    [BATTLE_ANIM_IMPAIR_47 - 1] = BattleAnim_RunImpair, // stat_change.c: Impair
+    [BATTLE_ANIM_CONDEMN - 1] = BattleAnim_RunCondemn, // condemn.c: Condemn
+    [BATTLE_ANIM_CURSE - 1] = BattleAnim_RunCurse,     // target_motes.c: Curse
+    [BATTLE_ANIM_DRAIN - 1] = BattleAnim_RunDrain,     // drain.c: Drain
+    [BATTLE_ANIM_BREAK - 1] = BattleAnim_RunBreak,     // drain.c: Break
+    [BATTLE_ANIM_REGENERATE - 1] = BattleAnim_RunWish, // healing.c: Wish
+    [BATTLE_ANIM_REFLECT - 1] = BattleAnim_RunWish,    // healing.c: Wish
+    [BATTLE_ANIM_UNUSED_IMPACT - 1] =
+        BattleAnim_RunImpact, // stat_change.c: Impact
+    [BATTLE_ANIM_UNUSED_IMPAIR - 1] =
+        BattleAnim_RunImpair, // stat_change.c: Impair
     [BATTLE_ANIM_DRAGON_CLOUD - 1] =
         BattleAnim_RunDragonCloud, // dragon_cloud.c: Dragon Cloud
     [BATTLE_ANIM_DEMON_NIGHT - 1] =
@@ -503,27 +505,25 @@ BattleAnimHandler gBattleAnim_Handlers[BATTLE_ANIM_COUNT - 1] = {
     [BATTLE_ANIM_ASTRAL_BLAST - 1] =
         BattleAnim_RunAstralBlast,                     // stars.c: Astral Blast
     [BATTLE_ANIM_GRANITE - 1] = BattleAnim_RunGranite, // stat_change.c: Granite
-    [BATTLE_ANIM_REVIVE_201 - 1] =
-        BattleAnim_RunRevive,                        // djinn_beams.c: Revive
-    [BATTLE_ANIM_VINE - 1] = BattleAnim_RunVine,     // growth.c: Vine
-    [BATTLE_ANIM_GROUND - 1] = BattleAnim_RunGround, // hail.c: Ground
-    [BATTLE_ANIM_PLY_204 - 1] = BattleAnim_RunPly,   // healing.c: Ply
-    [BATTLE_ANIM_SLEET - 1] = BattleAnim_RunSleet,   // projectiles.c: Sleet
-    [BATTLE_ANIM_WISH_206 - 1] = BattleAnim_RunWish, // healing.c: Wish
-    [BATTLE_ANIM_HAIL - 1] = BattleAnim_RunHail,     // hail.c: Hail
-    [BATTLE_ANIM_TONIC - 1] = BattleAnim_RunTonic,   // healing.c: Tonic
-    [BATTLE_ANIM_DEW - 1] = BattleAnim_RunDew,       // djinn_beams.c: Dew
-    [BATTLE_ANIM_IMPACT_210 - 1] =
-        BattleAnim_RunImpact,                          // stat_change.c: Impact
-    [BATTLE_ANIM_GUARD_211 - 1] = BattleAnim_RunGuard, // stat_change.c: Guard
+    [BATTLE_ANIM_QUARTZ - 1] = BattleAnim_RunRevive,   // djinn_beams.c: Revive
+    [BATTLE_ANIM_VINE - 1] = BattleAnim_RunVine,       // growth.c: Vine
+    [BATTLE_ANIM_GROUND - 1] = BattleAnim_RunGround,   // hail.c: Ground
+    [BATTLE_ANIM_FIZZ - 1] = BattleAnim_RunPly,        // healing.c: Ply
+    [BATTLE_ANIM_SLEET - 1] = BattleAnim_RunSleet,     // projectiles.c: Sleet
+    [BATTLE_ANIM_SPRITZ - 1] = BattleAnim_RunWish,     // healing.c: Wish
+    [BATTLE_ANIM_HAIL - 1] = BattleAnim_RunHail,       // hail.c: Hail
+    [BATTLE_ANIM_TONIC - 1] = BattleAnim_RunTonic,     // healing.c: Tonic
+    [BATTLE_ANIM_DEW - 1] = BattleAnim_RunDew,         // djinn_beams.c: Dew
+    [BATTLE_ANIM_FORGE - 1] = BattleAnim_RunImpact,    // stat_change.c: Impact
+    [BATTLE_ANIM_CORONA - 1] = BattleAnim_RunGuard,    // stat_change.c: Guard
     [BATTLE_ANIM_PSY_CRYSTAL - 1] =
         BattleAnim_RunPsyCrystal,                    // healing.c: Psy Crystal
     [BATTLE_ANIM_FLASH - 1] = BattleAnim_RunFlash,   // stat_change.c: Flash
     [BATTLE_ANIM_TORCH - 1] = BattleAnim_RunTorch,   // torch.c: Torch
-    [BATTLE_ANIM_WARD_215 - 1] = BattleAnim_RunWard, // stat_change.c: Ward
+    [BATTLE_ANIM_BREEZE - 1] = BattleAnim_RunWard,   // stat_change.c: Ward
     [BATTLE_ANIM_ZEPHYR - 1] = BattleAnim_RunZephyr, // stat_change.c: Zephyr
     [BATTLE_ANIM_KITE - 1] = BattleAnim_RunKite,     // torch.c: Kite
-    [BATTLE_ANIM_BIND_218 - 1] = BattleAnim_RunBind, // bind.c: Bind
+    [BATTLE_ANIM_LUFF - 1] = BattleAnim_RunBind,     // bind.c: Bind
     [BATTLE_ANIM_GUST - 1] = BattleAnim_RunGust,     // burst_scene.c: Gust
     [BATTLE_ANIM_VENUS - 1] = BattleAnim_RunVenus,   // djinn_attacks.c: Venus
     [BATTLE_ANIM_MERCURY - 1] =
@@ -549,7 +549,7 @@ BattleAnimHandler gBattleAnim_Handlers[BATTLE_ANIM_COUNT - 1] = {
         BattleAnim_RunRumble, // gathering_lights.c: Rumble
     [BATTLE_ANIM_BONE_CHILLER - 1] =
         BattleAnim_RunBoneChiller, // lobbed_shells.c: Bone Chiller
-    [BATTLE_ANIM_GUST_310 - 1] = BattleAnim_RunGust, // burst_scene.c: Gust
+    [BATTLE_ANIM_RAPID_SMASH - 1] = BattleAnim_RunGust, // burst_scene.c: Gust
     [BATTLE_ANIM_BONE_CHARGE - 1] =
         BattleAnim_RunBoneCharge, // rushing_strike.c: Bone Charge
     [BATTLE_ANIM_MYSTIC_FLAME - 1] =
@@ -573,7 +573,7 @@ BattleAnimHandler gBattleAnim_Handlers[BATTLE_ANIM_COUNT - 1] = {
     [BATTLE_ANIM_RANSACK - 1] = BattleAnim_RunRansack, // burst_scene.c: Ransack
     [BATTLE_ANIM_STICKY_POISON - 1] =
         BattleAnim_RunStickyPoison, // lobbed_shells.c: Sticky Poison
-    [BATTLE_ANIM_POISONOUS_BITE_323 - 1] =
+    [BATTLE_ANIM_POISON_FANG - 1] =
         BattleAnim_RunPoisonousBite, // target_strike.c: Poisonous Bite
     [BATTLE_ANIM_ELECTRIC_BITE - 1] =
         BattleAnim_RunElectricBite, // target_strike.c: Electric Bite
@@ -585,7 +585,7 @@ BattleAnimHandler gBattleAnim_Handlers[BATTLE_ANIM_COUNT - 1] = {
         BattleAnim_RunVampiricFang, // target_strike.c: Vampiric Fang
     [BATTLE_ANIM_BACTERIA_RUSH - 1] =
         BattleAnim_RunBacteriaRush, // burst_scene.c: Bacteria Rush
-    [BATTLE_ANIM_FLYING_ATTACK_329 - 1] =
+    [BATTLE_ANIM_SWIFT_STRIKE - 1] =
         BattleAnim_RunFlyingAttack, // burst_scene.c: Flying Attack
     [BATTLE_ANIM_ROTTEN_BLOOD - 1] =
         BattleAnim_RunRottenBlood, // lobbed_shells.c: Rotten Blood
@@ -606,15 +606,15 @@ BattleAnimHandler gBattleAnim_Handlers[BATTLE_ANIM_COUNT - 1] = {
         BattleAnim_RunHeadbutt, // rushing_strike.c: Headbutt
     [BATTLE_ANIM_POISON_INK - 1] =
         BattleAnim_RunPoisonInk, // lobbed_shells.c: Poison Ink
-    [BATTLE_ANIM_BEAR_CLAW_342 - 1] =
+    [BATTLE_ANIM_COUNTERSTRIKE - 1] =
         BattleAnim_RunBearClaw, // burst_scene.c: Bear Claw
-    [BATTLE_ANIM_RANSACK_343 - 1] =
+    [BATTLE_ANIM_MAD_DASH - 1] =
         BattleAnim_RunRansack, // burst_scene.c: Ransack
     [BATTLE_ANIM_SOOTHING_STAR - 1] =
         BattleAnim_RunSoothingStar, // streaks.c: Soothing Star
     [BATTLE_ANIM_SPIDER_WEB - 1] =
         BattleAnim_RunSpiderWeb, // spider_web.c: Spider Web
-    [BATTLE_ANIM_HEARTRENDER_346 - 1] =
+    [BATTLE_ANIM_HEARTRENDER - 1] =
         BattleAnim_RunHeartrender, // target_motes.c: Heartrender
     [BATTLE_ANIM_MAD_SPATTER - 1] =
         BattleAnim_RunMadSpatter, // lobbed_shells.c: Mad Spatter
@@ -625,10 +625,11 @@ BattleAnimHandler gBattleAnim_Handlers[BATTLE_ANIM_COUNT - 1] = {
         BattleAnim_RunDecompose, // lobbed_shells.c: Decompose
     [BATTLE_ANIM_HAUNTING - 1] =
         BattleAnim_RunHaunting, // gathering_lights.c: Haunting
-    [BATTLE_ANIM_CURE_352 - 1] = BattleAnim_RunCure, // healing.c: Cure
+    [BATTLE_ANIM_WORMS - 1] = BattleAnim_RunCure, // healing.c: Cure
     [BATTLE_ANIM_BERSERK - 1] =
         BattleAnim_RunBerserk, // mirrored_wall.c: Berserk
-    [BATTLE_ANIM_CURSE_354 - 1] = BattleAnim_RunCurse, // target_motes.c: Curse
+    [BATTLE_ANIM_LUCID_PROPHECY - 1] =
+        BattleAnim_RunCurse, // target_motes.c: Curse
     [BATTLE_ANIM_SMOKE_BOMB - 1] =
         BattleAnim_RunSmokeBomb, // eruption.c: Smoke Bomb
     [BATTLE_ANIM_WING_STROKE - 1] =

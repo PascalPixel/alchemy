@@ -1193,7 +1193,7 @@ void HeatGauge_Start(void) {
   s32 slot;
   u16 *slotAddress;
 
-  FieldDecompress_Type01(gHeatGauge_Tiles, gHeatGauge_TileBuffer);
+  FieldDecompress_TaggedLz(gHeatGauge_Tiles, gHeatGauge_TileBuffer);
   slotAddress = &gHeatGauge_VramSlot;
   slot = VramCache_FindFreeEntry();
   *slotAddress = slot;

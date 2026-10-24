@@ -87,7 +87,7 @@ enum PaletteTint {
   PALETTE_TINT_PALE = 0x10005, ///< half of each channel, plus their mean
   /// R plus an eighth of G and of B; G and B two thirds.
   PALETTE_TINT_RED = 0x10006,
-  PALETTE_TINT_WARM2 = 0x10007, ///< half R + 6, two thirds G + 4, B - 6
+  PALETTE_TINT_WARM_DARK = 0x10007, ///< half R + 6, two thirds G + 4, B - 6
   /// From here the TINT, BLEND and SPLIT bits are tested, TINT and BLEND
   /// carrying an RGB555 colour in the low 15 bits; any other value is the
   /// address of a ready buffer to copy.

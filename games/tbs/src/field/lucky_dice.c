@@ -353,9 +353,9 @@ void LuckyDice_Run(void) {
   // UB: Call2 passes integers to the decoder's two pointer parameters.
   // Plain typed calls add four bytes to LuckyDice_Run in tbs-en.
 #ifdef UBFIX
-  Decompress_Type01((const void *)resourceAddress, Ram_MapGridCellBuffer);
+  Decompress_TaggedLz((const void *)resourceAddress, Ram_MapGridCellBuffer);
 #else
-  Call2(Decompress_Type01, resourceAddress, (s32)Ram_MapGridCellBuffer);
+  Call2(Decompress_TaggedLz, resourceAddress, (s32)Ram_MapGridCellBuffer);
 #endif
   Dma_Set(Ram_MapGridCellBuffer, BG_SCREEN_BLOCK(8),
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
@@ -367,9 +367,9 @@ void LuckyDice_Run(void) {
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
   resourceAddress += 0x200;
 #ifdef UBFIX
-  Decompress_Type01((const void *)resourceAddress, Ram_MapGridCellBuffer);
+  Decompress_TaggedLz((const void *)resourceAddress, Ram_MapGridCellBuffer);
 #else
-  Call2(Decompress_Type01, resourceAddress, (s32)Ram_MapGridCellBuffer);
+  Call2(Decompress_TaggedLz, resourceAddress, (s32)Ram_MapGridCellBuffer);
 #endif
   Dma_Set(Ram_MapGridCellBuffer, (void *)OBJ_VRAM0,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x1f00, REG_DMA3);

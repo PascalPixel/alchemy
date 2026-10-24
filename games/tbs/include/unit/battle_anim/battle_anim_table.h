@@ -218,7 +218,8 @@ extern s8 gVolcano_Depths[][4];
 extern u8 gVolcano_StartFrames[];
 extern u8 gTargetMotes_GlintFlips[];
 
-/// Cybele's waving poses: the animations of objects 3 and 4.
+/// Cybele's waving poses: the animations of objects 3 and 4, the two in the
+/// middle row of SUMMON_FORMATION_CYBELE.
 enum {
   CYBELE_POSE_OBJECT3, ///< object 3's animation
   CYBELE_POSE_OBJECT4  ///< object 4's animation

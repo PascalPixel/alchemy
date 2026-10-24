@@ -266,7 +266,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   graphics = Resource_GetTableEntry((s32)&ResourceId_BlueRingSheet);
   Iwram_CopyWords(BG_PLTT, graphics, 128);
   graphics += 128;
-  Decompress_Type01(graphics, work);
+  Decompress_TaggedLz(graphics, work);
   switch (element) {
   case ELEMENT_VENUS:
     graphics = Resource_GetTableEntry((s32)&ResourceId_YellowPaletteB);

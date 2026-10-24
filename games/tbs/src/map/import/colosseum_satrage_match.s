@@ -12,7 +12,7 @@
 	.set import.FreeHeapSlot, 1
 	.set import.AllocEwram, 1
 	.set import.Free, 1
-	.set import.Decompress_Type01, 1
+	.set import.Decompress_TaggedLz, 1
 	.set import.VramCache_FreeEntry, 1
 	.set import.VramCache_ReleaseVram, 1
 	.set import.VramCache_Load, 1

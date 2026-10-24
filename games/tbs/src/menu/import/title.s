@@ -4,7 +4,7 @@
 	.set import.Task_Add, 1
 	.set import.AllocEwram, 1
 	.set import.Free, 1
-	.set import.Decompress_Type01, 1
+	.set import.Decompress_TaggedLz, 1
 	.set import.VramCache_Load, 1
 	.set import.VramCache_FindFreeEntry, 1
 	.set import.Oam_AddSpriteAtDepth, 1

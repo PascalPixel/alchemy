@@ -48,7 +48,7 @@ void BattleAnim_RunCannibalFang(struct BattleAnimArgs *effect) {
 /// One lime column strikes the first target, with smoke.
 ///
 /// Abilities: Poisonous Bite (BATTLE_ANIM_POISONOUS_BITE); Poison Fang
-/// (BATTLE_ANIM_POISONOUS_BITE_323).
+/// (BATTLE_ANIM_POISON_FANG).
 void BattleAnim_RunPoisonousBite(struct BattleAnimArgs *effect) {
   BattleAnim_RunTargetStrike(effect, TARGET_STRIKE_STYLE_LIME_SMOKE_COLUMN);
 }

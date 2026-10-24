@@ -172,7 +172,7 @@ static void MainMenu_LoadBackground(void) {
   Dma_Set(resource, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x70,
           REG_DMA3);
   resource += 0x1c0;
-  FieldDecompress_Type01(resource, Ram_MapGridCellBuffer);
+  FieldDecompress_TaggedLz(resource, Ram_MapGridCellBuffer);
   Dma_Set((void *)Ram_MapGridCellBuffer, LOGO_TILES,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
   // Build the visible 30-column logo map, padding to the 32-cell screen stride.
@@ -949,7 +949,7 @@ UNUSED static void FileMenu_FillTileGrid(struct Window *window,
 
   shadow = ((struct WindowWork *)gWindowWork[0])->tilemap;
   decodedTiles = AllocEwram(0x300);
-  FieldDecompress_Type01(compressedTiles, decodedTiles);
+  FieldDecompress_TaggedLz(compressedTiles, decodedTiles);
   offset = (window->y * 32 + window->x) * 2;
   vram = (u16 *)(0x06002000 + offset);
   shadow = (u16 *)((u8 *)shadow + offset);

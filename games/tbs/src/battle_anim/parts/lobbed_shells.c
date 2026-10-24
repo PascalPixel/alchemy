@@ -130,11 +130,11 @@ void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode) {
   palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Decompress_Type01(palette, work->sheet);
+  Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_SmokeSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Decompress_Type01(palette, work->sheet + LOBBED_SHELLS_SMOKE_CELLS);
+  Decompress_TaggedLz(palette, work->sheet + LOBBED_SHELLS_SMOKE_CELLS);
   if (mode == LOBBED_SHELLS_BONE_CHILLER)
     palette = Resource_GetTableEntry((s32)&ResourceId_BluePalette);
   else if (mode == LOBBED_SHELLS_STICKY_GOO)

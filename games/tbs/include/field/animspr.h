@@ -44,7 +44,7 @@ struct SpriteAnim {
   u8 kind;
   u8 colorMode;    ///< SpriteColorMode its pixels are drawn with; 0 when taken
   u8 priority;     ///< drawing order 0 to 3 among the anims; above 3 not drawn
-  u8 mode;         ///< frame codec: 1 type-01, 3 LZ, anything else raw
+  u8 mode;         ///< frame codec: 1 tagged LZ, 3 LZ, anything else raw
   void **frames;   ///< frame pointers, from the metadata or a frame cache
   u8 **scripts;    ///< the metadata's command scripts, one per animation number
   u8 *script;      ///< the running script; null when stopped (ANIMCMD_END)

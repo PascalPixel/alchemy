@@ -71,13 +71,13 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
   sprites = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleAnim_StartCanvasLayer(0);
-  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
-                    sprites);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
+                      sprites);
   // A sheet resource is its palette followed by its packed images.
   palette = Resource_GetTableEntry((s32)&ResourceId_FlashBurstSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Decompress_Type01(palette, work->sheet);
+  Decompress_TaggedLz(palette, work->sheet);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
@@ -147,7 +147,7 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
       palette = Resource_GetTableEntry((s32)&ResourceId_FlameballSheet);
       Iwram_CopyWords((void *)BG_PLTT, palette, 128);
       palette += 128;
-      Decompress_Type01(palette, work->sheet);
+      Decompress_TaggedLz(palette, work->sheet);
       actor->gravity = 0;
       actor->velocityX = 0;
       actor->velocityY = 0;
@@ -278,7 +278,7 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Decompress_Type01(palette, work->sheet);
+  Decompress_TaggedLz(palette, work->sheet);
   // The skulls are drawn in the pink burst's colours, which replace the
   // skull sheet's own.
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
@@ -409,7 +409,7 @@ void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {
   ANIM_START_NARROW_CANVAS(0);
   palette = Resource_GetTableEntry((s32)&ResourceId_SpiralSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
-  Decompress_Type01((u8 *)palette + 128, work->sheet);
+  Decompress_TaggedLz((u8 *)palette + 128, work->sheet);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP,

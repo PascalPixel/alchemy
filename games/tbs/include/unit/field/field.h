@@ -60,8 +60,8 @@ enum AnimationFacingKind {
 /// are stored. Any other value is raw, for the frame decoder.
 enum SpriteFrameCodec {
   SPRITE_FRAME_RAW = 0,
-  SPRITE_FRAME_TYPE01 = 1, ///< Decompress_Type01's format
-  SPRITE_FRAME_LZ = 3      ///< LZ-compressed
+  SPRITE_FRAME_TAGGED_LZ = 1, ///< Decompress_TaggedLz's format
+  SPRITE_FRAME_LZ = 3         ///< LZ-compressed
 };
 
 /// Sprite.flags.

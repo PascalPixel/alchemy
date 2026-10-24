@@ -1002,13 +1002,13 @@ void LuckyWheels_Run(void) {
       }
     }
   }
-  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD),
-                    sheet);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD),
+                      sheet);
   entry = Resource_GetTableEntry((s32)&ResourceId_LuckyWheelsFramePicture);
   Dma_Set(entry, (void *)&BG_PLTT_COLOR(10, 0),
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   entry += 32;
-  Decompress_Type01(entry, tiles);
+  Decompress_TaggedLz(entry, tiles);
   j = 0;
   for (k = 0; k != 20; k++) {
     for (i = 0; i != 30; i++) {
@@ -1075,14 +1075,14 @@ void LuckyWheels_Run(void) {
     Dma_Set(entry, (void *)OBJ_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 480 / 4,
             REG_DMA3);
     entry += 480;
-    Decompress_Type01(entry, tiles);
+    Decompress_TaggedLz(entry, tiles);
     Dma_Set(tiles, (void *)OBJ_VRAM0, (DMA_ENABLE | DMA_32BIT) << 16 | 0x1b30,
             REG_DMA3);
     entry = Resource_GetTableEntry((s32)&ResourceId_LuckyWheelsJackpot);
     Dma_Set(entry, (void *)&OBJ_PLTT_COLOR(15, 0),
             (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
     entry += 32;
-    Decompress_Type01(entry, tiles);
+    Decompress_TaggedLz(entry, tiles);
     Dma_Set(tiles, (void *)LUCKY_WHEELS_JACKPOT_TILES,
             LUCKY_WHEELS_JACKPOT_COPY, REG_DMA3);
     WindowSystem_InitFieldFar();

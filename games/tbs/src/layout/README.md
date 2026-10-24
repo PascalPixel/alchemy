@@ -180,7 +180,7 @@ The name of the file the build asks for says what to make:
 - `script`: the tileset animation and blend scripts below.
 
 The codec `lz` then packs each stream in the format the game's
-`Decompress_Type01` unpacks, and the bytes must come out identical.
+`Decompress_TaggedLz` unpacks, and the bytes must come out identical.
 Where [the original](../../glossary.md#the-original) stream is followed by stray bytes the packer left in its
 buffer, `layout.s` places them as literal bytes with a `PACKER:` comment naming
 what wrote them. Where Camelot changed a stream after packing it, a

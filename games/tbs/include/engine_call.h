@@ -85,13 +85,13 @@ static inline s32 FieldUnit_AddHp(s32 owner, s32 delta) {
   return Unit_AddHp(owner, delta);
 }
 
-/// Decodes type-01 compressed data from `source` into `destination`. Maps
-/// and the title screen and main menu reach the decoder through it; main-image
-/// code calls Decompress_Type01 without it, LuckyDice_Run through call.h's
-/// Call2.
-static inline s32 FieldDecompress_Type01(const void *source,
-                                         void *destination) {
-  return Decompress_Type01(source, destination);
+/// Decodes a tagged LZ stream (a first byte of 0 or 1) from `source` into
+/// `destination`. Maps and the title screen and main menu reach the decoder
+/// through it; main-image code calls Decompress_TaggedLz without it,
+/// LuckyDice_Run through call.h's Call2.
+static inline s32 FieldDecompress_TaggedLz(const void *source,
+                                           void *destination) {
+  return Decompress_TaggedLz(source, destination);
 }
 
 static inline void ScanlineEffect_StartWave(s32 mode, s32 freqX, s32 stepX,

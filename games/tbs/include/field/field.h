@@ -109,10 +109,10 @@ extern u32 gScanlineAngle;
 /// The world map camera's pitch the scanline parameters were built for.
 extern u32 gScanlinePitch;
 #endif
-/// The lighthouse transition's frames, packed (type 01), decoded 0x1000 bytes
+/// The lighthouse transition's frames, packed (tagged LZ), decoded 0x1000 bytes
 /// after the tiles (WorldMap_PlayLighthouseTransition).
 extern const u8 gWorldMapPackedFrames[];
-/// The lighthouse transition's tiles, packed (type 01).
+/// The lighthouse transition's tiles, packed (tagged LZ).
 extern const u8 gWorldMapPackedTiles[];
 /// The lighthouse transitions' palettes, 32 bytes each, loaded as BG palette
 /// 14.
@@ -192,7 +192,7 @@ extern const u8 gObjectMotion_StepAngleScript[];
 extern const u8 gMovementType_FaceLeaderScript[];
 extern const u8 gObjectMotion_VariantScripts[];
 // Lamakan Desert's heat gauge (HeatGauge_Start and HeatGauge_Draw).
-/// The gauge's tiles, packed (type 01).
+/// The gauge's tiles, packed (tagged LZ).
 extern u8 gHeatGauge_Tiles[];
 /// The gauge's 16 colours, loaded as OBJ palette 14.
 extern const u16 gHeatGauge_Palette[16];

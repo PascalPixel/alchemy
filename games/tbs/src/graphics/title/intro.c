@@ -548,7 +548,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   // The resource begins with 224 colours; its packed tiles follow them.
   resourceData = Resource_GetTableEntry(resourceId);
   Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(0x70), REG_DMA3);
-  Decompress_Type01(resourceData + 448, Ram_MapGridCellBuffer);
+  Decompress_TaggedLz(resourceData + 448, Ram_MapGridCellBuffer);
   Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(0x2580),
           REG_DMA3);
   // Pad the 30-tile picture to the hardware map's 32-tile row width.
@@ -636,7 +636,7 @@ s32 Title_ShowCamelotLogo(void) {
    * counts; as resourceData set before the decode, 13 of 119 instructions
    * differ in tbs-en. */
   workIndex = (u32)Ram_MapGridCellBuffer;
-  Decompress_Type01(Resource_GetTableEntry(resourceId), (u8 *)workIndex);
+  Decompress_TaggedLz(Resource_GetTableEntry(resourceId), (u8 *)workIndex);
   // The decoded resource: 224 colours, the map, the still tiles, then four
   // animation frames of 0x400 bytes each.
   resourceData = (u8 *)workIndex;
@@ -751,7 +751,7 @@ void TitlePaletteFade_Update(void) {
 /// per colour, each in the high bits of a halfword). `mode` picks the
 /// tint: a colour below PALETTE_TINT_FROM_SOURCE fills every colour
 /// with it; PALETTE_TINT_FROM_SOURCE takes that colour from source[0];
-/// PALETTE_TINT_NONE to PALETTE_TINT_WARM2 are the whole-palette
+/// PALETTE_TINT_NONE to PALETTE_TINT_WARM_DARK are the whole-palette
 /// filters; the TINT, BLEND and SPLIT flags carry
 /// a colour in their low bits; anything else is the address of components to
 /// copy. `selectedPalettes` is an enum PaletteSelection.
@@ -916,7 +916,7 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
         destination += 3;
       }
       break;
-    case PALETTE_TINT_WARM2:
+    case PALETTE_TINT_WARM_DARK:
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
         colorWork = *source++;
         red = colorWork & 31;

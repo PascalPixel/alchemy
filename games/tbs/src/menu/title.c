@@ -184,7 +184,7 @@ static void Title_LoadSprites(s32 unused) {
   Dma_Set(encodedGraphics, (void *)OBJ_PLTT,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x70, REG_DMA3);
   encodedGraphics += 0x1c0;
-  FieldDecompress_Type01(encodedGraphics, decodedSprites);
+  FieldDecompress_TaggedLz(encodedGraphics, decodedSprites);
   // The picture is a whole 240 x 160 screen (to_be_continued_de.png and the
   // others). The lettering is its bottom 32 rows, the last 0x1e00 bytes: 120
   // sprites of one 64-byte tile. The 0x7800 bytes before it are the 480 tiles
@@ -196,8 +196,8 @@ static void Title_LoadSprites(s32 unused) {
   decodedSprites = AllocEwram(0x520);
   if (gTitleVramBlock == -1)
     gTitleVramBlock = VramCache_FindFreeEntry();
-  FieldDecompress_Type01(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB),
-                         decodedSprites);
+  FieldDecompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB),
+                           decodedSprites);
   Dma_Set(decodedSprites, (void *)&OBJ_PLTT_COLOR(15, 0),
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   Vram_Load(gTitleVramBlock, 0x500, decodedSprites + 32);
@@ -356,7 +356,7 @@ static void Title_LoadBackground(void) {
   Dma_Set(encodedGraphics, (void *)BG_PLTT,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x70, REG_DMA3);
   encodedGraphics += 0x1c0;
-  FieldDecompress_Type01(encodedGraphics, Ram_MapGridCellBuffer);
+  FieldDecompress_TaggedLz(encodedGraphics, Ram_MapGridCellBuffer);
   Dma_Set((void *)Ram_MapGridCellBuffer, LOGO_TILES,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
   // Fill the visible 30 columns and pad each 32-entry tilemap row.

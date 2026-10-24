@@ -973,8 +973,8 @@ its list. Names keep their rows' order, groups follow their animations' values,
 spaces:
 
 ```c
-/// Abilities: Heartrender (BATTLE_ANIM_HEARTRENDER_346); none
-/// (BATTLE_ANIM_HEARTRENDER).
+/// Abilities: Heartrender (BATTLE_ANIM_HEARTRENDER); none
+/// (BATTLE_ANIM_UNUSED_HEARTRENDER).
 ```
 
 The animation is an enumerator, never a number, and its prefix says how it is

@@ -477,7 +477,7 @@ void RegionMap_Show(s32 picture) {
   Dma_Set(graphics, (void *)BG_PLTT,
           (u32)(DMA_ENABLE | DMA_32BIT) << 16 | (448 / 4), REG_DMA3);
   BG_PLTT[0] = 0;
-  Decompress_Type01(graphics + 448, gMapGridCellBuffer);
+  Decompress_TaggedLz(graphics + 448, gMapGridCellBuffer);
   Dma_Set(gMapGridCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00,
           (u32)(DMA_ENABLE | DMA_32BIT) << 16 |
               (WORLD_MAP_SCREEN_WIDTH * WORLD_MAP_SCREEN_HEIGHT / 4),

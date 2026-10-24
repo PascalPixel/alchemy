@@ -902,10 +902,10 @@ static void EventScript_PassSouthWallOpening(void) {
 /// Unused: an empty function nothing calls.
 UNUSED static void ColosseumNavampaMatch_UnusedEventHook(void) {}
 
-// XXX: likely its message numbers date from a catalog older than the Japanese
-// release, because in it, as in the English one, the lines three apart per
-// character from MsgColossoDidntThinkBattles are a spectator's thought and the
-// stage announcements, not this question.
+// XXX (no evidence): which lines this question was written for; in the
+// Japanese catalog, as in the English one, the lines three apart per character
+// from MsgColossoDidntThinkBattles are a spectator's thought and the stage
+// announcements, and no catalog older than the released ones survives.
 /// Unused: talking to a character at the third finals site would have handed
 /// the player control of that character.
 ///

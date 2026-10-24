@@ -704,8 +704,9 @@ static void EventScript_SearchSealedDoor(void) {
   FieldMessage_Show(MsgFieldDoorTightlyLocked, 1);
 }
 
-// XXX: likely LunpaFortressGroundFloor's first four rows (in a chest's sprite,
-// at the map's origin), because nothing else uses them.
+// XXX (no evidence): which map's object events these are; the pickups are
+// unused and name no map, and LunpaFortressGroundFloor's first four rows (in a
+// chest's sprite, at the map's origin) are the only rows nothing else uses.
 /// The four object events from LOCALID_FIRST_ITEM_DISPLAY that the unused item
 /// pickups below show their items on, in a map they do not name.
 /// ★ Named from what the player sees: four chests (SPRITE_CHEST) at the
@@ -4112,9 +4113,11 @@ struct MapEvent gLunpaFortressEventsOther[] = {
     { MAP_EVENT_COORD, 20, FLAG_LUNPA_FORTRESS_FINDING_HAMMET, EVENT_SCRIPT(EventScript_FindHammet) },
     { MAP_EVENT_TALK, LOCALID_TOADONPA_CELL_GUARD, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetStillInside) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOADONPA_CELL_GUARD, CONDITION_ALWAYS, MSGNO(MsgLunpaDodonpaSecretlyInside) },
-    // XXX: these two rows give LOCALID_TOADONPA_HAMMET Dodonpa's lines from his cell,
-    // though Hammet has left the cave by the time Dodonpa is jailed; whether
-    // the party can reach them is not known.
+    // These two rows give LOCALID_TOADONPA_HAMMET Dodonpa's lines from his
+    // cell, though Hammet is put out of sight at (0, 0) once Dodonpa is
+    // jailed; before then he stands where the party finds him.
+    // XXX: whether the party can talk to Hammet before coord event 20 starts
+    // EventScript_FindHammet; a recording walking up to him would settle it.
     { MAP_EVENT_TALK, LOCALID_TOADONPA_HAMMET, CONDITION_ALWAYS, MSGNO(MsgLunpaWrongTurnOver) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOADONPA_HAMMET, CONDITION_ALWAYS, MSGNO(MsgLunpaCantBelieveWhen) },
     { MAP_EVENT_TALK, LOCALID_INVISIBLE_TOADONPA_DODONPA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToJailedDodonpa) },

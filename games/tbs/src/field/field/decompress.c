@@ -53,9 +53,10 @@ u8 *Decompress_Lz(const u8 *source, u8 *destination) {
         command++;
       }
       length += 2;
-      // XXX: a run copies from before the literals' start, not from the
-      // output written so far; a codec 3 sprite anim with a draw parameter
-      // would show whether its streams ever use a copy run.
+      // A run copies from before the literals' start, not from the output:
+      // a sprite's codec 3 frames are stored one after another, and each is
+      // packed against the frames stored before it, as IwramDecompress also
+      // reads them. 253 sprites, Isaac's among them, use codec 3.
       copy = base - (token & 0x0fff);
       while (length != 0) {
         *destination++ = *copy++;

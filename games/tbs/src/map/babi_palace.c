@@ -2555,8 +2555,9 @@ s32 BabiPalace_ApplyEntryState(void) {
     if (gSaveBlock.warpDest == BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH) {
       BabiPalace_RestorePartyAndInventory();
       BabiPalace_WakeAfterFinals();
-      // XXX: likely so that reloading the map does not play the waking again,
-      // because only this warp destination chooses it.
+      // Only this warp destination chooses the waking, so rewriting it makes a
+      // later load of the map from the save block, as when a game saved here
+      // is continued, an arrival from the statue room, not a second waking.
       gSaveBlock.warpDest = BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST;
     }
     if (gSaveBlock.warpDest == BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH) {

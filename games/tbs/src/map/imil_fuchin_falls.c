@@ -910,8 +910,9 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveFourthLogSouthFromMiddle(void) {
   FuchinFallsCave_RebuildDragonsEyeRoomLogs();
 }
 
-// XXX: likely a slip for a move north, because the third log's matching coord
-// event 19 floats it north.
+// XXX (no evidence): whether walking north was meant to float the log north,
+// as the third log's matching coord event 19 does; the room never has a coord
+// event 24, so the game never shows which.
 /// Unused: walking north into coord event 24 in Fuchin Falls Cave's third room
 /// would float the fourth log 80 pixels south (its stops clear). Coord event
 /// 24's cells reach the room only from their copy at columns 10 to 12, row 43,

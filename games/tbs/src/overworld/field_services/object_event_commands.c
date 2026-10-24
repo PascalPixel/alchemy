@@ -302,11 +302,11 @@ void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
     // height above the ground is kept. The coordinates are whole pixels,
     // rounded toward zero. MapGrid_GetTerrainHeight takes 16.16 coordinates and
     // returns 16.16 pixels, so these pixel coordinates read the layer's first
-    // cell, and the
-    // << 16 keeps only the result's low 16 bits (0 on a flat cell).
-    // XXX: likely written for an older interface in pixels, because weather.c
-    // makes the same call; a map script placing an object event this way on
-    // raised ground would show what the game does.
+    // cell, and the << 16 keeps only the result's low 16 bits (0 on a flat
+    // cell). The object event is left at its height above the ground, counted
+    // from 0, for the rest of this frame; before it is drawn,
+    // Object_UpdateAllThumb's ground following adds the new ground's height,
+    // so one standing on the ground lands on it there.
     if (1 & object->motionFlags) {
       terrainId = object->layer;
       tileX = x;

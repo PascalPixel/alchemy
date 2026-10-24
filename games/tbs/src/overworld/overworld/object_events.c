@@ -108,8 +108,8 @@ void FieldScript_SpawnObjectEventTemplates(struct ObjectEventTemplate *entry,
        (s16)templateSprite != -1 && slot <= OBJ_EVENT_SLOT_COUNT - 1;
        entry++, templateSprite = entry->sprite) {
     // Current object event template tables use sprites 0 to 504, so every live
-    // row sets objectEventIndex. XXX: what the 0x2705 cutoff was for; no table
-    // reaches it.
+    // row sets objectEventIndex.
+    // XXX (no evidence): what the 0x2705 cutoff was for; no table reaches it.
     if (entry->sprite <= 7)
       objectEventIndex = entry->sprite;
     else if (entry->sprite <= 0x2705)
@@ -157,9 +157,11 @@ void FieldScript_SpawnObjectEventTemplates(struct ObjectEventTemplate *entry,
       Object_SelectAnimationFar(object, 1);
       // lastNo is the animation last selected, which selecting again skips: a
       // random 0 to 29 makes the second selection below restart animation 1
-      // from its first frame, unless it happens to be 1. XXX: likely meant to
-      // start each idle at a random frame, because the value is random; as it
-      // stands it only forces the restart.
+      // from its first frame, unless it happens to be 1. The first selection
+      // has just started it from that frame, so the idle looks the same
+      // either way.
+      // XXX (no evidence): why the value is random when only whether it is 1
+      // matters; nothing else reads lastNo before the selection.
       if (object->spriteStorageKind == OBJECT_SPRITE_ONE &&
           (sprite = object->sprite) != 0)
         sprite->lastNo = ((u32)(Random16()) % (u32)30);

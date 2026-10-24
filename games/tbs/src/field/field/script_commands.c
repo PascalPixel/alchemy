@@ -495,9 +495,6 @@ s32 FieldCamera_FollowLeaderInBounds(struct Object *interpreter) {
   return 1;
 }
 
-extern u8 IwramSqrt[];
-s32 _call_via_r3(s32, s32, s32, s32);
-
 /// SC_APPROACH_LINK: follows the linked object at its speed. More than 16
 /// pixels away it walks to 16 pixels short of it (animation 2) and runs on;
 /// within 16 it stands (animation 1) and waits for the next frame.
@@ -526,13 +523,8 @@ s32 Object_ApproachLinkedObject(struct Object *interpreter) {
   dz = linkedObject->z - object->z;
   deltaXPixels = dx >> 0x10;
   deltaZPixels = dz >> 0x10;
-  // The IWRAM square root, called by address through r3; it reads only the
-  // first argument, and dx and deltaZPixels fill r1 and r2.
-  // XXX: why r1 and r2 carry dx and deltaZPixels; whether the routine is
-  // known to take more than one argument would settle it.
-  distancePixels = _call_via_r3((deltaXPixels * deltaXPixels) +
-                                    (deltaZPixels * deltaZPixels),
-                                dx, deltaZPixels, (u32)IwramSqrt);
+  distancePixels =
+      Iwram_Sqrt((deltaXPixels * deltaXPixels) + (deltaZPixels * deltaZPixels));
   // Further than 16 pixels: aim at the point 16 pixels short of the linked
   // object along the line to it (the 16.16 offset scaled by the whole-pixel
   // ratio) and run on to SC_WAIT(1); otherwise stand and stay on this command.

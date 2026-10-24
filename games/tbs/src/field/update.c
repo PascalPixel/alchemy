@@ -121,9 +121,10 @@ void Object_UpdateAll(void) {
           // deltaX and deltaZ are 16.16 too, so each axis gains its share of
           // the acceleration; further away they are whole pixels, and MulQ16
           // makes the gain 65536 times smaller, which rounds to almost
-          // nothing.
-          // XXX: likely a bug, because Object_UpdateAllThumb's free flight
-          // multiplies its whole-pixel offsets by the ratio without MulQ16.
+          // nothing. Object_UpdateAllThumb's free flight multiplies its
+          // whole-pixel offsets by the ratio without MulQ16, so the two
+          // updates would steer towards a far target differently; nothing
+          // runs this one, so the player never sees it.
           speedRatio = IwramRatioMulQ14(distance, object->acceleration);
           velocityX = object->velocityX + MulQ16(deltaX, speedRatio);
           object->velocityX = velocityX;
@@ -143,9 +144,9 @@ void Object_UpdateAll(void) {
         }
       } else {
         // No target: brake by the acceleration until the object stops.
-        // XXX: this branch calls the far-call stubs where the steering above
-        // calls the IWRAM routines by address; both reach the same routines,
-        // and only the bytes show the difference, not why.
+        // XXX (no evidence): why this branch calls the far-call stubs where
+        // the steering above calls the IWRAM routines by address; both reach
+        // the same routines, and nothing runs this copy to show a difference.
         deltaX = object->velocityX;
         deltaZ = object->velocityZ;
         distance =

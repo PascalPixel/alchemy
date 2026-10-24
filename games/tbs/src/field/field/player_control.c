@@ -35,14 +35,6 @@ enum FieldShortcutKind {
   FIELD_SHORTCUT_ITEM = 1      ///< fieldWork->item
 };
 
-/// Stores value in a halfword of the event work.
-static __inline__ void Field_StoreHalfword(s16 *address, s32 value) {
-  // XXX: why the stores go through a helper rather than plain assignment;
-  // whether the assignment form changes Field_RequestShortcut's bytes would
-  // settle it.
-  *address = value;
-}
-
 /// Unused: stores value as a word in the object's update hook.
 /// Nothing calls it.
 UNUSED void Object_SetUpdateValue(void *rawObject, s32 value) {
@@ -70,22 +62,20 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
   struct FieldWork *work = gFieldWork;
 
   if (GameFlag_GetFar(FLAG_MENUS_RAISE_EVENT) != 0) {
-    Field_StoreHalfword(&work->raisedEvent, FIELD_RAISED_EVENT_MENUS);
+    work->raisedEvent = FIELD_RAISED_EVENT_MENUS;
   } else if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     if (FIELD_SHORTCUT_KEYS & KEY_R) {
-      Field_StoreHalfword(&work->raisedEvent,
-                          (u16)FIELD_RAISED_EVENT_REGION_MAP);
+      work->raisedEvent = FIELD_RAISED_EVENT_REGION_MAP;
     } else if (FIELD_SHORTCUT_KEYS & KEY_L) {
-      Field_StoreHalfword(&work->raisedEvent,
-                          (u16)FIELD_RAISED_EVENT_WORLD_MAP_ZOOM);
+      work->raisedEvent = FIELD_RAISED_EVENT_WORLD_MAP_ZOOM;
     }
   } else {
     switch (assignmentKind) {
     case FIELD_SHORTCUT_PSYNERGY:
-      Field_StoreHalfword(&work->psynergy, requestId);
+      work->psynergy = requestId;
       break;
     case FIELD_SHORTCUT_ITEM:
-      Field_StoreHalfword(&work->item, requestId);
+      work->item = requestId;
       break;
     }
   }
@@ -141,10 +131,11 @@ s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
   s32 dz = (*firstCoordinate - *secondCoordinate) >> 16;
   s32 radius = radiusA + radiusB;
 
-  // dx and dz are already whole pixels (at most 32768), so these tests
-  // always pass and only the distance decides.
-  // XXX: likely meant as a quick reject of points over 64 pixels apart,
-  // because 0x400000 is 64 pixels in 16.16, the units before the shift.
+  // The bound is 64 pixels in 16.16, the units before the shift, but dx and
+  // dz are already whole pixels (at most 32768), so these tests always pass
+  // and only the distance decides. No two objects on a 2,048-pixel map are
+  // far enough apart for the squares to overflow, so nothing the player sees
+  // changes.
   if (!(dx > 0x400000) && !(dz > 0x400000) &&
       dx * dx + dy * dy + dz * dz < radius * radius)
     return 0;

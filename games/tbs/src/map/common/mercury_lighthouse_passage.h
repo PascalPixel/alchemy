@@ -33,8 +33,9 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 warp) {
   FieldScript_End();
 }
 
-// XXX: likely an early form of LeaveThroughPassage, because it plays the same
-// sound and steps the same way.
+// XXX (no evidence): whether this is an early form of
+// MercuryLighthouse_LeaveThroughPassage, which plays the same sound and steps
+// the same way; nothing calls it, so nothing shows what would have followed.
 /// Unused: the leader steps 8 pixels north with the passages' sound and
 /// vanishes, then is put at x 8 * column + 8, z 0, with no warp and no end to
 /// the script; nothing in either overlay calls it.

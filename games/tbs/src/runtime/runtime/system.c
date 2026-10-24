@@ -228,7 +228,11 @@ UNUSED void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
 
 /// Decodes the compressed code resource `index` to `destination` and resolves
 /// its long branches there, with a RAM copy of the ARM routine that does what
-/// Code_ResolveLongBranches does; the copy is allocated and freed again.
+/// Code_ResolveLongBranches does; the copy is allocated and freed again. In the
+/// packed stream each `bl` holds its target's offset from the start of the
+/// overlay, and the patch turns that into the offset from the instruction,
+/// which the processor expects; the packer, tools/ags-overlays, does the
+/// reverse.
 /// Called by Map_LoadOverlay for each map's overlay, and through the
 /// far-call table.
 void Overlay_Load(u32 index, void *destination) {

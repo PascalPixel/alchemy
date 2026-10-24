@@ -7,6 +7,10 @@
 #include "types.h"
 #include "version.h"
 
+/// The map and decode buffers, from here to Ram_BgTileBuffer, follow the
+/// overlay area at fixed addresses because code reaches across their
+/// boundaries by arithmetic: the map grid's cells fill 64 KB from
+/// Ram_MapGridCellBuffer, through the sprite slots and the decode buffer.
 #define Ram_MapGridCellBuffer                                                  \
   FIXED_ADDRESS((u8 *), 0x02010000, gMapGridCellBuffer)
 #define Ram_DecodeBuffer FIXED_ADDRESS((u8 *), 0x0201c000, gDecodeBuffer)
@@ -17,11 +21,18 @@
 #define Ram_EnemySpriteSlots                                                   \
   FIXED_ADDRESS((u8 *), 0x02018000, gActorSpriteSlots)
 
+/// The sound driver's mixer, SoundMainRAM, 932 bytes. m4aSoundInit copies
+/// SOUND_MIXER_CODE_SIZE (1 KB) there at once, so the 92 bytes after the mixer
+/// in the ROM land just after it.
 #define Ram_SoundMixer FIXED_ADDRESS((u8 *), 0x03007000, SoundMainRAM)
 
+/// The end of the IWRAM heap, which the allocators test against, and the
+/// bottom of the stacks.
 #define Ram_IwramHeapEnd                                                       \
   FIXED_ADDRESS((u8 *), 0x03007800, gCartridgeResetMarker)
 
+/// The stack top WaitFrames runs its frames from: the 512 bytes below it are
+/// what the frame loop, its tasks and the VBlank work always have.
 #define Ram_FrameWaitStackTop                                                  \
   FIXED_ADDRESS((u8 *), 0x03007a00, gFrameWaitStackTop)
 
@@ -31,8 +42,9 @@
 // The 16 bytes are space German alone reserves before gOamDepthLists
 // (system/iwram.s), so the test is on the language: French, Spanish and
 // Italian, which take German's other changes, lay IWRAM out as English does.
-// XXX: likely a German-only variable nothing reads, because no matched code
-// names an address in those 16 bytes; a reader of them would settle it.
+// Nothing in the German build reads or writes them: no literal in its main
+// image or overlays points into them, and no symbol names them. XXX (no
+// evidence): what they were reserved for.
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define Ram_BgScroll FIXED_ADDRESS((u8 *), 0x03001ae0, gBgScroll)
 #define Ram_VramCacheEntries                                                   \

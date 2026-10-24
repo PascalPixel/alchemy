@@ -55,16 +55,25 @@ enum MusicPlayerId {
 
 /// The five versions of the IWRAM mixer's last step Sound_LoadReverbCode
 /// copies into place, each carrying a different share of a frame's sound into
-/// the next: the song's reverb, as MusicPlayer2000 calls it. The sound
-/// README's "The mixer's code is chosen per song" says what each keeps.
+/// the next: the song's reverb, as MusicPlayer2000 calls it. Each is the last
+/// step of IwramSoundRenderFrame's loop, which reads back what the two hardware
+/// buffers held the time before, and works out what the mix buffer starts the
+/// next frame with.
 enum SoundReverbCode {
-  SOUND_REVERB_MONO,    ///< one value for both channels; the audio test only
-  SOUND_REVERB_CROSSED, ///< each channel's old samples crossed with the other's
-  SOUND_REVERB_NORMAL,  ///< most music and the Battle Arena
-  /// More of what has played carries over: MUS_TITLE, MUS_ENDING_LOGO and
-  /// MUS_ENDING.
+  /// One value for both channels, from the two buffers together; only the
+  /// audio test loads it.
+  SOUND_REVERB_MONO,
+  /// Each channel's old samples crossed with the other's; only the audio test
+  /// loads it.
+  SOUND_REVERB_CROSSED,
+  /// A quarter of the mix and an eighth of each buffer's old samples carry
+  /// over: most music and the Battle Arena.
+  SOUND_REVERB_NORMAL,
+  /// An eighth of the mix and a quarter of the old samples carry over:
+  /// MUS_TITLE, MUS_ENDING_LOGO and MUS_ENDING.
   SOUND_REVERB_LONG,
-  SOUND_REVERB_NONE ///< nothing carries over: a link battle
+  /// Nothing carries over, the mix buffer is cleared: a link battle.
+  SOUND_REVERB_NONE
 };
 
 s32 Sound_LoadReverbCode(s32 code);

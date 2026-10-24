@@ -157,9 +157,9 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
   }
 
   // A previously failed erase receives six more conditioning erases; one that
-  // was blank at once receives one. XXX: why a sector that already reads
-  // blank is erased again is not known; the SST chip's published erase
-  // procedure would say.
+  // was blank at once receives one. XXX (no evidence): why a sector that
+  // already reads blank is erased again; the reason lies in the SST chip's
+  // behaviour, which neither the ROM nor a render shows.
   rounds = 1;
   if (attempt != 0) {
     rounds = 6;

@@ -13,6 +13,12 @@
 @   recolor NN, maps...    Maps followed by a palette; reuse the preceding tiles.
 @   overlays ID...         Map overlays in ID order.
 @   unused N               N unused entries.
+@ A row's number is its place, so a row added or moved renumbers every row
+@ after it. Code naming a resource by its symbol follows, but some numbers
+@ travel bare: the map table (field/map_headers.s) names each map's overlay by
+@ number, objects.tsv numbers each overlay's rows, the layouts are counted on
+@ from ResourceId_Layout001 (MapGrid_LoadLayout), and the option menu's marker
+@ steps through eight frames from ResourceId_MenuCursorFrames.
 	.macro group kind:req, names:vararg
 	.irp n, \names
 	resource \n, \kind\()_\n

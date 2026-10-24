@@ -3,8 +3,8 @@
 @ caller continuation.
 @ C2: IwramSoundEndChannel to IwramSoundNormalizeChannels:
 @ Mixer blocks save r4/r9 without lr, use fp as a sample multiplier and
-@ switch instruction mode; normalize-channel code stores an instruction word
-@ through pc.
+@ switch instruction mode; normalize-channel code stores the clip mask
+@ through pc, into gSoundMixerClipped, the word linked right after it.
 .syntax unified
 	.arm
 	asr	r9, r9, #22

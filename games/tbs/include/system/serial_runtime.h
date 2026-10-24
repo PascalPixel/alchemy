@@ -60,8 +60,8 @@ enum SerialMode {
 enum LinkStatus {
   LINK_STATUS_HEARD_BOTH = 3,  ///< both consoles heard from this frame
   LINK_STATUS_CLOCKING = 0x80, ///< this console clocks the transfers
-  LINK_STATUS_PARENT =
-      0x1000, ///< isParent, SIOCNT's bit 6 at the last interrupt
+  /// The last transfer interrupt found SIOCNT's error bit (SIO_ERROR) set.
+  LINK_STATUS_ERROR = 0x1000,
   /// SIOCNT's multiplayer id is 2 or more.
   LINK_STATUS_EXTRA_CONSOLE = 0x2000
 };
@@ -76,13 +76,15 @@ struct SerialWork {
   u8 receivedMask; ///< the consoles heard from since the link began
   u8 currentMask;  ///< the consoles heard from this frame
   /// Set by the interrupt for each console and cleared each frame.
-  /// bits: 1 heard while isParent was set | 0 a packet completed
+  /// bits: 1 heard while transferError was set | 0 a packet completed
   u8 channelFlags[4];
   /// Nonzero lets a new packet restart timer 3.
   u8 transferEnabled;
-  /// SIOCNT's bit 6, copied by each transfer interrupt; nonzero adds 0x1000
-  /// to the link status.
-  u8 isParent;
+  /// SIOCNT's error bit (SIO_ERROR), which multiplayer mode sets when a
+  /// transfer fails, copied by each transfer interrupt; nonzero adds
+  /// LINK_STATUS_ERROR to the link status and refuses the packets heard
+  /// meanwhile.
+  u8 transferError;
   u8 reserved0a; ///< not named by TBS code
   /// The packet sequence number, counted up each frame once connected.
   u8 sequence;
@@ -173,9 +175,9 @@ extern u8 gLinkExchangeState;
  * Serial_WaitForStatusMask). */
 extern volatile u16 gLinkStatus;
 
-static inline s32 Serial_AddParentFlag(s32 status) {
-  if (gSerialWork.isParent != 0)
-    status |= LINK_STATUS_PARENT;
+static inline s32 Serial_AddErrorFlag(s32 status) {
+  if (gSerialWork.transferError != 0)
+    status |= LINK_STATUS_ERROR;
   return status;
 }
 

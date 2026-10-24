@@ -10,8 +10,12 @@
 
 /// SoundInfo.ident and MusicPlayerInfo.ident when free; its bytes spell `Smsh`
 /// in memory order. A call raises the word while it changes the driver or a
-/// music player, which turns away the mixer and other calls (the README's "The
-/// driver's ident").
+/// music player, which turns away the mixer and other calls: a library call
+/// that changes the driver checks the word is exactly ID_NUMBER, adds 1 while
+/// it works and puts ID_NUMBER back, so a call meeting a raised word is
+/// dropped, not delayed. m4aSoundVSyncOff adds 10 instead, so a suspended
+/// driver can be told from a busy one, and SoundInit holds it at 0 while it
+/// clears the driver's work.
 #define ID_NUMBER 0x68736D53
 
 #define SOUND_INFO_PTR (*(struct SoundInfo **)0x03007FF0)

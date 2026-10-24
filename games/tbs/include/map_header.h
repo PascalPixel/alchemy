@@ -47,6 +47,9 @@ STATIC_ASSERT(sizeof(struct MapWarpRegion) == 16);
 /// The entry table at the start of each map overlay: its initialize
 /// function and the functions returning its warp destinations, warps, object
 /// event templates, map events and warp regions, each behind a veneer word.
+/// The field reads each entry's veneer as the address word in its last four
+/// bytes, so member i of the six sits at 8 * i + 4; the field calls them as
+/// gOverlayArea.initialize(), gOverlayArea.events() and so on.
 struct MapEntries {
   u32 initializeVeneer;
   s32 (*initialize)(void);
@@ -76,7 +79,8 @@ STATIC_ASSERT(sizeof(struct FieldPosition) == 12);
 /// Every map's header, by map number (field/map_headers.s).
 extern const struct MapHeader gMapHeaders[];
 /// The running map's overlay, loaded into these 0x8000 bytes of EWRAM at
-/// each map change; its code opens with its entry table.
+/// each map change; its code opens with its 48-byte entry table. Every overlay
+/// is linked to run at this one fixed address (0x02008000).
 extern struct MapEntries gOverlayArea;
 
 #endif

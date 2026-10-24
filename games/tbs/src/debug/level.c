@@ -239,10 +239,10 @@ static void IncreaseItemAndLevel_SelectItem(void) {
   redraw = 1;
   window = Window_Create(0, 0, 30, 7, 2);
   details = Window_Create(0, 8, ITEM_DEBUG_DETAILS_WIDTH, 10, 2);
-  // Copy the existing sprite palette into the debug window palettes: sprite
-  // palette 0 into BG palette 14, then BG palette 15's colour 4 over BG
-  // palette 14's colour 14, as the battle background does for BG palette 5.
-  // XXX: which layer draws with palette 14 here would say why.
+  // Lend BG palette 14, the menus' highlight palette, to the item icons, as
+  // Palette_LoadIconsIntoHighlight does: sprite palette 0 into it, then BG
+  // palette 15's colour 4 over its colour 14. ItemMenu_DrawItemDetails draws
+  // the details window's element icons in palette 14.
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
           DMA_ENABLE << 16 | 0x10, REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(14, 14),
@@ -628,6 +628,14 @@ struct ObjectEventTemplate gIncreaseItemAndLevel_ObjectEventTemplates[] = {
 };
 // clang-format on
 
+/// Talking to each tester runs its tool. The ability browser has a talk row
+/// only in English and German (TBS_PATCH_1 without TBS_PATCH_3); French,
+/// Spanish and Italian keep its code and its object event. Force cast at the
+/// portrait browser runs a motion test in Japanese and shows the three
+/// character-set caption rows elsewhere; in every edition a second row on the
+/// same person, run before the cast (PSYNERGY_PHASE_BEFORE_CAST), sets the
+/// effect's child mode, so Force's shot leaves the portrait browser where it
+/// stands.
 struct MapEvent gIncreaseItemAndLevel_Events[] = {
     {MAP_EVENT_TALK, LOCALID_ITEM_BROWSER, CONDITION_ALWAYS,
      EVENT_SCRIPT(IncreaseItemAndLevel_SelectItem)},

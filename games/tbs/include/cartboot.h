@@ -6,6 +6,9 @@
 
 #include "types.h"
 
+/// The cartridge's first instruction. The soft reset in WaitFrames jumps
+/// here, and SerialTest_Run, a link cable test nothing reaches, sends the
+/// first 640 bytes from here.
 #define Cart_Restart FIXED_ADDRESS((u32), 0x08000000, Rom_Start)
 
 #endif

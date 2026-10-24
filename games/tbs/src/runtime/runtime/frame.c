@@ -377,9 +377,10 @@ void System_VBlankHandler(void) {
   u32 keys;
   void (*hook)(void);
 
-  // XXX: likely the display writes come first so that they land inside the
-  // vertical blank, and the mixer last because it is long and need only finish
-  // within the frame; the bytes don't say so.
+  // The display writes come first, while the blank lasts: OAM can be written
+  // only in a blank, and a palette or scroll changed while lines are drawn
+  // shows half changed. The mixer comes last: it prepares the samples the
+  // hardware plays during the next frame, so it need only finish before then.
   // Stop any HBlank DMA effect left running from the last frame
   {
     volatile u16 *dma0 = REG_DMA0;

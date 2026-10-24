@@ -4,7 +4,8 @@
    build names the edition with --defsym TBS_EDITION_<LANG>=1. An address is
    written once for the editions that share it, and the last address of each
    placement is that of the editions it does not name: English and Italian,
-   and Japanese with them at the first two. */
+   and Japanese with them at the first two. Most of German's bank starts fall
+   on 256-byte steps, the other editions' on 2 or 4 KB ones. */
 OUTPUT_ARCH(arm)
 ENTRY(System_Entry)
 INCLUDE "games/tbs/constants.ld"

@@ -62,10 +62,11 @@ extern s32 gBuildStamp[];
 /// Nonzero once SONG_FADE_OUT_BGM has started the music's fade; further fade
 /// songs are ignored until the next music clears it.
 extern u8 gBgmFadeRequested;
-/// Cleared by the audio test, SoundTest_Run (reached only
-/// through a sound far-call veneer), which restarts a 20-frame timer when it
-/// finds it set; no other code names it.
-extern s32 gSoundTestRestartTimer;
+/// Set by the resident mixer whenever it clips a sample: when a sum overflows,
+/// IwramSoundNormalizeChannels saturates the samples and stores the clip mask
+/// (0x80008000) here, through pc. Cleared by the audio test, SoundTest_Run,
+/// which restarts a 20-frame countdown when it finds it set.
+extern s32 gSoundMixerClipped;
 /// An EWRAM byte Sound_Initialize clears and nothing else
 /// names.
 extern u8 gSound_UnreadByte;

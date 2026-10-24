@@ -108,9 +108,11 @@ s32 Task_Add(TaskFunc callback, s32 order) {
   struct Task *task;
   s32 i;
 
-  // XXX: whether the game ever adds a task during a pass, which would shift
-  // the tasks after it by one; a probe here while Task_RunPass runs, across a
-  // playthrough, would settle it.
+  // Adding re-sorts the table, which would shift the tasks after the new one
+  // if it came during a pass; it never does. In a call graph of the English
+  // build, main image and overlays, no task reaches Task_Add, and neither does
+  // any function whose address is taken except main-thread entries (far-call
+  // entries, a map's entry table and event scripts, start-up).
   index = -1;
   task = gTasks;
   // DEAD: nothing uses the status read here; its load is in the ROM.

@@ -9,6 +9,8 @@
 
 /// The byte of gGameFlagBytes that holds `flag`: bits 3 to 11 of its number,
 /// isolated by shifting up and back down, which is how the game computes it.
+/// A number past 4,095 wraps onto a lower flag rather than reaching the memory
+/// after gGameFlagBytes.
 #define GAME_FLAG_BYTE(flag) (((u32)(flag) << 20) >> 23)
 
 #endif

@@ -58,7 +58,8 @@
 #include "enemy_ids.h"
 
 /// Keeps occupied slots in order and clears the unused inventory tail, for
-/// Inventory_Remove (inventory.c) and InventorySnapshot_Save (snapshot.c).
+/// Inventory_Remove (inventory.c) and InventorySnapshot_Save (snapshot.c). A
+/// slot is empty when it is 0.
 static inline void Inventory_CompactSlots(s16 *inventory) {
   s32 usedSlots = 0;
   s32 slot;

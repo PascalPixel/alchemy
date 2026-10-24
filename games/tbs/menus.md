@@ -19,13 +19,12 @@ hand are [sprites](glossary.md#sprite-and-oam) in front of everything.
 
 A window grows out of its centre when it opens and shrinks back when it
 closes. The game waits for it to reach full size before writing anything in
-it, so every box on screen, however many there are, opens the same way.
+it, so every box on screen, however many there are, opens the same way. There
+is room for a fixed number of windows at once, and a closing window keeps its
+place until it has gone.
 
-Each window is a slot in one block of memory, `struct WindowWork`, drawn into
-one tilemap that `BG0` shows. `Window_Create` takes a free slot, or returns
-`NULL` when all are taken; `Window_UpdateZooms`, the first step of the window
-system's once-a-[frame](glossary.md#frame) [task](glossary.md#task)
-`WindowSystem_Update`, grows and shrinks them.
+`Window_Create` opens a window and `Window_UpdateZooms` grows and shrinks
+them, once a [frame](glossary.md#frame).
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -44,14 +43,12 @@ before it is shown, and its blanks (a name, a number, an item) are filled in
 then. A text printer then types it into its window a few letters each frame,
 with the speaker's voice blip, and waits for a button at each page break.
 
-`Message_OpenWindow` does all of it for one message: `Message_Decode` unpacks
-it into a ring of letter codes, `Window_FitOnScreen` sizes the window to the
-text, `Window_Create` opens it and `TextPrinter_Add` starts typing. The text
-itself is in the PO catalogs under `games/tbs/text`, and the code names a
-message by its linker symbol (`MsgGameSaved`).
+`Message_OpenWindow` does all of it for one message. The text itself is in the
+PO catalogs under `games/tbs/text`, and the code names a message by its linker
+symbol (`MsgGameSaved`).
 
 [Windows](src/window/README.md#decoding-a-message) goes through decoding,
-[the ring](src/window/README.md#the-text-buffer) and
+[the text buffer](src/window/README.md#the-text-buffer) and
 [typing](src/window/README.md#typing).
 
 ## The field menu
@@ -61,17 +58,12 @@ message by its linker symbol (`MsgGameSaved`).
 Pressing A with nothing in front of the leader (or Select) opens a row of
 icons: Psynergy, Djinn, Item and Status, the Djinn icon only once the first
 Djinni has joined. Each opens a screen; backing out of it brings the icons
-back. While a screen is open the field holds still behind it.
+back. While a screen is open the field holds still behind it: its people stop,
+and so do the weather and the map's animations.
 
-`FieldMenu_Run` (in the window code) draws the row and calls the chosen
-screen through the menu [bank](glossary.md#bank)'s
-[far-call](glossary.md#far-call) table: `PsynergyMenu_Run`, `DjinnMenu_Run`,
-`ItemMenu_Run` or `SummaryScreen_Run`. Every screen keeps its state in one
-block of memory, the menu work (`gMenuWork`, heap slot `HEAP_SLOT_MENU`), and
-sets the object system's `suspended` field so the field's sprites stop;
-`Menu_SuspendFieldTasks` also pauses the map's tasks, the weather and the
-colour changes, in every edition for the Djinn and summary screens but only in
-later editions for the Item and Psynergy screens.
+`FieldMenu_Run` draws the row and calls the chosen screen through the menu
+[bank](glossary.md#bank). The screens take turns with one block of memory, the
+menu work, since only one runs at a time.
 
 [Menus](src/menu/README.md#the-screens) goes through each screen.
 
@@ -84,12 +76,10 @@ small watcher plays the cancel sound and raises a
 [game flag](glossary.md#game-flag); every loop of the screen checks that flag
 beside its own buttons and returns as if the player had backed out, so the
 loops unwind one after another without any of them knowing how deep the
-player was.
+player was. The Djinn screen checks for Start in its own choosers instead.
 
-The watcher is `Menu_CancelSoundTick`, added by `Menu_CancelSoundReset` before
-the Item, Psynergy and summary screens' loops; the flag is
-`FLAG_MENU_START_PRESSED`. The Djinn screen tests Start in its own choosers
-instead and returns `DJINN_RESULT_START`.
+The watcher is `Menu_CancelSoundTick`, and the flag
+`FLAG_MENU_START_PRESSED`.
 
 ### Psynergy and items used on the field
 
@@ -102,10 +92,8 @@ what its own [map events](glossary.md#map-event) do with it, so the screen
 writes down what was chosen and closes, and the map decides what Move does to
 that pillar.
 
-The Psynergy screen writes the choice into the event work's `psynergy`
-(`gFieldWork`), the Item screen into its `item`; `Map_Run` then calls
-`Field_UsePsynergy` or `Field_UseItem`. [Menus](src/menu/README.md#the-psynergy-screen)
-has the request's layout.
+The screen writes its choice into the field's event work (`gFieldWork`), and
+`Map_Run` hands it to `Field_UsePsynergy` or `Field_UseItem`.
 
 ## The pause menu and saving
 
@@ -116,10 +104,8 @@ one of three files in the cartridge's backup memory, Sleep puts the console to
 sleep until L and R are pressed together, and Change settings opens the option
 menu (window colour, message speed, speech and auto-sleep).
 
-`PauseMenu_Run` (`window/screens/debug.c`) runs it; `Save_ToChosenFile`
-(`window/screens/save.c`) asks for the file and writes it, and
-`OptionMenu_Run` runs the settings. [Windows](src/window/README.md#the-pause-menu)
-has each.
+`PauseMenu_Run` runs it; `Save_ToChosenFile` saves and `OptionMenu_Run` runs
+the settings. [Windows](src/window/README.md#the-pause-menu) has each.
 
 ## Shops
 
@@ -131,10 +117,9 @@ table lists, plus the rare items (artifacts) the party has seen in shops of
 its kind; a sanctum's priest revives, cures and lifts curses for a fee; an inn
 restores the members still standing for a price per guest.
 
-A map opens a shop with `Shop_Run`, passing its stock row and the keeper whose
-portrait the lines show; a sanctum with `Sanctum_Run` and an inn with
-`Inn_CheckIn`. The counters borrow the field menu's heap block as
-`struct ShopWork`.
+A map opens a shop with `Shop_Run`, a sanctum with `Sanctum_Run` and an inn
+with `Inn_CheckIn`. The counters borrow the field menu's memory, since the two
+are never open together.
 
 [Shops](src/shop/README.md#shops) has the prices,
 [the sanctum's services](src/shop/README.md#sanctums) and
@@ -145,18 +130,18 @@ portrait the lines show; a sanctum with `Sanctum_Run` and an inn with
 All windows share `BG0` so that the map keeps the other three backgrounds,
 however many windows are open. Unpacking a message once, ahead of typing it,
 puts the slow work in one place and leaves each frame's typing cheap. The
-field menu's screens and the counters take turns in one heap block because
-only one of them runs at a time. Field Psynergy is passed back as a request
-because it needs the field running, the leader facing something and the map's
-events, none of which exist while the menu runs.
+field menu's screens and the counters take turns in one block of memory
+because only one of them runs at a time. Field Psynergy is passed back as a
+request because it needs the field running, the leader facing something and
+the map's events, none of which exist while the menu runs.
 
 ## Limits
 
 - The screen is 30 by 20 tiles; a window narrower or shorter than 2 tiles, or
   wider or taller than 30, draws no frame.
 - Eight windows at once (twelve in Japanese), three text printers, 64 window
-  sprites and eight message arguments; a ninth argument is dropped.
-- The text ring holds 512 letter codes (256 in Japanese).
+  sprites and eight message blanks; a ninth blank is dropped.
+- The text buffer holds 512 letter codes (256 in Japanese).
 - The menu work is 2,672 bytes, with room for eight party members and 32
   listed entries; a member carries 15 items.
 - A shop row lists at most 24 items and 8 artifacts. Shop credit stops at

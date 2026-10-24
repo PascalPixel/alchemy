@@ -145,7 +145,7 @@ void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
 /// Recomputes a unit's stats from its base stats, equipment, set Djinn, class
 /// and battle stat levels, clamps each to its range and writes them to the
 /// unit. A change of maximum HP or PP keeps the unit's current HP and PP at
-/// the same fraction of it. Also sets the unit's curse curse bits and
+/// the same fraction of it. Also sets the unit's curse bits and
 /// equipment bonuses. Called after anything that changes those inputs:
 /// equipping, setting Djinn, levelling up, a class change, battle stat
 /// changes.

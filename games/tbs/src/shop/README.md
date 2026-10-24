@@ -23,42 +23,20 @@ and the items and their rare item counters in [Game rules](../game/README.md).
 A shop offers four things at its counter: Buy, Sell, Artifacts and Repair.
 Every shop in the game is one row of a stock table, which lists the ordinary
 items it always sells, the rare items it brings to market the first time it
-is visited, and whether it sells weapons, armor or items. The keeper's lines
-are the same set for every shop of a kind, so a town's script only names
-which row it is and whose face the lines show.
+is visited, and whether it sells weapons, armor or items. Bilibin's weapon
+shop, for one, sells the Long Sword, Broad Sword, Hunter's Sword, Battle Axe
+and Heavy Mace, and brings the Witch's Wand.
 
-`Shop_Run(stockRow, keeper)` runs a shop until the player leaves: after
-setting up its windows and the hand, it is one loop over the four actions
-(`shop/run.c`), each opening with the keeper's line for it. The stock rows are
-`sStockTable` in [`shop/artifacts.c`](shop/artifacts.c), with their columns
-named there; a row number out of range opens `SHOP_STOCK_ROW_EMPTY`, which
-sells nothing. Bilibin's weapon shop is row 7: the Long Sword, Broad Sword,
-Hunter's Sword, Battle Axe and Heavy Mace, and one artifact, the Witch's Wand.
+The keepers' lines are written once for each kind of shop, every set in the
+same order, so a town's script only names which row the shop is and whose face
+the lines show. The code always asks for the weapon shop's line, and the line
+is moved over to the armor, item or warriors' shop's set by the distance
+between the two sets' welcomes.
 
-The keepers' lines are written once for each shop type, each set in the same
-order, and the code names only the weapon shop's. `Shop_ShowKeeperMessage`
-moves a line into the shop's own set by the distance between the two sets'
-welcomes, and Xian's three rows (`SHOP_STOCK_ROW_XIAN_WEAPONS` to `_ITEMS`)
-add the warriors' distance on top:
-
-```c
-if (shopType == SHOP_TYPE_ARMOR)
-  resolvedMessage += MsgArmorShopWelcome - MsgWeaponShopWelcome;
-if (shopType == SHOP_TYPE_ITEMS)
-  resolvedMessage += MsgItemShopWelcome - MsgWeaponShopWelcome;
-if ((s8)shop->warriorShop != 0)
-  resolvedMessage += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
-```
-
-| Name | Value | Meaning |
-| --- | --- | --- |
-| `SHOP_STOCK_ITEMS`, `SHOP_STOCK_ITEM_COUNT` | 0, 24 | the ordinary items' columns |
-| `SHOP_STOCK_ARTIFACTS`, `SHOP_STOCK_ARTIFACT_COUNT` | 24, 8 | the artifacts' columns |
-| `SHOP_STOCK_TYPE` | 32 | the shop type's column |
-| `SHOP_STOCK_ROWS` | 35 | rows in the table |
-| `SHOP_TYPE_ITEMS`, `_WEAPONS`, `_ARMOR` | `EQUIPMENT_GROUP_NONE`, `_WEAPON`, `_ARMOR` | what the shop sells, as `Item_GetEquipmentGroup` sorts items: an item shop sells what is not equipment |
-| `SHOP_ACTION_BUY`, `_SELL`, `_ARTIFACTS`, `_REPAIR` | 0 to 3 | the counter's four actions |
-| `SHOP_STOCK_PAGE_ITEMS` | 7 | items on a page of the Buy list |
+`Shop_Run` runs a shop until the player leaves: one loop over the four
+actions, each in its own file under `shop/`. The stock table is `sStockTable`
+in [`shop/artifacts.c`](shop/artifacts.c), with its columns named there, and
+`Shop_ShowKeeperMessage` finds each line.
 
 ### Buying
 
@@ -67,10 +45,9 @@ if ((s8)shop->warriorShop != 0)
 Buying takes the price off the party's coins and asks who carries the item;
 at a weapon or armor shop the hand over each member shows what the item would
 do to their stats, or says `Can't equip`. A stackable item such as a Herb
-asks how many.
+asks how many. The list shows seven items a page.
 
-`Shop_SelectBuy` lists the row's items (`ShopStock_CopyItems`), seven to a
-page, and charges each item's price, one at a time.
+`Shop_SelectBuy` runs it.
 
 ### Game Tickets
 
@@ -79,11 +56,11 @@ page, and charges each item's price, one at a time.
 Every coin spent buying also builds a shop credit the player never sees. Once
 it reaches the next ticket's cost, the keeper hands over a Game Ticket, which
 pays for a spin of Tolbi's Lucky Wheels, and the cost comes off the credit,
-never off the coins. Each ticket costs more than the last, five at a time.
+never off the coins. Each ticket costs more than the last, five at a time, and
+a purchase gives at most one.
 
-After each purchase `Shop_BuySpecialItem` compares `gSaveBlock.shopCredit`
-with `sGameTicketCreditCosts`, indexed by the tickets already given
-(`gSaveBlock.shopGifts`), and gives at most one ticket.
+After each purchase `Shop_BuySpecialItem` compares the credit with
+`sGameTicketCreditCosts`.
 
 | Tickets | Credit each |
 | --- | --- |
@@ -100,10 +77,10 @@ with `sGameTicketCreditCosts`, indexed by the tickets already given
 
 A shop buys an item back for three quarters of its price, half for a broken
 one, and nothing for one the story needs; a Herb that costs 10 sells for 7.
+It will not take a cursed item that is being worn. A rare item sold goes back
+on sale ([Artifacts](#artifacts)).
 
-`Shop_SellItem` refuses an item the shop does not buy and one that is
-equipped and cursed, and puts each sold item through `Inventory_Discard`,
-which puts a rare item back on sale ([Artifacts](#artifacts)).
+`Shop_SellItem` runs it.
 
 ### Repairing
 
@@ -114,16 +91,13 @@ Healing Ring, can be repaired, for a quarter of its price. The smith takes it
 away for three hammer blows, hands it back mended and offers to equip it. Any
 other item gets `Sorry, but we don't handle` it.
 
-`Shop_RepairItem` (`shop/repair.c`) refuses an item whose `useType` is not
-`ITEM_USE_MAY_BREAK`, one that is not broken, and one that is equipped and
-cannot come off; `Shop_RepairPrice` sets the price. While the smith works the
-item's slot is left empty without closing the gap.
+`Shop_RepairItem` (`shop/repair.c`) runs it.
 
 | Item | Sells for | Repair costs |
 | --- | --- | --- |
 | ordinary | three quarters of its price | |
 | broken | half its price | a quarter of its price |
-| indispensable | nothing | |
+| one the story needs | nothing | |
 
 ### Artifacts
 
@@ -136,20 +110,14 @@ once; buying one takes it off, and selling or dropping one puts it back. So a
 rare item first found in one town is sold by every shop of its kind
 afterwards, and one the party gives up comes back on sale.
 
-On a shop's first visit `ShopStock_AddArtifacts` adds one to the counter
-(`Item_AdjustCounter`) of each artifact in its row and sets the
-[game flag](../../glossary.md#game-flag)
-`FLAG_SHOP_ARTIFACTS_STOCKED + stockRow`, so a revisited shop adds nothing.
-The list shows every item of the shop's type whose counter is above zero, and
-the quantity the player can buy stops at the count. When two shops' rows list
-the same item, each first visit adds one, so it can be bought twice. Vault's
-weapon shop is row 4, whose only artifact is the Magic Rod; the party reaches
-Vault first, so Bilibin's weapon shop lists both unless the Magic Rod was
-bought in Vault.
+Vault's weapon shop brings the Magic Rod. The party reaches Vault first, so
+Bilibin's weapon shop lists the Magic Rod beside its own Witch's Wand unless
+it was bought in Vault. When two shops' rows list the same item, each first
+visit adds one, so it can be bought twice.
 
-| Name | Value | Meaning |
-| --- | --- | --- |
-| `FLAG_SHOP_ARTIFACTS_STOCKED` | 1,024 | the first of 35 game flags, one a stock row, set once a shop has added its artifacts |
+`ShopStock_AddArtifacts` counts a shop's rare items on its first visit, and a
+[game flag](../../glossary.md#game-flag) for each row,
+`FLAG_SHOP_ARTIFACTS_STOCKED` plus the row, remembers that it has.
 
 ## Sanctums
 
@@ -158,23 +126,18 @@ bought in Vault.
 A sanctum's priest serves one member at a time. The hand can point at anyone,
 but a member who doesn't need the service is refused with a line, and the
 choice comes round again while anyone is left who does. Reviving and lifting a
-curse cost more for a higher-level member.
+curse cost more for a higher-level member. Lifting a curse takes off every
+cursed item the member wears.
 
-`Sanctum_Run` (`shop/sanctum.c`) runs it. `Sanctum_NeedsService` tests the
-member and `Sanctum_ServicePrice` sets the fee; `BattleUnit_ResetStateByMode`
-applies the service: full HP for a revive, poison or the haunting cleared, or
-every cursed item taken off, after which `Unit_Calculate` rebuilds the curse
-bits (`Unit.curse`, `enum CurseFlag`) from what is still equipped. Since those
-bits are set only for a cursed item worn, and nothing sets `CURSE_KEEP_BOUND`,
-a member the sanctum accepts for lifting a curse always has a cursed item to
-take off.
+`Sanctum_Run` (`shop/sanctum.c`) runs it; `Sanctum_NeedsService` decides who
+needs what and `Sanctum_ServicePrice` sets the fee.
 
-| Service | Value | For a member who | Fee |
-| --- | --- | --- | --- |
-| `SANCTUM_SERVICE_REVIVE` | 0 | is down (HP 0) | 20 coins a level |
-| `SANCTUM_SERVICE_CURE_POISON` | 1 | is poisoned or deadly poisoned | 10 coins |
-| `SANCTUM_SERVICE_REPEL_EVIL` | 2 | is haunted | 50 coins |
-| `SANCTUM_SERVICE_REMOVE_CURSE` | 3 | wears a cursed item | 10 coins a level |
+| Service | For a member who | Fee |
+| --- | --- | --- |
+| Revive | is down (HP 0) | 20 coins a level |
+| Cure poison | is poisoned or deadly poisoned | 10 coins |
+| Repel evil | is haunted | 50 coins |
+| Remove curse | wears a cursed item | 10 coins a level |
 
 ## Inns
 
@@ -182,27 +145,11 @@ take off.
 
 An inn charges for each member still standing and restores their HP and PP
 overnight. A member who is down stays down until a sanctum revives them, and
-is not charged. Each town's inn has its own price a guest.
+is not charged. Each town's inn has its own price a guest, from 2 coins in
+Vale to 25 in Lalivero.
 
-`Inn_CheckIn(innId, keeper)` charges `sInnPricesPerGuest[innId]` for each
-standing member (`Inn_RoomPrice`); on Yes, with the coins, `Inn_PlaySleep`
-fades to black with the inn's music and back with their HP and PP restored.
-Each town's map script names its own inn's row:
-
-| Row | Inn | Coins a guest |
-| --- | --- | --- |
-| 0 | Vale | 2 |
-| 1 | Vault | 4 |
-| 2 | Bilibin | 7 |
-| 3 | Kolima | 8 |
-| 4 | Imil | 8 |
-| 5 | Xian | 10 |
-| 6 | Altin | 12 |
-| 7 | Kalay | 15 |
-| 8 | Lunpa | 20 |
-| 9 | Tolbi (unused) | 0 |
-| 10 | Suhalla | 18 |
-| 11 | Lalivero | 25 |
+`Inn_CheckIn` runs it, with each town's map naming its row of
+`sInnPricesPerGuest`, and `Inn_PlaySleep` plays the night.
 
 ## The item picker
 
@@ -213,35 +160,28 @@ which member's item to drop to make room. The dropped item leaves the bag,
 the items after it move up and the new one takes the last place. An item the
 story needs can't be dropped, nor can one that can't be taken off while worn.
 
-`ItemPicker_Run` runs it. `PartyInventory_GiveItem`, the script command that
-gives an item, opens it when every bag is full, as do the Elemental Star room
-when it gives the four Mythril Bags and the debug test. `Shop_SelectUse`
-refuses an indispensable item with a message and an equipped cursed one with
-only the cancel sound. The silence is a bug in
-[the original](../../glossary.md#the-original): its test reads the selection
-result where it means the discard error. The macro `SHOP_CANNOT_REMOVE_STATUS`
-keeps that test, and built with
-[`BUGFIX`](../../glossary.md#bug-bugfix-and-ubfix) it tests the error instead,
-so the message shows.
+The second refusal should say so, but in
+[the original](../../glossary.md#the-original) it only plays the cancel sound:
+its test reads the wrong value, a
+[bug](../../glossary.md#bug-bugfix-and-ubfix) the code keeps, with the fixed
+form behind `BUGFIX`.
+
+`ItemPicker_Run` runs it.
 
 ## The work block
 
-A counter borrows the memory of the field menu's screens while it runs.
-
-Every counter and the item picker take the menu's
-[heap](../../glossary.md#heap-and-pools) block, under the
-[heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_MENU`, as
-`struct ShopWork` ([`include/shop.h`](../../include/shop.h)), with
-`Shop_InitializeWork`, and give it back with `Shop_ReleaseWork`.
+A counter borrows the memory of the field menu's screens while it runs, since
+the two are never open at once. Every counter and the item picker read it as
+`struct ShopWork` ([`include/shop.h`](../../include/shop.h));
 [Menus](../menu/README.md#the-menu-work) describes the block.
 
 ## Design
 
 Artifacts are counted per item rather than stocked per shop, so the same
-counter serves every shop and every way an item leaves the party
-(`Inventory_Discard`); a flag per stock row is all that stops a revisited
-shop from adding its artifacts again. Keeper lines are found by distance from
-the weapon shop's version, so one call site serves every shop type.
+counter serves every shop and every way an item leaves the party; a flag per
+stock row is all that stops a revisited shop from adding its artifacts again.
+Keeper lines are found by distance from the weapon shop's version, so one call
+serves every kind of shop.
 
 Map overlays import these functions by name (`games/tbs/src/map/import/`),
 and the far-call table `system/far_call/SHOP.S` names them with `Far` added,
@@ -250,24 +190,11 @@ so renaming one changes those folders too.
 ### Editions
 
 The counters' layout differs by [edition](../../glossary.md#editions) where
-longer words need room. Each value is a named macro chosen in one `#if` block
-in `shop_internal.h`: the Yes/No menu is one column further left in German,
-French and Spanish move the price and the word after it, and in the
-international editions the coins window is a tile wider and the item
-description is drawn as tiles rather than into a text canvas. Window values
-are in tiles, text positions in pixels.
-
-| Name | Japanese | English | German | French | Spanish | Italian |
-| --- | --- | --- | --- | --- | --- | --- |
-| `SHOP_CONFIRM_MENU_X` | 7 | 7 | 6 | 7 | 7 | 7 |
-| `SHOP_PRICE_NUMBER_X` | `0x20` | `0x20` | `0x20` | `0x18` | `0x20` | `0x20` |
-| `SHOP_PRICE_LABEL_X` | `0x48` | `0x48` | `0x48` | `0x40` | `0x50` | `0x48` |
-| `SHOP_MONEY_WINDOW_WIDTH` | 11 | 12 | 12 | 12 | 12 | 12 |
-| `ITEM_PICKER_WINDOW_X`, `_WIDTH` | 16, 14 | 14, 16 | 14, 16 | 14, 16 | 14, 16 | 14, 16 |
-| `SANCTUM_PRICE_WINDOW_X`, `_WIDTH` | 1, 23 | 1, 23 | 0, 30 | 1, 25 | 1, 23 | 1, 23 |
-| `SHOP_QUANTITY_CURSOR_X` | 128 | 128 | 120 | 120 | 128 | 128 |
-| `SHOP_ITEM_NOTE_X` | 8 | 0 | 0 | 0 | 0 | 0 |
-| `SHOP_EMPTY_GRID_X`, `_Y` | 8, 20 | 8, 20 | 8, 20 | 8, 20 | 8, 20 | 20, 12 |
+longer words need room: in German the Yes and No menu sits a column further
+left, French and Spanish move the price and the word after it, and in the
+international editions the coins window is a tile wider and an item's
+description is drawn as window tiles. Each value is a named macro chosen in
+one `#if` block in `shop_internal.h`.
 
 ## How it fits with the rest of the game
 
@@ -275,25 +202,18 @@ Maps open the counters through their
 [import tables](../../glossary.md#entry-table-and-import-table), and the rest
 of the program through the shop [bank](../../glossary.md#bank)'s
 [far-call](../../glossary.md#far-call) table. Some of the shop's pieces serve
-other screens:
-
-- `MenuCursor_Advance` also moves the cursors of the option menu, the naming
-  screen, the file menu and the choice of who joins the party.
-- The Item screen draws its quantity bar with `QuantityBar_Fill`.
-- `Shop_SaveAndTintFieldPalette`, which saves the field's colours and fades
-  them over 16 [frames](../../glossary.md#frame), also runs before a
-  [Djinni](../../glossary.md#djinn) joins the party and before the wall in
-  Altmiller Cave bursts.
+other screens: its hand cursor also moves in the option menu, the naming
+screen and the file menu; the Item screen draws its quantity bar with the
+shop's; and the colour fade a sanctum plays first also runs before a
+[Djinni](../../glossary.md#djinn) joins the party and before the wall in
+Altmiller Cave bursts.
 
 ## Limits
 
 - A stock row lists at most 24 items and 8 artifacts, and there are 35 rows.
-- A shop adds its artifacts once, remembered by
-  `FLAG_SHOP_ARTIFACTS_STOCKED + stockRow`.
-- Shop credit stops at 999,999 and the Game Ticket count at 28
-  (`Party_AdjustShopCredit`, `Party_AdjustShopGifts`), so every ticket after
-  the 28th costs entry 28 of `sGameTicketCreditCosts`, and entry 29 is never
-  read.
+- A shop adds its artifacts once.
+- Shop credit stops at 999,999 and the Game Ticket count at 28, so every
+  ticket after the 28th costs the same as the 28th.
 - Inn row 9, Tolbi's, has a price of 0 and no script opens it: Tolbi's inns are
   always full.
 

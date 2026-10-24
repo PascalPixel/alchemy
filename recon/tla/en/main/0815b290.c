@@ -30,6 +30,10 @@
 // but the mask becomes 254: 9) or s8 (4); every order of the four first
 // stores and of the four stores after the allocation; alchemy-devtools permute 11
 // minutes, two seeds: nothing below 4.
+// 2026-10-24: the flag byte read into a u8 held by an asm that clobbers r1
+// (31: the shared zero in r1 is rebuilt, and the mask becomes 254); the
+// height copied into a u8 held by an asm that clobbers r3 (48: height is no
+// longer spilled).
 
 #include "types.h"
 #include "animspr.h"

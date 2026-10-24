@@ -4,6 +4,9 @@
 // temporary for the first queued write's address, found by a greedy search over
 // one-pass blocks, barriers and block temporaries, fixes two of the five
 // (differ 14 without it).
+// 2026-10-24: an empty asm on work that clobbers r2 (delta set after it) puts
+// the work load before 0x3001 is started, but work and delta swap r4 and r5
+// (44); with work pinned to r5 as well, the allocation moves (135).
 #include "types.h"
 #include "io_reg.h"
 #include "dma.h"

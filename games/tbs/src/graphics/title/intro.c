@@ -1064,8 +1064,12 @@ UNUSED void TitlePaletteFade_SetBackdrop(s32 color) {
     fade->palette[0] = color;
 }
 
-/// Starts fading the shown colours to the target over the requested frames.
-/// Called by Title_ShowIntro for the opening fade from black.
+/// Starts fading the shown colours to the target over the requested frames:
+/// each of the 1,536 components (three for each of the 512 colours) steps by
+/// its distance divided by the frames, the remainder kept in the ten bits below
+/// it, so every colour arrives together. Called by Title_ShowIntro for its
+/// 60-frame fade from RGB(2, 0, 0), a dark red, to the picture's colours, the
+/// fade's only use in this game.
 void TitlePaletteFade_Start(s32 frames) {
   struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeWork;
 

@@ -628,6 +628,14 @@ struct ObjectEventTemplate gIncreaseItemAndLevel_ObjectEventTemplates[] = {
 };
 // clang-format on
 
+/// Talking to each tester runs its tool. The ability browser has a talk row
+/// only in English and German (TBS_PATCH_1 without TBS_PATCH_3); French,
+/// Spanish and Italian keep its code and its object event. Force cast at the
+/// portrait browser runs a motion test in Japanese and shows the three
+/// character-set caption rows elsewhere; in every edition a second row on the
+/// same person, run before the cast (PSYNERGY_PHASE_BEFORE_CAST), sets the
+/// effect's child mode, so Force's shot leaves the portrait browser where it
+/// stands.
 struct MapEvent gIncreaseItemAndLevel_Events[] = {
     {MAP_EVENT_TALK, LOCALID_ITEM_BROWSER, CONDITION_ALWAYS,
      EVENT_SCRIPT(IncreaseItemAndLevel_SelectItem)},

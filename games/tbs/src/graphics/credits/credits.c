@@ -1016,10 +1016,13 @@ void Credits_DrawEnteringLine(void) {
 
 /// Allocates the credits sprites, builds the blank border and text rows,
 /// clears the tile ring and adds the scrolling and line-rendering tasks. Called
-/// by Credits_Run; the credits keep their state in borrowed flash-library cells
-/// (see the graphics README). The 1 KB sprite buffer comes from the EWRAM bump
-/// pool and is never freed; each line buffer is taken from the pool after it
-/// and given back.
+/// by Credits_Run; the credits keep their state in four borrowed
+/// flash-library cells: the sprite buffer's pointer in gFlashNumRemainingBytes
+/// (SCROLL_OBJECTS), the scroll in gFlash_Handler3, the last line drawn in
+/// gFlash (CREDITS_LAST_LINE_POSITION) and the end-of-text latch in
+/// gFlash_Handler0 (CREDITS_END_OF_TEXT). The 1 KB sprite buffer comes from the
+/// EWRAM bump pool and is never freed; each line buffer is taken from the pool
+/// after it and given back.
 void Credits_InitTextSprites(void) {
   // Sharing the three border-strip loops through an ordinary inline helper
   // changes registers at the same 0x178-byte native English extent.

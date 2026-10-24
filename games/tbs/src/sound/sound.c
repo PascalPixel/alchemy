@@ -98,8 +98,7 @@ void Sound_PlaySong(s32 id) {
     // Music: the keep control, or the music last chosen (gCurrentBgm),
     // changes nothing, so a map may name its music on every entry; a song
     // that has ended is not started again. The three songs below take the long
-    // reverb code, the rest the normal one (the README's "The mixer's code is
-    // chosen per song").
+    // reverb code, the rest the normal one (enum SoundReverbCode).
     if (id == SONG_KEEP_BGM)
       return;
     if (id == gCurrentBgm)
@@ -122,7 +121,10 @@ void Sound_PlaySong(s32 id) {
 }
 
 /// Restores BGM after a fanfare and steps its volume and combined tempo/pitch
-/// ramps once per VBlank, clamping each ramp when it crosses its target.
+/// ramps once per VBlank, clamping each ramp when it crosses its target. After
+/// a fanfare starts it counts gBgmRestoreDelay down, waits until the fanfare's
+/// player has no track playing, and sets the music's target volume back to
+/// BGM_UNITY_SCALE, so the code that played the fanfare does nothing more.
 /// Called by System_VBlankHandler through the sound far-call table; it also
 /// runs the PCM buffer's DMA restart count (m4aSoundVSync).
 void Sound_UpdateBgmRamps(void) {

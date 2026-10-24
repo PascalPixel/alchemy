@@ -13,7 +13,10 @@
 
 #include "types.h"
 
-// Fixed addresses of IWRAM-resident routines.
+// Fixed addresses of IWRAM-resident routines. System_InstallIwramAndIrqs
+// copies the resident runtime to 0x03000000; C calls its routines at these
+// numbers, and ARM code running from RAM reaches them as offsets from
+// IwramIrqMain (IWRAM_ENTRY), so the runtime cannot move.
 #define Iwram_RatioMulQ14Entry                                                 \
   FIXED_ADDRESS((s32 (*)(s32 divisor, s32 value)), 0x0300013c, IwramRatioMulQ14)
 #define Iwram_ClearWordsEntry                                                  \

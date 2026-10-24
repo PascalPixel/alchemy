@@ -656,8 +656,8 @@ control gives it priority 1. The picture of a sprite's anims is therefore of
 a battle unit, whose sprite is the same `struct Sprite`
 composed by the same `Sprite_ComposeFrame`.
 
-
-- XXX: what `FieldWork`'s `unk1da`, `unk1dc` and `unk1de` hold;
-  `FieldScript_Start` sets them to 0xffff, -1 and -1 at each script and no
-  C reads them, so a read in a map overlay's assembly or a watch on them over
-  a script would settle it.
+Three halfwords of the map work between the next message and the camera
+object, `unusedAfterMessage` and the pair `unusedBeforeCamera`, are reset by
+`FieldScript_Start` at every script (to `0xffff`, -1 and -1) and read by
+nothing: every map's code is C, and none of it reaches the map work by offset
+there.

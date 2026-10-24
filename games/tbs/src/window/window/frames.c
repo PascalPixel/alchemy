@@ -267,7 +267,7 @@ void Text_ResetStyle(void) {
   state->lineSpacing = 10;
   state->letterSpacing = 9;
   state->outline = TEXT_STYLE_PLAIN;
-  state->unknownAfterLineSpacing = 1;
+  state->unusedAfterLineSpacing = 1;
 }
 
 /// Reserves the glyph sprites' tiles, resets the text style, starts the ring

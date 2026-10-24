@@ -594,7 +594,7 @@ void SaveBlock_InitializeDefaults(void) {
   gSaveBlock.coins = 0;
   gSaveBlock.messageSpeed = 1;
   gSaveBlock.speech = 1;
-  gSaveBlock.unk20b = 1;
+  gSaveBlock.unusedAfterSpeech = 1;
   gSaveBlock.windowColor[0] = 0;
   gSaveBlock.windowColor[1] = 8;
   gSaveBlock.buildStamp = 0;

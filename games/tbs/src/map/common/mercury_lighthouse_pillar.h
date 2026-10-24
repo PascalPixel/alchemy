@@ -150,8 +150,8 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
   struct Sprite *sprite;
 
   point = gFieldWork->objectEvents[gSaveBlock.leaderLocalId];
-  spark =
-      ObjectEvent_Create(26, point->x.fixed, point->y.fixed, point->z.fixed);
+  spark = ObjectEvent_Create(SPRITE_GOLDEN_RINGS, point->x.fixed,
+                             point->y.fixed, point->z.fixed);
   if (spark != NULL) {
     spark->groundHeight = point->groundHeight;
     sprite = spark->sprite;
@@ -165,8 +165,8 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
       sprite->image.priority = 1;
     }
   }
-  spark =
-      ObjectEvent_Create(26, point->x.fixed, point->y.fixed, point->z.fixed);
+  spark = ObjectEvent_Create(SPRITE_GOLDEN_RINGS, point->x.fixed,
+                             point->y.fixed, point->z.fixed);
   if (spark != NULL) {
     spark->groundHeight = point->groundHeight;
     sprite = spark->sprite;
@@ -204,8 +204,9 @@ void MercuryLighthouse_ChargeLights(void) {
   FieldScript_Start();
   pillar = state->pillar;
   if (pillar == 0) {
-    objectEvent = ObjectEvent_Create(
-        26, leader->x.fixed, leader->y.fixed + 0x180000, leader->z.fixed);
+    objectEvent =
+        ObjectEvent_Create(SPRITE_GOLDEN_RINGS, leader->x.fixed,
+                           leader->y.fixed + 0x180000, leader->z.fixed);
     if (objectEvent != 0) {
       struct Sprite *sprite = objectEvent->sprite;
 
@@ -327,8 +328,8 @@ void MercuryLighthouse_HopAcrossPool(void) {
   }
   if (to->behavior == state->poolBehavior && state->levels != 0) {
     source = state->pillar;
-    obj = ObjectEvent_Create(26, source->x.fixed, source->y.fixed,
-                             source->z.fixed);
+    obj = ObjectEvent_Create(SPRITE_GOLDEN_RINGS, source->x.fixed,
+                             source->y.fixed, source->z.fixed);
     if (obj != NULL) {
       sprite = obj->sprite;
       obj->groundHeight = source->groundHeight;

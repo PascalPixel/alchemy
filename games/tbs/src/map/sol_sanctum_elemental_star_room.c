@@ -261,8 +261,8 @@ static void EventScript_BagVenusStar(void) {
   MapGrid_CopyCellsTo(0, 40, 43, 66, 3, 3);
   FieldScript_WaitFrames(20);
   // Present the collected star, then return to Kraden's explanation.
-  member = SolSanctumElementalStarRoom_PresentStar(220, PIXELS(712), PIXELS(16),
-                                                   PIXELS(464));
+  member = SolSanctumElementalStarRoom_PresentStar(ITEM_VENUS_STAR, PIXELS(712),
+                                                   PIXELS(16), PIXELS(464));
   FieldScript_WaitFrames(40);
   MessageArgument_Push(member, 1);
   message = MsgSolSanctumVenusStarBagged;
@@ -367,8 +367,8 @@ static void EventScript_BagMercuryStar(void) {
   MapGrid_CopyCellsTo(0, 40, 43, 46, 3, 3);
   FieldScript_WaitFrames(20);
   // Present the collected star, then return to Kraden's explanation.
-  member = SolSanctumElementalStarRoom_PresentStar(221, PIXELS(712), PIXELS(16),
-                                                   PIXELS(144));
+  member = SolSanctumElementalStarRoom_PresentStar(
+      ITEM_MERCURY_STAR, PIXELS(712), PIXELS(16), PIXELS(144));
   FieldScript_WaitFrames(40);
   MessageArgument_Push(member, 1);
   message = MsgSolSanctumPutMercuryStar;
@@ -485,8 +485,8 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   FieldScript_WaitFrames(20);
   MapGrid_CopyCellsTo(0, 40, 13, 66, 3, 3);
   FieldScript_WaitFrames(20);
-  member = SolSanctumElementalStarRoom_PresentStar(223, PIXELS(232), PIXELS(16),
-                                                   PIXELS(464));
+  member = SolSanctumElementalStarRoom_PresentStar(
+      ITEM_JUPITER_STAR, PIXELS(232), PIXELS(16), PIXELS(464));
   FieldScript_WaitFrames(40);
   MessageArgument_Push(member, 1);
   FieldMessage_Show(MsgSolSanctumJupiterStarBagged, 1);
@@ -1197,9 +1197,9 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
-  PartyInventory_Discard(220);
-  PartyInventory_Discard(221);
-  PartyInventory_Discard(223);
+  PartyInventory_Discard(ITEM_VENUS_STAR);
+  PartyInventory_Discard(ITEM_MERCURY_STAR);
+  PartyInventory_Discard(ITEM_JUPITER_STAR);
 }
 
 /// Stands Saturos, Menardi, Felix and Alex round Jenna and Kraden after the
@@ -1281,8 +1281,8 @@ static void EventScript_TakeMarsStar(void) {
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_CopyCellsTo(0, 40, 13, 46, 3, 3);
   FieldScript_WaitFrames(20);
-  member = SolSanctumElementalStarRoom_PresentStar(222, PIXELS(232), PIXELS(16),
-                                                   PIXELS(144));
+  member = SolSanctumElementalStarRoom_PresentStar(ITEM_MARS_STAR, PIXELS(232),
+                                                   PIXELS(16), PIXELS(144));
   FieldScript_WaitFrames(40);
   MessageArgument_Push(member, 1);
   FieldMessage_Show(MsgSolSanctumMarsStarBagged, 1);

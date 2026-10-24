@@ -1297,8 +1297,8 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
 #endif
           MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
           ObjectEvent_RefreshSelectorById(LOCALID_SLIDING_STATUE);
-          ObjectEvent_PrepareObject(x, 0, PIXELS(786), 223);
-          ObjectEvent_PrepareObject(x, 0, PIXELS(818), 223);
+          ObjectEvent_PrepareObject(x, 0, PIXELS(786), SPRITE_CRATE);
+          ObjectEvent_PrepareObject(x, 0, PIXELS(818), SPRITE_CRATE);
           ObjectMotion_ResetAndSetPosition(LOCALID_SLIDING_STATUE, 840, 744);
           FieldScript_WaitFrames(5);
           Sound_PlaySong(SE_STONE_GRIND);
@@ -1686,7 +1686,8 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     ObjectEvent_WalkTo(LOCALID_MIA, 840, 600);
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
     MapGrid_CopyCellAttributes(116, 36, 3, 4, 52, 36);
-    ObjectEvent_PrepareObject(PIXELS(840), PIXELS(56), PIXELS(608), 223);
+    ObjectEvent_PrepareObject(PIXELS(840), PIXELS(56), PIXELS(608),
+                              SPRITE_CRATE);
     ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
     ObjectEvent_WalkToAndWait(LOCALID_MIA, 840, 560);
     Import_ObjectEventSetPosition(LOCALID_MIA, 0, 0);
@@ -2117,7 +2118,7 @@ static void MercuryLighthouse_EnterRisingPassage(void) {
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
     ObjectEvent_PrepareObject(
         ObjectEvent_GetById(LOCALID_PARTY_LEADER)->x.fixed, 0, PIXELS(702),
-        223);
+        SPRITE_CRATE);
     MapGrid_CopyCellsTo(92, 46, 92, 40, 3, 2);
     ObjectEvent_GetById(LOCALID_PARTY_LEADER)->gravity = 0x8000;
     ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 2);

@@ -372,8 +372,9 @@ s32 TolbiSpring_Initialize(void) {
 
   if (gSaveBlock.mapId == (s32)&MapId_TolbiSpring) {
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    Io_Write16(0x3f42, &REG_BLDCNT);
-    Io_Write16(0x80c, &REG_BLDALPHA);
+    Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
+               &REG_BLDCNT);
+    Io_Write16(BLEND_ALPHA(12, 8), &REG_BLDALPHA);
     Import_ObjectEventSetAnimation(LOCALID_TOLBI_SPRING_EAST_SIGN_GRASS, 2);
     Import_ObjectEventSetAnimation(LOCALID_TOLBI_SPRING_WEST_SIGN_GRASS, 2);
     ObjectEvent_GetById(LOCALID_TOLBI_SPRING_EAST_SIGN_GRASS)->scaleX =
@@ -388,8 +389,9 @@ s32 TolbiSpring_Initialize(void) {
     if (gSaveBlock.warpDest == TOLBI_SPRING_FROM_TOLBI) {
       TolbiSpring_InitializeTossSimulation();
       if (GameFlag_Get(FLAG_TOLBI_SPRING_RISEN)) {
-        Io_SetBlendControl(0x3f42);
-        Io_SetBlendAlpha(0x1000);
+        Io_SetBlendControl(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND |
+                           BLDCNT_TGT2_ALL);
+        Io_SetBlendAlpha(BLEND_ALPHA(0, 16));
       }
     }
   } else {
@@ -554,7 +556,8 @@ static void TolbiSpring_RiseAndFadeIn(void) {
   }
   alphaSteps = gTolbiSpring_AlphaSteps;
   for (stepIndex = 0; stepIndex < 8; stepIndex++) {
-    Io_Write16(0x3f42, &REG_BLDCNT);
+    Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
+               &REG_BLDCNT);
     Io_Write16(*alphaSteps++, &REG_BLDALPHA);
     WaitFrames(8);
   }

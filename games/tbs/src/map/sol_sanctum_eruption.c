@@ -1851,8 +1851,8 @@ static void SolSanctumEruption_SpawnEffectPair(struct ObjectEvent *parent) {
 
   Sound_PlaySong(SE_ERUPTION_COLUMNS);
   for (effectIndex = 0; effectIndex < 2; ++effectIndex) {
-    child = ObjectEvent_Create(26, parent->x.fixed, parent->y.fixed,
-                               parent->z.fixed);
+    child = ObjectEvent_Create(SPRITE_GOLDEN_RINGS, parent->x.fixed,
+                               parent->y.fixed, parent->z.fixed);
     pair[effectIndex] = child;
     if (child != NULL) {
       child->groundHeight = parent->groundHeight;

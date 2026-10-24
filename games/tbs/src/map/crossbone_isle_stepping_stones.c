@@ -1651,7 +1651,8 @@ s32 Map_Initialize(void) {
     }
   } else if (gSaveBlock.mapId == (s32)&MapId_CrossboneIsleStackedPillars) {
     // Restore the four movable pillars and the leader's riding overlay.
-    ObjectEvent_CreateConfiguredObject(PIXELS(584), 0, PIXELS(200), 223);
+    ObjectEvent_CreateConfiguredObject(PIXELS(584), 0, PIXELS(200),
+                                       SPRITE_CRATE);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       ObjectEvent_GetById(LOCALID_PARTY_LEADER)->riseCounter = 1;
     }

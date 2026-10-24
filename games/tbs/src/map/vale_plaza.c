@@ -2071,8 +2071,8 @@ static void ValePlaza_SpawnEffectPair(struct ObjectEvent *parent) {
 
   Sound_PlaySong(SE_PSYNERGY_SPARKLE);
   for (i = 0; i < 2; ++i) {
-    child = ObjectEvent_Create(26, parent->x.fixed, parent->y.fixed,
-                               parent->z.fixed);
+    child = ObjectEvent_Create(SPRITE_GOLDEN_RINGS, parent->x.fixed,
+                               parent->y.fixed, parent->z.fixed);
     pair[i] = child;
     if (child != NULL) {
       child->groundHeight = parent->groundHeight;

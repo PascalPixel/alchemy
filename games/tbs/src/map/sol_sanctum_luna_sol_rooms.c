@@ -435,7 +435,8 @@ static void EventScript_KradenFindsHeartOfSanctum(void) {
     ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST + FACING_STEP,
                               10);
     SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_GARET, 6);
-    ObjectEvent_SetAttachedEffect(LOCALID_JENNA, 0x102);
+    ObjectEvent_SetAttachedEffect(LOCALID_JENNA, ATTACHED_EFFECT_IN_FRONT |
+                                                     ATTACHED_EFFECT_ONCE);
     FieldScript_WaitFrames(40);
     ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST, 10);
     // Jenna: "Let's hurry back to the village and tell everybody!"
@@ -444,7 +445,8 @@ static void EventScript_KradenFindsHeartOfSanctum(void) {
     ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
     FieldScript_WaitFrames(10);
     ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTHWEST, 20);
-    ObjectEvent_SetAttachedEffect(LOCALID_KRADEN, 0x102);
+    ObjectEvent_SetAttachedEffect(LOCALID_KRADEN, ATTACHED_EFFECT_IN_FRONT |
+                                                      ATTACHED_EFFECT_ONCE);
     FieldScript_WaitFrames(20);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH + FACING_STEP,
                               40);
@@ -1162,7 +1164,9 @@ static void EventScript_KradenSeesLunaPictureChange(void) {
       ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
       // Kraden: "But other than that, nothing looks different..."
       SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_KRADEN, 6);
-      ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, 0x102);
+      ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER,
+                                    ATTACHED_EFFECT_IN_FRONT |
+                                        ATTACHED_EFFECT_ONCE);
       FieldScript_WaitFrames(40);
       ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
       FieldScript_WaitFrames(30);
@@ -1615,8 +1619,10 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   PaletteFade_StartInterpolation(60);
   WaitFrames(100);
   // Both look around, bewildered, as the rooms give a jolt.
-  ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, 0x102);
-  FieldEffect_ConfigureLinkedObject(LOCALID_GARET, 0x102);
+  ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
+                                                          ATTACHED_EFFECT_ONCE);
+  FieldEffect_ConfigureLinkedObject(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
+                                                       ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(60);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 20);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 40);

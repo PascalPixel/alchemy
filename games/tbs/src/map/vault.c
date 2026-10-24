@@ -885,7 +885,7 @@ s32 Map_Initialize(void) {
   }
   // A still object on the well that shows nothing (vault_revisit.c's open
   // questions).
-  ObjectEvent_CreateConfiguredObject(PIXELS(128), 0, PIXELS(420), 223);
+  ObjectEvent_CreateConfiguredObject(PIXELS(128), 0, PIXELS(420), SPRITE_CRATE);
   lowBit = 1;
   zero = 0;
   objectEvent = ObjectEvent_GetById(LOCALID_BOY_ROUND_THE_WELL);

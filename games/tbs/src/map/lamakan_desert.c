@@ -1067,7 +1067,8 @@ static void HeatGauge_Draw(void) {
     }
   } else if (gHeatGaugeSlide <= 1) {
     if (++gHeatGaugeSlide == 1) {
-      Dma_Set(gHeatGauge_Palette, (void *)0x050003c0, 0x80000010, REG_DMA3);
+      Dma_Set(gHeatGauge_Palette, (void *)&OBJ_PLTT_COLOR(14, 0),
+              (DMA_ENABLE | DMA_16BIT) << 16 | 16, REG_DMA3);
     }
   }
   counter = gHeatGaugeSlide;
@@ -1089,7 +1090,8 @@ static void HeatGauge_Draw(void) {
 
   // Tint the six changing palette entries before composing the gauge tiles.
   buffer = Alloc(0x900);
-  Dma_Set(gHeatGauge_Palette, buffer, 0x80000010, REG_DMA3);
+  Dma_Set(gHeatGauge_Palette, buffer, (DMA_ENABLE | DMA_16BIT) << 16 | 16,
+          REG_DMA3);
   colors = (s16 *)(buffer + 12);
   color = colors;
   for (i = 6; i < 12; i++) {
@@ -1134,7 +1136,8 @@ static void HeatGauge_Draw(void) {
   }
 
   // Fill the remaining bar and overlay its nontransparent frame pixels.
-  Dma_Set(gHeatGauge_TileBuffer, buffer, 0x84000240, REG_DMA3);
+  Dma_Set(gHeatGauge_TileBuffer, buffer, (DMA_ENABLE | DMA_32BIT) << 16 | 0x240,
+          REG_DMA3);
   if (gHeatGaugeFlash <= 118) {
     column = (u32 *)(buffer + 80);
     fill = 0xeeeeeeee;

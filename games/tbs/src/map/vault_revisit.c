@@ -677,7 +677,7 @@ s32 Map_Initialize(void) {
   // A still object on the well that shows nothing. XXX (no evidence): what it
   // was meant to show; its tiles in video memory are blank and nothing refers
   // to it.
-  ObjectEvent_CreateConfiguredObject(PIXELS(128), 0, PIXELS(420), 223);
+  ObjectEvent_CreateConfiguredObject(PIXELS(128), 0, PIXELS(420), SPRITE_CRATE);
   MapGrid_CopyCellsTo(45, 41, 8, 45, 3, 3);
   WaitFrames(1);
   // Resume the two walking villagers' proximity reactions.

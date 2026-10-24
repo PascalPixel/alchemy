@@ -102,6 +102,7 @@
 #include "fixed_math.h"
 #include "songs.h"
 #include "heap.h"
+#include "item_ids.h"
 #include "audio_engine_symbols.h"
 
 /// After the quest is refused, the Great Healer has warned that stepping
@@ -1847,7 +1848,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
   FieldScript_WaitFrames(10);
   // Illustrate the account with the floating item icon.
-  Sanctum_RaiseItemIcon(222, PIXELS(184), PIXELS(27), PIXELS(168));
+  Sanctum_RaiseItemIcon(ITEM_MARS_STAR, PIXELS(184), PIXELS(27), PIXELS(168));
   ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
@@ -2109,7 +2110,7 @@ static void Sanctum_SpawnObjectEventSpark(s32 id) {
   x += randomOffset << 16;
   x += -PIXELS(10);
   spark = ObjectEvent_Create(
-      0x11e, x,
+      SPRITE_GLINT, x,
       objectEvent->y.fixed + ((Import_RandomNext() & 15) << 16) + -PIXELS(8),
       objectEvent->z.fixed);
   if (spark == 0)

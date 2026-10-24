@@ -56,17 +56,18 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
                       BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 |
                           BLDCNT_TGT2_BG3,
-                      0x20000);
+                      IO_WRITE_16);
   sprite->image.objectMode = 1;
   sprite->shadow.objectMode = 1;
   Sound_PlaySong(SE_COLOSSO_WARRIOR_APPEAR);
   for (i = 0; i <= 15; i += 2) {
     objectEvent->scaleX = (i << 12) + 0x1000;
     objectEvent->scaleY = 0x1f000 - (i << 12);
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((15 - i) << 8) | (i + 1), 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((15 - i) << 8) | (i + 1),
+                        IO_WRITE_16);
     WaitFrames(1);
   }
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 0), 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 0), IO_WRITE_16);
   objectEvent->scaleX = 0x11000;
   objectEvent->scaleY = 0xf000;
   FieldScript_WaitFrames(1);

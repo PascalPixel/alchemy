@@ -726,7 +726,7 @@ static void VaultCave_RunRumble(void) {
   frame = 0;
   upperFadeBits = fadeLevel << 10;
   do {
-    IoWriteQueue_Store16(0x4000052,
+    IoWriteQueue_Store16((u32)&REG_BLDALPHA,
                          upperFadeBits | (fadeLevel << 5) | lowFadeLevel);
     FieldScript_WaitFrames(1);
     if (frame % 20 == 0) {

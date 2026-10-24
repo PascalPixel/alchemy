@@ -47,7 +47,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
   cell = (struct MapGridCell *)Ram_MapGridCellBuffer + ((z / 0x100000) << 7) +
          objectEvent->x.fixed / 0x100000;
   if (st->levels != 0 && st->pillar != 0) {
-    obj = ObjectEvent_Create(26, objectEvent->x.fixed,
+    obj = ObjectEvent_Create(SPRITE_GOLDEN_RINGS, objectEvent->x.fixed,
                              objectEvent->y.fixed + 0x180000, z);
     if (obj != 0) {
       obj->groundHeight = objectEvent->groundHeight;
@@ -67,8 +67,8 @@ void MercuryLighthouse_RestoreLights(s32 region,
     st->pillar = 0;
   }
   if (cell->behavior == region && st->stepEffect != 0) {
-    obj = ObjectEvent_Create(26, objectEvent->x.fixed, objectEvent->y.fixed,
-                             objectEvent->z.fixed);
+    obj = ObjectEvent_Create(SPRITE_GOLDEN_RINGS, objectEvent->x.fixed,
+                             objectEvent->y.fixed, objectEvent->z.fixed);
     if (obj == 0)
       return;
     obj->groundHeight = objectEvent->groundHeight;

@@ -843,7 +843,8 @@ static void EventScript_SinkSoutheastPillar(void) {
   if ((objectEvent->x.fixed >> 20) == 48) {
     if (GameFlag_Get(FLAG_MAP_TEMP_02) != 0) {
       WAIT(30);
-      overlay = ObjectEvent_PrepareObject(PIXELS(770), 0, PIXELS(274), 223);
+      overlay =
+          ObjectEvent_PrepareObject(PIXELS(770), 0, PIXELS(274), SPRITE_CRATE);
       options = &optionsStorage;
       options->startScaleX = 3 * Q16_ONE / 5;
       options->startScaleY = 3 * Q16_ONE / 5;

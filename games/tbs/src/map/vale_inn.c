@@ -1230,8 +1230,8 @@ static void ValeInn_SpawnEffectPair(union ObjectEventOrEffect *fieldObject) {
   s32 effectIndex;
 
   for (effectIndex = 0; effectIndex < 2; ++effectIndex) {
-    child = ObjectEvent_Create(26, parent->x.fixed, parent->y.fixed,
-                               parent->z.fixed);
+    child = ObjectEvent_Create(SPRITE_GOLDEN_RINGS, parent->x.fixed,
+                               parent->y.fixed, parent->z.fixed);
     pair[effectIndex] = child;
     if (child != NULL) {
       child->groundHeight = parent->groundHeight;

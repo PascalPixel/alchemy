@@ -27,8 +27,8 @@ struct ObjectCameraPoint {
 struct ObjectCameraFixed {
   struct ObjectCameraPoint eye;
   struct ObjectCameraPoint target;
-  struct ObjectCameraPoint *eyeOverride;    ///< when set, used as the eye
-  struct ObjectCameraPoint *targetOverride; ///< when set, used as the target
+  struct ObjectCameraPoint *followEye;      ///< when set, used as the eye
+  struct ObjectCameraPoint *followPosition; ///< when set, used as the target
 };
 
 /// Each frame, with the scrolling camera: places every object's sprite on the
@@ -229,10 +229,10 @@ void ObjectSystem_ProjectSprites(void) {
                    Render_DecodeFrameCodeSize);
   eye = &camera->eye;
   target = &camera->target;
-  if (camera->eyeOverride != NULL)
-    eye = camera->eyeOverride;
-  if (camera->targetOverride != NULL)
-    target = camera->targetOverride;
+  if (camera->followEye != NULL)
+    eye = camera->followEye;
+  if (camera->followPosition != NULL)
+    target = camera->followPosition;
   // The camera's heading over the ground, from the eye's offset from the
   // target in whole pixels; each sprite's facing is drawn relative to it, so
   // a sprite keeps its world heading as the camera turns.

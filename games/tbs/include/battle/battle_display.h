@@ -20,9 +20,9 @@ struct BattleCamera {
   /// the focus along the turned view.
   s32 eye[3];
   s32 focus[3]; ///< the focus, 16.16 fixed-point pixels
-  /// XXX: cleared beside followPosition and never read (see the battle
-  /// README).
-  s32 unk18;
+  /// When set, ObjectSystem_ProjectSprites faces the sprites from it instead
+  /// of eye; every camera setup clears it and nothing sets it.
+  s32 *followEye;
   s32 *followPosition;        ///< when set, followed instead of focus
   s32 distance;               ///< eye to focus, 16.16 fixed-point pixels
   u8 unusedAfterDistance[16]; ///< no code names it
@@ -54,8 +54,7 @@ struct BattleBackgroundWork {
   /// 0 lets the camera update set the background's range each frame; 1 for
   /// a critical hit's zoom and once a round's view is set.
   s32 flag;
-  s32 unk18; ///< XXX: cleared when the battle starts and never read
-  s32 unk1c; ///< XXX: cleared when the battle starts and never read
+  s32 unusedAfterFlag[2]; ///< cleared when a battle starts; nothing reads them
 };
 
 /// A presentation step's stack work: the animation command it builds and runs,

@@ -76,8 +76,8 @@ s32 Battle_Run(s32 enemyGroup) {
   view->frames = 0;
   view->targetYaw = YAW_PARTY_TURN;
   view->flag = 1;
-  view->unk18 = 0;
-  view->unk1c = 0;
+  view->unusedAfterFlag[0] = 0;
+  view->unusedAfterFlag[1] = 0;
   REG_DISPCNT = DISPCNT_MODE_1;
   GameFlag_SetFar(FLAG_IN_BATTLE);
   // XXX: what flag 0x169 marks; nothing in the source reads it by number,

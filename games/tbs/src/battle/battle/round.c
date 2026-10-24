@@ -88,7 +88,7 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
   camera->pitch = 244 << 8;
   camera->followPosition = 0;
   camera->distance = 0x02ee0000;
-  camera->unk18 = 0;
+  camera->followEye = 0;
 
   Transform_Reset();
   Transform_ApplyPosition(&camera->focus[0]);

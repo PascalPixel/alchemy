@@ -52,7 +52,7 @@ void Camera_ResetViewDefaults(void) {
   camera->followPosition = 0;
   gProjection.centerX = 0;
   gProjection.centerY = 0;
-  camera->unk18 = 0;
+  camera->followEye = 0;
 
   // The eye sits `distance` behind the target along the camera's view.
   Transform_Reset();

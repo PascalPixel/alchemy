@@ -115,16 +115,17 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
   // party's side both halves are mirrored as well.
   if (work->effect->side == 0) {
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
-                      BLITTER_MAX);
+                      COMPOSITE_LIGHTEN);
     drawUpper = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
-    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
+                      COMPOSITE_LIGHTEN);
     drawLower = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   } else {
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP,
-                      BLITTER_MAX);
+                      COMPOSITE_LIGHTEN);
     drawUpper = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                      BLITTER_MAX);
+                      COMPOSITE_LIGHTEN);
     drawLower = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   }
 
@@ -342,10 +343,10 @@ void BattleAnim_RunMoteFountain(struct BattleAnimArgs *effect, s32 mode) {
     BattleAnim_StartCanvasLayer(0);
   else
     BattleAnim_StartCanvasLayer(1);
-  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
-                    BLITTER_MAX);
+                    COMPOSITE_LIGHTEN);
   draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING)

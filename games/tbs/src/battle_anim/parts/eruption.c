@@ -117,7 +117,7 @@ void BattleAnim_RunEruption(struct BattleAnimArgs *effect, s32 mode) {
     mote->variant = 0;
   }
 
-  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 

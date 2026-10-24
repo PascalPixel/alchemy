@@ -255,7 +255,7 @@ void BattleAnim_RunTargetMotes(struct BattleAnimArgs *effect, u32 mode) {
           ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             ANIM_CLIP_BOUNDS |
                                 gTargetMotes_GlintFlips[Random16() & 3],
-                            BLITTER_MAX);
+                            COMPOSITE_LIGHTEN);
           ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
               canvas,
               work->sheet + gBattleAnim_GlintCells[frame & 3] +
@@ -268,7 +268,8 @@ void BattleAnim_RunTargetMotes(struct BattleAnimArgs *effect, u32 mode) {
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
       draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
-      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
+                        COMPOSITE_LIGHTEN);
       draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
       ANIM_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, object->x, 160 << 13, object->z);

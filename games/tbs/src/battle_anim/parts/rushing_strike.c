@@ -115,14 +115,14 @@ void BattleAnim_RunRushingStrike(struct BattleAnimArgs *effect, s32 mode) {
 
   // The top half, and the bottom half flipped; mirrored on side 1.
   if (work->effect->side == 0) {
-    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
-                      BLITTER_MAX);
+                      COMPOSITE_LIGHTEN);
   } else {
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                      BLITTER_MAX);
+                      COMPOSITE_LIGHTEN);
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP,
-                      BLITTER_MAX);
+                      COMPOSITE_LIGHTEN);
   }
   draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];

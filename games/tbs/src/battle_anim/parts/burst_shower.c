@@ -135,10 +135,10 @@ void BattleAnim_RunBurstShower(struct BattleAnimArgs *effect, s32 mode) {
   // The faces are drawn facing each way by side; the others take the usual
   // pair for the side.
   if (mode == BURST_SHOWER_MODE_FACES) {
-    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
     draw[0] = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_RAM_CODE);
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                      BLITTER_MAX);
+                      COMPOSITE_LIGHTEN);
     draw[1] = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   } else {
     BattleAnim_FetchRectangleBlitters(work->effect->side, draw);

@@ -239,7 +239,7 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *effect, u32 mode) {
       s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + originY - 24;
 
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags ^ COMPOSITE_FLIP_X,
-                        BLITTER_MAX);
+                        COMPOSITE_LIGHTEN);
       draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, drawFlags ^ COMPOSITE_FLIP_X,
                         COMPOSITE_ADDITIVE);
@@ -275,7 +275,7 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *effect, u32 mode) {
       // by pitch, Guard not at all, Ward by yaw, the others by yaw and roll,
       // 1/64 turn a frame.
       if (frame > member * 8) {
-        ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_MAX);
+        ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
         draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
         ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, drawFlags, COMPOSITE_ADDITIVE);
         draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
@@ -325,7 +325,7 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *effect, u32 mode) {
       if (frame >= member * 8 + 52 && frame < member * 8 + 76) {
         s32 cell = (frame - member * 8 - 52) / 4 % 6;
 
-        ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_MAX);
+        ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
         draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
         draw[0](canvas, work->sheet + cell * (40 * 40) + STAT_BOOST_BURST,
                 screen.x - 20, screen.y - 20, 40, 40);
@@ -338,7 +338,7 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *effect, u32 mode) {
         if (frame >= member * 8 + 80 && frame < member * 8 + 108) {
           s32 cell = (frame - member * 8 - 80) / 4 % 7;
 
-          ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_MAX);
+          ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
           draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
           draw[0](canvas, work->sheet + cell * (24 * 40) + STAT_BOOST_PICTURE,
                   screen.x - 12, screen.y - 20, 24, 40);
@@ -349,7 +349,7 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *effect, u32 mode) {
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cell = (frame - member * 8 - 80) / 4 % 6;
 
-          ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_MAX);
+          ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
           draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
           draw[0](canvas, work->sheet + cell * (32 * 64) + STAT_BOOST_PICTURE,
                   screen.x - 16, screen.y - 32, 32, 64);
@@ -360,10 +360,10 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *effect, u32 mode) {
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cell = (frame - member * 8 - 80) / 2 % 6;
 
-          ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_MAX);
+          ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
           draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
           ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, drawFlags | COMPOSITE_FLIP_Y,
-                            BLITTER_MAX);
+                            COMPOSITE_LIGHTEN);
           draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
           draw[0](canvas, work->sheet + cell * (64 * 32) + STAT_BOOST_PICTURE,
                   screen.x - 32, screen.y - 24, 64, 32);

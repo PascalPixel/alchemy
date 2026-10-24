@@ -142,10 +142,10 @@ void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element) {
         draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_CELLS, x, y, 40, 40);
       ANIM_RELEASE_BLITTERS();
     }
-    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
     draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                      BLITTER_MAX);
+                      COMPOSITE_LIGHTEN);
     draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
 
     // Motes: one every 8 frames, swaying up to 16 pixels either way (odd

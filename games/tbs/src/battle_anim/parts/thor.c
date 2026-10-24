@@ -297,7 +297,8 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
                           COMPOSITE_ADDITIVE);
         drawAlt = ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2];
       } else {
-        ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+        ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
+                          COMPOSITE_LIGHTEN);
         drawAlt = ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2];
       }
       dotCount = count;
@@ -354,12 +355,13 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
         blit[0](canvas, ramp + inset, inset + 48, i + 16, fullWidth - inset * 2,
                 1);
       }
-      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
+                        COMPOSITE_LIGHTEN);
       ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2](canvas, work->sheet, 32,
                                           (frame - 151) * 20 - 12, 32, 96);
       FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
+                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
       ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2](canvas, work->sheet, 64,
                                           (frame - 151) * 20 - 12, 32, 96);
       FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
@@ -480,7 +482,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
               s32 boltX = (Random16() & 3) - 3;
               s32 boltY = (Random16() & 3) + 32;
               ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
-                                BLITTER_MAX);
+                                COMPOSITE_LIGHTEN);
               ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2](
                   canvas, work->sheet + i % 3 * THOR_BOLT_BYTES, boltX, boltY,
                   THOR_BOLT_SIZE, THOR_BOLT_SIZE);
@@ -512,25 +514,28 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
           mirrorX = moteX + 72;
           moteY = 32 - ((Trig_Cos(angle) * (radius + 8)) >> 16);
         }
-        ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+        ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
+                          COMPOSITE_LIGHTEN);
         ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2](canvas,
                                             work->sheet + THOR_MOTE_CELLS,
                                             moteX + 60, moteY - 24, 12, 24);
         FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
         ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                          ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
+                          ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                          COMPOSITE_LIGHTEN);
         ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2](
             canvas, work->sheet + THOR_MOTE_CELLS, mirrorX, moteY - 24, 12, 24);
         FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
         ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                          ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
+                          ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
+                          COMPOSITE_LIGHTEN);
         ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2](
             canvas, work->sheet + THOR_MOTE_CELLS, moteX + 60, moteY, 12, 24);
         FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
         ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                               COMPOSITE_FLIP_Y,
-                          BLITTER_MAX);
+                          COMPOSITE_LIGHTEN);
         ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2](
             canvas, work->sheet + THOR_MOTE_CELLS, mirrorX, moteY, 12, 24);
         FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
@@ -562,7 +567,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
 
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y,
-                        BLITTER_MAX);
+                        COMPOSITE_LIGHTEN);
       {
         // Live sparks keep their line, slowing to 60/64 a frame with no
         // gravity, and one past the ground (y 120) bounces back at half

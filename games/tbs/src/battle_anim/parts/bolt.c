@@ -58,7 +58,7 @@ void BattleAnim_RunBolt(struct BattleAnimArgs *effect) {
   sprites = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleAnim_StartCanvasLayer(1);
-  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   draw[0] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
   // The tornado sheet only for its glints.
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);

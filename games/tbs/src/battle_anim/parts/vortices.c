@@ -60,10 +60,10 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Decompress_Type01(palette, work->sheet);
-  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   draw[0] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP,
-                    BLITTER_MAX);
+                    COMPOSITE_LIGHTEN);
   REG_BLDALPHA = BLEND_ALPHA(15, 15);
   draw[1] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE_2);
   source = GetBattleObjectSlotFar(work->effect->user)->object;
@@ -216,10 +216,10 @@ void BattleAnim_RunWhirlwind(struct BattleAnimArgs *effect) {
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Decompress_Type01(palette, work->sheet);
-  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   draw[0] = (DrawRectangle)ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                    BLITTER_MAX);
+                    COMPOSITE_LIGHTEN);
   draw[1] = (DrawRectangle)ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
 
   // The glints: each waits up to 15 frames, then plays at a random spot on

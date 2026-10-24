@@ -64,7 +64,7 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
                     graphics);
   Object_SelectAnimationFar(caster, POSE_LEAP);
   Object_SetAnimationSpeedFar((struct Object *)caster, 48);
-  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   // Trails keep 75% of each pixel a frame.
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
@@ -244,7 +244,7 @@ void BattleAnim_RunShiningStar(struct BattleAnimArgs *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
                     graphics);
-  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   // Trails keep half of each pixel a frame.
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 50;

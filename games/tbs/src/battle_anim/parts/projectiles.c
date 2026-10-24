@@ -79,10 +79,11 @@ void BattleAnim_RunDjinniEntrance(struct BattleAnimArgs *effect, s32 element,
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_ADDITIVE);
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                      BLITTER_MAX);
+                      COMPOSITE_LIGHTEN);
   } else {
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
-    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
+                      COMPOSITE_LIGHTEN);
   }
   draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
@@ -444,9 +445,10 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
   if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
     if (work->effect->side == 1)
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                        BLITTER_MAX);
+                        COMPOSITE_LIGHTEN);
     else
-      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
+                        COMPOSITE_LIGHTEN);
   } else {
     if (work->effect->side == 1)
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
@@ -812,10 +814,10 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
               if (work->effect->side == 1)
                 ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                   ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                                  BLITTER_MAX);
+                                  COMPOSITE_LIGHTEN);
               else
                 ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
-                                  BLITTER_MAX);
+                                  COMPOSITE_LIGHTEN);
               ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
                   canvas, work->sheet + PROJECTILE_VOLLEY_COMET_CELLS,
                   screenPosition->x - 16,
@@ -825,11 +827,11 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
               if (work->effect->side == 1)
                 ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                   ANIM_CLIP_BOUNDS | COMPOSITE_FLIP,
-                                  BLITTER_MAX);
+                                  COMPOSITE_LIGHTEN);
               else
                 ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                   ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
-                                  BLITTER_MAX);
+                                  COMPOSITE_LIGHTEN);
               ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
                   canvas, work->sheet + PROJECTILE_VOLLEY_COMET_CELLS,
                   screenPosition->x - 16, screenPosition->y, 32,
@@ -882,7 +884,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
 
             if (!(i & 1)) {
               ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
-                                BLITTER_MAX);
+                                COMPOSITE_LIGHTEN);
               ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
                   canvas, work->sheet + gProjectileVolley_FlashOffsets[step],
                   flash->x - gProjectileVolley_FlashWidths[step],
@@ -891,7 +893,8 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
                   gProjectileVolley_FlashHeights[step]);
               FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
               ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                                ANIM_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
+                                ANIM_CLIP_BOUNDS | COMPOSITE_FLIP,
+                                COMPOSITE_LIGHTEN);
               ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
                   canvas, work->sheet + gProjectileVolley_FlashOffsets[step],
                   flash->x,
@@ -902,7 +905,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
               FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
             } else {
               ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
-                                BLITTER_MAX);
+                                COMPOSITE_LIGHTEN);
               ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
                   canvas,
                   work->sheet + gProjectileVolley_FlashOffsets[step] +
@@ -913,7 +916,8 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
                   gProjectileVolley_FlashWidths[step]);
               FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
               ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                                ANIM_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
+                                ANIM_CLIP_BOUNDS | COMPOSITE_FLIP,
+                                COMPOSITE_LIGHTEN);
               ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
                   canvas,
                   work->sheet + gProjectileVolley_FlashOffsets[step] +

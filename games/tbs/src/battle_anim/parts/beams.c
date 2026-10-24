@@ -73,25 +73,26 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                         COMPOSITE_ADDITIVE);
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
+                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_LIGHTEN);
     } else {
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y,
                         COMPOSITE_ADDITIVE);
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y,
-                        BLITTER_MAX);
+                        COMPOSITE_LIGHTEN);
     }
   } else {
     if (work->effect->side == 0) {
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
-      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
+                        COMPOSITE_LIGHTEN);
     } else {
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_ADDITIVE);
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
+                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
     }
   }
   slots = (DrawRectangle *)gHeapSlots;
@@ -330,12 +331,13 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
                BGCNT_SCREEN_BASE(31);
   if (work->effect->side == 0) {
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
-    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
+                      COMPOSITE_LIGHTEN);
   } else {
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_ADDITIVE);
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                      BLITTER_MAX);
+                      COMPOSITE_LIGHTEN);
   }
   slots = (DrawRectangle *)gHeapSlots;
   draw[0] = slots[HEAP_SLOT_RAM_CODE];

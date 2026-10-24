@@ -92,7 +92,7 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_LimePalette), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   path = Resource_GetTableEntry((s32)&ResourceId_StagedParticlePath);
-  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
   draw[0] = ANIM_BLITTERS[HEAP_SLOT_RAM_CODE];
   draw[1] = ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2];

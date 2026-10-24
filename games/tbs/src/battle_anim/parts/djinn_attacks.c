@@ -381,7 +381,7 @@ void BattleAnim_RunVenus(struct BattleAnimArgs *effect) {
   BattleAnim_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
-                    BLITTER_MAX);
+                    COMPOSITE_LIGHTEN);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
   draw[0] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
   draw[1] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);

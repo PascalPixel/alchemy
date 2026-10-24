@@ -88,7 +88,7 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *effect) {
   REG_WIN0H = WIN_RANGE(240, 240); // an empty window
   Resource_LoadAndDecompress((s32)&ResourceId_IceBlockSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, puffSheet, 0, 0);
-  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   draw = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_RAM_CODE);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
                     COMPOSITE_TRANSPARENT);

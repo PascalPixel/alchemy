@@ -312,7 +312,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 32;
     BattleAnim_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7, ANIM_CLIP_BOUNDS,
-                            BLITTER_MAX);
+                            COMPOSITE_LIGHTEN);
     draw = slots[HEAP_SLOT_RAM_CODE - HEAP_SLOT_BATTLE_BACKGROUND];
     // Each copy darkens every pixel of the map by 2 levels (four bytes of 2
     // in one word, as the other darkening animations write theirs).
@@ -521,7 +521,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
-  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   draw = gHeapSlots[HEAP_SLOT_RAM_CODE];
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
   // Screen motes keep whole canvas pixels, not 16.16: x 0 to 127 and y 127

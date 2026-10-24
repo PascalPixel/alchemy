@@ -33,7 +33,7 @@ void BattleAnim_RunBolt(struct BattleAnimArgs *effect) {
   ANIM_GET_SLOTS(slots, cursor, work, canvas); /* the three blocks */
   work->effect = effect;
   BattleAnim_StartCanvasLayer(1);              /* BG2 shows the canvas */
-  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   draw[0] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
                              work->sheet + BOLT_CELLS, 1, 1);
@@ -390,7 +390,7 @@ in EWRAM otherwise. `ANIM_LOAD_BLITTER` builds one for the 128 by 128
 canvas. An animation usually holds its two as a `BlitterPair`, `[0]` in
 `HEAP_SLOT_RAM_CODE` and `[1]` in `HEAP_SLOT_RAM_CODE_2`;
 `BattleAnim_FetchRectangleBlitters` ([`mirrored_wall.c`](parts/mirrored_wall.c))
-builds the usual pair, clipped on all four sides, `[0]` using `BLITTER_MAX`
+builds the usual pair, clipped on all four sides, `[0]` using `COMPOSITE_LIGHTEN`
 and `[1]` using `COMPOSITE_ADDITIVE`, both mirrored across when it is passed the
 targets' side. The battle's star field (`battle/battle/star_field.c`) and
 `overworld/lucky_wheels.c` reach the builder from other [banks](../../glossary.md#bank) through its
@@ -439,7 +439,7 @@ the result.
 | `COMPOSITE_FLIP_Y` | 8 | mirrors the picture top to bottom |
 | `COMPOSITE_COPY` | 0 | each pixel replaces the canvas pixel |
 | `COMPOSITE_TRANSPARENT` | 1 | each pixel replaces it unless it is level 0 |
-| `BLITTER_MAX` | 2 | keeps the brighter of the two |
+| `COMPOSITE_LIGHTEN` | 2 | keeps the brighter of the two |
 | `COMPOSITE_ADDITIVE` | 3 | adds the two, capped at 63 |
 | `HEAP_SLOT_RAM_CODE` | 46 | a `BlitterPair`'s `[0]` |
 | `HEAP_SLOT_RAM_CODE_2` | 47 | a `BlitterPair`'s `[1]` |
@@ -488,7 +488,7 @@ pillars hide what is behind them.
 Since a pixel is only a level, nothing ties a picture to its colours. The
 rushing strikes ([`rushing_strike.c`](parts/rushing_strike.c)) load one burst
 and copy another sheet's palette over it, so four abilities draw the same
-burst in four colourings, and a picture drawn with `BLITTER_MAX` or
+burst in four colourings, and a picture drawn with `COMPOSITE_LIGHTEN` or
 `COMPOSITE_ADDITIVE` needs its levels in the ramp the animation loads. A fade
 draws from darker copies of a picture built before the first frame. A
 symmetric picture is stored as one half and mirrored.

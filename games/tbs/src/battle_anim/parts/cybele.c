@@ -453,10 +453,11 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
                                  1, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
                                  work->sheet + CYBELE_BLAST_CELLS, 1, 1);
-      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
+                        COMPOSITE_LIGHTEN);
       draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
+                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
       draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
       REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND |
                    BLDCNT_TGT2_ALL;

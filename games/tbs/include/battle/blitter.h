@@ -25,7 +25,7 @@ enum {
 enum {
   COMPOSITE_COPY,        ///< writes every pixel
   COMPOSITE_TRANSPARENT, ///< writes every nonzero pixel
-  BLITTER_MAX,           ///< keeps the brighter of the two
+  COMPOSITE_LIGHTEN,     ///< keeps the brighter of the two
   COMPOSITE_ADDITIVE     ///< adds the two, capped at 63
 };
 

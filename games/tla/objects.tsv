@@ -4029,12 +4029,6 @@ main	rom_main_05	recon/tla/raw/080ebd24	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000ebc68	ja
 main	rom_main_05	games/tla/src/battle/effect/has_pending_target	.text
 main	rom_main_05	games/tla/src/battle/effect/slot_set_position	.text
-main	rom_main_05	recon/tla/it/rom	.rom.000ebebc	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000f0ebc	fr
-main	rom_main_05	recon/tla/es/rom	.rom.000f4ebc	es
-main	rom_main_05	recon/tla/de/rom	.rom.000f8ec8	de
-main	rom_main_05	recon/tla/raw/080ebec8	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000ebe0c	ja
 main	rom_main_05	games/tla/src/battle/effect/clear_owned_slot	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000ebf88	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000f0f88	fr

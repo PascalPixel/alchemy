@@ -3718,12 +3718,6 @@ Func_080db0b0:
 	.thumb_func
 EffectSlot_UpdateMotion:
 	.incbin "baserom.gba", 0x000ebd18, 0x0000014c
-	.section .rom.000ebebc, "ax"
-	.global EffectSlot_Initialize
-	.type EffectSlot_Initialize, %function
-	.thumb_func
-EffectSlot_Initialize:
-	.incbin "baserom.gba", 0x000ebebc, 0x000000a0
 	.section .rom.000ebf88, "ax"
 	.incbin "baserom.gba", 0x000ebf88, 0x000001b8
 	.section .rom.000ec1c4, "ax"

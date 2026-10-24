@@ -463,7 +463,7 @@ s32 TolbiSpring_Initialize(void) {
             MessageArgument_Push(item, 2);
             FieldScript_ShowMessageAndWait(
                 LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
-            FieldEffect_StartEffectObject22(item, 3);
+            ItemDisplay_ShowItem(item, 3);
             PartyInventory_GiveItem(item, 0);
             FieldScript_WaitFrames(10);
             ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
@@ -518,7 +518,7 @@ static void TolbiSpring_RevealPrize(s32 item) {
 
   FieldScript_WaitFrames(70);
   Sound_PlaySong(SE_RECOVERY);
-  FieldEffect_StartEffectObject22(item, 3);
+  ItemDisplay_ShowItem(item, 3);
   PartyInventory_GiveItem(item, 0);
   FieldScript_WaitFrames(20);
 

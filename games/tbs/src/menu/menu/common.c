@@ -1290,13 +1290,19 @@ void Menu_EnsureCancelSound(void) {
 /// Makes the text drawn after it colour 15 (TEXT_COLOR_NORMAL). Nothing calls
 /// it or the two after it; the status panel sets its colours with
 /// Text_SetColorFar.
-void WindowPalette_SetColor15(void) { Text_SetColorFar(TEXT_COLOR_NORMAL); }
+void WindowPalette_SetNormalTextColor(void) {
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
+}
 
 /// Makes the text drawn after it colour 2 (TEXT_COLOR_NO_HP).
-void WindowPalette_SetColor2(void) { Text_SetColorFar(TEXT_COLOR_NO_HP); }
+void WindowPalette_SetNoHpTextColor(void) {
+  Text_SetColorFar(TEXT_COLOR_NO_HP);
+}
 
 /// Makes the text drawn after it colour 4 (TEXT_COLOR_LOW_HP).
-void WindowPalette_SetColor4(void) { Text_SetColorFar(TEXT_COLOR_LOW_HP); }
+void WindowPalette_SetLowHpTextColor(void) {
+  Text_SetColorFar(TEXT_COLOR_LOW_HP);
+}
 
 #undef STATUS_PANEL_TEXT_X
 #undef STATUS_PANEL_CANNOT_EQUIP_X

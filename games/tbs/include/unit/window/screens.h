@@ -52,7 +52,7 @@ s32 Save_CountRecordsExcludingFlagged(s32 flag);
 s32 Save_ScanRecordFlags(void);
 u32 Save_BuildFileSummary(void);
 s16 Save_WriteCurrentFile(void);
-s32 Save_WriteFile(s32 arg0);
+s32 Save_WriteFile(s32 file);
 s32 Save_ProcessSelectedFile(void);
 s32 Save_ConfirmAndProcessSelectedFile(void);
 s32 Save_CopyFile(void);
@@ -107,12 +107,12 @@ struct BattleCommandRowWork;
 
 #ifdef UBFIX
 void Menu_BuildLocalizedPatternTiles(void);
-void Window_DrawThreeTileColumn(struct Window *window, s32 arg1, s32 arg2,
-                                s32 arg3, s32 unused);
+void Window_DrawThreeTileColumn(struct Window *window, s32 x, s32 y,
+                                s32 pattern, s32 unused);
 #else
 s32 Menu_BuildLocalizedPatternTiles(void);
-int Window_DrawThreeTileColumn(struct Window *window, s32 arg1, s32 arg2,
-                               s32 arg3, s32 unused);
+int Window_DrawThreeTileColumn(struct Window *window, s32 x, s32 y, s32 pattern,
+                               s32 unused);
 #endif
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
                                    s32 shift);
@@ -125,7 +125,7 @@ s32 Portrait_Load(u32 member, s32 cacheSlot);
 s32 WindowSprite_GetPointerTiles(s32 no);
 void Icon_Decompress(GlyphTransfer *work);
 struct Window *Link_CreateCountdownLabelWindow(void);
-s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1);
+s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon);
 void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile);
 void Text_DrawCharacter(struct BattleCommandRowWork *work, s32 index, u32 kind);
 void Graphics_SetBg1Priority3(void);
@@ -215,7 +215,7 @@ enum PasswordLevel {
 enum YesNo { YES = 0, NO = 1 };
 
 s32 FieldMenu_SelectCommand(s32 selection);
-s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1);
+s32 Menu_AnimateSelectionToEntry(s32 start, s32 command);
 s32 FileMenu_SelectAction(void);
 void Menu_DrawModeLabel(void);
 void Menu_DrawModeIndicator(void);

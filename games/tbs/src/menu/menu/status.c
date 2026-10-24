@@ -1291,9 +1291,9 @@ void Menu_BuildPatternTiles(void) {
           }
         }
         tile[rowIndex] =
-            XorWord(tile[rowIndex], gMenu_PatternRowMasks[mask].word0);
+            XorWord(tile[rowIndex], gMenu_PatternRowMasks[mask].firstTile);
         tile[rowIndex + 8] =
-            XorWord(tile[rowIndex + 8], gMenu_PatternRowMasks[mask].word1);
+            XorWord(tile[rowIndex + 8], gMenu_PatternRowMasks[mask].secondTile);
       }
     }
   }

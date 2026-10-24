@@ -141,7 +141,7 @@ UNUSED void BattleAnim_RunOrbitingSkulls(void) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   skulls = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
   Iwram_CopyWords((void *)BG_PLTT, skulls, 128);
-  Decompress_Type01(skulls + 128, work->sheet);
+  Decompress_TaggedLz(skulls + 128, work->sheet);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
   // The first transfer mode is overwritten at once.
   ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);

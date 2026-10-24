@@ -100,12 +100,12 @@ void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *effect, s32 mode) {
   palette = Resource_GetTableEntry((s32)&ResourceId_FlashBurstSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Decompress_Type01(palette, work->sheet);
+  Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet);
   palette += 128;
-  Decompress_Type01(palette, work->sheet + PALETTE_PARTICLES_STREAK_IMAGES);
-  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
-                    sheet);
+  Decompress_TaggedLz(palette, work->sheet + PALETTE_PARTICLES_STREAK_IMAGES);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
+                      sheet);
   if (mode == PALETTE_PARTICLES_DRAGON_DRIVER)
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),

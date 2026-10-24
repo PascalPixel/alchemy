@@ -45,7 +45,7 @@ void Colosso_StartRaceGauge(s32 playerLocalId, s32 opponentLocalId,
   work->gauge.level = 0;
   work->gauge.hold = 0;
 
-  FieldDecompress_Type01(gColosso_GaugeGraphics, (void *)handle);
+  FieldDecompress_TaggedLz(gColosso_GaugeGraphics, (void *)handle);
 
   pal = VramCache_FindFreeEntry();
   work->gauge.vramBlock = pal;
@@ -70,7 +70,7 @@ void Colosso_StartOpponent(s32 resource) {
   struct ColossoRaceWork *work = (struct ColossoRaceWork *)gColossoWork;
   struct PathRecorder *recorder = (struct PathRecorder *)gMapLocalState;
 
-  FieldDecompress_Type01(Resource_GetTableEntry(resource), work->path);
+  FieldDecompress_TaggedLz(Resource_GetTableEntry(resource), work->path);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     recorder->mode = PATH_RECORDER_PLAY;
     recorder->mirror = 1;

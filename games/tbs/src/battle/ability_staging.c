@@ -659,8 +659,8 @@ const u32 gAbilityAnimations[] = {
     BATTLE_ANIM_DRAIN, // Drain
     BATTLE_ANIM_DRAIN | (1 << ANIM_VARIANT_SHIFT), // Psy Drain
     BATTLE_ANIM_BREAK, // Break
-    BATTLE_ANIM_WISH_44, // Regenerate
-    BATTLE_ANIM_WISH_45, // Reflect
+    BATTLE_ANIM_REGENERATE, // Regenerate
+    BATTLE_ANIM_REFLECT, // Reflect
     0, // ?
     0, // ?
     0, // ?
@@ -765,8 +765,8 @@ const u32 gAbilityAnimations[] = {
     0x81 | ANIM_BY_ID_RANGE, // Murk
     0x82 | ANIM_BY_ID_RANGE, // Cyclone Slash
     0x83 | ANIM_BY_ID_RANGE, // Psyphon Seal
-    BATTLE_ANIM_GUST_310, // Rapid Smash
-    BATTLE_ANIM_GUST_310, // Sonic Smash
+    BATTLE_ANIM_RAPID_SMASH, // Rapid Smash
+    BATTLE_ANIM_RAPID_SMASH, // Sonic Smash
     0x84 | ANIM_BY_ID_RANGE, // Asura
     BATTLE_ANIM_TITAN_BLADE, // Titan Blade
     BATTLE_ANIM_SHINING_STAR, // Shining Star
@@ -833,7 +833,7 @@ const u32 gAbilityAnimations[] = {
     0, // ?
     0x68 | ANIM_BY_ID_RANGE, // Flint
     BATTLE_ANIM_GRANITE, // Granite
-    BATTLE_ANIM_REVIVE_201, // Quartz
+    BATTLE_ANIM_QUARTZ, // Quartz
     BATTLE_ANIM_VINE, // Vine
     0x6b | ANIM_BY_ID_RANGE, // Sap
     BATTLE_ANIM_GROUND, // Ground
@@ -851,10 +851,10 @@ const u32 gAbilityAnimations[] = {
     0, // =
     0, // =
     0, // =
-    BATTLE_ANIM_PLY_204, // Fizz
+    BATTLE_ANIM_FIZZ, // Fizz
     BATTLE_ANIM_SLEET, // Sleet
     0x66 | ANIM_BY_ID_RANGE, // Mist
-    BATTLE_ANIM_WISH_206, // Spritz
+    BATTLE_ANIM_SPRITZ, // Spritz
     BATTLE_ANIM_HAIL, // Hail
     BATTLE_ANIM_TONIC, // Tonic
     BATTLE_ANIM_DEW, // Dew
@@ -871,9 +871,9 @@ const u32 gAbilityAnimations[] = {
     0, // =
     0, // =
     0, // =
-    BATTLE_ANIM_IMPACT_210, // Forge
+    BATTLE_ANIM_FORGE, // Forge
     0x67 | ANIM_BY_ID_RANGE, // Fever
-    BATTLE_ANIM_GUARD_211, // Corona
+    BATTLE_ANIM_CORONA, // Corona
     0x69 | ANIM_BY_ID_RANGE, // Scorch
     BATTLE_ANIM_PSY_CRYSTAL, // Ember
     BATTLE_ANIM_FLASH, // Flash
@@ -892,12 +892,12 @@ const u32 gAbilityAnimations[] = {
     0, // =
     0, // =
     BATTLE_ANIM_GUST, // Gust
-    BATTLE_ANIM_WARD_215, // Breeze
+    BATTLE_ANIM_BREEZE, // Breeze
     BATTLE_ANIM_ZEPHYR, // Zephyr
     0x65 | ANIM_BY_ID_RANGE, // Smog
     BATTLE_ANIM_KITE, // Kite
     0x6a | ANIM_BY_ID_RANGE, // Squall
-    BATTLE_ANIM_BIND_218, // Luff
+    BATTLE_ANIM_LUFF, // Luff
     0, // =
     0, // =
     0, // =
@@ -983,7 +983,7 @@ const u32 gAbilityAnimations[] = {
     0, // ?
     BATTLE_ANIM_RUMBLE, // Rumble
     BATTLE_ANIM_BONE_CHILLER, // Bone Chiller
-    BATTLE_ANIM_GUST_310, // Slice
+    BATTLE_ANIM_RAPID_SMASH, // Slice
     BATTLE_ANIM_BONE_CHARGE, // Bone Charge
     BATTLE_ANIM_MYSTIC_FLAME, // Mystic Flame
     BATTLE_ANIM_NUMBING_STING, // Numbing Sting
@@ -996,13 +996,13 @@ const u32 gAbilityAnimations[] = {
     BATTLE_ANIM_UNDEAD_SWORD, // Undead Sword
     BATTLE_ANIM_RANSACK, // Ransack
     BATTLE_ANIM_STICKY_POISON, // Sticky Poison
-    BATTLE_ANIM_POISONOUS_BITE_323, // Poison Fang
+    BATTLE_ANIM_POISON_FANG, // Poison Fang
     BATTLE_ANIM_ELECTRIC_BITE, // Electric Bite
     BATTLE_ANIM_POISON_TAIL, // Poison Tail
     BATTLE_ANIM_ONSLAUGHT, // Onslaught
     BATTLE_ANIM_VAMPIRIC_FANG, // Vampiric Fang
     BATTLE_ANIM_BACTERIA_RUSH, // Bacteria Rush
-    BATTLE_ANIM_FLYING_ATTACK_329, // Swift Strike
+    BATTLE_ANIM_SWIFT_STRIKE, // Swift Strike
     BATTLE_ANIM_ROTTEN_BLOOD, // Rotten Blood
     0x85 | ANIM_BY_ID_RANGE, // Forcible Arm
     BATTLE_ANIM_DOUBLE_FANG, // Double Fang
@@ -1015,19 +1015,19 @@ const u32 gAbilityAnimations[] = {
     BATTLE_ANIM_HEADBUTT, // Headbutt
     BATTLE_ANIM_POISON_INK, // Poison Ink
     0x86 | ANIM_BY_ID_RANGE, // Truncheon Fist
-    BATTLE_ANIM_BEAR_CLAW_342, // Counterstrike
-    BATTLE_ANIM_RANSACK_343, // Mad Dash
+    BATTLE_ANIM_COUNTERSTRIKE, // Counterstrike
+    BATTLE_ANIM_MAD_DASH, // Mad Dash
     BATTLE_ANIM_SOOTHING_STAR, // Soothing Star
     BATTLE_ANIM_SPIDER_WEB, // Spider Web
-    BATTLE_ANIM_HEARTRENDER_346, // Heartrender
+    BATTLE_ANIM_HEARTRENDER, // Heartrender
     BATTLE_ANIM_MAD_SPATTER, // Mad Spatter
     BATTLE_ANIM_SPASM, // Spasm
     BATTLE_ANIM_SLEEP_STAR, // Sleep Star
     BATTLE_ANIM_DECOMPOSE, // Decompose
     BATTLE_ANIM_HAUNTING, // Haunting
-    BATTLE_ANIM_CURE_352, // Worms
+    BATTLE_ANIM_WORMS, // Worms
     BATTLE_ANIM_BERSERK, // Berserk
-    BATTLE_ANIM_CURSE_354, // Lucid Prophecy
+    BATTLE_ANIM_LUCID_PROPHECY, // Lucid Prophecy
     BATTLE_ANIM_RECOVERY, // Recovery
     0, // Flee
     0, // Contain

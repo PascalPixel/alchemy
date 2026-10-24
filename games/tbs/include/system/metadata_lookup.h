@@ -27,7 +27,7 @@ struct AnimationMetadata {
   /// Pixels; half of it is a battle unit's Object.radius, and can be an
   /// object's radius (ObjectEvent.radius).
   u8 boxY;
-  u8 frameCodec; ///< SpriteAnim.mode: 1 type-01, 3 LZ, anything else raw
+  u8 frameCodec; ///< SpriteAnim.mode: 1 tagged LZ, 3 LZ, anything else raw
   /// The frame pointers; null takes them from the sprite frame cache slot
   /// holding the animation (SpriteFrameCache_FindByTag).
   void **frames;

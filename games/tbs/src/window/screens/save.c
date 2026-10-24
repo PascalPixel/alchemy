@@ -212,7 +212,7 @@ u32 Save_BuildFileSummary(void) {
     if (GameFlag_GetFar(i))
       summary->flagCount++;
   }
-  summary->hasFlag20 = GameFlag_GetFar(FLAG_CHILDHOOD) != 0;
+  summary->childhood = GameFlag_GetFar(FLAG_CHILDHOOD) != 0;
   {
     s32 n;
     u32 *frame = &gSaveBlock.buildStamp;
@@ -619,7 +619,7 @@ void FileMenu_ShowPartySprites(struct Window *window, s32 x, s32 y,
 
   for (i = 0; i < 4 && summary->party[i] != -1; i++) {
     struct Sprite *sprite = Sprite_CreateFar(Party_RemapCharacterIdIfEnabledFar(
-        summary->party[i], (s8)summary->hasFlag20));
+        summary->party[i], (s8)summary->childhood));
 
     if (sprite != NULL) {
       Sprite_StartAnimFar(sprite, 1);

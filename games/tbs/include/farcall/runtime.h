@@ -40,9 +40,9 @@ void *AllocEwramFar(s32 size);
 /// Unpacks a byte-oriented LZ resource with a RAM copy of its ARM decoder, and
 /// returns the unpacked size in bytes.
 s32 Decompress_ByteLzFar(const void *source, void *destination);
-/// Unpacks a type-01 resource the same way and returns the unpacked size in
-/// bytes.
-s32 Decompress_Type01Far(const void *source, void *destination);
+/// Unpacks a tagged LZ resource (a first byte of 0 or 1) the same way and
+/// returns the unpacked size in bytes.
+s32 Decompress_TaggedLzFar(const void *source, void *destination);
 /// Frees VRAM cache entry `no`, its sprite VRAM included, once its picture is
 /// no longer shown.
 s32 VramCache_FreeEntryFar(u32 no);

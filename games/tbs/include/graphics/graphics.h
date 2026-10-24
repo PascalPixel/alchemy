@@ -42,9 +42,9 @@ extern u8 gPageArrowTiles[];
 /// Transform_BuildLookAt's ARM dot product, seven words it copies onto its
 /// stack to run.
 extern const u32 RelocatedQ16DotProduct[];
-/// Decompress_Type2Commands through its type-2 command loop, which
-/// Decompress_Type2 copies to the heap.
-extern u8 Decompress_Type2CommandsCodeSize[];
+/// Decompress_MoveToFrontLzCommands through its command loop, which
+/// Decompress_MoveToFrontLz copies to the heap.
+extern u8 Decompress_MoveToFrontLzCommandsCodeSize[];
 /// Decompress_ByteLzArm: how much Decompress_ByteLz allocates for it.
 extern u8 Decompress_ByteLzCodeSize[];
 /// The Japanese status panel's PP row, "EP    /": label and slash in one
@@ -154,8 +154,8 @@ extern const struct ArticleTable gArticle_Table;
 /// One row's masks for a pair of bar-pattern tiles: a word XORed into each
 /// tile's row.
 struct TileMask {
-  u32 word0;
-  u32 word1;
+  u32 firstTile;
+  u32 secondTile;
 };
 /// The six row patterns that mark the battle menus' range icons, colour 5
 /// over a colour-4 fill, read by Menu_BuildLocalizedPatternTiles.
@@ -206,20 +206,21 @@ extern const u8 gNamingScreen_KeyboardTilemap[];
 /// 224 zeroed bytes right after Render_DecodeFrame's code and tables; its
 /// address ends the stretch the field sprites' draw copies to RAM.
 extern const u8 gRender_DecodeFrameEnd[];
-/// The type-2 resource decoder's ARM entry: it returns 4 unless the stream's
-/// first byte says type 2.
-extern const u8 Decompress_Type2Commands[];
+/// The move-to-front LZ decoder's ARM entry: it returns 4 unless the
+/// stream's first byte is 2, the move-to-front tag.
+extern const u8 Decompress_MoveToFrontLzCommands[];
 /// The byte-oriented LZ decoder, run by Decompress_ByteLz from a heap
 /// copy.
 extern const u8 Decompress_ByteLzArm[];
 /// The halfword LZ decoder that Decompress_Halfwords runs from its
 /// stack.
 extern const u8 Decompress_HalfwordLz[];
-/// The type-01 resource decoder, run by Decompress_Type01 from a heap
+/// The tagged LZ decoder (a first byte of 0 for the general form, 1 for the
+/// palette form), run by Decompress_TaggedLz from a heap
 /// copy.
-extern const u8 Decompress_Type01Arm[];
-/// Decompress_Type01Arm, which Decompress_Type01 copies to the heap.
-extern u8 Decompress_Type01CodeSize[];
+extern const u8 Decompress_TaggedLzArm[];
+/// Decompress_TaggedLzArm, which Decompress_TaggedLz copies to the heap.
+extern u8 Decompress_TaggedLzCodeSize[];
 /// Decompress_HalfwordLz, copied onto the stack by
 /// Decompress_Halfwords.
 extern u8 Decompress_HalfwordsCodeSize[];

@@ -29,7 +29,7 @@ void SpriteColor_RemapPixels(u8 *bytes, s32 byteCount) {
 /// from byte 2. size counts the method byte too (an even size means no data).
 /// The methods are enum MetatilePacking.
 ///
-/// Called by MapGrid_LoadLayout with the size Decompress_Type01
+/// Called by MapGrid_LoadLayout with the size Decompress_TaggedLz
 /// returns; the packed stream is decoded to Ram_MapGridCellBuffer + 1 so that
 /// its method byte lands at byte 1 and the halfwords at byte 2 are aligned.
 void TileMap_DecodeStagedBuffer(s32 size) {
@@ -241,22 +241,22 @@ s32 MapGrid_LoadLayout(s32 index) {
   // staged in the cell buffer, which the cell planes then overwrite.
   encodedData = (u8 *)layoutHeader + layoutHeader->metatiles;
   TileMap_DecodeStagedBuffer(
-      Decompress_Type01(encodedData, Ram_MapGridCellBuffer + 1));
+      Decompress_TaggedLz(encodedData, Ram_MapGridCellBuffer + 1));
   encodedData = (u8 *)layoutHeader + layoutHeader->shapes;
-  Decompress_Type01(encodedData, Ram_MapGridShapes);
+  Decompress_TaggedLz(encodedData, Ram_MapGridShapes);
   encodedData = (u8 *)layoutHeader + layoutHeader->cells;
-  Decompress_Type01(encodedData, Ram_MapGridCellBuffer);
+  Decompress_TaggedLz(encodedData, Ram_MapGridCellBuffer);
   TileMap_ConvertBuffer();
   // The tileset animation and blend scripts are optional (offset 0), and decode
   // into the space after the shapes in Ram_MapGridShapes.
   if (layoutHeader->animation != 0) {
     encodedData = (u8 *)layoutHeader + layoutHeader->animation;
-    Decompress_Type01(encodedData, Ram_MapGridShapes + 0x1000);
+    Decompress_TaggedLz(encodedData, Ram_MapGridShapes + 0x1000);
     TilesetAnim_StartAll((const u16 *)(Ram_MapGridShapes + 0x1000));
   }
   if (layoutHeader->blend != 0) {
     encodedData = (u8 *)layoutHeader + layoutHeader->blend;
-    Decompress_Type01(encodedData, Ram_MapGridShapes + 0x1e00);
+    Decompress_TaggedLz(encodedData, Ram_MapGridShapes + 0x1e00);
     BlendScript_Start((u16 *)(Ram_MapGridShapes + 0x1e00));
   }
   // The treasure spot list is not decoded: Field_PlaceTreasureSpots reads it in
@@ -340,29 +340,33 @@ s32 MapGrid_LoadLayout(s32 index) {
     if (graphicsBuffer != NULL) {
       // Colour 0 of BG palette 0 is the backdrop; it survives the new palette.
       backdrop = *(s16 *)BG_PLTT;
-      Decompress_Type01(Resource_GetTableEntry(layoutResources->resources[1] +
-                                               (u32)&ResourceId_Layout001),
-                        graphicsBuffer);
+      Decompress_TaggedLz(Resource_GetTableEntry(layoutResources->resources[1] +
+                                                 (u32)&ResourceId_Layout001),
+                          graphicsBuffer);
       *(s16 *)graphicsBuffer = backdrop;
       /* FAKEMATCH(wrapper): these four copies call the fixed entry itself, past
        * the IWRAM call layer; as Iwram_CopyWords, 103 of 349 instructions
        * differ in tbs-en. */
       Iwram_CopyWordsEntry((void *)BG_PLTT, graphicsBuffer, 0x1c0);
-      Decompress_Type2(Resource_GetTableEntry(layoutResources->resources[2] +
-                                              (u32)&ResourceId_Layout001),
-                       graphicsBuffer);
+      Decompress_MoveToFrontLz(
+          Resource_GetTableEntry(layoutResources->resources[2] +
+                                 (u32)&ResourceId_Layout001),
+          graphicsBuffer);
       Iwram_CopyWordsEntry(BG_CHAR_BLOCK(1), graphicsBuffer, 0x4000);
-      Decompress_Type2(Resource_GetTableEntry(layoutResources->resources[3] +
-                                              (u32)&ResourceId_Layout001),
-                       graphicsBuffer);
+      Decompress_MoveToFrontLz(
+          Resource_GetTableEntry(layoutResources->resources[3] +
+                                 (u32)&ResourceId_Layout001),
+          graphicsBuffer);
       Iwram_CopyWordsEntry(BG_CHAR_BLOCK(2), graphicsBuffer, 0x4000);
-      Decompress_Type2(Resource_GetTableEntry(layoutResources->resources[4] +
-                                              (u32)&ResourceId_Layout001),
-                       graphicsBuffer);
+      Decompress_MoveToFrontLz(
+          Resource_GetTableEntry(layoutResources->resources[4] +
+                                 (u32)&ResourceId_Layout001),
+          graphicsBuffer);
       Iwram_CopyWordsEntry(BG_CHAR_BLOCK(3), graphicsBuffer, 0x4000);
-      Decompress_Type2(Resource_GetTableEntry(layoutResources->resources[5] +
-                                              (u32)&ResourceId_Layout001),
-                       gMapGridAnimTiles);
+      Decompress_MoveToFrontLz(
+          Resource_GetTableEntry(layoutResources->resources[5] +
+                                 (u32)&ResourceId_Layout001),
+          gMapGridAnimTiles);
       Free(graphicsBuffer);
     }
   }

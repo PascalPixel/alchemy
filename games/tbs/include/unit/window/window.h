@@ -362,12 +362,13 @@ s32 Text_CheckPauseSkipped(struct TextPrinter *printer);
 s32 Text_CheckTextDismissed(struct TextPrinter *printer);
 void TextPrinter_CloseFinishedWindows(void);
 void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset);
-s32 Message_DecodeMode1(s32 arg0);
+s32 Message_DecodeMode1(s32 message);
 void Message_Find(struct MessageReader *reader, s32 message);
 s32 Text_DecodeSymbolInC(struct MessageReader *reader);
 void Portrait_ClearSlots(void);
 s32 Portrait_GetForSpeaker(u32 value);
-struct Window *Portrait_OpenWindow(s32 arg0, s32 arg1, s32 x, s32 y);
+struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
+                                   s32 y);
 void Portrait_CloseWindow(u32 entry);
 
 #define WINDOW_WORK ((struct WindowWork *)gWindowWork[0])
@@ -393,14 +394,14 @@ void Portrait_CloseWindow(u32 entry);
 
 s32 Icon_CountItemIcons(void);
 s32 Icon_CountPsynergyIcons(void);
-void Icon_BuildCommandIconTiles(s32 no0, s32 no1, s32 *slot, s32 *ret,
-                                s32 flag);
+void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 frameIcon, s32 *slot,
+                                s32 *tileOut, s32 reuse);
 void Ability_RequestGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
                           s32 reuse);
 void Icon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst,
                              s32 reuse);
 s32 ItemIcon_Compose(u32 code, u32 layers);
-s32 Icon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
+s32 Icon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot);
 s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 slot);
 s32 Resource_LoadTableEntry(u32 value, s32 unused, u32 slot);
 void Icon_DrawItem(s32 code);
@@ -473,7 +474,7 @@ void MapNamePopup_Update(void);
 void MapNamePopup_Hide(void);
 s32 Item_RemoveFromInventory(s32 unused, s32 itemId);
 s32 Item_ReturnTrue(void);
-void OptionMenu_StepWindowHue(s32 arg0);
+void OptionMenu_StepWindowHue(s32 keys);
 void Debug_SelectAbilityPair(void);
 s32 Party_ListPsynergy(struct AbilityListEntry *output);
 void Menu_FindShortcutEntries(u32 *first_index, u32 *second_index,

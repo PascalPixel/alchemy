@@ -102,8 +102,8 @@ const ScriptCommand gObjectScript_CommandTable[47] = {
     ObjectScript_Nop,                       // 0x1d SC_NOP
     ObjectScript_PlaySound,                 // 0x1e SC_SE
     ObjectScript_SetBase,                   // 0x1f SC_BASE
-    ObjectScript_ClearByte54,               // 0x20 SC_HIDE_SPRITES
-    ObjectScript_SetByte54,                 // 0x21 SC_SHOW_SPRITE
+    ObjectScript_HideSprites,               // 0x20 SC_HIDE_SPRITES
+    ObjectScript_ShowSprite,                // 0x21 SC_SHOW_SPRITE
     ObjectScript_InvokeCallback,            // 0x22 SC_CALL
     Field_CheckConfiguredKeysAndCount,      // 0x23 SC_KEY_COUNT
     ObjectScript_End,                       // 0x24

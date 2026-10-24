@@ -68,8 +68,8 @@ void BattleAnim_RunGatheringLights(struct BattleAnimArgs *effect, s32 mode) {
   BattleAnim_StartCanvasLayer(1);
   // Setup. The sheet is the first field of the work block, so the pictures
   // decode to `work` itself: three 20x32 lights.
-  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_MemberBurstImage),
-                    work);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_MemberBurstImage),
+                      work);
   if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
     paletteId = (s32)&ResourceId_PinkBurstSheet;
   else if (mode == GATHERING_LIGHTS_RUMBLE)

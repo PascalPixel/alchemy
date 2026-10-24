@@ -153,7 +153,7 @@ s32 WorldMap_InitializePerspective(void) {
   perspective->script = NULL;
   perspective->tiles =
       Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
-  Decompress_Type01(
+  Decompress_TaggedLz(
       Resource_GetTableEntry((s32)&ResourceId_DefaultTileAnimation),
       Ram_MapGridShapes + 0x1000);
   TilesetAnim_StartAll((const u16 *)(Ram_MapGridShapes + 0x1000));
@@ -163,9 +163,9 @@ s32 WorldMap_InitializePerspective(void) {
                    &REG_BLDCNT);
   Io_Write16Inline(BLEND_ALPHA(16, 16), &REG_BLDALPHA);
   REG_BLDY = 0;
-  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_DefaultGridCells),
-                    Ram_MapGridCellBuffer);
-  Decompress_Type01(
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DefaultGridCells),
+                      Ram_MapGridCellBuffer);
+  Decompress_TaggedLz(
       Resource_GetTableEntry((s32)&ResourceId_DefaultMetatileAttributes),
       Ram_MapGridShapes);
   // The ground is BG3 and BG2, two 512-pixel affine layers that wrap (char
@@ -350,22 +350,22 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   Dma_Set(buffer, WORLD_MAP_BG_PALETTE, (DMA_ENABLE | DMA_32BIT) << 16 | 0x70,
           REG_DMA3);
   tiles = gBgTileBuffer;
-  Decompress_Type01(Resource_GetTableEntry(resources[1]), tiles);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[1]), tiles);
   Dma_Set(tiles, BG_CHAR_BLOCK(2), (DMA_ENABLE | DMA_32BIT) << 16 | 0x800,
           REG_DMA3);
-  Decompress_Type01(Resource_GetTableEntry(resources[2]),
-                    Ram_BgTileBuffer + 0x2000);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[2]),
+                      Ram_BgTileBuffer + 0x2000);
   Dma_Set(Ram_BgTileBuffer + 0x2000, BG_CHAR_BLOCK(2) + 0x2000,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
-  Decompress_Type01(Resource_GetTableEntry(resources[3]),
-                    Ram_BgTileBuffer + 0x4000);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[3]),
+                      Ram_BgTileBuffer + 0x4000);
   Dma_Set(Ram_BgTileBuffer + 0x4000, BG_CHAR_BLOCK(3),
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
-  Decompress_Type01(Resource_GetTableEntry(resources[4]),
-                    Ram_BgTileBuffer + 0x6000);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[4]),
+                      Ram_BgTileBuffer + 0x6000);
   Dma_Set(Ram_BgTileBuffer + 0x6000, BG_CHAR_BLOCK(3) + 0x2000,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
-  Decompress_Type01(Resource_GetTableEntry(resources[5]), gMapGridAnimTiles);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[5]), gMapGridAnimTiles);
   // BG1's map (screen block 5) is filled with tile 0x7f of palette 15, and
   // screen block 6 numbers a 30 by 20 tile picture from tile 0x1a8, two
   // tile numbers a word, for the still view WorldMap_StartStillView shows.
@@ -770,22 +770,22 @@ void WorldMap_LoadAreaGraphics(void) {
   *(s16 *)decodeBuffer = backdropColor;
   Dma_Set(decodeBuffer, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x70,
           REG_DMA3);
-  Decompress_Type01(Resource_GetTableEntry(graphicsResources[1]),
-                    gBgTileBuffer);
-  Decompress_Type01(Resource_GetTableEntry(graphicsResources[2]),
-                    Ram_BgTileBuffer + 0x2000);
-  Decompress_Type01(Resource_GetTableEntry(graphicsResources[3]),
-                    Ram_BgTileBuffer + 0x4000);
-  Decompress_Type01(Resource_GetTableEntry(graphicsResources[4]),
-                    Ram_BgTileBuffer + 0x6000);
+  Decompress_TaggedLz(Resource_GetTableEntry(graphicsResources[1]),
+                      gBgTileBuffer);
+  Decompress_TaggedLz(Resource_GetTableEntry(graphicsResources[2]),
+                      Ram_BgTileBuffer + 0x2000);
+  Decompress_TaggedLz(Resource_GetTableEntry(graphicsResources[3]),
+                      Ram_BgTileBuffer + 0x4000);
+  Decompress_TaggedLz(Resource_GetTableEntry(graphicsResources[4]),
+                      Ram_BgTileBuffer + 0x6000);
   // The VBlank copies the tiles back and the next frame shows the ground;
   // only then is the still picture's buffer refilled with the cells.
   gVBlankCallback = WorldMap_ShowBg1FromBuffer;
   perspective->windowTop = 0;
   perspective->windowBottom = 159;
   WaitFrames(1);
-  Decompress_Type01(Resource_GetTableEntry((u32)&ResourceId_DefaultGridCells),
-                    decodeBuffer);
+  Decompress_TaggedLz(Resource_GetTableEntry((u32)&ResourceId_DefaultGridCells),
+                      decodeBuffer);
   WorldMap_UpdateCurrentTileBlock();
   perspective->animationActive = 0;
   Task_ResumeAll(TilesetAnim_Update);
@@ -804,8 +804,8 @@ void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
   perspective->windowTop = 0;
   perspective->windowBottom = 159;
   WaitFrames(1);
-  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_DefaultGridCells),
-                    gMapGridCellBuffer);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DefaultGridCells),
+                      gMapGridCellBuffer);
   WorldMap_UpdateCurrentTileBlock();
   Task_ResumeAll(TilesetAnim_Update);
   WaitFrames(1);

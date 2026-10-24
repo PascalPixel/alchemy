@@ -59,8 +59,8 @@ void BattleAnim_RunParalyze(struct BattleAnimArgs *effect) {
 }
 /// Hearts close in on each target, turning as they come.
 ///
-/// Abilities: Heartrender (BATTLE_ANIM_HEARTRENDER_346); none
-/// (BATTLE_ANIM_HEARTRENDER).
+/// Abilities: Heartrender (BATTLE_ANIM_HEARTRENDER); none
+/// (BATTLE_ANIM_UNUSED_HEARTRENDER).
 void BattleAnim_RunHeartrender(struct BattleAnimArgs *effect) {
   BattleAnim_RunTargetMotes(effect, TARGET_MOTES_HEARTRENDER);
 }
@@ -485,7 +485,7 @@ void BattleAnim_RunSleep(struct BattleAnimArgs *effect) {
 /// frame 32.
 ///
 /// Abilities: Curse (BATTLE_ANIM_CURSE); Lucid Prophecy
-/// (BATTLE_ANIM_CURSE_354).
+/// (BATTLE_ANIM_LUCID_PROPHECY).
 ///
 /// Lasts 32 frames a target plus 32, so with one target the flame is cut off
 /// after 64 frames. work->particles' variants, 0 to 63, give each flame its

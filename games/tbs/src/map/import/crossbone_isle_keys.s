@@ -47,7 +47,7 @@
 	.set import.Field_TryJumpForward, 1
 	.set import.Field_ClimbDown, 1
 	.set import.Field_ClimbUp, 1
-	.set import.FieldEffect_StartEffectObject22, 1
+	.set import.ItemDisplay_ShowItem, 1
 	.set import.TreasureSpot_SetObjectEventPosition, 1
 	.set import.Djinn_JoinParty, 1
 	.set import.Map_PlayQueuedMusic, 1

@@ -1,4 +1,4 @@
-Decompress_Type2CommandsCodeSize = Resource_ExecuteTransfer - Decompress_Type2Commands;
+Decompress_MoveToFrontLzCommandsCodeSize = Resource_ExecuteTransfer - Decompress_MoveToFrontLzCommands;
 Render_DecodeFrameCodeSize = TileMap_DrawRows - Render_DecodeFrame;
 Tile_Decompress4bppCodeSize = Tile_ExpandMasked - Tile_Decompress4bpp;
 Tile_ExpandMaskedCodeSize = Tile_ExpandOpaque - Tile_ExpandMasked;

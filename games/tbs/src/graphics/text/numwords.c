@@ -2,7 +2,7 @@
 #include "types.h"
 
 //--------------------------------------------------------------------------
-// Number words
+// Counted nouns
 // The German counted nouns, singular and plural, by kind.
 //--------------------------------------------------------------------------
 
@@ -13,12 +13,12 @@
 /// or 1.
 /// Words 5 to 7 are empty, and word 7's plural is a null pointer.
 // clang-format off
-const u8 *const gLocalizedWord_Numbers[16] = {
-    gLocalizedWord_Number9, gLocalizedWord_Number8, // Punkt, Punkte
-    gLocalizedWord_Number7, gLocalizedWord_Number6, // Münze, Münzen
-    gLocalizedWord_Number5, gLocalizedWord_Number4, // Runde, Runden
-    gLocalizedWord_Number3, gLocalizedWord_Number2, // Ticket, Tickets
-    gLocalizedWord_Number1, gLocalizedWord_Number0, // Kampf, Käpfe (ROM spelling retained: the m is missing)
+const u8 *const gLocalizedWord_CountedNouns[16] = {
+    gLocalizedWord_Point, gLocalizedWord_Points, // Punkt, Punkte
+    gLocalizedWord_Coin, gLocalizedWord_Coins, // Münze, Münzen
+    gLocalizedWord_Round, gLocalizedWord_Rounds, // Runde, Runden
+    gLocalizedWord_Ticket, gLocalizedWord_Tickets, // Ticket, Tickets
+    gLocalizedWord_Battle, gLocalizedWord_Battles, // Kampf, Käpfe (ROM spelling retained: the m is missing)
     (const u8 *)gArticle_Empty, (const u8 *)gArticle_Empty,
     (const u8 *)gArticle_Empty, (const u8 *)gArticle_Empty,
     (const u8 *)gArticle_Empty, 0,

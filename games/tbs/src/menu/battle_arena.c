@@ -558,7 +558,7 @@ static s32 BattleArena_ReceivePartyRecords(void) {
   // The record loop and both waits are written with goto (MATCHING.md): as a
   // for loop round while loops, 105 of 189 instructions differ in tbs-en.
   goto next;
-wait1:
+waitRecord:
   if (gSerialReceivedSize > size) {
     result = -1;
     goto done;
@@ -571,9 +571,9 @@ wait1:
       goto done;
     }
   }
-test1:
+testRecord:
   if (Serial_GetActiveTransfers() != 0) {
-    goto wait1;
+    goto waitRecord;
   }
   if (gSerialReceivedSize != size) {
     result = -1;
@@ -623,8 +623,8 @@ next:
   if ((transferResult = Serial_StartReceive(record)) == -1) {
     goto failed;
   }
-  goto test1;
-wait2:
+  goto testRecord;
+waitRecovery:
   transferResult = gSerialReceivedSize;
   if (transferResult > LOBBY_RECOVERY_RECORD_BYTES) {
     result = -1;
@@ -638,9 +638,9 @@ wait2:
       goto done;
     }
   }
-test2:
+testRecovery:
   if (Serial_GetActiveTransfers() != 0) {
-    goto wait2;
+    goto waitRecovery;
   }
   if (gSerialReceivedSize != LOBBY_RECOVERY_RECORD_BYTES) {
     result = -1;
@@ -655,7 +655,7 @@ second:
   heap = AllocEwram(size);
   tries = 0;
   if ((transferResult = Serial_StartReceive(Djinn_GetRecoveryTable(1))) != -1) {
-    goto test2;
+    goto testRecovery;
   }
 failed:
   result = transferResult;
@@ -710,8 +710,9 @@ static s32 BattleArena_CopyPartyOwnerIds(u16 *memberIds) {
 /// out of time. The copies go through an EWRAM pool buffer freed before
 /// returning.
 static s32 BattleArena_SendPartyRecords(void) {
-  // Measured plain form: replacing only the final offer-transfer wait3/test3
-  // polling region with while(active transfers) adds 8 bytes in tbs-en.
+  // Measured plain form: replacing only the final offer-transfer
+  // waitOffer/testOffer polling region with while(active transfers) adds 8
+  // bytes in tbs-en.
   s32 result;
   u8 *slotMap;
   u16 memberIds[8];
@@ -830,8 +831,8 @@ next:
       result = transferResult;
       goto done;
     }
-    goto test3;
-  wait3:
+    goto testOffer;
+  waitOffer:
     WaitFrames(1);
     if (--timeout < 0 ||
         (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
@@ -840,9 +841,9 @@ next:
         goto done;
       }
     }
-  test3:
+  testOffer:
     if (Serial_GetActiveTransfers() != 0) {
-      goto wait3;
+      goto waitOffer;
     }
     WaitFrames(1);
     WaitFrames(2);

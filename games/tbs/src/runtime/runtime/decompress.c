@@ -28,12 +28,15 @@ void Decompress_Halfwords(const void *source, void *destination) {
     return result;                                                             \
   }
 
-/// Decodes a type-01 resource and returns its unpacked byte count.
-RESOURCE_DEFINE_DECODE(Decompress_Type01, Decompress_Type01Arm,
-                       Decompress_Type01CodeSize)
-/// Decodes a type-02 resource and returns its unpacked byte count.
-RESOURCE_DEFINE_DECODE(Decompress_Type2, Decompress_Type2Commands,
-                       Decompress_Type2CommandsCodeSize)
+/// Decodes a tagged LZ resource (a first byte of 0 for the general form, 1 for
+/// the palette form) and returns its unpacked byte count.
+RESOURCE_DEFINE_DECODE(Decompress_TaggedLz, Decompress_TaggedLzArm,
+                       Decompress_TaggedLzCodeSize)
+/// Decodes a move-to-front LZ resource (a first byte of 2) and returns its
+/// unpacked byte count.
+RESOURCE_DEFINE_DECODE(Decompress_MoveToFrontLz,
+                       Decompress_MoveToFrontLzCommands,
+                       Decompress_MoveToFrontLzCommandsCodeSize)
 /// Decodes a byte-oriented LZ resource and returns its unpacked byte count.
 RESOURCE_DEFINE_DECODE(Decompress_ByteLz, Decompress_ByteLzArm,
                        Decompress_ByteLzCodeSize)

@@ -80,7 +80,7 @@ static inline void Object_InitializeSparkle(struct Object *object) {
 /// Each frame of a found item's picture: one time in ten, a sparkle appears
 /// within 16 pixels of it. Installed as the picture's update hook by
 /// FieldEffect_StartRandomParticleEmitter, ItemDisplay_ShowPicture
-/// and FieldEffect_StartEffectObject22.
+/// and ItemDisplay_ShowItem.
 void ItemDisplay_EmitSparkles(union ObjectEventOrEffect *fieldObject) {
   struct Object *emitter = (struct Object *)fieldObject;
   union PolarOffsetPosition position;
@@ -209,7 +209,7 @@ void Object_DestroyIfPresent(void *object) {
 /// Raises a found item's picture to 36 pixels above the party leader, who
 /// holds it up (animation 28) facing the screen. Called by Field_SearchCell for
 /// what a search finds, by ItemDisplay_ShowPicture and by
-/// FieldEffect_StartEffectObject22.
+/// ItemDisplay_ShowItem.
 void ItemDisplay_RaiseAboveLeader(struct Object *object) {
   struct Object *leader;
 
@@ -265,7 +265,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
 /// call it (41 of them). When no object is
 /// free, heap block 17, taken for the icon, is not released (the map change's
 /// heap reset frees it).
-void FieldEffect_StartEffectObject22(s32 item, s32 flags) {
+void ItemDisplay_ShowItem(s32 item, s32 flags) {
   struct ObjectEvent *leader =
       ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
   void *iconBuffer = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, 0x608);

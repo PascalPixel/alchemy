@@ -9,7 +9,7 @@
 /// canvas with light.
 ///
 /// Abilities: Gust (BATTLE_ANIM_GUST); Rapid Smash, Sonic Smash, Slice
-/// (BATTLE_ANIM_GUST_310).
+/// (BATTLE_ANIM_RAPID_SMASH).
 void BattleAnim_RunGust(struct BattleAnimArgs *effect) {
   if (effect->variant == ANIM_VARIANT_BASIC) {
     BattleAnim_RunBurstSequence(effect, BURST_SEQUENCE_GUST);
@@ -25,7 +25,7 @@ void BattleAnim_RunGust(struct BattleAnimArgs *effect) {
 /// The user strikes the first target five times.
 ///
 /// Abilities: Bear Claw (BATTLE_ANIM_BEAR_CLAW); Counterstrike
-/// (BATTLE_ANIM_BEAR_CLAW_342).
+/// (BATTLE_ANIM_COUNTERSTRIKE).
 void BattleAnim_RunBearClaw(struct BattleAnimArgs *effect) {
   BattleAnim_RunBurstSequence(effect, BURST_SEQUENCE_BEAR_CLAW);
 }
@@ -33,7 +33,7 @@ void BattleAnim_RunBearClaw(struct BattleAnimArgs *effect) {
 /// Ransack plays the same five strikes as Bear Claw.
 ///
 /// Abilities: Ransack (BATTLE_ANIM_RANSACK); Mad Dash
-/// (BATTLE_ANIM_RANSACK_343).
+/// (BATTLE_ANIM_MAD_DASH).
 void BattleAnim_RunRansack(struct BattleAnimArgs *effect) {
   BattleAnim_RunBurstSequence(effect, BURST_SEQUENCE_BEAR_CLAW);
 }
@@ -56,7 +56,7 @@ void BattleAnim_RunFreebiteRush(struct BattleAnimArgs *effect) {
 /// with a double or triple blow.
 ///
 /// Abilities: Flying Attack (BATTLE_ANIM_FLYING_ATTACK); Swift Strike
-/// (BATTLE_ANIM_FLYING_ATTACK_329).
+/// (BATTLE_ANIM_SWIFT_STRIKE).
 void BattleAnim_RunFlyingAttack(struct BattleAnimArgs *effect) {
   if (effect->variant == ANIM_VARIANT_BASIC) {
     BattleAnim_RunBurstSequence(effect, BURST_SEQUENCE_FLYING_ATTACK);

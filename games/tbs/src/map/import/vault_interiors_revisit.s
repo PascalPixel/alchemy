@@ -29,7 +29,7 @@
 	.set import.FieldScript_ShowMessageThenWait, 1
 	.set import.ObjectMotion_ArmCallback, 1
 	.set import.FieldEffect_SpawnLinked, 1
-	.set import.FieldEffect_StartEffectObject22, 1
+	.set import.ItemDisplay_ShowItem, 1
 	.set import.Shop_Run, 1
 	.set import.Inn_CheckIn, 1
 	.include "games/tbs/src/system/overlay.inc"

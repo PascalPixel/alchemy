@@ -233,7 +233,7 @@ void Overlay_Load(u32 index, void *destination) {
   void (*patchBranches)(void *, s32);
   s32 codeSize;
 
-  codeSize = Decompress_Type01(Resource_GetTableEntry(index), destination);
+  codeSize = Decompress_TaggedLz(Resource_GetTableEntry(index), destination);
   RamCode_Load(patchBranches, Resource_PatchThumbBranch,
                Resource_PatchThumbBranchCodeSize);
   patchBranches(destination, codeSize);

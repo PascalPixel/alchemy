@@ -641,7 +641,7 @@ static void EventScript_JillGivesHardNut(void) {
   // Show the named gift before adding it to the party's inventory.
   FieldMessage_Show(MsgBilibinJillGaveIsaacSpecialGift, 1);
   gFieldWork->message++;
-  FieldEffect_StartEffectObject22(ITEM_HARD_NUT, 3);
+  ItemDisplay_ShowItem(ITEM_HARD_NUT, 3);
   PartyInventory_GiveItem(ITEM_HARD_NUT, 0);
   ObjectMotion_SetAnimationAndWait(LOCALID_JILL, ANIM_NOD);
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);

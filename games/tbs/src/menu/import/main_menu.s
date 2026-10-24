@@ -7,7 +7,7 @@
 	.set import.Task_Remove, 1
 	.set import.AllocEwram, 1
 	.set import.Free, 1
-	.set import.Decompress_Type01, 1
+	.set import.Decompress_TaggedLz, 1
 	.set import.Window_LoadGraphics, 1
 	.set import.Resource_GetTableEntry, 1
 	.set import.ScreenFade_ToBlack, 1

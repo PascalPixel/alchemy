@@ -86,9 +86,9 @@ s32 Audio_PlayCueReturnOne(s32 cue);
 void Menu_CancelSoundTick(void);
 void Menu_CancelSoundReset(void);
 void Menu_EnsureCancelSound(void);
-void WindowPalette_SetColor15(void);
-void WindowPalette_SetColor2(void);
-void WindowPalette_SetColor4(void);
+void WindowPalette_SetNormalTextColor(void);
+void WindowPalette_SetNoHpTextColor(void);
+void WindowPalette_SetLowHpTextColor(void);
 void DjinnFigures_ClearSlotsAndSchedule(void);
 void DjinnFigures_ClearSlotsAndScheduleAlt(void);
 

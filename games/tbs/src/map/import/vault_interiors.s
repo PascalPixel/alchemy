@@ -81,7 +81,7 @@
 	.set import.FieldScript_FinishScreenTransition, 1
 	.set import.FieldScript_WaitTransitionFrames, 1
 	.set import.FieldEffect_PlayCueAndStartEmitterOnTarget, 1
-	.set import.FieldEffect_StartEffectObject22, 1
+	.set import.ItemDisplay_ShowItem, 1
 	.set import.ObjectEvent_GetByLocalId, 1
 	.set import.Field_DispatchTypeHandler, 1
 	.set import.FieldEffect_LoadActionEffectResources, 1

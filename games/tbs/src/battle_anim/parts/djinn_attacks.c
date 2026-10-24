@@ -341,7 +341,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
     Iwram_CopyWords((void *)BG_PLTT, data, 128);
   if (skipPalette != 0)
     data += 128;
-  Decompress_Type01(data, dst);
+  Decompress_TaggedLz(data, dst);
 }
 
 #define VENUS_FRAMES 96

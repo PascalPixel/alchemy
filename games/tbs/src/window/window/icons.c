@@ -213,19 +213,19 @@ extern const u8 *gMenuTitlePictures[];
 s32 Resource_LoadTableEntry(u32 value, s32 unused, u32 slot) {
   // Three more names of the one table: the ROM keeps a literal for each case,
   // and with one name the switch folds into a single load.
-  extern const u8 *PairSource1[] __asm__("gMenuTitlePictures"),
-      *PairSource2[] __asm__("gMenuTitlePictures"),
-      *PairSource3[] __asm__("gMenuTitlePictures");
+  extern const u8 *gMenuTitlePicturesCase1[] __asm__("gMenuTitlePictures"),
+      *gMenuTitlePicturesCase2[] __asm__("gMenuTitlePictures"),
+      *gMenuTitlePicturesCase3[] __asm__("gMenuTitlePictures");
   void *source;
   switch (value) {
   case 1:
-    source = PairSource1;
+    source = gMenuTitlePicturesCase1;
     break;
   case 2:
-    source = PairSource2;
+    source = gMenuTitlePicturesCase2;
     break;
   case 3:
-    source = PairSource3;
+    source = gMenuTitlePicturesCase3;
     break;
   case 0:
   default:

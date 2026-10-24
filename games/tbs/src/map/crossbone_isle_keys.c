@@ -636,7 +636,7 @@ static void EventScript_HideRedKey(void) {
 /// taken.
 static inline void CrossboneIsleKeys_CollectKey(s32 localId, s32 itemId,
                                                 s32 collectedFlag) {
-  FieldEffect_StartEffectObject22(itemId, 3);
+  ItemDisplay_ShowItem(itemId, 3);
   OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_STAND);
   PartyInventory_GiveItem(itemId, 0);
   Import_ObjectEventSetPosition(localId, 0, 0);

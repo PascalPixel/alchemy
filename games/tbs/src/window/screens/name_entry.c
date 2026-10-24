@@ -62,7 +62,7 @@ void Window_CopyTilemapRegion(const struct Window *window, const void *source) {
   s16 *vram;
   s32 row;
 
-  Decompress_Type01(source, buffer);
+  Decompress_TaggedLz(source, buffer);
   cell = window->y * 32 + window->x;
   vram = (s16 *)WINDOW_TILEMAP_VRAM + cell;
   mirror += cell;

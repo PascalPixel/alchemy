@@ -2094,7 +2094,7 @@ static void MercuryLighthouse_InspectHealingFountain(void) {
 static void MercuryLighthouse_FillHermesWaterBottle(void) {
   FieldScript_Start();
   Sound_PlaySong(MUS_TREASURE_FOUND);
-  FieldEffect_StartEffectObject22(ITEM_HERMES_WATER, 3);
+  ItemDisplay_ShowItem(ITEM_HERMES_WATER, 3);
   MercuryLighthouse_ReplaceInventoryItem(ITEM_EMPTY_BOTTLE, ITEM_HERMES_WATER);
   MessageArgument_Push(PartyInventory_FindMember(ITEM_HERMES_WATER), 1);
   MessageArgument_Push(ITEM_HERMES_WATER, 2);

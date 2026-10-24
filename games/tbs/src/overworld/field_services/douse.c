@@ -20,9 +20,9 @@ struct ObjectEventDouseView {
   u8 reserved54;
   u8 flag; ///< motionFlags: 2 falls, 0 free flight
   u8 reserved56[8];
-  /// wait: frames its script waits before it runs on; 2 or 6 here, before
+  /// Frames its script waits before it runs on; 2 or 6 here, before
   /// gFieldEffect_CommonParticleScript frees it.
-  s16 phase;
+  s16 wait;
   u8 reserved60[0xc];
   void (*callback)(
       union ObjectEventOrEffect *fieldObject); ///< per-frame update
@@ -57,12 +57,12 @@ void FieldEffect_SpawnRandomAngleTriplet(
       (struct ObjectEventDouseView *)fieldObject;
   s32 i;
   struct ObjectEventDouseView *p;
-  s32 phase = 2;
-  s32 phase2;
+  s32 dropWait = 2;
+  s32 splashWait;
   s16 *pp;
 
   if (particle->y <= particle->altitude) {
-    particle->phase = phase;
+    particle->wait = dropWait;
     Object_InitializeFar((struct Object *)particle,
                          gFieldEffect_CommonParticleScript);
     p = NULL;
@@ -83,9 +83,9 @@ void FieldEffect_SpawnRandomAngleTriplet(
       p->speed = Random16() + 0x13333;
       ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)p,
                                                        32 << 16, Random16());
-      pp = &p->phase;
-      phase2 = 6;
-      *pp = phase2;
+      pp = &p->wait;
+      splashWait = 6;
+      *pp = splashWait;
       Object_InitializeFar((struct Object *)p,
                            gFieldEffect_CommonParticleScript);
     }

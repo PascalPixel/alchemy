@@ -172,7 +172,7 @@ static void MainMenu_LoadBackground(void) {
   Dma_Set(resource, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x70,
           REG_DMA3);
   resource += 0x1c0;
-  FieldDecompress_Type01(resource, Ram_MapGridCellBuffer);
+  FieldDecompress_TaggedLz(resource, Ram_MapGridCellBuffer);
   Dma_Set((void *)Ram_MapGridCellBuffer, LOGO_TILES,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
   // Build the visible 30-column logo map, padding to the 32-cell screen stride.
@@ -389,7 +389,7 @@ struct SaveMenuMapLocalState {
   u8 mapAndInventory[0x100]; ///< gMapLocalState, then gInventorySnapshot
   /// The play time in frames, which Save_BuildFileSummary copies here
   /// when saving.
-  s32 word100;
+  s32 playTime;
 };
 
 /// A console's link payload as the cable transfer reads it from
@@ -569,7 +569,7 @@ menu_top:;
       GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
       GameFlag_Set(0x13e);
     } else if (state->playTime !=
-               ((struct SaveMenuMapLocalState *)gMapLocalState)->word100) {
+               ((struct SaveMenuMapLocalState *)gMapLocalState)->playTime) {
       FieldMessage_Show(MsgSaveDataCorrupted, 9);
       FieldMessage_Show(MsgSaveDataCorrupted + 1, 13);
       if (YesNoMenu_Run(1, 0, 0, YES) != YES) {
@@ -949,7 +949,7 @@ UNUSED static void FileMenu_FillTileGrid(struct Window *window,
 
   shadow = ((struct WindowWork *)gWindowWork[0])->tilemap;
   decodedTiles = AllocEwram(0x300);
-  FieldDecompress_Type01(compressedTiles, decodedTiles);
+  FieldDecompress_TaggedLz(compressedTiles, decodedTiles);
   offset = (window->y * 32 + window->x) * 2;
   vram = (u16 *)(0x06002000 + offset);
   shadow = (u16 *)((u8 *)shadow + offset);

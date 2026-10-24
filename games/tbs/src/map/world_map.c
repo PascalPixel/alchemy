@@ -1992,7 +1992,7 @@ static void WorldMap_RunBlackOrbScene(void) {
   ObjectMotion_SetPositionAndReset(gWorldMapIodem, 6036, 3400);
   FieldScript_WaitFrames(1);
   ObjectEvent_GetById(gWorldMapIodem)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
-  FieldEffect_StartEffectObject22(ITEM_BLACK_ORB, 3);
+  ItemDisplay_ShowItem(ITEM_BLACK_ORB, 3);
   PartyInventory_GiveItem(ITEM_BLACK_ORB, 0);
   ObjectMotion_SetVarCbAndRefresh(gWorldMapIodem, 1);
   FieldScript_SetMessageId(MsgWorldMapNowUseOnShip);
@@ -2829,8 +2829,8 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
   WaitFrames(1);
   GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
   WorldMap_StartStillView();
-  FieldDecompress_Type01(gWorldMapPackedTiles, buffer);
-  FieldDecompress_Type01(gWorldMapPackedFrames, buffer + 0x1000);
+  FieldDecompress_TaggedLz(gWorldMapPackedTiles, buffer);
+  FieldDecompress_TaggedLz(gWorldMapPackedFrames, buffer + 0x1000);
   IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT[14 * 16],
                       (u32)(gWorldMapPalettes + palette * 32),
                       DMA_ENABLE << 16 | 16);

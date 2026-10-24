@@ -41,7 +41,7 @@ struct SaveFileSummary {
   /// the file menu for cleared data lists a file without it as not cleared.
   s8 sendFlag;
   s8 flagCount; ///< how many Djinn flags (FLAG_DJINN_FIRST on) are set
-  u8 hasFlag20; ///< FLAG_CHILDHOOD is set; remaps the party's sprites
+  u8 childhood; ///< FLAG_CHILDHOOD is set; remaps the party's sprites
   /// bits: 15..8 windowBrightness | 7..0 windowColor
   ///@{
   u16 windowHue : 8;        ///< SaveBlock.windowColor[0]

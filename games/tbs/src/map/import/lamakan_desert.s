@@ -7,7 +7,7 @@
 	.set import.Vector_AddPolarOffset, 1
 	.set import.Alloc, 1
 	.set import.Free, 1
-	.set import.Decompress_Type01, 1
+	.set import.Decompress_TaggedLz, 1
 	.set import.VramCache_ReleaseVram, 1
 	.set import.VramCache_Load, 1
 	.set import.VramCache_FindFreeEntry, 1

@@ -33,7 +33,7 @@ FarCall_RuntimeTable:
 	overlay_veneer DebugText_PrintDecimal
 	overlay_veneer DebugText_PrintBlanks
 	export Decompress_ByteLzFar, Decompress_ByteLz
-	export Decompress_Type01Far, Decompress_Type01
+	export Decompress_TaggedLzFar, Decompress_TaggedLz
 	overlay_veneer VramCache_Reset
 	export VramCache_FreeEntryFar, VramCache_FreeEntry
 	export VramCache_ReleaseVramFar, VramCache_ReleaseVram

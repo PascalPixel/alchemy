@@ -42,6 +42,6 @@
 	.set import.FieldScript_StartScreenTransition, 1
 	.set import.FieldScript_FinishScreenTransition, 1
 	.set import.FieldScript_WaitTransitionFrames, 1
-	.set import.FieldEffect_StartEffectObject22, 1
+	.set import.ItemDisplay_ShowItem, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

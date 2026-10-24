@@ -924,7 +924,7 @@ static void EventScript_OfferBones(void) {
       FieldScript_SetMessageId(MsgVaultWowHaveManyThingsArent);
       Script_ShowMessage(LOCALID_GIRL_AT_THE_INN, 0);
     } else {
-      FieldEffect_StartEffectObject22(ITEM_BONE, 3);
+      ItemDisplay_ShowItem(ITEM_BONE, 3);
       PartyInventory_GiveItem(ITEM_BONE, 0);
       GameFlag_Set(FLAG_VAULT_BONE_RECEIVED);
     }

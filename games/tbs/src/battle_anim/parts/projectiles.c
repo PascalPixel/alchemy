@@ -73,7 +73,7 @@ void BattleAnim_RunDjinniEntrance(struct BattleAnimArgs *effect, s32 element,
   // The small Djinni's resource is its palette, then its picture.
   palette = Resource_GetTableEntry(sheetId);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
-  Decompress_Type01(palette + 128, work->sheet);
+  Decompress_TaggedLz(palette + 128, work->sheet);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (side == 1) {
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,

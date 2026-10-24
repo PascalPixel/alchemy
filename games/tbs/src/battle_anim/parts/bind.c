@@ -112,7 +112,7 @@ UNUSED void BattleAnim_ConvertBackgroundToBlueRamp(void) {
 /// A triangle of light spins and shrinks onto the first target for 64 frames,
 /// then a rune stands on the target; the battle shows the result on frame 64.
 ///
-/// Abilities: Bind (BATTLE_ANIM_BIND); Luff (BATTLE_ANIM_BIND_218).
+/// Abilities: Bind (BATTLE_ANIM_BIND); Luff (BATTLE_ANIM_LUFF).
 ///
 /// When effect->prelude is 1 a Jupiter Djinni first appears over the first
 /// target, sways and rises away. The canvas darkens a little faster every 16
@@ -169,14 +169,14 @@ void BattleAnim_RunBind(struct BattleAnimArgs *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Decompress_Type01(palette, work->sheet);
-  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
-                    graphics);
-  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD),
-                    work->sheet + 0x1000);
+  Decompress_TaggedLz(palette, work->sheet);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
+                      graphics);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD),
+                      work->sheet + 0x1000);
   palette = Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet);
   palette += 128;
-  Decompress_Type01(palette, work->sheet + 0x2000);
+  Decompress_TaggedLz(palette, work->sheet + 0x2000);
   // 4 off every pixel each frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
   Projection_ScaledUnit(work->effect->targets[0], &anchor);
@@ -340,11 +340,11 @@ void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Decompress_Type01(palette, work->sheet);
-  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
-                    graphics);
+  Decompress_TaggedLz(palette, work->sheet);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
+                      graphics);
   palette = Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD);
-  Decompress_Type01(palette, work->sheet + 0x1000);
+  Decompress_TaggedLz(palette, work->sheet + 0x1000);
   // 4 off every pixel each frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
   Projection_ScaledUnit(work->effect->targets[0], &anchor);

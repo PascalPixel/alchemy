@@ -160,7 +160,7 @@ void FieldScript_ShowTwoMessagesAndWaitFar(s32 first, s32 first_x, s32 first_y,
                                            s32 second_extra);
 /// Gives the messages that follow the voice of an object event's sprite, at the
 /// rate the message speed option picks; the top bit alone silences them.
-void Message_SetVoiceFromObjectEventFar(s32 arg0);
+void Message_SetVoiceFromObjectEventFar(s32 localId);
 /// Fixes the priority of an object event's sprite so it no longer follows its
 /// depth.
 void ObjectMotion_SetActionVariantFar(s32 objectId, s32 priority);
@@ -185,7 +185,7 @@ void FieldCamera_MoveWithinMapBoundsFar(s32 requested_x, s32 requested_y,
 /// Waits, at most 600 frames, for the camera to arrive, then 2 frames more.
 void FieldCamera_WaitForArrivalFar(void);
 /// Moves the camera to an object event's position, kept inside the map.
-void ObjectEvent_PlaceCurrentWithinCameraBoundsFar(s32 arg0, s32 arg1);
+void ObjectEvent_PlaceCurrentWithinCameraBoundsFar(s32 localId, s32 glide);
 /// Returns the camera object, the script's view centre.
 struct ObjectEvent *FieldCamera_GetScriptObjectFar(void);
 /// Sets the map rectangle the camera keeps the screen inside.
@@ -219,7 +219,7 @@ s32 ObjectEvent_GetScreenPositionFar(s32 objectId, s32 *position);
 s32 ObjectEvent_GetTriggerTileAheadOfCurrentFar(void);
 /// Returns the sprite a character is drawn with, which depends on
 /// FLAG_CHILDHOOD and FLAG_ISAAC_WEARS_TUNIC.
-s32 Party_RemapCharacterIdByFlagsFar(s32 arg0);
+s32 Party_RemapCharacterIdByFlagsFar(s32 character);
 /// Jumps the leader two cells forward when the map allows, chaining jumps.
 /// Returns 0 after a jump, -1 when it can't.
 s32 Field_TryJumpForwardFar(void);
@@ -282,7 +282,7 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTargetFar(s32 effect, s32 target,
 void ItemDisplay_ShowPictureFar(void *object, s32 flags);
 /// Holds an item's picture above the leader for 80 frames, the way a found
 /// item is shown in most maps.
-void FieldEffect_StartEffectObject22Far(s32 value, s32 flags);
+void ItemDisplay_ShowItemFar(s32 value, s32 flags);
 /// Moves a treasure spot's object event to (x, z) on the ground, in 16.16
 /// pixels; -1 keeps the centre of its cell on that axis.
 void TreasureSpot_SetObjectEventPositionFar(s32 id, s32 x, s32 y);
@@ -328,7 +328,7 @@ void FieldEffect_FinishWaveAndReleaseHeapBlockFar(void);
 void FieldEffect_RestoreMindReadPaletteFar(void);
 /// Returns whether the map has a Psynergy event of this group for what the
 /// leader faces; nothing in ☀️ calls it.
-s32 FieldEffect_HasMatchingEvent5Far(s32 group);
+s32 Map_HasFieldPsynergyEventFar(s32 group);
 /// Returns whether the map has an event for this item and what the leader
 /// faces; the item menu then closes and the item is used on the field.
 u32 Map_HasPsynergyEventFar(u16 item);
@@ -387,8 +387,8 @@ void FieldEffect_InitializeSlotsFar(void);
 void FieldEffect_ClearActiveSlotsAndScheduleUpdatesFar(void);
 /// Places an object event on the leader and walks it out to an offset, then
 /// gives it an action.
-void ObjectMotion_LaunchFromFocusedObjectFar(u32 arg0, s32 arg1, s32 arg2,
-                                             s32 arg3);
+void ObjectMotion_LaunchFromFocusedObjectFar(u32 objectId, s32 xOffset,
+                                             s32 zOffset, s32 action);
 /// Walks an object event a given offset in pixels from where it stands.
 void ObjectMotion_OffsetPositionAndResetFar(u32 objectId, s32 x_offset,
                                             s32 z_offset);
@@ -425,7 +425,7 @@ void Map_QueueMusicFar(s32 sound_id);
 void Map_PlayQueuedMusicFar(void);
 /// Returns a character's sprite for a save file's summary, which records only
 /// whether it was childhood.
-s32 Party_RemapCharacterIdIfEnabledFar(s32 arg0, s32 arg1);
+s32 Party_RemapCharacterIdIfEnabledFar(s32 character, s32 childhood);
 #if TBS_PATCH_2
 /// While Reveal is active, destroys its sparkles and leaves its marks; the
 /// field menu calls it after each choice.

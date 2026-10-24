@@ -12,7 +12,7 @@
 	.set import.FreeHeapSlot, 1
 	.set import.AllocEwram, 1
 	.set import.Free, 1
-	.set import.Decompress_Type01, 1
+	.set import.Decompress_TaggedLz, 1
 	.set import.VramCache_FreeEntry, 1
 	.set import.VramCache_Load, 1
 	.set import.IoWriteQueue_Store16, 1
@@ -92,7 +92,7 @@
 	.set import.FieldScript_StartScreenTransition, 1
 	.set import.FieldScript_FinishScreenTransition, 1
 	.set import.FieldScript_WaitTransitionFrames, 1
-	.set import.FieldEffect_StartEffectObject22, 1
+	.set import.ItemDisplay_ShowItem, 1
 	.set import.WorldMap_StartScript, 1
 	.set import.WorldMap_EndScript, 1
 	.set import.ObjectEvent_GetByLocalId, 1

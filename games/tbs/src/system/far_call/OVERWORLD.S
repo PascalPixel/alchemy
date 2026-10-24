@@ -119,7 +119,7 @@ FarCall_OverworldTable:
 	export ScanlineEffect_StopFar, ScanlineEffect_Stop
 	export FieldEffect_PlayCueAndStartEmitterOnTargetFar, FieldEffect_PlayCueAndStartEmitterOnTarget
 	export ItemDisplay_ShowPictureFar, ItemDisplay_ShowPicture
-	export FieldEffect_StartEffectObject22Far, FieldEffect_StartEffectObject22
+	export ItemDisplay_ShowItemFar, ItemDisplay_ShowItem
 	overlay_veneer TreasureSpot_GetObjectEvent
 	overlay_veneer TreasureSpot_OpenChest
 	overlay_veneer TreasureSpot_CloseChest
@@ -149,7 +149,7 @@ FarCall_OverworldTable:
 	export FieldEffect_FinishWaveAndReleaseHeapBlockFar, FieldEffect_FinishWaveAndReleaseHeapBlock
 	overlay_veneer FieldEffect_GreyMindReadPalette
 	export FieldEffect_RestoreMindReadPaletteFar, FieldEffect_RestoreMindReadPalette
-	export FieldEffect_HasMatchingEvent5Far, FieldEffect_HasMatchingEvent5
+	export Map_HasFieldPsynergyEventFar, Map_HasFieldPsynergyEvent
 	export Map_HasPsynergyEventFar, Map_HasPsynergyEvent
 	export Sprite_ShareVramCacheEntryFar, Sprite_ShareVramCacheEntry
 	export FieldScript_GetSpecialValueFar, FieldScript_GetSpecialValue

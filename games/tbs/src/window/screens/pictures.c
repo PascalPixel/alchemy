@@ -97,7 +97,7 @@ struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
     CommandIcon_Load(icon, slot, remap);
     sprite = WindowSprite_Create(slot, OUTPUT_SIZE_32X32, window, x, y);
-    sprite->oam.palette256 = 1;
+    sprite->oam.fullColor = 1;
     sprite->sentinel = 0xfb;
   }
   return sprite;
@@ -177,9 +177,9 @@ s32 Menu_BuildLocalizedPatternTiles(void) {
           }
         }
         tile[row] =
-            XorWord(tile[row], gMenu_BarPatternRows[sourcePattern].word0);
-        tile[row + 8] =
-            XorWord(tile[row + 8], gMenu_BarPatternRows[sourcePattern].word1);
+            XorWord(tile[row], gMenu_BarPatternRows[sourcePattern].firstTile);
+        tile[row + 8] = XorWord(tile[row + 8],
+                                gMenu_BarPatternRows[sourcePattern].secondTile);
       }
     }
   }

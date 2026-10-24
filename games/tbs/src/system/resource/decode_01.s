@@ -1,10 +1,10 @@
-@ C2: Decompress_Type01Arm:
+@ C2: Decompress_TaggedLzArm:
 @ The bit reader branches on carry immediately after shifting its live
 @ bit reservoir; it also uses unshifted movs r2,r2 for copy-and-test.
-@ C2: Decompress_Type2Commands:
+@ C2: Decompress_MoveToFrontLzCommands:
 @ add ip, pc, #36 followed by ldm ip, {sl, fp} loads a data block
 @ relative to pc, including r11/fp as ordinary decoder state.
-@ C2: Decompress_Type2Loop to Resource_RefillType2Bits:
+@ C2: Decompress_MoveToFrontLzLoop to Resource_RefillMoveToFrontLzBits:
 @ Computed add pc enters fixed-size decoder code slots; command execution
 @ also carries live reader register state across entry labels.
 @ C2: Resource_ExecuteTransfer:
@@ -14,8 +14,8 @@
 @ instructions.
 .syntax unified
 	.arm
-	.global Decompress_Type01Arm
-Decompress_Type01Arm:
+	.global Decompress_TaggedLzArm
+Decompress_TaggedLzArm:
 	push	{r5, r6, r7, r9, lr}
 	ldrb	r2, [r0], #1
 	cmp	r2, #0
@@ -220,12 +220,12 @@ Decompress_Type01Arm:
 	ldrb	r3, [r0], #1
 	add	r3, r3, #16
 	b	.Ltype1_copy
-	.global Decompress_Type01CodeSize
-	.set Decompress_Type01CodeSize, . - Decompress_Type01Arm
+	.global Decompress_TaggedLzCodeSize
+	.set Decompress_TaggedLzCodeSize, . - Decompress_TaggedLzArm
 .syntax unified
 	.arm
-	.global Decompress_Type2Commands
-Decompress_Type2Commands:
+	.global Decompress_MoveToFrontLzCommands
+Decompress_MoveToFrontLzCommands:
 	ldrb	r2, [r0], #1
 	cmp	r2, #2
 	movne	r0, #4
@@ -240,8 +240,8 @@ Decompress_Type2Commands:
 	lsl	r4, r2, #3
 	ldrbne	r2, [r0], #1
 	subs	r4, r4, #16
-	blmi	Resource_RefillType2Bits
-	b	Decompress_Type2Loop
+	blmi	Resource_RefillMoveToFrontLzBits
+	b	Decompress_MoveToFrontLzLoop
 .syntax unified
 	.section .rodata,"a",%progbits
 	.arm
@@ -264,7 +264,7 @@ Decompress_Type2Commands:
 	orr	r5, r5, r8, lsl #4
 	lsr	r2, r2, #8
 	subs	r4, r4, #11
-	blmi	Resource_RefillType2Bits
+	blmi	Resource_RefillMoveToFrontLzBits
 	b	.Ltype2_literal_store
 .Ltype2_literal_3bit:
 	lsrs	r2, r2, #1
@@ -281,7 +281,7 @@ Decompress_Type2Commands:
 	orr	r5, r5, r8, lsl #4
 	lsr	r2, r2, #6
 	subs	r4, r4, #9
-	blmi	Resource_RefillType2Bits
+	blmi	Resource_RefillMoveToFrontLzBits
 	b	.Ltype2_literal_store
 .Ltype2_literal:
 	push	{r5, r9}
@@ -299,12 +299,12 @@ Decompress_Type2Commands:
 	orr	r5, r5, r8, lsl #4
 	lsr	r2, r2, #4
 	subs	r4, r4, #6
-	blmi	Resource_RefillType2Bits
+	blmi	Resource_RefillMoveToFrontLzBits
 .Ltype2_literal_store:
 	strb	r5, [r1, #1]!
 	pop	{r5, r9}
-	.global Decompress_Type2Loop
-Decompress_Type2Loop:
+	.global Decompress_MoveToFrontLzLoop
+Decompress_MoveToFrontLzLoop:
 	lsrs	r2, r2, #1
 	bcs	.Ltype2_literal
 	lsrs	r2, r2, #1
@@ -368,19 +368,19 @@ Decompress_Type2Loop:
 	subs	r4, r4, #6
 	lsr	r2, r2, #5
 .Ltype2_copy:
-	blmi	Resource_RefillType2Bits
+	blmi	Resource_RefillMoveToFrontLzBits
 	ldrb	r7, [r1, -r6]
 	strb	r7, [r1, #1]!
 .Ltype2_copy_byte:
 	ldrb	r7, [r1, -r6]
 	strb	r7, [r1, #1]!
 	subs	r5, r5, #1
-	beq	Decompress_Type2Loop
+	beq	Decompress_MoveToFrontLzLoop
 	ldrb	r7, [r1, -r6]
 	strb	r7, [r1, #1]!
 	subs	r5, r5, #1
 	bne	.Ltype2_copy_byte
-	b	Decompress_Type2Loop
+	b	Decompress_MoveToFrontLzLoop
 .Ltype2_distance_long:
 	sub	r6, r1, r9
 	cmp	r6, #2048
@@ -437,8 +437,8 @@ Decompress_Type2Loop:
 	b	.Ltype2_copy
 .Ltype2_refill_to_distance:
 	sub	lr, pc, #280
-	.global Resource_RefillType2Bits
-Resource_RefillType2Bits:
+	.global Resource_RefillMoveToFrontLzBits
+Resource_RefillMoveToFrontLzBits:
 	ldrh	r3, [r0], #2
 	add	r4, r4, #16
 	orr	r2, r2, r3, lsl r4

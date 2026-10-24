@@ -2125,7 +2125,7 @@ static void AltinPeak_AwardFrostJewelAndDrain(void) {
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(20);
-  FieldEffect_StartEffectObject22(ITEM_FROST_JEWEL, 3);
+  ItemDisplay_ShowItem(ITEM_FROST_JEWEL, 3);
   PartyInventory_GiveItem(ITEM_FROST_JEWEL, 0);
   FieldCamera_GetScriptObject()->motionFlags = 0;
   FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);

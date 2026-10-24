@@ -238,37 +238,42 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(
   particle->z.fixed = source->z.fixed - ((0x10000 - scale) * 5) + 0x100000;
 }
 
-/// A falling arc's sprite (struct Sprite), seen as the attribute
-/// bits, VRAM cache entry and animation that Avoid's arcs set on it; the notes
-/// give the Sprite fields, some under other names here.
+/// A falling arc's sprite (struct Sprite), seen as the image attributes, VRAM
+/// cache entry and first layer that Avoid's arcs set on it, under struct
+/// Sprite's names; its image bit fields are read here as bytes.
 struct DescendingArcSprite {
   u8 padding00[5];
-  u8 flags05_0 : 5;
-  u8 flags05_5 : 1; ///< image.fullColor: 0 for 16 colours
-  u8 layer : 2;     ///< image.shape, despite the name: 1 wide
+  u8 affine : 2;
+  u8 objectMode : 2;
+  u8 mosaic : 1;
+  u8 fullColor : 1; ///< 0 for 16 colours
+  u8 shape : 2;     ///< 1 wide
   u8 padding06;
-  u8 flags07_0 : 6;
-  u8 size : 2; ///< image.size
+  u8 xHigh : 1;
+  u8 affineIndex : 5;
+  u8 size : 2;
   union {
     struct {
-      u16 tile : 10; ///< image.tile, the first sprite tile in VRAM
-      u16 flags08_10 : 6;
+      u16 tile : 10; ///< the first sprite tile in VRAM
+      u16 priority : 2;
+      u16 palette : 4;
     } half;
     struct {
       u8 tileLow;
-      u8 flags09_0 : 2;
-      u8 variant : 2; ///< image.priority, despite the name
-      u8 flags09_4 : 4;
+      u8 tileHigh : 2;
+      u8 priority : 2;
+      u8 palette : 4;
     } byte;
   } attr;
   u8 padding0c[16];
-  u8 resource;   ///< slot: the VRAM cache entry holding its tiles
-  u8 active : 1; ///< retainCacheEntry: the borrowed tiles stay loaded
-  u8 flags1d1 : 7;
+  u8 slot;                 ///< the VRAM cache entry holding its tiles
+  u8 retainCacheEntry : 1; ///< the borrowed tiles stay loaded
+  u8 useOwnScale : 1;
+  u8 unusedFlags : 6;
   u8 padding1e[8];
-  u8 animation; ///< flags, despite the name: 0 drops the shadow
-  u8 padding27;
-  struct SpriteAnim *frame; ///< entries[0], its first layer
+  u8 flags; ///< 0 drops the shadow
+  u8 count;
+  struct SpriteAnim *firstEntry; ///< entries[0], its first layer
 };
 
 /// Spawns a pair of falling arcs (one upside down) on arc, 64 pixels above
@@ -303,22 +308,22 @@ void FieldEffect_SpawnDescendingArcParticles(struct ObjectEvent *arc) {
     if (sprite == NULL)
       continue;
     Sprite_StartAnimFar((struct Sprite *)sprite, 0);
-    sprite->animation = zero;
-    VramCache_FreeEntry(sprite->resource);
-    sprite->resource = effectWork->arcTileSlot;
-    sprite->active = 1;
-    sprite->attr.half.tile = gVramCacheEntries[sprite->resource].offset >> 5;
-    sprite->flags05_5 = 0;
-    sprite->layer = 1;
+    sprite->flags = zero;
+    VramCache_FreeEntry(sprite->slot);
+    sprite->slot = effectWork->arcTileSlot;
+    sprite->retainCacheEntry = 1;
+    sprite->attr.half.tile = gVramCacheEntries[sprite->slot].offset >> 5;
+    sprite->fullColor = 0;
+    sprite->shape = 1;
     sprite->size = 2;
-    sprite->frame->frame = zero;
+    sprite->firstEntry->frame = zero;
   }
   // BUG: failed allocations above leave a missing arc or sprite here.
   // Preserve the original partial-pair behavior until recovery is established.
   objectEvents[0]->update = FieldEffect_UpdateDescendingParticleNegativeArc;
-  ((struct DescendingArcSprite *)objectEvents[0]->sprite)->attr.byte.variant =
+  ((struct DescendingArcSprite *)objectEvents[0]->sprite)->attr.byte.priority =
       0;
   objectEvents[1]->update = FieldEffect_UpdateDescendingParticlePositiveArc;
-  ((struct DescendingArcSprite *)objectEvents[1]->sprite)->attr.byte.variant =
-      ((struct DescendingArcSprite *)leader->sprite)->attr.byte.variant;
+  ((struct DescendingArcSprite *)objectEvents[1]->sprite)->attr.byte.priority =
+      ((struct DescendingArcSprite *)leader->sprite)->attr.byte.priority;
 }

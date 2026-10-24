@@ -91,9 +91,9 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
   resource = Resource_GetTableEntry((s32)&ResourceId_WhirlwindSheet);
   Iwram_CopyWords((void *)BG_PLTT, resource, 0x80);
   resource += 0x80;
-  Decompress_Type01(resource, work->sheet);
-  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
-                    graphics);
+  Decompress_TaggedLz(resource, work->sheet);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
+                      graphics);
 
   // Trails keep half of each pixel a frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
@@ -304,7 +304,7 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
       resource = Resource_GetTableEntry((s32)&ResourceId_VioletCometSheet);
       Iwram_CopyWords((void *)BG_PLTT, resource, 0x80);
       resource += 0x80;
-      Decompress_Type01(resource, work->sheet + PROCNE_COMET_CELLS);
+      Decompress_TaggedLz(resource, work->sheet + PROCNE_COMET_CELLS);
 
       index = 0;
       do {

@@ -4,7 +4,7 @@
 /// Returns the party's Djinn recovery bank, the standby Djinn with their turns
 /// to recover and the summon flags, or an enemy record read as one for the
 /// enemy side.
-void *Djinn_GetRecoveryTableFar(s32 arg0);
+void *Djinn_GetRecoveryTableFar(s32 enemySide);
 #ifndef OWN_Unit_GetFar
 /// Returns the unit of a playable character or of an enemy in the
 /// current battle, or NULL for anything else; nearly every bank reads units
@@ -195,7 +195,7 @@ s32 PartyInventory_HasSpaceFar(void);
 u32 Unit_GetExperienceForLevelFar(s32 owner, s32 level);
 /// Restores every party member's HP and PP; with 1 it also cures poison and
 /// haunting.
-void Party_RestoreHpPpFar(s32 arg0);
+void Party_RestoreHpPpFar(s32 cureConditions);
 /// Restores the PP of each member whose element's lighthouse is lit, at the top
 /// of the Mercury and Venus Lighthouses.
 void Party_RestorePpOfLitElementsFar(void);

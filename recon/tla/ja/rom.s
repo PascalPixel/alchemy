@@ -35,12 +35,6 @@ Func_08013de4:
 	.thumb_func
 VramCache_AllocateBlocks:
 	.incbin "baserom.gba", 0x00014174, 0x00000080
-	.section .rom.00014b70, "ax"
-	.global Func_08014b70
-	.type Func_08014b70, %function
-	.thumb_func
-Func_08014b70:
-	.incbin "baserom.gba", 0x00014b70, 0x0000003c
 	.section .rom.00015510, "ax"
 	.global Transform_BuildLookAt
 	.type Transform_BuildLookAt, %function

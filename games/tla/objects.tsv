@@ -127,12 +127,6 @@ main	rom_main_00	games/tla/src/system/scheduler/disable_callbacks	.text
 main	rom_main_00	games/tla/src/lib/math	.text
 main	rom_main_00	games/tla/src/system/memory/debug_text	.text
 main	rom_main_00	games/tla/src/system/memory/debugnum	.text
-main	rom_main_00	recon/tla/it/rom	.rom.00014b9c	it
-main	rom_main_00	recon/tla/fr/rom	.rom.00014b9c	fr
-main	rom_main_00	recon/tla/es/rom	.rom.00014b9c	es
-main	rom_main_00	recon/tla/de/rom	.rom.00014b9c	de
-main	rom_main_00	recon/tla/raw/08014b70	.text	en
-main	rom_main_00	recon/tla/ja/rom	.rom.00014b70	ja
 main	rom_main_00	games/tla/src/system/memory/memory	.text
 main	rom_main_00	games/tla/src/graphics/render/render	.text
 main	rom_main_00	recon/tla/it/rom	.rom.0001553c	it

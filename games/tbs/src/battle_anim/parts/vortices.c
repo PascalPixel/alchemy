@@ -248,7 +248,7 @@ void BattleAnim_RunWhirlwind(struct BattleAnimArgs *effect) {
     // The sweep sways 16 pixels each way, once every 64 frames, about a
     // point 32 pixels right of the canvas's x 40 when the targets are the
     // party, left otherwise.
-    if (work->effect->side == 1)
+    if (work->effect->side == ANIM_SIDE_PARTY)
       wave += 0x200000;
     else
       wave -= 0x200000;

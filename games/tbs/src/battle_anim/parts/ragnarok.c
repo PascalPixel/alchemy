@@ -136,7 +136,7 @@ void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
       s32 top;
 
       height = 128;
-      if (work->effect->side == 1) {
+      if (work->effect->side == ANIM_SIDE_PARTY) {
         if (frame <= 9) {
           x = frame * 10 - 8;
           top = frame * 16 - 128;

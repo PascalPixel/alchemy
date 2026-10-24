@@ -60,7 +60,7 @@ void BattleAnim_RunSwirlSwipe(struct BattleAnimArgs *effect, s32 mode) {
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
   ANIM_START_NARROW_CANVAS(0);
-  if (work->effect->side == 1) {
+  if (work->effect->side == ANIM_SIDE_PARTY) {
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
     draw[0] = (DrawRectangle)ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
@@ -83,7 +83,7 @@ void BattleAnim_RunSwirlSwipe(struct BattleAnimArgs *effect, s32 mode) {
   Projection_ScaledUnit(work->effect->targets[0], &position);
   // Line the canvas up so the swipe crosses the target: the target's x
   // lands at canvas x 16 against the enemies and 112 against the party.
-  if (work->effect->side == 0)
+  if (work->effect->side == ANIM_SIDE_ENEMIES)
     REG_BG2X = (16 - position.x) << 8;
   else
     REG_BG2X = (112 - position.x) << 8;

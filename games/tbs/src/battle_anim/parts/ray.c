@@ -41,8 +41,9 @@ void BattleAnim_RunRay(struct BattleAnimArgs *effect) {
   work->effect = effect;
   BattleAnim_StartTiledCanvas(1);
   // Destruct Ray stretches the canvas across the screen; the others show it
-  // at its own width over the targets' half (on side 1, moved 128 pixels).
-  // BG2X is 20.8: Destruct Ray's canvas moves 16 texels towards the targets.
+  // at its own width over the targets' half (on ANIM_SIDE_PARTY, moved 128
+  // pixels). BG2X is 20.8: Destruct Ray's canvas moves 16 texels towards the
+  // targets.
   if (work->effect->variant == ANIM_VARIANT_STRONGEST)
     REG_BG2PA = Q_8_8(0.5);
   else
@@ -56,12 +57,12 @@ void BattleAnim_RunRay(struct BattleAnimArgs *effect) {
                              work->sheet + RAY_CELLS, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (work->effect->variant == ANIM_VARIANT_STRONGEST) {
-    if (work->effect->side == 1)
+    if (work->effect->side == ANIM_SIDE_PARTY)
       REG_BG2X = -0x1000;
     else
       REG_BG2X = 0x1000;
   } else {
-    if (work->effect->side == 1)
+    if (work->effect->side == ANIM_SIDE_PARTY)
       REG_BG2X = -0x8000;
   }
 

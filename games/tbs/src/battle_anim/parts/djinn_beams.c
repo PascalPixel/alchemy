@@ -95,14 +95,14 @@ void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element) {
 
   // With one target, scroll BG2 so the target is at the canvas's x 64;
   // with several, the canvas covers the targets' side of the field: from
-  // screen x 112 for the party (side 1), from x 0 for enemies. offsetX is
-  // added to every screen x drawn, turning it into a canvas x.
+  // screen x 112 for the party (ANIM_SIDE_PARTY), from x 0 for enemies. offsetX
+  // is added to every screen x drawn, turning it into a canvas x.
   REG_BG2PA = Q_8_8(1);
   if (work->effect->targetCount == 1) {
     Projection_ScaledUnit(work->effect->targets[0], &one);
     offsetX = 64 - one.x;
   } else {
-    if (work->effect->side == 1)
+    if (work->effect->side == ANIM_SIDE_PARTY)
       offsetX = -112;
     else
       offsetX = 0;

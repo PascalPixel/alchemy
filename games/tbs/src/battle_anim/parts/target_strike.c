@@ -282,7 +282,7 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
         // target's centre, 21 for the first picture down to -8 for the last,
         // so the sweep crosses the centre; mirrored when the targets are the
         // party, its right edge stands as far to the left.
-        if (work->effect->side == 1) {
+        if (work->effect->side == ANIM_SIDE_PARTY) {
           ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                             ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             COMPOSITE_LIGHTEN);

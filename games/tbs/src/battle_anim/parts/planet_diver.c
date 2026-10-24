@@ -163,11 +163,11 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
         actor->y -= 8 << 16;
         // The nudge after drawing lasts only to this frame's landing test,
         // where the chips start; the next frame projects the user afresh.
-        // On side 1 the nudge moves y, so the chips start 8 pixels lower
-        // rather than 8 pixels across.
+        // On ANIM_SIDE_PARTY the nudge moves y, so the chips start 8 pixels
+        // lower rather than 8 pixels across.
         // XXX (no evidence): whether screenPosition.x += 8 was meant, as side
         // 0 moves x; only the author's intent would say.
-        if (work->effect->side == 0) {
+        if (work->effect->side == ANIM_SIDE_ENEMIES) {
           draw[0](canvas, work->sheet, screenPosition.x - 20,
                   screenPosition.y - 52, 40, 64);
           screenPosition.x -= 8;
@@ -314,7 +314,7 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
     // way, about a 1.5-texel offset against the enemies. The wave is 32 lines
     // long (1/32 turn a line) and moves up a line each frame.
     row = work->bg2xLines;
-    if (work->effect->side == 0) {
+    if (work->effect->side == ANIM_SIDE_ENEMIES) {
       for (i = 0; i != 160; i++)
         *row++ = (0x60000 - Trig_Sin((frame + i) << 11) * 6) >> 10;
     } else {
@@ -425,7 +425,7 @@ void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {
   // and each frame's first line takes the table's last value, latched at
   // VBlank, so this 104 can reach at most the top line before the DMA first
   // runs; and no row reaches this animation.
-  if (work->effect->side == 1) {
+  if (work->effect->side == ANIM_SIDE_PARTY) {
     REG_BG2X = -0x6800;
     offsetX = -112;
   } else {
@@ -442,7 +442,7 @@ void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {
     // a line) and moves up a line each frame.
     camera = gBattleCamera;
     row = work->bg2xLines;
-    if (work->effect->side == 0) {
+    if (work->effect->side == ANIM_SIDE_ENEMIES) {
       s32 angle;
       s32 base;
 

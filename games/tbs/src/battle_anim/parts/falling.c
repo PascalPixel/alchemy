@@ -48,8 +48,7 @@ enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 /// stream out of the sky above the targets. effect->variant picks the size of
 /// the volley from gFalling_IceCounts (shards and frames: 16 for 46 frames
 /// for Ice, 20 for 52 for Ice Horn, 32 for 80 for Ice Missile); Ice Horn
-/// leaves longer trails and Ice Missile draws additively. effect->side is 1
-/// when the targets are the party, 0 when they are enemies.
+/// leaves longer trails and Ice Missile draws additively.
 void BattleAnim_RunIce(struct BattleAnimArgs *effect) {
   void **slots;
   void **cursor;
@@ -90,7 +89,7 @@ void BattleAnim_RunIce(struct BattleAnimArgs *effect) {
 
       shard = &work->particles[i];
       x = (Random16() & 63) + (Random16() & 7) + 24;
-      if (work->effect->side == 1)
+      if (work->effect->side == ANIM_SIDE_PARTY)
         x = x + slant + 24;
       else
         x = x - slant + 80;
@@ -104,7 +103,7 @@ void BattleAnim_RunIce(struct BattleAnimArgs *effect) {
 
   // The shards fall towards the targets' side, so the blitters mirror them
   // when the targets are the party.
-  if (work->effect->side == 0) {
+  if (work->effect->side == ANIM_SIDE_ENEMIES) {
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, BLITTER_CLIP_Y, COMPOSITE_LIGHTEN);
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, BLITTER_CLIP_Y, COMPOSITE_ADDITIVE);
   } else {
@@ -122,7 +121,7 @@ void BattleAnim_RunIce(struct BattleAnimArgs *effect) {
   // a line the way the shards fall (on line 8 from x 104 against the
   // enemies, moving left; from x 32 against the party, moving right), then a
   // fixed span down to line 135.
-  if (work->effect->side == 0) {
+  if (work->effect->side == ANIM_SIDE_ENEMIES) {
     line = (u16 *)Ram_MapGridCellBuffer;
     FALLING_BUILD_SLANTED_WINDOW(line, i, 103, (0xf0 - i) | ((0x70 - i) << 8),
                                  WIN_RANGE(8, 136));
@@ -161,7 +160,7 @@ void BattleAnim_RunIce(struct BattleAnimArgs *effect) {
         draw[work->effect->variant == ANIM_VARIANT_STRONGEST ? 1 : 0](
             canvas, work->sheet, x, y, 32, 32);
         if (shard->y <= FALLING_LAND_Y) { // above y 80
-          if (work->effect->side == 0)
+          if (work->effect->side == ANIM_SIDE_ENEMIES)
             shard->x -= 64;
           else
             shard->x += 64;
@@ -269,8 +268,7 @@ struct BoltSparkBuffer {
 /// window 0. effect->variant picks the volley from gFalling_Counts: 6 bolts of
 /// 8 sparks (Douse), 8 of 16 (Drench) or 32 of 4 (Deluge), spaced 32, 24 or 8
 /// pixels apart, over 80 frames; it also picks how the canvas fades (see
-/// below). effect->side is 1 when the targets are the party, 0 when they are
-/// enemies.
+/// below).
 void BattleAnim_RunDouse(struct BattleAnimArgs *effect) {
   void **slots;
   void **cursor;
@@ -317,7 +315,7 @@ void BattleAnim_RunDouse(struct BattleAnimArgs *effect) {
     x = Random16() & 63;
     y = -(i * gFalling_Counts[work->effect->variant][FALLING_BOLT_SPACING] +
           16);
-    if (work->effect->side == 1)
+    if (work->effect->side == ANIM_SIDE_PARTY)
       x = x + y / 2 - 48;
     else
       x = x - y / 2 + 72;
@@ -328,7 +326,7 @@ void BattleAnim_RunDouse(struct BattleAnimArgs *effect) {
 
   // Window 0's edges, one per scanline: a 128-pixel band slanting half a
   // pixel a line, as the bolts fall, then a fixed span down to line 135.
-  if (work->effect->side == 0) {
+  if (work->effect->side == ANIM_SIDE_ENEMIES) {
     line = (u16 *)Ram_MapGridCellBuffer;
     FALLING_BUILD_SLANTED_WINDOW(line, i, 103,
                                  ((0x34 - i / 2) << 8) | (0xb4 - i / 2),
@@ -374,7 +372,7 @@ void BattleAnim_RunDouse(struct BattleAnimArgs *effect) {
       if (bolt->variant == -1) {
         drawBolt(canvas, work->sheet + DOUSE_FALLING_CELL, x, y, 24, 24);
         if (bolt->y <= FALLING_LAND_Y) {
-          if (work->effect->side == 0)
+          if (work->effect->side == ANIM_SIDE_ENEMIES)
             bolt->x -= 32;
           else
             bolt->x += 32;

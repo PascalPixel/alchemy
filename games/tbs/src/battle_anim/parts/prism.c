@@ -61,7 +61,7 @@ void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
     // This first random number is drawn and discarded.
     x = Random16() & 31;
     seed->y = -0x400000;
-    if (work->effect->side == 1) {
+    if (work->effect->side == ANIM_SIDE_PARTY) {
       x = ((Random16() & 31) + 80) << 16;
       seed->velocityX = (Random16() & 63) << 12;
     } else {
@@ -86,7 +86,7 @@ void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
         speed = 192;
       else
         speed = 2496 - frame * 24;
-      if (work->effect->side == 0)
+      if (work->effect->side == ANIM_SIDE_ENEMIES)
         camera->yaw -= speed;
       else
         camera->yaw += speed;

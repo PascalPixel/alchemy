@@ -104,13 +104,13 @@ void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *effect) {
     Projection_Unit(work->effect->user, &position);
     REG_BG2X = (80 - position.x) << 8;
     // Frames 8 to 23: the swirl plays its seven pictures, two frames each,
-    // at the user's height, placed from the other edge on side 1.
+    // at the user's height, placed from the other edge on ANIM_SIDE_PARTY.
     if (frame >= 8 && frame <= 23) {
       s32 cell = (frame - 8) / 2;
 
       if (cell > 6)
         cell = 6;
-      if (work->effect->side == 0) {
+      if (work->effect->side == ANIM_SIDE_ENEMIES) {
         draw[0](canvas, work->sheet + gHelmSplitter_Cells[cell],
                 gHelmSplitter_CellBiasX[cell] + 30,
                 gHelmSplitter_CellBiasY[cell] + position.y - 60,

@@ -24,9 +24,9 @@ enum {
 /// work->particles holds the 64 motes (angle, height and radius in x, y and
 /// z); after the burst the first 32 also hold the smoke puffs, in their
 /// velocity and variant fields, while motes 0 to 15 keep moving in theirs.
-/// PARTICLES holds the 32 chips. Writes REG_BG2PA and, on side 1, REG_BG2X;
-/// ends with the blitters freed, the transfer callback removed and the canvas
-/// layer closed.
+/// PARTICLES holds the 32 chips. Writes REG_BG2PA and, on ANIM_SIDE_PARTY,
+/// REG_BG2X; ends with the blitters freed, the transfer callback removed and
+/// the canvas layer closed.
 ///
 /// effect: the targets; variant picks the number of motes and columns and
 ///         the burst frame (gFrost_Timings): 32 motes, 8 columns and frame
@@ -74,8 +74,8 @@ void BattleAnim_RunFrost(struct BattleAnimArgs *effect) {
   }
 
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  // On side 1 the canvas moves 112 pixels right, over the party.
-  if (work->effect->side == 1)
+  // On ANIM_SIDE_PARTY the canvas moves 112 pixels right, over the party.
+  if (work->effect->side == ANIM_SIDE_PARTY)
     REG_BG2X = -0x7000;
 
   for (frame = 0;

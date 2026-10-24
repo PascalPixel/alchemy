@@ -119,7 +119,7 @@ void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *effect, s32 mode) {
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_VineSheet, work->sheet, 1, 1);
   }
-  if (work->effect->side == 1) {
+  if (work->effect->side == ANIM_SIDE_PARTY) {
     REG_BG2X = -0x7000; // 112 pixels right
   }
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
@@ -437,8 +437,8 @@ void BattleAnim_RunVine(struct BattleAnimArgs *effect) {
 ///         thorn's size and direction.
 ///
 /// PARTICLES holds the dust, 64 puffs. Writes REG_BG2PA, REG_BLDCNT,
-/// REG_BLDALPHA and, on side 1, REG_BG2X; sets work->shakeFrames as each
-/// thorn appears.
+/// REG_BLDALPHA and, on ANIM_SIDE_PARTY, REG_BG2X; sets work->shakeFrames as
+/// each thorn appears.
 void BattleAnim_RunThorn(struct BattleAnimArgs *effect) {
   void *canvas;
   s32 frame;
@@ -463,7 +463,7 @@ void BattleAnim_RunThorn(struct BattleAnimArgs *effect) {
   REG_BLDCNT = 0;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_ThornSheet, work->sheet, 1, 1);
-  if (work->effect->side == 1) {
+  if (work->effect->side == ANIM_SIDE_PARTY) {
     REG_BG2X = -0x7000; // 112 pixels right
   }
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,

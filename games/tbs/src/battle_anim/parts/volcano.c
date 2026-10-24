@@ -96,7 +96,7 @@ void BattleAnim_RunVolcano(struct BattleAnimArgs *effect) {
   for (frame = 0; frame != VOLCANO_FRAMES; frame++) {
     camera = gBattleCamera;
     if (work->effect->variant == ANIM_VARIANT_STRONGEST && frame < 64) {
-      if (work->effect->side == 0)
+      if (work->effect->side == ANIM_SIDE_ENEMIES)
         camera->yaw = camera->yaw + 192;
       else
         camera->yaw = (s16)camera->yaw - 192;

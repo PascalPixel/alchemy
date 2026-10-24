@@ -113,7 +113,7 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
 
   // The upper half of a streak is its image flipped vertically; on the
   // party's side both halves are mirrored as well.
-  if (work->effect->side == 0) {
+  if (work->effect->side == ANIM_SIDE_ENEMIES) {
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                       COMPOSITE_LIGHTEN);
     drawUpper = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);

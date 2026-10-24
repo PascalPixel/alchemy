@@ -97,7 +97,7 @@ void BattleAnim_RunPlasma(struct BattleAnimArgs *effect) {
         speed = 256;
       else
         speed = 704 - frame * 8;
-      if (work->effect->side == 1)
+      if (work->effect->side == ANIM_SIDE_PARTY)
         camera->yaw -= speed;
       else
         camera->yaw += speed;
@@ -324,7 +324,7 @@ void BattleAnim_RunSparkGroups(struct BattleAnimArgs *effect, s32 mode) {
           j;
       speed = (Random16() & 0x3ff) + 32;
       angle = Random16() & 0xffff;
-      if (work->effect->side == 1)
+      if (work->effect->side == ANIM_SIDE_PARTY)
         spark->x =
             (originX -
              gPlasma_Shapes[work->effect->variant][SPARK_GROUPS_OFFSET + i] +
@@ -356,7 +356,7 @@ void BattleAnim_RunSparkGroups(struct BattleAnimArgs *effect, s32 mode) {
     // The strongest variant turns the camera's yaw 1/256 turn a frame for 52
     // frames, about a fifth of a turn.
     if (work->effect->variant == ANIM_VARIANT_STRONGEST && frame <= 51) {
-      if (work->effect->side == 0)
+      if (work->effect->side == ANIM_SIDE_ENEMIES)
         camera->yaw += 256;
       else
         camera->yaw -= 256;
@@ -387,7 +387,7 @@ void BattleAnim_RunSparkGroups(struct BattleAnimArgs *effect, s32 mode) {
       if (frame == start)
         work->shakeFrames = 12;
       if (frame >= start && frame < start + 2) {
-        if (work->effect->side == 1)
+        if (work->effect->side == ANIM_SIDE_PARTY)
           draw[0](canvas, work->sheet,
                   originX -
                       gPlasma_Shapes[work->effect->variant]
@@ -409,7 +409,7 @@ void BattleAnim_RunSparkGroups(struct BattleAnimArgs *effect, s32 mode) {
 
           point = &work->particles[i * SPARK_GROUPS_FLASHES] + j;
           y = Q_16_16_TO_INT(point->y) + originY;
-          if (work->effect->side == 1)
+          if (work->effect->side == ANIM_SIDE_PARTY)
             x = Q_16_16_TO_INT(point->x) + originX -
                 gPlasma_Shapes[work->effect->variant][SPARK_GROUPS_OFFSET + i] +
                 28;

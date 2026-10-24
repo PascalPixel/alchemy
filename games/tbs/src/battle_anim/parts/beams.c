@@ -68,9 +68,9 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
                BGCNT_SCREEN_BASE(31);
   WaitFrames(1);
   // Two blitters, additive and brightest-wins; BEAM_ARC_A_INVERTED draws its
-  // pictures upside down, and side 1 mirrors them.
+  // pictures upside down, and ANIM_SIDE_PARTY mirrors them.
   if (kind == BEAM_ARC_A_INVERTED) {
-    if (work->effect->side == 0) {
+    if (work->effect->side == ANIM_SIDE_ENEMIES) {
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                         COMPOSITE_ADDITIVE);
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
@@ -84,7 +84,7 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
                         COMPOSITE_LIGHTEN);
     }
   } else {
-    if (work->effect->side == 0) {
+    if (work->effect->side == ANIM_SIDE_ENEMIES) {
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
@@ -136,11 +136,11 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
-  // Scroll BG1 so the first target falls at canvas x 96 on side 0 and 32 on
-  // side 1, as far as a scroll held between -128 and 0 allows; anchor
-  // becomes the target's position on the canvas.
+  // Scroll BG1 so the first target falls at canvas x 96 on ANIM_SIDE_ENEMIES
+  // and 32 on ANIM_SIDE_PARTY, as far as a scroll held between -128 and 0
+  // allows; anchor becomes the target's position on the canvas.
   Projection_Sprite(work->effect->targets[0], &anchor);
-  if (work->effect->side == 0)
+  if (work->effect->side == ANIM_SIDE_ENEMIES)
     scrollX = 96 - anchor.x;
   else
     scrollX = 32 - anchor.x;
@@ -184,15 +184,15 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
     }
     if (frame == 4)
       BattleMotion_ApplyKnockbackFar(work->effect->targets[0], KNOCKBACK_NUDGE);
-    // The picture plays from the user, to its left on side 0 and its right
-    // on side 1: the wave's six 48x16 cells backwards and the arc's six
-    // 48x72 cells, two frames each; the beam image grows through its six
-    // cells, three frames each.
+    // The picture plays from the user, to its left on ANIM_SIDE_ENEMIES and its
+    // right on ANIM_SIDE_PARTY: the wave's six 48x16 cells backwards and the
+    // arc's six 48x72 cells, two frames each; the beam image grows through its
+    // six cells, three frames each.
     Projection_ScaledUnit(work->effect->user, &screenPosition);
     screenPosition.y += 16;
     if (kind == BEAM_WAVE) {
       if (frame <= 11) {
-        if (work->effect->side == 0)
+        if (work->effect->side == ANIM_SIDE_ENEMIES)
           draw[1](canvas, work->sheet + (5 - frame / 2) * (48 * 16),
                   screenPosition.x + scrollX - 48, screenPosition.y - 8, 48,
                   16);
@@ -202,7 +202,7 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
       }
     } else if ((u32)kind <= BEAM_ARC_B || kind == BEAM_ARC_A_INVERTED) {
       if (frame <= 11) {
-        if (work->effect->side == 0)
+        if (work->effect->side == ANIM_SIDE_ENEMIES)
           draw[1](canvas, work->sheet + frame / 2 * (48 * 72),
                   screenPosition.x + scrollX - 48, screenPosition.y - 40, 48,
                   72);
@@ -214,7 +214,7 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
       if (frame <= 17) {
         s32 cell = frame / 3;
 
-        if (work->effect->side == 0)
+        if (work->effect->side == ANIM_SIDE_ENEMIES)
           draw[1](canvas, work->sheet + gBeam_Cells[cell],
                   screenPosition.x + gBeam_CellReaches[cell] + scrollX - 58,
                   screenPosition.y - gBeam_CellHeights[cell] / 2,
@@ -332,7 +332,7 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
   BattleAnim_SetupCanvasTileMap();
   REG_BG1CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
-  if (work->effect->side == 0) {
+  if (work->effect->side == ANIM_SIDE_ENEMIES) {
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
@@ -444,7 +444,7 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
   Projection_ScaledUnit(work->effect->targets[0], &anchor);
-  if (work->effect->side == 0)
+  if (work->effect->side == ANIM_SIDE_ENEMIES)
     scrollX = 32 - anchor.x;
   else
     scrollX = 96 - anchor.x;

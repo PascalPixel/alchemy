@@ -92,7 +92,7 @@ void BattleAnim_RunEruption(struct BattleAnimArgs *effect, s32 mode) {
   for (i = 0; i != 32; i++) {
     struct Particle *puff = &work->particles[i];
 
-    if (work->effect->side == 1)
+    if (work->effect->side == ANIM_SIDE_PARTY)
       puff->x = 200 << 14;
     else
       puff->x = -(200 << 14);
@@ -106,7 +106,7 @@ void BattleAnim_RunEruption(struct BattleAnimArgs *effect, s32 mode) {
   for (i = 0; i != 1024; i++) {
     struct Particle *mote = &PARTICLES[i];
 
-    if (work->effect->side == 1)
+    if (work->effect->side == ANIM_SIDE_PARTY)
       mote->x = 200 << 14;
     else
       mote->x = -(200 << 14);
@@ -134,9 +134,9 @@ void BattleAnim_RunEruption(struct BattleAnimArgs *effect, s32 mode) {
 
     // The motes still above the ground, alternating the two mote sets,
     // falling under a gravity of 1/8 pixel a frame per frame. The half-width
-    // x is shifted 16 pixels left, or right on side 1. A mote is size 9 at
-    // depth 160 or nearer and one smaller for each 64 deeper; from depth 736
-    // the size is 0, which would read gBattleAnim_MoteCells[-1].
+    // x is shifted 16 pixels left, or right on ANIM_SIDE_PARTY. A mote is size
+    // 9 at depth 160 or nearer and one smaller for each 64 deeper; from depth
+    // 736 the size is 0, which would read gBattleAnim_MoteCells[-1].
     // XXX: whether a mote ever gets that deep needs a run of the animation.
     for (i = 0; i != gEruption_Counts[variant][ERUPTION_FIELD_MOTES]; i++) {
       struct Particle *mote = &PARTICLES[i];

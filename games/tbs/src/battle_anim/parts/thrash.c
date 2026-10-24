@@ -70,10 +70,10 @@ void BattleAnim_RunVorpalSlash(struct BattleAnimArgs *effect) {
 /// BattleAnim_RunVorpalSlash; nothing passes FLASHING_STRIKE_UNUSED.
 ///
 /// The user steps up to the first target over 16 frames. Then four 120x120
-/// pictures show for four frames each (mirrored when effect->side is 1), the
-/// canvas fills with colour 0x3f on frames 16 to 19, the battle shows the
-/// damage on frame 18, and on frame 20 the target reels and the screen
-/// shakes. 21 frames.
+/// pictures show for four frames each (mirrored when effect->side is
+/// ANIM_SIDE_PARTY), the canvas fills with colour 0x3f on frames 16 to 19, the
+/// battle shows the damage on frame 18, and on frame 20 the target reels and
+/// the screen shakes. 21 frames.
 ///
 /// Opens and closes the canvas layer; the pictures take work->imageStorage
 /// and the start of Ram_MapGridCellBuffer.
@@ -122,7 +122,7 @@ void BattleAnim_RunFlashingStrike(struct BattleAnimArgs *effect, s32 mode) {
     BattleMotion_ApproachTargetFar(effect->user, effect->targets[0], 16, 0);
   WaitFrames(16);
 
-  if (work->effect->side == 1)
+  if (work->effect->side == ANIM_SIDE_PARTY)
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_COPY);
   else

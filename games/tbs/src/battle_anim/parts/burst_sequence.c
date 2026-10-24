@@ -211,8 +211,8 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *effect, s32 mode) {
     actorPos.x /= 2;
 
     // Arcs and waves; odd strikes are drawn flipped upside down, and on
-    // side 1 both are mirrored.
-    if (work->effect->side == 0) {
+    // ANIM_SIDE_PARTY both are mirrored.
+    if (work->effect->side == ANIM_SIDE_ENEMIES) {
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
@@ -235,7 +235,7 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *effect, s32 mode) {
             gBurstSequence_Styles[mode][BURST_SEQUENCE_ARC_SHEET] ==
                 BURST_SEQUENCE_ARCS) {
           // The arc: six 48x72 frames.
-          if (work->effect->side == 0)
+          if (work->effect->side == ANIM_SIDE_ENEMIES)
             draw[i & 1](canvas, work->sheet + step * (48 * 72),
                         targetPos.x / 2 - 16, targetPos.y - 40, 48, 72);
           else
@@ -243,7 +243,7 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *effect, s32 mode) {
                         targetPos.x / 2 - 32, targetPos.y - 40, 48, 72);
         } else {
           // The wave: six 48x16 frames.
-          if (work->effect->side == 0)
+          if (work->effect->side == ANIM_SIDE_ENEMIES)
             draw[i & 1](canvas, BURST_SEQUENCE_WAVE_CELLS + step * (48 * 16),
                         targetPos.x / 2 - 16, actorPos.y - 8, 48, 16);
           else

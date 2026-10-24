@@ -44,7 +44,7 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
   // The motes are in the battle sheet's slot; work->sheet holds the flares.
   sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  if (effect->side == 1)
+  if (effect->side == ANIM_SIDE_PARTY)
     BattleAnim_StartCanvasLayer(1);
   else
     BattleAnim_StartCanvasLayer(0);

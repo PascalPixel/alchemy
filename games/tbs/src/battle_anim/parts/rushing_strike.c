@@ -113,8 +113,8 @@ void BattleAnim_RunRushingStrike(struct BattleAnimArgs *effect, s32 mode) {
   work->effect = effect;
   BattleAnim_StartCanvasLayer(0);
 
-  // The top half, and the bottom half flipped; mirrored on side 1.
-  if (work->effect->side == 0) {
+  // The top half, and the bottom half flipped; mirrored on ANIM_SIDE_PARTY.
+  if (work->effect->side == ANIM_SIDE_ENEMIES) {
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                       COMPOSITE_LIGHTEN);

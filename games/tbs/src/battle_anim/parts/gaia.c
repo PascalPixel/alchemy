@@ -58,7 +58,7 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
     REG_BG2PA = Q_8_8(0.8);
   else if (work->effect->variant == ANIM_VARIANT_STRONGER)
     REG_BG2PA = Q_8_8(1.0 / 1.5);
-  if (work->effect->side == 1) {
+  if (work->effect->side == ANIM_SIDE_PARTY) {
     wallX = 8;
     if (work->effect->variant == ANIM_VARIANT_BASIC)
       rockX = 40;

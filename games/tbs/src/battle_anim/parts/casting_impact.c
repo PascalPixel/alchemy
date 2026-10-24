@@ -532,13 +532,13 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
   position = &djinnPos;
 
   // Phase 2: place BG2 for the impacts that need it, at its unstretched
-  // scale with the impact over the target: canvas x 32 (96 on side 1), or
-  // 64 for Terra Strike, falls on the target's screen x. Asura's BG2X
-  // starts at -128 (8 on side 1) instead and starts scrolling 12 pixels a
+  // scale with the impact over the target: canvas x 32 (96 on ANIM_SIDE_PARTY),
+  // or 64 for Terra Strike, falls on the target's screen x. Asura's BG2X starts
+  // at -128 (8 on ANIM_SIDE_PARTY) instead and starts scrolling 12 pixels a
   // frame, slowing from frame 7.
   if (mode == CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
     REG_BG2PA = Q_8_8(1);
-    if (work->effect->side == 0) {
+    if (work->effect->side == ANIM_SIDE_ENEMIES) {
       // frame is 32 here, the gathering's length.
       REG_BG2X = (frame - targetScreen->x) << 8;
     } else {
@@ -548,7 +548,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
     if (mode == CASTING_IMPACT_IMPACT_ASURA) {
       // Scroll the image horizontally; scrollPos is in 16.16 pixels.
       REG_BG2PA = Q_8_8(1);
-      if (work->effect->side == 0) {
+      if (work->effect->side == ANIM_SIDE_ENEMIES) {
         scrollPos = -0x800000;
         scrollSpeed = 0xc0000;
       } else {
@@ -569,7 +569,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
   }
   if (mode == CASTING_IMPACT_IMPACT_PSYPHON_SEAL) {
     REG_BG2PA = Q_8_8(1);
-    if (work->effect->side == 0) {
+    if (work->effect->side == ANIM_SIDE_ENEMIES) {
       REG_BG2X = (32 - targetScreen->x) << 8;
     } else {
       REG_BG2X = (96 - targetScreen->x) << 8;
@@ -772,7 +772,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
         mode != CASTING_IMPACT_IMPACT_FORCIBLE_ARM &&
         mode != CASTING_IMPACT_IMPACT_TRUNCHEON_FIST) {
       if (frame <= 11) {
-        if (work->effect->side == 0) {
+        if (work->effect->side == ANIM_SIDE_ENEMIES) {
           blitters[0](canvas, work->sheet + frame / 2 * (48 * 72),
                       casterScreen->x - 32, casterScreen->y - 40, 48, 72);
         } else {
@@ -1181,20 +1181,20 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
         Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       }
       if (frame <= 3) {
-        if (work->effect->side == 1) {
+        if (work->effect->side == ANIM_SIDE_PARTY) {
           blitters[0](canvas, work->imageStorage, 0, 24, 80, 104);
         } else {
           blitters[0](canvas, work->imageStorage, 48, 24, 80, 104);
         }
       } else {
         if (frame <= 7) {
-          if (work->effect->side == 1) {
+          if (work->effect->side == ANIM_SIDE_PARTY) {
             blitters[0](canvas, work->imageStorage, 0, 24, 80, 104);
           } else {
             blitters[0](canvas, work->imageStorage, 48, 24, 80, 104);
           }
         }
-        if (work->effect->side == 1) {
+        if (work->effect->side == ANIM_SIDE_PARTY) {
           blitters[0](canvas, work->imageStorage + 0x1e00, 16, 16, 80, 104);
         } else {
           blitters[0](canvas, work->imageStorage + 0x1e00, 32, 16, 80, 104);
@@ -1322,7 +1322,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
         // targetScreen->x / 2 is written out, so that its last shift can
         // follow the offset: as / 2 in each arm, 57 of 3070 instructions
         // differ; as imageX /= 2, 6.
-        if (work->effect->side == 0) {
+        if (work->effect->side == ANIM_SIDE_ENEMIES) {
           imageX = targetScreen->x;
           imageX += (u32)imageX >> 31;
           imageX >>= 1;

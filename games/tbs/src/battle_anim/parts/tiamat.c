@@ -113,10 +113,11 @@ void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *effect, s32 mode) {
   // Trails keep 75% of each pixel a frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  // Dragon Driver mirrors everything when the user is on the right (side 1).
+  // Dragon Driver mirrors everything when the user is on the right
+  // (ANIM_SIDE_PARTY).
   if (mode == PALETTE_PARTICLES_TIAMAT)
     dir = 1;
-  else if (work->effect->side == 1)
+  else if (work->effect->side == ANIM_SIDE_PARTY)
     dir = -1;
   else
     dir = 1;
@@ -126,7 +127,7 @@ void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *effect, s32 mode) {
     Projection_ScaledUnit(work->effect->user, &origin);
     origin.x /= 2;
     origin.y = 66;
-    if (work->effect->side == 1)
+    if (work->effect->side == ANIM_SIDE_PARTY)
       origin.x = 76;
     else
       origin.x = 44;

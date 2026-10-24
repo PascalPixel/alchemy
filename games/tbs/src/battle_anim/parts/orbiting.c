@@ -150,7 +150,7 @@ UNUSED void BattleAnim_RunOrbitingSkulls(void) {
   // Put the canvas on the targets' side of the screen: at one texel a pixel
   // it covers screen x 0 to 127 for enemy targets and 112 to 239 for the
   // party.
-  if (work->effect->side == 0)
+  if (work->effect->side == ANIM_SIDE_ENEMIES)
     xOffset = 0;
   else
     xOffset = -112;

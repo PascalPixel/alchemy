@@ -165,7 +165,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
   work = cache[-1];
 
   // Begin: in Outer Space the user leaps up with a sound. The stream's
-  // direction is 1 when that user stands on side 1, otherwise -1.
+  // direction is 1 when that user stands on ANIM_SIDE_PARTY, otherwise -1.
   work->effect = effect;
   ANIM_START_NARROW_CANVAS(0x2000);
   /* FAKEMATCH(temporary): mode tested through direction, so the arm reloads
@@ -182,7 +182,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
     animation->gravity = 0x91eb;
     BattleAnim_TintBattler(work->effect->user, -1, POSE_LEAP, -1, 0);
     Sound_PlaySongFar(SE_CRASH);
-    direction = work->effect->side == 1 ? mode : -1;
+    direction = work->effect->side == ANIM_SIDE_PARTY ? mode : -1;
   } else {
     direction = -1;
   }

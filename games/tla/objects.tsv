@@ -4061,12 +4061,6 @@ main	rom_main_05	recon/tla/raw/080ec4d4	.text	en
 main	rom_main_05	recon/tla/raw/080ece20	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000ec200	ja
 main	rom_main_05	games/tla/src/battle/effect/world_map_row	.text
-main	rom_main_05	recon/tla/it/rom	.rom.000ed024	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000f2024	fr
-main	rom_main_05	recon/tla/es/rom	.rom.000f6024	es
-main	rom_main_05	recon/tla/de/rom	.rom.000fa030	de
-main	rom_main_05	recon/tla/raw/080ed030	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000ecf3c	ja
 main	rom_main_05	games/tla/src/battle/effect/world_map_scroll	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000ed298	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000f2298	fr

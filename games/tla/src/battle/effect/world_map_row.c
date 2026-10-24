@@ -48,3 +48,42 @@ void Func_080ecf74(u32 column, s32 row) {
       tile -= 32;
   }
 }
+
+static inline s32 WorldMap_AddColumn(s32 column, s32 cell) {
+  /* FAKEMATCH(wrapper): the column added through an inline, so the sum
+   * keeps the column as its first operand; as column + cell, 2 of 51
+   * instructions differ in tla-en. */
+  return column + cell;
+}
+
+/// Draws one column of the world map picture on BG1, 21 rows down from a
+/// row, for scrolling: copies the column's cells from the decoded rows in the
+/// cell buffer, which wraps after 24 rows, into the 32-column screen from
+/// tile 256; the column twin of Func_080ecf74.
+void Func_080ed030(s32 column, s32 row) {
+  u32 i;
+
+  for (i = 0; i <= 20; i++) {
+    s32 line = row + i;
+    s32 cell = line;
+    s32 tile;
+
+    if (line > 23)
+      cell = line - 24;
+    tile = ((column & 31) + (line << 5) + 128) % 768;
+    cell <<= 6;
+    /* FAKEMATCH(barrier): an empty asm on the counter and the row's offset
+     * loads the cell buffer's address before the column is added; without
+     * it, 2 of 51 instructions differ in tla-en. */
+    asm("" : "+l"(i) : "l"(cell));
+    cell = WorldMap_AddColumn(column, cell);
+    cell <<= 6;
+    tile <<= 6;
+    /* FAKEMATCH(temporary): the screen's address in the line's register; as
+     * (u8 *)BG_VRAM + (256 << 6) + tile, 6 of 51 instructions differ in
+     * tla-en. */
+    line = BG_VRAM + (256 << 6);
+    Dma_Set(Ram_MapCellBuffer + cell, (u8 *)line + tile,
+            (DMA_ENABLE | DMA_32BIT) << 16 | 16, REG_DMA3);
+  }
+}

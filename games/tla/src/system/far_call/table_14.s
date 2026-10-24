@@ -96,7 +96,7 @@ Func_080381a8:
 	.global Func_080381b0
 	.thumb_func
 Func_080381b0:
-	overlay_veneer Func_0803dd98
+	overlay_veneer SelectionScreen_BuildEntries
 	.global Func_080381b8
 	.thumb_func
 Func_080381b8:

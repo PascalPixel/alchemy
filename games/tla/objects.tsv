@@ -1011,12 +1011,6 @@ main	rom_main_02	recon/tla/de/rom	.rom.0003dc70	de
 main	rom_main_02	recon/tla/raw/0803dc1c	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.0003dd50	ja
 main	rom_main_02	games/tla/src/graphics/glyph/resource_queue	.text
-main	rom_main_02	recon/tla/it/rom	.rom.0003ddf0	it
-main	rom_main_02	recon/tla/fr/rom	.rom.0003dddc	fr
-main	rom_main_02	recon/tla/es/rom	.rom.0003ddf8	es
-main	rom_main_02	recon/tla/de/rom	.rom.0003ddec	de
-main	rom_main_02	recon/tla/raw/0803dd98	.text	en
-main	rom_main_02	recon/tla/ja/rom	.rom.0003decc	ja
 main	rom_main_02	games/tla/src/graphics/glyph/reserved	.text
 main	rom_main_02	games/tla/src/system/resource/find_free_transfer_entry	.text
 main	rom_main_02	games/tla/src/graphics/glyph/owner_reset	.text

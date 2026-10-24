@@ -710,13 +710,6 @@ ItemIcon_Compose:
 	.thumb_func
 Func_0803dc1c:
 	.incbin "baserom.gba", 0x0003dc7c, 0x00000108
-	.section .rom.0003ddf8, "ax"
-	.balign 4
-	.global Func_0803dd98
-	.type Func_0803dd98, %function
-	.thumb_func
-Func_0803dd98:
-	.incbin "baserom.gba", 0x0003ddf8, 0x00000110
 	.section .rom.0003df84, "ax"
 	.global Func_0803df24
 	.type Func_0803df24, %function
@@ -747,6 +740,10 @@ Menu_StepLeft:
 	.section .rom.0003f064, "ax"
 	.incbin "baserom.gba", 0x0003f064, 0x000001d0
 	.section .rom.0003f344, "ax"
+	.global MenuSelection_SetupEntry
+	.type MenuSelection_SetupEntry, %function
+	.thumb_func
+MenuSelection_SetupEntry:
 	.incbin "baserom.gba", 0x0003f344, 0x000000e4
 	.section .rom.0003f428, "ax"
 	.global Menu_ConfirmSelection

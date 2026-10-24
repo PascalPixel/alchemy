@@ -20,7 +20,7 @@ void Ui_ClearWorkStateAndWaitFrame(void) {
   WaitFrames(1);
 }
 
-void Func_0803dd98(u32);
+void SelectionScreen_BuildEntries(u32);
 void Func_0803e7ac(void);
 void Menu_OpenSelectionWindow(u32, u32);
 void Func_0803df00(void);
@@ -35,7 +35,7 @@ u32 Menu_RunSelectionForValue(u32 value) {
   asm volatile("" : "+l"(state));
   state->cursorIndex = value;
   state->locked = 1;
-  Func_0803dd98(value);
+  SelectionScreen_BuildEntries(value);
   Func_0803e7ac();
   Menu_OpenSelectionWindow(0, 5);
   Func_0803df00();

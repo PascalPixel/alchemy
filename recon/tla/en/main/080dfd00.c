@@ -51,7 +51,7 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void BattleEffect_InitializeSharedScene(void);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *p);
 void BattleEffect_ShrinkObjectScaleUntilHalf(struct ObjectRuntime *object);
-void Func_080dfc3c(struct OrbitEffect *mote);
+void BattleEffect_CircleAnchor(struct OrbitEffect *mote);
 void BattleEffect_WanderAroundAnchor(struct OrbitEffect *mote);
 void BattleEffect_AgeAndCueAtEighty(struct ObjectRuntime *object);
 void BattleEffect_SetObjectTickMode(void *object, s32 mode);
@@ -149,7 +149,7 @@ void FieldEffect_RunWhirlwind(void) {
       mote = (struct OrbitEffect *)Object_Spawn(MOTE_OBJECT, position.x,
                                                 position.y, position.z);
       if (mote != 0) {
-        mote->update = Func_080dfc3c;
+        mote->update = BattleEffect_CircleAnchor;
         mote->anchor = orb;
         mote->timer = 0;
         mote->pause = 0;

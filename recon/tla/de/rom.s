@@ -1918,8 +1918,6 @@ Func_080df6f4:
 	.thumb_func
 Func_080df8e0:
 	.incbin "baserom.gba", 0x000ec8e0, 0x000001d4
-	.section .rom.000ecc3c, "ax"
-	.incbin "baserom.gba", 0x000ecc3c, 0x00000098
 	.section .rom.000ecd00, "ax"
 	.global FieldEffect_RunWhirlwind
 FieldEffect_RunWhirlwind:

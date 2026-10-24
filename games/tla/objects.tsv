@@ -3626,12 +3626,6 @@ main	rom_main_05	recon/tla/ja/rom	.rom.000df89a	ja
 main	rom_main_05	recon/tla/ja/rom	.rom.000df89c	ja
 main	rom_main_05	games/tla/src/field/common/effect/advance_motion	.text
 main	rom_main_05	games/tla/src/battle/effect/radial	.text
-main	rom_main_05	recon/tla/it/rom	.rom.000dfc30	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000e4c30	fr
-main	rom_main_05	recon/tla/es/rom	.rom.000e8c30	es
-main	rom_main_05	recon/tla/de/rom	.rom.000ecc3c	de
-main	rom_main_05	recon/tla/raw/080dfc3c	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000dfbf8	ja
 main	rom_main_05	games/tla/src/battle/effect/shrink_object_scale_until_half	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000dfcf4	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000e4cf4	fr

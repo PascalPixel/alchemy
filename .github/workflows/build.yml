@@ -1,8 +1,10 @@
 name: CI
 
-# The public proof: the six ☀️ editions rebuild from a clean clone with no ROM
-# and match rom.sha1. The tool tests, format check, current-GCC build and the
-# twelve-edition compare run locally in `make land` before every push to main.
+# The public proof: the six ☀️ editions rebuild from a clean clone with no ROM,
+# match rom.sha1 and are measured from the maps just linked. The tool tests,
+# format check, current-GCC build and the twelve-edition compare run locally in
+# `make land`, whose receipt adds ⚓️'s measurement; CI confirms a push without
+# one (.github/publication.md).
 
 on:
   pull_request:
@@ -29,6 +31,7 @@ jobs:
       CCACHE_BASEDIR: ${{ github.workspace }}
       CCACHE_COMPILERCHECK: content
       CCACHE_MAXSIZE: 500M
+      RUSTUP_TOOLCHAIN: 1.98.1
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
@@ -75,6 +78,35 @@ jobs:
             XGCC="ccache $PWD/tools/out/compilers/xgcc -B$PWD/tools/out/compilers/"
           ccache --show-stats
 
+      - name: Fetch the pinned development tools
+        id: devtools
+        run: |
+          git submodule update --init --depth 1 alchemy-devtools
+          echo "pin=$(git rev-parse HEAD:alchemy-devtools)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore the development tools built from that pin
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: |
+            ~/.cargo/registry
+            alchemy-devtools/target
+          key: devtools-${{ runner.os }}-${{ env.RUSTUP_TOOLCHAIN }}-${{ steps.devtools.outputs.pin }}
+
+      - name: Build the development tools if the cache missed
+        run: |
+          rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal
+          make devtools
+
+      - name: Measure the six ☀️ editions just built (calcrom over their maps)
+        run: alchemy-devtools/target/release/alchemy-devtools progress --game tbs "$RUNNER_TEMP/tbs.tsv"
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: tbs-measurement
+          path: ${{ runner.temp }}/tbs.tsv
+          if-no-files-found: error
+          retention-days: 7
+
   publish:
     name: Accept the measurement and publish the site
     needs: build
@@ -117,8 +149,17 @@ jobs:
       - name: Download the durable report archive
         run: gh release download decomp-reports --dir "$RUNNER_TEMP/measured" --pattern '*.tsv' --pattern '*.pb'
 
+      - name: Receive the build's ☀️ measurement
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: tbs-measurement
+          path: ${{ runner.temp }}/ci
+
+      # With a receipt: its ☀️ row must equal the build's. Without one: the
+      # build's ☀️ figures, and ⚓️'s from the nearest receipt, carried only
+      # where everything ⚓️'s measurement reads is unchanged.
       - name: Verify this revision and reconstruct its progress history
-        run: alchemy-devtools/target/release/alchemy-devtools progress --publish "$RUNNER_TEMP/measured" "$GITHUB_SHA" "$RUNNER_TEMP/publication"
+        run: alchemy-devtools/target/release/alchemy-devtools progress --publish "$RUNNER_TEMP/measured" "$GITHUB_SHA" "$RUNNER_TEMP/publication" "$RUNNER_TEMP/ci/tbs.tsv"
 
       - name: Archive the public figures and admit the successful measurement
         run: |
@@ -136,14 +177,14 @@ jobs:
             test "$actual" = "$expected" || { echo "Refusing to replace changed archive $name" >&2; exit 1; }
           done
 
+      # decomp.dev reads all twelve editions, which only a receipt holds:
+      # a commit without one hands it no report.
       - name: Hand decomp.dev all twelve editions
-        run: cp "$RUNNER_TEMP/measured/${GITHUB_SHA}.pb" "$RUNNER_TEMP/report.pb"
-
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: combined_report
-          path: ${{ runner.temp }}/report.pb
-          if-no-files-found: error
+          path: ${{ runner.temp }}/publication/report.pb
+          if-no-files-found: ignore
           retention-days: 90
 
       - name: Start the site build on Vercel, unless a newer commit is on main

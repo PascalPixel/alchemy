@@ -310,17 +310,13 @@ void MPlayStart(struct MusicPlayerInfo *player,
   // Preserve a higher-priority song unless the music player is idle.
   // checkPriority is 0 for every music player (sound/music_player_table.s), so
   // in ☀️ a new song always replaces the one playing.
-  if (player->checkPriority != 0) {
-    if (player->header == NULL || !(player->tracks[0].flags & MPT_FLG_START)) {
-      if ((player->status & MUSICPLAYER_STATUS_TRACK) == 0 ||
-          (player->status & MUSICPLAYER_STATUS_PAUSE))
-        // A labelled jump, the form this match needs.
-        goto start;
-    }
-    if (player->priority > header->priority)
-      return;
-  }
-start:
+  if (player->checkPriority != 0 &&
+      ((player->header != NULL && (player->tracks[0].flags & MPT_FLG_START)) ||
+       ((player->status & MUSICPLAYER_STATUS_TRACK) != 0 &&
+        !(player->status & MUSICPLAYER_STATUS_PAUSE))) &&
+      player->priority > header->priority)
+    return;
+
   player->ident++;
   // Reset song timing and fade state before assigning track streams: tempo
   // 150 runs a tick a frame until the song's tempo command.
@@ -535,35 +531,40 @@ void CgbOscOff(u8 channel) {
   }
 }
 
-/// Chooses stereo routing and derives peak and sustain levels for a CGB note,
-/// writing them into `note`: a note at least twice as loud on one side plays
-/// on that side only (NR51 bits 0x0f right, 0xf0 left), any other on both.
-/// peak is the two levels' sum / 16, at most 15 on one side; sustainLevel is
-/// peak * sustain / 16, rounded up. Called by CgbSound when a note
-/// starts and at each envelope step.
-void CgbModVol(struct CgbChannel *note) {
+/// Routes a CGB note at least twice as loud on one side to that side only
+/// (NR51 bits 0x0f right, 0xf0 left), returning whether it did. Compiled into
+/// CgbModVol, which routes any other note to both.
+static __inline__ s32 CgbPan(struct CgbChannel *note) {
   u32 right = note->outRight;
   u32 left = note->outLeft;
 
-  // The separate peak calculations and jumps are the form the bytes show:
-  // with one shared calculation tbs-en is four bytes shorter.
   if ((u8)right >= (u8)left) {
     if ((u8)right / 2 >= (u8)left) {
       note->panBits = 0x0F;
-      goto one_side;
+      return 1;
     }
   } else if ((u8)left / 2 >= (u8)right) {
     note->panBits = 0xF0;
-    goto one_side;
+    return 1;
   }
-  note->panBits = 0xFF;
-  note->peak = (u32)(note->outRight + note->outLeft) >> 4;
-  goto scale;
-one_side:
-  note->peak = (u32)(note->outRight + note->outLeft) >> 4;
-  if (note->peak > 15)
-    note->peak = 15;
-scale:
+  return 0;
+}
+
+/// Chooses stereo routing and derives peak and sustain levels for a CGB note,
+/// writing them into `note`: peak is the two levels' sum / 16, at most 15 on
+/// one side; sustainLevel is peak * sustain / 16, rounded up. Called by
+/// CgbSound when a note starts and at each envelope step.
+void CgbModVol(struct CgbChannel *note) {
+  // The peak is calculated in each branch, the form the bytes show: with one
+  // shared calculation tbs-en is four bytes shorter.
+  if (!CgbPan(note)) {
+    note->panBits = 0xFF;
+    note->peak = (u32)(note->outRight + note->outLeft) >> 4;
+  } else {
+    note->peak = (u32)(note->outRight + note->outLeft) >> 4;
+    if (note->peak > 15)
+      note->peak = 15;
+  }
   note->sustainLevel = (note->peak * note->sustain + 15) >> 4;
   note->panBits &= note->channelBits;
 }

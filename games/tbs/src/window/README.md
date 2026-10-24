@@ -1,199 +1,127 @@
 # Windows
 
-When someone in a town speaks, a framed box zooms open at the top of the
-screen and their words appear in it a few letters at a time, with a little
-voice blip as they go. Every box of text in the game works this way: the
-messages people say, the menus, the shop counters, the battle commands.
-The window code draws those boxes, unpacks the game's stored messages, types
-them out over several [frames](../../glossary.md#frame) and moves the small pictures a box carries:
+When someone in a town speaks, a framed box opens at the top of the screen
+and their words appear in it a few letters at a time, with a little voice blip
+as they go. Every box of text in the game works this way: what people say, the
+menus, the shop counters, the battle commands. The window code draws those
+boxes, unpacks the game's stored text, types it out over several
+[frames](../../glossary.md#frame) and moves the small pictures a box carries:
 letters, icons, portraits and the page arrow.
 
-It also builds the screens that are made directly from windows: the rows of
-command icons, the option and pause menus, the [party](../../glossary.md#the-party) status window, the
-file menu, the naming screen, the summary screen, the battle menus and the
-debug menus. [Menus, windows and shops](../../menus.md#windows) gives the
-whole layer in brief. The field menu's four screens are in
-[Menus](../menu/README.md), and the shop counters in
-[Shops](../shop/README.md).
+It also builds the screens made directly from windows: the field menu's row of
+icons, the pause menu and its option menu, the file menu that saves the game,
+the naming screen, the [party](../../glossary.md#the-party) status window, the
+battle menus and the debug menus.
+[Menus, windows and shops](../../menus.md#windows) gives the whole layer in
+brief; the field menu's four screens are in [Menus](../menu/README.md), and
+the shop counters in [Shops](../shop/README.md).
 
 ## The work block
 
 Everything the window system keeps between frames lives in one block of
 memory, set up with each [map](../../glossary.md#map) and gone at the next.
 
-The block holds the picture of the screen that every window is drawn into,
-a slot for each window that can be open, three text printers (one per
-message being typed), the pool of small [sprites](../../glossary.md#sprite-and-oam) the windows carry, the text
-buffer of unpacked messages and the blanks a message fills in. Because all of it is in
-one place, the code that reads it is the same in every [edition](../../glossary.md#editions) even though
-the Japanese edition has more window slots and a shorter ring.
+The block is `struct WindowWork`, borrowed from the
+[heap](../../glossary.md#heap-and-pools) under the
+[heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_WINDOW` by
+`WindowSystem_InitField` for the field and `WindowSystem_InitBattle` for
+battle, and reached as `WINDOW_WORK`. In order it holds:
 
-In the code the block is `struct WindowWork`, borrowed from the [heap](../../glossary.md#heap-and-pools) under
-the [heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_WINDOW` by `WindowSystem_InitField`
-for the field and by `WindowSystem_InitBattle` for battle; it lasts until the next
-map change and is reached as `WINDOW_WORK`. In order it holds:
-
-- `tilemap`: the windows' tilemap, 32 by 20 tiles, uploaded to video memory
+- `tilemap`: the windows' tilemap, 32 by 20 tiles, copied to video memory
   during [VBlank](../../glossary.md#frame) in 4-row bands marked in `dirty`;
 - `windows`: the window slots, `WINDOW_COUNT` of them;
 - `printers`: the three text printers;
-- `sprites` and `freeSprites`: the pool of `WINDOW_SPRITE_COUNT` (64) window
-  sprites, the sprites windows carry, and the list of those no window holds;
+- `sprites` and `freeSprites`: the 64 window sprites and the list of free ones;
 - `textTileState`, `nextTextTile` and `extraTextTiles`: the text tiles'
-  bookkeeping
-  ([Drawing text](#drawing-text));
-- `mindRead`, `battleMode` and the current printer's style, copied in to draw;
-- `textBuffer`: the text buffer, a ring of decoded text;
-- `argumentValues` and `argumentKinds`: the eight message arguments and their
-  `MESSAGE_ARGUMENT_` kinds;
+  bookkeeping ([Drawing text](#drawing-text));
+- `mindRead`, `battleMode` and the current text style;
+- `textBuffer`: the text buffer, a ring of unpacked text;
+- `argumentValues` and `argumentKinds`: the eight message arguments;
 - `portraitPictures` and `portraitSprites`: the two portrait slots;
 - `voiceSound` and the flags for halting speech.
 
-Its size differs by edition. The Japanese edition has 12 window slots and a
-ring of 256 codes; the others have 8 slots and 512 codes. A window slot is 36
-bytes and a code 2, so dropping four slots saves 144 bytes while the longer
-ring costs 512, and the block grows from `WINDOW_WORK_SIZE` 4,492 bytes to
-4,860. `include/tbs_edition.h` gives every field's offset in each layout, and
-`STATIC_ASSERT`s in `include/window.h` check the struct against them.
-
-Despite its name, `battleMode` says where the windows are, not what a menu
-is doing:
-
-| `battleMode` | Set by | Meaning |
-| --- | --- | --- |
-| 0 | the field setup, which clears the block | on the field |
-| 1 | `WindowSystem_InitBattle` | in battle: typing is faster, and cleared rows near the bottom keep the battle's tile |
-| 2 | `BattleMessage_Open`, while it decodes | a battle message is being decoded |
-
-`mindRead` is set while Mind Read, the Psynergy that shows what a person is
-thinking, shows someone's thoughts ([Drawing text](#drawing-text)).
+The Japanese [edition](../../glossary.md#editions) has 12 window slots and a
+ring of 256 codes, the others 8 slots and 512 codes, so the block grows from
+4,492 bytes to 4,860; `include/tbs_edition.h` gives every field's offset in
+each layout and `STATIC_ASSERT`s in `include/window.h` check the struct
+against them. `battleMode` is 0 on the field, 1 in battle (typing is faster)
+and 2 while `BattleMessage_Open` unpacks a battle message.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `HEAP_SLOT_WINDOW` | 15 | the heap slot that holds the work block |
-| `WINDOW_WORK_SIZE` | `0x118C` (4,492) in Japanese, `0x12FC` (4,860) in the others | the work block's size in bytes |
+| `WINDOW_WORK_SIZE` | 4,492 bytes in Japanese, 4,860 in the others | the work block's size |
 | `WINDOW_COUNT` | 12 in Japanese, 8 in the others | window slots |
-| `WINDOW_SPRITE_COUNT` | 64 | window sprites in the pool |
-| `TEXT_BUFFER_MASK` | `0xFF` in Japanese, `0x1FF` in the others | the text buffer's index mask: 256 or 512 codes |
+| `WINDOW_SPRITE_COUNT` | 64 | window sprites |
 | `MESSAGE_ARGUMENT_COUNT` | 8 | message arguments at a time |
 
 ## Windows
 
-A window is a framed rectangle drawn into the shared picture of the screen.
-It zooms open from its centre, stays while it is needed, and zooms shut.
+![The field menu in Xian opens on the Item screen: six windows zoom open from their centres at once, and when the player presses B they shrink away and the row of icons is back.](https://alchemy.pascalpixel.com/guides/window/windows-zoom.gif)
 
-Opening a window takes the first free slot. Unless it is asked to appear at
-once, the window then grows out from its centre over 8 frames, a bigger
-frame drawn each frame, and the code that opened it waits until it is full
-size before putting anything in it. Closing works the other way, over 4
-frames, and the slot stays taken until the window has gone, so a closing
-window still counts against the 8 slots.
+A window grows out of its centre over a few frames when it opens and shrinks
+back when it closes. The code that opened it waits until it is full size
+before writing in it. Its frame and blue filling are tiles of the one
+[background layer](../../glossary.md#background-layer) in front of the map's
+three; what it carries (letters, portraits, the hand) are sprites riding on
+it.
 
-The frame and the blue filling are tiles of the windows' tilemap, which the
-console shows on the one [background layer](../../glossary.md#background-layer) in front of the map's three. A
-message's letters, its portrait and its page arrow are sprites riding on the
-window, in front of everything. In a message in Vale, the map's grass and
-cliffs are on `BG3`, its trees and bushes on `BG2` and a roof and a tree top
-on `BG1`, with the people as sprites level with `BG2`; the window's frame and
-filling are on `BG0`, the one layer every window shares.
+`Window_Create(x, y, width, height, flags)` takes the first free slot, or
+returns `NULL` when none is free, and places the window at tile (x, y). The
+tilemap is 32 tiles wide because the console's background layers are, but the
+screen shows only 30 of them, so windows are placed on a screen of 30 by 20
+tiles. Unless the window has `WINDOW_FLAG_INSTANT`, `Window_UpdateZooms` draws
+its frame at (8 − frame) / 8 of its size about its centre over
+`WINDOW_OPEN_FRAMES`, and shrinks it over `WINDOW_CLOSE_FRAMES`; the slot is
+freed only once it has closed, so a closing window still counts against the 8.
+`Window_Close(window, instant)` starts the close and returns at once.
+`Window_DrawFrame` draws nothing for a width or height below 2 or above 30,
+and nothing checks that a window stays within the tilemap's 20 rows.
 
-A message window sizes itself to its text: it is measured first, then
-placed so that it fits on the screen.
-
-In the code, `Window_Create(x, y, width, height, flags)` takes the first
-free slot, or returns `NULL` when none is free, and places the window at tile
-(x, y), `width` by `height` tiles. The tilemap is 32 tiles wide because the
-console's background layers are, but the screen's 240 pixels show only 30 of
-them, so windows are placed on a screen of 30 by 20 tiles. Offsets inside a
-window are pixels from its interior's top left. Unless the window has
-`WINDOW_FLAG_INSTANT`, `Window_UpdateZooms` zooms it open over
-`WINDOW_OPEN_FRAMES` (8), drawing its frame at (8 − frame) / 8 of its size
-about its centre, and closed over `WINDOW_CLOSE_FRAMES` (4); the slot is
-freed only once the close has finished. `Window_Close(window, instant)`
-starts closing that one window and returns without waiting.
-
-`Window_DrawFrame` writes the frame into the tilemap and draws nothing for a
-width or height below 2 or above 30. Nothing checks that a window stays within
-the tilemap's 20 rows; the caller keeps it there. While `mindRead` is set every
-corner is the one round tile (`WINDOW_TILE_FRAME_ROUND_CORNER`), flipped to fit.
-
-`Window_FitOnScreen` (`window/measure.c`) measures a message and moves its
-window so that it fits on the screen. While `mindRead` is set the fitted window
-is 2 tiles wider; which of the measuring routines add those tiles differs by
-edition, and in Japanese and English the text also starts 8 pixels further
-in.
-
+A message window sizes itself to its text: `Window_FitOnScreen`
+(`window/measure.c`) measures the message and moves the window so it fits.
 Where the editions lay a screen out differently, the value is a named macro
-chosen in one `#if` block at the top of the private header or of the part.
-The battle [summon](../../glossary.md#summons) list, for one, is `SUMMON_MENU_WINDOW_WIDTH` 17 tiles wide
-at `SUMMON_MENU_WINDOW_X` 13 in the international editions, and 14 tiles wide at 16 in
-Japanese, so both end at the screen's right edge.
-
-The window flags (`struct Window.flags`) are in
-[`window.h`](../../include/unit/window/window.h), the zoom's lengths in
-`window_internal.h`.
+chosen in one `#if` block at the top of the private header or the part, as
+the battle [summon](../../glossary.md#summons) list's `SUMMON_MENU_WINDOW_X`
+and `SUMMON_MENU_WINDOW_WIDTH` are.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `WINDOW_FLAG_OPEN` | `0x1` | the window slot is in use |
+| `WINDOW_FLAG_OPEN` | `0x1` | the slot is in use |
 | `WINDOW_FLAG_INSTANT` | `0x2` | opens and closes at once, with no zoom |
 | `WINDOW_FLAG_TEXT_CANVAS` | `0x8` | text is drawn into the text canvas ([Drawing text](#drawing-text)) |
-| `WINDOW_FLAG_FRAMED_CANVAS` | `0x20` | the canvas has a frame and a filled background |
-| `WINDOW_FLAG_OUTLINED_TEXT` | `0x40` | the canvas text gets an outline |
 | `WINDOW_FLAG_ANCHOR_BOTTOM` | `0x80` | when a new page resizes the window, its bottom edge stays put |
 | `WINDOW_FLAG_FIXED_X` | `0x100` | when a new page resizes the window, its left edge stays put |
-| `WINDOW_OPEN_FRAMES` | 8 | frames a window takes to zoom open |
-| `WINDOW_CLOSE_FRAMES` | 4 | frames a window takes to zoom closed |
-| `SUMMON_MENU_WINDOW_X`, `SUMMON_MENU_WINDOW_WIDTH` | 13 and 17 tiles; 16 and 14 in Japanese | the battle summon list's place and width |
+| `WINDOW_OPEN_FRAMES` | 8 | frames a window takes to open |
+| `WINDOW_CLOSE_FRAMES` | 4 | frames a window takes to close |
 
 ## Decoding a message
 
-The cartridge stores the game's text squeezed, so before a message can be
-typed it is unpacked, whole, into plain letter codes.
+![Isaac asks Bilibin's innkeeper for a room: `Welcome to our inn.`, then `It's 21 coins for a room. Would you like to stay?` with the price filled in, a Yes and No choice and the coins window; he answers No and the innkeeper says `Please come again.`](https://alchemy.pascalpixel.com/guides/window/message-blanks.gif)
 
-Each stored letter is a short run of bits, and which run stands for which
-letter depends on the letter before it, so the pairs that are common in the
-game's text cost very little room. A message can also hold blanks: a party
-member's name, a number, the name of an item or a [Psynergy](../../glossary.md#psynergy-and-pp), each filled in
-as the message is unpacked, with "a" or "an" and the other small words each
-language puts in front of a name. The marks that say where a line or a page
-ends, where to pause and which colour to use are kept as they are, for the
-text printer to act on later. All the slow work happens here, once, so typing the
-message afterwards costs almost nothing a frame.
+The cartridge stores the game's text squeezed, so a message is unpacked whole
+before it is typed. A message can hold blanks, such as the 21 coins above or a
+member's or an item's name, and they are filled in as it is unpacked, with
+"a" or "an" and the other small words each language puts in front of a name.
+All the slow work happens here, once, so typing it afterwards costs almost
+nothing a frame.
 
-The game's text is stored as numbered messages. Their text is in the PO
-catalogs under `games/tbs/text`, one per language, which the build's
-`ags-text` turns into the packed messages and a header naming each one; the
-code writes a message by that linker symbol (`MsgGameSaved`). `Message_Decode`
-([`window/decode.c`](window/decode.c)) decodes a whole message at once into
-the text buffer.
+The text is in the PO catalogs under `games/tbs/text`, one per language, which
+the build's `ags-text` packs, with a header naming each message; the code
+writes a message by that linker symbol (`MsgGameSaved`). `Message_Decode`
+([`window/decode.c`](window/decode.c)) unpacks a whole message into the text
+buffer. Messages are Huffman-coded, with a separate tree for each previous
+letter (`Text_MessageContexts`); the routine that walks the trees,
+`Text_DecodeSymbol`, is handwritten ARM code in
+`graphics/text/decode_symbol.s`, copied into heap slot `TEXT_WORK_BLOCK` (50)
+for the decode. A blank takes its value from the argument table, which callers
+fill with `MessageArgument_Push(value, kind)`; the articles and endings come
+from `articles.c`. The inn's price is `MessageArgument_Push(price,
+MESSAGE_ARGUMENT_NUMBER)` before its line.
 
-Messages are Huffman-coded: common symbols get short codes and rare ones
-long codes, read one bit at a time down a tree of choices. There is a
-separate tree for each previous symbol (`Text_MessageContexts`), so the code
-just decoded chooses the tree for the next. The routine that walks the
-trees, `Text_DecodeSymbol`, is handwritten in the processor's 32-bit ARM
-instructions in `graphics/text/decode_symbol.s`; the decoder copies it into heap slot
-`TEXT_WORK_BLOCK` (50), which the heap takes from IWRAM when it has room,
-runs it from there one symbol at a time and releases the slot at the end.
-
-An argument code takes its value from the argument table, which callers fill
-with `MessageArgument_Push(value, kind)`: a name, a number, or an item or
-ability name, by its `MESSAGE_ARGUMENT_` kind. Each language's articles,
-possessives and endings come from `articles.c`, chosen by the article class
-an item or name carries. Style codes (colours, pauses, page breaks) are
-copied into the text buffer unchanged, with their operands, for the text printer to run. A control code in the catalogs
-is written in braces: `{end_wait}`, at the end of
-`Your game was saved.{end_wait}`, is `MESSAGE_END_WAIT`, kept as
-`TEXT_WAIT_KEY`, which waits for a button and closes the window. Garet's
-sister's line in Vale is `MsgValeYouGuysAreSoLuckyGaret`, whose name blank
-is `{actor_name:2}`.
-
-While a battle message is decoded `battleMode` is 2, and the Japanese decoder
-then sets names off with spaces and style codes and doubles each space.
-
-The stored control codes are an enum in `window/decode.c`; an operand is
-stored one above its value.
+Control codes are written in braces in the catalogs (`{end_wait}` at the end
+of `Your game was saved.{end_wait}`) and copied into the buffer unchanged for
+the text printer. An operand is stored one above its value.
 
 | Name | Value | Kept as |
 | --- | --- | --- |
@@ -202,105 +130,55 @@ stored one above its value.
 | `MESSAGE_END_WAIT` | 2 | `TEXT_WAIT_KEY`: a button closes the window |
 | `MESSAGE_LINE_BREAK` | 3 | `TEXT_NEWLINE` |
 | `MESSAGE_TEXT_COLOR` | 8 | `TEXT_COLOR`, with its operand |
-| `MESSAGE_TEXT_EFFECT` | 9 | `TEXT_OUTLINE`, with its operand: the style of sprite text |
-| `MESSAGE_LINE_SPACING` | 10 | `TEXT_LINE_SPACING`, with its operand |
 | `MESSAGE_LOCALIZED_WORD` | 13 | German: a counted noun; Italian: a gender ending; Spanish and French: the plural suffix |
-| `MESSAGE_WINDOW_EFFECT` | 15 | `TEXT_WINDOW_STATE`, with its operand: the window effect to run |
-| `MESSAGE_PROTAGONIST_NAME` | 16 | the letters of the leader's name (`gSaveBlock.leaderLocalId`) |
+| `MESSAGE_PROTAGONIST_NAME` | 16 | the letters of the leader's name |
 
 ## The text buffer
 
 Unpacked messages wait in a ring, the text buffer, until a text printer has
 typed them.
 
-Each message is written after the one before it, ends with an end mark, and
-is known only by where it starts. When the writing reaches the end of the
-ring it carries on from the beginning, over whatever was there, so several
-windows can show text at once without anyone setting room aside, and a
-message stays readable until enough later text has been unpacked to run over
-it.
-
-`work->textBuffer` is a ring of 16-bit codes whose index wraps through
-`TEXT_BUFFER_MASK`, the ring's size less one. A message is written at `work->textBufferEnd`, ends with 0, and
-is known only by the index it starts at, which `Message_Decode`
-returns; asking for message -1 returns the last message's start again. A
-message longer than the ring is cut at the ring's length; none in the game is
-([Evidence and open questions](#evidence-and-open-questions)).
+Each message is written after the one before, ends with 0 and is known only by
+the index it starts at, which `Message_Decode` returns. When writing reaches
+the end of the ring it carries on from the start, over whatever was there, so
+several windows can show text at once with nothing set aside, and a message
+stays readable until enough later text has run over it. The index wraps
+through `TEXT_BUFFER_MASK` (511, or 255 in Japanese); no message in the game
+is longer than the ring ([Evidence and open questions](#evidence-and-open-questions)).
 
 ## Typing
 
-A text printer types an unpacked message into its window a
-little each frame and acts on the marks it meets: a new line, a new page, a
-pause, a colour.
+![Isaac talks to Garet's sister in Vale: a message window opens at the top of the screen beside her portrait, `You guys are so lucky, Garet.` is typed out with a bobbing arrow at its end, the window narrows to fit `I wish I could go with you.`, and it closes.](https://alchemy.pascalpixel.com/guides/window/talk.gif)
 
-![Isaac talks to Garet's sister in Vale: a message window zooms open at the top of the screen beside her portrait, `You guys are so lucky, Garet.` is typed out with a bobbing arrow at its end, the window narrows to fit `I wish I could go with you.`, and it closes.](https://alchemy.pascalpixel.com/guides/window/talk.gif)
+A text printer puts a message into its window a little each frame, with the
+speaker's voice blip every few letters. At a page break it shows the arrow
+and waits for a button; then the window is cleared, refitted to the next
+page's text and typing goes on. At the end the window stays open or, with the
+closing mark, waits for a button and closes.
 
-Each frame the text printer puts on one more letter cell. A cell is a sprite 16 pixels wide, and in the
-international editions two narrow letters that fit in one cell together are typed
-as one, so "Yo" appears on the first frame. How many cells come a frame is
-the player's message speed: at the slow speed one, followed by a pause of 4
-frames that holding a button skips; at the normal speed one; at the fast
-speed up to ten, though a space or a mark ends the frame's share, so the
-text comes about a word at a time. Battle text is typed faster still, 8
-cells a frame, and 13 after a frame that ran late, so a battle keeps moving.
-Every few cells the speaker's voice blip plays.
-
-At a page break the text printer shows the arrow and waits for a button; then the
-window is cleared, refitted to the next page's text, and typing goes on. At
-the end the window either stays open or, with the closing mark, waits for a
-button and closes.
-
-In the code a text printer (`struct TextPrinter`) holds its window, the pen
-position in 1/256 pixels, the index of its next code, the countdowns for
-pauses and for the wait after each character, and its style.
-`TextPrinter_Add` takes a free text printer and returns `NULL` when all
-three are busy; the printer stays taken until its window closes.
-`BattleMessage_Continue` also reuses a text printer whose window has finished,
-continuing below its last line and scrolling once both lines are used.
-
-`WindowSystem_Update` is the window system's [task](../../glossary.md#task). Both setups add it in
-the main loop's pass, and it runs every frame: the windows' zoom
-(`Window_UpdateZooms`), then the text printers, then the window sprites
-(`WindowSprite_UpdateAll`). Code that shows a message waits on its window
-while the task types it. `Message_OpenWindow` (`window/frames.c`) is the
-whole path for one message, and a caller then waits a frame at a time
-(simplified, with the shop's wait from `Shop_ShowKeeperMessage`):
+A text printer (`struct TextPrinter`) holds its window, the pen position in
+1/256 pixels, the index of its next code, its countdowns and its style.
+`TextPrinter_Add` takes one of the three, or returns `NULL` when all are busy.
+`WindowSystem_Update`, the window system's [task](../../glossary.md#task), runs
+once a frame: the windows' zoom, then `TextPrinter_Step` for each printer, then
+the window sprites. `Message_OpenWindow` (`window/frames.c`) is the whole path
+for one message, and a caller then waits:
 
 ```c
-entry = Message_Decode(message, 1);   // decode into the ring
+entry = Message_Decode(message, 1);
 Window_FitOnScreen(entry, &x, &y, &width, &height, bounds, 0);
-window = Window_Create(x, y, width, height, flags);  // NULL: no free slot
-TextPrinter_Add(window, entry, 0, 0, bounds, 0); // take a text printer
+window = Window_Create(x, y, width, height, flags);
+TextPrinter_Add(window, entry, 0, 0, bounds, 0);
 
-while (TextPrinter_AllFinishedFar() == 0)   // every printer has typed its text
+while (TextPrinter_AllFinishedFar() == 0)
   WaitFrames(1);
 ```
 
-`TextPrinter_Step` types one frame's share of a text printer. Outside
-battle the share is `gMessageSpeed_Steps` for the player's message speed, and
-a space or a control code ends it; after each character the printer waits
-`gMessageSpeed_Delays` frames while no button is held. Two characters whose
-glyph widths add up to 15 pixels or less are drawn as one pair, the second in
-the code's high byte (14 in Spanish with an outline), except in a text canvas
-and in Japanese. In battle (`battleMode` nonzero) the share grows with how
-many VBlanks the last frame took (`gLagFramesShown`, 1 for a frame on time):
-
-```
-share = 3 + 5 × min(VBlanks, 2)    → 8 on time, 13 after a late frame
-``` The speaker's voice blip plays every
-`gMessageSpeed_VoiceGaps` characters, and is one of four sounds from
-`voiceSound`, chosen by the character's code.
-
-The speed tables are in `message_speed.c`, indexed by
-`gSaveBlock.messageSpeed`, 0 to 2 from slowest to fastest; the codes a
-text printer runs are in `window_internal.h`, and codes from `TEXT_SPACE` up are
-characters.
+The codes a printer acts on are in `window_internal.h`; from `TEXT_SPACE` (32)
+up they are letters.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `gMessageSpeed_Steps` | 1, 1, 10 | characters typed each frame |
-| `gMessageSpeed_Delays` | 4, 0, 0 | frames waited after each character while no button is held |
-| `gMessageSpeed_VoiceGaps` | 1, 3, 10 | characters between two voice blips |
 | `TEXT_END` | 0 | the text ends; the window stays open |
 | `TEXT_PAGE` | 1 | wait for a button, then clear the window for a new page |
 | `TEXT_WAIT_KEY` | 2 | wait for a button, then close the window |
@@ -308,93 +186,172 @@ characters.
 | `TEXT_PAUSE_LONG` | 4 | a 60-frame pause |
 | `TEXT_PAUSE_SHORT` | 5 | a 20-frame pause a button can cut short |
 | `TEXT_PAUSE_LONGEST` | 6 | a 120-frame pause a button can cut short |
-| `TEXT_COLORS_RESET` | 7 | colour 15, style 0 and line spacing 10 again |
-| `TEXT_COLOR`, `TEXT_OUTLINE`, `TEXT_LINE_SPACING` | 8, 9, 10 | the next entry is the colour, the style or the line spacing |
-| `TEXT_WINDOW_STATE` | 15 | the next entry is the window effect to run |
-| `TEXT_END_ALT` | 30 | ends the text as `TEXT_END` does |
-| `TEXT_SPACE` | 32 | the first character code |
+| `TEXT_COLOR`, `TEXT_OUTLINE`, `TEXT_LINE_SPACING` | 8, 9, 10 | the next code is the colour, the style or the line spacing |
+
+### How fast the letters come
+
+![Garet's sister's line typed twice from the same moment: first at the slow message speed, a letter at a time with a pause after each, then at the fast speed, where it comes about a word at a time.](https://alchemy.pascalpixel.com/guides/window/message-speed.gif)
+
+The player chooses the message speed in the option menu. At the slow speed one
+letter comes a frame with a pause of 4 frames after it, which holding a button
+skips; at the normal speed one a frame; at the fast speed up to ten, though a
+space ends the frame's share, so the text comes about a word at a time. In
+battle it is faster still, 8 letters a frame, so the battle keeps moving.
+
+`TextPrinter_Step` reads the share from `gMessageSpeed_Steps` and the pause
+from `gMessageSpeed_Delays`, both indexed by `gSaveBlock.messageSpeed`
+(`message_speed.c`). A letter is a 16-pixel sprite cell, and in the
+international editions two narrow letters whose widths add up to 15 pixels or
+less share one cell, so "Yo" appears on the first frame. In battle the share
+is 3 + 5 × min(VBlanks the last frame took, 2): 8 on time, 13 after a late
+frame.
+
+| Name | Value, slow to fast | Meaning |
+| --- | --- | --- |
+| `gMessageSpeed_Steps` | 1, 1, 10 | letters typed each frame |
+| `gMessageSpeed_Delays` | 4, 0, 0 | frames waited after each letter while no button is held |
+| `gMessageSpeed_VoiceGaps` | 1, 3, 10 | letters between two voice blips |
 
 ## Drawing text
 
-A window's frame is always tiles of the windows' tilemap, but its letters go
-on in one of three ways, depending on what the window is for.
-
-A message typed on the field puts each cell on as a sprite riding on the
-window, which is what lets letters bob or shake. A battle message is painted
-into one shared picture, the text canvas, across the bottom rows of the
-screen; there is one canvas, so only one such window shows at a time. Labels
-drawn all at once, such as menu text and the area's name, become tiles of the
-tilemap itself, from a set of tiles kept for text.
-
 ![Isaac casts Mind Read on Garet's sister in Vale: the field tints red, then gold and green, as her thought `Gee, I wish I could see new lands, too.` is typed into a round-cornered window beside her portrait.](https://alchemy.pascalpixel.com/abilities/mind-read.gif)
 
-While `mindRead` is set, as under Mind Read, the window has round corners, the
-text is drawn in colour 8 with no shadow, and a button press latched before
-a page's wait is dropped.
+A window's letters go on in one of three ways. A message typed on the field
+puts each letter cell on as a sprite riding on the window, which is what lets
+letters bob or shake. A battle message is painted into one shared picture, the
+text canvas, across the bottom of the screen. Labels drawn all at once, such
+as menu text and the area's name, become tiles of the window layer itself.
+Under Mind Read the window gets round corners and the text another colour.
 
-The canvas (`WINDOW_FLAG_TEXT_CANVAS`) draws into bitmap tiles at
-`TEXT_CANVAS_VRAM`, through `glyph_arm.c`. It is 120 tiles from
-`TEXT_CANVAS_FIRST_TILE`, enough for the interior of a full-width window six
-tiles tall, and its tiles run down columns; `BattleMessage_Open` opens
-it as a frameless window over the bottom rows for battle messages. Every canvas window maps the
-same tiles. Canvas lines are 13 pixels apart, and from the second line on the
-canvas scrolls up instead.
-
-Text drawn as tiles (`Text_DrawMessage`, `Text_DrawMessageAsTiles`)
-takes tiles `0x80` to `0xFF`, and `0x200` to `0x27F` as well while
-`extraTextTiles` is set. `Text_UseExtraTiles` sets it while the field menu's Djinn, Item,
-Psynergy and summary screens and the battle's Djinn menu are open, which need
-more text tiles, and clears it as they close. Its lines are 15 pixels apart. A tile's attribute has bit 0 once
-allocated and bit 1 while the tilemap shows it, so `Text_DrawStringAsTiles`
-can reuse the tiles a string already has and take only free ones.
+The canvas (`WINDOW_FLAG_TEXT_CANVAS`) is 120 tiles from
+`TEXT_CANVAS_FIRST_TILE`, drawn by `glyph_arm.c`; there is one, so only one
+canvas window shows at a time. Text drawn as tiles (`Text_DrawMessageAsTiles`)
+takes 128 tiles, and 128 more (`extraTextTiles`, set by `Text_UseExtraTiles`)
+while the field menu's screens or the battle's Djinn menu are open. Each
+window keeps a list of its window sprites (`struct WindowSprite`), moved every
+frame by `WindowSprite_UpdateAll` and returned to the pool when it closes;
+their pictures hold entries of the VRAM cache until `VramCache_FreeEntry`.
+While `mindRead` is set every corner is `WINDOW_TILE_FRAME_ROUND_CORNER` and
+the fitted window is 2 tiles wider.
 
 | Way | Chosen by | Where it draws | Line spacing |
 | --- | --- | --- | --- |
-| text canvas | `WINDOW_FLAG_TEXT_CANVAS` | 120 tiles from `TEXT_CANVAS_FIRST_TILE` (`0x128`), at `TEXT_CANVAS_VRAM` (`0x06002500`) | 13 pixels |
-| sprites | a typed message without the canvas flag | one 16 by 16 window sprite a cell: a character, or two narrow ones in the international editions | 15 pixels |
-| tilemap tiles | text drawn all at once | tiles `0x80` to `0xFF`, and `0x200` to `0x27F` with `extraTextTiles` set | 15 pixels |
-
-## Window sprites
-
-A window sprite is one sprite a window carries: a cell of text, an icon, a
-portrait or the page arrow. It moves with its window and goes when the
-window closes.
-
-Each window keeps a list of its sprites, taken from the pool's free list and
-returned when the window closes. `WindowSprite_UpdateAll` moves each
-sprite every frame by its `WINDOW_SPRITE_MOTION_` motion and queues it for drawing. A
-window sprite's picture occupies an entry of the VRAM cache, loaded into a free one
-(`VramCache_FindFreeEntry`, `VramCache_Load`) and freed by
-`VramCache_FreeEntry`. The two portrait slots record which picture each shows
-(`portraitPictures`, 999 when free) and its cache entry. In Japanese, a character
-that finds no free window sprite closes its window.
+| sprites | a typed message without the canvas flag | one 16 by 16 window sprite a cell | 15 pixels |
+| text canvas | `WINDOW_FLAG_TEXT_CANVAS` | 120 tiles from `TEXT_CANVAS_FIRST_TILE` (`0x128`) | 13 pixels |
+| tilemap tiles | text drawn all at once | tiles `0x80` to `0xFF`, and `0x200` to `0x27F` with `extraTextTiles` | 15 pixels |
 
 ## The area name
 
-Arriving in a new area, the player sees its name in a small window near the
-top of the screen for a moment.
+![The party arrives in Bilibin from the world map: as the screen fades in, a small window with `Bilibin` appears near the top of the screen, stays a moment and goes.](https://alchemy.pascalpixel.com/guides/window/area-name.gif)
 
-`MapNamePopup_Show` shows the area's name, from
-`MapSec_GetNameIndexFar`, drawn as tiles in a window centred across the
-screen and in its top 10 rows, opened with `WINDOW_FLAG_INSTANT`. It keeps the
-window and a countdown of `MAP_NAME_POPUP_FRAMES` (90) in two fields of the event work
-(`gFieldWork`, the running map's state), and
+Arriving in a new area, the player sees its name in a small window near the
+top of the screen for a second and a half.
+
+`MapNamePopup_Show` draws the name, from `MapSec_GetNameIndexFar`, as tiles in
+a window centred across the screen, opened with `WINDOW_FLAG_INSTANT`. It keeps
+the window and a countdown in the event work (`gFieldWork`), and
 `MapNamePopup_Update`, a main-loop task, closes it when the countdown ends.
+Opening the field menu hides it at once (`MapNamePopup_HideFar`).
 
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `MAP_NAME_POPUP_FRAMES` | 90 | frames the area's name shows |
 
+## The pause menu
+
+![Isaac presses Start in Vale: a window titled Pause offers `Save your quest`, `Sleep` and `Change settings`, each with an icon that lights up as the hand moves down to it, and B closes it.](https://alchemy.pascalpixel.com/guides/window/pause-menu.gif)
+
+Start on the field opens the pause menu: Save your quest, Sleep and Change
+settings. Sleep says to press L and R to resume and then stops the console
+until they are pressed. Backing out of the file choice or the option menu
+brings the pause menu back.
+
+The field's `Map_Run` calls `PauseMenu_Run` (`window/screens/debug.c`), which
+reads the choice from `PauseMenu_Choose` and runs `Save_ToChosenFile`, the
+sleep message (setting `gSleepRequested`) or `OptionMenu_Run`. The menu and
+the option menu share one heap slot, `HEAP_SLOT_OPTION_MENU`. In debug mode
+three more entries follow (`PAUSE_MENU_DEBUG_ROWS`).
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `PAUSE_MENU_SAVE_QUEST` | 0 | Save your quest |
+| `PAUSE_MENU_SLEEP` | 1 | Sleep |
+| `PAUSE_MENU_CHANGE_SETTINGS` | 2 | Change settings |
+
+### Saving
+
+![Isaac presses Start in Vale and chooses `Save your quest`: a window titled Save lists three files, all `(No saved data)`; the first is chosen, `Saving...` shows, and then `Your game was saved.`](https://alchemy.pascalpixel.com/guides/window/save.gif)
+
+The game keeps three save files in the cartridge's backup memory. Saving asks
+which file, with the one last used first, and asks `OK to save over this
+file?` when it already holds a game; then the saved jingle plays and the game
+is written.
+
+`Save_ToChosenFile` (`window/screens/save.c`) runs the file menu
+(`FileMenu_SelectFile`, also used by the title's Continue, Copy and Erase),
+builds the file's summary (`Save_BuildFileSummary`: level, play time, the
+Djinn found), records where the map's people stand
+(`Save_CaptureObjectEventsFar`) and writes the 8 KB save buffer as two 4 KB
+records, `file` and `file + SAVE_FILE_COUNT`. A failed write shows
+`Failed to save.`; with no backup memory it shows
+`Unable to detect backup memory.`.
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `SAVE_FILE_COUNT` | 3 | save files |
+| `SAVE_RECORD_BYTES` | 4 KB | one of a file's two records |
+
+### The option menu
+
+![Isaac opens Change settings from the pause menu: the hand turns the window colour slider, and every window turns from blue to green; it lowers the brightness, the windows darken; B drops the changes, the windows are blue again and the pause menu returns.](https://alchemy.pascalpixel.com/guides/window/options.gif)
+
+Change settings sets the windows' colour and brightness, the message speed,
+whether people speak with voice blips, and auto-sleep. The windows change
+colour as the player moves the slider; A or Start keeps the settings, B puts
+the old ones back.
+
+`OptionMenu_Run` (`window/window/options.c`) copies the settings into its work
+block so that cancelling can drop them, and calls `WindowColor_Apply` as the
+slider moves, which rewrites the window colours of `BG` palette 15 from a hue
+and brightness. Select cycles through preset colours. Every setting wraps at
+its ends.
+
+| Row | Values |
+| --- | --- |
+| window colour | 24 hues |
+| window brightness | 15 steps, 7 neutral |
+| message speed | 3 ([How fast the letters come](#how-fast-the-letters-come)) |
+| speech | on or off |
+| auto-sleep | on or off |
+
+## The naming screen
+
+![A new game with no save file: a keyboard window comes up under Isaac's portrait and the name `Isaac`; B takes off two letters, the hand moves to `a` and then `c` and puts them back, Start jumps to End, and A ends the name.](https://alchemy.pascalpixel.com/guides/window/naming-screen.gif)
+
+A new game opens on the naming screen with the leader's name already in it.
+The player moves the hand over a keyboard: A puts a letter on, B or Del takes
+the last one off, and End (or Start, which jumps there) keeps the name. A
+name has at most five letters, and an empty one keeps the old name.
+
+`NamingScreen_EditMemberName(member)` (`window/screens/name_entry.c`) runs it
+and writes the name over the member's only on End; B on an empty name returns
+-1. The main menu's new game (`menu/main_menu.c`) names Isaac alone; two
+hidden button codes there add more names to enter, the first Garet, Ivan and
+Mia, the second Felix, Jenna and Sheba as well.
+
+| Name | Value | Meaning |
+| --- | --- | --- |
+| `NAME_MAX_LETTERS` | 5 | letters in a name |
+
 ## Design
 
-[Menus, windows and shops](../../menus.md) explains why messages are decoded
-ahead of typing and why every window shares one tilemap. Within the window
-code, the two routines that run per pixel or per bit, the canvas renderer and
-the tree walker, are ARM code (the processor's full 32-bit instructions)
-copied into RAM, while everything else is Thumb code (its compact 16-bit
-form) run from ROM; why is an open question (below). The work block's two
-layouts are one struct whose array sizes come from `tbs_edition.h`, so the
-code that reads it is the same in every edition.
+[Menus, windows and shops](../../menus.md) explains why messages are unpacked
+ahead of typing and why every window shares one tilemap. The two routines that
+work per pixel or per bit, the canvas renderer and the tree walker, are ARM
+code (the processor's full 32-bit instructions) copied into RAM, while the
+rest is Thumb code run from ROM; why is an open question (below). The work
+block's two layouts are one struct whose array sizes come from
+`tbs_edition.h`, so the code that reads it is the same in every edition.
 
 Many of the window functions' names are shared with
 [The Lost Age](../../glossary.md#the-two-games)'s copies of these files and
@@ -407,11 +364,12 @@ so renaming one changes other folders too.
   wider or taller than 30, is not drawn.
 - Twelve window slots in Japanese and eight in the international editions.
 - Three text printers and 64 window sprites.
-- Eight message arguments at a time (`MESSAGE_ARGUMENT_COUNT`); a ninth is
-  dropped (`MessageArgument_Push`).
+- Eight message arguments at a time; a ninth is dropped
+  (`MessageArgument_Push`).
 - The text buffer holds 256 codes in Japanese and 512 in the others.
 - The text canvas holds 120 tiles, one canvas window at a time.
 - Text drawn as tiles has 128 tiles, or 256 with `extraTextTiles` set.
+- Three save files; a name has five letters.
 
 ## Words used here
 
@@ -421,13 +379,11 @@ so renaming one changes other folders too.
   tilemap.
 - **text canvas**: a window with `WINDOW_FLAG_TEXT_CANVAS`, whose text is drawn
   into bitmap tiles rather than placed as sprites or tilemap tiles.
-- **decoded text**: a message after decoding, as 16-bit codes in the text
-  buffer, the ring `work->textBuffer`.
-- **text printer**: a `struct TextPrinter`, which types decoded text into one
+- **text buffer**: the ring `work->textBuffer` of unpacked 16-bit codes.
+- **text printer**: a `struct TextPrinter`, which types unpacked text into one
   window and runs its control codes (`TEXT_`).
 - **window sprite**: a `struct WindowSprite`, one sprite a window carries.
-- **text tile state**: `work->textTileState`, one byte per text tile saying
-  whether it is allocated and whether the tilemap still shows it.
+- **file menu**: the list of the three save files (`FileMenu_SelectFile`).
 - `unk` plus an offset, such as `unk10`: a field whose meaning is not known.
 
 ## Evidence and open questions
@@ -438,27 +394,27 @@ and the screens from the English release's text they show. Messages are
 named by their linker symbols, made from their English text. That "Yo" is
 typed on the first frame follows from the English glyph widths
 (`graphics/font/text.tsv`) and the pairing rule in `TextPrinter_Step`, and
-agrees with a recording of the window opening
-(`guides/window/window-open.png`), whose first typed frame shows it.
+agrees with the recording of the window opening
+(`guides/window/window-open.png`).
 
-[XXX](../../glossary.md#xxx): likely the canvas renderer and the tree walker are ARM code run from
-RAM for speed, because ARM code fetched from the cartridge's 16-bit bus is
-slow; nothing in the code says so. XXX: the likely reason the text buffer was
-doubled in the international editions is their longer text; the bytes show only the
-change.
+[XXX](../../glossary.md#xxx): likely the canvas renderer and the tree walker
+are ARM code run from RAM for speed, because ARM code fetched from the
+cartridge's 16-bit bus is slow; nothing in the code says so. XXX: the likely
+reason the text buffer was doubled in the international editions is their
+longer text; the bytes show only the change.
 
 A message longer than the ring would be cut, its terminator landing on its own
 start, but no message is that long. Counting each control code and line break
 as one code, before the arguments are filled in, the longest message of each
 edition's text is the Lucky Dice rules, at 200 of the Japanese ring's 256
 codes and at most 446 (Italian) of the others' 512. The two bytes before the
-argument table, `padding` in `struct WindowWork`, align `argumentValues` to a word
-in every edition, and nothing reads them. The halfword after `lineSpacing`,
-`unusedAfterLineSpacing`, is set to 1 whenever `Text_ResetStyle` resets the
-text style and read by nothing: the text printer has no field to copy into it
-(`TextPrinter_ApplyStyle` copies only the colour, outline and line spacing),
-no text control code writes it, and the glyph code, all C, reads the style
-through its named fields.
+argument table, `padding` in `struct WindowWork`, align `argumentValues` to a
+word in every edition, and nothing reads them. The halfword after
+`lineSpacing`, `unusedAfterLineSpacing`, is set to 1 whenever `Text_ResetStyle`
+resets the text style and read by nothing: the text printer has no field to
+copy into it (`TextPrinter_ApplyStyle` copies only the colour, outline and
+line spacing), no text control code writes it, and the glyph code, all C,
+reads the style through its named fields.
 
 - XXX (no evidence): why there are three text printers, and why the international
   editions gave up four windows when they doubled the ring; the code shows

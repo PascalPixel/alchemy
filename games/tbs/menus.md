@@ -1,326 +1,140 @@
 # Menus, windows and shops
 
-Everything the player reads or chooses outside the [map](glossary.md#map) itself comes in a
-framed box: what people say, the field menu and its screens, the shop and
-inn counters, the battle commands. This layer of the game draws those boxes
-(windows), unpacks the game's stored text and types it into them, runs the
-field menu's four screens ([Psynergy](glossary.md#psynergy-and-pp), [Djinn](glossary.md#djinn), Item and Status), and runs the
-counters where the [party](glossary.md#the-party) spends its coins: shops, sanctums and inns.
+Everything the player reads or chooses outside the [map](glossary.md#map)
+itself comes in a framed box: what people say, the field menu and its screens,
+the pause menu, the shop and inn counters. This layer draws those boxes
+(windows), types the game's text into them, runs the field menu's four screens
+([Psynergy](glossary.md#psynergy-and-pp), [Djinn](glossary.md#djinn), Item and
+Status), and runs the counters where the [party](glossary.md#the-party) spends
+its coins.
 
-All the windows share one [background layer](glossary.md#background-layer), `BG0`, in front of the three the map
-uses, so the map looks the same however many windows are open. Text drawn
-into a window all at once, such as a menu's names and prices, is tiles of that
-layer too; a message's typed letters, icons, portraits and the pointing hand
-are [sprites](glossary.md#sprite-and-oam) in front of everything.
+All the windows share one [background layer](glossary.md#background-layer),
+`BG0`, in front of the three the map uses, so the map looks the same however
+many windows are open. A message's letters, the portraits and the pointing
+hand are [sprites](glossary.md#sprite-and-oam) in front of everything.
 
 ## Windows
 
-A window is a framed box that zooms open from its centre, holds text or
-icons for as long as it is needed, and zooms shut.
+![The field menu in Xian opens on the Item screen: six windows zoom open from their centres at once, and when the player presses B they shrink away and the row of icons is back.](https://alchemy.pascalpixel.com/guides/window/windows-zoom.gif)
 
-Every window is drawn into one tilemap, a grid of 8-pixel tile numbers that
-`BG0` shows. The console's background layers are 32 tiles wide, but the
-screen, 240 by 160 pixels, shows only 30 of those columns and 20 rows. So:
+A window grows out of its centre when it opens and shrinks back when it
+closes. The game waits for it to reach full size before writing anything in
+it, so every box on screen, however many there are, opens the same way.
 
-- the tilemap holds 32 by 20 entries, and its last two columns are never
-  seen;
-- windows are placed on the 30 by 20 tiles that show.
-
-A window takes 8 [frames](glossary.md#frame) to grow open and 4 to shrink shut, and the code that
-opened it waits while it does. A window's letters go on in one of three ways:
-
-| Way | Used for | Where the letters are | How many at once |
-| --- | --- | --- | --- |
-| sprites | a message typed on the field | one 16 by 16 sprite a letter cell, riding on the window | 64 sprites for all windows |
-| text canvas | a battle message | one shared picture of 120 tiles across the bottom rows | one window |
-| tilemap tiles | labels, names and prices drawn all at once | tiles of `BG0` itself, from a set kept for text | 128 tiles, 256 while a field menu screen or the battle's Djinn menu is open |
-
-A sprite a window carries, a letter cell, an icon, a portrait or the page
-arrow, is one of its window sprites. It moves with the window and goes when
-the window closes.
-
-All of the window system's state is one block of memory, `struct
-WindowWork`, borrowed from the [heap](glossary.md#heap-and-pools) under the [heap slot](glossary.md#heap-slot) `HEAP_SLOT_WINDOW`. It holds
-the tilemap (`work->tilemap`, copied to `WINDOW_TILEMAP_VRAM` in video memory by a
-VBlank [task](glossary.md#task)), the window slots, the text printers (below), the
-window sprites and the decoded text. A window is a
-`struct Window` slot, opened by `Window_Create(x, y, width, height,
-flags)` in the first free slot, with its place and size in tiles; it returns
-`NULL` when every slot is taken. Unless it has `WINDOW_FLAG_INSTANT`, it zooms open
-over `WINDOW_OPEN_FRAMES` and closed over `WINDOW_CLOSE_FRAMES`, and its
-slot stays taken until it has closed. The zoom is stepped by
-`Window_UpdateZooms`, the first step of `WindowSystem_Update`, the window
-system's task, which runs once a frame.
-
-The text canvas (`WINDOW_FLAG_TEXT_CANVAS`, at `TEXT_CANVAS_VRAM`) is drawn by the
-renderer in `glyph_arm.c`, written in the processor's fast 32-bit ARM
-instructions; its 120 tiles are exactly the battle message window's text
-area. Tilemap text takes tiles from a run of 128, and the work block's `alt`
-adds a second run of 128 while a screen that needs more is open. Each window
-sprite (`struct WindowSprite`) is moved every frame by its `WINDOW_SPRITE_MOTION_` motion
-(`WindowSprite_UpdateAll`), and its picture holds an entry of the VRAM
-cache, the video memory kept for sprite pictures, until the window code frees
-it with `VramCache_FreeEntry`.
+Each window is a slot in one block of memory, `struct WindowWork`, drawn into
+one tilemap that `BG0` shows. `Window_Create` takes a free slot, or returns
+`NULL` when all are taken; `Window_UpdateZooms`, the first step of the window
+system's once-a-[frame](glossary.md#frame) [task](glossary.md#task)
+`WindowSystem_Update`, grows and shrinks them.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `HEAP_SLOT_WINDOW` | 15 | the heap slot of the window system's work block |
-| `WINDOW_COUNT` | 12, or 8 | window slots: 12 in the Japanese [edition](glossary.md#editions), 8 in the international editions |
-| `WINDOW_OPEN_FRAMES` | 8 | frames a window takes to zoom open |
-| `WINDOW_CLOSE_FRAMES` | 4 | frames a window takes to zoom closed |
-| `WINDOW_SPRITE_COUNT` | 64 | window sprites at a time |
+| `WINDOW_OPEN_FRAMES` | 8 | frames a window takes to open |
+| `WINDOW_CLOSE_FRAMES` | 4 | frames a window takes to close |
+| `WINDOW_COUNT` | 8, or 12 in Japanese | windows open at once |
 
-[Windows](src/window/README.md#windows) has the work block's layout and the
-screens built directly from windows: the file menu, the naming screen and the
-battle menus.
+[Windows](src/window/README.md#windows) has the rest.
 
 ## Messages
 
-A message is unpacked whole first, and then typed into its window a little
-each frame.
+![Isaac talks to Garet's sister in Vale: a window opens at the top of the screen beside her portrait, `You guys are so lucky, Garet.` is typed out letter by letter with a bobbing arrow at the end, the next page `I wish I could go with you.` follows, and the window closes.](https://alchemy.pascalpixel.com/guides/window/talk.gif)
 
-![Garet's sister's line in Vale, `You guys are so lucky, Garet.`, typed into a window beside her portrait](https://alchemy.pascalpixel.com/guides/window/talk.gif)
+The cartridge keeps the game's text squeezed, so a message is unpacked whole
+before it is shown, and its blanks (a name, a number, an item) are filled in
+then. A text printer then types it into its window a few letters each frame,
+with the speaker's voice blip, and waits for a button at each page break.
 
-The cartridge keeps its text squeezed, each letter a short code. Showing a
-message takes three steps, each done by different code:
-
-1. The whole message is unpacked at once, and its blanks are filled in: a
-   member's name, a number, an item's name with "a" or "an" in front.
-2. The unpacked letters wait in a ring of codes, one message after another,
-   until a newer message runs over them.
-3. A text printer types them into a window, one letter cell a
-   frame at the normal speed, acting on the marks for a new line, a new page,
-   a pause or a colour, with the speaker's voice blip as it goes. At a page
-   break an arrow shows and the window waits for a button.
-
-`Message_OpenWindow` does all of it for one message, and the shop's
-`Shop_ShowKeeperMessage` then waits until the typing is done (simplified):
-
-```c
-// Message_OpenWindow (window/frames.c)
-entry = Message_Decode(message, 1);   // 1. unpack into the ring
-Window_FitOnScreen(entry, &x, &y, &width, &height, bounds, 0);
-window = Window_Create(x, y, width, height, flags);
-TextPrinter_Add(window, entry, 0, 0, bounds, 0);  // 3. a text printer
-
-// Shop_ShowKeeperMessage (shop/run.c)
-while (TextPrinter_AllFinishedFar() == 0)
-  WaitFrames(1);
-```
-
-`Message_Decode` decodes the whole message. Messages are stored as
-Huffman codes, which give common letters short codes and rare ones long
-codes, read one bit at a time down a tree of choices. There is a separate
-tree for each previous letter (`Text_MessageContexts`), so the letter just
-decoded chooses the tree for the next. The routine that walks the trees, in
-the processor's fast 32-bit ARM instructions, is copied into the heap block
-`TEXT_WORK_BLOCK`, which the heap takes from IWRAM when it has room, for the
-decode and released after it. The decoder writes out names, numbers, and item
-and ability names from the argument table (`MESSAGE_ARGUMENT_`,
-`MessageArgument_Push`), and each language's articles and possessives
-(`articles.c`). The marks for colours, pauses and pages are copied into the
-ring unchanged, with their operands, for the text printer to act on.
-
-The decoded text goes into `work->entries`, a ring of 16-bit codes whose
-index wraps through `TEXT_BUFFER_MASK`, the ring's size less one. Each
-message is written after the previous one, ends with 0, and is known only by
-the index it starts at. The ring is 512 codes, or 256 in the Japanese edition,
-and a longer message is cut off at the ring's length.
-
-A text printer (`struct TextPrinter`) runs the control codes (`TEXT_`).
-`TextPrinter_Add` takes a free text printer and returns `NULL` when all
-three are busy. Each frame, `WindowSystem_Update` steps the windows, then the
-text printers, then the window sprites. Outside battle a text printer types
-as many cells a frame as the player's message speed allows (`message_speed.c`); in
-battle, eight. A message window sizes and places itself to fit its text on
-the screen (`Window_FitOnScreen`).
-
-The text itself is in the PO catalogs under `games/tbs/text`, one per
-language. The build's `ags-text` turns each catalog into the packed messages
-and a header naming each one, and the code names a message by that linker
-symbol (`MsgGameSaved`). Why there are three text printers is an open question
-(below).
-
-| Name | Value | Meaning |
-| --- | --- | --- |
-| `TEXT_WORK_BLOCK` | 50 | the heap slot the tree walker is copied into while a message decodes |
-| `MESSAGE_ARGUMENT_COUNT` | 8 | message arguments at a time |
+`Message_OpenWindow` does all of it for one message: `Message_Decode` unpacks
+it into a ring of letter codes, `Window_FitOnScreen` sizes the window to the
+text, `Window_Create` opens it and `TextPrinter_Add` starts typing. The text
+itself is in the PO catalogs under `games/tbs/text`, and the code names a
+message by its linker symbol (`MsgGameSaved`).
 
 [Windows](src/window/README.md#decoding-a-message) goes through decoding,
 [the ring](src/window/README.md#the-text-buffer) and
 [typing](src/window/README.md#typing).
 
-## Field menu screens
+## The field menu
 
-The field menu is a row of icons; each opens a screen that runs its own steps
-and then hands control back to the icons, or to the field.
+![Isaac opens the field menu in Vale: the party's HP and PP window comes up with a row of command icons, the selection steps from Psynergy to Item to Status, the summary screen opens on Isaac's stats, turns to a page of his elemental levels, Power and Resist, and closes back to the icons.](https://alchemy.pascalpixel.com/guides/menu/menus.gif)
 
-The row has three icons until the first Djinni joins the party, and four
-after. Each screen is an ordinary function with its own loop of steps that
-waits a frame at a time, and a step may run a further loop inside it. When
-the player backs out, the screen returns and the icons come up again.
+Pressing A with nothing in front of the leader (or Select) opens a row of
+icons: Psynergy, Djinn, Item and Status, the Djinn icon only once the first
+Djinni has joined. Each opens a screen; backing out of it brings the icons
+back. While a screen is open the field holds still behind it.
 
-![Isaac opens the field menu in Vale: the party's HP and PP window comes up with a row of command icons, the selection steps from Psynergy to Item to Status, the summary screen opens on Isaac's stats with `Your status is normal.` above them, turns to a page of his elemental levels, Power and Resist, and closes back to the icons.](https://alchemy.pascalpixel.com/guides/menu/menus.gif)
+`FieldMenu_Run` (in the window code) draws the row and calls the chosen
+screen through the menu [bank](glossary.md#bank)'s
+[far-call](glossary.md#far-call) table: `PsynergyMenu_Run`, `DjinnMenu_Run`,
+`ItemMenu_Run` or `SummaryScreen_Run`. Every screen keeps its state in one
+block of memory, the menu work (`gMenuWork`, heap slot `HEAP_SLOT_MENU`), and
+sets the object system's `suspended` field so the field's sprites stop;
+`Menu_SuspendFieldTasks` also pauses the map's tasks, the weather and the
+colour changes, in every edition for the Djinn and summary screens but only in
+later editions for the Item and Psynergy screens.
 
-The row of icons is drawn by `FieldMenu_Run` in the window code;
-`FieldMenu_SelectCommand` leaves out the Djinn icon while the party owns no
-Djinni. `FieldMenu_Run` calls the chosen screen through the menu
-[bank](glossary.md#bank)'s [far-call](glossary.md#far-call) table, `system/far_call/MENU.S`: `PsynergyMenu_Run`, `DjinnMenu_Run`, `ItemMenu_Run`
-or `SummaryScreen_Run`. Each screen's result is read in that screen's own case:
-the Psynergy and Item screens return 1 to close the menu and -1 to show the
-icons again, while the Djinn screen always returns 1, which for it means
-"show the icons again" ([Menus](src/menu/README.md#the-screens) has the table).
-
-All four screens keep their state in one block of memory, `HEAP_SLOT_MENU`
-(`MENU_WORK_SIZE`, 2,672 bytes), reached as `gMenuWork`. Each screen reads it
-through its own struct (`ItemMenuWork`, `PsynergyMenuWork`,
-`SummaryScreenWork`, `DjinnMenuWork`), takes it as it opens and releases it
-as it closes.
-
-| Name | Value | Meaning |
-| --- | --- | --- |
-| `HEAP_SLOT_MENU` | 55 | the screens' and the counters' work block, `gMenuWork` |
-| `MENU_WORK_SIZE` | 2,672 bytes (`0xa70`) | its size |
-| `HEAP_SLOT_OBJECT_SYSTEM` | 6 | the object system's work, whose `suspended` field holds the field still |
-| `FLAG_MENU_START_PRESSED` | 336 (`0x150`) | Start was pressed: every loop of the screen returns |
-| `FLAG_PALETTE_BLEND_HELD` | 338 (`0x152`) | the palette blend stops while a screen is open |
-| `FLAG_WEATHER_HELD` | 358 (`0x166`) | the weather stops while a screen is open |
-
-### The field behind the menu
-
-While a screen is open the field holds still behind it: its objects are
-suspended, and in most editions the map's tasks, the weather, the colour
-changes and the map's tileset animations pause too.
-
-Every screen sets the `suspended` field of the object system's work, so the
-field's sprites that are not held stop being drawn and free their VRAM cache
-entries. That work's heap slot is named `HEAP_SLOT_OBJECT_SYSTEM`, although it
-belongs to the object system that runs the [objects](glossary.md#object); the menus only
-set its one field. `Menu_SuspendFieldTasks` also
-suspends the [overlay](glossary.md#overlay)'s tasks (`Task_SuspendOverlayTasks`) and the map's
-tileset animations, and sets `FLAG_PALETTE_BLEND_HELD` and `FLAG_WEATHER_HELD`
-so that the palette blend and the weather stop; `Menu_ResumeFieldTasks`
-undoes all of it. The Djinn screen and the summary screen call it in every edition, the
-Item screen under `TBS_PATCH_1` (the international editions) and the Psynergy
-screen under `TBS_PATCH_2` (German, French, Spanish and Italian), so the
-earlier editions leave the field's tasks running behind those two screens.
+[Menus](src/menu/README.md#the-screens) goes through each screen.
 
 ### Start
 
-Pressing Start closes a screen at once, however many choices deep the player
-is.
+![Isaac is two choices deep in the Psynergy screen, at `Which Psynergy?`, when Start is pressed: every window of the screen closes at once and the row of icons is back.](https://alchemy.pascalpixel.com/guides/menu/menu-start.gif)
 
-A small watcher runs every frame while the screen is open. When Start is
-pressed it plays the cancel sound and raises a [game flag](glossary.md#game-flag), and every loop on
-the screen checks that flag beside its own buttons and returns as if the
-player had backed out. The loops unwind one after another, without any of
-them knowing how deep the player was, and the icons come back.
+Start closes a screen at once, however many choices deep the player is. A
+small watcher plays the cancel sound and raises a
+[game flag](glossary.md#game-flag); every loop of the screen checks that flag
+beside its own buttons and returns as if the player had backed out, so the
+loops unwind one after another without any of them knowing how deep the
+player was.
 
-Before their command loops, the Item, Psynergy and summary screens call
-`Menu_CancelSoundReset`, which clears `FLAG_MENU_START_PRESSED` and adds the
-watcher, `Menu_CancelSoundTick`, as a main-loop task. The whole watcher is
-this (`menu/common.c`):
-
-```c
-void Menu_CancelSoundTick(void) {
-  if (gKeysPressed & KEY_START) {
-    Sound_PlaySongFar(SE_MENU_CANCEL);
-    GameFlag_SetFar(FLAG_MENU_START_PRESSED);
-    Task_Remove(Menu_CancelSoundTick);
-  }
-}
-```
-
-and each loop tests the flag in its condition, as the Item screen's does:
-`while (done == 0 && GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0)`. The
-Djinn screen has no watcher: its choosers test Start themselves, play the
-same sound and return `DJINN_RESULT_START`, which ends the screen's loop.
+The watcher is `Menu_CancelSoundTick`, added by `Menu_CancelSoundReset` before
+the Item, Psynergy and summary screens' loops; the flag is
+`FLAG_MENU_START_PRESSED`. The Djinn screen tests Start in its own choosers
+instead and returns `DJINN_RESULT_START`.
 
 ### Psynergy and items used on the field
 
+![Isaac opens the menu beside a stone pillar in Vale and picks Psynergy, himself and then Move; the menu closes, `Move` shows, a hand appears over the pillar and pushes it one step to the right.](https://alchemy.pascalpixel.com/guides/menu/menu-psynergy.gif)
+
 Psynergy or an item used on a party member works inside the screen, but
 Psynergy meant for the world, such as Move, is cast by the field after the
-menu has closed.
+menu has closed. Only the running map knows what the leader is facing and
+what its own [map events](glossary.md#map-event) do with it, so the screen
+writes down what was chosen and closes, and the map decides what Move does to
+that pillar.
 
-![Isaac opens the menu beside a stone pillar in Vale and picks Psynergy, himself and then Move; the menu closes, `Move` shows, the field turns blue-green as a hand appears over the pillar, and it pushes the pillar one step to the right.](https://alchemy.pascalpixel.com/guides/menu/menu-psynergy.gif)
+The Psynergy screen writes the choice into the event work's `psynergy`
+(`gFieldWork`), the Item screen into its `item`; `Map_Run` then calls
+`Field_UsePsynergy` or `Field_UseItem`. [Menus](src/menu/README.md#the-psynergy-screen)
+has the request's layout.
 
-Field Psynergy needs the field running, the leader facing something and the
-map's own [map events](glossary.md#map-event), none of which exist while the menu is open. So the
-Psynergy screen only writes down what was chosen and closes; once the field
-runs again, it casts the Psynergy at whatever the leader faces, and the
-map's code decides what happens. What Move does to a given stone pillar is
-therefore decided by the map, not the menu ([Maps](src/map/README.md)).
+## The pause menu and saving
 
-The Psynergy screen writes the field's Psynergy request, one word holding
-the caster and the Psynergy ([Menus](src/menu/README.md#the-psynergy-screen)),
-into the event work (`gFieldWork`, the running map's state, in the heap slot
-`HEAP_SLOT_FIELD`). The Item screen writes the item request (`struct ItemPickerResult`) the same
-way. `Map_Run` hands the Psynergy request to `Field_UsePsynergy`, which
-plays the effect between the map's Psynergy events
-(`PSYNERGY_PHASE_BEFORE_CAST` and `PSYNERGY_PHASE_AFTER_CAST`).
+![Isaac presses Start in Vale: the pause menu offers `Save your quest`, `Sleep` and `Change settings`; Save your quest opens three empty files, the first is chosen, `Saving...` shows and then `Your game was saved.`](https://alchemy.pascalpixel.com/guides/window/save.gif)
 
-[Menus](src/menu/README.md#the-screens) goes through each screen's steps,
-the status panel and the item sort orders.
+Start on the field opens the pause menu. Save your quest writes the game into
+one of three files in the cartridge's backup memory, Sleep puts the console to
+sleep until L and R are pressed together, and Change settings opens the option
+menu (window colour, message speed, speech and auto-sleep).
+
+`PauseMenu_Run` (`window/screens/debug.c`) runs it; `Save_ToChosenFile`
+(`window/screens/save.c`) asks for the file and writes it, and
+`OptionMenu_Run` runs the settings. [Windows](src/window/README.md#the-pause-menu)
+has each.
 
 ## Shops
 
-A town's counters are its shops, sanctums and inns, each opened by the
-town's map when the player talks to the keeper.
+![Isaac talks to Bilibin's item shopkeeper across the counter: the shopkeeper greets him, the counter's four icons come up with Buy, he picks a Herb for 10 coins and gives it to himself, the coins window drops from 500 to 490, and the shopkeeper thanks him as he leaves.](https://alchemy.pascalpixel.com/guides/shop/shop.gif)
 
-![Buying at an item shop: the keeper's welcome, the wares and their prices, and the coins the party pays](https://alchemy.pascalpixel.com/guides/shop/shop.gif)
+A town's counters are its shops, sanctums and inns, each opened by the town's
+map when the player talks to the keeper. A shop sells what its row of a stock
+table lists, plus the rare items (artifacts) the party has seen in shops of
+its kind; a sanctum's priest revives, cures and lifts curses for a fee; an inn
+restores the members still standing for a price per guest.
 
-A shop sells the ordinary items of its row of the stock table, and its
-Artifacts list sells rare items. A rare item is not stocked by one shop: it
-has one counter for the whole game, which goes up the first time a shop that
-lists it is visited, down when one is bought, and up again when one is sold
-or dropped. Every shop of the item's kind sells it while the counter is above
-zero, so a rare item first found in one town is on sale in the next, and one
-the party gives up comes back. Spending also builds a hidden shop credit that
-earns Game Tickets, which pay for Tolbi's Lucky Wheels. A sanctum charges a
-fee for its service, and an inn a price for each member still standing.
-
-A map opens a shop with `Shop_Run`, passing its stock row and the keeper
-whose portrait the lines show. The stock row is a row of `sStockTable`: up to
-24 ordinary items, then up to 8 artifacts, then the shop's type (items,
-weapons or armor), with the columns named by `SHOP_STOCK_`. A row number out
-of range opens `SHOP_STOCK_ROW_EMPTY`.
-
-The keepers' lines are written once for each type of shop, in the same order
-in each set, and the code names only the weapon shop's. A shop of another
-type adds the distance between the two sets' welcomes (`Shop_ShowKeeperMessage`):
-
-```
-line shown = weapon shop's line + (this type's welcome − MsgWeaponShopWelcome)
-```
-
-so an armor shop's `MsgWhatWouldYouLike` is that line plus
-`MsgArmorShopWelcome - MsgWeaponShopWelcome`.
-
-A shop's first visit adds one to the counter (`Item_AdjustCounter`) of each
-artifact in its row and sets the game flag `FLAG_SHOP_ARTIFACTS_STOCKED +
-stockRow`, so a later visit adds nothing; buying an artifact takes one off; a
-rare item the party sells, drops or discards goes through `Inventory_Discard`,
-which adds one back.
-
-Every coin spent buying also adds to `gSaveBlock.shopCredit`. After each
-purchase, once the credit reaches the next Game Ticket's cost
-(`sGameTicketCreditCosts`), the keeper gives a Game Ticket and the cost
-comes off the credit, never off the party's coins (`Shop_BuySpecialItem`).
-A sanctum's fee depends on the service and, for reviving and removing a
-curse, on the member's level (`Sanctum_ServicePrice`); an inn charges a price
-per guest for each member still standing (`sInnPricesPerGuest`).
-
-Every counter, and the item picker that asks which item to drop when the
-party finds one with every bag full, keeps its work in `HEAP_SLOT_MENU` as
-`struct ShopWork`, taken by `Shop_InitializeWork` and released by
-`Shop_ReleaseWork`. Maps reach the counters through their [import
-tables](glossary.md#entry-table-and-import-table), and other banks through the far-call table
-`system/far_call/SHOP.S`.
-
-| Name | Value | Meaning |
-| --- | --- | --- |
-| `FLAG_SHOP_ARTIFACTS_STOCKED` | 1,024 (`0x400`) | the first of 35 game flags, one a stock row, set on a shop's first visit |
-| `HEAP_SLOT_MENU` | 55 | the counter's work, `struct ShopWork` |
+A map opens a shop with `Shop_Run`, passing its stock row and the keeper whose
+portrait the lines show; a sanctum with `Sanctum_Run` and an inn with
+`Inn_CheckIn`. The counters borrow the field menu's heap block as
+`struct ShopWork`.
 
 [Shops](src/shop/README.md#shops) has the prices,
 [the sanctum's services](src/shop/README.md#sanctums) and
@@ -329,39 +143,21 @@ tables](glossary.md#entry-table-and-import-table), and other banks through the f
 ## Why the layer is shaped this way
 
 All windows share `BG0` so that the map keeps the other three backgrounds,
-however many windows are open. Decoding a message once, ahead of typing it,
-puts the slow work in one place and leaves each frame's typing cheap; the
-ring lets several windows show text at once with no allocation, at the cost
-of a message being overwritten once enough later text has been decoded.
-
-The field menu's screens and the counters take turns in one heap block
-because only one of them can run at a time; the same arrangement is why a
-counter and the field menu are never open together. Field Psynergy is passed
-back as a request because it needs the field running, the leader facing
-something and the map's events, none of which exist while the menu runs.
+however many windows are open. Unpacking a message once, ahead of typing it,
+puts the slow work in one place and leaves each frame's typing cheap. The
+field menu's screens and the counters take turns in one heap block because
+only one of them runs at a time. Field Psynergy is passed back as a request
+because it needs the field running, the leader facing something and the map's
+events, none of which exist while the menu runs.
 
 ## Limits
 
-- The screen is 30 by 20 tiles. A window narrower or shorter than 2 tiles,
-  or wider or taller than 30, draws no frame, and nothing checks that a
-  window stays within the tilemap's 20 rows.
-- Twelve window slots in the Japanese edition and eight in the international
-  editions; `Window_Create` returns `NULL` when none is free.
-- Three text printers, 64 window sprites and eight message arguments at a
-  time; a ninth argument is dropped (`MessageArgument_Push`).
-- The text buffer holds 512 codes, or 256 in Japanese.
+- The screen is 30 by 20 tiles; a window narrower or shorter than 2 tiles, or
+  wider or taller than 30, draws no frame.
+- Eight windows at once (twelve in Japanese), three text printers, 64 window
+  sprites and eight message arguments; a ninth argument is dropped.
+- The text ring holds 512 letter codes (256 in Japanese).
 - The menu work is 2,672 bytes, with room for eight party members and 32
-  listed entries; a member's inventory has `INVENTORY_SLOTS` (15) slots.
+  listed entries; a member carries 15 items.
 - A shop row lists at most 24 items and 8 artifacts. Shop credit stops at
-  999,999 and the Game Ticket count at 28 (`Party_AdjustShopCredit`,
-  `Party_AdjustShopGifts`).
-
-## Open questions
-
-- XXX: why there are three text printers is not known.
-- XXX: why the Japanese edition leaves the field's tasks running behind the
-  Item and Psynergy screens, and the English one behind the Psynergy screen,
-  is not known.
-- XXX: why Start is a game flag (`FLAG_MENU_START_PRESSED`) rather than a
-  variable, when the task that sets it and every test of it are in the menu's
-  own code; nothing in the ROM needs it to be a flag.
+  999,999 and the Game Ticket count at 28.

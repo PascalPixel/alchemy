@@ -111,8 +111,8 @@ void FieldScript_Start(void) {
   runtime->unusedBeforeCamera[0] = -1;
   runtime->unusedBeforeCamera[1] = -1;
   Task_Add(FieldScript_UpdateDebugSkip, 0xC80);
-  // XXX: flag 0x132 is cleared at every script and nothing in ☀️ names it; the
-  // map scripts or overlays that set or test 0x132 would settle its meaning.
+  // XXX (no evidence): what flag 0x132 marks; it is cleared at every script,
+  // and no code or table in the game sets or tests it.
   GameFlag_ClearFar(0x132);
   runtime->speaker = gSaveBlock.leaderLocalId;
   runtime->messageWindow = 0;
@@ -142,8 +142,8 @@ void FieldScript_RunObjectHookAndWait(struct ObjectEventTemplate *table) {
   FieldScript_NoOpHook();
   ObjectEvent_ResetForObject(table);
   WaitFrames(1);
-  // XXX: the leader's object is fetched and not used; a caller in an overlay
-  // that reads the result would show whether this returned it once.
+  // XXX (no evidence): why the leader's object is fetched and dropped; no
+  // code calls this function, so no caller reads a result.
   ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
 }
 

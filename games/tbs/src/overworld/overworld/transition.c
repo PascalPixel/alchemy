@@ -573,10 +573,9 @@ void ScreenTransition_InitializeBattleEffectState(s32 mode) {
   Task_Add(FieldEffect_StartWindowHBlankDma, 0x480);
 }
 
-// XXX: nothing in ☀️ names it and it has no far-call entry, yet it is not
-// marked UNUSED; a caller through a table or ⚓️'s twin would settle it.
-/// Suspends the window transition's two callbacks.
-void ScreenTransition_SuspendCallbacks(void) {
+/// Unused: suspends the window transition's two callbacks. Nothing calls it,
+/// by name, far-call entry or table.
+UNUSED void ScreenTransition_SuspendCallbacks(void) {
   Task_SuspendAll(&ScreenTransition_UpdateScanlineTable);
   Task_SuspendAll(&FieldEffect_StartWindowHBlankDma);
 }

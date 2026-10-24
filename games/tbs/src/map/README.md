@@ -27,46 +27,26 @@ says where the party then stands and who else is there.
 
 When the party arrives, the engine asks what can happen here (the map
 events, kept for the whole visit), where the party arrives (the [warp
-destinations](../../glossary.md#warp-destination)), who stands where (the [object event](../../glossary.md#object-event) templates), and whether
-anything needs setting up (the initialization). At every step it asks
-whether the leader is standing in a [warp](../../glossary.md#warp) area, and as the party leaves,
+destinations](../../glossary.md#warp-destination)), who stands where (the
+[object event](../../glossary.md#object-event) templates), and whether
+anything needs setting up. At every step it asks whether the leader is
+standing in a [warp](../../glossary.md#warp) area, and as the party leaves,
 where the warp leads. Each answer comes from a function rather than a fixed
 table, so a map can answer differently as the story goes on
 ([World](../../world.md#map-entries) gives Vault's example), and an overlay
 that serves several maps can answer for each.
 
-The initialization restores what the flags say has happened, starts
-callbacks, or plays an arrival cutscene; it may take a warp at once. It
-skips arrival cutscenes when `FLAG_KEEP_PARTY_POSITION` says the party is
-returning to where it stood, as after a battle.
+The setup restores what the flags say has happened, starts the map's own
+timed work, or plays an arrival cutscene; it may send the party on at once. It
+skips arrival cutscenes when the party is coming back to where it stood, as
+after a battle.
 
-In the code, the six are `struct MapEntries` in `map_header.h`, in a
-fixed order at the start of every overlay, `entry/<map>.s`. Each entry is an
-8-byte [veneer](../../glossary.md#veneer):
-
-```text
-+0  one word, two instructions: load the word that follows, jump to it
-+4  the address of the map's function
-```
-
-Six of them make 48 bytes, and the offsets in the table below are those of
-the address words, 4 bytes into each veneer. `Map_Run` calls
-`Map_GetEvents`, then places the party at its warp destination
-(`Map_ApplyWarpDest`), creates the object events from the object event
-templates and calls `Map_Initialize`. `Field_ProcessStep` reads the regions
-at every step, and `Map_TakeWarp` reads the warps as the party leaves. An
-overlay that serves several maps chooses by `gSaveBlock.mapId`, as Babi Lighthouse's
-`Map_GetWarpRegions` does. Some overlays give the entries names of their own
-(`BabiLighthouse_GetWarps`); only the order is fixed.
-
-| Entry, as Vault names it | Offset in `struct MapEntries` | Returns or does |
-| --- | --- | --- |
-| `Map_Initialize` | `0x04` | the map's setup, run once its object events exist |
-| `Map_GetWarpDests` | `0x0c` | `struct MapWarpDest` rows |
-| `Map_GetWarps` | `0x14` | the warp table |
-| `Map_GetObjectEventTemplates` | `0x1c` | `struct ObjectEventTemplate` rows |
-| `Map_GetEvents` | `0x24` | `struct MapEvent` rows |
-| `Map_GetWarpRegions` | `0x2c` | `struct MapWarpRegion` boxes, or `NULL` |
+The six are `struct MapEntries`, in a fixed order at the start of
+every overlay (`entry/<map>.s`), each behind an 8-byte
+[veneer](../../glossary.md#veneer). Vault names them `Map_Initialize`,
+`Map_GetWarpDests`, `Map_GetWarps`, `Map_GetObjectEventTemplates`,
+`Map_GetEvents` and `Map_GetWarpRegions`; some overlays give them names of
+their own (`BabiLighthouse_GetWarps`), since only the order is fixed.
 
 ## The tables
 
@@ -74,80 +54,70 @@ The answers are tables: where the party can arrive and leave, who stands
 where, and what answers each thing the player does. The field is 3D, with y
 the height and x and z the ground, so a position in them is in pixels with x
 east, y up and z south, and a facing is one of eight headings
-(`enum Facing`); [Words used here](#words-used-here) gives the units.
+([Words used here](#words-used-here) gives the units).
 
-- **Warp destinations** (`struct MapWarpDest`): for each warp destination
-  number, a flag that must be set (or -1), a position, a facing and the
-  camera's limits.
-- **Warps**: a header word per map (`MAP_WARPS(Map)`), then rows of
-  `MAP_WARP(warp, map, warpDest)` mapping a warp kind to a map and warp
-  destination named in `map_warps.h`, ended by `MAP_WARPS_END`.
-  `MAP_WARP_IF` adds a flag, and the row is taken only while that flag is
-  clear. `WARP_TO_BATTLE` leads into a battle.
-- **Object event templates** (`struct ObjectEventTemplate`): a [sprite](../../glossary.md#sprite-and-oam), a
-  condition, a behaviour (an `enum MovementType` such as `MOVEMENT_TYPE_STAND`
-  or `MOVEMENT_TYPE_WANDER`, or an object [script](../../glossary.md#script)), a position, a facing and
-  how the object event turns when spoken to.
-- **Regions** (`struct MapWarpRegion`): boxes in which the leader takes a warp
-  kind, each with a condition. Most maps have none.
-- **Map events** (`struct MapEvent`): a control word (the kind and its
-  detail), a [trigger](../../glossary.md#trigger), a condition and a value, ended by `MAP_EVENTS_END`.
+- **Warp destinations**: for each place the party can arrive, a flag that
+  must be set, a position, a facing and how far the camera may go.
+- **Warps**: for each way out, the map and warp destination it leads to,
+  sometimes only while a flag is clear. One kind of warp leads into a battle.
+- **Object event templates**: who stands where: a
+  [sprite](../../glossary.md#sprite-and-oam), a condition, how they move
+  (standing, wandering, or a [script](../../glossary.md#script) of their
+  own), a position, a facing and how they turn when spoken to.
+- **Regions**: boxes in which the leader takes a warp, each with a condition.
+  Most maps have none.
+- **Map events**: what answers each thing the player does
+  ([below](#what-a-map-event-row-says)).
+
+These are `struct MapWarpDest`, the `MAP_WARP` rows of the warp
+table (named in `map_warps.h`), `struct ObjectEventTemplate`,
+`struct MapWarpRegion` and `struct MapEvent`, all in `map_tables.h` and
+`map_header.h`.
 
 ### Conditions
 
-The object event templates and the map events carry a condition, a halfword
-that says whether the row holds:
+The object event templates and the map events carry a condition, which says
+whether the row holds. Most often it is a [game flag](../../glossary.md#game-flag),
+and the row holds until that flag is set: "until this has happened" is the
+common case.
 
 | Condition | The row holds |
 | --- | --- |
 | `CONDITION_ALWAYS` (-1) | always |
-| a [game flag](../../glossary.md#game-flag), such as `FLAG_VALE_NUT_CAUGHT` | while the flag is clear |
-| `IF_FLAG_SET(flag)`, the flag with `CONDITION_FLAG_SET` (`0x1000`) added | while the flag is set |
-| `CONDITION_IN_VIEW` (0), object event templates only | while the object event lies within the view (`Map_AssignViewFlags`) |
-
-A bare flag means "until this has happened", the common case: a row for
-before a flag is set is written with the flag alone.
+| a game flag, such as `FLAG_VALE_NUT_CAUGHT` | while the flag is clear |
+| `IF_FLAG_SET(flag)` | while the flag is set |
+| `CONDITION_IN_VIEW` (0), object event templates only | while the object event lies within the view |
 
 ### Who stands where
 
 Each row of a map's object event templates puts one person or thing on the
-map, an object event, and each row owns an object event slot of its own, a
-numbered place for it in the map's state, whether or not it appears.
+map, an object event, and each row owns a numbered place of its own, its
+[local id](../../glossary.md#local-id), whether or not it appears.
 
-A row can carry a condition, a [story flag](../../glossary.md#game-flag) that must be set or clear, and a
-row whose condition fails puts nobody on the map. Its slot stays empty
-rather than going to the next row, so every object event keeps one [local id](../../glossary.md#local-id)
-all game and the map's code can name it once: on Mercury Lighthouse's upper floor
-the blue statue has one row for its place on the ledge and another for where
-it lands after it falls, and only one of the two appears.
+A row can carry a condition, a [story flag](../../glossary.md#game-flag) that
+must be set or clear, and a row whose condition fails puts nobody on the map.
+Its place stays empty rather than going to the next row, so every object
+event keeps one number all game and the map's code can name it once: on
+Mercury Lighthouse's upper floor the blue statue has one row for its place on
+the ledge and another for where it lands after it falls, and only one of the
+two appears.
 
-The party takes slots 0 to 7, the leader the one the player moves
-(`LOCALID_PARTY_LEADER`), and the table's rows take the slots from
-`LOCALID_FIRST_PLACED` in order: local id `LOCALID_FIRST_PLACED + n` is always row n
-(`FieldScript_SpawnObjectEventTemplates`). A row whose sprite is one of the party's
-characters (sprites 0 to 7) takes that character's own slot instead. Each map names its object events in
-an enum in row order (`LOCALID_FALLEN_STATUE = LOCALID_FIRST_PLACED`).
+The party takes the first eight places, and the table's rows take the places
+after them in order. A row whose sprite is one of the party's characters
+takes that character's own place instead.
+
+Each map names its object events in an enum in row order,
+starting from `LOCALID_FIRST_PLACED`; `LOCALID_PARTY_LEADER` is the one the
+player moves, and `FieldScript_SpawnObjectEventTemplates` places the rows.
 
 ### What a map event row says
 
 ![Isaac talks to his mother Dora outside their house in Vale: "It looks like it won't rain for some time... so I guess I'll just have you fix it later."](https://alchemy.pascalpixel.com/places/vale/events/Event_DoraFretsAboutTheRoof.gif)
 
 Each thing the player can do on a map that the map answers, talking to Dora
-here, is one row of its event table: what starts it, whom or where it answers,
-when it holds, and what runs. A map event is four words, `struct MapEvent` in
-`map_tables.h`:
-
-```c
-struct MapEvent {
-  u32 control;   // the kind (bits 3..0) and its detail
-  s16 trigger;   // what it answers: a local id, a metatile behavior, a value
-  s16 condition; // when the row holds (Conditions, above)
-  u32 value;     // a message, a script, a warp kind or what a search finds
-};
-```
-
-These are four rows of Vale's table on the day the story begins
-(`gVale_Events` in `vale.c`):
+here, is one row of its event table: what starts it, whom or where it
+answers, when it holds, and what runs. These are four rows of Vale's table on
+the day the story begins:
 
 ```c
 { MAP_EVENT_TALK, LOCALID_DORA, CONDITION_ALWAYS,
@@ -160,93 +130,66 @@ These are four rows of Vale's table on the day the story begins
   EVENT_SCRIPT(EventScript_SearchTheLockedDoor) },
 ```
 
-Talking to Dora, Isaac's mother, runs a script; walking north into a cell
-with behavior 8, a [coord event](../../glossary.md#coord-event), enters Isaac's house; Catch on the nut works until
-`FLAG_VALE_NUT_CAUGHT` is set; and A facing a cell with behavior 24, a
-[bg event](../../glossary.md#bg-event), searches the locked door. A map event's kind says what starts it and what its trigger
-is:
+Talking to Dora, Isaac's mother, runs a script; walking north into the
+doorstep of Isaac's house, a [coord event](../../glossary.md#coord-event),
+takes him in; Catch on the nut works until the nut has been caught; and A
+facing the locked door, a [bg event](../../glossary.md#bg-event), searches it.
+What starts a row also says what it answers:
 
-| Kind | Started by | Trigger |
+| Kind | Started by | Answers |
 | --- | --- | --- |
-| `MAP_EVENT_TALK` | the A button on an object event | the object event's local id |
-| `MAP_EVENT_TALK_HALTED` | talking to an object event Halt has stopped | the object event's local id |
-| `MAP_EVENT_COORD`, `COORD_EVENT_FACING(f)`, `COORD_EVENT_WALKING_INTO(f)` | stepping onto a cell, facing a way, or pushing against it | the cell's metatile behavior |
-| `MAP_EVENT_WARP` | stepping onto a cell no coord event answers | the cell's metatile behavior |
-| `BG_EVENT(target)` | the A button on what is ahead, when it is no object event | the cell's metatile behavior |
-| `USE_ITEM(item)`, `USE_ITEM_ON_OBJ_EVENT(item)` | using an item | the cell's metatile behavior or the object event's local id |
-| `PSYNERGY_ON_OBJ_EVENT(ability)`, `PSYNERGY_IN_AREA(ability, phase)` | using Psynergy on an object event, or anywhere | the object event's local id, or 0 |
-| `MAP_EVENT_RAISED` | the map's code raising a value | the value |
+| `MAP_EVENT_TALK` | the A button on someone | that object event |
+| `MAP_EVENT_TALK_HALTED` | talking to someone Halt has stopped | that object event |
+| `MAP_EVENT_COORD` and its forms | stepping onto a spot, facing a way, or pushing against it | the spot's [metatile behavior](../../glossary.md#metatile-behavior) |
+| `MAP_EVENT_WARP` | stepping onto a spot no coord event answers | the spot's metatile behavior |
+| `BG_EVENT(target)` | the A button on what is ahead, when it is nobody | the spot's metatile behavior |
+| `USE_ITEM(item)` and its form | using an item | a spot or an object event |
+| `PSYNERGY_ON_OBJ_EVENT(ability)` and its form | using Psynergy on someone, or anywhere | that object event, or anywhere |
+| `MAP_EVENT_RAISED` | the map's code asking for it | a number the code gives |
 
-A Psynergy event's phase (`enum PsynergyPhase`) says when it runs around the
-effect: `PSYNERGY_PHASE_BEFORE_CAST` before it plays,
-`PSYNERGY_PHASE_AFTER_CAST` after, and `PSYNERGY_PHASE_EFFECT_ACTS` from inside
-the effect, as Force strikes, Frost freezes or Reveal shows what is hidden.
-Reveal's maps pair that row with a `PSYNERGY_PHASE_EFFECT_ENDS` one that
-hides it all again as the colours come back, and `PSYNERGY_PHASE_AFTER_END`
-runs when a Psynergy that runs out by itself, such as Cloak, has ended.
-[Running a map](../overworld/README.md#how-field-psynergy-reaches-its-effect)
-follows a cast through these and lists the phases' values.
+A Psynergy row also says when it runs around the effect: before it plays,
+after it, or from inside it, as Force strikes, Frost freezes or Reveal shows
+what is hidden. Reveal's maps pair that row with one that hides everything
+again as the colours come back, and a row can run when a Psynergy that runs
+out by itself, such as Cloak, has ended. [Running a
+map](../overworld/README.md#how-field-psynergy-reaches-its-effect) follows a
+cast through these.
 
-The kind decides how the value is read: a warp's is its warp kind, and a bg
-event's is a script or what the search finds (`FIND_ITEM`, `FIND_COINS`,
-`FIND_PSYNERGY_STONE`, `FIND_MESSAGE` or `FIND_MIMIC`). For the other kinds
-it is a message (`MSGNO(name)`) or a function (`EVENT_SCRIPT(function)`):
-functions live above `0x10000` and messages below, which is how one word
-holds either.
+What runs is a message, a script, or for a search what is found there: an
+item, coins, a Psynergy Stone, a line of text or a mimic's battle. One word
+holds either a message or a script, since scripts live at addresses above any
+message number.
 
-The formats are in `games/tbs/include/map_tables.h`, the warp names in
-`map_warps.h`.
-
-| Name | Value | Meaning |
-| --- | --- | --- |
-| `LOCALID_PARTY_LEADER` | 0 | the object event the player moves |
-| `LOCALID_FIRST_PLACED` | 8 | the slot of the first object event template |
-| `CONDITION_ALWAYS` | -1 | a row that always holds |
-| `CONDITION_IN_VIEW` | 0 | an object event shown only while within the view (`Map_AssignViewFlags`) |
-| `CONDITION_FLAG_SET` | `0x1000` | with a flag (`IF_FLAG_SET`): the flag must be set, not clear |
-| `MAP_WARPS_END` | `0x1ff` | ends a warp table |
-| `MAP_EVENTS_END` | `0xffffffff` | ends a map event table |
-| `MAP_EVENT_TALK` | 0 | map event kind: talking to an object event |
-| `MAP_EVENT_WARP` | 1 | map event kind: a warp cell |
-| `MAP_EVENT_COORD` | 2 | map event kind: stepping onto or pushing against a cell |
-| `MAP_EVENT_BG` | 3 | map event kind: a search |
-| `MAP_EVENT_ITEM` | 4 | map event kind: an item used on a cell or an object event |
-| `MAP_EVENT_PSYNERGY` | 5 | map event kind: Psynergy |
-| `MAP_EVENT_RAISED` | 6 | map event kind: raised by code |
-| `MAP_EVENT_TALK_HALTED` | 7 | map event kind: talking to an object event Halt has stopped |
-| `MAP_EVENT_TRIGGER_OWN_EFFECT` | `0x400` | trigger bit: a Psynergy event runs in place of the effect, a bg event shows no checking message |
-| `FIND_ITEM(item)` | `0x00100000` + item | a bg event finds an item |
-| `FIND_COINS(coins)` | `0x00200000` + coins | a bg event finds coins |
-| `FIND_PSYNERGY_STONE` | `0x00300000` | a bg event finds a Psynergy Stone |
-| `FIND_MESSAGE(message)` | `0x00400000` + message | a bg event shows a message |
-| `FIND_MIMIC` | `0x00500000` | a bg event starts a mimic's battle |
+The row is `struct MapEvent`, its kinds and the `FIND_` values
+are in `map_tables.h`, and a script is written `EVENT_SCRIPT(function)` and a
+message `MSGNO(name)`.
 
 ### Which map events a cell starts
 
 ![In Vale, Isaac walks north into the ladder beside his house and climbs onto the roof](https://alchemy.pascalpixel.com/places/vale/events/Event_ClimbLadderOntoRoof.gif)
 
 Some spots on a map do something when the leader reaches them: a doorstep
-leads into a house when the leader walks into it, the edge of a village
-leads on to the next map, a ladder climbs to a roof, and a chest or a
-bookcase answers the A button. The layout marks each spot by the [metatile
-behavior](../../glossary.md#metatile-behavior) of its [cell](../../glossary.md#cell), and the map's event table says what that behavior
-does. The same behavior means different things on different maps.
+leads into a house when the leader walks into it, the edge of a village leads
+on to the next map, a ladder climbs to a roof, and a chest or a bookcase
+answers the A button. The layout marks each spot by the [metatile
+behavior](../../glossary.md#metatile-behavior) of its
+[cell](../../glossary.md#cell), and the map's event table says what that
+number does. The same number means different things on different maps.
 
-In Vale on the day the story begins, each door is a
-coord event rather than a warp: walking north into the doorstep runs a
-script, `EventScript_EnterIsaacsHouse` for Isaac's house, that opens the door,
+In Vale on the day the story begins, each door is a coord event rather than a
+warp: walking north into the doorstep runs a script that opens the door,
 walks the leader in and only then asks for the warp, and that can refuse
 instead, as Dora does once the party has left Vale. Coord events also climb
-the ladder beside Isaac's house (`EventScript_ClimbLadderOntoRoof` up,
-`EventScript_ClimbDownFromRoof` down) and put the bridge's cells
-back when the leader steps off it (`EventScript_StepOffBridge`). Three
-cells of the path at the top carry a behavior no row answers.
+the ladder beside Isaac's house and put the bridge's cells back when the
+leader steps off it. Three cells of the path at the top carry a number no row
+answers, and do nothing.
 
-Stepping on or walking into a cell runs the first coord event whose trigger
-is its metatile behavior and whose condition holds, or failing one the first
-such warp (`Map_RunCoordEventOrWarp`); pressing A facing it runs the first
-such bg event. A behavior with no row does nothing. The map's own behaviors
-are `MB_EVENT_FIRST` to `MB_EVENT_LAST`; the behaviors above them mean
+Stepping on or walking into a cell runs the first coord event that answers
+its number and whose condition holds, or failing one the first such warp;
+pressing A facing it runs the first such bg event.
+
+`Map_RunCoordEventOrWarp` runs the stepping, and the numbers a
+map owns are `MB_EVENT_FIRST` to `MB_EVENT_LAST`; the numbers above them mean
 the same on every map ([Layouts](../layout/README.md#cells)).
 
 ## How a map event is chosen
@@ -266,30 +209,19 @@ of the thieves ([`vault_interiors_revisit.c`](vault_interiors_revisit.c)):
 { MAP_EVENT_TALK, LOCALID_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarnOfThievesRevenge) },
 ```
 
-A row behind one that always fits is never reached, as the cook's second row
-shows.
+A row behind one that always fits is never reached.
 
-`Map_FindEvent` returns the first row whose kind, trigger and condition
-fit. A bg event on a named target, which is every target but
-`BG_EVENT_SILENT` and says what the leader checks (a chest, a jar), is the
-one exception, so that an opened chest still answers:
+Searching a chest or a jar is the one exception, so that an opened chest
+still answers. The game finds the row whatever its condition, shows the
+"checked the chest..." line, and only then tests the condition: an unopened
+chest gives what it holds and is marked opened, and an opened one adds "but
+the chest was empty." A chest that hides a mimic starts its battle instead.
 
-1. `Map_FindEvent` returns it whatever its condition, unless it finds a
-   mimic.
-2. `Field_SearchCell` shows the target's checking line (`MsgTileChecked`
-   plus the target, "checked the chest...").
-3. Only then does it test the condition: an unopened chest gives what it
-   holds and sets its flag, and an opened one adds the result line, "but
-   the chest was empty."
-
-Rows these rules make unreachable keep a
-[`// Unused:`](../../glossary.md#unused) tag in their table, and [Unused](https://alchemy.pascalpixel.com/tbs/unused) describes every
-such case.
-
-| Name | Value | Meaning |
-| --- | --- | --- |
-| `BG_EVENT_SILENT` | 0 | a bg event that shows nothing as the leader checks |
-| `BG_EVENT_CHEST` | 1 | the first named target; target n shows `MsgTileChecked` + n |
+`Map_FindEvent` finds the row and `Field_SearchCell` runs a
+search. Rows these rules make unreachable keep a
+[`// Unused:`](../../glossary.md#unused) tag in their table, and
+[Unused](https://alchemy.pascalpixel.com/tbs/unused) describes every such
+case.
 
 ## Scripts
 
@@ -310,60 +242,38 @@ static void EventScript_EnterJennasGrandparentsHouse(void) {
 ```
 
 A step that takes time, such as opening the door, a line of dialogue or a
-wait, holds the script inside itself, so the next line starts only when it is
-done; a step that takes no time, such as starting a walk, lets the next line
-follow in the same [frame](../../glossary.md#frame). Whatever has to keep
-moving during a cutscene runs on its own: as an object script (the steps an
-object event runs each frame), a callback (a function the map adds to run
-once a frame) or an update hook (a function an object event runs each frame
-with itself). A request the script raises, like this warp, waits until the
-script has returned.
+wait, holds the script until it is done; a step that takes no time, such as
+starting a walk, lets the next line follow in the same
+[frame](../../glossary.md#frame). Whatever has to keep moving during a
+cutscene runs on its own: as an object script (the steps someone runs each
+frame), a callback (a function the map runs once a frame) or a hook (a
+function one object event runs each frame). A request the script raises, like
+this warp, waits until the script has finished.
 
-A function a map event names is a script: straight-line C in the engine calls
-of `script_layer.h`, `field_service.h` and `engine_call.h`, or in the
-shorter commands of `script.h` that expand to them. A step blocks by running
-the frames itself: `WAIT(n)` reaches the engine's `WaitFrames(n)`, which runs
-the game's [tasks](../../glossary.md#task) and waits for the vertical blank
-once a frame for n frames before it returns, so the script's own C code simply
-continues on the next line ([Engine](../../engine.md#waiting-and-tasks)
-explains it). `MapGrid_AnimateCells` holds the script until the door's last
-step; `ObjectEvent_WalkTo` does not wait for the walker
-(`ObjectEvent_WalkToAndWait` does).
-
-`SCRIPT_START` stops the leader and makes it the speaker, and `SCRIPT_END`
-returns the camera to it. `MESSAGE_SET` chooses a message and `MESSAGE_PUT`
-shows it spoken by an object event. `OBJECT_POSITION_SET`, `OBJECT_WALK`,
-`OBJECT_SPEED`, `OBJECT_DIR`, `OBJECT_FACE` and `OBJECT_ANIMATION` move, turn
-and animate object events by local id. `GameFlag_Get`, `GameFlag_Set` and
-`GameFlag_Clear` test, set and clear game flags, and `SE(n)` plays a sound
-from `songs.h`. Callbacks are added with `FieldScheduler_AddCallback` at
-`TASK_PRIORITY_MAP`.
-
-| Name | Value | Meaning |
-| --- | --- | --- |
-| `TASK_PRIORITY_MAP` | 3200 | the task priority a map's callbacks run at |
+A script is plain C written in the calls of `script_layer.h`,
+`field_service.h` and `engine_call.h`, or in the shorter commands of
+`script.h` that stand for them. A step that takes time runs the game's frames
+itself through `WaitFrames` before it returns ([Engine](../../engine.md#waiting-and-tasks)
+explains it). A callback is added with `FieldScheduler_AddCallback`.
 
 ## State that cleans itself up
 
-A map never undoes what it changed. Instead the game keeps two sets of
-flags for maps to use, and forgets them for it as the party moves on.
+A map never undoes what it changed. Instead the game keeps two sets of flags
+for maps to use, and forgets them for it as the party moves on.
 
 Map temp flags last until the party next enters a map, so a map keeps a
 pushed stone pillar or an opened door in one and finds it back in place next
-time. [Map-section](../../glossary.md#map-section) temp flags last while the party stays anywhere in the map
-section, so they hold what must survive moving between its rooms, as Fuchin
-Falls Cave keeps where its logs float. Coming back from a battle forgets
-neither.
+time. [Map-section](../../glossary.md#map-section) temp flags last while the
+party stays anywhere in the map section, so they hold what must survive
+moving between its rooms, as Fuchin Falls Cave keeps where its logs float.
+Coming back from a battle forgets neither. Because the numbers are reused
+everywhere, each map names the ones it uses for what they hold there, in its
+own file (`FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN` in Crossbone Isle,
+`FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK` in Vault's houses).
 
-`Map_ResetFlagsOnEnter` clears the map's 256 flags on every ordinary
-arrival and the map section's 256 when the party enters another map section
-([the front page](../../README.md#game-flags) explains the ranges). Because
-the numbers are reused everywhere, each map says near its top (or beside a
-single use) what it keeps in them, and names those it gives a meaning in its own file
-(`FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN = FLAG_MAP_TEMP_40` in Crossbone Isle,
-`FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK = FLAG_MAPSEC_TEMP_00` in Vault's houses).
-
-The flags are in `games/tbs/include/flags.h`.
+`Map_ResetFlagsOnEnter` clears them ([the front
+page](../../README.md#game-flags) explains the ranges), and the flags are in
+`games/tbs/include/flags.h`.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -372,36 +282,24 @@ The flags are in `games/tbs/include/flags.h`.
 
 ## Code shared between overlays
 
-Two maps that need the same piece of code each carry their own copy of
-it, because a map's code can call only the main program, never another
-map's.
+Two maps that need the same piece of code each carry their own copy of it,
+because a map's code can call only the main program, never another map's.
 
-Only one overlay is loaded at a time, so the code several maps need is
-written once in `common/` and compiled into each of them. The ROM holds a
-copy in each overlay, alike but for the addresses they hold (their calls
-into the overlay's import table and their pointers to its data). Each map
-includes the header where its code lies in that overlay, since the include
-decides where the code is compiled and so where its bytes land. A header in
-`common/` is code, not declarations: including it twice in one map would
-place it twice.
+Only one overlay is loaded at a time, so the code several maps need is written
+once in `common/` and compiled into each of them: the three Colosso finals
+share the friends' cheering spots, the stage guides, the race gauge and the
+opponent's recorded run; Vault and its houses share the walking villagers;
+Mercury Lighthouse's maps share the pool's lights and the passages between
+floors; and many maps share the small effects and the helpers that move
+object events. The ROM holds a copy in each overlay, alike but for the
+addresses they hold.
 
-| Headers | Included by | What they hold |
-| --- | --- | --- |
-| `colosso_*.h`, `item_equip.h` | the three Colosso final matches (`colosseum_*_match.c`); `item_equip.h` also Goma Cave's entrance | the friends' cheering spots, the stage guides, the race gauge, the opponent's recorded path, the start lettering |
-| `vault_*.h` | Vault and its interiors | the walking villagers, the Bone, the doorway, Ivan's farewell |
-| `mercury_lighthouse_*.h` | Mercury Lighthouse and its entrance | the pool's lights that carry the leader over it, the passages between floors, the pool's shimmer |
-| `kolima_*.h` | Kolima Forest's maps | the cursed forest's colours, the dust of Tret's curse, the hop onto the river's object event |
-| `sol_sanctum_*.h` | Sol Sanctum's rooms | the Elemental Star room's floating lights, the corridor's and maze's entry |
-| `vale.h`, `world_map_linked_effects.h` | Vale's gate and storm; Vale and the world map | the storm's door warps; the particles around a glowing object event |
-| `effect_*.h` | many | `FieldEffect_Spawn` and the small effects it places, cutscene Psynergy |
-| `object_*.h` | many | object events: pushed objects, lookups by cell and distance, turning and waiting |
-| `map_grid_panel.h`, `scroll_initialize_hblank_dma.h` | Crossbone Isle's stepping stones and Kolima Forest's floodgate; the Lemurian ship | a stretch of the layout drawn straight into the background's tile map; the water's ripple |
-
-A header named after one map may be shared further: `colosso_item_icon.h`
-also draws Crossbone Isle's Red Key. A helper that some of the maps including
-its header never call is `UNUSED`, so that a current GCC does not warn there.
-Renaming a function in `common/` renames it in every map that includes the
-header.
+A header in `common/` is code, not declarations: each map includes it where
+the code lies in that overlay, since the include decides where its bytes land,
+and including it twice in one map would place it twice. A helper that some of
+the maps including its header never call is `UNUSED`, so that a current GCC
+does not warn there. Renaming a function in `common/` renames it in every map
+that includes the header; each header's opening comment says what it holds.
 
 ## Design
 
@@ -436,17 +334,17 @@ page](../../README.md#the-map-table-and-map-sections). The layouts the maps are
 built on are in [Layouts](../layout/README.md), and the debug rooms, built the
 same way, in [Debug rooms](../debug/README.md).
 
-To find the code for a map, find its row in `field/map_headers.s`: the overlay's
-resource number begins the rows of `objects.tsv` that name its files. To find
-what someone says, search `games/tbs/text/en.po` for the line; its `msgctxt`
-is the name the map writes (`MsgVaultWelcomeToVaultTheTownAt`).
+To find the code for a map, find its row in `field/map_headers.s`: the
+overlay's resource number begins the rows of `objects.tsv` that name its
+files. To find what someone says, search `games/tbs/text/en.po` for the line;
+its `msgctxt` is the name the map writes (`MsgVaultWelcomeToVaultTheTownAt`).
 
 ## Limits
 
 - An overlay's code, tables and RAM variables must fit in `gOverlayArea`,
   32 KB of [EWRAM](../../glossary.md#iwram-and-ewram).
-- An overlay calls the [main image](../../glossary.md#main-image) only through its import table, never another
-  overlay.
+- An overlay calls the [main image](../../glossary.md#main-image) only through
+  its import table, never another overlay.
 - 66 local ids: the party's 8, then the placed object events.
 - 256 map temp flags and 256 map-section temp flags, reused by every map and
   map section.
@@ -479,8 +377,8 @@ are named for what the player sees; its messages are linker symbols made from
 their English text. Overlay numbers are their rows of the resource directory.
 
 Many functions in `common/` keep older descriptive names
-(`ObjectEvent_SetFlagBitByRelativeDepth`, `Map_`); each takes its name with the maps that
-call it, as those maps are humanized.
+(`ObjectEvent_SetFlagBitByRelativeDepth`, `Map_`); each takes its name with the
+maps that call it, as those maps are humanized.
 
 The animated warps of `enum WarpStyle` play the leader's leaving and arrival
 animations, named in `enum ObjectEventAnimation` from Isaac's sprite

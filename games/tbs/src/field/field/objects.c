@@ -191,8 +191,8 @@ void ObjectSystem_Initialize(s32 controlMode) {
     Task_Add(ObjectSystem_ProjectSprites, 0xc80);
   } else {
     Task_Add(ObjectSystem_PlaceSprites, 0xc80);
-    // XXX: nothing in the tree reads these two IWRAM words; code that reads
-    // them by address would say what the scrolling camera resets here.
+    // XXX (no evidence): what the scrolling camera resets here; nothing in
+    // the game reads these two IWRAM words, by name or by address.
     gCamera_UnreadWord2 = 0;
     gCamera_UnreadWord1 = 0;
   }
@@ -293,9 +293,12 @@ struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z) {
       break;
     case OBJECT_CREATE_GROUP:
       // Take a zeroed list of four sprites, and fill it with id and id + 1.
-      // XXX: a list is four words but the next starts a word later, so a
-      // second list overlaps the first and its zeroing clears count. No code
-      // in the tree creates a group object to show the intended spacing.
+      // A list is four words but the next starts a word later, so a second
+      // list would overlap the first and its zeroing clear count. No caller
+      // passes OBJECT_CREATE_GROUP: every id is a sprite below 0x1000, an
+      // object event template's (0 to 504), or a kind with no sprite.
+      // XXX (no evidence): whether the lists were meant four words apart;
+      // nothing in the game creates a group to show it.
       spriteSlots =
           (void **)((u32 *)gObjectSystemWork + gObjectSystemWork->count++ + 2);
       object->spriteStorageKind = spriteStorageKind;

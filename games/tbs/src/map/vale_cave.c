@@ -434,9 +434,10 @@ static void EventScript_MoveEastCratesIntoHole(void) {
     rightEffect = ObjectEvent_PrepareObject(
         ObjectEvent_GetById(LOCALID_EAST_CRATES)->x.fixed + PIXELS(8), 0,
         ObjectEvent_GetById(LOCALID_EAST_CRATES)->z.fixed + PIXELS(52), 241);
-    // XXX: likely a slip copied from EventScript_MoveWestCratesIntoHole,
-    // because it clears the western crates' motion flags rather than these
-    // crates'.
+    // This clears the western crates' motion flags, not these crates', where
+    // EventScript_MoveWestCratesIntoHole clears its own. These sink all the
+    // same, since the sinking writes their height directly and nothing pulls
+    // them back up, as the recording of this event shows.
     ObjectEvent_GetById(LOCALID_WEST_CRATES)->motionFlags = 0;
     // Surround the sinking crates with one particle per frame.
     particleOptions = &options;

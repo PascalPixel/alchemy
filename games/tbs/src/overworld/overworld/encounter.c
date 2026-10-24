@@ -163,14 +163,14 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
     rate = entry->rate;
     if (rate == 0)
       return 0;
-    // Flag 5 is FLAG_IN_PARTY(JENNA): with Jenna in the party, there are no
-    // encounters while she has more than 130 experience points. She is in
-    // the party only from Vale (EventScript_RoofMended, map/vale.c) to the Sol
-    // Sanctum's eruption, starting at level 1 with none, so this ends random
-    // battles in the Sol Sanctum once she nears level 4 (158). XXX: likely a
-    // cap on training before the journey, because it can act nowhere else.
-    if (GameFlag_GetFar(5) != 0) {
-      level = Unit_GetFar(5)->experience;
+    // With Jenna in the party, there are no encounters while she has more
+    // than 130 experience points. She is in the party only from Vale
+    // (EventScript_RoofMended, map/vale.c) to the Sol Sanctum's eruption,
+    // starting at level 1 with none, so the rule acts only in the Sol
+    // Sanctum, where it ends random battles once she nears level 4 (158):
+    // the party cannot train there before the journey begins.
+    if (GameFlag_GetFar(FLAG_IN_PARTY(JENNA)) != 0) {
+      level = Unit_GetFar(JENNA)->experience;
       if (level > 130)
         return 0;
     }

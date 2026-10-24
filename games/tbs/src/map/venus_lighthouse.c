@@ -3808,8 +3808,10 @@ static s32 VenusLighthouse_RouteLight(struct Object *interpreter) {
   pillarPosition.y = light->y.fixed - PIXELS(16);
   pillarPosition.z = light->z.fixed;
   pillar = ObjectEvent_FindAtPosition(&pillarPosition, 0);
-  // XXX: the paths end only on sockets, so a pillar is likely always there;
-  // a light over an empty socket would read through a null pillar.
+  // XXX: whether a light ever reaches an empty socket, where pillar is null
+  // and the read below goes through address 0; on the third floor the lights
+  // start once three pillars are sunk in the four sockets, so a recording with
+  // the north-east socket left empty would settle it.
   sprite = pillar->sprite;
   if (sprite->entries[0]->animationId == SPRITE_SPIRAL_PILLAR) {
     s32 velocityX = light->velocityX;

@@ -117,10 +117,9 @@ s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
         layer->frameBase = 255;
         layer->script = 0;
         frame = 255;
-        // XXX: ending any anim lowers the sprite's anim count, so the last
-        // anim stops being stepped and drawn even when another one ended; a
-        // sprite whose anim other than the last ends would show whether that
-        // is a bug.
+        // Ending any anim lowers the sprite's anim count, as if the last had
+        // ended. Only sprite 283, the impact of Lift, has animations that end,
+        // and it is a sprite of one anim, so an ending always empties it.
         animation->count--;
         goto select_direction;
       // Unused commands, skipped. 251 is not among them: it shows as a frame.
@@ -518,9 +517,9 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
       roundedScale = (z + 0x400) & -0x800;
       scaleX = Iwram_MulQ16(roundedScale, *scale++);
       scaleY = Iwram_MulQ16(roundedScale, *scale);
-      // Hold each scale below 2 (0x1f800 is 2 less 1/32).
-      // XXX: likely to keep the scaled sprite inside its double-size box,
-      // because at 2 it would just fill it.
+      // Hold each scale below 2 (0x1f800 is 2 less 1/32): a scaled sprite is
+      // drawn in a double-size box, which the picture exactly fills at 2 and
+      // would overflow, cut off at its edges, beyond it.
       if (scaleX > 0x1f7ff)
         scaleX = 0x1f800;
       if (scaleY > 0x1f7ff)

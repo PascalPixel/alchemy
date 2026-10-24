@@ -141,8 +141,9 @@ void FieldEffect_RunPly(void) {
   }
 
   // The particles share one sprite cache; keep its slot to free at the end.
-  // XXX: last is read with no check that any particle spawned; a map with
-  // no free object slots would show whether this can be 0.
+  // last is read with no check that any particle spawned. It would be 0 only
+  // with all 64 objects taken for eight frames, and a map places at most 60:
+  // the world map's 51 object event templates, the party's 8 and the camera.
   resourceSlot = last->slot;
   Sound_PlaySongFar(SE_PSYNERGY_START);
   // The last particle spawned 7 frames ago with 120 frames to live: wait

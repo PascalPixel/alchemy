@@ -87,8 +87,10 @@ void FieldEffect_RunCatch(void) {
   }
   Object_SelectAnimationFar(object, 5);
   Sound_PlaySongFar(SE_WATER);
-  // XXX: why the caught object goes to (-9, -9) pixels, just off the map's
-  // corner; the map code that reads it after Catch would settle it.
+  // As the hand presses down, the caught object vanishes: (-9, -9) pixels is
+  // just off the map's corner, where no view reaches. The map's after event
+  // then puts it away for good, as Vale's EventScript_CatchNut moves the Nut
+  // to (0, 0) and sets FLAG_VALE_NUT_CAUGHT so that it is not placed again.
   if (child != 0)
     Object_SetPositionAndResetMotionFar((struct Object *)child, -(9 << 16),
                                         child->y, -(9 << 16));

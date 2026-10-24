@@ -62,9 +62,12 @@ enum AbilityId {
   ABILITY_ATALANTA = 0x18f,
   ABILITY_PROCNE = 0x190,
   ABILITY_THOR = 0x191,
+  /// Power 5: the second Bat row's (enemies.c).
   ABILITY_SONIC_WAVE = 0x1b3,
-  /// Sonic Wave's second row.
-  ABILITY_SONIC_WAVE_2 = 0x1b4,
+  /// Power 45 against the Bat's 5: the Rabid Bat's, the Clay Gargoyle's,
+  /// the Ant Lion's and the Roach's.
+  /// ★ Named from the game: "Sonic Wave" (MsgAbilityName)
+  ABILITY_SONIC_WAVE_STRONG = 0x1b4,
   ABILITY_SHRIEK = 0x1b5,
   ABILITY_BANSHEE_HOWL = 0x1b6,
   ABILITY_CRAZY_VOICE = 0x1b7,

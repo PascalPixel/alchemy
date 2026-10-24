@@ -430,7 +430,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
     // Some enemy abilities have their own wording.
     switch (abilityId) {
     case ABILITY_SONIC_WAVE:
-    case ABILITY_SONIC_WAVE_2:
+    case ABILITY_SONIC_WAVE_STRONG:
       message = MsgEmitsUltrasonicWaves;
       break;
     case ABILITY_HEAT_MIRAGE:

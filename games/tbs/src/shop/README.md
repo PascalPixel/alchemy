@@ -114,7 +114,7 @@ Healing Ring, can be repaired, for a quarter of its price. The smith takes it
 away for three hammer blows, hands it back mended and offers to equip it. Any
 other item gets `Sorry, but we don't handle` it.
 
-`Shop_RepairItem` (`shop/repair.c`) refuses an item whose `use_type` is not
+`Shop_RepairItem` (`shop/repair.c`) refuses an item whose `useType` is not
 `ITEM_USE_MAY_BREAK`, one that is not broken, and one that is equipped and
 cannot come off; `Shop_RepairPrice` sets the price. While the smith works the
 item's slot is left empty without closing the gap.

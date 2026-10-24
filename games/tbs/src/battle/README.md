@@ -183,7 +183,7 @@ Attack is usually just Attack, but a weapon can unleash its own ability in its
 place, as the Swift Sword unleashes Sonic Smash.
 
 - `COMMAND_ATTACK` is `ABILITY_ATTACK`, unless the weapon unleashes
-  (`RollWeaponUnleashFar`) at five times its `unleash_chance` percent plus
+  (`RollWeaponUnleashFar`) at five times its `unleashChance` percent plus
   what the equipment adds; the player then reads
   `<unit>'s <weapon> lets out a howl!` and the ability's name.
 - `COMMAND_PSYNERGY` is the ability chosen in the menu. Its PP cost is paid
@@ -191,7 +191,7 @@ place, as the Swift Sword unleashes Sonic Smash.
 - `COMMAND_DJINN` reads the Djinni's ability from `../game/djinn_table.c`
   (`Djinn_GetAbilityIdFar`). Only a set Djinni is unleashed, and it then goes
   on standby; one on standby is set again instead.
-- `COMMAND_ITEM` takes the item's `action_id`; an item with none, or a broken
+- `COMMAND_ITEM` takes the item's `abilityId`; an item with none, or a broken
   one, makes the user defend. What using it costs is spent in `staging.c`.
 - `COMMAND_SUMMON` takes the summon's ability from `../game/summons.c` and
   marks the standby Djinn it uses.
@@ -204,7 +204,7 @@ or an enemy's with its own (`Item_GetEquippedElement`).
 | --- | --- | --- |
 | `COMMAND_ATTACK` | 0 | `ABILITY_ATTACK`, or the weapon's unleash |
 | `COMMAND_PSYNERGY` | 1 | the ability chosen in the menu |
-| `COMMAND_ITEM` | 2 | the item's `action_id` |
+| `COMMAND_ITEM` | 2 | the item's `abilityId` |
 | `COMMAND_DEFEND` | 3 | Defend |
 | `COMMAND_ENEMY_ABILITY` | 4 | an enemy's ability |
 | `COMMAND_DJINN` | 5 | the Djinni's ability |
@@ -604,8 +604,8 @@ and others) rather than taking `Battle_`.
   `ENEMY_BATTLE_SIZE` at most; in a link battle each console sends
   `LINK_PARTY_SIZE`.
 - `formations.c` has 380 formations, each of up to five kinds of enemy with
-  the least and most of each (`member0` to `member4`, `minimum0` to
-  `minimum4`, `maximum0` to `maximum4`). The encounter zones in
+  the least and most of each (`memberIds`, `minimumCounts` and
+  `maximumCounts`). The encounter zones in
   `../overworld/encounter_zones.c` choose among them.
 - The playback queue holds `BATTLE_PLAYBACK_CAPACITY` events.
 

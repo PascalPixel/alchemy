@@ -347,7 +347,7 @@ s32 PauseMenu_Run(void) {
 }
 
 /// Browses pages of item, Psynergy and status-pattern icons, suspending the
-/// menu controller while the browser owns its window and cache entries.
+/// field's object system while the browser owns its window and cache entries.
 /// L and R switch the kind, Left and Right turn its 8 pages of 32 icons
 /// (item and Psynergy icons page * 32 on; the status patterns are 0 to 31 on
 /// every page, whatever the heading says), A or B closes it. Returns 0. The

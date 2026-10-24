@@ -404,9 +404,9 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
     for (i = 0; i != THOR_PARTICLE_COUNT; i++) {
       THOR_PARTICLES[i].variant = 0;
     }
-    // XXX: nothing in Thor reads these 16 particles, and
-    // BattleAnim_RunImpactBurst overwrites them; what they were for is open,
-    // and the Lost Age's twin of this scene may show it.
+    // Nothing in Thor reads these 16 particles, and BattleAnim_RunImpactBurst
+    // overwrites them; only their random draws change what is drawn later.
+    // XXX (no evidence): what they were for; no code that reads them is left.
     for (i = 0; i != 16; i++) {
       work->particles[i].x = (Random16() & 31) - 16;
       work->particles[i].y = Random16() & 63;

@@ -4,10 +4,9 @@
 
 #include "../battle_anim_internal.h"
 
-// None of the three animations here is called, or held in any table: they are
-// in the ROM but unreachable. XXX: whether they are leftovers or reached by
-// some path not yet read; a pointer to one in data outside the animation
-// tables would settle it.
+// None of the three animations here is called, and no table or other data in
+// the ROM holds the address of any of them: they are in the ROM but
+// unreachable.
 
 #define SWIRLING_STARS_FRAMES 160
 #define SWIRLING_STARS_COUNT 64 ///< stars that swirl

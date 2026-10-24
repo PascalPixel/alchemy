@@ -20,7 +20,7 @@ struct BattleObject {
   u16 resource;          ///< the unit's sprite
   u16 overlay;   ///< a second sprite drawn over it, the weapon; 0 for none
   u16 animation; ///< the status icon's animation shown; 0 for none
-  u16 effect;    ///< an effect sprite drawn with the unit
+  u16 shadow;    ///< the shadow sprite under the unit (BATTLE_SHADOW_SPRITE)
   s32 anchorX;   ///< 16.16 fixed-point pixels
   s32 anchorZ;   ///< 16.16 fixed-point pixels
   /// The unit sprite's SpriteColorMode: an enemy's own, 1 for a
@@ -32,7 +32,7 @@ struct BattleObject {
   s8 cycleTimer;      ///< frames until the next status icon
   struct SpriteAnimHeadView
       *animationEntry;                    ///< the status icon's sprite, or NULL
-  struct SpriteAnimHeadView *effectEntry; ///< the effect sprite, or NULL
+  struct SpriteAnimHeadView *shadowEntry; ///< the shadow's sprite, or NULL
   /// Set by BattleObject_MarkForRelease: the object is released with the
   /// others by BattleObject_DestroyAll.
   s16 active;

@@ -128,8 +128,10 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
     classSlot = itemOrClassIndex;
   // The earliest listed class to fall names the victory message, and a
   // second defeat makes it DEFEAT_SEVERAL.
-  // XXX: likely meant DEFEAT_BY_PARTY_MEMBER, because no defeat state is 2,
-  // so this test never fails.
+  // No defeat state is 2, so this test never fails.
+  // XXX (no evidence): whether DEFEAT_BY_PARTY_MEMBER was meant; the code
+  // behaves the same for every state the game sets, so only the author's
+  // intent would say.
   if (battle->defeatState != 2) {
     if (classSlot < battle->firstDefeated)
       battle->firstDefeated = classSlot;

@@ -128,8 +128,9 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
       blitters[0](canvas, Ram_MapGridCellBuffer + strip + step * (40 * 80),
                   origin.x / 2 - 20, origin.y - 48, 40, 80);
       // A busy delay before the blitter is freed (BattleAnim_CallDoNothing).
-      // XXX: why it waits, as nothing here depends on the time; the Lost
-      // Age's Annihilation would show whether it is a leftover.
+      // Nothing here depends on the time it takes.
+      // XXX (no evidence): why it waits; the delay changes nothing the game
+      // draws or computes, so only the author's intent would say.
       BattleAnim_CallDoNothing(10000);
       FreeHeapSlot(HEAP_SLOT_RAM_CODE);
     }

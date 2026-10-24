@@ -198,8 +198,8 @@ void BattleAnim_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 
   pos.groundHeight = 0;
   pos.height = 255 << 16;
-  // XXX: what a height of 255 means to the placement; the objects' use
-  // of SpritePlacement.height in the field would settle it.
+  // Render_ApplyProjectedPlacement draws each picture 255 pixels above its
+  // y, while its draw slot, and any shadow, still follow y itself.
   switch (formation) {
   // 1 << 21 is 32 pixels in 16.16.
   case SUMMON_FORMATION_THOR:

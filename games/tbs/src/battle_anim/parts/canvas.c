@@ -594,10 +594,12 @@ void BattleAnim_SetupCanvasTileMap(void) {
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, screen->background, 0);
   gBgScroll[1].y = 32;
   layer->secondMode = BATTLE_BACKGROUND_NONE;
-  // Blank tile 0xff, then map rows 4 to 11 filled with 0xffff.
-  // XXX: what map entry 0xffff shows (tile 0x3ff, flipped, palette 15, in
-  // a 256-colour layer); a VRAM view of a beam scene would settle whether
-  // those rows are meant to show nothing.
+  // Blank tile 0xff, then map rows 4 to 11 filled with 0xffff, which show
+  // nothing: the entry names tile 0x3ff (the flips and palette bits change
+  // nothing in a blank 256-colour tile), whose 64 bytes from character base
+  // 0 are this map's own row 31. BattleTransition_BuildTilemap leaves that
+  // row alone and BattleBackground_Load clears it, so tile 0x3ff is the
+  // battle's blank tile, as the battlefield's own map uses it.
   Iwram_ClearWords(BG_CHAR_BLOCK(0) + 0xff * 64, 64);
   Iwram_FillWords(BG_SCREEN_BLOCK(31) + 4 * 64, 0x200, -1);
   // Rows 12 to 27: the canvas's 16 tiles from tile 0x100, then blank tile

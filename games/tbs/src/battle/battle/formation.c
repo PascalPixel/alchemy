@@ -24,8 +24,9 @@ extern u16 gBattleFormation_LevelMatchedEnemies[];
 /// choose by.
 /// Returns -1 for a formation with no required member, -2 when it holds an
 /// enemy above level 3 the party has not defeated (ENEMY_DEFEATED_FLAG,
-/// unless flag 0x174 is set), and -3 when it has no member. Called by
-/// BattleFormation_SelectLevelMatchedCandidate for every formation.
+/// unless FLAG_MONSTER_BATTLE_ANY_ENEMY is set), and -3 when it has no
+/// member. Called by BattleFormation_SelectLevelMatchedCandidate for every
+/// formation.
 s32 BattleFormation_AverageLevel(s32 recordId) {
   struct Formation *record;
   struct EnemyDefinition *enemy;
@@ -56,8 +57,7 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
                                                              ENEMY_ID_FIRST);
     if (enemy == 0)
       continue;
-    // XXX: flag 0x174 makes every enemy eligible; what sets it would name it.
-    if (enemy->level > 3 && !GameFlag_GetFar(0x174) &&
+    if (enemy->level > 3 && !GameFlag_GetFar(FLAG_MONSTER_BATTLE_ANY_ENEMY) &&
         !GameFlag_GetFar(ENEMY_DEFEATED_FLAG(enemyId + ENEMY_ID_FIRST)))
       return -2;
     levelTotal += enemy->level;
@@ -104,8 +104,8 @@ struct BattleBaseStats {
 /// 32 qualifying is chosen at random. With none, it returns formation 1 and a
 /// margin of 0. Called by BattleFormation_BuildEnemyList under
 /// FLAG_MONSTER_BATTLE; clears the defeated flags of the classes in
-/// gBattleFormation_LevelMatchedEnemies, excluding them unless flag 0x174
-/// bypasses the defeated-enemy check.
+/// gBattleFormation_LevelMatchedEnemies, which excludes those above level 3
+/// unless FLAG_MONSTER_BATTLE_ANY_ENEMY bypasses the defeated-enemy check.
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   s32 matchCount = 0;
   struct FormationCandidate *pool = AllocEwram(128);
@@ -143,7 +143,8 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
     pool[candidateOrUnitIndex].score = -1;
 
   // Forget defeated classes that the monster battles normally exclude;
-  // flag 0x174 can still admit them. The definition read is unused.
+  // FLAG_MONSTER_BATTLE_ANY_ENEMY would still admit them. The definition
+  // read is unused.
   for (candidateOrUnitIndex = 0; (u32)candidateOrUnitIndex <= 19;
        candidateOrUnitIndex++) {
     Enemy_GetDefinitionFar(

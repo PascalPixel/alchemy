@@ -55,30 +55,6 @@ s32 BattleObject_ResetRuntimeFields(s32 unitId) {
   BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
 }
 
-// XXX: likely only a second spelling of struct AdvanceArrowSprite, because
-// BattleMessage_WaitForAdvance written through that struct as
-// playback.c's PLAY_ADVANCE writes it (both words through a u32 cast, then
-// tile, x and y) shows no difference in an alchemy-devtools diff of any
-// edition; set field by field, 101 of 138 instructions differ in tbs-en. The
-// twelve-edition comparison would settle whether this view can go.
-
-/// The advance arrow's OAM entry, as plain halfwords: a second view of struct
-/// AdvanceArrowSprite. BattleMessage_WaitForAdvance keeps it on its
-/// stack and rebuilds it each frame before Oam_AddSpriteAtDepth queues it.
-struct AdvanceArrowSpriteHalfwordView {
-  struct AdvanceArrowSpriteHalfwordView *next; ///< never set here
-  union {
-    struct {
-      u16 attr0; ///< OAM attribute 0: y in the low byte
-      u16 attr1; ///< OAM attribute 1: x in the low nine bits
-      u16 attr2; ///< OAM attribute 2: tile in the low ten bits
-      u16 attr3; ///< cleared with attr2 each frame
-    } fields;
-    u32 words[2]; ///< paired attributes, initialized together
-    u8 bytes[8];  ///< the y byte can change without replacing attribute 0
-  } attributes;
-};
-
 /// The advance arrow's attribute 0: a 256-colour, semi-transparent tall
 /// sprite; with attribute 1's size 0 it is 8 by 16 pixels.
 #define ADVANCE_ARROW_ATTR0 0xa400
@@ -97,17 +73,13 @@ void BattleMessage_WaitForAdvance(void) {
 #else
 s32 BattleMessage_WaitForAdvance(void) {
 #endif
-  struct AdvanceArrowSpriteHalfwordView *prompt;
-  struct AdvanceArrowSpriteHalfwordView promptStorage;
+  struct AdvanceArrowSprite *prompt;
+  struct AdvanceArrowSprite promptStorage;
   s32 frame;
   s32 tileSlot;
   s32 frameTiles;
   struct Window *window;
   struct BattleMessageOffset *offset;
-  s32 attr2;
-  s32 attr1;
-  s32 x;
-  s16 tile;
 
   while (!TextPrinter_AllFinishedFar())
     WaitFrames(1);
@@ -124,19 +96,17 @@ s32 BattleMessage_WaitForAdvance(void) {
     IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
     IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
     Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
-    prompt->attributes.words[0] = ADVANCE_ARROW_ATTR0;
-    prompt->attributes.words[1] = 0;
-    tile = VramCache_Reload(tileSlot, frameTiles) & 0x3ff;
-    attr2 = prompt->attributes.fields.attr2;
-    prompt->attributes.fields.attr2 = (attr2 & ~0x3ff) | tile;
+    // Both attribute words are set whole, as PLAY_ADVANCE sets them
+    // (playback.c).
+    ((u32 *)prompt)[1] = ADVANCE_ARROW_ATTR0;
+    ((u32 *)prompt)[2] = 0;
+    prompt->tile = VramCache_Reload(tileSlot, frameTiles);
     // The window is placed in tiles, its offset in 1/256 pixels.
-    x = (u16)((window->x * 8 + (offset->x >> 8) + 4) & 0x1ff);
-    attr1 = prompt->attributes.fields.attr1;
-    prompt->attributes.fields.attr1 = (attr1 & ~0x1ff) | x;
+    prompt->x = window->x * 8 + (offset->x >> 8) + 4;
     // Bob up and down by up to 2 pixels, once every 16 frames (a sixteenth
     // of a turn a frame).
-    prompt->attributes.bytes[0] = Trig_Sin(gFrameCount << 12) / 32768 +
-                                  window->y * 8 + (offset->y >> 8) + 6;
+    prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
+                (offset->y >> 8) + 6;
     Oam_AddSpriteAtDepth(prompt, 240);
     // A held advance key counts only after 16 frames, so one still held from
     // the previous message does not skip this one; B held goes on at once.

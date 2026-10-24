@@ -226,9 +226,10 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
   ANIM_FINISH_CANVAS();
 }
 
-// XXX: likely to keep the turn smooth when an animation frame runs long,
-// because every frame still turns at least half the delta; a run with a slow
-// animation frame would settle it.
+// Every frame turns the camera at least half the delta, so it keeps turning
+// on frames the animation has not finished.
+// XXX (no evidence): whether that is meant to keep the turn smooth when an
+// animation frame runs long; the code shows the effect, not the reason.
 /// Turns the battle camera's yaw by work->cameraDelta, or by half of it on a
 /// frame the animation has not marked.
 ///

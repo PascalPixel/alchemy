@@ -188,6 +188,9 @@
 /// ★ Named from the game: "Linked Battles and Monster Battles"
 /// (MsgFieldWelcomeToBattleArenaWherePeople)
 #define FLAG_MONSTER_BATTLE 0x173
+/// Lets the monster battles choose enemies above level 3 the party has never
+/// defeated (BattleFormation_AverageLevel). Nothing in this game sets it.
+#define FLAG_MONSTER_BATTLE_ANY_ENEMY 0x174
 /// Set when the cleared game's menu goes to the Battle Arena: there Psynergy
 /// has no effect and the pause menu offers only Change settings.
 /// ★ Named from the game: "Welcome to Battle Arena"

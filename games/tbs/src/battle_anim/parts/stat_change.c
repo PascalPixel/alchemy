@@ -533,9 +533,12 @@ void BattleAnim_RunStatReduction(struct BattleAnimArgs *effect, s32 mode) {
 
   for (frame = 0; frame != work->effect->targetCount * 4 + 64; frame++) {
     camera = gBattleCamera;
-    // XXX: the loop runs count * 4 + 64 frames, so frame 72 comes only with
-    // three or more targets; whether the battle shows the damage some other
-    // way for one or two would settle whether this is a bug.
+    // The loop runs count * 4 + 64 frames, so frame 72 comes only with three
+    // or more targets. With one or two, BattlePlayback_WaitForReady starts
+    // playback once the animation returns, so the messages follow the shards
+    // instead of overlapping them.
+    // XXX (no evidence): whether that difference was meant; both orders show
+    // the same messages, so only the author's intent would say.
     if (frame == 72)
       ANIM_SHOW_DAMAGE(0);
     ANIM_FOR_EACH_TARGET(j, work->effect) {

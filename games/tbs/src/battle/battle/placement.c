@@ -8,16 +8,17 @@
 #define SPRITE_ISAAC_MACHETE 480
 #define SPRITE_GARET_MACHETE 482
 
-// XXX: likely the unit's shadow on the ground rather than an animation, because
-// of that picture, because adding it also clears the sprite's own shadow
-// (Sprite.flags bit 0), and because BattleObject_UpdateSpritePriorities changes
-// the layer's priority while the unit is off the ground.
-/// BattleObject.effect as a battle object is made: the sprite
-/// BattleObject_SpawnObjectsForList adds as a layer of every one-part body
-/// (NARROW_EFFECT_SPRITE on a body 32 pixels wide). Its 64 by 64 picture
-/// (graphics/sprite/spr_510.png) holds only a 32 by 6 ellipse along its bottom
-/// edge, NARROW_EFFECT_SPRITE's a 16 by 3 one.
-#define BATTLE_OBJ_NO_EFFECT 0x1fe
+/// The shadow a unit casts on the ground, BattleObject.shadow as a battle
+/// object is made: the sprite BattleObject_SpawnObjectsForList adds as a layer
+/// of every one-part body (NARROW_SHADOW_SPRITE on a body 32 pixels wide). Its
+/// 64 by 64 picture (graphics/sprite/spr_510.png) holds only a 32 by 6 ellipse
+/// along its bottom edge, NARROW_SHADOW_SPRITE's a 16 by 3 one. It stays on
+/// the ground while the unit is off it (BattleObject_UpdateSpritePriorities),
+/// and adding it clears the sprite's own shadow (Sprite.flags bit 0), so a
+/// unit casts one.
+/// ★ Named from what the player sees: the black ellipse under each unit's
+/// feet (a battle's render)
+#define BATTLE_SHADOW_SPRITE 0x1fe
 
 /// Creates the battle object of unit at (x, y) on the battlefield, in
 /// pixels: its sprite (an enemy's from its class, sharing the slot it
@@ -236,10 +237,10 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   weaponSprite = BattleUnit_LookupWeaponValueByClass(unitId);
   actor->animation = 0;
   actor->animationEntry = 0;
-  actor->effectEntry = 0;
+  actor->shadowEntry = 0;
   actor->active = 0;
   actor->fading = 0;
-  actor->effect = BATTLE_OBJ_NO_EFFECT;
+  actor->shadow = BATTLE_SHADOW_SPRITE;
   classId = unit->id;
   actor->overlay = weaponSprite;
 

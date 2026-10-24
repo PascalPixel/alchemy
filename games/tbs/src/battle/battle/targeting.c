@@ -113,12 +113,16 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
   return positions[(Random16() * count) >> 16];
 }
 
-// XXX: likely wrong, because Restore and Tonic clear stun and never confusion
-// or charm (BattleAbility_ApplyToTarget), as Restore's description and the
-// party's target window (BattleTarget_RunSelection) have it; only
-// Battle_RollEffectSuccessFar counts confusion and charm too. Cerebus and the
-// Hydros Statue, the enemies with Restore, pass over an ally who is only
-// stunned, and may spend it on one who is only confused or charmed.
+// The list disagrees with what Restore does: Restore and Tonic clear stun and
+// never confusion or charm (BattleAbility_ApplyToTarget), as Restore's
+// description and the party's target window (BattleTarget_RunSelection) have
+// it; only Battle_RollEffectSuccessFar counts confusion and charm too. So
+// Cerebus and the Hydros Statue, the enemies with Restore, pass over an ally
+// who is only stunned, and may spend it on one who is only confused or
+// charmed.
+// XXX (no evidence): whether the enemies were meant to see Restore this way;
+// the code is consistent with Battle_RollEffectSuccessFar's list, so only the
+// author's intent would say which list is the slip.
 /// Counts the statuses of unit that Restore is taken to cure: delusion,
 /// confusion, charm, sleep, the Psynergy seal and the Grim Reaper.
 #define COUNT_PARTIAL_CURES(unit, count)                                       \

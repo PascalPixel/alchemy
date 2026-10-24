@@ -364,9 +364,12 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
     // Save each target's layer colour modes (all but its last layer) in
     // work, beside the animation command. RunItem and RunPsynergyCast do the
     // same.
-    // XXX: no code reads savedAnimationParameters by name; an animation that
-    // reads past its command into BattleStagingWork would settle what
-    // they are kept for.
+    // Nothing reads them back: every animation reads its command only
+    // through struct BattleAnimArgs's named fields, which end before them,
+    // and the colour modes are put back from BattleObject_GetPalette
+    // (BattleAnim_SetupBlendedDisplay) or cleared afterwards.
+    // XXX (no evidence): what they were kept for; no reader in this game's
+    // battle code shows it.
     for (i = 0; i != work.effect.targetCount; i++) {
       struct Sprite *animation;
       u32 child;
@@ -715,10 +718,12 @@ s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
 
   // The camera turns to the user's side; the user raises the item
   // (POSE_CAST).
-  // XXX: likely a slip, because the other runners test > ALLY_MAX: with > 4,
-  // Jenna, Sheba and Piers (character_ids.h) would take the enemies' view;
-  // whether any of them uses an item in a battle of this game would settle
-  // whether it is seen.
+  // The other runners test > ALLY_MAX; with > 4, Jenna, Sheba and Piers
+  // take the enemies' view. In play only Isaac, Garet, Ivan and Mia fight,
+  // so the two tests agree; only the debug party presets with Jenna
+  // (debug_presets.c) let an item turn the camera the wrong way.
+  // XXX (no evidence): whether > 4 is a slip; the play the game allows
+  // behaves the same either way, so only the author's intent would say.
   if (plan->actorId > 4)
     targetYaw = YAW_ENEMY_TURN;
   else

@@ -163,9 +163,10 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
         actor->y -= 8 << 16;
         // The nudge after drawing lasts only to this frame's landing test,
         // where the chips start; the next frame projects the user afresh.
-        // XXX: likely meant as screenPosition.x += 8, because side 0 moves
-        // x; a capture of an enemy's Planet Diver would show where its chips
-        // start.
+        // On side 1 the nudge moves y, so the chips start 8 pixels lower
+        // rather than 8 pixels across.
+        // XXX (no evidence): whether screenPosition.x += 8 was meant, as side
+        // 0 moves x; only the author's intent would say.
         if (work->effect->side == 0) {
           draw[0](canvas, work->sheet, screenPosition.x - 20,
                   screenPosition.y - 52, 40, 64);

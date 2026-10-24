@@ -105,9 +105,10 @@ DEFINE_TICK_STATUS(BattleUnit_TickDelusion, delusion, 30)
 /// Battle_ProcessRoundEnd shows `MsgConscious` when it returns 1.
 s32 BattleUnit_TickConfusion(s32 unitId) {
   struct Unit *unit = Unit_GetFar(unitId);
-  // XXX: Unit.confusion is declared s8 but counted down here as a u8,
-  // unlike the statuses DEFINE_TICK_STATUS ticks; a read that sign-extends it
-  // elsewhere would settle its type.
+  // Unit.confusion is counted down here as a u8, unlike the statuses
+  // DEFINE_TICK_STATUS ticks, as are its reads in targeting.c and
+  // battle_calc.c; the plain s8 reads below and in round.c match too. It runs
+  // from 0 to STATUS_TURNS, so its sign never shows.
   if ((u8)unit->confusion != 0) {
     (*(u8 *)&unit->confusion)--;
     if (unit->confusion == 0)

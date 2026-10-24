@@ -157,11 +157,12 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
 
   source = GetBattleObjectSlotFar(work->effect->user)->object;
   {
-    // XXX: the length counts 6 frames for every streak although targets are
-    // 32 frames apart, so with four targets the fourth's hit (frame 120)
-    // falls on the frame the loop stops at and never plays; the abilities'
-    // target ranges would settle whether four targets can occur. With three,
-    // the loop stops at 102, before the third target's second flash (104).
+    // The length counts 6 frames for every streak although targets are 32
+    // frames apart: with four targets the fourth's hit (frame 120) would fall
+    // on the frame the loop stops at, and with three the loop would stop at
+    // 102, before the third target's second flash (104). Neither happens:
+    // every ability that plays a streak volley has a range of 1 in
+    // abilities.c, so it has one target.
     s32 totalFrames =
         streaks * work->effect->targetCount * STREAKS_SPACING + 48;
 
@@ -184,9 +185,10 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
       s32 *row = work->bg2xLines;
 
       // A sine wave of BG2X offsets, one per scanline, for the wave
-      // HBlank DMA.
-      // XXX: nothing here arms BattleAnim_ArmBg2AffineHBlankDma, so the table
-      // seems unread; a trace of the tasks during Sonic Wave would settle it.
+      // HBlank DMA, which nothing arms here: only the animations that add
+      // BattleAnim_ArmBg2AffineHBlankDma feed the table to BG2X, and each
+      // removes it before returning, so this table is never read and the
+      // canvas does not ripple.
       for (k = 0; k != 160; k++)
         *row++ = (0x80000 - Trig_Sin((frame + k) << 12) * 2) >> 10;
       // Fade the canvas out over the last 16 frames.

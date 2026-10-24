@@ -954,6 +954,8 @@ const void *gCredits_Lines[] = {
 
 /// A credits line has been drawn, so its scratch buffer holds the shadow row to
 /// carry.
+/// ★ Named from what the player sees: the credits text scrolling up the screen
+/// one line at a time (its render)
 #define FLAG_CREDITS_LINE_DRAWN FLAG_MAP_TEMP_00
 
 /// A VBlank task added by Credits_InitTextSprites: maps the

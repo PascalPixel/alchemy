@@ -194,7 +194,7 @@ static void EventScript_TintSolRoom(void) {
     paletteActive = Script_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
     if (paletteActive == 0) {
       FieldScript_Start();
-      PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, 1);
+      PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, PALETTES_BG);
       PaletteFade_StartInterpolation(20);
       GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
       GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
@@ -212,7 +212,7 @@ static void EventScript_TintSolRoom(void) {
   } else {
     if (Script_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED) == 0) {
       FieldScript_Start();
-      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
+      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
       PaletteFade_StartInterpolation(20);
       GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
       GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
@@ -229,7 +229,7 @@ static void EventScript_TintSolRoom(void) {
 static void EventScript_RestorePlainTint(void) {
   if (Script_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED) == 0) {
     FieldScript_Start();
-    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
     PaletteFade_StartInterpolation(20);
     GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
     GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
@@ -251,7 +251,7 @@ static void EventScript_TintLunaRoom(void) {
     paletteActive = Script_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
     if (paletteActive == 0) {
       FieldScript_Start();
-      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
+      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
       PaletteFade_StartInterpolation(20);
       GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
       GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
@@ -261,7 +261,7 @@ static void EventScript_TintLunaRoom(void) {
   } else {
     if (Script_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED) == 0) {
       FieldScript_Start();
-      PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, 1);
+      PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, PALETTES_BG);
       PaletteFade_StartInterpolation(20);
       GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
       GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
@@ -280,7 +280,7 @@ static void EventScript_TintLunaRoom(void) {
 /// flags.
 static void EventScript_TintPassageBetweenRooms(void) {
   if (Script_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED) == 0) {
-    PaletteFade_ApplyTarget(SOL_SANCTUM_WARM_TINT, 1);
+    PaletteFade_ApplyTarget(SOL_SANCTUM_WARM_TINT, PALETTES_BG);
     PaletteFade_StartInterpolation(20);
     GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED);
     GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
@@ -872,7 +872,7 @@ static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
   ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(574), PIXELS(120));
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   WaitFrames(1);
-  PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, 1);
+  PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
   GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
@@ -883,10 +883,10 @@ static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(40);
   Script_PlaySong(SE_THUNDER);
-  PaletteFade_ApplyTarget(0x10005, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_BG);
   PaletteFade_StartInterpolation(8);
   FieldScript_WaitFrames(32);
-  PaletteFade_SetTarget(SOL_SANCTUM_BLUE_TINT, 1);
+  PaletteFade_SetTarget(SOL_SANCTUM_BLUE_TINT, PALETTES_BG);
   PaletteFade_StartInterpolation(24);
 }
 
@@ -1379,7 +1379,7 @@ static void EventScript_RiseToElementalStarRoom(void) {
     gFieldWork->transitionFrames = 24;
     FieldScript_FinishScreenTransition();
     FieldScript_WaitTransitionFrames();
-    PaletteFade_SetTarget(0, 0);
+    PaletteFade_SetTarget(RGB(0, 0, 0), PALETTES_ALL);
     PaletteFade_StartInterpolation(1);
     WaitFrames(1);
     Import_ScriptRequestWarp(
@@ -1416,14 +1416,14 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
       GameFlag_Get(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) == 0) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
   }
-  PaletteFade_SetSource(PALETTE_TINT_NONE, 0);
+  PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED) != 0) {
-      PaletteFade_SetTarget(SOL_SANCTUM_BLUE_TINT, 1);
+      PaletteFade_SetTarget(SOL_SANCTUM_BLUE_TINT, PALETTES_BG);
       PaletteFade_StartInterpolation(1);
       WaitFrames(1);
     } else if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED) != 0) {
-      PaletteFade_SetTarget(SOL_SANCTUM_WARM_TINT, 1);
+      PaletteFade_SetTarget(SOL_SANCTUM_WARM_TINT, PALETTES_BG);
       PaletteFade_StartInterpolation(1);
       WaitFrames(1);
     }
@@ -1593,8 +1593,8 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   FieldCamera_MoveTo(PIXELS(286), -1, PIXELS(134), 0);
   MapGrid_CenterOnFollowedPoint();
   WaitFrames(1);
-  PaletteFade_ApplySource(0x7fff, 0);
-  PaletteFade_SetTarget(0x7fff, 0);
+  PaletteFade_ApplySource(RGB(31, 31, 31), PALETTES_ALL);
+  PaletteFade_SetTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   WaitFrames(1);
   ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(280), PIXELS(134));
@@ -1605,13 +1605,13 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 1;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
-  PaletteFade_SetTarget(SOL_SANCTUM_BLUE_TINT, 1);
+  PaletteFade_SetTarget(SOL_SANCTUM_BLUE_TINT, PALETTES_BG);
   PaletteFade_StartInterpolation(120);
   WaitFrames(120);
   GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
   GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
   GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(60);
   WaitFrames(100);
   // Both look around, bewildered, as the rooms give a jolt.

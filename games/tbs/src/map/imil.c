@@ -1088,13 +1088,13 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Script_ShowMessage(LOCALID_MIA, 0);
   Script_PlaySong(SE_PSYNERGY_SPARKLE);
   // The lighthouse interrupts the visit; Mia leaves and the party follows.
-  PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
-  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(31, 20, 31), 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(31, 20, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(10);
   WaitFrames(1);
   Script_PlaySong(SE_SHIMMER);
   WaitFrames(40);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(60);
   WaitFrames(60);
   ObjectEvent_SetAttachedEffect(LOCALID_MIA, ATTACHED_EFFECT_IN_FRONT |

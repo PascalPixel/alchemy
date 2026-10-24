@@ -1373,7 +1373,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   WaitFrames(1);
   FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  PaletteFade_ApplyTarget(PALETTE_TINT_GRAYSCALE, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_GRAYSCALE, PALETTES_BG);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_SetMessageId(MsgColossoIsaac);
@@ -1514,7 +1514,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(1464), PIXELS(192));
   ObjectEvent_SetPosition(LOCALID_MIA, PIXELS(1560), PIXELS(200));
   ObjectSystem_SuspendProjectionAndShowSprites();
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(1);
   FieldScript_SetMessageId(MsgColossoIsaacFellAsleep);
   Script_ShowMessage(LOCALID_GARET, 0);

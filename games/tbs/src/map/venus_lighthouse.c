@@ -1399,13 +1399,13 @@ static void EventScript_SearchStatue(void) {
   FieldScript_Start();
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   FieldMessage_Show(MsgVenusStatueSpeaksIsaacSoulYe, 1);
-  PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
-  PaletteFade_ApplyTarget(PALETTE_TINT_PALE, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_ALL);
   PaletteFade_StartInterpolation(120);
   FieldScript_WaitFrames(100);
   Script_PlaySong(SE_SWIRL);
   FieldScript_WaitFrames(30);
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(60);
   FieldScript_WaitFrames(70);
   // The first consultation selects a route; later consultations alternate it.
@@ -1427,7 +1427,7 @@ static void EventScript_SearchStatue(void) {
     GameFlag_Clear(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH);
     VenusLighthouse_DrawSecondPath();
   }
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(20);
   FieldScript_WaitFrames(40);
   // Follow the revealed path after the statue and color effect have finished.

@@ -72,6 +72,7 @@
 #include "macros.h"
 #include "flags.h"
 #include "songs.h"
+#include "io_reg.h"
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
 #include "fx_work.h"
@@ -222,25 +223,25 @@ static void SolSanctumEruption_PlayHostageScene(void) {
 #endif
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(4);
   FieldScript_WaitFrames(4);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(4);
   FieldScript_WaitFrames(4);
   SolSanctumEruption_ThrowEruptionRing();
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(4);
   FieldScript_WaitFrames(16);
   Script_PlaySong(SE_CLATTER);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(4);
   FieldScript_WaitFrames(4);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(4);
   FieldScript_WaitFrames(4);
   Script_PlaySong(SE_CLATTER);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(48);
   FieldScript_WaitFrames(48);
   ObjectMotion_Launch(LOCALID_PARTY_LEADER, 6, 0);
@@ -297,10 +298,11 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(299), 1);
   FieldCamera_WaitForArrival();
   Script_PlaySong(SE_MAP_TRANSITION);
-  PaletteFade_ApplyTarget(0x205294, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(20, 20, 20),
+                          PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(20);
   WaitFrames(20);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(20);
   FieldScript_WaitFrames(200);
   // Garet: "That rock... It's floating... Do you know what it is?" Yes:
@@ -890,7 +892,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   gEmberMask = 3;
   FieldScript_WaitFrames(80);
   Script_PlaySong(SONG_FADE_OUT_BGM);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(40);
   FieldScript_WaitFrames(40);
   Task_Remove(SolSanctumEruption_StepEmbers);
@@ -920,7 +922,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   WaitFrames(4);
   ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 3);
   ObjectMotion_SetActionVariant(LOCALID_GARET, 3);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(40);
   FieldScript_WaitFrames(40);
 
@@ -1169,7 +1171,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
   ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(40);
   sparkles->stopped = 1;
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -1237,7 +1239,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   FieldScript_WaitFrames(20);
   sparkles->stopped = 0;
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-  PaletteFade_ApplyTarget(0x20119e, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(30, 12, 4), PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   FieldScript_WaitFrames(20);
   Map_StartCutscenePsynergy();
@@ -1248,7 +1250,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   }
   FieldScheduler_AddCallback(SolSanctumEruption_UpdateWiseOnePalette,
                              TASK_PRIORITY_MAP);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   FieldScript_WaitFrames(30);
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
@@ -1401,7 +1403,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
 
   sparkles->stopped = 0;
   MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-  PaletteFade_ApplyTarget(0x20119e, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(30, 12, 4), PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   FieldScript_WaitFrames(20);
   // The floor breaks up again in two places; the Wise One floats to each and
@@ -1435,7 +1437,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   }
   FieldScheduler_AddCallback(SolSanctumEruption_UpdateWiseOnePalette,
                              TASK_PRIORITY_MAP);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   FieldScript_WaitFrames(30);
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
@@ -1454,7 +1456,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   FieldScript_WaitFrames(60);
 
   MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-  PaletteFade_ApplyTarget(0x20119e, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(30, 12, 4), PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   FieldScript_WaitFrames(20);
   Script_PlaySong(SE_TREMOR);
@@ -1471,7 +1473,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   }
   FieldScheduler_AddCallback(SolSanctumEruption_UpdateWiseOnePalette,
                              TASK_PRIORITY_MAP);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   FieldScript_WaitFrames(30);
@@ -1489,7 +1491,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Script_PlaySong(SE_TREMOR);
   Script_PlaySong(MUS_ERUPTION);
   MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-  PaletteFade_ApplyTarget(0x20119e, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(30, 12, 4), PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   FieldScript_WaitFrames(20);
   Script_PlaySong(SE_TREMOR);
@@ -1525,11 +1527,11 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   FieldScheduler_AddCallback(SolSanctumEruption_UpdateWiseOnePalette,
                              TASK_PRIORITY_MAP);
   FieldScript_WaitFrames(20);
-  PaletteFade_ApplyTarget(0x7fff, 2);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_OBJECTS);
   // Fade the chamber away, stop its effects and leave through the rescue warp.
   PaletteFade_StartInterpolation(60);
   WaitFrames(100);
-  PaletteFade_ApplyTarget(0x7fff, 1);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   WaitFrames(60);
   Task_Remove(SolSanctumEruption_UpdateWiseOnePalette);
@@ -1632,16 +1634,16 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
     ObjectEvent_DestroyById(arcIndex + LOCALID_FIRST_CRYSTAL);
   switch (corner) {
   case CHAMBER_NORTHWEST:
-    PaletteFade_ApplyTarget(0x4039d2, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(18, 14, 14), PALETTES_BG);
     break;
   case CHAMBER_SOUTHWEST:
-    PaletteFade_ApplyTarget(0x4049d2, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(18, 14, 18), PALETTES_BG);
     break;
   case CHAMBER_NORTHEAST:
-    PaletteFade_ApplyTarget(0x404a4e, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(14, 18, 18), PALETTES_BG);
     break;
   case CHAMBER_SOUTHEAST:
-    PaletteFade_ApplyTarget(0x403a52, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(18, 18, 14), PALETTES_BG);
     break;
   }
   PaletteFade_StartInterpolation(60);
@@ -1723,7 +1725,7 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
   }
   WaitFrames(40);
   Task_Remove(SolSanctumEruption_UpdateElementalArcs);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(40);
 }
 
@@ -1765,7 +1767,7 @@ static void SolSanctumEruption_FadeCameraTo(s32 x, s32 z) {
   z *= PIXELS(1);
   x *= PIXELS(1);
   FieldCamera_MoveWithinMapBounds(x, -1, z, 1);
-  PaletteFade_SetTarget(0, 0);
+  PaletteFade_SetTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(20);
   WaitFrames(40);
   center->x.fixed = x;
@@ -1777,7 +1779,7 @@ static void SolSanctumEruption_FadeCameraTo(s32 x, s32 z) {
   WaitFrames(5);
   MapGrid_CenterOnFollowedPoint();
   WaitFrames(5);
-  PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(20);
   WaitFrames(30);
 }
@@ -1800,10 +1802,10 @@ static void SolSanctumEruption_SetMaterializationTint(s32 enabled, s32 frames,
                                                       s32 waitFrames) {
   if (enabled == 1) {
     Sound_PlaySong(SE_MATERIALIZE);
-    PaletteFade_SetTarget(0x203a52, 1);
+    PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(18, 18, 14), PALETTES_BG);
   } else {
     Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-    PaletteFade_SetTarget(PALETTE_TINT_NONE, 1);
+    PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_BG);
   }
   PaletteFade_StartInterpolation(frames);
   if (waitFrames != 0) {

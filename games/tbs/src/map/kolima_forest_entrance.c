@@ -60,6 +60,7 @@
 #include "text/msg_ids.h"
 #include "objcmd.h"
 #include "songs.h"
+#include "io_reg.h"
 #include "audio_engine_symbols.h"
 #include "fixed_math.h"
 
@@ -384,15 +385,15 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   KolimaForestEntrance_FaceObjectEventAndWait(LOCALID_IVAN, FACING_NORTH, 10);
   Script_PlaySong(SONG_FADE_OUT_BGM);
   Script_PlaySong(SE_CURSE_FALL);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   WaitFrames(1);
   gKolimaForestEntrance_SparkleSoundOn = 1;
   FieldScheduler_AddCallback(KolimaForestEntrance_SpawnCurseSparkle,
                              TASK_PRIORITY_MAP);
   WaitFrames(20);
-  PaletteFade_ApplyTarget(0x405210, 1);
-  PaletteFade_ApplyTarget(0x10000, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(16, 16, 20), PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(120);
   WaitFrames(60);
   squashAction = gKolimaForestEntrance_SquashAction;
@@ -455,7 +456,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   FieldScript_WaitFrames(160);
   Task_Remove(KolimaForestEntrance_SpawnCurseSparkle);
   FieldScript_WaitFrames(120);
-  PaletteFade_ApplyTarget(0x406218, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   WaitFrames(60);
   gFallingEffectWidth = 0;
@@ -540,7 +541,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Task_Remove(Kolima_UpdateCurseDust);
   FieldScript_WaitFrames(120);
   Script_PlaySong(SONG_FADE_OUT_BGM);
-  PaletteFade_ApplyTarget(0x10000, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   WaitFrames(60);
   ObjectMotion_EnableActionAndResetMotion(LOCALID_LEADER_PSYNERGY_FIELD);
@@ -769,7 +770,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   }
   Script_ShowMessage(LOCALID_GARET, 0);
   Script_PlaySong(MUS_FOREST);
-  PaletteFade_ApplyTarget(0x406218, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   WaitFrames(60);
   gFallingEffectWidth = 0;
@@ -920,7 +921,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Script_ShowMessage(LOCALID_TRET, 0);
   Task_Remove(Kolima_UpdateCurseDust);
   FieldScript_WaitFrames(80);
-  PaletteFade_ApplyTarget(0x10000, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   WaitFrames(80);
   ObjectMotion_EnableActionAndResetMotion(LOCALID_LEADER_PSYNERGY_FIELD);

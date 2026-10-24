@@ -322,11 +322,11 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveTo(PIXELS(512), -PIXELS(24), PIXELS(160), 1);
   FieldCamera_WaitForArrival();
-  PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
-  PaletteFade_ApplyTarget(PALETTE_TINT_PALE, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_ALL);
   PaletteFade_StartInterpolation(50);
   FieldScript_WaitFrames(50);
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(30);
   FieldScript_WaitFrames(30);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(504), PIXELS(168));
@@ -338,7 +338,7 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Import_ObjectEventSetAnimation(LOCALID_IVAN, 19);
   Import_ObjectEventSetAnimation(LOCALID_MIA, 19);
   FieldScript_WaitFrames(10);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(30);
   FieldScript_WaitFrames(30);
   FieldScript_WaitFrames(80);

@@ -1305,7 +1305,7 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
           ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_SLIDING_STATUE);
           FieldScript_WaitFrames(40);
           GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL);
-          PaletteFade_SetSource(PALETTE_TINT_NONE, 0);
+          PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
           gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
           FieldScript_FinishScreenTransition();
           FieldScript_WaitTransitionFrames();
@@ -1662,13 +1662,14 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     MercuryLighthouse_MiaCastsPlyOnEntrance();
     FieldScript_WaitFrames(50);
     Sound_PlaySong(SE_PSYNERGY_SPARKLE);
-    PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
-    PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(31, 20, 31), 0);
+    PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+    PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(31, 20, 31),
+                            PALETTES_ALL);
     PaletteFade_StartInterpolation(10);
     WaitFrames(1);
     Sound_PlaySong(SE_SHIMMER);
     WaitFrames(40);
-    PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
+    PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_StartInterpolation(60);
     WaitFrames(60);
     Sound_PlaySong(SE_MERCURY_LIGHTHOUSE_DOOR_OPEN);
@@ -1950,11 +1951,11 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     MercuryLighthouse_RaiseObjectEventWithSparks(LOCALID_PARTY_LEADER);
     FieldScript_WaitFrames(60);
     Task_Remove(MercuryLighthouse_CycleWaterfallPalette);
-    PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
-    PaletteFade_ApplyTarget(PALETTE_TINT_PALE, 0);
+    PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+    PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_ALL);
     PaletteFade_StartInterpolation(120);
     FieldScript_WaitFrames(120);
-    PaletteFade_ApplyTarget(0x7fff, 0);
+    PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
     PaletteFade_StartInterpolation(60);
     FieldScript_WaitFrames(60);
     Import_ScriptRequestWarp(
@@ -2032,12 +2033,12 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     ObjectEvent_WalkToAndWait(LOCALID_IVAN, 792, 200);
     FieldScript_WaitFrames(30);
     MercuryLighthouse_RaiseObjectEventWithSparks(LOCALID_IVAN);
-    PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
+    PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
     Task_Remove(MercuryLighthouse_CycleWaterfallPalette);
-    PaletteFade_ApplyTarget(PALETTE_TINT_PALE, 0);
+    PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_ALL);
     PaletteFade_StartInterpolation(120);
     FieldScript_WaitFrames(120);
-    PaletteFade_ApplyTarget(0x7fff, 0);
+    PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
     PaletteFade_StartInterpolation(60);
     FieldScript_WaitFrames(60);
     FieldScript_End();
@@ -2642,14 +2643,14 @@ s32 MercuryLighthouse_Initialize(void) {
         break;
       MercuryLighthouse_ArriveWithSparks();
       Map_QueueMusic(SE_AMBIENT_WATER);
-      PaletteFade_ApplySource(128 << 9, 0);
-      PaletteFade_SetTarget(0x10003, 1);
+      PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+      PaletteFade_SetTarget(PALETTE_TINT_WARM, PALETTES_BG);
       PaletteFade_StartInterpolation(30);
       FieldScript_WaitTransitionFrames();
       Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
       FieldScript_WaitFrames(30);
       FieldMessage_ShowCentered(MsgMercuryHonorsGoddessRainbows, 0, 0);
-      PaletteFade_SetTarget(128 << 9, 0);
+      PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
       PaletteFade_StartInterpolation(30);
       break;
     case MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE:

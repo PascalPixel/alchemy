@@ -760,8 +760,8 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   WAIT(20);
   // Tret tries to release the people of Kolima: the colours shift and sparks
   // swirl out from his face, then fade.
-  PaletteFade_ApplySource(0x10000, 0);
-  PaletteFade_ApplyTarget(0x406218, 1);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   WaitFrames(40);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
@@ -782,7 +782,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   Task_AddCallback(sparkTask, TASK_PRIORITY_MAP);
   WAIT(220);
   Task_Remove(sparkTask);
-  PaletteFade_ApplyTarget(0x10000, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   WaitFrames(40);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_BLINK);

@@ -309,10 +309,10 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
   if (leaderColumn == 12 && leaderRow == 32) {
     FieldScript_Start();
     // Fade the scene before releasing fifteen sparks above the pool.
-    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_StartInterpolation(60);
     FieldScript_WaitFrames(120);
-    PaletteFade_ApplyTarget(PALETTE_TINT_PALE, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_BG);
     PaletteFade_StartInterpolation(60);
     FieldScript_WaitFrames(40);
     sparkIndex = 0;
@@ -347,7 +347,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
                                TASK_PRIORITY_MAP);
     MapGrid_CopyCellsTo(37, 98, 10, 97, 5, 3);
     MapGrid_CopyCellAttributes(70, 32, 13, 7, 6, 32);
-    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_StartInterpolation(60);
     FieldScript_WaitFrames(120);
     FieldScript_End();
@@ -534,14 +534,14 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     ObjectEvent_Get(LOCALID_PARTY_LEADER)->gravity = 0x10000;
     ObjectEvent_Get(LOCALID_PARTY_LEADER)->bounce = 0x4000;
     if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED)) {
-      PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
-      PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
+      PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+      PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
       PaletteFade_StartInterpolation(30);
       FieldScript_WaitTransitionFrames();
       Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
       FieldScript_WaitFrames(30);
       FieldMessage_ShowCentered(MsgMercuryWhoHonorsHeart, 0, 0);
-      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
+      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
       PaletteFade_StartInterpolation(30);
     }
     FieldScript_End();

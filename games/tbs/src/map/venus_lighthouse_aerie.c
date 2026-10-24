@@ -1738,17 +1738,17 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
                               gVenusLighthouseAerie_BeamOpenAction);
   Script_PlaySong(SE_CRASH);
   MapGrid_SetShake(PIXELS(6), PIXELS(6), Q16_ONE);
-  PaletteFade_ApplyTarget(0x4063ff, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(31, 31, 24), PALETTES_ALL);
   PaletteFade_Interpolate(16);
   Task_Wait(20);
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(24);
   Task_Wait(60);
   Task_AddCallback(VenusLighthouseAerie_SpawnUpperOrbitParticles,
                    TASK_PRIORITY_MAP);
   Script_PlaySong(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-  PaletteFade_ApplyTarget(0x4063ff, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(31, 31, 24), PALETTES_ALL);
   PaletteFade_Interpolate(120);
   ObjectEvent_SetActionScript(LOCALID_BEAM_BOTTOM,
                               gVenusLighthouseAerie_BeamNarrowAction);
@@ -1756,12 +1756,12 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
                               gVenusLighthouseAerie_BeamNarrowAction);
   Task_Wait(120);
   MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
-  PaletteFade_ApplyTarget(0x203210, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(16, 16, 12), PALETTES_ALL);
   PaletteFade_Interpolate(120);
   Task_Wait(120);
   Script_PlaySong(MUS_ERUPTION);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_Interpolate(120);
   Task_Wait(120);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
@@ -1896,7 +1896,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   VenusLighthouseAerie_ShowMessage(LOCALID_GARET);
   Script_PlaySong(SONG_FADE_OUT_BGM);
   // Flash Saturos and Menardi and release their matching radial bursts.
-  PaletteFade_ApplyTarget(0x40250d, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(13, 8, 9), PALETTES_BG);
   PaletteFade_Interpolate(40);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_SATUROS,
                                        FACING_NORTH + FACING_STEP);
@@ -1986,10 +1986,10 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
 /// Flashes the object palette white, then restores the transformation colour.
 static void VenusLighthouseAerie_FlashScreen(void) {
   Sound_PlaySong(SE_FALLING_LIGHT);
-  PaletteFade_SetTarget(0x7fff, 1);
+  PaletteFade_SetTarget(RGB(31, 31, 31), PALETTES_BG);
   PaletteFade_StartInterpolation(1);
   WaitFrames(4);
-  PaletteFade_SetTarget(0x40250d, 1);
+  PaletteFade_SetTarget(PALETTE_TINT_BLEND | RGB(13, 8, 9), PALETTES_BG);
   PaletteFade_StartInterpolation(1);
   WaitFrames(1);
 }
@@ -2510,10 +2510,10 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
                               gVenusLighthouseAerie_BeamOpenAction);
   Sound_PlaySong(SE_CRASH);
   MapGrid_SetShake(PIXELS(6), PIXELS(6), Q16_ONE);
-  PaletteFade_ApplyTarget(0x4063ff, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(31, 31, 24), PALETTES_ALL);
   PaletteFade_StartInterpolation(16);
   WaitFrames(20);
-  PaletteFade_SetTarget(0x7fff, 0);
+  PaletteFade_SetTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(24);
   WaitFrames(60);
   Sound_PlaySong(SE_RUMBLE);
@@ -2589,7 +2589,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   Import_ObjectEventSetAnimation(LOCALID_SHEBA, SHEBA_ANIMATION_HANG_ONE_HAND);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SHEBA), 0);
   MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-  PaletteFade_SetTarget(0x4063ff, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_BLEND | RGB(31, 31, 24), PALETTES_ALL);
   PaletteFade_StartInterpolation(120);
   ObjectEvent_SetActionScript(LOCALID_BEAM_BOTTOM,
                               gVenusLighthouseAerie_BeamRiseAction);
@@ -2603,11 +2603,11 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
                               gVenusLighthouseAerie_BeamRiseAction);
   WaitFrames(120);
   MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
-  PaletteFade_SetTarget(0x203210, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(16, 16, 12), PALETTES_ALL);
   PaletteFade_StartInterpolation(120);
   WaitFrames(120);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(120);
   WaitFrames(120);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
@@ -2765,8 +2765,8 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
                              TASK_PRIORITY_MAP);
   gFieldWork->transitionFrames = 1;
   FieldScript_StartScreenTransition();
-  PaletteFade_ApplySource(RGB(31, 31, 31), 0);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
+  PaletteFade_ApplySource(RGB(31, 31, 31), PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(40);
   WaitFrames(60);
 }
@@ -3154,11 +3154,11 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
   case 0:
     Script_PlaySong(SE_SHIMMER);
     MapGrid_SetShake(PIXELS(6), PIXELS(6), Q16_ONE);
-    PaletteFade_ApplyTarget(0x2063ff, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(31, 31, 24), PALETTES_BG);
     PaletteFade_StartInterpolation(8);
     break;
   case 8:
-    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
     PaletteFade_StartInterpolation(8);
     break;
   case 16:
@@ -3179,7 +3179,8 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
   case 25:
     sTransitionStep--;
     if (center->y.fixed > 0) {
-      PaletteFade_ApplyTarget(0x203210, 0);
+      PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(16, 16, 12),
+                              PALETTES_ALL);
       PaletteFade_StartInterpolation(16);
       sTransitionStep++;
       ObjectEvent_Get(LOCALID_PARTY_LEADER)->riseCounter = 1;
@@ -3198,7 +3199,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
   case 26:
     sTransitionStep--;
     if (center->y.fixed > (PIXELS(40))) {
-      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
+      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
       PaletteFade_StartInterpolation(40);
       sTransitionStep++;
     } else {
@@ -3220,7 +3221,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
     break;
   case 36:
     Script_PlaySong(SE_FALLING_LIGHT);
-    PaletteFade_ApplyTarget(RGB(31, 31, 31), 0);
+    PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
     PaletteFade_StartInterpolation(12);
     break;
   case 48:

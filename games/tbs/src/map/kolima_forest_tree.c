@@ -266,7 +266,8 @@ static void KolimaForestTree_TalkToTret(void) {
     } else {
       FieldScript_SetMessageId(MsgKolimaSilence);
       Script_ShowMessage(LOCALID_TRET, 0);
-      PaletteFade_ApplyTarget(0x406218, 1);
+      PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24),
+                              PALETTES_BG);
       PaletteFade_StartInterpolation(20);
       WaitFrames(40);
       Script_ShowMessageAndWait(
@@ -274,7 +275,7 @@ static void KolimaForestTree_TalkToTret(void) {
       ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
       Script_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_TRETS_WRATHFUL_SIDE,
                          0);
-      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
+      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
       PaletteFade_StartInterpolation(20);
       WaitFrames(40);
     }
@@ -336,7 +337,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   // The wrathful side throws the leader back before the water can heal Tret.
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  PaletteFade_ApplyTarget(0x406218, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   WaitFrames(40);
   Script_PlaySong(SONG_FADE_OUT_BGM);
@@ -381,7 +382,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   FieldScript_WaitFrames(20);
   Script_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_TRETS_WRATHFUL_SIDE, 0);
   Map_PlayMusic();
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   WaitFrames(40);
   {
@@ -601,7 +602,7 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaPalette_Restore(0);
   PaletteFade_StartInterpolation(1);
   WaitFrames(1);
-  PaletteFade_ApplyTarget(0x406218, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(40);
   FieldScript_WaitFrames(60);
   gKolimaForestTreeSparkFrame = 0;
@@ -613,7 +614,7 @@ static void KolimaForestTree_RestoreTret(void) {
   FieldScheduler_AddCallback(spawnOrbitSparks, TASK_PRIORITY_MAP);
   FieldScript_WaitFrames(100);
   Task_Remove(spawnOrbitSparks);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(60);
   FieldScript_WaitFrames(100);
   KolimaPalette_Restore(0);
@@ -706,7 +707,7 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaPalette_Restore(0);
   PaletteFade_StartInterpolation(1);
   WaitFrames(1);
-  PaletteFade_ApplyTarget(0x406218, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(40);
   FieldScript_WaitFrames(60);
   gKolimaForestTreeSparkFrame = 0;

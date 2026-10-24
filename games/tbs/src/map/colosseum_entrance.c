@@ -85,6 +85,7 @@
 #include "macros.h"
 #include "flags.h"
 #include "songs.h"
+#include "io_reg.h"
 #include "audio_engine_symbols.h"
 
 static void ColosseumEntrance_ApplyArrivalState(void);
@@ -1558,16 +1559,16 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   ColosseumEntrance_PositionPartyForBriefing();
   WaitFrames(1);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  PaletteFade_SetSource(0, 0);
-  PaletteFade_ApplyTarget(0, 0);
+  PaletteFade_SetSource(RGB(0, 0, 0), PALETTES_ALL);
+  PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   WaitFrames(1);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 3);
   gFieldWork->transitionFrames = 1;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
-  PaletteFade_SetSource(0, 0);
-  PaletteFade_ApplyTarget(0x10002, 0);
+  PaletteFade_SetSource(RGB(0, 0, 0), PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_SEPIA, PALETTES_ALL);
   PaletteFade_StartInterpolation(40);
   FieldScript_WaitFrames(80);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FIRST_SOLDIER, 1);
@@ -1578,7 +1579,7 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
                                   FACING_SOUTHEAST + FACING_STEP);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FIRST_SOLDIER, 2);
   FieldScript_WaitFrames(20);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(40);
   FieldScript_WaitFrames(80);
   ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);

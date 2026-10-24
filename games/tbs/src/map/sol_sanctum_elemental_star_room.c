@@ -74,6 +74,7 @@
 #include "objcmd.h"
 #include "fixed_math.h"
 #include "palbuf.h"
+#include "io_reg.h"
 #include "flags.h"
 #include "songs.h"
 #include "audio_engine_symbols.h"
@@ -195,10 +196,10 @@ static void EventScript_BagVenusStar(void) {
   // Flash the room before revealing the crossings for this star.
   Sound_PlaySong(SE_RUMBLE);
   for (i = 0; i != 6; i++) {
-    PaletteFade_SetTarget(0x403a52, 1);
+    PaletteFade_SetTarget(PALETTE_TINT_BLEND | RGB(18, 18, 14), PALETTES_BG);
     PaletteFade_StartInterpolation(8);
     FieldScript_WaitFrames(8);
-    PaletteFade_SetTarget(PALETTE_TINT_NONE, 1);
+    PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_BG);
     PaletteFade_StartInterpolation(8);
     FieldScript_WaitFrames(8);
     if (i == 1) {
@@ -300,10 +301,10 @@ static void EventScript_BagMercuryStar(void) {
   FieldScript_Start();
   Script_PlaySong(SE_RUMBLE);
   for (i = 0; i != 6; i++) {
-    PaletteFade_ApplyTarget(0x404a4e, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(14, 18, 18), PALETTES_BG);
     PaletteFade_StartInterpolation(8);
     FieldScript_WaitFrames(8);
-    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
     PaletteFade_StartInterpolation(8);
     FieldScript_WaitFrames(8);
     if (i == 1) {
@@ -419,10 +420,10 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
 
   Script_PlaySong(SE_RUMBLE);
   for (i = 0; i != 6; i++) {
-    PaletteFade_ApplyTarget(0x4049d2, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(18, 14, 18), PALETTES_BG);
     PaletteFade_StartInterpolation(8);
     FieldScript_WaitFrames(8);
-    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
     PaletteFade_StartInterpolation(8);
     FieldScript_WaitFrames(8);
     if (i == 1) {
@@ -1265,10 +1266,10 @@ static void EventScript_TakeMarsStar(void) {
   FieldScript_Start();
   Script_PlaySong(SE_RUMBLE);
   for (pass = 0; pass != 6; pass++) {
-    PaletteFade_ApplyTarget(0x4039d2, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(18, 14, 14), PALETTES_BG);
     PaletteFade_StartInterpolation(8);
     FieldScript_WaitFrames(8);
-    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
     PaletteFade_StartInterpolation(8);
     FieldScript_WaitFrames(8);
     if (pass == 1) {
@@ -2126,7 +2127,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
 s32 SolSanctumElementalStarRoom_Initialize(void) {
   s32 ringLocalId;
 
-  PaletteFade_SetSource(PALETTE_TINT_NONE, 0);
+  PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   ringLocalId = LOCALID_FIRST_FLOATING_LIGHT;
   do {

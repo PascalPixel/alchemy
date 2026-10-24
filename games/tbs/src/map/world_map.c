@@ -2276,7 +2276,7 @@ static void WorldMap_ShowEndingScene(void) {
   WaitFrames(1);
   FieldEffect_ScheduleRatioTransition(3 * Q16_ONE / 2, 16);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   gFieldWork->transitionFrames = 16;
   FieldScript_StartScreenTransition();
   FieldScript_WaitForZoomTransition();
@@ -2379,7 +2379,7 @@ static void WorldMap_ShowEndingScene(void) {
   Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 60);
   WorldMap_LoadDefaultCellsAndUpdateBlock();
   Script_PlaySong(SONG_FADE_OUT_BGM);
-  PaletteFade_ApplyTarget(0, 0);
+  PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(120);
   WaitFrames(120);
   FieldScript_SetDestination((s32)&MapId_Title, TITLE_FROM_WORLD_MAP);
@@ -2394,8 +2394,8 @@ static void WorldMap_ShowEndingScene(void) {
 static void WorldMap_ShakeVenusLighthouse(void) {
   FieldScript_Start();
   Sound_PlaySong(SE_RUMBLE);
-  PaletteFade_SetSource(0, 0);
-  PaletteFade_SetTarget(0, 0);
+  PaletteFade_SetSource(RGB(0, 0, 0), PALETTES_ALL);
+  PaletteFade_SetTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   WaitFrames(2);
   gFieldWork->transitionFrames = 1;
@@ -2410,12 +2410,12 @@ static void WorldMap_ShakeVenusLighthouse(void) {
     TaskFunc callback = WorldMap_UpdateLighthouseQuake;
     FieldScheduler_AddCallback(callback, priority);
   }
-  PaletteFade_SetSource(0, 0);
-  PaletteFade_SetTarget(PALETTE_TINT_MUTED, 1);
-  PaletteFade_SetTarget(PALETTE_TINT_NONE, 2);
+  PaletteFade_SetSource(RGB(0, 0, 0), PALETTES_ALL);
+  PaletteFade_SetTarget(PALETTE_TINT_MUTED, PALETTES_BG);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(40);
   FieldScript_WaitFrames(240);
-  PaletteFade_SetTarget(0, 0);
+  PaletteFade_SetTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(80);
   WaitFrames(90);
   Import_ScriptRequestWarp(WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE);
@@ -2613,7 +2613,7 @@ static void WorldMap_ShowIslandDrifting(void) {
   ObjectEvent_SetActionScript(LOCALID_DRIFTING_ISLAND, gIslandDriftsEast);
   FieldScheduler_AddCallback(WorldMap_SpawnIslandWake, TASK_PRIORITY_MAP);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   gFieldWork->transitionFrames = 32;
   FieldScript_StartScreenTransition();
   FieldScript_WaitFrames(120);

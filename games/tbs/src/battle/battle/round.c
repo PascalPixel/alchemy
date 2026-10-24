@@ -58,7 +58,7 @@ void Palette_UpdatePulseBrightness(void) {
 
 /// Sets the camera up for the fixed view the battle shows while commands are
 /// chosen, raised by verticalOffset pixels, with its projection and the
-/// background's perspective to match. Called by
+/// background's zoom to match. Called by
 /// Battle_GatherActions, and through its far stub by
 /// Battle_CollectPartyCommands and UpdateLinkSessionCountdown. Writes the
 /// camera, gBattleBackgroundWork's targetYaw and flag (left 1, so the camera

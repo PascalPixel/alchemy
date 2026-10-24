@@ -8,7 +8,7 @@ void DebugBattle_RunMenuFar(void);
 /// lacks; with `refresh`, every listed unit's pose is set again afterwards.
 void BattleObject_SpawnObjectsForListFar(s16 *list, s32 refresh);
 /// Points the battle camera at (x, depth, y) with a zoom in percent and lines
-/// the background's perspective plane up with it.
+/// the zoomed background up with it.
 void BattleCamera_SetViewFar(s32 x, s32 depth, s32 y, s32 zoom);
 /// Points the battle camera at the ground between two units, with a zoom in
 /// percent, for a paired action or a beam.

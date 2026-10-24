@@ -66,7 +66,7 @@ s32 BattleTransition_RunMosaicFadeOut(void) {
   return 0;
 }
 
-/// Builds the perspective plane's 32 by 32 affine map: tiles 0 to 255 in its
+/// Builds the zoomed background's 32 by 32 affine map: tiles 0 to 255 in its
 /// first eight rows, 0 to 223 in the next seven, and 0xff in the rest.
 /// The two runs show the background picture's two halves, which the
 /// scanline BG2CNT values (BattleCamera_SetRange) read from character blocks 2
@@ -123,7 +123,7 @@ void BattleTransition_BuildTilemap(void *tilemap) {
   Iwram_FillWords(destination, 0x280, 0x03ff03ff);
 }
 
-/// Shows the perspective plane's finished page each frame while the
+/// Shows the zoomed background's finished page each frame while the
 /// background is BATTLE_BACKGROUND_ZOOMED: its first line's BG2CNT now, the
 /// rest by HBlank DMA 0, and its affine parameters into BG2PA to BG2Y. Runs
 /// each frame as a task, in the VBlank pass at its highest

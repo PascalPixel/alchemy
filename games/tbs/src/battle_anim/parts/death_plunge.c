@@ -603,7 +603,7 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
   // Aim the camera at the field's centre at 100% zoom, lining the battle
-  // background's perspective plane up with it.
+  // zoomed background up with it.
   BattleCamera_SetViewFar(0, 0, 0, 100);
   view->secondMode = BATTLE_BACKGROUND_NONE;
   ANIM_SET_CANVAS_AFFINE();

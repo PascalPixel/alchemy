@@ -110,7 +110,7 @@ above the zone's meets its battles less often, and with Avoid active none.
 `Field_ProcessStep` rolls on the zone underfoot through
 `Encounter_RollLayoutStep`, or `Encounter_RollWorldMap` on the world map, and
 both call `Encounter_CountStepsAndSelectFormation`
-([`overworld/encounter.c`](overworld/encounter.c)), which despite its name
+([`overworld/encounter.c`](overworld/encounter.c)), which
 runs on every frame the leader moves. It is passed the leader's speed limit,
 doubled while `FLAG_LURE_CAP` is set. There is no battle when
 `FLAG_NO_ENCOUNTERS` or `FLAG_NO_ENCOUNTERS_IN_MAPSEC` is set, on zone 0, while

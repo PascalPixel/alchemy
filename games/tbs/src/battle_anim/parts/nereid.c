@@ -104,7 +104,7 @@ void BattleAnim_RunNereid(struct BattleAnimArgs *effect) {
     sparks = PARTICLES;
     BattleAnim_SelectLivingTargets(work->effect);
     WaitFrames(1);
-    BattleAnim_SpawnObjects(NEREID_OBJECTS, 380, 2);
+    BattleAnim_SpawnObjects(NEREID_OBJECTS, SPRITE_NEREID, 2);
 
     for (frame = 0; frame != NEREID_FRAMES; frame++) {
       if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 32 && frame <= 97)

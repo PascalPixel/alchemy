@@ -125,8 +125,8 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
           Transform_ApplyRoll((frame - start) << 10);
           Transform_ApplyYaw(0x4000);
           scale.x = ((frame - start) << 12) + 0x1000;
-          if (scale.x > 0x10000)
-            scale.x = 0x10000;
+          if (scale.x > Q16_ONE)
+            scale.x = Q16_ONE;
           scale.y = scale.x;
           scale.z = scale.x;
           Transform_ApplyScale(Vector3_Coordinates(&scale));

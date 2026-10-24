@@ -58,6 +58,7 @@
 #include "unit/battle_anim/battle_anim_bits.h"
 #include "call.h"
 #include "macros.h"
+#include "sprite_ids.h"
 
 // Display, palette and scanline effects.
 //
@@ -345,6 +346,16 @@ enum CameraPhase {
   CAMERA_PHASE_FRAME_DONE, ///< the animation has finished a frame: turn the
                            ///< whole delta
   CAMERA_PHASE_HALF_TURNED ///< half a delta turned on an unmarked frame
+};
+
+/// Where each range of BattleAnim_DispatchByIdRange's animation kinds starts:
+/// the casting impacts (the kind less ANIM_RANGE_CASTING_IMPACT is an enum
+/// CastingImpact), the beam sequences, which also take every kind below the
+/// casting impacts, and the ring and spark scene, which plays critical hits.
+enum BattleAnimIdRange {
+  ANIM_RANGE_CASTING_IMPACT = 100,
+  ANIM_RANGE_BEAM_SEQUENCE = 136,
+  ANIM_RANGE_RING_AND_SPARK = ANIM_ID_CRITICAL_OFFSET
 };
 
 #endif // ALCHEMY_BATTLE_ANIM_INTERNAL_H

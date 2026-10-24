@@ -155,7 +155,7 @@ void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *effect, s32 mode) {
   if (mode == PALETTE_PARTICLES_TIAMAT) {
     BattleAnim_SelectLivingTargets(work->effect);
     WaitFrames(1);
-    BattleAnim_SpawnObjects(8, 377, 2);
+    BattleAnim_SpawnObjects(8, SPRITE_TIAMAT, 2);
   }
 
   for (frame = 0; frame != PALETTE_PARTICLES_FRAMES; frame++) {

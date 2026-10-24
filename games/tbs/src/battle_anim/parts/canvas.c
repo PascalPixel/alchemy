@@ -253,7 +253,7 @@ void Palette_StepFadeTransfer(void) {
 
     Graphics_ScaleRgb555ClampedFar(battle->palette,
                                    (void *)&BG_PLTT_COLOR(6, 0),
-                                   0x10000 - step * CANVAS_FADE_STEP, 128);
+                                   Q16_ONE - step * CANVAS_FADE_STEP, 128);
     work->fadeFrames--;
   }
 }
@@ -415,7 +415,8 @@ void BattleAnim_OpenCanvasLayer(s32 bgControl) {
                       IO_WRITE_16);
   gBgScroll[1].y = 32;
   WaitFrames(1);
-  BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 128);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background,
+                              BATTLE_BACKGROUND_FADE_RESTORE);
   work->fadeFrames = 24;
   work->fadeStep = 0;
   Task_Add(Palette_StepFadeTransfer, TASK_PRIORITY_MAIN_LOOP);

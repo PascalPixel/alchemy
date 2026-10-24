@@ -86,8 +86,8 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *effect) {
   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
   BattleAnim_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleAnim_SelectLivingTargets(work->effect);
-  // The formation: nine objects from resource object 370, sprite priority 1.
-  BattleAnim_SpawnObjects(9, 370, 1);
+  // The formation: nine objects of SPRITE_ATALANTA, sprite priority 1.
+  BattleAnim_SpawnObjects(9, SPRITE_ATALANTA, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SlashSheet, work->sheet, 1, 1);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_LimePalette), 128);

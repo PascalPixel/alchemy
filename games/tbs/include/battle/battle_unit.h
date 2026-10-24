@@ -234,6 +234,9 @@ enum AbilityUse {
 /// Unit.classId of an enemy, which has no class of its own.
 #define CLASS_NONE 0
 
+/// Unit ids from 128 are the enemies'.
+#define FIRST_ENEMY_UNIT 128
+
 /// Unit.poison: the poison takes a tenth of the maximum HP at the end of
 /// each turn, deadly poison a fifth.
 #define POISON_NORMAL 1

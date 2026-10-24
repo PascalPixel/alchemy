@@ -188,7 +188,7 @@ void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *effect) {
 /// formation: the summon's layout (enum SummonFormation); any other value
 ///            places nothing.
 void BattleAnim_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
-  static struct SpriteScale normalScale = {{{0x10000, 0x10000}}};
+  static struct SpriteScale normalScale = {{{Q16_ONE, Q16_ONE}}};
   static struct SpriteScale largeScale = {{{0x14000, 0x14000}}};
   struct BattleAnimWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   struct SpriteScale normal = normalScale;

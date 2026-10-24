@@ -110,7 +110,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
   BattleAnim_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_WIN0H = WIN_RANGE(240, 240);
   BattleAnim_SelectLivingTargets(work->effect);
-  BattleAnim_SpawnObjects(NEPTUNE_OBJECTS, 0x17a, 1);
+  BattleAnim_SpawnObjects(NEPTUNE_OBJECTS, SPRITE_NEPTUNE, 1);
   gProjection.centerY = 240;
   WaitFrames(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,

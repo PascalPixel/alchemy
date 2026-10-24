@@ -70,7 +70,7 @@ struct JudgmentWork {
 /// before it returns removes its transfer callback and closes the canvas
 /// layer.
 void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
-  static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
+  static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
   s32 anchor[3];
   struct ScreenPoint projectedPosition;
   struct SpritePlacement place;
@@ -128,7 +128,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
   // back.
   BattleAnim_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleAnim_SelectLivingTargets(work->effect);
-  BattleAnim_SpawnObjects(JUDGMENT_FORMATION_OBJECTS, 0x17e, 1);
+  BattleAnim_SpawnObjects(JUDGMENT_FORMATION_OBJECTS, SPRITE_JUDGMENT, 1);
   gProjection.centerY = 240;
   WaitFrames(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
@@ -331,7 +331,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
       zoom = -0x80000;
     }
     if (frame == 146) {
-      zoom = 0x10000;
+      zoom = Q16_ONE;
     }
 
     if (frame == 72) {
@@ -450,7 +450,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
   }
 
   for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
-    struct Sprite *animation = Sprite_CreateFar(390);
+    struct Sprite *animation = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
     work->animations[i] = animation;
     if (animation != 0) {
       animation->flags = 0;

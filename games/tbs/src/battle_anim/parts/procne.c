@@ -39,7 +39,7 @@
 /// objects of the block on frame 160 and releases them before closing the
 /// canvas.
 void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
-  static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
+  static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
   void **slots;
   void *canvas;
   struct BattleCamera *camera;
@@ -299,7 +299,7 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
       BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
                                   (s32)&ResourceId_VioletSkyBackdrop, 8);
       BattleAnim_SelectLivingTargets(work->effect);
-      BattleAnim_SpawnObjects(9, 376, 2);
+      BattleAnim_SpawnObjects(9, SPRITE_PROCNE, 2);
 
       resource = Resource_GetTableEntry((s32)&ResourceId_VioletCometSheet);
       Iwram_CopyWords((void *)BG_PLTT, resource, 0x80);
@@ -362,8 +362,8 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
       drift.x /= 2;
       drift.y /= 2;
 
-      scale.x = 0x10000;
-      scale.y = 0x10000;
+      scale.x = Q16_ONE;
+      scale.y = Q16_ONE;
       place.groundHeight = 0;
       // Object i is placed 64i pixels lower and raised 64i pixels higher,
       // which cancel on the screen but give it a draw slot 32i later

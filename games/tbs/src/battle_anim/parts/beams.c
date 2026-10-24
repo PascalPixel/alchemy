@@ -4,10 +4,10 @@
 
 #include "../battle_anim_internal.h"
 
-/// The beam sequence's pictures, by animation kind: the kinds below 100 that
-/// BattleAnim_DispatchByIdRange sends here. No ability's row selects one; the
-/// unused BattleStaging_RunPlainAttack plays an attack's kind, 0 for
-/// Attack.
+/// The beam sequence's pictures, by animation kind: the kinds below
+/// ANIM_RANGE_CASTING_IMPACT that BattleAnim_DispatchByIdRange sends here. No
+/// ability's row selects one; the unused BattleStaging_RunPlainAttack plays an
+/// attack's kind, 0 for Attack.
 enum BeamKind {
   BEAM_PLAIN_ATTACK,  ///< blue arc A: Attack's kind
   BEAM_ARC_A,         ///< blue arc A
@@ -22,8 +22,9 @@ enum BeamKind {
 /// a yellow orb flashes over it and sparks fly off, for 32 frames in all.
 /// effect->kind picks the picture.
 ///
-/// Reached through BattleAnim_DispatchByIdRange for kinds 136 to 199 and,
-/// through its unsigned test, every kind below 100;
+/// Reached through BattleAnim_DispatchByIdRange for kinds from
+/// ANIM_RANGE_BEAM_SEQUENCE to below ANIM_RANGE_RING_AND_SPARK and,
+/// through its unsigned test, every kind below ANIM_RANGE_CASTING_IMPACT;
 /// BattleStaging_RunPlainAttack (battle/staging.c) sends every plain
 /// attack there. Only the kinds of enum BeamKind have pictures. Shows the
 /// canvas on BG1 (BattleAnim_SetupCanvasTileMap), loads palette colours 0 to
@@ -99,9 +100,9 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
   draw[0] = slots[HEAP_SLOT_RAM_CODE];
   draw[1] = slots[HEAP_SLOT_RAM_CODE_2];
   WaitFrames(1);
-  // The picture, by BeamKind. An enemy user (unit id above 7) takes the small
-  // Mars Djinni's palette, a party member the crescent's. The sparks and the
-  // yellow orb follow.
+  // The picture, by BeamKind. An enemy user (unit id past PIERS) takes the
+  // small Mars Djinni's palette, a party member the crescent's. The sparks and
+  // the yellow orb follow.
   if (kind == BEAM_WAVE) {
     Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, work->sheet, 1, 1);
   } else if (kind == BEAM_IMAGE) {
@@ -121,7 +122,7 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
       break;
     }
   }
-  if (work->effect->user > 7)
+  if (work->effect->user > PIERS)
     Iwram_CopyWords(
         colors, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
         128);
@@ -264,14 +265,15 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
 }
 
 /// Plays the selected ring-and-spark strike, restoring the user motion after
-/// it. Kinds above 199 first gather 64 motes of light into the user for 32
-/// frames while it stands still; then star burst and crescent rings flash
-/// over the canvas and sparks fly from the first target for 32 frames, and
-/// the background palette fades back in.
+/// it. Kinds from ANIM_RANGE_RING_AND_SPARK first gather 64 motes of light
+/// into the user for 32 frames while it stands still; then star burst and
+/// crescent rings flash over the canvas and sparks fly from the first target
+/// for 32 frames, and the background palette fades back in.
 ///
-/// Reached through BattleAnim_DispatchByIdRange for kinds 200 and up, which
-/// BattleStaging_RunAttack (battle/staging.c) makes by adding 200 to the
-/// kind of a critical hit; so the gathering always plays. Shows the canvas on
+/// Reached through BattleAnim_DispatchByIdRange for kinds from
+/// ANIM_RANGE_RING_AND_SPARK, which BattleStaging_RunAttack
+/// (battle/staging.c) makes by adding ANIM_ID_CRITICAL_OFFSET to the kind of a
+/// critical hit; so the gathering always plays. Shows the canvas on
 /// BG1, keeps the battle's transition centred between the user and the first
 /// target while it loads, scrolls BG1 through gBgScroll[1] and uses
 /// work->particles 0 to 63, work->imageStorage, Ram_MapGridCellBuffer and both
@@ -313,16 +315,17 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
   ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sheet = ANIM_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
   camera = ANIM_SLOT(heapCache, HEAP_SLOT_CAMERA);
-  // DEAD: the test is never true, as only kinds 200 and up reach this
-  // runner (BattleAnim_DispatchByIdRange), so big stays 1; the ROM keeps it.
+  // DEAD: the test is never true, as only kinds from
+  // ANIM_RANGE_RING_AND_SPARK reach this runner
+  // (BattleAnim_DispatchByIdRange), so big stays 1; the ROM keeps it.
   big = 1;
-  if (effect->kind <= 199)
+  if (effect->kind < ANIM_RANGE_RING_AND_SPARK)
     big = 0;
   work->effect = effect;
   // Load the blitters and pictures a step a frame, keeping the transition
   // centred between the user and the first target meanwhile. The star
   // burst goes to the image storage and the crescent to the map grid cell
-  // buffer; an enemy user (unit id above 7) also takes the small Mars
+  // buffer; an enemy user (unit id past PIERS) also takes the small Mars
   // Djinni's palette.
   BattleCamera_SetViewAtPairMidpointFar(effect->user, effect->firstTarget, 130);
   WaitFrames(1);
@@ -352,7 +355,7 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
   WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_CrescentSheet,
                              Ram_MapGridCellBuffer, 1, 1);
-  if (work->effect->user > 7)
+  if (work->effect->user > PIERS)
     Iwram_CopyWords(
         colors, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
         128);

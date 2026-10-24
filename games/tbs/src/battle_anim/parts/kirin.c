@@ -33,8 +33,8 @@
 /// the frames before it starts); PARTICLES 32i to 32i + 31 are target i's
 /// burst motes, variant their frames left.
 void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
-  static struct SpriteScale sweepScale = {{{0x10000, 0x10000}}};
-  static struct SpriteScale riseScale = {{{0x10000, 0x10000}}};
+  static struct SpriteScale sweepScale = {{{Q16_ONE, Q16_ONE}}};
+  static struct SpriteScale riseScale = {{{Q16_ONE, Q16_ONE}}};
   void **cursor;
   struct SpritePlacement place;
   struct ScreenPoint unit;
@@ -74,7 +74,7 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
   // it only window 1 applies, which shows no sprites, so the row rides in from
   // behind that edge until the rise opens window 0 again.
   BattleAnim_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
-  BattleAnim_SpawnObjects(KIRIN_OBJECTS, 0x175, 1);
+  BattleAnim_SpawnObjects(KIRIN_OBJECTS, SPRITE_KIRIN, 1);
   gProjection.centerY = 240;
   BattleAnim_SelectLivingTargets(work->effect);
   REG_WININ = ANIM_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |

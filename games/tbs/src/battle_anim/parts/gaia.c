@@ -27,7 +27,7 @@
 ///         Rockfall, wider for Mother Gaia and Rockslide, widest for Grand
 ///         Gaia and Avalanche.
 void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
-  static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
+  static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
   void **slots;
   void **cursor;
   struct BattleAnimWork *work;
@@ -129,10 +129,10 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
-  // The rock objects, made from resource 390: objects 0 to 3 play animation
+  // The rock objects, of SPRITE_BATTLE_ROCKS: objects 0 to 3 play animation
   // 0, 4 to 7 animation 1 and 8 to 10 animation 2.
   for (i = 0; i != GAIA_ROCKS; i++) {
-    struct Sprite *rock = Sprite_CreateFar(390);
+    struct Sprite *rock = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
 
     work->animations[i] = rock;
     if (rock != 0) {

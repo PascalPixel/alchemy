@@ -35,7 +35,7 @@
 /// consume random numbers.
 void BattleAnim_RunRamses(struct BattleAnimArgs *effect) {
   // Every object of the scene takes this scale.
-  static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
+  static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
   struct SpritePlacement position;
   DrawRectangle draw[2];
   struct SpriteScale scale;
@@ -64,12 +64,12 @@ void BattleAnim_RunRamses(struct BattleAnimArgs *effect) {
   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
   BattleAnim_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   BattleAnim_SelectLivingTargets(work->effect);
-  // Nine objects of resource 379, the formation (0 to 6) and the orb (7 and
-  // 8), then the six rocks from resource 390, each playing one of its three
-  // animations.
-  BattleAnim_SpawnObjects(9, 379, 2);
+  // Nine objects of SPRITE_RAMSES, the formation (0 to 6) and the orb (7 and
+  // 8), then the six rocks of SPRITE_BATTLE_ROCKS, each playing one of its
+  // three animations.
+  BattleAnim_SpawnObjects(9, SPRITE_RAMSES, 2);
   for (i = 0; i != RAMSES_ROCKS; i++) {
-    struct Sprite *animation = Sprite_CreateFar(390);
+    struct Sprite *animation = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
 
     work->animations[9 + i] = animation;
     if (animation != 0) {

@@ -68,7 +68,7 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
   cursor = gBattleAnimWork;
   ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
-  BattleAnim_SpawnObjects(8, 0x177, 1);
+  BattleAnim_SpawnObjects(8, SPRITE_CYBELE, 1);
 
   // Setup. The dissolve order: eight shuffled runs of the columns 0 to 127,
   // each shuffled by 128 random swaps.

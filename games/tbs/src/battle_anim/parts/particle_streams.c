@@ -209,7 +209,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
       }
     }
   } else {
-    BattleAnim_SpawnObjects(1, 381, 3);
+    BattleAnim_SpawnObjects(1, SPRITE_METEOR, 3);
   }
   // The starfield: load the flame sheet (and in Outer Space the bolt's
   // palette), fill the screen map, give palette entries 128 to 190 random

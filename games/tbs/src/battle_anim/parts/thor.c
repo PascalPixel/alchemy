@@ -235,7 +235,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
         SET_VECTOR(scale, frame * 0x1800 - 0xd9400, scale[0], scale[0]);
         size = 5;
       } else {
-        SET_VECTOR(scale, 0x10000 - sinkFrame * 3 * 0x400, scale[0], scale[0]);
+        SET_VECTOR(scale, Q16_ONE - sinkFrame * 3 * 0x400, scale[0], scale[0]);
       }
       Transform_ApplyScale(scale);
     } else {
@@ -376,9 +376,9 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
   Task_Remove(BattleAnim_AdvanceScrollOnInterval);
   BattleAnim_SetupBlendedDisplay();
   BattleAnim_SelectLivingTargets(work->effect);
-  // Nine objects of resource 0x173, the formation (SUMMON_FORMATION_THOR),
+  // Nine objects of SPRITE_THOR, the formation (SUMMON_FORMATION_THOR),
   // released at the end.
-  BattleAnim_SpawnObjects(9, 0x173, 1);
+  BattleAnim_SpawnObjects(9, SPRITE_THOR, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
                              Ram_MapGridCellBuffer, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,

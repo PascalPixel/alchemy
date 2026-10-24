@@ -53,9 +53,9 @@ void BattleAnim_RunFlare(struct BattleAnimArgs *effect) {
   // The arc: from -90 to 90 degrees in steps of 22.5, half an ellipse with
   // radii of 32 pixels across and 16 up and down, centred on x 20 (84 on the
   // party's side) and dipping from y 40 at its ends to 56 at its middle.
-  // Against enemies (ids from 128) it runs from the left, otherwise from
-  // the right.
-  if (work->effect->targets[0] > 127) {
+  // Against enemies (ids from FIRST_ENEMY_UNIT) it runs from the left,
+  // otherwise from the right.
+  if (work->effect->targets[0] >= FIRST_ENEMY_UNIT) {
     originX = 0;
     direction = 1;
   } else {

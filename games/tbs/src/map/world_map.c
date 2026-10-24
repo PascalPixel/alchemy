@@ -188,7 +188,8 @@ static s32 WorldMap_GetRowingBalance(void);
 static s32 WorldMap_GetSeatRowValue(u32 seat);
 static void WorldMap_ShowIslandDrifting(void);
 static void WorldMap_UpdateStormTimer(void);
-static void WorldMap_PlayLighthouseTransition(s32 palette);
+static void
+WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse);
 
 /// The object events WorldMap_UpdateLocationContacts looks at, the placed ones
 /// to the last slot, and the base of the metatile behaviors a touch raises
@@ -886,11 +887,11 @@ s32 WorldMap_Initialize(void) {
     GameFlag_Set(FLAG_DEBUG_STEPS_OFF);
   }
   if (*warpDest == WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT) {
-    WorldMap_PlayLighthouseTransition(0);
+    WorldMap_PlayLighthouseTransition(WORLD_MAP_LIGHTHOUSE_MERCURY);
     FieldScript_SetDestination((s32)&MapId_MercuryLighthouseAerie,
                                MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT);
   } else if (*warpDest == WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT) {
-    WorldMap_PlayLighthouseTransition(1);
+    WorldMap_PlayLighthouseTransition(WORLD_MAP_LIGHTHOUSE_VENUS);
     FieldScript_SetDestination((s32)&MapId_VenusLighthouseAerie,
                                VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT);
   } else if (*warpDest == WORLD_MAP_AFTER_BLACK_ORB_DEFEAT) {
@@ -2812,8 +2813,8 @@ static inline void WorldMap_ShowTransitionFrame(u8 *buffer, s32 offset,
 }
 
 /// The lighthouse transition, after a beacon is lit: seven frames, tile maps
-/// drawn on BG0 in the lighthouse's colours (gWorldMapPalettes, palette 0 for
-/// Mercury and 1 for Venus), are a ball of light over the lighthouse's top
+/// drawn on BG0 in the lighthouse's colours (gWorldMapPalettes, by enum
+/// WorldMapLighthouse), are a ball of light over the lighthouse's top
 /// that swells frame by frame as the map darkens behind it, holds for 140
 /// frames and shrinks again; then the camera shakes and the screen closes for
 /// the aerie
@@ -2821,7 +2822,8 @@ static inline void WorldMap_ShowTransitionFrame(u8 *buffer, s32 offset,
 /// Called by WorldMap_Initialize at WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT and
 /// WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT. Clears FLAG_KEEP_PARTY_POSITION and
 /// sets FLAG_SKIP_MAP_CHANGE_SOUND.
-static void WorldMap_PlayLighthouseTransition(s32 palette) {
+static void
+WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
   u8 *buffer = AllocEwram(0x4000);
 
   WaitFrames(1);
@@ -2830,7 +2832,7 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
   FieldDecompress_TaggedLz(gWorldMapPackedTiles, buffer);
   FieldDecompress_TaggedLz(gWorldMapPackedFrames, buffer + 0x1000);
   IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT[14 * 16],
-                      (u32)(gWorldMapPalettes + palette * 32),
+                      (u32)(gWorldMapPalettes + lighthouse * 32),
                       DMA_ENABLE << 16 | 16);
   IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0) + 0x1000, (u32)buffer,
                       (DMA_ENABLE | DMA_32BIT) << 16 | 0x400);

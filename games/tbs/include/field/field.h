@@ -116,8 +116,16 @@ extern const u8 gWorldMapPackedFrames[];
 /// The lighthouse transition's tiles, packed (tagged LZ).
 extern const u8 gWorldMapPackedTiles[];
 /// The lighthouse transitions' palettes, 32 bytes each, loaded as BG palette
-/// 14.
+/// 14; indexed by enum WorldMapLighthouse.
 extern const u8 gWorldMapPalettes[];
+
+/// The lighthouse whose beacon the world map shows lit
+/// (WorldMap_PlayLighthouseTransition), as gWorldMapPalettes orders their
+/// colours.
+enum WorldMapLighthouse {
+  WORLD_MAP_LIGHTHOUSE_MERCURY,
+  WORLD_MAP_LIGHTHOUSE_VENUS,
+};
 /// Which of the two guides' turns Kalay_AlternateGuidesPacing is at, 0 to 4.
 extern s32 gKalay_DanceStep;
 /// The percent chance that a line above the split shows the shaken scroll: 0

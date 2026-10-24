@@ -58,7 +58,7 @@ SECTIONS
         "*/resource_68f_overlay.o"(.text.x0200a5e0)
         "*/games/tla/src/scene/tundaria_tower/events_h.o"(.text)
         "*/resource_68f_overlay.o"(.text.x0200a764)
-        "*/resource_68f_overlay.o"(.text.x0200a950)
+        "*/games/tla/src/field/common/effect/advance_motion_priority.o"(.text)
         "*/resource_68f_overlay.o"(.text.x0200a9d0)
         "*/resource_68f_overlay.o"(.text.x0200ab04)
         "*/resource_68f_overlay.o"(.text.x0200ac1c)

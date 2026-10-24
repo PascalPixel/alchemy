@@ -30,7 +30,6 @@ SECTIONS
         "*/resource_6ab_overlay.o"(.text.x020095ec)
         "*/games/tla/src/scene/mars_lighthouse_star_room/spawn.o"(.text)
         "*/resource_6ab_overlay.o"(.text.x020097c8)
-        "*/resource_6ab_overlay.o"(.text.x02009928)
         "*/games/tla/src/scene/mars_lighthouse_star_room/spawn2.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/s19b4.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/s1a9c.o"(.text)

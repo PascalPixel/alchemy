@@ -77,7 +77,7 @@ SECTIONS
         "*/resource_692_overlay.o"(.text.x0200c2f8)
         "*/games/tla/src/scene/magma_rock_inside/s4460.o"(.text)
         "*/resource_692_overlay.o"(.text.x0200c47c)
-        "*/resource_692_overlay.o"(.text.x0200c668)
+        "*/games/tla/src/field/common/effect/advance_motion_priority.o"(.text)
         "*/resource_692_overlay.o"(.text.x0200c6e8)
         "*/resource_692_overlay.o"(.text.x0200c81c)
         "*/resource_692_overlay.o"(.text.x0200c934)

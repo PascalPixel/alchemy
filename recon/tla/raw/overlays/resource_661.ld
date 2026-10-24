@@ -24,7 +24,7 @@ SECTIONS
         "*/games/tla/src/scene/yampi_desert/s0994.o"(.text)
         "*/games/tla/src/scene/yampi_desert/s0a10.o"(.text)
         "*/games/tla/src/scene/yampi_desert/s0a8c.o"(.text)
-        "*/resource_661_overlay.o"(.text.x02008b04)
+        "*/games/tla/src/field/common/effect/advance_motion_priority.o"(.text)
         "*/resource_661_overlay.o"(.text.x02008b84)
         "*/games/tla/src/scene/yampi_desert/s0c34.o"(.text)
         "*/games/tla/src/scene/yampi_desert/s0e78.o"(.text)

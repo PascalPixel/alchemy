@@ -25,7 +25,7 @@ SECTIONS
         "*/games/tla/src/scene/gaia_rock_inside/s06f8.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s0718.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s0748.o"(.text)
-        "*/resource_681_overlay.o"(.text.x02008774)
+        "*/games/tla/src/field/common/effect/advance_motion_priority.o"(.text)
         "*/resource_681_overlay.o"(.text.x020087f4)
         "*/games/tla/src/scene/gaia_rock_inside/s08b4.o"(.text)
         "*/resource_681_overlay.o"(.text.x02008900)

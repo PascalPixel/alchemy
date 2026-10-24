@@ -1189,45 +1189,6 @@ Func_02000a68:
 	pop {r5, r6, r7, pc}
 .L_02008b2c:
 	.4byte 0xffff0000
-	.section .text.x02008b30,"ax",%progbits
-	.global Func_02000b30
-	.thumb_func
-Func_02000b30:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	adds r7, r1, #0
-	bl Object_GetById
-	movs r2, #85
-	adds r5, r0, #0
-	adds r2, r2, r5
-	movs r3, #3
-	strb r3, [r2]
-	movs r6, #60
-	mov r8, r2
-.L_02008b4a:
-	cmp r6, #0
-	beq .L_02008b5c
-	movs r0, #1
-	bl WaitFrames
-	ldr r3, [r5, #40]
-	subs r6, #1
-	cmp r3, #0
-	bne .L_02008b4a
-.L_02008b5c:
-	cmp r7, #0
-	beq .L_02008b66
-	adds r0, r7, #0
-	bl Func_02002eec
-.L_02008b66:
-	movs r0, #10
-	bl WaitFrames
-	movs r3, #0
-	mov r2, r8
-	strb r3, [r2]
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
 	.section .text.x02008b78,"ax",%progbits
 	.global Func_02000b78
 	.thumb_func

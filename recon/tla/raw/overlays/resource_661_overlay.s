@@ -554,73 +554,6 @@ Func_020007e0:
 	.4byte 0xfdff0000
 .L_02008914:
 	.4byte gMapShapeGrid
-	.section .text.x02008b04,"ax",%progbits
-	.global Func_02000b04
-	.thumb_func
-Func_02000b04:
-	push {r5, r6, r7, lr}
-	adds r6, r0, #0
-	ldr r5, [r6, #68]
-	ldr r3, [r6, #8]
-	ldr r2, [r6, #72]
-	adds r3, r3, r5
-	str r3, [r6, #8]
-	ldr r3, [r6, #12]
-	ldr r7, [r6, #76]
-	adds r3, r3, r2
-	str r3, [r6, #12]
-	ldr r3, [r6, #16]
-	adds r0, r5, #0
-	adds r3, r3, r7
-	movs r1, #18
-	str r3, [r6, #16]
-	bl __divsi3
-	subs r5, r5, r0
-	str r5, [r6, #68]
-	adds r3, r7, #0
-	cmp r7, #0
-	bge .L_02008b34
-	adds r3, #15
-.L_02008b34:
-	asrs r3, r3, #4
-	subs r3, r7, r3
-	str r3, [r6, #76]
-	ldr r2, [r6, #48]
-	ldr r3, [r6, #24]
-	ldr r1, [r6, #80]
-	adds r3, r3, r2
-	str r3, [r6, #24]
-	ldr r2, [r6, #52]
-	ldr r3, [r6, #28]
-	adds r3, r3, r2
-	str r3, [r6, #28]
-	adds r2, r6, #0
-	adds r2, #100
-	ldrh r3, [r1, #18]
-	ldrh r2, [r2]
-	adds r3, r3, r2
-	strh r3, [r1, #18]
-	ldr r3, .L_02008b80
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r3, r2
-	ldr r0, [r3]
-	bl Object_GetById
-	ldr r3, [r0, #80]
-	ldr r4, [r6, #80]
-	ldrb r3, [r3, #9]
-	ldrb r1, [r4, #9]
-	movs r2, #12
-	ands r2, r3
-	movs r3, #13
-	negs r3, r3
-	ands r3, r1
-	orrs r3, r2
-	strb r3, [r4, #9]
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-.L_02008b80:
-	.4byte gPartyState
 	.section .text.x02008b84,"ax",%progbits
 	.global Func_02000b84
 	.thumb_func
@@ -704,7 +637,7 @@ Func_02000b84:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_02008c28:
-	.4byte Func_02000b04
+	.4byte Effect_AdvanceMotionAtLeaderPriority
 .L_02008c2c:
 	.4byte 0xffff0000
 .L_02008c30:
@@ -2002,7 +1935,7 @@ Func_02001cc4:
 .L_02009e50:
 	.4byte 0xffffff00
 .L_02009e54:
-	.4byte Func_02000b04
+	.4byte Effect_AdvanceMotionAtLeaderPriority
 	.section .text.x02009e58,"ax",%progbits
 	.global Func_02001e58
 	.thumb_func

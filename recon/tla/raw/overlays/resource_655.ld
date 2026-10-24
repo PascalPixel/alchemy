@@ -13,7 +13,7 @@ SECTIONS
         "*/resource_655_overlay.o"(.text.x02008584)
         "*/games/tla/src/scene/dehkan_plateau/events_m.o"(.text)
         "*/resource_655_overlay.o"(.text.x02008708)
-        "*/resource_655_overlay.o"(.text.x020088f4)
+        "*/games/tla/src/field/common/effect/advance_motion_priority.o"(.text)
         "*/resource_655_overlay.o"(.text.x02008974)
         "*/resource_655_overlay.o"(.text.x02008aa8)
         "*/resource_655_overlay.o"(.text.x02008bc0)

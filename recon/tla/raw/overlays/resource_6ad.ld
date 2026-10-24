@@ -29,7 +29,6 @@ SECTIONS
         "*/resource_6ad_overlay.o"(.text.x02009e20)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s1f84.o"(.text)
         "*/resource_6ad_overlay.o"(.text.x02009ffc)
-        "*/resource_6ad_overlay.o"(.text.x0200a15c)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s21a0.o"(.text)
         "*/resource_6ad_overlay.o"(.text.x0200a42c)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s25b0.o"(.text)

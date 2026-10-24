@@ -1,27 +1,29 @@
 # Maps
 
-Everything that makes a[map](../../
-                             glossary.md #map) itself is in its own code here
-    : who stands where,
-      what each person says,
-      what happens when the[party](../../ glossary.md #the -
-                                   party) steps on a doorstep,
-      searches a jar,
-      or uses an item or [Psynergy](../../ glossary.md #psynergy - and-pp),
-      and the cutscenes the map plays
-              .That code is a map[overlay](../../ glossary.md #overlay)
-    : a piece of code unpacked into one 32 KB area of RAM when the party arrives
-      ,
-      and replaced when it leaves.[Running a map](../ overworld / README.md)(
-          the `overworld` folder) runs the map
-          and asks the overlay what to do; the overlay drives the engine back through its
-[import table](../../glossary.md#entry-table-and-import-table), the list of main-program functions it may call. Each overlay has a generated page of its own, listed in
-[Maps](../field/map_headers.s) in [story order](../../glossary.md#the-places-in-story-order), with its [layout](../../glossary.md#layout) and its [map events](../../glossary.md#map-event).
+Everything that makes a [map](../../glossary.md#map) itself is in its own
+code here: who stands where, what each person says, what happens when the
+[party](../../glossary.md#the-party) steps on a doorstep, searches a jar or
+uses an item or [Psynergy](../../glossary.md#psynergy-and-pp), and the
+cutscenes the map plays. That code is a map
+[overlay](../../glossary.md#overlay): a piece of code unpacked into one 32 KB
+area of RAM when the party arrives, and replaced when it leaves.
+[Running a map](../overworld/README.md) runs the map and asks the overlay what
+to do; the overlay drives the engine back through its
+[import table](../../glossary.md#entry-table-and-import-table), the list of
+main-program functions it may call. Each overlay has a generated page of its
+own, listed in [Maps](../field/map_headers.s) in
+[story order](../../glossary.md#the-places-in-story-order), with its
+[layout](../../glossary.md#layout), its [map events](../../glossary.md#map-event)
+and a recording of each event.
 
 ## The entry table
 
+![Isaac walks out of the north door of a house in Vale; the room fades out and Vale fades in with him standing outside the same door](https://alchemy.pascalpixel.com/guides/map/arrive.gif)
+
 The engine knows nothing about any one map. It asks the map's code six
-questions, always the same ones, and the answers are the map.
+questions, always the same ones, and the answers are the map. In the
+recording, the house's code says where its north door leads, and Vale's code
+says where the party then stands and who else is there.
 
 When the party arrives, the engine asks what can happen here (the map
 events, kept for the whole visit), where the party arrives (the [warp
@@ -128,7 +130,12 @@ an enum in row order (`LOCALID_FALLEN_STATUE = LOCALID_FIRST_PLACED`).
 
 ### What a map event row says
 
-A map event is four words, `struct MapEvent` in `map_tables.h`:
+![Isaac talks to his mother Dora outside their house in Vale: "It looks like it won't rain for some time... so I guess I'll just have you fix it later."](https://alchemy.pascalpixel.com/places/vale/events/Event_DoraFretsAboutTheRoof.gif)
+
+Each thing the player can do on a map that the map answers, talking to Dora
+here, is one row of its event table: what starts it, whom or where it answers,
+when it holds, and what runs. A map event is four words, `struct MapEvent` in
+`map_tables.h`:
 
 ```c
 struct MapEvent {
@@ -216,6 +223,8 @@ The formats are in `games/tbs/include/map_tables.h`, the warp names in
 
 ### Which map events a cell starts
 
+![In Vale, Isaac walks north into the ladder beside his house and climbs onto the roof](https://alchemy.pascalpixel.com/places/vale/events/Event_ClimbLadderOntoRoof.gif)
+
 Some spots on a map do something when the leader reaches them: a doorstep
 leads into a house when the leader walks into it, the edge of a village
 leads on to the next map, a ladder climbs to a roof, and a chest or a
@@ -223,7 +232,7 @@ bookcase answers the A button. The layout marks each spot by the [metatile
 behavior](../../glossary.md#metatile-behavior) of its [cell](../../glossary.md#cell), and the map's event table says what that behavior
 does. The same behavior means different things on different maps.
 
-On the screen of Vale below, on the day the story begins, each door is a
+In Vale on the day the story begins, each door is a
 coord event rather than a warp: walking north into the doorstep runs a
 script, `EventScript_EnterIsaacsHouse` for Isaac's house, that opens the door,
 walks the leader in and only then asks for the warp, and that can refuse
@@ -232,8 +241,6 @@ the ladder beside Isaac's house (`EventScript_ClimbLadderOntoRoof` up,
 `EventScript_ClimbDownFromRoof` down) and put the bridge's cells
 back when the leader steps off it (`EventScript_StepOffBridge`). Three
 cells of the path at the top carry a behavior no row answers.
-
-![In Vale, Isaac walks north into the ladder beside his house and climbs onto the roof](https://alchemy.pascalpixel.com/places/vale/events/Event_ClimbLadderOntoRoof.gif)
 
 Stepping on or walking into a cell runs the first coord event whose trigger
 is its metatile behavior and whose condition holds, or failing one the first
@@ -244,15 +251,23 @@ the same on every map ([Layouts](../layout/README.md#cells)).
 
 ## How a map event is chosen
 
-When the player talks to someone, the game reads the map's event table
-from the top and runs the first row that fits. That one rule is how a person
-says something new as the story moves on.
+![Isaac talks to the mayor of Vault in his house twice: the first time the mayor welcomes him back and tells him the thieves have escaped from jail, the second time he only warns that they want revenge](https://alchemy.pascalpixel.com/guides/map/talk-twice.gif)
 
-A map lists its rows from the latest point in the story down to the
-default. In Vault's houses after Kalay, the mayor has a row that holds until
-he has welcomed Isaac back, and below it one that always holds: the first
-talk welcomes Isaac, and every later one warns of the thieves. A row behind
-one that always fits is never reached, as the cook's second row shows.
+When the player talks to someone, the game reads the map's event table from
+the top and runs the first row that fits. That one rule is how a person says
+something new as the story moves on. A map lists its rows from the latest
+point in the story down to the default. In Vault's houses after Kalay, the
+mayor has a row that holds until he has welcomed Isaac back, and below it one
+that always holds, so the first talk welcomes Isaac and every later one warns
+of the thieves ([`vault_interiors_revisit.c`](vault_interiors_revisit.c)):
+
+```c
+{ MAP_EVENT_TALK, LOCALID_MAYOR, FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, EVENT_SCRIPT(EventScript_WelcomeIsaacBack) },
+{ MAP_EVENT_TALK, LOCALID_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarnOfThievesRevenge) },
+```
+
+A row behind one that always fits is never reached, as the cook's second row
+shows.
 
 `Map_FindEvent` returns the first row whose kind, trigger and condition
 fit. A bg event on a named target, which is every target but
@@ -278,53 +293,51 @@ such case.
 
 ## Scripts
 
+![Isaac walks north into the door of Jenna's grandparents' house in Vale; the door opens, he walks in, and the room inside fades in](https://alchemy.pascalpixel.com/guides/world/door.gif)
+
 A cutscene is written as a list of what happens, one step to a line, and the
-game plays it from top to bottom while the party waits.
-
-A step that takes time, such as a wait, a line of dialogue or someone
-walking somewhere, waits inside itself, so the next line starts only when it
-is done, and the walk resumes only after the last line. Steps that take no
-time, such as starting the shake, follow each other within one [frame](../../glossary.md#frame).
-Whatever has to keep moving during a cutscene, like a villager walking past,
-runs on its own: as an object script (the steps an object event runs each
-frame), a callback (a function the map adds to run once a frame) or an
-update hook (a function an object event runs each frame with itself).
-
-A function a map event names is a script: straight-line C written in the
-commands of `script.h`, which expand to the engine calls of `script_layer.h`,
-`field_service.h` and `engine_call.h`. A step blocks by running the frames
-itself: `WAIT(n)` reaches the engine's `WaitFrames(n)`, which runs the
-game's [tasks](../../glossary.md#task) and waits for the vertical blank, once a frame for n frames, before it
-returns, so the script's own C code simply continues on the next line
-([Engine](../../engine.md#waiting-and-tasks) explains it). A line of
-dialogue and a walk wait the same way, until the player answers or the
-walker arrives.
+game plays it from top to bottom while the party waits. The door in the
+recording is one of the shortest: it plays the door's sound, opens the door,
+starts the leader walking in and asks for the warp into the house.
 
 ```c
-/// LunpaFortressUpperFloor, raised when the patrolling pair spots the leader:
-/// the first stops and stares, and the second throws the party out.
-static void EventScript_PatrolPairThrowsPartyOut(void) {
-  SCRIPT_START();
-  ObjectMotion_EnableActionAndResetMotion(LOCALID_UPPER_FLOOR_FIRST_PATROL);
-  ObjectMotion_OffsetPositionAndResetMotion(LOCALID_UPPER_FLOOR_FIRST_PATROL, 0,
-                                            0);
-  OBJECT_ANIMATION(LOCALID_UPPER_FLOOR_FIRST_PATROL, 0);
-  OBJECT_FACE(LOCALID_UPPER_FLOOR_FIRST_PATROL, LOCALID_PARTY_LEADER, 0);
-  FieldEffect_SpawnLinked(LOCALID_UPPER_FLOOR_FIRST_PATROL,
-                          EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  LunpaFortress_GuardThrowsPartyOut(LOCALID_UPPER_FLOOR_SECOND_PATROL);
-  SCRIPT_END();
+static void EventScript_EnterJennasGrandparentsHouse(void) {
+  Script_PlaySong(SE_DOOR_OPEN);
+  MapGrid_AnimateCells(gVale_GrandparentsDoorOpens, 49, 69);
+  ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 326, 1126);
+  Import_ScriptRequestWarp(VALE_TO_VALE_SHOPS_NORTH);
 }
 ```
 
-`SCRIPT_START` stops the leader and makes it the speaker, and `SCRIPT_END` returns the
-camera to it. `WAIT(n)` waits `n` frames, about 59.73 a second.
-`MESSAGE_SET` chooses a message and `MESSAGE_PUT` shows it spoken by an object event.
-`OBJECT_POSITION_SET`, `OBJECT_WALK`, `OBJECT_SPEED`, `OBJECT_DIR`, `OBJECT_FACE` and `OBJECT_ANIMATION`
-move, turn and animate object events by local id (`OBJECT_ANIMATION` takes an `enum
-ObjectEventAnimation` such as `ANIM_NOD`). `GameFlag_Get`, `GameFlag_Set` and `GameFlag_Clear` test, set and clear
-game flags, and `SE(n)` plays a sound from `songs.h`. Callbacks are added with
-`FieldScheduler_AddCallback` at `TASK_PRIORITY_MAP`.
+A step that takes time, such as opening the door, a line of dialogue or a
+wait, holds the script inside itself, so the next line starts only when it is
+done; a step that takes no time, such as starting a walk, lets the next line
+follow in the same [frame](../../glossary.md#frame). Whatever has to keep
+moving during a cutscene runs on its own: as an object script (the steps an
+object event runs each frame), a callback (a function the map adds to run
+once a frame) or an update hook (a function an object event runs each frame
+with itself). A request the script raises, like this warp, waits until the
+script has returned.
+
+A function a map event names is a script: straight-line C in the engine calls
+of `script_layer.h`, `field_service.h` and `engine_call.h`, or in the
+shorter commands of `script.h` that expand to them. A step blocks by running
+the frames itself: `WAIT(n)` reaches the engine's `WaitFrames(n)`, which runs
+the game's [tasks](../../glossary.md#task) and waits for the vertical blank
+once a frame for n frames before it returns, so the script's own C code simply
+continues on the next line ([Engine](../../engine.md#waiting-and-tasks)
+explains it). `MapGrid_AnimateCells` holds the script until the door's last
+step; `ObjectEvent_WalkTo` does not wait for the walker
+(`ObjectEvent_WalkToAndWait` does).
+
+`SCRIPT_START` stops the leader and makes it the speaker, and `SCRIPT_END`
+returns the camera to it. `MESSAGE_SET` chooses a message and `MESSAGE_PUT`
+shows it spoken by an object event. `OBJECT_POSITION_SET`, `OBJECT_WALK`,
+`OBJECT_SPEED`, `OBJECT_DIR`, `OBJECT_FACE` and `OBJECT_ANIMATION` move, turn
+and animate object events by local id. `GameFlag_Get`, `GameFlag_Set` and
+`GameFlag_Clear` test, set and clear game flags, and `SE(n)` plays a sound
+from `songs.h`. Callbacks are added with `FieldScheduler_AddCallback` at
+`TASK_PRIORITY_MAP`.
 
 | Name | Value | Meaning |
 | --- | --- | --- |

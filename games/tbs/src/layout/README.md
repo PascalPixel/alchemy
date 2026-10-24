@@ -14,11 +14,16 @@ how each part is stored, built and loaded.
 
 ## Cells
 
-A cell is one 16 by 16 pixel square of a layout. Once loaded it is one
-32-bit word that says three things: what is drawn there, what standing on
-it does, and how its ground is shaped.
+![Isaac walks to the edge of a ledge in Bilibin Cave's entrance and, with Down held, jumps down to the ground below in a puff of dust](https://alchemy.pascalpixel.com/guides/layout/ledge.gif)
 
-A cell is `struct MapGridCell` in [`map_grid.h`](../../include/map_grid.h):
+A cell is one 16 by 16 pixel square of a layout, and it says three things:
+what is drawn there, what standing on it does, and how its ground is shaped.
+The ledge in the recording is all three: a picture of a ledge, cells whose
+behavior says "jump down when pushed", and ground 32 pixels higher than the
+ground below.
+
+Once loaded, a cell is one 32-bit word, `struct MapGridCell` in
+[`map_grid.h`](../../include/map_grid.h):
 
 | Bits of the cell word | Field | Meaning |
 | --- | --- | --- |
@@ -282,7 +287,10 @@ past it. [System](../system/README.md) has the EWRAM layout.
 
 ### One grid, three layers
 
-All three layers are windows onto the one grid. In Goma Cave's entrance room
+![Vale's screen in front of the Sanctum taken apart: the ground, the middle layer, the sprites and the overhead layer spread out one behind another, then close up into the picture the player sees](https://alchemy.pascalpixel.com/guides/field/layers-3d.gif)
+
+A town's three layers are drawn one over another, but in memory they are side
+by side: all three are windows onto the one grid. In Goma Cave's entrance room
 the ground layer, the cave floor and its pool, starts at cell 0, 0; the middle
 layer, the rock walls, at cell 0, 34, below it; and the overhead layer, only
 the glow of the torches, at cell 50, 0, to its right. Each layer's origin in
@@ -349,15 +357,16 @@ row.
 
 ### Tileset animation and blend scripts
 
-Some parts of a map move by themselves without anything on the map moving:
-the game simply swaps the pictures of a few tiles on a timer. A
-layout's tileset animation script says which pictures to copy over which tiles and
-how long to wait between them; its blend script changes, in the same way, how
-the layers mix.
+![Isaac stands by the pool below Vale's waterfall while the falling water streams down and the spray at its foot churns](https://alchemy.pascalpixel.com/guides/layout/waterfall.gif)
 
-Suhalla Desert's north shows the usual shape: its channel 0 copies four rows
-of four tiles from one of four stored pictures, waits 15 frames, takes the
-next picture, and jumps back to the first after the fourth.
+Some parts of a map move by themselves without anything on the map moving:
+the game simply swaps the pictures of a few tiles on a timer, as with Vale's
+waterfall. A layout's tileset animation script says which pictures to copy
+over which tiles and how long to wait between them; its blend script changes,
+in the same way, how the layers mix. Suhalla Desert's north shows the usual
+shape: its channel 0 copies four rows of four tiles from one of four stored
+pictures, waits 15 frames, takes the next picture, and jumps back to the first
+after the fourth.
 
 Both scripts are runs of halfwords, run each frame as [tasks](../../glossary.md#task)
 ([`field/field/tile_animation.c`](../field/field/tile_animation.c)). In the

@@ -44,12 +44,16 @@ The Japanese [edition](../../glossary.md#editions) has 12 window slots and a
 ring of 256 codes, the others 8 slots and 512 codes, so the block grows from
 4,492 bytes to 4,860; `include/tbs_edition.h` gives every field's offset in
 each layout and `STATIC_ASSERT`s in `include/window.h` check the struct
-against them. `battleMode` is 0 on the field, 1 in battle (typing is faster)
-and 2 while `BattleMessage_Open` unpacks a battle message.
+against them. `battleMode` says where the windows are: `WINDOW_FIELD` on the
+field, `WINDOW_BATTLE` in battle (typing is faster) and `WINDOW_BATTLE_MESSAGE`
+while `BattleMessage_Open` unpacks a battle message.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `HEAP_SLOT_WINDOW` | 15 | the heap slot that holds the work block |
+| `WINDOW_FIELD` | 0 | `battleMode` on the field; the field setup clears the block |
+| `WINDOW_BATTLE` | 1 | `battleMode` in battle, from `WindowSystem_InitBattle` |
+| `WINDOW_BATTLE_MESSAGE` | 2 | `battleMode` while a battle message is decoded |
 | `WINDOW_WORK_SIZE` | 4,492 bytes in Japanese, 4,860 in the others | the work block's size |
 | `WINDOW_COUNT` | 12 in Japanese, 8 in the others | window slots |
 | `WINDOW_SPRITE_COUNT` | 64 | window sprites |
@@ -249,7 +253,7 @@ top of the screen for a second and a half.
 
 `MapNamePopup_Show` draws the name, from `MapSec_GetNameIndexFar`, as tiles in
 a window centred across the screen, opened with `WINDOW_FLAG_INSTANT`. It keeps
-the window and a countdown in the event work (`gFieldWork`), and
+the window and a countdown in the field work (`gFieldWork`), and
 `MapNamePopup_Update`, a main-loop task, closes it when the countdown ends.
 Opening the field menu hides it at once (`MapNamePopup_HideFar`).
 

@@ -35,7 +35,7 @@ enum FieldShortcutKind {
   FIELD_SHORTCUT_ITEM = 1      ///< fieldWork->item
 };
 
-/// Stores value in a halfword of the event work.
+/// Stores value in a halfword of the field work.
 static __inline__ void Field_StoreHalfword(s16 *address, s32 value) {
   // XXX: why the stores go through a helper rather than plain assignment;
   // whether the assignment form changes Field_RequestShortcut's bytes would
@@ -94,7 +94,7 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
 }
 
 /// Checks the keys the player has configured: Select, A and Start set their
-/// flag in the event work and return 1; the two shortcut keys pass on their
+/// flag in the field work and return 1; the two shortcut keys pass on their
 /// assignment (Field_RequestShortcut) and return its request id. Returns 0
 /// when none is pressed, or with no field work. Every caller drops the result.
 /// Only the first configured key pressed this frame counts, in that order.

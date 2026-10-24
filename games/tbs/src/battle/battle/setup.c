@@ -11,7 +11,7 @@
 /// camera a sixteenth of the way toward gBattleBackgroundWork's targetYaw,
 /// places the camera at its position (or at the one it follows) with its yaw,
 /// pitch and distance, and, unless its flag holds the background, refreshes the
-/// background's perspective. Runs as a task that
+/// background's zoom. Runs as a task that
 /// Battle_Run adds with priority 0xc7f: in the main-loop pass, after
 /// the tasks of priority 0xc80 (the objects' camera, the sprite priorities and
 /// playback). Changes battle->linkMisses and linkPaused,

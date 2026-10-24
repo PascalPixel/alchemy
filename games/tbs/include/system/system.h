@@ -172,7 +172,7 @@ extern u8 Tile_CopyStrided[];
 extern u8 Tile_CopyStridedCodeSize[];
 /// The size of Resource_ExecuteTransfer (decode_tagged_lz.s).
 extern u8 TransferCommandExecutor_Size[];
-void _call_via_r2(s32 arg0, s32 arg1, s32 target);
+void _call_via_r2(s32 first, s32 second, s32 target);
 void Iwram_Halt(void);
 void Mixer_Enter(void);
 

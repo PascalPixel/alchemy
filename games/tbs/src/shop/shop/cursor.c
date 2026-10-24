@@ -124,9 +124,9 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
   return priceSprite;
 }
 
-/// Saves the field colours in event work and fades to `layer` over 16 frames.
-/// Called before sanctum and Djinn capture effects and Altmiller's wall burst;
-/// Shop_RestoreFieldPalette restores the saved colours afterward.
+/// Saves the field colours in the field work and fades to `layer` over 16
+/// frames. Called before sanctum and Djinn capture effects and Altmiller's wall
+/// burst; Shop_RestoreFieldPalette restores the saved colours afterward.
 void Shop_SaveAndTintFieldPalette(s32 layer) {
   // UB: slot 32 lies past scalar gFieldWork. Its named load adds eight
   // bytes in the native EN trial (0x54 to 0x5c).

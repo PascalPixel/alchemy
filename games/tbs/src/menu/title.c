@@ -291,7 +291,7 @@ static void Title_UpdateSpriteReveal(void) {
 /// Shows the Golden Sun logo for Title_Run's warp destination 10: loads it
 /// while the screen is black, starts the lettering's reveal
 /// (Title_UpdateSpriteReveal, left running), brings the logo up from black over
-/// 51 frames and opens the screen. Leaves the event work's transitions at 60
+/// 51 frames and opens the screen. Leaves the field work's transitions at 60
 /// frames.
 static void Title_RevealScreen(s32 unused) {
   s32 brightnessStep;

@@ -1,5 +1,5 @@
 /// @file
-/// The battle background, its palette and perspective, the camera's zoom and
+/// The battle background, its palette and modes, the camera's zoom and
 /// the units' highlights.
 // Part of battle.c.
 
@@ -19,7 +19,7 @@
 /// almost black.
 #define BACKGROUND_LEVEL_STEP 1092
 
-/// The perspective plane's BG2CNT for the first 256 picture tiles: a 256 by
+/// The zoomed background's BG2CNT for the first 256 picture tiles: a 256 by
 /// 256 affine map in screen block 7, 256 colours, priority 2.
 #define BACKGROUND_PLANE_UPPER                                                 \
   (BGCNT_SIZE(1) | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS |                   \
@@ -139,7 +139,7 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
   BattleTransition_BuildTilemap(BG_SCREEN_BLOCK(31));
 }
 
-/// Allocates the perspective plane's scanline work
+/// Allocates the zoomed background's scanline work
 /// (HEAP_SLOT_BATTLE_SCANLINES) cleared, and sets the background's mode to
 /// BATTLE_BACKGROUND_NONE, so the next load adds its scanline callback.
 /// Called once by Battle_Run before BattleBackground_Load.
@@ -152,7 +152,7 @@ void BattleBackground_Init(void) {
   state->mode = BATTLE_BACKGROUND_NONE;
 }
 
-/// Frees the perspective plane's scanline work; called by
+/// Frees the zoomed background's scanline work; called by
 /// Battle_Run as the battle ends.
 void BattleBackground_Free(void) { FreeHeapSlot(HEAP_SLOT_BATTLE_SCANLINES); }
 
@@ -214,7 +214,7 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
     REG_BG1CNT = BATTLE_BG1CNT;
 }
 
-/// Builds the perspective plane's next page for a zoom of scale about centerX
+/// Builds the zoomed background's next page for a zoom of scale about centerX
 /// and centerY (all 16.16), shifted by offsetX and offsetY (8.8 pixels), and
 /// shows it.
 /// The page holds the affine parameters and each line's BG2CNT: which half of
@@ -356,7 +356,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 }
 
 /// Points the battle camera at (x, depth, y) with a zoom in percent, and lines
-/// the perspective plane up with it.
+/// the zoomed background up with it.
 /// The camera's eye is set 510 pixels from the focus along its yaw and pitch;
 /// where the battlefield's origin then projects decides the plane's offset
 /// (BattleCamera_SetRange), and the projection's focal length and depth range

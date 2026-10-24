@@ -404,11 +404,11 @@ s32 Map_RunCoordEventOrWarp(s32 value) {
 /// Called by Map_Run for its push request (work->pushCell), which
 /// Field_ProcessStep raises for MB_LEDGE to MB_JUMP_FORWARD.
 /// Clears work->blockedSteps when it acts.
-s32 Field_RunPushCellEvent(s32 collisionCode) {
+s32 Field_RunPushCellEvent(s32 behavior) {
   struct FieldWork *work = gFieldWork;
   s32 leader = gSaveBlock.leaderLocalId;
 
-  switch (collisionCode) {
+  switch (behavior) {
   case MB_LEDGE:
     if (work->blockedSteps > 12 && (gKeysHeld & KEY_DOWN)) {
       ObjectEvent_JumpDownLedge(leader, 6, 0);

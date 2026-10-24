@@ -266,8 +266,8 @@ enum WarpStyle {
 #define COORD_EVENT_FLAG_WALKING 0x200
 /// With COORD_EVENT_FLAG_WALKING, 2 frames of pushing are enough.
 #define COORD_EVENT_FLAG_QUICK 0x800
-/// A coord event that needs the leader to face within an eighth of a turn of
-/// the heading in control bits 15..12 (Map_FindEvent).
+/// An event that needs the leader to face within an eighth of a turn of the
+/// heading in control bits 15..12 (Map_FindEvent).
 #define MAP_EVENT_FLAG_FACING 0x400
 #define COORD_EVENT_WALKING (MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING)
 /// facing is an enum Facing; only its top four bits are compared.
@@ -339,6 +339,10 @@ enum PsynergyEventTarget {
 /// across.
 #define BG_EVENT_FACING(facing)                                                \
   (MAP_EVENT_BG | MAP_EVENT_FLAG_FACING | (facing))
+/// A talk event that answers only while the leader faces the given way, so one
+/// object event can answer differently from each side.
+#define TALK_EVENT_FACING(facing)                                              \
+  (MAP_EVENT_TALK | MAP_EVENT_FLAG_FACING | (facing))
 
 /// What a bg event is on, BG_EVENT()'s control bits 8..4. Target n shows
 /// message MsgTileChecked + n as the leader checks it, unless the trigger has

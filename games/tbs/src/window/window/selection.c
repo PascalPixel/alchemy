@@ -1402,7 +1402,7 @@ void Resource_ResetPendingTransfer(void) {
 /// returns the chosen screen's result. Cancelling the menu returns an
 /// undefined value, the missing result of PartyStatus_CloseWithMenu (0 under
 /// UBFIX); its one caller, Map_Run, ignores the result. Its case for
-/// command 0, which stores the trigger tile ahead in the event work's
+/// command 0, which stores the trigger tile ahead in the field work's
 /// searchCell, is unreachable.
 s32 FieldMenu_Run(void) {
   s32 ret;
@@ -1415,7 +1415,7 @@ s32 FieldMenu_Run(void) {
   for (;;) {
     PartyStatus_OpenAndWait();
     selection = FieldMenu_SelectCommand(selection);
-    // German, Spanish, French and Italian: mark a menu open (event work byte
+    // German, Spanish, French and Italian: mark a menu open (field work byte
     // 0xcca, which pauses Reveal's sparkles) and, while Reveal is active
     // (FieldWork.revealActive at 0xcb8), clear its sparkles.
 #if defined(HAS_LOCALIZED_MENU_GUARD)

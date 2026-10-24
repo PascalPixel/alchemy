@@ -356,46 +356,38 @@ s32 BattleAI_ChooseTarget(s32 actorId, struct AbilityDefinition *action) {
         action->targetMode == ABILITY_TARGET_SELF)
       ownSide = 1;
 
-    if (actorId < 0 || actorId > ALLY_MAX) {
-      if (ownSide != 0)
-        goto scan_enemies;
-    } else if (ownSide == 0) {
-      goto scan_enemies;
-    }
-
-    targetIndex = 0;
-    while (turnOrder->partyUnits[targetIndex] != BATTLE_UNIT_LIST_END) {
-      slot = &turnOrder->partyUnits[targetIndex];
-      unitId = *slot;
-      if (unitId != BATTLE_UNIT_REMOVED) {
-        if (action->targetMode != ABILITY_TARGET_SELF || unitId == actorId) {
-          unitIds[candidateCount] = unitId;
-          orderPositions[candidateCount] = PLACE_PARTY;
-          orderPositions[candidateCount] |= targetIndex;
-          candidateCount++;
+    if (((actorId < 0 || actorId > ALLY_MAX) && ownSide == 0) ||
+        (actorId >= 0 && actorId <= ALLY_MAX && ownSide != 0)) {
+      targetIndex = 0;
+      while (turnOrder->partyUnits[targetIndex] != BATTLE_UNIT_LIST_END) {
+        slot = &turnOrder->partyUnits[targetIndex];
+        unitId = *slot;
+        if (unitId != BATTLE_UNIT_REMOVED) {
+          if (action->targetMode != ABILITY_TARGET_SELF || unitId == actorId) {
+            unitIds[candidateCount] = unitId;
+            orderPositions[candidateCount] = PLACE_PARTY;
+            orderPositions[candidateCount] |= targetIndex;
+            candidateCount++;
+          }
         }
+        targetIndex++;
       }
-      targetIndex++;
-    }
-    goto scan_complete;
-
-  scan_enemies:
-    targetIndex = 0;
-    while (turnOrder->enemyIds[targetIndex] != BATTLE_UNIT_LIST_END) {
-      unitId = turnOrder->enemyIds[targetIndex];
-      if (unitId != BATTLE_UNIT_REMOVED) {
-        if (action->targetMode != ABILITY_TARGET_SELF || unitId == actorId) {
-          unitIds[candidateCount] = unitId;
-          orderPositions[candidateCount] = PLACE_ENEMY;
-          orderPositions[candidateCount] |= targetIndex;
-          candidateCount++;
+    } else {
+      targetIndex = 0;
+      while (turnOrder->enemyIds[targetIndex] != BATTLE_UNIT_LIST_END) {
+        unitId = turnOrder->enemyIds[targetIndex];
+        if (unitId != BATTLE_UNIT_REMOVED) {
+          if (action->targetMode != ABILITY_TARGET_SELF || unitId == actorId) {
+            unitIds[candidateCount] = unitId;
+            orderPositions[candidateCount] = PLACE_ENEMY;
+            orderPositions[candidateCount] |= targetIndex;
+            candidateCount++;
+          }
         }
+        targetIndex++;
       }
-      targetIndex++;
     }
   }
-
-scan_complete:
 
   if (candidateCount == 0)
     return TARGET_PICK_SIDE_EMPTY;

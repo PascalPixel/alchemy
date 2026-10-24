@@ -100,7 +100,8 @@ enum MapGridLayerIndex {
 /// The map work in HEAP_SLOT_MAP_GRID (struct MapGridScrollWork), seen as its
 /// tileset animations, blend script and layers' cells.
 struct MapGridScrollAnimView {
-  /// MapGridScrollWork's origin, shake and script; not named through this view.
+  /// MapGridScrollWork's origin, shake and markers; not named through this
+  /// view.
   ///@{
   s32 *origin;
   s32 shakeX, shakeY, shakeDecay;

@@ -255,7 +255,7 @@ void ObjectEvent_ResetForObject(struct ObjectEventTemplate *table) {
   leader = gSaveBlock.leaderLocalId;
   // Build the leader's temporary object event template before the map's placed
   // object events. The two-row table, the leader's row and an end row, lives in
-  // the event work at 0x200 (FieldWork's leaderTemplates) and lasts with it.
+  // the field work at 0x200 (FieldWork's leaderTemplates) and lasts with it.
   entry = (struct ObjectEventTemplate *)((u8 *)work + 0x200);
   entry[0] = gField_DefaultObjectEventTemplates[0];
   entry[1] = gField_DefaultObjectEventTemplates[1];
@@ -334,7 +334,7 @@ s32 ObjectEvent_FindLastActiveId(void) {
   return lastObjectEventIndex;
 }
 
-/// Unused: returns the address of object event slot index in the event work.
+/// Unused: returns the address of object event slot index in the field work.
 /// Nothing calls it.
 UNUSED void *ObjectEvent_GetSlotAddress(u32 objectEventIndex) {
   return (u8 *)gFieldWork + 0x14 + objectEventIndex * sizeof(void *);
@@ -496,7 +496,7 @@ void ObjectEvent_ClearAll(void) {
 
 /// Returns the object event in slot index (below OBJ_EVENT_SLOT_COUNT), or
 /// NULL. Indices up to 191 read past the object event slots into the rest of
-/// the event work; larger ones give NULL.
+/// the field work; larger ones give NULL.
 ///
 /// The field's object event lookup: called across the object folder and,
 /// through ObjectEvent_GetByLocalIdFar, by map

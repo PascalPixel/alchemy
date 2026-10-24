@@ -495,7 +495,7 @@ void Object_StartIdle(struct Object *object) {
 
 /// Starts an object on the camera script (SC_CAMERA). With a leader to
 /// follow, it also gets a speed limit of 4 pixels a frame and an
-/// acceleration of 0.5 (value30 and value34 are those fields). Called through
+/// acceleration of 0.5. Called through
 /// Object_StartCameraFar by the field map's object events, the Psynergy
 /// camera and the Colosso and Kolima Forest maps.
 void Object_StartCamera(struct Object *object, s32 linkedObjectHandle) {

@@ -125,7 +125,7 @@ s32 TextPrinter_Step(struct TextPrinter *printer) {
   // In battle, text runs at 3 glyphs a frame and 5 more for each VBlank the
   // last frame took (gLagFramesShown, 1 for a frame on time), counting at most
   // two.
-  if (work->battleMode != 0) {
+  if (work->battleMode != WINDOW_FIELD) {
     lag = gLagFramesShown;
     CLAMP(lag, 0, 2);
     glyphsLeft = lag * 5 + 3;
@@ -327,7 +327,7 @@ s32 TextPrinter_Step(struct TextPrinter *printer) {
       }
 
       // Outside battle a control code ends this frame's typing.
-      if (work->battleMode == 0)
+      if (work->battleMode == WINDOW_FIELD)
         glyphsLeft = 1;
     } else {
       // A character: draw it at the pen position, rounded to whole pixels.
@@ -418,7 +418,7 @@ s32 TextPrinter_Step(struct TextPrinter *printer) {
         return CHANNEL_STEP_CLOSE;
 #endif
       // Outside battle a space ends this frame's typing.
-      if (code == TEXT_SPACE && work->battleMode == 0)
+      if (code == TEXT_SPACE && work->battleMode == WINDOW_FIELD)
         glyphsLeft = 1;
     }
 

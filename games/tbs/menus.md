@@ -102,7 +102,7 @@ what its own [map events](glossary.md#map-event) do with it, so the screen
 writes down what was chosen and closes, and the map decides what Move does to
 that pillar.
 
-The Psynergy screen writes the choice into the event work's `psynergy`
+The Psynergy screen writes the choice into the field work's `psynergy`
 (`gFieldWork`), the Item screen into its `item`; `Map_Run` then calls
 `Field_UsePsynergy` or `Field_UseItem`. [Menus](src/menu/README.md#the-psynergy-screen)
 has the request's layout.

@@ -346,11 +346,9 @@ void BattleMessage_Open(s32 argument) {
   // printer starts as NULL, though it is assigned again before it is read; the
   // same zero clears marked below
   printer = NULL;
-  // battleMode 2 while decoding marks a battle message: the Japanese decoder
-  // then sets names off with spaces and style codes, and doubles each space.
-  state->battleMode = 2;
+  state->battleMode = WINDOW_BATTLE_MESSAGE;
   entryIndex = Message_Decode(argument, 1);
-  state->battleMode = 1;
+  state->battleMode = WINDOW_BATTLE;
 
   if (state->textBuffer[entryIndex] != 0) {
     previousWindow = control->window;

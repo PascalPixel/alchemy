@@ -187,7 +187,7 @@ s32 Map_FindObjectEventTalkEvent(s32 id);
 s32 Map_TalkToObjectEvent(s32 id);
 s32 Map_RunRaisedEvent(s32 value);
 s32 Map_RunCoordEventOrWarp(s32 value);
-s32 Field_RunPushCellEvent(s32 collisionCode);
+s32 Field_RunPushCellEvent(s32 behavior);
 s32 Field_SearchCell(s32 tile);
 s32 Field_GetPsynergyTargetRange(s32 kind);
 s32 Field_FindNearbyTalkTarget(s32 id);

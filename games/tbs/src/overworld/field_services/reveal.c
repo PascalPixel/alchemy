@@ -32,7 +32,7 @@ void Object_SetRevealSpriteColor(s32 value) {
 
 /// Task of the timed effect (FIELD_PSYNERGY_REVEAL): asks for it
 /// to end once the leader is 60 pixels from its centre or its time has run out.
-/// The centre and the time are in the event work from 0xcb8 on
+/// The centre and the time are in the field work from 0xcb8 on
 /// (FieldEffect_RunReveal). The time counts only while effectTimerRunning is
 /// set, so menus and other effects pause it. It asks every frame until
 /// FieldEffect_EndReveal removes it.
@@ -109,7 +109,7 @@ void FieldEffect_RunReveal(void) {
     Field_RunEventAction(event, gSaveBlock.leaderLocalId, eventTarget);
   Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
 
-  // Record the centre (in pixels) and the time in the event work, and put
+  // Record the centre (in pixels) and the time in the field work, and put
   // markers nearby.
   work->revealActive = 1;
   work->revealCenterX = state->centreX / 0x10000;

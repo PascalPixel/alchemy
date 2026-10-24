@@ -656,7 +656,7 @@ retry:
 /// outside that, or when no point works, it heads back towards home.
 ///
 /// Used by scripts in Vault and Vale (vault.c, vale_plaza.c). Sets bit 1 of
-/// flags59 while it roams and clears it on the way home, sets the move
+/// collisionFlags while it roams and clears it on the way home, sets the move
 /// target, and always moves on to the next command.
 s32 ObjectScript_WanderNearHome(struct Object *interpreter) {
   struct Object *object = interpreter;

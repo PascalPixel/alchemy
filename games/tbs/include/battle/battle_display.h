@@ -80,12 +80,12 @@ STATIC_ASSERT(offsetof(struct BattleStagingWork, effect.targets) == 0x24);
 enum BattleBackgroundMode {
   /// Not loaded yet: the next load adds BattleBackground_ShowZoomedPage.
   BATTLE_BACKGROUND_NONE,
-  /// The flat picture on BG1 (BATTLE_BG1CNT), its scroll following the
-  /// camera, BG2 left to an animation.
+  /// The picture at a fixed size on BG1 (BATTLE_BG1CNT), its scroll following
+  /// the camera, BG2 left to an animation.
   BATTLE_BACKGROUND_FIXED,
   /// The picture zoomed and panned on BG2, an affine layer; HBlank DMA sets
-  /// each line's BG2CNT to the half of the picture it reads. The code's
-  /// "perspective plane" is this plain zoom: the depth is in the picture.
+  /// each line's BG2CNT to the half of the picture it reads. The depth is drawn
+  /// into the picture; the hardware only zooms it.
   BATTLE_BACKGROUND_ZOOMED
 };
 

@@ -710,9 +710,8 @@ static s32 BattleArena_CopyPartyOwnerIds(u16 *memberIds) {
 /// out of time. The copies go through an EWRAM pool buffer freed before
 /// returning.
 static s32 BattleArena_SendPartyRecords(void) {
-  // Measured plain form: replacing only the final offer-transfer
-  // waitOffer/testOffer polling region with while(active transfers) adds 8
-  // bytes in tbs-en.
+  // Measured plain form: replacing only the final wait and test polling
+  // region with while(active transfers) adds 8 bytes in tbs-en.
   s32 result;
   u8 *slotMap;
   u16 memberIds[8];

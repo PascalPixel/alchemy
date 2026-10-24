@@ -375,8 +375,8 @@ s32 Battle_ProcessRoundEnd(void) {
       } while (recoveryIndex < list->count);
     }
   }
-  // Fade 0 leaves the palette as it is: this only puts the perspective
-  // plane back and rebuilds its map.
+  // Fade 0 leaves the palette as it is: this only puts the zoomed
+  // background back and rebuilds its map.
   BattleBackground_SetMode(BATTLE_BACKGROUND_ZOOMED, gBattleWork->background,
                            0);
   {

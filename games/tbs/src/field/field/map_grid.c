@@ -264,7 +264,7 @@ s32 MapGrid_LoadLayout(s32 index) {
   }
   // The treasure spot list is not decoded: Field_PlaceTreasureSpots reads it in
   // place through this pointer (MapGridMarkers.markers).
-  grid->script = (u8 *)layoutHeader + layoutHeader->markers;
+  grid->markers = (u8 *)layoutHeader + layoutHeader->markers;
   // The header's bounds and origins are in 8-pixel tiles; << 19 makes them
   // 16.16 pixels. The view starts at (0, 0) until the camera is centred.
   grid->minX = layoutHeader->cameraBounds[0] << 19;

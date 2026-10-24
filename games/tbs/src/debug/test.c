@@ -920,9 +920,8 @@ struct ObjectEventTemplate gMenuTest_ObjectEventTemplates[] = {
 /// Who runs what: Garet levels, Jenna equipment, Ivan consumables, Mia
 /// Isaac's name, and the placed object events (enum MenuTestLocalId) the rest.
 /// Outside Japanese, LOCALID_FELIX and LOCALID_SECOND_FELIX run a different
-/// browser for each way the leader faces (bits 15..12 of the control: 0xc
-/// north, 0x8 west, 0x0 east, 0x4 south); in Japanese they open the character
-/// selector and the item browser.
+/// browser for each way the leader faces (TALK_EVENT_FACING); in Japanese they
+/// open the character selector and the item browser.
 struct MapEvent gMenuTest_Events[] = {
     {MAP_EVENT_TALK, GARET, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_RaisePartyLevels)},
@@ -962,22 +961,22 @@ struct MapEvent gMenuTest_Events[] = {
     {MAP_EVENT_TALK, LOCALID_SECOND_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_OpenItemBrowser)},
 #else
-    {0xc400, LOCALID_FELIX, CONDITION_ALWAYS,
+    {TALK_EVENT_FACING(FACING_NORTH), LOCALID_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_BrowseWeaponShopMessages)},
-    {0x8400, LOCALID_FELIX, CONDITION_ALWAYS,
+    {TALK_EVENT_FACING(FACING_WEST), LOCALID_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_BrowseArmorShopMessages)},
-    {0x400, LOCALID_FELIX, CONDITION_ALWAYS,
+    {TALK_EVENT_FACING(FACING_EAST), LOCALID_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_BrowseItemShopMessages)},
-    {0x4400, LOCALID_FELIX, CONDITION_ALWAYS,
+    {TALK_EVENT_FACING(FACING_SOUTH), LOCALID_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_BrowseSanctumMessages)},
-    {0xc400, LOCALID_SECOND_FELIX, CONDITION_ALWAYS,
+    {TALK_EVENT_FACING(FACING_NORTH), LOCALID_SECOND_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_BrowseWarriorShopMessages)},
-    {0x8400, LOCALID_SECOND_FELIX, CONDITION_ALWAYS,
+    {TALK_EVENT_FACING(FACING_WEST), LOCALID_SECOND_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_BrowseWarriorArmorShopMessages)},
-    {0x400, LOCALID_SECOND_FELIX, CONDITION_ALWAYS,
+    {TALK_EVENT_FACING(FACING_EAST), LOCALID_SECOND_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_BrowseWarriorItemShopMessages)},
 #if TBS_PATCH_2
-    {0x4400, LOCALID_SECOND_FELIX, CONDITION_ALWAYS,
+    {TALK_EVENT_FACING(FACING_SOUTH), LOCALID_SECOND_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_RunMessageTest)},
 #endif
 #endif

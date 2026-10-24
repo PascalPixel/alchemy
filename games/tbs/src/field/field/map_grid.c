@@ -827,6 +827,10 @@ void MapGrid_PlayMetatileCopySequence(u16 *sequence, s32 destinationX,
 /// through MapGrid_CopyMetatileCellsRectFar.
 void MapGrid_CopyMetatileCellsRect(s32 sourceX, s32 sourceY, s32 width,
                                    s32 height, s32 dstX, s32 dstY) {
+  /* FAKEMATCH(temporary): the chains of temporaries, tmp2 to tmp17, set the
+   * registers, the schedule and the slots of the 36-byte frame; as a plain
+   * body (the offset computed once, two word stores), 85 of 137 instructions
+   * differ in tbs-en. */
   s32 y = dstY;
   u32 *sourceCells = (u32 *)Ram_MapGridCellBuffer + (sourceY * 128 + sourceX);
   u32 *destinationCells = &((u32 *)Ram_MapGridCellBuffer)[y * 128 + dstX];
@@ -893,9 +897,6 @@ void MapGrid_CopyMetatileCellsRect(s32 sourceX, s32 sourceY, s32 width,
             u32 tmp10;
             u32 tmp14;
             u32 tmp16;
-            /* FAKEMATCH(temporary): the copy chain through tmp2 to tmp17 sets
-             * the registers and slots of the 36-byte frame; as two plain word
-             * stores, 65 of 137 instructions differ in tbs-en. */
             u32 bytes = metatileId * 8;
             u32 tmp8;
             u32 tmp17;

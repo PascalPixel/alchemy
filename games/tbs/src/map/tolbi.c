@@ -395,7 +395,7 @@ static void Tolbi_TalkToSnackVendor(void) {
     GameFlag_Set(FLAG_TOLBI_CORN_GIVEN);
     FieldScript_SetMessageId(MsgTolbiLeftovers);
     FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SNACK_VENDOR, 0);
-    FieldEffect_StartEffectObject22(ITEM_CORN, 3);
+    ItemDisplay_ShowItem(ITEM_CORN, 3);
     FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SNACK_VENDOR, 0);
     Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
     PartyInventory_GiveItem(ITEM_CORN, 0);

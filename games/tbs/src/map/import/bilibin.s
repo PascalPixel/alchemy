@@ -48,7 +48,7 @@
 	.set import.FieldCamera_WaitForArrival, 1
 	.set import.Import_ScriptRequestWarp, 1
 	.set import.Field_TryJumpForward, 1
-	.set import.FieldEffect_StartEffectObject22, 1
+	.set import.ItemDisplay_ShowItem, 1
 	.set import.FieldEffect_StartMindReadWave, 1
 	.set import.FieldEffect_FinishWaveAndReleaseHeapBlock, 1
 	.set import.Djinn_JoinParty, 1

@@ -42,7 +42,7 @@
 	.set import.FieldScript_RequestDestination, 1
 	.set import.FieldScript_StartScreenTransition, 1
 	.set import.FieldScript_WaitTransitionFrames, 1
-	.set import.FieldEffect_StartEffectObject22, 1
+	.set import.ItemDisplay_ShowItem, 1
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.ObjectEvent_Snapshot, 1
 	.set import.Sound_WaitForFanfare, 1

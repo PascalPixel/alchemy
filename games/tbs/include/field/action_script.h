@@ -43,7 +43,7 @@ struct ScriptOperands {
   u32 gravity;       ///< SW_GRAVITY
   /// Work value 0x17: the word Object_CreateField zeroes and only map code
   /// reads.
-  u32 mapWord;
+  u32 riseBaseY;
   u32 sprite;           ///< work value 0x18: the sprite, or its list of four
   u8 spriteStorageKind; ///< work value 0x19: 0 hidden, 1 one, 2 a group
   u8 motionFlags;       ///< SW_MOTION, ObjectEventMotionFlag bits
@@ -53,13 +53,13 @@ struct ScriptOperands {
   u8 collisionFlags;    ///< SW_COLLISION
   u8 steeringFlags;     ///< SW_STEERING
   u8 paused;            ///< SW_PAUSED
-  u8 byte5c;            ///< keeps the sprite's VRAM; no work value
+  u8 retainSpriteCache; ///< keeps the sprite's VRAM; no work value
   u8 repeatCount;       ///< SW_REPEAT, SC_LOOP's count
   u16 wait;             ///< SW_WAIT, compared as signed
   u8 refused;           ///< Object.refused; no work value
   u8 frozen;            ///< ObjectArmView.frozen; no work value
-  u8 mapByte62;         ///< work value 0x27, kept by map code
-  u8 mapByte63;         ///< work value 0x28, kept by map code
+  u8 riseCounter;       ///< SW_RISE_COUNTER, kept by map code
+  u8 riseEnabled;       ///< SW_RISE_ENABLED, kept by map code
   s16 actionParameter;  ///< work value 0x23, what its action script reads
   s16 footprintSide;    ///< work value 0x24, or map scratch
   u32 linkedObject;     ///< work value 0x25, the object it follows or faces
@@ -70,7 +70,7 @@ STATIC_ASSERT(offsetof(struct ScriptOperands, scriptAddress) == 0x00);
 STATIC_ASSERT(offsetof(struct ScriptOperands, cursor) == 0x04);
 STATIC_ASSERT(offsetof(struct ScriptOperands, facing) == 0x06);
 STATIC_ASSERT(offsetof(struct ScriptOperands, radius) == 0x20);
-STATIC_ASSERT(offsetof(struct ScriptOperands, mapWord) == 0x4c);
+STATIC_ASSERT(offsetof(struct ScriptOperands, riseBaseY) == 0x4c);
 STATIC_ASSERT(offsetof(struct ScriptOperands, spriteStorageKind) == 0x54);
 STATIC_ASSERT(offsetof(struct ScriptOperands, repeatCount) == 0x5d);
 STATIC_ASSERT(offsetof(struct ScriptOperands, refused) == 0x60);

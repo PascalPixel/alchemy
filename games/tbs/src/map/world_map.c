@@ -1982,7 +1982,7 @@ static void WorldMap_RunBlackOrbScene(void) {
   ObjectMotion_SetPositionAndReset(gWorldMapIodem, 6036, 3400);
   FieldScript_WaitFrames(1);
   ObjectEvent_GetById(gWorldMapIodem)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
-  FieldEffect_StartEffectObject22(ITEM_BLACK_ORB, 3);
+  ItemDisplay_ShowItem(ITEM_BLACK_ORB, 3);
   PartyInventory_GiveItem(ITEM_BLACK_ORB, 0);
   ObjectMotion_SetVarCbAndRefresh(gWorldMapIodem, 1);
   FieldScript_SetMessageId(MsgWorldMapNowUseOnShip);

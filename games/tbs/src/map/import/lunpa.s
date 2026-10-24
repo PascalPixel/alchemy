@@ -57,7 +57,7 @@
 	.set import.FieldScript_StartScreenTransition, 1
 	.set import.FieldScript_FinishScreenTransition, 1
 	.set import.FieldScript_WaitTransitionFrames, 1
-	.set import.FieldEffect_StartEffectObject22, 1
+	.set import.ItemDisplay_ShowItem, 1
 	.set import.TreasureSpot_SetObjectEventPosition, 1
 	.set import.Field_DispatchTypeHandler, 1
 	.set import.FieldEffect_LoadActionEffectResources, 1

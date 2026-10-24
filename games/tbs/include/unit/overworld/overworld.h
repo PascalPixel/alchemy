@@ -201,7 +201,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot);
 void *Map_FindPsynergyEvent(s32 eventFlags, s32 group, void *target);
 s32 Field_RunPsynergyEvents(s32 packed);
 s32 Field_UsePsynergy(u32 code);
-s32 FieldEffect_HasMatchingEvent5(s32 group);
+s32 Map_HasFieldPsynergyEvent(s32 group);
 u32 Map_HasPsynergyEvent(u16 item);
 
 void ObjectMotion_SnapToTerrain(void *object);
@@ -222,7 +222,7 @@ struct Object *FieldEffect_StartRandomParticleEmitter(s32 localId, s32 item);
 void Object_DestroyIfPresent(void *object);
 void ItemDisplay_RaiseAboveLeader(struct Object *object);
 void ItemDisplay_ShowPicture(void *object, s32 flags);
-void FieldEffect_StartEffectObject22(s32 item, s32 flags);
+void ItemDisplay_ShowItem(s32 item, s32 flags);
 void FieldEffect_ClearRandomParticles(void);
 void Reveal_EmitSparkles(union ObjectEventOrEffect *fieldObject);
 s32 Field_IsRevealActive(struct Object *interpreter);

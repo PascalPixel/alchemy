@@ -56,7 +56,7 @@
 	.set import.ScreenTransition_InitializeBattleEffectState, 1
 	.set import.FieldScript_StartScreenTransition, 1
 	.set import.FieldScript_WaitTransitionFrames, 1
-	.set import.FieldEffect_StartEffectObject22, 1
+	.set import.ItemDisplay_ShowItem, 1
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.FieldEffect_FinishWaveAndReleaseHeapBlock, 1
 	.set import.Map_PlayMusic, 1

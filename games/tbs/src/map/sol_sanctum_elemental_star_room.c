@@ -2239,7 +2239,7 @@ static void SolSanctumElementalStarRoom_GiveMythrilBags(void) {
   s32 freeSlots;
 
   Sound_PlaySong(MUS_TREASURE_FOUND);
-  FieldEffect_StartEffectObject22(ITEM_MYTHRIL_BAG, 3);
+  ItemDisplay_ShowItem(ITEM_MYTHRIL_BAG, 3);
   FieldMessage_Show(MsgSolSanctumGotFourMythrilBags, 1);
   do {
     freeSlots = 30 - Inventory_Count(0);

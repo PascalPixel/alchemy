@@ -143,9 +143,10 @@ s32 Field_UsePsynergy(u32 code) {
 }
 
 /// Returns whether the map has a Psynergy event, in any phase, for
-/// Psynergy of group and what the leader faces. Exported as
-/// FieldEffect_HasMatchingEvent5Far, which no ☀️ code names.
-s32 FieldEffect_HasMatchingEvent5(s32 group) {
+/// Psynergy of group and what the leader faces. Called by the Psynergy menu
+/// (PsynergyMenu_ClassifySelectedPsynergy) through
+/// Map_HasFieldPsynergyEventFar.
+s32 Map_HasFieldPsynergyEvent(s32 group) {
   s32 target;
   s32 eventAddress =
       (s32)Map_FindPsynergyEvent(PSYNERGY_EV_ANY, (u16)group, &target);

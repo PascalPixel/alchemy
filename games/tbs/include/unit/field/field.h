@@ -206,10 +206,10 @@ void Object_SelectAnimation(void *raw, s32 no);
 void Object_SetAnimationSpeed(struct Object *object, s32 val);
 s32 ObjectScript_SetFlagAndTest(struct Object *interpreter);
 s32 ObjectScript_ClearFlagAndTest(struct Object *interpreter);
-void ObjectScript_SetOrCompareAddress(struct ScriptOperands *state,
-                                      s32 operation, s32 value);
-void ObjectScript_SetOrCompareUnsignedHalfword(struct ScriptOperands *state,
-                                               s32 operation, s32 value);
+void ObjectScript_SetOrCompareScriptAddress(struct ScriptOperands *state,
+                                            s32 operation, s32 value);
+void ObjectScript_SetOrCompareFacing(struct ScriptOperands *state,
+                                     s32 operation, s32 value);
 void ObjectScript_SetOrCompareX(struct ScriptOperands *state, s32 operation,
                                 s32 value);
 void ObjectScript_SetOrCompareY(struct ScriptOperands *state, s32 operation,
@@ -242,12 +242,12 @@ void ObjectScript_SetOrCompareGravity(struct ScriptOperands *state,
                                       s32 operation, s32 value);
 void ObjectScript_SetOrCompareTerrainHeight(struct ScriptOperands *state,
                                             s32 operation, s32 value);
-void ObjectScript_SetOrCompareWord4c(struct ScriptOperands *state,
-                                     s32 operation, s32 value);
-void ObjectScript_SetOrCompareAddress50(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareRiseBaseY(struct ScriptOperands *state,
                                         s32 operation, s32 value);
-void ObjectScript_SetOrCompareByte54(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareSprite(struct ScriptOperands *state,
                                      s32 operation, s32 value);
+void ObjectScript_SetOrCompareSpriteStorageKind(struct ScriptOperands *state,
+                                                s32 operation, s32 value);
 void ObjectScript_SetOrCompareMotionFlags(struct ScriptOperands *state,
                                           s32 operation, s32 value);
 void ObjectScript_SetOrCompareArrivalAxis(struct ScriptOperands *state,
@@ -264,26 +264,26 @@ void ObjectScript_SetOrComparePaused(struct ScriptOperands *state,
                                      s32 operation, s32 value);
 void ObjectScript_SetOrCompareRepeatCount(struct ScriptOperands *work,
                                           s32 operation, s32 value);
-void ObjectScript_SetOrCompareSignedHalfword64(struct ScriptOperands *work,
-                                               s32 operation, s32 value);
-void ObjectScript_SetOrCompareSignedHalfword66(struct ScriptOperands *work,
-                                               s32 operation, s32 value);
-void ObjectScript_SetOrCompareWord68(struct ScriptOperands *work, s32 operation,
-                                     s32 value);
+void ObjectScript_SetOrCompareActionParameter(struct ScriptOperands *work,
+                                              s32 operation, s32 value);
+void ObjectScript_SetOrCompareFootprintSide(struct ScriptOperands *work,
+                                            s32 operation, s32 value);
+void ObjectScript_SetOrCompareLinkedObject(struct ScriptOperands *work,
+                                           s32 operation, s32 value);
 void ObjectScript_SetOrCompareUpdateAddress(struct ScriptOperands *work,
                                             s32 operation, s32 value);
-void ObjectScript_SetOrCompareByte62(struct ScriptOperands *work, s32 operation,
-                                     s32 value);
-void ObjectScript_SetOrCompareByte63(struct ScriptOperands *work, s32 operation,
-                                     s32 value);
+void ObjectScript_SetOrCompareRiseCounter(struct ScriptOperands *work,
+                                          s32 operation, s32 value);
+void ObjectScript_SetOrCompareRiseEnabled(struct ScriptOperands *work,
+                                          s32 operation, s32 value);
 void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value);
 void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value);
 
 s32 MapGrid_GetScreenRelativePosition(struct Object *object,
                                       s32 *screenPosition);
 void ObjectSystem_Initialize(s32 controlMode);
-void Resource_ReservedNoOpC0C4(void);
-void Resource_ReservedNoOp2(void);
+void nullsub_0800C0C4(void);
+void nullsub_0800C0C8(void);
 void *Object_FindFree(void);
 void Object_Release(struct Object *object);
 struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z);
@@ -314,8 +314,8 @@ s32 ObjectCamera_ReturnTrue(void);
 void ObjectSystem_ProjectSprites(void);
 
 s32 ObjectScript_SetBase(struct Object *interpreter);
-s32 ObjectScript_ClearByte54(struct Object *interpreter);
-s32 ObjectScript_SetByte54(struct Object *interpreter);
+s32 ObjectScript_HideSprites(struct Object *interpreter);
+s32 ObjectScript_ShowSprite(struct Object *interpreter);
 void Object_WaitForMove(void *fieldObject);
 s32 Object_IsTargetUnset(struct Object *object);
 void Object_UpdateAllThumb(void);
@@ -357,8 +357,8 @@ void ObjectScript_SetOrCompareCursor(struct ScriptOperands *operands,
                                      s32 operation, s32 value);
 void ObjectScript_SetOrCompareRadius(struct ScriptOperands *state,
                                      s32 operation, s32 value);
-void ObjectScript_SetOrCompareHalfword5e(struct ScriptOperands *work,
-                                         s32 operation, s32 value);
+void ObjectScript_SetOrCompareWait(struct ScriptOperands *work, s32 operation,
+                                   s32 value);
 s32 ObjectScript_ApplyOperandSet(struct Object *interpreter);
 s32 ObjectScript_ApplyOperandAdd(struct Object *interpreter);
 s32 ObjectScript_ApplyOperandCompare(struct Object *interpreter);

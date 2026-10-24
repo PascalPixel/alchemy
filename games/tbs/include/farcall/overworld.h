@@ -282,7 +282,7 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTargetFar(s32 effect, s32 target,
 void ItemDisplay_ShowPictureFar(void *object, s32 flags);
 /// Holds an item's picture above the leader for 80 frames, the way a found
 /// item is shown in most maps.
-void FieldEffect_StartEffectObject22Far(s32 value, s32 flags);
+void ItemDisplay_ShowItemFar(s32 value, s32 flags);
 /// Moves a treasure spot's object event to (x, z) on the ground, in 16.16
 /// pixels; -1 keeps the centre of its cell on that axis.
 void TreasureSpot_SetObjectEventPositionFar(s32 id, s32 x, s32 y);
@@ -328,7 +328,7 @@ void FieldEffect_FinishWaveAndReleaseHeapBlockFar(void);
 void FieldEffect_RestoreMindReadPaletteFar(void);
 /// Returns whether the map has a Psynergy event of this group for what the
 /// leader faces; nothing in ☀️ calls it.
-s32 FieldEffect_HasMatchingEvent5Far(s32 group);
+s32 Map_HasFieldPsynergyEventFar(s32 group);
 /// Returns whether the map has an event for this item and what the leader
 /// faces; the item menu then closes and the item is used on the field.
 u32 Map_HasPsynergyEventFar(u16 item);

@@ -92,7 +92,7 @@ static void KolimaForestGlade_CatchNut(void) {
   FieldScript_Start();
   Import_ObjectEventSetPosition(LOCALID_NUT, 0, 0);
   GameFlag_Set(FLAG_KOLIMA_FOREST_NUT_CAUGHT);
-  FieldEffect_StartEffectObject22(ITEM_NUT, 3);
+  ItemDisplay_ShowItem(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
   FieldScript_End();
 }

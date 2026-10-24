@@ -334,7 +334,7 @@ static void TolbiShipMast_FindAnchorCharm(void) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_CREWMAN_CAUGHT) != 0 ||
       GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
     FieldScript_Start();
-    FieldEffect_StartEffectObject22(ITEM_ANCHOR_CHARM, 3);
+    ItemDisplay_ShowItem(ITEM_ANCHOR_CHARM, 3);
     PartyInventory_GiveItem(ITEM_ANCHOR_CHARM, 0);
     GameFlag_Set(FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND);
     FieldScript_End();

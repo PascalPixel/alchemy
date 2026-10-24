@@ -301,7 +301,7 @@
 	import ScanlineEffect_Stop, ScanlineEffect_StopFar
 	import FieldEffect_PlayCueAndStartEmitterOnTarget, FieldEffect_PlayCueAndStartEmitterOnTargetFar
 	import ItemDisplay_ShowPicture, ItemDisplay_ShowPictureFar
-	import FieldEffect_StartEffectObject22, FieldEffect_StartEffectObject22Far
+	import ItemDisplay_ShowItem, ItemDisplay_ShowItemFar
 	import TreasureSpot_SetObjectEventPosition, TreasureSpot_SetObjectEventPositionFar
 	import TreasureSpot_MoveLeaderAway, TreasureSpot_MoveLeaderAwayFar
 	import WorldMap_StartScript, WorldMap_StartScriptFar

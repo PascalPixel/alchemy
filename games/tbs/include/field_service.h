@@ -133,7 +133,7 @@ static inline void Item_LoadIcon(s32 item) { Icon_DrawItem(item); }
 
 /// Holds an item's picture up over the leader, as when the party finds it.
 static inline void Item_ShowFound(s32 item, s32 height) {
-  FieldEffect_StartEffectObject22(item, height);
+  ItemDisplay_ShowItem(item, height);
 }
 
 /// Redraws the room around the point the camera follows, after a script has

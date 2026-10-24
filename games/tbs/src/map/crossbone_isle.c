@@ -344,7 +344,7 @@ static void EventScript_CatchNut(void) {
   SCRIPT_START();
   Import_ObjectEventSetPosition(LOCALID_ISLE_NUT, 0, 0);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_NUT_CAUGHT);
-  FieldEffect_StartEffectObject22(ITEM_NUT, 3);
+  ItemDisplay_ShowItem(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
   SCRIPT_END();
 }

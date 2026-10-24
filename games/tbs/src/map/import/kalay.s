@@ -70,7 +70,7 @@
 	.set import.FieldScript_StartScreenTransition, 1
 	.set import.FieldScript_FinishScreenTransition, 1
 	.set import.FieldScript_WaitTransitionFrames, 1
-	.set import.FieldEffect_StartEffectObject22, 1
+	.set import.ItemDisplay_ShowItem, 1
 	.set import.FieldEffect_StartFadeOverlay, 1
 	.set import.Map_PlayMusic, 1
 	.set import.Djinn_JoinParty, 1

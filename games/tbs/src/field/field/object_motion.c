@@ -17,7 +17,7 @@ s32 ObjectScript_SetBase(struct Object *interpreter) {
 
 /// SC_HIDE_SPRITES: clears spriteStorageKind, hiding the sprites, and moves on
 /// to the next command.
-s32 ObjectScript_ClearByte54(struct Object *interpreter) {
+s32 ObjectScript_HideSprites(struct Object *interpreter) {
   interpreter->spriteStorageKind = OBJECT_SPRITE_NONE;
   interpreter->scriptCursor++;
   return 1;
@@ -25,7 +25,7 @@ s32 ObjectScript_ClearByte54(struct Object *interpreter) {
 
 /// SC_SHOW_SPRITE: sets spriteStorageKind to OBJECT_SPRITE_ONE, one sprite
 /// drawn, and moves on to the next command.
-s32 ObjectScript_SetByte54(struct Object *interpreter) {
+s32 ObjectScript_ShowSprite(struct Object *interpreter) {
   interpreter->spriteStorageKind = OBJECT_SPRITE_ONE;
   interpreter->scriptCursor++;
   return 1;

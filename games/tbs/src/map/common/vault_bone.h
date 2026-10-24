@@ -18,7 +18,7 @@ static void Vault_FindBone(void) {
     FieldScript_SetMessageId(MsgVaultWowHaveManyThingsArent);
     FieldScript_ShowMessageAndWait(LOCALID_GIRL_AT_THE_INN, 0);
   } else {
-    FieldEffect_StartEffectObject22(ITEM_BONE, 3);
+    ItemDisplay_ShowItem(ITEM_BONE, 3);
     PartyInventory_GiveItem(ITEM_BONE, 0);
   }
   FieldScript_End();

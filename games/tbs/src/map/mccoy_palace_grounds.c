@@ -155,7 +155,7 @@ static void EventScript_CatchFloatingNut(void) {
   FieldScript_Start();
   Import_ObjectEventSetPosition(LOCALID_FLOATING_NUT, 0, 0);
   GameFlag_Set(FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT);
-  FieldEffect_StartEffectObject22(ITEM_NUT, 3);
+  ItemDisplay_ShowItem(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
   FieldScript_End();
 }

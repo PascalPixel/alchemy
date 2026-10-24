@@ -768,7 +768,7 @@ static void EventScript_TakeCellKey(void) {
   ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   WAIT(10);
   OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_STAND);
-  FieldEffect_StartEffectObject22(ITEM_CELL_KEY, 3);
+  ItemDisplay_ShowItem(ITEM_CELL_KEY, 3);
   OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_STAND);
   PartyInventory_GiveItem(ITEM_CELL_KEY, 0);
   GameFlag_Set(FLAG_LUNPA_FORTRESS_CELL_KEY);

@@ -831,7 +831,8 @@ enum ScriptOperandOperation {
 /// The work value handlers, one for each entry of enum ObjectScriptValue (see
 /// gObjectScript_OperandHandlerTable in operand.c); each names the object field
 /// it sets, adds to or compares.
-SCRIPT_DEFINE_OPERAND_ADDRESS(ObjectScript_SetOrCompareAddress, scriptAddress)
+SCRIPT_DEFINE_OPERAND_ADDRESS(ObjectScript_SetOrCompareScriptAddress,
+                              scriptAddress)
 
 /// Work value SW_CURSOR: sets, adds to or compares the script cursor.
 void ObjectScript_SetOrCompareCursor(struct ScriptOperands *operands,
@@ -845,8 +846,7 @@ void ObjectScript_SetOrCompareCursor(struct ScriptOperands *operands,
   }
 }
 
-SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareUnsignedHalfword, facing,
-                             u16)
+SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareFacing, facing, u16)
 SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareX, x)
 SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareY, y)
 SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareZ, z)
@@ -878,10 +878,10 @@ SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareTargetZ, targetZ)
 SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareVerticalMotion, bounce)
 SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareGravity, gravity)
 SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareTerrainHeight, groundHeight)
-SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareWord4c, mapWord)
-SCRIPT_DEFINE_OPERAND_ADDRESS(ObjectScript_SetOrCompareAddress50, sprite)
-SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareByte54, spriteStorageKind,
-                             u8)
+SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareRiseBaseY, riseBaseY)
+SCRIPT_DEFINE_OPERAND_ADDRESS(ObjectScript_SetOrCompareSprite, sprite)
+SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareSpriteStorageKind,
+                             spriteStorageKind, u8)
 SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareMotionFlags, motionFlags,
                              u8)
 SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareArrivalAxis, arrivalAxis,
@@ -899,8 +899,8 @@ SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareRepeatCount, repeatCount,
                              u8)
 
 /// Work value SW_WAIT: sets, adds to or compares the wait counter.
-void ObjectScript_SetOrCompareHalfword5e(struct ScriptOperands *work,
-                                         s32 operation, s32 value) {
+void ObjectScript_SetOrCompareWait(struct ScriptOperands *work, s32 operation,
+                                   s32 value) {
   if (operation == SCRIPT_OPERAND_SET) {
     work->wait = value;
     return;
@@ -912,14 +912,16 @@ void ObjectScript_SetOrCompareHalfword5e(struct ScriptOperands *work,
   work->conditionResult = (s16)work->wait == (s16)value;
 }
 
-SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareSignedHalfword64,
+SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareActionParameter,
                              actionParameter, s16)
-SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareSignedHalfword66,
+SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareFootprintSide,
                              footprintSide, s16)
-SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareWord68, linkedObject)
+SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareLinkedObject, linkedObject)
 SCRIPT_DEFINE_OPERAND_WORD(ObjectScript_SetOrCompareUpdateAddress, hook)
-SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareByte62, mapByte62, u8)
-SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareByte63, mapByte63, u8)
+SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareRiseCounter, riseCounter,
+                             u8)
+SCRIPT_DEFINE_OPERAND_NARROW(ObjectScript_SetOrCompareRiseEnabled, riseEnabled,
+                             u8)
 
 /// Reads the two words after the command (a work value number and a value)
 /// and passes operation to that value's handler. The number is not checked

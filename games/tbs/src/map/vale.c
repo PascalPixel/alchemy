@@ -433,7 +433,7 @@ static void EventScript_CatchNut(void) {
   FieldScript_Start();
   Import_ObjectEventSetPosition(LOCALID_NUT, 0, 0);
   GameFlag_Set(FLAG_VALE_NUT_CAUGHT);
-  FieldEffect_StartEffectObject22(ITEM_NUT, 3);
+  ItemDisplay_ShowItem(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
   FieldScript_End();
 }
@@ -443,7 +443,7 @@ static void EventScript_CatchNutAfterKalay(void) {
   FieldScript_Start();
   Import_ObjectEventSetPosition(LOCALID_NUT_AFTER_KALAY, 0, 0);
   GameFlag_Set(FLAG_VALE_NUT_CAUGHT);
-  FieldEffect_StartEffectObject22(ITEM_NUT, 3);
+  ItemDisplay_ShowItem(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
   FieldScript_End();
 }

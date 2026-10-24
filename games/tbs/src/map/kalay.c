@@ -448,7 +448,7 @@ static void Kalay_CatchTunnelEntranceNut(void) {
   FieldScript_Start();
   Import_ObjectEventSetPosition(LOCALID_TUNNEL_ENTRANCE_NUT, 0, 0);
   GameFlag_Set(FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT);
-  FieldEffect_StartEffectObject22(ITEM_NUT, 3);
+  ItemDisplay_ShowItem(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
   FieldScript_End();
 }
@@ -1246,7 +1246,7 @@ static void Kalay_CatchTownNut(void) {
   WaitFrames(1);
   Import_ObjectEventSetPosition(LOCALID_TOWN_NUT, 0, 0);
   GameFlag_Set(FLAG_KALAY_TOWN_NUT_CAUGHT);
-  FieldEffect_StartEffectObject22(ITEM_NUT, 3);
+  ItemDisplay_ShowItem(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
 }
 

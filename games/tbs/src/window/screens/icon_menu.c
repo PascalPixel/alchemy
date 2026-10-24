@@ -538,10 +538,12 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   return command;
 }
 
-// XXX: with Send shown but not Battle, Send's place maps to SAVE_ACTION_BATTLE,
-// because gFileMenu_ActionByPosition lists Battle before Send in every row;
-// whether a file can ever be cleared without any of flags 48-127 set is not
-// established.
+// With Send shown but not Battle, Send's place maps to SAVE_ACTION_BATTLE,
+// because gFileMenu_ActionByPosition lists Battle before Send in every row.
+// XXX: whether that can happen, which needs a file cleared with no Djinni
+// found (flags 48-127 clear); a play that walks past Flint's ground on the
+// world map (MB_WORLD_MAP_FLINT) without meeting him would show whether he can
+// be missed.
 /// Builds the title menu from the save summaries and optional send flags.
 /// Translates the chosen visible position back to its action (enum FileAction),
 /// or -1 when cancelled or the backup memory cannot be read. With no files it
@@ -663,9 +665,11 @@ void Menu_DrawModeLabel(void) {
 // window sprites instead of preparing them for a redraw, and draws Cable's
 // help only when coming from Password. Spanish and Italian, which take the
 // French updates (TBS_PATCH_3), keep the others' form, so the test is on
-// the language.
-// XXX: why French needs its own redraw is unknown; a French recording of the
-// menu switching methods would show what it changes.
+// the language. The player sees no difference: French draws the help as
+// window sprites, so the empty frame the others redraw has nothing to clear,
+// and with two methods and the menu opening on Password, every move to Cable
+// comes from Password. XXX (no evidence): why French alone was rewritten; both
+// forms draw the same screens, so nothing the game shows tells them apart.
 #if (LANGUAGE == LANGUAGE_FRENCH)
 
 /// Redraws password/cable transfer help when the chosen method changes. A

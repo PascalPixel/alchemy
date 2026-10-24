@@ -244,11 +244,14 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
 
   if (window != NULL) {
     // BUG: from (8, 0) to (4, 4) is neither across nor down, so
-    // Window_DrawDividerLine draws nothing and the window has no divider.
-    // XXX: likely meant (8, 0, 8, 4), because the single joins draw
-    // (4, 0, 4, 4) half a tile before their text at x 36, as column 8 is
-    // before this one's at x 68.
+    // Window_DrawDividerLine draws nothing and the window has no divider. The
+    // single joins draw (4, 0, 4, 4), half a tile before their text at x 36;
+    // column 8 is the same place before this one's text at x 68.
+#ifdef BUGFIX
+    Window_DrawDividerLine(window, 8, 0, 8, 4);
+#else
     Window_DrawDividerLine(window, 8, 0, 4, 4);
+#endif
 
     ((struct WindowWork *)work)->dirty = 1;
 

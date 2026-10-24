@@ -16,9 +16,9 @@
 #include "graphics.h"
 #include "unit/window/window.h"
 
-// XXX: likely ARM code run from RAM for speed, as is the tree walker, because
-// ARM code fetched from the cartridge's 16-bit bus is slow; nothing in the code
-// says so.
+// ARM code copied to RAM, as the tree walker is: RamCode_Load takes IWRAM
+// when the copy fits, whose 32-bit bus fetches an ARM instruction in one read,
+// where the cartridge's 16-bit bus takes two.
 
 /// The pixel rows text may reach: four tiles, the battle message window's
 /// interior; a glyph is cut off below it.
@@ -360,8 +360,8 @@ void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles) {
           foundLeftEdge++;
           break;
         // Outside Japanese the left edge meeting a divider counts as a side
-        // too. XXX: what window tile 7 (taken as either side) is, is not
-        // known; the window tiles' picture would show it.
+        // too. Window tile 7, taken as either side, is blank in every
+        // edition's window tiles and no code places it, so it never matches.
         case 0xf007:
         case WINDOW_TILE_FRAME_LEFT:
 #if LANGUAGE != LANGUAGE_JAPANESE

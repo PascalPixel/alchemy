@@ -168,17 +168,21 @@ s32 DjinnMenu_Run(void) {
 
 /// The screen chooses an operation, optionally previews it, then commits it.
 enum DjinnMenuStep {
+  /// After a chooser: a negative result closes the screen, any other goes back
+  /// to choosing a Djinni.
   DJINN_STEP_HANDLE_RESULT = 0,
   DJINN_STEP_RESERVED = 1, ///< nothing sets it
   DJINN_STEP_SELECT_DJINN = 2,
-  DJINN_STEP_SELECT_ACTION = 3,
+  DJINN_STEP_SELECT_ACTION = 3, ///< what to do with the chosen Djinni
+  /// After a second choice: back to the Djinn, or on to a trade's second
+  /// Djinni or a gift's confirmation.
   DJINN_STEP_HANDLE_PAIR_RESULT = 4,
   DJINN_STEP_CONFIRM_SET = 5,
   DJINN_STEP_CONFIRM_STANDBY = 6,
   DJINN_STEP_CONFIRM_GIVE = 7,
-  DJINN_STEP_SELECT_SECOND = 8,
+  DJINN_STEP_SELECT_SECOND = 8, ///< the other Djinni of a trade
   DJINN_STEP_CONFIRM_TRADE = 9,
-  DJINN_STEP_SHOW_STATUS = 10,
+  DJINN_STEP_SHOW_STATUS = 10, ///< the status of the chosen column's member
   DJINN_STEP_APPLY_SET = 11,
   DJINN_STEP_APPLY_STANDBY = 12,
   DJINN_STEP_APPLY_GIVE = 13,

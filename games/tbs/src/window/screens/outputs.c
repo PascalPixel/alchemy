@@ -244,8 +244,9 @@ void WindowSprite_SetInvertedSentinel(void *sprite, s32 priority) {
 
 typedef void (*WindowSpanRoutine)(u16 *spans, u16 *tilemap);
 
-// XXX: likely meant to cover all 160 lines, because each line takes 4 bytes;
-// what the lower half then shows is not established.
+// XXX: likely meant to cover all 160 lines, because each line takes 4 bytes; a
+// window transition run with no window work would show what the lower 80
+// lines keep.
 /// Fills `spans`, a page of the screen transition's window edges past its WININ
 /// and WINOUT, with the window frames' horizontal extent on each of the 160
 /// scan lines: (left << 8) | right in the second halfword (WIN1H) of each

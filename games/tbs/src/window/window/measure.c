@@ -146,10 +146,10 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     // A character adds its width. Spaces (in Japanese every character) are
     // counted as the points the line can be stretched at. A space is
     // WINDOW_SPRITE_SPACE_WIDTH pixels. Style 1 (outlined) draws a glyph a
-    // pixel wider. XXX: style 5 (spinning) is counted a pixel wider too, though
-    // Text_DrawGlyphPair widens only style 1. No message in the six
-    // catalogs uses style 5 ({text_effect:6}), so none shows whether the pixel
-    // is meant; a use of the style would settle it.
+    // pixel wider. Style 5 (spinning) is counted a pixel wider too, though
+    // Text_DrawGlyphPair widens only style 1. XXX (no evidence): whether that
+    // pixel is meant; no message in the six catalogs uses style 5
+    // ({text_effect:6}), so the game never shows it.
     if (code > 31) {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
       if (code == 32) {
@@ -450,11 +450,10 @@ done:
   // Spanish and Italian, a set no patch level selects: TBS_PATCH_2 drops
   // Mind Read's padding from the first-page measure, Window_FitOnScreen and
   // the pen (typing.c) in German, French, Spanish and Italian alike.
-  // XXX: likely Spanish and Italian put the widening back here rather than
-  // keeping an older copy, because this function has the French outline
-  // reset at a page break (TBS_PATCH_3) too. Why only here is unknown; a
-  // Spanish or Italian recording of a Mind Read message over several pages
-  // would show whether the wider window was meant.
+  // Spanish and Italian put the widening back here rather than keeping an
+  // older copy: this function has the French outline reset at a page break
+  // (TBS_PATCH_3) too. XXX (no evidence): why only here; a recording shows
+  // the window 2 pixels wider, not whether that was meant.
 #if !(LANGUAGE == LANGUAGE_GERMAN) && !(LANGUAGE == LANGUAGE_FRENCH)
   if (work->mindRead != 0)
     maxWidth += 2;

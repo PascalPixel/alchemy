@@ -113,10 +113,10 @@ s32 Title_Run(void) {
     FieldScript_SetDestination((s32)&MapId_MainMenu, MAIN_MENU_FROM_TITLE);
     return 0;
   }
-  // The stub does nothing with its argument (runtime/runtime/system.c).
-  // XXX: likely left from loading the palette far-call bank, because the
-  // argument names that bank and the logo and intro calls below go through
-  // it.
+  // The stub does nothing with its argument (runtime/runtime/system.c), the
+  // far-call bank the logo and intro calls below go through. XXX (no
+  // evidence): what the call once did; the stub is empty in every edition, so
+  // only an earlier build of the game would show.
   Stub_NoOpHook((s32)&ResourceId_TitleFarCalls);
   if (gSaveBlock.warpDest == 2) {
     for (;;) {

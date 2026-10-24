@@ -93,6 +93,15 @@
 /// The party is in a town (MAP_TYPE_TOWN); the map loader sets and
 /// clears it, and the Colosso's log sets it as it ends.
 #define FLAG_IN_TOWN 0x123
+// Set as a file continues from its last Sanctum by the player's choice
+// (MainMenu_Run); nothing in the game reads either, by name, by number or as
+// part of a byte.
+/// The file was loaded with L and Start held, which restarts it at its last
+/// Sanctum.
+#define FLAG_SAVE_RESTARTED_AT_SANCTUM 0x13e
+/// The file's two play times differed and the player answered Yes to "Do you
+/// wish to try to recover from a Sanctum?".
+#define FLAG_SAVE_RECOVERED_AT_SANCTUM 0x13f
 /// Play the kind's usual effect. Field_UsePsynergy sets it for each use and
 /// clears it when the after event has trigger bit 0x400 and plays its own; the
 /// before event's script may clear it too.
@@ -1404,6 +1413,12 @@
 /// ★ Named from the game: "Rockslide...destroyed fence... Monsters
 /// everywhere..." (MsgValeRockslideDestroyedFence)
 #define FLAG_VALE_STORM_MONSTER_FOUGHT 0x900
+/// Set as the prologue ends, three years after the stormy night
+/// (Party_EndChildhood); nothing clears it. While it is set Vale's field music
+/// is MUS_VALE, ahead of the MUS_DANGER that FLAG_VALE_STORM_MONSTER_FOUGHT
+/// chose (the music rules in overworld/map_rules.s).
+/// ★ Named from the game: "Three years later..." (MsgValeRepairCaption)
+#define FLAG_VALE_THREE_YEARS_LATER 0x901
 /// The jar's Elixir by the cottage; after Kalay it is searchable only from the
 /// third patch.
 /// ★ Named from the game: "Elixir" (MsgItemName)

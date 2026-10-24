@@ -200,8 +200,9 @@ enum OptionMenuRow {
   OPTION_ROW_WINDOW_BRIGHTNESS = 2
 };
 
-// XXX: likely left from an earlier option screen, because the five-row one
-// OptionMenu_Run runs uses none of these four functions.
+// The five-row option menu OptionMenu_Run runs uses none of these four
+// functions. XXX (no evidence): what screen they were written for; nothing
+// calls them, so the game never shows one.
 /// Moves the three-row settings cursor up, wrapping to the bottom. The three
 /// rows are those of OptionMenu_LowerSetting.
 /// Nothing calls it.

@@ -54,7 +54,10 @@ s32 Menu_ResumeFieldTasks(void) {
 /// sets FLAG_PALETTE_BLEND_HELD and FLAG_WEATHER_HELD, so that the field's
 /// palette blend and weather stand still behind it (see Menu_ResumeFieldTasks,
 /// which undoes it). Returns Task_SuspendOverlayTasks' result, the last
-/// task index changed or -1; callers ignore it.
+/// task index changed or -1; callers ignore it. The Djinn and summary screens
+/// call it in every edition, the Item screen from TBS_PATCH_1 (the
+/// international editions) and the Psynergy screen from TBS_PATCH_2 (German,
+/// French, Spanish and Italian).
 s32 Menu_SuspendFieldTasks(void) {
   GameFlag_SetFar(FLAG_PALETTE_BLEND_HELD);
   GameFlag_SetFar(FLAG_WEATHER_HELD);
@@ -472,11 +475,15 @@ s32 Icon_CreateWithResourceVariant(struct Window *window, s32 x, s32 y) {
 
   icon = 0;
   block = VramCache_FindFreeEntry();
-  // XXX: likely meant as the no-free-block test, because 0 is a valid block:
-  // VramCache_FindFreeEntry returns VRAM_CACHE_ENTRY_COUNT (96) when none is
-  // free, which ItemMenu_SelectGiveQuantity tests. With none free, the sprite
-  // is created on block 96, which VramCache_Load refuses.
+  // BUG: block 0 is a valid block, and VramCache_FindFreeEntry says none is
+  // free with VRAM_CACHE_ENTRY_COUNT (96), which ItemMenu_SelectGiveQuantity
+  // tests. With none free, the sprite is created on block 96, which
+  // VramCache_Load refuses; with block 0 free, no hand is made.
+#ifdef BUGFIX
+  if (block != VRAM_CACHE_ENTRY_COUNT) {
+#else
   if (block != 0) {
+#endif
     VramCache_Load(block, ICON_TILE_BYTES, gIcon_ResourceTiles);
     icon = (s32)WindowSprite_CreateFar(block, ICON_SPRITE_16X16, window, x, y);
   }

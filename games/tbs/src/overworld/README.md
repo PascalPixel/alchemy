@@ -8,7 +8,7 @@ the A button, the menu. Around that loop sit random battles, the people a map
 puts in it, items and [Psynergy](../../glossary.md#psynergy-and-pp) used
 outside a battle, the commands cutscenes are written in,
 [Djinn](../../glossary.md#djinn) joining the party, and the picture of the
-world R brings up on the world map. Lucky Wheels, at Tolbi's spring, is here
+world R brings up on the world map. Lucky Wheels, played in Tolbi's game room, is here
 too, in another [bank](../../glossary.md#bank).
 
 The engine underneath, which moves everything and draws the maps, is

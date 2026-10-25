@@ -4,7 +4,7 @@
 // (Func_0810b1b4) and takes the coins, until nobody needs it or B. As ☀️'s
 // Shop_ServeParty loop in Shop_ConfirmAct's family (games/tbs/src/shop/shop.c,
 // after Shop_ConfirmAct), with ⚓️'s calls: Func_0810a9ac and Func_0810a9fc to
-// show a message, Func_08108660 for the choice, Func_0810af24 for the party
+// show a message, Func_08108660 for the choice, Shop_DrawServiceParty for the party
 // page, Func_08108690 for the page cursor and Func_08109188 for the coins.
 // Draft, differ 167 of 297 (2026-10-19), the shape following the listing:
 // the native keeps chooseAgain on the stack (sp + 4, its frame 16 bytes) and
@@ -44,7 +44,7 @@ s32 Shop_ServicePrice(s32 unitId, s32 serviceKind);
 void Shop_PlaceCursor(void *window, s32 x, s32 y);
 void Func_080f8058(s32 first);
 void WaitFrames(s32 frames);
-void Func_0810af24(void *window, s32 memberIndex);
+void Shop_DrawServiceParty(void *window, s32 memberIndex);
 void Shop_DrawSelectMsg(void *window, s32 unitId);
 void Audio_PlayCue(s32 cue);
 void RenderOutput_PrepareForRedrawFar(void *window);
@@ -105,7 +105,7 @@ s32 Func_0810abf0(void) {
         Func_080f8058(memberIndex / 4 * 4);
         WaitFrames(1);
       }
-      Func_0810af24(listWindow, memberIndex);
+      Shop_DrawServiceParty(listWindow, memberIndex);
       Shop_DrawSelectMsg(priceWindow, unitId);
       redraw = 0;
     }

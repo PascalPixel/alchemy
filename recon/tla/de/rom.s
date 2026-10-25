@@ -2503,23 +2503,11 @@ Func_081051a8:
 	.incbin "baserom.gba", 0x0010f574, 0x000000c0
 	.section .rom.0010f6ac, "ax"
 	.incbin "baserom.gba", 0x0010f6ac, 0x000000a0
-	.section .rom.001102c4, "ax"
-	.global Func_081082c4
-	.type Func_081082c4, %function
-	.thumb_func
-Func_081082c4:
-	.incbin "baserom.gba", 0x001102c4, 0x000001a0
-	.section .rom.00110690, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x00110690, 0x000000cc
-	.section .rom.00110948, "ax"
-	.balign 4
-	.global Func_08108948
-	.type Func_08108948, %function
-	.thumb_func
-Func_08108948:
-	.incbin "baserom.gba", 0x00110948, 0x0000009c
 	.section .rom.00110b70, "ax"
+	.global Func_08108b70
+	.type Func_08108b70, %function
+	.thumb_func
+Func_08108b70:
 	.incbin "baserom.gba", 0x00110b70, 0x00000618
 	.section .rom.0011128c, "ax"
 	.incbin "baserom.gba", 0x0011128c, 0x00000324
@@ -2549,33 +2537,23 @@ Func_0810a108:
 	.incbin "baserom.gba", 0x0011210c, 0x000001a4
 	.section .rom.001122dc, "ax"
 	.incbin "baserom.gba", 0x001122dc, 0x00000394
-	.section .rom.00112674, "ax"
-	.incbin "baserom.gba", 0x00112674, 0x00000088
 	.section .rom.00112710, "ax"
 	.global Forge_FindRecipe
 	.type Forge_FindRecipe, %function
 	.thumb_func
 Forge_FindRecipe:
 	.incbin "baserom.gba", 0x00112710, 0x0000003c
-	.section .rom.00112a84, "ax"
-	.balign 4
-	.global Func_0810aa80
-	.type Func_0810aa80, %function
+	.section .rom.00112bf4, "ax"
+	.global Func_0810abf0
+	.type Func_0810abf0, %function
 	.thumb_func
-Func_0810aa80:
-	.incbin "baserom.gba", 0x00112a84, 0x00000424
-	.section .rom.00112f28, "ax"
-	.incbin "baserom.gba", 0x00112f28, 0x00000128
+Func_0810abf0:
+	.incbin "baserom.gba", 0x00112bf4, 0x000002b4
+	.section .rom.0011304e, "ax"
+	.incbin "baserom.gba", 0x0011304e, 0x00000002
 	.section .rom.001131b8, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x001131b8, 0x000001c4
-	.section .rom.0011341c, "ax"
-	.balign 4
-	.global Func_0810b418
-	.type Func_0810b418, %function
-	.thumb_func
-Func_0810b418:
-	.incbin "baserom.gba", 0x0011341c, 0x00000108
 	.section .rom.001135c8, "ax"
 	.global Func_0810b5c4
 	.type Func_0810b5c4, %function

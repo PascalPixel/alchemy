@@ -1,5 +1,3 @@
-// differ 2: the native loads the cursor before copying the column count; a load
-// latency of 3 explains it, ARM9TDMI's 2 ties
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

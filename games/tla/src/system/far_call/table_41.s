@@ -14,11 +14,11 @@ Func_08108008:
 	.global Func_08108010
 	.thumb_func
 Func_08108010:
-	overlay_veneer Func_0810aa80
+	overlay_veneer Shop_ConfirmAct
 	.global Func_08108018
 	.thumb_func
 Func_08108018:
-	overlay_veneer Func_0810b418
+	overlay_veneer Inn_CheckIn
 	.global Func_08108020
 	.thumb_func
 Func_08108020:
@@ -30,7 +30,7 @@ Func_08108028:
 	.global Func_08108030
 	.thumb_func
 Func_08108030:
-	overlay_veneer Func_08108948
+	overlay_veneer ShopCursor_Advance
 	.global Func_08108038
 	.thumb_func
 Func_08108038:

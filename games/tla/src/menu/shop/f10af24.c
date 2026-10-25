@@ -1,9 +1,7 @@
-// Draft, differ 4 of 141: draws the sanctum's party page, four members at a
-// time with page arrows: ☀️'s Shop_DrawParty (games/tbs/src/shop/shop.c)
-// shape over a page, each member dimmed when Shop_CanServe refuses the chosen
-// service. Left: instruction order only, two rows before the loop (the
-// native sets the counter's r10 before the page index reload from the stack;
-// here mov sl and the ldr each sit one slot later).
+// Shop_DrawServiceParty draws the sanctum's party page, four members at a time
+// with page arrows: The Broken Seal's Shop_DrawParty
+// (games/tbs/src/shop/shop.c) shape over a page, each member dimmed when
+// Shop_CanServe refuses the chosen service.
 #include "types.h"
 #include "ram_buffer.h"
 #include "render_input.h"

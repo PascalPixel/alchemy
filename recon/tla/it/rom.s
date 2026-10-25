@@ -3169,23 +3169,11 @@ AudioCommand_WaitForStateByteClearFar:
 	.thumb_func
 Inn_PlaySleepFar:
 	.incbin "baserom.gba", 0x00108080, 0x00000008
-	.section .rom.001082c4, "ax"
-	.global Func_081082c4
-	.type Func_081082c4, %function
-	.thumb_func
-Func_081082c4:
-	.incbin "baserom.gba", 0x001082c4, 0x000001a0
-	.section .rom.00108690, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x00108690, 0x000000cc
-	.section .rom.00108948, "ax"
-	.balign 4
-	.global Func_08108948
-	.type Func_08108948, %function
-	.thumb_func
-Func_08108948:
-	.incbin "baserom.gba", 0x00108948, 0x0000009c
 	.section .rom.00108b70, "ax"
+	.global Func_08108b70
+	.type Func_08108b70, %function
+	.thumb_func
+Func_08108b70:
 	.incbin "baserom.gba", 0x00108b70, 0x00000618
 	.section .rom.001091cc, "ax"
 	.incbin "baserom.gba", 0x001091cc, 0x000000a4
@@ -3217,19 +3205,20 @@ Func_0810a108:
 	.incbin "baserom.gba", 0x0010a10c, 0x000001a4
 	.section .rom.0010a2dc, "ax"
 	.incbin "baserom.gba", 0x0010a2dc, 0x00000394
-	.section .rom.0010a674, "ax"
-	.incbin "baserom.gba", 0x0010a674, 0x00000088
 	.section .rom.0010a710, "ax"
 	.global Forge_FindRecipe
 	.type Forge_FindRecipe, %function
 	.thumb_func
 Forge_FindRecipe:
 	.incbin "baserom.gba", 0x0010a710, 0x0000003c
-	.section .rom.0010aa84, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x0010aa84, 0x00000404
-	.section .rom.0010af08, "ax"
-	.incbin "baserom.gba", 0x0010af08, 0x00000128
+	.section .rom.0010abf4, "ax"
+	.global Func_0810abf0
+	.type Func_0810abf0, %function
+	.thumb_func
+Func_0810abf0:
+	.incbin "baserom.gba", 0x0010abf4, 0x00000294
+	.section .rom.0010b02e, "ax"
+	.incbin "baserom.gba", 0x0010b02e, 0x00000002
 	.section .rom.0010b0a0, "ax"
 	.global BattleEffect_UpdateRadialMotion
 BattleEffect_UpdateRadialMotion:
@@ -3238,9 +3227,6 @@ BattleEffect_UpdateRadialMotion:
 	.global Func_0810b168
 Func_0810b168:
 	.incbin "baserom.gba", 0x0010b14c, 0x00000210
-	.section .rom.0010b3fc, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x0010b3fc, 0x00000108
 	.section .rom.0010b5a8, "ax"
 	.incbin "baserom.gba", 0x0010b5a8, 0x000000f8
 	.section .rom.0010b6b0, "ax"

@@ -6079,23 +6079,23 @@ main	rom_main_10	recon/tla/de/rom	.rom.001a101c	de
 main	rom_main_10	recon/tla/raw/081a101c	.text	en
 main	rom_main_10	recon/tla/ja/rom	.rom.001a1008	ja
 main	rom_main_10	games/tla/src/system/scene_state_set_halfword	.text
-main	rom_main_10	recon/tla/it/rom	.rom.001a1294	it
+main	rom_main_10	games/tla/src/graphics/display/scroll_map	.text
+main	rom_main_10	recon/tla/it/rom	.rom.001a133c	it
 main	rom_main_10	recon/tla/it/rom	.rom.001a150c	it
 main	rom_main_10	recon/tla/it/rom	.rom.001a15dc	it
-main	rom_main_10	recon/tla/fr/rom	.rom.001a1294	fr
+main	rom_main_10	recon/tla/fr/rom	.rom.001a133c	fr
 main	rom_main_10	recon/tla/fr/rom	.rom.001a150c	fr
 main	rom_main_10	recon/tla/fr/rom	.rom.001a15dc	fr
-main	rom_main_10	recon/tla/es/rom	.rom.001a1294	es
+main	rom_main_10	recon/tla/es/rom	.rom.001a133c	es
 main	rom_main_10	recon/tla/es/rom	.rom.001a150c	es
 main	rom_main_10	recon/tla/es/rom	.rom.001a15dc	es
-main	rom_main_10	recon/tla/de/rom	.rom.001a1294	de
+main	rom_main_10	recon/tla/de/rom	.rom.001a133c	de
 main	rom_main_10	recon/tla/de/rom	.rom.001a150c	de
 main	rom_main_10	recon/tla/de/rom	.rom.001a15dc	de
-main	rom_main_10	recon/tla/raw/081a1294	.text	en
 main	rom_main_10	recon/tla/raw/081a133c	.text	en
 main	rom_main_10	recon/tla/raw/081a150c	.text	en
 main	rom_main_10	recon/tla/raw/081a15dc	.text	en
-main	rom_main_10	recon/tla/ja/rom	.rom.001a1280	ja
+main	rom_main_10	recon/tla/ja/rom	.rom.001a1328	ja
 main	rom_main_10	recon/tla/ja/rom	.rom.001a14f8	ja
 main	rom_main_10	recon/tla/ja/rom	.rom.001a15c8	ja
 main	rom_main_10	games/tla/src/graphics/display/scroll_wait	.text

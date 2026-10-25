@@ -13,6 +13,8 @@
 // 3 cycles instead of agscc's 2 gives the object's load priority 37 over
 // the shifts' 36: the native order.
 // 2026-10-18: case 5 with pos[2] first: 16; the object as *(objects + i): 2.
+// 2026-10-24: column and row locals held by an asm whose input is the object
+// (92: i % 4 becomes a library call once the asm needs it whole).
 #include "types.h"
 #include "ram_buffer.h"
 #include "battle_fx_work.h"

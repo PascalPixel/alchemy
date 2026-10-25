@@ -12,6 +12,14 @@
 // explicit source pointer pinned to r1 with a barrier (the loop matches, but
 // the pointer is set up before the guard: differ 21; set up inside the
 // guard, 31 to 45).
+// 2026-10-24: a volatile empty asm after the byte store, the index stepped
+// in the store (outBuf[index++]) or as its own statement before the asm,
+// holds the reload behind the pointer step, but loop.c places the pointer
+// step right after the ldrb, so in the group before the barrier it ties the
+// index step (priority, class, dependents) and wins on insn order: adds r1,
+// #1 before the strb and adds r0, #1 after it, where the native has the index
+// step first (differ 4). An asm on the index kills the strength reduction
+// (37); the byte read into a local first swaps r2 and r3 (8).
 #include "lzpack.h"
 
 void LzPack_CopyBufferedBytes(u8 *destination) {

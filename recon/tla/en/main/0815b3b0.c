@@ -20,6 +20,15 @@
 // registers but the ldrb after the shift again (2); with the asm as well the
 // ldrb drops below movs r3, #2 (2): a load feeding an asm costs 0 in sched2,
 // so the asm lowers the load's priority instead of raising it.
+// 2026-10-24: 128 pinned to r3 and held by an asm whose input is the flag
+// byte (the bitfield clear reuses that load) puts the ldrb before the shift,
+// but ahead of the value's strb too (2): after mov r3, r8 both are ready at
+// priority 71, both class 3, and the load has six dependents to the store's
+// four. Adding sprite as an output of an asm on 128 makes the ldrb wait for
+// movs r3, #128 and orders the whole run as the native's, but only with the
+// entry and kind stores moved after it (they cannot cross the asm), and kind
+// then outlives value, so the two swap r7 and r8 (differ 12). Pinning kind to
+// r7 lets GCC reuse r7 for the sprite pointer (46).
 #include "types.h"
 #include "animspr.h"
 #include "ram_buffer.h"

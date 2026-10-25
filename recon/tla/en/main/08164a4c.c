@@ -10,6 +10,11 @@
 // local (17 to 68). Worked through sched2's ranking by hand, the native
 // order follows exactly if a load costs 3 cycles instead of agscc's 2:
 // the pooled mask (priority 3) then outranks the shift (2).
+// 2026-10-24: 160 and the mask pinned to r5 and r7 (a u16 mask register loads
+// from the pool) and held together by one asm order the prologue as the
+// native's, but GCC then reuses r7 inside the loop while the mask is still
+// read there (differ 60); unpinned, the u16 mask goes through the asm as a
+// zero-extended constant (19 and 27).
 #include "types.h"
 
 void Func_08164a4c(s32 blue_delta, s32 green_delta, s32 red_delta) {

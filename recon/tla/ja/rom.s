@@ -4717,8 +4717,8 @@ Func_081a0d78:
 	.thumb_func
 DisplayScroll_DrawLine:
 	.incbin "baserom.gba", 0x001a1008, 0x0000026c
-	.section .rom.001a1280, "ax"
-	.incbin "baserom.gba", 0x001a1280, 0x00000278
+	.section .rom.001a1328, "ax"
+	.incbin "baserom.gba", 0x001a1328, 0x000001d0
 	.section .rom.001a14f8, "ax"
 	.global Func_081a150c
 	.type Func_081a150c, %function

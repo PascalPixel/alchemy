@@ -13,6 +13,9 @@
 // the backward loop's 14 after its two step constants. A pin and barrier for
 // the address moves the allocation (differ 156); five permuter minutes found
 // nothing.
+// 2026-10-24: the later reads through a second pointer copied from the
+// block's (32). Func_081a1294, which this callback's column copy mirrors, is
+// adopted (games/tla/src/graphics/display/scroll_map.c).
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"

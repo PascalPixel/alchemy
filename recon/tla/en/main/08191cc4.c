@@ -14,6 +14,10 @@
 // 2026-10-19: battle held by an empty asm operand after the reads (42);
 // alchemy-devtools permute 5 minutes: nothing below 2. The one row is the TLA
 // pattern of a load issued between a constant's movs and its lsls.
+// 2026-10-24: 240 pinned to r2 and held by an asm on the battle load, the
+// effect field reached through a pointer built from (240 << 7) + 240: the
+// pin takes r2 from the transition's address, and the pointer's first load
+// is shared with the loop's (40).
 #include "types.h"
 #include "ram_buffer.h"
 #include "motobj.h"

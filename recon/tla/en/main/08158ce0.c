@@ -9,6 +9,14 @@
 // then falls after the parameter copies), a one-pass block there (differ 4),
 // barriers or "+l" asms on work, shake_range or remainingFrames (differ
 // 4 to 8), alchemy permute 4 minutes (no better).
+// 2026-10-24: 238 pinned to r0 and held by an asm whose input is the work
+// pointer, with the offset built as (238 << 7) + 168 and then added to the
+// work, gives the native's prologue exactly (the parameter copies, movs r0,
+// #238, the work load, then the shift). It costs the decrement's reload
+// register: reload picks r2 but the final code reads the pointer back
+// through r0 (mov r0, r8), where the native uses r2 (differ 6). Without the
+// pin the offset takes r3 and the heap base r2 (26); a second asm holding
+// 238 alone, or the sum held by a third, change nothing.
 #include "types.h"
 #include "battle_effect_work.h"
 #include "ram_buffer.h"

@@ -67,8 +67,6 @@ void BattleEffect_UpdateGrowingParticleSprite(struct EffectSprite *sprite, struc
   s32 scale;
 
   sprite->tile = tiles + ((particle->timer >> 2) & 7) * 8;
-  /* FAKEMATCH: ⚓️ stores the tile before it builds the scale step */
-  asm volatile("");
   scale = sprite->scaleX + 0x1999;
   sprite->scaleX = scale;
   if (scale > 0x10000)

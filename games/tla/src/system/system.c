@@ -76,30 +76,12 @@ void WaitFrames(s32 frames) {
           gIdleFrameCount = 0;
         else {
           gIdleFrameCount++;
-          {
-            u32 idle;
-            u32 limit;
-            limit = SLEEP_IDLE_FRAMES >> 6;
-            idle = gIdleFrameCount;
-            /* FAKEMATCH: under the ARM9TDMI load schedule plain source shifts
-             * the idle limit before the volatile counter reload; finish the
-             * reload before the limit's shift, with neither value changed. */
-            __asm__("" : "+r"(idle) : "r"(limit));
-            if (idle > (limit << 6) + (SLEEP_IDLE_FRAMES & 63))
-              gSleepRequested = 1;
-          }
+          if (gIdleFrameCount > SLEEP_IDLE_FRAMES)
+            gSleepRequested = 1;
         }
       }
-      {
-        u32 held;
-        held = gInput.held;
-        /* FAKEMATCH: plain source starts the sleep-button comparison constant
-         * before loading held buttons; leave held unchanged while the load goes
-         * first. */
-        __asm__ volatile("" : : "r"(held));
-        if (held == (KEYS_SHOULDERS | KEY_SELECT))
-          gSleepRequested = 1;
-      }
+      if (gInput.held == (KEYS_SHOULDERS | KEY_SELECT))
+        gSleepRequested = 1;
     }
     if (gDebugMode) {
       for (;;) {
@@ -151,13 +133,13 @@ void WaitFrames(s32 frames) {
         gSleepActive = 1;
         {
           u32 high;
-          volatile u16 *key;
-          /* FAKEMATCH: the prior direct form loads the wake address before the
-           * genuine flag store; end its scratch-register reuse first. */
-          __asm__ volatile("" : : : "r5");
+
+          /* FAKEMATCH(barrier): the wake mask's first instruction before
+           * REG_KEYCNT's address loads; as plain C, 3 of 326 instructions
+           * differ in tla-en. */
           high = KEYCNT_SLEEP_WAKE >> 8;
-          key = &REG_KEYCNT;
-          *key = (high << 8) + (KEYCNT_SLEEP_WAKE & 255);
+          asm volatile("" : "+l"(high));
+          REG_KEYCNT = (high << 8) + (KEYCNT_SLEEP_WAKE & 255);
         }
         Bios_SoundBiasOff();
         Bios_Stop();

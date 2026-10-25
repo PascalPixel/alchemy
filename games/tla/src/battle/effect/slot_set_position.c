@@ -48,10 +48,6 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
   EffectSlot_SetPosition(effect, x, z);
   unit = 0x10000;
   effect->maxSpeed = 0x20000;
-  /* FAKEMATCH(barrier): an empty asm on the slot after the speed's store, so
-   * the object's reload falls between the two halves of the unit; without it,
-   * 4 of 75 instructions differ in tla-en. */
-  asm("" : "+l"(effect));
   effect->acceleration = effect->scaleY = effect->scaleX = unit;
   effect->originX = x;
   effect->originZ = z;

@@ -26,19 +26,12 @@ extern const s8 gData_0810cf2c[];
 /// Multiplies the inn's price per guest by the number of living party members.
 // As ☀️'s Inn_RoomPrice.
 s32 Inn_RoomPrice(s32 innId) {
-  /* FAKEMATCH(pin): the work kept in r6 and the member offset in r5 under the
-   * barrier below, which gives the work one more use; as a plain local, 16 of
-   * 55 instructions differ in tla-en. */
-  register struct InnRuntime *inn asm("r6");
+  struct InnRuntime *inn;
   s32 guestCount;
   s32 pricePerGuest;
   s32 memberIndex;
 
   inn = Ram_HeapSlots->menuRuntime;
-  /* FAKEMATCH(barrier): the work loaded before the count's offset is built
-   * in r1, as native; the clobber keeps that build below the load. As plain
-   * C without the barrier and the pin, 4 of 55 instructions differ in tla-en. */
-  asm("" : "+l"(inn) : : "r1");
   guestCount = 0;
   pricePerGuest = gData_0810cf2c[innId];
   for (memberIndex = 0; memberIndex < inn->partyMemberCount; memberIndex++) {

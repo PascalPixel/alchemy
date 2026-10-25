@@ -42,10 +42,6 @@ void ItemMenu_DrawCommands(const s8 *commandStates, s32 window) {
 
   UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
   useState = commandStates[ITEM_COMMAND_USE];
-  /* FAKEMATCH(barrier): an empty asm on the states after the first is read,
-   * so -1 is built around that load; without it, 2 of 92 instructions differ
-   * in tla-en. */
-  asm("" : "+l"(commandStates));
   disabled = ITEM_COMMAND_STATE_DISABLED;
   if (useState == disabled)
     UiWork_SetParamNibbleFar(TEXT_COLOR_DISABLED);

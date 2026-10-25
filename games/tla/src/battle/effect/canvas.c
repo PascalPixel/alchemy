@@ -57,36 +57,8 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   BattleEffect_ClearActorTimers();
   display->secondMode = 1;
   WaitFrames(1);
-  {
-    /* FAKEMATCH: the zero pinned to r3 behind a barrier loads from the pool
-     * before the register address, as native; as a plain store, 2
-     * instructions differ in tla-en. */
-    register u16 zero asm("r3") = 0;
-    struct IoWriteQueue *q;
-    u32 saved;
-    s32 count;
-    u16 *count_;
-
-    /* FAKEMATCH: the barrier of the pin above. */
-    __asm__("" : "+l"(zero) : : "r2");
-    /* FAKEMATCH: IO_WRITE_QUEUE_PUSH written out, so the queue's address is
-     * taken before the BLDCNT store; through the macro, 2 instructions differ
-     * in tla-en. */
-    q = &gIoWriteQueue;
-    count_ = &q->count;
-    REG_BLDCNT = zero;
-    IRQ_LOCK(saved);
-    count = *count_;
-    if (count <= 31) {
-      u32 *entry = q->entries[count];
-
-      *count_ = count + 1;
-      *entry++ = 0x1741;
-      *entry++ = (u32)&REG_DISPCNT;
-      *entry = 0x20000;
-    }
-    IRQ_UNLOCK(saved);
-  }
+  REG_BLDCNT = 0;
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1741, 0x20000);
   gBgScroll[1].y = 32;
   WaitFrames(1);
   BattlePresentation_ConfigurePaletteFadeFar(1, *(u16 *)battle->unk670, 128);
@@ -102,16 +74,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   WaitFrames(1);
 
   Func_0814355c();
-  {
-    /* FAKEMATCH: WININ's value pinned to r2 behind a barrier loads from the
-     * pool before the register address, as native; as a plain store, 2
-     * instructions differ in tla-en. */
-    register u16 inside asm("r2") = 0x3537;
-
-    /* FAKEMATCH: the barrier of the pin above. */
-    __asm__("" : "+l"(inside) : : "r3");
-    REG_WININ = inside;
-  }
+  REG_WININ = 0x3537;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7741, 0x20000);
   WaitFrames(1);
 
@@ -193,25 +156,11 @@ void BattleEffect_EndCanvasLayer(void) {
   gBgScroll[1].y = work->savedBg1Y;
   gCameraSceneParameters[3] = 120;
   gCameraSceneParameters[4] = 120;
-  {
-    /* FAKEMATCH: the control word pinned to r3 behind a barrier loads from the
-     * pool before the register address, as native; as a plain store, 2
-     * instructions differ in tla-en. */
-    register u16 control asm("r3") = 0x787;
-
-    /* FAKEMATCH: the barrier of the pin above: it holds r2 until the value is
-     * loaded. */
-    __asm__("" : "+l"(control) : : "r2");
-    REG_BG2CNT = control;
-  }
+  REG_BG2CNT = 0x787;
   Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
   Scheduler_RemoveCallback(Palette_StepFadeTransfer);
   gBgScroll[1].y = 32;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
-  /* FAKEMATCH: the barrier loads the zero between the first two instructions
-   * of the register address, as native; as a plain store, 2 instructions
-   * differ in tla-en. */
-  __asm__ volatile("");
   REG_BLDCNT = 0;
   WaitFrames(1);
 

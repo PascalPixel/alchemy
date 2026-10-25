@@ -134,13 +134,10 @@ extern char ResourceId_Map000;
 
 void Map_GetHeaderSize(s32 map, s32 *size) {
   u8 *header;
-  /* FAKEMATCH: the table address as a word local added after the row offset
-   * reads [offset, table]; indexed as an array, 2 instructions differ in
-   * tla-en. */
-  u32 table = (u32)gData_0802f380;
 
-  header = Resource_GetTableEntry(*(const u16 *)(map * 12 + table) +
-                                  (u32)&ResourceId_Map000);
+  // Indexed as gData_0802f380[map][0], the load reads [table, offset].
+  header = Resource_GetTableEntry(
+      *(const u16 *)(map * 12 + (u32)gData_0802f380) + (u32)&ResourceId_Map000);
   size[0] = header[0];
   if (header[2] == 0)
     size[1] = 256;

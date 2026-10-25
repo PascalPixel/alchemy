@@ -4594,25 +4594,11 @@ Func_081c0428:
 Func_081c0490:
 	.incbin "baserom.gba", 0x001c0490, 0x00000158
 	.section .rom.001c075a, "ax"
-	.incbin "baserom.gba", 0x001c075a, 0x00000048
-	.section .rom.001c07a2, "ax"
-	.global MusicTrack_HandleNote
-	.type MusicTrack_HandleNote, %function
+	.global Func_081c075a
+	.type Func_081c075a, %function
 	.thumb_func
-MusicTrack_HandleNote:
-	.incbin "baserom.gba", 0x001c07a2, 0x00000102
-	.section .rom.001c08a4, "ax"
-	.global Func_081c08a4
-	.type Func_081c08a4, %function
-	.thumb_func
-Func_081c08a4:
-	.incbin "baserom.gba", 0x001c08a4, 0x0000012c
-	.section .rom.001c09d0, "ax"
-	.global MusicPlayer_Tick
-	.type MusicPlayer_Tick, %function
-	.thumb_func
-MusicPlayer_Tick:
-	.incbin "baserom.gba", 0x001c09d0, 0x00000248
+Func_081c075a:
+	.incbin "baserom.gba", 0x001c075a, 0x00000018
 	.section .rom.0088fec5, "ax"
 	.incbin "baserom.gba", 0x0088fec5, 0x00000003
 	.section .rom.008ab681, "ax"

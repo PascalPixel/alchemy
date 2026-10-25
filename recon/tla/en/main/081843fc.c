@@ -1,5 +1,9 @@
 // Draft of BattleEffect_RunCatastrophe, decompiled from the listing: differ 4844 of
 // 4580 (draft 4586), the same 321 calls and control flow; allocation differs.
+// The function runs on through listing 081848ec, whose Func_081848ec and
+// Func_08185b9c are labels inside it (the second the loop's test, which
+// this listing branches to); compare both: alchemy-devtools diff
+// 081843fc.c 081843fc,081848ec.
 
 #include "types.h"
 #include "battle_effect.h"

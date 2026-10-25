@@ -1,3 +1,12 @@
+@ MusicPlayer2000's note-on, pret's ChnVolSetAsm and ply_note: the stereo
+@ volume of a channel from its track's volume and pan, and the song command
+@ that starts a note on a free or the weakest channel. Handwritten (S1):
+@ SoundDriver_CalculateStereoVolume takes its channel and track in r4 and
+@ r5, a linkage no procedure-call standard produces, with its two clamps
+@ placed before its entry; MusicTrack_HandleNote picks its channel with
+@ adcs on a shift's carry. Func_081c08a4 is a label inside it that
+@ leftover_handle_note.s branches to.
+
 .syntax unified
 	.thumb
 .L_081c0772:
@@ -340,4 +349,4 @@ AlchemyUncredited_081c09c6:
 	.2byte	0x0000
 AlchemyUncreditedEnd_081c09c6:
 	.4byte	0x03007ff0
-	.4byte	0x081c36b0
+	.4byte	gSound_ClockLengths

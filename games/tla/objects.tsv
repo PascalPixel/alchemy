@@ -3520,7 +3520,12 @@ main	rom_main_05	recon/tla/de/rom	.rom.000f8f94	de
 main	rom_main_05	recon/tla/raw/080ebf94	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000ebed8	ja
 main	rom_main_05	games/tla/src/battle/effect/cleanup_resources_and_window	.text
-main	rom_main_05	games/tla/src/battle/effect/f0ec16c	.text
+main	rom_main_05	recon/tla/it/rom	.rom.000ec160	it
+main	rom_main_05	recon/tla/fr/rom	.rom.000f1160	fr
+main	rom_main_05	recon/tla/es/rom	.rom.000f5160	es
+main	rom_main_05	recon/tla/de/rom	.rom.000f916c	de
+main	rom_main_05	recon/tla/raw/080ec16c	.text	en
+main	rom_main_05	recon/tla/ja/rom	.rom.000ec0b0	ja
 main	rom_main_05	recon/tla/it/rom	.rom.000ec1c4	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000f11c4	fr
 main	rom_main_05	recon/tla/es/rom	.rom.000f51c4	es

@@ -2209,6 +2209,8 @@ Func_080eb960:
 	.incbin "baserom.gba", 0x000f8960, 0x000002d0
 	.section .rom.000f8f94, "ax"
 	.incbin "baserom.gba", 0x000f8f94, 0x000001b8
+	.section .rom.000f916c, "ax"
+	.incbin "baserom.gba", 0x000f916c, 0x00000064
 	.section .rom.000f91d0, "ax"
 	.incbin "baserom.gba", 0x000f91d0, 0x000000c8
 	.section .rom.000f92b8, "ax"

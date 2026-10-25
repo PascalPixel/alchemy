@@ -1,3 +1,8 @@
+// Near miss under -mthumb-slow-loads, differ 2 of 43 (2026-10-25, the Makefile's
+// options): the native copies the camera pointer back (mov r2, r8) right after
+// the second __divsi3 call; this compiles it after the quotient's shift and
+// store (lsls r0, r0, #16; str r0, [r6, #16]). Without the option it matched
+// and was adopted in all six editions (1c5de30c6f).
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"

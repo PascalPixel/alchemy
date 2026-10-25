@@ -1,12 +1,4 @@
-// Near miss, differ 6 of 63 (was 22): brightens palette colour `index` from
-// entry `entry` by delta (green by half and blue by a quarter of it) through
-// Func_02002b08. Taking the destination as a pointer before the channels are
-// joined builds index * 2 in r10 as the native does. Left: the native loads
-// the pool constant 0x1f one insn earlier, and places the literal pool before
-// the third call where arm_reorg here places it after (the size estimate is 4
-// bytes short there; an empty asm before that call moves the pool but
-// disturbs the allocation, differ 40).
-#include "../../../../games/tla/src/scene/kibombo/kibombo.h"
+#include "kibombo.h"
 
 extern u8 gData_0200635c[];
 extern s16 gData_02007948[];

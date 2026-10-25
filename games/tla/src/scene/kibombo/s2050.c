@@ -1,11 +1,3 @@
-// Near miss, differ 2 of 1069: a scene in Kibombo, skipped when flag 0x86a is
-// set and setting flag 0x8f5 at its end: the party and actors 5, 6, 7 and 26
-// gather, the camera pans over the place, actor 26 leads them about and asks a
-// question until it gets the first answer (the event work's halfword 0x1c4
-// counts the answers), and the actors are sent off with their action scripts.
-// Left: the native builds the 1 for the second actionFlags update after loading
-// the flags and keeps it in r8, which it then reuses for the result (one
-// reordered row). Tried: 3 minutes of alchemy permute.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"

@@ -1,6 +1,4 @@
-// near miss: differ 4 (listing 76 instructions, draft 76); scheduling at entry:
-// the native loads the event work between the owner's address and its offset
-#include "../../../../games/tla/src/scene/kibombo/kibombo.h"
+#include "kibombo.h"
 
 void Func_02003a08(s32 x, s32 z) {
   struct PartyState *party = &gPartyState;

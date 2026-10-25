@@ -1,10 +1,4 @@
-// Near miss, differ 2 of 65 (was 36): as Func_02002b18, with red raised by 4
-// more and green and blue by 4 less, written in its draft's form (a halfword
-// colour, the channels extracted first, the destination as a pointer). Left:
-// the native loads the pool constant 0x1f one insn earlier (before adds r0,
-// r0, r2); an empty asm before the red sum moves the masks instead (differ
-// 16).
-#include "../../../../games/tla/src/scene/kibombo/kibombo.h"
+#include "kibombo.h"
 
 extern u8 gData_0200635c[];
 extern s16 gData_02007948[];

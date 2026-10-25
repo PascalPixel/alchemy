@@ -1,12 +1,4 @@
-// Draft, differ 16 of 73: two things are left. The native loads the halfword
-// zero for the motion flags right after the random offset is added, before it
-// takes the counter's address; and its literal pool is dumped one instruction
-// earlier (after str r7, [r6, #48]), so its length estimate is 2 bytes longer
-// than this form's. An empty asm after the sum, as here, moves the pool from
-// two instructions late to one; a one-pass block there fixes neither (differ
-// 12, pool two late). The sum goes through an int variable: stored directly it
-// is narrowed to a halfword add of 0x8000 (differ 13).
-#include "../../../../games/tla/src/scene/kibombo/kibombo.h"
+#include "kibombo.h"
 
 s32 Math_Cosine(s32 angle);
 void Func_02005a2c(struct KibomboObject *object, const void *script);

@@ -1,8 +1,5 @@
-// Near miss: differ 2 of 89 (one reordered row). The native reads the first
-// enemy slot before it builds the -1 (ldrsh r3, [r2, r3]; movs r1, #1; negs r1,
-// r1); the draft builds it first. This game skips leading empty slots (254) and
-// lays out up to the last live one. Swapping the two initialisers does not move
-// the load.
+// Enemy_Update: this game skips leading empty slots (254) and lays out up to
+// the last live one.
 #include "types.h"
 #include "ram_buffer.h"
 #include "battle_work.h"

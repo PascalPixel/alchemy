@@ -1,14 +1,12 @@
-// Near miss, differ 2 of 108: the inn. Shows the keeper's window and the price,
-// then on yes and enough coins closes the windows, plays the night
-// (Inn_PlaySleep) and greets the party in the morning. ☀️'s Inn_CheckIn in
-// games/tbs/src/shop/shop.c, written with ⚓️'s calls (Func_08108148 for the
-// cursor work, Func_080380f8 for the keeper's window, Inn_RoomPrice for the
+// Inn_CheckIn is the inn. It shows the keeper's window and the price, then on
+// yes and enough coins closes the windows, plays the night (Inn_PlaySleep) and
+// greets the party in the morning. The Broken Seal's Inn_CheckIn in
+// games/tbs/src/shop/shop.c, written with this game's calls (Func_08108148 for
+// the cursor work, Func_080380f8 for the keeper's window, Inn_RoomPrice for the
 // room price, UiText_DrawQuantity, Func_081084f4 to show a message,
 // Func_08108630 for the choice, Func_08109188 for the coins, Func_0810824c to
-// clean up) and its work-block offsets; ⚓️ has no special-inn flag. Messages
-// from Msg04813 ("Welcome to our inn."). Instruction order only: after the
-// night, the reload of the keeper's resource and the window call's last zero
-// argument swap.
+// clean up) and its work-block offsets; this game has no special-inn flag.
+// Messages from MsgInnWelcome ("Welcome to our inn.").
 #include "types.h"
 #include "party_state.h"
 #include "ram_buffer.h"
@@ -41,7 +39,7 @@ enum InnMessageId {
   INN_MESSAGE_REST_COMPLETE,
 };
 
-extern u8 Msg04813[]; // "Welcome to our inn." (MsgInnWelcome)
+extern u8 MsgInnWelcome[];
 
 void Func_08108148(void);
 void Func_0810824c(void);
@@ -73,7 +71,7 @@ s32 Inn_CheckIn(s32 mode, s32 objectId) {
 
   amount = Inn_RoomPrice(mode);
   UiText_DrawQuantity(amount, 5);
-  messageBase = (s32)Msg04813;
+  messageBase = (s32)MsgInnWelcome;
   Func_081084f4(messageBase);
   state->window = UiWindow_CreateFar(0, 16, 12, 4, 2);
   Func_08109188();

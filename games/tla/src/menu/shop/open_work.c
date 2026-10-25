@@ -29,7 +29,7 @@ extern char ResourceId_MenuArrowTiles;
 extern char ResourceId_ShopUpArrowTiles;
 extern char ResourceId_ShopDownArrowTiles;
 
-void Func_08108948(void *work);
+void ShopCursor_Advance(void *work);
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
 // The Spanish and Italian far-call tables reach it through the slot they name
 // BattleEffect_InitializeSharedSceneFar.
@@ -45,7 +45,7 @@ void Func_0810be3c(void);
 void UiWork_FinalizePendingCoreFar(void);
 
 void Func_08108130(void) {
-  Func_08108948((u8 *)Ram_HeapSlots->menuRuntime + 0x4dc);
+  ShopCursor_Advance((u8 *)Ram_HeapSlots->menuRuntime + 0x4dc);
 }
 
 /// Opens the shop's work: lists the party, loads the cursor, page arrow, gem

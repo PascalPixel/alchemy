@@ -1,7 +1,4 @@
-// Draft, differ 6 of 89 (2026-10-15), ported from The Broken Seal's
-// BattleParty_CollectUnitList: the three halfword 0xff end markers load from
-// the literal pool one or two rows earlier in the native than here (ldr r2,
-// =0xff before lsls r3, r6, #1, and so on).
+// Func_08118c68: The Broken Seal's BattleParty_CollectUnitList.
 #include "types.h"
 #include "battle_work.h"
 #include "battle_party.h"

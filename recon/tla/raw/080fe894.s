@@ -166,7 +166,7 @@ Func_080fe894:
 	mov r2, r8
 	ldr r0, [r7, #16]
 	ldr r1, [sp, #4]
-	bl Func_08104d5c
+	bl Menu_HighlightPageEntry
 	movs r2, #0
 	mov r9, r2
 .L_080fe9f2:
@@ -258,7 +258,7 @@ Func_080fe894:
 	ldr r0, [r7, #16]
 	ldr r1, [sp, #4]
 	mov r2, r8
-	bl Func_08104d5c
+	bl Menu_HighlightPageEntry
 	b .L_080feab6
 .L_080feab0:
 	movs r0, #114
@@ -285,7 +285,7 @@ Func_080fe894:
 	add r0, sp, #4
 	mov r1, r8
 	movs r2, #4
-	bl Func_08104c00
+	bl Menu_MoveGridCursor
 	mov r9, r0
 .L_080feae8:
 	movs r0, #168

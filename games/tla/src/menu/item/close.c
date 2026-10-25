@@ -112,17 +112,17 @@ void Func_080fa84c(s32 owner);
 void Func_080f8170(void *window, s32 owner, s32 slot, s32 style);
 void ItemMenu_RefreshOwner(s32 owner, s32 mode);
 void Func_08104ef8(s32 first);
-void Func_08104d5c(void *window, s32 selection, s32 count);
+void Menu_HighlightPageEntry(void *window, s32 selection, s32 count);
 void Func_080f8a44(s32 x, s32 y);
 void InventoryMenu_SortByListOrder(u16 *inventory, s32 order);
 void Audio_PlayCue(s32 cue);
 s32 ItemMenu_CountItems(s32 owner);
-s32 Func_08104c00(s32 *selection, s32 count, s32 columns);
+s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 
 /// The party member row of the item menu: moving shows each member's items and
 /// status, holding R their equipment; L + A sorts the member's items, a new
 /// order each press; A chooses a member who has items and B backs out. The
-/// members are paged four at a time by Func_08104c00, which moves the
+/// members are paged four at a time by Menu_MoveGridCursor, which moves the
 /// selection and says what to redraw (2 for a new page). Returns the chosen
 /// member's id, or -1.
 // As The Broken Seal's ItemMenu_RunOwnerSelection. Japanese, which draws the
@@ -183,7 +183,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
         Func_08104ef8(selection / 4 * 4);
         WaitFrames(1);
       }
-      Func_08104d5c(menu->pageWindow, selection, count);
+      Menu_HighlightPageEntry(menu->pageWindow, selection, count);
     }
     Func_080f8a44(selection % 4 * 24 - 10, 16);
     WaitFrames(1);
@@ -214,7 +214,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
       showEquipment = 0;
       redraw = 1;
     } else {
-      redraw = Func_08104c00(&selection, count, 4);
+      redraw = Menu_MoveGridCursor(&selection, count, 4);
     }
   }
   menu->paneIndex[0] = selection;

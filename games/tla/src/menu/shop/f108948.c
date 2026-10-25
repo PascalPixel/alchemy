@@ -1,13 +1,9 @@
-// Near miss, differ 8 of 71, instruction order only: moves the shop cursor
-// one step of its glide toward the target, setting the sprite's position and
-// its OAM x and y, and stops the glide on its last step; ☀️'s
-// ShopCursor_Advance (games/tbs/src/shop/shop.c). The x field is written
-// through a u32 mask, as Func_081089e4 beside it in menu/shop/cursor_set.c
-// does, so the 0x1ff mask is split as the native's (16 with the bitfield
-// alone). Left: the native loads the target x before the start x and adds
-// the step after both, and loads the zero from the pool before building the
-// mask; agscc issues each load a step later, the pattern AGENTS.md records
-// for ⚓️.
+// ShopCursor_Advance moves the shop cursor one step of its glide toward the
+// target, setting the sprite's position and its OAM x and y, and stops the
+// glide on its last step; The Broken Seal's ShopCursor_Advance
+// (games/tbs/src/shop/shop.c). The x field is written through a u32 mask, as
+// Func_081089e4 beside it in menu/shop/cursor_set.c does, so the 0x1ff mask is
+// split as the native's.
 #include "types.h"
 #include "render_input.h"
 #include "ram_buffer.h"

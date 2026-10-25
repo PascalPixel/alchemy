@@ -1,12 +1,6 @@
-// Draft, differ 2 of 106 (2026-10-15), ported from The Broken Seal's
-// BattleSummon_UpdateAvailability: this game keeps the high half of the offer
-// state's mask, tests 16 summons and writes the mask back. The native reloads
-// the party list's address from its stack slot (ldr r6, [sp, #4]) between the
-// two halves of the 0x118 offset (movs r1, #140; lsls r1, r1, #1); here the
-// offset is finished first. Walking the list by pointer, a barrier after
-// clearing the total, and three minutes of alchemy permute measured 2 to 4. The
-// listing ends with a two-byte empty function (bx lr) at 0x08119050 that adopts
-// with it.
+// Func_08118f6c: The Broken Seal's BattleSummon_UpdateAvailability; this game
+// keeps the high half of the offer state's mask, tests 16 summons and writes
+// the mask back.
 #include "types.h"
 #include "battle_summon.h"
 #include "battle_party.h"
@@ -69,3 +63,6 @@ void Func_08118f6c(void) {
 
   Djinn_GetRecoveryTableFar(0)->availableMask = availableMask;
 }
+
+/// An empty function, right after Func_08118f6c.
+void Func_08119050(void) {}

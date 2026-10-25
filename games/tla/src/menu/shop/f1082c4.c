@@ -1,9 +1,7 @@
-// First draft of Func_081082c4: runs the shop's buy, sell, artifacts and
-// repair menu with the selected shopkeeper; the twin of ☀️'s Shop_Run
-// (games/tbs/src/shop/shop.c), without its warrior shop rows. The messages
-// take the twin's names. Near miss, differ 2 of 164, instruction order
-// only: the native sets the second argument's zero before it reloads
-// keeperResource for the window call; here the reload comes first.
+// Func_081082c4 runs the shop's buy, sell, artifacts and repair menu with the
+// selected shopkeeper; the twin of The Broken Seal's Shop_Run
+// (games/tbs/src/shop/shop.c), without its warrior shop rows. The messages take
+// the twin's names.
 #include "types.h"
 #include "ram_buffer.h"
 #include "render_input.h"
@@ -33,7 +31,7 @@ extern u8 MsgWeaponShopWelcome[], MsgWhatWouldYouLike[], MsgWhatToSell[],
 
 s32 EventTable_GetRowLimit(void);
 s32 EventTable_GetRowType(s32 row);
-void Func_0810a670(s32 row);
+void EventTable_ApplyRowAbilities(s32 row);
 void Func_08108148(void);
 void *Object_GetByIdFar(s32 id);
 struct RenderInput *Func_080380f8(s32 resource, s32 x, s32 y, s32 mode);
@@ -59,7 +57,7 @@ s32 Func_081082c4(s32 stockRow, s32 keeperId) {
 
   if (stockRow >= EventTable_GetRowLimit() || stockRow < 0)
     stockRow = 0;
-  Func_0810a670(stockRow);
+  EventTable_ApplyRowAbilities(stockRow);
   Func_08108148();
   shop = Ram_HeapSlots->menuRuntime;
   shop->shopType = EventTable_GetRowType(stockRow);

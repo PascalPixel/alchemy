@@ -92,7 +92,7 @@ void Scheduler_SuspendTasks(s32 mode);
 void Audio_PlayCue(s32 cue);
 void Sound_LoadPresetParameters(s32 preset);
 void Func_08118c68(void);
-void Func_0811b37c(void);
+void BattleUnit_RefreshPlacement(void);
 void Func_08118eb0(void);
 void Func_08118f6c(void);
 u16 *Djinn_GetRecoveryTableFar(s32 owner);
@@ -117,7 +117,7 @@ void Func_0811d7e4(void);
 void PartyStatus_DrawFar(s32 mode);
 void Resource_ResetEntry(s32 slot);
 s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions);
-s32 Func_0811c3bc(struct BattleActionRecord *actions);
+s32 BattlePresentation_BuildSortedUnitEntries(struct BattleActionRecord *actions);
 s32 Func_0811d9cc(struct BattleActionRecord *action, s32 delay);
 s32 BattlePres_RunAction(struct BattleActionRecord *action);
 s32 Func_0811a24c(s32 side, s32 value);
@@ -240,7 +240,7 @@ s32 Func_081197f0(s32 enemyGroup) {
   }
 
   Func_08118c68();
-  Func_0811b37c();
+  BattleUnit_RefreshPlacement();
   Func_08118eb0();
   Func_08118f6c();
   if (*Djinn_GetRecoveryTableFar(0) != 0)
@@ -295,7 +295,7 @@ s32 Func_081197f0(s32 enemyGroup) {
     if (GameFlag_Test(0x16a) == 0)
       actionCount = BattlePresentation_BuildActions(battle->actions);
     else
-      actionCount = Func_0811c3bc(battle->actions);
+      actionCount = BattlePresentation_BuildSortedUnitEntries(battle->actions);
     battle->promptSlot = VramCache_AllocEntry(128);
     PartyStatus_DrawFar(battle->partyStatus);
     if (actionCount < 0)

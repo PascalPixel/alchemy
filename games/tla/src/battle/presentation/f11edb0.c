@@ -1,15 +1,13 @@
-// Draft: ☀️'s BattlePresentation_RunItem (games/tbs/src/battle/battle/staging.c),
-// ported: plays an item's use, the camera turned to the user's side, the user
-// raising the item and, for an item with an effect, the screen dimming while
-// the effect plays with the events; then spends the item as its use type
-// says. ⚓️ sets the user's mode from the battle work's byte 0x869. Near miss,
-// differ 2 of 289: the object's load (ldr r0, [r0]) sits after the mode
-// offset's lsls here, between its movs and lsls natively; sched2 ranks the
-// offset's chain one higher. The dimming loop reads the battle work through
-// a heap pointer, which keeps 0x03000000 in r11 as the native (53 differ with
-// Ram_HeapSlots read in the loop). Message 3176 is MsgItemBroke here, a name
-// not yet in the catalogs. BattlePres_BuildTargetList is void (r0 is set
-// before r1 for the call, as the native).
+// Func_0811edb0: The Broken Seal's BattlePresentation_RunItem
+// (games/tbs/src/battle/battle/staging.c), ported: plays an item's use, the
+// camera turned to the user's side, the user raising the item and, for an item
+// with an effect, the screen dimming while the effect plays with the events;
+// then spends the item as its use type says. This game sets the user's mode
+// from the battle work's byte 0x869. The dimming loop reads the battle work
+// through a heap pointer, which keeps 0x03000000 in r11 as the native. Message
+// 3176 is MsgItemBroke here, a name not yet in the catalogs.
+// Func_0811ddd8 is void (r0 is set before r1 for the call, as the
+// native).
 #include "types.h"
 #include "battle.h"
 #include "battle_unit.h"
@@ -39,6 +37,8 @@ extern char MsgItemBroke;
 struct BattleUnit *Unit_Get(s32 unitId);
 void Object_SetMode(struct MotionObject *object, s32 mode);
 void ColorBuffer_Scale(u16 *source, u32 destination, s32 value, s32 size);
+void Func_0811ddd8(struct BattlePlan *plan,
+                   struct BattlePresentationWork *work);
 void Func_08138008(struct BattlePresentationWork *work);
 void Func_08138018(struct BattlePresentationWork *work);
 void BattleEventRuntime_WaitForReady(void);
@@ -65,7 +65,7 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
     targetYaw = 0x2000;
   if (transition->targetYaw != targetYaw)
     transition->targetYaw = targetYaw;
-  BattlePres_BuildTargetList(plan, &work);
+  Func_0811ddd8(plan, &work);
   BattlePres_SetActorModes(0, 0);
   {
     struct BattleObj *slot = BattleObject_Get(work.actor);

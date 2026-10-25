@@ -1,5 +1,3 @@
-// Remaining difference: the native loads the table between the shift and the
-// add of row * 33.
 #include "types.h"
 #include "game_flags.h"
 

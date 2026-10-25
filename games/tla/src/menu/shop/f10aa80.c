@@ -1,18 +1,12 @@
-// Near miss, differ 2 of 153 (2026-10-19; was 4): the sanctum's service loop.
-// It opens the priest's window (his face resource from the actor's sprite, or a
-// plain window), the cursor and the coins window, then offers the party service
-// until the menu is cancelled. ☀️'s Shop_ConfirmAct in
-// games/tbs/src/shop/shop.c, written with ⚓️'s calls (Func_08108148 for the
-// cursor work, Func_080380f8 for the side-object window, Func_08108aa8 to place
-// the cursor, Func_0810a9ac to show a message, Shop_CountUnits to count the
-// downed, Func_0810abf0 for the service, Func_0810824c to clean up), its
-// work-block offsets and numbered messages. Instruction order only: the work
-// pointer's load against the action offset's first move, and the keeper
-// resource's reload against the window call's x argument. The work's barrier
-// with an r2 clobber (as Shop_DrawSelectMsg's) fixes the first; the second, the
-// reload issued before movs r1, #0 (native: after), is the pattern 0810b418 and
-// 0810b5c4 share. Tried: the resource through a u16 temporary, u16 or s16
-// parameters, a pinned-zero x behind a barrier.
+// Shop_ConfirmAct is the sanctum's service loop. It opens the priest's window
+// (his face resource from the actor's sprite, or a plain window), the cursor
+// and the coins window, then offers the party service until the menu is
+// cancelled. The Broken Seal's Shop_ConfirmAct in games/tbs/src/shop/shop.c,
+// written with this game's calls (Func_08108148 for the cursor work,
+// Func_080380f8 for the side-object window, Func_08108aa8 to place the cursor,
+// Func_0810a9ac to show a message, Shop_CountUnits to count the downed,
+// Func_0810abf0 for the service, Func_0810824c to clean up), its work-block
+// offsets and numbered messages.
 #include "types.h"
 #include "render_input.h"
 #include "ram_buffer.h"
@@ -45,10 +39,10 @@ struct ShopCursorAnchor {
   u8 kind;
 };
 
-extern u8 Msg04818[]; // "Welcome, weary ..." (MsgSanctumWelcome)
-extern u8 Msg04819[]; // "Do you wish for ..." (MsgSanctumMoreAid)
-extern u8 Msg04820[]; // "Visit us again anytime ..." (MsgSanctumFarewell)
-extern u8 Msg04821[]; // "Hmm, you were downed ...", then "Fear not ..."
+extern u8 MsgWelcomeWearyWanderers[];
+extern u8 MsgSanctumMoreAid[];
+extern u8 MsgSanctumFarewell[];
+extern u8 MsgReviveService[]; // "Hmm, you were downed ...", then "Fear not ..."
 
 void Func_08108148(void);
 void *Object_GetByIdFar(s32 unitId);
@@ -72,6 +66,9 @@ s32 Shop_ConfirmAct(s32 unitId) {
 
   Func_08108148();
   shop = Ram_HeapSlots->menuRuntime;
+  /* FAKEMATCH(barrier): an empty asm on the work pointer with an r2 clobber,
+   * so its load comes before the action offset's first move; as the plain
+   * load, 4 of 153 instructions differ in tla-en. */
   asm("" : "+l"(shop) : : "r2");
   shop->partyAction = listWindow;
 
@@ -93,7 +90,7 @@ s32 Shop_ConfirmAct(s32 unitId) {
   cursorAnchor->unk00[4] = 0;
   Func_08108aa8(&shop->cursor, -32, 112);
   shop->cursor.anchor = (struct RenderOutput *)cursorAnchor;
-  Func_0810a9ac((s32)Msg04818);
+  Func_0810a9ac((s32)MsgWelcomeWearyWanderers);
 
   shop->moneyWindow = UiWindow_CreateFar(16, 11, 12, 4, 2);
   Func_08109188();
@@ -104,18 +101,18 @@ s32 Shop_ConfirmAct(s32 unitId) {
     if (partyAction == -1)
       break;
 
-    Func_0810a9ac((s32)Msg04821);
+    Func_0810a9ac((s32)MsgReviveService);
     if (Shop_CountUnits() == 0) {
-      Func_0810a9ac((s32)Msg04821 + 1);
+      Func_0810a9ac((s32)MsgReviveService + 1);
     } else {
       Func_0810abf0();
     }
     shop->partyAction = 0;
     Func_08108aa8(&shop->cursor, -32, 112);
-    Func_0810a9ac((s32)Msg04819);
+    Func_0810a9ac((s32)MsgSanctumMoreAid);
   }
 
-  Func_0810a9ac((s32)Msg04820);
+  Func_0810a9ac((s32)MsgSanctumFarewell);
   UiWork_FinalizeFar(shop->moneyWindow, 2);
   UiWork_FinalizeFar(listWindow, 2);
   Func_0810824c();

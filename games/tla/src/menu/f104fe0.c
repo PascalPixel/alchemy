@@ -18,7 +18,7 @@ struct MenuEntryWork {
   u8 active;
 };
 
-void Menu_CreateOwnerEntryObjects(s32 first);
+void Func_08104ef8(s32 first);
 void Menu_UpdateEntryObjectTransforms(void);
 
 void Menu_PlaceOwnerEntryObjects(struct MenuEntryWindow *window, s32 originX,
@@ -28,7 +28,7 @@ void Menu_PlaceOwnerEntryObjects(struct MenuEntryWindow *window, s32 originX,
 
   for (i = 7; i >= 0; i--)
     menu->objects[i] = NULL;
-  Menu_CreateOwnerEntryObjects(0);
+  Func_08104ef8(0);
   for (i = 0; i <= 3; i++) {
     if (menu->objects[i] != NULL) {
       menu->x[i] = (i * 3 + (window->x + originX)) * 8;

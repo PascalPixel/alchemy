@@ -1,9 +1,6 @@
-// Near miss: differ 6 of 143 (the opening only). The native loads the battle
-// work before it takes the id list address (movs r3, #192; sub sp, #80; lsls;
-// ldr r3, [r3, #36]; mov r2, sp; adds r2, #52); the draft interleaves the two.
-// A barrier after the load, or the load as the first statement, swaps r9 and
-// r10. The Broken Seal source plus the reserve owners; the second fill loop
-// needs its pointer set inside the for initialiser.
+// BattleUnit_RefreshPlacement: The Broken Seal's source plus the reserve
+// owners; the second fill loop needs its pointer set inside the for
+// initialiser.
 #include "types.h"
 #include "ram_buffer.h"
 #include "battle_work.h"
@@ -43,8 +40,9 @@ void BattleUnit_RefreshPlacement(void) {
     s32 id = ids[i];
 
     work->placement[id] = place;
-    BattleObject_Make(BattleObject_Get(id), id, gBattlePlacement_StepPairs[place * 2],
-                  gBattlePlacement_StepPairs[place * 2 + 1]);
+    BattleObject_Make(BattleObject_Get(id), id,
+                      gBattlePlacement_StepPairs[place * 2],
+                      gBattlePlacement_StepPairs[place * 2 + 1]);
   }
   for (i = 0; i < 6 && work->enemyIds[i] != 0xff; i++)
     ids[i] = work->enemyIds[i];

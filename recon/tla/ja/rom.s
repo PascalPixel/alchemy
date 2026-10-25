@@ -2446,12 +2446,12 @@ Func_08100738:
 	.thumb_func
 BattleEffect_ApplyToTargets:
 	.incbin "baserom.gba", 0x00100800, 0x00000548
-	.section .rom.00100e84, "ax"
-	.global Func_08100e7c
-	.type Func_08100e7c, %function
+	.section .rom.00101074, "ax"
+	.global Func_0810106c
+	.type Func_0810106c, %function
 	.thumb_func
-Func_08100e7c:
-	.incbin "baserom.gba", 0x00100e84, 0x00000734
+Func_0810106c:
+	.incbin "baserom.gba", 0x00101074, 0x00000544
 	.section .rom.00101640, "ax"
 	.incbin "baserom.gba", 0x00101640, 0x0000036c
 	.section .rom.00101ad0, "ax"
@@ -2471,37 +2471,29 @@ Func_08101c7c:
 	.type Func_08103064, %function
 	.thumb_func
 Func_08103064:
-	.incbin "baserom.gba", 0x0010303c, 0x000018c4
+	.incbin "baserom.gba", 0x0010303c, 0x00000104
+	.section .rom.001031ee, "ax"
+	.incbin "baserom.gba", 0x001031ee, 0x00000002
+	.global Func_08103218
+	.type Func_08103218, %function
+	.thumb_func
+Func_08103218:
+	.incbin "baserom.gba", 0x001031f0, 0x00001710
 	.section .rom.00104964, "ax"
 	.balign 4
 	.global Func_0810498c
 	.type Func_0810498c, %function
 	.thumb_func
 Func_0810498c:
-	.incbin "baserom.gba", 0x00104964, 0x000000cc
-	.section .rom.00104bd8, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x00104bd8, 0x000000cc
-	.section .rom.00104d34, "ax"
-	.incbin "baserom.gba", 0x00104d34, 0x0000004c
-	.section .rom.00104d80, "ax"
-	.global Menu_UpdateEntryObjectTransforms
-	.type Menu_UpdateEntryObjectTransforms, %function
-	.thumb_func
-Menu_UpdateEntryObjectTransforms:
-	.incbin "baserom.gba", 0x00104d80, 0x00000150
+	.incbin "baserom.gba", 0x00104964, 0x0000003c
+	.section .rom.00104e10, "ax"
+	.incbin "baserom.gba", 0x00104e10, 0x000000c0
 	.section .rom.00104ed0, "ax"
 	.global Func_08104ef8
 	.type Func_08104ef8, %function
 	.thumb_func
 Func_08104ef8:
 	.incbin "baserom.gba", 0x00104ed0, 0x000000e8
-	.section .rom.00104fb8, "ax"
-	.global Func_08104fe0
-	.type Func_08104fe0, %function
-	.thumb_func
-Func_08104fe0:
-	.incbin "baserom.gba", 0x00104fb8, 0x000000ac
 	.section .rom.001050a4, "ax"
 	.global MenuIcon_UpdateTransforms
 	.type MenuIcon_UpdateTransforms, %function
@@ -2518,23 +2510,11 @@ Func_081051a8:
 	.incbin "baserom.gba", 0x00105380, 0x000000c0
 	.section .rom.001054b8, "ax"
 	.incbin "baserom.gba", 0x001054b8, 0x000000a0
-	.section .rom.001082c4, "ax"
-	.global Func_081082c4
-	.type Func_081082c4, %function
-	.thumb_func
-Func_081082c4:
-	.incbin "baserom.gba", 0x001082c4, 0x000001a0
-	.section .rom.00108690, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x00108690, 0x000000cc
-	.section .rom.00108948, "ax"
-	.balign 4
-	.global Func_08108948
-	.type Func_08108948, %function
-	.thumb_func
-Func_08108948:
-	.incbin "baserom.gba", 0x00108948, 0x0000009c
 	.section .rom.00108b70, "ax"
+	.global Func_08108b70
+	.type Func_08108b70, %function
+	.thumb_func
+Func_08108b70:
 	.incbin "baserom.gba", 0x00108b70, 0x00000600
 	.section .rom.00109170, "ax"
 	.global Func_08109188
@@ -2567,7 +2547,22 @@ Func_08109cac:
 	.type Func_0810a108, %function
 	.thumb_func
 Func_0810a108:
-	.incbin "baserom.gba", 0x0010a110, 0x000005f8
+	.incbin "baserom.gba", 0x0010a110, 0x000001c0
+	.global Func_0810a2c8
+	.type Func_0810a2c8, %function
+	.thumb_func
+Func_0810a2c8:
+	.incbin "baserom.gba", 0x0010a2d0, 0x000003a4
+	.global EventTable_GetRowLimit
+	.type EventTable_GetRowLimit, %function
+	.thumb_func
+EventTable_GetRowLimit:
+	.incbin "baserom.gba", 0x0010a674, 0x00000004
+	.global EventTable_ApplyRowAbilities
+	.type EventTable_ApplyRowAbilities, %function
+	.thumb_func
+EventTable_ApplyRowAbilities:
+	.incbin "baserom.gba", 0x0010a678, 0x00000050
 	.section .rom.0010a71c, "ax"
 	.global Forge_FindRecipe
 	.type Forge_FindRecipe, %function
@@ -2576,13 +2571,13 @@ Forge_FindRecipe:
 	.incbin "baserom.gba", 0x0010a71c, 0x0000003c
 	.section .rom.0010aa90, "ax"
 	.balign 4
-	.global Func_0810aa80
-	.type Func_0810aa80, %function
+	.global Shop_ConfirmAct
+	.type Shop_ConfirmAct, %function
 	.thumb_func
-Func_0810aa80:
+Shop_ConfirmAct:
 	.incbin "baserom.gba", 0x0010aa90, 0x00000424
-	.section .rom.0010af34, "ax"
-	.incbin "baserom.gba", 0x0010af34, 0x00000128
+	.section .rom.0010b05a, "ax"
+	.incbin "baserom.gba", 0x0010b05a, 0x00000002
 	.section .rom.0010b0cc, "ax"
 	.global BattleEffect_UpdateRadialMotion
 BattleEffect_UpdateRadialMotion:
@@ -2592,10 +2587,10 @@ BattleEffect_UpdateRadialMotion:
 	.incbin "baserom.gba", 0x0010b1c4, 0x000001c4
 	.section .rom.0010b428, "ax"
 	.balign 4
-	.global Func_0810b418
-	.type Func_0810b418, %function
+	.global Inn_CheckIn
+	.type Inn_CheckIn, %function
 	.thumb_func
-Func_0810b418:
+Inn_CheckIn:
 	.incbin "baserom.gba", 0x0010b428, 0x00000108
 	.section .rom.0010b5d4, "ax"
 	.global Func_0810b5c4
@@ -2658,15 +2653,8 @@ DebugParty_LoadPreset:
 	.thumb_func
 Func_08118958:
 	.incbin "baserom.gba", 0x00118958, 0x00000274
-	.section .rom.00118c68, "ax"
-	.incbin "baserom.gba", 0x00118c68, 0x000000c4
-	.section .rom.00118f6c, "ax"
-	.balign 4
-	.global Func_08118f6c
-	.type Func_08118f6c, %function
-	.thumb_func
-Func_08118f6c:
-	.incbin "baserom.gba", 0x00118f6c, 0x000000e8
+	.section .rom.00119052, "ax"
+	.incbin "baserom.gba", 0x00119052, 0x00000002
 	.section .rom.001195ec, "ax"
 	.incbin "baserom.gba", 0x001195ec, 0x00000110
 	.section .rom.001197f0, "ax"
@@ -2681,12 +2669,8 @@ Func_081197f0:
 	.thumb_func
 BattleObject_Make:
 	.incbin "baserom.gba", 0x0011a7a8, 0x000009c0
-	.section .rom.0011b2c0, "ax"
-	.global Enemy_Update
-	.type Enemy_Update, %function
-	.thumb_func
-Enemy_Update:
-	.incbin "baserom.gba", 0x0011b2c0, 0x000001e8
+	.section .rom.0011b376, "ax"
+	.incbin "baserom.gba", 0x0011b376, 0x00000002
 	.section .rom.0011b756, "ax"
 	.incbin "baserom.gba", 0x0011b756, 0x00000002
 	.section .rom.0011b758, "ax"
@@ -2697,12 +2681,8 @@ Func_0811b75c:
 	.incbin "baserom.gba", 0x0011b758, 0x00000278
 	.section .rom.0011b9f8, "ax"
 	.incbin "baserom.gba", 0x0011b9f8, 0x00000230
-	.section .rom.0011bf14, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x0011bf14, 0x00000088
-	.section .rom.0011c3b8, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x0011c3b8, 0x000001d8
+	.section .rom.0011c532, "ax"
+	.incbin "baserom.gba", 0x0011c532, 0x00000002
 	.section .rom.0011c666, "ax"
 	.incbin "baserom.gba", 0x0011c666, 0x00000002
 	.section .rom.0011c70c, "ax"
@@ -2746,12 +2726,17 @@ BattlePres_BuildOpponentEntries:
 BattlePresentation_AppendLinkedActions:
 	.incbin "baserom.gba", 0x0011d410, 0x0000018c
 	.section .rom.0011d9c8, "ax"
-	.incbin "baserom.gba", 0x0011d9c8, 0x000009a0
+	.incbin "baserom.gba", 0x0011d9c8, 0x0000040c
+	.global Func_0811ddd8
+	.type Func_0811ddd8, %function
+	.thumb_func
+Func_0811ddd8:
+	.incbin "baserom.gba", 0x0011ddd4, 0x00000594
 	.section .rom.0011e3a6, "ax"
 	.incbin "baserom.gba", 0x0011e3a6, 0x00000432
 	.section .rom.0011e82c, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x0011e82c, 0x00000800
+	.incbin "baserom.gba", 0x0011e82c, 0x00000580
 	.section .rom.0011f084, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0011f084, 0x000002a8
@@ -2823,7 +2808,12 @@ Func_0812628c:
 	.type Func_081263fc, %function
 	.thumb_func
 Func_081263fc:
-	.incbin "baserom.gba", 0x001263f8, 0x00000408
+	.incbin "baserom.gba", 0x001263f8, 0x0000014c
+	.global BattleCamera_SetRange
+	.type BattleCamera_SetRange, %function
+	.thumb_func
+BattleCamera_SetRange:
+	.incbin "baserom.gba", 0x00126544, 0x000002bc
 	.section .rom.00126800, "ax"
 	.global BattlePres_SetupTransitionScene
 	.type BattlePres_SetupTransitionScene, %function

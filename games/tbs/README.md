@@ -26,6 +26,19 @@ map knows how far the story has gone from the
 the game. The always-loaded code is cut into [banks](glossary.md#bank)
 ([How the code is organised](#how-the-code-is-organised)).
 
+```mermaid
+flowchart TD
+  power([Power on]) --> init["System_Initialize<br/>start-up: memory, sound, tasks"]
+  init --> loop{"Game_MainLoop<br/>what runs next?"}
+  loop -- "a map" --> overlay["Unpack the overlay<br/>holding the map's scripts"]
+  overlay --> run["Map_Run: load the layout,<br/>the party walks until it<br/>takes a warp"]
+  run --> loop
+  loop -- "a battle" --> battle["Battle_Run<br/>always loaded, no overlay"]
+  battle --> loop
+  loop -- "a minigame" --> mini["Lucky Dice or Lucky Wheels<br/>always loaded, no overlay"]
+  mini --> loop
+```
+
 That main loop is unlike most games'. In most games, the Pokémon games among
 them, the main loop goes round once a [frame](glossary.md#frame), a sixtieth
 of a second, and calls each part of the game in turn, so anything that takes

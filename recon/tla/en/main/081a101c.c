@@ -1,3 +1,6 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 2 of
+// 279: only the copy's first argument (adds r0, r4, #0), which the native
+// sets after 0x100's shift. A greedy device search found nothing lower.
 // Near miss: differ 4 of 279, The Broken Seal's DisplayScroll_DrawLine. Two
 // scheduling swaps remain: the copy's buffer argument (adds r0, r4, #0) comes
 // before 0x100's shift instead of after, and the font's pool load comes after

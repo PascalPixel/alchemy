@@ -1,3 +1,5 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 8 of
+// 119; a greedy device search found nothing lower.
 // Draft, differ 12 of 119: draws a number as digit sprites into the slot
 // machine's sprite table, right-aligned to end at x: each of digits places
 // takes value's digit there, leading zeros skipped but the last digit always

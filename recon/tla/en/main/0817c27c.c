@@ -1,3 +1,9 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 6 of
+// 464 with two empty asm: one before the heap reads stores the argument at
+// sp+24 first, as the native, and one before the frame loop (10 without
+// either). Left: the frame's 0 stored before &caster is built, and the spark
+// loop's 0 after the shake store (an empty asm there moves the
+// gMapCellBuffer pool load: 12).
 // Draft (tla-en): listing 464 instructions, draft 464, common 447, differ 34.
 // Written from the listing (☀️'s BattleEffect_RunRushingStrike is only
 // a hint). A five-cell burst drawn on the actor's side for 30 frames;
@@ -93,10 +99,9 @@ void BattleEffect_EndCanvasLayer(void);
 // end toward the target, half of them falling and half rising as they burn
 // down.
 void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
-  struct HeapSlots *heap = Ram_HeapSlots;
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)heap->battleFxWork[0];
-  u8 *canvas = heap->battleFxWork[1];
+  struct HeapSlots *heap;
+  struct BattleEffectWork *work;
+  u8 *canvas;
   struct EffectPosition caster;
   s32 frame;
   struct EffectStep *spark;
@@ -106,8 +111,14 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
    * and the allocation moves (285 of 464 instructions differ in tla-en, 34
    * with the pair). */
   DrawRectangle draw[2];
-  u8 *sparkCels = heap->unk64[0];
+  u8 *sparkCels;
   s32 i;
+
+  __asm__("");
+  heap = Ram_HeapSlots;
+  work = (struct BattleEffectWork *)heap->battleFxWork[0];
+  canvas = heap->battleFxWork[1];
+  sparkCels = heap->unk64[0];
 
   BattleEffect_StartCanvasLayer(1);
   if (effect->side == 0) {
@@ -125,6 +136,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   Scheduler_AddOrUpdateCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  __asm__("");
 
   for (frame = 0; frame != SWING_FRAMES; frame++) {
     // The slash, its cels anchored to the caster's front.

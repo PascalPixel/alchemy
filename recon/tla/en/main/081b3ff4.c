@@ -1,3 +1,5 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 50 of
+// 1072; not worked this pass.
 // Draft, differ 118 of 1072: The Broken Seal's LzPack_PackStream
 // (games/tbs/src/object/colorfx.c), the small LZ packer, as ☀️ writes it;
 // the same 1072 instructions with every register the listing's. Left:

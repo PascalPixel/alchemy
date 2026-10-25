@@ -1,3 +1,6 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 4 of
+// 91 with nextFrame's store in a one-pass block, found by a greedy device
+// search (6 without it).
 // Draft of Func_020028cc (overlay 64B, 91 instructions), differ 8: the puff
 // that trails actor 8 every sixteenth frame, ported from ☀️'s
 // WorldMap_SpawnActorEightPuff (⚓️ creates object 285 with Func_02004b30).
@@ -55,7 +58,9 @@ void Func_020028cc(void) {
     obj->x += ((value << 5) >> 16) << 16;
     obj->z += (s32)(((value << 5) >> 16) << 16) >> 1;
   }
+  do {
   spr->nextFrame = 0;
+  } while (0);
   spr->priority = ((struct FieldSprite *)leader->animation)->priority;
   obj->priorityFlags |= 2;
   obj->motionFlags = leader->motionFlags;

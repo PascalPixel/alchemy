@@ -1,3 +1,7 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 6 of
+// 105: three stores the native issues one row earlier (sp+16 in the
+// prologue, sp+0, and the multiply before the reload of sp+16). An empty asm
+// before or after the heap read: 6 and 10.
 // Draft, differ 10 of 105: draws a number as large digit sprites into the
 // slot machine's sprite table, as Func_081b8180 does: digits places from x,
 // 22 pixels apart, leading zeros skipped, tiles 640 + 16 * digit in the given

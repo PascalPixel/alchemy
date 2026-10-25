@@ -1,3 +1,6 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 2 of
+// 102: only the cursor's store, which the native issues before the limit
+// offset's shift. A greedy device search found nothing lower.
 // Near miss: differ 6 of 102, The Broken Seal's LzPack_ConsumeSlotBytes.
 // The two one-pass blocks (found by a greedy device search, differ 10 without
 // them) fix the byte read and the removal call; three swaps remain, each a load

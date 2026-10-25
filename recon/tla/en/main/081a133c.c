@@ -1,3 +1,7 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 4 of
+// 212: the pointer's copy to r0 for the column test and the backward loop's
+// 14. Reading the column test through the block pointer, kept in scope or
+// copied to a local, gives 56. A greedy device search found nothing lower.
 // Draft, differ 4 of 212: the scrolling picture scene's per-frame callback
 // (Func_081a150c adds it). Fades BLDALPHA in over 64 frames, eases the
 // position toward the target at most the speed a frame, eases the 16.16

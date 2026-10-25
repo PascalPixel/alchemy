@@ -1,3 +1,8 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 6 of
+// 467: the native issues the work pointer's copy to r9 before the third heap
+// load, and in both bursts adds the speed's 32 between the x store and the y
+// load. An empty asm reading the speed after the x store disturbs the whole
+// allocation (227). A greedy device search found nothing lower.
 // Draft of BattleEffect_RunPlumeEdge, effect kind 85 (Plume Edge), written from the
 // listing on The Broken Seal's canvas skeleton. No close twin (shape
 // BattleEffect_RunImpactBurst 0.566, call order BattleEffect_RunJupiter

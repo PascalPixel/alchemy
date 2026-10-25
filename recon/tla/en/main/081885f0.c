@@ -1,3 +1,6 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 2 of
+// 141: only the size's copy to r4 in the prologue, which the native makes
+// after the three stack stores. A greedy device search found nothing lower.
 // Near miss: listing 141 instructions, draft 141, differ 4 (was 6: three pairs;
 // -mtune=arm7tdmi as an analysis: also 6, the prologue pair fixed and the
 // outer loop's y += 18 one slot early). No ☀️ twin: The Broken Seal has no

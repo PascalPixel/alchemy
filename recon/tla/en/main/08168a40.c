@@ -1,3 +1,6 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 18 of
+// 1065 with three empty asm the greedy device search placed (26 without
+// them); the rest is the instruction order described below.
 // Draft, differ 126 of 1065: BattleEffect_RunKirin, summon 3 (BattleEffect_RunSceneEffect's case 3,
 // actflags 0x8003), The Broken Seal's BattleEffect_RunKirin.
 
@@ -137,6 +140,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   s32 wave;
   s32 frame;
   s32 i;
+  __asm__("");
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -358,6 +362,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
       i++;
     } while (i != 14);
     jitter = jitterRow;
+  __asm__("");
     i = 0;
     do {
       jitter[i] = Random16() & 31;
@@ -469,6 +474,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
 
         work->transferMode = 0;
         work->transferValue = 75;
+  __asm__("");
         i = 0;
         y = -8;
         do {

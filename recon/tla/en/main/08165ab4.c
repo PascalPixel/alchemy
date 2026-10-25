@@ -1,3 +1,6 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 20 of
+// 804 with two empty asm the greedy device search placed (26 without them);
+// the rest is the instruction order described below.
 // Draft, differ 78 of 804: BattleEffect_RunRamses, summon 1 (BattleEffect_RunSceneEffect's case 1,
 // actflags 0x8001), The Broken Seal's BattleEffect_RunRamses.
 
@@ -143,6 +146,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   struct FxScale orb;
   s32 i;
   s32 k;
+  __asm__("");
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -230,6 +234,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
 
     // The formation, a 3 x 3 block behind the orb.
     position[3] = 0;
+  __asm__("");
     position[1] = 0;
     for (i = 0; i != 7; i++) {
       position[0] = (gData_08198a64[i] << 16) + base.x - 0x200000;

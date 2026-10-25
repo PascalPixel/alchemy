@@ -1,11 +1,13 @@
-// Draft, differ 167 of 241 (2026-10-18), from the listing: spawns the
-// current scene's item objects (chests, jars, buried items) from the rows
-// Func_080ceba8 finds, at most 16. Left: the loop. The native tests the row
-// type once before the loop and again at its foot, with one pointer stepped
-// by 2 and 6 and no giv; as a while (type = *rows++ ...) the tests rotate
-// but loop.c splits the pointer in two (differ 193), and as a for (;;) with
-// the tests repeated GCC cross-jumps the two tests into one (this form).
-// The kind chain matches as an else-if chain.
+// Draft, differ 150 of 241 (167 before, 2026-10-25), from the listing: spawns
+// the current scene's item objects (chests, jars, buried items) from the rows
+// Func_080ceba8 finds, at most 16. The loop is a for whose condition reads
+// the next row's type, as the native's test at its foot shows (its i > 15
+// test folded away on entry), with the row's three halfwords read by index.
+// Left: the loop's entry. alchemy-gcc's jump pass copies the exit test in
+// front of the loop as the native has it, but jump2 cross-jumps the copy
+// into the test at the foot (the entry becomes a branch to it), which the
+// native never does; the registers after it follow from that. The kind
+// chain matches as an else-if chain.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
@@ -46,14 +48,11 @@ void Func_080cec34(void) {
 
   if (rows == NULL)
     return;
-  i = 0;
-  type = *rows++;
-  if (type == 0 || (type & 0x4000))
-    return;
-  for (;;) {
-    id = *rows++;
-    flag = *rows++;
-    item = *rows++;
+  for (i = 0; i < 16 && (type = *rows++) != 0 && !(type & 0x4000); i++) {
+    flag = rows[1];
+    id = rows[0];
+    item = rows[2];
+    rows += 3;
     if ((type == 128 || flag == -1 || !GameFlag_Test(flag)) &&
         !Func_080cec24(id, position)) {
       buried = 0;
@@ -116,10 +115,5 @@ void Func_080cec34(void) {
           BYTE_AT(object, 89) = 0;
       }
     }
-    if (++i > 15)
-      break;
-    type = *rows++;
-    if (type == 0 || (type & 0x4000))
-      break;
   }
 }

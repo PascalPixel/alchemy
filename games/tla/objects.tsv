@@ -104,12 +104,6 @@ main	rom_main_00	recon/tla/raw/080138b4	.text	en
 main	rom_main_00	recon/tla/raw/0801399c	.text	en
 main	rom_main_00	recon/tla/ja/rom	.rom.000138b4	ja
 main	rom_main_00	games/tla/src/system/io	.text
-main	rom_main_00	recon/tla/it/rom	.rom.00013e10	it
-main	rom_main_00	recon/tla/fr/rom	.rom.00013e10	fr
-main	rom_main_00	recon/tla/es/rom	.rom.00013e10	es
-main	rom_main_00	recon/tla/de/rom	.rom.00013e10	de
-main	rom_main_00	recon/tla/raw/08013de4	.text	en
-main	rom_main_00	recon/tla/ja/rom	.rom.00013de4	ja
 main	rom_main_00	games/tla/src/graphics/display/blend	.text
 main	rom_main_00	games/tla/src/graphics/render/oam_buckets	.text
 main	rom_main_00	recon/tla/it/rom	.rom.000141a0	it

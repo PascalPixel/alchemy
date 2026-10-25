@@ -53,12 +53,6 @@ System_WaitForFrameInterrupt:
 	.thumb_func
 Input_UpdateKeyRepeatAndDirection:
 	.incbin "baserom.gba", 0x000138e0, 0x0000027c
-	.section .rom.00013e10, "ax"
-	.global Func_08013de4
-	.type Func_08013de4, %function
-	.thumb_func
-Func_08013de4:
-	.incbin "baserom.gba", 0x00013e10, 0x0000008c
 	.section .rom.000141a0, "ax"
 	.global VramCache_AllocateBlocks
 	.type VramCache_AllocateBlocks, %function

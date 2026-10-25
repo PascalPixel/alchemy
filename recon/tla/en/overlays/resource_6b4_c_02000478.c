@@ -1,75 +1,51 @@
-// Draft of overlay 6b4's Func_02000478, translated from its listing: differ
-// 99 of 104. Left: its shape: 107 instructions against the listing's 104.
+// Draft of overlay 6b4's Func_02000478, written from its listing: spreads count
+// + 1 effects (Func_020000b8, this overlay's Effect_Spawn) in a ring of the
+// given radius around object 8, at its sprite's priority, shrunk to 0.8 and
+// moved by Effect_AdvanceMotion. Differ 53 of 104. Left: register allocation
+// (the native keeps the options' address in r7, the object in r8 and the
+// counter in sl) and the direction's address, which the native forms inside the
+// loop after the first call and this before the loop.
 #include "types.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Func_020000b8();
-s32 Math_Cosine();
-s32 Math_Sine();
-s32 Object_GetById();
-s32 Random16Far();
-s32 __divsi3();
-extern u8 Effect_AdvanceMotion[];
+#include "object_runtime.h"
+#include "field_sprite.h"
+#include "field_effect.h"
+#include "vector3.h"
 
-void Func_02000478(s32 p0, s32 p1) {
-  s32 sp_[1];
-  s32 spo_[4];
-  s32 v_r9, v_r10, v_r11, v_r8, v_r7, v_r5, v_r3, v_r6, t0, t1;
-  s32 t2, t3, t4, t5, t6, t7, t8, t9, t10, t11;
-  s32 t12, t13, t14, t15;
+struct ObjectRuntime *Object_GetById(s32 id);
+s32 Math_Cosine(s32 angle);
+s32 Math_Sine(s32 angle);
+u32 Random16Far(void);
+void Effect_AdvanceMotion(union FieldObject *object);
+void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags,
+                   const struct EffectOptions *options);
 
-  t0 = Object_GetById(8);
-  FIELD_AT(sp_, s32, 48) = (s32)Effect_AdvanceMotion;
-  FIELD_AT(sp_, s32, 20) = 0xcccc;
-  FIELD_AT(sp_, s32, 24) = 0xcccc;
-  t1 = FIELD_AT(t0, s32, 80);
-  t2 = FIELD_AT(t1, u8, 9);
-  FIELD_AT(sp_, s32, 12) = ((u32)(t2 << 28) >> 30);
-  v_r7 = ((s32)sp_ + 12);
-  v_r8 = t0;
-  v_r11 = p0;
-  v_r10 = 0;
-  v_r9 = p1;
-L_020084b2:
-  t3 = __divsi3(0x10000, v_r9);
-  v_r5 = (v_r10 * t3);
-  t4 = Math_Cosine(v_r5);
-  v_r6 = (s32)sp_;
-  v_r3 = (v_r11 * t4);
-  if (v_r3 >= 0)
-    goto L_020084d2;
-  v_r3 = (v_r3 + 255);
-L_020084d2:
-  *(s32 *)v_r6 = (v_r3 >> 8);
-  FIELD_AT(v_r6, s32, 4) = 0;
-  t5 = Math_Sine(v_r5);
-  v_r3 = (v_r11 * t5);
-  if (v_r3 >= 0)
-    goto L_020084ea;
-  v_r3 = (v_r3 + 255);
-L_020084ea:
-  FIELD_AT(v_r6, s32, 8) = (v_r3 >> 8);
-  t6 = *(s32 *)v_r6;
-  *(s32 *)v_r6 = (t6 + (t6 >> 1));
-  t7 = Random16Far();
-  t8 = *(s32 *)v_r6;
-  *(s32 *)v_r6 = ((t8 + ((u32)(((t7 << 1) + t7) << 14) >> 16)) - 0x6000);
-  t9 = Random16Far();
-  t10 = FIELD_AT(v_r6, s32, 8);
-  v_r5 = ((t10 + ((u32)(((t9 << 1) + t9) << 13) >> 16)) - 0x3000);
-  FIELD_AT(v_r6, s32, 8) = v_r5;
-  t11 = FIELD_AT(v_r6, s32, 4);
-  t12 = FIELD_AT(v_r8, s32, 16);
-  t13 = FIELD_AT(v_r8, s32, 8);
-  t14 = FIELD_AT(v_r8, s32, 12);
-  t15 = *(s32 *)v_r6;
-  Func_020000b8(t13, t14, t12, t15, t11, v_r5, 0x10a0001, v_r7);
-  v_r10 = (v_r10 + 1);
-  if ((u32)v_r10 <= (u32)v_r9)
-    goto L_020084b2;
-  return;
+void Func_02000478(s32 radius, u32 count) {
+  struct ObjectRuntime *object;
+  struct EffectOptions options;
+  struct Vector3 dir;
+  u32 i;
+  s32 angle;
+
+  object = Object_GetById(8);
+  options.update = Effect_AdvanceMotion;
+  options.startScaleX = 0xcccc;
+  options.startScaleY = 0xcccc;
+  options.priority = ((struct FieldSprite *)object->animation)->priority;
+  i = 0;
+next:
+  angle = i * (0x10000 / (s32)count);
+  dir.x = Math_Cosine(angle) * radius / 256;
+  dir.y = 0;
+  dir.z = Math_Sine(angle) * radius / 256;
+  dir.x += dir.x >> 1;
+  dir.x += ((Random16Far() * 3) << 14 >> 16) - 0x6000;
+  dir.z += ((Random16Far() * 3) << 13 >> 16) - 0x3000;
+  Func_020000b8(object->x, object->y, object->z, dir.x, dir.y, dir.z,
+                EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                    EFFECT_USE_PRIORITY | 1,
+                &options);
+  i++;
+  if (i <= count)
+    goto next;
 }

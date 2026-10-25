@@ -1,116 +1,108 @@
-// Draft of overlay 6aa's Func_020022e4, translated from its listing: differ
-// 191 of 145. Left: its shape: 148 instructions against the listing's 145.
+// Draft of overlay 6aa's Func_020022e4, written from its listing: unless flag
+// 0x109 is set it records up to four objects from a 0-ended list of ids and
+// flags as the beam's targets and up to four stops from a second list, then
+// sets the beam's two values, the blend if none is set, and Func_020020ec as a
+// callback. Differ 141 of 145. Left: register allocation from the first list on
+// (the native keeps the id in sl and spills the target height, where this keeps
+// the id in r4 and spills it across each call).
 #include "types.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 GameFlag_Test();
-s32 ObjectDispatch_SetSingleChildFlags();
-s32 Object_GetById();
-s32 Scheduler_AddOrUpdateCallback();
-extern u8 Func_020020ec[];
+#include "io_reg.h"
+#include "object_runtime.h"
+
+/// One object the beam reaches, as Func_020022e4 records it.
+struct MarsLighthouseBeamTarget {
+  u16 active;
+  u16 index;
+  u16 flags;
+  u16 unk06;
+  struct ObjectRuntime *object;
+  s32 height; ///< 16.16 pixels
+};
+
+struct MarsLighthouseBeam {
+  u8 unk00[10];
+  u16 unk0a;
+  u8 unk0c[4];
+  s32 unk10;
+  struct MarsLighthouseBeamTarget targets[4];
+  u16 stopCount;
+  u16 stops[7];
+};
+
 extern u8 gData_020023c4[];
 
-void Func_020022e4(s32 p0, s32 p1, s32 p2, s32 p3) {
-  s32 sp_[1];
-  s32 v_r6, v_r8, v_r9, v_r10, v_r11, v_r0, v_r5, v_r7, v_r1, v_r3;
-  s32 v_r2, t0, t1, t2, t3, t5, t6, t7, t8, t9;
-  s32 t10, t11, t12, t13, t14, t15, t16;
+s32 GameFlag_Test(s32 flag);
+struct ObjectRuntime *Object_GetById(s32 id);
+void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+                                        s32 flags);
+void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Func_020020ec(void);
 
-  FIELD_AT(sp_, s32, 4) = ((s32)gData_020023c4 + 0x188);
-  FIELD_AT(sp_, s32, 12) = p2;
-  FIELD_AT(sp_, s32, 8) = p3;
-  t0 = GameFlag_Test(0x109);
-  v_r9 = (((s32)gData_020023c4 + 0x188) + 20);
-  v_r8 = p1;
-  v_r6 = p0;
-  if (t0 != 0)
-    goto L_0200a3c8;
-  t1 = *(u16 *)v_r6;
-  v_r11 = 0;
-  v_r10 = t1;
-  v_r6 = (v_r6 + 2);
-  if (v_r10 <= v_r11)
-    goto L_0200a386;
-L_0200a31e:
-  t2 = *(u16 *)v_r6;
-  FIELD_AT(sp_, s32, 0) = (15 & t2);
-  t3 = Object_GetById(v_r10);
-  v_r7 = (t2 & 240);
-  v_r5 = t3;
-  v_r0 = t3;
-  v_r6 = (v_r6 + 2);
-  if (v_r5 == 0)
-    goto L_0200a372;
-  ObjectDispatch_SetSingleChildFlags(v_r0, 0);
-  *(u8 *)(v_r5 + 98) = 1;
-  v_r2 = (128 & v_r7);
-  v_r3 = (v_r5 + 98);
-  v_r1 = 1;
-  if (v_r2 != 0)
-    goto L_0200a352;
-  *(u8 *)(v_r3 - 9) = v_r2;
-L_0200a352:
-  *(u16 *)v_r9 = v_r1;
-  FIELD_AT(v_r9, u16, 4) = v_r7;
-  t5 = Object_GetById(v_r10);
-  FIELD_AT(v_r9, s32, 8) = t5;
-  t6 = FIELD_AT(sp_, s32, 0);
-  FIELD_AT(v_r9, s32, 12) = (t6 << 16);
-  FIELD_AT(v_r9, u16, 2) = v_r11;
-  v_r9 = (v_r9 + 16);
-L_0200a372:
-  v_r11 = (v_r11 + 1);
-  if (v_r11 > 3)
-    goto L_0200a386;
-  t7 = *(u16 *)v_r6;
-  v_r10 = t7;
-  v_r6 = (v_r6 + 2);
-  if (v_r10 > 0)
-    goto L_0200a31e;
-L_0200a386:
-  v_r3 = v_r8;
-  if (v_r3 == 0)
-    goto L_0200a3c8;
-  t8 = *(u16 *)v_r3;
-  t9 = FIELD_AT(sp_, s32, 4);
-  FIELD_AT(t9, u16, 84) = t8;
-  v_r11 = 0;
-  v_r8 = (v_r8 + 2);
-  v_r1 = t9;
-  if (t8 <= v_r11)
-    goto L_0200a3c8;
-  v_r2 = (v_r1 + 84);
-L_0200a3a4:
-  t10 = *(u16 *)v_r8;
-  FIELD_AT(v_r2, u16, 2) = t10;
-  v_r11 = (v_r11 + 1);
-  v_r2 = (v_r2 + 4);
-  v_r8 = (v_r8 + 2);
-  if (v_r11 > 3)
-    goto L_0200a3c8;
-  t11 = *(u16 *)v_r8;
-  *(u16 *)v_r2 = t11;
-  v_r8 = (v_r8 + 2);
-  if (t11 > 0)
-    goto L_0200a3a4;
-L_0200a3c8:
-  t12 = FIELD_AT(sp_, s32, 12);
-  t13 = FIELD_AT(sp_, s32, 4);
-  FIELD_AT(t13, s32, 16) = t12;
-  t14 = FIELD_AT(sp_, u16, 8);
-  t15 = FIELD_AT(sp_, s32, 4);
-  FIELD_AT(t15, u16, 10) = t14;
-  t16 = *(u16 *)0x4000050;
-  v_r1 = 0x4000050;
-  if (t16 != 0)
-    goto L_0200a3f8;
-  *(u16 *)0x4000052 = 0xc08;
-  *(u16 *)v_r1 = 0x3f10;
-L_0200a3f8:
-  Scheduler_AddOrUpdateCallback((s32)Func_020020ec, 0x480);
-  return;
+void Func_020022e4(u16 *targets, u16 *stops, s32 a2, s32 a3) {
+  struct MarsLighthouseBeam *beam =
+      (struct MarsLighthouseBeam *)(gData_020023c4 + 0x188);
+  struct MarsLighthouseBeamTarget *target = beam->targets;
+  s32 id;
+  s32 i;
+
+  if (GameFlag_Test(0x109) == 0) {
+    id = *targets++;
+    i = 0;
+    if (id > 0) {
+    nextTarget:
+      {
+        s32 flags = *targets;
+        s32 height = flags & 15;
+        struct ObjectRuntime *object;
+
+        flags &= 0xf0;
+        object = Object_GetById(id);
+        targets++;
+        if (object != NULL) {
+          ObjectDispatch_SetSingleChildFlags(object, 0);
+          ((u8 *)object)[98] = 1;
+          if ((flags & 0x80) == 0)
+            object->collisionFlags = 0;
+          target->active = 1;
+          target->flags = flags;
+          target->object = Object_GetById(id);
+          target->height = height << 16;
+          target->index = i;
+          target++;
+        }
+      }
+      i++;
+      if (i <= 3) {
+        id = *targets++;
+        if (id > 0)
+          goto nextTarget;
+      }
+    }
+    if (stops != NULL) {
+      u16 *stop;
+
+      i = 0;
+      beam->stopCount = *stops++;
+      if ((s16)beam->stopCount > 0) {
+        stop = &beam->stopCount;
+      nextStop:
+        stop[1] = *stops;
+        i++;
+        stops++;
+        stop += 2;
+        if (i <= 3) {
+          *stop = *stops++;
+          if ((s16)*stop > 0)
+            goto nextStop;
+        }
+      }
+    }
+  }
+  beam->unk10 = a2;
+  beam->unk0a = a3;
+  if (REG_BLDCNT == 0) {
+    REG_BLDALPHA = 0x608;
+    REG_BLDCNT = 0x3f10;
+  }
+  Scheduler_AddOrUpdateCallback(Func_020020ec, 0x480);
 }

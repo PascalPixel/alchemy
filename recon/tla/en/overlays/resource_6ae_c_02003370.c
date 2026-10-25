@@ -1,5 +1,5 @@
 // Draft of overlay 6ae's Func_02003370, translated from its listing: differ
-// 126 of 207. Left: its shape: 197 instructions against the listing's 207.
+// 125 of 207. Left: its shape: 196 instructions against the listing's 207.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -188,7 +188,7 @@ L_0200b506:
   FIELD_AT(v_r7, u8, 98) = ((u32)t32 >> 13);
   FIELD_AT(v_r7, s32, 108) = (s32)Func_020000e4;
   t33 = Value0((s32 (*)())Random16Far);
-  t34 = Value2((s32 (*)())Math_Sine, ((u32)((t33 << 16) - t33) >> 20), 0);
+  t34 = Value1((s32 (*)())Math_Sine, ((u32)((t33 << 16) - t33) >> 20));
   FIELD_AT(v_r7, s32, 48) = (((t34 << 1) + t34) << 3);
   t35 = FIELD_AT(v_r6, s16, 50);
   FIELD_AT(v_r7, s32, 48) = t35;

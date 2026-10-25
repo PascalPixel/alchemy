@@ -1,4 +1,4 @@
-// Draft, differ 3122 of 3111: the battle summary screen, The Broken Seal's
+// Draft, differ 2310 of 3111: the battle summary screen, The Broken Seal's
 // BattleSummaryScreen_Run (games/tbs/src/window/screens/status.c) grown into
 // four pages that A cycles through: the stats (page 0, as The Broken Seal's),
 // the member's battle Psynergy (1, four rows a page, with PP cost, element and
@@ -7,9 +7,11 @@
 // rows, usable ones first). Each list page has its own cursor group (3 to 5),
 // and the help line follows the cursor. The battle figure is spawned for the
 // member shown and released on the way out; a reserve member (past the
-// fourth) is labelled. The structure follows the listing; left: the frame
-// (eight bytes larger here) and the stack slots of the many spilled locals,
-// so the allocation differs nearly throughout.
+// fourth) is labelled. The structure follows the listing, and the locals are
+// declared in the native's frame order (the first declared takes the highest
+// slot; in code order, differ 3122); left: cursorX and cursorY, which the
+// native spills and the draft keeps in registers, shift the slots below them,
+// and the allocation differs from there.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -286,46 +288,46 @@ void PartyStatus_Draw(s32 flags);
   }
 
 s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
+  struct SummaryOam portraitSprite;
+  struct SummaryOam cursorSprite;
+  s32 statusSlots[11];
+  s8 statusKinds[11];
+  struct SummaryOam statusSprites[11];
+  struct SummaryOam iconSprites[4];
+  struct SummaryOam nameSprite;
+  struct SummaryCursor cursor;
+  s32 iconSlots[4];
+  u16 figureList[2];
+  u16 spawnList[2];
+  u16 itemText[64];
+  u16 psynergyText[64];
   struct SummaryWindowWork *work;
+  struct SummaryWindow *statusWindow;
   s32 redraw;
+  struct SummaryWindow *helpWindow;
   s32 memberIndex;
+  s32 cursorSlot;
+  s32 cursorY;
+  s32 cursorX;
+  s32 portraitSlot;
   s32 statusCount;
   s32 hasDjinn;
+  s32 shownMember;
   s32 page;
   s32 figureShown;
   s32 *djinnList;
   s32 djinnCount;
   s32 psynergyCount;
   s32 itemCount;
-  s32 shownMember;
-  s32 portraitSlot;
-  s32 cursorSlot;
   s32 keys;
+  struct SummaryUnit *unit;
   s32 i;
   s32 j;
-  s32 cursorX;
-  s32 cursorY;
-  struct SummaryWindow *statusWindow;
-  struct SummaryWindow *helpWindow;
-  struct SummaryUnit *unit;
   struct SummaryNavigation *navigation;
   u16 *entries;
   s32 rowBase;
   s32 row;
   s32 groupPosition;
-  u16 figureList[2];
-  u16 spawnList[2];
-  s32 iconSlots[4];
-  struct SummaryCursor cursor;
-  struct SummaryOam nameSprite;
-  struct SummaryOam iconSprites[4];
-  struct SummaryOam statusSprites[11];
-  s8 statusKinds[11];
-  s32 statusSlots[11];
-  struct SummaryOam cursorSprite;
-  struct SummaryOam portraitSprite;
-  u16 psynergyText[64];
-  u16 itemText[32];
 
   work = (struct SummaryWindowWork *)Ram_HeapSlots->windowTiles;
   redraw = 1;

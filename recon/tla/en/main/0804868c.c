@@ -144,6 +144,7 @@ void WaitFrames(s32 frames);
 s32 Func_0804868c(s32 member) {
   struct DjinnMenuOam cursorSprite;
   u16 messageText[64];
+  s32 previewPages;
   struct DjinnMenuWork *work;
   struct DjinnMenuWindow *previewWindow;
   s32 drawnRow;
@@ -158,7 +159,8 @@ s32 Func_0804868c(s32 member) {
   s32 redraw;
   s32 alreadySelected;
   s32 redrawList;
-  s32 previewPages;
+  s32 cursorY;
+  s32 cursorX;
   struct DjinnMenuWindow *listWindow;
   s32 firstEntry;
   s32 selectedRow;
@@ -172,8 +174,6 @@ s32 Func_0804868c(s32 member) {
   s32 djinnIndex;
   s32 i;
   s32 j;
-  s32 cursorX;
-  s32 cursorY;
   struct DjinnMenuNavigation *navigation;
   struct DjinnMenuPartyStatus *partyStatus;
   u32 blinkPhase;

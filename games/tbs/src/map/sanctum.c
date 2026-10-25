@@ -526,8 +526,8 @@ static void EventScript_LeaveAfterRefusing(void) {
   struct PaletteFade *paletteWork;
 
   FieldScript_Start();
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, 0);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STILL);
   Import_ObjectEventSetAnimation(LOCALID_DORA, 0);
   Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 0);
   Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);

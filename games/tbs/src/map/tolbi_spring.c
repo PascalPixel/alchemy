@@ -617,7 +617,7 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
   }
   FieldScript_SetMessageId(MsgTolbiStepRightEnjoy);
   FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
-  FieldScript_RequestDestination(508, 0);
+  FieldScript_RequestDestination(RUN_LUCKY_WHEELS, 0);
   FieldScript_SetNextDestination((s32)&MapId_TolbiGameRooms,
                                  TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_WHEELS);
 }
@@ -648,7 +648,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
     ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, 120, 152);
     ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_WEST, 0);
     FieldScript_WaitFrames(20);
-    FieldScript_RequestDestination(0x1fd, 0);
+    FieldScript_RequestDestination(RUN_LUCKY_DICE, 0);
     FieldScript_SetNextDestination((s32)&MapId_TolbiGameRooms,
                                    TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_DICE);
   } else {

@@ -1556,8 +1556,10 @@ static void EventScript_FreeRooferAndConfrontThieves(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   base = (s32)&MapId_VaultInteriors;
-  FieldScript_SetNextDestination(base, 17);
-  FieldScript_SetDefeatDestination(base, 16);
+  FieldScript_SetNextDestination(base,
+                                 VAULT_INTERIORS_LOFT_AFTER_THIEVES_DEFEATED);
+  FieldScript_SetDefeatDestination(
+      base, VAULT_INTERIORS_LOFT_AFTER_LOSING_TO_THIEVES);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 5);
   FieldScript_End();
@@ -2381,9 +2383,9 @@ static void VaultInteriors_LoseToThieves(void) {
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(784), PIXELS(448));
   ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(808), PIXELS(432));
   ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(776), PIXELS(432));
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 19);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, 19);
-  Import_ObjectEventSetAnimation(LOCALID_IVAN, 19);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_COLLAPSE);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_COLLAPSE);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_COLLAPSE);
   priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags = priorityFlags;
   ObjectEvent_GetById(LOCALID_GARET)->priorityFlags = priorityFlags;
@@ -2487,8 +2489,10 @@ static void VaultInteriors_ConfrontThievesAgain(void) {
   Script_ShowMessage(LOCALID_THIEF_LEADER, 0);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  FieldScript_SetNextDestination((s32)&MapId_VaultInteriors, 17);
-  FieldScript_SetDefeatDestination((s32)&MapId_VaultInteriors, 16);
+  FieldScript_SetNextDestination((s32)&MapId_VaultInteriors,
+                                 VAULT_INTERIORS_LOFT_AFTER_THIEVES_DEFEATED);
+  FieldScript_SetDefeatDestination(
+      (s32)&MapId_VaultInteriors, VAULT_INTERIORS_LOFT_AFTER_LOSING_TO_THIEVES);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 5);
 }

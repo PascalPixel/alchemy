@@ -333,10 +333,10 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(528), PIXELS(144));
   ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(488), PIXELS(144));
   ObjectEvent_SetPosition(LOCALID_MIA, PIXELS(512), PIXELS(152));
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 19);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, 19);
-  Import_ObjectEventSetAnimation(LOCALID_IVAN, 19);
-  Import_ObjectEventSetAnimation(LOCALID_MIA, 19);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_COLLAPSE);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_COLLAPSE);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_COLLAPSE);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_COLLAPSE);
   FieldScript_WaitFrames(10);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(30);
@@ -776,7 +776,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   FieldScript_WaitFrames(50);
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_SOUTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST + FACING_STEP, 20);
-  ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, 4);
+  ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_MENARDI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                         60);
@@ -836,7 +836,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_EAST, 10);
   Script_ShowMessageAndWait(LOCALID_FELIX, 0, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_JENNA, 2);
-  ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, 4);
+  ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_JENNA, 0, 20);
   Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);

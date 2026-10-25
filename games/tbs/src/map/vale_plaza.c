@@ -1507,7 +1507,7 @@ static void EventScript_TravelersLeaveAfterBattle(void) {
   ObjectEvent_SetPosition(LOCALID_SECOND_TRAVELER, PIXELS(112), PIXELS(360));
   ObjectEvent_FaceDirection(LOCALID_FIRST_TRAVELER, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_SECOND_TRAVELER, FACING_WEST, 0);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 16);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   objectEvent->scaleX = -Q16_ONE;
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);

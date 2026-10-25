@@ -373,7 +373,7 @@ static void EventScript_KradenFindsHeartOfSanctum(void) {
     Sound_PlaySong(SONG_FADE_OUT_BGM);
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 288, 232);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
     FieldScript_WaitFrames(20);
     Sound_PlaySong(MUS_FOREST);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
@@ -567,7 +567,7 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   FieldScript_SetMessageId(MsgSolSanctumWhRoom);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 488, 176);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetPosition(LOCALID_KRADEN, leader->x.fixed, leader->z.fixed);
@@ -651,7 +651,7 @@ static void EventScript_KradenStopsPartyLeaving(void) {
     return;
   }
   FieldScript_Start();
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
   FieldScript_SetMessageId(MsgSolSanctumWayLeadsOutSanctum);
   if (Script_GetFlag(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0 ||
       GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) == 0) {
@@ -1151,7 +1151,7 @@ static void EventScript_KradenSeesLunaPictureChange(void) {
       // Sol!"
       FieldScript_SetMessageId(MsgSolSanctumThePictureOfLunaChanged);
       ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 576, 232);
-      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
       FieldCamera_WaitForArrival();
       FieldScript_WaitFrames(10);
       ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
@@ -1207,7 +1207,7 @@ static void EventScript_KradenSeesLunaPictureChange(void) {
 static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void) {
   Sound_PlaySong(MUS_FOREST);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 376, 184);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
   ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(376), PIXELS(184));
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 392, 168);
@@ -1245,7 +1245,7 @@ static void EventScript_RiseToElementalStarRoom(void) {
     FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
     FieldCamera_MoveTo(PIXELS(287), -1, PIXELS(148), 1);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 288, 120);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
     ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 30);
     ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(288), PIXELS(120));
     ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
@@ -1295,7 +1295,7 @@ static void EventScript_RiseToElementalStarRoom(void) {
     Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
     Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
     // Kraden: "Ah ha! This has to be it." and "Let's go, Isaac!"
     FieldScript_SetMessageId(MsgSolSanctumHa);
     SolSanctumLunaSolRooms_ShowMessageAndWait(

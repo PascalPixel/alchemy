@@ -3827,7 +3827,7 @@ static void TolbiShipInteriors_ReportMonstersBelowdecks(void) {
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(440), PIXELS(134));
   FieldScript_StartScreenTransition();
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 5);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_RUN);
   ObjectEvent_MoveToAndWait(LOCALID_PARTY_LEADER, 0x198, 134);
   ObjectEvent_MoveToAndWait(LOCALID_PARTY_LEADER, 0x198, 152);
   ObjectEvent_MoveToAndWait(LOCALID_PARTY_LEADER, 0x1b0, 166);

@@ -1948,7 +1948,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 0);
     ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 792, 200);
     FieldScript_WaitFrames(10);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 18);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_BATHE);
     MercuryLighthouse_RaiseObjectEventWithSparks(LOCALID_PARTY_LEADER);
     FieldScript_WaitFrames(60);
     Task_Remove(MercuryLighthouse_CycleWaterfallPalette);
@@ -2012,7 +2012,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 0);
     ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 792, 200);
     FieldScript_WaitFrames(10);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 18);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_BATHE);
     ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);

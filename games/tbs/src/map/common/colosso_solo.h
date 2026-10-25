@@ -468,7 +468,7 @@ L_main:
   ObjectEvent_LinkPair(friendId, LOCALID_PARTY_LEADER, 30);
   Import_ObjectEventSetAnimation(friendId, 3);
   behindZ = frontZ - 32;
-  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, 3);
+  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectEvent_WalkToAndWait(guide, guideX, behindZ);
   ObjectMotion_ResetAndSetPositionInMode2(guide, besideX, behindZ);
   ObjectEvent_LinkObjectAndSetCallback(0, friendId);

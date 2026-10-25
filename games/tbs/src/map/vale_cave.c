@@ -725,7 +725,7 @@ static void EventScript_PushLogOffLedge(void) {
   pushedLog->bounce = stationaryMotion;
   ObjectMotion_OffsetPositionAndResetMotion(LOCALID_WEST_LOG, 12, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 1);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_WEST_LOG);
   Script_PlaySong(SE_STOP_ACTION_SE);
   Script_PlaySong(SE_HEAVY_STOP);

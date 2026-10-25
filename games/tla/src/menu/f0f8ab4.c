@@ -1,11 +1,3 @@
-// Near miss, differ 2 of 122: the twin of The Broken Seal's UiMenu_SlideCursor.
-// The native loads the 0x1ff mask of the sprite's x field before it subtracts
-// 56 (adds r1, r1, r3; ldr r3, [pc]; subs r1, #56); here the subtraction comes
-// first. The mask belongs to the bit-field store, so no source value can carry
-// a barrier; splitting the sum from the subtraction changes nothing.
-// 2026-10-19: the mask as an explicit 0x1ff local behind a volatile barrier is
-// built by split constants instead of loaded (46); four minutes of permuter
-// found nothing.
 #include "types.h"
 #include "ram_buffer.h"
 #include "render_input.h"
@@ -22,6 +14,7 @@ struct OwnerMenuState {
 
 void WaitFrames(s32 frames);
 
+/// The twin of The Broken Seal's UiMenu_SlideCursor.
 void Func_080f8ab4(s32 x, s32 y) {
   struct OwnerMenuState *work =
       (struct OwnerMenuState *)Ram_HeapSlots->menuRuntime;

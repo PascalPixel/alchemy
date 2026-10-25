@@ -1,9 +1,3 @@
-// Near miss, differ 2 of 69, one reordered pair: the native loads the menu
-// before it starts the count's offset 0x214 (ldr r6, [r3]; movs r2, #133); this
-// form starts the constant first (sched2 gives movs priority 38, the load 37).
-// An empty asm or a one-pass block after the load pulls the two parameter
-// copies before it (differ 4). The permuter found nothing in five minutes
-// (4,701 candidates).
 #include "types.h"
 #include "ram_buffer.h"
 
@@ -35,8 +29,8 @@ struct MenuResult {
 
 s32 Unit_Get(s32 owner);
 
-// Split the selected slot owner's Psynergy into pages of five rows.
-s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index) {
+/// Split the selected slot owner's Psynergy into pages of five rows.
+s32 Func_080fd80c(struct MenuResult *result, s32 index) {
   s32 ownerState;
   struct PsynergyMenuState *menu = Ram_HeapSlots->menuRuntime;
   s32 entryCount;

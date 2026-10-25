@@ -1,16 +1,8 @@
-// Draft, differ 2 of 237 (2026-10-15), ported from The Broken Seal's
-// ItemMenu_DrawEquipPage: the native loads MsgItemPlainName from the pool
-// between the first two instructions of the 0x1ff mask (movs r0, #128; ldr r3;
-// lsls r0, r0, #1); here sched2 gives the mask's chain (priority 5) the slot
-// before the load (priority 4). The sum written either way round, as an index,
-// through a local or with an int cast measured the same; three minutes of
-// alchemy permute found nothing better. The plain twin is differ 6: the two
-// loop loads of the item also come after their mask, which the barriers below
-// fix.
 #include "types.h"
 #include "item.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "edition.h"
 
 struct InventoryMenuState {
   u8 unk000[0x30];
@@ -32,7 +24,12 @@ struct MenuResult {
 
 #define PAGE_ROWS 5
 #define EQUIP_SLOT_X 2
+// The equipment slots' highlight is a tile wider outside the English edition.
+#if LANGUAGE == LANGUAGE_ENGLISH
 #define EQUIP_SLOT_WIDTH 9
+#else
+#define EQUIP_SLOT_WIDTH 10
+#endif
 
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void WaitFrames(s32 frames);
@@ -64,7 +61,6 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
   for (row = 0; row < PAGE_ROWS; row++) {
     if (row == state->row) {
       entry = menu->items[state->selectedIndex];
-      asm volatile("");
       mask = ITEM_ID_MASK;
       mask &= entry;
       item = Item_Get(mask);
@@ -77,7 +73,6 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
       }
     } else {
       entry = menu->items[base + row];
-      asm volatile("");
       mask = ITEM_ID_MASK;
       mask &= entry;
       item = Item_Get(mask);

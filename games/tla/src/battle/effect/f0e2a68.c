@@ -1,6 +1,3 @@
-// Near miss of Func_080e2a68 (48 instructions, 4 differ): the native starts i /
-// 2 (lsrs r2, r7, #31) after the row sum and finishes it after the offset load;
-// the draft starts it one row early.
 #include "types.h"
 
 s32 Trig_Cos(s32 angle);

@@ -1,9 +1,3 @@
-// Near miss, differ 10 of 158: draws one page of the psynergy list (name, PP
-// cost, greyed when the PP is short or the action restricted), ☀️'s
-// PsynergyMenu_DrawActionPage in games/tbs/src/menu/menu.c, with ⚓️'s
-// work-block offsets (flags 0x21c, entries 0x1c4, owner byte 0x216). Instruction
-// order only: the entry's halfword load and the 0x3fff mask's first move swap
-// at each of three reads, and one move of the row moves past the mask.
 #include "battle_type.h"
 #include "ram_buffer.h"
 
@@ -36,13 +30,15 @@ void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x,
                                   s32 y);
 struct BattleUnit *Unit_Get(s32 owner);
 struct BattleAct *BattleAction_Get(s32 action);
-extern u8 MsgAbilityName;
-extern u8 MsgShortcutHelp[];
-extern u8 MsgChangeCharacterHelp[];
-extern u8 MsgPsynergyPp[];
+extern u8 MsgAbilityNothing[];
+extern u8 MsgShortcutSetL[];
+extern u8 MsgArrangeItemsHelp[];
+extern u8 MsgPsynergyChooseTarget[];
 
-s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
-                                const struct MenuResult *state) {
+/// Draws one page of the Psynergy list (name, PP cost, greyed when the PP is
+/// short or the action restricted): The Broken Seal's
+/// PsynergyMenu_DrawActionPage with this game's work-block offsets.
+s32 Func_080fd968(s32 window, s32 unused, const struct MenuResult *state) {
   u32 firstEntry;
   u32 visibleCount;
   u8 row;
@@ -57,9 +53,10 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
   UiWindow_DrawDividerLineFar(window, 0, 11, 16, 11);
 
   if (2 & *(u16 *)((u8 *)menu + 0x21c)) {
-    UiText_DrawCharacterAtOffsetFar((s32)MsgShortcutHelp, window, 0, 88);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgShortcutSetL - 1, window, 0, 88);
   } else {
-    UiText_DrawCharacterAtOffsetFar((s32)MsgChangeCharacterHelp, window, 0, 88);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgArrangeItemsHelp + 2, window, 0,
+                                    88);
   }
 
   firstEntry = state->page * 5;
@@ -70,7 +67,8 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
 
   Menu_SetPageIcons(5, firstEntry, window, 0x70, 0x22);
   Menu_DrawPageIndicator(window, state->entryCount, 5, state->page, 15);
-  UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyPp, window, 0x60, 0);
+  UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyChooseTarget + 2, window,
+                                  0x60, 0);
 
   row = 0;
   if (visibleCount > row) {
@@ -89,7 +87,8 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
       }
 
       UiText_DrawCharacterAtOffsetFar(
-          (0x3fff & *(const u16 *)(cursor + (s32)menu)) + (s32)&MsgAbilityName,
+          (0x3fff & *(const u16 *)(cursor + (s32)menu)) +
+              (s32)MsgAbilityNothing,
           window, 16, row * 16 + 8);
       UiText_DrawNumberAtOffsetFar(ability->ppCost, 2, window, 104,
                                    row * 16 + 8);

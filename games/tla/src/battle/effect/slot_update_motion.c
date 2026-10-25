@@ -1,11 +1,3 @@
-// Near miss, differ 2 of 156 (2026-10-15). The native loads targetX, then
-// starts EFFECT_NO_TARGET (ldr r0, [r7, #12]; movs r2, #128; lsls; sub sp, #4);
-// this starts the constant first, its movs having two dependents to the load's
-// one. Measured: an empty asm taking the load as input and the constant's first
-// byte as in/out orders those rows, but flips the tie in the multiply block and
-// three later constants' registers (differ 30); a barrier after the load moves
-// sub sp ahead of it (differ 2).
-// 2026-10-19: three minutes of permuter found nothing.
 #include "types.h"
 #include "effect_slot.h"
 #include "iwram_call.h"

@@ -7,6 +7,7 @@
 // store in a one-pass block (differ 30). alchemy permute, 5 minutes: differ 16
 // at best, only with id as a short (sign-extended), which the callers do not
 // suggest.
+// Measured against its copies: overlay 681's Func_02004a5c (differ 28 of 66).
 #include "types.h"
 #include "object_runtime.h"
 #include "ram_buffer.h"

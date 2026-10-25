@@ -4,6 +4,8 @@
 // r2, r0, #0; asrs r2, r2, #19 for asrs r2, r0, #19). Tried: the index as a
 // local (36), a cells local, array indexing, the grid added later (15), permute
 // 1 minute.
+// Measured against its copies: overlay 67F's Func_02000bc0 (differ 11 of 60),
+// overlay 691's Func_020036f8 (differ 11 of 60).
 #include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
 #include "map.h"
 

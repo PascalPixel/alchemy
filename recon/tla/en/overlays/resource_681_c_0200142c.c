@@ -10,6 +10,7 @@
 // read before the speed); the angle sum written six ways, five minutes of
 // alchemy permute on that form, no better. Its copy group is led by 664's
 // Func_02003f94 in another lane.
+// Measured against its copies: overlay 67C's Func_0200147c (differ 2 of 75).
 #include "types.h"
 #include "iwram_call.h"
 #include "frame.h"

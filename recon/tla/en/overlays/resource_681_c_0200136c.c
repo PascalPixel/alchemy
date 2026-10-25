@@ -1,3 +1,4 @@
+// Measured against its copies: overlay 67C's Func_020013bc (differ 101 of 89).
 #include "types.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \

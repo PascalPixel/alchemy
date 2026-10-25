@@ -1,4 +1,4 @@
-// Draft, differ 129 of 187: translated from its listing; names and structure still
+// Draft, differ 99 of 187: translated from its listing; names and structure still
 // to do.
 #include "iwram_call.h"
 #include "lib/call.h"
@@ -28,7 +28,7 @@ void Func_020006cc();
 void GameFlag_SetBit();
 s32 Func_02003af4();
 
-s32 Func_02000a48(void) {
+s32 Func_02000a48(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 r6, v0, r4, r1, r2, r5, r3, r0, ip, v1, v2, v3, v4, v5, v6, v7, v8;
   s32 stack[2];
 
@@ -46,7 +46,7 @@ s32 Func_02000a48(void) {
   r5 = 78;
   Call6((void (*)())Func_02003aa4, 98, 21, 4, 3, r5, 21);
   Call6((void (*)())Func_02003aa4, 98, 27, 4, 3, r5, 24);
-  Call1((void (*)())Func_020006cc, (s32)gData_02003d98);
+  Func_020006cc((s32)gData_02003d98);
   goto L_02008b1e;
 L_02008aaa:
   if (r2 != (224))
@@ -55,25 +55,25 @@ L_02008aaa:
   r2 = 0;
   if ((FIELD_AT(r1, s16, 482)) > 3)
     goto L_02008ac6;
-  Call1((void (*)())Func_020006cc, (s32)gData_02003dac);
+  Func_020006cc((s32)gData_02003dac);
   goto L_02008b1e;
 L_02008ac6:
   if (r3 > 8)
     goto L_02008ad2;
-  Call1((void (*)())Func_020006cc, (s32)gData_02003dd2);
+  Func_020006cc((s32)gData_02003dd2);
   goto L_02008b1e;
 L_02008ad2:
   if (r3 > 12)
     goto L_02008af2;
   Call6((void (*)())Func_02003aa4, 79, 37, 2, 1, 79, 36);
-  Call1((void (*)())Func_020006cc, (s32)gData_02003de4);
+  Func_020006cc((s32)gData_02003de4);
   goto L_02008b1e;
 L_02008af2:
   stack[0] = 103;
   r5 = 38;
   Call6((void (*)())Func_02003aa4, 103, 39, 1, 1, 103, r5);
   Call6((void (*)())Func_02003aa4, 99, 42, 5, 1, 99, r5);
-  Call1((void (*)())Func_020006cc, (s32)gData_02003de8);
+  Func_020006cc((s32)gData_02003de8);
 L_02008b1e:
   r4 = 0;
   r0 = *(s16 *)((480 + (s32)&gPartyState) + r4);
@@ -87,7 +87,7 @@ L_02008b1e:
     goto L_02008b4e;
   if (r1 != 25)
     goto L_02008b4e;
-  Call1((void (*)())GameFlag_SetBit, 0x8d6);
+  Value1((s32 (*)())GameFlag_SetBit, 0x8d6);
   r0 = v1;
   goto L_02008be0;
 L_02008b4e:
@@ -95,7 +95,7 @@ L_02008b4e:
     goto L_02008be0;
   if (r1 != 22)
     goto L_02008be0;
-  Call1((void (*)())GameFlag_SetBit, 0x8d5);
+  Value1((s32 (*)())GameFlag_SetBit, 0x8d5);
   r0 = v2;
   goto L_02008be0;
 L_02008b62:
@@ -110,7 +110,7 @@ L_02008b62:
     goto L_02008be0;
   if (r1 != 33)
     goto L_02008be0;
-  Call1((void (*)())GameFlag_SetBit, 0x8d7);
+  Value1((s32 (*)())GameFlag_SetBit, 0x8d7);
   r0 = v3;
   goto L_02008be0;
 L_02008b8a:
@@ -120,7 +120,7 @@ L_02008b8a:
     goto L_02008be0;
   if (r1 != 35)
     goto L_02008be0;
-  Call1((void (*)())GameFlag_SetBit, 0x8d8);
+  Value1((s32 (*)())GameFlag_SetBit, 0x8d8);
   r0 = v4;
   goto L_02008be0;
 L_02008ba2:
@@ -130,7 +130,7 @@ L_02008ba2:
     goto L_02008be0;
   if (r1 != 36)
     goto L_02008be0;
-  Call1((void (*)())GameFlag_SetBit, 0x8d9);
+  Value1((s32 (*)())GameFlag_SetBit, 0x8d9);
   r0 = v5;
   goto L_02008be0;
 L_02008bba:
@@ -138,7 +138,7 @@ L_02008bba:
     goto L_02008bce;
   if (r1 != 37)
     goto L_02008bce;
-  Call1((void (*)())GameFlag_SetBit, 0x8da);
+  Value1((s32 (*)())GameFlag_SetBit, 0x8da);
   r0 = v6;
   goto L_02008be0;
 L_02008bce:

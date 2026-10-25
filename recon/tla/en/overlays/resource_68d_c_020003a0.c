@@ -1,10 +1,12 @@
-// Draft, differ 167 of 126: translated from its listing; names and structure
-// still to do.
-#include "types.h"
+// Draft, differ 163 of 126: translated from its listing; names and structure still
+// to do.
+#include "iwram_call.h"
+#include "lib/call.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "types.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -27,61 +29,62 @@ extern u8 Data_02003098[];
 extern u8 Func_020002b4[];
 extern u8 gData_0200308c[];
 s32 MemAlloc();
-s32 Func_02001f6c();
+void Func_02001f6c();
 s32 Resource_FindFreeEntry();
 s32 VramCache_Load();
-s32 Func_02002104();
+void Func_02002104();
 s32 Scheduler_AddOrUpdateCallback();
 void MemFree();
 
-s32 Func_020003a0(void) {
+s32 Func_020003a0(s32 a0, s32 a1, s32 a2, s32 a3) {
+  s32 r9_1, r7_1, r5_1, r5_2, r6_1, r5_3, r8_1, r10_1, r11_1, r6_2, r6_3, r6_4;
   s32 v0, r9, r7, r5, v1, v2, r6, r8, r10, r11, v3, v4, v5, r0;
   s32 stack[1];
 
   /* sub (s32)stack, #4 */
   v0 = MemAlloc(0x1000);
-  r9 = v0;
+  r9_1 = v0;
   FIELD_AT(67108944, u16, 0) = 0x3f40;
   FIELD_AT(67108946, u16, 0) = 0x1000;
-  r7 = 32;
-  Func_02001f6c((s32)Data_02002620, r9);
-  r5 = (s32)gData_02003020;
+  r7_1 = 32;
+  Func_02001f6c((s32)Data_02002620, r9_1);
+  r5_1 = (s32)gData_02003020;
   v1 = Resource_FindFreeEntry();
-  FIELD_AT(r5, s32, 0) = v1;
-  r5 = (s32)Data_02003088;
-  v2 = VramCache_Load(v1, 0x1000, r9);
-  r6 = (s32)Data_02003060;
-  FIELD_AT(r5, s32, 0) = v2;
-  Func_02002104(r6, 0, 0, -0x40000000, v2);
-  FIELD_AT(r6, u16, 30) = 1;
-  r5 = 13;
-  r5 = -r5;
-  r8 = 8;
-  r10 = 4;
-  FIELD_AT(r6, u8, 5) = ((r5 & (FIELD_AT(r6, u8, 5))) | r10) | r7;
-  FIELD_AT(r6, u8, 9) = ((r5 & (FIELD_AT(r6, u8, 9))) | r8) & 15;
-  r11 = 15;
-  Func_02001f6c((s32)Data_02002af8, r9);
-  r6 = (s32)gData_02003094;
+  FIELD_AT(r5_1, s32, 0) = v1;
+  r5_2 = (s32)Data_02003088;
+  v2 = VramCache_Load(v1, 0x1000, r9_1);
+  r6_1 = (s32)Data_02003060;
+  FIELD_AT(r5_2, s32, 0) = v2;
+  Func_02002104(r6_1, 0, 0, -0x40000000, v2);
+  FIELD_AT(r6_1, u16, 30) = 1;
+  r5_3 = 13;
+  r5_3 = -r5_3;
+  r8_1 = 8;
+  r10_1 = 4;
+  FIELD_AT(r6_1, u8, 5) = ((r5_3 & (FIELD_AT(r6_1, u8, 5))) | r10_1) | r7_1;
+  FIELD_AT(r6_1, u8, 9) = ((r5_3 & (FIELD_AT(r6_1, u8, 9))) | r8_1) & 15;
+  r11_1 = 15;
+  Func_02001f6c((s32)Data_02002af8, r9_1);
+  r6_2 = (s32)gData_02003094;
   v3 = Resource_FindFreeEntry();
-  FIELD_AT(r6, s32, 0) = v3;
-  r6 = (s32)Data_02003058;
-  v4 = VramCache_Load(v3, 0x1000, r9);
-  FIELD_AT(r6, s32, 0) = v4;
-  r6 = (s32)Data_02003030;
-  Func_02002104(r6, 0, 0, -0x40000000, v4);
-  FIELD_AT(r6, u16, 30) = 2;
-  FIELD_AT(r6, u8, 9) = ((r5 & (FIELD_AT(r6, u8, 9))) | r8) & r11;
-  r5 = r5 & (FIELD_AT(r6, u8, 5));
-  r5 = r5 | r10;
-  r5 = r5 | r7;
-  FIELD_AT(r6, u8, 5) = r5;
+  FIELD_AT(r6_2, s32, 0) = v3;
+  r6_3 = (s32)Data_02003058;
+  v4 = VramCache_Load(v3, 0x1000, r9_1);
+  FIELD_AT(r6_3, s32, 0) = v4;
+  r6_4 = (s32)Data_02003030;
+  Func_02002104(r6_4, 0, 0, -0x40000000, v4);
+  FIELD_AT(r6_4, u16, 30) = 2;
+  FIELD_AT(r6_4, u8, 9) = ((r5_3 & (FIELD_AT(r6_4, u8, 9))) | r8_1) & r11_1;
+  r5_3 = r5_3 & (FIELD_AT(r6_4, u8, 5));
+  r5_3 = r5_3 | r10_1;
+  r5_3 = r5_3 | r7_1;
+  FIELD_AT(r6_4, u8, 5) = r5_3;
   FIELD_AT((s32)Data_02003090, s32, 0) = 0;
   FIELD_AT((s32)Data_02003024, s32, 0) = 0;
   FIELD_AT((s32)Data_02003098, s32, 0) = 0;
   FIELD_AT((s32)gData_0200308c, u8, 0) = 0;
-  Scheduler_AddOrUpdateCallback((s32)Func_020002b4, 0x480);
-  MemFree(r9);
+  Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_020002b4, 0x480);
+  MemFree(r9_1);
   /* add (s32)stack, #4 */
   return v5;
 }

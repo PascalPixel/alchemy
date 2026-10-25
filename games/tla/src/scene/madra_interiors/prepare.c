@@ -76,12 +76,7 @@ s32 Func_02000624(void) {
   Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
   Func_02001e80(0);
   if (gPartyState.scene == (s32)&SceneId_Ov659Room1) {
-    /* FAKEMATCH: the one-pass block ends the scheduling block: ⚓️ loads the
-     * event work before it builds the offset 0xd4c (differ 2 without it;
-     * through a plain pointer 20). */
-    do {
-      event = Ram_HeapSlots->eventWork;
-    } while (0);
+    event = Ram_HeapSlots->eventWork;
     FIELD_AT(event, u16, 0xd4c) = 3;
     if (!FlagCheck(0x821)) {
       ActorPlace(29, 0, 0);

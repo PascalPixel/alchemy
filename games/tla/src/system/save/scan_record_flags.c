@@ -1,9 +1,3 @@
-// Near miss, differ 4 of 78 (85 before, 2026-10-25): the flags read as
-// fields of each summary, so that loop.c reduces them to one cursor and
-// leaves the level read as work + i * 64 + 0x3058, as the native does. Left:
-// the native interleaves the cursor's offset (movs; lsls; adds) with the
-// copy of the first flag's address and the load of the 1; this builds it
-// in one run. The Broken Seal twin has no level test.
 #include "types.h"
 #include "ram_buffer.h"
 #include "save_state.h"
@@ -16,7 +10,7 @@ s32 Func_0801596c(void);
 s32 SaveState_LoadSummaryRecords(void);
 void SaveState_ReleaseWorkspace(void);
 
-s32 SaveState_ScanRecordFlags(void) {
+s32 Func_080432a4(void) {
   s32 err;
   s32 cnt;
   s32 ret;
@@ -40,8 +34,7 @@ s32 SaveState_ScanRecordFlags(void) {
       }
       if (work->summary[i].flagCount != 0)
         gData_020036d8 = 1;
-      if (work->summary[i].level != 0 &&
-          work->summary[i].hasFlag34 == 0)
+      if (work->summary[i].level != 0 && work->summary[i].hasFlag34 == 0)
         gData_02005350 = 1;
     }
   }

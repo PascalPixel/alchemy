@@ -1,17 +1,3 @@
-// Near miss, differ 4 of 247 (two reordered pairs), 2026-10-15: The Broken
-// Seal's Unit_RefreshPsynergy on this game's tables: one clearing pass
-// with both marks (0xc000), class abilities as halfwords with their level
-// at +2, and the class mark ored as a constant. Remaining: in both fill
-// loops' preheaders the native loads the pooled halfword zero before the
-// slot address is finished (ldr r2 before lsls r3, r6, #2; ldr r1 before
-// adds r2, r3, r0); this finishes the address first. From the sched2 dump:
-// the zero (cost 2, no dependents) ties the address on priority and loses
-// on dependents. The zero pinned to r2 behind an empty asm that holds r3
-// fixes the first loop, but any asm there lengthens j's live range so j and
-// the class pointer trade r6 and r7 (differ 64); pinning j as well breaks
-// the frame (differ 272). The pin alone, while and do forms, a pointer
-// form and a named zero change nothing. Four minutes of alchemy permute
-// found nothing lower.
 #include "types.h"
 #include "owner_state.h"
 #include "item.h"

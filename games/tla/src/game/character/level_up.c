@@ -1,16 +1,3 @@
-// Near miss, differ 2 of 285 (one reordered pair): after the band's clamp
-// the native doubles the band (lsls r0, r5, #1), copies the work pointer
-// (mov r3, r9) and only then saves the doubled band (mov r8, r0); this saves
-// it before the copy. From the sched2 dump of that block: the copy (insn
-// 1143) and the save (1146) both have priority 482, and the save wins on
-// dependents (9 against 3), so identical instructions do not give the
-// native order. Measured: The Broken Seal's division form instead of the
-// library calls (same 2); an empty barrier after the clamp (same 2); an
-// input barrier on the work pointer puts the copy ahead of the shift
-// (differ 2); with the doubled band as a second operand the shift is
-// emitted twice (differ 9); five minutes of alchemy permute, 8,200
-// candidates, none better. The unit is common's struct BattleUnit; its
-// neighbour Unit_GetExperienceForLevel is C in level_hook.c.
 #include "owner_state.h"
 #include "mem.h"
 #include "types.h"

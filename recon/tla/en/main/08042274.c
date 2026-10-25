@@ -1,14 +1,17 @@
-// Near miss, differ 2 of 74 (one reordered pair), 2026-10-15: The Broken
-// Seal's UiText_DrawPrefixedNumberAtOffset in the form of its English
-// edition (its Spanish, French and Italian ones set both halfwords in the
-// branches; this game's other editions are not yet measured), reading the
-// window's x and y as signed halfwords. The second halfword goes through a
-// u16 temporary, which loads 0xf01e from the pool as the native does, with a
-// barrier after its store. Remaining: the native loads the fifth argument
-// from the stack (ldr r5, [sp, #56]) and the window tiles before it copies
-// the value (adds r4, r0, #0); this copies first. Pinning the value to r4
-// (which fixes UiText_DrawNumber) or any other parameter to its register,
-// and an asm use of the variant or the work, did not move the copy.
+// Near miss: its instructions match under -mthumb-slow-loads (differ 0 of
+// 74, 2026-10-25), but its literal pool does not: the u16 temporary is
+// promoted, so 0xf01e is pooled as the word 0xfffff01e, where the native
+// holds 0x0000f01e (a halfword pool entry and its two bytes of padding, as
+// consttable_2 writes one). Adopted in en and de it compared 2 bytes short
+// of the ROM there. Without the temporary the constant is built in three
+// instructions (differ 6); as s16, differ 2 with the same pool word.
+// The Broken Seal's UiText_DrawPrefixedNumberAtOffset in the form of its
+// English edition (its Spanish, French and Italian ones set both halfwords
+// in the branches; this game's Japanese edition has another layout),
+// reading the window's x and y as signed halfwords, with a barrier after
+// the second halfword's store (without it, differ 2). Before the new
+// option the native loaded the fifth argument from the stack and the window
+// tiles before it copied the value (differ 2).
 #include "types.h"
 #include "ram_buffer.h"
 #include "window.h"

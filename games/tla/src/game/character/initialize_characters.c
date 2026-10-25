@@ -1,11 +1,3 @@
-// Near miss: differ 8 of 119, four reordered rows. The native loads the owner
-// table before it opens the frame (ldr r1; sub sp, #32), reads the first owner
-// before it builds -1 (ldr r0, [r3]; movs r1, #1), sets the clear loop counter
-// before the Character_GetDefinition call (movs r5, #14; ldrh r0, [r2]; bl) and
-// loads the halfword zero before it copies the record (ldr r2, =0; adds r3, r7,
-// #0). Setting the counter before the call, in the same or in its own variable,
-// swaps the first loop r5 and r6. Message 131 (the first character name) needs
-// a name in the six catalogs: MsgCharacterName here is not defined yet.
 #include "types.h"
 #include "owner_state.h"
 #include "party_state.h"
@@ -34,7 +26,7 @@ struct OwnerStart *Character_GetDefinition(s32 index);
 void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
 void Unit_Calculate(s32 owner);
 
-void Party_InitializeCharacters(void) {
+void Func_080af7ac(void) {
   struct OwnerInventoryState *state;
   struct OwnerStart *start;
   u16 nameBuf[16];
@@ -65,15 +57,7 @@ void Party_InitializeCharacters(void) {
     do {
       state = Unit_Get(*remote);
       if (state != 0) {
-        {
-          s32 id = *remote;
-
-          /* FAKEMATCH: the barrier keeps the id load ahead of the class field
-           * offset; without it the offset is started first (one reordered row).
-           */
-          __asm__("");
-          state->classId = id;
-        }
+        state->classId = *remote;
         start = Character_GetDefinition(state->classId);
         for (i = 14; i >= 0; i--)
           state->inventory[i] = 0;

@@ -11,21 +11,19 @@ struct Panel_02001804 {
 };
 
 void Func_0200187c(struct Panel_02001804 *panel) {
+  /* FAKEMATCH(pin): the shadow pointer in r5; as a plain local, 23 of 43
+   * instructions differ in tla-en. */
   register u16 *shadow asm("r5") = (u16 *)Ram_HeapSlots->windowTiles;
-  register void *work asm("r0") = Runtime_BumpAllocateAlternatePool(0x300);
+  void *work = Runtime_BumpAllocateAlternatePool(0x300);
   u16 *tiles;
   s32 offset;
+  /* FAKEMATCH(pin): the row in r6; as a plain local, 16 of 43 instructions
+   * differ in tla-en. */
   register s32 row asm("r6");
   s32 column;
 
-  offset = panel->y * 32 + panel->x;
-  {
-    register u32 vram asm("r2") = 0x06002000;
-    __asm__ __volatile__("" : "+r"(offset));
-
-    offset *= 2;
-    tiles = (u16 *)(offset + vram);
-  }
+  offset = (panel->y * 32 + panel->x) * 2;
+  tiles = (u16 *)(offset + 0x06002000);
   shadow = (u16 *)((u8 *)shadow + offset + 8);
   row = 0;
 next_row:

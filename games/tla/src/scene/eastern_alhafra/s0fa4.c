@@ -53,7 +53,7 @@ L_02009052:
   Call2((void (*)())Object_SetModeById, 10, 2);
   FIELD_AT(v_r5, u8, 89) = 0;
   /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
-   * the listing orders it; without it, 6 of 168 instructions differ in
+   * the listing orders it; without it, 4 of 168 instructions differ in
    * tla-en. */
   asm("");
   FIELD_AT(v_r5, u8, 35) = (2 | FIELD_AT(v_r5, u8, 35));
@@ -71,7 +71,7 @@ L_020090a8:
   Call2((void (*)())Object_SetModeById, 11, 2);
   FIELD_AT(v_r5, u8, 89) = 0;
   /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
-   * the listing orders it; without it, 6 of 168 instructions differ in
+   * the listing orders it; without it, 4 of 168 instructions differ in
    * tla-en. */
   asm("");
   FIELD_AT(v_r5, u8, 35) = (2 | FIELD_AT(v_r5, u8, 35));

@@ -1,14 +1,14 @@
 /// @file
-/// Inside Bilibin's buildings: MapId_CottageRoomsC, whose area name is
-/// Bilibin. Six of Bilibin's doors (BILIBIN_TO_INN to
-/// BILIBIN_TO_WEAPON_AND_ARMOR_SHOP, in bilibin.c) lead into its rooms, and
-/// each room's door leads back out to the door it was entered by. One room
-/// holds the weapon and armor shops, another the item shop, a third the inn
-/// with the restaurant beside it, whose stairs
+/// Cottage rooms C (MapId_CottageRoomsC), a sheet of rooms drawn as cottages,
+/// all of them inside Bilibin's buildings, whose area name is Bilibin. Six of
+/// Bilibin's doors (BILIBIN_TO_INN to BILIBIN_TO_WEAPON_AND_ARMOR_SHOP, in
+/// bilibin.c) lead into its rooms, and each room's door leads back out to the
+/// door it was entered by. One room holds the weapon and armor shops, another
+/// the item shop, a third the inn with the restaurant beside it, whose stairs
 /// (COTTAGE_ROOMS_C_INN_TO_INN_UPSTAIRS and
 /// COTTAGE_ROOMS_C_INN_UPSTAIRS_TO_INN) join it to its upstairs rooms; three
-/// other buildings hold villagers. CottageRoomsC_GetObjectEventTemplates
-/// leaves out the object events of the rooms not in view.
+/// other buildings hold villagers. CottageRoomsC_GetObjectEventTemplates leaves
+/// out the object events of the rooms not in view.
 ///
 /// Everyone has a line for while Kolima's curse holds (FLAG_KOLIMA_CURSE_LIFTED
 /// clear) and one for after. Before, the townsfolk explain the tree at the

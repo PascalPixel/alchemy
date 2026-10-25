@@ -1,25 +1,23 @@
 /// @file
-/// Tolbi-bound Ship (MapId_ShipRooms), below its decks: one of the
-/// ship's three maps on its voyage from Kalay to Tolbi, told in
-/// tolbi_ship_deck.c. The map is four rooms, each a camera box of the
-/// warp destination table, whose warp destinations are named by room: the
-/// passengers' hold (SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK
-/// and the others named for it), the cargo hold
-/// (SHIP_ROOMS_CRATE_HOLD_FROM_TOLBI_SHIP_DECK), the rowing deck
-/// where the oarsmen row (the SHIP_ROOMS_ROWING_DECK warp
-/// destinations and SHIP_ROOMS_FROM_WORLD_MAP) and the captain's
-/// quarters (the SHIP_ROOMS_CAPTAINS_ROOM warp destinations). Three
-/// warps lead up to the deck,
-/// SHIP_ROOMS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK from the hold,
+/// Ship rooms (MapId_ShipRooms), a sheet of rooms drawn as a ship's cabins, all
+/// of them below the decks of the Tolbi-bound Ship: one of the ship's three
+/// maps on its voyage from Kalay to Tolbi, told in tolbi_ship_deck.c. The map
+/// is four rooms, each a camera box of the warp destination table, whose warp
+/// destinations are named by room: the passengers' hold
+/// (SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK and the others named for
+/// it), the cargo hold (SHIP_ROOMS_CRATE_HOLD_FROM_TOLBI_SHIP_DECK), the rowing
+/// deck where the oarsmen row (the SHIP_ROOMS_ROWING_DECK warp destinations and
+/// SHIP_ROOMS_FROM_WORLD_MAP) and the captain's quarters (the
+/// SHIP_ROOMS_CAPTAINS_ROOM warp destinations). Three warps lead up to the
+/// deck, SHIP_ROOMS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK from the hold,
 /// SHIP_ROOMS_CRATE_HOLD_TO_TOLBI_SHIP_DECK from the cargo hold and
-/// SHIP_ROOMS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK from the captain's
-/// quarters, and SHIP_ROOMS_PASSENGER_HOLD_TO_ROWING_DECK and
-/// SHIP_ROOMS_ROWING_DECK_TO_PASSENGER_HOLD join the hold and the
-/// rowing deck. The object event templates and map events are chosen by the
-/// room and the voyage's stage; most of the voyage's cutscenes play here, at
-/// the warp destinations from
-/// SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_CAST_OFF on, through
-/// the shared operations of ShipRooms_RunSceneCommand. In story order:
+/// SHIP_ROOMS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK from the captain's quarters, and
+/// SHIP_ROOMS_PASSENGER_HOLD_TO_ROWING_DECK and
+/// SHIP_ROOMS_ROWING_DECK_TO_PASSENGER_HOLD join the hold and the rowing deck.
+/// The object event templates and map events are chosen by the room and the
+/// voyage's stage; most of the voyage's cutscenes play here, at the warp
+/// destinations from SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_CAST_OFF on,
+/// through the shared operations of ShipRooms_RunSceneCommand. In story order:
 ///
 /// - At Kalay, while the ship waits for its replacement from Tolbi. Once the
 ///   tour group has left Kalay (FLAG_KALAY_COLOSSO_TOUR_LEFT), walking into

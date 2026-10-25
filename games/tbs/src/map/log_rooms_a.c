@@ -1,13 +1,14 @@
 /// @file
-/// Vault (MapId_LogRoomsA): the insides of the town's houses, shops and
-/// inn, and the inn's loft, while Hammet's Shaman's Rod is missing and just
-/// after it is found. Every room is on one map, each a warp destination with a
-/// camera box of its own, and Vault's doors (vault.c) lead to the warp
-/// destinations named for them: the gem owner's house, the child's house, the
-/// inn and its guests' room upstairs, the item shop, the weapon and armor
-/// shop, the mayor's house and a room with a crate, behind which a way climbs
-/// to the inn's loft. The loft has object event templates and events of its
-/// own (LogRoomsA_GetObjectEventTemplates and _GetEvents), and
+/// Log rooms A (MapId_LogRoomsA), a sheet of rooms drawn in logs, all of them
+/// Vault's: the insides of the town's houses, shops and inn, and the inn's
+/// loft, while Hammet's Shaman's Rod is missing and just after it is found.
+/// Every room is on one map, each a warp destination with a camera box of its
+/// own, and Vault's doors (vault.c) lead to the warp destinations named for
+/// them: the gem owner's house, the child's house, the inn and its guests' room
+/// upstairs, the item shop, the weapon and armor shop, the mayor's house and a
+/// room with a crate, behind which a way climbs to the inn's loft. The loft has
+/// object event templates and events of its own
+/// (LogRoomsA_GetObjectEventTemplates and _GetEvents), and
 /// FLAG_VAULT_THIEVES_JAILED chooses the other rooms' tables.
 ///
 /// The story flags drive the rooms in order:

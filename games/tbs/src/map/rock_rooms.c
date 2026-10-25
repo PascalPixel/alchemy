@@ -1,9 +1,8 @@
 /// @file
-/// The buildings of Lunpa and the house at Suhalla Gate: one sheet of rooms
-/// (MapId_RockRooms), packed onto one map as the game packs rooms that
-/// share a tile style, which keeps the town's name because all its rooms but
-/// one are Lunpa's. Its rooms are told apart by the warp destination
-/// the party comes in by, and the area name follows it:
+/// Rock rooms (MapId_RockRooms), a sheet of rooms cut into rock: the game packs
+/// rooms that share a tile style onto one map, and this one holds the buildings
+/// of Lunpa and the house at Suhalla Gate. Its rooms are told apart by the warp
+/// destination the party comes in by, and the area name follows it:
 ///
 /// - Lunpa: the three homes, the weapon and armor shop, the item shop, the inn
 ///   and the crate room, entered by the town's doors (lunpa.c) at

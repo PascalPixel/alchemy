@@ -1,9 +1,9 @@
 /// @file
-/// Tret Tree (MapId_TreeRooms), the inside of Tret, the holy tree of
-/// Kolima Forest, and the first of Tret Tree's two maps. The party comes in
-/// from Kolima Forest (kolima_forest_tree.c) to face Tret's wrathful side.
-/// FLAG_TRET_DEFEATED, whether that battle is won and Tret has spoken with the
-/// party since, decides most of the map.
+/// Tree rooms (MapId_TreeRooms), a sheet of rooms drawn inside a tree: the
+/// inside of Tret, the holy tree of Kolima Forest, and the first of Tret Tree's
+/// two maps. The party comes in from Kolima Forest (kolima_forest_tree.c) to
+/// face Tret's wrathful side. FLAG_TRET_DEFEATED, whether that battle is won
+/// and Tret has spoken with the party since, decides most of the map.
 ///
 /// The map is six rooms, the six camera boxes of its warp destination table.
 /// The party comes in from Kolima Forest (MapId_KolimaForestTree) at

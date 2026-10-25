@@ -1,9 +1,9 @@
 /// @file
-/// Vale (MapId_CottageRoomsA), a sheet of Vale's rooms: the game packs rooms
-/// that share a tile style onto one map, and every room on this one is entered
-/// from Vale. Each room is a warp destination with a camera box of its own,
-/// named for the door it is entered by, and its door takes the warp of the same
-/// number back out. In story order, by the warps that lead in:
+/// Cottage rooms A (MapId_CottageRoomsA), a sheet of rooms drawn as cottages:
+/// the game packs rooms that share a tile style onto one map, and every room on
+/// this one is Vale's. Each room is a warp destination with a camera box of its
+/// own, named for the door it is entered by, and its door takes the warp of the
+/// same number back out. In story order, by the warps that lead in:
 ///
 /// - From the village (MapId_Vale, and on the stormy night
 ///   MapId_ValeStormyNight): the house of Garet's family

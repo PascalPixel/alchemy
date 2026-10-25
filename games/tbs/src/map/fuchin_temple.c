@@ -15,7 +15,7 @@
 ///   Fuchin Falls Cave (FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE);
 ///   back out with the Orb of Force (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), he
 ///   sends the party on to Nyunpa (FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST).
-/// - Lacquer rooms (MapId_LacquerRoomsA), a sheet of rooms drawn in red
+/// - Lacquer rooms A (MapId_LacquerRoomsA), a sheet of rooms drawn in red
 ///   lacquer, each a camera box of its own that the warp destination the party
 ///   comes in by chooses. In story order, by the warps that lead in:
 ///   - Fuchin Temple (by

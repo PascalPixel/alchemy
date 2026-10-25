@@ -1,7 +1,7 @@
 /// @file
-/// The buildings of Suhalla: one map (MapId_TimberRoomsA) whose rooms
-/// are told apart by the warp destination the party arrives at, and whose area
-/// name follows it:
+/// Timber rooms A (MapId_TimberRoomsA), a sheet of rooms drawn in timber, all
+/// of them inside Suhalla's buildings, whose rooms are told apart by the warp
+/// destination the party arrives at, and whose area name follows it:
 ///
 /// - Suhalla: the houses, the shop and the inn behind the village's doors,
 ///   whose warps from the village (SUHALLA_TO_INN, SUHALLA_TO_HOUSE_WEST,

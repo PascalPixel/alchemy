@@ -1,7 +1,8 @@
 /// @file
-/// The buildings of Tolbi (MapId_StuccoRoomsB): its houses, inns and
-/// shops, which the area names call Tolbi, and Tolbi Sanctum, as the same
-/// map is named at STUCCO_ROOMS_B_SANCTUM and STUCCO_ROOMS_B_SANCTUM_NORTH.
+/// Stucco rooms B (MapId_StuccoRoomsB), a sheet of rooms drawn in stucco, all
+/// of them Tolbi's: its houses, inns and shops, which the area names call
+/// Tolbi, and Tolbi Sanctum, as the same map is named at STUCCO_ROOMS_B_SANCTUM
+/// and STUCCO_ROOMS_B_SANCTUM_NORTH.
 ///
 /// - Tolbi, the rooms behind the town's doors, which Tolbi's warps
 ///   TOLBI_TO_HOUSE_SOUTH to TOLBI_TO_HOUSE_SOUTHWEST lead into; this map's

@@ -1,27 +1,28 @@
 /// @file
 /// Inside Kalay: the houses and the inn, and the Kalay Sanctum.
 ///
-/// - Kalay (MapId_StuccoRoomsA), one map holding every house and the
-///   inn, each entered from its own door in the town (kalay.c) at a warp
-///   destination of its own, and left by the matching warp. The inn's warp
-///   destinations, STUCCO_ROOMS_A_INN_FROM_INN_PASSAGE to
+/// - Stucco rooms A (MapId_StuccoRoomsA), a sheet of rooms drawn in stucco, all
+///   of them Kalay's, whose area name is Kalay: every house and the inn, each
+///   entered from its own door in the town (kalay.c) at a warp destination of
+///   its own, and left by the matching warp. The inn's warp destinations,
+///   STUCCO_ROOMS_A_INN_FROM_INN_PASSAGE to
 ///   STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST and
 ///   STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE, take the inn's
-///   object event templates and map events; every other
-///   warp destination takes the houses'. The inn is full of tourists on their
-///   way to see Colosso in Tolbi. The innkeeper offers a room when spoken to
-///   across the counter; from elsewhere he asks `Are you going to Tolbi also?`,
-///   and the tour's guide in the dining room says `Please finish eating if you
-///   are taking the tour!` Either sets FLAG_KALAY_HEARD_OF_COLOSSO_TOUR, after
-///   which leaving the town plays the tour group's departure. Once the tour
-///   has left (FLAG_KALAY_COLOSSO_TOUR_LEFT), its guests are gone from the
-///   inn, two people are gone from the houses, one of whom was about to join
-///   it, and those who stay say so. Searching the ovens shows what the cooks
-///   are making, except that the oven with roasted eggplant gives a Smoke
-///   Bomb: its find comes first in the table under the same metatile behavior,
-///   and a named bg event ignores its condition, so it answers every time and
-///   the eggplant line is unused. Barrels hold 11 coins and an Elixir. The
-///   inn's table and the houses' both carry these bg events.
+///   object event templates and map events; every other warp destination takes
+///   the houses'. The inn is full of tourists on their way to see Colosso in
+///   Tolbi. The innkeeper offers a room when spoken to across the counter; from
+///   elsewhere he asks `Are you going to Tolbi also?`, and the tour's guide in
+///   the dining room says `Please finish eating if you are taking the tour!`
+///   Either sets FLAG_KALAY_HEARD_OF_COLOSSO_TOUR, after which leaving the town
+///   plays the tour group's departure. Once the tour has left
+///   (FLAG_KALAY_COLOSSO_TOUR_LEFT), its guests are gone from the inn, two
+///   people are gone from the houses, one of whom was about to join it, and
+///   those who stay say so. Searching the ovens shows what the cooks are
+///   making, except that the oven with roasted eggplant gives a Smoke Bomb: its
+///   find comes first in the table under the same metatile behavior, and a
+///   named bg event ignores its condition, so it answers every time and the
+///   eggplant line is unused. Barrels hold 11 coins and an Elixir. The inn's
+///   table and the houses' both carry these bg events.
 /// - Kalay Sanctum (MapId_KalaySanctum), whose healer offers the
 ///   Sanctum's services when spoken to across the counter. Its warp leads
 ///   back into the town (KALAY_FROM_KALAY_SANCTUM).

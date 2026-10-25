@@ -34,16 +34,16 @@
 /// MapId_TolbiShipDeck) and through a door (coord event 10) into the building
 /// beside them, whose room is on CottageRoomsE.
 ///
-/// Wooden rooms B (CottageRoomsE) is a sheet of rooms drawn in wood: the game
-/// packs rooms of several places that share a tile style onto one map, and this
-/// one holds a room at each dock, in story order by the warps that lead in: the
-/// room at Kalay Docks (COTTAGE_ROOMS_E_FROM_KALAY_DOCKS), whose area name is
-/// Kalay Docks, and the room at Tolbi Docks (COTTAGE_ROOMS_E_FROM_TOLBI_DOCKS),
-/// whose area name is Tolbi Docks. In the Kalay room a woman sells the boarding
-/// ticket, 600 coins for the four of them (FLAG_KALAY_DOCKS_TICKET_BOUGHT),
-/// until the ship has sailed, when she says it will not leave again for the
-/// monsters at sea; in the Tolbi room no tickets are sold at all, the sea being
-/// too dangerous.
+/// Cottage rooms E (CottageRoomsE) is a sheet of rooms drawn as cottages: the
+/// game packs rooms of several places that share a tile style onto one map, and
+/// this one holds a room at each dock, in story order by the warps that lead
+/// in: the room at Kalay Docks (COTTAGE_ROOMS_E_FROM_KALAY_DOCKS), whose area
+/// name is Kalay Docks, and the room at Tolbi Docks
+/// (COTTAGE_ROOMS_E_FROM_TOLBI_DOCKS), whose area name is Tolbi Docks. In the
+/// Kalay room a woman sells the boarding ticket, 600 coins for the four of them
+/// (FLAG_KALAY_DOCKS_TICKET_BOUGHT), until the ship has sailed, when she says
+/// it will not leave again for the monsters at sea; in the Tolbi room no
+/// tickets are sold at all, the sea being too dangerous.
 ///
 /// Tolbi Docks (TolbiDocks) is where the ship lands after the crossing.
 /// Stepping off (coord event 20, FLAG_TOLBI_DOCKS_ARRIVALS_GREETED) the party

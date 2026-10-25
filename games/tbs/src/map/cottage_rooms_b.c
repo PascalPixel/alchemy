@@ -1,6 +1,6 @@
 /// @file
-/// Wooden rooms A (MapId_CottageRoomsB), a sheet of rooms drawn in wood: the
-/// game packs rooms of several places that share a tile style onto one map,
+/// Cottage rooms B (MapId_CottageRoomsB), a sheet of rooms drawn as cottages:
+/// the game packs rooms of several places that share a tile style onto one map,
 /// each room a camera box of its own that the warp destination the party comes
 /// in by chooses. This sheet's rooms are in Vale but for one in Babi's Palace,
 /// and its tables and setup choose by the warp destination and the story

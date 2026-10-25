@@ -30,20 +30,20 @@
 ///   or the raised ground, and once it lands at cell (15, 7) it stays there for
 ///   the rest of the visit (a temporary flag). Searching finds 9 coins, a Vial
 ///   and a Lucky Medal.
-/// - Imil (MapId_IceRooms), inside the houses, the shops and the inn; by
-///   ICE_ROOMS_FROM_IMIL_EAST_NORTHEAST the same map is the Imil
-///   Sanctum. While the epidemic lasts the weapon and armor sellers are sick:
-///   searching their counters pans the camera to them, and they say the shop is
-///   closed. The item seller's daughter minds that shop for her mother. In the
-///   Sanctum Mia's two apprentices keep her place: Justin offers healing across
-///   the counter, the first time saying he can act as the party's healer
-///   (FLAG_IMIL_JUSTIN_OFFERED_HEALING), and Megan asks whether the
-///   party has visited the old couple who live near the entrance of town, where
-///   Mia went (FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE). In the old couple's house
-///   (ICE_ROOMS_HOUSE_SOUTHWEST) the old man moans for help, and talking
-///   to him sends his wife hurrying to fetch Mia. Either sets
-///   FLAG_IMIL_MIA_SENT_FOR, which changes the couple's lines and where they
-///   stand.
+/// - Ice rooms (MapId_IceRooms), a sheet of rooms drawn in ice, all of them
+///   Imil's: inside the houses, the shops and the inn, whose area name is Imil;
+///   by ICE_ROOMS_FROM_IMIL_EAST_NORTHEAST the same map is the Imil Sanctum.
+///   While the epidemic lasts the weapon and armor sellers are sick: searching
+///   their counters pans the camera to them, and they say the shop is closed.
+///   The item seller's daughter minds that shop for her mother. In the Sanctum
+///   Mia's two apprentices keep her place: Justin offers healing across the
+///   counter, the first time saying he can act as the party's healer
+///   (FLAG_IMIL_JUSTIN_OFFERED_HEALING), and Megan asks whether the party has
+///   visited the old couple who live near the entrance of town, where Mia went
+///   (FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE). In the old couple's house
+///   (ICE_ROOMS_HOUSE_SOUTHWEST) the old man moans for help, and talking to him
+///   sends his wife hurrying to fetch Mia. Either sets FLAG_IMIL_MIA_SENT_FOR,
+///   which changes the couple's lines and where they stand.
 ///
 ///   Mia's healing is this map's first script. Entering the old
 ///   couple's house once Megan has told the party where Mia went,

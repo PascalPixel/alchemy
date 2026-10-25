@@ -1,43 +1,40 @@
 /// @file
-/// Lalivero's interiors: two sheets of Lalivero's rooms in one overlay.
-/// The game packs rooms that share a tile style onto one map, and every room on
-/// these two is entered from Lalivero, so each is named for the town with a
-/// letter. Their area name is Lalivero, and Lalivero Sanctum for the Sanctum's
-/// rooms of TimberRoomsB (TIMBER_ROOMS_B_FROM_LALIVERO_NORTHEAST
-/// and TIMBER_ROOMS_B_SANCTUM). Each map has tables for before and after
-/// Venus Lighthouse, chosen by FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, as the
-/// town's are (lalivero.c).
+/// Lalivero's interiors: two sheets of rooms drawn in timber in one overlay,
+/// Timber rooms B and C. The game packs rooms that share a tile style onto one
+/// map, and every room on these two is Lalivero's, entered from the town. Their
+/// area name is Lalivero, and Lalivero Sanctum for the Sanctum's rooms of
+/// TimberRoomsB (TIMBER_ROOMS_B_FROM_LALIVERO_NORTHEAST and
+/// TIMBER_ROOMS_B_SANCTUM). Each map has tables for before and after Venus
+/// Lighthouse, chosen by FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, as the town's
+/// are (lalivero.c).
 ///
-/// Lalivero interiors A (MapId_TimberRoomsB) holds, by the warps that
-/// lead in, a house (TIMBER_ROOMS_B_FROM_LALIVERO_WEST), a house
-/// (TIMBER_ROOMS_B_FROM_LALIVERO_SOUTHEAST), the item shop with a room
-/// upstairs (TIMBER_ROOMS_B_FROM_LALIVERO_NORTH), a house with an upper
-/// floor (TIMBER_ROOMS_B_FROM_LALIVERO_NORTHWEST), the weapon and armor
-/// shop, entered by either of its two doors
-/// (TIMBER_ROOMS_B_FROM_LALIVERO_SOUTH and
+/// Timber rooms B (MapId_TimberRoomsB) holds, by the warps that lead in, a
+/// house (TIMBER_ROOMS_B_FROM_LALIVERO_WEST), a house
+/// (TIMBER_ROOMS_B_FROM_LALIVERO_SOUTHEAST), the item shop with a room upstairs
+/// (TIMBER_ROOMS_B_FROM_LALIVERO_NORTH), a house with an upper floor
+/// (TIMBER_ROOMS_B_FROM_LALIVERO_NORTHWEST), the weapon and armor shop, entered
+/// by either of its two doors (TIMBER_ROOMS_B_FROM_LALIVERO_SOUTH and
 /// TIMBER_ROOMS_B_FROM_LALIVERO_EAST_SOUTHEAST), and the Sanctum
-/// (TIMBER_ROOMS_B_FROM_LALIVERO_NORTHEAST). Each shopkeeper stands
-/// behind a counter and trades only with a leader facing north across it
+/// (TIMBER_ROOMS_B_FROM_LALIVERO_NORTHEAST). Each shopkeeper stands behind a
+/// counter and trades only with a leader facing north across it
 /// (EventScript_TalkToWeaponMerchant and the others); from any other side they
-/// talk. Stepping into the Sanctum by TIMBER_ROOMS_B_SANCTUM makes it the
-/// place a defeated party wakes. Barrels hold a Lucky Medal and an Antidote.
+/// talk. Stepping into the Sanctum by TIMBER_ROOMS_B_SANCTUM makes it the place
+/// a defeated party wakes. Barrels hold a Lucky Medal and an Antidote.
 ///
-/// Lalivero interiors B (MapId_TimberRoomsC) holds, by the warps that
-/// lead in, Faran's house (TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST and
-/// TIMBER_ROOMS_C_FROM_LALIVERO_SOUTH), the inn with its upper floor and
-/// two guest rooms (TIMBER_ROOMS_C_FROM_LALIVERO_NORTHEAST), and the way
-/// out to the wharf where Babi's ship lies
-/// (TIMBER_ROOMS_C_FROM_LALIVERO_NORTHWEST, leading on by
-/// TIMBER_ROOMS_C_TO_LEMURIAN_SHIP).
-/// Before Venus Lighthouse an inn worker apologizes once for her distraction
-/// (EventScript_TalkToInnWorker, FLAG_LALIVERO_INN_WORKER_APOLOGIZED) and goes
-/// back to her chores. The aerie of Venus Lighthouse leads in by
-/// TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE, which plays
-/// EventScript_ReportToFaran: the party reports to Faran and Iodem, in one of
-/// two versions by FLAG_SAW_SHIP_AT_IDEJIMA. Coord event 51 afterwards plays
-/// EventScript_IodemCallsOut (FLAG_IODEM_ASKED_TO_MEET), which sends the party
-/// outside, where Iodem gives it the Black Orb (lalivero.c). A barrel holds a
-/// Lucky Medal.
+/// Timber rooms C (MapId_TimberRoomsC) holds, by the warps that lead in,
+/// Faran's house (TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST and
+/// TIMBER_ROOMS_C_FROM_LALIVERO_SOUTH), the inn with its upper floor and two
+/// guest rooms (TIMBER_ROOMS_C_FROM_LALIVERO_NORTHEAST), and the way out to the
+/// wharf where Babi's ship lies (TIMBER_ROOMS_C_FROM_LALIVERO_NORTHWEST,
+/// leading on by TIMBER_ROOMS_C_TO_LEMURIAN_SHIP). Before Venus Lighthouse an
+/// inn worker apologizes once for her distraction (EventScript_TalkToInnWorker,
+/// FLAG_LALIVERO_INN_WORKER_APOLOGIZED) and goes back to her chores. The aerie
+/// of Venus Lighthouse leads in by TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE,
+/// which plays EventScript_ReportToFaran: the party reports to Faran and Iodem,
+/// in one of two versions by FLAG_SAW_SHIP_AT_IDEJIMA. Coord event 51
+/// afterwards plays EventScript_IodemCallsOut (FLAG_IODEM_ASKED_TO_MEET), which
+/// sends the party outside, where Iodem gives it the Black Orb (lalivero.c). A
+/// barrel holds a Lucky Medal.
 
 #include "action_script.h"
 #include "save_block.h"

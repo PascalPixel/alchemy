@@ -1,9 +1,12 @@
 /// @file
 /// Altin, the mining village north of the Alpine Crossing, in two maps that
 /// share this overlay and the area name Altin: MapId_Altin, the village
-/// outdoors, and MapId_CottageRoomsD, inside its houses, shops and inn.
-/// The getters pick each map's tables by gSaveBlock.mapId, both share one
-/// warp table, and a third, empty set of tables serves any other map.
+/// outdoors, and MapId_CottageRoomsD, a sheet of rooms drawn as cottages, all
+/// of them Altin's: its houses, shops and inn, entered by the village's doors
+/// (COTTAGE_ROOMS_D_FROM_ALTIN_NORTHWEST to
+/// COTTAGE_ROOMS_D_FROM_ALTIN_SOUTHWEST). The getters pick each map's tables by
+/// gSaveBlock.mapId, both share one warp table, and a third, empty set of
+/// tables serves any other map.
 ///
 /// The village is flooded by the water beasts of its mine, whose maps the
 /// area names call Altin Peak (altin_peak.c), and two things in Altin's code
@@ -37,12 +40,12 @@
 /// AltinPeakSouthEntrance, AltinPeakJunction and AltinPeakSpritz. A pillar that
 /// Move pushes to column 22 stays there (FLAG_ALTIN_PILLAR_MOVED).
 ///
-/// Inside (CottageRoomsD), two families shelter in the inn's Room One and Room
-/// Two, as the game calls them, until the first and the second drop send them
-/// home (CottageRoomsD_PlaceSheltering), and the weapon merchant waits in the
-/// inn until the water has drained. Each merchant opens across the counter once
-/// the shop has dried, and a cook from Xian paces between his pots
-/// (gCottageRoomsD_CookScript).
+/// Inside, in Cottage rooms D (CottageRoomsD), two families shelter in the
+/// inn's Room One and Room Two, as the game calls them, until the first and the
+/// second drop send them home (CottageRoomsD_PlaceSheltering), and the weapon
+/// merchant waits in the inn until the water has drained. Each merchant opens
+/// across the counter once the shop has dried, and a cook from Xian paces
+/// between his pots (gCottageRoomsD_CookScript).
 
 #include "save_block.h"
 #include "version.h"

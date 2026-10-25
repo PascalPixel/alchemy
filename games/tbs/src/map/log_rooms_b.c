@@ -1,9 +1,10 @@
 /// @file
-/// Vault (MapId_LogRoomsB): the town's houses, shops and inn once
-/// the party has reached Kalay. They replace the first visit's interiors
-/// (log_rooms_a.c) as MapId_VaultRevisit (vault_revisit.c) replaces the
-/// town: each of its six house doors leads to the warp destination here named
-/// for the same door, and each room leads back out through it.
+/// Log rooms B (MapId_LogRoomsB), a sheet of rooms drawn in logs, all of them
+/// Vault's: the town's houses, shops and inn once the party has reached Kalay.
+/// They replace the first visit's interiors (log_rooms_a.c) as
+/// MapId_VaultRevisit (vault_revisit.c) replaces the town: each of its six
+/// house doors leads to the warp destination here named for the same door, and
+/// each room leads back out through it.
 ///
 /// The thieves have broken out of jail, and the talk is of them and of Colosso,
 /// the festival about to begin in Tolbi. The rooms, by warp destination:

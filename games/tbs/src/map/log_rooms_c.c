@@ -1,9 +1,9 @@
 /// @file
-/// Kolima (MapId_LogRoomsC): the village's houses, shops and inn, all
-/// in one map. Some of its warps join its own rooms by the stairs up the inn
-/// and the weapon and armor shop, five lead back out to the village
-/// (MapId_Kolima) and one into Kolima Tunnel (MapId_KolimaTunnel,
-/// LOG_ROOMS_C_TO_KOLIMA_TUNNEL).
+/// Log rooms C (MapId_LogRoomsC), a sheet of rooms drawn in logs, all of them
+/// Kolima's: the village's houses, shops and inn. Some of its warps join its
+/// own rooms by the stairs up the inn and the weapon and armor shop, five lead
+/// back out to the village (MapId_Kolima) and one into Kolima Tunnel
+/// (MapId_KolimaTunnel, LOG_ROOMS_C_TO_KOLIMA_TUNNEL).
 ///
 /// Like the people outside, the fifteen residents (LOCALID_FIRST_VILLAGER to
 /// LOCALID_LAST_VILLAGER) were turned into trees when the curse fell, and until

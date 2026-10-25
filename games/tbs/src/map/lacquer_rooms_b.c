@@ -1,6 +1,7 @@
 /// @file
-/// Xian's houses, shops and inn (MapId_LacquerRoomsB; the area names call it
-/// Xian), and the room behind Master Feh's school.
+/// Lacquer rooms B (MapId_LacquerRoomsB), a sheet of rooms drawn in red
+/// lacquer, all of them Xian's: its houses, shops and inn, which the area names
+/// call Xian, and the room behind Master Feh's school.
 ///
 /// Each of Xian's doors leads to a room here, and each room leads back out to
 /// its door. LACQUER_ROOMS_B_HOUSE, LACQUER_ROOMS_B_HOUSE_NORTH and

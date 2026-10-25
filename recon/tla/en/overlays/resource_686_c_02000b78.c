@@ -1,10 +1,12 @@
-// Draft, differ 111 of 82: translated from its listing; names and structure
-// still to do.
-#include "types.h"
+// Draft, differ 111 of 82: translated from its listing; names and structure still
+// to do.
+#include "iwram_call.h"
+#include "lib/call.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "types.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -14,7 +16,7 @@
        ->v)
 
 s32 Random16Far();
-s32 Func_0200015c();
+void Func_0200015c();
 void FieldEvent_WaitFrames();
 
 s32 Func_02000b78(s32 a0, s32 a1, s32 a2, s32 a3) {

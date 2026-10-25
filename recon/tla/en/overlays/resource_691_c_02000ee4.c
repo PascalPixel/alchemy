@@ -1,10 +1,12 @@
-// Draft, differ 103 of 104: translated from its listing; names and structure
-// still to do.
-#include "types.h"
+// Draft, differ 103 of 104: translated from its listing; names and structure still
+// to do.
+#include "iwram_call.h"
+#include "lib/call.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "types.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -14,9 +16,9 @@
        ->v)
 
 extern u8 Func_02000dc0[];
-void *Object_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
+s32 Object_GetById();
+s32 GameFlag_Test();
+void Object_SetSpritePriority();
 
 s32 Func_02000ee4(s32 a0, s32 a1, s32 a2) {
   s32 r8, r9, v0, r6, v1, r11, r0, r7, r5, r10, v2, v3, v4, v5, v6, r3, v7, v8;
@@ -39,7 +41,7 @@ s32 Func_02000ee4(s32 a0, s32 a1, s32 a2) {
   FIELD_AT(r6, s32, 12) = FIELD_AT(v3, s32, 12);
   v4 = Object_GetById(r5);
   FIELD_AT(r6, s32, 16) = FIELD_AT(v4, s32, 16);
-  Object_SetSpritePriority(r6, 2);
+  Call2((void (*)())Object_SetSpritePriority, r6, 2);
   FIELD_AT(r6, u16, 102) = r8;
   FIELD_AT(r6, u8, 98) = r9 ^ 1;
   FIELD_AT(r6, s32, 108) = (s32)Func_02000dc0;

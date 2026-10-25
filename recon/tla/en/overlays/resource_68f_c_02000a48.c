@@ -1,10 +1,12 @@
-// Draft, differ 124 of 104: translated from its listing; names and structure
-// still to do.
-#include "types.h"
+// Draft, differ 124 of 104: translated from its listing; names and structure still
+// to do.
+#include "iwram_call.h"
+#include "lib/call.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "types.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -13,20 +15,20 @@
    } *)(base))                                                                 \
        ->v)
 
-void *Object_GetById(s32 id);
-u32 Random16Far(void);
+s32 Object_GetById();
+s32 Random16Far();
 s32 Func_020000b8();
-void GameFlag_SetBit(s32 flag);
-s32 Func_02000338();
+void GameFlag_SetBit();
+void Func_02000338();
 s32 Func_02002fc0();
 
-s32 Func_02000a48(s32 a0, s32 a1) {
+s32 Func_02000a48(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 r6, r10, r9, v0, r7, r0, r5, r8, v1, v2, r4, v3, r3, v4, v5;
   s32 stack[14];
 
   r6 = a1;
   r10 = a0;
-  /* sub sp, #56 */
+  /* sub (s32)stack, #56 */
   r9 = FIELD_AT(50331872, s32, 0);
   v0 = Object_GetById(*(s16 *)((FIELD_AT(50331872, s32, 0)) + 26));
   r7 = v0;
@@ -61,22 +63,21 @@ L_02008ad4:
   FIELD_AT(r7, s32, 28) = (FIELD_AT(r7, s32, 28)) - 7936;
   r3 = (FIELD_AT(r7, s32, 28)) - 7936;
 L_02008adc:
-  if (r10 != 1)
-    goto L_02008b22;
-  FIELD_AT(r7, s32, 28) = 0x10000;
-  r4 = 0;
-  GameFlag_SetBit(*(s16 *)((r7 + 100) + r4));
-  v4 = Object_GetById(*(s16 *)(r9 + 26));
-  Func_02000338();
-  r4 = r10;
-  v5 = Func_02002fc0(67, 23, ((FIELD_AT(r7, s32, 8)) >> 20) + 64,
-                     (FIELD_AT(r7, s32, 16)) >> 20, r4, r4);
-  FIELD_AT(r7, s32, 16) = 0;
-  FIELD_AT(r7, s32, 12) = 0;
-  FIELD_AT(r7, s32, 8) = 0;
-  r0 = v5;
-  r3 = 0;
-L_02008b22:
-  /* add sp, #56 */
+  if (r10 == 1) {
+    FIELD_AT(r7, s32, 28) = 0x10000;
+    r4 = 0;
+    GameFlag_SetBit(*(s16 *)((r7 + 100) + r4));
+    v4 = Object_GetById(*(s16 *)(r9 + 26));
+    Func_02000338();
+    r4 = r10;
+    v5 = Func_02002fc0(67, 23, ((FIELD_AT(r7, s32, 8)) >> 20) + 64,
+                       (FIELD_AT(r7, s32, 16)) >> 20, r4, r4);
+    FIELD_AT(r7, s32, 16) = 0;
+    FIELD_AT(r7, s32, 12) = 0;
+    FIELD_AT(r7, s32, 8) = 0;
+    r0 = v5;
+    r3 = 0;
+  }
+  /* add (s32)stack, #56 */
   return r0;
 }

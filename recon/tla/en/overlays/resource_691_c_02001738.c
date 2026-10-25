@@ -1,4 +1,4 @@
-// Draft, differ 339 of 294: translated from its listing; names and structure still
+// Draft, differ 342 of 294: translated from its listing; names and structure still
 // to do.
 #include "iwram_call.h"
 #include "lib/call.h"
@@ -37,53 +37,51 @@ s32 Func_020010cc();
 s32 Object_GetById();
 
 s32 Func_02001738(s32 a0, s32 a1, s32 a2, s32 a3) {
-  s32 r5_1, r9_1, r8_1, r10_1, r11_1, r7_1, r6_1, r5_2, r7_2, r10_2, r6_2, r5_3,
-      r6_3, r5_4;
   s32 r5, r9, r8, r10, r2, r3, v0, r11, r0, r7, r6, v1, v2, r4, v3, v4, v5, r1,
       v6, v7, v8, v9, v10, v11, v12;
   s32 stack[18];
 
-  r5_1 = (s32)gFrameCount;
-  r9_1 = (s32)Ram_HeapSlots->eventWork;
-  r8_1 = a0;
+  r5 = (s32)gFrameCount;
+  r9 = (s32)Ram_HeapSlots->eventWork;
+  r8 = a0;
   /* sub (s32)stack, #72 */
-  r10_1 = 15;
+  r10 = 15;
   r2 = a2;
-  r3 = (FIELD_AT(r5_1, s32, 0)) & 15;
-  if (((FIELD_AT(r5_1, s32, 0)) & 15) == 0) {
-    Call2((void (*)())Func_02003c4c, r8_1, 136);
+  r3 = (FIELD_AT(r5, s32, 0)) & 15;
+  if (((FIELD_AT(r5, s32, 0)) & 15) == 0) {
+    Call2((void (*)())Func_02003c4c, r8, 136);
   }
-  Call2((void (*)())Object_SetPartAttribute, r8_1, 10);
-  r11_1 = 100 + r8_1;
+  Value2((s32 (*)())Object_SetPartAttribute, r8, 10);
+  r11 = 100 + r8;
   r2 = 0;
-  r3 = FIELD_AT(r8_1, s16, 100);
+  r3 = FIELD_AT(r8, s16, 100);
   r0 = v0;
-  if ((FIELD_AT(r8_1, s16, 100)) > 31)
+  if ((FIELD_AT(r8, s16, 100)) > 31)
     goto L_020097e6;
-  r7_1 = FIELD_AT(r5_1, s32, 0);
-  r7_1 = r7_1 & 3;
-  if (r7_1 == 0)
+  r7 = FIELD_AT(r5, s32, 0);
+  r7 = r7 & 3;
+  if (r7 == 0)
     goto L_0200978a;
   goto L_02009954;
 L_0200978a:
-  r6_1 = (s32)((u8 *)stack + 32);
-  FIELD_AT(r6_1, u16, 24) = 0x193;
-  FIELD_AT(r6_1, s32, 4) = 10;
-  FIELD_AT(r6_1, s32, 0) = 2;
-  FIELD_AT(r6_1, s32, 36) = (s32)Func_020011b8;
-  FIELD_AT(r6_1, s32, 28) = (s32)gData_02003d50;
+  r6 = (s32)((u8 *)stack + 32);
+  FIELD_AT(r6, u16, 24) = 0x193;
+  FIELD_AT(r6, s32, 4) = 10;
+  FIELD_AT(r6, s32, 0) = 2;
+  FIELD_AT(r6, s32, 36) = (s32)Func_020011b8;
+  FIELD_AT(r6, s32, 28) = (s32)gData_02003d50;
   v1 = Random16Far();
-  r5_2 = v1;
-  r5_2 = r5_2 & r10_1;
+  r5 = v1;
+  r5 = r5 & r10;
   v2 = Random16Far();
-  r4 = r10_1;
-  r4 = FIELD_AT(r8_1, s32, 8);
+  r4 = r10;
+  r4 = FIELD_AT(r8, s32, 8);
   r4 = r4 + 65536;
-  r5_2 = r5_2 - 8;
-  r5_2 = r5_2 << 14;
-  v3 = Func_0200015c(r4, (FIELD_AT(r8_1, s32, 12)) + 1572864,
-                     FIELD_AT(r8_1, s32, 16), r5_2, r7_1, ((v2 & r4) - 8) << 14,
-                     0x1330000, r6_1);
+  r5 = r5 - 8;
+  r5 = r5 << 14;
+  v3 = Func_0200015c(r4, (FIELD_AT(r8, s32, 12)) + 1572864,
+                     FIELD_AT(r8, s32, 16), r5, r7, ((v2 & r4) - 8) << 14,
+                     0x1330000, r6);
   r0 = v3;
   goto L_02009954;
 L_020097e6:
@@ -91,48 +89,48 @@ L_020097e6:
     goto L_020097ec;
   goto L_0200993e;
 L_020097ec:
-  Call2((void (*)())Func_02003c4c, r8_1, 144);
-  r4 = r8_1;
+  Call2((void (*)())Func_02003c4c, r8, 144);
+  r4 = r8;
   v4 = Engine_ObjectCreate(0x15f, (FIELD_AT(r4, s32, 8)) + 65536,
                            (FIELD_AT(r4, s32, 12)) + 2097152,
                            FIELD_AT(r4, s32, 16));
-  r7_2 = (s32)((u8 *)stack + 16);
-  FIELD_AT(r7_2, s32, 0) = v4;
+  r7 = (s32)((u8 *)stack + 16);
+  FIELD_AT(r7, s32, 0) = v4;
   r4 = 1;
-  r10_2 = r4;
+  r10 = r4;
 L_02009818:
-  r6_2 = FIELD_AT(FIELD_AT(r7_2, s32, 0), s32, 80);
+  r6 = FIELD_AT(FIELD_AT(r7, s32, 0), s32, 80);
   v5 = Engine_ObjectCreate(0x15f, 0, 0, 0);
-  r5_3 = r10_2 << 2;
-  FIELD_AT(FIELD_AT(v5, s32, 80), u8, 16) = FIELD_AT(r6_2, u8, 16);
-  *(s32 *)(r7_2 + r5_3) = v5;
+  r5 = r10 << 2;
+  FIELD_AT(FIELD_AT(v5, s32, 80), u8, 16) = FIELD_AT(r6, u8, 16);
+  *(s32 *)(r7 + r5) = v5;
   FIELD_AT(FIELD_AT(v5, s32, 80), u8, 17) =
       (FIELD_AT(FIELD_AT(v5, s32, 80), u8, 17)) | 1;
-  r6_3 = 0;
-  FIELD_AT(v5, s32, 8) = FIELD_AT(FIELD_AT(r7_2, s32, 0), s32, 8);
-  FIELD_AT(v5, s32, 12) = FIELD_AT(FIELD_AT(r7_2, s32, 0), s32, 12);
-  FIELD_AT(v5, s32, 16) = FIELD_AT(FIELD_AT(r7_2, s32, 0), s32, 16);
-  FIELD_AT(v5, u8, 85) = r6_3;
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, v5, 0);
-  Call2((void (*)())Func_02003a54, *(s32 *)(r7_2 + r5_3), 3);
-  r5_4 = (s32)Func_02001528;
-  FIELD_AT((*(s32 *)(r7_2 + r5_4)), u8, 98) = 3 - r10_2;
-  FIELD_AT(*(s32 *)(r7_2 + r5_4), s32, 104) = r8_1;
-  FIELD_AT(*(s32 *)(r7_2 + r5_4), s32, 108) = r5_4;
-  Call2((void (*)())Object_SetPartAttribute, *(s32 *)(r7_2 + r5_4), 3);
+  r6 = 0;
+  FIELD_AT(v5, s32, 8) = FIELD_AT(FIELD_AT(r7, s32, 0), s32, 8);
+  FIELD_AT(v5, s32, 12) = FIELD_AT(FIELD_AT(r7, s32, 0), s32, 12);
+  FIELD_AT(v5, s32, 16) = FIELD_AT(FIELD_AT(r7, s32, 0), s32, 16);
+  FIELD_AT(v5, u8, 85) = r6;
+  Value2((s32 (*)())ObjectDispatch_SetSingleChildFlags, v5, 0);
+  Call2((void (*)())Func_02003a54, *(s32 *)(r7 + r5), 3);
+  r5 = (s32)Func_02001528;
+  FIELD_AT((*(s32 *)(r7 + r5)), u8, 98) = 3 - r10;
+  FIELD_AT(*(s32 *)(r7 + r5), s32, 104) = r8;
+  FIELD_AT(*(s32 *)(r7 + r5), s32, 108) = r5;
+  Call2((void (*)())Object_SetPartAttribute, *(s32 *)(r7 + r5), 3);
   r4 = 1;
-  r10_2 = r10_2 + r4;
-  if (r10_2 != 4)
+  r10 = r10 + r4;
+  if (r10 != 4)
     goto L_02009818;
-  FIELD_AT((FIELD_AT(r7_2, s32, 0)), u8, 85) = r6_3;
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, FIELD_AT(r7_2, s32, 0),
-        0);
-  Call2((void (*)())Func_02003a54, FIELD_AT(r7_2, s32, 0), 3);
-  Call2((void (*)())Object_SetSpritePriority, FIELD_AT(r7_2, s32, 0), 3);
-  FIELD_AT((FIELD_AT(r7_2, s32, 0)), u8, 98) = 3;
-  FIELD_AT(FIELD_AT(r7_2, s32, 0), s32, 104) = r8_1;
-  FIELD_AT(FIELD_AT(r7_2, s32, 0), s32, 108) = r5_4;
-  Call2((void (*)())Object_SetPartAttribute, FIELD_AT(r7_2, s32, 0), 3);
+  FIELD_AT((FIELD_AT(r7, s32, 0)), u8, 85) = r6;
+  Value2((s32 (*)())ObjectDispatch_SetSingleChildFlags, FIELD_AT(r7, s32, 0),
+         0);
+  Call2((void (*)())Func_02003a54, FIELD_AT(r7, s32, 0), 3);
+  Call2((void (*)())Object_SetSpritePriority, FIELD_AT(r7, s32, 0), 3);
+  FIELD_AT((FIELD_AT(r7, s32, 0)), u8, 98) = 3;
+  FIELD_AT(FIELD_AT(r7, s32, 0), s32, 104) = r8;
+  FIELD_AT(FIELD_AT(r7, s32, 0), s32, 108) = r5;
+  Call2((void (*)())Object_SetPartAttribute, FIELD_AT(r7, s32, 0), 3);
   r4 = 0;
   r0 = 0;
   r1 = (s32)&gPartyState;
@@ -140,7 +138,7 @@ L_02009818:
   r3 = 223;
   if ((*(s16 *)(((s32)(s32)&gPartyState + 480) + r4)) != (223))
     goto L_020098de;
-  v6 = Func_020010cc(FIELD_AT(r8_1, s32, 8), FIELD_AT(r8_1, s32, 16),
+  v6 = Func_020010cc(FIELD_AT(r8, s32, 8), FIELD_AT(r8, s32, 16),
                      (s32)gData_02003d9e);
   r0 = v6;
   goto L_0200991e;
@@ -148,8 +146,8 @@ L_020098de:
   if (r2 != (224))
     goto L_0200991e;
   r4 = 0;
-  r0 = FIELD_AT(r8_1, s32, 8);
-  r1 = FIELD_AT(r8_1, s32, 16);
+  r0 = FIELD_AT(r8, s32, 8);
+  r1 = FIELD_AT(r8, s32, 16);
   r3 = *(s16 *)((r1 + 482) + r4);
   if ((*(s16 *)((r1 + 482) + r4)) > 3)
     goto L_02009900;
@@ -174,38 +172,38 @@ L_02009918:
 L_0200991e:
   v11 = Object_GetById(r0);
   FIELD_AT(v11, u8, 98) = 4;
-  FIELD_AT(v11, s32, 104) = r8_1;
+  FIELD_AT(v11, s32, 104) = r8;
   FIELD_AT(v11, s32, 108) = (s32)Func_020015e4;
-  r4 = r11_1;
-  FIELD_AT(r11_1, u16, 0) = (FIELD_AT(r4, u16, 0)) + 1;
-  r0 = r11_1;
+  r4 = r11;
+  FIELD_AT(r11, u16, 0) = (FIELD_AT(r4, u16, 0)) + 1;
+  r0 = r11;
   goto L_02009954;
 L_0200993e:
   if (r3 <= 0x16c)
     goto L_02009954;
-  Call2((void (*)())Object_SetPartAttribute, r8_1, 0);
-  FIELD_AT(r8_1, s32, 108) = 0;
+  Call2((void (*)())Object_SetPartAttribute, r8, 0);
+  FIELD_AT(r8, s32, 108) = 0;
   r0 = v12;
 L_02009954:
   r4 = 0;
-  r3 = *(s16 *)((358 + r9_1) + r4);
-  if ((*(s16 *)((358 + r9_1) + r4)) != 0)
+  r3 = *(s16 *)((358 + r9) + r4);
+  if ((*(s16 *)((358 + r9) + r4)) != 0)
     goto L_020099a2;
   r0 = 0;
-  r3 = FIELD_AT(r9_1, s16, 346);
-  if ((FIELD_AT(r9_1, s16, 346)) != 0)
+  r3 = FIELD_AT(r9, s16, 346);
+  if ((FIELD_AT(r9, s16, 346)) != 0)
     goto L_020099a2;
-  r3 = FIELD_AT(r9_1, s16, 350);
-  if ((FIELD_AT(r9_1, s16, 350)) != 0)
+  r3 = FIELD_AT(r9, s16, 350);
+  if ((FIELD_AT(r9, s16, 350)) != 0)
     goto L_020099a2;
-  r3 = FIELD_AT(r9_1, s16, 360);
-  if ((FIELD_AT(r9_1, s16, 360)) != 0)
+  r3 = FIELD_AT(r9, s16, 360);
+  if ((FIELD_AT(r9, s16, 360)) != 0)
     goto L_020099a2;
-  r3 = FIELD_AT(r9_1, u16, 434);
-  if ((FIELD_AT(r9_1, u16, 434)) == 0)
+  r3 = FIELD_AT(r9, u16, 434);
+  if ((FIELD_AT(r9, u16, 434)) == 0)
     goto L_020099a2;
-  FIELD_AT(r8_1, u16, 100) = (FIELD_AT(r8_1, u16, 100)) + 1;
-  r3 = (FIELD_AT(r8_1, u16, 100)) + 1;
+  FIELD_AT(r8, u16, 100) = (FIELD_AT(r8, u16, 100)) + 1;
+  r3 = (FIELD_AT(r8, u16, 100)) + 1;
 L_020099a2:
   /* add (s32)stack, #72 */
   return r0;

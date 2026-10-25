@@ -1,11 +1,12 @@
-// Draft, differ 315 of 246: translated from its listing; names and structure
-// still to do. Measured against its copies: overlay 690's Func_02001d3c (differ
-// 315 of 246).
-#include "types.h"
+// Draft, differ 315 of 246: translated from its listing; names and structure still
+// to do.
+#include "iwram_call.h"
+#include "lib/call.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "types.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -15,25 +16,23 @@
        ->v)
 
 extern u8 Func_020017dc[];
-struct ObjectRuntime *ObjectTable_Get(u32 objectId);
-s32 Func_02001868();
+void Func_02001868();
 s32 Func_02002fe0();
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle,
-                              union FieldCoordinate *position);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+void Vector_AddPolarOffsetFar();
+s32 Map_GetTerrainHeight();
 s32 Func_02002f80();
-void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object, s32 value);
+void ObjectDispatch_SetAnimationSpeed();
 s32 Func_02003028();
-s32 Func_02002fb0();
-s32 Func_02002fb8();
-void WaitFrames(s32 frames);
+void Func_02002fb0();
+void Func_02002fb8();
+void WaitFrames();
 
-s32 Func_02001e68(void) {
+s32 Func_02001e68(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 v0, r5, r0, r2, r3, r9, r6, r8, r1, r7, r11, v1, v2, r10, v3, v4, v5, v6,
       v7, v8;
   s32 stack[8];
 
-  /* sub sp, #32 */
+  /* sub (s32)stack, #32 */
   v0 = ObjectTable_Get(FIELD_AT((s32)(s32)&gPartyState, s32, 532));
   r5 = v0;
   stack[4] = ((((FIELD_AT(r5, u16, 6)) + 8192) & -16384) << 16) >> 16;
@@ -64,7 +63,7 @@ L_02009edc:
   r11 = 34 + r5;
   v1 = Func_02002fe0(FIELD_AT(r5, u8, 34), r8, r7);
   stack[3] = v1;
-  Vector_AddPolarOffsetFar(0x100000, stack[4], r6);
+  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, stack[4], r6);
   v2 = Func_02002fe0(FIELD_AT(r11, u8, 0), FIELD_AT(r6, s32, 0),
                      FIELD_AT(r6, s32, 8));
   r10 = v2;
@@ -79,8 +78,8 @@ L_02009edc:
   FIELD_AT(r5, s32, 48) = 0x20000;
   FIELD_AT(r5, s32, 52) = 0x1999;
   FIELD_AT(r5, u16, 100) = 0;
-  Func_02002f80(r5, 2);
-  ObjectDispatch_SetAnimationSpeed(r5, 48);
+  Call2((void (*)())Func_02002f80, r5, 2);
+  Call2((void (*)())ObjectDispatch_SetAnimationSpeed, r5, 48);
   FIELD_AT(r5, s32, 108) = (s32)Func_020017dc;
   goto L_0200a01a;
 L_02009f70:
@@ -126,7 +125,8 @@ L_02009fdc:
   if (r10 != stack[3])
     goto L_0200a060;
 L_0200a01a:
-  Vector_AddPolarOffsetFar(0x100000, stack[4], (s32)((u8 *)stack + 20));
+  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, stack[4],
+        (s32)((u8 *)stack + 20));
   r7 = (s32)((u8 *)stack + 20);
   v6 = Func_02002fe0(FIELD_AT(r11, u8, 0), FIELD_AT(r7, s32, 0),
                      FIELD_AT(r7, s32, 8));
@@ -138,16 +138,16 @@ L_0200a03a:
   FIELD_AT(r5, s32, 52) = 0x10000;
   Func_02002fb0(r5, stack[2], FIELD_AT(r5, s32, 12), stack[1]);
   Func_02002fb8(r5);
-  WaitFrames(2);
+  Call1((void (*)())WaitFrames, 2);
   r0 = v7;
   goto L_02009e9a;
 L_0200a060:
-  WaitFrames(10);
+  Call1((void (*)())WaitFrames, 10);
 L_0200a066:
   FIELD_AT(r5, s32, 108) = 0;
   FIELD_AT(r5, u8, 90) = 1 | (FIELD_AT(r5, u8, 90));
   FIELD_AT(r5, s32, 52) = 0x4000;
   v8 = Func_02002f80(r5, 1);
-  /* add sp, #32 */
+  /* add (s32)stack, #32 */
   return v8;
 }

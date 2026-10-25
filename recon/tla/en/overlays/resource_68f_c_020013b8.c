@@ -1,4 +1,4 @@
-// Draft, differ 196 of 416: translated from its listing; names and structure still
+// Draft, differ 221 of 416: translated from its listing; names and structure still
 // to do.
 #include "iwram_call.h"
 #include "lib/call.h"
@@ -45,10 +45,9 @@ void GameFlag_SetBit();
 s32 Scheduler_AddOrUpdateCallback();
 
 s32 Func_020013b8(s32 a0, s32 a1, s32 a2, s32 a3) {
-  s32 r6_1, r5_1, r5_2, r5_3, r5_4, r5_5;
   s32 r1, r2, r3, v0, r0, v1, v2, r6, v3, r5, v4, v5, v6, v7, v8, v9, v10, v11,
       v12, v13, v14, v15, v16, v17, v18, v19;
-  s32 stack[2];
+  s32 stack[16];
 
   FIELD_AT(((s32)Ram_HeapSlots->eventWork), s32, 428) = 0x204;
   /* sub (s32)stack, #8 */
@@ -88,18 +87,18 @@ L_02009424:
   goto L_020097c4;
 L_0200942a:
   v2 = GameFlag_Test(0x945);
-  r6_1 = v2;
-  if (r6_1 != 0)
+  r6 = v2;
+  if (r6 != 0)
     goto L_020094c6;
   v3 = Object_GetById(8);
-  r5_1 = v3;
+  r5 = v3;
   v4 = Object_GetById(8);
   Call2((void (*)())ObjectDispatch_SetSingleChildFlags, v4, 0);
-  FIELD_AT(r5_1, u8, 89) = r6_1;
-  FIELD_AT((r5_1 + 89) - 4, u8, 0) = r6_1;
-  FIELD_AT(r5_1, s32, 20) = 0x80000;
-  FIELD_AT(r5_1, s32, 12) = 0x80000;
-  Call2((void (*)())Func_02003020, r5_1, 0x1b9);
+  FIELD_AT(r5, u8, 89) = r6;
+  FIELD_AT((r5 + 89) - 4, u8, 0) = r6;
+  FIELD_AT(r5, s32, 20) = 0x80000;
+  FIELD_AT(r5, s32, 12) = 0x80000;
+  Call2((void (*)())Func_02003020, r5, 0x1b9);
   v5 = GameFlag_Test(0x944);
   if (v5 != 0)
     goto L_0200947a;
@@ -207,17 +206,17 @@ L_020095e2:
   }
 L_02009614:
   v12 = Func_02002f98(0x11e, 0x1d80000, 0, 0xc80000);
-  r5_2 = v12;
+  r5 = v12;
   r0 = v12;
-  if (r5_2 != 0)
+  if (r5 != 0)
     goto L_0200962e;
   goto L_020097c4;
 L_0200962e:
   Call2((void (*)())Object_SetSpritePriority, r0, 1);
-  FIELD_AT(r5_2, u8, 85) = 0;
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, r5_2, 0);
-  Call2((void (*)())Object_SetPartAttribute, r5_2, 14);
-  Call2((void (*)())Animation_SetStateFlags, r5_2, 1);
+  FIELD_AT(r5, u8, 85) = 0;
+  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, r5, 0);
+  Call2((void (*)())Object_SetPartAttribute, r5, 14);
+  Call2((void (*)())Animation_SetStateFlags, r5, 1);
   goto L_020097c4;
 L_02009656:
   Func_02000404((s32)gData_0200335a);
@@ -236,26 +235,25 @@ L_02009694:
 L_020096a4:
   v15 = GameFlag_Test(0x94b);
   if (v15 != 0) {
-    stack[1] = 4;
-    r5_3 = 3;
-    Call6((void (*)())Func_02002fc0, 18, 97, 6, 97, r5_3, 4);
-    Call6((void (*)())Func_02002fc0, 82, 34, 70, 34, r5_3, 2);
+    r5 = 3;
+    Call6((void (*)())Func_02002fc0, 18, 97, 6, 97, r5, 4);
+    Call6((void (*)())Func_02002fc0, 82, 34, 70, 34, r5, 2);
     Call6((void (*)())Func_02002fe8, 7, 36, 1, 1, 7, 35);
   }
-  r5_4 = (s32)Data_02003ccc;
+  r5 = (s32)Data_02003ccc;
   v16 = Func_02002f98(4, 0, 0, 0);
   r0 = v16;
   r3 = 144;
   goto L_0200970e;
 L_020096fe:
-  r5_5 = (s32)Data_02003ccc;
+  r5 = (s32)Data_02003ccc;
   v17 = Func_02002f98(4, 0, 0, 0);
   r0 = v17;
   r3 = 156;
 L_0200970e:
   FIELD_AT(r0, s32, 76) = r3 << 18;
   FIELD_AT(r0, s32, 108) = (s32)Func_020010d4;
-  FIELD_AT(r5_5, s32, 0) = r0;
+  FIELD_AT(r5, s32, 0) = r0;
   FIELD_AT(r0, u8, 85) = 0;
   Call2((void (*)())Object_SetSpritePriority, r0, 3);
   goto L_020097c4;

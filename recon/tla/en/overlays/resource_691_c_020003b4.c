@@ -1,10 +1,12 @@
-// Draft, differ 210 of 175: translated from its listing; names and structure
-// still to do.
-#include "types.h"
+// Draft, differ 210 of 175: translated from its listing; names and structure still
+// to do.
+#include "iwram_call.h"
+#include "lib/call.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "types.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -19,12 +21,12 @@ s32 Object_FindInCell();
 s32 Func_02003aac();
 s32 Func_02003a54();
 void WaitFrames();
-s32 Func_02003c54();
-s32 Func_02003a84();
+void Func_02003c54();
+void Func_02003a84();
 s32 Func_02003a8c();
-s32 Func_02003bdc();
+void Func_02003bdc();
 
-s32 Func_020003b4(void) {
+s32 Func_020003b4(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 v0, r5, r9, r10, r7, r8, v1, r6, r0, v2, r3, v3, v4, v5, v6;
   s32 stack[3];
 
@@ -52,23 +54,21 @@ L_0200840a:
   FIELD_AT(r7, s32, 8) = (FIELD_AT(r6, s32, 16)) + ((*(s32 *)(r9 + r5)) << 16);
   v2 = Object_FindInCell(r7, r6);
   r0 = v2;
-  if (v2 == 0)
-    goto L_02008440;
-  r3 = 1 & (FIELD_AT(r0, u8, 89));
-  if ((1 & (FIELD_AT(r0, u8, 89))) != 0)
-    goto L_02008520;
-L_02008440:
+  if (v2 != 0) {
+    r3 = 1 & (FIELD_AT(r0, u8, 89));
+    if ((1 & (FIELD_AT(r0, u8, 89))) != 0)
+      goto L_02008520;
+  }
   FIELD_AT(r7, s32, 0) = FIELD_AT(r6, s32, 8);
   FIELD_AT(r7, s32, 4) = (FIELD_AT(r6, s32, 12)) + 1048576;
   FIELD_AT(r7, s32, 8) = FIELD_AT(r6, s32, 16);
   v3 = Object_FindInCell(r7, r6);
   r0 = v3;
-  if (v3 == 0)
-    goto L_0200846c;
-  r3 = 1 & (FIELD_AT(r0, u8, 89));
-  if ((1 & (FIELD_AT(r0, u8, 89))) != 0)
-    goto L_02008520;
-L_0200846c:
+  if (v3 != 0) {
+    r3 = 1 & (FIELD_AT(r0, u8, 89));
+    if ((1 & (FIELD_AT(r0, u8, 89))) != 0)
+      goto L_02008520;
+  }
   FIELD_AT(r6, u8, 34) = 2;
   FIELD_AT(r7, s32, 0) = (FIELD_AT(r6, s32, 8)) + ((*(s32 *)(r9 + r5)) & r10);
   FIELD_AT(r7, s32, 4) = FIELD_AT(r6, s32, 12);
@@ -82,11 +82,11 @@ L_0200846c:
   if ((FIELD_AT(r6, u8, 98)) != 0)
     goto L_02008520;
   r5 = 204;
-  Func_02003a54(r8, 8);
+  Call2((void (*)())Func_02003a54, r8, 8);
   r5 = r5 << 6;
-  WaitFrames(15);
+  Call1((void (*)())WaitFrames, 15);
   r5 = r5 + 51;
-  Func_02003c54(185);
+  Call1((void (*)())Func_02003c54, 185);
   FIELD_AT(r6, s32, 48) = r5;
   FIELD_AT(r6, s32, 52) = r5;
   Func_02003a84(r6, FIELD_AT(r7, s32, 0), FIELD_AT(r7, s32, 4),

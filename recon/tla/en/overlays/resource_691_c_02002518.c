@@ -1,10 +1,12 @@
-// Draft, differ 135 of 112: translated from its listing; names and structure
-// still to do.
-#include "types.h"
+// Draft, differ 135 of 112: translated from its listing; names and structure still
+// to do.
+#include "iwram_call.h"
+#include "lib/call.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "types.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -18,11 +20,11 @@ extern u8 Func_02001528[];
 s32 Object_GetById();
 s32 Engine_ObjectCreate();
 void ObjectDispatch_SetSingleChildFlags();
-s32 Func_02003a54();
+void Func_02003a54();
 void Object_SetPartAttribute();
 void Object_SetSpritePriority();
 
-s32 Func_02002518(s32 a0) {
+s32 Func_02002518(s32 a0, s32 a1) {
   s32 r5, v0, r0, r3, v1, r8, v2, r7, r10, r6, v3, v4;
   s32 stack[4];
 
@@ -54,24 +56,25 @@ L_0200a562:
   FIELD_AT(v3, s32, 12) = FIELD_AT(FIELD_AT(r7, s32, 0), s32, 12);
   FIELD_AT(v3, s32, 16) = FIELD_AT(FIELD_AT(r7, s32, 0), s32, 16);
   FIELD_AT(v3, u8, 85) = r6;
-  ObjectDispatch_SetSingleChildFlags(v3, 0);
-  Func_02003a54(*(s32 *)(r7 + r5), 3);
+  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, v3, 0);
+  Call2((void (*)())Func_02003a54, *(s32 *)(r7 + r5), 3);
   r5 = (s32)Func_02001528;
   FIELD_AT((*(s32 *)(r7 + r5)), u8, 98) = r10 + 255;
   FIELD_AT(*(s32 *)(r7 + r5), s32, 104) = r8;
   FIELD_AT(*(s32 *)(r7 + r5), s32, 108) = r5;
-  Object_SetPartAttribute(*(s32 *)(r7 + r5), 3);
+  Call2((void (*)())Object_SetPartAttribute, *(s32 *)(r7 + r5), 3);
   r10 = r10 + 1;
   if (r10 != 4)
     goto L_0200a562;
   FIELD_AT((FIELD_AT(r7, s32, 0)), u8, 85) = r6;
-  ObjectDispatch_SetSingleChildFlags(FIELD_AT(r7, s32, 0), 0);
-  Func_02003a54(FIELD_AT(r7, s32, 0), 3);
-  Object_SetSpritePriority(FIELD_AT(r7, s32, 0), 3);
+  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, FIELD_AT(r7, s32, 0),
+        0);
+  Call2((void (*)())Func_02003a54, FIELD_AT(r7, s32, 0), 3);
+  Call2((void (*)())Object_SetSpritePriority, FIELD_AT(r7, s32, 0), 3);
   FIELD_AT((FIELD_AT(r7, s32, 0)), u8, 98) = 3;
   FIELD_AT(FIELD_AT(r7, s32, 0), s32, 104) = r8;
   FIELD_AT(FIELD_AT(r7, s32, 0), s32, 108) = r5;
-  Object_SetPartAttribute(FIELD_AT(r7, s32, 0), 3);
+  Call2((void (*)())Object_SetPartAttribute, FIELD_AT(r7, s32, 0), 3);
   r0 = v4;
 L_0200a604:
   /* add (s32)stack, #16 */

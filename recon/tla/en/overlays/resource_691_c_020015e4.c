@@ -1,10 +1,12 @@
-// Draft, differ 184 of 153: translated from its listing; names and structure
-// still to do.
-#include "types.h"
+// Draft, differ 184 of 153: translated from its listing; names and structure still
+// to do.
+#include "iwram_call.h"
+#include "lib/call.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "types.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -16,11 +18,11 @@
 extern u8 gFrameCount[];
 extern u8 Func_020011b8[];
 extern u8 gData_02003d50[];
-u32 Random16Far(void);
-s32 Func_0200015c();
+s32 Random16Far();
+void Func_0200015c();
 s32 Func_020005cc();
 
-s32 Func_020015e4(s32 a0) {
+s32 Func_020015e4(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 r6, r8, r4, r2, r0, r1, r7, r10, r5, v0, v1;
   s32 stack[14];
 
@@ -28,7 +30,7 @@ s32 Func_020015e4(s32 a0) {
   r8 = FIELD_AT(r6, s32, 104);
   r4 = r8;
   r4 = r4 + 100;
-  /* sub sp, #56 */
+  /* sub (s32)stack, #56 */
   r2 = FIELD_AT(r4, u16, 0);
   if ((u32)(((FIELD_AT(r4, u16, 0)) - 35) << 16) > (u32)458752)
     goto L_02009624;
@@ -65,25 +67,24 @@ L_020096a4:
   r7 = FIELD_AT((s32)gFrameCount, s32, 0);
   r10 = 7;
   r7 = r7 & 7;
-  if (r7 != 0)
-    goto L_020096f8;
-  r5 = (s32)((u8 *)stack + 16);
-  FIELD_AT(r5, u16, 24) = 0x193;
-  FIELD_AT(r5, s32, 4) = 10;
-  FIELD_AT(r5, s32, 0) = 2;
-  FIELD_AT(r5, s32, 36) = (s32)Func_020011b8;
-  FIELD_AT(r5, s32, 28) = (s32)gData_02003d50;
-  v0 = Random16Far();
-  r4 = -0x20000;
-  stack[0] = r4;
-  r4 = 0x1330000;
-  Func_0200015c((FIELD_AT(r6, s32, 8)) + 65536,
-                (FIELD_AT(r6, s32, 12)) - 262144, FIELD_AT(r6, s32, 16),
-                ((v0 & r10) - 3) << 14, r4, r7, r4, r5);
-L_020096f8:
+  if (r7 == 0) {
+    r5 = (s32)((u8 *)stack + 16);
+    FIELD_AT(r5, u16, 24) = 0x193;
+    FIELD_AT(r5, s32, 4) = 10;
+    FIELD_AT(r5, s32, 0) = 2;
+    FIELD_AT(r5, s32, 36) = (s32)Func_020011b8;
+    FIELD_AT(r5, s32, 28) = (s32)gData_02003d50;
+    v0 = Random16Far();
+    r4 = -0x20000;
+    stack[0] = r4;
+    r4 = 0x1330000;
+    Func_0200015c((FIELD_AT(r6, s32, 8)) + 65536,
+                  (FIELD_AT(r6, s32, 12)) - 262144, FIELD_AT(r6, s32, 16),
+                  ((v0 & r10) - 3) << 14, r4, r7, r4, r5);
+  }
   v1 = Func_020005cc(FIELD_AT(r8, u8, 34), (FIELD_AT(r8, s32, 8)) >> 20,
                      (FIELD_AT(r8, s32, 16)) >> 20,
                      ((FIELD_AT(r6, s32, 12)) >> 19) + 1);
-  /* add sp, #56 */
+  /* add (s32)stack, #56 */
   return v1;
 }

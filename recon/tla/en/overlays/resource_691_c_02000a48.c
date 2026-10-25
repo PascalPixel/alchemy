@@ -1,4 +1,4 @@
-// Draft, differ 99 of 187: translated from its listing; names and structure still
+// Draft, differ 87 of 187: translated from its listing; names and structure still
 // to do.
 #include "iwram_call.h"
 #include "lib/call.h"
@@ -30,7 +30,7 @@ s32 Func_02003af4();
 
 s32 Func_02000a48(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 r6, v0, r4, r1, r2, r5, r3, r0, ip, v1, v2, v3, v4, v5, v6, v7, v8;
-  s32 stack[2];
+  s32 stack[16];
 
   r6 = FIELD_AT(((s32)Ram_HeapSlots->eventWork), s32, 3260);
   /* sub (s32)stack, #8 */
@@ -42,7 +42,6 @@ s32 Func_02000a48(s32 a0, s32 a1, s32 a2, s32 a3) {
   r2 = *(s16 *)(((s32)(s32)&gPartyState + 480) + r4);
   if ((*(s16 *)(((s32)(s32)&gPartyState + 480) + r4)) != (223))
     goto L_02008aaa;
-  stack[1] = 21;
   r5 = 78;
   Call6((void (*)())Func_02003aa4, 98, 21, 4, 3, r5, 21);
   Call6((void (*)())Func_02003aa4, 98, 27, 4, 3, r5, 24);
@@ -69,7 +68,6 @@ L_02008ad2:
   Func_020006cc((s32)gData_02003de4);
   goto L_02008b1e;
 L_02008af2:
-  stack[0] = 103;
   r5 = 38;
   Call6((void (*)())Func_02003aa4, 103, 39, 1, 1, 103, r5);
   Call6((void (*)())Func_02003aa4, 99, 42, 5, 1, 99, r5);

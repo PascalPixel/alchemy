@@ -1,10 +1,12 @@
-// Draft, differ 55 of 95: translated from its listing; names and structure
-// still to do.
-#include "types.h"
+// Draft, differ 55 of 95: translated from its listing; names and structure still
+// to do.
+#include "iwram_call.h"
+#include "lib/call.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "types.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -18,7 +20,7 @@ s32 Object_GetById();
 s32 GameFlag_Test();
 s32 Func_02002e0c();
 
-s32 Func_020010f4(void) {
+s32 Func_020010f4(s32 a0) {
   s32 v0, r7, r5, r6, r8, v1, r0, r1, r4, r3, v2;
   s32 stack[3];
 
@@ -32,15 +34,13 @@ s32 Func_020010f4(void) {
   r0 = v1;
   if (v1 != 0)
     goto L_020091b0;
-  if (r5 != 0)
-    goto L_02009134;
-  r1 = (s32)gMapCellBuffer;
-  r0 = (s32)gMapCellBuffer;
-  goto L_02009144;
-L_02009134:
-  r1 = FIELD_AT(r5, s32, 424);
-  r0 = FIELD_AT(r5, s32, 312);
-L_02009144:
+  if (r5 == 0) {
+    r1 = (s32)gMapCellBuffer;
+    r0 = (s32)gMapCellBuffer;
+  } else {
+    r1 = FIELD_AT(r5, s32, 424);
+    r0 = FIELD_AT(r5, s32, 312);
+  }
   r4 = FIELD_AT(r6, s32, 8);
   r0 = r0 + (((r4 >> 20) + (((FIELD_AT(r6, s32, 16)) >> 20) << 7)) << 2);
   r3 = 232 &
@@ -64,10 +64,9 @@ L_02009144:
   FIELD_AT((s32)stack, s32, 8) = (FIELD_AT(r6, s32, 16)) + 524288;
   v2 = Func_02002e0c(r6);
   r0 = v2;
-  if (v2 >= 0)
-    goto L_0200919e;
-  FIELD_AT(r7, u16, 340) = 66;
-L_0200919e:
+  if (v2 < 0) {
+    FIELD_AT(r7, u16, 340) = 66;
+  }
   FIELD_AT(r6, s32, 16) = (FIELD_AT(r6, s32, 16)) + 32768;
   FIELD_AT(r8, s32, 16) = (FIELD_AT(r8, s32, 16)) + 32768;
   r3 = (FIELD_AT(r8, s32, 16)) + 32768;

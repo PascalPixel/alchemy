@@ -1,11 +1,12 @@
-// Draft, differ 79 of 172: translated from its listing; names and structure
-// still to do.
-#include "types.h"
+// Draft, differ 79 of 172: translated from its listing; names and structure still
+// to do.
+#include "iwram_call.h"
 #include "lib/call.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "types.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -15,31 +16,30 @@
        ->v)
 
 extern u8 Effect_AdvanceMotion[];
-void *Object_GetById(s32 id);
-s32 Func_02003048();
-s32 Func_02003148();
-void Camera_MoveWithinMapBounds(s32, s32, s32, s32);
-s32 Func_02002fa8();
-void WaitFrames(s32 frames);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-s32 Func_020031a8();
-void FieldEvent_WaitFrames(s32 frames);
-s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
-u32 Random16Far(void);
-s32 Func_020000b8();
+s32 Object_GetById();
+void Func_02003048();
+void Func_02003148();
+void Camera_MoveWithinMapBounds();
+void Func_02002fa8();
+void WaitFrames();
+void Event_StartScreenTransition();
+void Event_WaitTransitionFrames();
+void Func_020031a8();
+void FieldEvent_WaitFrames();
+s32 Math_Cosine();
+s32 Math_Sine();
+s32 Random16Far();
+void Func_020000b8();
 s32 Func_020030c8();
-void Object_SetModeById(u32, s32);
 s32 Func_02003000();
-s32 Func_02003008();
+void Func_02003008();
 s32 Func_02003050();
 
-s32 Func_020011e0(void) {
+s32 Func_020011e0(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 v0, r7, v1, r5, r4, r8, r10, v2, r6, v3, v4, v5, r2, r3, v6, v7, v8, r0;
   s32 stack[17];
 
-  /* sub sp, #68 */
+  /* sub (s32)stack, #68 */
   v0 = Object_GetById(FIELD_AT((s32)(s32)&gPartyState, s32, 532));
   r7 = v0;
   Func_02003048();
@@ -114,6 +114,6 @@ L_0200927a:
   FIELD_AT(r7, s32, 68) = 0x4000;
   FIELD_AT(((s32)Ram_HeapSlots->eventWork), s32, 428) = 0x204;
   v8 = Func_02003050();
-  /* add sp, #68 */
+  /* add (s32)stack, #68 */
   return v8;
 }

@@ -1,10 +1,12 @@
-// Draft, differ 80 of 96: translated from its listing; names and structure
-// still to do.
-#include "types.h"
+// Draft, differ 80 of 96: translated from its listing; names and structure still
+// to do.
+#include "iwram_call.h"
+#include "lib/call.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "types.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -22,7 +24,7 @@ extern u8 Data_02003024[];
 extern u8 Data_02003060[];
 extern u8 Data_02003030[];
 s32 __modsi3();
-s32 Func_02002124();
+void Func_02002124();
 s32 Func_020020d4();
 s32 Func_0200210c();
 
@@ -57,18 +59,16 @@ L_020082e8:
   r5 = v0;
   FIELD_AT(67108946, u16, 0) = *(u16 *)(((s32)gData_02002fe8) + (r5 << 1));
   r2 = *(u16 *)(((s32)gData_02002fe8) + (r5 << 1));
-  if (r5 != 0)
-    goto L_0200831c;
-  FIELD_AT((s32)Data_02003090, s32, 0) = 1;
-  FIELD_AT((s32)Data_02003024, s32, 0) = r5;
-  Func_02002124(153);
-L_0200831c:
-  if (r5 != 14)
-    goto L_02008332;
-  FIELD_AT((s32)Data_02003090, s32, 0) = 0;
-  FIELD_AT((s32)Data_02003024, s32, 0) = 1;
-  Func_02002124(153);
-L_02008332:
+  if (r5 == 0) {
+    FIELD_AT((s32)Data_02003090, s32, 0) = 1;
+    FIELD_AT((s32)Data_02003024, s32, 0) = r5;
+    Call1((void (*)())Func_02002124, 153);
+  }
+  if (r5 == 14) {
+    FIELD_AT((s32)Data_02003090, s32, 0) = 0;
+    FIELD_AT((s32)Data_02003024, s32, 0) = 1;
+    Call1((void (*)())Func_02002124, 153);
+  }
   FIELD_AT(r6, s32, 0) = (FIELD_AT(r6, s32, 0)) + 1;
 L_02008338:
   r5 = (s32)stack;
@@ -77,20 +77,18 @@ L_02008338:
   FIELD_AT(r5, s32, 8) = 0x1c00000;
   v1 = Func_020020d4(r5);
   r0 = v1;
-  if ((FIELD_AT((s32)Data_02003090, s32, 0)) == 0)
-    goto L_02008366;
-  FIELD_AT((s32)Data_02003060, s32, 12) = FIELD_AT(r5, s32, 0);
-  FIELD_AT((s32)Data_02003060, s32, 16) = FIELD_AT(r5, s32, 8);
-  v2 = Func_0200210c((s32)Data_02003060, r1);
-  r0 = v2;
-L_02008366:
-  if ((FIELD_AT((s32)Data_02003024, s32, 0)) == 0)
-    goto L_0200837c;
-  FIELD_AT((s32)Data_02003030, s32, 12) = FIELD_AT(r5, s32, 0);
-  FIELD_AT((s32)Data_02003030, s32, 16) = FIELD_AT(r5, s32, 8);
-  v3 = Func_0200210c((s32)Data_02003030, r1);
-  r0 = v3;
-L_0200837c:
+  if ((FIELD_AT((s32)Data_02003090, s32, 0)) != 0) {
+    FIELD_AT((s32)Data_02003060, s32, 12) = FIELD_AT(r5, s32, 0);
+    FIELD_AT((s32)Data_02003060, s32, 16) = FIELD_AT(r5, s32, 8);
+    v2 = Func_0200210c((s32)Data_02003060, r1);
+    r0 = v2;
+  }
+  if ((FIELD_AT((s32)Data_02003024, s32, 0)) != 0) {
+    FIELD_AT((s32)Data_02003030, s32, 12) = FIELD_AT(r5, s32, 0);
+    FIELD_AT((s32)Data_02003030, s32, 16) = FIELD_AT(r5, s32, 8);
+    v3 = Func_0200210c((s32)Data_02003030, r1);
+    r0 = v3;
+  }
   /* add (s32)stack, #12 */
   return r0;
 }

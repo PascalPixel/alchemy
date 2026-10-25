@@ -1,11 +1,12 @@
-// Draft, differ 97 of 88: translated from its listing; names and structure
-// still to do. Measured against its copies: overlay 691's Func_02003820 (differ
-// 97 of 88).
-#include "types.h"
+// Draft, differ 97 of 88: translated from its listing; names and structure still
+// to do.
+#include "iwram_call.h"
+#include "lib/call.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "types.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -14,15 +15,14 @@
    } *)(base))                                                                 \
        ->v)
 
-u32 Random16Far(void);
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle,
-                              union FieldCoordinate *position);
+s32 Random16Far();
+void Vector_AddPolarOffsetFar();
 
 s32 Func_02002d44(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 r11, r0, r3, r2, r7, v0, r10, r6, r5, r8, r9, v1, v2, v3;
   s32 stack[3];
 
-  /* sub sp, #12 */
+  /* sub (s32)stack, #12 */
   stack[0] = a2;
   stack[2] = a0;
   stack[1] = a1;
@@ -62,6 +62,6 @@ L_0200ad6c:
   if (r7 != 0)
     goto L_0200ad6c;
 L_0200adf0:
-  /* add sp, #12 */
+  /* add (s32)stack, #12 */
   return r0;
 }

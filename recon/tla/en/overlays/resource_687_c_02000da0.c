@@ -1,10 +1,12 @@
-// Draft, differ 193 of 150: translated from its listing; names and structure
-// still to do.
-#include "types.h"
+// Draft, differ 193 of 150: translated from its listing; names and structure still
+// to do.
+#include "iwram_call.h"
+#include "lib/call.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "types.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -17,23 +19,23 @@ extern u8 Func_02000c50[];
 extern u8 gData_020022cc[];
 extern u8 gData_020026c0[];
 void Scheduler_RemoveCallbackFar();
-s32 Func_02001fac();
-s32 Func_02002044();
-s32 Func_02002054();
+void Func_02001fac();
+void Func_02002044();
+void Func_02002054();
 void WaitFrames();
 void GameFlag_ClearBit();
 s32 Func_02001fb4();
 
-s32 Func_02000da0(void) {
+s32 Func_02000da0(s32 a0) {
   s32 v0, r4, r9, r11, r10, r8, r5, r6, r7, r1, r0, r2, r3, ip, v1, v2, lr;
 
   Scheduler_RemoveCallbackFar((s32)Func_02000c50);
   Func_02001fac();
-  Func_02002044(0);
-  Func_02002054(0x22c);
+  Call1((void (*)())Func_02002044, 0);
+  Call1((void (*)())Func_02002054, 0x22c);
   FIELD_AT((s32)gData_020022cc, s32, 0) = 1;
 L_02008dcc:
-  WaitFrames(10);
+  Call1((void (*)())WaitFrames, 10);
   r4 = 160;
   r4 = r4 << 19;
   r4 = r4 + 98;
@@ -59,41 +61,36 @@ L_02008de8:
   goto L_02008e30;
 L_02008e30:
   r3 = (u32)(r5 << 16) >> 16;
-  if ((u32)((u32)(r5 << 16) >> 16) <= (u32)r2)
-    goto L_02008e48;
-  r4 = 255;
-  r4 = r4 << 8;
-  r4 = r4 + 255;
-  r5 = ((r3 + r4) << 16) >> 16;
-L_02008e48:
+  if ((u32)((u32)(r5 << 16) >> 16) > (u32)r2) {
+    r4 = 255;
+    r4 = r4 << 8;
+    r4 = r4 + 255;
+    r5 = ((r3 + r4) << 16) >> 16;
+  }
   ip = r6;
   r3 = (u32)(r1 << 16) >> 16;
-  if ((u32)((u32)(r1 << 16) >> 16) >= (u32)r6)
-    goto L_02008e5c;
-  r1 = ((r3 + 1) << 16) >> 16;
-L_02008e5c:
+  if ((u32)((u32)(r1 << 16) >> 16) < (u32)r6) {
+    r1 = ((r3 + 1) << 16) >> 16;
+  }
   r3 = (u32)(r1 << 16) >> 16;
-  if ((u32)((u32)(r1 << 16) >> 16) <= (u32)ip)
-    goto L_02008e74;
-  r4 = 255;
-  r4 = r4 << 8;
-  r4 = r4 + 255;
-  r1 = ((r3 + r4) << 16) >> 16;
-L_02008e74:
+  if ((u32)((u32)(r1 << 16) >> 16) > (u32)ip) {
+    r4 = 255;
+    r4 = r4 << 8;
+    r4 = r4 + 255;
+    r1 = ((r3 + r4) << 16) >> 16;
+  }
   ip = r7;
   r3 = (u32)(r0 << 16) >> 16;
-  if ((u32)((u32)(r0 << 16) >> 16) >= (u32)r7)
-    goto L_02008e88;
-  r0 = ((r3 + 1) << 16) >> 16;
-L_02008e88:
+  if ((u32)((u32)(r0 << 16) >> 16) < (u32)r7) {
+    r0 = ((r3 + 1) << 16) >> 16;
+  }
   r3 = (u32)(r0 << 16) >> 16;
-  if ((u32)((u32)(r0 << 16) >> 16) <= (u32)ip)
-    goto L_02008ea0;
-  r4 = 255;
-  r4 = r4 << 8;
-  r4 = r4 + 255;
-  r0 = ((r3 + r4) << 16) >> 16;
-L_02008ea0:
+  if ((u32)((u32)(r0 << 16) >> 16) > (u32)ip) {
+    r4 = 255;
+    r4 = r4 << 8;
+    r4 = r4 + 255;
+    r0 = ((r3 + r4) << 16) >> 16;
+  }
   r9 = r9 + 1;
   r4 = 2;
   FIELD_AT(r8, u16, 0) = ((u32)(r5 << 16) >> 16) |

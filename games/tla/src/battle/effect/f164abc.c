@@ -1,12 +1,6 @@
-// Draft, differ 2 of 53: as Func_08164a4c over BG palette entries 96 to
-// 223, the deltas red first. Left: the same prologue order, the pooled 0x1f
-// mask loaded between the two halves of 0x050000c0 in the native. In
-// sched2 the mask's load (loop.c's hoisted invariant, last in the block)
-// and the shift tie at priority 2 and the earlier insn wins; the native
-// order needs the mask ahead of the pointer in RTL. Tried: the palette
-// indexed as a giv ((u16 *)0x050000c0)[i] (differ 34).
 #include "types.h"
 
+/// As Func_08164a4c over BG palette entries 96 to 223, the deltas red first.
 void Func_08164abc(s32 red_delta, s32 green_delta, s32 blue_delta) {
   u16 *color = (u16 *)0x050000c0;
   s32 i;

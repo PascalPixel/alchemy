@@ -3027,12 +3027,6 @@ BattleEffect_RunZagan:
 	.section .rom.0014cca8, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0014cca8, 0x000000a0
-	.section .rom.0014cd48, "ax"
-	.global Func_0814cd48
-	.type Func_0814cd48, %function
-	.thumb_func
-Func_0814cd48:
-	.incbin "baserom.gba", 0x0014cd48, 0x000000d8
 	.section .rom.0014ce30, "ax"
 	.balign 4
 	.global BattleEffect_RunCybele
@@ -3192,7 +3186,7 @@ BattleEffect_RunHail:
 	.type BattleEffect_RunGround, %function
 	.thumb_func
 BattleEffect_RunGround:
-	.incbin "baserom.gba", 0x001587e4, 0x00000584
+	.incbin "baserom.gba", 0x001587e4, 0x000004fc
 	.section .rom.00158dc8, "ax"
 	.balign 4
 	.global BattleEffect_RunThor
@@ -3216,9 +3210,9 @@ BattleEffect_RunBurstScene:
 	.thumb_func
 BattleEffect_RunGaia:
 	.incbin "baserom.gba", 0x0015a9e4, 0x00000868
-	.section .rom.0015b290, "ax"
+	.section .rom.0015b3b0, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x0015b290, 0x00000180
+	.incbin "baserom.gba", 0x0015b3b0, 0x00000060
 	.section .rom.0015b434, "ax"
 	.incbin "baserom.gba", 0x0015b434, 0x00000330
 	.global BattleEffect_RunUlysses
@@ -3263,10 +3257,8 @@ Func_0815e3ac:
 	.thumb_func
 Func_0815e9f4:
 	.incbin "baserom.gba", 0x0015e9f4, 0x0000060c
-	.section .rom.0015f0a0, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x0015f0a0, 0x000000cc
 	.section .rom.0015f16c, "ax"
+	.balign 4
 	.global Func_0815f16c
 	.type Func_0815f16c, %function
 	.thumb_func
@@ -3282,7 +3274,10 @@ BattleEffect_RunTorch:
 	.incbin "baserom.gba", 0x00163c2c, 0x0000015c
 	.section .rom.00163e14, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x00163e14, 0x00000da0
+	.incbin "baserom.gba", 0x00163e14, 0x00000618
+	.section .rom.0016467c, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0016467c, 0x000003d0
 	.section .rom.00164c0a, "ax"
 	.incbin "baserom.gba", 0x00164c0a, 0x000000ba
 	.section .rom.00164cc4, "ax"
@@ -3678,13 +3673,13 @@ BattleEffect_RunMegiddo:
 	.thumb_func
 BattleEffect_RunOdyssey:
 	.incbin "baserom.gba", 0x00190b74, 0x00000f6c
-	.section .rom.00191cc4, "ax"
-	.incbin "baserom.gba", 0x00191cc4, 0x0000009c
+	.section .rom.00191d60, "ax"
+	.balign 4
 	.global BattleEffect_RunMoloch
 	.type BattleEffect_RunMoloch, %function
 	.thumb_func
 BattleEffect_RunMoloch:
-	.incbin "baserom.gba", 0x00191d60, 0x00000ac8
+	.incbin "baserom.gba", 0x00191d60, 0x000009dc
 	.section .rom.0019284c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0019284c, 0x00000450
@@ -3796,10 +3791,9 @@ Palette_Transform:
 	.thumb_func
 LuckyDice_Run:
 	.incbin "baserom.gba", 0x001ac15c, 0x000011ec
-	.section .rom.001b21ec, "ax"
-	.incbin "baserom.gba", 0x001b21ec, 0x000010a8
-	.section .rom.001b336c, "ax"
-	.incbin "baserom.gba", 0x001b336c, 0x0000013c
+	.section .rom.001b243c, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x001b243c, 0x00000e58
 	.section .rom.001b34a8, "ax"
 	.global ReelGame_Run
 	.type ReelGame_Run, %function

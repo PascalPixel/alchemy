@@ -15699,7 +15699,7 @@ msgctxt "message"
 msgid "03892"
 msgstr "Bigl. gioco"
 
-msgctxt "message"
+msgctxt "MsgSlotsBet"
 msgid "03893"
 msgstr "Pun."
 

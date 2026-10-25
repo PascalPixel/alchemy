@@ -1,12 +1,3 @@
-// Near miss, differ 6 of 103: The Broken Seal's ObjectGroup_UpdateMembers as ⚓️
-// has it: the member count is a byte at 0x1b, the timers sit at 0x78dc of the
-// effect work, and a member's frame is reset only when its parameter changes.
-// Reading the count through the inline accessor gives the native's registers in
-// the member loop (differ 44 reading it directly). Left: the timer store, where
-// the native interleaves the timer's load with the 0x78dc offset (add r1, sp,
-// #52; movs r3, #240; ldrb r0, [r1]; lsls r3, r3, #7; ldr r1, [sp, #12]; adds
-// r3, #220); here the offset is built first. An operand barrier on the timer
-// changes the allocation (differ 55).
 #include "types.h"
 #include "ram_buffer.h"
 
@@ -45,6 +36,9 @@ void Animation_ApplyChildArgumentFar(void *group, s32 value);
 
 static __inline__ u8 GroupCount(struct FxGroup *group) { return group->count; }
 
+/// The Broken Seal's ObjectGroup_UpdateMembers as The Lost Age has it: the
+/// member count is a byte at 0x1b, the timers sit at 0x78dc of the effect
+/// work, and a member's frame is reset only when its parameter changes.
 void Func_0814cd48(s32 setId, s32 objectValue, s32 groupValue, s32 stateSlot,
                    s32 stateValue) {
   struct FxSlot *set;

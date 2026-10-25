@@ -1,20 +1,3 @@
-// Draft, differ 2 of 242: The Broken Seal's BattleEffect_PlaceFormationObjects
-// with The Lost Age's three more formations (case 4: eleven objects from
-// signed columns, case 5: twelve in a 4x3 grid, case 6: eight more) in the
-// native's case order 0, 5, 1, 2, 6, 3, 4. Case 0 walks an explicit object
-// pointer (its spill is stored before i is cleared, as the native does).
-// Left: in case 5 the native loads the object (ldmia r4!) before it shifts
-// the column and row; here both shifts come first (one reordered row).
-// Tried: the shifts as other expressions (x + ..., * 0x200000, i % 4 * 32),
-// a Placement struct for pos, an object local fetched first (differ 235) or
-// held through one or two empty asms (2, 22), row and column locals (76 to
-// 103), a separate object pointer for case 5 (4), alchemy permute 6 minutes
-// (no candidate below 2). By hand through sched2's ranking, a load costing
-// 3 cycles instead of agscc's 2 gives the object's load priority 37 over
-// the shifts' 36: the native order.
-// 2026-10-18: case 5 with pos[2] first: 16; the object as *(objects + i): 2.
-// 2026-10-24: column and row locals held by an asm whose input is the object
-// (92: i % 4 becomes a library call once the asm needs it whole).
 #include "types.h"
 #include "ram_buffer.h"
 #include "battle_fx_work.h"
@@ -42,6 +25,9 @@ extern const u8 gData_081989d7[];
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
 
+/// The Broken Seal's BattleEffect_PlaceFormationObjects with The Lost Age's
+/// three more formations (4: eleven objects from signed columns, 5: twelve in
+/// a 4x3 grid, 6: eight more), in the order 0, 5, 1, 2, 6, 3, 4.
 void Func_0816442c(s32 formation, s32 x, s32 z) {
   struct BattleFxWork *work =
       (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];

@@ -15770,7 +15770,7 @@ msgctxt "message"
 msgid "03892"
 msgstr "Tickets"
 
-msgctxt "message"
+msgctxt "MsgSlotsBet"
 msgid "03893"
 msgstr "Wette"
 

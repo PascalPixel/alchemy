@@ -1,23 +1,3 @@
-// Draft, differ 2 of 72 (no device): summon 25's closing step, which puts
-// the targets back and restores the battle's camera, palette and backdrop.
-// Left: the native loads the battle work (ldr r3, [r3, #36]) between the two
-// halves of the effect field's offset 0x78f0 (movs r2, #240 / lsls); agscc
-// finishes the constant first (one reordered row).
-// Tried: the three heap reads in all six declaration orders (work first:
-// differ 2; transition first: 20; battle first: 29-41), assigned in
-// statements in other orders than declared (2 or 20), the work read in a
-// one-pass block (20), all three through one HeapSlots pointer (2 or 20), a
-// pointer to the effect field (20); alchemy permute 4 minutes, nothing below
-// 2.
-// 2026-10-18: each callee declared s32 in place of void, one at a time (2 or
-// 4).
-// 2026-10-19: battle held by an empty asm operand after the reads (42);
-// alchemy-devtools permute 5 minutes: nothing below 2. The one row is the TLA
-// pattern of a load issued between a constant's movs and its lsls.
-// 2026-10-24: 240 pinned to r2 and held by an asm on the battle load, the
-// effect field reached through a pointer built from (240 << 7) + 240: the
-// pin takes r2 from the transition's address, and the pointer's first load
-// is shared with the loop's (40).
 #include "types.h"
 #include "ram_buffer.h"
 #include "motobj.h"

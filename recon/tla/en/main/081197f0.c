@@ -105,7 +105,7 @@ void Func_081263fc(s32 mode, s32 background, s32 value);
 void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale);
 void BattlePres_SetupTransitionScene(s32 a, s32 b, s32 c, s32 d);
 void Party_ReservedNoOp5B14(s32 value);
-void Func_081281ec(void);
+void BattleSpoils_Clear(void);
 s32 VramCache_AllocEntry(s32 size);
 u32 Battle_RandomFar(void);
 void Func_08125d74(s32 enemyCount, s32 enemyGroup);
@@ -258,7 +258,7 @@ s32 Func_081197f0(s32 enemyGroup) {
   BattlePres_SetupTransitionScene(0, 0, 0, 190);
   Party_ReservedNoOp5B14(1);
   *(volatile u16 *)0x04000050 = 0;
-  Func_081281ec();
+  BattleSpoils_Clear();
   battle->promptSlot = VramCache_AllocEntry(128);
 
   battle->encounterMode = 0;

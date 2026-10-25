@@ -3434,8 +3434,6 @@ BattleEnemy_ClaimNameLetter:
 	.incbin "baserom.gba", 0x00127af4, 0x000000c4
 	.section .rom.00127cec, "ax"
 	.incbin "baserom.gba", 0x00127cec, 0x000003cc
-	.section .rom.00128202, "ax"
-	.incbin "baserom.gba", 0x00128202, 0x0000003e
 	.section .rom.00128264, "ax"
 	.global Func_0812824c
 	.type Func_0812824c, %function

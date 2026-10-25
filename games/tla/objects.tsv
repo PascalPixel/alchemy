@@ -4683,12 +4683,6 @@ main	rom_main_08	recon/tla/raw/08127cd4	.text	en
 main	rom_main_08	recon/tla/ja/rom	.rom.00127cd0	ja
 main	rom_main_08	games/tla/src/battle/summon/definition	.text
 main	rom_main_08	games/tla/src/game/item/encode_banked_id	.text
-main	rom_main_08	recon/tla/it/rom	.rom.00128202	it
-main	rom_main_08	recon/tla/fr/rom	.rom.00128202	fr
-main	rom_main_08	recon/tla/es/rom	.rom.00128202	es
-main	rom_main_08	recon/tla/de/rom	.rom.00128202	de
-main	rom_main_08	recon/tla/raw/081281ea	.text	en
-main	rom_main_08	recon/tla/raw/081281ec	.text	en
 main	rom_main_08	games/tla/src/game/item/first_digit	.text	en de es fr it
 main	rom_main_08	recon/tla/it/rom	.rom.00128264	it
 main	rom_main_08	recon/tla/fr/rom	.rom.00128264	fr
@@ -4696,7 +4690,7 @@ main	rom_main_08	recon/tla/es/rom	.rom.00128264	es
 main	rom_main_08	recon/tla/de/rom	.rom.00128264	de
 main	rom_main_08	recon/tla/raw/0812824c	.text	en
 main	rom_main_08	recon/tla/raw/081284c0	.text	en
-main	rom_main_08	recon/tla/ja/rom	.rom.001281e6	ja
+main	rom_main_08	recon/tla/ja/rom	.rom.00128224	ja
 main	rom_main_08	recon/tla/ja/rom	.rom.00128248	ja
 main	rom_main_08	games/tla/src/battle/battle_data	.rodata
 main	rom_main_08	games/tla/src/battle/battle_action	.rodata

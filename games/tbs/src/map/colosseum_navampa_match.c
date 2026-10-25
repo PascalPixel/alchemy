@@ -1995,6 +1995,9 @@ static void EventScript_TalkToLogRollingAttendant(s32 localId) {
   FieldScript_End();
 }
 
+// This map's warps for colosso_solo.h.
+#define COLOSSO_SOLO_TO_RACE COLOSSEUM_NAVAMPA_MATCH_LEND_A_HAND_TO_RACE
+#define COLOSSO_SOLO_TO_COLOSSEUM COLOSSEUM_NAVAMPA_MATCH_TO_COLOSSEUM
 #include "common/colosso_solo.h"
 #include "common/item_equip.h"
 #include "common/colosso_task.h"

@@ -2533,7 +2533,8 @@ static void VaultInteriors_DefeatThieves(void) {
   Import_ObjectEventSetAnimation(LOCALID_THIEF_LEADER, 9);
   Import_ObjectEventSetAnimation(LOCALID_FIRST_THIEF, 9);
   Import_ObjectEventSetAnimation(LOCALID_SECOND_THIEF, 9);
-  ObjectEvent_GetById(LOCALID_SECOND_THIEF)->priorityFlags &= 254;
+  ObjectEvent_GetById(LOCALID_SECOND_THIEF)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   thirdThiefSprite->image.priority = 3;
   actions = gVaultInteriors_ActionTable;
   ObjectEvent_SetActionScript(LOCALID_THIEF_LEADER, actions);

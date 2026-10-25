@@ -366,7 +366,8 @@ void MercuryLighthouse_HopAcrossPool(void) {
   objectEvent->velocityY = 0x40000;
   *flags &= 0x7e;
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
-  ObjectMotion_SetPositionAndCommit(0, pos[0].part.pixel, pos[2].part.pixel);
+  ObjectMotion_SetPositionAndCommit(LOCALID_PARTY_LEADER, pos[0].part.pixel,
+                                    pos[2].part.pixel);
   Object_SelectAnimation(objectEvent, 6);
   WaitFrames(2);
   if (to->behavior != state->poolBehavior)

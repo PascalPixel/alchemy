@@ -1383,7 +1383,8 @@ s32 BabiLighthouse_SetupMap(void) {
         ObjectEvent_GetById(LOCALID_RIGHT_PILLAR)->groundHeight;
     if (GameFlag_Get(FLAG_GROWTH_PASSAGE_OPEN) != 0) {
       Import_ObjectEventSetAnimation(LOCALID_PLANT, 4);
-      ObjectEvent_GetById(LOCALID_PLANT)->collisionFlags = 0xfe;
+      ObjectEvent_GetById(LOCALID_PLANT)->collisionFlags =
+          0xff & ~OBJ_EVENT_SOLID;
       BabiLighthouse_OpenGrowthPassage();
     }
     // Their script waits stagger the first animations of the four lying on the

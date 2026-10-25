@@ -766,7 +766,7 @@ static void Kolima_WitnessForestCurse(void) {
   ObjectMotion_SetVariantCallback(LOCALID_GARET, 1);
   Kolima_ShowMessageAndWait(LOCALID_GARET, 20);
   ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1) / 2, PIXELS(1) / 4);
-  ObjectEvent_GetById(LOCALID_IVAN)->steeringFlags &= 254;
+  ObjectEvent_GetById(LOCALID_IVAN)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkToAndWait(LOCALID_IVAN, 72, 0x11e);
   FieldScript_WaitFrames(1);
   ObjectEvent_GetById(LOCALID_IVAN)->steeringFlags |= motionFacingFlag;
@@ -962,10 +962,14 @@ static void Kolima_WitnessForestCurse(void) {
   }
   mapState = (s32 *)&gFallingEffectState;
   *mapState = KOLIMA_DUST_DRIFTING;
-  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags &= 254;
-  ObjectEvent_GetById(LOCALID_GARET)->priorityFlags &= 254;
-  ObjectEvent_GetById(LOCALID_IVAN)->priorityFlags &= 254;
-  ObjectEvent_GetById(LOCALID_MIA)->priorityFlags &= 254;
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectEvent_GetById(LOCALID_GARET)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectEvent_GetById(LOCALID_IVAN)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectEvent_GetById(LOCALID_MIA)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 3);
   ObjectMotion_SetActionVariant(LOCALID_GARET, 3);
   ObjectMotion_SetActionVariant(LOCALID_IVAN, 3);
@@ -975,25 +979,29 @@ static void Kolima_WitnessForestCurse(void) {
   FieldScheduler_AddCallback(Kolima_AlternateProtectiveFieldHeights,
                              TASK_PRIORITY_MAP);
   Script_PlaySong(SE_SHIMMER);
-  ObjectEvent_GetById(LOCALID_LEADER_PSYNERGY_FIELD)->priorityFlags &= 254;
+  ObjectEvent_GetById(LOCALID_LEADER_PSYNERGY_FIELD)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectMotion_SetActionVariant(LOCALID_LEADER_PSYNERGY_FIELD, 2);
   ObjectEvent_SetPosition(LOCALID_LEADER_PSYNERGY_FIELD, PIXELS(120),
                           PIXELS(248));
   growFieldActions = gKolima_ProtectiveFieldGrowActions;
   ObjectEvent_SetActionScript(LOCALID_LEADER_PSYNERGY_FIELD, growFieldActions);
-  ObjectEvent_GetById(LOCALID_IVAN_PSYNERGY_FIELD)->priorityFlags &= 254;
+  ObjectEvent_GetById(LOCALID_IVAN_PSYNERGY_FIELD)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectMotion_SetActionVariant(LOCALID_IVAN_PSYNERGY_FIELD, 2);
   ObjectEvent_SetPosition(LOCALID_IVAN_PSYNERGY_FIELD, PIXELS(100),
                           PIXELS(274));
   ObjectEvent_SetActionScript(LOCALID_IVAN_PSYNERGY_FIELD, growFieldActions);
   if (gKolima_MiaInParty != 0) {
-    ObjectEvent_GetById(LOCALID_MIA_PSYNERGY_FIELD)->priorityFlags &= 254;
+    ObjectEvent_GetById(LOCALID_MIA_PSYNERGY_FIELD)->priorityFlags &=
+        ~OBJ_EVENT_PRIORITY_AUTOMATIC;
     ObjectMotion_SetActionVariant(LOCALID_MIA_PSYNERGY_FIELD, 2);
     ObjectEvent_SetPosition(LOCALID_MIA_PSYNERGY_FIELD, PIXELS(74),
                             PIXELS(254));
     ObjectEvent_SetActionScript(LOCALID_MIA_PSYNERGY_FIELD, growFieldActions);
   }
-  ObjectEvent_GetById(LOCALID_GARET_PSYNERGY_FIELD)->priorityFlags &= 254;
+  ObjectEvent_GetById(LOCALID_GARET_PSYNERGY_FIELD)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectMotion_SetActionVariant(LOCALID_GARET_PSYNERGY_FIELD, 2);
   ObjectEvent_SetPosition(LOCALID_GARET_PSYNERGY_FIELD, PIXELS(94),
                           PIXELS(225));
@@ -1247,10 +1255,14 @@ static void Kolima_WitnessForestCurse(void) {
   if (gKolima_MiaInParty != 0) {
     Kolima_FaceObjectEventAndWait(LOCALID_MIA, FACING_NORTH, 10);
   }
-  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags &= 254;
-  ObjectEvent_GetById(LOCALID_GARET)->priorityFlags &= 254;
-  ObjectEvent_GetById(LOCALID_IVAN)->priorityFlags &= 254;
-  ObjectEvent_GetById(LOCALID_MIA)->priorityFlags &= 254;
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectEvent_GetById(LOCALID_GARET)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectEvent_GetById(LOCALID_IVAN)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectEvent_GetById(LOCALID_MIA)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 3);
   ObjectMotion_SetActionVariant(LOCALID_GARET, 3);
   ObjectMotion_SetActionVariant(LOCALID_IVAN, 3);

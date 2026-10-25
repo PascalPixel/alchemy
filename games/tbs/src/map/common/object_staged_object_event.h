@@ -83,7 +83,7 @@ UNUSED static void PushedObject_AdvancePair(void) {
   u32 step;
   s32 rate;
 
-  lead = ObjectEvent_GetById(0);
+  lead = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   dir = lead->facing >> 12;
   step = gPushedObject_DirectionSteps[dir];
   dst.x = lead->x.fixed + (step & 0xffff0000);
@@ -246,7 +246,7 @@ static s32 PushedObject_StopBlockedMotion(struct ObjectEvent *objectEvent) {
 static struct ObjectEvent *Map_FindObjectEventRegion(s32 *direction, s32 *slot,
                                                      s32 *footprint) {
   struct FieldWork *work = gFieldWork;
-  struct ObjectEvent *player = ObjectEvent_GetById(0);
+  struct ObjectEvent *player = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   struct ObjectEvent **list;
   u32 i, j;
 
@@ -421,7 +421,7 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
 #else
   workspace = (struct MapGridScrollWork *)*(u32 *)gMapGridWork;
 #endif
-  direction = (ObjectEvent_GetById(0))->facing >> 12;
+  direction = (ObjectEvent_GetById(LOCALID_PARTY_LEADER))->facing >> 12;
   objectEvent = ObjectEvent_GetById(probe.objectEventSlot);
   footprintTable = (u8 *)gPushedObject_FootprintBounds;
   {
@@ -461,8 +461,8 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
   PushedObject_FillGridAttributeRectangle(0, tilePosition.x, tilePosition.z,
                                           horizontalExtent, verticalExtent,
                                           MB_NORMAL);
-  ObjectMotion_SetSpeedParameters(0, 0x8000, 0x1999);
-  Import_ObjectEventSetAnimation(0, ANIM_PUSH);
+  ObjectMotion_SetSpeedParameters(LOCALID_PARTY_LEADER, 0x8000, 0x1999);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_PUSH);
   FieldScript_WaitFrames(15);
 
   {
@@ -475,15 +475,16 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
       if (verticalDelta < 0)
         verticalDelta += 0x1ffff;
       verticalDelta >>= 17;
-      ObjectMotion_OffsetPositionAndResetMotion(0, horizontalDelta,
-                                                verticalDelta);
+      ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER,
+                                                horizontalDelta, verticalDelta);
     }
   }
 
 #ifdef UBFIX
-  ObjectEvent_GetById(0)->update = PushedObject_StopBlockedMotion;
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->update =
+      PushedObject_StopBlockedMotion;
 #else
-  ObjectEvent_GetById(0)->update =
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->update =
       (void (*)(union ObjectEventOrEffect *))PushedObject_StopBlockedMotion;
 #endif
   FieldScript_WaitFrames(4);
@@ -495,9 +496,9 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
   Sound_PlaySong(SE_HEAVY_MOVE);
   Object_SetPosition(objectEvent, probe.position.x, probe.position.y,
                      probe.position.z);
-  ObjectMotion_CommitCurrentPositionAndActivate(0);
-  Import_ObjectEventSetAnimation(0, 2);
-  ObjectEvent_SetSpeed(0, 0x4ccc, 0x1999);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x4ccc, 0x1999);
 
   {
     s32 packedOrientation = gPushedObject_DirectionSteps[direction];
@@ -507,9 +508,9 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
   if (probe.callback != 0)
     probe.callback();
 
-  ObjectMotion_CommitCurrentPositionAndActivate(0);
-  Import_ObjectEventSetAnimation(0, 1);
-  ObjectEvent_GetById(0)->update = NULL;
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->update = NULL;
   Object_WaitForMove(objectEvent);
   Sound_PlaySong(SE_STOP_ACTION_SE);
   Sound_PlaySong(SE_HEAVY_STOP);

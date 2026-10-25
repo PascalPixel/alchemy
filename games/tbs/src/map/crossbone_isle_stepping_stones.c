@@ -973,7 +973,7 @@ static s32 CrossboneIsleSteppingStones_UpdateObjectEventPriority(
   }
   if (objectEvent->y.fixed < leader->y.fixed) {
     objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
-    objectEvent->collisionFlags &= 254;
+    objectEvent->collisionFlags &= ~OBJ_EVENT_SOLID;
     if (objectEvent->sprite->image.priority < leader->sprite->image.priority) {
       objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
       objectEvent->sprite->image.priority = leader->sprite->image.priority;
@@ -1171,7 +1171,8 @@ static void EventScript_JumpOrPushStackedPillar(void) {
       ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed);
 #endif
   if (CrossboneIsleSteppingStones_TryJumpAcrossPillar() == 0) {
-    ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags &= 254;
+    ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags &=
+        ~OBJ_EVENT_FOLLOWS_TERRAIN;
     ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags &=
         ~OBJ_EVENT_PRIORITY_AUTOMATIC;
     PushedObject_AdvancePair();
@@ -1544,7 +1545,7 @@ const struct MapEvent *Map_GetEvents(void) {
 static void CrossboneIsleSteppingStones_PrepLoweredObjectEvent(s32 id) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(id);
 
-  objectEvent->collisionFlags &= 254;
+  objectEvent->collisionFlags &= ~OBJ_EVENT_SOLID;
   objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
   objectEvent->motionFlags = 0;
   ObjectEvent_SetSpriteFlags(objectEvent, 0);

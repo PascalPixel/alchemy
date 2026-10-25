@@ -82,12 +82,16 @@ enum ObjectEventAnimation {
   /// ANIM_STAND's idle with more glances to each side, as when a whirlwind
   /// catches the leader.
   ANIM_LEADER_LOOK_AROUND = 9,
-  ANIM_LEADER_CLIMB = 10,      ///< climbing a wall, seen from behind
-  ANIM_LEADER_CLING = 12,      ///< still on a wall, seen from behind
+  ANIM_LEADER_CLIMB = 10, ///< climbing a wall, seen from behind
+  /// Stepping off the top of a ladder, as onto the roof beside Isaac's house.
+  ANIM_LEADER_CLIMB_OVER_TOP = 11,
+  ANIM_LEADER_CLING = 12, ///< still on a wall, seen from behind
+  /// ANIM_LEADER_CLIMB_OVER_TOP played backwards: stepping from the top of a
+  /// ladder onto its rungs.
+  ANIM_LEADER_CLIMB_DOWN_FROM_TOP = 13,
   ANIM_LEADER_CLIMB_EAST = 14, ///< reaching along a wall as he climbs east
   ANIM_LEADER_CLIMB_WEST = 15, ///< reaching along a wall as he climbs west
-  /// One leg forward, braced, held briefly: the frame ANIM_LEADER_LEAP
-  /// holds
+  /// One leg forward, braced, held briefly: the frame ANIM_LEADER_LEAP holds
   /// and the run starts on, as when he lunges into a fight or pulls someone
   /// from a river.
   ANIM_LEADER_STRIDE = 16,
@@ -114,6 +118,9 @@ enum ObjectEventAnimation {
   /// Spinning round once, then drawn blank (ANIMCMD_BLANK).
   ANIM_LEADER_SPIN_AWAY = 27,
   ANIM_LEADER_ARMS_RAISED = 28, ///< both arms raised over his head
+  /// Swinging an arm out to throw, as he tosses a coin or medal at Tolbi's
+  /// spring.
+  ANIM_LEADER_TOSS = 29,
   /// Held in ANIM_LEADER_SPRING's crouch, knees bent, as after a lost
   /// match.
   ANIM_LEADER_CROUCH = 35

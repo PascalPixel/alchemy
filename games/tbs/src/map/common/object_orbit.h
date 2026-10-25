@@ -45,7 +45,7 @@ void Map_FloatNut(s32 id) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0)
     objectEvent->y += 0x200000;
 
-  objectEvent->priorityFlags &= 0xfe;
+  objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   objectEvent->visible = 1;
 
   transfer = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, 0x608);

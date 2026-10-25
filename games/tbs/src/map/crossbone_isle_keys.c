@@ -1196,7 +1196,7 @@ static void EventScript_TouchThirdPillar(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
   if (leader->facing == FACING_SOUTH) {
-    FieldObjectEvent_JumpDownLedge(0, 6, 0);
+    FieldObjectEvent_JumpDownLedge(LOCALID_PARTY_LEADER, 6, 0);
   } else {
     EventScript_PushThirdPillar();
   }

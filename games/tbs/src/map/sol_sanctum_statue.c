@@ -878,7 +878,8 @@ s32 SolSanctumStatue_Initialize(void) {
   }
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_MOVED_CENTER_STATUE),
                              0);
-  ObjectEvent_GetById(LOCALID_MOVED_CENTER_STATUE)->priorityFlags &= 254;
+  ObjectEvent_GetById(LOCALID_MOVED_CENTER_STATUE)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectMotion_SetActionVariant(LOCALID_MOVED_CENTER_STATUE, 1);
   // Only warp destinations 3 and 4 keep Jenna and Garet staged for their
   // conversations.

@@ -452,7 +452,7 @@ static void MercuryLighthouseAerie_StepOntoPlatform(void) {
     objectEvent =
         ObjectEvent_GetById(gMercuryLighthouseAerie_PlatformUnderfoot);
     objectEvent->motionFlags = 0;
-    leader->motionFlags &= 0xfe;
+    leader->motionFlags &= ~OBJ_EVENT_FOLLOWS_TERRAIN;
     objectEvent->y.fixed -= PIXELS(3);
     leader->y.fixed -= PIXELS(3);
     leader->groundHeight -= PIXELS(3);
@@ -498,7 +498,8 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   struct ObjectEvent *objectEvent;
 
   FieldScript_Start();
-  ObjectEvent_Get(LOCALID_FIRST_LIFT_PLATFORM)->motionFlags &= 0xfa;
+  ObjectEvent_Get(LOCALID_FIRST_LIFT_PLATFORM)->motionFlags &=
+      ~(OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FLOATS);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);

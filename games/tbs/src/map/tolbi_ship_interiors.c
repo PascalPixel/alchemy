@@ -450,9 +450,16 @@ enum TolbiShipInteriorsMetatileBehavior {
   MB_TOLBI_SHIP_INTERIORS_QUARTERS_JAR = 102
 };
 
-/// A speaker: the object event, and in the top four bits where the message
-/// window opens beside them.
-#define SPEAKER(localId, window) ((window) << 12 | (localId))
+/// A speaker: the object event, with the speaker bits for where its message
+/// window and portrait open.
+#define SPEAKER(localId, bits) ((bits) | (localId))
+
+/// TolbiShipInteriors_MoveCameraAndWait's flags, above the frames it waits
+/// after in the low bits.
+#define SHIP_CAMERA_JUMP 0x1 ///< jump there at once rather than glide
+/// Then recenter the layers on the camera (MapGrid_CenterOnFollowedPoint).
+#define SHIP_CAMERA_RECENTER_LAYERS 0x01000000
+#define SHIP_CAMERA_WAIT_FOR_ARRIVAL 0x10000000
 
 // Defined below, in the order of the ROM.
 static void TolbiShipInteriors_StepBesideLeader(s32 passengerId);
@@ -1281,7 +1288,10 @@ static void TolbiShipInteriors_StepBesideLeader(s32 passengerId) {
   TolbiShipInteriors_Turn(passengerId, leader->facing);
 }
 
-enum { KAJA_ROWING_SPEAKER = SPEAKER(LOCALID_ROWING_KAJA, 10) };
+enum {
+  KAJA_ROWING_SPEAKER = SPEAKER(LOCALID_ROWING_KAJA,
+                                SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT)
+};
 
 /// Returns 1 when the spot next to the leader in the given sixteenth of a turn
 /// holds no object event and no wall, else 0.
@@ -1614,7 +1624,7 @@ static void TolbiShipInteriors_WatchCrewWonderAtDelay(void) {
   Field_EndBusyAndReveal();
   FieldCamera_SetSpeedParameters(PIXELS(8) / 5, PIXELS(1) / 5);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(448), -1, PIXELS(638),
-                                       0x10000028u);
+                                       SHIP_CAMERA_WAIT_FOR_ARRIVAL | 40);
   FieldScript_SetMessageId(MsgTolbiShipWonderCouldHaveHappened);
 
   TolbiShipInteriors_Say(LOCALID_QUARTERS_CAPTAIN);
@@ -1658,21 +1668,26 @@ static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
     Field_EndBusyAndReveal();
     FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
     TolbiShipInteriors_MoveCameraAndWait(PIXELS(1463), -1, PIXELS(464),
-                                         0x10000014);
+                                         SHIP_CAMERA_WAIT_FOR_ARRIVAL | 20);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_HOLD_OURANOS, 1);
     FieldScript_SetMessageId(MsgTolbiShipIfWeArentGoingSet);
-    TolbiShipInteriors_Say(SPEAKER(LOCALID_HOLD_OURANOS, 2));
+    TolbiShipInteriors_Say(
+        SPEAKER(LOCALID_HOLD_OURANOS, SPEAKER_PORTRAIT_RIGHT));
     TolbiShipInteriors_Turn(LOCALID_HOLD_SECOND_GUIDE,
                             FACING_NORTH + FACING_STEP);
-    guideSpeaker = SPEAKER(LOCALID_HOLD_SECOND_GUIDE, 8);
+    guideSpeaker = SPEAKER(LOCALID_HOLD_SECOND_GUIDE, SPEAKER_WINDOW_BELOW);
     ObjectEvent_ShowEmote(LOCALID_HOLD_SECOND_GUIDE,
                           EMOTE_IN_FRONT | EMOTE_WINCE, 20);
     ObjectMotion_SetVariantCallback(LOCALID_HOLD_SECOND_GUIDE, 2);
     TolbiShipInteriors_Say(guideSpeaker);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_HOLD_SEAN, 1);
-    Script_ShowMessageAndWait(SPEAKER(LOCALID_HOLD_SEAN, 10), 0, 20);
+    Script_ShowMessageAndWait(
+        SPEAKER(LOCALID_HOLD_SEAN,
+                SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT),
+        0, 20);
     TolbiShipInteriors_Turn(LOCALID_HOLD_SECOND_GUIDE, 0);
-    seanSpeaker = SPEAKER(LOCALID_HOLD_SEAN, 10);
+    seanSpeaker = SPEAKER(LOCALID_HOLD_SEAN,
+                          SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT);
     ObjectEvent_ShowEmote(LOCALID_HOLD_SECOND_GUIDE,
                           EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     ObjectEvent_ShowEmote(LOCALID_HOLD_SEAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
@@ -1696,9 +1711,11 @@ static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
     ObjectMotion_SetVariantCallback(LOCALID_HOLD_SECOND_GUIDE, 1);
     TolbiShipInteriors_Say(guideSpeaker);
     ObjectMotion_SetAnimationAndWait(LOCALID_HOLD_OURANOS, 4);
-    TolbiShipInteriors_Say(SPEAKER(LOCALID_HOLD_OURANOS, 2));
+    TolbiShipInteriors_Say(
+        SPEAKER(LOCALID_HOLD_OURANOS, SPEAKER_PORTRAIT_RIGHT));
     ObjectMotion_SetVariantCallback(LOCALID_HOLD_OURANOS, 2);
-    TolbiShipInteriors_Say(SPEAKER(LOCALID_HOLD_OURANOS, 2));
+    TolbiShipInteriors_Say(
+        SPEAKER(LOCALID_HOLD_OURANOS, SPEAKER_PORTRAIT_RIGHT));
     Import_ObjectEventSetAnimation(LOCALID_HOLD_SECOND_GUIDE, 4);
     TolbiShipInteriors_Say(guideSpeaker);
     ObjectMotion_SetAnimationAndWait(LOCALID_HOLD_SEAN, 4);
@@ -1767,7 +1784,8 @@ static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
     FieldScript_WaitFrames(20);
     ObjectEvent_FaceDirection(LOCALID_HOLD_SECOND_GUIDE, FACING_SOUTH, 0);
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(12) / 5, PIXELS(6) / 5);
-    ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &= 254;
+    ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
+        ~OBJ_EVENT_FACES_MOTION;
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 184, 520);
     FieldScript_WaitFrames(1);
     {
@@ -1806,7 +1824,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   Script_PlaySong(MUS_DUNGEON);
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(456), -1, PIXELS(648),
-                                       0x10000014);
+                                       SHIP_CAMERA_WAIT_FOR_ARRIVAL | 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_QUARTERS_KAJA, 1);
   FieldScript_SetMessageId(MsgTolbiShipYoureTryingLaunchShip);
   TolbiShipInteriors_Say(LOCALID_QUARTERS_KAJA);
@@ -1828,7 +1846,8 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   ObjectEvent_FaceDirection(LOCALID_QUARTERS_SECOND_GUIDE,
                             FACING_NORTH + FACING_STEP, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_QUARTERS_OURANOS, 1);
-  TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_OURANOS, 1));
+  TolbiShipInteriors_Say(
+      SPEAKER(LOCALID_QUARTERS_OURANOS, SPEAKER_PORTRAIT_LEFT));
   ObjectEvent_ShowEmote(LOCALID_QUARTERS_SECOND_GUIDE,
                         EMOTE_IN_FRONT | EMOTE_WINCE, 20);
   ObjectMotion_SetVariantCallback(LOCALID_QUARTERS_SECOND_GUIDE, 2);
@@ -1838,13 +1857,15 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   TolbiShipInteriors_Say(LOCALID_QUARTERS_KAJA);
   ObjectEvent_ShowEmote(LOCALID_QUARTERS_SEAN, EMOTE_IN_FRONT | EMOTE_HEART,
                         20);
-  TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_SEAN, 9));
+  TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_SEAN,
+                                 SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT));
   ObjectMotion_SetVarCbAndRefresh(LOCALID_QUARTERS_CAPTAIN, 1);
   Import_ObjectEventSetAnimation(LOCALID_QUARTERS_CAPTAIN, 3);
   TolbiShipInteriors_Say(LOCALID_QUARTERS_CAPTAIN);
   TolbiShipInteriors_Turn(LOCALID_QUARTERS_SEAN,
                           FACING_SOUTHEAST + FACING_STEP);
-  TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_SEAN, 9));
+  TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_SEAN,
+                                 SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT));
   TolbiShipInteriors_Turn(LOCALID_QUARTERS_OURANOS,
                           FACING_NORTHWEST + FACING_STEP);
   ObjectMotion_SetAnimationAndWait(LOCALID_QUARTERS_OURANOS, 3);
@@ -1875,14 +1896,16 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_QUARTERS_OURANOS, 2);
   ObjectEvent_FaceDirection(LOCALID_QUARTERS_OURANOS,
                             FACING_NORTH + FACING_STEP, 0);
-  TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_OURANOS, 1));
+  TolbiShipInteriors_Say(
+      SPEAKER(LOCALID_QUARTERS_OURANOS, SPEAKER_PORTRAIT_LEFT));
   ObjectEvent_FaceDirection(LOCALID_QUARTERS_SEAN, FACING_NORTH + FACING_STEP,
                             0);
   ObjectEvent_ShowEmote(LOCALID_QUARTERS_KAJA, EMOTE_IN_FRONT | EMOTE_QUESTION,
                         60);
   Import_ObjectEventSetAnimation(LOCALID_QUARTERS_OURANOS, 4);
   FieldScript_WaitFrames(20);
-  TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_OURANOS, 1));
+  TolbiShipInteriors_Say(
+      SPEAKER(LOCALID_QUARTERS_OURANOS, SPEAKER_PORTRAIT_LEFT));
   Import_ObjectEventSetAnimation(LOCALID_QUARTERS_KAJA, 3);
   TolbiShipInteriors_Say(LOCALID_QUARTERS_KAJA);
   ObjectEvent_FaceDirection(LOCALID_QUARTERS_SECOND_GUIDE,
@@ -1893,7 +1916,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   ObjectMotion_Launch(LOCALID_QUARTERS_SECOND_GUIDE, 2, 20);
   TolbiShipInteriors_Say(LOCALID_QUARTERS_SECOND_GUIDE);
   ObjectMotion_SetAnimationAndWait(LOCALID_QUARTERS_KAJA, 3);
-  seanSpeech = SPEAKER(LOCALID_QUARTERS_SEAN, 1);
+  seanSpeech = SPEAKER(LOCALID_QUARTERS_SEAN, SPEAKER_PORTRAIT_LEFT);
   TolbiShipInteriors_Say(LOCALID_QUARTERS_KAJA);
   TolbiShipInteriors_Turn(LOCALID_QUARTERS_OURANOS, FACING_NORTH + FACING_STEP);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_QUARTERS_SEAN, 1);
@@ -1909,7 +1932,8 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   Import_ObjectEventSetAnimation(LOCALID_QUARTERS_KAJA, 3);
   TolbiShipInteriors_Say(LOCALID_QUARTERS_KAJA);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_QUARTERS_OURANOS, 1);
-  TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_OURANOS, 1));
+  TolbiShipInteriors_Say(
+      SPEAKER(LOCALID_QUARTERS_OURANOS, SPEAKER_PORTRAIT_LEFT));
   ObjectEvent_ShowEmote(LOCALID_QUARTERS_CAPTAIN, EMOTE_IN_FRONT | EMOTE_WINCE,
                         40);
   Script_ShowMessage(LOCALID_QUARTERS_CAPTAIN, 0);
@@ -1927,7 +1951,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   ObjectEvent_ShowEmote(LOCALID_QUARTERS_SEAN,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   ObjectMotion_SetVariantCallback(LOCALID_QUARTERS_SEAN, 2);
-  ouranosSpeech = SPEAKER(LOCALID_QUARTERS_OURANOS, 4);
+  ouranosSpeech = SPEAKER(LOCALID_QUARTERS_OURANOS, SPEAKER_WINDOW_ABOVE);
   TolbiShipInteriors_Say(seanSpeech);
   ObjectEvent_FaceDirection(LOCALID_QUARTERS_OURANOS,
                             FACING_SOUTH + FACING_STEP, 20);
@@ -1950,7 +1974,8 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   ObjectEvent_ShowEmote(LOCALID_QUARTERS_OURANOS,
                         EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   ObjectMotion_SetVariantCallback(LOCALID_QUARTERS_OURANOS, 2);
-  TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_OURANOS, 1));
+  TolbiShipInteriors_Say(
+      SPEAKER(LOCALID_QUARTERS_OURANOS, SPEAKER_PORTRAIT_LEFT));
   ObjectEvent_ShowEmote(LOCALID_QUARTERS_KAJA, EMOTE_IN_FRONT | EMOTE_SMILE,
                         40);
   TolbiShipInteriors_Say(LOCALID_QUARTERS_KAJA);
@@ -1986,7 +2011,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   ObjectEvent_FaceDirection(LOCALID_QUARTERS_CAPTAIN, FACING_WEST, 20);
   Script_PlaySong(MUS_SILENCE);
   ObjectMotion_SetVariantCallback(LOCALID_QUARTERS_CAPTAIN, 2);
-  captainSpeech = SPEAKER(LOCALID_QUARTERS_CAPTAIN, 8);
+  captainSpeech = SPEAKER(LOCALID_QUARTERS_CAPTAIN, SPEAKER_WINDOW_BELOW);
   ObjectEvent_ShowEmote(LOCALID_QUARTERS_CAPTAIN,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
   TolbiShipInteriors_Say(captainSpeech);
@@ -2025,7 +2050,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   ObjectEvent_ShowEmote(LOCALID_QUARTERS_KAJA,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   ObjectMotion_SetVariantCallback(LOCALID_QUARTERS_KAJA, 2);
-  TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_KAJA, 8));
+  TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_KAJA, SPEAKER_WINDOW_BELOW));
   ObjectEvent_ShowEmote(LOCALID_QUARTERS_OURANOS,
                         EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   TolbiShipInteriors_Say(LOCALID_QUARTERS_OURANOS);
@@ -2052,14 +2077,16 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   // them.
   ObjectEvent_WalkToAndWait(LOCALID_QUARTERS_SEAN, 444, 628);
   TolbiShipInteriors_Turn(LOCALID_QUARTERS_SEAN, FACING_NORTH + FACING_STEP);
-  TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_SEAN, 9));
+  TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_SEAN,
+                                 SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT));
   ObjectEvent_FaceDirection(LOCALID_QUARTERS_CAPTAIN,
                             FACING_SOUTH + FACING_STEP, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_QUARTERS_CAPTAIN, 3);
   TolbiShipInteriors_Say(LOCALID_QUARTERS_CAPTAIN);
   ObjectEvent_ShowEmote(LOCALID_QUARTERS_OURANOS, EMOTE_IN_FRONT | EMOTE_WINCE,
                         60);
-  TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_OURANOS, 1));
+  TolbiShipInteriors_Say(
+      SPEAKER(LOCALID_QUARTERS_OURANOS, SPEAKER_PORTRAIT_LEFT));
   ObjectEvent_ShowEmote(LOCALID_QUARTERS_SECOND_GUIDE,
                         EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
   ObjectMotion_SetVariantCallback(LOCALID_QUARTERS_SECOND_GUIDE, 2);
@@ -2067,7 +2094,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   TolbiShipInteriors_Turn(LOCALID_QUARTERS_KAJA,
                           FACING_SOUTHEAST + FACING_STEP);
   ObjectMotion_SetAnimationAndWait(LOCALID_QUARTERS_KAJA, 4);
-  TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_KAJA, 1));
+  TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_KAJA, SPEAKER_PORTRAIT_LEFT));
   TolbiShipInteriors_Turn(LOCALID_QUARTERS_SEAN, 0);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_QUARTERS_CAPTAIN, 1);
   TolbiShipInteriors_Say(LOCALID_QUARTERS_CAPTAIN);
@@ -2078,7 +2105,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
                         60);
   FieldCamera_SetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(464), -1, PIXELS(680),
-                                       0x10000000);
+                                       SHIP_CAMERA_WAIT_FOR_ARRIVAL);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_QUARTERS_CREWMAN, 1);
   TolbiShipInteriors_Turn(LOCALID_QUARTERS_CREWMAN, 0);
   TolbiShipInteriors_Say(LOCALID_QUARTERS_CREWMAN);
@@ -2134,7 +2161,7 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
                               0);
   ObjectEvent_ShowEmote(LOCALID_QUARTERS_CAPTAIN,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  captainSpeech = SPEAKER(LOCALID_QUARTERS_CAPTAIN, 1);
+  captainSpeech = SPEAKER(LOCALID_QUARTERS_CAPTAIN, SPEAKER_PORTRAIT_LEFT);
   ObjectMotion_SetVariantCallback(LOCALID_QUARTERS_CAPTAIN, 3);
   FieldScript_SetMessageId(MsgTolbiShipItsMyLuckyAnchor);
   TolbiShipInteriors_Say(captainSpeech);
@@ -2157,7 +2184,8 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   Script_OpenMessage(captainSpeech, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
     ObjectMotion_SetVarCbAndRefresh(LOCALID_QUARTERS_KAJA, 2);
-    TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_KAJA, 9));
+    TolbiShipInteriors_Say(SPEAKER(
+        LOCALID_QUARTERS_KAJA, SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT));
     ObjectEvent_ShowEmote(LOCALID_QUARTERS_CAPTAIN,
                           EMOTE_IN_FRONT | EMOTE_SMILE, 40);
     TolbiShipInteriors_Say(captainSpeech);
@@ -2165,9 +2193,12 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   } else {
     gFieldWork->message += 2;
     ObjectMotion_SetVarCbAndRefresh(LOCALID_QUARTERS_KAJA, 1);
-    TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_KAJA, 9));
+    TolbiShipInteriors_Say(SPEAKER(
+        LOCALID_QUARTERS_KAJA, SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT));
     ObjectMotion_SetVariantCallback(LOCALID_QUARTERS_CAPTAIN, 2);
-    TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_CAPTAIN, 9));
+    TolbiShipInteriors_Say(
+        SPEAKER(LOCALID_QUARTERS_CAPTAIN,
+                SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT));
   }
   ObjectEvent_ShowEmote(LOCALID_QUARTERS_SECOND_GUIDE,
                         EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
@@ -2196,7 +2227,8 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   ObjectEvent_ShowEmote(LOCALID_QUARTERS_OURANOS,
                         EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   TolbiShipInteriors_Say(LOCALID_QUARTERS_OURANOS);
-  seanSpeech = SPEAKER(LOCALID_QUARTERS_SEAN, 9);
+  seanSpeech = SPEAKER(LOCALID_QUARTERS_SEAN,
+                       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT);
   TolbiShipInteriors_Turn(LOCALID_QUARTERS_SEAN, FACING_NORTH + FACING_STEP);
   Import_ObjectEventSetAnimation(LOCALID_QUARTERS_SEAN, 4);
   TolbiShipInteriors_Say(seanSpeech);
@@ -2262,7 +2294,7 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
                         40);
   TolbiShipInteriors_Say(seanSpeech);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_QUARTERS_KAJA, 1);
-  TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_KAJA, 1));
+  TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_KAJA, SPEAKER_PORTRAIT_LEFT));
   ObjectMotion_SetAnimationAndWait(LOCALID_QUARTERS_CAPTAIN, 3);
   TolbiShipInteriors_Turn(LOCALID_QUARTERS_CAPTAIN, FACING_SOUTH + FACING_STEP);
   TolbiShipInteriors_Say(LOCALID_QUARTERS_CAPTAIN);
@@ -2275,7 +2307,10 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
     ObjectMotion_SetAnimationAndWait(LOCALID_QUARTERS_SEAN, 3);
     TolbiShipInteriors_Say(seanSpeech);
     ObjectMotion_SetVariantCallback(LOCALID_QUARTERS_KAJA, 1);
-    Script_ShowMessageAndWait(SPEAKER(LOCALID_QUARTERS_KAJA, 9), 0, 40);
+    Script_ShowMessageAndWait(
+        SPEAKER(LOCALID_QUARTERS_KAJA,
+                SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT),
+        0, 40);
     gFieldWork->message += 1;
   } else {
     gFieldWork->message += 3;
@@ -2293,7 +2328,7 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   Script_ShowMessageAndWait(LOCALID_QUARTERS_SECOND_GUIDE, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_QUARTERS_CAPTAIN, 3);
   ObjectEvent_SetSpeed(LOCALID_QUARTERS_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
-  captainAboveSpeech = SPEAKER(LOCALID_QUARTERS_CAPTAIN, 4);
+  captainAboveSpeech = SPEAKER(LOCALID_QUARTERS_CAPTAIN, SPEAKER_WINDOW_ABOVE);
   ObjectEvent_WalkToAndWait(LOCALID_QUARTERS_CAPTAIN, 472, 632);
   TolbiShipInteriors_Say(captainAboveSpeech);
   ObjectEvent_ShowEmote(LOCALID_QUARTERS_SECOND_GUIDE,
@@ -2304,7 +2339,8 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   Script_ShowMessageAndWait(captainAboveSpeech, 0, 40);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_QUARTERS_OURANOS, 1);
   TolbiShipInteriors_Turn(LOCALID_QUARTERS_OURANOS, (value << 8));
-  TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_OURANOS, 1));
+  TolbiShipInteriors_Say(
+      SPEAKER(LOCALID_QUARTERS_OURANOS, SPEAKER_PORTRAIT_LEFT));
   ObjectEvent_ShowEmote(LOCALID_QUARTERS_CREWMAN, EMOTE_IN_FRONT | EMOTE_WINCE,
                         20);
   ObjectEvent_SetSpeed(LOCALID_QUARTERS_CREWMAN, PIXELS(12) / 5, PIXELS(6) / 5);
@@ -2324,7 +2360,7 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   TolbiShipInteriors_Turn(LOCALID_QUARTERS_KAJA,
                           FACING_SOUTHEAST + FACING_STEP);
   ObjectMotion_SetVariantCallback(LOCALID_QUARTERS_KAJA, 2);
-  TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_KAJA, 1));
+  TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_KAJA, SPEAKER_PORTRAIT_LEFT));
   TolbiShipInteriors_Turn(LOCALID_QUARTERS_SEAN, 0);
   ObjectEvent_FaceDirection(LOCALID_QUARTERS_CAPTAIN, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_QUARTERS_KAJA, FACING_SOUTH + FACING_STEP,
@@ -2341,17 +2377,21 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   Script_OpenMessage(SPEAKER_PORTRAIT_LEFT | LOCALID_QUARTERS_CAPTAIN, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
     ObjectMotion_SetAnimationAndWait(LOCALID_QUARTERS_CAPTAIN, 3);
-    TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_CAPTAIN, 1));
+    TolbiShipInteriors_Say(
+        SPEAKER(LOCALID_QUARTERS_CAPTAIN, SPEAKER_PORTRAIT_LEFT));
     gFieldWork->message += 1;
   } else {
     gFieldWork->message += 1;
-    TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_CAPTAIN, 1));
+    TolbiShipInteriors_Say(
+        SPEAKER(LOCALID_QUARTERS_CAPTAIN, SPEAKER_PORTRAIT_LEFT));
   }
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_QUARTERS_CAPTAIN, 3);
-  TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_CAPTAIN, 1));
+  TolbiShipInteriors_Say(
+      SPEAKER(LOCALID_QUARTERS_CAPTAIN, SPEAKER_PORTRAIT_LEFT));
   TolbiShipInteriors_Turn(LOCALID_QUARTERS_CAPTAIN, FACING_WEST);
-  TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_CAPTAIN, 4));
+  TolbiShipInteriors_Say(
+      SPEAKER(LOCALID_QUARTERS_CAPTAIN, SPEAKER_WINDOW_ABOVE));
   TolbiShipInteriors_RunSceneCommand(SHIP_PLAY_PARTY_ANIMATION, 0, 0);
   Import_ObjectEventSetAnimation(LOCALID_QUARTERS_SEAN, 3);
   Import_ObjectEventSetAnimation(LOCALID_QUARTERS_OURANOS, 3);
@@ -2811,7 +2851,9 @@ static void TolbiShipInteriors_AskForReplacementOarsmen(void) {
   FieldScript_Start();
   TolbiShipInteriors_RunSceneCommand(SHIP_PLACE_FOLLOWERS_AND_MONSTERS, 0, 0);
   TolbiShipInteriors_RunSceneCommand(SHIP_RESET_CAMERA, 1, 0);
-  TolbiShipInteriors_MoveCameraAndWait(PIXELS(440), -1, PIXELS(168), 0x1000001);
+  TolbiShipInteriors_MoveCameraAndWait(PIXELS(440), -1, PIXELS(168),
+                                       SHIP_CAMERA_RECENTER_LAYERS |
+                                           SHIP_CAMERA_JUMP);
   TolbiShipInteriors_PlaceObjectEvent(LOCALID_ROWING_KAJA, 440, 164,
                                       FACING_SOUTH + FACING_STEP);
   TolbiShipInteriors_PlaceObjectEvent(LOCALID_ROWING_CREWMAN, 428, 190,
@@ -2941,7 +2983,9 @@ static void TolbiShipInteriors_AskForReplacementOarsmen(void) {
   ObjectEvent_WalkToAndWait(LOCALID_ROWING_KAJA, 408, 134);
   ObjectEvent_WalkTo(LOCALID_ROWING_KAJA, 440, 134);
   FieldScript_WaitFrames(40);
-  TolbiShipInteriors_RunSceneCommand(SHIP_CLOSE_SCREEN, 10, 0);
+  TolbiShipInteriors_RunSceneCommand(
+      SHIP_CLOSE_SCREEN,
+      TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_TOLBI_SHIP_DECK_READY, 0);
   GameFlag_Set(FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT);
 }
 
@@ -2970,7 +3014,9 @@ static void TolbiShipInteriors_CastOff(void) {
   ObjectMotion_SetVariantCallback(LOCALID_QUARTERS_CAPTAIN, 2);
   FieldScript_SetMessageId(MsgTolbiShipCastOff);
   Script_ShowMessageAndWait(LOCALID_QUARTERS_CAPTAIN, 0, 20);
-  TolbiShipInteriors_RunSceneCommand(SHIP_CLOSE_SCREEN, 11, 0);
+  TolbiShipInteriors_RunSceneCommand(
+      SHIP_CLOSE_SCREEN,
+      TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_TO_PASSENGER_HOLD_CALL_TO_OARS, 0);
 }
 
 /// Announces departure after a replacement rower has joined the crew.
@@ -2982,7 +3028,9 @@ static void TolbiShipInteriors_AnnounceDeparture(void) {
   ObjectMotion_SetVariantCallback(LOCALID_QUARTERS_CAPTAIN, 2);
   FieldScript_SetMessageId(MsgTolbiShipWereOff);
   Script_ShowMessageAndWait(LOCALID_QUARTERS_CAPTAIN, 0, 20);
-  TolbiShipInteriors_RunSceneCommand(SHIP_CLOSE_SCREEN, 11, 0);
+  TolbiShipInteriors_RunSceneCommand(
+      SHIP_CLOSE_SCREEN,
+      TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_TO_PASSENGER_HOLD_CALL_TO_OARS, 0);
 }
 
 /// Kaja comes into the hold and calls the first passenger to the rowing deck.
@@ -2993,7 +3041,9 @@ static void TolbiShipInteriors_KajaCallsToOars(void) {
   TolbiShipInteriors_RunSceneCommand(SHIP_SETUP_PASSENGER_HOLD, 0, 0);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   ObjectEvent_SetPosition(LOCALID_HOLD_KAJA, PIXELS(150), PIXELS(586));
-  TolbiShipInteriors_MoveCameraAndWait(PIXELS(156), -1, PIXELS(536), 0x1000001);
+  TolbiShipInteriors_MoveCameraAndWait(PIXELS(156), -1, PIXELS(536),
+                                       SHIP_CAMERA_RECENTER_LAYERS |
+                                           SHIP_CAMERA_JUMP);
   TolbiShipInteriors_RunSceneCommand(SHIP_OPEN_SCREEN, 0, 0);
   ObjectEvent_SetSpeed(LOCALID_HOLD_KAJA, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_HOLD_KAJA, 168, 578);
@@ -3002,7 +3052,9 @@ static void TolbiShipInteriors_KajaCallsToOars(void) {
   ObjectMotion_SetVariantCallback(LOCALID_HOLD_KAJA, 2);
   FieldScript_SetMessageId(MsgTolbiShipRowThoseOars);
   Script_ShowMessageAndWait(LOCALID_HOLD_KAJA, 0, 20);
-  TolbiShipInteriors_RunSceneCommand(SHIP_CLOSE_SCREEN, 12, 0);
+  TolbiShipInteriors_RunSceneCommand(
+      SHIP_CLOSE_SCREEN,
+      TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_ROWING_DECK_ROWING, 0);
 }
 
 /// Kaja comes into the hold and calls a replacement rower back to the rowing
@@ -3012,7 +3064,9 @@ static void TolbiShipInteriors_KajaCallsReplacementToOars(void) {
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   TolbiShipInteriors_HideSelectedPassengers();
   ObjectEvent_SetPosition(LOCALID_SEA_HOLD_KAJA, PIXELS(150), PIXELS(586));
-  TolbiShipInteriors_MoveCameraAndWait(PIXELS(156), -1, PIXELS(536), 0x1000001);
+  TolbiShipInteriors_MoveCameraAndWait(PIXELS(156), -1, PIXELS(536),
+                                       SHIP_CAMERA_RECENTER_LAYERS |
+                                           SHIP_CAMERA_JUMP);
   TolbiShipInteriors_RunSceneCommand(SHIP_OPEN_SCREEN, 0, 0);
   ObjectEvent_SetSpeed(LOCALID_SEA_HOLD_KAJA, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_SEA_HOLD_KAJA, 168, 578);
@@ -3021,7 +3075,9 @@ static void TolbiShipInteriors_KajaCallsReplacementToOars(void) {
   ObjectMotion_SetVariantCallback(LOCALID_SEA_HOLD_KAJA, 2);
   FieldScript_SetMessageId(MsgTolbiShipRowThoseOars);
   Script_ShowMessageAndWait(LOCALID_SEA_HOLD_KAJA, 0, 20);
-  TolbiShipInteriors_RunSceneCommand(SHIP_CLOSE_SCREEN, 12, 0);
+  TolbiShipInteriors_RunSceneCommand(
+      SHIP_CLOSE_SCREEN,
+      TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_ROWING_DECK_ROWING, 0);
 }
 
 /// Restores the rowing deck for the current set of selected passengers.
@@ -3234,7 +3290,8 @@ static void TolbiShipInteriors_IntroduceReplacementOarsman(s32 seat) {
       TolbiShipInteriors_Turn(rowerId, FACING_NORTH + FACING_STEP);
     }
     ObjectEvent_LinkPair(LOCALID_ROWING_KAJA, LOCALID_PARTY_LEADER, 20);
-    TolbiShipInteriors_Say(SPEAKER(LOCALID_ROWING_KAJA, 2));
+    TolbiShipInteriors_Say(
+        SPEAKER(LOCALID_ROWING_KAJA, SPEAKER_PORTRAIT_RIGHT));
     ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_ROWING_KAJA, 3);
     ObjectEvent_SetSpeed(LOCALID_ROWING_KAJA, PIXELS(1), PIXELS(1) / 2);
@@ -3245,7 +3302,9 @@ static void TolbiShipInteriors_IntroduceReplacementOarsman(s32 seat) {
     ObjectEvent_WalkToAndWait(LOCALID_ROWING_KAJA, 408, 134);
     ObjectMotion_ResetAndSetPositionInMode2(LOCALID_ROWING_KAJA, 0x1b8, 134);
     FieldScript_WaitFrames(40);
-    TolbiShipInteriors_RunSceneCommand(SHIP_CLOSE_SCREEN, 10, 0);
+    TolbiShipInteriors_RunSceneCommand(
+        SHIP_CLOSE_SCREEN,
+        TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_TOLBI_SHIP_DECK_READY, 0);
   } else {
     FieldScript_SetMessageId(MsgTolbiShipBack);
     Script_ShowMessageAndWait(KAJA_ROWING_SPEAKER, 0, 40);
@@ -3414,11 +3473,14 @@ static void TolbiShipInteriors_MoveCameraAndWait(s32 x, s32 y, s32 z,
                                                  u32 flags) {
   u32 selected;
 
-  FieldCamera_MoveWithinMapBounds(x, y, z, ~flags & 1);
+  FieldCamera_MoveWithinMapBounds(x, y, z, ~flags & SHIP_CAMERA_JUMP);
+  // XXX: likely a mask of 0xffff was meant, because the callers pass waits of
+  // 20 and 40 frames, which this mask cuts to 16 and none; SHIP_CAMERA_JUMP
+  // also adds a frame.
   selected = flags & 0x1111;
-  if ((flags & 0x10000000) != 0)
+  if ((flags & SHIP_CAMERA_WAIT_FOR_ARRIVAL) != 0)
     FieldCamera_WaitForArrival();
-  if ((flags & 0x01000000) != 0)
+  if ((flags & SHIP_CAMERA_RECENTER_LAYERS) != 0)
     MapGrid_CenterOnFollowedPoint();
   FieldScript_WaitFrames(selected);
 }
@@ -3620,7 +3682,8 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
       TolbiShipInteriors_PlaceAnchorCharm();
     }
     TolbiShipInteriors_MoveCameraAndWait(PIXELS(448), PIXELS(32), PIXELS(624),
-                                         0x1000001);
+                                         SHIP_CAMERA_RECENTER_LAYERS |
+                                             SHIP_CAMERA_JUMP);
     if (opt == 0) {
       break;
     }
@@ -3823,7 +3886,9 @@ static void TolbiShipInteriors_ReportMonstersBelowdecks(void) {
   struct ObjectEvent *objectEvent;
   s32 message;
 
-  TolbiShipInteriors_MoveCameraAndWait(PIXELS(440), -1, PIXELS(176), 0x1000001);
+  TolbiShipInteriors_MoveCameraAndWait(PIXELS(440), -1, PIXELS(176),
+                                       SHIP_CAMERA_RECENTER_LAYERS |
+                                           SHIP_CAMERA_JUMP);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(440), PIXELS(134));
   FieldScript_StartScreenTransition();
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
@@ -3868,14 +3933,14 @@ static void TolbiShipInteriors_ReportMonstersBelowdecks(void) {
   TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY, FACING_SOUTH, 20);
   FieldCamera_SetSpeed(PIXELS(18) / 5, PIXELS(9) / 20);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(440), -1, PIXELS(320),
-                                       0x10000014);
+                                       SHIP_CAMERA_WAIT_FOR_ARRIVAL | 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_ROWING_CREWMAN, 2);
   TolbiShipInteriors_Turn(LOCALID_ROWING_CREWMAN, FACING_NORTH + FACING_STEP);
   FieldScript_SetMessageId(message + 1);
   TolbiShipInteriors_Say(LOCALID_ROWING_CREWMAN);
   ObjectEvent_FaceDirection(LOCALID_ROWING_CREWMAN, FACING_EAST, 20);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(440), -1, PIXELS(134),
-                                       0x10000000);
+                                       SHIP_CAMERA_WAIT_FOR_ARRIVAL);
   ObjectEvent_SetActionScript(LOCALID_GARET,
                               gTolbiShipInteriors_FollowersRejoinByStairs);
   ObjectEvent_SetActionScript(LOCALID_IVAN,
@@ -3902,7 +3967,9 @@ static void TolbiShipInteriors_ReactToMonsterAttack(void) {
   TolbiShipInteriors_PlaceObjectEvent(LOCALID_ROWING_FIRST_OARSMAN, 454, 248,
                                       FACING_SOUTHEAST + FACING_STEP);
   Import_ObjectEventSetAnimation(LOCALID_ROWING_FIRST_OARSMAN, 6);
-  TolbiShipInteriors_MoveCameraAndWait(PIXELS(440), -1, PIXELS(308), 0x1000001);
+  TolbiShipInteriors_MoveCameraAndWait(PIXELS(440), -1, PIXELS(308),
+                                       SHIP_CAMERA_RECENTER_LAYERS |
+                                           SHIP_CAMERA_JUMP);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(20);
@@ -4074,7 +4141,9 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   objectEvent = ObjectEvent_GetById(LOCALID_ROWING_KAJA);
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   TolbiShipInteriors_InstallRowingDeckObjectEvents(16);
-  TolbiShipInteriors_MoveCameraAndWait(PIXELS(438), -1, PIXELS(174), 0x1000001);
+  TolbiShipInteriors_MoveCameraAndWait(PIXELS(438), -1, PIXELS(174),
+                                       SHIP_CAMERA_RECENTER_LAYERS |
+                                           SHIP_CAMERA_JUMP);
   TolbiShipInteriors_RunSceneCommand(SHIP_OPEN_SCREEN, 1, 20);
   Script_PlaySong(MUS_SILENCE);
   Script_PlaySong(SE_BOOM);
@@ -4256,7 +4325,9 @@ static void TolbiShipInteriors_ReachIsland(void) {
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   TolbiShipInteriors_InstallRowingDeckObjectEvents(16);
   Import_ObjectEventSetAnimation(LOCALID_ROWING_DRUMMER, 5);
-  TolbiShipInteriors_MoveCameraAndWait(PIXELS(438), -1, PIXELS(174), 0x1000001);
+  TolbiShipInteriors_MoveCameraAndWait(PIXELS(438), -1, PIXELS(174),
+                                       SHIP_CAMERA_RECENTER_LAYERS |
+                                           SHIP_CAMERA_JUMP);
   TolbiShipInteriors_RunSceneCommand(SHIP_OPEN_SCREEN, 1, 20);
   ObjectEvent_ConfigureSpriteColor(LOCALID_ROWING_KAJA, SPRITE_COLOR_NORMAL);
   objectEvent = ObjectEvent_GetById(LOCALID_ROWING_KAJA);

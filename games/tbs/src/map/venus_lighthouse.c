@@ -1651,6 +1651,8 @@ static void EventScript_FallThroughFloor(void) {
 #if TBS_PATCH_3
   *motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
 #endif
+  // XXX: likely the leader's object event was meant, because the fall set up
+  // above is his; a null pointer reads velocityY from the BIOS instead.
   ObjectEvent_WaitUntilIdle(0);
   ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Import_ScriptRequestWarp(
@@ -2702,7 +2704,7 @@ static void EventScript_EnterRisingPassage(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 10);
   (void)VenusLighthouse_CreateBlendedPassageEffect(PIXELS(520), 0, PIXELS(784),
                                                    SPRITE_CRATE);
-  FieldObjectEvent_JumpDownLedge(0, 6, 0);
+  FieldObjectEvent_JumpDownLedge(LOCALID_PARTY_LEADER, 6, 0);
   FieldScript_WaitFrames(60);
   Import_ScriptRequestWarp(
       VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_TO_WALL_SWITCHES_RISING);
@@ -3141,14 +3143,14 @@ s32 VenusLighthouse_Initialize(void) {
         objectEvent->motionFlags = 0;
         objectEvent->y.fixed = -PIXELS(48);
         objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
-        objectEvent->collisionFlags &= 0xfe;
+        objectEvent->collisionFlags &= ~OBJ_EVENT_SOLID;
         objectEvent->timer = 3;
         ObjectMotion_SetActionVariant(LOCALID_BALANCE_WEST, 1);
         objectEvent = ObjectEvent_GetById(LOCALID_BALANCE_EAST);
         objectEvent->motionFlags = 0;
         objectEvent->y.fixed = -PIXELS(48);
         objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
-        objectEvent->collisionFlags &= 0xfe;
+        objectEvent->collisionFlags &= ~OBJ_EVENT_SOLID;
         objectEvent->timer = 3;
         ObjectMotion_SetActionVariant(LOCALID_BALANCE_EAST, 1);
         objectEvent = ObjectEvent_GetById(LOCALID_FIRST_FLOATING_PILLAR);

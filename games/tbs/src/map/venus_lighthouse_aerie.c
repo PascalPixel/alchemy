@@ -574,7 +574,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Sound_PlaySong(SE_STOP_ACTION_SE);
   FieldScript_WaitFrames(20);
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_SPRING);
-  ObjectMotion_WaitForAnimationChange(0);
+  ObjectMotion_WaitForAnimationChange(LOCALID_PARTY_LEADER);
   leader->x.fixed = PIXELS(516);
   leader->y.fixed = PIXELS(8);
   leader->z.fixed = PIXELS(148);
@@ -1672,7 +1672,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   // Let the group react as the Venus Star reaches the beacon.
   VenusLighthouseAerie_ShowGroupEmote(EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   ObjectEvent_SetSpritePriority(LOCALID_FELIX, 1);
-  ObjectEvent_Get(LOCALID_FELIX)->priorityFlags |= 1;
+  ObjectEvent_Get(LOCALID_FELIX)->priorityFlags |= OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectEvent_StartRepeatedMotion(LOCALID_IVAN, 2);
   VenusLighthouseAerie_ShowMessage(LOCALID_IVAN);
   ObjectEvent_RunRepeatedMotion(LOCALID_MIA, 1);

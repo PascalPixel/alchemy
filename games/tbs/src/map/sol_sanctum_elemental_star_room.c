@@ -1795,7 +1795,8 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   FieldCamera_SetSpeed(PIXELS(8), PIXELS(1));
   // Tour the four pedestals, returning the view to the party after each.
   SolSanctumElementalStarRoom_ShowPedestal(PIXELS(711), PIXELS(464), 589, 353,
-                                           0x1009);
+                                           SPEAKER_PORTRAIT_LEFT |
+                                               LOCALID_KRADEN);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 3);
   FieldScript_WaitFrames(10);
@@ -1804,7 +1805,8 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHEAST, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 20);
   SolSanctumElementalStarRoom_ShowPedestal(PIXELS(711), PIXELS(147), 596, 238,
-                                           0x1009);
+                                           SPEAKER_PORTRAIT_LEFT |
+                                               LOCALID_KRADEN);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
   FieldScript_WaitFrames(10);
@@ -1817,7 +1819,8 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 20);
   SolSanctumElementalStarRoom_ShowPedestal(PIXELS(231), PIXELS(147), 308, 250,
-                                           0x2009);
+                                           SPEAKER_PORTRAIT_RIGHT |
+                                               LOCALID_KRADEN);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 3);
   FieldScript_WaitFrames(10);
@@ -1830,7 +1833,8 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_SOUTHWEST, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 20);
   SolSanctumElementalStarRoom_ShowPedestal(PIXELS(231), PIXELS(464), 306, 362,
-                                           0x2009);
+                                           SPEAKER_PORTRAIT_RIGHT |
+                                               LOCALID_KRADEN);
   FieldScript_WaitFrames(30);
   ObjectEvent_ShowEmote(LOCALID_KRADEN, EMOTE_IN_FRONT | EMOTE_HEART, 60);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);

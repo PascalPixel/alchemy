@@ -52,7 +52,9 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   Object_SelectAnimation(objectEvent, 0);
   Object_SelectAnimation(objectEvent, 1);
   Import_ObjectEventSetPosition(id, x << 16, z << 16);
-  ObjectMotion_SetAngleToward(0, 0x4000, 0);
+  // BUG: FACING_SOUTH is passed where a local id belongs; no object event has
+  // it, so the leader does not turn.
+  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
                       BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 |
                           BLDCNT_TGT2_BG3,

@@ -479,7 +479,7 @@ static void EventScript_HopDownStep(void) {
 
   SCRIPT_START();
   Object_SelectAnimation(leader, ANIM_LEADER_SPRING);
-  ObjectMotion_WaitForAnimationChange(0);
+  ObjectMotion_WaitForAnimationChange(LOCALID_PARTY_LEADER);
   Object_SelectAnimation(leader, 1);
   ObjectEvent_SetSpriteFlags(leader, 0);
   leader->motionFlags |= OBJ_EVENT_FALLS;
@@ -670,7 +670,8 @@ static void EventScript_BlowAwayIvyA(void) {
   GameFlag_Set(FLAG_MAP_TEMP_00);
   if (GameFlag_Get(FLAG_MAP_TEMP_01) != 0) {
     ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->riseCounter = 0;
-    ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->collisionFlags &= 0xf7;
+    ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->collisionFlags &=
+        ~OBJ_EVENT_NOT_TARGETED;
   } else {
     ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->riseCounter = 1;
     flags = &ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->collisionFlags;
@@ -689,7 +690,8 @@ static void EventScript_BlowAwayIvyB(void) {
   GameFlag_Set(FLAG_MAP_TEMP_01);
   if (GameFlag_Get(FLAG_MAP_TEMP_00) != 0) {
     ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->riseCounter = 0;
-    ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->collisionFlags &= 0xf7;
+    ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->collisionFlags &=
+        ~OBJ_EVENT_NOT_TARGETED;
   } else {
     ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->riseCounter = 1;
     flags = &ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->collisionFlags;
@@ -1748,8 +1750,10 @@ s32 TunnelRuins_Initialize(void) {
             OBJ_EVENT_PRIORITY_UNDERFOOT;
         ObjectEvent_GetById(LOCALID_BALANCE_EAST)->priorityFlags |=
             OBJ_EVENT_PRIORITY_UNDERFOOT;
-        ObjectEvent_GetById(LOCALID_BALANCE_WEST)->collisionFlags &= 0xfe;
-        ObjectEvent_GetById(LOCALID_BALANCE_EAST)->collisionFlags &= 0xfe;
+        ObjectEvent_GetById(LOCALID_BALANCE_WEST)->collisionFlags &=
+            ~OBJ_EVENT_SOLID;
+        ObjectEvent_GetById(LOCALID_BALANCE_EAST)->collisionFlags &=
+            ~OBJ_EVENT_SOLID;
         ObjectEvent_GetById(LOCALID_BALANCE_WEST)->timer = 3;
         ObjectEvent_GetById(LOCALID_BALANCE_EAST)->timer = 3;
         ObjectMotion_SetActionVariant(LOCALID_BALANCE_WEST, 1);

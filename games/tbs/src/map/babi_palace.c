@@ -1876,7 +1876,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Script_Wait(20);
-  ObjectEvent_FaceEachOther(LOCALID_BABI, 20, 40);
+  ObjectEvent_FaceEachOther(LOCALID_BABI, LOCALID_IODEM, 40);
   ObjectEvent_RunRepeatedMotion(LOCALID_BABI, 2);
   Script_Wait(20);
   Script_ShowMessage(LOCALID_BABI, 0);
@@ -1986,7 +1986,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Script_Wait(10);
-  ObjectEvent_FaceEachOther(LOCALID_BABI, 20, 30);
+  ObjectEvent_FaceEachOther(LOCALID_BABI, LOCALID_IODEM, 30);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
   ObjectEvent_SetAnimationAndWait(LOCALID_BABI, ANIM_SHAKE_HEAD);
@@ -2121,7 +2121,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_Wait(20);
   Script_ShowMessage(LOCALID_IVAN, 0);
   Script_Wait(10);
-  ObjectEvent_FaceEachOther(LOCALID_IODEM, 14, 60);
+  ObjectEvent_FaceEachOther(LOCALID_IODEM, LOCALID_BABI, 60);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTHEAST, 0);
   ObjectEvent_FaceDirection(LOCALID_BABI, FACING_SOUTH, 0);
   Script_Wait(30);
@@ -2254,10 +2254,10 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTHEAST, 0);
   Script_Wait(20);
   // The party tracks each departing speaker before gathering back together.
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_PARTY_LEADER, 20);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, 20);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_MIA, 20);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, 20);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_PARTY_LEADER, LOCALID_IODEM);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, LOCALID_IODEM);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_MIA, LOCALID_IODEM);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, LOCALID_IODEM);
   ObjectEvent_SetSpeed(LOCALID_IODEM, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkByAndWait(LOCALID_IODEM, 0, 32);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_EAST, 0);
@@ -2281,10 +2281,10 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
   Script_Wait(30);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_PARTY_LEADER, 14);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, 14);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_MIA, 14);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, 14);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_PARTY_LEADER, LOCALID_BABI);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, LOCALID_BABI);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_MIA, LOCALID_BABI);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, LOCALID_BABI);
   Script_Wait(30);
   ObjectEvent_SetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
   Script_Wait(30);

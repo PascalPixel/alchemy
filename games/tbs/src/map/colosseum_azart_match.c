@@ -689,15 +689,15 @@ static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
   FieldScript_Start();
   ObjectEvent_SetPosition(LOCALID_OPPONENT, PIXELS(1320), PIXELS(192));
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(1288), PIXELS(192));
-  // BUG: 0x4000 is FACING_SOUTH, passed where ObjectEvent_FaceObjectEvent takes
-  // a local id; ObjectEvent_GetByLocalId has no object event past 0xbf, so
+  // BUG: FACING_SOUTH is passed where ObjectEvent_FaceObjectEvent takes a
+  // local id; ObjectEvent_GetByLocalId has no object event past 0xbf, so
   // neither turns.
 #ifdef BUGFIX
   ObjectEvent_FaceDirection(LOCALID_OPPONENT, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
 #else
-  ObjectEvent_FaceObjectEvent(LOCALID_OPPONENT, 0x4000, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, 0x4000, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_OPPONENT, FACING_SOUTH, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
 #endif
   if (result < 0) {
     Import_ObjectEventSetAnimation(LOCALID_OPPONENT,
@@ -935,7 +935,9 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
       FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(1240), -1, PIXELS(168), 1);
       FieldCamera_WaitForArrival();
-      ObjectEvent_FaceObjectEvent(guide, 0x6000, 0);
+      // BUG: FACING_SOUTHWEST is passed where a local id belongs; no object
+      // event has it, so the guide does not turn.
+      ObjectEvent_FaceObjectEvent(guide, FACING_SOUTHWEST, 0);
       Script_ShowMessage(guide, 0);
       FieldCamera_MoveTo(PIXELS(1304), -1, PIXELS(168), 1);
       FieldCamera_WaitForArrival();
@@ -1257,6 +1259,9 @@ static __inline__ void AdvanceMessage(s32 amount) {
   gFieldWork->message += amount;
 }
 
+// This map's warps for colosso_solo.h.
+#define COLOSSO_SOLO_TO_RACE COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE
+#define COLOSSO_SOLO_TO_COLOSSEUM COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_WEST
 #include "common/colosso_solo.h"
 #include "common/item_equip.h"
 #include "common/colosso_task.h"

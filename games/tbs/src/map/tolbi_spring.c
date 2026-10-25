@@ -1495,7 +1495,8 @@ static s32 TolbiSpring_RunToss(s32 tossKind) {
     }
     // Release the token on the leader's throw frame.
     if (sTossFrame == 16) {
-      Import_ObjectEventSetAnimation(gSaveBlock.leaderLocalId, 29);
+      Import_ObjectEventSetAnimation(gSaveBlock.leaderLocalId,
+                                     ANIM_LEADER_TOSS);
       toss->launchFrame = 0;
       toss->velocity.x = 13 * PIXELS(1) / 10;
       toss->velocity.y = PIXELS(4);

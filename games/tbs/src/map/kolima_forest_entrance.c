@@ -426,13 +426,13 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_COLLAPSE);
     FieldScript_WaitFrames(10);
   }
-  record = ObjectEvent_GetById(0);
+  record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   record->velocityY = PIXELS(2);
   FieldScript_WaitFrames(10);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(2));
   restoreScaleAction = gKolimaForestEntrance_RestoreScaleAction;
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, restoreScaleAction);
-  record = ObjectEvent_GetById(0);
+  record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   ObjectEvent_SetSpriteFlags(record, 0);
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_COLLAPSE);
   FieldScript_WaitFrames(20);
@@ -497,10 +497,14 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     gFieldWork->message += 1;
   }
   gFallingEffectState = KOLIMA_DUST_DRIFTING;
-  ObjectEvent_GetById(0)->priorityFlags &= 254;
-  ObjectEvent_GetById(LOCALID_GARET)->priorityFlags &= 254;
-  ObjectEvent_GetById(LOCALID_IVAN)->priorityFlags &= 254;
-  ObjectEvent_GetById(LOCALID_MIA)->priorityFlags &= 254;
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectEvent_GetById(LOCALID_GARET)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectEvent_GetById(LOCALID_IVAN)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectEvent_GetById(LOCALID_MIA)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 3);
   ObjectMotion_SetActionVariant(LOCALID_GARET, 3);
   ObjectMotion_SetActionVariant(LOCALID_IVAN, 3);
@@ -509,25 +513,29 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   FieldScheduler_AddCallback(KolimaForestEntrance_FlickerPsynergyFields,
                              TASK_PRIORITY_MAP);
   Script_PlaySong(SE_SHIMMER);
-  ObjectEvent_GetById(LOCALID_LEADER_PSYNERGY_FIELD)->priorityFlags &= 254;
+  ObjectEvent_GetById(LOCALID_LEADER_PSYNERGY_FIELD)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectMotion_SetActionVariant(LOCALID_LEADER_PSYNERGY_FIELD, 2);
   ObjectEvent_SetPosition(LOCALID_LEADER_PSYNERGY_FIELD, PIXELS(253),
                           PIXELS(603));
   growFieldAction = gKolimaForestEntrance_PsynergyFieldGrowAction;
   ObjectEvent_SetActionScript(LOCALID_LEADER_PSYNERGY_FIELD, growFieldAction);
-  ObjectEvent_GetById(LOCALID_IVAN_PSYNERGY_FIELD)->priorityFlags &= 254;
+  ObjectEvent_GetById(LOCALID_IVAN_PSYNERGY_FIELD)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectMotion_SetActionVariant(LOCALID_IVAN_PSYNERGY_FIELD, 2);
   ObjectEvent_SetPosition(LOCALID_IVAN_PSYNERGY_FIELD, PIXELS(233),
                           PIXELS(629));
   ObjectEvent_SetActionScript(LOCALID_IVAN_PSYNERGY_FIELD, growFieldAction);
   if (gKolimaForestEntrance_MiaInParty != 0) {
-    ObjectEvent_GetById(LOCALID_MIA_PSYNERGY_FIELD)->priorityFlags &= 254;
+    ObjectEvent_GetById(LOCALID_MIA_PSYNERGY_FIELD)->priorityFlags &=
+        ~OBJ_EVENT_PRIORITY_AUTOMATIC;
     ObjectMotion_SetActionVariant(LOCALID_MIA_PSYNERGY_FIELD, 2);
     ObjectEvent_SetPosition(LOCALID_MIA_PSYNERGY_FIELD, PIXELS(207),
                             PIXELS(609));
     ObjectEvent_SetActionScript(LOCALID_MIA_PSYNERGY_FIELD, growFieldAction);
   }
-  ObjectEvent_GetById(LOCALID_GARET_PSYNERGY_FIELD)->priorityFlags &= 254;
+  ObjectEvent_GetById(LOCALID_GARET_PSYNERGY_FIELD)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectMotion_SetActionVariant(LOCALID_GARET_PSYNERGY_FIELD, 2);
   ObjectEvent_SetPosition(LOCALID_GARET_PSYNERGY_FIELD, PIXELS(227),
                           PIXELS(580));
@@ -588,7 +596,8 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 3);
   FieldScript_WaitFrames(40);
   ObjectMotion_SetActionVariant(LOCALID_GARET, 2);
-  ObjectEvent_GetById(LOCALID_GARET)->priorityFlags |= 1;
+  ObjectEvent_GetById(LOCALID_GARET)->priorityFlags |=
+      OBJ_EVENT_PRIORITY_AUTOMATIC;
   record = ObjectEvent_GetById(LOCALID_GARET);
   ObjectEvent_SetSpriteFlags(record, 1);
   ObjectMotion_Launch(LOCALID_GARET, 6, 0);
@@ -624,7 +633,8 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
     FieldScript_WaitFrames(80);
     ObjectMotion_SetActionVariant(LOCALID_MIA, 2);
-    ObjectEvent_GetById(LOCALID_MIA)->priorityFlags |= 1;
+    ObjectEvent_GetById(LOCALID_MIA)->priorityFlags |=
+        OBJ_EVENT_PRIORITY_AUTOMATIC;
     record = ObjectEvent_GetById(LOCALID_MIA);
     ObjectEvent_SetSpriteFlags(record, 1);
     ObjectMotion_Launch(LOCALID_MIA, 4, 0);
@@ -651,7 +661,8 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetActionVariant(LOCALID_IVAN, 2);
-  ObjectEvent_GetById(LOCALID_IVAN)->priorityFlags |= 1;
+  ObjectEvent_GetById(LOCALID_IVAN)->priorityFlags |=
+      OBJ_EVENT_PRIORITY_AUTOMATIC;
   record = ObjectEvent_GetById(LOCALID_IVAN);
   ObjectEvent_SetSpriteFlags(record, 1);
   ObjectMotion_Launch(LOCALID_IVAN, 4, 0);
@@ -660,8 +671,9 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 2);
-  ObjectEvent_GetById(0)->priorityFlags |= 1;
-  record = ObjectEvent_GetById(0);
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags |=
+      OBJ_EVENT_PRIORITY_AUTOMATIC;
+  record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   ObjectEvent_SetSpriteFlags(record, 1);
   ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 0);
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
@@ -792,10 +804,14 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   if (gKolimaForestEntrance_MiaInParty != 0) {
     KolimaForestEntrance_FaceObjectEventAndWait(LOCALID_MIA, FACING_NORTH, 10);
   }
-  ObjectEvent_GetById(0)->priorityFlags &= 254;
-  ObjectEvent_GetById(LOCALID_GARET)->priorityFlags &= 254;
-  ObjectEvent_GetById(LOCALID_IVAN)->priorityFlags &= 254;
-  ObjectEvent_GetById(LOCALID_MIA)->priorityFlags &= 254;
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectEvent_GetById(LOCALID_GARET)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectEvent_GetById(LOCALID_IVAN)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectEvent_GetById(LOCALID_MIA)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 3);
   ObjectMotion_SetActionVariant(LOCALID_GARET, 3);
   ObjectMotion_SetActionVariant(LOCALID_IVAN, 3);
@@ -943,10 +959,14 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   ObjectMotion_SetActionVariant(LOCALID_GARET, 2);
   ObjectMotion_SetActionVariant(LOCALID_IVAN, 2);
   ObjectMotion_SetActionVariant(LOCALID_MIA, 2);
-  ObjectEvent_GetById(0)->priorityFlags |= 1;
-  ObjectEvent_GetById(LOCALID_GARET)->priorityFlags |= 1;
-  ObjectEvent_GetById(LOCALID_IVAN)->priorityFlags |= 1;
-  ObjectEvent_GetById(LOCALID_MIA)->priorityFlags |= 1;
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags |=
+      OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectEvent_GetById(LOCALID_GARET)->priorityFlags |=
+      OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectEvent_GetById(LOCALID_IVAN)->priorityFlags |=
+      OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectEvent_GetById(LOCALID_MIA)->priorityFlags |=
+      OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
   KolimaForestEntrance_FaceObjectEventAndWait(LOCALID_IVAN, FACING_NORTHEAST,
                                               10);

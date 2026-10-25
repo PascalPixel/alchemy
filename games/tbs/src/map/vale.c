@@ -848,7 +848,8 @@ static void EventScript_TurnBackFromThePuppies(void) {
 static void EventScript_ClimbLadderOntoRoof(void) {
   FieldScript_Start();
   MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
-  Vale_MoveObjectEventAlongLowerZPath(LOCALID_PARTY_LEADER, 10, 11, 1);
+  Vale_MoveObjectEventAlongLowerZPath(LOCALID_PARTY_LEADER, ANIM_LEADER_CLIMB,
+                                      ANIM_LEADER_CLIMB_OVER_TOP, 1);
   GameFlag_Set(FLAG_VALE_ON_ROOF);
   FieldScript_End();
 }
@@ -858,7 +859,9 @@ static void EventScript_ClimbLadderOntoRoof(void) {
 /// cells are put back (FLAG_VALE_ON_ROOF cleared).
 static void EventScript_ClimbDownFromRoof(void) {
   FieldScript_Start();
-  Vale_MoveObjectEventAlongHigherZPath(LOCALID_PARTY_LEADER, 13, 10, 1);
+  Vale_MoveObjectEventAlongHigherZPath(LOCALID_PARTY_LEADER,
+                                       ANIM_LEADER_CLIMB_DOWN_FROM_TOP,
+                                       ANIM_LEADER_CLIMB, 1);
   GameFlag_Clear(FLAG_VALE_ON_ROOF);
   MapGrid_CopyCellAttributes(49, 46, 8, 4, 20, 50);
   FieldScript_End();
@@ -1241,7 +1244,8 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   ObjectEvent_WalkTo(LOCALID_GARET, 369, 904);
   ObjectEvent_WalkToAndWait(LOCALID_JENNA, 392, 904);
   Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
-  Vale_MoveObjectEventAlongLowerZPath(LOCALID_JENNA, 10, 11, 0);
+  Vale_MoveObjectEventAlongLowerZPath(LOCALID_JENNA, ANIM_LEADER_CLIMB,
+                                      ANIM_LEADER_CLIMB_OVER_TOP, 0);
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST, 0);
   Script_ShowMessageAndWait(LOCALID_JENNA, 0, 10);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
@@ -1264,7 +1268,8 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 20);
-  Vale_MoveObjectEventAlongLowerZPath(LOCALID_GARET, 10, 11, 0);
+  Vale_MoveObjectEventAlongLowerZPath(LOCALID_GARET, ANIM_LEADER_CLIMB,
+                                      ANIM_LEADER_CLIMB_OVER_TOP, 0);
   ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(3) / 10, PIXELS(3) / 20);
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(3) / 10, PIXELS(3) / 20);
   ObjectEvent_WalkTo(LOCALID_GARET, 392, 843);
@@ -1565,7 +1570,9 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
   FieldScript_PrepareTwoObjectsAndApply(GARET, JENNA);
   FieldCamera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(887), 1);
-  Vale_MoveObjectEventAlongHigherZPath(LOCALID_PARTY_LEADER, 13, 10, 0);
+  Vale_MoveObjectEventAlongHigherZPath(LOCALID_PARTY_LEADER,
+                                       ANIM_LEADER_CLIMB_DOWN_FROM_TOP,
+                                       ANIM_LEADER_CLIMB, 0);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 376, 912);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_Get(LOCALID_DORA)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
@@ -2683,7 +2690,8 @@ static void EventScript_RoofMended(void) {
   ObjectEvent_WalkTo(LOCALID_GARET, 369, 904);
   ObjectEvent_WalkToAndWait(LOCALID_JENNA, 392, 904);
   Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
-  Vale_MoveObjectEventAlongLowerZPath(LOCALID_JENNA, 10, 11, 0);
+  Vale_MoveObjectEventAlongLowerZPath(LOCALID_JENNA, ANIM_LEADER_CLIMB,
+                                      ANIM_LEADER_CLIMB_OVER_TOP, 0);
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST, 0);
   Script_ShowMessageAndWait(LOCALID_JENNA, 0, 10);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
@@ -2704,7 +2712,8 @@ static void EventScript_RoofMended(void) {
   Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 20);
-  Vale_MoveObjectEventAlongLowerZPath(LOCALID_GARET, 10, 11, 0);
+  Vale_MoveObjectEventAlongLowerZPath(LOCALID_GARET, ANIM_LEADER_CLIMB,
+                                      ANIM_LEADER_CLIMB_OVER_TOP, 0);
   ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(3) / 10, PIXELS(3) / 20);
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(3) / 10, PIXELS(3) / 20);
   ObjectEvent_WalkTo(LOCALID_GARET, 392, 843);
@@ -2811,7 +2820,7 @@ static void EventScript_RoofMended(void) {
   Script_PlaySong(SE_RATTLE);
   objectEvent = ObjectEvent_Get(LOCALID_DORA);
   objectEvent->sprite->flags = none;
-  objectEvent->steeringFlags &= 0xfe;
+  objectEvent->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_SetSpeed(LOCALID_DORA, PIXELS(3), PIXELS(3) / 2);
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 364, 815);
   FieldScript_WaitFrames(4);
@@ -2869,7 +2878,7 @@ static void EventScript_RoofMended(void) {
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_SOUTH, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
-  objectEvent->priorityFlags &= 0xfe;
+  objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 80);
   ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_EAST, 60);
@@ -3007,7 +3016,9 @@ static void EventScript_RoofMended(void) {
   ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
   FieldScript_PrepareTwoObjectsAndApply(GARET, JENNA);
   FieldCamera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(887), 1);
-  Vale_MoveObjectEventAlongHigherZPath(LOCALID_PARTY_LEADER, 13, 10, 0);
+  Vale_MoveObjectEventAlongHigherZPath(LOCALID_PARTY_LEADER,
+                                       ANIM_LEADER_CLIMB_DOWN_FROM_TOP,
+                                       ANIM_LEADER_CLIMB, 0);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 376, 912);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   {

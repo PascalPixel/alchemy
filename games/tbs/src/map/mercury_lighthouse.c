@@ -2728,7 +2728,8 @@ s32 MercuryLighthouse_Initialize(void) {
         Import_ObjectEventSetPosition(LOCALID_MIA, 0, 0);
         ObjectEvent_SetPosition(LOCALID_DOOR_STATUE, PIXELS(824), PIXELS(600));
         MapGrid_CopyCellAttributes(116, 36, 3, 4, 52, 36);
-        ObjectEvent_GetById(LOCALID_DOOR_STATUE)->collisionFlags = 254;
+        ObjectEvent_GetById(LOCALID_DOOR_STATUE)->collisionFlags =
+            0xff & ~OBJ_EVENT_SOLID;
         FieldScript_WaitFrames(1);
       }
       ObjectEvent_GetById(LOCALID_DOOR_STATUE)->motionFlags = 0;

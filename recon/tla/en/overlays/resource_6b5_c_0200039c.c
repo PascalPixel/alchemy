@@ -1,5 +1,5 @@
 // Draft of overlay 6b5's Func_0200039c, translated from its listing: differ
-// 313 of 185. Left: its shape: 224 instructions against the listing's 185.
+// 300 of 185. Left: its shape: 237 instructions against the listing's 185.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -19,14 +19,15 @@ s32 WaitFrames();
 extern u8 gLinkStatus[];
 extern u8 gSerialReceivedSize[];
 
-s32 Func_0200039c(void) {
+s32 Func_0200039c(s32 p0, s32 p1, s32 p2, s32 p3) {
   s32 sp_[1];
   s32 v_r8, v_r9, v_r3, v_r10, v_r7, v_r11, v_r5, v_r6, v_r1, v_r2;
   s32 v_r4, v_r0, t0, t1, t3, t4, t5, t6, t9, t10;
   s32 t11, t12, t13, t14, t15, t16, t18, t19, t20, t23;
   s32 t24, t25;
 
-  t0 = Value1((s32 (*)())Runtime_BumpAllocateAlternatePool, 0x154);
+  t0 = Value4((s32 (*)())Runtime_BumpAllocateAlternatePool, 0x154, p1, 0x154,
+              p3);
   v_r11 = 0x154;
   v_r7 = 0;
   v_r10 = 0x384;
@@ -42,7 +43,7 @@ L_020083c8:
   goto L_020084de;
 L_020083d0:
   Call1((void (*)())WaitFrames, 1);
-  v_r10 = (v_r10 + -1);
+  v_r10 = (v_r10 - 1);
   v_r3 = -1;
   v_r2 = v_r10;
   if (v_r2 < 0)
@@ -65,14 +66,14 @@ L_020083f4:
   v_r3 = t5;
   if (v_r3 != v_r11)
     goto L_020084de;
-  t6 = *(u8 *)(v_r6 + 0x12a);
+  t6 = FIELD_AT(v_r6, u8, 298);
   if (t6 == 0)
     goto L_02008414;
   v_r7 = (v_r7 + 1);
 L_02008414:
   Call1((void (*)())WaitFrames, 2);
   Call2((void (*)())Ui_AdjustValueWithoutLimit, 0xc58, (s32)sp_);
-  t9 = FIELD_AT(sp_, u16, 0);
+  t9 = *(u16 *)sp_;
   v_r2 = (s32)sp_;
   v_r1 = 0;
   if (t9 == v_r1)
@@ -120,7 +121,7 @@ L_0200847a:
   v_r2 = v_r8;
   if (v_r2 > 2)
     goto L_020084ec;
-  t14 = Value1((s32 (*)())Unit_Get, (v_r8 + 128));
+  t14 = Value4((s32 (*)())Unit_Get, (v_r8 + 128), v_r1, v_r2, v_r3);
   t15 = Value1((s32 (*)())SerialRuntime_StartReceive, t14);
   v_r3 = -1;
   v_r0 = t15;
@@ -136,7 +137,7 @@ L_0200849a:
   if (v_r3 > v_r2)
     goto L_020084de;
   Call1((void (*)())WaitFrames, 1);
-  v_r10 = (v_r10 + -1);
+  v_r10 = (v_r10 - 1);
   v_r3 = -1;
   v_r2 = v_r10;
   if (v_r2 < 0)
@@ -167,7 +168,7 @@ L_020084e4:
   goto L_02008516;
 L_020084ec:
   Call4((void (*)())MemFree, v_r9, v_r1, v_r2, v_r3);
-  t23 = Value1((s32 (*)())Runtime_BumpAllocateAlternatePool, 0x154);
+  t23 = Runtime_BumpAllocateAlternatePool(0x154, 0, 0x154, 0);
   t24 = Value1((s32 (*)())Djinn_GetRecoveryTable, 1);
   t25 = Value1((s32 (*)())SerialRuntime_StartReceive, t24);
   v_r3 = -1;

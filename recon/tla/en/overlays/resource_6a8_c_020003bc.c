@@ -1,5 +1,5 @@
 // Draft of overlay 6a8's Func_020003bc, translated from its listing: differ
-// 46 of 85. Left: its shape: 79 instructions against the listing's 85.
+// 30 of 85. Left: instruction order and register choice.
 #include "types.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -20,7 +20,7 @@ s32 Func_020003bc(s32 p0) {
 
   t0 = FIELD_AT(0x3000000, s32, 60);
   t1 = FIELD_AT(0x3000000, s32, 108);
-  t2 = *(s32 *)((s32)gPartyState + 0x214);
+  t2 = FIELD_AT((s32)gPartyState, s32, 532);
   t3 = Object_GetById(t2);
   t4 = SceneActor_CalculateFixedPointDistance((t3 + 8), (p0 + 8));
   v_r10 = t0;
@@ -29,7 +29,7 @@ s32 Func_020003bc(s32 p0) {
   v_r5 = p0;
   if (t4 > 11)
     goto L_02008400;
-  *(u8 *)(v_r5 + 91) = v_r7;
+  FIELD_AT(v_r5, u8, 91) = v_r7;
   Func_020043c4(v_r5, 2);
   goto L_0200846a;
 L_02008400:
@@ -52,9 +52,9 @@ L_0200841a:
   t8 = Func_020002d8(v_r5, t7, 24, 0);
   if (t8 != 0)
     goto L_0200846a;
-  t9 = *(s32 *)((s32)gPartyState + 0x214);
+  t9 = FIELD_AT((s32)gPartyState, s32, 532);
   t10 = Object_GetById(t9);
-  t11 = *(s16 *)(0x160 + v_r8);
+  t11 = FIELD_AT(v_r8, s16, 352);
   v_r1 = t10;
   if (t11 != 0)
     goto L_02008454;

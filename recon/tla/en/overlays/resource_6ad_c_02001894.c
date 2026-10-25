@@ -1,5 +1,5 @@
 // Draft of overlay 6ad's Func_02001894, translated from its listing: differ
-// 172 of 197. Left: its shape: 183 instructions against the listing's 197.
+// 156 of 197. Left: its shape: 189 instructions against the listing's 197.
 #include "types.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -31,21 +31,21 @@ void Func_02001894(s32 p0) {
   s32 t35, t36, t37;
 
   t0 = FIELD_AT(0x3000000, s32, 108);
-  t1 = *(s32 *)((s32)gPartyState + 0x214);
+  t1 = FIELD_AT((s32)gPartyState, s32, 532);
   t2 = Object_GetById(t1);
-  t3 = *(s16 *)(0x166 + t0);
+  t3 = FIELD_AT(t0, s16, 358);
   v_r7 = t2;
   v_r10 = t0;
   v_r6 = p0;
   if (t3 != 0)
     goto L_020098f2;
-  t4 = *(s16 *)(0x15a + v_r10);
+  t4 = FIELD_AT(v_r10, s16, 346);
   if (t4 != 0)
     goto L_020098f2;
-  t5 = *(s16 *)(0x15e + v_r10);
+  t5 = FIELD_AT(v_r10, s16, 350);
   if (t5 != 0)
     goto L_020098f2;
-  t6 = *(s16 *)(0x168 + v_r10);
+  t6 = FIELD_AT(v_r10, s16, 360);
   if (t6 == 0)
     goto L_02009900;
 L_020098f2:
@@ -53,8 +53,8 @@ L_020098f2:
   goto L_02009a3e;
 L_02009900:
   ObjectDispatch_SetAnimationSpeed(v_r6, 16);
-  t9 = *(u16 *)(v_r6 + 100);
-  *(u16 *)(v_r6 + 100) = (t9 + 1);
+  t9 = FIELD_AT(v_r6, u16, 100);
+  FIELD_AT(v_r6, u16, 100) = (t9 + 1);
   if ((31 & (t9 + 1)) != 31)
     goto L_02009920;
   Func_020056c0(231);
@@ -70,20 +70,20 @@ L_02009920:
   if (t17 == 255)
     goto L_02009a22;
   t18 = FIELD_AT(v_r6, s32, 8);
-  FIELD_AT(sp_, s32, 0) = t18;
+  *(s32 *)sp_ = t18;
   t19 = FIELD_AT(v_r6, s32, 12);
   FIELD_AT(sp_, s32, 4) = t19;
   t20 = FIELD_AT(v_r6, s32, 16);
   FIELD_AT(sp_, s32, 8) = t20;
-  Func_02005658(((s32)sp_ + 0));
-  t22 = FIELD_AT(sp_, s32, 0);
+  Func_02005658((s32)sp_);
+  t22 = *(s32 *)sp_;
   v_r5 = t22;
   if (v_r5 > 0x1100000)
     goto L_02009a22;
   if (v_r5 < 0xffe00000)
     goto L_02009a22;
-  t23 = *(u8 *)(98 + v_r6);
-  v_r9 = (98 + v_r6);
+  t23 = FIELD_AT(v_r6, u8, 98);
+  v_r9 = (v_r6 + 98);
   if (t23 != 0)
     goto L_020099e8;
   t24 = FIELD_AT(v_r7, s32, 12);
@@ -111,12 +111,12 @@ L_020099a0:
   t28 = FIELD_AT(v_r6, u16, 6);
   FIELD_AT(v_r7, s32, 104) = v_r6;
   FIELD_AT(v_r7, u16, 6) = t28;
-  t29 = *(u8 *)(v_r7 + 35);
-  *(u8 *)(v_r7 + 35) = (254 & t29);
-  *(u16 *)(0x16a + v_r10) = 200;
-  *(u8 *)((s32)gPartyState + 0x212) = 0;
+  t29 = FIELD_AT(v_r7, u8, 35);
+  FIELD_AT(v_r7, u8, 35) = (254 & t29);
+  FIELD_AT(v_r10, u16, 362) = 200;
+  FIELD_AT((s32)gPartyState, u8, 530) = 0;
   *(u8 *)v_r9 = 1;
-  *(u8 *)(v_r6 + 99) = 1;
+  FIELD_AT(v_r6, u8, 99) = 1;
 L_020099e8:
   t30 = FIELD_AT(v_r6, u16, 6);
   t31 = Math_Cosine(t30);
@@ -134,7 +134,7 @@ L_02009a1c:
   FIELD_AT(v_r6, s32, 16) = (v_r3 + v_r0);
   goto L_02009a3e;
 L_02009a22:
-  *(u8 *)(v_r6 + 99) = 0;
+  FIELD_AT(v_r6, u8, 99) = 0;
   FIELD_AT(v_r6, s32, 108) = 0;
   Func_02005490(v_r6, (s32)gData_02007044);
   Func_020056c0(228);

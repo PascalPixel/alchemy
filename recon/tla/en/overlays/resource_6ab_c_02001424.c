@@ -1,5 +1,5 @@
 // Draft of overlay 6ab's Func_02001424, translated from its listing: differ
-// 94 of 91. Left: its shape: 95 instructions against the listing's 91.
+// 79 of 91. Left: its shape: 94 instructions against the listing's 91.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -46,11 +46,11 @@ L_0200946a:
   v_r5 = t5;
   if (v_r5 == 0)
     goto L_020094e8;
-  *(u8 *)(v_r5 + 92) = 2;
-  *(u8 *)(v_r5 + 85) = 0;
-  *(u16 *)((v_r5 + 85) + 15) = 0;
-  t6 = *(u8 *)(v_r5 + 35);
-  *(u8 *)(v_r5 + 35) = (254 & t6);
+  FIELD_AT(v_r5, u8, 92) = 2;
+  FIELD_AT(v_r5, u8, 85) = 0;
+  FIELD_AT(v_r5, u16, 100) = 0;
+  t6 = FIELD_AT(v_r5, u8, 35);
+  FIELD_AT(v_r5, u8, 35) = (254 & t6);
   t7 = FIELD_AT(v_r5, s32, 80);
   t8 = FIELD_AT(t7, u8, 9);
   FIELD_AT(t7, u8, 9) = ((-13 & t8) | 8);

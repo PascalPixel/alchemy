@@ -1,6 +1,7 @@
 // Draft of overlay 6ac's Func_02000934, translated from its listing: differ
-// 168 of 159. Left: its shape: 155 instructions against the listing's 159.
+// 149 of 159. Left: its shape: 164 instructions against the listing's 159.
 #include "types.h"
+#include "call.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -56,23 +57,23 @@ L_0200898c:
   v_r5 = (s32)gData_02003a80;
   if ((((v_r6 - 20) + ((u32)(v_r6 - 20) >> 31)) >> 1) != 0)
     goto L_020089d8;
-  Func_02003178(0, 125, 3, 3, 3, 3);
+  Call6((void (*)())Func_02003178, 0, 125, 3, 3, 17, 67);
   goto L_020089d8;
 L_020089d8:
   t2 = *(s16 *)v_r5;
   if (t2 != 1)
     goto L_020089f4;
-  Func_02003178(0, 125, 3, 3, 3, 3);
+  Call6((void (*)())Func_02003178, 0, 125, 3, 3, 8, 72);
 L_020089f4:
   t4 = *(s16 *)v_r5;
   if (t4 != 2)
     goto L_02008a10;
-  Func_02003178(0, 125, 3, 3, 3, 3);
+  Call6((void (*)())Func_02003178, 0, 125, 3, 3, 17, 72);
 L_02008a10:
   t6 = *(s16 *)v_r5;
   if (t6 != 3)
     goto L_02008a2c;
-  Func_02003178(0, 125, 3, 3, 3, 3);
+  Call6((void (*)())Func_02003178, 0, 125, 3, 3, 8, 67);
 L_02008a2c:
   t8 = *(u16 *)0x4000208;
   *(u16 *)0x4000208 = 0x4000208;
@@ -87,8 +88,8 @@ L_02008a2c:
   t10 = *(s16 *)(s32)Data_02003a7c;
   *(s32 *)(((((v_r3 << 1) + v_r3) << 2) + v_r4) + 4) =
       (t10 | ((16 - t10) << 8));
-  *(s32 *)((((((v_r3 << 1) + v_r3) << 2) + v_r4) + 4) + 4) = 0x4000052;
-  *(s32 *)(((((((v_r3 << 1) + v_r3) << 2) + v_r4) + 4) + 4) + 4) = 0x20000;
+  *(s32 *)(((((v_r3 << 1) + v_r3) << 2) + v_r4) + 8) = 0x4000052;
+  FIELD_AT(((((v_r3 << 1) + v_r3) << 2) + v_r4), s32, 12) = 0x20000;
 L_02008a68:
   *(u16 *)v_r0 = v_r5;
   t11 = *(u16 *)v_r0;
@@ -100,10 +101,10 @@ L_02008a68:
     goto L_02008a9a;
   *(u16 *)v_r4 = (v_r2 + 1);
   *(s32 *)(((((v_r2 << 1) + v_r2) << 2) + v_r4) + 4) = 0x3f42;
-  *(s32 *)((((((v_r2 << 1) + v_r2) << 2) + v_r4) + 4) + 4) = 0x4000050;
-  *(s32 *)(((((((v_r2 << 1) + v_r2) << 2) + v_r4) + 4) + 4) + 4) = 0x20000;
+  *(s32 *)(((((v_r2 << 1) + v_r2) << 2) + v_r4) + 8) = 0x4000050;
+  FIELD_AT(((((v_r2 << 1) + v_r2) << 2) + v_r4), s32, 12) = 0x20000;
 L_02008a9a:
   *(u16 *)v_r0 = v_r1;
-  Scheduler_AddOrUpdateCallback((s32)Func_0200055c, 0x480);
+  Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_0200055c, 0x480);
   return;
 }

@@ -1,5 +1,5 @@
 // Draft of overlay 6aa's Func_02002860, translated from its listing: differ
-// 60 of 138. Left: its shape: 132 instructions against the listing's 138.
+// 31 of 138. Left: its shape: 137 instructions against the listing's 138.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -37,31 +37,31 @@ void Func_02002860(void) {
   v_r5 = t0;
   if (t1 != 0)
     goto L_0200a88c;
-  t2 = *(s32 *)(v_r5 + 0x1ac);
+  t2 = FIELD_AT(v_r5, s32, 428);
   t3 = *(s32 *)(v_r5 + (v_r1 + 2));
   Call2((void (*)())Func_02004d50, t2, t3);
   *(u16 *)v_r6 = 1;
 L_0200a88c:
   Call1((void (*)())GameFlag_ClearBit, 0x106);
-  *(u16 *)(v_r5 + 0x166) = 0;
-  *(u16 *)(v_r5 + 0x15a) = 0;
-  *(u16 *)(v_r5 + 0x15e) = 0;
-  *(u16 *)(v_r5 + 0x15c) = 0;
-  *(u16 *)(v_r5 + 0x164) = 0;
-  Call2((void (*)())Func_020024c0, -10, 0);
-  Call3((void (*)())Func_02004d10, 0x70000, 0xe000, 0);
-  t8 = *(s32 *)((s32)gPartyState + 0x214);
+  FIELD_AT(v_r5, u16, 358) = 0;
+  FIELD_AT(v_r5, u16, 346) = 0;
+  FIELD_AT(v_r5, u16, 350) = 0;
+  FIELD_AT(v_r5, u16, 348) = 0;
+  FIELD_AT(v_r5, u16, 356) = 0;
+  Func_020024c0(-10, 0);
+  Call2((void (*)())Func_02004d10, 0x70000, 0xe000);
+  t8 = FIELD_AT((s32)gPartyState, s32, 532);
   t9 = Value1((s32 (*)())Object_GetById, t8);
   Call1((void (*)())GameFlag_SetBit, 0x106);
   Func_02004ca8();
-  Call3((void (*)())Func_02004da0, 0, 0, 0);
+  Call1((void (*)())Func_02004da0, 0);
   Call1((void (*)())GameFlag_ClearBit, 0x106);
   FIELD_AT(t9, s32, 108) = (s32)Func_02002614;
   FIELD_AT(t9, u16, 6) = 0x4000;
   Call2((void (*)())Func_02004bc0, t9, 49);
   v_r7 = ((s32)gData_020023c4 + 0x188);
   t15 = FIELD_AT(v_r7, s32, 108);
-  t16 = *(s16 *)(t15 + 100);
+  t16 = FIELD_AT(t15, s16, 100);
   v_r6 = t9;
   if (t16 != 0)
     goto L_0200a978;
@@ -99,7 +99,7 @@ L_0200a962:
   FIELD_AT(v_r7, u16, 4) = 0;
   Call1((void (*)())WaitFrames, 1);
   t31 = FIELD_AT(v_r7, s32, 108);
-  t32 = *(s16 *)(t31 + 100);
+  t32 = FIELD_AT(t31, s16, 100);
   if (t32 == 0)
     goto L_0200a918;
 L_0200a978:

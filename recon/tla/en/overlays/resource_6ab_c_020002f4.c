@@ -1,5 +1,5 @@
 // Draft of overlay 6ab's Func_020002f4, translated from its listing: differ
-// 135 of 255. Left: its shape: 250 instructions against the listing's 255.
+// 33 of 255. Left: its shape: 256 instructions against the listing's 255.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -30,18 +30,17 @@ extern u8 Data_02004cec[];
 extern u8 gPartyState[];
 
 s32 Func_020002f4(void) {
-  s32 v_r7, v_r8, v_r10, v_r6, v_r5, v_r0, v_r1, t0, t1, t2;
-  s32 t3, t7, t12, t13, t14, t15, t16, t17, t18, t20;
-  s32 t22, t24, t27, t28, t31, t34, t35, t40, t42, t45;
-  s32 t46;
+  s32 v_r7, v_r8, v_r10, v_r6, v_r5, t0, t1, t2, t7, t12;
+  s32 t13, t14, t15, t16, t17, t18, t20, t22, t24, t27;
+  s32 t28, t31, t34, t35, t40, t42, t45, t46;
 
-  t0 = *(s16 *)(0x1e0 + (s32)gPartyState);
-  t1 = *(s16 *)(0x1e2 + (s32)gPartyState);
+  t0 = FIELD_AT((s32)gPartyState, s16, 480);
+  t1 = FIELD_AT((s32)gPartyState, s16, 482);
   t2 = FIELD_AT(0x3000000, s32, 108);
-  *(s32 *)(t2 + 0x1ac) = 0x204;
+  FIELD_AT(t2, s32, 428) = 0x204;
   *(s32 *)(s32)Data_02004cec = 0;
-  t3 = Value1((s32 (*)())GameFlag_SetBit, 0x112);
-  Call2((void (*)())Func_02001d7c, t3, 0);
+  Call1((void (*)())GameFlag_SetBit, 0x112);
+  Func_02001d7c();
   Call4((void (*)())Func_02001df0, 0, 0, 0, 88);
   v_r10 = 0x3000000;
   v_r8 = (s32)gPartyState;
@@ -56,19 +55,19 @@ L_02008350:
     goto L_020083ac;
   Call6((void (*)())Func_0200423c, 65, 65, 9, 21, 38, 24);
   Call6((void (*)())Func_02004244, 65, 65, 9, 21, 38, 24);
-  Call6((void (*)())Func_02004244, 76, 64, 9, 22, 38, 22);
-  Call6((void (*)())Func_02004244, 76, 64, 9, 22, 22, 9);
+  Call6((void (*)())Func_02004244, 76, 64, 9, 22, 38, 87);
+  Call6((void (*)())Func_02004244, 76, 64, 9, 22, 102, 23);
 L_020083ac:
   if (v_r7 != 11)
     goto L_0200840a;
-  t12 = *(s32 *)(0x214 + v_r8);
+  t12 = FIELD_AT(v_r8, s32, 532);
   t13 = Value1((s32 (*)())Object_GetById, t12);
   t14 = FIELD_AT(v_r10, s32, 108);
   t15 = Value1((s32 (*)())GameFlag_GetByte, 0x340);
   t16 = Value1((s32 (*)())GameFlag_GetByte, 0x348);
   v_r6 = (t14 + 0x1cc);
   t17 = *(s32 *)v_r6;
-  FIELD_AT(t13, s32, 16) = ((t16 << 20) + 0xfed80000);
+  FIELD_AT(t13, s32, 16) = ((t16 << 20) - 0x1280000);
   v_r5 = ((t15 << 20) + 0x80000);
   FIELD_AT(t13, s32, 8) = v_r5;
   FIELD_AT(t17, s32, 8) = v_r5;
@@ -76,18 +75,16 @@ L_020083ac:
   FIELD_AT(t17, s32, 16) = t18;
   Func_020041fc();
   t20 = Value1((s32 (*)())GameFlag_Test, 0x109);
-  v_r0 = t20;
-  if (v_r0 != 0)
+  if (t20 != 0)
     goto L_0200840a;
-  Call2((void (*)())Func_02003e04, v_r0, v_r1);
+  Func_02003e04();
 L_0200840a:
   if ((u32)(v_r7 - 9) > (u32)1)
     goto L_02008422;
   t22 = Value1((s32 (*)())GameFlag_Test, 0x109);
-  v_r0 = t22;
-  if (v_r0 != 0)
+  if (t22 != 0)
     goto L_02008422;
-  Call2((void (*)())Func_02003e04, v_r0, v_r1);
+  Func_02003e04();
 L_02008422:
   if (v_r7 == 1)
     goto L_0200842c;
@@ -143,8 +140,8 @@ L_020084f8:
   t46 = FIELD_AT(t45, s32, 8);
   if (t46 <= 0x1900000)
     goto L_0200853a;
-  Call6((void (*)())Func_0200423c, 39, 22, 2, 1, 1, 2);
-  Call6((void (*)())Func_0200423c, 31, 21, 2, 2, 2, 2);
+  Call6((void (*)())Func_0200423c, 39, 22, 2, 1, 43, 13);
+  Call6((void (*)())Func_0200423c, 31, 21, 2, 2, 40, 12);
   goto L_0200853a;
 L_02008532:
   if (v_r7 != 20)

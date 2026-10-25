@@ -32,15 +32,16 @@ void Func_02000a10(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       object->velocityY = 0x60000;
       object->scaleX = 0x6666;
       object->scaleY = 0x6666;
-      for (;;) {
-        WaitFrames(1);
-        scale = object->scaleX + 0x51e;
-        object->angle += 0x1000;
-        object->scaleX = scale;
-        object->scaleY = scale;
-        if (scale > 0xffff)
-          break;
-      }
+    grow:
+      WaitFrames(1);
+      scale = object->scaleX + 0x51e;
+      object->angle += 0x1000;
+      object->scaleX = scale;
+      object->scaleY = scale;
+      if (scale >= 0x10000)
+        goto grown;
+      goto grow;
+    grown:
       object->scaleX = 0x10000;
       object->scaleY = 0x10000;
       object->angle = Object_GetById(gPartyState.currentOwner)->angle + 0x8000;

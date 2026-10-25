@@ -1,5 +1,5 @@
 // Draft of overlay 6a5's Func_02000cd0, translated from its listing: differ
-// 168 of 691. Left: instruction order and register choice.
+// 128 of 691. Left: its shape: 693 instructions against the listing's 691.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -58,11 +58,11 @@ void Func_02000cd0(void) {
   Func_02005814();
   Call1((void (*)())Func_02005984, 0);
   t2 = FIELD_AT(0x3000000, s32, 108);
-  *(s32 *)(t2 + 0x1ac) = 0x100;
-  *(s32 *)(t2 + 0x1b4) = 120;
-  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+  FIELD_AT(t2, s32, 428) = 0x100;
+  FIELD_AT(t2, s32, 436) = 120;
+  Camera_MoveWithinMapBounds(-1, -1, -1, 0);
   t4 = Value0((s32 (*)())Func_0200592c);
-  *(u8 *)(t4 + 85) = 0;
+  FIELD_AT(t4, u8, 85) = 0;
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x2000000, 0x600000, 0xf00000,
         0);
   Call1((void (*)())WaitFrames, 1);
@@ -114,7 +114,7 @@ void Func_02000cd0(void) {
   Call1((void (*)())FieldEvent_WaitFrames, 33);
   Call1((void (*)())Func_020059f4, 34);
   Call3((void (*)())Func_020058d4, 0x101c, 0, 0);
-  Call3((void (*)())Func_020058fc, 7, 0x100, 0);
+  Func_020058fc(7, 0x100, 0);
   Call3((void (*)())Func_020058fc, 4, 0x100, 30);
   Call2((void (*)())Object_SetModeById, 27, 4);
   Call1((void (*)())FieldEvent_WaitFrames, 33);
@@ -131,7 +131,7 @@ void Func_02000cd0(void) {
   Call2((void (*)())Object_SetModeById, 27, 3);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call3((void (*)())Func_020058d4, 27, 0, 0);
-  Call3((void (*)())Func_020058fc, 7, 0x102, 30);
+  Func_020058fc(7, 0x102, 30);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 28, 2);
   Call1((void (*)())FieldEvent_WaitFrames, 5);
   Call2((void (*)())UiText_OpenMessageAtObject, 0x101c, 0);
@@ -141,17 +141,17 @@ void Func_02000cd0(void) {
     goto L_02008fc4;
   Call3((void (*)())Func_020058d4, 0x101c, 0, 0);
   t77 = FIELD_AT(v_r7, s32, 108);
-  t78 = *(u16 *)(t77 + 0x1c4);
-  *(u16 *)(t77 + 0x1c4) = (t78 + 1);
+  t78 = FIELD_AT(t77, u16, 452);
+  FIELD_AT(t77, u16, 452) = (t78 + 1);
   goto L_02008fe0;
 L_02008fc4:
   t79 = FIELD_AT(v_r7, s32, 108);
-  t80 = *(u16 *)(t79 + 0x1c4);
-  *(u16 *)(t79 + 0x1c4) = (t80 + 1);
+  t80 = FIELD_AT(t79, u16, 452);
+  FIELD_AT(t79, u16, 452) = (t80 + 1);
   Call3((void (*)())Func_020058d4, 0x101c, 0, 0);
 L_02008fe0:
   Call3((void (*)())Func_020058fc, 7, 0x100, 0);
-  Call3((void (*)())Func_020058fc, 4, 0x100, 30);
+  Func_020058fc(4, 0x100, 30);
   Call3((void (*)())ObjectMotion_ArmCallback, 7, 0x8000, 0);
   Call2((void (*)())Func_020058ec, 4, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
@@ -160,21 +160,21 @@ L_02008fe0:
   Call3((void (*)())ObjectMotion_ArmCallback, 4, 0x4000, 0);
   Call3((void (*)())Func_020058fc, 7, 0x102, 0);
   t91 = Value1((s32 (*)())Object_GetById, 28);
-  t92 = *(u8 *)(t91 + 90);
-  *(u8 *)(t91 + 90) = (254 & t92);
+  t92 = FIELD_AT(t91, u8, 90);
+  FIELD_AT(t91, u8, 90) = (254 & t92);
   t93 = Value1((s32 (*)())Object_GetById, 28);
   FIELD_AT(t93, s32, 40) = 0x40000;
   Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion, 28, 0, 24);
   Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 28);
   t96 = Value1((s32 (*)())Object_GetById, 28);
-  t97 = *(u8 *)(t96 + 90);
-  *(u8 *)(t96 + 90) = (1 | t97);
+  t97 = FIELD_AT(t96, u8, 90);
+  FIELD_AT(t96, u8, 90) = (1 | t97);
   Call3((void (*)())ObjectMotion_ArmCallback, 28, 0xa000, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 7, 0x4000, 0);
   Call3((void (*)())Func_020058d4, 7, 0, 0);
   t101 = FIELD_AT(0x3000000, s32, 108);
-  t102 = *(u16 *)(t101 + 0x1c4);
-  *(u16 *)(t101 + 0x1c4) = (t102 + 1);
+  t102 = FIELD_AT(t101, u16, 452);
+  FIELD_AT(t101, u16, 452) = (t102 + 1);
   Call2((void (*)())UiText_ShowPositionedMessageAndWait, ((t102 << 16) >> 16),
         5);
   Call1((void (*)())PartyInventory_Add, 224);
@@ -199,17 +199,17 @@ L_020090f8:
   Call3((void (*)())ObjectMotion_OffsetPositionAndReset, 4, 0, 8);
   Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 27, -0x18, -8);
   t112 = Value1((s32 (*)())Object_GetById, 4);
-  t113 = *(u8 *)(t112 + 90);
-  *(u8 *)(t112 + 90) = (254 & t113);
+  t113 = FIELD_AT(t112, u8, 90);
+  FIELD_AT(t112, u8, 90) = (254 & t113);
   Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion, 4, 0, -8);
   Call3((void (*)())Func_020058fc, 28, 0x108, 30);
   Call3((void (*)())Func_020058d4, 28, 0, 0);
   Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 4);
   t118 = Value1((s32 (*)())Object_GetById, 4);
-  t119 = *(u8 *)(t118 + 90);
+  t119 = FIELD_AT(t118, u8, 90);
   v_r5 = (254 & t119);
-  *(u8 *)(t118 + 90) = v_r5;
-  Call3((void (*)())Func_020058fc, 4, 0x109, 30);
+  FIELD_AT(t118, u8, 90) = v_r5;
+  Func_020058fc(4, 0x109, 30);
   Call2((void (*)())Func_020058ec, 7, 0x8000);
   Call3((void (*)())Func_020058d4, 7, 0, 0);
   Call3((void (*)())Func_020058fc, 27, 0x108, 30);
@@ -218,12 +218,12 @@ L_020090f8:
   Call2((void (*)())Func_020058ec, 7, 0x4000);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   Call2((void (*)())Func_02005904, 7, 0x102);
-  t129 = *(s32 *)((s32)gPartyState + 0x214);
+  t129 = FIELD_AT((s32)gPartyState, s32, 532);
   Call2((void (*)())Func_02005904, t129, 0x102);
   Call1((void (*)())FieldEvent_WaitFrames, 30);
-  Call3((void (*)())Func_020058fc, 28, 0x108, 30);
+  Func_020058fc(28, 0x108, 30);
   Call3((void (*)())ObjectMotion_ArmCallback, 28, 0xb000, 0);
-  Call2((void (*)())UiText_OpenMessageAtObject, 28, 0);
+  UiText_OpenMessageAtObject(28, 0);
   t135 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (t135 != 0)
     goto L_02009236;
@@ -231,29 +231,29 @@ L_020090f8:
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call3((void (*)())Func_020058d4, 28, 0, 0);
   t139 = FIELD_AT(0x3000000, s32, 108);
-  t140 = *(u16 *)(t139 + 0x1c4);
-  *(u16 *)(t139 + 0x1c4) = (t140 + 1);
+  t140 = FIELD_AT(t139, u16, 452);
+  FIELD_AT(t139, u16, 452) = (t140 + 1);
   goto L_02009260;
 L_02009236:
   Call2((void (*)())Object_SetModeById, 28, 3);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   t143 = FIELD_AT(0x3000000, s32, 108);
-  t144 = *(u16 *)(t143 + 0x1c4);
-  *(u16 *)(t143 + 0x1c4) = (t144 + 1);
+  t144 = FIELD_AT(t143, u16, 452);
+  FIELD_AT(t143, u16, 452) = (t144 + 1);
   Call3((void (*)())Func_020058d4, 28, 0, 0);
 L_02009260:
   Call2((void (*)())Motion_SetVarCbAndRefresh, 7, 2);
   Call1((void (*)())FieldEvent_WaitFrames, 5);
   Call3((void (*)())Func_020058d4, 7, 0, 0);
-  Call3((void (*)())Func_020058fc, 27, 0x109, 30);
+  Func_020058fc(27, 0x109, 30);
   Call3((void (*)())ObjectMotion_ArmCallback, 27, 0xd000, 0);
   Call3((void (*)())Func_020058d4, 0x201b, 0, 0);
-  Call3((void (*)())Func_020058fc, 4, 0x108, 30);
+  Func_020058fc(4, 0x108, 30);
   Call3((void (*)())ObjectMotion_ArmCallback, 28, 0xd000, 0);
   Call2((void (*)())Object_SetModeById, 28, 4);
   Call1((void (*)())FieldEvent_WaitFrames, 33);
   Call3((void (*)())Func_020058d4, 28, 0, 0);
-  Call3((void (*)())Func_020058fc, 4, 0x101, 30);
+  Func_020058fc(4, 0x101, 30);
   Call3((void (*)())ObjectMotion_ArmCallback, 27, 0xb000, 0);
   Call2((void (*)())Object_SetModeById, 27, 4);
   Call1((void (*)())FieldEvent_WaitFrames, 33);
@@ -267,7 +267,7 @@ L_02009260:
   Call2((void (*)())Object_SetModeById, 27, 3);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call3((void (*)())Func_020058d4, 0x201b, 0, 0);
-  *(u8 *)((s32)gPartyState + 0x24b) = 2;
+  FIELD_AT((s32)gPartyState, u8, 587) = 2;
   Call2((void (*)())Party_SetFields1eeAnd1f0, 0x109, 10);
   Call2((void (*)())Party_SetFields1f2And1f4, 0x109, 10);
   Call1((void (*)())GameFlag_SetBit, 0x11b);

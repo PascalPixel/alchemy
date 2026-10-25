@@ -1,5 +1,5 @@
 // Draft of overlay 6ab's Func_02003e04, translated from its listing: differ
-// 108 of 169. Left: its shape: 161 instructions against the listing's 169.
+// 63 of 169. Left: its shape: 166 instructions against the listing's 169.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -32,11 +32,12 @@ extern u8 gPartyState[];
 
 void Func_02003e04(void) {
   s32 sp_[1];
+  s32 spo_[4];
   s32 v_r5, v_r10, v_r7, v_r8, t0, t1, t7, t12, t13, t14;
   s32 t15, t16, t17, t18, t19, t20, t21, t22, t23, t26;
   s32 t28, t33, t36;
 
-  t0 = *(s32 *)((s32)gPartyState + 0x214);
+  t0 = FIELD_AT((s32)gPartyState, s32, 532);
   t1 = Value1((s32 (*)())Object_GetById, t0);
   Func_020042dc();
   Call1((void (*)())Func_0200444c, 0);
@@ -49,39 +50,38 @@ void Func_02003e04(void) {
   v_r5 = (t1 + 85);
   *(u8 *)v_r5 = 0;
   t7 = FIELD_AT(0x3000000, s32, 108);
-  *(s32 *)(t7 + 0x1ac) = 0x100;
+  FIELD_AT(t7, s32, 428) = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Call1((void (*)())Func_0200446c, 204);
   *(u8 *)v_r5 = 3;
   Call1((void (*)())FieldEvent_WaitFrames, 24);
-  FIELD_AT(sp_, s32, 32) = 7;
-  FIELD_AT(sp_, s32, 64) = (s32)Effect_AdvanceMotion;
-  FIELD_AT(sp_, s32, 36) = 0xa3d7;
-  FIELD_AT(sp_, s32, 40) = 0xa3d7;
-  v_r8 = ((s32)sp_ + 28);
+  FIELD_AT(sp_, s32, 16) = 7;
+  FIELD_AT(sp_, s32, 48) = (s32)Effect_AdvanceMotion;
+  FIELD_AT(sp_, s32, 20) = 0xa3d7;
+  FIELD_AT(sp_, s32, 24) = 0xa3d7;
+  v_r8 = ((s32)sp_ + 12);
   v_r7 = t1;
   v_r10 = 0;
 L_0200be9e:
   v_r5 = (v_r10 << 12);
   t12 = Value1((s32 (*)())Math_Cosine, v_r5);
-  FIELD_AT(sp_, s32, 16) = t12;
-  FIELD_AT(sp_, s32, 20) = 0;
+  *(s32 *)sp_ = t12;
+  FIELD_AT(sp_, s32, 4) = 0;
   t13 = Value2((s32 (*)())Math_Sine, v_r5, 0);
-  t14 = FIELD_AT(sp_, s32, 16);
-  FIELD_AT(sp_, s32, 24) = t13;
-  FIELD_AT(sp_, s32, 16) = (t14 + (t14 >> 1));
+  t14 = *(s32 *)sp_;
+  FIELD_AT(sp_, s32, 8) = t13;
+  *(s32 *)sp_ = (t14 + (t14 >> 1));
   t15 = Value0((s32 (*)())Random16Far);
-  t16 = FIELD_AT(sp_, s32, 16);
-  FIELD_AT(sp_, s32, 16) =
-      ((t16 + ((u32)(((t15 << 1) + t15) << 14) >> 16)) + -0x6000);
+  t16 = *(s32 *)sp_;
+  *(s32 *)sp_ = ((t16 + ((u32)(((t15 << 1) + t15) << 14) >> 16)) - 0x6000);
   t17 = Value0((s32 (*)())Random16Far);
-  t18 = FIELD_AT(sp_, s32, 24);
-  t19 = FIELD_AT(sp_, s32, 20);
-  v_r5 = ((t18 + ((u32)(((t17 << 1) + t17) << 13) >> 16)) + -0x3000);
-  FIELD_AT(sp_, s32, 24) = v_r5;
+  t18 = FIELD_AT(sp_, s32, 8);
+  t19 = FIELD_AT(sp_, s32, 4);
+  v_r5 = ((t18 + ((u32)(((t17 << 1) + t17) << 13) >> 16)) - 0x3000);
+  FIELD_AT(sp_, s32, 8) = v_r5;
   t20 = FIELD_AT(v_r7, s32, 16);
-  t21 = FIELD_AT(sp_, s32, 16);
+  t21 = *(s32 *)sp_;
   t22 = FIELD_AT(v_r7, s32, 8);
   t23 = FIELD_AT(v_r7, s32, 12);
   Func_0200363c(t22, t23, t20, t21, v_r8, v_r5, v_r8, v_r8);

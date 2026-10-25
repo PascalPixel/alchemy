@@ -1,5 +1,5 @@
 // Draft of overlay 6a9's Func_020006a8, translated from its listing: differ
-// 112 of 148. Left: its shape: 144 instructions against the listing's 148.
+// 109 of 148. Left: its shape: 147 instructions against the listing's 148.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -26,7 +26,7 @@ void Func_020006a8(void) {
 
   t0 = FIELD_AT(0x3000000, s32, 108);
   t1 = *(s32 *)0x30000e0;
-  *(s32 *)(t0 + 0xcbc) = 0;
+  FIELD_AT(t0, s32, 3260) = 0;
   v_r1 = (t0 + 0xcbc);
   v_r2 = t1;
   v_r7 = t0;
@@ -34,7 +34,7 @@ void Func_020006a8(void) {
   v_r8 = (s32)gData_02001220;
   if (v_r2 == v_r6)
     goto L_020086f2;
-  t2 = *(s16 *)(v_r7 + 0x166);
+  t2 = FIELD_AT(v_r7, s16, 358);
   if (t2 == 0)
     goto L_020086f2;
   t3 = FIELD_AT(v_r2, s32, 20);
@@ -46,17 +46,17 @@ void Func_020006a8(void) {
   Call1((void (*)())Func_0200053c, 1);
   goto L_020087a2;
 L_020086f2:
-  t6 = *(s32 *)((s32)gPartyState + 0x214);
+  t6 = FIELD_AT((s32)gPartyState, s32, 532);
   t7 = Value1((s32 (*)())Object_GetById, t6);
   t8 = FIELD_AT(t7, u16, 6);
   t9 = FIELD_AT(t7, s32, 8);
-  FIELD_AT(sp_, s32, 0) = t9;
+  *(s32 *)sp_ = t9;
   t10 = FIELD_AT(t7, s32, 12);
   FIELD_AT(sp_, s32, 4) = t10;
   t11 = FIELD_AT(t7, s32, 16);
   FIELD_AT(sp_, s32, 8) = t11;
   Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000,
-        ((t8 + 0x2000) & 0xc000), ((s32)sp_ + 0));
+        ((t8 + 0x2000) & 0xc000), (s32)sp_);
   t13 = *(u16 *)v_r8;
   v_r5 = (s32)sp_;
   if (t13 == 0xffff)
@@ -98,7 +98,7 @@ L_0200877a:
 L_0200878e:
   if (v_r6 == 0)
     goto L_020087da;
-  *(s32 *)(v_r7 + 0xcbc) = v_r6;
+  FIELD_AT(v_r7, s32, 3260) = v_r6;
   Call1((void (*)())Func_0200053c, 1);
 L_020087a2:
   t25 = FIELD_AT(v_r6, s32, 8);

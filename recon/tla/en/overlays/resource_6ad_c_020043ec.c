@@ -1,5 +1,5 @@
 // Draft of overlay 6ad's Func_020043ec, translated from its listing: differ
-// 406 of 347. Left: its shape: 355 instructions against the listing's 347.
+// 403 of 347. Left: its shape: 358 instructions against the listing's 347.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -40,7 +40,7 @@ void Func_020043ec(void) {
   s32 t68, t69, t70, t72, t73, t74, t75, t76, t77, t78;
   s32 t79, t84;
 
-  t0 = *(s32 *)((s32)gPartyState + 0x214);
+  t0 = FIELD_AT((s32)gPartyState, s32, 532);
   t1 = Value1((s32 (*)())ObjectTable_Get, t0);
   *(u16 *)(s32)gData_020074c8 = 0;
   v_r7 = t1;
@@ -70,7 +70,7 @@ L_0200c458:
   FIELD_AT(sp_, s32, 16) = ((t5 & v_r1) + v_r2);
   FIELD_AT(sp_, s32, 20) = t6;
   FIELD_AT(sp_, s32, 4) = (v_r7 + 34);
-  t7 = *(u8 *)(v_r7 + 34);
+  t7 = FIELD_AT(v_r7, u8, 34);
   t8 = FIELD_AT(sp_, s32, 16);
   t9 = Value3((s32 (*)())Func_020054d0, t7, t6, t8);
   FIELD_AT(sp_, s32, 24) = t9;
@@ -95,7 +95,7 @@ L_0200c4d4:
   t19 = FIELD_AT(v_r7, s32, 8);
   t20 = Value2((s32 (*)())ArcTan2, (t16 - t18), (t17 - t19));
   v_r9 = ((t20 << 16) >> 16);
-  v_r9 = ((((0x2000 + v_r9) & -0x4000) << 16) >> 16);
+  v_r9 = ((((v_r9 + 0x2000) & -0x4000) << 16) >> 16);
   goto L_0200c500;
 L_0200c500:
   Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, v_r9, ((s32)sp_ + 28));
@@ -120,7 +120,7 @@ L_0200c500:
   FIELD_AT(v_r10, s32, 8) = t34;
   FIELD_AT(v_r7, s32, 48) = 0x20000;
   FIELD_AT(v_r7, s32, 52) = 0x1999;
-  *(u16 *)(v_r7 + 100) = 0;
+  FIELD_AT(v_r7, u16, 100) = 0;
   t35 = FIELD_AT(sp_, s32, 12);
   t36 = FIELD_AT(v_r7, s32, 12);
   t37 = FIELD_AT(sp_, s32, 8);
@@ -168,9 +168,9 @@ L_0200c5b6:
   if ((t52 << 16) != 0)
     goto L_0200c6ca;
   t53 = FIELD_AT(v_r7, u16, 32);
-  FIELD_AT(sp_, s32, 0) = (t53 - 2);
+  *(s32 *)sp_ = (t53 - 2);
   t54 = FIELD_AT(0x3000000, s32, 20);
-  v_r8 = (89 + t54);
+  v_r8 = (t54 + 89);
   v_r10 = 0;
   v_r5 = t54;
 L_0200c5ee:
@@ -183,7 +183,7 @@ L_0200c5ee:
   if (v_r5 == v_r7)
     goto L_0200c618;
   t57 = FIELD_AT(v_r5, u16, 32);
-  t58 = FIELD_AT(sp_, s32, 0);
+  t58 = *(s32 *)sp_;
   t59 = Value4((s32 (*)())Func_02005538, (v_r5 + 8), t58, ((s32)sp_ + 28),
                (t57 - 2));
   if (t59 >= 0)
@@ -250,8 +250,8 @@ L_0200c6c4:
   Call1((void (*)())WaitFrames, 10);
 L_0200c6ca:
   FIELD_AT(v_r7, s32, 108) = 0;
-  t84 = *(u8 *)(v_r7 + 90);
-  *(u8 *)(v_r7 + 90) = (1 | t84);
+  t84 = FIELD_AT(v_r7, u8, 90);
+  FIELD_AT(v_r7, u8, 90) = (1 | t84);
   FIELD_AT(v_r7, s32, 52) = 0x4000;
   Call2((void (*)())Func_02005480, v_r7, 1);
   return;

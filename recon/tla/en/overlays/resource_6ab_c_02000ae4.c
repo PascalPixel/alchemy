@@ -1,5 +1,5 @@
 // Draft of overlay 6ab's Func_02000ae4, translated from its listing: differ
-// 66 of 80. Left: instruction order and register choice.
+// 58 of 80. Left: instruction order and register choice.
 #include "types.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -34,8 +34,8 @@ void Func_02000ae4(s32 p0) {
   t3 = FIELD_AT(t1, u8, 9);
   FIELD_AT(t1, u8, 5) = (-0x21 & t2);
   FIELD_AT(t1, u8, 9) = (((15 & t3) & -13) | 4);
-  *(u8 *)(v_r0 + 85) = 3;
-  *(u8 *)((v_r0 + 85) + 7) = 1;
+  FIELD_AT(v_r0, u8, 85) = 3;
+  FIELD_AT(v_r0, u8, 92) = 1;
   FIELD_AT(v_r0, s32, 108) = (s32)Func_02000ab4;
   FIELD_AT(t1, u8, 26) = v_r5;
   FIELD_AT(t1, u8, 27) = v_r5;

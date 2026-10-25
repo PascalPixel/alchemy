@@ -1,5 +1,5 @@
 // Draft of overlay 6ac's Func_020000c0, translated from its listing: differ
-// 276 of 230. Left: its shape: 168 instructions against the listing's 230.
+// 269 of 230. Left: its shape: 171 instructions against the listing's 230.
 #include "types.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -23,16 +23,16 @@ void Func_020000c0(void) {
   s32 t9, t10, t11, t12, t13, t14, t15, t16, t17, t18;
   s32 t19, t20, t21;
 
-  t0 = *(s16 *)((s32)gPartyState + 0x1e2);
+  t0 = FIELD_AT((s32)gPartyState, s16, 482);
   t1 = FIELD_AT(0x3000000, s32, 108);
-  t2 = *(s16 *)(t1 + 0x166);
+  t2 = FIELD_AT(t1, s16, 358);
   v_r11 = t0;
   v_r2 = t1;
   if (t2 == 0)
     goto L_020080f2;
   goto L_02008292;
 L_020080f2:
-  t3 = *(u8 *)(v_r2 + 0xca4);
+  t3 = FIELD_AT(v_r2, u8, 3236);
   v_r10 = ((t3 << 24) >> 24);
   if (v_r10 == 0)
     goto L_02008108;
@@ -127,8 +127,8 @@ L_0200825a:
     goto L_02008288;
   *(u16 *)v_r1 = (v_r2 + 1);
   *(s32 *)(((((v_r2 << 1) + v_r2) << 2) + v_r1) + 4) = (s32)gData_0200397c;
-  *(s32 *)((((((v_r2 << 1) + v_r2) << 2) + v_r1) + 4) + 4) = 0x50001a0;
-  *(s32 *)(((((((v_r2 << 1) + v_r2) << 2) + v_r1) + 4) + 4) + 4) = 0x84000008;
+  *(s32 *)(((((v_r2 << 1) + v_r2) << 2) + v_r1) + 8) = 0x50001a0;
+  FIELD_AT(((((v_r2 << 1) + v_r2) << 2) + v_r1), s32, 12) = 0x84000008;
 L_02008288:
   *(u16 *)v_r0 = v_r4;
   t21 = *(s32 *)(s32)gData_020036c4;

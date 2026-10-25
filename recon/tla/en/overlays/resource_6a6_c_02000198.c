@@ -1,5 +1,5 @@
 // Draft of overlay 6a6's Func_02000198, translated from its listing: differ
-// 245 of 1050. Left: its shape: 1065 instructions against the listing's 1050.
+// 226 of 1050. Left: its shape: 1064 instructions against the listing's 1050.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -74,8 +74,8 @@ extern u8 gData_0200166c[];
 void Func_02000198(void) {
   s32 v_r5, v_r1, v_r6, v_r2, v_r0, v_r7, v_r8, v_r10, v_r3, t0;
   s32 t5, t6, t36, t37, t38, t40, t41, t43, t47, t48;
-  s32 t49, t50, t51, t52, t53, t55, t56, t112, t147, t183;
-  s32 t186, t189, t190, t193, t194, t226, t233, t234, t246;
+  s32 t49, t50, t51, t52, t53, t55, t56, t147, t186, t189;
+  s32 t190, t193, t194, t226, t233, t234;
 
   t0 = Value1((s32 (*)())Object_GetById, 4);
   Func_020012e0();
@@ -233,7 +233,7 @@ L_02008474:
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x1e80000, -1, 0x1860000, 1);
   Call4((void (*)())Func_02001350, 14, 0xf80000, 0x1e00000, 0);
   Func_020000ac();
-  Call3((void (*)())Func_020012c8, 0, 0, 0x10000);
+  Func_020012c8(0, 0, 0x10000);
   Call1((void (*)())Func_02001448, 0x186);
   Call1((void (*)())FieldEvent_WaitFrames, 180);
   Call1((void (*)())Func_02001280, 120);
@@ -248,7 +248,7 @@ L_02008474:
   Call1((void (*)())FieldEvent_WaitFrames, 30);
   Call3((void (*)())Func_020013a8, 17, 0x102, 35);
   Call2((void (*)())Func_02001390, 17, 0);
-  Call3((void (*)())Func_020013a8, 16, 0x107, 35);
+  Func_020013a8(16, 0x107, 35);
   Call3((void (*)())ObjectMotion_CommitPositionAndActivate, 16, -12, 24);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 16, 2);
   Call2((void (*)())Func_02001390, 16, 0);
@@ -258,7 +258,7 @@ L_02008474:
   Call3((void (*)())Func_020013a8, 18, 0x100, 35);
   Call2((void (*)())Func_02001390, 18, 0);
   Call3((void (*)())Func_020013a8, 16, 0x101, 0);
-  Call3((void (*)())Func_020013a8, 17, 0x101, 35);
+  Func_020013a8(17, 0x101, 35);
   Call3((void (*)())ObjectMotion_SetAngleToward, 16, 18, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 17, 0x2000, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 60);
@@ -275,16 +275,15 @@ L_02008474:
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x1e80000, -1, 0x1460000, 1);
   Call1((void (*)())FieldEvent_WaitFrames, 60);
   Call3((void (*)())Func_020013a8, 16, 0x100, 0);
-  Call3((void (*)())Func_020013a8, 17, 0x100, 50);
+  Func_020013a8(17, 0x100, 50);
   Call3((void (*)())Func_020013a8, 17, 0x102, 35);
   Call2((void (*)())Func_02001390, 17, 0);
   Call2((void (*)())Object_SetModeById, 16, 3);
   Call2((void (*)())Func_02001390, 16, 0);
   Call3((void (*)())ObjectMotion_SetAngleToward, 18, 4, 0);
-  Call3((void (*)())Func_020013a8, 18, 0x109, 35);
-  t112 = Value4((s32 (*)())Camera_MoveWithinMapBounds, 0x1e80000, -1, 0x16e0000,
-                1);
-  Call1((void (*)())Func_020013c8, t112);
+  Func_020013a8(18, 0x109, 35);
+  Call4((void (*)())Camera_MoveWithinMapBounds, 0x1e80000, -1, 0x16e0000, 1);
+  Func_020013c8();
   Call3((void (*)())ObjectMotion_ArmCallback, 18, 0x5000, 0);
   Call2((void (*)())Func_02001390, 18, 0);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 17, 0xcccc, 0x6666);
@@ -307,20 +306,20 @@ L_02008474:
   Call2((void (*)())Func_02001390, 16, 0);
   Call3((void (*)())Func_020013a8, 18, 0x105, 0);
   Call3((void (*)())Func_020013a8, 17, 0x105, 0);
-  Call3((void (*)())Func_020013a8, 16, 0x105, 60);
+  Func_020013a8(16, 0x105, 60);
   Call3((void (*)())Func_020013a8, 18, 0x106, 35);
   Call2((void (*)())Func_02001390, 18, 0);
   Call2((void (*)())Object_SetModeById, 17, 3);
   Call1((void (*)())FieldEvent_WaitFrames, 40);
-  Call3((void (*)())Func_020013a8, 17, 0x106, 35);
+  Func_020013a8(17, 0x106, 35);
   Call2((void (*)())Func_02001390, 17, 0);
   Call2((void (*)())Object_SetModeById, 16, 3);
   Call1((void (*)())FieldEvent_WaitFrames, 30);
   Call2((void (*)())Func_020013b8, 0x8000, 0x1000);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x21e0000, -1, 0x1000000, 1);
   t147 = Value1((s32 (*)())Object_GetById, 16);
-  *(u8 *)(t147 + 85) = 0;
-  Call3((void (*)())ObjectMotion_SetSpeedParameters, 16, 0x18000, 0xc000);
+  FIELD_AT(t147, u8, 85) = 0;
+  ObjectMotion_SetSpeedParameters(16, 0x18000, 0xc000);
   Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 16,
         (s32)gData_02001470);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 18, 0x8000, 0x4000);
@@ -361,18 +360,17 @@ L_020088f0:
   Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 16,
         (s32)gData_0200158c);
   Call2((void (*)())Func_020013b8, 0x1cccc, 0x3999);
-  t183 = Value4((s32 (*)())Camera_MoveWithinMapBounds, 0x21e0000, -1, 0x15e0000,
-                1);
-  Call1((void (*)())Func_020013c8, t183);
-  Call2((void (*)())UiText_OpenMessageAtObject, 17, 0);
+  Call4((void (*)())Camera_MoveWithinMapBounds, 0x21e0000, -1, 0x15e0000, 1);
+  Func_020013c8();
+  UiText_OpenMessageAtObject(17, 0);
   t186 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (t186 != 0)
     goto L_02008992;
   Call2((void (*)())Object_SetModeById, 18, 3);
   Call2((void (*)())Func_02001390, 18, 0);
   t189 = FIELD_AT(0x3000000, s32, 108);
-  t190 = *(u16 *)(t189 + 0x1c4);
-  *(u16 *)(t189 + 0x1c4) = (t190 + 1);
+  t190 = FIELD_AT(t189, u16, 452);
+  FIELD_AT(t189, u16, 452) = (t190 + 1);
   goto L_020089c4;
 L_02008982:
   v_r1 = 0x1d7;
@@ -384,8 +382,8 @@ L_0200898a:
 L_02008992:
   Call2((void (*)())Object_SetModeById, 18, 4);
   t193 = FIELD_AT(0x3000000, s32, 108);
-  t194 = *(u16 *)(t193 + 0x1c4);
-  *(u16 *)(t193 + 0x1c4) = (t194 + 1);
+  t194 = FIELD_AT(t193, u16, 452);
+  FIELD_AT(t193, u16, 452) = (t194 + 1);
   Call2((void (*)())Func_02001390, 17, 0);
   Call2((void (*)())Object_SetModeById, 18, 3);
   Call2((void (*)())Func_02001390, 18, 0);
@@ -421,7 +419,7 @@ L_020089c4:
   Call1((void (*)())FieldEvent_WaitFrames, 40);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 20, 0x1999, 0xccc);
   t226 = Value1((s32 (*)())Object_GetById, 20);
-  *(u8 *)(t226 + 85) = 0;
+  FIELD_AT(t226, u8, 85) = 0;
   Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 20,
         (s32)gData_0200166c);
   Call1((void (*)())Object_RefreshSelectorById, 20);
@@ -430,8 +428,8 @@ L_020089c4:
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x1cc0000, -1, 0x15e0000, 1);
   Call1((void (*)())FieldEvent_WaitFrames, 30);
   t233 = Value1((s32 (*)())Object_GetById, 16);
-  t234 = *(u8 *)(t233 + 90);
-  *(u8 *)(t233 + 90) = (254 & t234);
+  t234 = FIELD_AT(t233, u8, 90);
+  FIELD_AT(t233, u8, 90) = (254 & t234);
   Call3((void (*)())ObjectMotion_OffsetPositionAndReset, 18, -0x28, -0x14);
   Call3((void (*)())ObjectMotion_OffsetPositionAndReset, 17, -0x28, -0x14);
   Call3((void (*)())ObjectMotion_OffsetPositionAndReset, 16, -0x28, -0x14);
@@ -443,7 +441,7 @@ L_020089c4:
   Call3((void (*)())Func_02001348, 16, 0, 0);
   Call3((void (*)())Func_02001348, 18, 0, 0);
   Call3((void (*)())Func_02001348, 17, 0, 0);
-  t246 = Value3((s32 (*)())Func_02001348, 20, 0, 0);
-  Call2((void (*)())Func_020012e8, t246, 0);
+  Call3((void (*)())Func_02001348, 20, 0, 0);
+  Func_020012e8();
   return;
 }

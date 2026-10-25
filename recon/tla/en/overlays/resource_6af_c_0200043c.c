@@ -1,5 +1,5 @@
 // Draft of overlay 6af's Func_0200043c, translated from its listing: differ
-// 117 of 163. Left: its shape: 160 instructions against the listing's 163.
+// 49 of 163. Left: its shape: 162 instructions against the listing's 163.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -21,6 +21,7 @@ extern u8 gData_02001128[];
 
 void Func_0200043c(s32 p0, s32 p1) {
   s32 sp_[1];
+  s32 spo_[4];
   s32 v_r11, v_r6, t1, t2, t8, t9, t11, t12, t14, t15;
   s32 t18, t19, t22, t23;
 
@@ -35,33 +36,33 @@ void Func_0200043c(s32 p0, s32 p1) {
   Func_02001014();
   Call3((void (*)())Func_02000fb4, 0, 0x100000, 0x10000);
   Call3((void (*)())Func_02000fb4, -1, -1, 0xe666);
-  Call4((void (*)())Func_0200106c, 0x237, 0, 0, 0);
-  FIELD_AT(sp_, s32, 24) = 0x13333;
-  FIELD_AT(sp_, s32, 28) = 0x18000;
-  FIELD_AT(sp_, s32, 16) = 1;
-  FIELD_AT(sp_, u16, 40) = 0x115;
+  Call1((void (*)())Func_0200106c, 0x237);
+  FIELD_AT(sp_, s32, 8) = 0x13333;
+  FIELD_AT(sp_, s32, 12) = 0x18000;
+  *(s32 *)sp_ = 1;
+  FIELD_AT(sp_, u16, 24) = 0x115;
   t8 = FIELD_AT(v_r6, s32, 4);
-  FIELD_AT(sp_, s32, 44) = (s32)gData_02001128;
+  FIELD_AT(sp_, s32, 28) = (s32)gData_02001128;
   t9 = *(s32 *)v_r6;
-  Func_0200015c(((t9 << 20) + 0x80000), 0, ((t8 << 20) + 0x140000), 0, 0, 0, 0,
-                ((s32)sp_ + 16));
-  FIELD_AT(sp_, s32, 24) = 0x9999;
+  Func_0200015c(((t9 << 20) + 0x80000), 0, ((t8 << 20) + 0x140000), 0, 0, 0,
+                0x3a0000, (s32)sp_);
+  FIELD_AT(sp_, s32, 8) = 0x9999;
   t11 = *(s32 *)v_r6;
   t12 = FIELD_AT(v_r6, s32, 4);
-  Func_0200015c(((t11 << 20) + 0xfffe0000), 0, ((t12 << 20) + 0x80000), 0, 0, 0,
-                0, ((s32)sp_ + 16));
+  Func_0200015c(((t11 << 20) - 0x20000), 0, ((t12 << 20) + 0x80000), 0, 0, 0,
+                0x3a0000, (s32)sp_);
   t14 = *(s32 *)v_r6;
   t15 = FIELD_AT(v_r6, s32, 4);
   Func_0200015c(((t14 << 20) + 0x120000), 0, ((t15 << 20) + 0x80000), 0, 0, 0,
-                0, ((s32)sp_ + 16));
+                0x3a0000, (s32)sp_);
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   t18 = *(s32 *)v_r6;
   t19 = FIELD_AT(v_r6, s32, 4);
-  Call6((void (*)())Func_02000f9c, 6, 100, 3, 4, 3, 4);
+  Call6((void (*)())Func_02000f9c, 6, 100, 3, 4, (t18 + 63), (t19 - 2));
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   t22 = *(s32 *)v_r6;
   t23 = FIELD_AT(v_r6, s32, 4);
-  Call6((void (*)())Func_02000f9c, 3, 100, 3, 4, 3, 4);
+  Call6((void (*)())Func_02000f9c, 3, 100, 3, 4, (t22 + 63), (t23 - 2));
   Call1((void (*)())FieldEvent_WaitFrames, 10);
   Call2((void (*)())Func_020003fc, p0, v_r11);
   return;

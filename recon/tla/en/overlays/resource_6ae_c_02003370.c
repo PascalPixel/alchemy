@@ -1,5 +1,5 @@
 // Draft of overlay 6ae's Func_02003370, translated from its listing: differ
-// 165 of 207. Left: its shape: 192 instructions against the listing's 207.
+// 126 of 207. Left: its shape: 197 instructions against the listing's 207.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -109,7 +109,7 @@ L_0200b41a:
   v_r0 = 0x10000;
 L_0200b41e:
   Call2((void (*)())Func_0200575c, v_r0, 1);
-  Call4((void (*)())Func_0200576c, 8, 0, 0, 0);
+  Call1((void (*)())Func_0200576c, 8);
   goto L_0200b506;
 L_0200b42c:
   Call3((void (*)())Func_020055c4, 0x10000, 0x10000, 0x10000);
@@ -131,7 +131,7 @@ L_0200b466:
   if (t10 <= 0)
     goto L_0200b488;
   Call2((void (*)())Func_0200575c, 0x203210, 0);
-  Call4((void (*)())Func_0200576c, 16, 0, 0, 0);
+  Call1((void (*)())Func_0200576c, 16);
   t13 = *(s32 *)v_r5;
   *(s32 *)v_r5 = (t13 + 1);
   goto L_0200b506;
@@ -139,7 +139,7 @@ L_0200b488:
   t14 = *(s32 *)(s32)gFrameCount;
   if ((t14 & 7) != 0)
     goto L_0200b49a;
-  Call1((void (*)())Func_020057dc, 246);
+  Func_020057dc(246);
 L_0200b49a:
   t16 = FIELD_AT(v_r6, s32, 12);
   FIELD_AT(v_r6, s32, 12) = (t16 + 0x24000);
@@ -172,8 +172,7 @@ L_0200b506:
   t26 = FIELD_AT(v_r6, s32, 16);
   t27 = Value4(
       (s32 (*)())Func_02005574, 0x2a0, t25,
-      ((t24 - (((u32)(((t23 << 2) + t23) << 4) >> 16) << 16)) + 0xfff80000),
-      t26);
+      ((t24 - (((u32)(((t23 << 2) + t23) << 4) >> 16) << 16)) - 0x80000), t26);
   v_r0 = t27;
   v_r7 = t27;
   if (v_r0 == 0)
@@ -181,12 +180,12 @@ L_0200b506:
   t28 = FIELD_AT(v_r7, s32, 80);
   Call2((void (*)())Func_0200556c, v_r0, (s32)gData_02006180);
   Call2((void (*)())Object_SetPartAttribute, v_r7, 1);
-  *(u8 *)(v_r7 + 85) = 0;
+  FIELD_AT(v_r7, u8, 85) = 0;
   t31 = Value0((s32 (*)())Random16Far);
-  *(u16 *)(v_r7 + 100) = (0xffff000 & t31);
-  *(u16 *)(v_r7 + 102) = 0;
+  FIELD_AT(v_r7, u16, 100) = (0xffff000 & t31);
+  FIELD_AT(v_r7, u16, 102) = 0;
   t32 = Value0((s32 (*)())Random16Far);
-  *(u8 *)(v_r7 + 98) = ((u32)t32 >> 13);
+  FIELD_AT(v_r7, u8, 98) = ((u32)t32 >> 13);
   FIELD_AT(v_r7, s32, 108) = (s32)Func_020000e4;
   t33 = Value0((s32 (*)())Random16Far);
   t34 = Value2((s32 (*)())Math_Sine, ((u32)((t33 << 16) - t33) >> 20), 0);

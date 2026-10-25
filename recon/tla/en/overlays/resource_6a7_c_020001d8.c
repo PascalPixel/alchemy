@@ -1,5 +1,5 @@
 // Draft of overlay 6a7's Func_020001d8, translated from its listing: differ
-// 49 of 438. Left: its shape: 441 instructions against the listing's 438.
+// 46 of 438. Left: its shape: 440 instructions against the listing's 438.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -64,7 +64,7 @@ void Func_020001d8(void) {
   goto L_020085f2;
 L_0200820c:
   Func_02000a68();
-  Call2((void (*)())Func_02000b30, 0, 0);
+  Call1((void (*)())Func_02000b30, 0);
   Call1((void (*)())Func_02000ac0, (s32)MsgShipSafeFiringDistance);
   Call3((void (*)())ObjectMotion_SetPositionAndCommit, 8, 0x1d0, 216);
   Call2((void (*)())Func_02000ad8, 8, 0xc000);
@@ -108,13 +108,13 @@ L_020082ea:
   goto L_020085c6;
 L_0200832c:
   t36 = FIELD_AT(0x3000000, s32, 108);
-  t37 = *(u16 *)(t36 + 0x1c4);
-  *(u16 *)(t36 + 0x1c4) = (t37 + 1);
+  t37 = FIELD_AT(t36, u16, 452);
+  FIELD_AT(t36, u16, 452) = (t37 + 1);
   Call3((void (*)())Func_02000ad0, 11, 0, 5);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 8, 0x30000, 0x18000);
   t40 = Value1((s32 (*)())Object_GetById, 8);
-  t41 = *(u8 *)(t40 + 90);
-  *(u8 *)(t40 + 90) = (254 & t41);
+  t41 = FIELD_AT(t40, u8, 90);
+  FIELD_AT(t40, u8, 90) = (254 & t41);
   Call3((void (*)())ObjectMotion_OffsetPositionAndReset, 8, 0, 16);
   Call1((void (*)())Func_02000b58, 144);
   Call1((void (*)())FieldEvent_WaitFrames, 4);
@@ -144,12 +144,12 @@ L_020083da:
   Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 9);
   Call1((void (*)())Func_02000b58, 145);
   t59 = FIELD_AT(v_r6, s32, 8);
-  FIELD_AT(sp_, s32, 12) = (t59 + 0xfffe0000);
+  FIELD_AT(sp_, s32, 12) = (t59 - 0x20000);
   t60 = FIELD_AT(v_r6, s32, 12);
   FIELD_AT(sp_, s32, 16) = t60;
   t61 = FIELD_AT(v_r6, s32, 16);
-  FIELD_AT(sp_, s32, 20) = (t61 + 0xfff80000);
-  FIELD_AT(sp_, s32, 0) = 0x1900000;
+  FIELD_AT(sp_, s32, 20) = (t61 - 0x80000);
+  *(s32 *)sp_ = 0x1900000;
   FIELD_AT(sp_, s32, 4) = 0;
   FIELD_AT(sp_, s32, 8) = 0x500000;
   Call3((void (*)())Func_020006b0, ((s32)sp_ + 12), (s32)sp_,
@@ -173,28 +173,28 @@ L_020083da:
   Call3((void (*)())ObjectMotion_SetPositionAndCommit, 8, 0x1d0, 152);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 8, 0x9999, 0x4ccc);
   t79 = FIELD_AT(v_r7, s32, 28);
-  FIELD_AT(v_r7, s32, 28) = (t79 + -0x1000);
-  FIELD_AT(v_r7, s32, 24) = (t79 + -0x1000);
+  FIELD_AT(v_r7, s32, 28) = (t79 - 0x1000);
+  FIELD_AT(v_r7, s32, 24) = (t79 - 0x1000);
   Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion, 8, 0, -16);
   Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 8);
   t82 = FIELD_AT(v_r7, s32, 28);
-  FIELD_AT(v_r7, s32, 28) = (t82 + -0x1000);
-  FIELD_AT(v_r7, s32, 24) = (t82 + -0x1000);
+  FIELD_AT(v_r7, s32, 28) = (t82 - 0x1000);
+  FIELD_AT(v_r7, s32, 24) = (t82 - 0x1000);
   Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion, 8, 0, -16);
   Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 8);
   t85 = FIELD_AT(v_r7, s32, 28);
-  FIELD_AT(v_r7, s32, 28) = (t85 + -0x1000);
-  FIELD_AT(v_r7, s32, 24) = (t85 + -0x1000);
+  FIELD_AT(v_r7, s32, 28) = (t85 - 0x1000);
+  FIELD_AT(v_r7, s32, 24) = (t85 - 0x1000);
   Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion, 8, 0, -16);
   Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 8);
   t88 = FIELD_AT(v_r7, s32, 28);
-  FIELD_AT(v_r7, s32, 28) = (t88 + -0x1000);
-  FIELD_AT(v_r7, s32, 24) = (t88 + -0x1000);
+  FIELD_AT(v_r7, s32, 28) = (t88 - 0x1000);
+  FIELD_AT(v_r7, s32, 24) = (t88 - 0x1000);
   Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion, 8, 0, -16);
   Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 8);
   t91 = FIELD_AT(v_r7, s32, 28);
-  FIELD_AT(v_r7, s32, 28) = (t91 + -0x1000);
-  FIELD_AT(v_r7, s32, 24) = (t91 + -0x1000);
+  FIELD_AT(v_r7, s32, 28) = (t91 - 0x1000);
+  FIELD_AT(v_r7, s32, 24) = (t91 - 0x1000);
   Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion, 8, 0, -16);
   Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 8);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 8, 0x3333, 0x1999);
@@ -202,8 +202,8 @@ L_020083da:
   v_r5 = 19;
 L_02008594:
   t96 = FIELD_AT(v_r7, s32, 28);
-  FIELD_AT(v_r7, s32, 28) = (t96 + -0x900);
-  FIELD_AT(v_r7, s32, 24) = (t96 + -0x900);
+  FIELD_AT(v_r7, s32, 28) = (t96 - 0x900);
+  FIELD_AT(v_r7, s32, 24) = (t96 - 0x900);
   Call1((void (*)())WaitFrames, 7);
   v_r5 = (v_r5 - 1);
   if (v_r5 >= 0)

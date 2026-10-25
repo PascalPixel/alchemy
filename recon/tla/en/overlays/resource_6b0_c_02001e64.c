@@ -1,5 +1,5 @@
 // Draft of overlay 6b0's Func_02001e64, translated from its listing: differ
-// 517 of 913. Left: its shape: 862 instructions against the listing's 913.
+// 263 of 913. Left: its shape: 926 instructions against the listing's 913.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -45,8 +45,8 @@ s32 Func_02001e64(void) {
   s32 t149, t154, t155;
 
   t0 = FIELD_AT(0x3000000, s32, 108);
-  *(s32 *)(t0 + 0x1ac) = 0x204;
-  t1 = *(s16 *)((s32)gPartyState + 0x1e0);
+  FIELD_AT(t0, s32, 428) = 0x204;
+  t1 = FIELD_AT((s32)gPartyState, s16, 480);
   v_r2 = 0x3000000;
   v_r7 = 0x204;
   v_r6 = (s32)gPartyState;
@@ -59,32 +59,32 @@ s32 Func_02001e64(void) {
   if (t3 == 0)
     goto L_02009ec6;
   Call3((void (*)())Func_02000a78, 0x208, 48, 0);
-  Call6((void (*)())Func_02003328, 85, 34, 85, 8, 8, 85);
+  Call6((void (*)())Func_02003328, 85, 34, 85, 8, 9, 8);
 L_02009ec6:
   t6 = Value1((s32 (*)())GameFlag_Test, 0xa88);
   if (t6 == 0)
     goto L_02009ef4;
   Call3((void (*)())Func_02000a78, 0x228, 48, 3);
-  Call6((void (*)())Func_02003328, 101, 34, 101, 8, 8, 101);
+  Call6((void (*)())Func_02003328, 101, 34, 101, 8, 9, 8);
 L_02009ef4:
   t9 = Value1((s32 (*)())GameFlag_Test, 0xa89);
   if (t9 == 0)
     goto L_02009f22;
   Call3((void (*)())Func_02000a78, 0x1f8, 40, 10);
-  Call6((void (*)())Func_02003328, 85, 46, 85, 20, 20, 85);
+  Call6((void (*)())Func_02003328, 85, 46, 85, 20, 9, 8);
 L_02009f22:
   t12 = Value1((s32 (*)())GameFlag_Test, 0xa8a);
   if (t12 == 0)
     goto L_02009f50;
   Call3((void (*)())Func_02000a78, 0x238, 40, 2);
-  Call6((void (*)())Func_02003328, 101, 46, 101, 20, 20, 101);
+  Call6((void (*)())Func_02003328, 101, 46, 101, 20, 9, 8);
 L_02009f50:
   t15 = Value1((s32 (*)())GameFlag_Test, 0xa8b);
   if (t15 != 0)
     goto L_02009f60;
   goto L_0200a6e6;
 L_02009f60:
-  Call6((void (*)())Func_02003328, 54, 7, 33, 7, 7, 33);
+  Call6((void (*)())Func_02003328, 54, 7, 33, 7, 1, 2);
   Call4((void (*)())Func_02003380, 0x2180000, 0x880000, 0, 0);
   goto L_0200a6e6;
 L_02009f86:
@@ -105,16 +105,16 @@ L_02009fb8:
   Call3((void (*)())Func_020033e0, 10, 0x1b80000, 0x2f80000);
 L_02009fd4:
   Call1((void (*)())Func_02003490, (s32)gData_020036e4);
-  t25 = *(s32 *)(v_r6 + 0x214);
+  t25 = FIELD_AT(v_r6, s32, 532);
   t26 = Value1((s32 (*)())Object_GetById, t25);
-  t27 = *(u8 *)(t26 + 35);
-  *(u8 *)(t26 + 35) = (64 | t27);
+  t27 = FIELD_AT(t26, u8, 35);
+  FIELD_AT(t26, u8, 35) = (64 | t27);
   t28 = Value1((s32 (*)())Object_GetById, 9);
-  *(u8 *)(t28 + 85) = 0;
+  FIELD_AT(t28, u8, 85) = 0;
   t29 = Value1((s32 (*)())Object_GetById, 9);
-  t30 = *(u8 *)(t29 + 35);
-  *(u8 *)(t29 + 35) = (128 | t30);
-  t31 = *(s16 *)(v_r6 + 0x1e2);
+  t30 = FIELD_AT(t29, u8, 35);
+  FIELD_AT(t29, u8, 35) = (128 | t30);
+  t31 = FIELD_AT(v_r6, s16, 482);
   if (t31 != 17)
     goto L_0200a03c;
   t32 = Value1((s32 (*)())GameFlag_Test, 0x300);
@@ -123,7 +123,7 @@ L_02009fd4:
   Call2((void (*)())Object_SetModeById, 9, 2);
   Call3((void (*)())Func_020033e0, 9, 0x2d80000, 0x780000);
 L_0200a03c:
-  t35 = *(s16 *)((s32)gPartyState + 0x1e2);
+  t35 = FIELD_AT((s32)gPartyState, s16, 482);
   if (t35 != 18)
     goto L_0200a05c;
   t36 = Value1((s32 (*)())GameFlag_Test, 0x300);
@@ -131,7 +131,7 @@ L_0200a03c:
     goto L_0200a05c;
   Func_02001d68();
 L_0200a05c:
-  t38 = *(s16 *)((s32)gPartyState + 0x1e2);
+  t38 = FIELD_AT((s32)gPartyState, s16, 482);
   v_r5 = (s32)gPartyState;
   if (t38 == 10)
     goto L_0200a06e;
@@ -146,47 +146,47 @@ L_0200a084:
   if (t41 == 0)
     goto L_0200a09e;
   t42 = Value1((s32 (*)())Object_GetById, 9);
-  *(u8 *)(t42 + 85) = 4;
+  FIELD_AT(t42, u8, 85) = 4;
 L_0200a09e:
   t43 = Value1((s32 (*)())GameFlag_Test, 0x200);
   if (t43 == 0)
     goto L_0200a0bc;
-  Call6((void (*)())Func_02003328, 54, 87, 44, 86, 86, 86);
+  Call6((void (*)())Func_02003328, 54, 87, 44, 86, 1, 1);
 L_0200a0bc:
   t45 = Value1((s32 (*)())GameFlag_Test, 0x201);
   if (t45 == 0)
     goto L_0200a0dc;
-  Call6((void (*)())Func_02003328, 54, 87, 46, 86, 86, 86);
+  Call6((void (*)())Func_02003328, 54, 87, 46, 86, 1, 1);
 L_0200a0dc:
   t47 = Value1((s32 (*)())GameFlag_Test, 0x202);
   if (t47 == 0)
     goto L_0200a0fc;
-  Call6((void (*)())Func_02003328, 54, 87, 43, 87, 87, 87);
+  Call6((void (*)())Func_02003328, 54, 87, 43, 87, 1, 1);
 L_0200a0fc:
   t49 = Value1((s32 (*)())GameFlag_Test, 0x203);
   if (t49 == 0)
     goto L_0200a11c;
-  Call6((void (*)())Func_02003328, 54, 87, 45, 87, 87, 87);
+  Call6((void (*)())Func_02003328, 54, 87, 45, 87, 1, 1);
 L_0200a11c:
   t51 = Value1((s32 (*)())GameFlag_Test, 0x204);
   if (t51 == 0)
     goto L_0200a13a;
-  Call6((void (*)())Func_02003328, 54, 87, 47, 87, 87, 87);
+  Call6((void (*)())Func_02003328, 54, 87, 47, 87, 1, 1);
 L_0200a13a:
   t53 = Value1((s32 (*)())GameFlag_Test, 0x205);
   if (t53 == 0)
     goto L_0200a15a;
-  Call6((void (*)())Func_02003328, 54, 87, 44, 88, 88, 88);
+  Call6((void (*)())Func_02003328, 54, 87, 44, 88, 1, 1);
 L_0200a15a:
   t55 = Value1((s32 (*)())GameFlag_Test, 0x206);
   if (t55 == 0)
     goto L_0200a17a;
-  Call6((void (*)())Func_02003328, 54, 87, 46, 88, 88, 88);
+  Call6((void (*)())Func_02003328, 54, 87, 46, 88, 1, 1);
 L_0200a17a:
-  t57 = *(s32 *)(v_r5 + 0x214);
+  t57 = FIELD_AT(v_r5, s32, 532);
   t58 = Value1((s32 (*)())Object_GetById, t57);
-  t59 = *(u8 *)(t58 + 35);
-  *(u8 *)(t58 + 35) = (32 | t59);
+  t59 = FIELD_AT(t58, u8, 35);
+  FIELD_AT(t58, u8, 35) = (32 | t59);
   goto L_0200a6e6;
 L_0200a1b4:
   if (v_r1 == 0x131)
@@ -194,17 +194,17 @@ L_0200a1b4:
   goto L_0200a2ce;
 L_0200a1bc:
   t60 = Value1((s32 (*)())Object_GetById, 14);
-  *(u8 *)(t60 + 85) = 2;
+  FIELD_AT(t60, u8, 85) = 2;
   FIELD_AT(t60, s32, 20) = 0xfff20000;
   FIELD_AT(t60, s32, 12) = 0xfff20000;
-  t61 = *(u8 *)(t60 + 35);
-  *(u8 *)(t60 + 35) = (128 | t61);
-  t62 = *(s32 *)(v_r6 + 0x214);
+  t61 = FIELD_AT(t60, u8, 35);
+  FIELD_AT(t60, u8, 35) = (128 | t61);
+  t62 = FIELD_AT(v_r6, s32, 532);
   t63 = Value1((s32 (*)())Object_GetById, t62);
-  t64 = *(u8 *)(t63 + 35);
-  *(u8 *)(t63 + 35) = (64 | t64);
+  t64 = FIELD_AT(t63, u8, 35);
+  FIELD_AT(t63, u8, 35) = (64 | t64);
   t65 = Value1((s32 (*)())Object_GetById, 9);
-  *(u8 *)(t65 + 98) = 1;
+  FIELD_AT(t65, u8, 98) = 1;
   t66 = Value1((s32 (*)())GameFlag_Test, 0xa82);
   v_r7 = 2;
   v_r5 = 1;
@@ -255,28 +255,28 @@ L_0200a2d6:
   Call3((void (*)())Func_020033e0, 9, 0x1080000, 0x1680000);
 L_0200a2f2:
   Call1((void (*)())Func_02003490, (s32)gData_020036f6);
-  t87 = *(u16 *)(v_r6 + 0x1e2);
-  t88 = *(s16 *)(v_r6 + 0x1e2);
+  t87 = FIELD_AT(v_r6, u16, 482);
+  t88 = FIELD_AT(v_r6, s16, 482);
   v_r3 = t87;
   v_r2 = t88;
   if (v_r2 == 1)
     goto L_0200a30a;
   goto L_0200a4a2;
 L_0200a30a:
-  Func_02002a74(33, 0x280, 0x380, 18, 18);
+  Func_02002a74(33, 0x280, 0x380, 18, 68);
   t90 = Value1((s32 (*)())GameFlag_Test, 0x304);
   v_r5 = t90;
   if (v_r5 != 0)
     goto L_0200a35e;
-  t91 = *(s32 *)(v_r6 + 0x214);
+  t91 = FIELD_AT(v_r6, s32, 532);
   t92 = Value1((s32 (*)())Object_GetById, t91);
-  t93 = *(u8 *)(t92 + 35);
-  *(u8 *)(t92 + 35) = (64 | t93);
+  t93 = FIELD_AT(t92, u8, 35);
+  FIELD_AT(t92, u8, 35) = (64 | t93);
   t94 = Value1((s32 (*)())Object_GetById, 8);
-  *(u8 *)(t94 + 85) = v_r5;
+  FIELD_AT(t94, u8, 85) = v_r5;
   t95 = Value1((s32 (*)())Object_GetById, 8);
-  t96 = *(u8 *)(t95 + 35);
-  *(u8 *)(t95 + 35) = (128 | t96);
+  t96 = FIELD_AT(t95, u8, 35);
+  FIELD_AT(t95, u8, 35) = (128 | t96);
   goto L_0200a3a8;
 L_0200a35e:
   Call3((void (*)())Func_020033e0, 8, 0, 0);
@@ -292,56 +292,56 @@ L_0200a3a8:
   if (t105 == 0)
     goto L_0200a3c2;
   t106 = Value1((s32 (*)())Object_GetById, 8);
-  *(u8 *)(t106 + 85) = 4;
+  FIELD_AT(t106, u8, 85) = 4;
 L_0200a3c2:
   t107 = Value1((s32 (*)())GameFlag_Test, 0x200);
   if (t107 == 0)
     goto L_0200a3e0;
-  Call6((void (*)())Func_02003328, 17, 71, 8, 69, 69, 69);
+  Call6((void (*)())Func_02003328, 17, 71, 8, 69, 1, 1);
 L_0200a3e0:
   t109 = Value1((s32 (*)())GameFlag_Test, 0x205);
   if (t109 == 0)
     goto L_0200a400;
-  Call6((void (*)())Func_02003328, 17, 71, 6, 71, 71, 71);
+  Call6((void (*)())Func_02003328, 17, 71, 6, 71, 1, 1);
 L_0200a400:
   t111 = Value1((s32 (*)())GameFlag_Test, 0x201);
   if (t111 == 0)
     goto L_0200a420;
-  Call6((void (*)())Func_02003328, 17, 71, 5, 75, 75, 75);
+  Call6((void (*)())Func_02003328, 17, 71, 5, 75, 1, 1);
 L_0200a420:
   t113 = Value1((s32 (*)())GameFlag_Test, 0x202);
   if (t113 == 0)
     goto L_0200a440;
-  Call6((void (*)())Func_02003328, 17, 71, 8, 75, 75, 75);
+  Call6((void (*)())Func_02003328, 17, 71, 8, 75, 1, 1);
 L_0200a440:
   t115 = Value1((s32 (*)())GameFlag_Test, 0x203);
   if (t115 == 0)
     goto L_0200a460;
-  Call6((void (*)())Func_02003328, 17, 71, 11, 75, 75, 75);
+  Call6((void (*)())Func_02003328, 17, 71, 11, 75, 1, 1);
 L_0200a460:
   t117 = Value1((s32 (*)())GameFlag_Test, 0x204);
   if (t117 == 0)
     goto L_0200a47e;
-  Call6((void (*)())Func_02003328, 17, 71, 8, 73, 73, 73);
+  Call6((void (*)())Func_02003328, 17, 71, 8, 73, 1, 1);
 L_0200a47e:
   t119 = Value1((s32 (*)())GameFlag_Test, 0x206);
   if (t119 != 0)
     goto L_0200a48e;
   goto L_0200a6e6;
 L_0200a48e:
-  Call6((void (*)())Func_02003328, 17, 71, 10, 71, 71, 71);
+  Call6((void (*)())Func_02003328, 17, 71, 10, 71, 1, 1);
   goto L_0200a6e6;
 L_0200a4a2:
   if (v_r2 != 11)
     goto L_0200a4c0;
-  Func_02002a74(33, 0x280, 0x380, 18, 18);
+  Func_02002a74(33, 0x280, 0x380, 18, 68);
   v_r1 = 0;
   v_r0 = 22;
   goto L_0200a4ec;
 L_0200a4c0:
   if (v_r2 != 12)
     goto L_0200a4f4;
-  Func_02002a74(35, 0x280, 0x380, 18, 18);
+  Func_02002a74(35, 0x280, 0x380, 18, 68);
   t123 = Value1((s32 (*)())GameFlag_Test, 0x109);
   if (t123 == 0)
     goto L_0200a4e6;
@@ -350,14 +350,14 @@ L_0200a4e6:
   v_r1 = -0x24;
   v_r0 = 36;
 L_0200a4ec:
-  Call4((void (*)())Func_02003190, v_r0, v_r1, v_r7, v_r3);
+  Call3((void (*)())Func_02003190, v_r0, v_r1, v_r7);
   goto L_0200a6e6;
 L_0200a4f4:
   if ((u32)((v_r3 - 4) << 16) <= (u32)0x10000)
     goto L_0200a502;
   goto L_0200a6e6;
 L_0200a502:
-  Func_02002a74(35, 0x280, 0x380, 18, 18);
+  Func_02002a74(35, 0x280, 0x380, 18, 68);
   goto L_0200a6e6;
 L_0200a52c:
   if (v_r1 == 0x133)
@@ -365,7 +365,7 @@ L_0200a52c:
   goto L_0200a6e6;
 L_0200a534:
   t126 = FIELD_AT(v_r2, s32, 32);
-  t127 = *(s16 *)(v_r6 + 0x1e2);
+  t127 = FIELD_AT(v_r6, s16, 482);
   v_r5 = t126;
   v_r3 = (t127 - 1);
   if ((u32)v_r3 <= (u32)11)
@@ -404,22 +404,22 @@ L_0200a580:
     goto L_0200a596;
   Call3((void (*)())Func_020033e0, 11, 0, 0);
 L_0200a596:
-  t130 = *(s32 *)((s32)gPartyState + 0x214);
+  t130 = FIELD_AT((s32)gPartyState, s32, 532);
   t131 = Value1((s32 (*)())Object_GetById, t130);
-  t132 = *(u8 *)(t131 + 35);
-  *(u8 *)(t131 + 35) = (64 | t132);
+  t132 = FIELD_AT(t131, u8, 35);
+  FIELD_AT(t131, u8, 35) = (64 | t132);
   Call2((void (*)())Object_SetModeById, 11, 2);
   t134 = Value1((s32 (*)())Object_GetById, 11);
-  *(u8 *)(t134 + 85) = 0;
+  FIELD_AT(t134, u8, 85) = 0;
   t135 = Value1((s32 (*)())Object_GetById, 11);
-  t136 = *(u8 *)(t135 + 35);
-  *(u8 *)(t135 + 35) = (128 | t136);
+  t136 = FIELD_AT(t135, u8, 35);
+  FIELD_AT(t135, u8, 35) = (128 | t136);
   Call2((void (*)())Object_SetModeById, 11, 2);
   t138 = Value1((s32 (*)())GameFlag_Test, 0x304);
   v_r6 = (s32)gPartyState;
   if (t138 != 0)
     goto L_0200a5fa;
-  t139 = *(s16 *)(v_r6 + 0x1e2);
+  t139 = FIELD_AT(v_r6, s16, 482);
   if (t139 != 12)
     goto L_0200a5fa;
   Func_02001df4();
@@ -437,7 +437,7 @@ L_0200a606:
   v_r2 = 240;
   goto L_0200a650;
 L_0200a61e:
-  Call6((void (*)())Func_02003328, 18, 1, 11, 4, 4, 11);
+  Call6((void (*)())Func_02003328, 18, 1, 11, 4, 1, 2);
   v_r0 = 0xb80000;
   v_r1 = 176;
   goto L_0200a67a;
@@ -453,7 +453,7 @@ L_0200a650:
   Call1((void (*)())GameFlag_SetBit, 0x200);
   goto L_0200a6e6;
 L_0200a660:
-  Call6((void (*)())Func_02003328, 18, 1, 26, 4, 4, 26);
+  Call6((void (*)())Func_02003328, 18, 1, 26, 4, 1, 2);
   v_r0 = 0x1a80000;
   v_r1 = 176;
 L_0200a67a:
@@ -467,13 +467,13 @@ L_0200a686:
   Call1((void (*)())GameFlag_SetBit, 0x200);
   goto L_0200a6d0;
 L_0200a6ac:
-  Call6((void (*)())Func_02003328, 18, 1, 53, 4, 4, 53);
+  Call6((void (*)())Func_02003328, 18, 1, 53, 4, 1, 2);
   Call4((void (*)())Func_02003380, 0x3580000, 0x580000, 0, 2);
 L_0200a6d0:
-  t154 = *(s32 *)(v_r5 + 236);
-  *(s32 *)(v_r5 + 236) = (t154 + 0x80000);
-  t155 = *(s32 *)((v_r5 + 236) + 8);
-  *(s32 *)((v_r5 + 236) + 8) = (t155 + 0x80000);
+  t154 = FIELD_AT(v_r5, s32, 236);
+  FIELD_AT(v_r5, s32, 236) = (t154 + 0x80000);
+  t155 = FIELD_AT(v_r5, s32, 244);
+  FIELD_AT(v_r5, s32, 244) = (t155 + 0x80000);
 L_0200a6e6:
   return 0;
 }

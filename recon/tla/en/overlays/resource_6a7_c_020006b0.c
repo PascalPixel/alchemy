@@ -1,5 +1,5 @@
 // Draft of overlay 6a7's Func_020006b0, translated from its listing: differ
-// 286 of 323. Left: its shape: 345 instructions against the listing's 323.
+// 274 of 323. Left: its shape: 343 instructions against the listing's 323.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -35,28 +35,29 @@ extern u8 Field_Palette685[];
 
 void Func_020006b0(s32 p0, s32 p1, s32 p2) {
   s32 sp_[1];
+  s32 spo_[1];
   s32 v_r8, v_r6, v_r10, v_r7, v_r9, v_r5, v_r11, v_r2, v_r3, t0;
   s32 t1, t3, t4, t5, t7, t8, t9, t10, t11, t12;
   s32 t13, t14, t15, t16, t17, t18, t20, t21, t23, t28;
   s32 t31, t32, t35, t36, t37, t38, t39, t40, t41, t42;
   s32 t43, t45, t46, t52;
 
-  FIELD_AT(sp_, s32, 20) = p2;
+  FIELD_AT(sp_, s32, 16) = p2;
   t0 = Value2((s32 (*)())Runtime_AllocateHeapBlockFar, 220, 0x1e58);
-  FIELD_AT(sp_, s32, 8) = 0;
+  FIELD_AT(sp_, s32, 4) = 0;
   t1 = Value4((s32 (*)())Resource_GetTableEntry, 0x1f2, 0, 0, 0);
   Call2((void (*)())Func_020009f0, t1, t0);
   t3 = Value0((s32 (*)())Resource_FindFreeEntry);
-  FIELD_AT(sp_, s32, 16) = t3;
+  FIELD_AT(sp_, s32, 12) = t3;
   t4 = Value3((s32 (*)())VramCache_Load, t3, 0x500, t0);
-  FIELD_AT(sp_, s32, 12) = t4;
+  FIELD_AT(sp_, s32, 8) = t4;
   v_r9 = t0;
-  v_r7 = (0x1870 + t0);
+  v_r7 = (t0 + 0x1870);
   v_r10 = p1;
-  v_r6 = (0x1000 + t0);
+  v_r6 = (t0 + 0x1000);
   v_r8 = 0;
 L_02008706:
-  t5 = FIELD_AT(sp_, s32, 12);
+  t5 = FIELD_AT(sp_, s32, 8);
   Func_02000b40(v_r6, 0, 0, 0x40000000, 0x40000000);
   t7 = FIELD_AT(v_r6, u8, 9);
   FIELD_AT(v_r6, u16, 30) = 250;
@@ -89,7 +90,7 @@ L_02008706:
   Call2((void (*)())Func_020009f0, t18, t17);
   t20 = Value0((s32 (*)())Resource_FindFreeEntry);
   t21 = Value3((s32 (*)())VramCache_Load, t20, 0x400, t17);
-  FIELD_AT(sp_, s32, 4) = t21;
+  *(s32 *)sp_ = t21;
   Call4((void (*)())MemFree, t17, 0, 0, 0);
   v_r11 = t20;
   v_r10 = t16;
@@ -97,7 +98,7 @@ L_02008706:
   v_r8 = 95;
 L_020087e0:
   t23 = Value0((s32 (*)())Random16Far);
-  v_r8 = (v_r8 + -1);
+  v_r8 = (v_r8 - 1);
   *(s32 *)v_r5 = -((u32)(t23 << 5) >> 16);
   v_r5 = (v_r5 + 16);
   if (v_r8 >= 0)
@@ -119,21 +120,21 @@ L_0200881e:
 L_0200883a:
   if (v_r6 != 105)
     goto L_0200885e;
-  t28 = FIELD_AT(sp_, s32, 20);
-  FIELD_AT(sp_, s32, 8) = 1;
+  t28 = FIELD_AT(sp_, s32, 16);
+  FIELD_AT(sp_, s32, 4) = 1;
   Call3((void (*)())Func_02000a50, 0x60000, 0x60000, 0x10000);
   Call1((void (*)())Func_02000b58, 228);
 L_0200885e:
   if (v_r6 != 130)
     goto L_02008866;
-  FIELD_AT(sp_, s32, 8) = 1;
+  FIELD_AT(sp_, s32, 4) = 1;
 L_02008866:
-  t31 = FIELD_AT(sp_, s32, 8);
+  t31 = FIELD_AT(sp_, s32, 4);
   if (t31 == 0)
     goto L_020088ac;
-  v_r5 = (0x1000 + v_r9);
+  v_r5 = (v_r9 + 0x1000);
   v_r8 = 53;
-  v_r7 = (0x1870 + v_r9);
+  v_r7 = (v_r9 + 0x1870);
 L_0200887e:
   t32 = FIELD_AT(v_r7, s32, 24);
   if ((u32)t32 > (u32)59)
@@ -143,7 +144,7 @@ L_0200887e:
   t35 = FIELD_AT(v_r7, s32, 24);
   FIELD_AT(v_r7, s32, 24) = (t35 + 1);
 L_0200889c:
-  v_r8 = (v_r8 + -1);
+  v_r8 = (v_r8 - 1);
   v_r5 = (v_r5 + 40);
   v_r7 = (v_r7 + 28);
   if (v_r8 >= 0)
@@ -171,7 +172,7 @@ L_02008910:
   v_r3 = t41;
   if (v_r3 < 0)
     goto L_02008934;
-  t42 = FIELD_AT(sp_, s32, 4);
+  t42 = *(s32 *)sp_;
   t43 = FIELD_AT(v_r5, u16, 8);
   FIELD_AT(v_r5, u16, 8) =
       ((t43 & -0x400) | ((t42 + ((v_r3 >> 2) << 2)) & 0x3ff));
@@ -186,7 +187,7 @@ L_02008934:
   goto L_02008958;
 L_02008958:
   v_r5 = (v_r5 + 16);
-  if (v_r5 <= (0x5f0 + v_r10))
+  if (v_r5 <= (v_r10 + 0x5f0))
     goto L_020088ae;
   Call1((void (*)())WaitFrames, 1);
   v_r6 = (v_r6 + 1);
@@ -197,8 +198,8 @@ L_02008972:
   Call1((void (*)())Resource_ResetEntry, v_r11);
   Call4((void (*)())MemFree, v_r10, 0, 0, 0);
   Call1((void (*)())FieldEvent_WaitFrames, 40);
-  Call3((void (*)())Func_02000a50, 0, 0, 0);
-  t52 = FIELD_AT(sp_, s32, 16);
+  Func_02000a50(0, 0, 0);
+  t52 = FIELD_AT(sp_, s32, 12);
   Call1((void (*)())Resource_ResetEntry, t52);
   Call4((void (*)())Runtime_ReleaseHeapBlock, 220, 0, 0, 0);
   return;

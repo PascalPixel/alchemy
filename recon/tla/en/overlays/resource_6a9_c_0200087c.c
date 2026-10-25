@@ -1,5 +1,5 @@
 // Draft of overlay 6a9's Func_0200087c, translated from its listing: differ
-// 182 of 255. Left: its shape: 269 instructions against the listing's 255.
+// 175 of 255. Left: its shape: 264 instructions against the listing's 255.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -30,6 +30,7 @@ extern u8 Func_02000848[];
 
 void Func_0200087c(void) {
   s32 sp_[1];
+  s32 spo_[4];
   s32 v_r7, v_r2, v_r1, v_r5, v_r11, v_r9, v_r0, v_r8, v_r6, v_r10;
   s32 t0, t1, t2, t3, t4, t7, t8, t9, t10, t12;
   s32 t13, t14, t15, t16, t17, t18, t27, t28, t29, t30;
@@ -39,13 +40,13 @@ void Func_0200087c(void) {
 
   t0 = FIELD_AT(0x3000000, s32, 108);
   t1 = *(s32 *)0x30000e0;
-  t2 = *(s32 *)(t0 + 0xcbc);
+  t2 = FIELD_AT(t0, s32, 3260);
   v_r1 = t1;
   v_r2 = t0;
   v_r7 = t2;
   if (v_r1 == 0)
     goto L_020088c4;
-  t3 = *(s16 *)(v_r2 + 0x166);
+  t3 = FIELD_AT(v_r2, s16, 358);
   if (t3 == 0)
     goto L_020088c4;
   t4 = FIELD_AT(v_r1, s16, 28);
@@ -64,8 +65,8 @@ L_020088cc:
     goto L_020088de;
   goto L_02008a60;
 L_020088de:
-  *(u8 *)(34 + v_r7) = 2;
-  *(u8 *)(85 + v_r7) = 3;
+  FIELD_AT(v_r7, u8, 34) = 2;
+  FIELD_AT(v_r7, u8, 85) = 3;
   FIELD_AT(v_r7, s32, 68) = 0;
   Call1((void (*)())WaitFrames, 1);
   t12 = FIELD_AT(v_r7, s32, 8);
@@ -73,20 +74,20 @@ L_020088de:
   t14 = Value3((s32 (*)())Func_020010a4, 2, t12, t13);
   v_r8 = 0;
   v_r0 = t14;
-  v_r9 = (85 + v_r7);
-  v_r11 = (34 + v_r7);
+  v_r9 = (v_r7 + 85);
+  v_r11 = (v_r7 + 34);
   v_r5 = 2;
   if (v_r0 == v_r8)
     goto L_0200897a;
-  t15 = *(u8 *)(v_r7 + 35);
-  *(u8 *)(v_r7 + 35) = (t15 | 2);
+  t15 = FIELD_AT(v_r7, u8, 35);
+  FIELD_AT(v_r7, u8, 35) = (t15 | 2);
   *(u16 *)0x4000052 = 0x1000;
   t16 = FIELD_AT(v_r7, s32, 16);
   *(u16 *)0x4000050 = 0x3f10;
   t17 = FIELD_AT(v_r7, s32, 8);
   t18 = Value4((s32 (*)())OverlayObject_PrepareObject, t17, 0,
                (t16 + ((v_r0 + 2) << 20)), 0x138);
-  Call4((void (*)())Func_02001164, 204, 0, 0, 0);
+  Call1((void (*)())Func_02001164, 204);
   Call1((void (*)())OverlayObject_WaitUntilIdle, v_r7);
   Call1((void (*)())OverlayObject_WaitUntilIdle, v_r7);
   v_r6 = 0x4000050;
@@ -103,37 +104,37 @@ L_02008960:
 L_0200897a:
   Call1((void (*)())OverlayObject_WaitUntilIdle, v_r7);
   Call1((void (*)())OverlayObject_WaitUntilIdle, v_r7);
-  Call4((void (*)())Func_02001164, 188, 0, 0, 0);
-  FIELD_AT(sp_, s32, 20) = 7;
-  FIELD_AT(sp_, s32, 16) = v_r5;
-  FIELD_AT(sp_, s32, 52) = (s32)Func_020007ec;
-  FIELD_AT(sp_, s32, 24) = 0xcccc;
-  FIELD_AT(sp_, s32, 28) = 0xcccc;
-  v_r8 = ((s32)sp_ + 16);
+  Call1((void (*)())Func_02001164, 188);
+  FIELD_AT(sp_, s32, 4) = 7;
+  *(s32 *)sp_ = v_r5;
+  FIELD_AT(sp_, s32, 36) = (s32)Func_020007ec;
+  FIELD_AT(sp_, s32, 8) = 0xcccc;
+  FIELD_AT(sp_, s32, 12) = 0xcccc;
+  v_r8 = (s32)sp_;
   v_r10 = 0;
 L_020089a8:
   v_r5 = (v_r10 << 12);
   t27 = Value1((s32 (*)())Math_Cosine, v_r5);
-  FIELD_AT(sp_, s32, 56) = (t27 << 1);
-  FIELD_AT(sp_, s32, 60) = 0;
+  FIELD_AT(sp_, s32, 40) = (t27 << 1);
+  FIELD_AT(sp_, s32, 44) = 0;
   t28 = Value2((s32 (*)())Math_Sine, v_r5, 0);
-  t29 = FIELD_AT(sp_, s32, 56);
-  FIELD_AT(sp_, s32, 56) = (t29 + (t29 >> 1));
-  FIELD_AT(sp_, s32, 64) = (t28 << 1);
+  t29 = FIELD_AT(sp_, s32, 40);
+  FIELD_AT(sp_, s32, 40) = (t29 + (t29 >> 1));
+  FIELD_AT(sp_, s32, 48) = (t28 << 1);
   t30 = Value0((s32 (*)())Random16Far);
-  t31 = FIELD_AT(sp_, s32, 56);
-  FIELD_AT(sp_, s32, 56) =
-      ((t31 + ((u32)(((t30 << 1) + t30) << 14) >> 16)) + -0x6000);
+  t31 = FIELD_AT(sp_, s32, 40);
+  FIELD_AT(sp_, s32, 40) =
+      ((t31 + ((u32)(((t30 << 1) + t30) << 14) >> 16)) - 0x6000);
   t32 = Value0((s32 (*)())Random16Far);
-  t33 = FIELD_AT(sp_, s32, 64);
-  t34 = FIELD_AT(sp_, s32, 60);
-  v_r5 = ((t33 + ((u32)(((t32 << 1) + t32) << 13) >> 16)) + -0x3000);
-  FIELD_AT(sp_, s32, 64) = v_r5;
+  t33 = FIELD_AT(sp_, s32, 48);
+  t34 = FIELD_AT(sp_, s32, 44);
+  v_r5 = ((t33 + ((u32)(((t32 << 1) + t32) << 13) >> 16)) - 0x3000);
+  FIELD_AT(sp_, s32, 48) = v_r5;
   t35 = FIELD_AT(v_r7, s32, 8);
   t36 = FIELD_AT(v_r7, s32, 16);
   t37 = FIELD_AT(v_r7, s32, 12);
-  t38 = FIELD_AT(sp_, s32, 56);
-  Func_0200015c(t35, t37, t36, t38, v_r8, v_r5, v_r8, v_r8);
+  t38 = FIELD_AT(sp_, s32, 40);
+  Func_0200015c(t35, t37, t36, t38, t34, v_r5, 0x10b0000, v_r8);
   v_r10 = (v_r10 + 1);
   if ((u32)v_r10 <= (u32)16)
     goto L_020089a8;
@@ -141,18 +142,18 @@ L_02008a1e:
   *(u8 *)v_r9 = 0;
   *(u8 *)v_r11 = 0;
   t40 = FIELD_AT(v_r7, s32, 8);
-  FIELD_AT(sp_, s32, 56) = t40;
+  FIELD_AT(sp_, s32, 40) = t40;
   t41 = FIELD_AT(v_r7, s32, 12);
-  FIELD_AT(sp_, s32, 60) = (t41 + 0xfff00000);
+  FIELD_AT(sp_, s32, 44) = (t41 - 0x100000);
   t42 = FIELD_AT(v_r7, s32, 16);
-  FIELD_AT(sp_, s32, 64) = t42;
-  t43 = Value4((s32 (*)())Func_0200115c, ((s32)sp_ + 56), 1, 0xfff00000, t42);
+  FIELD_AT(sp_, s32, 48) = t42;
+  t43 = Value2((s32 (*)())Func_0200115c, ((s32)sp_ + 40), 1);
   v_r0 = t43;
   if (v_r0 == 0)
     goto L_02008a60;
   FIELD_AT(v_r7, s32, 108) = (s32)Func_02000848;
-  *(u8 *)(v_r7 + 98) = 1;
-  *(u8 *)(v_r0 + 98) = 1;
+  FIELD_AT(v_r7, u8, 98) = 1;
+  FIELD_AT(v_r0, u8, 98) = 1;
   Call1((void (*)())GameFlag_SetBit, 0x212);
 L_02008a60:
   t45 = FIELD_AT(v_r7, s32, 8);

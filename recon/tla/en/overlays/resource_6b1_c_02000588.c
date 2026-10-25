@@ -1,5 +1,5 @@
 // Draft of overlay 6b1's Func_02000588, translated from its listing: differ
-// 57 of 157. Left: its shape: 152 instructions against the listing's 157.
+// 49 of 157. Left: its shape: 152 instructions against the listing's 157.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -46,7 +46,7 @@ L_020085a8:
     goto L_020085bc;
   goto L_020086f8;
 L_020085bc:
-  t5 = *(u8 *)(v_r5 + 34);
+  t5 = FIELD_AT(v_r5, u8, 34);
   t6 = FIELD_AT(v_r5, s32, 8);
   t7 = FIELD_AT(v_r5, s32, 16);
   t8 = Value3((s32 (*)())Func_02000c8c, t5, t6, t7);
@@ -75,7 +75,7 @@ L_0200860e:
 L_02008616:
   t19 = *(s8 *)((s32)gData_02000eec + v_r6);
   t20 = Value1((s32 (*)())Object_GetById, t19);
-  *(u8 *)(t20 + 85) = 0;
+  FIELD_AT(t20, u8, 85) = 0;
   t21 = FIELD_AT(t20, s32, 12);
   FIELD_AT(t20, s32, 12) = (t21 + 0x8000);
   FIELD_AT(t20, s32, 52) = 0x1000;
@@ -110,7 +110,7 @@ L_020086a8:
   t38 = Value1((s32 (*)())Object_GetById, v_r6);
   t39 = FIELD_AT(t38, s32, 16);
   FIELD_AT(t38, s32, 16) = ((t39 & 0xfff00000) + 0x80000);
-  *(u8 *)(t38 + 85) = 3;
+  FIELD_AT(t38, u8, 85) = 3;
   FIELD_AT(t38, s32, 108) = 0;
   v_r6 = (v_r6 + 1);
   if (v_r6 <= 14)

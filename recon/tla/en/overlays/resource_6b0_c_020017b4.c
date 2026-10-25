@@ -1,5 +1,5 @@
 // Draft of overlay 6b0's Func_020017b4, translated from its listing: differ
-// 103 of 171. Left: its shape: 176 instructions against the listing's 171.
+// 66 of 171. Left: instruction order and register choice.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -24,13 +24,13 @@ extern u8 gData_02003594[];
 extern u8 gFrameCount[];
 extern u8 gPartyState[];
 
-s32 Func_020017b4(s32 p0) {
+void Func_020017b4(s32 p0) {
   s32 sp_[1];
-  s32 v_r5, v_r7, v_r6, v_r0, v_r4, v_r1, v_r8, v_r3, v_r2, t0;
-  s32 t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
-  s32 t11, t12, t13, t14, t15, t16, t17, t18, t19, t20;
-  s32 t21, t22, t23, t29, t30, t31, t33, t34, t36, t37;
-  s32 t38, t39, t40, t41, t42, t43, t44, t45;
+  s32 v_r5, v_r7, v_r6, v_r4, v_r1, v_r8, v_r0, v_r3, v_r2, t0;
+  s32 t1, t2, t3, t4, t6, t7, t8, t9, t10, t11;
+  s32 t12, t13, t14, t15, t16, t17, t18, t19, t20, t21;
+  s32 t22, t23, t29, t30, t31, t33, t34, t36, t37, t38;
+  s32 t39, t40, t41, t42, t43, t44, t45;
 
   v_r5 = ((s32)gPartyState + 0x214);
   t0 = *(s32 *)v_r5;
@@ -43,19 +43,18 @@ s32 Func_020017b4(s32 p0) {
   if (t4 <= 248)
     goto L_02009800;
   FIELD_AT(v_r6, s32, 108) = 0;
-  t5 = Value1((s32 (*)())GameFlag_ClearBit, 0x200);
+  Call1((void (*)())GameFlag_ClearBit, 0x200);
   t6 = FIELD_AT(v_r6, s32, 8);
   FIELD_AT(v_r6, s32, 8) = ((t6 & 0xfff00000) + 0x80000);
   t7 = FIELD_AT(v_r6, s32, 16);
   FIELD_AT(v_r6, s32, 16) = ((t7 & 0xfff00000) + 0x80000);
-  v_r0 = t5;
   goto L_02009920;
 L_02009800:
   t8 = FIELD_AT(v_r7, s32, 8);
   t9 = FIELD_AT(v_r6, s32, 76);
   t10 = FIELD_AT(v_r6, s32, 8);
   FIELD_AT(sp_, s32, 8) = (t10 - (t8 - t9));
-  FIELD_AT(sp_, s32, 0) = (t10 - (t8 - t9));
+  *(s32 *)sp_ = (t10 - (t8 - t9));
   t11 = FIELD_AT(v_r7, s32, 12);
   FIELD_AT(sp_, s32, 12) = t11;
   t12 = FIELD_AT(v_r7, s32, 16);
@@ -82,8 +81,8 @@ L_02009832:
   t21 = Value0((s32 (*)())Random16Far);
   t22 = FIELD_AT(t18, s32, 12);
   FIELD_AT(t18, s32, 12) = (t22 + (((31 & t21) - 4) << 16));
-  *(u8 *)(t18 + 85) = 0;
-  t23 = *(u8 *)(v_r6 + 98);
+  FIELD_AT(t18, u8, 85) = 0;
+  t23 = FIELD_AT(v_r6, u8, 98);
   Call2((void (*)())Object_SetPartAttribute, t18, t23);
   Call2((void (*)())Object_SetSpritePriority, t18, 2);
   Call2((void (*)())Func_020032e0, t18, 1);
@@ -99,7 +98,6 @@ L_02009832:
   Call1((void (*)())Func_020034b8, 106);
 L_020098b2:
   t33 = FIELD_AT(v_r8, s16, 10);
-  v_r0 = 10;
   if (t33 > 248)
     goto L_02009920;
   t34 = FIELD_AT(v_r7, u16, 6);
@@ -109,10 +107,9 @@ L_020098b2:
   t37 = *(u8 *)v_r5;
   t38 = FIELD_AT(v_r8, s32, 8);
   t39 = Value3((s32 (*)())Func_02003348, t37, t36, t38);
-  v_r0 = t39;
-  if (v_r0 == 255)
+  if (t39 == 255)
     goto L_02009920;
-  t40 = FIELD_AT(sp_, s32, 0);
+  t40 = *(s32 *)sp_;
   t41 = FIELD_AT(sp_, s32, 4);
   FIELD_AT(v_r6, s32, 8) = t40;
   FIELD_AT(v_r6, s32, 16) = t41;
@@ -130,7 +127,6 @@ L_02009908:
   if (v_r0 != 51)
     goto L_02009920;
   t45 = FIELD_AT(0x3000000, s32, 108);
-  v_r0 = 0x16a;
   v_r2 = 0;
   v_r1 = (t45 + 0x16a);
   v_r3 = 200;
@@ -138,5 +134,5 @@ L_0200991c:
   *(u16 *)v_r1 = v_r3;
   FIELD_AT(v_r6, s32, 108) = v_r2;
 L_02009920:
-  return v_r0;
+  return;
 }

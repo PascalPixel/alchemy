@@ -1,5 +1,5 @@
 // Draft of overlay 6ad's Func_02004d10, translated from its listing: differ
-// 380 of 305. Left: its shape: 299 instructions against the listing's 305.
+// 338 of 305. Left: its shape: 303 instructions against the listing's 305.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -28,177 +28,162 @@ extern u8 gData_02005f7c[];
 extern u8 gPartyState[];
 
 void Func_02004d10(s32 p0, s32 p1, s32 p2, s32 p3, s32 p4, s32 p5) {
-  s32 sp_[18];
+  s32 sp_[12];
+  s32 spo_[2];
   s32 v_r7, v_r5, v_r0, v_r4, v_r14, v_r12, v_r10, v_r6, v_r9, v_r8;
   s32 v_r1, v_r2, v_r11, v_r3, t0, t1, t2, t3, t4, t5;
   s32 t6, t7, t8, t9, t10, t11, t12, t13, t14, t15;
-  s32 t16, t17, t19, t21, t24, t25, t26, t27, t28, t29;
-  s32 t31, t32, t37, t38, t39, t41, t43, t45, t47, t48;
-  s32 t50, t52, t54, t55, t59, t60, t61, t64, t65, t66;
-  s32 t67, t68, t69, t70, t71, t73, t74, t75, t77, t78;
-  s32 t79, t81, t82, t83, t84, t85, t86, t87, t88, t90;
-  s32 t91, t92, t93;
+  s32 t16, t18, t20, t23, t24, t25, t26, t28, t29, t35;
+  s32 t37, t39, t41, t42, t44, t46, t48, t49, t53, t56;
+  s32 t57, t58, t59, t60, t61, t63, t65, t67, t68, t69;
+  s32 t70, t71, t72, t73, t74, t76, t77, t78, t79;
 
-  FIELD_AT(sp_, s32, 88) = p0;
-  FIELD_AT(sp_, s32, 92) = p1;
-  FIELD_AT(sp_, s32, 96) = p2;
-  FIELD_AT(sp_, s32, 100) = p3;
   t0 = FIELD_AT(0x3000000, s32, 32);
-  FIELD_AT(sp_, s32, 28) = t0;
-  t1 = *(s32 *)(0x214 + (s32)gPartyState);
+  FIELD_AT(sp_, s32, 20) = t0;
+  t1 = FIELD_AT((s32)gPartyState, s32, 532);
   t2 = Value1((s32 (*)())Object_GetById, t1);
   t3 = Value1((s32 (*)())Object_GetById, p4);
   t4 = FIELD_AT(t2, s32, 48);
-  FIELD_AT(sp_, s32, 20) = t4;
+  FIELD_AT(sp_, s32, 12) = t4;
   t5 = FIELD_AT(t2, s32, 52);
-  FIELD_AT(sp_, s32, 12) = ((s32)sp_ + 32);
-  FIELD_AT(sp_, s32, 16) = t5;
-  t6 = FIELD_AT(sp_, s32, 100);
-  t7 = FIELD_AT(t3, s32, 8);
+  FIELD_AT(sp_, s32, 4) = ((s32)sp_ + 24);
+  FIELD_AT(sp_, s32, 8) = t5;
+  t6 = FIELD_AT(t3, s32, 8);
+  FIELD_AT(sp_, s32, 24) = t6;
+  t7 = FIELD_AT(t3, s32, 16);
   FIELD_AT(sp_, s32, 32) = t7;
-  t8 = FIELD_AT(t3, s32, 16);
-  FIELD_AT(sp_, s32, 40) = t8;
-  FIELD_AT(sp_, s32, 8) = ((s32)sp_ + 44);
-  v_r7 = (t6 << 2);
-  t9 = *(s8 *)((s32)gData_02005f64 + v_r7);
-  t10 = FIELD_AT(t3, s32, 8);
-  t11 = FIELD_AT(sp_, s32, 8);
-  *(s32 *)t11 = ((t10 + (t9 << 16)) >> 20);
-  t12 = *(s8 *)((s32)gData_02005f64 + (v_r7 + 1));
-  t13 = FIELD_AT(t3, s32, 16);
-  t14 = FIELD_AT(sp_, s32, 8);
-  FIELD_AT(t14, s32, 8) = ((t13 + (t12 << 16)) >> 20);
+  *(s32 *)sp_ = ((s32)sp_ + 36);
+  v_r7 = (p3 << 2);
+  t8 = *(s8 *)((s32)gData_02005f64 + v_r7);
+  t9 = FIELD_AT(t3, s32, 8);
+  t10 = *(s32 *)sp_;
+  *(s32 *)t10 = ((t9 + (t8 << 16)) >> 20);
+  t11 = *(s8 *)((s32)gData_02005f64 + (v_r7 + 1));
+  t12 = FIELD_AT(t3, s32, 16);
+  t13 = *(s32 *)sp_;
+  FIELD_AT(t13, s32, 8) = ((t12 + (t11 << 16)) >> 20);
   v_r8 = t2;
   v_r9 = 0;
   v_r6 = t3;
-  v_r10 = (0x214 + (s32)gPartyState);
-  v_r12 = ((t13 + (t12 << 16)) >> 20);
-  v_r14 = ((t10 + (t9 << 16)) >> 20);
-  v_r4 = t12;
-  v_r0 = t9;
+  v_r10 = ((s32)gPartyState + 0x214);
+  v_r12 = ((t12 + (t11 << 16)) >> 20);
+  v_r14 = ((t9 + (t8 << 16)) >> 20);
+  v_r4 = t11;
+  v_r0 = t8;
   v_r5 = (s32)gData_02005f64;
   if (v_r0 >= v_r9)
     goto L_0200cda0;
   v_r0 = -v_r0;
 L_0200cda0:
-  t15 = *(s8 *)(v_r5 + (v_r7 + 2));
-  v_r1 = t15;
+  t14 = *(s8 *)(v_r5 + (v_r7 + 2));
+  v_r1 = t14;
   if (v_r1 >= 0)
     goto L_0200cdaa;
   v_r1 = -v_r1;
 L_0200cdaa:
-  FIELD_AT(sp_, s32, 24) = ((v_r0 + v_r1) >> 4);
+  FIELD_AT(sp_, s32, 16) = ((v_r0 + v_r1) >> 4);
   v_r1 = v_r4;
   if (v_r1 >= 0)
     goto L_0200cdb8;
   v_r1 = -v_r1;
 L_0200cdb8:
-  t16 = *(s8 *)(v_r5 + (v_r7 + 3));
-  v_r2 = t16;
+  t15 = *(s8 *)(v_r5 + (v_r7 + 3));
+  v_r2 = t15;
   if (v_r2 >= 0)
     goto L_0200cdc2;
   v_r2 = -v_r2;
 L_0200cdc2:
-  t17 = FIELD_AT(sp_, s32, 24);
-  Call6((void (*)())Func_02004a44, 0, v_r14, v_r12, t17, t17, t17);
-  t19 = *(s32 *)v_r10;
-  Call3((void (*)())ObjectMotion_SetSpeedParameters, t19, 0x8000, 0x1999);
-  t21 = *(s32 *)v_r10;
-  Call2((void (*)())Object_SetModeById, t21, 8);
+  t16 = FIELD_AT(sp_, s32, 16);
+  Call6((void (*)())Func_02004a44, 0, v_r14, v_r12, t16, ((v_r1 + v_r2) >> 4),
+        0);
+  t18 = *(s32 *)v_r10;
+  Call3((void (*)())ObjectMotion_SetSpeedParameters, t18, 0x8000, 0x1999);
+  t20 = *(s32 *)v_r10;
+  Call2((void (*)())Object_SetModeById, t20, 8);
   Call1((void (*)())WaitFrames, 15);
-  t24 = FIELD_AT(sp_, s32, 12);
-  t25 = FIELD_AT(sp_, s32, 88);
-  t26 = *(s32 *)t24;
-  t27 = FIELD_AT(sp_, s32, 96);
-  t28 = FIELD_AT(t24, s32, 8);
-  t29 = *(s32 *)v_r10;
-  Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion, t29,
-        ((t25 - t26) >> 17), ((t27 - t28) >> 17));
-  t31 = *(s32 *)v_r10;
-  t32 = Value1((s32 (*)())Object_GetById, t31);
-  FIELD_AT(t32, s32, 108) = (s32)Func_02004fc0;
+  t23 = FIELD_AT(sp_, s32, 4);
+  t24 = *(s32 *)t23;
+  t25 = FIELD_AT(t23, s32, 8);
+  t26 = *(s32 *)v_r10;
+  Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion, t26,
+        ((p0 - t24) >> 17), ((p2 - t25) >> 17));
+  t28 = *(s32 *)v_r10;
+  t29 = Value1((s32 (*)())Object_GetById, t28);
+  FIELD_AT(t29, s32, 108) = (s32)Func_02004fc0;
   Call1((void (*)())WaitFrames, 4);
-  Call2((void (*)())Func_02005480, v_r6, 2);
+  Func_02005480(v_r6, 2);
   Call1((void (*)())Func_020056c0, 239);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, p4, 0x8000, 0x1999);
-  t37 = FIELD_AT(sp_, s32, 88);
-  t38 = FIELD_AT(sp_, s32, 92);
-  t39 = FIELD_AT(sp_, s32, 96);
-  Call4((void (*)())Func_020054b8, v_r6, t37, t38, t39);
+  Call4((void (*)())Func_020054b8, v_r6, p0, p1, p2);
   v_r5 = ((s32)gPartyState + 0x214);
-  t41 = *(s32 *)v_r5;
-  Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, t41);
-  t43 = *(s32 *)v_r5;
-  Call2((void (*)())Object_SetModeById, t43, 2);
-  t45 = *(s32 *)v_r5;
-  Call3((void (*)())ObjectMotion_SetSpeedParameters, t45, 0x4ccc, 0x1999);
-  t47 = *(s32 *)((s32)gData_02005f7c + (v_r9 << 2));
-  t48 = *(s32 *)v_r5;
-  Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion, t48,
-        ((t47 << 16) >> 31), ((t47 << 16) >> 17));
+  t35 = *(s32 *)v_r5;
+  Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, t35);
+  t37 = *(s32 *)v_r5;
+  Call2((void (*)())Object_SetModeById, t37, 2);
+  t39 = *(s32 *)v_r5;
+  Call3((void (*)())ObjectMotion_SetSpeedParameters, t39, 0x4ccc, 0x1999);
+  t41 = *(s32 *)((s32)gData_02005f7c + (v_r9 << 2));
+  t42 = *(s32 *)v_r5;
+  Call3((void (*)())ObjectMotion_OffsetPositionAndResetMotion, t42,
+        ((t41 << 16) >> 31), ((t41 << 16) >> 17));
   v_r3 = p5;
   v_r11 = ((v_r1 + v_r2) >> 4);
   if (v_r3 == 0)
     goto L_0200ce98;
 L_0200ce98:
-  t50 = *(s32 *)v_r5;
-  Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, t50);
-  t52 = *(s32 *)v_r5;
-  Call2((void (*)())Object_SetModeById, t52, 1);
+  t44 = *(s32 *)v_r5;
+  Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, t44);
+  t46 = *(s32 *)v_r5;
+  Call2((void (*)())Object_SetModeById, t46, 1);
   FIELD_AT(v_r8, s32, 108) = 0;
-  t54 = FIELD_AT(sp_, s32, 20);
-  FIELD_AT(v_r8, s32, 48) = t54;
-  t55 = FIELD_AT(sp_, s32, 16);
-  FIELD_AT(v_r8, s32, 52) = t55;
+  t48 = FIELD_AT(sp_, s32, 12);
+  FIELD_AT(v_r8, s32, 48) = t48;
+  t49 = FIELD_AT(sp_, s32, 8);
+  FIELD_AT(v_r8, s32, 52) = t49;
   Call1((void (*)())Func_020054c0, v_r6);
   Call1((void (*)())Func_020056c0, 0x12a);
   Call1((void (*)())Func_020056c0, 213);
-  t59 = FIELD_AT(v_r6, s32, 12);
-  t60 = FIELD_AT(sp_, s32, 88);
-  t61 = FIELD_AT(sp_, s32, 96);
-  Call4((void (*)())Object_SetPositionAndResetMotion, v_r6, t60, t59, t61);
+  t53 = FIELD_AT(v_r6, s32, 12);
+  Call4((void (*)())Object_SetPositionAndResetMotion, v_r6, p0, t53, p2);
   Call2((void (*)())Func_02005480, v_r6, 1);
-  t64 = FIELD_AT(sp_, s32, 88);
-  t65 = *(s8 *)((s32)gData_02005f64 + v_r7);
-  t66 = *(s8 *)((s32)gData_02005f64 + (v_r7 + 1));
-  t67 = FIELD_AT(sp_, s32, 96);
-  t68 = FIELD_AT(sp_, s32, 28);
-  FIELD_AT(sp_, s32, 88) = ((t64 + (t65 << 16)) >> 20);
-  FIELD_AT(sp_, s32, 96) = ((t67 + (t66 << 16)) >> 20);
-  t69 = *(s32 *)(t68 + 0x148);
-  t70 = *(s32 *)(t68 + 0x14c);
-  v_r8 = (t69 >> 20);
-  v_r6 = (t70 >> 20);
-  t71 = FIELD_AT(sp_, s32, 24);
-  Call6((void (*)())Func_020054e8, ((t64 + (t65 << 16)) >> 20),
-        ((t67 + (t66 << 16)) >> 20), t71, v_r11, v_r11, t71);
-  t73 = FIELD_AT(sp_, s32, 88);
-  t74 = FIELD_AT(sp_, s32, 96);
-  t75 = FIELD_AT(sp_, s32, 24);
-  Call6((void (*)())Func_02004a44, 0, t73, t74, t75, 0, 255);
-  t77 = FIELD_AT(sp_, s32, 88);
-  t78 = FIELD_AT(sp_, s32, 96);
-  t79 = FIELD_AT(sp_, s32, 24);
-  Call6((void (*)())Func_02004a44, 2, t77, t78, t79, t79, 255);
-  t81 = FIELD_AT(sp_, s32, 12);
-  t82 = *(s8 *)((s32)gData_02005f64 + v_r7);
-  t83 = *(s32 *)t81;
-  t84 = FIELD_AT(sp_, s32, 8);
-  *(s32 *)t84 = ((t83 + (t82 << 16)) >> 20);
+  t56 = *(s8 *)((s32)gData_02005f64 + v_r7);
+  t57 = *(s8 *)((s32)gData_02005f64 + (v_r7 + 1));
+  t58 = FIELD_AT(sp_, s32, 20);
+  p0 = ((p0 + (t56 << 16)) >> 20);
+  p2 = ((p2 + (t57 << 16)) >> 20);
+  t59 = FIELD_AT(t58, s32, 328);
+  t60 = FIELD_AT(t58, s32, 332);
+  v_r8 = (t59 >> 20);
+  v_r6 = (t60 >> 20);
+  t61 = FIELD_AT(sp_, s32, 16);
+  Call6((void (*)())Func_020054e8, ((p0 + (t56 << 16)) >> 20),
+        ((p2 + (t57 << 16)) >> 20), t61, v_r11,
+        (v_r8 + ((p0 + (t56 << 16)) >> 20)),
+        (v_r6 + ((p2 + (t57 << 16)) >> 20)));
+  t63 = FIELD_AT(sp_, s32, 16);
+  Call6((void (*)())Func_02004a44, 0, p0, p2, t63, v_r11, 255);
+  t65 = FIELD_AT(sp_, s32, 16);
+  Call6((void (*)())Func_02004a44, 2, p0, p2, t65, v_r11, 255);
+  t67 = FIELD_AT(sp_, s32, 4);
+  t68 = *(s8 *)((s32)gData_02005f64 + v_r7);
+  t69 = *(s32 *)t67;
+  t70 = *(s32 *)sp_;
+  *(s32 *)t70 = ((t69 + (t68 << 16)) >> 20);
   v_r9 = (v_r7 + 1);
-  t85 = *(s8 *)((s32)gData_02005f64 + v_r9);
-  t86 = FIELD_AT(t81, s32, 8);
-  t87 = FIELD_AT(sp_, s32, 8);
-  FIELD_AT(t87, s32, 8) = ((t86 + (t85 << 16)) >> 20);
-  t88 = FIELD_AT(sp_, s32, 24);
-  v_r8 = (v_r8 + ((t83 + (t82 << 16)) >> 20));
-  v_r6 = (v_r6 + ((t86 + (t85 << 16)) >> 20));
-  Call6((void (*)())Func_020054e8, v_r8, v_r6, t88, v_r11, v_r6, v_r11);
-  t90 = FIELD_AT(sp_, s32, 8);
-  t91 = *(s32 *)t90;
-  t92 = FIELD_AT(t90, s32, 8);
-  t93 = FIELD_AT(sp_, s32, 24);
-  Call6((void (*)())Func_02004a44, 2, t91, t92, t93, t93, 0);
+  t71 = *(s8 *)((s32)gData_02005f64 + v_r9);
+  t72 = FIELD_AT(t67, s32, 8);
+  t73 = *(s32 *)sp_;
+  FIELD_AT(t73, s32, 8) = ((t72 + (t71 << 16)) >> 20);
+  t74 = FIELD_AT(sp_, s32, 16);
+  v_r8 = (v_r8 + ((t69 + (t68 << 16)) >> 20));
+  v_r6 = (v_r6 + ((t72 + (t71 << 16)) >> 20));
+  Call6((void (*)())Func_020054e8, v_r8, v_r6, t74, v_r11,
+        ((t69 + (t68 << 16)) >> 20), ((t72 + (t71 << 16)) >> 20));
+  t76 = *(s32 *)sp_;
+  t77 = *(s32 *)t76;
+  t78 = FIELD_AT(t76, s32, 8);
+  t79 = FIELD_AT(sp_, s32, 16);
+  Call6((void (*)())Func_02004a44, 2, t77, t78, t79, v_r11, 0);
   Func_02005668();
   return;
 }

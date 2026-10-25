@@ -1,5 +1,5 @@
 // Draft of overlay 6b0's Func_0200088c, translated from its listing: differ
-// 133 of 130. Left: its shape: 127 instructions against the listing's 130.
+// 124 of 130. Left: its shape: 124 instructions against the listing's 130.
 #include "types.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -37,14 +37,14 @@ void Func_0200088c(s32 p0, s32 p1, s32 p2) {
   t6 = FIELD_AT(p0, s32, 8);
   t7 = FIELD_AT(p1, s32, 8);
   t8 = ArcTan2((t6 - t7), (t5 - t4));
-  FIELD_AT(sp_, s32, 0) = (t3 + 100);
-  *(u16 *)(t3 + 100) = t8;
+  *(s32 *)sp_ = (t3 + 100);
+  FIELD_AT(t3, u16, 100) = t8;
   t9 = Random16Far();
   t10 = Random16Far();
   t11 = FIELD_AT(sp_, u8, 4);
-  *(u16 *)(t3 + 102) = (((15 & t10) * ((2 & t9) - 1)) << 8);
-  *(u8 *)(t3 + 98) = t11;
-  *(u8 *)((t3 + 98) - 13) = 0;
+  FIELD_AT(t3, u16, 102) = (((15 & t10) * ((2 & t9) - 1)) << 8);
+  FIELD_AT(t3, u8, 98) = t11;
+  FIELD_AT(t3, u8, 85) = 0;
   t12 = *(s32 *)p1;
   v_r6 = p0;
   v_r9 = p1;
@@ -81,7 +81,7 @@ L_02008952:
   Object_SetSpritePriority(v_r7, 2);
   Func_020032e0(v_r7, 7);
   ObjectDispatch_SetSingleChildFlags(v_r7, 0);
-  t23 = FIELD_AT(sp_, s32, 0);
+  t23 = *(s32 *)sp_;
   t24 = FIELD_AT(v_r7, s32, 76);
   t25 = *(s16 *)t23;
   Vector_AddPolarOffsetFar(t24, t25, (v_r7 + 8));

@@ -1,5 +1,5 @@
 // Draft of overlay 6ae's Func_020001d8, translated from its listing: differ
-// 107 of 124. Left: its shape: 115 instructions against the listing's 124.
+// 102 of 124. Left: its shape: 120 instructions against the listing's 124.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -32,15 +32,15 @@ void Func_020001d8(void) {
 
   Call4((void (*)())Func_02004ef0, (s32)gData_02005aa4, (s32)gData_02005ab4,
         (s32)gData_02005ae0, (s32)gData_02005b0c);
-  t1 = *(s32 *)((s32)gPartyState + 0x214);
+  t1 = FIELD_AT((s32)gPartyState, s32, 532);
   t2 = Value1((s32 (*)())Object_GetById, t1);
-  t3 = *(u8 *)(t2 + 35);
-  *(u8 *)(t2 + 35) = (64 | t3);
+  t3 = FIELD_AT(t2, u8, 35);
+  FIELD_AT(t2, u8, 35) = (64 | t3);
   v_r5 = 10;
 L_02008206:
   t4 = Value1((s32 (*)())Object_GetById, v_r5);
-  t5 = *(u8 *)(t4 + 35);
-  *(u8 *)(t4 + 35) = (128 | t5);
+  t5 = FIELD_AT(t4, u8, 35);
+  FIELD_AT(t4, u8, 35) = (128 | t5);
   Call2((void (*)())Animation_ApplyChildValues, t4, 5);
   v_r5 = (v_r5 + 1);
   if (v_r5 <= 16)
@@ -53,22 +53,22 @@ L_02008206:
   Call1((void (*)())WaitFrames, 1);
   Call2((void (*)())ObjectMotion_SetActionVariant, 8, 1);
   t12 = Value1((s32 (*)())Object_GetById, 8);
-  *(u8 *)(t12 + 85) = 4;
+  FIELD_AT(t12, u8, 85) = 4;
   FIELD_AT(t12, s32, 12) = 0x700000;
   Call2((void (*)())Animation_ApplyChildValues, t12, 5);
   Call2((void (*)())ObjectDispatch_SetSingleChildFlags, t12, 0);
-  t15 = *(u8 *)(t12 + 35);
-  *(u8 *)(t12 + 35) = (t15 | 32);
+  t15 = FIELD_AT(t12, u8, 35);
+  FIELD_AT(t12, u8, 35) = (t15 | 32);
   Call2((void (*)())ObjectMotion_SetActionVariant, 9, 2);
   t17 = Value1((s32 (*)())Object_GetById, 9);
-  *(u8 *)(t17 + 85) = 4;
+  FIELD_AT(t17, u8, 85) = 4;
   FIELD_AT(t17, s32, 24) = 0x14ccc;
   FIELD_AT(t17, s32, 28) = 0x14ccc;
   FIELD_AT(t17, s32, 12) = 0x700000;
   Call2((void (*)())Animation_ApplyChildValues, t17, 5);
   Call2((void (*)())ObjectDispatch_SetSingleChildFlags, t17, 0);
-  t20 = *(u8 *)(t17 + 35);
-  *(u8 *)(t17 + 35) = ((t20 | 32) | 2);
+  t20 = FIELD_AT(t17, u8, 35);
+  FIELD_AT(t17, u8, 35) = ((t20 | 32) | 2);
   Call2((void (*)())Animation_SetStateFlags, t17, 1);
   *(s32 *)(s32)Data_0200eb60 = 0;
   Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_020004a4, 0x480);

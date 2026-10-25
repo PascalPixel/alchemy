@@ -1,11 +1,3 @@
-// Draft, differ 2 of 81: one prologue instruction in a different place; the
-// native loads gPartyState's address before spilling effect (str r2, [sp]),
-// where this spills it first. In sched2 the spill and the load tie at priority
-// 105 and the spill wins on insn order. Storing x before z took it from differ
-// 61 to 2 (permute, 4 minutes). Tried: effect as u32, work declared before
-// leader (differ 38), declarations apart from their calls, an early return,
-// writing the marker through work, the effect through work (differ 33); permute
-// (4 more minutes) found nothing below 2.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -49,7 +41,7 @@ void Func_02002010(s32 x, s32 z, s32 effect) {
     marker->z = leader->z;
     Func_02002188();
     Func_02001dc8();
-    ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
-        effect;
+    ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
+        ->screenEffect = effect;
   }
 }

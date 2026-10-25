@@ -1,6 +1,3 @@
-// Draft, differ 4 of 72: overlay 6a1's copy of the function drafted in
-// resource_6a4_c_02000de0.c (overlay 6a4's Func_02000de0, differ 4 there), whose
-// header says what it is, what still differs and what was tried.
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
 
 s32 Func_020008c0(struct ObjectRuntime *object) {

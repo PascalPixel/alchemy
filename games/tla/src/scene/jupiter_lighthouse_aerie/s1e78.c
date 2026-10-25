@@ -1,6 +1,3 @@
-// Draft, differ 12 of 207: overlay 6a4's copy of the function drafted in
-// resource_6aa_c_02003b30.c (overlay 6aa's Func_02003b30, differ 12 there), whose
-// header says what it is, what still differs and what was tried.
 #include "types.h"
 #include "field_effect.h"
 #include "party_state.h"

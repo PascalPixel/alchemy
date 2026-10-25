@@ -1,11 +1,10 @@
-// Near miss: differ 2 of 81 (one reordered row): the native loads the party
-// state's address before it spills the third argument; the draft spills first.
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
 
 void Func_02002888(s32 dx, s32 dz, s32 value) {
   struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
   u8 *event = Ram_HeapSlots->eventWork;
-  struct JupiterLighthouseAerieWork *work = (struct JupiterLighthouseAerieWork *)gData_02003488;
+  struct JupiterLighthouseAerieWork *work =
+      (struct JupiterLighthouseAerieWork *)gData_02003488;
   s32 x = GameFlag_GetByte(work->flag);
   s32 z = GameFlag_GetByte(work->flag + 8);
 

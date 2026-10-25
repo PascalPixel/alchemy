@@ -1,6 +1,3 @@
-// Draft, differ 2 of 51: overlay 6a0's copy of the function drafted in
-// resource_655_c_02000038.c (overlay 655's Func_02000038, differ 2 there), whose
-// header says what it is, what still differs and what was tried.
 #include "types.h"
 #include "object_runtime.h"
 

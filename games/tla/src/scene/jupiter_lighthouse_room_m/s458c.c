@@ -1,6 +1,3 @@
-// Draft of overlay 6a5's Func_020055e4, the twin of overlay 6a1's
-// Func_02002010: its draft (resource_6a1_c_02002010.c) with this overlay's
-// symbols: differ 2 of 81. Left: what that draft's header records.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -18,32 +15,32 @@ struct JupiterLighthouseRoom8EventWork {
   struct ObjectRuntime *marker;
 };
 
-extern struct JupiterLighthouseRoom8Puzzle Data_02006b74;
+extern struct JupiterLighthouseRoom8Puzzle Data_02005b88;
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_GetByte(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
-void Func_0200577c(void);
-void Func_0200539c(void);
+void Func_0200471c(void);
+void Func_02004344(void);
 
-void Func_020055e4(s32 x, s32 z, s32 effect) {
+void Func_0200458c(s32 x, s32 z, s32 effect) {
   struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
   struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->eventWork;
-  s32 dx = GameFlag_GetByte(Data_02006b74.flag);
-  s32 dz = GameFlag_GetByte(Data_02006b74.flag + 8);
+  s32 dx = GameFlag_GetByte(Data_02005b88.flag);
+  s32 dz = GameFlag_GetByte(Data_02005b88.flag + 8);
 
   if (dx != 0 || dz != 0) {
     struct ObjectRuntime *marker;
 
-    GameFlag_SetByte(Data_02006b74.flag, 0);
-    GameFlag_SetByte(Data_02006b74.flag + 8, 0);
+    GameFlag_SetByte(Data_02005b88.flag, 0);
+    GameFlag_SetByte(Data_02005b88.flag + 8, 0);
     leader->x = ((dx + x) << 20) + 0x80000;
     leader->z = ((dz + z) << 20) + 0x80000;
     marker = work->marker;
     marker->x = leader->x;
     marker->z = leader->z;
-    Func_0200577c();
-    Func_0200539c();
+    Func_0200471c();
+    Func_02004344();
     ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
         ->screenEffect = effect;
   }

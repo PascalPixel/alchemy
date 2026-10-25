@@ -1,38 +1,37 @@
-// Draft, differ 12 of 207: overlay 6a3's copy of the function drafted in
-// resource_6aa_c_02003b30.c (overlay 6aa's Func_02003b30, differ 12 there), whose
-// header says what it is, what still differs and what was tried.
 #include "types.h"
-#include "field_effect.h"
 #include "party_state.h"
+#include "field_sprite.h"
+#include "field_effect.h"
 
-extern const s32 *gData_02005a30[];
-
-struct FieldActor *Object_GetById(s32 id);
-struct FieldEffect *Func_0200470c(s32 type, s32 x, s32 y, s32 z);
-void Func_020046f4(struct FieldEffect *effect, s32 mode);
-void Func_02004704(struct FieldEffect *effect, const s32 *script);
-void ObjectDispatch_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
-void Object_SetSpritePriority(struct FieldEffect *effect, s32 priority);
-void Object_SetPartAttribute(struct FieldEffect *effect, s32 value);
-
-void Func_02003b7c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+extern struct FieldEffect *Object_GetById(s32 id);
+extern void Func_02005754(struct FieldEffect *effect, s32 mode);
+extern void Func_02005764(struct FieldEffect *effect, const s32 *script);
+extern const s32 *gData_0200ea10[];
+extern void ObjectDispatch_SetSingleChildFlags(struct FieldEffect *effect,
+                                               u32 flags);
+extern void Object_SetSpritePriority(struct FieldEffect *effect, s32 priority);
+extern void Object_SetPartAttribute(struct FieldEffect *effect, s32 attribute);
+extern void
+BattleEffect_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object);
+void Func_02004bd4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
-  struct FieldActor *party = Object_GetById(gPartyState.currentOwner);
+  struct FieldEffect *party = Object_GetById(gPartyState.currentOwner);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
+  u32 start;
 
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = Func_0200470c(options->type, x, y, z);
+    effect = (struct FieldEffect *)Func_0200576c(options->type, x, y, z);
   else
-    effect = Func_0200470c(285, x, y, z);
+    effect = (struct FieldEffect *)Func_0200576c(285, x, y, z);
   if (effect == 0)
     return;
 
   sprite = effect->sprite;
-  Func_020046f4(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Func_02004704(effect, gData_02005a30[flags & EFFECT_SCRIPT_MASK]);
+  Func_02005754(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Func_02005764(effect, gData_0200ea10[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   ObjectDispatch_SetSingleChildFlags(effect, 0);
   effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
@@ -52,28 +51,29 @@ void Func_02003b7c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->priorityFlags &= ~1;
     Object_SetSpritePriority(effect, options->priority);
   }
-  if ((flags & EFFECT_USE_START_SCALE) != 0) {
+  start = flags & EFFECT_USE_START_SCALE;
+  if (start != 0) {
     effect->scaleX = options->startScaleX;
     effect->scaleY = options->startScaleY;
   }
   if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    s32 target;
-    s32 frames;
+    s32 targetX;
+    s32 count;
 
-    script = gData_02005a30[flags & EFFECT_SCRIPT_MASK];
-    target = options->targetScaleX;
-    frames = script[3];
-    if ((flags & EFFECT_USE_START_SCALE) != 0) {
-      effect->scaleRateX = (target - effect->scaleX) / frames;
+    script = gData_0200ea10[flags & EFFECT_SCRIPT_MASK];
+    targetX = options->targetScaleX;
+    count = script[3];
+    if (start != 0) {
+      effect->scaleRateX = (targetX - effect->scaleX) / count;
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (target - 0x10000) / frames;
+      effect->scaleRateX = (targetX - 0x10000) / count;
       effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Func_020046f4(effect, 1);
-    Func_02004704(effect, options->script);
+    Func_02005754(effect, 1);
+    Func_02005764(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
     sprite->rotation = options->rotation;

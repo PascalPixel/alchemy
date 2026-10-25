@@ -1,6 +1,3 @@
-// Draft, differ 2 of 81: overlay 69f's copy of the function drafted in
-// resource_6a1_c_02002010.c (overlay 6a1's Func_02002010, differ 2 there), whose
-// header says what it is, what still differs and what was tried.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -44,7 +41,7 @@ void Func_0200196c(s32 x, s32 z, s32 effect) {
     marker->z = leader->z;
     Func_02001adc();
     Func_02001724();
-    ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
-        effect;
+    ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
+        ->screenEffect = effect;
   }
 }

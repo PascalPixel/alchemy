@@ -4,6 +4,104 @@
 void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Func_02004534(void);
+#include "event_work.h"
+#include "object_runtime.h"
+
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
+#define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
+
+s32 Func_02005ea4();
+s32 Func_02005e74();
+s32 Func_02005eac();
+s32 Func_02005e6c();
+s32 Func_02005dcc();
+s32 Func_02005dd4();
+s32 Func_02004138();
+s32 UiText_DrawQuantityPairWithCue();
+s32 Object_LinkPair();
+s32 ObjectMotion_SetSpeedParameters();
+s32 ObjectMotion_CommitCurrentPositionAndActivate();
+s32 ObjectMotion_ResetAndSetPosition();
+void ObjectMotion_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
+
+static inline void Call0(void (*f)()) { f(); }
+
+/// Checking the tablet shows its message; the first time (flag 0x8d4 clear)
+/// the scene with actor 6 follows, as Func_020030cc of Magma Rock does with
+/// the Blaze tablet.
+void Func_02004534(void) {
+  struct FieldActor *object;
+
+  Func_02005e14();
+  Call1(Func_02005f2c, 0);
+  UiText_ShowPositionedMessageAndWait(MsgCheckedTheTablet, 1);
+  if (Value1(GameFlag_Test, 0x8d4) != 0) {
+    Func_02005e1c();
+  } else {
+    Call1(Func_02005ea4, (s32)MsgCheckedTheTablet);
+    EVENT_WORK->messageId++;
+    Call3(ObjectMotion_SetSpeedParameters, gPartyState.currentOwner, 0xb333,
+          0x5999);
+    Call3(ObjectMotion_SetSpeedParameters, 6, 0xb333, 0x5999);
+    Call2(Func_02005e74, 6, gPartyState.currentOwner);
+    Call1(FieldEvent_WaitFrames, 1);
+    Call3(ObjectMotion_ResetAndSetPositionInMode2, gPartyState.currentOwner,
+          0x100, 0x88);
+    Call3(ObjectMotion_ResetAndSetPositionInMode2, 6, 0x110, 0x88);
+    Call1(ObjectMotion_CommitCurrentPositionAndActivate,
+          gPartyState.currentOwner);
+    Call1(ObjectMotion_CommitCurrentPositionAndActivate, 6);
+    Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0, 0);
+    Call3(ObjectMotion_ArmCallback, 6, 0x8000, 0);
+    Call1(FieldEvent_WaitFrames, 0xa);
+    Call2(Func_02005eac, 6, 0);
+    Call2(Object_SetModeById, gPartyState.currentOwner, 3);
+    Call1(FieldEvent_WaitFrames, 0x1e);
+    Call3(ObjectMotion_SetPositionAndReset, gPartyState.currentOwner, 0x100,
+          0x98);
+    Call3(ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xc000, 0);
+    Call1(FieldEvent_WaitFrames, 0x14);
+    Call3(ObjectMotion_ArmCallback, 6, 0x4000, 0);
+    Call1(FieldEvent_WaitFrames, 0x14);
+    Call2(Object_SetModeById, 6, 3);
+    Call1(FieldEvent_WaitFrames, 0x1e);
+    Call3(ObjectMotion_ArmCallback, 6, 0xc000, 0);
+    Call1(FieldEvent_WaitFrames, 0x14);
+    Call3(ObjectMotion_SetPositionAndReset, 6, 0x108, 0x89);
+    Call3(ObjectMotion_ArmCallback, 6, 0xc000, 0);
+    Call1(FieldEvent_WaitFrames, 0x14);
+    UiText_ShowPositionedMessageAndWait(MsgCheckedTheTablet + 2, 1);
+    Call3(Func_02005dcc, 0x50000, 0x70000, 0x10000);
+    Call3(Func_02005dcc, -1, -1, 0xe666);
+    /* FAKEMATCH(wrapper): the call through Call0's pointer; called directly,
+     * the two -1s before it are negated in the other order, 2 of 202
+     * instructions differ in tla-en. */
+    Call0(Func_02005dd4);
+    Call2(Func_02004138, 8, 6);
+    Call2(UiText_DrawQuantityPairWithCue, 6, 0x90);
+    Call1(GameFlag_SetBit, 0x8d4);
+    Call3(Object_LinkPair, gPartyState.currentOwner, 6, 0);
+    Call1(FieldEvent_WaitFrames, 0xa);
+    Call2(Object_SetModeById, 6, 3);
+    Call2(Object_SetModeById, gPartyState.currentOwner, 3);
+    Call1(FieldEvent_WaitFrames, 0x14);
+    Call3(ObjectMotion_SetSpeedParameters, 6, 0x13333, 0x9999);
+    Call2(Object_SetModeById, 6, 2);
+    object = Object_GetById(gPartyState.currentOwner);
+    if (object != 0)
+      Call3(ObjectMotion_ResetAndSetPosition, 6, FIELD_AT(object, s16, 10),
+            FIELD_AT(object, s16, 18));
+    Call1(ObjectMotion_CommitCurrentPositionAndActivate, 6);
+    Call3(Func_02005e6c, 6, 0, 0);
+    Object_SetActionCallback((struct ObjectRuntime *)Object_GetById(8), 9);
+    Func_02005e1c();
+  }
+}
 
 void Func_02004740(void) {
   if (GameFlag_Test(0x8d4)) {

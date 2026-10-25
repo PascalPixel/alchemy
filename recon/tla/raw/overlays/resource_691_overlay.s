@@ -5303,7 +5303,7 @@ Func_020034ac:
 .L_0200b5d8:
 	.4byte 0xfffffa00
 .L_0200b5dc:
-	.4byte Func_0200342c
+	.4byte Effect_AdvanceMotionAtLeaderPriority
 	.section .text.x0200b5e0,"ax",%progbits
 	.global Func_020035e0
 	.thumb_func
@@ -5439,7 +5439,7 @@ Func_020035e0:
 .L_0200b6f0:
 	.4byte 0xfffff800
 .L_0200b6f4:
-	.4byte Func_0200342c
+	.4byte Effect_AdvanceMotionAtLeaderPriority
 	.section .text.x0200b6f8,"ax",%progbits
 	.global Func_020036f8
 	.thumb_func

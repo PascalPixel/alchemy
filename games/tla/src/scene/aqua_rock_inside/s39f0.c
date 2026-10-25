@@ -16,7 +16,7 @@ void Func_020039f0(s32 *position, s32 base) {
     angle = (u16)Random16Far() - 0x8000;
     object->action = angle;
     Func_02003994(object, 3);
-    object->update = Func_0200389c;
+    object->update = (void (*)(void))Func_0200389c;
     Animation_SetStateFlags(object, 1);
   }
 }

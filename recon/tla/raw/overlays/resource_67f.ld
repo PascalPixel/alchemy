@@ -13,7 +13,7 @@ SECTIONS
         "*/resource_67f_overlay.o"(.text.x02008584)
         "*/games/tla/src/scene/izumo_ruins/s06ec.o"(.text)
         "*/resource_67f_overlay.o"(.text.x02008708)
-        "*/resource_67f_overlay.o"(.text.x020088f4)
+        "*/games/tla/src/field/common/effect/advance_motion_priority.o"(.text)
         "*/resource_67f_overlay.o"(.text.x02008974)
         "*/resource_67f_overlay.o"(.text.x02008aa8)
         "*/resource_67f_overlay.o"(.text.x02008bc0)

@@ -15,6 +15,36 @@ extern const u8 gData_02005d8c[];
 void Func_02001e20(void);
 void Func_02001ffc(void);
 void Func_020022d0(struct ObjectRuntime *object);
+extern const u8 gData_02005d8c[];
+
+void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+                                        s32 flags);
+void Func_02005490(struct ObjectRuntime *object, const void *script);
+
+/// Stops the object and sets its sprite part, then restarts its script at
+/// gData_02005d8c; Func_02001e1c of the Mars Lighthouse entrance is the same
+/// function.
+void Func_0200215c(struct ObjectRuntime *object, s32 part) {
+  /* FAKEMATCH(temporary): one zero for every cleared field; as six stores of
+   * 0, 29 of 30 instructions differ in tla-en. */
+  s32 zero = 0;
+
+  object->motionFlags = zero;
+  object->collisionFlags = zero;
+  {
+    s32 three = 3;
+
+    /* FAKEMATCH(barrier): an asm holding a 3 builds the part mask before the
+     * sprite loads; without it, 4 of 30 instructions differ in tla-en. */
+    asm volatile("" : : "r"(three));
+    ((struct SpriteParts *)object->animation)->part = part;
+  }
+  ObjectDispatch_SetSingleChildFlags(object, 0);
+  Func_02005490(object, gData_02005d8c);
+  object->action = zero;
+  object->speedLimit = zero;
+  object->acceleration = zero;
+}
 
 void Func_020021a0(s32 *position, s32 speed, s32 mode) {
   struct ObjectRuntime *object =

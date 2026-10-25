@@ -1,11 +1,12 @@
-// Draft, differ 145 of 535, 2026-10-18: the option screen, as ☀️'s
+// Draft, differ 52 of 535 (145 before the saved settings were written as
+// gPartyState's fields rather than through a byte pointer, 2026-10-25): the option screen, as ☀️'s
 // Menu_RunWorkspaceOptions (games/tbs/src/window/window.c). The five messages
 // (0x113b, 0x1141, 0x1144, 0x1146 and 0x1161 in English) are pool symbols the
 // catalogs must name before adoption (MsgOptionA to MsgOptionE here).
 // Remaining: mostly the native's loads issued ahead of constants (each frame
 // loop's reload of the frame before the option offset, the slider rows), the
-// cursor row's registers, and the saved settings' copy, where the native
-// builds the work offset in r1 and the party offset in r0.
+// cursor row's registers and the offsets of the cursor and the preset,
+// which the native builds in the other register.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -78,7 +79,6 @@ s32 Func_080400e8(void) {
   s32 y;
   s32 result;
   struct RenderOutput *frame;
-  u8 *party;
 
   redraw = 1;
   selectedOption = 0;
@@ -211,20 +211,19 @@ s32 Func_080400e8(void) {
 
   UiWork_Finalize(helpWindow, 2);
   UiWork_Finalize(settingsWindow, 2);
-  party = (u8 *)&gPartyState;
   if (result == 0) {
-    if (party[0x24a] == 0 && work->option[4] == 1)
+    if (gPartyState.unk244[6] == 0 && work->option[4] == 1)
       UiText_ShowPositionedMessageAndWait((s32)MsgOptionE, 1);
   }
   if (result == 0) {
-    party[0x225] = work->option[0];
-    party[0x226] = work->option[1];
-    party[0x22c] = work->option[2];
-    party[0x22a] = work->option[3];
-    party[0x24a] = work->option[4];
-    gAutoSleepEnabled = party[0x24a];
+    gPartyState.paletteGlow[0] = work->option[0];
+    gPartyState.paletteGlow[1] = work->option[1];
+    gPartyState.eventMode = work->option[2];
+    gPartyState.battleFxEnabled = work->option[3];
+    gPartyState.unk244[6] = work->option[4];
+    gAutoSleepEnabled = gPartyState.unk244[6];
   } else {
-    Func_0803f9c0(party[0x225], party[0x226]);
+    Func_0803f9c0(gPartyState.paletteGlow[0], gPartyState.paletteGlow[1]);
   }
   Func_0803fd14();
   WaitFrames(1);

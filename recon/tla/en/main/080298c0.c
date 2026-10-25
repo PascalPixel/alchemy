@@ -1,4 +1,4 @@
-// Draft, differ 633 of 965: script command 0x1e, walking that turns into
+// Draft, differ 625 of 965: script command 0x1e, walking that turns into
 // climbing: on foot it moves by the direction pad as SC_PLAYER does without
 // pushing (a refused step with up held starts a climb onto ground more than
 // 8 pixels above when Func_080c8770 allows it there; with down held, a climb
@@ -9,8 +9,10 @@
 // falling bit of rubble (object 0x11d) drops beside it. Walking leaves
 // object 0x164 every fifth step, as Func_0802a124's wake. Both modes end
 // with Func_08029838. Structure and frame follow the listing (the retry
-// list is 10 headings long); left: register
-// allocation and scheduling throughout.
+// list is 10 headings long, the locals declared in frame order); left: the
+// first literal pool lands after the first climbing branch here, far earlier
+// than the native's, so every pool load's offset differs, and register
+// choice and scheduling.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -70,16 +72,16 @@ s32 Func_080298c0(struct ObjectRuntime *object) {
   struct FieldPosition spawn;
   s32 collision;
   s32 heading;
-  s32 y;
   s32 groundHere;
+  s32 y;
   s32 groundAhead;
-  s32 cellX;
-  s32 cellZ;
-  s32 angle;
-  s32 angleIndex;
   u8 *terrainId;
   s16 *action;
   s16 *climbing;
+  s32 angle;
+  s32 cellX;
+  s32 cellZ;
+  s32 angleIndex;
   u8 *wakeTimer;
   struct ObjectRuntime *effect;
   struct PlayerSprite *sprite;

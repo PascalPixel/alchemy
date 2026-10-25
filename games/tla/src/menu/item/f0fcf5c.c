@@ -1,9 +1,3 @@
-// Near miss, differ 6 of 74: selects a party tab in the psynergy menu and
-// builds that member's psynergy icons, ☀️'s PsynergyMenu_SelectPartySlot in
-// games/tbs/src/menu/menu.c, with ⚓️'s work-block offsets (each 4 below
-// ☀️'s). Instruction order only: the listing loads the work pointer's
-// address before saving the slot and its times-4 offset; here those three
-// moves come first.
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -19,8 +13,15 @@ extern u8 gData_03001f2c[];
 
 u8 *BattleAction_Get(s32 action);
 s32 BattleEffect_HasMatchingEvent5Far(u8 effect);
+void Func_080f8ab4(s32 x, s32 y);
+void *Unit_Get(s32 owner);
+s32 Func_080fd6f0(void *unit, void *list, s32 mode);
+s32 Func_080fd000(void *owner, void *list);
 
-s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
+/// Selects a party tab in the Psynergy menu and builds that member's Psynergy
+/// icons: The Broken Seal's PsynergyMenu_SelectPartySlot with this game's
+/// work-block offsets (each 4 below The Broken Seal's).
+s32 Func_080fcf5c(s32 partySlot) {
   void *menu = Ram_HeapSlots->menuRuntime;
   s32 offset = partySlot + 28;
   s32 cursorOffset = partySlot * 4 + 20;
@@ -52,16 +53,16 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
     combinedOffset = 0;
   } else {
     combinedOffset = ownerIndex * 2;
-    UiMenu_SlideCursor(ownerIndex * 24 - 10, 16);
+    Func_080f8ab4(ownerIndex * 24 - 10, 16);
   }
 
   objOff = combinedOffset + 516;
   objId = *(u16 *)(menu + objOff);
-  objPtr = Unit_GetFar(objId);
+  objPtr = Unit_Get(objId);
   p456 = menu + 452;
-  badge = PsynergyMenu_CollectActions(objPtr, p456, 2);
+  badge = Func_080fd6f0(objPtr, p456, 2);
   *(u8 *)(menu + 532) = (u8)badge;
-  result = PsynergyMenu_SelectMember(menu + 516, p456);
+  result = Func_080fd000(menu + 516, p456);
 
   cursorOffset2 = partySlot * 4 + 20;
   icon = *(void **)(menu + cursorOffset2);

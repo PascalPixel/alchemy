@@ -1,10 +1,3 @@
-// Draft, differ 2 of 80: The Broken Seal's ItemMenu_DrawNamePage over The Lost
-// Age's menu offsets. Before the row loop the native loads the 0x1ff mask from
-// the pool one row earlier (movs r2, #226; ldr r7, =0x1ff; add r3, sl; lsls r2,
-// r2, #1), this form after the shift. A for loop with an index, with the
-// pointer as a second induction variable or with the pointer stepped in the
-// body measured 45 to 63. MsgItemName is message 607 in English and is not
-// named in the catalogs yet.
 #include "types.h"
 #include "ram_buffer.h"
 
@@ -41,9 +34,9 @@ void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page,
 void Menu_SetPageIcons(s32 page_size, s32 first_entry, s32 window, s32 x,
                        s32 y);
 
-// Draws the names on one five-row page of the item list.
-s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
-                          const struct MenuResult *state) {
+/// Draws the names on one five-row page of the item list: The Broken Seal's
+/// ItemMenu_DrawNamePage over this game's menu offsets.
+s32 Func_080fc608(s32 window, s32 unused, const struct MenuResult *state) {
   struct InventoryMenuState *menu = Ram_HeapSlots->menuRuntime;
   u32 page;
   u32 firstEntry;

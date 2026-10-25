@@ -1,9 +1,3 @@
-// Near miss, differ 6 of 79: the twin of The Broken Seal's
-// CharacterMenu_SelectOwner. Only the first block's order differs: the native
-// finishes the heap slots' address (lsls r3, r3, #18) before it starts the
-// index's offset and loads the menu before it saves slot * 4 (ldr r5, [r3]; mov
-// r10, r0); here both come one step later. Four minutes of alchemy permute
-// found nothing nearer.
 #include "types.h"
 #include "ram_buffer.h"
 
@@ -32,6 +26,7 @@ s32 Func_080fe894(void);
 void UiIcon_PrepareObject(struct OwnerCursor *cursor);
 void WaitFrames(s32 frames);
 
+/// The twin of The Broken Seal's CharacterMenu_SelectOwner.
 s32 Func_080fe580(s32 slot) {
   struct OwnerMenuState *menu;
   struct OwnerCursor *cursor;

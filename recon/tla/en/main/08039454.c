@@ -1,3 +1,5 @@
+// Draft, differ 8 of 69 (2026-10-24): a one-pass block around x = left >> 3
+// takes six rows off. Left: instruction order only.
 // Near miss, differ 14 of 69: The Broken Seal's UiWindow_ClearInteriorTiles,
 // reading the window's position signed (ldrsh) and loading it before the
 // rounding, as the native orders it. Left: sub sp, #4 is scheduled before
@@ -29,7 +31,9 @@ void UiWindow_ClearInteriorTiles(const struct UiWindow *window, u32 left,
   s32 windowY;
 
   work = UI_WORK;
-  x = left >> 3;
+  do {
+    x = left >> 3;
+  } while (0);
   windowX = (s16)window->x;
   windowY = (s16)window->y;
   right += 7;

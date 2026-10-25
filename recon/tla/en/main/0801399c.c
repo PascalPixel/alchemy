@@ -38,7 +38,7 @@ extern volatile u8 gBlendDuration;
 
 void Func_08016990(void);
 void SoundDriver_VSyncRefresh(void);
-void Func_08013de4(void);
+void Fade_Update(void);
 void Func_081c0088(void);
 s32 SoundDriver_EnterFrameUpdate(void);
 void IwramSoundRenderFrame(s32) __attribute__((long_call));
@@ -62,7 +62,7 @@ void Func_0801399c(void) {
   }
   SoundDriver_VSyncRefresh();
   if (gBlendDuration != 0)
-    Func_08013de4();
+    Fade_Update();
   if (gFrameRenderPending != 0) {
     gFrameRenderPending = 0;
     if (gOamUsage.used != 0)

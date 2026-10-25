@@ -36,7 +36,7 @@ Func_0801399c:
 	ldrb r3, [r3]
 	cmp r3, #0
 	beq .L_080139e6
-	bl Func_08013de4
+	bl Fade_Update
 .L_080139e6:
 	ldr r2, .L_08013a7c
 	ldrb r3, [r2]

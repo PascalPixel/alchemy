@@ -1,3 +1,6 @@
+// Draft, differ 2 of 126 (2026-10-24): a one-pass block around the visual
+// pointer orders the byte 5 load as the native has it. Left: the native loads
+// byte 7 before it ORs in 32.
 // Draft, differ 4 of 126 (2026-10-18): the block is heap slot 72, and the
 // cursors of rows 7 and 8 are cleared inline. Left: in the bit-field updates
 // at the end the native loads byte 5 before it builds -13, and byte 7 before
@@ -107,7 +110,9 @@ void UiGlyph_ResetWorkState(void) {
   work->field2e2 = 0;
   work->field2fa = 0;
   work->field316 = 0;
-  visual = &work->visual;
+  do {
+    visual = &work->visual;
+  } while (0);
   visual->flags05_2 = 0;
   visual->flags05_4 = 0;
   visual->flags05_5 = 1;

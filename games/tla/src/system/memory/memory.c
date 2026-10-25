@@ -15,6 +15,35 @@
 #include "resource.h"
 
 extern char ResourceId_WindowTiles;
+extern u16 *gData_030011c4;
+
+/// Blanks the debug text screen (screen block 4), homes the debug text cursor
+/// and points BG0 at the screen.
+// As ☀️'s DebugText_Clear.
+void Func_08014b70(void) {
+  volatile u32 fill;
+  u32 blank;
+
+  /* FAKEMATCH(one-pass): the fill word set in a block of its own, so it loads
+   * from the pool before the prologue's sub sp; as fill = 0xf000f000, 2 of 22
+   * instructions differ in tla-en. */
+  do {
+    blank = 0xf000f000;
+  } while (0);
+  fill = blank;
+  Dma_Set((const void *)&fill, (void *)0x06002000, 0x85000140, REG_DMA3);
+  /* FAKEMATCH(one-pass): the cursor store in a block of its own, so BG0CNT's
+   * address is built after it; as a plain store, 4 of 22 instructions differ
+   * in tla-en. */
+  do {
+    gData_030011c4 = (u16 *)0x06002000;
+  } while (0);
+  {
+    s32 control = 0x400;
+
+    *(volatile u16 *)0x04000008 = control;
+  }
+}
 
 void Ui_LoadWindowGraphics(void) {
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),

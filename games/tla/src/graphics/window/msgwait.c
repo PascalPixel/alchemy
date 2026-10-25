@@ -1,11 +1,70 @@
 #include "types.h"
 #include "window.h"
 #include "ram_buffer.h"
+#include "uiflow.h"
+
+/// The message window's state in heap slot unk84[4].
+struct UiMessageSlot {
+  struct UiWindow *window;
+  s32 result; ///< what the last UiText_StartBattleMessage returned
+  s32 cursor; ///< where the next message starts
+};
+
+s32 UiText_BuildRenderEntries(s32 message, s32 mode);
+struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
+                                 s32 style);
+void Func_0803a2b0(s32 x, s32 y, s32 width, s32 height, s32 mode);
+s32 UiText_StartBattleMessage(struct UiWindow *window, s32 entry, s32 cursor);
+
+/// Decodes message and starts it in the message window along the bottom of
+/// the screen (tiles 0, 15, 30 by 6), creating the window first if it is not
+/// open; a message that decodes to nothing shows nothing.
+void UiMessage_Show(s32 message) {
+  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  struct UiMessageSlot *slot = Ram_HeapSlots->unk84[4];
+  struct UiWindow *window;
+  /* FAKEMATCH(pin): the entry held in r8, copied from r0 only after the
+   * result is cleared; as a plain local, 2 of 69 instructions differ in
+   * tla-en. */
+  register s32 entry asm("r8");
+  s32 result;
+
+  // The menu state reads 2 while the message decodes.
+  work->menuState = 2;
+  {
+    s32 decoded = UiText_BuildRenderEntries(message, 1);
+    u16 present;
+
+    work->menuState = 1;
+    /* FAKEMATCH(barrier): an empty asm, so the menu state is stored before
+     * the entry is addressed; as plain statements, 4 of 69 instructions
+     * differ in tla-en. */
+    __asm__ volatile("");
+    present = work->entries[decoded];
+    result = 0;
+    entry = decoded;
+    if (present == 0)
+      return;
+  }
+  if (slot->window == NULL) {
+    window = UiWindow_Create(0, 15, 30, 6, 10);
+    slot->window = window;
+    Func_0803a2b0(0, 15, 30, 6, 1);
+    slot->cursor = result;
+  } else {
+    window = slot->window;
+  }
+  if (window != NULL) {
+    result = UiText_StartBattleMessage(window, entry, slot->cursor);
+    slot->result = result;
+    slot->cursor = 0;
+    if (result == 0)
+      UiWork_Finalize(window, 1);
+  }
+}
 
 void WaitFrames(s32 frames);
 s32 UiWork_IsComplete(void);
-void UiMessage_Show(s32 message);
-s32 UiText_BuildRenderEntries(s32 key, s32 mode);
 s32 UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y,
                               u16 *bounds, s32 mode);
 

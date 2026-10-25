@@ -23,24 +23,12 @@ System_WaitForFrameInterrupt:
 	.thumb_func
 Input_UpdateKeyRepeatAndDirection:
 	.incbin "baserom.gba", 0x000138b4, 0x0000027c
-	.section .rom.00013de4, "ax"
-	.global Func_08013de4
-	.type Func_08013de4, %function
-	.thumb_func
-Func_08013de4:
-	.incbin "baserom.gba", 0x00013de4, 0x0000008c
 	.section .rom.00014174, "ax"
 	.global VramCache_AllocateBlocks
 	.type VramCache_AllocateBlocks, %function
 	.thumb_func
 VramCache_AllocateBlocks:
 	.incbin "baserom.gba", 0x00014174, 0x00000080
-	.section .rom.00014b70, "ax"
-	.global Func_08014b70
-	.type Func_08014b70, %function
-	.thumb_func
-Func_08014b70:
-	.incbin "baserom.gba", 0x00014b70, 0x0000003c
 	.section .rom.00015510, "ax"
 	.global Transform_BuildLookAt
 	.type Transform_BuildLookAt, %function
@@ -58,7 +46,7 @@ Render_ProjectPoint:
 	.type Func_0801596c, %function
 	.thumb_func
 Func_0801596c:
-	.incbin "baserom.gba", 0x0001596c, 0x000001b8
+	.incbin "baserom.gba", 0x0001596c, 0x00000164
 	.section .rom.00015ca4, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00015ca4, 0x000001a0
@@ -74,12 +62,6 @@ Func_08016180:
 	.thumb_func
 SerialRuntime_CollectReceivedPayloads:
 	.incbin "baserom.gba", 0x000165b4, 0x000000e0
-	.section .rom.00016694, "ax"
-	.global SerialRuntime_HandleTransferInterrupt
-	.type SerialRuntime_HandleTransferInterrupt, %function
-	.thumb_func
-SerialRuntime_HandleTransferInterrupt:
-	.incbin "baserom.gba", 0x00016694, 0x00000118
 	.section .rom.00016990, "ax"
 	.global Func_08016990
 	.type Func_08016990, %function
@@ -423,15 +405,13 @@ Func_08039f94:
 	.incbin "baserom.gba", 0x00039f28, 0x000000c0
 	.section .rom.0003a244, "ax"
 	.balign 4
+	.global Func_0803a2b0
+	.type Func_0803a2b0, %function
+	.thumb_func
+Func_0803a2b0:
 	.incbin "baserom.gba", 0x0003a244, 0x00000108
 	.section .rom.0003a3da, "ax"
 	.incbin "baserom.gba", 0x0003a3da, 0x00000002
-	.section .rom.0003a4e0, "ax"
-	.global UiMessage_Show
-	.type UiMessage_Show, %function
-	.thumb_func
-UiMessage_Show:
-	.incbin "baserom.gba", 0x0003a4e0, 0x00000094
 	.section .rom.0003a630, "ax"
 	.global UiText_OpenMessageWindow
 	.type UiText_OpenMessageWindow, %function
@@ -543,13 +523,6 @@ ItemIcon_Compose:
 	.thumb_func
 Func_0803dc1c:
 	.incbin "baserom.gba", 0x0003dd50, 0x00000108
-	.section .rom.0003decc, "ax"
-	.balign 4
-	.global Func_0803dd98
-	.type Func_0803dd98, %function
-	.thumb_func
-Func_0803dd98:
-	.incbin "baserom.gba", 0x0003decc, 0x00000110
 	.section .rom.0003e058, "ax"
 	.global Func_0803df24
 	.type Func_0803df24, %function
@@ -580,6 +553,10 @@ Menu_StepLeft:
 	.section .rom.0003f138, "ax"
 	.incbin "baserom.gba", 0x0003f138, 0x000001d0
 	.section .rom.0003f418, "ax"
+	.global MenuSelection_SetupEntry
+	.type MenuSelection_SetupEntry, %function
+	.thumb_func
+MenuSelection_SetupEntry:
 	.incbin "baserom.gba", 0x0003f418, 0x000000e4
 	.section .rom.0003f4fc, "ax"
 	.global Menu_ConfirmSelection

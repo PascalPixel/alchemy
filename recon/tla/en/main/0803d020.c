@@ -1,3 +1,5 @@
+// Draft, differ 8 of 112 (2026-10-24): a one-pass block around the centring of
+// x takes one reordered pair off. Left: instruction order only.
 // Draft, differ 10 of 112 (2026-10-18): only scheduling remains; the native
 // loads the work pointer before it builds the count offset, and in the
 // colour, outline and line-spacing cases and the loop start it loads the
@@ -38,7 +40,9 @@ s32 Func_0803d020(s32 message, u8 *canvas) {
       return text[3] == '-' ? 3 : 2;
     return 1;
   }
-  x = (192 - width) / 2;
+  do {
+    x = (192 - width) / 2;
+  } while (0);
   code = *text++;
   while (code != 0) {
     if (code <= 30) {

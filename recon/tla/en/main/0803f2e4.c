@@ -1,3 +1,6 @@
+// Draft, differ 10 of 103 (2026-10-24): a one-pass block around obj =
+// &node->obj takes four rows off. Left: the bit-field updates, where the
+// native loads bytes 5 and 7 before it builds their masks.
 #include "types.h"
 
 struct Object_0801c0dc {
@@ -75,7 +78,9 @@ void MenuSelection_SetupEntry(u32 kind, s32 base, struct ListNode *node,
   node->field22 = 0x100;
   node->field26 = 0x100;
 
-  obj = &node->obj;
+  do {
+    obj = &node->obj;
+  } while (0);
   obj->field52 = 0;
   obj->field55 = 0;
   obj->field54 = 0;

@@ -1,3 +1,7 @@
+// Draft, differ 4 of 53 (2026-10-24): an empty asm before the handler call, as
+// in its adopted twin Func_0802d71c (cell_open.c), reads the kind before the
+// 15 mask. Left: the native loads the handler table and Data_0202c001 one slot
+// earlier each.
 // Near miss, differ 6 of 53 (instruction order in the last block): The Broken
 // Seal's Map_GetTerrainHeight on this game's map work. The native reads the
 // handler kind (ldrb r0) before it starts the 15 mask and loads the handler
@@ -28,5 +32,6 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z) {
     grid = gMapShapeGrid;
   grid += x / 16 + (z / 16 << 7);
   code = Ram_MapCollision + *grid * 4;
+  __asm__ volatile("");
   return gMap_TerrainHeightHandlers[*code++ & 15](code, x & 15, z & 15);
 }

@@ -1,7 +1,8 @@
-// Under -mthumb-slow-loads (2026-10-25): still differ 6 of 89, the same
-// constant-before-load pairs (movs r3, #192; lsls r3, r3, #18 and the mask's
-// lsls r0, r0, #1 one row early). Its message base (number 2181 in English,
-// the first ability description) has no catalog name yet.
+// Under -mthumb-slow-loads (2026-10-25): differ 0 of 89, compiled with the
+// Makefile's options. Not adopted: its message base, MsgAbilityDescription
+// below (number 2181 in English, the first ability description), has no name in
+// this game's catalogs, though The Broken Seal's give it one; the six
+// catalogs need that name first.
 // Near miss, differ 6 of 89, three reordered pairs: the native reads
 // state->page before it finishes the heap address (mov r8, r2; movs r3, #192;
 // ldr r2, [r2, #8]; lsls r3, r3, #18) and loads the message base before it

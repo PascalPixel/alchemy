@@ -1,8 +1,9 @@
-// Near miss, differ 14 of 124, 2026-10-15: The Broken Seal's
+// Near miss, differ 10 of 124 (14 before UiText_QueueRenderEntries was
+// declared returning s32, as msgwait.c defines it), 2026-10-25: The Broken Seal's
 // Djinn_ShowJoinedMessage on this game's window tiles, its window at x 2 and
 // width 26, the element's "found the Djinni" message (MsgFoundVenusDjinni,
 // message 46 in the English catalog, still unnamed there) and gInput's
-// pressed keys. Seven reordered pairs remain, most a load the native issues
+// pressed keys. Five reordered pairs remain, most a load the native issues
 // one row earlier: the element table's pool load, the palette's stack
 // reload, the key table and the arguments of UiText_QueueRenderEntries,
 // which the native sets in the order r3, r2, r0. A device search found
@@ -28,7 +29,7 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                                   s32 palette, s32 reuse);
 void UiWork_PushValueSlot(u32 value, u32 kind);
 s32 UiText_BuildRenderEntriesMode1(s32 arg0);
-void UiText_QueueRenderEntries(struct UiWindow *, s32, s32, s32, s32);
+s32 UiText_QueueRenderEntries(struct UiWindow *, s32, s32, s32, s32);
 void Audio_PlayCue(u32);
 s32 Audio_Check(void);
 void Runtime_PushSlotEntry(void *entry, s32 priority);

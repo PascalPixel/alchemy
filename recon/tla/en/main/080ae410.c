@@ -1,4 +1,5 @@
-// Near miss, differ 146 of 219, 2026-10-18, written from the listing: takes
+// Near miss, differ 125 of 219 (146 before gPartyState's byte pointer was
+// taken just before the coins, where the native loads it, 2026-10-25), written from the listing: takes
 // over a The Broken Seal save (`save`, laid out as that game's: flag bits at
 // 0x40, party state at 0x240, the units at 0x520): its djinn flags and six
 // flags from Data_080b1284 set or clear this game's flags from 0x800 and
@@ -42,7 +43,7 @@ void Func_080ae410(u8 *save, s32 keepSettings) {
   struct SavedUnit *units = (struct SavedUnit *)(save + 0x520);
   u8 *party = save + 0x240;
   u8 *flags = save + 0x40;
-  u8 *state = (u8 *)&gPartyState;
+  u8 *state;
   u8 name[16];
   s32 i;
   s32 k;
@@ -74,6 +75,7 @@ void Func_080ae410(u8 *save, s32 keepSettings) {
   else
     GameFlag_SetBit(0x822);
 
+  state = (u8 *)&gPartyState;
   *(s32 *)(state + 0x28c) = *(s32 *)(party + 0x10);
   if (keepSettings == 0) {
     state[0x225] = party[0x225];

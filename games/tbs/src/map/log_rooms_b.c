@@ -14,8 +14,7 @@
 ///   table: the 4-by-3 block of cells copied from (0, 120) to (8, 67) lies
 ///   under the window of the map grid's layer 2, at the table, and draws it
 ///   bare where the first visit's house (log_rooms_a.c) draws the sparkling
-///   stone on it (render probe vault-interiors-revisit, the room before and
-///   after).
+///   stone on it (render probe log-rooms-b, the room before and after).
 /// - LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTH, the house of a boy who
 ///   doubts the thieves were from Lunpa.
 /// - LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST and

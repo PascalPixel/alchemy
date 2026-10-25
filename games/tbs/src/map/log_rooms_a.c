@@ -53,10 +53,10 @@
 ///
 /// EventScript_ApproachSuspects plays once: it copies
 /// MB_LOG_ROOMS_A_GUESTS_ROOM_DOOR cells over the guests' room's
-/// MB_LOG_ROOMS_A_GUESTS_ROOM cells, EventScript_DiscussSuspiciousGuests
-/// makes them MB_LOG_ROOMS_A_CORNERING_START, and every later arrival
-/// with FLAG_VAULT_SUSPECTS_APPROACHED set rewrites them again (render probe
-/// vault-interiors: the room has no GUESTS_ROOM cell once the flag is set).
+/// MB_LOG_ROOMS_A_GUESTS_ROOM cells, EventScript_DiscussSuspiciousGuests makes
+/// them MB_LOG_ROOMS_A_CORNERING_START, and every later arrival with
+/// FLAG_VAULT_SUSPECTS_APPROACHED set rewrites them again (render probe
+/// log-rooms-a: the room has no GUESTS_ROOM cell once the flag is set).
 
 #include "save_block.h"
 #include "flags.h"

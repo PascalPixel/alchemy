@@ -3885,17 +3885,17 @@ main	rom_main_08	games/tla/src/graphics/palette/color_scale_kernel
 main	rom_main_08	games/tla/src/graphics/palette/color_scale_loader
 main	rom_main_08	games/tla/src/battle/presentation/m8118430	.text
 main	rom_main_08	recon/tla/it/rom	.rom.0011843c	it
-main	rom_main_08	recon/tla/it/rom	.rom.00118738	it
 main	rom_main_08	recon/tla/fr/rom	.rom.0011843c	fr
-main	rom_main_08	recon/tla/fr/rom	.rom.00118738	fr
 main	rom_main_08	recon/tla/es/rom	.rom.0011843c	es
-main	rom_main_08	recon/tla/es/rom	.rom.00118738	es
 main	rom_main_08	recon/tla/de/rom	.rom.0011843c	de
-main	rom_main_08	recon/tla/de/rom	.rom.00118738	de
 main	rom_main_08	recon/tla/raw/0811843c	.text	en
-main	rom_main_08	recon/tla/raw/081185c4	.text	en
-main	rom_main_08	recon/tla/raw/08118738	.text	en
 main	rom_main_08	recon/tla/ja/rom	.rom.0011843c	ja
+main	rom_main_08	games/tla/src/battle/presentation/f1185c4	.text
+main	rom_main_08	recon/tla/it/rom	.rom.00118738	it
+main	rom_main_08	recon/tla/fr/rom	.rom.00118738	fr
+main	rom_main_08	recon/tla/es/rom	.rom.00118738	es
+main	rom_main_08	recon/tla/de/rom	.rom.00118738	de
+main	rom_main_08	recon/tla/raw/08118738	.text	en
 main	rom_main_08	recon/tla/ja/rom	.rom.00118738	ja
 main	rom_main_08	games/tla/src/battle/presentation/m8118954	.text
 main	rom_main_08	recon/tla/it/rom	.rom.00118958	it

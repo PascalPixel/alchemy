@@ -2888,6 +2888,10 @@ Menu_SetPageIcons:
 Func_080f94a4:
 	.incbin "baserom.gba", 0x000f94a4, 0x00000e38
 	.section .rom.000fa374, "ax"
+	.global Func_080fa368
+	.type Func_080fa368, %function
+	.thumb_func
+Func_080fa368:
 	.incbin "baserom.gba", 0x000fa374, 0x0000006c
 	.section .rom.000fa484, "ax"
 	.incbin "baserom.gba", 0x000fa484, 0x0000003c
@@ -2996,12 +3000,12 @@ Func_08100738:
 	.thumb_func
 BattleEffect_ApplyToTargets:
 	.incbin "baserom.gba", 0x00100914, 0x00000548
-	.section .rom.00100f98, "ax"
-	.global Func_08100e7c
-	.type Func_08100e7c, %function
+	.section .rom.00101188, "ax"
+	.global Func_0810106c
+	.type Func_0810106c, %function
 	.thumb_func
-Func_08100e7c:
-	.incbin "baserom.gba", 0x00100f98, 0x00000734
+Func_0810106c:
+	.incbin "baserom.gba", 0x00101188, 0x00000544
 	.section .rom.00101754, "ax"
 	.incbin "baserom.gba", 0x00101754, 0x0000036c
 	.section .rom.00101be4, "ax"

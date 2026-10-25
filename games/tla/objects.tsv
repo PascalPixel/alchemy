@@ -3891,13 +3891,13 @@ main	rom_main_06	recon/tla/raw/081007f8	.text	en
 main	rom_main_06	recon/tla/ja/rom	.rom.00100740	ja
 main	rom_main_06	games/tla/src/menu/item/itemkind	.text
 main	rom_main_06	games/tla/src/menu/item/row_coordinates	.text
-main	rom_main_06	recon/tla/it/rom	.rom.00100f98	it
-main	rom_main_06	recon/tla/fr/rom	.rom.00102fec	fr
-main	rom_main_06	recon/tla/es/rom	.rom.00106fd0	es
-main	rom_main_06	recon/tla/de/rom	.rom.0010b048	de
-main	rom_main_06	recon/tla/raw/08100e7c	.text	en
+main	rom_main_06	games/tla/src/menu/f100e7c	.text
+main	rom_main_06	recon/tla/ja/rom	.rom.00101074	ja
+main	rom_main_06	recon/tla/de/rom	.rom.0010b238	de
+main	rom_main_06	recon/tla/es/rom	.rom.001071c0	es
+main	rom_main_06	recon/tla/fr/rom	.rom.001031dc	fr
+main	rom_main_06	recon/tla/it/rom	.rom.00101188	it
 main	rom_main_06	recon/tla/raw/0810106c	.text	en
-main	rom_main_06	recon/tla/ja/rom	.rom.00100e84	ja
 main	rom_main_06	games/tla/src/menu/adjust_palette_bank	.text
 main	rom_main_06	recon/tla/it/rom	.rom.00101754	it
 main	rom_main_06	recon/tla/fr/rom	.rom.001037a8	fr

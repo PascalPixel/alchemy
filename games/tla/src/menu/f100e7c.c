@@ -1,11 +1,7 @@
-// Draft of Func_08100e7c: runs the Djinn menu, keeping the field's tiles and
-// the party's event mode; the twin of The Broken Seal's DjinnMenu_Run
-// (games/tbs/src/menu/menu/djinn.c), rewritten with ⚓️'s heap block (220,
-// 0xcec), menu work and calls (Func_0810106c is the screen loop).
-// Near miss, differ 10 of 201 (2026-10-19), instruction order only: the native
-// loads the object system before it starts the 1 it stores there, and the
-// pooled zero before the selection offset's first move, and so places the
-// literal pool one instruction earlier.
+// Func_08100e7c runs the Djinn menu, keeping the field's tiles and the party's
+// event mode; the twin of The Broken Seal's DjinnMenu_Run
+// (games/tbs/src/menu/menu/djinn.c), rewritten with this game's heap block
+// (220, 0xcec), menu work and calls (Func_0810106c is the screen loop).
 #include "types.h"
 #include "ram_buffer.h"
 #include "party_state.h"

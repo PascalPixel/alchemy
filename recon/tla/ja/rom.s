@@ -2673,6 +2673,10 @@ Func_080f8ab4:
 Func_080f94a4:
 	.incbin "baserom.gba", 0x000f942c, 0x00000db0
 	.section .rom.000fa27c, "ax"
+	.global Func_080fa368
+	.type Func_080fa368, %function
+	.thumb_func
+Func_080fa368:
 	.incbin "baserom.gba", 0x000fa27c, 0x0000006c
 	.section .rom.000fa4b8, "ax"
 	.global ItemMenu_RunOwnerSelection
@@ -2783,12 +2787,12 @@ Func_08100738:
 	.thumb_func
 BattleEffect_ApplyToTargets:
 	.incbin "baserom.gba", 0x00100800, 0x00000548
-	.section .rom.00100e84, "ax"
-	.global Func_08100e7c
-	.type Func_08100e7c, %function
+	.section .rom.00101074, "ax"
+	.global Func_0810106c
+	.type Func_0810106c, %function
 	.thumb_func
-Func_08100e7c:
-	.incbin "baserom.gba", 0x00100e84, 0x00000734
+Func_0810106c:
+	.incbin "baserom.gba", 0x00101074, 0x00000544
 	.section .rom.00101640, "ax"
 	.incbin "baserom.gba", 0x00101640, 0x0000036c
 	.section .rom.00101ad0, "ax"

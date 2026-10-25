@@ -7,7 +7,7 @@ SECTIONS
         "*/resource_64d_overlay.o"(.text.x020080c6)
         "*/games/tla/src/scene/venus_lighthouse_entrance/s00c8.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse_entrance/scene_events.o"(.text)
-        "*/resource_64d_overlay.o"(.text.x02008128)
+        "*/games/tla/src/scene/venus_lighthouse_entrance/s0128.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse_entrance/prepare.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse_entrance/s030c.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse_entrance/s0440.o"(.text)

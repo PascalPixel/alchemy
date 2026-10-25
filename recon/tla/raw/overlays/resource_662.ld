@@ -8,7 +8,7 @@ SECTIONS
         "*/resource_662_overlay.o"(.text.x020081d4)
         "*/resource_662_overlay.o"(.text.x0200833c)
         "*/resource_662_overlay.o"(.text.x02008458)
-        "*/resource_662_overlay.o"(.text.x02008754)
+        "*/games/tla/src/scene/yampi_desert_cave/s0754.o"(.text)
         "*/resource_662_overlay.o"(.text.x020087dc)
         "*/games/tla/src/scene/yampi_desert_cave/stop.o"(.text)
         "*/resource_662_overlay.o"(.text.x02008978)

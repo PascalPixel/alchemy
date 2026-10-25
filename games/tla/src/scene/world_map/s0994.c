@@ -31,9 +31,6 @@ void Func_02004db8(s32 value);
 void Func_02004df8(s32 value, s32 mode);
 void Func_02004e30(s32 cue);
 struct ObjectRuntime *Object_GetById(s32 id);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_0200050c(void);
 
 /// Brings the actor to the player character's position.
 static __inline__ void Actor_JoinLeader(s32 actor) {
@@ -78,26 +75,6 @@ static __inline__ void Func_02004d10_(s32 actor, s32 value) {
 static __inline__ void Func_02004d08_(s32 actor, s32 value, s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02004d08(actor, value, frames);
-}
-
-/// Back to the map: actor 8's position is kept in the party state.
-void Func_02000918(void) {
-  struct EventDestination *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *leader = Object_GetById(8);
-
-  Func_02004c20();
-  Func_02004db8(0);
-  if (gPartyState.renderMode == 8)
-    Func_0200050c();
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-  gPartyState.savedX = leader->x;
-  gPartyState.savedZ = leader->z;
-  gPartyState.unk280 = 0;
-  gPartyState.ownerOverride = 0;
-  GameFlag_ClearBit(0x176);
-  Func_02004e30(123);
-  Func_02004d40(work->scene);
 }
 
 void Func_02000994(void) {

@@ -7,6 +7,7 @@ SECTIONS
         "*/games/tla/src/scene/madra_interiors/s004c.o"(.text)
         "*/games/tla/src/scene/madra_interiors/s01b8.o"(.text)
         "*/resource_659_overlay.o"(.text.x02008570)
+        "*/resource_659_overlay.o"(.text.x02008624)
         "*/games/tla/src/scene/madra_interiors/prepare.o"(.text)
         "*/games/tla/src/scene/madra_interiors/events.o"(.text)
         "*/games/tla/src/scene/madra_interiors/import.o"(.text)

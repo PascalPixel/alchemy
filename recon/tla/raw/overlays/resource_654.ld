@@ -5,7 +5,7 @@ SECTIONS
         "*/games/tla/src/scene/shrine_of_the_sea_god/entry.o"(.text)
         "*/games/tla/src/field/common/object/set_sprite_priority.o"(.text)
         "*/games/tla/src/field/common/effect/move.o"(.text)
-        "*/resource_654_overlay.o"(.text.x020080b8)
+        "*/games/tla/src/scene/shrine_of_the_sea_god/s00b8.o"(.text)
         "*/games/tla/src/scene/shrine_of_the_sea_god/event0.o"(.text)
         "*/games/tla/src/scene/shrine_of_the_sea_god/scene_tables.o"(.text)
         "*/games/tla/src/scene/shrine_of_the_sea_god/exits.o"(.text)

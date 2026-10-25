@@ -16,6 +16,7 @@ SECTIONS
         "*/games/tla/src/scene/alhafra_interiors/s0578.o"(.text)
         "*/games/tla/src/scene/alhafra_interiors/s0598.o"(.text)
         "*/resource_666_overlay.o"(.text.x020085b8)
+        "*/games/tla/src/scene/alhafra_interiors/s05b8.o"(.text)
         "*/games/tla/src/scene/alhafra_interiors/prepare.o"(.text)
         "*/games/tla/src/scene/alhafra_interiors/s0738.o"(.text)
         "*/games/tla/src/scene/alhafra_interiors/import.o"(.text)

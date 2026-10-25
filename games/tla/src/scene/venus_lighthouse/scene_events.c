@@ -51,14 +51,7 @@ s32 VenusLighthouse_Start(void) {
   if (gPartyState.entrance == ENTRANCE_OPENING) {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
     // The international editions also save this scene and entrance 22.
-    {
-      s32 scene = (s32)&SceneId_VenusLighthouse;
-
-      /* FAKEMATCH: the native loads the scene id before it builds the
-       * saved-scene offset (one reordered row without). */
-      __asm__ volatile("");
-      gPartyState.savedScene = scene;
-    }
+    gPartyState.savedScene = (s32)&SceneId_VenusLighthouse;
     gPartyState.savedEntrance = 22;
 #endif
     Engine_EventStart();

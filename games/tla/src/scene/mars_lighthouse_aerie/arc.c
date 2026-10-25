@@ -12,15 +12,13 @@ void Func_020005a0(struct ObjectRuntime *object) {
   u16 angle;
   struct FieldSprite *sprite;
   s32 sine;
-  s32 x;
 
   angle = *pangle;
   parent = object->linkedObject;
   object->x = parent->x + Math_Cosine(angle) * (object->speedLimit + 28);
   sine = Math_Sine(angle);
-  x = object->x;
   object->z = (sine << 4) + 0x1080000;
-  object->targetX = x;
+  object->targetX = object->x;
   object->targetZ = object->z;
   sprite = object->animation;
   if (object->z < 0x1080000)

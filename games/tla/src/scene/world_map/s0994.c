@@ -87,20 +87,12 @@ void Func_02000918(void) {
 
   Func_02004c20();
   Func_02004db8(0);
-  do {
-    /* FAKEMATCH: the loop note keeps gPartyState's load ahead of the 0x212
-     * offset, as in the native (differ 4 without). */
-  } while (0);
   if (gPartyState.renderMode == 8)
     Func_0200050c();
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  do {
-    /* FAKEMATCH: inside a one-pass block the z offset starts before z is
-     * loaded, as in the native (alchemy permute; differ 2 without). */
-    gPartyState.savedX = leader->x;
-    gPartyState.savedZ = leader->z;
-  } while (0);
+  gPartyState.savedX = leader->x;
+  gPartyState.savedZ = leader->z;
   gPartyState.unk280 = 0;
   gPartyState.ownerOverride = 0;
   GameFlag_ClearBit(0x176);

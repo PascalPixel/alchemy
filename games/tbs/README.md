@@ -28,15 +28,18 @@ the game. The always-loaded code is cut into [banks](glossary.md#bank)
 
 ```mermaid
 flowchart TD
-  power([Power on]) --> init["System_Initialize<br/>start-up: memory, sound, tasks"]
-  init --> loop{"Game_MainLoop<br/>what runs next?"}
-  loop -- "a map" --> overlay["Unpack the overlay<br/>holding the map's scripts"]
-  overlay --> run["Map_Run: load the layout,<br/>the party walks until it<br/>takes a warp"]
-  run --> loop
-  loop -- "a battle" --> battle["Battle_Run<br/>always loaded, no overlay"]
-  battle --> loop
-  loop -- "a minigame" --> mini["Lucky Dice or Lucky Wheels<br/>always loaded, no overlay"]
-  mini --> loop
+  subgraph memory ["Always in memory"]
+    loop(["Game_MainLoop<br/>runs one turn, then the next"])
+    map["Map_Run<br/>the party walks"]
+    battle["Battle_Run"]
+    mini["Lucky Dice<br/>Lucky Wheels"]
+    loop -- "a map" --> map
+    loop -- "a battle" --> battle
+    loop -- "a minigame" --> mini
+  end
+  map -. "runs" .-> scripts["Overlay area, one at a time:<br/>the map's scripts,<br/>unpacked from its overlay"]
+  classDef overlay stroke-dasharray: 6 4
+  class scripts overlay
 ```
 
 That main loop is unlike most games'. In most games, the Pokémon games among

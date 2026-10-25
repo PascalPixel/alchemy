@@ -1,5 +1,5 @@
-// Near miss: differ 6 of 106, two places. The native builds -1 fully before it
-// copies the window out of r0 (movs r7, #1; negs r7, r7; mov r8, r0), and it
+// Near miss: differ 4 of 106 (6 with moved set after the window's call: the
+// native builds -1 fully before it copies the window out of r0). Left: it
 // finishes x (subs r1, r3, #4) before it starts the load of the window row,
 // which then reuses r3 (movs r3, #14; ldrsh r2, [r0, r3]); the draft loads the
 // row first through r4. An empty asm barrier after x orders the two but moves
@@ -35,8 +35,8 @@ s32 Func_08040d70(s32 index) {
   Func_08040c78();
   work = Ram_HeapSlots->unkd0[0];
   WaitFrames(1);
-  window = Func_08040cc4();
   moved = -1;
+  window = Func_08040cc4();
   do {
     if (moved != 0) {
       s32 x;

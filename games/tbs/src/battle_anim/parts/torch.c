@@ -60,7 +60,7 @@ void BattleAnim_RunTorch(struct BattleAnimArgs *effect) {
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
   REG_BG2PA = Q_8_8(1.0 / 1.5);
   BattleAnim_FetchRectangleBlitters(work->effect->side, draw);
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Fill the 128x128 sheet with each pixel's distance from the middle,
   // halved and held to 1 to 63, so the distance picks the colour. Rows count
@@ -112,12 +112,12 @@ void BattleAnim_RunTorch(struct BattleAnimArgs *effect) {
     r >>= 3;
     g >>= 3;
     b >>= 3;
-    pal[i] = ((u16 *)BG_PLTT)[i] = b << 10 | g << 5 | r;
+    pal[i] = ((u16 *)BG_PLTT)[i] = RGB(r, g, b);
   }
 
   draw[0](canvas, work->sheet, 0, 0, 128, 128);
   work->transferPending = 1;
-  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, TASK_PRIORITY_VBLANK);
 
   // Fade the radial picture in (frames 0 to 8), ripple each scanline, then
   // fade it out (frames 89 to 95, from 14 sixteenths down to 2).
@@ -151,8 +151,10 @@ void BattleAnim_RunTorch(struct BattleAnimArgs *effect) {
       work->transferPending = 1;
     } else {
       pal[1] = pal[63];
-      Dma_Set(pal + 62, pal + 63, 0x80a0003e, REG_DMA3);
-      IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT[1], (u32)(pal + 1), 0x8000003f);
+      Dma_Set(pal + 62, pal + 63,
+              (DMA_ENABLE | DMA_SRC_DEC | DMA_DEST_DEC) << 16 | 62, REG_DMA3);
+      IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT[1], (u32)(pal + 1),
+                          DMA_COPY_HALFWORDS(63));
     }
     WaitFrames(1);
   }

@@ -60,7 +60,7 @@ void BattleAnim_RunSwirlSwipe(struct BattleAnimArgs *effect, s32 mode) {
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
   ANIM_START_NARROW_CANVAS(0);
-  if (work->effect->side == 1) {
+  if (work->effect->side == ANIM_SIDE_PARTY) {
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
     draw[0] = (DrawRectangle)ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
@@ -78,12 +78,12 @@ void BattleAnim_RunSwirlSwipe(struct BattleAnimArgs *effect, s32 mode) {
     Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   }
   // Trails keep 3/4 a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   object = GetBattleObjectSlotFar(work->effect->targets[0])->object;
   Projection_ScaledUnit(work->effect->targets[0], &position);
   // Line the canvas up so the swipe crosses the target: the target's x
   // lands at canvas x 16 against the enemies and 112 against the party.
-  if (work->effect->side == 0)
+  if (work->effect->side == ANIM_SIDE_ENEMIES)
     REG_BG2X = (16 - position.x) << 8;
   else
     REG_BG2X = (112 - position.x) << 8;
@@ -172,10 +172,11 @@ void BattleAnim_RunSpiderWeb(struct BattleAnimArgs *effect) {
   canvas = *(void **)size;
   work = *(struct BattleAnimWork **)(size - 4);
   work->effect = effect;
-  BattleAnim_StartCanvasLayer(2);
+  BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(2));
   transparent = (s32)&REG_BLDALPHA;
   REG_BG2PA = Q_8_8(1);
-  *(u16 *)transparent = 0x1000; // REG_BLDALPHA: invisible to start with
+  *(u16 *)transparent =
+      BLEND_ALPHA(0, 16); // REG_BLDALPHA: invisible to start with
   Projection_ScaledUnit(work->effect->targets[0], &first);
   Projection_ScaledUnit(work->effect->targets[work->effect->targetCount - 1],
                         &last);

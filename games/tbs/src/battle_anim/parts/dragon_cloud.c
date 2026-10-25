@@ -89,18 +89,18 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              Ram_MapGridCellBuffer, 1, 0);
   BattleAnim_FetchRectangleBlitters(work->effect->side, draw);
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Seed the embers (particles 8 to 47) and flashes (48 to 63) thrown at the
   // strike, and the eight puffs (0 to 7) on an arc, each starting two frames
   // after the last. Embers and flashes burst from a fixed point of the
-  // field, x -56 (56 on side 1) at depth 0, the flashes 20 pixels up: up to
-  // 8 pixels a frame across and in depth, and up at up to 8 (embers) or 4
+  // field, x -56 (56 on ANIM_SIDE_PARTY) at depth 0, the flashes 20 pixels up:
+  // up to 8 pixels a frame across and in depth, and up at up to 8 (embers) or 4
   // (flashes).
   for (j = 0; j != DRAGON_CLOUD_EMBERS; j++) {
     struct Particle *ember = &work->particles[DRAGON_CLOUD_FIRST_EMBER + j];
 
-    if (work->effect->side == 0)
+    if (work->effect->side == ANIM_SIDE_ENEMIES)
       ember->x = -0x380000;
     else
       ember->x = 0x380000;
@@ -113,7 +113,7 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
   for (j = 0; j != DRAGON_CLOUD_FLASHES; j++) {
     struct Particle *flash = &work->particles[DRAGON_CLOUD_FIRST_FLASH + j];
 
-    if (work->effect->side == 0)
+    if (work->effect->side == ANIM_SIDE_ENEMIES)
       flash->x = -0x380000;
     else
       flash->x = 0x380000;
@@ -126,7 +126,7 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
   for (i = 0, j = -0x4000; i != DRAGON_CLOUD_PUFFS; i++, j += 0x1000) {
     struct Particle *puff = &work->particles[i];
 
-    if (work->effect->side == 1)
+    if (work->effect->side == ANIM_SIDE_PARTY)
       puff->x = (Trig_Sin(j) * 24 >> 16) + 88;
     else
       puff->x = (-(Trig_Sin(j) * 24) >> 16) + 16;
@@ -145,7 +145,7 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
       Sound_PlaySongFar(SE_WHOOSH);
     // 1/256 of a turn a frame, then re-aim the turned camera at the field's
     // centre at 100% zoom, which also moves the battle background's plane.
-    if (work->effect->side == 0) {
+    if (work->effect->side == ANIM_SIDE_ENEMIES) {
       if (frame <= 63)
         camera->yaw -= 0x100;
     } else {
@@ -202,11 +202,12 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
     ANIM_VIEW_FROM_CAMERA(camera);
     // The flame leans with its smoothed vertical motion (drift, -8 to 8):
     // one of five 24x48 cells, from rising to falling. Its position is the
-    // path's, halved across for the wide canvas and mirrored on side 1.
+    // path's, halved across for the wide canvas and mirrored on
+    // ANIM_SIDE_PARTY.
     if (frame >= 18 && frame <= DRAGON_CLOUD_STRIKE_FRAME) {
       s32 lift;
 
-      if (work->effect->side == 1)
+      if (work->effect->side == ANIM_SIDE_PARTY)
         position.x = 64 - x / 2;
       else
         position.x = x / 2 + 64;

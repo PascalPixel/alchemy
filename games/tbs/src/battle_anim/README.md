@@ -59,7 +59,7 @@ view or turns right round (Venus, Mercury, Mars and Jupiter do the first;
 twenty rows, among them the blessings, the second). Building the turn adjusts
 it: a double or triple blow raises the variant, a revival adds the switch for
 downed targets, and Annihilation's instant death landing on its first target
-sets the variant to 1. A critical hit adds 200 to a plain attack's
+sets the variant to 1. A critical hit adds `ANIM_ID_CRITICAL_OFFSET` to a plain attack's
 animation, which turns it into the ring and spark scene.
 
 The bits are named by the `ANIM_` macros in `../battle/battle_internal.h`,
@@ -431,12 +431,12 @@ void BattleAnim_RunBolt(struct BattleAnimArgs *effect) {
   ...
   ANIM_GET_SLOTS(slots, cursor, work, canvas); /* the three blocks */
   work->effect = effect;
-  BattleAnim_StartCanvasLayer(1);              /* BG2 shows the canvas */
+  BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1)); /* BG2 shows the canvas */
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   draw[0] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
                              work->sheet + BOLT_CELLS, 1, 1);
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75); /* keep 3/4 */
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   for (frame = 0; frame != work->effect->count * 8 + 40; frame++) {
     if (frame == 24)
       ANIM_SHOW_DAMAGE(SE_IMPACT);             /* the damage may show */

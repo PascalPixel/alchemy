@@ -89,6 +89,10 @@ enum BattleBackgroundMode {
   BATTLE_BACKGROUND_ZOOMED
 };
 
+/// BattleBackground_SetMode's fade that restores the saved palette instead of
+/// taking from each colour channel.
+#define BATTLE_BACKGROUND_FADE_RESTORE 0x80
+
 /// The battle background's affine parameters and reference point, copied
 /// whole to the BG2PA registers.
 struct BattleAffine {

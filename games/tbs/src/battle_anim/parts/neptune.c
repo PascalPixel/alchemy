@@ -100,17 +100,17 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
   *(u16 *)&BG_PLTT[1] = 0;
   // BG2's scale per frame: one texel a pixel until the VCount line (0 here),
   // twice the width from it down.
-  Task_Add(BattleAnim_ResetBg2Pa, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ResetBg2Pa, TASK_PRIORITY_VBLANK);
   Irq_SetHandler(IRQ_VCOUNT, 0, BattleAnim_SetBg2AffineScaleHalf);
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
   // Setup: wipe the battle away and close window 0 (its edge opens over the
   // first 16 frames), swap in the dusk battle background and load the pictures.
   REG_WININ = ANIM_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
   BattleAnim_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_WIN0H = WIN_RANGE(240, 240);
   BattleAnim_SelectLivingTargets(work->effect);
-  BattleAnim_SpawnObjects(NEPTUNE_OBJECTS, 0x17a, 1);
+  BattleAnim_SpawnObjects(NEPTUNE_OBJECTS, SPRITE_NEPTUNE, 1);
   gProjection.centerY = 240;
   WaitFrames(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
@@ -132,7 +132,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
   savedBg1ScrollX = gBgScroll[1].x;
   view = (struct BattleBackgroundWork *)CANVAS_SLOT(
       cache, HEAP_SLOT_BATTLE_BACKGROUND);
-  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   // The scene owns BG1's scroll until the second stage.
   view->busy = 1;
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
@@ -200,7 +200,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
           noise[k] = Random16() & 63;
         }
         *phase = 0;
-        Task_Add(BattleAnim_BuildWindowEdgeTable, ANIM_CALLBACK_ORDER);
+        Task_Add(BattleAnim_BuildWindowEdgeTable, TASK_PRIORITY_VBLANK);
       }
       *phase += windowEdgeStep;
       windowEdgeStep += 3;
@@ -478,7 +478,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
   BattleAnim_SetupBlendedDisplay();
   Task_Remove(BattleAnim_ResetBg2Pa);
   REG_WIN0H = WIN_RANGE(0, 240);
-  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   for (i = 0; i != NEPTUNE_PARTICLES; i++) {
     PARTICLES[i].variant = 0;
   }

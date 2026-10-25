@@ -31,11 +31,11 @@
 /// animation is an enumerator whose prefix says how it is reached:
 /// BATTLE_ANIM_ a row of the handler table, SUMMON_ANIM_ a row with
 /// ANIM_SUMMON, CASTING_IMPACT_ a row with ANIM_BY_ID_RANGE and a kind from
-/// 100 to 135 (the enumerator being the kind less 100), FIELD_PSYNERGY_ the
-/// fieldPsynergy field in abilities.c. Anything else that reaches a handler
-/// (an item, another animation handing over) is a sentence after it; a
-/// function no row reaches, such as a runner, has no reach line and says what
-/// calls it.
+/// ANIM_RANGE_CASTING_IMPACT on (the enumerator being the kind less that),
+/// FIELD_PSYNERGY_ the fieldPsynergy field in abilities.c. Anything else that
+/// reaches a handler (an item, another animation handing over) is a sentence
+/// after it; a function no row reaches, such as a runner, has no reach line and
+/// says what calls it.
 ///
 /// The shared machinery is in these parts:
 ///

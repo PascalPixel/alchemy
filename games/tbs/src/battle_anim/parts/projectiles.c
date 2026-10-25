@@ -20,7 +20,7 @@
 /// effect: the user and the targets.
 /// element: the Djinni's element, plus DJINNI_ENTRANCE_LONG for the 84-frame
 ///          entrance instead of the 64-frame one.
-/// side: 1 mirrors the pictures.
+/// side: ANIM_SIDE_PARTY mirrors the pictures.
 /// anchor: where the Djinni appears (enum DjinniEntranceAnchor).
 /// outX, outY: receive the Djinni's last screen position.
 void BattleAnim_RunDjinniEntrance(struct BattleAnimArgs *effect, s32 element,
@@ -75,7 +75,7 @@ void BattleAnim_RunDjinniEntrance(struct BattleAnimArgs *effect, s32 element,
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   Decompress_TaggedLz(palette + 128, work->sheet);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  if (side == 1) {
+  if (side == ANIM_SIDE_PARTY) {
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_ADDITIVE);
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
@@ -101,7 +101,7 @@ void BattleAnim_RunDjinniEntrance(struct BattleAnimArgs *effect, s32 element,
                  (Trig_Cos(angle) * speed) >> 5);
     spark->variant = 0;
   }
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   // The centre moves from the user to the goal, 60 pixels up, over frames
   // 6 to 45.
   SET_VECTOR(center, user->x, 0, user->z);
@@ -435,22 +435,22 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
   if (mode == PROJECTILE_VOLLEY_ICE_BLESSING)
     BattleAnim_StartCanvasLayer(0);
   else
-    BattleAnim_StartCanvasLayer(1);
+    BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   if (work->effect->prelude == 1)
     BattleAnim_RunDjinniEntrance(effect, ELEMENT_MERCURY, work->effect->side,
                                  DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
 
-  // The main blitter, mirrored on side 1: brightest-wins for Cutting Edge,
-  // additive for the others.
+  // The main blitter, mirrored on ANIM_SIDE_PARTY: brightest-wins for Cutting
+  // Edge, additive for the others.
   if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
-    if (work->effect->side == 1)
+    if (work->effect->side == ANIM_SIDE_PARTY)
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
     else
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
   } else {
-    if (work->effect->side == 1)
+    if (work->effect->side == ANIM_SIDE_PARTY)
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_ADDITIVE);
     else
@@ -493,7 +493,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
       const void *pal = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
       Iwram_CopyWords((void *)BG_PLTT, pal, 128);
     }
-    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
     Resource_LoadAndDecompress((s32)&ResourceId_ShurikenSheet, work->sheet, 1,
                                1);
@@ -504,17 +504,17 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
                     Resource_GetTableEntry((s32)&ResourceId_CometSheetA), 128);
     Resource_LoadAndDecompress((s32)&ResourceId_ProjectileVolleyImage,
                                work->sheet, 0, 0);
-    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else if (mode == PROJECTILE_VOLLEY_WING_FLUTTER ||
              mode == PROJECTILE_VOLLEY_WING_BEAT ||
              mode == PROJECTILE_VOLLEY_WING_STROKE) {
     Resource_LoadAndDecompress((s32)&ResourceId_YellowSparkSheet, work->sheet,
                                1, 1);
-    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else if (mode == PROJECTILE_VOLLEY_HEAT_WAVE) {
     Resource_LoadAndDecompress((s32)&ResourceId_FireballSheet, work->sheet, 1,
                                1);
-    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
     // The ice chips, and the small Mercury Djinni the prelude draws.
     Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1,
@@ -522,9 +522,9 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                                work->sheet + PROJECTILE_VOLLEY_DJINNI_CELLS, 1,
                                0);
-    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   }
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
 
   // Where the shots start and how fast they fly.
   user = GetBattleObjectSlotFar(work->effect->user)->object;
@@ -654,7 +654,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
 
         if (frame > 69)
           y = y - frame * 2 + 138;
-        if (work->effect->side == 1)
+        if (work->effect->side == ANIM_SIDE_PARTY)
           ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             COMPOSITE_ADDITIVE);
@@ -811,7 +811,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
                 mode == PROJECTILE_VOLLEY_IMPACT_COMETS) {
               // The picture holds the top half; the bottom half is drawn
               // flipped.
-              if (work->effect->side == 1)
+              if (work->effect->side == ANIM_SIDE_PARTY)
                 ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                   ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                                   COMPOSITE_LIGHTEN);
@@ -824,7 +824,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
                   screenPosition->y - gProjectileVolley_CometHeights[comet], 32,
                   gProjectileVolley_CometHeights[comet]);
               FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
-              if (work->effect->side == 1)
+              if (work->effect->side == ANIM_SIDE_PARTY)
                 ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                   ANIM_CLIP_BOUNDS | COMPOSITE_FLIP,
                                   COMPOSITE_LIGHTEN);

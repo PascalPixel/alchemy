@@ -27,21 +27,32 @@ STATIC_ASSERT(offsetof(struct BattleBg2Origin, y) == 0x04);
 /// 128x128 canvas into VRAM once a frame (work->transferMode); the canvas
 /// pixels are indices into a palette ramp, so scaling them fades a trail.
 /// For the clear, darken and brighten modes transferValue is a word, a fill or
-/// a step repeated in each of its four bytes (one per pixel); the fade mode
-/// only compares it with 50.
+/// a step repeated in each of its four bytes (one per pixel,
+/// CANVAS_FILL_WORD); the fade mode only compares it with CANVAS_FADE_HALF.
 enum CanvasTransferMode {
   CANVAS_COPY,             ///< copy as drawn
   CANVAS_COPY_AND_CLEAR,   ///< copy, then fill the canvas with transferValue (0
-                           ///< clears it; 0x10101010 is level 16 everywhere)
+                           ///< clears it)
   CANVAS_COPY_AND_FADE,    ///< copy, keeping half of each pixel's level for the
-                           ///< next frame when transferValue is 50, and three
-                           ///< quarters for any other value (75 by convention)
+                           ///< next frame when transferValue is
+                           ///< CANVAS_FADE_HALF, and three quarters for any
+                           ///< other value (CANVAS_FADE_THREE_QUARTERS by
+                           ///< convention)
   CANVAS_COPY_AND_DARKEN,  ///< copy, then lower each level by a byte of
                            ///< transferValue, stopping at 0
   CANVAS_COPY_AND_BRIGHTEN ///< copy, then raise each level by a byte of
                            ///< transferValue, stopping at 63; no animation
                            ///< uses it
 };
+
+/// CANVAS_COPY_AND_FADE's transferValue: the percentage of each pixel's level
+/// kept for the next frame.
+enum CanvasFadeShare { CANVAS_FADE_HALF = 50, CANVAS_FADE_THREE_QUARTERS = 75 };
+
+/// A canvas word holding `level` in each of its four bytes: a fill for
+/// CANVAS_COPY_AND_CLEAR or a step for CANVAS_COPY_AND_DARKEN, one byte per
+/// pixel.
+#define CANVAS_FILL_WORD(level) ((level) * 0x01010101)
 
 /// The running battle animation's work: its canvas image, 64 particles, the
 /// display registers it stages and its sprites. It lives in the

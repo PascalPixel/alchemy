@@ -54,7 +54,7 @@ void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
   // changes nothing the game shows, so only the author's intent would say.
   effect->variant = ANIM_VARIANT_STRONGER;
   work->effect = effect;
-  BattleAnim_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleAnim_FetchRectangleBlitters(work->effect->side, blit);
   // The user takes its leap pose and animates fast until the end: an
@@ -108,7 +108,7 @@ void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
   } while (col != RAGNAROK_SEEDED);
 
   // Each transfer keeps 3/4 of every canvas level, for an afterimage.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   frame = 0;
   do {
@@ -136,7 +136,7 @@ void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
       s32 top;
 
       height = 128;
-      if (work->effect->side == 1) {
+      if (work->effect->side == ANIM_SIDE_PARTY) {
         if (frame <= 9) {
           x = frame * 10 - 8;
           top = frame * 16 - 128;

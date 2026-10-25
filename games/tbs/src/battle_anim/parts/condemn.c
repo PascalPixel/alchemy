@@ -71,13 +71,13 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                     COMPOSITE_TRANSPARENT);
   draw[1] = (DrawRectangle)ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
-  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, TASK_PRIORITY_VBLANK);
   // Redraw from blank each frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, zero);
   // swing is the point the panel sways about, in 16.16 pixels: the first
   // pass high up on the near side.
   drawPanel = 1;
-  if (work->effect->side == 1) {
+  if (work->effect->side == ANIM_SIDE_PARTY) {
     swing[0] = -0x500000;
   } else {
     swing[0] = 0x700000;
@@ -104,7 +104,7 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
     // Frame 32: the second pass, lower and further across; the panel skips
     // a frame while it moves, and comes back opaque on frame 33.
     if (frame == 32) {
-      if (work->effect->side == 1) {
+      if (work->effect->side == ANIM_SIDE_PARTY) {
         swing[0] = -0x200000;
       } else {
         swing[0] = 0x480000;
@@ -119,7 +119,7 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
     // Frame 64: the last pass, on the first target.
     if (frame == 64) {
       Projection_ScaledUnit(work->effect->targets[0], position);
-      if (work->effect->side == 1) {
+      if (work->effect->side == ANIM_SIDE_PARTY) {
         swing[0] = (position[0].x - 128) << 16;
       } else {
         swing[0] = (position[0].x - 64) << 16;
@@ -161,7 +161,7 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
       angle += 0x800;
     }
     if (drawPanel != 0) {
-      if (work->effect->side == 0) {
+      if (work->effect->side == ANIM_SIDE_ENEMIES) {
         panelColumn = 0;
         panelRow = 0;
       } else {
@@ -190,7 +190,7 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
             canvas, work->sheet + 0x15d2, CONDEMN_PANEL_X(panelColumn, 1),
             CONDEMN_PANEL_Y(panelRow, 1) + screenY, 99, 69);
         if ((frame - 88) <= 1U) {
-          Iwram_FillWords(canvas, CANVAS_BYTES, 0x3F3F3F3F);
+          Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         }
         if ((frame - 90) <= 1U) {
           draw[work->effect->side](

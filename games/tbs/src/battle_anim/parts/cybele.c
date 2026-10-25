@@ -68,7 +68,7 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
   cursor = gBattleAnimWork;
   ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
-  BattleAnim_SpawnObjects(8, 0x177, 1);
+  BattleAnim_SpawnObjects(8, SPRITE_CYBELE, 1);
 
   // Setup. The dissolve order: eight shuffled runs of the columns 0 to 127,
   // each shuffled by 128 random swaps.
@@ -464,7 +464,8 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
                    BLDCNT_TGT2_ALL;
       REG_BG2PA = Q_8_8(0.5);
       REG_BG2X = 0;
-      ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+      ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                          CANVAS_FADE_THREE_QUARTERS);
       ANIM_FOR_EACH_TARGET(i, work->effect) {
         struct Object *object =
             GetBattleObjectSlotFar(work->effect->targets[i])->object;

@@ -68,7 +68,7 @@ void BattleAnim_RunNereid(struct BattleAnimArgs *effect) {
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
                       graphics);
   // Trails keep 75% of each pixel a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   {
     struct Point2D focus;
     struct Point2D velocity;
@@ -104,7 +104,7 @@ void BattleAnim_RunNereid(struct BattleAnimArgs *effect) {
     sparks = PARTICLES;
     BattleAnim_SelectLivingTargets(work->effect);
     WaitFrames(1);
-    BattleAnim_SpawnObjects(NEREID_OBJECTS, 380, 2);
+    BattleAnim_SpawnObjects(NEREID_OBJECTS, SPRITE_NEREID, 2);
 
     for (frame = 0; frame != NEREID_FRAMES; frame++) {
       if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 32 && frame <= 97)

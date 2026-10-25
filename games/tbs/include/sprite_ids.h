@@ -683,6 +683,36 @@ enum SpriteId {
   /// ★ Named from what the player sees: a grey gatehouse between green walls
   /// (spr_279.png)
   SPRITE_WORLD_MAP_GATEHOUSE = 0x117,
+  // The summons' figures: each summon's scene creates its objects of its own
+  // sprite (BattleAnim_SpawnObjects), each playing one of its animations.
+  /// ★ Named from the game: "Atalanta" (MsgDjinnName)
+  SPRITE_ATALANTA = 0x172,
+  /// ★ Named from the game: "Thor" (MsgDjinnName)
+  SPRITE_THOR = 0x173,
+  /// ★ Named from the game: "Boreas" (MsgDjinnName)
+  SPRITE_BOREAS = 0x174,
+  /// ★ Named from the game: "Kirin" (MsgDjinnName)
+  SPRITE_KIRIN = 0x175,
+  /// ★ Named from the game: "Cybele" (MsgDjinnName)
+  SPRITE_CYBELE = 0x177,
+  /// ★ Named from the game: "Procne" (MsgDjinnName)
+  SPRITE_PROCNE = 0x178,
+  /// ★ Named from the game: "Tiamat" (MsgDjinnName)
+  SPRITE_TIAMAT = 0x179,
+  /// ★ Named from the game: "Neptune" (MsgDjinnName)
+  SPRITE_NEPTUNE = 0x17a,
+  /// ★ Named from the game: "Ramses" (MsgDjinnName)
+  SPRITE_RAMSES = 0x17b,
+  /// ★ Named from the game: "Nereid" (MsgDjinnName)
+  SPRITE_NEREID = 0x17c,
+  /// ★ Named from the game: "Meteor" (MsgDjinnName)
+  SPRITE_METEOR = 0x17d,
+  /// ★ Named from the game: "Judgment" (MsgDjinnName)
+  SPRITE_JUDGMENT = 0x17e,
+  /// The rocks Gaia throws up, Ramses' rocks and Judgment's debris, in three
+  /// animations.
+  /// ★ Named from what the player sees: three orange rocks (spr_390.png)
+  SPRITE_BATTLE_ROCKS = 0x186,
   /// One of the two kinds of obstacle that move in Tolbi Spring while a token
   /// flies over it.
   /// ★ Named from what the player sees: a red crab (spr_396.png)

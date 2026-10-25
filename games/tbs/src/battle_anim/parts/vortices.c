@@ -55,7 +55,7 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->effect = effect;
-  BattleAnim_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
@@ -87,9 +87,9 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
   }
   work->cameraDelta = 0;
   work->cameraPhase = CAMERA_PHASE_IDLE;
-  Task_Add(BattleCamera_ApplyPhasedDelta, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PRIORITY_VBLANK);
   // Trails keep 75% of each pixel a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlaySongFar(SE_SCATTER);
 
   for (frame = 0;
@@ -210,7 +210,7 @@ void BattleAnim_RunWhirlwind(struct BattleAnimArgs *effect) {
   cursor = slots;
   ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
-  BattleAnim_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   palette = Resource_GetTableEntry((s32)&ResourceId_TornadoSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
@@ -231,7 +231,7 @@ void BattleAnim_RunWhirlwind(struct BattleAnimArgs *effect) {
     point->variant = -(Random16() & 15);
   }
   // Trails keep half a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BLDALPHA = BLEND_ALPHA(0, 16); // invisible to start with
   WaitFrames(1);
   Sound_PlaySongFar(SE_RUMBLE);
@@ -243,12 +243,12 @@ void BattleAnim_RunWhirlwind(struct BattleAnimArgs *effect) {
     // Seven flashes of the canvas, 8 frames apart: it is filled with level 8.
     for (i = 0; i != 7; i++) {
       if (frame == i * 8 + 16)
-        Iwram_FillWords(canvas, CANVAS_BYTES, 0x08080808);
+        Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(8));
     }
     // The sweep sways 16 pixels each way, once every 64 frames, about a
     // point 32 pixels right of the canvas's x 40 when the targets are the
     // party, left otherwise.
-    if (work->effect->side == 1)
+    if (work->effect->side == ANIM_SIDE_PARTY)
       wave += 0x200000;
     else
       wave -= 0x200000;

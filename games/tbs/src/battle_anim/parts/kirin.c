@@ -33,8 +33,8 @@
 /// the frames before it starts); PARTICLES 32i to 32i + 31 are target i's
 /// burst motes, variant their frames left.
 void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
-  static struct SpriteScale sweepScale = {{{0x10000, 0x10000}}};
-  static struct SpriteScale riseScale = {{{0x10000, 0x10000}}};
+  static struct SpriteScale sweepScale = {{{Q16_ONE, Q16_ONE}}};
+  static struct SpriteScale riseScale = {{{Q16_ONE, Q16_ONE}}};
   void **cursor;
   struct SpritePlacement place;
   struct ScreenPoint unit;
@@ -68,13 +68,13 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
   // Setup: wipe the battle away from left to right, swap in the forest
   // battle background and wipe back. Window 0 narrows to x 0 to 201; right of
   // it only window 1 applies, which shows no sprites, so the row rides in from
   // behind that edge until the rise opens window 0 again.
   BattleAnim_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
-  BattleAnim_SpawnObjects(KIRIN_OBJECTS, 0x175, 1);
+  BattleAnim_SpawnObjects(KIRIN_OBJECTS, SPRITE_KIRIN, 1);
   gProjection.centerY = 240;
   BattleAnim_SelectLivingTargets(work->effect);
   REG_WININ = ANIM_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
@@ -226,7 +226,7 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
     }
 
     if (frame == 24) {
-      ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+      ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if (frame == 28) {
       REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -333,7 +333,7 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
       i++;
     } while (i != 160 << 1);
 
-    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
     REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
     REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -447,7 +447,7 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
         s32 slide = (frame - 40) * 12;
         s32 y;
 
-        ANIM_SET_TRANSFER(work, CANVAS_COPY, 75);
+        ANIM_SET_TRANSFER(work, CANVAS_COPY, CANVAS_FADE_THREE_QUARTERS);
         i = 0;
         y = -8;
         do {

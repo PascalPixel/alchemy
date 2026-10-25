@@ -49,7 +49,7 @@ void BattleAnim_RunHail(struct BattleAnimArgs *effect) {
   BattleAnim_FetchRectangleBlitters(work->effect->side, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
                              1);
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Projection_Unit(work->effect->targets[0], &origin);
 
   // The chips burst up from 8 pixels above the first target's projected
@@ -148,7 +148,7 @@ void BattleAnim_RunHail(struct BattleAnimArgs *effect) {
     rise = frame * 4;
     if (rise > 32)
       rise = 32;
-    if (work->effect->side == 0) {
+    if (work->effect->side == ANIM_SIDE_ENEMIES) {
       for (i = 0; i != 5; i++)
         draw[0](canvas, work->sheet, (i << 5) - (frame / 4 & 31), 120 - rise,
                 32, 32);
@@ -210,7 +210,7 @@ void BattleAnim_RunGround(struct BattleAnimArgs *effect) {
   BattleAnim_RunDjinniEntrance(effect, ELEMENT_VENUS, work->effect->side,
                                DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  if (work->effect->side == 1)
+  if (work->effect->side == ANIM_SIDE_PARTY)
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_LIGHTEN);
   else
@@ -219,7 +219,7 @@ void BattleAnim_RunGround(struct BattleAnimArgs *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                              work->sheet + GROUND_DJINNI_CELLS, 1, 1);
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   user = GetBattleObjectSlotFar(work->effect->user)->object;
   target = GetBattleObjectSlotFar(work->effect->targets[0])->object;
   // The rocks leave the user 66 pixels up, fanning out towards the middle
@@ -249,7 +249,7 @@ void BattleAnim_RunGround(struct BattleAnimArgs *effect) {
 
       if (frame > 16)
         y = y - frame * 2 + 32;
-      if (work->effect->side == 1)
+      if (work->effect->side == ANIM_SIDE_PARTY)
         ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_ADDITIVE);

@@ -206,7 +206,7 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *effect, u32 mode) {
     Projection_ScaledUnit(work->effect->targets[0], &base);
     canvasShiftX = -base.x * 4 / 5 + 64;
   } else {
-    if (work->effect->side == 1)
+    if (work->effect->side == ANIM_SIDE_PARTY)
       canvasShiftX = -64;
     else
       canvasShiftX = 0;
@@ -214,9 +214,9 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *effect, u32 mode) {
   REG_BG2X = canvasShiftX << 8;
   // Each transfer keeps half of every level, so the flares leave trails.
   work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = 50;
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
-  if (work->effect->side == 1)
+  work->transferValue = CANVAS_FADE_HALF;
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  if (work->effect->side == ANIM_SIDE_PARTY)
     drawFlags = ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X;
   else
     drawFlags = ANIM_CLIP_BOUNDS;
@@ -490,9 +490,9 @@ void BattleAnim_RunStatReduction(struct BattleAnimArgs *effect, s32 mode) {
     }
   }
 
-  // On side 1 the canvas moves 112 pixels right, so everything is drawn
-  // 112 pixels further left on it.
-  if (work->effect->side == 1) {
+  // On ANIM_SIDE_PARTY the canvas moves 112 pixels right, so everything is
+  // drawn 112 pixels further left on it.
+  if (work->effect->side == ANIM_SIDE_PARTY) {
     REG_BG2X = -0x7000;
     xOffset = -112;
   } else {
@@ -519,7 +519,7 @@ void BattleAnim_RunStatReduction(struct BattleAnimArgs *effect, s32 mode) {
       shard->y = ((i & 31) / 4 * 6 - 10) << 16;
       shard->z = (i % 4 * 8 - 16) << 16;
     }
-    if (work->effect->side == 1)
+    if (work->effect->side == ANIM_SIDE_PARTY)
       shard->velocityX = 0x20000;
     else
       shard->velocityX = -0x20000;
@@ -529,7 +529,7 @@ void BattleAnim_RunStatReduction(struct BattleAnimArgs *effect, s32 mode) {
   }
 
   BattleAnim_FetchRectangleBlitters(work->effect->side, draw = blitters);
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != work->effect->targetCount * 4 + 64; frame++) {
     camera = gBattleCamera;

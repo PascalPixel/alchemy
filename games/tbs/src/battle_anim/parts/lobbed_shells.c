@@ -122,7 +122,7 @@ void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode) {
   ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
   camera = ANIM_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleAnim_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // Setup. The shell images, the smoke at LOBBED_SHELLS_SMOKE_CELLS and the
@@ -174,7 +174,7 @@ void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode) {
 
   // draw[0] draws the shells facing their flight; draw[1] draws the smoke
   // additively, or the shards mirrored the other way from draw[0].
-  if (effect->side == 0) {
+  if (effect->side == ANIM_SIDE_ENEMIES) {
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
     draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
     if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER) {
@@ -201,7 +201,7 @@ void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode) {
     }
   }
   // Trails keep 3/4 a frame. Smoke lingers 16 frames longer than shards.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER)
     total = work->effect->targetCount * 8 + 72;
   else

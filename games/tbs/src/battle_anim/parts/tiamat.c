@@ -111,12 +111,13 @@ void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *effect, s32 mode) {
                     Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
                     128);
   // Trails keep 75% of each pixel a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  // Dragon Driver mirrors everything when the user is on the right (side 1).
+  // Dragon Driver mirrors everything when the user is on the right
+  // (ANIM_SIDE_PARTY).
   if (mode == PALETTE_PARTICLES_TIAMAT)
     dir = 1;
-  else if (work->effect->side == 1)
+  else if (work->effect->side == ANIM_SIDE_PARTY)
     dir = -1;
   else
     dir = 1;
@@ -126,7 +127,7 @@ void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *effect, s32 mode) {
     Projection_ScaledUnit(work->effect->user, &origin);
     origin.x /= 2;
     origin.y = 66;
-    if (work->effect->side == 1)
+    if (work->effect->side == ANIM_SIDE_PARTY)
       origin.x = 76;
     else
       origin.x = 44;
@@ -155,7 +156,7 @@ void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *effect, s32 mode) {
   if (mode == PALETTE_PARTICLES_TIAMAT) {
     BattleAnim_SelectLivingTargets(work->effect);
     WaitFrames(1);
-    BattleAnim_SpawnObjects(8, 377, 2);
+    BattleAnim_SpawnObjects(8, SPRITE_TIAMAT, 2);
   }
 
   for (frame = 0; frame != PALETTE_PARTICLES_FRAMES; frame++) {
@@ -187,15 +188,15 @@ void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *effect, s32 mode) {
     // level 63, while the palette brightens; from 176 the pixels fade 2
     // levels a frame.
     if (frame == 128)
-      work->transferValue = 50;
+      work->transferValue = CANVAS_FADE_HALF;
     if (frame == 176) {
-      ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x02020202);
+      ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
       palette = Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet);
       Iwram_CopyWords((void *)BG_PLTT, palette, 128);
     } else if (frame >= 160 && frame <= 175) {
-      ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0x10101010);
+      ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
       if (frame > 173)
-        work->transferValue = 0x3f3f3f3f;
+        work->transferValue = CANVAS_FILL_WORD(63);
       Palette_BrightenBgEntries(2, 2, 2);
     }
 

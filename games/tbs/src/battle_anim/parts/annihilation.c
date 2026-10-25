@@ -79,8 +79,8 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
   } while (i != 64);
 
   Projection_ScaledUnit(work->effect->targets[0], &origin);
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
-  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
+  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != ANNIHILATION_FRAMES; frame++) {
     if (frame == 8)
@@ -89,10 +89,10 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
       Sound_PlaySongFar(SE_POWER_UP);
     Projection_ScaledUnit(work->effect->user, &position);
     // The fire streak, one picture a frame in front of the user, drawn
-    // additively and mirrored for side 1 with a blitter made for this one
-    // drawing.
+    // additively and mirrored for ANIM_SIDE_PARTY with a blitter made for this
+    // one drawing.
     if (frame >= 6 && frame <= 11) {
-      if (work->effect->side == 0)
+      if (work->effect->side == ANIM_SIDE_ENEMIES)
         ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
       else
@@ -100,7 +100,7 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
                           ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_ADDITIVE);
       blitters[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
-      if (work->effect->side == 0)
+      if (work->effect->side == ANIM_SIDE_ENEMIES)
         blitters[0](canvas, work->sheet + (frame - 6) * (48 * 72),
                     position.x / 2 - 24, position.y - 24, 48, 72);
       else
@@ -137,12 +137,13 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
     // The strike fills the canvas with level 63, a flash that the transfer
     // then fades.
     if (frame == 8) {
-      Dma_Fill32(0x3f3f3f3f, canvas, CANVAS_BYTES);
+      Dma_Fill32(CANVAS_FILL_WORD(63), canvas, CANVAS_BYTES);
     }
     ANIM_VIEW_FROM_CAMERA(camera);
     // Shards shrink as their lives run down, from mote size 7 to 2, and fall
     // at 1/64 pixel a frame per frame. Pairs of shards alternate between the
-    // brightest-wins and the additive blitter, both mirrored on side 1.
+    // brightest-wins and the additive blitter, both mirrored on
+    // ANIM_SIDE_PARTY.
     if (frame > 3) {
       BattleAnim_FetchRectangleBlitters(work->effect->side, blitters);
       for (i = 0; i != 64; i++) {

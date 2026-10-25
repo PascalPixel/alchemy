@@ -57,7 +57,7 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   caster = GetBattleObjectSlotFar(effect->user)->object;
   work->effect = effect;
-  BattleAnim_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
@@ -67,9 +67,9 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   // Trails keep 75% of each pixel a frame.
   work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = 75;
+  work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   draw[0] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE);
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
 
   source = GetBattleObjectSlotFar(work->effect->user)->object;
   target = GetBattleObjectSlotFar(work->effect->targets[0])->object;
@@ -99,7 +99,7 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
         speed = 128;
       else
         speed = 0x300 - frame * 16;
-      if (work->effect->side == 0)
+      if (work->effect->side == ANIM_SIDE_ENEMIES)
         view->yaw -= speed;
       else
         view->yaw += speed;
@@ -125,8 +125,8 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
           Transform_ApplyRoll((frame - start) << 10);
           Transform_ApplyYaw(0x4000);
           scale.x = ((frame - start) << 12) + 0x1000;
-          if (scale.x > 0x10000)
-            scale.x = 0x10000;
+          if (scale.x > Q16_ONE)
+            scale.x = Q16_ONE;
           scale.y = scale.x;
           scale.z = scale.x;
           Transform_ApplyScale(Vector3_Coordinates(&scale));
@@ -239,7 +239,7 @@ void BattleAnim_RunShiningStar(struct BattleAnimArgs *effect) {
   graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleAnim_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
@@ -247,9 +247,9 @@ void BattleAnim_RunShiningStar(struct BattleAnimArgs *effect) {
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   // Trails keep half of each pixel a frame.
   work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = 50;
+  work->transferValue = CANVAS_FADE_HALF;
   draw[0] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE);
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
 
   source = GetBattleObjectSlotFar(work->effect->user)->object;
   target = GetBattleObjectSlotFar(work->effect->targets[0])->object;

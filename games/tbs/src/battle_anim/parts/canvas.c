@@ -122,8 +122,8 @@ void BattleAnim_ProcessPendingGraphicsTransfer(void) {
       Iwram_FillWords(source, CANVAS_BYTES, work->transferValue);
       break;
     case CANVAS_COPY_AND_FADE:
-      // Any value but 50 keeps three quarters.
-      if (work->transferValue == 50) {
+      // Any value but CANVAS_FADE_HALF keeps three quarters.
+      if (work->transferValue == CANVAS_FADE_HALF) {
         PaletteFade_BackupAndHalve(source, (void *)BG_CHAR_BLOCK(1),
                                    CANVAS_BYTES);
       } else {
@@ -151,8 +151,8 @@ void BattleAnim_ProcessPendingGraphicsTransfer(void) {
 }
 
 /// Copies a full-screen picture to VRAM once the animation has finished drawing
-/// a frame: the 0x7800 bytes of Ram_MapGridCellBuffer into BG character block 2
-/// (0x06008000), the way transferMode says (every mode but
+/// a frame: the BATTLE_BACKGROUND_BYTES of Ram_MapGridCellBuffer into BG
+/// character block 2 (0x06008000), the way transferMode says (every mode but
 /// CANVAS_COPY_AND_BRIGHTEN).
 ///
 /// Runs each frame as a task added by
@@ -176,23 +176,25 @@ void BattleAnim_FlushPendingGraphicsTransfer(void) {
   transferMode = work->transferMode;
   switch (transferMode) {
   case CANVAS_COPY:
-    Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source, 0x7800);
+    Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source, BATTLE_BACKGROUND_BYTES);
     break;
   case CANVAS_COPY_AND_CLEAR:
-    Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source, 0x7800);
-    Iwram_FillWords(source, 0x7800, work->transferValue);
+    Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source, BATTLE_BACKGROUND_BYTES);
+    Iwram_FillWords(source, BATTLE_BACKGROUND_BYTES, work->transferValue);
     break;
   case CANVAS_COPY_AND_FADE:
-    if (work->transferValue == 50) {
-      PaletteFade_BackupAndHalve(source, (void *)BG_CHAR_BLOCK(2), 0x7800);
+    if (work->transferValue == CANVAS_FADE_HALF) {
+      PaletteFade_BackupAndHalve(source, (void *)BG_CHAR_BLOCK(2),
+                                 BATTLE_BACKGROUND_BYTES);
     } else {
       PaletteFade_BackupAndScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(2),
-                                              0x7800);
+                                              BATTLE_BACKGROUND_BYTES);
     }
     break;
   case CANVAS_COPY_AND_DARKEN:
     PaletteFade_BackupAndDarken(source, work->transferValue,
-                                (void *)BG_CHAR_BLOCK(2), 0x7800);
+                                (void *)BG_CHAR_BLOCK(2),
+                                BATTLE_BACKGROUND_BYTES);
     break;
   }
 
@@ -253,7 +255,7 @@ void Palette_StepFadeTransfer(void) {
 
     Graphics_ScaleRgb555ClampedFar(battle->palette,
                                    (void *)&BG_PLTT_COLOR(6, 0),
-                                   0x10000 - step * CANVAS_FADE_STEP, 128);
+                                   Q16_ONE - step * CANVAS_FADE_STEP, 128);
     work->fadeFrames--;
   }
 }
@@ -330,7 +332,7 @@ void BattleAnim_StartCanvasLayer(s32 bgControl) {
   display->secondMode = BATTLE_BACKGROUND_FIXED;
   WaitFrames(1);
   REG_BLDCNT = 0;
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, ANIM_DISPCNT, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, ANIM_DISPCNT, IO_WRITE_16);
   gBgScroll[1].y = 32;
   WaitFrames(1);
 
@@ -338,7 +340,7 @@ void BattleAnim_StartCanvasLayer(s32 bgControl) {
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   work->fadeFrames = 0;
   work->fadeStep = 0;
-  Task_Add(Palette_StepFadeTransfer, ANIM_PLAYBACK_ORDER);
+  Task_Add(Palette_StepFadeTransfer, TASK_PRIORITY_MAIN_LOOP);
 
   // Change BG2's settings while it is hidden (each queued DISPCNT lands two
   // frames later).
@@ -346,7 +348,7 @@ void BattleAnim_StartCanvasLayer(s32 bgControl) {
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON,
-                      0x20000);
+                      IO_WRITE_16);
   WaitFrames(1);
   REG_BG2CNT =
       bgControl | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
@@ -354,7 +356,7 @@ void BattleAnim_StartCanvasLayer(s32 bgControl) {
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON,
-                      0x20000);
+                      IO_WRITE_16);
   BattleCamera_SetViewFar(0, 0, 0, 100);
   display->secondMode = BATTLE_BACKGROUND_NONE;
   WaitFrames(1);
@@ -366,7 +368,7 @@ void BattleAnim_StartCanvasLayer(s32 bgControl) {
   REG_WININ = ANIM_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = ANIM_WINOUT;
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, ANIM_DISPCNT, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, ANIM_DISPCNT, IO_WRITE_16);
 
   // The screen map: the 16x16 tiles in order. An affine map has one byte
   // per tile, so they are written two at a time.
@@ -412,24 +414,25 @@ void BattleAnim_OpenCanvasLayer(s32 bgControl) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON,
-                      0x20000);
+                      IO_WRITE_16);
   gBgScroll[1].y = 32;
   WaitFrames(1);
-  BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 128);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background,
+                              BATTLE_BACKGROUND_FADE_RESTORE);
   work->fadeFrames = 24;
   work->fadeStep = 0;
-  Task_Add(Palette_StepFadeTransfer, ANIM_PLAYBACK_ORDER);
+  Task_Add(Palette_StepFadeTransfer, TASK_PRIORITY_MAIN_LOOP);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON,
-                      0x20000);
+                      IO_WRITE_16);
   WaitFrames(1);
   REG_BG2CNT =
       bgControl | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON,
-                      0x20000);
+                      IO_WRITE_16);
   BattleCamera_SetViewFar(0, 0, 0, 100);
   display->secondMode = BATTLE_BACKGROUND_NONE;
   WaitFrames(1);
@@ -441,7 +444,7 @@ void BattleAnim_OpenCanvasLayer(s32 bgControl) {
   REG_WININ = ANIM_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = ANIM_WINOUT;
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, ANIM_DISPCNT, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, ANIM_DISPCNT, IO_WRITE_16);
   WaitFrames(1);
 
   offset = 0;
@@ -514,7 +517,7 @@ void BattleAnim_EndCanvasLayer(void) {
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON,
-                      0x20000);
+                      IO_WRITE_16);
   REG_BLDCNT = 0;
   WaitFrames(1);
 
@@ -529,7 +532,7 @@ void BattleAnim_EndCanvasLayer(void) {
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON,
-                      0x20000);
+                      IO_WRITE_16);
   WaitFrames(1);
 }
 
@@ -538,7 +541,7 @@ void BattleAnim_EndCanvasLayer(void) {
 ///
 /// Called by BattleAnim_RunBeamSequence and
 /// BattleAnim_RunRingAndSparkSequence (beams.c). Sets the background view's
-/// secondMode to BATTLE_BACKGROUND_FIXED, queues DISPCNT for two frames later,
+/// secondMode to BATTLE_BACKGROUND_FIXED, queues DISPCNT for VBlank,
 /// starts the battle's palette fade to BATTLE_BACKGROUND_ZOOMED and waits two
 /// frames.
 void BattleAnim_HideBg1AndRestoreBackdrop(void) {

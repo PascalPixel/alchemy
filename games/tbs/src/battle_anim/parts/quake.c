@@ -32,9 +32,9 @@ struct RockWallHeights {
 ///
 /// Each pillar is capped with a strip of ground cut from the background.
 ///
-/// Writes REG_BG2PA, REG_BLDCNT and, on side 1, REG_BG2X; overwrites the
-/// first 0x8000 bytes of Ram_MapGridCellBuffer with BG tiles; sets the targets'
-/// vertical velocity and gravity; arms work->shakeFrames.
+/// Writes REG_BG2PA, REG_BLDCNT and, on ANIM_SIDE_PARTY, REG_BG2X; overwrites
+/// the first 0x8000 bytes of Ram_MapGridCellBuffer with BG tiles; sets the
+/// targets' vertical velocity and gravity; arms work->shakeFrames.
 ///
 /// effect: the targets; variant picks the row of gQuake_Timings.
 void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
@@ -66,7 +66,7 @@ void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
   ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
   camera = ((struct BattleCamera *)HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA));
   work->effect = effect;
-  BattleAnim_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   // The canvas at its own width, opaque: the pillars hide what is behind.
   REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;
@@ -89,9 +89,9 @@ void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
     }
   }
 
-  // On side 1 the canvas moves 112 pixels right, and the targets' positions
-  // with it.
-  if (work->effect->side == 1) {
+  // On ANIM_SIDE_PARTY the canvas moves 112 pixels right, and the targets'
+  // positions with it.
+  if (work->effect->side == ANIM_SIDE_PARTY) {
     REG_BG2X = -(112 << 8);
     xOffset = -112;
   } else {

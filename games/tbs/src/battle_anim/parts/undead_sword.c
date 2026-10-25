@@ -48,7 +48,7 @@ void BattleAnim_RunUndeadSword(struct BattleAnimArgs *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
                              work->sheet + UNDEAD_SWORD_SPARK_SHEET, 1, 0);
   BattleAnim_FetchRectangleBlitters(work->effect->side, draw);
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Shift BG2 so that canvas x 64 lines up with the target.
   Projection_Unit(work->effect->targets[0], &screenPosition);

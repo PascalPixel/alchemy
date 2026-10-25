@@ -27,7 +27,7 @@
 ///         Rockfall, wider for Mother Gaia and Rockslide, widest for Grand
 ///         Gaia and Avalanche.
 void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
-  static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
+  static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
   void **slots;
   void **cursor;
   struct BattleAnimWork *work;
@@ -58,7 +58,7 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
     REG_BG2PA = Q_8_8(0.8);
   else if (work->effect->variant == ANIM_VARIANT_STRONGER)
     REG_BG2PA = Q_8_8(1.0 / 1.5);
-  if (work->effect->side == 1) {
+  if (work->effect->side == ANIM_SIDE_PARTY) {
     wallX = 8;
     if (work->effect->variant == ANIM_VARIANT_BASIC)
       rockX = 40;
@@ -129,10 +129,10 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
-  // The rock objects, made from resource 390: objects 0 to 3 play animation
+  // The rock objects, of SPRITE_BATTLE_ROCKS: objects 0 to 3 play animation
   // 0, 4 to 7 animation 1 and 8 to 10 animation 2.
   for (i = 0; i != GAIA_ROCKS; i++) {
-    struct Sprite *rock = Sprite_CreateFar(390);
+    struct Sprite *rock = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
 
     work->animations[i] = rock;
     if (rock != 0) {
@@ -150,7 +150,7 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   // Trails: each transfer keeps 3/4 of every canvas level.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Rocks: x is the column, y counts down from 128 by z pixels a frame (2
   // to 17, and 8 to 15 for a rock restarted from frame 88), velocityX

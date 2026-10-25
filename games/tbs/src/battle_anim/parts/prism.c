@@ -49,7 +49,7 @@ void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 1);
   BattleAnim_FetchRectangleBlitters(work->effect->side, draw);
   // Trails keep half of each pixel a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // Line the crystals up above the screen, each starting 8 frames after
   // the last and drifting towards the middle as it falls: each starts 18
@@ -61,7 +61,7 @@ void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
     // This first random number is drawn and discarded.
     x = Random16() & 31;
     seed->y = -0x400000;
-    if (work->effect->side == 1) {
+    if (work->effect->side == ANIM_SIDE_PARTY) {
       x = ((Random16() & 31) + 80) << 16;
       seed->velocityX = (Random16() & 63) << 12;
     } else {
@@ -86,7 +86,7 @@ void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
         speed = 192;
       else
         speed = 2496 - frame * 24;
-      if (work->effect->side == 0)
+      if (work->effect->side == ANIM_SIDE_ENEMIES)
         camera->yaw -= speed;
       else
         camera->yaw += speed;
@@ -95,7 +95,7 @@ void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
       ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == gPrism_Counts[work->effect->variant][PRISM_FRAMES] - 8) {
       // Darken the canvas away over the last 8 frames, 6 levels a frame.
-      ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x06060606);
+      ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(6));
     }
     if (frame <= gPrism_Counts[work->effect->variant][PRISM_FRAMES] - 8) {
       for (i = 0;

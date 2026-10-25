@@ -24,9 +24,9 @@ enum {
 /// work->particles holds the 64 motes (angle, height and radius in x, y and
 /// z); after the burst the first 32 also hold the smoke puffs, in their
 /// velocity and variant fields, while motes 0 to 15 keep moving in theirs.
-/// PARTICLES holds the 32 chips. Writes REG_BG2PA and, on side 1, REG_BG2X;
-/// ends with the blitters freed, the transfer callback removed and the canvas
-/// layer closed.
+/// PARTICLES holds the 32 chips. Writes REG_BG2PA and, on ANIM_SIDE_PARTY,
+/// REG_BG2X; ends with the blitters freed, the transfer callback removed and
+/// the canvas layer closed.
 ///
 /// effect: the targets; variant picks the number of motes and columns and
 ///         the burst frame (gFrost_Timings): 32 motes, 8 columns and frame
@@ -55,7 +55,7 @@ void BattleAnim_RunFrost(struct BattleAnimArgs *effect) {
   ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
   puffSheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  ANIM_START_NARROW_CANVAS(1);
+  ANIM_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, puffSheet, 0, 0);
   /* FAKEMATCH(temporary): the motes, columns, chips and puffs draw through a
@@ -73,9 +73,9 @@ void BattleAnim_RunFrost(struct BattleAnimArgs *effect) {
     seed->y = ((Random16() & 31) - 64) << 16;
   }
 
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
-  // On side 1 the canvas moves 112 pixels right, over the party.
-  if (work->effect->side == 1)
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  // On ANIM_SIDE_PARTY the canvas moves 112 pixels right, over the party.
+  if (work->effect->side == ANIM_SIDE_PARTY)
     REG_BG2X = -0x7000;
 
   for (frame = 0;

@@ -4,10 +4,10 @@
 
 #include "../battle_anim_internal.h"
 
-/// The beam sequence's pictures, by animation kind: the kinds below 100 that
-/// BattleAnim_DispatchByIdRange sends here. No ability's row selects one; the
-/// unused BattleStaging_RunPlainAttack plays an attack's kind, 0 for
-/// Attack.
+/// The beam sequence's pictures, by animation kind: the kinds below
+/// ANIM_RANGE_CASTING_IMPACT that BattleAnim_DispatchByIdRange sends here. No
+/// ability's row selects one; the unused BattleStaging_RunPlainAttack plays an
+/// attack's kind, 0 for Attack.
 enum BeamKind {
   BEAM_PLAIN_ATTACK,  ///< blue arc A: Attack's kind
   BEAM_ARC_A,         ///< blue arc A
@@ -22,8 +22,9 @@ enum BeamKind {
 /// a yellow orb flashes over it and sparks fly off, for 32 frames in all.
 /// effect->kind picks the picture.
 ///
-/// Reached through BattleAnim_DispatchByIdRange for kinds 136 to 199 and,
-/// through its unsigned test, every kind below 100;
+/// Reached through BattleAnim_DispatchByIdRange for kinds from
+/// ANIM_RANGE_BEAM_SEQUENCE to below ANIM_RANGE_RING_AND_SPARK and,
+/// through its unsigned test, every kind below ANIM_RANGE_CASTING_IMPACT;
 /// BattleStaging_RunPlainAttack (battle/staging.c) sends every plain
 /// attack there. Only the kinds of enum BeamKind have pictures. Shows the
 /// canvas on BG1 (BattleAnim_SetupCanvasTileMap), loads palette colours 0 to
@@ -67,9 +68,9 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
                BGCNT_SCREEN_BASE(31);
   WaitFrames(1);
   // Two blitters, additive and brightest-wins; BEAM_ARC_A_INVERTED draws its
-  // pictures upside down, and side 1 mirrors them.
+  // pictures upside down, and ANIM_SIDE_PARTY mirrors them.
   if (kind == BEAM_ARC_A_INVERTED) {
-    if (work->effect->side == 0) {
+    if (work->effect->side == ANIM_SIDE_ENEMIES) {
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                         COMPOSITE_ADDITIVE);
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
@@ -83,7 +84,7 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
                         COMPOSITE_LIGHTEN);
     }
   } else {
-    if (work->effect->side == 0) {
+    if (work->effect->side == ANIM_SIDE_ENEMIES) {
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
@@ -99,9 +100,9 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
   draw[0] = slots[HEAP_SLOT_RAM_CODE];
   draw[1] = slots[HEAP_SLOT_RAM_CODE_2];
   WaitFrames(1);
-  // The picture, by BeamKind. An enemy user (unit id above 7) takes the small
-  // Mars Djinni's palette, a party member the crescent's. The sparks and the
-  // yellow orb follow.
+  // The picture, by BeamKind. An enemy user (unit id past PIERS) takes the
+  // small Mars Djinni's palette, a party member the crescent's. The sparks and
+  // the yellow orb follow.
   if (kind == BEAM_WAVE) {
     Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, work->sheet, 1, 1);
   } else if (kind == BEAM_IMAGE) {
@@ -121,7 +122,7 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
       break;
     }
   }
-  if (work->effect->user > 7)
+  if (work->effect->user > PIERS)
     Iwram_CopyWords(
         colors, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
         128);
@@ -132,14 +133,14 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet,
                              Ram_MapGridCellBuffer, 1, 0);
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
-  // Scroll BG1 so the first target falls at canvas x 96 on side 0 and 32 on
-  // side 1, as far as a scroll held between -128 and 0 allows; anchor
-  // becomes the target's position on the canvas.
+  // Scroll BG1 so the first target falls at canvas x 96 on ANIM_SIDE_ENEMIES
+  // and 32 on ANIM_SIDE_PARTY, as far as a scroll held between -128 and 0
+  // allows; anchor becomes the target's position on the canvas.
   Projection_Sprite(work->effect->targets[0], &anchor);
-  if (work->effect->side == 0)
+  if (work->effect->side == ANIM_SIDE_ENEMIES)
     scrollX = 96 - anchor.x;
   else
     scrollX = 32 - anchor.x;
@@ -183,15 +184,15 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
     }
     if (frame == 4)
       BattleMotion_ApplyKnockbackFar(work->effect->targets[0], KNOCKBACK_NUDGE);
-    // The picture plays from the user, to its left on side 0 and its right
-    // on side 1: the wave's six 48x16 cells backwards and the arc's six
-    // 48x72 cells, two frames each; the beam image grows through its six
-    // cells, three frames each.
+    // The picture plays from the user, to its left on ANIM_SIDE_ENEMIES and its
+    // right on ANIM_SIDE_PARTY: the wave's six 48x16 cells backwards and the
+    // arc's six 48x72 cells, two frames each; the beam image grows through its
+    // six cells, three frames each.
     Projection_ScaledUnit(work->effect->user, &screenPosition);
     screenPosition.y += 16;
     if (kind == BEAM_WAVE) {
       if (frame <= 11) {
-        if (work->effect->side == 0)
+        if (work->effect->side == ANIM_SIDE_ENEMIES)
           draw[1](canvas, work->sheet + (5 - frame / 2) * (48 * 16),
                   screenPosition.x + scrollX - 48, screenPosition.y - 8, 48,
                   16);
@@ -201,7 +202,7 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
       }
     } else if ((u32)kind <= BEAM_ARC_B || kind == BEAM_ARC_A_INVERTED) {
       if (frame <= 11) {
-        if (work->effect->side == 0)
+        if (work->effect->side == ANIM_SIDE_ENEMIES)
           draw[1](canvas, work->sheet + frame / 2 * (48 * 72),
                   screenPosition.x + scrollX - 48, screenPosition.y - 40, 48,
                   72);
@@ -213,7 +214,7 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
       if (frame <= 17) {
         s32 cell = frame / 3;
 
-        if (work->effect->side == 0)
+        if (work->effect->side == ANIM_SIDE_ENEMIES)
           draw[1](canvas, work->sheet + gBeam_Cells[cell],
                   screenPosition.x + gBeam_CellReaches[cell] + scrollX - 58,
                   screenPosition.y - gBeam_CellHeights[cell] / 2,
@@ -264,14 +265,15 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
 }
 
 /// Plays the selected ring-and-spark strike, restoring the user motion after
-/// it. Kinds above 199 first gather 64 motes of light into the user for 32
-/// frames while it stands still; then star burst and crescent rings flash
-/// over the canvas and sparks fly from the first target for 32 frames, and
-/// the background palette fades back in.
+/// it. Kinds from ANIM_RANGE_RING_AND_SPARK first gather 64 motes of light
+/// into the user for 32 frames while it stands still; then star burst and
+/// crescent rings flash over the canvas and sparks fly from the first target
+/// for 32 frames, and the background palette fades back in.
 ///
-/// Reached through BattleAnim_DispatchByIdRange for kinds 200 and up, which
-/// BattleStaging_RunAttack (battle/staging.c) makes by adding 200 to the
-/// kind of a critical hit; so the gathering always plays. Shows the canvas on
+/// Reached through BattleAnim_DispatchByIdRange for kinds from
+/// ANIM_RANGE_RING_AND_SPARK, which BattleStaging_RunAttack
+/// (battle/staging.c) makes by adding ANIM_ID_CRITICAL_OFFSET to the kind of a
+/// critical hit; so the gathering always plays. Shows the canvas on
 /// BG1, keeps the battle's transition centred between the user and the first
 /// target while it loads, scrolls BG1 through gBgScroll[1] and uses
 /// work->particles 0 to 63, work->imageStorage, Ram_MapGridCellBuffer and both
@@ -313,23 +315,24 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
   ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sheet = ANIM_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
   camera = ANIM_SLOT(heapCache, HEAP_SLOT_CAMERA);
-  // DEAD: the test is never true, as only kinds 200 and up reach this
-  // runner (BattleAnim_DispatchByIdRange), so big stays 1; the ROM keeps it.
+  // DEAD: the test is never true, as only kinds from
+  // ANIM_RANGE_RING_AND_SPARK reach this runner
+  // (BattleAnim_DispatchByIdRange), so big stays 1; the ROM keeps it.
   big = 1;
-  if (effect->kind <= 199)
+  if (effect->kind < ANIM_RANGE_RING_AND_SPARK)
     big = 0;
   work->effect = effect;
   // Load the blitters and pictures a step a frame, keeping the transition
   // centred between the user and the first target meanwhile. The star
   // burst goes to the image storage and the crescent to the map grid cell
-  // buffer; an enemy user (unit id above 7) also takes the small Mars
+  // buffer; an enemy user (unit id past PIERS) also takes the small Mars
   // Djinni's palette.
   BattleCamera_SetViewAtPairMidpointFar(effect->user, effect->firstTarget, 130);
   WaitFrames(1);
   BattleAnim_SetupCanvasTileMap();
   REG_BG1CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
-  if (work->effect->side == 0) {
+  if (work->effect->side == ANIM_SIDE_ENEMIES) {
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
@@ -352,7 +355,7 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
   WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_CrescentSheet,
                              Ram_MapGridCellBuffer, 1, 1);
-  if (work->effect->user > 7)
+  if (work->effect->user > PIERS)
     Iwram_CopyWords(
         colors, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
         128);
@@ -396,7 +399,7 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
     gBgScroll[1].y = 80;
     work->fadeFrames = 24;
     work->fadeStep = 0;
-    Task_Add(Palette_StepFadeTransfer, ANIM_PLAYBACK_ORDER);
+    Task_Add(Palette_StepFadeTransfer, TASK_PRIORITY_MAIN_LOOP);
     Sound_PlaySongFar(SE_POWER_UP);
     for (frame = 0; frame != 32; frame++) {
       BattleCamera_SetViewAtPairMidpointFar(work->effect->user,
@@ -437,11 +440,11 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
   // turned around once more).
   Iwram_ClearWords(canvas, canvasBytes);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), canvasBytes);
-  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
   Projection_ScaledUnit(work->effect->targets[0], &anchor);
-  if (work->effect->side == 0)
+  if (work->effect->side == ANIM_SIDE_ENEMIES)
     scrollX = 32 - anchor.x;
   else
     scrollX = 96 - anchor.x;

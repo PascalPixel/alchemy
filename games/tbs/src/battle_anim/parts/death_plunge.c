@@ -63,9 +63,9 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   // Trails keep 3/4 a frame.
   work->transferMode = CANVAS_COPY_AND_FADE;
-  work->transferValue = 75;
+  work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   draw[0] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
   // The run: the user moves to 90% of the way to the target, with an
   // acceleration of 2 pixels a frame per frame and a top speed of 8 pixels a
   // frame, and the animation waits 20 frames for it.
@@ -202,7 +202,7 @@ UNUSED void BattleAnim_RunBladeRain(struct BattleAnimArgs *effect) {
 
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  ANIM_START_NARROW_CANVAS(1);
+  ANIM_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   // Invisible to start with.
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
 
@@ -420,7 +420,7 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *effect) {
   work++;
   work--;
   // Trails keep 3/4 a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
   draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
   // The mote size, written back into the caller's argument.
@@ -545,9 +545,9 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *effect) {
 /// BattleTransition_Run, as a battle opens. Allocates and
 /// frees its own work, canvas and sheet slots; sets up BG2 as the canvas
 /// itself, as BattleAnim_StartCanvasLayer would; draws the disc in
-/// Ram_MapGridCellBuffer and copies it over 0x7800 bytes of BG character block
-/// 2; writes background colours 1 to 63 and palettes 6 to 13; reloads the
-/// battle background on BG1 on frame 5, and on its way out restores
+/// Ram_MapGridCellBuffer and copies it over the BATTLE_BACKGROUND_BYTES of BG
+/// character block 2; writes background colours 1 to 63 and palettes 6 to 13;
+/// reloads the battle background on BG1 on frame 5, and on its way out restores
 /// gBgScroll[1], starts the battle's palette fade to BATTLE_BACKGROUND_ZOOMED
 /// and queues a DISPCNT without BG1.
 ///
@@ -628,7 +628,7 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
 
   Iwram_ClearWords(canvas, size);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), size);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, ANIM_DISPCNT, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, ANIM_DISPCNT, IO_WRITE_16);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_TileAnimationMask,
@@ -666,8 +666,10 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
   // copy of the screen into it is overwritten at once), and background
   // palettes 6 to 13 turn white. BG1's scroll is saved and the battle's
   // background view marked busy while the battle background is replaced.
-  Iwram_CopyWords(Ram_MapGridCellBuffer, (void *)BG_CHAR_BLOCK(2), 0x7800);
-  Iwram_FillWords(Ram_MapGridCellBuffer, 0x7800, 0x01010101);
+  Iwram_CopyWords(Ram_MapGridCellBuffer, (void *)BG_CHAR_BLOCK(2),
+                  BATTLE_BACKGROUND_BYTES);
+  Iwram_FillWords(Ram_MapGridCellBuffer, BATTLE_BACKGROUND_BYTES,
+                  CANVAS_FILL_WORD(1));
   view->busy = 1;
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
@@ -675,8 +677,9 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT,
                       BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) |
                           BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31),
-                      0x20000);
-  Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0), 0x100, 0x7fff7fff);
+                      IO_WRITE_16);
+  Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0), 0x100,
+                  RGB(31, 31, 31) << 16 | RGB(31, 31, 31));
   Sound_PlaySongFar(SE_POWER_UP);
   BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
                          POSE_CAST, 0, 30);
@@ -735,7 +738,8 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
 
     // Frame 4: the whole screen turns the disc's grey.
     if (frame == 4)
-      Iwram_FillWords((void *)BG_CHAR_BLOCK(2), 0x7800, 0x02020202);
+      Iwram_FillWords((void *)BG_CHAR_BLOCK(2), BATTLE_BACKGROUND_BYTES,
+                      CANVAS_FILL_WORD(2));
 
     // Frames 0 to 3: grow the disc in the mask by 32 pixels of radius,
     // brighten its grey (colour 2), and copy the mask to the screen.
@@ -808,7 +812,8 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
           octantY++;
         }
       }
-      Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapGridCellBuffer, 0x7800);
+      Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapGridCellBuffer,
+                      BATTLE_BACKGROUND_BYTES);
     }
 
     // Draw the pieces up to frame 50; they start to fly and fall on frame
@@ -862,7 +867,7 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
       }
       // Trails keep half a frame.
       work->transferMode = CANVAS_COPY_AND_FADE;
-      work->transferValue = 50;
+      work->transferValue = CANVAS_FADE_HALF;
     }
 
     // Flashes: flashes 0 to 7 appear on frame 53 and four more each frame
@@ -902,7 +907,7 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON,
-                      0x20000);
+                      IO_WRITE_16);
   FreeHeapSlot(HEAP_SLOT_BATTLE_SHEET);
   FreeHeapSlot(HEAP_SLOT_BATTLE_CANVAS);
   FreeHeapSlot(HEAP_SLOT_BATTLE_ANIM);
@@ -991,7 +996,7 @@ void BattleAnim_RunElementBurst(struct BattleAnimArgs *effect) {
     work->particles[i].variant = (i & 15) + 16;
   }
   // Trails keep 3/4 a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                     COMPOSITE_ADDITIVE);
   draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
@@ -1184,9 +1189,9 @@ void BattleAnim_StartElementStreaks(s32 element) {
   work->frame = 0;
   work->transferMode = CANVAS_COPY_AND_DARKEN;
   // 6 levels off every pixel each frame, four pixels a word.
-  work->transferValue = 0x06060606;
-  Task_Add(BattleAnim_DrawStreaks, ANIM_PLAYBACK_ORDER);
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  work->transferValue = CANVAS_FILL_WORD(6);
+  Task_Add(BattleAnim_DrawStreaks, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
 }
 
 /// Ends the element streak burst that BattleAnim_StartElementStreaks

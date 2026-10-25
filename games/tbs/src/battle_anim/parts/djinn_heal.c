@@ -62,7 +62,7 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
     spark->variant = 0;
   }
   // Trails keep 75% of each pixel a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The swirl: frame 8 plays its sound, frames 30 to 69 carry it in 40
   // equal steps from the user's feet to 90 pixels up at the first target's

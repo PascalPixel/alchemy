@@ -55,7 +55,7 @@ void BattleAnim_RunVolcano(struct BattleAnimArgs *effect) {
   ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleAnim_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
                              1);
@@ -91,12 +91,12 @@ void BattleAnim_RunVolcano(struct BattleAnimArgs *effect) {
   }
 
   // Trails keep half of each pixel a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != VOLCANO_FRAMES; frame++) {
     camera = gBattleCamera;
     if (work->effect->variant == ANIM_VARIANT_STRONGEST && frame < 64) {
-      if (work->effect->side == 0)
+      if (work->effect->side == ANIM_SIDE_ENEMIES)
         camera->yaw = camera->yaw + 192;
       else
         camera->yaw = (s16)camera->yaw - 192;

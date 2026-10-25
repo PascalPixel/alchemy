@@ -114,10 +114,9 @@
 #define BATTLE_BG1CNT                                                          \
   (BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31))
 
-/// Unit ids from 128 are the enemies'. In a link battle each console sends
-/// LINK_PARTY_SIZE places, at most three members (LinkBattle_SendParty), and
-/// the opponent's take enemy ids 128 to 130.
-#define FIRST_ENEMY_UNIT 128
+/// In a link battle each console sends LINK_PARTY_SIZE places, at most three
+/// members (LinkBattle_SendParty), and the opponent's take the first three
+/// enemy ids from FIRST_ENEMY_UNIT.
 #define LINK_PARTY_SIZE 3
 
 /// The party fights four at a time, three in a link battle; six enemies at

@@ -58,6 +58,7 @@
 #include "unit/battle_anim/battle_anim_bits.h"
 #include "call.h"
 #include "macros.h"
+#include "sprite_ids.h"
 
 // Display, palette and scanline effects.
 //
@@ -182,7 +183,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// Sets the transfer, then starts copying the canvas to VRAM once a frame.
 #define ANIM_START_TRANSFER(work, mode, value)                                 \
   (ANIM_SET_TRANSFER(work, mode, value),                                       \
-   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER))
+   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK))
 
 /// Ends a frame of a canvas animation: marks the canvas ready for the transfer
 /// callback, then waits for the next frame. Nearly every animation loop ends
@@ -241,16 +242,13 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// animations write it only on lines outside window 0's vertical range.
 #define WINDOW_SPAN_INVERTED WIN_RANGE(1, 0)
 
-/// The task priority of every per-frame animation task
-/// (Task_Add sorts the frame's tasks by priority).
-#define ANIM_CALLBACK_ORDER 0x480
-/// The priority of the battle's own playback, which the palette fade and
-/// the element streaks take.
-#define ANIM_PLAYBACK_ORDER 0xc80
+/// The battle background's picture as BG1 shows it from BG character block 2:
+/// 256x120 pixels, one byte each.
+#define BATTLE_BACKGROUND_BYTES (256 * 120)
 
 /// Ram_MapGridCellBuffer as the unused BattleAnim_ConvertBackgroundToBlueRamp
 /// (bind.c) uses it: a working copy of the battle background's picture, the
-/// 0x7800 bytes of BG character block 2.
+/// BATTLE_BACKGROUND_BYTES of BG character block 2.
 #define BLUE_RAMP_PIXELS Ram_MapGridCellBuffer
 
 /// Caps a colour level at cap, and at 0 from below. Fades draw from darker
@@ -352,6 +350,16 @@ enum CameraPhase {
   CAMERA_PHASE_FRAME_DONE, ///< the animation has finished a frame: turn the
                            ///< whole delta
   CAMERA_PHASE_HALF_TURNED ///< half a delta turned on an unmarked frame
+};
+
+/// Where each range of BattleAnim_DispatchByIdRange's animation kinds starts:
+/// the casting impacts (the kind less ANIM_RANGE_CASTING_IMPACT is an enum
+/// CastingImpact), the beam sequences, which also take every kind below the
+/// casting impacts, and the ring and spark scene, which plays critical hits.
+enum BattleAnimIdRange {
+  ANIM_RANGE_CASTING_IMPACT = 100,
+  ANIM_RANGE_BEAM_SEQUENCE = 136,
+  ANIM_RANGE_RING_AND_SPARK = ANIM_ID_CRITICAL_OFFSET
 };
 
 #endif // ALCHEMY_BATTLE_ANIM_INTERNAL_H

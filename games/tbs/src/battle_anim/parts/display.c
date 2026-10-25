@@ -12,7 +12,7 @@
 /// the beam sequence (beams.c), the particle streams and the summon scenes
 /// Ramses, Kirin, Atalanta, Neptune, Boreas, Thor and Judgment, and at both
 /// ends of Ice and Douse (falling.c). Writes BLDCNT, BLDALPHA, the window
-/// registers and WININ and WINOUT, queues DISPCNT for two frames later and
+/// registers and WININ and WINOUT, queues DISPCNT for VBlank and
 /// waits one frame.
 void BattleAnim_ConfigureEffectDisplay(void) {
   REG_BLDCNT = 0;
@@ -23,8 +23,7 @@ void BattleAnim_ConfigureEffectDisplay(void) {
   REG_WININ = ANIM_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = ANIM_WINOUT;
-  // A delay of two frames (the queue's control word is delay << 16).
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, ANIM_DISPCNT, 2 << 16);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, ANIM_DISPCNT, IO_WRITE_16);
   WaitFrames(1);
 }
 

@@ -41,8 +41,9 @@ void BattleAnim_RunRay(struct BattleAnimArgs *effect) {
   work->effect = effect;
   BattleAnim_StartTiledCanvas(1);
   // Destruct Ray stretches the canvas across the screen; the others show it
-  // at its own width over the targets' half (on side 1, moved 128 pixels).
-  // BG2X is 20.8: Destruct Ray's canvas moves 16 texels towards the targets.
+  // at its own width over the targets' half (on ANIM_SIDE_PARTY, moved 128
+  // pixels). BG2X is 20.8: Destruct Ray's canvas moves 16 texels towards the
+  // targets.
   if (work->effect->variant == ANIM_VARIANT_STRONGEST)
     REG_BG2PA = Q_8_8(0.5);
   else
@@ -56,12 +57,12 @@ void BattleAnim_RunRay(struct BattleAnimArgs *effect) {
                              work->sheet + RAY_CELLS, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (work->effect->variant == ANIM_VARIANT_STRONGEST) {
-    if (work->effect->side == 1)
+    if (work->effect->side == ANIM_SIDE_PARTY)
       REG_BG2X = -0x1000;
     else
       REG_BG2X = 0x1000;
   } else {
-    if (work->effect->side == 1)
+    if (work->effect->side == ANIM_SIDE_PARTY)
       REG_BG2X = -0x8000;
   }
 
@@ -81,7 +82,7 @@ void BattleAnim_RunRay(struct BattleAnimArgs *effect) {
     spark->variant = 0;
   }
 
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlaySongFar(SE_ITEM_BREAK);
 
   for (frame = 0; frame != 64; frame++) {
@@ -91,7 +92,7 @@ void BattleAnim_RunRay(struct BattleAnimArgs *effect) {
     if (frame < 16) {
       // Fill the canvas with level 16, not 0, on frames 2, 7 and 12.
       if (frame % 5 == 2)
-        Iwram_FillWords(canvas, CANVAS_BYTES, 0x10101010);
+        Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
       for (bolt = 0; bolt != RAY_COUNT; bolt++) {
         s32 angle;
         s32 x;

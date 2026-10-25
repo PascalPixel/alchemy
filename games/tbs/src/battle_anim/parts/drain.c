@@ -35,7 +35,7 @@ void BattleAnim_RunBreak(struct BattleAnimArgs *effect) {
   sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = ANIM_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleAnim_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
@@ -79,7 +79,7 @@ void BattleAnim_RunBreak(struct BattleAnimArgs *effect) {
     }
   }
 
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // Target n starts on frame n * 20 with a sound and a 20-frame tint; the
   // last target's shards get 56 frames to fall. The battle shows the damage
@@ -165,7 +165,7 @@ void BattleAnim_RunDrain(struct BattleAnimArgs *effect) {
   else
     alternate = 1;
   work->effect = effect;
-  BattleAnim_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry(alternate == 0
@@ -199,7 +199,7 @@ void BattleAnim_RunDrain(struct BattleAnimArgs *effect) {
   // transfer so the motes leave fading trails.
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   draw = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
   Sound_PlaySongFar(SE_SWIRL);
 
   // Frame 0 plays the drain sound; target n bursts on frame n * 20; frame 40

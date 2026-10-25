@@ -84,7 +84,7 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
                     COMPOSITE_LIGHTEN);
   draw[1] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   // Trails keep 3/4 a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Four times as many chips are freed as the burst uses.
   for (i = 0; i != PLANET_DIVER_CLEARED_CHIPS; i++)
@@ -163,11 +163,11 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
         actor->y -= 8 << 16;
         // The nudge after drawing lasts only to this frame's landing test,
         // where the chips start; the next frame projects the user afresh.
-        // On side 1 the nudge moves y, so the chips start 8 pixels lower
-        // rather than 8 pixels across.
+        // On ANIM_SIDE_PARTY the nudge moves y, so the chips start 8 pixels
+        // lower rather than 8 pixels across.
         // XXX (no evidence): whether screenPosition.x += 8 was meant, as side
         // 0 moves x; only the author's intent would say.
-        if (work->effect->side == 0) {
+        if (work->effect->side == ANIM_SIDE_ENEMIES) {
           draw[0](canvas, work->sheet, screenPosition.x - 20,
                   screenPosition.y - 52, 40, 64);
           screenPosition.x -= 8;
@@ -288,9 +288,9 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
   draw[0] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
   draw[1] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
-  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, TASK_PRIORITY_VBLANK);
   // 4 off every pixel each frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 
   // Every skull starts up to 64 pixels from its centre on each axis.
   for (i = 0; i != HAUNT_SCATTERED; i++) {
@@ -314,7 +314,7 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
     // way, about a 1.5-texel offset against the enemies. The wave is 32 lines
     // long (1/32 turn a line) and moves up a line each frame.
     row = work->bg2xLines;
-    if (work->effect->side == 0) {
+    if (work->effect->side == ANIM_SIDE_ENEMIES) {
       for (i = 0; i != 160; i++)
         *row++ = (0x60000 - Trig_Sin((frame + i) << 11) * 6) >> 10;
     } else {
@@ -416,16 +416,16 @@ void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP,
                     COMPOSITE_LIGHTEN);
   draw[1] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
-  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, TASK_PRIORITY_VBLANK);
   // Trails keep half a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // On the party's side the canvas is scrolled 104 texels (BG2X is 20.8),
   // and the spirals are drawn 112 further left.
   // The ripple below rewrites BG2X after every line with a 112-texel lead,
   // and each frame's first line takes the table's last value, latched at
   // VBlank, so this 104 can reach at most the top line before the DMA first
   // runs; and no row reaches this animation.
-  if (work->effect->side == 1) {
+  if (work->effect->side == ANIM_SIDE_PARTY) {
     REG_BG2X = -0x6800;
     offsetX = -112;
   } else {
@@ -442,7 +442,7 @@ void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {
     // a line) and moves up a line each frame.
     camera = gBattleCamera;
     row = work->bg2xLines;
-    if (work->effect->side == 0) {
+    if (work->effect->side == ANIM_SIDE_ENEMIES) {
       s32 angle;
       s32 base;
 

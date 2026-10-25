@@ -57,7 +57,7 @@ void BattleAnim_RunBolt(struct BattleAnimArgs *effect) {
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
   sprites = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleAnim_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
   draw[0] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
   // The tornado sheet only for its glints.
@@ -70,7 +70,7 @@ void BattleAnim_RunBolt(struct BattleAnimArgs *effect) {
   for (j = 0; j != 1024; j++)
     PARTICLES[j].variant = 0;
   ANIM_FREE_PARTICLES(j, work->particles, 64);
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlaySongFar(SE_ITEM_BREAK);
   for (frame = 0; frame != work->effect->targetCount * 8 + 40; frame++) {
     if (frame == 24)
@@ -78,7 +78,7 @@ void BattleAnim_RunBolt(struct BattleAnimArgs *effect) {
     // The flash at each turn's start: the whole canvas set to level 16.
     ANIM_FOR_EACH_TARGET(i, work->effect) {
       if (frame == i * 8)
-        Iwram_FillWords(canvas, CANVAS_BYTES, 0x10101010);
+        Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
     }
     // Each target's turn, 8 frames after the one before.
     ANIM_FOR_EACH_TARGET(i, work->effect) {

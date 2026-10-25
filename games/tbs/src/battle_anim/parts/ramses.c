@@ -35,7 +35,7 @@
 /// consume random numbers.
 void BattleAnim_RunRamses(struct BattleAnimArgs *effect) {
   // Every object of the scene takes this scale.
-  static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
+  static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
   struct SpritePlacement position;
   DrawRectangle draw[2];
   struct SpriteScale scale;
@@ -61,15 +61,15 @@ void BattleAnim_RunRamses(struct BattleAnimArgs *effect) {
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
   BattleAnim_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   BattleAnim_SelectLivingTargets(work->effect);
-  // Nine objects of resource 379, the formation (0 to 6) and the orb (7 and
-  // 8), then the six rocks from resource 390, each playing one of its three
-  // animations.
-  BattleAnim_SpawnObjects(9, 379, 2);
+  // Nine objects of SPRITE_RAMSES, the formation (0 to 6) and the orb (7 and
+  // 8), then the six rocks of SPRITE_BATTLE_ROCKS, each playing one of its
+  // three animations.
+  BattleAnim_SpawnObjects(9, SPRITE_RAMSES, 2);
   for (i = 0; i != RAMSES_ROCKS; i++) {
-    struct Sprite *animation = Sprite_CreateFar(390);
+    struct Sprite *animation = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
 
     work->animations[9 + i] = animation;
     if (animation != 0) {
@@ -94,7 +94,7 @@ void BattleAnim_RunRamses(struct BattleAnimArgs *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 1);
   ANIM_SHOW_WIDE_CANVAS(16);
-  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // The formation's corner at (188, 92) and the orb at (160, 92); the rocks
   // wait 16 pixels apart above the field at random columns.
   base.x = 0xbc0000;

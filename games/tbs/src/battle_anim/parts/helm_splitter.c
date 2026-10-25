@@ -51,7 +51,7 @@ void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet,
                              work->sheet + HELM_SPLITTER_STAR_CELLS, 1, 0);
   BattleAnim_FetchRectangleBlitters(work->effect->side, draw);
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // Free the spark pool before moving the user: the pointer walks the
   // variant word of each seven-word Particle. Only the first 16 sparks are
@@ -104,13 +104,13 @@ void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *effect) {
     Projection_Unit(work->effect->user, &position);
     REG_BG2X = (80 - position.x) << 8;
     // Frames 8 to 23: the swirl plays its seven pictures, two frames each,
-    // at the user's height, placed from the other edge on side 1.
+    // at the user's height, placed from the other edge on ANIM_SIDE_PARTY.
     if (frame >= 8 && frame <= 23) {
       s32 cell = (frame - 8) / 2;
 
       if (cell > 6)
         cell = 6;
-      if (work->effect->side == 0) {
+      if (work->effect->side == ANIM_SIDE_ENEMIES) {
         draw[0](canvas, work->sheet + gHelmSplitter_Cells[cell],
                 gHelmSplitter_CellBiasX[cell] + 30,
                 gHelmSplitter_CellBiasY[cell] + position.y - 60,
@@ -188,7 +188,7 @@ void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *effect) {
 /// formation: the summon's layout (enum SummonFormation); any other value
 ///            places nothing.
 void BattleAnim_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
-  static struct SpriteScale normalScale = {{{0x10000, 0x10000}}};
+  static struct SpriteScale normalScale = {{{Q16_ONE, Q16_ONE}}};
   static struct SpriteScale largeScale = {{{0x14000, 0x14000}}};
   struct BattleAnimWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   struct SpriteScale normal = normalScale;
@@ -293,7 +293,7 @@ void BattleAnim_RunImpactBurst(s32 formation, s32 x, s32 y) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlareImage,
                              work->sheet + IMPACT_BURST_SHARD_CELLS, 0, 0);
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // Large sparks fly in random directions at 2 to 4 pixels a frame, the
   // vertical part doubled, and live 16 to 31 frames; only the first 30 are

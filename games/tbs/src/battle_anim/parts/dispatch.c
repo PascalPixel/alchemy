@@ -191,7 +191,7 @@ void BattleAnim_SelectLivingTargets(struct BattleAnimArgs *effect) {
   s32 i;
 
   count = 0;
-  if (effect->targets[0] > 127) {
+  if (effect->targets[0] >= FIRST_ENEMY_UNIT) {
     for (i = 0; i != 6; i++) {
       s32 id = i + 128;
 

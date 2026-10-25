@@ -152,7 +152,7 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
   if (mode == TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH)
     BattleAnim_StartCanvasLayer(0);
   else
-    BattleAnim_StartCanvasLayer(1);
+    BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   // The canvas adds its full colour to everything under it.
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
@@ -254,7 +254,7 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
   }
 
   // Trails keep 3/4 a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Strike halfway between the target's middle and its feet.
   Projection_ScaledUnit(work->effect->targets[0], &targetPosition);
@@ -282,7 +282,7 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
         // target's centre, 21 for the first picture down to -8 for the last,
         // so the sweep crosses the centre; mirrored when the targets are the
         // party, its right edge stands as far to the left.
-        if (work->effect->side == 1) {
+        if (work->effect->side == ANIM_SIDE_PARTY) {
           ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                             ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             COMPOSITE_LIGHTEN);

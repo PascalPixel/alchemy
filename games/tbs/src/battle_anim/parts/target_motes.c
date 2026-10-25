@@ -199,9 +199,9 @@ void BattleAnim_RunTargetMotes(struct BattleAnimArgs *effect, u32 mode) {
   else
     total = work->effect->targetCount * 8 + 32;
   if (TARGET_MOTES_RIPPLE(mode))
-    Task_Add(BattleAnim_ArmBg2AffineHBlankDma, ANIM_CALLBACK_ORDER);
+    Task_Add(BattleAnim_ArmBg2AffineHBlankDma, TASK_PRIORITY_VBLANK);
   // Trails keep 75% of each pixel a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlaySongFar(SE_SWIRL);
 
   // Target n's turn starts on frame n * 8; the animation ends 64 frames (wide
@@ -374,7 +374,7 @@ void BattleAnim_RunTargetMotes(struct BattleAnimArgs *effect, u32 mode) {
 /// It lasts SLEEP_FRAMES. PARTICLES 0 to 31 are the sheep, canvas pixels in
 /// 16.16; only the first twelve fall. Loads the sheep palette into the first
 /// 64 background colours and sets REG_BLDCNT and BG2's affine registers (the
-/// narrow canvas, moved over the party's side when side is 1).
+/// narrow canvas, moved over the party's side when side is ANIM_SIDE_PARTY).
 void BattleAnim_RunSleep(struct BattleAnimArgs *effect) {
   void **slots;
   void **cursor;
@@ -417,7 +417,7 @@ void BattleAnim_RunSleep(struct BattleAnimArgs *effect) {
     current->variant = Random16() & 255;
   }
   // Over the party's side: the canvas moves 112 pixels right.
-  if (work->effect->side == 1)
+  if (work->effect->side == ANIM_SIDE_PARTY)
     REG_BG2X = -0x7000;
   // Redraw from blank each frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
@@ -492,7 +492,8 @@ void BattleAnim_RunSleep(struct BattleAnimArgs *effect) {
 /// after 64 frames. work->particles' variants, 0 to 63, give each flame its
 /// starting point in its animation. Loads the flame column palette into the
 /// first 64 background colours and sets REG_BLDCNT and BG2's affine registers
-/// (the narrow canvas, moved over the party's side when side is 1).
+/// (the narrow canvas, moved over the party's side when side is
+/// ANIM_SIDE_PARTY).
 void BattleAnim_RunCurse(struct BattleAnimArgs *effect) {
   void **slot;
   struct BattleAnimWork *work;
@@ -513,14 +514,14 @@ void BattleAnim_RunCurse(struct BattleAnimArgs *effect) {
   canvas = slot[0];
   work = slot[-1];
   work->effect = effect;
-  ANIM_START_NARROW_CANVAS(1);
+  ANIM_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   // Drawn solid.
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work->sheet, 1,
                              1);
   // Over the party's side: the canvas moves 112 pixels right, and the
   // targets' x is moved back by the same below.
-  if (work->effect->side == 1) {
+  if (work->effect->side == ANIM_SIDE_PARTY) {
     REG_BG2X = -0x7000;
   }
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
@@ -529,7 +530,7 @@ void BattleAnim_RunCurse(struct BattleAnimArgs *effect) {
   work->transferMode = CANVAS_COPY_AND_CLEAR;
   work->transferValue = 0;
   draw[0] = (DrawRectangle)CANVAS_SLOT(slot, HEAP_SLOT_RAM_CODE);
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
   // Each flame starts at a random point of its animation.
   ANIM_FOR_EACH_TARGET(i, work->effect) {
     work->particles[i].variant = Random16() & 63;
@@ -549,7 +550,7 @@ void BattleAnim_RunCurse(struct BattleAnimArgs *effect) {
         }
         if (frame >= start && frame < start + 72) {
           Projection_ScaledUnit(work->effect->targets[i], &screenPosition);
-          if (work->effect->side == 1) {
+          if (work->effect->side == ANIM_SIDE_PARTY) {
             screenPosition.x -= 112;
           }
           y = screenPosition.y;

@@ -65,7 +65,7 @@ void BattleAnim_RunGatheringLights(struct BattleAnimArgs *effect, s32 mode) {
   ANIM_GET_SLOTS(slots, cursor, work, canvas);
   camera = ANIM_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleAnim_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   // Setup. The sheet is the first field of the work block, so the pictures
   // decode to `work` itself: three 20x32 lights.
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_MemberBurstImage),
@@ -97,9 +97,9 @@ void BattleAnim_RunGatheringLights(struct BattleAnimArgs *effect, s32 mode) {
     }
   }
 
-  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, TASK_PRIORITY_VBLANK);
   // Trails keep 3/4 a frame.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlaySongFar(SE_ENEMY_CRY);
 
   for (frame = 0;

@@ -193,11 +193,11 @@ void BattleAnim_RunBurstShower(struct BattleAnimArgs *effect, s32 mode) {
 
   // The faces leave shorter trails than the bursts.
   if (mode == BURST_SHOWER_MODE_FACES) {
-    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
-    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   }
-  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, TASK_PRIORITY_VBLANK);
 
   for (i = 0; i != 64; i++) {
     work->particles[i].variant = -1;
@@ -210,14 +210,14 @@ void BattleAnim_RunBurstShower(struct BattleAnimArgs *effect, s32 mode) {
     origin.y -= 16;
   }
   if (mode == BURST_SHOWER_MODE_DJINNI) {
-    if (work->effect->side == 1) {
+    if (work->effect->side == ANIM_SIDE_PARTY) {
       origin.x += 28;
     } else {
       origin.x -= 28;
     }
   }
   if (mode == BURST_SHOWER_MODE_FACES) {
-    if (work->effect->side == 1) {
+    if (work->effect->side == ANIM_SIDE_PARTY) {
       origin.x += 16;
     } else {
       origin.x -= 16;
@@ -256,7 +256,7 @@ void BattleAnim_RunBurstShower(struct BattleAnimArgs *effect, s32 mode) {
     // its three 72x62 pictures every 3 frames (0x1200 bytes apart); the others
     // fire one burst a frame for 48 frames at a random point near a target.
     if (mode == BURST_SHOWER_MODE_LIGHTNING) {
-      if (work->effect->side == 1) {
+      if (work->effect->side == ANIM_SIDE_PARTY) {
         draw[0](canvas,
                 (work->sheet + BURST_SHOWER_CELLS) + ((frame / 3 % 3 * 9) << 9),
                 origin.x - 2, origin.y - 32, 72, 62);
@@ -286,7 +286,7 @@ void BattleAnim_RunBurstShower(struct BattleAnimArgs *effect, s32 mode) {
 
     // Move and draw the bursts; each lasts 24 frames and steps through the
     // 32x64 pictures (0x800 bytes apart) every 4. The faces have one picture,
-    // mirrored on side 1.
+    // mirrored on ANIM_SIDE_PARTY.
     i = 0;
     width = 32;
     height = 64;

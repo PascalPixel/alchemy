@@ -44,8 +44,8 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
   // The motes are in the battle sheet's slot; work->sheet holds the flares.
   sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  if (effect->side == 1)
-    BattleAnim_StartCanvasLayer(1);
+  if (effect->side == ANIM_SIDE_PARTY)
+    BattleAnim_StartCanvasLayer(BGCNT_PRIORITY(1));
   else
     BattleAnim_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
@@ -79,9 +79,9 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
 
   work->cameraDelta = 0;
   work->cameraPhase = CAMERA_PHASE_IDLE;
-  Task_Add(BattleCamera_ApplyPhasedDelta, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PRIORITY_VBLANK);
   // Each transfer keeps three quarters of every level, for long trails.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The last ember launches on frame count / 2; the animation runs 132 frames
   // past that.

@@ -137,19 +137,19 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
 // holds its address.
 // XXX (no evidence): what it was for, perhaps keys that once chose an
 // animation for enemy targets; only a debug build would show it.
-/// Reads the held keys when the first target is an enemy (id 128 or more)
-/// and does nothing with them. Nothing calls it.
+/// Reads the held keys when the first target is an enemy (FIRST_ENEMY_UNIT or
+/// more) and does nothing with them. Nothing calls it.
 void BattleAnim_ProbeKeysForExtendedActor(void) {
   struct BattleAnimWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   struct BattleAnimArgs *effect = work->effect;
 
-  if (effect->targets[0] > 0x7f)
+  if (effect->targets[0] >= FIRST_ENEMY_UNIT)
     (void)gKeysHeld;
 }
 
-/// Runs a battle animation from the second range of kinds: 100 to 135 are the
-/// casting impacts (kind - 100), 136 to 199 the beam sequences, 200 and up
-/// the ring and spark scenes.
+/// Runs a battle animation from the second range of kinds, split by enum
+/// BattleAnimIdRange: the casting impacts (kind - ANIM_RANGE_CASTING_IMPACT),
+/// the beam sequences and the ring and spark scenes.
 ///
 /// Reached from the battle's presentation through its far-call stub: from
 /// the attack, item, Psynergy cast and unit transition runners
@@ -173,11 +173,12 @@ void BattleAnim_DispatchByIdRange(struct BattleAnimArgs *effect) {
   AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   value = effect->kind;
   kind = value;
-  value = kind - 100;
-  // Unsigned, so kinds below 100 fall through to the beam sequences too.
-  if ((u32)value <= 35) {
+  value = kind - ANIM_RANGE_CASTING_IMPACT;
+  // Unsigned, so kinds below ANIM_RANGE_CASTING_IMPACT fall through to the
+  // beam sequences too.
+  if ((u32)value < ANIM_RANGE_BEAM_SEQUENCE - ANIM_RANGE_CASTING_IMPACT) {
     BattleAnim_RunCastingImpact(effect, value);
-  } else if (kind > 199) {
+  } else if (kind >= ANIM_RANGE_RING_AND_SPARK) {
     BattleAnim_RunRingAndSparkSequence(effect);
   } else {
     BattleAnim_RunBeamSequence(effect);

@@ -108,7 +108,7 @@ void BattleAnim_RunMercury(struct BattleAnimArgs *effect) {
   BattleAnim_TransposeCopy(cells + DJINN_ATTACKS_FLAME2_CELLS,
                            work->sheet + MERCURY_FLAME_CELLS, 34, 65);
   // Each transfer keeps three quarters of every level, for trails.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   ANIM_FREE_PARTICLES(i, work->particles, 8);
   ANIM_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
   Sound_PlaySongFar(SE_WAVE);
@@ -244,7 +244,7 @@ void BattleAnim_RunJupiter(struct BattleAnimArgs *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlameballSheet,
                              work->sheet + JUPITER_FLAMEBALL_CELLS, 1, 0);
   // Each transfer fades the canvas to 3/4.
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The flameballs start at x 64 to 127, y -80 to -17; 32 are placed, the
   // first 8 fall. A ball is done once it is below the ground line.
@@ -390,7 +390,7 @@ void BattleAnim_RunVenus(struct BattleAnimArgs *effect) {
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet,
                              work->sheet + VENUS_FLAME_SHEET, 1, 0);
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   // The flame columns start at the bottom, at random x from 0 to 63; 32
   // are placed, the first 10 rise. The columns draw flipped upside down.
   for (i = 0; i != 32; i++) {
@@ -519,7 +519,7 @@ void BattleAnim_RunMars(struct BattleAnimArgs *effect) {
                              1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet,
                              work->sheet + MARS_ORB_CELLS, 1, 1);
-  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Nine flames spread out from x 32 alternately left and right (odd flames
   // left), 2 frames apart: flame i stands sin(i * 11.25 degrees) * 24 pixels

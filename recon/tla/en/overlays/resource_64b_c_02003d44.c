@@ -1,0 +1,138 @@
+// Draft, differ 41 of 593: the world map's fade: queues the world map palette
+// for mode and its frames, then steps the blend through 0xe00 down to 0x800
+// and back. Overlay 64c has the same code (its Func_02001400). Left: a few
+// literal-pool loads the native issues one instruction earlier, and mode 1
+// building its first two 0x20000 arguments apart.
+#include "types.h"
+#include "io_reg.h"
+#include "io_write_queue.h"
+#include "ram_buffer.h"
+#include "party_state.h"
+#include "object_runtime.h"
+#include "event_work.h"
+
+extern u8 gWorldMapPackedTiles[];
+extern u8 gWorldMapPackedFrames[];
+extern u8 gWorldMapPalettes[];
+extern u16 gData_02006e08;
+
+void WaitFrames(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
+void GameFlag_ClearBit(s32 flag);
+void GameFlag_SetBit(s32 flag);
+struct ObjectRuntime *Object_GetById(s32 id);
+void Event_StartScreenTransition(void);
+void Event_WaitTransitionFrames(void);
+void Func_02004b78(s32 a, s32 b, s32 c);
+void Func_02004e30(s32 cue);
+void Func_02004da8(void);
+void *Runtime_BumpAllocateAlternatePool(s32 size);
+void Func_02004aa8(void *source, void *destination);
+void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Func_02003c50(void);
+void Func_02004c20(void);
+void Func_02004db8(s32 value);
+void Func_02004ac8(void);
+void MemFree(void *pointer);
+
+#define PUSH_FRAME(offset)                                                     \
+  IO_WRITE_QUEUE_PUSH_IME(ime, 0x06002000, (u32)(buffer + (offset)), 0x84000140)
+
+void Func_02003d44(s32 mode) {
+  volatile u16 *ime;
+  u8 *buffer;
+
+  WaitFrames(1);
+  GameFlag_ClearBit(0x109);
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
+  Object_GetById(gPartyState.currentOwner)->animationKind = 0;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->delay = 16;
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  if (mode == 2) {
+    Func_02004b78(0x20000, 0x30000, 0x10000);
+    Func_02004e30(141);
+  }
+  Func_02004da8();
+  buffer = Runtime_BumpAllocateAlternatePool(0x4000);
+  ime = &REG_IME;
+  Func_02004aa8(gWorldMapPackedTiles, buffer);
+  Func_02004aa8(gWorldMapPackedFrames, buffer + 0x1000);
+  IO_WRITE_QUEUE_PUSH_IME(ime, 0x050001c0, (u32)(gWorldMapPalettes + mode * 32),
+                          0x80000010);
+  IO_WRITE_QUEUE_PUSH_IME(ime, 0x06001000, (u32)buffer, 0x84000400);
+  Scheduler_AddOrUpdateCallback(Func_02003c50, 0x480);
+  Func_02004c20();
+  Func_02004db8(0);
+  Func_02004e30(246);
+  gData_02006e08 = 0xe00;
+  PUSH_FRAME(0x3480);
+  FieldEvent_WaitFrames(2);
+  gData_02006e08 = 0xd00;
+  PUSH_FRAME(0x2e80);
+  FieldEvent_WaitFrames(2);
+  gData_02006e08 = 0xc00;
+  PUSH_FRAME(0x2880);
+  FieldEvent_WaitFrames(2);
+  gData_02006e08 = 0xb00;
+  PUSH_FRAME(0x2280);
+  FieldEvent_WaitFrames(2);
+  gData_02006e08 = 0xa00;
+  PUSH_FRAME(0x1c80);
+  FieldEvent_WaitFrames(2);
+  gData_02006e08 = 0x900;
+  PUSH_FRAME(0x1680);
+  FieldEvent_WaitFrames(2);
+  gData_02006e08 = 0x800;
+  PUSH_FRAME(0x1080);
+  FieldEvent_WaitFrames(140);
+  PUSH_FRAME(0x1680);
+  FieldEvent_WaitFrames(4);
+  PUSH_FRAME(0x1c80);
+  FieldEvent_WaitFrames(4);
+  PUSH_FRAME(0x2280);
+  FieldEvent_WaitFrames(4);
+  gData_02006e08 = 0x900;
+  PUSH_FRAME(0x2880);
+  FieldEvent_WaitFrames(4);
+  gData_02006e08 = 0xa00;
+  PUSH_FRAME(0x2e80);
+  FieldEvent_WaitFrames(4);
+  gData_02006e08 = 0xb00;
+  PUSH_FRAME(0x3480);
+  FieldEvent_WaitFrames(4);
+  gData_02006e08 = 0xc00;
+  PUSH_FRAME(0x3a80);
+  if (mode == 1) {
+    Func_02004b78(0x20000, 0x20000, 0x10000);
+    Func_02004e30(141);
+    gData_02006e08 = 0xd00;
+    FieldEvent_WaitFrames(4);
+    gData_02006e08 = 0xe00;
+    FieldEvent_WaitFrames(4);
+    gData_02006e08 = 0xf00;
+    FieldEvent_WaitFrames(4);
+    gData_02006e08 = 0x1000;
+    FieldEvent_WaitFrames(45);
+    Scheduler_RemoveCallbackFar(Func_02003c50);
+    Func_02004ac8();
+    QueueIoWriteDelay2(0x04000052, gData_02006e08);
+    QueueIoWriteDelay2(0x04000050, 0);
+  } else {
+    gData_02006e08 = 0xd00;
+    FieldEvent_WaitFrames(4);
+    gData_02006e08 = 0xe00;
+    FieldEvent_WaitFrames(4);
+    gData_02006e08 = 0xf00;
+    FieldEvent_WaitFrames(4);
+    gData_02006e08 = 0x1000;
+    FieldEvent_WaitFrames(45);
+    Scheduler_RemoveCallbackFar(Func_02003c50);
+    Func_02004ac8();
+    QueueIoWriteDelay2(0x04000052, gData_02006e08);
+    QueueIoWriteDelay2(0x04000050, 0);
+  }
+  MemFree(buffer);
+  GameFlag_SetBit(0x101);
+}

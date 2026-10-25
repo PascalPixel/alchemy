@@ -1452,12 +1452,6 @@ ObjectMotion_MoveToObject:
 	.thumb_func
 Func_080d3378:
 	.incbin "baserom.gba", 0x000d836c, 0x000000e8
-	.section .rom.000d8774, "ax"
-	.global Func_080d3780
-	.type Func_080d3780, %function
-	.thumb_func
-Func_080d3780:
-	.incbin "baserom.gba", 0x000d8774, 0x00000054
 	.section .rom.000d8934, "ax"
 	.balign 4
 	.global Func_080d3940
@@ -1859,8 +1853,6 @@ Func_080df1fc:
 	.thumb_func
 Func_080df8e0:
 	.incbin "baserom.gba", 0x000e48d4, 0x000001d4
-	.section .rom.000e4c30, "ax"
-	.incbin "baserom.gba", 0x000e4c30, 0x00000098
 	.section .rom.000e4cf4, "ax"
 	.global FieldEffect_RunWhirlwind
 FieldEffect_RunWhirlwind:

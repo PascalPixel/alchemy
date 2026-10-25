@@ -68,3 +68,38 @@ void Object_SetPartAttribute(struct ObjectRuntime *object, s32 attribute) {
     list->dirty = 1;
   }
 }
+
+void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
+                                  const void *callback);
+
+/// Links an object to the object in the low 8 bits of targetId and starts
+/// callback on it. Unless bit 16 of targetId is set it takes a follow
+/// distance of 40 pixels (action 40), the target's top speed with twice its
+/// acceleration, to keep up with it, and no collision flags, so it cannot
+/// block the target. The Broken Seal's ObjectEvent_SetTargetAndCallback.
+void Object_SetTargetAndCallback(u32 objectId, s32 targetId,
+                                 const void *callback) {
+  struct ObjectRuntime *follower = ObjectTable_Get(objectId);
+  struct ObjectRuntime *target = ObjectTable_Get(targetId & 0xff);
+
+  if (follower != NULL && target != NULL) {
+    follower->linkedObject = target;
+    if (!(targetId & 0x10000)) {
+      /* FAKEMATCH(pin): the collision flags' zero held in r1, which the
+       * native loads from the pool between the action's store and the
+       * target's acceleration; as follower->collisionFlags = 0, 2 of 36
+       * instructions differ in tla-en. */
+      register u16 none asm("r1") = 0;
+
+      follower->action = 40;
+      /* FAKEMATCH(barrier): an empty asm holding the pinned zero and the
+       * target's acceleration puts the zero's pool load between the action's
+       * store and that load; as the pin alone, 2 of 36 differ in tla-en. */
+      asm("" : "+l"(none), "+m"(target->acceleration));
+      follower->acceleration = target->acceleration * 2;
+      follower->speedLimit = target->speedLimit;
+      follower->collisionFlags = none;
+    }
+    ObjectDispatch_InitializeFar(follower, callback);
+  }
+}

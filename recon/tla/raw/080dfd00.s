@@ -359,7 +359,7 @@ FieldEffect_RunWhirlwind:
 .L_080dffec:
 	.4byte BattleEffect_ShrinkObjectScaleUntilHalf
 .L_080dfff0:
-	.4byte Func_080dfc3c
+	.4byte BattleEffect_CircleAnchor
 .L_080dfff4:
 	.4byte BattleEffect_WanderAroundAnchor
 .L_080dfff8:

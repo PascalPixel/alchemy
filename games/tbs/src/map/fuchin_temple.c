@@ -79,7 +79,6 @@
 #include "ability_ids.h"
 #include "flags.h"
 #include "songs.h"
-#include "script.h"
 #include "item_ids.h"
 #include "objcmd.h"
 #include "heap_slots.h"
@@ -316,8 +315,8 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 /// Kolima now?") and is remembered; no means the party came through the forest.
 /// Later talks go on to the tale of the forest.
 static void EventScript_YoungManFromKolimaAsksAboutBridge(void) {
-  SCRIPT_START();
-  MESSAGE_SET(MsgXianHowDidGetHereBridge);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgXianHowDidGetHereBridge);
   if (Script_GetFlag(FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN) != 0) {
     gFieldWork->message += 4;
   }
@@ -328,7 +327,7 @@ static void EventScript_YoungManFromKolimaAsksAboutBridge(void) {
     gFieldWork->message++;
   }
   Script_ShowMessage(LOCALID_YOUNG_MAN_FROM_KOLIMA, 0);
-  SCRIPT_END();
+  FieldScript_End();
 }
 
 /// Talking to the boy monk (LOCALID_ADMIRING_BOY_MONK) at Fuchin Temple
@@ -338,23 +337,23 @@ static void EventScript_YoungManFromKolimaAsksAboutBridge(void) {
 /// world's concerns. Is he watching over us?"
 static void EventScript_BoyMonkSpeaksOfNyunpa(void) {
 
-  SCRIPT_START();
+  FieldScript_Start();
   if (GameFlag_Get(FLAG_NYUNPA_ENLIGHTENED) != 0) {
-    MESSAGE_SET(MsgXianNowHeTrulyBeyondWorlds);
+    FieldScript_SetMessageId(MsgXianNowHeTrulyBeyondWorlds);
     FieldScript_AskYesNoAndShowResponse(LOCALID_ADMIRING_BOY_MONK, 0);
-    SCRIPT_END();
+    FieldScript_End();
   } else {
-    MESSAGE_SET(MsgXianIsntNobleHimTrySave);
-    MESSAGE_OPEN(LOCALID_ADMIRING_BOY_MONK, 0);
+    FieldScript_SetMessageId(MsgXianIsntNobleHimTrySave);
+    FieldMessage_ShowAtObject(LOCALID_ADMIRING_BOY_MONK, 0);
     if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
       gFieldWork->message++;
-      MESSAGE_OPEN(LOCALID_ADMIRING_BOY_MONK, 0);
+      FieldMessage_ShowAtObject(LOCALID_ADMIRING_BOY_MONK, 0);
       if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
         gFieldWork->message++;
       }
     }
-    MESSAGE_PUT(LOCALID_ADMIRING_BOY_MONK, 0);
-    SCRIPT_END();
+    FieldScript_ShowMessageAndWait(LOCALID_ADMIRING_BOY_MONK, 0);
+    FieldScript_End();
   }
 }
 
@@ -369,8 +368,8 @@ static void EventScript_MonkLetsPartyIntoGrotto(void) {
   struct EffectOptions options;
 
   monk = ObjectEvent_GetById(LOCALID_FALLS_MONK);
-  SCRIPT_START();
-  MESSAGE_SET(MsgXianAlreadyHeardTest);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgXianAlreadyHeardTest);
   FieldScript_ShowMessageThenWait(LOCALID_FALLS_MONK, 0, 20);
   // The monk leaps aside and lands in a puff of dust.
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 168, 392);
@@ -380,7 +379,7 @@ static void EventScript_MonkLetsPartyIntoGrotto(void) {
   movingMonk->velocityY = 0x140000;
   movingMonk = ObjectEvent_GetById(LOCALID_FALLS_MONK);
   movingMonk->gravity = 0x40000;
-  OBJECT_SPEED(LOCALID_FALLS_MONK, PIXELS(3), 3 * PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_FALLS_MONK, PIXELS(3), 3 * PIXELS(1) / 2);
   ObjectEvent_SetDestination(LOCALID_FALLS_MONK, 152, 392);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FALLS_MONK);
   movingMonk = ObjectEvent_GetById(LOCALID_FALLS_MONK);
@@ -395,11 +394,11 @@ static void EventScript_MonkLetsPartyIntoGrotto(void) {
                     0, 0, EFFECT_USE_PALETTE, &options);
   FieldEffect_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + 0x40000),
                     -0x8000, 0, 0, EFFECT_USE_PALETTE, &options);
-  WAIT(30);
+  FieldScript_WaitFrames(30);
   Map_PlayQueuedMusic();
   MapGrid_CopyCellAttributes(10, 24, 1, 1, 10, 22);
   GameFlag_Set(FLAG_FUCHIN_FALLS_GROTTO_OPENED);
-  SCRIPT_END();
+  FieldScript_End();
 }
 
 /// Isaac comes back out of the grotto with the Orb of Force. At Fuchin Temple
@@ -407,27 +406,28 @@ static void EventScript_MonkLetsPartyIntoGrotto(void) {
 /// the way back is open again. "Young master, did you complete the test?" Then
 /// "Master Nyunpa is waiting for you... Proceed to the temple."
 static void EventScript_MonkAsksWhetherTestIsDone(void) {
-  SCRIPT_START();
+  FieldScript_Start();
   GameFlag_Set(FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST);
-  OBJECT_FACE(LOCALID_FALLS_MONK, LOCALID_PARTY_LEADER, 0);
-  WAIT(10);
-  MESSAGE_SET(MsgXianYoungMasterDidCompleteTest);
+  ObjectMotion_SetAngleToward(LOCALID_FALLS_MONK, LOCALID_PARTY_LEADER, 0);
+  FieldScript_WaitFrames(10);
+  FieldScript_SetMessageId(MsgXianYoungMasterDidCompleteTest);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FALLS_MONK, 2);
-  WAIT(20);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_WEST, 20);
+  FieldScript_WaitFrames(20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 20);
   FieldScript_AskYesNoAndShowResponse(LOCALID_FALLS_MONK, 0);
-  WAIT(10);
-  OBJECT_EMOTE(LOCALID_FALLS_MONK, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
-  OBJECT_DIR(LOCALID_FALLS_MONK, FACING_NORTH + FACING_STEP, 20);
+  FieldScript_WaitFrames(10);
+  ObjectEvent_ShowEmote(LOCALID_FALLS_MONK, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                        80);
+  ObjectEvent_FaceDirection(LOCALID_FALLS_MONK, FACING_NORTH + FACING_STEP, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FALLS_MONK, 2);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   FieldScript_ShowMessageThenWait(LOCALID_FALLS_MONK, 0, 20);
   ObjectMotion_ArmCallback(LOCALID_FALLS_MONK, FACING_EAST, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_FALLS_MONK, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   FieldScript_ShowMessageThenWait(LOCALID_FALLS_MONK, 0, 20);
   MapGrid_CopyCellAttributes(10, 26, 1, 1, 10, 24);
-  SCRIPT_END();
+  FieldScript_End();
 }
 
 /// Reading Nyunpa's mind inside Fuchin Temple (LacquerRoomsA), or
@@ -441,50 +441,50 @@ static void EventScript_NyunpaOffersTest(void) {
   s32 alreadyDeclinedTrial;
   struct ObjectEvent *nyunpa;
 
-  SCRIPT_START();
+  FieldScript_Start();
   // Revisit an earlier refusal, or introduce the offer through Mind Read.
   alreadyDeclinedTrial = GameFlag_Get(FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED);
   if (alreadyDeclinedTrial != 0) {
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 168, 504);
-    WAIT(5);
-    OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
+    FieldScript_WaitFrames(5);
+    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
     ObjectEvent_GetById(LOCALID_NYUNPA)->paused = 0;
-    SE(SE_JUMP);
+    Script_PlaySong(SE_JUMP);
     nyunpa = ObjectEvent_Get(LOCALID_NYUNPA);
     nyunpa->velocityY = 0x80000;
-    OBJECT_ANIMATION(LOCALID_NYUNPA, ANIM_STAND);
-    WAIT(30);
-    MESSAGE_SET(MsgXianMustSurviveTestGrottoBefore);
+    Import_ObjectEventSetAnimation(LOCALID_NYUNPA, ANIM_STAND);
+    FieldScript_WaitFrames(30);
+    FieldScript_SetMessageId(MsgXianMustSurviveTestGrottoBefore);
   } else {
-    MESSAGE_SET(MsgXianMmmmWhoWhoSpeaksMy);
+    FieldScript_SetMessageId(MsgXianMmmmWhoWhoSpeaksMy);
     FuchinTemple_StartMindReadDemonstration(LOCALID_PARTY_LEADER,
                                             LOCALID_NYUNPA);
-    WAIT(30);
+    FieldScript_WaitFrames(30);
     Script_ShowMessage(LOCALID_NYUNPA, 0);
     FuchinTemple_FinishMindReadDemonstration();
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 168, 504);
-    WAIT(5);
-    OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
-    SE(SE_JUMP);
+    FieldScript_WaitFrames(5);
+    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
+    Script_PlaySong(SE_JUMP);
     ObjectEvent_GetById(LOCALID_NYUNPA)->paused = alreadyDeclinedTrial;
     nyunpa = ObjectEvent_Get(LOCALID_NYUNPA);
     nyunpa->velocityY = 0x80000;
-    OBJECT_ANIMATION(LOCALID_NYUNPA, ANIM_STAND);
-    WAIT(30);
+    Import_ObjectEventSetAnimation(LOCALID_NYUNPA, ANIM_STAND);
+    FieldScript_WaitFrames(30);
     Script_OpenMessage(LOCALID_NYUNPA, 0);
     if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
       ObjectMotion_SetVarCbAndRefresh(LOCALID_NYUNPA, 2);
-      WAIT(20);
+      FieldScript_WaitFrames(20);
       Script_ShowMessage(LOCALID_NYUNPA, 0);
-      WAIT(20);
+      FieldScript_WaitFrames(20);
       FuchinTemple_StartMindReadDemonstration(LOCALID_NYUNPA,
                                               LOCALID_PARTY_LEADER);
-      WAIT(30);
+      FieldScript_WaitFrames(30);
       ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
-      WAIT(50);
+      FieldScript_WaitFrames(50);
       FuchinTemple_FinishMindReadDemonstration();
-      WAIT(30);
+      FieldScript_WaitFrames(30);
       ObjectMotion_SetAnimationAndWait(LOCALID_NYUNPA, ANIM_NOD);
       Script_ShowMessage(LOCALID_NYUNPA, 0);
     } else {
@@ -492,57 +492,61 @@ static void EventScript_NyunpaOffersTest(void) {
       Script_ShowMessage(LOCALID_NYUNPA, 0);
     }
     ObjectMotion_SetAnimationAndWait(LOCALID_NYUNPA, ANIM_NOD);
-    WAIT(30);
-    OBJECT_EMOTE(LOCALID_NYUNPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-    MESSAGE_SET(MsgXianFollowThemDoNot);
+    FieldScript_WaitFrames(30);
+    ObjectEvent_ShowEmote(LOCALID_NYUNPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                          60);
+    FieldScript_SetMessageId(MsgXianFollowThemDoNot);
     Script_OpenMessage(LOCALID_NYUNPA, 0);
     if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
-      OBJECT_EMOTE(LOCALID_NYUNPA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+      ObjectEvent_ShowEmote(LOCALID_NYUNPA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
+                            60);
       FuchinTemple_StartMindReadDemonstration(LOCALID_NYUNPA,
                                               LOCALID_PARTY_LEADER);
-      WAIT(30);
+      FieldScript_WaitFrames(30);
       ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
-      WAIT(50);
+      FieldScript_WaitFrames(50);
       FuchinTemple_FinishMindReadDemonstration();
-      WAIT(30);
+      FieldScript_WaitFrames(30);
       Script_ShowMessage(LOCALID_NYUNPA, 0);
       gFieldWork->message += 1;
     } else {
       gFieldWork->message += 1;
-      WAIT(20);
+      FieldScript_WaitFrames(20);
       ObjectMotion_SetAnimationAndWait(LOCALID_NYUNPA, ANIM_NOD);
-      WAIT(20);
+      FieldScript_WaitFrames(20);
       Script_ShowMessage(LOCALID_NYUNPA, 0);
     }
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     ObjectMotion_SetAnimationAndWait(LOCALID_NYUNPA, ANIM_SHAKE_HEAD);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     Script_ShowMessage(LOCALID_NYUNPA, 0);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     Script_ShowMessage(LOCALID_NYUNPA, 0);
-    WAIT(20);
-    OBJECT_DIR(LOCALID_NYUNPA, FACING_NORTH, 20);
-    OBJECT_SPEED(LOCALID_NYUNPA, 3 * PIXELS(1) / 10, 3 * PIXELS(1) / 20);
+    FieldScript_WaitFrames(20);
+    ObjectEvent_FaceDirection(LOCALID_NYUNPA, FACING_NORTH, 20);
+    ObjectEvent_SetSpeed(LOCALID_NYUNPA, 3 * PIXELS(1) / 10,
+                         3 * PIXELS(1) / 20);
     ObjectEvent_WalkToAndWait(LOCALID_NYUNPA, 168, 464);
-    WAIT(60);
-    OBJECT_DIR(LOCALID_NYUNPA, FACING_SOUTH, 40);
+    FieldScript_WaitFrames(60);
+    ObjectEvent_FaceDirection(LOCALID_NYUNPA, FACING_SOUTH, 40);
     Script_ShowMessageAndWait(LOCALID_NYUNPA, 0, 10);
-    OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+    ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
+                          60);
     ObjectEvent_WalkToAndWait(LOCALID_NYUNPA, 168, 472);
   }
   Script_OpenMessage(LOCALID_NYUNPA, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
-    MESSAGE_SET(MsgXianThenCannotTellGiveUp);
+    FieldScript_SetMessageId(MsgXianThenCannotTellGiveUp);
     Script_ShowMessage(LOCALID_NYUNPA, 0);
     GameFlag_Set(FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED);
   } else {
     // "Do not worry. You will be permitted to enter the grotto." Nyunpa
     // glows as he calls to the monk.
-    MESSAGE_SET(MsgXianDoNotWorryWillPermitted);
-    WAIT(30);
+    FieldScript_SetMessageId(MsgXianDoNotWorryWillPermitted);
+    FieldScript_WaitFrames(30);
     ObjectMotion_SetAnimationAndWait(LOCALID_NYUNPA, ANIM_NOD);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     FieldCamera_SetSpeed(0x8000, 0x1000);
     ObjectEvent_PlaceCurrentWithinCameraBounds(LOCALID_NYUNPA, 1);
     PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -555,43 +559,43 @@ static void EventScript_NyunpaOffersTest(void) {
     PaletteFade_StartInterpolation(30);
     Script_ShowMessage(LOCALID_NYUNPA, 0);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_NYUNPA, 2);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     Script_ShowMessage(LOCALID_NYUNPA, 0);
     ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
     ObjectEvent_SetAttachedEffect(
         LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    WAIT(60);
+    FieldScript_WaitFrames(60);
     Script_ShowMessageAndWait(LOCALID_NYUNPA, 0, 10);
     GameFlag_Set(FLAG_NYUNPA_TEST_ACCEPTED);
   }
-  OBJECT_ANIMATION(LOCALID_NYUNPA, ANIM_NYUNPA_MEDITATE);
-  SCRIPT_END();
+  Import_ObjectEventSetAnimation(LOCALID_NYUNPA, ANIM_NYUNPA_MEDITATE);
+  FieldScript_End();
 }
 
 /// Reading Nyunpa's mind inside Fuchin Temple once the test is accepted: he
 /// notices.
 /// "You enjoy reading the minds of others, do you not?"
 static void EventScript_NyunpaFeelsMindRead(void) {
-  SCRIPT_START();
-  MESSAGE_SET(MsgXianEnjoyReadingMindsOthersDo);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgXianEnjoyReadingMindsOthersDo);
   FieldScript_AskYesNoAndShowResponse(LOCALID_NYUNPA, 0);
-  SCRIPT_END();
+  FieldScript_End();
 }
 
 /// Talking to the student at the door of Master Feh's school in Xian
 /// (LOCALID_WELCOMING_STUDENT): the student asks whether the party came to
 /// watch. "This is Master Feh's school... You came to watch?"
 static void EventScript_StudentWelcomesToSchool(void) {
-  SCRIPT_START();
-  MESSAGE_SET(MsgXianMasterFehsSchoolCameWatch);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgXianMasterFehsSchoolCameWatch);
   FieldScript_AskYesNoAndShowResponse(LOCALID_WELCOMING_STUDENT, 0);
-  SCRIPT_END();
+  FieldScript_End();
 }
 
 /// Talking to the student who practices jumping in Master Feh's school in Xian:
 /// he lands, talks about jumping (or Lama Temple, or Hsu), then jumps on.
 static void EventScript_TalkToJumpingStudent(void) {
-  SCRIPT_START();
+  FieldScript_Start();
 
   ObjectEvent_GetById(LOCALID_JUMPING_STUDENT)->paused = 0;
 
@@ -607,17 +611,17 @@ static void EventScript_TalkToJumpingStudent(void) {
 
   ObjectEvent_GetById(LOCALID_JUMPING_STUDENT)->paused = 1;
 
-  OBJECT_FACE(LOCALID_JUMPING_STUDENT, LOCALID_PARTY_LEADER, 0);
+  ObjectMotion_SetAngleToward(LOCALID_JUMPING_STUDENT, LOCALID_PARTY_LEADER, 0);
 
   if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) != 0) {
-    MESSAGE_SET(MsgXianHsuDidNotPracticeJumping);
+    FieldScript_SetMessageId(MsgXianHsuDidNotPracticeJumping);
   } else if (GameFlag_Get(FLAG_FEH_SAW_KI) != 0) {
-    MESSAGE_SET(MsgXianLamaTempleFarWestIn);
+    FieldScript_SetMessageId(MsgXianLamaTempleFarWestIn);
   } else {
-    MESSAGE_SET(MsgXianFlexibilityJumpingVeryImportantIn);
+    FieldScript_SetMessageId(MsgXianFlexibilityJumpingVeryImportantIn);
   }
 
-  MESSAGE_PUT(LOCALID_JUMPING_STUDENT, 0);
+  FieldScript_ShowMessageAndWait(LOCALID_JUMPING_STUDENT, 0);
 
   ObjectEvent_GetById(LOCALID_JUMPING_STUDENT)->facing = FACING_SOUTH;
 
@@ -625,7 +629,7 @@ static void EventScript_TalkToJumpingStudent(void) {
 
   ObjectEvent_SetActionScript(LOCALID_JUMPING_STUDENT,
                               gFuchinTemple_JumpingStudentScript);
-  SCRIPT_END();
+  FieldScript_End();
 }
 
 /// Talking to the student by the training tree in Master Feh's school in Xian
@@ -633,10 +637,10 @@ static void EventScript_TalkToJumpingStudent(void) {
 /// see Master Feh. "Master Feh is very busy. Do you still wish to see him?"
 /// Yes: if the tree falls to Chi from the line, he will take the party to Feh.
 static void EventScript_StudentAsksAboutFeh(void) {
-  SCRIPT_START();
-  MESSAGE_SET(MsgXianMasterFehVeryBusyDo);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgXianMasterFehVeryBusyDo);
   FieldScript_AskYesNoAndShowResponse(LOCALID_TREE_STUDENT, 0);
-  SCRIPT_END();
+  FieldScript_End();
 }
 
 /// Rotates the training tree through its westward arc and scatters particles.
@@ -765,17 +769,18 @@ static void FuchinTemple_StudentWalksAroundTree(void) {
   if (((leaderFacing - FACING_SOUTHEAST) << 16) <= 0x3fff0000) {
     ObjectMotion_SetPositionAndReset(LOCALID_TREE_STUDENT, 216, 168);
     ObjectMotion_SetPositionAndReset(LOCALID_TREE_STUDENT, 224, 168);
-    OBJECT_DIR(LOCALID_TREE_STUDENT, FACING_SOUTHEAST, 20);
+    ObjectEvent_FaceDirection(LOCALID_TREE_STUDENT, FACING_SOUTHEAST, 20);
   } else if ((u16)(leaderFacing - FACING_SOUTHWEST) <= quadrantLimit) {
     ObjectMotion_SetPositionAndReset(LOCALID_TREE_STUDENT, 232, 160);
-    OBJECT_DIR(LOCALID_TREE_STUDENT, FACING_SOUTH + FACING_STEP, 20);
+    ObjectEvent_FaceDirection(LOCALID_TREE_STUDENT, FACING_SOUTH + FACING_STEP,
+                              20);
   } else if ((u16)(leaderFacing - FACING_NORTHWEST) <= quadrantLimit) {
     ObjectMotion_SetPositionAndReset(LOCALID_TREE_STUDENT, 216, 168);
     ObjectMotion_SetPositionAndReset(LOCALID_TREE_STUDENT, 224, 172);
-    OBJECT_DIR(LOCALID_TREE_STUDENT, FACING_NORTHEAST, 20);
+    ObjectEvent_FaceDirection(LOCALID_TREE_STUDENT, FACING_NORTHEAST, 20);
   } else {
     ObjectMotion_SetPositionAndReset(LOCALID_TREE_STUDENT, 232, 160);
-    OBJECT_DIR(LOCALID_TREE_STUDENT, FACING_SOUTHEAST, 20);
+    ObjectEvent_FaceDirection(LOCALID_TREE_STUDENT, FACING_SOUTHEAST, 20);
   }
 }
 
@@ -794,33 +799,35 @@ enum FuchinTempleChiRule {
 static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
   s32 rulesMessage;
 
-  OBJECT_SPEED(LOCALID_TREE_STUDENT, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-  WAIT(60);
+  ObjectEvent_SetSpeed(LOCALID_TREE_STUDENT, 4 * PIXELS(1) / 5,
+                       2 * PIXELS(1) / 5);
+  FieldScript_WaitFrames(60);
   rulesMessage = MsgXianCannotPushHands;
-  MESSAGE_SET(rulesMessage);
+  FieldScript_SetMessageId(rulesMessage);
   if (mode == FUCHIN_TEMPLE_CHI_NOT_FROM_LINE) {
-    MESSAGE_SET(rulesMessage - 1);
-    OBJECT_EMOTE(LOCALID_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+    FieldScript_SetMessageId(rulesMessage - 1);
+    ObjectEvent_ShowEmote(LOCALID_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                          60);
     FieldScript_ShowMessageThenWait(LOCALID_TREE_STUDENT, 0, 20);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_TREE_STUDENT, 2);
-    MESSAGE_SET(MsgXianWarriorsCannotUse);
+    FieldScript_SetMessageId(MsgXianWarriorsCannotUse);
     FieldScript_ShowMessageThenWait(LOCALID_TREE_STUDENT, 0, 20);
     ObjectMotion_SetAnimationAndWait(LOCALID_TREE_STUDENT, ANIM_SHAKE_HEAD);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     FieldScript_ShowMessageThenWait(LOCALID_TREE_STUDENT, 0, 20);
     ObjectMotion_SetAnimationAndWait(LOCALID_TREE_STUDENT, ANIM_NOD);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
   }
   if (mode == FUCHIN_TEMPLE_CHI_SEEN_BEFORE) {
-    MESSAGE_SET(MsgXianGreatWarriorTrain);
+    FieldScript_SetMessageId(MsgXianGreatWarriorTrain);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_TREE_STUDENT, 2);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
   }
   FieldScript_ShowMessageThenWait(LOCALID_TREE_STUDENT, 0, 20);
   // Restore the tree and let the student return to the demonstration spot.
   FuchinTemple_StudentWalksAroundTree();
   ObjectMotion_SetVarCbAndRefresh(LOCALID_TREE_STUDENT, 3);
-  OBJECT_POSITION_SET(LOCALID_TRAINING_TREE, 232, 168);
+  ObjectEvent_SetPosition(LOCALID_TRAINING_TREE, PIXELS(232), PIXELS(168));
   Import_ObjectEventSetPosition(LOCALID_TRAINING_TREE_TARGET, PIXELS(232),
                                 PIXELS(168));
   ObjectEvent_GetById(LOCALID_TRAINING_TREE)->y.fixed = 0xc0000;
@@ -828,9 +835,9 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
   ObjectEvent_GetById(LOCALID_TRAINING_TREE)->scaleX = 0xcccc;
   ObjectEvent_GetById(LOCALID_TRAINING_TREE)->sprite->rotation = 0x8000;
   Sound_PlaySong(SE_CHEST_OPEN);
-  WAIT(40);
+  FieldScript_WaitFrames(40);
   ObjectMotion_SetPositionAndReset(LOCALID_TREE_STUDENT, 216, 152);
-  OBJECT_DIR(LOCALID_TREE_STUDENT, FACING_SOUTHEAST, 30);
+  ObjectEvent_FaceDirection(LOCALID_TREE_STUDENT, FACING_SOUTHEAST, 30);
 }
 
 /// The students see the tree fall, Feh doubts it came from the line, and the
@@ -838,36 +845,41 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
 static void FuchinTemple_StudentsSeeTreeFall(void) {
   struct ObjectEvent *tree;
 
-  OBJECT_FACE(LOCALID_PROUD_STUDENT, LOCALID_TRAINING_TREE, 0);
-  OBJECT_FACE(LOCALID_WATCHING_STUDENT, LOCALID_TRAINING_TREE, 0);
-  OBJECT_FACE(LOCALID_TREE_STUDENT, LOCALID_TRAINING_TREE, 0);
-  OBJECT_FACE(LOCALID_MESSENGER_STUDENT, LOCALID_TRAINING_TREE, 0);
-  OBJECT_FACE(LOCALID_FEH, LOCALID_TRAINING_TREE, 0);
-  WAIT(20);
+  ObjectMotion_SetAngleToward(LOCALID_PROUD_STUDENT, LOCALID_TRAINING_TREE, 0);
+  ObjectMotion_SetAngleToward(LOCALID_WATCHING_STUDENT, LOCALID_TRAINING_TREE,
+                              0);
+  ObjectMotion_SetAngleToward(LOCALID_TREE_STUDENT, LOCALID_TRAINING_TREE, 0);
+  ObjectMotion_SetAngleToward(LOCALID_MESSENGER_STUDENT, LOCALID_TRAINING_TREE,
+                              0);
+  ObjectMotion_SetAngleToward(LOCALID_FEH, LOCALID_TRAINING_TREE, 0);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_TREE_STUDENT, 2);
-  WAIT(20);
-  MESSAGE_SET(MsgXianLookTreeFell);
+  FieldScript_WaitFrames(20);
+  FieldScript_SetMessageId(MsgXianLookTreeFell);
   FieldScript_ShowMessageThenWait(LOCALID_TREE_STUDENT, 0, 20);
   FieldScript_ShowMessageThenWait(LOCALID_MESSENGER_STUDENT, 0, 20);
-  OBJECT_EMOTE(LOCALID_FEH, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  OBJECT_EMOTE(LOCALID_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_ShowEmote(LOCALID_FEH, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  ObjectEvent_ShowEmote(LOCALID_MESSENGER_STUDENT,
+                        EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   FieldScript_ShowMessageThenWait(LOCALID_MESSENGER_STUDENT, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_FEH, ANIM_SHAKE_HEAD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   FieldScript_ShowMessageThenWait(LOCALID_FEH, 0, 20);
-  OBJECT_EMOTE(LOCALID_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  ObjectEvent_ShowEmote(LOCALID_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_WINCE,
+                        60);
   FieldScript_ShowMessageThenWait(LOCALID_MESSENGER_STUDENT, 0, 20);
   ObjectEvent_LinkPair(LOCALID_TREE_STUDENT, LOCALID_FEH, 0);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_FEH, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_TREE_STUDENT, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   // Reset the tree after the group has reacted to the demonstration.
-  OBJECT_SPEED(LOCALID_TREE_STUDENT, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  ObjectEvent_SetSpeed(LOCALID_TREE_STUDENT, 4 * PIXELS(1) / 5,
+                       2 * PIXELS(1) / 5);
   FuchinTemple_StudentWalksAroundTree();
   ObjectMotion_SetVarCbAndRefresh(LOCALID_TREE_STUDENT, 3);
-  OBJECT_POSITION_SET(LOCALID_TRAINING_TREE, 232, 168);
+  ObjectEvent_SetPosition(LOCALID_TRAINING_TREE, PIXELS(232), PIXELS(168));
   Import_ObjectEventSetPosition(LOCALID_TRAINING_TREE_TARGET, PIXELS(232),
                                 PIXELS(168));
   tree = ObjectEvent_GetById(LOCALID_TRAINING_TREE);
@@ -884,16 +896,16 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
     sprite->rotation = rotation;
   }
   Sound_PlaySong(SE_CHEST_OPEN);
-  WAIT(40);
+  FieldScript_WaitFrames(40);
   ObjectMotion_SetPositionAndReset(LOCALID_TREE_STUDENT, 216, 152);
-  OBJECT_DIR(LOCALID_TREE_STUDENT, FACING_SOUTH, 30);
+  ObjectEvent_FaceDirection(LOCALID_TREE_STUDENT, FACING_SOUTH, 30);
   GameFlag_Set(FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL);
 }
 
 /// Move on the training tree in Master Feh's school in Xian: it topples, and
 /// the students react; it does not count as Chi.
 static void EventScript_MoveTree(void) {
-  SCRIPT_START();
+  FieldScript_Start();
 
   if (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing > FACING_SOUTH &&
       ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing < FACING_NORTH) {
@@ -908,7 +920,7 @@ static void EventScript_MoveTree(void) {
     FuchinTemple_StudentExplainsChiRules(FUCHIN_TEMPLE_CHI_NOT_FROM_LINE);
   }
 
-  SCRIPT_END();
+  FieldScript_End();
 }
 
 /// Walking into the training tree in Master Feh's school in Xian: Isaac pushes
@@ -917,9 +929,9 @@ static void EventScript_PushTreeByHand(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   u16 facing;
 
-  SCRIPT_START();
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_PUSH);
-  WAIT(20);
+  FieldScript_Start();
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_PUSH);
+  FieldScript_WaitFrames(20);
 
   facing = leader->facing;
 
@@ -933,9 +945,9 @@ static void EventScript_PushTreeByHand(void) {
     FuchinTemple_ToppleTreeEast();
   }
 
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   FuchinTemple_StudentExplainsChiRules(FUCHIN_TEMPLE_CHI_PUSHED_BY_HAND);
-  SCRIPT_END();
+  FieldScript_End();
 }
 
 /// Force on the training tree in Master Feh's school in Xian: it topples. From
@@ -946,7 +958,7 @@ static void EventScript_ForceTree(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   u16 facing;
 
-  SCRIPT_START();
+  FieldScript_Start();
 
   facing = leader->facing;
   if ((u16)(facing - FACING_SOUTHEAST) <= 0x3fff) {
@@ -970,7 +982,7 @@ static void EventScript_ForceTree(void) {
     } else {
       FuchinTemple_StudentsSeeTreeFall();
     }
-    SCRIPT_END();
+    FieldScript_End();
     return;
   }
 
@@ -981,7 +993,7 @@ static void EventScript_ForceTree(void) {
   } else {
     FuchinTemple_FehSeesChi();
   }
-  SCRIPT_END();
+  FieldScript_End();
 }
 
 /// The first time the tree falls from the line, a student runs for Master Feh.
@@ -992,52 +1004,56 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   struct ObjectEvent *objectEvent;
 
   GameFlag_Set(FLAG_FEIZHI_WENT_TO_HSU);
-  WAIT(30);
+  FieldScript_WaitFrames(30);
   ObjectEvent_FaceObjectEvent(LOCALID_PROUD_STUDENT, LOCALID_PARTY_LEADER, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_TREE_STUDENT, LOCALID_PARTY_LEADER, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_MESSENGER_STUDENT, LOCALID_PARTY_LEADER,
                               0);
-  WAIT(20);
-  OBJECT_EMOTE(LOCALID_PROUD_STUDENT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  OBJECT_EMOTE(LOCALID_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  OBJECT_EMOTE(LOCALID_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-               0);
-  WAIT(60);
-  MESSAGE_SET(MsgXianDidDoWarrior);
+  FieldScript_WaitFrames(20);
+  ObjectEvent_ShowEmote(LOCALID_PROUD_STUDENT,
+                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectEvent_ShowEmote(LOCALID_TREE_STUDENT,
+                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectEvent_ShowEmote(LOCALID_MESSENGER_STUDENT,
+                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldScript_WaitFrames(60);
+  FieldScript_SetMessageId(MsgXianDidDoWarrior);
   Script_ShowMessageAndWait(LOCALID_PROUD_STUDENT, 0, 20);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_PROUD_STUDENT, 0);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_TREE_STUDENT, 1);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_TREE_STUDENT, 0, 20);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_TREE_STUDENT, 0);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MESSENGER_STUDENT, 2);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_MESSENGER_STUDENT,
                               0);
   Script_AskYesNo(LOCALID_MESSENGER_STUDENT, 0);
-  WAIT(50);
+  FieldScript_WaitFrames(50);
   // Bring the observers out through the school door.
   FieldCamera_FollowObjectEvent(LOCALID_MESSENGER_STUDENT, 1);
-  OBJECT_SPEED(LOCALID_MESSENGER_STUDENT, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  ObjectEvent_SetSpeed(LOCALID_MESSENGER_STUDENT, 4 * PIXELS(1) / 5,
+                       2 * PIXELS(1) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_MESSENGER_STUDENT, 176, 248);
   ObjectEvent_WalkToAndWait(LOCALID_MESSENGER_STUDENT, 308, 248);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
-  OBJECT_DIR(LOCALID_MESSENGER_STUDENT, FACING_NORTH, 20);
-  SE(SE_DOOR_OPEN);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MESSENGER_STUDENT, FACING_NORTH, 20);
+  Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gFuchinTemple_FehsDoorOpens, 78, 13);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MESSENGER_STUDENT, 2);
-  WAIT(20);
-  OBJECT_SPEED(LOCALID_MESSENGER_STUDENT, 3 * PIXELS(1) / 2, 3 * PIXELS(1) / 4);
+  FieldScript_WaitFrames(20);
+  ObjectEvent_SetSpeed(LOCALID_MESSENGER_STUDENT, 3 * PIXELS(1) / 2,
+                       3 * PIXELS(1) / 4);
   objectEvent = ObjectEvent_GetById(LOCALID_MESSENGER_STUDENT);
   objectEvent->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkToAndWait(LOCALID_MESSENGER_STUDENT, 308, 272);
-  WAIT(1);
+  FieldScript_WaitFrames(1);
   objectEvent = ObjectEvent_Get(LOCALID_MESSENGER_STUDENT);
 
   objectEvent->steeringFlags =
       OBJ_EVENT_FACES_MOTION | objectEvent->steeringFlags;
   Script_ShowMessageAndWait(LOCALID_MESSENGER_STUDENT, 0, 50);
-  OBJECT_POSITION_SET(LOCALID_FEIZHI, 304, 216);
+  ObjectEvent_SetPosition(LOCALID_FEIZHI, PIXELS(304), PIXELS(216));
   ObjectEvent_WalkToAndWait(LOCALID_FEIZHI, 304, 248);
   ObjectEvent_FaceObjectEvent(LOCALID_WELCOMING_STUDENT, LOCALID_FEIZHI, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_KICKING_STUDENT, LOCALID_FEIZHI, 0);
@@ -1048,7 +1064,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   ObjectEvent_FaceObjectEvent(LOCALID_TREE_STUDENT, LOCALID_FEIZHI, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_MESSENGER_STUDENT, LOCALID_FEIZHI, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_FEIZHI, 0);
-  WAIT(10);
+  FieldScript_WaitFrames(10);
   ObjectMotion_SetVariantCallback(LOCALID_WELCOMING_STUDENT, 2);
   ObjectMotion_SetVariantCallback(LOCALID_KICKING_STUDENT, 2);
   ObjectMotion_SetVariantCallback(LOCALID_PUNCHING_STUDENT, 2);
@@ -1057,14 +1073,14 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   ObjectMotion_SetVariantCallback(LOCALID_WATCHING_STUDENT, 2);
   ObjectMotion_SetVariantCallback(LOCALID_TREE_STUDENT, 2);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MESSENGER_STUDENT, 2);
-  OBJECT_EMOTE(LOCALID_FEIZHI, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
-  OBJECT_POSITION_SET(LOCALID_FEH, 304, 216);
-  OBJECT_WALK(LOCALID_FEH, 304, 248);
-  OBJECT_WALK(LOCALID_FEIZHI, 280, 264);
+  ObjectEvent_ShowEmote(LOCALID_FEIZHI, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
+  ObjectEvent_SetPosition(LOCALID_FEH, PIXELS(304), PIXELS(216));
+  ObjectEvent_WalkTo(LOCALID_FEH, 304, 248);
+  ObjectEvent_WalkTo(LOCALID_FEIZHI, 280, 264);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FEH);
-  OBJECT_DIR(LOCALID_FEH, FACING_SOUTH + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_FEH, FACING_SOUTH + FACING_STEP, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FEIZHI);
-  SE(SE_DOOR_CLOSE);
+  Script_PlaySong(SE_DOOR_CLOSE);
   MapGrid_AnimateCells(gFuchinTemple_FehsDoorCloses, 78, 13);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
   ObjectEvent_FaceObjectEvent(LOCALID_WELCOMING_STUDENT, LOCALID_FEIZHI, 0);
@@ -1076,112 +1092,113 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   ObjectEvent_FaceObjectEvent(LOCALID_TREE_STUDENT, LOCALID_FEIZHI, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_MESSENGER_STUDENT, LOCALID_FEIZHI, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_FEIZHI, 0);
-  WAIT(10);
+  FieldScript_WaitFrames(10);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FEIZHI, 2);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_FEH, ANIM_SHAKE_HEAD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_FEIZHI, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FEH, 1);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
-  OBJECT_DIR(LOCALID_FEIZHI, FACING_NORTH + FACING_STEP, 20);
+  ObjectEvent_FaceDirection(LOCALID_FEIZHI, FACING_NORTH + FACING_STEP, 20);
   Script_ShowMessageAndWait(LOCALID_FEIZHI, 0, 20);
-  OBJECT_EMOTE(LOCALID_FEH, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  ObjectEvent_ShowEmote(LOCALID_FEH, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_FEIZHI, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEIZHI, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_FEH, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_FEIZHI, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_FEH, ANIM_SHAKE_HEAD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FEIZHI, 2);
-  WAIT(20);
-  OBJECT_DIR(LOCALID_FEIZHI, FACING_EAST, 20);
+  FieldScript_WaitFrames(20);
+  ObjectEvent_FaceDirection(LOCALID_FEIZHI, FACING_EAST, 20);
   Script_ShowMessageAndWait(LOCALID_FEIZHI, 0, 20);
-  OBJECT_DIR(LOCALID_MESSENGER_STUDENT, FACING_WEST, 20);
+  ObjectEvent_FaceDirection(LOCALID_MESSENGER_STUDENT, FACING_WEST, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_MESSENGER_STUDENT, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_FEIZHI, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEIZHI, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_MESSENGER_STUDENT, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_MESSENGER_STUDENT, 0, 20);
-  OBJECT_DIR(LOCALID_FEIZHI, FACING_WEST, 20);
+  ObjectEvent_FaceDirection(LOCALID_FEIZHI, FACING_WEST, 20);
   Script_ShowMessageAndWait(LOCALID_FEIZHI, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_WELCOMING_STUDENT, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_WELCOMING_STUDENT, 0, 20);
-  OBJECT_DIR(LOCALID_FEIZHI, FACING_NORTH + FACING_STEP, 20);
+  ObjectEvent_FaceDirection(LOCALID_FEIZHI, FACING_NORTH + FACING_STEP, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FEIZHI, 1);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEIZHI, 0, 20);
-  OBJECT_EMOTE(LOCALID_FEH, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  ObjectEvent_ShowEmote(LOCALID_FEH, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
-  OBJECT_EMOTE(LOCALID_FEIZHI, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_ShowEmote(LOCALID_FEIZHI, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Script_ShowMessageAndWait(LOCALID_FEIZHI, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_FEH, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
-  OBJECT_EMOTE(LOCALID_FEIZHI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  ObjectEvent_ShowEmote(LOCALID_FEIZHI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Script_ShowMessageAndWait(LOCALID_FEIZHI, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_FEH, ANIM_SHAKE_HEAD);
-  WAIT(20);
-  OBJECT_EMOTE(LOCALID_FEIZHI, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
+  FieldScript_WaitFrames(20);
+  ObjectEvent_ShowEmote(LOCALID_FEIZHI, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
   Script_ShowMessageAndWait(LOCALID_FEIZHI, 0, 20);
-  OBJECT_EMOTE(LOCALID_FEH, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  ObjectEvent_ShowEmote(LOCALID_FEH, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_FEIZHI, ANIM_SHAKE_HEAD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEIZHI, 0, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FEH, 2);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FEIZHI, 2);
-  WAIT(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_WalkToAndWait(LOCALID_FEIZHI, 256, 280);
-  OBJECT_DIR(LOCALID_FEIZHI, FACING_SOUTH, 20);
-  OBJECT_POSITION_SET(LOCALID_FEIZHI, 0, 0);
+  ObjectEvent_FaceDirection(LOCALID_FEIZHI, FACING_SOUTH, 20);
+  ObjectEvent_SetPosition(LOCALID_FEIZHI, PIXELS(0), PIXELS(0));
   ObjectEvent_DestroyById(LOCALID_FEIZHI);
-  WAIT(30);
+  FieldScript_WaitFrames(30);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_WELCOMING_STUDENT, 2);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_WELCOMING_STUDENT, 0, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_TREE_STUDENT, 2);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_TREE_STUDENT, 0, 20);
   ObjectEvent_FaceObjectEvent(LOCALID_MESSENGER_STUDENT, LOCALID_FEH, 0);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MESSENGER_STUDENT, 2);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_MESSENGER_STUDENT, 0, 20);
   ObjectEvent_FaceObjectEvent(LOCALID_FEH, LOCALID_MESSENGER_STUDENT, 0);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_FEH, ANIM_SHAKE_HEAD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_FEH, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
-  OBJECT_SPEED(LOCALID_FEH, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  ObjectEvent_SetSpeed(LOCALID_FEH, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_FEH, 256, 248);
-  OBJECT_DIR(LOCALID_FEH, FACING_NORTH, 20);
+  ObjectEvent_FaceDirection(LOCALID_FEH, FACING_NORTH, 20);
   ObjectMotion_SetVariantCallback(LOCALID_FEH, 1);
-  OBJECT_EMOTE(LOCALID_FEH, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  ObjectEvent_ShowEmote(LOCALID_FEH, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   ObjectEvent_WalkToAndWait(LOCALID_FEH, 240, 184);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FEH, 2);
-  WAIT(20);
-  OBJECT_POSITION_SET(LOCALID_TRAINING_TREE, 232, 168);
-  OBJECT_POSITION_SET(LOCALID_TRAINING_TREE_TARGET, 232, 168);
+  FieldScript_WaitFrames(20);
+  ObjectEvent_SetPosition(LOCALID_TRAINING_TREE, PIXELS(232), PIXELS(168));
+  ObjectEvent_SetPosition(LOCALID_TRAINING_TREE_TARGET, PIXELS(232),
+                          PIXELS(168));
   // Restore the tree before leaving the group ready for another demonstration.
   objectEvent = ObjectEvent_Get(LOCALID_TRAINING_TREE);
   objectEvent->y.fixed = 0xc0000;
@@ -1196,11 +1213,12 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
 
     sprite->rotation = rotation;
   }
-  SE(SE_CHEST_OPEN);
+  Script_PlaySong(SE_CHEST_OPEN);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
   ObjectEvent_WalkToAndWait(LOCALID_MESSENGER_STUDENT, 256, 240);
-  OBJECT_DIR(LOCALID_MESSENGER_STUDENT, FACING_NORTHWEST + FACING_STEP, 20);
+  ObjectEvent_FaceDirection(LOCALID_MESSENGER_STUDENT,
+                            FACING_NORTHWEST + FACING_STEP, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MESSENGER_STUDENT, 1);
   Script_ShowMessageAndWait(LOCALID_MESSENGER_STUDENT, 0, 20);
   ObjectEvent_FaceObjectEvent(LOCALID_WELCOMING_STUDENT, LOCALID_PARTY_LEADER,
@@ -1216,43 +1234,45 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   ObjectEvent_FaceObjectEvent(LOCALID_MESSENGER_STUDENT, LOCALID_PARTY_LEADER,
                               0);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FEH, 2);
-  WAIT(20);
-  OBJECT_DIR(LOCALID_FEH, FACING_SOUTH + FACING_STEP, 20);
+  FieldScript_WaitFrames(20);
+  ObjectEvent_FaceDirection(LOCALID_FEH, FACING_SOUTH + FACING_STEP, 20);
   ObjectEvent_WalkToAndWait(LOCALID_FEH, 248, 208);
-  OBJECT_DIR(LOCALID_FEH, FACING_SOUTH + FACING_STEP, 20);
+  ObjectEvent_FaceDirection(LOCALID_FEH, FACING_SOUTH + FACING_STEP, 20);
   Script_OpenMessage(LOCALID_FEH, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
     ObjectMotion_SetVarCbAndRefresh(LOCALID_MESSENGER_STUDENT, 1);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(LOCALID_MESSENGER_STUDENT, 0, 20);
     GameFlag_Set(FLAG_FEH_WAITS_TO_SEE_CHI);
   } else {
     Script_SkipMessages(1);
-    WAIT(20);
-    OBJECT_EMOTE(LOCALID_FEH, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-    OBJECT_DIR(LOCALID_FEH, FACING_SOUTH, 20);
+    FieldScript_WaitFrames(20);
+    ObjectEvent_ShowEmote(LOCALID_FEH, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+    ObjectEvent_FaceDirection(LOCALID_FEH, FACING_SOUTH, 20);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_MESSENGER_STUDENT, 2);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     Script_OpenMessage(LOCALID_MESSENGER_STUDENT, 0);
     if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
       ObjectMotion_SetAnimationAndWait(LOCALID_MESSENGER_STUDENT, ANIM_NOD);
-      WAIT(20);
-      OBJECT_DIR(LOCALID_FEH, FACING_NORTHWEST + FACING_STEP, 20);
+      FieldScript_WaitFrames(20);
+      ObjectEvent_FaceDirection(LOCALID_FEH, FACING_NORTHWEST + FACING_STEP,
+                                20);
       Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
       GameFlag_Set(FLAG_FEH_WAITS_TO_SEE_CHI);
     } else {
       Script_SkipMessages(1);
-      WAIT(20);
+      FieldScript_WaitFrames(20);
       ObjectMotion_SetAnimationAndWait(LOCALID_FEH, ANIM_SHAKE_HEAD);
-      WAIT(20);
+      FieldScript_WaitFrames(20);
       Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
       Script_SetFlag(FLAG_FEH_CHI_DEMONSTRATION_DECLINED);
     }
   }
-  OBJECT_DIR(LOCALID_KICKING_STUDENT, FACING_WEST, 0);
-  OBJECT_DIR(LOCALID_PUNCHING_STUDENT, FACING_WEST, 20);
-  OBJECT_ANIMATION(LOCALID_KICKING_STUDENT, ANIM_STUDENT_KICKS);
-  OBJECT_ANIMATION(LOCALID_PUNCHING_STUDENT, ANIM_STUDENT_PUNCHES);
+  ObjectEvent_FaceDirection(LOCALID_KICKING_STUDENT, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_PUNCHING_STUDENT, FACING_WEST, 20);
+  Import_ObjectEventSetAnimation(LOCALID_KICKING_STUDENT, ANIM_STUDENT_KICKS);
+  Import_ObjectEventSetAnimation(LOCALID_PUNCHING_STUDENT,
+                                 ANIM_STUDENT_PUNCHES);
   ObjectEvent_SetActionScript(LOCALID_JUMPING_STUDENT,
                               gFuchinTemple_JumpingStudentScript);
 }
@@ -1262,19 +1282,19 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
 /// "Warrior, will you show me your Chi?"
 static void EventScript_FehAsksToSeeChi(void) {
 
-  SCRIPT_START();
-  MESSAGE_SET(MsgXianWarriorWillShowMeYour);
-  MESSAGE_OPEN(LOCALID_FEH, 0);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgXianWarriorWillShowMeYour);
+  FieldMessage_ShowAtObject(LOCALID_FEH, 0);
 
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     FieldScript_ShowMessageThenWait(LOCALID_FEH, 0, 20);
     GameFlag_Set(FLAG_FEH_WAITS_TO_SEE_CHI);
-    SCRIPT_END();
+    FieldScript_End();
   } else {
     gFieldWork->message += 1;
     FieldScript_ShowMessageThenWait(LOCALID_FEH, 0, 20);
-    SCRIPT_END();
+    FieldScript_End();
   }
 }
 
@@ -1295,15 +1315,17 @@ static void FuchinTemple_FehSeesChi(void) {
   objectEvent->update = 0;
   objectEvent = ObjectEvent_Get(LOCALID_MESSENGER_STUDENT);
   objectEvent->update = 0;
-  OBJECT_ANIMATION(LOCALID_PUNCHING_STUDENT, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PUNCHING_STUDENT, ANIM_STAND);
   FieldCamera_SetSpeed(0x8000, 0x1000);
   FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(200), 1);
   FieldCamera_WaitForArrival();
   // Continue the Chi discussion with the students gathered around the tree.
-  MESSAGE_SET(MsgXianYaTreeFell);
-  OBJECT_SPEED(LOCALID_KICKING_STUDENT, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-  OBJECT_SPEED(LOCALID_JUMPING_STUDENT, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-  OBJECT_WALK(LOCALID_KICKING_STUDENT, 152, 200);
+  FieldScript_SetMessageId(MsgXianYaTreeFell);
+  ObjectEvent_SetSpeed(LOCALID_KICKING_STUDENT, 4 * PIXELS(1) / 5,
+                       2 * PIXELS(1) / 5);
+  ObjectEvent_SetSpeed(LOCALID_JUMPING_STUDENT, 4 * PIXELS(1) / 5,
+                       2 * PIXELS(1) / 5);
+  ObjectEvent_WalkTo(LOCALID_KICKING_STUDENT, 152, 200);
   ObjectEvent_WalkToAndWait(LOCALID_JUMPING_STUDENT, 144, 248);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KICKING_STUDENT);
   ObjectEvent_FaceObjectEvent(LOCALID_WELCOMING_STUDENT, LOCALID_TRAINING_TREE,
@@ -1317,9 +1339,10 @@ static void FuchinTemple_FehSeesChi(void) {
   ObjectEvent_FaceObjectEvent(LOCALID_MESSENGER_STUDENT, LOCALID_TRAINING_TREE,
                               0);
   ObjectEvent_FaceObjectEvent(LOCALID_FEH, LOCALID_TRAINING_TREE, 0);
-  OBJECT_SPEED(LOCALID_KICKING_STUDENT, 3 * PIXELS(1) / 2, 3 * PIXELS(1) / 4);
-  OBJECT_SPEED(LOCALID_JUMPING_STUDENT, PIXELS(2), PIXELS(1));
-  OBJECT_WALK(LOCALID_KICKING_STUDENT, 152, 200);
+  ObjectEvent_SetSpeed(LOCALID_KICKING_STUDENT, 3 * PIXELS(1) / 2,
+                       3 * PIXELS(1) / 4);
+  ObjectEvent_SetSpeed(LOCALID_JUMPING_STUDENT, PIXELS(2), PIXELS(1));
+  ObjectEvent_WalkTo(LOCALID_KICKING_STUDENT, 152, 200);
   ObjectEvent_WalkToAndWait(LOCALID_JUMPING_STUDENT, 144, 248);
   ObjectEvent_FaceObjectEvent(LOCALID_JUMPING_STUDENT, LOCALID_TRAINING_TREE,
                               0);
@@ -1327,36 +1350,43 @@ static void FuchinTemple_FehSeesChi(void) {
   ObjectEvent_FaceObjectEvent(LOCALID_KICKING_STUDENT, LOCALID_TRAINING_TREE,
                               0);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FEH, 2);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 40);
   ObjectEvent_FaceObjectEvent(LOCALID_WELCOMING_STUDENT, LOCALID_FEH, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_KICKING_STUDENT, LOCALID_FEH, 0);
-  OBJECT_DIR(LOCALID_PUNCHING_STUDENT, FACING_SOUTHEAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_PUNCHING_STUDENT,
+                            FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_JUMPING_STUDENT, LOCALID_FEH, 0);
-  OBJECT_DIR(LOCALID_PROUD_STUDENT, FACING_SOUTHEAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_PROUD_STUDENT,
+                            FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_WATCHING_STUDENT, LOCALID_FEH, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_TREE_STUDENT, LOCALID_FEH, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_MESSENGER_STUDENT, LOCALID_FEH, 0);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_MESSENGER_STUDENT, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_FEH, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_MESSENGER_STUDENT, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_MESSENGER_STUDENT, 0, 20);
-  OBJECT_EMOTE(LOCALID_FEH, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  OBJECT_EMOTE(LOCALID_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_ShowEmote(LOCALID_FEH, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  ObjectEvent_ShowEmote(LOCALID_MESSENGER_STUDENT,
+                        EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Script_ShowMessageAndWait(LOCALID_MESSENGER_STUDENT, 0, 20);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
-  OBJECT_EMOTE(LOCALID_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  OBJECT_EMOTE(LOCALID_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  OBJECT_SPEED(LOCALID_TREE_STUDENT, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  ObjectEvent_ShowEmote(LOCALID_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_WINCE,
+                        60);
+  ObjectEvent_ShowEmote(LOCALID_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                        60);
+  ObjectEvent_SetSpeed(LOCALID_TREE_STUDENT, 4 * PIXELS(1) / 5,
+                       2 * PIXELS(1) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_TREE_STUDENT, 216, 176);
-  OBJECT_DIR(LOCALID_TREE_STUDENT, FACING_SOUTHEAST + FACING_STEP, 20);
+  ObjectEvent_FaceDirection(LOCALID_TREE_STUDENT,
+                            FACING_SOUTHEAST + FACING_STEP, 20);
   Script_ShowMessageAndWait(LOCALID_TREE_STUDENT, 0, 20);
-  OBJECT_DIR(LOCALID_FEH, FACING_NORTHWEST + FACING_STEP, 20);
+  ObjectEvent_FaceDirection(LOCALID_FEH, FACING_NORTHWEST + FACING_STEP, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_FEH, ANIM_SHAKE_HEAD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
   ObjectMotion_SetVariantCallback(LOCALID_WELCOMING_STUDENT, 2);
   ObjectMotion_SetVariantCallback(LOCALID_KICKING_STUDENT, 2);
@@ -1366,116 +1396,127 @@ static void FuchinTemple_FehSeesChi(void) {
   ObjectMotion_SetVariantCallback(LOCALID_WATCHING_STUDENT, 2);
   ObjectMotion_SetVariantCallback(LOCALID_TREE_STUDENT, 2);
   ObjectMotion_SetVariantCallback(LOCALID_MESSENGER_STUDENT, 2);
-  WAIT(40);
+  FieldScript_WaitFrames(40);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_PROUD_STUDENT, 2);
   Script_ShowMessageAndWait(LOCALID_PROUD_STUDENT, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_FEH, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 20);
-  OBJECT_DIR(LOCALID_FEH, FACING_SOUTH + FACING_STEP, 20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 20);
+  ObjectEvent_FaceDirection(LOCALID_FEH, FACING_SOUTH + FACING_STEP, 20);
   Script_AskYesNo(LOCALID_FEH, 0);
-  OBJECT_EMOTE(LOCALID_WELCOMING_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  WAIT(5);
-  OBJECT_EMOTE(LOCALID_KICKING_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  WAIT(5);
-  OBJECT_EMOTE(LOCALID_PUNCHING_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  WAIT(5);
-  OBJECT_EMOTE(LOCALID_JUMPING_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  WAIT(5);
-  OBJECT_EMOTE(LOCALID_PROUD_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  WAIT(5);
-  OBJECT_EMOTE(LOCALID_WATCHING_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  WAIT(5);
-  OBJECT_EMOTE(LOCALID_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  WAIT(5);
-  OBJECT_EMOTE(LOCALID_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  WAIT(60);
+  ObjectEvent_ShowEmote(LOCALID_WELCOMING_STUDENT,
+                        EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  FieldScript_WaitFrames(5);
+  ObjectEvent_ShowEmote(LOCALID_KICKING_STUDENT,
+                        EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  FieldScript_WaitFrames(5);
+  ObjectEvent_ShowEmote(LOCALID_PUNCHING_STUDENT,
+                        EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  FieldScript_WaitFrames(5);
+  ObjectEvent_ShowEmote(LOCALID_JUMPING_STUDENT,
+                        EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  FieldScript_WaitFrames(5);
+  ObjectEvent_ShowEmote(LOCALID_PROUD_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                        0);
+  FieldScript_WaitFrames(5);
+  ObjectEvent_ShowEmote(LOCALID_WATCHING_STUDENT,
+                        EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  FieldScript_WaitFrames(5);
+  ObjectEvent_ShowEmote(LOCALID_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                        0);
+  FieldScript_WaitFrames(5);
+  ObjectEvent_ShowEmote(LOCALID_MESSENGER_STUDENT,
+                        EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  FieldScript_WaitFrames(60);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MESSENGER_STUDENT, 2);
   Script_ShowMessageAndWait(LOCALID_MESSENGER_STUDENT, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_FEH, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
-  OBJECT_EMOTE(LOCALID_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_ShowEmote(LOCALID_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                        60);
   Script_ShowMessageAndWait(LOCALID_TREE_STUDENT, 0, 20);
   ObjectEvent_FaceObjectEvent(LOCALID_FEH, LOCALID_TREE_STUDENT, 0);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_FEH, ANIM_SHAKE_HEAD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 40);
   ObjectEvent_LinkPair(LOCALID_PUNCHING_STUDENT, LOCALID_KICKING_STUDENT, 0);
   ObjectEvent_LinkPair(LOCALID_JUMPING_STUDENT, LOCALID_WATCHING_STUDENT, 0);
   ObjectEvent_LinkPair(LOCALID_PROUD_STUDENT, LOCALID_TREE_STUDENT, 0);
-  WAIT(60);
+  FieldScript_WaitFrames(60);
   ObjectEvent_FaceObjectEvent(LOCALID_KICKING_STUDENT, LOCALID_FEH, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_PUNCHING_STUDENT, LOCALID_FEH, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_JUMPING_STUDENT, LOCALID_FEH, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_PROUD_STUDENT, LOCALID_FEH, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_WATCHING_STUDENT, LOCALID_FEH, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_TREE_STUDENT, LOCALID_FEH, 0);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FEH, 2);
-  WAIT(20);
-  OBJECT_ANIMATION(LOCALID_WELCOMING_STUDENT, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_KICKING_STUDENT, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_PUNCHING_STUDENT, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_JUMPING_STUDENT, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_PROUD_STUDENT, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_WATCHING_STUDENT, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_TREE_STUDENT, ANIM_NOD);
+  FieldScript_WaitFrames(20);
+  Import_ObjectEventSetAnimation(LOCALID_WELCOMING_STUDENT, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_KICKING_STUDENT, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PUNCHING_STUDENT, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_JUMPING_STUDENT, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PROUD_STUDENT, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_WATCHING_STUDENT, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_TREE_STUDENT, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MESSENGER_STUDENT, ANIM_NOD);
-  WAIT(20);
-  OBJECT_DIR(LOCALID_FEH, FACING_SOUTH + FACING_STEP, 20);
+  FieldScript_WaitFrames(20);
+  ObjectEvent_FaceDirection(LOCALID_FEH, FACING_SOUTH + FACING_STEP, 20);
   Script_AskYesNo(LOCALID_FEH, 0);
   ObjectMotion_SetAnimationAndWait(LOCALID_FEH, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_WELCOMING_STUDENT, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_KICKING_STUDENT, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_PUNCHING_STUDENT, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_JUMPING_STUDENT, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_PROUD_STUDENT, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_WATCHING_STUDENT, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_TREE_STUDENT, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_WELCOMING_STUDENT, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_KICKING_STUDENT, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PUNCHING_STUDENT, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_JUMPING_STUDENT, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PROUD_STUDENT, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_WATCHING_STUDENT, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_TREE_STUDENT, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MESSENGER_STUDENT, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FEH, 2);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_FEH, ANIM_NOD);
-  WAIT(20);
-  OBJECT_DIR(LOCALID_FEH, FACING_WEST, 20);
+  FieldScript_WaitFrames(20);
+  ObjectEvent_FaceDirection(LOCALID_FEH, FACING_WEST, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FEH, 2);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEH, 0, 20);
-  OBJECT_ANIMATION(LOCALID_WELCOMING_STUDENT, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_KICKING_STUDENT, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_PUNCHING_STUDENT, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_JUMPING_STUDENT, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_PROUD_STUDENT, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_WATCHING_STUDENT, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_TREE_STUDENT, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_WELCOMING_STUDENT, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_KICKING_STUDENT, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PUNCHING_STUDENT, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_JUMPING_STUDENT, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PROUD_STUDENT, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_WATCHING_STUDENT, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_TREE_STUDENT, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MESSENGER_STUDENT, ANIM_NOD);
-  WAIT(20);
-  OBJECT_WALK(LOCALID_KICKING_STUDENT, 120, 200);
-  OBJECT_WALK(LOCALID_JUMPING_STUDENT, 120, 248);
+  FieldScript_WaitFrames(20);
+  ObjectEvent_WalkTo(LOCALID_KICKING_STUDENT, 120, 200);
+  ObjectEvent_WalkTo(LOCALID_JUMPING_STUDENT, 120, 248);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KICKING_STUDENT);
-  OBJECT_DIR(LOCALID_PUNCHING_STUDENT, FACING_WEST, 20);
-  OBJECT_ANIMATION(LOCALID_KICKING_STUDENT, ANIM_STUDENT_KICKS);
-  OBJECT_ANIMATION(LOCALID_PUNCHING_STUDENT, ANIM_STUDENT_PUNCHES);
+  ObjectEvent_FaceDirection(LOCALID_PUNCHING_STUDENT, FACING_WEST, 20);
+  Import_ObjectEventSetAnimation(LOCALID_KICKING_STUDENT, ANIM_STUDENT_KICKS);
+  Import_ObjectEventSetAnimation(LOCALID_PUNCHING_STUDENT,
+                                 ANIM_STUDENT_PUNCHES);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_JUMPING_STUDENT);
   ObjectEvent_SetActionScript(LOCALID_JUMPING_STUDENT,
                               gFuchinTemple_JumpingStudentScript);
-  OBJECT_SPEED(LOCALID_TREE_STUDENT, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  ObjectEvent_SetSpeed(LOCALID_TREE_STUDENT, 4 * PIXELS(1) / 5,
+                       2 * PIXELS(1) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_TREE_STUDENT, 216, 168);
   ObjectEvent_WalkToAndWait(LOCALID_TREE_STUDENT, 232, 168);
-  OBJECT_DIR(LOCALID_TREE_STUDENT, FACING_NORTH, 20);
+  ObjectEvent_FaceDirection(LOCALID_TREE_STUDENT, FACING_NORTH, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_TREE_STUDENT, 3);
-  OBJECT_POSITION_SET(LOCALID_TRAINING_TREE, 232, 168);
+  ObjectEvent_SetPosition(LOCALID_TRAINING_TREE, PIXELS(232), PIXELS(168));
   objectEvent = ObjectEvent_Get(LOCALID_TRAINING_TREE);
   objectEvent->y.fixed = 0xc0000;
   objectEvent = ObjectEvent_Get(LOCALID_TRAINING_TREE);
@@ -1487,10 +1528,10 @@ static void FuchinTemple_FehSeesChi(void) {
 
     sprite->rotation = rotation;
   }
-  SE(SE_CHEST_OPEN);
-  WAIT(40);
+  Script_PlaySong(SE_CHEST_OPEN);
+  FieldScript_WaitFrames(40);
   ObjectEvent_WalkToAndWait(LOCALID_TREE_STUDENT, 216, 152);
-  OBJECT_DIR(LOCALID_TREE_STUDENT, FACING_SOUTH, 30);
+  ObjectEvent_FaceDirection(LOCALID_TREE_STUDENT, FACING_SOUTH, 30);
   GameFlag_Clear(FLAG_FEH_WAITS_TO_SEE_CHI);
   GameFlag_Set(FLAG_FEH_SAW_KI);
 }
@@ -1499,10 +1540,10 @@ static void FuchinTemple_FehSeesChi(void) {
 /// Xian once Hsu is known to be trapped: the student asks about the flood.
 /// "Water monsters flooded Altin. Did you defeat them, warrior?"
 static void EventScript_StudentAsksAboutAltin(void) {
-  SCRIPT_START();
-  MESSAGE_SET(MsgXianWaterMonstersFloodedAltinDid);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgXianWaterMonstersFloodedAltinDid);
   FieldScript_AskYesNoAndShowResponse(LOCALID_PUNCHING_STUDENT, 0);
-  SCRIPT_END();
+  FieldScript_End();
 }
 
 /// Walking north into the door Feh and Feizhi came out of, in Master Feh's
@@ -1510,20 +1551,20 @@ static void EventScript_StudentAsksAboutAltin(void) {
 /// opens and Isaac walks through
 /// (LACQUER_ROOMS_A_FEHS_SCHOOL_TO_HOUSE). "It is locked."
 static void EventScript_OpenLockedDoor(void) {
-  SCRIPT_START();
+  FieldScript_Start();
   if (GameFlag_Get(FLAG_FEIZHI_WENT_TO_HSU) == 0 &&
       GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
     FieldMessage_Show(MsgXianItIsLocked, 1);
-    SCRIPT_END();
+    FieldScript_End();
   } else {
-    SE(SE_DOOR_OPEN);
+    Script_PlaySong(SE_DOOR_OPEN);
     MapGrid_AnimateCells(gFuchinTemple_FehsDoorOpens, 78, 13);
-    OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+    ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 306, 248);
-    OBJECT_WALK(LOCALID_PARTY_LEADER, 304, 216);
-    WAIT(20);
+    ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 304, 216);
+    FieldScript_WaitFrames(20);
     Import_ScriptRequestWarp(LACQUER_ROOMS_A_FEHS_SCHOOL_TO_HOUSE);
-    SCRIPT_END();
+    FieldScript_End();
   }
 }
 
@@ -1536,27 +1577,27 @@ static void EventScript_TalkToHealer(void) {
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   facing = leader->facing;
-  SCRIPT_START();
+  FieldScript_Start();
 
   if (FACING_IS_NORTH(facing)) {
     Sanctum_Run(LOCALID_HEALER);
   } else {
-    MESSAGE_SET(MsgXianImTravelingAroundWorldSpread);
-    MESSAGE_PUT(LOCALID_HEALER, 0);
+    FieldScript_SetMessageId(MsgXianImTravelingAroundWorldSpread);
+    FieldScript_ShowMessageAndWait(LOCALID_HEALER, 0);
   }
 
-  SCRIPT_END();
+  FieldScript_End();
 }
 
 /// Reading Nyunpa's mind inside Fuchin Temple once he is enlightened: he
 /// entrusts the world to Isaac. "Isaac... Is that you...? I am... counting on
 /// you... to bring peace... to the world..."
 static void EventScript_ReadNyunpasLastWish(void) {
-  SCRIPT_START();
+  FieldScript_Start();
   ObjectMotion_SetVarCbAndRefresh(LOCALID_NYUNPA, 2);
-  MESSAGE_SET(MsgXianIsaacAmCountingOnBring);
-  MESSAGE_PUT(LOCALID_NYUNPA, 0);
-  SCRIPT_END();
+  FieldScript_SetMessageId(MsgXianIsaacAmCountingOnBring);
+  FieldScript_ShowMessageAndWait(LOCALID_NYUNPA, 0);
+  FieldScript_End();
 }
 
 /// Selects the outdoor, school, or lesson map event table.
@@ -1621,15 +1662,16 @@ static UNUSED void FuchinTemple_HopLeaderWest(void) {
 /// Unused: hops the leader by a pixel offset, waiting for the movement to
 /// finish; only the three unused hops above call it.
 static UNUSED void FuchinTemple_HopLeaderByOffset(s32 offsetX, s32 offsetZ) {
-  SCRIPT_START();
-  OBJECT_SPEED(LOCALID_PARTY_LEADER, 5 * PIXELS(1) / 2, 5 * PIXELS(1) / 4);
+  FieldScript_Start();
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 5 * PIXELS(1) / 2,
+                       5 * PIXELS(1) / 4);
   ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, offsetX,
                                             offsetZ);
   ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 0);
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_LEADER_LEAP);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_LEAP);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_LEADER_SPRING);
-  SCRIPT_END();
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_SPRING);
+  FieldScript_End();
 }
 
 /// Stepping into the waterfall grotto's entrance at Fuchin Temple
@@ -1639,7 +1681,7 @@ static void EventScript_EnterWaterfallGrotto(void) {
   struct ObjectEvent *leader;
   TaskFunc particleTask;
 
-  SCRIPT_START();
+  FieldScript_Start();
   // Keep the entry effect alive until the leader has moved into the fade.
   particleTask = FuchinTemple_SpawnGrottoEntryParticle;
   FieldScheduler_AddCallback(particleTask, TASK_PRIORITY_MAP);
@@ -1648,7 +1690,7 @@ static void EventScript_EnterWaterfallGrotto(void) {
   gFieldWork->transitionFrames = 60;
   FieldScript_FinishScreenTransition();
   Sound_PlaySong(SE_CAST);
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, 0, -6);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
@@ -1657,7 +1699,7 @@ static void EventScript_EnterWaterfallGrotto(void) {
   Task_Remove(particleTask);
   FieldScript_WaitTransitionFrames();
   Import_ScriptRequestWarp(FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE);
-  SCRIPT_END();
+  FieldScript_End();
 }
 
 /// Stepping south onto coord event 1 inside Fuchin Temple
@@ -1672,17 +1714,18 @@ static void EventScript_LeaveTemple(void) {
 /// Walking north into the temple door at Fuchin Temple (FuchinTempleGrounds,
 /// coord event 2): it opens, and Isaac walks inside, where Nyunpa meditates.
 static void EventScript_EnterTemple(void) {
-  SCRIPT_START();
-  SE(SE_THUMP);
+  FieldScript_Start();
+  Script_PlaySong(SE_THUMP);
   MapGrid_AnimateCells(gFuchinTemple_TempleDoorOpens, 77, 8);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
-  OBJECT_SPEED(LOCALID_PARTY_LEADER, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 4 * PIXELS(1) / 5,
+                       2 * PIXELS(1) / 5);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -16);
-  WAIT(16);
+  FieldScript_WaitFrames(16);
   Import_ScriptRequestWarp(FUCHIN_TEMPLE_GROUNDS_TO_LACQUER_ROOMS_A);
-  SCRIPT_END();
+  FieldScript_End();
 }
 
 /// Back inside Fuchin Temple from the grotto with the Orb of Force
@@ -1693,102 +1736,104 @@ static void EventScript_EnterTemple(void) {
 static void FuchinTemple_NyunpaTeachesKi(void) {
   struct ObjectEvent *nyunpa;
 
-  SCRIPT_START();
-  OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-  OBJECT_WALK(LOCALID_PARTY_LEADER, 168, 504);
+  FieldScript_Start();
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 168, 504);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetVariantCallback(LOCALID_NYUNPA, 2);
   ObjectEvent_SetAttachedEffect(LOCALID_NYUNPA, ATTACHED_EFFECT_IN_FRONT |
                                                     ATTACHED_EFFECT_ONCE);
-  WAIT(60);
+  FieldScript_WaitFrames(60);
   ObjectEvent_GetById(LOCALID_NYUNPA)->paused = 0;
-  SE(SE_JUMP);
+  Script_PlaySong(SE_JUMP);
   nyunpa = ObjectEvent_Get(LOCALID_NYUNPA);
   nyunpa->velocityY = 0x80000;
-  OBJECT_ANIMATION(LOCALID_NYUNPA, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_NYUNPA, ANIM_STAND);
   // Praise the completed test before answering the follow-up questions.
-  MESSAGE_SET(MsgXianExcellentIsaac);
+  FieldScript_SetMessageId(MsgXianExcellentIsaac);
   Script_ShowMessageAndWait(LOCALID_NYUNPA, 0, 20);
   Script_ShowMessageAndWait(LOCALID_NYUNPA, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_NYUNPA, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_NYUNPA, 0, 20);
-  OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                        60);
   Script_OpenMessage(LOCALID_NYUNPA, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
-    WAIT(10);
+    FieldScript_WaitFrames(10);
     ObjectMotion_SetAnimationAndWait(LOCALID_NYUNPA, ANIM_NOD);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(LOCALID_NYUNPA, 0, 20);
     gFieldWork->message += 2;
   } else {
-    WAIT(10);
+    FieldScript_WaitFrames(10);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_NYUNPA, 2);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     gFieldWork->message++;
     Script_ShowMessageAndWait(LOCALID_NYUNPA, 0, 20);
     ObjectMotion_SetAnimationAndWait(LOCALID_NYUNPA, ANIM_NOD);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(LOCALID_NYUNPA, 0, 20);
   }
   Script_ShowMessageAndWait(LOCALID_NYUNPA, 0, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_NYUNPA, 2);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_NYUNPA, 0, 20);
-  OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                        60);
   Script_OpenMessage(LOCALID_NYUNPA, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
-    WAIT(10);
-    OBJECT_EMOTE(LOCALID_NYUNPA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-    MESSAGE_SET(MsgXianCanReadMindsKnowCurious);
+    FieldScript_WaitFrames(10);
+    ObjectEvent_ShowEmote(LOCALID_NYUNPA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+    FieldScript_SetMessageId(MsgXianCanReadMindsKnowCurious);
     Script_OpenMessage(LOCALID_NYUNPA, 0);
     do {
       if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) != 1) {
         break;
       }
-      WAIT(10);
-      OBJECT_EMOTE(LOCALID_NYUNPA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-      MESSAGE_SET(MsgXianDontTryHard);
+      FieldScript_WaitFrames(10);
+      ObjectEvent_ShowEmote(LOCALID_NYUNPA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+      FieldScript_SetMessageId(MsgXianDontTryHard);
       Script_OpenMessage(LOCALID_NYUNPA, 0);
     } while (1);
   }
   // Explain why hidden monsters make the new ability useful.
-  MESSAGE_SET(MsgXianMonstersWaitInHidingWould);
-  WAIT(10);
+  FieldScript_SetMessageId(MsgXianMonstersWaitInHidingWould);
+  FieldScript_WaitFrames(10);
   ObjectMotion_SetAnimationAndWait(LOCALID_NYUNPA, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_OpenMessage(LOCALID_NYUNPA, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
-    WAIT(10);
+    FieldScript_WaitFrames(10);
     ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(LOCALID_NYUNPA, 0, 20);
     gFieldWork->message++;
   } else {
-    WAIT(10);
+    FieldScript_WaitFrames(10);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_NYUNPA, 2);
     gFieldWork->message++;
     Script_ShowMessageAndWait(LOCALID_NYUNPA, 0, 20);
   }
   ObjectMotion_SetAnimationAndWait(LOCALID_NYUNPA, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_NYUNPA, 0, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_NYUNPA, 2);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_NYUNPA, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_NYUNPA, ANIM_NOD);
-  WAIT(20);
-  OBJECT_ANIMATION(LOCALID_NYUNPA, ANIM_NYUNPA_MEDITATE);
+  FieldScript_WaitFrames(20);
+  Import_ObjectEventSetAnimation(LOCALID_NYUNPA, ANIM_NYUNPA_MEDITATE);
   GameFlag_Set(FLAG_NYUNPA_TAUGHT_FORCE);
-  SCRIPT_END();
+  FieldScript_End();
 }
 
 /// Entering Master Hama's room in Lama Temple the first time, the party is
@@ -1801,28 +1846,29 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
 static void FuchinTemple_RunHamasRevealLesson(void) {
   struct ObjectEvent *leader;
 
-  SCRIPT_START();
-  OBJECT_SPEED(LOCALID_PARTY_LEADER, 2 * PIXELS(1) / 5, PIXELS(1) / 5);
-  OBJECT_WALK(LOCALID_PARTY_LEADER, 472, 536);
+  FieldScript_Start();
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 2 * PIXELS(1) / 5, PIXELS(1) / 5);
+  ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 472, 536);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  OBJECT_DIR(LOCALID_HAMAS_BOY_MONK, FACING_EAST, 20);
+  ObjectEvent_FaceDirection(LOCALID_HAMAS_BOY_MONK, FACING_EAST, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_HAMAS_BOY_MONK, 2);
-  WAIT(20);
-  MESSAGE_SET(MsgXianMasterHamaMeditatingPleaseExtremely);
+  FieldScript_WaitFrames(20);
+  FieldScript_SetMessageId(MsgXianMasterHamaMeditatingPleaseExtremely);
   Script_ShowMessageAndWait(LOCALID_HAMAS_BOY_MONK, 0, 20);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_WEST, 20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
-  WAIT(30);
-  OBJECT_DIR(LOCALID_HAMA, FACING_SOUTH, 30);
+  FieldScript_WaitFrames(30);
+  ObjectEvent_FaceDirection(LOCALID_HAMA, FACING_SOUTH, 30);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 1);
-  WAIT(20);
-  OBJECT_DIR(LOCALID_HAMAS_BOY_MONK, FACING_NORTH + FACING_STEP, 0);
+  FieldScript_WaitFrames(20);
+  ObjectEvent_FaceDirection(LOCALID_HAMAS_BOY_MONK, FACING_NORTH + FACING_STEP,
+                            0);
   // Bring the other party members out from the leader for the lesson.
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != 0) {
@@ -1836,198 +1882,200 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   if (leader != 0) {
     ObjectEvent_SetPosition(LOCALID_MIA, leader->x.fixed, leader->z.fixed);
   }
-  OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-  OBJECT_SPEED(LOCALID_GARET, PIXELS(1) / 2, PIXELS(1) / 4);
-  OBJECT_SPEED(LOCALID_IVAN, PIXELS(1) / 2, PIXELS(1) / 4);
-  OBJECT_SPEED(LOCALID_MIA, PIXELS(1) / 2, PIXELS(1) / 4);
-  OBJECT_WALK(LOCALID_PARTY_LEADER, 464, 504);
-  OBJECT_WALK(LOCALID_IVAN, 480, 504);
-  OBJECT_WALK(LOCALID_GARET, 496, 496);
-  OBJECT_WALK(LOCALID_MIA, 448, 496);
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1) / 2, PIXELS(1) / 4);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1) / 2, PIXELS(1) / 4);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(1) / 2, PIXELS(1) / 4);
+  ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 464, 504);
+  ObjectEvent_WalkTo(LOCALID_IVAN, 480, 504);
+  ObjectEvent_WalkTo(LOCALID_GARET, 496, 496);
+  ObjectEvent_WalkTo(LOCALID_MIA, 448, 496);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IVAN);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
-  OBJECT_DIR(LOCALID_MIA, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
-  OBJECT_DIR(LOCALID_GARET, FACING_NORTHWEST, 0);
-  WAIT(20);
-  OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJECT_EMOTE(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJECT_EMOTE(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  OBJECT_DIR(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 20);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 0);
+  FieldScript_WaitFrames(20);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                        0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 20);
   Script_AskYesNo(LOCALID_GARET, 0);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_DIR(LOCALID_GARET, FACING_NORTHWEST, 20);
-  OBJECT_EMOTE(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 20);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_EMOTE(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_NOD);
-  OBJECT_DIR(LOCALID_HAMA, FACING_SOUTHEAST + FACING_STEP, 20);
+  ObjectEvent_FaceDirection(LOCALID_HAMA, FACING_SOUTHEAST + FACING_STEP, 20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_EAST, 0);
-  OBJECT_DIR(LOCALID_GARET, FACING_SOUTHWEST, 0);
-  OBJECT_DIR(LOCALID_MIA, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHEAST, 0);
   ObjectMotion_SetVariantCallback(LOCALID_IVAN, 2);
   ObjectEvent_SetAttachedEffect(LOCALID_IVAN, ATTACHED_EFFECT_IN_FRONT |
                                                   ATTACHED_EFFECT_ONCE);
-  WAIT(60);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  OBJECT_DIR(LOCALID_GARET, FACING_NORTHWEST, 0);
-  OBJECT_DIR(LOCALID_MIA, FACING_NORTHEAST, 0);
-  WAIT(20);
+  FieldScript_WaitFrames(60);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 0);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
   ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_IVAN, 50);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  OBJECT_DIR(LOCALID_IVAN, FACING_NORTH, 30);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 30);
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_EMOTE(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
-  OBJECT_DIR(LOCALID_HAMA, FACING_SOUTH + FACING_STEP, 20);
+  ObjectEvent_FaceDirection(LOCALID_HAMA, FACING_SOUTH + FACING_STEP, 20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 0);
-  OBJECT_DIR(LOCALID_GARET, FACING_SOUTHWEST, 0);
-  WAIT(30);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  OBJECT_DIR(LOCALID_GARET, FACING_NORTHWEST, 20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 0);
+  FieldScript_WaitFrames(30);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 20);
   Script_ShowMessageAndWait(LOCALID_GARET, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_SHAKE_HEAD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceObjectEvent(LOCALID_HAMA, LOCALID_IVAN, 0);
-  WAIT(10);
+  FieldScript_WaitFrames(10);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_IVAN, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_IVAN, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_MIA, LOCALID_IVAN, 0);
-  OBJECT_EMOTE(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_GARET, 0, 20);
-  OBJECT_EMOTE(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  ObjectEvent_ShowEmote(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   ObjectEvent_FaceObjectEvent(LOCALID_HAMA, LOCALID_GARET, 0);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_EMOTE(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
   ObjectEvent_FaceObjectEvent(LOCALID_HAMA, LOCALID_GARET, 0);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  OBJECT_DIR(LOCALID_GARET, FACING_NORTHWEST, 0);
-  OBJECT_DIR(LOCALID_MIA, FACING_NORTHEAST, 0);
-  WAIT(20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 0);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
   ObjectMotion_SetVariantCallback(LOCALID_IVAN, 2);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
-  OBJECT_DIR(LOCALID_HAMA, FACING_SOUTH + FACING_STEP, 20);
+  ObjectEvent_FaceDirection(LOCALID_HAMA, FACING_SOUTH + FACING_STEP, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
   ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
   ObjectMotion_SetVariantCallback(LOCALID_IVAN, 2);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_SHAKE_HEAD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_HAMA, 2);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_GARET, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
-  WAIT(60);
+  FieldScript_WaitFrames(60);
   Script_ShowMessageAndWait(LOCALID_GARET, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_SHAKE_HEAD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                        0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Script_ShowMessageAndWait(LOCALID_GARET, 0, 20);
-  OBJECT_EMOTE(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectEvent_ShowEmote(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   ObjectMotion_SetVariantCallback(LOCALID_HAMA, 1);
-  WAIT(60);
+  FieldScript_WaitFrames(60);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_SHAKE_HEAD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
   ObjectMotion_SetVariantCallback(LOCALID_GARET, 1);
   ObjectMotion_SetVariantCallback(LOCALID_IVAN, 1);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_SHAKE_HEAD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  OBJECT_DIR(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 20);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 20);
   Script_AskYesNo(LOCALID_GARET, 0);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 1);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
-  OBJECT_DIR(LOCALID_GARET, FACING_NORTHWEST, 20);
-  OBJECT_DIR(LOCALID_HAMA, FACING_NORTH, 20);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 20);
+  ObjectEvent_FaceDirection(LOCALID_HAMA, FACING_NORTH, 20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_GARET, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
-  WAIT(20);
-  OBJECT_DIR(LOCALID_HAMA, FACING_SOUTH, 20);
+  FieldScript_WaitFrames(20);
+  ObjectEvent_FaceDirection(LOCALID_HAMA, FACING_SOUTH, 20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
   ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
   ObjectMotion_SetVariantCallback(LOCALID_IVAN, 2);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_SHAKE_HEAD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_EMOTE(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
@@ -2038,142 +2086,148 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
                                                   ATTACHED_EFFECT_ONCE);
   ObjectEvent_SetAttachedEffect(LOCALID_MIA, ATTACHED_EFFECT_IN_FRONT |
                                                  ATTACHED_EFFECT_ONCE);
-  WAIT(60);
+  FieldScript_WaitFrames(60);
   Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
-  OBJECT_DIR(LOCALID_HAMA, FACING_SOUTH + FACING_STEP, 20);
-  WAIT(20);
+  ObjectEvent_FaceDirection(LOCALID_HAMA, FACING_SOUTH + FACING_STEP, 20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJECT_EMOTE(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJECT_EMOTE(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                        0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_GARET, 0, 20);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_IVAN, LOCALID_GARET, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_MIA, LOCALID_GARET, 0);
-  WAIT(20);
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_IVAN, ANIM_NOD);
+  FieldScript_WaitFrames(20);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
-  WAIT(60);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  OBJECT_DIR(LOCALID_IVAN, FACING_NORTH, 0);
-  OBJECT_DIR(LOCALID_MIA, FACING_NORTH + FACING_STEP, 0);
-  WAIT(20);
+  FieldScript_WaitFrames(60);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH + FACING_STEP, 0);
+  FieldScript_WaitFrames(20);
   Script_AskYesNo(LOCALID_HAMA, 0);
-  OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  OBJECT_EMOTE(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  OBJECT_EMOTE(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  WAIT(60);
-  OBJECT_DIR(LOCALID_GARET, FACING_SOUTHWEST, 20);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  FieldScript_WaitFrames(60);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 20);
   Script_AskYesNo(LOCALID_GARET, 0);
-  WAIT(20);
-  OBJECT_DIR(LOCALID_MIA, FACING_SOUTHEAST, 20);
+  FieldScript_WaitFrames(20);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHEAST, 20);
   Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
-  OBJECT_DIR(LOCALID_GARET, FACING_NORTHWEST, 0);
-  OBJECT_DIR(LOCALID_MIA, FACING_NORTHEAST, 30);
-  OBJECT_DIR(LOCALID_HAMA, FACING_EAST, 20);
-  OBJECT_EMOTE(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  OBJECT_EMOTE(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 30);
+  ObjectEvent_FaceDirection(LOCALID_HAMA, FACING_EAST, 20);
+  ObjectEvent_ShowEmote(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
-  OBJECT_DIR(LOCALID_HAMA, FACING_NORTH, 20);
-  OBJECT_EMOTE(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  ObjectEvent_FaceDirection(LOCALID_HAMA, FACING_NORTH, 20);
+  ObjectEvent_ShowEmote(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJECT_EMOTE(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJECT_EMOTE(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                        0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJECT_EMOTE(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJECT_EMOTE(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                        0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_GARET, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_HAMA, 1);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_EAST, 0);
-  OBJECT_DIR(LOCALID_GARET, FACING_SOUTHWEST, 0);
-  OBJECT_DIR(LOCALID_IVAN, FACING_WEST, 0);
-  OBJECT_DIR(LOCALID_MIA, FACING_SOUTHEAST, 0);
-  WAIT(60);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  OBJECT_DIR(LOCALID_GARET, FACING_NORTHWEST, 0);
-  OBJECT_DIR(LOCALID_IVAN, FACING_NORTH, 0);
-  OBJECT_DIR(LOCALID_MIA, FACING_NORTHEAST, 0);
-  WAIT(30);
-  OBJECT_DIR(LOCALID_HAMA, FACING_SOUTH, 20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHEAST, 0);
+  FieldScript_WaitFrames(60);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 0);
+  FieldScript_WaitFrames(30);
+  ObjectEvent_FaceDirection(LOCALID_HAMA, FACING_SOUTH, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_SHAKE_HEAD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
   // Interrupt the discussion with the arrival from the southern path.
-  OBJECT_POSITION_SET(LOCALID_FEIZHI_IN_LAMA_TEMPLE, 472, 608);
+  ObjectEvent_SetPosition(LOCALID_FEIZHI_IN_LAMA_TEMPLE, PIXELS(472),
+                          PIXELS(608));
   Script_ShowMessageAndWait(LOCALID_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
-  OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  OBJECT_EMOTE(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  OBJECT_EMOTE(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  OBJECT_EMOTE(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  OBJECT_EMOTE(LOCALID_HAMAS_BOY_MONK, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  WAIT(60);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-  OBJECT_DIR(LOCALID_GARET, FACING_SOUTH, 0);
-  OBJECT_DIR(LOCALID_IVAN, FACING_SOUTH, 0);
-  OBJECT_DIR(LOCALID_MIA, FACING_SOUTH, 0);
-  OBJECT_DIR(LOCALID_HAMAS_BOY_MONK, FACING_EAST, 0);
-  WAIT(30);
-  OBJECT_SPEED(LOCALID_FEIZHI_IN_LAMA_TEMPLE, 4 * PIXELS(1) / 5,
-               2 * PIXELS(1) / 5);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
+                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectEvent_ShowEmote(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectEvent_ShowEmote(LOCALID_HAMAS_BOY_MONK,
+                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldScript_WaitFrames(60);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_HAMAS_BOY_MONK, FACING_EAST, 0);
+  FieldScript_WaitFrames(30);
+  ObjectEvent_SetSpeed(LOCALID_FEIZHI_IN_LAMA_TEMPLE, 4 * PIXELS(1) / 5,
+                       2 * PIXELS(1) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_FEIZHI_IN_LAMA_TEMPLE, 472, 536);
-  OBJECT_EMOTE(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_ShowEmote(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_DIR(LOCALID_IVAN, FACING_NORTH, 40);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 40);
   ObjectEvent_WalkToAndWait(LOCALID_IVAN, 488, 512);
-  WAIT(10);
-  OBJECT_DIR(LOCALID_IVAN, FACING_SOUTHWEST, 20);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_EAST, 30);
+  FieldScript_WaitFrames(10);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTHWEST, 20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 30);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 456, 512);
-  WAIT(10);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 20);
+  FieldScript_WaitFrames(10);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FEIZHI_IN_LAMA_TEMPLE, 2);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
-  OBJECT_EMOTE(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_ShowEmote(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
   ObjectMotion_SetVariantCallback(LOCALID_FEIZHI_IN_LAMA_TEMPLE, 2);
   ObjectEvent_SetAttachedEffect(LOCALID_FEIZHI_IN_LAMA_TEMPLE,
                                 ATTACHED_EFFECT_IN_FRONT |
                                     ATTACHED_EFFECT_ONCE);
-  WAIT(60);
+  FieldScript_WaitFrames(60);
   Script_ShowMessageAndWait(LOCALID_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
-  OBJECT_EMOTE(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_ShowEmote(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_EMOTE(LOCALID_FEIZHI_IN_LAMA_TEMPLE,
-               EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  ObjectEvent_ShowEmote(LOCALID_FEIZHI_IN_LAMA_TEMPLE,
+                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Script_ShowMessageAndWait(LOCALID_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
   ObjectMotion_SetVariantCallback(LOCALID_HAMA, 1);
-  OBJECT_EMOTE(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  ObjectEvent_ShowEmote(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 0);
-  OBJECT_DIR(LOCALID_GARET, FACING_NORTHWEST, 0);
-  OBJECT_DIR(LOCALID_IVAN, FACING_NORTHWEST, 0);
-  OBJECT_DIR(LOCALID_MIA, FACING_NORTHEAST, 0);
-  WAIT(40);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 0);
+  FieldScript_WaitFrames(40);
   ObjectMotion_SetAnimationAndWait(LOCALID_FEIZHI_IN_LAMA_TEMPLE, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_SHAKE_HEAD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_EMOTE(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_ShowEmote(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
   // BUG: LOCALID_FEIZHI is Feizhi's number in the school's table. Hama's room
   // places no object event at that number, so Feizhi does not bounce before she
@@ -2183,186 +2237,191 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
 #else
   ObjectMotion_SetVariantCallback(LOCALID_FEIZHI, 1);
 #endif
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
-  OBJECT_EMOTE(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  ObjectEvent_ShowEmote(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_EMOTE(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  ObjectEvent_ShowEmote(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_NOD);
-  WAIT(2);
-  OBJECT_ANIMATION(LOCALID_IVAN, ANIM_NOD);
-  WAIT(1);
-  OBJECT_ANIMATION(LOCALID_MIA, ANIM_NOD);
-  WAIT(5);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  FieldScript_WaitFrames(2);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  FieldScript_WaitFrames(1);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  FieldScript_WaitFrames(5);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   ObjectEvent_FaceObjectEvent(LOCALID_HAMA, LOCALID_PARTY_LEADER, 0);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_SPEED(LOCALID_FEIZHI_IN_LAMA_TEMPLE, 4 * PIXELS(1) / 5,
-               2 * PIXELS(1) / 5);
+  ObjectEvent_SetSpeed(LOCALID_FEIZHI_IN_LAMA_TEMPLE, 4 * PIXELS(1) / 5,
+                       2 * PIXELS(1) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_FEIZHI_IN_LAMA_TEMPLE, 472, 504);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetVariantCallback(LOCALID_FEIZHI_IN_LAMA_TEMPLE, 1);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
   ObjectEvent_FaceObjectEvent(LOCALID_HAMA, LOCALID_FEIZHI_IN_LAMA_TEMPLE, 0);
-  OBJECT_SPEED(LOCALID_HAMA, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
-  OBJECT_DIR(LOCALID_GARET, FACING_SOUTHWEST, 0);
-  OBJECT_DIR(LOCALID_IVAN, FACING_SOUTHWEST, 0);
-  OBJECT_DIR(LOCALID_MIA, FACING_SOUTHEAST, 0);
+  ObjectEvent_SetSpeed(LOCALID_HAMA, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHEAST, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_HAMA);
-  WAIT(30);
+  FieldScript_WaitFrames(30);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_WALK(LOCALID_FEIZHI_IN_LAMA_TEMPLE, 472, 568);
+  ObjectEvent_WalkTo(LOCALID_FEIZHI_IN_LAMA_TEMPLE, 472, 568);
   ObjectEvent_WalkToAndWait(LOCALID_HAMA, 472, 536);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FEIZHI_IN_LAMA_TEMPLE);
   Script_ShowMessageAndWait(LOCALID_GARET, 0, 20);
   ObjectMotion_SetVariantCallback(LOCALID_HAMA, 2);
-  OBJECT_EMOTE(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  OBJECT_DIR(LOCALID_FEIZHI_IN_LAMA_TEMPLE, FACING_NORTH + FACING_STEP, 0);
-  OBJECT_DIR(LOCALID_HAMA, FACING_NORTH + FACING_STEP, 20);
+  ObjectEvent_ShowEmote(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  ObjectEvent_FaceDirection(LOCALID_FEIZHI_IN_LAMA_TEMPLE,
+                            FACING_NORTH + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_HAMA, FACING_NORTH + FACING_STEP, 20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
   ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
   ObjectMotion_SetVariantCallback(LOCALID_IVAN, 2);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
   ObjectEvent_WalkToAndWait(LOCALID_HAMA, 472, 512);
-  OBJECT_DIR(LOCALID_HAMA, FACING_EAST, 0);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_EAST, 0);
-  OBJECT_DIR(LOCALID_IVAN, FACING_WEST, 0);
-  OBJECT_DIR(LOCALID_HAMAS_BOY_MONK, FACING_NORTH + FACING_STEP, 20);
+  ObjectEvent_FaceDirection(LOCALID_HAMA, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_HAMAS_BOY_MONK, FACING_NORTH + FACING_STEP,
+                            20);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 448, 512);
-  WAIT(1);
+  FieldScript_WaitFrames(1);
   {
     struct ObjectEvent *leaderObjectEvent =
         ObjectEvent_Get(LOCALID_PARTY_LEADER);
     leaderObjectEvent->steeringFlags =
         OBJ_EVENT_FACES_MOTION | leaderObjectEvent->steeringFlags;
   }
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   // Finish Ivan's lesson before adding Reveal to his ability list.
   FuchinTemple_AnimateRevealLesson();
-  WAIT(60);
+  FieldScript_WaitFrames(60);
   Party_LearnAbility(IVAN, ABILITY_REVEAL);
   // Let Hama and her monk leave, then gather the party into the leader.
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_GARET, ANIM_NOD);
-  OBJECT_ANIMATION(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
-  WAIT(20);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
-  OBJECT_DIR(LOCALID_GARET, FACING_SOUTHWEST, 0);
-  OBJECT_DIR(LOCALID_IVAN, FACING_SOUTHWEST, 0);
-  OBJECT_DIR(LOCALID_MIA, FACING_SOUTHEAST, 0);
-  OBJECT_DIR(LOCALID_HAMAS_BOY_MONK, FACING_SOUTHEAST + FACING_STEP, 0);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_HAMAS_BOY_MONK,
+                            FACING_SOUTHEAST + FACING_STEP, 0);
+  FieldScript_WaitFrames(20);
   ObjectEvent_WalkToAndWait(LOCALID_HAMA, 472, 552);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_HAMA, 2);
-  WAIT(20);
-  OBJECT_DIR(LOCALID_HAMA, FACING_NORTH + FACING_STEP, 20);
+  FieldScript_WaitFrames(20);
+  ObjectEvent_FaceDirection(LOCALID_HAMA, FACING_NORTH + FACING_STEP, 20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_SPEED(LOCALID_HAMA, PIXELS(1) / 2, PIXELS(1) / 4);
+  ObjectEvent_SetSpeed(LOCALID_HAMA, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_WalkToAndWait(LOCALID_HAMA, 480, 540);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
-  OBJECT_SPEED(LOCALID_HAMA, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-  OBJECT_SPEED(LOCALID_HAMAS_BOY_MONK, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-  OBJECT_WALK(LOCALID_HAMA, 472, 608);
-  OBJECT_WALK(LOCALID_HAMAS_BOY_MONK, 472, 544);
+  ObjectEvent_SetSpeed(LOCALID_HAMA, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  ObjectEvent_SetSpeed(LOCALID_HAMAS_BOY_MONK, 4 * PIXELS(1) / 5,
+                       2 * PIXELS(1) / 5);
+  ObjectEvent_WalkTo(LOCALID_HAMA, 472, 608);
+  ObjectEvent_WalkTo(LOCALID_HAMAS_BOY_MONK, 472, 544);
   ObjectEvent_WalkToAndWait(LOCALID_FEIZHI_IN_LAMA_TEMPLE, 472, 608);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_HAMAS_BOY_MONK);
-  OBJECT_WALK(LOCALID_HAMAS_BOY_MONK, 472, 608);
-  OBJECT_POSITION_SET(LOCALID_FEIZHI_IN_LAMA_TEMPLE, 0, 0);
+  ObjectEvent_WalkTo(LOCALID_HAMAS_BOY_MONK, 472, 608);
+  ObjectEvent_SetPosition(LOCALID_FEIZHI_IN_LAMA_TEMPLE, PIXELS(0), PIXELS(0));
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_HAMA);
-  OBJECT_POSITION_SET(LOCALID_HAMA, 0, 0);
+  ObjectEvent_SetPosition(LOCALID_HAMA, PIXELS(0), PIXELS(0));
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_HAMAS_BOY_MONK);
-  OBJECT_POSITION_SET(LOCALID_HAMAS_BOY_MONK, 0, 0);
+  ObjectEvent_SetPosition(LOCALID_HAMAS_BOY_MONK, PIXELS(0), PIXELS(0));
   ObjectEvent_WalkToAndWait(LOCALID_IVAN, 488, 520);
-  OBJECT_EMOTE(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
-  WAIT(20);
-  OBJECT_DIR(LOCALID_MIA, FACING_SOUTHEAST, 20);
+  FieldScript_WaitFrames(20);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHEAST, 20);
   Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_EAST, 0);
-  OBJECT_DIR(LOCALID_IVAN, FACING_NORTHWEST, 20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
-  OBJECT_EMOTE(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
-  OBJECT_DIR(LOCALID_GARET, FACING_SOUTHWEST, 20);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 20);
   Script_AskYesNo(LOCALID_GARET, 0);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
-  WAIT(20);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  OBJECT_DIR(LOCALID_GARET, FACING_WEST, 0);
+  FieldScript_WaitFrames(20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
   Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
-  OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                        0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_SHAKE_HEAD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
-  OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Script_OpenMessage(LOCALID_MIA, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(LOCALID_GARET, 0, 20);
     gFieldWork->message++;
   } else {
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     gFieldWork->message++;
     ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
   }
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
   Script_ShowMessageAndWait(LOCALID_GARET, 0, 20);
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
-  WAIT(20);
-  OBJECT_WALK(LOCALID_GARET, 448, 512);
+  FieldScript_WaitFrames(20);
+  ObjectEvent_WalkTo(LOCALID_GARET, 448, 512);
   ObjectEvent_WalkToAndWait(LOCALID_MIA, 448, 512);
-  OBJECT_POSITION_SET(LOCALID_MIA, 0, 0);
+  ObjectEvent_SetPosition(LOCALID_MIA, PIXELS(0), PIXELS(0));
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
-  OBJECT_POSITION_SET(LOCALID_GARET, 0, 0);
-  WAIT(20);
+  ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(0), PIXELS(0));
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_IVAN, 20);
-  WAIT(30);
+  FieldScript_WaitFrames(30);
   ObjectEvent_FaceObjectEvent(LOCALID_IVAN, LOCALID_PARTY_LEADER, 20);
   Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
-  OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   ObjectMotion_SetVariantCallback(LOCALID_IVAN, 2);
   ObjectEvent_SetAttachedEffect(LOCALID_IVAN, ATTACHED_EFFECT_IN_FRONT |
                                                   ATTACHED_EFFECT_ONCE);
-  WAIT(60);
+  FieldScript_WaitFrames(60);
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
   ObjectEvent_WalkToAndWait(LOCALID_IVAN, 448, 512);
-  OBJECT_POSITION_SET(LOCALID_IVAN, 0, 0);
-  SCRIPT_END();
+  ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(0), PIXELS(0));
+  FieldScript_End();
   GameFlag_Set(FLAG_XIAN_HEARD_HSU_TRAPPED);
 }
 
@@ -2380,9 +2439,9 @@ s32 Map_Initialize(void) {
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     if (gSaveBlock.warpDest == LACQUER_ROOMS_A_FROM_FUCHIN_TEMPLE_GROUNDS) {
       if (GameFlag_Get(FLAG_NYUNPA_ENLIGHTENED)) {
-        OBJECT_ANIMATION(LOCALID_NYUNPA, ANIM_NYUNPA_WITHERED);
+        Import_ObjectEventSetAnimation(LOCALID_NYUNPA, ANIM_NYUNPA_WITHERED);
       } else {
-        OBJECT_ANIMATION(LOCALID_NYUNPA, ANIM_NYUNPA_MEDITATE);
+        Import_ObjectEventSetAnimation(LOCALID_NYUNPA, ANIM_NYUNPA_MEDITATE);
         if (GameFlag_Get(FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND) &&
             !GameFlag_Get(FLAG_NYUNPA_TAUGHT_FORCE) &&
             !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
@@ -2436,8 +2495,10 @@ s32 Map_Initialize(void) {
       // it was for.
       ObjectEvent_PrepareObject(PIXELS(304), PIXELS(24), PIXELS(224),
                                 SPRITE_CRATE);
-      OBJECT_ANIMATION(LOCALID_KICKING_STUDENT, ANIM_STUDENT_KICKS);
-      OBJECT_ANIMATION(LOCALID_PUNCHING_STUDENT, ANIM_STUDENT_PUNCHES);
+      Import_ObjectEventSetAnimation(LOCALID_KICKING_STUDENT,
+                                     ANIM_STUDENT_KICKS);
+      Import_ObjectEventSetAnimation(LOCALID_PUNCHING_STUDENT,
+                                     ANIM_STUDENT_PUNCHES);
     } else if (gSaveBlock.warpDest ==
                LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
@@ -2459,7 +2520,7 @@ s32 Map_Initialize(void) {
       MapGrid_CopyCellAttributes(10, 84, 1, 1, 10, 24);
     }
     if (GameFlag_Get(FLAG_FUCHIN_FALLS_GROTTO_OPENED)) {
-      OBJECT_POSITION_SET(LOCALID_FALLS_MONK, 152, 392);
+      ObjectEvent_SetPosition(LOCALID_FALLS_MONK, PIXELS(152), PIXELS(392));
       ObjectMotion_ArmCallback(LOCALID_FALLS_MONK, FACING_EAST, 0);
       MapGrid_CopyCellAttributes(10, 26, 1, 1, 10, 22);
     }
@@ -2485,7 +2546,7 @@ static void FuchinTemple_StartMindReadDemonstration(s32 caster, s32 target) {
 
 /// Finishes the demonstration's effect and lowers the caster's hands.
 static void FuchinTemple_FinishMindReadDemonstration(void) {
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   Field_DispatchTypeHandler(PSYNERGY_STEP_FINISH);
   FieldEffect_StopCasterHook();
 }
@@ -2503,7 +2564,7 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
   options.targetScaleX = 224 << 10;
   options.targetScaleY = 192 << 9;
   for (shotIndex = 0; shotIndex < 8; shotIndex++) {
-    WAIT(10);
+    FieldScript_WaitFrames(10);
     if (shotIndex & 1) {
       Sound_PlaySong(SE_PSYNERGY_START);
     }
@@ -2514,7 +2575,7 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
                           EFFECT_SCRIPT_MEDIUM,
                       &options);
   }
-  WAIT(60);
+  FieldScript_WaitFrames(60);
 }
 
 /// Hama's and Ivan's update hook during the Reveal lesson: they glow, drawn red
@@ -2543,15 +2604,15 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   Sound_PlaySong(SE_PSYNERGY_SPARKLE);
   ObjectEvent_GetById(LOCALID_HAMA)->update =
       FuchinTemple_AlternateLessonChildEffect;
-  WAIT(40);
+  FieldScript_WaitFrames(40);
   PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(20, 2, 23), PALETTES_BG);
   PaletteFade_StartInterpolation(60);
-  WAIT(40);
+  FieldScript_WaitFrames(40);
   Sound_PlaySong(SE_PSYNERGY_SPARKLE);
   ObjectEvent_GetById(LOCALID_IVAN)->update =
       FuchinTemple_AlternateLessonChildEffect;
-  WAIT(120);
+  FieldScript_WaitFrames(120);
   hama = ObjectEvent_GetById(LOCALID_HAMA);
   // Emit the lesson particles while both temporary child effects run.
   options.priority = 1;
@@ -2573,11 +2634,11 @@ static void FuchinTemple_AnimateRevealLesson(void) {
     WaitFrames(2);
   }
   Sound_PlaySong(SE_SHIMMER);
-  WAIT(30);
+  FieldScript_WaitFrames(30);
   // Fade back and remove both hooks before the conversation resumes.
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
-  WAIT(40);
+  FieldScript_WaitFrames(40);
   ObjectEvent_GetById(LOCALID_HAMA)->update = NULL;
   ObjectEvent_GetById(LOCALID_IVAN)->update = NULL;
   ObjectEvent_ConfigureSpriteColor(LOCALID_HAMA, SPRITE_COLOR_NORMAL);

@@ -94,7 +94,6 @@
 #include "flags.h"
 #include "songs.h"
 #include "heap.h"
-#include "script.h"
 
 /// A chest searched while facing the given way.
 #define BG_EVENT_CHEST_FACING(facing)                                          \
@@ -308,12 +307,12 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 objectId) {
 /// back to the ship at WARP_DEST_AFTER_BATTLE.
 static void EventScript_FightDeadbeard(void) {
 
-  SCRIPT_START();
+  FieldScript_Start();
   FieldScript_SetNextDestination(gSaveBlock.mapId, WARP_DEST_AFTER_BATTLE);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, 5);
-  SCRIPT_END();
+  FieldScript_End();
 }
 
 const struct MapEvent *Map_GetEvents(void) {
@@ -340,12 +339,12 @@ const struct MapEvent *Map_GetEvents(void) {
 /// Catch on the Nut circling on Crossbone Isle: the party gets it
 /// (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
 static void EventScript_CatchNut(void) {
-  SCRIPT_START();
+  FieldScript_Start();
   Import_ObjectEventSetPosition(LOCALID_ISLE_NUT, 0, 0);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_NUT_CAUGHT);
   ItemDisplay_ShowItem(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
-  SCRIPT_END();
+  FieldScript_End();
 }
 
 /// Restores each map's puzzles from its flags: the sliding logs'
@@ -468,7 +467,7 @@ static void CrossboneIsle_RestoreSunkPillar(void) {
       (gSaveBlock.mapId + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
                            (s32)&MapId_CrossboneIsleFirstFloor)));
   if (cleared != 0) {
-    OBJECT_POSITION_SET(LOCALID_SINKING_PILLAR, 650, 168);
+    ObjectEvent_SetPosition(LOCALID_SINKING_PILLAR, PIXELS(650), PIXELS(168));
     objectEvent->y.fixed = -PIXELS(32);
     ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_SINKING_PILLAR), 0);
     ObjectMotion_SetActionVariant(LOCALID_SINKING_PILLAR, 3);
@@ -511,10 +510,10 @@ static void EventScript_MovePillar(void) {
   // Play the moved-pillar reaction before hiding it and opening the passage.
   pillar->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
 
-  WAIT(8);
+  FieldScript_WaitFrames(8);
   CrossboneIsle_SpawnPillarMovedBurst(LOCALID_SINKING_PILLAR);
   Sound_PlaySong(SE_WHOOSH);
-  WAIT(40);
+  FieldScript_WaitFrames(40);
 
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SINKING_PILLAR), 0);
   ObjectMotion_SetActionVariant(LOCALID_SINKING_PILLAR, 3);
@@ -536,9 +535,9 @@ static void EventScript_MovePillar(void) {
 /// Walking into a corridor room's pillar in Crossbone Isle Cave (coord event
 /// 20): push it a step.
 static void EventScript_PushPillar(void) {
-  SCRIPT_START();
+  FieldScript_Start();
   PushedObject_AdvancePair();
-  SCRIPT_END();
+  FieldScript_End();
   EventScript_MovePillar();
 }
 
@@ -558,7 +557,7 @@ static void EventScript_OpenEastDoor(void) {
   if (GameFlag_Get(gSaveBlock.mapId +
                    (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
                     (s32)&MapId_CrossboneIsleFirstFloor)) == 0) {
-    SCRIPT_START();
+    FieldScript_Start();
     FieldScript_SetNextDestination(gSaveBlock.mapId, WARP_DEST_AFTER_BATTLE);
     Battle_SetType(BATTLE_TYPE_SCRIPTED);
     // The first four rooms use ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS; the
@@ -601,7 +600,7 @@ static void EventScript_OpenEastDoor(void) {
           ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, 4);
       break;
     }
-    SCRIPT_END();
+    FieldScript_End();
   } else {
     MapGrid_PlayMetatileCopySequence(gCrossboneIsle_EntranceCells, 44, 7);
     Sound_PlaySong(SE_STONE_RUMBLE);
@@ -612,18 +611,18 @@ static void EventScript_OpenEastDoor(void) {
 /// Back from the battle at a corridor room's east door
 /// (WARP_DEST_AFTER_BATTLE): the door opens, and the party walks through.
 static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
-  SCRIPT_START();
-  OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
+  FieldScript_Start();
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   GameFlag_Set((gSaveBlock.mapId +
                 (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
                  (s32)&MapId_CrossboneIsleFirstFloor)));
-  WAIT(30);
+  FieldScript_WaitFrames(30);
   MapGrid_AnimateCells(gCrossboneIsle_EntranceCells, 44, 7);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 3, -16);
   Import_ScriptRequestWarp(CORRIDOR_TO_SIDE_ROOM_EAST);
-  SCRIPT_END();
+  FieldScript_End();
 }
 
 /// Unused: Growth on Crossbone Isle's first plant would grow it and let the
@@ -726,25 +725,25 @@ static void CrossboneIsle_RestoreIvy(void) {
 
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY) != 0) {
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 8, 21);
-    OBJECT_POSITION_SET(LOCALID_FIRST_IVY, 968, 968);
+    ObjectEvent_SetPosition(LOCALID_FIRST_IVY, PIXELS(968), PIXELS(968));
   } else {
     objectEvent = ObjectEvent_Get(LOCALID_FIRST_IVY);
     objectEvent->scaleY = 8 * Q16_ONE / 5;
   }
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1) != 0) {
-    OBJECT_POSITION_SET(LOCALID_FIRST_IVY + 1, 968, 968);
+    ObjectEvent_SetPosition(LOCALID_FIRST_IVY + 1, PIXELS(968), PIXELS(968));
   } else {
     objectEvent = ObjectEvent_Get(LOCALID_FIRST_IVY + 1);
     objectEvent->scaleY = 8 * Q16_ONE / 5;
   }
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2) != 0) {
-    OBJECT_POSITION_SET(LOCALID_FIRST_IVY + 2, 968, 968);
+    ObjectEvent_SetPosition(LOCALID_FIRST_IVY + 2, PIXELS(968), PIXELS(968));
   } else {
     objectEvent = ObjectEvent_Get(LOCALID_FIRST_IVY + 2);
     objectEvent->scaleY = 8 * Q16_ONE / 5;
   }
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3) != 0) {
-    OBJECT_POSITION_SET(LOCALID_FIRST_IVY + 3, 968, 968);
+    ObjectEvent_SetPosition(LOCALID_FIRST_IVY + 3, PIXELS(968), PIXELS(968));
   } else {
     objectEvent = ObjectEvent_Get(LOCALID_FIRST_IVY + 3);
     // BUG: no fourth ivy is placed, so its slot is empty (ObjectEvent_ClearAll)
@@ -761,11 +760,11 @@ static void CrossboneIsle_RestoreIvy(void) {
 static void EventScript_PushIsleLog(void) {
   struct PushedObjectProbe probe;
 
-  SCRIPT_START();
+  FieldScript_Start();
   if (PushedObject_FindClearPosition(&probe) != 0) {
     ObjectEvent_MoveAndRedraw(probe);
   }
-  SCRIPT_END();
+  FieldScript_End();
 }
 
 /// Moves the selected object event and puzzle log by the same pixel offset.
@@ -779,7 +778,7 @@ static void CrossboneIsle_MoveSelectedObjectEventAndLog(s32 localId,
 
   selectedObjectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   logObjectEvent = ObjectEvent_GetById(localId);
-  SCRIPT_START();
+  FieldScript_Start();
   {
     fixedX =
         ((selectedObjectEvent->x.fixed + (xOffset * PIXELS(1))) & 0xFFF00000) +
@@ -814,7 +813,7 @@ static void CrossboneIsle_MoveSelectedObjectEventAndLog(s32 localId,
   Sound_PlaySong(SE_LOG_PUSH);
   Object_WaitForMove(selectedObjectEvent);
   Sound_PlaySong(SE_STOP_ACTION_SE);
-  SCRIPT_END();
+  FieldScript_End();
 }
 
 /// Draws the three-cell horizontal footprint centered on this log.
@@ -864,8 +863,8 @@ static void CrossboneIsle_DrawVerticalLogFootprint(s32 localId,
 
 /// Runs the two animation changes used when touching a puzzle log.
 static void CrossboneIsle_AnimateTouchedLog(int localId) {
-  OBJECT_ANIMATION(localId, 1);
-  OBJECT_ANIMATION(localId, 2);
+  Import_ObjectEventSetAnimation(localId, 1);
+  Import_ObjectEventSetAnimation(localId, 2);
 }
 
 /// Draws all twelve log footprints in Crossbone Isle Cave
@@ -974,7 +973,7 @@ static s32 CrossboneIsle_TryHop(struct ObjectEvent *objectEvent,
 #endif
     s32 movingFlags;
 
-    SCRIPT_START();
+    FieldScript_Start();
     Object_SelectAnimation(objectEvent, 6);
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
@@ -999,7 +998,7 @@ static s32 CrossboneIsle_TryHop(struct ObjectEvent *objectEvent,
     Object_SelectAnimation(objectEvent, 6);
     ObjectEvent_SetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
     *motionFlags = (u8)savedMotionFlags;
-    SCRIPT_END();
+    FieldScript_End();
     return 1;
   }
   return 0;

@@ -74,7 +74,6 @@
 #include "flags.h"
 #include "songs.h"
 #include "heap.h"
-#include "script.h"
 
 // Map-section temp flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
 // party enters another map section, and other map sections use the numbers for
@@ -297,22 +296,22 @@ static void EventScript_BaneFirstEscape(void) {
 
   if (Script_GetFlag(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) == 0) {
     GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE);
-    SCRIPT_START();
+    FieldScript_Start();
     FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
     ObjectEvent_PlaceCurrentWithinCameraBounds(LOCALID_BANE, 1);
     FieldCamera_WaitForArrival();
-    OBJECT_DIR(LOCALID_BANE, FACING_EAST, 20);
+    ObjectEvent_FaceDirection(LOCALID_BANE, FACING_EAST, 20);
     ObjectEvent_SetAttachedEffect(LOCALID_BANE, ATTACHED_EFFECT_IN_FRONT |
                                                     ATTACHED_EFFECT_ONCE);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_BANE, 2);
-    WAIT(20);
-    OBJECT_SPEED(LOCALID_BANE, PIXELS(1), PIXELS(1) / 2);
-    SE(SE_JUMP);
+    FieldScript_WaitFrames(20);
+    ObjectEvent_SetSpeed(LOCALID_BANE, PIXELS(1), PIXELS(1) / 2);
+    Script_PlaySong(SE_JUMP);
     djinni = ObjectEvent_GetById(LOCALID_BANE);
     djinni->velocityY = PIXELS(8);
     ObjectEvent_WalkToAndWait(LOCALID_BANE, 584, 680);
-    OBJECT_DIR(LOCALID_BANE, FACING_SOUTH, 20);
-    SCRIPT_END();
+    ObjectEvent_FaceDirection(LOCALID_BANE, FACING_SOUTH, 20);
+    FieldScript_End();
   }
 }
 
@@ -328,48 +327,48 @@ static void EventScript_BaneSecondEscape(void) {
     escapeComplete = Script_GetFlag(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE);
     if (escapeComplete == 0) {
       GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE);
-      SCRIPT_START();
+      FieldScript_Start();
 
       // Focus on the Djinni before its next jump away.
       FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
       ObjectEvent_PlaceCurrentWithinCameraBounds(LOCALID_BANE, 1);
       FieldCamera_WaitForArrival();
-      OBJECT_DIR(LOCALID_BANE, FACING_SOUTH, 20);
+      ObjectEvent_FaceDirection(LOCALID_BANE, FACING_SOUTH, 20);
       ObjectEvent_SetAttachedEffect(LOCALID_BANE, ATTACHED_EFFECT_IN_FRONT |
                                                       ATTACHED_EFFECT_ONCE);
       ObjectMotion_SetVarCbAndRefresh(LOCALID_BANE, 2);
-      WAIT(20);
-      OBJECT_SPEED(LOCALID_BANE, PIXELS(1), PIXELS(1) / 2);
-      SE(SE_JUMP);
+      FieldScript_WaitFrames(20);
+      ObjectEvent_SetSpeed(LOCALID_BANE, PIXELS(1), PIXELS(1) / 2);
+      Script_PlaySong(SE_JUMP);
       jumpingDjinni = ObjectEvent_GetById(LOCALID_BANE);
       jumpingDjinni->velocityY = PIXELS(10);
       ObjectEvent_WalkToAndWait(LOCALID_BANE, 584, 664);
-      OBJECT_DIR(LOCALID_BANE, FACING_SOUTH, 20);
+      ObjectEvent_FaceDirection(LOCALID_BANE, FACING_SOUTH, 20);
       ObjectEvent_SetAttachedEffect(LOCALID_BANE, ATTACHED_EFFECT_IN_FRONT |
                                                       ATTACHED_EFFECT_ONCE);
-      WAIT(30);
+      FieldScript_WaitFrames(30);
 
       // Dash across the platforms, then shake the room on landing.
-      OBJECT_SPEED(LOCALID_BANE, PIXELS(8), PIXELS(1) / 4);
+      ObjectEvent_SetSpeed(LOCALID_BANE, PIXELS(8), PIXELS(1) / 4);
       ObjectEvent_WalkToAndWait(LOCALID_BANE, 664, 664);
       ObjectEvent_WalkToAndWait(LOCALID_BANE, 744, 664);
       ObjectEvent_WalkToAndWait(LOCALID_BANE, 824, 664);
-      WAIT(10);
-      SE(SE_BANE_ESCAPE);
+      FieldScript_WaitFrames(10);
+      Script_PlaySong(SE_BANE_ESCAPE);
       MapGrid_SetShake(PIXELS(4), PIXELS(2), Q16_ONE);
-      WAIT(20);
+      FieldScript_WaitFrames(20);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-      WAIT(30);
+      FieldScript_WaitFrames(30);
 
       // Leave the Djinni tilted while its scale animation continues.
-      OBJECT_POSITION_SET(LOCALID_BANE, 888, 664);
+      ObjectEvent_SetPosition(LOCALID_BANE, PIXELS(888), PIXELS(664));
       spinningDjinni = ObjectEvent_GetById(LOCALID_BANE);
       spinningDjinni->sprite->rotation = 0xf800;
       spinningDjinni->facing = 0;
       Object_SetAnimationSpeed((struct Object *)spinningDjinni, 0);
       ObjectEvent_SetScript(spinningDjinni,
                             gCrossboneIsleKeys_BaneSquashScript);
-      SCRIPT_END();
+      FieldScript_End();
     }
   }
 }
@@ -383,29 +382,29 @@ static void EventScript_BaneLastEscape(void) {
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0 &&
       Script_GetFlag(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) == 0) {
     GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE);
-    SCRIPT_START();
+    FieldScript_Start();
 
     // Restore the sprite before the last jump and winding escape path.
     djinni = ObjectEvent_GetById(LOCALID_BANE);
     djinni->sprite->rotation = 0;
     Object_SetAnimationSpeed((struct Object *)djinni, 16);
-    SE(SE_JUMP);
+    Script_PlaySong(SE_JUMP);
     djinni = ObjectEvent_GetById(LOCALID_BANE);
     djinni->velocityY = PIXELS(8);
-    OBJECT_DIR(LOCALID_BANE, FACING_WEST, 30);
+    ObjectEvent_FaceDirection(LOCALID_BANE, FACING_WEST, 30);
     ObjectEvent_SetAttachedEffect(LOCALID_BANE, ATTACHED_EFFECT_IN_FRONT |
                                                     ATTACHED_EFFECT_ONCE);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_BANE, 2);
-    WAIT(20);
-    OBJECT_SPEED(LOCALID_BANE, PIXELS(1), PIXELS(1) / 2);
-    SE(SE_JUMP);
+    FieldScript_WaitFrames(20);
+    ObjectEvent_SetSpeed(LOCALID_BANE, PIXELS(1), PIXELS(1) / 2);
+    Script_PlaySong(SE_JUMP);
     djinni = ObjectEvent_GetById(LOCALID_BANE);
     djinni->velocityY = PIXELS(4);
     ObjectEvent_WalkToAndWait(LOCALID_BANE, 880, 680);
-    WAIT(10);
+    FieldScript_WaitFrames(10);
     ObjectEvent_SetAttachedEffect(LOCALID_BANE, ATTACHED_EFFECT_IN_FRONT |
                                                     ATTACHED_EFFECT_ATTACH);
-    OBJECT_SPEED(LOCALID_BANE, PIXELS(2), PIXELS(1));
+    ObjectEvent_SetSpeed(LOCALID_BANE, PIXELS(2), PIXELS(1));
     ObjectEvent_WalkToAndWait(LOCALID_BANE, 880, 696);
     ObjectEvent_WalkToAndWait(LOCALID_BANE, 882, 704);
     ObjectEvent_WalkToAndWait(LOCALID_BANE, 880, 712);
@@ -415,9 +414,9 @@ static void EventScript_BaneLastEscape(void) {
     ObjectEvent_WalkToAndWait(LOCALID_BANE, 880, 744);
     ObjectEvent_WalkToAndWait(LOCALID_BANE, 878, 752);
     ObjectEvent_WalkToAndWait(LOCALID_BANE, 880, 760);
-    OBJECT_POSITION_SET(LOCALID_BANE, 856, 824);
-    WAIT(10);
-    OBJECT_DIR(LOCALID_BANE, FACING_NORTH, 20);
+    ObjectEvent_SetPosition(LOCALID_BANE, PIXELS(856), PIXELS(824));
+    FieldScript_WaitFrames(10);
+    ObjectEvent_FaceDirection(LOCALID_BANE, FACING_NORTH, 20);
     ObjectEvent_SetAttachedEffect(LOCALID_BANE, ATTACHED_EFFECT_IN_FRONT |
                                                     ATTACHED_EFFECT_REMOVE);
     djinni = ObjectEvent_GetById(LOCALID_BANE);
@@ -427,7 +426,7 @@ static void EventScript_BaneLastEscape(void) {
     djinni->update = (void (*)(
         union ObjectEventOrEffect *))CrossboneIsleKeys_FaceBaneTowardLeader;
 #endif
-    SCRIPT_END();
+    FieldScript_End();
   }
 }
 
@@ -466,9 +465,9 @@ static void EventScript_BaneKeepsAway(void) {
 
 /// Halt on Bane in CrossboneIsleBane: it freezes in place.
 static void EventScript_HaltBane(void) {
-  SCRIPT_START();
-  OBJECT_ANIMATION(LOCALID_BANE, 0);
-  SCRIPT_END();
+  FieldScript_Start();
+  Import_ObjectEventSetAnimation(LOCALID_BANE, 0);
+  FieldScript_End();
 }
 
 const struct MapEvent *Map_GetEvents(void) {
@@ -517,7 +516,7 @@ static void CrossboneIsleKeys_OpenBlueDoor(s32 passageInfo) {
 /// Opens the red door, playing its opening when asked.
 static void CrossboneIsleKeys_OpenRedDoor(s32 passageInfo) {
   if ((passageInfo & PASSAGE_PLAY_OPENING) != 0) {
-    SE(SE_GATE_MOVE);
+    Script_PlaySong(SE_GATE_MOVE);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
     MapGrid_CopyCells(84, 29, 1, 3, 70, 49);
@@ -624,14 +623,14 @@ static void EventScript_ShowRedKey(void) {
   MapGrid_CopyCells(25, 45, 1, 2, 25, 48);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_RED_KEY) == 0)
     Import_ObjectEventSetPosition(keyLocalId, x, z);
-  WAIT(1);
+  FieldScript_WaitFrames(1);
 }
 
 /// Reveal wears off in CrossboneIsleKeys: the Red Key's cell is
 /// hidden again.
 static void EventScript_HideRedKey(void) {
   MapGrid_CopyCells(24, 48, 1, 2, 25, 48);
-  OBJECT_POSITION_SET(LOCALID_RED_KEY, 8, 8);
+  ObjectEvent_SetPosition(LOCALID_RED_KEY, PIXELS(8), PIXELS(8));
 }
 
 /// Collects the selected key, hides its object event and remembers it was
@@ -639,7 +638,7 @@ static void EventScript_HideRedKey(void) {
 static inline void CrossboneIsleKeys_CollectKey(s32 localId, s32 itemId,
                                                 s32 collectedFlag) {
   ItemDisplay_ShowItem(itemId, 3);
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   PartyInventory_GiveItem(itemId, 0);
   Import_ObjectEventSetPosition(localId, 0, 0);
   GameFlag_Set(collectedFlag);
@@ -696,10 +695,10 @@ static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
 static void EventScript_DodgeFirstPursuer(void) {
   struct ObjectEvent *leader;
 
-  SCRIPT_START();
-  OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(19) / 10, PIXELS(19) / 20);
-  OBJECT_SPEED(LOCALID_FIRST_STATUE, PIXELS(19) / 10, PIXELS(19) / 20);
-  SE(SE_THUMP);
+  FieldScript_Start();
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(19) / 10, PIXELS(19) / 20);
+  ObjectEvent_SetSpeed(LOCALID_FIRST_STATUE, PIXELS(19) / 10, PIXELS(19) / 20);
+  Script_PlaySong(SE_THUMP);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetDestination(LOCALID_FIRST_STATUE, leader->x.part.pixel,
@@ -707,14 +706,14 @@ static void EventScript_DodgeFirstPursuer(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FIRST_STATUE);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, 24);
-  WAIT(4);
-  SE(SE_THUMP);
+  FieldScript_WaitFrames(4);
+  Script_PlaySong(SE_THUMP);
   ObjectEvent_SetDestinationOffset(LOCALID_FIRST_STATUE, 0,
                                    CROSSBONE_PURSUER_STEP_Z);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   ObjectEvent_SetDestination(LOCALID_FIRST_STATUE, 360, 152);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FIRST_STATUE);
-  SCRIPT_END();
+  FieldScript_End();
   GameFlag_Clear(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
 }
 
@@ -739,10 +738,10 @@ static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
 static void EventScript_DodgeSecondPursuer(void) {
   struct ObjectEvent *leader;
 
-  SCRIPT_START();
-  OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
-  OBJECT_SPEED(LOCALID_SECOND_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
-  SE(SE_THUMP);
+  FieldScript_Start();
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
+  ObjectEvent_SetSpeed(LOCALID_SECOND_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
+  Script_PlaySong(SE_THUMP);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetDestination(LOCALID_SECOND_STATUE, leader->x.part.pixel,
@@ -751,13 +750,13 @@ static void EventScript_DodgeSecondPursuer(void) {
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_SECOND_STATUE);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0,
                                    CROSSBONE_LEADER_STEP_Z);
-  SE(SE_THUMP);
-  WAIT(4);
+  Script_PlaySong(SE_THUMP);
+  FieldScript_WaitFrames(4);
   ObjectEvent_SetDestinationOffset(LOCALID_SECOND_STATUE, 0, 16);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   ObjectEvent_SetDestination(LOCALID_SECOND_STATUE, 168, 264);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_SECOND_STATUE);
-  SCRIPT_END();
+  FieldScript_End();
   GameFlag_Clear(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
 }
 
@@ -809,10 +808,12 @@ static void EventScript_DodgeThirdPursuer(void) {
   struct ObjectEvent *leader;
 
   if (gSaveBlock.pausedObject != LOCALID_THIRD_STATUE) {
-    SCRIPT_START();
-    OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
-    OBJECT_SPEED(LOCALID_THIRD_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
-    SE(SE_THUMP);
+    FieldScript_Start();
+    ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(17) / 10,
+                         PIXELS(17) / 20);
+    ObjectEvent_SetSpeed(LOCALID_THIRD_STATUE, PIXELS(17) / 10,
+                         PIXELS(17) / 20);
+    Script_PlaySong(SE_THUMP);
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (leader != 0) {
       ObjectEvent_SetDestination(LOCALID_THIRD_STATUE, leader->x.part.pixel,
@@ -821,14 +822,14 @@ static void EventScript_DodgeThirdPursuer(void) {
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_THIRD_STATUE);
     ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0,
                                      CROSSBONE_LEADER_STEP_Z);
-    WAIT(4);
-    SE(SE_THUMP);
+    FieldScript_WaitFrames(4);
+    Script_PlaySong(SE_THUMP);
     ObjectEvent_SetDestinationOffset(LOCALID_THIRD_STATUE, 0, 16);
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
     ObjectEvent_SetDestination(LOCALID_THIRD_STATUE, 264, 360);
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_THIRD_STATUE);
-    WAIT(10);
-    SCRIPT_END();
+    FieldScript_WaitFrames(10);
+    FieldScript_End();
   }
 }
 
@@ -839,8 +840,9 @@ static void EventScript_DodgeFourthPursuer(void) {
   s32 leaderColumn;
 
   if (gSaveBlock.pausedObject != LOCALID_FOURTH_STATUE) {
-    SCRIPT_START();
-    OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
+    FieldScript_Start();
+    ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(17) / 10,
+                         PIXELS(17) / 20);
     ObjectMotion_SetSpeedParameters(LOCALID_FOURTH_STATUE, PIXELS(17) / 10,
                                     PIXELS(17) / 20);
     Sound_PlaySong(SE_THUMP);
@@ -866,14 +868,14 @@ static void EventScript_DodgeFourthPursuer(void) {
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FOURTH_STATUE);
     ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, 0,
                                               CROSSBONE_LEADER_STEP_Z);
-    WAIT(4);
+    FieldScript_WaitFrames(4);
     Sound_PlaySong(SE_THUMP);
     ObjectMotion_OffsetPositionAndResetMotion(LOCALID_FOURTH_STATUE, 0, 16);
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
     ObjectMotion_ResetAndSetPosition(LOCALID_FOURTH_STATUE, 344, 360);
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FOURTH_STATUE);
-    WAIT(10);
-    SCRIPT_END();
+    FieldScript_WaitFrames(10);
+    FieldScript_End();
   }
 }
 
@@ -898,10 +900,10 @@ static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
 static void EventScript_DodgeFifthPursuer(void) {
   struct ObjectEvent *leader;
 
-  SCRIPT_START();
-  OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
-  OBJECT_SPEED(LOCALID_FIFTH_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
-  SE(SE_THUMP);
+  FieldScript_Start();
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
+  ObjectEvent_SetSpeed(LOCALID_FIFTH_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
+  Script_PlaySong(SE_THUMP);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetDestination(LOCALID_FIFTH_STATUE, leader->x.part.pixel,
@@ -910,12 +912,12 @@ static void EventScript_DodgeFifthPursuer(void) {
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FIFTH_STATUE);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0,
                                    CROSSBONE_LEADER_STEP_Z);
-  SE(SE_THUMP);
+  Script_PlaySong(SE_THUMP);
   ObjectEvent_SetDestinationOffset(LOCALID_FIFTH_STATUE, 0, 16);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   ObjectEvent_SetDestination(LOCALID_FIFTH_STATUE, 312, 232);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FIFTH_STATUE);
-  SCRIPT_END();
+  FieldScript_End();
   GameFlag_Clear(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
 }
 
@@ -1105,7 +1107,7 @@ static void EventScript_PushFirstPillar(void) {
 /// restored.
 static void CrossboneIsleKeys_ReleaseSecondPillarChest(void) {
   Task_Remove(CrossboneIsleKeys_FollowSecondPillar);
-  OBJECT_POSITION_SET(LOCALID_SECOND_PILLAR_CHEST, 0, 0);
+  ObjectEvent_SetPosition(LOCALID_SECOND_PILLAR_CHEST, PIXELS(0), PIXELS(0));
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_LOOKED_EAST) != 0) {
     MapGrid_CopyCellAttributes(58, 36, 1, 1, 45, 43);
   } else {
@@ -1324,16 +1326,18 @@ UNUSED static void CrossboneIsleKeys_UnusedUpdateKeyIcons(void) {
   switch (gCrossboneIsleKeys_IconTimer) {
   case 12:
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY) == 0) {
-      OBJECT_POSITION_SET(LOCALID_FIRST_BLUE_KEY, 232, 872);
+      ObjectEvent_SetPosition(LOCALID_FIRST_BLUE_KEY, PIXELS(232), PIXELS(872));
     }
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 1) == 0) {
-      OBJECT_POSITION_SET(LOCALID_SECOND_BLUE_KEY, 296, 824);
+      ObjectEvent_SetPosition(LOCALID_SECOND_BLUE_KEY, PIXELS(296),
+                              PIXELS(824));
     }
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 2) == 0) {
-      OBJECT_POSITION_SET(LOCALID_THIRD_BLUE_KEY, 328, 760);
+      ObjectEvent_SetPosition(LOCALID_THIRD_BLUE_KEY, PIXELS(328), PIXELS(760));
     }
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 3) == 0) {
-      OBJECT_POSITION_SET(LOCALID_FOURTH_BLUE_KEY, 360, 872);
+      ObjectEvent_SetPosition(LOCALID_FOURTH_BLUE_KEY, PIXELS(360),
+                              PIXELS(872));
     }
     break;
   case 10:
@@ -1365,16 +1369,16 @@ static void CrossboneIsleKeys_InitializeKeys(void) {
   Colosso_ShowItemIcon(LOCALID_SECOND_BLUE_KEY, ITEM_BLUE_KEY);
   Colosso_ShowItemIcon(LOCALID_FIRST_BLUE_KEY, ITEM_BLUE_KEY);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY) == 0) {
-    OBJECT_POSITION_SET(LOCALID_FIRST_BLUE_KEY, 232, 872);
+    ObjectEvent_SetPosition(LOCALID_FIRST_BLUE_KEY, PIXELS(232), PIXELS(872));
   }
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 1) == 0) {
-    OBJECT_POSITION_SET(LOCALID_SECOND_BLUE_KEY, 296, 824);
+    ObjectEvent_SetPosition(LOCALID_SECOND_BLUE_KEY, PIXELS(296), PIXELS(824));
   }
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 2) == 0) {
-    OBJECT_POSITION_SET(LOCALID_THIRD_BLUE_KEY, 328, 760);
+    ObjectEvent_SetPosition(LOCALID_THIRD_BLUE_KEY, PIXELS(328), PIXELS(760));
   }
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 3) == 0) {
-    OBJECT_POSITION_SET(LOCALID_FOURTH_BLUE_KEY, 360, 872);
+    ObjectEvent_SetPosition(LOCALID_FOURTH_BLUE_KEY, PIXELS(360), PIXELS(872));
   }
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN) != 0) {
     CrossboneIsleKeys_OpenBlueDoor(0);
@@ -1428,7 +1432,7 @@ static void CrossboneIsleKeys_InitializeBane(void) {
                              TASK_PRIORITY_MAP);
   TreasureSpot_SetPosition(107, 0, 0);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_DEMON_AXE) != 0) {
-    OBJECT_ANIMATION(LOCALID_SECOND_PILLAR_CHEST, 2);
+    Import_ObjectEventSetAnimation(LOCALID_SECOND_PILLAR_CHEST, 2);
   }
   EventScript_MoveFirstPillar();
   EventScript_MoveSecondPillar();
@@ -1443,13 +1447,13 @@ static void CrossboneIsleKeys_InitializeBane(void) {
   CrossboneIsleKeys_RepaintFourthAndFifthPillarCells();
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_PUDDLE_FROZEN) != 0) {
     EventScript_FreezePuddle();
-    OBJECT_ANIMATION(LOCALID_PUDDLE, 5);
+    Import_ObjectEventSetAnimation(LOCALID_PUDDLE, 5);
   }
 
   // Restore the surviving Djinni at the last completed escape stage.
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
-      OBJECT_POSITION_SET(LOCALID_BANE, 856, 824);
+      ObjectEvent_SetPosition(LOCALID_BANE, PIXELS(856), PIXELS(824));
       djinni = ObjectEvent_GetById(LOCALID_BANE);
 #ifdef UBFIX
       djinni->update = CrossboneIsleKeys_FaceBaneTowardLeader;
@@ -1458,14 +1462,14 @@ static void CrossboneIsleKeys_InitializeBane(void) {
           union ObjectEventOrEffect *))CrossboneIsleKeys_FaceBaneTowardLeader;
 #endif
     } else if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0) {
-      OBJECT_POSITION_SET(LOCALID_BANE, 888, 664);
+      ObjectEvent_SetPosition(LOCALID_BANE, PIXELS(888), PIXELS(664));
       djinni = ObjectEvent_GetById(LOCALID_BANE);
       djinni->sprite->rotation = 0;
       Object_SetAnimationSpeed((struct Object *)djinni, 16);
     } else if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {
-      OBJECT_POSITION_SET(LOCALID_BANE, 584, 680);
+      ObjectEvent_SetPosition(LOCALID_BANE, PIXELS(584), PIXELS(680));
     } else {
-      OBJECT_POSITION_SET(LOCALID_BANE, 584, 664);
+      ObjectEvent_SetPosition(LOCALID_BANE, PIXELS(584), PIXELS(664));
     }
   }
 }

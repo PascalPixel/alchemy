@@ -36,7 +36,6 @@
 
 #include "script_layer.h"
 #include "flags.h"
-#include "script.h"
 
 // Map-section temp flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
 // party enters another map section, and other map sections use the numbers for
@@ -79,8 +78,8 @@ s32 Map_Initialize(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = 24;
   if (GameFlag_Get(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
-    OBJECT_POSITION_SET(LOCALID_FALLEN_STUMP, 216, 136);
-    OBJECT_ANIMATION(LOCALID_FALLEN_STUMP, STUMP_ANIMATION_SINK);
+    ObjectEvent_SetPosition(LOCALID_FALLEN_STUMP, PIXELS(216), PIXELS(136));
+    Import_ObjectEventSetAnimation(LOCALID_FALLEN_STUMP, STUMP_ANIMATION_SINK);
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_FALLEN_STUMP), 0);
     ObjectEvent_GetById(LOCALID_FALLEN_STUMP)->priorityFlags =
         OBJ_EVENT_PRIORITY_UNDERFOOT;

@@ -58,7 +58,6 @@
 #include "map_grid_scroll.h"
 #include "flags.h"
 #include "songs.h"
-#include "script.h"
 
 /// Breeze, a Jupiter Djinni (DJINNI_BREEZE), the only placed object event; its
 /// object event template is gone once its flag (FLAG_DJINNI(DJINNI_BREEZE))
@@ -176,7 +175,7 @@ static void EventScript_EnterTretTreeRooms(void) {
   struct FieldWork *state = gFieldWork;
   s16 *touchedWarp;
 
-  SE(SE_MAP_EXIT);
+  Script_PlaySong(SE_MAP_EXIT);
   touchedWarp = &state->coordEvent;
   Import_ScriptRequestWarp(*touchedWarp);
 }
@@ -210,8 +209,8 @@ const struct MapEvent *TretTreeBranch_GetEvents(void) {
 
 /// Unused script hook: begins and immediately ends a script.
 static void UNUSED TretTreeBranch_RunEmptyEvent(void) {
-  SCRIPT_START();
-  SCRIPT_END();
+  FieldScript_Start();
+  FieldScript_End();
 }
 
 static void UNUSED TretTreeBranch_UnusedHookFirst(void) {}

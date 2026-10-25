@@ -62,7 +62,6 @@
 #include "macros.h"
 #include "flags.h"
 #include "songs.h"
-#include "script.h"
 #include "item_ids.h"
 #include "vector3.h"
 #include "fx_work.h"
@@ -116,8 +115,8 @@ static void GomaCaveEntrance_GiveShamansRod(void);
 
 /// Shows the next message over the speaker, then pauses.
 static void GomaCaveEntrance_SayThenWait(s32 localId, s32 frames) {
-  MESSAGE_PUT(localId, 0);
-  WAIT(frames);
+  FieldScript_ShowMessageAndWait(localId, 0);
+  FieldScript_WaitFrames(frames);
 }
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
@@ -163,7 +162,7 @@ static void EventScript_MoveEastPillar(void) {
   pillar = ObjectEvent_GetById(LOCALID_EAST_PILLAR);
   column = pillar->x.fixed / PIXELS(16);
   if (column == 23) {
-    WAIT(10);
+    FieldScript_WaitFrames(10);
     ObjectEvent_GetById(LOCALID_EAST_PILLAR)->priorityFlags =
         OBJ_EVENT_PRIORITY_UNDERFOOT;
     ObjectEvent_GetById(LOCALID_EAST_PILLAR)->motionFlags = 0;
@@ -181,23 +180,23 @@ static void EventScript_PushWestPillar(void) {
   s32 offsetX;
 
   work = gFieldWork;
-  SCRIPT_START();
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_PUSH);
-  WAIT(20);
-  OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
-  OBJECT_SPEED(LOCALID_WEST_PILLAR, PIXELS(1) / 5, PIXELS(1) / 10);
-  SE(SE_PUSH);
+  FieldScript_Start();
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_PUSH);
+  FieldScript_WaitFrames(20);
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
+  ObjectEvent_SetSpeed(LOCALID_WEST_PILLAR, PIXELS(1) / 5, PIXELS(1) / 10);
+  Script_PlaySong(SE_PUSH);
   // 16 pixels east from coord event 5, west from coord event 6.
   offsetX = (11 - (work->coordEvent << 1)) << 4;
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, offsetX, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_WEST_PILLAR, offsetX, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_WEST_PILLAR);
-  WAIT(20);
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_STAND);
+  FieldScript_WaitFrames(20);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   EventScript_MoveWestPillar();
   Map_PlayQueuedMusic();
-  SCRIPT_END();
+  FieldScript_End();
 }
 
 /// Unused: an empty function nothing calls.
@@ -209,9 +208,9 @@ UNUSED static void GomaCaveEntrance_NoOpB(void) {}
 /// Whirlwind on the second ivy at Goma Cave Entrance: it is blown away for
 /// good.
 static void EventScript_BlowAwayIvy(void) {
-  SCRIPT_START();
+  FieldScript_Start();
   GameFlag_Set(FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY);
-  SCRIPT_END();
+  FieldScript_End();
 }
 
 const struct MapEvent *Map_GetEvents(void) { return gGomaCaveEntranceEvents; }
@@ -223,9 +222,9 @@ s32 Map_Initialize(void) {
   struct ObjectEvent *movedObject;
 
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
-  WAIT(10);
+  FieldScript_WaitFrames(10);
   Map_QueueMusic(SE_AMBIENT_WATER);
-  OBJECT_ANIMATION(LOCALID_SUNKEN_STUMP, STUMP_ANIMATION_SINK);
+  Import_ObjectEventSetAnimation(LOCALID_SUNKEN_STUMP, STUMP_ANIMATION_SINK);
   ObjectEvent_GetById(LOCALID_SUNKEN_STUMP)->priorityFlags =
       OBJ_EVENT_PRIORITY_UNDERFOOT;
   {
@@ -247,16 +246,16 @@ s32 Map_Initialize(void) {
     Import_ObjectEventSetPosition(LOCALID_STUMP, PIXELS(136), PIXELS(196));
     ObjectEvent_GetById(LOCALID_STUMP)->priorityFlags |=
         OBJ_EVENT_PRIORITY_UNDERFOOT;
-    OBJECT_ANIMATION(LOCALID_STUMP, STUMP_ANIMATION_SINK);
+    Import_ObjectEventSetAnimation(LOCALID_STUMP, STUMP_ANIMATION_SINK);
     MapGrid_CopyCellAttributes(39, 12, 3, 1, 8, 12);
     MapGrid_CopyCellAttributes(43, 11, 3, 1, 12, 11);
   }
   if (GameFlag_Get(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP) != 0) {
-    OBJECT_POSITION_SET(LOCALID_WEST_PILLAR, 264, 312);
+    ObjectEvent_SetPosition(LOCALID_WEST_PILLAR, PIXELS(264), PIXELS(312));
     MapGrid_CopyCellAttributes(48, 18, 1, 2, 16, 18);
   } else {
     if (GameFlag_Get(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS) != 0) {
-      OBJECT_POSITION_SET(LOCALID_WEST_PILLAR, 280, 312);
+      ObjectEvent_SetPosition(LOCALID_WEST_PILLAR, PIXELS(280), PIXELS(312));
       MapGrid_CopyCellAttributes(47, 18, 1, 2, 16, 18);
     }
   }
@@ -284,142 +283,152 @@ static void EventScript_IvanRejoins(void) {
 #if TBS_PATCH_1
   Map_PlayQueuedMusic();
 #endif
-  SCRIPT_START();
-  WAIT(30);
-  MESSAGE_SET(MsgGomaNoUsePsynergy);
-  OBJECT_SPEED(LOCALID_PARTY_LEADER, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-  OBJECT_SPEED(LOCALID_GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 20);
+  FieldScript_Start();
+  FieldScript_WaitFrames(30);
+  FieldScript_SetMessageId(MsgGomaNoUsePsynergy);
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 4 * PIXELS(1) / 5,
+                       2 * PIXELS(1) / 5);
+  ObjectEvent_SetSpeed(LOCALID_GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 20);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetPosition(LOCALID_GARET, leader->x.fixed, leader->z.fixed);
   }
   ObjectEvent_WalkToAndWait(LOCALID_GARET, 264, 168);
-  OBJECT_DIR(LOCALID_GARET, FACING_SOUTHWEST, 20);
-  WAIT(20);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 20);
+  FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_SHAKE_HEAD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_GARET, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
-  WAIT(20);
+  FieldScript_WaitFrames(20);
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     // Garet falls back into line.
-    OBJECT_ANIMATION(LOCALID_GARET, ANIM_WALK);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (leader != 0) {
       ObjectEvent_SetDestination(LOCALID_GARET, leader->x.part.pixel,
                                  leader->z.part.pixel);
     }
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
-    OBJECT_POSITION_SET(LOCALID_GARET, 0, 0);
-    SCRIPT_END();
+    ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(0), PIXELS(0));
+    FieldScript_End();
   } else {
     // Ivan comes up from the south: "You want to move the stump, right?"
-    OBJECT_POSITION_SET(LOCALID_IVAN, 360, 248);
-    OBJECT_SPEED(LOCALID_IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+    ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(360), PIXELS(248));
+    ObjectEvent_SetSpeed(LOCALID_IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
     ObjectEvent_WalkToAndWait(LOCALID_IVAN, 272, 248);
     ObjectEvent_WalkToAndWait(LOCALID_IVAN, 272, 208);
-    OBJECT_DIR(LOCALID_IVAN, FACING_NORTHWEST, 20);
+    ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST, 20);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
-    OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
-    OBJECT_DIR(LOCALID_GARET, FACING_SOUTH, 0);
-    WAIT(20);
-    OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
+    FieldScript_WaitFrames(20);
+    ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
+                          EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                          60);
     ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
     ObjectEvent_WalkToAndWait(LOCALID_IVAN, 264, 200);
-    OBJECT_WALK(LOCALID_PARTY_LEADER, 248, 168);
+    ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 248, 168);
     ObjectEvent_WalkToAndWait(LOCALID_IVAN, 248, 184);
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-    OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
-    OBJECT_DIR(LOCALID_GARET, FACING_SOUTHWEST, 0);
+    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 0);
     ObjectEvent_WalkToAndWait(LOCALID_IVAN, 232, 184);
-    WAIT(20);
-    OBJECT_EMOTE(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-    OBJECT_DIR(LOCALID_IVAN, FACING_NORTHEAST, 20);
+    FieldScript_WaitFrames(20);
+    ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+    ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHEAST, 20);
     ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
-    OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
-    WAIT(20);
-    OBJECT_DIR(LOCALID_IVAN, FACING_WEST, 20);
+    FieldScript_WaitFrames(20);
+    ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 20);
     Script_ShowMessageAndWait(LOCALID_IVAN, 0, 120);
-    OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-    OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+    ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
+                          0);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
-    WAIT(60);
-    OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
-    OBJECT_DIR(LOCALID_GARET, FACING_SOUTHWEST, 0);
-    WAIT(60);
-    OBJECT_EMOTE(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
+    FieldScript_WaitFrames(60);
+    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 0);
+    FieldScript_WaitFrames(60);
+    ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
     ObjectMotion_SetVariantCallback(LOCALID_IVAN, 1);
-    WAIT(30);
+    FieldScript_WaitFrames(30);
     Script_ShowMessageAndWait(LOCALID_IVAN, 0, 30);
-    OBJECT_DIR(LOCALID_IVAN, FACING_NORTHEAST, 20);
+    ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHEAST, 20);
     ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
-    OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
-    WAIT(20);
-    OBJECT_DIR(LOCALID_IVAN, FACING_WEST, 20);
+    FieldScript_WaitFrames(20);
+    ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 20);
     // "I have a great idea. Leave it to me!": Whirlwind.
     GomaCaveEntrance_WhirlwindOnStumpIvy();
-    OBJECT_ANIMATION(LOCALID_IVAN, ANIM_STAND);
-    WAIT(20);
+    Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_STAND);
+    FieldScript_WaitFrames(20);
 #if TBS_PATCH_1
     Map_PlayQueuedMusic();
 #endif
-    OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+    ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
+                          EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                          60);
     ObjectMotion_Launch(LOCALID_GARET, 2, 0);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(LOCALID_GARET, 20);
     ObjectEvent_WalkToAndWait(LOCALID_IVAN, 264, 184);
-    WAIT(10);
+    FieldScript_WaitFrames(10);
     ObjectEvent_FaceObjectEvent(LOCALID_IVAN, LOCALID_GARET, 0);
     ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_IVAN, 0);
     ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_IVAN, 0);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(LOCALID_IVAN, 60);
-    OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-    OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-    OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-    OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-    WAIT(60);
-    OBJECT_DIR(LOCALID_GARET, FACING_WEST, 0);
-    OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_EAST, 0);
-    WAIT(60);
-    OBJECT_DIR(LOCALID_GARET, FACING_SOUTH, 0);
-    OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
-    WAIT(10);
+    ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
+                          0);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+    ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                          0);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    FieldScript_WaitFrames(60);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
+    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
+    FieldScript_WaitFrames(60);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
+    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
+    FieldScript_WaitFrames(10);
     GomaCaveEntrance_SayThenWait(LOCALID_GARET, 20);
-    OBJECT_EMOTE(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-    WAIT(60);
+    ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+    FieldScript_WaitFrames(60);
     ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(LOCALID_IVAN, 20);
     ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_IVAN, 0);
     ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_IVAN, 0);
-    OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-    OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-    WAIT(60);
+    ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
+                          0);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    FieldScript_WaitFrames(60);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(LOCALID_IVAN, 30);
-    OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-    OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-    WAIT(80);
+    ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                          0);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    FieldScript_WaitFrames(80);
     ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(LOCALID_IVAN, 20);
     ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
     ObjectMotion_SetVariantCallback(LOCALID_GARET, 1);
@@ -427,62 +436,62 @@ static void EventScript_IvanRejoins(void) {
         LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
                                                      ATTACHED_EFFECT_ONCE);
-    WAIT(60);
+    FieldScript_WaitFrames(60);
     ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(LOCALID_IVAN, 20);
-    OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_EAST, 0);
-    OBJECT_DIR(LOCALID_GARET, FACING_WEST, 0);
-    WAIT(80);
+    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
+    FieldScript_WaitFrames(80);
     ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_IVAN, 0);
     ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_IVAN, 0);
-    WAIT(30);
+    FieldScript_WaitFrames(30);
     ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(LOCALID_IVAN, 30);
     ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(LOCALID_IVAN, 20);
     ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(LOCALID_IVAN, 40);
-    OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     // "Please, allow me to join your quest.": Ivan rejoins with his rod.
     FieldScript_PrepareObjectAndApplyValue(IVAN, 1);
-    WAIT(60);
+    FieldScript_WaitFrames(60);
     GomaCaveEntrance_GiveShamansRod();
     ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 1);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     ObjectEvent_WalkToAndWait(LOCALID_IVAN, 248, 184);
-    WAIT(20);
+    FieldScript_WaitFrames(20);
     GomaCaveEntrance_SayThenWait(LOCALID_IVAN, 20);
-    OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_WEST, 0);
-    OBJECT_DIR(LOCALID_GARET, FACING_WEST, 0);
-    WAIT(120);
+    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
+    FieldScript_WaitFrames(120);
     GomaCaveEntrance_SayThenWait(LOCALID_IVAN, 30);
     ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_IVAN, 0);
     ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_IVAN, 0);
     ObjectEvent_FaceObjectEvent(LOCALID_IVAN, LOCALID_PARTY_LEADER, 0);
-    WAIT(20);
-    OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_NOD);
-    OBJECT_ANIMATION(LOCALID_GARET, ANIM_NOD);
+    FieldScript_WaitFrames(20);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
-    WAIT(50);
-    OBJECT_SPEED(LOCALID_GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-    OBJECT_SPEED(LOCALID_IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-    OBJECT_WALK(LOCALID_GARET, 248, 168);
+    FieldScript_WaitFrames(50);
+    ObjectEvent_SetSpeed(LOCALID_GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+    ObjectEvent_SetSpeed(LOCALID_IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+    ObjectEvent_WalkTo(LOCALID_GARET, 248, 168);
     ObjectEvent_WalkToAndWait(LOCALID_IVAN, 248, 168);
-    OBJECT_POSITION_SET(LOCALID_IVAN, 0, 0);
+    ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(0), PIXELS(0));
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
-    OBJECT_POSITION_SET(LOCALID_GARET, 0, 0);
+    ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(0), PIXELS(0));
     MapGrid_CopyCellAttributes(74, 11, 1, 1, 73, 11);
     GameFlag_Set(FLAG_GOMA_CAVE_IVAN_JOINED);
-    SCRIPT_END();
+    FieldScript_End();
   }
 }
 
@@ -492,7 +501,7 @@ static void EventScript_MoveStump(void) {
   s32 column;
   struct ObjectEvent *stump;
 
-  SCRIPT_START();
+  FieldScript_Start();
   column = ObjectEvent_GetById(LOCALID_STUMP)->x.fixed >> 20;
   if (column == 11) {
     GomaCaveEntrance_LeapStump(LOCALID_STUMP);
@@ -502,7 +511,7 @@ static void EventScript_MoveStump(void) {
     MapGrid_CopyCellAttributes(43, 11, 3, 1, 12, column);
     GameFlag_Set(FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED);
   }
-  SCRIPT_END();
+  FieldScript_End();
 }
 
 /// Ivan casts Whirlwind on the stump's ivy, and the cutscene waits for it. The
@@ -555,7 +564,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
     stump->targetX = OBJ_EVENT_NO_TARGET;
   }
   stump->update = GomaCaveEntrance_SpinStump;
-  OBJECT_SPEED(stumpId, PIXELS(3), 3 * PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(stumpId, PIXELS(3), 3 * PIXELS(1) / 2);
   ObjectMotion_ResetAndSetPosition(stumpId, 160, 192);
   stump->gravity = 4 * PIXELS(1) / 5;
   stump->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
@@ -596,7 +605,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
       stump->x.fixed, stump->y.fixed, stump->z.fixed, 0, 0, 0,
       EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET, p);
   Sound_PlaySong(SE_CAST);
-  OBJECT_ANIMATION(stumpId, STUMP_ANIMATION_SPLASH);
+  Import_ObjectEventSetAnimation(stumpId, STUMP_ANIMATION_SPLASH);
   MapGrid_WaitForShakeToSettle();
 }
 

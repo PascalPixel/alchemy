@@ -251,9 +251,8 @@ function one object event runs each frame). A request the script raises, like
 this warp, waits until the script has finished.
 
 A script is plain C written in the calls of `script_layer.h`,
-`field_service.h` and `engine_call.h`, or in the shorter commands of
-`script.h` that stand for them. A step that takes time runs the game's frames
-itself through `WaitFrames` before it returns ([Engine](../../engine.md#waiting-and-tasks)
+`field_service.h` and `engine_call.h`. A step that takes time runs the
+game's frames itself through `WaitFrames` before it returns ([Engine](../../engine.md#waiting-and-tasks)
 explains it). A callback is added with `FieldScheduler_AddCallback`.
 
 ## State that cleans itself up
@@ -372,7 +371,7 @@ its `msgctxt` is the name the map writes (`MsgVaultWelcomeToVaultTheTownAt`).
   proven meaning takes a name in the map's own file, never in `flags.h`.
 - **messages**: linker symbols written by bare name, `MSGNO(name)` their
   number. A message's `msgctxt` in `games/tbs/text/en.po` is its name;
-  `MESSAGE_PUT` chooses the next message after showing one, so a line that
+  `FieldScript_ShowMessageAndWait` chooses the next message after showing one, so a line that
   follows a named one has no name of its own.
 - **callback**: a function a map adds with `FieldScheduler_AddCallback` at
   `TASK_PRIORITY_MAP`, run once a frame until removed.

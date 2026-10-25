@@ -53,7 +53,6 @@
 #include "objcmd.h"
 #include "flags.h"
 #include "songs.h"
-#include "script.h"
 #include "item_ids.h"
 #include "ability_ids.h"
 #include "vector3.h"
@@ -144,7 +143,7 @@ s32 Map_Initialize(void) {
         ObjectEvent_SetSpriteFlags(stump, 0);
         ObjectEvent_GetById(LOCALID_STUMP)->priorityFlags |=
             OBJ_EVENT_PRIORITY_UNDERFOOT;
-        OBJECT_ANIMATION(LOCALID_STUMP, STUMP_ANIMATION_SINK);
+        Import_ObjectEventSetAnimation(LOCALID_STUMP, STUMP_ANIMATION_SINK);
         MapGrid_CopyCellAttributes(19, 74, 9, 3, 19, 17);
       }
     }
@@ -179,7 +178,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
     stump->targetX = OBJ_EVENT_NO_TARGET;
   }
   stump->update = GomaCaveStream_SpinStump;
-  OBJECT_SPEED(stumpId, PIXELS(3), 3 * PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(stumpId, PIXELS(3), 3 * PIXELS(1) / 2);
   ObjectEvent_SetDestination(stumpId, 376, 288);
   stump->gravity = 4 * PIXELS(1) / 5;
   stump->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
@@ -221,7 +220,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
                         EFFECT_SCALE_TO_TARGET,
                     &options);
   Sound_PlaySong(SE_CAST);
-  OBJECT_ANIMATION(stumpId, STUMP_ANIMATION_SPLASH);
+  Import_ObjectEventSetAnimation(stumpId, STUMP_ANIMATION_SPLASH);
   MapGrid_WaitForShakeToSettle();
 }
 

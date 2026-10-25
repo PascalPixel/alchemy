@@ -77,7 +77,6 @@
 #include "animspr.h"
 #include "venus_lighthouse_aerie.h"
 #include "field_effect.h"
-#include "script.h"
 #include "script_layer.h"
 #include "map_tables.h"
 #include "songs.h"
@@ -3289,7 +3288,7 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   s32 phase;
   s32 angle;
 
-  center = OBJECT_GET(23);
+  center = ((union ObjectEventOrEffect *)ObjectEvent_GetById(23));
   grid = gMapGridWork[0];
   drift = (u32)(Random_Next() * 48) >> 16 << 16;
   if ((s16)(grid->viewY >> 16) <= 129) {

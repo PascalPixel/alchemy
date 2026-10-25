@@ -334,7 +334,7 @@ Where the party arrives in a map, named for where it comes from
 ### Script
 
 A function a map event names (`EventScript_EnterIsaacsHouse`), written one step
-to a line in the commands of `script.h`, each step that takes time running its
+to a line as calls into the script layer, each step that takes time running its
 frames before the next starts. An object script is the list of `SC_` commands
 an [object](#object) runs each frame ([Maps](src/map/README.md#scripts)).
 

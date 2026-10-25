@@ -280,7 +280,7 @@ load moves.
 - One routine can be reached by several routes, each kept where it matches: a
   game flag by `GameFlag_Get`, `GameFlag_Set` and `GameFlag_Clear` or by the
   script layer's inlines `Script_GetFlag`, `Script_SetFlag` and
-  `Script_ClearFlag`; a `script.h` command or the service it names; a unit by
+  `Script_ClearFlag`; a unit by
   `Unit_Get` or, from other [banks](../glossary.md#bank), the far call
   `Unit_GetFar`; a unit copy by `Iwram_CopyWords`, through `_call_via_r3`, or
   through `Item_CopyWords` (tagged). An inline call's argument is a pseudo of

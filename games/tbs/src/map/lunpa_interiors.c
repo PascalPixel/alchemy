@@ -1,7 +1,9 @@
 /// @file
-/// The buildings of Lunpa and the house at Suhalla Gate: one map
-/// (MapId_LunpaInteriors) whose rooms are told apart by the warp destination
-/// the party comes in by, and whose area name follows it:
+/// The buildings of Lunpa and the house at Suhalla Gate: one sheet of rooms
+/// (MapId_LunpaInteriors), packed onto one map as the game packs rooms that
+/// share a tile style, which keeps the town's name because all its rooms but
+/// one are Lunpa's. Its rooms are told apart by the warp destination
+/// the party comes in by, and the area name follows it:
 ///
 /// - Lunpa: the three homes, the weapon and armor shop, the item shop, the inn
 ///   and the crate room, entered by the town's doors (lunpa.c) at
@@ -9,8 +11,9 @@
 /// - Lunpa Temple: ROOM_TEMPLE from the town, and ROOM_TEMPLE_SECOND_WARP_DEST,
 ///   where a party defeated in Lunpa wakes.
 /// - Gate to Suhalla: the house beside Suhalla Gate (suhalla_gate.c), entered
-///   at ROOM_GATE_TO_SUHALLA, where a traveling Healer offers the Sanctum's
-///   services.
+///   at ROOM_GATE_TO_SUHALLA (LUNPA_INTERIORS_FROM_SUHALLA_GATE_CHECKPOINT),
+///   the sheet's one room that is not Lunpa's, where a traveling Healer offers
+///   the Sanctum's services.
 ///
 /// A room's warp destination number is also its warp kind and the coord event
 /// of its door (ROOM_DOOR), so each door leads back out the way the party came

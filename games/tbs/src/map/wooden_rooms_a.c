@@ -1,9 +1,45 @@
 /// @file
-/// Vale (MapId_WoodenRoomsA): Isaac's house and the ground outside it, the
-/// inn and the inside of Kraden's cottage, and at
-/// WOODEN_ROOMS_A_FROM_BABI_PALACE a room of Babi's Palace: one overlay
-/// whose tables and setup choose by the warp destination and the story flags.
-/// In story order:
+/// Wooden rooms A (MapId_WoodenRoomsA), a sheet of rooms drawn in wood: the
+/// game packs rooms of several places that share a tile style onto one map,
+/// each room a camera box of its own that the warp destination the party comes
+/// in by chooses. This sheet's rooms are in Vale but for one in Babi's Palace,
+/// and its tables and setup choose by the warp destination and the story
+/// flags. The rooms, in story order, by the warps that lead in:
+///
+/// - Isaac's house in Vale: its upper floor, where a new game begins
+///   (WOODEN_ROOMS_A_FROM_VALE_PLAZA_SOUTHEAST, from menu/main_menu.c), and its
+///   ground floor, entered from Vale (WOODEN_ROOMS_A_FROM_VALE, from Vale's
+///   VALE_TO_WOODEN_ROOMS_A and the stormy night's
+///   VALE_STORMY_NIGHT_TO_WOODEN_ROOMS_A_ISAACS_HOUSE), joined by the stairs
+///   (WOODEN_ROOMS_A_ISAACS_HOUSE_FROM_UPSTAIRS and
+///   WOODEN_ROOMS_A_ISAACS_HOUSE_FROM_GROUND_FLOOR).
+/// - A house in Vale with two beds before a hearth, entered only on the stormy
+///   night, by either of its two doors
+///   (WOODEN_ROOMS_A_FROM_VALE_STORMY_NIGHT_WEST and
+///   WOODEN_ROOMS_A_FROM_VALE_STORMY_NIGHT_EAST).
+/// - Kraden's study, the inside of his cottage
+///   (WOODEN_ROOMS_A_FROM_VALE_KRADENS_COTTAGE_NORTH and
+///   WOODEN_ROOMS_A_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG, from
+///   ValeKradensCottage).
+///   ★ Named from what the player sees: Kraden's study, its walls lined with
+///   bookcases around a great pot (its render)
+/// - Vale's inn: the innkeeper's counter on the ground floor
+///   (WOODEN_ROOMS_A_FROM_VALE_PLAZA_WEST, from ValePlaza's
+///   VALE_PLAZA_TO_WOODEN_ROOMS_A_SOUTH) and the guest room upstairs
+///   (WOODEN_ROOMS_A_VALE_INN_FROM_GROUND_FLOOR).
+/// - Vale's forge, where the young smith works beside his mother
+///   (WOODEN_ROOMS_A_FROM_VALE_PLAZA_NORTHWEST).
+///   ★ Named from what the player sees: a forge with its furnace and anvil
+///   (its render)
+/// - A second forge room, stocked with sacks and crates beneath weapons and a
+///   shield on its wall, whose doorway in ValePlaza opens only once the party
+///   is back from Kalay (WOODEN_ROOMS_A_FROM_VALE_PLAZA_NORTHEAST).
+///   ★ Named from what the player sees: a forge room of sacks and crates with
+///   weapons and a shield on its wall (its render)
+/// - Babi's Palace, in Tolbi: the room of Babi's scholars
+///   (WOODEN_ROOMS_A_FROM_BABI_PALACE).
+///
+/// What happens in them follows the story:
 ///
 /// - The stormy night, three years before the journey, when a new game begins
 ///   at WOODEN_ROOMS_A_FROM_VALE_PLAZA_SOUTHEAST (from menu/main_menu.c, or

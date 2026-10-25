@@ -883,13 +883,13 @@
 /// The chest in the street.
 /// ★ Named from the game: "Warrior's Helm" (MsgItemName)
 #define FLAG_LALIVERO_WARRIORS_HELM 0xfb8
-/// A barrel in the shops' map (LaliveroInteriorsA).
+/// A barrel in LaliveroInteriorsA.
 /// ★ Named from the game: "Lucky Medal" (MsgItemName)
 #define FLAG_LALIVERO_INTERIORS_A_LUCKY_MEDAL 0xfb9
-/// A barrel in the shops' map (LaliveroInteriorsA).
+/// A barrel in LaliveroInteriorsA.
 /// ★ Named from the game: "Antidote" (MsgItemName)
 #define FLAG_LALIVERO_INTERIORS_A_ANTIDOTE 0xfba
-/// A barrel in Faran's house and the inn (LaliveroInteriorsB).
+/// A barrel in LaliveroInteriorsB.
 /// ★ Named from the game: "Lucky Medal" (MsgItemName)
 #define FLAG_LALIVERO_INTERIORS_B_LUCKY_MEDAL 0xfbb
 // Lunpa
@@ -1667,7 +1667,7 @@
 /// ★ Named from the game: "Vambrace" (MsgItemName)
 #define FLAG_VAULT_CAVE_VAMBRACE_CHEST 0xfc4
 
-// Vault Jail: its chests, set once each is opened
+// Lunpa's hidden room (StoneRooms): its chests, set once each is opened
 /// ★ Named from the game: "Water of Life" (MsgItemName)
 #define FLAG_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE 0xf8c
 /// ★ Named from the game: "Smoke Bomb" (MsgItemName)

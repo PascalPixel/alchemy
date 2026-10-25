@@ -1,17 +1,25 @@
 /// @file
-/// Vale (MapId_ValeInteriors): the insides of the village's houses and
-/// shops, all on one map. Each room is a warp destination with a camera box of
-/// its own, named for the door it is entered by
-/// (VALE_INTERIORS_FROM_VALE_WEST and the rest), and its door takes the
-/// warp of the same number back out: four open onto the village (MapId_Vale),
-/// and four onto the part of Vale with the Psynergy Stone (MapId_ValePlaza),
-/// as the warps' names say. Garet's family lives in the room entered from
-/// VALE_INTERIORS_FROM_VALE_EAST: his grandfather the mayor, his
-/// grandmother and his parents. Jenna's grandparents live in the room entered
-/// from VALE_INTERIORS_FROM_VALE_NORTH, and the one entered from
-/// VALE_INTERIORS_FROM_VALE_PLAZA_WEST holds the item, weapon and armor
-/// shops, each opened across its counter. The object event templates and map
-/// events follow the story:
+/// Vale (MapId_ValeInteriors), a sheet of Vale's rooms: the game packs rooms
+/// that share a tile style onto one map, and every room on this one is entered
+/// from Vale. Each room is a warp destination with a camera box of its own,
+/// named for the door it is entered by, and its door takes the warp of the same
+/// number back out. In story order, by the warps that lead in:
+///
+/// - From the village (MapId_Vale, and on the stormy night
+///   MapId_ValeStormyNight): the house of Garet's family
+///   (VALE_INTERIORS_FROM_VALE_EAST), his grandfather the mayor, his
+///   grandmother and his parents; the house of Jenna's grandparents
+///   (VALE_INTERIORS_FROM_VALE_NORTH); and two more houses
+///   (VALE_INTERIORS_FROM_VALE_SOUTH and VALE_INTERIORS_FROM_VALE_WEST).
+/// - From the part of Vale with the Psynergy Stone (MapId_ValePlaza): the
+///   shops (VALE_INTERIORS_FROM_VALE_PLAZA_WEST), where the item, weapon and
+///   armor shops each open across a counter, and three houses
+///   (VALE_INTERIORS_FROM_VALE_PLAZA_EAST, VALE_INTERIORS_FROM_VALE_PLAZA_NORTH
+///   and VALE_INTERIORS_FROM_VALE_PLAZA_SOUTH).
+/// - Unused: a ninth room drawn at the sheet's lower left, whose camera box no
+///   warp destination gives, so no door leads in.
+///
+/// The object event templates and map events follow the story:
 ///
 /// - The stormy night of the prologue (FLAG_VALE_STORM). Everyone is out:
 ///   ValeInteriors_Initialize removes every resident and flashes the

@@ -14,18 +14,16 @@ const struct MapEvent *LaliveroInteriors_GetEvents(void);
 s32 Map_Initialize(void);
 extern s32 gLaliveroInteriors_InnWorkerChores[];
 extern struct MapWarpDest gLaliveroInteriors_WarpDests[];
-extern struct MapWarpRegion gLaliveroInteriors_ShopsRegions[];
-extern struct MapWarpRegion gLaliveroInteriors_FaransHouseRegions[];
+extern struct MapWarpRegion gLaliveroInteriorsA_Regions[];
+extern struct MapWarpRegion gLaliveroInteriorsB_Regions[];
 extern u32 gLaliveroInteriors_Warps[];
+extern struct ObjectEventTemplate gLaliveroInteriorsA_ObjectEventTemplates[];
+extern struct ObjectEventTemplate gLaliveroInteriorsB_ObjectEventTemplates[];
 extern struct ObjectEventTemplate
-    gLaliveroInteriors_ShopsObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gLaliveroInteriors_FaransHouseObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gLaliveroInteriors_FaransHouseObjectEventTemplatesAfterLighthouse[];
-extern struct MapEvent gLaliveroInteriors_ShopsEvents[];
-extern struct MapEvent gLaliveroInteriors_ShopsEventsAfterLighthouse[];
-extern struct MapEvent gLaliveroInteriors_FaransHouseEvents[];
-extern struct MapEvent gLaliveroInteriors_FaransHouseEventsAfterLighthouse[];
+    gLaliveroInteriorsB_ObjectEventTemplatesAfterLighthouse[];
+extern struct MapEvent gLaliveroInteriorsA_Events[];
+extern struct MapEvent gLaliveroInteriorsA_EventsAfterLighthouse[];
+extern struct MapEvent gLaliveroInteriorsB_Events[];
+extern struct MapEvent gLaliveroInteriorsB_EventsAfterLighthouse[];
 
 #endif

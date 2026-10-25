@@ -513,8 +513,8 @@ static void EventScript_UnusedLeaveToValeInteriorsWestBySecondDoor(void) {
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
-/// Reached by walking north into metatile behavior 12; arrives in another part
-/// of Vale at WOODEN_ROOMS_A_FROM_VALE_STORMY_NIGHT_WEST.
+/// Reached by walking north into metatile behavior 12; arrives in the house
+/// with two beds before a hearth, WOODEN_ROOMS_A_FROM_VALE_STORMY_NIGHT_WEST.
 static void EventScript_LeaveToWoodenRoomsAWest(void) {
   Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStormyNight_IsaacsDoorOpens, 35, 73);
@@ -524,8 +524,8 @@ static void EventScript_LeaveToWoodenRoomsAWest(void) {
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
-/// Reached by walking north into metatile behavior 13; arrives in another part
-/// of Vale at WOODEN_ROOMS_A_FROM_VALE_STORMY_NIGHT_EAST.
+/// Reached by walking north into metatile behavior 13; arrives in the house
+/// with two beds before a hearth, WOODEN_ROOMS_A_FROM_VALE_STORMY_NIGHT_EAST.
 static void EventScript_LeaveToWoodenRoomsAEast(void) {
   Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStormyNight_GrandparentsDoorOpens, 38, 72);

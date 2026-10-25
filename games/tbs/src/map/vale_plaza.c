@@ -51,7 +51,7 @@
 /// party's PP at every time but the farewell. The ivy in three places
 /// (LOCALID_FIRST_IVY to LOCALID_THIRD_IVY) can be blown away with Whirlwind,
 /// each one's flag keeping it gone. The doors lead into the houses
-/// (MapId_ValeInteriors) and into another part of Vale
+/// (MapId_ValeInteriors) and into the inn and the forge
 /// (MapId_WoodenRoomsA), the path west to the village (MapId_Vale) or, on
 /// the stormy night, back to the storm's map (MapId_ValeStormyNight), and the
 /// warp row of metatile behavior 11 to VALE_PLAZA_TO_GOMA_CAVE_STREAM, which
@@ -64,9 +64,10 @@
 /// Three debug warp destinations are in no warp destination table and no warp
 /// leads to them: VALE_PLAZA_DEBUG_BEFORE_TRAVELERS_LEAVE replays the
 /// strangers' departure, VALE_PLAZA_DEBUG_CHILDHOOD sets FLAG_CHILDHOOD and
-/// takes VALE_PLAZA_TO_WOODEN_ROOMS_A_SOUTHEAST into Vale (MapId_WoodenRoomsA),
-/// and VALE_PLAZA_DEBUG_STORY_FLAGS sets a preset of story flags and takes
-/// VALE_PLAZA_TO_BILIBIN (ValePlaza_SetProgressFlagsAndExit).
+/// takes VALE_PLAZA_TO_WOODEN_ROOMS_A_SOUTHEAST into Isaac's house
+/// (MapId_WoodenRoomsA), and VALE_PLAZA_DEBUG_STORY_FLAGS sets a preset of
+/// story flags and takes VALE_PLAZA_TO_BILIBIN
+/// (ValePlaza_SetProgressFlagsAndExit).
 ///
 /// The hut's owner (LOCALID_HUT_OWNER) is never seen by day after the prologue:
 /// ValePlaza_Initialize hides the storm's Jenna by number without testing
@@ -835,7 +836,7 @@ static inline void EventScript_OpenDoorAndWalkThrough(s32 cellX, s32 cellZ,
 
 // Vale's doors here: walking north into metatile behavior n opens door n and
 // takes warp n (Vale_RequestBackdropWarp), into the houses
-// (MapId_ValeInteriors) or another part of Vale (MapId_WoodenRoomsA).
+// (MapId_ValeInteriors) or the inn and the forge (MapId_WoodenRoomsA).
 
 /// In Vale, opens the northwest door, into a house (MapId_ValeInteriors,
 /// VALE_INTERIORS_FROM_VALE_PLAZA_EAST).
@@ -845,7 +846,7 @@ static void EventScript_OpenNorthwestDoor(void) {
 }
 
 /// In Vale back from Kalay, opens the northeast doorway in two stages and walks
-/// inside (MapId_WoodenRoomsA,
+/// into the second forge room (MapId_WoodenRoomsA,
 /// WOODEN_ROOMS_A_FROM_VALE_PLAZA_NORTHEAST).
 ///
 /// Reached by walking north into metatile behavior 2 after Kalay; the other
@@ -883,14 +884,14 @@ static void EventScript_OpenSouthwestDoor(void) {
   Vale_RequestBackdropWarp(VALE_PLAZA_TO_VALE_INTERIORS_WEST);
 }
 
-/// In Vale, opens the door at the west edge, into another part of Vale
+/// In Vale, opens the door at the west edge, into the forge
 /// (MapId_WoodenRoomsA, WOODEN_ROOMS_A_FROM_VALE_PLAZA_NORTHWEST).
 static void EventScript_OpenWestEdgeDoor(void) {
   EventScript_OpenDoorAndWalkThrough(35, 36, 102, 611);
   Vale_RequestBackdropWarp(VALE_PLAZA_TO_WOODEN_ROOMS_A_NORTHWEST);
 }
 
-/// In Vale, opens the southeast door, into another part of Vale
+/// In Vale, opens the southeast door, into the inn
 /// (MapId_WoodenRoomsA, WOODEN_ROOMS_A_FROM_VALE_PLAZA_WEST).
 static void EventScript_OpenSoutheastDoor(void) {
   EventScript_OpenDoorAndWalkThrough(51, 39, 358, 670);

@@ -1,6 +1,8 @@
 /// @file
-/// Fuchin Temple, and two masters' rooms in other map sections that share its
-/// overlay: Master Feh's school in Xian and Master Hama's room in Lama Temple.
+/// Fuchin Temple's grounds, and the sheet of rooms that shares its overlay: the
+/// game packs rooms of several places that share a tile style onto one map,
+/// here the inside of Fuchin Temple with two masters' rooms in other map
+/// sections, Master Feh's school in Xian and Master Hama's room in Lama Temple.
 /// Two maps hold four map sections, by their area names; in each, story flags
 /// pick where the people stand and which script plays on entry.
 ///
@@ -13,40 +15,43 @@
 ///   Fuchin Falls Cave (FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE);
 ///   back out with the Orb of Force (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), he
 ///   sends the party on to Nyunpa (FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST).
-/// - Fuchin Temple (MapId_LacquerRooms, by
-///   LACQUER_ROOMS_FROM_FUCHIN_TEMPLE_GROUNDS or the default warp
-///   destination), inside, where Nyunpa meditates. Mind Read on him offers the
-///   test (EventScript_NyunpaOffersTest, again after
-///   FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED); back with the Orb,
-///   Map_Initialize plays his lesson on Ki (FuchinTemple_NyunpaTeachesKi,
-///   FLAG_NYUNPA_TAUGHT_FORCE). Once Mogall Forest has set
-///   FLAG_NYUNPA_ENLIGHTENED he sits withered (ANIM_NYUNPA_WITHERED) and Mind
-///   Read hears his last wish.
-/// - Xian (LacquerRooms, by
-///   LACQUER_ROOMS_FEHS_SCHOOL_FROM_XIAN and
-///   LACQUER_ROOMS_FEHS_SCHOOL_FROM_HOUSE), Master Feh's kung fu
-///   school; the area-name rules give the name Xian only at
-///   LACQUER_ROOMS_FEHS_SCHOOL_FROM_XIAN, and Map_Initialize hides
-///   the name at both. Force from the line fells the training tree
-///   (EventScript_ForceTree): the first time, Feizhi and Feh come out and she
-///   leaves to find Hsu (FLAG_FEIZHI_WENT_TO_HSU), which unlocks
-///   LACQUER_ROOMS_FEHS_SCHOOL_TO_HOUSE; Feh then waits to see
-///   Isaac's Chi (FLAG_FEH_WAITS_TO_SEE_CHI, or
-///   FLAG_FEH_CHI_DEMONSTRATION_DECLINED after two refusals) and, seeing the
-///   tree fall from the line, names it Ki (FLAG_FEH_SAW_KI). Moving the tree
-///   with Move or by hand only sets
-///   FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL. Once Hsu is known to be
-///   trapped (FLAG_XIAN_HEARD_HSU_TRAPPED), Map_GetObjectEventTemplates removes
-///   the tree and two students. LACQUER_ROOMS_FEHS_SCHOOL_TO_XIAN
-///   leads out into Xian.
-/// - Lama Temple (LacquerRooms, by
-///   LACQUER_ROOMS_HAMAS_ROOM_FROM_LAMA_TEMPLE), the room in which
-///   Master Hama meditates. The first visit plays her lesson
-///   (FuchinTemple_RunHamasRevealLesson), in which she gives Ivan Reveal and
-///   leaves with Feizhi to free Hsu, setting FLAG_XIAN_HEARD_HSU_TRAPPED; until
-///   FLAG_HSU_RESCUED, Hama and the boy monk in her room are away.
-///   LACQUER_ROOMS_HAMAS_ROOM_TO_LAMA_TEMPLE leads back into Lama
-///   Temple.
+/// - Lacquer rooms (MapId_LacquerRooms), a sheet of rooms drawn in red lacquer,
+///   each a camera box of its own that the warp destination the party comes in
+///   by chooses. In story order, by the warps that lead in:
+///   - Fuchin Temple (by
+///     LACQUER_ROOMS_FROM_FUCHIN_TEMPLE_GROUNDS or the default warp
+///     destination), inside, where Nyunpa meditates. Mind Read on him offers
+///     the test (EventScript_NyunpaOffersTest, again after
+///     FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED); back with the Orb,
+///     Map_Initialize plays his lesson on Ki (FuchinTemple_NyunpaTeachesKi,
+///     FLAG_NYUNPA_TAUGHT_FORCE). Once Mogall Forest has set
+///     FLAG_NYUNPA_ENLIGHTENED he sits withered (ANIM_NYUNPA_WITHERED) and Mind
+///     Read hears his last wish.
+///   - Xian (by
+///     LACQUER_ROOMS_FEHS_SCHOOL_FROM_XIAN and
+///     LACQUER_ROOMS_FEHS_SCHOOL_FROM_HOUSE), Master Feh's kung fu
+///     school; the area-name rules give the name Xian only at
+///     LACQUER_ROOMS_FEHS_SCHOOL_FROM_XIAN, and Map_Initialize hides
+///     the name at both. Force from the line fells the training tree
+///     (EventScript_ForceTree): the first time, Feizhi and Feh come out and she
+///     leaves to find Hsu (FLAG_FEIZHI_WENT_TO_HSU), which unlocks
+///     LACQUER_ROOMS_FEHS_SCHOOL_TO_HOUSE; Feh then waits to see
+///     Isaac's Chi (FLAG_FEH_WAITS_TO_SEE_CHI, or
+///     FLAG_FEH_CHI_DEMONSTRATION_DECLINED after two refusals) and, seeing the
+///     tree fall from the line, names it Ki (FLAG_FEH_SAW_KI). Moving the tree
+///     with Move or by hand only sets
+///     FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL. Once Hsu is known to be
+///     trapped (FLAG_XIAN_HEARD_HSU_TRAPPED), Map_GetObjectEventTemplates
+///     removes the tree and two students. LACQUER_ROOMS_FEHS_SCHOOL_TO_XIAN
+///     leads out into Xian.
+///   - Lama Temple (by
+///     LACQUER_ROOMS_HAMAS_ROOM_FROM_LAMA_TEMPLE), the room in which
+///     Master Hama meditates. The first visit plays her lesson
+///     (FuchinTemple_RunHamasRevealLesson), in which she gives Ivan Reveal and
+///     leaves with Feizhi to free Hsu, setting FLAG_XIAN_HEARD_HSU_TRAPPED;
+///     until FLAG_HSU_RESCUED, Hama and the boy monk in her room are away.
+///     LACQUER_ROOMS_HAMAS_ROOM_TO_LAMA_TEMPLE leads back into Lama
+///     Temple.
 #include "save_block.h"
 #include "map_ids.h"
 #include "unit/map/fuchin_temple.h"

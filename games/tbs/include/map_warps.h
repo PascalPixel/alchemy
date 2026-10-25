@@ -3260,6 +3260,8 @@ enum {
 
 /// MapId_LunpaInteriors's warp destinations and warps.
 enum {
+  /// The house at the gate to Suhalla, the one room of the sheet that is not
+  /// Lunpa's.
   LUNPA_INTERIORS_FROM_SUHALLA_GATE_CHECKPOINT = 10,
 };
 

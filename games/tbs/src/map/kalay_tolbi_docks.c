@@ -1,12 +1,13 @@
 /// @file
 /// Kalay Docks and Tolbi Docks, the two ends of the ship's crossing of the
 /// Karagol Sea, in three maps that share one overlay: MapId_KalayDocks,
-/// MapId_WoodenRoomsB and MapId_TolbiDocks. The getters pick
-/// each map's tables by gSaveBlock.mapId, and three story flags choose among
-/// them: FLAG_TOLBI_SHIP_REACHED_TOLBI, whether the ship has made its crossing
-/// (set on the world map, WorldMap_CompleteTransfer);
-/// FLAG_KALAY_COLOSSO_TOUR_LEFT, whether the Colosso Tour's group has left
-/// Kalay; and FLAG_COLOSSO_OVER, whether the Colosso finals have been fought.
+/// MapId_TolbiDocks and MapId_WoodenRoomsB, the sheet that holds a room at
+/// each. The getters pick each map's tables by gSaveBlock.mapId, and three
+/// story flags choose among them: FLAG_TOLBI_SHIP_REACHED_TOLBI, whether the
+/// ship has made its crossing (set on the world map,
+/// WorldMap_CompleteTransfer); FLAG_KALAY_COLOSSO_TOUR_LEFT, whether the
+/// Colosso Tour's group has left Kalay; and FLAG_COLOSSO_OVER, whether the
+/// Colosso finals have been fought.
 ///
 /// Kalay Docks (KalayDocks): the first time the party walks in from the world
 /// map (KALAY_DOCKS_FROM_WORLD_MAP_SOUTH, FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL)
@@ -31,15 +32,18 @@
 /// KALAY_DOCKS_TO_WORLD_MAP_NORTH), onto the ship
 /// (KALAY_DOCKS_TO_TOLBI_SHIP_DECK, the Tolbi-bound Ship,
 /// MapId_TolbiShipDeck) and through a door (coord event 10) into the building
-/// beside them.
+/// beside them, whose room is on WoodenRoomsB.
 ///
-/// That building (WoodenRoomsB) has a room at each dock: entered
-/// from Kalay Docks (WOODEN_ROOMS_B_FROM_KALAY_DOCKS) it is Kalay
-/// Docks, from Tolbi Docks (WOODEN_ROOMS_B_FROM_TOLBI_DOCKS) it is
-/// Tolbi Docks. In the Kalay room a woman sells the boarding ticket, 600 coins
-/// for the four of them (FLAG_KALAY_DOCKS_TICKET_BOUGHT), until the ship has
-/// sailed, when she says it will not leave again for the monsters at sea; in
-/// the Tolbi room no tickets are sold at all, the sea being too dangerous.
+/// Wooden rooms B (WoodenRoomsB) is a sheet of rooms drawn in wood: the game
+/// packs rooms of several places that share a tile style onto one map, and this
+/// one holds a room at each dock, in story order by the warps that lead in: the
+/// room at Kalay Docks (WOODEN_ROOMS_B_FROM_KALAY_DOCKS), whose area name is
+/// Kalay Docks, and the room at Tolbi Docks (WOODEN_ROOMS_B_FROM_TOLBI_DOCKS),
+/// whose area name is Tolbi Docks. In the Kalay room a woman sells the boarding
+/// ticket, 600 coins for the four of them (FLAG_KALAY_DOCKS_TICKET_BOUGHT),
+/// until the ship has sailed, when she says it will not leave again for the
+/// monsters at sea; in the Tolbi room no tickets are sold at all, the sea being
+/// too dangerous.
 ///
 /// Tolbi Docks (TolbiDocks) is where the ship lands after the crossing.
 /// Stepping off (coord event 20, FLAG_TOLBI_DOCKS_ARRIVALS_GREETED) the party
@@ -49,9 +53,9 @@
 /// Two stacks of crates slide along the pier under Move, a chest holds a Potion
 /// and a box 35 coins, and the docks lead to the world map toward Tolbi
 /// (TOLBI_DOCKS_TO_WORLD_MAP), back onto the ship
-/// (TOLBI_DOCKS_TO_TOLBI_SHIP_DECK) and into the building (coord event 10).
-/// After Colosso the Colosso Tour's passengers are stranded here, the ships not
-/// sailing, and the first time the party comes (coord event 50,
+/// (TOLBI_DOCKS_TO_TOLBI_SHIP_DECK) and into the building beside them (coord
+/// event 10). After Colosso the Colosso Tour's passengers are stranded here,
+/// the ships not sailing, and the first time the party comes (coord event 50,
 /// FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED) it watches them demand to be taken home
 /// and the tour guide's hired bodyguard knock the angriest flat;
 /// KalayTolbiDocks_PrepareTolbiDocks keeps them where the scene left them. Only
@@ -209,7 +213,7 @@ enum TolbiDocksStrandedLocalId {
   LOCALID_SIGHING_PASSENGER
 };
 
-/// The building's people, numbering the rows of
+/// The people of the two dock rooms, numbering the rows of
 /// gKalayTolbiDocks_InteriorObjectEventTemplates from LOCALID_FIRST_PLACED: the
 /// Kalay room's three, then the Tolbi room's. Once the ship has crossed
 /// (gKalayTolbiDocks_InteriorObjectEventTemplatesShipGone) the Kalay room's two
@@ -245,7 +249,7 @@ enum KalayTolbiDocksInteriorLocalId {
   LOCALID_OLD_WOMAN_WITH_NOWHERE_TO_SLEEP
 };
 
-/// The building after Colosso
+/// The dock rooms after Colosso
 /// (gKalayTolbiDocks_InteriorObjectEventTemplatesStranded): the Tolbi room's
 /// last two rows hold other people.
 enum KalayTolbiDocksInteriorStrandedLocalId {
@@ -272,8 +276,8 @@ static void KalayTolbiDocks_GroundJoins(void) {
   Djinn_JoinParty(LOCALID_GROUND, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_GROUND));
 }
 
-/// Selects the warp destinations of Kalay Docks, Tolbi Docks or the building
-/// between.
+/// Selects the warp destinations of Kalay Docks, Tolbi Docks or the rooms
+/// on WoodenRoomsB.
 const struct MapWarpDest *KalayTolbiDocks_GetWarpDests(void) {
   s16 mapId = gSaveBlock.mapId;
 
@@ -293,8 +297,8 @@ const struct MapWarpRegion *KalayTolbiDocks_GetRegions(void) { return NULL; }
 
 /// The warps of the three maps, each map's after its header word (a warp of
 /// kind 0): both docks lead to the world map, onto the ship
-/// (MapId_TolbiShipDeck) and into the building
-/// (MapId_WoodenRoomsB), whose rooms lead back to their docks.
+/// (MapId_TolbiShipDeck) and into their rooms
+/// (MapId_WoodenRoomsB), which lead back to their docks.
 const u32 *KalayTolbiDocks_GetWarps(void) { return gKalayTolbiDocks_Warps; }
 
 /// Each map's people before the crossing, once the ship has crossed and not
@@ -518,7 +522,7 @@ static void KalayTolbiDocks_TalkToDockWorker(void) {
   FieldScript_End();
 }
 
-/// The building's Kalay room, until the ship has crossed: the ticket seller
+/// The room at Kalay Docks, until the ship has crossed: the ticket seller
 /// offers tickets for the four of them at 600 coins, with the party's coins
 /// shown beside the question. Declining, the leader shakes his head; without
 /// enough coins the seller refuses; otherwise the party gets its ticket and
@@ -782,7 +786,7 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
   }
 }
 
-/// The building between the docks opens with a window transition and no area
+/// The rooms at the docks open with a window transition and no area
 /// name.
 static void KalayTolbiDocks_PrepareInterior(void) {
   gFieldWork->transition =
@@ -1183,7 +1187,7 @@ struct MapWarpDest gKalayTolbiDocks_TolbiWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-/// The building's warp destinations, each into the room at the dock it is
+/// WoodenRoomsB's warp destinations, each into the room at the dock it is
 /// entered from.
 struct MapWarpDest gKalayTolbiDocks_InteriorWarpDests[] = {
     {0, CONDITION_ALWAYS, 96, 0, 248, FACING_NORTH, 0, -1, -1, -1, -1, 0},
@@ -1194,7 +1198,7 @@ struct MapWarpDest gKalayTolbiDocks_InteriorWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-/// Kalay Docks' warps, then Tolbi Docks' and the building's, each after the
+/// Kalay Docks' warps, then Tolbi Docks' and WoodenRoomsB's, each after the
 /// header word (a warp of kind 0) for its map.
 u32 gKalayTolbiDocks_Warps[] = {
     MAP_WARPS(KalayDocks),

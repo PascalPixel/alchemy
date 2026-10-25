@@ -1,19 +1,34 @@
-/// @file Lalivero's buildings: two maps in one overlay, with the area name
-/// Lalivero, and Lalivero Sanctum for the Sanctum's rooms of LaliveroInteriorsA
-/// (LALIVERO_INTERIORS_A_FROM_LALIVERO_NORTHEAST and
-/// LALIVERO_INTERIORS_A_SANCTUM). Each map has tables for before and after
+/// @file
+/// Lalivero's interiors: two sheets of Lalivero's rooms in one overlay.
+/// The game packs rooms that share a tile style onto one map, and every room on
+/// these two is entered from Lalivero, so each is named for the town with a
+/// letter. Their area name is Lalivero, and Lalivero Sanctum for the Sanctum's
+/// rooms of LaliveroInteriorsA (LALIVERO_INTERIORS_A_FROM_LALIVERO_NORTHEAST
+/// and LALIVERO_INTERIORS_A_SANCTUM). Each map has tables for before and after
 /// Venus Lighthouse, chosen by FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, as the
 /// town's are (lalivero.c).
 ///
-/// MapId_LaliveroInteriorsA holds the houses, the weapon, armor and item shops
-/// and the Sanctum. Each shopkeeper stands behind a counter and trades only
-/// with a leader facing north across it (EventScript_TalkToWeaponMerchant and
-/// the others); from any other side they talk. Stepping into the Sanctum by
-/// LALIVERO_INTERIORS_A_SANCTUM makes it the place a defeated party wakes.
-/// Barrels hold a Lucky Medal and an Antidote.
+/// Lalivero interiors A (MapId_LaliveroInteriorsA) holds, by the warps that
+/// lead in, a house (LALIVERO_INTERIORS_A_FROM_LALIVERO_WEST), a house
+/// (LALIVERO_INTERIORS_A_FROM_LALIVERO_SOUTHEAST), the item shop with a room
+/// upstairs (LALIVERO_INTERIORS_A_FROM_LALIVERO_NORTH), a house with an upper
+/// floor (LALIVERO_INTERIORS_A_FROM_LALIVERO_NORTHWEST), the weapon and armor
+/// shop, entered by either of its two doors
+/// (LALIVERO_INTERIORS_A_FROM_LALIVERO_SOUTH and
+/// LALIVERO_INTERIORS_A_FROM_LALIVERO_EAST_SOUTHEAST), and the Sanctum
+/// (LALIVERO_INTERIORS_A_FROM_LALIVERO_NORTHEAST). Each shopkeeper stands
+/// behind a counter and trades only with a leader facing north across it
+/// (EventScript_TalkToWeaponMerchant and the others); from any other side they
+/// talk. Stepping into the Sanctum by LALIVERO_INTERIORS_A_SANCTUM makes it the
+/// place a defeated party wakes. Barrels hold a Lucky Medal and an Antidote.
 ///
-/// MapId_LaliveroInteriorsB holds Faran's house, the inn and the way out to
-/// the wharf where Babi's ship lies (LALIVERO_INTERIORS_B_TO_LEMURIAN_SHIP).
+/// Lalivero interiors B (MapId_LaliveroInteriorsB) holds, by the warps that
+/// lead in, Faran's house (LALIVERO_INTERIORS_B_FROM_LALIVERO_SOUTHWEST and
+/// LALIVERO_INTERIORS_B_FROM_LALIVERO_SOUTH), the inn with its upper floor and
+/// two guest rooms (LALIVERO_INTERIORS_B_FROM_LALIVERO_NORTHEAST), and the way
+/// out to the wharf where Babi's ship lies
+/// (LALIVERO_INTERIORS_B_FROM_LALIVERO_NORTHWEST, leading on by
+/// LALIVERO_INTERIORS_B_TO_LEMURIAN_SHIP).
 /// Before Venus Lighthouse an inn worker apologizes once for her distraction
 /// (EventScript_TalkToInnWorker, FLAG_LALIVERO_INN_WORKER_APOLOGIZED) and goes
 /// back to her chores. The aerie of Venus Lighthouse leads in by
@@ -212,9 +227,9 @@ const struct MapWarpDest *LaliveroInteriors_GetWarpDests(void) {
 
 const struct MapWarpRegion *LaliveroInteriors_GetRegions(void) {
   if (gSaveBlock.mapId == (s32)&MapId_LaliveroInteriorsA) {
-    return gLaliveroInteriors_ShopsRegions;
+    return gLaliveroInteriorsA_Regions;
   }
-  return gLaliveroInteriors_FaransHouseRegions;
+  return gLaliveroInteriorsB_Regions;
 }
 
 const u32 *LaliveroInteriors_GetWarps(void) { return gLaliveroInteriors_Warps; }
@@ -225,11 +240,11 @@ LaliveroInteriors_GetObjectEventTemplates(void) {
   if (gSaveBlock.mapId == (s32)&MapId_LaliveroInteriorsB) {
     // Faran's house and the inn.
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
-      return gLaliveroInteriors_FaransHouseObjectEventTemplatesAfterLighthouse;
+      return gLaliveroInteriorsB_ObjectEventTemplatesAfterLighthouse;
     }
-    return gLaliveroInteriors_FaransHouseObjectEventTemplates;
+    return gLaliveroInteriorsB_ObjectEventTemplates;
   }
-  return gLaliveroInteriors_ShopsObjectEventTemplates;
+  return gLaliveroInteriorsA_ObjectEventTemplates;
 }
 
 /// The side the leader faces: the facing rounded to the nearest of east,
@@ -410,14 +425,14 @@ static void EventScript_LeaveBuilding(void) {
 const struct MapEvent *LaliveroInteriors_GetEvents(void) {
   if (gSaveBlock.mapId == (s32)&MapId_LaliveroInteriorsB) {
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
-      return gLaliveroInteriors_FaransHouseEventsAfterLighthouse;
+      return gLaliveroInteriorsB_EventsAfterLighthouse;
     }
-    return gLaliveroInteriors_FaransHouseEvents;
+    return gLaliveroInteriorsB_Events;
   }
   if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
-    return gLaliveroInteriors_ShopsEventsAfterLighthouse;
+    return gLaliveroInteriorsA_EventsAfterLighthouse;
   }
-  return gLaliveroInteriors_ShopsEvents;
+  return gLaliveroInteriorsA_Events;
 }
 
 /// Lalivero (LaliveroInteriorsB),
@@ -979,12 +994,12 @@ struct MapWarpDest gLaliveroInteriors_WarpDests[] = {
 };
 
 // clang-format off
-struct MapWarpRegion gLaliveroInteriors_ShopsRegions[] = {
+struct MapWarpRegion gLaliveroInteriorsA_Regions[] = {
     {196, 28, 595, 204, 36, 603, CONDITION_ALWAYS, LALIVERO_INTERIORS_A_TO_LALIVERO_EAST_SOUTHEAST},
     {MAP_TABLE_END},
 };
 
-struct MapWarpRegion gLaliveroInteriors_FaransHouseRegions[] = {
+struct MapWarpRegion gLaliveroInteriorsB_Regions[] = {
     {212, 28, 83, 220, 36, 91, CONDITION_ALWAYS, LALIVERO_INTERIORS_B_TO_LALIVERO_SOUTH},
     {MAP_TABLE_END},
 };
@@ -1017,7 +1032,7 @@ u32 gLaliveroInteriors_Warps[] = {
     MAP_WARPS_END,
 };
 
-struct ObjectEventTemplate gLaliveroInteriors_ShopsObjectEventTemplates[] = {
+struct ObjectEventTemplate gLaliveroInteriorsA_ObjectEventTemplates[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(176), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1049,7 +1064,7 @@ struct ObjectEventTemplate gLaliveroInteriors_ShopsObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gLaliveroInteriors_FaransHouseObjectEventTemplates[] = {
+struct ObjectEventTemplate gLaliveroInteriorsB_ObjectEventTemplates[] = {
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(168), 0, PIXELS(112), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1069,7 +1084,7 @@ struct ObjectEventTemplate gLaliveroInteriors_FaransHouseObjectEventTemplates[] 
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gLaliveroInteriors_FaransHouseObjectEventTemplatesAfterLighthouse[] = {
+struct ObjectEventTemplate gLaliveroInteriorsB_ObjectEventTemplatesAfterLighthouse[] = {
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(168), 0, PIXELS(112), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1095,7 +1110,7 @@ struct ObjectEventTemplate gLaliveroInteriors_FaransHouseObjectEventTemplatesAft
     { MAP_TABLE_END },
 };
 
-struct MapEvent gLaliveroInteriors_ShopsEvents[] = {
+struct MapEvent gLaliveroInteriorsA_Events[] = {
     { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
     { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
     { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
@@ -1142,7 +1157,7 @@ struct MapEvent gLaliveroInteriors_ShopsEvents[] = {
     { MAP_EVENTS_END },
 };
 
-struct MapEvent gLaliveroInteriors_ShopsEventsAfterLighthouse[] = {
+struct MapEvent gLaliveroInteriorsA_EventsAfterLighthouse[] = {
     { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
     { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
     { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
@@ -1189,7 +1204,7 @@ struct MapEvent gLaliveroInteriors_ShopsEventsAfterLighthouse[] = {
     { MAP_EVENTS_END },
 };
 
-struct MapEvent gLaliveroInteriors_FaransHouseEvents[] = {
+struct MapEvent gLaliveroInteriorsB_Events[] = {
     { MAP_EVENT_COORD, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
     { MAP_EVENT_COORD, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
     { MAP_EVENT_COORD, 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
@@ -1221,7 +1236,7 @@ struct MapEvent gLaliveroInteriors_FaransHouseEvents[] = {
     { MAP_EVENTS_END },
 };
 
-struct MapEvent gLaliveroInteriors_FaransHouseEventsAfterLighthouse[] = {
+struct MapEvent gLaliveroInteriorsB_EventsAfterLighthouse[] = {
     { MAP_EVENT_COORD, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
     { MAP_EVENT_COORD, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
     { MAP_EVENT_COORD, 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },

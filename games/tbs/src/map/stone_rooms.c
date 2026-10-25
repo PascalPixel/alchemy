@@ -1,9 +1,11 @@
 
 /// @file
-/// Vault's jail (MapId_StoneRooms), one map of two rooms whose area names
-/// differ by warp destination. The warp destination also picks the tables: the
-/// thieves' for STONE_ROOMS_FROM_VAULT and STONE_ROOMS_FROM_LUNPA, the
-/// prisoner's for STONE_ROOMS_FROM_VAULT_REVISIT.
+/// Stone rooms (MapId_StoneRooms), a sheet of rooms drawn in stone: the game
+/// packs rooms of several places that share a tile style onto one map, and
+/// this one holds two, whose area names differ by warp destination. The warp
+/// destination also picks the tables: the thieves' for STONE_ROOMS_FROM_VAULT
+/// and STONE_ROOMS_FROM_LUNPA, the prisoner's for
+/// STONE_ROOMS_FROM_VAULT_REVISIT. In story order, by the warps that lead in:
 ///
 /// - Vault (STONE_ROOMS_FROM_VAULT and STONE_ROOMS_FROM_VAULT_REVISIT), the
 /// cell
@@ -13,13 +15,15 @@
 ///   Read. Once Vault has become its later map (vault_revisit.c), whose
 ///   villagers say the thieves have broken out, its jail door comes in by
 ///   STONE_ROOMS_FROM_VAULT_REVISIT and finds a lone prisoner instead.
-/// - Lunpa (STONE_ROOMS_FROM_LUNPA), the map's other room, which Lunpa's hidden
-///   passage reaches (lunpa.c). Its six chests are each opened once
+/// - Lunpa (STONE_ROOMS_FROM_LUNPA), Lunpa's hidden room, which the town's
+///   hidden passage reaches (lunpa.c). Its six chests are each opened once
 ///   (FLAG_LUNPA_HIDDEN_ROOM_CHEST_*), MB_LUNPA_HIDDEN_ROOM_DOOR leads back up
 ///   into Lunpa, and arriving this way clears FLAG_SHOW_LOCATION_NAME, so no
 ///   area name is shown. The room uses the thieves' tables, so its chests and
 ///   warp sit in the same map event table as the thieves' talk and the Vault
 ///   door.
+///   ★ Named from what the player sees: a hidden stone room of six chests
+///   behind barred windows (its render)
 
 #include "save_block.h"
 #include "unit/map/stone_rooms.h"

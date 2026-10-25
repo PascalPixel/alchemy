@@ -909,11 +909,11 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 3b6	text	games/tbs/src/map/entry/stucco_rooms_b
 3b6	text	games/tbs/src/map/stucco_rooms_b
 3b6	text	games/tbs/src/map/import/stucco_rooms_b
-3b7	text	games/tbs/src/map/entry/tolbi_spring
-3b7	text	games/tbs/src/map/tolbi_spring
-3b7	text	games/tbs/src/map/import/tolbi_spring
+3b7	text	games/tbs/src/map/entry/tolbi_games
+3b7	text	games/tbs/src/map/tolbi_games
+3b7	text	games/tbs/src/map/import/tolbi_games
 3b7	text	libgcc.a:_call_via_rX
-3b7	bss	games/tbs/src/map/tolbi_spring	.bss
+3b7	bss	games/tbs/src/map/tolbi_games	.bss
 3b8	text	games/tbs/src/map/entry/babi_palace
 3b8	text	games/tbs/src/map/babi_palace
 3b8	text	games/tbs/src/map/import/babi_palace

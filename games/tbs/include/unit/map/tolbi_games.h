@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_MAP_TOLBI_SPRING_H
-#define ALCHEMY_UNIT_MAP_TOLBI_SPRING_H
+#ifndef ALCHEMY_UNIT_MAP_TOLBI_GAMES_H
+#define ALCHEMY_UNIT_MAP_TOLBI_GAMES_H
 
 #include "types.h"
 #include "map_tables.h"

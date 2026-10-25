@@ -904,7 +904,7 @@ s32 YesNoMenu_RunAt(s32 x, s32 y, s32 selection) {
 
 /// Selects Coins or Lucky Medals, centered on row 17,
 /// starting on position `selection`. Returns the position chosen, or -1 when
-/// cancelled. Tolbi's spring asks it (map/tolbi_spring.c).
+/// cancelled. Tolbi's spring asks it (map/tolbi_games.c).
 s32 Menu_SelectCoinsOrMedals(s32 selection) {
   s32 result;
 

@@ -36,7 +36,7 @@
 ///   the coin and medal counts show an `=` after each number.
 
 #include "keystate.h"
-#include "unit/map/tolbi_spring.h"
+#include "unit/map/tolbi_games.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
 #include "unit/field/field.h"

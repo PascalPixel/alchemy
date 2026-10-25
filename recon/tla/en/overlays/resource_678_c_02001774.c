@@ -1,4 +1,4 @@
-// Draft, differ 4 of 760: Taopo Swamp's map setup, by room: clears the screen
+// Draft, differ 2 of 760: Taopo Swamp's map setup, by room: clears the screen
 // effect, then in Ov678Room2 sets Retreat to Ov678Room1's entrance 1 and
 // shows the five stakes (objects 8 to 12) flags 0x8e0 to 0x8e4 have driven
 // in; each other room sets screen effect 516 and places what its flags have
@@ -9,7 +9,8 @@
 // time), and in Ov678Room11 the entrances 2 and 3 and 6 start the frog
 // scenes (Func_02002084 or Func_02002114) and 4 and 5 Func_02002828.
 // Left: scheduling only: the native loads the Retreat scene's id before 0x260
-// is built, and in Ov678Room8 loads Func_02002614's first argument after its 0.
+// is built (an id kept in a temporary, a cast or a byte-offset store does not
+// move it).
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -141,7 +142,7 @@ s32 Func_02001774(void) {
       Func_02002980();
       Call4(Func_02002988, 0, 776, 8, 9);
     } else {
-      Call3(Func_02002614, (s32)gData_02002aca, 0, (s32)Func_020014a0);
+      Value3((s32 (*)())Func_02002614, (s32)gData_02002aca, 0, (s32)Func_020014a0);
       Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
       Call2(Scheduler_AddOrUpdateCallback, Func_020016fc, 0x480);
       Call2(Scheduler_AddOrUpdateCallback, Func_02001618, 0x480);

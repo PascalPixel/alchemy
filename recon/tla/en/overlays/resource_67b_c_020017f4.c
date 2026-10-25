@@ -1,13 +1,15 @@
-// Draft, differ 28 of 534: Aqua Rock's map setup: sets Retreat to
+// Draft, differ 4 of 534: Aqua Rock's map setup: sets Retreat to
 // Ov67bRoom1's entrance 1 and the screen effect, then in Ov67bRoom1 sets
-// up the gates' objects (8 to 23), the Djinni-like objects placed by flags
-// 0x950, 0x310 and 0x318, the water and its objects (Func_02002550,
+// up the gates' objects (8 to 23), objects 25 and 24, placed by flag 0x950 and
+// the bytes 0x310 and 0x318, the water and its objects (Func_02002550,
 // Func_0200276c, flag 0xa68), the steps flag 0x955 raises and the gate
 // flag 0xa6b opens, then the gates (Func_02000844); in Ov67bRoom2 it opens
 // the cells flags 545 to 547 and 0x951 and 0x952 mark, and sets up the
 // water by the entrance; entrances 1 and 6 there (before flag 265) and 5
 // and 4 in Ov67bRoom1 start their scenes.
-// Left: the native loads the Retreat scene's id after the screen effect's address and builds Func_020029d8(24)'s arguments in another order, and it rereads the entrance with ldrsh for the test for 6 where alchemy-gcc keeps an ldrh copy and compares it shifted.
+// Left: scheduling only: the native loads the Retreat scene's id (kept in r5
+// for the room test) before 516 is formed from the screen effect's offset;
+// a struct field for the screen effect does not move it.
 #include "../../../../games/tla/src/scene/aqua_rock/local.h"
 #include "call.h"
 
@@ -78,7 +80,7 @@ s32 Func_020017f4(void) {
     Object_GetById(Func_02002a68())->priorityFlags |= 32;
     Scheduler_AddOrUpdateCallback(Func_020013f8, 0x480);
     ObjectMotion_SetActionVariant(28, 1);
-    ObjectMotion_SetActionVariant(24, 1);
+    Value2((s32 (*)())ObjectMotion_SetActionVariant, 24, 1);
     Func_02002550();
     Func_0200276c();
     if (GameFlag_Test(0xa68)) {

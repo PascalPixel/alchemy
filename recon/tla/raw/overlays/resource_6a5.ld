@@ -11,7 +11,7 @@ SECTIONS
         "*/games/tla/src/field/common/object/step_angle.o"(.text)
         "*/resource_6a5_overlay.o"(.text.x02008198)
         "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s045c.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s04c8.o"(.text)
+        "*/resource_6a5_overlay.o"(.text.x020084c8)
         "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s05b8.o"(.text)
         "*/resource_6a5_overlay.o"(.text.x0200865c)
         "*/resource_6a5_overlay.o"(.text.x02008cd0)

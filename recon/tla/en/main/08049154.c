@@ -116,8 +116,8 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
   struct SummonMenuWindow *counts;
   s32 mask;
   s32 preferredRow;
-  s32 cursorX;
   s32 cursorY;
+  s32 cursorX;
   const struct SummonDefinition *summon;
   struct SummonMenuNavigation *navigation;
   s32 orderedCount;

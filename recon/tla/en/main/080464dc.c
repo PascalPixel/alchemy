@@ -1,4 +1,4 @@
-// Draft, differ 104 of 767 (alchemy-devtools diff ... 08046414,080464dc,
+// Draft, differ 46 of 767 (alchemy-devtools diff ... 08046414,080464dc,
 // the nested function and its parent): the Djinn change preview, The Broken
 // Seal's BattleDjinnMenu_ShowChangePreview (games/tbs/src/window/screens/
 // djinn_preview.c) on this game's unit layout, messages and text colours,
@@ -6,9 +6,11 @@
 // 08046414.c). The stat page's window is 20 tiles wide, and Attack keeps
 // the vitals' digit offset. Messages are
 // written as symbols (placeholders Msg_xxxx where en.po names none), which
-// load from the pool as the native does (as numbers, differ 325). Left: the
-// nested function's register choice (as in 08046414.c) and a few pairs the
-// parent schedules one row apart.
+// load from the pool as the native does (as numbers, differ 325). The nested
+// function takes The Broken Seal's index cast, zero temporary and window device
+// (differ 104 without them). Left: the nested function stores the index
+// before the sentinel and position where the native stores it after, and a few
+// pairs the parent schedules one row apart.
 #include "types.h"
 #include "window.h"
 #include "uiwindow.h"
@@ -128,22 +130,27 @@ struct UiWindow *Func_080464dc(struct UiWindow *window, s32 member,
   void Func_08046414(s32 x, s32 y, s32 up) {
     struct RenderOutput *output = RenderOutput_AcquireFree();
     struct ArrowOam *sprite;
-    s32 entry;
+    u32 zero;
 
     if (output == NULL)
       return;
     output->active = 1;
     output->kind = 1;
-    entry = VramCache_AllocEntry(128);
+    *(s8 *)&output->index = VramCache_AllocEntry(128);
+    sprite = (struct ArrowOam *)output->unk10;
     output->sentinel = 240;
     output->x = 120;
     output->y = 120;
-    output->index = entry;
-    sprite = (struct ArrowOam *)output->unk10;
     ((struct ArrowSprite *)sprite)->attr01 = 0x40000400;
-    ((struct ArrowSprite *)sprite)->attr2 = 0;
+    zero = 0;
+    ((struct ArrowSprite *)sprite)->attr2 = zero;
     sprite->x = (s16)window->x * 8 + x;
     sprite->y = (s16)window->y * 8 + y;
+    /* FAKEMATCH(dead): advancing and restoring the captured window keeps the
+     * static chain in r9, as The Broken Seal's DjinnMenu_DrawStatArrow; without
+     * the pair, 76 of 767 instructions differ in tla-en (with the parent). */
+    window++;
+    window--;
     sprite->tile =
         VramCache_Reload((u8)output->index, up ? gDjinnMenu_ArrowUpTiles
                                                : gDjinnMenu_ArrowDownTiles);

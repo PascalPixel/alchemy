@@ -81,16 +81,16 @@ s32 Func_08027064(struct ObjectRuntime *object) {
   struct FieldPosition testPosition;
   struct FieldPosition contact;
   s16 angleOffsets[22];
-  struct PlayerSprite *sprite;
-  struct EventWork *work;
-  struct MapFlagsWork *map;
-  s32 movementAnimation;
-  s32 onObject;
-  s32 pushed;
   s32 collision;
-  s32 angle;
+  s32 pushed;
+  struct PlayerSprite *sprite;
   s16 heading;
   s32 angleIndex;
+  s32 movementAnimation;
+  s32 onObject;
+  struct EventWork *work;
+  struct MapFlagsWork *map;
+  s32 angle;
   struct ObjectRuntime *other;
   u8 oldFlags;
 

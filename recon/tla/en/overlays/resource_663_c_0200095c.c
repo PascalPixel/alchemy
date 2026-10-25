@@ -1,4 +1,4 @@
-// Draft, differ 597 of 632: Whirlwind in Air's Rock: a gust (object type 280)
+// Draft, differ 581 of 632: Whirlwind in Air's Rock: a gust (object type 280)
 // rises from the target (the effect work's object at 0x14) and grows,
 // shedding sparks (object type 0x2a0, Func_02000840) every fourth frame
 // while the target flickers; then it travels in the leader's facing, two
@@ -21,6 +21,7 @@
 #include "field_sprite.h"
 #include "system/field_effect.h"
 #include "system/vector3.h"
+#include "call.h"
 
 extern s32 gFrameCount;
 extern const s16 gData_02004674[][4];
@@ -174,20 +175,23 @@ void Func_0200095c(void) {
         x = row[2] + (gust->x >> 20);
         z = row[3] + (gust->z >> 20);
         if (hit & 1) {
-          Func_02003b68(row[0], row[1], x, z - 1, 1, 3);
-          Func_02003b80(row[0], row[1], 1, 2, x, z);
-          Func_02003b80(row[0], row[1], 1, 2, gust->x >> 20, gust->z >> 20);
+          Call6(Func_02003b68, row[0], row[1], x, z - 1, 1, 3);
+          Call6(Func_02003b80, row[0], row[1], 1, 2, x, z);
+          Call6(Func_02003b80, row[0], row[1], 1, 2, gust->x >> 20,
+                gust->z >> 20);
         } else {
-          Func_02003b68(row[0], row[1], x, z - (hit >> 1), 1, 1);
-          Func_02003b80(row[0], row[1], 1, 1, x, z);
-          Func_02003b80(row[0], row[1], 1, 1, gust->x >> 20, gust->z >> 20);
+          Call6(Func_02003b68, row[0], row[1], x, z - (hit >> 1), 1, 1);
+          Call6(Func_02003b80, row[0], row[1], 1, 1, x, z);
+          Call6(Func_02003b80, row[0], row[1], 1, 1, gust->x >> 20,
+                gust->z >> 20);
         }
         Func_02003b50();
       }
       FieldEvent_WaitFrames(1);
     }
     if (hit == 2) {
-      Func_02003b68(gData_02004674[2][0], gData_02004674[2][1], x, z, 1, 1);
+      Call6(Func_02003b68, gData_02004674[2][0], gData_02004674[2][1], x, z, 1,
+            1);
       Func_02003b50();
     }
     Func_02003cd8(298);

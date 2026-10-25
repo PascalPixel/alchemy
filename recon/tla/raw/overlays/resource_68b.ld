@@ -11,7 +11,7 @@ SECTIONS
         "*/games/tla/src/scene/lemuria/events_a.o"(.text)
         "*/games/tla/src/scene/lemuria/s0538.o"(.text)
         "*/games/tla/src/scene/lemuria/events_b.o"(.text)
-        "*/resource_68b_overlay.o"(.text.x0200862c)
+        "*/games/tla/src/scene/lemuria/s062c.o"(.text)
         "*/games/tla/src/scene/lemuria/s08e8.o"(.text)
         "*/games/tla/src/scene/lemuria/scene_events.o"(.text)
         "*/games/tla/src/scene/lemuria/s0a6c.o"(.text)

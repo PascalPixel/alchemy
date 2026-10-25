@@ -7,7 +7,6 @@ SECTIONS
         "*/games/tla/src/scene/izumo_interiors/scene_tables.o"(.text)
         "*/games/tla/src/scene/izumo_interiors/s00b4.o"(.text)
         "*/games/tla/src/scene/izumo_interiors/s051c.o"(.text)
-        "*/resource_67d_overlay.o"(.text.x0200861c)
         "*/games/tla/src/scene/izumo_interiors/s1d84.o"(.text)
         "*/games/tla/src/scene/izumo_interiors/s1dd0.o"(.text)
         "*/resource_67d_overlay.o"(.text.x0200a00c)

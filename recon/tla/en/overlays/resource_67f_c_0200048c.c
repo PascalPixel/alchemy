@@ -1,6 +1,8 @@
 // Near miss, differ 19 of 91: the listing rebuilds 0xffff at the loop's bottom
 // test and skips a non-matching entry with a branch to it; this draft keeps
 // 0xffff in ip across the loop.
+// Measured against its copies: overlay 68F's Func_020024e8 (differ 19 of 91),
+// overlay 691's Func_02002fc4 (differ 19 of 91).
 #include "../../../../games/tla/src/scene/izumo_ruins/izumo_ruins.h"
 
 void Func_0200048c(u16 *list, s32 id) {

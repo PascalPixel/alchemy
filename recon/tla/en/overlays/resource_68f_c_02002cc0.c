@@ -3,6 +3,7 @@
 // goto loop keeps the offsets and the counter in r8 as the native has them (a
 // do-while hoists them, differ 60). The same update is overlay 6A8's
 // Func_02004114. Permute 1 minute: differ 36 only through an inline helper.
+// Measured against its copies: overlay 691's Func_0200379c (differ 44 of 57).
 #include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
 
 struct Spark {

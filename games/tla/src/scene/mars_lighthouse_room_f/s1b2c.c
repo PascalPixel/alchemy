@@ -1,6 +1,3 @@
-// Draft of overlay 6ad's Func_02001b2c, the twin of overlay 69a's
-// Func_0200090c: its draft (resource_69a_c_0200090c.c) with this overlay's
-// symbols: differ 4 of 72. Left: what that draft's header records.
 #include "types.h"
 #include "frame.h"
 #include "field_event.h"

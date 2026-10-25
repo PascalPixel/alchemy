@@ -15,7 +15,7 @@ SECTIONS
         "*/games/tla/src/menu/lobby/exchange.o"(.text)
         "*/resource_6b5_overlay.o"(.text.x02008864)
         "*/games/tla/src/menu/lobby/counter.o"(.text)
-        "*/resource_6b5_overlay.o"(.text.x02008da0)
+        "*/games/tla/src/menu/lobby/s0da0.o"(.text)
         "*/games/tla/src/menu/lobby/prompt.o"(.text)
         "*/games/tla/src/menu/lobby/sound_call.o"(.text)
         "*/resource_6b5_overlay.o"(.text.x02008fbc)

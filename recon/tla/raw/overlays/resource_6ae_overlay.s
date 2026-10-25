@@ -6591,45 +6591,6 @@ Func_02004d50:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 	.endif
-	.section .text.x0200ce80,"ax",%progbits
-	.ifdef TLA_EDITION_JA
-	.balign 4
-	.else
-	.balign 4
-	.global Func_02004e80
-	.thumb_func
-Func_02004e80:
-	push {r5, r6, lr}
-	mov r6, r8
-	push {r6}
-	adds r6, r1, #0
-	bl Object_GetById
-	ldr r3, .L_0200cebc
-	movs r1, #181
-	lsls r1, r1, #1
-	adds r1, #255
-	adds r2, r3, r1
-	movs r5, #0
-	strb r5, [r2]
-	movs r2, #128
-	lsls r2, r2, #2
-	adds r2, #106
-	adds r3, r3, r2
-	mov r8, r0
-	strh r6, [r3]
-	adds r0, r6, #0
-	bl Object_GetById
-	mov r1, r8
-	ldr r3, [r1, #108]
-	str r3, [r0, #108]
-	str r5, [r1, #108]
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_0200cebc:
-	.4byte gPartyState
-	.endif
 	.section .text.x0200cef0,"ax",%progbits
 	.balign 4
 	.global Func_02004ef0

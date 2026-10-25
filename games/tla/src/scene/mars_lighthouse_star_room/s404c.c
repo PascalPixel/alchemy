@@ -1,6 +1,3 @@
-// Draft of overlay 6ab's Func_0200404c, the twin of overlay 6a1's
-// Func_02002010: its draft (resource_6a1_c_02002010.c) with this overlay's
-// symbols: differ 2 of 81. Left: what that draft's header records.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"

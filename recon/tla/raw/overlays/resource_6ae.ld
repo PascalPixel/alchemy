@@ -29,7 +29,7 @@ SECTIONS
         "*/games/tla/src/scene/mars_lighthouse_aerie/events_f.o"(.text)
         "*/resource_6ae_overlay.o"(.text.x0200cd50)
         "*/games/tla/src/scene/mars_lighthouse_aerie/events_g.o"(.text)
-        "*/resource_6ae_overlay.o"(.text.x0200ce80)
+        "*/games/tla/src/scene/mars_lighthouse_aerie/s4e80.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_aerie/events_h.o"(.text)
         "*/resource_6ae_overlay.o"(.text.x0200cef0)
         "*/games/tla/src/scene/mars_lighthouse_aerie/stop.o"(.text)

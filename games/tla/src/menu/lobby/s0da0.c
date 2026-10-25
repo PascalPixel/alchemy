@@ -1,11 +1,3 @@
-// Draft of overlay 6b5's Func_02000da0 (0x02008da0), ported from ☀️'s
-// EV09_TALK: differ 4 of 63, two pairs in sched2's order. In each branch the
-// native loads the message base from the pool before the tally's offset
-// constant is complete (first branch: ldr r3 before movs r2, #179; second:
-// between movs r2, #128 and its lsls); here the constant's chain is one
-// priority step longer and goes first. Swapping the base and tally
-// assignments differs by 12 to 35; 12 minutes of alchemy permute found
-// nothing below 4.
 #include "battle.h"
 #include "field.h"
 #include "game.h"

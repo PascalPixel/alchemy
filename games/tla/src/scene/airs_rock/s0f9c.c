@@ -15,9 +15,6 @@ void Func_02000f9c(struct ObjectRuntime *object) {
   object->z += object->unk4c;
   if ((object->x >> 19) <= 39) {
     object->bounce += 0x18000;
-    /* FAKEMATCH: the barrier after the speed store starts the step constant
-     * before scaleX is loaded; as plain C, 4 instructions differ in tla-en. */
-    __asm__("");
     scale = object->scaleX + 0xccc;
   } else {
     object->bounce -= 0x18000;

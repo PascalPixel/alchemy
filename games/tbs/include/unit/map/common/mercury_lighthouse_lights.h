@@ -6,13 +6,30 @@
 
 struct ObjectEvent;
 
+/// The metatile behaviors Ply gives the pool's cells in
+/// MercuryLighthouseEntrance and MercuryLighthouseLower, which the hops and the
+/// lights answer.
+enum MercuryLighthousePoolBehavior {
+  /// The pool's heart, which gives the leader lights.
+  /// ★ Named from what the player sees: the heart at the pool's centre (its
+  /// render)
+  MB_MERCURY_LIGHTHOUSE_POOL_HEART = 11,
+  /// Out in the water, where ripples spread from the leader.
+  /// ★ Named from what the player sees: the open water of the pool (its render)
+  MB_MERCURY_LIGHTHOUSE_POOL_WATER = 21,
+  /// The pool's rim, which takes the leader's lights.
+  /// ★ Named from what the player sees: the rim of the pool (its render)
+  MB_MERCURY_LIGHTHOUSE_POOL_RIM = 31
+};
+
 /// Published in the map's light-controller slot while the pillar is active.
 struct MercuryLighthouseLights {
   /// The leader's lights, 0 to 3: the heart gives three and each hop into the
   /// pool spends one.
   s32 levels;
   s32 poolBehavior; ///< the pool's metatile behavior, the floor's region
-  /// Frames to the next ripple at trigger 21, 10 to 39; a hop zeroes it.
+  /// Frames to the next ripple in MB_MERCURY_LIGHTHOUSE_POOL_WATER, 10 to 39; a
+  /// hop zeroes it.
   s32 rippleTimer;
   /// 16.16 fixed-point pixels: the centre of the column's cell, where a
   /// sinking leader is put back.

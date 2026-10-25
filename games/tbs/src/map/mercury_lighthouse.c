@@ -441,26 +441,27 @@ MercuryLighthouse_GetObjectEventTemplates(void) {
 }
 
 /// MercuryLighthouseLower, as in MercuryLighthouseEntrance, once Ply has worked
-/// there: touching metatile behavior 21 keeps blue ripples spreading from the
-/// leader.
+/// there: touching  MB_MERCURY_LIGHTHOUSE_POOL_WATER keeps blue ripples
+/// spreading from the leader.
 static void MercuryLighthouse_RippleWhileInPool(void) {
   MercuryLighthouse_RippleAroundLeader();
 }
 
-/// MercuryLighthouseLower, touching metatile behavior 31 or 32: the leader
-/// loses his lights.
+/// MercuryLighthouseLower, touching  MB_MERCURY_LIGHTHOUSE_POOL_RIM or metatile
+/// behavior 32: the leader loses his lights.
 static void MercuryLighthouse_LoseLightsOnLower(void) {
   MercuryLighthouse_LoseLights();
 }
 
-/// MercuryLighthouseLower, walking into metatile behavior 11, 21 or 31: one
-/// step across the pool, spending a light.
+/// MercuryLighthouseLower, walking into  MB_MERCURY_LIGHTHOUSE_POOL_HEART,
+/// MB_MERCURY_LIGHTHOUSE_POOL_WATER or MB_MERCURY_LIGHTHOUSE_POOL_RIM: one step
+/// across the pool, spending a light.
 static void MercuryLighthouse_HopAcrossPoolOnLower(void) {
   MercuryLighthouse_HopAcrossPool();
 }
 
-/// MercuryLighthouseLower, touching metatile behavior 11, the pool's heart: the
-/// column of lights over the leader grows a stage.
+/// MercuryLighthouseLower, touching  MB_MERCURY_LIGHTHOUSE_POOL_HEART, the
+/// pool's heart: the column of lights over the leader grows a stage.
 static void MercuryLighthouse_ChargeLightsOnLower(void) {
   MercuryLighthouse_ChargeLights();
 }
@@ -2332,7 +2333,8 @@ s32 MercuryLighthouse_Initialize(void) {
     REG_BLDALPHA = alpha;
   }
   MercuryLighthouse_RestoreLights(
-      21, (struct MercuryLighthouseLights *)gMapLocalState);
+      MB_MERCURY_LIGHTHOUSE_POOL_WATER,
+      (struct MercuryLighthouseLights *)gMapLocalState);
   FieldEffect_StartFadeOverlay(0);
   if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
     FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette,
@@ -3393,12 +3395,12 @@ struct MapEvent gMercuryLighthouseLowerEvents[] = {
     { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 55, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_NORTHEAST },
     { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 56, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_UPPER },
     { MAP_EVENT_COORD, 32, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_LoseLightsOnLower) },
-    { COORD_EVENT_WALKING, 31, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_HopAcrossPoolOnLower) },
-    { MAP_EVENT_COORD, 31, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_LoseLightsOnLower) },
-    { COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 21, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_HopAcrossPoolOnLower) },
-    { MAP_EVENT_COORD, 21, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_RippleWhileInPool) },
-    { COORD_EVENT_WALKING, 11, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_HopAcrossPoolOnLower) },
-    { MAP_EVENT_COORD, 11, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_ChargeLightsOnLower) },
+    { COORD_EVENT_WALKING, MB_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_HopAcrossPoolOnLower) },
+    { MAP_EVENT_COORD, MB_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_LoseLightsOnLower) },
+    { COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, MB_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_HopAcrossPoolOnLower) },
+    { MAP_EVENT_COORD, MB_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_RippleWhileInPool) },
+    { COORD_EVENT_WALKING, MB_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_HopAcrossPoolOnLower) },
+    { MAP_EVENT_COORD, MB_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_ChargeLightsOnLower) },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_EnterRisingPassage) },
     { COORD_EVENT_WALKING, 25, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_PushChannelPipes) },
     { MAP_EVENT_TALK, LOCALID_MIA, FLAG_MIA_JOINED_PARTY, MSGNO(MsgMercuryLighthouseThePathIsBlockedAgainWhat) },

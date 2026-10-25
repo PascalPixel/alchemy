@@ -663,12 +663,12 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 375	text	games/tbs/src/map/entry/vale_kradens_cottage
 375	text	games/tbs/src/map/vale_kradens_cottage
 375	text	games/tbs/src/map/import/vale_kradens_cottage
-376	text	games/tbs/src/map/entry/vale_interiors
-376	text	games/tbs/src/map/vale_interiors
-376	text	games/tbs/src/map/import/vale_interiors
-377	text	games/tbs/src/map/entry/wooden_rooms_a
-377	text	games/tbs/src/map/wooden_rooms_a
-377	text	games/tbs/src/map/import/wooden_rooms_a
+376	text	games/tbs/src/map/entry/cottage_rooms_a
+376	text	games/tbs/src/map/cottage_rooms_a
+376	text	games/tbs/src/map/import/cottage_rooms_a
+377	text	games/tbs/src/map/entry/cottage_rooms_b
+377	text	games/tbs/src/map/cottage_rooms_b
+377	text	games/tbs/src/map/import/cottage_rooms_b
 378	text	games/tbs/src/map/entry/sanctum
 378	text	games/tbs/src/map/sanctum
 378	text	games/tbs/src/map/import/sanctum
@@ -708,10 +708,10 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 382	text	games/tbs/src/map/vault
 382	text	games/tbs/src/map/import/vault
 382	text	libgcc.a:_call_via_rX
-383	text	games/tbs/src/map/entry/vault_interiors
-383	text	games/tbs/src/map/vault_interiors
-383	text	games/tbs/src/map/import/vault_interiors
-383	bss	games/tbs/src/map/vault_interiors	.bss COMMON
+383	text	games/tbs/src/map/entry/log_rooms_a
+383	text	games/tbs/src/map/log_rooms_a
+383	text	games/tbs/src/map/import/log_rooms_a
+383	bss	games/tbs/src/map/log_rooms_a	.bss COMMON
 384	text	games/tbs/src/map/entry/stone_rooms
 384	text	games/tbs/src/map/stone_rooms
 384	text	games/tbs/src/map/import/stone_rooms
@@ -719,9 +719,9 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 385	text	games/tbs/src/map/vault_revisit
 385	text	games/tbs/src/map/import/vault_revisit
 385	text	libgcc.a:_call_via_rX
-386	text	games/tbs/src/map/entry/vault_interiors_revisit
-386	text	games/tbs/src/map/vault_interiors_revisit
-386	text	games/tbs/src/map/import/vault_interiors_revisit
+386	text	games/tbs/src/map/entry/log_rooms_b
+386	text	games/tbs/src/map/log_rooms_b
+386	text	games/tbs/src/map/import/log_rooms_b
 387	text	games/tbs/src/map/entry/goma_cave_entrance
 387	text	games/tbs/src/map/goma_cave_entrance
 387	text	games/tbs/src/map/import/goma_cave_entrance
@@ -740,9 +740,9 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 38b	text	games/tbs/src/map/bilibin
 38b	text	games/tbs/src/map/import/bilibin
 38b	bss	games/tbs/src/map/bilibin	.bss COMMON
-38c	text	games/tbs/src/map/entry/bilibin_interiors
-38c	text	games/tbs/src/map/bilibin_interiors
-38c	text	games/tbs/src/map/import/bilibin_interiors
+38c	text	games/tbs/src/map/entry/cottage_rooms_c
+38c	text	games/tbs/src/map/cottage_rooms_c
+38c	text	games/tbs/src/map/import/cottage_rooms_c
 38d	text	games/tbs/src/map/entry/mccoy_palace
 38d	text	games/tbs/src/map/mccoy_palace
 38d	text	games/tbs/src/map/import/mccoy_palace
@@ -753,9 +753,9 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 38f	text	games/tbs/src/map/kolima
 38f	text	games/tbs/src/map/import/kolima
 38f	bss	games/tbs/src/map/kolima	.bss
-390	text	games/tbs/src/map/entry/kolima_interiors
-390	text	games/tbs/src/map/kolima_interiors
-390	text	games/tbs/src/map/import/kolima_interiors
+390	text	games/tbs/src/map/entry/log_rooms_c
+390	text	games/tbs/src/map/log_rooms_c
+390	text	games/tbs/src/map/import/log_rooms_c
 391	text	games/tbs/src/map/entry/kolima_forest_entrance
 391	text	games/tbs/src/map/kolima_forest_entrance
 391	text	games/tbs/src/map/import/kolima_forest_entrance
@@ -780,10 +780,10 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 395	text	games/tbs/src/map/import/kolima_forest_tree
 395	bss	games/tbs/src/map/kolima_forest_tree	.bss
 395	bss	resource_395_overlay	.bss
-396	text	games/tbs/src/map/entry/tret_tree_interiors
-396	text	games/tbs/src/map/tret_tree_interiors
-396	text	games/tbs/src/map/import/tret_tree_interiors
-396	bss	games/tbs/src/map/tret_tree_interiors	.bss
+396	text	games/tbs/src/map/entry/tree_rooms
+396	text	games/tbs/src/map/tree_rooms
+396	text	games/tbs/src/map/import/tree_rooms
+396	bss	games/tbs/src/map/tree_rooms	.bss
 397	text	games/tbs/src/map/entry/tret_tree_branch
 397	text	games/tbs/src/map/tret_tree_branch
 397	text	games/tbs/src/map/import/tret_tree_branch
@@ -822,9 +822,9 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 3a0	text	games/tbs/src/map/xian
 3a0	text	games/tbs/src/map/import/xian
 3a0	text	libgcc.a:_call_via_rX
-3a1	text	games/tbs/src/map/entry/xian_interiors
-3a1	text	games/tbs/src/map/xian_interiors
-3a1	text	games/tbs/src/map/import/xian_interiors
+3a1	text	games/tbs/src/map/entry/lacquer_rooms_b
+3a1	text	games/tbs/src/map/lacquer_rooms_b
+3a1	text	games/tbs/src/map/import/lacquer_rooms_b
 3a2	text	games/tbs/src/map/entry/alpine_crossing_lama_temple
 3a2	text	games/tbs/src/map/alpine_crossing_lama_temple
 3a2	text	games/tbs/src/map/import/alpine_crossing_lama_temple
@@ -868,9 +868,9 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 3ab	text	games/tbs/src/map/entry/lunpa
 3ab	text	games/tbs/src/map/lunpa
 3ab	text	games/tbs/src/map/import/lunpa
-3ac	text	games/tbs/src/map/entry/lunpa_interiors
-3ac	text	games/tbs/src/map/lunpa_interiors
-3ac	text	games/tbs/src/map/import/lunpa_interiors
+3ac	text	games/tbs/src/map/entry/rock_rooms
+3ac	text	games/tbs/src/map/rock_rooms
+3ac	text	games/tbs/src/map/import/rock_rooms
 3ad	text	games/tbs/src/map/entry/west_lunpa_cave
 3ad	text	games/tbs/src/map/west_lunpa_cave
 3ad	text	games/tbs/src/map/import/west_lunpa_cave
@@ -885,10 +885,10 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 3b0	text	games/tbs/src/map/tolbi_ship_mast
 3b0	text	games/tbs/src/map/import/tolbi_ship_mast
 3b0	bss	games/tbs/src/map/tolbi_ship_mast	.bss
-3b1	text	games/tbs/src/map/entry/tolbi_ship_interiors
-3b1	text	games/tbs/src/map/tolbi_ship_interiors
-3b1	text	games/tbs/src/map/import/tolbi_ship_interiors
-3b1	bss	games/tbs/src/map/tolbi_ship_interiors	.bss COMMON
+3b1	text	games/tbs/src/map/entry/ship_rooms
+3b1	text	games/tbs/src/map/ship_rooms
+3b1	text	games/tbs/src/map/import/ship_rooms
+3b1	bss	games/tbs/src/map/ship_rooms	.bss COMMON
 3b2	text	games/tbs/src/map/entry/crossbone_isle
 3b2	text	games/tbs/src/map/crossbone_isle
 3b2	text	games/tbs/src/map/import/crossbone_isle
@@ -906,9 +906,9 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 3b5	text	games/tbs/src/map/tolbi
 3b5	text	games/tbs/src/map/import/tolbi
 3b5	text	libgcc.a:_call_via_rX
-3b6	text	games/tbs/src/map/entry/tolbi_interiors
-3b6	text	games/tbs/src/map/tolbi_interiors
-3b6	text	games/tbs/src/map/import/tolbi_interiors
+3b6	text	games/tbs/src/map/entry/stucco_rooms_b
+3b6	text	games/tbs/src/map/stucco_rooms_b
+3b6	text	games/tbs/src/map/import/stucco_rooms_b
 3b7	text	games/tbs/src/map/entry/tolbi_spring
 3b7	text	games/tbs/src/map/tolbi_spring
 3b7	text	games/tbs/src/map/import/tolbi_spring
@@ -964,9 +964,9 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 3c1	text	games/tbs/src/map/entry/suhalla
 3c1	text	games/tbs/src/map/suhalla
 3c1	text	games/tbs/src/map/import/suhalla
-3c2	text	games/tbs/src/map/entry/suhalla_interiors
-3c2	text	games/tbs/src/map/suhalla_interiors
-3c2	text	games/tbs/src/map/import/suhalla_interiors
+3c2	text	games/tbs/src/map/entry/timber_rooms_a
+3c2	text	games/tbs/src/map/timber_rooms_a
+3c2	text	games/tbs/src/map/import/timber_rooms_a
 3c3	text	games/tbs/src/map/entry/suhalla_gate
 3c3	text	games/tbs/src/map/suhalla_gate
 3c3	text	games/tbs/src/map/import/suhalla_gate

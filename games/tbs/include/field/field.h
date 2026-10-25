@@ -90,7 +90,7 @@ extern const u8 gField_BgEventMessageOffsets[];
 /// The motes of light's 16 by 16 tiles, packed (FieldMotes_Start).
 extern const u8 gFieldEffect_MoteTiles[];
 extern s32 gDjinnFigures_SpriteIds[];
-extern s32 gTolbiShipInteriors_ShakeTimer;
+extern s32 gShipRooms_ShakeTimer;
 /// The bend's water level in gMapLocalState's second halfword: 1 high (the logs
 /// float), 0 low; the floodgate switch flips it.
 extern s16 *gKolimaForestFloodgateLayout;
@@ -169,8 +169,8 @@ extern s16 gColosso_ModeScaleTarget;
 /// The lettering's sprite parts, three words each, written every frame.
 extern u32 gColosso_LetteringSprites[];
 /// Frames in a row the chase has found a suspect cornered; at
-/// VAULT_INTERIORS_CORNERED_FRAMES the chase raises its event.
-extern u16 gVaultInteriors_StopTimer;
+/// LOG_ROOMS_A_CORNERED_FRAMES the chase raises its event.
+extern u16 gLogRoomsA_StopTimer;
 /// The size of Object_UpdateAll's code, an address equal to the size
 /// (constants.ld). Only the unused Object_RunUpdateAllFromHeap reads it, to
 /// copy the routine to the heap and run it once.

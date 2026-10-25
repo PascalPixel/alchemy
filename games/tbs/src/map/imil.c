@@ -15,7 +15,7 @@
 /// - Imil (MapId_Imil), the village. A young man shivers and sneezes in the
 ///   snow, waiting for Mia, and a strongman counts out his exercises against
 ///   the cold. Six doors (coord events 51 to 56) open into the houses, the
-///   shops, the inn and the Sanctum (MapId_ImilInteriors),
+///   shops, the inn and the Sanctum (MapId_IceRooms),
 ///   IMIL_TO_WORLD_MAP_SOUTH and IMIL_TO_WORLD_MAP_NORTH lead out to the world
 ///   map, and the way north (coord event 4) leads into Imil Falls Cave; coming
 ///   back out of it (IMIL_FROM_IMIL_FALLS_CAVE) the leader walks down into the
@@ -30,8 +30,8 @@
 ///   or the raised ground, and once it lands at cell (15, 7) it stays there for
 ///   the rest of the visit (a temporary flag). Searching finds 9 coins, a Vial
 ///   and a Lucky Medal.
-/// - Imil (MapId_ImilInteriors), inside the houses, the shops and the inn; by
-///   IMIL_INTERIORS_FROM_IMIL_EAST_NORTHEAST the same map is the Imil
+/// - Imil (MapId_IceRooms), inside the houses, the shops and the inn; by
+///   ICE_ROOMS_FROM_IMIL_EAST_NORTHEAST the same map is the Imil
 ///   Sanctum. While the epidemic lasts the weapon and armor sellers are sick:
 ///   searching their counters pans the camera to them, and they say the shop is
 ///   closed. The item seller's daughter minds that shop for her mother. In the
@@ -40,7 +40,7 @@
 ///   (FLAG_IMIL_JUSTIN_OFFERED_HEALING), and Megan asks whether the
 ///   party has visited the old couple who live near the entrance of town, where
 ///   Mia went (FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE). In the old couple's house
-///   (IMIL_INTERIORS_HOUSE_SOUTHWEST) the old man moans for help, and talking
+///   (ICE_ROOMS_HOUSE_SOUTHWEST) the old man moans for help, and talking
 ///   to him sends his wife hurrying to fetch Mia. Either sets
 ///   FLAG_IMIL_MIA_SENT_FOR, which changes the couple's lines and where they
 ///   stand.
@@ -129,10 +129,10 @@ enum ImilVillageLocalId {
   LOCALID_SNOWMAN
 };
 
-/// The object events of the houses and the Sanctum (ImilInteriors), numbering
+/// The object events of the houses and the Sanctum (IceRooms), numbering
 /// gImil_InteriorObjectEventTemplates' rows from LOCALID_FIRST_PLACED; the rows
 /// of Garet, Ivan and Mia take those characters' own slots.
-enum ImilInteriorsLocalId {
+enum IceRoomsLocalId {
   /// The old couple's house.
   /// ★ Named from the game: "Have you visited the old couple who live near the
   /// entrance of town?" (MsgImilHaveVisitedOldCoupleWho)
@@ -188,7 +188,7 @@ enum ImilInteriorsLocalId {
   /// Justin..." (MsgImilMia)
   LOCALID_MEGAN,
   /// A crate in the old couple's house, kept under the party as altin.c keeps
-  /// its ground sprites; Vault's crate (vault_interiors.c) uses the same
+  /// its ground sprites; Vault's crate (log_rooms_a.c) uses the same
   /// sprite.
   /// ★ Named from what the player sees: a wooden crate by the old couple's
   /// fireplace (its render)
@@ -218,9 +218,9 @@ enum { IMIL_INN = 4 };
 
 /// The weapon and armor counters' metatile behaviors in the houses: searching
 /// one facing north reaches its seller.
-enum ImilInteriorsMetatileBehavior {
-  MB_IMIL_INTERIORS_WEAPON_COUNTER = 10,
-  MB_IMIL_INTERIORS_ARMOR_COUNTER = 11
+enum IceRoomsMetatileBehavior {
+  MB_ICE_ROOMS_WEAPON_COUNTER = 10,
+  MB_ICE_ROOMS_ARMOR_COUNTER = 11
 };
 
 // The leader faces a counter: FACING_IS_NORTH, in the two spellings the sites
@@ -304,7 +304,7 @@ static s32 Imil_UpdateShiver(struct Object *interpreter) {
 
 /// Imil is two maps: the village, and its houses and Sanctum.
 const struct MapWarpDest *Imil_GetWarpDests(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_ImilInteriors) {
+  if (gSaveBlock.mapId == (s32)&MapId_IceRooms) {
     return gImil_InteriorWarpDests;
   }
   return gImil_TownWarpDests;
@@ -320,7 +320,7 @@ const u32 *Imil_GetWarps(void) { return gImil_Warps; }
 const struct ObjectEventTemplate *Imil_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *script;
 
-  if (gSaveBlock.mapId == ((s32)&MapId_ImilInteriors)) {
+  if (gSaveBlock.mapId == ((s32)&MapId_IceRooms)) {
     script = gImil_InteriorObjectEventTemplates;
     Map_AssignViewFlags(script);
     if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
@@ -350,7 +350,7 @@ static void Imil_StartIceSlide(void) { Imil_RunIceSlide(); }
 /// The village's, or the houses' and the Sanctum's, conversations and
 /// Psynergy targets.
 const struct MapEvent *Imil_GetEvents(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_ImilInteriors) {
+  if (gSaveBlock.mapId == (s32)&MapId_IceRooms) {
     return gImil_InteriorEvents;
   }
   return gImil_TownEvents;
@@ -614,7 +614,7 @@ static void Imil_ReadJustinsMind(void) {
 
 /// Walking north into one of Imil's six doors (coord events 51 to 56): everyone
 /// stops, the door opens and the leader walks in; the Sanctum's door
-/// (IMIL_TO_IMIL_INTERIORS_NORTHEAST) has its own sound and a slower walk.
+/// (IMIL_TO_ICE_ROOMS_NORTHEAST) has its own sound and a slower walk.
 static void Imil_OpenDoorAndExit(void) {
   struct FieldWork *work;
   struct ObjectEvent *objectEvent;
@@ -630,7 +630,7 @@ static void Imil_OpenDoorAndExit(void) {
     }
   }
   warp = (s16)(work->coordEvent - 50);
-  if (warp == IMIL_TO_IMIL_INTERIORS_NORTHEAST) {
+  if (warp == IMIL_TO_ICE_ROOMS_NORTHEAST) {
     Sound_PlaySong(SE_THUMP);
   } else {
     Sound_PlaySong(SE_DOOR_OPEN);
@@ -643,7 +643,7 @@ static void Imil_OpenDoorAndExit(void) {
   }
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  if (warp == IMIL_TO_IMIL_INTERIORS_NORTHEAST) {
+  if (warp == IMIL_TO_ICE_ROOMS_NORTHEAST) {
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
     Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
     ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 3);
@@ -861,12 +861,12 @@ s32 Imil_Initialize(void) {
         gSaveBlock.warpDest == IMIL_FROM_IMIL_FALLS_CAVE) {
       Imil_ArriveFromFallsCave();
     }
-  } else if (gSaveBlock.mapId == (s32)&MapId_ImilInteriors) {
+  } else if (gSaveBlock.mapId == (s32)&MapId_IceRooms) {
     // Restore each interior's occupants before running its arrival script.
     gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     warpDest = gSaveBlock.warpDest;
-    if (warpDest == IMIL_INTERIORS_HOUSE_SOUTHWEST) {
+    if (warpDest == ICE_ROOMS_HOUSE_SOUTHWEST) {
       ObjectEvent_ConfigureSpriteColor(LOCALID_CRATE, SPRITE_COLOR_HIDDEN);
       ObjectEvent_GetById(LOCALID_CRATE)->collisionFlags |= 8;
       ObjectMotion_SetActionVariant(LOCALID_CRATE, 1);
@@ -907,12 +907,12 @@ s32 Imil_Initialize(void) {
           ObjectEvent_SetBuiltinAction(LOCALID_OLD_WOMAN, 2);
         }
       }
-    } else if (warpDest == IMIL_INTERIORS_FROM_IMIL_WEST_SOUTHWEST) {
+    } else if (warpDest == ICE_ROOMS_FROM_IMIL_WEST_SOUTHWEST) {
       if (!GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         ObjectEvent_GetById(LOCALID_SICK_OLD_MAN)->work = 1;
         ObjectEvent_SetActionScript(LOCALID_SICK_OLD_MAN, gImil_ShiverScript);
       }
-    } else if (warpDest == IMIL_INTERIORS_HOUSE_NORTHEAST) {
+    } else if (warpDest == ICE_ROOMS_HOUSE_NORTHEAST) {
       if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         ObjectEvent_SetPosition(LOCALID_WEAPON_MERCHANT, PIXELS(364),
                                 PIXELS(578));
@@ -935,7 +935,7 @@ s32 Imil_Initialize(void) {
         Import_ObjectEventSetAnimation(LOCALID_ARMOR_MERCHANT,
                                        IMIL_ANIMATION_LIE_IN_BED);
       }
-    } else if (warpDest == IMIL_INTERIORS_HOUSE_WEST) {
+    } else if (warpDest == ICE_ROOMS_HOUSE_WEST) {
       if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         ObjectEvent_SetPosition(LOCALID_ITEM_MERCHANT, PIXELS(460),
                                 PIXELS(258));
@@ -958,7 +958,7 @@ s32 Imil_Initialize(void) {
         Import_ObjectEventSetAnimation(LOCALID_ITEM_MERCHANT,
                                        IMIL_ANIMATION_LIE_IN_BED);
       }
-    } else if (warpDest == IMIL_INTERIORS_FROM_IMIL_EAST_NORTHEAST) {
+    } else if (warpDest == ICE_ROOMS_FROM_IMIL_EAST_NORTHEAST) {
       if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         ObjectEvent_GetById(LOCALID_MEGAN)->facing =
             FACING_SOUTHEAST + FACING_STEP;
@@ -1834,47 +1834,47 @@ struct MapWarpDest gImil_TownWarpDests[] = {
     { IMIL_EAST_UNUSED, CONDITION_ALWAYS, 480, 0, 280, FACING_WEST, 0, -1, -1, -1, -1, 0 },
     { IMIL_FROM_HOUSE_WEST, CONDITION_ALWAYS, 312, 0, 424, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { IMIL_FROM_HOUSE_NORTHEAST, CONDITION_ALWAYS, 424, 0, 392, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { IMIL_FROM_IMIL_INTERIORS_EAST, CONDITION_ALWAYS, 456, 0, 248, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { IMIL_FROM_IMIL_INTERIORS_NORTHEAST, CONDITION_ALWAYS, 376, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { IMIL_FROM_IMIL_INTERIORS_WEST, CONDITION_ALWAYS, 120, 0, 208, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { IMIL_FROM_IMIL_INTERIORS_SOUTHWEST, CONDITION_ALWAYS, 64, 0, 360, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { IMIL_FROM_ICE_ROOMS_EAST, CONDITION_ALWAYS, 456, 0, 248, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { IMIL_FROM_ICE_ROOMS_NORTHEAST, CONDITION_ALWAYS, 376, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { IMIL_FROM_ICE_ROOMS_WEST, CONDITION_ALWAYS, 120, 0, 208, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { IMIL_FROM_ICE_ROOMS_SOUTHWEST, CONDITION_ALWAYS, 64, 0, 360, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { IMIL_FROM_IMIL_FALLS_CAVE, CONDITION_ALWAYS, 229, 0, 88, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { MAP_TABLE_END },
 };
 
 struct MapWarpDest gImil_InteriorWarpDests[] = {
     { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 136, 0, 248, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { IMIL_INTERIORS_HOUSE_SOUTHWEST, CONDITION_ALWAYS, 144, 0, 242, FACING_NORTH, 0, 32, 52, 256, 280, 0 },
-    { IMIL_INTERIORS_FROM_IMIL_WEST_SOUTHWEST, CONDITION_ALWAYS, 143, 0, 596, FACING_NORTH, 0, 42, 424, 256, 631, 0 },
-    { IMIL_INTERIORS_HOUSE_WEST, CONDITION_ALWAYS, 399, 0, 322, FACING_NORTH, 0, 320, 58, 536, 360, 0 },
-    { IMIL_INTERIORS_HOUSE_NORTHEAST, CONDITION_ALWAYS, 400, 0, 659, FACING_NORTH, 0, 307, 382, 545, 697, 0 },
-    { IMIL_INTERIORS_INN, CONDITION_ALWAYS, 129, 0, 915, FACING_NORTH, 0, 50, 706, 350, 949, 0 },
-    { IMIL_INTERIORS_INN_UPSTAIRS_FROM_INN, CONDITION_ALWAYS, 446, 0, 825, FACING_SOUTH, 0, 402, 740, 670, 921, 0 },
-    { IMIL_INTERIORS_FROM_IMIL_EAST_NORTHEAST, CONDITION_ALWAYS, 687, 0, 264, FACING_NORTH, 0, 594, 49, 806, 295, 0 },
-    { IMIL_INTERIORS_INN_FROM_INN_UPSTAIRS, CONDITION_ALWAYS, 182, 0, 772, FACING_SOUTH, 0, 50, 706, 350, 949, 0 },
+    { ICE_ROOMS_HOUSE_SOUTHWEST, CONDITION_ALWAYS, 144, 0, 242, FACING_NORTH, 0, 32, 52, 256, 280, 0 },
+    { ICE_ROOMS_FROM_IMIL_WEST_SOUTHWEST, CONDITION_ALWAYS, 143, 0, 596, FACING_NORTH, 0, 42, 424, 256, 631, 0 },
+    { ICE_ROOMS_HOUSE_WEST, CONDITION_ALWAYS, 399, 0, 322, FACING_NORTH, 0, 320, 58, 536, 360, 0 },
+    { ICE_ROOMS_HOUSE_NORTHEAST, CONDITION_ALWAYS, 400, 0, 659, FACING_NORTH, 0, 307, 382, 545, 697, 0 },
+    { ICE_ROOMS_INN, CONDITION_ALWAYS, 129, 0, 915, FACING_NORTH, 0, 50, 706, 350, 949, 0 },
+    { ICE_ROOMS_INN_UPSTAIRS_FROM_INN, CONDITION_ALWAYS, 446, 0, 825, FACING_SOUTH, 0, 402, 740, 670, 921, 0 },
+    { ICE_ROOMS_FROM_IMIL_EAST_NORTHEAST, CONDITION_ALWAYS, 687, 0, 264, FACING_NORTH, 0, 594, 49, 806, 295, 0 },
+    { ICE_ROOMS_INN_FROM_INN_UPSTAIRS, CONDITION_ALWAYS, 182, 0, 772, FACING_SOUTH, 0, 50, 706, 350, 949, 0 },
     { MAP_TABLE_END },
 };
 
 u32 gImil_Warps[] = {
     MAP_WARPS(Imil),
-    MAP_WARP(IMIL_TO_HOUSE_SOUTHWEST, ImilInteriors, IMIL_INTERIORS_HOUSE_SOUTHWEST),
-    MAP_WARP(IMIL_TO_INN, ImilInteriors, IMIL_INTERIORS_INN),
-    MAP_WARP(IMIL_TO_HOUSE_WEST, ImilInteriors, IMIL_INTERIORS_HOUSE_WEST),
-    MAP_WARP(IMIL_TO_HOUSE_NORTHEAST, ImilInteriors, IMIL_INTERIORS_HOUSE_NORTHEAST),
-    MAP_WARP(IMIL_TO_IMIL_INTERIORS_EAST, ImilInteriors, IMIL_INTERIORS_FROM_IMIL_WEST_SOUTHWEST),
-    MAP_WARP(IMIL_TO_IMIL_INTERIORS_NORTHEAST, ImilInteriors, IMIL_INTERIORS_FROM_IMIL_EAST_NORTHEAST),
+    MAP_WARP(IMIL_TO_HOUSE_SOUTHWEST, IceRooms, ICE_ROOMS_HOUSE_SOUTHWEST),
+    MAP_WARP(IMIL_TO_INN, IceRooms, ICE_ROOMS_INN),
+    MAP_WARP(IMIL_TO_HOUSE_WEST, IceRooms, ICE_ROOMS_HOUSE_WEST),
+    MAP_WARP(IMIL_TO_HOUSE_NORTHEAST, IceRooms, ICE_ROOMS_HOUSE_NORTHEAST),
+    MAP_WARP(IMIL_TO_ICE_ROOMS_EAST, IceRooms, ICE_ROOMS_FROM_IMIL_WEST_SOUTHWEST),
+    MAP_WARP(IMIL_TO_ICE_ROOMS_NORTHEAST, IceRooms, ICE_ROOMS_FROM_IMIL_EAST_NORTHEAST),
     MAP_WARP(IMIL_TO_IMIL_FALLS_CAVE, ImilFallsCave, IMIL_FALLS_CAVE_FROM_IMIL),
     MAP_WARP(IMIL_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_IMIL_SOUTH),
     MAP_WARP(IMIL_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_IMIL_NORTH),
-    MAP_WARPS(ImilInteriors),
-    MAP_WARP(IMIL_INTERIORS_HOUSE_WEST_TO_IMIL, Imil, IMIL_FROM_HOUSE_WEST),
-    MAP_WARP(IMIL_INTERIORS_TO_IMIL_WEST_SOUTHWEST, Imil, IMIL_FROM_IMIL_INTERIORS_WEST),
-    MAP_WARP(IMIL_INTERIORS_TO_IMIL_EAST, Imil, IMIL_FROM_IMIL_INTERIORS_EAST),
-    MAP_WARP(IMIL_INTERIORS_TO_IMIL, Imil, IMIL_FROM_IMIL_INTERIORS_NORTHEAST),
-    MAP_WARP(IMIL_INTERIORS_TO_IMIL_SOUTH_SOUTHWEST, Imil, IMIL_FROM_HOUSE_NORTHEAST),
-    MAP_WARP(IMIL_INTERIORS_INN_UPSTAIRS_TO_INN, ImilInteriors, IMIL_INTERIORS_INN_FROM_INN_UPSTAIRS),
-    MAP_WARP(IMIL_INTERIORS_TO_IMIL_EAST_NORTHEAST, Imil, IMIL_FROM_IMIL_INTERIORS_SOUTHWEST),
-    MAP_WARP(IMIL_INTERIORS_INN_TO_INN_UPSTAIRS, ImilInteriors, IMIL_INTERIORS_INN_UPSTAIRS_FROM_INN),
+    MAP_WARPS(IceRooms),
+    MAP_WARP(ICE_ROOMS_HOUSE_WEST_TO_IMIL, Imil, IMIL_FROM_HOUSE_WEST),
+    MAP_WARP(ICE_ROOMS_TO_IMIL_WEST_SOUTHWEST, Imil, IMIL_FROM_ICE_ROOMS_WEST),
+    MAP_WARP(ICE_ROOMS_TO_IMIL_EAST, Imil, IMIL_FROM_ICE_ROOMS_EAST),
+    MAP_WARP(ICE_ROOMS_TO_IMIL, Imil, IMIL_FROM_ICE_ROOMS_NORTHEAST),
+    MAP_WARP(ICE_ROOMS_TO_IMIL_SOUTH_SOUTHWEST, Imil, IMIL_FROM_HOUSE_NORTHEAST),
+    MAP_WARP(ICE_ROOMS_INN_UPSTAIRS_TO_INN, IceRooms, ICE_ROOMS_INN_FROM_INN_UPSTAIRS),
+    MAP_WARP(ICE_ROOMS_TO_IMIL_EAST_NORTHEAST, Imil, IMIL_FROM_ICE_ROOMS_SOUTHWEST),
+    MAP_WARP(ICE_ROOMS_INN_TO_INN_UPSTAIRS, IceRooms, ICE_ROOMS_INN_UPSTAIRS_FROM_INN),
     MAP_WARPS_END,
 };
 
@@ -2023,22 +2023,22 @@ struct MapEvent gImil_InteriorEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_JUSTIN, CONDITION_ALWAYS, MSGNO(MsgImilMiasGoingToDefendTheHonor) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MEGAN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_ReadMegansMind) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MEGAN, CONDITION_ALWAYS, MSGNO(MsgImilImSorryMiaButICant) },
-    { BG_EVENT_FACING(FACING_NORTH), MB_IMIL_INTERIORS_WEAPON_COUNTER, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_TalkToWeaponMerchant) },
-    { BG_EVENT_FACING(FACING_NORTH), MB_IMIL_INTERIORS_ARMOR_COUNTER, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_TalkToArmorMerchant) },
+    { BG_EVENT_FACING(FACING_NORTH), MB_ICE_ROOMS_WEAPON_COUNTER, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_TalkToWeaponMerchant) },
+    { BG_EVENT_FACING(FACING_NORTH), MB_ICE_ROOMS_ARMOR_COUNTER, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_TalkToArmorMerchant) },
     { BG_EVENT(BG_EVENT_CHEST), 100, 0xf26, FIND_ITEM(ITEM_EMPTY_BOTTLE) },
     { BG_EVENT(BG_EVENT_BARREL), 101, 0xf62, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { BG_EVENT(BG_EVENT_OVEN), 102, 0xf63, FIND_ITEM(ITEM_LUCKY_PEPPER) },
     { BG_EVENT(BG_EVENT_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgImilItLooksLikePorridgeItIs)) },
     // Unused: this oven's item row answers first (see the maps README).
     { BG_EVENT(BG_EVENT_OVEN), 102, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgImilItsSomeHotStewItWarms)) },
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, IMIL_INTERIORS_HOUSE_WEST_TO_IMIL },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, IMIL_INTERIORS_TO_IMIL_WEST_SOUTHWEST },
-    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, IMIL_INTERIORS_TO_IMIL_EAST },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, IMIL_INTERIORS_TO_IMIL },
-    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, IMIL_INTERIORS_TO_IMIL_SOUTH_SOUTHWEST },
-    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, IMIL_INTERIORS_INN_UPSTAIRS_TO_INN },
-    { MAP_EVENT_WARP, 7, CONDITION_ALWAYS, IMIL_INTERIORS_TO_IMIL_EAST_NORTHEAST },
-    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, IMIL_INTERIORS_INN_TO_INN_UPSTAIRS },
+    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, ICE_ROOMS_HOUSE_WEST_TO_IMIL },
+    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, ICE_ROOMS_TO_IMIL_WEST_SOUTHWEST },
+    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, ICE_ROOMS_TO_IMIL_EAST },
+    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, ICE_ROOMS_TO_IMIL },
+    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, ICE_ROOMS_TO_IMIL_SOUTH_SOUTHWEST },
+    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, ICE_ROOMS_INN_UPSTAIRS_TO_INN },
+    { MAP_EVENT_WARP, 7, CONDITION_ALWAYS, ICE_ROOMS_TO_IMIL_EAST_NORTHEAST },
+    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, ICE_ROOMS_INN_TO_INN_UPSTAIRS },
     { MAP_EVENTS_END },
 };
 

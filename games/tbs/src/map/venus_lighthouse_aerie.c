@@ -47,12 +47,12 @@
 ///   (WORLD_MAP_BEFORE_SHEBAS_FALL) with its music kept.
 /// - Sheba's fall (VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP,
 ///   VenusLighthouseAerie_StageShebasFall): Sheba and Felix fall, and the party
-///   is taken to Lalivero (VENUS_LIGHTHOUSE_AERIE_TO_LALIVERO_INTERIORS_B)
+///   is taken to Lalivero (VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_C)
 ///   with FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED set.
 ///
 /// A lost battle returns to VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT, which gives
 /// the Shaman's Rod back to whoever carried it and leaves for Lalivero Sanctum
-/// (VENUS_LIGHTHOUSE_AERIE_TO_LALIVERO_INTERIORS_A).
+/// (VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B).
 
 #include "action_script.h"
 #include "save_block.h"
@@ -504,7 +504,7 @@ s32 VenusLighthouseAerie_Initialize(void) {
     } else {
       Inventory_AddItem(3, ITEM_SHAMANS_ROD);
     }
-    Import_ScriptRequestWarp(VENUS_LIGHTHOUSE_AERIE_TO_LALIVERO_INTERIORS_A);
+    Import_ScriptRequestWarp(VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B);
     break;
   }
 
@@ -2165,7 +2165,7 @@ static void VenusLighthouseAerie_ShowShebaInDanger(void) {
 /// Back from the world map (VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP): stages the
 /// broken aerie for Sheba's fall and the party's escape, plays them, sets
 /// FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED and leaves for Lalivero
-/// (VENUS_LIGHTHOUSE_AERIE_TO_LALIVERO_INTERIORS_B).
+/// (VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_C).
 static void VenusLighthouseAerie_StageShebasFall(void) {
   struct ObjectEvent *leader;
   struct ObjectEvent *objectEvent;
@@ -2249,7 +2249,7 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   FieldScript_WaitFrames(40);
   VenusLighthouseAerie_PlayShebasFall();
   GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
-  Import_ScriptRequestWarp(VENUS_LIGHTHOUSE_AERIE_TO_LALIVERO_INTERIORS_B);
+  Import_ScriptRequestWarp(VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_C);
 }
 
 /// Shows Saturos and Menardi falling into the beacon after their final defeat.
@@ -3534,10 +3534,10 @@ u32 gVenusLighthouseAerieWarps[] = {
     MAP_WARPS(VenusLighthouseAerie),
     MAP_WARP(VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP, WorldMap,
              WORLD_MAP_BEFORE_SHEBAS_FALL),
-    MAP_WARP(VENUS_LIGHTHOUSE_AERIE_TO_LALIVERO_INTERIORS_B, LaliveroInteriorsB,
-             LALIVERO_INTERIORS_B_FROM_VENUS_LIGHTHOUSE_AERIE),
-    MAP_WARP(VENUS_LIGHTHOUSE_AERIE_TO_LALIVERO_INTERIORS_A, LaliveroInteriorsA,
-             LALIVERO_INTERIORS_A_SANCTUM),
+    MAP_WARP(VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_C, TimberRoomsC,
+             TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE),
+    MAP_WARP(VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B, TimberRoomsB,
+             TIMBER_ROOMS_B_SANCTUM),
     MAP_WARPS_END,
 };
 

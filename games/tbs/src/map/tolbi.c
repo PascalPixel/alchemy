@@ -41,9 +41,9 @@
 ///
 /// The doors from TOLBI_TO_HOUSE_SOUTH to TOLBI_TO_SANCTUM, whose cells carry
 /// their warps' numbers, lead into Tolbi's houses, inns and shops and into
-/// Tolbi Sanctum (all MapId_TolbiInteriors), but for TOLBI_TO_LUCKY_WHEELS,
+/// Tolbi Sanctum (all MapId_StuccoRoomsB), but for TOLBI_TO_LUCKY_WHEELS,
 /// which with TOLBI_TO_LUCKY_DICE leads into the Lucky Dice and Lucky Wheels
-/// rooms (MapId_TolbiGameRooms, whose area name is also Tolbi).
+/// rooms (MapId_StuccoRoomsC, whose area name is also Tolbi).
 /// TOLBI_TO_BABI_PALACE_ENTRANCE leads to Babi's Palace,
 /// TOLBI_TO_COLOSSEUM_ENTRANCE to the Colosseum Entrance and TOLBI_TO_WORLD_MAP
 /// out onto the world map.
@@ -758,7 +758,7 @@ struct MapWarpDest gTolbiWarpDests[] = {
      -1, -1, -1, -1, 0},
     {TOLBI_FROM_INN, CONDITION_ALWAYS, 408, 0, 160, FACING_SOUTH, 0, -1, -1, -1,
      -1, 0},
-    {TOLBI_FROM_TOLBI_INTERIORS_EAST, CONDITION_ALWAYS, 536, 0, 232,
+    {TOLBI_FROM_STUCCO_ROOMS_B_EAST, CONDITION_ALWAYS, 536, 0, 232,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {TOLBI_FROM_HOUSE_NORTHEAST, CONDITION_ALWAYS, 536, 0, 200, FACING_SOUTH, 0,
      -1, -1, -1, -1, 0},
@@ -770,8 +770,8 @@ struct MapWarpDest gTolbiWarpDests[] = {
      -1, -1, -1, -1, 0},
     {TOLBI_FROM_SANCTUM, CONDITION_ALWAYS, 200, 0, 424, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
-    {TOLBI_FROM_TOLBI_INTERIORS_WEST, CONDITION_ALWAYS, 88, 0, 392,
-     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {TOLBI_FROM_STUCCO_ROOMS_B_WEST, CONDITION_ALWAYS, 88, 0, 392, FACING_SOUTH,
+     0, -1, -1, -1, -1, 0},
     {TOLBI_FROM_BABI_PALACE_ENTRANCE, CONDITION_ALWAYS, 64, 0, 112,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {TOLBI_FROM_COLOSSEUM_ENTRANCE, CONDITION_ALWAYS, 304, 0, 64, FACING_SOUTH,
@@ -786,27 +786,27 @@ struct MapWarpDest gTolbiWarpDests[] = {
 
 u32 gTolbiWarps[] = {
     MAP_WARPS(Tolbi),
-    MAP_WARP(TOLBI_TO_HOUSE_SOUTH, TolbiInteriors, TOLBI_INTERIORS_HOUSE_SOUTH),
-    MAP_WARP(TOLBI_TO_HOUSE_NORTHWEST, TolbiInteriors,
-             TOLBI_INTERIORS_HOUSE_NORTHWEST),
-    MAP_WARP(TOLBI_TO_INN, TolbiInteriors, TOLBI_INTERIORS_INN),
-    MAP_WARP(TOLBI_TO_LUCKY_WHEELS, TolbiGameRooms,
-             TOLBI_GAME_ROOMS_LUCKY_WHEELS_FROM_TOLBI),
-    MAP_WARP(TOLBI_TO_HOUSE_NORTHEAST, TolbiInteriors,
-             TOLBI_INTERIORS_HOUSE_NORTHEAST),
-    MAP_WARP(TOLBI_TO_HOUSE_EAST, TolbiInteriors, TOLBI_INTERIORS_HOUSE_EAST),
-    MAP_WARP(TOLBI_TO_WEAPON_AND_ARMOR_SHOP, TolbiInteriors,
-             TOLBI_INTERIORS_WEAPON_AND_ARMOR_SHOP),
-    MAP_WARP(TOLBI_TO_HOUSE_SOUTHWEST, TolbiInteriors,
-             TOLBI_INTERIORS_HOUSE_SOUTHWEST),
-    MAP_WARP(TOLBI_TO_SANCTUM, TolbiInteriors, TOLBI_INTERIORS_SANCTUM),
+    MAP_WARP(TOLBI_TO_HOUSE_SOUTH, StuccoRoomsB, STUCCO_ROOMS_B_HOUSE_SOUTH),
+    MAP_WARP(TOLBI_TO_HOUSE_NORTHWEST, StuccoRoomsB,
+             STUCCO_ROOMS_B_HOUSE_NORTHWEST),
+    MAP_WARP(TOLBI_TO_INN, StuccoRoomsB, STUCCO_ROOMS_B_INN),
+    MAP_WARP(TOLBI_TO_LUCKY_WHEELS, StuccoRoomsC,
+             STUCCO_ROOMS_C_LUCKY_WHEELS_FROM_TOLBI),
+    MAP_WARP(TOLBI_TO_HOUSE_NORTHEAST, StuccoRoomsB,
+             STUCCO_ROOMS_B_HOUSE_NORTHEAST),
+    MAP_WARP(TOLBI_TO_HOUSE_EAST, StuccoRoomsB, STUCCO_ROOMS_B_HOUSE_EAST),
+    MAP_WARP(TOLBI_TO_WEAPON_AND_ARMOR_SHOP, StuccoRoomsB,
+             STUCCO_ROOMS_B_WEAPON_AND_ARMOR_SHOP),
+    MAP_WARP(TOLBI_TO_HOUSE_SOUTHWEST, StuccoRoomsB,
+             STUCCO_ROOMS_B_HOUSE_SOUTHWEST),
+    MAP_WARP(TOLBI_TO_SANCTUM, StuccoRoomsB, STUCCO_ROOMS_B_SANCTUM),
     MAP_WARP(TOLBI_TO_BABI_PALACE_ENTRANCE, BabiPalaceEntrance,
              BABI_PALACE_ENTRANCE_FROM_TOLBI),
     MAP_WARP(TOLBI_TO_COLOSSEUM_ENTRANCE, ColosseumEntrance,
              COLOSSEUM_ENTRANCE_FROM_TOLBI),
     MAP_WARP(TOLBI_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_TOLBI),
-    MAP_WARP(TOLBI_TO_LUCKY_DICE, TolbiGameRooms,
-             TOLBI_GAME_ROOMS_LUCKY_DICE_FROM_TOLBI),
+    MAP_WARP(TOLBI_TO_LUCKY_DICE, StuccoRoomsC,
+             STUCCO_ROOMS_C_LUCKY_DICE_FROM_TOLBI),
     MAP_WARP(TOLBI_TO_TOLBI_SPRING, TolbiSpring, TOLBI_SPRING_FROM_TOLBI),
     MAP_WARPS_END,
 };

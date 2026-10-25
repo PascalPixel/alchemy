@@ -10,7 +10,7 @@
 /// - Vault (STONE_ROOMS_FROM_VAULT and STONE_ROOMS_FROM_VAULT_REVISIT), the
 /// cell
 ///   behind Vault's jail door. Once the party has beaten the three thieves in
-///   the inn's loft (FLAG_VAULT_THIEVES_JAILED, vault_interiors.c), coming in
+///   the inn's loft (FLAG_VAULT_THIEVES_JAILED, log_rooms_a.c), coming in
 ///   from Vault finds them behind the bars, each with his own talk and Mind
 ///   Read. Once Vault has become its later map (vault_revisit.c), whose
 ///   villagers say the thieves have broken out, its jail door comes in by

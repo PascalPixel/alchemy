@@ -2,7 +2,7 @@
 /// Tolbi-bound Ship (MapId_TolbiShipDeck), its deck: the ship that carries
 /// the party and a tour group bound for Colosso across the Karagol Sea from
 /// Kalay to Tolbi. The ship's other maps are its mast (tolbi_ship_mast.c)
-/// and below decks (tolbi_ship_interiors.c). The voyage's stage, read from
+/// and below decks (ship_rooms.c). The voyage's stage, read from
 /// its flags, chooses the deck's object event templates and events: at Kalay,
 /// under sail once the first attack is fought off
 /// (FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF), while the oars move
@@ -25,18 +25,18 @@
 ///   (FLAG_TOLBI_SHIP_CREWMAN_CAUGHT), and Mind Read shows he hid the charm
 ///   on the mast. Once it is back (FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) the
 ///   passengers who promised to row stand on deck.
-/// - Setting sail (TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_READY): Kaja
+/// - Setting sail (TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_READY): Kaja
 ///   brings word that all is ready ("Preparations... Ready!"), which leads
 ///   to the lookout on the mast.
 /// - The attacks: sea monsters are sighted
-///   (TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_SEA_MONSTERS), which leads to
+///   (TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_SEA_MONSTERS), which leads to
 ///   the captain's quarters, where the captain turns the ship; monsters leap
-///   aboard (TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_MONSTERS_BOARD), harry
+///   aboard (TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD), harry
 ///   Ouranos and Sean, the warriors bound for Colosso who guard the deck with
 ///   Kaja (TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK), and drop onto
 ///   the deck (TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK); each of
 ///   these three leads below to the fight among the oars. At
-///   TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_KRAKEN the party jumps down to
+///   TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_KRAKEN the party jumps down to
 ///   the deck and fights the Kraken, and returns to
 ///   TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE, where Kaja thanks Isaac
 ///   (FLAG_TOLBI_SHIP_KRAKEN_DEFEATED).
@@ -93,7 +93,7 @@
 // own.
 
 /// "There's a huge sea monster on the ship!": the deck shakes until the
-/// Kraken is defeated (set in tolbi_ship_interiors.c).
+/// Kraken is defeated (set in ship_rooms.c).
 /// ★ Named from the game: "there's a huge sea monster on the ship!"
 /// (MsgTolbiShipWonderWhatsWrongShipShouldnt)
 #define FLAG_TOLBI_SHIP_KRAKEN_ON_DECK 0x302
@@ -233,10 +233,10 @@ enum TolbiShipDeckLocalId {
   /// ★ Named from the game: "I have a job to do. I can't row!"
   /// (MsgTolbiShipDeckYouMustFeelAwfullyImportantOrdering)
   LOCALID_SEA_CREW_MEMBER,
-  /// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_MONSTERS_BOARD
+  /// TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD
   /// (gTolbiShipDeck_MonstersBoardObjectEventTemplates): the first attack's
   /// three monsters, all of one sprite, which leap aboard and go below by the
-  /// first door, where gTolbiShipInteriors_FirstAttackMonsters places them.
+  /// first door, where gShipRooms_FirstAttackMonsters places them.
   /// ★ Named from what the player sees: a jellyfish monster
   /// (SPRITE_JELLYFISH_MONSTER) leaping onto the deck from the sea (its
   /// render)
@@ -249,7 +249,7 @@ enum TolbiShipDeckLocalId {
   /// (SPRITE_PINK_WINGED_MONSTER) hovering by the rail (its render)
   LOCALID_SEA_FIRST_HOVERING_MONSTER = LOCALID_SEA_CREW_MEMBER + 1,
   /// Then the second attack's three, two of the hovering monsters' sprite and
-  /// one other, as gTolbiShipInteriors_SecondAttackMonsters places them, come
+  /// one other, as gShipRooms_SecondAttackMonsters places them, come
   /// aboard and go below.
   /// ★ Named from what the player sees: two pink winged monsters and a lizard
   /// monster (SPRITE_LIZARD_MONSTER) coming aboard (its render)
@@ -266,7 +266,7 @@ enum TolbiShipDeckLocalId {
   /// across the deck (its render)
   LOCALID_SEA_FIRST_LEAPING_MONSTER = LOCALID_SEA_CREW_MEMBER + 1,
   /// Then the third attack's three, two with the first attack's sprite and one
-  /// other, as gTolbiShipInteriors_ThirdAttackMonsters places them, which go
+  /// other, as gShipRooms_ThirdAttackMonsters places them, which go
   /// below; the last drops onto the deck.
   /// ★ Named from what the player sees: two jellyfish monsters and a blue
   /// winged monster (SPRITE_BLUE_WINGED_MONSTER) going below (its render)
@@ -278,7 +278,7 @@ enum TolbiShipDeckLocalId {
   /// ★ Named from what the player sees: a shadow on the deck growing where the
   /// falling monster will land (its render)
   LOCALID_SEA_FALLING_MONSTER_SHADOW = LOCALID_SEA_THIRD_ATTACK_MONSTER + 3,
-  /// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_KRAKEN and at anchor
+  /// TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_KRAKEN and at anchor
   /// (gTolbiShipDeck_KrakenObjectEventTemplates, after Garet, Ivan and Mia in
   /// their own slots): the Kraken, which the party charges; at anchor the same
   /// rows place it only for it to be destroyed at once.
@@ -975,11 +975,11 @@ static void TolbiShipDeck_GoBelow(void) {
   FieldScript_Start();
   throughDoor = 0;
   switch (work->coordEvent) {
-  case TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_PASSENGER_HOLD:
+  case TOLBI_SHIP_DECK_TO_SHIP_ROOMS_PASSENGER_HOLD:
     throughDoor = 1;
     TolbiShipDeck_OpenFirstDoor();
     break;
-  case TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM:
+  case TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CAPTAINS_ROOM:
     throughDoor = 1;
     TolbiShipDeck_OpenSecondDoor();
     break;
@@ -1303,7 +1303,7 @@ s32 TolbiShipDeck_Initialize(void) {
 
 /// Applies the voyage's state: which cells and oars are drawn, whether the deck
 /// rocks and the sea scrolls, and which cutscene the warp destination starts
-/// (the warp destinations from TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_READY
+/// (the warp destinations from TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_READY
 /// on are the voyage's cutscenes, chained by their warps).
 static void TolbiShipDeck_ApplyEntryState(void) {
   s32 flag;
@@ -1341,17 +1341,17 @@ static void TolbiShipDeck_ApplyEntryState(void) {
   case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST:
     ObjectEvent_GetById(LOCALID_PARTY_LEADER)->sprite->image.priority = 1;
     break;
-  case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_READY:
+  case TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_READY:
     if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
       TolbiShipDeck_DepartWithParty();
     } else {
       TolbiShipDeck_DepartFromKalay();
     }
     return;
-  case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_SEA_MONSTERS:
+  case TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_SEA_MONSTERS:
     TolbiShipDeck_SightSeaMonsters();
     return;
-  case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_MONSTERS_BOARD:
+  case TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD:
     TolbiShipDeck_MonstersBoard();
     return;
   case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK:
@@ -1360,7 +1360,7 @@ static void TolbiShipDeck_ApplyEntryState(void) {
   case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK:
     TolbiShipDeck_MonsterLandsOnDeck();
     return;
-  case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_KRAKEN:
+  case TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_KRAKEN:
     TolbiShipDeck_JumpIntoKrakenBattle();
     return;
   case TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE:
@@ -1578,7 +1578,7 @@ static void TolbiShipDeck_SetUpAtAnchor(void) {
   FieldScript_End();
 }
 
-/// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_READY, setting sail from Kalay
+/// TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_READY, setting sail from Kalay
 /// before the party is on deck: Kaja (LOCALID_KALAY_KAJA) brings word to
 /// LOCALID_KALAY_CREW_MEMBER that all is ready.
 static void TolbiShipDeck_DepartFromKalay(void) {
@@ -1607,7 +1607,7 @@ static void TolbiShipDeck_DepartFromKalay(void) {
                                           LOCALID_KALAY_CREW_MEMBER);
 }
 
-/// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_READY on later departures, with
+/// TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_READY on later departures, with
 /// the party aboard: Kaja brings word to LOCALID_SEA_CREW_MEMBER.
 static void TolbiShipDeck_DepartWithParty(void) {
   struct ObjectEvent *record;
@@ -1671,7 +1671,7 @@ static void TolbiShipDeck_AnnouncePreparationsReady(s32 messenger,
   Import_ScriptRequestWarp(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_MAST_COURSE_CLEAR);
 }
 
-/// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_SEA_MONSTERS: sea monsters are
+/// TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_SEA_MONSTERS: sea monsters are
 /// sighted. "Aye, Captain! Sea monsters!"
 static void TolbiShipDeck_SightSeaMonsters(void) {
   FieldScript_Start();
@@ -1696,10 +1696,10 @@ static void TolbiShipDeck_SightSeaMonsters(void) {
       0, 20);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_TURN);
+  Import_ScriptRequestWarp(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_TURN);
 }
 
-/// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_MONSTERS_BOARD: the monsters leap
+/// TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD: the monsters leap
 /// aboard and someone cries out. "It's no use. It's too late!"
 static void TolbiShipDeck_MonstersBoard(void) {
   s32 zero;
@@ -1774,8 +1774,7 @@ static void TolbiShipDeck_MonstersBoard(void) {
   Message_SetVoiceFromObjectEvent(LOCALID_SEA_OURANOS);
   FieldMessage_ShowCentered(MsgTolbiShipArrgh, 1, 0);
   ObjectSystem_ResumeProjectionAndHideLayers();
-  Import_ScriptRequestWarp(
-      TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_FIRST_ATTACK);
+  Import_ScriptRequestWarp(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_FIRST_ATTACK);
 }
 
 /// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK: the monsters harry the
@@ -1903,8 +1902,7 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   Message_SetVoiceFromObjectEvent(LOCALID_SEA_OURANOS);
   FieldMessage_ShowCentered(MsgTolbiShipArrgh, 1, 0);
   ObjectSystem_ResumeProjectionAndHideLayers();
-  Import_ScriptRequestWarp(
-      TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_SECOND_ATTACK);
+  Import_ScriptRequestWarp(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_SECOND_ATTACK);
 }
 
 /// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK: a great shape rises from
@@ -2050,11 +2048,10 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   Message_SetVoiceFromObjectEvent(LOCALID_SEA_OURANOS);
   FieldMessage_ShowCentered(MsgTolbiShipArrgh, 1, 0);
   ObjectSystem_ResumeProjectionAndHideLayers();
-  Import_ScriptRequestWarp(
-      TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_THIRD_ATTACK);
+  Import_ScriptRequestWarp(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_THIRD_ATTACK);
 }
 
-/// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_KRAKEN: the party jumps down to
+/// TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_KRAKEN: the party jumps down to
 /// the deck, gathers and charges; the battle with the Kraken begins, returning
 /// to TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE.
 static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
@@ -2166,8 +2163,8 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   ObjectEvent_WalkTo(LOCALID_IVAN, 248, 564);
   ObjectEvent_WalkTo(LOCALID_MIA, 248, 564);
   FieldScript_WaitFrames(20);
-  gSaveBlock.savedMap = (s32)&MapId_TolbiShipInteriors;
-  gSaveBlock.savedWarpDest = TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_AFTER_DEFEAT;
+  gSaveBlock.savedMap = (s32)&MapId_ShipRooms;
+  gSaveBlock.savedWarpDest = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   FieldScript_SetNextDestination((s32)&MapId_TolbiShipDeck,
                                  TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE);
@@ -2883,7 +2880,7 @@ static void TolbiShipDeck_Turn(s32 localId, s32 facing) {
 /// Ouranos thinks they have reached Tolbi, but Kaja sees the coast is not
 /// Tolbi's and the ship is off course, and the crew head for an island to get
 /// their bearings before Kaja goes below.
-/// TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_ISLAND leads on below decks, toward
+/// TOLBI_SHIP_DECK_TO_SHIP_ROOMS_ISLAND leads on below decks, toward
 /// the island.
 static void TolbiShipDeck_SightIsland(void) {
   FieldScript_Start();
@@ -2962,7 +2959,7 @@ static void TolbiShipDeck_SightIsland(void) {
   FieldScript_WaitFrames(40);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_ISLAND);
+  Import_ScriptRequestWarp(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_ISLAND);
 }
 
 /// At anchor off the island, talking to Sean or Ouranos: the party is asked to
@@ -3159,8 +3156,7 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(
-      TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_SWITCH_TEAMS);
+  Import_ScriptRequestWarp(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_SWITCH_TEAMS);
 }
 
 /// Places the leader on the deck facing south, with the camera on them.
@@ -3200,7 +3196,7 @@ const s32 gTolbiShipDeck_SquashAndStretchActions[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_MONSTERS_BOARD: a first-attack
+/// TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD: a first-attack
 /// monster runs in, leaps over the rail onto the deck and goes below by the
 /// first door.
 const s32 gTolbiShipDeck_MonsterLeapsAboardActions[] = {
@@ -3388,30 +3384,30 @@ const s32 gTolbiShipDeck_SeanLooksAboutActions[] = {
 const struct MapWarpDest gTolbiShipDeckWarpDests[] = {
     {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 179, 0, 653, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
-    {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_PASSENGER_HOLD, CONDITION_ALWAYS,
-     216, 0, 600, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_CRATE_HOLD, CONDITION_ALWAYS,
-     232, 0, 664, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM, CONDITION_ALWAYS,
-     216, 0, 808, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_PASSENGER_HOLD, CONDITION_ALWAYS, 216, 0,
+     600, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_CRATE_HOLD, CONDITION_ALWAYS, 232, 0, 664,
+     FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_CAPTAINS_ROOM, CONDITION_ALWAYS, 216, 0,
+     808, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST, CONDITION_ALWAYS, 216, 4, 648,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {TOLBI_SHIP_DECK_FROM_KALAY_DOCKS, CONDITION_ALWAYS, 312, -4, 656,
      FACING_WEST, 0, -1, -1, -1, -1, 0},
     {TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS, CONDITION_ALWAYS, 120, -4, 656,
      FACING_EAST, 0, 65, -1, -1, -1, 0},
-    {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_READY, CONDITION_ALWAYS, 232, 0,
-     664, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_SEA_MONSTERS, CONDITION_ALWAYS,
-     212, 0, 521, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_MONSTERS_BOARD, CONDITION_ALWAYS,
-     192, 0, 650, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_READY, CONDITION_ALWAYS, 232, 0, 664,
+     FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_SEA_MONSTERS, CONDITION_ALWAYS, 212, 0,
+     521, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD, CONDITION_ALWAYS, 192, 0,
+     650, FACING_EAST, 0, -1, -1, -1, -1, 0},
     {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK, CONDITION_ALWAYS, 232,
      0, 654, FACING_EAST, 0, -1, -1, -1, -1, 0},
     {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK, CONDITION_ALWAYS, 216,
      0, 657, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_KRAKEN, CONDITION_ALWAYS, 216, 0,
-     640, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_KRAKEN, CONDITION_ALWAYS, 216, 0, 640,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE, CONDITION_ALWAYS, 216, 0,
      540, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_LAND_SIGHTED, CONDITION_ALWAYS, 216,
@@ -3431,21 +3427,21 @@ const struct MapWarpRegion gTolbiShipDeckRegions[] = {
 
 const u32 gTolbiShipDeckWarps[] = {
     MAP_WARPS(TolbiShipDeck),
-    MAP_WARP(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_PASSENGER_HOLD, TolbiShipInteriors, TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK),
-    MAP_WARP(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CRATE_HOLD, TolbiShipInteriors, TOLBI_SHIP_INTERIORS_CRATE_HOLD_FROM_TOLBI_SHIP_DECK),
-    MAP_WARP(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM, TolbiShipInteriors, TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK),
+    MAP_WARP(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_PASSENGER_HOLD, ShipRooms, SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK),
+    MAP_WARP(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CRATE_HOLD, ShipRooms, SHIP_ROOMS_CRATE_HOLD_FROM_TOLBI_SHIP_DECK),
+    MAP_WARP(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CAPTAINS_ROOM, ShipRooms, SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK),
     MAP_WARP(TOLBI_SHIP_DECK_TO_KALAY_DOCKS, KalayDocks, KALAY_DOCKS_FROM_TOLBI_SHIP_DECK),
     MAP_WARP(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_MAST, TolbiShipMast, TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK),
     MAP_WARP(TOLBI_SHIP_DECK_TO_TOLBI_DOCKS, TolbiDocks, TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK),
     MAP_WARP(TOLBI_SHIP_DECK_TO_WORLD_MAP_CROSSBONE_ISLE, WorldMap, WORLD_MAP_FROM_TOLBI_SHIP_DECK_CROSSBONE_ISLE),
     MAP_WARP(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_MAST_COURSE_CLEAR, TolbiShipMast, TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR),
-    MAP_WARP(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_TURN, TolbiShipInteriors, TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_TURN),
-    MAP_WARP(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_FIRST_ATTACK, TolbiShipInteriors, TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_FIRST_ATTACK),
-    MAP_WARP(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_SECOND_ATTACK, TolbiShipInteriors, TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SECOND_ATTACK),
-    MAP_WARP(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_THIRD_ATTACK, TolbiShipInteriors, TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_THIRD_ATTACK),
+    MAP_WARP(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_TURN, ShipRooms, SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_TURN),
+    MAP_WARP(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_FIRST_ATTACK, ShipRooms, SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_FIRST_ATTACK),
+    MAP_WARP(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_SECOND_ATTACK, ShipRooms, SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SECOND_ATTACK),
+    MAP_WARP(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_THIRD_ATTACK, ShipRooms, SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_THIRD_ATTACK),
     MAP_WARP(TOLBI_SHIP_DECK_TO_WORLD_MAP_REACH_TOLBI, WorldMap, WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI),
-    MAP_WARP(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_ISLAND, TolbiShipInteriors, TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_ISLAND),
-    MAP_WARP(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_SWITCH_TEAMS, TolbiShipInteriors, TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SWITCH_TEAMS),
+    MAP_WARP(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_ISLAND, ShipRooms, SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_ISLAND),
+    MAP_WARP(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_SWITCH_TEAMS, ShipRooms, SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SWITCH_TEAMS),
     MAP_WARPS_END,
 };
 
@@ -3730,13 +3726,13 @@ const struct ObjectEventTemplate gTolbiShipDeckObjectEventTemplatesArrived[] = {
 };
 
 const struct MapEvent gTolbiShipDeckEvents[] = {
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_PASSENGER_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
+    { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_SHIP_DECK_TO_SHIP_ROOMS_PASSENGER_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
 #if !TBS_PATCH_2
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CRATE_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
+    { COORD_EVENT_WALKING_INTO(FACING_WEST), TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CRATE_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
 #else
-    { MAP_EVENT_COORD, TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CRATE_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelowWhileFacingWest) },
+    { MAP_EVENT_COORD, TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CRATE_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelowWhileFacingWest) },
 #endif
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
+    { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CAPTAINS_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
     { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, TOLBI_SHIP_DECK_TO_KALAY_DOCKS },
     { MAP_EVENT_TALK, LOCALID_KALAY_CREWMAN, FLAG_TOLBI_SHIP_CREWMAN_CAUGHT, MSGNO(MsgTolbiShipDeckThereAreALotOfPassengers) },
     { MAP_EVENT_TALK, LOCALID_KALAY_CREWMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckOhAtTheRiskOfSounding) },
@@ -3777,13 +3773,13 @@ const struct MapEvent gTolbiShipDeckEvents[] = {
 };
 
 const struct MapEvent gTolbiShipDeckEventsAtSea[] = {
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_PASSENGER_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
+    { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_SHIP_DECK_TO_SHIP_ROOMS_PASSENGER_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
 #if !TBS_PATCH_2
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CRATE_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
+    { COORD_EVENT_WALKING_INTO(FACING_WEST), TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CRATE_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
 #else
-    { MAP_EVENT_COORD, TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CRATE_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelowWhileFacingWest) },
+    { MAP_EVENT_COORD, TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CRATE_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelowWhileFacingWest) },
 #endif
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
+    { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CAPTAINS_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
     { MAP_EVENT_TALK, LOCALID_SEA_CREW_MEMBER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckYouMustFeelAwfullyImportantOrdering) },
     { MAP_EVENT_TALK, LOCALID_SEA_SEAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckItLooksLikeAnotherOarsmanWas) },
     { MAP_EVENT_TALK, LOCALID_SEA_OURANOS, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckIFeelSorryForTheOarsmen) },
@@ -3794,13 +3790,13 @@ const struct MapEvent gTolbiShipDeckEventsAtSea[] = {
 };
 
 const struct MapEvent gTolbiShipDeckEventsArrived[] = {
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_PASSENGER_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
+    { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_SHIP_DECK_TO_SHIP_ROOMS_PASSENGER_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
 #if !TBS_PATCH_2
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CRATE_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
+    { COORD_EVENT_WALKING_INTO(FACING_WEST), TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CRATE_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
 #else
-    { MAP_EVENT_COORD, TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CRATE_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelowWhileFacingWest) },
+    { MAP_EVENT_COORD, TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CRATE_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelowWhileFacingWest) },
 #endif
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
+    { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CAPTAINS_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
     { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, TOLBI_SHIP_DECK_TO_TOLBI_DOCKS },
     { MAP_EVENT_TALK, LOCALID_ARRIVED_KAJA, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckYouLookinForSeanAndOuranos) },
     { MAP_EVENT_TALK, LOCALID_ARRIVED_ASKS_ABOUT_COLOSSO, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_AskHeadedForColosso) },
@@ -3812,13 +3808,13 @@ const struct MapEvent gTolbiShipDeckEventsArrived[] = {
 };
 
 const struct MapEvent gTolbiShipDeckEventsAtIsland[] = {
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_PASSENGER_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
+    { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_SHIP_DECK_TO_SHIP_ROOMS_PASSENGER_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
 #if !TBS_PATCH_2
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CRATE_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
+    { COORD_EVENT_WALKING_INTO(FACING_WEST), TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CRATE_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
 #else
-    { MAP_EVENT_COORD, TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CRATE_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelowWhileFacingWest) },
+    { MAP_EVENT_COORD, TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CRATE_HOLD, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelowWhileFacingWest) },
 #endif
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
+    { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CAPTAINS_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
     { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, TOLBI_SHIP_DECK_TO_WORLD_MAP_CROSSBONE_ISLE },
     { MAP_EVENT_TALK, LOCALID_SEA_CREW_MEMBER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckKajaAndTheCaptainAreProfessionals) },
     { MAP_EVENT_TALK, LOCALID_SEA_SEAN, FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED, EVENT_SCRIPT(TolbiShipDeck_OfferToScoutIsland) },

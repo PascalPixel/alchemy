@@ -40,7 +40,7 @@
 ///   (FLAG_VALE_PARTY_LEFT), and again after it has reached Kalay
 ///   (FLAG_KALAY_REACHED), the three talk of what the eruption and the Wise One
 ///   changed.
-/// - Vault Sanctum (SANCTUM_FROM_VAULT and SANCTUM_FROM_VAULT_INTERIORS). Its
+/// - Vault Sanctum (SANCTUM_FROM_VAULT and SANCTUM_FROM_LOG_ROOMS_A). Its
 ///   healer and the other person there (LOCALID_SANCTUM_MEMBER) miss a gold
 ///   statue stolen during the eruption, until the party has the thieves jailed
 ///   and the statue is returned (FLAG_VAULT_THIEVES_JAILED); then the statue
@@ -132,7 +132,7 @@ enum SanctumLocalId {
   // quest).
   /// The western of Vale Sanctum's two other healers, men with long brown hair
   /// and beards in long robes, as Mind Read hears a villager in
-  /// vale_interiors.c call the Sanctum's people: "The healers
+  /// cottage_rooms_a.c call the Sanctum's people: "The healers
   /// are supposed to guard Sol Sanctum." Before the quest: "Our Psynergy was
   /// given to us by the sacred power of Mt. Aleph."
   /// ★ Named from the game: "The healers are supposed to guard"
@@ -171,7 +171,7 @@ enum SanctumLocalId {
   /// ★ Named from the game: "stolen gold statue" (MsgSanctumWonderIfEverSeeOur)
   LOCALID_SANCTUM_MEMBER = LOCALID_FIRST_PLACED + 1,
   /// Vault Sanctum's gold statue (the sprite of the one a chest gives back in
-  /// vault_interiors.c), placed off the map until the thieves are jailed
+  /// log_rooms_a.c), placed off the map until the thieves are jailed
   /// (FLAG_VAULT_THIEVES_JAILED).
   /// ★ Named from the game: "our stolen gold statue"
   /// (MsgSanctumWonderIfEverSeeOur)
@@ -229,7 +229,7 @@ const u32 *Sanctum_GetWarps(void) { return gSanctum_Warps; }
 /// quest's gathering (SANCTUM_FROM_VALE_ERUPTION and
 /// SANCTUM_FROM_QUEST_RESTART), the healer and LOCALID_SANCTUM_MEMBER of Vault
 /// Sanctum and Bilibin Sanctum (SANCTUM_FROM_VAULT, SANCTUM_FROM_VAULT_REVISIT,
-/// SANCTUM_FROM_VAULT_INTERIORS and SANCTUM_FROM_BILIBIN), the healer alone in
+/// SANCTUM_FROM_LOG_ROOMS_A and SANCTUM_FROM_BILIBIN), the healer alone in
 /// Altin Sanctum and Xian Sanctum (SANCTUM_FROM_ALTIN and SANCTUM_FROM_XIAN),
 /// and nobody otherwise.
 const struct ObjectEventTemplate *Sanctum_GetObjectEventTemplates(void) {
@@ -240,7 +240,7 @@ const struct ObjectEventTemplate *Sanctum_GetObjectEventTemplates(void) {
 
   case SANCTUM_FROM_VAULT:
   case SANCTUM_FROM_VAULT_REVISIT:
-  case SANCTUM_FROM_VAULT_INTERIORS:
+  case SANCTUM_FROM_LOG_ROOMS_A:
   case SANCTUM_FROM_BILIBIN:
     return gSanctum_VaultBilibinObjectEventTemplates;
 
@@ -267,7 +267,7 @@ const struct ObjectEventTemplate *Sanctum_GetObjectEventTemplates(void) {
 const struct MapEvent *Sanctum_GetEvents(void) {
   switch (gSaveBlock.warpDest) {
   case SANCTUM_FROM_VAULT:
-  case SANCTUM_FROM_VAULT_INTERIORS:
+  case SANCTUM_FROM_LOG_ROOMS_A:
     return gSanctum_VaultEvents;
   case SANCTUM_FROM_VAULT_REVISIT:
     return gSanctum_VaultRevisitEvents;
@@ -468,7 +468,7 @@ s32 Sanctum_Initialize(void) {
   switch (gSaveBlock.warpDest) {
   case SANCTUM_FROM_VAULT:
   case SANCTUM_FROM_VAULT_REVISIT:
-  case SANCTUM_FROM_VAULT_INTERIORS:
+  case SANCTUM_FROM_LOG_ROOMS_A:
     if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
       ObjectEvent_SetPosition(LOCALID_GOLD_STATUE, PIXELS(200), PIXELS(80));
     }
@@ -2186,7 +2186,7 @@ static void EventScript_TalkToHealerOnVisit(void) {
 
   switch (warpDest) {
   case SANCTUM_FROM_VAULT:
-  case SANCTUM_FROM_VAULT_INTERIORS:
+  case SANCTUM_FROM_LOG_ROOMS_A:
     if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
       FieldScript_SetMessageId(MsgSanctumWasHandFateReturnedGold);
     } else {
@@ -2364,7 +2364,7 @@ struct MapWarpDest gSanctum_WarpDests[] = {
     { SANCTUM_VALE_UNUSED, CONDITION_ALWAYS, 199, 0, 164, FACING_SOUTH, 0, 64, 8, 336, 272, 0 },
     { SANCTUM_FROM_VAULT, CONDITION_ALWAYS, 199, 0, 246, FACING_NORTH, 0, 64, 8, 336, 272, 0 },
     { SANCTUM_FROM_VAULT_REVISIT, CONDITION_ALWAYS, 199, 0, 246, FACING_NORTH, 0, 64, 8, 336, 272, 0 },
-    { SANCTUM_FROM_VAULT_INTERIORS, CONDITION_ALWAYS, 199, 0, 164, FACING_SOUTH, 0, 64, 8, 336, 272, 0 },
+    { SANCTUM_FROM_LOG_ROOMS_A, CONDITION_ALWAYS, 199, 0, 164, FACING_SOUTH, 0, 64, 8, 336, 272, 0 },
     { SANCTUM_FROM_VALE_ERUPTION, CONDITION_ALWAYS, 192, 0, 168, FACING_NORTH, 0, 128, 0, 320, 272, 0 },
     { SANCTUM_FROM_QUEST_RESTART, CONDITION_ALWAYS, 192, 0, 168, FACING_NORTH, 0, 128, 0, 320, 272, 0 },
     { SANCTUM_FROM_ALTIN, CONDITION_ALWAYS, 200, 0, 240, FACING_NORTH, 0, 128, 0, 320, 272, 0 },

@@ -6,7 +6,7 @@
 #include "object_event.h"
 #include "script_layer.h"
 
-/// Searching MB_VAULT_INTERIORS_INN_BARREL beside the girl at the inn takes a
+/// Searching MB_LOG_ROOMS_A_INN_BARREL beside the girl at the inn takes a
 /// Bone after the thieves are jailed. The floor Bone remains, so the party can
 /// take more. With no room for it, LOCALID_GIRL_AT_THE_INN (as both maps name
 /// her) shakes their head: "Aren't you a greedy lad!"

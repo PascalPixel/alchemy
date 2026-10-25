@@ -2,16 +2,16 @@
 /// Two maps of Tolbi where the party plays for prizes whenever it is in town;
 /// neither has a story script.
 ///
-/// - Tolbi (MapId_TolbiGameRooms), the rooms of Lucky Dice and Lucky Wheels;
-///   TOLBI_GAME_ROOMS_LUCKY_DICE_TO_TOLBI and
-///   TOLBI_GAME_ROOMS_LUCKY_WHEELS_TO_TOLBI lead back into MapId_Tolbi. The
+/// - Tolbi (MapId_StuccoRoomsC), the rooms of Lucky Dice and Lucky Wheels;
+///   STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI and
+///   STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI lead back into MapId_Tolbi. The
 ///   Lucky Dice attendant asks ten coins for each level of the party's average
 ///   level: the coin total is saved in the save block and the party goes to the
-///   Lucky Dice game, which returns to TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_DICE,
+///   Lucky Dice game, which returns to STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE,
 ///   where the setup has the attendant announce the coins won or lost, with a
 ///   fanfare by the size of the win. The Lucky Wheels attendant takes Game
 ///   Tickets and warns when the bag has six free slots or fewer; the game
-///   returns to TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_WHEELS with the prize
+///   returns to STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS with the prize
 ///   categories won, and the setup has the attendant hand over an item for
 ///   each, a different one of the category's three than last time (Moons choose
 ///   any category), or offers another game when nothing was won. Signs give
@@ -93,7 +93,7 @@ static s32 TolbiSpring_RunToss(s32 tossKind);
 
 enum SpringTossKind { SPRING_TOSS_COIN, SPRING_TOSS_MEDAL };
 
-/// The object events of the Lucky Dice and Lucky Wheels rooms (TolbiGameRooms),
+/// The object events of the Lucky Dice and Lucky Wheels rooms (StuccoRoomsC),
 /// numbered in the order of gTolbiSpringObjectEventTemplatesOther from
 /// LOCALID_FIRST_PLACED.
 enum TolbiSpringGameRoomLocalId {
@@ -362,8 +362,8 @@ const struct MapEvent *TolbiSpring_GetEvents(void) {
 /// obstacles, with the spring shown at once if it has risen in this visit. The
 /// Lucky Dice and Lucky Wheels rooms: the soldier removed after
 /// FLAG_COLOSSO_OVER, and the returns from the games,
-/// TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_DICE announcing Lucky Dice's coins and
-/// TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_WHEELS handing over Lucky Wheels' prizes.
+/// STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE announcing Lucky Dice's coins and
+/// STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS handing over Lucky Wheels' prizes.
 s32 TolbiSpring_Initialize(void) {
   s32 coinChange;
   s8 *wonPrizes;
@@ -400,14 +400,14 @@ s32 TolbiSpring_Initialize(void) {
     }
     gOamCopyEnabled = 1;
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 9);
-    if (gSaveBlock.warpDest == TOLBI_GAME_ROOMS_LUCKY_DICE_FROM_TOLBI) {
+    if (gSaveBlock.warpDest == STUCCO_ROOMS_C_LUCKY_DICE_FROM_TOLBI) {
       ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT,
                                        SPRITE_COLOR_GRB);
       ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_SPRING_DICE_ATTENDANT,
                                        SPRITE_COLOR_RBG);
     }
     // Lucky Dice returns here to report the change in the party's coins.
-    if (gSaveBlock.warpDest == TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_DICE &&
+    if (gSaveBlock.warpDest == STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       FieldScript_Start();
       ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT,
@@ -441,7 +441,7 @@ s32 TolbiSpring_Initialize(void) {
       FieldScript_End();
     }
     // Lucky Wheels returns item categories for the attendant to award.
-    if (gSaveBlock.warpDest == TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_WHEELS &&
+    if (gSaveBlock.warpDest == STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       wonPrizes = gSaveBlock.wonPrizes;
       FieldScript_Start();
@@ -565,7 +565,7 @@ static void TolbiSpring_RiseAndFadeIn(void) {
 
 /// The Lucky Wheels attendant in Tolbi checks tickets and inventory space
 /// before sending the party to the game, which returns to
-/// TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_WHEELS; `spoken` is 1 after a game with
+/// STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS; `spoken` is 1 after a game with
 /// no prize, to offer another.
 static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
   s32 tickets = PartyInventory_CountItem(ITEM_GAME_TICKET);
@@ -618,13 +618,13 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
   FieldScript_SetMessageId(MsgTolbiStepRightEnjoy);
   FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
   FieldScript_RequestDestination(RUN_LUCKY_WHEELS, 0);
-  FieldScript_SetNextDestination((s32)&MapId_TolbiGameRooms,
-                                 TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_WHEELS);
+  FieldScript_SetNextDestination((s32)&MapId_StuccoRoomsC,
+                                 STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS);
 }
 
 /// Talking to the Lucky Dice attendant in Tolbi: offers a game for ten coins a
 /// level of the party's average level and saves the coin total for the return
-/// to TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_DICE.
+/// to STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE.
 static void TolbiSpring_OfferLuckyDice(void) {
   u32 cost;
   u32 coins;
@@ -649,8 +649,8 @@ static void TolbiSpring_OfferLuckyDice(void) {
     ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_WEST, 0);
     FieldScript_WaitFrames(20);
     FieldScript_RequestDestination(RUN_LUCKY_DICE, 0);
-    FieldScript_SetNextDestination((s32)&MapId_TolbiGameRooms,
-                                   TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_DICE);
+    FieldScript_SetNextDestination((s32)&MapId_StuccoRoomsC,
+                                   STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE);
   } else {
     gFieldWork->message++;
     FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SPRING_DICE_ATTENDANT, 0);
@@ -1538,9 +1538,9 @@ const struct MapWarpDest gTolbiSpring_WarpDests[] = {
     {2, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {10, CONDITION_ALWAYS, 128, 0, 176, FACING_NORTH, 0, 8, 8, 248, 200, 0},
     {11, CONDITION_ALWAYS, 96, 0, 440, FACING_NORTH, 0, 8, 288, 248, 456, 0},
-    {TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_WHEELS, CONDITION_ALWAYS, 144, 0, 390,
+    {STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS, CONDITION_ALWAYS, 144, 0, 390,
      FACING_NORTH, 0, 8, 288, 248, 456, 0},
-    {TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_DICE, CONDITION_ALWAYS, 120, 0, 152,
+    {STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE, CONDITION_ALWAYS, 120, 0, 152,
      FACING_WEST, 0, 8, 8, 248, 200, 0},
     {MAP_TABLE_END},
 };
@@ -1549,10 +1549,10 @@ const u32 gTolbiSpring_Warps[] = {
     MAP_WARPS(TolbiSpring),
     MAP_WARP_IF(TOLBI_SPRING_TO_TOLBI, Tolbi, TOLBI_FROM_TOLBI_SPRING,
                 0xffffffff),
-    MAP_WARPS(TolbiGameRooms),
-    MAP_WARP_IF(TOLBI_GAME_ROOMS_LUCKY_DICE_TO_TOLBI, Tolbi,
+    MAP_WARPS(StuccoRoomsC),
+    MAP_WARP_IF(STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI, Tolbi,
                 TOLBI_FROM_LUCKY_DICE, 0xffffffff),
-    MAP_WARP_IF(TOLBI_GAME_ROOMS_LUCKY_WHEELS_TO_TOLBI, Tolbi,
+    MAP_WARP_IF(STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI, Tolbi,
                 TOLBI_FROM_HOUSE_NORTHEAST, 0xffffffff),
     MAP_WARPS_END,
 };
@@ -1631,8 +1631,8 @@ const struct ObjectEventTemplate gTolbiSpringObjectEventTemplatesOther[] = {
 };
 
 const struct MapEvent gTolbiSpringEventsOther[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, TOLBI_GAME_ROOMS_LUCKY_DICE_TO_TOLBI },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, TOLBI_GAME_ROOMS_LUCKY_WHEELS_TO_TOLBI },
+    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI },
+    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI },
     { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_TalkToWheelsAttendant) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringHmmIWonderIfTheseKids) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_DICE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_OfferLuckyDice) },

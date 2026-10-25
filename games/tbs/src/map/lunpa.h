@@ -19,7 +19,7 @@
 /// so the road leads to LunpaFortressGroundFloor's default entrance.
 enum { GATE_WARP_THIRD = 3 };
 
-/// The first of the rooms in LunpaInteriors that Lunpa's doors lead into.
+/// The first of the rooms in RockRooms that Lunpa's doors lead into.
 enum { ROOM_WARP_DEST_FIRST = 1 };
 
 #define ROOM_WARP_DEST(warp)                                                   \

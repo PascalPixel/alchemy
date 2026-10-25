@@ -43,7 +43,7 @@
 /// LamakanDesertCave, a cave, has no heat gauge. Coord event 9 takes
 /// LAMAKAN_DESERT_CAVE_TO_WORLD_MAP, and leaving that way while Hsu is still
 /// trapped (FLAG_HSU_RESCUED clear) sets FLAG_HSU_RESCUED and
-/// FLAG_HSU_RESCUED_WITHOUT_PARTY, which xian_interiors.c reads to have Feizhi
+/// FLAG_HSU_RESCUED_WITHOUT_PARTY, which lacquer_rooms_b.c reads to have Feizhi
 /// thank Master Hama alone.
 
 #include "vram_cache.h"

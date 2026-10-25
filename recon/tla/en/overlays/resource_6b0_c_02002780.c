@@ -41,9 +41,9 @@ void Func_02002780(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   effect->motionFlags = 0;
   ObjectDispatch_SetSingleChildFlags(effect, 0);
   effect->update = Effect_MoveLocal;
-  effect->velocityX = velocityX;
-  effect->velocityY = velocityY;
-  effect->velocityZ = velocityZ;
+  effect->velocity.x = velocityX;
+  effect->velocity.y = velocityY;
+  effect->velocity.z = velocityZ;
   Object_SetSpritePriorityB(effect, party->sprite->priority);
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;

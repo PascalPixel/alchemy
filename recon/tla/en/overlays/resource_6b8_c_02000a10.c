@@ -1,7 +1,9 @@
-// Draft, differ 28 of 86: this form hoists the turn step 0x1000 out of the
-// scale loop into r6 from the literal pool; the native builds it inside the
-// loop (movs r1 #128, lsls #5). An int temporary for the angle, a for (;;)
-// loop and a forwarding inline for the wait leave it hoisted.
+// Draft, differ 22 of 86: as a goto loop the scale loop builds its turn step
+// 0x1000 inside it, as the native does (a for (;;) loop hoists it into r6 from
+// the literal pool: differ 28). Left: the native compares the scale with 0xffff
+// (ble) and adds 1 for the full size that follows, where this compares with
+// 0x10000 (blt), however the test is written; the loads of the scale and the
+// angle come before their constants.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
@@ -32,15 +34,16 @@ void Func_02000a10(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       object->velocityY = 0x60000;
       object->scaleX = 0x6666;
       object->scaleY = 0x6666;
-      for (;;) {
-        WaitFrames(1);
-        scale = object->scaleX + 0x51e;
-        object->angle += 0x1000;
-        object->scaleX = scale;
-        object->scaleY = scale;
-        if (scale > 0xffff)
-          break;
-      }
+    grow:
+      WaitFrames(1);
+      scale = object->scaleX + 0x51e;
+      object->angle += 0x1000;
+      object->scaleX = scale;
+      object->scaleY = scale;
+      if (scale >= 0x10000)
+        goto grown;
+      goto grow;
+    grown:
       object->scaleX = 0x10000;
       object->scaleY = 0x10000;
       object->angle = Object_GetById(gPartyState.currentOwner)->angle + 0x8000;

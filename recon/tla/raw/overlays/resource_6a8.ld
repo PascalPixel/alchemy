@@ -12,6 +12,7 @@ SECTIONS
         "*/games/tla/src/scene/prox/s0290.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse/distance.o"(.text)
         "*/resource_6a8_overlay.o"(.text.x020082d8)
+        "*/games/tla/src/scene/prox/s03bc.o"(.text)
         "*/resource_6a8_overlay.o"(.text.x020083bc)
         "*/games/tla/src/scene/prox/scene_tables.o"(.text)
         "*/resource_6a8_overlay.o"(.text.x0200848c)

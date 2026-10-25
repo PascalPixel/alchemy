@@ -30,9 +30,9 @@ the game. The always-loaded code is cut into [banks](glossary.md#bank)
 %%{init: {"flowchart": {"curve": "step"}}}%%
 flowchart TD
   loop(["Game_MainLoop"]) --> which{"Which map<br/>number?"}
-  which -- "a map" --> map@{ img: "https://alchemy.pascalpixel.com/guides/world/door.gif", label: "Map_Run", pos: "b", w: 120, h: 80, constraint: "on" }
-  which -- "RUN_BATTLE" --> battle@{ img: "https://alchemy.pascalpixel.com/guides/battle/commands.gif", label: "Battle_Run", pos: "b", w: 120, h: 80, constraint: "on" }
-  which -- "RUN_LUCKY_DICE<br/>RUN_LUCKY_WHEELS" --> mini@{ img: "https://alchemy.pascalpixel.com/guides/overworld/lucky-dice.gif", label: "Lucky Dice, Lucky Wheels", pos: "b", w: 120, h: 80, constraint: "on" }
+  which -- "a map" --> map["Map_Run<br/>the party walks"]
+  which -- "RUN_BATTLE" --> battle["Battle_Run"]
+  which -- "RUN_LUCKY_DICE<br/>RUN_LUCKY_WHEELS" --> mini["Lucky Dice<br/>Lucky Wheels"]
   map -. "the warp taken:<br/>next map" .-> loop
   battle -. "won: same map<br/>lost: last save" .-> loop
   mini -. "result: back to<br/>the game room" .-> loop

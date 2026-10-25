@@ -15719,7 +15719,7 @@ msgctxt "message"
 msgid "03892"
 msgstr "Ticket"
 
-msgctxt "message"
+msgctxt "MsgSlotsBet"
 msgid "03893"
 msgstr "Pari"
 

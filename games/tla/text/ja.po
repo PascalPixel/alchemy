@@ -13853,7 +13853,7 @@ msgctxt "message"
 msgid "03433"
 msgstr "ゲームチケット"
 
-msgctxt "message"
+msgctxt "MsgSlotsBet"
 msgid "03434"
 msgstr "ベット"
 

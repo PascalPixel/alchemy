@@ -1,16 +1,17 @@
 // Draft of Func_081263fc, The Broken Seal's BattleBackground_Load
-// (games/tbs/src/battle/battle.c): differ 4 of 137 (tla-en, 2026-10-15).
-// The Lost Age copies the decoder into a heap block of its own (RamCode_Load
-// and MemFree) instead of work slot 49, scales the palette with
-// ColorBuffer_Scale, and skips the backdrop's palette copy while the battle
-// work's byte at 0x867 is set (summons 4, 6 and 24 set it).
+// (games/tbs/src/battle/battle.c). The Lost Age copies the decoder into a
+// heap block of its own (RamCode_Load and MemFree) instead of work slot 49,
+// scales the palette with ColorBuffer_Scale, and skips the backdrop's palette
+// copy while the battle work's byte at 0x867 is set (summons 4, 6 and 24 set
+// it).
 
-// Left: two halfword copies whose address the native starts around its
-// load (the 0x050001e8 colour, ldrh between movs and lsls of 0x050000bc; the
-// BG1CNT value, ldr between movs and lsls of 0x0400000a); here the address
-// is finished first. sched2 issues the pooled load one slot later than the
-// native, the residue the Djinn drafts record. Tried: the colour through a
-// local (differ 27).
+// Exact under -mthumb-slow-loads (differ 0 of 137, tla-en, 2026-10-25), but
+// not adopted: it loads Model_DecodeCodeSize, the decoder's length (0x234
+// bytes, from Model_DecodeCode through model_bit_commands), and nothing
+// defines that symbol until the 08118230 and 08118244 listings join
+// model_decode.s, where it can be `. - Model_DecodeCode` as the relocated
+// kernels' sizes are. Written as the literal 0x234 it compiles to movs and
+// lsls instead of the pool load, and the image shifts from here on.
 
 #include "types.h"
 #include "dma.h"
@@ -62,10 +63,10 @@ void Func_081263fc(s32 mode, s32 resource, s32 level) {
     u32 offset = 0x100;
     void *vram;
 
-    /* FAKEMATCH: as in The Broken Seal, conditional cancelling updates end
-     * CSE before the decoder's arguments, so the VRAM address loads before
-     * the data add (plainly, or through a vram local: differ 6; a one-pass
-     * block before the call: 6). */
+    /* FAKEMATCH(dead): as in The Broken Seal, cancelling updates under a test
+     * end CSE before the decoder's arguments, so the VRAM address loads
+     * before the data add; as decode(data + 0x100, (void *)0x06008000), 2 of
+     * 137 instructions differ in tla-en. */
     if (session) {
       offset++;
       offset--;

@@ -78,13 +78,13 @@ extern char ResourceId_LamakanDesertBackdrop;
 extern char ResourceId_MogallForestBackdrop; ///< Mogall Forest's three maps.
 /// MapId_MercuryLighthouseAerie.
 extern char ResourceId_MercuryLighthouseAerieBackdrop;
-/// MapId_TolbiShipInteriors.
+/// MapId_ShipRooms.
 extern char ResourceId_TolbiShipInteriorsBackdrop;
 /// Fuchin Falls Cave, and MapId_CrossboneIsleFloatingLogs on Crossbone
 /// Isle.
 extern char ResourceId_ImilFuchinFallsBackdrop;
 extern char ResourceId_KolimaForestBackdrop; ///< Kolima Forest's five maps.
-/// MapId_TretTreeInteriors.
+/// MapId_TreeRooms.
 extern char ResourceId_TretTreeInteriorsBackdrop;
 /// Goma Cave, Kolima Tunnel, Bilibin Cave and Gateway Cave, and any map the
 /// table doesn't list, since it comes last.

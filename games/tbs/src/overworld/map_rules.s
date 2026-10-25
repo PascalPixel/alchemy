@@ -56,7 +56,7 @@ gMap_MusicRules:
 	map_music Sanctum, -1, 0x9f0, 74
 	map_music Sanctum, -1, 0x814, 2
 	map_music Sanctum, -1, -1, 74
-	map_music WoodenRoomsA, 19, -1, 3
+	map_music CottageRoomsB, 19, -1, 3
 	mapsec_music 3, -1, 0x9f0, 0
 	mapsec_music 3, -1, 0x814, 2
 	mapsec_music 3, -1, 0x901, 0
@@ -95,7 +95,7 @@ gMap_MusicRules:
 	map_music MercuryLighthouseAerie, -1, -1, 22
 	mapsec_music 19, -1, 0x881, 22
 	mapsec_music 19, -1, -1, 27
-	map_music LacquerRooms, 3, -1, 60
+	map_music LacquerRoomsA, 3, -1, 60
 	mapsec_music 20, -1, -1, 5
 	mapsec_music 21, -1, -1, 28
 	mapsec_music 22, -1, -1, 21
@@ -111,7 +111,7 @@ gMap_MusicRules:
 	mapsec_music 31, -1, -1, 24
 	mapsec_music 32, -1, -1, 6
 	mapsec_music 33, -1, -1, 3
-	map_music LunpaInteriors, 10, -1, 24
+	map_music RockRooms, 10, -1, 24
 	mapsec_music 34, -1, -1, 1
 	mapsec_music 35, -1, -1, 24
 	mapsec_music 36, -1, -1, 6
@@ -182,14 +182,14 @@ gMapSec_NameRules:
 	map_name Sanctum, 32, 6
 	map_name Sanctum, 29, 7
 	map_name Sanctum, -1, 8
-	map_name WoodenRoomsA, 19, 9
+	map_name CottageRoomsB, 19, 9
 	group_name 3, -1, 10
 	map_name SolEntrance, -1, 11
 	map_name SolSanctumElementalStarRoom, -1, 12
 	map_name SolSanctumEruption, -1, 12
 	group_name 4, -1, 13
-	map_name LunpaInteriors, 7, 14
-	map_name LunpaInteriors, 11, 14
+	map_name RockRooms, 7, 14
+	map_name RockRooms, 11, 14
 	map_name StoneRooms, 2, 15
 	group_name 5, -1, 16
 	group_name 6, -1, 17
@@ -206,13 +206,13 @@ gMapSec_NameRules:
 	group_name 14, -1, 27
 	map_name BilibinCaveEntrance, -1, 28
 	group_name 15, -1, 29
-	map_name ImilInteriors, 7, 30
+	map_name IceRooms, 7, 30
 	group_name 17, -1, 31
 	group_name 18, -1, 32
 	map_name MercuryLighthouseAerie, -1, 33
 	group_name 19, -1, 34
-	map_name LacquerRooms, 2, 35
-	map_name LacquerRooms, 3, 36
+	map_name LacquerRoomsA, 2, 35
+	map_name LacquerRoomsA, 3, 36
 	group_name 20, -1, 37
 	group_name 21, -1, 38
 	group_name 22, -1, 39
@@ -233,18 +233,18 @@ gMapSec_NameRules:
 	group_name 32, -1, 50
 	map_name HammetPalace, -1, 51
 	group_name 33, -1, 51
-	map_name LunpaInteriors, 10, 52
+	map_name RockRooms, 10, 52
 	group_name 34, -1, 53
 	group_name 35, -1, 54
-	map_name WoodenRoomsB, 2, 55
+	map_name CottageRoomsE, 2, 55
 	group_name 36, -1, 56
 	group_name 37, -1, 57
 	group_name 38, -1, 58
 	map_name CrossboneIsle, -1, 59
 	map_name PirateShip, -1, 60
 	group_name 39, -1, 61
-	map_name TolbiInteriors, 8, 62
-	map_name TolbiInteriors, 30, 62
+	map_name StuccoRoomsB, 8, 62
+	map_name StuccoRoomsB, 30, 62
 	group_name 40, -1, 63
 	map_name BabiPalaceEntrance, -1, 64
 	map_name BabiPalace, -1, 64
@@ -264,8 +264,8 @@ gMapSec_NameRules:
 	group_name 48, -1, 77
 	group_name 49, -1, 78
 	group_name 50, -1, 79
-	map_name SuhallaInteriors, 2, 80
-	map_name SuhallaInteriors, 6, 80
+	map_name TimberRoomsA, 2, 80
+	map_name TimberRoomsA, 6, 80
 	group_name 51, -1, 81
 	map_name GatewayCave, -1, 82
 	group_name 52, -1, 83
@@ -276,8 +276,8 @@ gMapSec_NameRules:
 	map_name BabiLighthouseEntry, -1, 86
 	map_name RoadToBabiLighthouse, -1, 87
 	group_name 54, -1, 88
-	map_name LaliveroInteriorsA, 11, 89
-	map_name LaliveroInteriorsA, 12, 89
+	map_name TimberRoomsB, 11, 89
+	map_name TimberRoomsB, 12, 89
 	group_name 55, -1, 90
 	map_name VenusLighthouseGroundFloor, -1, 91
 	group_name 56, -1, 92
@@ -303,23 +303,23 @@ gMapSec_NameRules:
 
 	.global gDefeatReturnPoints
 gDefeatReturnPoints:
-	return_to ValeStormyNight, 15, WoodenRoomsA, 16
+	return_to ValeStormyNight, 15, CottageRoomsB, 16
 	return_to Vale, 16, Sanctum, 2
 	return_to Vault, 1, Sanctum, 12
 	return_to Vault, 3, Sanctum, 12
 	return_to Bilibin, -1, Sanctum, 35
 	return_to Kolima, -1, Kolima, 12
-	return_to Imil, -1, ImilInteriors, 7
+	return_to Imil, -1, IceRooms, 7
 	return_to FuchinTempleGrounds, -1, FuchinTempleGrounds, 5
 	return_to Xian, -1, Sanctum, 32
 	return_to Altin, -1, Sanctum, 29
 	return_to LamaTemple, -1, LamaTemple, 5
 	return_to VaultRevisit, -1, Sanctum, 11
 	return_to Kalay, -1, KalaySanctum, 2
-	return_to Lunpa, 3, LunpaInteriors, 11
-	return_to Tolbi, -1, TolbiInteriors, 30
-	return_to Suhalla, -1, SuhallaInteriors, 6
-	return_to Lalivero, -1, LaliveroInteriorsA, 12
+	return_to Lunpa, 3, RockRooms, 11
+	return_to Tolbi, -1, StuccoRoomsB, 30
+	return_to Suhalla, -1, TimberRoomsA, 6
+	return_to Lalivero, -1, TimberRoomsB, 12
 	return_to BattleArena, -1, BattleArena, 1
 	.2byte -1, -1, -1, -1	@ end
 
@@ -328,12 +328,12 @@ gDefeatReturnPoints:
 gBattleBackground_Maps:
 	backdrop ValeStormBackdrop, ValeStormyNight, Vale, ValePlaza, ValeKradensCottage
 	backdrop SolSanctumBackdrop, SolSanctumCorridor, SolSanctumReliefs, SolSanctumMaze, SolSanctumLunaSolRooms, AltinPeakHydrosStatue, CrossboneIsleSteppingStones
-	backdrop InteriorBackdrop, VaultInteriors
+	backdrop InteriorBackdrop, LogRoomsA
 	backdrop GomaCaveBackdrop, GomaCaveEntrance
 	backdrop GomaCaveBackdrop, GomaCavePond, GomaCavePillar, GomaCaveStream, KolimaTunnel
 	backdrop KolimaForestBackdrop, KolimaForestEntrance, KolimaForestGlade, KolimaForestCliff, KolimaForestFloodgate, KolimaForestTree
 	backdrop TretTreeBranchBackdrop, TretTreeBranch
-	backdrop TretTreeInteriorsBackdrop, TretTreeInteriors
+	backdrop TretTreeInteriorsBackdrop, TreeRooms
 	backdrop GomaCaveBackdrop, BilibinCaveEntrance, BilibinCaveRapier, BilibinCaveIce
 	backdrop MercuryLighthouseBackdrop, MercuryLighthouseEntrance, MercuryLighthouseLower, MercuryLighthouseMiddle, MercuryLighthouseUpper, MercuryLighthouseExterior
 	backdrop MercuryLighthouseAerieBackdrop, MercuryLighthouseAerie
@@ -342,7 +342,7 @@ gBattleBackground_Maps:
 	backdrop AltinPeakBackdrop, AltinPeakFirstWaterBeast, AltinPeakRailTunnel, AltinPeakSecondWaterBeast, AltinPeakSouthEntrance, AltinPeakThirdWaterBeast, AltinPeakPool, AltinPeakSpritz, AltinPeakJunction, AltinPeakFallingRocks, AltinPeakWestExit
 	backdrop LamakanDesertBackdrop, LamakanDesertEast, LamakanDesertSmog, LamakanDesertManticore
 	backdrop TolbiShipDeckBackdrop, TolbiShipDeck, TolbiShipMast
-	backdrop TolbiShipInteriorsBackdrop, TolbiShipInteriors
+	backdrop TolbiShipInteriorsBackdrop, ShipRooms
 	backdrop ColossoBackdrop, ColosseumAzartMatch, ColosseumSatrageMatch, ColosseumNavampaMatch, BattleArena
 	backdrop AltmillerCaveBackdrop, AltmillerCaveEntrance, AltmillerCaveBabi, AltmillerCaveVialChest, AltmillerCaveSquall, AltmillerCaveCookieChest, AltmillerCaveDraught
 	backdrop AltmillerCaveBackdrop, LunpaFortressGroundFloor, LunpaFortressUpperFloor, LunpaFortressCave, LunpaFortressToadonpa
@@ -353,7 +353,7 @@ gBattleBackground_Maps:
 	backdrop GomaCaveBackdrop, GatewayCave
 	backdrop BabiLighthouseBackdrop, BabiLighthouseEntry, BabiLighthouseLuff, BabiLighthouseStoneDoor, CrossboneIsleBane
 	backdrop TunnelRuinsBackdrop, TunnelRuinsGreatStatue, TunnelRuinsLadyStatues
-	backdrop InteriorBackdrop, Lalivero, LaliveroInteriorsA, LaliveroInteriorsB
+	backdrop InteriorBackdrop, Lalivero, TimberRoomsB, TimberRoomsC
 	backdrop VenusLighthouseBackdrop, VenusLighthouseGroundFloor, VenusLighthouseFirstFloor, VenusLighthouseSecondFloor, VenusLighthouseThirdFloor, VenusLighthouseFourthFloor
 	backdrop VenusLighthouseAerieBackdrop, VenusLighthouseAerie
 	backdrop GomaCaveBackdrop

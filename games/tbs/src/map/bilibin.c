@@ -23,7 +23,7 @@
 ///
 /// Bilibin's doors (coord events 3 to 9, the numbers of the warps they take)
 /// open before the party walks in (EventScript_OpenDoorAndLeave): six lead into
-/// Bilibin's buildings (MapId_BilibinInteriors) and the seventh into the
+/// Bilibin's buildings (MapId_CottageRoomsC) and the seventh into the
 /// Bilibin Sanctum, out of which (BILIBIN_FROM_SANCTUM) the area name is not
 /// shown again. The other warps lead to the world map, to the garden of McCoy's
 /// Palace and, two ways, into the Treasury: past the ivy at the west edge
@@ -1093,12 +1093,12 @@ u32 gBilibinWarps[] = {
     MAP_WARPS(Bilibin),
     MAP_WARP(BILIBIN_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_BILIBIN),
     MAP_WARP(BILIBIN_TO_MCCOY_PALACE_GROUNDS, McCoyPalaceGrounds, MCCOY_PALACE_GROUNDS_FROM_BILIBIN),
-    MAP_WARP(BILIBIN_TO_INN, BilibinInteriors, BILIBIN_INTERIORS_INN),
-    MAP_WARP(BILIBIN_TO_HOUSE_EAST, BilibinInteriors, BILIBIN_INTERIORS_HOUSE_EAST),
-    MAP_WARP(BILIBIN_TO_HOUSE_WEST, BilibinInteriors, BILIBIN_INTERIORS_HOUSE_WEST),
-    MAP_WARP(BILIBIN_TO_HOUSE_NORTH, BilibinInteriors, BILIBIN_INTERIORS_HOUSE_NORTH),
-    MAP_WARP(BILIBIN_TO_ITEM_SHOP, BilibinInteriors, BILIBIN_INTERIORS_ITEM_SHOP),
-    MAP_WARP(BILIBIN_TO_WEAPON_AND_ARMOR_SHOP, BilibinInteriors, BILIBIN_INTERIORS_WEAPON_AND_ARMOR_SHOP),
+    MAP_WARP(BILIBIN_TO_INN, CottageRoomsC, COTTAGE_ROOMS_C_INN),
+    MAP_WARP(BILIBIN_TO_HOUSE_EAST, CottageRoomsC, COTTAGE_ROOMS_C_HOUSE_EAST),
+    MAP_WARP(BILIBIN_TO_HOUSE_WEST, CottageRoomsC, COTTAGE_ROOMS_C_HOUSE_WEST),
+    MAP_WARP(BILIBIN_TO_HOUSE_NORTH, CottageRoomsC, COTTAGE_ROOMS_C_HOUSE_NORTH),
+    MAP_WARP(BILIBIN_TO_ITEM_SHOP, CottageRoomsC, COTTAGE_ROOMS_C_ITEM_SHOP),
+    MAP_WARP(BILIBIN_TO_WEAPON_AND_ARMOR_SHOP, CottageRoomsC, COTTAGE_ROOMS_C_WEAPON_AND_ARMOR_SHOP),
     MAP_WARP(BILIBIN_TO_SANCTUM, Sanctum, SANCTUM_FROM_BILIBIN),
     MAP_WARP(BILIBIN_TO_BILIBIN_TREASURY_WEST, BilibinTreasury, BILIBIN_TREASURY_FROM_BILIBIN_SOUTH),
     MAP_WARP(BILIBIN_TO_BILIBIN_TREASURY_EAST, BilibinTreasury, BILIBIN_TREASURY_FROM_BILIBIN_NORTH),

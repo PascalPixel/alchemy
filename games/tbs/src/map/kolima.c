@@ -1,6 +1,6 @@
 /// @file
 /// Kolima's overlay, which holds three maps. The
-/// village's houses and shops are another overlay (kolima_interiors.c), and so
+/// village's houses and shops are another overlay (log_rooms_c.c), and so
 /// is each map of Kolima Forest.
 ///
 /// - Kolima (MapId_Kolima), the village of lumberjacks, to which Lord
@@ -24,14 +24,14 @@
 ///   Sanctum's services across his counter. Granite, a Venus Djinni
 ///   (LOCALID_GRANITE), waits in the village and joins when spoken to. Five
 ///   doorways (KOLIMA_TO_INN to KOLIMA_TO_HOUSE_NORTH) lead into the houses and
-///   shops (MapId_KolimaInteriors), KOLIMA_TO_WORLD_MAP and
+///   shops (MapId_LogRoomsC), KOLIMA_TO_WORLD_MAP and
 ///   KOLIMA_TO_WORLD_MAP_EAST to the world map and KOLIMA_TO_KOLIMA_TUNNEL
 ///   into Kolima Tunnel.
 /// - Kolima Tunnel (MapId_KolimaTunnel), a passage with no one in it from
-///   one of the houses (KOLIMA_INTERIORS_FROM_KOLIMA_TUNNEL) to the village
+///   one of the houses (LOG_ROOMS_C_FROM_KOLIMA_TUNNEL) to the village
 ///   (KOLIMA_FROM_KOLIMA_TUNNEL). It shares the village's event table, whose
 ///   warps KOLIMA_TO_WORLD_MAP and KOLIMA_TO_WORLD_MAP_EAST are, by the same
-///   numbers, its two ways out (KOLIMA_TUNNEL_TO_KOLIMA_INTERIORS and
+///   numbers, its two ways out (KOLIMA_TUNNEL_TO_LOG_ROOMS_C and
 ///   KOLIMA_TUNNEL_TO_KOLIMA). That table's two jars, an Apple and an Herb
 ///   (bg events 100 and 101), are in the village: only Kolima's layout
 ///   (layout_037's treasure_spots.tsv) places them, at cells (23, 8) and (13,
@@ -284,7 +284,7 @@ const struct MapWarpDest *Kolima_GetWarpDests(void) {
 }
 
 /// Only Kolima Tunnel has regions: its two ways out,
-/// KOLIMA_TUNNEL_TO_KOLIMA_INTERIORS and KOLIMA_TUNNEL_TO_KOLIMA.
+/// KOLIMA_TUNNEL_TO_LOG_ROOMS_C and KOLIMA_TUNNEL_TO_KOLIMA.
 const struct MapWarpRegion *Kolima_GetRegions(void) {
   if (gSaveBlock.mapId == (s32)&MapId_KolimaTunnel) {
     return gKolimaTunnelRegions;
@@ -293,7 +293,7 @@ const struct MapWarpRegion *Kolima_GetRegions(void) {
 }
 
 /// The warps of all three maps, each map's after its header word (a warp
-/// of kind 0): Kolima's to the world map, the houses (MapId_KolimaInteriors)
+/// of kind 0): Kolima's to the world map, the houses (MapId_LogRoomsC)
 /// and Kolima
 /// Tunnel, Kolima Bridge's to the world map, and Kolima Tunnel's to a house
 /// and the village.
@@ -1846,7 +1846,7 @@ struct MapWarpDest gKolimaBridgeWarpDests[] = {
 };
 
 struct MapWarpDest gKolimaTunnelWarpDests[] = {
-    {KOLIMA_TUNNEL_FROM_KOLIMA_INTERIORS, CONDITION_ALWAYS, 216, 0, 320,
+    {KOLIMA_TUNNEL_FROM_LOG_ROOMS_C, CONDITION_ALWAYS, 216, 0, 320,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {KOLIMA_TUNNEL_FROM_KOLIMA, CONDITION_ALWAYS, 312, 0, 312, FACING_SOUTH, 0,
      -1, -1, -1, -1, 0},
@@ -1866,17 +1866,17 @@ u32 gKolimaWarps[] = {
     MAP_WARPS(Kolima),
     MAP_WARP(KOLIMA_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_KOLIMA_WEST),
     MAP_WARP(KOLIMA_TO_WORLD_MAP_EAST, WorldMap, WORLD_MAP_FROM_KOLIMA_EAST),
-    MAP_WARP(KOLIMA_TO_INN, KolimaInteriors, KOLIMA_INTERIORS_INN_FROM_KOLIMA),
-    MAP_WARP(KOLIMA_TO_ITEM_SHOP, KolimaInteriors, KOLIMA_INTERIORS_ITEM_SHOP_FROM_KOLIMA),
-    MAP_WARP(KOLIMA_TO_HOUSE_SOUTH, KolimaInteriors, KOLIMA_INTERIORS_HOUSE_FROM_KOLIMA_SOUTH),
-    MAP_WARP(KOLIMA_TO_WEAPON_AND_ARMOR_SHOP, KolimaInteriors, KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_FROM_KOLIMA),
-    MAP_WARP(KOLIMA_TO_HOUSE_NORTH, KolimaInteriors, KOLIMA_INTERIORS_HOUSE_FROM_KOLIMA_NORTH),
+    MAP_WARP(KOLIMA_TO_INN, LogRoomsC, LOG_ROOMS_C_INN_FROM_KOLIMA),
+    MAP_WARP(KOLIMA_TO_ITEM_SHOP, LogRoomsC, LOG_ROOMS_C_ITEM_SHOP_FROM_KOLIMA),
+    MAP_WARP(KOLIMA_TO_HOUSE_SOUTH, LogRoomsC, LOG_ROOMS_C_HOUSE_FROM_KOLIMA_SOUTH),
+    MAP_WARP(KOLIMA_TO_WEAPON_AND_ARMOR_SHOP, LogRoomsC, LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_FROM_KOLIMA),
+    MAP_WARP(KOLIMA_TO_HOUSE_NORTH, LogRoomsC, LOG_ROOMS_C_HOUSE_FROM_KOLIMA_NORTH),
     MAP_WARP(KOLIMA_TO_KOLIMA_TUNNEL, KolimaTunnel, KOLIMA_TUNNEL_FROM_KOLIMA),
     MAP_WARPS(KolimaBridge),
     MAP_WARP(KOLIMA_BRIDGE_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_KOLIMA_BRIDGE_EAST),
     MAP_WARP(KOLIMA_BRIDGE_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_KOLIMA_BRIDGE_WEST),
     MAP_WARPS(KolimaTunnel),
-    MAP_WARP(KOLIMA_TUNNEL_TO_KOLIMA_INTERIORS, KolimaInteriors, KOLIMA_INTERIORS_FROM_KOLIMA_TUNNEL),
+    MAP_WARP(KOLIMA_TUNNEL_TO_LOG_ROOMS_C, LogRoomsC, LOG_ROOMS_C_FROM_KOLIMA_TUNNEL),
     MAP_WARP(KOLIMA_TUNNEL_TO_KOLIMA, Kolima, KOLIMA_FROM_KOLIMA_TUNNEL),
     MAP_WARPS_END,
 };
@@ -1971,7 +1971,7 @@ struct ObjectEventTemplate gKolimaBridgeObjectEventTemplates[] = {
 /// after, the healer, Granite and two jars. Warps 1 and 2, which cell 99 takes
 /// too, keep their numbers, since each map's warp table gives them its own
 /// doors: KOLIMA_TO_WORLD_MAP and KOLIMA_TO_WORLD_MAP_EAST in Kolima,
-/// KOLIMA_TUNNEL_TO_KOLIMA_INTERIORS and KOLIMA_TUNNEL_TO_KOLIMA in Kolima
+/// KOLIMA_TUNNEL_TO_LOG_ROOMS_C and KOLIMA_TUNNEL_TO_KOLIMA in Kolima
 /// Tunnel.
 struct MapEvent gKolimaEvents[] = {
     { MAP_EVENT_WARP, 99, CONDITION_ALWAYS, 1 },

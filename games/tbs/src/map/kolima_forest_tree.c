@@ -12,8 +12,8 @@
 /// waters of Mercury Lighthouse might save Tret, though its fountain has dried
 /// up, and Tret ask Kolima's forgiveness. Using Hermes' Water on Tret now, the
 /// wrathful side throws the leader back. The way on is into Tret himself: the
-/// region at his foot is KOLIMA_FOREST_TREE_TO_TRET_TREE_INTERIORS, into the
-/// Tret Tree (MapId_TretTreeInteriors), where the party defeats the evil
+/// region at his foot is KOLIMA_FOREST_TREE_TO_TREE_ROOMS, into the
+/// Tret Tree (MapId_TreeRooms), where the party defeats the evil
 /// within him (FLAG_TRET_DEFEATED, set there) and finds him too weak to save
 /// Kolima. Back here, with Hermes' Water, which Mercury Lighthouse's fountain
 /// gives in an Empty Bottle, talking to Tret opens the party's items, and using
@@ -159,7 +159,7 @@ const struct MapWarpRegion *KolimaForestTree_GetRegions(void) {
 }
 
 /// The ways back (MapId_KolimaForestFloodgate) and into the Tret Tree
-/// (MapId_TretTreeInteriors).
+/// (MapId_TreeRooms).
 const u32 *KolimaForestTree_GetWarps(void) { return gKolimaForestTreeWarps; }
 
 /// Tret and Laurel, the blank object events at their spots, the ones the party
@@ -1126,21 +1126,21 @@ struct MapWarpDest gKolimaForestTreeWarpDests[] = {
      512, 448, 0},
     {KOLIMA_FOREST_TREE_FROM_KOLIMA_FOREST_FLOODGATE, CONDITION_ALWAYS, 136, 0,
      424, FACING_NORTH, 0, 0, 0, 512, 448, 0},
-    {KOLIMA_FOREST_TREE_FROM_TRET_TREE_INTERIORS, CONDITION_ALWAYS, 328, 16,
-     200, FACING_SOUTH, 0, 0, 0, 512, 448, 0},
+    {KOLIMA_FOREST_TREE_FROM_TREE_ROOMS, CONDITION_ALWAYS, 328, 16, 200,
+     FACING_SOUTH, 0, 0, 0, 512, 448, 0},
     {MAP_TABLE_END},
 };
 
 // clang-format off
 struct MapWarpRegion gKolimaForestTreeRegions[] = {
-    {320, 88, 176, 336, 104, 192, -1, KOLIMA_FOREST_TREE_TO_TRET_TREE_INTERIORS},
+    {320, 88, 176, 336, 104, 192, -1, KOLIMA_FOREST_TREE_TO_TREE_ROOMS},
     {-1, 0, 0, 0, 0, 0, 0, 0},
 };
 
 u32 gKolimaForestTreeWarps[] = {
     MAP_WARPS(KolimaForestTree),
     MAP_WARP(KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_FLOODGATE, KolimaForestFloodgate, KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_TREE),
-    MAP_WARP(KOLIMA_FOREST_TREE_TO_TRET_TREE_INTERIORS, TretTreeInteriors, TRET_TREE_INTERIORS_FROM_KOLIMA_FOREST_TREE),
+    MAP_WARP(KOLIMA_FOREST_TREE_TO_TREE_ROOMS, TreeRooms, TREE_ROOMS_FROM_KOLIMA_FOREST_TREE),
     MAP_WARPS_END,
 };
 

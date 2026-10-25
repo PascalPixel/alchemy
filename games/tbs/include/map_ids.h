@@ -29,14 +29,16 @@ extern char MapId_ValePlaza;
 /// ★ Named from the game: "You mustn't go beyond Kraden's cottage."
 /// (MsgValeDontGoBeyondKradensCottage)
 extern char MapId_ValeKradensCottage;
-/// A sheet of Vale's rooms, all entered from Vale.
-/// ★ Named from what the player sees: the interiors of Vale's houses and its
-/// shops, Garet's house and Jenna's grandparents' house among them (its render)
-extern char MapId_ValeInteriors;
-/// A sheet of rooms of more than one place, drawn in wood.
-/// ★ Named from what the player sees: rooms drawn in wood, Vale's inn, Isaac's
-/// house, Kraden's study and the forge, with Babi's scholars' room (its render)
-extern char MapId_WoodenRoomsA;
+/// A sheet of rooms drawn as cottages, all of them Vale's.
+/// ★ Named from what the player sees: rooms drawn as cottages, the interiors of
+/// Vale's houses and its shops, Garet's house and Jenna's grandparents' house
+/// among them (its render)
+extern char MapId_CottageRoomsA;
+/// A sheet of rooms drawn as cottages, of more than one place.
+/// ★ Named from what the player sees: rooms drawn as cottages, Vale's inn,
+/// Isaac's house, Kraden's study and the forge, with Babi's scholars' room (its
+/// render)
+extern char MapId_CottageRoomsB;
 /// ★ Named from its area name: Sanctum
 extern char MapId_Sanctum;
 /// ★ Named from the game: "in this eruption?!?" (MsgValeMtAlephWasInactive)
@@ -65,9 +67,11 @@ extern char MapId_SolSanctumEruption;
 extern char MapId_SolEntrance;
 /// ★ Named from its area name: Vault
 extern char MapId_Vault;
-/// ★ Named from what the player sees: the inside of Vault's houses, shops and
-/// inn, with the inn's loft behind a crate (its render)
-extern char MapId_VaultInteriors;
+/// A sheet of rooms drawn in logs, all of them Vault's.
+/// ★ Named from what the player sees: rooms drawn in logs, the inside of
+/// Vault's houses, shops and inn, with the inn's loft behind a crate (its
+/// render)
+extern char MapId_LogRoomsA;
 /// A sheet of rooms of more than one place, drawn in stone.
 /// ★ Named from what the player sees: rooms drawn in stone, Vault's jail and
 /// Lunpa's hidden room of chests (its render)
@@ -75,9 +79,11 @@ extern char MapId_StoneRooms;
 /// ★ Named from what the player sees: Vault again once the party has reached
 /// Kalay, its thieves broken out of jail (its render)
 extern char MapId_VaultRevisit;
-/// ★ Named from what the player sees: the inside of Vault's houses, shops and
-/// inn on the later visit, after the thieves escape (its render)
-extern char MapId_VaultInteriorsRevisit;
+/// A sheet of rooms drawn in logs, all of them Vault's.
+/// ★ Named from what the player sees: rooms drawn in logs, the inside of
+/// Vault's houses, shops and inn on the later visit, after the thieves escape
+/// (its render)
+extern char MapId_LogRoomsB;
 /// ★ Named from its area name: Goma Cave Entrance
 extern char MapId_GomaCaveEntrance;
 /// ★ Named from what the player sees: a cave room around a pond, below the room
@@ -94,9 +100,10 @@ extern char MapId_GomaCaveStream;
 extern char MapId_GomaCaveBridge;
 /// ★ Named from its area name: Bilibin
 extern char MapId_Bilibin;
-/// ★ Named from what the player sees: the inside of Bilibin's shops, inn and
-/// houses (its render)
-extern char MapId_BilibinInteriors;
+/// A sheet of rooms drawn as cottages, all of them Bilibin's.
+/// ★ Named from what the player sees: rooms drawn as cottages, the inside of
+/// Bilibin's shops, inn and houses (its render)
+extern char MapId_CottageRoomsC;
 /// ★ Named from its area name: Bilibin Treasury
 extern char MapId_BilibinTreasury;
 /// ★ Named from the game: "McCoy's Palace" (MsgDebugEntryName)
@@ -108,9 +115,10 @@ extern char MapId_McCoyPalaceGrounds;
 extern char MapId_BilibinBarricade;
 /// ★ Named from its area name: Kolima
 extern char MapId_Kolima;
-/// ★ Named from what the player sees: the inside of Kolima's houses, shops and
-/// inn, their people turned to trees (its render)
-extern char MapId_KolimaInteriors;
+/// A sheet of rooms drawn in logs, all of them Kolima's.
+/// ★ Named from what the player sees: rooms drawn in logs, the inside of
+/// Kolima's houses, shops and inn, their people turned to trees (its render)
+extern char MapId_LogRoomsC;
 /// ★ Named from its area name: Kolima Tunnel
 extern char MapId_KolimaTunnel;
 /// ★ Named from its area name: Kolima Bridge
@@ -129,9 +137,10 @@ extern char MapId_KolimaForestFloodgate;
 /// ★ Named from the game: "The holy tree of Kolima"
 /// (MsgKolimaInteriorsTheHolyTreeOfKolimaHas)
 extern char MapId_KolimaForestTree;
+/// A sheet of rooms drawn inside a tree.
 /// ★ Named from what the player sees: the rooms inside the trunk of Tret Tree
 /// (its render)
-extern char MapId_TretTreeInteriors;
+extern char MapId_TreeRooms;
 /// ★ Named from the game: "Then those gems fell into my branches..."
 /// (MsgKolimaWasIndeedAngryPeopleHad)
 extern char MapId_TretTreeBranch;
@@ -144,9 +153,10 @@ extern char MapId_BilibinCaveRapier;
 extern char MapId_BilibinCaveEntrance;
 /// ★ Named from its area name: Imil
 extern char MapId_Imil;
-/// ★ Named from what the player sees: the inside of Imil's houses, shops, inn
-/// and Sanctum (its render)
-extern char MapId_ImilInteriors;
+/// A sheet of rooms drawn in ice, all of them Imil's.
+/// ★ Named from what the player sees: rooms drawn in ice, the inside of Imil's
+/// houses, shops, inn and Sanctum (its render)
+extern char MapId_IceRooms;
 /// ★ Named from its area name: Imil Falls Cave
 extern char MapId_ImilFallsCave;
 /// ★ Named from what the player sees: the lighthouse's ground floor inside its
@@ -174,11 +184,11 @@ extern char MapId_UnusedMercuryLighthouseAerieCopy;
 /// ★ Named from what the player sees: outside the temple, its monks and the
 /// stepped waterfall with the grotto beneath (its render)
 extern char MapId_FuchinTempleGrounds;
-/// A sheet of rooms of more than one place, drawn in red lacquer.
+/// A sheet of rooms drawn in red lacquer, of more than one place.
 /// ★ Named from what the player sees: rooms drawn in red lacquer, Nyunpa's hall
 /// in Fuchin Temple, Feh's school in Xian and Hama's room in Lama Temple (its
 /// render)
-extern char MapId_LacquerRooms;
+extern char MapId_LacquerRoomsA;
 /// ★ Named from what the player sees: the cave's mouth and only way in and out,
 /// a log pool and stumps in the water (its render)
 extern char MapId_FuchinFallsCaveEntrance;
@@ -204,16 +214,20 @@ extern char MapId_MogallForestKillerApe;
 extern char MapId_MogallForestSidePaths;
 /// ★ Named from its area name: Xian
 extern char MapId_Xian;
-/// ★ Named from what the player sees: the inside of Xian's houses, shops and
-/// inn, and the room behind Master Feh's school (its render)
-extern char MapId_XianInteriors;
+/// A sheet of rooms drawn in red lacquer, all of them Xian's.
+/// ★ Named from what the player sees: rooms drawn in red lacquer, the inside of
+/// Xian's houses, shops and inn, and the room behind Master Feh's school (its
+/// render)
+extern char MapId_LacquerRoomsB;
 /// ★ Named from its area name: Alpine Crossing
 extern char MapId_AlpineCrossing;
 /// ★ Named from its area name: Altin
 extern char MapId_Altin;
-/// ★ Named from what the player sees: the inside of Altin's houses, shops and
-/// inn, where flooded-out families shelter (its render)
-extern char MapId_AltinInteriors;
+/// A sheet of rooms drawn as cottages, all of them Altin's.
+/// ★ Named from what the player sees: rooms drawn as cottages, the inside of
+/// Altin's houses, shops and inn, where flooded-out families shelter (its
+/// render)
+extern char MapId_CottageRoomsD;
 /// ★ Named from the game: "The water beasts looked"
 /// (MsgAltinTheWaterBeastsLookedExactlyLike)
 extern char MapId_AltinPeakFirstWaterBeast;
@@ -274,9 +288,11 @@ extern char MapId_VaultCaveVambrace;
 extern char MapId_VaultCaveMouth;
 /// ★ Named from its area name: Kalay
 extern char MapId_Kalay;
-/// ★ Named from what the player sees: Kalay's houses, its weapon and armor
-/// shops and its inn with the guest rooms below (its render)
-extern char MapId_KalayInteriors;
+/// A sheet of rooms drawn in stucco, all of them Kalay's.
+/// ★ Named from what the player sees: rooms drawn in stucco, Kalay's houses,
+/// its weapon and armor shops and its inn with the guest rooms below (its
+/// render)
+extern char MapId_StuccoRoomsA;
 /// ★ Named from its area name: Kalay Sanctum
 extern char MapId_KalaySanctum;
 /// ★ Named from what the player sees: the front of Hammet Palace, where two
@@ -286,27 +302,30 @@ extern char MapId_HammetPalaceGrounds;
 extern char MapId_HammetPalace;
 /// ★ Named from its area name: Lunpa
 extern char MapId_Lunpa;
-/// ★ Named from what the player sees: the inside of Lunpa's homes, shops, inn,
-/// crate room and temple, and the house at Suhalla Gate (its render)
-extern char MapId_LunpaInteriors;
+/// A sheet of rooms cut into rock, of more than one place.
+/// ★ Named from what the player sees: rooms cut into rock, the inside of
+/// Lunpa's homes, shops, inn, crate room and temple, and the house at Suhalla
+/// Gate (its render)
+extern char MapId_RockRooms;
 /// ★ Named from its area name: West Lunpa Cave
 extern char MapId_WestLunpaCave;
 /// ★ Named from its area name: Kalay Docks
 extern char MapId_KalayDocks;
-/// A sheet of rooms of more than one place, drawn in wood.
-/// ★ Named from what the player sees: rooms drawn in wood, the dock buildings'
-/// rooms at Kalay Docks and Tolbi Docks, where boarding tickets are sold (its
-/// render)
-extern char MapId_WoodenRoomsB;
+/// A sheet of rooms drawn as cottages, of more than one place.
+/// ★ Named from what the player sees: rooms drawn as cottages, the dock
+/// buildings' rooms at Kalay Docks and Tolbi Docks, where boarding tickets are
+/// sold (its render)
+extern char MapId_CottageRoomsE;
 /// ★ Named from what the player sees: the deck of the Tolbi-bound Ship on its
 /// voyage across the Karagol Sea (its render)
 extern char MapId_TolbiShipDeck;
 /// ★ Named from the game: "You climbed up the mast"
 /// (MsgTolbiShipItsMyLuckyAnchor)
 extern char MapId_TolbiShipMast;
-/// ★ Named from the game: "Monsters belowdecks!"
-/// (MsgTolbiShipMonstersBelowdecks)
-extern char MapId_TolbiShipInteriors;
+/// A sheet of rooms drawn as a ship's cabins.
+/// ★ Named from what the player sees: the cabins below the decks of the
+/// Tolbi-bound Ship, its holds, rowing deck and captain's quarters (its render)
+extern char MapId_ShipRooms;
 /// ★ Named from its area name: Tolbi Docks
 extern char MapId_TolbiDocks;
 /// ★ Named from its area name: Crossbone Isle
@@ -373,12 +392,14 @@ extern char MapId_CrossboneIsleEighthFloor;
 extern char MapId_CrossboneIsleNinthFloor;
 /// ★ Named from its area name: Tolbi
 extern char MapId_Tolbi;
-/// ★ Named from what the player sees: the inside of Tolbi's houses, inns and
-/// shops, and Tolbi Sanctum (its render)
-extern char MapId_TolbiInteriors;
-/// ★ Named from what the player sees: the two small rooms in Tolbi where Lucky
-/// Dice and Lucky Wheels are played (its render)
-extern char MapId_TolbiGameRooms;
+/// A sheet of rooms drawn in stucco, all of them Tolbi's.
+/// ★ Named from what the player sees: rooms drawn in stucco, the inside of
+/// Tolbi's houses, inns and shops, and Tolbi Sanctum (its render)
+extern char MapId_StuccoRoomsB;
+/// A sheet of rooms drawn in stucco, both of them Tolbi's.
+/// ★ Named from what the player sees: rooms drawn in stucco, the two small
+/// rooms in Tolbi where Lucky Dice and Lucky Wheels are played (its render)
+extern char MapId_StuccoRoomsC;
 /// ★ Named from its area name: Babi's Palace
 extern char MapId_BabiPalace;
 /// ★ Named from what the player sees: the way up from Tolbi to the palace door,
@@ -450,9 +471,10 @@ extern char MapId_SuhallaDesertSouth;
 extern char MapId_SuhallaDesertCaves;
 /// ★ Named from its area name: Suhalla
 extern char MapId_Suhalla;
-/// ★ Named from what the player sees: the inside of Suhalla's houses, shop and
-/// inn, and Suhalla Sanctum (its render)
-extern char MapId_SuhallaInteriors;
+/// A sheet of rooms drawn in timber, all of them Suhalla's.
+/// ★ Named from what the player sees: rooms drawn in timber, the inside of
+/// Suhalla's houses, shop and inn, and Suhalla Sanctum (its render)
+extern char MapId_TimberRoomsA;
 /// ★ Named from the game: "Only those with travel papers may pass through."
 /// (MsgSuhallaTravelPapersRequired)
 extern char MapId_SuhallaGateCheckpoint;
@@ -476,14 +498,15 @@ extern char MapId_BabiLighthouseEntry;
 extern char MapId_RoadToBabiLighthouse;
 /// ★ Named from its area name: Lalivero
 extern char MapId_Lalivero;
-/// The first of two sheets of Lalivero's rooms.
-/// ★ Named from what the player sees: the interiors of Lalivero's weapon and
-/// armor shop, item shop and Sanctum, with three houses (its render)
-extern char MapId_LaliveroInteriorsA;
-/// The second of two sheets of Lalivero's rooms.
-/// ★ Named from what the player sees: the interiors of Faran's house,
-/// Lalivero's inn and the way out to the wharf (its render)
-extern char MapId_LaliveroInteriorsB;
+/// The first of two sheets of Lalivero's rooms, drawn in timber.
+/// ★ Named from what the player sees: rooms drawn in timber, the interiors of
+/// Lalivero's weapon and armor shop, item shop and Sanctum, with three houses
+/// (its render)
+extern char MapId_TimberRoomsB;
+/// The second of two sheets of Lalivero's rooms, drawn in timber.
+/// ★ Named from what the player sees: rooms drawn in timber, the interiors of
+/// Faran's house, Lalivero's inn and the way out to the wharf (its render)
+extern char MapId_TimberRoomsC;
 /// ★ Named from its area name: Venus Lighthouse Entry
 extern char MapId_VenusLighthouseEntry;
 /// ★ Named from what the player sees: the floor the front door opens onto, with

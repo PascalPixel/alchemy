@@ -2,7 +2,7 @@
 /// Vault (MapId_Vault), "the town at the heart of Angara", as the party first
 /// finds it after Mt. Aleph's eruption: its streets, with the townspeople,
 /// Ivan, the bell and the dog. The houses, the inn and its loft, where the
-/// search for Hammet's stolen Shaman's Rod plays out, are vault_interiors.c.
+/// search for Hammet's stolen Shaman's Rod plays out, are log_rooms_a.c.
 /// Map_GetObjectEventTemplates and Map_GetEvents choose their tables by
 /// FLAG_VAULT_THIEVES_JAILED, and once the party has reached Kalay
 /// (FLAG_KALAY_REACHED) Map_Initialize sends it straight on to the town's
@@ -31,7 +31,7 @@
 /// beside the bell; it joins only in the later map. The well rumbles with
 /// water and a wooden box holds a Nut. The doors open with an animation
 /// (gVault_*DoorCells) and lead into the houses, shops and inn
-/// (MapId_VaultInteriors), the jail (MapId_StoneRooms) and the Vault Sanctum
+/// (MapId_LogRoomsA), the jail (MapId_StoneRooms) and the Vault Sanctum
 /// (VAULT_TO_SANCTUM); the metatile behaviors the events answer are enum
 /// VaultMetatileBehavior (vault.h).
 ///
@@ -706,33 +706,33 @@ static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
 }
 
 /// The door of the gem owner's house opens and the party walks in.
-/// It's VAULT_TO_VAULT_INTERIORS_EAST_SOUTHEAST, into the house where a man
+/// It's VAULT_TO_LOG_ROOMS_A_EAST_SOUTHEAST, into the house where a man
 /// keeps a sparkling rock the volcano threw.
 static void EventScript_EnterGemOwnersHouse(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
   MapGrid_PlayMetatileCopySequence(gVault_GemOwnersHouseDoorCells, 56, 19);
-  Vault_WalkThroughExit(408, 320, VAULT_TO_VAULT_INTERIORS_EAST_SOUTHEAST);
+  Vault_WalkThroughExit(408, 320, VAULT_TO_LOG_ROOMS_A_EAST_SOUTHEAST);
 }
 
 /// The door of a child's home opens and the party walks in.
-/// It's VAULT_TO_VAULT_INTERIORS_SOUTHEAST, into the house east of the town's
+/// It's VAULT_TO_LOG_ROOMS_A_SOUTHEAST, into the house east of the town's
 /// centre.
 static void EventScript_EnterChildsHouse(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
   MapGrid_PlayMetatileCopySequence(gVault_ChildsHouseDoorCells, 50, 18);
-  Vault_WalkThroughExit(312, 304, VAULT_TO_VAULT_INTERIORS_SOUTHEAST);
+  Vault_WalkThroughExit(312, 304, VAULT_TO_LOG_ROOMS_A_SOUTHEAST);
 }
 
 /// The inn's door opens and the party walks in.
-/// It's VAULT_TO_VAULT_INTERIORS_SOUTHWEST, into the inn where the three
+/// It's VAULT_TO_LOG_ROOMS_A_SOUTHWEST, into the inn where the three
 /// suspects stay.
 static void EventScript_EnterInn(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
   MapGrid_PlayMetatileCopySequence(gVault_InnDoorCells, 44, 17);
-  Vault_WalkThroughExit(216, 288, VAULT_TO_VAULT_INTERIORS_SOUTHWEST);
+  Vault_WalkThroughExit(216, 288, VAULT_TO_LOG_ROOMS_A_SOUTHWEST);
 }
 
-/// In Vault, the door VAULT_TO_VAULT_INTERIORS_EAST opens into the item shop,
+/// In Vault, the door VAULT_TO_LOG_ROOMS_A_EAST opens into the item shop,
 /// an old couple's home too; the leader walks in behind the doorway's
 /// foreground tiles.
 static void EventScript_EnterItemShop(void) {
@@ -744,11 +744,11 @@ static void EventScript_EnterItemShop(void) {
   MapGrid_CopyCellAttributes(33, 20, 1, 3, 23, 12);
   objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;
-  Vault_WalkThroughExit(376, 224, VAULT_TO_VAULT_INTERIORS_EAST);
+  Vault_WalkThroughExit(376, 224, VAULT_TO_LOG_ROOMS_A_EAST);
 }
 
 /// The weapon and armor shop's door opens and the party walks in.
-/// It's VAULT_TO_VAULT_INTERIORS_NORTH_NORTHEAST, entered as the item shop is.
+/// It's VAULT_TO_LOG_ROOMS_A_NORTH_NORTHEAST, entered as the item shop is.
 static void EventScript_EnterWeaponAndArmorShop(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   struct Sprite *sprite = objectEvent->sprite;
@@ -758,15 +758,15 @@ static void EventScript_EnterWeaponAndArmorShop(void) {
   MapGrid_CopyCellAttributes(33, 20, 1, 3, 18, 10);
   objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;
-  Vault_WalkThroughExit(296, 176, VAULT_TO_VAULT_INTERIORS_NORTH_NORTHEAST);
+  Vault_WalkThroughExit(296, 176, VAULT_TO_LOG_ROOMS_A_NORTH_NORTHEAST);
 }
 
-/// In Vault, the door VAULT_TO_VAULT_INTERIORS_NORTHWEST opens into the
+/// In Vault, the door VAULT_TO_LOG_ROOMS_A_NORTHWEST opens into the
 /// mayor's house, where Ivan waits.
 static void EventScript_EnterMayorsHouse(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
   MapGrid_PlayMetatileCopySequence(gVault_MayorsHouseDoorCells, 38, 6);
-  Vault_WalkThroughExit(120, 144, VAULT_TO_VAULT_INTERIORS_NORTHWEST);
+  Vault_WalkThroughExit(120, 144, VAULT_TO_LOG_ROOMS_A_NORTHWEST);
 }
 
 #include "common/vault_map_cells.h"
@@ -786,10 +786,10 @@ static void EventScript_EnterJail(void) {
 }
 
 /// In Vault, the party walks through a doorless entrance into the room with
-/// the crate (VAULT_TO_VAULT_INTERIORS_WEST).
+/// the crate (VAULT_TO_LOG_ROOMS_A_WEST).
 static void EventScript_EnterPassage(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  Vault_WalkThroughExit(152, 264, VAULT_TO_VAULT_INTERIORS_WEST);
+  Vault_WalkThroughExit(152, 264, VAULT_TO_LOG_ROOMS_A_WEST);
 }
 
 /// Moves an object event through a jump and waits up to sixty frames for it to
@@ -996,7 +996,7 @@ s32 Map_Initialize(void) {
     }
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   } else {
-    if (gSaveBlock.warpDest == VAULT_FROM_VAULT_INTERIORS_WEST) {
+    if (gSaveBlock.warpDest == VAULT_FROM_LOG_ROOMS_A_WEST) {
       if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
         Import_ObjectEventSetPosition(LOCALID_YOUNG_MAN_FIXING_THE_ROOF, 0, 0);
       }
@@ -1287,24 +1287,24 @@ struct MapWarpDest gVault_WarpDests[] = {
      -1, -1, -1, -1, 0},
     {VAULT_NORTH_UNUSED, CONDITION_ALWAYS, 224, 0, 138, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
-    {VAULT_FROM_VAULT_INTERIORS_EAST_SOUTHEAST, CONDITION_ALWAYS, 408, 0, 344,
+    {VAULT_FROM_LOG_ROOMS_A_EAST_SOUTHEAST, CONDITION_ALWAYS, 408, 0, 344,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VAULT_FROM_VAULT_INTERIORS_SOUTHEAST, CONDITION_ALWAYS, 312, 0, 328,
+    {VAULT_FROM_LOG_ROOMS_A_SOUTHEAST, CONDITION_ALWAYS, 312, 0, 328,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VAULT_FROM_VAULT_INTERIORS_SOUTHWEST, CONDITION_ALWAYS, 216, 0, 312,
+    {VAULT_FROM_LOG_ROOMS_A_SOUTHWEST, CONDITION_ALWAYS, 216, 0, 312,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VAULT_FROM_VAULT_INTERIORS_EAST, CONDITION_ALWAYS, 376, 0, 248,
+    {VAULT_FROM_LOG_ROOMS_A_EAST, CONDITION_ALWAYS, 376, 0, 248, FACING_SOUTH,
+     0, -1, -1, -1, -1, 0},
+    {VAULT_FROM_LOG_ROOMS_A_NORTH_NORTHEAST, CONDITION_ALWAYS, 296, 0, 200,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VAULT_FROM_VAULT_INTERIORS_NORTH_NORTHEAST, CONDITION_ALWAYS, 296, 0, 200,
-     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VAULT_FROM_VAULT_INTERIORS_NORTHWEST, CONDITION_ALWAYS, 120, 0, 168,
+    {VAULT_FROM_LOG_ROOMS_A_NORTHWEST, CONDITION_ALWAYS, 120, 0, 168,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {VAULT_FROM_SANCTUM, CONDITION_ALWAYS, 64, 0, 294, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {VAULT_FROM_STONE_ROOMS, CONDITION_ALWAYS, 70, 0, 183, FACING_SOUTH, 0, -1,
      -1, -1, -1, 0},
-    {VAULT_FROM_VAULT_INTERIORS_WEST, CONDITION_ALWAYS, 152, 0, 272,
-     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {VAULT_FROM_LOG_ROOMS_A_WEST, CONDITION_ALWAYS, 152, 0, 272, FACING_SOUTH,
+     0, -1, -1, -1, -1, 0},
     {MAP_TABLE_END},
 };
 
@@ -1312,22 +1312,20 @@ u32 gVault_Warps[] = {
     MAP_WARPS(Vault),
     MAP_WARP(VAULT_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_VAULT_SOUTH),
     MAP_WARP(VAULT_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_VAULT_NORTH),
-    MAP_WARP(VAULT_TO_VAULT_INTERIORS_EAST_SOUTHEAST, VaultInteriors,
-             VAULT_INTERIORS_FROM_VAULT_EAST_SOUTHEAST),
-    MAP_WARP(VAULT_TO_VAULT_INTERIORS_SOUTHEAST, VaultInteriors,
-             VAULT_INTERIORS_FROM_VAULT_SOUTHEAST),
-    MAP_WARP(VAULT_TO_VAULT_INTERIORS_SOUTHWEST, VaultInteriors,
-             VAULT_INTERIORS_FROM_VAULT_SOUTHWEST),
-    MAP_WARP(VAULT_TO_VAULT_INTERIORS_EAST, VaultInteriors,
-             VAULT_INTERIORS_FROM_VAULT_EAST),
-    MAP_WARP(VAULT_TO_VAULT_INTERIORS_NORTH_NORTHEAST, VaultInteriors,
-             VAULT_INTERIORS_FROM_VAULT_NORTH_NORTHEAST),
-    MAP_WARP(VAULT_TO_VAULT_INTERIORS_NORTHWEST, VaultInteriors,
-             VAULT_INTERIORS_FROM_VAULT_NORTHWEST),
+    MAP_WARP(VAULT_TO_LOG_ROOMS_A_EAST_SOUTHEAST, LogRoomsA,
+             LOG_ROOMS_A_FROM_VAULT_EAST_SOUTHEAST),
+    MAP_WARP(VAULT_TO_LOG_ROOMS_A_SOUTHEAST, LogRoomsA,
+             LOG_ROOMS_A_FROM_VAULT_SOUTHEAST),
+    MAP_WARP(VAULT_TO_LOG_ROOMS_A_SOUTHWEST, LogRoomsA,
+             LOG_ROOMS_A_FROM_VAULT_SOUTHWEST),
+    MAP_WARP(VAULT_TO_LOG_ROOMS_A_EAST, LogRoomsA, LOG_ROOMS_A_FROM_VAULT_EAST),
+    MAP_WARP(VAULT_TO_LOG_ROOMS_A_NORTH_NORTHEAST, LogRoomsA,
+             LOG_ROOMS_A_FROM_VAULT_NORTH_NORTHEAST),
+    MAP_WARP(VAULT_TO_LOG_ROOMS_A_NORTHWEST, LogRoomsA,
+             LOG_ROOMS_A_FROM_VAULT_NORTHWEST),
     MAP_WARP(VAULT_TO_SANCTUM, Sanctum, SANCTUM_FROM_VAULT),
     MAP_WARP(VAULT_TO_STONE_ROOMS, StoneRooms, STONE_ROOMS_FROM_VAULT),
-    MAP_WARP(VAULT_TO_VAULT_INTERIORS_WEST, VaultInteriors,
-             VAULT_INTERIORS_FROM_VAULT_WEST),
+    MAP_WARP(VAULT_TO_LOG_ROOMS_A_WEST, LogRoomsA, LOG_ROOMS_A_FROM_VAULT_WEST),
     MAP_WARP(VAULT_TO_VAULT_REVISIT, VaultRevisit, VAULT_REVISIT_FROM_VAULT),
     MAP_WARPS_END,
 };

@@ -8,7 +8,7 @@
 /// after Colosso the village talks of the sandstorms that close the desert, of
 /// its distrust of Angara and of Sheba, the hostage; after it, of the soldiers
 /// the storms caught on the way to Babi Lighthouse, who lie in one of its
-/// houses (suhalla_interiors.c). The same people stand in the same rows of both
+/// houses (timber_rooms_a.c). The same people stand in the same rows of both
 /// object event template tables, so one enum names them; the woman the
 /// sandstorms brought stands off the map until the audience.
 ///
@@ -256,14 +256,12 @@ struct MapWarpDest gSuhallaWarpDests[] = {
 
 u32 gSuhallaWarps[] = {
     MAP_WARPS(Suhalla),
-    MAP_WARP(SUHALLA_TO_INN, SuhallaInteriors, SUHALLA_INTERIORS_INN),
-    MAP_WARP(SUHALLA_TO_SANCTUM, SuhallaInteriors, SUHALLA_INTERIORS_SANCTUM),
-    MAP_WARP(SUHALLA_TO_HOUSE_WEST, SuhallaInteriors,
-             SUHALLA_INTERIORS_HOUSE_WEST),
-    MAP_WARP(SUHALLA_TO_HOUSE_NORTHEAST, SuhallaInteriors,
-             SUHALLA_INTERIORS_HOUSE_NORTHEAST),
-    MAP_WARP(SUHALLA_TO_HOUSE_EAST, SuhallaInteriors,
-             SUHALLA_INTERIORS_HOUSE_EAST),
+    MAP_WARP(SUHALLA_TO_INN, TimberRoomsA, TIMBER_ROOMS_A_INN),
+    MAP_WARP(SUHALLA_TO_SANCTUM, TimberRoomsA, TIMBER_ROOMS_A_SANCTUM),
+    MAP_WARP(SUHALLA_TO_HOUSE_WEST, TimberRoomsA, TIMBER_ROOMS_A_HOUSE_WEST),
+    MAP_WARP(SUHALLA_TO_HOUSE_NORTHEAST, TimberRoomsA,
+             TIMBER_ROOMS_A_HOUSE_NORTHEAST),
+    MAP_WARP(SUHALLA_TO_HOUSE_EAST, TimberRoomsA, TIMBER_ROOMS_A_HOUSE_EAST),
     MAP_WARP(SUHALLA_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_SUHALLA),
     MAP_WARP(SUHALLA_TO_WORLD_MAP_NORTH, WorldMap,
              WORLD_MAP_FROM_SUHALLA_NORTH),

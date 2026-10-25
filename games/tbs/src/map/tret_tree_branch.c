@@ -2,11 +2,11 @@
 /// Tret Tree (MapId_TretTreeBranch), the second of Tret Tree's two maps:
 /// out on Tret's branches, under open sky
 /// (places/tret-tree-branch/map-0.png), between the rooms of
-/// MapId_TretTreeInteriors (tret_tree_interiors.c), where the story is told.
+/// MapId_TreeRooms (tree_rooms.c), where the story is told.
 /// This map has no story event and tests no story flag.
 ///
-/// Its eight warps (TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_SOUTH_SOUTHWEST and
-/// the seven after it) lead back into MapId_TretTreeInteriors; walking into
+/// Its eight warps (TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHWEST and
+/// the seven after it) lead back into MapId_TreeRooms; walking into
 /// one for two frames (COORD_EVENT_FLAG_QUICK) plays the warp sound and leaves
 /// at once, the cells' metatile behaviors being the warps' own numbers.
 /// Coord events on metatile behaviors 10 to 15 lie in pairs at the top and
@@ -171,7 +171,7 @@ static void EventScript_GoUpSoutheastVine(void) {
 /// Walking into one of the eight warps in Tret Tree, whose cells' metatile
 /// behaviors are the warps' own numbers: the warp sound plays and the party
 /// leaves by the warp touched, into Tret Tree's other map
-/// (MapId_TretTreeInteriors).
+/// (MapId_TreeRooms).
 static void EventScript_EnterTretTreeRooms(void) {
   struct FieldWork *state = gFieldWork;
   s16 *touchedWarp;
@@ -293,49 +293,43 @@ static void TretTreeBranch_StartBg3Split(void) {
 struct MapWarpDest gTretTreeBranch_WarpDests[] = {
     {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 100, 0, 100, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
-    {TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_SOUTH_SOUTHWEST,
-     CONDITION_ALWAYS, 328, 0, 424, FACING_WEST, 0, -1, -1, -1, -1, 0},
-    {TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_SOUTH_SOUTHEAST,
-     CONDITION_ALWAYS, 424, 0, 440, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_SOUTH, CONDITION_ALWAYS, 376, 0,
-     360, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_SOUTHEAST, CONDITION_ALWAYS, 424,
-     0, 328, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_NORTH, CONDITION_ALWAYS, 376, 0,
-     264, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_NORTHWEST, CONDITION_ALWAYS, 328,
-     0, 248, FACING_WEST, 0, -1, -1, -1, -1, 0},
-    {TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_NORTH_NORTHWEST,
-     CONDITION_ALWAYS, 328, 0, 152, FACING_WEST, 0, -1, -1, -1, -1, 0},
-    {TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_NORTH_NORTHEAST,
-     CONDITION_ALWAYS, 424, 0, 136, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHWEST, CONDITION_ALWAYS, 328, 0,
+     424, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHEAST, CONDITION_ALWAYS, 424, 0,
+     440, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH, CONDITION_ALWAYS, 376, 0, 360,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTHEAST, CONDITION_ALWAYS, 424, 0, 328,
+     FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH, CONDITION_ALWAYS, 376, 0, 264,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTHWEST, CONDITION_ALWAYS, 328, 0, 248,
+     FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH_NORTHWEST, CONDITION_ALWAYS, 328, 0,
+     152, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH_NORTHEAST, CONDITION_ALWAYS, 424, 0,
+     136, FACING_EAST, 0, -1, -1, -1, -1, 0},
     {MAP_TABLE_END},
 };
 
 u32 gTretTreeBranch_Warps[] = {
     MAP_WARPS(TretTreeBranch),
-    MAP_WARP(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_SOUTH_SOUTHWEST,
-             TretTreeInteriors,
-             TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHWEST),
-    MAP_WARP(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_SOUTH_SOUTHEAST,
-             TretTreeInteriors,
-             TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHEAST),
-    MAP_WARP(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_SOUTH, TretTreeInteriors,
-             TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_SOUTH),
-    MAP_WARP(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_SOUTHEAST,
-             TretTreeInteriors,
-             TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_SOUTHEAST),
-    MAP_WARP(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_NORTH, TretTreeInteriors,
-             TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_NORTH),
-    MAP_WARP(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_NORTHWEST,
-             TretTreeInteriors,
-             TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_NORTHWEST),
-    MAP_WARP(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_NORTH_NORTHWEST,
-             TretTreeInteriors,
-             TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_NORTH_NORTHWEST),
-    MAP_WARP(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_NORTH_NORTHEAST,
-             TretTreeInteriors,
-             TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_NORTH_NORTHEAST),
+    MAP_WARP(TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHWEST, TreeRooms,
+             TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHWEST),
+    MAP_WARP(TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHEAST, TreeRooms,
+             TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHEAST),
+    MAP_WARP(TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH, TreeRooms,
+             TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH),
+    MAP_WARP(TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTHEAST, TreeRooms,
+             TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTHEAST),
+    MAP_WARP(TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH, TreeRooms,
+             TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH),
+    MAP_WARP(TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTHWEST, TreeRooms,
+             TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTHWEST),
+    MAP_WARP(TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH_NORTHWEST, TreeRooms,
+             TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH_NORTHWEST),
+    MAP_WARP(TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH_NORTHEAST, TreeRooms,
+             TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH_NORTHEAST),
     MAP_WARPS_END,
 };
 

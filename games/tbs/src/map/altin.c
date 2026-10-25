@@ -1,9 +1,12 @@
 /// @file
 /// Altin, the mining village north of the Alpine Crossing, in two maps that
 /// share this overlay and the area name Altin: MapId_Altin, the village
-/// outdoors, and MapId_AltinInteriors, inside its houses, shops and inn.
-/// The getters pick each map's tables by gSaveBlock.mapId, both share one
-/// warp table, and a third, empty set of tables serves any other map.
+/// outdoors, and MapId_CottageRoomsD, a sheet of rooms drawn as cottages, all
+/// of them Altin's: its houses, shops and inn, entered by the village's doors
+/// (COTTAGE_ROOMS_D_FROM_ALTIN_NORTHWEST to
+/// COTTAGE_ROOMS_D_FROM_ALTIN_SOUTHWEST). The getters pick each map's tables by
+/// gSaveBlock.mapId, both share one warp table, and a third, empty set of
+/// tables serves any other map.
 ///
 /// The village is flooded by the water beasts of its mine, whose maps the
 /// area names call Altin Peak (altin_peak.c), and two things in Altin's code
@@ -29,7 +32,7 @@
 /// steps near it (Altin_ScareOffBeast): it stops, cries out and hops away
 /// into the flood for good (FLAG_ALTIN_WATER_BEAST_LEFT). Doors (coord events 2
 /// to 9, Altin_EnterDoor, each leaving by the warp of its number) lead into
-/// AltinInteriors and into the Altin Sanctum (ALTIN_TO_SANCTUM), whose wide
+/// CottageRoomsD and into the Altin Sanctum (ALTIN_TO_SANCTUM), whose wide
 /// door is redrawn by hand; coming back out of the Sanctum (ALTIN_FROM_SANCTUM)
 /// the area name is not shown again. Three doorways (coord events 10 to
 /// 12, Altin_WalkThroughDoorway) and the warp ALTIN_TO_ALTIN_PEAK_SPRITZ lead
@@ -37,12 +40,12 @@
 /// AltinPeakSouthEntrance, AltinPeakJunction and AltinPeakSpritz. A pillar that
 /// Move pushes to column 22 stays there (FLAG_ALTIN_PILLAR_MOVED).
 ///
-/// Inside (AltinInteriors), two families shelter in the inn's Room One and Room
-/// Two, as the game calls them, until the first and the second drop send them
-/// home (AltinInteriors_PlaceSheltering), and the weapon merchant waits in the
-/// inn until the water has drained. Each merchant opens across the counter once
-/// the shop has dried, and a cook from Xian paces between his pots
-/// (gAltinInteriors_CookScript).
+/// Inside, in Cottage rooms D (CottageRoomsD), two families shelter in the
+/// inn's Room One and Room Two, as the game calls them, until the first and the
+/// second drop send them home (CottageRoomsD_PlaceSheltering), and the weapon
+/// merchant waits in the inn until the water has drained. Each merchant opens
+/// across the counter once the shop has dried, and a cook from Xian paces
+/// between his pots (gCottageRoomsD_CookScript).
 
 #include "save_block.h"
 #include "version.h"
@@ -78,7 +81,7 @@
 #endif
 
 #define MAP_ALTIN_VILLAGE ((s32)&MapId_Altin)
-#define MAP_ALTIN_HOUSES ((s32)&MapId_AltinInteriors)
+#define MAP_ALTIN_HOUSES ((s32)&MapId_CottageRoomsD)
 
 /// The village's object events, numbering the rows of
 /// gAltin_ObjectEventTemplates. The people without a scene of their own
@@ -164,7 +167,7 @@ enum AltinVillageLocalId {
 };
 
 /// The houses' object events, numbering the rows of
-/// gAltinInteriors_ObjectEventTemplates, named as the village's are.
+/// gCottageRoomsD_ObjectEventTemplates, named as the village's are.
 enum AltinHouseLocalId {
   /// The family sheltering in the inn's Room One until the first drop: this
   /// man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR) and a woman with
@@ -199,7 +202,7 @@ enum AltinHouseLocalId {
   /// (MsgAltinIHeardSomeoneKilledTheWater)
   LOCALID_WOMAN_NO_PLACE_LIKE_HOME,
   /// A little girl with orange pigtails (SPRITE_GIRL_WITH_PIGTAILS);
-  /// AltinInteriors_AskAboutMonsters.
+  /// CottageRoomsD_AskAboutMonsters.
   /// ★ Named from the game: "Here, let me thank you with...a kiss!"
   /// (MsgAltinDefeatedThoseMonstersDidnt)
   LOCALID_KISSING_GIRL,
@@ -212,7 +215,7 @@ enum AltinHouseLocalId {
   /// ★ Named from the game: "It's great that I can sell armor out of my shop
   /// again." (MsgAltinItsGreatCanSellArmor)
   LOCALID_ARMOR_MERCHANT,
-  /// Opens the inn (AltinInteriors_TalkToInnkeeper).
+  /// Opens the inn (CottageRoomsD_TalkToInnkeeper).
   /// ★ Named from the game: "Innkeeper" (MsgDebugGlyphName)
   LOCALID_INNKEEPER,
   /// A woman with red-brown hair in a white apron (SPRITE_WOMAN_IN_PINK_APRON).
@@ -260,7 +263,7 @@ enum AltinMetatileBehavior {
 enum {
   /// The Sanctum's door, which leads to SANCTUM_FROM_ALTIN.
   DOOR_SANCTUM = ALTIN_TO_SANCTUM - MB_ALTIN_FIRST_DOOR,
-  DOOR_STRAIGHT_IN = ALTIN_TO_ALTIN_INTERIORS_EAST - MB_ALTIN_FIRST_DOOR
+  DOOR_STRAIGHT_IN = ALTIN_TO_COTTAGE_ROOMS_D_EAST - MB_ALTIN_FIRST_DOOR
 };
 
 #define WATER_BEAST_HOP_PERIOD 60
@@ -286,7 +289,7 @@ enum {
 #endif
 
 static void Altin_ApplyWaterLevel(void);
-static void AltinInteriors_PlaceSheltering(void);
+static void CottageRoomsD_PlaceSheltering(void);
 static void Altin_BeastSpawnSpray(void);
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
@@ -296,7 +299,7 @@ const struct MapWarpDest *Map_GetWarpDests(void) {
     return gAltin_WarpDests;
   }
   if (mapId == MAP_ALTIN_HOUSES) {
-    return gAltinInteriors_WarpDests;
+    return gCottageRoomsD_WarpDests;
   }
   return gAltin_NoWarpDests;
 }
@@ -323,16 +326,16 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   }
   if (mapId == MAP_ALTIN_HOUSES) {
     if (GameFlag_Get(FLAG_ALTIN_MINE_FIRST_DRAIN))
-      gAltinInteriors_ObjectEventTemplates[LOCALID_ROOM_ONE_SECOND_GUEST -
-                                           LOCALID_FIRST_PLACED]
+      gCottageRoomsD_ObjectEventTemplates[LOCALID_ROOM_ONE_SECOND_GUEST -
+                                          LOCALID_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_AND_BACK;
     if (GameFlag_Get(FLAG_ALTIN_MINE_SECOND_DRAIN) ||
         GameFlag_Get(FLAG_ALTIN_MINE_THIRD_DRAIN))
-      gAltinInteriors_ObjectEventTemplates[LOCALID_ROOM_TWO_SECOND_GUEST -
-                                           LOCALID_FIRST_PLACED]
+      gCottageRoomsD_ObjectEventTemplates[LOCALID_ROOM_TWO_SECOND_GUEST -
+                                          LOCALID_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_AND_BACK;
-    Map_AssignViewFlags(gAltinInteriors_ObjectEventTemplates);
-    return gAltinInteriors_ObjectEventTemplates;
+    Map_AssignViewFlags(gCottageRoomsD_ObjectEventTemplates);
+    return gCottageRoomsD_ObjectEventTemplates;
   }
   return gAltin_NoObjectEventTemplates;
 }
@@ -344,7 +347,7 @@ const struct MapEvent *Map_GetEvents(void) {
     return gAltin_Events;
   }
   if (mapId == MAP_ALTIN_HOUSES) {
-    return gAltinInteriors_Events;
+    return gCottageRoomsD_Events;
   }
   return gAltin_NoEvents;
 }
@@ -434,7 +437,7 @@ static void Altin_AskAboutRuins(void) {
 /// A woman asks whether the party is who the girl from Xian was looking for.
 /// She's from the family that sheltered in the inn's Room One, and asks inside
 /// Altin once the hydros statues are beaten.
-static void AltinInteriors_AskAboutXianGirl(void) {
+static void CottageRoomsD_AskAboutXianGirl(void) {
 
   FieldScript_Start();
   FieldScript_SetMessageId(MsgAltinGirlFromXianWasAsking);
@@ -445,7 +448,7 @@ static void AltinInteriors_AskAboutXianGirl(void) {
 /// An old man points the party to the bottom of the mine. He's from the family
 /// sheltering in the inn's Room Two, and inside Altin, before the hydros
 /// statues are beaten, he asks whether the party seeks the way west.
-static void AltinInteriors_AskAboutWayWest(void) {
+static void CottageRoomsD_AskAboutWayWest(void) {
 
   FieldScript_Start();
   FieldScript_SetMessageId(MsgAltinTryingFindYourWayWest);
@@ -456,7 +459,7 @@ static void AltinInteriors_AskAboutWayWest(void) {
 /// A little girl thanks the leader with a kiss. She's back home inside Altin
 /// before the hydros statues are beaten, and asks whether the party defeated
 /// the monsters; she gives the kiss either way.
-static void AltinInteriors_AskAboutMonsters(void) {
+static void CottageRoomsD_AskAboutMonsters(void) {
 
   FieldScript_Start();
   FieldScript_SetMessageId(MsgAltinDefeatedThoseMonstersDidnt);
@@ -466,7 +469,7 @@ static void AltinInteriors_AskAboutMonsters(void) {
 
 /// A man at the inn asks whether the remaining beasts are deep below. He's
 /// staying at Altin's inn once the hydros statues are beaten.
-static void AltinInteriors_AskAboutMineBeasts(void) {
+static void CottageRoomsD_AskAboutMineBeasts(void) {
 
   FieldScript_Start();
   FieldScript_SetMessageId(MsgAltinThereFewBeastsInMine);
@@ -488,7 +491,7 @@ static s32 Altin_LeaderFacesCounter(void) {
 /// Altin's weapon merchant: until the water drains he waits in the inn and
 /// cannot sell; afterwards he opens his shop when spoken to across the
 /// counter.
-static void AltinInteriors_TalkToWeaponMerchant(void) {
+static void CottageRoomsD_TalkToWeaponMerchant(void) {
 
   if (GameFlag_Get(FLAG_ALTIN_WATER_DRAINED) == 0) {
     FieldScript_Start();
@@ -567,7 +570,7 @@ static void Altin_TalkToItemMerchant(void) {
 /// Altin's innkeeper opens the inn when spoken to across the counter. Spoken to
 /// otherwise, the innkeeper talks about the flood or, once it is over, the
 /// temple west of the mine.
-static void AltinInteriors_TalkToInnkeeper(void) {
+static void CottageRoomsD_TalkToInnkeeper(void) {
   struct ObjectEvent *leader;
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -638,9 +641,9 @@ static void Altin_EnterDoor(void) {
     // The north door's row in gAltin_Doors plays its opening at
     // (39, 17), outside the village's camera box; its house stands at
     // (8, 17), above where the party comes back out
-    // (ALTIN_FROM_ALTIN_INTERIORS_NORTH), so that doorway is drawn open here
+    // (ALTIN_FROM_COTTAGE_ROOMS_D_NORTH), so that doorway is drawn open here
     // (a render with this copy made on entry shows the open doorway).
-    if (doorIndex == ALTIN_TO_ALTIN_INTERIORS_NORTH - MB_ALTIN_FIRST_DOOR) {
+    if (doorIndex == ALTIN_TO_COTTAGE_ROOMS_D_NORTH - MB_ALTIN_FIRST_DOOR) {
       MapGrid_CopyCellsTo(33, 42, 8, 17, 1, 2);
     }
     MapGrid_AnimateCells(gAltin_Doors[doorIndex].steps, column, row);
@@ -780,7 +783,7 @@ s32 Map_Initialize(void) {
   if (mapId == MAP_ALTIN_VILLAGE) {
     Altin_ApplyWaterLevel();
   } else if (mapId == MAP_ALTIN_HOUSES) {
-    AltinInteriors_PlaceSheltering();
+    CottageRoomsD_PlaceSheltering();
   }
 
   return 0;
@@ -867,10 +870,10 @@ static void Altin_ApplyWaterLevel(void) {
   WaitFrames(1);
 }
 
-/// Sets up inside Altin's buildings (AltinInteriors): the families still
+/// Sets up inside Altin's buildings (CottageRoomsD): the families still
 /// sheltering in the inn's rooms, the weapon merchant waiting there until the
 /// water drains, and the shopkeepers kept from wandering.
-static void AltinInteriors_PlaceSheltering(void) {
+static void CottageRoomsD_PlaceSheltering(void) {
   struct ObjectEvent *objectEvent;
 
   if (GameFlag_Get(FLAG_ALTIN_WATER_DROPPED_ONCE) == 0) {
@@ -995,7 +998,7 @@ static void Altin_ScareOffBeast(void) {
 }
 
 /// The cook from Xian paces between his pots, nodding over each.
-s32 gAltinInteriors_CookScript[] = {
+s32 gCottageRoomsD_CookScript[] = {
     SC_ADD(SW_COLLISION, 128),
     SC_SET(SW_SPEED, 0x26666),
     SC_SET(SW_ACCELERATION, 0x13333),
@@ -1038,21 +1041,21 @@ struct MapWarpDest gAltin_WarpDests[] = {
     {0, CONDITION_ALWAYS, 380, 0, 433, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_FROM_WORLD_MAP, CONDITION_ALWAYS, 488, 0, 184, FACING_WEST, 0, -1,
      -1, -1, -1, 0},
-    {ALTIN_FROM_ALTIN_INTERIORS_SOUTHWEST, CONDITION_ALWAYS, 168, 0, 216,
+    {ALTIN_FROM_COTTAGE_ROOMS_D_SOUTHWEST, CONDITION_ALWAYS, 168, 0, 216,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_FROM_SANCTUM, CONDITION_ALWAYS, 336, 0, 200, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
-    {ALTIN_FROM_ALTIN_INTERIORS_NORTHWEST, CONDITION_ALWAYS, 424, 0, 344,
+    {ALTIN_FROM_COTTAGE_ROOMS_D_NORTHWEST, CONDITION_ALWAYS, 424, 0, 344,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {ALTIN_FROM_ALTIN_INTERIORS_NORTH, CONDITION_ALWAYS, 136, 0, 312,
+    {ALTIN_FROM_COTTAGE_ROOMS_D_NORTH, CONDITION_ALWAYS, 136, 0, 312,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {ALTIN_FROM_ALTIN_INTERIORS_NORTHEAST, CONDITION_ALWAYS, 280, 0, 408,
+    {ALTIN_FROM_COTTAGE_ROOMS_D_NORTHEAST, CONDITION_ALWAYS, 280, 0, 408,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {ALTIN_FROM_ALTIN_INTERIORS_SOUTHEAST, CONDITION_ALWAYS, 456, 0, 224,
+    {ALTIN_FROM_COTTAGE_ROOMS_D_SOUTHEAST, CONDITION_ALWAYS, 456, 0, 224,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {ALTIN_FROM_ALTIN_INTERIORS_EAST, CONDITION_ALWAYS, 184, 0, 408,
+    {ALTIN_FROM_COTTAGE_ROOMS_D_EAST, CONDITION_ALWAYS, 184, 0, 408,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {ALTIN_FROM_ALTIN_INTERIORS_WEST, CONDITION_ALWAYS, 168, 0, 440,
+    {ALTIN_FROM_COTTAGE_ROOMS_D_WEST, CONDITION_ALWAYS, 168, 0, 440,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_FROM_ALTIN_PEAK_FIRST_WATER_BEAST, CONDITION_ALWAYS, 24, 0, 456,
      FACING_SOUTHEAST, 0, -1, -1, -1, -1, 0},
@@ -1065,25 +1068,25 @@ struct MapWarpDest gAltin_WarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gAltinInteriors_WarpDests[] = {
+struct MapWarpDest gCottageRoomsD_WarpDests[] = {
     {0, CONDITION_ALWAYS, 200, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {ALTIN_INTERIORS_FROM_ALTIN_NORTHWEST, CONDITION_ALWAYS, 159, 0, 258,
+    {COTTAGE_ROOMS_D_FROM_ALTIN_NORTHWEST, CONDITION_ALWAYS, 159, 0, 258,
      FACING_NORTH, 0, 25, 16, 255, 300, 0},
-    {ALTIN_INTERIORS_FROM_ALTIN_NORTH, CONDITION_ALWAYS, 336, 0, 213,
+    {COTTAGE_ROOMS_D_FROM_ALTIN_NORTH, CONDITION_ALWAYS, 336, 0, 213,
      FACING_NORTH, 0, 268, 40, 500, 250, 0},
-    {ALTIN_INTERIORS_FROM_ALTIN_NORTHEAST, CONDITION_ALWAYS, 688, 0, 204,
+    {COTTAGE_ROOMS_D_FROM_ALTIN_NORTHEAST, CONDITION_ALWAYS, 688, 0, 204,
      FACING_NORTH, 0, 542, 40, 768, 250, 0},
-    {ALTIN_INTERIORS_FROM_ALTIN_WEST, CONDITION_ALWAYS, 240, 0, 500,
+    {COTTAGE_ROOMS_D_FROM_ALTIN_WEST, CONDITION_ALWAYS, 240, 0, 500,
      FACING_NORTH, 0, 110, 336, 350, 540, 0},
-    {ALTIN_INTERIORS_FROM_ALTIN_SOUTHEAST, CONDITION_ALWAYS, 496, 0, 504,
+    {COTTAGE_ROOMS_D_FROM_ALTIN_SOUTHEAST, CONDITION_ALWAYS, 496, 0, 504,
      FACING_NORTH, 0, 360, 336, 600, 540, 0},
-    {ALTIN_INTERIORS_FROM_ALTIN_EAST, CONDITION_ALWAYS, 752, 0, 516,
+    {COTTAGE_ROOMS_D_FROM_ALTIN_EAST, CONDITION_ALWAYS, 752, 0, 516,
      FACING_NORTH, 0, 635, 280, 845, 556, 0},
-    {ALTIN_INTERIORS_FROM_ALTIN_SOUTHWEST, CONDITION_ALWAYS, 80, 0, 864,
+    {COTTAGE_ROOMS_D_FROM_ALTIN_SOUTHWEST, CONDITION_ALWAYS, 80, 0, 864,
      FACING_NORTH, 0, 16, 638, 432, 912, 0},
-    {ALTIN_FROM_ALTIN_INTERIORS_EAST, CONDITION_ALWAYS, 68, 0, 728,
+    {ALTIN_FROM_COTTAGE_ROOMS_D_EAST, CONDITION_ALWAYS, 68, 0, 728,
      FACING_SOUTH, 0, 16, 638, 432, 912, 0},
-    {ALTIN_FROM_ALTIN_INTERIORS_WEST, CONDITION_ALWAYS, 690, 0, 732,
+    {ALTIN_FROM_COTTAGE_ROOMS_D_WEST, CONDITION_ALWAYS, 690, 0, 732,
      FACING_SOUTH, 0, 480, 626, 896, 882, 0},
     {MAP_TABLE_END},
 };
@@ -1091,21 +1094,21 @@ struct MapWarpDest gAltinInteriors_WarpDests[] = {
 u32 gAltin_Warps[] = {
     MAP_WARPS(Altin),
     MAP_WARP(ALTIN_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_ALTIN),
-    MAP_WARP(ALTIN_TO_ALTIN_INTERIORS_SOUTHWEST, AltinInteriors,
-             ALTIN_INTERIORS_FROM_ALTIN_SOUTHWEST),
+    MAP_WARP(ALTIN_TO_COTTAGE_ROOMS_D_SOUTHWEST, CottageRoomsD,
+             COTTAGE_ROOMS_D_FROM_ALTIN_SOUTHWEST),
     MAP_WARP(ALTIN_TO_SANCTUM, Sanctum, SANCTUM_FROM_ALTIN),
-    MAP_WARP(ALTIN_TO_ALTIN_INTERIORS_NORTHWEST, AltinInteriors,
-             ALTIN_INTERIORS_FROM_ALTIN_NORTHWEST),
-    MAP_WARP(ALTIN_TO_ALTIN_INTERIORS_NORTH, AltinInteriors,
-             ALTIN_INTERIORS_FROM_ALTIN_NORTH),
-    MAP_WARP(ALTIN_TO_ALTIN_INTERIORS_NORTHEAST, AltinInteriors,
-             ALTIN_INTERIORS_FROM_ALTIN_NORTHEAST),
-    MAP_WARP(ALTIN_TO_ALTIN_INTERIORS_SOUTHEAST, AltinInteriors,
-             ALTIN_INTERIORS_FROM_ALTIN_SOUTHEAST),
-    MAP_WARP(ALTIN_TO_ALTIN_INTERIORS_EAST, AltinInteriors,
-             ALTIN_INTERIORS_FROM_ALTIN_EAST),
-    MAP_WARP(ALTIN_TO_ALTIN_INTERIORS_WEST, AltinInteriors,
-             ALTIN_INTERIORS_FROM_ALTIN_WEST),
+    MAP_WARP(ALTIN_TO_COTTAGE_ROOMS_D_NORTHWEST, CottageRoomsD,
+             COTTAGE_ROOMS_D_FROM_ALTIN_NORTHWEST),
+    MAP_WARP(ALTIN_TO_COTTAGE_ROOMS_D_NORTH, CottageRoomsD,
+             COTTAGE_ROOMS_D_FROM_ALTIN_NORTH),
+    MAP_WARP(ALTIN_TO_COTTAGE_ROOMS_D_NORTHEAST, CottageRoomsD,
+             COTTAGE_ROOMS_D_FROM_ALTIN_NORTHEAST),
+    MAP_WARP(ALTIN_TO_COTTAGE_ROOMS_D_SOUTHEAST, CottageRoomsD,
+             COTTAGE_ROOMS_D_FROM_ALTIN_SOUTHEAST),
+    MAP_WARP(ALTIN_TO_COTTAGE_ROOMS_D_EAST, CottageRoomsD,
+             COTTAGE_ROOMS_D_FROM_ALTIN_EAST),
+    MAP_WARP(ALTIN_TO_COTTAGE_ROOMS_D_WEST, CottageRoomsD,
+             COTTAGE_ROOMS_D_FROM_ALTIN_WEST),
     MAP_WARP(ALTIN_TO_ALTIN_PEAK_FIRST_WATER_BEAST, AltinPeakFirstWaterBeast,
              ALTIN_PEAK_FIRST_WATER_BEAST_FROM_ALTIN),
     MAP_WARP(ALTIN_TO_ALTIN_PEAK_SOUTH_ENTRANCE, AltinPeakSouthEntrance,
@@ -1114,25 +1117,25 @@ u32 gAltin_Warps[] = {
              ALTIN_PEAK_JUNCTION_FROM_ALTIN),
     MAP_WARP(ALTIN_TO_ALTIN_PEAK_SPRITZ, AltinPeakSpritz,
              ALTIN_PEAK_SPRITZ_FROM_ALTIN),
-    MAP_WARPS(AltinInteriors),
-    MAP_WARP(ALTIN_INTERIORS_TO_ALTIN_NORTHWEST, Altin,
-             ALTIN_FROM_ALTIN_INTERIORS_NORTHWEST),
-    MAP_WARP(ALTIN_INTERIORS_TO_ALTIN_NORTH, Altin,
-             ALTIN_FROM_ALTIN_INTERIORS_NORTH),
-    MAP_WARP(ALTIN_INTERIORS_TO_ALTIN_NORTHEAST, Altin,
-             ALTIN_FROM_ALTIN_INTERIORS_NORTHEAST),
-    MAP_WARP(ALTIN_INTERIORS_TO_ALTIN_WEST, Altin,
-             ALTIN_FROM_ALTIN_INTERIORS_WEST),
-    MAP_WARP(ALTIN_INTERIORS_TO_ALTIN_SOUTHEAST, Altin,
-             ALTIN_FROM_ALTIN_INTERIORS_SOUTHEAST),
-    MAP_WARP(ALTIN_INTERIORS_TO_ALTIN_EAST, Altin,
-             ALTIN_FROM_ALTIN_INTERIORS_EAST),
-    MAP_WARP(ALTIN_INTERIORS_TO_ALTIN_SOUTHWEST, Altin,
-             ALTIN_FROM_ALTIN_INTERIORS_SOUTHWEST),
-    MAP_WARP(ALTIN_INTERIORS_INN_TO_INN_UPSTAIRS, AltinInteriors,
-             ALTIN_INTERIORS_INN_UPSTAIRS_FROM_INN),
-    MAP_WARP(ALTIN_INTERIORS_INN_UPSTAIRS_TO_INN, AltinInteriors,
-             ALTIN_INTERIORS_INN_FROM_INN_UPSTAIRS),
+    MAP_WARPS(CottageRoomsD),
+    MAP_WARP(COTTAGE_ROOMS_D_TO_ALTIN_NORTHWEST, Altin,
+             ALTIN_FROM_COTTAGE_ROOMS_D_NORTHWEST),
+    MAP_WARP(COTTAGE_ROOMS_D_TO_ALTIN_NORTH, Altin,
+             ALTIN_FROM_COTTAGE_ROOMS_D_NORTH),
+    MAP_WARP(COTTAGE_ROOMS_D_TO_ALTIN_NORTHEAST, Altin,
+             ALTIN_FROM_COTTAGE_ROOMS_D_NORTHEAST),
+    MAP_WARP(COTTAGE_ROOMS_D_TO_ALTIN_WEST, Altin,
+             ALTIN_FROM_COTTAGE_ROOMS_D_WEST),
+    MAP_WARP(COTTAGE_ROOMS_D_TO_ALTIN_SOUTHEAST, Altin,
+             ALTIN_FROM_COTTAGE_ROOMS_D_SOUTHEAST),
+    MAP_WARP(COTTAGE_ROOMS_D_TO_ALTIN_EAST, Altin,
+             ALTIN_FROM_COTTAGE_ROOMS_D_EAST),
+    MAP_WARP(COTTAGE_ROOMS_D_TO_ALTIN_SOUTHWEST, Altin,
+             ALTIN_FROM_COTTAGE_ROOMS_D_SOUTHWEST),
+    MAP_WARP(COTTAGE_ROOMS_D_INN_TO_INN_UPSTAIRS, CottageRoomsD,
+             COTTAGE_ROOMS_D_INN_UPSTAIRS_FROM_INN),
+    MAP_WARP(COTTAGE_ROOMS_D_INN_UPSTAIRS_TO_INN, CottageRoomsD,
+             COTTAGE_ROOMS_D_INN_FROM_INN_UPSTAIRS),
     MAP_WARPS_END,
 };
 
@@ -1191,7 +1194,7 @@ struct ObjectEventTemplate gAltin_ObjectEventTemplates[] = {
 };
 
 // clang-format off
-struct ObjectEventTemplate gAltinInteriors_ObjectEventTemplates[] = {
+struct ObjectEventTemplate gCottageRoomsD_ObjectEventTemplates[] = {
     {SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(104), 0, PIXELS(120), FACING_EAST + FACING_STEP,
         TALK_FACING_PARTY, 0},
     {SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(105), 0, PIXELS(233), FACING_SOUTH + FACING_STEP,
@@ -1214,7 +1217,7 @@ struct ObjectEventTemplate gAltinInteriors_ObjectEventTemplates[] = {
     {SPRITE_MAN_WITH_DARK_HAIR, 0x0, MOVEMENT_TYPE_STAND, PIXELS(103), 0, PIXELS(744), FACING_SOUTHEAST + FACING_STEP,
         TALK_FACING_PARTY, 0},
     {SPRITE_WOMAN_IN_PINK_APRON, 0x0, MOVEMENT_TYPE_WANDER_NEAR, PIXELS(228), 0, PIXELS(756), FACING_SOUTHWEST + FACING_STEP, TALK_FACING_PARTY, 0},
-    {SPRITE_COOK, 0x0, (s32)gAltinInteriors_CookScript, PIXELS(350), 0, PIXELS(746),
+    {SPRITE_COOK, 0x0, (s32)gCottageRoomsD_CookScript, PIXELS(350), 0, PIXELS(746),
         FACING_SOUTHWEST + FACING_STEP, TALK_FACING_PARTY, 0},
     {SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, MOVEMENT_TYPE_STAND, PIXELS(646), 0, PIXELS(734), FACING_SOUTHEAST + FACING_STEP,
         TALK_FACING_PARTY, 0},
@@ -1312,24 +1315,24 @@ struct MapEvent gAltin_Events[] = {
     {MAP_EVENTS_END},
 };
 
-struct MapEvent gAltinInteriors_Events[] = {
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_NORTHWEST},
-    {MAP_EVENT_WARP, 2, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_NORTH},
-    {MAP_EVENT_WARP, 3, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_NORTHEAST},
-    {MAP_EVENT_WARP, 4, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_WEST},
-    {MAP_EVENT_WARP, 5, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_SOUTHEAST},
-    {MAP_EVENT_WARP, 6, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_EAST},
-    {MAP_EVENT_WARP, 7, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_SOUTHWEST},
-    {MAP_EVENT_WARP, 8, CONDITION_ALWAYS, ALTIN_INTERIORS_INN_TO_INN_UPSTAIRS},
-    {MAP_EVENT_WARP, 9, CONDITION_ALWAYS, ALTIN_INTERIORS_INN_UPSTAIRS_TO_INN},
+struct MapEvent gCottageRoomsD_Events[] = {
+    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_NORTHWEST},
+    {MAP_EVENT_WARP, 2, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_NORTH},
+    {MAP_EVENT_WARP, 3, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_NORTHEAST},
+    {MAP_EVENT_WARP, 4, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_WEST},
+    {MAP_EVENT_WARP, 5, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_SOUTHEAST},
+    {MAP_EVENT_WARP, 6, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_EAST},
+    {MAP_EVENT_WARP, 7, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_SOUTHWEST},
+    {MAP_EVENT_WARP, 8, CONDITION_ALWAYS, COTTAGE_ROOMS_D_INN_TO_INN_UPSTAIRS},
+    {MAP_EVENT_WARP, 9, CONDITION_ALWAYS, COTTAGE_ROOMS_D_INN_UPSTAIRS_TO_INN},
     {MAP_EVENT_TALK, LOCALID_ROOM_ONE_GUEST, FLAG_ALTIN_WATER_DROPPED_ONCE, MSGNO(MsgAltinNoMatterWhatHappensIdNever)},
     {MAP_EVENT_TALK, LOCALID_ROOM_ONE_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinOhNoTheWholeHouseIs)},
     {MAP_EVENT_TALK, LOCALID_ROOM_ONE_GUEST, CONDITION_ALWAYS, MSGNO(MsgAltinIHearThatSilkRoadIs)},
     {MAP_EVENT_TALK, LOCALID_ROOM_ONE_SECOND_GUEST, FLAG_ALTIN_WATER_DROPPED_ONCE, MSGNO(MsgAltinOfCourseOurHouseWillBe)},
     {MAP_EVENT_TALK, LOCALID_ROOM_ONE_SECOND_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIfTheMonsterThatDidThis)},
-    {MAP_EVENT_TALK, LOCALID_ROOM_ONE_SECOND_GUEST, CONDITION_ALWAYS, EVENT_SCRIPT(AltinInteriors_AskAboutXianGirl)},
+    {MAP_EVENT_TALK, LOCALID_ROOM_ONE_SECOND_GUEST, CONDITION_ALWAYS, EVENT_SCRIPT(CottageRoomsD_AskAboutXianGirl)},
     {MAP_EVENT_TALK, LOCALID_ROOM_TWO_GUEST, FLAG_ALTIN_WATER_DROPPED_TWICE, MSGNO(MsgAltinNotManyPeopleComeUpSilk)},
-    {MAP_EVENT_TALK, LOCALID_ROOM_TWO_GUEST, FLAG_HYDROS_STATUES_DEFEATED, EVENT_SCRIPT(AltinInteriors_AskAboutWayWest)},
+    {MAP_EVENT_TALK, LOCALID_ROOM_TWO_GUEST, FLAG_HYDROS_STATUES_DEFEATED, EVENT_SCRIPT(CottageRoomsD_AskAboutWayWest)},
     {MAP_EVENT_TALK, LOCALID_ROOM_TWO_GUEST, CONDITION_ALWAYS, MSGNO(MsgAltinAncientRuinsAndTreasureDefinitelyGo)},
     {MAP_EVENT_TALK, LOCALID_ROOM_TWO_SECOND_GUEST, FLAG_ALTIN_WATER_DROPPED_TWICE, MSGNO(MsgAltinItsBeenALongTimeSince)},
     {MAP_EVENT_TALK, LOCALID_ROOM_TWO_SECOND_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinDontBeTooHarshOnThose)},
@@ -1338,12 +1341,12 @@ struct MapEvent gAltinInteriors_Events[] = {
     {MAP_EVENT_TALK, LOCALID_MAN_BACK_IN_HIS_HOMETOWN, CONDITION_ALWAYS, MSGNO(MsgAltinReallyAncientRuinsAtTheBottom)},
     {MAP_EVENT_TALK, LOCALID_WOMAN_NO_PLACE_LIKE_HOME, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIHeardSomeoneKilledTheWater)},
     {MAP_EVENT_TALK, LOCALID_WOMAN_NO_PLACE_LIKE_HOME, CONDITION_ALWAYS, MSGNO(MsgAltinThereProbablyIsntMuchTreasureIn)},
-    {MAP_EVENT_TALK, LOCALID_KISSING_GIRL, FLAG_HYDROS_STATUES_DEFEATED, EVENT_SCRIPT(AltinInteriors_AskAboutMonsters)},
+    {MAP_EVENT_TALK, LOCALID_KISSING_GIRL, FLAG_HYDROS_STATUES_DEFEATED, EVENT_SCRIPT(CottageRoomsD_AskAboutMonsters)},
     {MAP_EVENT_TALK, LOCALID_KISSING_GIRL, CONDITION_ALWAYS, MSGNO(MsgAltinSomethingsWrongWithMomAndPop)},
-    {MAP_EVENT_TALK, LOCALID_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(AltinInteriors_TalkToWeaponMerchant)},
+    {MAP_EVENT_TALK, LOCALID_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(CottageRoomsD_TalkToWeaponMerchant)},
     {MAP_EVENT_TALK, LOCALID_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Altin_TalkToArmorMerchant)},
     {MAP_EVENT_TALK, LOCALID_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Altin_TalkToItemMerchant)},
-    {MAP_EVENT_TALK, LOCALID_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(AltinInteriors_TalkToInnkeeper)},
+    {MAP_EVENT_TALK, LOCALID_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(CottageRoomsD_TalkToInnkeeper)},
     {MAP_EVENT_TALK, LOCALID_WOMAN_FORMER_GLORY, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIdGiveAnythingForSomeoneTo)},
     {MAP_EVENT_TALK, LOCALID_WOMAN_FORMER_GLORY, CONDITION_ALWAYS, MSGNO(MsgAltinThereIsAnEndlessDesertWest)},
     {MAP_EVENT_TALK, LOCALID_COOK, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinICameFromXianICook)},
@@ -1351,7 +1354,7 @@ struct MapEvent gAltinInteriors_Events[] = {
     {MAP_EVENT_TALK, LOCALID_MAN_WAITING_TO_GO_HOME, FLAG_ALTIN_WATER_DROPPED_ONCE, MSGNO(MsgAltinNoneOfUsCanGoHome)},
     {MAP_EVENT_TALK, LOCALID_MAN_WAITING_TO_GO_HOME, FLAG_ALTIN_WATER_DROPPED_TWICE, MSGNO(MsgAltinTheGuestsInRoomOneMoved)},
     {MAP_EVENT_TALK, LOCALID_MAN_WAITING_TO_GO_HOME, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinTheGuestsInRoomTwoAlso)},
-    {MAP_EVENT_TALK, LOCALID_MAN_WAITING_TO_GO_HOME, CONDITION_ALWAYS, EVENT_SCRIPT(AltinInteriors_AskAboutMineBeasts)},
+    {MAP_EVENT_TALK, LOCALID_MAN_WAITING_TO_GO_HOME, CONDITION_ALWAYS, EVENT_SCRIPT(CottageRoomsD_AskAboutMineBeasts)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_ONE_GUEST, FLAG_ALTIN_WATER_DROPPED_ONCE,
         MSGNO(MsgAltinLeavingAltinForTolbiWellThats)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_ONE_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinItsGoingToTakeALot)},

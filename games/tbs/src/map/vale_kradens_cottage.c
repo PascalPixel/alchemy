@@ -39,10 +39,10 @@
 ///   Talking to Kraden plays EventScript_KradenPlansSanctumVisit: Garet brings
 ///   up Saturos and Menardi, and Kraden talks the three into a secret look at
 ///   Sol Sanctum on the forbidden mountain, then goes in to prepare, and
-///   VALE_KRADENS_COTTAGE_TO_WOODEN_ROOMS_A_MYTHRIL_BAG takes the party into
-///   the cottage (MapId_WoodenRoomsA,
-///   WOODEN_ROOMS_A_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG). Coming back out by
-///   VALE_KRADENS_COTTAGE_FROM_WOODEN_ROOMS_A_SOUTH, Kraden joins them for Mt.
+///   VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG takes the party into
+///   the cottage (MapId_CottageRoomsB,
+///   COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG). Coming back out by
+///   VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH, Kraden joins them for Mt.
 ///   Aleph (EventScript_KradenSetsOff, FLAG_SANCTUM_VISIT_PLANNED); from then
 ///   on he and the strangers are gone. A small boy at the fence hears growls
 ///   beyond it, and a jar holds an Elixir.
@@ -51,8 +51,8 @@
 ///   fair hair visits the empty cottage, missing Kraden.
 ///
 /// By day the cottage's door (EventScript_EnterCottage) leads into the cottage
-/// (VALE_KRADENS_COTTAGE_TO_WOODEN_ROOMS_A_NORTH, to MapId_WoodenRoomsA's
-/// WOODEN_ROOMS_A_FROM_VALE_KRADENS_COTTAGE_NORTH),
+/// (VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH, to MapId_CottageRoomsB's
+/// COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_NORTH),
 /// VALE_KRADENS_COTTAGE_TO_VALE_NORTH and VALE_KRADENS_COTTAGE_TO_VALE_SOUTH go
 /// down into the village (MapId_Vale) and
 /// VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST and
@@ -241,10 +241,11 @@ static void EventScript_TalkToBoyByTheFence(void) {
 ///
 /// Reached by talking to Kraden in the day's events, until
 /// FLAG_SANCTUM_VISIT_PLANNED is set. Ends by taking
-/// VALE_KRADENS_COTTAGE_TO_WOODEN_ROOMS_A_MYTHRIL_BAG into the cottage
-/// (MapId_WoodenRoomsA, WOODEN_ROOMS_A_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG);
-/// the party comes back by VALE_KRADENS_COTTAGE_FROM_WOODEN_ROOMS_A_SOUTH,
-/// where EventScript_KradenSetsOff goes on.
+/// VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG into the cottage
+/// (MapId_CottageRoomsB,
+/// COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG); the party comes back
+/// by VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH, where
+/// EventScript_KradenSetsOff goes on.
 static void EventScript_KradenPlansSanctumVisit(void) {
   struct ObjectEvent *leader;
   s32 x, z;
@@ -499,7 +500,7 @@ static void EventScript_KradenPlansSanctumVisit(void) {
                               10);
     // Kraden opens his door and goes in to prepare; the screen closes and the
     // party follows him through
-    // VALE_KRADENS_COTTAGE_TO_WOODEN_ROOMS_A_MYTHRIL_BAG.
+    // VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG.
     Script_PlaySong(SE_DOOR_OPEN);
     MapGrid_AnimateCells(gValeKradensCottage_DoorOpens, 43, 8);
     ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
@@ -514,17 +515,17 @@ static void EventScript_KradenPlansSanctumVisit(void) {
     FieldScript_FinishScreenTransition();
     FieldScript_WaitTransitionFrames();
     Import_ScriptRequestWarp(
-        VALE_KRADENS_COTTAGE_TO_WOODEN_ROOMS_A_MYTHRIL_BAG);
+        VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG);
     FieldScript_End();
   }
 }
 
 /// In Vale, back out of Kraden's cottage by
-/// VALE_KRADENS_COTTAGE_FROM_WOODEN_ROOMS_A_SOUTH: Kraden comes out ready, and
+/// VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH: Kraden comes out ready, and
 /// everyone joins Isaac for Mt. Aleph. "This is our best bet."
 ///
 /// Called by ValeKradensCottage_Initialize on
-/// VALE_KRADENS_COTTAGE_FROM_WOODEN_ROOMS_A_SOUTH unless the party keeps its
+/// VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH unless the party keeps its
 /// position. Sets FLAG_SANCTUM_VISIT_PLANNED and FLAG_VALE_KRADENS_DOOR_OPEN
 /// (the door stays open), and removes Kraden, Garet, Jenna, Saturos and
 /// Menardi.
@@ -599,14 +600,14 @@ static void EventScript_KradenSetsOff(void) {
 /// it open.
 ///
 /// Reached by walking north into metatile behavior 3, by day and after Kalay;
-/// takes VALE_KRADENS_COTTAGE_TO_WOODEN_ROOMS_A_NORTH into the cottage.
+/// takes VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH into the cottage.
 static void EventScript_EnterCottage(void) {
   if (GameFlag_Get(FLAG_VALE_KRADENS_DOOR_OPEN) == 0) {
     Sound_PlaySong(SE_DOOR_OPEN);
     MapGrid_PlayMetatileCopySequence(gValeKradensCottage_DoorOpens, 43, 8);
   }
   ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 229, 217);
-  Import_ScriptRequestWarp(VALE_KRADENS_COTTAGE_TO_WOODEN_ROOMS_A_NORTH);
+  Import_ScriptRequestWarp(VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH);
 }
 
 /// In Vale on the way to Kraden's cottage, walking past the two strangers:
@@ -943,7 +944,7 @@ static void EventScript_OverhearKraden(void) {
 /// (unless FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) and blocks the cells the
 /// rockslide covers. By day it removes the rocks and Garet, runs
 /// EventScript_KradenSetsOff from
-/// VALE_KRADENS_COTTAGE_FROM_WOODEN_ROOMS_A_SOUTH, removes Kraden and the
+/// VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH, removes Kraden and the
 /// strangers once FLAG_SANCTUM_VISIT_PLANNED is set, and places the cottage
 /// visitor after Kalay. Clears FLAG_VALE_KRADENS_DOOR_OPEN when the party keeps
 /// its position.
@@ -1006,7 +1007,7 @@ s32 ValeKradensCottage_Initialize(void) {
     FieldScript_Start();
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       if (gSaveBlock.warpDest ==
-          VALE_KRADENS_COTTAGE_FROM_WOODEN_ROOMS_A_SOUTH) {
+          VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH) {
         EventScript_KradenSetsOff();
       }
     }
@@ -1239,13 +1240,13 @@ struct MapWarpDest gValeKradensCottage_WarpDests[] = {
      FACING_WEST, 0, -1, -1, -1, -1, 0},
     {VALE_KRADENS_COTTAGE_FROM_VALE_SOUTH, CONDITION_ALWAYS, 454, 0, 443,
      FACING_WEST, 0, -1, -1, -1, -1, 0},
-    {VALE_KRADENS_COTTAGE_FROM_WOODEN_ROOMS_A_NORTH, CONDITION_ALWAYS, 229, 0,
+    {VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_NORTH, CONDITION_ALWAYS, 229, 0,
      233, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_WEST, CONDITION_ALWAYS, 72, 0,
      80, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST, CONDITION_ALWAYS, 104, 0,
      104, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VALE_KRADENS_COTTAGE_FROM_WOODEN_ROOMS_A_SOUTH, CONDITION_ALWAYS, 232, 0,
+    {VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH, CONDITION_ALWAYS, 232, 0,
      264, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {MAP_TABLE_END},
 };
@@ -1256,8 +1257,8 @@ u32 gValeKradensCottage_Warps[] = {
              VALE_FROM_VALE_KRADENS_COTTAGE_NORTH),
     MAP_WARP(VALE_KRADENS_COTTAGE_TO_VALE_SOUTH, Vale,
              VALE_FROM_VALE_KRADENS_COTTAGE_SOUTH),
-    MAP_WARP(VALE_KRADENS_COTTAGE_TO_WOODEN_ROOMS_A_NORTH, WoodenRoomsA,
-             WOODEN_ROOMS_A_FROM_VALE_KRADENS_COTTAGE_NORTH),
+    MAP_WARP(VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH, CottageRoomsB,
+             COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_NORTH),
     MAP_WARP(VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST, ValeCaveMouth,
              VALE_CAVE_MOUTH_FROM_VALE_KRADENS_COTTAGE_WEST),
     MAP_WARP(VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST, ValeCaveMouth,
@@ -1266,8 +1267,8 @@ u32 gValeKradensCottage_Warps[] = {
              VALE_STORMY_NIGHT_FROM_VALE_KRADENS_COTTAGE_NORTH),
     MAP_WARP(VALE_KRADENS_COTTAGE_TO_VALE_STORMY_NIGHT_SOUTH, ValeStormyNight,
              VALE_STORMY_NIGHT_FROM_VALE_KRADENS_COTTAGE_SOUTH),
-    MAP_WARP(VALE_KRADENS_COTTAGE_TO_WOODEN_ROOMS_A_MYTHRIL_BAG, WoodenRoomsA,
-             WOODEN_ROOMS_A_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG),
+    MAP_WARP(VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG, CottageRoomsB,
+             COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG),
     MAP_WARPS_END,
 };
 

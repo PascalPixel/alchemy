@@ -47,10 +47,10 @@
 ///   (WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH) it stops and the leader steps
 ///   down.
 /// - The Tolbi-bound Ship's crossing of the Karagol Sea: between the ship's
-///   maps (WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_FIRST_ATTACK to
+///   maps (WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_FIRST_ATTACK to
 ///   _SAIL_TO_LAND) the map shows the ship sailing west and sends the party
 ///   back aboard (FLAG_TOLBI_SHIP_ROWING). A rowing off course takes it north
-///   to anchor off the island (WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS,
+///   to anchor off the island (WORLD_MAP_FROM_SHIP_ROOMS,
 ///   FLAG_TOLBI_SHIP_AT_ISLAND), where MB_WORLD_MAP_CROSSBONE_ISLE leads ashore
 ///   and MB_WORLD_MAP_TOLBI_SHIP back aboard;
 ///   WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI ends the crossing at Tolbi
@@ -62,7 +62,7 @@
 ///   (MB_WORLD_MAP_SHIPWRECK) the orb does nothing; Iodem takes it back and the
 ///   party must go on to Babi Lighthouse (FLAG_BLACK_ORB_RETURNED). A defeat
 ///   meanwhile returns to WORLD_MAP_AFTER_BLACK_ORB_DEFEAT, which discards the
-///   orb and leads on by WORLD_MAP_TO_LUNPA_INTERIORS.
+///   orb and leads on by WORLD_MAP_TO_ROCK_ROOMS.
 /// - Venus Lighthouse lit (WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT): the
 ///   lighthouse transition, then back to the Lighthouse Aerie
 ///   (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT); after the look back
@@ -374,9 +374,9 @@ enum WorldMapCaravanLocalId {
 /// The Tolbi-bound Ship, the first object event of
 /// gWorldMapObjectEventTemplatesCrossingEnds and
 /// gWorldMapObjectEventTemplatesCrossing
-/// (WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_FIRST_ATTACK to
+/// (WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_FIRST_ATTACK to
 /// WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI and
-/// WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS), shown on its way across the Karagol
+/// WORLD_MAP_FROM_SHIP_ROOMS), shown on its way across the Karagol
 /// Sea.
 enum {
   /// ★ Named from its area name: Tolbi-bound Ship
@@ -666,7 +666,7 @@ const struct ObjectEventTemplate *WorldMap_GetObjectEventTemplates(void) {
       return gWorldMapObjectEventTemplatesHammetsCaravan;
     }
     break;
-  case WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_FIRST_ATTACK:
+  case WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_FIRST_ATTACK:
   case WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI:
     return gWorldMapObjectEventTemplatesCrossingEnds;
   case WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH:
@@ -675,11 +675,11 @@ const struct ObjectEventTemplate *WorldMap_GetObjectEventTemplates(void) {
     return gWorldMapObjectEventTemplatesFromClear;
   case WORLD_MAP_BEFORE_SHEBAS_FALL:
     return gWorldMapObjectEventTemplatesBeforeShebasFall;
-  case WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_SECOND_ATTACK:
-  case WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_THIRD_ATTACK:
-  case WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_KRAKEN:
-  case WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_LAND:
-  case WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS:
+  case WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_SECOND_ATTACK:
+  case WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_THIRD_ATTACK:
+  case WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_KRAKEN:
+  case WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_LAND:
+  case WORLD_MAP_FROM_SHIP_ROOMS:
     return gWorldMapObjectEventTemplatesCrossing;
   case WORLD_MAP_JENNA_AND_KRADEN_ADRIFT:
     return gWorldMapObjectEventTemplatesJennaAndKradenAdrift;
@@ -893,7 +893,7 @@ s32 WorldMap_Initialize(void) {
   } else if (*warpDest == WORLD_MAP_AFTER_BLACK_ORB_DEFEAT) {
     FieldScript_Start();
     PartyInventory_Discard(ITEM_BLACK_ORB);
-    Import_ScriptRequestWarp(WORLD_MAP_TO_LUNPA_INTERIORS);
+    Import_ScriptRequestWarp(WORLD_MAP_TO_ROCK_ROOMS);
   } else {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_CENTRE_LINE, 0);
@@ -942,19 +942,19 @@ s32 WorldMap_Initialize(void) {
         WorldMap_ShowHammetsCaravan();
       }
       break;
-    case WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_FIRST_ATTACK:
+    case WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_FIRST_ATTACK:
       WorldMap_SailToFirstMonsterAttack();
       break;
-    case WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_SECOND_ATTACK:
+    case WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_SECOND_ATTACK:
       WorldMap_SailToSecondMonsterAttack();
       break;
-    case WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_THIRD_ATTACK:
+    case WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_THIRD_ATTACK:
       WorldMap_SailToThirdMonsterAttack();
       break;
-    case WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_KRAKEN:
+    case WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_KRAKEN:
       WorldMap_SailToKraken();
       break;
-    case WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_LAND:
+    case WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_LAND:
       WorldMap_SailUntilLandSighted();
       break;
     case WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI:
@@ -979,7 +979,7 @@ s32 WorldMap_Initialize(void) {
                                    TASK_PRIORITY_MAP);
       }
       break;
-    case WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS:
+    case WORLD_MAP_FROM_SHIP_ROOMS:
       WorldMap_SailTolbiShipToIsland();
       break;
     case WORLD_MAP_JENNA_AND_KRADEN_ADRIFT:
@@ -1455,7 +1455,7 @@ static void WorldMap_UpdateFallingRock(void) {
 /// on the mast for the first monster attack
 /// (TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK, tolbi_ship_mast.c). Called by
 /// WorldMap_Initialize at
-/// WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_FIRST_ATTACK; sets
+/// WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_FIRST_ATTACK; sets
 /// FLAG_TOLBI_SHIP_ROWING.
 static void WorldMap_SailToFirstMonsterAttack(void) {
   struct ObjectEvent *objectEvent;
@@ -1513,7 +1513,7 @@ static inline void WorldMap_SailCrossingLeg(s32 warp) {
 /// SECOND_ATTACK leads up to the lookout on the mast for the second monster
 /// attack (TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK).
 /// Called by WorldMap_Initialize at
-/// WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_SECOND_ATTACK.
+/// WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_SECOND_ATTACK.
 static void WorldMap_SailToSecondMonsterAttack(void) {
   WorldMap_SailCrossingLeg(WORLD_MAP_TO_TOLBI_SHIP_MAST_SECOND_ATTACK);
 }
@@ -1522,18 +1522,18 @@ static void WorldMap_SailToSecondMonsterAttack(void) {
 /// THIRD_ATTACK leads up to the lookout on the mast for the third monster
 /// attack (TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK).
 /// Called by WorldMap_Initialize at
-/// WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_THIRD_ATTACK.
+/// WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_THIRD_ATTACK.
 static void WorldMap_SailToThirdMonsterAttack(void) {
   WorldMap_SailCrossingLeg(WORLD_MAP_TO_TOLBI_SHIP_MAST_THIRD_ATTACK);
 }
 
-/// A leg of the Tolbi-bound Ship's crossing: WORLD_MAP_TO_TOLBI_SHIP_INTERIORS
+/// A leg of the Tolbi-bound Ship's crossing: WORLD_MAP_TO_SHIP_ROOMS
 /// leads back down to the rowing deck as the Kraken comes aboard
-/// (TOLBI_SHIP_INTERIORS_FROM_WORLD_MAP).
+/// (SHIP_ROOMS_FROM_WORLD_MAP).
 /// Called by WorldMap_Initialize at
-/// WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_KRAKEN.
+/// WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_KRAKEN.
 static void WorldMap_SailToKraken(void) {
-  WorldMap_SailCrossingLeg(WORLD_MAP_TO_TOLBI_SHIP_INTERIORS);
+  WorldMap_SailCrossingLeg(WORLD_MAP_TO_SHIP_ROOMS);
 }
 
 /// The last leg of the Tolbi-bound Ship's crossing: the ship sails west,
@@ -1541,7 +1541,7 @@ static void WorldMap_SailToKraken(void) {
 /// one that takes it off course to the island, and
 /// WORLD_MAP_TO_TOLBI_SHIP_MAST_LAND_HO leads up to the lookout on the mast as
 /// he sights land (TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO). Called by
-/// WorldMap_Initialize at WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_LAND;
+/// WorldMap_Initialize at WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_LAND;
 /// sets FLAG_TOLBI_SHIP_ROWING.
 static void WorldMap_SailUntilLandSighted(void) {
   struct ObjectEvent *objectEvent;
@@ -2462,10 +2462,10 @@ static void WorldMap_UpdateLighthouseQuake(void) {
 }
 
 /// A leg of the Tolbi-bound Ship's crossing: out of the ship's interior
-/// (TOLBI_SHIP_INTERIORS_TO_WORLD_MAP) the ship sails north to its anchorage
+/// (SHIP_ROOMS_TO_WORLD_MAP) the ship sails north to its anchorage
 /// off the island, where LOCALID_TOLBI_SHIP stands, and the party goes back
-/// into it (WORLD_MAP_TO_TOLBI_SHIP_INTERIORS_ROWING_DECK_ISLAND). Called by
-/// WorldMap_Initialize at WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS.
+/// into it (WORLD_MAP_TO_SHIP_ROOMS_ROWING_DECK_ISLAND). Called by
+/// WorldMap_Initialize at WORLD_MAP_FROM_SHIP_ROOMS.
 static void WorldMap_SailTolbiShipToIsland(void) {
 
   struct ObjectEvent *objectEvent;
@@ -2501,8 +2501,7 @@ static void WorldMap_SailTolbiShipToIsland(void) {
   FieldScript_WaitFrames(40);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(
-      WORLD_MAP_TO_TOLBI_SHIP_INTERIORS_ROWING_DECK_ISLAND);
+  Import_ScriptRequestWarp(WORLD_MAP_TO_SHIP_ROOMS_ROWING_DECK_ISLAND);
 }
 
 /// The rowers' balance, as TolbiShipMast_GetRowingBalance (tolbi_ship_mast.c)
@@ -3344,16 +3343,16 @@ struct MapWarpDest gWorldMapWarpDests[] = {
      3212, FACING_EAST, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_HAMMETS_CARAVAN_LEAVES, CONDITION_ALWAYS, 5848, 0, 1608,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_FIRST_ATTACK, CONDITION_ALWAYS,
-     5384, 0, 2248, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_SECOND_ATTACK,
-     CONDITION_ALWAYS, 7944, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_THIRD_ATTACK, CONDITION_ALWAYS,
-     7944, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_KRAKEN, CONDITION_ALWAYS, 7944,
-     0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_LAND, CONDITION_ALWAYS, 7944,
-     0, 200, FACING_SOUTH, 0, -1, 128, -1, -1, 0},
+    {WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_FIRST_ATTACK, CONDITION_ALWAYS, 5384, 0,
+     2248, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_SECOND_ATTACK, CONDITION_ALWAYS, 7944, 0,
+     200, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_THIRD_ATTACK, CONDITION_ALWAYS, 7944, 0,
+     200, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_KRAKEN, CONDITION_ALWAYS, 7944, 0, 200,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_LAND, CONDITION_ALWAYS, 7944, 0, 200,
+     FACING_SOUTH, 0, -1, 128, -1, -1, 0},
     {WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI, CONDITION_ALWAYS, 5096, 0,
      2328, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH, CONDITION_ALWAYS, 5528, 0,
@@ -3364,8 +3363,8 @@ struct MapWarpDest gWorldMapWarpDests[] = {
      0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_TOLBI_SHIP_DECK_CROSSBONE_ISLE, CONDITION_ALWAYS, 4728, 0,
      424, FACING_WEST, 0, -1, -1, -1, -1, 0},
-    {WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS, CONDITION_ALWAYS, 4872, 0, 808,
-     FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_SHIP_ROOMS, CONDITION_ALWAYS, 4872, 0, 808, FACING_WEST, 0,
+     -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_CROSSBONE_ISLE, CONDITION_ALWAYS, 4576, 0, 508,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_SUHALLA_DESERT_SANDSTORM, CONDITION_ALWAYS, 4392, 0, 328,
@@ -3499,8 +3498,7 @@ u32 gWorldMapWarps[] = {
              TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK),
     MAP_WARP(WORLD_MAP_TO_TOLBI_SHIP_MAST_THIRD_ATTACK, TolbiShipMast,
              TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK),
-    MAP_WARP(WORLD_MAP_TO_TOLBI_SHIP_INTERIORS, TolbiShipInteriors,
-             TOLBI_SHIP_INTERIORS_FROM_WORLD_MAP),
+    MAP_WARP(WORLD_MAP_TO_SHIP_ROOMS, ShipRooms, SHIP_ROOMS_FROM_WORLD_MAP),
     MAP_WARP(WORLD_MAP_TO_TOLBI_SHIP_MAST_LAND_HO, TolbiShipMast,
              TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO),
     MAP_WARP(WORLD_MAP_TO_TOLBI_SHIP_DECK, TolbiShipDeck,
@@ -3509,13 +3507,12 @@ u32 gWorldMapWarps[] = {
              KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH),
     MAP_WARP(WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE, VenusLighthouseAerie,
              VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_TOLBI_SHIP_INTERIORS_ROWING_DECK_ISLAND,
-             TolbiShipInteriors,
-             TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_WORLD_MAP_ISLAND),
+    MAP_WARP(WORLD_MAP_TO_SHIP_ROOMS_ROWING_DECK_ISLAND, ShipRooms,
+             SHIP_ROOMS_ROWING_DECK_FROM_WORLD_MAP_ISLAND),
     MAP_WARP(WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT, WorldMap,
              WORLD_MAP_JENNA_AND_KRADEN_ADRIFT),
-    MAP_WARP(WORLD_MAP_TO_LUNPA_INTERIORS, LunpaInteriors,
-             LUNPA_INTERIORS_FROM_SUHALLA_GATE_CHECKPOINT),
+    MAP_WARP(WORLD_MAP_TO_ROCK_ROOMS, RockRooms,
+             ROCK_ROOMS_FROM_SUHALLA_GATE_CHECKPOINT),
     MAP_WARPS_END,
 };
 

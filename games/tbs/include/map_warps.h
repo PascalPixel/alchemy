@@ -88,11 +88,11 @@ enum {
   WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_NORTH = 60,
   WORLD_MAP_FROM_VENUS_LIGHTHOUSE_ENTRY_WEST = 61,
   WORLD_MAP_HAMMETS_CARAVAN_LEAVES = 64,
-  WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_FIRST_ATTACK = 65,
-  WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_SECOND_ATTACK = 66,
-  WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_THIRD_ATTACK = 67,
-  WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_KRAKEN = 68,
-  WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_LAND = 69,
+  WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_FIRST_ATTACK = 65,
+  WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_SECOND_ATTACK = 66,
+  WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_THIRD_ATTACK = 67,
+  WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_KRAKEN = 68,
+  WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_LAND = 69,
   WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI = 70,
   WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH = 71,
   WORLD_MAP_FROM_MAIN_MENU = 72,
@@ -101,14 +101,14 @@ enum {
   /// Sheba's fall (WorldMap_ShakeVenusLighthouse).
   WORLD_MAP_BEFORE_SHEBAS_FALL = 73,
   WORLD_MAP_FROM_TOLBI_SHIP_DECK_CROSSBONE_ISLE = 74,
-  WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS = 75,
+  WORLD_MAP_FROM_SHIP_ROOMS = 75,
   WORLD_MAP_FROM_CROSSBONE_ISLE = 76,
   /// Where one of the Suhalla Desert's storms sets the party down, still in
   /// the air, beside the world map's own storm.
   /// ★ Named from its area name: Suhalla Desert
   WORLD_MAP_FROM_SUHALLA_DESERT_SANDSTORM = 77,
   /// Where a defeat returns after Iodem hands over the Black Orb: the orb is
-  /// discarded and WORLD_MAP_TO_LUNPA_INTERIORS leads on.
+  /// discarded and WORLD_MAP_TO_ROCK_ROOMS leads on.
   WORLD_MAP_AFTER_BLACK_ORB_DEFEAT = 78,
   WORLD_MAP_JENNA_AND_KRADEN_ADRIFT = 80,
   WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT =
@@ -191,17 +191,17 @@ enum {
   WORLD_MAP_TO_TOLBI_SHIP_MAST_FIRST_ATTACK = 102,
   WORLD_MAP_TO_TOLBI_SHIP_MAST_SECOND_ATTACK = 103,
   WORLD_MAP_TO_TOLBI_SHIP_MAST_THIRD_ATTACK = 104,
-  WORLD_MAP_TO_TOLBI_SHIP_INTERIORS = 105,
+  WORLD_MAP_TO_SHIP_ROOMS = 105,
   WORLD_MAP_TO_TOLBI_SHIP_MAST_LAND_HO =
       106, ///< ★ Named from the game: "Land ho!" (MsgTolbiShipLandHo)
   WORLD_MAP_TO_TOLBI_SHIP_DECK = 107,
   WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE_SOUTH = 108,
   WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE = 109,
-  WORLD_MAP_TO_TOLBI_SHIP_INTERIORS_ROWING_DECK_ISLAND = 110,
+  WORLD_MAP_TO_SHIP_ROOMS_ROWING_DECK_ISLAND = 110,
   WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT =
       111, ///< ★ Named from what the player sees: Jenna and Kraden adrift on an
            ///< island in the ending (its render)
-  WORLD_MAP_TO_LUNPA_INTERIORS = 112,
+  WORLD_MAP_TO_ROCK_ROOMS = 112,
 };
 
 /// MapId_ValeStormyNight's warp destinations.
@@ -209,14 +209,14 @@ enum {
   VALE_STORMY_NIGHT_FROM_VALE_KRADENS_COTTAGE_NORTH = 3,
   VALE_STORMY_NIGHT_FROM_VALE_KRADENS_COTTAGE_SOUTH = 4,
   VALE_STORMY_NIGHT_FROM_VALE_PLAZA = 5,
-  VALE_STORMY_NIGHT_FROM_VALE_INTERIORS_EAST = 6,
-  VALE_STORMY_NIGHT_FROM_VALE_INTERIORS_SOUTH = 7,
-  VALE_STORMY_NIGHT_FROM_WOODEN_ROOMS_A_ISAACS_HOUSE = 8,
-  VALE_STORMY_NIGHT_FROM_VALE_INTERIORS_NORTH = 9,
-  VALE_STORMY_NIGHT_FROM_VALE_INTERIORS_WEST = 10,
-  VALE_STORMY_NIGHT_FROM_WOODEN_ROOMS_A_WEST = 12,
-  VALE_STORMY_NIGHT_FROM_WOODEN_ROOMS_A_EAST = 13,
-  VALE_STORMY_NIGHT_FROM_WOODEN_ROOMS_A_WITH_DORA = 15,
+  VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_EAST = 6,
+  VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_SOUTH = 7,
+  VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_ISAACS_HOUSE = 8,
+  VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_NORTH = 9,
+  VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_WEST = 10,
+  VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WEST = 12,
+  VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_EAST = 13,
+  VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA = 15,
   VALE_STORMY_NIGHT_FROM_BOULDER_PASSED = 16,
 };
 /// MapId_ValeStormyNight's warps.
@@ -224,22 +224,22 @@ enum {
   VALE_STORMY_NIGHT_TO_VALE_PLAZA = 2,
   VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_NORTH = 3,
   VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_SOUTH = 4,
-  VALE_STORMY_NIGHT_TO_VALE_INTERIORS_EAST = 5,
-  VALE_STORMY_NIGHT_TO_VALE_INTERIORS_SOUTH = 6,
-  VALE_STORMY_NIGHT_TO_WOODEN_ROOMS_A_ISAACS_HOUSE =
+  VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_EAST = 5,
+  VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_SOUTH = 6,
+  VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_ISAACS_HOUSE =
       7, ///< ★ Named from what the player sees: the door of Isaac's house on
          ///< the stormy night (its render)
-  VALE_STORMY_NIGHT_TO_VALE_INTERIORS_NORTH = 8,
-  VALE_STORMY_NIGHT_TO_VALE_INTERIORS_WEST = 9,
-  VALE_STORMY_NIGHT_TO_VALE_INTERIORS_WEST_SECOND_DOOR =
+  VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_NORTH = 8,
+  VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST = 9,
+  VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST_SECOND_DOOR =
       10, ///< ★ Named from what the player sees: the second door of the house
           ///< by the river, leading where the first house door does (its
           ///< render)
-  VALE_STORMY_NIGHT_TO_VALE_INTERIORS_WEST_SANCTUM_DOOR =
+  VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST_SANCTUM_DOOR =
       11, ///< ★ Named from what the player sees: the door where the Sanctum
           ///< stands by day (its render)
-  VALE_STORMY_NIGHT_TO_WOODEN_ROOMS_A_WEST = 12,
-  VALE_STORMY_NIGHT_TO_WOODEN_ROOMS_A_EAST = 13,
+  VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_WEST = 12,
+  VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_EAST = 13,
   VALE_STORMY_NIGHT_TO_BOULDER_PASSED =
       20, ///< ★ Named from what the player sees: the riverbank where Isaac
           ///< stands once the Boulder has swept down the river (its render)
@@ -252,15 +252,15 @@ enum {
   VALE_FROM_VALE_KRADENS_COTTAGE_NORTH = 3,
   VALE_FROM_VALE_KRADENS_COTTAGE_SOUTH = 4,
   VALE_FROM_VALE_PLAZA = 5,
-  VALE_FROM_VALE_INTERIORS_EAST = 6,
-  VALE_FROM_VALE_INTERIORS_SOUTH = 7,
-  VALE_FROM_WOODEN_ROOMS_A = 8,
-  VALE_FROM_VALE_INTERIORS_NORTH = 9,
-  VALE_FROM_VALE_INTERIORS_WEST = 10,
+  VALE_FROM_COTTAGE_ROOMS_A_EAST = 6,
+  VALE_FROM_COTTAGE_ROOMS_A_SOUTH = 7,
+  VALE_FROM_COTTAGE_ROOMS_B = 8,
+  VALE_FROM_COTTAGE_ROOMS_A_NORTH = 9,
+  VALE_FROM_COTTAGE_ROOMS_A_WEST = 10,
   /// Beside the second door into the house of Jenna's grandparents, which
-  /// VALE_TO_VALE_INTERIORS_NORTH_SECOND_DOOR leaves by; no warp leads
+  /// VALE_TO_COTTAGE_ROOMS_A_NORTH_SECOND_DOOR leaves by; no warp leads
   /// here.
-  VALE_FROM_VALE_INTERIORS_NORTH_SECOND_DOOR = 11,
+  VALE_FROM_COTTAGE_ROOMS_A_NORTH_SECOND_DOOR = 11,
   VALE_FROM_TITLE = 16,
   VALE_FROM_ROOF_MENDED = 17,
 };
@@ -270,12 +270,12 @@ enum {
   VALE_TO_VALE_PLAZA = 2,
   VALE_TO_VALE_KRADENS_COTTAGE_NORTH = 3,
   VALE_TO_VALE_KRADENS_COTTAGE_SOUTH = 4,
-  VALE_TO_VALE_INTERIORS_EAST = 5,
-  VALE_TO_VALE_INTERIORS_SOUTH = 6,
-  VALE_TO_WOODEN_ROOMS_A = 7,
-  VALE_TO_VALE_INTERIORS_NORTH = 8,
-  VALE_TO_VALE_INTERIORS_WEST = 9,
-  VALE_TO_VALE_INTERIORS_NORTH_SECOND_DOOR =
+  VALE_TO_COTTAGE_ROOMS_A_EAST = 5,
+  VALE_TO_COTTAGE_ROOMS_A_SOUTH = 6,
+  VALE_TO_COTTAGE_ROOMS_B = 7,
+  VALE_TO_COTTAGE_ROOMS_A_NORTH = 8,
+  VALE_TO_COTTAGE_ROOMS_A_WEST = 9,
+  VALE_TO_COTTAGE_ROOMS_A_NORTH_SECOND_DOOR =
       10, ///< ★ Named from what the player sees: the door of the house by the
           ///< river that leads into Jenna's grandparents' house (its render)
   VALE_TO_SANCTUM = 11,
@@ -285,13 +285,13 @@ enum {
 
 /// MapId_ValePlaza's warp destinations.
 enum {
-  VALE_PLAZA_FROM_VALE_INTERIORS_NORTH = 1,
-  VALE_PLAZA_FROM_WOODEN_ROOMS_A_NORTH = 2,
-  VALE_PLAZA_FROM_VALE_INTERIORS_WEST = 3,
-  VALE_PLAZA_FROM_VALE_INTERIORS_EAST = 4,
-  VALE_PLAZA_FROM_VALE_INTERIORS_SOUTH = 5,
-  VALE_PLAZA_FROM_WOODEN_ROOMS_A_WEST = 6,
-  VALE_PLAZA_FROM_WOODEN_ROOMS_A_SOUTH = 7,
+  VALE_PLAZA_FROM_COTTAGE_ROOMS_A_NORTH = 1,
+  VALE_PLAZA_FROM_COTTAGE_ROOMS_B_NORTH = 2,
+  VALE_PLAZA_FROM_COTTAGE_ROOMS_A_WEST = 3,
+  VALE_PLAZA_FROM_COTTAGE_ROOMS_A_EAST = 4,
+  VALE_PLAZA_FROM_COTTAGE_ROOMS_A_SOUTH = 5,
+  VALE_PLAZA_FROM_COTTAGE_ROOMS_B_WEST = 6,
+  VALE_PLAZA_FROM_COTTAGE_ROOMS_B_SOUTH = 7,
   VALE_PLAZA_FROM_VALE = 8,
   VALE_PLAZA_FROM_WORLD_MAP = 10,
   VALE_PLAZA_FROM_GOMA_CAVE_STREAM = 11,
@@ -313,129 +313,129 @@ enum {
 };
 /// MapId_ValePlaza's warps.
 enum {
-  VALE_PLAZA_TO_VALE_INTERIORS_EAST = 1,
-  VALE_PLAZA_TO_WOODEN_ROOMS_A_NORTH = 2,
-  VALE_PLAZA_TO_VALE_INTERIORS_NORTH = 3,
-  VALE_PLAZA_TO_VALE_INTERIORS_SOUTH = 4,
-  VALE_PLAZA_TO_VALE_INTERIORS_WEST = 5,
-  VALE_PLAZA_TO_WOODEN_ROOMS_A_NORTHWEST = 6,
-  VALE_PLAZA_TO_WOODEN_ROOMS_A_SOUTH = 7,
+  VALE_PLAZA_TO_COTTAGE_ROOMS_A_EAST = 1,
+  VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTH = 2,
+  VALE_PLAZA_TO_COTTAGE_ROOMS_A_NORTH = 3,
+  VALE_PLAZA_TO_COTTAGE_ROOMS_A_SOUTH = 4,
+  VALE_PLAZA_TO_COTTAGE_ROOMS_A_WEST = 5,
+  VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTHWEST = 6,
+  VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTH = 7,
   VALE_PLAZA_TO_VALE = 8,
   VALE_PLAZA_TO_TITLE = 9,
   VALE_PLAZA_TO_WORLD_MAP = 10,
   VALE_PLAZA_TO_GOMA_CAVE_STREAM = 11,
   VALE_PLAZA_TO_BILIBIN = 40,
-  VALE_PLAZA_TO_WOODEN_ROOMS_A_SOUTHEAST = 50,
+  VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST = 50,
 };
 
 /// MapId_ValeKradensCottage's warp destinations.
 enum {
   VALE_KRADENS_COTTAGE_FROM_VALE_NORTH = 1,
   VALE_KRADENS_COTTAGE_FROM_VALE_SOUTH = 2,
-  VALE_KRADENS_COTTAGE_FROM_WOODEN_ROOMS_A_NORTH = 3,
+  VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_NORTH = 3,
   VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_WEST = 4,
   /// Cleared of the map section name with
   /// VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST, but no warp leads here and
   /// the warp destination table has no row for it.
   VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_UNUSED = 5,
   VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST = 6,
-  VALE_KRADENS_COTTAGE_FROM_WOODEN_ROOMS_A_SOUTH = 10,
+  VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH = 10,
 };
 /// MapId_ValeKradensCottage's warps.
 enum {
   VALE_KRADENS_COTTAGE_TO_VALE_NORTH = 1,
   VALE_KRADENS_COTTAGE_TO_VALE_SOUTH = 2,
-  VALE_KRADENS_COTTAGE_TO_WOODEN_ROOMS_A_NORTH = 3,
+  VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH = 3,
   VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST = 4,
   VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST = 6,
   VALE_KRADENS_COTTAGE_TO_VALE_STORMY_NIGHT_NORTH = 11,
   VALE_KRADENS_COTTAGE_TO_VALE_STORMY_NIGHT_SOUTH = 12,
-  VALE_KRADENS_COTTAGE_TO_WOODEN_ROOMS_A_MYTHRIL_BAG =
+  VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG =
       13, ///< ★ Named from the game: "Mythril Bag" (MsgItemName)
 };
 
-/// MapId_ValeInteriors's warp destinations.
+/// MapId_CottageRoomsA's warp destinations.
 enum {
-  VALE_INTERIORS_FROM_VALE_WEST = 1,
-  VALE_INTERIORS_FROM_VALE_NORTH = 2,
-  VALE_INTERIORS_FROM_VALE_PLAZA_NORTH = 3,
-  VALE_INTERIORS_FROM_VALE_PLAZA_WEST = 4,
-  VALE_INTERIORS_FROM_VALE_SOUTH = 5,
-  VALE_INTERIORS_FROM_VALE_EAST = 6,
-  VALE_INTERIORS_FROM_VALE_PLAZA_SOUTH = 7,
-  VALE_INTERIORS_FROM_VALE_PLAZA_EAST = 8,
+  COTTAGE_ROOMS_A_FROM_VALE_WEST = 1,
+  COTTAGE_ROOMS_A_FROM_VALE_NORTH = 2,
+  COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH = 3,
+  COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST = 4,
+  COTTAGE_ROOMS_A_FROM_VALE_SOUTH = 5,
+  COTTAGE_ROOMS_A_FROM_VALE_EAST = 6,
+  COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH = 7,
+  COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST = 8,
 };
-/// MapId_ValeInteriors's warps.
+/// MapId_CottageRoomsA's warps.
 enum {
-  VALE_INTERIORS_TO_VALE_WEST = 1,
-  VALE_INTERIORS_TO_VALE_NORTH = 2,
-  VALE_INTERIORS_TO_VALE_PLAZA_WEST = 3,
-  VALE_INTERIORS_TO_VALE_PLAZA_SOUTH = 4,
-  VALE_INTERIORS_TO_VALE_SOUTH = 5,
-  VALE_INTERIORS_TO_VALE_EAST = 6,
-  VALE_INTERIORS_TO_VALE_PLAZA_EAST = 7,
-  VALE_INTERIORS_TO_VALE_PLAZA_NORTH = 8,
+  COTTAGE_ROOMS_A_TO_VALE_WEST = 1,
+  COTTAGE_ROOMS_A_TO_VALE_NORTH = 2,
+  COTTAGE_ROOMS_A_TO_VALE_PLAZA_WEST = 3,
+  COTTAGE_ROOMS_A_TO_VALE_PLAZA_SOUTH = 4,
+  COTTAGE_ROOMS_A_TO_VALE_SOUTH = 5,
+  COTTAGE_ROOMS_A_TO_VALE_EAST = 6,
+  COTTAGE_ROOMS_A_TO_VALE_PLAZA_EAST = 7,
+  COTTAGE_ROOMS_A_TO_VALE_PLAZA_NORTH = 8,
 };
 
-/// MapId_WoodenRoomsA's warp destinations.
+/// MapId_CottageRoomsB's warp destinations.
 enum {
-  WOODEN_ROOMS_A_FROM_VALE_PLAZA_NORTHWEST = 1,
-  WOODEN_ROOMS_A_FROM_VALE_KRADENS_COTTAGE_NORTH = 2,
-  WOODEN_ROOMS_A_FROM_VALE_PLAZA_NORTHEAST = 3,
-  WOODEN_ROOMS_A_FROM_VALE_PLAZA_WEST = 4,
-  WOODEN_ROOMS_A_VALE_INN_FROM_UPSTAIRS =
+  COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHWEST = 1,
+  COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_NORTH = 2,
+  COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHEAST = 3,
+  COTTAGE_ROOMS_B_FROM_VALE_PLAZA_WEST = 4,
+  COTTAGE_ROOMS_B_VALE_INN_FROM_UPSTAIRS =
       5, ///< ★ Named from what the player sees: Vale's
          ///< inn, with its innkeeper's counter and the
          ///< stairs up to the guest room (its render)
-  WOODEN_ROOMS_A_FROM_VALE = 6,
-  WOODEN_ROOMS_A_ISAACS_HOUSE_FROM_UPSTAIRS =
+  COTTAGE_ROOMS_B_FROM_VALE = 6,
+  COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS =
       7, ///< ★ Named from what the player sees: Isaac's house, where Dora wakes
          ///< him on the stormy night (its render)
-  WOODEN_ROOMS_A_VALE_INN_FROM_GROUND_FLOOR =
+  COTTAGE_ROOMS_B_VALE_INN_FROM_GROUND_FLOOR =
       8, ///< ★ Named from what the player sees: Vale's inn, with its
          ///< innkeeper's counter and the stairs up to the guest room (its
          ///< render)
-  WOODEN_ROOMS_A_ISAACS_HOUSE_FROM_GROUND_FLOOR =
+  COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_GROUND_FLOOR =
       9, ///< ★ Named from what the player sees: Isaac's house, where Dora wakes
          ///< him on the stormy night (its render)
-  WOODEN_ROOMS_A_FROM_VALE_STORMY_NIGHT_WEST = 11,
-  WOODEN_ROOMS_A_FROM_VALE_STORMY_NIGHT_EAST = 12,
-  WOODEN_ROOMS_A_FROM_BABI_PALACE = 19,
-  WOODEN_ROOMS_A_FROM_VALE_PLAZA_SOUTHEAST = 20,
-  WOODEN_ROOMS_A_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA =
+  COTTAGE_ROOMS_B_FROM_VALE_STORMY_NIGHT_WEST = 11,
+  COTTAGE_ROOMS_B_FROM_VALE_STORMY_NIGHT_EAST = 12,
+  COTTAGE_ROOMS_B_FROM_BABI_PALACE = 19,
+  COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST = 20,
+  COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA =
       21, ///< ★ Named from what the player sees: Isaac's house, where Dora
           ///< wakes him on the stormy night (its render)
-  WOODEN_ROOMS_A_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG = 22,
+  COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG = 22,
 };
-/// MapId_WoodenRoomsA's warps.
+/// MapId_CottageRoomsB's warps.
 enum {
-  WOODEN_ROOMS_A_TO_VALE_PLAZA_NORTHWEST = 1,
-  WOODEN_ROOMS_A_TO_VALE_KRADENS_COTTAGE_NORTH = 2,
-  WOODEN_ROOMS_A_TO_VALE_PLAZA_NORTHEAST = 3,
-  WOODEN_ROOMS_A_TO_VALE_PLAZA_WEST = 4,
-  WOODEN_ROOMS_A_VALE_INN_TO_UPSTAIRS =
+  COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST = 1,
+  COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_NORTH = 2,
+  COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHEAST = 3,
+  COTTAGE_ROOMS_B_TO_VALE_PLAZA_WEST = 4,
+  COTTAGE_ROOMS_B_VALE_INN_TO_UPSTAIRS =
       5, ///< ★ Named from what the player sees: the upper floor the stairs
          ///< climb to, the inn's guest room or Isaac's bedroom (its render)
-  WOODEN_ROOMS_A_TO_VALE = 6,
-  WOODEN_ROOMS_A_ISAACS_HOUSE_TO_UPSTAIRS =
+  COTTAGE_ROOMS_B_TO_VALE = 6,
+  COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_UPSTAIRS =
       7, ///< ★ Named from what the player sees: the upper floor the stairs
          ///< climb to, the inn's guest room or Isaac's bedroom (its render)
-  WOODEN_ROOMS_A_VALE_INN_TO_GROUND_FLOOR =
+  COTTAGE_ROOMS_B_VALE_INN_TO_GROUND_FLOOR =
       8, ///< ★ Named from what the player sees: the ground floor at the foot of
          ///< the stairs (its render)
-  WOODEN_ROOMS_A_ISAACS_HOUSE_TO_GROUND_FLOOR =
+  COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR =
       9, ///< ★ Named from what the player sees: the ground floor at the foot of
          ///< the stairs (its render)
-  WOODEN_ROOMS_A_TO_VALE_STORMY_NIGHT_WEST = 10,
-  WOODEN_ROOMS_A_TO_VALE_STORMY_NIGHT_EAST = 11,
-  WOODEN_ROOMS_A_TO_BABI_PALACE = 19,
-  WOODEN_ROOMS_A_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA =
+  COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WEST = 10,
+  COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_EAST = 11,
+  COTTAGE_ROOMS_B_TO_BABI_PALACE = 19,
+  COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA =
       20, ///< ★ Named from what the player sees: the ground floor at the foot
           ///< of the stairs (its render)
-  WOODEN_ROOMS_A_TO_VALE_STORMY_NIGHT_WITH_DORA =
+  COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WITH_DORA =
       21, ///< ★ Named from what the player sees: Dora leading Isaac down and
           ///< out of the house on the stormy night (its render)
-  WOODEN_ROOMS_A_TO_VALE_KRADENS_COTTAGE_SOUTH = 22,
+  COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_SOUTH = 22,
 };
 
 /// MapId_Sanctum's warp destinations.
@@ -447,7 +447,7 @@ enum {
   SANCTUM_VALE_UNUSED = 2,
   SANCTUM_FROM_VAULT = 10,
   SANCTUM_FROM_VAULT_REVISIT = 11,
-  SANCTUM_FROM_VAULT_INTERIORS = 12,
+  SANCTUM_FROM_LOG_ROOMS_A = 12,
   SANCTUM_FROM_VALE_ERUPTION = 20,
   SANCTUM_FROM_QUEST_RESTART = 21,
   SANCTUM_FROM_ALTIN = 29,
@@ -685,84 +685,83 @@ enum {
   VAULT_FROM_WORLD_MAP_SOUTH = 1,
   VAULT_NORTH_UNUSED = 2, ///< inside the north gate; no warp leads here
   VAULT_FROM_WORLD_MAP_NORTH = 3,
-  VAULT_FROM_VAULT_INTERIORS_EAST_SOUTHEAST = 5,
-  VAULT_FROM_VAULT_INTERIORS_SOUTHEAST = 6,
-  VAULT_FROM_VAULT_INTERIORS_SOUTHWEST = 7,
-  VAULT_FROM_VAULT_INTERIORS_EAST = 8,
-  VAULT_FROM_VAULT_INTERIORS_NORTH_NORTHEAST = 9,
-  VAULT_FROM_VAULT_INTERIORS_NORTHWEST = 10,
+  VAULT_FROM_LOG_ROOMS_A_EAST_SOUTHEAST = 5,
+  VAULT_FROM_LOG_ROOMS_A_SOUTHEAST = 6,
+  VAULT_FROM_LOG_ROOMS_A_SOUTHWEST = 7,
+  VAULT_FROM_LOG_ROOMS_A_EAST = 8,
+  VAULT_FROM_LOG_ROOMS_A_NORTH_NORTHEAST = 9,
+  VAULT_FROM_LOG_ROOMS_A_NORTHWEST = 10,
   VAULT_FROM_SANCTUM = 11,
   VAULT_FROM_STONE_ROOMS = 12,
-  VAULT_FROM_VAULT_INTERIORS_WEST = 13,
+  VAULT_FROM_LOG_ROOMS_A_WEST = 13,
 };
 /// MapId_Vault's warps.
 enum {
   VAULT_TO_WORLD_MAP_SOUTH = 1,
   VAULT_TO_WORLD_MAP_NORTH = 2,
-  VAULT_TO_VAULT_INTERIORS_EAST_SOUTHEAST = 5,
-  VAULT_TO_VAULT_INTERIORS_SOUTHEAST = 6,
-  VAULT_TO_VAULT_INTERIORS_SOUTHWEST = 7,
-  VAULT_TO_VAULT_INTERIORS_EAST = 8,
-  VAULT_TO_VAULT_INTERIORS_NORTH_NORTHEAST = 9,
-  VAULT_TO_VAULT_INTERIORS_NORTHWEST = 10,
+  VAULT_TO_LOG_ROOMS_A_EAST_SOUTHEAST = 5,
+  VAULT_TO_LOG_ROOMS_A_SOUTHEAST = 6,
+  VAULT_TO_LOG_ROOMS_A_SOUTHWEST = 7,
+  VAULT_TO_LOG_ROOMS_A_EAST = 8,
+  VAULT_TO_LOG_ROOMS_A_NORTH_NORTHEAST = 9,
+  VAULT_TO_LOG_ROOMS_A_NORTHWEST = 10,
   VAULT_TO_SANCTUM = 11,
   VAULT_TO_STONE_ROOMS = 12,
-  VAULT_TO_VAULT_INTERIORS_WEST = 13,
+  VAULT_TO_LOG_ROOMS_A_WEST = 13,
   VAULT_TO_VAULT_REVISIT = 14,
 };
 
-/// MapId_VaultInteriors's warp destinations.
+/// MapId_LogRoomsA's warp destinations.
 enum {
-  VAULT_INTERIORS_FROM_VAULT_EAST_SOUTHEAST = 5,
-  VAULT_INTERIORS_FROM_VAULT_SOUTHEAST = 6,
-  VAULT_INTERIORS_FROM_VAULT_SOUTHWEST = 7,
-  VAULT_INTERIORS_FROM_VAULT_EAST = 8,
-  VAULT_INTERIORS_FROM_VAULT_NORTH_NORTHEAST = 9,
-  VAULT_INTERIORS_FROM_VAULT_NORTHWEST = 10,
-  VAULT_INTERIORS_INN_FROM_INN_UPSTAIRS =
+  LOG_ROOMS_A_FROM_VAULT_EAST_SOUTHEAST = 5,
+  LOG_ROOMS_A_FROM_VAULT_SOUTHEAST = 6,
+  LOG_ROOMS_A_FROM_VAULT_SOUTHWEST = 7,
+  LOG_ROOMS_A_FROM_VAULT_EAST = 8,
+  LOG_ROOMS_A_FROM_VAULT_NORTH_NORTHEAST = 9,
+  LOG_ROOMS_A_FROM_VAULT_NORTHWEST = 10,
+  LOG_ROOMS_A_INN_FROM_INN_UPSTAIRS =
       11, ///< ★ Named from what the player sees: Vault's inn, with the
           ///< innkeeper behind the counter and stairs up (its render)
-  VAULT_INTERIORS_INN_UPSTAIRS_FROM_INN =
+  LOG_ROOMS_A_INN_UPSTAIRS_FROM_INN =
       12, ///< ★ Named from the game: "The guests upstairs"
           ///< (MsgVaultTheGuestsUpstairsWerentInTheir)
-  VAULT_INTERIORS_FROM_VAULT_WEST = 13,
-  VAULT_INTERIORS_CRATE_ROOM_FROM_LOFT =
+  LOG_ROOMS_A_FROM_VAULT_WEST = 13,
+  LOG_ROOMS_A_CRATE_ROOM_FROM_LOFT =
       14, ///< ★ Named from what the player sees: the room with a crate that
           ///< Move pushes aside to reach the loft (its render)
-  VAULT_INTERIORS_LOFT_FROM_CRATE_ROOM =
+  LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM =
       15, ///< ★ Named from the game: "I came into this loft"
           ///< (MsgVaultVaultCutFree)
   /// The inn's loft after the party loses the battle with the three thieves
-  /// (VaultInteriors_LoseToThieves).
+  /// (LogRoomsA_LoseToThieves).
   /// ★ Named from the game: "I came into this loft" (MsgVaultVaultCutFree)
-  VAULT_INTERIORS_LOFT_AFTER_LOSING_TO_THIEVES = 16,
+  LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES = 16,
   /// The inn's loft after the party beats the three thieves
-  /// (VaultInteriors_DefeatThieves).
+  /// (LogRoomsA_DefeatThieves).
   /// ★ Named from the game: "I came into this loft" (MsgVaultVaultCutFree)
-  VAULT_INTERIORS_LOFT_AFTER_THIEVES_DEFEATED = 17,
+  LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED = 17,
 };
-/// MapId_VaultInteriors's warps.
+/// MapId_LogRoomsA's warps.
 enum {
-  VAULT_INTERIORS_TO_VAULT_EAST_SOUTHEAST = 5,
-  VAULT_INTERIORS_TO_VAULT_SOUTHEAST = 6,
-  VAULT_INTERIORS_TO_VAULT_SOUTHWEST = 7,
-  VAULT_INTERIORS_TO_VAULT_EAST = 8,
-  VAULT_INTERIORS_TO_VAULT_NORTH_NORTHEAST = 9,
-  VAULT_INTERIORS_TO_VAULT_NORTHWEST = 10,
-  VAULT_INTERIORS_INN_UPSTAIRS_TO_INN =
+  LOG_ROOMS_A_TO_VAULT_EAST_SOUTHEAST = 5,
+  LOG_ROOMS_A_TO_VAULT_SOUTHEAST = 6,
+  LOG_ROOMS_A_TO_VAULT_SOUTHWEST = 7,
+  LOG_ROOMS_A_TO_VAULT_EAST = 8,
+  LOG_ROOMS_A_TO_VAULT_NORTH_NORTHEAST = 9,
+  LOG_ROOMS_A_TO_VAULT_NORTHWEST = 10,
+  LOG_ROOMS_A_INN_UPSTAIRS_TO_INN =
       11, ///< ★ Named from what the player sees: Vault's inn, with the
           ///< innkeeper behind the counter and stairs up (its render)
-  VAULT_INTERIORS_INN_TO_INN_UPSTAIRS =
+  LOG_ROOMS_A_INN_TO_INN_UPSTAIRS =
       12, ///< ★ Named from the game: "The guests upstairs"
           ///< (MsgVaultTheGuestsUpstairsWerentInTheir)
-  VAULT_INTERIORS_TO_VAULT_WEST = 13,
-  VAULT_INTERIORS_LOFT_TO_CRATE_ROOM =
+  LOG_ROOMS_A_TO_VAULT_WEST = 13,
+  LOG_ROOMS_A_LOFT_TO_CRATE_ROOM =
       14, ///< ★ Named from what the player sees: the room with a crate that
           ///< Move pushes aside to reach the loft (its render)
-  VAULT_INTERIORS_CRATE_ROOM_TO_LOFT =
-      15, ///< ★ Named from the game: "I came into this loft"
-          ///< (MsgVaultVaultCutFree)
-  VAULT_INTERIORS_TO_SANCTUM = 16,
+  LOG_ROOMS_A_CRATE_ROOM_TO_LOFT = 15, ///< ★ Named from the game: "I came into
+                                       ///< this loft" (MsgVaultVaultCutFree)
+  LOG_ROOMS_A_TO_SANCTUM = 16,
 };
 
 /// MapId_StoneRooms's warp destinations.
@@ -782,12 +781,12 @@ enum {
 enum {
   VAULT_REVISIT_FROM_VAULT = 1,
   VAULT_REVISIT_NORTH_UNUSED = 2, ///< inside the north gate; no warp leads here
-  VAULT_REVISIT_FROM_VAULT_INTERIORS_REVISIT_SOUTHEAST = 5,
-  VAULT_REVISIT_FROM_VAULT_INTERIORS_REVISIT_SOUTH = 6,
-  VAULT_REVISIT_FROM_VAULT_INTERIORS_REVISIT_SOUTHWEST = 7,
-  VAULT_REVISIT_FROM_VAULT_INTERIORS_REVISIT_EAST = 8,
-  VAULT_REVISIT_FROM_VAULT_INTERIORS_REVISIT_NORTH = 9,
-  VAULT_REVISIT_FROM_VAULT_INTERIORS_REVISIT_NORTHWEST = 10,
+  VAULT_REVISIT_FROM_LOG_ROOMS_B_SOUTHEAST = 5,
+  VAULT_REVISIT_FROM_LOG_ROOMS_B_SOUTH = 6,
+  VAULT_REVISIT_FROM_LOG_ROOMS_B_SOUTHWEST = 7,
+  VAULT_REVISIT_FROM_LOG_ROOMS_B_EAST = 8,
+  VAULT_REVISIT_FROM_LOG_ROOMS_B_NORTH = 9,
+  VAULT_REVISIT_FROM_LOG_ROOMS_B_NORTHWEST = 10,
   VAULT_REVISIT_FROM_SANCTUM = 11,
   VAULT_REVISIT_FROM_STONE_ROOMS = 12,
   VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE = 13,
@@ -797,45 +796,45 @@ enum {
 enum {
   VAULT_REVISIT_TO_WORLD_MAP_SOUTH = 1,
   VAULT_REVISIT_TO_WORLD_MAP_NORTH = 2,
-  VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTHEAST = 5,
-  VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTH = 6,
-  VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTHWEST = 7,
-  VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_EAST = 8,
-  VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_NORTH = 9,
-  VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_NORTHWEST = 10,
+  VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHEAST = 5,
+  VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTH = 6,
+  VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHWEST = 7,
+  VAULT_REVISIT_TO_LOG_ROOMS_B_EAST = 8,
+  VAULT_REVISIT_TO_LOG_ROOMS_B_NORTH = 9,
+  VAULT_REVISIT_TO_LOG_ROOMS_B_NORTHWEST = 10,
   VAULT_REVISIT_TO_SANCTUM = 11,
   VAULT_REVISIT_TO_STONE_ROOMS = 12,
   VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE = 13,
   VAULT_REVISIT_TO_VAULT_CAVE_MOUTH = 14,
 };
 
-/// MapId_VaultInteriorsRevisit's warp destinations.
+/// MapId_LogRoomsB's warp destinations.
 enum {
-  VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHEAST = 5,
-  VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTH = 6,
-  VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHWEST = 7,
-  VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_EAST = 8,
-  VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_NORTH = 9,
-  VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_NORTHWEST = 10,
-  VAULT_INTERIORS_REVISIT_INN_FROM_INN_UPSTAIRS =
+  LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST = 5,
+  LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTH = 6,
+  LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST = 7,
+  LOG_ROOMS_B_FROM_VAULT_REVISIT_EAST = 8,
+  LOG_ROOMS_B_FROM_VAULT_REVISIT_NORTH = 9,
+  LOG_ROOMS_B_FROM_VAULT_REVISIT_NORTHWEST = 10,
+  LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS =
       11, ///< ★ Named from what the player sees: Vault's inn, with the
           ///< innkeeper behind the counter and stairs up (its render)
-  VAULT_INTERIORS_REVISIT_INN_UPSTAIRS_FROM_INN =
+  LOG_ROOMS_B_INN_UPSTAIRS_FROM_INN =
       12, ///< ★ Named from what the player sees: the room of beds up the inn's
           ///< stairs (its render)
 };
-/// MapId_VaultInteriorsRevisit's warps.
+/// MapId_LogRoomsB's warps.
 enum {
-  VAULT_INTERIORS_REVISIT_TO_VAULT_REVISIT_SOUTHEAST = 5,
-  VAULT_INTERIORS_REVISIT_TO_VAULT_REVISIT_SOUTH = 6,
-  VAULT_INTERIORS_REVISIT_TO_VAULT_REVISIT_SOUTHWEST = 7,
-  VAULT_INTERIORS_REVISIT_TO_VAULT_REVISIT_EAST = 8,
-  VAULT_INTERIORS_REVISIT_TO_VAULT_REVISIT_NORTH = 9,
-  VAULT_INTERIORS_REVISIT_TO_VAULT_REVISIT_NORTHWEST = 10,
-  VAULT_INTERIORS_REVISIT_INN_UPSTAIRS_TO_INN =
+  LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTHEAST = 5,
+  LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTH = 6,
+  LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTHWEST = 7,
+  LOG_ROOMS_B_TO_VAULT_REVISIT_EAST = 8,
+  LOG_ROOMS_B_TO_VAULT_REVISIT_NORTH = 9,
+  LOG_ROOMS_B_TO_VAULT_REVISIT_NORTHWEST = 10,
+  LOG_ROOMS_B_INN_UPSTAIRS_TO_INN =
       11, ///< ★ Named from what the player sees: Vault's inn, with the
           ///< innkeeper behind the counter and stairs up (its render)
-  VAULT_INTERIORS_REVISIT_INN_TO_INN_UPSTAIRS =
+  LOG_ROOMS_B_INN_TO_INN_UPSTAIRS =
       12, ///< ★ Named from what the player sees: the room of beds up the inn's
           ///< stairs (its render)
 };
@@ -944,43 +943,43 @@ enum {
   BILIBIN_TO_BILIBIN_TREASURY_EAST = 11,
 };
 
-/// MapId_BilibinInteriors's warp destinations.
+/// MapId_CottageRoomsC's warp destinations.
 enum {
-  BILIBIN_INTERIORS_HOUSE_EAST = 1,  ///< the room behind Bilibin's house east
-                                     ///< door; through BILIBIN_TO_HOUSE_EAST
-  BILIBIN_INTERIORS_HOUSE_WEST = 2,  ///< the room behind Bilibin's house west
-                                     ///< door; through BILIBIN_TO_HOUSE_WEST
-  BILIBIN_INTERIORS_HOUSE_NORTH = 3, ///< the room behind Bilibin's house north
-                                     ///< door; through BILIBIN_TO_HOUSE_NORTH
-  BILIBIN_INTERIORS_WEAPON_AND_ARMOR_SHOP =
+  COTTAGE_ROOMS_C_HOUSE_EAST = 1,  ///< the room behind Bilibin's house east
+                                   ///< door; through BILIBIN_TO_HOUSE_EAST
+  COTTAGE_ROOMS_C_HOUSE_WEST = 2,  ///< the room behind Bilibin's house west
+                                   ///< door; through BILIBIN_TO_HOUSE_WEST
+  COTTAGE_ROOMS_C_HOUSE_NORTH = 3, ///< the room behind Bilibin's house north
+                                   ///< door; through BILIBIN_TO_HOUSE_NORTH
+  COTTAGE_ROOMS_C_WEAPON_AND_ARMOR_SHOP =
       4, ///< ★ Named from what the player sees: the shop hung with swords and
          ///< shields, with a seller of each behind its counter (its render);
          ///< through BILIBIN_TO_WEAPON_AND_ARMOR_SHOP
-  BILIBIN_INTERIORS_ITEM_SHOP =
+  COTTAGE_ROOMS_C_ITEM_SHOP =
       5, ///< ★ Named from what the player sees: the shop of shelves and crates
          ///< whose keeper sells items (its render); through
          ///< BILIBIN_TO_ITEM_SHOP
-  BILIBIN_INTERIORS_INN = 6, ///< the room behind Bilibin's inn door; the room
-                             ///< holds the inn; through BILIBIN_TO_INN
-  BILIBIN_INTERIORS_INN_UPSTAIRS_FROM_INN =
+  COTTAGE_ROOMS_C_INN = 6, ///< the room behind Bilibin's inn door; the room
+                           ///< holds the inn; through BILIBIN_TO_INN
+  COTTAGE_ROOMS_C_INN_UPSTAIRS_FROM_INN =
       7, ///< ★ Named from what the player sees: the rooms of beds and crates up
          ///< the inn's stairs (its render)
-  BILIBIN_INTERIORS_INN_FROM_INN_UPSTAIRS =
+  COTTAGE_ROOMS_C_INN_FROM_INN_UPSTAIRS =
       8, ///< ★ Named from what the player sees: Bilibin's inn, with the
          ///< restaurant beside its counter (its render)
 };
-/// MapId_BilibinInteriors's warps.
+/// MapId_CottageRoomsC's warps.
 enum {
-  BILIBIN_INTERIORS_HOUSE_EAST_TO_BILIBIN = 1,
-  BILIBIN_INTERIORS_HOUSE_WEST_TO_BILIBIN = 2,
-  BILIBIN_INTERIORS_HOUSE_NORTH_TO_BILIBIN = 3,
-  BILIBIN_INTERIORS_WEAPON_AND_ARMOR_SHOP_TO_BILIBIN = 4,
-  BILIBIN_INTERIORS_ITEM_SHOP_TO_BILIBIN = 5,
-  BILIBIN_INTERIORS_INN_TO_BILIBIN = 6,
-  BILIBIN_INTERIORS_INN_UPSTAIRS_TO_INN =
+  COTTAGE_ROOMS_C_HOUSE_EAST_TO_BILIBIN = 1,
+  COTTAGE_ROOMS_C_HOUSE_WEST_TO_BILIBIN = 2,
+  COTTAGE_ROOMS_C_HOUSE_NORTH_TO_BILIBIN = 3,
+  COTTAGE_ROOMS_C_WEAPON_AND_ARMOR_SHOP_TO_BILIBIN = 4,
+  COTTAGE_ROOMS_C_ITEM_SHOP_TO_BILIBIN = 5,
+  COTTAGE_ROOMS_C_INN_TO_BILIBIN = 6,
+  COTTAGE_ROOMS_C_INN_UPSTAIRS_TO_INN =
       7, ///< ★ Named from what the player sees: Bilibin's inn, with the
          ///< restaurant beside its counter (its render)
-  BILIBIN_INTERIORS_INN_TO_INN_UPSTAIRS =
+  COTTAGE_ROOMS_C_INN_TO_INN_UPSTAIRS =
       8, ///< ★ Named from what the player sees: the rooms of beds and crates up
          ///< the inn's stairs (its render)
 };
@@ -1230,94 +1229,94 @@ enum {
   KOLIMA_TO_KOLIMA_TUNNEL = 10,
 };
 
-/// MapId_KolimaInteriors's warp destinations.
+/// MapId_LogRoomsC's warp destinations.
 enum {
-  KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP =
+  LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP =
       1, ///< ★ Named from what the player sees: the room up the shop's stair, a
          ///< bookcase and two villagers (its render)
-  KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR =
+  LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR =
       2, ///< ★ Named from what the player sees: the room up the shop's stair, a
          ///< bookcase and two villagers (its render)
-  KOLIMA_INTERIORS_ITEM_SHOP_FROM_KOLIMA =
+  LOG_ROOMS_C_ITEM_SHOP_FROM_KOLIMA =
       3, ///< ★ Named from what the player sees: the room behind the item sign,
          ///< the item seller at her counter (its render)
-  KOLIMA_INTERIORS_INN_FROM_KOLIMA =
+  LOG_ROOMS_C_INN_FROM_KOLIMA =
       4, ///< ★ Named from what the player sees: the room behind the INN sign on
          ///< the village's northwest tree, the innkeeper at his counter (its
          ///< render)
-  KOLIMA_INTERIORS_INN_FROM_INN_SECOND_FLOOR =
+  LOG_ROOMS_C_INN_FROM_INN_SECOND_FLOOR =
       5, ///< ★ Named from what the player sees: the room behind the INN sign on
          ///< the village's northwest tree, the innkeeper at his counter (its
          ///< render)
-  KOLIMA_INTERIORS_INN_THIRD_FLOOR_FROM_INN_SECOND_FLOOR =
+  LOG_ROOMS_C_INN_THIRD_FLOOR_FROM_INN_SECOND_FLOOR =
       6, ///< ★ Named from what the player sees: the top room of the inn's tree,
          ///< a bed and a stranded merchant (its render)
-  KOLIMA_INTERIORS_HOUSE_FROM_KOLIMA_SOUTH =
+  LOG_ROOMS_C_HOUSE_FROM_KOLIMA_SOUTH =
       7, ///< ★ Named from what the player sees: the house of the father with a
          ///< secret, a storeroom with a ladder behind it (its render)
-  KOLIMA_INTERIORS_HOUSE_FROM_KOLIMA_NORTH =
+  LOG_ROOMS_C_HOUSE_FROM_KOLIMA_NORTH =
       8, ///< ★ Named from what the player sees: the house of the father with a
          ///< secret, a storeroom with a ladder behind it (its render)
-  KOLIMA_INTERIORS_FROM_KOLIMA_TUNNEL = 9,
-  KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_FROM_KOLIMA =
+  LOG_ROOMS_C_FROM_KOLIMA_TUNNEL = 9,
+  LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_FROM_KOLIMA =
       10, ///< ★ Named from what the player sees: the weapon and armor sellers
           ///< side by side at one counter (its render)
-  KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_FROM_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR =
+  LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_FROM_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR =
       11, ///< ★ Named from what the player sees: the weapon and armor sellers
           ///< side by side at one counter (its render)
-  KOLIMA_INTERIORS_INN_SECOND_FLOOR_FROM_INN =
+  LOG_ROOMS_C_INN_SECOND_FLOOR_FROM_INN =
       12, ///< ★ Named from what the player sees: the room up the inn's stair, a
           ///< bed and a lumberjack staying the night (its render)
-  KOLIMA_INTERIORS_INN_SECOND_FLOOR_FROM_INN_THIRD_FLOOR =
+  LOG_ROOMS_C_INN_SECOND_FLOOR_FROM_INN_THIRD_FLOOR =
       13, ///< ★ Named from what the player sees: the room up the inn's stair, a
           ///< bed and a lumberjack staying the night (its render)
-  KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR =
+  LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR =
       14, ///< ★ Named from what the player sees: the top room of the shop's
           ///< tree, a lumberjack and his two children (its render)
 };
-/// MapId_KolimaInteriors's warps.
+/// MapId_LogRoomsC's warps.
 enum {
-  KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_TO_WEAPON_AND_ARMOR_SHOP =
+  LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_TO_WEAPON_AND_ARMOR_SHOP =
       1, ///< ★ Named from what the player sees: the weapon and armor sellers
          ///< side by side at one counter (its render)
-  KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_TO_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR =
+  LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_TO_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR =
       2, ///< ★ Named from what the player sees: the top room of the shop's
          ///< tree, a lumberjack and his two children (its render)
-  KOLIMA_INTERIORS_ITEM_SHOP_TO_KOLIMA = 3,
-  KOLIMA_INTERIORS_INN_TO_KOLIMA = 4,
-  KOLIMA_INTERIORS_INN_TO_INN_SECOND_FLOOR =
+  LOG_ROOMS_C_ITEM_SHOP_TO_KOLIMA = 3,
+  LOG_ROOMS_C_INN_TO_KOLIMA = 4,
+  LOG_ROOMS_C_INN_TO_INN_SECOND_FLOOR =
       5, ///< ★ Named from what the player sees: the room up the inn's stair, a
          ///< bed and a lumberjack staying the night (its render)
-  KOLIMA_INTERIORS_INN_THIRD_FLOOR_TO_INN_SECOND_FLOOR =
+  LOG_ROOMS_C_INN_THIRD_FLOOR_TO_INN_SECOND_FLOOR =
       6, ///< ★ Named from what the player sees: the room up the inn's stair, a
          ///< bed and a lumberjack staying the night (its render)
-  KOLIMA_INTERIORS_HOUSE_TO_KOLIMA_SOUTH = 7,
-  KOLIMA_INTERIORS_HOUSE_TO_KOLIMA_NORTH = 8,
-  KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_TO_KOLIMA = 9,
-  KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_TO_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR =
+  LOG_ROOMS_C_HOUSE_TO_KOLIMA_SOUTH = 7,
+  LOG_ROOMS_C_HOUSE_TO_KOLIMA_NORTH = 8,
+  LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_TO_KOLIMA = 9,
+  LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_TO_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR =
       10, ///< ★ Named from what the player sees: the room up the shop's stair,
           ///< a bookcase and two villagers (its render)
-  KOLIMA_INTERIORS_INN_SECOND_FLOOR_TO_INN =
+  LOG_ROOMS_C_INN_SECOND_FLOOR_TO_INN =
       11, ///< ★ Named from what the player sees: the room behind the INN sign
           ///< on the village's northwest tree, the innkeeper at his counter
           ///< (its render)
-  KOLIMA_INTERIORS_INN_SECOND_FLOOR_TO_INN_THIRD_FLOOR =
+  LOG_ROOMS_C_INN_SECOND_FLOOR_TO_INN_THIRD_FLOOR =
       12, ///< ★ Named from what the player sees: the top room of the inn's
           ///< tree, a bed and a stranded merchant (its render)
-  KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR_TO_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR =
+  LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR_TO_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR =
       13, ///< ★ Named from what the player sees: the room up the shop's stair,
           ///< a bookcase and two villagers (its render)
-  KOLIMA_INTERIORS_TO_KOLIMA_TUNNEL = 14,
+  LOG_ROOMS_C_TO_KOLIMA_TUNNEL = 14,
 };
 
 /// MapId_KolimaTunnel's warp destinations.
 enum {
-  KOLIMA_TUNNEL_FROM_KOLIMA_INTERIORS = 1,
+  KOLIMA_TUNNEL_FROM_LOG_ROOMS_C = 1,
   KOLIMA_TUNNEL_FROM_KOLIMA = 2,
 };
 /// MapId_KolimaTunnel's warps.
 enum {
-  KOLIMA_TUNNEL_TO_KOLIMA_INTERIORS = 1,
+  KOLIMA_TUNNEL_TO_LOG_ROOMS_C = 1,
   KOLIMA_TUNNEL_TO_KOLIMA = 2,
 };
 
@@ -1389,137 +1388,137 @@ enum {
 /// MapId_KolimaForestTree's warp destinations.
 enum {
   KOLIMA_FOREST_TREE_FROM_KOLIMA_FOREST_FLOODGATE = 1,
-  KOLIMA_FOREST_TREE_FROM_TRET_TREE_INTERIORS = 2,
+  KOLIMA_FOREST_TREE_FROM_TREE_ROOMS = 2,
 };
 /// MapId_KolimaForestTree's warps.
 enum {
   KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_FLOODGATE = 1,
-  KOLIMA_FOREST_TREE_TO_TRET_TREE_INTERIORS = 2,
+  KOLIMA_FOREST_TREE_TO_TREE_ROOMS = 2,
 };
 
-/// MapId_TretTreeInteriors's warp destinations.
+/// MapId_TreeRooms's warp destinations.
 enum {
-  TRET_TREE_INTERIORS_FROM_KOLIMA_FOREST_TREE = 1,
-  TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHWEST = 2,
-  TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHEAST = 3,
-  TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_SOUTH = 4,
-  TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_SOUTHEAST = 5,
-  TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_NORTHWEST = 6,
-  TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_NORTH = 7,
-  TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_NORTH_NORTHWEST = 8,
-  TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_NORTH_NORTHEAST = 9,
-  TRET_TREE_INTERIORS_ENTRANCE_FROM_SECOND_FLOOR =
+  TREE_ROOMS_FROM_KOLIMA_FOREST_TREE = 1,
+  TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHWEST = 2,
+  TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHEAST = 3,
+  TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH = 4,
+  TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTHEAST = 5,
+  TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTHWEST = 6,
+  TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH = 7,
+  TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH_NORTHWEST = 8,
+  TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH_NORTHEAST = 9,
+  TREE_ROOMS_ENTRANCE_FROM_SECOND_FLOOR =
       11, ///< ★ Named from what the player sees: the room entered from Kolima
           ///< Forest through the door at Tret's foot (its render)
-  TRET_TREE_INTERIORS_SECOND_FLOOR_FROM_ENTRANCE =
+  TREE_ROOMS_SECOND_FLOOR_FROM_ENTRANCE =
       12, ///< ★ Named from what the player sees: the webbed room one floor
           ///< above the entrance, reached up a vine (its render)
-  TRET_TREE_INTERIORS_THIRD_FLOOR_FROM_FOURTH_FLOOR =
+  TREE_ROOMS_THIRD_FLOOR_FROM_FOURTH_FLOOR =
       13, ///< ★ Named from what the player sees: the webbed room with a chest
           ///< and a Psynergy Stone, one floor higher (its render)
-  TRET_TREE_INTERIORS_FOURTH_FLOOR_FROM_THIRD_FLOOR =
+  TREE_ROOMS_FOURTH_FLOOR_FROM_THIRD_FLOOR =
       14, ///< ★ Named from what the player sees: the bare room above, reached
           ///< up a vine (its render)
-  TRET_TREE_INTERIORS_TRET_FROM_ENTRANCE =
+  TREE_ROOMS_TRET_FROM_ENTRANCE =
       15, ///< ★ Named from what the player sees: the lowest room, where Tret's
           ///< face looks out of the wall (its render)
-  TRET_TREE_INTERIORS_ENTRANCE_FROM_TRET =
+  TREE_ROOMS_ENTRANCE_FROM_TRET =
       16, ///< ★ Named from what the player sees: the room entered from Kolima
           ///< Forest through the door at Tret's foot (its render)
-  TRET_TREE_INTERIORS_AFTER_FIGHT_TRET = 19, ///< EventScript_FightTret
+  TREE_ROOMS_AFTER_FIGHT_TRET = 19, ///< EventScript_FightTret
   // The landings below the cocoons, each numbered as its cocoon's metatile
-  // behavior (TretTreeInteriors_StepOnCocoon).
-  TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_1 = 21,
-  TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_2 = 22,
-  TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_3 = 23,
-  TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_4 = 24,
-  TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_5 = 25,
-  TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_6 = 26,
-  TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_7 = 27,
-  TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_8 = 28,
-  TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_9 = 29,
-  TRET_TREE_INTERIORS_FROM_THIRD_FLOOR_WEST_COCOON = 31,
-  TRET_TREE_INTERIORS_FROM_THIRD_FLOOR_EAST_COCOON = 32,
+  // behavior (TreeRooms_StepOnCocoon).
+  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_1 = 21,
+  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_2 = 22,
+  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_3 = 23,
+  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_4 = 24,
+  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_5 = 25,
+  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_6 = 26,
+  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_7 = 27,
+  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_8 = 28,
+  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_9 = 29,
+  TREE_ROOMS_FROM_THIRD_FLOOR_WEST_COCOON = 31,
+  TREE_ROOMS_FROM_THIRD_FLOOR_EAST_COCOON = 32,
   /// The way down to Tret: the leader falls on from here.
-  TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_CENTER_COCOON = 50,
-  TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_NORTHWEST_COCOON = 51,
-  TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_NORTH_COCOON = 52,
-  TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_NORTHEAST_COCOON = 53,
-  TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_WEST_COCOON = 54,
-  TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_EAST_COCOON = 55,
-  TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_SOUTHWEST_COCOON = 56,
-  TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_SOUTH_COCOON = 57,
-  TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_SOUTHEAST_COCOON = 58,
-  TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON = 59,
+  TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON = 50,
+  TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_COCOON = 51,
+  TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_COCOON = 52,
+  TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_COCOON = 53,
+  TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_COCOON = 54,
+  TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_COCOON = 55,
+  TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_COCOON = 56,
+  TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_COCOON = 57,
+  TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_COCOON = 58,
+  TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON = 59,
 };
-/// MapId_TretTreeInteriors's warps.
+/// MapId_TreeRooms's warps.
 enum {
-  TRET_TREE_INTERIORS_TO_KOLIMA_FOREST_TREE = 1,
-  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST =
+  TREE_ROOMS_TO_KOLIMA_FOREST_TREE = 1,
+  TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST =
       2, ///< ★ Named from what the player sees: the lowest room, where Tret's
          ///< face looks out of the wall (its render)
-  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHEAST =
+  TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHEAST =
       3, ///< ★ Named from what the player sees: the lowest room, where Tret's
          ///< face looks out of the wall (its render)
-  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH =
+  TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH =
       4, ///< ★ Named from what the player sees: the lowest room, where Tret's
          ///< face looks out of the wall (its render)
-  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTHEAST =
+  TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTHEAST =
       5, ///< ★ Named from what the player sees: the lowest room, where Tret's
          ///< face looks out of the wall (its render)
-  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTHWEST =
+  TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTHWEST =
       6, ///< ★ Named from what the player sees: the lowest room, where Tret's
          ///< face looks out of the wall (its render)
-  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTH =
+  TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH =
       7, ///< ★ Named from what the player sees: the lowest room, where Tret's
          ///< face looks out of the wall (its render)
-  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTH_NORTHWEST =
+  TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHWEST =
       8, ///< ★ Named from what the player sees: the lowest room, where Tret's
          ///< face looks out of the wall (its render)
-  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTH_NORTHEAST =
+  TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHEAST =
       9, ///< ★ Named from what the player sees: the lowest room, where Tret's
          ///< face looks out of the wall (its render)
-  TRET_TREE_INTERIORS_ENTRANCE_TO_SECOND_FLOOR =
+  TREE_ROOMS_ENTRANCE_TO_SECOND_FLOOR =
       10, ///< ★ Named from what the player sees: the webbed room one floor
           ///< above the entrance, reached up a vine (its render)
-  TRET_TREE_INTERIORS_SECOND_FLOOR_TO_ENTRANCE =
+  TREE_ROOMS_SECOND_FLOOR_TO_ENTRANCE =
       11, ///< ★ Named from what the player sees: the room entered from Kolima
           ///< Forest through the door at Tret's foot (its render)
-  TRET_TREE_INTERIORS_THIRD_FLOOR_TO_FOURTH_FLOOR =
+  TREE_ROOMS_THIRD_FLOOR_TO_FOURTH_FLOOR =
       12, ///< ★ Named from what the player sees: the bare room above, reached
           ///< up a vine (its render)
-  TRET_TREE_INTERIORS_FOURTH_FLOOR_TO_THIRD_FLOOR =
+  TREE_ROOMS_FOURTH_FLOOR_TO_THIRD_FLOOR =
       13, ///< ★ Named from what the player sees: the webbed room with a chest
           ///< and a Psynergy Stone, one floor higher (its render)
-  TRET_TREE_INTERIORS_TRET_TO_ENTRANCE =
+  TREE_ROOMS_TRET_TO_ENTRANCE =
       14, ///< ★ Named from what the player sees: the room entered from Kolima
           ///< Forest through the door at Tret's foot (its render)
-  TRET_TREE_INTERIORS_ENTRANCE_TO_TRET =
+  TREE_ROOMS_ENTRANCE_TO_TRET =
       15, ///< ★ Named from what the player sees: the lowest room, where Tret's
           ///< face looks out of the wall (its render)
 };
 
 /// MapId_TretTreeBranch's warp destinations.
 enum {
-  TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_SOUTH_SOUTHWEST = 1,
-  TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_SOUTH_SOUTHEAST = 2,
-  TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_SOUTH = 3,
-  TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_SOUTHEAST = 4,
-  TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_NORTH = 5,
-  TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_NORTHWEST = 6,
-  TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_NORTH_NORTHWEST = 7,
-  TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_NORTH_NORTHEAST = 8,
+  TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHWEST = 1,
+  TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHEAST = 2,
+  TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH = 3,
+  TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTHEAST = 4,
+  TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH = 5,
+  TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTHWEST = 6,
+  TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH_NORTHWEST = 7,
+  TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH_NORTHEAST = 8,
 };
 /// MapId_TretTreeBranch's warps.
 enum {
-  TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_SOUTH_SOUTHWEST = 1,
-  TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_SOUTH_SOUTHEAST = 2,
-  TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_SOUTH = 3,
-  TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_SOUTHEAST = 4,
-  TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_NORTH = 5,
-  TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_NORTHWEST = 6,
-  TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_NORTH_NORTHWEST = 7,
-  TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_NORTH_NORTHEAST = 8,
+  TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHWEST = 1,
+  TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHEAST = 2,
+  TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH = 3,
+  TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTHEAST = 4,
+  TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH = 5,
+  TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTHWEST = 6,
+  TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH_NORTHWEST = 7,
+  TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH_NORTHEAST = 8,
 };
 
 /// MapId_BilibinCaveIce's warp destinations.
@@ -1586,10 +1585,10 @@ enum {
       2, ///< at the village's east edge, facing west; no warp leads here
   IMIL_FROM_HOUSE_WEST = 3,
   IMIL_FROM_HOUSE_NORTHEAST = 4,
-  IMIL_FROM_IMIL_INTERIORS_EAST = 5,
-  IMIL_FROM_IMIL_INTERIORS_NORTHEAST = 6,
-  IMIL_FROM_IMIL_INTERIORS_WEST = 7,
-  IMIL_FROM_IMIL_INTERIORS_SOUTHWEST = 8,
+  IMIL_FROM_ICE_ROOMS_EAST = 5,
+  IMIL_FROM_ICE_ROOMS_NORTHEAST = 6,
+  IMIL_FROM_ICE_ROOMS_WEST = 7,
+  IMIL_FROM_ICE_ROOMS_SOUTHWEST = 8,
   IMIL_FROM_IMIL_FALLS_CAVE = 9,
 };
 /// MapId_Imil's warps.
@@ -1600,45 +1599,43 @@ enum {
       2, ///< ★ Named from the game: "Welcome to our inn." (MsgInnWelcome)
   IMIL_TO_HOUSE_WEST = 3,
   IMIL_TO_HOUSE_NORTHEAST = 4,
-  IMIL_TO_IMIL_INTERIORS_EAST = 5,
-  IMIL_TO_IMIL_INTERIORS_NORTHEAST = 6,
+  IMIL_TO_ICE_ROOMS_EAST = 5,
+  IMIL_TO_ICE_ROOMS_NORTHEAST = 6,
   IMIL_TO_IMIL_FALLS_CAVE = 8,
   IMIL_TO_WORLD_MAP_SOUTH = 11,
   IMIL_TO_WORLD_MAP_NORTH = 12,
 };
 
-/// MapId_ImilInteriors's warp destinations.
+/// MapId_IceRooms's warp destinations.
 enum {
-  IMIL_INTERIORS_HOUSE_SOUTHWEST =
-      1, ///< the room behind Imil's house southwest door; through
-         ///< IMIL_TO_HOUSE_SOUTHWEST
-  IMIL_INTERIORS_FROM_IMIL_WEST_SOUTHWEST = 2,
-  IMIL_INTERIORS_HOUSE_WEST =
+  ICE_ROOMS_HOUSE_SOUTHWEST = 1, ///< the room behind Imil's house southwest
+                                 ///< door; through IMIL_TO_HOUSE_SOUTHWEST
+  ICE_ROOMS_FROM_IMIL_WEST_SOUTHWEST = 2,
+  ICE_ROOMS_HOUSE_WEST =
       3, ///< the room behind Imil's house west door; through IMIL_TO_HOUSE_WEST
-  IMIL_INTERIORS_HOUSE_NORTHEAST =
-      4, ///< the room behind Imil's house northeast door; through
-         ///< IMIL_TO_HOUSE_NORTHEAST
-  IMIL_INTERIORS_INN = 5,
-  IMIL_INTERIORS_INN_UPSTAIRS_FROM_INN =
+  ICE_ROOMS_HOUSE_NORTHEAST = 4, ///< the room behind Imil's house northeast
+                                 ///< door; through IMIL_TO_HOUSE_NORTHEAST
+  ICE_ROOMS_INN = 5,
+  ICE_ROOMS_INN_UPSTAIRS_FROM_INN =
       6, ///< ★ Named from what the player sees: the room up the inn's stairs,
          ///< with barrels (its render)
-  IMIL_INTERIORS_FROM_IMIL_EAST_NORTHEAST = 7,
-  IMIL_INTERIORS_INN_FROM_INN_UPSTAIRS =
+  ICE_ROOMS_FROM_IMIL_EAST_NORTHEAST = 7,
+  ICE_ROOMS_INN_FROM_INN_UPSTAIRS =
       8, ///< ★ Named from what the player sees: Imil's inn, its innkeeper
          ///< behind the counter (its render)
 };
-/// MapId_ImilInteriors's warps.
+/// MapId_IceRooms's warps.
 enum {
-  IMIL_INTERIORS_HOUSE_WEST_TO_IMIL = 1,
-  IMIL_INTERIORS_TO_IMIL_WEST_SOUTHWEST = 2,
-  IMIL_INTERIORS_TO_IMIL_EAST = 3,
-  IMIL_INTERIORS_TO_IMIL = 4,
-  IMIL_INTERIORS_TO_IMIL_SOUTH_SOUTHWEST = 5,
-  IMIL_INTERIORS_INN_UPSTAIRS_TO_INN =
+  ICE_ROOMS_HOUSE_WEST_TO_IMIL = 1,
+  ICE_ROOMS_TO_IMIL_WEST_SOUTHWEST = 2,
+  ICE_ROOMS_TO_IMIL_EAST = 3,
+  ICE_ROOMS_TO_IMIL = 4,
+  ICE_ROOMS_TO_IMIL_SOUTH_SOUTHWEST = 5,
+  ICE_ROOMS_INN_UPSTAIRS_TO_INN =
       6, ///< ★ Named from what the player sees: Imil's inn, its innkeeper
          ///< behind the counter (its render)
-  IMIL_INTERIORS_TO_IMIL_EAST_NORTHEAST = 7,
-  IMIL_INTERIORS_INN_TO_INN_UPSTAIRS =
+  ICE_ROOMS_TO_IMIL_EAST_NORTHEAST = 7,
+  ICE_ROOMS_INN_TO_INN_UPSTAIRS =
       8, ///< ★ Named from what the player sees: the room up the inn's stairs,
          ///< with barrels (its render)
 };
@@ -1984,7 +1981,7 @@ enum {
 /// MapId_FuchinTempleGrounds's warp destinations.
 enum {
   FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP = 1,
-  FUCHIN_TEMPLE_GROUNDS_FROM_LACQUER_ROOMS = 2,
+  FUCHIN_TEMPLE_GROUNDS_FROM_LACQUER_ROOMS_A = 2,
   FUCHIN_TEMPLE_GROUNDS_FROM_FUCHIN_FALLS_CAVE_ENTRANCE = 3,
   /// In front of the traveling healer, where a party defeated anywhere at
   /// Fuchin Temple wakes (its return point in overworld/map_rules.s).
@@ -1993,27 +1990,27 @@ enum {
 /// MapId_FuchinTempleGrounds's warps.
 enum {
   FUCHIN_TEMPLE_GROUNDS_TO_WORLD_MAP = 1,
-  FUCHIN_TEMPLE_GROUNDS_TO_LACQUER_ROOMS = 2,
+  FUCHIN_TEMPLE_GROUNDS_TO_LACQUER_ROOMS_A = 2,
   FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE = 3,
 };
 
-/// MapId_LacquerRooms's warp destinations.
+/// MapId_LacquerRoomsA's warp destinations.
 enum {
-  LACQUER_ROOMS_FROM_FUCHIN_TEMPLE_GROUNDS = 1,
+  LACQUER_ROOMS_A_FROM_FUCHIN_TEMPLE_GROUNDS = 1,
   /// ★ Named from the game: "You warriors should visit Master Feh's school."
   /// (MsgXianYouWarriorsShouldVisitMasterFehs)
-  LACQUER_ROOMS_FEHS_SCHOOL_FROM_XIAN = 2,
+  LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_XIAN = 2,
   /// ★ Named from the game: "Master Hama is meditating. Please be extremely
   /// quiet." (MsgXianMasterHamaMeditatingPleaseExtremely)
-  LACQUER_ROOMS_HAMAS_ROOM_FROM_LAMA_TEMPLE = 3,
-  LACQUER_ROOMS_FEHS_SCHOOL_FROM_HOUSE = 4,
+  LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE = 3,
+  LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_HOUSE = 4,
 };
-/// MapId_LacquerRooms's warps.
+/// MapId_LacquerRoomsA's warps.
 enum {
-  LACQUER_ROOMS_TO_FUCHIN_TEMPLE_GROUNDS = 1,
-  LACQUER_ROOMS_FEHS_SCHOOL_TO_XIAN = 2,
-  LACQUER_ROOMS_HAMAS_ROOM_TO_LAMA_TEMPLE = 3,
-  LACQUER_ROOMS_FEHS_SCHOOL_TO_HOUSE =
+  LACQUER_ROOMS_A_TO_FUCHIN_TEMPLE_GROUNDS = 1,
+  LACQUER_ROOMS_A_FEHS_SCHOOL_TO_XIAN = 2,
+  LACQUER_ROOMS_A_HAMAS_ROOM_TO_LAMA_TEMPLE = 3,
+  LACQUER_ROOMS_A_FEHS_SCHOOL_TO_HOUSE =
       4, ///< ★ Named from what the player sees: the small room with a bed
          ///< behind the door Master Feh and Feizhi come out of (its render)
 };
@@ -2419,10 +2416,10 @@ enum {
   XIAN_FROM_HOUSE = 1,
   XIAN_FROM_WEAPON_AND_ARMOR_SHOP = 5,
   XIAN_FROM_HOUSE_NORTH = 6,
-  XIAN_FROM_XIAN_INTERIORS_EAST = 7,
-  XIAN_FROM_XIAN_INTERIORS_SOUTH = 8,
-  XIAN_FROM_XIAN_INTERIORS_WEST = 9,
-  XIAN_FROM_LACQUER_ROOMS_FEHS_SCHOOL = 10,
+  XIAN_FROM_LACQUER_ROOMS_B_EAST = 7,
+  XIAN_FROM_LACQUER_ROOMS_B_SOUTH = 8,
+  XIAN_FROM_LACQUER_ROOMS_B_WEST = 9,
+  XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL = 10,
   XIAN_FROM_SANCTUM_WEST = 11,
 };
 /// MapId_Xian's warps.
@@ -2430,49 +2427,50 @@ enum {
   XIAN_TO_HOUSE = 1, ///< ★ Named from what the player sees: a house with beds,
                      ///< a table and a hearth (its render)
   XIAN_TO_HOUSE_NORTH = 2,
-  XIAN_TO_XIAN_INTERIORS_EAST = 3,
+  XIAN_TO_LACQUER_ROOMS_B_EAST = 3,
   XIAN_TO_INN =
       4, ///< ★ Named from the game: "Welcome to our inn." (MsgInnWelcome)
   XIAN_TO_WEAPON_AND_ARMOR_SHOP =
       5, ///< ★ Named from what the player sees: the shop whose sellers stand
          ///< behind one long white counter (its render)
   XIAN_TO_SANCTUM = 6,
-  XIAN_TO_LACQUER_ROOMS_FEHS_SCHOOL = 7,
+  XIAN_TO_LACQUER_ROOMS_A_FEHS_SCHOOL = 7,
   XIAN_TO_WORLD_MAP = 8,
 };
 
-/// MapId_XianInteriors's warp destinations.
+/// MapId_LacquerRoomsB's warp destinations.
 enum {
-  XIAN_INTERIORS_HOUSE =
+  LACQUER_ROOMS_B_HOUSE =
       1, ///< the room behind Xian's house door; through XIAN_TO_HOUSE
-  XIAN_INTERIORS_HOUSE_NORTH =
+  LACQUER_ROOMS_B_HOUSE_NORTH =
       2, ///< the room holds the hsus house; through XIAN_TO_HOUSE_NORTH
-  XIAN_INTERIORS_FROM_XIAN_EAST = 3,
-  XIAN_INTERIORS_INN_SOUTH = 4, ///< the room holds the inn; through XIAN_TO_INN
-  XIAN_INTERIORS_INN_GUEST_ROOMS_FROM_INN =
+  LACQUER_ROOMS_B_FROM_XIAN_EAST = 3,
+  LACQUER_ROOMS_B_INN_SOUTH =
+      4, ///< the room holds the inn; through XIAN_TO_INN
+  LACQUER_ROOMS_B_INN_GUEST_ROOMS_FROM_INN =
       5, ///< ★ Named from what the player sees: the small rooms behind the
          ///< inn's front room, with a bed (its render)
-  XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP =
+  LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP =
       6, ///< ★ Named from what the player sees: the shop whose sellers stand
          ///< behind one long white counter (its render); through
          ///< XIAN_TO_WEAPON_AND_ARMOR_SHOP
-  XIAN_INTERIORS_INN_FROM_INN_GUEST_ROOMS = 7, ///< the room holds the inn;
-  XIAN_INTERIORS_FROM_LACQUER_ROOMS_FEHS_SCHOOL =
-      8, ///< the room behind LacquerRooms's house door; through
-         ///< LACQUER_ROOMS_FEHS_SCHOOL_TO_HOUSE
+  LACQUER_ROOMS_B_INN_FROM_INN_GUEST_ROOMS = 7, ///< the room holds the inn;
+  LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL =
+      8, ///< the room behind LacquerRoomsA's house door; through
+         ///< LACQUER_ROOMS_A_FEHS_SCHOOL_TO_HOUSE
 };
-/// MapId_XianInteriors's warps.
+/// MapId_LacquerRoomsB's warps.
 enum {
-  XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP_TO_XIAN = 1,
-  XIAN_INTERIORS_HOUSE_NORTH_TO_XIAN = 2,
-  XIAN_INTERIORS_TO_XIAN_EAST = 3,
-  XIAN_INTERIORS_TO_XIAN_SOUTH = 4,
-  XIAN_INTERIORS_INN_GUEST_ROOMS_TO_INN = 5,
-  XIAN_INTERIORS_TO_XIAN_WEST = 6,
-  XIAN_INTERIORS_INN_TO_INN_GUEST_ROOMS =
+  LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_XIAN = 1,
+  LACQUER_ROOMS_B_HOUSE_NORTH_TO_XIAN = 2,
+  LACQUER_ROOMS_B_TO_XIAN_EAST = 3,
+  LACQUER_ROOMS_B_TO_XIAN_SOUTH = 4,
+  LACQUER_ROOMS_B_INN_GUEST_ROOMS_TO_INN = 5,
+  LACQUER_ROOMS_B_TO_XIAN_WEST = 6,
+  LACQUER_ROOMS_B_INN_TO_INN_GUEST_ROOMS =
       7, ///< ★ Named from what the player sees: the small rooms behind the
          ///< inn's front room, with a bed (its render)
-  XIAN_INTERIORS_TO_LACQUER_ROOMS_FEHS_SCHOOL = 8,
+  LACQUER_ROOMS_B_TO_LACQUER_ROOMS_A_FEHS_SCHOOL = 8,
 };
 
 /// MapId_AlpineCrossing's warp destinations.
@@ -2496,14 +2494,14 @@ enum {
 /// MapId_Altin's warp destinations.
 enum {
   ALTIN_FROM_WORLD_MAP = 1,
-  ALTIN_FROM_ALTIN_INTERIORS_SOUTHWEST = 2,
+  ALTIN_FROM_COTTAGE_ROOMS_D_SOUTHWEST = 2,
   ALTIN_FROM_SANCTUM = 3,
-  ALTIN_FROM_ALTIN_INTERIORS_NORTHWEST = 4,
-  ALTIN_FROM_ALTIN_INTERIORS_NORTH = 5,
-  ALTIN_FROM_ALTIN_INTERIORS_NORTHEAST = 6,
-  ALTIN_FROM_ALTIN_INTERIORS_SOUTHEAST = 7,
-  ALTIN_FROM_ALTIN_INTERIORS_EAST = 8,
-  ALTIN_FROM_ALTIN_INTERIORS_WEST = 9,
+  ALTIN_FROM_COTTAGE_ROOMS_D_NORTHWEST = 4,
+  ALTIN_FROM_COTTAGE_ROOMS_D_NORTH = 5,
+  ALTIN_FROM_COTTAGE_ROOMS_D_NORTHEAST = 6,
+  ALTIN_FROM_COTTAGE_ROOMS_D_SOUTHEAST = 7,
+  ALTIN_FROM_COTTAGE_ROOMS_D_EAST = 8,
+  ALTIN_FROM_COTTAGE_ROOMS_D_WEST = 9,
   ALTIN_FROM_ALTIN_PEAK_FIRST_WATER_BEAST = 10,
   ALTIN_FROM_ALTIN_PEAK_SOUTH_ENTRANCE = 11,
   ALTIN_FROM_ALTIN_PEAK_JUNCTION = 12,
@@ -2512,48 +2510,48 @@ enum {
 /// MapId_Altin's warps.
 enum {
   ALTIN_TO_WORLD_MAP = 1,
-  ALTIN_TO_ALTIN_INTERIORS_SOUTHWEST = 2,
+  ALTIN_TO_COTTAGE_ROOMS_D_SOUTHWEST = 2,
   ALTIN_TO_SANCTUM = 3,
-  ALTIN_TO_ALTIN_INTERIORS_NORTHWEST = 4,
-  ALTIN_TO_ALTIN_INTERIORS_NORTH = 5,
-  ALTIN_TO_ALTIN_INTERIORS_NORTHEAST = 6,
-  ALTIN_TO_ALTIN_INTERIORS_SOUTHEAST = 7,
-  ALTIN_TO_ALTIN_INTERIORS_EAST = 8,
-  ALTIN_TO_ALTIN_INTERIORS_WEST = 9,
+  ALTIN_TO_COTTAGE_ROOMS_D_NORTHWEST = 4,
+  ALTIN_TO_COTTAGE_ROOMS_D_NORTH = 5,
+  ALTIN_TO_COTTAGE_ROOMS_D_NORTHEAST = 6,
+  ALTIN_TO_COTTAGE_ROOMS_D_SOUTHEAST = 7,
+  ALTIN_TO_COTTAGE_ROOMS_D_EAST = 8,
+  ALTIN_TO_COTTAGE_ROOMS_D_WEST = 9,
   ALTIN_TO_ALTIN_PEAK_FIRST_WATER_BEAST = 10,
   ALTIN_TO_ALTIN_PEAK_SOUTH_ENTRANCE = 11,
   ALTIN_TO_ALTIN_PEAK_JUNCTION = 12,
   ALTIN_TO_ALTIN_PEAK_SPRITZ = 13,
 };
 
-/// MapId_AltinInteriors's warp destinations.
+/// MapId_CottageRoomsD's warp destinations.
 enum {
-  ALTIN_INTERIORS_FROM_ALTIN_NORTHWEST = 1,
-  ALTIN_INTERIORS_FROM_ALTIN_NORTH = 2,
-  ALTIN_INTERIORS_FROM_ALTIN_NORTHEAST = 3,
-  ALTIN_INTERIORS_FROM_ALTIN_WEST = 4,
-  ALTIN_INTERIORS_FROM_ALTIN_SOUTHEAST = 5,
-  ALTIN_INTERIORS_FROM_ALTIN_EAST = 6,
-  ALTIN_INTERIORS_FROM_ALTIN_SOUTHWEST = 7,
-  ALTIN_INTERIORS_INN_FROM_INN_UPSTAIRS =
+  COTTAGE_ROOMS_D_FROM_ALTIN_NORTHWEST = 1,
+  COTTAGE_ROOMS_D_FROM_ALTIN_NORTH = 2,
+  COTTAGE_ROOMS_D_FROM_ALTIN_NORTHEAST = 3,
+  COTTAGE_ROOMS_D_FROM_ALTIN_WEST = 4,
+  COTTAGE_ROOMS_D_FROM_ALTIN_SOUTHEAST = 5,
+  COTTAGE_ROOMS_D_FROM_ALTIN_EAST = 6,
+  COTTAGE_ROOMS_D_FROM_ALTIN_SOUTHWEST = 7,
+  COTTAGE_ROOMS_D_INN_FROM_INN_UPSTAIRS =
       8, ///< ★ Named from the game: "Welcome to our inn." (MsgInnWelcome)
-  ALTIN_INTERIORS_INN_UPSTAIRS_FROM_INN =
+  COTTAGE_ROOMS_D_INN_UPSTAIRS_FROM_INN =
       9, ///< ★ Named from what the player sees: the inn's upper floor of guest
          ///< rooms, reached by the stairs beside its counter (its render)
 };
-/// MapId_AltinInteriors's warps.
+/// MapId_CottageRoomsD's warps.
 enum {
-  ALTIN_INTERIORS_TO_ALTIN_NORTHWEST = 1,
-  ALTIN_INTERIORS_TO_ALTIN_NORTH = 2,
-  ALTIN_INTERIORS_TO_ALTIN_NORTHEAST = 3,
-  ALTIN_INTERIORS_TO_ALTIN_WEST = 4,
-  ALTIN_INTERIORS_TO_ALTIN_SOUTHEAST = 5,
-  ALTIN_INTERIORS_TO_ALTIN_EAST = 6,
-  ALTIN_INTERIORS_TO_ALTIN_SOUTHWEST = 7,
-  ALTIN_INTERIORS_INN_TO_INN_UPSTAIRS =
+  COTTAGE_ROOMS_D_TO_ALTIN_NORTHWEST = 1,
+  COTTAGE_ROOMS_D_TO_ALTIN_NORTH = 2,
+  COTTAGE_ROOMS_D_TO_ALTIN_NORTHEAST = 3,
+  COTTAGE_ROOMS_D_TO_ALTIN_WEST = 4,
+  COTTAGE_ROOMS_D_TO_ALTIN_SOUTHEAST = 5,
+  COTTAGE_ROOMS_D_TO_ALTIN_EAST = 6,
+  COTTAGE_ROOMS_D_TO_ALTIN_SOUTHWEST = 7,
+  COTTAGE_ROOMS_D_INN_TO_INN_UPSTAIRS =
       8, ///< ★ Named from what the player sees: the inn's upper floor of guest
          ///< rooms, reached by the stairs beside its counter (its render)
-  ALTIN_INTERIORS_INN_UPSTAIRS_TO_INN =
+  COTTAGE_ROOMS_D_INN_UPSTAIRS_TO_INN =
       9, ///< ★ Named from the game: "Welcome to our inn." (MsgInnWelcome)
 };
 
@@ -2743,7 +2741,7 @@ enum {
 /// MapId_LamaTemple's warp destinations.
 enum {
   LAMA_TEMPLE_FROM_WORLD_MAP = 1,
-  LAMA_TEMPLE_FROM_LACQUER_ROOMS_HAMAS_ROOM = 2,
+  LAMA_TEMPLE_FROM_LACQUER_ROOMS_A_HAMAS_ROOM = 2,
   LAMA_TEMPLE_FROM_ALPINE_CROSSING = 3,
   /// In front of the traveling healer, where a party defeated anywhere in Lama
   /// Temple wakes (its return point in overworld/map_rules.s).
@@ -2752,7 +2750,7 @@ enum {
 /// MapId_LamaTemple's warps.
 enum {
   LAMA_TEMPLE_TO_WORLD_MAP = 1,
-  LAMA_TEMPLE_TO_LACQUER_ROOMS_HAMAS_ROOM = 2,
+  LAMA_TEMPLE_TO_LACQUER_ROOMS_A_HAMAS_ROOM = 2,
 };
 
 /// MapId_LamakanDesertEast's warp destinations.
@@ -3039,94 +3037,94 @@ enum {
   KALAY_TO_KALAY_TUNNEL_TREASURE_ROOM = 14,
 };
 
-/// MapId_KalayInteriors's warp destinations.
+/// MapId_StuccoRoomsA's warp destinations.
 enum {
-  KALAY_INTERIORS_HOUSE_NORTHWEST = 1,
-  KALAY_INTERIORS_HOUSE_NORTHEAST_UPPER =
+  STUCCO_ROOMS_A_HOUSE_NORTHWEST = 1,
+  STUCCO_ROOMS_A_HOUSE_NORTHEAST_UPPER =
       2, ///< ★ Named from what the player sees: the upper floor of the
          ///< two-storey house in the town's north-east, entered from its
          ///< terrace (its render)
-  KALAY_INTERIORS_HOUSE_NORTHEAST_LOWER =
+  STUCCO_ROOMS_A_HOUSE_NORTHEAST_LOWER =
       3, ///< ★ Named from what the player sees: the ground floor of the
          ///< two-storey house in the town's north-east (its render)
-  KALAY_INTERIORS_HOUSE_SOUTHEAST = 4,
-  KALAY_INTERIORS_WEAPON_SHOP_COUNTER =
+  STUCCO_ROOMS_A_HOUSE_SOUTHEAST = 4,
+  STUCCO_ROOMS_A_WEAPON_SHOP_COUNTER =
       5, ///< ★ Named from what the player sees: behind the weapon seller's
          ///< counter, through the arched doorway at the back (its render)
-  KALAY_INTERIORS_WEAPON_SHOP = 6,
-  KALAY_INTERIORS_ARMOR_SHOP = 7,
-  KALAY_INTERIORS_ARMOR_SHOP_COUNTER = 8,
-  KALAY_INTERIORS_INN_FROM_INN_PASSAGE =
+  STUCCO_ROOMS_A_WEAPON_SHOP = 6,
+  STUCCO_ROOMS_A_ARMOR_SHOP = 7,
+  STUCCO_ROOMS_A_ARMOR_SHOP_COUNTER = 8,
+  STUCCO_ROOMS_A_INN_FROM_INN_PASSAGE =
       9, ///< ★ Named from what the player sees: the inn's room with its
          ///< counter, dining tables and stairs (its render)
-  KALAY_INTERIORS_INN = 10,
-  KALAY_INTERIORS_INN_PASSAGE_FROM_INN =
+  STUCCO_ROOMS_A_INN = 10,
+  STUCCO_ROOMS_A_INN_PASSAGE_FROM_INN =
       11, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  KALAY_INTERIORS_INN_PASSAGE_FROM_GUEST_ROOM_NORTHWEST =
+  STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_NORTHWEST =
       12, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  KALAY_INTERIORS_INN_PASSAGE_FROM_GUEST_ROOM_NORTHEAST =
+  STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_NORTHEAST =
       13, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  KALAY_INTERIORS_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHWEST =
+  STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHWEST =
       14, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  KALAY_INTERIORS_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST =
+  STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST =
       15, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  KALAY_INTERIORS_GUEST_ROOM_SOUTHEAST_FROM_INN_PASSAGE =
+  STUCCO_ROOMS_A_GUEST_ROOM_SOUTHEAST_FROM_INN_PASSAGE =
       16, ///< ★ Named from what the player sees: the guest room through the
           ///< east opening on the inn corridor's south side (its render)
-  KALAY_INTERIORS_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE =
+  STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE =
       17, ///< ★ Named from what the player sees: the guest room behind the west
           ///< door in the inn corridor's north wall (its render)
-  KALAY_INTERIORS_GUEST_ROOM_NORTHEAST_FROM_INN_PASSAGE =
+  STUCCO_ROOMS_A_GUEST_ROOM_NORTHEAST_FROM_INN_PASSAGE =
       18, ///< ★ Named from what the player sees: the guest room behind the east
           ///< door in the inn corridor's north wall (its render)
-  KALAY_INTERIORS_GUEST_ROOM_SOUTHWEST_FROM_INN_PASSAGE =
+  STUCCO_ROOMS_A_GUEST_ROOM_SOUTHWEST_FROM_INN_PASSAGE =
       19, ///< ★ Named from what the player sees: the guest room through the
           ///< west opening on the inn corridor's south side (its render)
 };
-/// MapId_KalayInteriors's warps.
+/// MapId_StuccoRoomsA's warps.
 enum {
-  KALAY_INTERIORS_HOUSE_NORTHWEST_TO_KALAY = 1,
-  KALAY_INTERIORS_HOUSE_NORTHEAST_UPPER_TO_KALAY = 2,
-  KALAY_INTERIORS_HOUSE_NORTHEAST_LOWER_TO_KALAY = 3,
-  KALAY_INTERIORS_HOUSE_SOUTHEAST_TO_KALAY = 4,
-  KALAY_INTERIORS_WEAPON_SHOP_COUNTER_TO_KALAY = 5,
-  KALAY_INTERIORS_WEAPON_SHOP_TO_KALAY = 6,
-  KALAY_INTERIORS_ARMOR_SHOP_TO_KALAY = 7,
-  KALAY_INTERIORS_ARMOR_SHOP_COUNTER_TO_KALAY = 8,
-  KALAY_INTERIORS_INN_TO_INN_PASSAGE =
+  STUCCO_ROOMS_A_HOUSE_NORTHWEST_TO_KALAY = 1,
+  STUCCO_ROOMS_A_HOUSE_NORTHEAST_UPPER_TO_KALAY = 2,
+  STUCCO_ROOMS_A_HOUSE_NORTHEAST_LOWER_TO_KALAY = 3,
+  STUCCO_ROOMS_A_HOUSE_SOUTHEAST_TO_KALAY = 4,
+  STUCCO_ROOMS_A_WEAPON_SHOP_COUNTER_TO_KALAY = 5,
+  STUCCO_ROOMS_A_WEAPON_SHOP_TO_KALAY = 6,
+  STUCCO_ROOMS_A_ARMOR_SHOP_TO_KALAY = 7,
+  STUCCO_ROOMS_A_ARMOR_SHOP_COUNTER_TO_KALAY = 8,
+  STUCCO_ROOMS_A_INN_TO_INN_PASSAGE =
       9, ///< ★ Named from what the player sees: the corridor at the foot of the
          ///< inn's stairs, lined with guest-room doors (its render)
-  KALAY_INTERIORS_INN_TO_KALAY = 10,
-  KALAY_INTERIORS_INN_PASSAGE_TO_INN =
+  STUCCO_ROOMS_A_INN_TO_KALAY = 10,
+  STUCCO_ROOMS_A_INN_PASSAGE_TO_INN =
       11, ///< ★ Named from what the player sees: the inn's room with its
           ///< counter, dining tables and stairs (its render)
-  KALAY_INTERIORS_INN_PASSAGE_TO_GUEST_ROOM_NORTHWEST =
+  STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_NORTHWEST =
       12, ///< ★ Named from what the player sees: the guest room behind the west
           ///< door in the inn corridor's north wall (its render)
-  KALAY_INTERIORS_INN_PASSAGE_TO_GUEST_ROOM_NORTHEAST =
+  STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_NORTHEAST =
       13, ///< ★ Named from what the player sees: the guest room behind the east
           ///< door in the inn corridor's north wall (its render)
-  KALAY_INTERIORS_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST =
+  STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST =
       14, ///< ★ Named from what the player sees: the guest room through the
           ///< west opening on the inn corridor's south side (its render)
-  KALAY_INTERIORS_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST =
+  STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST =
       15, ///< ★ Named from what the player sees: the guest room through the
           ///< east opening on the inn corridor's south side (its render)
-  KALAY_INTERIORS_GUEST_ROOM_SOUTHEAST_TO_INN_PASSAGE =
+  STUCCO_ROOMS_A_GUEST_ROOM_SOUTHEAST_TO_INN_PASSAGE =
       16, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  KALAY_INTERIORS_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE =
+  STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE =
       17, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  KALAY_INTERIORS_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE =
+  STUCCO_ROOMS_A_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE =
       18, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  KALAY_INTERIORS_GUEST_ROOM_SOUTHWEST_TO_INN_PASSAGE =
+  STUCCO_ROOMS_A_GUEST_ROOM_SOUTHWEST_TO_INN_PASSAGE =
       19, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
 };
@@ -3282,11 +3280,11 @@ enum {
   LUNPA_TO_STONE_ROOMS = 12,
 };
 
-/// MapId_LunpaInteriors's warp destinations and warps.
+/// MapId_RockRooms's warp destinations and warps.
 enum {
   /// The house at the gate to Suhalla, the one room of the sheet that is not
   /// Lunpa's.
-  LUNPA_INTERIORS_FROM_SUHALLA_GATE_CHECKPOINT = 10,
+  ROCK_ROOMS_FROM_SUHALLA_GATE_CHECKPOINT = 10,
 };
 
 /// MapId_WestLunpaCave's warp destinations.
@@ -3310,42 +3308,42 @@ enum {
 enum {
   KALAY_DOCKS_FROM_WORLD_MAP_SOUTH = 1,
   KALAY_DOCKS_FROM_TOLBI_SHIP_DECK = 2,
-  KALAY_DOCKS_FROM_WOODEN_ROOMS_B = 3,
+  KALAY_DOCKS_FROM_COTTAGE_ROOMS_E = 3,
   KALAY_DOCKS_FROM_WORLD_MAP_NORTH = 4,
 };
 /// MapId_KalayDocks's warps.
 enum {
   KALAY_DOCKS_TO_WORLD_MAP_SOUTH = 1,
   KALAY_DOCKS_TO_TOLBI_SHIP_DECK = 2,
-  KALAY_DOCKS_TO_WOODEN_ROOMS_B = 3,
+  KALAY_DOCKS_TO_COTTAGE_ROOMS_E = 3,
   KALAY_DOCKS_TO_WORLD_MAP_NORTH = 4,
 };
 
-/// MapId_WoodenRoomsB's warp destinations.
+/// MapId_CottageRoomsE's warp destinations.
 enum {
-  WOODEN_ROOMS_B_FROM_KALAY_DOCKS = 1,
-  WOODEN_ROOMS_B_FROM_TOLBI_DOCKS = 2,
+  COTTAGE_ROOMS_E_FROM_KALAY_DOCKS = 1,
+  COTTAGE_ROOMS_E_FROM_TOLBI_DOCKS = 2,
 };
-/// MapId_WoodenRoomsB's warps.
+/// MapId_CottageRoomsE's warps.
 enum {
-  WOODEN_ROOMS_B_TO_KALAY_DOCKS = 1,
-  WOODEN_ROOMS_B_TO_TOLBI_DOCKS = 2,
+  COTTAGE_ROOMS_E_TO_KALAY_DOCKS = 1,
+  COTTAGE_ROOMS_E_TO_TOLBI_DOCKS = 2,
 };
 
 /// MapId_TolbiShipDeck's warp destinations.
 enum {
-  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_PASSENGER_HOLD = 1,
-  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_CRATE_HOLD = 2,
-  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM = 3,
+  TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_PASSENGER_HOLD = 1,
+  TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_CRATE_HOLD = 2,
+  TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_CAPTAINS_ROOM = 3,
   TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST = 4,
   TOLBI_SHIP_DECK_FROM_KALAY_DOCKS = 5,
   TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS = 6,
-  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_READY = 10,
-  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_SEA_MONSTERS = 11,
-  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_MONSTERS_BOARD = 12,
+  TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_READY = 10,
+  TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_SEA_MONSTERS = 11,
+  TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD = 12,
   TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK = 13,
   TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK = 14,
-  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_KRAKEN = 15,
+  TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_KRAKEN = 15,
   TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE =
       16, ///< TolbiShipDeck_JumpIntoKrakenBattle
   TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_LAND_SIGHTED =
@@ -3355,9 +3353,9 @@ enum {
 };
 /// MapId_TolbiShipDeck's warps.
 enum {
-  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_PASSENGER_HOLD = 1,
-  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CRATE_HOLD = 2,
-  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM = 3,
+  TOLBI_SHIP_DECK_TO_SHIP_ROOMS_PASSENGER_HOLD = 1,
+  TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CRATE_HOLD = 2,
+  TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CAPTAINS_ROOM = 3,
   TOLBI_SHIP_DECK_TO_KALAY_DOCKS = 4,
   TOLBI_SHIP_DECK_TO_TOLBI_SHIP_MAST = 5,
   TOLBI_SHIP_DECK_TO_TOLBI_DOCKS = 6,
@@ -3366,15 +3364,15 @@ enum {
   TOLBI_SHIP_DECK_TO_TOLBI_SHIP_MAST_COURSE_CLEAR =
       10, ///< ★ Named from the game: "Ship's course... Clear!"
           ///< (MsgTolbiShipShipsCourseClear)
-  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_TURN = 11,
-  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_FIRST_ATTACK = 12,
-  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_SECOND_ATTACK = 13,
-  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_THIRD_ATTACK = 14,
+  TOLBI_SHIP_DECK_TO_SHIP_ROOMS_TURN = 11,
+  TOLBI_SHIP_DECK_TO_SHIP_ROOMS_FIRST_ATTACK = 12,
+  TOLBI_SHIP_DECK_TO_SHIP_ROOMS_SECOND_ATTACK = 13,
+  TOLBI_SHIP_DECK_TO_SHIP_ROOMS_THIRD_ATTACK = 14,
   TOLBI_SHIP_DECK_TO_WORLD_MAP_REACH_TOLBI =
       15, ///< ★ Named from what the player sees: the ship coming in to Tolbi at
           ///< the end of the crossing (its render)
-  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_ISLAND = 16,
-  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_SWITCH_TEAMS = 17,
+  TOLBI_SHIP_DECK_TO_SHIP_ROOMS_ISLAND = 16,
+  TOLBI_SHIP_DECK_TO_SHIP_ROOMS_SWITCH_TEAMS = 17,
 };
 
 /// MapId_TolbiShipMast's warp destinations.
@@ -3390,8 +3388,8 @@ enum {
 /// MapId_TolbiShipMast's warps.
 enum {
   TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK = 1,
-  TOLBI_SHIP_MAST_TO_TOLBI_SHIP_INTERIORS_CAST_OFF = 10,
-  TOLBI_SHIP_MAST_TO_TOLBI_SHIP_INTERIORS_MONSTERS = 11,
+  TOLBI_SHIP_MAST_TO_SHIP_ROOMS_CAST_OFF = 10,
+  TOLBI_SHIP_MAST_TO_SHIP_ROOMS_MONSTERS = 11,
   TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_SECOND_ATTACK = 12,
   TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_THIRD_ATTACK = 13,
   TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_LAND_SIGHTED =
@@ -3399,123 +3397,123 @@ enum {
   TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE = 15,
 };
 
-/// MapId_TolbiShipInteriors's warp destinations.
+/// MapId_ShipRooms's warp destinations.
 enum {
-  TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK =
+  SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK =
       1, ///< ★ Named from what the player sees: the room below deck where the
          ///< tour's passengers sit round a green rug (its render)
-  TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_ROWING_DECK =
+  SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK =
       2, ///< ★ Named from what the player sees: the room below deck where the
          ///< tour's passengers sit round a green rug (its render)
-  TOLBI_SHIP_INTERIORS_CRATE_HOLD_FROM_TOLBI_SHIP_DECK =
+  SHIP_ROOMS_CRATE_HOLD_FROM_TOLBI_SHIP_DECK =
       3, ///< ★ Named from what the player sees: the room below deck stacked
          ///< with crates, barrels and fruit baskets (its render)
-  TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_PASSENGER_HOLD =
+  SHIP_ROOMS_ROWING_DECK_FROM_PASSENGER_HOLD =
       4, ///< ★ Named from what the player sees: the oarsmen rowing in rows to a
          ///< drummer's beat (its render)
-  TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK =
+  SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK =
       5, ///< ★ Named from what the player sees: the room where the captain
          ///< stands by the ship's wheel (its render)
-  TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_CAST_OFF =
+  SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_CAST_OFF =
       10, ///< ★ Named from what the player sees: the room where the captain
           ///< stands by the ship's wheel (its render)
-  TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_CAPTAINS_ROOM_CALL_TO_OARS = 11,
-  TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_PASSENGER_HOLD_ROWING =
+  SHIP_ROOMS_PASSENGER_HOLD_FROM_CAPTAINS_ROOM_CALL_TO_OARS = 11,
+  SHIP_ROOMS_ROWING_DECK_FROM_PASSENGER_HOLD_ROWING =
       12, ///< ★ Named from what the player sees: the oarsmen rowing in rows to
           ///< a drummer's beat (its render)
-  TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_MONSTERS =
+  SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_MONSTERS =
       13, ///< ★ Named from what the player sees: the room where the captain
           ///< stands by the ship's wheel (its render)
-  TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_TURN =
+  SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_TURN =
       14, ///< ★ Named from what the player sees: the room where the captain
           ///< stands by the ship's wheel (its render)
-  TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_FIRST_ATTACK =
+  SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_FIRST_ATTACK =
       15, ///< ★ Named from what the player sees: the oarsmen rowing in rows to
           ///< a drummer's beat (its render)
-  TOLBI_SHIP_INTERIORS_ROWING_DECK_AFTER_FIRST_ATTACK_BATTLE =
-      16, ///< TolbiShipInteriors_FightRowingDeckMonsters
-  TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SECOND_ATTACK =
+  SHIP_ROOMS_ROWING_DECK_AFTER_FIRST_ATTACK_BATTLE =
+      16, ///< ShipRooms_FightRowingDeckMonsters
+  SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SECOND_ATTACK =
       17, ///< ★ Named from what the player sees: the oarsmen rowing in rows to
           ///< a drummer's beat (its render)
-  TOLBI_SHIP_INTERIORS_ROWING_DECK_AFTER_SECOND_ATTACK_BATTLE =
-      18, ///< TolbiShipInteriors_FightRowingDeckMonsters
-  TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_THIRD_ATTACK =
+  SHIP_ROOMS_ROWING_DECK_AFTER_SECOND_ATTACK_BATTLE =
+      18, ///< ShipRooms_FightRowingDeckMonsters
+  SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_THIRD_ATTACK =
       19, ///< ★ Named from what the player sees: the oarsmen rowing in rows to
           ///< a drummer's beat (its render)
-  TOLBI_SHIP_INTERIORS_ROWING_DECK_AFTER_THIRD_ATTACK_BATTLE =
-      20, ///< TolbiShipInteriors_FightRowingDeckMonsters
-  TOLBI_SHIP_INTERIORS_FROM_WORLD_MAP = 21,
-  TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_ISLAND =
+  SHIP_ROOMS_ROWING_DECK_AFTER_THIRD_ATTACK_BATTLE =
+      20, ///< ShipRooms_FightRowingDeckMonsters
+  SHIP_ROOMS_FROM_WORLD_MAP = 21,
+  SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_ISLAND =
       22, ///< ★ Named from what the player sees: the room where the captain
           ///< stands by the ship's wheel (its render)
-  TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_WORLD_MAP_ISLAND = 23,
-  TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SWITCH_TEAMS =
+  SHIP_ROOMS_ROWING_DECK_FROM_WORLD_MAP_ISLAND = 23,
+  SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SWITCH_TEAMS =
       24, ///< ★ Named from what the player sees: the oarsmen rowing in rows to
           ///< a drummer's beat (its render)
   /// Where a defeat in the monster attacks or the Kraken battle returns the
   /// party (gSaveBlock.savedWarpDest): the voyage's flags are cleared and the
   /// party goes up on deck.
-  TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_AFTER_DEFEAT = 30,
+  SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT = 30,
 };
-/// MapId_TolbiShipInteriors's warps.
+/// MapId_ShipRooms's warps.
 enum {
-  TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK = 1,
-  TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_ROWING_DECK =
+  SHIP_ROOMS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK = 1,
+  SHIP_ROOMS_PASSENGER_HOLD_TO_ROWING_DECK =
       2, ///< ★ Named from what the player sees: the oarsmen rowing in rows to a
          ///< drummer's beat (its render)
-  TOLBI_SHIP_INTERIORS_CRATE_HOLD_TO_TOLBI_SHIP_DECK = 3,
-  TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_PASSENGER_HOLD =
+  SHIP_ROOMS_CRATE_HOLD_TO_TOLBI_SHIP_DECK = 3,
+  SHIP_ROOMS_ROWING_DECK_TO_PASSENGER_HOLD =
       4, ///< ★ Named from what the player sees: the room below deck where the
          ///< tour's passengers sit round a green rug (its render)
-  TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK = 5,
-  TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_TOLBI_SHIP_DECK_READY =
+  SHIP_ROOMS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK = 5,
+  SHIP_ROOMS_ROWING_DECK_TO_TOLBI_SHIP_DECK_READY =
       10, ///< ★ Named from the game: "Preparations... Ready!"
           ///< (MsgTolbiShipPreparationsReady)
-  TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_TO_PASSENGER_HOLD_CALL_TO_OARS =
+  SHIP_ROOMS_CAPTAINS_ROOM_TO_PASSENGER_HOLD_CALL_TO_OARS =
       11, ///< ★ Named from what the player sees: the room below deck where the
           ///< tour's passengers sit round a green rug (its render)
-  TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_ROWING_DECK_ROWING =
+  SHIP_ROOMS_PASSENGER_HOLD_TO_ROWING_DECK_ROWING =
       12, ///< ★ Named from what the player sees: the oarsmen rowing in rows to
           ///< a drummer's beat (its render)
-  TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_FIRST_ATTACK =
+  SHIP_ROOMS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_FIRST_ATTACK =
       13, ///< ★ Named from what the player sees: the ship sailing across the
           ///< world map until the first monster attack (its render)
-  TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK_SEA_MONSTERS =
+  SHIP_ROOMS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK_SEA_MONSTERS =
       14, ///< ★ Named from the game: "Sea monsters!"
           ///< (MsgTolbiShipAyeCaptainSeaMonsters)
-  TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK_MONSTERS_BOARD =
+  SHIP_ROOMS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK_MONSTERS_BOARD =
       15, ///< ★ Named from the game: "It's no use. It's too late!"
           ///< (MsgTolbiShipNoUseLate)
-  TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_SECOND_ATTACK =
+  SHIP_ROOMS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_SECOND_ATTACK =
       16, ///< ★ Named from what the player sees: the ship sailing across the
           ///< world map until the second monster attack (its render)
-  TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_THIRD_ATTACK =
+  SHIP_ROOMS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_THIRD_ATTACK =
       17, ///< ★ Named from what the player sees: the ship sailing across the
           ///< world map until the third monster attack (its render)
-  TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_KRAKEN =
+  SHIP_ROOMS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_KRAKEN =
       18, ///< ★ Named from what the player sees: the ship sailing across the
           ///< world map until the Kraken comes aboard (its render)
-  TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_TOLBI_SHIP_DECK_KRAKEN =
+  SHIP_ROOMS_ROWING_DECK_TO_TOLBI_SHIP_DECK_KRAKEN =
       19, ///< ★ Named from what the player sees: the stairs up to the deck
           ///< while the Kraken is aboard, where the party jumps into the battle
           ///< (its render)
-  TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_LAND =
+  SHIP_ROOMS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_LAND =
       20, ///< ★ Named from what the player sees: the ship sailing across the
           ///< world map until land is sighted (its render)
-  TOLBI_SHIP_INTERIORS_TO_WORLD_MAP = 21,
+  SHIP_ROOMS_TO_WORLD_MAP = 21,
 };
 
 /// MapId_TolbiDocks's warp destinations.
 enum {
   TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK = 1,
   TOLBI_DOCKS_FROM_WORLD_MAP = 2,
-  TOLBI_DOCKS_FROM_WOODEN_ROOMS_B = 3,
+  TOLBI_DOCKS_FROM_COTTAGE_ROOMS_E = 3,
 };
 /// MapId_TolbiDocks's warps.
 enum {
   TOLBI_DOCKS_TO_WORLD_MAP = 1,
   TOLBI_DOCKS_TO_TOLBI_SHIP_DECK = 2,
-  TOLBI_DOCKS_TO_WOODEN_ROOMS_B = 3,
+  TOLBI_DOCKS_TO_COTTAGE_ROOMS_E = 3,
 };
 
 /// MapId_CrossboneIsle's warp destinations.
@@ -3803,13 +3801,13 @@ enum {
   TOLBI_FROM_HOUSE_SOUTH = 1,
   TOLBI_FROM_HOUSE_NORTHWEST = 2,
   TOLBI_FROM_INN = 3,
-  TOLBI_FROM_TOLBI_INTERIORS_EAST = 4,
+  TOLBI_FROM_STUCCO_ROOMS_B_EAST = 4,
   TOLBI_FROM_HOUSE_NORTHEAST = 5,
   TOLBI_FROM_HOUSE_EAST = 6,
   TOLBI_FROM_WEAPON_AND_ARMOR_SHOP = 7,
   TOLBI_FROM_HOUSE_SOUTHWEST = 8,
   TOLBI_FROM_SANCTUM = 9,
-  TOLBI_FROM_TOLBI_INTERIORS_WEST = 10,
+  TOLBI_FROM_STUCCO_ROOMS_B_WEST = 10,
   TOLBI_FROM_BABI_PALACE_ENTRANCE = 11,
   TOLBI_FROM_COLOSSEUM_ENTRANCE = 12,
   TOLBI_FROM_LUCKY_DICE = 13,
@@ -3839,125 +3837,125 @@ enum {
   TOLBI_TO_TOLBI_SPRING = 30,
 };
 
-/// MapId_TolbiInteriors's warp destinations.
+/// MapId_StuccoRoomsB's warp destinations.
 enum {
-  TOLBI_INTERIORS_HOUSE_NORTHEAST =
+  STUCCO_ROOMS_B_HOUSE_NORTHEAST =
       1, ///< the room behind Tolbi's house northeast door; through
          ///< TOLBI_TO_HOUSE_NORTHEAST
-  TOLBI_INTERIORS_HOUSE_NORTHWEST =
+  STUCCO_ROOMS_B_HOUSE_NORTHWEST =
       2, ///< the room behind Tolbi's house northwest door; through
          ///< TOLBI_TO_HOUSE_NORTHWEST
-  TOLBI_INTERIORS_HOUSE_EAST = 3,  ///< the room behind Tolbi's house east door;
-                                   ///< through TOLBI_TO_HOUSE_EAST
-  TOLBI_INTERIORS_HOUSE_SOUTH = 4, ///< the room behind Tolbi's house south
-                                   ///< door; through TOLBI_TO_HOUSE_SOUTH
-  TOLBI_INTERIORS_HOUSE_SOUTHWEST =
+  STUCCO_ROOMS_B_HOUSE_EAST = 3,  ///< the room behind Tolbi's house east door;
+                                  ///< through TOLBI_TO_HOUSE_EAST
+  STUCCO_ROOMS_B_HOUSE_SOUTH = 4, ///< the room behind Tolbi's house south
+                                  ///< door; through TOLBI_TO_HOUSE_SOUTH
+  STUCCO_ROOMS_B_HOUSE_SOUTHWEST =
       5, ///< the room behind Tolbi's house southwest door; through
          ///< TOLBI_TO_HOUSE_SOUTHWEST
-  TOLBI_INTERIORS_WEAPON_AND_ARMOR_SHOP =
+  STUCCO_ROOMS_B_WEAPON_AND_ARMOR_SHOP =
       6, ///< ★ Named from what the player sees: the shop of two rooms joined at
          ///< the front, a seller behind the counter of each (its render);
          ///< through TOLBI_TO_WEAPON_AND_ARMOR_SHOP
-  TOLBI_INTERIORS_SANCTUM =
+  STUCCO_ROOMS_B_SANCTUM =
       8, ///< the room behind Tolbi's sanctum door; the
          ///< room holds the sanctum; through TOLBI_TO_SANCTUM
-  TOLBI_INTERIORS_INN =
+  STUCCO_ROOMS_B_INN =
       9, ///< the room behind Tolbi's inn door; through TOLBI_TO_INN
-  TOLBI_INTERIORS_INN_FROM_INN_PASSAGE =
+  STUCCO_ROOMS_B_INN_FROM_INN_PASSAGE =
       10, ///< ★ Named from the game: "Inn Full"
           ///< (MsgTolbiInteriorsIsaacCheckedTheSignInnFull)
-  TOLBI_INTERIORS_INN_PASSAGE_FROM_INN =
+  STUCCO_ROOMS_B_INN_PASSAGE_FROM_INN =
       11, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  TOLBI_INTERIORS_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHWEST =
+  STUCCO_ROOMS_B_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHWEST =
       12, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  TOLBI_INTERIORS_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST =
+  STUCCO_ROOMS_B_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST =
       13, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  TOLBI_INTERIORS_INN_PASSAGE_FROM_GUEST_ROOM_NORTHWEST =
+  STUCCO_ROOMS_B_INN_PASSAGE_FROM_GUEST_ROOM_NORTHWEST =
       14, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  TOLBI_INTERIORS_INN_PASSAGE_FROM_GUEST_ROOM_NORTHEAST =
+  STUCCO_ROOMS_B_INN_PASSAGE_FROM_GUEST_ROOM_NORTHEAST =
       15, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  TOLBI_INTERIORS_GUEST_ROOM_SOUTHEAST_FROM_INN_PASSAGE =
+  STUCCO_ROOMS_B_GUEST_ROOM_SOUTHEAST_FROM_INN_PASSAGE =
       16, ///< ★ Named from what the player sees: the guest room through the
           ///< east opening on the corridor's south side, where stranded
           ///< passengers argue (its render)
-  TOLBI_INTERIORS_GUEST_ROOM_SOUTHWEST_FROM_INN_PASSAGE =
+  STUCCO_ROOMS_B_GUEST_ROOM_SOUTHWEST_FROM_INN_PASSAGE =
       17, ///< ★ Named from what the player sees: the guest room through the
           ///< west opening on the inn corridor's south side (its render)
-  TOLBI_INTERIORS_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE =
+  STUCCO_ROOMS_B_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE =
       18, ///< ★ Named from what the player sees: the guest room behind the west
           ///< door in the inn corridor's north wall (its render)
-  TOLBI_INTERIORS_GUEST_ROOM_NORTHEAST_FROM_INN_PASSAGE =
+  STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_FROM_INN_PASSAGE =
       19, ///< ★ Named from what the player sees: the guest room behind the east
           ///< door in the corridor's north wall, where a woman hides a Lucky
           ///< Medal (its render)
-  TOLBI_INTERIORS_SANCTUM_NORTH = 30, ///< the room holds the sanctum;
+  STUCCO_ROOMS_B_SANCTUM_NORTH = 30, ///< the room holds the sanctum;
 };
-/// MapId_TolbiInteriors's warps.
+/// MapId_StuccoRoomsB's warps.
 enum {
-  TOLBI_INTERIORS_HOUSE_NORTHWEST_TO_TOLBI = 1,
-  TOLBI_INTERIORS_INN_TO_TOLBI = 2,
-  TOLBI_INTERIORS_TO_TOLBI_EAST = 3,
-  TOLBI_INTERIORS_HOUSE_NORTHEAST_TO_TOLBI = 4,
-  TOLBI_INTERIORS_HOUSE_EAST_TO_TOLBI = 5,
-  TOLBI_INTERIORS_WEAPON_AND_ARMOR_SHOP_TO_TOLBI = 6,
-  TOLBI_INTERIORS_HOUSE_SOUTHWEST_TO_TOLBI = 7,
-  TOLBI_INTERIORS_SANCTUM_TO_TOLBI = 8,
-  TOLBI_INTERIORS_TO_TOLBI_WEST = 9,
-  TOLBI_INTERIORS_INN_TO_INN_PASSAGE =
+  STUCCO_ROOMS_B_HOUSE_NORTHWEST_TO_TOLBI = 1,
+  STUCCO_ROOMS_B_INN_TO_TOLBI = 2,
+  STUCCO_ROOMS_B_TO_TOLBI_EAST = 3,
+  STUCCO_ROOMS_B_HOUSE_NORTHEAST_TO_TOLBI = 4,
+  STUCCO_ROOMS_B_HOUSE_EAST_TO_TOLBI = 5,
+  STUCCO_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_TOLBI = 6,
+  STUCCO_ROOMS_B_HOUSE_SOUTHWEST_TO_TOLBI = 7,
+  STUCCO_ROOMS_B_SANCTUM_TO_TOLBI = 8,
+  STUCCO_ROOMS_B_TO_TOLBI_WEST = 9,
+  STUCCO_ROOMS_B_INN_TO_INN_PASSAGE =
       10, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  TOLBI_INTERIORS_INN_PASSAGE_TO_INN =
+  STUCCO_ROOMS_B_INN_PASSAGE_TO_INN =
       11, ///< ★ Named from the game: "Inn Full"
           ///< (MsgTolbiInteriorsIsaacCheckedTheSignInnFull)
-  TOLBI_INTERIORS_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST =
+  STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST =
       12, ///< ★ Named from what the player sees: the guest room through the
           ///< west opening on the inn corridor's south side (its render)
-  TOLBI_INTERIORS_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST =
+  STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST =
       13, ///< ★ Named from what the player sees: the guest room through the
           ///< east opening on the corridor's south side, where stranded
           ///< passengers argue (its render)
-  TOLBI_INTERIORS_INN_PASSAGE_TO_GUEST_ROOM_NORTHWEST =
+  STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_NORTHWEST =
       14, ///< ★ Named from what the player sees: the guest room behind the west
           ///< door in the inn corridor's north wall (its render)
-  TOLBI_INTERIORS_INN_PASSAGE_TO_GUEST_ROOM_NORTHEAST =
+  STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_NORTHEAST =
       15, ///< ★ Named from what the player sees: the guest room behind the east
           ///< door in the corridor's north wall, where a woman hides a Lucky
           ///< Medal (its render)
-  TOLBI_INTERIORS_GUEST_ROOM_SOUTHEAST_TO_INN_PASSAGE =
+  STUCCO_ROOMS_B_GUEST_ROOM_SOUTHEAST_TO_INN_PASSAGE =
       16, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  TOLBI_INTERIORS_GUEST_ROOM_SOUTHWEST_TO_INN_PASSAGE =
+  STUCCO_ROOMS_B_GUEST_ROOM_SOUTHWEST_TO_INN_PASSAGE =
       17, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  TOLBI_INTERIORS_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE =
+  STUCCO_ROOMS_B_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE =
       18, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  TOLBI_INTERIORS_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE =
+  STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE =
       19, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
 };
 
-/// MapId_TolbiGameRooms's warp destinations.
+/// MapId_StuccoRoomsC's warp destinations.
 enum {
-  TOLBI_GAME_ROOMS_LUCKY_DICE_FROM_TOLBI =
+  STUCCO_ROOMS_C_LUCKY_DICE_FROM_TOLBI =
       10, ///< ★ Named from the game: "Throw the dice"
           ///< (MsgTolbiSpringLuckyDiceThrowTheDiceOn)
-  TOLBI_GAME_ROOMS_LUCKY_WHEELS_FROM_TOLBI =
+  STUCCO_ROOMS_C_LUCKY_WHEELS_FROM_TOLBI =
       11, ///< ★ Named from the game: "Lucky Wheels"
           ///< (MsgTolbiLuckyWheelsRulesPullLever)
-  TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_WHEELS =
-      12, ///< TolbiSpring_OfferLuckyWheels
-  TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_DICE = 13, ///< TolbiSpring_OfferLuckyDice
+  STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS =
+      12,                                     ///< TolbiSpring_OfferLuckyWheels
+  STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE = 13, ///< TolbiSpring_OfferLuckyDice
 };
-/// MapId_TolbiGameRooms's warps.
+/// MapId_StuccoRoomsC's warps.
 enum {
-  TOLBI_GAME_ROOMS_LUCKY_DICE_TO_TOLBI = 1,
-  TOLBI_GAME_ROOMS_LUCKY_WHEELS_TO_TOLBI = 2,
+  STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI = 1,
+  STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI = 2,
 };
 
 /// MapId_BabiPalace's warp destinations.
@@ -3990,7 +3988,7 @@ enum {
   BABI_PALACE_SCHOLARS_LANDING_FROM_CARPET_ROOM =
       10, ///< ★ Named from what the player sees: the stair landing whose dark
           ///< doorway leads to the scholars' room (its render)
-  BABI_PALACE_FROM_WOODEN_ROOMS_A = 11,
+  BABI_PALACE_FROM_COTTAGE_ROOMS_B = 11,
   BABI_PALACE_TUNNEL_LANDING_FROM_CARPET_ROOM =
       12, ///< ★ Named from what the player sees: the stair landing whose dark
           ///< doorway leads into the Colosseum Tunnel (its render)
@@ -4113,7 +4111,7 @@ enum {
   BABI_PALACE_SCHOLARS_LANDING_TO_CARPET_ROOM =
       10, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
           ///< that joins the palace's stairs and doors (its render)
-  BABI_PALACE_TO_WOODEN_ROOMS_A = 11,
+  BABI_PALACE_TO_COTTAGE_ROOMS_B = 11,
   BABI_PALACE_TUNNEL_LANDING_TO_CARPET_ROOM =
       12, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
           ///< that joins the palace's stairs and doors (its render)
@@ -4982,7 +4980,7 @@ enum {
   SUHALLA_FROM_WORLD_MAP = 10,
   // XXX: likely a debug start into the story after the audience, because Babi's
   // Palace (BABI_PALACE_AFTER_COLOSSO) and Suhalla's buildings
-  // (SUHALLA_INTERIORS_AFTER_BABI_SPOKE) have warp destinations that set story
+  // (TIMBER_ROOMS_A_AFTER_BABI_SPOKE) have warp destinations that set story
   // flags the same way.
   /// In no table row and led to by no warp: arriving by it sets
   /// FLAG_BABI_SPOKE_AFTER_COLOSSO, marking Babi's audience as held.
@@ -5002,69 +5000,68 @@ enum {
   SUHALLA_TO_WORLD_MAP_EAST = 12,
 };
 
-/// MapId_SuhallaInteriors's warp destinations.
+/// MapId_TimberRoomsA's warp destinations.
 enum {
-  SUHALLA_INTERIORS_INN = 1,
-  SUHALLA_INTERIORS_SANCTUM =
+  TIMBER_ROOMS_A_INN = 1,
+  TIMBER_ROOMS_A_SANCTUM =
       2, ///< the room behind Suhalla's sanctum door;
          ///< the room holds the sanctum; through SUHALLA_TO_SANCTUM
-  SUHALLA_INTERIORS_HOUSE_WEST = 3, ///< the room behind Suhalla's house west
-                                    ///< door; through SUHALLA_TO_HOUSE_WEST
-  SUHALLA_INTERIORS_HOUSE_NORTHEAST =
+  TIMBER_ROOMS_A_HOUSE_WEST = 3, ///< the room behind Suhalla's house west
+                                 ///< door; through SUHALLA_TO_HOUSE_WEST
+  TIMBER_ROOMS_A_HOUSE_NORTHEAST =
       4, ///< the room behind Suhalla's house northeast door; through
          ///< SUHALLA_TO_HOUSE_NORTHEAST
-  SUHALLA_INTERIORS_HOUSE_EAST = 5, ///< the room behind Suhalla's house east
+  TIMBER_ROOMS_A_HOUSE_EAST = 5,    ///< the room behind Suhalla's house east
                                     ///< door; through SUHALLA_TO_HOUSE_EAST
-  SUHALLA_INTERIORS_SANCTUM_NORTH =
-      6, ///< before the priest in Suhalla Sanctum, where a party defeated in
-         ///< Suhalla wakes
-  SUHALLA_INTERIORS_HOUSE_WEST_UNUSED = 7, ///< no warp leads here
-  SUHALLA_INTERIORS_INN_FROM_GUEST_ROOM_WEST =
+  TIMBER_ROOMS_A_SANCTUM_NORTH = 6, ///< before the priest in Suhalla Sanctum,
+                                    ///< where a party defeated in Suhalla wakes
+  TIMBER_ROOMS_A_HOUSE_WEST_UNUSED = 7, ///< no warp leads here
+  TIMBER_ROOMS_A_INN_FROM_GUEST_ROOM_WEST =
       10, ///< ★ Named from what the player sees: Suhalla's inn and its counter
           ///< (its render)
-  SUHALLA_INTERIORS_INN_FROM_GUEST_ROOM_EAST =
+  TIMBER_ROOMS_A_INN_FROM_GUEST_ROOM_EAST =
       11, ///< ★ Named from what the player sees: Suhalla's inn and its counter
           ///< (its render)
-  SUHALLA_INTERIORS_GUEST_ROOM_WEST_FROM_INN =
+  TIMBER_ROOMS_A_GUEST_ROOM_WEST_FROM_INN =
       12, ///< ★ Named from what the player sees: the inn's guest room with one
           ///< bed, behind its western doorway (its render)
-  SUHALLA_INTERIORS_GUEST_ROOM_EAST_FROM_INN =
+  TIMBER_ROOMS_A_GUEST_ROOM_EAST_FROM_INN =
       13, ///< ★ Named from what the player sees: the inn's guest room with two
           ///< beds, behind its eastern doorway (its render)
-  SUHALLA_INTERIORS_INN_FROM_LOFT =
+  TIMBER_ROOMS_A_INN_FROM_LOFT =
       14, ///< ★ Named from what the player sees: Suhalla's inn and its counter
           ///< (its render)
-  SUHALLA_INTERIORS_LOFT_FROM_INN =
+  TIMBER_ROOMS_A_LOFT_FROM_INN =
       15, ///< ★ Named from what the player sees: the room with beds up the
           ///< inn's ladder (its render)
   // XXX: likely a debug start into the story after the audience.
   /// In no table row and led to by no warp: arriving by it also marks Babi's
   /// audience as held, as SUHALLA_AFTER_BABI_SPOKE does.
-  SUHALLA_INTERIORS_AFTER_BABI_SPOKE = 90,
+  TIMBER_ROOMS_A_AFTER_BABI_SPOKE = 90,
 };
-/// MapId_SuhallaInteriors's warps.
+/// MapId_TimberRoomsA's warps.
 enum {
-  SUHALLA_INTERIORS_INN_TO_SUHALLA = 1,
-  SUHALLA_INTERIORS_SANCTUM_TO_SUHALLA = 2,
-  SUHALLA_INTERIORS_HOUSE_WEST_TO_SUHALLA = 3,
-  SUHALLA_INTERIORS_HOUSE_NORTHEAST_TO_SUHALLA = 4,
-  SUHALLA_INTERIORS_HOUSE_EAST_TO_SUHALLA = 5,
-  SUHALLA_INTERIORS_INN_TO_GUEST_ROOM_WEST =
+  TIMBER_ROOMS_A_INN_TO_SUHALLA = 1,
+  TIMBER_ROOMS_A_SANCTUM_TO_SUHALLA = 2,
+  TIMBER_ROOMS_A_HOUSE_WEST_TO_SUHALLA = 3,
+  TIMBER_ROOMS_A_HOUSE_NORTHEAST_TO_SUHALLA = 4,
+  TIMBER_ROOMS_A_HOUSE_EAST_TO_SUHALLA = 5,
+  TIMBER_ROOMS_A_INN_TO_GUEST_ROOM_WEST =
       10, ///< ★ Named from what the player sees: the inn's guest room with one
           ///< bed, behind its western doorway (its render)
-  SUHALLA_INTERIORS_INN_TO_GUEST_ROOM_EAST =
+  TIMBER_ROOMS_A_INN_TO_GUEST_ROOM_EAST =
       11, ///< ★ Named from what the player sees: the inn's guest room with two
           ///< beds, behind its eastern doorway (its render)
-  SUHALLA_INTERIORS_GUEST_ROOM_WEST_TO_INN =
+  TIMBER_ROOMS_A_GUEST_ROOM_WEST_TO_INN =
       12, ///< ★ Named from what the player sees: Suhalla's inn and its counter
           ///< (its render)
-  SUHALLA_INTERIORS_GUEST_ROOM_EAST_TO_INN =
+  TIMBER_ROOMS_A_GUEST_ROOM_EAST_TO_INN =
       13, ///< ★ Named from what the player sees: Suhalla's inn and its counter
           ///< (its render)
-  SUHALLA_INTERIORS_INN_TO_LOFT =
+  TIMBER_ROOMS_A_INN_TO_LOFT =
       14, ///< ★ Named from what the player sees: the room with beds up the
           ///< inn's ladder (its render)
-  SUHALLA_INTERIORS_LOFT_TO_INN =
+  TIMBER_ROOMS_A_LOFT_TO_INN =
       15, ///< ★ Named from what the player sees: Suhalla's inn and its counter
           ///< (its render)
 };
@@ -5073,7 +5070,7 @@ enum {
 enum {
   SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH = 1,
   SUHALLA_GATE_CHECKPOINT_FROM_SUHALLA_GATE_DEW_WEST = 2,
-  SUHALLA_GATE_CHECKPOINT_FROM_LUNPA_INTERIORS = 3,
+  SUHALLA_GATE_CHECKPOINT_FROM_ROCK_ROOMS = 3,
   SUHALLA_GATE_CHECKPOINT_FROM_SUHALLA_GATE_DEW_EAST = 4,
   SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST = 5,
 };
@@ -5081,7 +5078,7 @@ enum {
 enum {
   SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_SOUTH = 1,
   SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_WEST = 2,
-  SUHALLA_GATE_CHECKPOINT_TO_LUNPA_INTERIORS = 3,
+  SUHALLA_GATE_CHECKPOINT_TO_ROCK_ROOMS = 3,
   SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_EAST = 4,
   SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_EAST = 5,
 };
@@ -5440,139 +5437,139 @@ enum {
 
 /// MapId_Lalivero's warp destinations.
 enum {
-  LALIVERO_FROM_LALIVERO_INTERIORS_B_NORTHWEST = 1,
-  LALIVERO_FROM_LALIVERO_INTERIORS_A_WEST = 2,
-  LALIVERO_FROM_LALIVERO_INTERIORS_B_NORTHEAST = 3,
-  LALIVERO_FROM_LALIVERO_INTERIORS_A_NORTHWEST = 4,
-  LALIVERO_FROM_LALIVERO_INTERIORS_A_NORTH = 5,
-  LALIVERO_FROM_LALIVERO_INTERIORS_A_NORTHEAST = 6,
-  LALIVERO_FROM_LALIVERO_INTERIORS_B_SOUTHWEST = 7,
-  LALIVERO_FROM_LALIVERO_INTERIORS_B_SOUTH = 8,
-  LALIVERO_FROM_LALIVERO_INTERIORS_A_SOUTH = 9,
-  LALIVERO_FROM_LALIVERO_INTERIORS_A_SOUTHEAST = 10,
-  LALIVERO_FROM_LALIVERO_INTERIORS_A_EAST_SOUTHEAST = 11,
+  LALIVERO_FROM_TIMBER_ROOMS_C_NORTHWEST = 1,
+  LALIVERO_FROM_TIMBER_ROOMS_B_WEST = 2,
+  LALIVERO_FROM_TIMBER_ROOMS_C_NORTHEAST = 3,
+  LALIVERO_FROM_TIMBER_ROOMS_B_NORTHWEST = 4,
+  LALIVERO_FROM_TIMBER_ROOMS_B_NORTH = 5,
+  LALIVERO_FROM_TIMBER_ROOMS_B_NORTHEAST = 6,
+  LALIVERO_FROM_TIMBER_ROOMS_C_SOUTHWEST = 7,
+  LALIVERO_FROM_TIMBER_ROOMS_C_SOUTH = 8,
+  LALIVERO_FROM_TIMBER_ROOMS_B_SOUTH = 9,
+  LALIVERO_FROM_TIMBER_ROOMS_B_SOUTHEAST = 10,
+  LALIVERO_FROM_TIMBER_ROOMS_B_EAST_SOUTHEAST = 11,
   LALIVERO_FROM_WORLD_MAP_EAST = 20,
   LALIVERO_FROM_WORLD_MAP_WEST = 21,
 };
 /// MapId_Lalivero's warps.
 enum {
-  LALIVERO_TO_LALIVERO_INTERIORS_B_NORTHWEST = 1,
-  LALIVERO_TO_LALIVERO_INTERIORS_A_WEST = 2,
-  LALIVERO_TO_LALIVERO_INTERIORS_B_NORTHEAST = 3,
-  LALIVERO_TO_LALIVERO_INTERIORS_A_NORTHWEST = 4,
-  LALIVERO_TO_LALIVERO_INTERIORS_A_NORTH = 5,
-  LALIVERO_TO_LALIVERO_INTERIORS_A_NORTHEAST = 6,
-  LALIVERO_TO_LALIVERO_INTERIORS_B_SOUTHWEST = 7,
-  LALIVERO_TO_LALIVERO_INTERIORS_B_SOUTH = 8,
-  LALIVERO_TO_LALIVERO_INTERIORS_A_SOUTH = 9,
-  LALIVERO_TO_LALIVERO_INTERIORS_A_SOUTHEAST = 10,
-  LALIVERO_TO_LALIVERO_INTERIORS_A_EAST_SOUTHEAST = 11,
+  LALIVERO_TO_TIMBER_ROOMS_C_NORTHWEST = 1,
+  LALIVERO_TO_TIMBER_ROOMS_B_WEST = 2,
+  LALIVERO_TO_TIMBER_ROOMS_C_NORTHEAST = 3,
+  LALIVERO_TO_TIMBER_ROOMS_B_NORTHWEST = 4,
+  LALIVERO_TO_TIMBER_ROOMS_B_NORTH = 5,
+  LALIVERO_TO_TIMBER_ROOMS_B_NORTHEAST = 6,
+  LALIVERO_TO_TIMBER_ROOMS_C_SOUTHWEST = 7,
+  LALIVERO_TO_TIMBER_ROOMS_C_SOUTH = 8,
+  LALIVERO_TO_TIMBER_ROOMS_B_SOUTH = 9,
+  LALIVERO_TO_TIMBER_ROOMS_B_SOUTHEAST = 10,
+  LALIVERO_TO_TIMBER_ROOMS_B_EAST_SOUTHEAST = 11,
   LALIVERO_TO_WORLD_MAP_EAST = 20,
   LALIVERO_TO_WORLD_MAP_WEST = 21,
 };
 
-/// MapId_LaliveroInteriorsA's warp destinations.
+/// MapId_TimberRoomsB's warp destinations.
 enum {
-  LALIVERO_INTERIORS_A_FROM_LALIVERO_WEST = 1,
-  LALIVERO_INTERIORS_A_FROM_LALIVERO_SOUTHEAST = 2,
-  LALIVERO_INTERIORS_A_ITEM_SHOP_UPSTAIRS_FROM_ITEM_SHOP =
+  TIMBER_ROOMS_B_FROM_LALIVERO_WEST = 1,
+  TIMBER_ROOMS_B_FROM_LALIVERO_SOUTHEAST = 2,
+  TIMBER_ROOMS_B_ITEM_SHOP_UPSTAIRS_FROM_ITEM_SHOP =
       3, ///< ★ Named from what the player sees: the room up the item shop's
          ///< stairs (its render)
-  LALIVERO_INTERIORS_A_FROM_LALIVERO_NORTH = 4,
-  LALIVERO_INTERIORS_A_ITEM_SHOP_FROM_ITEM_SHOP_UPSTAIRS =
+  TIMBER_ROOMS_B_FROM_LALIVERO_NORTH = 4,
+  TIMBER_ROOMS_B_ITEM_SHOP_FROM_ITEM_SHOP_UPSTAIRS =
       5, ///< ★ Named from what the player sees: the room behind Lalivero's
          ///< north door where a merchant sells items across a counter (its
          ///< render)
-  LALIVERO_INTERIORS_A_FROM_LALIVERO_NORTHWEST = 6,
-  LALIVERO_INTERIORS_A_NORTHWEST_HOUSE_FROM_NORTHWEST_HOUSE_UPSTAIRS =
+  TIMBER_ROOMS_B_FROM_LALIVERO_NORTHWEST = 6,
+  TIMBER_ROOMS_B_NORTHWEST_HOUSE_FROM_NORTHWEST_HOUSE_UPSTAIRS =
       7, ///< ★ Named from what the player sees: the house behind Lalivero's
          ///< northwest door (its render)
-  LALIVERO_INTERIORS_A_NORTHWEST_HOUSE_UPSTAIRS_FROM_NORTHWEST_HOUSE =
+  TIMBER_ROOMS_B_NORTHWEST_HOUSE_UPSTAIRS_FROM_NORTHWEST_HOUSE =
       8, ///< ★ Named from what the player sees: the room up that house's
          ///< stairs, where a worker naps (its render)
-  LALIVERO_INTERIORS_A_FROM_LALIVERO_SOUTH = 9,
-  LALIVERO_INTERIORS_A_FROM_LALIVERO_EAST_SOUTHEAST = 10,
-  LALIVERO_INTERIORS_A_FROM_LALIVERO_NORTHEAST = 11,
-  LALIVERO_INTERIORS_A_SANCTUM =
+  TIMBER_ROOMS_B_FROM_LALIVERO_SOUTH = 9,
+  TIMBER_ROOMS_B_FROM_LALIVERO_EAST_SOUTHEAST = 10,
+  TIMBER_ROOMS_B_FROM_LALIVERO_NORTHEAST = 11,
+  TIMBER_ROOMS_B_SANCTUM =
       12, ///< stepping in makes the sanctum where a defeated party wakes
 };
-/// MapId_LaliveroInteriorsA's warps.
+/// MapId_TimberRoomsB's warps.
 enum {
-  LALIVERO_INTERIORS_A_TO_LALIVERO_WEST = 1,
-  LALIVERO_INTERIORS_A_TO_LALIVERO_SOUTHEAST = 2,
-  LALIVERO_INTERIORS_A_ITEM_SHOP_UPSTAIRS_TO_ITEM_SHOP =
+  TIMBER_ROOMS_B_TO_LALIVERO_WEST = 1,
+  TIMBER_ROOMS_B_TO_LALIVERO_SOUTHEAST = 2,
+  TIMBER_ROOMS_B_ITEM_SHOP_UPSTAIRS_TO_ITEM_SHOP =
       3, ///< ★ Named from what the player sees: the room behind Lalivero's
          ///< north door where a merchant sells items across a counter (its
          ///< render)
-  LALIVERO_INTERIORS_A_TO_LALIVERO_NORTH = 4,
-  LALIVERO_INTERIORS_A_ITEM_SHOP_TO_ITEM_SHOP_UPSTAIRS =
+  TIMBER_ROOMS_B_TO_LALIVERO_NORTH = 4,
+  TIMBER_ROOMS_B_ITEM_SHOP_TO_ITEM_SHOP_UPSTAIRS =
       5, ///< ★ Named from what the player sees: the room up the item shop's
          ///< stairs (its render)
-  LALIVERO_INTERIORS_A_TO_LALIVERO_NORTHWEST = 6,
-  LALIVERO_INTERIORS_A_NORTHWEST_HOUSE_TO_NORTHWEST_HOUSE_UPSTAIRS =
+  TIMBER_ROOMS_B_TO_LALIVERO_NORTHWEST = 6,
+  TIMBER_ROOMS_B_NORTHWEST_HOUSE_TO_NORTHWEST_HOUSE_UPSTAIRS =
       7, ///< ★ Named from what the player sees: the room up that house's
          ///< stairs, where a worker naps (its render)
-  LALIVERO_INTERIORS_A_NORTHWEST_HOUSE_UPSTAIRS_TO_NORTHWEST_HOUSE =
+  TIMBER_ROOMS_B_NORTHWEST_HOUSE_UPSTAIRS_TO_NORTHWEST_HOUSE =
       8, ///< ★ Named from what the player sees: the house behind Lalivero's
          ///< northwest door (its render)
-  LALIVERO_INTERIORS_A_TO_LALIVERO_SOUTH = 9,
-  LALIVERO_INTERIORS_A_TO_LALIVERO_EAST_SOUTHEAST = 10,
-  LALIVERO_INTERIORS_A_TO_LALIVERO_NORTHEAST = 11,
+  TIMBER_ROOMS_B_TO_LALIVERO_SOUTH = 9,
+  TIMBER_ROOMS_B_TO_LALIVERO_EAST_SOUTHEAST = 10,
+  TIMBER_ROOMS_B_TO_LALIVERO_NORTHEAST = 11,
 };
 
-/// MapId_LaliveroInteriorsB's warp destinations.
+/// MapId_TimberRoomsC's warp destinations.
 enum {
-  LALIVERO_INTERIORS_B_FROM_LALIVERO_SOUTHWEST = 21,
-  LALIVERO_INTERIORS_B_FROM_LALIVERO_SOUTH = 22,
-  LALIVERO_INTERIORS_B_FROM_LALIVERO_NORTHEAST = 23,
-  LALIVERO_INTERIORS_B_INN_FROM_INN_UPSTAIRS =
+  TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST = 21,
+  TIMBER_ROOMS_C_FROM_LALIVERO_SOUTH = 22,
+  TIMBER_ROOMS_C_FROM_LALIVERO_NORTHEAST = 23,
+  TIMBER_ROOMS_C_INN_FROM_INN_UPSTAIRS =
       24, ///< ★ Named from what the player sees: the room where an innkeeper
           ///< offers a room for the night across a counter (its render)
-  LALIVERO_INTERIORS_B_INN_UPSTAIRS_FROM_INN =
+  TIMBER_ROOMS_C_INN_UPSTAIRS_FROM_INN =
       25, ///< ★ Named from what the player sees: the hall at the top of the
           ///< inn's stairs, with two bedroom doors (its render)
-  LALIVERO_INTERIORS_B_INN_UPSTAIRS_FROM_GUEST_ROOM_WEST =
+  TIMBER_ROOMS_C_INN_UPSTAIRS_FROM_GUEST_ROOM_WEST =
       26, ///< ★ Named from what the player sees: the hall at the top of the
           ///< inn's stairs, with two bedroom doors (its render)
-  LALIVERO_INTERIORS_B_INN_UPSTAIRS_FROM_GUEST_ROOM_EAST =
+  TIMBER_ROOMS_C_INN_UPSTAIRS_FROM_GUEST_ROOM_EAST =
       27, ///< ★ Named from what the player sees: the hall at the top of the
           ///< inn's stairs, with two bedroom doors (its render)
-  LALIVERO_INTERIORS_B_GUEST_ROOM_WEST_FROM_INN_UPSTAIRS =
+  TIMBER_ROOMS_C_GUEST_ROOM_WEST_FROM_INN_UPSTAIRS =
       28, ///< ★ Named from what the player sees: a bedroom off the inn's
           ///< upstairs hall (its render)
-  LALIVERO_INTERIORS_B_GUEST_ROOM_EAST_FROM_INN_UPSTAIRS =
+  TIMBER_ROOMS_C_GUEST_ROOM_EAST_FROM_INN_UPSTAIRS =
       29, ///< ★ Named from what the player sees: a bedroom off the inn's
           ///< upstairs hall (its render)
-  LALIVERO_INTERIORS_B_FROM_LALIVERO_NORTHWEST = 30,
-  LALIVERO_INTERIORS_B_FROM_LEMURIAN_SHIP = 31,
-  LALIVERO_INTERIORS_B_FROM_VENUS_LIGHTHOUSE_AERIE =
+  TIMBER_ROOMS_C_FROM_LALIVERO_NORTHWEST = 30,
+  TIMBER_ROOMS_C_FROM_LEMURIAN_SHIP = 31,
+  TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE =
       99, ///< back from Venus Lighthouse, the party is led straight to Faran
 };
-/// MapId_LaliveroInteriorsB's warps.
+/// MapId_TimberRoomsC's warps.
 enum {
-  LALIVERO_INTERIORS_B_TO_LALIVERO_SOUTHWEST = 21,
-  LALIVERO_INTERIORS_B_TO_LALIVERO_SOUTH = 22,
-  LALIVERO_INTERIORS_B_TO_LALIVERO_NORTHEAST = 23,
-  LALIVERO_INTERIORS_B_INN_TO_INN_UPSTAIRS =
+  TIMBER_ROOMS_C_TO_LALIVERO_SOUTHWEST = 21,
+  TIMBER_ROOMS_C_TO_LALIVERO_SOUTH = 22,
+  TIMBER_ROOMS_C_TO_LALIVERO_NORTHEAST = 23,
+  TIMBER_ROOMS_C_INN_TO_INN_UPSTAIRS =
       24, ///< ★ Named from what the player sees: the hall at the top of the
           ///< inn's stairs, with two bedroom doors (its render)
-  LALIVERO_INTERIORS_B_INN_UPSTAIRS_TO_INN =
+  TIMBER_ROOMS_C_INN_UPSTAIRS_TO_INN =
       25, ///< ★ Named from what the player sees: the room where an innkeeper
           ///< offers a room for the night across a counter (its render)
-  LALIVERO_INTERIORS_B_INN_UPSTAIRS_TO_GUEST_ROOM_WEST =
+  TIMBER_ROOMS_C_INN_UPSTAIRS_TO_GUEST_ROOM_WEST =
       26, ///< ★ Named from what the player sees: a bedroom off the inn's
           ///< upstairs hall (its render)
-  LALIVERO_INTERIORS_B_INN_UPSTAIRS_TO_GUEST_ROOM_EAST =
+  TIMBER_ROOMS_C_INN_UPSTAIRS_TO_GUEST_ROOM_EAST =
       27, ///< ★ Named from what the player sees: a bedroom off the inn's
           ///< upstairs hall (its render)
-  LALIVERO_INTERIORS_B_GUEST_ROOM_WEST_TO_INN_UPSTAIRS =
+  TIMBER_ROOMS_C_GUEST_ROOM_WEST_TO_INN_UPSTAIRS =
       28, ///< ★ Named from what the player sees: the hall at the top of the
           ///< inn's stairs, with two bedroom doors (its render)
-  LALIVERO_INTERIORS_B_GUEST_ROOM_EAST_TO_INN_UPSTAIRS =
+  TIMBER_ROOMS_C_GUEST_ROOM_EAST_TO_INN_UPSTAIRS =
       29, ///< ★ Named from what the player sees: the hall at the top of the
           ///< inn's stairs, with two bedroom doors (its render)
-  LALIVERO_INTERIORS_B_TO_LALIVERO_NORTHWEST = 30,
-  LALIVERO_INTERIORS_B_TO_LEMURIAN_SHIP = 31,
+  TIMBER_ROOMS_C_TO_LALIVERO_NORTHWEST = 30,
+  TIMBER_ROOMS_C_TO_LEMURIAN_SHIP = 31,
 };
 
 /// MapId_VenusLighthouseEntry's warp destinations.
@@ -6098,13 +6095,13 @@ enum {
   VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT =
       93, ///< the world map sends the party back here after its lighthouse cut
   VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP = 1,
-  VENUS_LIGHTHOUSE_AERIE_TO_LALIVERO_INTERIORS_B = 2,
-  VENUS_LIGHTHOUSE_AERIE_TO_LALIVERO_INTERIORS_A = 9,
+  VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_C = 2,
+  VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B = 9,
 };
 
 /// MapId_LemurianShip's warp destinations.
 enum {
-  LEMURIAN_SHIP_FROM_LALIVERO_INTERIORS_B = 1,
+  LEMURIAN_SHIP_FROM_TIMBER_ROOMS_C = 1,
   /// In no table row and led to by no warp: only the debug map selector,
   /// which warps to any warp destination from 0 to 99, reaches it. Arriving by
   /// it hands the leader the Black Orb. ★ Named from the game: "You got the
@@ -6113,7 +6110,7 @@ enum {
 };
 /// MapId_LemurianShip's warps.
 enum {
-  LEMURIAN_SHIP_TO_LALIVERO_INTERIORS_B = 1,
+  LEMURIAN_SHIP_TO_TIMBER_ROOMS_C = 1,
 };
 
 /// MapId_TolbiSpring's warp destinations.

@@ -31,40 +31,40 @@ gBattle_LocationRules:
 	location TretTreeBranch, 2, -1, 1, 20
 	location TretTreeBranch, 3, -1, 1, 20
 	location TretTreeBranch, -1, -1, 1, 23
-	location TretTreeInteriors, 1, -1, 1, 21
-	location TretTreeInteriors, 11, -1, 1, 21
-	location TretTreeInteriors, 16, -1, 1, 21
-	location TretTreeInteriors, 21, -1, 1, 21
-	location TretTreeInteriors, 22, -1, 1, 21
-	location TretTreeInteriors, 23, -1, 1, 21
-	location TretTreeInteriors, 24, -1, 1, 21
-	location TretTreeInteriors, 25, -1, 1, 21
-	location TretTreeInteriors, 26, -1, 1, 21
-	location TretTreeInteriors, 27, -1, 1, 21
-	location TretTreeInteriors, 28, -1, 1, 21
-	location TretTreeInteriors, 29, -1, 1, 21
-	location TretTreeInteriors, 2, -1, 0, 22
-	location TretTreeInteriors, 3, -1, 0, 22
-	location TretTreeInteriors, 4, -1, 0, 22
-	location TretTreeInteriors, 5, -1, 0, 22
-	location TretTreeInteriors, 12, -1, 0, 22
-	location TretTreeInteriors, 13, -1, 0, 22
-	location TretTreeInteriors, 31, -1, 0, 22
-	location TretTreeInteriors, 32, -1, 0, 22
-	location TretTreeInteriors, 6, -1, 0, 24
-	location TretTreeInteriors, 7, -1, 0, 24
-	location TretTreeInteriors, 8, -1, 0, 24
-	location TretTreeInteriors, 9, -1, 0, 24
-	location TretTreeInteriors, 14, -1, 0, 24
-	location TretTreeInteriors, 51, -1, 0, 24
-	location TretTreeInteriors, 52, -1, 0, 24
-	location TretTreeInteriors, 53, -1, 0, 24
-	location TretTreeInteriors, 54, -1, 0, 24
-	location TretTreeInteriors, 55, -1, 0, 24
-	location TretTreeInteriors, 56, -1, 0, 24
-	location TretTreeInteriors, 57, -1, 0, 24
-	location TretTreeInteriors, 58, -1, 0, 24
-	location TretTreeInteriors, 59, -1, 0, 24
+	location TreeRooms, 1, -1, 1, 21
+	location TreeRooms, 11, -1, 1, 21
+	location TreeRooms, 16, -1, 1, 21
+	location TreeRooms, 21, -1, 1, 21
+	location TreeRooms, 22, -1, 1, 21
+	location TreeRooms, 23, -1, 1, 21
+	location TreeRooms, 24, -1, 1, 21
+	location TreeRooms, 25, -1, 1, 21
+	location TreeRooms, 26, -1, 1, 21
+	location TreeRooms, 27, -1, 1, 21
+	location TreeRooms, 28, -1, 1, 21
+	location TreeRooms, 29, -1, 1, 21
+	location TreeRooms, 2, -1, 0, 22
+	location TreeRooms, 3, -1, 0, 22
+	location TreeRooms, 4, -1, 0, 22
+	location TreeRooms, 5, -1, 0, 22
+	location TreeRooms, 12, -1, 0, 22
+	location TreeRooms, 13, -1, 0, 22
+	location TreeRooms, 31, -1, 0, 22
+	location TreeRooms, 32, -1, 0, 22
+	location TreeRooms, 6, -1, 0, 24
+	location TreeRooms, 7, -1, 0, 24
+	location TreeRooms, 8, -1, 0, 24
+	location TreeRooms, 9, -1, 0, 24
+	location TreeRooms, 14, -1, 0, 24
+	location TreeRooms, 51, -1, 0, 24
+	location TreeRooms, 52, -1, 0, 24
+	location TreeRooms, 53, -1, 0, 24
+	location TreeRooms, 54, -1, 0, 24
+	location TreeRooms, 55, -1, 0, 24
+	location TreeRooms, 56, -1, 0, 24
+	location TreeRooms, 57, -1, 0, 24
+	location TreeRooms, 58, -1, 0, 24
+	location TreeRooms, 59, -1, 0, 24
 	location BilibinCaveRapier, 5, -1, 1, 27
 	location BilibinCaveRapier, 6, -1, 1, 27
 	location BilibinCaveRapier, -1, -1, 1, 25

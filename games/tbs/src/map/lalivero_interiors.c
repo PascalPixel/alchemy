@@ -1,43 +1,40 @@
 /// @file
-/// Lalivero's interiors: two sheets of Lalivero's rooms in one overlay.
-/// The game packs rooms that share a tile style onto one map, and every room on
-/// these two is entered from Lalivero, so each is named for the town with a
-/// letter. Their area name is Lalivero, and Lalivero Sanctum for the Sanctum's
-/// rooms of LaliveroInteriorsA (LALIVERO_INTERIORS_A_FROM_LALIVERO_NORTHEAST
-/// and LALIVERO_INTERIORS_A_SANCTUM). Each map has tables for before and after
-/// Venus Lighthouse, chosen by FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, as the
-/// town's are (lalivero.c).
+/// Lalivero's interiors: two sheets of rooms drawn in timber in one overlay,
+/// Timber rooms B and C. The game packs rooms that share a tile style onto one
+/// map, and every room on these two is Lalivero's, entered from the town. Their
+/// area name is Lalivero, and Lalivero Sanctum for the Sanctum's rooms of
+/// TimberRoomsB (TIMBER_ROOMS_B_FROM_LALIVERO_NORTHEAST and
+/// TIMBER_ROOMS_B_SANCTUM). Each map has tables for before and after Venus
+/// Lighthouse, chosen by FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, as the town's
+/// are (lalivero.c).
 ///
-/// Lalivero interiors A (MapId_LaliveroInteriorsA) holds, by the warps that
-/// lead in, a house (LALIVERO_INTERIORS_A_FROM_LALIVERO_WEST), a house
-/// (LALIVERO_INTERIORS_A_FROM_LALIVERO_SOUTHEAST), the item shop with a room
-/// upstairs (LALIVERO_INTERIORS_A_FROM_LALIVERO_NORTH), a house with an upper
-/// floor (LALIVERO_INTERIORS_A_FROM_LALIVERO_NORTHWEST), the weapon and armor
-/// shop, entered by either of its two doors
-/// (LALIVERO_INTERIORS_A_FROM_LALIVERO_SOUTH and
-/// LALIVERO_INTERIORS_A_FROM_LALIVERO_EAST_SOUTHEAST), and the Sanctum
-/// (LALIVERO_INTERIORS_A_FROM_LALIVERO_NORTHEAST). Each shopkeeper stands
-/// behind a counter and trades only with a leader facing north across it
+/// Timber rooms B (MapId_TimberRoomsB) holds, by the warps that lead in, a
+/// house (TIMBER_ROOMS_B_FROM_LALIVERO_WEST), a house
+/// (TIMBER_ROOMS_B_FROM_LALIVERO_SOUTHEAST), the item shop with a room upstairs
+/// (TIMBER_ROOMS_B_FROM_LALIVERO_NORTH), a house with an upper floor
+/// (TIMBER_ROOMS_B_FROM_LALIVERO_NORTHWEST), the weapon and armor shop, entered
+/// by either of its two doors (TIMBER_ROOMS_B_FROM_LALIVERO_SOUTH and
+/// TIMBER_ROOMS_B_FROM_LALIVERO_EAST_SOUTHEAST), and the Sanctum
+/// (TIMBER_ROOMS_B_FROM_LALIVERO_NORTHEAST). Each shopkeeper stands behind a
+/// counter and trades only with a leader facing north across it
 /// (EventScript_TalkToWeaponMerchant and the others); from any other side they
-/// talk. Stepping into the Sanctum by LALIVERO_INTERIORS_A_SANCTUM makes it the
-/// place a defeated party wakes. Barrels hold a Lucky Medal and an Antidote.
+/// talk. Stepping into the Sanctum by TIMBER_ROOMS_B_SANCTUM makes it the place
+/// a defeated party wakes. Barrels hold a Lucky Medal and an Antidote.
 ///
-/// Lalivero interiors B (MapId_LaliveroInteriorsB) holds, by the warps that
-/// lead in, Faran's house (LALIVERO_INTERIORS_B_FROM_LALIVERO_SOUTHWEST and
-/// LALIVERO_INTERIORS_B_FROM_LALIVERO_SOUTH), the inn with its upper floor and
-/// two guest rooms (LALIVERO_INTERIORS_B_FROM_LALIVERO_NORTHEAST), and the way
-/// out to the wharf where Babi's ship lies
-/// (LALIVERO_INTERIORS_B_FROM_LALIVERO_NORTHWEST, leading on by
-/// LALIVERO_INTERIORS_B_TO_LEMURIAN_SHIP).
-/// Before Venus Lighthouse an inn worker apologizes once for her distraction
-/// (EventScript_TalkToInnWorker, FLAG_LALIVERO_INN_WORKER_APOLOGIZED) and goes
-/// back to her chores. The aerie of Venus Lighthouse leads in by
-/// LALIVERO_INTERIORS_B_FROM_VENUS_LIGHTHOUSE_AERIE, which plays
-/// EventScript_ReportToFaran: the party reports to Faran and Iodem, in one of
-/// two versions by FLAG_SAW_SHIP_AT_IDEJIMA. Coord event 51 afterwards plays
-/// EventScript_IodemCallsOut (FLAG_IODEM_ASKED_TO_MEET), which sends the party
-/// outside, where Iodem gives it the Black Orb (lalivero.c). A barrel holds a
-/// Lucky Medal.
+/// Timber rooms C (MapId_TimberRoomsC) holds, by the warps that lead in,
+/// Faran's house (TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST and
+/// TIMBER_ROOMS_C_FROM_LALIVERO_SOUTH), the inn with its upper floor and two
+/// guest rooms (TIMBER_ROOMS_C_FROM_LALIVERO_NORTHEAST), and the way out to the
+/// wharf where Babi's ship lies (TIMBER_ROOMS_C_FROM_LALIVERO_NORTHWEST,
+/// leading on by TIMBER_ROOMS_C_TO_LEMURIAN_SHIP). Before Venus Lighthouse an
+/// inn worker apologizes once for her distraction (EventScript_TalkToInnWorker,
+/// FLAG_LALIVERO_INN_WORKER_APOLOGIZED) and goes back to her chores. The aerie
+/// of Venus Lighthouse leads in by TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE,
+/// which plays EventScript_ReportToFaran: the party reports to Faran and Iodem,
+/// in one of two versions by FLAG_SAW_SHIP_AT_IDEJIMA. Coord event 51
+/// afterwards plays EventScript_IodemCallsOut (FLAG_IODEM_ASKED_TO_MEET), which
+/// sends the party outside, where Iodem gives it the Black Orb (lalivero.c). A
+/// barrel holds a Lucky Medal.
 
 #include "action_script.h"
 #include "save_block.h"
@@ -89,9 +86,9 @@ enum {
 /// event template tables. The people are named by what they say before Venus
 /// Lighthouse and by what their sprites show.
 enum LaliveroInteriorsLocalId {
-  // The houses, the shops and the Sanctum (LaliveroInteriorsA).
+  // The houses, the shops and the Sanctum (TimberRoomsB).
   /// A young man with brown hair in a purple shirt, in the house at
-  /// LALIVERO_INTERIORS_A_FROM_LALIVERO_WEST. "Of course I have seen Sheba's
+  /// TIMBER_ROOMS_B_FROM_LALIVERO_WEST. "Of course I have seen Sheba's
   /// power...
   /// It's incredible!"
   /// ★ Named from the game: "Of course I have seen"
@@ -103,7 +100,7 @@ enum LaliveroInteriorsLocalId {
   /// (MsgLaliveroInteriorsThereAreSomeWhoDoNot)
   LOCALID_WOMAN_DEFENDING_SHEBA,
   /// A man in a white turban, in the house at
-  /// LALIVERO_INTERIORS_A_FROM_LALIVERO_SOUTHEAST. "Could Faran have tricked us
+  /// TIMBER_ROOMS_B_FROM_LALIVERO_SOUTHEAST. "Could Faran have tricked us
   /// all?"
   /// ★ Named from the game: "Could Faran have tricked us all?"
   /// (MsgLaliveroInteriorsCouldFaranHaveTrickedUsAll)
@@ -114,7 +111,7 @@ enum LaliveroInteriorsLocalId {
   /// useless!" (MsgLaliveroInteriorsIfActorCantUseHerPowers)
   LOCALID_WOMAN_DOUBTING_SHEBA,
   /// An old man with a cane, upstairs in the item shop at
-  /// LALIVERO_INTERIORS_A_FROM_LALIVERO_NORTH. "Sheba came flying to the ruins
+  /// TIMBER_ROOMS_B_FROM_LALIVERO_NORTH. "Sheba came flying to the ruins
   /// like a
   /// shooting star."
   /// ★ Named from the game: "came flying to the ruins like a shooting star."
@@ -126,7 +123,7 @@ enum LaliveroInteriorsLocalId {
   /// (MsgLaliveroInteriorsEvenActorCouldntHaveEscapedSix)
   LOCALID_OLD_WOMAN_SIX_OF_THEM,
   /// A bald, muscular man, in the house at
-  /// LALIVERO_INTERIORS_A_FROM_LALIVERO_NORTHWEST. "They say a man named Iodem
+  /// TIMBER_ROOMS_B_FROM_LALIVERO_NORTHWEST. "They say a man named Iodem
   /// is
   /// coming from Tolbi. I guess he plans to make us do even more work!"
   /// ★ Named from the game: "I guess he plans to make us do even more work!"
@@ -139,7 +136,7 @@ enum LaliveroInteriorsLocalId {
   /// ★ Named from the game: "No one's called me, so maybe I'll take a nap..."
   /// (MsgLaliveroInteriorsNoOnesCalledMeSoMaybe)
   LOCALID_NAPPING_WORKER,
-  /// A strongman, in the house at LALIVERO_INTERIORS_A_FROM_LALIVERO_NORTHWEST.
+  /// A strongman, in the house at TIMBER_ROOMS_B_FROM_LALIVERO_NORTHWEST.
   /// "Sheba said the cave at the ruins leads to the southeast."
   /// ★ Named from the game: "said the cave at the ruins leads to the
   /// southeast." (MsgLaliveroInteriorsActorSaidTheCaveAtThe)
@@ -163,7 +160,7 @@ enum LaliveroInteriorsLocalId {
   /// counter (its render)
   LOCALID_HEALER,
 
-  // Faran's house and the inn (LaliveroInteriorsB).
+  // Faran's house and the inn (TimberRoomsC).
   /// Faran's wife, who raised Sheba. "We received Sheba from the sky and
   /// raised her lovingly... I know Faran will rescue that child."
   /// ★ Named from the game: "His wife seems very calm, considering."
@@ -214,7 +211,7 @@ enum { ANIM_WORKER_LIE_ASLEEP = 6 };
 /// game: "Oh, I'm sorry..." (MsgLaliveroImSorry)
 enum { FLAG_LALIVERO_INN_WORKER_APOLOGIZED = FLAG_MAPSEC_TEMP_00 };
 
-/// LaliveroInteriorsB: the inn worker sighs between chores.
+/// TimberRoomsC: the inn worker sighs between chores.
 static s32 InnWorker_Sigh(struct Object *interpreter) {
   ObjectEvent_SetAttachedEffect(LOCALID_INN_WORKER, ATTACHED_EFFECT_IN_FRONT |
                                                         ATTACHED_EFFECT_ONCE);
@@ -226,10 +223,10 @@ const struct MapWarpDest *LaliveroInteriors_GetWarpDests(void) {
 }
 
 const struct MapWarpRegion *LaliveroInteriors_GetRegions(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_LaliveroInteriorsA) {
-    return gLaliveroInteriorsA_Regions;
+  if (gSaveBlock.mapId == (s32)&MapId_TimberRoomsB) {
+    return gTimberRoomsB_Regions;
   }
-  return gLaliveroInteriorsB_Regions;
+  return gTimberRoomsC_Regions;
 }
 
 const u32 *LaliveroInteriors_GetWarps(void) { return gLaliveroInteriors_Warps; }
@@ -237,14 +234,14 @@ const u32 *LaliveroInteriors_GetWarps(void) { return gLaliveroInteriors_Warps; }
 /// The people of each map; Faran's house fills up after Venus Lighthouse.
 const struct ObjectEventTemplate *
 LaliveroInteriors_GetObjectEventTemplates(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_LaliveroInteriorsB) {
+  if (gSaveBlock.mapId == (s32)&MapId_TimberRoomsC) {
     // Faran's house and the inn.
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
-      return gLaliveroInteriorsB_ObjectEventTemplatesAfterLighthouse;
+      return gTimberRoomsC_ObjectEventTemplatesAfterLighthouse;
     }
-    return gLaliveroInteriorsB_ObjectEventTemplates;
+    return gTimberRoomsC_ObjectEventTemplates;
   }
-  return gLaliveroInteriorsA_ObjectEventTemplates;
+  return gTimberRoomsB_ObjectEventTemplates;
 }
 
 /// The side the leader faces: the facing rounded to the nearest of east,
@@ -255,7 +252,7 @@ static inline u16 LaliveroInteriors_LeaderGetSide(void) {
 }
 
 /// The weapon merchant sells weapons, or talks of Sheba and the sea. In
-/// Lalivero's shops (LaliveroInteriorsA), across the counter, it's the weapon
+/// Lalivero's shops (TimberRoomsB), across the counter, it's the weapon
 /// shop; from elsewhere, before Venus Lighthouse, they ask whether the party
 /// has heard that Sheba was taken hostage and Faran went after her, and after
 /// it tell of the rough sea.
@@ -286,7 +283,7 @@ static void EventScript_TalkToWeaponMerchant(s32 keeper) {
   }
 }
 
-/// Lalivero (LaliveroInteriorsA): the armor shop across the counter; otherwise
+/// Lalivero (TimberRoomsB): the armor shop across the counter; otherwise
 /// small talk.
 static void EventScript_TalkToArmorMerchant(s32 keeper) {
   if (LaliveroInteriors_LeaderGetSide() == FACING_NORTH) {
@@ -300,7 +297,7 @@ static void EventScript_TalkToArmorMerchant(s32 keeper) {
   }
 }
 
-/// Lalivero (LaliveroInteriorsA): the item shop across the counter; otherwise
+/// Lalivero (TimberRoomsB): the item shop across the counter; otherwise
 /// small talk.
 static void EventScript_TalkToItemMerchant(s32 keeper) {
   if (LaliveroInteriors_LeaderGetSide() == FACING_NORTH) {
@@ -328,7 +325,7 @@ static void EventScript_TalkToHealer(s32 healer) {
   }
 }
 
-/// Lalivero (LaliveroInteriorsB), the inn: a room for the night across the
+/// Lalivero (TimberRoomsC), the inn: a room for the night across the
 /// counter; otherwise small talk.
 static void EventScript_TalkToInnkeeper(s32 innkeeper) {
   if (LaliveroInteriors_LeaderGetSide() == FACING_NORTH) {
@@ -342,7 +339,7 @@ static void EventScript_TalkToInnkeeper(s32 innkeeper) {
   }
 }
 
-/// Lalivero (LaliveroInteriorsB), before Venus Lighthouse: the inn worker
+/// Lalivero (TimberRoomsC), before Venus Lighthouse: the inn worker
 /// stops her chores to apologize: worry for Sheba keeps her from concentrating.
 /// A leader standing west of her steps aside to the south before she starts
 /// again.
@@ -380,7 +377,7 @@ static void EventScript_TalkToInnWorker(void) {
   FieldScript_End();
 }
 
-/// Lalivero (LaliveroInteriorsB), coord event 51 in Faran's house after the
+/// Lalivero (TimberRoomsC), coord event 51 in Faran's house after the
 /// report: the camera finds Iodem, who asks the party to wait for him outside.
 static void EventScript_IodemCallsOut(void) {
 
@@ -401,7 +398,7 @@ static void EventScript_IodemCallsOut(void) {
   FieldScript_End();
 }
 
-/// Lalivero (LaliveroInteriorsB): Iodem, talked to before he has given the
+/// Lalivero (TimberRoomsC): Iodem, talked to before he has given the
 /// Black Orb, repeats his request.
 static void EventScript_TalkToIodem(void) {
 
@@ -423,20 +420,20 @@ static void EventScript_LeaveBuilding(void) {
 /// What the party can talk to, touch and search in each map, before and
 /// after Venus Lighthouse.
 const struct MapEvent *LaliveroInteriors_GetEvents(void) {
-  if (gSaveBlock.mapId == (s32)&MapId_LaliveroInteriorsB) {
+  if (gSaveBlock.mapId == (s32)&MapId_TimberRoomsC) {
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
-      return gLaliveroInteriorsB_EventsAfterLighthouse;
+      return gTimberRoomsC_EventsAfterLighthouse;
     }
-    return gLaliveroInteriorsB_Events;
+    return gTimberRoomsC_Events;
   }
   if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
-    return gLaliveroInteriorsA_EventsAfterLighthouse;
+    return gTimberRoomsB_EventsAfterLighthouse;
   }
-  return gLaliveroInteriorsA_Events;
+  return gTimberRoomsB_Events;
 }
 
-/// Lalivero (LaliveroInteriorsB),
-/// LALIVERO_INTERIORS_B_FROM_VENUS_LIGHTHOUSE_AERIE back from Venus
+/// Lalivero (TimberRoomsC),
+/// TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE back from Venus
 /// Lighthouse: the party reports to Faran and Iodem. No sign of Sheba, nor of
 /// Jenna and the others; Faran's faith that Sheba lived, what an Adept is, and
 /// a farewell as the party sets out to search for Jenna.
@@ -855,7 +852,7 @@ s32 Map_Initialize(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   mapId = gSaveBlock.mapId;
-  if (mapId == (s32)&MapId_LaliveroInteriorsA) {
+  if (mapId == (s32)&MapId_TimberRoomsB) {
     // Each shopkeeper is drawn under the counter's top, and counts as nearer
     // to talk to (OBJ_EVENT_NEAR_TALK) so that the leader reaches it across the
     // counter.
@@ -874,12 +871,12 @@ s32 Map_Initialize(void) {
     Import_ObjectEventSetAnimation(LOCALID_NAPPING_WORKER,
                                    ANIM_WORKER_LIE_ASLEEP);
     warpDest = gSaveBlock.warpDest;
-    if (warpDest == LALIVERO_INTERIORS_A_SANCTUM) {
+    if (warpDest == TIMBER_ROOMS_B_SANCTUM) {
       gSaveBlock.savedMap = mapId;
       gSaveBlock.savedWarpDest = warpDest;
     }
   }
-  if (gSaveBlock.mapId == (s32)&MapId_LaliveroInteriorsB) {
+  if (gSaveBlock.mapId == (s32)&MapId_TimberRoomsC) {
     objectEvent = ObjectEvent_GetById(LOCALID_INNKEEPER);
     objectEvent->collisionFlags |= OBJ_EVENT_NEAR_TALK;
     objectEvent->priorityFlags = 0;
@@ -888,8 +885,7 @@ s32 Map_Initialize(void) {
       ObjectEvent_SetActionScript(LOCALID_INN_WORKER,
                                   gLaliveroInteriors_InnWorkerChores);
     }
-    if (gSaveBlock.warpDest ==
-        LALIVERO_INTERIORS_B_FROM_VENUS_LIGHTHOUSE_AERIE) {
+    if (gSaveBlock.warpDest == TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE) {
       EventScript_ReportToFaran();
       // Iodem and Faran turn toward the leader, as their later object event
       // templates do.
@@ -899,7 +895,7 @@ s32 Map_Initialize(void) {
       ObjectEvent_SetMovementType(
           (struct Object *)ObjectEvent_GetById(LOCALID_FARAN),
           MOVEMENT_TYPE_FACE_LEADER);
-      gSaveBlock.warpDest = LALIVERO_INTERIORS_B_FROM_LALIVERO_SOUTHWEST;
+      gSaveBlock.warpDest = TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST;
     }
   }
   return 0;
@@ -942,97 +938,97 @@ s32 gLaliveroInteriors_InnWorkerChores[] = {
 };
 
 struct MapWarpDest gLaliveroInteriors_WarpDests[] = {
-    {LALIVERO_INTERIORS_A_FROM_LALIVERO_WEST, CONDITION_ALWAYS, 144, 0, 168,
+    {TIMBER_ROOMS_B_FROM_LALIVERO_WEST, CONDITION_ALWAYS, 144, 0, 168,
      FACING_NORTH, 0, 0, 8, 240, 192, 0},
-    {LALIVERO_INTERIORS_A_FROM_LALIVERO_SOUTHEAST, CONDITION_ALWAYS, 400, 0,
-     168, FACING_NORTH, 0, 256, 8, 496, 192, 0},
-    {LALIVERO_INTERIORS_A_ITEM_SHOP_UPSTAIRS_FROM_ITEM_SHOP, CONDITION_ALWAYS,
-     648, 0, 72, FACING_NORTH, 0, 488, 8, 728, 184, 0},
-    {LALIVERO_INTERIORS_A_FROM_LALIVERO_NORTH, CONDITION_ALWAYS, 128, 0, 472,
+    {TIMBER_ROOMS_B_FROM_LALIVERO_SOUTHEAST, CONDITION_ALWAYS, 400, 0, 168,
+     FACING_NORTH, 0, 256, 8, 496, 192, 0},
+    {TIMBER_ROOMS_B_ITEM_SHOP_UPSTAIRS_FROM_ITEM_SHOP, CONDITION_ALWAYS, 648, 0,
+     72, FACING_NORTH, 0, 488, 8, 728, 184, 0},
+    {TIMBER_ROOMS_B_FROM_LALIVERO_NORTH, CONDITION_ALWAYS, 128, 0, 472,
      FACING_NORTH, 0, 0, 216, 240, 488, 0},
-    {LALIVERO_INTERIORS_A_ITEM_SHOP_FROM_ITEM_SHOP_UPSTAIRS, CONDITION_ALWAYS,
-     136, 0, 296, FACING_SOUTH, 0, 0, 216, 240, 488, 0},
-    {LALIVERO_INTERIORS_A_FROM_LALIVERO_NORTHWEST, CONDITION_ALWAYS, 368, 0,
-     472, FACING_NORTH, 0, 240, 216, 480, 488, 0},
-    {LALIVERO_INTERIORS_A_NORTHWEST_HOUSE_FROM_NORTHWEST_HOUSE_UPSTAIRS,
+    {TIMBER_ROOMS_B_ITEM_SHOP_FROM_ITEM_SHOP_UPSTAIRS, CONDITION_ALWAYS, 136, 0,
+     296, FACING_SOUTH, 0, 0, 216, 240, 488, 0},
+    {TIMBER_ROOMS_B_FROM_LALIVERO_NORTHWEST, CONDITION_ALWAYS, 368, 0, 472,
+     FACING_NORTH, 0, 240, 216, 480, 488, 0},
+    {TIMBER_ROOMS_B_NORTHWEST_HOUSE_FROM_NORTHWEST_HOUSE_UPSTAIRS,
      CONDITION_ALWAYS, 392, 0, 296, FACING_SOUTH, 0, 240, 216, 480, 488, 0},
-    {LALIVERO_INTERIORS_A_NORTHWEST_HOUSE_UPSTAIRS_FROM_NORTHWEST_HOUSE,
+    {TIMBER_ROOMS_B_NORTHWEST_HOUSE_UPSTAIRS_FROM_NORTHWEST_HOUSE,
      CONDITION_ALWAYS, 648, 0, 280, FACING_NORTH, 0, 480, 216, 720, 488, 0},
-    {LALIVERO_INTERIORS_A_FROM_LALIVERO_SOUTH, CONDITION_ALWAYS, 96, 0, 680,
+    {TIMBER_ROOMS_B_FROM_LALIVERO_SOUTH, CONDITION_ALWAYS, 96, 0, 680,
      FACING_NORTH, 0, 8, 520, 312, 696, 0},
-    {LALIVERO_INTERIORS_A_FROM_LALIVERO_EAST_SOUTHEAST, CONDITION_ALWAYS, 200,
-     0, 600, FACING_SOUTH, 0, 8, 520, 312, 696, 0},
-    {LALIVERO_INTERIORS_A_FROM_LALIVERO_NORTHEAST, CONDITION_ALWAYS, 432, 0,
-     728, FACING_NORTH, 0, 312, 520, 552, 744, 0},
-    {LALIVERO_INTERIORS_A_SANCTUM, CONDITION_ALWAYS, 432, 0, 630, FACING_NORTH,
-     0, 312, 520, 552, 744, 0},
-    {LALIVERO_INTERIORS_B_FROM_LALIVERO_SOUTHWEST, CONDITION_ALWAYS, 96, 0, 168,
+    {TIMBER_ROOMS_B_FROM_LALIVERO_EAST_SOUTHEAST, CONDITION_ALWAYS, 200, 0, 600,
+     FACING_SOUTH, 0, 8, 520, 312, 696, 0},
+    {TIMBER_ROOMS_B_FROM_LALIVERO_NORTHEAST, CONDITION_ALWAYS, 432, 0, 728,
+     FACING_NORTH, 0, 312, 520, 552, 744, 0},
+    {TIMBER_ROOMS_B_SANCTUM, CONDITION_ALWAYS, 432, 0, 630, FACING_NORTH, 0,
+     312, 520, 552, 744, 0},
+    {TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST, CONDITION_ALWAYS, 96, 0, 168,
      FACING_NORTH, 0, 8, 8, 312, 192, 0},
-    {LALIVERO_INTERIORS_B_FROM_LALIVERO_SOUTH, CONDITION_ALWAYS, 216, 0, 88,
+    {TIMBER_ROOMS_C_FROM_LALIVERO_SOUTH, CONDITION_ALWAYS, 216, 0, 88,
      FACING_SOUTH, 0, 8, 8, 312, 192, 0},
-    {LALIVERO_INTERIORS_B_FROM_LALIVERO_NORTHEAST, CONDITION_ALWAYS, 224, 0,
-     392, FACING_NORTH, 0, 8, 232, 312, 416, 0},
-    {LALIVERO_INTERIORS_B_INN_FROM_INN_UPSTAIRS, CONDITION_ALWAYS, 88, 0, 312,
+    {TIMBER_ROOMS_C_FROM_LALIVERO_NORTHEAST, CONDITION_ALWAYS, 224, 0, 392,
+     FACING_NORTH, 0, 8, 232, 312, 416, 0},
+    {TIMBER_ROOMS_C_INN_FROM_INN_UPSTAIRS, CONDITION_ALWAYS, 88, 0, 312,
      FACING_SOUTH, 0, 8, 232, 312, 416, 0},
-    {LALIVERO_INTERIORS_B_INN_UPSTAIRS_FROM_INN, CONDITION_ALWAYS, 384, 0, 368,
+    {TIMBER_ROOMS_C_INN_UPSTAIRS_FROM_INN, CONDITION_ALWAYS, 384, 0, 368,
      FACING_NORTH, 0, 320, 240, 632, 400, 0},
-    {LALIVERO_INTERIORS_B_INN_UPSTAIRS_FROM_GUEST_ROOM_WEST, CONDITION_ALWAYS,
-     456, 0, 376, FACING_NORTH, 0, 320, 240, 632, 400, 0},
-    {LALIVERO_INTERIORS_B_INN_UPSTAIRS_FROM_GUEST_ROOM_EAST, CONDITION_ALWAYS,
-     504, 0, 376, FACING_NORTH, 0, 320, 240, 632, 400, 0},
-    {LALIVERO_INTERIORS_B_GUEST_ROOM_WEST_FROM_INN_UPSTAIRS, CONDITION_ALWAYS,
-     472, 0, 72, FACING_SOUTH, 0, 344, 8, 584, 168, 0},
-    {LALIVERO_INTERIORS_B_GUEST_ROOM_EAST_FROM_INN_UPSTAIRS, CONDITION_ALWAYS,
-     744, 0, 72, FACING_SOUTH, 0, 632, 8, 872, 168, 0},
-    {LALIVERO_INTERIORS_B_FROM_LALIVERO_NORTHWEST, CONDITION_ALWAYS, 832, 0,
-     872, FACING_NORTH, 0, 280, 504, 912, 896, 0},
-    {LALIVERO_INTERIORS_B_FROM_LEMURIAN_SHIP, CONDITION_ALWAYS, 464, 0, 832,
+    {TIMBER_ROOMS_C_INN_UPSTAIRS_FROM_GUEST_ROOM_WEST, CONDITION_ALWAYS, 456, 0,
+     376, FACING_NORTH, 0, 320, 240, 632, 400, 0},
+    {TIMBER_ROOMS_C_INN_UPSTAIRS_FROM_GUEST_ROOM_EAST, CONDITION_ALWAYS, 504, 0,
+     376, FACING_NORTH, 0, 320, 240, 632, 400, 0},
+    {TIMBER_ROOMS_C_GUEST_ROOM_WEST_FROM_INN_UPSTAIRS, CONDITION_ALWAYS, 472, 0,
+     72, FACING_SOUTH, 0, 344, 8, 584, 168, 0},
+    {TIMBER_ROOMS_C_GUEST_ROOM_EAST_FROM_INN_UPSTAIRS, CONDITION_ALWAYS, 744, 0,
+     72, FACING_SOUTH, 0, 632, 8, 872, 168, 0},
+    {TIMBER_ROOMS_C_FROM_LALIVERO_NORTHWEST, CONDITION_ALWAYS, 832, 0, 872,
+     FACING_NORTH, 0, 280, 504, 912, 896, 0},
+    {TIMBER_ROOMS_C_FROM_LEMURIAN_SHIP, CONDITION_ALWAYS, 464, 0, 832,
      FACING_SOUTH, 0, 280, 504, 912, 896, 0},
-    {LALIVERO_INTERIORS_B_FROM_VENUS_LIGHTHOUSE_AERIE, CONDITION_ALWAYS, 96, 0,
-     168, FACING_NORTH, 0, 8, 8, 312, 192, 0},
+    {TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE, CONDITION_ALWAYS, 96, 0, 168,
+     FACING_NORTH, 0, 8, 8, 312, 192, 0},
     {MAP_TABLE_END},
 };
 
 // clang-format off
-struct MapWarpRegion gLaliveroInteriorsA_Regions[] = {
-    {196, 28, 595, 204, 36, 603, CONDITION_ALWAYS, LALIVERO_INTERIORS_A_TO_LALIVERO_EAST_SOUTHEAST},
+struct MapWarpRegion gTimberRoomsB_Regions[] = {
+    {196, 28, 595, 204, 36, 603, CONDITION_ALWAYS, TIMBER_ROOMS_B_TO_LALIVERO_EAST_SOUTHEAST},
     {MAP_TABLE_END},
 };
 
-struct MapWarpRegion gLaliveroInteriorsB_Regions[] = {
-    {212, 28, 83, 220, 36, 91, CONDITION_ALWAYS, LALIVERO_INTERIORS_B_TO_LALIVERO_SOUTH},
+struct MapWarpRegion gTimberRoomsC_Regions[] = {
+    {212, 28, 83, 220, 36, 91, CONDITION_ALWAYS, TIMBER_ROOMS_C_TO_LALIVERO_SOUTH},
     {MAP_TABLE_END},
 };
 
 u32 gLaliveroInteriors_Warps[] = {
-    MAP_WARPS(LaliveroInteriorsA),
-    MAP_WARP(LALIVERO_INTERIORS_A_TO_LALIVERO_WEST, Lalivero, LALIVERO_FROM_LALIVERO_INTERIORS_A_WEST),
-    MAP_WARP(LALIVERO_INTERIORS_A_TO_LALIVERO_SOUTHEAST, Lalivero, LALIVERO_FROM_LALIVERO_INTERIORS_A_SOUTHEAST),
-    MAP_WARP(LALIVERO_INTERIORS_A_ITEM_SHOP_UPSTAIRS_TO_ITEM_SHOP, LaliveroInteriorsA, LALIVERO_INTERIORS_A_ITEM_SHOP_FROM_ITEM_SHOP_UPSTAIRS),
-    MAP_WARP(LALIVERO_INTERIORS_A_TO_LALIVERO_NORTH, Lalivero, LALIVERO_FROM_LALIVERO_INTERIORS_A_NORTH),
-    MAP_WARP(LALIVERO_INTERIORS_A_ITEM_SHOP_TO_ITEM_SHOP_UPSTAIRS, LaliveroInteriorsA, LALIVERO_INTERIORS_A_ITEM_SHOP_UPSTAIRS_FROM_ITEM_SHOP),
-    MAP_WARP(LALIVERO_INTERIORS_A_TO_LALIVERO_NORTHWEST, Lalivero, LALIVERO_FROM_LALIVERO_INTERIORS_A_NORTHWEST),
-    MAP_WARP(LALIVERO_INTERIORS_A_NORTHWEST_HOUSE_TO_NORTHWEST_HOUSE_UPSTAIRS, LaliveroInteriorsA, LALIVERO_INTERIORS_A_NORTHWEST_HOUSE_UPSTAIRS_FROM_NORTHWEST_HOUSE),
-    MAP_WARP(LALIVERO_INTERIORS_A_NORTHWEST_HOUSE_UPSTAIRS_TO_NORTHWEST_HOUSE, LaliveroInteriorsA, LALIVERO_INTERIORS_A_NORTHWEST_HOUSE_FROM_NORTHWEST_HOUSE_UPSTAIRS),
-    MAP_WARP(LALIVERO_INTERIORS_A_TO_LALIVERO_SOUTH, Lalivero, LALIVERO_FROM_LALIVERO_INTERIORS_A_SOUTH),
-    MAP_WARP(LALIVERO_INTERIORS_A_TO_LALIVERO_EAST_SOUTHEAST, Lalivero, LALIVERO_FROM_LALIVERO_INTERIORS_A_EAST_SOUTHEAST),
-    MAP_WARP(LALIVERO_INTERIORS_A_TO_LALIVERO_NORTHEAST, Lalivero, LALIVERO_FROM_LALIVERO_INTERIORS_A_NORTHEAST),
-    MAP_WARPS(LaliveroInteriorsB),
-    MAP_WARP(LALIVERO_INTERIORS_B_TO_LALIVERO_SOUTHWEST, Lalivero, LALIVERO_FROM_LALIVERO_INTERIORS_B_SOUTHWEST),
-    MAP_WARP(LALIVERO_INTERIORS_B_TO_LALIVERO_SOUTH, Lalivero, LALIVERO_FROM_LALIVERO_INTERIORS_B_SOUTH),
-    MAP_WARP(LALIVERO_INTERIORS_B_TO_LALIVERO_NORTHEAST, Lalivero, LALIVERO_FROM_LALIVERO_INTERIORS_B_NORTHEAST),
-    MAP_WARP(LALIVERO_INTERIORS_B_INN_TO_INN_UPSTAIRS, LaliveroInteriorsB, LALIVERO_INTERIORS_B_INN_UPSTAIRS_FROM_INN),
-    MAP_WARP(LALIVERO_INTERIORS_B_INN_UPSTAIRS_TO_INN, LaliveroInteriorsB, LALIVERO_INTERIORS_B_INN_FROM_INN_UPSTAIRS),
-    MAP_WARP(LALIVERO_INTERIORS_B_INN_UPSTAIRS_TO_GUEST_ROOM_WEST, LaliveroInteriorsB, LALIVERO_INTERIORS_B_GUEST_ROOM_WEST_FROM_INN_UPSTAIRS),
-    MAP_WARP(LALIVERO_INTERIORS_B_INN_UPSTAIRS_TO_GUEST_ROOM_EAST, LaliveroInteriorsB, LALIVERO_INTERIORS_B_GUEST_ROOM_EAST_FROM_INN_UPSTAIRS),
-    MAP_WARP(LALIVERO_INTERIORS_B_GUEST_ROOM_WEST_TO_INN_UPSTAIRS, LaliveroInteriorsB, LALIVERO_INTERIORS_B_INN_UPSTAIRS_FROM_GUEST_ROOM_WEST),
-    MAP_WARP(LALIVERO_INTERIORS_B_GUEST_ROOM_EAST_TO_INN_UPSTAIRS, LaliveroInteriorsB, LALIVERO_INTERIORS_B_INN_UPSTAIRS_FROM_GUEST_ROOM_EAST),
-    MAP_WARP(LALIVERO_INTERIORS_B_TO_LALIVERO_NORTHWEST, Lalivero, LALIVERO_FROM_LALIVERO_INTERIORS_B_NORTHWEST),
-    MAP_WARP(LALIVERO_INTERIORS_B_TO_LEMURIAN_SHIP, LemurianShip, LEMURIAN_SHIP_FROM_LALIVERO_INTERIORS_B),
+    MAP_WARPS(TimberRoomsB),
+    MAP_WARP(TIMBER_ROOMS_B_TO_LALIVERO_WEST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_WEST),
+    MAP_WARP(TIMBER_ROOMS_B_TO_LALIVERO_SOUTHEAST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_SOUTHEAST),
+    MAP_WARP(TIMBER_ROOMS_B_ITEM_SHOP_UPSTAIRS_TO_ITEM_SHOP, TimberRoomsB, TIMBER_ROOMS_B_ITEM_SHOP_FROM_ITEM_SHOP_UPSTAIRS),
+    MAP_WARP(TIMBER_ROOMS_B_TO_LALIVERO_NORTH, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_NORTH),
+    MAP_WARP(TIMBER_ROOMS_B_ITEM_SHOP_TO_ITEM_SHOP_UPSTAIRS, TimberRoomsB, TIMBER_ROOMS_B_ITEM_SHOP_UPSTAIRS_FROM_ITEM_SHOP),
+    MAP_WARP(TIMBER_ROOMS_B_TO_LALIVERO_NORTHWEST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_NORTHWEST),
+    MAP_WARP(TIMBER_ROOMS_B_NORTHWEST_HOUSE_TO_NORTHWEST_HOUSE_UPSTAIRS, TimberRoomsB, TIMBER_ROOMS_B_NORTHWEST_HOUSE_UPSTAIRS_FROM_NORTHWEST_HOUSE),
+    MAP_WARP(TIMBER_ROOMS_B_NORTHWEST_HOUSE_UPSTAIRS_TO_NORTHWEST_HOUSE, TimberRoomsB, TIMBER_ROOMS_B_NORTHWEST_HOUSE_FROM_NORTHWEST_HOUSE_UPSTAIRS),
+    MAP_WARP(TIMBER_ROOMS_B_TO_LALIVERO_SOUTH, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_SOUTH),
+    MAP_WARP(TIMBER_ROOMS_B_TO_LALIVERO_EAST_SOUTHEAST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_EAST_SOUTHEAST),
+    MAP_WARP(TIMBER_ROOMS_B_TO_LALIVERO_NORTHEAST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_NORTHEAST),
+    MAP_WARPS(TimberRoomsC),
+    MAP_WARP(TIMBER_ROOMS_C_TO_LALIVERO_SOUTHWEST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_C_SOUTHWEST),
+    MAP_WARP(TIMBER_ROOMS_C_TO_LALIVERO_SOUTH, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_C_SOUTH),
+    MAP_WARP(TIMBER_ROOMS_C_TO_LALIVERO_NORTHEAST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_C_NORTHEAST),
+    MAP_WARP(TIMBER_ROOMS_C_INN_TO_INN_UPSTAIRS, TimberRoomsC, TIMBER_ROOMS_C_INN_UPSTAIRS_FROM_INN),
+    MAP_WARP(TIMBER_ROOMS_C_INN_UPSTAIRS_TO_INN, TimberRoomsC, TIMBER_ROOMS_C_INN_FROM_INN_UPSTAIRS),
+    MAP_WARP(TIMBER_ROOMS_C_INN_UPSTAIRS_TO_GUEST_ROOM_WEST, TimberRoomsC, TIMBER_ROOMS_C_GUEST_ROOM_WEST_FROM_INN_UPSTAIRS),
+    MAP_WARP(TIMBER_ROOMS_C_INN_UPSTAIRS_TO_GUEST_ROOM_EAST, TimberRoomsC, TIMBER_ROOMS_C_GUEST_ROOM_EAST_FROM_INN_UPSTAIRS),
+    MAP_WARP(TIMBER_ROOMS_C_GUEST_ROOM_WEST_TO_INN_UPSTAIRS, TimberRoomsC, TIMBER_ROOMS_C_INN_UPSTAIRS_FROM_GUEST_ROOM_WEST),
+    MAP_WARP(TIMBER_ROOMS_C_GUEST_ROOM_EAST_TO_INN_UPSTAIRS, TimberRoomsC, TIMBER_ROOMS_C_INN_UPSTAIRS_FROM_GUEST_ROOM_EAST),
+    MAP_WARP(TIMBER_ROOMS_C_TO_LALIVERO_NORTHWEST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_C_NORTHWEST),
+    MAP_WARP(TIMBER_ROOMS_C_TO_LEMURIAN_SHIP, LemurianShip, LEMURIAN_SHIP_FROM_TIMBER_ROOMS_C),
     MAP_WARPS_END,
 };
 
-struct ObjectEventTemplate gLaliveroInteriorsA_ObjectEventTemplates[] = {
+struct ObjectEventTemplate gTimberRoomsB_ObjectEventTemplates[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(176), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1064,7 +1060,7 @@ struct ObjectEventTemplate gLaliveroInteriorsA_ObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gLaliveroInteriorsB_ObjectEventTemplates[] = {
+struct ObjectEventTemplate gTimberRoomsC_ObjectEventTemplates[] = {
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(168), 0, PIXELS(112), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1084,7 +1080,7 @@ struct ObjectEventTemplate gLaliveroInteriorsB_ObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gLaliveroInteriorsB_ObjectEventTemplatesAfterLighthouse[] = {
+struct ObjectEventTemplate gTimberRoomsC_ObjectEventTemplatesAfterLighthouse[] = {
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(168), 0, PIXELS(112), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1110,7 +1106,7 @@ struct ObjectEventTemplate gLaliveroInteriorsB_ObjectEventTemplatesAfterLighthou
     { MAP_TABLE_END },
 };
 
-struct MapEvent gLaliveroInteriorsA_Events[] = {
+struct MapEvent gTimberRoomsB_Events[] = {
     { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
     { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
     { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
@@ -1149,15 +1145,15 @@ struct MapEvent gLaliveroInteriorsA_Events[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsICantRescueActorIfI) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIfAnythingHappensToActorIll) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HEALER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIBetBabisTowerWillBe) },
-    { BG_EVENT(BG_EVENT_BARREL), 100, FLAG_LALIVERO_INTERIORS_A_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { BG_EVENT(BG_EVENT_BARREL), 101, FLAG_LALIVERO_INTERIORS_A_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
+    { BG_EVENT(BG_EVENT_BARREL), 100, FLAG_TIMBER_ROOMS_B_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { BG_EVENT(BG_EVENT_BARREL), 101, FLAG_TIMBER_ROOMS_B_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
     { BG_EVENT(BG_EVENT_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsShesMakingMushroomSoupInLalivero)) },
     { BG_EVENT(BG_EVENT_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsItsALaliveroSaladWithPotato)) },
     { BG_EVENT(BG_EVENT_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsThePotIsFullOfA)) },
     { MAP_EVENTS_END },
 };
 
-struct MapEvent gLaliveroInteriorsA_EventsAfterLighthouse[] = {
+struct MapEvent gTimberRoomsB_EventsAfterLighthouse[] = {
     { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
     { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
     { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
@@ -1196,15 +1192,15 @@ struct MapEvent gLaliveroInteriorsA_EventsAfterLighthouse[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhenWillTheOceanBeCalm) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheChampaArePeopleFromA) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HEALER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsFirstTheLighthouseWasStruckDown) },
-    { BG_EVENT(BG_EVENT_BARREL), 100, FLAG_LALIVERO_INTERIORS_A_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { BG_EVENT(BG_EVENT_BARREL), 101, FLAG_LALIVERO_INTERIORS_A_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
+    { BG_EVENT(BG_EVENT_BARREL), 100, FLAG_TIMBER_ROOMS_B_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { BG_EVENT(BG_EVENT_BARREL), 101, FLAG_TIMBER_ROOMS_B_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
     { BG_EVENT(BG_EVENT_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsShesMakingMushroomSoupInLalivero)) },
     { BG_EVENT(BG_EVENT_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsItsALaliveroSaladWithPotato)) },
     { BG_EVENT(BG_EVENT_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsThePotIsFullOfA)) },
     { MAP_EVENTS_END },
 };
 
-struct MapEvent gLaliveroInteriorsB_Events[] = {
+struct MapEvent gTimberRoomsC_Events[] = {
     { MAP_EVENT_COORD, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
     { MAP_EVENT_COORD, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
     { MAP_EVENT_COORD, 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
@@ -1229,14 +1225,14 @@ struct MapEvent gLaliveroInteriorsB_Events[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhyDidThisHaveToHappen) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsHousecleaningChangingSheetsItsAllDone) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_COOK, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsOnceThisIncidentIsOverI) },
-    { BG_EVENT(BG_EVENT_BARREL), 102, FLAG_LALIVERO_INTERIORS_B_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { BG_EVENT(BG_EVENT_BARREL), 102, FLAG_TIMBER_ROOMS_C_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { BG_EVENT(BG_EVENT_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsShesFryingFreshwaterFishFromThe)) },
     { BG_EVENT(BG_EVENT_OVEN), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsItsRiceMadeWithGrainsFrom)) },
     { BG_EVENT(BG_EVENT_OVEN), 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsShesMakingRoastChickenThisScent)) },
     { MAP_EVENTS_END },
 };
 
-struct MapEvent gLaliveroInteriorsB_EventsAfterLighthouse[] = {
+struct MapEvent gTimberRoomsC_EventsAfterLighthouse[] = {
     { MAP_EVENT_COORD, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
     { MAP_EVENT_COORD, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
     { MAP_EVENT_COORD, 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveBuilding) },
@@ -1266,7 +1262,7 @@ struct MapEvent gLaliveroInteriorsB_EventsAfterLighthouse[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhyWouldTheLightingMakeSuch) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsImSleepyTheseBrightNightsHave) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_COOK, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsGeeWhatAmIGoingTo) },
-    { BG_EVENT(BG_EVENT_BARREL), 102, FLAG_LALIVERO_INTERIORS_B_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { BG_EVENT(BG_EVENT_BARREL), 102, FLAG_TIMBER_ROOMS_C_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { BG_EVENT(BG_EVENT_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsShesFryingFreshwaterFishFromThe)) },
     { BG_EVENT(BG_EVENT_OVEN), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsItsRiceMadeWithGrainsFrom)) },
     { BG_EVENT(BG_EVENT_OVEN), 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLaliveroInteriorsShesMakingRoastChickenThisScent)) },

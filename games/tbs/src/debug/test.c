@@ -63,7 +63,7 @@ enum MenuTestLocalId {
   /// `You got treasure!`
   /// ★ Named from the game: "Menardi" (MsgDebugGlyphName)
   LOCALID_MENARDI,
-  /// The sprite of Vale's armor merchant, 0x7d (vale_interiors.c);
+  /// The sprite of Vale's armor merchant, 0x7d (cottage_rooms_a.c);
   /// opens
   /// the debug shop.
   /// ★ Named from the game: "Ask me anything about armor."

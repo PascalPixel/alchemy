@@ -632,7 +632,7 @@
 /// ★ Named from the game: "Lucky Medal" (MsgItemName)
 #define FLAG_BABI_PALACE_LUCKY_MEDAL 0xf9f
 /// A jar in the scholars' room, which is drawn on Vale's layout
-/// (wooden_rooms_a.c).
+/// (cottage_rooms_b.c).
 /// ★ Named from the game: "Hard Nut" (MsgItemName)
 #define FLAG_BABI_PALACE_HARD_NUT 0xf9e
 // Bilibin
@@ -717,11 +717,11 @@
 #define FLAG_KALAY_TUNNEL_POTION_CHEST 0xf21
 /// The containers of Kalay's houses.
 /// ★ Named from the game: "coin" (MsgGotCoins)
-#define FLAG_KALAY_INTERIORS_COINS_BARREL 0xf83
+#define FLAG_STUCCO_ROOMS_A_COINS_BARREL 0xf83
 /// ★ Named from the game: "Smoke Bomb" (MsgItemName)
-#define FLAG_KALAY_INTERIORS_SMOKE_BOMB_OVEN 0xf84
+#define FLAG_STUCCO_ROOMS_A_SMOKE_BOMB_OVEN 0xf84
 /// ★ Named from the game: "Elixir" (MsgItemName)
-#define FLAG_KALAY_INTERIORS_ELIXIR_BARREL 0xf85
+#define FLAG_STUCCO_ROOMS_A_ELIXIR_BARREL 0xf85
 
 // Imil
 /// Megan, Mia's apprentice, told the party Mia went to the old couple's house.
@@ -883,15 +883,15 @@
 /// The chest in the street.
 /// ★ Named from the game: "Warrior's Helm" (MsgItemName)
 #define FLAG_LALIVERO_WARRIORS_HELM 0xfb8
-/// A barrel in LaliveroInteriorsA.
+/// A barrel in TimberRoomsB.
 /// ★ Named from the game: "Lucky Medal" (MsgItemName)
-#define FLAG_LALIVERO_INTERIORS_A_LUCKY_MEDAL 0xfb9
-/// A barrel in LaliveroInteriorsA.
+#define FLAG_TIMBER_ROOMS_B_LUCKY_MEDAL 0xfb9
+/// A barrel in TimberRoomsB.
 /// ★ Named from the game: "Antidote" (MsgItemName)
-#define FLAG_LALIVERO_INTERIORS_A_ANTIDOTE 0xfba
-/// A barrel in LaliveroInteriorsB.
+#define FLAG_TIMBER_ROOMS_B_ANTIDOTE 0xfba
+/// A barrel in TimberRoomsC.
 /// ★ Named from the game: "Lucky Medal" (MsgItemName)
-#define FLAG_LALIVERO_INTERIORS_B_LUCKY_MEDAL 0xfbb
+#define FLAG_TIMBER_ROOMS_C_LUCKY_MEDAL 0xfbb
 // Lunpa
 /// Set on the world map as Hammet's caravan leaves Vault for Lunpa; from then
 /// on Lunpa's east guard asks whether the party came from Kalay, and touching
@@ -1140,7 +1140,7 @@
 #define FLAG_SUHALLA_JAR_COINS 0xfaf
 /// The Smoke Bomb in one of the houses' ovens is found.
 /// ★ Named from the game: "Smoke Bomb" (MsgItemName)
-#define FLAG_SUHALLA_INTERIORS_OVEN_SMOKE_BOMB 0xfb0
+#define FLAG_TIMBER_ROOMS_A_OVEN_SMOKE_BOMB 0xfb0
 
 // Suhalla Gate
 /// The soldier east of Suhalla Gate's passage has gasped that Venus Lighthouse
@@ -1217,19 +1217,19 @@
 /// trash pile. She then stands beside that barrel.
 /// ★ Named from the game: "She just hid that thing she found behind that trash
 /// pile." (MsgTolbiHehHehSheJustHid)
-#define FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN 0x8bc
+#define FLAG_STUCCO_ROOMS_B_MEDAL_HIDDEN 0x8bc
 /// The party has taken the Lucky Medal from the barrel where the woman hid it;
 /// she then stops teasing and greets the party, startled.
 /// ★ Named from the game: "Lucky Medal" (MsgItemName)
-#define FLAG_TOLBI_INTERIORS_MEDAL_TAKEN 0x8bd
+#define FLAG_STUCCO_ROOMS_B_MEDAL_TAKEN 0x8bd
 /// The medal woman has greeted the party, startled, since it took the medal.
 /// ★ Named from the game: "Oh... Hello!" (MsgTolbiHello)
-#define FLAG_TOLBI_INTERIORS_MEDAL_WOMAN_SAID_HELLO 0x8be
+#define FLAG_STUCCO_ROOMS_B_MEDAL_WOMAN_SAID_HELLO 0x8be
 /// The interiors' barrels, set once each is searched.
 /// ★ Named from the game: "Vial" (MsgItemName)
-#define FLAG_TOLBI_INTERIORS_BARREL_VIAL 0xf9a
+#define FLAG_STUCCO_ROOMS_B_BARREL_VIAL 0xf9a
 /// ★ Named from the game: "Lucky Medal" (MsgItemName)
-#define FLAG_TOLBI_INTERIORS_BARREL_LUCKY_MEDAL 0xf9b
+#define FLAG_STUCCO_ROOMS_B_BARREL_LUCKY_MEDAL 0xf9b
 
 // Tolbi ship: the crossing of the Karagol Sea from Kalay to Tolbi
 /// The ship is at anchor off Crossbone Isle, the rowers resting, until Kaja
@@ -1297,7 +1297,7 @@
 /// (MsgTolbiShipThankIsaacDidGoodAgainst)
 #define FLAG_TOLBI_SHIP_KRAKEN_DEFEATED 0x92b
 /// The passenger chosen to row in the first empty seat: nine flags, one for
-/// each passenger, in the order of TolbiShipPassenger (tolbi_ship_interiors.c).
+/// each passenger, in the order of TolbiShipPassenger (ship_rooms.c).
 /// Each later seat has nine of its own, from
 /// FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS.
 /// ★ Named from the game: "go ask one of the passengers to row"
@@ -1573,15 +1573,15 @@
 #define FLAG_GARET_CAME_HOME 0x81d
 // The houses' containers, set once each is searched (not on the stormy night)
 /// ★ Named from the game: "Antidote" (MsgItemName)
-#define FLAG_VALE_INTERIORS_BARREL_ANTIDOTE 0xf42
+#define FLAG_COTTAGE_ROOMS_A_BARREL_ANTIDOTE 0xf42
 /// ★ Named from the game: "coin" (MsgGotCoins)
-#define FLAG_VALE_INTERIORS_JAR_6_COINS 0xf43
+#define FLAG_COTTAGE_ROOMS_A_JAR_6_COINS 0xf43
 /// ★ Named from the game: "coin" (MsgGotCoins)
-#define FLAG_VALE_INTERIORS_JAR_2_COINS 0xf44
+#define FLAG_COTTAGE_ROOMS_A_JAR_2_COINS 0xf44
 /// ★ Named from the game: "Smoke Bomb" (MsgItemName)
-#define FLAG_VALE_INTERIORS_JAR_SMOKE_BOMB 0xf45
+#define FLAG_COTTAGE_ROOMS_A_JAR_SMOKE_BOMB 0xf45
 /// ★ Named from the game: "coin" (MsgGotCoins)
-#define FLAG_VALE_INTERIORS_JAR_3_COINS 0xf46
+#define FLAG_COTTAGE_ROOMS_A_JAR_3_COINS 0xf46
 
 // Vale during the eruption
 /// Isaac and Garet have come back down the mountain to the villagers waiting
@@ -1640,13 +1640,13 @@
 
 // Vault interiors: their containers, set once each is searched
 /// ★ Named from the game: "coin" (MsgGotCoins)
-#define FLAG_VAULT_INTERIORS_JAR_COINS 0xf4b
+#define FLAG_LOG_ROOMS_A_JAR_COINS 0xf4b
 /// ★ Named from the game: "coin" (MsgGotCoins)
-#define FLAG_VAULT_INTERIORS_BARREL_COINS 0xf4c
+#define FLAG_LOG_ROOMS_A_BARREL_COINS 0xf4c
 /// ★ Named from the game: "Sleep Bomb" (MsgItemName)
-#define FLAG_VAULT_INTERIORS_BARREL_SLEEP_BOMB 0xf4d
+#define FLAG_LOG_ROOMS_A_BARREL_SLEEP_BOMB 0xf4d
 /// ★ Named from the game: "Mint" (MsgItemName)
-#define FLAG_VAULT_INTERIORS_BOX_MINT 0xf4e
+#define FLAG_LOG_ROOMS_A_BOX_MINT 0xf4e
 
 // Vault cave: its switches, and its chests, set once each is opened
 /// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
@@ -1686,9 +1686,9 @@
 
 // Xian interiors: set once each find is taken.
 /// ★ Named from the game: "Elixir" (MsgItemName)
-#define FLAG_XIAN_INTERIORS_ELIXIR_BARREL 0xf6f
+#define FLAG_LACQUER_ROOMS_B_ELIXIR_BARREL 0xf6f
 /// ★ Named from the game: "Sleep Bomb" (MsgItemName)
-#define FLAG_XIAN_INTERIORS_SLEEP_BOMB_JAR 0xf70
+#define FLAG_LACQUER_ROOMS_B_SLEEP_BOMB_JAR 0xf70
 
 // Goma Cave
 /// The stump at Goma Cave Entrance has leapt out of the way and lies flat.
@@ -1810,10 +1810,10 @@
 /// ★ Named from the game: "Fuchin's Ki releases the mind's energy"
 /// (MsgXianYaTreeFell)
 #define FLAG_FEH_SAW_KI 0x89b
-/// A jar in LacquerRooms.
+/// A jar in LacquerRoomsA.
 /// ★ Named from the game: "Unicorn Ring" (MsgItemName)
 #define FLAG_FUCHIN_TEMPLE_UNICORN_RING_JAR 0xf68
-/// A barrel in LacquerRooms.
+/// A barrel in LacquerRoomsA.
 /// ★ Named from the game: "Antidote" (MsgItemName)
 #define FLAG_FUCHIN_TEMPLE_ANTIDOTE_BARREL 0xf69
 /// The jar in Master Hama's room in Lama Temple.

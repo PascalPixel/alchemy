@@ -42,7 +42,7 @@ SECTIONS
         "*/games/tla/src/scene/trial_road/s15a8.o"(.text)
         "*/games/tla/src/scene/trial_road/s1890.o"(.text)
         "*/games/tla/src/scene/trial_road/s1afc.o"(.text)
-        "*/resource_697_overlay.o"(.text.x02009c6c)
+        "*/games/tla/src/scene/trial_road/s1c6c.o"(.text)
         "*/games/tla/src/scene/trial_road/s1d8c.o"(.text)
         "*/resource_697_overlay.o"(.text.x02009dd4)
         "*/games/tla/src/scene/trial_road/s1efc.o"(.text)

@@ -1,10 +1,14 @@
-// Draft, differ N of M: a scheduled callback that, unless the leader is in
+// Draft, differ 4 of 83: a scheduled callback that, unless the leader is in
 // movement mode 4, moves it one pixel along z each frame and, every eighth frame
 // while it moves, kicks up a puff behind it (the effect spawner with a random
 // spread and the leader's sprite priority).
-#include "../../../../games/tla/src/scene/trial_road/trial_road.h"
+#include "types.h"
+#include "object_runtime.h"
+#include "party_state.h"
 #include "frame.h"
 #include "field_effect.h"
+
+struct ObjectRuntime *Object_GetById(s32 id);
 
 u32 Random16Far(void);
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);

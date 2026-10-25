@@ -3492,11 +3492,6 @@ Func_0815e9f4:
 	.thumb_func
 Func_0815f16c:
 	.incbin "baserom.gba", 0x0015f16c, 0x00004764
-	.global BattleEffect_RunTorch
-	.type BattleEffect_RunTorch, %function
-	.thumb_func
-BattleEffect_RunTorch:
-	.incbin "baserom.gba", 0x001638d0, 0x00000330
 	.section .rom.00163c2c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00163c2c, 0x0000015c

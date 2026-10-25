@@ -632,7 +632,7 @@
 /// ★ Named from the game: "Lucky Medal" (MsgItemName)
 #define FLAG_BABI_PALACE_LUCKY_MEDAL 0xf9f
 /// A jar in the scholars' room, which is drawn on Vale's layout
-/// (vale_inn.c).
+/// (wooden_rooms_a.c).
 /// ★ Named from the game: "Hard Nut" (MsgItemName)
 #define FLAG_BABI_PALACE_HARD_NUT 0xf9e
 // Bilibin
@@ -883,15 +883,15 @@
 /// The chest in the street.
 /// ★ Named from the game: "Warrior's Helm" (MsgItemName)
 #define FLAG_LALIVERO_WARRIORS_HELM 0xfb8
-/// A barrel in the shops' map (LaliveroShops).
+/// A barrel in the shops' map (LaliveroInteriorsA).
 /// ★ Named from the game: "Lucky Medal" (MsgItemName)
-#define FLAG_LALIVERO_SHOPS_LUCKY_MEDAL 0xfb9
-/// A barrel in the shops' map (LaliveroShops).
+#define FLAG_LALIVERO_INTERIORS_A_LUCKY_MEDAL 0xfb9
+/// A barrel in the shops' map (LaliveroInteriorsA).
 /// ★ Named from the game: "Antidote" (MsgItemName)
-#define FLAG_LALIVERO_SHOPS_ANTIDOTE 0xfba
-/// A barrel in Faran's house and the inn (LaliveroFaransHouse).
+#define FLAG_LALIVERO_INTERIORS_A_ANTIDOTE 0xfba
+/// A barrel in Faran's house and the inn (LaliveroInteriorsB).
 /// ★ Named from the game: "Lucky Medal" (MsgItemName)
-#define FLAG_LALIVERO_FARANS_HOUSE_LUCKY_MEDAL 0xfbb
+#define FLAG_LALIVERO_INTERIORS_B_LUCKY_MEDAL 0xfbb
 // Lunpa
 /// Set on the world map as Hammet's caravan leaves Vault for Lunpa; from then
 /// on Lunpa's east guard asks whether the party came from Kalay, and touching
@@ -1573,15 +1573,15 @@
 #define FLAG_GARET_CAME_HOME 0x81d
 // The houses' containers, set once each is searched (not on the stormy night)
 /// ★ Named from the game: "Antidote" (MsgItemName)
-#define FLAG_VALE_SHOPS_BARREL_ANTIDOTE 0xf42
+#define FLAG_VALE_INTERIORS_BARREL_ANTIDOTE 0xf42
 /// ★ Named from the game: "coin" (MsgGotCoins)
-#define FLAG_VALE_SHOPS_JAR_6_COINS 0xf43
+#define FLAG_VALE_INTERIORS_JAR_6_COINS 0xf43
 /// ★ Named from the game: "coin" (MsgGotCoins)
-#define FLAG_VALE_SHOPS_JAR_2_COINS 0xf44
+#define FLAG_VALE_INTERIORS_JAR_2_COINS 0xf44
 /// ★ Named from the game: "Smoke Bomb" (MsgItemName)
-#define FLAG_VALE_SHOPS_JAR_SMOKE_BOMB 0xf45
+#define FLAG_VALE_INTERIORS_JAR_SMOKE_BOMB 0xf45
 /// ★ Named from the game: "coin" (MsgGotCoins)
-#define FLAG_VALE_SHOPS_JAR_3_COINS 0xf46
+#define FLAG_VALE_INTERIORS_JAR_3_COINS 0xf46
 
 // Vale during the eruption
 /// Isaac and Garet have come back down the mountain to the villagers waiting
@@ -1669,17 +1669,17 @@
 
 // Vault Jail: its chests, set once each is opened
 /// ★ Named from the game: "Water of Life" (MsgItemName)
-#define FLAG_VAULT_JAIL_CHEST_WATER_OF_LIFE 0xf8c
+#define FLAG_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE 0xf8c
 /// ★ Named from the game: "Smoke Bomb" (MsgItemName)
-#define FLAG_VAULT_JAIL_CHEST_SMOKE_BOMB 0xf8d
+#define FLAG_LUNPA_HIDDEN_ROOM_CHEST_SMOKE_BOMB 0xf8d
 /// ★ Named from the game: "Lucky Medal" (MsgItemName)
-#define FLAG_VAULT_JAIL_CHEST_LUCKY_MEDAL 0xf8e
+#define FLAG_LUNPA_HIDDEN_ROOM_CHEST_LUCKY_MEDAL 0xf8e
 /// ★ Named from the game: "Antidote" (MsgItemName)
-#define FLAG_VAULT_JAIL_CHEST_ANTIDOTE 0xf8f
+#define FLAG_LUNPA_HIDDEN_ROOM_CHEST_ANTIDOTE 0xf8f
 /// ★ Named from the game: "coin" (MsgGotCoins)
-#define FLAG_VAULT_JAIL_CHEST_COINS 0xf90
+#define FLAG_LUNPA_HIDDEN_ROOM_CHEST_COINS 0xf90
 /// ★ Named from the game: "Elixir" (MsgItemName)
-#define FLAG_VAULT_JAIL_CHEST_ELIXIR 0xf91
+#define FLAG_LUNPA_HIDDEN_ROOM_CHEST_ELIXIR 0xf91
 /// Xian: set once the jar's Lucky Medal is taken.
 /// ★ Named from the game: "Lucky Medal" (MsgItemName)
 #define FLAG_XIAN_LUCKY_MEDAL_JAR 0xf6e
@@ -1810,10 +1810,10 @@
 /// ★ Named from the game: "Fuchin's Ki releases the mind's energy"
 /// (MsgXianYaTreeFell)
 #define FLAG_FEH_SAW_KI 0x89b
-/// A jar in FuchinTempleInteriors.
+/// A jar in LacquerRooms.
 /// ★ Named from the game: "Unicorn Ring" (MsgItemName)
 #define FLAG_FUCHIN_TEMPLE_UNICORN_RING_JAR 0xf68
-/// A barrel in FuchinTempleInteriors.
+/// A barrel in LacquerRooms.
 /// ★ Named from the game: "Antidote" (MsgItemName)
 #define FLAG_FUCHIN_TEMPLE_ANTIDOTE_BARREL 0xf69
 /// The jar in Master Hama's room in Lama Temple.

@@ -130,7 +130,7 @@ enum SanctumLocalId {
   // quest).
   /// The western of Vale Sanctum's two other healers, men with long brown hair
   /// and beards in long robes, as Mind Read hears a villager in
-  /// vale_shops.c call the Sanctum's people: "The healers
+  /// vale_interiors.c call the Sanctum's people: "The healers
   /// are supposed to guard Sol Sanctum." Before the quest: "Our Psynergy was
   /// given to us by the sacred power of Mt. Aleph."
   /// ★ Named from the game: "The healers are supposed to guard"

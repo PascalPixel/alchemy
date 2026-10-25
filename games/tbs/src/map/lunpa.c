@@ -7,7 +7,7 @@
 ///   in from the world map; doors lead into the homes, shops, inn and temple
 ///   (LunpaInteriors, lunpa_interiors.c), roads to West Lunpa Cave and up to
 ///   the Lunpa Fortress Gates, and a hidden passage to the jail
-///   (LUNPA_TO_VAULT_JAIL, whose area name there is Lunpa).
+///   (LUNPA_TO_STONE_ROOMS, whose area name there is Lunpa).
 /// - Lunpa Fortress Gates (MapId_LunpaFortressGates, area name Lunpa Fortress
 ///   Gates): the steps up to the fortress door, kept by two guards whom the
 ///   party gets past under Cloak.
@@ -581,7 +581,7 @@ static void EventScript_EnterHiddenPassage(void) {
       Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
       ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -8);
       FieldScript_WaitFrames(13);
-      Import_ScriptRequestWarp(LUNPA_TO_VAULT_JAIL);
+      Import_ScriptRequestWarp(LUNPA_TO_STONE_ROOMS);
     }
   }
 }
@@ -1013,7 +1013,7 @@ struct MapWarpDest gLunpaWarpDests[] = {
     LUNPA_WARP_DEST(LUNPA_FROM_INN, 104, 184, FACING_SOUTH),
     LUNPA_WARP_DEST(LUNPA_FROM_TEMPLE, 48, 168, FACING_SOUTH),
     LUNPA_WARP_DEST(LUNPA_FROM_CRATE_ROOM, 216, 344, FACING_SOUTH),
-    LUNPA_WARP_DEST(LUNPA_FROM_VAULT_JAIL, 40, 328, FACING_SOUTH),
+    LUNPA_WARP_DEST(LUNPA_FROM_STONE_ROOMS, 40, 328, FACING_SOUTH),
     {MAP_TABLE_END},
 };
 
@@ -1045,7 +1045,7 @@ u32 gLunpaWarps[] = {
     ROOM_WARP(LUNPA_TO_INN),
     ROOM_WARP(LUNPA_TO_TEMPLE),
     ROOM_WARP(LUNPA_TO_CRATE_ROOM),
-    MAP_WARP(LUNPA_TO_VAULT_JAIL, VaultJail, VAULT_JAIL_FROM_LUNPA),
+    MAP_WARP(LUNPA_TO_STONE_ROOMS, StoneRooms, STONE_ROOMS_FROM_LUNPA),
     MAP_WARPS_END,
 };
 

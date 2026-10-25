@@ -31,10 +31,10 @@ extern char MapId_ValePlaza;
 extern char MapId_ValeKradensCottage;
 /// ★ Named from what the player sees: Vale's item shop and its weapon and armor
 /// shop, with Garet's house and Jenna's grandparents' house (its render)
-extern char MapId_ValeShops;
+extern char MapId_ValeInteriors;
 /// ★ Named from what the player sees: Vale's inn and its upstairs guest room,
 /// with Isaac's house and Kraden's cottage (its render)
-extern char MapId_ValeInn;
+extern char MapId_WoodenRoomsA;
 /// ★ Named from its area name: Sanctum
 extern char MapId_Sanctum;
 /// ★ Named from the game: "in this eruption?!?" (MsgValeMtAlephWasInactive)
@@ -67,7 +67,7 @@ extern char MapId_Vault;
 /// inn, with the inn's loft behind a crate (its render)
 extern char MapId_VaultInteriors;
 /// ★ Named from the game: "check out the jail?" (MsgVaultGuysCheckJail)
-extern char MapId_VaultJail;
+extern char MapId_StoneRooms;
 /// ★ Named from what the player sees: Vault again once the party has reached
 /// Kalay, its thieves broken out of jail (its render)
 extern char MapId_VaultRevisit;
@@ -172,7 +172,7 @@ extern char MapId_UnusedMercuryLighthouseAerieCopy;
 extern char MapId_FuchinTempleGrounds;
 /// ★ Named from what the player sees: the rooms inside, Nyunpa's hall, Feh's
 /// school in Xian and Hama's room in Lama Temple (its render)
-extern char MapId_FuchinTempleInteriors;
+extern char MapId_LacquerRooms;
 /// ★ Named from what the player sees: the cave's mouth and only way in and out,
 /// a log pool and stumps in the water (its render)
 extern char MapId_FuchinFallsCaveEntrance;
@@ -289,7 +289,7 @@ extern char MapId_WestLunpaCave;
 extern char MapId_KalayDocks;
 /// ★ Named from what the player sees: the rooms of the dock buildings at Kalay
 /// Docks and Tolbi Docks, where boarding tickets are sold (its render)
-extern char MapId_KalayTolbiDocksInteriors;
+extern char MapId_WoodenRoomsB;
 /// ★ Named from what the player sees: the deck of the Tolbi-bound Ship on its
 /// voyage across the Karagol Sea (its render)
 extern char MapId_TolbiShipDeck;
@@ -470,9 +470,9 @@ extern char MapId_RoadToBabiLighthouse;
 extern char MapId_Lalivero;
 /// ★ Named from what the player sees: Lalivero's weapon and armor shop, item
 /// shop and Sanctum, with three houses (its render)
-extern char MapId_LaliveroShops;
+extern char MapId_LaliveroInteriorsA;
 /// ★ Named from the game: "Faran's house" (MsgLaliveroPleaseWaitForMeOutside)
-extern char MapId_LaliveroFaransHouse;
+extern char MapId_LaliveroInteriorsB;
 /// ★ Named from its area name: Venus Lighthouse Entry
 extern char MapId_VenusLighthouseEntry;
 /// ★ Named from what the player sees: the floor the front door opens onto, with

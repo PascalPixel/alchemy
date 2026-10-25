@@ -237,7 +237,7 @@ static void EventScript_EnterJennasGrandparentsHouse(void) {
   Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_GrandparentsDoorOpens, 49, 69);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 326, 1126);
-  Import_ScriptRequestWarp(VALE_TO_VALE_SHOPS_NORTH);
+  Import_ScriptRequestWarp(VALE_TO_VALE_INTERIORS_NORTH);
 }
 ```
 

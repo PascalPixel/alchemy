@@ -15,8 +15,8 @@
 /// party only when spoken to across the counter, and otherwise talk.
 ///
 /// The room behind Master Feh's school
-/// (XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) is reached only
-/// from the school (FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_TO_HOUSE, in
+/// (XIAN_INTERIORS_FROM_LACQUER_ROOMS_FEHS_SCHOOL) is reached only
+/// from the school (LACQUER_ROOMS_FEHS_SCHOOL_TO_HOUSE, in
 /// fuchin_temple.c) and has its own tables (XianInteriors_GetEvents). Once Xian
 /// has heard of Hsu, Master Feh, Feizhi and Hsu are there, Hsu lying in the bed
 /// (ANIM_HSU_IN_BED; the room's render with Hsu placed).
@@ -105,7 +105,7 @@ enum {
 };
 
 /// The object events placed in the room behind Master Feh's school
-/// (XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL), where they stand
+/// (XIAN_INTERIORS_FROM_LACQUER_ROOMS_FEHS_SCHOOL), where they stand
 /// once Xian has heard of Hsu, as its dialogue shows them: Master Feh says
 /// Feizhi's prediction came true, Feizhi welcomes the party, and Hsu was
 /// injured on his way from Lama Temple.
@@ -144,8 +144,7 @@ const u32 *XianInteriors_GetWarps(void) { return gXianInteriors_Warps; }
 /// replaces with whether each object event stands inside the view bounds of the
 /// room entered.
 const struct ObjectEventTemplate *XianInteriors_GetObjectEventTemplates(void) {
-  if (gSaveBlock.warpDest ==
-      XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) {
+  if (gSaveBlock.warpDest == XIAN_INTERIORS_FROM_LACQUER_ROOMS_FEHS_SCHOOL) {
     return gXianInteriors_SchoolRoomObjectEventTemplates;
   }
   Map_AssignViewFlags(gXianInteriors_ObjectEventTemplates);
@@ -278,8 +277,7 @@ static void XianInteriors_FeizhiThanksParty(void) {
 
 /// The room behind the school has its own map events.
 const struct MapEvent *XianInteriors_GetEvents(void) {
-  if (gSaveBlock.warpDest ==
-      XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) {
+  if (gSaveBlock.warpDest == XIAN_INTERIORS_FROM_LACQUER_ROOMS_FEHS_SCHOOL) {
     return gXianInteriors_SchoolRoomEvents;
   }
   return gXianInteriors_Events;
@@ -308,8 +306,7 @@ s32 XianInteriors_Initialize(void) {
                                        SPRITE_CHEST);
     ObjectEvent_CreateConfiguredObject(PIXELS(484), 0, PIXELS(568),
                                        SPRITE_CHEST);
-  } else if (warpDest ==
-             XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) {
+  } else if (warpDest == XIAN_INTERIORS_FROM_LACQUER_ROOMS_FEHS_SCHOOL) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     Import_ObjectEventSetAnimation(LOCALID_HSU, ANIM_HSU_IN_BED);
   }
@@ -354,8 +351,8 @@ struct MapWarpDest gXianInteriors_WarpDests[] = {
      FACING_NORTH, 0, 352, 496, 656, 720, 0},
     {XIAN_INTERIORS_INN_FROM_INN_GUEST_ROOMS, CONDITION_ALWAYS, 120, 0, 360,
      FACING_EAST, 0, 48, 288, 336, 496, 0},
-    {XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL, CONDITION_ALWAYS,
-     120, 0, 696, FACING_NORTH, 0, 64, 544, 304, 744, 0},
+    {XIAN_INTERIORS_FROM_LACQUER_ROOMS_FEHS_SCHOOL, CONDITION_ALWAYS, 120, 0,
+     696, FACING_NORTH, 0, 64, 544, 304, 744, 0},
     {MAP_TABLE_END},
 };
 
@@ -372,9 +369,8 @@ u32 gXianInteriors_Warps[] = {
     MAP_WARP(XIAN_INTERIORS_TO_XIAN_WEST, Xian, XIAN_FROM_XIAN_INTERIORS_WEST),
     MAP_WARP(XIAN_INTERIORS_INN_TO_INN_GUEST_ROOMS, XianInteriors,
              XIAN_INTERIORS_INN_GUEST_ROOMS_FROM_INN),
-    MAP_WARP(XIAN_INTERIORS_TO_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL,
-             FuchinTempleInteriors,
-             FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_FROM_HOUSE),
+    MAP_WARP(XIAN_INTERIORS_TO_LACQUER_ROOMS_FEHS_SCHOOL, LacquerRooms,
+             LACQUER_ROOMS_FEHS_SCHOOL_FROM_HOUSE),
     MAP_WARPS_END,
 };
 
@@ -488,7 +484,7 @@ struct MapEvent gXianInteriors_Events[] = {
 };
 
 struct MapEvent gXianInteriors_SchoolRoomEvents[] = {
-    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, XIAN_INTERIORS_TO_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL },
+    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, XIAN_INTERIORS_TO_LACQUER_ROOMS_FEHS_SCHOOL },
     { MAP_EVENT_TALK, LOCALID_FEH, FLAG_HSU_RESCUED_WITHOUT_PARTY, MSGNO(MsgXianInteriorsFeizhisPredictionCameTrueNowI) },
     { MAP_EVENT_TALK, LOCALID_FEIZHI, FLAG_HSU_RESCUED_WITHOUT_PARTY, EVENT_SCRIPT(XianInteriors_FeizhiThanksParty) },
     { MAP_EVENT_TALK, LOCALID_HSU, FLAG_HSU_RESCUED_WITHOUT_PARTY, MSGNO(MsgXianInteriorsIWasInjuredByRocksOn) },

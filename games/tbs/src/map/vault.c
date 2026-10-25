@@ -31,7 +31,7 @@
 /// beside the bell; it joins only in the later map. The well rumbles with
 /// water and a wooden box holds a Nut. The doors open with an animation
 /// (gVault_*DoorCells) and lead into the houses, shops and inn
-/// (MapId_VaultInteriors), the jail (MapId_VaultJail) and the Vault Sanctum
+/// (MapId_VaultInteriors), the jail (MapId_StoneRooms) and the Vault Sanctum
 /// (VAULT_TO_SANCTUM); the metatile behaviors the events answer are enum
 /// VaultMetatileBehavior (vault.h).
 ///
@@ -772,7 +772,7 @@ static void EventScript_EnterMayorsHouse(void) {
 #include "common/vault_map_cells.h"
 
 /// In Vault, the jail door opens and the party walks in, drawn behind the
-/// doorway (VAULT_TO_VAULT_JAIL, the jail's VAULT_JAIL_FROM_VAULT).
+/// doorway (VAULT_TO_STONE_ROOMS, the jail's STONE_ROOMS_FROM_VAULT).
 static void EventScript_EnterJail(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   struct Sprite *sprite = objectEvent->sprite;
@@ -782,7 +782,7 @@ static void EventScript_EnterJail(void) {
   MapGrid_CopyCellAttributes(33, 20, 1, 3, 4, 10);
   objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;
-  Vault_WalkThroughExit(72, 160, VAULT_TO_VAULT_JAIL);
+  Vault_WalkThroughExit(72, 160, VAULT_TO_STONE_ROOMS);
 }
 
 /// In Vault, the party walks through a doorless entrance into the room with
@@ -1301,7 +1301,7 @@ struct MapWarpDest gVault_WarpDests[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {VAULT_FROM_SANCTUM, CONDITION_ALWAYS, 64, 0, 294, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
-    {VAULT_FROM_VAULT_JAIL, CONDITION_ALWAYS, 70, 0, 183, FACING_SOUTH, 0, -1,
+    {VAULT_FROM_STONE_ROOMS, CONDITION_ALWAYS, 70, 0, 183, FACING_SOUTH, 0, -1,
      -1, -1, -1, 0},
     {VAULT_FROM_VAULT_INTERIORS_WEST, CONDITION_ALWAYS, 152, 0, 272,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -1325,7 +1325,7 @@ u32 gVault_Warps[] = {
     MAP_WARP(VAULT_TO_VAULT_INTERIORS_NORTHWEST, VaultInteriors,
              VAULT_INTERIORS_FROM_VAULT_NORTHWEST),
     MAP_WARP(VAULT_TO_SANCTUM, Sanctum, SANCTUM_FROM_VAULT),
-    MAP_WARP(VAULT_TO_VAULT_JAIL, VaultJail, VAULT_JAIL_FROM_VAULT),
+    MAP_WARP(VAULT_TO_STONE_ROOMS, StoneRooms, STONE_ROOMS_FROM_VAULT),
     MAP_WARP(VAULT_TO_VAULT_INTERIORS_WEST, VaultInteriors,
              VAULT_INTERIORS_FROM_VAULT_WEST),
     MAP_WARP(VAULT_TO_VAULT_REVISIT, VaultRevisit, VAULT_REVISIT_FROM_VAULT),

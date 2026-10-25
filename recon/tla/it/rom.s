@@ -565,15 +565,13 @@ Func_08039f94:
 	.incbin "baserom.gba", 0x00039f78, 0x000000c0
 	.section .rom.0003a294, "ax"
 	.balign 4
+	.global Func_0803a2b0
+	.type Func_0803a2b0, %function
+	.thumb_func
+Func_0803a2b0:
 	.incbin "baserom.gba", 0x0003a294, 0x00000108
 	.section .rom.0003a42a, "ax"
 	.incbin "baserom.gba", 0x0003a42a, 0x00000002
-	.section .rom.0003a530, "ax"
-	.global UiMessage_Show
-	.type UiMessage_Show, %function
-	.thumb_func
-UiMessage_Show:
-	.incbin "baserom.gba", 0x0003a530, 0x00000094
 	.section .rom.0003a680, "ax"
 	.global UiText_OpenMessageWindow
 	.type UiText_OpenMessageWindow, %function

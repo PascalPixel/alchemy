@@ -826,12 +826,6 @@ main	rom_main_02	recon/tla/de/rom	.rom.0003a406	de
 main	rom_main_02	recon/tla/raw/0803a446	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.0003a3da	ja
 main	rom_main_02	games/tla/src/graphics/window/counters	.text
-main	rom_main_02	recon/tla/it/rom	.rom.0003a530	it
-main	rom_main_02	recon/tla/fr/rom	.rom.0003a518	fr
-main	rom_main_02	recon/tla/es/rom	.rom.0003a530	es
-main	rom_main_02	recon/tla/de/rom	.rom.0003a50c	de
-main	rom_main_02	recon/tla/raw/0803a54c	.text	en
-main	rom_main_02	recon/tla/ja/rom	.rom.0003a4e0	ja
 main	rom_main_02	games/tla/src/graphics/window/msgwait	.text
 main	rom_main_02	games/tla/src/graphics/window/set_busy_flags	.text
 main	rom_main_02	recon/tla/it/rom	.rom.0003a680	it

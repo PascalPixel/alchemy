@@ -1,4 +1,4 @@
-// Draft, differ 93 of 200: a bouncing object's update: it stops animating
+// Draft, differ 73 of 200: a bouncing object's update: it stops animating
 // while any of the event work's four busy counters is set; with its action
 // count at zero it is removed (or parked at 0, 0); otherwise it bounces back
 // off the leader (and records 201 in the event work's counter 0x16a), off
@@ -9,6 +9,9 @@
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
+extern char SceneId_Ov664Room1, SceneId_Ov664Room2, SceneId_Ov664Room3,
+    SceneId_Ov664Room5, SceneId_Ov664Room6, SceneId_Ov664Room7,
+    SceneId_Ov664Room8, SceneId_Ov664Room9;
 #include "ram_buffer.h"
 
 struct ObjectRuntime *Object_GetById(u32 id);
@@ -48,14 +51,14 @@ void Func_02001458(struct ObjectRuntime *object) {
     object->speedLimit = -object->speedLimit >> 1;
     object->z = leader->z - 0x80000;
   }
-  if (gPartyState.scene == 0x57) {
+  if (gPartyState.scene == (s32)&SceneId_Ov664Room3) {
     other = Object_GetById(8);
     if (Func_02000cec(&other->x, &object->x) <= 8) {
       object->speedLimit = -object->speedLimit >> 1;
       object->unk4c = 0;
       object->z = other->z - 0x80000;
     }
-  } else if (gPartyState.scene == 0x5c) {
+  } else if (gPartyState.scene == (s32)&SceneId_Ov664Room8) {
     for (i = 0; i != 3; i++) {
       other = Object_GetById(i + 12);
       if (Func_02000cec(&other->x, &object->x) <= 8) {

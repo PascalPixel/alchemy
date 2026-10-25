@@ -1,4 +1,4 @@
-// Draft, differ 115 of 155: every eighth frame pair, while none of the event
+// Draft, differ 66 of 155: every eighth frame pair, while none of the event
 // work's four busy counters is set, starts a drip (Func_0200160c) at a place
 // chosen by scene: in scene 0x57 one of two spots by the frame and flag
 // 0x89b; in scene 0x5c one of six by the frame, the leader's position and
@@ -8,6 +8,9 @@
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
+extern char SceneId_Ov664Room1, SceneId_Ov664Room2, SceneId_Ov664Room3,
+    SceneId_Ov664Room5, SceneId_Ov664Room6, SceneId_Ov664Room7,
+    SceneId_Ov664Room8, SceneId_Ov664Room9;
 #include "ram_buffer.h"
 
 extern u32 gFrameCount;
@@ -27,7 +30,7 @@ void Func_02001690(void) {
   if ((frame & 6) != 0)
     return;
   scene = gPartyState.scene;
-  if (scene == 0x57) {
+  if (scene == (s32)&SceneId_Ov664Room3) {
     s32 x;
 
     if ((frame & 1) && !GameFlag_Test(0x89b))
@@ -35,7 +38,7 @@ void Func_02001690(void) {
     else
       x = 0x1180000;
     Func_0200160c(x, 0, 0x2680000);
-  } else if (scene == 0x5c) {
+  } else if (scene == (s32)&SceneId_Ov664Room8) {
     if (frame & 1) {
       if (Object_GetById(gPartyState.currentOwner)->z >> 19 > 41) {
         if (Object_GetById(gPartyState.currentOwner)->x >> 19 <= 44)

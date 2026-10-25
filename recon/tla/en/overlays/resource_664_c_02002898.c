@@ -1,4 +1,4 @@
-// Draft, differ 101 of 92: when the controlled character moves to another cell,
+// Draft, differ 78 of 92: when the controlled character moves to another cell,
 // copies the 1 by 2 cell attributes under it to the spare cells at (73, 72)
 // and copies the ones at (71, 72) in their place: at x, below z by its height
 // plus 64 in scenes 0x55 and 0x56, or 64 to the right in scenes 0x59 and 0x5a
@@ -8,6 +8,9 @@
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
+extern char SceneId_Ov664Room1, SceneId_Ov664Room2, SceneId_Ov664Room3,
+    SceneId_Ov664Room5, SceneId_Ov664Room6, SceneId_Ov664Room7,
+    SceneId_Ov664Room8, SceneId_Ov664Room9;
 
 extern s32 gData_02006c0c;
 extern s32 gData_020073dc;
@@ -34,10 +37,10 @@ void Func_02002898(void) {
   gData_020073dc = 1;
   gData_020073e0 = 2;
   scene = gPartyState.scene;
-  if (scene == 0x55 || scene == 0x56) {
+  if (scene == (s32)&SceneId_Ov664Room1 || scene == (s32)&SceneId_Ov664Room2) {
     gData_020073e4 = x;
     gData_020073e8 = z - y + 64;
-  } else if (scene == 0x59 || scene == 0x5a) {
+  } else if (scene == (s32)&SceneId_Ov664Room5 || scene == (s32)&SceneId_Ov664Room6) {
     gData_020073e4 = x + 64;
     gData_020073e8 = z - y;
   }

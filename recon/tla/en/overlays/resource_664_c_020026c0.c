@@ -1,4 +1,4 @@
-// Draft, differ 59 of 70: once the controlled character stands still on
+// Draft, differ 38 of 70: once the controlled character stands still on
 // another cell, puts back the cell attributes Func_02002898 saved at
 // (73, 72) and forgets the cell; in scene 0x59 it also records the kind of
 // the cell it left (Func_02000690, kind 2) plus 200 in the event work's
@@ -7,6 +7,9 @@
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
+extern char SceneId_Ov664Room1, SceneId_Ov664Room2, SceneId_Ov664Room3,
+    SceneId_Ov664Room5, SceneId_Ov664Room6, SceneId_Ov664Room7,
+    SceneId_Ov664Room8, SceneId_Ov664Room9;
 #include "ram_buffer.h"
 
 extern s32 gData_02006c0c;
@@ -39,7 +42,7 @@ void Func_020026c0(void) {
   z = last & 0xffff;
   Func_02005db4(73, 72, gData_020073dc, gData_020073e0, gData_020073e4,
                 gData_020073e8);
-  if (gPartyState.scene == 0x59) {
+  if (gPartyState.scene == (s32)&SceneId_Ov664Room5) {
     work = Ram_HeapSlots->eventWork;
     cell = Func_02000690(2, x, z) >> 8;
     if (cell != 0)

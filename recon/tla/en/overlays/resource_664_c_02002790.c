@@ -1,4 +1,4 @@
-// Draft, differ 113 of 101: Func_02002898's twin for scenes 0x55 to 0x57 and
+// Draft, differ 84 of 101: Func_02002898's twin for scenes 0x55 to 0x57 and
 // 0x59 to 0x5b and 0x5d, putting back the cells from (70, 72): when the
 // controlled character moves to another cell, saves the 1 by 2 cell
 // attributes under it at (73, 72) and copies the spare ones in their place.
@@ -7,6 +7,9 @@
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
+extern char SceneId_Ov664Room1, SceneId_Ov664Room2, SceneId_Ov664Room3,
+    SceneId_Ov664Room5, SceneId_Ov664Room6, SceneId_Ov664Room7,
+    SceneId_Ov664Room8, SceneId_Ov664Room9;
 
 extern s32 gData_02006c0c;
 extern s32 gData_020073dc;
@@ -33,10 +36,10 @@ void Func_02002790(void) {
   gData_020073dc = 1;
   gData_020073e0 = 2;
   scene = gPartyState.scene;
-  if (scene == 0x55 || scene == 0x56 || scene == 0x57) {
+  if (scene == (s32)&SceneId_Ov664Room1 || scene == (s32)&SceneId_Ov664Room2 || scene == (s32)&SceneId_Ov664Room3) {
     gData_020073e4 = x;
     gData_020073e8 = z - y + 64;
-  } else if (scene == 0x59 || scene == 0x5a || scene == 0x5b || scene == 0x5d) {
+  } else if (scene == (s32)&SceneId_Ov664Room5 || scene == (s32)&SceneId_Ov664Room6 || scene == (s32)&SceneId_Ov664Room7 || scene == (s32)&SceneId_Ov664Room9) {
     gData_020073e4 = x + 64;
     gData_020073e8 = z - y;
   }

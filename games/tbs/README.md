@@ -27,7 +27,7 @@ the game. The always-loaded code is cut into [banks](glossary.md#bank)
 ([How the code is organised](#how-the-code-is-organised)).
 
 ```mermaid
-%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE"}, "flowchart": {"curve": "step", "padding": 14}}}%%
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE"}, "flowchart": {"curve": "basis", "padding": 14}}}%%
 flowchart LR
   start(["The game starts"]) --> loop(["The main loop"])
   loop --> map["A map"]
@@ -44,14 +44,14 @@ flowchart LR
   classDef fight fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef dice fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef wheels fill:#E6F3C4,stroke:#B5D46A,color:#4C6312
-  classDef join fill:#9AA3AE,stroke:#9AA3AE
+  classDef join fill:transparent,stroke:transparent
   class start,loop flow
   class map field
   class battle fight
   class dice dice
   class wheels wheels
   class back join
-  style back width:8px,height:8px
+  style back width:1px,height:1px
 ```
 
 That main loop is unlike most games'. In most games, the Pokémon games among

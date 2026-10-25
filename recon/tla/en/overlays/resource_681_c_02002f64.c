@@ -1,14 +1,12 @@
-// Draft, differ 266 of 522: translated from its listing; names and structure
-// still to do. The function begins at Func_02002f30, whose prologue the
-// listing keeps as 52 bytes of words (so diff cannot compare it); this is the
-// body from the Func_02002f64 label on, measured against that part alone.
-#include "types.h"
+// Draft, differ 260 of 522: translated from its listing; names and structure still
+// to do.
+#include "iwram_call.h"
 #include "lib/call.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "ram_buffer.h"
-#include "iwram_call.h"
 #include "text/msg_ids.h"
+#include "types.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -20,36 +18,36 @@
 extern u8 gData_0200530c[];
 extern u8 gData_020053d8[];
 s32 Object_GetById();
-s32 Func_02004e3c();
-s32 Func_02002ac8();
+void Func_02004e3c();
+void Func_02002ac8();
 s32 GameFlag_Test();
-s32 Func_02004ebc();
-s32 Func_02004df4();
+void Func_02004ebc();
+void Func_02004df4();
 s32 GameFlag_GetByte();
-s32 Func_02002cb4();
+void Func_02002cb4();
 s32 Func_02004dfc();
-s32 Func_02004e04();
-s32 Func_02004e5c();
-s32 Func_02004fcc();
+void Func_02004e04();
+void Func_02004e5c();
+void Func_02004fcc();
 void Camera_MoveWithinMapBounds();
 void Event_StartScreenTransition();
 void FieldEvent_WaitFrames();
 void ObjectDispatch_SetSingleChildFlags();
 s32 Engine_ObjectCreate();
-s32 Func_02004dac();
-s32 Func_02004d9c();
+void Func_02004dac();
+void Func_02004d9c();
 void Animation_ApplyChildValues();
 void WaitFrames();
-s32 Func_02005014();
+void Func_02005014();
 void GameFlag_SetBit();
-s32 Func_02004f6c();
-s32 Func_0200042c();
-s32 Func_02004fec();
-s32 Func_02004d00();
-s32 Func_02004a5c();
-s32 Func_02004fc4();
+void Func_02004f6c();
+void Func_0200042c();
+void Func_02004fec();
+void Func_02004d00();
+void Func_02004a5c();
+void Func_02004fc4();
 
-s32 Func_02002f64(s32 a0, s32 a1, s32 a2) {
+s32 Func_02002f64(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 r2, r1, v0, r5, v1, v2, v3, v4, r6, r0, r3, v5, v6, v7, v8, v9, v10, v11,
       r8, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, r7;
   s32 stack[16];
@@ -164,7 +162,7 @@ L_0200bfb8:
   goto L_0200c0d2;
 L_0200bfc8:
   r8 = 60;
-  Func_02004e5c(r0);
+  Call1((void (*)())Func_02004e5c, r0);
   Call1((void (*)())Func_02004fcc, 0);
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Call3((void (*)())Func_02004ebc, 11, 0, 0);
@@ -183,7 +181,7 @@ L_0200bfc8:
   if (r5 == 0)
     goto L_0200c070;
   Call2((void (*)())ObjectDispatch_SetSingleChildFlags, r0, 0);
-  Func_02004dac(r5, (s32)gData_020053d8);
+  Call2((void (*)())Func_02004dac, r5, (s32)gData_020053d8);
   Call2((void (*)())Func_02004d9c, r5, 1);
   Call2((void (*)())Animation_ApplyChildValues, r5, 14);
   FIELD_AT(FIELD_AT(r5, s32, 80), u8, 9) =
@@ -255,17 +253,17 @@ L_0200c142:
   v17 = GameFlag_Test(0x303);
   if (v17 == 0)
     goto L_0200c162;
-  Call4((void (*)())Func_02004a5c, 11, 0x1800000, 0x4b0000, 0x2a80000);
+  Func_02004a5c(11, 0x1800000, 0x4b0000, 0x2a80000);
 L_0200c162:
   v18 = GameFlag_Test(0x304);
   if (v18 == 0)
     goto L_0200c17e;
-  Call4((void (*)())Func_02004a5c, 12, 0x1cf0000, 0x330000, 0x2a80000);
+  Func_02004a5c(12, 0x1cf0000, 0x330000, 0x2a80000);
 L_0200c17e:
   v19 = GameFlag_Test(0x305);
   if (v19 == 0)
     goto L_0200c19c;
-  Call4((void (*)())Func_02004a5c, 13, 0x2350000, 0x370000, 0x2a80000);
+  Func_02004a5c(13, 0x2350000, 0x370000, 0x2a80000);
 L_0200c19c:
   v20 = GameFlag_Test(0x9bc);
   if (v20 == 0)

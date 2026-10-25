@@ -1,11 +1,12 @@
-// Draft, differ 255 of 307: translated from its listing; names and structure
-// still to do.
-#include "types.h"
+// Draft, differ 253 of 307: translated from its listing; names and structure still
+// to do.
+#include "iwram_call.h"
 #include "lib/call.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "types.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -18,10 +19,10 @@ extern u8 Func_020010a8[];
 extern u8 Func_02001650[];
 extern u8 gFrameCount[];
 extern u8 gData_020022cc[];
-s32 Func_02001fac();
-s32 Func_02002044();
-s32 Func_02002054();
-s32 Func_02001f74();
+void Func_02001fac();
+void Func_02002044();
+void Func_02002054();
+void Func_02001f74();
 s32 Engine_ObjectCreate();
 void Camera_MoveWithinMapBounds();
 void Event_StartScreenTransition();
@@ -30,14 +31,14 @@ s32 Scheduler_AddOrUpdateCallback();
 void Event_WaitTransitionFrames();
 void FieldEvent_WaitFrames();
 s32 Func_02001928();
-s32 Func_02001f94();
-s32 Func_02001ffc();
+void Func_02001f94();
+void Func_02001ffc();
 void GameFlag_SetBit();
 s32 Random16Far();
-s32 Func_0200015c();
-s32 Func_02001f64();
+void Func_0200015c();
+void Func_02001f64();
 void Scheduler_RemoveCallbackFar();
-s32 Func_0200204c();
+void Func_0200204c();
 s32 Func_02001fb4();
 
 s32 Func_02001a14(s32 a0, s32 a1, s32 a2, s32 a3) {

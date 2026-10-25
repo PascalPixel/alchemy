@@ -1,12 +1,11 @@
-// Draft, differ 1219 of 918: translated from its listing; names and structure
-// still to do.
-#include "types.h"
-#include "lib/call.h"
+// Draft, differ 1199 of 918: translated from its listing; names and structure still
+// to do.
+#include "iwram_call.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "ram_buffer.h"
-#include "iwram_call.h"
 #include "text/msg_ids.h"
+#include "types.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -24,14 +23,14 @@ extern u8 gData_020017c0[];
 extern u8 gData_02001746[];
 extern u8 gData_02001748[];
 s32 Object_GetById();
-s32 Func_020012e8();
+void Func_020012e8();
 s32 __divsi3();
-s32 Func_020008f0();
+void Func_020008f0();
 s32 Math_Sine();
 s32 Math_Cosine();
-s32 Func_02001408();
+void Func_02001408();
 s32 __modsi3();
-s32 Func_02000884();
+void Func_02000884();
 
 s32 Func_02000904(void) {
   s32 r7, r11, r2, r0, r1, v0, v1, r5, r6, v2, r8, r10, v3, v4, r3, v5, v6, r4,
@@ -72,11 +71,11 @@ L_02008960:
   if ((FIELD_AT((s32)gData_020017b0, s32, 0)) != 1)
     goto L_02008980;
   v0 = Object_GetById(17);
-  Call2((void (*)())Func_020012e8, v0, 1);
+  Func_020012e8(v0, 1);
   goto L_0200898c;
 L_02008980:
   v1 = Object_GetById(12);
-  Call2((void (*)())Func_020012e8, v1, 1);
+  Func_020012e8(v1, 1);
 L_0200898c:
   if ((FIELD_AT(r7, s32, 76)) <= 0)
     goto L_02008a0c;
@@ -143,17 +142,17 @@ L_02008a52:
   if ((FIELD_AT((s32)gData_020017b0, s32, 0)) != 1)
     goto L_02008a8c;
   v5 = Object_GetById(17);
-  Call2((void (*)())Func_020012e8, v5, 2);
-  Call2((void (*)())Func_020008f0, 15, 0);
-  Call2((void (*)())Func_020008f0, 14, 0);
-  Call2((void (*)())Func_020008f0, 13, 0);
+  Func_020012e8(v5, 2);
+  Func_020008f0(15, 0);
+  Func_020008f0(14, 0);
+  Func_020008f0(13, 0);
   goto L_02008ab0;
 L_02008a8c:
   v6 = Object_GetById(12);
-  Call2((void (*)())Func_020012e8, v6, 2);
-  Call2((void (*)())Func_020008f0, 10, 0);
-  Call2((void (*)())Func_020008f0, 9, 0);
-  Call2((void (*)())Func_020008f0, 8, 0);
+  Func_020012e8(v6, 2);
+  Func_020008f0(10, 0);
+  Func_020008f0(9, 0);
+  Func_020008f0(8, 0);
 L_02008ab0:
   FIELD_AT((s32)gData_02001824, s32, 0) = 1;
   r0 = (s32)gData_02001828;
@@ -342,11 +341,11 @@ L_02008cfa:
   if (r11 != 0)
     goto L_02008d0e;
   v11 = Object_GetById(18);
-  Call2((void (*)())Func_020012e8, v11, 1);
+  Func_020012e8(v11, 1);
   goto L_02008d1a;
 L_02008d0e:
   v12 = Object_GetById(19);
-  Call2((void (*)())Func_020012e8, v12, 1);
+  Func_020012e8(v12, 1);
 L_02008d1a:
   r2 = FIELD_AT(r6, u16, 14);
   if ((*(s16 *)(r6 + 14)) != 0)
@@ -400,11 +399,11 @@ L_02008d88:
   r0 = 20;
 L_02008d90:
   v13 = Object_GetById(r0);
-  Call2((void (*)())Func_020012e8, v13, 3);
+  Func_020012e8(v13, 3);
   goto L_02008e7c;
 L_02008d9c:
   v14 = Object_GetById(20);
-  Call2((void (*)())Func_020012e8, v14, 2);
+  Func_020012e8(v14, 2);
   v15 = Math_Sine(*(s16 *)(r6 + 12));
   FIELD_AT(r6, s32, 0) = (((v15 << 1) + v15) << 4) + 7340032;
   v16 = Math_Cosine(*(s16 *)(r6 + 12));
@@ -427,7 +426,7 @@ L_02008df8:
   if ((r0 << 16) <= 0)
     goto L_02008e24;
   v17 = Object_GetById(21);
-  Call2((void (*)())Func_020012e8, v17, 3);
+  Func_020012e8(v17, 3);
   goto L_02008e76;
 L_02008e24:
   if (r2 > 0x17f)
@@ -438,11 +437,11 @@ L_02008e24:
   FIELD_AT(r6, s32, 8) = (((v19 << 1) + v19) << 3) + 4718592;
   FIELD_AT(r6, u16, 12) = (FIELD_AT(r6, u16, 12)) + r5;
   v20 = Object_GetById(21);
-  Call2((void (*)())Func_020012e8, v20, 2);
+  Func_020012e8(v20, 2);
   goto L_02008e76;
 L_02008e6a:
   v21 = Object_GetById(21);
-  Call2((void (*)())Func_020012e8, v21, 3);
+  Func_020012e8(v21, 3);
 L_02008e76:
   r3 = FIELD_AT(r6, u16, 14);
 L_02008e78:
@@ -496,7 +495,7 @@ L_02008f12:
 L_02008f14:
   FIELD_AT(r7, s32, 76) = r3;
 L_02008f16:
-  Call1((void (*)())Func_02001408, 0x12d);
+  Func_02001408(0x12d);
   v25 = __modsi3((*(s16 *)(r6 + 16)) + 1, 3);
   FIELD_AT(r6, u16, 18) = 36;
   FIELD_AT(r6, u16, 16) = v25;
@@ -562,11 +561,11 @@ L_02008fc2:
   Func_02000884(14, r10, 0, 0, r5);
   Func_02000884(13, r9, 0, 0, r5);
   v26 = Object_GetById(15);
-  Call2((void (*)())Func_020012e8, v26, 4);
+  Func_020012e8(v26, 4);
   v27 = Object_GetById(14);
-  Call2((void (*)())Func_020012e8, v27, 4);
+  Func_020012e8(v27, 4);
   v28 = Object_GetById(13);
-  Call2((void (*)())Func_020012e8, v28, 4);
+  Func_020012e8(v28, 4);
   goto L_020090c4;
 L_0200905a:
   r5 = 16;
@@ -576,11 +575,11 @@ L_0200905a:
   Func_02000884(9, r10, 0, 0, r5);
   Func_02000884(8, r9, 0, 0, r5);
   v29 = Object_GetById(10);
-  Call2((void (*)())Func_020012e8, v29, 4);
+  Func_020012e8(v29, 4);
   v30 = Object_GetById(9);
-  Call2((void (*)())Func_020012e8, v30, 4);
+  Func_020012e8(v30, 4);
   v31 = Object_GetById(8);
-  Call2((void (*)())Func_020012e8, v31, 4);
+  Func_020012e8(v31, 4);
 L_020090c4:
   r0 = 2;
   r3 = *(s16 *)(r7 + 2);

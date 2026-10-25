@@ -1,12 +1,12 @@
-// Draft, differ 225 of 416: translated from its listing; names and structure
-// still to do.
-#include "types.h"
+// Draft, differ 217 of 416: translated from its listing; names and structure still
+// to do.
+#include "iwram_call.h"
 #include "lib/call.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "ram_buffer.h"
-#include "iwram_call.h"
 #include "text/msg_ids.h"
+#include "types.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -24,23 +24,23 @@ extern u8 Func_020010d4[];
 extern u8 Func_0200137c[];
 extern u8 gData_0200326e[];
 s32 GameFlag_Test();
-s32 Func_02000548();
-s32 Func_0200058c();
+void Func_02000548();
+void Func_0200058c();
 s32 Object_GetById();
 void ObjectDispatch_SetSingleChildFlags();
-s32 Func_02003020();
-s32 Func_02002fc0();
-s32 Func_02002fe8();
-s32 Func_02003088();
+void Func_02003020();
+void Func_02002fc0();
+void Func_02002fe8();
+void Func_02003088();
 s32 MapCell_SetAttributes();
 void Object_LinkObjectAndSetCallback();
-s32 Func_020011e0();
-s32 Func_02000404();
+void Func_020011e0();
+void Func_02000404();
 s32 Func_02002f98();
 void Object_SetSpritePriority();
 void Object_SetPartAttribute();
 void Animation_SetStateFlags();
-s32 Func_02003168();
+void Func_02003168();
 void GameFlag_SetBit();
 s32 Scheduler_AddOrUpdateCallback();
 
@@ -141,14 +141,14 @@ L_02009526:
   if (v9 != 0)
     goto L_02009568;
   Call3((void (*)())Func_02003088, 8, 0x1580000, 0x2180000);
-  Call4((void (*)())MapCell_SetAttributes, 0, 21, 33, 0x3300);
-  Call4((void (*)())MapCell_SetAttributes, 0, 22, 33, 0xff00);
+  MapCell_SetAttributes(0, 21, 33, 0x3300);
+  MapCell_SetAttributes(0, 22, 33, 0xff00);
   goto L_02009584;
 L_02009568:
   v10 = GameFlag_Test(0x201);
   if (v10 != 0)
     goto L_02009584;
-  Call4((void (*)())MapCell_SetAttributes, 0, 26, 33, 0xff00);
+  MapCell_SetAttributes(0, 26, 33, 0xff00);
 L_02009584:
   Call2((void (*)())Object_LinkObjectAndSetCallback, 8,
         FIELD_AT((s32)(s32)&gPartyState, s32, 532));
@@ -165,13 +165,13 @@ L_020095a2:
     goto L_020095b4;
   goto L_020097c4;
 L_020095b4:
-  Func_020011e0(r0, r1);
+  Call2((void (*)())Func_020011e0, r0, r1);
   goto L_020097c4;
 L_020095ba:
   r3 = 210;
   if (r2 != (210))
     goto L_020095c8;
-  Func_02000404((s32)gData_02003340);
+  Call1((void (*)())Func_02000404, (s32)gData_02003340);
   goto L_020097c4;
 L_020095c8:
   if (r2 == (211))
@@ -220,7 +220,7 @@ L_0200962e:
   Call2((void (*)())Animation_SetStateFlags, r5, 1);
   goto L_020097c4;
 L_02009656:
-  Func_02000404((s32)gData_0200335a);
+  Call1((void (*)())Func_02000404, (s32)gData_0200335a);
   v13 = GameFlag_Test(0x947);
   if (v13 == 0)
     goto L_02009694;
@@ -230,7 +230,7 @@ L_02009656:
     goto L_02009694;
   Call3((void (*)())Func_02003088, 12, 0xc80000, 0x880000);
 L_02009694:
-  Func_02003168((s32)gData_02003264);
+  Call1((void (*)())Func_02003168, (s32)gData_02003264);
   Call2((void (*)())ObjectMotion_SetActionVariant, 12, 2);
   goto L_020097c4;
 L_020096a4:
@@ -265,7 +265,7 @@ L_02009728:
   r0 = v18;
   if (v18 != 0)
     goto L_020097c4;
-  Func_020011e0(r0, r1);
+  Call2((void (*)())Func_020011e0, r0, r1);
   goto L_020097c4;
 L_02009770:
   if (r2 != (212))
@@ -280,7 +280,7 @@ L_02009770:
 L_020097b4:
   Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_0200137c, 0x480);
 L_020097be:
-  Func_02003168((s32)gData_0200326e);
+  Call1((void (*)())Func_02003168, (s32)gData_0200326e);
 L_020097c4:
   /* add (s32)stack, #8 */
   return 0;

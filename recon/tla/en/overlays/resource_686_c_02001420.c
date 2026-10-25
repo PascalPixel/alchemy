@@ -1,10 +1,11 @@
-// Draft, differ 156 of 179: translated from its listing; names and structure
-// still to do.
-#include "types.h"
+// Draft, differ 154 of 179: translated from its listing; names and structure still
+// to do.
+#include "iwram_call.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "types.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -14,10 +15,10 @@
        ->v)
 
 extern u8 Data_02004030[];
+extern u8 IwramClearWords[];
 extern u8 Func_020012c4[];
 s32 MemAlloc();
 s32 GameFlag_Test();
-void IwramClearWords();
 s32 Resource_FindFreeEntry();
 s32 VramCache_Load();
 void MemFree();
@@ -38,7 +39,7 @@ s32 Func_02001420(void) {
   v1 = GameFlag_Test(0x109);
   if (v1 != 0)
     goto L_0200945c;
-  IwramClearWords(r7, 240);
+  Iwram_ClearWords(r7, 240);
 L_0200945c:
   r2 = 31;
 L_0200945e:

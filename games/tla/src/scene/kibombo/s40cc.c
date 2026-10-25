@@ -56,6 +56,7 @@ void Func_020040cc(void) {
 void Func_02004294(void) {
   struct KibomboObject **slot;
   struct KibomboObject *object;
+  s32 y;
 
   ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
                                      0);
@@ -99,8 +100,13 @@ void Func_02004294(void) {
       (*slot)->y += 0xffffc000;
       WaitFrames(1);
       object = *slot;
-    test:;
-    } while (object->y > 0x240000);
+    test:
+      y = object->y;
+      /* FAKEMATCH(barrier): an empty asm on the height, so the limit's first
+       * half is built before it loads; as object->y > 0x240000, 2 of 151
+       * instructions differ in tla-en. */
+      __asm__("" : "+l"(y));
+    } while (y > 0x240000);
   }
   Motion_SetModeAndWaitAnimation(17, 4);
   Kibombo_MessagePut(17, 0);

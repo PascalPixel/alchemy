@@ -19,7 +19,6 @@ static __inline__ void Func_020033e0_(s32 id, s32 x, s32 z) {
 
 void Func_02001d68(void) {
   struct ObjectRuntime *object = Object_GetById(9);
-  s32 y;
 
   Func_02003398();
   Func_02003488(0);
@@ -29,10 +28,9 @@ void Func_02001d68(void) {
   Func_020033e0_(gPartyState.currentOwner, 0x2d80000, 0x780000);
   Object_GetById(gPartyState.currentOwner)->y = -0x300000;
   Event_StartScreenTransition();
-  y = object->y;
   object->acceleration = 0x10000;
   object->speedLimit = 0x10000;
-  Func_02003310(object, object->x, y + 0x300000, object->z);
+  Func_02003310(object, object->x, object->y + 0x300000, object->z);
   Func_02003318(object);
   GameFlag_SetBit(0x300);
   Func_020033a0();
@@ -40,7 +38,6 @@ void Func_02001d68(void) {
 
 void Func_02001df4(void) {
   struct ObjectRuntime *object = Object_GetById(11);
-  s32 y;
 
   Func_02003398();
   Func_02003488(0);
@@ -48,10 +45,9 @@ void Func_02001df4(void) {
   object->y = -0x400000;
   Object_GetById(gPartyState.currentOwner)->y = -0x300000;
   Event_StartScreenTransition();
-  y = object->y;
   object->acceleration = 0x10000;
   object->speedLimit = 0x10000;
-  Func_02003310(object, object->x, y + 0x300000, object->z);
+  Func_02003310(object, object->x, object->y + 0x300000, object->z);
   Func_02003318(object);
   GameFlag_SetBit(0x304);
   Func_020033a0();

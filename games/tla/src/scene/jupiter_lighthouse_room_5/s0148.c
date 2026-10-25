@@ -75,31 +75,19 @@ void Func_020001a4(void) {
   /* FAKEMATCH: the random value pinned to r2, where the native copies the
    * call's result; unpinned it is shifted straight out of r0 (differ 2). */
   register u32 random asm("r2");
-  s32 y;
 
   if (Flag_IsSet(0x201) == 0 && __umodsi3(gFrameCount, 3) != 0)
     return;
   center = Object_GetById(23);
   if (Flag_IsSet(0x201) != 0) {
     random = Random16Far();
-    /* FAKEMATCH: the two barriers keep the copy of the random value, then the
-     * height load, ahead of the shift; without the first differ 4, without the
-     * second differ 3. */
-    asm("");
-    y = center->y;
-    asm("");
     effect = CreateOrbitEffect(
-        center->x, (s32)((u32)(random << 8) >> 16 << 16) + y - 0x1c0000,
+        center->x, (s32)((u32)(random << 8) >> 16 << 16) + center->y - 0x1c0000,
         center->z);
   } else {
     random = Random16Far();
-    /* FAKEMATCH: as above; both branches end alike, so the jump pass shares
-     * their tail. */
-    asm("");
-    y = center->y;
-    asm("");
     effect = CreateOrbitEffect(
-        center->x, (s32)((u32)(random << 6) >> 16 << 16) + y - 0x1c0000,
+        center->x, (s32)((u32)(random << 6) >> 16 << 16) + center->y - 0x1c0000,
         center->z);
   }
   if (effect != 0) {

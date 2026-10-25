@@ -17,7 +17,13 @@ void Func_02002140(void);
 void Func_02003764(void);
 
 void Func_02003aa0(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
+  s32 *route = (s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac);
+
+  /* FAKEMATCH(barrier): an empty asm between the route's address and its
+   * store, so the party state's address loads after the address is added; as
+   * one assignment, 2 of 57 instructions differ in tla-en. */
+  __asm__("");
+  *route = 0x204;
   Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
   if (GameFlag_Test(95) != 0)
     GameFlag_SetBit(521);

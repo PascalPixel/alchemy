@@ -21,10 +21,15 @@ void Func_0200102c(void) {
   if (GameFlag_Test(0x8c9) != 0) {
     if (GameFlag_Test(0x109) == 0) {
       left->x += -0xc0000;
-      /* FAKEMATCH: read and written as long, another alias set than the int
-       * store before it, so the step is built before right->x loads; as int,
-       * 2 instructions differ in tla-en. */
-      *(long *)&right->x += 0xc0000;
+      {
+        s32 x = right->x;
+
+        /* FAKEMATCH(barrier): an empty asm on the loaded x, so the step's
+         * first half is built before right->x loads; as right->x += 0xc0000, 2
+         * of 43 instructions differ in tla-en. */
+        asm("" : "+l"(x));
+        right->x = x + 0xc0000;
+      }
     }
     Func_02000958();
   }

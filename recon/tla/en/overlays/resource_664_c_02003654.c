@@ -7,11 +7,15 @@
 // (68, 84) open, the blend fades over 32 frames, then (cue 148) the light
 // reaches object 8, which flashes and leaves (Func_02001084); the display
 // is put back and flag 0x899 set.
-// Left: a rough reading: the native saves only r8 and r10 with a 12-byte frame (the fill's halfword at sp+10), keeps the buffer in r5 and the counters in r7, rebuilds each row's VRAM address from the counter, and hoists the 0xfcff mask and the sparks' constants otherwise.
+// Left: a rough reading: the native saves only r8 and r10 with a 12-byte frame
+// (the fill's halfword at sp+10), keeps the buffer in r5 and the counters in
+// r7, rebuilds each row's VRAM address from the counter, and hoists the 0xfcff
+// mask and the sparks' constants otherwise.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "bg_scroll.h"
+#include "field_sprite.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
 
@@ -72,11 +76,23 @@ void Func_02003654(void) {
   Dma_Fill16(0, (void *)0x6002000, 0x800);
   buffer = MemAlloc(0x80);
   Func_02005d24(Resource_GetTableEntry(449), buffer);
-  for (i = 0, cell = buffer; i != 64; i++, cell++)
-    *cell &= 0xfcff;
-  for (i = 0, cell = buffer; i != 16; i++, cell += 4)
-    Dma_Set(cell, (void *)(0x6002000 + (i << 6)), 0x84000002,
-            (volatile u32 *)0x040000d4);
+  i = 0;
+  cell = buffer;
+mask:
+  *cell &= 0xfcff;
+  i++;
+  cell++;
+  if (i != 64)
+    goto mask;
+  cell = buffer;
+  i = 0;
+row:
+  Dma_Set(cell, (void *)(0x6002000 + (i << 6)), 0x84000002,
+          (volatile u32 *)0x040000d4);
+  i++;
+  cell += 4;
+  if (i != 16)
+    goto row;
   MemFree(buffer);
   Func_02005f94(246);
   ((u8 *)Object_GetById(10))[98] = 9;
@@ -86,9 +102,8 @@ void Func_02003654(void) {
     if ((gFrameCount & 3) == 0) {
       spark = Engine_ObjectCreate(0x2a0, Object_GetById(10)->x,
                                   Object_GetById(10)->y, Object_GetById(10)->z);
-      ((u8 *)spark->animation)[9] =
-          (((u8 *)spark->animation)[9] & ~12) |
-          (((u8 *)Object_GetById(10)->animation)[9] & 12);
+      ((struct FieldSprite *)spark->animation)->priority =
+          ((struct FieldSprite *)Object_GetById(10)->animation)->priority;
       spark->priorityFlags |= 1;
       spark->motionFlags = 0;
       spark->bounce = spark->x;
@@ -130,10 +145,13 @@ void Func_02003654(void) {
   Func_02005d9c(68, 84, 12, 77, 3, 3);
   Func_02005dcc(0x50000, 0x70000, 0x10000);
   Func_02005dcc(-1, -1, 0xe666);
-  for (i = 0; i != 32; i++) {
-    REG_BLDALPHA = (16 - (i >> 1)) | 0x1000;
-    WaitFrames(1);
-  }
+  i = 0;
+fade:
+  REG_BLDALPHA = (16 - (i >> 1)) | 0x1000;
+  i++;
+  WaitFrames(1);
+  if (i != 32)
+    goto fade;
   Func_02005f0c(0x10003, 0);
   Func_02005f04(0x10000, 0);
   Func_02005f14(60);

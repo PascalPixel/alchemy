@@ -631,7 +631,7 @@ static void LamakanDesert_BatheInOasis(void) {
   {
     struct ObjectEvent *objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
 
-    options.type = 214;
+    options.type = SPRITE_SPLASH;
     options.startScaleX = 0x8000;
     options.startScaleY = 0xcccc;
     options.targetScaleX = 0x10000;
@@ -666,7 +666,7 @@ static void LamakanDesert_BatheInOasis(void) {
   {
     struct ObjectEvent *objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
 
-    puff.type = 214;
+    puff.type = SPRITE_SPLASH;
     puff.startScaleX = 0x8000;
     puff.startScaleY = 0xcccc;
     puff.targetScaleX = 0x8000;

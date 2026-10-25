@@ -905,6 +905,8 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
     stormAlpha = 16;
     Map_QueueMusic(SE_SANDSTORM);
   }
+  // BLEND_ALPHA(stormAlpha, 16 - stormAlpha), whose operand order compiles
+  // differently.
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - stormAlpha) << 8) | stormAlpha,
                       IO_WRITE_16);
 }
@@ -961,6 +963,8 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
     stormAlpha = 16;
     Map_QueueMusic(SE_SANDSTORM);
   }
+  // BLEND_ALPHA(stormAlpha, 16 - stormAlpha), whose operand order compiles
+  // differently.
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - stormAlpha) << 8) | stormAlpha,
                       IO_WRITE_16);
 }

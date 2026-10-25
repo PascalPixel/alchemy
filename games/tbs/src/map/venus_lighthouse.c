@@ -975,7 +975,7 @@ static s32 VenusLighthouse_TrailLight(union ObjectEventOrEffect *fieldObject) {
     }
   }
   velocityY = 0;
-  options.type = 286;
+  options.type = SPRITE_GLINT;
   options.startScaleX = Q16_ONE;
   options.startScaleY = Q16_ONE;
   options.targetScaleX = -327;
@@ -3678,7 +3678,7 @@ VenusLighthouse_UpdateRisingSpray(union ObjectEventOrEffect *fieldObject) {
 
   options->priority = 1;
   options->palette = 5;
-  options->type = 286;
+  options->type = SPRITE_GLINT;
   options->script = gVenusSprayScript;
   framePhase = gFrameCount & 3;
   if (framePhase == 0) {

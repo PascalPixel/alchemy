@@ -2277,7 +2277,7 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
   options = &optionsStorage;
   options->priority = 1;
   options->palette = 5;
-  options->type = 0x11c;
+  options->type = SPRITE_PARTICLE;
   options->startScaleX = 2 * Q16_ONE / 5;
   options->startScaleY = 3 * Q16_ONE;
   for (frame = 0; frame <= 31; frame++) {

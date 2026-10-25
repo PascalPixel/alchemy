@@ -1605,7 +1605,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_NORTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_SHEBA, FACING_EAST, 0);
   star = (union ObjectEventOrEffect *)ObjectEvent_Create(
-      22, objectEvent->x.fixed, objectEvent->y.fixed + PIXELS(8),
+      SPRITE_BLANK, objectEvent->x.fixed, objectEvent->y.fixed + PIXELS(8),
       objectEvent->z.fixed);
   if (star != NULL) {
     sprite = star->objectEvent.sprite;

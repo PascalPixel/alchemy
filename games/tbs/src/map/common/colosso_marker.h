@@ -65,6 +65,7 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   for (i = 0; i <= 15; i += 2) {
     objectEvent->scaleX = (i << 12) + 0x1000;
     objectEvent->scaleY = 0x1f000 - (i << 12);
+    // BLEND_ALPHA(i + 1, 15 - i), whose operand order compiles differently.
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((15 - i) << 8) | (i + 1),
                         IO_WRITE_16);
     WaitFrames(1);

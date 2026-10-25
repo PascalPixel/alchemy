@@ -1,8 +1,9 @@
-// Draft, differ 64 of 308: Aqua Rock's entry setup: in each room it shows the
+// Draft, differ 50 of 308: Aqua Rock's entry setup: in each room it shows the
 // statues already filled by their flags (or dims those still empty), opens
 // what the story has opened and arms the room's water and cell handlers by
 // entrance.
 #include "types.h"
+#include "lib/call.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "ram_buffer.h"
@@ -52,31 +53,31 @@ s32 Func_02002020(void) {
   FIELD_AT(Ram_HeapSlots->eventWork, s32, 428) = 0x204;
   if (gPartyState.scene == (s32)&SceneId_Ov67cRoom1) {
     if (GameFlag_Test(0x230)) {
-      Func_02001e78(8);
-      Object_SetModeById(8, 3);
+      Call1((void (*)())Func_02001e78, 8);
+      Call2((void (*)())Object_SetModeById, 8, 3);
     } else {
-      Object_SetPartAttribute(Object_GetById(8), 6);
+      Call2((void (*)())Object_SetPartAttribute, Object_GetById(8), 6);
     }
     if (GameFlag_Test(0x231)) {
-      Func_02001e78(9);
-      Object_SetModeById(9, 3);
+      Call1((void (*)())Func_02001e78, 9);
+      Call2((void (*)())Object_SetModeById, 9, 3);
     } else {
-      Object_SetPartAttribute(Object_GetById(9), 6);
+      Call2((void (*)())Object_SetPartAttribute, Object_GetById(9), 6);
     }
   } else if (gPartyState.scene == (s32)&SceneId_Ov67cRoom2) {
     if (GameFlag_Test(0x240)) {
-      Func_02003d24(118, 15, 5, 32, 110, 15);
-      Func_02003d1c(59, 16, 5, 32, 46, 16);
-      Object_SetPartAttribute(Object_GetById(8), 6);
+      Call6((void (*)())Func_02003d24, 118, 15, 5, 32, 110, 15);
+      Call6((void (*)())Func_02003d1c, 59, 16, 5, 32, 46, 16);
+      Call2((void (*)())Object_SetPartAttribute, Object_GetById(8), 6);
     } else {
-      Func_02001e78(8);
-      Object_SetModeById(8, 3);
+      Call1((void (*)())Func_02001e78, 8);
+      Call2((void (*)())Object_SetModeById, 8, 3);
     }
     object = Object_GetById(9);
     object->motionFlags = 0;
     if (GameFlag_Test(0x95c)) {
-      Func_02003ddc(9, 0x2780000, 0x980000);
-      Func_02003d1c(41, 9, 1, 1, 39, 9);
+      Call3((void (*)())Func_02003ddc, 9, 0x2780000, 0x980000);
+      Call6((void (*)())Func_02003d1c, 41, 9, 1, 1, 39, 9);
       object->y = 0;
       object->terrainHeight = 0;
     }
@@ -84,18 +85,18 @@ s32 Func_02002020(void) {
     if (entrance == 7)
       Func_02002ffc();
   } else if (gPartyState.scene == (s32)&SceneId_Ov67cRoom4) {
-    Func_02001e78(10);
-    Object_SetModeById(10, 3);
-    Func_02001e78(11);
-    Object_SetModeById(11, 3);
+    Call1((void (*)())Func_02001e78, 10);
+    Call2((void (*)())Object_SetModeById, 10, 3);
+    Call1((void (*)())Func_02001e78, 11);
+    Call2((void (*)())Object_SetModeById, 11, 3);
     if ((u32)(entrance - 6) <= 1) {
       if (GameFlag_Test(0x249)) {
-        Object_SetPartAttribute(Object_GetById(9), 5);
-        Func_02001e78(9);
-        Object_SetModeById(9, 3);
+        Call2((void (*)())Object_SetPartAttribute, Object_GetById(9), 5);
+        Call1((void (*)())Func_02001e78, 9);
+        Call2((void (*)())Object_SetModeById, 9, 3);
         Func_02000b5c();
       } else {
-        Object_SetPartAttribute(Object_GetById(9), 6);
+        Call2((void (*)())Object_SetPartAttribute, Object_GetById(9), 6);
       }
     }
     FIELD_AT(Object_GetById(13), u8, 98) = 1;
@@ -109,20 +110,20 @@ s32 Func_02002020(void) {
   } else if (gPartyState.scene == (s32)&SceneId_Ov67cRoom5) {
     if ((u32)(entrance - 5) <= 1) {
       Func_02003ab0(gData_020040f4, gData_02004102, Func_02001fcc);
-      Func_02003ecc(170);
+      Call1((void (*)())Func_02003ecc, 170);
     }
   } else if (gPartyState.scene == (s32)&SceneId_Ov67cRoom6) {
     if (entrance == 5 || entrance == 7) {
       Func_02003ab0(gData_02004106, gData_02004114, Func_02001fcc);
-      Func_02003ecc(170);
-      Func_0200107c(0, 10);
+      Call1((void (*)())Func_02003ecc, 170);
+      Call2((void (*)())Func_0200107c, 0, 10);
     }
     if (!GameFlag_Test(0x238)) {
-      Func_02001e78(9);
-      Object_SetModeById(9, 3);
+      Call1((void (*)())Func_02001e78, 9);
+      Call2((void (*)())Object_SetModeById, 9, 3);
     }
     object = Object_GetById(12);
-    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Call2((void (*)())ObjectDispatch_SetSingleChildFlags, object, 0);
     object->collisionFlags = 0;
     object->priorityFlags |= 2;
     object->update = (void (*)(void))Func_02001ea0;
@@ -130,11 +131,11 @@ s32 Func_02002020(void) {
       Func_02001f04();
   } else if (gPartyState.scene == (s32)&SceneId_Ov67cRoom9) {
     if (GameFlag_Test(0x24b)) {
-      Object_SetPartAttribute(Object_GetById(9), 5);
-      Func_02001e78(9);
-      Object_SetModeById(9, 3);
+      Call2((void (*)())Object_SetPartAttribute, Object_GetById(9), 5);
+      Call1((void (*)())Func_02001e78, 9);
+      Call2((void (*)())Object_SetModeById, 9, 3);
     } else {
-      Object_SetPartAttribute(Object_GetById(9), 6);
+      Call2((void (*)())Object_SetPartAttribute, Object_GetById(9), 6);
     }
     FIELD_AT(Object_GetById(10), u8, 98) = 1;
     FIELD_AT(Object_GetById(11), u8, 98) = 1;

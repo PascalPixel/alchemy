@@ -21,7 +21,7 @@ SECTIONS
         "*/games/tla/src/scene/alhafra/s0760.o"(.text)
         "*/games/tla/src/scene/alhafra/s0774.o"(.text)
         "*/games/tla/src/scene/alhafra/s0788.o"(.text)
-        "*/resource_665_overlay.o"(.text.x020087d4)
+        "*/games/tla/src/scene/alhafra/s07d4.o"(.text)
         "*/resource_665_overlay.o"(.text.x02008a18)
         "*/games/tla/src/scene/alhafra/s0a98.o"(.text)
         "*/games/tla/src/scene/alhafra/s0aa0.o"(.text)

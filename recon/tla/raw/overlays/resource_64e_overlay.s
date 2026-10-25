@@ -507,3 +507,93 @@ Func_020005a8:
 	pop {r5, r6, r7, pc}
 .L_0200864c:
 	.4byte gFrameCount
+	.section .text.x02008a54,"ax",%progbits
+	.balign 4
+	.ifndef TLA_EDITION_JA
+	.global VenusLighthouse_Start
+	.thumb_func
+VenusLighthouse_Start:
+	push {lr}
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r3, [r3, #108]
+	movs r0, #214
+	lsls r0, r0, #1
+	movs r2, #129
+	adds r3, r3, r0
+	lsls r2, r2, #2
+	ldr r1, .L_02008b20
+	str r2, [r3]
+	subs r2, #34
+	adds r3, r1, r2
+	movs r0, #0
+	ldrsh r3, [r3, r0]
+	cmp r3, #99
+	bne .L_02008aa2
+	ldr r3, .L_02008b24
+	movs r0, #242
+	lsls r0, r0, #1
+	adds r2, r1, r0
+	strh r3, [r2]
+	movs r3, #243
+	lsls r3, r3, #1
+	adds r2, r1, r3
+	movs r3, #22
+	strh r3, [r2]
+	bl Engine_EventStart
+	movs r0, #0
+	bl Engine_EventResolvePendingActions
+	bl Func_02000b2c
+	bl Func_02000d30
+	bl Engine_EventEnd
+	b .L_02008b1a
+.L_02008aa2:
+	movs r0, #10
+	bl Engine_ActorGet
+	movs r1, #6
+	bl Object_SetPartAttribute
+	movs r0, #17
+	bl Engine_ActorGet
+	movs r1, #6
+	bl Object_SetPartAttribute
+	movs r0, #18
+	bl Engine_ActorGet
+	movs r1, #6
+	bl Object_SetPartAttribute
+	movs r0, #19
+	bl Engine_ActorGet
+	movs r1, #6
+	bl Object_SetPartAttribute
+	movs r0, #20
+	bl Engine_ActorGet
+	movs r1, #6
+	bl Object_SetPartAttribute
+	movs r0, #21
+	bl Engine_ActorGet
+	movs r1, #6
+	bl Object_SetPartAttribute
+	movs r0, #22
+	bl Engine_ActorGet
+	movs r1, #6
+	bl Object_SetPartAttribute
+	movs r0, #23
+	bl Engine_ActorGet
+	movs r1, #6
+	bl Object_SetPartAttribute
+	movs r0, #24
+	bl Engine_ActorGet
+	movs r1, #6
+	bl Object_SetPartAttribute
+	movs r0, #25
+	bl Engine_ActorGet
+	movs r1, #6
+	bl Object_SetPartAttribute
+.L_02008b1a:
+	movs r0, #0
+	pop {pc}
+	.2byte 0x0000
+.L_02008b20:
+	.4byte gPartyState
+.L_02008b24:
+	.4byte SceneId_VenusLighthouse
+	.endif

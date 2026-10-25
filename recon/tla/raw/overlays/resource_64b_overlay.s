@@ -593,6 +593,64 @@ Func_020006d0:
 	mov r10, r6
 	mov r11, r7
 	pop {r5, r6, r7, pc}
+	.section .text.x02008918,"ax",%progbits
+	.global Func_02000918
+	.thumb_func
+Func_02000918:
+	push {r5, r6, r7, lr}
+	movs r3, #192
+	lsls r3, r3, #18
+	movs r0, #8
+	ldr r7, [r3, #108]
+	bl Object_GetById
+	adds r6, r0, #0
+	bl Func_02004c20
+	movs r0, #0
+	bl Func_02004db8
+	ldr r5, .L_02008990
+	movs r1, #128
+	lsls r1, r1, #2
+	adds r1, #18
+	adds r3, r5, r1
+	ldrb r3, [r3]
+	cmp r3, #8
+	bne .L_02008946
+	bl Func_0200050c
+.L_02008946:
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
+	movs r3, #158
+	lsls r3, r3, #2
+	adds r2, r5, r3
+	ldr r3, [r6, #8]
+	movs r1, #159
+	str r3, [r2]
+	lsls r1, r1, #2
+	ldr r3, [r6, #16]
+	adds r2, r5, r1
+	str r3, [r2]
+	movs r2, #160
+	lsls r2, r2, #2
+	subs r1, #6
+	adds r3, r5, r2
+	movs r2, #0
+	str r2, [r3]
+	movs r0, #187
+	adds r3, r5, r1
+	strh r2, [r3]
+	lsls r0, r0, #1
+	bl GameFlag_ClearBit
+	movs r0, #123
+	bl Func_02004e30
+	movs r2, #170
+	lsls r2, r2, #1
+	adds r3, r7, r2
+	movs r1, #0
+	ldrsh r0, [r3, r1]
+	bl Func_02004d40
+	pop {r5, r6, r7, pc}
+.L_02008990:
+	.4byte gPartyState
 	.section .text.x02008be0,"ax",%progbits
 	.balign 4
 	.global Func_02000be0

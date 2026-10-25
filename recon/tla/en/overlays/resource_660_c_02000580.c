@@ -1,4 +1,9 @@
-#include "garoh_interiors.h"
+// Draft, differ 2 of 158 under -mthumb-slow-loads: the compiler issues
+// gPartyState's load (ldr r5) before lsls r2, r2, #1 and the add into the event
+// work; the native issues it after them, as in overlay 65e's Func_02000340.
+// Adopted in 78b8a48d42, when it matched without the option; back on the
+// listing since.
+#include "../../../../games/tla/src/scene/garoh_interiors/garoh_interiors.h"
 
 void GameFlag_ClearBit(s32 flag);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,

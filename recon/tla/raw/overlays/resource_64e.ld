@@ -20,6 +20,7 @@ SECTIONS
         "*/games/tla/src/scene/venus_lighthouse/push.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse/statue.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse/scene_events.o"(.text)
+        "*/resource_64e_overlay.o"(.text.x02008a54)
         "*/games/tla/src/scene/venus_lighthouse/prepare.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse/leave.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse/import.o"(.text)

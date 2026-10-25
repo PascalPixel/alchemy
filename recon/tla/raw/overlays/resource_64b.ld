@@ -12,6 +12,7 @@ SECTIONS
         "*/games/tla/src/scene/world_map/s050c.o"(.text)
         "*/resource_64b_overlay.o"(.text.x02008574)
         "*/resource_64b_overlay.o"(.text.x020086d0)
+        "*/resource_64b_overlay.o"(.text.x02008918)
         "*/games/tla/src/scene/world_map/s0994.o"(.text)
         "*/resource_64b_overlay.o"(.text.x02008be0)
         "*/games/tla/src/scene/world_map/s0d1c.o"(.text)

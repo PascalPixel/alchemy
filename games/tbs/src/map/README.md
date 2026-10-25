@@ -317,7 +317,8 @@ one tile style sit side by side on one layout, each with a camera box of its
 own, and the warp destination the party arrives at chooses the room by its
 box. The rooms of one sheet can belong to different places, so its area name
 follows the warp destination too; Vale's inn and the scholars' room in Babi's
-Palace share `MapId_CottageRoomsB`. Each sheet's file lists its rooms and the
+Palace share `MapId_CottageRoomsB`. A sheet is therefore named for the style
+its rooms are drawn in, never for a place, and its file lists its rooms and the
 places they belong to.
 
 A map's functions take its name (`Vault_`, `VaultRevisit_`,
@@ -382,12 +383,12 @@ its `msgctxt` is the name the map writes (`MsgVaultWelcomeToVaultTheTownAt`).
 
 A map's name is its map section's area name from `gMapSec_NameRules`, or for a
 room the game leaves unnamed, what the player sees there. A sheet of rooms
-whose rooms all belong to one place is named for it (`CottageRoomsA`,
-`RockRooms`), and one that mixes places for the material its rooms are
-drawn in (`CottageRoomsB`, `StoneRooms`, `LacquerRoomsA`), with a letter where
-two share one; its functions
-are named for what the player sees; its messages are linker symbols made from
-their English text. Overlay numbers are their rows of the resource directory.
+is named for the interior style its rooms are drawn in, in a word from interior
+design and architecture rather than a place (`CottageRoomsA`, `LogRoomsC`,
+`StuccoRoomsB`, `StoneRooms`, `ShipRooms`), with a letter in map-table order
+where several share a style. A map's functions are named for what the player
+sees; its messages are linker symbols made from their English text. Overlay
+numbers are their rows of the resource directory.
 
 Many functions in `common/` keep older descriptive names
 (`ObjectEvent_SetFlagBitByRelativeDepth`, `Map_`); each takes its name with the

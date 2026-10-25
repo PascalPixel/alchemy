@@ -258,7 +258,8 @@ grid of cells under them, 128 by 128; several maps can share one
 
 A map that packs indoor rooms drawn in one tile style side by side, each with
 a camera box the warp destination chooses; its rooms may belong to different
-places ([Maps](src/map/README.md#design)).
+places, so it is named for the style they are drawn in, as Cottage rooms or
+Stucco rooms ([Maps](src/map/README.md#design)).
 
 ### Cell
 

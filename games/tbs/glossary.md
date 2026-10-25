@@ -196,8 +196,8 @@ table entry and every stub of an overlay's tables is one.
 ### Overlay
 
 A packed piece of code unpacked into one 32 KB area of EWRAM, `gOverlayArea`,
-when it is needed: each map's code is one, 96 in all, and only one is loaded
-at a time ([Engine](engine.md#overlays)).
+when it is needed: each holds the scripts of one map or of a few neighbouring
+maps, 96 in all for 201 maps, and only one is loaded at a time ([Engine](engine.md#overlays)).
 
 ### Entry table and import table
 

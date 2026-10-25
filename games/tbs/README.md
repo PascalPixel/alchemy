@@ -3,35 +3,38 @@
 [The Broken Seal](glossary.md#the-two-games) is the first game in the series,
 released as simply "Golden Sun" outside of Japan.
 
-The game's code comes in two kinds. Most of it is always in memory: the
-[map loop](#the-map-loop), and everything it calls on, the engine that moves
-and draws the party and everyone else, the windows and menus, the battle
-system, the minigames such as Lucky Dice, and saving. The rest is
-[overlays](#maps-and-overlays): each [map](glossary.md#map)'s own code, which
-says who stands there and what happens, unpacked into memory only while the
-[party](glossary.md#the-party) is in that map.
+Everything the [party](glossary.md#the-party) walks around in is a
+[map](glossary.md#map): a room, a town, a dungeon floor or the world map. The
+game is always in exactly one map. Walking through a door ends that map and
+starts the next, and that round, map after map, is the game's
+[map loop](#the-map-loop).
 
-The map loop runs one map at a time: a room, a town, a dungeon floor, the
-world map. When the party walks through a door, the game ends one map and
-starts the next. Each map brings its overlay and its own
-[layout](glossary.md#layout), the picture it shows and the ground under it.
-A battle or a minigame takes a map's place in the loop: it runs as if it were
-a map, under a number past the last map's, but its code is part of the
-always-loaded program, so it needs no overlay. What a map knows about how far
-the story has gone, it reads from the [game flags](glossary.md#game-flag), a
-long list of yes-or-no facts saved with the game. The always-loaded code is
-cut into [banks](glossary.md#bank)
+A map is made of two things. Its [layout](glossary.md#layout) is the picture
+and the ground: what is drawn, and where the party can walk. Its
+[scripts](glossary.md#script) are code: who stands where, and what happens when
+the party talks to someone or steps somewhere. A map's scripts are loaded
+only while the party is in it. On the cartridge they are packed in
+[overlays](#maps-and-overlays), each holding the scripts of one map or of a
+few neighbouring maps: 201 maps share 96 overlays.
+
+The rest of the game's code is always loaded: the engine that moves and draws
+everyone, the windows and menus, battles, the Lucky Dice and Lucky Wheels
+minigames, and saving. A battle or a minigame takes a turn of the map loop as
+if it were a map, but needs no overlay, because its code is always there. A
+map knows how far the story has gone from the
+[game flags](glossary.md#game-flag), a long list of yes-or-no facts saved with
+the game. The always-loaded code is cut into [banks](glossary.md#bank)
 ([How the code is organised](#how-the-code-is-organised)).
 
 The code also runs differently from most games'. In most games, the Pokémon
 games among them, one main loop goes round once a
 [frame](glossary.md#frame) and calls each part of the game in turn, so
 anything that takes time is cut into steps that remember where they got to.
-In this game a cutscene, a menu or a whole map is an ordinary function that
+In this game a cutscene, a menu or a map's script is an ordinary function that
 runs from start to finish: when time has to pass, it asks to wait a number of
 frames, and while it waits the engine keeps everything else moving
 ([Engine](engine.md#waiting-and-tasks)). So a scene's code reads top to
-bottom, like a script. The price is that only one piece of code waits at a
+bottom, in the order things happen. The price is that only one piece of code waits at a
 time: whatever moves alongside it, an animation or a flashing light, is
 written as a small job of its own that runs every frame.
 

@@ -2922,12 +2922,6 @@ Func_0811f66c:
 	.thumb_func
 BattlePresentation_WaitForAdvance:
 	.incbin "baserom.gba", 0x0011ff20, 0x00000158
-	.section .rom.00120078, "ax"
-	.global Func_08120060
-	.type Func_08120060, %function
-	.thumb_func
-Func_08120060:
-	.incbin "baserom.gba", 0x00120078, 0x000000f8
 	.section .rom.0012046c, "ax"
 	.global BattleTarget_Execute
 	.type BattleTarget_Execute, %function
@@ -2953,22 +2947,15 @@ Func_08123574:
 	.section .rom.00124e38, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00124e38, 0x00000c80
-	.global Func_08125aa0
-	.type Func_08125aa0, %function
-	.thumb_func
-Func_08125aa0:
-	.incbin "baserom.gba", 0x00125ab8, 0x000000d8
 	.section .rom.00125bd0, "ax"
+	.global Func_08125bb8
+	.type Func_08125bb8, %function
+	.thumb_func
+Func_08125bb8:
 	.incbin "baserom.gba", 0x00125bd0, 0x00000054
 	.section .rom.00125d8c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00125d8c, 0x000004a4
-	.section .rom.001262a4, "ax"
-	.global Func_0812628c
-	.type Func_0812628c, %function
-	.thumb_func
-Func_0812628c:
-	.incbin "baserom.gba", 0x001262a4, 0x00000138
 	.section .rom.00126414, "ax"
 	.balign 4
 	.global Func_081263fc
@@ -3017,13 +3004,6 @@ Func_08126e00:
 	.thumb_func
 Func_08127308:
 	.incbin "baserom.gba", 0x00127320, 0x00000264
-	.section .rom.001275a0, "ax"
-	.balign 4
-	.global Func_08127588
-	.type Func_08127588, %function
-	.thumb_func
-Func_08127588:
-	.incbin "baserom.gba", 0x001275a0, 0x000000c4
 	.section .rom.00127884, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00127884, 0x000001a0
@@ -3042,7 +3022,7 @@ BattleEnemy_ClaimNameLetter:
 Func_0812824c:
 	.incbin "baserom.gba", 0x00128264, 0x00000578
 	.section .rom.0013ba50, "ax"
-	.incbin "baserom.gba", 0x0013ba50, 0x000000e8
+	.incbin "baserom.gba", 0x0013ba50, 0x0000009c
 	.section .rom.0013bbd8, "ax"
 	.global BattleEffect_RunIce
 	.type BattleEffect_RunIce, %function
@@ -3125,8 +3105,6 @@ BattleEffect_RunEclipse:
 	.thumb_func
 Func_08142944:
 	.incbin "baserom.gba", 0x00142944, 0x000006bc
-	.section .rom.00143354, "ax"
-	.incbin "baserom.gba", 0x00143354, 0x00000060
 	.section .rom.0014355c, "ax"
 	.balign 4
 	.global Func_0814355c
@@ -3327,11 +3305,6 @@ Func_0814fab8:
 	.global SummonEffect_RunCanvasEffect
 SummonEffect_RunCanvasEffect:
 	.incbin "baserom.gba", 0x001504d8, 0x000004dc
-	.global BattleEffect_RunFlare
-	.type BattleEffect_RunFlare, %function
-	.thumb_func
-BattleEffect_RunFlare:
-	.incbin "baserom.gba", 0x001509b4, 0x00000264
 	.section .rom.00150c74, "ax"
 	.global BattleEffect_RunQuake
 	.type BattleEffect_RunQuake, %function
@@ -3466,9 +3439,6 @@ BattleEffect_RunBurstScene:
 	.thumb_func
 BattleEffect_RunGaia:
 	.incbin "baserom.gba", 0x0015a9e4, 0x00000868
-	.section .rom.0015b3b0, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x0015b3b0, 0x00000060
 	.section .rom.0015b434, "ax"
 	.incbin "baserom.gba", 0x0015b434, 0x00000330
 	.global BattleEffect_RunUlysses
@@ -3494,8 +3464,6 @@ BattleEffect_RunSpiderWeb:
 	.thumb_func
 BattleEffect_RunAzul:
 	.incbin "baserom.gba", 0x0015cde8, 0x00001388
-	.section .rom.0015e22c, "ax"
-	.incbin "baserom.gba", 0x0015e22c, 0x0000005c
 	.section .rom.0015e3ac, "ax"
 	.balign 4
 	.global Func_0815e3ac
@@ -3819,13 +3787,8 @@ Func_08181ed4:
 	.global Func_081823a8
 Func_081823a8:
 	.incbin "baserom.gba", 0x001823a8, 0x000004a4
-	.section .rom.00182898, "ax"
+	.section .rom.00182aa8, "ax"
 	.balign 4
-	.global Func_08182898
-	.type Func_08182898, %function
-	.thumb_func
-Func_08182898:
-	.incbin "baserom.gba", 0x00182898, 0x00000210
 	.global BattleEffect_RunCoatlicue
 	.type BattleEffect_RunCoatlicue, %function
 	.thumb_func
@@ -3931,7 +3894,10 @@ BattleEffect_RunOdyssey:
 	.type BattleEffect_RunMoloch, %function
 	.thumb_func
 BattleEffect_RunMoloch:
-	.incbin "baserom.gba", 0x00191d60, 0x000009dc
+	.incbin "baserom.gba", 0x00191d60, 0x000007dc
+	.section .rom.00192648, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x00192648, 0x000000f4
 	.section .rom.0019284c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0019284c, 0x00000450
@@ -3953,10 +3919,14 @@ Func_08196404:
 	.type Func_081a06e0, %function
 	.thumb_func
 Func_081a06e0:
-	.incbin "baserom.gba", 0x001a06e0, 0x00000320
-	.section .rom.001a0a70, "ax"
-	.incbin "baserom.gba", 0x001a0a70, 0x00000178
+	.incbin "baserom.gba", 0x001a06e0, 0x000001e4
+	.global Func_081a08c4
+	.type Func_081a08c4, %function
+	.thumb_func
+Func_081a08c4:
+	.incbin "baserom.gba", 0x001a08c4, 0x0000013c
 	.section .rom.001a0be8, "ax"
+	.balign 4
 	.global DisplayScroll_DrawMessageLine
 	.type DisplayScroll_DrawMessageLine, %function
 	.thumb_func

@@ -1,32 +1,3 @@
-// Draft (tla-en): listing 225 instructions, draft 225, common 223, differ 4.
-// Written from the listing; called only by Func_0818284c (f18284c.c), which
-// opens the canvas and sets the blend before it. ☀️ has no twin: its nearest
-// shapes are BattleEffect_RunFlare (0.55) and BattleEffect_RunPrism.
-// Statements, registers, stores and the frame (canvas sp+20, the blitter pair
-// sp+12/sp+16, frame sp+8) all match; four places are left where the native
-// loads first and this build does not: BattleEffect_ProcessPendingGraphicsTransfer's address before work
-// in the prologue, the particle base before the reload pair that clears i in
-// both loop preheaders (after the hoisted heights in the second), and the
-// spilled frame before i * 8 is built. sched2 ties each on priority and takes
-// the other insn for its dependent or its class against the last call.
-// Measured: an empty asm after the spawn pointer fixes the first preheader
-// (differ 6); one-pass blocks or asm operands on i or frame in the actor
-// loop: 25 to 167; a particle-array pointer variable, an inline blitter
-// loader, a volatile pad, copied effect, work through a slot pointer: no
-// gain. Widths and heights are read once each, in argument order, and the
-// tables are not const (the native rereads the heights after the call).
-// 2026-10-15 (lane N2): rewritten with the work struct and named constants;
-// the same 225 instructions and differ 8. alchemy permute, 8 minutes, two
-// jobs: nothing below differ 15.
-// 2026-10-19 (run 33): two tagged devices fix the prologue and the first
-// preheader: differ 8 to 4. Left: the second preheader (the native loads the
-// hoisted heights table, then the bubble pointer, then i's 0; an asm on
-// bubble holding r2 orders bubble and i but lets the hoisted load fall after
-// bubble's, and a heights local loaded before it moves the reload registers:
-// differ 4 and 6) and the spilled frame before i * 8 (a pinned frame behind
-// an asm: the whole allocation moves, differ 90).
-// Resource ids 0x190 (BattleEffect_BlueBeamSheet) and 0xfd (Resource_Data0FD)
-// need their names in system/resource/directory.s when this is adopted.
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "io_reg.h"
@@ -86,9 +57,9 @@ void BattleEffect_EndCanvasLayer(void);
 void Func_08182898(struct BattleEffectArgument *effect) {
   void *canvas = Ram_HeapSlots->battleFxWork[1];
   struct BattleEffectWork *work;
-  /* FAKEMATCH: frame local. The blitter pair, of which this effect uses the
-   * first: as a two-word array it is one DImode pseudo, and its spill takes
-   * sp+12 and the unused sp+16 the native frame has. */
+  /* FAKEMATCH(dead): the blitter pair, of which this effect uses the first,
+   * spills as one DImode pseudo into the unused frame word the native has;
+   * as a single DrawRectangle, 8 of 225 instructions differ in tla-en. */
   DrawRectangle draw[2];
   s32 frame;
   s32 i;
@@ -123,10 +94,6 @@ void Func_08182898(struct BattleEffectArgument *effect) {
     if (frame == 0) {
       struct EffectStep *spawn = gData_02015000;
 
-      /* FAKEMATCH(barrier): an empty asm on spawn that holds r4, so the spawn
-       * pointer's pool load comes before i's 0; as the plain loop, 2 of 225
-       * instructions differ in tla-en. */
-      __asm__("" : "+l"(spawn) : : "r4");
       for (i = 0; i != BUBBLE_COUNT; i++) {
         spawn->x = (Random16() & 127) << 16;
         spawn->y = ((Random16() & 127) + 120) << 16;

@@ -1,10 +1,3 @@
-// Near miss: differ 2 of 152 (was 10 with the one-pass block on the table
-// store). Pinning the table cell to r5 and each loop's OAM attribute word to
-// r0 behind a volatile barrier issues the native's pool loads first. Left: the
-// grid loop's preheader, where the native loads 0x40004000 (ldr r3, then r10)
-// between 16's movs and its copy to lr; a forced temporary for the word loads
-// it first but swaps r2 and r3 (differ 8), a pin to r10 the same, an explicit
-// x += 8 column worse (differ 45). Three permuter minutes found nothing.
 #include "types.h"
 #include "mem.h"
 #include "dma.h"
@@ -21,13 +14,13 @@ extern s16 gDisplayScroll_LastPosition;
 extern struct DisplayScrollObject *gDisplayScroll_Objects;
 extern const void *gDisplayScroll_LineTable[];
 
-void DisplayScroll_UpdateObjects(void);
+void Func_081a08c4(void);
 void DisplayScroll_RenderEnteringLine(void);
 s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align);
 
-void DisplayScroll_InitializeObjectTable(void) {
-  /* FAKEMATCH: retain the existing pointer-cell and postincrement word
-     stores; direct typed stores in f4f9d28 change the 376-byte body to 368. */
+void Func_081a0a70(void) {
+  /* FAKEMATCH(volatile): the DMA fill word volatile; as a plain u32, 6 of 152
+   * instructions differ in tla-en. */
   volatile u32 fill;
   u32 *entry;
   u32 i;
@@ -35,9 +28,7 @@ void DisplayScroll_InitializeObjectTable(void) {
 
   void *objects =
       Runtime_BumpAllocateAlternatePool(128 * sizeof(struct DisplayScrollObject));
-  register void **cell asm("r5") = (void **)&gDisplayScroll_Objects;
-
-  __asm__ __volatile__("" : "+l"(cell));
+  void **cell = (void **)&gDisplayScroll_Objects;
   *cell = objects;
   fill = 0;
   Dma_Set((void *)&fill, (void *)0x06010000, 0x85001800,
@@ -48,9 +39,7 @@ void DisplayScroll_InitializeObjectTable(void) {
 
   entry = *(u32 **)cell;
   {
-    register u32 attr asm("r0") = 0x80004000;
-
-    __asm__ __volatile__("" : "+l"(attr));
+    u32 attr = 0x80004000;
   for (i = 0; i < 8; i++) {
     u32 *q = entry;
 
@@ -60,9 +49,7 @@ void DisplayScroll_InitializeObjectTable(void) {
   }
   }
   {
-    register u32 attr asm("r0") = 0x80004088;
-
-    __asm__ __volatile__("" : "+l"(attr));
+    u32 attr = 0x80004088;
     for (i = 0; i < 8; i++) {
       u32 *q = entry;
 
@@ -72,9 +59,7 @@ void DisplayScroll_InitializeObjectTable(void) {
     }
   }
   {
-    register u32 attr asm("r0") = 0x40004098;
-
-    __asm__ __volatile__("" : "+l"(attr));
+    u32 attr = 0x40004098;
     for (i = 0; i < 8; i++) {
       u32 *q = entry;
 
@@ -103,7 +88,7 @@ void DisplayScroll_InitializeObjectTable(void) {
   gDisplayScroll_Position = 0;
   gDisplayScroll_LastPosition = 0;
   gDisplayScroll_Busy = 0;
-  Scheduler_AddOrUpdateCallback((s32)DisplayScroll_UpdateObjects, 0xc80);
+  Scheduler_AddOrUpdateCallback((s32)Func_081a08c4, 0xc80);
   Scheduler_AddOrUpdateCallback((s32)DisplayScroll_RenderEnteringLine, 0x480);
   for (i = 0; i < 32; i++)
     DisplayScroll_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);

@@ -1,16 +1,13 @@
-// Near miss: differ 6 of 94 (three reordered rows, all in the opening; differ 8
-// before the one-pass block on the saved word). The native builds the BG0CNT
-// address and reads it ahead of the prologue sub sp and of the address of the
-// first saved slot (movs r2; lsls r2; sub sp; adds r2; movs r0, #6; ldrh; add
-// r0, sp); the draft has sub sp and the slot address first. The opening block
-// holds the prologue, so no block can stand there.
 #include "fixed_math.h"
 #include "types.h"
 #include "system.h"
 
 void Fade_ToBlack(s32 arg0);
 
-s32 BattlePres_RunMosaicFadeOut(void) {
+s32 Func_08125aa0(void) {
+  /* FAKEMATCH(volatile): the four saved BG control words volatile, so each
+   * keeps its stack slot; as plain u16 locals, 65 of 94 instructions differ
+   * in tla-en. */
   volatile u16 bg0cnt;
   volatile u16 bg1cnt;
   volatile u16 bg2cnt;
@@ -43,12 +40,7 @@ s32 BattlePres_RunMosaicFadeOut(void) {
 
   *(volatile u16 *)0x04000000 = 1;
   WaitFrames(4);
-  /* FAKEMATCH: the one-pass block ends the scheduling block: the native reads
-   * the saved control word before it builds the register address (one reordered
-   * row). */
-  do {
-    saved = bg0cnt;
-  } while (0);
+  saved = bg0cnt;
   reg = (volatile u16 *)0x04000008;
   *reg++ = saved;
   *reg++ = bg1cnt;

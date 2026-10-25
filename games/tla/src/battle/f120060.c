@@ -1,8 +1,3 @@
-// Draft, differ 2 of 101: ☀️'s BattlePresentation_WaitForPromptAt
-// (games/tbs/src/battle/battle.c), ported: shows the cursor bobbing at
-// (x, y) and waits for A, B, L or R; returns 1. Left: instruction order
-// only, one pair: the REG_WINOUT constant's movs r7, #128 one slot ahead of
-// the position.x halfword load (ldrh r3, [sp]) here, after it natively.
 #include "types.h"
 #include "input.h"
 #include "iowrite.h"
@@ -41,7 +36,9 @@ void QueueIoWriteDelay10(u32 address, u32 value);
 void QueueIoWriteDelay6(u32 address, u32 value);
 void Runtime_PushSlotEntry(void *entry, s32 priority);
 
-s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y) {
+/// The Broken Seal's BattlePresentation_WaitForPromptAt: shows the cursor
+/// bobbing at (x, y) and waits for A, B, L or R; returns 1.
+s32 Func_08120060(s32 x, s32 y) {
   struct MenuPoint position;
   s32 frameTiles;
   struct CursorSprite promptStorage;

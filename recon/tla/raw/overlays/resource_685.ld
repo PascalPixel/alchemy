@@ -7,7 +7,7 @@ SECTIONS
         "*/games/tla/src/scene/champa_cliff_caves/scene_tables.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves/s0070.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves/warp.o"(.text)
-        "*/resource_685_overlay.o"(.text.x02008208)
+        "*/games/tla/src/scene/champa_cliff_caves/s0208.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves/events.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves/s0464.o"(.text)
         "*/resource_685_overlay.o"(.text.x020084d4)

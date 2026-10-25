@@ -12,7 +12,7 @@ SECTIONS
         "*/resource_694_overlay.o"(.text.x020083f6)
         "*/games/tla/src/field/common/effect/move.o"(.text)
         "*/resource_694_overlay.o"(.text.x0200842e)
-        "*/resource_694_overlay.o"(.text.x02008430)
+        "*/games/tla/src/scene/contigo/s0430.o"(.text)
         "*/games/tla/src/scene/contigo/event0.o"(.text)
         "*/resource_694_overlay.o"(.text.x02008658)
         "*/resource_694_overlay.o"(.text.x020086d0)

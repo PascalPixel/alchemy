@@ -3795,9 +3795,8 @@ main	rom_main_05	recon/tla/it/rom	.rom.000e3cf8	it
 main	rom_main_05	recon/tla/it/rom	.rom.000e4238	it
 main	rom_main_05	recon/tla/it/rom	.rom.000e42c8	it
 main	rom_main_05	recon/tla/raw/080e3d04	.text	en
-main	rom_main_05	recon/tla/raw/080e4244	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000e3cc0	ja
-main	rom_main_05	recon/tla/ja/rom	.rom.000e4200	ja
+main	rom_main_05	games/tla/src/field/common/event/object_blocked	.text	ja en
 main	rom_main_05	games/tla/src/field/common/event/blockcue	.text	ja en de fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000e9460	fr
 main	rom_main_05	recon/tla/de/rom	.rom.000f146c	de

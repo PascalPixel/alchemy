@@ -3631,12 +3631,8 @@ BattleEffect_StartCanvasLayer:
 	.incbin "baserom.gba", 0x001435e0, 0x00000260
 	.section .rom.00143d80, "ax"
 	.incbin "baserom.gba", 0x00143d80, 0x00000134
-	.section .rom.00143eb4, "ax"
-	.global Func_08143eb4
-	.type Func_08143eb4, %function
-	.thumb_func
-Func_08143eb4:
-	.incbin "baserom.gba", 0x00143eb4, 0x00000190
+	.section .rom.00144044, "ax"
+	.balign 4
 	.global BattleEffect_RunHaunt
 	.type BattleEffect_RunHaunt, %function
 	.thumb_func

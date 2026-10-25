@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 @ Abilities: Haunt (kind 39).
 	.global BattleEffect_RunHaunt
 	.thumb_func

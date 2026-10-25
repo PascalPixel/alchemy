@@ -1,3 +1,5 @@
+// 2026-10-25: y typed unsigned long (a signature device) leaves only the
+// sub sp, #36 row (differ 2); twelve minutes of permuter found nothing nearer.
 // Draft, differ 4 of 130: the prologue's sub sp, #36 is scheduled one
 // instruction early (before lsls r3, r3, #18 of the heap slot base) and the
 // store of y before the load of the render work; sched2 ties the stack

@@ -254,6 +254,12 @@ What a town or dungeon map shows and stands on: three background layers and a
 grid of cells under them, 128 by 128; several maps can share one
 ([Layouts](src/layout/README.md)).
 
+### Sheet of rooms
+
+A map that packs indoor rooms drawn in one tile style side by side, each with
+a camera box the warp destination chooses; its rooms may belong to different
+places ([Maps](src/map/README.md#design)).
+
 ### Cell
 
 One 16 by 16 pixel square of a layout: which metatile is drawn there, the

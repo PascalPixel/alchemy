@@ -7,7 +7,7 @@ SECTIONS
         "*/games/tla/src/scene/shaman_village_cave/s0098.o"(.text)
         "*/games/tla/src/scene/shaman_village_cave/s00f0.o"(.text)
         "*/games/tla/src/scene/shaman_village_cave/s0148.o"(.text)
-        "*/resource_695_overlay.o"(.text.x02008184)
+        "*/games/tla/src/scene/shaman_village_cave/s0184.o"(.text)
         "*/games/tla/src/scene/shaman_village_cave/s030c.o"(.text)
         "*/games/tla/src/scene/shaman_village_cave/places.o"(.text)
         "*/games/tla/src/scene/shaman_village_cave/scene_events.o"(.text)

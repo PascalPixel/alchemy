@@ -8,6 +8,12 @@ The Broken Seal is fully rebuilt from this repository, in Japanese, English, Ger
 
 <img src="https://alchemy.pascalpixel.com/PROGRESS_CHART.png" width="838" alt="How much of each game's code and data is rebuilt, day by day since 16 July 2026" />
 
+## Documentation
+
+<a href="https://alchemy.pascalpixel.com"><img src="https://alchemy.pascalpixel.com/guides/docs/front-page.png" width="838" alt="The front page of Alchemy's documentation, with its World and Battle sections" /></a>
+
+[alchemy.pascalpixel.com](https://alchemy.pascalpixel.com) explains how The Broken Seal works, written from its rebuilt source, with recordings from the game itself.
+
 ## Build
 
 [INSTALL.md](INSTALL.md) has the commands for Linux, macOS and Windows. Every build is checked against the original cartridges’ hashes in [rom.sha1](rom.sha1).

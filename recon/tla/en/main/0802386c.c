@@ -1,4 +1,4 @@
-// Draft, differ 668 of 606: The Broken Seal's ObjectSystem_PlaceSprites
+// Draft, differ 660 of 606: The Broken Seal's ObjectSystem_PlaceSprites
 // (games/tbs/src/field/field/object_camera.c), the scrolling camera that
 // places every object's sprite each frame (Func_080230e0 adds it at 0x480).
 // This game's changes: priorityFlags bit 4 hides an object as if off
@@ -89,24 +89,27 @@ void Func_0802386c(void) {
   /* An unused local for the room the native frame keeps above the
    * placement, as The Broken Seal's. */
   struct CameraPoint unusedPoints[3];
+  struct PlacementPoint point;
+  s32 scale[2];
+  s32 objectIndex;
   struct MapWork *map;
   s32 viewX;
   s32 viewZ;
   struct ObjectSystemWork *system;
-  s32 originY;
-  struct ObjectRuntime *object;
-  s32 objectIndex;
-  u8 *terrainId;
-  u8 *animationKind;
-  struct PlacedSprite *sprite;
   s32 dx;
   s32 dz;
+  s32 originY;
+  struct PlacedSprite *sprite;
   u8 *priorityFlags;
   s32 layer;
   u32 *cells;
   s32 objectHeight;
   s32 leftPriority;
   s32 middlePriority;
+  s8 *basePriority;
+  u8 *terrainId;
+  u8 *animationKind;
+  struct ObjectRuntime *object;
   s32 rightPriority;
   s32 priority;
   s32 x;
@@ -117,9 +120,6 @@ void Func_0802386c(void) {
   s32 height;
   s32 rise;
   u32 layerPlusOne;
-  s32 scale[2];
-  struct PlacementPoint point;
-  s8 *basePriority;
 
   map = Ram_HeapSlots->mapWork;
   viewX = map->viewX & 0xffff0000;

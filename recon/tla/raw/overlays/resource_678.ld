@@ -21,6 +21,7 @@ SECTIONS
         "*/games/tla/src/scene/taopo_swamp/events_h.o"(.text)
         "*/games/tla/src/scene/taopo_swamp/s1618.o"(.text)
         "*/games/tla/src/scene/taopo_swamp/events_i.o"(.text)
+        "*/games/tla/src/scene/taopo_swamp/s1774.o"(.text)
         "*/resource_678_overlay.o"(.text.x02009774)
         "*/games/tla/src/scene/taopo_swamp/prepare.o"(.text)
         "*/resource_678_overlay.o"(.text.x02009ff0)

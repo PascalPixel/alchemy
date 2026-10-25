@@ -5,7 +5,7 @@ SECTIONS
         "*/games/tla/src/scene/gabomba_statue/entry.o"(.text)
         "*/games/tla/src/field/common/object/set_sprite_priority.o"(.text)
         "*/games/tla/src/field/common/effect/move.o"(.text)
-        "*/resource_671_overlay.o"(.text.x020080b8)
+        "*/games/tla/src/scene/gabomba_statue/s00b8.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/wander.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/scene_tables.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/s02dc.o"(.text)

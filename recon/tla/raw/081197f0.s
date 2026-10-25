@@ -303,7 +303,7 @@ Func_081197f0:
 	lsls r3, r3, #19
 	adds r3, #80
 	strh r5, [r3]
-	bl Func_081281ec
+	bl BattleSpoils_Clear
 	movs r0, #128
 	bl VramCache_AllocEntry
 	mov r1, r9

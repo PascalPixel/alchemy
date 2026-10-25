@@ -49,7 +49,8 @@ struct BattleWork {
   u8 placement[16];  ///< each unit's index in slots; 0xff for none
   struct BattleObj slots[14];
   struct BattleActionRecord actions[20]; ///< the actions chosen for the turn
-  u8 unk42c[0x138]; ///< not named by TLA code
+  u8 unk42c[0x124]; ///< not named by TLA code
+  struct BattleSpoils spoils; ///< what the battle has won so far
   /// A queue of two enemies to call in (an ability of effect 87): their
   /// classes and name letters, its head and its length.
   ///@{
@@ -90,6 +91,7 @@ STATIC_ASSERT(offsetof(struct BattleWork, enemyIds) == 0x066);
 STATIC_ASSERT(offsetof(struct BattleWork, placement) == 0x074);
 STATIC_ASSERT(offsetof(struct BattleWork, slots) == 0x084);
 STATIC_ASSERT(offsetof(struct BattleWork, actions) == 0x2ec);
+STATIC_ASSERT(offsetof(struct BattleWork, spoils) == 0x550);
 STATIC_ASSERT(offsetof(struct BattleWork, queuedSummons) == 0x564);
 STATIC_ASSERT(offsetof(struct BattleWork, queueCount) == 0x56b);
 STATIC_ASSERT(offsetof(struct BattleWork, highlightStep) == 0x676);

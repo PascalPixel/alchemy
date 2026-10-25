@@ -1,4 +1,7 @@
 #include "types.h"
+#include "ram_buffer.h"
+#include "party_state.h"
+#include "battle_work.h"
 
 u8 *Item_Get(u32);
 
@@ -21,4 +24,30 @@ u32 BattleSpoils_RankItem(u32 value) {
     bank += base;
   }
   return bank;
+}
+
+/// Empties the battle's spoils and the party's pending item, as The Broken
+/// Seal's BattleSpoils_Clear does. Called by Func_081197f0.
+void BattleSpoils_Clear(void) {
+  struct BattleWork *battle;
+  struct BattleSpoils *spoils;
+  struct PartyState *party;
+  u16 *items;
+  s32 index;
+
+  battle = Ram_HeapSlots->battleWork;
+  /* FAKEMATCH(one-pass): the spoils' and the party state's addresses in a
+   * one-pass block; as spoils = &battle->spoils with gPartyState.tally25c, 2
+   * of 27 instructions differ in tla-en. */
+  do {
+    spoils = &battle->spoils;
+    party = &gPartyState;
+  } while (0);
+  party->tally25c = 0;
+  spoils->coins = 0;
+  spoils->experience = 0;
+  spoils->defeated = 0;
+  items = battle->spoils.items;
+  for (index = 3; index >= 0; index--)
+    items[index] = 0;
 }

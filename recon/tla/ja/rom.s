@@ -2864,8 +2864,6 @@ BattleEnemy_ClaimNameLetter:
 	.thumb_func
 Func_0812824c:
 	.incbin "baserom.gba", 0x00128248, 0x00000578
-	.section .rom.0013ba50, "ax"
-	.incbin "baserom.gba", 0x0013ba50, 0x0000009c
 	.section .rom.0013bbd8, "ax"
 	.global BattleEffect_RunIce
 	.type BattleEffect_RunIce, %function
@@ -2948,21 +2946,6 @@ BattleEffect_RunEclipse:
 	.thumb_func
 Func_08142944:
 	.incbin "baserom.gba", 0x00142944, 0x000006bc
-	.section .rom.0014355c, "ax"
-	.balign 4
-	.global Func_0814355c
-	.type Func_0814355c, %function
-	.thumb_func
-Func_0814355c:
-	.incbin "baserom.gba", 0x0014355c, 0x00000084
-	.section .rom.001435e0, "ax"
-	.global BattleEffect_StartCanvasLayer
-	.type BattleEffect_StartCanvasLayer, %function
-	.thumb_func
-BattleEffect_StartCanvasLayer:
-	.incbin "baserom.gba", 0x001435e0, 0x00000260
-	.section .rom.00143d80, "ax"
-	.incbin "baserom.gba", 0x00143d80, 0x00000134
 	.section .rom.00144044, "ax"
 	.balign 4
 	.global BattleEffect_RunHaunt

@@ -1,4 +1,4 @@
-// Draft, differ 1231 of 1044: the world map screen's frame callback, this
+// Draft, differ 1209 of 1044: the world map screen's frame callback, this
 // game's form of ☀️'s RegionMap_UpdateMarkers (games/tbs/src/overworld/
 // field_services/world_map.c). The cursor glides to a target set at
 // Data_0202a644 (its step a quarter of the distance, at most 8 pixels) or
@@ -224,13 +224,13 @@ void Func_080ec4d4(void) {
       if (tile == 15) {
         if (!GameFlag_Test(0x8de))
           continue;
-        if (*(s16 *)((u8 *)&gPartyState + 0x276) != 0)
+        if (gPartyState.ownerOverride != 0)
           continue;
         name = -2;
-        placeX = *(s16 *)((u8 *)&gPartyState + 0x27a) * 853 / 16384 - 269;
+        placeX = ((s16 *)&gPartyState.savedX)[1] * 853 / 16384 - 269;
         tile = 2;
         always = 0;
-        placeY = *(s16 *)((u8 *)&gPartyState + 0x27e) * 640 / 16384 - 112;
+        placeY = ((s16 *)&gPartyState.savedZ)[1] * 640 / 16384 - 112;
       } else {
         if (!GameFlag_Test(x))
           continue;

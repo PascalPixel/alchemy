@@ -20,6 +20,7 @@
 #include "bg_scroll.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
+#include "scene_ids.h"
 
 struct WorldMapWork {
   u16 vramBlock;
@@ -232,7 +233,7 @@ redraw:
       if (gWorldMapWork.shown == -1)
         continue;
       place = &FlagEntries_GetTable()[gWorldMapWork.shown];
-      *(s16 *)((u8 *)&gPartyState + 0x2be) = 2;
+      *(s16 *)gPartyState.unk2be = (s32)&SceneId_Ov64a;
       Data_02000500 = place->flag;
       Func_080ca368(place->scene, place->entrance);
       break;
@@ -241,7 +242,7 @@ redraw:
       continue;
     if (mode == 0)
       break;
-    *(s16 *)((u8 *)&gPartyState + 0x2be) = -1;
+    *(s16 *)gPartyState.unk2be = -1;
     Data_02000500 = -1;
     break;
   }

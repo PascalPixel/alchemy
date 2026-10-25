@@ -1,0 +1,315 @@
+// Draft, differ 6 of 934: Idejima: the scene after MsgIdejimaThoughtTheyWere-
+// InsideLighthouse, with actors 5, 6, 8, 10 and the leader, ending in
+// countdown 13. Calls go through call.h; the four headings the native keeps
+// in r8 to r11 are locals. Left: three pairs in another order (the 1 for the
+// first actionFlags set built before its load, the leader's id loaded after
+// the 314 it is placed at, the leader's action address after a pool load);
+// three minutes of permute found nothing better.
+#include "types.h"
+#include "object_runtime.h"
+#include "party_state.h"
+#include "ram_buffer.h"
+#include "call.h"
+#include "text/msg_ids.h"
+
+struct ObjectRuntime *Object_GetById(s32 id);
+void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+                                        s32 flags);
+void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+s32 GameFlag_Test(s32 flag);
+void GameFlag_SetBit(s32 flag);
+void Engine_EventStart(void);
+void Engine_EventEnd();
+void Engine_EventSetMessage();
+void Engine_EventShowMessage();
+void Engine_ActorSetAnimation();
+void Engine_ActorPlaceAtActor();
+void Engine_AudioPlayCue(s32 cue);
+s32 Engine_ActorShowEmote();
+void Event_StartScreenTransition(void);
+void Event_FinishScreenTransition(void);
+void Event_WaitTransitionFrames(void);
+s32 Event_AskYesNoWithActorAnimation();
+void FieldEvent_WaitFrames();
+void Motion_SetVarCbAndRefresh();
+void Motion_SetModeAndWaitAnimation();
+void Object_LinkPair();
+void ObjectMotion_Launch();
+void ObjectMotion_ArmCallback();
+void ObjectMotion_WaitForAnimationChange();
+void ObjectMotion_SetAngleToward();
+void ObjectMotion_ResetAndSetPosition();
+void ObjectMotion_CommitCurrentPositionAndActivate();
+void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void UiText_OpenMessageAtObject();
+void DriftScene_SpawnObject();
+void Func_02003180();
+void Func_02003190();
+void Func_02003228();
+void Func_02003230();
+void Func_02003298();
+void Func_02003310(s32 skip);
+void Func_020032e8(s32 countdown);
+void Engine_CameraSetSpeed();
+void Camera_MoveWithinMapBounds();
+void ObjectMotion_EnableActionAndSetCallback();
+void Object_SetActionCallbackAndRefreshById();
+void Task_Wait();
+
+extern const u8 gData_02003534[];
+extern const u8 gData_02003578[];
+extern const u8 gData_020035bc[];
+extern const u8 gData_02003600[];
+
+void DriftScene_Prepare(void);
+void Func_020032b8();
+void Func_020032e0(void);
+void Object_LinkObjectAndSetCallback();
+void Object_RefreshSelectorById();
+void ObjectMotion_EnableActionAndResetMotion();
+void ObjectMotion_ResetAndSetPositionInMode2();
+void ObjectMotion_SetVariantCallback();
+void Engine_ActorSetAttachedEffect();
+
+void Func_02002304(void) {
+  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  s32 a3000, aD000, a4000, a8000;
+
+  Engine_EventStart();
+  Call1((void (*)())Func_02003310, 0);
+  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+  DriftScene_Prepare();
+  a3000 = 0x3000;
+  Call4((void (*)())Func_02003230, 8, 0x13a0000, 0xc80000, a3000);
+  aD000 = 0xd000;
+  Call4((void (*)())Func_02003230, 10, 0x1480000, 0xf00000, aD000);
+  a4000 = 0x4000;
+  Call4((void (*)())Func_02003230, 5, 0x1540000, 0xc80000, a4000);
+  Call4((void (*)())Func_02003230, 6, 0x1560000, 0xe60000, 0);
+  Call2((void (*)())Engine_ActorSetAnimation, 6, 19);
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(6), 0);
+  a8000 = 0x8000;
+  Call4((void (*)())Func_02003230, gPartyState.currentOwner, 0x1380000,
+        0xe60000, a8000);
+  Call2((void (*)())Engine_ActorSetAnimation, gPartyState.currentOwner, 41);
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+                                     0);
+  Call1((void (*)())Task_Wait, 1);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call1((void (*)())Engine_EventSetMessage,
+        MsgIdejimaThoughtTheyWereInsideLighthouse);
+  Call2((void (*)())Engine_EventShowMessage, 8, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 10, 0xb000, 0);
+  Call2((void (*)())Engine_EventShowMessage, 0x200a, 0);
+  Call2((void (*)())Engine_ActorSetAnimation, 5, 4);
+  Call2((void (*)())Engine_EventShowMessage, 5, 0);
+  Call2((void (*)())Motion_SetModeAndWaitAnimation, 8, 3);
+  Call2((void (*)())Motion_SetVarCbAndRefresh, 6, 2);
+  Call3((void (*)())ObjectMotion_ArmCallback, 10, aD000, 0);
+  Value3((s32 (*)())Engine_ActorShowEmote, 10, 0x100, 80);
+  Call3((void (*)())ObjectMotion_ArmCallback, 10, 0xb000, 0);
+  Call11((void (*)())Func_020032b8, 8, 9, 1, 7, 6, 10, 12, 16, 18, 11, 0);
+  Value3((s32 (*)())Engine_ActorShowEmote, 8, 0x101, 40);
+  Call2((void (*)())Motion_SetVarCbAndRefresh, 6, 2);
+  Call2((void (*)())Engine_ActorSetAttachedEffect, 5, 0x102);
+  Call3((void (*)())Func_02003298, 5, 0, 20);
+  Call2((void (*)())Motion_SetVarCbAndRefresh, 6, 1);
+  Call1((void (*)())FieldEvent_WaitFrames, 40);
+  Call2((void (*)())Engine_EventShowMessage, 6, 0);
+  Call2((void (*)())Engine_EventShowMessage, 8, 0);
+  Call2((void (*)())Engine_EventShowMessage, 5, 0);
+  Value3((s32 (*)())Engine_ActorShowEmote, 6, 0x101, 40);
+  Call2((void (*)())Engine_EventShowMessage, 6, 0);
+  Call2((void (*)())Engine_ActorSetAnimation, 6, 18);
+  Call1((void (*)())FieldEvent_WaitFrames, 40);
+  Call2((void (*)())Engine_EventShowMessage, 6, 0);
+  Call2((void (*)())Engine_ActorSetAnimation, 8, 3);
+  Call3((void (*)())Func_02003298, 8, 0, 40);
+  Call3((void (*)())Func_02003298, 6, 0, 40);
+  Object_GetById(6)->actionFlags &= 254;
+  Call3((void (*)())ObjectMotion_ResetAndSetPositionInMode2, 6, 340, 226);
+  Call3((void (*)())ObjectMotion_Launch, 6, 4, 0);
+  Call2((void (*)())Engine_ActorSetAnimation, 6, 1);
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(6), 1);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call2((void (*)())Engine_ActorSetAttachedEffect, 5, 0x102);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call2((void (*)())Engine_EventShowMessage, 5, 0);
+  Object_GetById(6)->actionFlags |= 1;
+  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0xa000, 0);
+  Call1((void (*)())Object_RefreshSelectorById, 6);
+  Call2((void (*)())Motion_SetModeAndWaitAnimation, 6, 3);
+  Call1((void (*)())FieldEvent_WaitFrames, 40);
+  Call2((void (*)())Object_LinkObjectAndSetCallback, 8, 6);
+  Call2((void (*)())Object_LinkObjectAndSetCallback, 5, 6);
+  Call2((void (*)())Object_LinkObjectAndSetCallback, 10, 6);
+  Call3((void (*)())ObjectMotion_SetSpeedParameters, 6, 0x6666, 0x3333);
+  Call3((void (*)())ObjectMotion_SetPositionAndReset, 6, 358, 222);
+  Call1((void (*)())FieldEvent_WaitFrames, 40);
+  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0x2000, 80);
+  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0xe000, 40);
+  Call3((void (*)())ObjectMotion_ArmCallback, 6, a8000, 0);
+  Call3((void (*)())Func_02003298, 6, 0, 20);
+  Call2((void (*)())Engine_EventShowMessage, 0x100a, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0xe000, 40);
+  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0x2000, 0);
+  Value3((s32 (*)())Engine_ActorShowEmote, 6, 0x101, 40);
+  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0x6000, 0);
+  Call2((void (*)())Engine_EventShowMessage, 6, 0);
+  Call2((void (*)())Engine_ActorSetAnimation, 8, 4);
+  Call2((void (*)())Engine_EventShowMessage, 8, 0);
+  Call3((void (*)())ObjectMotion_Launch, 5, 4, 0);
+  Call2((void (*)())Engine_EventShowMessage, 0x1005, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 6, a8000, 20);
+  Call2((void (*)())Motion_SetModeAndWaitAnimation, 10, 3);
+  Call2((void (*)())Engine_EventShowMessage, 0x100a, 0);
+  Call3((void (*)())ObjectMotion_SetSpeedParameters, 6, 0x19999, 0xcccc);
+  Call3((void (*)())ObjectMotion_SetPositionAndReset, 6, 348, 222);
+  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0x6000, 0);
+  Call2((void (*)())Engine_EventShowMessage, 0x4006, 0);
+  Call1((void (*)())ObjectMotion_EnableActionAndResetMotion, 8);
+  Call1((void (*)())ObjectMotion_EnableActionAndResetMotion, 5);
+  Call1((void (*)())ObjectMotion_EnableActionAndResetMotion, 10);
+  Call3((void (*)())ObjectMotion_SetSpeedParameters, 8, 0x6666, 0x3333);
+  Call3((void (*)())ObjectMotion_SetPositionAndReset, 8, 320, 200);
+  Call3((void (*)())Func_02003298, 8, 0, 40);
+  Call3((void (*)())ObjectMotion_ArmCallback, 6, a8000, 40);
+  Call2((void (*)())Engine_EventShowMessage, 6, 0);
+  Value3((s32 (*)())Engine_ActorShowEmote, 10, 0x100, 0);
+  Call2((void (*)())Engine_EventShowMessage, 0x100a, 0);
+  Call2((void (*)())Motion_SetModeAndWaitAnimation, 6, 4);
+  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0x6000, 0);
+  Call2((void (*)())Engine_EventShowMessage, 0x4006, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 8, 0, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 5, a8000, 0);
+  Call2((void (*)())Engine_EventShowMessage, 5, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0xa000, 0);
+  Call2((void (*)())Engine_EventShowMessage, 6, 0);
+  Call2((void (*)())Engine_EventShowMessage, 0x100a, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0x6000, 0);
+  Call1((void (*)())Object_RefreshSelectorById, 6);
+  Call2((void (*)())Motion_SetModeAndWaitAnimation, 6, 3);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call2((void (*)())Motion_SetModeAndWaitAnimation, 10, 4);
+  Call2((void (*)())Engine_EventShowMessage, 0x100a, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 8, 0x2000, 0);
+  Call2((void (*)())Engine_EventShowMessage, 8, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0xa000, 0);
+  Call1((void (*)())Object_RefreshSelectorById, 6);
+  Call2((void (*)())Engine_ActorSetAnimation, 6, 4);
+  Call3((void (*)())Func_02003298, 6, 0, 20);
+  Call2((void (*)())Motion_SetVarCbAndRefresh, gPartyState.currentOwner, 2);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call3((void (*)())ObjectMotion_ArmCallback, 5, a4000, 0);
+  Call3((void (*)())Func_02003298, 0x1005, 0, 20);
+  Value3((s32 (*)())Engine_ActorShowEmote, gPartyState.currentOwner, 0x105, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0xc000, 0);
+  Call1((void (*)())Object_RefreshSelectorById, 6);
+  Call2((void (*)())Engine_ActorSetAnimation, 6, 3);
+  Call2((void (*)())Engine_EventShowMessage, 6, 0);
+  Value3((s32 (*)())Engine_ActorShowEmote, gPartyState.currentOwner, 0x105, 0);
+  Call2((void (*)())Motion_SetVarCbAndRefresh, gPartyState.currentOwner, 2);
+  Call2((void (*)())Engine_ActorSetAttachedEffect, 8, 0x102);
+  Call3((void (*)())Func_02003298, 8, 0, 20);
+  Call2((void (*)())ObjectMotion_SetVariantCallback, gPartyState.currentOwner,
+        3);
+  Value3((s32 (*)())Engine_ActorShowEmote, 10, 0x100, 20);
+  Call3((void (*)())ObjectMotion_ArmCallback, 10, 0xb000, 20);
+  Call2((void (*)())Engine_EventShowMessage, 10, 0);
+  Call2((void (*)())Engine_ActorSetAnimation, gPartyState.currentOwner, 42);
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call3((void (*)())ObjectMotion_ArmCallback, 8, 0x5000, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 5, 0x6000, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 6, a8000, 20);
+  Call2((void (*)())Engine_EventShowMessage, 0x2008, 0);
+  Value3((s32 (*)())Engine_ActorShowEmote, 5, 0x109, 40);
+  Call2((void (*)())Engine_EventShowMessage, 5, 0);
+  Object_GetById(gPartyState.currentOwner)->actionFlags &= 254;
+  Call3((void (*)())ObjectMotion_ResetAndSetPositionInMode2,
+        gPartyState.currentOwner, 314, 226);
+  Call3((void (*)())ObjectMotion_Launch, gPartyState.currentOwner, 4, 0);
+  Call2((void (*)())Engine_ActorSetAnimation, gPartyState.currentOwner, 1);
+  ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),
+                                     1);
+  leader->scaleX = 0x10000;
+  Call1((void (*)())FieldEvent_WaitFrames, 20);
+  Call2((void (*)())Engine_ActorSetAttachedEffect, 5, 0x102);
+  Call2((void (*)())Engine_EventShowMessage, 5, 0);
+  Object_GetById(gPartyState.currentOwner)->actionFlags |= 1;
+  Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x6000,
+        40);
+  Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x2000,
+        40);
+  Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0xa000,
+        80);
+  Call2((void (*)())Engine_EventShowMessage, 0x2008, 0);
+  Value3((s32 (*)())Engine_ActorShowEmote, gPartyState.currentOwner, 0x101, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0, 20);
+  Call3((void (*)())ObjectMotion_ArmCallback, 10, 0xb000, 0);
+  Call2((void (*)())Engine_EventShowMessage, 10, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x2000,
+        0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 8, a3000, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0x6000, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 5, 0x6000, 0);
+  Call2((void (*)())Motion_SetModeAndWaitAnimation, 10, 3);
+  Call2((void (*)())Engine_EventShowMessage, 10, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 8, 0, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 5, a8000, 40);
+  Value3((s32 (*)())Engine_ActorShowEmote, 5, 0x109, 20);
+  Call2((void (*)())Engine_EventShowMessage, 5, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0xa000, 20);
+  Call2((void (*)())Engine_EventShowMessage, 6, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 8, a3000, 0);
+  Call2((void (*)())Engine_EventShowMessage, 8, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 8, 0, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 5, a8000, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 6, a8000, 20);
+  Call3((void (*)())ObjectMotion_ArmCallback, 10, 0, 0);
+  Call2((void (*)())Engine_ActorSetAnimation, 8, 3);
+  Call2((void (*)())Engine_ActorSetAnimation, 5, 3);
+  Call2((void (*)())Engine_ActorSetAnimation, gPartyState.currentOwner, 3);
+  Call2((void (*)())Motion_SetModeAndWaitAnimation, 6, 3);
+  Call3((void (*)())ObjectMotion_SetSpeedParameters, 10, 0x19999, 0xcccc);
+  Call3((void (*)())ObjectMotion_SetPositionAndReset, 10, 368, 256);
+  Call3((void (*)())ObjectMotion_ArmCallback, 10, 0, 0);
+  Value3((s32 (*)())Engine_ActorShowEmote, 6, 0x100, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 6, 0x2000, 0);
+  Call1((void (*)())Object_RefreshSelectorById, 6);
+  Call2((void (*)())Engine_EventShowMessage, 0x5006, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 8, a3000, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, 5, 0x2000, 0);
+  Call3((void (*)())ObjectMotion_ArmCallback, gPartyState.currentOwner, 0x2000,
+        0);
+  Call3((void (*)())ObjectMotion_SetPositionAndReset, 10, 400, 264);
+  Call3((void (*)())ObjectMotion_ArmCallback, 10, 0, 0);
+  Call2((void (*)())Engine_EventShowMessage, 8, 0);
+  Value3((s32 (*)())Engine_ActorShowEmote, 10, 0x108, 0);
+  Call2((void (*)())Engine_EventShowMessage, 0x100a, 0);
+  Call2((void (*)())Engine_CameraSetSpeed, 0x9999, 0x1333);
+  Call4((void (*)())Camera_MoveWithinMapBounds, 0x18c0000, -1, 0xea0000, 1);
+  Call3((void (*)())ObjectMotion_SetSpeedParameters, 5, 0xcccc, 0x6666);
+  Call3((void (*)())ObjectMotion_SetSpeedParameters, 6, 0xcccc, 0x6666);
+  Call3((void (*)())ObjectMotion_SetSpeedParameters, 8, 0xcccc, 0x6666);
+  Call3((void (*)())ObjectMotion_SetSpeedParameters, gPartyState.currentOwner,
+        0xcccc, 0x6666);
+  leader->action = 0;
+  Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 8, gData_020035bc);
+  Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 5, gData_02003534);
+  Call2((void (*)())ObjectMotion_EnableActionAndSetCallback,
+        gPartyState.currentOwner, gData_02003600);
+  Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 6, gData_02003578);
+  do
+    Task_Wait(1);
+  while (leader->action == 0);
+  Func_020032e0();
+  Value3((s32 (*)())Engine_ActorShowEmote, 5, 0x100, 20);
+  Call2((void (*)())Engine_EventShowMessage, 0x1005, 0);
+  Call2((void (*)())Engine_EventShowMessage, 0x1006, 0);
+  Call2((void (*)())Engine_EventShowMessage, 8, 0);
+  Call1((void (*)())Func_020032e8, 13);
+}

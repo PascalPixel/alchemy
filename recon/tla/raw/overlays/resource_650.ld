@@ -11,7 +11,7 @@ SECTIONS
         "*/resource_650_overlay.o"(.text.x020095a0)
         "*/games/tla/src/scene/idejima/drift.o"(.text)
         "*/games/tla/src/field/common/drift_spawn.o"(.text)
-        "*/resource_650_overlay.o"(.text.x020096d8)
+        "*/games/tla/src/scene/idejima/s16d8.o"(.text)
         "*/resource_650_overlay.o"(.text.x02009ee0)
         "*/resource_650_overlay.o"(.text.x0200a304)
         "*/games/tla/src/scene/idejima/wake.o"(.text)

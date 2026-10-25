@@ -27,17 +27,16 @@ the game. The always-loaded code is cut into [banks](glossary.md#bank)
 ([How the code is organised](#how-the-code-is-organised)).
 
 ```mermaid
+%%{init: {"flowchart": {"curve": "step"}}}%%
 flowchart TD
-  subgraph memory ["Always in memory"]
-    loop(["Game_MainLoop<br/>runs one turn, then the next"])
-    map["Map_Run<br/>the party walks"]
-    battle["Battle_Run"]
-    mini["Lucky Dice<br/>Lucky Wheels"]
-    loop -- "a map" --> map
-    loop -- "a battle" --> battle
-    loop -- "a minigame" --> mini
-  end
-  map -. "runs" .-> scripts["Overlay area, one at a time:<br/>the map's scripts,<br/>unpacked from its overlay"]
+  loop(["Game_MainLoop"]) --> which{"Which map<br/>number?"}
+  which -- "a map" --> map@{ img: "https://alchemy.pascalpixel.com/guides/world/door.gif", label: "Map_Run", pos: "b", w: 120, h: 80, constraint: "on" }
+  which -- "RUN_BATTLE" --> battle@{ img: "https://alchemy.pascalpixel.com/guides/battle/commands.gif", label: "Battle_Run", pos: "b", w: 120, h: 80, constraint: "on" }
+  which -- "RUN_LUCKY_DICE<br/>RUN_LUCKY_WHEELS" --> mini@{ img: "https://alchemy.pascalpixel.com/guides/overworld/lucky-dice.gif", label: "Lucky Dice, Lucky Wheels", pos: "b", w: 120, h: 80, constraint: "on" }
+  map -. "the warp taken:<br/>next map" .-> loop
+  battle -. "won: same map<br/>lost: last save" .-> loop
+  mini -. "result: back to<br/>the game room" .-> loop
+  map --- scripts["Overlay area:<br/>the map's scripts"]
   classDef overlay stroke-dasharray: 6 4
   class scripts overlay
 ```

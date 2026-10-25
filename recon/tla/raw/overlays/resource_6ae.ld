@@ -8,7 +8,7 @@ SECTIONS
         "*/games/tla/src/scene/mars_lighthouse_aerie/events_a.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_aerie/scene_events.o"(.text)
         "*/resource_6ae_overlay.o"(.text.x020081d8)
-        "*/resource_6ae_overlay.o"(.text.x02008314)
+        "*/games/tla/src/scene/mars_lighthouse_aerie/s0314.o"(.text)
         "*/resource_6ae_overlay.o"(.text.x02008450)
         "*/resource_6ae_overlay.o"(.text.x020084a4)
         "*/games/tla/src/scene/mars_lighthouse_aerie/arc.o"(.text)

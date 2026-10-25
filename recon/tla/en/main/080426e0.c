@@ -6,7 +6,12 @@
 // reload; this reads it once after the loop and allocates the loop's
 // registers differently. A state local read at the start is spilled
 // (differ 52); four permuter minutes reached differ 47 with a copy of the
-// work pointer in the loop.
+// work pointer in the loop. 2026-10-25: alchemy-gcc's jump pass does copy the
+// exit test in front of the loop (the RTL dump of jump shows it), but jump2
+// cross-jumps the copy back into the test at the foot, so the loop is
+// entered by a branch to it; the native keeps both copies (cmp; blt before
+// the loop). With the row's three-way store reduced to two the copies differ
+// and both stay.
 #include "types.h"
 #include "ram_buffer.h"
 #include "window.h"

@@ -1,15 +1,19 @@
-// Near miss, differ 206 of 322, 2026-10-18, written from the listing and The
-// Broken Seal's GameState_InitializeDefaults (games/tbs/src/game/game.c): clears the
-// party state, the work block, the flags and the owners by DMA, builds the
-// characters, sets a new game's defaults (the button layout, Felix and Jenna
-// in the party, their first Psynergy, 200 coins, the message settings, the
-// play time clock and the slot machine prize odds) and fills the work
-// block's random tables. Left: the native loads gPartyState's address after
-// the characters are built (this hoists it to the top); it builds the button
-// layout's halfword constants with movs and pools only the byte constants
-// 0, 1, 4 and 8 of the later stores (r8, r5, r10, r6), where agscc shares
-// the first 1 and 2 with the later uses and pools those; the remaining
-// differences follow from those registers.
+// Near miss, differ 28 of 322 (206 before, 2026-10-25), written from the
+// listing and The Broken Seal's SaveBlock_InitializeDefaults
+// (games/tbs/src/game/game/units.c): clears the party state, the work
+// block, the flags and the owners by DMA, builds the characters, sets a new
+// game's defaults (the button layout, Felix and Jenna in the party, their
+// first Psynergy, 200 coins, the message settings, the play time clock and
+// the slot machine prize odds) and fills the work block's random tables.
+// The party state written by field rather than through a byte pointer taken
+// at the top (206 to 132: the native loads its address after the
+// characters), gAutoSleepEnabled and gIdleFrameCount volatile as The Broken
+// Seal declares its gIdleSleepEnabled (132 to 46: the native rereads the
+// flag after the play time store; frame.h would need them volatile on
+// adoption) and Unit_LearnPsynergy returning s32 as add_action.c defines it
+// (46 to 28: its arguments are then set r1 first). Left: the native loads the
+// pooled byte constants 1 and 8 a slot or two from where this does, and the
+// pools sit 4 bytes apart from that.
 #include "types.h"
 #include "party_state.h"
 #include "dma.h"
@@ -29,21 +33,20 @@ extern u8 gData_02001000[];
 extern u8 gGameFlagBytes[];
 extern u8 gOwnerStates[];
 extern u32 gFrameWaitCount;
-extern u8 gAutoSleepEnabled;
-extern u16 gIdleFrameCount;
+extern volatile u8 gAutoSleepEnabled;
+extern volatile u16 gIdleFrameCount;
 extern s16 gData_020036d0;
 extern u16 gData_02003860;
 extern const u8 Data_080b1f2c[4][5];
 
 void Func_080af7ac(void);
 s32 Party_AddActiveOwner(s32 owner);
-void Unit_LearnPsynergy(s32 owner, s32 ability);
+s32 Unit_LearnPsynergy(s32 owner, s32 ability);
 u32 Runtime_GetBuildStampTime(void);
 u32 Random16(void);
 
 void Func_080addf0(void) {
   volatile s32 zero;
-  u8 *state = (u8 *)&gPartyState;
   s32 i;
   s32 j;
 
@@ -58,15 +61,15 @@ void Func_080addf0(void) {
   zero = 0;
   START_DMA(&zero, gOwnerStates, 0x85000298);
   Func_080af7ac();
-  *(u16 *)(state + 0x230) = 1;
-  *(u16 *)(state + 0x232) = 2;
-  *(u16 *)(state + 0x234) = 4;
-  *(u16 *)(state + 0x236) = 8;
-  *(u16 *)(state + 0x238) = 0x200;
-  *(u16 *)(state + 0x23a) = 0x100;
-  *(u16 *)(state + 0x23c) = 2;
-  *(u16 *)(state + 0x240) = 0;
-  *(u16 *)(state + 0x242) = 0;
+  gPartyState.keys230 = 1;
+  gPartyState.unk232 = 2;
+  gPartyState.keys234 = 4;
+  gPartyState.keys236 = 8;
+  gPartyState.keys238 = 0x200;
+  gPartyState.keys23a = 0x100;
+  *(u16 *)gPartyState.unk23c = 2;
+  gPartyState.packedEvents[0] = 0;
+  gPartyState.packedEvents[1] = 0;
   gPartyState.currentOwner = 4;
   Party_AddActiveOwner(4);
   Party_AddActiveOwner(5);
@@ -80,38 +83,38 @@ void Func_080addf0(void) {
   Unit_LearnPsynergy(2, 141);
   Unit_LearnPsynergy(2, 144);
   gPartyState.coins = 200;
-  *(u32 *)(state + 0x28c) = 0;
-  *(u16 *)(state + 0x2bc) = 0;
-  state[0x274] = 0;
-  state[0x22c] = 1;
-  state[0x22a] = 1;
-  state[0x22b] = 1;
-  state[0x225] = 0;
-  state[0x226] = 8;
-  *(u32 *)(state + 0) = 0;
-  *(u32 *)(state + 0x2d8) = Runtime_GetBuildStampTime();
+  *(u32 *)&gPartyState.unk284[8] = 0;
+  gPartyState.forgeItem = 0;
+  gPartyState.counter274 = 0;
+  gPartyState.eventMode = 1;
+  gPartyState.battleFxEnabled = 1;
+  gPartyState.unk22b = 1;
+  gPartyState.paletteGlow[0] = 0;
+  gPartyState.paletteGlow[1] = 8;
+  *(u32 *)gPartyState.unk000 = 0;
+  *(u32 *)((u8 *)&gPartyState + 0x2d8) = Runtime_GetBuildStampTime();
   gFrameWaitCount = 0;
   gAutoSleepEnabled = 0;
   gPartyState.playTime = 0;
-  state[0x24a] = gAutoSleepEnabled;
+  gPartyState.unk244[6] = gAutoSleepEnabled;
   gIdleFrameCount = 0;
   gData_020036d0 = -1;
-  state[0x286] = gData_02003860;
-  state[0x13d] = 4;
-  state[0x13e] = 4;
-  state[0x13f] = 4;
-  state[0x140] = 8;
-  state[0x141] = 8;
-  state[0x142] = 8;
-  state[0x143] = 16;
-  state[0x144] = 16;
-  state[0x145] = 16;
-  state[0x146] = 32;
-  state[0x147] = 32;
-  state[0x148] = 32;
-  state[0x149] = 64;
-  state[0x14a] = 64;
-  state[0x14b] = 64;
+  gPartyState.unk284[2] = gData_02003860;
+  gPartyState.unk13d[0] = 4;
+  gPartyState.unk13d[1] = 4;
+  gPartyState.unk13d[2] = 4;
+  gPartyState.unk13d[3] = 8;
+  gPartyState.unk13d[4] = 8;
+  gPartyState.unk13d[5] = 8;
+  gPartyState.unk13d[6] = 16;
+  gPartyState.unk13d[7] = 16;
+  gPartyState.unk13d[8] = 16;
+  gPartyState.unk13d[9] = 32;
+  gPartyState.unk13d[10] = 32;
+  gPartyState.unk13d[11] = 32;
+  gPartyState.unk13d[12] = 64;
+  gPartyState.unk13d[13] = 64;
+  gPartyState.unk13d[14] = 64;
 
   for (i = 0; i < 32; i++) {
     for (j = 0; j < 8; j++)

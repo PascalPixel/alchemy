@@ -754,7 +754,12 @@ Func_08040798:
 	.section .rom.00040db4, "ax"
 	.incbin "baserom.gba", 0x00040db4, 0x000000f4
 	.section .rom.000410ac, "ax"
-	.incbin "baserom.gba", 0x000410ac, 0x0000019c
+	.balign 4
+	.global Func_08041068
+	.type Func_08041068, %function
+	.thumb_func
+Func_08041068:
+	.incbin "baserom.gba", 0x000410ac, 0x00000090
 	.section .rom.000412d0, "ax"
 	.global Func_0804128c
 	.type Func_0804128c, %function
@@ -813,13 +818,6 @@ UiText_DrawStringAtOffset:
 	.thumb_func
 UiText_DrawPrefixedNumberAtOffset:
 	.incbin "baserom.gba", 0x000422c4, 0x000000a0
-	.section .rom.00042558, "ax"
-	.balign 4
-	.global Ui_LoadCharacterEntryForSlot
-	.type Ui_LoadCharacterEntryForSlot, %function
-	.thumb_func
-Ui_LoadCharacterEntryForSlot:
-	.incbin "baserom.gba", 0x00042558, 0x00000064
 	.section .rom.000425ca, "ax"
 	.incbin "baserom.gba", 0x000425ca, 0x00000002
 	.section .rom.00042730, "ax"
@@ -844,18 +842,6 @@ Func_08042f10:
 	.thumb_func
 Func_08042ff0:
 	.incbin "baserom.gba", 0x00043040, 0x000000d4
-	.section .rom.00043114, "ax"
-	.global Func_080430c4
-	.type Func_080430c4, %function
-	.thumb_func
-Func_080430c4:
-	.incbin "baserom.gba", 0x00043114, 0x000000ec
-	.section .rom.00043200, "ax"
-	.global Text_FormatPlayTime
-	.type Text_FormatPlayTime, %function
-	.thumb_func
-Text_FormatPlayTime:
-	.incbin "baserom.gba", 0x00043200, 0x00000080
 	.section .rom.000432f4, "ax"
 	.balign 4
 	.global Func_080432a4
@@ -1027,432 +1013,6 @@ Func_0804e1d8:
 	.thumb_func
 Func_0804e3f4:
 	.incbin "baserom.gba", 0x0004e618, 0x00000190
-	.section .rom.000b2070, "ax"
-	.global Inventory_GetEquippedItemFar
-	.type Inventory_GetEquippedItemFar, %function
-	.thumb_func
-Inventory_GetEquippedItemFar:
-	.incbin "baserom.gba", 0x000b2070, 0x00000008
-	.section .rom.000b2078, "ax"
-	.global BattleAction_Get
-	.type BattleAction_Get, %function
-	.thumb_func
-BattleAction_Get:
-	.incbin "baserom.gba", 0x000b2078, 0x00000008
-	.section .rom.000b2080, "ax"
-	.global Unit_LearnPsynergyFar
-	.type Unit_LearnPsynergyFar, %function
-	.thumb_func
-Unit_LearnPsynergyFar:
-	.incbin "baserom.gba", 0x000b2080, 0x00000008
-	.section .rom.000b2088, "ax"
-	.global Unit_KnowsActionFar
-	.type Unit_KnowsActionFar, %function
-	.thumb_func
-Unit_KnowsActionFar:
-	.incbin "baserom.gba", 0x000b2088, 0x00000008
-	.section .rom.000b2090, "ax"
-	.global Func_080ad090
-	.type Func_080ad090, %function
-	.thumb_func
-Func_080ad090:
-	.incbin "baserom.gba", 0x000b2090, 0x00000008
-	.section .rom.000b2098, "ax"
-	.global Func_080ad098
-	.type Func_080ad098, %function
-	.thumb_func
-Func_080ad098:
-	.incbin "baserom.gba", 0x000b2098, 0x00000008
-	.section .rom.000b20a0, "ax"
-	.global Func_080ad0a0
-	.type Func_080ad0a0, %function
-	.thumb_func
-Func_080ad0a0:
-	.incbin "baserom.gba", 0x000b20a0, 0x00000008
-	.section .rom.000b20a8, "ax"
-	.global Func_080ad0a8
-	.type Func_080ad0a8, %function
-	.thumb_func
-Func_080ad0a8:
-	.incbin "baserom.gba", 0x000b20a8, 0x00000008
-	.section .rom.000b20c0, "ax"
-	.global Unit_AddHpFar
-	.type Unit_AddHpFar, %function
-	.thumb_func
-Unit_AddHpFar:
-	.incbin "baserom.gba", 0x000b20c0, 0x00000008
-	.section .rom.000b20c8, "ax"
-	.global Unit_AddPpFar
-	.type Unit_AddPpFar, %function
-	.thumb_func
-Unit_AddPpFar:
-	.incbin "baserom.gba", 0x000b20c8, 0x00000008
-	.section .rom.000b20d0, "ax"
-	.global Unit_UpdateRatiosFar
-	.type Unit_UpdateRatiosFar, %function
-	.thumb_func
-Unit_UpdateRatiosFar:
-	.incbin "baserom.gba", 0x000b20d0, 0x00000008
-	.section .rom.000b20d8, "ax"
-	.global Unit_SetHpFar
-	.type Unit_SetHpFar, %function
-	.thumb_func
-Unit_SetHpFar:
-	.incbin "baserom.gba", 0x000b20d8, 0x00000008
-	.section .rom.000b20e0, "ax"
-	.global Unit_SetPpFar
-	.type Unit_SetPpFar, %function
-	.thumb_func
-Unit_SetPpFar:
-	.incbin "baserom.gba", 0x000b20e0, 0x00000008
-	.section .rom.000b20e8, "ax"
-	.global BattleUnit_SetFar
-	.type BattleUnit_SetFar, %function
-	.thumb_func
-BattleUnit_SetFar:
-	.incbin "baserom.gba", 0x000b20e8, 0x00000008
-	.section .rom.000b20f0, "ax"
-	.global Party_CountActiveOwnersFar
-	.type Party_CountActiveOwnersFar, %function
-	.thumb_func
-Party_CountActiveOwnersFar:
-	.incbin "baserom.gba", 0x000b20f0, 0x00000008
-	.section .rom.000b20f8, "ax"
-	.global Party_AddActiveOwnerFar
-	.type Party_AddActiveOwnerFar, %function
-	.thumb_func
-Party_AddActiveOwnerFar:
-	.incbin "baserom.gba", 0x000b20f8, 0x00000008
-	.section .rom.000b2100, "ax"
-	.global Party_ListActiveOwnersFar
-	.type Party_ListActiveOwnersFar, %function
-	.thumb_func
-Party_ListActiveOwnersFar:
-	.incbin "baserom.gba", 0x000b2100, 0x00000008
-	.section .rom.000b2108, "ax"
-	.global RollWeaponUnleashFar
-	.type RollWeaponUnleashFar, %function
-	.thumb_func
-RollWeaponUnleashFar:
-	.incbin "baserom.gba", 0x000b2108, 0x00000008
-	.section .rom.000b2110, "ax"
-	.global Party_RemoveActiveOwnerFar
-	.type Party_RemoveActiveOwnerFar, %function
-	.thumb_func
-Party_RemoveActiveOwnerFar:
-	.incbin "baserom.gba", 0x000b2110, 0x00000008
-	.section .rom.000b2118, "ax"
-	.global Item_GetEquippedElementFar
-	.type Item_GetEquippedElementFar, %function
-	.thumb_func
-Item_GetEquippedElementFar:
-	.incbin "baserom.gba", 0x000b2118, 0x00000008
-	.section .rom.000b2120, "ax"
-	.global BattleEffect_RollSuccessFar
-	.type BattleEffect_RollSuccessFar, %function
-	.thumb_func
-BattleEffect_RollSuccessFar:
-	.incbin "baserom.gba", 0x000b2120, 0x00000008
-	.section .rom.000b2128, "ax"
-	.global Battle_CalculateAttackDamageFar
-	.type Battle_CalculateAttackDamageFar, %function
-	.thumb_func
-Battle_CalculateAttackDamageFar:
-	.incbin "baserom.gba", 0x000b2128, 0x00000008
-	.section .rom.000b2130, "ax"
-	.global Battle_CalculatePsynergyPowerFar
-	.type Battle_CalculatePsynergyPowerFar, %function
-	.thumb_func
-Battle_CalculatePsynergyPowerFar:
-	.incbin "baserom.gba", 0x000b2130, 0x00000008
-	.section .rom.000b2138, "ax"
-	.global Battle_CalculateRecoveryFar
-	.type Battle_CalculateRecoveryFar, %function
-	.thumb_func
-Battle_CalculateRecoveryFar:
-	.incbin "baserom.gba", 0x000b2138, 0x00000008
-	.section .rom.000b2140, "ax"
-	.global Enemy_GetDefinitionFar
-	.type Enemy_GetDefinitionFar, %function
-	.thumb_func
-Enemy_GetDefinitionFar:
-	.incbin "baserom.gba", 0x000b2140, 0x00000008
-	.section .rom.000b2148, "ax"
-	.global Battle_RandomFar
-	.type Battle_RandomFar, %function
-	.thumb_func
-Battle_RandomFar:
-	.incbin "baserom.gba", 0x000b2148, 0x00000008
-	.section .rom.000b2150, "ax"
-	.global Djinn_AddToOwnerFar
-	.type Djinn_AddToOwnerFar, %function
-	.thumb_func
-Djinn_AddToOwnerFar:
-	.incbin "baserom.gba", 0x000b2150, 0x00000008
-	.section .rom.000b2158, "ax"
-	.global Djinn_ActivateFar
-	.type Djinn_ActivateFar, %function
-	.thumb_func
-Djinn_ActivateFar:
-	.incbin "baserom.gba", 0x000b2158, 0x00000008
-	.section .rom.000b2160, "ax"
-	.global Djinn_DeactivateFar
-	.type Djinn_DeactivateFar, %function
-	.thumb_func
-Djinn_DeactivateFar:
-	.incbin "baserom.gba", 0x000b2160, 0x00000008
-	.section .rom.000b2168, "ax"
-	.global DjinnRecovery_RemoveFar
-	.type DjinnRecovery_RemoveFar, %function
-	.thumb_func
-DjinnRecovery_RemoveFar:
-	.incbin "baserom.gba", 0x000b2168, 0x00000008
-	.section .rom.000b2170, "ax"
-	.global DjinnRecovery_AddStandbyFar
-	.type DjinnRecovery_AddStandbyFar, %function
-	.thumb_func
-DjinnRecovery_AddStandbyFar:
-	.incbin "baserom.gba", 0x000b2170, 0x00000008
-	.section .rom.000b2178, "ax"
-	.global Djinn_TransferFar
-	.type Djinn_TransferFar, %function
-	.thumb_func
-Djinn_TransferFar:
-	.incbin "baserom.gba", 0x000b2178, 0x00000008
-	.section .rom.000b2180, "ax"
-	.global Summon_ListLearnedFar
-	.type Summon_ListLearnedFar, %function
-	.thumb_func
-Summon_ListLearnedFar:
-	.incbin "baserom.gba", 0x000b2180, 0x00000008
-	.section .rom.000b2188, "ax"
-	.global SummonDefinition_Get
-	.type SummonDefinition_Get, %function
-	.thumb_func
-SummonDefinition_Get:
-	.incbin "baserom.gba", 0x000b2188, 0x00000008
-	.section .rom.000b2190, "ax"
-	.global Djinn_GetDefinitionHeaderFar
-	.type Djinn_GetDefinitionHeaderFar, %function
-	.thumb_func
-Djinn_GetDefinitionHeaderFar:
-	.incbin "baserom.gba", 0x000b2190, 0x00000008
-	.section .rom.000b2198, "ax"
-	.global Unit_LevelUpToFar
-	.type Unit_LevelUpToFar, %function
-	.thumb_func
-Unit_LevelUpToFar:
-	.incbin "baserom.gba", 0x000b2198, 0x00000008
-	.section .rom.000b21a0, "ax"
-	.global Unit_GetElementLevelFar
-	.type Unit_GetElementLevelFar, %function
-	.thumb_func
-Unit_GetElementLevelFar:
-	.incbin "baserom.gba", 0x000b21a0, 0x00000008
-	.section .rom.000b21a8, "ax"
-	.global DjinnRecovery_CountStandbyFar
-	.type DjinnRecovery_CountStandbyFar, %function
-	.thumb_func
-DjinnRecovery_CountStandbyFar:
-	.incbin "baserom.gba", 0x000b21a8, 0x00000008
-	.section .rom.000b21b0, "ax"
-	.global Djinn_IsActiveFar
-	.type Djinn_IsActiveFar, %function
-	.thumb_func
-Djinn_IsActiveFar:
-	.incbin "baserom.gba", 0x000b21b0, 0x00000008
-	.section .rom.000b21b8, "ax"
-	.global Djinn_IsReadyFar
-	.type Djinn_IsReadyFar, %function
-	.thumb_func
-Djinn_IsReadyFar:
-	.incbin "baserom.gba", 0x000b21b8, 0x00000008
-	.section .rom.000b21c0, "ax"
-	.global Item_CanOwnerEquip
-	.type Item_CanOwnerEquip, %function
-	.thumb_func
-Item_CanOwnerEquip:
-	.incbin "baserom.gba", 0x000b21c0, 0x00000008
-	.section .rom.000b21c8, "ax"
-	.global Item_IsCompatibleWithOwnerFar
-	.type Item_IsCompatibleWithOwnerFar, %function
-	.thumb_func
-Item_IsCompatibleWithOwnerFar:
-	.incbin "baserom.gba", 0x000b21c8, 0x00000008
-	.section .rom.000b21d0, "ax"
-	.global Inventory_FindEquippedFar
-	.type Inventory_FindEquippedFar, %function
-	.thumb_func
-Inventory_FindEquippedFar:
-	.incbin "baserom.gba", 0x000b21d0, 0x00000008
-	.section .rom.000b21d8, "ax"
-	.global Party_AdjustCoinsFar
-	.type Party_AdjustCoinsFar, %function
-	.thumb_func
-Party_AdjustCoinsFar:
-	.incbin "baserom.gba", 0x000b21d8, 0x00000008
-	.section .rom.000b21e0, "ax"
-	.global Item_GetEquipmentGroupFar
-	.type Item_GetEquipmentGroupFar, %function
-	.thumb_func
-Item_GetEquipmentGroupFar:
-	.incbin "baserom.gba", 0x000b21e0, 0x00000008
-	.section .rom.000b21e8, "ax"
-	.global Item_AdjustCounterFar
-	.type Item_AdjustCounterFar, %function
-	.thumb_func
-Item_AdjustCounterFar:
-	.incbin "baserom.gba", 0x000b21e8, 0x00000008
-	.section .rom.000b21f0, "ax"
-	.global Inventory_CountFar
-	.type Inventory_CountFar, %function
-	.thumb_func
-Inventory_CountFar:
-	.incbin "baserom.gba", 0x000b21f0, 0x00000008
-	.section .rom.000b21f8, "ax"
-	.global PartyInventory_HasSpaceFar
-	.type PartyInventory_HasSpaceFar, %function
-	.thumb_func
-PartyInventory_HasSpaceFar:
-	.incbin "baserom.gba", 0x000b21f8, 0x00000008
-	.section .rom.000b2200, "ax"
-	.global Unit_GetExperienceForLevelFar
-	.type Unit_GetExperienceForLevelFar, %function
-	.thumb_func
-Unit_GetExperienceForLevelFar:
-	.incbin "baserom.gba", 0x000b2200, 0x00000008
-	.section .rom.000b2208, "ax"
-	.global Func_080ad208
-	.type Func_080ad208, %function
-	.thumb_func
-Func_080ad208:
-	.incbin "baserom.gba", 0x000b2208, 0x00000008
-	.section .rom.000b2210, "ax"
-	.global Func_080ad210
-	.type Func_080ad210, %function
-	.thumb_func
-Func_080ad210:
-	.incbin "baserom.gba", 0x000b2210, 0x00000008
-	.section .rom.000b2218, "ax"
-	.global Party_SetLeaderJennaFar
-	.type Party_SetLeaderJennaFar, %function
-	.thumb_func
-Party_SetLeaderJennaFar:
-	.incbin "baserom.gba", 0x000b2218, 0x00000008
-	.section .rom.000b2220, "ax"
-	.global Party_SetLeaderFelixFar
-	.type Party_SetLeaderFelixFar, %function
-	.thumb_func
-Party_SetLeaderFelixFar:
-	.incbin "baserom.gba", 0x000b2220, 0x00000008
-	.section .rom.000b2228, "ax"
-	.global Func_080ad228
-	.type Func_080ad228, %function
-	.thumb_func
-Func_080ad228:
-	.incbin "baserom.gba", 0x000b2228, 0x00000008
-	.section .rom.000b2230, "ax"
-	.global Func_080ad230
-	.type Func_080ad230, %function
-	.thumb_func
-Func_080ad230:
-	.incbin "baserom.gba", 0x000b2230, 0x00000008
-	.section .rom.000b2238, "ax"
-	.global Func_080ad238
-	.type Func_080ad238, %function
-	.thumb_func
-Func_080ad238:
-	.incbin "baserom.gba", 0x000b2238, 0x00000008
-	.section .rom.000b2240, "ax"
-	.global Func_080ad240
-	.type Func_080ad240, %function
-	.thumb_func
-Func_080ad240:
-	.incbin "baserom.gba", 0x000b2240, 0x00000008
-	.section .rom.000b2248, "ax"
-	.global Djinn_AddToLeastLoadedOwnerFar
-	.type Djinn_AddToLeastLoadedOwnerFar, %function
-	.thumb_func
-Djinn_AddToLeastLoadedOwnerFar:
-	.incbin "baserom.gba", 0x000b2248, 0x00000008
-	.section .rom.000b2250, "ax"
-	.global Party_SumDjinnCountsFar
-	.type Party_SumDjinnCountsFar, %function
-	.thumb_func
-Party_SumDjinnCountsFar:
-	.incbin "baserom.gba", 0x000b2250, 0x00000008
-	.section .rom.000b2258, "ax"
-	.global Party_AdjustShopCreditFar
-	.type Party_AdjustShopCreditFar, %function
-	.thumb_func
-Party_AdjustShopCreditFar:
-	.incbin "baserom.gba", 0x000b2258, 0x00000008
-	.section .rom.000b2260, "ax"
-	.global Party_AdjustShopGiftsFar
-	.type Party_AdjustShopGiftsFar, %function
-	.thumb_func
-Party_AdjustShopGiftsFar:
-	.incbin "baserom.gba", 0x000b2260, 0x00000008
-	.section .rom.000b2268, "ax"
-	.global Func_080ad268
-	.type Func_080ad268, %function
-	.thumb_func
-Func_080ad268:
-	.incbin "baserom.gba", 0x000b2268, 0x00000008
-	.section .rom.000b2270, "ax"
-	.global Func_080ad270
-	.type Func_080ad270, %function
-	.thumb_func
-Func_080ad270:
-	.incbin "baserom.gba", 0x000b2270, 0x00000008
-	.section .rom.000b2278, "ax"
-	.global Inventory_DiscardFar
-	.type Inventory_DiscardFar, %function
-	.thumb_func
-Inventory_DiscardFar:
-	.incbin "baserom.gba", 0x000b2278, 0x00000008
-	.section .rom.000b2280, "ax"
-	.global Battle_IsReviveEffectFar
-	.type Battle_IsReviveEffectFar, %function
-	.thumb_func
-Battle_IsReviveEffectFar:
-	.incbin "baserom.gba", 0x000b2280, 0x00000008
-	.section .rom.000b2288, "ax"
-	.global Unit_RefreshPsynergyFar
-	.type Unit_RefreshPsynergyFar, %function
-	.thumb_func
-Unit_RefreshPsynergyFar:
-	.incbin "baserom.gba", 0x000b2288, 0x00000008
-	.section .rom.000b2290, "ax"
-	.global Party_GetAverageLevelFar
-	.type Party_GetAverageLevelFar, %function
-	.thumb_func
-Party_GetAverageLevelFar:
-	.incbin "baserom.gba", 0x000b2290, 0x00000008
-	.section .rom.000b2298, "ax"
-	.global Unit_UpdateClassFar
-	.type Unit_UpdateClassFar, %function
-	.thumb_func
-Unit_UpdateClassFar:
-	.incbin "baserom.gba", 0x000b2298, 0x00000008
-	.section .rom.000b22a0, "ax"
-	.global Inventory_CountItemFar
-	.type Inventory_CountItemFar, %function
-	.thumb_func
-Inventory_CountItemFar:
-	.incbin "baserom.gba", 0x000b22a0, 0x00000008
-	.section .rom.000b22a8, "ax"
-	.global PartyInventory_CountItemFar
-	.type PartyInventory_CountItemFar, %function
-	.thumb_func
-PartyInventory_CountItemFar:
-	.incbin "baserom.gba", 0x000b22a8, 0x00000008
-	.section .rom.000b22b0, "ax"
-	.global PartyInventory_DiscardFar
-	.type PartyInventory_DiscardFar, %function
-	.thumb_func
-PartyInventory_DiscardFar:
-	.incbin "baserom.gba", 0x000b22b0, 0x00000008
 	.section .rom.000b23f6, "ax"
 	.incbin "baserom.gba", 0x000b23f6, 0x00000002
 	.section .rom.000b23f8, "ax"
@@ -1540,6 +1100,11 @@ Inventory_Remove:
 Owner_UpdateClassActions:
 	.incbin "baserom.gba", 0x000b44e4, 0x00000210
 	.section .rom.000b47ac, "ax"
+	.balign 4
+	.global Func_080af7ac
+	.type Func_080af7ac, %function
+	.thumb_func
+Func_080af7ac:
 	.incbin "baserom.gba", 0x000b47ac, 0x00000120
 	.section .rom.000b491c, "ax"
 	.global Owner_LevelUp
@@ -1548,6 +1113,11 @@ Owner_UpdateClassActions:
 Owner_LevelUp:
 	.incbin "baserom.gba", 0x000b491c, 0x00000264
 	.section .rom.000b4bec, "ax"
+	.balign 4
+	.global Func_080afbec
+	.type Func_080afbec, %function
+	.thumb_func
+Func_080afbec:
 	.incbin "baserom.gba", 0x000b4bec, 0x000001d0
 	.section .rom.000b5084, "ax"
 	.global Unit_CalculateBaseElements

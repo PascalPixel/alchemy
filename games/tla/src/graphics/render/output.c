@@ -12,6 +12,7 @@
 #include "ram_buffer.h"
 #include "resource.h"
 #include "window.h"
+#include "stddef.h"
 
 s32 UiText_GetSpeakerPortrait(s32 key);
 void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
@@ -79,4 +80,38 @@ struct RenderOutput *CreateSideObject(s32 objectKind, s32 position, s32 side,
   state->resourceIds[side] = id;
   state->outputIds[side] = first;
   return object;
+}
+
+/// Reloads the portrait picture for the key into a portrait slot with that
+/// slot's palette (14 + slot), reusing the slot's VRAM cache entry. A slot of
+/// 2 or more means whichever slot already shows the picture, the second
+/// first; when neither does, nothing is loaded.
+void Ui_LoadCharacterEntryForSlot(u32 slot, s32 key, s32 unused) {
+  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  s32 id = UiText_GetSpeakerPortrait(key);
+  s32 offset;
+  s32 palette;
+  s32 cached;
+  s32 tile;
+  s32 entry;
+
+  if (id == -1)
+    return;
+  if (slot > 1) {
+    if (work->resourceIds[1] == id)
+      slot = 1;
+    else if (work->resourceIds[0] == id)
+      slot = 0;
+    else
+      return;
+  }
+  offset = offsetof(struct UiRenderWork, outputIds);
+  palette = slot;
+  cached = *(u16 *)((u8 *)work + (slot * 2 + offset));
+  /* FAKEMATCH(barrier): the palette's copy of the slot and the offset's
+   * shift wait for the cache entry's load; as entry = work->outputIds[slot],
+   * 2 of 48 instructions differ in tla-en. */
+  __asm__("" : "+l"(palette) : "l"(cached), "l"(offset));
+  entry = cached;
+  UiGlyph_LoadEntryWithPalette(id, unused, &entry, &tile, palette + 14, 1);
 }

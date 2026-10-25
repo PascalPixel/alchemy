@@ -1,11 +1,15 @@
-// Draft, differ 100 of 180 (ported from The Broken Seal's
-// Encounter_SelectEnemyGroup; ⚓️ drops the flag 5 level check, reads the
-// cloak byte at 0x26d and the encounter fields at 0x194 and 0x198 of the
-// event work). The native keeps the party state's address in r5 from the
-// cloak test to the avoid test, across Party_GetAverageLevelFar, the zone
-// in r0, the rate in r7 and the entry in r9; this draft reloads the party
-// address at each use and allocates the rest differently. The flag and zone
-// tests are one condition here, as the native shares their return.
+// Draft, differ 44 of 180 (100 before, 2026-10-25), ported from The Broken
+// Seal's Encounter_CountStepsAndSelectFormation
+// (games/tbs/src/overworld/overworld/encounter.c); this game drops the
+// Jenna experience check, reads the cloak byte at 0x26d and the encounter
+// bias and threshold at 0x194 and 0x198 of the event work. gPartyState read
+// by field (the native keeps its address across Party_GetAverageLevelFar and
+// loads it again for the step count), the threshold at 0x198, Random16
+// unsigned (the draw's lsrs) and the zone test on its own (100 to 44). Left:
+// which returns of 0 set r0 before their test (the native presets it for
+// the cloak and rate tests and shares the flags' return with the zone test),
+// the zone's reload register, and the draw's pick and weight pointer, which
+// the native keeps in r2 and r0.
 #include "types.h"
 #include "iwram_call.h"
 #include "party_state.h"
@@ -21,17 +25,16 @@ struct EncounterZone {
 struct EncounterWork {
   u8 unk000[0x194];
   s32 bias;
-  s32 unk198;
   s32 threshold;
 };
 
 s32 GameFlag_Test(s32 flag);
 s32 Party_GetAverageLevelFar(void);
-s32 Random16(void);
+u32 Random16(void);
 void BattleEffect_SelectBattleCue(s32 zone, s32 group);
 extern const struct EncounterZone gEncounter_EnemyGroupTable[];
 
-#define ENCOUNTER_STEPS (party->encounterSteps)
+#define ENCOUNTER_STEPS (gPartyState.encounterSteps)
 
 s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
   struct EncounterWork *work;
@@ -44,13 +47,14 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
   s32 sum;
   s32 pick;
   s32 i;
-  struct PartyState *party = &gPartyState;
 
   work = Ram_HeapSlots->eventWork;
   if (GameFlag_Test(351) == 0) {
-    if (GameFlag_Test(352) != 0 || GameFlag_Test(353) != 0 || zone == 0)
+    if (GameFlag_Test(352) != 0 || GameFlag_Test(353) != 0)
       return 0;
-    if (party->cloaked != 0)
+    if (zone == 0)
+      return 0;
+    if (gPartyState.cloaked != 0)
       return 0;
     entry = gEncounter_EnemyGroupTable + zone;
     rate = entry->rate;
@@ -62,7 +66,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
       level = 0;
     if (level > 5)
       level = 5;
-    if (level > 0 && party->avoidDistance != 0)
+    if (level > 0 && gPartyState.avoidDistance != 0)
       return 0;
     rate += level * 5;
 

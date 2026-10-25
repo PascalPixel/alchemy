@@ -1,9 +1,11 @@
-// First draft of Func_08041068, differ 27 of 65 (draft 64 instructions),
-// written from the listing; the calls and the loop's shape match, the registers
-// do not. The native keeps the line pointer in r7, the text y in r10, the count
-// in r8 (mov r3, r8; cmp r3, #8) and the divider row in r5; here the count
-// takes r7 and the line pointer r10. Measured: an indexed for loop with the
-// divider skipped on the first pass is differ 59.
+// Near miss, differ 2 of 65 (27 before alchemy permute moved the line
+// pointer's set-up after the row's and RenderOutput_Create took its fifth
+// argument): the debug warp menu's window, nine preset names 16 pixels
+// apart with a divider under each but the last. Left: the native loads
+// gDebugWarp_Presets from the pool (ldr r7) before it copies y's 4 to sl;
+// this copies first. Every order of the four set-ups and of the
+// declarations measures 2 or more; an indexed for loop with the divider
+// skipped on the first pass is differ 59.
 #include "types.h"
 #include "ram_buffer.h"
 
@@ -29,7 +31,7 @@ void UiText_DrawStringInWindow(const u8 *text, struct RenderInput *window,
                                s32 x, s32 y);
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 void *RenderOutput_Create(s32 slot, s32 attributes, struct RenderInput *window,
-                          s32 mode);
+                          s32 x, s32 y);
 
 struct RenderInput *Func_08041068(void) {
   struct ScreenWork *work = Ram_HeapSlots->unkd0[0];
@@ -40,10 +42,10 @@ struct RenderInput *Func_08041068(void) {
   s32 y;
 
   window = UiWindow_Create(0, 0, 30, 19, 2);
-  line = gDebugWarp_Presets;
   y = 4;
   i = 0;
   row = 2;
+  line = gDebugWarp_Presets;
   for (;;) {
     UiText_DrawStringInWindow(line->text, window, 8, y);
     y += 16;
@@ -55,6 +57,6 @@ struct RenderInput *Func_08041068(void) {
     i++;
   }
   work->cursor = RenderOutput_Create(Resource_LoadFixedBlockBIntoFreeSlot(),
-                                     0x40000000, window, 0);
+                                     0x40000000, window, 0, 0);
   return window;
 }

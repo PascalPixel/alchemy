@@ -1,13 +1,9 @@
-// Draft, differ 85 of 78: the native keeps the pass index times 64 in r4 (lsls
-// r4, r5, #6 at the top of every pass), rebuilds the level offset 0x3058 on
-// every pass and reads the level through the workspace base (ldrb r3, [r7,
-// r3]); only the flag cursor is strength-reduced (r0, adds r0, #64). This
-// draft, an explicit cursor and an explicit per-pass offset all reduce the
-// level read to a second cursor and so keep the result out of r8 and the third
-// flag address out of sl. The Broken Seal twin has no level test.
-// 2026-10-18: written as a goto loop with an explicit cursor, the level read
-// takes the native's form (i << 6 and 0x3058 each pass) but nothing is
-// hoisted: the flag addresses and the 1 are loaded in the loop (differ 115).
+// Near miss, differ 4 of 78 (85 before, 2026-10-25): the flags read as
+// fields of each summary, so that loop.c reduces them to one cursor and
+// leaves the level read as work + i * 64 + 0x3058, as the native does. Left:
+// the native interleaves the cursor's offset (movs; lsls; adds) with the
+// copy of the first flag's address and the load of the 1; this builds it
+// in one run. The Broken Seal twin has no level test.
 #include "types.h"
 #include "ram_buffer.h"
 #include "save_state.h"
@@ -20,10 +16,6 @@ s32 Func_0801596c(void);
 s32 SaveState_LoadSummaryRecords(void);
 void SaveState_ReleaseWorkspace(void);
 
-#define SUMMARY_TAIL(field)                                                    \
-  ((u32)&((struct SaveSummary *)0)->field -                                    \
-   (u32)&((struct SaveSummary *)0)->party[4])
-
 s32 SaveState_ScanRecordFlags(void) {
   s32 err;
   s32 cnt;
@@ -34,24 +26,22 @@ s32 SaveState_ScanRecordFlags(void) {
   ret = -9;
   if (err == 0) {
     s32 i;
-    s8 *flags;
     struct SaveWorkspace *work;
 
     ret = SaveState_LoadSummaryRecords();
     work = Ram_HeapSlots->serialWork;
-    flags = &work->summary[0].party[4];
     gData_02003860 = 0;
     gData_020036d8 = 0;
     gData_02005350 = 0;
     for (i = 0; i < 3; i++) {
-      if (flags[i * sizeof(struct SaveSummary) + SUMMARY_TAIL(sendFlag)] != 0) {
+      if (work->summary[i].sendFlag != 0) {
         gData_02003860 = 1;
         cnt++;
       }
-      if (flags[i * sizeof(struct SaveSummary) + SUMMARY_TAIL(flagCount)] != 0)
+      if (work->summary[i].flagCount != 0)
         gData_020036d8 = 1;
       if (work->summary[i].level != 0 &&
-          flags[i * sizeof(struct SaveSummary) + SUMMARY_TAIL(hasFlag34)] == 0)
+          work->summary[i].hasFlag34 == 0)
         gData_02005350 = 1;
     }
   }

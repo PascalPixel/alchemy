@@ -27,29 +27,33 @@ the game. The always-loaded code is cut into [banks](glossary.md#bank)
 ([How the code is organised](#how-the-code-is-organised)).
 
 ```mermaid
-%%{init: {"theme": "base", "themeVariables": {"fontFamily": "ui-sans-serif, system-ui, sans-serif", "fontSize": "15px", "lineColor": "#8a8a8a", "edgeLabelBackground": "#E8E6DF", "titleColor": "#1D9E75", "clusterBkg": "transparent", "clusterBorder": "#1D9E75"}, "flowchart": {"curve": "step", "padding": 14}}}%%
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace", "fontSize": "14px", "lineColor": "#9AA3AE", "edgeLabelBackground": "#F4F4F2", "titleColor": "#4F6E99", "clusterBkg": "#E6EEF7", "clusterBorder": "#AFC6E0"}, "flowchart": {"curve": "step", "padding": 14}}}%%
 flowchart TD
   start(["<b>The game starts</b>"]) --> loop(["<b>The main loop</b><br/><small>chooses what runs next</small>"])
   loop -- "a map" --> layout
-  loop -- "a battle" --> battle["<b>A battle</b><br/><small>always loaded</small>"]
-  loop -- "a minigame" --> mini["<b>Lucky Dice or Lucky Wheels</b><br/><small>always loaded</small>"]
+  loop -- "a battle" --> battle["<b>A battle</b><br/><small>always loaded<br/>won: back to the map<br/>lost: the last Sanctum</small>"]
+  loop -- "a minigame" --> mini["<b>Lucky Dice or Lucky Wheels</b><br/><small>always loaded<br/>then back to the game room</small>"]
   subgraph map ["<b>A map</b>"]
     layout["<b>Its layout</b><br/><small>the picture and the ground</small>"]
-    layout --- overlay["<b>Its overlay, unpacked</b><br/><small>characters, conversations<br/>and other events</small>"]
+    layout --- overlay["<b>Its overlay, unpacked</b><br/><small>characters, conversations<br/>and other events<br/>a door: the next map</small>"]
   end
-  overlay -. "a door: the next map" .-> loop
-  battle -. "won: back to the map<br/>lost: the last Sanctum" .-> loop
-  mini -. "back to the game room" .-> loop
-  classDef flow fill:#534AB7,stroke:#3C3489,color:#ffffff
-  classDef place fill:#0F6E56,stroke:#085041,color:#ffffff
-  classDef scripts fill:#1D9E75,stroke:#085041,color:#ffffff,stroke-dasharray:6 4
-  classDef fight fill:#993C1D,stroke:#712B13,color:#ffffff
-  classDef game fill:#854F0B,stroke:#633806,color:#ffffff
+  overlay --- back(( ))
+  battle --- back
+  mini --- back
+  back --> loop
+  classDef flow fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
+  classDef place fill:#D9EBDF,stroke:#9CC5A8,color:#2F6040
+  classDef scripts fill:#F6EFC9,stroke:#D9C77A,color:#6E5A1C
+  classDef fight fill:#F3DAE8,stroke:#D7A3C3,color:#843A68
+  classDef game fill:#EAE2F5,stroke:#C3B0E0,color:#5E4590
+  classDef join fill:#9AA3AE,stroke:#9AA3AE
   class start,loop flow
   class layout place
   class overlay scripts
   class battle fight
   class mini game
+  class back join
+  style back width:8px,height:8px
 ```
 
 That main loop is unlike most games'. In most games, the Pokémon games among

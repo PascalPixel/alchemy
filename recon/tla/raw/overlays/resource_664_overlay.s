@@ -2240,72 +2240,8 @@ Func_02001458:
 	.4byte 0x00000057
 .L_02009608:
 	.4byte 0x0000005c
-	.section .text.x0200960c,"ax",%progbits
-	.global Func_0200160c
-	.thumb_func
-Func_0200160c:
-	push {r5, lr}
-	adds r4, r0, #0
-	adds r5, r1, #0
-	movs r0, #30
-	adds r1, r4, #0
-	adds r3, r2, #0
-	adds r0, #255
-	adds r2, r5, #0
-	bl Engine_ObjectCreate
-	movs r1, #1
-	adds r5, r0, #0
-	bl Func_02005d5c
-	adds r0, r5, #0
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
-	adds r0, r5, #0
-	movs r1, #6
-	bl Object_SetPartAttribute
-	adds r0, r5, #0
-	movs r1, #1
-	bl Animation_SetStateFlags
-	adds r2, r5, #0
-	ldr r1, .L_02009680
-	adds r2, #100
-	movs r3, #27
-	strh r3, [r2]
-	adds r3, r5, #0
-	adds r3, #85
-	strb r1, [r3]
-	adds r3, #5
-	strb r1, [r3]
-	movs r3, #128
-	lsls r3, r3, #8
-	str r3, [r5, #24]
-	movs r3, #128
-	lsls r3, r3, #11
-	str r3, [r5, #48]
-	bl Random16Far
-	movs r3, #254
-	lsls r3, r3, #7
-	ldr r2, .L_02009684
-	adds r3, #255
-	ands r3, r0
-	lsls r3, r3, #1
-	adds r3, r3, r2
-	str r3, [r5, #52]
-	movs r3, #224
-	lsls r3, r3, #6
-	str r3, [r5, #76]
-	ldr r3, .L_02009688
-	str r3, [r5, #108]
-	b .L_0200968c
-.L_02009680:
-	.4byte 0x00000000
-.L_02009684:
-	.4byte 0xffff8001
-.L_02009688:
-	.4byte Func_02001458
-.L_0200968c:
-	pop {r5, pc}
-	.2byte 0x0000
 	.section .text.x02009690,"ax",%progbits
+	.balign 4
 	.global Func_02001690
 	.thumb_func
 Func_02001690:

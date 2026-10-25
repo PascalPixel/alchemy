@@ -10109,62 +10109,8 @@ Func_02000e44:
 	.4byte IwramClearWords
 	.endif
 	.endif
-	.section .text.x0200987c,"ax",%progbits
-	.global Func_0200187c
-	.thumb_func
-Func_0200187c:
-	push {r5, r6, lr}
-	adds r6, r0, #0
-	movs r3, #192
-	movs r0, #192
-	lsls r3, r3, #18
-	lsls r0, r0, #2
-	ldr r5, [r3, #60]
-	bl Runtime_BumpAllocateAlternatePool
-	movs r1, #14
-	ldrsh r3, [r6, r1]
-	movs r1, #12
-	ldrsh r2, [r6, r1]
-	lsls r3, r3, #5
-	adds r3, r3, r2
-	ldr r2, .L_020098d4
-	lsls r3, r3, #1
-	adds r5, r5, r3
-	adds r1, r3, r2
-	adds r5, #8
-	movs r6, #0
-.L_020098a6:
-	movs r4, #0
-.L_020098a8:
-	lsls r3, r6, #4
-	ldr r2, .L_020098d0
-	adds r3, r3, r4
-	adds r3, #32
-	orrs r3, r2
-	lsls r3, r3, #16
-	asrs r3, r3, #16
-	adds r4, #1
-	strh r3, [r1]
-	strh r3, [r5]
-	adds r1, #2
-	adds r5, #2
-	cmp r4, #15
-	ble .L_020098a8
-	adds r6, #1
-	adds r1, #32
-	adds r5, #32
-	cmp r6, #7
-	ble .L_020098a6
-	b .L_020098d8
-.L_020098d0:
-	.4byte 0xfffff000
-.L_020098d4:
-	.4byte 0x06002000
-.L_020098d8:
-	bl MemFree
-	pop {r5, r6, pc}
-	.2byte 0x0000
 	.section .text.x020098e0,"ax",%progbits
+	.balign 4
 	.ifdef TLA_EDITION_JA
 	.global Func_020018e0
 	.thumb_func

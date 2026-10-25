@@ -507,35 +507,6 @@ Func_02000660:
 	.4byte gPartyState
 .L_020086f0:
 	.4byte MsgRrruffRrruff2
-	.section .text.x02008738,"ax",%progbits
-	.global Func_02000738
-	.thumb_func
-Func_02000738:
-	push {lr}
-	ldr r3, .L_02008760
-	movs r0, #160
-	ldr r3, [r3]
-	ldr r4, .L_02008764
-	lsls r0, r0, #19
-	adds r0, #24
-	lsrs r2, r3, #4
-	movs r1, #3
-.L_0200874a:
-	movs r3, #3
-	ands r3, r2
-	lsls r3, r3, #1
-	ldrh r3, [r4, r3]
-	subs r1, #1
-	strh r3, [r0]
-	adds r2, #1
-	adds r0, #2
-	cmp r1, #0
-	bge .L_0200874a
-	pop {pc}
-.L_02008760:
-	.4byte gFrameCount
-.L_02008764:
-	.4byte gData_02001ae0
 	.section .text.x02008be4,"ax",%progbits
 	.global Func_02000be4
 	.thumb_func

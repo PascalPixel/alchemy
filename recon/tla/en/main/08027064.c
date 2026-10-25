@@ -1,13 +1,14 @@
-// Draft, differ 875 of 1094: script command 0x19 (SC_PLAYER), The Broken
+// Draft, differ 437 of 1094: script command 0x19 (SC_PLAYER), The Broken
 // Seal's Object_UpdateLeaderControl
 // (games/tbs/src/field/field/player_control.c) with this game's changes: no
 // fast walk; standing on another object a cell below (priorityFlags bit 6) lets
 // the step through when a still object (bit 7) fills the step and both its
 // sides; wading ground (map byte 0x17 bits 2-3, cell attribute bit 4) hides the
-// sprite's lower half and leaves Func_08026fc8's effect. Structure follows the
-// listing (frame 128 bytes, the native 120); left is register allocation
-// throughout (the native keeps the object in r8, the heading shifted left 16 in
-// r11 and the angle so on the stack), which cascades into most rows.
+// sprite's lower half and leaves Func_08026fc8's effect. Structure and frame
+// follow the listing: the angle is a u16 (as s32, differ 584; the native spills
+// it as angle << 16), the locals are declared in frame order and the
+// one-cell-below test is written as an absolute difference (differ 875 before).
+// Left: scheduling and some register choice throughout.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -90,7 +91,7 @@ s32 Func_08027064(struct ObjectRuntime *object) {
   s32 onObject;
   struct EventWork *work;
   struct MapFlagsWork *map;
-  s32 angle;
+  u16 angle;
   struct ObjectRuntime *other;
   u8 oldFlags;
 
@@ -141,10 +142,8 @@ s32 Func_08027064(struct ObjectRuntime *object) {
         continue;
       if (other == object)
         continue;
-      dy = object->y - other->y - 0x100000;
-      if (dy < 0)
-        dy = -dy;
-      if (dy > 0x7ffff)
+      dy = object->y - other->y;
+      if ((dy - 0x100000 < 0 ? -(dy - 0x100000) : dy - 0x100000) > 0x7ffff)
         continue;
       if (SAME_CELL(object->x, other->x) && SAME_CELL(object->z, other->z))
         onObject = 1;

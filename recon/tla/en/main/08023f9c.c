@@ -1,4 +1,4 @@
-// Draft, differ 761 of 875: The Broken Seal's Object_UpdateAllThumb
+// Draft, differ 758 of 875: The Broken Seal's Object_UpdateAllThumb
 // (games/tbs/src/field/field/object_motion.c), which runs each object's hook
 // and script and moves it toward its target each frame (Func_080230e0 adds
 // it at 0x48b). This game's changes: a paused object records no motion and
@@ -264,10 +264,8 @@ void Func_08023f9c(void) {
             continue;
           if (((nextZ - other->z + 0x80000) >> 20) != 0)
             continue;
-          dy = y - other->y - 0x100000;
-          if (dy < 0)
-            dy = -dy;
-          if (dy > 0x7ffff)
+          dy = y - other->y;
+          if ((dy - 0x100000 < 0 ? -(dy - 0x100000) : dy - 0x100000) > 0x7ffff)
             continue;
           ground = other->y + 0x100000;
           standing = 1;

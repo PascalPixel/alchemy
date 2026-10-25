@@ -1,12 +1,12 @@
-// Draft, differ 503 of 827: script command 0x1f, a sibling of SC_PLAYER
+// Draft, differ 331 of 827: script command 0x1f, a sibling of SC_PLAYER
 // (Func_08027064) with longer reach: steps 19 pixels ahead (with the four
 // probes 22.5 and 45 degrees off and six retry headings), pushes from 15
 // pixels and tests 21 pixels past a pushed object; with flag 0x17f, B moves
 // at 4 pixels a frame. The first shortcut key posts request 252 in the event
 // work; turns at most 0x400 a step, and an object with one sprite reads the
-// world map's ground under it afterwards. Structure follows the listing;
-// left: register allocation and scheduling (frame 104 bytes, the native 100:
-// one more spill slot), the native keeping only angle << 16 on the stack.
+// world map's ground under it afterwards. Structure and frame follow the
+// listing, the angle a u16 as in Func_08027064 (as s32, differ 472). Left:
+// scheduling and some register choice.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -49,7 +49,7 @@ s32 Func_08027e20(struct ObjectRuntime *object) {
   s16 angleOffsets[22];
   s32 collision;
   s32 pushed;
-  s32 angle;
+  u16 angle;
   s16 heading;
   s32 angleIndex;
   s32 onObject;
@@ -119,10 +119,8 @@ s32 Func_08027e20(struct ObjectRuntime *object) {
         continue;
       if (other == object)
         continue;
-      dy = object->y - other->y - 0x100000;
-      if (dy < 0)
-        dy = -dy;
-      if (dy > 0x7ffff)
+      dy = object->y - other->y;
+      if ((dy - 0x100000 < 0 ? -(dy - 0x100000) : dy - 0x100000) > 0x7ffff)
         continue;
       if (SAME_CELL(object->x, other->x) && SAME_CELL(object->z, other->z))
         onObject = 1;

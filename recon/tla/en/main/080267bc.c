@@ -1,10 +1,11 @@
-// Draft, differ 388 of 713: script command 0x24, a slow sibling of SC_PLAYER
+// Draft, differ 254 of 713: script command 0x24, a slow sibling of SC_PLAYER
 // (Func_08027064): walks at one pixel a frame with a gentle acceleration
 // (0xccc), the dash keys choosing only the running animation; steps 8
 // pixels with the same probes, retries and pushing, but neither sets the
 // velocity's heading nor records the held keys, and a refused step keeps
-// the velocity. Structure follows the listing; left: register allocation
-// and scheduling (frame 104 bytes, the native 100: one more spill slot).
+// the velocity. Structure and frame follow the listing, the angle a u16 and the
+// heading an s16 (as s32, differ 388). Left: scheduling and register choice,
+// most of it in the object loops.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -54,8 +55,8 @@ s32 Func_080267bc(struct ObjectRuntime *object) {
   s32 collision;
   s32 pushed;
   s32 movementAnimation;
-  s32 angle;
-  s32 heading;
+  u16 angle;
+  s16 heading;
   s32 angleIndex;
   s32 onObject;
   struct ObjectRuntime *other;

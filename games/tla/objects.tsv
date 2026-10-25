@@ -792,6 +792,7 @@ main	rom_main_02	recon/tla/ja/rom	.rom.0003aa84	ja
 main	rom_main_02	recon/tla/ja/rom	.rom.0003ac3c	ja
 main	rom_main_02	games/tla/src/graphics/text/render_wide	.text	en de es fr it
 main	rom_main_02	games/tla/src/graphics/text/format_number	.text
+main	rom_main_02	games/tla/src/graphics/text/article_name	.text	en
 main	rom_main_02	recon/tla/it/rom	.rom.0003aea0	it
 main	rom_main_02	recon/tla/it/rom	.rom.0003afe4	it
 main	rom_main_02	recon/tla/fr/rom	.rom.0003ae6c	fr
@@ -800,7 +801,6 @@ main	rom_main_02	recon/tla/es/rom	.rom.0003aea0	es
 main	rom_main_02	recon/tla/es/rom	.rom.0003b044	es
 main	rom_main_02	recon/tla/de/rom	.rom.0003ae60	de
 main	rom_main_02	recon/tla/de/rom	.rom.0003afcc	de
-main	rom_main_02	recon/tla/raw/0803aed8	.text	en
 main	rom_main_02	recon/tla/raw/0803b094	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.0003ae38	ja
 main	rom_main_02	recon/tla/ja/rom	.rom.0003b77c	ja

@@ -183,7 +183,7 @@ GomaCavePillar_UpdateFragment(union ObjectEventOrEffect *fieldObject) {
 /// Applies child value 15 at the end of a fragment's lifetime.
 static s32 GomaCavePillar_FinishFragment(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
-  ObjectEvent_SetSpriteColor(objectEvent, 15);
+  ObjectEvent_SetSpriteColor(objectEvent, SPRITE_COLOR_HIDDEN);
   return 0;
 }
 
@@ -376,7 +376,7 @@ static void EventScript_PushStumpOver(void) {
     WAIT(10);
     // Dust falls while the stump rocks on the edge.
     fragmentCallback = GomaCavePillar_SpawnStumpDust;
-    FieldScheduler_AddCallback(fragmentCallback, 3200);
+    FieldScheduler_AddCallback(fragmentCallback, TASK_PRIORITY_MAP);
     Sound_PlaySong(SE_RUMBLE);
     ObjectMotion_OffsetPositionAndResetMotion(LOCALID_STUMP, 1, 0);
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_STUMP);
@@ -641,7 +641,7 @@ s32 Map_Initialize(void) {
   // Coming back from a Djinni battle: the man reacts until it is over.
   if (gSaveBlock.pendingDjinnEvent != 0) {
     gGomaCavePillar_WitnessFrames = 0;
-    Task_AddCallback(GomaCavePillar_FidgetWhileForgeFights, 3200);
+    Task_AddCallback(GomaCavePillar_FidgetWhileForgeFights, TASK_PRIORITY_MAP);
   }
   return 0;
 }

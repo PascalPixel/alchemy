@@ -85,6 +85,7 @@
 #include "macros.h"
 #include "flags.h"
 #include "songs.h"
+#include "io_reg.h"
 #include "audio_engine_symbols.h"
 
 static void ColosseumEntrance_ApplyArrivalState(void);
@@ -1529,7 +1530,7 @@ static void ColosseumEntrance_UpdateEntranceCells(void) {
     row = 8;
     MapGrid_CopyCellAttributes(14, 8, 2, 1, column, row);
   } else {
-    ObjectEvent_ConfigureSpriteColor(LOCALID_LUCKY_GUESS_MAN, 2);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_LUCKY_GUESS_MAN, SPRITE_COLOR_RBG);
     if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
       column = 14;
       row = 11;
@@ -1558,16 +1559,16 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   ColosseumEntrance_PositionPartyForBriefing();
   WaitFrames(1);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  PaletteFade_SetSource(0, 0);
-  PaletteFade_ApplyTarget(0, 0);
+  PaletteFade_SetSource(RGB(0, 0, 0), PALETTES_ALL);
+  PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   WaitFrames(1);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 3);
   gFieldWork->transitionFrames = 1;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
-  PaletteFade_SetSource(0, 0);
-  PaletteFade_ApplyTarget(0x10002, 0);
+  PaletteFade_SetSource(RGB(0, 0, 0), PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_SEPIA, PALETTES_ALL);
   PaletteFade_StartInterpolation(40);
   FieldScript_WaitFrames(80);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FIRST_SOLDIER, 1);
@@ -1578,7 +1579,7 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
                                   FACING_SOUTHEAST + FACING_STEP);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FIRST_SOLDIER, 2);
   FieldScript_WaitFrames(20);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(40);
   FieldScript_WaitFrames(80);
   ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -2034,13 +2035,13 @@ static void ColosseumEntrance_CelebrateBothWins(void) {
 /// The warriors' child values and their waiting actions in the Colosseum's
 /// waiting room.
 static void ColosseumEntrance_InitializeContestants(void) {
-  ObjectEvent_ConfigureSpriteColor(LOCALID_MORGAN, 3);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_AZART, 0);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_GALAHAD, 4);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SATRAGE, 1);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_DEKKA, 5);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_NAVAMPA, 2);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_BUFORD, 6);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_MORGAN, SPRITE_COLOR_BGR);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_AZART, SPRITE_COLOR_NORMAL);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_GALAHAD, SPRITE_COLOR_GBR);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SATRAGE, SPRITE_COLOR_GRB);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_DEKKA, SPRITE_COLOR_BRG);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_NAVAMPA, SPRITE_COLOR_RBG);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_BUFORD, SPRITE_COLOR_GREY);
   ObjectEvent_SetActionById(LOCALID_AZART, 10);
   ObjectEvent_SetActionById(LOCALID_GALAHAD, 20);
   Import_ObjectEventSetAnimation(LOCALID_SATRAGE, 0);

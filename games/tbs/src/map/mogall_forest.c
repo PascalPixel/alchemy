@@ -96,6 +96,7 @@
 #include "flags.h"
 #include "item_ids.h"
 #include "songs.h"
+#include "heap.h"
 
 /// Object events of the first area (MapId_MogallForestSign), numbered in the
 /// order of gMogallForestSign_ObjectEventTemplates.

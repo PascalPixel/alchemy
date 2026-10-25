@@ -23,12 +23,12 @@
 #include "songs.h"
 
 // Mercury Lighthouse and its entrance, once the pool is woken: standing at the
-// pool's heart (coord event 11) gives the leader three lights, shown as a
-// column of light over them. Each hop into the pool (the floor's region, its
-// metatile behavior) spends one, and a light comes to hold the leader up where
-// they land. A hop within the pool with no light left sinks the leader, who is
-// put back at the heart. Coord event 31 takes the lights away, and Retreat
-// removes the column.
+// pool's heart (MB_MERCURY_LIGHTHOUSE_POOL_HEART) gives the leader three
+// lights, shown as a column of light over them. Each hop into the pool (the
+// floor's region, its metatile behavior) spends one, and a light comes to hold
+// the leader up where they land. A hop within the pool with no light left sinks
+// the leader, who is put back at the heart. MB_MERCURY_LIGHTHOUSE_POOL_RIM
+// takes the lights away, and Retreat removes the column.
 
 /// Raises the spark while its scale follows a half-sine pulse.
 static s32
@@ -150,8 +150,8 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
   struct Sprite *sprite;
 
   point = gFieldWork->objectEvents[gSaveBlock.leaderLocalId];
-  spark =
-      ObjectEvent_Create(26, point->x.fixed, point->y.fixed, point->z.fixed);
+  spark = ObjectEvent_Create(SPRITE_GOLDEN_RINGS, point->x.fixed,
+                             point->y.fixed, point->z.fixed);
   if (spark != NULL) {
     spark->groundHeight = point->groundHeight;
     sprite = spark->sprite;
@@ -165,8 +165,8 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
       sprite->image.priority = 1;
     }
   }
-  spark =
-      ObjectEvent_Create(26, point->x.fixed, point->y.fixed, point->z.fixed);
+  spark = ObjectEvent_Create(SPRITE_GOLDEN_RINGS, point->x.fixed,
+                             point->y.fixed, point->z.fixed);
   if (spark != NULL) {
     spark->groundHeight = point->groundHeight;
     sprite = spark->sprite;
@@ -183,11 +183,11 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
   Sound_PlaySong(SE_PSYNERGY_START);
 }
 
-/// Coord event 11, the pool's heart: the column of light appears over the
-/// leader if it is not there, and grows a stage with each pair of sparks, half
-/// a second apart, up to three lights. The column's cell is where a sinking
-/// leader comes back to; FLAG_NO_ENCOUNTERS_IN_MAPSEC is set while the leader
-/// has lights.
+/// MB_MERCURY_LIGHTHOUSE_POOL_HEART, the pool's heart: the column of light
+/// appears over the leader if it is not there, and grows a stage with each pair
+/// of sparks, half a second apart, up to three lights. The column's cell is
+/// where a sinking leader comes back to; FLAG_NO_ENCOUNTERS_IN_MAPSEC is set
+/// while the leader has lights.
 void MercuryLighthouse_ChargeLights(void) {
   struct MercuryLighthouseLights *state;
   struct ObjectEvent *leader;
@@ -204,8 +204,9 @@ void MercuryLighthouse_ChargeLights(void) {
   FieldScript_Start();
   pillar = state->pillar;
   if (pillar == 0) {
-    objectEvent = ObjectEvent_Create(
-        26, leader->x.fixed, leader->y.fixed + 0x180000, leader->z.fixed);
+    objectEvent =
+        ObjectEvent_Create(SPRITE_GOLDEN_RINGS, leader->x.fixed,
+                           leader->y.fixed + 0x180000, leader->z.fixed);
     if (objectEvent != 0) {
       struct Sprite *sprite = objectEvent->sprite;
 
@@ -244,8 +245,8 @@ void MercuryLighthouse_ChargeLights(void) {
 
 #define MAPGRID_CELLS ((struct MapGridCell *)Ram_MapGridCellBuffer)
 
-/// Coord event 31: the leader loses their lights, and the column swells and
-/// fades away.
+/// MB_MERCURY_LIGHTHOUSE_POOL_RIM: the leader loses their lights, and the
+/// column swells and fades away.
 void MercuryLighthouse_LoseLights(void) {
   struct MercuryLighthouseLights *state =
       *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
@@ -268,13 +269,14 @@ void MercuryLighthouse_LoseLights(void) {
   }
 }
 
-/// Pushing against the pool's edge (coord events 11, 21 and 31): the leader
-/// hops two cells the way the pad points, unless the hop leads into the pool
-/// without a light or is blocked. A hop into the pool spends a light, which
-/// flies ahead to the landing cell; the column shrinks a stage, or goes with
-/// the last light. Landing in the pool with no light under them, the leader
-/// sinks until a key is pressed after half a second, and is put back at the
-/// heart.
+/// Pushing against the pool's edge (MB_MERCURY_LIGHTHOUSE_POOL_HEART,
+/// MB_MERCURY_LIGHTHOUSE_POOL_WATER and MB_MERCURY_LIGHTHOUSE_POOL_RIM): the
+/// leader hops two cells the way the pad points, unless the hop leads into the
+/// pool without a light or is blocked. A hop into the pool spends a light,
+/// which flies ahead to the landing cell; the column shrinks a stage, or goes
+/// with the last light. Landing in the pool with no light under them, the
+/// leader sinks until a key is pressed after half a second, and is put back at
+/// the heart.
 void MercuryLighthouse_HopAcrossPool(void) {
   struct FieldWork *work;
   struct MercuryLighthouseLights *state;
@@ -327,8 +329,8 @@ void MercuryLighthouse_HopAcrossPool(void) {
   }
   if (to->behavior == state->poolBehavior && state->levels != 0) {
     source = state->pillar;
-    obj = ObjectEvent_Create(26, source->x.fixed, source->y.fixed,
-                             source->z.fixed);
+    obj = ObjectEvent_Create(SPRITE_GOLDEN_RINGS, source->x.fixed,
+                             source->y.fixed, source->z.fixed);
     if (obj != NULL) {
       sprite = obj->sprite;
       obj->groundHeight = source->groundHeight;
@@ -365,7 +367,8 @@ void MercuryLighthouse_HopAcrossPool(void) {
   objectEvent->velocityY = 0x40000;
   *flags &= 0x7e;
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
-  ObjectMotion_SetPositionAndCommit(0, pos[0].part.pixel, pos[2].part.pixel);
+  ObjectMotion_SetPositionAndCommit(LOCALID_PARTY_LEADER, pos[0].part.pixel,
+                                    pos[2].part.pixel);
   Object_SelectAnimation(objectEvent, 6);
   WaitFrames(2);
   if (to->behavior != state->poolBehavior)
@@ -395,8 +398,8 @@ void MercuryLighthouse_HopAcrossPool(void) {
   work->walkingDistance += Iwram_MulQ16(work->walkingDistanceScale, 0x200000);
 }
 
-/// Coord event 21: while the leader stands there, a blue ripple spreads from
-/// him every 10 to 39 frames.
+/// MB_MERCURY_LIGHTHOUSE_POOL_WATER: while the leader stands there, a blue
+/// ripple spreads from him every 10 to 39 frames.
 void MercuryLighthouse_RippleAroundLeader(void) {
   struct MercuryLighthouseLights *state;
   struct ObjectEvent *point;

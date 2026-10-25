@@ -1332,7 +1332,7 @@ static void LunpaFortress_CheckUpperFloorDoorApproach(void) {
     s32 playerZ = leader->z.fixed / PIXELS(16);
 
     if (playerX == 16 && playerZ > 55 && playerZ <= 58 &&
-        (leader->facing == 0xc000 || leader->facing == 0x4000)) {
+        (leader->facing == FACING_NORTH || leader->facing == FACING_SOUTH)) {
       s16 *touchedTrigger = &gFieldWork->coordEvent;
       s32 doorTrigger = MB_LUNPA_FORTRESS_FIRST_DOOR;
 
@@ -3313,11 +3313,16 @@ static void LunpaFortress_InitializeGroundFloor(void) {
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     break;
   }
-  ObjectEvent_ConfigureSpriteColor(LOCALID_GROUND_FLOOR_PATROL_GUARD, 1);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_GROUND_FLOOR_UPPER_HALL_GUARD, 1);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_GROUND_FLOOR_SECOND_SENTRY, 1);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_GROUND_FLOOR_ENTRANCE_GUARD, 1);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_GROUND_FLOOR_FIRST_SENTRY, 1);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_GROUND_FLOOR_PATROL_GUARD,
+                                   SPRITE_COLOR_GRB);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_GROUND_FLOOR_UPPER_HALL_GUARD,
+                                   SPRITE_COLOR_GRB);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_GROUND_FLOOR_SECOND_SENTRY,
+                                   SPRITE_COLOR_GRB);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_GROUND_FLOOR_ENTRANCE_GUARD,
+                                   SPRITE_COLOR_GRB);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_GROUND_FLOOR_FIRST_SENTRY,
+                                   SPRITE_COLOR_GRB);
   WaitFrames(1);
 }
 
@@ -3328,9 +3333,12 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   struct ObjectEvent *keyObjectEvent;
 
   LunpaFortress_RestoreUpperFloorDoors();
-  ObjectEvent_ConfigureSpriteColor(LOCALID_UPPER_FLOOR_FIRST_PATROL, 1);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_UPPER_FLOOR_SECOND_PATROL, 1);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_UPPER_FLOOR_HALL_PATROL, 1);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_UPPER_FLOOR_FIRST_PATROL,
+                                   SPRITE_COLOR_GRB);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_UPPER_FLOOR_SECOND_PATROL,
+                                   SPRITE_COLOR_GRB);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_UPPER_FLOOR_HALL_PATROL,
+                                   SPRITE_COLOR_GRB);
   if (GameFlag_Get(FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN)) {
     OBJECT_POSITION_SET(LOCALID_UPPER_FLOOR_WEST_GUARD, 0, 0);
   }

@@ -21,12 +21,9 @@
 // own and choose where to cheer from, and the guide at each stage describes it
 // and offers a friend's cheering there.
 //
-// The three match maps number their ways out alike, so the requests here
-// keep the numbers: warp 10 is each map's way from lending a hand to the
-// race (COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE and its twins), and warp 11
-// its way back out to the Colosseum (COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_WEST,
-// COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_SOUTH,
-// COLOSSEUM_NAVAMPA_MATCH_TO_COLOSSEUM).
+// Each match map defines its own two warps before including this file:
+// COLOSSO_SOLO_TO_RACE, its way from lending a hand to the race, and
+// COLOSSO_SOLO_TO_COLOSSEUM, its way back out to the Colosseum.
 
 // Byte flags (eight flags each) holding where a friend cheers from: the cell
 // column at COLOSSO_CHEER_COLUMN + 16 * character and the cell row at
@@ -201,7 +198,7 @@ static void Colosso_TakePlaceForMatch(void) {
   }
   supporterId++;
   if (supporterId > MIA) {
-    Import_ScriptRequestWarp(10);
+    Import_ScriptRequestWarp(COLOSSO_SOLO_TO_RACE);
     GameFlag_Set(FLAG_KEEP_MUSIC);
   } else {
     Colosso_ControlCharacterAlone(supporterId);
@@ -251,7 +248,7 @@ void Colosso_AskDoneCheering(s32 id) {
                           objectEvent->z.fixed >> 20);
     slot++;
     if (slot > MIA) {
-      Import_ScriptRequestWarp(10);
+      Import_ScriptRequestWarp(COLOSSO_SOLO_TO_RACE);
       GameFlag_Set(FLAG_KEEP_MUSIC);
     } else {
       Colosso_ControlCharacterAlone(slot);
@@ -292,7 +289,7 @@ static void Colosso_AskReadyToRace(s32 localId) {
       ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, x, z + 32);
       FieldScript_FinishScreenTransition();
       FieldScript_WaitTransitionFrames();
-      Import_ScriptRequestWarp(11);
+      Import_ScriptRequestWarp(COLOSSO_SOLO_TO_COLOSSEUM);
     }
   } else {
     FieldScript_SetMessageId(MsgColossoWaitShouldntDecideWhereBest);
@@ -457,21 +454,21 @@ L_main:
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(friendId, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(guide, PIXELS(1), PIXELS(1) / 2);
-  leader = ObjectEvent_GetById(0);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetPosition(friendId, leader->x.fixed, leader->z.fixed);
   }
   frontZ = guideZ + 16;
   ObjectEvent_WalkToAndWait(friendId, guideX, frontZ);
   besideX = guideX + 16;
-  ObjectMotion_SetPositionAndReset(0, besideX, frontZ);
+  ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, besideX, frontZ);
   ObjectEvent_LinkPair(friendId, LOCALID_PARTY_LEADER, 30);
-  Import_ObjectEventSetAnimation(friendId, 3);
+  Import_ObjectEventSetAnimation(friendId, ANIM_NOD);
   behindZ = frontZ - 32;
-  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, 3);
+  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectEvent_WalkToAndWait(guide, guideX, behindZ);
   ObjectMotion_ResetAndSetPositionInMode2(guide, besideX, behindZ);
-  ObjectEvent_LinkObjectAndSetCallback(0, friendId);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_PARTY_LEADER, friendId);
   ObjectEvent_WalkToAndWait(friendId, guideX, behindZ);
   Import_ObjectEventSetAnimation(guide, 1);
   ObjectEvent_FaceDirection(guide, FACING_WEST, 0);

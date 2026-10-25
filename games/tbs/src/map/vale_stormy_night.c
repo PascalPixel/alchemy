@@ -1621,7 +1621,7 @@ static void EventScript_WatchBoulderFall(void) {
     sShakeDone = 1;
     Import_ObjectEventSetAnimation(LOCALID_ELDER_FAR_WEST, ANIM_STAND);
     WaitFrames(1);
-    ObjectEvent_SetSpriteColorById(LOCALID_ELDER_FAR_WEST, 0);
+    ObjectEvent_SetSpriteColorById(LOCALID_ELDER_FAR_WEST, SPRITE_COLOR_NORMAL);
     ObjectEvent_ShowEmote(LOCALID_ELDER_FAR_WEST,
                           EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
     ObjectEvent_FaceDirection(LOCALID_ELDER_FAR_WEST, FACING_WEST, 40);
@@ -2469,7 +2469,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   PaletteFade_StartInterpolation(40);
   Task_Wait(40);
   // Stage the boulder and its shadow for the downriver camera shot.
-  ObjectEvent_SetSpriteColorById(LOCALID_BOULDER, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_BOULDER, SPRITE_COLOR_NORMAL);
   currentObjectEvent = ObjectEvent_Get(LOCALID_BOULDER);
   ObjectEvent_SetSpriteFlags(currentObjectEvent, 0);
   currentObjectEvent = ObjectEvent_Get(LOCALID_BOULDER_SHADOW);
@@ -3050,8 +3050,8 @@ static void ValeStormyNight_SpawnEffectPair(struct ObjectEvent *parent) {
 
   Sound_PlaySong(SE_JUMP);
   for (i = 0; i < 2; ++i) {
-    child = ObjectEvent_Create(26, parent->x.fixed, parent->y.fixed,
-                               parent->z.fixed);
+    child = ObjectEvent_Create(SPRITE_GOLDEN_RINGS, parent->x.fixed,
+                               parent->y.fixed, parent->z.fixed);
     pair[i] = child;
     if (child != NULL) {
       child->groundHeight = parent->groundHeight;

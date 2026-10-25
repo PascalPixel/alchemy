@@ -66,6 +66,7 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "flags.h"
+#include "heap.h"
 
 /// The townspeople, numbering the object event template rows from
 /// LOCALID_FIRST_PLACED and named by what they say on the party's return.

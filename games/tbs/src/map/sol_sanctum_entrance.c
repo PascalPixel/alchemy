@@ -684,7 +684,8 @@ static void SolSanctumEntrance_ApplyEntryState(void) {
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     gSolSanctumEntrance_RumbleTimer = 0;
-    Task_AddCallback(SolSanctumEntrance_UpdateEruptionRumbles, 0xc80);
+    Task_AddCallback(SolSanctumEntrance_UpdateEruptionRumbles,
+                     TASK_PRIORITY_MAP);
   }
   if (GameFlag_Get(FLAG_VALE_RETURNED_FROM_MT_ALEPH) != 0) {
     MapGrid_CopyCellAttributes(5, 6, 1, 1, 6, 6);
@@ -819,7 +820,7 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   FieldScript_Start();
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldScript_StartScreenTransition();
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
   FieldScript_WaitFrames(4);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   // Gather the followers around the leader for Kraden's introduction.
@@ -847,8 +848,8 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   ObjectEvent_SetDestinationOffset(LOCALID_JENNA, 16, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_KRADEN, 0, -32);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, 0);
-  Import_ObjectEventSetAnimation(LOCALID_JENNA, 0);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STILL);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STILL);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTH, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KRADEN);
@@ -939,9 +940,9 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   ObjectEvent_SetDestinationOffset(LOCALID_KRADEN, 0, -16);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KRADEN);
   Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, 0);
-  Import_ObjectEventSetAnimation(LOCALID_JENNA, 0);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STILL);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STILL);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST, 0);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 30);

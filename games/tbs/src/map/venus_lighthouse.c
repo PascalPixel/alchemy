@@ -975,7 +975,7 @@ static s32 VenusLighthouse_TrailLight(union ObjectEventOrEffect *fieldObject) {
     }
   }
   velocityY = 0;
-  options.type = 286;
+  options.type = SPRITE_GLINT;
   options.startScaleX = Q16_ONE;
   options.startScaleY = Q16_ONE;
   options.targetScaleX = -327;
@@ -1399,13 +1399,13 @@ static void EventScript_SearchStatue(void) {
   FieldScript_Start();
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   FieldMessage_Show(MsgVenusStatueSpeaksIsaacSoulYe, 1);
-  PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
-  PaletteFade_ApplyTarget(PALETTE_TINT_PALE, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_ALL);
   PaletteFade_StartInterpolation(120);
   FieldScript_WaitFrames(100);
   Script_PlaySong(SE_SWIRL);
   FieldScript_WaitFrames(30);
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(60);
   FieldScript_WaitFrames(70);
   // The first consultation selects a route; later consultations alternate it.
@@ -1427,7 +1427,7 @@ static void EventScript_SearchStatue(void) {
     GameFlag_Clear(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH);
     VenusLighthouse_DrawSecondPath();
   }
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(20);
   FieldScript_WaitFrames(40);
   // Follow the revealed path after the statue and color effect have finished.
@@ -1651,6 +1651,8 @@ static void EventScript_FallThroughFloor(void) {
 #if TBS_PATCH_3
   *motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
 #endif
+  // XXX: likely the leader's object event was meant, because the fall set up
+  // above is his; a null pointer reads velocityY from the BIOS instead.
   ObjectEvent_WaitUntilIdle(0);
   ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Import_ScriptRequestWarp(
@@ -2702,7 +2704,7 @@ static void EventScript_EnterRisingPassage(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 10);
   (void)VenusLighthouse_CreateBlendedPassageEffect(PIXELS(520), 0, PIXELS(784),
                                                    SPRITE_CRATE);
-  FieldObjectEvent_JumpDownLedge(0, 6, 0);
+  FieldObjectEvent_JumpDownLedge(LOCALID_PARTY_LEADER, 6, 0);
   FieldScript_WaitFrames(60);
   Import_ScriptRequestWarp(
       VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_TO_WALL_SWITCHES_RISING);
@@ -3141,14 +3143,14 @@ s32 VenusLighthouse_Initialize(void) {
         objectEvent->motionFlags = 0;
         objectEvent->y.fixed = -PIXELS(48);
         objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
-        objectEvent->collisionFlags &= 0xfe;
+        objectEvent->collisionFlags &= ~OBJ_EVENT_SOLID;
         objectEvent->timer = 3;
         ObjectMotion_SetActionVariant(LOCALID_BALANCE_WEST, 1);
         objectEvent = ObjectEvent_GetById(LOCALID_BALANCE_EAST);
         objectEvent->motionFlags = 0;
         objectEvent->y.fixed = -PIXELS(48);
         objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
-        objectEvent->collisionFlags &= 0xfe;
+        objectEvent->collisionFlags &= ~OBJ_EVENT_SOLID;
         objectEvent->timer = 3;
         ObjectMotion_SetActionVariant(LOCALID_BALANCE_EAST, 1);
         objectEvent = ObjectEvent_GetById(LOCALID_FIRST_FLOATING_PILLAR);
@@ -3578,7 +3580,7 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
       }
       if (extraBursts == 3)
         FieldScheduler_AddCallback(VenusLighthouse_EmitWestPassageParticles,
-                                   3200);
+                                   TASK_PRIORITY_MAP);
     }
     MapGrid_CopyCellsTo(53, row + 12, 26, row + 12, 3, 1);
     rowOffset += 0x100000;
@@ -3641,7 +3643,8 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
       extraBursts++;
       goto again;
     }
-    FieldScheduler_AddCallback(VenusLighthouse_EmitEastPassageParticles, 3200);
+    FieldScheduler_AddCallback(VenusLighthouse_EmitEastPassageParticles,
+                               TASK_PRIORITY_MAP);
     MapGrid_CopyCellsTo(58, row + 12, 34, row + 12, 3, 1);
     rowOffset += 0x100000;
     row++;
@@ -3675,7 +3678,7 @@ VenusLighthouse_UpdateRisingSpray(union ObjectEventOrEffect *fieldObject) {
 
   options->priority = 1;
   options->palette = 5;
-  options->type = 286;
+  options->type = SPRITE_GLINT;
   options->script = gVenusSprayScript;
   framePhase = gFrameCount & 3;
   if (framePhase == 0) {

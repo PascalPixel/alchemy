@@ -54,6 +54,7 @@
 #include "objcmd.h"
 #include "flags.h"
 #include "songs.h"
+#include "heap.h"
 
 // UB: this calls a void function through an s32 function type, the call the
 // bytes show; UBFIX calls it as declared. Its use is tagged.

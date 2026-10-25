@@ -344,7 +344,7 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
     objectEvent->facing += 2 * FACING_STEP;
     WaitFrames(1);
   }
-  if (warpDest != 50)
+  if (warpDest != TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_CENTER_COCOON)
     GameFlag_Set(FLAG_ARRIVE_FALLING);
 }
 
@@ -357,120 +357,137 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnSecondFloorCocoon1(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_1_TORN, 64,
-                                 35, 21);
+  TretTreeInteriors_StepOnCocoon(
+      FLAG_TRET_TREE_SECOND_FLOOR_COCOON_1_TORN, 64, 35,
+      TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_1);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnSecondFloorCocoon2(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_2_TORN, 65,
-                                 35, 22);
+  TretTreeInteriors_StepOnCocoon(
+      FLAG_TRET_TREE_SECOND_FLOOR_COCOON_2_TORN, 65, 35,
+      TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_2);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnSecondFloorCocoon3(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_3_TORN, 66,
-                                 35, 23);
+  TretTreeInteriors_StepOnCocoon(
+      FLAG_TRET_TREE_SECOND_FLOOR_COCOON_3_TORN, 66, 35,
+      TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_3);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnSecondFloorCocoon4(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_4_TORN, 67,
-                                 35, 24);
+  TretTreeInteriors_StepOnCocoon(
+      FLAG_TRET_TREE_SECOND_FLOOR_COCOON_4_TORN, 67, 35,
+      TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_4);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnSecondFloorCocoon5(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_5_TORN, 68,
-                                 35, 25);
+  TretTreeInteriors_StepOnCocoon(
+      FLAG_TRET_TREE_SECOND_FLOOR_COCOON_5_TORN, 68, 35,
+      TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_5);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnSecondFloorCocoon6(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_6_TORN, 69,
-                                 35, 26);
+  TretTreeInteriors_StepOnCocoon(
+      FLAG_TRET_TREE_SECOND_FLOOR_COCOON_6_TORN, 69, 35,
+      TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_6);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnSecondFloorCocoon7(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_7_TORN, 70,
-                                 35, 27);
+  TretTreeInteriors_StepOnCocoon(
+      FLAG_TRET_TREE_SECOND_FLOOR_COCOON_7_TORN, 70, 35,
+      TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_7);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnSecondFloorCocoon8(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_8_TORN, 71,
-                                 35, 28);
+  TretTreeInteriors_StepOnCocoon(
+      FLAG_TRET_TREE_SECOND_FLOOR_COCOON_8_TORN, 71, 35,
+      TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_8);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnSecondFloorCocoon9(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_9_TORN, 72,
-                                 35, 29);
+  TretTreeInteriors_StepOnCocoon(
+      FLAG_TRET_TREE_SECOND_FLOOR_COCOON_9_TORN, 72, 35,
+      TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_9);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnThirdFloorWestCocoon(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_THIRD_FLOOR_WEST_COCOON_TORN,
-                                 73, 35, 31);
+  TretTreeInteriors_StepOnCocoon(
+      FLAG_TRET_TREE_THIRD_FLOOR_WEST_COCOON_TORN, 73, 35,
+      TRET_TREE_INTERIORS_FROM_THIRD_FLOOR_WEST_COCOON);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnThirdFloorEastCocoon(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_THIRD_FLOOR_EAST_COCOON_TORN,
-                                 74, 35, 32);
+  TretTreeInteriors_StepOnCocoon(
+      FLAG_TRET_TREE_THIRD_FLOOR_EAST_COCOON_TORN, 74, 35,
+      TRET_TREE_INTERIORS_FROM_THIRD_FLOOR_EAST_COCOON);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnFifthFloorCenterCocoon(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_CENTER_COCOON_TORN,
-                                 79, 35, 50);
+  TretTreeInteriors_StepOnCocoon(
+      FLAG_TRET_TREE_FIFTH_FLOOR_CENTER_COCOON_TORN, 79, 35,
+      TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_CENTER_COCOON);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnFifthFloorNorthwestCocoon(void) {
   TretTreeInteriors_StepOnCocoon(
-      FLAG_TRET_TREE_FIFTH_FLOOR_NORTHWEST_COCOON_TORN, 75, 35, 51);
+      FLAG_TRET_TREE_FIFTH_FLOOR_NORTHWEST_COCOON_TORN, 75, 35,
+      TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_NORTHWEST_COCOON);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnFifthFloorNorthCocoon(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_COCOON_TORN,
-                                 76, 35, 52);
+  TretTreeInteriors_StepOnCocoon(
+      FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_COCOON_TORN, 76, 35,
+      TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_NORTH_COCOON);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnFifthFloorNortheastCocoon(void) {
   TretTreeInteriors_StepOnCocoon(
-      FLAG_TRET_TREE_FIFTH_FLOOR_NORTHEAST_COCOON_TORN, 77, 35, 53);
+      FLAG_TRET_TREE_FIFTH_FLOOR_NORTHEAST_COCOON_TORN, 77, 35,
+      TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_NORTHEAST_COCOON);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnFifthFloorWestCocoon(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_WEST_COCOON_TORN,
-                                 78, 35, 54);
+  TretTreeInteriors_StepOnCocoon(
+      FLAG_TRET_TREE_FIFTH_FLOOR_WEST_COCOON_TORN, 78, 35,
+      TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_WEST_COCOON);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnFifthFloorEastCocoon(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_EAST_COCOON_TORN,
-                                 80, 35, 55);
+  TretTreeInteriors_StepOnCocoon(
+      FLAG_TRET_TREE_FIFTH_FLOOR_EAST_COCOON_TORN, 80, 35,
+      TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_EAST_COCOON);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
@@ -478,28 +495,32 @@ static void EventScript_StepOnFifthFloorEastCocoon(void) {
 /// destinations agree.
 static void EventScript_StepOnFifthFloorSouthwestCocoon(void) {
   TretTreeInteriors_StepOnCocoon(
-      FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHWEST_COCOON_TORN, 81, 35, 56);
+      FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHWEST_COCOON_TORN, 81, 35,
+      TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_SOUTHWEST_COCOON);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnFifthFloorSouthCocoon(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTH_COCOON_TORN,
-                                 82, 35, 57);
+  TretTreeInteriors_StepOnCocoon(
+      FLAG_TRET_TREE_FIFTH_FLOOR_SOUTH_COCOON_TORN, 82, 35,
+      TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_SOUTH_COCOON);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnFifthFloorSoutheastCocoon(void) {
   TretTreeInteriors_StepOnCocoon(
-      FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_COCOON_TORN, 83, 35, 58);
+      FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_COCOON_TORN, 83, 35,
+      TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_SOUTHEAST_COCOON);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
 static void EventScript_StepOnFifthFloorFarSoutheastCocoon(void) {
   TretTreeInteriors_StepOnCocoon(
-      FLAG_TRET_TREE_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON_TORN, 84, 35, 59);
+      FLAG_TRET_TREE_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON_TORN, 84, 35,
+      TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON);
 }
 
 /// Jumping on from a cocoon in Tret Tree (Field_TryJumpForward) clears the
@@ -760,8 +781,8 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   WAIT(20);
   // Tret tries to release the people of Kolima: the colours shift and sparks
   // swirl out from his face, then fade.
-  PaletteFade_ApplySource(0x10000, 0);
-  PaletteFade_ApplyTarget(0x406218, 1);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   WaitFrames(40);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
@@ -782,7 +803,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   Task_AddCallback(sparkTask, TASK_PRIORITY_MAP);
   WAIT(220);
   Task_Remove(sparkTask);
-  PaletteFade_ApplyTarget(0x10000, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   WaitFrames(40);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_BLINK);
@@ -882,7 +903,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
     tretSpeaker->motionFlags = 0;
     tretSpeaker->y.fixed = -PIXELS(10);
   }
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_TRET, 15);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_TRET, SPRITE_COLOR_HIDDEN);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   if (gSaveBlock.warpDest != TRET_TREE_INTERIORS_AFTER_FIGHT_TRET)
     FieldScheduler_AddCallback(TretPalette_UpdateMapTint, TASK_PRIORITY_MAP);
@@ -1254,7 +1275,7 @@ static void TretTreeInteriors_RunLandingDustScene(void) {
   SE(SE_THUMP);
   ObjectEvent_SetAttachedEffect(
       LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, 22);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   MapGrid_WaitForShakeToSettle();
@@ -1452,27 +1473,27 @@ struct MapWarpDest gTretTreeInteriorsWarpDests[] = {
     { TRET_TREE_INTERIORS_FOURTH_FLOOR_FROM_THIRD_FLOOR, CONDITION_ALWAYS, 552, 0, 360, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
     { TRET_TREE_INTERIORS_TRET_FROM_ENTRANCE, CONDITION_ALWAYS, 168, 24, 152, FACING_SOUTH, 0, 32, 0, 304, 272, 0 },
     { TRET_TREE_INTERIORS_ENTRANCE_FROM_TRET, CONDITION_ALWAYS, 488, 0, 168, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { 21, CONDITION_ALWAYS, 472, 0, 104, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { 22, CONDITION_ALWAYS, 504, 0, 104, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { 23, CONDITION_ALWAYS, 424, 0, 136, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { 24, CONDITION_ALWAYS, 424, 0, 168, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { 25, CONDITION_ALWAYS, 440, 0, 200, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { 26, CONDITION_ALWAYS, 488, 0, 200, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { 27, CONDITION_ALWAYS, 456, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { 28, CONDITION_ALWAYS, 488, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { 29, CONDITION_ALWAYS, 520, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { 31, CONDITION_ALWAYS, 760, 0, 104, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
-    { 32, CONDITION_ALWAYS, 856, 0, 120, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
-    { 51, CONDITION_ALWAYS, 456, 0, 392, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-    { 52, CONDITION_ALWAYS, 488, 0, 392, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-    { 53, CONDITION_ALWAYS, 520, 0, 392, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-    { 54, CONDITION_ALWAYS, 456, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-    { 55, CONDITION_ALWAYS, 520, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-    { 56, CONDITION_ALWAYS, 456, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-    { 57, CONDITION_ALWAYS, 488, 0, 456, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-    { 58, CONDITION_ALWAYS, 520, 0, 456, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-    { 59, CONDITION_ALWAYS, 552, 0, 456, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-    { 50, CONDITION_ALWAYS, 488, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_1, CONDITION_ALWAYS, 472, 0, 104, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_2, CONDITION_ALWAYS, 504, 0, 104, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_3, CONDITION_ALWAYS, 424, 0, 136, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_4, CONDITION_ALWAYS, 424, 0, 168, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_5, CONDITION_ALWAYS, 440, 0, 200, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_6, CONDITION_ALWAYS, 488, 0, 200, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_7, CONDITION_ALWAYS, 456, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_8, CONDITION_ALWAYS, 488, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TRET_TREE_INTERIORS_FROM_SECOND_FLOOR_COCOON_9, CONDITION_ALWAYS, 520, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TRET_TREE_INTERIORS_FROM_THIRD_FLOOR_WEST_COCOON, CONDITION_ALWAYS, 760, 0, 104, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
+    { TRET_TREE_INTERIORS_FROM_THIRD_FLOOR_EAST_COCOON, CONDITION_ALWAYS, 856, 0, 120, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
+    { TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_NORTHWEST_COCOON, CONDITION_ALWAYS, 456, 0, 392, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_NORTH_COCOON, CONDITION_ALWAYS, 488, 0, 392, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_NORTHEAST_COCOON, CONDITION_ALWAYS, 520, 0, 392, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_WEST_COCOON, CONDITION_ALWAYS, 456, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_EAST_COCOON, CONDITION_ALWAYS, 520, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_SOUTHWEST_COCOON, CONDITION_ALWAYS, 456, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_SOUTH_COCOON, CONDITION_ALWAYS, 488, 0, 456, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_SOUTHEAST_COCOON, CONDITION_ALWAYS, 520, 0, 456, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON, CONDITION_ALWAYS, 552, 0, 456, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TRET_TREE_INTERIORS_FROM_FIFTH_FLOOR_CENTER_COCOON, CONDITION_ALWAYS, 488, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
     { 40, CONDITION_ALWAYS, 168, 0, 424, FACING_SOUTH, 0, 32, 272, 304, 544, 0 },
     { 30, CONDITION_ALWAYS, 808, 0, 152, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
     { 20, CONDITION_ALWAYS, 488, 0, 152, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },

@@ -101,6 +101,8 @@
 #include "frame.h"
 #include "fixed_math.h"
 #include "songs.h"
+#include "heap.h"
+#include "item_ids.h"
 #include "audio_engine_symbols.h"
 
 /// After the quest is refused, the Great Healer has warned that stepping
@@ -524,8 +526,8 @@ static void EventScript_LeaveAfterRefusing(void) {
   struct PaletteFade *paletteWork;
 
   FieldScript_Start();
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, 0);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STILL);
   Import_ObjectEventSetAnimation(LOCALID_DORA, 0);
   Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 0);
   Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);
@@ -849,7 +851,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     FieldScript_WaitFrames(40);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
     Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);
-    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, 0x100);
+    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, SPRITE_COLOR_BLINK);
     Sanctum_ShowHealerAfterimage();
     Script_PlaySong(SE_WISE_ONE_QUEST);
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
@@ -866,7 +868,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
     FieldScript_WaitFrames(96);
     FieldScript_WaitFrames(32);
-    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, 0);
+    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, SPRITE_COLOR_NORMAL);
     FieldScript_WaitFrames(30);
     // Return to the gathering and finish the departure conversation.
     Sanctum_HideHealerAfterimage();
@@ -923,7 +925,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     FieldScript_WaitFrames(60);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
     Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);
-    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, 0x100);
+    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, SPRITE_COLOR_BLINK);
     Sanctum_ShowHealerAfterimage();
     Script_PlaySong(SE_WISE_ONE_QUEST);
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
@@ -951,7 +953,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     FieldScript_WaitFrames(32);
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
     FieldScript_WaitFrames(128);
-    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, 0);
+    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, SPRITE_COLOR_NORMAL);
     FieldScript_WaitFrames(30);
     Sanctum_HideHealerAfterimage();
     Import_ObjectEventSetAnimation(LOCALID_HEALER, 1);
@@ -1308,7 +1310,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   FieldScript_WaitFrames(40);
   Script_ShowMessage(LOCALID_WISE_ONE, 0);
   FieldScript_WaitFrames(60);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_WISE_ONE, 0x100);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_WISE_ONE, SPRITE_COLOR_BLINK);
   Script_PlaySong(SONG_FADE_OUT_BGM);
   Script_PlaySong(SE_MATERIALIZE);
   // Shrink the Wise One amid sparks before restoring the room.
@@ -1321,7 +1323,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
     wiseOne->scaleY += -Q16_ONE / 100;
   }
   Script_PlaySong(SE_STOP_ACTION_SE);
-  ObjectEvent_SetSpriteColorById(LOCALID_WISE_ONE, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_WISE_ONE, SPRITE_COLOR_NORMAL);
   ObjectEvent_SetPosition(LOCALID_WISE_ONE, 0, 0);
   FieldScript_WaitFrames(40);
   FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
@@ -1846,7 +1848,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
   FieldScript_WaitFrames(10);
   // Illustrate the account with the floating item icon.
-  Sanctum_RaiseItemIcon(222, PIXELS(184), PIXELS(27), PIXELS(168));
+  Sanctum_RaiseItemIcon(ITEM_MARS_STAR, PIXELS(184), PIXELS(27), PIXELS(168));
   ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
@@ -2049,10 +2051,10 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
     sprite->image.palette = 0;
     icon->velocityY = PIXELS(2);
     icon->gravity = PIXELS(1) / 4;
-    transferBuffer = AllocHeapSlot(17, 0x608);
+    transferBuffer = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Icon_DrawItem(item);
     VramCache_Load(sprite->slot, 128, transferBuffer + 0x400);
-    FreeHeapSlot(17);
+    FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
     for (frame = 0; frame < 60; frame++) {
       if ((u32)(icon->velocityY + 255) <= 0x1fe)
         icon->motionFlags = 0;
@@ -2108,7 +2110,7 @@ static void Sanctum_SpawnObjectEventSpark(s32 id) {
   x += randomOffset << 16;
   x += -PIXELS(10);
   spark = ObjectEvent_Create(
-      0x11e, x,
+      SPRITE_GLINT, x,
       objectEvent->y.fixed + ((Import_RandomNext() & 15) << 16) + -PIXELS(8),
       objectEvent->z.fixed);
   if (spark == 0)

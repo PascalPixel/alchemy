@@ -64,6 +64,7 @@
 #include "objcmd.h"
 #include "item_ids.h"
 #include "songs.h"
+#include "heap.h"
 #include "audio_engine_symbols.h"
 #include "flags.h"
 

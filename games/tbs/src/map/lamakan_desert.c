@@ -631,7 +631,7 @@ static void LamakanDesert_BatheInOasis(void) {
   {
     struct ObjectEvent *objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
 
-    options.type = 214;
+    options.type = SPRITE_SPLASH;
     options.startScaleX = 0x8000;
     options.startScaleY = 0xcccc;
     options.targetScaleX = 0x10000;
@@ -666,7 +666,7 @@ static void LamakanDesert_BatheInOasis(void) {
   {
     struct ObjectEvent *objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
 
-    puff.type = 214;
+    puff.type = SPRITE_SPLASH;
     puff.startScaleX = 0x8000;
     puff.startScaleY = 0xcccc;
     puff.targetScaleX = 0x8000;
@@ -713,7 +713,8 @@ static void HeatGauge_CountStep(void) {
     params.startScaleY = 0x8000;
     dx = 0;
     params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
-    if (objectEvent->facing != 0 && objectEvent->facing != 0x8000) {
+    if (objectEvent->facing != FACING_EAST &&
+        objectEvent->facing != FACING_WEST) {
       z = objectEvent->z.fixed;
       dx = 0x20000 - ((((z >> 20) & 1) * 5) << 16);
     } else {
@@ -1066,7 +1067,8 @@ static void HeatGauge_Draw(void) {
     }
   } else if (gHeatGaugeSlide <= 1) {
     if (++gHeatGaugeSlide == 1) {
-      Dma_Set(gHeatGauge_Palette, (void *)0x050003c0, 0x80000010, REG_DMA3);
+      Dma_Set(gHeatGauge_Palette, (void *)&OBJ_PLTT_COLOR(14, 0),
+              (DMA_ENABLE | DMA_16BIT) << 16 | 16, REG_DMA3);
     }
   }
   counter = gHeatGaugeSlide;
@@ -1088,7 +1090,8 @@ static void HeatGauge_Draw(void) {
 
   // Tint the six changing palette entries before composing the gauge tiles.
   buffer = Alloc(0x900);
-  Dma_Set(gHeatGauge_Palette, buffer, 0x80000010, REG_DMA3);
+  Dma_Set(gHeatGauge_Palette, buffer, (DMA_ENABLE | DMA_16BIT) << 16 | 16,
+          REG_DMA3);
   colors = (s16 *)(buffer + 12);
   color = colors;
   for (i = 6; i < 12; i++) {
@@ -1133,7 +1136,8 @@ static void HeatGauge_Draw(void) {
   }
 
   // Fill the remaining bar and overlay its nontransparent frame pixels.
-  Dma_Set(gHeatGauge_TileBuffer, buffer, 0x84000240, REG_DMA3);
+  Dma_Set(gHeatGauge_TileBuffer, buffer, (DMA_ENABLE | DMA_32BIT) << 16 | 0x240,
+          REG_DMA3);
   if (gHeatGaugeFlash <= 118) {
     column = (u32 *)(buffer + 80);
     fill = 0xeeeeeeee;
@@ -1194,7 +1198,7 @@ void HeatGauge_Start(void) {
   VramCache_Load((s16)slot, 0x480, 0);
   gHeatGaugeSlide = 0;
   gHeatGauge_Held = 0;
-  FieldScheduler_AddCallback(HeatGauge_Draw, 0xc76);
+  FieldScheduler_AddCallback(HeatGauge_Draw, TASK_PRIORITY_MAP - 10);
 }
 
 /// While held (1), the gauge stays on screen.

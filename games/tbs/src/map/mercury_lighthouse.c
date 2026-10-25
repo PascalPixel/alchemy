@@ -441,26 +441,27 @@ MercuryLighthouse_GetObjectEventTemplates(void) {
 }
 
 /// MercuryLighthouseLower, as in MercuryLighthouseEntrance, once Ply has worked
-/// there: touching metatile behavior 21 keeps blue ripples spreading from the
-/// leader.
+/// there: touching  MB_MERCURY_LIGHTHOUSE_POOL_WATER keeps blue ripples
+/// spreading from the leader.
 static void MercuryLighthouse_RippleWhileInPool(void) {
   MercuryLighthouse_RippleAroundLeader();
 }
 
-/// MercuryLighthouseLower, touching metatile behavior 31 or 32: the leader
-/// loses his lights.
+/// MercuryLighthouseLower, touching  MB_MERCURY_LIGHTHOUSE_POOL_RIM or metatile
+/// behavior 32: the leader loses his lights.
 static void MercuryLighthouse_LoseLightsOnLower(void) {
   MercuryLighthouse_LoseLights();
 }
 
-/// MercuryLighthouseLower, walking into metatile behavior 11, 21 or 31: one
-/// step across the pool, spending a light.
+/// MercuryLighthouseLower, walking into  MB_MERCURY_LIGHTHOUSE_POOL_HEART,
+/// MB_MERCURY_LIGHTHOUSE_POOL_WATER or MB_MERCURY_LIGHTHOUSE_POOL_RIM: one step
+/// across the pool, spending a light.
 static void MercuryLighthouse_HopAcrossPoolOnLower(void) {
   MercuryLighthouse_HopAcrossPool();
 }
 
-/// MercuryLighthouseLower, touching metatile behavior 11, the pool's heart: the
-/// column of lights over the leader grows a stage.
+/// MercuryLighthouseLower, touching  MB_MERCURY_LIGHTHOUSE_POOL_HEART, the
+/// pool's heart: the column of lights over the leader grows a stage.
 static void MercuryLighthouse_ChargeLightsOnLower(void) {
   MercuryLighthouse_ChargeLights();
 }
@@ -1297,15 +1298,15 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
 #endif
           MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
           ObjectEvent_RefreshSelectorById(LOCALID_SLIDING_STATUE);
-          ObjectEvent_PrepareObject(x, 0, PIXELS(786), 223);
-          ObjectEvent_PrepareObject(x, 0, PIXELS(818), 223);
+          ObjectEvent_PrepareObject(x, 0, PIXELS(786), SPRITE_CRATE);
+          ObjectEvent_PrepareObject(x, 0, PIXELS(818), SPRITE_CRATE);
           ObjectMotion_ResetAndSetPosition(LOCALID_SLIDING_STATUE, 840, 744);
           FieldScript_WaitFrames(5);
           Sound_PlaySong(SE_STONE_GRIND);
           ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_SLIDING_STATUE);
           FieldScript_WaitFrames(40);
           GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL);
-          PaletteFade_SetSource(PALETTE_TINT_NONE, 0);
+          PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
           gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
           FieldScript_FinishScreenTransition();
           FieldScript_WaitTransitionFrames();
@@ -1662,13 +1663,14 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     MercuryLighthouse_MiaCastsPlyOnEntrance();
     FieldScript_WaitFrames(50);
     Sound_PlaySong(SE_PSYNERGY_SPARKLE);
-    PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
-    PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(31, 20, 31), 0);
+    PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+    PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(31, 20, 31),
+                            PALETTES_ALL);
     PaletteFade_StartInterpolation(10);
     WaitFrames(1);
     Sound_PlaySong(SE_SHIMMER);
     WaitFrames(40);
-    PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
+    PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_StartInterpolation(60);
     WaitFrames(60);
     Sound_PlaySong(SE_MERCURY_LIGHTHOUSE_DOOR_OPEN);
@@ -1685,7 +1687,8 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     ObjectEvent_WalkTo(LOCALID_MIA, 840, 600);
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
     MapGrid_CopyCellAttributes(116, 36, 3, 4, 52, 36);
-    ObjectEvent_PrepareObject(PIXELS(840), PIXELS(56), PIXELS(608), 223);
+    ObjectEvent_PrepareObject(PIXELS(840), PIXELS(56), PIXELS(608),
+                              SPRITE_CRATE);
     ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
     ObjectEvent_WalkToAndWait(LOCALID_MIA, 840, 560);
     Import_ObjectEventSetPosition(LOCALID_MIA, 0, 0);
@@ -1776,7 +1779,7 @@ static void MercuryLighthouse_RaiseObjectEventWithSparks(s32 localId) {
   objectEvent = ObjectEvent_GetById(localId);
   objectEvent->motionFlags = 0;
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
-  ObjectEvent_SetSpriteColorById(localId, 0x100);
+  ObjectEvent_SetSpriteColorById(localId, SPRITE_COLOR_BLINK);
   Sound_PlaySong(SE_RISE_WITH_SPARKS);
   options = &optionsStorage;
   options->priority = 1;
@@ -1946,15 +1949,15 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 0);
     ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 792, 200);
     FieldScript_WaitFrames(10);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 18);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_BATHE);
     MercuryLighthouse_RaiseObjectEventWithSparks(LOCALID_PARTY_LEADER);
     FieldScript_WaitFrames(60);
     Task_Remove(MercuryLighthouse_CycleWaterfallPalette);
-    PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
-    PaletteFade_ApplyTarget(PALETTE_TINT_PALE, 0);
+    PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+    PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_ALL);
     PaletteFade_StartInterpolation(120);
     FieldScript_WaitFrames(120);
-    PaletteFade_ApplyTarget(0x7fff, 0);
+    PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
     PaletteFade_StartInterpolation(60);
     FieldScript_WaitFrames(60);
     Import_ScriptRequestWarp(
@@ -2010,7 +2013,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 0);
     ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 792, 200);
     FieldScript_WaitFrames(10);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 18);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_BATHE);
     ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
@@ -2032,12 +2035,12 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     ObjectEvent_WalkToAndWait(LOCALID_IVAN, 792, 200);
     FieldScript_WaitFrames(30);
     MercuryLighthouse_RaiseObjectEventWithSparks(LOCALID_IVAN);
-    PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
+    PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
     Task_Remove(MercuryLighthouse_CycleWaterfallPalette);
-    PaletteFade_ApplyTarget(PALETTE_TINT_PALE, 0);
+    PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_ALL);
     PaletteFade_StartInterpolation(120);
     FieldScript_WaitFrames(120);
-    PaletteFade_ApplyTarget(0x7fff, 0);
+    PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
     PaletteFade_StartInterpolation(60);
     FieldScript_WaitFrames(60);
     FieldScript_End();
@@ -2116,7 +2119,7 @@ static void MercuryLighthouse_EnterRisingPassage(void) {
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
     ObjectEvent_PrepareObject(
         ObjectEvent_GetById(LOCALID_PARTY_LEADER)->x.fixed, 0, PIXELS(702),
-        223);
+        SPRITE_CRATE);
     MapGrid_CopyCellsTo(92, 46, 92, 40, 3, 2);
     ObjectEvent_GetById(LOCALID_PARTY_LEADER)->gravity = 0x8000;
     ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 2);
@@ -2330,7 +2333,8 @@ s32 MercuryLighthouse_Initialize(void) {
     REG_BLDALPHA = alpha;
   }
   MercuryLighthouse_RestoreLights(
-      21, (struct MercuryLighthouseLights *)gMapLocalState);
+      MB_MERCURY_LIGHTHOUSE_POOL_WATER,
+      (struct MercuryLighthouseLights *)gMapLocalState);
   FieldEffect_StartFadeOverlay(0);
   if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
     FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette,
@@ -2608,7 +2612,8 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_UPPER_GATE_FROM_STONE_DOORS_STATUE_FALLS:
       FieldScript_Start();
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_FALLEN_STATUE), 1);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, 15);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER,
+                                       SPRITE_COLOR_HIDDEN);
       ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
       ObjectEvent_GetById(LOCALID_FALLEN_STATUE)->y.fixed = PIXELS(144);
       ObjectEvent_GetById(LOCALID_FALLEN_STATUE)->motionFlags = 0;
@@ -2642,14 +2647,14 @@ s32 MercuryLighthouse_Initialize(void) {
         break;
       MercuryLighthouse_ArriveWithSparks();
       Map_QueueMusic(SE_AMBIENT_WATER);
-      PaletteFade_ApplySource(128 << 9, 0);
-      PaletteFade_SetTarget(0x10003, 1);
+      PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+      PaletteFade_SetTarget(PALETTE_TINT_WARM, PALETTES_BG);
       PaletteFade_StartInterpolation(30);
       FieldScript_WaitTransitionFrames();
       Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
       FieldScript_WaitFrames(30);
       FieldMessage_ShowCentered(MsgMercuryHonorsGoddessRainbows, 0, 0);
-      PaletteFade_SetTarget(128 << 9, 0);
+      PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
       PaletteFade_StartInterpolation(30);
       break;
     case MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE:
@@ -2725,7 +2730,8 @@ s32 MercuryLighthouse_Initialize(void) {
         Import_ObjectEventSetPosition(LOCALID_MIA, 0, 0);
         ObjectEvent_SetPosition(LOCALID_DOOR_STATUE, PIXELS(824), PIXELS(600));
         MapGrid_CopyCellAttributes(116, 36, 3, 4, 52, 36);
-        ObjectEvent_GetById(LOCALID_DOOR_STATUE)->collisionFlags = 254;
+        ObjectEvent_GetById(LOCALID_DOOR_STATUE)->collisionFlags =
+            0xff & ~OBJ_EVENT_SOLID;
         FieldScript_WaitFrames(1);
       }
       ObjectEvent_GetById(LOCALID_DOOR_STATUE)->motionFlags = 0;
@@ -3389,12 +3395,12 @@ struct MapEvent gMercuryLighthouseLowerEvents[] = {
     { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 55, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_NORTHEAST },
     { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 56, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_UPPER },
     { MAP_EVENT_COORD, 32, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_LoseLightsOnLower) },
-    { COORD_EVENT_WALKING, 31, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_HopAcrossPoolOnLower) },
-    { MAP_EVENT_COORD, 31, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_LoseLightsOnLower) },
-    { COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 21, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_HopAcrossPoolOnLower) },
-    { MAP_EVENT_COORD, 21, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_RippleWhileInPool) },
-    { COORD_EVENT_WALKING, 11, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_HopAcrossPoolOnLower) },
-    { MAP_EVENT_COORD, 11, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_ChargeLightsOnLower) },
+    { COORD_EVENT_WALKING, MB_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_HopAcrossPoolOnLower) },
+    { MAP_EVENT_COORD, MB_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_LoseLightsOnLower) },
+    { COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, MB_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_HopAcrossPoolOnLower) },
+    { MAP_EVENT_COORD, MB_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_RippleWhileInPool) },
+    { COORD_EVENT_WALKING, MB_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_HopAcrossPoolOnLower) },
+    { MAP_EVENT_COORD, MB_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_ChargeLightsOnLower) },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_EnterRisingPassage) },
     { COORD_EVENT_WALKING, 25, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_PushChannelPipes) },
     { MAP_EVENT_TALK, LOCALID_MIA, FLAG_MIA_JOINED_PARTY, MSGNO(MsgMercuryLighthouseThePathIsBlockedAgainWhat) },

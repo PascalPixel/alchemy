@@ -867,7 +867,7 @@ s32 Imil_Initialize(void) {
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     warpDest = gSaveBlock.warpDest;
     if (warpDest == IMIL_INTERIORS_HOUSE_SOUTHWEST) {
-      ObjectEvent_ConfigureSpriteColor(LOCALID_CRATE, 15);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_CRATE, SPRITE_COLOR_HIDDEN);
       ObjectEvent_GetById(LOCALID_CRATE)->collisionFlags |= 8;
       ObjectMotion_SetActionVariant(LOCALID_CRATE, 1);
       if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
@@ -1032,7 +1032,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   ObjectEvent_SetActionScript(LOCALID_OLD_MAN, table);
   Script_ShowMessageAndWait(LOCALID_OLD_MAN, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_MIA, FACING_WEST, 20);
-  ObjectEvent_FaceDirection(LOCALID_OLD_WOMAN, 0, 10);
+  ObjectEvent_FaceDirection(LOCALID_OLD_WOMAN, FACING_EAST, 10);
   ObjectMotion_SetAnimationAndWait(LOCALID_OLD_WOMAN, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_OLD_WOMAN, 0, 40);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
@@ -1062,7 +1062,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   FieldScript_WaitFrames(40);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(LOCALID_OLD_WOMAN, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_OLD_WOMAN, FACING_EAST, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_OLD_WOMAN, ANIM_NOD);
   Script_ShowMessageAndWait(LOCALID_OLD_WOMAN, 0, 10);
   ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
@@ -1088,19 +1088,19 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Script_ShowMessage(LOCALID_MIA, 0);
   Script_PlaySong(SE_PSYNERGY_SPARKLE);
   // The lighthouse interrupts the visit; Mia leaves and the party follows.
-  PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
-  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(31, 20, 31), 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(31, 20, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(10);
   WaitFrames(1);
   Script_PlaySong(SE_SHIMMER);
   WaitFrames(40);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(60);
   WaitFrames(60);
   ObjectEvent_SetAttachedEffect(LOCALID_MIA, ATTACHED_EFFECT_IN_FRONT |
                                                  ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(LOCALID_MIA, 0, 10);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_EAST, 10);
   ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(2), PIXELS(1));
   ObjectEvent_WalkToAndWait(LOCALID_MIA, 202, 198);
   FieldScript_WaitFrames(40);
@@ -1213,7 +1213,7 @@ UNUSED static void Imil_SwayAndSpark(struct ObjectEvent *objectEvent) {
       spark->scaleY = 3 * Q16_ONE / 5;
       spark->priorityFlags = 2;
       spark->motionFlags = 0;
-      ObjectEvent_SetSpriteColor(spark, 9);
+      ObjectEvent_SetSpriteColor(spark, SPRITE_COLOR_BLUE_TINT);
       ObjectEvent_SetScript(spark, gImil_SparkScript);
     }
   }
@@ -1249,7 +1249,7 @@ static void Imil_InitializeRisingEffect(struct ObjectEvent *work) {
   sprite = work->sprite;
   sprite->image.priority = 1;
 
-  ObjectEvent_SetSpriteColor(work, 9);
+  ObjectEvent_SetSpriteColor(work, SPRITE_COLOR_BLUE_TINT);
   ObjectEvent_SetSpriteFlags(work, 0);
 
   work->scaleX = Q16_ONE / 2;

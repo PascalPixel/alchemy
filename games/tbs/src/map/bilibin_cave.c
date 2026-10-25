@@ -327,7 +327,7 @@ static void EventScript_DouseIceRoomFire(void) {
 /// back into a puddle.
 static inline void BilibinCave_MeltFrostBack(s32 localId) {
   FieldScript_Start();
-  ObjectEvent_ConfigureSpriteColor(localId, 0);
+  ObjectEvent_ConfigureSpriteColor(localId, SPRITE_COLOR_NORMAL);
   FieldScript_WaitFrames(40);
   Sound_PlaySong(SE_HIDDEN_PASSAGE_OPEN);
   ObjectMotion_SetAnimationAndWait(localId, PUDDLE_ANIMATION_MELT);

@@ -194,7 +194,7 @@ static void EventScript_TintSolRoom(void) {
     paletteActive = Script_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
     if (paletteActive == 0) {
       FieldScript_Start();
-      PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, 1);
+      PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, PALETTES_BG);
       PaletteFade_StartInterpolation(20);
       GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
       GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
@@ -212,7 +212,7 @@ static void EventScript_TintSolRoom(void) {
   } else {
     if (Script_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED) == 0) {
       FieldScript_Start();
-      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
+      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
       PaletteFade_StartInterpolation(20);
       GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
       GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
@@ -229,7 +229,7 @@ static void EventScript_TintSolRoom(void) {
 static void EventScript_RestorePlainTint(void) {
   if (Script_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED) == 0) {
     FieldScript_Start();
-    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
     PaletteFade_StartInterpolation(20);
     GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
     GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
@@ -251,7 +251,7 @@ static void EventScript_TintLunaRoom(void) {
     paletteActive = Script_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
     if (paletteActive == 0) {
       FieldScript_Start();
-      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
+      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
       PaletteFade_StartInterpolation(20);
       GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
       GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
@@ -261,7 +261,7 @@ static void EventScript_TintLunaRoom(void) {
   } else {
     if (Script_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED) == 0) {
       FieldScript_Start();
-      PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, 1);
+      PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, PALETTES_BG);
       PaletteFade_StartInterpolation(20);
       GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
       GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
@@ -280,7 +280,7 @@ static void EventScript_TintLunaRoom(void) {
 /// flags.
 static void EventScript_TintPassageBetweenRooms(void) {
   if (Script_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED) == 0) {
-    PaletteFade_ApplyTarget(SOL_SANCTUM_WARM_TINT, 1);
+    PaletteFade_ApplyTarget(SOL_SANCTUM_WARM_TINT, PALETTES_BG);
     PaletteFade_StartInterpolation(20);
     GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED);
     GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
@@ -373,7 +373,7 @@ static void EventScript_KradenFindsHeartOfSanctum(void) {
     Sound_PlaySong(SONG_FADE_OUT_BGM);
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 288, 232);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
     FieldScript_WaitFrames(20);
     Sound_PlaySong(MUS_FOREST);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
@@ -435,7 +435,8 @@ static void EventScript_KradenFindsHeartOfSanctum(void) {
     ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST + FACING_STEP,
                               10);
     SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_GARET, 6);
-    ObjectEvent_SetAttachedEffect(LOCALID_JENNA, 0x102);
+    ObjectEvent_SetAttachedEffect(LOCALID_JENNA, ATTACHED_EFFECT_IN_FRONT |
+                                                     ATTACHED_EFFECT_ONCE);
     FieldScript_WaitFrames(40);
     ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST, 10);
     // Jenna: "Let's hurry back to the village and tell everybody!"
@@ -444,7 +445,8 @@ static void EventScript_KradenFindsHeartOfSanctum(void) {
     ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
     FieldScript_WaitFrames(10);
     ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTHWEST, 20);
-    ObjectEvent_SetAttachedEffect(LOCALID_KRADEN, 0x102);
+    ObjectEvent_SetAttachedEffect(LOCALID_KRADEN, ATTACHED_EFFECT_IN_FRONT |
+                                                      ATTACHED_EFFECT_ONCE);
     FieldScript_WaitFrames(20);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH + FACING_STEP,
                               40);
@@ -565,7 +567,7 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   FieldScript_SetMessageId(MsgSolSanctumWhRoom);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 488, 176);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetPosition(LOCALID_KRADEN, leader->x.fixed, leader->z.fixed);
@@ -649,7 +651,7 @@ static void EventScript_KradenStopsPartyLeaving(void) {
     return;
   }
   FieldScript_Start();
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
   FieldScript_SetMessageId(MsgSolSanctumWayLeadsOutSanctum);
   if (Script_GetFlag(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0 ||
       GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) == 0) {
@@ -872,7 +874,7 @@ static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
   ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(574), PIXELS(120));
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   WaitFrames(1);
-  PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, 1);
+  PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
   GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
@@ -883,10 +885,10 @@ static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(40);
   Script_PlaySong(SE_THUNDER);
-  PaletteFade_ApplyTarget(0x10005, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_BG);
   PaletteFade_StartInterpolation(8);
   FieldScript_WaitFrames(32);
-  PaletteFade_SetTarget(SOL_SANCTUM_BLUE_TINT, 1);
+  PaletteFade_SetTarget(SOL_SANCTUM_BLUE_TINT, PALETTES_BG);
   PaletteFade_StartInterpolation(24);
 }
 
@@ -1149,7 +1151,7 @@ static void EventScript_KradenSeesLunaPictureChange(void) {
       // Sol!"
       FieldScript_SetMessageId(MsgSolSanctumThePictureOfLunaChanged);
       ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 576, 232);
-      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
       FieldCamera_WaitForArrival();
       FieldScript_WaitFrames(10);
       ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
@@ -1162,7 +1164,9 @@ static void EventScript_KradenSeesLunaPictureChange(void) {
       ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
       // Kraden: "But other than that, nothing looks different..."
       SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_KRADEN, 6);
-      ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, 0x102);
+      ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER,
+                                    ATTACHED_EFFECT_IN_FRONT |
+                                        ATTACHED_EFFECT_ONCE);
       FieldScript_WaitFrames(40);
       ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
       FieldScript_WaitFrames(30);
@@ -1203,7 +1207,7 @@ static void EventScript_KradenSeesLunaPictureChange(void) {
 static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void) {
   Sound_PlaySong(MUS_FOREST);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 376, 184);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
   ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(376), PIXELS(184));
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 392, 168);
@@ -1241,7 +1245,7 @@ static void EventScript_RiseToElementalStarRoom(void) {
     FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
     FieldCamera_MoveTo(PIXELS(287), -1, PIXELS(148), 1);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 288, 120);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
     ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 30);
     ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(288), PIXELS(120));
     ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
@@ -1291,7 +1295,7 @@ static void EventScript_RiseToElementalStarRoom(void) {
     Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
     Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
     // Kraden: "Ah ha! This has to be it." and "Let's go, Isaac!"
     FieldScript_SetMessageId(MsgSolSanctumHa);
     SolSanctumLunaSolRooms_ShowMessageAndWait(
@@ -1315,7 +1319,7 @@ static void EventScript_RiseToElementalStarRoom(void) {
     sprite = 0;
     objectEvent->motionFlags = (u32)sprite;
     Sound_PlaySong(SE_ASCEND);
-    ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 0x100);
+    ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_BLINK);
     sprite = objectEvent->sprite;
     frame = 0;
     sprite->flags = 0;
@@ -1356,7 +1360,7 @@ static void EventScript_RiseToElementalStarRoom(void) {
       objectEvent->motionFlags = frame;
     }
     Sound_PlaySong(SE_ASCEND);
-    ObjectEvent_SetSpriteColorById(LOCALID_KRADEN, 0x100);
+    ObjectEvent_SetSpriteColorById(LOCALID_KRADEN, SPRITE_COLOR_BLINK);
     sprite = objectEvent->sprite;
     sprite->flags = 0;
     do {
@@ -1379,7 +1383,7 @@ static void EventScript_RiseToElementalStarRoom(void) {
     gFieldWork->transitionFrames = 24;
     FieldScript_FinishScreenTransition();
     FieldScript_WaitTransitionFrames();
-    PaletteFade_SetTarget(0, 0);
+    PaletteFade_SetTarget(RGB(0, 0, 0), PALETTES_ALL);
     PaletteFade_StartInterpolation(1);
     WaitFrames(1);
     Import_ScriptRequestWarp(
@@ -1416,14 +1420,14 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
       GameFlag_Get(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) == 0) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
   }
-  PaletteFade_SetSource(PALETTE_TINT_NONE, 0);
+  PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED) != 0) {
-      PaletteFade_SetTarget(SOL_SANCTUM_BLUE_TINT, 1);
+      PaletteFade_SetTarget(SOL_SANCTUM_BLUE_TINT, PALETTES_BG);
       PaletteFade_StartInterpolation(1);
       WaitFrames(1);
     } else if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED) != 0) {
-      PaletteFade_SetTarget(SOL_SANCTUM_WARM_TINT, 1);
+      PaletteFade_SetTarget(SOL_SANCTUM_WARM_TINT, PALETTES_BG);
       PaletteFade_StartInterpolation(1);
       WaitFrames(1);
     }
@@ -1593,8 +1597,8 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   FieldCamera_MoveTo(PIXELS(286), -1, PIXELS(134), 0);
   MapGrid_CenterOnFollowedPoint();
   WaitFrames(1);
-  PaletteFade_ApplySource(0x7fff, 0);
-  PaletteFade_SetTarget(0x7fff, 0);
+  PaletteFade_ApplySource(RGB(31, 31, 31), PALETTES_ALL);
+  PaletteFade_SetTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   WaitFrames(1);
   ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(280), PIXELS(134));
@@ -1605,18 +1609,20 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 1;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
-  PaletteFade_SetTarget(SOL_SANCTUM_BLUE_TINT, 1);
+  PaletteFade_SetTarget(SOL_SANCTUM_BLUE_TINT, PALETTES_BG);
   PaletteFade_StartInterpolation(120);
   WaitFrames(120);
   GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
   GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
   GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(60);
   WaitFrames(100);
   // Both look around, bewildered, as the rooms give a jolt.
-  ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, 0x102);
-  FieldEffect_ConfigureLinkedObject(LOCALID_GARET, 0x102);
+  ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
+                                                          ATTACHED_EFFECT_ONCE);
+  FieldEffect_ConfigureLinkedObject(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
+                                                       ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(60);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 20);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 40);

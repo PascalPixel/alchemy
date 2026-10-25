@@ -55,9 +55,10 @@ void Colosso_StartRaceGauge(s32 playerLocalId, s32 opponentLocalId,
   // adds the state bit here. Modern GCC already includes that bit in a
   // function pointer; adding one would turn it into an ARM-state address.
 #ifdef UBFIX
-  FieldScheduler_AddCallback(Colosso_DrawGauge, 0xc76);
+  FieldScheduler_AddCallback(Colosso_DrawGauge, TASK_PRIORITY_MAP - 10);
 #else
-  FieldScheduler_AddCallback((TaskFunc)((s32)Colosso_DrawGauge + 1), 0xc76);
+  FieldScheduler_AddCallback((TaskFunc)((s32)Colosso_DrawGauge + 1),
+                             TASK_PRIORITY_MAP - 10);
 #endif
 
   Free((void *)handle);
@@ -78,5 +79,5 @@ void Colosso_StartOpponent(s32 resource) {
     recorder->still = 0;
     recorder->pathIndex = 0;
   }
-  FieldScheduler_AddCallback(Colosso_UpdatePathOpponent, 0xc85);
+  FieldScheduler_AddCallback(Colosso_UpdatePathOpponent, TASK_PRIORITY_MAP + 5);
 }

@@ -86,6 +86,7 @@
 #include "palbuf.h"
 #include "map_header.h"
 #include "songs.h"
+#include "io_reg.h"
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
 
@@ -212,9 +213,9 @@ static s32 Kolima_UpdateTimedAppearance(struct Object *interpreter) {
   s32 appearanceTimer = (u16)objectEvent->timer + ((u32)scaledRandom >> 16);
   objectEvent->timer = appearanceTimer;
   if ((s16)appearanceTimer > 1000) {
-    ObjectEvent_SetSpriteColor(objectEvent, 7);
+    ObjectEvent_SetSpriteColor(objectEvent, SPRITE_COLOR_WHITE);
   } else {
-    ObjectEvent_SetSpriteColor(objectEvent, 10);
+    ObjectEvent_SetSpriteColor(objectEvent, SPRITE_COLOR_RED_TINT);
   }
   if ((s16)objectEvent->timer > 1200) {
     objectEvent->timer = 0;
@@ -765,7 +766,7 @@ static void Kolima_WitnessForestCurse(void) {
   ObjectMotion_SetVariantCallback(LOCALID_GARET, 1);
   Kolima_ShowMessageAndWait(LOCALID_GARET, 20);
   ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1) / 2, PIXELS(1) / 4);
-  ObjectEvent_GetById(LOCALID_IVAN)->steeringFlags &= 254;
+  ObjectEvent_GetById(LOCALID_IVAN)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkToAndWait(LOCALID_IVAN, 72, 0x11e);
   FieldScript_WaitFrames(1);
   ObjectEvent_GetById(LOCALID_IVAN)->steeringFlags |= motionFacingFlag;
@@ -834,15 +835,15 @@ static void Kolima_WitnessForestCurse(void) {
   Kolima_FaceObjectEventAndWait(LOCALID_IVAN, FACING_NORTH, 10);
   Script_PlaySong(SONG_FADE_OUT_BGM);
   Script_PlaySong(SE_CURSE_FALL);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   WaitFrames(1);
   // The falling sparkles threaten to turn the party into trees as well.
   gKolima_EffectActive = 1;
   FieldScheduler_AddCallback(Kolima_SpawnCurseSparkle, TASK_PRIORITY_MAP);
   WaitFrames(20);
-  PaletteFade_ApplyTarget(0x405210, 1);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(16, 16, 20), PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(120);
   WaitFrames(60);
   squashActions = gKolima_PartySquashActions;
@@ -910,7 +911,7 @@ static void Kolima_WitnessForestCurse(void) {
   FieldScript_WaitFrames(160);
   Task_Remove(Kolima_SpawnCurseSparkle);
   FieldScript_WaitFrames(120);
-  PaletteFade_ApplyTarget(0x406218, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   WaitFrames(60);
   // Bring the falling curtain over the party and reveal their protective
@@ -961,10 +962,14 @@ static void Kolima_WitnessForestCurse(void) {
   }
   mapState = (s32 *)&gFallingEffectState;
   *mapState = KOLIMA_DUST_DRIFTING;
-  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags &= 254;
-  ObjectEvent_GetById(LOCALID_GARET)->priorityFlags &= 254;
-  ObjectEvent_GetById(LOCALID_IVAN)->priorityFlags &= 254;
-  ObjectEvent_GetById(LOCALID_MIA)->priorityFlags &= 254;
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectEvent_GetById(LOCALID_GARET)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectEvent_GetById(LOCALID_IVAN)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectEvent_GetById(LOCALID_MIA)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 3);
   ObjectMotion_SetActionVariant(LOCALID_GARET, 3);
   ObjectMotion_SetActionVariant(LOCALID_IVAN, 3);
@@ -974,25 +979,29 @@ static void Kolima_WitnessForestCurse(void) {
   FieldScheduler_AddCallback(Kolima_AlternateProtectiveFieldHeights,
                              TASK_PRIORITY_MAP);
   Script_PlaySong(SE_SHIMMER);
-  ObjectEvent_GetById(LOCALID_LEADER_PSYNERGY_FIELD)->priorityFlags &= 254;
+  ObjectEvent_GetById(LOCALID_LEADER_PSYNERGY_FIELD)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectMotion_SetActionVariant(LOCALID_LEADER_PSYNERGY_FIELD, 2);
   ObjectEvent_SetPosition(LOCALID_LEADER_PSYNERGY_FIELD, PIXELS(120),
                           PIXELS(248));
   growFieldActions = gKolima_ProtectiveFieldGrowActions;
   ObjectEvent_SetActionScript(LOCALID_LEADER_PSYNERGY_FIELD, growFieldActions);
-  ObjectEvent_GetById(LOCALID_IVAN_PSYNERGY_FIELD)->priorityFlags &= 254;
+  ObjectEvent_GetById(LOCALID_IVAN_PSYNERGY_FIELD)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectMotion_SetActionVariant(LOCALID_IVAN_PSYNERGY_FIELD, 2);
   ObjectEvent_SetPosition(LOCALID_IVAN_PSYNERGY_FIELD, PIXELS(100),
                           PIXELS(274));
   ObjectEvent_SetActionScript(LOCALID_IVAN_PSYNERGY_FIELD, growFieldActions);
   if (gKolima_MiaInParty != 0) {
-    ObjectEvent_GetById(LOCALID_MIA_PSYNERGY_FIELD)->priorityFlags &= 254;
+    ObjectEvent_GetById(LOCALID_MIA_PSYNERGY_FIELD)->priorityFlags &=
+        ~OBJ_EVENT_PRIORITY_AUTOMATIC;
     ObjectMotion_SetActionVariant(LOCALID_MIA_PSYNERGY_FIELD, 2);
     ObjectEvent_SetPosition(LOCALID_MIA_PSYNERGY_FIELD, PIXELS(74),
                             PIXELS(254));
     ObjectEvent_SetActionScript(LOCALID_MIA_PSYNERGY_FIELD, growFieldActions);
   }
-  ObjectEvent_GetById(LOCALID_GARET_PSYNERGY_FIELD)->priorityFlags &= 254;
+  ObjectEvent_GetById(LOCALID_GARET_PSYNERGY_FIELD)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectMotion_SetActionVariant(LOCALID_GARET_PSYNERGY_FIELD, 2);
   ObjectEvent_SetPosition(LOCALID_GARET_PSYNERGY_FIELD, PIXELS(94),
                           PIXELS(225));
@@ -1006,7 +1015,7 @@ static void Kolima_WitnessForestCurse(void) {
   Task_Remove(Kolima_UpdateCurseDust);
   FieldScript_WaitFrames(120);
   Script_PlaySong(SONG_FADE_OUT_BGM);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   WaitFrames(60);
   ObjectMotion_EnableActionAndResetMotion(LOCALID_LEADER_PSYNERGY_FIELD);
@@ -1223,7 +1232,7 @@ static void Kolima_WitnessForestCurse(void) {
   }
   Script_ShowMessage(LOCALID_GARET, 0);
   Script_PlaySong(MUS_FOREST);
-  PaletteFade_ApplyTarget(0x406218, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   WaitFrames(60);
   gFallingEffectWidth = 0;
@@ -1246,10 +1255,14 @@ static void Kolima_WitnessForestCurse(void) {
   if (gKolima_MiaInParty != 0) {
     Kolima_FaceObjectEventAndWait(LOCALID_MIA, FACING_NORTH, 10);
   }
-  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags &= 254;
-  ObjectEvent_GetById(LOCALID_GARET)->priorityFlags &= 254;
-  ObjectEvent_GetById(LOCALID_IVAN)->priorityFlags &= 254;
-  ObjectEvent_GetById(LOCALID_MIA)->priorityFlags &= 254;
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectEvent_GetById(LOCALID_GARET)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectEvent_GetById(LOCALID_IVAN)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectEvent_GetById(LOCALID_MIA)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 3);
   ObjectMotion_SetActionVariant(LOCALID_GARET, 3);
   ObjectMotion_SetActionVariant(LOCALID_IVAN, 3);
@@ -1373,7 +1386,7 @@ static void Kolima_WitnessForestCurse(void) {
   Script_ShowMessage(LOCALID_TRET, 0);
   Task_Remove(Kolima_UpdateCurseDust);
   FieldScript_WaitFrames(80);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   WaitFrames(80);
   ObjectMotion_EnableActionAndResetMotion(LOCALID_LEADER_PSYNERGY_FIELD);

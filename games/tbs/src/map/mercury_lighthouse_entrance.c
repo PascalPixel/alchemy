@@ -30,18 +30,20 @@
 ///   starts the colours shimmering and opens the routes that need it
 ///   (FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED): it copies the metatile behaviors
 ///   of 13 by 7 cells over the pool at (6, 32), and entering the goddess's room
-///   once it is set copies them again. Cells out in the water take metatile
-///   behavior 21, the heart 11 and cells on the pool's rim 31, which the
-///   hops and lights below answer, while the water between them stays a wall
+///   once it is set copies them again. Cells out in the water take
+///   MB_MERCURY_LIGHTHOUSE_POOL_WATER, the heart
+///   MB_MERCURY_LIGHTHOUSE_POOL_HEART and cells on the pool's rim
+///   MB_MERCURY_LIGHTHOUSE_POOL_RIM, which the hops and lights below answer,
+///   while the water between them stays a wall
 ///   (https://alchemy.pascalpixel.com/places/mercury-lighthouse-entrance/pool-ply-cells.png:
 ///   the pool's cells tinted by what each does, a wall, a hop, or the lights
 ///   given or taken, entered by the goddess's room before and after Ply, the
 ///   cells Ply changed outlined). From then on
 ///   the pool's heart
-///   (metatile behavior 11) gives the leader up to three lights, each hop into
-///   the water spends one, and landing in it without one sinks the leader back
-///   to the heart (the helpers of common/mercury_lighthouse_pillar.h). Dropping
-///   in from above
+///   ( MB_MERCURY_LIGHTHOUSE_POOL_HEART) gives the leader up to three lights,
+///   each hop into the water spends one, and landing in it without one sinks
+///   the leader back to the heart (the helpers of
+///   common/mercury_lighthouse_pillar.h). Dropping in from above
 ///   (MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE) the first
 ///   time, the leader lands in a burst, and until Ply has worked the
 ///   inscription's words appear.
@@ -202,27 +204,29 @@ static s32 MercuryLighthouseEntrance_MiaWatchesLeader(
 
 #include "common/mercury_lighthouse_palette_cycle.h"
 
-/// Mercury Lighthouse, the pool, once Ply has worked: touching metatile
-/// behavior 21 keeps blue ripples spreading from the leader while there.
+/// Mercury Lighthouse, the pool, once Ply has worked: touching
+/// MB_MERCURY_LIGHTHOUSE_POOL_WATER keeps blue ripples spreading from the
+/// leader while there.
 static void MercuryLighthouseEntrance_RippleAroundLeader(void) {
   MercuryLighthouse_RippleAroundLeader();
 }
 
-/// Mercury Lighthouse, the pool, once Ply has worked: touching metatile
-/// behavior 31 takes the leader's lights.
+/// Mercury Lighthouse, the pool, once Ply has worked: touching
+/// MB_MERCURY_LIGHTHOUSE_POOL_RIM takes the leader's lights.
 static void MercuryLighthouseEntrance_LoseLights(void) {
   MercuryLighthouse_LoseLights();
 }
 
-/// Mercury Lighthouse, the pool, once Ply has worked: walking into metatile
-/// behavior 11, 21 or 31 hops the leader two cells the pressed way, spending a
-/// light on a hop into the water.
+/// Mercury Lighthouse, the pool, once Ply has worked: walking into
+/// MB_MERCURY_LIGHTHOUSE_POOL_HEART, MB_MERCURY_LIGHTHOUSE_POOL_WATER or
+/// MB_MERCURY_LIGHTHOUSE_POOL_RIM hops the leader two cells the pressed way,
+/// spending a light on a hop into the water.
 static void MercuryLighthouseEntrance_HopAcrossPool(void) {
   MercuryLighthouse_HopAcrossPool();
 }
 
 /// Mercury Lighthouse, the pool, once Ply has worked: touching its heart
-/// (metatile behavior 11) gives the leader lights, up to three.
+/// ( MB_MERCURY_LIGHTHOUSE_POOL_HEART) gives the leader lights, up to three.
 static void MercuryLighthouseEntrance_ChargeLights(void) {
   MercuryLighthouse_ChargeLights();
 }
@@ -309,10 +313,10 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
   if (leaderColumn == 12 && leaderRow == 32) {
     FieldScript_Start();
     // Fade the scene before releasing fifteen sparks above the pool.
-    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_StartInterpolation(60);
     FieldScript_WaitFrames(120);
-    PaletteFade_ApplyTarget(PALETTE_TINT_PALE, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_BG);
     PaletteFade_StartInterpolation(60);
     FieldScript_WaitFrames(40);
     sparkIndex = 0;
@@ -347,7 +351,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
                                TASK_PRIORITY_MAP);
     MapGrid_CopyCellsTo(37, 98, 10, 97, 5, 3);
     MapGrid_CopyCellAttributes(70, 32, 13, 7, 6, 32);
-    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_StartInterpolation(60);
     FieldScript_WaitFrames(120);
     FieldScript_End();
@@ -434,7 +438,8 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   }
   // Restore persistent lighting and the Retreat destination first.
   MercuryLighthouse_RestoreLights(
-      21, (struct MercuryLighthouseLights *)gMapLocalState);
+      MB_MERCURY_LIGHTHOUSE_POOL_WATER,
+      (struct MercuryLighthouseLights *)gMapLocalState);
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   gSaveBlock.retreatWarpDest = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
   gSaveBlock.retreatMap = (s32)&MapId_MercuryLighthouseExterior;
@@ -534,14 +539,14 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     ObjectEvent_Get(LOCALID_PARTY_LEADER)->gravity = 0x10000;
     ObjectEvent_Get(LOCALID_PARTY_LEADER)->bounce = 0x4000;
     if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED)) {
-      PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
-      PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
+      PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+      PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
       PaletteFade_StartInterpolation(30);
       FieldScript_WaitTransitionFrames();
       Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
       FieldScript_WaitFrames(30);
       FieldMessage_ShowCentered(MsgMercuryWhoHonorsHeart, 0, 0);
-      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
+      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
       PaletteFade_StartInterpolation(30);
     }
     FieldScript_End();
@@ -556,7 +561,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     Map_QueueMusic(SE_AMBIENT_WATER);
     break;
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_PIPE:
-    ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 15);
+    ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
     ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_PARTY_LEADER), 0);
     FieldScript_Start();
     MapGrid_CenterOnFollowedPoint();
@@ -936,12 +941,12 @@ struct ObjectEventTemplate gMercuryLighthouseEntrance_ObjectEventTemplates[] = {
 };
 
 struct MapEvent gMercuryLighthouseEntrance_Events[] = {
-    { COORD_EVENT_WALKING, 31, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_HopAcrossPool) },
-    { MAP_EVENT_COORD, 31, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_LoseLights) },
-    { COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 21, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_HopAcrossPool) },
-    { MAP_EVENT_COORD, 21, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_RippleAroundLeader) },
-    { COORD_EVENT_WALKING, 11, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_HopAcrossPool) },
-    { MAP_EVENT_COORD, 11, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_ChargeLights) },
+    { COORD_EVENT_WALKING, MB_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_HopAcrossPool) },
+    { MAP_EVENT_COORD, MB_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_LoseLights) },
+    { COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, MB_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_HopAcrossPool) },
+    { MAP_EVENT_COORD, MB_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_RippleAroundLeader) },
+    { COORD_EVENT_WALKING, MB_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_HopAcrossPool) },
+    { MAP_EVENT_COORD, MB_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouseEntrance_ChargeLights) },
     { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouseEntrance_ReturnToDoorway) },
     { MAP_EVENT_COORD, 40, IF_FLAG_SET(FLAG_LIZARD_MAN_STEPPED_ASIDE), EVENT_SCRIPT(MercuryLighthouseEntrance_LizardManReturnsToCentre) },
     { MAP_EVENT_COORD, 42, IF_FLAG_SET(FLAG_LIZARD_MAN_STEPPED_ASIDE), EVENT_SCRIPT(MercuryLighthouseEntrance_LizardManReturnsToCentre) },

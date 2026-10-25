@@ -260,7 +260,7 @@ static void EventScript_KradenPlansSanctumVisit(void) {
     FieldScript_SetMessageId(MsgValeKradenOhIsaac);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 1);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 232, 264);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
     ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_KRADEN, 20);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
     Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
@@ -363,7 +363,7 @@ static void EventScript_KradenPlansSanctumVisit(void) {
     FieldScript_WaitFrames(10);
     Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
     Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
     ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
     ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_SOUTH, 16);
@@ -454,7 +454,7 @@ static void EventScript_KradenPlansSanctumVisit(void) {
       Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
       ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_NOD);
       FieldScript_WaitFrames(8);
-      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
       gFieldWork->message++;
     }
     // Kraden: then it is decided.
@@ -467,7 +467,7 @@ static void EventScript_KradenPlansSanctumVisit(void) {
                               10);
     ValeKradensCottage_NodTogether();
     FieldScript_WaitFrames(10);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
     FieldScript_WaitFrames(20);
     // Kraden makes Isaac the leader; Garet and Jenna squabble over who would
     // be nervous.
@@ -564,13 +564,13 @@ static void EventScript_KradenSetsOff(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 10);
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_WEST, 10);
   Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
@@ -653,9 +653,9 @@ static void EventScript_MeetSaturosAndMenardi(void) {
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_WalkTo(LOCALID_JENNA, 376, 328);
   ObjectEvent_WalkToAndWait(LOCALID_GARET, 408, 328);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
-  Import_ObjectEventSetAnimation(LOCALID_JENNA, 0);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, 0);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STILL);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STILL);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_EAST, 20);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
@@ -870,9 +870,9 @@ static void EventScript_OverhearKraden(void) {
     ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
     ObjectEvent_WalkTo(LOCALID_JENNA, 296, 328);
     ObjectEvent_WalkToAndWait(LOCALID_GARET, 280, 328);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
-    Import_ObjectEventSetAnimation(LOCALID_JENNA, 0);
-    Import_ObjectEventSetAnimation(LOCALID_GARET, 0);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
+    Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STILL);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STILL);
     ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST + FACING_STEP, 0);
     ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST + FACING_STEP, 0);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER,

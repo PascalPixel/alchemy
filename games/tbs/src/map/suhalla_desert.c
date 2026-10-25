@@ -413,7 +413,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     if (appearanceRestored == 0) {
       nextFrame = frame + 1;
       IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
-                          BLEND_ALPHA(nextFrame, 16 - nextFrame), 0x20000);
+                          BLEND_ALPHA(nextFrame, 16 - nextFrame), IO_WRITE_16);
     } else {
       nextFrame = frame + 1;
     }
@@ -900,13 +900,15 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
       objectEvent->sprite->flags = 0;
     }
   }
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND, IO_WRITE_16);
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN)) {
     stormAlpha = 16;
     Map_QueueMusic(SE_SANDSTORM);
   }
+  // BLEND_ALPHA(stormAlpha, 16 - stormAlpha), whose operand order compiles
+  // differently.
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - stormAlpha) << 8) | stormAlpha,
-                      0x20000);
+                      IO_WRITE_16);
 }
 
 /// The second map's storms on entry, as the first map's; the fourth storm's
@@ -956,13 +958,15 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED + 4)) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_DOUSED);
   }
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND, IO_WRITE_16);
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN)) {
     stormAlpha = 16;
     Map_QueueMusic(SE_SANDSTORM);
   }
+  // BLEND_ALPHA(stormAlpha, 16 - stormAlpha), whose operand order compiles
+  // differently.
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - stormAlpha) << 8) | stormAlpha,
-                      0x20000);
+                      IO_WRITE_16);
 }
 
 s32 gFieldEffect_ShortScript[] = {

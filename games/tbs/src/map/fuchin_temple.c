@@ -2556,7 +2556,7 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   // Emit the lesson particles while both temporary child effects run.
   options.priority = 1;
   options.palette = SPRITE_COLOR_RBG;
-  options.type = 0x011d;
+  options.type = SPRITE_SPARKLE;
   for (particleIndex = 0; particleIndex < 64; particleIndex++) {
     if ((particleIndex & 3) == 0) {
       Sound_PlaySong(SE_GLITTER);

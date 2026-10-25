@@ -140,9 +140,9 @@ static void TolbiShipDeck_PlaceLeaderOnDeck(void);
 // lookups, but does not write them. Its mutable API therefore needs a cast
 // at each call; the tables themselves remain const.
 
-/// A speaker: the object event, and in the top four bits where the message
-/// window opens beside them (4, SPEAKER_WINDOW_ABOVE, is above).
-#define SPEAKER(localId, window) ((window) << 12 | (localId))
+/// A speaker: the object event, with the speaker bits for where its message
+/// window and portrait open.
+#define SPEAKER(localId, bits) ((bits) | (localId))
 
 /// Who is who on deck, numbering each object event template table's rows from
 /// LOCALID_FIRST_PLACED. Every table starts with the same twelve rows of oars,
@@ -1029,7 +1029,7 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     FieldScript_WaitFrames(40);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_KALAY_CAPTAIN, 1);
     FieldScript_SetMessageId(MsgTolbiShipWonderCouldHaveHappened);
-    TolbiShipDeck_Say(SPEAKER(LOCALID_KALAY_CAPTAIN, 4));
+    TolbiShipDeck_Say(SPEAKER(LOCALID_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
     ObjectEvent_ShowEmote(LOCALID_KALAY_CREWMAN, EMOTE_IN_FRONT | EMOTE_WINCE,
                           60);
     ObjectMotion_SetVariantCallback(LOCALID_KALAY_CREWMAN, 2);
@@ -1037,26 +1037,26 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     ObjectMotion_SetVarCbAndRefresh(LOCALID_KALAY_CAPTAIN, 1);
     ObjectEvent_FaceDirection(LOCALID_KALAY_CAPTAIN, FACING_SOUTH + FACING_STEP,
                               0);
-    TolbiShipDeck_Say(SPEAKER(LOCALID_KALAY_CAPTAIN, 4));
+    TolbiShipDeck_Say(SPEAKER(LOCALID_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
     ObjectMotion_SetVarCbAndRefresh(LOCALID_KALAY_CREWMAN, 1);
     TolbiShipDeck_Turn(LOCALID_KALAY_CREWMAN, FACING_NORTHWEST + FACING_STEP);
     TolbiShipDeck_Say(LOCALID_KALAY_CREWMAN);
     TolbiShipDeck_Turn(LOCALID_KALAY_KAJA, FACING_SOUTHEAST + FACING_STEP);
     Import_ObjectEventSetAnimation(LOCALID_KALAY_KAJA, 3);
-    TolbiShipDeck_Say(SPEAKER(LOCALID_KALAY_KAJA, 4));
+    TolbiShipDeck_Say(SPEAKER(LOCALID_KALAY_KAJA, SPEAKER_WINDOW_ABOVE));
     ObjectEvent_ShowEmote(LOCALID_KALAY_CAPTAIN,
                           EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     ObjectEvent_FaceDirection(LOCALID_KALAY_CAPTAIN, FACING_WEST, 20);
-    TolbiShipDeck_Say(SPEAKER(LOCALID_KALAY_CAPTAIN, 4));
+    TolbiShipDeck_Say(SPEAKER(LOCALID_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
     TolbiShipDeck_Turn(LOCALID_KALAY_KAJA, FACING_EAST);
     ObjectMotion_SetAnimationAndWait(LOCALID_KALAY_KAJA, 4);
-    TolbiShipDeck_Say(SPEAKER(LOCALID_KALAY_KAJA, 4));
+    TolbiShipDeck_Say(SPEAKER(LOCALID_KALAY_KAJA, SPEAKER_WINDOW_ABOVE));
     ObjectEvent_ShowEmote(LOCALID_KALAY_CREWMAN,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     ObjectMotion_SetVariantCallback(LOCALID_KALAY_CREWMAN, 2);
     TolbiShipDeck_Say(LOCALID_KALAY_CREWMAN);
     ObjectMotion_SetAnimationAndWait(LOCALID_KALAY_CAPTAIN, 3);
-    TolbiShipDeck_Say(SPEAKER(LOCALID_KALAY_CAPTAIN, 4));
+    TolbiShipDeck_Say(SPEAKER(LOCALID_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
     TolbiShipDeck_Turn(LOCALID_KALAY_CREWMAN, FACING_NORTH + FACING_STEP);
     Import_ObjectEventSetAnimation(LOCALID_KALAY_KAJA, 3);
     ObjectMotion_SetAnimationAndWait(LOCALID_KALAY_CREWMAN, 3);
@@ -1066,19 +1066,21 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     TolbiShipDeck_Turn(LOCALID_KALAY_CAPTAIN, FACING_SOUTH + FACING_STEP);
     FieldScript_SetMessageId(MsgTolbiShipTheresNothingWeCanDo);
     ObjectMotion_SetVariantCallback(LOCALID_KALAY_CAPTAIN, 1);
-    TolbiShipDeck_Say(SPEAKER(LOCALID_KALAY_CAPTAIN, 4));
+    TolbiShipDeck_Say(SPEAKER(LOCALID_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
     ObjectEvent_ShowEmote(LOCALID_KALAY_CREWMAN,
                           EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     ObjectMotion_SetVariantCallback(LOCALID_KALAY_CREWMAN, 2);
     TolbiShipDeck_Say(LOCALID_KALAY_CREWMAN);
     ObjectEvent_ShowEmote(LOCALID_KALAY_CAPTAIN, EMOTE_IN_FRONT | EMOTE_SMILE,
                           20);
-    Script_ShowMessageAndWait(SPEAKER(LOCALID_KALAY_CAPTAIN, 4), 0, 20);
+    Script_ShowMessageAndWait(
+        SPEAKER(LOCALID_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE), 0, 20);
     ObjectEvent_ShowEmote(LOCALID_KALAY_KAJA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-    TolbiShipDeck_Say(SPEAKER(LOCALID_KALAY_KAJA, 4));
+    TolbiShipDeck_Say(SPEAKER(LOCALID_KALAY_KAJA, SPEAKER_WINDOW_ABOVE));
     TolbiShipDeck_Turn(LOCALID_KALAY_CAPTAIN, FACING_WEST);
     ObjectMotion_SetAnimationAndWait(LOCALID_KALAY_CAPTAIN, 3);
-    Script_ShowMessageAndWait(SPEAKER(LOCALID_KALAY_CAPTAIN, 4), 0, 20);
+    Script_ShowMessageAndWait(
+        SPEAKER(LOCALID_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE), 0, 20);
     ObjectEvent_ShowEmote(LOCALID_KALAY_CREWMAN, EMOTE_IN_FRONT | EMOTE_WINCE,
                           40);
     ObjectMotion_SetVariantCallback(LOCALID_KALAY_CREWMAN, 2);
@@ -1095,14 +1097,14 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
                               20);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_KALAY_CAPTAIN, 2);
     FieldScript_WaitFrames(20);
-    TolbiShipDeck_Say(SPEAKER(LOCALID_KALAY_CAPTAIN, 4));
+    TolbiShipDeck_Say(SPEAKER(LOCALID_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
     ObjectEvent_SetAttachedEffect(LOCALID_KALAY_KAJA, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
     ObjectEvent_SetAttachedEffect(
         LOCALID_KALAY_CREWMAN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     FieldScript_WaitFrames(40);
     ObjectMotion_SetAnimationAndWait(LOCALID_KALAY_CAPTAIN, 3);
-    TolbiShipDeck_Say(SPEAKER(LOCALID_KALAY_CAPTAIN, 4));
+    TolbiShipDeck_Say(SPEAKER(LOCALID_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
     FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
     FieldCamera_MoveTo(PIXELS(182), -1, PIXELS(760), 1);
     ObjectEvent_SetSpeed(LOCALID_KALAY_KAJA, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1314,7 +1316,8 @@ static void TolbiShipDeck_ApplyEntryState(void) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
     TolbiShipDeck_CopyUnderwayCells();
     TolbiShipDeck_CopyAnchoredCells();
-    ObjectEvent_ConfigureSpriteColor(LOCALID_ARRIVED_FIRST_PASSENGER + 1, 2);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_ARRIVED_FIRST_PASSENGER + 1,
+                                     SPRITE_COLOR_RBG);
   } else if (GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
     TolbiShipDeck_CopyUnderwayCells();
     TolbiShipDeck_CopyAnchoredCells();
@@ -1614,7 +1617,7 @@ static void TolbiShipDeck_DepartWithParty(void) {
       (struct ObjectEventTemplate *)gTolbiShipDeck_CrewObjectEventTemplates);
   WaitFrames(1);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(232), PIXELS(636));
-  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   ObjectEvent_SetSpriteFlags(record, 0);
   WaitFrames(1);
@@ -1675,7 +1678,7 @@ static void TolbiShipDeck_SightSeaMonsters(void) {
   FieldScript_CallWithLastActiveObjectId(
       (struct ObjectEventTemplate *)gTolbiShipDeck_CrewObjectEventTemplates);
   WaitFrames(1);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
@@ -1688,7 +1691,9 @@ static void TolbiShipDeck_SightSeaMonsters(void) {
   TolbiShipDeck_Turn(LOCALID_SEA_SEAN, FACING_SOUTH + FACING_STEP);
   ObjectMotion_Launch(LOCALID_SEA_SEAN, 4, 20);
   ObjectMotion_SetVariantCallback(LOCALID_SEA_SEAN, 2);
-  FieldScript_ShowMessageThenWait(SPEAKER(LOCALID_SEA_SEAN, 6), 0, 20);
+  FieldScript_ShowMessageThenWait(
+      SPEAKER(LOCALID_SEA_SEAN, SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT),
+      0, 20);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   Import_ScriptRequestWarp(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_TURN);
@@ -1709,7 +1714,7 @@ static void TolbiShipDeck_MonstersBoard(void) {
           gTolbiShipDeck_MonstersBoardObjectEventTemplates);
   WaitFrames(1);
   ObjectEvent_SetPosition(LOCALID_SEA_OURANOS, PIXELS(248), PIXELS(728));
-  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
@@ -1720,7 +1725,8 @@ static void TolbiShipDeck_MonstersBoard(void) {
   ObjectEvent_WalkToAndWait(LOCALID_SEA_OURANOS, 182, 654);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_SEA_OURANOS, 2);
   FieldScript_SetMessageId(MsgTolbiShipNoUseLate);
-  TolbiShipDeck_Say(SPEAKER(LOCALID_SEA_OURANOS, 10));
+  TolbiShipDeck_Say(SPEAKER(LOCALID_SEA_OURANOS,
+                            SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT));
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(12) / 5, PIXELS(6) / 5);
   FieldObjectMotion_ResetAndSetPosition(LOCALID_PARTY_LEADER, 154, 609);
   Sound_PlaySong(SE_ENEMY_CRY);
@@ -1744,9 +1750,12 @@ static void TolbiShipDeck_MonstersBoard(void) {
   ObjectEvent_SetActionScript(LOCALID_SEA_FIRST_ATTACK_MONSTER, shared);
   ObjectEvent_SetActionScript(LOCALID_SEA_FIRST_ATTACK_MONSTER + 1, shared);
   ObjectEvent_SetActionScript(LOCALID_SEA_FIRST_ATTACK_MONSTER + 2, shared);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_ATTACK_MONSTER, 3);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_ATTACK_MONSTER + 1, 3);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_ATTACK_MONSTER + 2, 3);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_ATTACK_MONSTER,
+                                   SPRITE_COLOR_BGR);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_ATTACK_MONSTER + 1,
+                                   SPRITE_COLOR_BGR);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_ATTACK_MONSTER + 2,
+                                   SPRITE_COLOR_BGR);
   do {
     WaitFrames(1);
   } while (ObjectEvent_GetById(LOCALID_SEA_FIRST_ATTACK_MONSTER)->timer == 0);
@@ -1774,7 +1783,7 @@ static void TolbiShipDeck_MonstersBoard(void) {
 static void TolbiShipDeck_MonstersAttackCrew(void) {
 
   FieldScript_Start();
-  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   FieldScript_CallWithLastActiveObjectId(
       (struct ObjectEventTemplate *)gTolbiShipDeck_CrewObjectEventTemplates);
@@ -1907,7 +1916,7 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   const s32 *sailorActions;
 
   FieldScript_Start();
-  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   ObjectEvent_SetSpriteFlags(record, 0);
   FieldScript_CallWithLastActiveObjectId(
@@ -1952,12 +1961,18 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
                               gTolbiShipDeck_HopActions);
   ObjectEvent_SetActionScript(LOCALID_SEA_THIRD_ATTACK_MONSTER + 1,
                               gTolbiShipDeck_HopActions);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_LEAPING_MONSTER, 3);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_LEAPING_MONSTER + 1, 3);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_LEAPING_MONSTER + 2, 3);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_LEAPING_MONSTER + 3, 3);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_THIRD_ATTACK_MONSTER, 3);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_THIRD_ATTACK_MONSTER + 1, 3);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_LEAPING_MONSTER,
+                                   SPRITE_COLOR_BGR);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_LEAPING_MONSTER + 1,
+                                   SPRITE_COLOR_BGR);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_LEAPING_MONSTER + 2,
+                                   SPRITE_COLOR_BGR);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_FIRST_LEAPING_MONSTER + 3,
+                                   SPRITE_COLOR_BGR);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_THIRD_ATTACK_MONSTER,
+                                   SPRITE_COLOR_BGR);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SEA_THIRD_ATTACK_MONSTER + 1,
+                                   SPRITE_COLOR_BGR);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldScript_StartScreenTransition();
@@ -2223,7 +2238,7 @@ static void TolbiShipDeck_SightLand(void) {
   struct ObjectEvent *record;
 
   FieldScript_Start();
-  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   ObjectEvent_SetSpriteFlags(record, 0);
   FieldScript_CallWithLastActiveObjectId(
@@ -2391,7 +2406,7 @@ static void TolbiShipDeck_RowersDisembark(void) {
   }
 
   FieldScript_Start();
-  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (record != 0) {
@@ -2462,7 +2477,7 @@ static void TolbiShipDeck_RowersDisembark(void) {
   FieldScript_WaitFrames(40);
   Import_ObjectEventSetPosition(LOCALID_PARTY_LEADER, 216 << 16, 146 << 18);
   WaitFrames(1);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_NORMAL);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 216, 150 << 2);
@@ -2884,7 +2899,7 @@ static void TolbiShipDeck_SightIsland(void) {
   ObjectEvent_SetPosition(LOCALID_SEA_SEAN, PIXELS(204), PIXELS(526));
   ObjectEvent_Get(LOCALID_SEA_SEAN)->facing = FACING_NORTHWEST + FACING_STEP;
   ObjectEvent_SetPosition(LOCALID_SEA_CREW_MEMBER, 0, 0);
-  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_PARTY_LEADER), 0);
   WaitFrames(1);
   gFieldWork->transition =
@@ -2899,14 +2914,16 @@ static void TolbiShipDeck_SightIsland(void) {
   TolbiShipDeck_Say(LOCALID_SEA_OURANOS);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_SEA_KAJA, 2);
   Import_ObjectEventSetAnimation(LOCALID_SEA_KAJA, 4);
-  TolbiShipDeck_Say(SPEAKER(LOCALID_SEA_KAJA, 6));
+  TolbiShipDeck_Say(
+      SPEAKER(LOCALID_SEA_KAJA, SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT));
   ObjectEvent_FaceDirection(LOCALID_SEA_OURANOS, FACING_NORTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_SEA_SEAN, FACING_NORTH + FACING_STEP, 0);
   ObjectEvent_ShowEmote(LOCALID_SEA_OURANOS, EMOTE_IN_FRONT | EMOTE_QUESTION,
                         0);
   ObjectEvent_ShowEmote(LOCALID_SEA_SEAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Import_ObjectEventSetAnimation(LOCALID_SEA_KAJA, 3);
-  TolbiShipDeck_Say(SPEAKER(LOCALID_SEA_KAJA, 6));
+  TolbiShipDeck_Say(
+      SPEAKER(LOCALID_SEA_KAJA, SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT));
   ObjectEvent_SetAttachedEffect(LOCALID_SEA_OURANOS, ATTACHED_EFFECT_IN_FRONT |
                                                          ATTACHED_EFFECT_ONCE);
   ObjectEvent_SetAttachedEffect(LOCALID_SEA_SEAN, ATTACHED_EFFECT_IN_FRONT |
@@ -2926,13 +2943,16 @@ static void TolbiShipDeck_SightIsland(void) {
   ObjectEvent_WalkToAndWait(LOCALID_SEA_KAJA, 210, 0x1fc);
   TolbiShipDeck_Turn(LOCALID_SEA_KAJA, FACING_NORTHWEST + FACING_STEP);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_SEA_OURANOS, 1);
-  TolbiShipDeck_Say(SPEAKER(LOCALID_SEA_OURANOS, 5));
+  TolbiShipDeck_Say(SPEAKER(LOCALID_SEA_OURANOS,
+                            SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_LEFT));
   ObjectMotion_SetAnimationAndWait(LOCALID_SEA_KAJA, 3);
   TolbiShipDeck_Turn(LOCALID_SEA_SEAN, FACING_NORTH + FACING_STEP);
-  TolbiShipDeck_Say(SPEAKER(LOCALID_SEA_SEAN, 9));
+  TolbiShipDeck_Say(
+      SPEAKER(LOCALID_SEA_SEAN, SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT));
   ObjectEvent_FaceDirection(LOCALID_SEA_KAJA, FACING_WEST, 20);
   Import_ObjectEventSetAnimation(LOCALID_SEA_KAJA, 4);
-  TolbiShipDeck_Say(SPEAKER(LOCALID_SEA_KAJA, 10));
+  TolbiShipDeck_Say(
+      SPEAKER(LOCALID_SEA_KAJA, SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT));
   ObjectEvent_WalkToAndWait(LOCALID_SEA_KAJA, 204, 0x218);
   ObjectEvent_FaceDirection(LOCALID_SEA_SEAN, FACING_NORTHWEST + FACING_STEP,
                             0);
@@ -3013,7 +3033,8 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
   TolbiShipDeck_Say(LOCALID_SEA_SEAN);
   ObjectEvent_SetSpeed(LOCALID_SEA_SEAN, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(LOCALID_SEA_OURANOS, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_GetById(LOCALID_SEA_SEAN)->steeringFlags &= 254;
+  ObjectEvent_GetById(LOCALID_SEA_SEAN)->steeringFlags &=
+      ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkToAndWait(LOCALID_SEA_SEAN, 162, 0x27a);
   FieldScript_WaitFrames(1);
   bits = OBJ_EVENT_FACES_MOTION;
@@ -3023,7 +3044,8 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
 
     objectEvent->steeringFlags = value | bits;
   }
-  ObjectEvent_GetById(LOCALID_SEA_OURANOS)->steeringFlags &= 254;
+  ObjectEvent_GetById(LOCALID_SEA_OURANOS)->steeringFlags &=
+      ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkToAndWait(LOCALID_SEA_OURANOS, 162, 0x2a4);
   FieldScript_WaitFrames(1);
   {
@@ -3063,15 +3085,15 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_SEA_SEAN, 1);
   TolbiShipDeck_Turn(LOCALID_SEA_SEAN, FACING_SOUTH + FACING_STEP);
   FieldScript_SetMessageId(MsgTolbiShipHowWasIsaacDidExplore);
-  Script_OpenMessage(SPEAKER(LOCALID_SEA_SEAN, 2), 0);
+  Script_OpenMessage(SPEAKER(LOCALID_SEA_SEAN, SPEAKER_PORTRAIT_RIGHT), 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
-    TolbiShipDeck_Say(SPEAKER(LOCALID_SEA_SEAN, 2));
+    TolbiShipDeck_Say(SPEAKER(LOCALID_SEA_SEAN, SPEAKER_PORTRAIT_RIGHT));
     FieldScript_End();
     return;
   }
   gFieldWork->message++;
-  Script_AskYesNo(SPEAKER(LOCALID_SEA_SEAN, 2), 0);
+  Script_AskYesNo(SPEAKER(LOCALID_SEA_SEAN, SPEAKER_PORTRAIT_RIGHT), 0);
   TolbiShipDeck_OpenFirstDoor();
   ObjectEvent_SetPosition(LOCALID_TOUR_GUIDE_AT_ANCHOR, PIXELS(216),
                           PIXELS(588));
@@ -3090,25 +3112,26 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
   ObjectEvent_SetSpeed(LOCALID_SEA_KAJA, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(LOCALID_SEA_KAJA, 180, 0x298);
   ObjectEvent_FaceDirection(LOCALID_SEA_KAJA, FACING_NORTH + FACING_STEP, 0);
-  TolbiShipDeck_Say(SPEAKER(LOCALID_SEA_KAJA, 2));
+  TolbiShipDeck_Say(SPEAKER(LOCALID_SEA_KAJA, SPEAKER_PORTRAIT_RIGHT));
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
   ObjectEvent_FaceDirection(LOCALID_SEA_SEAN, FACING_SOUTHEAST + FACING_STEP,
                             0);
   ObjectEvent_ShowEmote(LOCALID_TOUR_GUIDE_AT_ANCHOR,
                         EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_SEA_KAJA, 1);
-  TolbiShipDeck_Say(SPEAKER(LOCALID_SEA_KAJA, 2));
+  TolbiShipDeck_Say(SPEAKER(LOCALID_SEA_KAJA, SPEAKER_PORTRAIT_RIGHT));
   ObjectMotion_SetVariantCallback(LOCALID_SEA_OURANOS, 2);
   TolbiShipDeck_Say(LOCALID_SEA_OURANOS);
   ObjectEvent_FaceDirection(LOCALID_SEA_KAJA, FACING_SOUTH + FACING_STEP, 20);
   Import_ObjectEventSetAnimation(LOCALID_SEA_KAJA, 3);
-  TolbiShipDeck_Say(SPEAKER(LOCALID_SEA_KAJA, 6));
+  TolbiShipDeck_Say(
+      SPEAKER(LOCALID_SEA_KAJA, SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT));
   ObjectMotion_Launch(LOCALID_TOUR_GUIDE_AT_ANCHOR, 2, 20);
   Import_ObjectEventSetAnimation(LOCALID_TOUR_GUIDE_AT_ANCHOR, 4);
   TolbiShipDeck_Say(LOCALID_TOUR_GUIDE_AT_ANCHOR);
   ObjectEvent_WalkToAndWait(LOCALID_SEA_KAJA, 182, 0x280);
   ObjectEvent_FaceDirection(LOCALID_SEA_KAJA, FACING_NORTH + FACING_STEP, 0);
-  TolbiShipDeck_Say(SPEAKER(LOCALID_SEA_KAJA, 8));
+  TolbiShipDeck_Say(SPEAKER(LOCALID_SEA_KAJA, SPEAKER_WINDOW_BELOW));
   ObjectEvent_ShowEmote(LOCALID_TOUR_GUIDE_AT_ANCHOR,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   ObjectMotion_SetVariantCallback(LOCALID_TOUR_GUIDE_AT_ANCHOR, 2);
@@ -3128,7 +3151,7 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
                               gTolbiShipDeck_GoBelowActions);
   FieldScript_WaitFrames(40);
   TolbiShipDeck_Turn(LOCALID_SEA_KAJA, FACING_WEST);
-  TolbiShipDeck_Say(SPEAKER(LOCALID_SEA_KAJA, 2));
+  TolbiShipDeck_Say(SPEAKER(LOCALID_SEA_KAJA, SPEAKER_PORTRAIT_RIGHT));
   TolbiShipDeck_Turn(LOCALID_PARTY_LEADER, FACING_NORTHEAST);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_SEA_KAJA, 3);

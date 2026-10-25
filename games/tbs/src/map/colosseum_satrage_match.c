@@ -966,15 +966,15 @@ static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
   FieldScript_Start();
   ObjectEvent_SetPosition(LOCALID_OPPONENT, PIXELS(88), PIXELS(256));
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(120), PIXELS(256));
-  // BUG: 0x4000 is FACING_SOUTH, passed where ObjectEvent_FaceObjectEvent takes
-  // a local id; ObjectEvent_GetByLocalId has no object event past 0xbf, so
+  // BUG: FACING_SOUTH is passed where ObjectEvent_FaceObjectEvent takes a
+  // local id; ObjectEvent_GetByLocalId has no object event past 0xbf, so
   // neither turns.
 #ifdef BUGFIX
   ObjectEvent_FaceDirection(LOCALID_OPPONENT, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
 #else
-  ObjectEvent_FaceObjectEvent(LOCALID_OPPONENT, 0x4000, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, 0x4000, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_OPPONENT, FACING_SOUTH, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
 #endif
   if (result < 0) {
     Import_ObjectEventSetAnimation(LOCALID_OPPONENT,
@@ -1130,7 +1130,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
   Colosso_ShowItemIcon(LOCALID_PRIZE_B, ITEM_COTTON_SHIRT);
   Colosso_ShowItemIcon(LOCALID_PRIZE_A, ITEM_CHAIN_MAIL);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_OPPONENT, 1);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_OPPONENT, SPRITE_COLOR_GRB);
   // The race, the friends' turns, the tour, and the battle's result.
   switch (gSaveBlock.warpDest) {
   case COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND:
@@ -1561,6 +1561,9 @@ static void EventScript_TalkToBoardWalkAttendant(s32 attendant) {
   FieldScript_End();
 }
 
+// This map's warps for colosso_solo.h.
+#define COLOSSO_SOLO_TO_RACE COLOSSEUM_SATRAGE_MATCH_LEND_A_HAND_TO_RACE
+#define COLOSSO_SOLO_TO_COLOSSEUM COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_SOUTH
 #include "common/colosso_solo.h"
 #include "common/item_equip.h"
 #include "common/colosso_task.h"

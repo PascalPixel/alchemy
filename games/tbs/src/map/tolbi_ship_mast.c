@@ -423,7 +423,7 @@ static void TolbiShipMast_SetupVisibleLeaderLookout(void) {
 
   FieldScript_Start();
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(164), PIXELS(321));
-  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   ObjectEvent_SetSpriteFlags(leader, 0);
   WaitFrames(1);
@@ -476,7 +476,7 @@ static void TolbiShipMast_RunAvastScene(void) {
   FieldScript_CallWithLastActiveObjectId(
       gTolbiShipMast_FirstAttackObjectEventTemplates);
   WaitFrames(1);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   ObjectEvent_SetActionScript(LOCALID_LOOKOUT, gTolbiShipMast_LookoutActions);
   work = (struct FieldWork **)(gMapGridWork +
@@ -513,9 +513,12 @@ static void TolbiShipMast_RunAvastScene(void) {
   ObjectMotion_SetActionVariant(LOCALID_FIRST_SIGHTED_MONSTER, 3);
   ObjectMotion_SetActionVariant(LOCALID_FIRST_SIGHTED_MONSTER + 1, 3);
   ObjectMotion_SetActionVariant(LOCALID_FIRST_SIGHTED_MONSTER + 2, 3);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_FIRST_SIGHTED_MONSTER, 3);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_FIRST_SIGHTED_MONSTER + 1, 3);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_FIRST_SIGHTED_MONSTER + 2, 3);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_FIRST_SIGHTED_MONSTER,
+                                   SPRITE_COLOR_BGR);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_FIRST_SIGHTED_MONSTER + 1,
+                                   SPRITE_COLOR_BGR);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_FIRST_SIGHTED_MONSTER + 2,
+                                   SPRITE_COLOR_BGR);
   // Grow the three monsters from half size as they close in on the lookout.
   objectEvent = ObjectEvent_GetById(LOCALID_FIRST_SIGHTED_MONSTER);
   scale = Q16_ONE / 2;
@@ -602,7 +605,7 @@ static void TolbiShipMast_ShowMonsters(void) {
   struct ObjectEvent *leader;
 
   FieldScript_Start();
-  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   ObjectEvent_SetSpriteFlags(leader, 0);
   WaitFrames(1);
@@ -717,7 +720,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
   struct ObjectEvent *objectEvent;
 
   FieldScript_Start();
-  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   WaitFrames(1);
   FieldScript_CallWithLastActiveObjectId(
@@ -825,7 +828,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
 /// warp.
 static void TolbiShipMast_AnnounceLand(void) {
   FieldScript_Start();
-  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   FieldScript_CallWithLastActiveObjectId(
       gTolbiShipMast_BirdObjectEventTemplates);

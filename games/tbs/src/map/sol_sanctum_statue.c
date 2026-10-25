@@ -81,6 +81,7 @@
 #include "macros.h"
 #include "flags.h"
 #include "songs.h"
+#include "heap.h"
 #include "audio_engine_symbols.h"
 #include "ability_ids.h"
 
@@ -877,7 +878,8 @@ s32 SolSanctumStatue_Initialize(void) {
   }
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_MOVED_CENTER_STATUE),
                              0);
-  ObjectEvent_GetById(LOCALID_MOVED_CENTER_STATUE)->priorityFlags &= 254;
+  ObjectEvent_GetById(LOCALID_MOVED_CENTER_STATUE)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectMotion_SetActionVariant(LOCALID_MOVED_CENTER_STATUE, 1);
   // Only warp destinations 3 and 4 keep Jenna and Garet staged for their
   // conversations.
@@ -986,7 +988,7 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
   u8 *pixels;
 
   spriteWords = sScrollingSprites.words;
-  pixels = AllocHeapSlotEwram(14, 1024);
+  pixels = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gSolSanctumStatue_SpriteRowsGraphics, pixels);
   tile = VramCache_Load(VramCache_FindFreeEntry(), 128, pixels);
   for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
@@ -1015,7 +1017,7 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
     spriteWords += 3;
     *attributeWords = tile | 0xc00;
   }
-  FreeHeapSlot(14);
+  FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
   {
     s32 priority = 3200;
 

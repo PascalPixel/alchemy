@@ -479,7 +479,7 @@ static void EventScript_HopDownStep(void) {
 
   SCRIPT_START();
   Object_SelectAnimation(leader, ANIM_LEADER_SPRING);
-  ObjectMotion_WaitForAnimationChange(0);
+  ObjectMotion_WaitForAnimationChange(LOCALID_PARTY_LEADER);
   Object_SelectAnimation(leader, 1);
   ObjectEvent_SetSpriteFlags(leader, 0);
   leader->motionFlags |= OBJ_EVENT_FALLS;
@@ -670,7 +670,8 @@ static void EventScript_BlowAwayIvyA(void) {
   GameFlag_Set(FLAG_MAP_TEMP_00);
   if (GameFlag_Get(FLAG_MAP_TEMP_01) != 0) {
     ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->riseCounter = 0;
-    ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->collisionFlags &= 0xf7;
+    ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->collisionFlags &=
+        ~OBJ_EVENT_NOT_TARGETED;
   } else {
     ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->riseCounter = 1;
     flags = &ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->collisionFlags;
@@ -689,7 +690,8 @@ static void EventScript_BlowAwayIvyB(void) {
   GameFlag_Set(FLAG_MAP_TEMP_01);
   if (GameFlag_Get(FLAG_MAP_TEMP_00) != 0) {
     ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->riseCounter = 0;
-    ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->collisionFlags &= 0xf7;
+    ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->collisionFlags &=
+        ~OBJ_EVENT_NOT_TARGETED;
   } else {
     ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->riseCounter = 1;
     flags = &ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->collisionFlags;
@@ -813,7 +815,8 @@ static void EventScript_FreezeNorthwestPillarPuddle(void) {
   u8 *flags;
 
   OBJECT_ANIMATION(LOCALID_NORTHWEST_PILLAR_PUDDLE, 1);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_NORTHWEST_PILLAR_PUDDLE, 0);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_NORTHWEST_PILLAR_PUDDLE,
+                                   SPRITE_COLOR_NORMAL);
   OBJECT_ANIMATION(LOCALID_NORTHWEST_PILLAR_PUDDLE, 2);
   flags = &ObjectEvent_GetById(LOCALID_NORTHWEST_PILLAR_PUDDLE)->priorityFlags;
   *flags &= ~OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -842,7 +845,8 @@ static void EventScript_SinkSoutheastPillar(void) {
   if ((objectEvent->x.fixed >> 20) == 48) {
     if (GameFlag_Get(FLAG_MAP_TEMP_02) != 0) {
       WAIT(30);
-      overlay = ObjectEvent_PrepareObject(PIXELS(770), 0, PIXELS(274), 223);
+      overlay =
+          ObjectEvent_PrepareObject(PIXELS(770), 0, PIXELS(274), SPRITE_CRATE);
       options = &optionsStorage;
       options->startScaleX = 3 * Q16_ONE / 5;
       options->startScaleY = 3 * Q16_ONE / 5;
@@ -914,7 +918,8 @@ static void EventScript_FreezeSoutheastPillarPuddle(void) {
   u8 *flags;
 
   OBJECT_ANIMATION(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 1);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 0);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SOUTHEAST_PILLAR_PUDDLE,
+                                   SPRITE_COLOR_NORMAL);
   OBJECT_ANIMATION(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 2);
   flags = &ObjectEvent_GetById(LOCALID_SOUTHEAST_PILLAR_PUDDLE)->priorityFlags;
   *flags &= ~OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -986,7 +991,7 @@ static void EventScript_FreezeDousePuddle(void) {
   SCRIPT_START();
   ObjectMotion_SetActionVariant(LOCALID_DOUSE_PUDDLE, 1);
   OBJECT_ANIMATION(LOCALID_DOUSE_PUDDLE, 1);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_DOUSE_PUDDLE, 0);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_DOUSE_PUDDLE, SPRITE_COLOR_NORMAL);
   OBJECT_ANIMATION(LOCALID_DOUSE_PUDDLE, 2);
 
   {
@@ -1623,8 +1628,10 @@ s32 TunnelRuins_Initialize(void) {
           ObjectEvent_GetById(LOCALID_NORTHWEST_PILLAR_PUDDLE), 0);
       ObjectEvent_SetSpriteFlags(
           ObjectEvent_GetById(LOCALID_SOUTHEAST_PILLAR_PUDDLE), 0);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_NORTHWEST_PILLAR_PUDDLE, 15);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 15);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_NORTHWEST_PILLAR_PUDDLE,
+                                       SPRITE_COLOR_HIDDEN);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_SOUTHEAST_PILLAR_PUDDLE,
+                                       SPRITE_COLOR_HIDDEN);
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR)) {
         MapGrid_CopyCellsTo(59, 8, 49, 8, 1, 3);
         MapGrid_CopyCellAttributes(51, 8, 1, 1, 49, 8);
@@ -1638,7 +1645,8 @@ s32 TunnelRuins_Initialize(void) {
         OBJECT_POSITION_SET(LOCALID_NORTHWEST_PILLAR_PUDDLE, 744, 136);
       }
       if (GameFlag_Get(FLAG_MAP_TEMP_00)) {
-        ObjectEvent_ConfigureSpriteColor(LOCALID_NORTHWEST_PILLAR_PUDDLE, 0);
+        ObjectEvent_ConfigureSpriteColor(LOCALID_NORTHWEST_PILLAR_PUDDLE,
+                                         SPRITE_COLOR_NORMAL);
         OBJECT_ANIMATION(LOCALID_NORTHWEST_PILLAR_PUDDLE, 5);
       }
       if (Script_GetFlag(FLAG_MAP_TEMP_02))
@@ -1658,7 +1666,8 @@ s32 TunnelRuins_Initialize(void) {
         GameFlag_Set(FLAG_MAP_TEMP_02);
       }
       if (GameFlag_Get(FLAG_MAP_TEMP_01)) {
-        ObjectEvent_ConfigureSpriteColor(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 0);
+        ObjectEvent_ConfigureSpriteColor(LOCALID_SOUTHEAST_PILLAR_PUDDLE,
+                                         SPRITE_COLOR_NORMAL);
         OBJECT_ANIMATION(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 5);
       }
       break;
@@ -1697,8 +1706,10 @@ s32 TunnelRuins_Initialize(void) {
           BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE;
       gSaveBlock.retreatMap = (s32)&MapId_BabiLighthouseEntry;
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_EAST_PILLAR_A, 6);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_EAST_PILLAR_B, 6);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_EAST_PILLAR_A,
+                                       SPRITE_COLOR_GREY);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_EAST_PILLAR_B,
+                                       SPRITE_COLOR_GREY);
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST))
         OBJECT_POSITION_SET(LOCALID_EAST_PILLAR_A, 728, 312);
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST))
@@ -1711,12 +1722,14 @@ s32 TunnelRuins_Initialize(void) {
       ObjectEvent_GetById(LOCALID_DOUSE_PILLAR)->motionFlags = 0;
       ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_DOUSE_PILLAR), 0);
       ObjectMotion_SetActionVariant(LOCALID_DOUSE_PUDDLE, 1);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_DOUSE_PUDDLE, 15);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_DOUSE_PUDDLE,
+                                       SPRITE_COLOR_HIDDEN);
       ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE), 0);
       ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE)->motionFlags = 0;
       if (!GameFlag_Get(FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN))
         break;
-      ObjectEvent_ConfigureSpriteColor(LOCALID_DOUSE_PUDDLE, 0);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_DOUSE_PUDDLE,
+                                       SPRITE_COLOR_NORMAL);
       OBJECT_ANIMATION(LOCALID_DOUSE_PUDDLE, 5);
       MapGrid_CopyCellAttributeRect(
           26, 8, 1, 1, ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE)->x.fixed >> 20,
@@ -1737,8 +1750,10 @@ s32 TunnelRuins_Initialize(void) {
             OBJ_EVENT_PRIORITY_UNDERFOOT;
         ObjectEvent_GetById(LOCALID_BALANCE_EAST)->priorityFlags |=
             OBJ_EVENT_PRIORITY_UNDERFOOT;
-        ObjectEvent_GetById(LOCALID_BALANCE_WEST)->collisionFlags &= 0xfe;
-        ObjectEvent_GetById(LOCALID_BALANCE_EAST)->collisionFlags &= 0xfe;
+        ObjectEvent_GetById(LOCALID_BALANCE_WEST)->collisionFlags &=
+            ~OBJ_EVENT_SOLID;
+        ObjectEvent_GetById(LOCALID_BALANCE_EAST)->collisionFlags &=
+            ~OBJ_EVENT_SOLID;
         ObjectEvent_GetById(LOCALID_BALANCE_WEST)->timer = 3;
         ObjectEvent_GetById(LOCALID_BALANCE_EAST)->timer = 3;
         ObjectMotion_SetActionVariant(LOCALID_BALANCE_WEST, 1);
@@ -1827,11 +1842,16 @@ s32 TunnelRuins_Initialize(void) {
           ~OBJ_EVENT_FOLLOWS_TERRAIN;
       ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTH)->motionFlags &=
           ~OBJ_EVENT_FOLLOWS_TERRAIN;
-      ObjectEvent_ConfigureSpriteColor(LOCALID_LADY_STATUE_NORTHWEST, 4);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_LADY_STATUE_NORTHEAST, 1);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_LADY_STATUE_SOUTHWEST, 4);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_LADY_STATUE_SOUTHEAST, 10);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_LADY_STATUE_SOUTH, 0);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_LADY_STATUE_NORTHWEST,
+                                       SPRITE_COLOR_GBR);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_LADY_STATUE_NORTHEAST,
+                                       SPRITE_COLOR_GRB);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_LADY_STATUE_SOUTHWEST,
+                                       SPRITE_COLOR_GBR);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_LADY_STATUE_SOUTHEAST,
+                                       SPRITE_COLOR_RED_TINT);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_LADY_STATUE_SOUTH,
+                                       SPRITE_COLOR_NORMAL);
       OBJECT_ANIMATION(LOCALID_LADY_STATUE_NORTHWEST, 2);
       OBJECT_ANIMATION(LOCALID_LADY_STATUE_SOUTH, 2);
       MapGrid_CopyCellAttributeRect(

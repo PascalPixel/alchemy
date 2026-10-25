@@ -23,7 +23,7 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 warp) {
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, 0, -6);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   v->update = 0;
   FieldScript_WaitFrames(30);

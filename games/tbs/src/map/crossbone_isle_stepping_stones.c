@@ -794,7 +794,7 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
   // Increase the chance of showing the alternate scroll on each scanline.
   sShakeChance = 0;
   FieldScheduler_AddCallback(CrossboneIsleSteppingStones_PrepareWaterScroll,
-                             0xc80);
+                             TASK_PRIORITY_MAP);
   WaitFrames(1);
   Irq_SetHandler(1, 0, CrossboneIsleSteppingStones_JitterBackgroundScroll);
   Sound_PlaySong(SE_WATER_LEVEL);
@@ -973,7 +973,7 @@ static s32 CrossboneIsleSteppingStones_UpdateObjectEventPriority(
   }
   if (objectEvent->y.fixed < leader->y.fixed) {
     objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
-    objectEvent->collisionFlags &= 254;
+    objectEvent->collisionFlags &= ~OBJ_EVENT_SOLID;
     if (objectEvent->sprite->image.priority < leader->sprite->image.priority) {
       objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
       objectEvent->sprite->image.priority = leader->sprite->image.priority;
@@ -1171,7 +1171,8 @@ static void EventScript_JumpOrPushStackedPillar(void) {
       ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed);
 #endif
   if (CrossboneIsleSteppingStones_TryJumpAcrossPillar() == 0) {
-    ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags &= 254;
+    ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags &=
+        ~OBJ_EVENT_FOLLOWS_TERRAIN;
     ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags &=
         ~OBJ_EVENT_PRIORITY_AUTOMATIC;
     PushedObject_AdvancePair();
@@ -1208,7 +1209,8 @@ static void EventScript_PushOrClimbDown(void) {
 /// follows the leader, and the leader's rise counter starts.
 static void EventScript_StartRising(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  ((struct FadeOverlayWork *)HEAP_SLOT_BLOCK(36))->objectEvent = leader;
+  ((struct FadeOverlayWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY))
+      ->objectEvent = leader;
   leader->riseCounter = 1;
 }
 
@@ -1217,7 +1219,8 @@ static void EventScript_StartRising(void) {
 static void EventScript_StopRising(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
-  ((struct FadeOverlayWork *)HEAP_SLOT_BLOCK(36))->objectEvent = NULL;
+  ((struct FadeOverlayWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY))
+      ->objectEvent = NULL;
   leader->riseCounter = 0;
 }
 
@@ -1426,7 +1429,7 @@ static void EventScript_FreezeThirdPuddle(void) {
     WAIT(20);
     // The third puddle freezes while the previously frozen second puddle thaws.
     FieldScheduler_AddCallback(CrossboneIsleSteppingStones_SpawnFrostParticle,
-                               0xc80);
+                               TASK_PRIORITY_MAP);
     WAIT(40);
     if (Script_GetFlag(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN +
                        1) != 0) {
@@ -1444,7 +1447,8 @@ static void EventScript_FreezeThirdPuddle(void) {
           (void (*)(union ObjectEventOrEffect *))set;
       MapGrid_CopyCellAttributes(17, 13, 1, 1, 18, 13);
       GameFlag_Clear(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN + 1);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_PUDDLE, 0);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_PUDDLE,
+                                       SPRITE_COLOR_NORMAL);
       ObjectEvent_SetBuiltinAction(LOCALID_SECOND_PUDDLE,
                                    OBJ_EVENT_ACTION_IDLE);
     } else {
@@ -1541,7 +1545,7 @@ const struct MapEvent *Map_GetEvents(void) {
 static void CrossboneIsleSteppingStones_PrepLoweredObjectEvent(s32 id) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(id);
 
-  objectEvent->collisionFlags &= 254;
+  objectEvent->collisionFlags &= ~OBJ_EVENT_SOLID;
   objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
   objectEvent->motionFlags = 0;
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
@@ -1648,7 +1652,8 @@ s32 Map_Initialize(void) {
     }
   } else if (gSaveBlock.mapId == (s32)&MapId_CrossboneIsleStackedPillars) {
     // Restore the four movable pillars and the leader's riding overlay.
-    ObjectEvent_CreateConfiguredObject(PIXELS(584), 0, PIXELS(200), 223);
+    ObjectEvent_CreateConfiguredObject(PIXELS(584), 0, PIXELS(200),
+                                       SPRITE_CRATE);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       ObjectEvent_GetById(LOCALID_PARTY_LEADER)->riseCounter = 1;
     }
@@ -1696,7 +1701,8 @@ s32 Map_Initialize(void) {
     // Restore CrossboneIsleDragonStatue's moved pillar, frozen puddles, and
     // raised pillar pair.
     OBJECT_ANIMATION(LOCALID_SINKING_BOULDER, 2);
-    ObjectEvent_ConfigureSpriteColor(LOCALID_SINKING_BOULDER, 6);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_SINKING_BOULDER,
+                                     SPRITE_COLOR_GREY);
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
 #if TBS_PATCH_1

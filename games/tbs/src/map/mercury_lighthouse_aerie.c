@@ -322,23 +322,23 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveTo(PIXELS(512), -PIXELS(24), PIXELS(160), 1);
   FieldCamera_WaitForArrival();
-  PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
-  PaletteFade_ApplyTarget(PALETTE_TINT_PALE, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_ALL);
   PaletteFade_StartInterpolation(50);
   FieldScript_WaitFrames(50);
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(30);
   FieldScript_WaitFrames(30);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(504), PIXELS(168));
   ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(528), PIXELS(144));
   ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(488), PIXELS(144));
   ObjectEvent_SetPosition(LOCALID_MIA, PIXELS(512), PIXELS(152));
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 19);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, 19);
-  Import_ObjectEventSetAnimation(LOCALID_IVAN, 19);
-  Import_ObjectEventSetAnimation(LOCALID_MIA, 19);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_COLLAPSE);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_COLLAPSE);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_COLLAPSE);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_COLLAPSE);
   FieldScript_WaitFrames(10);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(30);
   FieldScript_WaitFrames(30);
   FieldScript_WaitFrames(80);
@@ -452,7 +452,7 @@ static void MercuryLighthouseAerie_StepOntoPlatform(void) {
     objectEvent =
         ObjectEvent_GetById(gMercuryLighthouseAerie_PlatformUnderfoot);
     objectEvent->motionFlags = 0;
-    leader->motionFlags &= 0xfe;
+    leader->motionFlags &= ~OBJ_EVENT_FOLLOWS_TERRAIN;
     objectEvent->y.fixed -= PIXELS(3);
     leader->y.fixed -= PIXELS(3);
     leader->groundHeight -= PIXELS(3);
@@ -498,7 +498,8 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   struct ObjectEvent *objectEvent;
 
   FieldScript_Start();
-  ObjectEvent_Get(LOCALID_FIRST_LIFT_PLATFORM)->motionFlags &= 0xfa;
+  ObjectEvent_Get(LOCALID_FIRST_LIFT_PLATFORM)->motionFlags &=
+      ~(OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FLOATS);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -776,7 +777,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   FieldScript_WaitFrames(50);
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_SOUTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST + FACING_STEP, 20);
-  ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, 4);
+  ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_MENARDI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                         60);
@@ -836,7 +837,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_EAST, 10);
   Script_ShowMessageAndWait(LOCALID_FELIX, 0, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_JENNA, 2);
-  ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, 4);
+  ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_JENNA, 0, 20);
   Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);
@@ -1203,8 +1204,8 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   FieldCamera_GetScriptObject()->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(232), 1);
   FieldCamera_WaitForArrival();
-  ObjectEvent_SetSpriteColorById(LOCALID_SATUROS, 0xF);
-  ObjectEvent_SetSpriteColorById(LOCALID_ALEX, 0xF);
+  ObjectEvent_SetSpriteColorById(LOCALID_SATUROS, SPRITE_COLOR_HIDDEN);
+  ObjectEvent_SetSpriteColorById(LOCALID_ALEX, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetPosition(LOCALID_SATUROS, PIXELS(240), PIXELS(208));
   ObjectEvent_SetPosition(LOCALID_ALEX, PIXELS(232), PIXELS(208));
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_SOUTH + FACING_STEP, 0);
@@ -1316,8 +1317,8 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   FieldCamera_WaitForArrival();
   Import_ObjectEventSetAnimation(LOCALID_SATUROS, 1);
   Import_ObjectEventSetAnimation(LOCALID_ALEX, 1);
-  ObjectEvent_SetSpriteColorById(LOCALID_SATUROS, 0xF);
-  ObjectEvent_SetSpriteColorById(LOCALID_ALEX, 0xF);
+  ObjectEvent_SetSpriteColorById(LOCALID_SATUROS, SPRITE_COLOR_HIDDEN);
+  ObjectEvent_SetSpriteColorById(LOCALID_ALEX, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetPosition(LOCALID_SATUROS, PIXELS(120), PIXELS(152));
   ObjectEvent_SetPosition(LOCALID_ALEX, PIXELS(112), PIXELS(160));
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_SOUTH + FACING_STEP, 0);
@@ -1552,8 +1553,8 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
   left = ObjectEvent_GetById(LOCALID_SATUROS);
   right = ObjectEvent_GetById(LOCALID_ALEX);
   Sound_PlaySong(SE_WARP);
-  ObjectEvent_SetSpriteColorById(LOCALID_SATUROS, 0x100);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_ALEX, 0x100);
+  ObjectEvent_SetSpriteColorById(LOCALID_SATUROS, SPRITE_COLOR_BLINK);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_ALEX, SPRITE_COLOR_BLINK);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SATUROS), 0);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ALEX), 0);
   options = &optionsStorage;
@@ -1647,12 +1648,12 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
                         options);
     }
     if (i == 20) {
-      ObjectEvent_SetSpriteColorById(LOCALID_SATUROS, 0x100);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_ALEX, 0x100);
+      ObjectEvent_SetSpriteColorById(LOCALID_SATUROS, SPRITE_COLOR_BLINK);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_ALEX, SPRITE_COLOR_BLINK);
     }
   }
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SATUROS, 0);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_ALEX, 0);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SATUROS, SPRITE_COLOR_NORMAL);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_ALEX, SPRITE_COLOR_NORMAL);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SATUROS),
                              SPRITE_FLAG_SHADOW);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ALEX),
@@ -1844,7 +1845,7 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   }
   sprite = spark->sprite;
   ObjectEvent_SetScript(spark, gMercuryLighthouseAerie_SparkScript);
-  ObjectEvent_SetSpriteColor(spark, 3);
+  ObjectEvent_SetSpriteColor(spark, SPRITE_COLOR_BGR);
   spark->motionFlags = tick;
   angle = Import_RandomNext() & 0x0ffff000;
   spark->timer = angle;

@@ -387,10 +387,12 @@ static void EventScript_MoveWestCratesIntoHole(void) {
     ObjectEvent_GetById(LOCALID_WEST_CRATES)->x.fixed += PIXELS(2);
     leftEffect = ObjectEvent_PrepareObject(
         ObjectEvent_GetById(LOCALID_WEST_CRATES)->x.fixed, 0,
-        ObjectEvent_GetById(LOCALID_WEST_CRATES)->z.fixed + PIXELS(52), 241);
+        ObjectEvent_GetById(LOCALID_WEST_CRATES)->z.fixed + PIXELS(52),
+        SPRITE_CRATES);
     rightEffect = ObjectEvent_PrepareObject(
         ObjectEvent_GetById(LOCALID_WEST_CRATES)->x.fixed + PIXELS(16), 0,
-        ObjectEvent_GetById(LOCALID_WEST_CRATES)->z.fixed + PIXELS(52), 241);
+        ObjectEvent_GetById(LOCALID_WEST_CRATES)->z.fixed + PIXELS(52),
+        SPRITE_CRATES);
     ObjectEvent_GetById(LOCALID_WEST_CRATES)->motionFlags = 0;
     // Surround the sinking crates with one particle per frame.
     particleOptions = &options;
@@ -430,10 +432,12 @@ static void EventScript_MoveEastCratesIntoHole(void) {
   if (ObjectEvent_GetById(LOCALID_EAST_CRATES)->x.fixed >> 20 == 27) {
     leftEffect = ObjectEvent_PrepareObject(
         ObjectEvent_GetById(LOCALID_EAST_CRATES)->x.fixed - PIXELS(8), 0,
-        ObjectEvent_GetById(LOCALID_EAST_CRATES)->z.fixed + PIXELS(52), 241);
+        ObjectEvent_GetById(LOCALID_EAST_CRATES)->z.fixed + PIXELS(52),
+        SPRITE_CRATES);
     rightEffect = ObjectEvent_PrepareObject(
         ObjectEvent_GetById(LOCALID_EAST_CRATES)->x.fixed + PIXELS(8), 0,
-        ObjectEvent_GetById(LOCALID_EAST_CRATES)->z.fixed + PIXELS(52), 241);
+        ObjectEvent_GetById(LOCALID_EAST_CRATES)->z.fixed + PIXELS(52),
+        SPRITE_CRATES);
     // This clears the western crates' motion flags, not these crates', where
     // EventScript_MoveWestCratesIntoHole clears its own. These sink all the
     // same, since the sinking writes their height directly and nothing pulls
@@ -721,7 +725,7 @@ static void EventScript_PushLogOffLedge(void) {
   pushedLog->bounce = stationaryMotion;
   ObjectMotion_OffsetPositionAndResetMotion(LOCALID_WEST_LOG, 12, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 1);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_WEST_LOG);
   Script_PlaySong(SE_STOP_ACTION_SE);
   Script_PlaySong(SE_HEAVY_STOP);
@@ -919,7 +923,8 @@ static void ValeCave_ApplyEntryState(void) {
       // nothing. XXX (no evidence): what it and the chest below were meant to
       // show; the sprites alone hold neither, and neither object is solid or a
       // target.
-      ObjectEvent_CreateConfiguredObject(PIXELS(120), 0, PIXELS(232), 223);
+      ObjectEvent_CreateConfiguredObject(PIXELS(120), 0, PIXELS(232),
+                                         SPRITE_CRATE);
       break;
     case VALE_CAVE_KITE_EAST_FROM_WEST:
     case VALE_CAVE_KITE_EAST_FROM_SOUTH:

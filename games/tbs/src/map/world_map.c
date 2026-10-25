@@ -1189,7 +1189,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   ObjectEvent_SetAttachedEffect(LOCALID_CARAVAN_MAN, ATTACHED_EFFECT_IN_FRONT |
                                                          ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(60);
-  ObjectEvent_FaceDirection(LOCALID_CARAVAN_MAN, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_CARAVAN_MAN, FACING_EAST, 20);
   ObjectMotion_SetVariantCallback(LOCALID_CARAVAN_MAN, 3);
   Script_ShowMessageAndWait(LOCALID_CARAVAN_MAN, 0, 20);
   ObjectEvent_SetPosition(LOCALID_CARAVAN_HAMMET, PIXELS(5656), PIXELS(1784));
@@ -1220,7 +1220,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_CARAVAN_HAMMET, 0,
                             40);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_CARAVAN_MAN, 1);
-  ObjectEvent_FaceDirection(LOCALID_CARAVAN_MAN, 0, 10);
+  ObjectEvent_FaceDirection(LOCALID_CARAVAN_MAN, FACING_EAST, 10);
   Script_ShowMessageAndWait(LOCALID_CARAVAN_MAN, 0, 10);
   ObjectEvent_ShowEmote(LOCALID_CARAVAN_HAMMET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                         60);
@@ -1245,7 +1245,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   ObjectEvent_ShowEmote(LOCALID_CARAVAN_MAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                         0);
   ObjectEvent_FaceDirection(LOCALID_CARAVAN_HAMMET, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(LOCALID_CARAVAN_MAN, 0, 40);
+  ObjectEvent_FaceDirection(LOCALID_CARAVAN_MAN, FACING_EAST, 40);
   ObjectEvent_FaceDirection(LOCALID_CARAVAN_HAMMET,
                             FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_CARAVAN_MAN, FACING_NORTHWEST + FACING_STEP,
@@ -1309,7 +1309,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   ObjectMotion_Launch(LOCALID_CARAVAN_HAMMET, 4, 40);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_CARAVAN_HAMMET, 0,
                             10);
-  ObjectEvent_FaceDirection(LOCALID_CARAVAN_MAN, 0, 10);
+  ObjectEvent_FaceDirection(LOCALID_CARAVAN_MAN, FACING_EAST, 10);
   Script_ShowMessageAndWait(LOCALID_CARAVAN_MAN, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_CARAVAN_HAMMET, FACING_NORTH, 40);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_CARAVAN_HAMMET, 0,
@@ -2277,7 +2277,7 @@ static void WorldMap_ShowEndingScene(void) {
   WaitFrames(1);
   FieldEffect_ScheduleRatioTransition(3 * Q16_ONE / 2, 16);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   gFieldWork->transitionFrames = 16;
   FieldScript_StartScreenTransition();
   FieldScript_WaitForZoomTransition();
@@ -2380,7 +2380,7 @@ static void WorldMap_ShowEndingScene(void) {
   Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 60);
   WorldMap_LoadDefaultCellsAndUpdateBlock();
   Script_PlaySong(SONG_FADE_OUT_BGM);
-  PaletteFade_ApplyTarget(0, 0);
+  PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(120);
   WaitFrames(120);
   FieldScript_SetDestination((s32)&MapId_Title, TITLE_FROM_WORLD_MAP);
@@ -2395,8 +2395,8 @@ static void WorldMap_ShowEndingScene(void) {
 static void WorldMap_ShakeVenusLighthouse(void) {
   FieldScript_Start();
   Sound_PlaySong(SE_RUMBLE);
-  PaletteFade_SetSource(0, 0);
-  PaletteFade_SetTarget(0, 0);
+  PaletteFade_SetSource(RGB(0, 0, 0), PALETTES_ALL);
+  PaletteFade_SetTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   WaitFrames(2);
   gFieldWork->transitionFrames = 1;
@@ -2411,12 +2411,12 @@ static void WorldMap_ShakeVenusLighthouse(void) {
     TaskFunc callback = WorldMap_UpdateLighthouseQuake;
     FieldScheduler_AddCallback(callback, priority);
   }
-  PaletteFade_SetSource(0, 0);
-  PaletteFade_SetTarget(PALETTE_TINT_MUTED, 1);
-  PaletteFade_SetTarget(PALETTE_TINT_NONE, 2);
+  PaletteFade_SetSource(RGB(0, 0, 0), PALETTES_ALL);
+  PaletteFade_SetTarget(PALETTE_TINT_MUTED, PALETTES_BG);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(40);
   FieldScript_WaitFrames(240);
-  PaletteFade_SetTarget(0, 0);
+  PaletteFade_SetTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(80);
   WaitFrames(90);
   Import_ScriptRequestWarp(WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE);
@@ -2614,7 +2614,7 @@ static void WorldMap_ShowIslandDrifting(void) {
   ObjectEvent_SetActionScript(LOCALID_DRIFTING_ISLAND, gIslandDriftsEast);
   FieldScheduler_AddCallback(WorldMap_SpawnIslandWake, TASK_PRIORITY_MAP);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   gFieldWork->transitionFrames = 32;
   FieldScript_StartScreenTransition();
   FieldScript_WaitFrames(120);

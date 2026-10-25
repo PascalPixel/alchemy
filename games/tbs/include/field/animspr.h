@@ -32,6 +32,11 @@ enum SpriteColorMode {
   SPRITE_COLOR_HIDDEN = 15      ///< solid colour 0, transparent
 };
 
+/// Passed to ObjectEvent_ConfigureSpriteColor in place of a SpriteColorMode:
+/// the object event blinks white every few frames (ObjectEvent_UpdateBlink)
+/// until it is given a mode again.
+#define SPRITE_COLOR_BLINK 0x100
+
 /// One of a sprite's four sprite anims: its animation id, frames, running
 /// script and timer.
 struct SpriteAnim {

@@ -577,7 +577,8 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   // The soldiers come up to the party; the poster waits off to the side.
   ObjectEvent_SetPosition(LOCALID_TOLBI_SOLDIER_A, PIXELS(72), PIXELS(208));
   ObjectEvent_SetPosition(LOCALID_TOLBI_SOLDIER_B, PIXELS(56), PIXELS(208));
-  ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_MISSING_PERSON_POSTER, 15);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_MISSING_PERSON_POSTER,
+                                   SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetSpriteFlags(
       ObjectEvent_GetById(LOCALID_TOLBI_MISSING_PERSON_POSTER), 0);
   ObjectEvent_SetPosition(LOCALID_TOLBI_MISSING_PERSON_POSTER, PIXELS(95),

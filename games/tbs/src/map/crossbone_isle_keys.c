@@ -76,6 +76,7 @@
 #include "fixed_math.h"
 #include "flags.h"
 #include "songs.h"
+#include "heap.h"
 #include "script.h"
 
 // Map-section temp flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
@@ -304,7 +305,8 @@ static void EventScript_BaneFirstEscape(void) {
     ObjectEvent_PlaceCurrentWithinCameraBounds(LOCALID_BANE, 1);
     FieldCamera_WaitForArrival();
     OBJECT_DIR(LOCALID_BANE, FACING_EAST, 20);
-    ObjectEvent_SetAttachedEffect(LOCALID_BANE, 0x102);
+    ObjectEvent_SetAttachedEffect(LOCALID_BANE, ATTACHED_EFFECT_IN_FRONT |
+                                                    ATTACHED_EFFECT_ONCE);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_BANE, 2);
     WAIT(20);
     OBJECT_SPEED(LOCALID_BANE, PIXELS(1), PIXELS(1) / 2);
@@ -336,7 +338,8 @@ static void EventScript_BaneSecondEscape(void) {
       ObjectEvent_PlaceCurrentWithinCameraBounds(LOCALID_BANE, 1);
       FieldCamera_WaitForArrival();
       OBJECT_DIR(LOCALID_BANE, FACING_SOUTH, 20);
-      ObjectEvent_SetAttachedEffect(LOCALID_BANE, 0x102);
+      ObjectEvent_SetAttachedEffect(LOCALID_BANE, ATTACHED_EFFECT_IN_FRONT |
+                                                      ATTACHED_EFFECT_ONCE);
       ObjectMotion_SetVarCbAndRefresh(LOCALID_BANE, 2);
       WAIT(20);
       OBJECT_SPEED(LOCALID_BANE, PIXELS(1), PIXELS(1) / 2);
@@ -345,7 +348,8 @@ static void EventScript_BaneSecondEscape(void) {
       jumpingDjinni->velocityY = PIXELS(10);
       ObjectEvent_WalkToAndWait(LOCALID_BANE, 584, 664);
       OBJECT_DIR(LOCALID_BANE, FACING_SOUTH, 20);
-      ObjectEvent_SetAttachedEffect(LOCALID_BANE, 0x102);
+      ObjectEvent_SetAttachedEffect(LOCALID_BANE, ATTACHED_EFFECT_IN_FRONT |
+                                                      ATTACHED_EFFECT_ONCE);
       WAIT(30);
 
       // Dash across the platforms, then shake the room on landing.
@@ -392,7 +396,8 @@ static void EventScript_BaneLastEscape(void) {
     djinni = ObjectEvent_GetById(LOCALID_BANE);
     djinni->velocityY = PIXELS(8);
     OBJECT_DIR(LOCALID_BANE, FACING_WEST, 30);
-    ObjectEvent_SetAttachedEffect(LOCALID_BANE, 0x102);
+    ObjectEvent_SetAttachedEffect(LOCALID_BANE, ATTACHED_EFFECT_IN_FRONT |
+                                                    ATTACHED_EFFECT_ONCE);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_BANE, 2);
     WAIT(20);
     OBJECT_SPEED(LOCALID_BANE, PIXELS(1), PIXELS(1) / 2);
@@ -401,7 +406,8 @@ static void EventScript_BaneLastEscape(void) {
     djinni->velocityY = PIXELS(4);
     ObjectEvent_WalkToAndWait(LOCALID_BANE, 880, 680);
     WAIT(10);
-    ObjectEvent_SetAttachedEffect(LOCALID_BANE, 0x101);
+    ObjectEvent_SetAttachedEffect(LOCALID_BANE, ATTACHED_EFFECT_IN_FRONT |
+                                                    ATTACHED_EFFECT_ATTACH);
     OBJECT_SPEED(LOCALID_BANE, PIXELS(2), PIXELS(1));
     ObjectEvent_WalkToAndWait(LOCALID_BANE, 880, 696);
     ObjectEvent_WalkToAndWait(LOCALID_BANE, 882, 704);
@@ -415,7 +421,8 @@ static void EventScript_BaneLastEscape(void) {
     OBJECT_POSITION_SET(LOCALID_BANE, 856, 824);
     WAIT(10);
     OBJECT_DIR(LOCALID_BANE, FACING_NORTH, 20);
-    ObjectEvent_SetAttachedEffect(LOCALID_BANE, 0x100);
+    ObjectEvent_SetAttachedEffect(LOCALID_BANE, ATTACHED_EFFECT_IN_FRONT |
+                                                    ATTACHED_EFFECT_REMOVE);
     djinni = ObjectEvent_GetById(LOCALID_BANE);
 #ifdef UBFIX
     djinni->update = CrossboneIsleKeys_FaceBaneTowardLeader;
@@ -1189,7 +1196,7 @@ static void EventScript_TouchThirdPillar(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
   if (leader->facing == FACING_SOUTH) {
-    FieldObjectEvent_JumpDownLedge(0, 6, 0);
+    FieldObjectEvent_JumpDownLedge(LOCALID_PARTY_LEADER, 6, 0);
   } else {
     EventScript_PushThirdPillar();
   }
@@ -1406,8 +1413,9 @@ static void CrossboneIsleKeys_InitializeStatues(void) {
       CrossboneIsleKeys_CheckSecondPursuerTrigger, TASK_PRIORITY_MAP);
   FieldScheduler_AddCallback(CrossboneIsleKeys_CheckFirstPursuerTrigger,
                              TASK_PRIORITY_MAP);
-  Io_Write16(0x3f42, &REG_BLDCNT);
-  Io_Write16(0x607, &REG_BLDALPHA);
+  Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
+             &REG_BLDCNT);
+  Io_Write16(BLEND_ALPHA(7, 6), &REG_BLDALPHA);
 }
 
 /// Restores movable pillars, terrain and the Djinni escape progress.

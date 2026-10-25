@@ -700,9 +700,9 @@ static void EventScript_DoraWakesIsaac(void) {
       (struct Object *)ObjectEvent_GetById(LOCALID_PARTY_LEADER), SPRITE_TUNIC);
   GameFlag_Set(FLAG_ISAAC_WEARS_TUNIC);
   Sound_PlaySong(SE_RECOVERY);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, 7);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_WHITE);
   FieldScript_WaitFrames(10);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_NORMAL);
   FieldScript_WaitFrames(20);
   ObjectEvent_GetById(LOCALID_DORA)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 534, 688);
@@ -1155,10 +1155,10 @@ static void EventScript_ShowMythrilBag(void) {
   sprite->image.palette = 0;
   // Load the item icon into the temporary object event before animating the
   // bag.
-  glyph = AllocHeapSlot(17, sizeof(*glyph));
+  glyph = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*glyph));
   Icon_DrawItem(ITEM_MYTHRIL_BAG);
   VramCache_Load(sprite->slot, 128, glyph->tiles);
-  FreeHeapSlot(17);
+  FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
   FieldScript_StartScreenTransition();
   // Walk the presenter into view, then wait for both bag scripts to finish.
@@ -1230,8 +1230,8 @@ static void ValeInn_SpawnEffectPair(union ObjectEventOrEffect *fieldObject) {
   s32 effectIndex;
 
   for (effectIndex = 0; effectIndex < 2; ++effectIndex) {
-    child = ObjectEvent_Create(26, parent->x.fixed, parent->y.fixed,
-                               parent->z.fixed);
+    child = ObjectEvent_Create(SPRITE_GOLDEN_RINGS, parent->x.fixed,
+                               parent->y.fixed, parent->z.fixed);
     pair[effectIndex] = child;
     if (child != NULL) {
       child->groundHeight = parent->groundHeight;

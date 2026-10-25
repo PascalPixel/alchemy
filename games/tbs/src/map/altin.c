@@ -405,7 +405,7 @@ static void Altin_TalkToThirstyOldWoman(void) {
 #ifdef BUGFIX
       ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
 #else
-      ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, 0x4000, 0);
+      ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
 #endif
       ObjectEvent_FaceDirection(LOCALID_THIRSTY_OLD_WOMAN,
                                 FACING_SOUTH - FACING_STEP, 0);

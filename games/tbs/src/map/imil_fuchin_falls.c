@@ -122,6 +122,7 @@
 #include "io_reg.h"
 #include "flags.h"
 #include "songs.h"
+#include "heap.h"
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
 #include "map_grid.h"
@@ -1561,8 +1562,10 @@ static void ImilFuchinFalls_PrepareRoom(void) {
         MapGrid_CopyCellsTo(30, 8, 12, 8, 8, 7);
       } else {
         gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-        PaletteFade_ApplySource(PALETTE_TINT_CUSTOM | RGB(8, 8, 12), 1);
-        PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 12), 1);
+        PaletteFade_ApplySource(PALETTE_TINT_CUSTOM | RGB(8, 8, 12),
+                                PALETTES_BG);
+        PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 12),
+                                PALETTES_BG);
         PaletteFade_StartInterpolation(1);
         WaitFrames(1);
       }
@@ -1654,10 +1657,10 @@ static void ImilFuchinFalls_PlaceDragonsEye(void) {
     sprite->image.palette = 0;
     objectEvent->motionFlags = clear;
     objectEvent->retainSpriteCache = 1;
-    glyph = AllocHeapSlot(17, sizeof(*glyph));
+    glyph = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*glyph));
     Icon_DrawItem(ITEM_DRAGONS_EYE);
     VramCache_Load(sprite->slot, 128, glyph->tiles);
-    FreeHeapSlot(17);
+    FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
     gImilFuchinFalls_DragonsEye = objectEvent;
   }
 }
@@ -1795,14 +1798,14 @@ static void FuchinFallsCave_LightDragonWithEye(void) {
   Field_EndBusyAndReveal();
 
   for (pass = 0; pass < 4; pass++) {
-    PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(24, 24, 16), 1);
+    PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(24, 24, 16), PALETTES_BG);
     PaletteFade_StartInterpolation(1);
     WaitFrames(2);
     if (pass == 0) {
       MapGrid_CopyCellsTo(30, 8, 12, 8, 8, 7);
       MapGrid_CopyCellsTo(30, 57, 19, 57, 1, 1);
     }
-    PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 12), 1);
+    PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 12), PALETTES_BG);
     PaletteFade_StartInterpolation(1);
     WaitFrames(2);
   }
@@ -1813,14 +1816,14 @@ static void FuchinFallsCave_LightDragonWithEye(void) {
   FieldScheduler_AddCallback(ImilFuchinFalls_BlowCaveMouthDust,
                              TASK_PRIORITY_MAP);
   WaitFrames(40);
-  PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(16, 4, 4), 1);
+  PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(16, 4, 4), PALETTES_BG);
   PaletteFade_StartInterpolation(40);
   WaitFrames(80);
   Task_Remove(ImilFuchinFalls_BlowCaveMouthDust);
   WaitFrames(20);
 
   // Settle the lighting, consume the eye and remember the revealed path.
-  PaletteFade_SetTarget(PALETTE_TINT_NONE, 1);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(80);
 
   WaitFrames(80);
@@ -1887,8 +1890,8 @@ static void FuchinFallsCave_EndRevealLighting(void) {
     state->nextMode = 0;
     state->duration = 1;
     state->step = 1;
-    PaletteFade_SetSource(0, 1);
-    PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 12), 1);
+    PaletteFade_SetSource(RGB(0, 0, 0), PALETTES_BG);
+    PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 12), PALETTES_BG);
     PaletteFade_StartInterpolation(16);
     WaitFrames(16);
   }

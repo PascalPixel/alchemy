@@ -372,8 +372,9 @@ s32 TolbiSpring_Initialize(void) {
 
   if (gSaveBlock.mapId == (s32)&MapId_TolbiSpring) {
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    Io_Write16(0x3f42, &REG_BLDCNT);
-    Io_Write16(0x80c, &REG_BLDALPHA);
+    Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
+               &REG_BLDCNT);
+    Io_Write16(BLEND_ALPHA(12, 8), &REG_BLDALPHA);
     Import_ObjectEventSetAnimation(LOCALID_TOLBI_SPRING_EAST_SIGN_GRASS, 2);
     Import_ObjectEventSetAnimation(LOCALID_TOLBI_SPRING_WEST_SIGN_GRASS, 2);
     ObjectEvent_GetById(LOCALID_TOLBI_SPRING_EAST_SIGN_GRASS)->scaleX =
@@ -388,8 +389,9 @@ s32 TolbiSpring_Initialize(void) {
     if (gSaveBlock.warpDest == TOLBI_SPRING_FROM_TOLBI) {
       TolbiSpring_InitializeTossSimulation();
       if (GameFlag_Get(FLAG_TOLBI_SPRING_RISEN)) {
-        Io_SetBlendControl(0x3f42);
-        Io_SetBlendAlpha(0x1000);
+        Io_SetBlendControl(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND |
+                           BLDCNT_TGT2_ALL);
+        Io_SetBlendAlpha(BLEND_ALPHA(0, 16));
       }
     }
   } else {
@@ -400,16 +402,18 @@ s32 TolbiSpring_Initialize(void) {
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 9);
     if (gSaveBlock.warpDest == TOLBI_GAME_ROOMS_LUCKY_DICE_FROM_TOLBI) {
       ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT,
-                                       1);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_SPRING_DICE_ATTENDANT, 2);
+                                       SPRITE_COLOR_GRB);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_SPRING_DICE_ATTENDANT,
+                                       SPRITE_COLOR_RBG);
     }
     // Lucky Dice returns here to report the change in the party's coins.
     if (gSaveBlock.warpDest == TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_DICE &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       FieldScript_Start();
       ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT,
-                                       1);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_SPRING_DICE_ATTENDANT, 2);
+                                       SPRITE_COLOR_GRB);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_SPRING_DICE_ATTENDANT,
+                                       SPRITE_COLOR_RBG);
       FieldScript_StartScreenTransition();
       FieldScript_WaitTransitionFrames();
       FieldScript_WaitFrames(10);
@@ -552,7 +556,8 @@ static void TolbiSpring_RiseAndFadeIn(void) {
   }
   alphaSteps = gTolbiSpring_AlphaSteps;
   for (stepIndex = 0; stepIndex < 8; stepIndex++) {
-    Io_Write16(0x3f42, &REG_BLDCNT);
+    Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
+               &REG_BLDCNT);
     Io_Write16(*alphaSteps++, &REG_BLDALPHA);
     WaitFrames(8);
   }
@@ -612,7 +617,7 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
   }
   FieldScript_SetMessageId(MsgTolbiStepRightEnjoy);
   FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
-  FieldScript_RequestDestination(508, 0);
+  FieldScript_RequestDestination(RUN_LUCKY_WHEELS, 0);
   FieldScript_SetNextDestination((s32)&MapId_TolbiGameRooms,
                                  TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_WHEELS);
 }
@@ -643,7 +648,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
     ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, 120, 152);
     ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_WEST, 0);
     FieldScript_WaitFrames(20);
-    FieldScript_RequestDestination(0x1fd, 0);
+    FieldScript_RequestDestination(RUN_LUCKY_DICE, 0);
     FieldScript_SetNextDestination((s32)&MapId_TolbiGameRooms,
                                    TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_DICE);
   } else {
@@ -1490,7 +1495,8 @@ static s32 TolbiSpring_RunToss(s32 tossKind) {
     }
     // Release the token on the leader's throw frame.
     if (sTossFrame == 16) {
-      Import_ObjectEventSetAnimation(gSaveBlock.leaderLocalId, 29);
+      Import_ObjectEventSetAnimation(gSaveBlock.leaderLocalId,
+                                     ANIM_LEADER_TOSS);
       toss->launchFrame = 0;
       toss->velocity.x = 13 * PIXELS(1) / 10;
       toss->velocity.y = PIXELS(4);

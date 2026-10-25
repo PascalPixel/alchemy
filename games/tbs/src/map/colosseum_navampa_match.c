@@ -1048,7 +1048,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   objectEvent->motionFlags = 0;
   objectEvent->y.fixed = PIXELS(4);
 
-  if (GameFlag_Get(866) != 0) {
+  if (GameFlag_Get(FLAG_SCALES_FROZEN) != 0) {
     Import_ObjectEventSetAnimation(LOCALID_PUDDLE, 5);
     objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
     objectEvent->y.fixed = PIXELS(4);
@@ -1059,14 +1059,14 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     objectEvent = ObjectEvent_GetById(LOCALID_PUDDLE);
     objectEvent->scaleX = 3 * Q16_ONE / 2;
     objectEvent->scaleY = 3 * Q16_ONE / 2;
-    if (GameFlag_Get(871) != 0) {
+    if (GameFlag_Get(FLAG_ON_SCALES) != 0) {
       MapGrid_CopyCellAttributes(0, 24, 1, 1, 9, 12);
     } else {
       MapGrid_CopyCellAttributes(0, 25, 1, 1, 9, 12);
     }
   }
 
-  if (GameFlag_Get(872) != 0) {
+  if (GameFlag_Get(FLAG_WEIGHT_ON_SCALES) != 0) {
     MapGrid_CopyCellAttributes(15, 12, 1, 1, 13, 12);
     MapGrid_CopyCellAttributes(1, 25, 1, 1, 9, 12);
     objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEIGHT);
@@ -1107,7 +1107,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   }
 
   // Halt preserves a stationary wall; otherwise restart its pattern cycle.
-  if (GameFlag_Get(865) != 0) {
+  if (GameFlag_Get(FLAG_WALL_WEDGE_HALTED) != 0) {
     for (i = LOCALID_FIRST_PISTON; i <= LOCALID_LAST_PISTON; i++) {
       objectEvent = ObjectEvent_GetById(i);
       objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -1134,12 +1134,12 @@ s32 ColosseumNavampaMatch_Initialize(void) {
                                TASK_PRIORITY_MAP);
   }
 
-  if (GameFlag_Get(864) != 0) {
+  if (GameFlag_Get(FLAG_PLANT_GROWN) != 0) {
     Import_ObjectEventSetAnimation(LOCALID_GROWTH_PLANT, ANIM_SHAKE_HEAD);
     MapGrid_CopyCellAttributes(47, 61, 1, 4, 49, 61);
   }
 
-  if (GameFlag_Get(867) != 0) {
+  if (GameFlag_Get(FLAG_SIDEWALK_LOG_KNOCKED_OFF) != 0) {
     TilesetAnim_Pause(1);
     objectEvent = ObjectEvent_GetById(LOCALID_SIDEWALK_LOG);
     objectEvent->motionFlags = 0;
@@ -1153,7 +1153,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     TilesetAnim_Pause(2);
   }
 
-  if (GameFlag_Get(873) != 0) {
+  if (GameFlag_Get(FLAG_LONG_LOG_IN_PLACE) != 0) {
     objectEvent = ObjectEvent_GetById(LOCALID_LONG_LOG);
     Object_SelectAnimation(objectEvent, 8);
     objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -1179,7 +1179,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
   Colosso_ShowItemIcon(LOCALID_PRIZE_A, ITEM_CLAYMORE);
   Colosso_ShowItemIcon(LOCALID_PRIZE_B, ITEM_HUNTERS_SWORD);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_OPPONENT, 2);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_OPPONENT, SPRITE_COLOR_RBG);
 
   // Warp destinations: the race (1), the friends' turns, the tour, and the end
   // of Colosso after a win (4) or a loss (5).
@@ -1373,7 +1373,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   WaitFrames(1);
   FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  PaletteFade_ApplyTarget(PALETTE_TINT_GRAYSCALE, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_GRAYSCALE, PALETTES_BG);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_SetMessageId(MsgColossoIsaac);
@@ -1514,7 +1514,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(1464), PIXELS(192));
   ObjectEvent_SetPosition(LOCALID_MIA, PIXELS(1560), PIXELS(200));
   ObjectSystem_SuspendProjectionAndShowSprites();
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(1);
   FieldScript_SetMessageId(MsgColossoIsaacFellAsleep);
   Script_ShowMessage(LOCALID_GARET, 0);
@@ -1995,6 +1995,9 @@ static void EventScript_TalkToLogRollingAttendant(s32 localId) {
   FieldScript_End();
 }
 
+// This map's warps for colosso_solo.h.
+#define COLOSSO_SOLO_TO_RACE COLOSSEUM_NAVAMPA_MATCH_LEND_A_HAND_TO_RACE
+#define COLOSSO_SOLO_TO_COLOSSEUM COLOSSEUM_NAVAMPA_MATCH_TO_COLOSSEUM
 #include "common/colosso_solo.h"
 #include "common/item_equip.h"
 #include "common/colosso_task.h"

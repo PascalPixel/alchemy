@@ -1,14 +1,27 @@
-# ☀️ The Broken Seal
+# The Broken Seal
 
-[The Broken Seal](glossary.md#the-two-games) plays one [map](glossary.md#map)
-at a time: a room, a town, a dungeon floor, the world map. When the
-[party](glossary.md#the-party) walks through a door, the game ends one map and
-starts the next. Each map brings its own code, loaded only while the party is
-there, and its own [layout](glossary.md#layout), the picture it shows and the
-ground under it. What a map knows about how far the story has gone, it reads
-from the [game flags](glossary.md#game-flag), a long list of yes-or-no facts
-saved with the game. The rest of the program is always there, cut into
-[banks](glossary.md#bank) ([How the code is organised](#how-the-code-is-organised)).
+[The Broken Seal](glossary.md#the-two-games) is the first game in the series,
+released as simply "Golden Sun" outside of Japan.
+
+The game's code comes in two kinds. Most of it is always in memory: the
+[main loop](#the-main-loop), and everything it calls on, the engine that moves
+and draws the party and everyone else, the windows and menus, the battle
+system, the minigames such as Lucky Dice, and saving. The rest is
+[overlays](#maps-and-overlays): each [map](glossary.md#map)'s own code, which
+says who stands there and what happens, unpacked into memory only while the
+[party](glossary.md#the-party) is in that map.
+
+The main loop runs one map at a time: a room, a town, a dungeon floor, the
+world map. When the party walks through a door, the game ends one map and
+starts the next. Each map brings its overlay and its own
+[layout](glossary.md#layout), the picture it shows and the ground under it.
+A battle or a minigame takes a map's place in the loop: it runs as if it were
+a map, under a number past the last map's, but its code is part of the
+always-loaded program, so it needs no overlay. What a map knows about how far
+the story has gone, it reads from the [game flags](glossary.md#game-flag), a
+long list of yes-or-no facts saved with the game. The always-loaded code is
+cut into [banks](glossary.md#bank)
+([How the code is organised](#how-the-code-is-organised)).
 
 ## The main loop
 
@@ -89,11 +102,11 @@ Avoid doesn't wear off.
 The table is `gMapHeaders`, one `struct MapHeader` a row; code names each map
 by its row's symbol, `MapId_<Place>`.
 
-| What | Count |
-| --- | --- |
-| maps | 201 |
-| overlays, the maps' code, some shared by several maps | 96 |
-| map sections | 71 |
+| What                                                  | Count |
+| ----------------------------------------------------- | ----- |
+| maps                                                  | 201   |
+| overlays, the maps' code, some shared by several maps | 96    |
+| map sections                                          | 71    |
 
 ## Warps and warp destinations
 

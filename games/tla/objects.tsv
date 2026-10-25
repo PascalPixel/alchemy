@@ -1162,8 +1162,8 @@ main	rom_main_02	recon/tla/fr/rom	.rom.000410ac	fr
 main	rom_main_02	recon/tla/es/rom	.rom.000410c8	es
 main	rom_main_02	recon/tla/de/rom	.rom.000410bc	de
 main	rom_main_02	recon/tla/raw/08041068	.text	en
-main	rom_main_02	recon/tla/raw/080410f8	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.0004118c	ja
+main	rom_main_02	games/tla/src/menu/debug_warp	.text
 main	rom_main_02	games/tla/src/menu/screene	.text
 main	rom_main_02	games/tla/src/graphics/text/ability_name	.text
 main	rom_main_02	recon/tla/it/rom	.rom.000412e4	it

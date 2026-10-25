@@ -802,7 +802,12 @@ Func_08040798:
 	.section .rom.00040dd0, "ax"
 	.incbin "baserom.gba", 0x00040dd0, 0x000000f4
 	.section .rom.000410c8, "ax"
-	.incbin "baserom.gba", 0x000410c8, 0x0000019c
+	.balign 4
+	.global Func_08041068
+	.type Func_08041068, %function
+	.thumb_func
+Func_08041068:
+	.incbin "baserom.gba", 0x000410c8, 0x00000090
 	.section .rom.000412ec, "ax"
 	.global Func_0804128c
 	.type Func_0804128c, %function

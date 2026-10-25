@@ -46,7 +46,7 @@ s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
   view->frames = 60;
   battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   view->flag = 0;
-  battle->brightness = 0x10000;
+  battle->brightness = Q16_ONE;
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   Transform_Reset();
   Transform_SetLookAt(camera->eye, camera->focus);
@@ -396,7 +396,7 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
       work.effect.side ^= 1;
     // The animation runs to its end while playback, a task, plays
     // each target's outcome from the frame the blow lands.
-    Task_Add(BattlePlayback_Run, 0xc80);
+    Task_Add(BattlePlayback_Run, TASK_PRIORITY_MAIN_LOOP);
     if (plan->animation & ANIM_SUMMON)
       BattleAnim_RunSummonEffectFar(&work.effect);
     else if (plan->animation & ANIM_BY_ID_RANGE)
@@ -541,9 +541,9 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
   else
     work.effect.side = ANIM_SIDE_ENEMIES;
 
-  REG_WIN0H = WIN_RANGE(0, 240);
+  REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
   REG_WIN0V = WIN_RANGE(16, 136);
-  REG_WIN1H = WIN_RANGE(0, 240);
+  REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
   REG_WIN1V = WIN_RANGE(16, 136);
   REG_WININ = BATTLE_WININ;
   REG_WINOUT = BATTLE_WINOUT;
@@ -600,7 +600,7 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
       }
     }
 
-    Task_Add(BattlePlayback_Run, 0xc80);
+    Task_Add(BattlePlayback_Run, TASK_PRIORITY_MAIN_LOOP);
     if (work.effect.kind != 0) {
       if (plan->animation & ANIM_BY_ID_RANGE)
         BattleAnim_DispatchByIdRangeFar(&work.effect);
@@ -754,7 +754,7 @@ s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
   // An item with an animation dims the background over 20 frames, to about two
   // thirds of its brightness (19 steps of 0x444 in 16.16), then plays it; one
   // with none waits a second.
-  Task_Add(BattlePlayback_Run, 0xc80);
+  Task_Add(BattlePlayback_Run, TASK_PRIORITY_MAIN_LOOP);
   if (work.effect.kind != 0) {
     s32 fade;
 
@@ -765,7 +765,7 @@ s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
 
       if (targetOrFadeIndex < 20) {
         u16 *palette = battle->palette;
-        s32 value = 0x10000 - fade;
+        s32 value = Q16_ONE - fade;
 
         battle->brightness = value;
         Graphics_ScaleRgb555Clamped(palette, (u16 *)(BG_PLTT + 6 * 16), value,
@@ -963,7 +963,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode) {
     BattlePlayback_RunAll();
     BattleBackground_RestorePalette();
   } else {
-    Task_Add(BattlePlayback_Run, 0xc80);
+    Task_Add(BattlePlayback_Run, TASK_PRIORITY_MAIN_LOOP);
     if (work.effect.kind) {
       if (plan->animation & ANIM_BY_ID_RANGE)
         BattleAnim_DispatchByIdRangeFar(&work.effect);

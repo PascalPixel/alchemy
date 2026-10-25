@@ -95,7 +95,7 @@ s32 ElementGlow_UpdateStarField(void) {
       if (distance <= 0xfff) {
         spark->life = 0;
       } else {
-        scale = Iwram_RatioMulQ14(distance, 0x10000);
+        scale = Iwram_RatioMulQ14(distance, Q16_ONE);
         spark->life--;
         axisPosition = spark->motion;
         for (axis = 2; axis >= 0; axis--) {
@@ -114,7 +114,7 @@ s32 ElementGlow_UpdateStarField(void) {
     // them, while the field is young.
     if (life == 0 && work->frames <= 24) {
       angle = Random16();
-      radius = Random16() + 0x10000;
+      radius = Random16() + Q16_ONE;
       halfRadius = radius >> 1;
       spark->motion[0] = Iwram_MulQ16(Trig_Cos(angle), halfRadius);
       spark->motion[1] = Iwram_MulQ16(Trig_Sin(angle), halfRadius);
@@ -229,7 +229,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   // coordinate is mirrored, and the further out, the longer it lives.
   for (effectIndex = 0; effectIndex < 16; effectIndex++) {
     s32 angle = Random16();
-    u32 radius = Random16() + 0x10000;
+    u32 radius = Random16() + Q16_ONE;
     u32 halfRadius = radius >> 1;
 
     spark = &work->sparks[effectIndex];
@@ -290,8 +290,8 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   Io_Write16(Q_8_8(1), &REG_BG2PD);
   BattleAnim_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
   BattleAnim_BuildBlitterFar(HEAP_SLOT_RAM_CODE_2, 7, 7, 3, 2);
-  Task_Add(STAR_FIELD_UPDATE_CALLBACK, 0xc80);
-  return Task_Add(STAR_FIELD_UPLOAD_CALLBACK, 0xc80);
+  Task_Add(STAR_FIELD_UPDATE_CALLBACK, TASK_PRIORITY_MAIN_LOOP);
+  return Task_Add(STAR_FIELD_UPLOAD_CALLBACK, TASK_PRIORITY_MAIN_LOOP);
 }
 
 /// Ends a star field: clears BG2's tiles in character block 1, frees its
@@ -328,8 +328,8 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
   u32 green;
   u32 blue;
 
-  if (scale > 0x10000)
-    scale = 0x10000;
+  if (scale > Q16_ONE)
+    scale = Q16_ONE;
   if (count > 0) {
     redMask = 0x1f;
     greenMask = 0x3e0;
@@ -395,7 +395,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   IoWriteQueue_Store16((u32)&REG_BLDCNT,
                        BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   WaitFrames(1);
-  Io_Write16(WIN_RANGE(0, 240), &REG_WIN0H);
+  Io_Write16(WIN_RANGE(0, DISPLAY_WIDTH), &REG_WIN0H);
   Io_Write16(WIN_RANGE(16, 136), &REG_WIN0V);
   Io_Write16(WININ_WIN0_ALL, &REG_WININ);
   Io_Write16(WINOUT_WIN01_BG0 | WINOUT_WIN01_OBJ, &REG_WINOUT);

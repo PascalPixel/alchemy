@@ -154,15 +154,15 @@ void FieldEffect_SetupResourcesAndWindow(void) {
   }
   work->cursorVramBlock = Resource_LoadFixedBlockBIntoFreeSlotFar();
   tile = gVramCacheEntries[work->cursorVramBlock].offset;
-  work->nameWindow = Window_CreateFar(0, 0, 0, 0, 2);
+  work->nameWindow = Window_CreateFar(0, 0, 0, 0, WINDOW_FLAG_INSTANT);
   work->namedMarker = -1;
   work->cursorSpeed = WORLD_MAP_CURSOR_MIN_SPEED;
 #ifdef UBFIX
   marker->words[0] = 0;
-  marker->words[1] = 0x40000000;
+  marker->words[1] = MENU_SPRITE_SHAPE_16X16;
 #else
   *oam++ = 0;
-  *oam++ = 0x40000000;
+  *oam++ = MENU_SPRITE_SHAPE_16X16;
 #endif
   cursorAttributes = 0x400;
   cursorAttributes |= tile >> 5;
@@ -489,7 +489,7 @@ void RegionMap_Show(s32 picture) {
   FieldEffect_SetupResourcesAndWindow();
   Task_Add(RegionMap_UpdateMarkers, TASK_PRIORITY_MAIN_LOOP);
   if (GameFlag_GetFar(FLAG_WORLD_MAP_LEFT))
-    FieldMessage_ShowFar(MsgNotOnMap, 1);
+    FieldMessage_ShowFar(MsgNotOnMap, FIELD_MESSAGE_ZOOM);
   do {
     WaitFrames(1);
   } while ((gKeysRepeat & (KEY_A | KEY_B)) == 0);
@@ -569,7 +569,7 @@ void FieldEffect_RunVisibilityTransition(void) {
         WaitFrames(1);
       } while (gKeysHeld & KEY_L);
     }
-    FieldEffect_ScheduleRatioTransition(0x10000, 6);
+    FieldEffect_ScheduleRatioTransition(Q16_ONE, 6);
     Task_ResumeOverlayTasks();
   }
 }

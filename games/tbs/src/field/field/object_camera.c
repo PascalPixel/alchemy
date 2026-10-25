@@ -34,8 +34,8 @@ struct ObjectCameraFixed {
 /// Each frame, with the scrolling camera: places every object's sprite on the
 /// screen. An object on or near the screen takes its layer and priority from
 /// the cell under it; one off screen gives up its VRAM cache entry.
-/// ObjectSystem_Initialize adds it as a task (priority 0xc80, after the objects
-/// move) for every mode but 3 and 4;
+/// ObjectSystem_Initialize adds it as a task (priority TASK_PRIORITY_MAIN_LOOP,
+/// after the objects move) for every mode but 3 and 4;
 /// ObjectSystem_SuspendProjectionAndShowSprites suspends it. Resets the
 /// system's used count, may change an object's layer and its sprite's
 /// priorities, and holds the frame decoder in heap slot HEAP_SLOT_FRAME_SCRATCH
@@ -191,10 +191,10 @@ UNUSED s32 ObjectCamera_ReturnTrue(void) { return 1; }
 /// 64th object down, facing them by the angle from the eye to the target.
 /// While battle commands are chosen (FLAG_CHOOSING_COMMANDS, set by
 /// Battle_GatherActions) it uses the fixed view matrix and 1.0
-/// scale. ObjectSystem_Initialize adds it as a task (priority 0xc80) for
-/// OBJECT_SYSTEM_WORLD_MAP and OBJECT_SYSTEM_BATTLE;
-/// ObjectSystem_SuspendProjectionAndShowSprites suspends it. Resets the
-/// system's used count.
+/// scale. ObjectSystem_Initialize adds it as a task (priority
+/// TASK_PRIORITY_MAIN_LOOP) for OBJECT_SYSTEM_WORLD_MAP and
+/// OBJECT_SYSTEM_BATTLE; ObjectSystem_SuspendProjectionAndShowSprites suspends
+/// it. Resets the system's used count.
 void ObjectSystem_ProjectSprites(void) {
   s32 i;
   struct ObjectCameraFixed *camera;
@@ -252,7 +252,7 @@ void ObjectSystem_ProjectSprites(void) {
   // draw slot here: 0 sorts it by distance (Render_PlaceProjectedSprite).
   object = gObjects;
   object += OBJECT_COUNT - 1;
-  fixedScale = 0x10000;
+  fixedScale = Q16_ONE;
   for (i = OBJECT_COUNT - 1; i >= 0; i--, object--) {
     if (object->script == 0)
       continue;

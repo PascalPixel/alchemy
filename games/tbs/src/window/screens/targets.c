@@ -208,7 +208,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     cursorTracks[0].x = (u8)actorPosition.x;
     cursorTracks[0].y = 0x80;
   }
-  window = Window_Create(0, 12, 30, 4, 74);
+  window = Window_Create(0, 12, 30, 4,
+                         WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                             WINDOW_FLAG_OUTLINED_TEXT);
   while (1) {
     firstSprite = cursorSprites;
     drawCursors = 0;
@@ -382,9 +384,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
 #endif
           }
-            Text_SetColor(2);
+            Text_SetColor(TEXT_COLOR_RED);
             Text_DrawMessageAsTiles(MsgTargetSetDjinni, conditionWindow, 0, 0);
-            Text_SetColor(15);
+            Text_SetColor(TEXT_COLOR_WHITE);
             break;
           case TARGET_HINT_HP: {
             s32 anchor;
@@ -631,9 +633,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             if (count != 0)
               break;
           no_condition:
-            Text_SetColor(2);
+            Text_SetColor(TEXT_COLOR_RED);
             Text_DrawMessageAsTiles(MsgTargetNoEffect, conditionWindow, 0, 0);
-            Text_SetColor(15);
+            Text_SetColor(TEXT_COLOR_WHITE);
             break;
           }
         }

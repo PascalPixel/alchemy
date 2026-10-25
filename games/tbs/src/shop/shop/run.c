@@ -133,7 +133,8 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   window = Portrait_OpenWindowFar(shop->keeperGraphics, 0, 0, 0);
   if (window == 0)
     window = Window_CreateFar(-5, 0, 5, 5, WINDOW_FLAG_INSTANT);
-  anchor = WindowSprite_CreateFar(shop->cursorIcon, 0x40000000, window, 0, 0);
+  anchor =
+      WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16, window, 0, 0);
   anchor->motion = WINDOW_SPRITE_MOTION_STILL;
   anchor->kind = 0;
   // The hand waits off the left edge until a screen places it

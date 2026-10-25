@@ -40,7 +40,8 @@ s32 ColossoMenu_Choose(s32 unused) {
   u16 *palette;
 
   moved = 1;
-  window = Window_Create(TALK_WINDOW_X, 13, TALK_WINDOW_WIDTH, 7, 2);
+  window = Window_Create(TALK_WINDOW_X, 13, TALK_WINDOW_WIDTH, 7,
+                         WINDOW_FLAG_INSTANT);
   Text_DrawMessageAsTiles(MsgTalkChoice, window, 8, 0);
   Text_DrawMessageAsTiles(MsgTalkChoice + 1, window, 8, 16);
   Text_DrawMessageAsTiles(MsgTalkChoice + 2, window, 8, 32);
@@ -52,16 +53,18 @@ s32 ColossoMenu_Choose(s32 unused) {
     MenuCursor_SetPositionImmediateFar(&cursor, window->x * 8 - 3,
                                        window->y * 8 + 9);
   }
-  // The choice under the cursor flashes between palette 15 and palette 14,
-  // a copy of it with colour 4 grey.
-  palette = (u16 *)&BG_PLTT_COLOR(14, 0);
-  Dma_Set((const void *)&BG_PLTT_COLOR(15, 0), palette, DMA_COPY32(8),
-          REG_DMA3);
+  // The choice under the cursor flashes between WINDOW_PALETTE and
+  // HIGHLIGHT_PALETTE, a copy of it with WINDOW_BACKGROUND_COLOR grey.
+  palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
+  Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
+          DMA_COPY32(8), REG_DMA3);
   palette[4] = 0x6318;
   while (1) {
-    Window_SetTextTileRect(window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1, 14);
+    Window_SetTextTileRect(window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1,
+                           HIGHLIGHT_PALETTE);
     WaitFrames(1);
-    Window_SetTextTileRect(window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1, 15);
+    Window_SetTextTileRect(window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1,
+                           WINDOW_PALETTE);
     if (moved) {
       moved = 0;
       MenuCursor_SetFar(&cursor, window->x * 8 - 3,

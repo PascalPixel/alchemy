@@ -150,8 +150,8 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
 // shadow; each pixel left of the length becomes colour 8 (shadow 13), the
 // rest colour 2 (shadow 12). Only the bottom row of each tile changes for an
 // empty bar, the bottom three otherwise. Outside battle it first loads the
-// basic colours into BG palette 14, its colour 14 taken from colour 4 of
-// palette 15.
+// basic colours into HIGHLIGHT_PALETTE, its TEXT_BACKGROUND_COLOR taken from
+// WINDOW_BACKGROUND_COLOR.
 // It is declared to return s32 but returns no value, and no caller reads one;
 // UBFIX makes it void, which changes the register its epilogue returns
 // through.
@@ -173,8 +173,10 @@ s32 PartyStatus_DrawBars(struct Window *window, s32 x, s32 y, s32 length) {
 
   if (work->battleMode == WINDOW_FIELD) {
     Dma_Set((const void *)Palette_GetBasicSpriteColors(),
-            (void *)&BG_PLTT_COLOR(14, 0), DMA_COPY16(16), REG_DMA3);
-    BG_PLTT_COLOR(14, 14) = BG_PLTT_COLOR(15, 4);
+            (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0), DMA_COPY16(16),
+            REG_DMA3);
+    BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR) =
+        BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   }
   x += window->x;
   y += window->y;
@@ -224,9 +226,9 @@ s32 PartyStatus_DrawBars(struct Window *window, s32 x, s32 y, s32 length) {
 
 /// Draws the party status window with `flags` (see PARTY_STATUS_*): each
 /// member's name, HP and optionally PP with their bars, and in battle the
-/// standby Djinn of each element. The HP is drawn in text colour 2 at zero and
-/// colour 4 at a quarter or less. When the flags change, the window is erased
-/// and laid out again first.
+/// standby Djinn of each element. The HP is drawn in TEXT_COLOR_RED at zero and
+/// TEXT_COLOR_YELLOW at a quarter or less. When the flags change, the window is
+/// erased and laid out again first.
 void PartyStatus_Draw(s32 flags) {
   // UB: the negative indices leave the single party-status heap slot.
   // Named members grow the EN function from 0x3d4 to 0x3dc bytes. Keep the
@@ -306,22 +308,20 @@ void PartyStatus_Draw(s32 flags) {
     s32 current;
 
     if (hp == 0)
-      Text_SetColor(2);
+      Text_SetColor(TEXT_COLOR_RED);
     else if (hp <= hpMax / 4)
-      Text_SetColor(4);
+      Text_SetColor(TEXT_COLOR_YELLOW);
     else
-      Text_SetColor(15);
-    // The numbers' tiles take BG palette 14 in the field and 5 in battle
-    // (WindowWork.textPalette); the name keeps palette 15.
-    work->textPalette = 14;
+      Text_SetColor(TEXT_COLOR_WHITE);
+    work->textPalette = HIGHLIGHT_PALETTE;
     if (work->battleMode != WINDOW_FIELD)
-      work->textPalette = 5;
+      work->textPalette = BASIC_COLORS_PALETTE;
     Text_DrawPrefixedNumberAtOffset(
         hp, window, (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8 + 8, 0);
-    work->textPalette = 15;
+    work->textPalette = WINDOW_PALETTE;
     Text_DrawStringAtOffset(unit->name, window,
                             (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8);
-    Text_SetColor(15);
+    Text_SetColor(TEXT_COLOR_WHITE);
     if (unit->hpMax != 0) {
       // A member with any HP left shows at least one pixel of bar.
       current = unit->hp;
@@ -332,9 +332,9 @@ void PartyStatus_Draw(s32 flags) {
                            barLength);
     }
     if (flags & PARTY_STATUS_SHOW_PP) {
-      work->textPalette = 14;
+      work->textPalette = HIGHLIGHT_PALETTE;
       if (work->battleMode != WINDOW_FIELD)
-        work->textPalette = 5;
+        work->textPalette = BASIC_COLORS_PALETTE;
       Text_DrawPrefixedNumberAtOffset(unit->pp, window,
                                       (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8,
                                       y * 8 + 16, 1);
@@ -348,7 +348,7 @@ void PartyStatus_Draw(s32 flags) {
       }
     }
   }
-  work->textPalette = 15;
+  work->textPalette = WINDOW_PALETTE;
 
   // The Djinn column: each element's icon and its count of standby Djinn.
   if (work->battleMode != WINDOW_FIELD && (flags & PARTY_STATUS_SHOW_DJINN)) {

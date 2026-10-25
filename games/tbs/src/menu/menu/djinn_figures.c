@@ -33,7 +33,7 @@ void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1) {
     state->positionsX[index] = 0x10;
     state->positionsY[index] = 0x20;
   }
-  Task_Add(DjinnFigures_UpdateAllPositions, 0xc80);
+  Task_Add(DjinnFigures_UpdateAllPositions, TASK_PRIORITY_MAIN_LOOP);
 }
 
 /// Releases the four objects and removes their task. It defines
@@ -91,7 +91,8 @@ void DjinnFigures_UpdateAllPositions(void) {
       placement.height = vertical;
       placement.y = ((s32)state->positionsY[index] << 16) + vertical;
       placement.groundHeight = 0;
-      Object_ApplyProjectedPlacementFar(animation, &placement, &scale, 0x4000);
+      Object_ApplyProjectedPlacementFar(animation, &placement, &scale,
+                                        FACING_SOUTH);
     }
     index += 1;
     if (index > 3)
@@ -133,7 +134,7 @@ void DjinnFigures_UpdateBottomRow(void) {
         scale.x = -phase;
         scale.y = -phase;
       } else {
-        scale.x = phase + (s32)(0x10000 - phase) / 3;
+        scale.x = phase + (s32)(Q16_ONE - phase) / 3;
         scale.y = scale.x;
         menu->phases[objectIndex] = scale.x;
       }
@@ -174,11 +175,11 @@ void DjinnFigures_InitializeBottomRow(s32 unused0, s32 unused1) {
     if (animation != NULL)
       Sprite_StartAnimFar(animation, 2);
     state->animations[index] = animation;
-    state->phases[index] = 0x10000;
+    state->phases[index] = Q16_ONE;
     state->positionsX[index] = 0x10;
     state->positionsY[index] = 0xc8;
   }
-  Task_Add(DjinnFigures_UpdateBottomRow, 0xc80);
+  Task_Add(DjinnFigures_UpdateBottomRow, TASK_PRIORITY_MAIN_LOOP);
 }
 
 /// Updates one object's saved position and its signed y marker: with negative

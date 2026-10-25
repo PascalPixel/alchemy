@@ -131,8 +131,8 @@ void WaitFrames(s32 frames) {
       // last VBlank, plus 256 for each frame it overran; the peak is held
       // for 30 frames
       line = *(u16 *)&REG_VCOUNT;
-      if (line >= 160)
-        line -= 160;
+      if (line >= DISPLAY_HEIGHT)
+        line -= DISPLAY_HEIGHT;
       else
         line += 68;
       line += (gLagFrameCount - 1) << 8;

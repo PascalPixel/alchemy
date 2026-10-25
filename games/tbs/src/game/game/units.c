@@ -10,11 +10,11 @@
 struct StatWork {
   s32 hp;                 ///< maximum HP
   s32 pp;                 ///< maximum PP
-  s32 atk;                ///< Attack, 0 to 999 once clamped
-  s32 def;                ///< Defense, 0 to 999 once clamped
-  s32 agi;                ///< Agility, 0 to 999 once clamped
+  s32 atk;                ///< Attack, 0 to UNIT_STAT_MAX once clamped
+  s32 def;                ///< Defense, 0 to UNIT_STAT_MAX once clamped
+  s32 agi;                ///< Agility, 0 to UNIT_STAT_MAX once clamped
   s32 unused;             ///< never written; a gap between Agility and Luck
-  s32 luck;               ///< Luck, 0 to 99 once clamped
+  s32 luck;               ///< Luck, 0 to UNIT_LUCK_MAX once clamped
   s32 turns;              ///< actions a round, 0 to 2
   s32 hpRegen;            ///< HP regained each round
   s32 ppRegen;            ///< PP regained each round
@@ -397,16 +397,16 @@ void Unit_Calculate(s32 unitId) {
       stats->ppRegen += 4;
   }
 
-  CLAMP(stats->atk, 0, 999);
-  CLAMP(stats->def, 0, 999);
-  CLAMP(stats->agi, 0, 999);
-  CLAMP(stats->luck, 0, 99);
+  CLAMP(stats->atk, 0, UNIT_STAT_MAX);
+  CLAMP(stats->def, 0, UNIT_STAT_MAX);
+  CLAMP(stats->agi, 0, UNIT_STAT_MAX);
+  CLAMP(stats->luck, 0, UNIT_LUCK_MAX);
   CLAMP(stats->turns, 0, 2);
-  CLAMP(stats->hpRegen, 0, 10000);
-  CLAMP(stats->ppRegen, 0, 200);
+  CLAMP(stats->hpRegen, 0, UNIT_HP_REGEN_MAX);
+  CLAMP(stats->ppRegen, 0, UNIT_PP_REGEN_MAX);
   for (index = 0; index < ELEMENT_COUNT; index++) {
-    CLAMP(stats->element[index][0], 0, 200);
-    CLAMP(stats->element[index][1], 0, 200);
+    CLAMP(stats->element[index][0], 0, UNIT_ELEMENT_MAX);
+    CLAMP(stats->element[index][1], 0, UNIT_ELEMENT_MAX);
   }
 
   unit->atk = stats->atk;
@@ -421,10 +421,9 @@ void Unit_Calculate(s32 unitId) {
     unit->element[index].resistance = stats->element[index][1];
   }
 
-  // A character's maximum HP and PP stop at 1999, an enemy's at 9999.
-  statLimit = 9999;
+  statLimit = UNIT_HP_MAX;
   if (unit->classId)
-    statLimit = 1999;
+    statLimit = UNIT_CHARACTER_HP_MAX;
 
   previousMaximum = unit->hpMax;
   CLAMP(stats->hp, 0, statLimit);

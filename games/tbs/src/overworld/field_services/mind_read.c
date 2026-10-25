@@ -48,7 +48,7 @@ void FieldEffect_StartMindReadWave(s32 x, s32 y) {
   work->targetId = y;
   work->delay = 8;
   FieldEffect_GreyMindReadPalette();
-  Task_Add(FieldEffect_UpdateMindReadWave, 0xc80);
+  Task_Add(FieldEffect_UpdateMindReadWave, TASK_PRIORITY_MAIN_LOOP);
 }
 
 /// Stops the wave effect: restores the caster's colours and the palettes and
@@ -91,7 +91,7 @@ void FieldEffect_UpdateMindReadWave(void) {
   // The 160 scanlines' offsets, a sine wave of 4 pixels either way (a 16.16
   // sine >> 14), on the hidden page; then show that page.
   line = work->lines[work->page ^ 1];
-  for (scanline = 0; scanline < 160; scanline++)
+  for (scanline = 0; scanline < DISPLAY_HEIGHT; scanline++)
     *line++ =
         Trig_Sin(((u32)((work->phase + scanline * 8) << 16) / (u32)160)) >> 14;
   work->phase += 4;
@@ -147,7 +147,7 @@ void FieldEffect_UpdateMindReadWave(void) {
 }
 
 // What Mind Read's wave uses: BG0's scanline scroll, the hue cycle and BG
-// palette 15.
+// WINDOW_PALETTE.
 
 #define MIND_READ_GREY RGB(28, 28, 28)
 
@@ -257,7 +257,7 @@ void FieldEffect_SetCallbackWhenTargetUnset(
   }
 }
 
-/// Turns colours 1 and 3 to 12 of BG palette 15 grey and starts the BG0
+/// Turns colours 1 and 3 to 12 of WINDOW_PALETTE grey and starts the BG0
 /// scanline scroll (FieldEffect_ArmBg0HBlankDma) at each VBlank.
 void FieldEffect_GreyMindReadPalette(void) {
   volatile u16 *p;
@@ -265,7 +265,7 @@ void FieldEffect_GreyMindReadPalette(void) {
   // Window mode 1: messages show as thoughts until
   // FieldEffect_RestoreMindReadPalette clears it.
   ((struct WindowWork *)gWindowWork[0])->mindRead = 1;
-  p = &BG_PLTT_COLOR(15, 1);
+  p = &BG_PLTT_COLOR(WINDOW_PALETTE, 1);
   *p = MIND_READ_GREY;
   p += 2;
   *p = MIND_READ_GREY;
@@ -288,20 +288,20 @@ void FieldEffect_GreyMindReadPalette(void) {
   p += 1;
   *p = MIND_READ_GREY;
   // 0x480 is TASK_PRIORITY_VBLANK.
-  Task_Add(FieldEffect_ArmBg0HBlankDma, 0x480);
+  Task_Add(FieldEffect_ArmBg0HBlankDma, TASK_PRIORITY_VBLANK);
 }
 
-/// Stops the BG0 scanline scroll and restores BG palette 15.
+/// Stops the BG0 scanline scroll and restores WINDOW_PALETTE.
 void FieldEffect_RestoreMindReadPalette(void) {
   void *work;
 
   work = gWindowWork[0];
   Task_Remove(FieldEffect_ArmBg0HBlankDma);
   // Palette 15's white, black and two greys.
-  BG_PLTT_COLOR(15, 1) = RGB(31, 31, 31);
-  BG_PLTT_COLOR(15, 3) = 0;
-  BG_PLTT_COLOR(15, 11) = RGB(10, 10, 10);
-  BG_PLTT_COLOR(15, 12) = RGB(20, 20, 20);
+  BG_PLTT_COLOR(WINDOW_PALETTE, 1) = RGB(31, 31, 31);
+  BG_PLTT_COLOR(WINDOW_PALETTE, 3) = 0;
+  BG_PLTT_COLOR(WINDOW_PALETTE, 11) = RGB(10, 10, 10);
+  BG_PLTT_COLOR(WINDOW_PALETTE, 12) = RGB(20, 20, 20);
   WindowColor_ApplyFar(gSaveBlock.windowColor[0], gSaveBlock.windowColor[1]);
   ((struct WindowWork *)work)->mindRead = 0;
 }

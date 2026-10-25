@@ -348,7 +348,7 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
   // The margins are the 16x8 shadow's half width and height. A double-size
   // affine sprite is drawn in a box twice as wide and tall, so both halves
   // double.
-  if (scaleX > 0x10000 || scaleY > 0x10000) {
+  if (scaleX > Q16_ONE || scaleY > Q16_ONE) {
     affine = 3;
     marginX = 16;
     marginY = 8;
@@ -415,7 +415,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
 
   // Reuse an untransformed sprite when mirroring, scale and rotation allow it.
   flip = Sprite_ComposeFrame(sprite, facing);
-  if (flip == 0 && scaleX == 0x10000 && scaleY == scaleX &&
+  if (flip == 0 && scaleX == Q16_ONE && scaleY == scaleX &&
       sprite->rotation == 0) {
     affine = 0;
     matrix = 0;
@@ -428,7 +428,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
       effect.scaleX = -effect.scaleX;
     matrix = OamMatrix_AllocFromTransform(&effect);
   }
-  if (scaleX > 0x10000 || scaleY > 0x10000) {
+  if (scaleX > Q16_ONE || scaleY > Q16_ONE) {
     affine = 3;
     halfWidth <<= 1;
     halfHeight <<= 1;
@@ -446,7 +446,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
   // Queue the shadow at ground height before the raised image.
   y = ((screenY - groundHeight) >> 16) - shadowHalfHeight;
   if (sprite->flags & SPRITE_FLAG_SHADOW) {
-    if (y < 160) {
+    if (y < DISPLAY_HEIGHT) {
       part = &sprite->shadow;
       part->affine = affine;
       part->affineIndex = matrix;
@@ -460,7 +460,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
       ((scaleY * ((sprite->height >> 1) - sprite->offsetY) + 0xffff) >> 16);
   // Only the right and bottom edges are tested; OAM wraps a negative
   // position.
-  if (x < 240 && y < 160) {
+  if (x < DISPLAY_WIDTH && y < DISPLAY_HEIGHT) {
     part = &sprite->image;
     part->x = x;
     part->y = y;
@@ -526,12 +526,12 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
         scaleY = 0x1f800;
       offsetX = Iwram_MulQ16(sprite->offsetX, scaleX);
       offsetY = -Iwram_MulQ16((sprite->height >> 1) - sprite->offsetY, scaleY);
-      if (scaleX > 0x10000 || scaleY > 0x10000) {
+      if (scaleX > Q16_ONE || scaleY > Q16_ONE) {
         affine = 3;
         halfWidth <<= 1;
         halfHeight <<= 1;
         size = 16;
-      } else if (scaleX == 0x10000 && sprite->rotation == 0 &&
+      } else if (scaleX == Q16_ONE && sprite->rotation == 0 &&
                  scaleY == scaleX) {
         affine = 0;
       }

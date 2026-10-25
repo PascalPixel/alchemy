@@ -82,7 +82,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   p = &pos;
   SET_POSITION(p, effectWork->x, effectWork->y + (16 << 16), effectWork->z);
   objectEvent = (struct ObjectEvent *)FieldEffect_SpawnItemBreakMode1(
-      p->x + (32 << 16), p->y, p->z, 0x8000);
+      p->x + (32 << 16), p->y, p->z, FACING_WEST);
   hands[0] = objectEvent;
   right = (struct ObjectEvent *)FieldEffect_SpawnItemBreakMode1(
       p->x - (32 << 16), p->y, p->z, 0);
@@ -108,7 +108,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   // Lift to 24 pixels above the ground, 3/8 pixel a frame, floating (motion
   // flag bit 2) with no shadow and its colours cycling.
   target->update = Object_CycleSpriteColors;
-  Task_Add(FieldEffect_SpawnFallingParticles, 0xc80);
+  Task_Add(FieldEffect_SpawnFallingParticles, TASK_PRIORITY_MAIN_LOOP);
   Sound_PlaySongFar(SE_PSYNERGY_START);
   target->motionFlags = 4;
   Object_SetSpriteFlagsFar((struct Object *)target, 0);
@@ -301,7 +301,7 @@ struct Object *FieldEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle) {
   s32 scale;
 
   Sound_PlaySongFar(SE_ITEM_BREAK);
-  fragment = (struct Object *)Object_Spawn(215, x, y, z);
+  fragment = (struct Object *)Object_Spawn(SPRITE_MOVE_HAND, x, y, z);
   if (fragment != NULL) {
     fragment->scaleY = 0x4000;
     fragment->scaleX = 0x4000;
@@ -310,7 +310,7 @@ struct Object *FieldEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle) {
     fragment->steeringFlags = 0;
     Object_SelectAnimationFar(fragment, 1);
     scale = fragment->scaleX;
-    if (scale < 0x10000) {
+    if (scale < Q16_ONE) {
       do {
         scale += 0x800;
         fragment->scaleY = scale;

@@ -71,9 +71,9 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
       }
 
       // The distance in pixels.
-      dx = (candidate->x - source->x) / 0x10000;
-      dy = (candidate->y - source->y) / 0x10000;
-      dz = (candidate->z - source->z) / 0x10000;
+      dx = (candidate->x - source->x) / Q16_ONE;
+      dy = (candidate->y - source->y) / Q16_ONE;
+      dz = (candidate->z - source->z) / Q16_ONE;
 
       squaredX = dx * dx;
       squaredY = dy * dy;

@@ -170,8 +170,8 @@ void FieldScript_SpawnObjectEventTemplates(struct ObjectEventTemplate *entry,
       object->collisionFlags = 1;
       ObjectEvent_SetMovementType(object, entry->movement);
       Object_SelectAnimationFar(object, 1);
-      ((struct Object *)object)->homeX = object->x / 0x10000;
-      ((struct Object *)object)->homeZ = object->z / 0x10000;
+      ((struct Object *)object)->homeX = object->x / Q16_ONE;
+      ((struct Object *)object)->homeZ = object->z / Q16_ONE;
       // An object event template with a height is lifted half a pixel more and
       // takes motion flags 4, floating: it neither follows the ground nor
       // falls. Outside the world map every height is then counted from the
@@ -288,7 +288,7 @@ void ObjectEvent_ResetForObject(struct ObjectEventTemplate *table) {
     object->groundHeight = object->y;
     object->motionFlags = 0;
     Object_SetSpriteFlagsFar((struct Object *)object, 0);
-    Object_SelectAnimationFar(object, 12);
+    Object_SelectAnimationFar(object, ANIM_LEADER_CLING);
   } else {
     gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
   }

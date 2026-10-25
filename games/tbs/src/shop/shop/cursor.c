@@ -118,7 +118,7 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
   if (resourceSlot != VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(resourceSlot, 0x100, tileBuffer);
     priceSprite =
-        WindowSprite_CreateFar(resourceSlot, 0x80008000, window, x, y);
+        WindowSprite_CreateFar(resourceSlot, OUTPUT_SIZE_16X32, window, x, y);
   }
   FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
   return priceSprite;

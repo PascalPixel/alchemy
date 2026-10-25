@@ -50,11 +50,11 @@ void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
 
 /// The battle item list for unit `member`: `count` inventory entries (ended by
 /// 0), five to a page, each with its icon and name: plain when usable,
-/// colour 4 when Item_ClassifyUseAbility refuses it, colour 2 when broken;
-/// the window above names the one under the cursor (MsgItemPlainName), or
-/// says it cannot be used in battle. Returns the chosen entry's
-/// place in `entries`, or -1 when cancelled, when the link battle's time
-/// runs out, or when there are no items. A refused item stays on the list
+/// TEXT_COLOR_YELLOW when Item_ClassifyUseAbility refuses it, TEXT_COLOR_RED
+/// when broken; the window above names the one under the cursor
+/// (MsgItemPlainName), or says it cannot be used in battle. Returns the chosen
+/// entry's place in `entries`, or -1 when cancelled, when the link battle's
+/// time runs out, or when there are no items. A refused item stays on the list
 /// with its reason ("It's broken.", and the classifier's messages). The
 /// item command runs it (Battle_CollectPartyCommands).
 s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
@@ -87,7 +87,9 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   drawnFirstEntry = -1;
   drawnRow = -1;
   cursorHandle = VramCache_AllocEntry(128);
-  messageWindow = Window_Create(0, 5, 30, 4, 42);
+  messageWindow = Window_Create(0, 5, 30, 4,
+                                WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                                    WINDOW_FLAG_FRAMED_CANVAS);
   iconCount = 0;
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
   window = Window_Create(15, 9, 15, BATTLE_LIST_ROWS * 2 + 1, 6);
@@ -117,7 +119,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
       Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
-                           window->width - 2, 1, 15);
+                           window->width - 2, 1, WINDOW_PALETTE);
       Text_FillCanvasBackground();
       if (count != 0) {
         if (Item_ClassifyUseAbility(member,
@@ -146,15 +148,15 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
             break;
           }
           Item_GetDirectFar(item);
-          Text_SetColor(15);
+          Text_SetColor(TEXT_COLOR_WHITE);
           if (Item_ClassifyUseAbility(member, item) != 0) {
-            Text_SetColor(4);
+            Text_SetColor(TEXT_COLOR_YELLOW);
           } else if ((item & INVENTORY_BROKEN) != 0) {
-            Text_SetColor(2);
+            Text_SetColor(TEXT_COLOR_RED);
           }
           Text_DrawMessageAsTiles((item & INVENTORY_ITEM_ID_MASK) + MsgItemName,
                                   window, 16, i * 16);
-          Text_SetColor(15);
+          Text_SetColor(TEXT_COLOR_WHITE);
           sprites[i].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[i]);
         }
         iconCount = i;
@@ -174,7 +176,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
       }
 
       Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
-                           window->width - 2, 1, 14);
+                           window->width - 2, 1, HIGHLIGHT_PALETTE);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
     }

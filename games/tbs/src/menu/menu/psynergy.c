@@ -59,8 +59,8 @@ s32 PsynergyMenu_Run(void) {
   Window_InitializeWork(0);
   menu->memberCount = Party_ListMembersFar(menu->memberTable);
   ItemMenu_Initialize(0, 3, 0, 7);
-  menu->messageWindow = Window_CreateFar(13, 0, 17, 3, 2);
-  Palette_LightenBankHighlight(14);
+  menu->messageWindow = Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
+  Palette_LightenBankHighlight(HIGHLIGHT_PALETTE);
   Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
 #if TBS_PATCH_2
   Menu_SuspendFieldTasks();
@@ -773,7 +773,7 @@ void PsynergyMenu_CreateEntryGrid(void) {
   window = MenuCursor_Create(menu);
   PsynergyMenu_InitializeEntryObjects((void *)window, 2, 2, 8, 0);
 
-  window = Window_CreateFar(0, 5, 30, 15, 2);
+  window = Window_CreateFar(0, 5, 30, 15, WINDOW_FLAG_INSTANT);
   menu->psynergyWindow = window;
   menu->selectedColumn = 0;
   menu->selectedRow = 0;
@@ -962,27 +962,25 @@ s32 PsynergyMenu_DrawDetailPage(struct Window *window, s32 *work,
       MENU_DRAW_DESCRIPTION(description, menu->infoWindow, 0, 0);
     }
   } else {
-    // BUG: clears map flag 0x2ff instead of FLAG_MENU_INFO_KEPT, so a kept
+    // BUG: clears FLAG_MAP_TEMP_FF instead of FLAG_MENU_INFO_KEPT, so a kept
     // message keeps the descriptions away until another screen clears it.
 #ifdef BUGFIX
     GameFlag_ClearFar(FLAG_MENU_INFO_KEPT);
 #else
-    GameFlag_ClearFar(0x2ff);
+    GameFlag_ClearFar(FLAG_MAP_TEMP_FF);
 #endif
   }
 
   rowIndex = 0;
   do {
     if (rowIndex == state->row) {
-      Render_SetTilemapFlagRect((void *)menu->psynergyWindow,
-                                PSYNERGY_DETAIL_ROW_X, rowIndex * 2 + 1,
-                                PSYNERGY_DETAIL_ROW_WIDTH, 1,
-                                14); // highlighted
+      Render_SetTilemapFlagRect(
+          (void *)menu->psynergyWindow, PSYNERGY_DETAIL_ROW_X, rowIndex * 2 + 1,
+          PSYNERGY_DETAIL_ROW_WIDTH, 1, HIGHLIGHT_PALETTE);
     } else {
       Render_SetTilemapFlagRect((void *)menu->psynergyWindow,
                                 PSYNERGY_DETAIL_ROW_X, rowIndex * 2 + 1,
-                                PSYNERGY_DETAIL_ROW_WIDTH, 1,
-                                15); // normal
+                                PSYNERGY_DETAIL_ROW_WIDTH, 1, WINDOW_PALETTE);
     }
     rowIndex++;
   } while (rowIndex < LIST_PAGE_SIZE);

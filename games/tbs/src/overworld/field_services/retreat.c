@@ -99,13 +99,13 @@ void FieldEffect_UpdateRadialLaunch(struct FieldEffectSprite *effect) {
 ///
 /// Abilities: Retreat (FIELD_PSYNERGY_RETREAT).
 ///
-/// The caster turns south, plays animation 28 with its colours cycling,
-/// spins up for 70 frames (FieldEffect_UpdateSpinAngle), then rises and shrinks
-/// out of sight (FieldEffect_UpdateDescendingObject) as the particles fly. It
-/// is hidden, not released, and the effect opens a script (FieldScript_Start)
-/// it does not end: the Retreat warp raised before it (WARP_RETREAT, by
-/// Field_UsePsynergy or Field_UseItem) then leaves the map. Called by
-/// FieldEffect_Run and FieldEffect_DispatchRequestKind.
+/// The caster turns south, plays ANIM_LEADER_ARMS_RAISED with its colours
+/// cycling, spins up for 70 frames (FieldEffect_UpdateSpinAngle), then rises
+/// and shrinks out of sight (FieldEffect_UpdateDescendingObject) as the
+/// particles fly. It is hidden, not released, and the effect opens a script
+/// (FieldScript_Start) it does not end: the Retreat warp raised before it
+/// (WARP_RETREAT, by Field_UsePsynergy or Field_UseItem) then leaves the map.
+/// Called by FieldEffect_Run and FieldEffect_DispatchRequestKind.
 void FieldEffect_RunRetreat(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct ObjectEvent *objectEvent = effectWork->mainObject;
@@ -118,11 +118,11 @@ void FieldEffect_RunRetreat(void) {
   FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
   FieldEffect_FadeToEffectColor();
   WaitFrames(10);
-  ObjectMotion_ArmCallback(effectWork->firstObjectId, 0x4000, 0);
+  ObjectMotion_ArmCallback(effectWork->firstObjectId, FACING_SOUTH, 0);
   WaitFrames(30);
   objectEvent->update = Object_CycleSpriteColors;
   Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
-  Object_SelectAnimationFar(objectEvent, 28);
+  Object_SelectAnimationFar(objectEvent, ANIM_LEADER_ARMS_RAISED);
   WaitFrames(40);
 
   // Start spinning.
@@ -198,13 +198,13 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(
   }
 
   scale = particle->scaleX + 0xC00;
-  if (scale > 0x10000)
-    scale = 0x10000;
+  if (scale > Q16_ONE)
+    scale = Q16_ONE;
   particle->scaleX = scale;
   particle->scaleY = scale;
   particle->x.fixed = source->x.fixed;
   particle->y.fixed = y - 0x20000;
-  particle->z.fixed = source->z.fixed + ((0x10000 - scale) * 5) + 0x90000;
+  particle->z.fixed = source->z.fixed + ((Q16_ONE - scale) * 5) + 0x90000;
 }
 
 /// As FieldEffect_UpdateDescendingParticlePositiveArc for the arc drawn upside
@@ -229,13 +229,13 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(
   }
 
   scale = particle->scaleX + 0xC00;
-  if (scale > 0x10000)
-    scale = 0x10000;
+  if (scale > Q16_ONE)
+    scale = Q16_ONE;
   particle->scaleX = scale;
   particle->scaleY = -scale;
   particle->x.fixed = source->x.fixed;
   particle->y.fixed = y - 0x20000;
-  particle->z.fixed = source->z.fixed - ((0x10000 - scale) * 5) + 0x100000;
+  particle->z.fixed = source->z.fixed - ((Q16_ONE - scale) * 5) + 0x100000;
 }
 
 /// A falling arc's sprite (struct Sprite), seen as the image attributes, VRAM
@@ -293,7 +293,8 @@ void FieldEffect_SpawnDescendingArcParticles(struct ObjectEvent *arc) {
 
   for (arcIndex = 0; arcIndex <= 1; arcIndex++) {
     objectEvent = (struct ObjectEvent *)Object_CreateFar(
-        26, source->x.fixed, source->y.fixed + 0x400000, source->z.fixed);
+        SPRITE_GOLDEN_RINGS, source->x.fixed, source->y.fixed + 0x400000,
+        source->z.fixed);
     objectEvents[arcIndex] = objectEvent;
     if (objectEvent == NULL)
       continue;

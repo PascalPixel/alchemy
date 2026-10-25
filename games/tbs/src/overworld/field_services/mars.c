@@ -7,10 +7,10 @@
 /// A Mars Djinni joins the party: it turns to the camera, bounces three times,
 /// spins ever faster and shrinks away in a fountain of 24 sparks
 /// (FieldEffect_UpdatePhasedRadialParticle). The leader turns to the camera and
-/// plays animation 28, the sparks swarm the leader, who pulses for 100 frames,
-/// and the sparks vanish. Called by Djinn_JoinParty for a Mars Djinni, which
-/// then clears the Djinni's object event slot. Uses all 24 field effect
-/// sprites, tints the field palette red and fades it back at the end.
+/// plays ANIM_LEADER_ARMS_RAISED, the sparks swarm the leader, who pulses for
+/// 100 frames, and the sparks vanish. Called by Djinn_JoinParty for a Mars
+/// Djinni, which then clears the Djinni's object event slot. Uses all 24 field
+/// effect sprites, tints the field palette red and fades it back at the end.
 void Djinn_RunMarsJoinEffect(s32 djinniId) {
   struct Vector3 position;
   s32 scale;
@@ -34,7 +34,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   WaitFrames(30);
   // Turn to face the camera (angle 0x4000), then bounce three times, a rising
   // note on each.
-  ObjectMotion_ArmCallback(djinniId, 0x4000, 0);
+  ObjectMotion_ArmCallback(djinniId, FACING_SOUTH, 0);
   WaitFrames(20);
   Sound_PlaySongFar(SE_NOTE_LOW);
   ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
@@ -67,7 +67,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
                                   FieldEffect_UpdatePhasedRadialParticle);
     FieldEffectSprite_SetObjectMode(effect, 7);
     Sprite_SetAnimColorModesFar(effect->object, SPRITE_COLOR_RED_TINT);
-    scale = Random16() / 3 + 0x10000; // 1.0 to 1.33
+    scale = Random16() / 3 + Q16_ONE; // 1.0 to 1.33
     effect->scaleY = scale;
     effect->scaleX = scale;
     remaining--;
@@ -76,9 +76,10 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   } while (remaining >= 0);
 
   WaitFrames(60);
-  ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, 0x4000, 0);
+  ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, FACING_SOUTH, 0);
   WaitFrames(20);
-  Object_SelectAnimationFar(ObjectEvent_GetById(gSaveBlock.leaderLocalId), 28);
+  Object_SelectAnimationFar(ObjectEvent_GetById(gSaveBlock.leaderLocalId),
+                            ANIM_LEADER_ARMS_RAISED);
 
   // Every spark still in use stops its fountain. The cursor walks
   // the slots' state bytes; a slot's active flag is 5 bytes after its state.
@@ -126,8 +127,8 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   WaitFrames(10);
   effect = NULL;
   leader->update = (void *)effect;
-  leader->scaleX = 0x10000;
-  leader->scaleY = 0x10000;
+  leader->scaleX = Q16_ONE;
+  leader->scaleY = Q16_ONE;
   // Fade the palette back from the tint and free the field effect sprites.
   WaitFrames(30);
   Shop_RestoreFieldPaletteFar();
@@ -199,10 +200,10 @@ void FieldEffect_UpdateRadialSpread(struct FieldEffectSprite *effect) {
     position.x = effect->x;
     position.z = effect->z;
 
-    Vector_AddPolarOffset(0x780000, 0xc000, &position);
+    Vector_AddPolarOffset(0x780000, FACING_NORTH, &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
-    effect->acceleration = 0x10000;
+    effect->acceleration = Q16_ONE;
     effect->speedMax = 0x50000;
     effect->turnStepLimited = state;
     effect->state++;

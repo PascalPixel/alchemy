@@ -18,7 +18,7 @@
 /// The battle summon list: the summons the party holds enough Djinn for
 /// (Summon_ListLearnedFar, BattleSummonState.availableMask), four to a page,
 /// those `standby` can pay for first, each with its Djinn cost by element,
-/// the others in colour 2. Above it the summon's description, and the
+/// the others in TEXT_COLOR_RED. Above it the summon's description, and the
 /// standby Djinn of each element, the elements it needs blinking. `standby`
 /// is what the earlier commands this round leave
 /// (BattleMenuWork.standbyDjinn). Returns the chosen summon, even one that
@@ -56,7 +56,9 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   drawnFirstEntry = -1;
   // One 16x16 sprite.
   cursorHandle = (s16)VramCache_AllocEntry(128);
-  description = Window_Create(0, 4, 30, 4, 42);
+  description = Window_Create(0, 4, 30, 4,
+                              WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                                  WINDOW_FLAG_FRAMED_CANVAS);
   counts = Window_Create(20, 8, 10, 3, 6);
   mask = 0;
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
@@ -125,7 +127,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
       Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
-                           window->width - 2, 1, 15);
+                           window->width - 2, 1, WINDOW_PALETTE);
       Text_FillCanvasBackground();
 
       // Description and required Djinni elements: mask has bit n for each
@@ -175,14 +177,14 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
               if (summon->djinnRequired[element] > standby[element])
                 break;
             }
-            affordable = element == 4;
-            Ability_LoadGlyph(summon->abilityId & 0x3fff, 0, &iconSlots[index],
-                              &glyph, 1);
+            affordable = element == ELEMENT_COUNT;
+            Ability_LoadGlyph(summon->abilityId & ACTION_ID_MASK, 0,
+                              &iconSlots[index], &glyph, 1);
             y = index * 2;
             sprites[index].oam.f.tile = glyph;
-            // A summon the party cannot afford is drawn in colour 2.
+            // A summon the party cannot afford is drawn in TEXT_COLOR_RED.
             if (!affordable)
-              Text_SetColor(2);
+              Text_SetColor(TEXT_COLOR_RED);
             Text_DrawMessageAsTiles(SummonDefinition_Get(id)->abilityId +
                                         MsgAbilityName,
                                     window, 16, index * 16);
@@ -197,7 +199,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
                 col++;
               }
             }
-            Text_SetColor(15);
+            Text_SetColor(TEXT_COLOR_WHITE);
             visibleSummons[index++] = 1;
             if (index <= 3 &&
                 (id = orderedSummons[firstEntry + index]) != SUMMON_END)
@@ -220,7 +222,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
         }
       }
       Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
-                           window->width - 2, 1, 14);
+                           window->width - 2, 1, HIGHLIGHT_PALETTE);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
     }

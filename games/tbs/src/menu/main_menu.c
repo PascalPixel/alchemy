@@ -217,9 +217,9 @@ static void MainMenu_UpdateBlend(void) {
                       BLDCNT_TGT1_BG0 | BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND |
                           BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
                           BLDCNT_TGT2_BD,
-                      0x20000);
+                      IO_WRITE_16);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
-                      BLEND_ALPHA((u16)level, 16 - (u16)level), 0x20000);
+                      BLEND_ALPHA((u16)level, 16 - (u16)level), IO_WRITE_16);
   if ((u16)level > 15)
     Task_Remove(MainMenu_UpdateBlend);
 }
@@ -443,20 +443,22 @@ s32 MainMenu_Run(void) {
 
   blendStarted = 0;
   MainMenu_LoadBackground();
-  FieldScheduler_AddCallback(MainMenu_CheckButtonCodes, 0xc80);
+  FieldScheduler_AddCallback(MainMenu_CheckButtonCodes,
+                             TASK_PRIORITY_MAIN_LOOP);
   gFieldWork->transition = blendStarted;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
-  // Warp destination 2, after the credits (Title_Run): save the cleared game,
-  // then the world map's warp destination 72. Cancelling the file choice asks
+  // MAIN_MENU_FROM_TITLE, after the credits (Title_Run): save the cleared game,
+  // then WORLD_MAP_FROM_MAIN_MENU. Cancelling the file choice asks
   // again.
-  if (gSaveBlock.warpDest == 2) {
+  if (gSaveBlock.warpDest == MAIN_MENU_FROM_TITLE) {
   L_ask:
-    FieldMessage_Show(MsgSaveAdventureQuestion, 5);
+    FieldMessage_Show(MsgSaveAdventureQuestion,
+                      FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN);
     v7 = FieldYesNo_Ask(1);
     TextPrinter_CloseFinishedWindows();
     if (v7 == 0) {
-      FieldMessage_Show(MsgSaveAdventureQuestion + 1, 1);
+      FieldMessage_Show(MsgSaveAdventureQuestion + 1, FIELD_MESSAGE_ZOOM);
       // Marks the file cleared (SaveFileSummary's sendFlag): its data can be
       // sent, and the message says it cannot be continued.
       gSaveBlock.sendFlag = 1;
@@ -492,7 +494,7 @@ menu_top:;
   if (v6 == 0) {
     if (blendStarted == 0) {
       WaitFrames(30);
-      FieldScheduler_AddCallback(MainMenu_UpdateBlend, 0xc80);
+      FieldScheduler_AddCallback(MainMenu_UpdateBlend, TASK_PRIORITY_MAIN_LOOP);
       WaitFrames(1);
       blendStarted = 1;
     }
@@ -535,7 +537,7 @@ menu_top:;
     }
     Party_StartChildhood();
     gSaveBlock.mapId = (s32)&MapId_ValeInn;
-    gSaveBlock.warpDest = 20;
+    gSaveBlock.warpDest = VALE_INN_FROM_VALE_PLAZA_SOUTHEAST;
     goto leave;
   }
   // Continue a file where it was saved, except: a file from another build of
@@ -559,7 +561,8 @@ menu_top:;
       GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
     } else if ((gKeysHeld & (KEY_L | KEY_START)) == (KEY_L | KEY_START)) {
       if (MainMenu_GetSaveRecoveryBlockMask() != 0) {
-        FieldMessage_Show(MsgSaveRecoveryFailed, 9);
+        FieldMessage_Show(MsgSaveRecoveryFailed,
+                          FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
         goto menu_top;
       }
       state->mapId = state->savedMap;
@@ -568,8 +571,11 @@ menu_top:;
       GameFlag_Set(FLAG_SAVE_RESTARTED_AT_SANCTUM);
     } else if (state->playTime !=
                ((struct SaveMenuMapLocalState *)gMapLocalState)->playTime) {
-      FieldMessage_Show(MsgSaveDataCorrupted, 9);
-      FieldMessage_Show(MsgSaveDataCorrupted + 1, 13);
+      FieldMessage_Show(MsgSaveDataCorrupted,
+                        FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
+      FieldMessage_Show(MsgSaveDataCorrupted + 1, FIELD_MESSAGE_ZOOM |
+                                                      FIELD_MESSAGE_KEEP_OPEN |
+                                                      FIELD_MESSAGE_LOWER);
       if (YesNoMenu_Run(1, 0, 0, YES) != YES) {
         TextPrinter_CloseFinishedWindows();
         goto menu_top;
@@ -579,7 +585,8 @@ menu_top:;
         // MsgSaveRecoveryFailed, spelled as MsgSaveDataCorrupted + 2: the ROM
         // adds 2 to the register holding the earlier message's number, and by
         // name 108 of 921 instructions differ in tbs-en.
-        FieldMessage_Show(MsgSaveDataCorrupted + 2, 9);
+        FieldMessage_Show(MsgSaveDataCorrupted + 2,
+                          FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
         goto menu_top;
       }
       state->mapId = state->savedMap;
@@ -646,7 +653,8 @@ menu_top:;
     // the partner's payload (struct SaveLinkGreeting); B gives up.
     if (v6 == TRANSFER_METHOD_CABLE) {
       v6 = (s32)Window_Create(MAIN_MENU_LINK_WINDOW_X, 5,
-                              MAIN_MENU_LINK_WINDOW_WIDTH, 8, 2);
+                              MAIN_MENU_LINK_WINDOW_WIDTH, 8,
+                              WINDOW_FLAG_INSTANT);
       linkMessage = MsgClearSaveLabel;
 
       Text_DrawMessage(linkMessage, (struct Window *)v6, 0, 4);
@@ -702,7 +710,8 @@ menu_top:;
         goto link_select;
       }
       v6 = (s32)Window_Create(MAIN_MENU_LINK_ERROR_WINDOW_X, 10,
-                              MAIN_MENU_LINK_ERROR_WINDOW_WIDTH, 4, 2);
+                              MAIN_MENU_LINK_ERROR_WINDOW_WIDTH, 4,
+                              WINDOW_FLAG_INSTANT);
 
       Text_DrawMessage(MsgClearSendingData, (struct Window *)v6, 0, 4);
       WaitFrames(10);
@@ -855,8 +864,8 @@ menu_top:;
             v5 = (v5 + 2);
             v7 = (v7 + 1);
           } while (v7 != 4);
-          // The page numbers beside the arrows, on palette 15: tile 0x301 + n
-          // is the digit n + 1, and 0x30b + n the same digit in the second
+          // The page numbers beside the arrows, on WINDOW_PALETTE: tile 0x301 +
+          // n is the digit n + 1, and 0x30b + n the same digit in the second
           // colouring, for the page shown.
           if (pageCount > 1) {
             v7 = 0;
@@ -964,7 +973,7 @@ UNUSED static void FileMenu_FillTileGrid(struct Window *window,
   Free(decodedTiles);
 }
 
-/// UNUSED: fills a 16-by-eight region with palette 15 tiles beginning at
+/// UNUSED: fills a 16-by-eight region with WINDOW_PALETTE tiles beginning at
 /// tile 32.
 UNUSED static void FileMenu_FillTileBlock(const struct Window *window) {
   s16 *mirror = ((struct WindowWork *)gWindowWork[0])->tilemap;
@@ -1004,14 +1013,15 @@ UNUSED static void FileMenu_FillTileBlock(const struct Window *window) {
 /// A party member's base stats, which the password clamps and packs: struct
 /// Unit's from baseHp to baseLuck, at the same offsets.
 struct PasswordStats {
-  s16 baseHp;      ///< clamped to 0 to 1999; 11 bits in the password
-  s16 basePp;      ///< clamped to 0 to 1999; 11 bits
+  s16 baseHp;      ///< clamped to 0 to UNIT_CHARACTER_HP_MAX; 11 bits in the
+                   ///< password
+  s16 basePp;      ///< clamped to 0 to UNIT_CHARACTER_HP_MAX; 11 bits
   s16 hpGauge;     ///< Unit's; not read here
   s16 ppGauge;     ///< Unit's; not read here
-  u16 baseAttack;  ///< clamped to 999; 10 bits
-  u16 baseDefense; ///< clamped to 999; 10 bits
-  u16 baseAgility; ///< clamped to 999; 10 bits
-  u8 baseLuck;     ///< clamped to 99; 8 bits, the top one always 0
+  u16 baseAttack;  ///< clamped to UNIT_STAT_MAX; 10 bits
+  u16 baseDefense; ///< clamped to UNIT_STAT_MAX; 10 bits
+  u16 baseAgility; ///< clamped to UNIT_STAT_MAX; 10 bits
+  u8 baseLuck;     ///< clamped to UNIT_LUCK_MAX; 8 bits, the top one always 0
 };
 
 /// A party member as the password reads them: their level, base stats,
@@ -1095,29 +1105,29 @@ static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out) {
         ((const struct { s32 id[4]; } *)gMainMenu_PasswordMembers)->id[i]);
     struct PasswordStats *stats = &member->stats;
 
-    if (stats->baseHp > 1999) {
-      stats->baseHp = 1999;
+    if (stats->baseHp > UNIT_CHARACTER_HP_MAX) {
+      stats->baseHp = UNIT_CHARACTER_HP_MAX;
     }
     if (stats->baseHp < 0) {
       stats->baseHp = 0;
     }
-    if (stats->basePp > 1999) {
-      stats->basePp = 1999;
+    if (stats->basePp > UNIT_CHARACTER_HP_MAX) {
+      stats->basePp = UNIT_CHARACTER_HP_MAX;
     }
     if (stats->basePp < 0) {
       stats->basePp = 0;
     }
-    if (stats->baseAttack > 999) {
-      stats->baseAttack = 999;
+    if (stats->baseAttack > UNIT_STAT_MAX) {
+      stats->baseAttack = UNIT_STAT_MAX;
     }
-    if (stats->baseDefense > 999) {
-      stats->baseDefense = 999;
+    if (stats->baseDefense > UNIT_STAT_MAX) {
+      stats->baseDefense = UNIT_STAT_MAX;
     }
-    if (stats->baseAgility > 999) {
-      stats->baseAgility = 999;
+    if (stats->baseAgility > UNIT_STAT_MAX) {
+      stats->baseAgility = UNIT_STAT_MAX;
     }
-    if (stats->baseLuck > 99) {
-      stats->baseLuck = 99;
+    if (stats->baseLuck > UNIT_LUCK_MAX) {
+      stats->baseLuck = UNIT_LUCK_MAX;
     }
     // Shift as unsigned: the permitted HP and Defense maxima exceed the
     // signed 32-bit range after packing, while their bit patterns are valid.
@@ -1125,8 +1135,8 @@ static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out) {
         (u32)stats->baseHp << 21 | stats->basePp << 10 | stats->baseAttack;
     packedStats[i * 2 + 1] = (u32)stats->baseDefense << 22 |
                              stats->baseAgility << 12 | stats->baseLuck << 4;
-    if (member->level > 99) {
-      member->level = 99;
+    if (member->level > UNIT_LEVEL_MAX) {
+      member->level = UNIT_LEVEL_MAX;
     }
     if (member->level == 0) {
       member->level = 1;

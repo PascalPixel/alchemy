@@ -96,14 +96,6 @@
 /// The speakers' definitions (fxdata.c), read by Speaker_FindDefinition.
 extern struct SpeakerDefinition gSpeakerDefinitions[];
 
-/// The warp request whose destination is already in gSaveBlock.mapId and
-/// .warpDest, so that Map_TakeWarp leaves them as they are. Random battles,
-/// Retreat and the script commands that set a destination
-/// (FieldScript_SetDestination) raise it, and Map_Run returns it when the
-/// whole party falls; Map_TakeWarp also uses it for "no warp found" (map.c,
-/// run_map.c).
-#define WARP_NONE 999
-
 /// Map ids above the field maps, which Game_Run runs without a
 /// layout; each returns a result to Map_ReturnFromRun instead of a warp.
 /// A 16.16 position that Vector_AddPolarOffset moves by a distance and a
@@ -136,7 +128,8 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 
 /// Shows message m with the user's and the Psynergy's names, and waits.
 #define PSYNERGY_MESSAGE(who, act, m)                                          \
-  (MessageArgument_PushFar((who), 1), MessageArgument_PushFar((act), 4),       \
-   FieldMessage_ShowFar((m), 1))
+  (MessageArgument_PushFar((who), MESSAGE_ARGUMENT_ACTOR),                     \
+   MessageArgument_PushFar((act), MESSAGE_ARGUMENT_ABILITY),                   \
+   FieldMessage_ShowFar((m), FIELD_MESSAGE_ZOOM))
 
 #endif

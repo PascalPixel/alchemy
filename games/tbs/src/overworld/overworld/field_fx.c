@@ -207,8 +207,8 @@ void Object_DestroyIfPresent(void *object) {
 }
 
 /// Raises a found item's picture to 36 pixels above the party leader, who
-/// holds it up (animation 28) facing the screen. Called by Field_SearchCell for
-/// what a search finds, by ItemDisplay_ShowPicture and by
+/// holds it up (ANIM_LEADER_ARMS_RAISED) facing the screen. Called by
+/// Field_SearchCell for what a search finds, by ItemDisplay_ShowPicture and by
 /// ItemDisplay_ShowItem.
 void ItemDisplay_RaiseAboveLeader(struct Object *object) {
   struct Object *leader;
@@ -224,10 +224,10 @@ void ItemDisplay_RaiseAboveLeader(struct Object *object) {
   object->motionFlags = 0;
   Object_SetMoveTargetFar(object, leader->x, leader->y + (36 << 16), leader->z);
   WaitFrames(3);
-  Object_SelectAnimationFar(leader, 28);
+  Object_SelectAnimationFar(leader, ANIM_LEADER_ARMS_RAISED);
   Object_InitializeFar((struct Object *)object, gFieldEffect_RisingPulseScript);
   // Angle 0x4000, a quarter turn, faces the screen.
-  leader->facing = 0x4000;
+  leader->facing = FACING_SOUTH;
 }
 
 /// Shows a found item's picture: flags bit 0 adds sparkles and bit 1 raises it
@@ -270,7 +270,8 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
       ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
   void *iconBuffer = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   struct Object *object = (struct Object *)Object_CreateFar(
-      22, leader->x.fixed, leader->y.fixed + (36 << 16), leader->z.fixed);
+      SPRITE_BLANK, leader->x.fixed, leader->y.fixed + (36 << 16),
+      leader->z.fixed);
 
   if (object != 0) {
     struct Sprite *sprite = object->sprite;
@@ -430,7 +431,8 @@ void FieldEffect_SpawnNearbyMarkers(void) {
                * as a variable of its own, 9 of 163 instructions differ in
                * tbs-en. */
               objectEvent = (struct Object *)Object_CreateFar(
-                  22, (column << 20) + (8 << 16), 0, (row << 20) + (8 << 16));
+                  SPRITE_BLANK, (column << 20) + (8 << 16), 0,
+                  (row << 20) + (8 << 16));
               if (objectEvent != 0) {
                 Object_InitializeFar((struct Object *)objectEvent,
                                      gFieldEffect_MarkerParticleScript);

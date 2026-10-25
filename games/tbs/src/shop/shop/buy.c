@@ -263,16 +263,16 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
   if (window != 0) {
     WindowSprite_PrepareForRedrawFar(window);
     if (stockIndex != 0) {
-      icon = WindowSprite_CreateFar(shop->previousPageIcon, 0x40000000, window,
-                                    216, -16);
+      icon = WindowSprite_CreateFar(shop->previousPageIcon, OUTPUT_SIZE_16X16,
+                                    window, 216, -16);
       zero = 0;
       icon->kind = zero;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_UP;
       icon->animationStep = zero;
     }
     if (stockIndex + SHOP_STOCK_PAGE_ITEMS < itemCount) {
-      icon = WindowSprite_CreateFar(shop->nextPageIcon, 0x40000000, window, 216,
-                                    24);
+      icon = WindowSprite_CreateFar(shop->nextPageIcon, OUTPUT_SIZE_16X16,
+                                    window, 216, 24);
       zero = 0;
       icon->kind = zero;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
@@ -393,7 +393,7 @@ void Shop_DrawParty(struct Window *window, s32 selected, s32 itemId) {
         Sprite_StartAnimFar(shop->partyMemberIcons[memberIndex], 30);
       else
         Sprite_StartAnimFar(shop->partyMemberIcons[memberIndex], 1);
-      shop->partyMemberScale[memberIndex] = 0x10000;
+      shop->partyMemberScale[memberIndex] = Q16_ONE;
       if (!Item_IsCompatibleWithUnitFar(shop->partyMemberIds[memberIndex],
                                         itemId))
         shop->partyMemberScale[memberIndex] = 0xcccc;
@@ -462,11 +462,11 @@ void Shop_DrawEquipComparison(struct Window *window, s32 unitId, s32 itemId) {
   baseStats[3] = unit->luck;
   for (index = 0; index <= 2; index++) {
     if (baseStats[index] > previewStats[index])
-      WindowSprite_CreateFar(shop->statDownIcon, 0x40000000, window, 56,
+      WindowSprite_CreateFar(shop->statDownIcon, OUTPUT_SIZE_16X16, window, 56,
                              index * 16 - 4)
           ->kind = 0;
     else if (baseStats[index] < previewStats[index])
-      WindowSprite_CreateFar(shop->statUpIcon, 0x40000000, window, 56,
+      WindowSprite_CreateFar(shop->statUpIcon, OUTPUT_SIZE_16X16, window, 56,
                              index * 16 - 4)
           ->kind = 0;
     Text_DrawNumberInWindowFar(baseStats[index], 3, window, 32, index * 16);
@@ -634,9 +634,9 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
       // The bar is one 8-tile entry shown as two 32x8 sprites (shape and size
       // bits 0x40004000); the second starts at the entry's tile 4
       VramCache_Load(resourceSlot, 0x100, 0);
-      WindowSprite_CreateFar(resourceSlot, 0x40004000, window, 0, 0);
+      WindowSprite_CreateFar(resourceSlot, OUTPUT_SIZE_32X8, window, 0, 0);
       quantitySprite =
-          WindowSprite_CreateFar(resourceSlot, 0x40004000, window, 32, 0);
+          WindowSprite_CreateFar(resourceSlot, OUTPUT_SIZE_32X8, window, 32, 0);
       quantitySprite->oam.index += 4;
       for (;;) {
         if (gKeysPressed & KEY_A) {

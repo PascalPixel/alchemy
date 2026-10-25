@@ -17,6 +17,14 @@ struct ObjectEventTemplate;
 struct Window;
 union ObjectEventOrEffect;
 
+/// The warp request whose destination is already in gSaveBlock.mapId and
+/// .warpDest, so that Map_TakeWarp leaves them as they are. Random battles,
+/// Retreat and the script commands that set a destination
+/// (FieldScript_SetDestination) raise it, and Map_Run returns it when the
+/// whole party falls; Map_TakeWarp also uses it for "no warp found" (map.c,
+/// run_map.c).
+#define WARP_NONE 999
+
 /// gSaveBlock.movementMode: how the map loop hands the party leader back to
 /// the player (Map_Run).
 enum LeaderMovementMode {

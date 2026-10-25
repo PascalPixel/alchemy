@@ -6,13 +6,13 @@
 
 /// The battle Psynergy list for unit `unitId`: `count` abilities of `actions`
 /// (ended by 0), five to a page, each with its icon, name, PP cost, element
-/// and range icon, in colour 4 when not usable in battle, colour 2 when the
-/// unit's PP fall short and colour 9 while its Psynergy is sealed; the
-/// window above describes the one under the cursor. Returns the chosen
-/// ability's place in `actions`, or -1 when cancelled, when the link
-/// battle's time runs out or when the list is empty. Only an ability not
-/// usable in battle is refused here, silently: one the PP cannot pay for, or
-/// a sealed member's, can be chosen. The Psynergy command runs it
+/// and range icon, in TEXT_COLOR_YELLOW when not usable in battle,
+/// TEXT_COLOR_RED when the unit's PP fall short and TEXT_COLOR_PINK while its
+/// Psynergy is sealed; the window above describes the one under the cursor.
+/// Returns the chosen ability's place in `actions`, or -1 when cancelled, when
+/// the link battle's time runs out or when the list is empty. Only an ability
+/// not usable in battle is refused here, silently: one the PP cannot pay for,
+/// or a sealed member's, can be chosen. The Psynergy command runs it
 /// (Battle_CollectPartyCommands), listing only abilities usable in battle.
 s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   struct WindowWork *work;
@@ -46,7 +46,9 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   drawnFirstEntry = -1;
   cursorHandle = VramCache_AllocEntry(128);
   unit = Unit_GetFar(unitId);
-  messageWindow = Window_Create(0, 5, 30, 4, 42);
+  messageWindow = Window_Create(0, 5, 30, 4,
+                                WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                                    WINDOW_FLAG_FRAMED_CANVAS);
   iconCount = BATTLE_LIST_ROWS;
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
   window = Window_Create(9, 9, 21, BATTLE_LIST_ROWS * 2 + 1, 6);
@@ -76,7 +78,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
       Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
-                           window->width - 2, 1, 15);
+                           window->width - 2, 1, WINDOW_PALETTE);
       Text_FillCanvasBackground();
       if (count != 0) {
         BATTLE_MENU_MESSAGE_COPY(
@@ -101,7 +103,8 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
             break;
           }
           action = Ability_Get(encodedAction);
-          Window_SetTilemapEntry(window, 0xf01f, 11, i * 2, 0);
+          Window_SetTilemapEntry(window, PSYNERGY_COST_FIRST_TILE, 11, i * 2,
+                                 0);
           Window_SetTilemapEntry(window, PSYNERGY_COST_SECOND_TILE, 12, i * 2,
                                  0);
           Ability_LoadGlyph(encodedAction & ACTION_ID_MASK, 0, &iconSlots[i],
@@ -109,23 +112,22 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
           sprites[i].oam.f.tile = glyph;
 
           if ((action->flags & ABILITY_USABLE_IN_BATTLE) == 0) {
-            Text_SetColor(4);
+            Text_SetColor(TEXT_COLOR_YELLOW);
           } else if (action->ppCost > unit->pp) {
-            Text_SetColor(2);
+            Text_SetColor(TEXT_COLOR_RED);
           } else if (unit->psySeal != 0) {
-            Text_SetColor(9);
+            Text_SetColor(TEXT_COLOR_PINK);
           }
 
-          // The name and cost take BG palette 5 (WindowWork.textPalette).
-          work->textPalette = 5;
+          work->textPalette = BASIC_COLORS_PALETTE;
           Text_DrawMessageAsTiles(encodedAction + MsgAbilityName, window, 16,
                                   i * 16);
           Text_DrawNumberAtOffset(action->ppCost, 2, window, 104, i * 16);
-          Text_SetColor(15);
-          work->textPalette = 15;
+          Text_SetColor(TEXT_COLOR_WHITE);
+          work->textPalette = WINDOW_PALETTE;
 
           // Element 4 is none: no element icon.
-          if (action->element != 4) {
+          if (action->element != ELEMENT_NONE) {
             Window_SetTilemapEntry(window, action->element + 0x5001, 15, i * 2,
                                    0);
           }
@@ -155,7 +157,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
       }
 
       Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
-                           window->width - 2, 1, 14);
+                           window->width - 2, 1, HIGHLIGHT_PALETTE);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
     }
@@ -175,10 +177,11 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
             window->width - (count + 4) / BATTLE_LIST_ROWS + i - 2, -1, 0);
       }
       pageTile = -1;
-      Window_SetTilemapEntry(window, 0xf334,
+      Window_SetTilemapEntry(window, LIST_TILE_PAGES_LEFT,
                              window->width - (count + 4) / BATTLE_LIST_ROWS - 3,
                              pageTile, 0);
-      Window_SetTilemapEntry(window, 0xf335, window->width - 2, pageTile, 0);
+      Window_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
+                             pageTile, 0);
       Window_MarkTilemapRow(work, window->y - 1);
     }
 
@@ -188,7 +191,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
 
     cursorPosition.x = window->x * 8 - 4;
     cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
-    ((u32 *)iconSprite)[1] = 0x40000000;
+    ((u32 *)iconSprite)[1] = MENU_SPRITE_SHAPE_16X16;
     ((u32 *)iconSprite)[2] = 0;
     iconSprite->oam.f.tile =
         VramCache_Reload(cursorHandle, (s32)gPointingHandTiles);

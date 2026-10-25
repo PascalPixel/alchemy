@@ -55,8 +55,8 @@ void FieldEffect_WatchLeaderDistance(void) {
   // 0.82) for the comparison, so the edge is an ellipse 60 pixels up and
   // down from the centre and about 73 to either side.
   distanceX =
-      Iwram_MulQ16(work->revealCenterX - objectEvent->x / 0x10000, 0xd105);
-  distanceZ = work->revealCenterY - (objectEvent->z - objectEvent->y) / 0x10000;
+      Iwram_MulQ16(work->revealCenterX - objectEvent->x / Q16_ONE, 0xd105);
+  distanceZ = work->revealCenterY - (objectEvent->z - objectEvent->y) / Q16_ONE;
   if (distanceX * distanceX + distanceZ * distanceZ >= 3600 ||
       work->revealFrames == 0) {
     // Raise Reveal as a Psynergy request that pays no PP (ACT_PACKED 0x2000
@@ -95,8 +95,8 @@ void FieldEffect_RunReveal(void) {
   state->centreY = target->z.fixed - target->y.fixed;
   // From the plain colours (PALETTE_TINT_NONE, 0x10000) the BG palettes
   // turn grey (PALETTE_TINT_GRAYSCALE, 0x10001) in one frame.
-  PaletteFade_SetSource(0x10000, 0);
-  PaletteFade_SetTarget(0x10001, 1);
+  PaletteFade_SetSource(PALETTE_TINT_NONE, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_GRAYSCALE, 1);
   PaletteFade_StartInterpolation(1);
   // Not in the English release.
 #if !(TBS_PATCH_1 && !TBS_PATCH_2)
@@ -112,8 +112,8 @@ void FieldEffect_RunReveal(void) {
   // Record the centre (in pixels) and the time in the field work, and put
   // markers nearby.
   work->revealActive = 1;
-  work->revealCenterX = state->centreX / 0x10000;
-  work->revealCenterY = state->centreY / 0x10000;
+  work->revealCenterX = state->centreX / Q16_ONE;
+  work->revealCenterY = state->centreY / Q16_ONE;
   work->revealFrames = 600;
   work->effectTimerRunning = 1;
   FieldEffect_SpawnNearbyMarkers();
@@ -123,7 +123,7 @@ void FieldEffect_RunReveal(void) {
     state->value = frame;
     frame++;
   } while (frame <= 18);
-  Task_Add(FieldEffect_WatchLeaderDistance, 0xc80);
+  Task_Add(FieldEffect_WatchLeaderDistance, TASK_PRIORITY_MAIN_LOOP);
 }
 
 /// Ends Reveal if it is running: stops its watch, brings the colours back

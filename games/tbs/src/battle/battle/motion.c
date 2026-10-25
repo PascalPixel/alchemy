@@ -118,7 +118,7 @@ void BattleMotion_HopBack(s32 unitId) {
 
   battleObject = BattleObject_Get(unitId);
   object = battleObject->object;
-  object->acceleration = 0x10000;
+  object->acceleration = Q16_ONE;
   object->speedLimit = 0x40000;
   object->velocityY = 0x30000;
   object->gravity = 0x9999;

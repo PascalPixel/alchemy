@@ -113,8 +113,8 @@ s32 DjinnMenu_Run(void) {
   Resource_LoadPairedBlocksIfAvailable();
   ItemMenu_Initialize(0, 3, 0, 7);
   Menu_SetFirstObjectRowCoordinates(0);
-  Palette_LightenBankHighlight(14);
-  menu->helpWindow = Window_CreateFar(13, 0, 17, 5, 2);
+  Palette_LightenBankHighlight(HIGHLIGHT_PALETTE);
+  menu->helpWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
   menu->pairEntries[0] = 255;
   zero = 0;
   menu->selectedColumn[0] = zero;
@@ -478,15 +478,16 @@ void DjinnMenu_AdjustPaletteBank(s32 brightnessDelta) {
 #define DJINN_BACKDROP_FRAME_TILE 150
 
 /// PsynergyList_Diff' marks on an action id: Psynergy the change gives,
-/// drawn in colour 4, and Psynergy it takes away, in colour 2.
+/// drawn in TEXT_COLOR_YELLOW, and Psynergy it takes away, in TEXT_COLOR_RED.
 #define DJINN_PREVIEW_GAINED 0x8000
 #define DJINN_PREVIEW_LOST 0x4000
 
 /// Draws the backdrop behind the Djinn menu's list: its window, tiles and
 /// palettes. First saves BG character block 1's first 8 KB and palettes 4 to 7
-/// in the backdrop, which DjinnMenu_Run puts back as the menu closes. Palette
-/// 5 gets the basic sprite colours, with the window background as colour 14,
-/// for the element icons (DJINN_ELEMENT_TILE); palette 7 a copy of 15; then
+/// in the backdrop, which DjinnMenu_Run puts back as the menu closes.
+/// BASIC_COLORS_PALETTE gets the basic sprite colours, with
+/// TEXT_BACKGROUND_COLOR the window background, for the element icons
+/// (DJINN_ELEMENT_TILE); palette 7 a copy of 15; then
 /// DjinnMenu_AdjustPaletteBank(8) makes 14, 4 and 6 from 15, 5 and 7.
 MenuBackdropResult Menu_OpenBackdropScreen(void) {
   // UB: the implicit int call conflicts with DrawElementList's void definition.
@@ -505,13 +506,15 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
   Iwram_CopyWords(BG_CHAR_BLOCK(1) + DJINN_BACKDROP_FRAME_TILE * TILE_SIZE_4BPP,
                   gMenu_BackdropFrameTile, TILE_SIZE_4BPP);
   Dma_Set((const void *)Palette_GetBasicSpriteColors(),
-          (void *)&BG_PLTT_COLOR(5, 0), DMA_ENABLE << 16 | 16, REG_DMA3);
-  BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
-  Dma_Set((void *)&BG_PLTT_COLOR(15, 0), (void *)&BG_PLTT_COLOR(7, 0),
+          (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_ENABLE << 16 | 16, REG_DMA3);
+  BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
+      BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
+  Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0),
+          (void *)&BG_PLTT_COLOR(7, 0), DMA_ENABLE << 16 | 16, REG_DMA3);
   DjinnMenu_AdjustPaletteBank(8);
-  BG_PLTT_COLOR(7, 4) = BG_PLTT_COLOR(15, 4);
-  BG_PLTT_COLOR(6, 4) = BG_PLTT_COLOR(15, 4);
+  BG_PLTT_COLOR(7, 4) = BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
+  BG_PLTT_COLOR(6, 4) = BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
 #ifdef UBFIX
   DjinnMenu_DrawElementList(&backdrop->list);
 #else
@@ -609,8 +612,9 @@ s32 DjinnMenu_BuildLists(void *table) {
 
 /// Draws each member's Djinn column, including set and recovering entries.
 /// Rebuilds table's lists first. Each name follows its element's icon: in the
-/// normal colour when set, colour 2 on standby and colour 4 while recovering.
-/// Holds the tilemap upload (holdTilemapUpload) until the list is drawn.
+/// normal colour when set, TEXT_COLOR_RED on standby and TEXT_COLOR_YELLOW
+/// while recovering. Holds the tilemap upload (holdTilemapUpload) until the
+/// list is drawn.
 void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
   struct DjinnMenuWork *menu;
   s32 listIndex;
@@ -641,10 +645,11 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
       for (listIndex = 0; listIndex < table->counts[row]; listIndex++) {
         if (element != (entries[listIndex] & DJINN_ENTRY_ELEMENT) >> 5)
           continue;
-        // Colour 2 when not set; colour 4 over it when it is neither set nor
-        // ready to set, that is recovering (or held by a summon).
+        // TEXT_COLOR_RED when not set; TEXT_COLOR_YELLOW over it when it is
+        // neither set nor ready to set, that is recovering (or held by a
+        // summon).
         if ((entries[listIndex] & DJINN_ENTRY_IS_SET) == 0)
-          Text_SetColorFar(2);
+          Text_SetColorFar(TEXT_COLOR_RED);
         canChangeState = 0;
         if (Djinn_CanSetFar((entries[listIndex] & DJINN_ENTRY_MEMBER) >> 8,
                             (entries[listIndex] & DJINN_ENTRY_ELEMENT) >> 5,
@@ -654,7 +659,7 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
                            entries[listIndex] & DJINN_ENTRY_INDEX))
           canChangeState = 1;
         if (!canChangeState)
-          Text_SetColorFar(4);
+          Text_SetColorFar(TEXT_COLOR_YELLOW);
         Window_SetTilemapEntryFar(
             menu->listWindow,
             ((entries[listIndex] & DJINN_ENTRY_ELEMENT) >> 5) +
@@ -678,8 +683,9 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
 
 /// Sets the palette of a rectangle of window's interior, (x, y) and its size in
 /// tiles from the interior's corner, through Window_HighlightRectFar.
-/// Only bit 12 of each map entry changes, so palette 15 and 14 swap (the row
-/// highlight) and so do 5 and 4 (the element icons).
+/// Only bit 12 of each map entry changes, so WINDOW_PALETTE and
+/// HIGHLIGHT_PALETTE swap (the row highlight) and so do 5 and 4 (the element
+/// icons).
 s32 Window_SetInteriorPaletteBitRect(const struct Window *window, s32 x, s32 y,
                                      s32 width, s32 height, s32 palette) {
   Window_HighlightRectFar(window->x + x + 1, window->y + y + 1, width, height,
@@ -689,8 +695,8 @@ s32 Window_SetInteriorPaletteBitRect(const struct Window *window, s32 x, s32 y,
 #endif
 }
 
-/// Moves each tile of a screen rectangle (in tiles) that shows palette 15 to
-/// palette, and marks each row changed for upload. Clipped as
+/// Moves each tile of a screen rectangle (in tiles) that shows WINDOW_PALETTE
+/// to palette, and marks each row changed for upload. Clipped as
 /// Render_SetTilemapFlagRect clips: to the screen's columns, and to its rows
 /// only once the rectangle reaches row 29. The Djinn menu dims its windows
 /// with palette 6 behind the help and the second chooser.
@@ -776,12 +782,12 @@ s32 DjinnMenu_ShowHelp(void) {
   message++;
   Text_DrawMessageAsTilesFar(message, menu->helpWindow, 0, 16);
   // Dim the party window and the Djinn list behind the help: palette 6 is
-  // palette 15's text 12 steps darker (Menu_OpenBackdropScreen).
+  // WINDOW_PALETTE's text 12 steps darker (Menu_OpenBackdropScreen).
   Window_SetRectPalette(1, 1, 11, 3, 6);
   Window_SetInteriorRectPalette((void *)menu->listWindow, 0, 0, 28, 10, 6);
   list = Window_CreateFar(0, 9, 8, 10, 6);
-  helpWindow = Window_CreateFar(8, 12, 22, 7, 2);
-  statusWindow = Window_CreateFar(8, 9, 22, 3, 2);
+  helpWindow = Window_CreateFar(8, 12, 22, 7, WINDOW_FLAG_INSTANT);
+  statusWindow = Window_CreateFar(8, 9, 22, 3, WINDOW_FLAG_INSTANT);
   Window_MarkVisibleTextTilesFar();
   helpIndex = 0;
   listMessage = MsgDjinnInfoTopic;
@@ -794,8 +800,9 @@ s32 DjinnMenu_ShowHelp(void) {
     Text_DrawMessageFar(selection + MsgDjinnInfoTopic, statusWindow, 0, 0);
     printer = (struct TextPrinter *)Message_OpenDecodedFar(
         helpWindow, selection + MsgDjinnInfoText);
-    Window_SetInteriorPaletteBitRect(list, 0, previous, 6, 1, 15);
-    Window_SetInteriorPaletteBitRect(list, 0, selection, 6, 1, 14);
+    Window_SetInteriorPaletteBitRect(list, 0, previous, 6, 1, WINDOW_PALETTE);
+    Window_SetInteriorPaletteBitRect(list, 0, selection, 6, 1,
+                                     HIGHLIGHT_PALETTE);
     previous = selection;
     for (;;) {
       MenuCursor_Position(-12, (list->y + selection) * 8 + 8);
@@ -860,7 +867,7 @@ s32 DjinnMenu_ShowHelp(void) {
     WindowSprite_PrepareForRedrawFar(menu->statusWindow);
     ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 0;
   }
-  Task_Add(Menu_UpdateEntryObjectTransforms, 0xc80);
+  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PRIORITY_MAIN_LOOP);
   return result;
 }
 
@@ -968,7 +975,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     fromX = (u16)((u32)sourceCursor % (u32)10);
     fromY = (u16)((u32)sourceCursor / (u32)10);
     Window_SetInteriorPaletteBitRect(menu->listWindow, fromX * 7 + 1, fromY + 2,
-                                     DJINN_CURSOR_WIDTH, 1, 14);
+                                     DJINN_CURSOR_WIDTH, 1, HIGHLIGHT_PALETTE);
     Window_SetInteriorRectPalette(menu->listWindow, fromX * 7 + 1, 2,
                                   DJINN_CURSOR_WIDTH, 7, 6);
     for (n = 0; n < menu->memberCount; n++) {
@@ -1041,8 +1048,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       // The Djinni's figure, its element's: animation 1 for one on standby or
       // recovering, 2 for one that is set. A recovering one gets
       // DjinnFigures_SetSlotPosition's negative mark, which
-      // DjinnFigures_UpdateBottomRow turns into facing 0x8000 rather than
-      // 0x4000. On a header the figure goes off screen (y 200).
+      // DjinnFigures_UpdateBottomRow turns into FACING_WEST rather than
+      // FACING_SOUTH. On a header the figure goes off screen (y 200).
       if (selectedRow == -1) {
         DjinnFigures_SetSlotPosition(mode, 0, 200, 0);
       } else if (mode == DJINN_SELECT_DJINNI) {
@@ -1132,7 +1139,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (!(columnFlags[memberColumn] & DJINN_COLUMN_ON_HEADER))
         Window_SetInteriorPaletteBitRect(menu->listWindow, memberColumn * 7 + 1,
                                          djinnRow + 2, DJINN_CURSOR_WIDTH, 1,
-                                         14);
+                                         HIGHLIGHT_PALETTE);
       ((struct WindowWork *)gWindowWork[0])->dirty = 1;
     }
     if (columnFlags[memberColumn] & DJINN_COLUMN_ON_HEADER)
@@ -1469,7 +1476,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         result = DJINN_RESULT_HELP;
         Window_SetInteriorPaletteBitRect(menu->listWindow, memberColumn * 7 + 1,
                                          djinnRow + 2, DJINN_CURSOR_WIDTH, 1,
-                                         15);
+                                         WINDOW_PALETTE);
         Sound_PlaySongFar(SE_MENU_CONFIRM);
         break;
       }
@@ -1479,7 +1486,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (columnFlags[memberColumn] & DJINN_COLUMN_EMPTY)
         continue;
       Window_SetInteriorPaletteBitRect(menu->listWindow, memberColumn * 7 + 1,
-                                       djinnRow + 2, DJINN_CURSOR_WIDTH, 1, 15);
+                                       djinnRow + 2, DJINN_CURSOR_WIDTH, 1,
+                                       WINDOW_PALETTE);
       if (columnFlags[memberColumn] & DJINN_COLUMN_EMPTY)
         continue;
       if (columnFlags[memberColumn] & DJINN_COLUMN_ON_HEADER) {
@@ -1505,7 +1513,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (columnFlags[memberColumn] & DJINN_COLUMN_EMPTY)
         continue;
       Window_SetInteriorPaletteBitRect(menu->listWindow, memberColumn * 7 + 1,
-                                       djinnRow + 2, DJINN_CURSOR_WIDTH, 1, 15);
+                                       djinnRow + 2, DJINN_CURSOR_WIDTH, 1,
+                                       WINDOW_PALETTE);
       djinnRow++;
       count = backdrop->list.counts[memberColumn];
       if (count == 0)
@@ -1528,7 +1537,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (!(columnFlags[memberColumn] & DJINN_COLUMN_EMPTY))
         Window_SetInteriorPaletteBitRect(menu->listWindow, memberColumn * 7 + 1,
                                          djinnRow + 2, DJINN_CURSOR_WIDTH, 1,
-                                         15);
+                                         WINDOW_PALETTE);
       memberColumn--;
       memberColumn = Menu_WrapIndex(memberColumn, menu->memberCount);
       if (mode == DJINN_SELECT_DJINNI) {
@@ -1552,7 +1561,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (!(columnFlags[memberColumn] & DJINN_COLUMN_EMPTY))
         Window_SetInteriorPaletteBitRect(menu->listWindow, memberColumn * 7 + 1,
                                          djinnRow + 2, DJINN_CURSOR_WIDTH, 1,
-                                         15);
+                                         WINDOW_PALETTE);
       memberColumn++;
       memberColumn = Menu_WrapIndex(memberColumn, menu->memberCount);
       if (mode == DJINN_SELECT_DJINNI) {
@@ -1659,9 +1668,9 @@ static __inline__ void Unit_Copy(struct Unit *destination,
 ///
 /// previewMode says the change (enum DjinnPreviewMode). Page 0 shows the
 /// stats, class and set Djinn counts, with an arrow beside each stat that
-/// changes; page n the nth page of the Psynergy list, new Psynergy in colour 4
-/// and lost Psynergy in colour 2. side is the portrait slot. The saved copy is
-/// a heap block freed before returning. Returns 1.
+/// changes; page n the nth page of the Psynergy list, new Psynergy in
+/// TEXT_COLOR_YELLOW and lost Psynergy in TEXT_COLOR_RED. side is the portrait
+/// slot. The saved copy is a heap block freed before returning. Returns 1.
 s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
                               s32 removePairSlot, s32 addPairSlot,
                               s32 previewMode, s32 page, s32 side) {
@@ -1788,7 +1797,7 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
       if (originalUnit->classId != unit->classId)
         column += 5;
       // Each element's icon and its count of set Djinn: 0xf030 + n is the
-      // window font's digit n (character 0x30 + n) in palette 15.
+      // window font's digit n (character 0x30 + n) in WINDOW_PALETTE.
       for (i = 0; i < 4; i++) {
         Window_SetTilemapEntryFar(window, DJINN_ELEMENT_TILE + i,
                                   column + i * 2, y + 5, 0);
@@ -1860,8 +1869,8 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
   }
 
   // Pages 1 on: the Psynergy after the change, five to a page (six with no
-  // change), then the key below: "* Psynergy Gained" in colour 4, "* Psynergy
-  // Lost" in colour 2, or "* No change".
+  // change), then the key below: "* Psynergy Gained" in TEXT_COLOR_YELLOW, "*
+  // Psynergy Lost" in TEXT_COLOR_RED, or "* No change".
   if (page > 0) {
     s32 rows;
     s32 first;
@@ -1878,9 +1887,9 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
       Icon_CreateWithLoadedResource(window, x * 8, (y + line * 2) * 8 + 4,
                                     actions[first] & PSYNERGY_ABILITY_MASK);
       if (actions[first] & 0x8000)
-        Text_SetColorFar(4);
+        Text_SetColorFar(TEXT_COLOR_YELLOW);
       else if (actions[first] & 0x4000)
-        Text_SetColorFar(2);
+        Text_SetColorFar(TEXT_COLOR_RED);
       else
         Text_SetColorFar(TEXT_COLOR_NORMAL);
       Text_DrawMessageAsTilesFar(MsgAbilityName +
@@ -1898,13 +1907,13 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
 
       lines = 0;
       if (gained) {
-        Text_SetColorFar(4);
+        Text_SetColorFar(TEXT_COLOR_YELLOW);
         Text_DrawMessageAsTilesFar(MsgPsynergyGained, window, x * 8,
                                    y * 8 + 88);
         lines = 1;
       }
       if (lost) {
-        Text_SetColorFar(2);
+        Text_SetColorFar(TEXT_COLOR_RED);
         Text_DrawMessageAsTilesFar(MsgPsynergyLost, window, x * 8,
                                    (y + lines) * 8 + 88);
         lines++;

@@ -324,15 +324,17 @@ static s32 BattleArena_InitializeSerial(void) {
 
 u8 *BattleArena_GetWarps(void) { return (u8 *)gBattleArenaWarps; }
 
-/// The object event templates entry. After a defeat (warp destination 9 for a
-/// monster battle, 11 for a linked one) the party members and four visitors
-/// roughly trade places (gBattleArenaBattleObjectEventTemplates): Garet, Ivan
-/// and Mia or Jenna take three of the visitors' spots, and the visitors stand
-/// around where the party stood.
+/// The object event templates entry. After a defeat
+/// (BATTLE_ARENA_AFTER_MONSTER_LOSS or BATTLE_ARENA_AFTER_LINK_LOSS) the party
+/// members and four visitors roughly trade places
+/// (gBattleArenaBattleObjectEventTemplates): Garet, Ivan and Mia or Jenna take
+/// three of the visitors' spots, and the visitors stand around where the party
+/// stood.
 s32 BattleArena_SelectObjectEventTemplates(void) {
   s16 warpDest = gSaveBlock.warpDest;
 
-  if (warpDest == 11 || warpDest == 9) {
+  if (warpDest == BATTLE_ARENA_AFTER_LINK_LOSS ||
+      warpDest == BATTLE_ARENA_AFTER_MONSTER_LOSS) {
     return (s32)gBattleArenaBattleObjectEventTemplates;
   }
   return (s32)gBattleArenaObjectEventTemplates;
@@ -908,9 +910,9 @@ check:
 /// the link is lost, or the partner neither asks nor stands in the circle for
 /// LOBBY_PEER_WAIT_FRAMES. The leader then walks in while the parties are
 /// exchanged; a failed exchange walks back, restarts the Battle Arena's polling
-/// and raises LOBBY_EVENT_DISCONNECTED. Sets where the battle returns to (warp
-/// destinations 8 and 9 for a monster battle, 10 and 11 for a linked one) and
-/// requests it. The original returns have no defined status.
+/// and raises LOBBY_EVENT_DISCONNECTED. Sets where the battle returns to (the
+/// BATTLE_ARENA_AFTER_ warp destinations) and requests it. The original returns
+/// have no defined status.
 static s32 BattleArena_EnterBattle(void) {
   struct FieldWork *work;
   s32 failed;
@@ -988,7 +990,7 @@ static s32 BattleArena_EnterBattle(void) {
       FieldScript_SetMessageId(MsgLobbyGoodLuck);
       FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
       WaitFrames(45);
-      ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x10000, 0x8000);
+      ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, Q16_ONE, 0x8000);
       ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 216, 184);
       ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
       ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 216, 168);
@@ -996,7 +998,7 @@ static s32 BattleArena_EnterBattle(void) {
     } else {
       // Speeds are 16.16 pixels a frame: one to (216, 200), a tenth while
       // the parties are exchanged, then a half.
-      ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x10000, 0x8000);
+      ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, Q16_ONE, 0x8000);
       ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 216, 200);
       ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
       ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x1999, 0xccc);
@@ -1004,7 +1006,7 @@ static s32 BattleArena_EnterBattle(void) {
       // A failed exchange: walk back out and return to the Battle Arena,
       // reporting the link lost (LOBBY_EVENT_DISCONNECTED).
       if (BattleArena_ExchangePartyRecords() < 0) {
-        ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x10000, 0x8000);
+        ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, Q16_ONE, 0x8000);
         ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 216, 200);
         TilesetAnim_Resume(5);
         WaitFrames(8);
@@ -1013,7 +1015,8 @@ static s32 BattleArena_EnterBattle(void) {
         FreeHeapSlot(HEAP_SLOT_ENEMY_UNITS);
         BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
         BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
-        FieldScheduler_AddCallback((TaskFunc)BattleArena_PollPeerReady, 0xc80);
+        FieldScheduler_AddCallback((TaskFunc)BattleArena_PollPeerReady,
+                                   TASK_PRIORITY_MAIN_LOOP);
         Task_SetFlags((TaskFunc)BattleArena_PollPeerReady, 1);
         GameFlag_Clear(FLAG_BATTLE_ARENA_PARTNER_ASKED);
         GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_AGREED);
@@ -1028,11 +1031,15 @@ static s32 BattleArena_EnterBattle(void) {
       ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
     }
     if (GameFlag_Get(FLAG_MONSTER_BATTLE)) {
-      FieldScript_SetNextDestination((s32)&MapId_BattleArena, 8);
-      FieldScript_SetDefeatDestination((s32)&MapId_BattleArena, 9);
+      FieldScript_SetNextDestination((s32)&MapId_BattleArena,
+                                     BATTLE_ARENA_AFTER_MONSTER_WIN);
+      FieldScript_SetDefeatDestination((s32)&MapId_BattleArena,
+                                       BATTLE_ARENA_AFTER_MONSTER_LOSS);
     } else {
-      FieldScript_SetNextDestination((s32)&MapId_BattleArena, 10);
-      FieldScript_SetDefeatDestination((s32)&MapId_BattleArena, 11);
+      FieldScript_SetNextDestination((s32)&MapId_BattleArena,
+                                     BATTLE_ARENA_AFTER_LINK_WIN);
+      FieldScript_SetDefeatDestination((s32)&MapId_BattleArena,
+                                       BATTLE_ARENA_AFTER_LINK_LOSS);
     }
     // Publish EXEC only after the battle and return destinations are ready.
     // It fills the payload's first four halfwords, where the link battle's
@@ -1190,7 +1197,7 @@ static s32 BattleArena_ReportWinTallies(s32 localId) {
     tally = &gSaveBlock.linkTallies[LINK_TALLY_LINKED_WINS];
     if (*tally != 0) {
       MessageArgument_ClearAll();
-      MessageArgument_Push(*tally, 5);
+      MessageArgument_Push(*tally, MESSAGE_ARGUMENT_NUMBER);
       FieldScript_SetMessageId(messageBase + 1);
       FieldScript_ShowMessageAndWait(localId, 0);
     } else {
@@ -1202,7 +1209,7 @@ static s32 BattleArena_ReportWinTallies(s32 localId) {
     tally = &gSaveBlock.linkTallies[LINK_TALLY_LINKED_STREAK];
     if (*tally != 0) {
       MessageArgument_ClearAll();
-      MessageArgument_Push(*tally, 5);
+      MessageArgument_Push(*tally, MESSAGE_ARGUMENT_NUMBER);
       FieldScript_SetMessageId(messageBase + 1);
       FieldScript_ShowMessageAndWait(localId, 0);
     } else {
@@ -1228,7 +1235,7 @@ static s32 BattleArena_ChooseDebugPartyPreset(s32 localId) {
   ObjectMotion_SetAngleToward(localId, gSaveBlock.leaderLocalId, 0);
   FieldScript_SetMessageId(MsgLobbyChooseParameters);
   FieldScript_ShowMessageAndWait(localId, 0);
-  window = Window_Create(0, 0, 6, 4, 2);
+  window = Window_Create(0, 0, 6, 4, WINDOW_FLAG_INSTANT);
   presetIndex = 0;
   displayedPreset = -1;
   for (;;) {
@@ -1445,7 +1452,8 @@ static s32 BattleArena_ReportMonsterRecord(s32 localId) {
   state = &gSaveBlock;
   ObjectMotion_SetAngleToward(localId, state->leaderLocalId, 0);
   if (state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] != 0) {
-    MessageArgument_Push(state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK], 5);
+    MessageArgument_Push(state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK],
+                         MESSAGE_ARGUMENT_NUMBER);
     FieldScript_SetMessageId(MsgLobbyWonNumberConsecutive);
   } else {
     FieldScript_SetMessageId(MsgLobbyCantWaitSee);
@@ -1525,10 +1533,10 @@ static s32 BattleArena_DrawThreeDigitValue(s32 value) {
 }
 
 /// The overlay's initialize entry, run on every arrival: settles the battle
-/// that brought the party here and restarts the Battle Arena's polling. Warp
-/// destination 8 is a monster battle won, 9 one lost, 10 a linked battle won
-/// (or broken off, FLAG_MAPSEC_TEMP_E8) and 11 one lost; any other warp
-/// destination (BATTLE_ARENA_FROM_MAIN_MENU, from the main menu)
+/// that brought the party here and restarts the Battle Arena's polling. A
+/// linked battle broken off (FLAG_MAPSEC_TEMP_E8) arrives as
+/// BATTLE_ARENA_AFTER_LINK_WIN; any other warp destination than the
+/// BATTLE_ARENA_AFTER_ ones (BATTLE_ARENA_FROM_MAIN_MENU, from the main menu)
 /// restarts the link. Updates gSaveBlock.linkTallies, saves after linked
 /// battles and new monster records, and restores the party's HP, PP and Djinn
 /// unless a monster series goes on. Returns 0.
@@ -1565,8 +1573,8 @@ s32 BattleArena_RunRoundResult(void) {
       GameFlag_Set(FLAG_BATTLE_ARENA_IN_PARTY_FIRST + i);
     }
   }
-  // Warp destination 8, a monster battle won: offer the next one.
-  if (gSaveBlock.warpDest == 8) {
+  // A monster battle won: offer the next one.
+  if (gSaveBlock.warpDest == BATTLE_ARENA_AFTER_MONSTER_WIN) {
     s32 wins;
     s32 messageOffset;
     s32 v;
@@ -1607,7 +1615,7 @@ s32 BattleArena_RunRoundResult(void) {
       GameFlag_Clear(FLAG_MONSTER_BATTLE);
       FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
       MessageArgument_Push(gSaveBlock.linkTallies[LINK_TALLY_MONSTER_STREAK],
-                           5);
+                           MESSAGE_ARGUMENT_NUMBER);
       if (gSaveBlock.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] <
           gSaveBlock.linkTallies[LINK_TALLY_MONSTER_STREAK]) {
         gSaveBlock.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] =
@@ -1622,16 +1630,17 @@ s32 BattleArena_RunRoundResult(void) {
       BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
     }
     FieldScript_End();
-    // Warp destination 9, a monster battle lost: the series ends, and a new
+    // A monster battle lost: the series ends, and a new
     // record is saved.
-  } else if (gSaveBlock.warpDest == 9) {
+  } else if (gSaveBlock.warpDest == BATTLE_ARENA_AFTER_MONSTER_LOSS) {
     gSaveBlock.linkTallies[LINK_TALLY_MONSTER_LOSSES]++;
     FieldScript_Start();
     FieldScript_StartScreenTransition();
     FieldScript_WaitTransitionFrames();
     BattleArena_WriteSlotValue(LOBBY_SLOT_ALONE);
     ObjectMotion_SetAngleToward(LOCALID_ATTENDANT, gSaveBlock.leaderLocalId, 0);
-    MessageArgument_Push(gSaveBlock.linkTallies[LINK_TALLY_MONSTER_STREAK], 5);
+    MessageArgument_Push(gSaveBlock.linkTallies[LINK_TALLY_MONSTER_STREAK],
+                         MESSAGE_ARGUMENT_NUMBER);
     if (gSaveBlock.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] <
         gSaveBlock.linkTallies[LINK_TALLY_MONSTER_STREAK]) {
       gSaveBlock.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] =
@@ -1648,9 +1657,9 @@ s32 BattleArena_RunRoundResult(void) {
     FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
     BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
     FieldScript_End();
-    // Warp destination 10, a linked battle won: count the win and the run; a
+    // A linked battle won: count the win and the run; a
     // longer run is the board's new record. Saved.
-  } else if (gSaveBlock.warpDest == 10) {
+  } else if (gSaveBlock.warpDest == BATTLE_ARENA_AFTER_LINK_WIN) {
     s32 v;
 
     FieldScript_Start();
@@ -1682,9 +1691,9 @@ s32 BattleArena_RunRoundResult(void) {
       GameFlag_Set(FLAG_BATTLE_ARENA_LINK_BATTLE_WON);
     }
     FieldScript_End();
-    // Warp destination 11, a linked battle lost: count the loss and end the
+    // A linked battle lost: count the loss and end the
     // run. Saved.
-  } else if (gSaveBlock.warpDest == 11) {
+  } else if (gSaveBlock.warpDest == BATTLE_ARENA_AFTER_LINK_LOSS) {
     s32 v;
 
     FieldScript_Start();
@@ -1724,9 +1733,10 @@ s32 BattleArena_RunRoundResult(void) {
   }
   // Resume polling and restore the party unless continuing a monster run.
   callback = (TaskFunc)BattleArena_PollPeerReady;
-  FieldScheduler_AddCallback(callback, 0xc80);
+  FieldScheduler_AddCallback(callback, TASK_PRIORITY_MAIN_LOOP);
   Task_SetFlags(callback, 1);
-  if (gSaveBlock.warpDest != 8 || !GameFlag_Get(FLAG_MONSTER_BATTLE)) {
+  if (gSaveBlock.warpDest != BATTLE_ARENA_AFTER_MONSTER_WIN ||
+      !GameFlag_Get(FLAG_MONSTER_BATTLE)) {
     Party_RestoreHpPp(1);
     DjinnRecovery_TickTwenty();
   }
@@ -1741,13 +1751,12 @@ u8 gBattleArena_SlotColumns[] = {
 };
 
 /// Where the party appears: BATTLE_ARENA_FROM_MAIN_MENU from the main menu,
-/// 8 and 9 after a monster battle won or lost, 10 and 11 after a linked one
-/// (BattleArena_EnterBattle).
+/// the BATTLE_ARENA_AFTER_ ones after a battle (BattleArena_EnterBattle).
 struct MapWarpDest gBattleArenaWarpDests[] = {
-    { 11, CONDITION_ALWAYS, 128, 0, 164, FACING_NORTH, 0, 16, 0, 416, 310, 0 },
-    { 10, CONDITION_ALWAYS, 352, 0, 148, FACING_NORTH, 0, 16, 0, 416, 310, 0 },
-    { 8, CONDITION_ALWAYS, 216, 0, 200, FACING_WEST, 0, 16, 0, 416, 310, 0 },
-    { 9, CONDITION_ALWAYS, 216, 0, 200, FACING_WEST, 0, 16, 0, 416, 310, 0 },
+    { BATTLE_ARENA_AFTER_LINK_LOSS, CONDITION_ALWAYS, 128, 0, 164, FACING_NORTH, 0, 16, 0, 416, 310, 0 },
+    { BATTLE_ARENA_AFTER_LINK_WIN, CONDITION_ALWAYS, 352, 0, 148, FACING_NORTH, 0, 16, 0, 416, 310, 0 },
+    { BATTLE_ARENA_AFTER_MONSTER_WIN, CONDITION_ALWAYS, 216, 0, 200, FACING_WEST, 0, 16, 0, 416, 310, 0 },
+    { BATTLE_ARENA_AFTER_MONSTER_LOSS, CONDITION_ALWAYS, 216, 0, 200, FACING_WEST, 0, 16, 0, 416, 310, 0 },
     { BATTLE_ARENA_FROM_MAIN_MENU, CONDITION_ALWAYS, 216, 0, 288, FACING_NORTH, 0, 16, 0, 416, 310, 0 },
     { 0, CONDITION_ALWAYS, 216, 0, 208, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { MAP_TABLE_END },

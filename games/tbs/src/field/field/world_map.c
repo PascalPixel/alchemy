@@ -207,7 +207,7 @@ s32 WorldMap_InitializePerspective(void) {
   perspective->farPlane = farPlane;
   distance = &perspective->distance;
   *distance = farPlane;
-  perspective->zoom = 0x10000;
+  perspective->zoom = Q16_ONE;
   zoomTransitionFrames = &perspective->zoomTransitionFrames;
   camera->followEye = 0;
   camera->followPosition = 0;
@@ -253,7 +253,7 @@ s32 WorldMap_InitializePerspective(void) {
   Transform_ApplyPitch(*pitch);
   eyeOffset.x = 0;
   eyeOffset.y = 0;
-  eyeOffset.z = *distance + 0x10000;
+  eyeOffset.z = *distance + Q16_ONE;
   Iwram_TransformVector(&eyeOffset, camera->eye);
   REG_MOSAIC = 0;
   Io_Write16(DISPCNT_MODE_2 | DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
@@ -266,8 +266,8 @@ s32 WorldMap_InitializePerspective(void) {
   // Rows 0 to 159: the whole screen shows the perspective view.
   perspective->windowTop = 0;
   perspective->windowBottom = 159;
-  Task_Add(WorldMap_UpdateView, 0xc85);
-  Task_Add(WorldMap_ApplyAffineFrame, 0x480);
+  Task_Add(WorldMap_UpdateView, TASK_PRIORITY_MAIN_LOOP + 5);
+  Task_Add(WorldMap_ApplyAffineFrame, TASK_PRIORITY_VBLANK);
   // Each of the 16 by 16 grid cells starts on the tile of its own number.
   for (tileIndex = 255; tileIndex >= 0; tileIndex--)
     perspective->tileIds[tileIndex] = tileIndex;
@@ -366,7 +366,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   Dma_Set(Ram_BgTileBuffer + 0x6000, BG_CHAR_BLOCK(3) + 0x2000,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[5]), gMapGridAnimTiles);
-  // BG1's map (screen block 5) is filled with tile 0x7f of palette 15, and
+  // BG1's map (screen block 5) is filled with tile 0x7f of WINDOW_PALETTE, and
   // screen block 6 numbers a 30 by 20 tile picture from tile 0x1a8, two
   // tile numbers a word, for the still view WorldMap_StartStillView shows.
   Dma_Fill32(0xf07ff07f, BG_SCREEN_BLOCK(5), 0x600);
@@ -598,7 +598,7 @@ void WorldMap_UpdateView(void) {
   Transform_ApplyPitch(perspective->pitch);
   eyeOffset.x = 0;
   eyeOffset.y = 0;
-  eyeOffset.z = height + 0x10000;
+  eyeOffset.z = height + Q16_ONE;
   Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   Transform_Reset();
   Transform_SetLookAt(camera->eye, cameraPosition);

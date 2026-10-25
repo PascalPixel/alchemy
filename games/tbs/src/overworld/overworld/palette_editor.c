@@ -8,7 +8,7 @@
 // 13 of row 1 of screen block 4.
 #define EDITOR_PALETTE ((u16 *)0x05000000)
 #define EDITOR_MAP ((u16 *)0x0600205a)
-#define EDITOR_HEX_DIGIT 0xf0e0 ///< the tile of digit 0, in BG palette 15
+#define EDITOR_HEX_DIGIT 0xf0e0 ///< the tile of digit 0, in WINDOW_PALETTE
 
 /// The debug palette editor (L on the pause menu in debug mode). Shows colours
 /// 1 to 15 of a palette with their red, green and blue values in hex. Left and
@@ -38,18 +38,18 @@ void PaletteEditor_Run(void) {
 redraw:
   // Column 0 shows the palette number and R, G, B; columns 1 to 15 show each
   // colour's swatch, drawn in the palette being edited, and its three
-  // channels. The letters are tiles at their ASCII codes in BG palette 15.
+  // channels. The letters are tiles at their ASCII codes in WINDOW_PALETTE.
   tile = (palette << 12) + 0xd1;
   paletteColor = &EDITOR_PALETTE[palette * 16 + 1];
   swatchColumn = EDITOR_MAP;
   tileEntry = swatchColumn;
   *tileEntry = EDITOR_HEX_DIGIT + palette;
   tileEntry += 32;
-  *tileEntry = 0xf000 | 'R';
+  *tileEntry = WINDOW_TILE('R');
   tileEntry += 32;
-  *tileEntry = 0xf000 | 'G';
+  *tileEntry = WINDOW_TILE('G');
   tileEntry += 32;
-  *tileEntry = 0xf000 | 'B';
+  *tileEntry = WINDOW_TILE('B');
   swatchColumn++;
   for (i = 1; i < 16; i++) {
     tileEntry = swatchColumn;

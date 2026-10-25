@@ -50,7 +50,47 @@ enum {
 /// copies the work block's tilemap to.
 #define WINDOW_TILEMAP_VRAM ((u8 *)0x06002000)
 
-/// A tilemap entry of palette 15, the UI palette.
+/// The BG palette of the windows and their text, the UI palette.
+#define WINDOW_PALETTE 15
+/// The BG palette the menus keep for their selected row or page: a copy of
+/// WINDOW_PALETTE with its background lightened (Palette_LightenBankHighlight),
+/// which the item icons borrow (Palette_LoadIconsIntoHighlight).
+#define HIGHLIGHT_PALETTE 14
+/// The window palette's background colour, behind its text; in
+/// HIGHLIGHT_PALETTE, the selected row's.
+#define WINDOW_BACKGROUND_COLOR 4
+/// Eight 4bpp pixels of WINDOW_BACKGROUND_COLOR, for filling the text canvas
+/// or a tile a word at a time.
+#define TEXT_CANVAS_BACKGROUND_WORD 0x44444444
+/// The colour that text drawn in a palette other than WINDOW_PALETTE stands
+/// on (Text_DrawStringAsTiles); the menus copy WINDOW_BACKGROUND_COLOR into it.
+#define TEXT_BACKGROUND_COLOR 14
+/// The BG palette that battle and the Djinn menu fill with the first basic
+/// sprite palette, its TEXT_BACKGROUND_COLOR the window background: the element
+/// icons and the coloured numbers are drawn in it (WindowWork.textPalette).
+#define BASIC_COLORS_PALETTE 5
+
+/// Text colours (Text_SetColor), named as both the window palette (through
+/// gFont_ColorPens) and the basic sprite palette show them.
+enum TextColor {
+  TEXT_COLOR_RED = 2,
+  TEXT_COLOR_YELLOW = 4,
+  TEXT_COLOR_PINK =
+      9, ///< in BASIC_COLORS_PALETTE; WINDOW_PALETTE shows it white
+  TEXT_COLOR_GREY = 14,
+  TEXT_COLOR_WHITE = 15, ///< a text printer's colour at start
+};
+
+/// The OAM shape and size a window sprite is created with
+/// (WindowSprite_Create): attribute 0's shape in the low half, attribute 1's
+/// size in the high half.
+#define OUTPUT_SIZE_16X16 0x40000000
+#define OUTPUT_SIZE_32X32 0x80000000
+#define OUTPUT_SIZE_32X8 0x40004000
+#define OUTPUT_SIZE_32X16 0x80004000
+#define OUTPUT_SIZE_16X32 0x80008000
+
+/// A tilemap entry of WINDOW_PALETTE.
 #define WINDOW_TILE(tile) (0xf000 | (tile))
 /// Two copies of a tilemap entry, for filling a run of entries a word at a
 /// time.
@@ -67,8 +107,8 @@ enum {
 #define PAGE_ARROW_RIGHT WINDOW_TILE(PAGE_ARROW_TILE + 1)
 
 /// The window frame's tiles. While WindowWork.mindRead is set (a battle
-/// animation sets it while it greys palette 15 and scrolls BG0 by scanline) the
-/// corners are one rounded tile, flipped for each corner.
+/// animation sets it while it greys WINDOW_PALETTE and scrolls BG0 by scanline)
+/// the corners are one rounded tile, flipped for each corner.
 enum {
   WINDOW_TILE_BLANK = WINDOW_TILE(0x00),
   WINDOW_TILE_FRAME_TOP_LEFT = WINDOW_TILE(0x10),
@@ -356,10 +396,10 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode);
 enum TilemapEntryMode {
   TILEMAP_ENTRY_PLAIN, ///< as given, palette bits included
   TILEMAP_ENTRY_NONE,  ///< nothing
-  /// In palette 14, the highlight Palette_LightenBankHighlight makes for the
-  /// selected row or page.
+  /// In HIGHLIGHT_PALETTE, the highlight Palette_LightenBankHighlight makes for
+  /// the selected row or page.
   TILEMAP_ENTRY_HIGHLIGHT,
-  TILEMAP_ENTRY_WINDOW, ///< in palette 15, the window palette
+  TILEMAP_ENTRY_WINDOW, ///< in WINDOW_PALETTE
   /// In palette 1, which the summary screen and the party rearranging fill
   /// with the element icons' colours for the rows that are not highlighted
   /// (SummaryScreen_Run, MemberChooser_RunRearrange).

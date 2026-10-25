@@ -114,7 +114,7 @@ void FieldEffect_RunHalt(void) {
     SET_POSITION(orb, from.x + (to.x - from.x) * step / 10,
                  from.y + (to.y - from.y) * step / 10,
                  from.z + (to.z - from.z) * step / 10);
-    scale = FieldEffect_Interpolate(0x10000, 0x4000, step); // from 0.25 to full
+    scale = FieldEffect_Interpolate(Q16_ONE, 0x4000, step); // from 0.25 to full
     orb->scaleX = scale;
     orb->scaleY = scale;
     WaitFrames(1);

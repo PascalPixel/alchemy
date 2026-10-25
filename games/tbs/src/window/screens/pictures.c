@@ -41,9 +41,9 @@ struct WindowSprite *MenuTitle_Create(s32 picture, struct Window *window, s32 x,
   // 0x4000 is the wide shape of attribute 0, which with size 2 is 32x16, 8
   // tiles. Neither sprite is checked for NULL.
   MenuTitle_Load(picture, slot);
-  first = WindowSprite_Create(slot, 0x80004000, window, x, y);
+  first = WindowSprite_Create(slot, OUTPUT_SIZE_32X16, window, x, y);
   first->sentinel = 0xFD;
-  second = WindowSprite_Create(slot, 0x80004000, window, x + 32, y);
+  second = WindowSprite_Create(slot, OUTPUT_SIZE_32X16, window, x + 32, y);
   second->sentinel = 0xFD;
   // The right half's tiles, after the left half's 8.
   second->oam.index += 8;
@@ -138,7 +138,7 @@ static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 
 // Builds the twelve range icons Window_DrawThreeTileColumn draws, as BG
 // tiles 0x314 to 0x32b (at 0x06006280): icon n is a centre tile and an end
-// tile, filled with colour 4, then marked row by row by XOR with
+// tile, filled with WINDOW_BACKGROUND_COLOR, then marked row by row by XOR with
 // gMenu_BarPatternRows (its colour 5 turns the fill to colour 1). Rows 1 to 7
 // are marked; the first set grows its pattern with the row, the second skips
 // row 1. Battle_CollectPartyCommands builds them as the command menus open.
@@ -163,7 +163,7 @@ s32 Menu_BuildLocalizedPatternTiles(void) {
           patternIndex * RANGE_PATTERN_PAIR_WORDS;
       s32 row;
 
-      Iwram_FillWords(tile, 64, 0x44444444);
+      Iwram_FillWords(tile, 64, TEXT_CANVAS_BACKGROUND_WORD);
       for (row = 1; row <= 7; row++) {
         s32 sourcePattern = patternIndex;
 
@@ -559,5 +559,5 @@ UNUSED void Graphics_InstallBg1VCountHandler(void) {
   do {
     address = (u32)CommandRow_PutBg1InFront;
   } while (0);
-  Irq_SetHandler(2, 136, (InterruptHandler)address);
+  Irq_SetHandler(IRQ_VCOUNT, 136, (InterruptHandler)address);
 }

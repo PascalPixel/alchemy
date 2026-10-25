@@ -89,7 +89,7 @@ void FieldScript_RequestDestination(u16 mapId, u16 warpDest) {
   struct FieldWork *work = gFieldWork;
   gSaveBlock.mapId = mapId;
   gSaveBlock.warpDest = warpDest;
-  work->warp = 999;
+  work->warp = WARP_NONE;
 }
 
 /// Plays SE_STOP_MUSIC_PLAYER_5, then soundId (SONG_FADE_OUT_ACTION_SE for -1),

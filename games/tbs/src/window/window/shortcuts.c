@@ -34,11 +34,11 @@ void MapNamePopup_Show(void) {
   Text_GetMessageSize(areaMessage, &x, &y, &width, &height);
   x = (30 - width) >> 1;
   y = (10 - height) >> 1;
-  nameWindow = Window_Create(x, y, width, height, 2);
+  nameWindow = Window_Create(x, y, width, height, WINDOW_FLAG_INSTANT);
   notice->window = nameWindow;
   Text_DrawMessage(areaMessage, nameWindow, 0, 0);
   notice->countdown = MAP_NAME_POPUP_FRAMES;
-  Task_Add(MapNamePopup_Update, 0xc80);
+  Task_Add(MapNamePopup_Update, TASK_PRIORITY_MAIN_LOOP);
 }
 
 /// Counts the area name down, and closes it at 0.
@@ -123,31 +123,30 @@ void Debug_SelectAbilityPair(void) {
   redraw = 1;
   // Build the debug shortcut candidates before creating their three windows.
   // 0x700 bytes hold 448 entries, as many as Menu_FindShortcutEntries
-  // searches. Units 0, 1, 2 and 5 are first taught action 140, unit 2 also
-  // 141 and 78, and unit 3 action 93.
+  // searches.
   list = Alloc(0x700);
-  Unit_LearnPsynergyFar(0, 140);
-  Unit_LearnPsynergyFar(1, 140);
-  Unit_LearnPsynergyFar(2, 140);
-  Unit_LearnPsynergyFar(2, 141);
-  Unit_LearnPsynergyFar(2, 78);
-  Unit_LearnPsynergyFar(3, 93);
-  Unit_LearnPsynergyFar(5, 140);
+  Unit_LearnPsynergyFar(ISAAC, ABILITY_MOVE);
+  Unit_LearnPsynergyFar(GARET, ABILITY_MOVE);
+  Unit_LearnPsynergyFar(IVAN, ABILITY_MOVE);
+  Unit_LearnPsynergyFar(IVAN, ABILITY_MIND_READ);
+  Unit_LearnPsynergyFar(IVAN, ABILITY_WHIRLWIND);
+  Unit_LearnPsynergyFar(MIA, ABILITY_PLY);
+  Unit_LearnPsynergyFar(JENNA, ABILITY_MOVE);
   second = 0;
   first = 0;
   count = Party_ListPsynergy(list);
   if (count != 0) {
     Menu_FindShortcutEntries(&first, &second, list);
-    win = Window_Create(4, 6, 20, 7, 2);
-    title = Window_Create(4, 3, 20, 3, 2);
-    info = Window_Create(4, 14, 20, 5, 2);
+    win = Window_Create(4, 6, 20, 7, WINDOW_FLAG_INSTANT);
+    title = Window_Create(4, 3, 20, 3, WINDOW_FLAG_INSTANT);
+    info = Window_Create(4, 14, 20, 5, WINDOW_FLAG_INSTANT);
     // VramCache_FindFreeEntry reports no free entry as VRAM_CACHE_ENTRY_COUNT,
     // not 0: this test lets that through, and with entry 0 it leaves cursor
-    // NULL for the writes below. 0x40000000 is a 16x16 sprite.
+    // NULL for the writes below.
     slot = VramCache_FindFreeEntry();
     if (slot != 0) {
       VramCache_Load(slot, 128, gPointingHandTiles);
-      cursor = WindowSprite_Create(slot, 0x40000000, win, 0, 0);
+      cursor = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, win, 0, 0);
     }
     /* FAKEMATCH(temporary): the title message passed through slot; as the
      * message passed directly, 2 of 362 instructions differ in tbs-en. */

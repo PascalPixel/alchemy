@@ -57,8 +57,10 @@ s32 Field_UsePsynergy(u32 code) {
       PSYNERGY_MESSAGE(userId, ABILITY_RETREAT, MsgDoesNotWorkHere);
       return 0;
     }
-    MessageArgument_PushFar(ABILITY_RETREAT, 4);
-    FieldMessage_ShowFar(MsgUseAbilityConfirm, 13);
+    MessageArgument_PushFar(ABILITY_RETREAT, MESSAGE_ARGUMENT_ABILITY);
+    FieldMessage_ShowFar(MsgUseAbilityConfirm, FIELD_MESSAGE_ZOOM |
+                                                   FIELD_MESSAGE_KEEP_OPEN |
+                                                   FIELD_MESSAGE_LOWER);
     declined = FieldYesNo_Ask(1); // 0 is yes
     TextPrinter_CloseFinishedWindowsFar();
     if (declined != 0)

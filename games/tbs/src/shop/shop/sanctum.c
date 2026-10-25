@@ -151,8 +151,8 @@ s32 Sanctum_Run(s32 unitId) {
     Portrait_CreateFar(2, 0, 0, listWindow, -4, -4);
   }
 
-  cursorAnchor =
-      WindowSprite_CreateFar(shop->cursorIcon, 0x40000000, listWindow, 0, 0);
+  cursorAnchor = WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16,
+                                        listWindow, 0, 0);
   cursorAnchor->motion = 1;
   cursorAnchor->kind = 0;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
@@ -368,7 +368,7 @@ void Sanctum_HighlightMembers(struct Window *window, s32 selected) {
         Sprite_StartAnimFar(shop->partyMemberIcons[memberIndex], 30);
       else
         Sprite_StartAnimFar(shop->partyMemberIcons[memberIndex], 1);
-      shop->partyMemberScale[memberIndex] = 0x10000;
+      shop->partyMemberScale[memberIndex] = Q16_ONE;
       if (!Sanctum_NeedsService(shop->partyMemberIds[memberIndex], serviceKind))
         shop->partyMemberScale[memberIndex] = 0xb333;
     }

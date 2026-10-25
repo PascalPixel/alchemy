@@ -83,6 +83,10 @@ enum DisplayControl {
 #define REG_BG3X (*(volatile s32 *)0x04000038)  ///< BG3: origin x
 #define REG_BG3Y (*(volatile s32 *)0x0400003c)  ///< BG3: origin y
 
+/// The screen's size in pixels.
+#define DISPLAY_WIDTH 240
+#define DISPLAY_HEIGHT 160
+
 // The two windows' edges, each a WIN_RANGE value in pixels.
 #define REG_WIN0H (*(volatile u16 *)0x04000040) ///< window 0, left and right
 #define REG_WIN1H (*(volatile u16 *)0x04000042) ///< window 1, left and right

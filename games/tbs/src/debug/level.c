@@ -167,7 +167,7 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
   s32 messageId;
 
   unit = Unit_Get(gSaveBlock.leaderLocalId);
-  window = Window_Create(0, 0, 30, 9, 2);
+  window = Window_Create(0, 0, 30, 9, WINDOW_FLAG_INSTANT);
 
   messageId = MsgDebugRaiseEveryonesLevel;
   Text_DrawMessage(messageId, window, 0, 0);
@@ -237,15 +237,18 @@ static void IncreaseItemAndLevel_SelectItem(void) {
   selectedItemId = 1;
   Sound_PlaySong(SE_MENU_CONFIRM);
   redraw = 1;
-  window = Window_Create(0, 0, 30, 7, 2);
-  details = Window_Create(0, 8, ITEM_DEBUG_DETAILS_WIDTH, 10, 2);
-  // Lend BG palette 14, the menus' highlight palette, to the item icons, as
+  window = Window_Create(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
+  details =
+      Window_Create(0, 8, ITEM_DEBUG_DETAILS_WIDTH, 10, WINDOW_FLAG_INSTANT);
+  // Lend HIGHLIGHT_PALETTE to the item icons, as
   // Palette_LoadIconsIntoHighlight does: sprite palette 0 into it, then BG
-  // palette 15's colour 4 over its colour 14. ItemMenu_DrawItemDetails draws
-  // the details window's element icons in palette 14.
-  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
+  // WINDOW_BACKGROUND_COLOR over its TEXT_BACKGROUND_COLOR.
+  // ItemMenu_DrawItemDetails draws the details window's element icons in
+  // HIGHLIGHT_PALETTE.
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
           DMA_ENABLE << 16 | 0x10, REG_DMA3);
-  Dma_Set((const void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(14, 14),
+  Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
+          (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
           DMA_ENABLE << 16 | 1, REG_DMA3);
   WaitFrames(1);
   while (1) {
@@ -371,11 +374,12 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
   selectedAbilityId = 1;
   Sound_PlaySong(SE_MENU_CONFIRM);
   redraw = 1;
-  window = Window_Create(0, 0, 30, 12, 2);
+  window = Window_Create(0, 0, 30, 12, WINDOW_FLAG_INSTANT);
   // Copy the existing sprite palette into the debug window palettes.
-  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
           DMA_ENABLE << 16 | 0x10, REG_DMA3);
-  Dma_Set((const void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(14, 14),
+  Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
+          (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
           DMA_ENABLE << 16 | 1, REG_DMA3);
   WaitFrames(1);
   while (1) {
@@ -522,7 +526,7 @@ static void IncreaseItemAndLevel_ShowGlyphCaptions(void) {
    * buffer, 2 of 29 instructions differ in tbs-en. */
   UNUSED u8 text[32];
 
-  window = Window_Create(0, 13, 30, 6, 2);
+  window = Window_Create(0, 13, 30, 6, WINDOW_FLAG_INSTANT);
   Text_DrawStringInWindow(gIncreaseItemAndLevel_GlyphsUpper, window, 0, 0);
   Text_DrawStringInWindow(gIncreaseItemAndLevel_GlyphsLower, window, 0, 8);
   Text_DrawStringInWindow(gIncreaseItemAndLevel_GlyphsMarks, window, 0, 16);

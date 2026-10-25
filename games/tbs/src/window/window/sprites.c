@@ -203,7 +203,7 @@ STATIC_ASSERT(offsetof(struct WindowSpriteCellView, attr) ==
 
 /// Puts a character into a window's tilemap as a tile at tile (x, y) of its
 /// interior. GLYPH_DRAW_PAGE_ARROW shows the next-page arrow sprite in the
-/// window's corner instead. The code is the tile's number in palette 15, so
+/// window's corner instead. The code is the tile's number in WINDOW_PALETTE, so
 /// only codes up to 0xff are drawn; a place beyond the bottom or right frame is
 /// ignored.
 void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
@@ -369,10 +369,10 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
 
   switch (mode) {
   case TILEMAP_ENTRY_WINDOW:
-    palette = 0xf000;
+    palette = WINDOW_PALETTE << 12;
     break;
   case TILEMAP_ENTRY_HIGHLIGHT:
-    palette = 0xe000;
+    palette = HIGHLIGHT_PALETTE << 12;
     break;
   case TILEMAP_ENTRY_ICON:
     palette = 0x1000;

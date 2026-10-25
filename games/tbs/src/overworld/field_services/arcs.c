@@ -28,8 +28,8 @@ void FieldEffect_UpdateScaledArcObjectA(
   arc->scaleX = scale;
   arc->scaleY = scale;
   arc->x.fixed = anchor->x.fixed;
-  arc->y.fixed += 0x10000;
-  arc->z.fixed = anchor->z.fixed + (0x10000 - scale) * 5 + 0x90000;
+  arc->y.fixed += Q16_ONE;
+  arc->z.fixed = anchor->z.fixed + (Q16_ONE - scale) * 5 + 0x90000;
 }
 
 /// Per-frame update of arc B: arc A upside down, 16 pixels in front of the
@@ -52,8 +52,8 @@ void FieldEffect_UpdateScaledArcObjectB(
   arc->scaleX = scale;
   arc->scaleY = -scale;
   arc->x.fixed = anchor->x.fixed;
-  arc->y.fixed += 0x10000;
-  arc->z.fixed = anchor->z.fixed - (0x10000 - scale) * 5 + 0x100000;
+  arc->y.fixed += Q16_ONE;
+  arc->z.fixed = anchor->z.fixed - (Q16_ONE - scale) * 5 + 0x100000;
 }
 
 /// A sprite (struct Sprite) as the arcs set it up: its image's three
@@ -104,7 +104,7 @@ void FieldEffect_SpawnScaledArcObjects(struct ObjectEvent *linked) {
 
   for (arcIndex = 0; arcIndex <= 1; arcIndex++) {
     arc = (struct ObjectEvent *)Object_CreateFar(
-        26, linked->x.fixed, linked->y.fixed, linked->z.fixed);
+        SPRITE_GOLDEN_RINGS, linked->x.fixed, linked->y.fixed, linked->z.fixed);
     arcs[arcIndex] = arc;
     if (arc == 0)
       continue;

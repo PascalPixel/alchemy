@@ -147,7 +147,7 @@ s32 Battle_Run(s32 enemyGroup) {
     BattleParty_AssignOpponentSlots();
     battle->layout = FORMATION_LAYOUT_SHUFFLED;
   }
-  Task_Add(BattleCamera_Update, 0xc7f);
+  Task_Add(BattleCamera_Update, TASK_PRIORITY_MAIN_LOOP - 1);
 
   // The battle music: the scene's own song, or the usual battle songs.
   cue = gSaveBlock.battleMusic;
@@ -209,7 +209,7 @@ s32 Battle_Run(s32 enemyGroup) {
   BattleTransition_Run(enemyCount, enemyGroup);
   view->flag = 0;
   gCpuLoadDisplayEnabled = 0;
-  Task_Add(BattleObject_UpdateSpritePriorities, 0xc80);
+  Task_Add(BattleObject_UpdateSpritePriorities, TASK_PRIORITY_MAIN_LOOP);
 
   // The rounds.
   for (;;) {

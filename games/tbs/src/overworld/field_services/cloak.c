@@ -132,7 +132,7 @@ void FieldEffect_EndCloak(void) {
 /// it as a map loads, since gSaveBlock.cloaked outlives the map.
 void FieldEffect_ResumeCloakCheck(void) {
   if (gSaveBlock.cloaked != 0) {
-    Task_Add(FieldEffect_CheckCloakTile, 0xc80);
+    Task_Add(FieldEffect_CheckCloakTile, TASK_PRIORITY_MAIN_LOOP);
   }
 }
 
@@ -174,7 +174,7 @@ void FieldEffect_StartCloak(void) {
   // Check the cell at once: off a Cloak cell, unhide and drop the request
   // the check just raised (n is 0 here).
   check = FieldEffect_CheckCloakTile;
-  Task_Add(check, 0xc80);
+  Task_Add(check, TASK_PRIORITY_MAIN_LOOP);
   gSaveBlock.cloaked = 1;
   check();
   if (work->psynergy == CLOAK_END) {

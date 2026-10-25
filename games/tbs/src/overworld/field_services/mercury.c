@@ -9,7 +9,7 @@
 /// A Mercury Djinni joins the party: the screen is tinted blue, the Djinni
 /// bounces twice and hops three times ever higher, then rises 120 pixels out
 /// of sight trailing eight afterimages. The leader turns to the camera and
-/// plays animation 28 while 24 droplets rain round it, one a frame
+/// plays ANIM_LEADER_ARMS_RAISED while 24 droplets rain round it, one a frame
 /// (FieldEffect_UpdateRandomTargetParticle); then the colours return. Called
 /// by Djinn_JoinParty for a Mercury Djinni, which then clears the Djinni's
 /// object event slot; the Djinni's object and its afterimages are released
@@ -101,9 +101,10 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   if (resourceId != 96)
     VramCache_FreeEntry(resourceId);
   WaitFrames(10);
-  ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, 0x4000, 0);
+  ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, FACING_SOUTH, 0);
   WaitFrames(20);
-  Object_SelectAnimationFar(ObjectEvent_GetById(gSaveBlock.leaderLocalId), 28);
+  Object_SelectAnimationFar(ObjectEvent_GetById(gSaveBlock.leaderLocalId),
+                            ANIM_LEADER_ARMS_RAISED);
   WaitFrames(20);
 
   // The droplets (object 240), one a frame, from where the Djinni was on

@@ -5,20 +5,15 @@
 
 #include "../battle_internal.h"
 
-/// Background palette 14, the highlight palette: the window screens fill it
-/// with palette 15, the window palette, with a colour changed
-/// (Palette_LightenBankHighlight), and this pulse with palette 15 brightened.
-#define HIGHLIGHT_PALETTE ((u16 *)&BG_PLTT_COLOR(14, 0))
-
-/// Pulses BG palette 14's colours: each takes the matching colour of
-/// palette 15 brightened by up to twelve steps, rising and falling with the
+/// Pulses HIGHLIGHT_PALETTE's colours: each takes the matching colour of
+/// WINDOW_PALETTE brightened by up to twelve steps, rising and falling with the
 /// frame count. Nothing in the source calls it. Writes BG palette RAM.
 void Palette_UpdatePulseBrightness(void) {
   u16 *palette;
   s32 remainingColors;
   s32 channelMask;
 
-  palette = HIGHLIGHT_PALETTE;
+  palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
   channelMask = 31;
   remainingColors = 15;
   do {
@@ -35,7 +30,7 @@ void Palette_UpdatePulseBrightness(void) {
     frameCount = gFrameCount;
     angle = (frameCount * 3U) << 10;
     color = palette[16];
-    brightness = (0x10000 - Trig_Cos(angle)) / 0x2AAA;
+    brightness = (Q16_ONE - Trig_Cos(angle)) / 0x2AAA;
 
     blue = (color >> 10) & channelMask;
     green = (color >> 5) & channelMask;

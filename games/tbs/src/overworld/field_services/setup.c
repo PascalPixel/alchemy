@@ -58,7 +58,7 @@ void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   effectWork->tileSlot = VramCache_FindFreeEntry();
   VramCache_Load((s16)effectWork->tileSlot, 256, gFieldEffect_SparkTiles);
   // 0xc80 is TASK_PRIORITY_MAIN_LOOP: the slots update once a frame.
-  Task_Add(FieldEffect_UpdateAllEffectSlots, 0xc80);
+  Task_Add(FieldEffect_UpdateAllEffectSlots, TASK_PRIORITY_MAIN_LOOP);
 }
 
 /// Records the caster and the target of an effect. With no target, the effect
@@ -224,7 +224,7 @@ void FieldEffect_StartCast(void) {
   }
   if (effectWork->active != 0) {
     ObjectEvent_SetOthersPaused((struct Object *)caster, 1, 0);
-    MessageArgument_PushFar(announcedAbility, 4);
+    MessageArgument_PushFar(announcedAbility, MESSAGE_ARGUMENT_ABILITY);
     // The mode branches currently show the same message. Merging them shrinks
     // the native English function by 32 bytes, so keep this existing form.
     if ((s8)effectWork->mode != 0) {
@@ -234,7 +234,7 @@ void FieldEffect_StartCast(void) {
     }
     ObjectEvent_SetOthersPaused((struct Object *)caster, 0, 0x10);
   }
-  if (GameFlag_GetFar(0x140) != 0) {
+  if (GameFlag_GetFar(FLAG_PSYNERGY_EFFECT) != 0) {
     if (effectWork->visible != 0) {
       caster->update = FieldEffect_CycleObjectValueByCounter;
     }
@@ -305,7 +305,7 @@ void FieldEffect_FadeFromEffectColor(void) {
   savedPalettes = (s32)(field + 0x236);
   PaletteFade_SetTarget(savedPalettes, 2);
   if (((struct FieldWork *)field)->revealActive != 0) {
-    PaletteFade_SetTarget(0x10001, 1);
+    PaletteFade_SetTarget(PALETTE_TINT_GRAYSCALE, 1);
   } else {
     PaletteFade_SetTarget(savedPalettes, 1);
   }

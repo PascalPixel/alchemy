@@ -5,7 +5,7 @@
 #include "../runtime_internal.h"
 
 // Debug text: a 32x20-character screen of window font tiles in BG0, written
-// from gDebugTextCursor onwards; characters are tile numbers in palette 15.
+// from gDebugTextCursor onwards; characters are tile numbers in WINDOW_PALETTE.
 
 /// Writes `value` as eight hexadecimal digits to the number buffer. Called by
 /// DebugText_PrintHex.
@@ -84,7 +84,7 @@ void String_FormatDecimal(s32 number) {
   output[1] = 0;
 }
 
-/// Writes `count` blank characters (tile 0 in palette 15) at the debug text
+/// Writes `count` blank characters (tile 0 in WINDOW_PALETTE) at the debug text
 /// cursor and moves it on. Unlike DebugText_Print it writes even while debug
 /// text is off, and does not wrap at the end of the screen. Reached through
 /// the far-call table.
@@ -93,7 +93,7 @@ void DebugText_PrintBlanks(u32 count) {
   u32 index;
 
   for (index = 0; index < count; index++)
-    *dst++ = 0xf000;
+    *dst++ = WINDOW_TILE(0);
   gDebugTextCursor = dst;
 }
 
@@ -124,7 +124,7 @@ void DebugText_Print(const u8 *src) {
     src++;
 
     if (c != 0) {
-      // 0xf000 selects palette 15 in each screen entry; the end of the
+      // 0xf000 selects WINDOW_PALETTE in each screen entry; the end of the
       // 32x20-entry screen (0x500 bytes) wraps to its start
       u32 mask = 0xf000;
       addr = (u32)(BG_SCREEN_BLOCK(4) + 0x500);
@@ -180,23 +180,23 @@ void DebugText_Clear(void) {
 }
 
 /// Loads the window font and frame tiles into BG character block 0, the window
-/// palette into BG palette 15 with its gradient colours, and the basic sprite
+/// palette into WINDOW_PALETTE with its gradient colours, and the basic sprite
 /// palettes. Called by System_Initialize and by the modes that replace those
 /// graphics and must put them back (the debug battle, the palette editor).
 void Window_LoadGraphics(void) {
   // 0x800 words: 8 KB, 256 tiles of 4 bits a pixel
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),
           BG_CHAR_BLOCK(0), DMA_COPY_WORDS(0x800), REG_DMA3);
-  Dma_Set(gWindow_Palette, (void *)&BG_PLTT_COLOR(15, 0),
+  Dma_Set(gWindow_Palette, (void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0),
           DMA_ENABLE << 16 | 0x10, REG_DMA3);
   Io_Write16(0, &PLTT_BACKDROP);
-  Io_Write16(RGB(0, 12, 16), &BG_PLTT_COLOR(15, 4));
-  Io_Write16(RGB(0, 11, 14), &BG_PLTT_COLOR(15, 5));
-  Io_Write16(RGB(0, 10, 12), &BG_PLTT_COLOR(15, 6));
-  Io_Write16(RGB(0, 9, 10), &BG_PLTT_COLOR(15, 7));
-  Io_Write16(RGB(0, 13, 18), &BG_PLTT_COLOR(15, 8));
-  Io_Write16(RGB(0, 14, 20), &BG_PLTT_COLOR(15, 9));
-  Io_Write16(RGB(0, 15, 22), &BG_PLTT_COLOR(15, 10));
+  Io_Write16(RGB(0, 12, 16), &BG_PLTT_COLOR(WINDOW_PALETTE, 4));
+  Io_Write16(RGB(0, 11, 14), &BG_PLTT_COLOR(WINDOW_PALETTE, 5));
+  Io_Write16(RGB(0, 10, 12), &BG_PLTT_COLOR(WINDOW_PALETTE, 6));
+  Io_Write16(RGB(0, 9, 10), &BG_PLTT_COLOR(WINDOW_PALETTE, 7));
+  Io_Write16(RGB(0, 13, 18), &BG_PLTT_COLOR(WINDOW_PALETTE, 8));
+  Io_Write16(RGB(0, 14, 20), &BG_PLTT_COLOR(WINDOW_PALETTE, 9));
+  Io_Write16(RGB(0, 15, 22), &BG_PLTT_COLOR(WINDOW_PALETTE, 10));
   // 0xe0 halfwords: 224 colours, sprite palettes 0 to 13
   Dma_Set(gBasicSpritePalettes, (void *)OBJ_PLTT, DMA_ENABLE << 16 | 0xe0,
           REG_DMA3);

@@ -25,7 +25,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
   shop = gMenuWork;
   shop->itemWindow = Window_CreateFar(16, 12, 14, 8, WINDOW_FLAG_INSTANT);
   partyWindow = Window_CreateFar(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
-  cursorAnchor = WindowSprite_CreateFar(shop->cursorIcon, 0x40000000,
+  cursorAnchor = WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16,
                                         partyWindow, 0, result);
   cursorAnchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
   cursorAnchor->kind = result;

@@ -9,7 +9,7 @@
 /// copy the rest into WIN0H and WIN1H one word each HBlank, so that every line
 /// of the screen gets its own window edges.
 ///
-/// A task (priority 0x480) that ScreenTransition_Start,
+/// A task (priority TASK_PRIORITY_VBLANK) that ScreenTransition_Start,
 /// ScreenTransition_Finish and ScreenTransition_InitializeBattleEffectState
 /// add for a window transition, and ScreenTransition_UpdateScanlineTable
 /// removes when it ends.
@@ -27,8 +27,8 @@ void FieldEffect_StartWindowHBlankDma(void) {
   Io_Write16(*scanlineData++, &REG_WINOUT);
   Io_Write16(*scanlineData++, &REG_WIN0H);
   Io_Write16(*scanlineData++, &REG_WIN1H);
-  Io_Write16(WIN_RANGE(0, 160), &REG_WIN0V);
-  Io_Write16(WIN_RANGE(0, 160), &REG_WIN1V);
+  Io_Write16(WIN_RANGE(0, DISPLAY_HEIGHT), &REG_WIN0V);
+  Io_Write16(WIN_RANGE(0, DISPLAY_HEIGHT), &REG_WIN1V);
   // HBlank repeats one word: both horizontal window bounds for the next line.
   Dma_Set(scanlineData, (void *)&REG_WIN0H, DMA_HBLANK_WORD_PER_LINE,
           (volatile u32 *)dma0);
@@ -67,7 +67,7 @@ extern struct TransitionShape gScreenTransition_Shapes[];
 /// whether the transition opens or closes; its low 5 bits are its progress.
 /// The mode is an enum WindowTransitionMode.
 ///
-/// A task (priority 0xc80), added with
+/// A task (priority TASK_PRIORITY_MAIN_LOOP), added with
 /// FieldEffect_StartWindowHBlankDma; it removes both and stops DMA 0 when a
 /// transition with no next mode ends. Writes the hidden page of the
 /// transition state (HEAP_SLOT_SCREEN_TRANSITION) and then flips state->page.
@@ -172,7 +172,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
     // Each line shows one bar of the table's width at a random place on the
     // 240-pixel line.
     value = gScreenTransition_NoiseWidths[value];
-    for (i = 0; i < 160; i++) {
+    for (i = 0; i < DISPLAY_HEIGHT; i++) {
       leftEdge = (Random16() * (241 - value)) >> 16;
       scanlineData[0] = ((leftEdge << 8) | (leftEdge + value));
       scanlineData += 2;
@@ -232,7 +232,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
     // Each line's window runs from the left edge to 16 pixels per step of
     // progress plus up to 15 at random, at most 255.
     value &= 31;
-    for (i = 0; i < 160; i++) {
+    for (i = 0; i < DISPLAY_HEIGHT; i++) {
       horizontalExtent = (value << 4) + ((16 * Random16()) >> 16);
       if (horizontalExtent > 255) {
         horizontalExtent = 255;
@@ -275,7 +275,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
     // screen.
     value *= 5;
     radiusSquaredQ16 = (value * value) << 16;
-    for (i = 0; i < 160; i++) {
+    for (i = 0; i < DISPLAY_HEIGHT; i++) {
       value = i - 80;
       horizontalExtent =
           Iwram_Sqrt(radiusSquaredQ16 - ((value * value) << 16)) >> 8;
@@ -287,11 +287,11 @@ void ScreenTransition_UpdateScanlineTable(void) {
       if (right < 0) {
         right = 0;
       }
-      if (left > 240) {
-        left = 240;
+      if (left > DISPLAY_WIDTH) {
+        left = DISPLAY_WIDTH;
       }
-      if (right > 240) {
-        right = 240;
+      if (right > DISPLAY_WIDTH) {
+        right = DISPLAY_WIDTH;
       }
 #ifdef UBFIX
       edges = (left << 8) + right;
@@ -316,9 +316,9 @@ void ScreenTransition_UpdateScanlineTable(void) {
     }
     // Even lines' windows grow from the left edge and odd lines' from the
     // right, by up to 240 pixels over 32 steps.
-    value = (u32)(240 * (value & 31)) >> 5;
-    for (i = 0; i < 160; i += 2) {
-      oppositeEdges = ((240 - value) << 8) + 240;
+    value = (u32)(DISPLAY_WIDTH * (value & 31)) >> 5;
+    for (i = 0; i < DISPLAY_HEIGHT; i += 2) {
+      oppositeEdges = ((DISPLAY_WIDTH - value) << 8) + DISPLAY_WIDTH;
       scanlineData[0] = value;
       scanlineData[2] = oppositeEdges;
       scanlineData += 4;
@@ -338,8 +338,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
 #endif
     // Centred on the leader's place on screen, 16 pixels above its feet.
     object = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
-    centerX = (object->x - ax) / 0x10000;
-    centerY = ((object->z - object->y) - cameraY) / 0x10000 - 16;
+    centerX = (object->x - ax) / Q16_ONE;
+    centerY = ((object->z - object->y) - cameraY) / Q16_ONE - 16;
     // The frame counter is read here, where WINDOW_TRANSITION_RIPPLE forms
     // its index, and the value is not used.
     gFrameCount;
@@ -361,7 +361,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
     // ellipse 1.22 times as wide as it is tall.
     value *= 5;
     radiusSquaredQ16 = (value * value) << 16;
-    for (i = 0; i < 160; i++) {
+    for (i = 0; i < DISPLAY_HEIGHT; i++) {
       value = i - centerY;
       horizontalExtent =
           Iwram_Sqrt(radiusSquaredQ16 - ((value * value * 3) << 15)) >> 8;
@@ -373,11 +373,11 @@ void ScreenTransition_UpdateScanlineTable(void) {
       if (right < 0) {
         right = 0;
       }
-      if (left > 240) {
-        left = 240;
+      if (left > DISPLAY_WIDTH) {
+        left = DISPLAY_WIDTH;
       }
-      if (right > 240) {
-        right = 240;
+      if (right > DISPLAY_WIDTH) {
+        right = DISPLAY_WIDTH;
       }
       scanlineData[0] = ((left << 8) + right);
       scanlineData += 2;
@@ -396,8 +396,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     // Centred on state->centreX and centreY; each line's edges move out by
     // gScreenTransition_EdgeOffsets, indexed two entries a line and one a
     // frame, so the outline ripples.
-    centerX = (state->centreX - cameraX) / 0x10000;
-    centerY = (state->centreY - cameraY8) / 0x10000 - 16;
+    centerX = (state->centreX - cameraX) / Q16_ONE;
+    centerY = (state->centreY - cameraY8) / Q16_ONE - 16;
     k = -centerY * 2 + gFrameCount;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
@@ -409,7 +409,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
     }
     value *= 5;
     radiusSquaredQ16 = (value * value) << 16;
-    for (i = 0; i < 160; i++) {
+    for (i = 0; i < DISPLAY_HEIGHT; i++) {
       value = i - centerY;
       horizontalExtent =
           Iwram_Sqrt(radiusSquaredQ16 - ((value * value * 3) << 15)) >> 8;
@@ -421,8 +421,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
         right += delta;
         // An offset that closes the line leaves it with no window.
         if (left >= right) {
-          left = 240;
-          right = 240;
+          left = DISPLAY_WIDTH;
+          right = DISPLAY_WIDTH;
         }
       }
       if (left < 0) {
@@ -431,11 +431,11 @@ void ScreenTransition_UpdateScanlineTable(void) {
       if (right < 0) {
         right = 0;
       }
-      if (left > 240) {
-        left = 240;
+      if (left > DISPLAY_WIDTH) {
+        left = DISPLAY_WIDTH;
       }
-      if (right > 240) {
-        right = 240;
+      if (right > DISPLAY_WIDTH) {
+        right = DISPLAY_WIDTH;
       }
       scanlineData[0] = ((left << 8) + right);
       scanlineData += 2;
@@ -455,8 +455,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     cameraY = viewLeader[1] & 0xffff0000;
 #endif
     object = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
-    centerX = (object->x - ax) / 0x10000;
-    centerY = ((object->z - object->y) - cameraY) / 0x10000 - 16;
+    centerX = (object->x - ax) / Q16_ONE;
+    centerY = ((object->z - object->y) - cameraY) / Q16_ONE - 16;
     // As in WINDOW_TRANSITION_LEADER_INVERSE, the frame counter is read and
     // not used.
     gFrameCount;
@@ -470,7 +470,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
     }
     value *= 5;
     radiusSquaredQ16 = (value * value) << 16;
-    for (i = 0; i < 160; i++) {
+    for (i = 0; i < DISPLAY_HEIGHT; i++) {
       value = i - centerY;
       horizontalExtent =
           Iwram_Sqrt(radiusSquaredQ16 - ((value * value * 3) << 15)) >> 8;
@@ -482,11 +482,11 @@ void ScreenTransition_UpdateScanlineTable(void) {
       if (right < 0) {
         right = 0;
       }
-      if (left > 240) {
-        left = 240;
+      if (left > DISPLAY_WIDTH) {
+        left = DISPLAY_WIDTH;
       }
-      if (right > 240) {
-        right = 240;
+      if (right > DISPLAY_WIDTH) {
+        right = DISPLAY_WIDTH;
       }
       scanlineData[0] = ((left << 8) + right);
       scanlineData += 2;
@@ -505,10 +505,10 @@ void ScreenTransition_UpdateScanlineTable(void) {
     cameraY = viewLeaderLow[1] & 0xffff0000;
 #endif
     object = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
-    centerX = (object->x - ax) / 0x10000;
+    centerX = (object->x - ax) / Q16_ONE;
     // Centred 8 pixels above the leader's feet, not 16 as in
     // WINDOW_TRANSITION_LEADER.
-    centerY = ((object->z - object->y) - cameraY) / 0x10000 - 8;
+    centerY = ((object->z - object->y) - cameraY) / Q16_ONE - 8;
     // As in WINDOW_TRANSITION_LEADER_INVERSE, the frame counter is read and
     // not used.
     gFrameCount;
@@ -523,7 +523,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
     // sqrt(r * r - 0.75 * dy * dy): 1.15 times as tall as it is wide.
     value *= 5;
     radiusSquaredQ16 = (value * value) << 16;
-    for (i = 0; i < 160; i++) {
+    for (i = 0; i < DISPLAY_HEIGHT; i++) {
       value = i - centerY;
       horizontalExtent =
           Iwram_Sqrt(radiusSquaredQ16 - ((value * value * 3) << 14)) >> 8;
@@ -535,11 +535,11 @@ void ScreenTransition_UpdateScanlineTable(void) {
       if (right < 0) {
         right = 0;
       }
-      if (left > 240) {
-        left = 240;
+      if (left > DISPLAY_WIDTH) {
+        left = DISPLAY_WIDTH;
       }
-      if (right > 240) {
-        right = 240;
+      if (right > DISPLAY_WIDTH) {
+        right = DISPLAY_WIDTH;
       }
       scanlineData[0] = ((left << 8) + right);
       scanlineData += 2;
@@ -569,8 +569,8 @@ void ScreenTransition_InitializeBattleEffectState(s32 mode) {
   state->value = 0;
   state->mask = 0x3f3f;
   state->active = 1;
-  Task_Add(ScreenTransition_UpdateScanlineTable, 0xc80);
-  Task_Add(FieldEffect_StartWindowHBlankDma, 0x480);
+  Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PRIORITY_VBLANK);
 }
 
 /// Unused: suspends the window transition's two callbacks. Nothing calls it,
@@ -620,11 +620,11 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     WaitFrames(1);
     break;
   case TRANSITION_BACKDROP_FADE:
-    PaletteFade_SetSource(0x8000, PLTT_BACKDROP);
+    PaletteFade_SetSource(PALETTE_TINT_FROM_SOURCE, PLTT_BACKDROP);
     PaletteFade_StartInterpolation(frames);
     WaitFrames(1);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
-                        0x20000);
+                        IO_WRITE_16);
     PaletteFade_SetBackdrop(0);
     return;
   // The window, dissolve and centre-line kinds open from value 0 (closed) to
@@ -636,11 +636,11 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     state->value = 0;
     state->mask = 63;
     state->active = 1;
-    Task_Add(ScreenTransition_UpdateScanlineTable, 0xc80);
-    Task_Add(FieldEffect_StartWindowHBlankDma, 0x480);
+    Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PRIORITY_MAIN_LOOP);
+    Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PRIORITY_VBLANK);
     WaitFrames(1);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
-                        0x20000);
+                        IO_WRITE_16);
     state->start = 0;
     state->end = 32;
     state->duration = frames;
@@ -654,9 +654,9 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     state->value = 32;
     ScreenTransition_FillTilemapAndSolidTile(15);
     WaitFrames(1);
-    Task_Add(ScreenTransition_UpdateFrame, 0xc80);
+    Task_Add(ScreenTransition_UpdateFrame, TASK_PRIORITY_MAIN_LOOP);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
-                        0x20000);
+                        IO_WRITE_16);
     state->start = 0;
     state->end = 32;
     state->duration = frames;
@@ -672,15 +672,15 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     display->secondLine = 80;
     WaitFrames(1);
     if (variant == 0) {
-      Task_Add(ScreenTransition_Update, 0xc80);
-      Irq_SetHandler(1, 0, ScreenTransition_UpdateScanline);
+      Task_Add(ScreenTransition_Update, TASK_PRIORITY_MAIN_LOOP);
+      Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
       state->start = 80;
       state->end = 0;
       state->duration = frames;
       state->step = 0;
     } else {
-      Task_Add(ScreenTransition_UpdateFromCentre, 0xc80);
-      Irq_SetHandler(1, 0, ScreenTransition_UpdateScanline);
+      Task_Add(ScreenTransition_UpdateFromCentre, TASK_PRIORITY_MAIN_LOOP);
+      Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
       state->start = 80;
       state->end = 0;
       state->duration = frames;
@@ -690,7 +690,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
   }
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
-                      0x20000);
+                      IO_WRITE_16);
 }
 
 /// Fades the screen out over frames frames, as ScreenTransition_Start fades
@@ -715,7 +715,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     ScreenFade_ToBlack(frames);
     break;
   case TRANSITION_BACKDROP_FADE:
-    PaletteFade_SetTarget(0x8000, 0);
+    PaletteFade_SetTarget(PALETTE_TINT_FROM_SOURCE, 0);
     PaletteFade_StartInterpolation(frames);
     break;
   case TRANSITION_WINDOW: {
@@ -725,8 +725,8 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     state->value = 32;
     state->mask = 63;
     state->active = 1;
-    Task_Add(ScreenTransition_UpdateScanlineTable, 0xc80);
-    Task_Add(FieldEffect_StartWindowHBlankDma, 0x480);
+    Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PRIORITY_MAIN_LOOP);
+    Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PRIORITY_VBLANK);
     WaitFrames(1);
     state->start = 32;
     state->end = 64;
@@ -741,7 +741,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     state->value = 32;
     ScreenTransition_FillTilemapAndSolidTile(0);
     WaitFrames(1);
-    Task_Add(ScreenTransition_UpdateFrame, 0xc80);
+    Task_Add(ScreenTransition_UpdateFrame, TASK_PRIORITY_MAIN_LOOP);
     state->start = 32;
     state->end = 64;
     state->duration = frames;
@@ -752,15 +752,15 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     struct ScreenTransitionState *state =
         ScreenTransition_AllocateAndClearState();
     if (variant == 0) {
-      Task_Add(ScreenTransition_Update, 0xc80);
-      Irq_SetHandler(1, 0, ScreenTransition_UpdateScanline);
+      Task_Add(ScreenTransition_Update, TASK_PRIORITY_MAIN_LOOP);
+      Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
       state->start = 0;
       state->end = 80;
       state->duration = frames;
       state->step = 0;
     } else {
-      Task_Add(ScreenTransition_UpdateFromCentre, 0xc80);
-      Irq_SetHandler(1, 0, ScreenTransition_UpdateScanline);
+      Task_Add(ScreenTransition_UpdateFromCentre, TASK_PRIORITY_MAIN_LOOP);
+      Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
       state->start = 0;
       state->end = 80;
       state->duration = frames;
@@ -813,7 +813,7 @@ void ScreenTransition_Update(void) {
     if (*step >= *duration) {
       *duration = 0;
       Task_Remove(ScreenTransition_Update);
-      Irq_SetHandler(1, 0, 0);
+      Irq_SetHandler(IRQ_HBLANK, 0, 0);
       return;
     } else {
       s32 delta = state->end - state->start;
@@ -853,7 +853,7 @@ void ScreenTransition_UpdateFromCentre(void) {
     if (*step >= *duration) {
       *duration = 0;
       Task_Remove(ScreenTransition_UpdateFromCentre);
-      Irq_SetHandler(1, 0, 0);
+      Irq_SetHandler(IRQ_HBLANK, 0, 0);
       return;
     } else {
       s32 delta = state->end - state->start;
@@ -998,9 +998,9 @@ void ScreenTransition_UpdateFrame(void) {
                       (DMA_ENABLE | DMA_32BIT) << 16 | 0x8);
 }
 
-/// Fills background screen block 4 with tile 0 in palette 15 and, unless color
-/// is -1, makes tile 0 solid color. The fill is 0x500 bytes: the block's first
-/// 20 rows of 32 entries, the screen's height.
+/// Fills background screen block 4 with tile 0 in WINDOW_PALETTE and, unless
+/// color is -1, makes tile 0 solid color. The fill is 0x500 bytes: the block's
+/// first 20 rows of 32 entries, the screen's height.
 ///
 /// Sets up the dissolve for ScreenTransition_Start (colour 15),
 /// ScreenTransition_Finish and ScreenTransition_InitializeState (colour 0).
@@ -1033,6 +1033,6 @@ void ScreenTransition_InitializeState(s32 value) {
   ScreenTransition_FillTilemapAndSolidTile(0);
   state->mode = value;
   state->value = 0;
-  Task_Add(ScreenTransition_UpdateFrame, 0xc80);
+  Task_Add(ScreenTransition_UpdateFrame, TASK_PRIORITY_MAIN_LOOP);
   WaitFrames(0x78);
 }

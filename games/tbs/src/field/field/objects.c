@@ -180,17 +180,17 @@ void ObjectSystem_Initialize(s32 controlMode) {
   ObjectSystem_Configure(controlMode);
   Dma_Fill32Cell(fill, 0, objectPool, OBJECT_COUNT * sizeof(*objectPool));
   Dma_Fill32Cell(fill, 0, system, sizeof(*system));
-  // The task runner runs higher priorities first: the objects move (0xc8a)
-  // before the camera follows them (0xc80).
+  // The task runner runs higher priorities first: the objects move before
+  // the camera follows them.
   if (controlMode == OBJECT_SYSTEM_BATTLE)
-    Task_Add(Object_UpdateAllMotion, 0xc8a);
+    Task_Add(Object_UpdateAllMotion, TASK_PRIORITY_MAIN_LOOP + 10);
   else
-    Task_Add(Object_UpdateAllThumb, 0xc8a);
+    Task_Add(Object_UpdateAllThumb, TASK_PRIORITY_MAIN_LOOP + 10);
   if (controlMode >= OBJECT_SYSTEM_WORLD_MAP &&
       controlMode <= OBJECT_SYSTEM_BATTLE) {
-    Task_Add(ObjectSystem_ProjectSprites, 0xc80);
+    Task_Add(ObjectSystem_ProjectSprites, TASK_PRIORITY_MAIN_LOOP);
   } else {
-    Task_Add(ObjectSystem_PlaceSprites, 0xc80);
+    Task_Add(ObjectSystem_PlaceSprites, TASK_PRIORITY_MAIN_LOOP);
     // XXX (no evidence): what the scrolling camera resets here; nothing in
     // the game reads these two IWRAM words, by name or by address.
     gCamera_UnreadWord2 = 0;
@@ -322,21 +322,21 @@ struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z) {
     Object_SetPositionAndResetMotion(object, x, y, z);
     // Up to 2 pixels a frame, gaining 1 a frame; unit scale; following the
     // ground and falling; turning to face its motion; keeping a quarter of its
-    // speed when it bounces; facing down the screen (0x4000, the heading
-    // gWorldMap_KeyHeadings gives Down).
+    // speed when it bounces; facing down the screen (FACING_SOUTH, the
+    // heading gWorldMap_KeyHeadings gives Down).
     object->script = (s32 *)gObject_DefaultScript;
     object->speedLimit = 0x20000;
     object->scriptCursor = 0;
-    objectEvent->scaleX = 0x10000;
-    objectEvent->scaleY = 0x10000;
-    object->acceleration = 0x10000;
+    objectEvent->scaleX = Q16_ONE;
+    objectEvent->scaleY = Q16_ONE;
+    object->acceleration = Q16_ONE;
     object->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
-    motion->gravity = 0x10000;
+    motion->gravity = Q16_ONE;
     motion->bounce = 0x4000;
     object->collisionFlags = 0;
     object->steeringFlags = OBJ_EVENT_FACES_MOTION;
     objectEvent->riseBaseY = 0;
-    object->facing = 0x4000;
+    object->facing = FACING_SOUTH;
     // Its home position, in pixels.
     scripted->homeX = x / 65536;
     scripted->homeZ = z / 65536;
@@ -575,7 +575,7 @@ void Anim_ApplyChildValues(struct Object *object, u32 param) {
 void ObjectSystem_SuspendProjectionAndShowSprites(void) {
   Task_SuspendAll(ObjectSystem_PlaceSprites);
   Task_SuspendAll(ObjectSystem_ProjectSprites);
-  PaletteFade_SetTargetFar(0x10000, 1);
+  PaletteFade_SetTargetFar(PALETTE_TINT_NONE, 1);
   PaletteFade_StartInterpolationFar(1);
   WaitFrames(1);
   REG_DISPCNT =

@@ -278,7 +278,7 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
 
   // The sideways axis u = (dz, 0, -dx), normalized
   t = Iwram_MulQ16(dy, dy);
-  scale = 0x10000;
+  scale = Q16_ONE;
   if (scale - t > 0)
     scale = Iwram_UnsignedDivide(num, FixedSqrt(scale - t)) << 1;
   ux = Iwram_MulQ16(dz, scale);
@@ -385,8 +385,8 @@ s32 Transform_ProjectPoint(const void *point, s32 *screen) {
     } else {
       scale = 0x151eb; // about 1.32
     }
-    screen[0] = projection->centerX + Iwram_MulQ16(screen[0], scale) / 0x10000;
-    screen[1] = projection->centerY - Iwram_MulQ16(screen[1], scale) / 0x10000;
+    screen[0] = projection->centerX + Iwram_MulQ16(screen[0], scale) / Q16_ONE;
+    screen[1] = projection->centerY - Iwram_MulQ16(screen[1], scale) / Q16_ONE;
     result = scale;
   }
   return result;

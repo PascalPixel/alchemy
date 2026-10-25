@@ -40,7 +40,7 @@ void FieldEffect_RunLiftOnTarget(s32 unused) {
   pos[1] = y;
   z = effectWork->z;
   pos[2] = z;
-  pair[0] = FieldEffect_SpawnItemBreakMode3(x + 0x200000, y, z, 0x8000);
+  pair[0] = FieldEffect_SpawnItemBreakMode3(x + 0x200000, y, z, FACING_WEST);
   pair[1] =
       FieldEffect_SpawnItemBreakMode3(pos[0] - 0x200000, pos[1], pos[2], 0);
 
@@ -95,14 +95,14 @@ struct Object *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle) {
   s32 scale;
 
   Sound_PlaySongFar(SE_ITEM_BREAK);
-  fragment = (struct Object *)Object_Spawn(215, x, y, z);
+  fragment = (struct Object *)Object_Spawn(SPRITE_MOVE_HAND, x, y, z);
   if (fragment != NULL) {
     fragment->scaleX = fragment->scaleY = 0x4000;
     fragment->acceleration = fragment->speedLimit = 0x30000; // 3 pixels a frame
     ((struct Sprite *)fragment->sprite)->image.priority = 0;
     Object_SelectAnimationFar(fragment, 3);
     scale = fragment->scaleX;
-    if (scale < 0x10000) {
+    if (scale < Q16_ONE) {
       do {
         scale += 0x800;
         fragment->scaleY = scale;

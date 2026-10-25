@@ -6,8 +6,8 @@
 
 /// End of the effect: switches the caster's display flags between 3 and 1 on
 /// a 5-frame cycle, so its outline (bit 1) blinks beside its shadow (bit 0).
-/// FieldEffect_RunAvoid adds it as a task (priority 0xc80) for its last 70
-/// frames and removes it again.
+/// FieldEffect_RunAvoid adds it as a task (priority TASK_PRIORITY_MAIN_LOOP)
+/// for its last 70 frames and removes it again.
 void FieldEffect_BlinkAvoidCaster(void) {
   struct Object *caster;
   struct Sprite *rec;
@@ -63,12 +63,12 @@ void FieldEffect_UpdatePairedArcSpawner(
 void FieldScript_ShowStatusMessage(void) {
   gSaveBlock.avoidDistance = 0;
   if (gSaveBlock.avoidByItem == 0) {
-    MessageArgument_PushFar(ABILITY_AVOID, 4);
-    FieldMessage_ShowFar(MsgAbilityWoreOff, 1);
+    MessageArgument_PushFar(ABILITY_AVOID, MESSAGE_ARGUMENT_ABILITY);
+    FieldMessage_ShowFar(MsgAbilityWoreOff, FIELD_MESSAGE_ZOOM);
     return;
   }
-  MessageArgument_PushFar(ITEM_SACRED_FEATHER, 2);
-  FieldMessage_ShowFar(MsgItemWoreOff, 1);
+  MessageArgument_PushFar(ITEM_SACRED_FEATHER, MESSAGE_ARGUMENT_ITEM);
+  FieldMessage_ShowFar(MsgItemWoreOff, FIELD_MESSAGE_ZOOM);
 }
 
 /// The caster spins and flashes, then blinks, and encounters are kept away
@@ -133,7 +133,7 @@ void FieldEffect_RunAvoid(void) {
   }
   object->update = NULL;
   object->facing = angle;
-  Task_Add(FieldEffect_BlinkAvoidCaster, 0xc80);
+  Task_Add(FieldEffect_BlinkAvoidCaster, TASK_PRIORITY_MAIN_LOOP);
   WaitFrames(15);
   Sound_PlaySongFar(SE_NOTE_MID);
   WaitFrames(55);
@@ -146,5 +146,5 @@ void FieldEffect_RunAvoid(void) {
     Object_SetSpriteFlagsFar((struct Object *)object, SPRITE_FLAG_SHADOW);
   Anim_ApplyChildValuesFar((struct Object *)object, SPRITE_COLOR_NORMAL);
   VramCache_FreeEntry(effectWork->arcTileSlot);
-  FieldMessage_ShowFar(MsgMonstersAttackLess, 1);
+  FieldMessage_ShowFar(MsgMonstersAttackLess, FIELD_MESSAGE_ZOOM);
 }

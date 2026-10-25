@@ -1,5 +1,9 @@
-// Draft of overlay 6ad's Func_02001bcc, translated from its listing: differ
-// 10 of 165. Left: instruction order and register choice.
+// Draft of overlay 6ad's Func_02001bcc, translated from its listing, with the
+// vertical steps pinned as the blend writes are: differ 4 of 165. Left: in both
+// flag branches the native copies the sprite pointer from r8 for the rotation
+// after it stores the x, where this copies it before; a barrier there also
+// holds back the next call's argument, which the native issues early (differ
+// 14).
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -50,8 +54,16 @@ void Func_02001bcc(void) {
     goto L_02009ca8;
   t13 = FIELD_AT(v_r6, s32, 12);
   FIELD_AT(v_r6, s32, 12) = (t13 + 0x66640);
-  t14 = FIELD_AT(v_r5, s32, 12);
-  FIELD_AT(v_r5, s32, 12) = (t14 + 0x1eb80);
+  {
+    /* FAKEMATCH(pin): the step pinned to r2 loads from the pool before the
+     * field, as native; as a plain sum, 10 of 165 instructions differ in tla-en
+     * (the three sites together). */
+    register s32 step asm("r2") = 0x1eb80;
+
+    /* FAKEMATCH(barrier): holds r3 until the step is loaded. */
+    __asm__("" : "+l"(step) : : "r3");
+    FIELD_AT(v_r5, s32, 12) += step;
+  }
   t15 = FIELD_AT(v_r5, s32, 8);
   FIELD_AT(v_r5, s32, 8) = (t15 + 0xfffd70c0);
   t16 = FIELD_AT(v_r8, u16, 18);
@@ -66,8 +78,16 @@ L_02009ca8:
     goto L_02009cf2;
   t22 = FIELD_AT(v_r7, s32, 12);
   FIELD_AT(v_r7, s32, 12) = (t22 + 0x66640);
-  t23 = FIELD_AT(v_r5, s32, 12);
-  FIELD_AT(v_r5, s32, 12) = (t23 + 0x1eb80);
+  {
+    /* FAKEMATCH(pin): the step pinned to r2 loads from the pool before the
+     * field, as native; as a plain sum, 10 of 165 instructions differ in tla-en
+     * (the three sites together). */
+    register s32 step asm("r2") = 0x1eb80;
+
+    /* FAKEMATCH(barrier): holds r3 until the step is loaded. */
+    __asm__("" : "+l"(step) : : "r3");
+    FIELD_AT(v_r5, s32, 12) += step;
+  }
   t24 = FIELD_AT(v_r5, s32, 8);
   FIELD_AT(v_r5, s32, 8) = (t24 + 0x28f40);
   t25 = FIELD_AT(v_r8, u16, 18);
@@ -87,8 +107,16 @@ L_02009cf2:
   FIELD_AT(v_r6, s32, 12) = (t32 + 0x199900);
   t33 = FIELD_AT(v_r7, s32, 12);
   FIELD_AT(v_r7, s32, 12) = (t33 + 0x199900);
-  t34 = FIELD_AT(v_r5, s32, 12);
-  FIELD_AT(v_r5, s32, 12) = (t34 + 0x1b8480);
+  {
+    /* FAKEMATCH(pin): the step pinned to r2 loads from the pool before the
+     * field, as native; as a plain sum, 10 of 165 instructions differ in tla-en
+     * (the three sites together). */
+    register s32 step asm("r2") = 0x1b8480;
+
+    /* FAKEMATCH(barrier): holds r3 until the step is loaded. */
+    __asm__("" : "+l"(step) : : "r3");
+    FIELD_AT(v_r5, s32, 12) += step;
+  }
   *(u8 *)v_r9 = 4;
   *(u8 *)v_r10 = 4;
   *(u8 *)v_r11 = 4;

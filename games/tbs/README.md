@@ -6,8 +6,8 @@ released as simply "Golden Sun" outside of Japan.
 Everything the [party](glossary.md#the-party) walks around in is a
 [map](glossary.md#map): a room, a town, a dungeon floor or the world map. The
 game is always in exactly one map. Walking through a door ends that map and
-starts the next, and that round, map after map, is the game's
-[map loop](#the-map-loop).
+starts the next. The game's [main loop](#the-main-loop) does that: it runs
+one map, then the next, for as long as the game is on.
 
 A map is made of two things. Its [layout](glossary.md#layout) is the picture
 and the ground: what is drawn, and where the party can walk. Its
@@ -19,26 +19,28 @@ few neighbouring maps: 201 maps share 96 overlays.
 
 The rest of the game's code is always loaded: the engine that moves and draws
 everyone, the windows and menus, battles, the Lucky Dice and Lucky Wheels
-minigames, and saving. A battle or a minigame takes a turn of the map loop as
+minigames, and saving. A battle or a minigame takes a turn of the main loop as
 if it were a map, but needs no overlay, because its code is always there. A
 map knows how far the story has gone from the
 [game flags](glossary.md#game-flag), a long list of yes-or-no facts saved with
 the game. The always-loaded code is cut into [banks](glossary.md#bank)
 ([How the code is organised](#how-the-code-is-organised)).
 
-The code also runs differently from most games'. In most games, the Pokémon
-games among them, one main loop goes round once a
-[frame](glossary.md#frame) and calls each part of the game in turn, so
-anything that takes time is cut into steps that remember where they got to.
-In this game a cutscene, a menu or a map's script is an ordinary function that
-runs from start to finish: when time has to pass, it asks to wait a number of
-frames, and while it waits the engine keeps everything else moving
+That main loop is unlike most games'. In most games, the Pokémon games among
+them, the main loop goes round once a [frame](glossary.md#frame), a sixtieth
+of a second, and calls each part of the game in turn, so anything that takes
+time is cut into steps that remember where they got to. This game's main loop
+goes round once per map, battle or minigame, and one turn can last minutes.
+Frames are counted inside: a cutscene, a menu or a map's script is an ordinary
+function that runs from start to finish, and when time has to pass it asks to
+wait a number of frames. While it waits, small jobs called
+[tasks](glossary.md#task) keep everything else moving, each run once a frame
 ([Engine](engine.md#waiting-and-tasks)). So a scene's code reads top to
-bottom, in the order things happen. The price is that only one piece of code waits at a
-time: whatever moves alongside it, an animation or a flashing light, is
-written as a small job of its own that runs every frame.
+bottom, in the order things happen; the price is that only one piece of code
+waits at a time, and whatever moves alongside it, an animation or a flashing
+light, has to be a task of its own.
 
-## The map loop
+## The main loop
 
 ![Isaac walks up into the Sanctum's doorway in Vale; the village fades to black and the Sanctum's hall fades in around him, its people standing round the altar](https://alchemy.pascalpixel.com/guides/front/sanctum-door.gif)
 
@@ -241,7 +243,7 @@ banks, about 1 MB of the English cartridge, followed by the sound code, the
 music and the packed pictures and maps. Each bank starts at a fixed place, and
 code in one bank calls another bank only through a short list of entrances at
 that bank's start, so a bank can grow without moving the others. In the code
-an entrance has the function's name with `Far` added: the map loop starts a
+an entrance has the function's name with `Far` added: the main loop starts a
 battle with `Battle_RunFar`, which leads to `Battle_Run` in the battle bank.
 The [glossary](glossary.md#far-call) says how such a call works, and
 [System](src/system/README.md#why-the-program-is-cut-into-banks) why the

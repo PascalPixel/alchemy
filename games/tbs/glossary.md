@@ -240,7 +240,7 @@ finds them in the same sense.
 
 One row of the map table: a room, a town, a dungeon floor or the world map,
 201 in all, each running an overlay's code and showing a layout
-([The front page](README.md#the-map-loop)).
+([The front page](README.md#the-main-loop)).
 
 ### Map section
 

@@ -21,7 +21,7 @@ Between switching on and the title, the game puts memory in order and starts
 the services everything else relies on: the code that hands each frame to the
 screen, the sound and the list of [tasks](glossary.md#task). It copies the
 routines that must run fastest into the console's fast memory, waits ten
-frames, and starts the loop of maps on the [front page](README.md#the-map-loop),
+frames, and starts the loop of maps on the [front page](README.md#the-main-loop),
 which runs for as long as the console is on. A soft reset starts the game
 again from its very first instruction, so start-up runs again in full.
 

@@ -20,7 +20,7 @@ Resource_DirectoryTable:
 	resource , Resource_FarCall007
 	resource , Resource_FarCall008
 	resource , Resource_FarCall009
-	resource , Resource_FarCall00A
+	resource FarCall00A, Resource_FarCall00A
 	resource FarCall00B, Resource_FarCall00B
 	resource , Resource_FarCall00C
 	resource , Resource_FarCall00D

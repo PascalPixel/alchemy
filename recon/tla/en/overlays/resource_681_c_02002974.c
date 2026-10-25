@@ -1,40 +1,65 @@
-// Draft, differ 96 of 75: records which of eleven listed cells persons 10 and
-// 11 stand on, as the two halves of the byte flag 0x210.
-#include "types.h"
+// Draft, differ 80 of 75: records which of eleven listed cells persons 10 and
+// 11 stand on, as the two halves of the byte flag 0x210. Translated from its
+// listing; names and structure still to do.
+#include "iwram_call.h"
+#include "lib/call.h"
 #include "object_runtime.h"
+#include "party_state.h"
+#include "ram_buffer.h"
+#include "text/msg_ids.h"
+#include "types.h"
 
-struct CellPoint {
-  s16 x;
-  s16 z;
-};
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
 
-extern s16 gData_0200530c[][2];
+extern u8 gData_0200530c[];
+s32 Object_GetById();
+s32 GameFlag_SetByte();
 
-struct ObjectRuntime *Object_GetById(s32 id);
-u32 GameFlag_SetByte(u32 flag, u8 value);
+s32 Func_02002974(void) {
+  s32 r8_1, r9_1, r10_1, r7_1, r6_1, r11_1, r9_2, r10_2, r5_1;
+  s32 v0, r8, r9, r10, r7, v1, r6, r4, r11, r1, ip, r0, r2, r5, v2;
 
-void Func_02002974(void) {
-  struct ObjectRuntime *object = Object_GetById(10);
-  s32 firstX = object->x >> 19;
-  s32 firstZ;
-  s32 secondX;
-  s32 secondZ;
-  u8 first = 0;
-  u8 second = 0;
-  s8 i;
-
-  firstZ = object->z >> 19;
-  object = Object_GetById(11);
-  secondX = object->x >> 19;
-  secondZ = object->z >> 19;
-  i = 1;
-loop:
-  if (firstX == gData_0200530c[i][0] && firstZ == gData_0200530c[i][1])
-    first = i;
-  if (secondX == gData_0200530c[i][0] && secondZ == gData_0200530c[i][1])
-    second = i;
-  i++;
-  if (i <= 11)
-    goto loop;
-  GameFlag_SetByte(0x210, (s8)(first | second << 4));
+  v0 = Object_GetById(10);
+  r8_1 = (FIELD_AT(v0, s32, 8)) >> 19;
+  r9_1 = 0;
+  r10_1 = 0;
+  r7_1 = (FIELD_AT(v0, s32, 16)) >> 19;
+  v1 = Object_GetById(11);
+  r6_1 = (FIELD_AT(v1, s32, 8)) >> 19;
+  r4 = 1;
+  r11_1 = (FIELD_AT(v1, s32, 16)) >> 19;
+  r1 = r4 << 24;
+  ip = (s32)gData_0200530c;
+L_0200a9b0:
+  r0 = ip;
+  r2 = r1 >> 22;
+  if (r8_1 != (*(s16 *)(ip + (r1 >> 22))))
+    goto L_0200a9c8;
+  if (r7_1 != (*(s16 *)(r0 + (r2 + 2))))
+    goto L_0200a9c8;
+  r9_2 = (u32)r1 >> 24;
+L_0200a9c8:
+  r2 = r4 << 24;
+  r1 = (r4 << 24) >> 22;
+  if (r6_1 != (*(s16 *)(r0 + ((r4 << 24) >> 22))))
+    goto L_0200a9de;
+  if (r11_1 != (*(s16 *)(r0 + (r1 + 2))))
+    goto L_0200a9de;
+  r10_2 = (u32)r2 >> 24;
+L_0200a9de:
+  r4 = 128;
+  r4 = r4 << 17;
+  r4 = (u32)(r2 + r4) >> 24;
+  r5_1 = 176;
+  r5_1 = r5_1 << 20;
+  r1 = r4 << 24;
+  if ((r4 << 24) <= r5_1)
+    goto L_0200a9b0;
+  v2 = GameFlag_SetByte(0x210, ((r9_2 << 24) | (r10_2 << 28)) >> 24);
+  return v2;
 }

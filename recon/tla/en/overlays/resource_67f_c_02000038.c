@@ -1,28 +1,57 @@
-// Draft, differ 10 of 51: the copy of overlay 662's Func_02000b54 (whose draft
+// Draft, differ 6 of 51: the copy of overlay 662's Func_02000b54 (whose draft
 // holds the notes), calling Izumo Ruins' Func_02000128 for its cell placement.
-#include "types.h"
+// Translated from its listing; names and structure still to do.
+#include "iwram_call.h"
+#include "lib/call.h"
 #include "object_runtime.h"
+#include "party_state.h"
+#include "ram_buffer.h"
+#include "text/msg_ids.h"
+#include "types.h"
 
-struct ObjectRuntime *Object_GetById(s32 id);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
-                                        s32 flags);
-void Func_02000128(s32 id, u32 column, s32 row, s32 layer);
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
 
-void Func_02000038(const u16 *entry) {
-  if (entry[0] == 0xffff)
-    return;
-loop:
-  {
-    u32 id = entry[0];
-    struct ObjectRuntime *object = Object_GetById(id);
-    s16 column = entry[1];
-    s16 row = entry[2];
+s32 Object_GetById();
+void ObjectDispatch_SetSingleChildFlags();
+s32 Func_02000128();
 
-    object->collisionFlags &= ~1;
-    ObjectDispatch_SetSingleChildFlags(object, 0);
-    Func_02000128(id, (u16)column, (u16)row, object->terrainId);
-    entry += 3;
-  }
-  if (entry[0] != 0xffff)
-    goto loop;
+s32 Func_02000038(s32 a0, s32 a1, s32 a2, s32 a3) {
+  s32 r0, r3, r7, r8, v0, r5, r6, r4, v1;
+  s32 stack[1];
+
+  /* sub (s32)stack, #4 */
+  r0 = a0;
+  r3 = FIELD_AT(a0, u16, 0);
+  if ((FIELD_AT(a0, u16, 0)) == 0xffff)
+    goto L_0200809c;
+  r7 = r0;
+L_0200804e:
+  r8 = FIELD_AT(r7, u16, 0);
+  v0 = Object_GetById(r8);
+  r5 = v0;
+  r6 = *(s16 *)(r7 + 2);
+  r4 = *(s16 *)(r7 + 4);
+  FIELD_AT(r5, u8, 89) = 254 & (FIELD_AT(r5, u8, 89));
+  stack[0] = r4;
+  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, v0, 0);
+  r4 = stack[0];
+  r6 = r6 << 16;
+  r4 = r4 << 16;
+  r4 = (u32)r4 >> 16;
+  r6 = (u32)r6 >> 16;
+  r5 = r5 + 34;
+  r7 = r7 + 6;
+  v1 = Func_02000128(r8, r6, r4, FIELD_AT(r5, u8, 0));
+  r0 = v1;
+  r3 = FIELD_AT(r7, u16, 0);
+  if ((FIELD_AT(r7, u16, 0)) != 0xffff)
+    goto L_0200804e;
+L_0200809c:
+  /* add (s32)stack, #4 */
+  return r0;
 }

@@ -54,7 +54,7 @@ SECTIONS
         "*/games/tla/src/field/common/object/set_sprite_priority_b.o"(.text)
         "*/resource_6b0_overlay.o"(.text.x0200a746)
         "*/games/tla/src/scene/anemos_inner_sanctum/move.o"(.text)
-        "*/resource_6b0_overlay.o"(.text.x0200a780)
+        "*/games/tla/src/scene/anemos_inner_sanctum/s2780.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s2948.o"(.text)
         "*/resource_6b0_overlay.o"(.text.x0200aa74)
         "*/games/tla/src/scene/anemos_inner_sanctum/s2cb8.o"(.text)
@@ -63,7 +63,7 @@ SECTIONS
         "*/resource_6b0_overlay.o"(.text.x0200af46)
         "*/resource_6b0_overlay.o"(.text.x0200af48)
         "*/resource_6b0_overlay.o"(.text.x0200b0e0)
-        "*/resource_6b0_overlay.o"(.text.x0200b190)
+        "*/games/tla/src/scene/anemos_inner_sanctum/s3190.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/import.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/data.o"(.data)
     }

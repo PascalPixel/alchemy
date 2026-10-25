@@ -1,5 +1,121 @@
 .syntax unified
 	.thumb
+	.section .text.x020081a4,"ax",%progbits
+	.global Func_020001a4
+	.thumb_func
+Func_020001a4:
+	push {r5, r6, r7, lr}
+	mov r7, r8
+	push {r7}
+	movs r0, #129
+	lsls r0, r0, #1
+	adds r0, #255
+	bl GameFlag_Test
+	cmp r0, #0
+	bne .L_020081c6
+	ldr r3, .L_020081e8
+	movs r1, #3
+	ldr r0, [r3]
+	bl __umodsi3
+	cmp r0, #0
+	bne .L_0200828c
+.L_020081c6:
+	movs r0, #23
+	bl Object_GetById
+	adds r5, r0, #0
+	movs r0, #129
+	lsls r0, r0, #1
+	adds r0, #255
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_020081ec
+	bl Random16Far
+	adds r2, r0, #0
+	ldr r3, [r5, #12]
+	lsls r2, r2, #8
+	b .L_020081f6
+.L_020081e8:
+	.4byte gFrameCount
+.L_020081ec:
+	bl Random16Far
+	adds r2, r0, #0
+	ldr r3, [r5, #12]
+	lsls r2, r2, #6
+.L_020081f6:
+	lsrs r2, r2, #16
+	lsls r2, r2, #16
+	adds r2, r2, r3
+	ldr r3, .L_0200827c
+	movs r0, #168
+	adds r2, r2, r3
+	ldr r1, [r5, #8]
+	ldr r3, [r5, #16]
+	lsls r0, r0, #2
+	bl Func_02002828
+	adds r7, r0, #0
+	cmp r7, #0
+	beq .L_0200828c
+	ldr r1, .L_02008280
+	adds r0, r7, #0
+	ldr r6, [r7, #80]
+	bl Func_02002820
+	movs r1, #1
+	adds r0, r7, #0
+	bl Object_SetPartAttribute
+	adds r3, r7, #0
+	adds r3, #85
+	movs r5, #0
+	strb r5, [r3]
+	bl Random16Far
+	ldr r3, .L_02008284
+	adds r2, r7, #0
+	adds r2, #100
+	ands r3, r0
+	strh r3, [r2]
+	adds r3, r7, #0
+	adds r3, #102
+	strh r5, [r3]
+	ldr r3, .L_02008288
+	ldr r1, .L_02008278
+	str r3, [r7, #108]
+	mov r8, r1
+	bl Random16Far
+	adds r3, r0, #0
+	lsls r0, r3, #16
+	subs r0, r0, r3
+	lsrs r0, r0, #20
+	bl Math_Sine
+	lsls r3, r0, #1
+	adds r3, r3, r0
+	lsls r3, r3, #3
+	asrs r3, r3, #16
+	str r3, [r7, #48]
+	mov r3, r8
+	ldrb r2, [r6, #9]
+	strb r3, [r6, #26]
+	movs r3, #13
+	negs r3, r3
+	ands r3, r2
+	movs r2, #4
+	orrs r3, r2
+	strb r3, [r6, #9]
+	b .L_0200828c
+	.2byte 0x0000
+.L_02008278:
+	.4byte 0x00000000
+.L_0200827c:
+	.4byte 0xffe40000
+.L_02008280:
+	.4byte gData_02003214
+.L_02008284:
+	.4byte 0x0ffff000
+.L_02008288:
+	.4byte Func_02000148
+.L_0200828c:
+	pop {r3}
+	mov r8, r3
+	pop {r5, r6, r7, pc}
+	.2byte 0x0000
 	.section .text.x020082b8,"ax",%progbits
 	.balign 4
 	.global Func_020002b8
@@ -2970,97 +3086,6 @@ Func_020025e8:
 .L_0200a690:
 	.4byte gPartyState
 .L_0200a694:
-	.4byte Data_0200354c
-	.section .text.x0200a698,"ax",%progbits
-	.global Func_02002698
-	.thumb_func
-Func_02002698:
-	push {r5, r6, r7, lr}
-	mov r7, r11
-	mov r6, r10
-	mov r5, r9
-	push {r5, r6, r7}
-	mov r7, r8
-	push {r7}
-	sub sp, #4
-	ldr r3, .L_0200a748
-	str r2, [sp, #0]
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r3, r2
-	mov r9, r0
-	ldr r0, [r3]
-	mov r11, r1
-	bl Object_GetById
-	movs r3, #192
-	ldr r5, .L_0200a74c
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	adds r6, r0, #0
-	movs r2, #2
-	ldrsh r0, [r5, r2]
-	mov r10, r3
-	bl GameFlag_GetByte
-	adds r7, r0, #0
-	movs r3, #2
-	ldrsh r0, [r5, r3]
-	adds r0, #8
-	bl GameFlag_GetByte
-	mov r8, r0
-	cmp r7, #0
-	bne .L_0200a6e6
-	cmp r0, #0
-	beq .L_0200a73a
-.L_0200a6e6:
-	movs r2, #2
-	ldrsh r0, [r5, r2]
-	movs r1, #0
-	bl GameFlag_SetByte
-	movs r3, #2
-	ldrsh r0, [r5, r3]
-	movs r1, #0
-	adds r0, #8
-	bl GameFlag_SetByte
-	mov r3, r9
-	adds r2, r7, r3
-	mov r3, r8
-	movs r1, #128
-	add r3, r11
-	lsls r1, r1, #12
-	lsls r3, r3, #20
-	adds r3, r3, r1
-	str r3, [r6, #16]
-	movs r3, #230
-	lsls r3, r3, #1
-	add r3, r10
-	lsls r2, r2, #20
-	adds r2, r2, r1
-	ldr r1, [r3]
-	str r2, [r6, #8]
-	str r2, [r1, #8]
-	ldr r3, [r6, #16]
-	str r3, [r1, #16]
-	bl Func_02002838
-	bl Func_02002450
-	movs r2, #192
-	lsls r2, r2, #18
-	ldr r3, [r2, #108]
-	movs r2, #214
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	ldr r2, [sp, #0]
-	str r2, [r3]
-.L_0200a73a:
-	add sp, #4
-	pop {r3, r5, r6, r7}
-	mov r8, r3
-	mov r9, r5
-	mov r10, r6
-	mov r11, r7
-	pop {r5, r6, r7, pc}
-.L_0200a748:
-	.4byte gPartyState
-.L_0200a74c:
 	.4byte Data_0200354c
 	.section .bss,"aw",%nobits
 	.global gData_02003400

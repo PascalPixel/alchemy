@@ -7,7 +7,7 @@ SECTIONS
         "*/resource_6b4_overlay.o"(.text.x0200807e)
         "*/games/tla/src/field/common/effect/move.o"(.text)
         "*/resource_6b4_overlay.o"(.text.x020080b6)
-        "*/resource_6b4_overlay.o"(.text.x020080b8)
+        "*/games/tla/src/scene/mt_aleph_summit/s00b8.o"(.text)
         "*/games/tla/src/scene/mt_aleph_summit/scene_tables.o"(.text)
         "*/resource_6b4_overlay.o"(.text.x020082a4)
         "*/resource_6b4_overlay.o"(.text.x0200832c)

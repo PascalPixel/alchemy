@@ -289,7 +289,7 @@ extern const struct MapMusicRule gMap_MusicRules[];
 
 /// Chooses the current map's field music (gSaveBlock.cue) from the first rule
 /// matching the map or its map section and the warp destination;
-/// SONG_KEEP_BGM when none does. Called by Game_Run on entering each map,
+/// SONG_KEEP_BGM when none does. Called by Game_MainLoop on entering each map,
 /// before Map_PlayMusic plays it.
 void Map_ChooseMusic(void) {
   s16 music = SONG_KEEP_BGM;

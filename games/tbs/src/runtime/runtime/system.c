@@ -12,10 +12,11 @@
 
 /// Powers the game up: stops any HBlank DMA left running, sets the cartridge
 /// wait states, clears IWRAM, installs the interrupt handlers and the resident
-/// IWRAM code, loads the window graphics and the sound driver, then starts a
-/// new game. It never returns. Called once by System_Entry after it has set
-/// the stacks; it clears the debug switches, enables the OAM copy and sleep,
-/// and clears gCartridgeResetMarker, which a soft reset leaves set.
+/// IWRAM code, loads the window graphics and the sound driver, then enters
+/// Game_MainLoop and never returns. The C entry point (pret's AgbMain), called
+/// once by System_Entry after it has set the stacks; it clears the debug
+/// switches, enables the OAM copy and sleep, and clears gCartridgeResetMarker,
+/// which a soft reset leaves set.
 void System_Initialize(void) {
   {
     volatile u16 *dma0 = REG_DMA0;
@@ -58,7 +59,7 @@ void System_Initialize(void) {
   gOamCopyEnabled = 1;
   gSleepDisabled = 0;
   WaitFrames(10);
-  Game_RunFar(0);
+  Game_MainLoopFar(0);
 }
 
 /// Unused: waits out frames forever; the frame loop still runs the

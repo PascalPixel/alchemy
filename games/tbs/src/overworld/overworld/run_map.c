@@ -24,7 +24,7 @@ struct ObjectSystemSuspendView {
 /// (Field_ProcessStep each frame) until a request is made, and then the
 /// requests are handled until none is left.
 ///
-/// Called from Game_Run's main loop for every map, which
+/// Called from Game_MainLoop's main loop for every map, which
 /// passes the result to Map_TakeWarp. Allocates the field work in
 /// HEAP_SLOT_FIELD, cleared, and frees it on the way out, with every
 /// block the map took after it from the same pool; sets gSaveBlock's default,

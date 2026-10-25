@@ -71,7 +71,7 @@ At power-on the loop starts with the title screen, and the main menu comes
 next. Both are rows of the map table, run like maps though the party never
 walks there.
 
-The loop is `Game_Run`; one pass through a field map is
+The loop is `Game_MainLoop`; one pass through a field map is
 `Map_ResetFlagsOnEnter`, `Map_LoadOverlay`, `Map_Run` and `Map_TakeWarp`, and
 a battle's return is `Map_ReturnFromRun`. [Running a map](src/overworld/README.md)
 follows a field map from its arrival to its warp.

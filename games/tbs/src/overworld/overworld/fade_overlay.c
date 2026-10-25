@@ -115,7 +115,7 @@ void FadeOverlay_DrawMarks(void) {
 /// and Fuchin Falls); Crossbone Isle then switches it on and off by setting the
 /// work's object event. No ☀️ code stops it (FadeOverlay_Suspend has no
 /// named caller): the work and the callback last until the next map change
-/// resets the heap and the task table (Game_Run).
+/// resets the heap and the task table (Game_MainLoop).
 void FieldEffect_StartFadeOverlay(void *object) {
   struct FadeOverlayWork *work;
   u8 *tiles;

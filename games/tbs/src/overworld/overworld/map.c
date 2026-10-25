@@ -21,7 +21,7 @@
 /// warp table gives the first warp of that kind (or of any kind) whose flag, if
 /// it has one, is not set. A warp of kind 0 or the end of the map's warps
 /// falls back to the map of its first warp, at warp destination 0. Called by
-/// Game_Run with Map_Run's result; sets gSaveBlock.mapId and
+/// Game_MainLoop with Map_Run's result; sets gSaveBlock.mapId and
 /// .warpDest, and leaves them alone for WARP_NONE, whose destination is set
 /// already, or for a map with no header in the table.
 void Map_TakeWarp(s32 warpId) {
@@ -86,14 +86,14 @@ void Map_TakeWarp(s32 warpId) {
 }
 
 /// Chooses where the game continues after a battle or anything else that is
-/// not a map (see Game_Run). result is its result:
+/// not a map (see Game_MainLoop). result is its result:
 /// -1 when the party was defeated, which revives the leader with 1 HP (and,
 /// with FLAG_CHILDHOOD, fully heals Isaac and Garet, characters 0 and 1) and
 /// returns to the defeat point, or to the last saved point when none is set.
 /// Any other result goes to the next map the script set, or to the default
 /// map (the map the battle or minigame was started from) with the
 /// party keeping its position (FLAG_KEEP_PARTY_POSITION). Called by
-/// Game_Run after each map from RUN_NONE on; stores result in
+/// Game_MainLoop after each map from RUN_NONE on; stores result in
 /// gSaveBlock.runResult and sets gSaveBlock.mapId and .warpDest.
 void Map_ReturnFromRun(s32 result) {
   struct Unit *unit;
@@ -203,23 +203,23 @@ static __inline__ s32 RunLuckyWheels(s32 warpDest) {
   return result;
 }
 
-/// The game's main loop, which never returns. mode, an enum GameRunMode,
+/// The game's main loop, which never returns. mode, an enum GameStart,
 /// chooses the first map. Each pass resets the
 /// runtime, then either runs a battle or minigame and picks the map to return
 /// to, or loads a map's code, starts its music and runs it until the
-/// party takes a warp. Called with GAME_RUN_TITLE through Game_RunFar by
+/// party takes a warp. Called with GAME_START_TITLE through Game_MainLoopFar by
 /// System_Initialize at power-on and by Game_Restart.
-void Game_Run(s32 mode) {
+void Game_MainLoop(s32 mode) {
   const struct MapHeader *table;
   const struct MapHeader *record;
   s32 warpDest;
 
   table = gMapHeaders;
   // Choose the first map before initializing the per-map runtime.
-  if (gDebugMode && mode == GAME_RUN_DEBUG_VALE) {
+  if (gDebugMode && mode == GAME_START_DEBUG_VALE) {
     gSaveBlock.mapId = (s32)&MapId_ValePlaza;
     gSaveBlock.warpDest = mode;
-  } else if (gDebugMode && mode == GAME_RUN_DEBUG_MAIN_MENU) {
+  } else if (gDebugMode && mode == GAME_START_DEBUG_MAIN_MENU) {
     gSaveBlock.mapId = (s32)&MapId_MainMenu;
     gSaveBlock.warpDest = MAIN_MENU_FROM_SANCTUM;
   } else {
@@ -306,7 +306,7 @@ void Game_Run(s32 mode) {
 }
 
 /// Loads the current map's overlay code (its resource) into gOverlayArea.
-/// Called by Game_Run before Map_Run.
+/// Called by Game_MainLoop before Map_Run.
 void Map_LoadOverlay(s32 unused) {
   const struct MapHeader *table;
 
@@ -322,8 +322,8 @@ void Map_LoadOverlay(s32 unused) {
 /// entering a new map section so are the map section's flags and step
 /// counters, the location name is shown and the warp destination becomes the
 /// point Retreat returns to. Then the map section's visited flag
-/// (FLAG_MAPSEC_VISITED) is set. Called by Game_Run before each map, with keep
-/// from FLAG_KEEP_PARTY_POSITION; sets gSaveBlock.mapSec and .mapType.
+/// (FLAG_MAPSEC_VISITED) is set. Called by Game_MainLoop before each map, with
+/// keep from FLAG_KEEP_PARTY_POSITION; sets gSaveBlock.mapSec and .mapType.
 void Map_ResetFlagsOnEnter(s32 unused, s32 keep) {
   s32 mapSec = MAP_HEADER(gSaveBlock.mapId)->mapSec;
   s32 flag;
@@ -368,7 +368,7 @@ void Map_ResetFlagsOnEnter(s32 unused, s32 keep) {
 }
 
 /// Starts the current map's field music, chosen by
-/// Map_ChooseMusic. Called by Game_Run, and by
+/// Map_ChooseMusic. Called by Game_MainLoop, and by
 /// 34 map overlays through Map_PlayMusicFar.
 void Map_PlayMusic(void) { Sound_PlaySongFar(gSaveBlock.mapMusic); }
 

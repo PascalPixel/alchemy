@@ -10,7 +10,6 @@
 #include "edition.h"
 #include "farcall.h"
 
-void System_WaitForFrameInterrupt(void);
 void Bios_SoundBiasOff(void);
 void Bios_SoundBiasOn(void);
 /// No code in the tree defines or reads it; Random16's seed is gRandomSeed.

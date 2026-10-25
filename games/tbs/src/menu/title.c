@@ -72,7 +72,7 @@ u8 *Title_GetEvents(void) { return (u8 *)gTitleEvents; }
 /// - Warp destination 9, after the ship sails (lemurian_ship.c's SetSail): the
 ///   credits, then the main menu's warp destination 2, which offers to
 ///   save the cleared game.
-/// - Warp destination 2, at power-on (Game_Run) and after the logo: the
+/// - Warp destination 2, at power-on (Game_MainLoop) and after the logo: the
 ///   Nintendo and Camelot logos and, when a save file exists, the title intro
 ///   with its "Press Start" prompt; then the main menu's warp
 ///   destination 1.

@@ -33,7 +33,7 @@ struct StatWork {
 /// Only GAME.S's bare veneer reaches it; nothing calls it by name.
 void Game_Restart(void) {
   SaveBlock_InitializeDefaults();
-  Game_RunFar(0);
+  Game_MainLoopFar(0);
 }
 
 /// Returns the party's Djinn recovery bank (the standby Djinn and their turns
@@ -553,7 +553,7 @@ struct MapLocalStateSnapshotView {
 /// save stamp; sets a new game's defaults: Isaac alone in the party, the
 /// standard button layout, the message speed, the play time clock and the Lucky
 /// Wheels prize odds. Called by the main menu's new game, by
-/// Game_Restart and Game_Run, and by the debug battle menu.
+/// Game_Restart and Game_MainLoop, and by the debug battle menu.
 void SaveBlock_InitializeDefaults(void) {
   volatile s32 zero;
 

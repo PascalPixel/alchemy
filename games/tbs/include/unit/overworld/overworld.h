@@ -36,11 +36,11 @@ enum LeaderMovementMode {
   LEADER_MOVEMENT_AIRBORNE = 2
 };
 
-/// Game_Run's mode: where the game starts.
-enum GameRunMode {
-  GAME_RUN_TITLE = 0,          ///< the title screen, with a fresh save block
-  GAME_RUN_DEBUG_VALE = 1,     ///< in debug mode, MapId_ValePlaza
-  GAME_RUN_DEBUG_MAIN_MENU = 2 ///< in debug mode, the main menu
+/// Game_MainLoop's mode: where the game starts.
+enum GameStart {
+  GAME_START_TITLE = 0,          ///< the title screen, with a fresh save block
+  GAME_START_DEBUG_VALE = 1,     ///< in debug mode, MapId_ValePlaza
+  GAME_START_DEBUG_MAIN_MENU = 2 ///< in debug mode, the main menu
 };
 
 /// A window transition's shape: MAP_TRANSITION(TRANSITION_WINDOW, mode)'s
@@ -105,7 +105,7 @@ enum EncounterZoneId {
 void Map_TakeWarp(s32 warpId);
 void Map_ReturnFromRun(s32 result);
 s32 Map_GetMapSec(s32 mapId);
-void Game_Run(s32 mode);
+void Game_MainLoop(s32 mode);
 void Map_LoadOverlay(s32 unused);
 void Map_ResetFlagsOnEnter(s32 unused, s32 keep);
 void Map_PlayMusic(void);

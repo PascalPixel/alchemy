@@ -5,7 +5,7 @@
 	.global FarCall_OverworldTable
 FarCall_OverworldTable:
 	export Map_RunFar, Map_Run
-	export Game_RunFar, Game_Run
+	export Game_MainLoopFar, Game_MainLoop
 	export FieldScript_WaitFramesFar, FieldScript_WaitFrames
 	export FieldScript_StartFar, FieldScript_Start
 	export FieldScript_EndFar, FieldScript_End

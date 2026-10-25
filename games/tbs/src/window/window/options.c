@@ -155,7 +155,7 @@ u16 Color_ScaleComponents(s16 *rgb, s32 redScale, s32 greenScale,
 /// saved ones when the screen is cancelled. The file menu
 /// (FileMenu_SelectFile) shows the colours of the file under the cursor, and
 /// the saved ones for an empty file and on leaving. The main menu
-/// (menu/main_menu.c), the main loop's start (Game_Run), the end of the
+/// (menu/main_menu.c), the main loop's start (Game_MainLoop), the end of the
 /// Mind Read wave (FieldEffect_RestoreMindReadPalette) and Vale and the
 /// world map call it with the saved settings.
 void WindowColor_Apply(s32 phase, s32 brightness) {

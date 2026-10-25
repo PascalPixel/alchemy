@@ -34,7 +34,7 @@ by a [far call](glossary.md#far-call). When it returns, the field map is
 loaded again, or after a defeat the map the defeat rules name. The debug
 battle menu is the only other way in.
 
-`Game_Run` (`src/overworld/overworld/map.c`) sees the next map
+`Game_MainLoop` (`src/overworld/overworld/map.c`) sees the next map
 `RUN_BATTLE` and calls `Battle_RunFar`, which leads to `Battle_Run`
 (`src/battle/battle/encounter.c`). The formations are the rows of
 `src/battle/formations.c`, chosen by the encounter zones in

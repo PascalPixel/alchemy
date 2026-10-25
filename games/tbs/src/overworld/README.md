@@ -189,7 +189,7 @@ matches with; [Matching](../MATCHING.md#heap-slots) explains why.
 
 ## How it fits with the rest of the game
 
-`Game_Run` is the game's main loop; [the front
+`Game_MainLoop` is the game's main loop; [the front
 page](../../README.md#the-main-loop) describes it. For a map it clears the
 map's flags, loads the overlay and runs `Map_Run`; for a battle or minigame it
 runs that and then loads the map again. The overlay supplies the map's tables

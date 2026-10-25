@@ -5,10 +5,10 @@
 /// and returns the warp kind for Map_TakeWarp, or WARP_NONE when gSaveBlock
 /// already holds the next map.
 s32 Map_RunFar(s32 warpDest);
-/// The game's main loop, which never returns; mode, an enum GameRunMode,
+/// The game's main loop, which never returns; mode, an enum GameStart,
 /// picks the first map. System_Initialize starts it at power-on with
-/// GAME_RUN_TITLE, and Game_Restart starts it again.
-void Game_RunFar(s32 mode);
+/// GAME_START_TITLE, and Game_Restart starts it again.
+void Game_MainLoopFar(s32 mode);
 /// Waits the given number of frames, unless debug fast forward is on.
 void FieldScript_WaitFramesFar(s32 frames);
 /// Opens a script: closes any map name popup, stops the leader and resets the

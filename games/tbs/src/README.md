@@ -21,7 +21,7 @@ loading, scrolling and drawing the map grid. [Running a map](overworld/README.md
 the `overworld` folder, runs
 one map on that engine, from its set-up to the [warp](../glossary.md#warp) the party leaves
 by, with random encounters, field [Psynergy](../glossary.md#psynergy-and-pp) and the commands map scripts
-use; `Game_Run`, the loop that runs one map after another, is there too.
+use; `Game_MainLoop`, the loop that runs one map after another, is there too.
 [Maps](map/README.md) holds the maps, one [overlay](../glossary.md#overlay) each: [object event](../glossary.md#object-event)
 templates, [map events](../glossary.md#map-event), [scripts](../glossary.md#script) and cutscenes. [Layouts](layout/README.md)
 holds the [layouts](../glossary.md#layout) as data.
@@ -230,7 +230,7 @@ a table from its `.tsv`, or a layout, under the name the code uses.
 ## Where to start reading
 
 `System_Initialize`, in [runtime/runtime/system.c](runtime/runtime/system.c),
-is the first C to run; it ends by calling `Game_Run`, which is short enough
+is the first C to run; it ends by calling `Game_MainLoop`, which is short enough
 to read whole. [Runtime](runtime/README.md) follows the same path.
 
 To find the code behind something in the game, search for its English name.

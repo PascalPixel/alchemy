@@ -326,7 +326,7 @@ of an object event, update hooks returning `s32`) are in
 
 ## How it fits with the rest of the game
 
-`Game_Run` unpacks the overlay into `gOverlayArea` (`Map_LoadOverlay`) and
+`Game_MainLoop` unpacks the overlay into `gOverlayArea` (`Map_LoadOverlay`) and
 `Map_Run` calls its entries; [Engine](../../engine.md#overlays)
 describes the entry and import tables and how the overlay is loaded. The map
 table and how maps depend on the story are on [the front

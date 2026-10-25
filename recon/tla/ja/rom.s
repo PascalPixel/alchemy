@@ -2733,13 +2733,19 @@ BattlePresentation_AppendLinkedActions:
 Func_0811ddd8:
 	.incbin "baserom.gba", 0x0011ddd4, 0x00000594
 	.section .rom.0011e3a6, "ax"
-	.incbin "baserom.gba", 0x0011e3a6, 0x00000432
+	.incbin "baserom.gba", 0x0011e3a6, 0x00000002
+	.global Func_0811e3ac
+	.type Func_0811e3ac, %function
+	.thumb_func
+Func_0811e3ac:
+	.incbin "baserom.gba", 0x0011e3a8, 0x00000430
 	.section .rom.0011e82c, "ax"
 	.balign 4
+	.global Func_0811e830
+	.type Func_0811e830, %function
+	.thumb_func
+Func_0811e830:
 	.incbin "baserom.gba", 0x0011e82c, 0x00000580
-	.section .rom.0011f084, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x0011f084, 0x000002a8
 	.section .rom.0011f668, "ax"
 	.balign 4
 	.global Func_0811f66c

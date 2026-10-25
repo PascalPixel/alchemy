@@ -14892,11 +14892,11 @@ msgctxt "message"
 msgid "03704"
 msgstr "Ma non ha effetto su {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgCastLacksPp"
 msgid "03705"
 msgstr "...Ma non ha abbastanza PP!"
 
-msgctxt "message"
+msgctxt "MsgPsynergyBlocked"
 msgid "03706"
 msgstr "Ma la Psinergia è bloccata!"
 

@@ -1,4 +1,5 @@
-// Draft, differ 38 of 292, written from the listing in the form of The
+// Draft, differ 36 of 292 (38 before Event_SpawnObjectTable was declared void,
+// as its listing returns nothing), written from the listing in the form of The
 // Broken Seal's ObjectEvent_ResetForObject: the leader's placement row from
 // gPartyState (and its height when it enters above ground), then the
 // scene's table from slot 8, the leader's movement mode (world map, the
@@ -29,7 +30,7 @@ struct EventWorkPlacements {
 extern const struct ScenePlacement gData_080f21d4[];
 
 void ObjectTable_Clear(void);
-s32 Event_SpawnObjectTable(s32 table, s32 first);
+void Event_SpawnObjectTable(s32 table, s32 first);
 s32 Map_GetTerrainHeightFar(u8 kind, s32 x, s32 z);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
                                            u32 flags);

@@ -1,19 +1,3 @@
-// Near miss, differ 28 of 322 (206 before, 2026-10-25), written from the
-// listing and The Broken Seal's SaveBlock_InitializeDefaults
-// (games/tbs/src/game/game/units.c): clears the party state, the work
-// block, the flags and the owners by DMA, builds the characters, sets a new
-// game's defaults (the button layout, Felix and Jenna in the party, their
-// first Psynergy, 200 coins, the message settings, the play time clock and
-// the slot machine prize odds) and fills the work block's random tables.
-// The party state written by field rather than through a byte pointer taken
-// at the top (206 to 132: the native loads its address after the
-// characters), gAutoSleepEnabled and gIdleFrameCount volatile as The Broken
-// Seal declares its gIdleSleepEnabled (132 to 46: the native rereads the
-// flag after the play time store; frame.h would need them volatile on
-// adoption) and Unit_LearnPsynergy returning s32 as add_action.c defines it
-// (46 to 28: its arguments are then set r1 first). Left: the native loads the
-// pooled byte constants 1 and 8 a slot or two from where this does, and the
-// pools sit 4 bytes apart from that.
 #include "types.h"
 #include "party_state.h"
 #include "dma.h"
@@ -33,6 +17,9 @@ extern u8 gData_02001000[];
 extern u8 gGameFlagBytes[];
 extern u8 gOwnerStates[];
 extern u32 gFrameWaitCount;
+/* FAKEMATCH(volatile): the auto-sleep flag read again after the play time
+ * store, as The Broken Seal declares its gIdleSleepEnabled; as plain u8, as
+ * frame.h declares it, 108 of 322 instructions differ in tla-en. */
 extern volatile u8 gAutoSleepEnabled;
 extern volatile u16 gIdleFrameCount;
 extern s16 gData_020036d0;
@@ -45,6 +32,11 @@ s32 Unit_LearnPsynergy(s32 owner, s32 ability);
 u32 Runtime_GetBuildStampTime(void);
 u32 Random16(void);
 
+/// Starts a new game's state: clears the party state, the work block, the
+/// flags and the owners by DMA, builds the characters, sets the defaults (the
+/// button layout, Felix and Jenna in the party, their first Psynergy, 200
+/// coins, the message settings and the play time clock) and fills the work
+/// block's random tables.
 void Func_080addf0(void) {
   volatile s32 zero;
   s32 i;

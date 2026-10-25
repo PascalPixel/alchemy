@@ -1,8 +1,3 @@
-// Near miss, differ 2 of 75 (one reordered pair), 2026-10-18:
-// GameFlag_RefreshLureCap, ported from The Broken Seal's function of the same
-// name (games/tbs/src/game/game.c). Remaining: after Item_GetDirect the
-// native restores the spilled slot and count (ldr r2, ldr r1) before it
-// copies the item (adds r5, r0, #0); this copies first.
 #include "types.h"
 #include "party_state.h"
 #include "owner_state.h"

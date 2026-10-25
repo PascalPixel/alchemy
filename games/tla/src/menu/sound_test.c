@@ -1,15 +1,3 @@
-// Near miss, differ 6 of 235 (reordered rows), 2026-10-18. Remaining:
-// the native loads Data_0805ea98's address before the prologue's sub sp, and it
-// reloads the work from its stack slot before it builds the 0x5a4 offset. Both
-// a one-pass block around the copy (differ 16) and x and y as locals
-// (differ 48) are worse; five permuter minutes found nothing lower.
-// Measured: the cursor wrap needs the row count as a variable (__modsi3),
-// the pressed keys a volatile view, and y written with shifts, which keeps
-// fold from merging the two multiplies.
-// The debug sound test. Four values (music, jingle, sound effect,
-// sound preset) start from Data_0805ea98; up and down pick one, left and
-// right step it by 1, L and R by 10; A plays it (the fourth loads its preset
-// parameters), START plays sound 390 and stops, B leaves.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -39,8 +27,10 @@ void UiText_DrawStringInWindow(const u8 *text, struct RenderInput *window,
 void UiText_DrawNumberInWindow(s32 value, s32 digits,
                                struct RenderInput *window, s32 x, s32 y);
 
-#define PRESSED (((volatile struct InputState *)&gInput)->pressed)
-
+/// The debug sound test. Four values (music, jingle, sound effect, sound
+/// preset) start from Data_0805ea98; up and down pick one, left and right
+/// step it by 1, L and R by 10; A plays it (the fourth loads its preset
+/// parameters), START plays sound 390 and stops, and B leaves.
 s32 Func_08040a48(void) {
   struct SoundTestValues test;
   s32 redraw = 1;
@@ -75,15 +65,15 @@ s32 Func_08040a48(void) {
                     ((s16)window->y << 3) + (cursor << 4) + 12, 3);
     }
     WaitFrames(1);
-    if (PRESSED & 2)
-      goto done;
-    if (PRESSED & 1) {
+    if (gInput.pressed & 2)
+      break;
+    if (gInput.pressed & 1) {
       if (cursor == 3)
         Sound_LoadPresetParameters(test.values[3]);
       else
         Audio_PlayCue(test.values[cursor]);
     }
-    if (PRESSED & 8) {
+    if (gInput.pressed & 8) {
       Audio_PlayCue(390);
       Audio_PlayCue(0);
     }
@@ -112,7 +102,6 @@ s32 Func_08040a48(void) {
       redraw = 1;
     }
   } while (1);
-done:
   UiWork_Finalize(window, 2);
   Func_080409dc();
   WaitFrames(1);

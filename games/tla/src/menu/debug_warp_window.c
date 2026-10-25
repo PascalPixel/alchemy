@@ -1,11 +1,3 @@
-// Near miss, differ 2 of 65 (27 before alchemy permute moved the line
-// pointer's set-up after the row's and RenderOutput_Create took its fifth
-// argument): the debug warp menu's window, nine preset names 16 pixels
-// apart with a divider under each but the last. Left: the native loads
-// gDebugWarp_Presets from the pool (ldr r7) before it copies y's 4 to sl;
-// this copies first. Every order of the four set-ups and of the
-// declarations measures 2 or more; an indexed for loop with the divider
-// skipped on the first pass is differ 59.
 #include "types.h"
 #include "ram_buffer.h"
 
@@ -33,6 +25,8 @@ s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 void *RenderOutput_Create(s32 slot, s32 attributes, struct RenderInput *window,
                           s32 x, s32 y);
 
+/// Opens the debug warp menu's window: nine preset names 16 pixels apart,
+/// with a divider under each but the last.
 struct RenderInput *Func_08041068(void) {
   struct ScreenWork *work = Ram_HeapSlots->unkd0[0];
   struct RenderInput *window;

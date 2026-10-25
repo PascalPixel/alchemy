@@ -1,13 +1,3 @@
-// Near miss, differ 2 of 180 (one reordered pair), 2026-10-15: The Broken
-// Seal's DebugMenu_BrowsePortraits with its two devices (the count-derived
-// cancel mask, the slot offset before the loop and the loaded temporary).
-// The name list starts at message 4930 in English ("Master Poi"; 4916 in
-// Japanese, 5433 German, 5397 Spanish, 5390 French and Italian), a pool
-// symbol that the catalogs must name before adoption (MsgTestName here).
-// Remaining: the native loads gInput's address (ldr r6) before it copies the
-// total to sl; this copies first (equal priority, the copy has a dependent).
-// Five permuter minutes and operand-tied empty asms found nothing lower.
-
 #include "types.h"
 #include "ram_buffer.h"
 #include "window.h"
@@ -16,8 +6,8 @@
 #include "uiflow.h"
 #include "text_render_runtime.h"
 
-extern s16 gData_0805eb58[];
-extern s16 gData_0805eb7c[];
+extern s16 gPortrait_CharacterMap[];
+extern s16 gPortrait_SpriteMap[];
 
 struct RenderInput *Func_0803d3c0(s32 x, s32 y, s32 width, s32 height);
 struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
@@ -30,6 +20,9 @@ void UiText_DrawNumberInWindow(s32 value, s32 width, struct RenderInput *output,
 
 extern u8 MsgTestName[];
 
+/// A debug browser of the portraits: left and right step through
+/// gPortrait_CharacterMap and then gPortrait_SpriteMap, L and R by ten, each
+/// drawn with its number and its name from MsgTestName; A or B leaves.
 s32 Func_0804e3f4(void) {
   struct UiRenderWork *work;
   struct RenderInput *portrait;
@@ -50,13 +43,18 @@ s32 Func_0804e3f4(void) {
   portrait = Func_0803d3c0(0, 0, 10, 5);
   window = UiWindow_Create(10, 10, 14, 3, 2);
   index = 0;
-  for (i = 0; gData_0805eb58[i * 2] != -1; i++) {
+  for (i = 0; gPortrait_CharacterMap[i * 2] != -1; i++) {
   }
   count = i;
-  for (i = 0; gData_0805eb7c[i * 2] != -1; i++) {
+  for (i = 0; gPortrait_SpriteMap[i * 2] != -1; i++) {
   }
   total = count + i;
+  /* FAKEMATCH(dead): a zero from the count in the cancel mask, as in The
+   * Broken Seal's twin; as cancel = 2, 30 of 180 instructions differ in
+   * tla-en. */
   cancel = ((u32)(u16)count >> 16) | 2;
+  /* FAKEMATCH(temporary): the slot's offset defined before the loop; as the
+   * offset written at its load, 10 of 180 instructions differ in tla-en. */
   slotOffset = 0x1382;
   while (1) {
     if (gInput.repeat & 0x20) {
@@ -84,10 +82,13 @@ s32 Func_0804e3f4(void) {
       index = (index + total) % total;
       RenderOutput_PrepareForRedraw(window);
       if (index < count)
-        glyph = gData_0805eb58[index * 2 + 1];
+        glyph = gPortrait_CharacterMap[index * 2 + 1];
       else
-        glyph = gData_0805eb7c[(index - count) * 2 + 1] + 128;
+        glyph = gPortrait_SpriteMap[(index - count) * 2 + 1] + 128;
       {
+        /* FAKEMATCH(temporary): a word temporary for the slot and the
+         * palette in a variable; as the slot assigned directly and 15
+         * passed, 8 of 180 instructions differ in tla-en. */
         s32 pal;
         s32 loaded = *(u16 *)((u8 *)work + slotOffset);
         pal = 15;

@@ -584,7 +584,7 @@ msgctxt "message"
 msgid "00130"
 msgstr "3 min"
 
-msgctxt "message"
+msgctxt "MsgCharacterName"
 msgid "00131"
 msgstr "Hans"
 
@@ -22358,7 +22358,7 @@ msgctxt "message"
 msgid "05396"
 msgstr "No lo necesitas, ¿no?{page_break}"
 
-msgctxt "message"
+msgctxt "MsgTestName"
 msgid "05397"
 msgstr "Maestro Poi{end_wait}"
 

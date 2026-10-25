@@ -14623,7 +14623,7 @@ msgstr ""
 "すいこまれそうで\n"
 "くらくらしてきた{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFoundItem"
 msgid "03600"
 msgstr ""
 "{protagonist_name}は\n"

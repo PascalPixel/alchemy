@@ -16488,7 +16488,7 @@ msgctxt "message"
 msgid "04059"
 msgstr "Ça fait une belle descente.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFoundItem"
 msgid "04060"
 msgstr ""
 "{protagonist_name} a trouvé:\n"

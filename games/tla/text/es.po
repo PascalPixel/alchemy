@@ -16472,7 +16472,7 @@ msgctxt "message"
 msgid "04059"
 msgstr "Es muy profundo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFoundItem"
 msgid "04060"
 msgstr ""
 "{protagonist_name} encontró\n"

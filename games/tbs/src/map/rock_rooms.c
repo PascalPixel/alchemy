@@ -486,8 +486,8 @@ s32 Map_Initialize(void) {
   warpDest = gSaveBlock.warpDest;
   if (warpDest == ROOM_GATE_TO_SUHALLA) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
-    gSaveBlock.savedMap = (s32)&MapId_RockRooms;
-    gSaveBlock.savedWarpDest = warpDest;
+    gSaveBlock.restartMap = (s32)&MapId_RockRooms;
+    gSaveBlock.restartWarpDest = warpDest;
   }
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_WEAPON_COUNTER), 0);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ARMOR_COUNTER), 0);

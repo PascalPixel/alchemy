@@ -86,9 +86,9 @@ struct SaveBlock {
   /// The map being played: its index in gMapHeaders (a MapId_
   /// symbol), or RUN_BATTLE or another number above the field maps.
   s16 mapId;
-  s16 warpDest; ///< the warp destination taken; in RUN_BATTLE, the formation
-  s16 savedMap; ///< where a defeat returns to without a defeat point
-  s16 savedWarpDest;   ///< where a defeat returns to without a defeat point
+  s16 warpDest;   ///< the warp destination taken; in RUN_BATTLE, the formation
+  s16 restartMap; ///< where the party restarts: the last Sanctum, usually
+  s16 restartWarpDest; ///< the restart point's warp destination
   s16 defaultMap;      ///< the map being run, kept as it starts
   s16 defaultWarpDest; ///< the warp destination it was entered by
   s16 mapSec;  ///< the current map's map section; a new one resets its flags

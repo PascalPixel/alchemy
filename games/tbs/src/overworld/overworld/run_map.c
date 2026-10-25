@@ -199,8 +199,8 @@ s32 Map_Run(s32 warpDest) {
               vitals = Unit_GetFar(gSaveBlock.leaderLocalId);
               vitals->hp = 1;
               Unit_UpdateGauges(vitals);
-              gSaveBlock.mapId = gSaveBlock.savedMap;
-              gSaveBlock.warpDest = gSaveBlock.savedWarpDest;
+              gSaveBlock.mapId = gSaveBlock.restartMap;
+              gSaveBlock.warpDest = gSaveBlock.restartWarpDest;
               WorldMap_EndScript();
               result = WARP_NONE;
               goto done;

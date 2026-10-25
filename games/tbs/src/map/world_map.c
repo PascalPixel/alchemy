@@ -1998,8 +1998,8 @@ static void WorldMap_RunBlackOrbScene(void) {
   FieldScript_WaitFrames(20);
   GameFlag_Set(FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER);
   GameFlag_Set(FLAG_SAW_SHIP_AT_IDEJIMA);
-  gSaveBlock.savedMap = (s32)&MapId_WorldMap;
-  gSaveBlock.savedWarpDest = WORLD_MAP_AFTER_BLACK_ORB_DEFEAT;
+  gSaveBlock.restartMap = (s32)&MapId_WorldMap;
+  gSaveBlock.restartWarpDest = WORLD_MAP_AFTER_BLACK_ORB_DEFEAT;
   FieldScript_End();
 }
 

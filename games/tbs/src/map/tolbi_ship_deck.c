@@ -2163,8 +2163,8 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   ObjectEvent_WalkTo(LOCALID_IVAN, 248, 564);
   ObjectEvent_WalkTo(LOCALID_MIA, 248, 564);
   FieldScript_WaitFrames(20);
-  gSaveBlock.savedMap = (s32)&MapId_ShipRooms;
-  gSaveBlock.savedWarpDest = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
+  gSaveBlock.restartMap = (s32)&MapId_ShipRooms;
+  gSaveBlock.restartWarpDest = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   FieldScript_SetNextDestination((s32)&MapId_TolbiShipDeck,
                                  TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE);

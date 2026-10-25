@@ -530,8 +530,8 @@ void FieldScript_SetDestination(s32 mapId, s32 warpDest) {
 void FieldScript_SetSavedDestination(u16 mapId, u16 warpDest) {
   struct FieldWork *state = gFieldWork;
   state->warp = WARP_NONE;
-  gSaveBlock.savedMap = mapId;
-  gSaveBlock.savedWarpDest = warpDest;
+  gSaveBlock.restartMap = mapId;
+  gSaveBlock.restartWarpDest = warpDest;
 }
 
 /// The script command "request warp": sets the field's warp request (999 leaves

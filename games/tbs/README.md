@@ -34,7 +34,7 @@ flowchart TD
   which -- "RUN_BATTLE" --> battle["Battle_Run"]
   which -- "RUN_LUCKY_DICE<br/>RUN_LUCKY_WHEELS" --> mini["Lucky Dice<br/>Lucky Wheels"]
   map -. "the warp taken:<br/>next map" .-> loop
-  battle -. "won: same map<br/>lost: last save" .-> loop
+  battle -. "won: same map<br/>lost: the last Sanctum" .-> loop
   mini -. "result: back to<br/>the game room" .-> loop
   map --- scripts["Overlay area:<br/>the map's scripts"]
   classDef overlay stroke-dasharray: 6 4

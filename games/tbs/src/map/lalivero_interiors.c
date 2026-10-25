@@ -872,8 +872,8 @@ s32 Map_Initialize(void) {
                                    ANIM_WORKER_LIE_ASLEEP);
     warpDest = gSaveBlock.warpDest;
     if (warpDest == TIMBER_ROOMS_B_SANCTUM) {
-      gSaveBlock.savedMap = mapId;
-      gSaveBlock.savedWarpDest = warpDest;
+      gSaveBlock.restartMap = mapId;
+      gSaveBlock.restartWarpDest = warpDest;
     }
   }
   if (gSaveBlock.mapId == (s32)&MapId_TimberRoomsC) {

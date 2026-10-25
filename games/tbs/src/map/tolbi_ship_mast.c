@@ -7,7 +7,7 @@
 /// TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK. The warp destinations from
 /// TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR on are the voyage's
 /// cutscenes here, each leading on into the next; during the attacks the
-/// map a defeat returns to (gSaveBlock.savedMap) is set to
+/// map a defeat returns to (gSaveBlock.restartMap) is set to
 /// SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT, which starts the voyage
 /// over. While the ship is under way (rowing, or at sea after the first
 /// attack, and neither at the island nor at Tolbi) the setup sways the view.
@@ -382,18 +382,18 @@ s32 TolbiShipMast_Initialize(void) {
     }
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK:
-    gSaveBlock.savedMap = (s32)&MapId_ShipRooms;
-    gSaveBlock.savedWarpDest = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
+    gSaveBlock.restartMap = (s32)&MapId_ShipRooms;
+    gSaveBlock.restartWarpDest = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_RunAvastScene();
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK:
-    gSaveBlock.savedMap = (s32)&MapId_ShipRooms;
-    gSaveBlock.savedWarpDest = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
+    gSaveBlock.restartMap = (s32)&MapId_ShipRooms;
+    gSaveBlock.restartWarpDest = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_ShowMonsters();
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK:
-    gSaveBlock.savedMap = (s32)&MapId_ShipRooms;
-    gSaveBlock.savedWarpDest = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
+    gSaveBlock.restartMap = (s32)&MapId_ShipRooms;
+    gSaveBlock.restartWarpDest = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_RunLandingSequence();
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO:
@@ -876,8 +876,8 @@ static void TolbiShipMast_AnnounceLand(void) {
   FieldScript_WaitTransitionFrames();
   // The rowing balance picks where the ship comes in: exactly 11 takes
   // TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE, off course to the island.
-  gSaveBlock.savedMap = (s32)&MapId_ShipRooms;
-  gSaveBlock.savedWarpDest = SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK;
+  gSaveBlock.restartMap = (s32)&MapId_ShipRooms;
+  gSaveBlock.restartWarpDest = SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK;
   if (TolbiShipMast_GetRowingBalance() == 11) {
     Import_ScriptRequestWarp(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE);
   } else {

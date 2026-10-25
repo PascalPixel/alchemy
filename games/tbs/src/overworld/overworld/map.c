@@ -89,12 +89,14 @@ void Map_TakeWarp(s32 warpId) {
 /// not a map (see Game_MainLoop). result is its result:
 /// -1 when the party was defeated, which revives the leader with 1 HP (and,
 /// with FLAG_CHILDHOOD, fully heals Isaac and Garet, characters 0 and 1) and
-/// returns to the defeat point, or to the last saved point when none is set.
-/// Any other result goes to the next map the script set, or to the default
-/// map (the map the battle or minigame was started from) with the
-/// party keeping its position (FLAG_KEEP_PARTY_POSITION). Called by
-/// Game_MainLoop after each map from RUN_NONE on; stores result in
-/// gSaveBlock.runResult and sets gSaveBlock.mapId and .warpDest.
+/// returns to the story battle's defeat point
+/// (FieldScript_SetDefeatDestination) or, when none is set, to the restart
+/// point, usually the last Sanctum (Map_SetDefeatReturnPoint). Any other result
+/// goes to the next map the script set, or to the default map (the map the
+/// battle or minigame was started from) with the party keeping its position
+/// (FLAG_KEEP_PARTY_POSITION). Called by Game_MainLoop after each map from
+/// RUN_NONE on; stores result in gSaveBlock.runResult and sets gSaveBlock.mapId
+/// and .warpDest.
 void Map_ReturnFromRun(s32 result) {
   struct Unit *unit;
   s32 i;
@@ -120,8 +122,8 @@ void Map_ReturnFromRun(s32 result) {
     mapId = gSaveBlock.defeatMap;
     warpDest = gSaveBlock.defeatWarpDest;
     if (mapId == -1 && warpDest == -1) {
-      gSaveBlock.mapId = gSaveBlock.savedMap;
-      gSaveBlock.warpDest = gSaveBlock.savedWarpDest;
+      gSaveBlock.mapId = gSaveBlock.restartMap;
+      gSaveBlock.warpDest = gSaveBlock.restartWarpDest;
     } else {
       if (mapId != -1)
         gSaveBlock.mapId = mapId;

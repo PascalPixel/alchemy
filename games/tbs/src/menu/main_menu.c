@@ -542,7 +542,7 @@ menu_top:;
   }
   // Continue a file where it was saved, except: a file from another build of
   // the game, or one loaded with L and Start held, restarts at its last
-  // Sanctum (savedMap); a file whose two play times differ is reported
+  // Sanctum (restartMap); a file whose two play times differ is reported
   // corrupted, with the offer to restart there. The two chosen restarts set
   // flags that nothing reads.
   if (v6 == 1) {
@@ -556,8 +556,8 @@ menu_top:;
     state = &gSaveBlock;
     WindowColor_Apply(state->windowColor[0], state->windowColor[1]);
     if (state->buildStamp != BuildStamp_GetTime()) {
-      state->mapId = state->savedMap;
-      state->warpDest = state->savedWarpDest;
+      state->mapId = state->restartMap;
+      state->warpDest = state->restartWarpDest;
       GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
     } else if ((gKeysHeld & (KEY_L | KEY_START)) == (KEY_L | KEY_START)) {
       if (MainMenu_GetSaveRecoveryBlockMask() != 0) {
@@ -565,8 +565,8 @@ menu_top:;
                           FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
         goto menu_top;
       }
-      state->mapId = state->savedMap;
-      state->warpDest = state->savedWarpDest;
+      state->mapId = state->restartMap;
+      state->warpDest = state->restartWarpDest;
       GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
       GameFlag_Set(FLAG_SAVE_RESTARTED_AT_SANCTUM);
     } else if (state->playTime !=
@@ -589,8 +589,8 @@ menu_top:;
                           FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
         goto menu_top;
       }
-      state->mapId = state->savedMap;
-      state->warpDest = state->savedWarpDest;
+      state->mapId = state->restartMap;
+      state->warpDest = state->restartWarpDest;
       GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
       GameFlag_Set(FLAG_SAVE_RECOVERED_AT_SANCTUM);
     }

@@ -185,8 +185,8 @@ s32 Map_Initialize(void) {
   s32 mapId;
 
   if (GameFlag_Get(FLAG_SUHALLA_GATE_ATTACK_SEEN)) {
-    gSaveBlock.savedMap = (s32)&MapId_RockRooms;
-    gSaveBlock.savedWarpDest = ROCK_ROOMS_FROM_SUHALLA_GATE_CHECKPOINT;
+    gSaveBlock.restartMap = (s32)&MapId_RockRooms;
+    gSaveBlock.restartWarpDest = ROCK_ROOMS_FROM_SUHALLA_GATE_CHECKPOINT;
   }
   mapId = gSaveBlock.mapId;
   if (mapId == (s32)&MapId_SuhallaGateCheckpoint) {

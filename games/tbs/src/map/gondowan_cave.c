@@ -245,8 +245,8 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
       Script_ClearFlag(FLAG_IODEM_FOLLOWING_PARTY);
       ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IODEM);
       OBJECT_ANIMATION(LOCALID_IODEM, ANIM_STAND);
-      gSaveBlock.savedMap = (s32)&MapId_StuccoRoomsB;
-      gSaveBlock.savedWarpDest = STUCCO_ROOMS_B_SANCTUM_NORTH;
+      gSaveBlock.restartMap = (s32)&MapId_StuccoRoomsB;
+      gSaveBlock.restartWarpDest = STUCCO_ROOMS_B_SANCTUM_NORTH;
     } else {
       // "Then we should continue on our way to the lighthouse." He rejoins
       // the party, and Isaac steps away from the coord event.

@@ -968,7 +968,7 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
       Text_DrawMessage(MsgSaveNoData, fileList, 10, y);
     } else if (summary->frames < buildStamp) {
       // Saved by an older build: "(Continue from a Sanctum)", since such a
-      // file resumes at SaveBlock.savedMap, not where it was saved
+      // file resumes at SaveBlock.restartMap, not where it was saved
       // (menu/main_menu.c).
       Text_DrawMessage(MsgSaveContinue, fileList, 10, y);
     } else if (summary->playTime != *(u32 *)summary->secondRecordPlayTime) {

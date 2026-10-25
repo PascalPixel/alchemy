@@ -43,7 +43,7 @@ SECTIONS
         "*/games/tla/src/field/common/effect/move.o"(.text)
         "*/resource_69b_overlay.o"(.text.x0200965a)
         "*/resource_69b_overlay.o"(.text.x0200965c)
-        "*/resource_69b_overlay.o"(.text.x02009824)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_2/s1824.o"(.text)
         "*/resource_69b_overlay.o"(.text.x02009950)
         "*/games/tla/src/scene/jupiter_lighthouse_room_2/s1b94.o"(.text)
         "*/resource_69b_overlay.o"(.text.x02009c8c)

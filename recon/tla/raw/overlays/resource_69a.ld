@@ -26,7 +26,7 @@ SECTIONS
         "*/games/tla/src/field/common/object/set_sprite_priority.o"(.text)
         "*/games/tla/src/field/common/effect/move.o"(.text)
         "*/resource_69a_overlay.o"(.text.x02008f3c)
-        "*/resource_69a_overlay.o"(.text.x02009104)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_1/s1104.o"(.text)
         "*/resource_69a_overlay.o"(.text.x02009230)
         "*/games/tla/src/scene/jupiter_lighthouse_room_1/s1474.o"(.text)
         "*/resource_69a_overlay.o"(.text.x0200956c)

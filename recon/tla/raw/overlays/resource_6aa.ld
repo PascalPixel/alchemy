@@ -74,7 +74,7 @@ SECTIONS
         "*/games/tla/src/field/common/object/set_sprite_priority_b.o"(.text)
         "*/games/tla/src/field/common/effect/move.o"(.text)
         "*/resource_6aa_overlay.o"(.text.x0200bb30)
-        "*/resource_6aa_overlay.o"(.text.x0200bcf8)
+        "*/games/tla/src/scene/mars_lighthouse_entrance/s3cf8.o"(.text)
         "*/resource_6aa_overlay.o"(.text.x0200be24)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s4068.o"(.text)
         "*/resource_6aa_overlay.o"(.text.x0200c160)

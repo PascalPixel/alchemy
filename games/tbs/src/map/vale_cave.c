@@ -30,11 +30,8 @@
 ///   FLAG_VALE_CAVE_KITE_BEHIND_LEDGE); from then on twelve metatile behaviors,
 ///   45 to 56 on the 23 cells round the ledge, each send it to its point of
 ///   gValeCave_WalkTargets on the ledge's far side as the leader walks round
-///   (EventScript_KiteKeepsAway), so it cannot be reached until Halt stops it
-///   (https://alchemy.pascalpixel.com/places/vale-cave-kite/kite-ledge.gif: the
-///   leader walking the ring, twice the size, the cells of those metatile
-///   behaviors outlined and numbered from 0 by behavior, the walk targets drawn
-///   with the same numbers, and Kite boxed). A stopped Kite can be talked to
+///   (EventScript_KiteKeepsAway), so it cannot be reached until Halt stops it.
+///   A stopped Kite can be talked to
 ///   and joins the party (EventScript_TalkToKite), setting FLAG_KITE, which
 ///   removes it from the object event templates. The room's chests hold the
 ///   Halt Gem, which gives Halt, and a Nut. In the holes' part

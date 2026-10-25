@@ -72,14 +72,11 @@
 /// ValePlaza_Initialize hides the storm's Jenna by number without testing
 /// FLAG_VALE_STORM, and by day that number is his (a BUG, fixed by BUGFIX).
 ///
-/// A villager showing Psynergy (EventScript_DemonstratePsynergy by day,
-/// EventScript_BoyLiftsSmallRock on the stormy night) flashes white
-/// (ValePlaza_FlashPsynergyPalette), then cycles through his colour modes while
-/// pairs of sparks rise and fall about him every 16 frames
-/// (ValePlaza_CyclePsynergyPaletteAndSpawnEffects)
-/// (https://alchemy.pascalpixel.com/places/vale-gate/psynergy-display.gif: the
-/// strongman's display by day, the screen with him boxed beside the sprites
-/// alone and the 16 sprite palettes).
+/// A villager showing Psynergy (the strongman in
+/// EventScript_DemonstratePsynergy by day, EventScript_BoyLiftsSmallRock on the
+/// stormy night) flashes white (ValePlaza_FlashPsynergyPalette), then cycles
+/// through his colour modes while pairs of sparks rise and fall about him every
+/// 16 frames (ValePlaza_CyclePsynergyPaletteAndSpawnEffects).
 
 #include "save_block.h"
 #include "flags.h"

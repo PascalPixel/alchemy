@@ -31,10 +31,7 @@
 ///   Water of Life last), and the item won has its weight halved for later
 ///   tosses. Where the token settles is measured from TOLBI_SPRING_CENTER_X and
 ///   _Z, the rings ending at squared distances of 224, 624, 1,088 and 1,680
-///   square pixels, which match the rings painted in the spring
-///   (https://alchemy.pascalpixel.com/places/tolbi-spring/toss.gif: a coin
-///   tossed from the spring's edge, its path in yellow, the rings drawn at
-///   those distances and labelled with what a coin wins in each). The spring
+///   square pixels, which match the rings painted in the spring. The spring
 ///   opens to show the prize as it is given. In the editions before TBS_PATCH_1
 ///   the coin and medal counts show an `=` after each number.
 

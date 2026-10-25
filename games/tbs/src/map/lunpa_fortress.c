@@ -46,12 +46,9 @@
 /// a leader in his own column up to six rows away, or within a row of his up to
 /// six columns away, whatever stands between them, but never one in rows 5 to 7
 /// from column 10 west, at the passage's top, or in columns 8 and 9 below row
-/// 22 (LunpaFortress_IsLeaderInPatrolSafeZone)
-/// (https://alchemy.pascalpixel.com/places/lunpa-fortress-upper-floor/patrol-sight.png:
-/// the west passage with the pair's rounds in yellow, every cell either guard
-/// sees from some point of his round in red, and the cells they never look at
-/// in green). The guards who fight instead pick one of four challenges, by
-/// gLunpaFortressRandomPick, drawn on every arrival.
+/// 22 (LunpaFortress_IsLeaderInPatrolSafeZone). The guards who fight instead
+/// pick one of four challenges, by gLunpaFortressRandomPick, drawn on every
+/// arrival.
 ///
 /// The Cell Key opens the cell doors of all four maps, facing each door with it
 /// in the party, and each opened door is remembered in a map-section temp flag

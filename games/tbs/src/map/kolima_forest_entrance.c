@@ -13,11 +13,7 @@
 /// and Garet's on odd ones, each lifted out of sight on the others
 /// (KolimaForestEntrance_FlickerPsynergyFields). A sparkle bursts where it
 /// lands only inside the boxes KolimaForestEntrance_BurstOnPsynergyField tests,
-/// two with Mia in the party and three without her
-/// (https://alchemy.pascalpixel.com/places/kolima-forest-entrance/psynergy-fields.png:
-/// two frames running without Mia and with her, each field's place labelled
-/// with whose it is, in colour on the frame it shows, and the boxes outlined in
-/// yellow).
+/// two with Mia in the party and three without her.
 ///
 /// Three logs lie here, rolled by walking into them; the one pushed west to the
 /// water's edge tips into the river and floats there, cells the party can

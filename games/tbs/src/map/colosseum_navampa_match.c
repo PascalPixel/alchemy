@@ -36,10 +36,7 @@
 /// Stepping onto the Scales of Justice's western ledge (coord event 15,
 /// EventScript_StepOnScales) sends it, with the rider, down towards 4 pixels
 /// high and the eastern ledge up towards 32, and stepping off (coord event 16)
-/// swings them back; the weight Move sets on the western ledge does the same
-/// (https://alchemy.pascalpixel.com/places/colosseum-navampa-match/scales.gif:
-/// the leader stepping on, each ledge labelled with its height in whole
-/// pixels).
+/// swings them back; the weight Move sets on the western ledge does the same.
 ///
 /// Win or lose, the third match ends Colosso:
 /// COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON and _LOST set FLAG_COLOSSO_OVER, and

@@ -46,11 +46,8 @@
 /// lined up across the water in one phase and two up and two down, by turns,
 /// in the other. Each frame the task copies metatile behaviors into row 13 from
 /// column 58 and into cell (58, 11): one pair of copies by phase once the
-/// last lift has stopped, another while it moves
-/// (https://alchemy.pascalpixel.com/places/colosseum-satrage-match/lifts.gif:
-/// two cycles, the copied cells outlined and tinted by what each does, a wall,
-/// a jump across or open ground, under the phase in words, the lifts lining
-/// up or parting, and the frames to its next change).
+/// last lift has stopped, another while it moves. Each copied cell is a wall,
+/// a jump across or open ground, as the lifts line up or part.
 
 #include "action_script.h"
 #include "save_block.h"

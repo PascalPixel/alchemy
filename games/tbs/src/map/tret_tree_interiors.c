@@ -22,11 +22,8 @@
 /// a torn cocoon breaks through, and the leader spins and falls to the room
 /// below, arriving at the warp destination numbered as the cocoon
 /// (FLAG_ARRIVE_FALLING plays the landing): the cocoons 21 to 29 and 31 and 32
-/// drop the leader into one room and 50 to 59 into another
-/// (https://alchemy.pascalpixel.com/places/tret-tree-interiors/cocoons.png: the
-/// whole map, its six rooms where the grid lays them out, each cocoon's cells
-/// labelled with its metatile behavior and the warp destination of the same
-/// number ringed in the same colour). The layout draws four cocoons already
+/// drop the leader into one room and 50 to 59 into another of the map's six
+/// rooms. The layout draws four cocoons already
 /// torn (22, 52, 54 and 58) and the setup sets their flags, so they give way at
 /// the first step. A latch in the map state (sLastCocoon) keeps a step from
 /// counting twice until the leader walks on. Cocoon 50 is the way down to Tret:

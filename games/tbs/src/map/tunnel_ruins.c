@@ -52,10 +52,7 @@
 /// gTunnelRuins_BalanceHeights turns each weight into the platform's height.
 /// Entering from the Great Statue's north sets the balance up empty; coming in
 /// by TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH sets all three stones on it, one
-/// stone on the west platform and two stacked on the east, weights 2 and 4
-/// (https://alchemy.pascalpixel.com/places/tunnel-ruins-lady-statues/balance.png:
-/// the balance as each warp destination sets it up, each platform labelled with
-/// its weight and height in pixels and each stone with its letter).
+/// stone on the west platform and two stacked on the east, weights 2 and 4.
 
 #include "action_script.h"
 #include "version.h"

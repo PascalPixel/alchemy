@@ -16,30 +16,25 @@
 ///   what happened on the mountain, acted out in sepia
 ///   (Sanctum_ReenactSolSanctum): the palette fade turns every background and
 ///   sprite palette to PALETTE_TINT_SEPIA for the account and fades back to
-///   PALETTE_TINT_NONE over 60 frames after it
-///   (https://alchemy.pascalpixel.com/places/sanctum/account-sepia.gif: the
-///   account's first ten seconds and its last five, beside the 16 background
-///   and 16 sprite palettes). The Great Healer asks Isaac to take on the Wise
-///   One's quest (Sanctum_RequestQuestAcceptance). Each time his Psynergy
-///   shows, LOCALID_HEALER_AFTERIMAGE, a copy of him in SPRITE_COLOR_RED_TINT,
-///   jumps round him by a few pixels a frame (Sanctum_UpdateHealerAfterimage)
-///   while effects circle him (Sanctum_SpawnOrbitingEffect)
-///   (https://alchemy.pascalpixel.com/places/sanctum/healer-afterimages.gif:
-///   the screen, the healer boxed, beside the sprites and the sprites without
-///   the afterimage). Accepting plays Sanctum_ReceiveWiseOnesMission and sets
-///   FLAG_SANCTUM_QUEST_ACCEPTED, and SANCTUM_TO_VALE_PLAZA takes the two to
-///   MapId_ValePlaza (vale_plaza.c). Refusing leaves the room to
-///   gSanctum_QuestEvents: the Great Healer asks again when spoken to
-///   (EventScript_ReconsiderQuest), the door draws a warning
-///   (FLAG_SANCTUM_WARNED_BEFORE_LEAVING), and leaving anyway ends the game
-///   (EventScript_LeaveAfterRefusing): `And so the world began drifting toward
-///   its fated destruction...` From there the player can start again from the
-///   Great Healer, by SANCTUM_TO_QUEST_RESTART to SANCTUM_FROM_QUEST_RESTART,
-///   which skips the account (FLAG_SANCTUM_QUEST_RESTARTED), or leave by
-///   SANCTUM_TO_MAIN_MENU to MapId_MainMenu. After the party has left Vale
-///   (FLAG_VALE_PARTY_LEFT), and again after it has reached Kalay
-///   (FLAG_KALAY_REACHED), the three talk of what the eruption and the Wise One
-///   changed.
+///   PALETTE_TINT_NONE over 60 frames after it. The Great Healer asks Isaac to
+///   take on the Wise One's quest (Sanctum_RequestQuestAcceptance). Each time
+///   his Psynergy shows, LOCALID_HEALER_AFTERIMAGE, a copy of him in
+///   SPRITE_COLOR_RED_TINT, jumps round him by a few pixels a frame
+///   (Sanctum_UpdateHealerAfterimage) while effects circle him
+///   (Sanctum_SpawnOrbitingEffect). Accepting plays
+///   Sanctum_ReceiveWiseOnesMission and sets FLAG_SANCTUM_QUEST_ACCEPTED, and
+///   SANCTUM_TO_VALE_PLAZA takes the two to MapId_ValePlaza (vale_plaza.c).
+///   Refusing leaves the room to gSanctum_QuestEvents: the Great Healer asks
+///   again when spoken to (EventScript_ReconsiderQuest), the door draws a
+///   warning (FLAG_SANCTUM_WARNED_BEFORE_LEAVING), and leaving anyway ends the
+///   game (EventScript_LeaveAfterRefusing): `And so the world began drifting
+///   toward its fated destruction...` From there the player can start again
+///   from the Great Healer, by SANCTUM_TO_QUEST_RESTART to
+///   SANCTUM_FROM_QUEST_RESTART, which skips the account
+///   (FLAG_SANCTUM_QUEST_RESTARTED), or leave by SANCTUM_TO_MAIN_MENU to
+///   MapId_MainMenu. After the party has left Vale (FLAG_VALE_PARTY_LEFT), and
+///   again after it has reached Kalay (FLAG_KALAY_REACHED), the three talk of
+///   what the eruption and the Wise One changed.
 /// - Vault Sanctum (SANCTUM_FROM_VAULT and SANCTUM_FROM_VAULT_INTERIORS). Its
 ///   healer and the other person there (LOCALID_SANCTUM_MEMBER) miss a gold
 ///   statue stolen during the eruption, until the party has the thieves jailed

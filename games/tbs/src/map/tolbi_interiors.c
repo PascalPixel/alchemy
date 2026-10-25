@@ -15,8 +15,7 @@
 ///   TOLBI_INTERIORS_INN_TO_INN_PASSAGE and
 ///   TOLBI_INTERIORS_INN_PASSAGE_TO_INN join it to the inn's corridor, whose
 ///   doors lead into four guest rooms
-///   (TOLBI_INTERIORS_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST and the rest;
-///   https://alchemy.pascalpixel.com/places/tolbi-interiors/inn-rooms.png).
+///   (TOLBI_INTERIORS_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST and the rest).
 /// - Tolbi Sanctum, behind TOLBI_TO_SANCTUM (TOLBI_INTERIORS_SANCTUM), whose
 ///   healer opens the sanctum across the counter. TOLBI_INTERIORS_SANCTUM_NORTH
 ///   is where a defeat returns the party while Iodem waits at Gondowan Passage.

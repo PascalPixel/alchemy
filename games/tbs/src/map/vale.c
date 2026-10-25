@@ -70,10 +70,7 @@
 /// In the opening Garet trains his Psynergy on the pillar: his sprite flashes
 /// white, then cycles through its colour modes with sparks about him, while the
 /// hand of Move (LOCALID_OPENING_MOVE_HAND) pushes the pillar west, the pillar
-/// cycling its colour modes too, and sheds sparkles
-/// (https://alchemy.pascalpixel.com/places/vale/opening-move.gif: the screen,
-/// Garet, the pillar and the hand boxed, beside the sprites alone and the 16
-/// sprite palettes).
+/// cycling its colour modes too, and sheds sparkles.
 
 #include "save_block.h"
 #include "vram_cache.h"

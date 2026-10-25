@@ -35,8 +35,7 @@
 ///   two warps.
 /// - Colosseum (MapId_Colosseum), one map that holds the stands, the trial
 ///   grounds, the finals' waiting room and the passages to the finals stages,
-///   each a warp destination's camera box on it
-///   (https://alchemy.pascalpixel.com/places/colosseum/camera-boxes.png).
+///   each a warp destination's camera box on it.
 ///   Every arrival is a warp destination of its own, and
 ///   ColosseumEntrance_ApplyArrivalState plays the cutscene that warp
 ///   destination stands for. During the trials the stands' warp destinations

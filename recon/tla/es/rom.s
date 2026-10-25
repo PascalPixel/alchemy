@@ -2502,12 +2502,6 @@ Menu_UpdateEntryObjectTransformsFar:
 	.thumb_func
 Func_080f8170:
 	.incbin "baserom.gba", 0x000fe170, 0x00000494
-	.section .rom.000fe87c, "ax"
-	.global UiIcon_PrepareObject
-	.type UiIcon_PrepareObject, %function
-	.thumb_func
-UiIcon_PrepareObject:
-	.incbin "baserom.gba", 0x000fe87c, 0x0000003c
 	.section .rom.000fe998, "ax"
 	.balign 4
 	.global Func_080f89a4
@@ -2736,12 +2730,6 @@ Func_0810a108:
 	.incbin "baserom.gba", 0x0010e10c, 0x000001a4
 	.section .rom.0010e2dc, "ax"
 	.incbin "baserom.gba", 0x0010e2dc, 0x00000394
-	.section .rom.0010e710, "ax"
-	.global Forge_FindRecipe
-	.type Forge_FindRecipe, %function
-	.thumb_func
-Forge_FindRecipe:
-	.incbin "baserom.gba", 0x0010e710, 0x0000003c
 	.section .rom.0010ebf4, "ax"
 	.global Func_0810abf0
 	.type Func_0810abf0, %function

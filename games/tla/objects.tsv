@@ -3305,12 +3305,7 @@ main	rom_main_06	recon/tla/raw/080f8170		en
 main	rom_main_06	recon/tla/ja/rom	.rom.000f8170	ja
 main	rom_main_06	games/tla/src/graphics/render/value_rows	.text
 main	rom_main_06	games/tla/src/graphics/tile/create_with_resource_variant	.text
-main	rom_main_06	recon/tla/it/rom	.rom.000f8888	it
-main	rom_main_06	recon/tla/fr/rom	.rom.000fa888	fr
-main	rom_main_06	recon/tla/es/rom	.rom.000fe87c	es
-main	rom_main_06	recon/tla/de/rom	.rom.00102888	de
-main	rom_main_06	recon/tla/raw/080f8888	.text	en
-main	rom_main_06	recon/tla/ja/rom	.rom.000f8830	ja
+main	rom_main_06	games/tla/src/menu/f0f8888	.text
 main	rom_main_06	games/tla/src/menu/call_icon_routine	.text
 main	rom_main_06	games/tla/src/menu/arrow_window	.text
 main	rom_main_06	recon/tla/it/rom	.rom.000f89a4	it
@@ -3750,12 +3745,6 @@ main	rom_main_07	games/tla/src/menu/shop/f10a670	.text	en de es fr it
 main	rom_main_07	recon/tla/ja/rom	.rom.0010a110	ja
 main	rom_main_07	games/tla/src/menu/shop/f10a6b8	.text
 main	rom_main_07	games/tla/src/menu/shop/rowtype	.text
-main	rom_main_07	recon/tla/it/rom	.rom.0010a710	it
-main	rom_main_07	recon/tla/fr/rom	.rom.0010a710	fr
-main	rom_main_07	recon/tla/es/rom	.rom.0010e710	es
-main	rom_main_07	recon/tla/de/rom	.rom.00112710	de
-main	rom_main_07	recon/tla/raw/0810a70c	.text	en
-main	rom_main_07	recon/tla/ja/rom	.rom.0010a71c	ja
 main	rom_main_07	games/tla/src/menu/shop/forge	.text
 main	rom_main_07	games/tla/src/menu/shop/service	.text
 main	rom_main_07	games/tla/src/menu/shop/f10a960	.text

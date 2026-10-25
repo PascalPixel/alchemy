@@ -40,9 +40,7 @@ s32 Func_0803d020(s32 message, u8 *canvas) {
       return text[3] == '-' ? 3 : 2;
     return 1;
   }
-  do {
-    x = (192 - width) / 2;
-  } while (0);
+  x = (192 - width) / 2;
   code = *text++;
   while (code != 0) {
     if (code <= 30) {

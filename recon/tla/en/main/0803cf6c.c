@@ -14,10 +14,6 @@ void Func_0803cf6c(s32 message) {
   struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
   u32 count = work->count;
 
-  /* FAKEMATCH(barrier): an empty asm, so the count is read before the
-   * 0xffff is built; as plain statements, 4 of 22 instructions differ in
-   * tla-en. */
-  __asm__ volatile("");
   count = (u16)(count - 1) & (UI_TEXT_ENTRY_COUNT - 1);
   work->count = (u16)(count - 1) & (UI_TEXT_ENTRY_COUNT - 1);
   UiText_BuildRenderEntries(message, 1);

@@ -30,8 +30,8 @@ u8 SerialRuntime_CollectReceivedPayloads(void *payload) {
   *(u32 *)gSerialRuntime.channelFlags = 0;
   Io_Write16(1, &REG_IME);
   gSerialRuntime.currentMask = 0;
-  /* FAKEMATCH: holds the currentMask store ahead of the loop setup (one
-   * reordered pair without it). */
+  /* FAKEMATCH(barrier): an empty asm holds the currentMask store ahead of the
+   * loop setup; as plain statements, 2 of 106 instructions differ in tla-en. */
   asm volatile("");
   for (i = 0; i <= 1; i++) {
     packet = gSerialRuntime.pendingBuffer[i];

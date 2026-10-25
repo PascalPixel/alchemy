@@ -32,6 +32,5 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z) {
     grid = gMapShapeGrid;
   grid += x / 16 + (z / 16 << 7);
   code = Ram_MapCollision + *grid * 4;
-  __asm__ volatile("");
   return gMap_TerrainHeightHandlers[*code++ & 15](code, x & 15, z & 15);
 }

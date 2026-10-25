@@ -49,9 +49,7 @@ void OptionMenu_InitializeWork(void) {
 
   work = (struct OptionWork *)Runtime_AllocateBlock(208, 0x628);
   zero = 0;
-  do {
-    Dma_Set((const void *)&zero, work, 0x8500018a, REG_DMA3);
-  } while (0);
+  Dma_Set((const void *)&zero, work, 0x8500018a, REG_DMA3);
   work->option[0] = gPartyState.paletteGlow[0];
   work->optionCount[0] = 24;
   work->option[1] = gPartyState.paletteGlow[1];

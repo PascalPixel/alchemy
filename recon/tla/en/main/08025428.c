@@ -57,8 +57,9 @@ s32 Func_08025428(struct ObjectRuntime *cameraObject) {
       cameraObject->z = z;
     } else {
       dx = (x - cameraObject->x) / 0x10000;
-      /* FAKEMATCH: dead code, as in ☀️: this dy is overwritten below, but its
-       * references keep y in r5 (differ 58 without it). */
+      /* FAKEMATCH(dead): this dy, overwritten below, ranks y above the bounds
+       * in global allocation and keeps it in r5 as native; without it, 54 of
+       * 228 instructions differ in tla-en. */
       dy = (y - cameraObject->y) / 0x10000;
       dz = (z - cameraObject->z) / 0x10000;
       distance = Iwram_Sqrt(dx * dx + dz * dz) << 16;

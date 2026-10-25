@@ -46,14 +46,11 @@ s32 Map_LoadAreaGraphics(void) {
   WaitFrames(1);
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), buffer);
-  /* FAKEMATCH: the halfword local keeps zero in r5 and the short-range pool
-   * before the epilogue. */
-  value = 0;
   Map_UpdateCurrentTileBlock();
-  state->animationActive = value;
+  state->animationActive = 0;
   Scheduler_ResumeTasks(MapAnimation_Update);
-  state->framePending = value;
-  state->frameShown = value;
+  state->framePending = 0;
+  state->frameShown = 0;
   Func_0802d088(state->area, 0);
   WaitFrames(1);
 }

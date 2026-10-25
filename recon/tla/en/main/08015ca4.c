@@ -83,15 +83,6 @@ s32 SaveState_WriteRecord(s32 recordId, void *source) {
   }
   work->occupied[slot] = 1;
   work->recordId[slot] = recordId;
-  {
-    u32 sequence = header.sequence;
-
-    /* FAKEMATCH: the empty one-pass block ends the scheduling region, so the
-     * sequence loads before the slot is scaled as in the native (one reordered
-     * pair without it). */
-    do {
-    } while (0);
-    work->sequence[slot] = sequence;
-  }
+  work->sequence[slot] = header.sequence;
   return 0;
 }

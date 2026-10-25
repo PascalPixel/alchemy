@@ -110,9 +110,7 @@ void UiGlyph_ResetWorkState(void) {
   work->field2e2 = 0;
   work->field2fa = 0;
   work->field316 = 0;
-  do {
-    visual = &work->visual;
-  } while (0);
+  visual = &work->visual;
   visual->flags05_2 = 0;
   visual->flags05_4 = 0;
   visual->flags05_5 = 1;

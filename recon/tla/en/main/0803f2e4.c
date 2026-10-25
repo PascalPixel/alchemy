@@ -78,6 +78,9 @@ void MenuSelection_SetupEntry(u32 kind, s32 base, struct ListNode *node,
   node->field22 = 0x100;
   node->field26 = 0x100;
 
+  /* FAKEMATCH(one-pass): the object pointer formed in a once-only block,
+   * which ends the scheduling region before its field stores; as
+   * obj = &node->obj, 2 of 103 instructions differ in tla-en. */
   do {
     obj = &node->obj;
   } while (0);

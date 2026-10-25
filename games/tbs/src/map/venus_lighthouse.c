@@ -48,11 +48,8 @@
 ///   of track that sink into four sockets; with all three sunk two lights run
 ///   from the statue, and when the track leads one to the gate it opens
 ///   (FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN, with
-///   FLAG_VENUS_LIGHTHOUSE_SOCKETS_A or _B for where the pillars stand). The
-///   room with its sockets labelled, an arrangement of the pieces that opens
-///   the gate and the light's path through it is
-///   https://alchemy.pascalpixel.com/places/venus-lighthouse-third-floor/sockets.png.
-///   A chest holds Dragon Scales.
+///   FLAG_VENUS_LIGHTHOUSE_SOCKETS_A or _B for where the pillars stand). A
+///   chest holds Dragon Scales.
 /// - Venus Lighthouse (MapId_VenusLighthouseFourthFloor). Floors carry the
 ///   party each way, a west and an east floor switch slide their walls aside
 ///   (FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED and _EAST_WALL_MOVED, which

@@ -42,12 +42,8 @@
 /// it; when both leave it freezes again
 /// (BilibinCave_UpdateThirdPuddleFromTorches). Melting turns the metatile
 /// behaviors of cells (36, 22) and (36, 24), north and south of the puddle,
-/// from MB_ENCOUNTER_GROUND_1 to MB_JUMP_FORWARD
-/// (https://alchemy.pascalpixel.com/places/bilibin-cave-ice/third-puddle-melt.gif:
-/// the fourth torch, put a cell west of (35, 23), moved onto it with Move, its
-/// cell outlined in yellow and the two rewritten cells in red, each labelled
-/// with what it does, encounter ground and then a jump across).
-/// FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR and
+/// from MB_ENCOUNTER_GROUND_1 to MB_JUMP_FORWARD: encounter ground becomes a
+/// jump across. FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR and
 /// FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR remember which torch stands there
 /// and FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED that the pillar has melted, so
 /// coming back from MapId_BilibinCaveRapier puts the torches and the pillar

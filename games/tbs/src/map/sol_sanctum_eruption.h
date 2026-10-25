@@ -11,8 +11,7 @@ enum CollapseLocalId {
   /// the departing object event, whose own shadow is turned off
   /// (SolSanctumEruption_RaiseAndShrinkObjectEvent).
   /// ★ Named from what the player sees: the shadow that shrinks on the
-  /// platform as each of them rises away (its render),
-  /// https://alchemy.pascalpixel.com/places/sol-sanctum-eruption/departing-shadow.gif
+  /// platform as each of them rises away (its render)
   LOCALID_PLATFORM_SHADOW = LOCALID_FIRST_PLACED,
   /// ★ Named from the game: "What's wrong, Kraden?" (MsgSolSanctumWrongKraden)
   LOCALID_KRADEN,

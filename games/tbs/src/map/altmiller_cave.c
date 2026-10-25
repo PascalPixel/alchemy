@@ -38,12 +38,8 @@
 /// layers under it 16 sixteenths at level 0, two fewer at each level after,
 /// down to 6 at level 5. Where one level meets the next, a cell of each lies
 /// side by side, so the level is that of the cell the leader last stepped on,
-/// in either direction
-/// (https://alchemy.pascalpixel.com/places/altmiller-cave-entrance/darkness-levels.png:
-/// the passage's map with each cell labelled with the level it sets, over the
-/// same moment drawn at each of the six levels). Reveal lights a dark room
-/// while it lasts and shows the rocks' colours (AltmillerCave_StartReveal,
-/// AltmillerCave_EndReveal).
+/// in either direction. Reveal lights a dark room while it lasts and shows the
+/// rocks' colours (AltmillerCave_StartReveal, AltmillerCave_EndReveal).
 ///
 /// The rock puzzle keeps the rounds matched in gMapLocalState byte 0 and its
 /// state and the light at the top in struct RockPuzzle after it. Turning the

@@ -23,7 +23,7 @@
 ///   from the five houses' chimneys, staggered over each second, and one turns
 ///   the leader's footprints in the snow off on the frozen river that runs down
 ///   from the falls and on the raised ground under the big tree, and on
-///   elsewhere (both drawn on places/imil/footprints.png). Stepping onto ice
+///   elsewhere. Stepping onto ice
 ///   (metatile behavior 90) slides the leader in the held direction, turning
 ///   toward it as he goes, until a blocked cell or one too high stops him. Move
 ///   pushes the snowman only when cast from the snow, not from the river's ice
@@ -1281,7 +1281,7 @@ Imil_StartRisingEffect(union ObjectEventOrEffect *fieldObject) {
 }
 
 /// Smoke rises from the chimneys of Imil's five houses, staggered over each
-/// second (places/imil/footprints.png rings the chimneys).
+/// second.
 static void Imil_SpawnAmbientEffects(void) {
   // volatile: the type of &gFrameCount (frame.h); the six editions build the
   // same bytes without it
@@ -1320,7 +1320,7 @@ static void Imil_SpawnAmbientEffects(void) {
 /// elsewhere, each frame while the party is in the village: the frozen river,
 /// a north-south strip from x 192 to 255 widening to x 176 between z 288 and
 /// 367, and the raised ground under the big tree, above a height of 30 pixels
-/// east of x 232 and south of z 212 (places/imil/footprints.png).
+/// east of x 232 and south of z 212.
 static void Imil_UpdateFootprints(void) {
   struct ObjectEvent *objectEvent;
   s32 x;

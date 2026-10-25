@@ -41,11 +41,7 @@
 ///   (Colosso_StartRaceGauge), after the lettering `Match 1` and a count of
 ///   three. Azart runs east of the finish (1,304 pixels across, where the
 ///   prizes stand), his path the mirror of one through Isaac's own stages,
-///   so he is seen only as he comes into the arena
-///   (https://alchemy.pascalpixel.com/places/colosseum-azart-match/race.png:
-///   Isaac left standing at the start, Azart's place over the race mirrored
-///   back across the finish and drawn in red on the course, a dot every five
-///   seconds, and the gauge at four moments). At the arena
+///   so he is seen only as he comes into the arena. At the arena
 ///   (EventScript_ReachArena) the first to arrive takes the Iron Shield and the
 ///   second the Padded Gloves, which Isaac is given and equipped with, and the
 ///   two fight: the battle is ENCOUNTER_ZONE_COLOSSO's first or second group,

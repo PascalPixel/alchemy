@@ -34,11 +34,7 @@
 ///   MB_MERCURY_LIGHTHOUSE_POOL_WATER, the heart
 ///   MB_MERCURY_LIGHTHOUSE_POOL_HEART and cells on the pool's rim
 ///   MB_MERCURY_LIGHTHOUSE_POOL_RIM, which the hops and lights below answer,
-///   while the water between them stays a wall
-///   (https://alchemy.pascalpixel.com/places/mercury-lighthouse-entrance/pool-ply-cells.png:
-///   the pool's cells tinted by what each does, a wall, a hop, or the lights
-///   given or taken, entered by the goddess's room before and after Ply, the
-///   cells Ply changed outlined). From then on
+///   while the water between them stays a wall. From then on
 ///   the pool's heart
 ///   ( MB_MERCURY_LIGHTHOUSE_POOL_HEART) gives the leader up to three lights,
 ///   each hop into the water spends one, and landing in it without one sinks

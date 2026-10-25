@@ -10,15 +10,11 @@
 /// outside a box around the view and raises the COORD_EVENT_MAPSEC of the one
 /// the leader touches, which the map event table turns into that map section's
 /// warp; a few ways in are cells instead, each carrying the number of its warp.
-/// The world map laid flat, with each map section's object event boxed and
-/// labelled by its COORD_EVENT_MAPSEC and the box kept visible around a view at
-/// Vale, is
-/// https://alchemy.pascalpixel.com/places/world-map/place-triggers.png. Five
-/// map sections have two ways in, and their scripts choose the warp by the side
-/// the leader comes from: the Bilibin Barricade from the west or the east, and
-/// Kolima Bridge, Kalay Docks, Gondowan Passage and Lalivero from the north or
-/// the south. Kolima Bridge's object event shows the drawbridge let down once
-/// FLAG_KOLIMA_BRIDGE_LOWERED is set.
+/// Five map sections have two ways in, and their scripts choose the warp by the
+/// side the leader comes from: the Bilibin Barricade from the west or the east,
+/// and Kolima Bridge, Kalay Docks, Gondowan Passage and Lalivero from the north
+/// or the south. Kolima Bridge's object event shows the drawbridge let down
+/// once FLAG_KOLIMA_BRIDGE_LOWERED is set.
 ///
 /// It holds what the party meets on the map itself. Vine, Corona and Hail, a
 /// Venus, a Mars and a Mercury Djinni, stand on the map and, talked to or

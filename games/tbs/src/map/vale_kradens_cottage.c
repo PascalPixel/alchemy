@@ -16,12 +16,9 @@
 ///   VALE_KRADENS_COTTAGE_TO_VALE_STORMY_NIGHT_SOUTH). A rockslide has broken
 ///   the fence and let monsters in: Initialize starts the lightning, leaves the
 ///   two rocks that Isaac cannot budge across the way, copies MB_WALL over the
-///   path's cells below the west rock and under the east one, two of which by
-///   day hold EventScript_MeetSaturosAndMenardi's metatile behavior 7
-///   (https://alchemy.pascalpixel.com/places/vale-kraden/rockslide-cells.png:
-///   the room on the stormy night and by day, the rocks boxed and the six
-///   cells outlined with their metatile behaviors), and lays a hurt man by the
-///   fence. Talking to
+///   path's six cells below the west rock and under the east one, two of which
+///   by day hold EventScript_MeetSaturosAndMenardi's metatile behavior 7, and
+///   lays a hurt man by the fence. Talking to
 ///   him, or walking up to him (metatile behavior 20), plays
 ///   EventScript_TalkToRockslideSurvivor: asked whether he will die, a yes
 ///   leaves him giving up (FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP), and a no has

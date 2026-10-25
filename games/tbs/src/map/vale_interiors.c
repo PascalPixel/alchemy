@@ -48,10 +48,7 @@
 /// frames 10, 20 and 30 of every 180 (ValeInteriors_SpawnSleepZ): each
 /// starts 24 pixels above him at two fifths of its size and grows a fortieth
 /// a frame as it climbs ever more slowly and drifts right ever faster
-/// (ValeInteriors_AdvanceSleepZ)
-/// (https://alchemy.pascalpixel.com/places/vale-interiors-shops/sleep-z.gif:
-/// two cycles, the screen with the grandfather and the three letters boxed and
-/// the cycle's frame written, beside the sprites alone).
+/// (ValeInteriors_AdvanceSleepZ).
 
 #include "action_script.h"
 #include "save_block.h"

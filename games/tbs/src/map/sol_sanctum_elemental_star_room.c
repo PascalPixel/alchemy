@@ -32,11 +32,8 @@
 ///
 /// Whoever arrives on the platform appears 40 pixels above it at a tenth of
 /// his size, grows to full size and floats down onto it, over a shadow that
-/// grows with him
-/// (LOCALID_PLATFORM_SHADOW;
-/// https://alchemy.pascalpixel.com/places/sol-sanctum-elemental-star-room/rising-shadow.gif:
-/// Isaac's arrival, the platform's object event boxed on the screen, beside the
-/// sprites and the sprites without it, where the shadow is gone).
+/// grows with him: the platform's object event, LOCALID_PLATFORM_SHADOW,
+/// draws that shadow.
 
 #include "save_block.h"
 #include "unit/import.h"
@@ -106,8 +103,7 @@ enum StarRoomLocalId {
   /// in SolSanctumElementalStarRoom_EnterStarRoom, Felix in
   /// SolSanctumElementalStarRoom_DemandElementalStars).
   /// ★ Named from what the player sees: the shadow that grows on the platform
-  /// as Isaac comes in (its render),
-  /// https://alchemy.pascalpixel.com/places/sol-sanctum-elemental-star-room/rising-shadow.gif
+  /// as Isaac comes in (its render)
   LOCALID_PLATFORM_SHADOW = LOCALID_FIRST_PLACED,
   /// ★ Named from the game: "What's wrong, Kraden?" (MsgSolSanctumWrongKraden)
   LOCALID_KRADEN,

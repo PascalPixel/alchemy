@@ -30,10 +30,8 @@
 /// Saturos's group and their hostages leave one by one from the platform where
 /// the party arrived (SolSanctumEruption_RaiseAndShrinkObjectEvent): each walks
 /// onto it, rises 30 pixels at full size, then rises on as he shrinks away,
-/// over a shadow that shrinks with him (LOCALID_PLATFORM_SHADOW;
-/// https://alchemy.pascalpixel.com/places/sol-sanctum-eruption/departing-shadow.gif:
-/// the departures, the platform's object event boxed on the screen, beside the
-/// sprites and the sprites without it, where the shadow is gone).
+/// over a shadow that shrinks with him: the platform's object event,
+/// LOCALID_PLATFORM_SHADOW, draws that shadow.
 
 #include "action_script.h"
 #include "save_block.h"

@@ -375,8 +375,7 @@ enum TolbiShipRowingDeckLocalId {
   LOCALID_ROWING_DRUMMER,
   /// The eight oarsmen, men in red bandanas (SPRITE_MAN_IN_RED_BANDANA), a seat
   /// each, two by two from the north, the west seat
-  /// first; the passengers chosen take the first four seats
-  /// (https://alchemy.pascalpixel.com/places/tolbi-ship-interiors/rowing-deck-seats.png).
+  /// first; the passengers chosen take the first four seats.
   /// ★ Named from the game: "These big muscles are a sign that we're
   /// oarsmen." (MsgTolbiShipInteriorsTheseBigMusclesAreASign)
   LOCALID_ROWING_FIRST_OARSMAN,

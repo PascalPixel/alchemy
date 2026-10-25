@@ -33,22 +33,10 @@ void Ui_PrepareTransferForItem(s32 code) {
   GlyphTransfer *state = Ram_HeapSlots->glyphWork;
   struct ItemDefinition *item = Item_Get(0x1ff & code);
 
-  if (code != 0) {
+  if (code != 0)
     state->encoded = gUiIcon_ItemIconPointers[item->icon];
-  } else {
-    u8 *encoded;
-    u8 **table = gUiIcon_ItemIconPointers;
-
-    /* FAKEMATCH: a no-op self-assignment keeps the item live here, so the table
-     * takes r2 as native; without it the table takes r3 (differ 4) */
-    item->icon += 0;
-    /* FAKEMATCH: the table address loads before the offset 0x604 is built and
-     * the entry after it, as native; without the barrier both follow the offset
-     * (differ 4) */
-    asm volatile("");
-    encoded = table[0];
-    state->encoded = encoded;
-  }
+  else
+    state->encoded = gUiIcon_ItemIconPointers[0];
   state->width = 2;
   state->height = 2;
   UiGlyph_DecodeWithHeapRoutines(state, 0);

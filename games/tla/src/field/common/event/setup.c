@@ -30,9 +30,6 @@ void EventRuntime_PrepareCurrentObject(void) {
   object->targetZ = 0x80000000;
   object->velocityX = 0;
   object->velocityZ = 0;
-  /* FAKEMATCH: this boundary keeps the zero stores before party-mode address
-   * construction. */
-  __asm__ volatile("" : : : "memory");
   if (gPartyState.renderMode == 2)
     Object_SetMode(object, 12);
   else

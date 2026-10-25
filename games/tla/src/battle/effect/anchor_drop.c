@@ -20,22 +20,11 @@ void WaitFrames(s32 frames);
 /// gravity, waits 50 frames, then cues the event with id | 0x1000.
 void BattleEffect_DropObjectAtAnchor(s32 id) {
   struct ModeEvent *event = Ram_HeapSlots->eventWork;
-  s32 incoming = id;
-  struct ObjectRuntime **slot;
   struct ObjectRuntime *anchor;
   struct ObjectRuntime *object;
 
-  /* FAKEMATCH: ⚓️ loads the event work before it builds the anchor offset */
-  asm volatile("");
-  slot = &((struct AnchorWork *)Ram_HeapSlots->battleFxWork[0])->anchor;
-  // Passing the cue snapshot to Object_GetById adds a copy and changes two
-  // registers.
-  /* FAKEMATCH: keep the cue's entry-id copy after the anchor address; removing
-   * the constraint swaps two rows. */
-  asm("" : "+l"(incoming) : "l"(slot));
-  anchor = *slot;
+  anchor = ((struct AnchorWork *)Ram_HeapSlots->battleFxWork[0])->anchor;
   object = Object_GetById(id);
-
   if (anchor != NULL) {
     SET_POSITION(object, anchor->x, anchor->y, anchor->z);
   }
@@ -47,5 +36,5 @@ void BattleEffect_DropObjectAtAnchor(s32 id) {
   }
   object->gravity = 0x170a;
   WaitFrames(50);
-  event->cue = incoming | 0x1000;
+  event->cue = id | 0x1000;
 }

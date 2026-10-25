@@ -30,12 +30,10 @@ s32 PartyInventory_CountItem(s32 itemId) {
 
 struct ActionDefinition *BattleAction_GetDirect(s32 actionId) {
   u32 entryIndex = actionId & 0x3fff;
-  struct ActionDefinition *table;
 
   if (entryIndex > 0x2de)
     entryIndex = 0;
-  table = gBattleAction_DefinitionTable;
-  return &table[entryIndex];
+  return &gBattleAction_DefinitionTable[entryIndex];
 }
 
 s32 Party_FindOwnerWithAction(s32 action) {

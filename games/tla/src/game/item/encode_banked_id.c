@@ -31,19 +31,12 @@ u32 BattleSpoils_RankItem(u32 value) {
 void BattleSpoils_Clear(void) {
   struct BattleWork *battle;
   struct BattleSpoils *spoils;
-  struct PartyState *party;
   u16 *items;
   s32 index;
 
   battle = Ram_HeapSlots->battleWork;
-  /* FAKEMATCH(one-pass): the spoils' and the party state's addresses in a
-   * one-pass block; as spoils = &battle->spoils with gPartyState.tally25c, 2
-   * of 27 instructions differ in tla-en. */
-  do {
-    spoils = &battle->spoils;
-    party = &gPartyState;
-  } while (0);
-  party->tally25c = 0;
+  spoils = &battle->spoils;
+  gPartyState.tally25c = 0;
   spoils->coins = 0;
   spoils->experience = 0;
   spoils->defeated = 0;

@@ -9,16 +9,11 @@ void MusicCommand_SetPitchAndUpdateFrequency(u16 scale) {
 }
 
 void MusicCommand_SetPitch(s16 pitch) {
-  s32 player;
-  s32 mask;
-  s16 value;
+  s32 value;
 
-  /* FAKEMATCH: the one-pass block and local lifetimes keep the player load
-   * before signed narrowing. */
-  player = (u32)&gMusicPlayerBgm;
-  do {
-    value = pitch;
-    mask = 0xff;
-    MusicPlayer_SetPitch((struct SoundPlayer *)player, mask, value);
-  } while (0);
+  /* FAKEMATCH(temporary): the pitch widened into its own variable; as
+   * MusicPlayer_SetPitch(&gMusicPlayerBgm, 0xff, pitch), 2 of 8 instructions
+   * differ in tla-en. */
+  value = pitch;
+  MusicPlayer_SetPitch(&gMusicPlayerBgm, 0xff, value);
 }

@@ -23,11 +23,6 @@ s32 Func_080e4244(struct ObjectRuntime *object) {
 
   s8 *work = Ram_HeapSlots->eventWork;
   result = 0;
-  /* FAKEMATCH(barrier): an empty asm on the result, taking the loop counter
-   * before it is set (nothing is read), so the heap slots' address is built
-   * before the result's 0; without it, 2 of 70 instructions differ in
-   * tla-en. */
-  asm("" : "+l"(result) : "l"(i));
   if (work[394] != EVENT_MODE_NO_CELL_TEST) {
     if (Func_08020308(object->x, object->z, 0, object->terrainHeight) != 0)
       result = 1;

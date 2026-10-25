@@ -1,4 +1,4 @@
-// Draft of Class_Determine: differ 150 of 156 (tla-en, 2026-10-18). Ported
+// Draft of Class_Determine: differ 49 of 156 (tla-en, 2026-10-25). Ported
 // from The Broken Seal's function of the same name
 // (games/tbs/src/game/game.c): the class series comes from a character's two
 // strongest elements, and the class is the last of that series whose element
@@ -6,15 +6,14 @@
 // a 4 by 4 table, gives characters 5 and 7 (Jenna and Piers) their own
 // series, and lets three items (443 to 445) choose one.
 //
-// Left: register choice. The native keeps the character in r7, the item in
-// r8 and the result in fp (here r8, sl and r9), and walks the class table
-// with two induction variables (the record's offset from the table and a
-// pointer to its requirements), where this draft has one record pointer;
-// every register after the first loop shifts with it. A local table pointer
-// held across the call measured 173. Rewritten from the earlier port of The
-// Broken Seal's file, which no longer compiled.
+// Left: register choice. Indexing gClass_DefinitionTable itself (declared here
+// as the record view; the cast macro made one record pointer) gives the
+// native's two induction variables (150 to 77), and i declared before j
+// its loop registers (77 to 49). The native keeps the levels' address in r5
+// and the item in r8, the primary element in r0 and the second in r1; this
+// keeps the levels in r8, the item in sl, the primary in r1 and the second
+// in r5.
 #include "types.h"
-#include "owner_state.h"
 
 // A class record's start, as Class_Determine reads it.
 struct ClassSeriesView {
@@ -23,7 +22,7 @@ struct ClassSeriesView {
   u8 unk08[0x4c];
 };
 
-#define CLASS_TABLE ((const struct ClassSeriesView *)gClass_DefinitionTable)
+extern struct ClassSeriesView gClass_DefinitionTable[];
 
 extern const s32 Data_080c6604[4][4];
 
@@ -35,8 +34,8 @@ s32 Class_Determine(s32 character, const u8 *djinn, s32 item) {
   s32 best;
   s32 series;
   s32 result;
-  s32 j;
   s32 i;
+  s32 j;
 
   result = -1;
   if (character > 7)
@@ -72,10 +71,10 @@ s32 Class_Determine(s32 character, const u8 *djinn, s32 item) {
   else if (item == 445)
     series = 17;
   for (i = 243; i >= 0; i--) {
-    if (CLASS_TABLE[i].series != series)
+    if (gClass_DefinitionTable[i].series != series)
       continue;
     for (j = 0; j < 4; j++) {
-      if (levels[j] < CLASS_TABLE[i].required[j] * 10)
+      if (levels[j] < gClass_DefinitionTable[i].required[j] * 10)
         break;
     }
     if (j == 4) {

@@ -1,4 +1,4 @@
-// Draft, differ 317 of 439: a pillar of light rises in Air's Rock: BG0 is
+// Draft, differ 233 of 439: a pillar of light rises in Air's Rock: BG0 is
 // hidden while resources 0x1c0 (its tiles) and 449 (its map, the palette
 // bits cleared, copied in 16 rows of 8 bytes) are loaded into VRAM; object
 // 10 glows (Func_02002cc0) and sheds a spark (object type 0x2a0,
@@ -7,10 +7,7 @@
 // (68, 84) open, the blend fades over 32 frames, then (cue 148) the light
 // reaches object 8, which flashes and leaves (Func_02001084); the display
 // is put back and flag 0x899 set.
-// Left: a rough reading: the native saves only r8 and r10 with a 12-byte frame
-// (the fill's halfword at sp+10), keeps the buffer in r5 and the counters in
-// r7, rebuilds each row's VRAM address from the counter, and hoists the 0xfcff
-// mask and the sparks' constants otherwise.
+// Left: the native saves only r8 and r10 with a 12-byte frame (the fill's halfword at sp+10; the draft spills the first object to the stack), builds BG0CNT's 0x400 with movs where alchemy-gcc loads it from the pool, and keeps the frame count's low bits in r8 as the sparks' 0.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"

@@ -4,14 +4,14 @@
 released as simply "Golden Sun" outside of Japan.
 
 The game's code comes in two kinds. Most of it is always in memory: the
-[main loop](#the-main-loop), and everything it calls on, the engine that moves
+[map loop](#the-map-loop), and everything it calls on, the engine that moves
 and draws the party and everyone else, the windows and menus, the battle
 system, the minigames such as Lucky Dice, and saving. The rest is
 [overlays](#maps-and-overlays): each [map](glossary.md#map)'s own code, which
 says who stands there and what happens, unpacked into memory only while the
 [party](glossary.md#the-party) is in that map.
 
-The main loop runs one map at a time: a room, a town, a dungeon floor, the
+The map loop runs one map at a time: a room, a town, a dungeon floor, the
 world map. When the party walks through a door, the game ends one map and
 starts the next. Each map brings its overlay and its own
 [layout](glossary.md#layout), the picture it shows and the ground under it.
@@ -23,7 +23,19 @@ long list of yes-or-no facts saved with the game. The always-loaded code is
 cut into [banks](glossary.md#bank)
 ([How the code is organised](#how-the-code-is-organised)).
 
-## The main loop
+The code also runs differently from most games'. In most games, the Pokémon
+games among them, one main loop goes round once a
+[frame](glossary.md#frame) and calls each part of the game in turn, so
+anything that takes time is cut into steps that remember where they got to.
+In this game a cutscene, a menu or a whole map is an ordinary function that
+runs from start to finish: when time has to pass, it asks to wait a number of
+frames, and while it waits the engine keeps everything else moving
+([Engine](engine.md#waiting-and-tasks)). So a scene's code reads top to
+bottom, like a script. The price is that only one piece of code waits at a
+time: whatever moves alongside it, an animation or a flashing light, is
+written as a small job of its own that runs every frame.
+
+## The map loop
 
 ![Isaac walks up into the Sanctum's doorway in Vale; the village fades to black and the Sanctum's hall fades in around him, its people standing round the altar](https://alchemy.pascalpixel.com/guides/front/sanctum-door.gif)
 
@@ -226,7 +238,7 @@ banks, about 1 MB of the English cartridge, followed by the sound code, the
 music and the packed pictures and maps. Each bank starts at a fixed place, and
 code in one bank calls another bank only through a short list of entrances at
 that bank's start, so a bank can grow without moving the others. In the code
-an entrance has the function's name with `Far` added: the main loop starts a
+an entrance has the function's name with `Far` added: the map loop starts a
 battle with `Battle_RunFar`, which leads to `Battle_Run` in the battle bank.
 The [glossary](glossary.md#far-call) says how such a call works, and
 [System](src/system/README.md#why-the-program-is-cut-into-banks) why the

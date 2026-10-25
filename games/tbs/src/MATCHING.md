@@ -91,7 +91,7 @@ The kind says which device it is:
 - `volatile` is a qualifier that forces a load or store to stay where it's
   written. One that is part of a macro's own form, such as the fill word of
   `Dma_Fill32` ([pret](../glossary.md#pret)'s `DmaFill32`), is no device. Nor is one on memory an
-  interrupt handler shares with the main loop, such as `gVBlankDone` and
+  interrupt handler shares with the code it interrupts, such as `gVBlankDone` and
   `gFrameCount` (`include/frame.h`): there the C needs it to be correct.
 - `temporary` is a variable holding a value the plain form wouldn't name.
 - `dead` is code that emits nothing and only changes which registers the

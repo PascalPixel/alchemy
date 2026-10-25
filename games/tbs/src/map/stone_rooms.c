@@ -15,7 +15,7 @@
 ///   STONE_ROOMS_FROM_VAULT_REVISIT and finds a lone prisoner instead.
 /// - Lunpa (STONE_ROOMS_FROM_LUNPA), the map's other room, which Lunpa's hidden
 ///   passage reaches (lunpa.c). Its six chests are each opened once
-///   (FLAG_LUNPA_HIDDEN_ROOM_CHEST_*), MB_STONE_ROOMS_LUNPA_DOOR leads back up
+///   (FLAG_LUNPA_HIDDEN_ROOM_CHEST_*), MB_LUNPA_HIDDEN_ROOM_DOOR leads back up
 ///   into Lunpa, and arriving this way clears FLAG_SHOW_LOCATION_NAME, so no
 ///   area name is shown. The room uses the thieves' tables, so its chests and
 ///   warp sit in the same map event table as the thieves' talk and the Vault
@@ -45,20 +45,20 @@
 
 /// The metatile behaviors the jail's map events answer.
 enum StoneRoomsMetatileBehavior {
-  MB_STONE_ROOMS_VAULT_DOOR = 1,
-  MB_STONE_ROOMS_LUNPA_DOOR = 2,
+  MB_VAULT_JAIL_DOOR = 1,
+  MB_LUNPA_HIDDEN_ROOM_DOOR = 2,
   /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
-  MB_STONE_ROOMS_CHEST_WATER_OF_LIFE = 100,
+  MB_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE = 100,
   /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
-  MB_STONE_ROOMS_CHEST_SMOKE_BOMB,
+  MB_LUNPA_HIDDEN_ROOM_CHEST_SMOKE_BOMB,
   /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
-  MB_STONE_ROOMS_CHEST_LUCKY_MEDAL,
+  MB_LUNPA_HIDDEN_ROOM_CHEST_LUCKY_MEDAL,
   /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
-  MB_STONE_ROOMS_CHEST_ANTIDOTE,
+  MB_LUNPA_HIDDEN_ROOM_CHEST_ANTIDOTE,
   /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
-  MB_STONE_ROOMS_CHEST_COINS,
+  MB_LUNPA_HIDDEN_ROOM_CHEST_COINS,
   /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
-  MB_STONE_ROOMS_CHEST_ELIXIR
+  MB_LUNPA_HIDDEN_ROOM_CHEST_ELIXIR
 };
 
 /// The placed object events, numbering the rows of the table
@@ -219,7 +219,7 @@ static void EventScript_ReadRightThiefMind(void) {
 
 /// The party steps out of Vault's jail into Vault, with the warp sound.
 ///
-/// Reached by stepping on the door's cell (MB_STONE_ROOMS_VAULT_DOOR) under the
+/// Reached by stepping on the door's cell (MB_VAULT_JAIL_DOOR) under the
 /// thieves' table, that is, entered from Vault or Lunpa; takes
 /// STONE_ROOMS_TO_VAULT to VAULT_FROM_STONE_ROOMS. The prisoner's table leaves
 /// by a plain warp instead, STONE_ROOMS_TO_VAULT_REVISIT.
@@ -295,8 +295,8 @@ const struct ObjectEventTemplate gStoneRooms_PrisonerObjectEventTemplates[] = {
 };
 
 const struct MapEvent gStoneRooms_ThiefEvents[] = {
-    { MAP_EVENT_COORD, MB_STONE_ROOMS_VAULT_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveForVault) },
-    { MAP_EVENT_WARP, MB_STONE_ROOMS_LUNPA_DOOR, CONDITION_ALWAYS, STONE_ROOMS_TO_LUNPA },
+    { MAP_EVENT_COORD, MB_VAULT_JAIL_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveForVault) },
+    { MAP_EVENT_WARP, MB_LUNPA_HIDDEN_ROOM_DOOR, CONDITION_ALWAYS, STONE_ROOMS_TO_LUNPA },
     { MAP_EVENT_TALK, LOCALID_THIEF_LEADER, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
       EVENT_SCRIPT(EventScript_LeaderSilencesThieves) },
     { MAP_EVENT_TALK, LOCALID_LEFT_THIEF, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
@@ -309,23 +309,23 @@ const struct MapEvent gStoneRooms_ThiefEvents[] = {
       IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(EventScript_ReadLeftThiefMind) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_RIGHT_THIEF,
       IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(EventScript_ReadRightThiefMind) },
-    { BG_EVENT(BG_EVENT_CHEST), MB_STONE_ROOMS_CHEST_WATER_OF_LIFE, FLAG_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE,
+    { BG_EVENT(BG_EVENT_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE, FLAG_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE,
       FIND_ITEM(ITEM_WATER_OF_LIFE) },
-    { BG_EVENT(BG_EVENT_CHEST), MB_STONE_ROOMS_CHEST_SMOKE_BOMB, FLAG_LUNPA_HIDDEN_ROOM_CHEST_SMOKE_BOMB,
+    { BG_EVENT(BG_EVENT_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_SMOKE_BOMB, FLAG_LUNPA_HIDDEN_ROOM_CHEST_SMOKE_BOMB,
       FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { BG_EVENT(BG_EVENT_CHEST), MB_STONE_ROOMS_CHEST_LUCKY_MEDAL, FLAG_LUNPA_HIDDEN_ROOM_CHEST_LUCKY_MEDAL,
+    { BG_EVENT(BG_EVENT_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_LUCKY_MEDAL, FLAG_LUNPA_HIDDEN_ROOM_CHEST_LUCKY_MEDAL,
       FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { BG_EVENT(BG_EVENT_CHEST), MB_STONE_ROOMS_CHEST_ANTIDOTE, FLAG_LUNPA_HIDDEN_ROOM_CHEST_ANTIDOTE,
+    { BG_EVENT(BG_EVENT_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_ANTIDOTE, FLAG_LUNPA_HIDDEN_ROOM_CHEST_ANTIDOTE,
       FIND_ITEM(ITEM_ANTIDOTE) },
-    { BG_EVENT(BG_EVENT_CHEST), MB_STONE_ROOMS_CHEST_COINS, FLAG_LUNPA_HIDDEN_ROOM_CHEST_COINS, FIND_COINS(44) },
-    { BG_EVENT(BG_EVENT_CHEST), MB_STONE_ROOMS_CHEST_ELIXIR, FLAG_LUNPA_HIDDEN_ROOM_CHEST_ELIXIR,
+    { BG_EVENT(BG_EVENT_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_COINS, FLAG_LUNPA_HIDDEN_ROOM_CHEST_COINS, FIND_COINS(44) },
+    { BG_EVENT(BG_EVENT_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_ELIXIR, FLAG_LUNPA_HIDDEN_ROOM_CHEST_ELIXIR,
       FIND_ITEM(ITEM_ELIXIR) },
     { MAP_EVENTS_END },
 };
 // clang-format on
 
 const struct MapEvent gStoneRooms_PrisonerEvents[] = {
-    {MAP_EVENT_WARP, MB_STONE_ROOMS_VAULT_DOOR, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP, MB_VAULT_JAIL_DOOR, CONDITION_ALWAYS,
      STONE_ROOMS_TO_VAULT_REVISIT},
     {MAP_EVENT_TALK, LOCALID_PRISONER, CONDITION_ALWAYS,
      MsgVaultPrisonerRegretsFight},

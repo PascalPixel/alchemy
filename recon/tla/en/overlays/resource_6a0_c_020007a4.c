@@ -1,0 +1,116 @@
+// Draft, differ 94 of 230: Jupiter Lighthouse room 7's push handler for objects 18
+// to 20: an object not on the ground falls into place (sound 188). Object 18
+// or 19 then checks its spot (Func_02000194), resets the room, plays sound 167
+// for the spots that count, and when all is set (Func_02000290 returns 2 with
+// flag 2582) clears that flag and shows object 17 changing (sound 151) from
+// the camera at (664, 136). Object 20 on cell (8, 12) sets flag 2586, plays
+// sound 167 and with flag 2583 shows object 9 changing; off that cell it
+// marks the cell it stands on.
+#include "types.h"
+#include "object_runtime.h"
+#include "party_state.h"
+
+struct ObjectRuntime *Object_GetById(s32 id);
+s32 GameFlag_Test(s32 flag);
+void GameFlag_SetBit(s32 flag);
+void GameFlag_ClearBit(s32 flag);
+void WaitFrames(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+void Func_02002c5c(s32 sound);
+s32 Func_02000194(void);
+void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+                                        s32 flags);
+void Func_020002f0(void);
+void ObjectMotion_EnableActionAndResetMotion(s32 id);
+void Func_02002ba4(s32 id, s32 a, s32 b);
+s32 Func_02000290(void);
+void Func_02002b6c(void);
+void Func_02002b74(void);
+void Func_02002c0c(s32 value);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
+void Camera_FollowActor(s32 id, s32 flag);
+void Func_02002bd4(void);
+void Func_02002ad4(struct ObjectRuntime *object, s32 mode);
+void Func_02002c3c(s32 x, s32 z, s32 layer, s32 value);
+void Func_020005e8(s32 value);
+void Func_02002b54(s32 x, s32 z, s32 a, s32 b);
+void Func_02002c4c(s32 x, s32 z, s32 a, s32 b);
+
+void Func_020007a4(s32 unused, s32 id) {
+  struct ObjectRuntime *object = Object_GetById(id);
+  s32 spot;
+  s32 i;
+
+  if (object->terrainHeight !=
+      Map_GetTerrainHeight(object->terrainId, object->x, object->z)) {
+    object->motionFlags = 3;
+    WaitFrames(2);
+    for (i = 0; object->y > object->terrainHeight || object->velocityY != 0;) {
+      i++;
+      WaitFrames(1);
+      if (i > 29)
+        break;
+    }
+    Func_02002c5c(188);
+    object->motionFlags = 0;
+  }
+  if ((u32)(id - 18) <= 1) {
+    spot = Func_02000194();
+    if (spot == -1)
+      return;
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(id), 0);
+    FieldEvent_WaitFrames(30);
+    Func_020002f0();
+    if (spot == 0)
+      Func_02002c5c(167);
+    if (spot == 1)
+      Func_02002c5c(167);
+    if (spot == 3 && GameFlag_Test(2576))
+      Func_02002c5c(167);
+    if (spot == 4 && GameFlag_Test(2577))
+      Func_02002c5c(167);
+    ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);
+    Func_02002ba4(id, 0, 0);
+    if (Func_02000290() != 2 || !GameFlag_Test(2582))
+      return;
+    object = Object_GetById(17);
+    GameFlag_ClearBit(2582);
+    FieldEvent_WaitFrames(10);
+    Func_02002b6c();
+    Func_02002c0c(0);
+    Camera_MoveWithinMapBounds(166 << 18, -1, 136 << 16, 1);
+    Func_02002bd4();
+    FieldEvent_WaitFrames(20);
+    Func_02002c5c(151);
+    Func_02002ad4(object, 3);
+    object->priorityFlags &= ~2;
+    Func_02002c3c(object->x, object->z, object->terrainId, 255);
+    FieldEvent_WaitFrames(30);
+    Camera_FollowActor(gPartyState.currentOwner, 1);
+    Func_02002bd4();
+    Func_02002b74();
+    return;
+  }
+  if (id != 20)
+    return;
+  if (object->x >> 20 == 8 && object->z >> 20 == 12) {
+    GameFlag_SetBit(2586);
+    ObjectDispatch_SetSingleChildFlags(Object_GetById(20), 0);
+    FieldEvent_WaitFrames(30);
+    Func_02002c5c(167);
+    Func_020005e8(1);
+    if (!GameFlag_Test(2583))
+      return;
+    object = Object_GetById(9);
+    GameFlag_ClearBit(2583);
+    FieldEvent_WaitFrames(20);
+    Func_02002c5c(151);
+    Func_02002ad4(object, 3);
+    object->priorityFlags &= ~2;
+    Func_02002c3c(object->x, object->z, object->terrainId, 255);
+  } else {
+    Func_02002b54(object->x, object->z, 0, 8);
+    Func_02002c4c(object->x, object->z, 0, 128);
+  }
+}

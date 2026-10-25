@@ -1,7 +1,3 @@
-// Draft, differ 4 of 83: a scheduled callback that, unless the leader is in
-// movement mode 4, moves it one pixel along z each frame and, every eighth frame
-// while it moves, kicks up a puff behind it (the effect spawner with a random
-// spread and the leader's sprite priority).
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"

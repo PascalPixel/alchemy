@@ -1,10 +1,4 @@
-// Draft, differ 6 of 127: one frame of a Trial Road switch pair (objects 18 to 21,
-// each paired by gData_02005a88): the pressed one squashes over 10 frames; at
-// mode 1 the pair trades places (Func_02000924, Func_0200095c), flag 821 (18
-// and 19) or 823 (20 and 21) is set or cleared, and a leader standing on the
-// partner's cell is bounced up from the cell's centre; the partner overshoots
-// its height on frames 9, 11 and 13.
-#include "../../../../games/tla/src/scene/trial_road/trial_road.h"
+#include "trial_road.h"
 
 extern const s8 gData_02005a88[4];
 

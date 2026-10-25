@@ -1,12 +1,3 @@
-// Draft of overlay 698's Func_0200087c (0x0200887c), the twin of ☀️'s
-// SceneEffect_SpawnRandomEveryEightFramesB and of overlay 64e's
-// Func_020005a8: differ 4 of 72 (two reordered rows). After the first random
-// call the native copies the object to r2 and loads its x between the two
-// halves of the multiply by 9; here both halves come first (sched2 gives
-// lsls 116 and the copy 115). The x load split off behind a one-pass block or
-// a barrier differs by 12; four minutes of alchemy permute found nothing.
-// Copied in fourteen more overlays of the 698 family (copy group
-// 698:Func_0200087c).
 #include "types.h"
 
 s32 Random16Far(void);

@@ -1,11 +1,4 @@
-// Draft, differ 2 of 95: a Trial Road room's step check until flag 648 is set:
-// object 8 mirrors the leader about (296, 248) while the leader is within 80
-// pixels of that point or within 48 of the object; when the leader reaches the
-// point (within 4 pixels), with sounds 146 and 122, the object hops away to
-// (344, 264) on its action script and the flag is set. Left: the leader's
-// z is shifted before the -296 constant's pool load (the native loads first);
-// the y temporary is a device (as partner->y in the call, differ 4).
-#include "../../../../games/tla/src/scene/trial_road/trial_road.h"
+#include "trial_road.h"
 
 extern const u8 gData_02005b44[];
 

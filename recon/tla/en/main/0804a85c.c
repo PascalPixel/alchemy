@@ -1,4 +1,4 @@
-// Draft, differ 892 of 1647: battle target selection, The Broken Seal's
+// Draft, differ 801 of 1647: battle target selection, The Broken Seal's
 // BattleTarget_RunSelection (games/tbs/src/window/screens/targets.c) on this
 // game's work and messages. The modes are numbered differently (2 the
 // party, 4 the acting unit alone, 1 the enemies, whose downed ones a link
@@ -12,6 +12,18 @@
 #include "ram_buffer.h"
 #include "input.h"
 #include "frame.h"
+
+extern u8 Msg_0c5a[];
+extern u8 Msg_0d03[];
+extern u8 Msg_0d04[];
+extern u8 Msg_0d05[];
+extern u8 Msg_0d06[];
+extern u8 Msg_0d07[];
+extern u8 Msg_0d08[];
+extern u8 Msg_0d09[];
+extern u8 Msg_0d0a[];
+extern u8 Msg_0d0b[];
+extern u8 Msg_0d0c[];
 
 struct TargetWindow {
   u8 unk00[8];
@@ -364,7 +376,7 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
             conditionWindow = UiWindow_Create(
                 TARGET_HELP_COLUMN(selectedPosition.x, 4, 4, 22), 8, 9, 3, 6);
             Func_08041f70(2);
-            UiText_DrawCharacterAtOffset(0xd0c, conditionWindow, 0, 0);
+            UiText_DrawCharacterAtOffset((s32)Msg_0d0c, conditionWindow, 0, 0);
             Func_08041f70(15);
             break;
           case 1:
@@ -392,14 +404,14 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
                 TARGET_HELP_COLUMN(selectedPosition.x, 7, 5, 18), 8, 12, 3, 6);
             if (unit->hp != 0)
               goto no_condition;
-            UiText_DrawCharacterAtOffset(0xd0b, conditionWindow, 0, 0);
+            UiText_DrawCharacterAtOffset((s32)Msg_0d0b, conditionWindow, 0, 0);
             break;
           case 3:
             conditionWindow = UiWindow_Create(
                 TARGET_HELP_COLUMN(selectedPosition.x, 7, 5, 18), 8, 12, 3, 6);
             if (unit->poison == 0)
               goto no_condition;
-            UiText_DrawCharacterAtOffset(0xd04, conditionWindow, 0, 0);
+            UiText_DrawCharacterAtOffset((s32)Msg_0d04, conditionWindow, 0, 0);
             break;
           case 4: {
             s32 helpRow;
@@ -425,26 +437,27 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
                 count + 2, 6);
             count = 0;
             if (unit->delusion != 0) {
-              UiText_DrawCharacterAtOffset(0xd05, conditionWindow, 0, 0);
+              UiText_DrawCharacterAtOffset((s32)Msg_0d05, conditionWindow, 0,
+                                           0);
               count = 1;
             }
             if (unit->stun != 0) {
-              UiText_DrawCharacterAtOffset(0xd06, conditionWindow, 0,
+              UiText_DrawCharacterAtOffset((s32)Msg_0d06, conditionWindow, 0,
                                            count * 8);
               count++;
             }
             if (unit->sleep != 0) {
-              UiText_DrawCharacterAtOffset(0xd07, conditionWindow, 0,
+              UiText_DrawCharacterAtOffset((s32)Msg_0d07, conditionWindow, 0,
                                            count * 8);
               count++;
             }
             if (unit->psySeal != 0) {
-              UiText_DrawCharacterAtOffset(0xd08, conditionWindow, 0,
+              UiText_DrawCharacterAtOffset((s32)Msg_0d08, conditionWindow, 0,
                                            count * 8);
               count++;
             }
             if (unit->grimReaper != 0) {
-              UiText_DrawCharacterAtOffset(0xd09, conditionWindow, 0,
+              UiText_DrawCharacterAtOffset((s32)Msg_0d09, conditionWindow, 0,
                                            count * 8);
               count++;
             }
@@ -482,36 +495,37 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
                 count + 2, 6);
             count = 0;
             if (unit->poison != 0) {
-              UiText_DrawCharacterAtOffset(0xd04, conditionWindow, 0, 0);
+              UiText_DrawCharacterAtOffset((s32)Msg_0d04, conditionWindow, 0,
+                                           0);
               count = 1;
             }
             if (unit->delusion != 0) {
-              UiText_DrawCharacterAtOffset(0xd05, conditionWindow, 0,
+              UiText_DrawCharacterAtOffset((s32)Msg_0d05, conditionWindow, 0,
                                            count * 8);
               count++;
             }
             if (unit->stun != 0) {
-              UiText_DrawCharacterAtOffset(0xd06, conditionWindow, 0,
+              UiText_DrawCharacterAtOffset((s32)Msg_0d06, conditionWindow, 0,
                                            count * 8);
               count++;
             }
             if (unit->sleep != 0) {
-              UiText_DrawCharacterAtOffset(0xd07, conditionWindow, 0,
+              UiText_DrawCharacterAtOffset((s32)Msg_0d07, conditionWindow, 0,
                                            count * 8);
               count++;
             }
             if (unit->psySeal != 0) {
-              UiText_DrawCharacterAtOffset(0xd08, conditionWindow, 0,
+              UiText_DrawCharacterAtOffset((s32)Msg_0d08, conditionWindow, 0,
                                            count * 8);
               count++;
             }
             if (unit->grimReaper != 0) {
-              UiText_DrawCharacterAtOffset(0xd09, conditionWindow, 0,
+              UiText_DrawCharacterAtOffset((s32)Msg_0d09, conditionWindow, 0,
                                            count * 8);
               count++;
             }
             if (unit->haunt != 0) {
-              UiText_DrawCharacterAtOffset(0xd0a, conditionWindow, 0,
+              UiText_DrawCharacterAtOffset((s32)Msg_0d0a, conditionWindow, 0,
                                            count * 8);
               count++;
             }
@@ -520,7 +534,7 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
           }
           no_condition:
             Func_08041f70(2);
-            UiText_DrawCharacterAtOffset(0xd03, conditionWindow, 0, 0);
+            UiText_DrawCharacterAtOffset((s32)Msg_0d03, conditionWindow, 0, 0);
             Func_08041f70(15);
             break;
           }
@@ -533,7 +547,7 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
                                                    &namePosition);
         namePosition.y += Trig_Sin(gFrameCount << 12) / 32768;
         if (target->enemyKind == 355 || target->enemyKind == 352) {
-          width = 0xc5a;
+          width = (s32)Msg_0c5a;
           if (target->enemyKind == 355)
             width++;
           UiText_CopyMessageString(width, targetName, 14);

@@ -1,4 +1,4 @@
-// Draft, differ 1075 of 984: the battle summon menu, The Broken Seal's
+// Draft, differ 1062 of 984: the battle summon menu, The Broken Seal's
 // BattleSummonMenu_Run (games/tbs/src/window/screens/summon_menu.c) on this
 // game's work and messages. The list window stands at column 13, 17 tiles
 // wide; the standby counts above it are tiles (counts of ten and more from
@@ -10,6 +10,9 @@
 #include "ram_buffer.h"
 #include "input.h"
 #include "frame.h"
+
+extern u8 MsgAbilityNothing[];
+extern u8 Msg_0885[];
 
 struct SummonMenuWindow {
   u8 unk00[8];
@@ -200,7 +203,8 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
 
         definition =
             SummonDefinition_Get(orderedSummons[firstEntry + selectedRow]);
-        UiText_CopyMessageString(definition->abilityId + 0x885, text, 52);
+        UiText_CopyMessageString(definition->abilityId + (s32)Msg_0885, text,
+                                 52);
         UiText_RenderWideStringAtOffset(text, description, 0, 4);
         mask = 0;
         drawnRow = selectedRow;
@@ -248,7 +252,7 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
             if (!affordable)
               Func_08041f70(2);
             UiText_DrawCharacterAtOffset(SummonDefinition_Get(id)->abilityId +
-                                             0x5a7,
+                                             (s32)MsgAbilityNothing,
                                          window, 16, index * 16);
             col = 0;
             for (element = 0; element <= 3; element++) {

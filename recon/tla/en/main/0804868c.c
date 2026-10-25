@@ -1,4 +1,4 @@
-// Draft, differ 1070 of 1246: the battle Djinn menu, The Broken Seal's
+// Draft, differ 1009 of 1246: the battle Djinn menu, The Broken Seal's
 // BattleDjinnMenu_Run (games/tbs/src/window/screens/djinn_menu.c) on this
 // game's work, messages and change preview (Func_080464dc). The list window
 // is 10 tiles wide from column 20, a recovering Djinni's turns take two
@@ -11,6 +11,13 @@
 #include "input.h"
 #include "frame.h"
 #include "iwram_call.h"
+
+extern u8 MsgDjinnName[];
+extern u8 Msg_09b1[];
+extern u8 Msg_0cf8[];
+extern u8 Msg_0cf9[];
+extern u8 Msg_0d4e[];
+extern u8 Msg_0d50[];
 
 struct DjinnMenuWindow {
   u8 unk00[8];
@@ -260,7 +267,7 @@ s32 Func_0804868c(s32 member) {
           }
         }
         if (alreadySelected != 0) {
-          UiText_CopyMessageString(0xd50, messageText, 52);
+          UiText_CopyMessageString((s32)Msg_0d50, messageText, 52);
           if (previewWindow != NULL) {
             UiWork_Finalize(previewWindow, 1);
             previewWindow = NULL;
@@ -272,7 +279,7 @@ s32 Func_0804868c(s32 member) {
                                      DJINN_ENTRY_RECOVERY_SHIFT,
                                  5);
             UiText_CopyMessageString(((selectedDjinn & 0xf00) >> 8) * 20 +
-                                         (selectedDjinn & 0xff) + 0x9b1,
+                                         (selectedDjinn & 0xff) + (s32)Msg_09b1,
                                      messageText, 52);
             if (previewWindow != NULL) {
               UiWork_Finalize(previewWindow, 1);
@@ -282,18 +289,18 @@ s32 Func_0804868c(s32 member) {
           } else {
             previewWindow = Func_080464dc(previewWindow, member, selectedDjinn,
                                           previewPage, &previewPages);
-            UiText_CopyMessageString(0xcf9, messageText, 52);
+            UiText_CopyMessageString((s32)Msg_0cf9, messageText, 52);
             standbyElements = 1 << ((selectedDjinn & 0xf00) >> 8);
           }
         } else {
           previewWindow = Func_080464dc(previewWindow, member, selectedDjinn,
                                         previewPage, &previewPages);
           UiText_CopyMessageString(((selectedDjinn & 0xf00) >> 8) * 20 +
-                                       (selectedDjinn & 0xff) + 0x9b1,
+                                       (selectedDjinn & 0xff) + (s32)Msg_09b1,
                                    messageText, 52);
         }
       } else {
-        UiText_CopyMessageString(0xd4e, messageText, 52);
+        UiText_CopyMessageString((s32)Msg_0d4e, messageText, 52);
       }
       work->holdTilemapUpload = 0;
       if (previewPage == 0) {
@@ -316,7 +323,8 @@ s32 Func_0804868c(s32 member) {
           else if (encodedDjinn & DJINN_ENTRY_STANDBY)
             Func_08041f70(2);
           UiText_DrawCharacterAtOffset(((encodedDjinn & 0xf00) >> 8) * 20 +
-                                           (encodedDjinn & 0xff) + 0x6d3,
+                                           (encodedDjinn & 0xff) +
+                                           (s32)MsgDjinnName,
                                        listWindow, 8, j * 16);
           if (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK)
             UiText_DrawNumberAtOffset(
@@ -419,7 +427,7 @@ s32 Func_0804868c(s32 member) {
           UiWork_PushValueSlot((turns & DJINN_ENTRY_RECOVERY_MASK) >>
                                    DJINN_ENTRY_RECOVERY_SHIFT,
                                5);
-          UiText_CopyMessageString(0xcf8, messageText, 52);
+          UiText_CopyMessageString((s32)Msg_0cf8, messageText, 52);
           UiText_RenderWideStringAtOffset(messageText, messageWindow, 0, 4);
         }
         Audio_PlayCue(114);

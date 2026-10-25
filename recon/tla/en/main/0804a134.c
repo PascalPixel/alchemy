@@ -1,4 +1,4 @@
-// Draft, differ 594 of 817: the battle Psynergy menu, The Broken Seal's
+// Draft, differ 456 of 817: the battle Psynergy menu, The Broken Seal's
 // BattlePsynergyMenu_Run (games/tbs/src/window/screens/psynergy_menu.c) on
 // this game's work, messages and tiles; the frame tees are copied with
 // Func_08049a04 (The Broken Seal's Vram_CopyTile), and an ability not usable
@@ -9,6 +9,10 @@
 #include "ram_buffer.h"
 #include "input.h"
 #include "frame.h"
+
+extern u8 MsgAbilityNothing[];
+extern u8 Msg_0885[];
+extern u8 Msg_0d48[];
 
 struct PsynergyMenuWindow {
   u8 unk00[8];
@@ -168,10 +172,10 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
       Ui_FillVramBlockPattern();
       if (count != 0)
         UiText_CopyMessageString((actions[firstEntry + selectedRow] & 0x3fff) +
-                                     0x885,
+                                     (s32)Msg_0885,
                                  messageText, 52);
       else
-        UiText_CopyMessageString(0xd48, messageText, 52);
+        UiText_CopyMessageString((s32)Msg_0d48, messageText, 52);
       UiText_RenderWideStringAtOffset(messageText, messageWindow, 0, 4);
       drawnRow = selectedRow;
       if (firstEntry != drawnFirstEntry) {
@@ -195,8 +199,8 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
           else if (unit->psySeal != 0)
             Func_08041f70(9);
           work->textPalette = 5;
-          UiText_DrawCharacterAtOffset(encodedAction + 0x5a7, window, 16,
-                                       i * 16);
+          UiText_DrawCharacterAtOffset(encodedAction + (s32)MsgAbilityNothing,
+                                       window, 16, i * 16);
           UiText_DrawNumberAtOffset(action->ppCost, 2, window, 104, i * 16);
           Func_08041f70(15);
           work->textPalette = 15;

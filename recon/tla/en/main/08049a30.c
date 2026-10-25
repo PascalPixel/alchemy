@@ -1,4 +1,4 @@
-// Draft, differ 617 of 790: the battle item menu, The Broken Seal's
+// Draft, differ 545 of 790: the battle item menu, The Broken Seal's
 // BattleItemMenu_Run (games/tbs/src/window/screens/item_menu.c) on this
 // game's work, messages and tiles; the frame tees are copied with
 // Func_08049a04 (The Broken Seal's Vram_CopyTile). Structure follows the
@@ -9,6 +9,13 @@
 #include "ram_buffer.h"
 #include "input.h"
 #include "frame.h"
+
+extern u8 MsgItemName[];
+extern u8 MsgItemPlainName[];
+extern u8 Msg_0d46[];
+extern u8 Msg_0d4c[];
+extern u8 Msg_0d4d[];
+extern u8 Msg_0d4f[];
 
 struct ItemMenuWindow {
   u8 unk00[8];
@@ -151,13 +158,13 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
       if (count != 0) {
         if (Item_ClassifyUseAbility(member,
                                     entries[firstEntry + selectedRow]) == 2)
-          UiText_CopyMessageString(0xd4f, messageText, 52);
+          UiText_CopyMessageString((s32)Msg_0d4f, messageText, 52);
         else
           UiText_CopyMessageString((entries[firstEntry + selectedRow] & 0x1ff) +
-                                       0x92,
+                                       (s32)MsgItemPlainName,
                                    messageText, 52);
       } else {
-        UiText_CopyMessageString(0xd46, messageText, 52);
+        UiText_CopyMessageString((s32)Msg_0d46, messageText, 52);
       }
       UiText_RenderWideStringAtOffset(messageText, messageWindow, 0, 4);
       drawnRow = selectedRow;
@@ -173,8 +180,8 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
             Func_08041f70(4);
           else if (item & ITEM_BROKEN)
             Func_08041f70(2);
-          UiText_DrawCharacterAtOffset((item & 0x1ff) + 0x25f, window, 16,
-                                       i * 16);
+          UiText_DrawCharacterAtOffset((item & 0x1ff) + (s32)MsgItemName,
+                                       window, 16, i * 16);
           Func_08041f70(15);
           sprites[i].tile = ItemIcon_LoadIntoSlot(item, iconSlots[i]);
         }
@@ -242,11 +249,11 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
         }
         Audio_PlayCue(114);
         if (unusableReason == 2)
-          UiText_CopyMessageString(0xd4f, messageText, 32);
+          UiText_CopyMessageString((s32)Msg_0d4f, messageText, 32);
         else if (entries[result] & ITEM_BROKEN)
-          UiText_CopyMessageString(0xd4d, messageText, 32);
+          UiText_CopyMessageString((s32)Msg_0d4d, messageText, 32);
         else
-          UiText_CopyMessageString(0xd4c, messageText, 32);
+          UiText_CopyMessageString((s32)Msg_0d4c, messageText, 32);
         Ui_FillVramBlockPattern();
         UiText_RenderWideStringAtOffset(messageText, messageWindow, 0, 4);
       } else {

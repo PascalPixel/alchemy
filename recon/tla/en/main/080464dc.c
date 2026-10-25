@@ -1,16 +1,26 @@
-// Draft, differ 325 of 767 (alchemy-devtools diff ... 08046414,080464dc,
+// Draft, differ 104 of 767 (alchemy-devtools diff ... 08046414,080464dc,
 // the nested function and its parent): the Djinn change preview, The Broken
 // Seal's BattleDjinnMenu_ShowChangePreview (games/tbs/src/window/screens/
 // djinn_preview.c) on this game's unit layout, messages and text colours,
 // with its nested arrow function Func_08046414 (drafted alone in
 // 08046414.c). The stat page's window is 20 tiles wide, and Attack keeps
-// the vitals' digit offset. Left: register allocation (the native keeps
-// the window's frame slot address in sl and the encoded Djinni in r8) and
-// 17 instructions more in the draft.
+// the vitals' digit offset. Messages are
+// written as symbols (placeholders Msg_xxxx where en.po names none), which
+// load from the pool as the native does (as numbers, differ 325). Left: the
+// nested function's register choice (as in 08046414.c) and a few pairs the
+// parent schedules one row apart.
 #include "types.h"
 #include "window.h"
 #include "uiwindow.h"
 #include "iwram_call.h"
+
+extern u8 MsgAbilityNothing[];
+extern u8 MsgClassName[];
+extern u8 Msg_0d0d[];
+extern u8 Msg_0d0e[];
+extern u8 Msg_10d3[];
+extern u8 Msg_10d4[];
+extern u8 Msg_10d9[];
 
 struct PreviewUnit {
   u8 unk000[0x38];
@@ -172,7 +182,7 @@ struct UiWindow *Func_080464dc(struct UiWindow *window, s32 member,
     page = pages;
 
   if (page == 0) {
-    s32 label = 0xd0e;
+    s32 label = (s32)Msg_0d0e;
 
     UiText_DrawCharacterAtOffset(label, window, 0, 8);
     UiText_DrawCharacterAtOffset(label + 1, window, 0, 16);
@@ -202,7 +212,7 @@ struct UiWindow *Func_080464dc(struct UiWindow *window, s32 member,
     UiWindow_DrawDividerLine(window, 0, 8, 19, 8);
     if (gained != 0 || lost != 0)
       Func_08041f70(PREVIEW_RED);
-    UiText_DrawCharacterAtOffset(0xd0d, window, 24, 64);
+    UiText_DrawCharacterAtOffset((s32)Msg_0d0d, window, 24, 64);
     Func_08041f70(PREVIEW_WHITE);
   }
 
@@ -233,7 +243,8 @@ struct UiWindow *Func_080464dc(struct UiWindow *window, s32 member,
         Func_08041f70(PREVIEW_RED);
       else
         Func_08041f70(PREVIEW_WHITE);
-      UiText_DrawCharacterAtOffset((changedAbilities[i] & 0x3fff) + 0x5a7,
+      UiText_DrawCharacterAtOffset((changedAbilities[i] & 0x3fff) +
+                                       (s32)MsgAbilityNothing,
                                    window, 16, visibleRow * 16);
       UiWindow_SetTilemapEntry(window, 0xf01f, 11, visibleRow * 2, 0);
       UiWindow_SetTilemapEntry(window, 0xf01e, 12, visibleRow * 2, 0);
@@ -242,24 +253,27 @@ struct UiWindow *Func_080464dc(struct UiWindow *window, s32 member,
     }
     if (gained != 0) {
       Func_08041f70(PREVIEW_YELLOW);
-      UiText_DrawCharacterAtOffset(0x10d3, window, 32, 80);
+      UiText_DrawCharacterAtOffset((s32)Msg_10d3, window, 32, 80);
       summaryRows = 1;
     }
     if (lost != 0) {
       Func_08041f70(PREVIEW_RED);
-      UiText_DrawCharacterAtOffset(0x10d4, window, 32, summaryRows * 8 + 80);
+      UiText_DrawCharacterAtOffset((s32)Msg_10d4, window, 32,
+                                   summaryRows * 8 + 80);
       summaryRows++;
     }
     if (summaryRows == 0)
-      UiText_DrawCharacterAtOffset(0x10d9, window, 32, 80);
+      UiText_DrawCharacterAtOffset((s32)Msg_10d9, window, 32, 80);
     Func_08041f70(PREVIEW_WHITE);
     Func_08041f70(PREVIEW_WHITE);
     UiWindow_DrawDividerLine(window, 0, 10, 19, 10);
   }
 
   if (page == 0) {
-    UiText_DrawCharacterAtOffset(0xb63 + savedUnit->classId, window, 0, 0);
-    UiText_DrawCharacterAtOffset(0xb63 + unit->classId, window, 80, 0);
+    UiText_DrawCharacterAtOffset((s32)MsgClassName + savedUnit->classId, window,
+                                 0, 0);
+    UiText_DrawCharacterAtOffset((s32)MsgClassName + unit->classId, window, 80,
+                                 0);
     if (savedUnit->classId != unit->classId)
       UiWindow_SetTilemapEntry(window, 0xf728, 9, 0, page);
     else

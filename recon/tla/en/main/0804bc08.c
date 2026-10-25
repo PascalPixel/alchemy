@@ -1,4 +1,4 @@
-// Draft, differ 1152 of 1931 (alchemy-devtools diff ... 0804bbd0,0804bc08,
+// Draft, differ 921 of 1931 (alchemy-devtools diff ... 0804bbd0,0804bc08,
 // the waiting message's nested function and its parent): collecting the party's
 // battle commands, The Broken Seal's Battle_CollectPartyCommands
 // (games/tbs/src/window/screens/party_commands.c) on this game's work and
@@ -16,6 +16,11 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
+
+extern u8 MsgAbilityNothing[];
+extern u8 MsgCommandName[];
+extern u8 MsgDjinnName[];
+extern u8 MsgItemName[];
 
 struct CommandIcon {
   u8 unk00[4];
@@ -495,7 +500,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
       switch (mode) {
       case 0:
         commandWindow = UiWindow_Create(11, 17, 11, 3, 6);
-        UiText_DrawCharacterAtOffset(0x3a, commandWindow, 16, 0);
+        UiText_DrawCharacterAtOffset((s32)MsgCommandName, commandWindow, 16, 0);
         COMMAND_ICON_X(state) = 64;
         Audio_PlayCue(112);
         mode = Func_0804a85c(actorId, 1, 1, 0);
@@ -567,7 +572,8 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
           Func_08041f70(2);
         else if (((u8 *)unit)[0x13d] != 0)
           Func_08041f70(9);
-        UiText_DrawCharacterAtOffset(parameter + 0x5a7, commandWindow, 16, 0);
+        UiText_DrawCharacterAtOffset(parameter + (s32)MsgAbilityNothing,
+                                     commandWindow, 16, 0);
         UiText_DrawNumberAtOffset(ability->ppCost, 2, commandWindow, 104, 0);
         work->textPalette = 15;
         Func_08041f70(15);
@@ -635,7 +641,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         if (ok == 0)
           Func_08041f70(2);
         UiText_DrawCharacterAtOffset(SummonDefinition_Get(mode)->abilityId +
-                                         0x5a7,
+                                         (s32)MsgAbilityNothing,
                                      commandWindow, 16, 0);
         for (j = 0; j <= 3; j++) {
           if (summon->djinnRequired[j] != 0) {
@@ -698,7 +704,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
           commandWindow = UiWindow_Create(11, 17, 10, 3, 6);
           COMMAND_ICON_X(state) = 64;
           UiWindow_SetTilemapEntry(commandWindow, element + 0x5001, 0, 0, 0);
-          UiText_DrawCharacterAtOffset(element * 20 + index + 0x6d3,
+          UiText_DrawCharacterAtOffset(element * 20 + index + (s32)MsgDjinnName,
                                        commandWindow, 16, 0);
           command->range = cost;
           WaitFrames(1);
@@ -725,7 +731,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         COMMAND_ICON_X(state) = 64;
         Func_08041f70(2);
         UiWindow_SetTilemapEntry(commandWindow, element + 0x5001, 0, 0, 0);
-        UiText_DrawCharacterAtOffset(element * 20 + index + 0x6d3,
+        UiText_DrawCharacterAtOffset(element * 20 + index + (s32)MsgDjinnName,
                                      commandWindow, 16, 0);
         Func_08041f70(15);
         command->range = 1;
@@ -809,7 +815,8 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         iconSprite->tile =
             ItemIcon_LoadIntoSlot(unit->items[selection], handle);
         state->iconShown[1] = 1;
-        UiText_DrawCharacterAtOffset((unit->items[selection] & 0x1ff) + 0x25f,
+        UiText_DrawCharacterAtOffset((unit->items[selection] & 0x1ff) +
+                                         (s32)MsgItemName,
                                      commandWindow, 24, 0);
         command->range = cost;
         Audio_PlayCue(112);

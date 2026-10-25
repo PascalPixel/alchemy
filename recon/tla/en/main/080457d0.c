@@ -1,4 +1,4 @@
-// Draft, differ 917 of 1119: the battle command row, The Broken Seal's
+// Draft, differ 906 of 1119: the battle command row, The Broken Seal's
 // BattleCommandRow_Run (games/tbs/src/window/screens/command_row.c) on this
 // game's work and command numbers. The party's row (mode 0) is Fight (14),
 // command 49 (when the battle allows it, no reserve member is chosen and
@@ -15,6 +15,8 @@
 #include "input.h"
 #include "frame.h"
 #include "system/io_write_queue.h"
+
+extern u8 MsgCommandName[];
 
 struct CommandRowIcon {
   u8 unk00[4];
@@ -283,7 +285,8 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
     if (selectionUi->drawnIndex != selectionUi->selectedIndex) {
       RenderOutput_PrepareForRedraw(selectionUi->window);
       UiText_DrawCharacterAtOffset(
-          selectionUi->entries[selectionUi->selectedIndex].kind + 0x3a,
+          selectionUi->entries[selectionUi->selectedIndex].kind +
+              (s32)MsgCommandName,
           selectionUi->window, 0, 0);
       selectionUi->drawnIndex = selectionUi->selectedIndex;
       Func_080456f8(selectionUi, selectionUi->selectedIndex,

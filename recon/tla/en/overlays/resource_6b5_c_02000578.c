@@ -1,208 +1,138 @@
-// Draft of overlay 6b5's Func_02000578, translated from its listing: differ
-// 382 of 264. Left: its shape: 294 instructions against the listing's 264.
+// Draft of overlay 6b5's Func_02000578, the lobby's sending of the party
+// records and the Djinn recovery table, after ☀️'s BattleArena_SendPartyRecords
+// with the record loops as the listing shows them: differ 258 of 264. Left:
+// register allocation (the native keeps the result in fp and spills the member
+// count, where this spills the result), and the slot map's address stored
+// afresh in each turn of the clearing loop and read from its register.
 #include "types.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Djinn_GetRecoveryTable();
-s32 Func_02000538();
-s32 Func_0200192c();
-s32 Func_0200193c();
-s32 MemFree();
-s32 Runtime_BumpAllocateAlternatePool();
-s32 Unit_Get();
-s32 WaitFrames();
-extern u8 IwramCopyWords[];
-extern u8 gLinkStatus[];
+#include "iwram_call.h"
+#include "mem.h"
+#include "owner_state.h"
+#include "serial_runtime.h"
+
+s32 Func_02000538(u16 *memberIds);
+s32 Func_0200192c(void *data, s32 size);
+s32 Func_0200193c(void);
+void WaitFrames(s32 frames);
 
 s32 Func_02000578(void) {
-  s32 sp_[1];
-  s32 v_r6, v_r7, v_r11, v_r8, v_r9, v_r1, v_r3, v_r2, v_r5, v_r10;
-  s32 v_r0, v_r4, t0, t1, t2, t3, t5, t6, t7, t9;
-  s32 t10, t12, t14, t15, t17, t19, t21, t22, t23, t24;
-  s32 t25, t26, t27, t28, t29, t31, t32;
+  s32 result;
+  u8 *slotMap;
+  u16 memberIds[8];
+  u8 peerSlots[8];
+  s32 transferResult;
+  u8 *heap;
+  s32 memberCount;
+  s32 timeout;
+  s32 tries;
+  s32 i;
+  s32 j;
+  s32 k;
+  u32 size;
+  struct TradeOfferState *list;
 
-  t0 = Runtime_BumpAllocateAlternatePool(0x154);
-  t1 = Func_02000538(((s32)sp_ + 16));
-  FIELD_AT(sp_, s32, 4) = t1;
-  v_r9 = 0x258;
-  v_r8 = ((s32)sp_ + 16);
-  v_r11 = 0;
-  v_r7 = t0;
-  v_r6 = 0;
-L_020085ac:
-  FIELD_AT(sp_, s32, 0) = ((s32)sp_ + 8);
-  *(u8 *)(((s32)sp_ + 8) + v_r6) = 0;
-  v_r6 = (v_r6 + 1);
-  v_r3 = 0;
-  v_r1 = ((s32)sp_ + 8);
-  if (v_r6 <= 7)
-    goto L_020085ac;
-  t2 = FIELD_AT(sp_, s32, 4);
-  v_r2 = t2;
-  v_r6 = 0;
-  if (v_r6 >= v_r2)
-    goto L_02008690;
-L_020085c4:
-  v_r5 = (v_r6 << 1);
-  t3 = *(u16 *)(v_r8 + v_r5);
-  Unit_Get(t3);
-  *(u8 *)(v_r7 + 0x12a) = 2;
-  t5 = *(u16 *)(v_r8 + v_r5);
-  t6 = FIELD_AT(sp_, s32, 0);
-  *(u8 *)(t6 + t5) = (v_r6 - 128);
-  t7 = Func_0200192c(v_r7, 0x154);
-  v_r2 = -1;
-  v_r0 = t7;
-  v_r10 = 0;
-  if (v_r0 != v_r2)
-    goto L_0200863c;
-  v_r11 = v_r0;
-  goto L_0200879a;
-L_0200860c:
+  size = 0x154;
+  heap = Runtime_BumpAllocateAlternatePool(size);
+  result = 0;
+  timeout = 600;
+  memberCount = Func_02000538(memberIds);
+  i = 0;
+clear:
+  slotMap = peerSlots;
+  slotMap[i] = 0;
+  i++;
+  if (i <= 7)
+    goto clear;
+  i = 0;
+  if (i < memberCount) {
+  send:
+    tries = 0;
+    Iwram_CopyWords(heap, Unit_Get(memberIds[i]), size);
+    heap[0x12a] = 2;
+    slotMap[memberIds[i]] = i - 128;
+    if ((transferResult = Func_0200192c(heap, size)) == -1) {
+      result = transferResult;
+      goto done;
+    }
+    goto testMember;
+  waitMember:
+    WaitFrames(1);
+    if (--timeout < 0 || (gLinkStatus & 3) != 3) {
+      if (++tries > 24) {
+        result = -1;
+        goto done;
+      }
+    }
+  testMember:
+    if (Func_0200193c() != 0)
+      goto waitMember;
+    WaitFrames(2);
+    i++;
+    if (i < memberCount)
+      goto send;
+  }
+  goto next;
+wait:
   WaitFrames(1);
-  v_r9 = (v_r9 + -1);
-  if (v_r9 < 0)
-    goto L_0200862a;
-  t9 = *(u16 *)(s32)gLinkStatus;
-  if ((3 & t9) == 3)
-    goto L_0200863c;
-L_0200862a:
-  v_r10 = (v_r10 + 1);
-  v_r3 = v_r10;
-  v_r2 = 1;
-  if (v_r3 <= 24)
-    goto L_0200863c;
-  v_r11 = -1;
-  v_r1 = -1;
-  goto L_0200879a;
-L_0200863c:
-  t10 = Func_0200193c();
-  if (t10 != 0)
-    goto L_0200860c;
+  if (--timeout < 0 || (gLinkStatus & 3) != 3) {
+    if (++tries > 24) {
+      result = -1;
+      goto done;
+    }
+  }
+test:
+  if (Func_0200193c() != 0)
+    goto wait;
   WaitFrames(2);
-  t12 = FIELD_AT(sp_, s32, 4);
-  v_r6 = (v_r6 + 1);
-  v_r2 = t12;
-  if (v_r6 < v_r2)
-    goto L_020085c4;
-  goto L_02008690;
-L_02008654:
-  WaitFrames(1);
-  v_r9 = (v_r9 + -1);
-  v_r3 = -1;
-  v_r1 = v_r9;
-  if (v_r1 < 0)
-    goto L_02008672;
-  t14 = *(u16 *)(s32)gLinkStatus;
-  v_r3 = (3 & t14);
-  if (v_r3 == 3)
-    goto L_02008680;
-L_02008672:
-  v_r5 = (v_r5 + 1);
-  if (v_r5 <= 24)
-    goto L_02008680;
-  v_r11 = -1;
-  v_r2 = -1;
-  goto L_0200879a;
-L_02008680:
-  t15 = Func_0200193c();
-  if (t15 != 0)
-    goto L_02008654;
-  WaitFrames(2);
-  v_r6 = (v_r6 + 1);
-L_02008690:
-  if (v_r6 > 2)
-    goto L_020086b2;
-  *(u8 *)(v_r7 + 0x12a) = 0;
-  t17 = Func_0200192c(v_r7, 0x154);
-  v_r2 = -1;
-  v_r0 = t17;
-  v_r5 = 0;
-  if (v_r0 != v_r2)
-    goto L_02008680;
-  v_r11 = v_r0;
-  goto L_0200879a;
-L_020086b2:
-  MemFree(v_r7, v_r1, v_r2, v_r3);
-  t19 = Runtime_BumpAllocateAlternatePool(0x154);
-  Djinn_GetRecoveryTable(0);
-  t21 = *(s32 *)(t19 + 0x128);
-  v_r6 = 0x120;
-  v_r5 = 0;
-  v_r4 = (t19 + 8);
-  v_r8 = 0;
-  v_r10 = 0x258;
-  v_r7 = t19;
-  if (v_r5 >= t21)
-    goto L_02008740;
-  v_r0 = v_r4;
-L_020086f8:
-  t22 = FIELD_AT(v_r0, u8, 2);
-  t23 = *(u8 *)(((s32)sp_ + 8) + t22);
-  FIELD_AT(v_r0, u8, 2) = t23;
-  if ((t23 << 24) != 0)
-    goto L_02008732;
-  t24 = *(s32 *)(v_r4 + v_r6);
-  v_r1 = v_r5;
-  if (v_r1 >= (t24 - 1))
-    goto L_02008722;
-  v_r2 = ((v_r5 << 2) + v_r4);
-L_02008714:
-  t25 = FIELD_AT(v_r2, s32, 4);
-  *(s32 *)v_r2 = t25;
-  t26 = *(s32 *)(v_r4 + v_r6);
-  v_r1 = (v_r1 + 1);
-  v_r2 = (v_r2 + 4);
-  if (v_r1 < (t26 - 1))
-    goto L_02008714;
-L_02008722:
-  t27 = *(s32 *)(v_r4 + 0x120);
-  *(s32 *)(v_r4 + 0x120) = (t27 - 1);
-  v_r0 = (v_r0 - 4);
-  v_r5 = (v_r5 - 1);
-L_02008732:
-  t28 = FIELD_AT(v_r4, s32, 288);
-  v_r5 = (v_r5 + 1);
-  v_r6 = 0x120;
-  v_r0 = (v_r0 + 4);
-  if (v_r5 < t28)
-    goto L_020086f8;
-L_02008740:
-  t29 = Func_0200192c(v_r7, 0x154);
-  v_r1 = -1;
-  v_r0 = t29;
-  if (v_r0 != v_r1)
-    goto L_02008786;
-  v_r11 = v_r0;
-  goto L_0200879a;
-L_02008756:
-  WaitFrames(1);
-  v_r10 = (v_r10 + -1);
-  if (v_r10 < 0)
-    goto L_02008774;
-  t31 = *(u16 *)(s32)gLinkStatus;
-  if ((3 & t31) == 3)
-    goto L_02008786;
-L_02008774:
-  v_r8 = (v_r8 + 1);
-  v_r2 = v_r8;
-  v_r1 = 1;
-  if (v_r2 <= 24)
-    goto L_02008786;
-  v_r11 = -1;
-  v_r3 = -1;
-  goto L_0200879a;
-L_02008786:
-  t32 = Func_0200193c();
-  if (t32 != 0)
-    goto L_02008756;
-  WaitFrames(1);
-  WaitFrames(2);
-L_0200879a:
-  MemFree(v_r7, v_r1, v_r2, v_r3);
-  return v_r11;
+  i++;
+next:
+  if (i <= 2) {
+    heap[0x12a] = tries = 0;
+    if ((transferResult = Func_0200192c(heap, size)) != -1)
+      goto test;
+    result = transferResult;
+    goto done;
+  }
+  MemFree(heap);
+  size = 0x154;
+  heap = Runtime_BumpAllocateAlternatePool(size);
+  Iwram_CopyWords(heap, Djinn_GetRecoveryTable(0), size);
+  {
+    s32 timeout;
+    s32 tries;
+
+    list = (struct TradeOfferState *)heap;
+    tries = 0;
+    timeout = 600;
+    for (j = 0; j < list->count; j++) {
+      list->offers[j].owner = peerSlots[list->offers[j].owner];
+      if (list->offers[j].owner == 0) {
+        for (k = j; k < list->count - 1; k++)
+          list->offers[k] = list->offers[k + 1];
+        list->count--;
+        j--;
+      }
+    }
+    if ((transferResult = Func_0200192c(heap, size)) == -1) {
+      result = transferResult;
+      goto done;
+    }
+    goto testOffers;
+  waitOffers:
+    WaitFrames(1);
+    if (--timeout < 0 || (gLinkStatus & 3) != 3) {
+      if (++tries > 24) {
+        result = -1;
+        goto done;
+      }
+    }
+  testOffers:
+    if (Func_0200193c() != 0)
+      goto waitOffers;
+    WaitFrames(1);
+    WaitFrames(2);
+  }
+done:
+  MemFree(heap);
+  return result;
 }

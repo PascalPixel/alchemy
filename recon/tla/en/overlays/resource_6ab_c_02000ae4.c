@@ -1,5 +1,5 @@
 // Draft of overlay 6ab's Func_02000ae4, translated from its listing: differ
-// 58 of 80. Left: instruction order and register choice.
+// 57 of 80. Left: its shape: 77 instructions against the listing's 80.
 #include "types.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -44,7 +44,7 @@ void Func_02000ae4(s32 p0) {
   t6 = FIELD_AT(t1, u8, 16);
   v_r5 = (t4 + 0x400);
   VramCache_Load(t6, 128, v_r5);
-  Runtime_ReleaseHeapBlock(68, 0, 0, 0);
+  Runtime_ReleaseHeapBlock(68);
   if (v_r7 == 0)
     goto L_02008b92;
   WaitFrames(1);

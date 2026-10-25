@@ -1,5 +1,5 @@
 // Draft of overlay 6aa's Func_020029c8, translated from its listing: differ
-// 187 of 168. Left: its shape: 163 instructions against the listing's 168.
+// 170 of 168. Left: its shape: 164 instructions against the listing's 168.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -24,8 +24,8 @@ void Func_020029c8(s32 p0) {
   s32 sp_[1];
   s32 v_r11, v_r5, v_r8, v_r6, v_r7, t0, t1, t2, t3, t4;
   s32 t5, t6, t7, t8, t9, t10, t11, t12, t13, t16;
-  s32 t18, t19, t20, t21, t23, t24, t25, t27, t28, t29;
-  s32 t30, t31, t32, t33, t34, t35;
+  s32 t17, t18, t19, t20, t21, t22, t23, t25, t26, t27;
+  s32 t29, t30, t31, t32, t33, t34, t35, t36, t37;
 
   t0 = FIELD_AT(((s32)gData_020023c4 + 0x188), s32, 112);
   v_r11 = p0;
@@ -33,7 +33,7 @@ void Func_020029c8(s32 p0) {
     goto L_0200a9e4;
   goto L_0200ab3c;
 L_0200a9e4:
-  FIELD_AT(sp_, s32, 0) = 0;
+  *(s32 *)sp_ = 0;
 L_0200a9e8:
   t1 = Value0((s32 (*)())Random16Far);
   t2 = Value0((s32 (*)())Random16Far);
@@ -62,45 +62,47 @@ L_0200a9e8:
   FIELD_AT(v_r7, s32, 40) = ((t10 << 2) + 0x20000);
   t16 = Value1((s32 (*)())Math_Cosine, t10);
   v_r6 = (t11 << 3);
-  FIELD_AT(v_r7, s32, 44) = v_r6;
-  Call2((void (*)())Math_Sine, t10, t16);
+  t17 = ((s32 (*)())(s32)IwramMulQ16)(v_r6, t16);
+  FIELD_AT(v_r7, s32, 44) = t17;
+  t18 = Value1((s32 (*)())Math_Sine, t10);
+  t19 = ((s32 (*)())(s32)IwramMulQ16)(v_r6, t18);
   FIELD_AT(v_r7, s32, 72) = 0x547a;
-  t18 = FIELD_AT(((s32)gData_020023c4 + 0x188), s32, 112);
+  t20 = FIELD_AT(((s32)gData_020023c4 + 0x188), s32, 112);
   v_r5 = (((u32)(t12 + t13) >> 2) + 0x8000);
   FIELD_AT(v_r7, s32, 24) = v_r5;
   FIELD_AT(v_r7, s32, 28) = v_r5;
   FIELD_AT(v_r7, s32, 68) = 0x8000;
-  t19 = FIELD_AT(v_r7, s32, 80);
-  FIELD_AT(v_r7, s32, 36) = v_r6;
+  t21 = FIELD_AT(v_r7, s32, 80);
+  FIELD_AT(v_r7, s32, 36) = t19;
   FIELD_AT(v_r7, s32, 52) = 0;
-  t20 = FIELD_AT(t18, s32, 80);
-  t21 = FIELD_AT(t19, u8, 16);
-  Call1((void (*)())Resource_ResetEntry, t21);
-  t23 = FIELD_AT(t19, u8, 17);
-  FIELD_AT(t19, u8, 17) = (t23 | 1);
-  t24 = FIELD_AT(((s32)gData_020023c4 + 0x188), u16, 12);
-  t25 = FIELD_AT(t19, s32, 40);
-  FIELD_AT(t19, u8, 16) = t24;
-  Call1((void (*)())ResourceMetadata_ClearRecord, t25);
-  FIELD_AT(t19, s32, 40) = 0;
-  FIELD_AT(t19, u8, 27) = 0;
-  t27 = FIELD_AT(t20, u8, 20);
-  t28 = FIELD_AT(t19, u8, 5);
-  FIELD_AT(t19, u8, 20) = t27;
-  t29 = FIELD_AT(t20, u8, 21);
-  FIELD_AT(t19, u8, 21) = t29;
-  t30 = FIELD_AT(t20, u8, 5);
-  FIELD_AT(t19, u8, 5) = ((63 & t28) | (((u32)t30 >> 6) << 6));
-  t31 = FIELD_AT(t20, u8, 7);
-  t32 = FIELD_AT(t19, u8, 7);
-  FIELD_AT(t19, u8, 7) = ((63 & t32) | (((u32)t31 >> 6) << 6));
-  t33 = FIELD_AT(t20, u16, 8);
-  t34 = FIELD_AT(t19, u16, 8);
-  FIELD_AT(t19, u16, 8) = ((t34 & -0x400) | ((u32)(t33 << 22) >> 22));
+  t22 = FIELD_AT(t20, s32, 80);
+  t23 = FIELD_AT(t21, u8, 16);
+  Call1((void (*)())Resource_ResetEntry, t23);
+  t25 = FIELD_AT(t21, u8, 17);
+  FIELD_AT(t21, u8, 17) = (t25 | 1);
+  t26 = FIELD_AT(((s32)gData_020023c4 + 0x188), u16, 12);
+  t27 = FIELD_AT(t21, s32, 40);
+  FIELD_AT(t21, u8, 16) = t26;
+  Call1((void (*)())ResourceMetadata_ClearRecord, t27);
+  FIELD_AT(t21, s32, 40) = 0;
+  FIELD_AT(t21, u8, 27) = 0;
+  t29 = FIELD_AT(t22, u8, 20);
+  t30 = FIELD_AT(t21, u8, 5);
+  FIELD_AT(t21, u8, 20) = t29;
+  t31 = FIELD_AT(t22, u8, 21);
+  FIELD_AT(t21, u8, 21) = t31;
+  t32 = FIELD_AT(t22, u8, 5);
+  FIELD_AT(t21, u8, 5) = ((63 & t30) | (((u32)t32 >> 6) << 6));
+  t33 = FIELD_AT(t22, u8, 7);
+  t34 = FIELD_AT(t21, u8, 7);
+  FIELD_AT(t21, u8, 7) = ((63 & t34) | (((u32)t33 >> 6) << 6));
+  t35 = FIELD_AT(t22, u16, 8);
+  t36 = FIELD_AT(t21, u16, 8);
+  FIELD_AT(t21, u16, 8) = ((t36 & -0x400) | ((u32)(t35 << 22) >> 22));
 L_0200ab1c:
-  t35 = FIELD_AT(sp_, s32, 0);
-  FIELD_AT(sp_, s32, 0) = (t35 - 1);
-  if ((t35 - 1) < 0)
+  t37 = *(s32 *)sp_;
+  *(s32 *)sp_ = (t37 - 1);
+  if ((t37 - 1) < 0)
     goto L_0200ab28;
   goto L_0200a9e8;
 L_0200ab28:

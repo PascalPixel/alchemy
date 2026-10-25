@@ -1,5 +1,5 @@
 // Draft of overlay 6b4's Func_02000478, translated from its listing: differ
-// 100 of 104. Left: its shape: 108 instructions against the listing's 104.
+// 99 of 104. Left: its shape: 107 instructions against the listing's 104.
 #include "types.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -18,9 +18,9 @@ extern u8 Effect_AdvanceMotion[];
 void Func_02000478(s32 p0, s32 p1) {
   s32 sp_[1];
   s32 spo_[4];
-  s32 v_r9, v_r10, v_r11, v_r8, v_r7, v_r5, v_r3, v_r6, v_r1, t0;
-  s32 t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
-  s32 t11, t12, t13, t14, t15;
+  s32 v_r9, v_r10, v_r11, v_r8, v_r7, v_r5, v_r3, v_r6, t0, t1;
+  s32 t2, t3, t4, t5, t6, t7, t8, t9, t10, t11;
+  s32 t12, t13, t14, t15;
 
   t0 = Object_GetById(8);
   FIELD_AT(sp_, s32, 48) = (s32)Effect_AdvanceMotion;
@@ -46,7 +46,7 @@ L_020084b2:
 L_020084d2:
   *(s32 *)v_r6 = (v_r3 >> 8);
   FIELD_AT(v_r6, s32, 4) = 0;
-  t5 = Math_Sine(v_r5, v_r1);
+  t5 = Math_Sine(v_r5);
   v_r3 = (v_r11 * t5);
   if (v_r3 >= 0)
     goto L_020084ea;

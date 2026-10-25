@@ -1,5 +1,5 @@
 // Draft of overlay 6a5's Func_0200065c, translated from its listing: differ
-// 341 of 684. Left: its shape: 671 instructions against the listing's 684.
+// 336 of 684. Left: its shape: 694 instructions against the listing's 684.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -130,7 +130,7 @@ L_020086c4:
   t35 = FIELD_AT(t28, u8, 16);
   *(s32 *)sp_ = (t34 + 0x400);
   Call3((void (*)())VramCache_Load, t35, 128, (t34 + 0x400));
-  Call4((void (*)())Runtime_ReleaseHeapBlock, 68, 0, 0, 0);
+  Call1((void (*)())Runtime_ReleaseHeapBlock, 68);
 L_020087f4:
   Call2((void (*)())ObjectMotion_SetActionVariant, 37, 1);
   t39 = Value1((s32 (*)())Object_GetById, 37);
@@ -193,7 +193,7 @@ L_02008848:
   FIELD_AT(v_r6, u16, 100) = v_r11;
   Call1((void (*)())Func_0200578c, v_r7);
   *(u8 *)v_r10 = 4;
-  FieldEvent_WaitFrames(90);
+  Call1((void (*)())FieldEvent_WaitFrames, 90);
   *(u8 *)v_r10 = 0;
   Call4((void (*)())Func_02005784, v_r7, 0x2000000, 0x5c0000, 0x1080000);
   Call1((void (*)())Func_0200578c, v_r7);
@@ -270,8 +270,7 @@ L_020089ca:
   t110 = Value1((s32 (*)())Object_GetById, 32);
   t111 = FIELD_AT(t110, u8, 35);
   FIELD_AT(t110, u8, 35) = (t111 | 1);
-  Call4((void (*)())Camera_MoveWithinMapBounds, 0x2000000, 0x600000, 0x1080000,
-        1);
+  Camera_MoveWithinMapBounds(0x2000000, 0x600000, 0x1080000, 1);
   Func_02005924();
   Call2((void (*)())ObjectMotion_SetActionVariant, 31, 1);
   Call2((void (*)())ObjectMotion_SetActionVariant, 32, 1);
@@ -309,7 +308,7 @@ L_020089ca:
         (s32)gData_02006338);
   Call2((void (*)())ObjectMotion_EnableActionAndSetCallback, 32,
         (s32)gData_02006338);
-  Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_020004c8, 0x480);
+  Scheduler_AddOrUpdateCallback((s32)Func_020004c8, 0x480);
   Call3((void (*)())Func_02005884, 9, 0, 0);
   Call3((void (*)())Func_02005884, 10, 0, 0);
   Call3((void (*)())Func_02005884, 23, 0, 0);

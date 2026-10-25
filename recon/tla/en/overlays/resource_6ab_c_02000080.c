@@ -1,5 +1,5 @@
 // Draft of overlay 6ab's Func_02000080, translated from its listing: differ
-// 92 of 113. Left: its shape: 109 instructions against the listing's 113.
+// 85 of 113. Left: its shape: 114 instructions against the listing's 113.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -22,6 +22,7 @@ extern u8 gData_02004474[];
 void Func_02000080(s32 p0) {
   s32 v_r9, v_r11, v_r5, v_r8, v_r6, v_r7, t0, t1, t2, t3;
   s32 t4, t5, t6, t7, t8, t9, t10, t11, t12, t15;
+  s32 t16, t17, t18;
 
   t0 = Value1((s32 (*)())Object_GetById, p0);
   v_r11 = 5;
@@ -53,18 +54,20 @@ L_02008098:
   FIELD_AT(v_r7, s32, 40) = ((t10 << 2) + 0x20000);
   t15 = Value1((s32 (*)())Math_Cosine, t10);
   v_r6 = (t11 << 3);
-  FIELD_AT(v_r7, s32, 44) = v_r6;
-  Call2((void (*)())Math_Sine, t10, t15);
+  t16 = ((s32 (*)())(s32)IwramMulQ16)(v_r6, t15);
+  FIELD_AT(v_r7, s32, 44) = t16;
+  t17 = Value1((s32 (*)())Math_Sine, t10);
+  t18 = ((s32 (*)())(s32)IwramMulQ16)(v_r6, t17);
   FIELD_AT(v_r7, s32, 52) = 0;
   FIELD_AT(v_r7, s32, 72) = 0x547a;
-  FIELD_AT(v_r7, s32, 36) = v_r6;
+  FIELD_AT(v_r7, s32, 36) = t18;
   v_r5 = (((u32)t12 >> 1) + 0x4000);
   FIELD_AT(v_r7, s32, 24) = v_r5;
   FIELD_AT(v_r7, s32, 28) = v_r5;
   FIELD_AT(v_r7, s32, 68) = 0x8000;
   Call2((void (*)())Animation_ApplyChildValues, v_r7, 1);
 L_02008168:
-  v_r11 = (v_r11 + -1);
+  v_r11 = (v_r11 - 1);
   if (v_r11 >= 0)
     goto L_02008098;
   return;

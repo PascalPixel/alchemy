@@ -1,79 +1,68 @@
-// Draft of overlay 6aa's Func_020024c0, translated from its listing: differ
-// 132 of 108. Left: its shape: 102 instructions against the listing's 108.
+// Draft of overlay 6aa's Func_020024c0, written from its listing: it keeps the
+// active members' HP, runs Func_02004d08 for the leader, then counts the
+// members still standing and lists in the event work those it downed. Differ 90
+// of 108. Left: register allocation (the native keeps the work in r6, the count
+// in r7 and the leader in r8, and the owner byte's base and offset in sl and r8
+// across the call, where this spills them to a 20-byte frame).
 #include "types.h"
-#include "call.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Func_02004d08();
-s32 Func_02004da8();
-s32 Func_02004dc0();
-s32 Object_GetById();
-s32 Party_CountActiveOwners();
-s32 Unit_Get();
-extern u8 gPartyState[];
+#include "ram_buffer.h"
+#include "party_state.h"
+#include "battle_unit.h"
 
-void Func_020024c0(s32 p0, s32 p1) {
-  s32 sp_[1];
-  s32 v_r6, v_r8, v_r7, v_r5, v_r10, v_r0, t0, t1, t3, t4;
-  s32 t5, t6, t7, t10, t11, t12, t13, t14, t15, t16;
+struct MarsLighthouseEventWork {
+  u8 unk000[0x16a];
+  u16 unk16a;
+  u16 downCount;
+  u16 standingCount;
+  u16 downOwners[8];
+};
 
-  t0 = FIELD_AT(0x3000000, s32, 108);
-  t1 = Value2((s32 (*)())Func_02004dc0, p0, p1);
-  Call1((void (*)())Object_GetById, t1);
-  t3 = Value0((s32 (*)())Party_CountActiveOwners);
-  v_r5 = 0;
-  v_r7 = t3;
-  v_r8 = t1;
-  v_r6 = t0;
-  if (v_r5 >= v_r7)
-    goto L_0200a502;
-L_0200a4e6:
-  t4 = *(u8 *)((s32)gPartyState + (v_r5 + 0x218));
-  t5 = Value1((s32 (*)())Unit_Get, t4);
-  t6 = FIELD_AT(t5, u16, 56);
-  *(u16 *)((s32)sp_ + (v_r5 << 1)) = t6;
-  t7 = (v_r5 << 1);
-  v_r5 = (v_r5 + 1);
-  if (v_r5 < v_r7)
-    goto L_0200a4e6;
-L_0200a502:
-  Call2((void (*)())Func_02004da8, -10, 0);
-  *(u16 *)(v_r6 + 0x16c) = 0;
-  *(u16 *)(v_r6 + 0x16e) = 0;
-  Call3((void (*)())Func_02004d08, v_r8, 0x102, 0);
-  v_r5 = 0;
-  if (v_r5 >= v_r7)
-    goto L_0200a59c;
-L_0200a52e:
-  t10 = *(u8 *)((s32)gPartyState + (0x218 + v_r5));
-  t11 = Value1((s32 (*)())Unit_Get, t10);
-  t12 = FIELD_AT(t11, s16, 56);
-  v_r0 = t11;
-  v_r8 = (0x218 + v_r5);
-  v_r10 = (s32)gPartyState;
-  if (t12 <= 0)
-    goto L_0200a556;
-  t13 = *(u16 *)(v_r6 + 0x16e);
-  *(u16 *)(v_r6 + 0x16e) = (t13 + 1);
-  goto L_0200a596;
-L_0200a556:
-  t14 = *(s16 *)((s32)sp_ + (v_r5 << 1));
-  if (t14 == 0)
-    goto L_0200a596;
-  t15 = *(u16 *)(v_r6 + 0x16c);
-  *(u16 *)(v_r6 + 0x16c) = (t15 + 1);
-  t16 = *(u8 *)(v_r10 + v_r8);
-  *(u16 *)(v_r6 + (((t15 << 16) >> 15) + 0x170)) = t16;
-  *(u16 *)(v_r6 + 0x16a) = 0xffff;
-  *(u8 *)(v_r0 + 0x131) = 0;
-L_0200a596:
-  v_r5 = (v_r5 + 1);
-  if (v_r5 < v_r7)
-    goto L_0200a52e;
-L_0200a59c:
-  return;
+s32 Func_02004dc0(void);
+void Func_02004da8(s32 a, s32 b);
+void Func_02004d08(s32 id, s32 a);
+void *Object_GetById(s32 id);
+struct BattleUnit *Unit_Get(s32 owner);
+
+void Func_020024c0(void) {
+  struct MarsLighthouseEventWork *work = Ram_HeapSlots->eventWork;
+  s32 leader;
+  s32 count;
+  s32 i;
+  s16 hp[8];
+
+  leader = Func_02004dc0();
+  Object_GetById(leader);
+  count = Party_CountActiveOwners();
+  i = 0;
+  if (i < count) {
+  save:
+    hp[i] = Unit_Get(gPartyState.activeOwners[i])->hp;
+    i++;
+    if (i < count)
+      goto save;
+  }
+  Func_02004da8(-10, 0);
+  work->downCount = 0;
+  work->standingCount = 0;
+  Func_02004d08(leader, 258);
+  i = 0;
+  if (i < count) {
+  check:
+    {
+      struct BattleUnit *unit;
+      u8 *owner = &gPartyState.activeOwners[i];
+      unit = Unit_Get(*owner);
+
+      if (unit->hp > 0) {
+        work->standingCount++;
+      } else if (hp[i] != 0) {
+        work->downOwners[(s16)work->downCount++] = *owner;
+        work->unk16a = 0xffff;
+        ((u8 *)unit)[0x131] = 0;
+      }
+    }
+    i++;
+    if (i < count)
+      goto check;
+  }
 }

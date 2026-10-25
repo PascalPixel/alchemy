@@ -1,185 +1,143 @@
-// Draft of overlay 6b5's Func_0200039c, translated from its listing: differ
-// 300 of 185. Left: its shape: 237 instructions against the listing's 185.
+// Draft of overlay 6b5's Func_0200039c, the lobby's receipt of the partner's
+// three member records and Djinn recovery table, ported from ☀️'s
+// BattleArena_ReceivePartyRecords with the prefix loops as goto loops: differ
+// 184 of 185 (German to Italian 195 of 191, with the space after the prefix).
+// Left: register allocation throughout (the native keeps the record size in fp,
+// the heap block in r9, the timeout in sl and the result in r7), and the prefix
+// scan indexes namePrefix where this walks a pointer.
 #include "types.h"
-#include "call.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Djinn_GetRecoveryTable();
-s32 Func_0200193c();
-s32 MemFree();
-s32 Runtime_BumpAllocateAlternatePool();
-s32 SerialRuntime_StartReceive();
-s32 Ui_AdjustValueWithoutLimit();
-s32 Unit_Get();
-s32 WaitFrames();
-extern u8 gLinkStatus[];
-extern u8 gSerialReceivedSize[];
+#include "edition.h"
+#include "serial_runtime.h"
 
-s32 Func_0200039c(s32 p0, s32 p1, s32 p2, s32 p3) {
-  s32 sp_[1];
-  s32 v_r8, v_r9, v_r3, v_r10, v_r7, v_r11, v_r5, v_r6, v_r1, v_r2;
-  s32 v_r4, v_r0, t0, t1, t3, t4, t5, t6, t9, t10;
-  s32 t11, t12, t13, t14, t15, t16, t18, t19, t20, t23;
-  s32 t24, t25;
+void *Unit_Get(s32 owner);
+void *Djinn_GetRecoveryTable(s32 which);
+s32 Func_0200193c(void);
+void Ui_AdjustValueWithoutLimit(s32 message, u16 *buffer);
+void WaitFrames(s32 frames);
 
-  t0 = Value4((s32 (*)())Runtime_BumpAllocateAlternatePool, 0x154, p1, 0x154,
-              p3);
-  v_r11 = 0x154;
-  v_r7 = 0;
-  v_r10 = 0x384;
-  v_r3 = 0x384;
-  v_r9 = t0;
-  v_r8 = 0;
-  goto L_0200847a;
-L_020083c8:
-  t1 = *(u16 *)v_r3;
-  v_r3 = t1;
-  if ((u32)v_r3 <= (u32)v_r11)
-    goto L_020083d0;
-  goto L_020084de;
-L_020083d0:
-  Call1((void (*)())WaitFrames, 1);
-  v_r10 = (v_r10 - 1);
-  v_r3 = -1;
-  v_r2 = v_r10;
-  if (v_r2 < 0)
-    goto L_020083ee;
-  t3 = *(u16 *)(s32)gLinkStatus;
-  v_r3 = (3 & t3);
-  v_r2 = t3;
-  if (v_r3 == 3)
-    goto L_020083f4;
-L_020083ee:
-  v_r5 = (v_r5 + 1);
-  if (v_r5 > 24)
-    goto L_020084de;
-L_020083f4:
-  t4 = Value0((s32 (*)())Func_0200193c);
-  v_r3 = (s32)gSerialReceivedSize;
-  if (t4 != 0)
-    goto L_020083c8;
-  t5 = *(u16 *)v_r3;
-  v_r3 = t5;
-  if (v_r3 != v_r11)
-    goto L_020084de;
-  t6 = FIELD_AT(v_r6, u8, 298);
-  if (t6 == 0)
-    goto L_02008414;
-  v_r7 = (v_r7 + 1);
-L_02008414:
-  Call1((void (*)())WaitFrames, 2);
-  Call2((void (*)())Ui_AdjustValueWithoutLimit, 0xc58, (s32)sp_);
-  t9 = *(u16 *)sp_;
-  v_r2 = (s32)sp_;
-  v_r1 = 0;
-  if (t9 == v_r1)
-    goto L_0200843a;
-L_0200842c:
-  v_r1 = (v_r1 + 1);
-  if (v_r1 > 4)
-    goto L_0200843a;
-  t10 = *(u16 *)(v_r2 + (v_r1 << 1));
-  if (t10 != 0)
-    goto L_0200842c;
-L_0200843a:
-  t11 = v_r1;
-  v_r1 = 14;
-  v_r4 = t11;
-  if (v_r1 < v_r4)
-    goto L_0200845a;
-  v_r0 = (v_r6 + 14);
-  v_r2 = ((v_r6 - v_r4) + 14);
-L_0200844c:
-  t12 = *(u8 *)v_r2;
-  *(u8 *)v_r0 = t12;
-  v_r0 = (v_r0 - 1);
-  v_r1 = (v_r1 - 1);
-  v_r2 = (v_r2 - 1);
-  if (v_r1 >= v_r4)
-    goto L_0200844c;
-L_0200845a:
-  v_r1 = 0;
-  if (v_r1 >= v_r4)
-    goto L_02008472;
-  v_r0 = v_r6;
-L_02008462:
-  t13 = *(u16 *)((s32)sp_ + (v_r1 << 1));
-  *(u8 *)v_r0 = t13;
-  v_r0 = (v_r0 + 1);
-  v_r1 = (v_r1 + 1);
-  if (v_r1 < v_r4)
-    goto L_02008462;
-L_02008472:
-  FIELD_AT(v_r6, u8, 14) = 0;
-  v_r3 = 1;
-  v_r8 = (v_r8 + 1);
-L_0200847a:
-  v_r2 = v_r8;
-  if (v_r2 > 2)
-    goto L_020084ec;
-  t14 = Value4((s32 (*)())Unit_Get, (v_r8 + 128), v_r1, v_r2, v_r3);
-  t15 = Value1((s32 (*)())SerialRuntime_StartReceive, t14);
-  v_r3 = -1;
-  v_r0 = t15;
-  v_r6 = t14;
-  v_r5 = 0;
-  if (v_r0 != v_r3)
-    goto L_020083f4;
-  goto L_02008514;
-L_0200849a:
-  t16 = *(u16 *)v_r3;
-  v_r3 = t16;
-  v_r2 = 0x154;
-  if (v_r3 > v_r2)
-    goto L_020084de;
-  Call1((void (*)())WaitFrames, 1);
-  v_r10 = (v_r10 - 1);
-  v_r3 = -1;
-  v_r2 = v_r10;
-  if (v_r2 < 0)
-    goto L_020084c2;
-  t18 = *(u16 *)(s32)gLinkStatus;
-  v_r3 = (3 & t18);
-  v_r2 = t18;
-  if (v_r3 == 3)
-    goto L_020084c8;
-L_020084c2:
-  v_r5 = (v_r5 + 1);
-  if (v_r5 > 24)
-    goto L_020084de;
-L_020084c8:
-  t19 = Value0((s32 (*)())Func_0200193c);
-  v_r3 = (s32)gSerialReceivedSize;
-  if (t19 != 0)
-    goto L_0200849a;
-  t20 = *(u16 *)v_r3;
-  v_r3 = 0x154;
-  if (t20 == v_r3)
-    goto L_020084e4;
-L_020084de:
-  v_r7 = -1;
-  goto L_02008516;
-L_020084e4:
-  Call1((void (*)())WaitFrames, 2);
-  goto L_02008516;
-L_020084ec:
-  Call4((void (*)())MemFree, v_r9, v_r1, v_r2, v_r3);
-  t23 = Runtime_BumpAllocateAlternatePool(0x154, 0, 0x154, 0);
-  t24 = Value1((s32 (*)())Djinn_GetRecoveryTable, 1);
-  t25 = Value1((s32 (*)())SerialRuntime_StartReceive, t24);
-  v_r3 = -1;
-  v_r0 = t25;
-  v_r5 = 0;
-  v_r9 = t23;
-  if (v_r0 != v_r3)
-    goto L_020084c8;
-L_02008514:
-  v_r7 = v_r0;
-L_02008516:
-  Call4((void (*)())MemFree, v_r9, v_r1, v_r2, v_r3);
-  return v_r7;
+extern const u8 MsgEnemyLabel[];
+
+s32 Func_0200039c(void) {
+  u16 namePrefix[24];
+  u32 size;
+  void *heap;
+  s32 result;
+  s32 slot;
+  s32 timeout;
+  s32 tries;
+  u8 *record;
+  s32 transferResult;
+  s32 prefixLength;
+  s32 nameIndex;
+
+  size = 0x154;
+  heap = Runtime_BumpAllocateAlternatePool(size);
+  result = 0;
+  timeout = 900;
+  slot = 0;
+  goto next;
+waitRecord:
+  if (gSerialReceivedSize > size) {
+    result = -1;
+    goto done;
+  }
+  WaitFrames(1);
+  if (--timeout < 0 || (gLinkStatus & 3) != 3) {
+    if (++tries > 24) {
+      result = -1;
+      goto done;
+    }
+  }
+testRecord:
+  if (Func_0200193c() != 0) {
+    goto waitRecord;
+  }
+  if (gSerialReceivedSize != size) {
+    result = -1;
+    goto done;
+  }
+  if (record[0x12a] != 0) {
+    result++;
+  }
+  WaitFrames(2);
+  Ui_AdjustValueWithoutLimit((s32)MsgEnemyLabel, namePrefix);
+  nameIndex = 0;
+  if (namePrefix[nameIndex] != 0) {
+  scan:
+    nameIndex++;
+    if (nameIndex <= 4 && namePrefix[nameIndex] != 0)
+      goto scan;
+  }
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+  namePrefix[nameIndex] = ' ';
+  prefixLength = nameIndex + 1;
+#else
+  prefixLength = nameIndex;
+#endif
+  nameIndex = 14;
+  if (nameIndex >= prefixLength) {
+  shift:
+    record[nameIndex] = record[nameIndex - prefixLength];
+    nameIndex--;
+    if (nameIndex >= prefixLength)
+      goto shift;
+  }
+  nameIndex = 0;
+  if (nameIndex < prefixLength) {
+  copy:
+    record[nameIndex] = namePrefix[nameIndex];
+    nameIndex++;
+    if (nameIndex < prefixLength)
+      goto copy;
+  }
+  record[14] = 0;
+  slot++;
+next:
+  if (slot > 2) {
+    goto second;
+  }
+  record = (u8 *)Unit_Get(slot + 128);
+  tries = 0;
+  if ((transferResult = SerialRuntime_StartReceive(record)) == -1) {
+    goto failed;
+  }
+  goto testRecord;
+waitRecovery:
+  transferResult = gSerialReceivedSize;
+  if (transferResult > 0x154) {
+    result = -1;
+    goto done;
+  }
+  WaitFrames(1);
+  if (--timeout < 0 || (gLinkStatus & 3) != 3) {
+    if (++tries > 24) {
+      result = -1;
+      goto done;
+    }
+  }
+testRecovery:
+  if (Func_0200193c() != 0) {
+    goto waitRecovery;
+  }
+  if (gSerialReceivedSize != 0x154) {
+    result = -1;
+  } else {
+    WaitFrames(2);
+  }
+  goto done;
+second:
+  MemFree(heap);
+  size = 0x154;
+  heap = Runtime_BumpAllocateAlternatePool(size);
+  tries = 0;
+  if ((transferResult =
+           SerialRuntime_StartReceive(Djinn_GetRecoveryTable(1))) != -1) {
+    goto testRecovery;
+  }
+failed:
+  result = transferResult;
+done:
+  MemFree(heap);
+  return result;
 }

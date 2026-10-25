@@ -1,5 +1,5 @@
 // Draft of overlay 6ab's Func_02000e80, translated from its listing: differ
-// 279 of 563. Left: its shape: 558 instructions against the listing's 563.
+// 273 of 563. Left: its shape: 552 instructions against the listing's 563.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -93,7 +93,7 @@ L_02008ea2:
   t14 = FIELD_AT(t8, u8, 16);
   v_r5 = (t12 + 0x400);
   Call3((void (*)())VramCache_Load, t14, 128, v_r5);
-  Call4((void (*)())Runtime_ReleaseHeapBlock, 68, 0, 0, 0);
+  Call1((void (*)())Runtime_ReleaseHeapBlock, 68);
 L_02008f48:
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   v_r6 = ((s32)gPartyState + 0x214);
@@ -180,7 +180,7 @@ L_0200905c:
   t67 = FIELD_AT(t61, u8, 16);
   v_r5 = (t65 + 0x400);
   Call3((void (*)())VramCache_Load, t67, 128, v_r5);
-  Call4((void (*)())Runtime_ReleaseHeapBlock, 68, 0, 0, 0);
+  Call1((void (*)())Runtime_ReleaseHeapBlock, 68);
 L_02009112:
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   v_r7 = ((s32)gPartyState + 0x214);

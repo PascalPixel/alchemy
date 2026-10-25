@@ -1,66 +1,51 @@
-// Draft of overlay 6ab's Func_02002658, translated from its listing: differ
-// 94 of 98. Left: its shape: 96 instructions against the listing's 98.
-#include "types.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Animation_ApplyChildValues();
-s32 Func_020041dc();
-s32 Func_020041e4();
-s32 Math_Cosine();
-s32 Math_Sine();
-s32 ObjectDispatch_SetSingleChildFlags();
-s32 Random16Far();
-extern u8 IwramMulQ16[];
-extern u8 gData_020047b8[];
+// Draft of overlay 6ab's Func_02002658, the twin of overlay 6aa's
+// Func_02002b4c: its draft (resource_6aa_c_02002b4c.c) with this overlay's
+// symbols: differ 18 of 98. Left: what that draft's header records.
+#include "../../../../games/tla/src/scene/mars_lighthouse_entrance/room.h"
+#include "iwram_call.h"
 
-void Func_02002658(s32 p0, s32 p1, s32 p2, s32 p3) {
-  s32 sp_[4];
-  s32 v_r11, v_r7, v_r5, v_r8, v_r6, t0, t1, t2, t3, t4;
-  s32 t5, t6, t7, t8, t11, t12;
+extern const u8 gData_020047b8[];
 
-  FIELD_AT(sp_, s32, 12) = p0;
-  FIELD_AT(sp_, s32, 8) = p1;
-  FIELD_AT(sp_, s32, 4) = p2;
-  FIELD_AT(sp_, s32, 0) = p3;
-  v_r11 = 1;
-L_0200a674:
-  t0 = FIELD_AT(sp_, s32, 12);
-  t1 = FIELD_AT(sp_, s32, 8);
-  t2 = FIELD_AT(sp_, s32, 4);
-  t3 = Func_020041e4(0x145, t0, t1, t2);
-  v_r7 = t3;
-  if (v_r7 == 0)
-    goto L_0200a716;
-  t4 = Random16Far();
-  t5 = Random16Far();
-  t6 = FIELD_AT(sp_, s32, 0);
-  v_r5 = ((t6 + ((u32)t4 >> 4)) - ((u32)t5 >> 4));
-  t7 = Random16Far();
-  t8 = Random16Far();
-  Func_020041dc(v_r7, (s32)gData_020047b8);
-  ObjectDispatch_SetSingleChildFlags(v_r7, 0);
-  t11 = (v_r5 + 0x4000);
-  v_r5 = (v_r5 + 0x14000);
-  FIELD_AT(v_r7, s32, 40) = v_r5;
-  t12 = Math_Cosine(t11);
-  v_r8 = (t7 << 3);
-  FIELD_AT(v_r7, s32, 44) = v_r8;
-  Math_Sine(t11, t12);
-  FIELD_AT(v_r7, s32, 52) = 0;
-  FIELD_AT(v_r7, s32, 72) = 0x547a;
-  FIELD_AT(v_r7, s32, 36) = v_r8;
-  v_r6 = (((u32)t8 >> 1) + 0x4000);
-  FIELD_AT(v_r7, s32, 24) = v_r6;
-  FIELD_AT(v_r7, s32, 28) = v_r6;
-  FIELD_AT(v_r7, s32, 68) = 0x8000;
-  Animation_ApplyChildValues(v_r7, 1);
-L_0200a716:
-  v_r11 = (v_r11 + -1);
-  if (v_r11 >= 0)
-    goto L_0200a674;
-  return;
+s32 Math_Cosine(s32 angle);
+s32 Math_Sine(s32 angle);
+void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+                                        s32 flags);
+void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
+u32 Random16Far(void);
+
+/// Throws two sparks (object kind 325) from (x, y, z), each upward at about
+/// speed plus 0x14000 with a random spread, at a random angle and size.
+void Func_02002658(s32 x, s32 y, s32 z, s32 speed) {
+  s32 i;
+
+  i = 1;
+next:
+  {
+    struct ObjectRuntime *object = Func_020041e4(325, x, y, z);
+
+    if (object != NULL) {
+      s32 angle;
+      s32 rise;
+      s32 radius;
+      u32 size;
+
+      rise = speed + (Random16Far() >> 4) - (Random16Far() >> 4);
+      angle = 0x4000 + rise;
+      radius = Random16Far() * 8;
+      size = Random16Far();
+      Func_020041dc(object, gData_020047b8);
+      ObjectDispatch_SetSingleChildFlags(object, 0);
+      object->velocityY = rise + 0x14000;
+      object->velocityZ = Iwram_MulQ16(radius, Math_Cosine(angle));
+      object->velocityX = Iwram_MulQ16(radius, Math_Sine(angle));
+      object->acceleration = 0;
+      object->gravity = 0x547a;
+      object->scaleX = (size >> 1) + 0x4000;
+      object->scaleY = object->scaleX;
+      object->bounce = 0x8000;
+      Animation_ApplyChildValues(object, 1);
+    }
+  }
+  if (--i >= 0)
+    goto next;
 }

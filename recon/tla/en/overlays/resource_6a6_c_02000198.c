@@ -1,6 +1,7 @@
 // Draft of overlay 6a6's Func_02000198, translated from its listing: differ
-// 226 of 1050. Left: its shape: 1064 instructions against the listing's 1050.
+// 181 of 1050. Left: its shape: 1049 instructions against the listing's 1050.
 #include "types.h"
+#include "dma.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -153,12 +154,12 @@ L_0200821e:
   Call3((void (*)())Func_02001348, 21, 0, 0);
   Call3((void (*)())Func_020012c8, 0x70000, 0x70000, 0x10000);
   t36 = Value1((s32 (*)())Runtime_BumpAllocateAlternatePool, 0x600);
-  t37 = Value4((s32 (*)())MemAlloc, 0x1000, 0, 0, 0);
-  t38 = Value4((s32 (*)())Resource_GetTableEntry, 0x1e8, 0, 0, 0);
+  t37 = Value1((s32 (*)())MemAlloc, 0x1000);
+  t38 = Value1((s32 (*)())Resource_GetTableEntry, 0x1e8);
   Call2((void (*)())Func_02001248, t38, t37);
   t40 = Value0((s32 (*)())Resource_FindFreeEntry);
   t41 = Value3((s32 (*)())VramCache_Load, t40, 0x400, t37);
-  Call4((void (*)())MemFree, t37, 0, 0, 0);
+  Call1((void (*)())MemFree, t37);
   v_r10 = t41;
   v_r8 = t40;
   v_r7 = t36;
@@ -171,9 +172,8 @@ L_0200838c:
   v_r5 = (v_r5 + 16);
   if (v_r6 >= 0)
     goto L_0200838c;
-  *(s32 *)0x40000d4 = (s32)Field_Palette685;
-  *(s32 *)(0x40000d4 + 4) = 0x50003e0;
-  *(s32 *)(0x40000d4 + 8) = 0x80000010;
+  Dma_Set((const void *)(s32)Field_Palette685, (void *)0x50003e0, 0x80000010,
+          (volatile u32 *)0x40000d4);
   v_r6 = 0;
 L_020083b6:
   if ((31 & v_r6) != 0)
@@ -229,11 +229,11 @@ L_02008474:
   if (v_r6 <= 119)
     goto L_020083b6;
   Call1((void (*)())Resource_ResetEntry, v_r8);
-  Call4((void (*)())MemFree, v_r7, 0, 0, 0);
+  Call1((void (*)())MemFree, v_r7);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x1e80000, -1, 0x1860000, 1);
   Call4((void (*)())Func_02001350, 14, 0xf80000, 0x1e00000, 0);
   Func_020000ac();
-  Func_020012c8(0, 0, 0x10000);
+  Call3((void (*)())Func_020012c8, 0, 0, 0x10000);
   Call1((void (*)())Func_02001448, 0x186);
   Call1((void (*)())FieldEvent_WaitFrames, 180);
   Call1((void (*)())Func_02001280, 120);

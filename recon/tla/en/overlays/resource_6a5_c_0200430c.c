@@ -1,5 +1,5 @@
 // Draft of overlay 6a5's Func_0200430c, translated from its listing: differ
-// 156 of 197. Left: its shape: 189 instructions against the listing's 197.
+// 150 of 197. Left: its shape: 193 instructions against the listing's 197.
 #include "types.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -28,7 +28,7 @@ void Func_0200430c(s32 p0) {
   s32 t1, t2, t3, t4, t5, t6, t9, t11, t12, t13;
   s32 t14, t15, t16, t17, t18, t19, t20, t22, t23, t24;
   s32 t25, t26, t27, t28, t29, t30, t31, t32, t33, t34;
-  s32 t35, t36, t37;
+  s32 t35, t36, t37, t38, t39;
 
   t0 = FIELD_AT(0x3000000, s32, 108);
   t1 = FIELD_AT((s32)gPartyState, s32, 532);
@@ -121,14 +121,16 @@ L_0200c460:
   t30 = FIELD_AT(v_r6, u16, 6);
   t31 = Math_Cosine(t30);
   t32 = FIELD_AT(v_r6, s32, 48);
-  t33 = FIELD_AT(v_r6, s32, 8);
-  t34 = FIELD_AT(v_r6, u16, 6);
-  FIELD_AT(v_r6, s32, 8) = (t33 + t31);
-  t35 = Math_Sine(t34, t32);
-  t36 = FIELD_AT(v_r6, s32, 48);
-  t37 = FIELD_AT(v_r6, s32, 16);
-  v_r0 = t35;
-  v_r3 = t37;
+  t33 = ((s32 (*)())(s32)IwramMulQ16)(t31, t32);
+  t34 = FIELD_AT(v_r6, s32, 8);
+  t35 = FIELD_AT(v_r6, u16, 6);
+  FIELD_AT(v_r6, s32, 8) = (t34 + t33);
+  t36 = Math_Sine(t35);
+  t37 = FIELD_AT(v_r6, s32, 48);
+  t38 = ((s32 (*)())(s32)IwramMulQ16)(t36, t37);
+  t39 = FIELD_AT(v_r6, s32, 16);
+  v_r0 = t38;
+  v_r3 = t39;
   goto L_0200c494;
 L_0200c494:
   FIELD_AT(v_r6, s32, 16) = (v_r3 + v_r0);

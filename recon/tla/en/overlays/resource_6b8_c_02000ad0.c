@@ -1,5 +1,5 @@
 // Draft of overlay 6b8's Func_02000ad0, translated from its listing: differ
-// 203 of 174. Left: its shape: 189 instructions against the listing's 174.
+// 200 of 174. Left: its shape: 186 instructions against the listing's 174.
 #include "types.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -16,18 +16,17 @@ s32 Math_Sine();
 s32 Resource_ResetEntry();
 s32 __umodsi3();
 
-void Func_02000ad0(s32 p0, s32 p1) {
+void Func_02000ad0(s32 p0) {
   s32 sp_[1];
-  s32 v_r6, v_r7, v_r8, v_r1, v_r2, v_r5, v_r11, v_r3, v_r9, v_r10;
-  s32 t0, t1, t2, t3, t5, t6, t8, t9, t10, t11;
-  s32 t13, t15, t16, t17, t18, t19, t20, t21, t22, t24;
-  s32 t25, t26, t27, t28, t29, t30, t31, t32, t34, t35;
+  s32 v_r6, v_r7, v_r8, v_r2, v_r5, v_r11, v_r3, v_r9, v_r10, t0;
+  s32 t1, t2, t3, t5, t6, t8, t9, t10, t11, t13;
+  s32 t15, t16, t17, t18, t19, t20, t21, t22, t24, t25;
+  s32 t26, t27, t28, t29, t30, t31, t32, t34, t35;
 
   t0 = FIELD_AT(p0, s32, 104);
   v_r6 = (p0 + 99);
   t1 = *(u8 *)v_r6;
   v_r2 = t1;
-  v_r1 = p1;
   v_r8 = t0;
   v_r7 = p0;
   if ((1 & t1) == 0)
@@ -48,7 +47,6 @@ L_02008b0a:
   *(u16 *)(v_r8 + ((t8 << 1) + 160)) = v_r5;
   t9 = FIELD_AT(v_r8, u16, 166);
   FIELD_AT(v_r8, u16, 166) = (t9 ^ 1);
-  v_r1 = (v_r8 + 166);
   goto L_02008b7e;
 L_02008b48:
   if (v_r5 != 1)
@@ -72,7 +70,7 @@ L_02008b7e:
   v_r6 = (v_r8 + 160);
 L_02008b90:
   t16 = *(s16 *)v_r6;
-  t17 = Math_Sine((t16 << 10), v_r1);
+  t17 = Math_Sine((t16 << 10));
   FIELD_AT(sp_, s32, 4) = t17;
   t18 = *(s16 *)v_r6;
   v_r3 = t18;

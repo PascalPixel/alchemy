@@ -4003,12 +4003,6 @@ Func_081a76f8:
 	.thumb_func
 Data_081a786c:
 	.incbin "baserom.gba", 0x001a786c, 0x00000004
-	.section .rom.001a78c0, "ax"
-	.global PaletteFade_Update
-	.type PaletteFade_Update, %function
-	.thumb_func
-PaletteFade_Update:
-	.incbin "baserom.gba", 0x001a78c0, 0x00000168
 	.section .rom.001a7a28, "ax"
 	.global Palette_Transform
 	.type Palette_Transform, %function

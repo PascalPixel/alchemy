@@ -1,0 +1,154 @@
+// Draft of overlay 6ad's Func_0200242c, translated from its listing: differ
+// 200 of 182. Left: its shape: 170 instructions against the listing's 182.
+#include "types.h"
+#include "call.h"
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
+s32 Func_02001fb4();
+s32 Func_020021a0();
+s32 Func_020021e8();
+s32 Func_02002230();
+s32 Func_020023ac();
+s32 GameFlag_Test();
+extern u8 gData_020023c4[];
+
+void Func_0200242c(void) {
+  s32 sp_[1];
+  s32 v_r8, v_r7, v_r9, v_r10, v_r0, v_r3, v_r11, v_r5, v_r6, v_r4;
+  s32 v_r2, v_r1, t0, t1, t2, t3, t4, t5, t6, t7;
+  s32 t8, t9, t10, t11, t12, t13, t14, t15, t16, t17;
+  s32 t18, t19, t20, t21, t22, t23, t24, t25, t27, t28;
+  s32 t30, t31, t33, t34, t36, t37;
+
+  t0 = FIELD_AT(0x3000000, s32, 32);
+  v_r8 = ((s32)gData_020023c4 + 0x188);
+  t1 = *(s32 *)(t0 + 228);
+  t2 = FIELD_AT((t0 + 228), s32, 4);
+  t3 = *(s32 *)t0;
+  t4 = FIELD_AT(t3, s32, 4);
+  FIELD_AT(sp_, s32, 4) = t4;
+  t5 = FIELD_AT(0x3000000, s32, 108);
+  FIELD_AT(sp_, s32, 0) = t5;
+  t6 = FIELD_AT(v_r8, s16, 6);
+  v_r0 = v_r8;
+  v_r10 = (t2 & 0xffff0000);
+  v_r9 = (t1 & 0xffff0000);
+  v_r7 = (v_r8 + 20);
+  if (t6 == 0)
+    goto L_0200a486;
+  t7 = FIELD_AT(v_r0, s16, 8);
+  if (t7 != 0)
+    goto L_0200a486;
+  t8 = FIELD_AT(v_r0, s32, 16);
+  v_r3 = t8;
+  if (v_r3 == 0)
+    goto L_0200a486;
+L_0200a486:
+  t9 = FIELD_AT(v_r8, u16, 6);
+  FIELD_AT(v_r8, u16, 8) = t9;
+  FIELD_AT(v_r8, u16, 6) = 0;
+  v_r11 = 3;
+L_0200a498:
+  t10 = *(s16 *)v_r7;
+  if (t10 == 0)
+    goto L_0200a588;
+  t11 = FIELD_AT(v_r7, s32, 8);
+  v_r5 = t11;
+  if (v_r5 == 0)
+    goto L_0200a588;
+  t12 = Value1((s32 (*)())GameFlag_Test, 0x106);
+  t13 = FIELD_AT(sp_, s32, 0);
+  t14 = *(s16 *)(t13 + 0x166);
+  v_r0 = t12;
+  if (t14 == 0)
+    goto L_0200a4c2;
+  v_r0 = (v_r0 | 1);
+L_0200a4c2:
+  v_r6 = (v_r5 + 91);
+  *(u8 *)v_r6 = v_r0;
+  t15 = FIELD_AT(v_r8, s16, 14);
+  if (t15 == 0)
+    goto L_0200a4dc;
+  t16 = Value1((s32 (*)())GameFlag_Test, 0x106);
+  *(u8 *)v_r6 = t16;
+L_0200a4dc:
+  t17 = FIELD_AT(v_r5, s32, 8);
+  t18 = FIELD_AT(v_r5, s32, 16);
+  t19 = FIELD_AT(v_r5, s32, 12);
+  t20 = FIELD_AT(v_r7, s16, 6);
+  v_r1 = ((((t18 - v_r10) - t19) >> 16) - 8);
+  v_r2 = ((t17 - v_r9) >> 16);
+  v_r4 = t20;
+  if (v_r4 != 0)
+    goto L_0200a512;
+  if ((u32)(v_r2 + 7) > (u32)0x14e)
+    goto L_0200a588;
+  if (v_r1 <= -0x30)
+    goto L_0200a588;
+  if (v_r1 > 239)
+    goto L_0200a588;
+L_0200a512:
+  t21 = FIELD_AT(v_r7, s16, 2);
+  t22 = FIELD_AT(v_r7, u16, 2);
+  v_r1 = t22;
+  if (t21 > 0)
+    goto L_0200a584;
+  t23 = FIELD_AT(v_r7, u16, 4);
+  v_r1 = (240 & t23);
+  if (v_r1 == 32)
+    goto L_0200a558;
+  if (v_r1 > 32)
+    goto L_0200a534;
+  if (v_r1 == 0)
+    goto L_0200a574;
+  if (v_r1 == 16)
+    goto L_0200a566;
+  goto L_0200a580;
+L_0200a534:
+  if (v_r1 == 48)
+    goto L_0200a54a;
+  if (v_r1 != 128)
+    goto L_0200a580;
+  t24 = FIELD_AT(v_r7, s32, 8);
+  t25 = FIELD_AT(v_r7, s32, 12);
+  Call3((void (*)())Func_020023ac, (t24 + 8), t25, v_r4);
+  goto L_0200a580;
+L_0200a54a:
+  t27 = FIELD_AT(v_r7, s32, 8);
+  t28 = FIELD_AT(v_r7, s32, 12);
+  Call3((void (*)())Func_020021a0, (t27 + 8), t28, v_r4);
+  goto L_0200a580;
+L_0200a558:
+  t30 = FIELD_AT(v_r7, s32, 8);
+  t31 = FIELD_AT(v_r7, s32, 12);
+  Call3((void (*)())Func_02002230, (t30 + 8), t31, v_r4);
+  goto L_0200a580;
+L_0200a566:
+  t33 = FIELD_AT(v_r7, s32, 8);
+  t34 = FIELD_AT(v_r7, s32, 12);
+  Call3((void (*)())Func_020021e8, (t33 + 8), t34, v_r4);
+  goto L_0200a580;
+L_0200a574:
+  t36 = FIELD_AT(v_r7, s32, 8);
+  t37 = FIELD_AT(v_r7, s32, 12);
+  Call3((void (*)())Func_02001fb4, (t36 + 8), t37, v_r4);
+L_0200a580:
+  v_r3 = 8;
+  goto L_0200a586;
+L_0200a584:
+  v_r3 = (v_r1 - 1);
+L_0200a586:
+  FIELD_AT(v_r7, u16, 2) = v_r3;
+L_0200a588:
+  v_r11 = (v_r11 + -1);
+  v_r7 = (v_r7 + 16);
+  if (v_r11 < 0)
+    goto L_0200a598;
+  goto L_0200a498;
+L_0200a598:
+  return;
+}

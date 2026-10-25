@@ -1,0 +1,138 @@
+// Draft of overlay 6ac's Func_020000c0, translated from its listing: differ
+// 276 of 230. Left: its shape: 168 instructions against the listing's 230.
+#include "types.h"
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
+s32 GameFlag_Test();
+s32 __modsi3();
+extern u8 Data_020039bc[];
+extern u8 IwramCopyWords[];
+extern u8 gData_020036c4[];
+extern u8 gData_0200393c[];
+extern u8 gData_0200397c[];
+extern u8 gIoWriteQueue[];
+extern u8 gPartyState[];
+
+void Func_020000c0(void) {
+  s32 v_r2, v_r11, v_r10, v_r7, v_r0, v_r9, v_r8, v_r5, v_r6, v_r4;
+  s32 v_r1, t0, t1, t2, t3, t4, t5, t6, t7, t8;
+  s32 t9, t10, t11, t12, t13, t14, t15, t16, t17, t18;
+  s32 t19, t20, t21;
+
+  t0 = *(s16 *)((s32)gPartyState + 0x1e2);
+  t1 = FIELD_AT(0x3000000, s32, 108);
+  t2 = *(s16 *)(t1 + 0x166);
+  v_r11 = t0;
+  v_r2 = t1;
+  if (t2 == 0)
+    goto L_020080f2;
+  goto L_02008292;
+L_020080f2:
+  t3 = *(u8 *)(v_r2 + 0xca4);
+  v_r10 = ((t3 << 24) >> 24);
+  if (v_r10 == 0)
+    goto L_02008108;
+  goto L_02008292;
+L_02008108:
+  t4 = *(s32 *)(s32)gData_020036c4;
+  v_r7 = (s32)gData_020036c4;
+  if (t4 != -1)
+    goto L_02008140;
+  *(s32 *)v_r7 = v_r10;
+L_02008140:
+  t5 = *(s32 *)v_r7;
+  v_r0 = t5;
+  if (v_r0 >= 0)
+    goto L_02008148;
+  v_r0 = (v_r0 + 7);
+L_02008148:
+  t6 = __modsi3((v_r0 >> 3), 6);
+  v_r9 = t6;
+  if (v_r11 != 1)
+    goto L_0200819e;
+  t7 = GameFlag_Test(0xa32);
+  if (t7 == 0)
+    goto L_0200819e;
+  v_r8 = 20;
+  v_r7 = 0;
+L_02008178:
+  t8 = __modsi3((v_r9 + v_r7), 6);
+  t9 = *(u16 *)((s32)gData_0200393c + ((t8 << 1) + 20));
+  *(u16 *)((s32)gData_0200397c + v_r8) = t9;
+  v_r7 = (v_r7 + 1);
+  v_r8 = (v_r8 + 2);
+  if (v_r7 <= 5)
+    goto L_02008178;
+L_0200819e:
+  if (v_r11 != 2)
+    goto L_020081de;
+  t10 = GameFlag_Test(0xa33);
+  if (t10 == 0)
+    goto L_020081de;
+  v_r8 = 20;
+  v_r7 = 0;
+L_020081b8:
+  t11 = __modsi3((v_r9 + v_r7), 6);
+  t12 = *(u16 *)((s32)gData_0200393c + ((t11 << 1) + 40));
+  *(u16 *)((s32)gData_0200397c + v_r8) = t12;
+  v_r7 = (v_r7 + 1);
+  v_r8 = (v_r8 + 2);
+  if (v_r7 <= 5)
+    goto L_020081b8;
+L_020081de:
+  if (v_r11 != 3)
+    goto L_0200821c;
+  t13 = GameFlag_Test(0xa34);
+  if (t13 == 0)
+    goto L_0200821c;
+  v_r5 = 20;
+  v_r7 = 0;
+L_020081f6:
+  t14 = __modsi3((v_r9 + v_r7), 6);
+  t15 = *(u16 *)((s32)gData_0200393c + ((t14 << 1) + 52));
+  *(u16 *)((s32)gData_0200397c + v_r5) = t15;
+  v_r7 = (v_r7 + 1);
+  v_r5 = (v_r5 + 2);
+  if (v_r7 <= 5)
+    goto L_020081f6;
+L_0200821c:
+  if (v_r11 != 4)
+    goto L_0200825a;
+  t16 = GameFlag_Test(0xa35);
+  if (t16 == 0)
+    goto L_0200825a;
+  v_r6 = 20;
+  v_r7 = 0;
+L_02008234:
+  t17 = __modsi3((v_r9 + v_r7), 6);
+  t18 = *(u16 *)((s32)gData_0200393c + ((t17 << 1) + 8));
+  *(u16 *)((s32)gData_0200397c + v_r6) = t18;
+  v_r7 = (v_r7 + 1);
+  v_r6 = (v_r6 + 2);
+  if (v_r7 <= 5)
+    goto L_02008234;
+L_0200825a:
+  t19 = *(u16 *)0x4000208;
+  *(u16 *)0x4000208 = 0x4000208;
+  t20 = *(u16 *)(s32)gIoWriteQueue;
+  v_r1 = (s32)gIoWriteQueue;
+  v_r2 = t20;
+  v_r0 = 0x4000208;
+  v_r4 = t19;
+  if (v_r2 > 31)
+    goto L_02008288;
+  *(u16 *)v_r1 = (v_r2 + 1);
+  *(s32 *)(((((v_r2 << 1) + v_r2) << 2) + v_r1) + 4) = (s32)gData_0200397c;
+  *(s32 *)((((((v_r2 << 1) + v_r2) << 2) + v_r1) + 4) + 4) = 0x50001a0;
+  *(s32 *)(((((((v_r2 << 1) + v_r2) << 2) + v_r1) + 4) + 4) + 4) = 0x84000008;
+L_02008288:
+  *(u16 *)v_r0 = v_r4;
+  t21 = *(s32 *)(s32)gData_020036c4;
+  *(s32 *)(s32)gData_020036c4 = (t21 + 1);
+L_02008292:
+  return;
+}

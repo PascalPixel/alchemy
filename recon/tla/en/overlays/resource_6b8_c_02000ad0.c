@@ -1,0 +1,135 @@
+// Draft of overlay 6b8's Func_02000ad0, translated from its listing: differ
+// 213 of 174. Left: its shape: 189 instructions against the listing's 174.
+#include "types.h"
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
+s32 Animation_ApplyChildValues();
+s32 Func_02000ec4();
+s32 Func_02000eec();
+s32 Func_02000efc();
+s32 Func_02000f3c();
+s32 Math_Sine();
+s32 Resource_ResetEntry();
+s32 __umodsi3();
+
+void Func_02000ad0(s32 p0, s32 p1) {
+  s32 sp_[1];
+  s32 v_r6, v_r7, v_r8, v_r1, v_r5, v_r2, v_r3, v_r11, v_r9, v_r10;
+  s32 t0, t1, t2, t3, t5, t6, t8, t9, t10, t11;
+  s32 t13, t15, t16, t17, t18, t19, t20, t21, t22, t24;
+  s32 t25, t26, t27, t28, t29, t30, t31, t32, t34, t35;
+
+  t0 = FIELD_AT(p0, s32, 104);
+  v_r6 = (p0 + 99);
+  t1 = *(u8 *)v_r6;
+  v_r1 = p1;
+  v_r8 = t0;
+  v_r7 = p0;
+  if ((1 & t1) == 0)
+    goto L_02008b0a;
+  t2 = *(u8 *)v_r6;
+  t3 = __umodsi3(((u32)t2 >> 1), 6);
+  Animation_ApplyChildValues(v_r7, ((u32)(t3 << 24) >> 24));
+L_02008b0a:
+  t5 = *(u8 *)(v_r7 + 98);
+  v_r5 = t5;
+  if (v_r5 != 0)
+    goto L_02008b48;
+  t6 = *(u8 *)v_r6;
+  v_r3 = (15 & t6);
+  v_r2 = t6;
+  if (v_r3 != 0)
+    goto L_02008b7e;
+  Func_02000f3c(0x256, v_r1, v_r2, v_r3);
+  t8 = *(s16 *)(v_r8 + 166);
+  *(u16 *)(v_r8 + ((t8 << 1) + 160)) = v_r5;
+  t9 = *(u16 *)(v_r8 + 166);
+  *(u16 *)(v_r8 + 166) = (t9 ^ 1);
+  v_r1 = (v_r8 + 166);
+  goto L_02008b7e;
+L_02008b48:
+  if (v_r5 != 1)
+    goto L_02008b7e;
+  t10 = *(s16 *)(v_r8 + 160);
+  if (t10 <= 31)
+    goto L_02008b7e;
+  t11 = *(s16 *)(v_r8 + 162);
+  if (t11 <= 31)
+    goto L_02008b7e;
+  Animation_ApplyChildValues(v_r7, 0);
+  t13 = *(s16 *)(v_r8 + 164);
+  Resource_ResetEntry(t13);
+  FIELD_AT(v_r7, s32, 108) = 0;
+  goto L_02008c38;
+L_02008b7e:
+  t15 = *(u8 *)v_r6;
+  *(u8 *)v_r6 = (t15 + 1);
+  FIELD_AT(sp_, s32, 0) = 0;
+  v_r11 = 1;
+  v_r6 = (v_r8 + 160);
+L_02008b90:
+  t16 = *(s16 *)v_r6;
+  t17 = Math_Sine((t16 << 10), v_r1);
+  FIELD_AT(sp_, s32, 4) = t17;
+  t18 = *(s16 *)v_r6;
+  v_r3 = t18;
+  if (v_r3 < 0)
+    goto L_02008c24;
+  if (v_r3 > 31)
+    goto L_02008c24;
+  t19 = FIELD_AT(v_r7, s32, 8);
+  FIELD_AT(sp_, s32, 12) = t19;
+  t20 = *(s16 *)v_r6;
+  t21 = FIELD_AT(v_r7, s32, 12);
+  FIELD_AT(sp_, s32, 16) = (t21 + (t20 << 16));
+  t22 = FIELD_AT(v_r7, s32, 16);
+  FIELD_AT(sp_, s32, 20) = t22;
+  Func_02000ec4(((s32)sp_ + 0));
+  t24 = FIELD_AT(sp_, s32, 12);
+  FIELD_AT(sp_, s32, 8) = t24;
+  t25 = FIELD_AT(sp_, s32, 20);
+  t26 = FIELD_AT(sp_, s32, 0);
+  v_r10 = 0;
+  v_r5 = (t26 + v_r8);
+  v_r9 = t25;
+L_02008bd4:
+  t27 = FIELD_AT(sp_, s32, 8);
+  FIELD_AT(v_r5, s32, 16) = v_r9;
+  FIELD_AT(v_r5, s32, 12) = t27;
+  t28 = FIELD_AT(sp_, s32, 4);
+  FIELD_AT(v_r5, s32, 20) = t28;
+  FIELD_AT(v_r5, s32, 24) = t28;
+  if (v_r10 != 0)
+    goto L_02008bf4;
+  t29 = Func_02000efc(v_r7);
+  FIELD_AT(v_r5, u16, 30) = (t29 - 1);
+  goto L_02008c0c;
+L_02008bf4:
+  t30 = Func_02000efc(v_r7);
+  t31 = FIELD_AT(v_r5, s32, 16);
+  FIELD_AT(v_r5, s32, 16) = (t31 + 0xffff0000);
+  t32 = FIELD_AT(v_r5, s32, 24);
+  FIELD_AT(v_r5, u16, 30) = (t30 + 1);
+  FIELD_AT(v_r5, s32, 24) = -t32;
+L_02008c0c:
+  Func_02000eec(v_r5);
+  v_r10 = (v_r10 + 1);
+  v_r5 = (v_r5 + 40);
+  if (v_r10 <= 1)
+    goto L_02008bd4;
+  t34 = *(u16 *)v_r6;
+  *(u16 *)v_r6 = (t34 + 1);
+L_02008c24:
+  t35 = FIELD_AT(sp_, s32, 0);
+  FIELD_AT(sp_, s32, 0) = (t35 + 80);
+  v_r11 = (v_r11 + -1);
+  v_r6 = (v_r6 + 2);
+  if (v_r11 >= 0)
+    goto L_02008b90;
+L_02008c38:
+  return;
+}

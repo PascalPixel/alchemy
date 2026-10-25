@@ -1,0 +1,144 @@
+// Draft of overlay 6ad's Func_02001894, translated from its listing: differ
+// 172 of 197. Left: its shape: 183 instructions against the listing's 197.
+#include "types.h"
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
+s32 Func_02001868();
+s32 Func_02005490();
+s32 Func_02005658();
+s32 Func_020056a0();
+s32 Func_020056c0();
+s32 GameFlag_Test();
+s32 Math_Cosine();
+s32 Math_Sine();
+s32 ObjectDispatch_SetAnimationSpeed();
+s32 Object_GetById();
+extern u8 Data_02007064[];
+extern u8 IwramMulQ16[];
+extern u8 gData_02007044[];
+extern u8 gPartyState[];
+
+void Func_02001894(s32 p0) {
+  s32 sp_[1];
+  s32 v_r6, v_r10, v_r7, v_r5, v_r9, v_r3, v_r2, v_r8, v_r0, t0;
+  s32 t1, t2, t3, t4, t5, t6, t9, t11, t12, t13;
+  s32 t14, t15, t16, t17, t18, t19, t20, t22, t23, t24;
+  s32 t25, t26, t27, t28, t29, t30, t31, t32, t33, t34;
+  s32 t35, t36, t37;
+
+  t0 = FIELD_AT(0x3000000, s32, 108);
+  t1 = *(s32 *)((s32)gPartyState + 0x214);
+  t2 = Object_GetById(t1);
+  t3 = *(s16 *)(0x166 + t0);
+  v_r7 = t2;
+  v_r10 = t0;
+  v_r6 = p0;
+  if (t3 != 0)
+    goto L_020098f2;
+  t4 = *(s16 *)(0x15a + v_r10);
+  if (t4 != 0)
+    goto L_020098f2;
+  t5 = *(s16 *)(0x15e + v_r10);
+  if (t5 != 0)
+    goto L_020098f2;
+  t6 = *(s16 *)(0x168 + v_r10);
+  if (t6 == 0)
+    goto L_02009900;
+L_020098f2:
+  ObjectDispatch_SetAnimationSpeed(v_r6, 0);
+  goto L_02009a3e;
+L_02009900:
+  ObjectDispatch_SetAnimationSpeed(v_r6, 16);
+  t9 = *(u16 *)(v_r6 + 100);
+  *(u16 *)(v_r6 + 100) = (t9 + 1);
+  if ((31 & (t9 + 1)) != 31)
+    goto L_02009920;
+  Func_020056c0(231);
+L_02009920:
+  t11 = FIELD_AT(v_r7, s32, 80);
+  t12 = FIELD_AT(v_r6, s32, 80);
+  t13 = FIELD_AT(t11, u8, 9);
+  t14 = FIELD_AT(t12, u8, 9);
+  FIELD_AT(t12, u8, 9) = ((-13 & t14) | (12 & t13));
+  t15 = FIELD_AT(v_r6, s32, 8);
+  t16 = FIELD_AT(v_r6, s32, 16);
+  t17 = Func_020056a0(t15, t16, 2);
+  if (t17 == 255)
+    goto L_02009a22;
+  t18 = FIELD_AT(v_r6, s32, 8);
+  FIELD_AT(sp_, s32, 0) = t18;
+  t19 = FIELD_AT(v_r6, s32, 12);
+  FIELD_AT(sp_, s32, 4) = t19;
+  t20 = FIELD_AT(v_r6, s32, 16);
+  FIELD_AT(sp_, s32, 8) = t20;
+  Func_02005658(((s32)sp_ + 0));
+  t22 = FIELD_AT(sp_, s32, 0);
+  v_r5 = t22;
+  if (v_r5 > 0x1100000)
+    goto L_02009a22;
+  if (v_r5 < 0xffe00000)
+    goto L_02009a22;
+  t23 = *(u8 *)(98 + v_r6);
+  v_r9 = (98 + v_r6);
+  if (t23 != 0)
+    goto L_020099e8;
+  t24 = FIELD_AT(v_r7, s32, 12);
+  t25 = FIELD_AT(v_r6, s32, 12);
+  v_r5 = (t24 - t25);
+  v_r2 = t24;
+  v_r3 = t25;
+  if (v_r5 >= 0)
+    goto L_02009980;
+  v_r5 = (v_r3 - v_r2);
+L_02009980:
+  t26 = Func_02001868((v_r7 + 8), (v_r6 + 8));
+  v_r8 = 0;
+  if (t26 > 12)
+    goto L_020099a0;
+  if (v_r5 >= 0xc0000)
+    goto L_020099a0;
+  v_r8 = 1;
+L_020099a0:
+  if (v_r8 == 0)
+    goto L_020099e8;
+  t27 = GameFlag_Test(0x104);
+  if (t27 != 0)
+    goto L_020099e8;
+  t28 = FIELD_AT(v_r6, u16, 6);
+  FIELD_AT(v_r7, s32, 104) = v_r6;
+  FIELD_AT(v_r7, u16, 6) = t28;
+  t29 = *(u8 *)(v_r7 + 35);
+  *(u8 *)(v_r7 + 35) = (254 & t29);
+  *(u16 *)(0x16a + v_r10) = 200;
+  *(u8 *)((s32)gPartyState + 0x212) = 0;
+  *(u8 *)v_r9 = 1;
+  *(u8 *)(v_r6 + 99) = 1;
+L_020099e8:
+  t30 = FIELD_AT(v_r6, u16, 6);
+  t31 = Math_Cosine(t30);
+  t32 = FIELD_AT(v_r6, s32, 48);
+  t33 = FIELD_AT(v_r6, s32, 8);
+  t34 = FIELD_AT(v_r6, u16, 6);
+  FIELD_AT(v_r6, s32, 8) = (t33 + t31);
+  t35 = Math_Sine(t34, t32);
+  t36 = FIELD_AT(v_r6, s32, 48);
+  t37 = FIELD_AT(v_r6, s32, 16);
+  v_r0 = t35;
+  v_r3 = t37;
+  goto L_02009a1c;
+L_02009a1c:
+  FIELD_AT(v_r6, s32, 16) = (v_r3 + v_r0);
+  goto L_02009a3e;
+L_02009a22:
+  *(u8 *)(v_r6 + 99) = 0;
+  FIELD_AT(v_r6, s32, 108) = 0;
+  Func_02005490(v_r6, (s32)gData_02007044);
+  Func_020056c0(228);
+  *(s32 *)(s32)Data_02007064 = 0;
+L_02009a3e:
+  return;
+}

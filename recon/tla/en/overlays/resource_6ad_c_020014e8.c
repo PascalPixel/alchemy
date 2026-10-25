@@ -1,0 +1,51 @@
+// Draft of overlay 6ad's Func_020014e8, the twin of overlay 69f's
+// Func_020002e8: its draft (resource_69f_c_020002e8.c) with this overlay's
+// symbols: differ 14 of 83. Left: what that draft's header records.
+#include "../../../../games/tla/src/scene/jupiter_lighthouse_room_6/jupiter_lighthouse_room_6.h"
+#include "iwram_call.h"
+#include "dma.h"
+#include "io_reg.h"
+
+#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
+#define HALF_AT(base, offset) (*(u16 *)((u8 *)(base) + (offset)))
+#define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
+
+extern s32 gData_0200703c;
+extern s32 gData_02007040;
+extern u16 gData_02007068[];
+
+s32 __modsi3();
+s32 Map_GetTerrainHeight();
+void Func_02001b34();
+void Func_02001be4();
+void Func_02001250(s32 a, s32 b, s32 c, s32 d, s32 e);
+void Func_0200196c(s32 a, s32 b, s32 c);
+
+void Func_020014e8(void) {
+  u16 colors[16];
+  s32 phase;
+  s32 i;
+  s32 offset;
+
+  phase = (gData_0200703c / 4) % 5;
+  if (gData_02007040 != 0) {
+    u8 *work = Ram_HeapSlots->eventWork;
+
+    if (*(s16 *)(work + 358) != 0 && (HALF_AT(work, 358) & 0x3ff) != 153)
+      return;
+    if (*(s8 *)(work + 0xca4) != 0)
+      return;
+    if (*(s16 *)(work + 350) != 0)
+      return;
+  }
+  i = 0;
+  offset = 4;
+next:
+  colors[(phase + i) % 5] = *(u16 *)((u8 *)gData_02007068 + offset);
+  i++;
+  offset += 2;
+  if (i <= 4)
+    goto next;
+  Dma_Set(colors, (void *)0x05000184, 0x84000002, REG_DMA3);
+  gData_0200703c++;
+}

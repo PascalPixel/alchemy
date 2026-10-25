@@ -5,7 +5,7 @@ SECTIONS
         "*/games/tla/src/scene/shaman_village/entry.o"(.text)
         "*/games/tla/src/field/common/object/set_sprite_priority.o"(.text)
         "*/games/tla/src/field/common/effect/move.o"(.text)
-        "*/resource_696_overlay.o"(.text.x020080b8)
+        "*/games/tla/src/scene/shaman_village/s00b8.o"(.text)
         "*/games/tla/src/scene/shaman_village/s0280.o"(.text)
         "*/games/tla/src/scene/shaman_village/scene_tables.o"(.text)
         "*/games/tla/src/scene/shaman_village/s02dc.o"(.text)

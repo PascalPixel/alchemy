@@ -1,0 +1,54 @@
+#include "scene.h"
+#include "scene_ids.h"
+
+void Func_020034d4(s32 actor, s32 x, s32 z);
+void ObjectMotion_CommitPositionAndActivate(s32 actor, s32 dx, s32 dz);
+
+extern const struct WarpTarget gData_02003d18;
+
+static __inline__ void ObjectMotion_CommitPositionAndActivate_(s32 actor,
+                                                               s32 dx, s32 dz) {
+  ObjectMotion_CommitPositionAndActivate(actor, dx, dz);
+}
+
+static __inline__ void ObjectMotion_SetSpeedParameters_(s32 actor, s32 speed,
+                                                        s32 acceleration) {
+  ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
+}
+
+static __inline__ void Func_020034d4_(s32 actor, s32 x, s32 z) {
+  Func_020034d4(actor, x, z);
+}
+
+void Func_02000208(void) {
+  const struct WarpTarget *warp;
+  s32 msg;
+
+  warp = &gData_02003d10;
+  ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 168, 424);
+  Func_02003534(gPartyState.currentOwner, 0);
+  Func_0200362c(158);
+  Func_02003414(warp->scene, warp->x, warp->z);
+  Object_GetById(8)->motionFlags = 0;
+  Func_020034d4_(8, 184 << 16, 204 << 17);
+  ObjectMotion_SetSpeedParameters_(8, 0x1cccc, 0xe666);
+  ObjectMotion_CommitPositionAndActivate_(8, 0, 16);
+  Func_02003534(8, 0x8000);
+  msg = (s32)MsgHasMyGrandson;
+  Func_0200350c(msg);
+  UiText_OpenMessageAtObject(8, 0);
+  if (Event_AskYesNoWithActorAnimation(Func_020035f4(), 0) == 0) {
+    FieldEvent_WaitFrames(10);
+    Func_0200350c(msg + 1);
+  } else {
+    FieldEvent_WaitFrames(20);
+    Func_0200350c(msg + 2);
+  }
+  Func_02003524(8, 0);
+  ObjectMotion_SetSpeedParameters_(8, 0xcccc, 0x6666);
+  ObjectMotion_CommitPositionAndActivate_(8, 0, -14);
+  Func_020034d4_(8, 0, 0);
+  warp = &gData_02003d18;
+  Func_02003414(warp->scene, warp->x, warp->z);
+  Func_0200362c(158);
+}

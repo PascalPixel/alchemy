@@ -29,16 +29,19 @@ the game. The always-loaded code is cut into [banks](glossary.md#bank)
 ```mermaid
 %%{init: {"flowchart": {"curve": "step"}}}%%
 flowchart TD
-  loop(["Game_MainLoop"]) --> which{"Which map<br/>number?"}
-  which -- "a map" --> map["Map_Run<br/>the party walks"]
-  which -- "RUN_BATTLE" --> battle["Battle_Run"]
-  which -- "RUN_LUCKY_DICE<br/>RUN_LUCKY_WHEELS" --> mini["Lucky Dice<br/>Lucky Wheels"]
-  map -. "the warp taken:<br/>next map" .-> loop
-  battle -. "won: same map<br/>lost: the last Sanctum" .-> loop
-  mini -. "result: back to<br/>the game room" .-> loop
-  map --- scripts["Overlay area:<br/>the map's scripts"]
-  classDef overlay stroke-dasharray: 6 4
-  class scripts overlay
+  start(["The game starts"]) --> loop(["The main loop<br/>chooses what runs next"])
+  loop -- "a map" --> layout
+  loop -- "a battle" --> battle["The battle"]
+  loop -- "a minigame" --> mini["Lucky Dice or<br/>Lucky Wheels"]
+  subgraph map ["The map"]
+    layout["Its layout:<br/>the picture and the ground"]
+    layout --- overlay["Its overlay, unpacked:<br/>characters, conversations<br/>and other events"]
+  end
+  overlay -. "a door: the next map" .-> loop
+  battle -. "won: back to the map<br/>lost: the last Sanctum" .-> loop
+  mini -. "back to the game room" .-> loop
+  classDef dashed stroke-dasharray: 6 4
+  class overlay dashed
 ```
 
 That main loop is unlike most games'. In most games, the Pokémon games among

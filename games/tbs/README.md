@@ -27,26 +27,26 @@ the game. The always-loaded code is cut into [banks](glossary.md#bank)
 ([How the code is organised](#how-the-code-is-organised)).
 
 ```mermaid
-%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#F4F4F2"}, "flowchart": {"curve": "step", "padding": 14}}}%%
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE"}, "flowchart": {"curve": "step", "padding": 14}}}%%
 flowchart LR
-  start(["<b>The game starts</b>"]) --> loop(["<b>The main loop</b><br/><small>chooses what runs next</small>"])
-  loop -- "a map" --> map["<b>A map</b><br/><small>its layout: the picture, the ground<br/>its overlay: characters,<br/>conversations, other events<br/>a door: the next map</small>"]
-  loop -- "a battle" --> battle["<b>A battle</b><br/><small>always loaded<br/>won: back to the map<br/>lost: the last Sanctum</small>"]
-  loop -- "Lucky Dice" --> dice["<b>Lucky Dice</b><br/><small>always loaded<br/>then back to the game room</small>"]
-  loop -- "Lucky Wheels" --> wheels["<b>Lucky Wheels</b><br/><small>always loaded<br/>then back to the game room</small>"]
+  start(["The game starts"]) --> loop(["The main loop"])
+  loop --> map["A map"]
+  loop --> battle["A battle"]
+  loop --> dice["Lucky Dice"]
+  loop --> wheels["Lucky Wheels"]
   map --- back(( ))
   battle --- back
   dice --- back
   wheels --- back
   back --> loop
   classDef flow fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
-  classDef place fill:#D9EBDF,stroke:#9CC5A8,color:#2F6040
-  classDef fight fill:#F3DAE8,stroke:#D7A3C3,color:#843A68
-  classDef dice fill:#EAE2F5,stroke:#C3B0E0,color:#5E4590
-  classDef wheels fill:#F6EFC9,stroke:#D9C77A,color:#6E5A1C
+  classDef field fill:#E4E4E2,stroke:#A8A8A4,color:#3A3A38
+  classDef fight fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
+  classDef dice fill:#D3EBD9,stroke:#8DC49E,color:#25603A
+  classDef wheels fill:#E6F3C4,stroke:#B5D46A,color:#4C6312
   classDef join fill:#9AA3AE,stroke:#9AA3AE
   class start,loop flow
-  class map place
+  class map field
   class battle fight
   class dice dice
   class wheels wheels

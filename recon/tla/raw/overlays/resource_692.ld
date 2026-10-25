@@ -32,7 +32,7 @@ SECTIONS
         "*/games/tla/src/scene/magma_rock_inside/blink.o"(.text)
         "*/resource_692_overlay.o"(.text.x02008dcc)
         "*/games/tla/src/scene/magma_rock_inside/s0e14.o"(.text)
-        "*/resource_692_overlay.o"(.text.x02008e20)
+        "*/games/tla/src/scene/magma_rock_inside/s0e20.o"(.text)
         "*/games/tla/src/scene/magma_rock_inside/s0ea4.o"(.text)
         "*/resource_692_overlay.o"(.text.x02008ed0)
         "*/games/tla/src/scene/magma_rock_inside/s1148.o"(.text)

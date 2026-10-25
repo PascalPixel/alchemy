@@ -23,7 +23,7 @@ SECTIONS
         "*/resource_65f_overlay.o"(.text.x02008aa8)
         "*/games/tla/src/scene/garoh/prepare.o"(.text)
         "*/resource_65f_overlay.o"(.text.x02008be4)
-        "*/resource_65f_overlay.o"(.text.x02008d30)
+        "*/games/tla/src/scene/garoh/s0d30.o"(.text)
         "*/games/tla/src/scene/garoh/lift_a.o"(.text)
         "*/games/tla/src/scene/garoh/lift.o"(.text)
         "*/games/tla/src/field/common/effect/advance_motion.o"(.text)

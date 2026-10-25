@@ -11,7 +11,7 @@ SECTIONS
         "*/games/tla/src/scene/madra/s051c.o"(.text)
         "*/games/tla/src/scene/madra/events_c.o"(.text)
         "*/games/tla/src/scene/madra/s068c.o"(.text)
-        "*/resource_658_overlay.o"(.text.x020086ac)
+        "*/games/tla/src/scene/madra/s06ac.o"(.text)
         "*/games/tla/src/scene/madra/prepare.o"(.text)
         "*/games/tla/src/scene/madra/s0ac4.o"(.text)
         "*/games/tla/src/scene/madra/events_d.o"(.text)

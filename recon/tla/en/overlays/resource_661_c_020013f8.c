@@ -1,0 +1,47 @@
+// Draft, differ 48 of 124: the twin of Func_020012dc for the other room
+// (row 89): resets the stone, copies the four blocks and moves the leader
+// off the cells the blocks cover. Left: the last three moves keep the cell in
+// r6 and recompute the leader id address into r5.
+#include "../../../../games/tla/src/scene/yampi_desert/scene.h"
+#include "object_runtime.h"
+
+s32 Func_020012d4(s32 cell);
+
+/// Moves the leader to the centre of a cell, in pixels.
+#define MOVE_LEADER_TO(column, row)                                            \
+  {                                                                            \
+    s32 x_ = Func_020012d4(column);                                            \
+    s32 z_ = Func_020012d4(row);                                               \
+    Func_02004090(gPartyState.currentOwner, x_ << 16, z_ << 16);               \
+  }
+
+#define MOVE_LEADER_AGAIN(column, row_)                                        \
+  {                                                                            \
+    row = Func_020012d4(column);                                               \
+    Func_02004090(gPartyState.currentOwner, row << 16,                         \
+                  Func_020012d4(row_) << 16);                                  \
+  }
+
+void Func_020013f8(void) {
+  struct ObjectRuntime *leader =
+      (struct ObjectRuntime *)Object_GetById(gPartyState.currentOwner);
+  s32 column = leader->x >> 20;
+  s32 row = leader->z >> 20;
+
+  if (Object_GetById(64) != NULL)
+    Func_02004090(64, 0, 0);
+  Func_02003ff0(82, 89, 15, 40, 5, 6);
+  Scene_Call4000(82, 89, 5, 6, 15, 40);
+  Func_02003ff0(88, 89, 36, 25, 5, 5);
+  Scene_Call4000(88, 89, 5, 5, 36, 25);
+  if (column == 15 && row == 44)
+    MOVE_LEADER_TO(15, 43)
+  else if (column == 17 && row == 44)
+    MOVE_LEADER_AGAIN(17, 43)
+  else if (column == 19) {
+    if (row == 40)
+      MOVE_LEADER_AGAIN(19, 41)
+    else if (row == 42)
+      MOVE_LEADER_AGAIN(18, 42)
+  }
+}

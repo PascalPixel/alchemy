@@ -1,3 +1,11 @@
+@ MusicPlayer2000's frame tick, pret's MPlayMain: runs a player's callback,
+@ steps its fade and, as often as its tempo allows, every track's song
+@ commands and notes, then updates each channel's volume and pitch.
+@ Handwritten (S1): it saves the high registers without lr, keeps r11 as
+@ an ordinary register, branches on a shift's carry and calls through lr
+@ with a lone BL suffix; the bx r3 after its return is the driver's call
+@ through r3.
+
 .syntax unified
 	.thumb
 	.global MusicPlayer_Tick
@@ -17,7 +25,7 @@ MusicPlayer_Tick:
 	beq .L_081c09ec
 	ldr r0, [r0, #60]
 	mov lr, r3
-	.2byte 0xf800
+	.inst.n 0xf800
 .L_081c09ec:
 	pop {r0}
 	push {r4, r5, r6, r7}
@@ -146,7 +154,7 @@ Func_081c0a68:
 	adds r0, r7, #0
 	adds r1, r5, #0
 	mov lr, r3
-	.2byte 0xf800
+	.inst.n 0xf800
 	ldrb r0, [r5]
 	cmp r0, #0
 	beq .L_081c0b30
@@ -288,7 +296,7 @@ Func_081c0a68:
 	ldrb r2, [r5, #9]
 	adds r0, r6, #0
 	mov lr, r3
-	.2byte 0xf800
+	.inst.n 0xf800
 	str r0, [r4, #32]
 	ldrb r0, [r4, #29]
 	movs r1, #2
@@ -327,7 +335,7 @@ Func_081c0a68:
 	.thumb_func
 Func_081c0c0c:
 	pop {pc}
-	.2byte 0x4718
+	bx r3
 .L_081c0c10:
 	.4byte gData_03007ff0
 .L_081c0c14:

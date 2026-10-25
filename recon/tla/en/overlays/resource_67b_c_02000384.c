@@ -1,8 +1,8 @@
-// Draft, differ N of M: picks a spot for a wandering object: up to three
+// Draft, differ 94 of 107: picks a spot for a wandering object: up to three
 // times, a point 4 to 12 pixels ahead within a quarter turn of its angle;
 // the first within 16 pixels of its home (the halfwords at 0x64 and 0x66)
 // becomes its target (Func_02002930); after three misses it turns round and
-// sets its halfword at 0x5e. Returns 0. Left:
+// sets its halfword at 0x5e. Returns 0. Left: the native keeps the try count in r10 and 256 in r9, rounds the spot toward zero through a test and add, and lays the loop out with its exit tests in another order.
 #include "types.h"
 #include "object_runtime.h"
 #include "iwram_call.h"

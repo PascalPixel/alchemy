@@ -27,21 +27,29 @@ the game. The always-loaded code is cut into [banks](glossary.md#bank)
 ([How the code is organised](#how-the-code-is-organised)).
 
 ```mermaid
-%%{init: {"flowchart": {"curve": "step"}}}%%
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "ui-sans-serif, system-ui, sans-serif", "fontSize": "15px", "lineColor": "#8a8a8a", "edgeLabelBackground": "#E8E6DF", "titleColor": "#1D9E75", "clusterBkg": "transparent", "clusterBorder": "#1D9E75"}, "flowchart": {"curve": "step", "padding": 14}}}%%
 flowchart TD
-  start(["The game starts"]) --> loop(["The main loop<br/>chooses what runs next"])
+  start(["<b>The game starts</b>"]) --> loop(["<b>The main loop</b><br/><small>chooses what runs next</small>"])
   loop -- "a map" --> layout
-  loop -- "a battle" --> battle["The battle"]
-  loop -- "a minigame" --> mini["Lucky Dice or<br/>Lucky Wheels"]
-  subgraph map ["The map"]
-    layout["Its layout:<br/>the picture and the ground"]
-    layout --- overlay["Its overlay, unpacked:<br/>characters, conversations<br/>and other events"]
+  loop -- "a battle" --> battle["<b>A battle</b><br/><small>always loaded</small>"]
+  loop -- "a minigame" --> mini["<b>Lucky Dice or Lucky Wheels</b><br/><small>always loaded</small>"]
+  subgraph map ["<b>A map</b>"]
+    layout["<b>Its layout</b><br/><small>the picture and the ground</small>"]
+    layout --- overlay["<b>Its overlay, unpacked</b><br/><small>characters, conversations<br/>and other events</small>"]
   end
   overlay -. "a door: the next map" .-> loop
   battle -. "won: back to the map<br/>lost: the last Sanctum" .-> loop
   mini -. "back to the game room" .-> loop
-  classDef dashed stroke-dasharray: 6 4
-  class overlay dashed
+  classDef flow fill:#534AB7,stroke:#3C3489,color:#ffffff
+  classDef place fill:#0F6E56,stroke:#085041,color:#ffffff
+  classDef scripts fill:#1D9E75,stroke:#085041,color:#ffffff,stroke-dasharray:6 4
+  classDef fight fill:#993C1D,stroke:#712B13,color:#ffffff
+  classDef game fill:#854F0B,stroke:#633806,color:#ffffff
+  class start,loop flow
+  class layout place
+  class overlay scripts
+  class battle fight
+  class mini game
 ```
 
 That main loop is unlike most games'. In most games, the Pokémon games among

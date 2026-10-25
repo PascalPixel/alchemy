@@ -2,18 +2,15 @@
 
 void Object_SetSpritePriority(struct ShamanVillageObject *object, s32 priority);
 
-/// Swings an object about x = 168: left of it the object speeds up rightward and
-/// grows, right of it leftward and shrinks. It takes sprite priority 1 while it
-/// moves right, 2 otherwise, and spins.
+/// Swings an object about x = 168: left of it the object speeds up rightward
+/// and grows, right of it leftward and shrinks. It takes sprite priority 1
+/// while it moves right, 2 otherwise, and spins.
 void Func_02000508(struct ShamanVillageObject *object) {
   object->x += object->field44;
   object->y += object->field48;
   object->z += *(s32 *)((u8 *)object + 76);
   if (object->x >> 16 < 168) {
     object->field44 += 0x18000;
-    /* FAKEMATCH: the barrier builds the 0xccc step around the scale load, its
-     * first byte before it; without it, 4 instructions differ in tla-en. */
-    asm("");
     object->scaleY = object->scaleX += 0xccc;
   } else {
     object->field44 -= 0x18000;

@@ -1,7 +1,7 @@
 // First draft of Func_080fa870: the twin of ☀️'s ItemMenu_SelectTarget
 // (games/tbs/src/menu/menu/item.c), choosing the party member to use (mode 0)
 // or give (mode 1) the selected item to. This game pages the members four at a
-// time through the cursor helper Func_08104c00, which also replaces the Left
+// time through the cursor helper Menu_MoveGridCursor, which also replaces the Left
 // and Right tests; the item's owner is restored to the page on the way out.
 //
 // Near miss, differ 12 of 387, instruction order only: the native issues sub
@@ -72,7 +72,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Func_08104ef8(s32 first);
 void WaitFrames(s32 frames);
-void Func_08104d5c(void *window, s32 selection, s32 count);
+void Menu_HighlightPageEntry(void *window, s32 selection, s32 count);
 void ItemMenu_RefreshOwner(s32 owner, s32 mode);
 void UiWindow_DrawDividerLineFar(void *window, s32 x0, s32 y0, s32 x1, s32 y1);
 void UiWindow_ClearInteriorTilesFar(void *window, s32 x, s32 y, s32 width,
@@ -87,7 +87,7 @@ s32 ItemMenu_IsSpecial(s32 item);
 void Func_080f8170(void *window, s32 owner, s32 slot, s32 style);
 void Func_080f8a44(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
-u8 Func_08104c00(s32 *selection, s32 count, s32 columns);
+u8 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 void UiIcon_PrepareObject(struct TargetMarker *icon);
 void Func_080fac58(void);
 
@@ -120,7 +120,7 @@ s32 Func_080fa870(s32 mode) {
         Func_08104ef8(selection / 4 * 4);
         WaitFrames(1);
       }
-      Func_08104d5c(menu->pageWindow, selection, count);
+      Menu_HighlightPageEntry(menu->pageWindow, selection, count);
       if (mode == 1) {
         ItemMenu_RefreshOwner(menu->ownerIds[selection], 1);
         UiWindow_DrawDividerLineFar(window, 0, 9, 16, 9);
@@ -180,7 +180,7 @@ s32 Func_080fa870(s32 mode) {
       result = 255;
       break;
     }
-    redraw = Func_08104c00(&selection, count, 4);
+    redraw = Menu_MoveGridCursor(&selection, count, 4);
   }
   marker = menu->marker;
   UiIcon_PrepareObject(marker);
@@ -193,7 +193,7 @@ s32 Func_080fa870(s32 mode) {
   selection = menu->paneIndex[0];
   count = menu->ownerCount;
   Func_08104ef8(selection / 4 * 4);
-  Func_08104d5c(menu->pageWindow, selection, count);
+  Menu_HighlightPageEntry(menu->pageWindow, selection, count);
   menu->ownerIcons[0]->state = 13;
   menu->ownerIcons[1]->state = 13;
   return (s8)result;

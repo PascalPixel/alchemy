@@ -38,15 +38,7 @@ s32 Resource_FindFreeEntry(void) {
   struct VramBlockCacheEntry *entry = gResourceTableEntries;
 
   for (no = 0; no < VRAM_CACHE_ENTRY_COUNT; no++, entry++) {
-    u32 offset = entry->offset;
-    /* FAKEMATCH: 0xffff's first part pinned to r4 and an empty asm reading the
-     * offset load the offset between its two instructions; as a plain
-     * constant, 4 instructions differ in tla-en. */
-    register u32 free asm("r4") = 0xff00;
-
-    /* FAKEMATCH: the barrier of the pin above. */
-    asm("" : "+l"(free) : "l"(offset));
-    if (offset == free + 0xff) {
+    if (entry->offset == VRAM_CACHE_OFFSET_FREE) {
       ret = no;
       break;
     }

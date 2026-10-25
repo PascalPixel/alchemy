@@ -10,7 +10,7 @@ SECTIONS
         "*/resource_669_overlay.o"(.text.x02008250)
         "*/games/tla/src/scene/eastern_alhafra_ship/prepare.o"(.text)
         "*/games/tla/src/scene/eastern_alhafra_ship/spawn.o"(.text)
-        "*/resource_669_overlay.o"(.text.x02008438)
+        "*/games/tla/src/scene/eastern_alhafra_ship/s0438.o"(.text)
         "*/games/tla/src/scene/eastern_alhafra_ship/cutscene.o"(.text)
         "*/games/tla/src/scene/eastern_alhafra_ship/import.o"(.text)
         "*/games/tla/src/scene/eastern_alhafra_ship/data.o"(.data)

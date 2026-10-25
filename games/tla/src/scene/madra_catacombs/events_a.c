@@ -123,7 +123,10 @@ void Func_02000568(void) {
      * door r5. */
     __asm__("" : : "r"(i));
     left->x += -0x1999;
-    right->x += 0x1999;
+    /* FAKEMATCH(signature): read and written as long, another alias set than
+     * the left door's int store, so the load need not wait for that store; as
+     * int, 2 of 175 instructions differ in tla-en. */
+    *(long *)&right->x += 0x1999;
     WaitFrames(1);
   }
   Speed_Set(0x33333, 0x6666);

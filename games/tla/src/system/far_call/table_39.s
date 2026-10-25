@@ -29,7 +29,7 @@ Func_080f8060:
 .ifdef TLA_EDITION_FR
 	overlay_veneer MenuIcon_ReleaseObjects
 .else
-	overlay_veneer Func_08104fe0
+	overlay_veneer Menu_PlaceOwnerEntryObjects
 .endif
 .endif
 .endif

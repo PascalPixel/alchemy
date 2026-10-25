@@ -382,7 +382,7 @@ Func_080fc6bc:
 	ldr r0, [r7, #16]
 	adds r1, r5, #0
 	mov r2, r9
-	bl Func_08104d5c
+	bl Menu_HighlightPageEntry
 	movs r4, #188
 	lsls r4, r4, #1
 	adds r3, r7, r4

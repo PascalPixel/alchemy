@@ -22,8 +22,6 @@ s32 BattleFormation_GetRandomMember(s32 recordId) {
   maximumCount = record->maximumCounts;
   choiceCursor = choicesBase;
   remaining = 4;
-  /* FAKEMATCH: the plain order loads the record table before scaling the id. */
-  __asm__("");
   do {
     if (*maximumCount++ != 0) {
       s32 id = *memberId;

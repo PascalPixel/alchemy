@@ -127,7 +127,7 @@ Func_080fd2e8:
 	ldr r0, [r6, #16]
 	ldr r1, [sp, #0]
 	mov r2, r8
-	bl Func_08104d5c
+	bl Menu_HighlightPageEntry
 	movs r0, #82
 	adds r0, #255
 	bl GameFlag_Test
@@ -212,7 +212,7 @@ Func_080fd2e8:
 	mov r0, sp
 	mov r1, r8
 	movs r2, #4
-	bl Func_08104c00
+	bl Menu_MoveGridCursor
 	adds r7, r0, #0
 .L_080fd49a:
 	movs r0, #168
@@ -263,7 +263,7 @@ Func_080fd2e8:
 	ldr r0, [r6, #16]
 	ldr r1, [sp, #0]
 	mov r2, r8
-	bl Func_08104d5c
+	bl Menu_HighlightPageEntry
 	movs r1, #188
 	lsls r1, r1, #1
 	adds r3, r6, r1

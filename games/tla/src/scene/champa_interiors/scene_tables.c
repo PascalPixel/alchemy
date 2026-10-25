@@ -51,13 +51,18 @@ const struct SceneEvent *Func_020000a4(void) {
 }
 
 s32 Func_020000fc(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
-
+  s32 *effect = &((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect;
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-  work->screenEffect = 0x201;
+  s32 value = 0x201;
 #else
-  work->screenEffect = 0x209;
+  s32 value = 0x209;
 #endif
+
+  /* FAKEMATCH(barrier): an empty asm after the address and the value, so the
+   * party state's address loads just before the store; as one assignment, 2
+   * of 32 instructions differ in tla-en. */
+  __asm__("");
+  *effect = value;
   if (gPartyState.scene == (s32)&SceneId_Ov683 &&
       (u16)(gPartyState.entrance - 8) <= 1)
     Func_0200014c();

@@ -14,7 +14,7 @@ SECTIONS
         "*/resource_64a_overlay.o"(.text.x02008db4)
         "*/resource_64a_overlay.o"(.text.x02008e44)
         "*/games/tla/src/menu/clear/s1804.o"(.text)
-        "*/resource_64a_overlay.o"(.text.x0200987c)
+        "*/games/tla/src/menu/clear/s187c.o"(.text)
         "*/resource_64a_overlay.o"(.text.x020098e0)
         "*/resource_64a_overlay.o"(.text.x02009c7c)
         "*/resource_64a_overlay.o"(.text.x0200a068)

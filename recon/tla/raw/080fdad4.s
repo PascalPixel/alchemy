@@ -621,7 +621,7 @@ Func_080fdad4:
 	ldr r0, [r7, #16]
 	adds r1, r6, #0
 	mov r2, r11
-	bl Func_08104d5c
+	bl Menu_HighlightPageEntry
 	movs r0, #188
 	lsls r0, r0, #1
 	adds r3, r7, r0

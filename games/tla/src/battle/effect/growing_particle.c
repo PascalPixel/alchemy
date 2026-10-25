@@ -31,14 +31,7 @@ void Func_080e46ac(struct EffectSprite *sprite, struct EffectParticle *particle,
 
   if ((u32)particle->timer <= 31) {
     picture = (particle->timer >> 2) & 7;
-    /* FAKEMATCH(barrier): the picture number held in a register before it is
-     * scaled, so the tile mask loads first; without it, 2 of 58 instructions
-     * differ in tla-en. */
-    asm("" : "+l"(picture));
     sprite->oam.index = tiles + picture * 8;
-    /* FAKEMATCH(barrier): the tile's store before the scale is read; without
-     * it, 4 of 58 instructions differ in tla-en. */
-    asm("");
     scale = sprite->scaleX + 0x1999;
     sprite->scaleX = scale;
     if (scale > 0x10000)

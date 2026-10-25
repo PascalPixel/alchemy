@@ -1,0 +1,20 @@
+#include "types.h"
+#include "game_flags.h"
+
+extern u16 gData_0810c3f4[][33];
+void Item_AdjustCounterFar(s32 item, s32 amount);
+
+void EventTable_ApplyRowAbilities(s32 rowNo) {
+  s32 flag = rowNo + 0x400;
+  s32 i;
+
+  if (GameFlag_Test(flag) == 0) {
+    GameFlag_SetBit(flag);
+    for (i = 0; i <= 7; i++) {
+      s16 value = gData_0810c3f4[rowNo][24 + i];
+
+      if (value != 0)
+        Item_AdjustCounterFar(value, 1);
+    }
+  }
+}

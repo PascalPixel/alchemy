@@ -63,6 +63,9 @@ void Func_0802372c(struct IconOwner *owner, s32 id) {
   sprite->unk17 = 4;
   sprite->scale = 0x10000;
   sprite->oam.index = tile;
+  /* FAKEMATCH(barrier): the tile index stored before the palette byte is read;
+   * as plain C, 2 of 68 instructions differ in tla-en. */
+  asm("");
   sprite->oam.palette256 = 0;
   sprite->oam.palette = 0;
 }

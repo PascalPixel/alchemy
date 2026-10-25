@@ -64,7 +64,7 @@ SECTIONS
         "*/resource_6ab_overlay.o"(.text.x0200b602)
         "*/games/tla/src/field/common/effect/move.o"(.text)
         "*/resource_6ab_overlay.o"(.text.x0200b63a)
-        "*/resource_6ab_overlay.o"(.text.x0200b63c)
+        "*/games/tla/src/scene/mars_lighthouse_star_room/s363c.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/s3804.o"(.text)
         "*/resource_6ab_overlay.o"(.text.x0200b930)
         "*/games/tla/src/scene/mars_lighthouse_star_room/s3b74.o"(.text)
@@ -73,7 +73,7 @@ SECTIONS
         "*/resource_6ab_overlay.o"(.text.x0200be02)
         "*/resource_6ab_overlay.o"(.text.x0200be04)
         "*/resource_6ab_overlay.o"(.text.x0200bf9c)
-        "*/resource_6ab_overlay.o"(.text.x0200c04c)
+        "*/games/tla/src/scene/mars_lighthouse_star_room/s404c.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/import.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/data.o"(.data)
     }

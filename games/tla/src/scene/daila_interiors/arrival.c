@@ -39,8 +39,14 @@ void Func_02000dc4(const void *script);
 
 s32 DailaInteriors_Start(void) {
   struct DailaMapWork *map;
+  s32 *effect = &((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect;
+  s32 value = 0x209;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  /* FAKEMATCH(barrier): an empty asm after the address and the value, so the
+   * party state's address loads just before the store; as one assignment, 2
+   * of 174 instructions differ in tla-en. */
+  __asm__("");
+  *effect = value;
   if (gPartyState.scene == (s32)&SceneId_DailaInteriors1) {
     if (gPartyState.entrance == 7) {
       Func_02000c58();

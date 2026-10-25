@@ -23,23 +23,13 @@ void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
     xPositions[index] = -80;
     if (index != 0) {
       struct BattleUnit *actor;
-      u32 id;
       u32 enemy;
 
-      id = actorIds[index];
-      /* FAKEMATCH(barrier): the id loaded before 0xff02 is built and read
-       * again for the lookup; as (u16)(actorIds[index] - 254) after
-       * spacing = 25, 2 of 134 instructions differ in tla-en. */
-      __asm__ volatile("" : "+l"(id) : : "memory");
       spacing = 25;
-      if ((u16)(id - 254) > 1) {
+      if ((u16)(actorIds[index] - 254) > 1) {
         actor = Unit_Get(actorIds[index]);
         spacing = BattleClass_IsSmall(actor->enemyId) ? 27 : 38;
         enemy = actor->enemyId;
-        /* FAKEMATCH(barrier): the enemy id loaded before 357 is built; as
-         * actor->enemyId in each test, 2 of 134 instructions differ in
-         * tla-en. */
-        __asm__ volatile("" : "+l"(enemy));
         if (enemy == 357 || enemy == 348 || enemy == 91 || enemy == 92 ||
             enemy == 93 || enemy == 94 || enemy == 95 || enemy == 96 ||
             enemy == 97) {
@@ -49,9 +39,6 @@ void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
     }
     z -= spacing / 2;
     zPositions[index] = z;
-    /* FAKEMATCH(barrier): keeps 0xff02 from starting before the z store; as
-     * plain statements, 4 of 134 instructions differ in tla-en. */
-    __asm__ volatile("");
     spacing = 25;
     if ((u16)(actorIds[index] - 254) > 1) {
       struct BattleUnit *actor = Unit_Get(actorIds[index]);

@@ -183,7 +183,7 @@ Func_0810abf0:
 .L_0810ad54:
 	ldr r1, [sp, #12]
 	mov r0, r11
-	bl Func_0810af24
+	bl Shop_DrawServiceParty
 	mov r1, r8
 	ldr r0, [sp, #8]
 	bl Shop_DrawSelectMsg

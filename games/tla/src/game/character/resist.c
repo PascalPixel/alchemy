@@ -37,11 +37,10 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
     index = Enemy_GetDefinition(record)[42];
     if (index > 47)
       index = 0;
+    /* FAKEMATCH(temporary): the table in its own variable; as
+     * &gData_080c6684[index], 6 of 58 instructions differ in tla-en. */
     table = gData_080c6684;
     preset = &table[index];
-    /* FAKEMATCH: an empty asm reading the table puts its load between the
-       index's two steps; as no asm, 2 instructions differ in tla-en. */
-    asm("" : "+r"(preset) : "r"(table));
     for (i = 0; i <= 3; i++)
       output[i] = preset->digits[i] * 10;
   } else {

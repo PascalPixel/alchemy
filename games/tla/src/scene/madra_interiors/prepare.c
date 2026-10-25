@@ -59,64 +59,6 @@ void Object_RefreshSelectorById();
 void Object_SetModeById();
 void UiText_OpenMessageAtObject();
 
-void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
-void Func_02001e80(s32 value);
-void Func_02001d20(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02001d28(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02000534(void);
-void Func_02000570(void);
-
-/// The rooms' setup: the leader's sprite priority, the two rooms' actors and
-/// the sprite of actor 10, by the story flags.
-s32 Func_02000624(void) {
-  struct FieldSprite *sprite;
-  void *event;
-
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
-  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
-  Func_02001e80(0);
-  if (gPartyState.scene == (s32)&SceneId_Ov659Room1) {
-    /* FAKEMATCH: the one-pass block ends the scheduling block: ⚓️ loads the
-     * event work before it builds the offset 0xd4c (differ 2 without it;
-     * through a plain pointer 20). */
-    do {
-      event = Ram_HeapSlots->eventWork;
-    } while (0);
-    FIELD_AT(event, u16, 0xd4c) = 3;
-    if (!FlagCheck(0x821)) {
-      ActorPlace(29, 0, 0);
-      ActorPlace(30, 0, 0);
-    } else {
-      Object_SetPartAttribute(Object_GetById(29), 3);
-      Object_SetPartAttribute(Object_GetById(30), 5);
-    }
-    if (FlagCheck(0x8ab)) {
-      Func_02001d28(2, 110, 16, 10, 16, 64);
-      Func_02001d20(2, 46, 16, 10, 16, 0);
-    }
-  }
-  if (gPartyState.entrance == 20)
-    Func_02000570();
-  if (gPartyState.scene == (s32)&SceneId_Ov659Room2) {
-    if (FlagCheck(0x8ab)) {
-      ActorPlace(10, 0, 0);
-    } else {
-      Func_02001ef0(10, 0xc000);
-      ObjectDispatch_SetSingleChildFlags(Object_GetById(10), 0);
-      ((struct FieldSprite *)Object_GetById(10)->animation)->nextFrame |= 8;
-      sprite = Object_GetById(10)->animation;
-      sprite->unk11 = (sprite->unk11 & 3) | 32;
-      ((struct FieldSprite *)Object_GetById(10)->animation)->unk19 = 1;
-    }
-  }
-  Func_02000534();
-  if (FlagCheck(0x8ff))
-    Object_SetPartAttribute(Object_GetById(33), 2);
-  else
-    Object_SetPartAttribute(Object_GetById(28), 2);
-  return 0;
-}
-
 s32 Scene_PrepareMap(void) { return 0; }
 
 s32 Func_020007ac(struct ObjectRuntime *object) {

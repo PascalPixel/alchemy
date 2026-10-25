@@ -115,8 +115,8 @@ Resource_DirectoryTable:
 	resource , Battle_OrbAltarBackdrop
 	resource , Battle_PurpleCaveBackdrop
 	resource , Battle_BeastWallBackdrop
-	resource , Battle_DragonHallABackdrop
-	resource , Battle_DragonHallBBackdrop
+	resource DragonHallABackdrop, Battle_DragonHallABackdrop
+	resource DragonHallBBackdrop, Battle_DragonHallBBackdrop
 	resource , Battle_GorgePoolBackdrop
 	resource , Battle_SpikeHallBackdrop
 	resource SnowfieldBBackdrop, Battle_SnowfieldBBackdrop
@@ -263,7 +263,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data0FA
 	resource , Resource_Data0FB
 	resource , Resource_Data0FC
-	resource , Resource_Data0FD
+	resource Data0FD, Resource_Data0FD
 	resource , BattleEffect_ArcFragmentsSheet
 	resource , Resource_Data0FF
 	resource , BattleEffect_AxeSheet
@@ -386,7 +386,7 @@ Resource_DirectoryTable:
 	resource , BattleEffect_CrescentMoonSheet
 	resource , BattleEffect_ThornVineSheet
 	resource , BattleEffect_IceShardSheet
-	resource , BattleEffect_EmberStreakSheet
+	resource EmberStreakSheet, BattleEffect_EmberStreakSheet
 	resource , BattleEffect_BlueArcSheetA
 	resource , BattleEffect_BlueArcSheetB
 	resource , BattleEffect_GlowOrbSheet
@@ -410,7 +410,7 @@ Resource_DirectoryTable:
 	resource , BattleEffect_BlueRingSheet
 	resource , BattleEffect_RedPaletteC
 	resource , BattleEffect_VioletPaletteD
-	resource , BattleEffect_BlueBeamSheet
+	resource BlueBeamSheet, BattleEffect_BlueBeamSheet
 	resource VortexSheet, BattleEffect_VortexSheet
 	resource TornadoSheet, BattleEffect_TornadoSheet
 	resource , BattleEffect_CrystalSheet

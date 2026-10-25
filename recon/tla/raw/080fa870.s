@@ -117,7 +117,7 @@ Func_080fa870:
 	ldr r1, [sp, #12]
 	ldr r0, [r6, #16]
 	mov r2, r9
-	bl Func_08104d5c
+	bl Menu_HighlightPageEntry
 	mov r1, r10
 	cmp r1, #1
 	bne .L_080faa20
@@ -346,7 +346,7 @@ Func_080fa870:
 	add r0, sp, #12
 	mov r1, r9
 	movs r2, #4
-	bl Func_08104c00
+	bl Menu_MoveGridCursor
 	lsls r0, r0, #24
 	lsrs r5, r0, #24
 .L_080fab36:
@@ -399,7 +399,7 @@ Func_080fa870:
 	ldr r0, [r6, #16]
 	ldr r1, [sp, #12]
 	mov r2, r9
-	bl Func_08104d5c
+	bl Menu_HighlightPageEntry
 	movs r1, #188
 	lsls r1, r1, #1
 	adds r3, r6, r1

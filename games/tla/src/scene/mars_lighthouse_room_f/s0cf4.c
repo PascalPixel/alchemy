@@ -17,33 +17,26 @@ void Func_02004700(s32 a0);
 void Func_02000c80(s32 id) {
   struct ObjectRuntime *object = Object_GetById(id);
   struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
-  s32 z = object->z >> 20;
+  s32 row = (object->z >> 20) << 7;
   s32 x = object->x;
   u8 *cell = map->layers[2].cells;
-  s32 offset = (x >> 20) + (z << 7);
+  s32 offset = (x >> 20) + row;
 
-  /* FAKEMATCH: the one-pass block keeps the cell row's address loaded before x
-   * is shifted (differ 6 without it). */
-  do {
-    cell += offset << 2;
-    cell[2] = 255;
-  } while (0);
+  cell += offset << 2;
+  cell[2] = 255;
   Object_GetById(id)->priorityFlags = 0;
 }
 
 void Func_02000cb8(s32 id) {
   struct ObjectRuntime *object = Object_GetById(id);
   struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
-  s32 z = object->z >> 20;
+  s32 row = (object->z >> 20) << 7;
   s32 x = object->x;
   u8 *cell = map->layers[2].cells;
-  s32 offset = (x >> 20) + (z << 7);
+  s32 offset = (x >> 20) + row;
 
-  /* FAKEMATCH: as in Func_02000c80 (differ 6 without it). */
-  do {
-    cell += offset << 2;
-    cell[2] = 0;
-  } while (0);
+  cell += offset << 2;
+  cell[2] = 0;
   {
     u8 *flags = &Object_GetById(id)->priorityFlags;
     s32 value = 2;

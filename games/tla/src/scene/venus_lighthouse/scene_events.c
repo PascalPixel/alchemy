@@ -46,21 +46,12 @@ struct AerieEventWork {
   s32 mode;
 };
 
+// The international editions' form, which also saves this scene and entrance
+// 22, is still on the listing.
+#if (LANGUAGE == LANGUAGE_JAPANESE)
 s32 VenusLighthouse_Start(void) {
   ((struct AerieEventWork *)Ram_HeapSlots->eventWork)->mode = 0x204;
   if (gPartyState.entrance == ENTRANCE_OPENING) {
-#if (LANGUAGE != LANGUAGE_JAPANESE)
-    // The international editions also save this scene and entrance 22.
-    {
-      s32 scene = (s32)&SceneId_VenusLighthouse;
-
-      /* FAKEMATCH: the native loads the scene id before it builds the
-       * saved-scene offset (one reordered row without). */
-      __asm__ volatile("");
-      gPartyState.savedScene = scene;
-    }
-    gPartyState.savedEntrance = 22;
-#endif
     Engine_EventStart();
     Engine_EventResolvePendingActions(0);
     Func_02000b2c();
@@ -80,3 +71,4 @@ s32 VenusLighthouse_Start(void) {
   }
   return 0;
 }
+#endif

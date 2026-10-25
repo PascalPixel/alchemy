@@ -1,7 +1,7 @@
 // First draft of Func_080fd2e8: a second member row of the Psynergy menu,
 // with a cursor icon over the members. With browseOnly 0 each move redraws
 // the member's status and Psynergy; A returns the chosen member's id, B -1.
-// The selection moves through Func_08104c00 and stays on the stack.
+// The selection moves through Menu_MoveGridCursor and stays on the stack.
 // Differ 6 of 254 (2026-10-19): only the frame's sub sp, which the native
 // issues right after the menu load and agscc after the count's first move
 // (sched2 priority 80 against 82). Reading the count first, a barrier after
@@ -77,12 +77,12 @@ void PsynergyMenu_CallIconRoutineWithValue(struct PsynergyMenuState *menu,
                                            s32 ownerId);
 void Func_08104ef8(s32 first);
 void WaitFrames(s32 frames);
-void Func_08104d5c(struct MenuWindow *window, s32 selection, s32 count);
+void Menu_HighlightPageEntry(struct MenuWindow *window, s32 selection, s32 count);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
 void Func_080f8a44(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
-s32 Func_08104c00(s32 *selection, s32 count, s32 columns);
+s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 void UiIcon_PrepareObject(struct MenuIcon *icon);
 
 s32 Func_080fd2e8(s32 browseOnly) {
@@ -116,7 +116,7 @@ s32 Func_080fd2e8(s32 browseOnly) {
           Func_08104ef8(selection / 4 * 4);
           WaitFrames(1);
         }
-        Func_08104d5c(menu->rowWindow, selection, count);
+        Menu_HighlightPageEntry(menu->rowWindow, selection, count);
         if (!GameFlag_Test(0x151) && !shown) {
           RenderOutput_RedrawSavedRectFar(menu->infoWindow);
           UiText_DrawCharacterAtOffsetFar((menu->infoMessage & 0x3fff) +
@@ -140,7 +140,7 @@ s32 Func_080fd2e8(s32 browseOnly) {
       result = -1;
       break;
     }
-    redraw = Func_08104c00(&selection, count, 4);
+    redraw = Menu_MoveGridCursor(&selection, count, 4);
   }
   icon = menu->rowCursor;
   UiIcon_PrepareObject(icon);
@@ -152,7 +152,7 @@ s32 Func_080fd2e8(s32 browseOnly) {
   selection = menu->tabIndex[0];
   count = menu->tabCount;
   Func_08104ef8(selection / 4 * 4);
-  Func_08104d5c(menu->rowWindow, selection, count);
+  Menu_HighlightPageEntry(menu->rowWindow, selection, count);
   menu->paneIcon[0]->active = 13;
   menu->paneIcon[1]->active = 13;
   return result;

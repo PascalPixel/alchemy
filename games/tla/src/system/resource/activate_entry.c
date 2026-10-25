@@ -10,16 +10,10 @@
 /// range.
 s32 Resource_ResetEntry(u32 resourceIndex) {
   struct VramBlockCacheEntry *entry = &gResourceTableEntries[resourceIndex];
-  u32 offset;
 
   if (resourceIndex >= VRAM_CACHE_ENTRY_COUNT)
     return -1;
-  offset = entry->offset;
-  /* FAKEMATCH: an empty asm reading the offset gives its load a second
-   * dependent, so sched2 takes it inside the split constant 0xffff; plainly,
-   * 2 instructions differ in tla-en. */
-  asm("" : "+l"(entry) : "l"(offset));
-  if (offset != VRAM_CACHE_OFFSET_FREE) {
+  if (entry->offset != VRAM_CACHE_OFFSET_FREE) {
     VramCache_FreeBlocks(resourceIndex);
     entry->offset |= VRAM_CACHE_OFFSET_FREE;
     entry->size = 0;

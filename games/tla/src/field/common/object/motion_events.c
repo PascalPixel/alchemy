@@ -68,15 +68,14 @@ void ObjectMotion_Launch(u32 objectId, s32 speed, s32 eventId) {
 
 void ObjectMotion_SetVariantCallback(u32 objectId, s32 variant) {
   struct ObjectRuntime *object;
-  const u8 *scripts;
 
   object = ObjectTable_Get(objectId);
   if (object != NULL && variant > 0) {
     if (variant > 3)
       variant = 3;
-    scripts = gObject_VariantMotionScripts;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)object,
-                                 (u32)(scripts + ((3 - variant) << 7)));
+    ObjectDispatch_InitializeFar(
+        (struct DispatchObject *)object,
+        (u32)(gObject_VariantMotionScripts + ((3 - variant) << 7)));
   }
 }
 

@@ -3913,6 +3913,120 @@ Func_02001f10:
 	.4byte gData_02006c20
 .L_0200a988:
 	.4byte gData_02006b70
+	.section .text.x0200b26c,"ax",%progbits
+	.global Func_0200326c
+	.thumb_func
+Func_0200326c:
+	push {r5, r6, r7, lr}
+	mov r7, r8
+	push {r7}
+	movs r0, #128
+	lsls r0, r0, #2
+	bl GameFlag_Test
+	cmp r0, #0
+	bne .L_0200b28c
+	ldr r3, .L_0200b2ac
+	movs r1, #3
+	ldr r0, [r3]
+	bl __umodsi3
+	cmp r0, #0
+	bne .L_0200b350
+.L_0200b28c:
+	movs r0, #23
+	bl Object_GetById
+	adds r5, r0, #0
+	movs r0, #128
+	lsls r0, r0, #2
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_0200b2b0
+	bl Random16Far
+	adds r2, r0, #0
+	ldr r3, [r5, #12]
+	lsls r2, r2, #8
+	b .L_0200b2ba
+.L_0200b2ac:
+	.4byte gFrameCount
+.L_0200b2b0:
+	bl Random16Far
+	adds r2, r0, #0
+	ldr r3, [r5, #12]
+	lsls r2, r2, #6
+.L_0200b2ba:
+	lsrs r2, r2, #16
+	lsls r2, r2, #16
+	adds r2, r2, r3
+	ldr r3, .L_0200b340
+	movs r0, #168
+	adds r2, r2, r3
+	ldr r1, [r5, #8]
+	ldr r3, [r5, #16]
+	lsls r0, r0, #2
+	bl Func_02005574
+	adds r7, r0, #0
+	cmp r7, #0
+	beq .L_0200b350
+	ldr r1, .L_0200b344
+	adds r0, r7, #0
+	ldr r6, [r7, #80]
+	bl Func_0200556c
+	movs r1, #1
+	adds r0, r7, #0
+	bl Object_SetPartAttribute
+	adds r3, r7, #0
+	adds r3, #85
+	movs r5, #0
+	strb r5, [r3]
+	bl Random16Far
+	ldr r3, .L_0200b348
+	adds r2, r7, #0
+	adds r2, #100
+	ands r3, r0
+	strh r3, [r2]
+	adds r3, r7, #0
+	adds r3, #102
+	strh r5, [r3]
+	ldr r3, .L_0200b34c
+	ldr r1, .L_0200b33c
+	str r3, [r7, #108]
+	mov r8, r1
+	bl Random16Far
+	adds r3, r0, #0
+	lsls r0, r3, #16
+	subs r0, r0, r3
+	lsrs r0, r0, #20
+	bl Math_Sine
+	lsls r3, r0, #1
+	adds r3, r3, r0
+	lsls r3, r3, #3
+	asrs r3, r3, #16
+	str r3, [r7, #48]
+	mov r3, r8
+	ldrb r2, [r6, #9]
+	strb r3, [r6, #26]
+	movs r3, #13
+	negs r3, r3
+	ands r3, r2
+	movs r2, #8
+	orrs r3, r2
+	strb r3, [r6, #9]
+	b .L_0200b350
+	.2byte 0x0000
+.L_0200b33c:
+	.4byte 0x00000000
+.L_0200b340:
+	.4byte 0xffe40000
+.L_0200b344:
+	.4byte gData_02006afc
+.L_0200b348:
+	.4byte 0x0ffff000
+.L_0200b34c:
+	.4byte Func_02003210
+.L_0200b350:
+	pop {r3}
+	mov r8, r3
+	pop {r5, r6, r7, pc}
+	.2byte 0x0000
 	.section .text.x0200b370,"ax",%progbits
 	.balign 4
 	.global Func_02003370
@@ -6476,45 +6590,6 @@ Func_02004d50:
 .L_0200cd9c:
 	pop {r5, r6, pc}
 	.2byte 0x0000
-	.endif
-	.section .text.x0200ce80,"ax",%progbits
-	.ifdef TLA_EDITION_JA
-	.balign 4
-	.else
-	.balign 4
-	.global Func_02004e80
-	.thumb_func
-Func_02004e80:
-	push {r5, r6, lr}
-	mov r6, r8
-	push {r6}
-	adds r6, r1, #0
-	bl Object_GetById
-	ldr r3, .L_0200cebc
-	movs r1, #181
-	lsls r1, r1, #1
-	adds r1, #255
-	adds r2, r3, r1
-	movs r5, #0
-	strb r5, [r2]
-	movs r2, #128
-	lsls r2, r2, #2
-	adds r2, #106
-	adds r3, r3, r2
-	mov r8, r0
-	strh r6, [r3]
-	adds r0, r6, #0
-	bl Object_GetById
-	mov r1, r8
-	ldr r3, [r1, #108]
-	str r3, [r0, #108]
-	str r5, [r1, #108]
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_0200cebc:
-	.4byte gPartyState
 	.endif
 	.section .text.x0200cef0,"ax",%progbits
 	.balign 4

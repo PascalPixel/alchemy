@@ -1271,59 +1271,6 @@ Func_02001620:
 	.4byte gData_020040ac
 .L_02009a18:
 	.4byte Func_02001598
-	.section .text.x02009ea0,"ax",%progbits
-	.balign 4
-	.global Func_02001ea0
-	.thumb_func
-Func_02001ea0:
-	push {r5, r6, r7, lr}
-	ldr r3, .L_02009efc
-	ldr r7, [r3]
-	movs r3, #15
-	ands r7, r3
-	cmp r7, #0
-	bne .L_02009efa
-	ldr r1, [r0, #8]
-	ldr r2, [r0, #12]
-	ldr r3, [r0, #16]
-	movs r0, #14
-	adds r0, #255
-	bl Engine_ObjectCreate
-	adds r5, r0, #0
-	cmp r5, #0
-	beq .L_02009efa
-	ldr r1, .L_02009f00
-	ldr r6, [r5, #80]
-	bl Func_02003ccc
-	adds r3, r5, #0
-	adds r3, #85
-	adds r2, r5, #0
-	strb r7, [r3]
-	adds r2, #34
-	movs r3, #1
-	strb r3, [r2]
-	cmp r6, #0
-	beq .L_02009efa
-	adds r0, r6, #0
-	movs r1, #2
-	bl Animation_ApplyChildArgument
-	movs r3, #128
-	ldrb r2, [r6, #9]
-	lsls r3, r3, #7
-	strh r3, [r6, #18]
-	movs r3, #13
-	negs r3, r3
-	ands r3, r2
-	movs r2, #8
-	orrs r3, r2
-	strb r7, [r6, #26]
-	strb r3, [r6, #9]
-.L_02009efa:
-	pop {r5, r6, r7, pc}
-.L_02009efc:
-	.4byte gFrameCount
-.L_02009f00:
-	.4byte gData_020040dc
 	.section .text.x0200a020,"ax",%progbits
 	.global Func_02002020
 	.thumb_func

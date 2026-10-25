@@ -1,0 +1,40 @@
+#include "types.h"
+#include "ram_buffer.h"
+
+struct MapTileWindow {
+  s32 *origin;
+  u8 unk004[0x144];
+  u16 tileIds[32 * 32];
+};
+
+s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
+
+void Map_UpdateCurrentTileBlock(void) {
+  struct MapTileWindow *window = (struct MapTileWindow *)Ram_HeapSlots->mapWork;
+  s32 x0 = 0;
+  s32 y0 = 0;
+  u32 layer;
+  u32 row;
+  u32 col;
+  s32 bias;
+  s32 tile;
+
+  if (window->origin != NULL) {
+    s32 *p = window->origin;
+
+    x0 = *p++;
+    y0 = p[1];
+  }
+  x0 = (x0 - 0x1000000) >> 25;
+  y0 = (y0 - 0x1400000) >> 25;
+  for (layer = 0; layer < 2; layer++) {
+    for (row = 0; row < 2; row++) {
+      for (col = 0; col < 2; col++) {
+        tile = (((y0 + row) & 31) << 5) + ((x0 + col) & 31);
+        tile = window->tileIds[tile];
+        tile += layer << 10;
+        Map_WriteLayerCellTile(layer, x0 + col, y0 + row, tile, 1);
+      }
+    }
+  }
+}

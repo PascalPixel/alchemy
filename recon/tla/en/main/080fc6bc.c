@@ -95,7 +95,7 @@ s32 Func_080f8f9c(s32 horizontal, s32 count, s32 perPage, s32 *row, s32 *page);
 void Audio_PlayCue(s32 cue);
 s32 GameFlag_Test(s32 flag);
 void Func_08104ef8(s32 first);
-void Func_08104d5c(void *window, s32 selection, s32 count);
+void Menu_HighlightPageEntry(void *window, s32 selection, s32 count);
 void UiWindow_ClearInteriorTilesFar(void *window, s32 x, s32 y, s32 width,
                                     s32 height);
 
@@ -222,7 +222,7 @@ s32 Func_080fc6bc(s32 pane) {
                                                menu->items, 0);
           } while (menu->itemCount == 0);
           Func_08104ef8(member / 4 * 4);
-          Func_08104d5c(menu->pageWindow, member, count);
+          Menu_HighlightPageEntry(menu->pageWindow, member, count);
           menu->ownerIcons[0]->state = 13;
           menu->ownerIcons[1]->state = 13;
           WaitFrames(1);

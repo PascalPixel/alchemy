@@ -26,11 +26,6 @@ static __inline__ s32 Flag_Test(s32 flag) {
   return GameFlag_Test(flag);
 }
 
-static __inline__ void Flag_Clear(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_ClearBit(flag);
-}
-
 static __inline__ void SetObjectValue(s32 id, s32 value) {
   /* FAKEMATCH: the value pinned to r1: ⚓️ loads it before the id (movs r1; movs
    * r0); as a direct call or a plain forwarding inline the id comes first
@@ -44,8 +39,16 @@ static __inline__ void SetObjectValue(s32 id, s32 value) {
 /// values and priority bits, and under flag 0x200 runs Func_02000494. Under flag
 /// 0x201, runs a screen transition and Func_02000408, then clears the flag.
 s32 Func_02000740(void) {
-  ((struct AnemosInnerSanctumEntranceEventWork *)Ram_HeapSlots->eventWork)
-      ->route = 0x204;
+  s32 *route =
+      &((struct AnemosInnerSanctumEntranceEventWork *)Ram_HeapSlots->eventWork)
+           ->route;
+  s32 value = 0x204;
+
+  /* FAKEMATCH(barrier): an empty asm after the address and the value, so the
+   * party state's address loads just before the store; as one assignment, 2
+   * of 110 instructions differ in tla-en. */
+  __asm__("");
+  *route = value;
   if (gPartyState.scene == (s32)&SceneId_Ov6b1Room1) {
     Func_02000b18();
     Func_02000bd4(2);
@@ -62,7 +65,7 @@ s32 Func_02000740(void) {
     Object_GetById(12)->priorityFlags |= 0x80;
     Object_GetById(13)->priorityFlags |= 0x80;
     Object_GetById(14)->priorityFlags |= 0x80;
-    if (Flag_Test(0x200)) {
+    if (GameFlag_Test(0x200)) {
       Func_02000be0(1);
       Func_02000494();
     }
@@ -71,7 +74,7 @@ s32 Func_02000740(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Func_02000408();
-    Flag_Clear(0x201);
+    GameFlag_ClearBit(0x201);
   }
   return 0;
 }

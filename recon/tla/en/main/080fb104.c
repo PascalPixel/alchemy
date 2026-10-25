@@ -46,7 +46,7 @@ void RenderOutput_RedrawSavedRectFar(void *window);
 void ItemMenu_SetMessageWindowHeight7(void);
 void UiWindow_DrawDividerLineFar(void *window, s32 x0, s32 y0, s32 x1, s32 y1);
 void Func_080fc12c(void);
-void Func_080fb554(s8 *commandStates, void *window);
+void ItemMenu_DrawCommands(const s8 *commandStates, void *window);
 void Func_080f8ab4(s32 x, s32 y);
 void Func_080f8a44(s32 x, s32 y);
 s32 GameFlag_Test(s32 flag);
@@ -87,7 +87,7 @@ s32 Func_080fb104(void) {
     RenderOutput_RedrawSavedRectFar(messageWindow);
     UiWindow_DrawDividerLineFar(messageWindow, 0, 3, 16, 3);
     Func_080fc12c();
-    Func_080fb554(commandStates, messageWindow);
+    ItemMenu_DrawCommands(commandStates, messageWindow);
   }
   *redrawFlag = 0;
 

@@ -60,7 +60,7 @@ Func_080fcab8:
 	add r0, sp, #12
 	add r1, sp, #8
 	add r2, sp, #4
-	bl Func_080fcbd8
+	bl PsynergyMenu_RunSteps
 	adds r7, r0, #0
 	bl Menu_EnsureCancelSound
 	cmp r7, #1

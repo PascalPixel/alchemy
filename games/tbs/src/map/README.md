@@ -237,7 +237,7 @@ static void EventScript_EnterJennasGrandparentsHouse(void) {
   Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_GrandparentsDoorOpens, 49, 69);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 326, 1126);
-  Import_ScriptRequestWarp(VALE_TO_VALE_SHOPS_NORTH);
+  Import_ScriptRequestWarp(VALE_TO_VALE_INTERIORS_NORTH);
 }
 ```
 
@@ -311,6 +311,15 @@ share one overlay, and then share its file. A map overlay is never split into
 parts, because its code is laid out by kind (entry points, then handlers,
 then tables), not by map.
 
+Indoor rooms are packed several to a map, a
+[sheet of rooms](../../glossary.md#sheet-of-rooms): the rooms drawn in
+one tile style sit side by side on one layout, each with a camera box of its
+own, and the warp destination the party arrives at chooses the room by its
+box. The rooms of one sheet can belong to different places, so its area name
+follows the warp destination too; Vale's inn and the scholars' room in Babi's
+Palace share `MapId_WoodenRoomsA`. Each sheet's file lists its rooms and the
+places they belong to.
+
 A map's functions take its name (`Vault_`, `VaultRevisit_`,
 `ColosseumNavampaMatch_`) and say what the player sees; most functions a map
 event table names are `EventScript_` instead. Shared helpers take their
@@ -372,7 +381,11 @@ its `msgctxt` is the name the map writes (`MsgVaultWelcomeToVaultTheTownAt`).
 ## Evidence
 
 A map's name is its map section's area name from `gMapSec_NameRules`, or for a
-room the game leaves unnamed, what the player sees there; its functions
+room the game leaves unnamed, what the player sees there. A sheet of rooms
+whose rooms all belong to one place is named for it (`ValeInteriors`,
+`LunpaInteriors`), and one that mixes places for the material its rooms are
+drawn in (`WoodenRoomsA`, `StoneRooms`, `LacquerRooms`), with a letter where
+two share one; its functions
 are named for what the player sees; its messages are linker symbols made from
 their English text. Overlay numbers are their rows of the resource directory.
 

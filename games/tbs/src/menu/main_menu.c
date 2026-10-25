@@ -536,8 +536,8 @@ menu_top:;
       }
     }
     Party_StartChildhood();
-    gSaveBlock.mapId = (s32)&MapId_ValeInn;
-    gSaveBlock.warpDest = VALE_INN_FROM_VALE_PLAZA_SOUTHEAST;
+    gSaveBlock.mapId = (s32)&MapId_WoodenRoomsA;
+    gSaveBlock.warpDest = WOODEN_ROOMS_A_FROM_VALE_PLAZA_SOUTHEAST;
     goto leave;
   }
   // Continue a file where it was saved, except: a file from another build of

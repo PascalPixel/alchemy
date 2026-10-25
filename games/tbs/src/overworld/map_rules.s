@@ -56,7 +56,7 @@ gMap_MusicRules:
 	map_music Sanctum, -1, 0x9f0, 74
 	map_music Sanctum, -1, 0x814, 2
 	map_music Sanctum, -1, -1, 74
-	map_music ValeInn, 19, -1, 3
+	map_music WoodenRoomsA, 19, -1, 3
 	mapsec_music 3, -1, 0x9f0, 0
 	mapsec_music 3, -1, 0x814, 2
 	mapsec_music 3, -1, 0x901, 0
@@ -68,7 +68,7 @@ gMap_MusicRules:
 	mapsec_music 4, -1, 0x814, 63
 	map_music SolEntrance, -1, -1, 20
 	mapsec_music 4, -1, -1, 20
-	map_music VaultJail, 2, -1, 1
+	map_music StoneRooms, 2, -1, 1
 	mapsec_music 5, -1, -1, 0
 	mapsec_music 6, -1, -1, 42
 	mapsec_music 7, -1, -1, 24
@@ -95,7 +95,7 @@ gMap_MusicRules:
 	map_music MercuryLighthouseAerie, -1, -1, 22
 	mapsec_music 19, -1, 0x881, 22
 	mapsec_music 19, -1, -1, 27
-	map_music FuchinTempleInteriors, 3, -1, 60
+	map_music LacquerRooms, 3, -1, 60
 	mapsec_music 20, -1, -1, 5
 	mapsec_music 21, -1, -1, 28
 	mapsec_music 22, -1, -1, 21
@@ -182,7 +182,7 @@ gMapSec_NameRules:
 	map_name Sanctum, 32, 6
 	map_name Sanctum, 29, 7
 	map_name Sanctum, -1, 8
-	map_name ValeInn, 19, 9
+	map_name WoodenRoomsA, 19, 9
 	group_name 3, -1, 10
 	map_name SolEntrance, -1, 11
 	map_name SolSanctumElementalStarRoom, -1, 12
@@ -190,7 +190,7 @@ gMapSec_NameRules:
 	group_name 4, -1, 13
 	map_name LunpaInteriors, 7, 14
 	map_name LunpaInteriors, 11, 14
-	map_name VaultJail, 2, 15
+	map_name StoneRooms, 2, 15
 	group_name 5, -1, 16
 	group_name 6, -1, 17
 	group_name 7, -1, 18
@@ -211,8 +211,8 @@ gMapSec_NameRules:
 	group_name 18, -1, 32
 	map_name MercuryLighthouseAerie, -1, 33
 	group_name 19, -1, 34
-	map_name FuchinTempleInteriors, 2, 35
-	map_name FuchinTempleInteriors, 3, 36
+	map_name LacquerRooms, 2, 35
+	map_name LacquerRooms, 3, 36
 	group_name 20, -1, 37
 	group_name 21, -1, 38
 	group_name 22, -1, 39
@@ -236,7 +236,7 @@ gMapSec_NameRules:
 	map_name LunpaInteriors, 10, 52
 	group_name 34, -1, 53
 	group_name 35, -1, 54
-	map_name KalayTolbiDocksInteriors, 2, 55
+	map_name WoodenRoomsB, 2, 55
 	group_name 36, -1, 56
 	group_name 37, -1, 57
 	group_name 38, -1, 58
@@ -276,8 +276,8 @@ gMapSec_NameRules:
 	map_name BabiLighthouseEntry, -1, 86
 	map_name RoadToBabiLighthouse, -1, 87
 	group_name 54, -1, 88
-	map_name LaliveroShops, 11, 89
-	map_name LaliveroShops, 12, 89
+	map_name LaliveroInteriorsA, 11, 89
+	map_name LaliveroInteriorsA, 12, 89
 	group_name 55, -1, 90
 	map_name VenusLighthouseGroundFloor, -1, 91
 	group_name 56, -1, 92
@@ -303,7 +303,7 @@ gMapSec_NameRules:
 
 	.global gDefeatReturnPoints
 gDefeatReturnPoints:
-	return_to ValeStormyNight, 15, ValeInn, 16
+	return_to ValeStormyNight, 15, WoodenRoomsA, 16
 	return_to Vale, 16, Sanctum, 2
 	return_to Vault, 1, Sanctum, 12
 	return_to Vault, 3, Sanctum, 12
@@ -319,7 +319,7 @@ gDefeatReturnPoints:
 	return_to Lunpa, 3, LunpaInteriors, 11
 	return_to Tolbi, -1, TolbiInteriors, 30
 	return_to Suhalla, -1, SuhallaInteriors, 6
-	return_to Lalivero, -1, LaliveroShops, 12
+	return_to Lalivero, -1, LaliveroInteriorsA, 12
 	return_to BattleArena, -1, BattleArena, 1
 	.2byte -1, -1, -1, -1	@ end
 
@@ -353,7 +353,7 @@ gBattleBackground_Maps:
 	backdrop GomaCaveBackdrop, GatewayCave
 	backdrop BabiLighthouseBackdrop, BabiLighthouseEntry, BabiLighthouseLuff, BabiLighthouseStoneDoor, CrossboneIsleBane
 	backdrop TunnelRuinsBackdrop, TunnelRuinsGreatStatue, TunnelRuinsLadyStatues
-	backdrop InteriorBackdrop, Lalivero, LaliveroShops, LaliveroFaransHouse
+	backdrop InteriorBackdrop, Lalivero, LaliveroInteriorsA, LaliveroInteriorsB
 	backdrop VenusLighthouseBackdrop, VenusLighthouseGroundFloor, VenusLighthouseFirstFloor, VenusLighthouseSecondFloor, VenusLighthouseThirdFloor, VenusLighthouseFourthFloor
 	backdrop VenusLighthouseAerieBackdrop, VenusLighthouseAerie
 	backdrop GomaCaveBackdrop

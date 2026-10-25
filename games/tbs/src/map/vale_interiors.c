@@ -1,22 +1,30 @@
 /// @file
-/// Vale (MapId_ValeShops): the insides of the village's houses and
-/// shops, all on one map. Each room is a warp destination with a camera box of
-/// its own, named for the door it is entered by
-/// (VALE_SHOPS_FROM_VALE_WEST and the rest), and its door takes the
-/// warp of the same number back out: four open onto the village (MapId_Vale),
-/// and four onto the part of Vale with the Psynergy Stone (MapId_ValePlaza),
-/// as the warps' names say. Garet's family lives in the room entered from
-/// VALE_SHOPS_FROM_VALE_EAST: his grandfather the mayor, his
-/// grandmother and his parents. Jenna's grandparents live in the room entered
-/// from VALE_SHOPS_FROM_VALE_NORTH, and the one entered from
-/// VALE_SHOPS_FROM_VALE_PLAZA_WEST holds the item, weapon and armor
-/// shops, each opened across its counter. The object event templates and map
-/// events follow the story:
+/// Vale (MapId_ValeInteriors), a sheet of Vale's rooms: the game packs rooms
+/// that share a tile style onto one map, and every room on this one is entered
+/// from Vale. Each room is a warp destination with a camera box of its own,
+/// named for the door it is entered by, and its door takes the warp of the same
+/// number back out. In story order, by the warps that lead in:
+///
+/// - From the village (MapId_Vale, and on the stormy night
+///   MapId_ValeStormyNight): the house of Garet's family
+///   (VALE_INTERIORS_FROM_VALE_EAST), his grandfather the mayor, his
+///   grandmother and his parents; the house of Jenna's grandparents
+///   (VALE_INTERIORS_FROM_VALE_NORTH); and two more houses
+///   (VALE_INTERIORS_FROM_VALE_SOUTH and VALE_INTERIORS_FROM_VALE_WEST).
+/// - From the part of Vale with the Psynergy Stone (MapId_ValePlaza): the
+///   shops (VALE_INTERIORS_FROM_VALE_PLAZA_WEST), where the item, weapon and
+///   armor shops each open across a counter, and three houses
+///   (VALE_INTERIORS_FROM_VALE_PLAZA_EAST, VALE_INTERIORS_FROM_VALE_PLAZA_NORTH
+///   and VALE_INTERIORS_FROM_VALE_PLAZA_SOUTH).
+/// - Unused: a ninth room drawn at the sheet's lower left, whose camera box no
+///   warp destination gives, so no door leads in.
+///
+/// The object event templates and map events follow the story:
 ///
 /// - The stormy night of the prologue (FLAG_VALE_STORM). Everyone is out:
-///   ValeShops_Initialize removes every resident and flashes the
+///   ValeInteriors_Initialize removes every resident and flashes the
 ///   lightning outside, and the doors out to the village lead into the
-///   storm's map (MapId_ValeStormyNight) instead (ValeShops_GetWarps). The
+///   storm's map (MapId_ValeStormyNight) instead (ValeInteriors_GetWarps). The
 ///   jars and the barrel are empty, and six more bookcases than by day can be
 ///   read, a notebook called "Study of Alchemy" among them.
 /// - Three years later, the day the story begins. The villagers talk of
@@ -25,7 +33,7 @@
 ///   Smoke Bomb, each found once.
 /// - After the party has left Vale (FLAG_VALE_PARTY_LEFT), Jenna having been
 ///   taken on Mt. Aleph. Her grandmother lies sick in bed (Initialize, from
-///   VALE_SHOPS_FROM_VALE_NORTH), the villagers talk of the quest and
+///   VALE_INTERIORS_FROM_VALE_NORTH), the villagers talk of the quest and
 ///   of Felix, and the item merchant gives Isaac a Herb as a farewell gift
 ///   (FLAG_VALE_FAREWELL_HERB_RECEIVED).
 /// - Back from Kalay (FLAG_KALAY_REACHED), with Ivan and Mia in the party. The
@@ -37,10 +45,10 @@
 ///
 /// While Garet's grandfather dozes in EventScript_GaretComesHome, three letters
 /// Z (LOCALID_FIRST_SLEEP_Z and the two after it) rise from him, one at each of
-/// frames 10, 20 and 30 of every 180 (ValeShops_SpawnSleepZ): each
+/// frames 10, 20 and 30 of every 180 (ValeInteriors_SpawnSleepZ): each
 /// starts 24 pixels above him at two fifths of its size and grows a fortieth
 /// a frame as it climbs ever more slowly and drifts right ever faster
-/// (ValeShops_AdvanceSleepZ)
+/// (ValeInteriors_AdvanceSleepZ)
 /// (https://alchemy.pascalpixel.com/places/vale-interiors-shops/sleep-z.gif:
 /// two cycles, the screen with the grandfather and the three letters boxed and
 /// the cycle's frame written, beside the sprites alone).
@@ -48,7 +56,7 @@
 #include "action_script.h"
 #include "save_block.h"
 #include "unit/import.h"
-#include "unit/map/vale_shops.h"
+#include "unit/map/vale_interiors.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
 #include "unit/field/field.h"
@@ -72,10 +80,10 @@
 
 /// The placed object events, numbered in the order of the object event template
 /// tables, which all place them alike;
-/// gValeShops_ObjectEventTemplatesAfterKalay adds Garet, Ivan and Mia,
+/// gValeInteriors_ObjectEventTemplatesAfterKalay adds Garet, Ivan and Mia,
 /// who keep their characters' ids, and the drifting sprites. The villagers'
 /// notes quote what they say on the day the story begins.
-enum ValeShopsLocalId {
+enum ValeInteriorsLocalId {
   /// Garet's grandfather, the mayor, an old man with white hair and a cane
   /// ("your grandpa's the mayor", vale.c). "Isaac, please take care of my
   /// grandson, Garet."
@@ -156,7 +164,7 @@ enum ValeShopsLocalId {
 
 /// Animations of the houses' sprites beyond enum ObjectEventAnimation, as their
 /// animation tables and frames under graphics/sprite draw them.
-enum ValeShopsAnimation {
+enum ValeInteriorsAnimation {
   /// Garet's grandfather standing with his eyes shut, asleep (spr_117.png).
   ANIM_GRANDFATHER_ASLEEP = 5,
   /// Garet's grandfather glancing quickly from side to side (spr_117.png).
@@ -168,16 +176,16 @@ enum ValeShopsAnimation {
 
 // Forward declarations.
 static void EventScript_GaretComesHome(void);
-static void ValeShops_SpawnSleepZ(void);
+static void ValeInteriors_SpawnSleepZ(void);
 
 #include "common/object_facing.h"
 
 /// Moves and grows a Z drifting up from Garet's sleeping grandfather.
 ///
-/// Called each frame by gValeShops_SleepZScript; the object event's
+/// Called each frame by gValeInteriors_SleepZScript; the object event's
 /// timer and work are its x and y steps in signed 8.8 pixels, set by
-/// ValeShops_SpawnSleepZ.
-static s32 ValeShops_AdvanceSleepZ(struct Object *interpreter) {
+/// ValeInteriors_SpawnSleepZ.
+static s32 ValeInteriors_AdvanceSleepZ(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
 
   objectEvent->x.fixed += (s16)objectEvent->timer * 256;
@@ -189,31 +197,31 @@ static s32 ValeShops_AdvanceSleepZ(struct Object *interpreter) {
   return 0;
 }
 
-const struct MapWarpDest *ValeShops_GetWarpDests(void) {
-  return gValeShops_WarpDests;
+const struct MapWarpDest *ValeInteriors_GetWarpDests(void) {
+  return gValeInteriors_WarpDests;
 }
 
-const struct MapWarpRegion *ValeShops_GetRegions(void) { return NULL; }
+const struct MapWarpRegion *ValeInteriors_GetRegions(void) { return NULL; }
 
 /// On the stormy night, the doors lead out into the storm.
-const u32 *ValeShops_GetWarps(void) {
+const u32 *ValeInteriors_GetWarps(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0)
-    return gValeShops_StormWarps;
-  return gValeShops_Warps;
+    return gValeInteriors_StormWarps;
+  return gValeInteriors_Warps;
 }
 
 /// Selects the object event templates for the day the story begins, after the
 /// party has left Vale (FLAG_VALE_PARTY_LEFT), or after Kalay
 /// (FLAG_KALAY_REACHED), and marks which of their object events are in view.
-const struct ObjectEventTemplate *ValeShops_GetObjectEventTemplates(void) {
+const struct ObjectEventTemplate *ValeInteriors_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *table;
 
   if (GameFlag_Get(FLAG_KALAY_REACHED)) {
-    table = gValeShops_ObjectEventTemplatesAfterKalay;
+    table = gValeInteriors_ObjectEventTemplatesAfterKalay;
   } else if (GameFlag_Get(FLAG_VALE_PARTY_LEFT)) {
-    table = gValeShops_ObjectEventTemplatesAfterLeaving;
+    table = gValeInteriors_ObjectEventTemplatesAfterLeaving;
   } else {
-    table = gValeShops_ObjectEventTemplates;
+    table = gValeInteriors_ObjectEventTemplates;
   }
   Map_AssignViewFlags(table);
   return table;
@@ -222,14 +230,14 @@ const struct ObjectEventTemplate *ValeShops_GetObjectEventTemplates(void) {
 /// Selects the map events for the current visit to Vale: the stormy night's
 /// (FLAG_VALE_STORM), after Kalay, after the party has left, or the day the
 /// story begins.
-const struct MapEvent *ValeShops_GetEvents(void) {
+const struct MapEvent *ValeInteriors_GetEvents(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0)
-    return gValeShops_StormEvents;
+    return gValeInteriors_StormEvents;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
-    return gValeShops_EventsAfterKalay;
+    return gValeInteriors_EventsAfterKalay;
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0)
-    return gValeShops_EventsAfterLeaving;
-  return gValeShops_Events;
+    return gValeInteriors_EventsAfterLeaving;
+  return gValeInteriors_Events;
 }
 
 /// A burly grey-haired man asks whether Isaac knew why Kraden came to Vale.
@@ -267,7 +275,7 @@ static void EventScript_AskToScareVisitors(void) {
 /// party has left and before Kalay. Gives the Herb and sets
 /// FLAG_VALE_FAREWELL_HERB_RECEIVED once; afterwards the merchant turns to
 /// watch the leader.
-static void ValeShops_GiveFarewellHerb(void) {
+static void ValeInteriors_GiveFarewellHerb(void) {
   s32 gift;
 
   FieldScript_Start();
@@ -277,7 +285,7 @@ static void ValeShops_GiveFarewellHerb(void) {
     Object_SetTargetAndCallback(LOCALID_ITEM_MERCHANT,
                                 OBJ_EVENT_LINK_KEEP_MOTION |
                                     LOCALID_PARTY_LEADER,
-                                gValeShops_FaceTargetScript);
+                                gValeInteriors_FaceTargetScript);
   } else {
     gift = MsgValeThisIsMyFarewellGift;
     FieldScript_SetMessageId(gift);
@@ -326,7 +334,7 @@ static void EventScript_WorryAboutTravelersHealth(void) {
 
 /// Leaves a house through its door: the warp sound plays and the screen
 /// closes, stopping the lightning first on the stormy night.
-static void ValeShops_RequestWindowWarp(s32 warpNumber) {
+static void ValeInteriors_RequestWindowWarp(s32 warpNumber) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0)
     Weather_StopLightning();
   Sound_PlaySong(SE_MAP_EXIT);
@@ -344,53 +352,53 @@ static void ValeShops_RequestWindowWarp(s32 warpNumber) {
 // instead.
 
 /// Leaves the house where a young man dreams of leaving. It's the room entered
-/// from VALE_SHOPS_FROM_VALE_WEST, where
+/// from VALE_INTERIORS_FROM_VALE_WEST, where
 /// LOCALID_YOUNG_MAN_DREAMING_OF_LEAVING wanders.
 static void EventScript_LeaveToValeWest(void) {
-  ValeShops_RequestWindowWarp(VALE_SHOPS_TO_VALE_WEST);
+  ValeInteriors_RequestWindowWarp(VALE_INTERIORS_TO_VALE_WEST);
 }
 
 /// Leaves Jenna's grandparents' house.
 static void EventScript_LeaveToValeNorth(void) {
-  ValeShops_RequestWindowWarp(VALE_SHOPS_TO_VALE_NORTH);
+  ValeInteriors_RequestWindowWarp(VALE_INTERIORS_TO_VALE_NORTH);
 }
 
 /// Leaves the empty house. It's the room entered from
-/// VALE_SHOPS_FROM_VALE_PLAZA_NORTH, which no object event template
+/// VALE_INTERIORS_FROM_VALE_PLAZA_NORTH, which no object event template
 /// table puts anyone in.
 static void EventScript_LeaveToValePlazaWest(void) {
-  ValeShops_RequestWindowWarp(VALE_SHOPS_TO_VALE_PLAZA_WEST);
+  ValeInteriors_RequestWindowWarp(VALE_INTERIORS_TO_VALE_PLAZA_WEST);
 }
 
 /// Leaves Vale's shops.
 static void EventScript_LeaveToValePlazaSouth(void) {
-  ValeShops_RequestWindowWarp(VALE_SHOPS_TO_VALE_PLAZA_SOUTH);
+  ValeInteriors_RequestWindowWarp(VALE_INTERIORS_TO_VALE_PLAZA_SOUTH);
 }
 
 /// Leaves the house where villagers talk of Kraden and his visitors. It's the
-/// room entered from VALE_SHOPS_FROM_VALE_SOUTH, where
+/// room entered from VALE_INTERIORS_FROM_VALE_SOUTH, where
 /// LOCALID_MAN_ON_KRADENS_STUDIES and LOCALID_WOMAN_ON_VISITORS_IN_TOWN stand.
 static void EventScript_LeaveToValeSouth(void) {
-  ValeShops_RequestWindowWarp(VALE_SHOPS_TO_VALE_SOUTH);
+  ValeInteriors_RequestWindowWarp(VALE_INTERIORS_TO_VALE_SOUTH);
 }
 
 /// Leaves Garet's house.
 static void EventScript_LeaveToValeEast(void) {
-  ValeShops_RequestWindowWarp(VALE_SHOPS_TO_VALE_EAST);
+  ValeInteriors_RequestWindowWarp(VALE_INTERIORS_TO_VALE_EAST);
 }
 
 /// Leaves the house where a strongman plans to scare Kraden's visitors. It's
-/// the room entered from VALE_SHOPS_FROM_VALE_PLAZA_SOUTH, where
+/// the room entered from VALE_INTERIORS_FROM_VALE_PLAZA_SOUTH, where
 /// LOCALID_STRONGMAN_SCARING_VISITORS stands.
 static void EventScript_LeaveToValePlazaEast(void) {
-  ValeShops_RequestWindowWarp(VALE_SHOPS_TO_VALE_PLAZA_EAST);
+  ValeInteriors_RequestWindowWarp(VALE_INTERIORS_TO_VALE_PLAZA_EAST);
 }
 
 /// Leaves the house where a woman talks of permission to leave. It's the room
-/// entered from VALE_SHOPS_FROM_VALE_PLAZA_EAST, where
+/// entered from VALE_INTERIORS_FROM_VALE_PLAZA_EAST, where
 /// LOCALID_WOMAN_ON_PERMISSION_TO_LEAVE stands.
 static void EventScript_LeaveToValePlazaNorth(void) {
-  ValeShops_RequestWindowWarp(VALE_SHOPS_TO_VALE_PLAZA_NORTH);
+  ValeInteriors_RequestWindowWarp(VALE_INTERIORS_TO_VALE_PLAZA_NORTH);
 }
 
 /// Arriving in a house of Vale: on the stormy night the residents are gone and
@@ -398,10 +406,10 @@ static void EventScript_LeaveToValePlazaNorth(void) {
 /// time plays his homecoming.
 ///
 /// The map's initialize entry. Runs EventScript_GaretComesHome from
-/// VALE_SHOPS_FROM_VALE_EAST after Kalay until FLAG_GARET_CAME_HOME
-/// is set. From VALE_SHOPS_FROM_VALE_NORTH, once the party has left
+/// VALE_INTERIORS_FROM_VALE_EAST after Kalay until FLAG_GARET_CAME_HOME
+/// is set. From VALE_INTERIORS_FROM_VALE_NORTH, once the party has left
 /// Vale, Jenna's grandmother lies sick in bed.
-s32 ValeShops_Initialize(void) {
+s32 ValeInteriors_Initialize(void) {
   struct ObjectEvent *objectEvent;
   struct FieldWork **eventSlot = &gFieldWork;
 
@@ -435,7 +443,7 @@ s32 ValeShops_Initialize(void) {
   }
   // The returning party gets the household reunion only on its first visit.
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
-    if (gSaveBlock.warpDest == VALE_SHOPS_FROM_VALE_EAST) {
+    if (gSaveBlock.warpDest == VALE_INTERIORS_FROM_VALE_EAST) {
       if (GameFlag_Get(FLAG_GARET_CAME_HOME) == 0) {
         EventScript_GaretComesHome();
       }
@@ -443,7 +451,7 @@ s32 ValeShops_Initialize(void) {
     ObjectEvent_GetById(LOCALID_GARETS_FATHER)->collisionFlags |= 0x80;
   }
   // Once Jenna is taken, her grandmother lies sick in bed.
-  if (gSaveBlock.warpDest == VALE_SHOPS_FROM_VALE_NORTH) {
+  if (gSaveBlock.warpDest == VALE_INTERIORS_FROM_VALE_NORTH) {
     if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
       Import_ObjectEventSetPosition(LOCALID_JENNAS_GRANDMOTHER, PIXELS(454),
                                     PIXELS(150));
@@ -520,7 +528,7 @@ static void EventScript_TalkToArmorMerchant(void) {
 ///
 /// Reached by talking to the item merchant in every table but the stormy
 /// night's; opens shop 3 when facing north. After the party has left and
-/// before Kalay, ValeShops_GiveFarewellHerb speaks instead.
+/// before Kalay, ValeInteriors_GiveFarewellHerb speaks instead.
 static void EventScript_TalkToItemMerchant(void) {
   struct ObjectEvent *objectEvent;
 
@@ -535,7 +543,7 @@ static void EventScript_TalkToItemMerchant(void) {
       FieldScript_End();
     } else {
       if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
-        ValeShops_GiveFarewellHerb();
+        ValeInteriors_GiveFarewellHerb();
       } else {
         FieldScript_Start();
         FieldScript_SetMessageId(MsgValeAWiseManFleesWhen);
@@ -547,7 +555,7 @@ static void EventScript_TalkToItemMerchant(void) {
 }
 
 /// Garet's grandparents and father nod.
-static inline void ValeShops_FamilyNods(void) {
+static inline void ValeInteriors_FamilyNods(void) {
   Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, ANIM_NOD);
   Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDMOTHER, ANIM_NOD);
   Import_ObjectEventSetAnimation(LOCALID_GARETS_FATHER, ANIM_NOD);
@@ -555,8 +563,8 @@ static inline void ValeShops_FamilyNods(void) {
 }
 
 /// Starts the repeated motion before waiting for the requested animation.
-static inline void ValeShops_PlayRepeatedAnimationAndWait(s32 localId,
-                                                          s32 animation) {
+static inline void ValeInteriors_PlayRepeatedAnimationAndWait(s32 localId,
+                                                              s32 animation) {
   ObjectMotion_SetVariantCallback(localId, 1);
   ObjectMotion_SetAnimationAndWait(localId, animation);
 }
@@ -567,10 +575,10 @@ static inline void ValeShops_PlayRepeatedAnimationAndWait(s32 localId,
 /// them to look after him, and his father tells them to enjoy their stay; the
 /// three walk back into Isaac, and the father is left pacing.
 ///
-/// Called by ValeShops_Initialize from
-/// VALE_SHOPS_FROM_VALE_EAST after Kalay, until FLAG_GARET_CAME_HOME
+/// Called by ValeInteriors_Initialize from
+/// VALE_INTERIORS_FROM_VALE_EAST after Kalay, until FLAG_GARET_CAME_HOME
 /// is set; sets it. Adds and removes the callback
-/// ValeShops_SpawnSleepZ, and leaves the father pacing.
+/// ValeInteriors_SpawnSleepZ, and leaves the father pacing.
 static void EventScript_GaretComesHome(void) {
   struct ObjectEvent *sleepZ;
   struct ObjectEvent *objectEvent;
@@ -601,7 +609,7 @@ static void EventScript_GaretComesHome(void) {
   ObjectEvent_GetById(LOCALID_FIRST_SLEEP_Z)->motionFlags = motionFlags;
   ObjectEvent_GetById(LOCALID_FIRST_SLEEP_Z + 1)->motionFlags = motionFlags;
   ObjectEvent_GetById(LOCALID_FIRST_SLEEP_Z + 2)->motionFlags = motionFlags;
-  timedUpdate = ValeShops_SpawnSleepZ;
+  timedUpdate = ValeInteriors_SpawnSleepZ;
   FieldScheduler_AddCallback(timedUpdate, TASK_PRIORITY_MAP);
   WaitFrames(1);
   gFieldWork->transitionFrames = 32;
@@ -632,16 +640,16 @@ static void EventScript_GaretComesHome(void) {
   FieldScript_WaitFrames(10);
   Object_SetTargetAndCallback(
       LOCALID_PARTY_LEADER, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
-      gValeShops_FaceTargetScript);
+      gValeInteriors_FaceTargetScript);
   Object_SetTargetAndCallback(
       LOCALID_GARET, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
-      gValeShops_FaceTargetScript);
+      gValeInteriors_FaceTargetScript);
   Object_SetTargetAndCallback(
       LOCALID_IVAN, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
-      gValeShops_FaceTargetScript);
+      gValeInteriors_FaceTargetScript);
   Object_SetTargetAndCallback(
       LOCALID_MIA, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
-      gValeShops_FaceTargetScript);
+      gValeInteriors_FaceTargetScript);
   FieldScript_WaitFrames(300);
   FieldCamera_GetScriptObject()->motionFlags = motionFlags;
   // The camera pans slowly up to Garet's parents. His father, pacing, asks
@@ -697,13 +705,13 @@ static void EventScript_GaretComesHome(void) {
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT |
                                 LOCALID_GARETS_FATHER,
                             0, 10);
-  ValeShops_PlayRepeatedAnimationAndWait(LOCALID_GARETS_MOTHER, ANIM_NOD);
+  ValeInteriors_PlayRepeatedAnimationAndWait(LOCALID_GARETS_MOTHER, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ValeShops_PlayRepeatedAnimationAndWait(LOCALID_GARETS_FATHER,
-                                         ANIM_SHAKE_HEAD);
-  ValeShops_PlayRepeatedAnimationAndWait(LOCALID_GARETS_MOTHER, ANIM_NOD);
-  ValeShops_PlayRepeatedAnimationAndWait(LOCALID_GARETS_FATHER,
-                                         ANIM_SHAKE_HEAD);
+  ValeInteriors_PlayRepeatedAnimationAndWait(LOCALID_GARETS_FATHER,
+                                             ANIM_SHAKE_HEAD);
+  ValeInteriors_PlayRepeatedAnimationAndWait(LOCALID_GARETS_MOTHER, ANIM_NOD);
+  ValeInteriors_PlayRepeatedAnimationAndWait(LOCALID_GARETS_FATHER,
+                                             ANIM_SHAKE_HEAD);
   // Garet's grandmother sees him and chokes on her words; his mother asks if
   // she is choking, his father thinks she misses Garet too.
   ObjectEvent_ShowEmote(LOCALID_GARETS_GRANDMOTHER,
@@ -865,7 +873,7 @@ static void EventScript_GaretComesHome(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
   Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
-  ValeShops_FamilyNods();
+  ValeInteriors_FamilyNods();
   ObjectEvent_GetById(LOCALID_MIA)->priorityFlags &=
       ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectMotion_SetActionVariant(LOCALID_MIA, 1);
@@ -878,7 +886,7 @@ static void EventScript_GaretComesHome(void) {
   ObjectEvent_GetById(LOCALID_MIA)->priorityFlags |=
       OBJ_EVENT_PRIORITY_AUTOMATIC;
   Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
-  ValeShops_FamilyNods();
+  ValeInteriors_FamilyNods();
   FieldScript_WaitFrames(20);
   FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(428), 1);
   FieldScript_WaitFrames(20);
@@ -915,12 +923,12 @@ static void EventScript_GaretComesHome(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
-  partyScript = gValeShops_PartyLeavesScript;
+  partyScript = gValeInteriors_PartyLeavesScript;
   ObjectEvent_SetActionScript(LOCALID_GARET, partyScript);
   ObjectEvent_SetActionScript(LOCALID_IVAN, partyScript);
   ObjectEvent_RunActionScriptAndWait(LOCALID_MIA, partyScript);
   ObjectEvent_SetActionScript(LOCALID_GARETS_FATHER,
-                              gValeShops_FatherPacingScript);
+                              gValeInteriors_FatherPacingScript);
   ObjectEvent_WalkToAndWait(LOCALID_GARETS_MOTHER, 837, 376);
   ObjectEvent_FaceDirection(LOCALID_GARETS_MOTHER, FACING_NORTH + FACING_STEP,
                             20);
@@ -932,7 +940,7 @@ static void EventScript_GaretComesHome(void) {
 /// three at frames 10, 20 and 30 of every 180.
 ///
 /// A callback EventScript_GaretComesHome adds while the grandfather dozes.
-static void ValeShops_SpawnSleepZ(void) {
+static void ValeInteriors_SpawnSleepZ(void) {
   s32 localId;
   u32 cycleFrame;
   struct ObjectEvent *objectEvent;
@@ -972,15 +980,15 @@ static void ValeShops_SpawnSleepZ(void) {
     objectEvent->timer = 25; // 25/256 pixel per frame.
     objectEvent->work = 128; // 1/2 pixel per frame.
   }
-  ObjectEvent_SetActionScript(localId, gValeShops_SleepZScript);
+  ObjectEvent_SetActionScript(localId, gValeInteriors_SleepZScript);
 }
 
-s32 gValeShops_FaceTargetScript[] = {
+s32 gValeInteriors_FaceTargetScript[] = {
     SC_CALL(Map_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gValeShops_FatherPacingScript[] = {
+s32 gValeInteriors_FatherPacingScript[] = {
     SC_SET(SW_SPEED, PIXELS(3) / 5),
     SC_SET(SW_ACCELERATION, PIXELS(3) / 10),
     SC_ANIMATION(2),
@@ -1009,7 +1017,7 @@ s32 gValeShops_FatherPacingScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gValeShops_PartyLeavesScript[] = {
+s32 gValeInteriors_PartyLeavesScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(PIXELS(808), 0, PIXELS(508)),
     SC_SYNC,
@@ -1019,8 +1027,8 @@ s32 gValeShops_PartyLeavesScript[] = {
     SC_END,
 };
 
-s32 gValeShops_SleepZScript[] = {
-    SC_CALL(ValeShops_AdvanceSleepZ),
+s32 gValeInteriors_SleepZScript[] = {
+    SC_CALL(ValeInteriors_AdvanceSleepZ),
     SC_WAIT(1),
     SC_LOOP(60, SC_TOP),
     SC_POSITION(0, 0, 0),
@@ -1028,68 +1036,70 @@ s32 gValeShops_SleepZScript[] = {
     SC_END,
 };
 
-struct MapWarpDest gValeShops_WarpDests[] = {
+struct MapWarpDest gValeInteriors_WarpDests[] = {
     {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
-    {VALE_SHOPS_FROM_VALE_WEST, CONDITION_ALWAYS, 96, 0, 222, FACING_NORTH, 0,
-     4, 4, 244, 292, 0},
-    {VALE_SHOPS_FROM_VALE_NORTH, CONDITION_ALWAYS, 337, 0, 199, FACING_NORTH, 0,
-     252, 4, 548, 236, 0},
-    {VALE_SHOPS_FROM_VALE_PLAZA_NORTH, CONDITION_ALWAYS, 656, 0, 244,
+    {VALE_INTERIORS_FROM_VALE_WEST, CONDITION_ALWAYS, 96, 0, 222, FACING_NORTH,
+     0, 4, 4, 244, 292, 0},
+    {VALE_INTERIORS_FROM_VALE_NORTH, CONDITION_ALWAYS, 337, 0, 199,
+     FACING_NORTH, 0, 252, 4, 548, 236, 0},
+    {VALE_INTERIORS_FROM_VALE_PLAZA_NORTH, CONDITION_ALWAYS, 656, 0, 244,
      FACING_NORTH, 0, 556, 4, 900, 276, 0},
-    {VALE_SHOPS_FROM_VALE_PLAZA_WEST, CONDITION_ALWAYS, 159, 0, 525,
+    {VALE_INTERIORS_FROM_VALE_PLAZA_WEST, CONDITION_ALWAYS, 159, 0, 525,
      FACING_NORTH, 0, 4, 324, 332, 564, 0},
-    {VALE_SHOPS_FROM_VALE_SOUTH, CONDITION_ALWAYS, 528, 0, 486, FACING_NORTH, 0,
-     348, 284, 612, 516, 0},
-    {VALE_SHOPS_FROM_VALE_EAST, CONDITION_ALWAYS, 816, 0, 522, FACING_NORTH, 0,
-     628, 284, 884, 548, 0},
-    {VALE_SHOPS_FROM_VALE_PLAZA_SOUTH, CONDITION_ALWAYS, 463, 0, 851,
+    {VALE_INTERIORS_FROM_VALE_SOUTH, CONDITION_ALWAYS, 528, 0, 486,
+     FACING_NORTH, 0, 348, 284, 612, 516, 0},
+    {VALE_INTERIORS_FROM_VALE_EAST, CONDITION_ALWAYS, 816, 0, 522, FACING_NORTH,
+     0, 628, 284, 884, 548, 0},
+    {VALE_INTERIORS_FROM_VALE_PLAZA_SOUTH, CONDITION_ALWAYS, 463, 0, 851,
      FACING_NORTH, 0, 324, 604, 588, 884, 0},
-    {VALE_SHOPS_FROM_VALE_PLAZA_EAST, CONDITION_ALWAYS, 769, 0, 857,
+    {VALE_INTERIORS_FROM_VALE_PLAZA_EAST, CONDITION_ALWAYS, 769, 0, 857,
      FACING_NORTH, 0, 580, 628, 852, 884, 0},
     {MAP_TABLE_END},
 };
 
-u32 gValeShops_Warps[] = {
-    MAP_WARPS(ValeShops),
-    MAP_WARP(VALE_SHOPS_TO_VALE_WEST, Vale, VALE_FROM_VALE_SHOPS_WEST),
-    MAP_WARP(VALE_SHOPS_TO_VALE_NORTH, Vale, VALE_FROM_VALE_SHOPS_NORTH),
-    MAP_WARP(VALE_SHOPS_TO_VALE_PLAZA_WEST, ValePlaza,
-             VALE_PLAZA_FROM_VALE_SHOPS_WEST),
-    MAP_WARP(VALE_SHOPS_TO_VALE_PLAZA_SOUTH, ValePlaza,
-             VALE_PLAZA_FROM_VALE_SHOPS_SOUTH),
-    MAP_WARP(VALE_SHOPS_TO_VALE_SOUTH, Vale, VALE_FROM_VALE_SHOPS_SOUTH),
-    MAP_WARP(VALE_SHOPS_TO_VALE_EAST, Vale, VALE_FROM_VALE_SHOPS_EAST),
-    MAP_WARP(VALE_SHOPS_TO_VALE_PLAZA_EAST, ValePlaza,
-             VALE_PLAZA_FROM_VALE_SHOPS_EAST),
-    MAP_WARP(VALE_SHOPS_TO_VALE_PLAZA_NORTH, ValePlaza,
-             VALE_PLAZA_FROM_VALE_SHOPS_NORTH),
+u32 gValeInteriors_Warps[] = {
+    MAP_WARPS(ValeInteriors),
+    MAP_WARP(VALE_INTERIORS_TO_VALE_WEST, Vale, VALE_FROM_VALE_INTERIORS_WEST),
+    MAP_WARP(VALE_INTERIORS_TO_VALE_NORTH, Vale,
+             VALE_FROM_VALE_INTERIORS_NORTH),
+    MAP_WARP(VALE_INTERIORS_TO_VALE_PLAZA_WEST, ValePlaza,
+             VALE_PLAZA_FROM_VALE_INTERIORS_WEST),
+    MAP_WARP(VALE_INTERIORS_TO_VALE_PLAZA_SOUTH, ValePlaza,
+             VALE_PLAZA_FROM_VALE_INTERIORS_SOUTH),
+    MAP_WARP(VALE_INTERIORS_TO_VALE_SOUTH, Vale,
+             VALE_FROM_VALE_INTERIORS_SOUTH),
+    MAP_WARP(VALE_INTERIORS_TO_VALE_EAST, Vale, VALE_FROM_VALE_INTERIORS_EAST),
+    MAP_WARP(VALE_INTERIORS_TO_VALE_PLAZA_EAST, ValePlaza,
+             VALE_PLAZA_FROM_VALE_INTERIORS_EAST),
+    MAP_WARP(VALE_INTERIORS_TO_VALE_PLAZA_NORTH, ValePlaza,
+             VALE_PLAZA_FROM_VALE_INTERIORS_NORTH),
     MAP_WARPS_END,
 };
 
-u32 gValeShops_StormWarps[] = {
-    MAP_WARPS(ValeShops),
-    MAP_WARP(VALE_SHOPS_TO_VALE_WEST, ValeStormyNight,
-             VALE_STORMY_NIGHT_FROM_VALE_SHOPS_WEST),
-    MAP_WARP(VALE_SHOPS_TO_VALE_NORTH, ValeStormyNight,
-             VALE_STORMY_NIGHT_FROM_VALE_SHOPS_NORTH),
-    MAP_WARP(VALE_SHOPS_TO_VALE_PLAZA_WEST, ValePlaza,
-             VALE_PLAZA_FROM_VALE_SHOPS_WEST),
-    MAP_WARP(VALE_SHOPS_TO_VALE_PLAZA_SOUTH, ValePlaza,
-             VALE_PLAZA_FROM_VALE_SHOPS_SOUTH),
-    MAP_WARP(VALE_SHOPS_TO_VALE_SOUTH, ValeStormyNight,
-             VALE_STORMY_NIGHT_FROM_VALE_SHOPS_SOUTH),
-    MAP_WARP(VALE_SHOPS_TO_VALE_EAST, ValeStormyNight,
-             VALE_STORMY_NIGHT_FROM_VALE_SHOPS_EAST),
-    MAP_WARP(VALE_SHOPS_TO_VALE_PLAZA_EAST, ValePlaza,
-             VALE_PLAZA_FROM_VALE_SHOPS_EAST),
-    MAP_WARP(VALE_SHOPS_TO_VALE_PLAZA_NORTH, ValePlaza,
-             VALE_PLAZA_FROM_VALE_SHOPS_NORTH),
+u32 gValeInteriors_StormWarps[] = {
+    MAP_WARPS(ValeInteriors),
+    MAP_WARP(VALE_INTERIORS_TO_VALE_WEST, ValeStormyNight,
+             VALE_STORMY_NIGHT_FROM_VALE_INTERIORS_WEST),
+    MAP_WARP(VALE_INTERIORS_TO_VALE_NORTH, ValeStormyNight,
+             VALE_STORMY_NIGHT_FROM_VALE_INTERIORS_NORTH),
+    MAP_WARP(VALE_INTERIORS_TO_VALE_PLAZA_WEST, ValePlaza,
+             VALE_PLAZA_FROM_VALE_INTERIORS_WEST),
+    MAP_WARP(VALE_INTERIORS_TO_VALE_PLAZA_SOUTH, ValePlaza,
+             VALE_PLAZA_FROM_VALE_INTERIORS_SOUTH),
+    MAP_WARP(VALE_INTERIORS_TO_VALE_SOUTH, ValeStormyNight,
+             VALE_STORMY_NIGHT_FROM_VALE_INTERIORS_SOUTH),
+    MAP_WARP(VALE_INTERIORS_TO_VALE_EAST, ValeStormyNight,
+             VALE_STORMY_NIGHT_FROM_VALE_INTERIORS_EAST),
+    MAP_WARP(VALE_INTERIORS_TO_VALE_PLAZA_EAST, ValePlaza,
+             VALE_PLAZA_FROM_VALE_INTERIORS_EAST),
+    MAP_WARP(VALE_INTERIORS_TO_VALE_PLAZA_NORTH, ValePlaza,
+             VALE_PLAZA_FROM_VALE_INTERIORS_NORTH),
     MAP_WARPS_END,
 };
 
 // clang-format off
-struct ObjectEventTemplate gValeShops_ObjectEventTemplates[] = {
+struct ObjectEventTemplate gValeInteriors_ObjectEventTemplates[] = {
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(697), 0, PIXELS(468), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_WOMAN, 0x0, MOVEMENT_TYPE_STAND,
@@ -1123,7 +1133,7 @@ struct ObjectEventTemplate gValeShops_ObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gValeShops_ObjectEventTemplatesAfterLeaving[] = {
+struct ObjectEventTemplate gValeInteriors_ObjectEventTemplatesAfterLeaving[] = {
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(697), 0, PIXELS(468), FACING_SOUTHEAST + FACING_STEP, 3, 0 },
     { SPRITE_OLD_WOMAN, 0x0, MOVEMENT_TYPE_STAND,
@@ -1157,7 +1167,7 @@ struct ObjectEventTemplate gValeShops_ObjectEventTemplatesAfterLeaving[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gValeShops_ObjectEventTemplatesAfterKalay[] = {
+struct ObjectEventTemplate gValeInteriors_ObjectEventTemplatesAfterKalay[] = {
     { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1168,7 +1178,7 @@ struct ObjectEventTemplate gValeShops_ObjectEventTemplatesAfterKalay[] = {
         PIXELS(697), 0, PIXELS(468), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(726), 0, PIXELS(486), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
-    { SPRITE_MAN_IN_TEAL_SHIRT, 0x0, (s32)gValeShops_FatherPacingScript,
+    { SPRITE_MAN_IN_TEAL_SHIRT, 0x0, (s32)gValeInteriors_FatherPacingScript,
         PIXELS(819), 0, PIXELS(405), FACING_WEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_HEADSCARF, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(841), 0, PIXELS(370), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
@@ -1203,7 +1213,7 @@ struct ObjectEventTemplate gValeShops_ObjectEventTemplatesAfterKalay[] = {
     { MAP_TABLE_END },
 };
 
-struct MapEvent gValeShops_StormEvents[] = {
+struct MapEvent gValeInteriors_StormEvents[] = {
     { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeWest) },
     { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeNorth) },
     { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaWest) },
@@ -1232,7 +1242,7 @@ struct MapEvent gValeShops_StormEvents[] = {
     { MAP_EVENTS_END },
 };
 
-struct MapEvent gValeShops_Events[] = {
+struct MapEvent gValeInteriors_Events[] = {
     { MAP_EVENT_TALK, LOCALID_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeAtTheVeryLeastVisitorsShould) },
     { MAP_EVENT_TALK, LOCALID_GARETS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIHearKradenHasGuestsAgain) },
     { MAP_EVENT_TALK, LOCALID_GARETS_FATHER, CONDITION_ALWAYS, MSGNO(MsgValeGaretHasGrownQuiteStrongIn) },
@@ -1262,15 +1272,15 @@ struct MapEvent gValeShops_Events[] = {
     { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPsynergyStone)) },
     { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeAuntNotebook)) },
     { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookMakingGreatVillage)) },
-    { BG_EVENT(BG_EVENT_BARREL), 100, FLAG_VALE_SHOPS_BARREL_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
-    { BG_EVENT(BG_EVENT_JAR), 101, FLAG_VALE_SHOPS_JAR_6_COINS, FIND_COINS(6) },
-    { BG_EVENT(BG_EVENT_JAR), 102, FLAG_VALE_SHOPS_JAR_2_COINS, FIND_COINS(2) },
-    { BG_EVENT(BG_EVENT_JAR), 103, FLAG_VALE_SHOPS_JAR_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { BG_EVENT(BG_EVENT_JAR), 104, FLAG_VALE_SHOPS_JAR_3_COINS, FIND_COINS(3) },
+    { BG_EVENT(BG_EVENT_BARREL), 100, FLAG_VALE_INTERIORS_BARREL_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
+    { BG_EVENT(BG_EVENT_JAR), 101, FLAG_VALE_INTERIORS_JAR_6_COINS, FIND_COINS(6) },
+    { BG_EVENT(BG_EVENT_JAR), 102, FLAG_VALE_INTERIORS_JAR_2_COINS, FIND_COINS(2) },
+    { BG_EVENT(BG_EVENT_JAR), 103, FLAG_VALE_INTERIORS_JAR_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { BG_EVENT(BG_EVENT_JAR), 104, FLAG_VALE_INTERIORS_JAR_3_COINS, FIND_COINS(3) },
     { MAP_EVENTS_END },
 };
 
-struct MapEvent gValeShops_EventsAfterLeaving[] = {
+struct MapEvent gValeInteriors_EventsAfterLeaving[] = {
     { MAP_EVENT_TALK, LOCALID_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeIsaacPleaseTakeCareOfMy) },
     { MAP_EVENT_TALK, LOCALID_GARETS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeReceivingAQuestDirectlyFromThe) },
     { MAP_EVENT_TALK, LOCALID_GARETS_FATHER, CONDITION_ALWAYS, MSGNO(MsgValeImProudOfYouGaretMy) },
@@ -1309,11 +1319,11 @@ struct MapEvent gValeShops_EventsAfterLeaving[] = {
     { MAP_EVENT_COORD, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeEast) },
     { MAP_EVENT_COORD, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaEast) },
     { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaNorth) },
-    { BG_EVENT(BG_EVENT_BARREL), 100, FLAG_VALE_SHOPS_BARREL_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
-    { BG_EVENT(BG_EVENT_JAR), 101, FLAG_VALE_SHOPS_JAR_6_COINS, FIND_COINS(6) },
-    { BG_EVENT(BG_EVENT_JAR), 102, FLAG_VALE_SHOPS_JAR_2_COINS, FIND_COINS(2) },
-    { BG_EVENT(BG_EVENT_JAR), 103, FLAG_VALE_SHOPS_JAR_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { BG_EVENT(BG_EVENT_JAR), 104, FLAG_VALE_SHOPS_JAR_3_COINS, FIND_COINS(3) },
+    { BG_EVENT(BG_EVENT_BARREL), 100, FLAG_VALE_INTERIORS_BARREL_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
+    { BG_EVENT(BG_EVENT_JAR), 101, FLAG_VALE_INTERIORS_JAR_6_COINS, FIND_COINS(6) },
+    { BG_EVENT(BG_EVENT_JAR), 102, FLAG_VALE_INTERIORS_JAR_2_COINS, FIND_COINS(2) },
+    { BG_EVENT(BG_EVENT_JAR), 103, FLAG_VALE_INTERIORS_JAR_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { BG_EVENT(BG_EVENT_JAR), 104, FLAG_VALE_INTERIORS_JAR_3_COINS, FIND_COINS(3) },
     { BG_EVENT(BG_EVENT_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
     { BG_EVENT(BG_EVENT_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
     { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
@@ -1323,7 +1333,7 @@ struct MapEvent gValeShops_EventsAfterLeaving[] = {
     { MAP_EVENTS_END },
 };
 
-struct MapEvent gValeShops_EventsAfterKalay[] = {
+struct MapEvent gValeInteriors_EventsAfterKalay[] = {
     { MAP_EVENT_TALK, LOCALID_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeMiaIsSuchANiceGirl) },
     { MAP_EVENT_TALK, LOCALID_GARETS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeThatIvanSeemsToBeA) },
     { MAP_EVENT_TALK, LOCALID_GARETS_FATHER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutDora) },
@@ -1363,11 +1373,11 @@ struct MapEvent gValeShops_EventsAfterKalay[] = {
     { MAP_EVENT_COORD, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValeEast) },
     { MAP_EVENT_COORD, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaEast) },
     { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToValePlazaNorth) },
-    { BG_EVENT(BG_EVENT_BARREL), 100, FLAG_VALE_SHOPS_BARREL_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
-    { BG_EVENT(BG_EVENT_JAR), 101, FLAG_VALE_SHOPS_JAR_6_COINS, FIND_COINS(6) },
-    { BG_EVENT(BG_EVENT_JAR), 102, FLAG_VALE_SHOPS_JAR_2_COINS, FIND_COINS(2) },
-    { BG_EVENT(BG_EVENT_JAR), 103, FLAG_VALE_SHOPS_JAR_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { BG_EVENT(BG_EVENT_JAR), 104, FLAG_VALE_SHOPS_JAR_3_COINS, FIND_COINS(3) },
+    { BG_EVENT(BG_EVENT_BARREL), 100, FLAG_VALE_INTERIORS_BARREL_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
+    { BG_EVENT(BG_EVENT_JAR), 101, FLAG_VALE_INTERIORS_JAR_6_COINS, FIND_COINS(6) },
+    { BG_EVENT(BG_EVENT_JAR), 102, FLAG_VALE_INTERIORS_JAR_2_COINS, FIND_COINS(2) },
+    { BG_EVENT(BG_EVENT_JAR), 103, FLAG_VALE_INTERIORS_JAR_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { BG_EVENT(BG_EVENT_JAR), 104, FLAG_VALE_INTERIORS_JAR_3_COINS, FIND_COINS(3) },
     { BG_EVENT(BG_EVENT_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
     { BG_EVENT(BG_EVENT_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
     { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },

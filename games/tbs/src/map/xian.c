@@ -1,7 +1,7 @@
 /// @file
 /// MapId_Xian, the village of Xian. Its houses, shops and inn are
 /// xian_interiors.c; Master Feh's school is a room of the Fuchin Temple overlay
-/// (FuchinTempleInteriors, which XIAN_TO_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL
+/// (LacquerRooms, which XIAN_TO_LACQUER_ROOMS_FEHS_SCHOOL
 /// leads into; fuchin_temple.c).
 ///
 /// The village's talk turns on FLAG_XIAN_HEARD_HSU_TRAPPED, which Master Hama's
@@ -34,9 +34,9 @@
 /// A jar holds a Lucky Medal. Five doors lead into the houses, shops and inn
 /// (MapId_XianInteriors, XIAN_TO_HOUSE to XIAN_TO_WEAPON_AND_ARMOR_SHOP),
 /// XIAN_TO_SANCTUM into Xian Sanctum, its sliding door playing SE_THUMP,
-/// XIAN_TO_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL into Master Feh's school, and
+/// XIAN_TO_LACQUER_ROOMS_FEHS_SCHOOL into Master Feh's school, and
 /// XIAN_TO_WORLD_MAP out to the world map. Coming back from the school
-/// (XIAN_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) or the Sanctum
+/// (XIAN_FROM_LACQUER_ROOMS_FEHS_SCHOOL) or the Sanctum
 /// (XIAN_FROM_SANCTUM_WEST) clears FLAG_SHOW_LOCATION_NAME, so the name is not
 /// shown again.
 #include "save_block.h"
@@ -699,7 +699,7 @@ static void Xian_WalkThroughExit(s32 warpNumber) {
 /// Walking north into one of Xian's doors: it opens and the party goes in. Each
 /// door's metatile behavior is the number of the warp it leads by: five lead
 /// into the houses, shops and inn, XIAN_TO_SANCTUM into Xian Sanctum (SE_THUMP)
-/// and XIAN_TO_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL into Master Feh's school.
+/// and XIAN_TO_LACQUER_ROOMS_FEHS_SCHOOL into Master Feh's school.
 static void Xian_OpenDoorAndLeave(void) {
   struct FieldWork *work = gFieldWork;
 
@@ -730,7 +730,7 @@ static void Xian_OpenDoorAndLeave(void) {
     Sound_PlaySong(SE_THUMP);
     MapGrid_PlayMetatileCopySequence(gXian_SanctumDoorOpens, 69, 11);
     break;
-  case XIAN_TO_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL:
+  case XIAN_TO_LACQUER_ROOMS_FEHS_SCHOOL:
     Sound_PlaySong(SE_DOOR_OPEN);
     MapGrid_PlayMetatileCopySequence(gXian_SchoolDoorOpens, 83, 7);
     break;
@@ -834,10 +834,10 @@ s32 Xian_Initialize(void) {
 
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Map_QueueMusic(SE_AMBIENT_WIND);
-  // Back from the school (XIAN_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) or the
+  // Back from the school (XIAN_FROM_LACQUER_ROOMS_FEHS_SCHOOL) or the
   // Sanctum (XIAN_FROM_SANCTUM_WEST), the last two warp destinations, the name
   // is not shown.
-  if (gSaveBlock.warpDest >= XIAN_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) {
+  if (gSaveBlock.warpDest >= XIAN_FROM_LACQUER_ROOMS_FEHS_SCHOOL) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
   if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED)) {
@@ -1028,8 +1028,8 @@ struct MapWarpDest gXian_WarpDests[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {XIAN_FROM_XIAN_INTERIORS_WEST, CONDITION_ALWAYS, 216, 0, 184, FACING_SOUTH,
      0, -1, -1, -1, -1, 0},
-    {XIAN_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL, CONDITION_ALWAYS, 392, 0,
-     184, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {XIAN_FROM_LACQUER_ROOMS_FEHS_SCHOOL, CONDITION_ALWAYS, 392, 0, 184,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {XIAN_FROM_SANCTUM_WEST, CONDITION_ALWAYS, 176, 0, 216, FACING_SOUTH, 0, -1,
      -1, -1, -1, 0},
     {MAP_TABLE_END},
@@ -1045,8 +1045,8 @@ u32 gXian_Warps[] = {
     MAP_WARP(XIAN_TO_WEAPON_AND_ARMOR_SHOP, XianInteriors,
              XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP),
     MAP_WARP(XIAN_TO_SANCTUM, Sanctum, SANCTUM_FROM_XIAN),
-    MAP_WARP(XIAN_TO_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL, FuchinTempleInteriors,
-             FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_FROM_XIAN),
+    MAP_WARP(XIAN_TO_LACQUER_ROOMS_FEHS_SCHOOL, LacquerRooms,
+             LACQUER_ROOMS_FEHS_SCHOOL_FROM_XIAN),
     MAP_WARP(XIAN_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_XIAN),
     MAP_WARPS_END,
 };

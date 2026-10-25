@@ -29,12 +29,14 @@ extern char MapId_ValePlaza;
 /// ★ Named from the game: "You mustn't go beyond Kraden's cottage."
 /// (MsgValeDontGoBeyondKradensCottage)
 extern char MapId_ValeKradensCottage;
-/// ★ Named from what the player sees: Vale's item shop and its weapon and armor
-/// shop, with Garet's house and Jenna's grandparents' house (its render)
-extern char MapId_ValeShops;
-/// ★ Named from what the player sees: Vale's inn and its upstairs guest room,
-/// with Isaac's house and Kraden's cottage (its render)
-extern char MapId_ValeInn;
+/// A sheet of Vale's rooms, all entered from Vale.
+/// ★ Named from what the player sees: the interiors of Vale's houses and its
+/// shops, Garet's house and Jenna's grandparents' house among them (its render)
+extern char MapId_ValeInteriors;
+/// A sheet of rooms of more than one place, drawn in wood.
+/// ★ Named from what the player sees: rooms drawn in wood, Vale's inn, Isaac's
+/// house, Kraden's study and the forge, with Babi's scholars' room (its render)
+extern char MapId_WoodenRoomsA;
 /// ★ Named from its area name: Sanctum
 extern char MapId_Sanctum;
 /// ★ Named from the game: "in this eruption?!?" (MsgValeMtAlephWasInactive)
@@ -66,8 +68,10 @@ extern char MapId_Vault;
 /// ★ Named from what the player sees: the inside of Vault's houses, shops and
 /// inn, with the inn's loft behind a crate (its render)
 extern char MapId_VaultInteriors;
-/// ★ Named from the game: "check out the jail?" (MsgVaultGuysCheckJail)
-extern char MapId_VaultJail;
+/// A sheet of rooms of more than one place, drawn in stone.
+/// ★ Named from what the player sees: rooms drawn in stone, Vault's jail and
+/// Lunpa's hidden room of chests (its render)
+extern char MapId_StoneRooms;
 /// ★ Named from what the player sees: Vault again once the party has reached
 /// Kalay, its thieves broken out of jail (its render)
 extern char MapId_VaultRevisit;
@@ -170,9 +174,11 @@ extern char MapId_UnusedMercuryLighthouseAerieCopy;
 /// ★ Named from what the player sees: outside the temple, its monks and the
 /// stepped waterfall with the grotto beneath (its render)
 extern char MapId_FuchinTempleGrounds;
-/// ★ Named from what the player sees: the rooms inside, Nyunpa's hall, Feh's
-/// school in Xian and Hama's room in Lama Temple (its render)
-extern char MapId_FuchinTempleInteriors;
+/// A sheet of rooms of more than one place, drawn in red lacquer.
+/// ★ Named from what the player sees: rooms drawn in red lacquer, Nyunpa's hall
+/// in Fuchin Temple, Feh's school in Xian and Hama's room in Lama Temple (its
+/// render)
+extern char MapId_LacquerRooms;
 /// ★ Named from what the player sees: the cave's mouth and only way in and out,
 /// a log pool and stumps in the water (its render)
 extern char MapId_FuchinFallsCaveEntrance;
@@ -287,9 +293,11 @@ extern char MapId_LunpaInteriors;
 extern char MapId_WestLunpaCave;
 /// ★ Named from its area name: Kalay Docks
 extern char MapId_KalayDocks;
-/// ★ Named from what the player sees: the rooms of the dock buildings at Kalay
-/// Docks and Tolbi Docks, where boarding tickets are sold (its render)
-extern char MapId_KalayTolbiDocksInteriors;
+/// A sheet of rooms of more than one place, drawn in wood.
+/// ★ Named from what the player sees: rooms drawn in wood, the dock buildings'
+/// rooms at Kalay Docks and Tolbi Docks, where boarding tickets are sold (its
+/// render)
+extern char MapId_WoodenRoomsB;
 /// ★ Named from what the player sees: the deck of the Tolbi-bound Ship on its
 /// voyage across the Karagol Sea (its render)
 extern char MapId_TolbiShipDeck;
@@ -468,11 +476,14 @@ extern char MapId_BabiLighthouseEntry;
 extern char MapId_RoadToBabiLighthouse;
 /// ★ Named from its area name: Lalivero
 extern char MapId_Lalivero;
-/// ★ Named from what the player sees: Lalivero's weapon and armor shop, item
-/// shop and Sanctum, with three houses (its render)
-extern char MapId_LaliveroShops;
-/// ★ Named from the game: "Faran's house" (MsgLaliveroPleaseWaitForMeOutside)
-extern char MapId_LaliveroFaransHouse;
+/// The first of two sheets of Lalivero's rooms.
+/// ★ Named from what the player sees: the interiors of Lalivero's weapon and
+/// armor shop, item shop and Sanctum, with three houses (its render)
+extern char MapId_LaliveroInteriorsA;
+/// The second of two sheets of Lalivero's rooms.
+/// ★ Named from what the player sees: the interiors of Faran's house,
+/// Lalivero's inn and the way out to the wharf (its render)
+extern char MapId_LaliveroInteriorsB;
 /// ★ Named from its area name: Venus Lighthouse Entry
 extern char MapId_VenusLighthouseEntry;
 /// ★ Named from what the player sees: the floor the front door opens onto, with

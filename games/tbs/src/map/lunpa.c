@@ -6,8 +6,8 @@
 /// - Lunpa (MapId_Lunpa, area name Lunpa): the town. Two guards keep the road
 ///   in from the world map; doors lead into the homes, shops, inn and temple
 ///   (LunpaInteriors, lunpa_interiors.c), roads to West Lunpa Cave and up to
-///   the Lunpa Fortress Gates, and a hidden passage to the jail
-///   (LUNPA_TO_VAULT_JAIL, whose area name there is Lunpa).
+///   the Lunpa Fortress Gates, and a hidden passage to Lunpa's hidden room
+///   (LUNPA_TO_STONE_ROOMS, in StoneRooms, whose area name there is Lunpa).
 /// - Lunpa Fortress Gates (MapId_LunpaFortressGates, area name Lunpa Fortress
 ///   Gates): the steps up to the fortress door, kept by two guards whom the
 ///   party gets past under Cloak.
@@ -23,8 +23,8 @@
 /// and that every entry and the end of Reveal hide again
 /// (EventScript_HideSecrets): a Psynergy Stone, a puddle that Frost freezes
 /// into a pillar to stand on, and the sparkle of a switch. Searching the switch
-/// opens the passage to the jail, which can be walked through only while Reveal
-/// shows it (EventScript_EnterHiddenPassage). Its map temp flags:
+/// opens the passage to the hidden room, which can be walked through only while
+/// Reveal shows it (EventScript_EnterHiddenPassage). Its map temp flags:
 ///
 /// - FLAG_LUNPA_PUDDLE_FROZEN: Frost has frozen the puddle.
 /// - FLAG_LUNPA_SECRETS_HIDDEN: the secrets are hidden, Reveal not shining.
@@ -87,7 +87,7 @@ enum { PALETTE_TRANSLUCENT_EFFECT = 14, PALETTE_EFFECT = 15 };
 /// The town's secrets are hidden: Reveal is not shining.
 /// ★ Named from the game: "Reveal" (MsgAbilityName)
 #define FLAG_LUNPA_SECRETS_HIDDEN FLAG_MAP_TEMP_01
-/// The hidden switch has opened the passage to the jail.
+/// The hidden switch has opened the passage to the hidden room.
 /// ★ Named from the game: "At least those punks won't find the switch that
 /// opens the door. Heh heh! It's hidden too well in the wall!"
 /// (MsgLunpaHiddenDoorSwitch)
@@ -232,7 +232,7 @@ static inline void Lunpa_DrawHiddenPassageFrame(s32 sourceColumn,
 }
 
 /// Lunpa, casting Reveal: the Psynergy Stone's spot, the hidden switch's
-/// sparkle, the puddle and, once opened, the passage to the jail show.
+/// sparkle, the puddle and, once opened, the passage to the hidden room show.
 static void EventScript_RevealSecrets(void) {
   struct ObjectEvent *objectEvent;
   s32 cellX;
@@ -572,8 +572,8 @@ static void EventScript_EnterDoor(void) {
   FieldScript_End();
 }
 
-/// Lunpa, MB_LUNPA_HIDDEN_PASSAGE: the hidden passage leads to the jail once
-/// opened, while Reveal shows it.
+/// Lunpa, MB_LUNPA_HIDDEN_PASSAGE: the hidden passage leads to the hidden room
+/// once opened, while Reveal shows it.
 static void EventScript_EnterHiddenPassage(void) {
   if (GameFlag_Get(FLAG_LUNPA_HIDDEN_PASSAGE_OPEN) != 0) {
     if (GameFlag_Get(FLAG_LUNPA_SECRETS_HIDDEN) == 0) {
@@ -582,7 +582,7 @@ static void EventScript_EnterHiddenPassage(void) {
       Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
       ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -8);
       FieldScript_WaitFrames(13);
-      Import_ScriptRequestWarp(LUNPA_TO_VAULT_JAIL);
+      Import_ScriptRequestWarp(LUNPA_TO_STONE_ROOMS);
     }
   }
 }
@@ -617,8 +617,8 @@ UNUSED static void Lunpa_PlayRevealCue(void) {
   }
 }
 
-/// Lunpa: searching the switch Reveal shows opens the passage to the jail in
-/// five steps.
+/// Lunpa: searching the switch Reveal shows opens the passage to the hidden
+/// room in five steps.
 static void EventScript_PressHiddenSwitch(void) {
   if (GameFlag_Get(FLAG_LUNPA_SECRETS_HIDDEN) != 0) {
     return;
@@ -1014,7 +1014,7 @@ struct MapWarpDest gLunpaWarpDests[] = {
     LUNPA_WARP_DEST(LUNPA_FROM_INN, 104, 184, FACING_SOUTH),
     LUNPA_WARP_DEST(LUNPA_FROM_TEMPLE, 48, 168, FACING_SOUTH),
     LUNPA_WARP_DEST(LUNPA_FROM_CRATE_ROOM, 216, 344, FACING_SOUTH),
-    LUNPA_WARP_DEST(LUNPA_FROM_VAULT_JAIL, 40, 328, FACING_SOUTH),
+    LUNPA_WARP_DEST(LUNPA_FROM_STONE_ROOMS, 40, 328, FACING_SOUTH),
     {MAP_TABLE_END},
 };
 
@@ -1046,7 +1046,7 @@ u32 gLunpaWarps[] = {
     ROOM_WARP(LUNPA_TO_INN),
     ROOM_WARP(LUNPA_TO_TEMPLE),
     ROOM_WARP(LUNPA_TO_CRATE_ROOM),
-    MAP_WARP(LUNPA_TO_VAULT_JAIL, VaultJail, VAULT_JAIL_FROM_LUNPA),
+    MAP_WARP(LUNPA_TO_STONE_ROOMS, StoneRooms, STONE_ROOMS_FROM_LUNPA),
     MAP_WARPS_END,
 };
 

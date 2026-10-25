@@ -549,7 +549,7 @@
 /// shrunk in the eruption.
 #define SE_ASCEND 201
 /// On the stormy night, as Isaac and Dora hurry to the plaza, a flame flares up
-/// and rises away as smoke (gValeInn_FlameRisesScript).
+/// and rises away as smoke (gWoodenRoomsA_FlameRisesScript).
 #define SE_FLAME_FLARE 202
 /// Landing in dust at Babi Lighthouse, the Mercury Lighthouse entrance and
 /// Venus Lighthouse; the Tret Tree's cocoons and rooms; and the water drops

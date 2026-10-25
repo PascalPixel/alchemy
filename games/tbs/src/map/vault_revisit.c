@@ -24,7 +24,7 @@
 /// (MB_VAULT_CLIFF_CAVE_MOUTH) is a second way in. A wooden box holds a Nut,
 /// and the well rumbles with water. The cells the events answer are enum
 /// VaultMetatileBehavior (vault.h); the jail door brings the party in by
-/// VAULT_JAIL_FROM_VAULT_REVISIT, where a lone prisoner sits in the thieves'
+/// STONE_ROOMS_FROM_VAULT_REVISIT, where a lone prisoner sits in the thieves'
 /// place.
 ///
 /// The inn's roof is mended: the 3-by-3 block of cells Map_Initialize copies
@@ -544,7 +544,7 @@ static void EventScript_EnterMayorsHouse(void) {
 
 /// The jail door opens and the party walks in.
 /// It's drawn behind the doorway as it goes in, to
-/// VAULT_JAIL_FROM_VAULT_REVISIT, where the lone prisoner sits.
+/// STONE_ROOMS_FROM_VAULT_REVISIT, where the lone prisoner sits.
 static void EventScript_EnterJail(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   struct Sprite *sprite = objectEvent->sprite;
@@ -554,7 +554,7 @@ static void EventScript_EnterJail(void) {
   MapGrid_CopyCellAttributes(33, 20, 1, 3, 4, 10);
   objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;
-  Vault_WalkThroughExit(72, 160, VAULT_REVISIT_TO_VAULT_JAIL);
+  Vault_WalkThroughExit(72, 160, VAULT_REVISIT_TO_STONE_ROOMS);
 }
 
 // Shared entrance toggles precede the Djinni and dog events.
@@ -813,7 +813,7 @@ struct MapWarpDest gVaultRevisit_WarpDests[] = {
      120, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {VAULT_REVISIT_FROM_SANCTUM, CONDITION_ALWAYS, 64, 0, 294, FACING_SOUTH, 0,
      -1, -1, -1, -1, 0},
-    {VAULT_REVISIT_FROM_VAULT_JAIL, CONDITION_ALWAYS, 70, 0, 183, FACING_SOUTH,
+    {VAULT_REVISIT_FROM_STONE_ROOMS, CONDITION_ALWAYS, 70, 0, 183, FACING_SOUTH,
      0, -1, -1, -1, -1, 0},
     {VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE, CONDITION_ALWAYS, 217, 0, 409,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -847,8 +847,8 @@ u32 gVaultRevisit_Warps[] = {
              VaultInteriorsRevisit,
              VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_NORTHWEST),
     MAP_WARP(VAULT_REVISIT_TO_SANCTUM, Sanctum, SANCTUM_FROM_VAULT_REVISIT),
-    MAP_WARP(VAULT_REVISIT_TO_VAULT_JAIL, VaultJail,
-             VAULT_JAIL_FROM_VAULT_REVISIT),
+    MAP_WARP(VAULT_REVISIT_TO_STONE_ROOMS, StoneRooms,
+             STONE_ROOMS_FROM_VAULT_REVISIT),
     MAP_WARP(VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE, VaultCavePassage,
              VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT),
     MAP_WARP(VAULT_REVISIT_TO_VAULT_CAVE_MOUTH, VaultCaveMouth,

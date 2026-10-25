@@ -126,7 +126,7 @@ const struct ObjectEventTemplate *LemurianShip_GetObjectEventTemplates(void) {
 
 /// Lemurian ship, the way back to Lalivero: leaves and clears the backdrop
 /// colour. Reached by stepping on metatile behavior 1 (gLemurianShipEvents);
-/// takes LEMURIAN_SHIP_TO_LALIVERO_FARANS_HOUSE.
+/// takes LEMURIAN_SHIP_TO_LALIVERO_INTERIORS_B.
 static void EventScript_LeaveTheShip(void) {
   Import_ScriptRequestWarp(gFieldWork->coordEvent);
   Io_Write16(0, &PLTT_BACKDROP);
@@ -982,15 +982,15 @@ s16 gRippleSine[256] = {
 struct MapWarpDest gLemurianShipWarpDests[] = {
     {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 408, 0, 200, FACING_NORTH, 0, -1, -1,
      -1, -1, 0},
-    {LEMURIAN_SHIP_FROM_LALIVERO_FARANS_HOUSE, CONDITION_ALWAYS, 312, 0, 296,
+    {LEMURIAN_SHIP_FROM_LALIVERO_INTERIORS_B, CONDITION_ALWAYS, 312, 0, 296,
      FACING_NORTH, 0, -1, -1, -1, 328, 0},
     {MAP_TABLE_END},
 };
 
 u32 gLemurianShipWarps[] = {
     MAP_WARPS(LemurianShip),
-    MAP_WARP(LEMURIAN_SHIP_TO_LALIVERO_FARANS_HOUSE, LaliveroFaransHouse,
-             LALIVERO_FARANS_HOUSE_FROM_LEMURIAN_SHIP),
+    MAP_WARP(LEMURIAN_SHIP_TO_LALIVERO_INTERIORS_B, LaliveroInteriorsB,
+             LALIVERO_INTERIORS_B_FROM_LEMURIAN_SHIP),
     MAP_WARPS_END,
 };
 

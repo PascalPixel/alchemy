@@ -663,12 +663,12 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 375	text	games/tbs/src/map/entry/vale_kradens_cottage
 375	text	games/tbs/src/map/vale_kradens_cottage
 375	text	games/tbs/src/map/import/vale_kradens_cottage
-376	text	games/tbs/src/map/entry/vale_shops
-376	text	games/tbs/src/map/vale_shops
-376	text	games/tbs/src/map/import/vale_shops
-377	text	games/tbs/src/map/entry/vale_inn
-377	text	games/tbs/src/map/vale_inn
-377	text	games/tbs/src/map/import/vale_inn
+376	text	games/tbs/src/map/entry/vale_interiors
+376	text	games/tbs/src/map/vale_interiors
+376	text	games/tbs/src/map/import/vale_interiors
+377	text	games/tbs/src/map/entry/wooden_rooms_a
+377	text	games/tbs/src/map/wooden_rooms_a
+377	text	games/tbs/src/map/import/wooden_rooms_a
 378	text	games/tbs/src/map/entry/sanctum
 378	text	games/tbs/src/map/sanctum
 378	text	games/tbs/src/map/import/sanctum
@@ -712,9 +712,9 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 383	text	games/tbs/src/map/vault_interiors
 383	text	games/tbs/src/map/import/vault_interiors
 383	bss	games/tbs/src/map/vault_interiors	.bss COMMON
-384	text	games/tbs/src/map/entry/vault_jail
-384	text	games/tbs/src/map/vault_jail
-384	text	games/tbs/src/map/import/vault_jail
+384	text	games/tbs/src/map/entry/stone_rooms
+384	text	games/tbs/src/map/stone_rooms
+384	text	games/tbs/src/map/import/stone_rooms
 385	text	games/tbs/src/map/entry/vault_revisit
 385	text	games/tbs/src/map/vault_revisit
 385	text	games/tbs/src/map/import/vault_revisit

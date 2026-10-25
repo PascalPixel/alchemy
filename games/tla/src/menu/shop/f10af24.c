@@ -43,8 +43,8 @@ void Shop_DrawServiceParty(void *window, s32 selected) {
       icon->animStep = 0;
     }
     if (first + 4 < count) {
-      icon = RenderOutput_CreateFar(shop->nextPageIcon, 0x40000000, window, 88,
-                                    0);
+      icon =
+          RenderOutput_CreateFar(shop->nextPageIcon, 0x40000000, window, 88, 0);
       icon->kind = 0;
       icon->active = 15;
       icon->animStep = 0;

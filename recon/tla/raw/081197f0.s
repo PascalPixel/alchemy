@@ -241,7 +241,7 @@ Func_081197f0:
 	bl Audio_PlayCue
 .L_081199f0:
 	bl Func_08118c68
-	bl Func_0811b37c
+	bl BattleUnit_RefreshPlacement
 	bl Func_08118eb0
 	bl Func_08118f6c
 	movs r0, #0
@@ -450,7 +450,7 @@ Func_081197f0:
 	b .L_08119dde
 .L_08119bb4:
 	adds r0, r5, #0
-	bl Func_0811c3bc
+	bl BattlePresentation_BuildSortedUnitEntries
 .L_08119bba:
 	str r0, [sp, #28]
 	movs r0, #128

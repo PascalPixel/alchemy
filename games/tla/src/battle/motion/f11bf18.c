@@ -1,8 +1,3 @@
-// Near miss, differ 4 of 61: the listing loads the pool zero for the blend
-// register before it builds the register address, which also puts the literal
-// pool before the call to Object_SetPosition; this draft builds the address
-// first. An empty loop note before the store fixes both but moves the load of
-// the target and the add of the second quotient.
 #include "types.h"
 #include "object_runtime.h"
 

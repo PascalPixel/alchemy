@@ -2,7 +2,7 @@
 // paneIndex, the twin of The Broken Seal's PsynergyMenu_RunList
 // (games/tbs/src/menu/menu/psynergy.c). ⚓️ sets the field shortcuts as the
 // party's packed events (Party_SetPackedEvent), moves the member row through
-// Func_08104ef8 and Func_08104d5c, and tests Select as held. MsgShortcutHelp
+// Func_08104ef8 and Menu_HighlightPageEntry, and tests Select as held. MsgShortcutHelp
 // and MsgChangeCharacterHelp are messages 4112 and 4282 in English; they need
 // their names in the six catalogs before this links. Differ 228 of 762
 // (2026-10-19, four instructions long): the native shares one call of
@@ -94,7 +94,7 @@ void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
 void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
 s32 PsynergyMenu_IsActionRestricted(s32 actionEntry);
 void Func_08104ef8(s32 first);
-void Func_08104d5c(s32 window, s32 selection, s32 count);
+void Menu_HighlightPageEntry(s32 window, s32 selection, s32 count);
 void Func_080f8170(s32 window, s32 ownerId, s32 x, s32 y);
 void PsynergyMenu_CallIconRoutineWithValue(struct PsynergyMenuState *menu,
                                            s32 ownerId);
@@ -259,7 +259,7 @@ s32 Func_080fdad4(s32 paneIndex) {
         } while (menu->psynergyCount == 0);
         menu->tabIndex[paneIndex] = member;
         Func_08104ef8(member / 4 * 4);
-        Func_08104d5c(menu->rowWindow, member, ownerCount);
+        Menu_HighlightPageEntry(menu->rowWindow, member, ownerCount);
         menu->arrows[0]->active = 13;
         menu->arrows[1]->active = 13;
         WaitFrames(1);

@@ -13,7 +13,7 @@ Func_080fa368:
 	bl Func_080f88d0
 	movs r1, #2
 	movs r2, #2
-	bl Func_08104fe0
+	bl Menu_PlaceOwnerEntryObjects
 	movs r0, #151
 	ldr r1, .L_080fa390
 	lsls r0, r0, #1

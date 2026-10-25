@@ -109,7 +109,12 @@ Func_08016dd0:
 	.section .rom.00020010, "ax"
 	.global Render_ApplyProjectedPlacementFar
 Render_ApplyProjectedPlacementFar:
-	.incbin "baserom.gba", 0x00020010, 0x00000020
+	.incbin "baserom.gba", 0x00020010, 0x00000008
+	.global Func_08020018
+	.type Func_08020018, %function
+	.thumb_func
+Func_08020018:
+	.incbin "baserom.gba", 0x00020018, 0x00000018
 	.section .rom.00020030, "ax"
 	.global Animation_ApplyChildArgumentFar
 	.type Animation_ApplyChildArgumentFar, %function
@@ -2460,44 +2465,28 @@ Func_08101c7c:
 	.type Func_08103064, %function
 	.thumb_func
 Func_08103064:
-	.incbin "baserom.gba", 0x0010d230, 0x000018c4
+	.incbin "baserom.gba", 0x0010d230, 0x00000104
+	.section .rom.0010d3e2, "ax"
+	.incbin "baserom.gba", 0x0010d3e2, 0x00000002
+	.global Func_08103218
+	.type Func_08103218, %function
+	.thumb_func
+Func_08103218:
+	.incbin "baserom.gba", 0x0010d3e4, 0x00001710
 	.section .rom.0010eb58, "ax"
 	.balign 4
 	.global Func_0810498c
 	.type Func_0810498c, %function
 	.thumb_func
 Func_0810498c:
-	.incbin "baserom.gba", 0x0010eb58, 0x000000cc
-	.section .rom.0010edcc, "ax"
-	.balign 4
-	.global Func_08104c00
-	.type Func_08104c00, %function
-	.thumb_func
-Func_08104c00:
-	.incbin "baserom.gba", 0x0010edcc, 0x000000cc
-	.section .rom.0010ef28, "ax"
-	.global Func_08104d5c
-	.type Func_08104d5c, %function
-	.thumb_func
-Func_08104d5c:
-	.incbin "baserom.gba", 0x0010ef28, 0x0000004c
-	.section .rom.0010ef74, "ax"
-	.global Menu_UpdateEntryObjectTransforms
-	.type Menu_UpdateEntryObjectTransforms, %function
-	.thumb_func
-Menu_UpdateEntryObjectTransforms:
-	.incbin "baserom.gba", 0x0010ef74, 0x00000150
+	.incbin "baserom.gba", 0x0010eb58, 0x0000003c
+	.section .rom.0010f004, "ax"
+	.incbin "baserom.gba", 0x0010f004, 0x000000c0
 	.global Func_08104ef8
 	.type Func_08104ef8, %function
 	.thumb_func
 Func_08104ef8:
 	.incbin "baserom.gba", 0x0010f0c4, 0x000000e8
-	.section .rom.0010f1ac, "ax"
-	.global Func_08104fe0
-	.type Func_08104fe0, %function
-	.thumb_func
-Func_08104fe0:
-	.incbin "baserom.gba", 0x0010f1ac, 0x000000ac
 	.section .rom.0010f298, "ax"
 	.global MenuIcon_UpdateTransforms
 	.type MenuIcon_UpdateTransforms, %function

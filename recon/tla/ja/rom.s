@@ -2812,37 +2812,29 @@ Func_08101c7c:
 	.type Func_08103064, %function
 	.thumb_func
 Func_08103064:
-	.incbin "baserom.gba", 0x0010303c, 0x000018c4
+	.incbin "baserom.gba", 0x0010303c, 0x00000104
+	.section .rom.001031ee, "ax"
+	.incbin "baserom.gba", 0x001031ee, 0x00000002
+	.global Func_08103218
+	.type Func_08103218, %function
+	.thumb_func
+Func_08103218:
+	.incbin "baserom.gba", 0x001031f0, 0x00001710
 	.section .rom.00104964, "ax"
 	.balign 4
 	.global Func_0810498c
 	.type Func_0810498c, %function
 	.thumb_func
 Func_0810498c:
-	.incbin "baserom.gba", 0x00104964, 0x000000cc
-	.section .rom.00104bd8, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x00104bd8, 0x000000cc
-	.section .rom.00104d34, "ax"
-	.incbin "baserom.gba", 0x00104d34, 0x0000004c
-	.section .rom.00104d80, "ax"
-	.global Menu_UpdateEntryObjectTransforms
-	.type Menu_UpdateEntryObjectTransforms, %function
-	.thumb_func
-Menu_UpdateEntryObjectTransforms:
-	.incbin "baserom.gba", 0x00104d80, 0x00000150
+	.incbin "baserom.gba", 0x00104964, 0x0000003c
+	.section .rom.00104e10, "ax"
+	.incbin "baserom.gba", 0x00104e10, 0x000000c0
 	.section .rom.00104ed0, "ax"
 	.global Func_08104ef8
 	.type Func_08104ef8, %function
 	.thumb_func
 Func_08104ef8:
 	.incbin "baserom.gba", 0x00104ed0, 0x000000e8
-	.section .rom.00104fb8, "ax"
-	.global Func_08104fe0
-	.type Func_08104fe0, %function
-	.thumb_func
-Func_08104fe0:
-	.incbin "baserom.gba", 0x00104fb8, 0x000000ac
 	.section .rom.001050a4, "ax"
 	.global MenuIcon_UpdateTransforms
 	.type MenuIcon_UpdateTransforms, %function

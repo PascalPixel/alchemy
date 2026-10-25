@@ -15,12 +15,12 @@ struct MenuRuntimeCursor {
 };
 
 s32 Func_080f88d0(void *work);
-void Func_08104fe0(s32 value, s32 a, s32 b);
+void Menu_PlaceOwnerEntryObjects(s32 value, s32 a, s32 b);
 
 void Func_080fee04(void) {
   struct MenuRuntimeCursor *work = Ram_HeapSlots->menuRuntime;
 
-  Func_08104fe0(Func_080f88d0(work), 2, 2);
+  Menu_PlaceOwnerEntryObjects(Func_080f88d0(work), 2, 2);
   work->unk2c = 0;
   work->unk28 = 0;
   work->unk30 = 0;

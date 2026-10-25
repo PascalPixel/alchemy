@@ -3,7 +3,7 @@
 // (games/tbs/src/menu/menu/status.c). A chooses (1), B backs out (-1); R
 // and L move the member along the party order (Func_080fecfc), Select shows
 // the list of Djinn found (Func_080fe638) once the first is; the cursor moves
-// through Func_08104c00. MsgRearrangeHelp and MsgDjinnListHelp are messages
+// through Menu_MoveGridCursor. MsgRearrangeHelp and MsgDjinnListHelp are messages
 // 4156 and 4165 in English; they need their names in the six catalogs before
 // this links. Differ 16 of 306 (2026-10-19): the literal pool after the first
 // DMA comes one instruction later, which shifts later pool offsets, and the
@@ -58,12 +58,12 @@ void PsynergyMenu_CallIconRoutineWithValue(struct CharacterMenuState *menu,
                                            s32 ownerId);
 void Func_08104ef8(s32 first);
 void WaitFrames(s32 frames);
-void Func_08104d5c(s32 window, s32 selection, s32 count);
+void Menu_HighlightPageEntry(s32 window, s32 selection, s32 count);
 void Func_080f8a44(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
 s32 Func_080fecfc(s32 selection, s32 direction);
 void Func_080fe638(void);
-s32 Func_08104c00(s32 *selection, s32 count, s32 columns);
+s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 
 s32 Func_080fe894(void) {
   struct CharacterMenuState *menu;
@@ -112,7 +112,7 @@ s32 Func_080fe894(void) {
         Func_08104ef8(ownerIndex / 4 * 4);
         WaitFrames(1);
       }
-      Func_08104d5c(menu->rowWindow, ownerIndex, ownerCount);
+      Menu_HighlightPageEntry(menu->rowWindow, ownerIndex, ownerCount);
       redraw = 0;
     }
     Func_080f8a44((ownerIndex % 4) * 24 - 10, 16);
@@ -132,7 +132,7 @@ s32 Func_080fe894(void) {
         Audio_PlayCue(112);
         ownerIndex++;
         Func_08104ef8(ownerIndex / 4 * 4);
-        Func_08104d5c(menu->rowWindow, ownerIndex, ownerCount);
+        Menu_HighlightPageEntry(menu->rowWindow, ownerIndex, ownerCount);
       } else {
         Audio_PlayCue(114);
       }
@@ -142,7 +142,7 @@ s32 Func_080fe894(void) {
         Audio_PlayCue(112);
         ownerIndex--;
         Func_08104ef8(ownerIndex / 4 * 4);
-        Func_08104d5c(menu->rowWindow, ownerIndex, ownerCount);
+        Menu_HighlightPageEntry(menu->rowWindow, ownerIndex, ownerCount);
       } else {
         Audio_PlayCue(114);
       }
@@ -151,7 +151,7 @@ s32 Func_080fe894(void) {
       Func_080fe638();
       redraw = 1;
     } else {
-      redraw = Func_08104c00(&ownerIndex, ownerCount, 4);
+      redraw = Menu_MoveGridCursor(&ownerIndex, ownerCount, 4);
     }
   }
   menu->ownerIndex = ownerIndex;

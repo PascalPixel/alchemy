@@ -1,8 +1,3 @@
-// Near miss, differ 2 of 94 (one reordered row): the native loads *cursor (ldr
-// r6, [r0]) before it copies columns to r7; this draft copies first. Tried
-// 2026-10-12: an empty asm barrier after the two initial loads moves the whole
-// prologue (differ 20); three permuter minutes found nothing; the parameter
-// copied to a local after the cursor read (no change).
 #include "types.h"
 #include "input.h"
 

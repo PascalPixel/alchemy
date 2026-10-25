@@ -1,8 +1,4 @@
-// Draft, differ 2 of 71 (2026-10-15), ported from The Broken Seal's
-// Djinn_CountTurns: at the end of the owner loop the native loads the owner
-// count (ldrb r3) before it builds the 1 for the high-register increment (movs
-// r2, #1; add r8, r2); here the 1 comes first. The increment is ahead of the
-// test in RTL, so a barrier cannot order them.
+// Func_081049c8: The Broken Seal's Djinn_CountTurns.
 #include "types.h"
 #include "ram_buffer.h"
 

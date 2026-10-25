@@ -1,9 +1,5 @@
-// Draft, differ 2 of 83 (2026-10-15), ported from The Broken Seal's
-// Menu_RunPairedEntryAction with the first owner of each pair read into a
-// temporary (each fixes one reordered load; differ 6 without). The native
-// reloads the saved zero (ldr r4, [sp, #20]) between the two halves of the
-// pair's offset 0x25c; here the offset is finished first. Three minutes of
-// alchemy permute found nothing better.
+// Func_08103168: The Broken Seal's Menu_RunPairedEntryAction, with the first
+// owner of each pair read into a temporary.
 #include "types.h"
 #include "ram_buffer.h"
 

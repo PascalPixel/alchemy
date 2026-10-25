@@ -44,9 +44,9 @@ void Func_080fd6b0(u16 *list);
 void Func_081005e4(s32 x, s32 y, s32 columns);
 void Func_080facd8(u16 *list);
 void Func_08104ef8(s32 first);
-void Func_08104d5c(void *window, s32 selection, s32 count);
+void Menu_HighlightPageEntry(void *window, s32 selection, s32 count);
 void Func_080f8a44(s32 x, s32 y);
-s32 Func_08104c00(s32 *selection, s32 count, s32 columns);
+s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 
@@ -82,7 +82,7 @@ s32 Func_080feb58(void) {
         Func_08104ef8(selection / 4 * 4);
         WaitFrames(1);
       }
-      Func_08104d5c(menu->ownerWindow, selection, count);
+      Menu_HighlightPageEntry(menu->ownerWindow, selection, count);
     }
     Func_080f8a44((selection % 4) * 24 - 10, 16);
     WaitFrames(1);
@@ -96,7 +96,7 @@ s32 Func_080feb58(void) {
       result = -1;
       break;
     }
-    pending = Func_08104c00(&selection, count, 4);
+    pending = Menu_MoveGridCursor(&selection, count, 4);
   }
   menu->ownerIndex = selection;
   menu->selectedOwner = menu->ownerIds[selection];

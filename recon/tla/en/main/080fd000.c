@@ -1,7 +1,7 @@
 // First draft of Func_080fd000: the party member row of the Psynergy menu,
 // the twin of The Broken Seal's PsynergyMenu_SelectMember
 // (games/tbs/src/menu/menu/psynergy.c). ⚓️ moves the selection through
-// Func_08104c00 (which returns whether to redraw, 2 to scroll the row) and
+// Menu_MoveGridCursor (which returns whether to redraw, 2 to scroll the row) and
 // keeps it on the stack.
 // Differ 12 of 298 (2026-10-19), instruction order only: the native copies
 // ownerIds (mov r8, r0) before the count and the 0x26c offset, and loads
@@ -60,7 +60,7 @@ void PsynergyMenu_CallIconRoutineWithValue(struct PsynergyMenuState *menu,
                                            s32 ownerId);
 void Func_08104ef8(s32 first);
 void WaitFrames(s32 frames);
-void Func_08104d5c(s32 window, s32 selection, s32 count);
+void Menu_HighlightPageEntry(s32 window, s32 selection, s32 count);
 void RenderOutput_ClearListFar(s32 window);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiText_DrawWorkValueWithLabel(s32 window);
@@ -69,7 +69,7 @@ void Audio_PlayCue(s32 cue);
 void *MemAlloc(s32 size);
 void MemFree(void *block);
 s32 Func_080fd6f0(void *unit, u16 *actions, s32 mode);
-s32 Func_08104c00(s32 *selection, s32 count, s32 columns);
+s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 
 s32 Func_080fd000(u16 *ownerIds) {
   struct PsynergyMenuState *menu;
@@ -111,7 +111,7 @@ s32 Func_080fd000(u16 *ownerIds) {
         Func_08104ef8(selection / 4 * 4);
         WaitFrames(1);
       }
-      Func_08104d5c(menu->rowWindow, selection, count);
+      Menu_HighlightPageEntry(menu->rowWindow, selection, count);
       if (!GameFlag_Test(0x151) && !shown) {
         RenderOutput_ClearListFar(menu->infoWindow);
         RenderOutput_RedrawSavedRectFar(menu->infoWindow);
@@ -154,7 +154,7 @@ s32 Func_080fd000(u16 *ownerIds) {
       result = -1;
       break;
     }
-    redraw = Func_08104c00(&selection, count, 4);
+    redraw = Menu_MoveGridCursor(&selection, count, 4);
   }
   menu->tabIndex = selection;
   menu->selectedOwner = ownerIds[selection];

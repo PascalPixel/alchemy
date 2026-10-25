@@ -1,6 +1,6 @@
 // First draft of Func_080fa368: sets up the item menu's first screen, the
 // twin of ☀️'s ItemMenu_Initialize (games/tbs/src/menu/menu.c): the cursor window
-// with the party's figures (Func_080f88d0, Func_08104fe0), the info window
+// with the party's figures (Func_080f88d0, Menu_PlaceOwnerEntryObjects), the info window
 // along the bottom and an 8 by 2 cursor grid. The parameters are not used.
 // Near miss, differ 2 of 48, instruction order only: the native loads the
 // pooled 26 between the two halves of the row offset 302 (movs r0, #151; ldr
@@ -25,7 +25,7 @@ struct InventoryMenuState {
 };
 
 void *Func_080f88d0(struct InventoryMenuState *work);
-void Func_08104fe0(void *window, s32 originX, s32 originY);
+void Menu_PlaceOwnerEntryObjects(void *window, s32 originX, s32 originY);
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 
 void Func_080fa368(s32 x, s32 y, s32 mode, s32 columns) {
@@ -33,7 +33,7 @@ void Func_080fa368(s32 x, s32 y, s32 mode, s32 columns) {
       (struct InventoryMenuState *)Ram_HeapSlots->menuRuntime;
   s32 ownerIndex;
 
-  Func_08104fe0(Func_080f88d0(menu), 2, 2);
+  Menu_PlaceOwnerEntryObjects(Func_080f88d0(menu), 2, 2);
   for (ownerIndex = 3; ownerIndex >= 0; ownerIndex--)
     menu->ownerY[ownerIndex] = 26;
 

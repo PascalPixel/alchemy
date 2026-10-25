@@ -1,6 +1,6 @@
-// Draft, differ 44 of 57: overlay 692's copy of the function drafted in
-// resource_6a8_c_02004114.c (overlay 6a8's Func_02004114), whose
-// header says what it is, what still differs and what was tried.
+// Draft, differ 44 of 57: the falling rocks' update, overlay 692's copy of overlay 6a8's falling
+// rocks (resource_6a8_c_02004114.c, whose header says what differs there and
+// why the loops are goto loops).
 #include "types.h"
 #include "ram_buffer.h"
 
@@ -40,8 +40,8 @@ void *Resource_GetTableEntry(s32 id);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(s32 entry, s32 size, void *data);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Func_02004384(void *resource, void *destination);
-void Func_02004604(struct RockSprite *sprite, s32 a, s32 b, s32 c, s32 tile);
+void Func_02004c58(void *resource, void *destination);
+void Func_02004f10(struct RockSprite *sprite, s32 a, s32 b, s32 c, s32 tile);
 void Func_02004f18(struct RockSprite *sprite, struct Rock *rock);
 void Func_02004f20(struct Rock *rock, s32 a, s32 b);
 
@@ -78,74 +78,4 @@ loop:
   i--;
   if (i >= 0)
     goto loop;
-}
-
-void Func_02004198(s32 x, s32 y, s32 z, s32 count) {
-  struct RockWork *work = Ram_HeapSlots->menuRuntime;
-  s32 i;
-
-  /* FAKEMATCH: the loop is written with goto so that it carries no loop notes:
-   * the bytes rebuild the offsets on every pass, and a for loop hoists them. */
-  if (count > 0) {
-    i = count;
-  loop:;
-    {
-      s32 angle = Random16Far();
-      struct Rock *rock = &work->rocks[work->next];
-
-      rock->timer = 0;
-      rock->position[0] = x;
-      rock->position[1] = y;
-      rock->position[2] = z;
-      Vector_AddPolarOffsetFar((Random16Far() << 3) + 0x80000, angle,
-                               rock->position);
-      rock->velocity[0] = 0;
-      rock->velocity[1] = 0x50000;
-      rock->velocity[2] = 0;
-      Vector_AddPolarOffsetFar((Random16Far() << 1) + 0x20000, angle,
-                               rock->velocity);
-      work->next = (work->next + 1) & 63U;
-    }
-    i--;
-    if (i != 0)
-      goto loop;
-  }
-}
-
-void Func_02004254(void) {
-  struct RockWork *work =
-      Runtime_AllocateHeapBlockFar(220, sizeof(struct RockWork));
-  struct Rock *rock;
-  struct RockSprite *sprite;
-  s32 entry;
-  s32 tile;
-  s32 i;
-
-  Func_02004384(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
-  entry = Resource_FindFreeEntry();
-  tile = VramLoad(entry, 0x500, work);
-  work->tileBase = tile;
-  work->resource = entry;
-  rock = work->rocks;
-  sprite = work->sprites;
-  /* FAKEMATCH: the loop is written with goto so that it carries no loop notes:
-   * the bytes rebuild the constants on every pass and count in r8, and a for
-   * loop hoists them. */
-  i = 63;
-loop:
-  {
-    Func_02004604(sprite, 8, 8, 0x40000000, tile);
-    sprite->unk05 |= 0x20;
-    sprite->palette = 0;
-    sprite->priority = 0;
-    sprite->unk1e = 240;
-    i += -1;
-    rock->timer = -1;
-    sprite++;
-    rock++;
-  }
-  if (i >= 0)
-    goto loop;
-  work->next = 0;
-  Scheduler_AddOrUpdateCallback(Func_020049d8, 0x480);
 }

@@ -32,20 +32,24 @@ flowchart LR
   start(["<b>The game starts</b>"]) --> loop(["<b>The main loop</b><br/><small>chooses what runs next</small>"])
   loop -- "a map" --> map["<b>A map</b><br/><small>its layout: the picture, the ground<br/>its overlay: characters,<br/>conversations, other events<br/>a door: the next map</small>"]
   loop -- "a battle" --> battle["<b>A battle</b><br/><small>always loaded<br/>won: back to the map<br/>lost: the last Sanctum</small>"]
-  loop -- "a minigame" --> mini["<b>Lucky Dice or Lucky Wheels</b><br/><small>always loaded<br/>then back to the game room</small>"]
+  loop -- "Lucky Dice" --> dice["<b>Lucky Dice</b><br/><small>always loaded<br/>then back to the game room</small>"]
+  loop -- "Lucky Wheels" --> wheels["<b>Lucky Wheels</b><br/><small>always loaded<br/>then back to the game room</small>"]
   map --- back(( ))
   battle --- back
-  mini --- back
+  dice --- back
+  wheels --- back
   back --> loop
   classDef flow fill:#DDE3EC,stroke:#A9B6C8,color:#3E4C60
   classDef place fill:#D9EBDF,stroke:#9CC5A8,color:#2F6040
   classDef fight fill:#F3DAE8,stroke:#D7A3C3,color:#843A68
-  classDef game fill:#EAE2F5,stroke:#C3B0E0,color:#5E4590
+  classDef dice fill:#EAE2F5,stroke:#C3B0E0,color:#5E4590
+  classDef wheels fill:#F6EFC9,stroke:#D9C77A,color:#6E5A1C
   classDef join fill:#9AA3AE,stroke:#9AA3AE
   class start,loop flow
   class map place
   class battle fight
-  class mini game
+  class dice dice
+  class wheels wheels
   class back join
   style back width:8px,height:8px
 ```

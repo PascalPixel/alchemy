@@ -702,12 +702,6 @@ SaveState_BuildSummaryHeader:
 	.thumb_func
 Func_08043534:
 	.incbin "baserom.gba", 0x00043584, 0x000000c8
-	.section .rom.000436e0, "ax"
-	.global Func_08043690
-	.type Func_08043690, %function
-	.thumb_func
-Func_08043690:
-	.incbin "baserom.gba", 0x000436e0, 0x000000e4
 	.section .rom.00043ab4, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00043ab4, 0x000000d0

@@ -1104,12 +1104,6 @@ main	rom_main_02	recon/tla/de/rom	.rom.00043588	de
 main	rom_main_02	recon/tla/raw/08043534	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.00043678	ja
 main	rom_main_02	games/tla/src/system/save/saveslot	.text
-main	rom_main_02	recon/tla/it/rom	.rom.000436f4	it
-main	rom_main_02	recon/tla/fr/rom	.rom.000436e0	fr
-main	rom_main_02	recon/tla/es/rom	.rom.000436fc	es
-main	rom_main_02	recon/tla/de/rom	.rom.000436e4	de
-main	rom_main_02	recon/tla/raw/08043690	.text	en
-main	rom_main_02	recon/tla/ja/rom	.rom.000437d4	ja
 main	rom_main_02	games/tla/src/system/save/saveload	.text
 main	rom_main_02	games/tla/src/window/glow_update_sine	.text
 main	rom_main_02	games/tla/src/graphics/window/tilefill	.text

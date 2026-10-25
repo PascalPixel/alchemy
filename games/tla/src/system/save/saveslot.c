@@ -62,3 +62,59 @@ s32 SaveState_SaveToSlot(u32 slot) {
   SaveState_ReleaseWorkspace();
   return result;
 }
+
+extern u8 MsgOverwriteConfirm;
+
+s32 SaveProgress_Open(s32 arg0);
+void SaveProgress_Close(s32 arg0);
+s32 Func_08043cd8(s32 slot, s32 mode);
+s32 Menu_RunConfirmSelection(s32 low, s32 message, s32 w, s32 selection);
+
+/// Lets the player choose a file and saves the game to it, asking first before
+/// it writes over a file in use.
+s32 Func_08043690(void) {
+  s32 result = 0;
+  s32 slot;
+  s32 found;
+  s32 token;
+  struct SaveWorkspace *work;
+
+  if (Func_0801596c() != 0) {
+    UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
+    result = -9;
+  } else {
+    SaveState_LoadSummaryRecords();
+    slot = Func_08043cd8(gData_020036d0, 0);
+    if (slot == -1) {
+      result = slot;
+    } else {
+      work = Ram_HeapSlots->serialWork;
+      if (work->summary[slot].level != 0) {
+        UiText_ShowPositionedMessageAndWait((s32)&MsgOverwriteConfirm, 13);
+        while (UiWork_IsComplete() == 0)
+          WaitFrames(1);
+        if (Menu_RunConfirmSelection(1, 0, 0, 1) != 0) {
+          UiWork_FinalizePendingCore();
+          goto done;
+        }
+        UiWork_FinalizePendingCore();
+      }
+      gData_020036d0 = slot;
+      token = SaveProgress_Open(0);
+      SaveState_BuildSummaryHeader();
+      ObjectTable_SnapshotFar();
+      found = Func_08042f10(slot, gData_02000000);
+      SaveProgress_Close(token);
+      UiWork_FinalizePendingCore();
+      if (found != 0) {
+        UiText_ShowPositionedMessageAndWait((s32)&MsgSaveFailed, 1);
+        result = -3;
+      } else {
+        UiText_ShowPositionedMessageAndWait((s32)&MsgGameSaved, 9);
+      }
+    }
+  }
+done:
+  SaveState_ReleaseWorkspace();
+  return result;
+}

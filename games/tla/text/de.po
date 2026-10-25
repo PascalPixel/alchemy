@@ -16545,7 +16545,7 @@ msgctxt "message"
 msgid "04059"
 msgstr "Da geht es tief hinunter.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFoundItem"
 msgid "04060"
 msgstr ""
 "{protagonist_name} erhält\n"

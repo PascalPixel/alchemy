@@ -14624,7 +14624,7 @@ msgctxt "message"
 msgid "03598"
 msgstr "It's a long way down.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFoundItem"
 msgid "03599"
 msgstr ""
 "{protagonist_name} found\n"

@@ -115,8 +115,8 @@ Resource_DirectoryTable:
 	resource , Battle_OrbAltarBackdrop
 	resource , Battle_PurpleCaveBackdrop
 	resource , Battle_BeastWallBackdrop
-	resource , Battle_DragonHallABackdrop
-	resource , Battle_DragonHallBBackdrop
+	resource DragonHallABackdrop, Battle_DragonHallABackdrop
+	resource DragonHallBBackdrop, Battle_DragonHallBBackdrop
 	resource , Battle_GorgePoolBackdrop
 	resource , Battle_SpikeHallBackdrop
 	resource SnowfieldBBackdrop, Battle_SnowfieldBBackdrop

@@ -1,0 +1,85 @@
+#include "types.h"
+#include "callback_scheduler.h"
+#include "io_reg.h"
+#include "irq.h"
+#include "display_transition.h"
+
+void WaitFrames(s32 frames);
+void Fade_FromBlack(s32 frames);
+void Fade_ToBlack(s32 frames);
+void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 index);
+void BattleEffect_StartBufferInterpolation(s32 frames);
+struct DisplayTransitionState *Func_080d019c(void);
+void Func_080cf78c(void);
+
+/// Fades the screen out over frames frames, as The Broken Seal's
+/// DisplayTransition_Finish does, with this game's callbacks and priorities.
+void DisplayTransition_Finish(s32 mode, s32 frames) {
+  s32 variant;
+  s32 transitionKind;
+
+  transitionKind = (mode >> 8) & 0xff;
+  variant = mode & 0xff;
+  switch (transitionKind) {
+  case 0:
+    Fade_FromBlack(0);
+    Fade_ToBlack(frames);
+    break;
+  case 1:
+    BattleEffect_ApplyColorToTargetBuffer(0x8000, 0);
+    BattleEffect_StartBufferInterpolation(frames);
+    break;
+  case 2: {
+    struct DisplayTransitionState *state = Func_080d019c();
+    state->mode = variant;
+    state->value = 32;
+    state->mask = 63;
+    state->active = (REG_WINOUT & 0xff00) | 1;
+    Scheduler_AddOrUpdateCallback(Func_080cf78c, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleEffect_StartWindowHBlankDma, 0xc76);
+    WaitFrames(1);
+    state->start = 32;
+    state->end = 64;
+    state->duration = frames;
+    state->step = 0;
+    break;
+  }
+  case 3: {
+    struct DisplayTransitionState *state = Func_080d019c();
+    state->mode = variant;
+    state->value = 32;
+    DisplayTransition_FillTilemapAndSolidTile(0);
+    WaitFrames(1);
+    Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFrame, 0x480);
+    state->start = 32;
+    state->end = 64;
+    state->duration = frames;
+    state->step = 0;
+    break;
+  }
+  case 4: {
+    struct DisplayTransitionState *state = Func_080d019c();
+    s32 zero = 0;
+
+    /* FAKEMATCH(temporary): one zero both branches store, kept in r7; as the
+     * constant 0 in each store, 126 of 208 instructions differ in tla-en. */
+    ((u8 *)state)[0x53f] = 1;
+    if (variant == 0) {
+      Scheduler_AddOrUpdateCallback(DisplayTransition_Update, 0x480);
+      Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
+      state->start = zero;
+      state->end = 80;
+      state->duration = frames;
+      state->step = zero;
+    } else {
+      Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFromCentre, 0x480);
+      Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
+      state->start = zero;
+      state->end = 80;
+      state->duration = frames;
+      state->step = zero;
+    }
+    break;
+  }
+  }
+}

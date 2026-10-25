@@ -12,7 +12,7 @@ SECTIONS
         "*/games/tla/src/scene/kibombo/s0c90.o"(.text)
         "*/resource_670_overlay.o"(.text.x02008d74)
         "*/games/tla/src/scene/kibombo/s1218.o"(.text)
-        "*/resource_670_overlay.o"(.text.x02009318)
+        "*/games/tla/src/scene/kibombo/s1318.o"(.text)
         "*/resource_670_overlay.o"(.text.x0200a050)
         "*/games/tla/src/scene/kibombo/s2ad8.o"(.text)
         "*/resource_670_overlay.o"(.text.x0200ab18)

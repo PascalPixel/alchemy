@@ -18,7 +18,8 @@ void GameFlag_ClearBit(s32 flag);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
 void Func_020032e0(struct ObjectRuntime *object, s32 value);
-void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+                                        s32 flags);
 void Func_020032e8(struct ObjectRuntime *object, const s32 *script);
 void Func_020034b8(s32 sound);
 void Vector_AddPolarOffsetFar(s32 length, s32 angle, s32 *position);
@@ -33,8 +34,8 @@ static __inline__ void AddPolar(s32 length, s32 angle, s32 *position) {
 /// The update of an object that moves with the leader: once the leader is past
 /// z 248 it settles on its cell and clears flag 0x200; otherwise it repeats the
 /// leader's step, raising an effect of type 0x2a0 on each step, and stops where
-/// the cell kind under it is 52 or 51, setting the event work's unk16a to 201 or
-/// 200. unk4c and acceleration hold the leader's last x and z.
+/// the cell kind under it is 52 or 51, setting the event work's unk16a to 201
+/// or 200. unk4c and acceleration hold the leader's last x and z.
 void Func_020017b4(struct ObjectRuntime *self) {
   struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
   s32 next[2];

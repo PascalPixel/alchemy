@@ -2326,14 +2326,15 @@ main	rom_main_05	recon/tla/fr/rom	.rom.000dc518	fr
 main	rom_main_05	recon/tla/es/rom	.rom.000e0518	es
 main	rom_main_05	recon/tla/de/rom	.rom.000e4524	de
 main	rom_main_05	recon/tla/raw/080d7524	.text	en
-main	rom_main_05	games/tla/src/battle/effect/f0d7788	.text	en de es fr it
+main	rom_main_05	recon/tla/ja/rom	.rom.000d7504	ja
+main	rom_main_05	games/tla/src/battle/effect/f0d7788	.text
 main	rom_main_05	recon/tla/fr/rom	.rom.000dc840	fr
 main	rom_main_05	recon/tla/de/rom	.rom.000e484c	de
 main	rom_main_05	recon/tla/raw/080d784c	.text	en
 main	rom_main_05	recon/tla/es/rom	.rom.000e0840	es
 main	rom_main_05	recon/tla/it/rom	.rom.000d7840	it
-main	rom_main_05	games/tla/src/battle/effect/f0d793c	.text	en de es fr it
-main	rom_main_05	recon/tla/ja/rom	.rom.000d7504	ja
+main	rom_main_05	recon/tla/ja/rom	.rom.000d7808	ja
+main	rom_main_05	games/tla/src/battle/effect/f0d793c	.text
 main	rom_main_05	games/tla/src/battle/effect/slots	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000d7af8	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000dcaf8	fr

@@ -1756,7 +1756,9 @@ Func_080d7034:
 	.type Func_080d7524, %function
 	.thumb_func
 Func_080d7524:
-	.incbin "baserom.gba", 0x000d7504, 0x00000510
+	.incbin "baserom.gba", 0x000d7504, 0x0000024c
+	.section .rom.000d7808, "ax"
+	.incbin "baserom.gba", 0x000d7808, 0x000000f0
 	.section .rom.000d7ac0, "ax"
 	.global Func_080d7b04
 	.type Func_080d7b04, %function
@@ -1772,8 +1774,16 @@ BattleEffect_UpdatePhasedRadialParticle:
 	.section .rom.000d8130, "ax"
 	.incbin "baserom.gba", 0x000d8130, 0x00000078
 	.section .rom.000d829c, "ax"
+	.global Func_080d82e0
+	.type Func_080d82e0, %function
+	.thumb_func
+Func_080d82e0:
 	.incbin "baserom.gba", 0x000d829c, 0x0000042c
 	.section .rom.000d86fc, "ax"
+	.global Func_080d8740
+	.type Func_080d8740, %function
+	.thumb_func
+Func_080d8740:
 	.incbin "baserom.gba", 0x000d86fc, 0x0000023c
 	.section .rom.000d89bc, "ax"
 	.global Func_080d8a00

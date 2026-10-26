@@ -1,11 +1,3 @@
-// Draft of overlay 697's Func_02000330, translated from its listing: differ 9
-// of 93. Left: instruction order around
-//   push {r5, r6, r7, lr}
-//   + ldr r3, [pc, #216]
-//   - ldr r3, [pc, #220]
-//   movs r2, #133
-// (- the listing, + this draft). Tried: Call, Value and direct forms of each
-// call, empty asms and one-pass blocks between statements.
 #include "types.h"
 #include "party_state.h"
 #include "call.h"
@@ -32,7 +24,7 @@ void Object_SetModeById();
 void UiText_ShowPositionedMessageAndWait();
 extern u8 MsgTrialRoadGiveUpPrompt[];
 
-void Func_02000330(void) {
+s32 Func_02000330(void) {
   s32 t1, t2, t9, v_r5, v_r6;
 
   t1 = Value1((s32 (*)())Object_GetById, gPartyState.currentOwner);
@@ -41,7 +33,7 @@ void Func_02000330(void) {
   t2 = Value1((s32 (*)())GameFlag_Test, 0x9ff);
   if (t2 == 0)
     goto L_02008400;
-  Call0((void (*)())Func_02005880);
+  Func_02005880();
   Call1((void (*)())Func_020059e8, 0);
   Call3((void (*)())ObjectMotion_SetPositionAndReset, gPartyState.currentOwner,
         (((FIELD_AT(v_r5, s32, 8) >> 20) << 4) + 8),
@@ -68,8 +60,8 @@ void Func_02000330(void) {
   Call1((void (*)())FieldEvent_WaitFrames, 30);
   Func_02005868();
   Call1((void (*)())Func_02005990, 9);
-  goto L_0200840c;
+  return 1;
 L_02008400:
   Call1((void (*)())GameFlag_SetBit, 0x281);
-L_0200840c:
+  return 0;
 }

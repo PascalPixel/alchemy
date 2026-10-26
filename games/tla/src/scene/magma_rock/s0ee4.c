@@ -1,8 +1,5 @@
-// Draft, differ 6 of 104: unless flag 0x109 is set, places the object at the
-// linked object first + side, gives it Func_02000dc0 and faces it along the
-// pair first and first + 1. Left: the native starts the byte 98 address after
-// building the 1 it xors with side, in r2, where this form starts it first in
-// r1; the p[n] form and a four-minute permute (4 at best) do not reproduce it.
+// Unless flag 0x109 is set, places the object at the linked object first +
+// side, gives it Func_02000dc0 and faces it along the pair first and first + 1.
 #include "types.h"
 #include "object_runtime.h"
 
@@ -23,6 +20,7 @@ void Func_02000ee4(u16 id, s16 first, s16 side) {
   s32 linked;
   s32 next;
   u8 *flags;
+  u8 facing;
 
   if (GameFlag_Test(0x109))
     return;
@@ -34,7 +32,10 @@ void Func_02000ee4(u16 id, s16 first, s16 side) {
   object->z = Object_GetById(linked)->z;
   Object_SetSpritePriority(object, 2);
   HALF_AT(object, 102) = first;
-  BYTE_AT(object, 98) = side ^ 1;
+  /* FAKEMATCH(temporary): the byte is computed before its address; as
+   * BYTE_AT(object, 98) = side ^ 1, 6 of 104 instructions differ in tla-en. */
+  facing = side ^ 1;
+  BYTE_AT(object, 98) = facing;
   object->update = (void *)Func_02000dc0;
   next = left + 1;
   flags = &object->motionFlags;

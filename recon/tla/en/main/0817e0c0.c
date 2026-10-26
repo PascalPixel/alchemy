@@ -1,3 +1,5 @@
+// 2026-10-26: differ 127 of 601, with Scheduler_AddOrUpdateCallback returning
+// s32 as defined.
 // Draft (tla-en): listing 601 instructions, draft 600, common 530, differ 141.
 // The body of effect kinds 311, 314, 326, 339, 433 and 457 (variant_j.c's
 // BattleEffect_RunBoneCharge to BattleEffect_RunLivingArmor pass modes 4, 1, 2, 3, 4 and 5). Written
@@ -112,7 +114,7 @@ extern const u16 gData_08197410[];
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
 void *Resource_GetTableEntry(s32 resourceId);
-void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
+s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
 void ObjectDispatch_SetAnimationSpeedFar(struct MotionObject *object,

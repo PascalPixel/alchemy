@@ -97,14 +97,14 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack,
                                 s32 wait);
 void *Resource_GetTableEntry(s32 resourceId);
-void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
+s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 void Render_ResetTransformState(void);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
-void BattleEffect_LoadBlitter(s32 slot, s32 blitter);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 blitter);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);

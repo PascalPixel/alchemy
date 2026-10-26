@@ -1,3 +1,5 @@
+// 2026-10-26: differ 120 of 513, with Scheduler_AddOrUpdateCallback returning
+// s32 as defined.
 // Draft (tla-en): listing 513 instructions, draft 513, common 442, differ 142.
 // The body of effect kinds 114, 461 and 462 (summon_modes_1.c's
 // BattleEffect_RunPurgatory, BattleEffect_RunDjinnBlast and BattleEffect_RunDjinnStorm pass modes 0, 2 and 1).
@@ -98,7 +100,7 @@ extern const u8 Data_08198df8[];
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
 void *Resource_GetTableEntry(s32 resourceId);
-void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
+s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
 void Func_0815e22c(struct EffectPosition *midpoint);
 void Func_0815f0a0(s32 resourceId);

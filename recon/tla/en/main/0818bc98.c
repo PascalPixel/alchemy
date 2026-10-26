@@ -1,3 +1,5 @@
+// 2026-10-26: differ 173 of 1251, with BattleEffect_LoadBlitter returning s32
+// as nibble_pair.c defines it.
 // Near miss: listing 1251 instructions, draft 1252, differ 203. No close ☀️ twin
 // (call order BattleEffect_RunDragonCloud 0.417): ⚓️'s own effect on ☀️'s
 // frame, its bursts and jaws drawn as textured quads by ⚓️'s model kernels, as
@@ -107,7 +109,7 @@ extern u16 gData_08197410[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
-void BattleEffect_LoadBlitter(s32 slot, s32 packed);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);

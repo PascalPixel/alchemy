@@ -80,7 +80,7 @@ struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
 s32 BattleUnit_GetEffectHeightFar(s32 objectId);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
-void BattleEffect_LoadBlitter(s32 slot, s32 packed);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void EffectPosition_ProjectBattler(

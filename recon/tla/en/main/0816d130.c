@@ -41,7 +41,7 @@ void BattleEffect_StartCanvasLayer(s32 layer);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_EndCanvasLayer(void);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
-void BattleEffect_LoadBlitter(s32 slot, s32 kind);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 kind);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
 void Func_0814cd48(s32 id, s32 a, s32 b, s32 c, s32 d);

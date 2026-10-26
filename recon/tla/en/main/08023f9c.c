@@ -1,4 +1,6 @@
-// Draft, differ 758 of 875: The Broken Seal's Object_UpdateAllThumb
+// Draft, differ 732 of 875 (758 before; the locals declared in the twin's
+// order, x, y, z and ground before the arrival flag, give the native's stack
+// slots for x, y and z). Written from The Broken Seal's Object_UpdateAllThumb
 // (games/tbs/src/field/field/object_motion.c), which runs each object's hook
 // and script and moves it toward its target each frame (Func_080230e0 adds
 // it at 0x48b). This game's changes: a paused object records no motion and
@@ -9,7 +11,9 @@
 // the distance it moved this frame at 0x70; the arrival axes are numbered
 // 16 to 18. Left: the native keeps a second copy of the motion flags'
 // address and the arrival flag in lower stack slots (x, y and z at 24, 20
-// and 16), and register allocation differs from the free flight on.
+// and 16), and register allocation differs from the free flight on. Written
+// with the object's fields in place of the motion flags' pointer (loop.c makes
+// that pointer itself), it is differ 756 with one stack word more.
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
@@ -72,13 +76,13 @@ s16 ArcTan2(s32 y, s32 x);
 
 void Func_08023f9c(void) {
   struct MotionObject *object;
-  u8 *motionFlags;
   s32 objectsRemaining;
-  s32 arrivedAtTarget;
   s32 x;
   s32 y;
   s32 z;
   s32 ground;
+  s32 arrivedAtTarget;
+  u8 *motionFlags;
   s32 pos[3];
   s32 dx;
   s32 dy;

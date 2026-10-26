@@ -1,28 +1,32 @@
-// Draft, differ 32 of 61 (twins in overlays 662, 668, 674, 69c, 6a1 have drafts
-// too): the listing rereads other->animation, its value28 and the table address
-// on every pass with the index in r4, and builds the angle through r3; a for
-// loop strength-reduces the index, a goto loop hoists the loads.
-#include "../../../../games/tla/src/scene/mars_lighthouse_room_f/room.h"
+#include "types.h"
+#include "object_runtime.h"
 
 extern u16 gData_02005f58[];
 
+void Vector_AddPolarOffsetFar(s32 length, s32 angle, s32 *position);
+struct ObjectRuntime *Func_02005680(s32 *position, s32 mode);
 s32 Func_020054f8(struct ObjectRuntime *object, s32 *position);
 
 void Func_02004fc0(struct ObjectRuntime *object) {
   s32 position[3];
-  struct ObjectRuntime *other;
+  struct ObjectRuntime *hit;
   u32 i;
-  s32 angle = ((object->angle >> 12) + 2 & 12) << 12;
+  s32 angle = object->angle >> 12;
 
+  angle = ((angle + 2) & 12) << 12;
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
   Vector_AddPolarOffsetFar(0x100000, angle, position);
-  other = Func_02005680(position, 1);
-  if (other != NULL) {
+  hit = Func_02005680(position, 1);
+  if (hit != 0) {
     i = 0;
   next:
-    if (((struct BattleAnimationState *)other->animation)->value28[0] ==
+    /* FAKEMATCH(barrier): a memory barrier at the loop's head, so
+     * hit->animation, its value and the table are loaded again on every pass;
+     * without it, 26 of 61 instructions differ in tla-en. */
+    __asm__("" : : : "memory");
+    if (*((struct BattleAnimationState *)hit->animation)->value28 ==
         gData_02005f58[i])
       return;
     i++;

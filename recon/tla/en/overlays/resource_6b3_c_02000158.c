@@ -1,75 +1,69 @@
-// Draft of overlay 6b3's Func_02000158, translated from its listing: differ
-// 74 of 100. Left: its shape: 94 instructions against the listing's 100.
+// Draft, differ 24 of 100: rewritten from the listing. Opens the epilogue's
+// message window at x and y and, unless bit 15 of the message is set, a name
+// window at left and line that Func_0200005c follows; in mode 2 it restarts the
+// window's text, waits for the text, closes both windows and waits the given
+// frames. Left, all in the prologue: the native copies y out of r2 first and
+// builds 0x8000 there, copying x late, where this copies x first and builds
+// 0x8000 in r1, which moves the zero for the name window earlier. Permute 3
+// minutes found nothing better.
 #include "types.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 BattleEffect_GetResourceId();
-s32 Func_02000804();
-s32 UiText_OpenMessageWindow();
-s32 UiWork_Finalize();
-s32 UiWork_IsComplete();
-s32 WaitFrames();
-extern u8 gData_02000a28[];
-extern u8 gData_02000a2c[];
-extern u8 gData_02000a34[];
-extern u8 gData_02000a38[];
 
-void Func_02000158(s32 p0, s32 p1, s32 p2, s32 p3, s32 p4, s32 p5, s32 p6) {
-  s32 sp_[1];
-  s32 v_r7, v_r8, v_r5, v_r9, v_r10, v_r2, t0, t1, t2, t3;
-  s32 t4, t6, t11;
+struct EpilogueWindow {
+  u8 unk00[8];
+  u16 unk08;
+  u16 unk0a;
+  u8 unk0c[2];
+  u16 unk0e;
+};
 
-  v_r7 = (p0 & 0x7fff);
-  t0 = BattleEffect_GetResourceId(v_r7);
-  t1 = *(s32 *)(s32)gData_02000a28;
-  t2 = UiText_OpenMessageWindow(t1, p1, p2, ((t0 << 16) | 4));
-  v_r8 = (0x8000 & p0);
-  v_r10 = p3;
-  v_r9 = 0;
-  v_r5 = t2;
-  if (v_r8 != v_r9)
-    goto L_020081c8;
-  t3 = Func_02000804(v_r7, 0, v_r10, p4);
-  *(u8 *)(s32)gData_02000a34 = 1;
-  *(u16 *)(s32)gData_02000a38 = (v_r10 << 3);
-  *(u16 *)(s32)gData_02000a2c = (p4 << 3);
-  v_r9 = t3;
-L_020081c8:
-  if (p6 != 2)
-    goto L_020081e2;
-  t4 = FIELD_AT(v_r5, u16, 14);
-  FIELD_AT(v_r5, u16, 14) = (t4 + 1);
-  FIELD_AT(v_r5, u16, 8) = 0;
-  FIELD_AT(v_r5, u16, 10) = 0;
-  goto L_020081e2;
-L_020081dc:
+extern s32 gData_02000a28;
+extern s8 gData_02000a34;
+extern s16 gData_02000a38;
+extern s16 gData_02000a2c;
+
+s32 BattleEffect_GetResourceId(s32 message);
+struct EpilogueWindow *UiText_OpenMessageWindow(s32 id, s32 x, s32 y,
+                                                s32 resource);
+struct EpilogueWindow *Func_02000804(s32 message, s32 a, s32 left, s32 line);
+s32 UiWork_IsComplete(void);
+void UiWork_Finalize(struct EpilogueWindow *window, s32 mode);
+void WaitFrames(s32 frames);
+
+void Func_02000158(s32 message, s32 x, s32 y, s32 left, s32 line, s32 wait,
+                   s32 mode) {
+  s32 wide = 0x8000 & message;
+  struct EpilogueWindow *window;
+  struct EpilogueWindow *name;
+
+  message &= 0x7fff;
+  name = 0;
+  window = UiText_OpenMessageWindow(
+      gData_02000a28, x, y, (BattleEffect_GetResourceId(message) << 16) | 4);
+  if (!wide) {
+    name = Func_02000804(message, 0, left, line);
+    gData_02000a34 = 1;
+    gData_02000a38 = left << 3;
+    gData_02000a2c = line << 3;
+  }
+  if (mode == 2) {
+    window->unk0e++;
+    window->unk08 = 0;
+    window->unk0a = 0;
+  }
+  while (!UiWork_IsComplete())
+    WaitFrames(1);
   WaitFrames(1);
-L_020081e2:
-  t6 = UiWork_IsComplete();
-  if (t6 == 0)
-    goto L_020081dc;
-  WaitFrames(1);
-  UiWork_Finalize(v_r5, 2);
-  if (v_r8 != 0)
-    goto L_0200820c;
-  UiWork_Finalize(v_r9, 2);
-  *(u8 *)(s32)gData_02000a34 = v_r8;
-L_0200820c:
-  v_r2 = p5;
-  if (v_r2 <= 0)
-    goto L_02008220;
-  v_r5 = v_r2;
-L_02008214:
-  WaitFrames(1);
-  v_r5 = (v_r5 - 1);
-  if (v_r5 != 0)
-    goto L_02008214;
-L_02008220:
-  t11 = *(s32 *)(s32)gData_02000a28;
-  *(s32 *)(s32)gData_02000a28 = (t11 + 1);
-  return;
+  UiWork_Finalize(window, 2);
+  if (!wide) {
+    UiWork_Finalize(name, 2);
+    gData_02000a34 = wide;
+  }
+  if (wait > 0) {
+    s32 i = wait;
+
+    do {
+      WaitFrames(1);
+    } while (--i != 0);
+  }
+  gData_02000a28++;
 }

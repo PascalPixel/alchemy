@@ -1,146 +1,96 @@
-// Draft of overlay 6ad's Func_02001894, translated from its listing: differ
-// 150 of 197. Left: its shape: 193 instructions against the listing's 197.
+// Overlay 6ad's copy of resource_698_c_020005e4.c, with this overlay's symbols:
+// differ 16 of 197. That draft's header follows. Draft, differ 16 of 197:
+// shared by thirteen overlays (698 to 6a4): the update of an object that
+// carries the leader. While no event runs it animates, ticks a sound every 32
+// frames, takes the leader's sprite priority and moves along its angle; when
+// the leader stands close enough (and flag 260 is clear) it links the leader to
+// itself. Off its track it stops, takes its rest script and clears the ride.
+// 200 goes through a temporary so it is built with movs as an SImode constant
+// (as a halfword constant it loads from the pool), and the update is cleared
+// before the byte so both stores share one zero register. Left, all instruction
+// order: the cell lookup's 2 after its x and z loads (an empty asm after the
+// priority store gets x before z: 14), the third word of the position read
+// before the buffer pointer is copied to r0, the leader's link stored after its
+// angle, and the update store before the rest script's arguments. Permute 15
+// minutes found nothing better.
 #include "types.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Func_02001868();
-s32 Func_02005490();
-s32 Func_02005658();
-s32 Func_020056a0();
-s32 Func_020056c0();
-s32 GameFlag_Test();
-s32 Math_Cosine();
-s32 Math_Sine();
-s32 ObjectDispatch_SetAnimationSpeed();
-s32 Object_GetById();
-extern u8 Data_02007064[];
-extern u8 IwramMulQ16[];
-extern u8 gData_02007044[];
-extern u8 gPartyState[];
+#include "ram_buffer.h"
+#include "iwram_call.h"
+#include "object_runtime.h"
+#include "party_state.h"
+#include "field_sprite.h"
 
-void Func_02001894(s32 p0) {
-  s32 sp_[1];
-  s32 v_r6, v_r10, v_r7, v_r5, v_r9, v_r3, v_r2, v_r8, v_r0, t0;
-  s32 t1, t2, t3, t4, t5, t6, t9, t11, t12, t13;
-  s32 t14, t15, t16, t17, t18, t19, t20, t22, t23, t24;
-  s32 t25, t26, t27, t28, t29, t30, t31, t32, t33, t34;
-  s32 t35, t36, t37, t38, t39;
+extern const s32 gData_02007044[];
+extern s32 Data_02007064;
 
-  t0 = FIELD_AT(0x3000000, s32, 108);
-  t1 = FIELD_AT((s32)gPartyState, s32, 532);
-  t2 = Object_GetById(t1);
-  t3 = FIELD_AT(t0, s16, 358);
-  v_r7 = t2;
-  v_r10 = t0;
-  v_r6 = p0;
-  if (t3 != 0)
-    goto L_020098f2;
-  t4 = FIELD_AT(v_r10, s16, 346);
-  if (t4 != 0)
-    goto L_020098f2;
-  t5 = FIELD_AT(v_r10, s16, 350);
-  if (t5 != 0)
-    goto L_020098f2;
-  t6 = FIELD_AT(v_r10, s16, 360);
-  if (t6 == 0)
-    goto L_02009900;
-L_020098f2:
-  ObjectDispatch_SetAnimationSpeed(v_r6, 0);
-  goto L_02009a3e;
-L_02009900:
-  ObjectDispatch_SetAnimationSpeed(v_r6, 16);
-  t9 = FIELD_AT(v_r6, u16, 100);
-  FIELD_AT(v_r6, u16, 100) = (t9 + 1);
-  if ((31 & (t9 + 1)) != 31)
-    goto L_02009920;
-  Func_020056c0(231);
-L_02009920:
-  t11 = FIELD_AT(v_r7, s32, 80);
-  t12 = FIELD_AT(v_r6, s32, 80);
-  t13 = FIELD_AT(t11, u8, 9);
-  t14 = FIELD_AT(t12, u8, 9);
-  FIELD_AT(t12, u8, 9) = ((-13 & t14) | (12 & t13));
-  t15 = FIELD_AT(v_r6, s32, 8);
-  t16 = FIELD_AT(v_r6, s32, 16);
-  t17 = Func_020056a0(t15, t16, 2);
-  if (t17 == 255)
-    goto L_02009a22;
-  t18 = FIELD_AT(v_r6, s32, 8);
-  *(s32 *)sp_ = t18;
-  t19 = FIELD_AT(v_r6, s32, 12);
-  FIELD_AT(sp_, s32, 4) = t19;
-  t20 = FIELD_AT(v_r6, s32, 16);
-  FIELD_AT(sp_, s32, 8) = t20;
-  Func_02005658((s32)sp_);
-  t22 = *(s32 *)sp_;
-  v_r5 = t22;
-  if (v_r5 > 0x1100000)
-    goto L_02009a22;
-  if (v_r5 < 0xffe00000)
-    goto L_02009a22;
-  t23 = FIELD_AT(v_r6, u8, 98);
-  v_r9 = (v_r6 + 98);
-  if (t23 != 0)
-    goto L_020099e8;
-  t24 = FIELD_AT(v_r7, s32, 12);
-  t25 = FIELD_AT(v_r6, s32, 12);
-  v_r5 = (t24 - t25);
-  v_r2 = t24;
-  v_r3 = t25;
-  if (v_r5 >= 0)
-    goto L_02009980;
-  v_r5 = (v_r3 - v_r2);
-L_02009980:
-  t26 = Func_02001868((v_r7 + 8), (v_r6 + 8));
-  v_r8 = 0;
-  if (t26 > 12)
-    goto L_020099a0;
-  if (v_r5 >= 0xc0000)
-    goto L_020099a0;
-  v_r8 = 1;
-L_020099a0:
-  if (v_r8 == 0)
-    goto L_020099e8;
-  t27 = GameFlag_Test(0x104);
-  if (t27 != 0)
-    goto L_020099e8;
-  t28 = FIELD_AT(v_r6, u16, 6);
-  FIELD_AT(v_r7, s32, 104) = v_r6;
-  FIELD_AT(v_r7, u16, 6) = t28;
-  t29 = FIELD_AT(v_r7, u8, 35);
-  FIELD_AT(v_r7, u8, 35) = (254 & t29);
-  FIELD_AT(v_r10, u16, 362) = 200;
-  FIELD_AT((s32)gPartyState, u8, 530) = 0;
-  *(u8 *)v_r9 = 1;
-  FIELD_AT(v_r6, u8, 99) = 1;
-L_020099e8:
-  t30 = FIELD_AT(v_r6, u16, 6);
-  t31 = Math_Cosine(t30);
-  t32 = FIELD_AT(v_r6, s32, 48);
-  t33 = ((s32 (*)())(s32)IwramMulQ16)(t31, t32);
-  t34 = FIELD_AT(v_r6, s32, 8);
-  t35 = FIELD_AT(v_r6, u16, 6);
-  FIELD_AT(v_r6, s32, 8) = (t34 + t33);
-  t36 = Math_Sine(t35);
-  t37 = FIELD_AT(v_r6, s32, 48);
-  t38 = ((s32 (*)())(s32)IwramMulQ16)(t36, t37);
-  t39 = FIELD_AT(v_r6, s32, 16);
-  v_r0 = t38;
-  v_r3 = t39;
-  goto L_02009a1c;
-L_02009a1c:
-  FIELD_AT(v_r6, s32, 16) = (v_r3 + v_r0);
-  goto L_02009a3e;
-L_02009a22:
-  FIELD_AT(v_r6, u8, 99) = 0;
-  FIELD_AT(v_r6, s32, 108) = 0;
-  Func_02005490(v_r6, (s32)gData_02007044);
+struct ObjectRuntime *Object_GetById(s32 id);
+void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object, s32 speed);
+void Func_020056c0(s32 sound);
+s32 Func_020056a0(s32 x, s32 z, s32 layer);
+void Func_02005658(s32 *position);
+s32 Func_02001868(s32 *from, s32 *to);
+s32 GameFlag_Test(s32 flag);
+s32 Math_Cosine(s32 angle);
+s32 Math_Sine(s32 angle);
+void Func_02005490(struct ObjectRuntime *object, const s32 *script);
+
+void Func_02001894(struct ObjectRuntime *self) {
+  u8 *work = Ram_HeapSlots->eventWork;
+  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  s32 position[3];
+  s32 distance;
+  s32 near;
+
+  if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
+      *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
+    ObjectDispatch_SetAnimationSpeed(self, 0);
+    return;
+  }
+  ObjectDispatch_SetAnimationSpeed(self, 16);
+  if ((++*(u16 *)&self->action & 31) == 31)
+    Func_020056c0(231);
+  ((struct FieldSprite *)self->animation)->priority =
+      ((struct FieldSprite *)leader->animation)->priority;
+  if (Func_020056a0(self->x, self->z, 2) != 255) {
+    position[0] = self->x;
+    position[1] = self->y;
+    position[2] = self->z;
+    Func_02005658(position);
+    distance = position[0];
+    if (distance > 0x1100000)
+      goto stop;
+    if (distance < -0x200000)
+      goto stop;
+    {
+      if (*((u8 *)self + 0x62) == 0) {
+        distance = leader->y - self->y;
+        if (distance < 0)
+          distance = self->y - leader->y;
+        near = 0;
+        if (Func_02001868(&leader->x, &self->x) <= 12 && distance < 0xc0000)
+          near = 1;
+        if (near && !GameFlag_Test(260)) {
+          leader->angle = self->angle;
+          leader->linkedObject = self;
+          leader->priorityFlags &= ~1;
+          {
+            s32 delay = 200;
+            *(u16 *)(work + 362) = delay;
+          }
+          gPartyState.renderMode = 0;
+          *((u8 *)self + 0x62) = 1;
+          *((u8 *)self + 0x63) = 1;
+        }
+      }
+      self->x += Iwram_MulQ16(Math_Cosine(self->angle), self->speedLimit);
+      self->z += Iwram_MulQ16(Math_Sine(self->angle), self->speedLimit);
+      return;
+    }
+  }
+stop:
+  self->update = 0;
+  *((u8 *)self + 0x63) = 0;
+  Func_02005490(self, gData_02007044);
   Func_020056c0(228);
-  *(s32 *)(s32)Data_02007064 = 0;
-L_02009a3e:
-  return;
+  Data_02007064 = 0;
 }

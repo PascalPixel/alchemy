@@ -1,5 +1,5 @@
-// Draft, differ 60 of 131: overlay 69e's copy of the function drafted in
-// resource_698_c_020014dc.c (overlay 698's Func_020014dc), whose
+// Draft, differ 16 of 131: overlay 69e's copy of the function drafted in
+// resource_698_c_020014dc.c (overlay 698's Func_020014dc, differ 16 there), whose
 // header says what it is, what still differs and what was tried.
 #include "types.h"
 #include "ram_buffer.h"
@@ -49,18 +49,18 @@ void Func_020022b8(struct CellTarget *table, struct CellTargetEntry *entry) {
                                      0);
   Io_Write16(0xf1f, &REG_WINOUT);
   REG_DISPCNT |= 0x8000;
-  x = 0;
   table->shown = 1;
   Object_SetModeById(gPartyState.currentOwner, 28);
   FieldEvent_WaitFrames(16);
+  x = 0;
   do {
     if (x == 5)
       Func_02002a40(204);
     leader->scaleX += -0x400;
     leader->scaleY += -0x300;
     leader->y += -0x9999;
-    x++;
     WaitFrames(1);
+    x++;
   } while (x <= 39);
   Object_GetById(gPartyState.currentOwner)->animationKind = 0;
   table->shown = 0;

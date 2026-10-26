@@ -34,10 +34,10 @@ void Func_081a150c(void) {
   Scheduler_ResetTaskTable();
   Data_02007518 = 0;
   gData_0200751c = 0;
-  gData_02007520 = 0;
   Data_02007528 = 0;
   gScrollTarget = 0;
   Data_02007524 = 1;
+  gData_02007520 = 0;
   Data_02007514 = 0;
   Scheduler_AddOrUpdateCallback((s32)Func_081a133c, 0x480);
   Io_Write16(0x40, &REG_DISPCNT);

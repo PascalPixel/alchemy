@@ -32,7 +32,7 @@ SECTIONS
         "*/resource_654_overlay.o"(.text.x0200ad50)
         "*/games/tla/src/scene/shrine_of_the_sea_god/evente.o"(.text)
         "*/games/tla/src/scene/shrine_of_the_sea_god/eventf.o"(.text)
-        "*/resource_654_overlay.o"(.text.x0200b598)
+        "*/games/tla/src/scene/shrine_of_the_sea_god/s3598.o"(.text)
         "*/games/tla/src/scene/shrine_of_the_sea_god/eventg.o"(.text)
         "*/games/tla/src/scene/shrine_of_the_sea_god/import.o"(.text)
         "*/games/tla/src/scene/shrine_of_the_sea_god/data.o"(.data)

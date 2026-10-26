@@ -44,6 +44,7 @@ void Func_0200260c(struct ObjectRuntime *source, s32 x, s32 y, s32 z) {
   s16 *next = &work->next;
   struct SparkSprite *sprite = &work->sprites[*next];
   struct SparkState *state = &work->states[*next];
+  s32 speed;
 
   sprite->priority = Func_02002a24(source);
   sprite->unk1e = Func_02002a2c(source);
@@ -53,8 +54,10 @@ void Func_0200260c(struct ObjectRuntime *source, s32 x, s32 y, s32 z) {
   state->z = z;
   Vector_AddPolarOffsetFar(Random16Far() * 2 + 0x20000, angle, &state->x);
   state->velocityX = 0;
+  speed = (Random16Far() >> 1) + 0xc000;
   state->velocityZ = 0;
-  state->velocityY = (Random16Far() >> 1) + 0xc000;
+  state->velocityY = speed;
   Vector_AddPolarOffsetFar(Random16Far() >> 2, angle, &state->velocityX);
-  *next = (s16)(*next + 1) % 96;
+  *next = *next + 1;
+  *next = *next % 96;
 }

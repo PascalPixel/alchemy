@@ -51,7 +51,7 @@ void Func_020036a8(void) {
   s32 x = center->x;
   s32 z = center->z;
   s32 left, right, top, bottom;
-  s32 i;
+  u32 i;
 
   if (*(s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x960) <= 0x10000) {
     left = x - 0xa00000;

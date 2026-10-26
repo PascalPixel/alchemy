@@ -32,7 +32,6 @@ const u8 *Resource_GetTableEntry(u32 resourceId);
 void Graphics_LoadCharacterBlockAndPalette(u32 resourceId, s32 alternate) {
   const u8 *resourceData;
   const s16 *color;
-  u16 *grey;
   u32 paletteDestination;
   u32 paletteOffset;
   void *tileDestination;
@@ -61,19 +60,18 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resourceId, s32 alternate) {
   decoder(resourceData + 256, tileDestination, paletteOffset);
   MemFree(decoder);
 
-  color = (const s16 *)resourceData;
-  grey = gFlash_Handler3;
-  for (i = 127; i >= 0; i--) {
-    u32 value = *color++ << 16;
-    s32 blue = (value >> 26) & 0x1f;
-    s32 green = (value >> 21) & 0x1f;
+  for (i = 0; i < 128; i++) {
+    u32 value = *(const s16 *)resourceData << 16;
+    s32 blue = (u16)(value >> 26) & 0x1f;
+    s32 green = (u16)(value >> 21) & 0x1f;
     s32 red = (value & 0x1f0000) >> 16;
     s32 sum = (green * 2 + red) * 2 + blue;
 
+    resourceData += 2;
     blue = (sum + blue * 5) / 16;
     green = (sum + green * 5) / 16;
     red = (sum + red * 5) / 16;
-    *grey++ = blue << 10 | green << 5 | red;
+    gFlash_Handler3[i] = blue << 10 | green << 5 | red;
   }
   IO_WRITE_QUEUE_PUSH(paletteDestination, (u32)gFlash_Handler3, 0x84000040);
 }

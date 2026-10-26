@@ -1,16 +1,16 @@
-// Draft, differ 51 of 171: the Shrine of the Sea God's prepare step:
-// sets up actors 8 to 24 and the tiles the two flags 0x231 and 0x232 open.
-// Left: the native keeps the zero for the motion flags in r8 and the 2 in
-// r6, so it saves one register fewer.
-#include "../../../../games/tla/src/scene/shrine_of_the_sea_god/shrine_of_the_sea_god.h"
+#include "shrine_of_the_sea_god.h"
 #include "call.h"
 
 void Func_02002f88(s32 actor);
 void Func_02003b18(void);
 void Func_02003b20(s32 a, s32 flag, s32 b, s32 c);
 
+/// The Shrine of the Sea God's prepare step: sets up actors 8 to 24 and,
+/// for each of flags 0x231 and 0x232 that is set, copies its opened tiles
+/// and places actor 15 or 16 where it rests.
 void Func_02003598(void) {
   struct ShrineOfTheSeaGodObject *object;
+  struct ShrineOfTheSeaGodObject *lastObject;
 
   ((struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork)->mode17 = 1;
   Call1((void (*)())Func_02002f88, 8);
@@ -51,7 +51,10 @@ void Func_02003598(void) {
   object->motionFlags = 0;
   Call1((void (*)())Func_02003aa0, 23);
   Object_GetById(23)->motionFlags = 0;
-  object = Object_GetById(24);
+  /* FAKEMATCH(temporary): actor 24 fetched into its own variable; as
+   * object = Object_GetById(24), 51 of 171 instructions differ in tla-en. */
+  lastObject = Object_GetById(24);
+  object = lastObject;
   Call1((void (*)())Func_02003aa0, 24);
   object->priorityFlags |= 2;
   object->motionFlags = 0;

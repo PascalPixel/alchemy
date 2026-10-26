@@ -2,6 +2,16 @@
 #include "frame.h"
 #include "map.h"
 #include "ram_buffer.h"
+#include "edition.h"
+
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+// The European far-call tables give the terrain height's entry another name.
+s32 Func_08020190(s32 layer, s32 x, s32 z);
+#define Map_GetTerrainHeightFar Func_08020190
+#else
+s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
+#endif
 
 struct MoteParticle {
   u8 unk00[4];
@@ -33,7 +43,6 @@ struct MoteWork {
 
 u32 Random16(void);
 s32 GameFlag_Test(s32 flag);
-s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 void Func_080140d8(void *entry, s32 priority);
 
 /// The Broken Seal's FieldMotes_Update with 64 motes in the heap slot 0x74

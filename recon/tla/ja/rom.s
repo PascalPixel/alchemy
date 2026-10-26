@@ -2101,7 +2101,9 @@ Func_080e3698:
 Func_080e3d04:
 	.incbin "baserom.gba", 0x000e3cc0, 0x00000540
 	.section .rom.000e4428, "ax"
-	.incbin "baserom.gba", 0x000e4428, 0x00000240
+	.incbin "baserom.gba", 0x000e4428, 0x00000134
+	.section .rom.000e4564, "ax"
+	.incbin "baserom.gba", 0x000e4564, 0x00000104
 	.section .rom.000e46ec, "ax"
 	.balign 4
 	.global Func_080e4730

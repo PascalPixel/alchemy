@@ -41,10 +41,10 @@ Func_080c8750:
 	.thumb_func
 Object_SpawnFar:
 .ifdef TLA_EDITION_ES
-	overlay_veneer Map_TestSpecialTerrainPair
+	overlay_veneer Func_080dbcd8
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Map_TestSpecialTerrainPair
+	overlay_veneer Func_080dbcd8
 .else
 	overlay_veneer Object_Spawn
 .endif

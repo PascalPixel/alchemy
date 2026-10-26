@@ -1393,6 +1393,10 @@ Func_080caa4c:
 	.incbin "baserom.gba", 0x000cae5c, 0x00000110
 	.section .rom.000cb09c, "ax"
 	.balign 4
+	.global Func_080cb09c
+	.type Func_080cb09c, %function
+	.thumb_func
+Func_080cb09c:
 	.incbin "baserom.gba", 0x000cb09c, 0x0000062c
 	.section .rom.000cb91c, "ax"
 	.global Field_RunScene
@@ -1453,12 +1457,8 @@ Func_080eab98:
 	.thumb_func
 Func_080cdd80:
 	.incbin "baserom.gba", 0x000cdd80, 0x00000128
-	.section .rom.000cdfb0, "ax"
-	.global Event_FindFacingTrigger
-	.type Event_FindFacingTrigger, %function
-	.thumb_func
-Event_FindFacingTrigger:
-	.incbin "baserom.gba", 0x000cdfb0, 0x0000036c
+	.section .rom.000ce0aa, "ax"
+	.incbin "baserom.gba", 0x000ce0aa, 0x00000272
 	.section .rom.000ce31c, "ax"
 	.global Func_080ce31c
 	.type Func_080ce31c, %function
@@ -1738,12 +1738,6 @@ Func_080d67e8:
 	.thumb_func
 Func_080d69f4:
 	.incbin "baserom.gba", 0x000d69e8, 0x0000019c
-	.section .rom.000d6c54, "ax"
-	.global Func_080d6c60
-	.type Func_080d6c60, %function
-	.thumb_func
-Func_080d6c60:
-	.incbin "baserom.gba", 0x000d6c54, 0x000001f8
 	.section .rom.000d7028, "ax"
 	.global Func_080d7034
 	.type Func_080d7034, %function
@@ -1974,14 +1968,6 @@ Func_080dbca8:
 	.global Func_080dbcc0
 Func_080dbcc0:
 	.incbin "baserom.gba", 0x000dbcb4, 0x00000018
-	.section .rom.000dbccc, "ax"
-	.global Func_080dbcd8
-Func_080dbcd8:
-	.global Map_TestSpecialTerrainPair
-	.type Map_TestSpecialTerrainPair, %function
-	.thumb_func
-Map_TestSpecialTerrainPair:
-	.incbin "baserom.gba", 0x000dbccc, 0x00000070
 	.section .rom.000dbd3c, "ax"
 	.global Func_080e25e8
 	.type Func_080e25e8, %function
@@ -2044,12 +2030,6 @@ Func_080dbe80:
 	.thumb_func
 BattleEffect_GetObjectPriority:
 	.incbin "baserom.gba", 0x000dc1a4, 0x00000094
-	.section .rom.000dc288, "ax"
-	.global BattleEffect_InitializeSharedScene
-	.type BattleEffect_InitializeSharedScene, %function
-	.thumb_func
-BattleEffect_InitializeSharedScene:
-	.incbin "baserom.gba", 0x000dc288, 0x000000e8
 	.section .rom.000dc404, "ax"
 	.global BattleEffect_LoadActionEffectResources
 	.type BattleEffect_LoadActionEffectResources, %function
@@ -2265,10 +2245,8 @@ Func_080e3d04:
 	.thumb_func
 Func_080e137c:
 	.incbin "baserom.gba", 0x000e4238, 0x00000090
-	.section .rom.000e42c8, "ax"
-	.global Func_080e42d4
-Func_080e42d4:
-	.incbin "baserom.gba", 0x000e42c8, 0x000002cc
+	.section .rom.000e4460, "ax"
+	.incbin "baserom.gba", 0x000e4460, 0x00000134
 	.section .rom.000e459c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000e459c, 0x00000104
@@ -2315,15 +2293,18 @@ Func_080e68d0:
 	.type Func_080e3698, %function
 	.thumb_func
 Func_080e3698:
-	.incbin "baserom.gba", 0x000e70ec, 0x00000720
-	.section .rom.000e780c, "ax"
-	.global Func_080e7818
-Func_080e7818:
-	.incbin "baserom.gba", 0x000e780c, 0x00000024
-	.section .rom.000e7830, "ax"
-	.global BattleEffect_CallEffect22
-BattleEffect_CallEffect22:
-	.incbin "baserom.gba", 0x000e7830, 0x00000758
+	.incbin "baserom.gba", 0x000e70ec, 0x000003e0
+	.global Func_080e74d8
+	.type Func_080e74d8, %function
+	.thumb_func
+Func_080e74d8:
+	.incbin "baserom.gba", 0x000e74cc, 0x0000032c
+	.section .rom.000e7838, "ax"
+	.global Func_080e7844
+	.type Func_080e7844, %function
+	.thumb_func
+Func_080e7844:
+	.incbin "baserom.gba", 0x000e7838, 0x00000750
 	.section .rom.000e8070, "ax"
 	.incbin "baserom.gba", 0x000e8070, 0x00000748
 	.section .rom.000e87b8, "ax"
@@ -2811,6 +2792,10 @@ Func_0810b7b4:
 Func_0810bdf4:
 	.incbin "baserom.gba", 0x0010bde8, 0x00000048
 	.section .rom.00118070, "ax"
+	.global BattleUnit_GetEffectHeightFar
+	.type BattleUnit_GetEffectHeightFar, %function
+	.thumb_func
+BattleUnit_GetEffectHeightFar:
 	.incbin "baserom.gba", 0x00118070, 0x00000008
 	.section .rom.00118078, "ax"
 	.global BattleMotion_ApproachTargetFar
@@ -3468,11 +3453,6 @@ BattleEffect_RunSpiderWeb:
 	.thumb_func
 BattleEffect_RunAzul:
 	.incbin "baserom.gba", 0x0015cde8, 0x00001388
-	.section .rom.0015e288, "ax"
-	.balign 4
-	.global BattleUnit_ProjectToScreen
-BattleUnit_ProjectToScreen:
-	.incbin "baserom.gba", 0x0015e288, 0x00000074
 	.section .rom.0015e3ac, "ax"
 	.balign 4
 	.global Func_0815e3ac

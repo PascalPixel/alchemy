@@ -2,8 +2,14 @@
 #include "ram_buffer.h"
 #include "frame.h"
 #include "fx_scene.h"
+#include "edition.h"
 
 s32 GameFlag_Test(s32 flag);
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
+// The Spanish and Italian scaffolds label this function with the name their
+// far-call table gives the slot that reaches it.
+#define Field_StartColorTransition BattleEffect_GetObjectPriority
+#endif
 void Field_StartColorTransition(s32 frames, s32 color);
 
 /// The eight tints a field Psynergy washes the screen in (BGR555, fxdata.c).

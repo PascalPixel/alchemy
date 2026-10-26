@@ -21,12 +21,10 @@ void Render_ResetTransformState(void);
 void Transform_SetLookAt(u8 *source, u8 *destination);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 
-// The Japanese, French and Italian far-call tables do not reach
-// BattleUnit_GetEffectHeightFar under that name (Japanese names another slot,
-// the other two keep the slot unnamed on their scaffold); those three editions
-// keep this function on their scaffold (S4).
-#if (LANGUAGE != LANGUAGE_JAPANESE) && (LANGUAGE != LANGUAGE_FRENCH) &&                    \
-    (LANGUAGE != LANGUAGE_ITALIAN)
+// The Japanese far-call table does not reach BattleUnit_GetEffectHeightFar
+// under that name (that name labels another slot there), so Japanese keeps
+// this function on its scaffold.
+#if LANGUAGE != LANGUAGE_JAPANESE
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   u8 *camera;
   s32 *object;

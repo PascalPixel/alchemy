@@ -2105,8 +2105,6 @@ Func_0810abf0:
 	.thumb_func
 Func_0810b5c4:
 	.incbin "baserom.gba", 0x001135c8, 0x000000f8
-	.section .rom.001136d0, "ax"
-	.incbin "baserom.gba", 0x001136d0, 0x000000d0
 	.section .rom.001137b8, "ax"
 	.balign 4
 	.global Func_0810b7b4

@@ -1,3 +1,8 @@
+// Near miss, differ 20 of 551 (2026-10-26): the twin of The Broken Seal's
+// FieldEffect_SteerLiftedTarget, now with its 20 shard pointers kept on the
+// stack (the native's 128-byte frame). Only instruction order is left: after
+// a store the native issues another instruction before the next load, in the
+// position setups and the steering loop.
 #include "types.h"
 #include "object_dispatch.h"
 #include "input.h"
@@ -92,6 +97,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
   struct EffectWork *work;
   struct FxObject *source;
   struct FxObject *target;
+  struct FxObject *shards[20];
   struct FxPosition position;
   struct FxObject *anchors[2];
   struct FxObject *object;
@@ -244,8 +250,11 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
   p->y = target->y + 0x100000;
   p->z = target->z;
   {
+    struct FxObject **walk = shards;
+
     for (i = 0; i < 20; i++) {
       object = Object_Spawn(0x2a1, p->x, p->y, p->z);
+      *walk++ = object;
       if (object != NULL) {
         ObjectDispatch_InitializeFar((struct DispatchObject *)object,
                                      (u32)gData_080f0e78);

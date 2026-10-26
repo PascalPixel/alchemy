@@ -1,4 +1,4 @@
-// Draft, differ 33 of 171 (2026-10-18; 59 before): order and register choice.
+// Draft, differ 30 of 171 (2026-10-26, statements reordered) (2026-10-18; 59 before): order and register choice.
 // The held unsigned kind (as in BattleEffect_InitializeSharedScene) and a
 // halfword 17 (found by permuter) are tagged devices. Left: the prologue
 // loads (the owner spilled after the 0x80 slot here), the slot loop's two
@@ -65,9 +65,9 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 void BattleEffect_CleanupSceneObjects(void) {
   struct CleanupWork *work = Ram_HeapSlots->effectWork;
   s8 *event = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *owner = work->owner;
   s8 *block = Ram_HeapSlots->block32;
   struct CleanupMap *map = (struct CleanupMap *)Ram_HeapSlots->mapWork;
+  struct ObjectRuntime *owner = work->owner;
   struct CleanupSlot *slot = work->slots;
   s32 i;
   s32 raw;

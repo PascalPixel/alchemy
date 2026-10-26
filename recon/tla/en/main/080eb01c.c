@@ -1,20 +1,15 @@
-// Near miss, differ 38 of 304 (2026-10-15, written from the listing; ☀️ has no
+// Near miss, differ 8 of 304 (2026-10-26, written from the listing; ☀️ has no
 // twin, though field.c's Render_ApplyProjectedPlacement builds its affine
-// matrix the same way). What remains: the prologue loads scaleY and scaleX
-// back to back where this stores scaleY first; the screen box's left and top
-// take r4/r5 here and r5/r6 in the ROM (the ROM never uses r4 in this
-// function, as if they shared a register with something live across the
-// MulQ16 calls); and the ROM stores the OAM y and x before the affine mode and
-// matrix yet writes the masked matrix back to its stack slot, which this does
-// only with the matrix stored first. Measured: declaration order sets the
-// spill slots (affineMode, matrix, then x, y, scaleY: 115 -> 63); the height
-// and pivot products with scaleY second (63 -> 55); separate screen x and y
-// (55 -> 61, kept for the store order); the four OAM stores in 17 orders
-// (affine mode, matrix, y, x best: 50); permute 10 min, 2 jobs: width times
-// scaleX (50 -> 38). Worse: the half sizes reused for the screen box (126),
-// the matrix as u32/u8/u16/s16 (61-73), matrix &= 31 before its store (65),
-// u32 OAM bitfields (same). The rotated corner is (cos - sin) times the half
-// width and (cos + sin) times the half height, as the ROM computes it.
+// matrix the same way). Left: instruction order after stores, where the native
+// issues another instruction before the next load (the prologue's OAM sizes,
+// the height product). Measured: declaration order sets the spill slots
+// (affineMode, matrix, then x, y, scaleX, scaleY); the OAM x and y stored right
+// after the screen box, before the affine mode and matrix (34 -> 8); the
+// height and pivot products with scaleY second; width times scaleX. Worse:
+// the half sizes reused for the screen box (126), the matrix as u32/u8/u16/s16
+// (61-73), matrix &= 31 before its store (65), u32 OAM bitfields (same). The
+// rotated corner is (cos - sin) times the half width and (cos + sin) times the
+// half height, as the ROM computes it.
 #include "types.h"
 #include "iwram_call.h"
 #include <affine.h> // not the stale copy beside this draft
@@ -35,8 +30,8 @@ void Func_080eb01c(struct EffectSprite *sprite) {
   s32 matrix;
   s32 x = sprite->x;
   s32 y = sprite->y;
-  s32 scaleY = sprite->scaleY;
   s32 scaleX = sprite->scaleX;
+  s32 scaleY = sprite->scaleY;
   s32 width = sprite->width;
   s32 height = sprite->height;
   s32 left;
@@ -108,9 +103,9 @@ void Func_080eb01c(struct EffectSprite *sprite) {
       screenY > 159)
     return;
 
+  sprite->oam.x = screenX;
+  sprite->oam.y = screenY;
   sprite->oam.affineMode = affineMode;
   sprite->oam.matrix = matrix;
-  sprite->oam.y = screenY;
-  sprite->oam.x = screenX;
   Func_080140d8(sprite, sprite->depth);
 }

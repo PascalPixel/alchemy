@@ -1,13 +1,11 @@
-// Draft, differ 64 of 308 (2026-10-18): Func_080e09c0, the effect that
+// Near miss, differ 8 of 308 (2026-10-26): Func_080e09c0, the effect that
 // lifts an object (363) over the caster, drops it, and, unless the scene is
 // enabled, runs Func_080e0618's five phases as a frame callback until they
-// finish (999). Left: the native copies the work block to r10 only after it
-// has read the event and scene slots, so the event takes r2; this copies it
-// first and the event takes r0, which moves the registers of the opening and
-// the object copies after it. The sprite flags in the order priority,
-// palette, palette256 measure best (66-96 otherwise). The two resources are
-// 0x1ea and 0x1eb in directory.s (FieldEffect_SparkleFade,
-// FieldEffect_StarSparkleFade), still unnamed there.
+// finish (999). The event slot is read after the scene slot and the sprite's
+// palette set after its palette256 flag (60 -> 8). Left: instruction order after
+// stores, where the native issues another instruction before the next load.
+// The two resources are 0x1ea and 0x1eb in directory.s
+// (FieldEffect_SparkleFade, FieldEffect_StarSparkleFade), still unnamed there.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -72,8 +70,8 @@ extern char ResourceId_StarSparkleFade;
 
 void Func_080e09c0(void) {
   struct ScatterWork *work = Runtime_AllocateHeapBlock(92, 0x2114);
-  struct ScatterEvent *event = Ram_HeapSlots->eventWork;
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
+  struct ScatterEvent *event = Ram_HeapSlots->eventWork;
   struct ObjectRuntime *caster = scene->mainObject;
   struct ObjectRuntime *object;
   struct EffectSprite *sprite;
@@ -112,8 +110,8 @@ void Func_080e09c0(void) {
       Func_080eaf98(sprite, 4, 4, 0, tileA);
       sprite->depth = 250;
       sprite->oam.priority = 0;
-      sprite->oam.palette = 0;
       sprite->oam.palette256 = 1;
+      sprite->oam.palette = 0;
       particle->x = object->x;
       particle->y = object->y;
       particle->z = object->z;

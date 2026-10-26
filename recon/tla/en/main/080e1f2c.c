@@ -1,3 +1,4 @@
+// Near miss, differ 34 (2026-10-26, statements reordered).
 // First draft of Func_080e1f2c, written from the listing: a bow game on the
 // field (resources 0x1e7, FieldEffect_BowDraw, and 0x1e6,
 // FieldEffect_FlamingArrow): the bow and arrow sprites before the caster, the
@@ -98,8 +99,8 @@ void Func_080e1f2c(void) {
                         work->tiles);
   bowSlot = Resource_FindFreeEntry();
   tile = VramCache_Load(bowSlot, 0x1800, work->tiles);
-  sprite = &work->bow;
   work->bowTile = tile;
+  sprite = &work->bow;
   Func_080eaf98(sprite, 16, 16, 0x80000000, tile);
   sprite->oam.palette256 = 1;
   sprite->oam.palette = 0;
@@ -107,8 +108,8 @@ void Func_080e1f2c(void) {
   sprite->depth = BattleEffect_GetObjectDepth(scene->mainObject) + 1;
   sprite->scaleY = sprite->scaleX = 0x6666;
   sprite->angle = scene->angle;
-  pos.x = scene->mainObject->x;
   pos.z = scene->mainObject->z;
+  pos.x = scene->mainObject->x;
   vector = &work->bowPosition;
   Vector_AddPolarOffset(0x80000, scene->angle, &pos);
   vector->x = pos.x;
@@ -127,8 +128,8 @@ void Func_080e1f2c(void) {
   sprite->depth = BattleEffect_GetObjectDepth(scene->mainObject) + 2;
   sprite->scaleY = sprite->scaleX = 0;
   sprite->angle = scene->angle;
-  pos.x = scene->mainObject->x;
   pos.z = scene->mainObject->z;
+  pos.x = scene->mainObject->x;
   vector = &work->arrowPosition;
   Vector_AddPolarOffset(0x120000, scene->angle, &pos);
   vector->x = pos.x;

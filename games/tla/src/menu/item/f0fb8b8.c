@@ -1,6 +1,23 @@
 #include "types.h"
 
 #include "item.h"
+#include "edition.h"
+
+// The headings are indented in English; Spanish and Italian start all three at
+// the window's left edge, French the uses heading only.
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
+#define ITEM_DETAILS_HEADING_X 0
+#define ITEM_DETAILS_USES_X 0
+#define ITEM_DETAILS_NUMBER_X 0
+#elif LANGUAGE == LANGUAGE_FRENCH
+#define ITEM_DETAILS_HEADING_X 8
+#define ITEM_DETAILS_USES_X 0
+#define ITEM_DETAILS_NUMBER_X 16
+#else
+#define ITEM_DETAILS_HEADING_X 8
+#define ITEM_DETAILS_USES_X 16
+#define ITEM_DETAILS_NUMBER_X 16
+#endif
 
 extern u8 MsgEquipEffectHeading[], MsgStatLabel[], MsgDefenseLabel[],
     MsgEquipEffectName[];
@@ -8,7 +25,7 @@ extern u8 MsgItemCursed[], MsgBestowsPsynergy[], MsgUsesHeading[],
     MsgSingleUse[];
 extern u8 MsgBrokenNotice[], MsgMightBreak[], MsgNumberHeading[];
 extern u8 MsgRareItem[], MsgImportantItem[], MsgDetailsUnknown[];
-extern u8 gData_080af21c[], gData_080af220[];
+extern u8 gMenu_PointString[];
 
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiText_DrawStringInWindowFar(u8 *text, s32 window, s32 x, s32 y);
@@ -16,10 +33,15 @@ void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x,
                                   s32 y);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y,
                                  s32 palette);
-void UiWork_PushValueSlotFar(u32 value, u32 slot);
+void UiText_DrawQuantity(s32 value, s32 kind);
 void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y);
 
-void ItemMenu_DrawItemDetails(s32 window, s32 item) {
+/// Describes an item (an inventory entry) in window, one 8-pixel row a line:
+/// its equip bonuses and effects, a curse, the Psynergy it bestows, its uses
+/// and its count, or failing all of these whether it is rare or important.
+/// ItemMenu_DrawItemDetails passes unused -1. The twin of The Broken Seal's
+/// ItemMenu_DrawItemDetails.
+void Func_080fb8b8(s32 window, s32 item, s32 unused) {
   struct ItemDefinition *def;
   s32 i;
   s32 found;
@@ -32,8 +54,7 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item) {
   def = Item_Get(item & 0x1ff);
   if (def->type != 0) {
     found = 0;
-    /* FAKEMATCH: the two bonus fields are tested as one masked word. */
-    if ((*(u32 *)&def->primaryBonus & 0xffffff) == 0) {
+    if (def->primaryBonus == 0 && def->secondaryBonus == 0) {
       for (i = 0; i < 4; i++) {
         if (def->effects[i].kind != 0 || def->useType == 3) {
           found = 1;
@@ -44,20 +65,20 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item) {
       found = 1;
     }
     if (found == 1) {
-      UiText_DrawCharacterAtOffsetFar((s32)MsgEquipEffectHeading, window, 16,
-                                      0);
+      UiText_DrawCharacterAtOffsetFar((s32)MsgEquipEffectHeading, window,
+                                      ITEM_DETAILS_HEADING_X, 0);
       row = 1;
     }
     if (def->primaryBonus != 0) {
       UiText_DrawCharacterAtOffsetFar((s32)MsgStatLabel, window, 0, row * 8);
       amount = def->primaryBonus;
-      ItemMenu_DrawStat(amount, 3, window, 64, row * 8);
+      ItemMenu_DrawStat(amount, 3, window, 72, row * 8);
       row++;
     }
     if (def->secondaryBonus != 0) {
       UiText_DrawCharacterAtOffsetFar((s32)MsgDefenseLabel, window, 0, row * 8);
       amount = def->secondaryBonus;
-      ItemMenu_DrawStat(amount, 3, window, 64, row * 8);
+      ItemMenu_DrawStat(amount, 3, window, 72, row * 8);
       row++;
     }
   }
@@ -77,7 +98,7 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item) {
     case 26:
       UiText_DrawCharacterAtOffsetFar(
           def->effects[i].kind + (s32)MsgEquipEffectName, window, 0, row * 8);
-      ItemMenu_DrawStat(amount, 3, window, 64, row * 8);
+      ItemMenu_DrawStat(amount, 3, window, 72, row * 8);
       break;
     case 15:
     case 16:
@@ -91,7 +112,7 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item) {
           window, (u8)((def->effects[i].kind - 15) % 4) + 1, 0, row, 2);
       UiText_DrawCharacterAtOffsetFar(
           def->effects[i].kind + (s32)MsgEquipEffectName, window, 8, row * 8);
-      ItemMenu_DrawStat(amount, 3, window, 64, row * 8);
+      ItemMenu_DrawStat(amount, 3, window, 72, row * 8);
       break;
     case 7:
     case 8:
@@ -103,14 +124,13 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item) {
     case 14:
       UiText_DrawCharacterAtOffsetFar(
           def->effects[i].kind + (s32)MsgEquipEffectName, window, 0, row * 8);
-      UiText_DrawStringInWindowFar(gData_080af21c, window, 64, row * 8);
       if (amount > 9) {
         UiText_DrawNumberInWindowFar(1, 1, window, 72, row * 8);
-        UiText_DrawStringInWindowFar(gData_080af220, window, 80, row * 8);
+        UiText_DrawStringInWindowFar(gMenu_PointString, window, 80, row * 8);
         UiText_DrawNumberInWindowFar(amount - 10, 1, window, 88, row * 8);
       } else {
         UiText_DrawNumberInWindowFar(0, 1, window, 72, row * 8);
-        UiText_DrawStringInWindowFar(gData_080af220, window, 80, row * 8);
+        UiText_DrawStringInWindowFar(gMenu_PointString, window, 80, row * 8);
         UiText_DrawNumberInWindowFar(amount, 1, window, 88, row * 8);
       }
       break;
@@ -135,7 +155,8 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item) {
   }
   if (def->useType != 4 && def->useType != 0) {
     if (!consumable) {
-      UiText_DrawCharacterAtOffsetFar((s32)MsgUsesHeading, window, 16, row * 8);
+      UiText_DrawCharacterAtOffsetFar((s32)MsgUsesHeading, window,
+                                      ITEM_DETAILS_USES_X, row * 8);
       row++;
     }
     switch (def->useType) {
@@ -171,10 +192,10 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item) {
     if (row != 0)
       row++;
     i = (s32)MsgNumberHeading;
-    UiText_DrawCharacterAtOffsetFar(i, window, 16, row * 8);
+    UiText_DrawCharacterAtOffsetFar(i, window, ITEM_DETAILS_NUMBER_X, row * 8);
     row++;
     amount = (item & 0xf800) / 2048;
-    UiWork_PushValueSlotFar(amount + 1, 5);
+    UiText_DrawQuantity(amount + 1, 5);
     UiText_DrawCharacterAtOffsetFar(i + 1, window, 0, row * 8);
     row++;
   }

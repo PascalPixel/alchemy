@@ -18595,7 +18595,7 @@ msgctxt "message"
 msgid "04559"
 msgstr "Ein verfluchtes Item."
 
-msgctxt "message"
+msgctxt "MsgConfirmDrop"
 msgid "04560"
 msgstr "Willst du das"
 
@@ -18947,7 +18947,7 @@ msgctxt "message"
 msgid "04647"
 msgstr "Ring"
 
-msgctxt "message"
+msgctxt "MsgYes"
 msgid "04648"
 msgstr "Ja"
 

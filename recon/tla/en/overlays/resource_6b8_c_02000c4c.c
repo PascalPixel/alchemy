@@ -1,67 +1,71 @@
-// Draft of overlay 6b8's Func_02000c4c, translated from its listing: differ
-// 122 of 112. Left: its shape: 106 instructions against the listing's 112.
+// Overlay 6b8's copy of resource_694_c_02003e54.c, with this overlay's symbols:
+// differ 86 of 112. That draft's header follows. Draft, differ 86 of 112: sets
+// up an object's four 16 by 16 sprites in work: loads their tiles
+// (gData_02000f44, 256 bytes) into a free VRAM entry, resets the work's
+// counters (999, 999, 0), links object and work both ways, hooks the object's
+// update (Func_02000ad0) and gives each sprite the object's priority.
 #include "types.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Func_02000ee4();
-s32 Func_02000ef4();
-s32 Resource_FindFreeEntry();
-s32 VramCache_Load();
-extern u8 Func_02000ad0[];
-extern u8 gData_02000f44[];
-extern u8 gResourceTableEntries[];
+#include "object_runtime.h"
 
-void Func_02000c4c(s32 p0, s32 p1) {
-  s32 v_r8, v_r0, v_r3, v_r6, v_r7, v_r5, v_r10, v_r11, v_r9, t0;
-  s32 t2, t3, t5, t6, t7, t8;
+struct ResourceTableEntry {
+  u16 unk0;
+  u16 offset; ///< in bytes; its tile is offset / 32
+};
 
-  t0 = Resource_FindFreeEntry();
-  v_r8 = (p1 + 164);
-  *(u16 *)v_r8 = t0;
-  VramCache_Load(((t0 << 16) >> 16), 0x100, (s32)gData_02000f44);
-  FIELD_AT(p1, u16, 166) = 0;
-  FIELD_AT(p1, u16, 160) = 0x3e7;
-  FIELD_AT(p1, u16, 162) = 0x3e7;
-  FIELD_AT(p1, s32, 168) = p0;
-  FIELD_AT(p0, u8, 98) = 0;
-  v_r5 = 0;
-  v_r7 = p1;
-  v_r6 = p0;
-  v_r3 = (p0 + 99);
-  v_r0 = 0;
-  goto L_02008cb0;
-L_02008cb0:
-  *(u8 *)v_r3 = v_r0;
-  FIELD_AT(v_r6, s32, 108) = (s32)Func_02000ad0;
-  t2 = *(s16 *)v_r8;
-  t3 = FIELD_AT(((t2 << 2) + (s32)gResourceTableEntries), u16, 2);
-  FIELD_AT(v_r6, s32, 104) = v_r7;
-  v_r9 = v_r5;
-  v_r11 = ((u32)t3 >> 5);
-  v_r10 = v_r5;
-L_02008cce:
-  v_r8 = 1;
-  v_r5 = (v_r10 + v_r7);
-L_02008cd6:
-  Func_02000ee4(v_r5, 16, 16, 0x80004000, v_r11);
-  t5 = FIELD_AT(v_r5, u8, 5);
-  t6 = FIELD_AT(v_r5, u8, 9);
-  FIELD_AT(v_r5, u8, 5) = (t5 & -0x21);
-  FIELD_AT(v_r5, u8, 9) = (15 & t6);
-  t7 = Func_02000ef4(v_r6);
-  t8 = FIELD_AT(v_r5, u8, 9);
-  FIELD_AT(v_r5, u8, 9) = ((t8 & -13) | ((t7 & 3) << 2));
-  v_r8 = (v_r8 - 1);
-  v_r5 = (v_r5 + 40);
-  if (v_r8 >= 0)
-    goto L_02008cd6;
-  v_r9 = (v_r9 + 1);
-  v_r10 = (v_r10 + 80);
-  if (v_r9 <= 1)
-    goto L_02008cce;
-  return;
+struct SparkleSprite {
+  u8 unk00[5];
+  u8 attr5;
+  u8 unk06[2];
+  u16 tile : 10;
+  u16 priority : 2;
+  u16 palette : 4;
+  u8 unk0a[0x1e];
+};
+
+struct SparkleWork {
+  struct SparkleSprite sprites[4];
+  u16 unka0;
+  u16 unka2;
+  s16 vramEntry;
+  u16 unka6;
+  struct ObjectRuntime *object;
+};
+
+extern const u8 gData_02000f44[];
+extern struct ResourceTableEntry gResourceTableEntries[];
+
+s32 Resource_FindFreeEntry(void);
+s32 VramCache_Load(s32 entry, s32 size, const void *data);
+void Func_02000ee4(struct SparkleSprite *sprite, s32 width, s32 height,
+                   u32 attributes, s32 tile);
+s32 Func_02000ef4(struct ObjectRuntime *object);
+void Func_02000ad0(void);
+
+void Func_02000c4c(struct ObjectRuntime *object, struct SparkleWork *work) {
+  struct SparkleSprite *sprite;
+  s32 tile;
+  s32 row;
+  s32 col;
+
+  work->vramEntry = Resource_FindFreeEntry();
+  VramCache_Load(work->vramEntry, 256, gData_02000f44);
+  work->unka6 = 0;
+  work->unka0 = 999;
+  work->unka2 = 999;
+  work->object = object;
+  ((u8 *)object)[0x62] = 0;
+  ((u8 *)object)[0x63] = 0;
+  object->update = Func_02000ad0;
+  tile = gResourceTableEntries[work->vramEntry].offset >> 5;
+  object->linkedObject = (struct ObjectRuntime *)work;
+  for (row = 0; row <= 1; row++) {
+    sprite = &work->sprites[row * 2];
+    for (col = 1; col >= 0; col--) {
+      Func_02000ee4(sprite, 16, 16, 0x80004000, tile);
+      ((u8 *)sprite)[5] &= ~32;
+      ((u8 *)sprite)[9] &= 15;
+      sprite->priority = Func_02000ef4(object) & 3;
+      sprite++;
+    }
+  }
 }

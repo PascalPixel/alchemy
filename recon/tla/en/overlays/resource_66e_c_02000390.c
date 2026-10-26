@@ -1,6 +1,6 @@
-// Draft, differ 150 of 376: the Naribwe fortune teller's reading of an item
-// (object 10): the player picks an item to show (Func_020011a0, its unit
-// and slot; cancelling asks MsgShallIGive until refused); the item is set
+// Draft, differ 131 of 376 (was 150): the Naribwe fortune teller's reading of
+// an item (object 10): the player picks an item to show (Func_020011a0, its
+// unit and slot; cancelling asks MsgShallIGive until refused); the item is set
 // on the table (object 18, Func_020010a0) and named (MsgPlacedOnThe); she
 // asks MsgAreYouPrepared, and a no takes the item back and asks whether to
 // show another (MsgAreYouPrepared + 2); on a yes the screen darkens, she dances
@@ -9,14 +9,16 @@
 // (MsgAreYouPrepared + 29, then + 30 or + 31 by flag 0x940), others by their
 // kind (6 Func_020007b4, 1 Func_02000760, 2 to 5 Func_02000838, else
 // Func_02000878); the reading costs 20 coins. The Japanese edition is the same
-// with its own message numbers. Left: the native saves only r5 to r7 (the
-// unit's data in r5, MsgAreYouPrepared in r6, &gPartyState.currentOwner in r7),
+// with its own message numbers. The calls whose constants the native builds
+// afresh go through CallN. Left: the native saves only r5 to r7 (the unit's
+// data in r5, MsgAreYouPrepared in r6, &gPartyState.currentOwner in r7),
 // forms &unit and &slot at each call and reads the item as base plus offset,
 // where the draft keeps them in r8 to r11 and adds the slot to the base first.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "text/msg_ids.h"
+#include "lib/call.h"
 
 void Func_02001138(const u8 *message);
 void Func_02001148(s32 speaker, s32 flags);
@@ -80,7 +82,7 @@ ask:
   unitData = Unit_Get(unit);
   Func_020010b8(ITEM(unitData, slot));
   Func_020010a0(Object_GetById(18), ITEM(unitData, slot));
-  Func_02001108(18, 0x2a00000, 0x680000);
+  Call3((void (*)())Func_02001108, 18, 0x2a00000, 0x680000);
   FieldEvent_WaitFrames(60);
   Func_020010b0(ITEM(unitData, slot), 2);
   UiText_ShowPositionedMessageAndWait(MsgPlacedOnThe, 1);
@@ -104,7 +106,7 @@ bye:
 read:
   Func_02001138(message + 4);
   Func_02001148(10, 0);
-  Func_02001170(0x10000, 0);
+  Call2((void (*)())Func_02001170, 0x10000, 0);
   FieldEvent_WaitFrames(30);
   Func_02001168(0x40250d, 1);
   Func_02001178(30);
@@ -128,13 +130,13 @@ read:
   Func_020011a8(11);
   Func_02001168(0x10000, 1);
   Func_02001178(30);
-  Func_02001108(20, 0x2a00000, 0x680000);
+  Call3((void (*)())Func_02001108, 20, 0x2a00000, 0x680000);
   Func_020011a8(0x90);
   Object_SetModeById(20, 2);
   ObjectMotion_WaitForAnimationChange(20);
   Func_02001108(20, 0, 0);
   FieldEvent_WaitFrames(4);
-  Func_02001108(19, 0x2a00000, 0x680000);
+  Call3((void (*)())Func_02001108, 19, 0x2a00000, 0x680000);
   Object_SetModeById(19, 4);
   ObjectMotion_WaitForAnimationChange(19);
   FieldEvent_WaitFrames(15);

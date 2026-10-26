@@ -1,12 +1,16 @@
-// Draft, differ 81 of 169: when actor `id` stands at x 76 and actor 15 has
-// reached x 76 too, inside an event: the actor rocks over for 18 frames,
-// is thrown down to (1193, 530) with the screen shaking (cues 188 and 141),
-// lands in a cloud (type 276, Func_020001ec), plays cue 154 and mode 3;
-// actor 15 is made to stand in front and flag 0x884 is set. Left: the native keeps the sprite's rotation address and 0xcccc in high registers, reuses the zero in r5 for the cleared update and orders the options' stores otherwise.
+// Draft, differ 63 of 169 (was 81): when actor `id` stands at x 76 and actor
+// 15 has reached x 76 too, inside an event: the actor rocks over for 18
+// frames, is thrown down to (1193, 530) with the screen shaking (cues 188 and
+// 141), lands in a cloud (type 276, Func_020001ec), plays cue 154 and mode 3;
+// actor 15 is made to stand in front and flag 0x884 is set. The calls whose
+// constants the native builds afresh go through CallN. Left: the native keeps
+// the sprite's rotation address and 0xcccc in high registers, reuses the zero
+// in r5 for the cleared update and orders the options' stores otherwise.
 #include "types.h"
 #include "object_runtime.h"
 #include "field_sprite.h"
 #include "system/field_effect.h"
+#include "lib/call.h"
 
 struct ObjectRuntime *Object_GetById(u32 id);
 void Func_0200120c(void);
@@ -40,7 +44,7 @@ void Func_020003f8(s32 unused, s32 id) {
     return;
   Func_0200120c();
   Func_020012e4(0);
-  Func_020011d4(74, 31, 1, 1, 74, 33);
+  Call6((void (*)())Func_020011d4, 74, 31, 1, 1, 74, 33);
   if (Object_GetById(15)->x >> 20 == 76) {
     actor->motionFlags = 0;
     actor->collisionFlags = 0;
@@ -60,9 +64,9 @@ void Func_020003f8(s32 unused, s32 id) {
     ObjectMotion_CommitCurrentPositionAndActivate(id);
     Func_020003dc(actor, 0);
     Func_0200131c(188);
-    Func_020011f4(0x50000, 0x50000, 0x10000);
+    Call3((void (*)())Func_020011f4, 0x50000, 0x50000, 0x10000);
     Func_0200131c(141);
-    Func_020011f4(-1, -1, 0xe666);
+    Call3((void (*)())Func_020011f4, -1, -1, 0xe666);
     ((struct FieldSprite *)actor->animation)->rotation = 0x1000;
     options.type = 276;
     actor->update = 0;

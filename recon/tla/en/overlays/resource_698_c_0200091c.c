@@ -1,72 +1,61 @@
+// Draft of overlay 698's Func_0200091c, in 11 overlays of the 698 family:
+// differ 10 of 165. Sets objects 9, 10, 23 and 24 on their marks and grounds
+// them, then shifts and turns them for flags 2570 and 2571 (and raises them
+// when both are set). The sprite of object 23 is read once at the start, as
+// the native keeps it in r8; the call layer keeps each call's constants apart.
+// Left: five store-to-load rows: after each store the native loads the next
+// pool constant before the load through another object (ldr r2, =K; ldr r3,
+// [r5, #12]), where this loads the field first. Tried: K + c->y, an empty asm
+// before each, the constant through an asm temporary (10 to 14).
 #include "types.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
+#include "object_runtime.h"
+#include "field_sprite.h"
 #include "call.h"
+
 s32 Object_GetById();
-s32 Func_02001ab4();
+void Func_02001ab4();
 s32 GameFlag_Test();
-s32 Animation_ApplyChildValues();
+void Animation_ApplyChildValues();
 
 void Func_0200091c(void) {
-  s32 t7;
-  s32 t0;
-  s32 t1;
-  s32 t2;
-  s32 t8;
-  s32 t13;
-  s32 t18;
-  s32 t19;
+  struct ObjectRuntime *a = (struct ObjectRuntime *)Value1(Object_GetById, 9);
+  struct ObjectRuntime *b = (struct ObjectRuntime *)Value1(Object_GetById, 10);
+  struct ObjectRuntime *c = (struct ObjectRuntime *)Value1(Object_GetById, 23);
+  struct FieldSprite *sprite = c->animation;
 
-  t0 = Value1(Object_GetById, 9);
-  t1 = Value1(Object_GetById, 0xa);
-  t2 = Value1(Object_GetById, 0x17);
-  Call3(Func_02001ab4, 0x18, 0x2000000, 0xf80000);
-  Call3(Func_02001ab4, 0x17, 0x2000000, 0xf80000);
+  Call3(Func_02001ab4, 24, 0x2000000, 0xf80000);
+  Call3(Func_02001ab4, 23, 0x2000000, 0xf80000);
   Call3(Func_02001ab4, 9, 0x1d80000, 0x1000000);
-  Call3(Func_02001ab4, 0xa, 0x2280000, 0x1000000);
-  t7 = Value1(Object_GetById, 0x18);
-  FIELD_AT(t7, s32, 24) = 0;
-  FIELD_AT((0x55 + t2), u8, 0) = 0;
-  FIELD_AT(t2, s32, 12) = FIELD_AT(t2, s32, 20);
-  FIELD_AT((0x55 + t0), u8, 0) = 0;
-  FIELD_AT(t0, s32, 12) = FIELD_AT(t0, s32, 20);
-  FIELD_AT((0x55 + t1), u8, 0) = 0;
-  FIELD_AT(t1, s32, 12) = FIELD_AT(t1, s32, 20);
-  t8 = Value1(GameFlag_Test, 0xa0a);
-  if (t8 != 0) {
-    FIELD_AT(t0, s32, 12) = (FIELD_AT(t0, s32, 12) + 0x66640);
-    FIELD_AT(t2, s32, 12) = (FIELD_AT(t2, s32, 12) + 0x1eb80);
-    FIELD_AT(t2, s32, 8) = (FIELD_AT(t2, s32, 8) + -167744);
-    FIELD_AT(FIELD_AT(t2, s32, 80), u16, 18) =
-        (FIELD_AT(FIELD_AT(t2, s32, 80), u16, 18) + 0x800);
+  Call3(Func_02001ab4, 10, 0x2280000, 0x1000000);
+  ((struct ObjectRuntime *)Value1(Object_GetById, 24))->scaleX = 0;
+  c->motionFlags = 0;
+  c->y = c->terrainHeight;
+  a->motionFlags = 0;
+  a->y = a->terrainHeight;
+  b->motionFlags = 0;
+  b->y = b->terrainHeight;
+  if (Value1(GameFlag_Test, 0xa0a)) {
+    a->y += 0x66640;
+    c->y += 0x1eb80;
+    c->x += -0x28f40;
+    sprite->rotation += 0x800;
     Call2(Animation_ApplyChildValues, Value1(Object_GetById, 9), 4);
-    Call2(Animation_ApplyChildValues, Value1(Object_GetById, 0xb), 4);
+    Call2(Animation_ApplyChildValues, Value1(Object_GetById, 11), 4);
   }
-  t13 = Value1(GameFlag_Test, 0xa0b);
-  if (t13 != 0) {
-    FIELD_AT(t1, s32, 12) = (FIELD_AT(t1, s32, 12) + 0x66640);
-    FIELD_AT(t2, s32, 12) = (FIELD_AT(t2, s32, 12) + 0x1eb80);
-    FIELD_AT(t2, s32, 8) = (FIELD_AT(t2, s32, 8) + 0x28f40);
-    FIELD_AT(FIELD_AT(t2, s32, 80), u16, 18) =
-        (FIELD_AT(FIELD_AT(t2, s32, 80), u16, 18) + -2048);
-    Call2(Animation_ApplyChildValues, Value1(Object_GetById, 0xa), 4);
-    Call2(Animation_ApplyChildValues, Value1(Object_GetById, 0xc), 4);
+  if (Value1(GameFlag_Test, 0xa0b)) {
+    b->y += 0x66640;
+    c->y += 0x1eb80;
+    c->x += 0x28f40;
+    sprite->rotation -= 0x800;
+    Call2(Animation_ApplyChildValues, Value1(Object_GetById, 10), 4);
+    Call2(Animation_ApplyChildValues, Value1(Object_GetById, 12), 4);
   }
-  t18 = Value1(GameFlag_Test, 0xa0a);
-  if (t18 != 0) {
-    t19 = Value1(GameFlag_Test, 0xa0b);
-    if (t19 != 0) {
-      FIELD_AT(t0, s32, 12) = (FIELD_AT(t0, s32, 12) + 0x199900);
-      FIELD_AT(t1, s32, 12) = (FIELD_AT(t1, s32, 12) + 0x199900);
-      FIELD_AT(t2, s32, 12) = (FIELD_AT(t2, s32, 12) + 0x1b8480);
-      FIELD_AT((0x55 + t0), u8, 0) = 4;
-      FIELD_AT((0x55 + t1), u8, 0) = 4;
-      FIELD_AT((0x55 + t2), u8, 0) = 4;
-    }
+  if (Value1(GameFlag_Test, 0xa0a) && Value1(GameFlag_Test, 0xa0b)) {
+    a->y += 0x199900;
+    b->y += 0x199900;
+    c->y += 0x1b8480;
+    a->motionFlags = 4;
+    b->motionFlags = 4;
+    c->motionFlags = 4;
   }
 }

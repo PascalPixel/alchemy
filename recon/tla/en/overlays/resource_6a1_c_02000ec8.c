@@ -1,6 +1,7 @@
-// Draft, differ 337 of 305: overlay 6a1's copy of the function drafted in
-// resource_69c_c_02001050.c (overlay 69c's Func_02001050, differ 337 there), whose
-// header says what it is, what still differs and what was tried.
+// Draft, differ 288 of 305 (was 337): overlay 6a1's copy of the function
+// drafted in resource_69c_c_02001050.c (overlay 69c's Func_02001050), whose
+// header says what it is and what was tried. Forwarding calls through inline
+// wrappers (FAKEMATCH(wrapper) on adoption) gained 49.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -33,6 +34,14 @@ void Func_02001178(void);
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
+static __inline__ void Func_020021b0_(s32 x, s32 z, s32 width, s32 height, s32 toX, s32 toZ) {
+  Func_020021b0(x, z, width, height, toX, toZ);
+}
+
+static __inline__ void ObjectMotion_SetSpeedParameters_(s32 id, s32 speed, s32 acceleration) {
+  ObjectMotion_SetSpeedParameters(id, speed, acceleration);
+}
+
 void Func_02000ec8(struct PushTarget target, s32 id, void (*callback)(void)) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
@@ -56,7 +65,7 @@ void Func_02000ec8(struct PushTarget target, s32 id, void (*callback)(void)) {
   width = (ABS(rect[0]) + ABS(rect[2])) >> 4;
   height = (ABS(rect[1]) + ABS(rect[3])) >> 4;
   Map_FillCellRectByte2(0, cell[0], cell[2], width, height, 0);
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x8000, 0x1999);
+  ObjectMotion_SetSpeedParameters_(gPartyState.currentOwner, 0x8000, 0x1999);
   Object_SetModeById(gPartyState.currentOwner, 8);
   WaitFrames(15);
   ObjectMotion_OffsetPositionAndResetMotion(gPartyState.currentOwner,
@@ -66,11 +75,11 @@ void Func_02000ec8(struct PushTarget target, s32 id, void (*callback)(void)) {
   WaitFrames(4);
   Func_02002160(object, 2);
   Func_020022c8(239);
-  ObjectMotion_SetSpeedParameters(id, 0x8000, 0x1999);
+  ObjectMotion_SetSpeedParameters_(id, 0x8000, 0x1999);
   Func_02002190(object, target.x, target.y, target.z);
   ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.currentOwner);
   Object_SetModeById(gPartyState.currentOwner, 2);
-  ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x4ccc, 0x1999);
+  ObjectMotion_SetSpeedParameters_(gPartyState.currentOwner, 0x4ccc, 0x1999);
   ObjectMotion_OffsetPositionAndResetMotion(
       gPartyState.currentOwner, (gData_020022f4[step] << 16) >> 31,
       (gData_020022f4[step] << 16) >> 17);
@@ -90,13 +99,13 @@ void Func_02000ec8(struct PushTarget target, s32 id, void (*callback)(void)) {
   target.z = (target.z + (rect[1] << 16)) >> 20;
   originX = *(s32 *)(map + 328) >> 20;
   originZ = *(s32 *)(map + 332) >> 20;
-  Func_020021b0(target.x, target.z, width, height, originX + target.x,
+  Func_020021b0_(target.x, target.z, width, height, originX + target.x,
                 originZ + target.z);
   Map_FillCellRectByte2(0, target.x, target.z, width, height, 255);
   Map_FillCellRectByte2(2, target.x, target.z, width, height, 255);
   cell[0] = (from[0] + (rect[0] << 16)) >> 20;
   cell[2] = (from[2] + (rect[1] << 16)) >> 20;
-  Func_020021b0(originX + cell[0], originZ + cell[2], width, height, cell[0],
+  Func_020021b0_(originX + cell[0], originZ + cell[2], width, height, cell[0],
                 cell[2]);
   Map_FillCellRectByte2(2, cell[0], cell[2], width, height, 0);
   Func_020022a0();

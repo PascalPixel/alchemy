@@ -1,6 +1,12 @@
-// Draft of overlay 6ad's Func_02001a54, the twin of overlay 698's
-// Func_020007a4: its draft (resource_698_c_020007a4.c) with this overlay's
-// symbols: differ 69 of 92. Left: what that draft's header records.
+// Draft, differ 16 of 92: overlay 6ad's copy of resource_698_c_020007a4.c, with
+// this overlay's symbols, its two Iwram_MulQ16 calls through a forwarding
+// inline (direct, they share 0x80000 in r6 and the call address moves to r10:
+// 69). Left, all instruction order: the native copies the position's address to
+// r8 before reloading the angle after the x store, computes the priority flags'
+// address after the motion flags store, loads the pooled zero for unk62 and
+// unk63 before the angle and builds the options' address later; and its literal
+// pool lands one instruction earlier. An asm holding position.x makes it much
+// worse (90).
 #include "types.h"
 #include "iwram_call.h"
 #include "object_runtime.h"
@@ -36,14 +42,19 @@ void Func_02001894(struct GustObject *object);
 void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
+static __inline__ s32 MulQ16(s32 a, s32 b) {
+  /* FAKEMATCH(wrapper): forwarded inline (scene_call.h). */
+  return Iwram_MulQ16(a, b);
+}
+
 struct GustObject *Func_02001a54(struct GustObject *source) {
   struct Vector3 position;
   struct EffectOptions options;
   struct GustObject *object;
 
   Func_020056c0(222);
-  position.x = source->x + Iwram_MulQ16(0x80000, Math_Cosine(source->angle));
-  position.z = source->z + Iwram_MulQ16(0x80000, Math_Sine(source->angle));
+  position.x = source->x + MulQ16(0x80000, Math_Cosine(source->angle));
+  position.z = source->z + MulQ16(0x80000, Math_Sine(source->angle));
   object = Func_02005498(280, position.x, source->y, position.z);
   Func_02005480(object, 2);
   ObjectDispatch_SetSingleChildFlags(object, 0);

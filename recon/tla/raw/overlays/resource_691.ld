@@ -48,7 +48,7 @@ SECTIONS
         "*/games/tla/src/scene/magma_rock/copy.o"(.text)
         "*/resource_691_overlay.o"(.text.x0200a024)
         "*/games/tla/src/scene/magma_rock/blink_b.o"(.text)
-        "*/resource_691_overlay.o"(.text.x0200a0f8)
+        "*/games/tla/src/scene/magma_rock/s20f8.o"(.text)
         "*/games/tla/src/scene/magma_rock/events_b.o"(.text)
         "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
         "*/resource_691_overlay.o"(.text.x0200a2ac)

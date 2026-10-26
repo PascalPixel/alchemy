@@ -1,3 +1,4 @@
+// Draft, differ 179 (183 before statements reordered 2026-10-26).
 // Near miss, differ 185 of 157 (2026-10-18), first pass: The Broken Seal's
 // Map_CenterOnFollowedPoint, with this game's list of camera rectangles
 // (s16 pixels, ended by -1, the pointer at map work 0xfc) that push the
@@ -28,8 +29,8 @@ void Func_0802aa74(void) {
 
     x = *followedPosition++;
     height = *followedPosition++;
-    z = *followedPosition++;
     rect = *(s16 **)((u8 *)work + 0xfc);
+    z = *followedPosition++;
     if (rect != NULL) {
       while (rect[0] != -1) {
         s32 left = (rect[0] << 16) - 0x780000;

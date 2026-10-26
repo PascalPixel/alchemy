@@ -1,4 +1,4 @@
-// Draft, differ 125 of 334 (2026-10-15), The Broken Seal's
+// Draft, differ 120 (125 before statements reordered 2026-10-26) of 334 (2026-10-15), The Broken Seal's
 // FieldEffect_RunWhirlwind (shape 0.64, structure 0.73). ⚓️ keeps ☀️'s carried orb and
 // its orbiting motes, and adds two kinds of target, told apart by the target's
 // first animation (372 and 373): for both the orb shrinks away at once, for 372
@@ -106,9 +106,9 @@ void FieldEffect_RunWhirlwind(void) {
 
   from.x = caster->x;
   from.y = caster->y;
-  from.z = caster->z;
   to.x = scene->x;
   to.y = scene->y - (4 << 16);
+  from.z = caster->z;
   to.z = scene->z;
   orb = Object_Spawn(ORB_OBJECT, 0, 0, 0);
   if (orb == 0)

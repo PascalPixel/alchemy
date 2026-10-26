@@ -1,14 +1,15 @@
-// First draft of DjinnMenu_DrawPage: draws four party members' djinn from page
-// onward in the menu's list window, one column of 56 pixels each, grouped by
-// element; each name is coloured by its state (Func_08101a04: 0 grey, 1
-// normal, otherwise set) and drawn with Func_08101a54. With few enough djinn
-// per member (at most 7) it also draws message 0x10de and a divider under the
-// list. No ☀️ twin. Differ 71 of 146 (draft 147). Left: the native keeps the
-// column counter counting up (cmp r3, #3) where loop.c reverses it here,
-// and with it register choice: page stays in r6 rather than r8, y in r9
-// rather than r10 and the column's entries in r10. Measured: walking
-// pointers for the counts, owners and entries give 130; indexing each by
-// page + column gives 182.
+// Draft of DjinnMenu_DrawPage, differ 8 of 146 (2026-10-26; 69 before): draws four
+// party members' djinn from page onward in the menu's list window, one column
+// of 56 pixels each, grouped by element; each name is coloured by its state
+// (Func_08101a04: 0 grey, 1 normal, otherwise set) and drawn with
+// Func_08101a54. With few enough djinn per member (at most 7) it also draws
+// message 0x10de and a divider under the list. No ☀️ twin. The lists indexed
+// by page + column (the native keeps the count's offset apart from the list
+// and counts the column up), the djinn total in its own local, x stepped in
+// the for and the menu read before the tiles give the native's shape and
+// registers. Left: the column's entries address (page * 20 + list) is
+// scheduled two rows from the native's before the loop (permuter 5 minutes:
+// nothing).
 #include "types.h"
 #include "ram_buffer.h"
 
@@ -43,35 +44,34 @@ s32 UiWork_SetParamNibbleFar(s32 color);
 void WaitFrames(s32 frames);
 
 void DjinnMenu_DrawPage(struct DjinnList *list, s32 page) {
-  u8 *tiles = Ram_HeapSlots->windowTiles;
   struct DjinnMenuState *menu =
       (struct DjinnMenuState *)Ram_HeapSlots->menuRuntime;
+  u8 *tiles = Ram_HeapSlots->windowTiles;
   s32 window = menu->listWindow;
   s32 owners;
   s32 column;
-  s32 row;
   s32 element;
   s32 i;
   s32 x;
   s32 y;
+  s32 djinn;
 
   tiles[6] = 1;
   RenderOutput_RedrawSavedRectFar(window);
   owners = Party_CountActiveOwnersFar();
-  i = Party_SumDjinnCountsFar(-1);
-  if (owners != 0 && (i - 1) / owners <= 6) {
+  djinn = Party_SumDjinnCountsFar(-1);
+  if (owners != 0 && (djinn - 1) / owners <= 6) {
     UiText_DrawCharacterAtOffsetFar((s32)Msg010de, window, 0, 80);
     UiWindow_DrawDividerLineFar(window, 0, 10, 28, 10);
   }
   Func_081019a4(list);
-  x = 8;
-  for (column = 0, row = page; column <= 3; column++, row++) {
-    u16 *entries = list->columns[row].entries;
+  for (column = 0, x = 8; column <= 3; column++, x += 56) {
+    u16 *entries = list->columns[page + column].entries;
 
     y = 16;
     if (menu->owners[column] != NULL) {
       for (element = 0; element <= 3; element++) {
-        for (i = 0; i < list->counts[row]; i++) {
+        for (i = 0; i < list->counts[page + column]; i++) {
           if (element == (entries[i] & 0xe0) >> 5) {
             switch (Func_08101a04(entries[i])) {
             case 0:
@@ -90,7 +90,6 @@ void DjinnMenu_DrawPage(struct DjinnList *list, s32 page) {
         }
       }
     }
-    x += 56;
   }
   tiles[3] = 1;
   tiles[6] = 0;

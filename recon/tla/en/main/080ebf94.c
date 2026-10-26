@@ -1,19 +1,20 @@
-// First draft of Func_080ebf94: sets up the world map screen, as ☀️'s
-// BattleEffect_SetupResourcesAndWindow (games/tbs/src/object/psynergy_effects.c):
-// the marker tiles and their 128 OAM entries, the cursor at the leader's place
-// (or a fixed spot when flag 284 is set), the screen scroll clamped to the
-// map, and the place-name window. Differ 108 of 192 (draft 188). Left: the
-// constant 272 of three tile rows takes r2 and is scheduled earlier in the
-// native; the clamps keep a zero in r6 and the bounds in r1 and r0 across
-// them; after the clamps the native reloads the cursor from the work before
-// storing it to Data_0202a64c (this draft reuses the registers), and the last
-// OAM words and Data_0202a62c stores are ordered differently. Mostly order and
-// register choice; the reload is a difference of shape not yet found.
-// 2026-10-19: the clamp bounds as locals, as in Func_080ed0a0
-// (games/tla/src/battle/effect/world_map_scroll.c), bring it to 100. Left
-// there: the native zero for the clamps is the r6 the OAM stores reuse, and the
-// native reloads the work's x and z for Data_0202a64c after the clamps, as if
-// the stores to the address-taken screen values could alias them.
+// Draft of Func_080ebf94, differ 2 of 192 (2026-10-26; 98 before): sets up
+// the world map screen, as ☀️'s FieldEffect_SetupResourcesAndWindow
+// (games/tbs/src/overworld/field_services/world_map.c): the marker tiles and
+// their 128 OAM entries, the cursor at the leader's place (or a fixed spot
+// when flag 284 is set), the screen scroll clamped to the map, and the
+// place-name window. The work, the cursor pointer and the cursor's starting
+// place are reached at their constant addresses (ram_buffer.h): the work's x
+// and z are then read again after the clamps, and the stores after the cursor
+// pointer go through its address plus 4, as natively. The tile rows in ☀️'s
+// order, a zero bound for the clamps and the cursor's attributes built as ☀️
+// builds them give the rest. Left, scheduling only: after the cursor's first
+// OAM word the native shifts 0x40000000 into place before copying the moved
+// OAM pointer to its stack slot (lsls r3, r3, #23; adds r1, r2, #0), where
+// alchemy-gcc copies first; the stack store may alias the OAM stores, which
+// makes the copy's chain the longer. Barriers before, between and after the
+// two words and the word as a struct member changed nothing; permuter 4
+// minutes: nothing.
 #include "types.h"
 #include "dma.h"
 #include "mem.h"
@@ -21,6 +22,7 @@
 #include "vram_tab.h"
 #include "event_work.h"
 #include "flag_call.h"
+#include "ram_buffer.h"
 
 struct WorldMapWork {
   u16 vramBlock;
@@ -38,11 +40,6 @@ struct WorldMapWork {
   s32 unk648;
 };
 
-extern struct WorldMapWork gWorldMapWork;
-extern s32 Data_0202a64c[2];
-extern s32 Data_0202a62c[3];
-extern u8 Data_0202a004[];
-
 void *Object_GetById(s32 id);
 s32 Resource_LoadFixedBlockBIntoFreeSlotFar(void);
 void *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 mode);
@@ -50,15 +47,17 @@ void Func_080ec1d0(s32 *screenX, s32 *screenY);
 
 void Func_080ebf94(void) {
   u32 *markerTiles;
-  struct WorldMapWork *work = &gWorldMapWork;
+  struct WorldMapWork *work = Ram_WorldMapWork;
   u32 *oam;
   s32 screenX;
   s32 screenY;
   s32 tileAttributes;
   u32 i;
   u32 tile;
+  u32 cursorAttributes;
   s32 right;
   s32 bottom;
+  s32 left;
 
   markerTiles = Runtime_BumpAllocateAlternatePool(32);
   oam = work->markers;
@@ -71,17 +70,17 @@ void Func_080ebf94(void) {
   Dma_Fill32(0, markerTiles, 0x80);
   markerTiles[0] = 255;
   markerTiles[1] = 0x1ff;
+  markerTiles[2] = 272;
   markerTiles[8] = 68;
   markerTiles[9] = 324;
+  markerTiles[10] = 272;
   markerTiles[16] = 119;
   markerTiles[17] = 0x177;
+  markerTiles[18] = 272;
   markerTiles[24] = 0xff0;
   markerTiles[25] = 0xffff;
   markerTiles[26] = 0x1ffff;
   markerTiles[27] = 0x11ff0;
-  markerTiles[2] = 272;
-  markerTiles[10] = 272;
-  markerTiles[18] = 272;
   markerTiles[28] = 0x1100;
   tileAttributes = VramCache_Load(work->vramBlock, 0x80, markerTiles) | 0x400;
   for (i = 0; i < 128; i++) {
@@ -100,18 +99,19 @@ void Func_080ebf94(void) {
   }
   screenX = work->x - (120 << 16);
   screenY = work->z - (80 << 16);
+  left = 0;
   right = 272 << 16;
   bottom = 224 << 16;
-  if (screenX < 0)
-    screenX = 0;
+  if (screenX < left)
+    screenX = left;
   if (screenX > right)
     screenX = right;
-  if (screenY < 0)
-    screenY = 0;
+  if (screenY < left)
+    screenY = left;
   if (screenY > bottom)
     screenY = bottom;
-  Data_0202a64c[0] = work->x;
-  Data_0202a64c[1] = work->z;
+  Ram_WorldMapCursorStart[0] = work->x;
+  Ram_WorldMapCursorStart[1] = work->z;
   work->windowSlot = Resource_LoadFixedBlockBIntoFreeSlotFar();
   tile = gResourceTableEntries[work->windowSlot].offset;
   work->window = UiWindow_CreateFar(0, 0, 0, 0, 2);
@@ -119,8 +119,10 @@ void Func_080ebf94(void) {
   work->speed = 0x10000;
   *oam++ = 0;
   *oam++ = 0x40000000;
-  *oam = 0x400 | (tile >> 5);
-  Data_0202a62c[0] = (s32)Data_0202a004;
-  Data_0202a62c[1] = screenX;
-  Data_0202a62c[2] = screenY;
+  cursorAttributes = 0x400;
+  cursorAttributes |= tile >> 5;
+  *oam = cursorAttributes;
+  *Ram_WorldMapCursor = &work->x;
+  Ram_WorldMapScroll[0] = screenX;
+  Ram_WorldMapScroll[1] = screenY;
 }

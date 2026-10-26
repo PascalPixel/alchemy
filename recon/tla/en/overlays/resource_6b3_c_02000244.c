@@ -1,3 +1,13 @@
+// Draft, differ 19 of 102: centres a message and hands it to Func_02000158. x
+// and y stay in their stack slots for UiText_GetResourceDimensions; GCSE copies
+// their loads for the closing call into each branch, so an empty asm with a
+// memory clobber before the call keeps them as one load each, as the native has
+// (without it: 64; with x and y volatile their addresses take registers: 100).
+// Left, register allocation: the native gives the message r8, the wait r10 and
+// the mode r9 and stores the zeros of x and y from r4, where this gives the
+// mode r8, the message r10 and the wait r9 and stores the zeros from r3; a
+// pinned mode (29) or another place for its zero (30) is worse, and permute
+// found nothing in 8 minutes.
 
 // Draft of overlay 6b3 Func_02000244: centres a message and hands it to
 // Func_02000158. The logic is right; the listing keeps x and y in their stack
@@ -21,7 +31,7 @@ void Func_02000244(s32 message, s32 position, s32 wait) {
   s32 height;
   s32 mode = 0;
   s32 left;
-  s32 line;
+  s32 line = 0;
   s32 half;
   s32 wide;
 
@@ -29,7 +39,6 @@ void Func_02000244(s32 message, s32 position, s32 wait) {
   y = 0;
   wide = message & 0x8000;
   UiText_GetResourceDimensions(gData_02000a28, &x, &y, &width, &height);
-  line = 0;
   if (width <= 24) {
     if (!wide)
       x = (25 - width) / 2 + 5;
@@ -57,5 +66,6 @@ void Func_02000244(s32 message, s32 position, s32 wait) {
       line = 15;
     }
   }
+  __asm__("" : : : "memory");
   Func_02000158(message, x, y, left, line, wait, mode);
 }

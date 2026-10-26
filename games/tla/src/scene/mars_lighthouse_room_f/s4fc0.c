@@ -1,0 +1,42 @@
+#include "types.h"
+#include "object_runtime.h"
+
+extern u16 gData_02005f58[];
+
+void Vector_AddPolarOffsetFar(s32 length, s32 angle, s32 *position);
+struct ObjectRuntime *Func_02005680(s32 *position, s32 mode);
+s32 Func_020054f8(struct ObjectRuntime *object, s32 *position);
+
+void Func_02004fc0(struct ObjectRuntime *object) {
+  s32 position[3];
+  struct ObjectRuntime *hit;
+  u32 i;
+  s32 angle = object->angle >> 12;
+
+  angle = ((angle + 2) & 12) << 12;
+  position[0] = object->x;
+  position[1] = object->y;
+  position[2] = object->z;
+  Vector_AddPolarOffsetFar(0x100000, angle, position);
+  hit = Func_02005680(position, 1);
+  if (hit != 0) {
+    i = 0;
+  next:
+    /* FAKEMATCH(barrier): a memory barrier at the loop's head, so
+     * hit->animation, its value and the table are loaded again on every pass;
+     * without it, 26 of 61 instructions differ in tla-en. */
+    __asm__("" : : : "memory");
+    if (*((struct BattleAnimationState *)hit->animation)->value28 ==
+        gData_02005f58[i])
+      return;
+    i++;
+    if (i <= 5)
+      goto next;
+    Object_SetPositionAndResetMotion(object, object->x, object->y, object->z);
+  }
+  position[0] = object->x;
+  position[1] = object->y;
+  position[2] = object->z;
+  if (Func_020054f8(object, position) > 0)
+    Object_SetPositionAndResetMotion(object, object->x, object->y, object->z);
+}

@@ -1,4 +1,4 @@
-// Near miss, differ 254 of 274: the native keeps the event work in r8 and
+// Near miss, differ 141 (254 before statements reordered 2026-10-26) of 274: the native keeps the event work in r8 and
 // its frame is 8 bytes smaller (44); it builds 0xffff and -1 for the four
 // marks with split constants where this loads them from the pool.
 // Looks at 21 map cells around the effect owner, at the tile offsets
@@ -23,12 +23,12 @@ void Func_080e2264(void) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
   s16 *points = (s16 *)(event + 0xcc0);
   struct ObjectRuntime *owner = *(struct ObjectRuntime **)(effect + 16);
-  s32 count = 0;
   s16 *point;
   s32 position[3];
   s32 x, z;
   s32 kind;
   u32 i;
+  s32 count = 0;
 
   work[0x1b34] = count;
   *(u16 *)(event + 0xd3c) = 0xffff;
@@ -55,8 +55,8 @@ void Func_080e2264(void) {
       *(s16 *)(event + 0xd3c) = x >> 16;
       *(s16 *)(event + 0xd3e) = z >> 16;
       *(s16 *)(event + 0xd3c) = (*(s16 *)(event + 0xd3c) & 0xfff0) + 8;
-      *(s16 *)(event + 0xd3e) = (*(s16 *)(event + 0xd3e) & 0xfff0) + 8;
       point[0] = x / 0x100000;
+      *(s16 *)(event + 0xd3e) = (*(s16 *)(event + 0xd3e) & 0xfff0) + 8;
       point[1] = z / 0x100000;
       point += 2;
       count++;

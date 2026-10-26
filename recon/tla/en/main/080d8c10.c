@@ -1,14 +1,15 @@
-// Draft, differ 55 of 142: the heap slot 0x9c workspace's per-frame update.
+// Draft, differ 47 of 142 (55 before, 2026-10-26): the heap slot 0x9c workspace's per-frame update.
 // Unless flag 260 is set, once the event timer passes 12: on foot, the talk
 // target the leader faces is looked up among the eight slots' two ids and,
 // when Func_080d99b8 accepts the pair, the event prompt becomes 0xfc85; in
 // render mode 3 it is 0xfc86. Then each active slot's swing is advanced: a
 // damped sine (phase steps 1/16 turn, amplitude times 0.95 until it falls
-// under 0.1) passed to Func_080d8fa8. No ☀️ twin found. Left: the search
-// loop's shape: the native tests slot 0's two ids before the loop, as loop
-// rotation would copy them, and steps a separate pointer from the second
-// slot; agscc enters the for loop by a jump to its test and walks the slot
-// pointer itself, then needs r4 for the base (pushed and spilled, frame 4).
+// under 0.1) passed to Func_080d8fa8. No ☀️ twin found. The search is a while
+// over the slots that counts before it steps, which gives the native's copy
+// of slot 0's test before the loop. Left: the native then steps a separate
+// pointer from the slots base, which stays in r5 for the second loop; here
+// the first count folds to 1 and the base needs r4 (pushed and spilled,
+// frame 4).
 // The second loop matches. The event fields are struct fields (through cast
 // pointers the prompt's constants come from the pool: differ 73).
 #include "types.h"
@@ -56,9 +57,11 @@ void Func_080d8c10(void) {
       s32 target = Field_FindNearbyTalkTarget(gPartyState.currentOwner);
 
       if (target != -1) {
-        for (slot = work->slots; i < 8; i++, slot++) {
-          if (slot->id == target || slot->value == target)
+        slot = work->slots;
+        while (slot->id != target && slot->value != target) {
+          if (++i > 7)
             break;
+          slot++;
         }
         if (i < 8 && Func_080d99b8(work->slots[i].id, work->slots[i].value))
           event->prompt = 0xfc85;

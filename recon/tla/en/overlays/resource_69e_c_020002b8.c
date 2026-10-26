@@ -1,15 +1,21 @@
-// Draft, differ 249 of 395: Jupiter Lighthouse room 5's event when the leader stands
-// on cell (42, 41): sets flag 2560, turns the leader (Func_02002940), plays its
-// hooks and sounds 220 and 178, starts the spark ring from above the leader to
-// (680, 0, 574) (Func_02001718) and a pulse callback (Func_02000294) that
-// quickens over 20 steps, sounds 390 and 144 with the screen shaking, objects
-// 23 and 24 brought in on their action scripts, flashes, the room's cells
-// copied open (Func_02002860) and Func_02000d80(2); then the callbacks stop,
-// objects 13 to 16 rise 2 pixels a frame for 16 frames, take their next state
-// (Func_02000e04) and sound 80 plays.
+// Draft, differ 30 of 395: Jupiter Lighthouse room 5's event when the leader
+// stands on cell (42, 41): sets flag 2560, turns the leader (Func_02002940),
+// plays its hooks and sounds 220 and 178, starts the spark ring from above the
+// leader to (680, 0, 574) (Func_02001718) and a pulse callback (Func_02000294)
+// that quickens over 20 steps, sounds 390 and 144 with the screen shaking,
+// objects 23 and 24 brought in on their action scripts, flashes, the room's
+// cells copied open (Func_02002860) and Func_02000d80(2); then the callbacks
+// stop, objects 13 to 16 rise 2 pixels a frame for 16 frames, take their next
+// state (Func_02000e04) and sound 80 plays. The shake, flash and cell-copy
+// calls go through the call layer (CSE shared 0x10000 across them), and the
+// quickening pulse and the final rise are goto loops (the native builds the
+// pulse's address, its zero and 0x20000 again on every pass). Left: the pulse's
+// address and the zero kept from its first pass swap high registers (the native
+// has the address in r9 and the zero in r11).
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
+#include "call.h"
 
 extern s32 gData_02003274;
 extern s32 gData_02003278;
@@ -95,17 +101,19 @@ void Func_020002b8(void) {
   gData_02003274 = 0;
   gData_02003278 = 1;
   Scheduler_AddOrUpdateCallback(Func_02000294, 0x480);
-  for (i = 0; i <= 19; i++) {
-    gData_02003274 = 0;
-    WaitFrames((20 - i) / 2);
-    gData_02003274 = 1;
-    WaitFrames(1);
-  }
+  i = 0;
+quicken:
+  gData_02003274 = 0;
+  WaitFrames((20 - i) / 2);
+  gData_02003274 = 1;
+  WaitFrames(1);
+  if (++i <= 19)
+    goto quicken;
   Func_02002a40(390);
-  Func_02002870(0x10000, 0x10000, 0x10000);
+  Call3((void (*)())Func_02002870, 0x10000, 0x10000, 0x10000);
   gData_02003274 = 1;
   FieldEvent_WaitFrames(90);
-  Func_02002870(0x30000, 0x30000, 0x10000);
+  Call3((void (*)())Func_02002870, 0x30000, 0x30000, 0x10000);
   gData_02003274 = 3;
   gData_02003278 = 0;
   FieldEvent_WaitFrames(40);
@@ -113,9 +121,9 @@ void Func_020002b8(void) {
   Bring(24);
   Scheduler_AddOrUpdateCallback(Func_020001a4, 0x480);
   Func_02002a40(144);
-  Func_02002870(0x60000, 0x60000, 0x10000);
-  Func_02002980(0x10000, 0);
-  Func_02002978(0x4063ff, 0);
+  Call3((void (*)())Func_02002870, 0x60000, 0x60000, 0x10000);
+  Call2((void (*)())Func_02002980, 0x10000, 0);
+  Call2((void (*)())Func_02002978, 0x4063ff, 0);
   Func_02002988(60);
   WaitFrames(60);
   Func_02002a40(144);
@@ -124,8 +132,8 @@ void Func_020002b8(void) {
   WaitFrames(30);
   Func_02002a40(144);
   WaitFrames(30);
-  Func_02002860(58, 99, 3, 3, 41, 99);
-  Func_02002860(123, 32, 1, 5, 106, 32);
+  Call6((void (*)())Func_02002860, 58, 99, 3, 3, 41, 99);
+  Call6((void (*)())Func_02002860, 123, 32, 1, 5, 106, 32);
   Func_02000d80(2);
   Func_02002a40(144);
   WaitFrames(30);
@@ -146,11 +154,11 @@ void Func_020002b8(void) {
   Object_RefreshSelectorById(24);
   Object_GetById(23)->scaleX = 0;
   Object_GetById(24)->scaleX = 0;
-  Func_02002978(0x10000, 0);
+  Call2((void (*)())Func_02002978, 0x10000, 0);
   Func_02002988(30);
-  Func_02002870(0x20000, 0x20000, 0x10000);
+  Call3((void (*)())Func_02002870, 0x20000, 0x20000, 0x10000);
   FieldEvent_WaitFrames(30);
-  Func_02002870(0, 0, 0x10000);
+  Call3((void (*)())Func_02002870, 0, 0, 0x10000);
   Scheduler_RemoveCallbackFar(Func_02000294);
   Func_0200185c();
   FieldEvent_WaitFrames(30);
@@ -158,13 +166,15 @@ void Func_020002b8(void) {
   b->motionFlags = 0;
   c->motionFlags = 0;
   d->motionFlags = 0;
-  for (i = 15; i >= 0; i--) {
-    a->y += 0x20000;
-    b->y += 0x20000;
-    c->y += 0x20000;
-    d->y += 0x20000;
-    WaitFrames(1);
-  }
+  i = 15;
+rise:
+  a->y += 0x20000;
+  b->y += 0x20000;
+  c->y += 0x20000;
+  d->y += 0x20000;
+  WaitFrames(1);
+  if (--i >= 0)
+    goto rise;
   Func_02000e04(13);
   Func_02000e04(14);
   Func_02000e04(15);

@@ -1,4 +1,4 @@
-// Draft, differ 199 of 228: The Broken Seal's Transform_BuildLookAt
+// Draft, differ 143 (199 before statements reordered 2026-10-26) of 228: The Broken Seal's Transform_BuildLookAt
 // (games/tbs/src/runtime/runtime/transform.c) for The Lost Age: the
 // dot-product routine copied to the stack is eight words here
 // (Math_DotProductQ16Code, frame 68), the square roots are Iwram_Sqrt at its
@@ -29,12 +29,12 @@ extern const u32 Math_DotProductQ16Code[];
 typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
 
 void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
+  Dot3Fn dot;
   u32 code[8];
   s32 dx, dy, dz;
   s32 ux;
   s32 zero = 0;
   s32 ex;
-  Dot3Fn dot;
   s32 ey;
   s32 uz;
   s32 vx, vy, vz;
@@ -67,9 +67,9 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
    * product spills before the negated axis (four reordered instructions). */
   do {
     dx = mul(dx, scale);
+    uz = -dx;
     dy = mul(dy, scale);
     t = mul(dz, scale);
-    uz = -dx;
     dz = t;
   } while (0);
 

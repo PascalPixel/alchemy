@@ -1,4 +1,4 @@
-// Draft, differ 193 of 223: the Trial Road stage's frame counter (a scheduled
+// Draft, differ 165 of 223: the Trial Road stage's frame counter (a scheduled
 // callback while fewer than four stages are done): at the start of a stage
 // (Func_020056e8) it loads the stage's pattern (Func_020056c4 from
 // gData_02005b84) and resets object 8, or after the fourth hides object 8;
@@ -6,7 +6,12 @@
 // set, it plays the stage's timed beats: frames 1 and 601 open the chests
 // (objects 9 to 12 in mode 6, sound 124), 655, 50 and 710 play motion 5 on one
 // of them with sound 125, 653 and 708 turn object 8, and 70 and 730 end
-// the stage (Func_020002a4, sound 138).
+// the stage (Func_020002a4, sound 138). Object 8's flag is set in an if and
+// else on the object, as the native stores 1 or 0 after a branch (193 with the
+// comparison stored). Left: after the best score the native reads the stage
+// again for the increment, its switch builds each case value afresh where CSE
+// here derives 653 and 728 from 708, and the timer's halfword for the increment
+// is read early in each case.
 #include "../../../../games/tla/src/scene/trial_road/trial_road.h"
 
 struct TrialRoadStage {
@@ -42,10 +47,9 @@ void Func_0200223c(void) {
       if (state->stage >= state->best)
         state->best = state->stage + 1;
       if (++state->stage <= 3) {
-        Func_020056c4(
-            gData_02005b84[state->order[state->stage * 2 +
-                                        (s16)(state->mirrored ^ 1)] &
-                           7]);
+        Func_020056c4(gData_02005b84[state->order[state->stage * 2 +
+                                                  (s16)(state->mirrored ^ 1)] &
+                                     7]);
         Object_GetById(8)->terrainHeight = 0;
         Object_GetById(8)->y = 0;
       } else {
@@ -54,7 +58,14 @@ void Func_0200223c(void) {
       state->timer = 0;
     }
   }
-  ((u8 *)Object_GetById(8))[0x54] = state->current == state->stage;
+  {
+    struct ObjectRuntime *marker = Object_GetById(8);
+
+    if (state->current == state->stage)
+      marker->animationKind = 1;
+    else
+      marker->animationKind = 0;
+  }
   if (state->timer == 0)
     return;
   if (GameFlag_Test(260))

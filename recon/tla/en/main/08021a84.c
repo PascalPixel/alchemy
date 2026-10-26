@@ -1,3 +1,4 @@
+// Draft, differ 269 (289 before statements reordered 2026-10-26).
 // Draft, differ 297 of 578, structure in place, allocation not: the
 // constants and temporaries take other low registers throughout. The
 // locals are declared in the order of the native's spill slots (mirrored at
@@ -88,10 +89,10 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
   u32 facing;
   s32 tile;
 
-  mirrored = 0;
   system = (struct ObjectSystemColours *)Ram_HeapSlots->objectSystem;
   decoderWasLoaded = 1;
   decodeFrame = Ram_HeapSlots->unk4c[1];
+  mirrored = 0;
   if (decodeFrame == NULL) {
     Dma_Set(
         Render_DecodeFrameCode,
@@ -202,11 +203,11 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
     if (gData_0802eadc[(dir >> 13) & 7] & 0x80)
       mirrored = 1;
   } else if (obj->dirty != 0) {
+    drawCount = -1;
     size = obj->width * obj->height;
     pixels = MemAlloc(size);
     Iwram_ClearWords(pixels, size);
 
-    drawCount = -1;
     for (i = obj->count - 1; i >= 0; i--) {
       layer = obj->entries[i];
       if (layer == 0)

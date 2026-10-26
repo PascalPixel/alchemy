@@ -1,11 +1,12 @@
-// Draft, differ 123 of 216: overlay 69a's copy of the function drafted in
-// resource_698_c_020003cc.c (overlay 698's Func_020003cc, differ 123 there), whose
+// Draft, differ 115 of 216: overlay 69a's copy of the function drafted in
+// resource_698_c_020003cc.c (overlay 698's Func_020003cc, differ 115 there), whose
 // header says what it is, what still differs and what was tried.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "frame.h"
+#include "call.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_02001b24(void);
@@ -51,14 +52,14 @@ void Func_0200045c(void) {
   }
   *(u16 *)(work + 0xd44) = 1;
   *(u16 *)(work + 0xd46) = 1;
-  facing = linked->angle >> 13;
+  facing = linked->angle / 0x2000;
   actor->x = (((linked->x >> 19) & ~1) + facing - 1) << 19;
   actor->z = (((linked->z >> 19) & ~1) - (facing & 2) + 1) << 19;
   actor->velocityY = 0x60000;
   actor->priorityFlags = 1;
   actor->motionFlags = 3;
   ObjectDispatch_SetSingleChildFlags(actor, 1);
-  Camera_MoveWithinMapBounds(-1, -1, -1, 0);
+  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   shadow = Func_02001b7c();
   shadow->speedLimit = 0x80000;
   shadow->acceleration = 0x10000;

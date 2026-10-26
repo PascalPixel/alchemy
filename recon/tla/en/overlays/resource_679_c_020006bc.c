@@ -1,4 +1,4 @@
-// Draft of Func_020006bc (overlay 679, 74 instructions), differ 31: cycles the
+// Draft of Func_020006bc (overlay 679, 74 instructions), differ 22: cycles the
 // 15 colours it first captured from BG palette 4 (0x05000080, into
 // gData_02002a58) into gData_02002a78, one step every second frame, and queues
 // their DMA to OBJ palette 14 (0x050003c0). Written from the listing (the twin
@@ -7,14 +7,15 @@
 // gData_02002a58[i + 1]; the native keeps both pool loads in the loop
 // (gData_02002a78 in r8, reused after it for the queue's value) and steps an
 // offset in r6;
-// - after the capture the native reloads the counter for the base; here the
-// stored zero's register is reused. Measured: the loop as a goto (no strength
-// reduction at all, 48); the destination as a pointer set in the loop and used
-// after it (32); the base computed inside the loop (51).
+// - the counter is read through a volatile extern, so it is loaded again after
+// the capture stores zero, as the native does (plain, differ 33). Measured: the
+// loop as a goto (no strength reduction at all, 48); the destination as a
+// pointer set in the loop and used after it (32); the base computed inside the
+// loop (51).
 #include "../../../../games/tla/src/scene/apojii_islands/local.h"
 #include "io_write_queue.h"
 
-extern s32 gData_020024cc[];
+extern volatile s32 gData_020024cc[];
 extern u16 gData_02002a58[16];
 extern u16 gData_02002a78[16];
 

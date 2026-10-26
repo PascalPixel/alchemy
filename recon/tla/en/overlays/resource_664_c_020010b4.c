@@ -1,12 +1,15 @@
-// Draft, differ 141 of 211: the update Func_02001290 gives its shots: while the
-// event work is busy it stops; on a cell of kind 212 it ends (cue 539, its
-// end script gData_020061cc); otherwise, the first time it reaches the
-// leader (within 16 pixels on the same height when the leader climbs, else
-// within 8 on the same level) and flag 0x104 is clear, it carries the
-// leader along (counter 0x16a 200, movement 0); it moves 1.5 pixels a frame
-// along its angle, upward when its angle is 0xc000. Left: the native keeps
-// the shot in r6 and reuses the busy counter's zero in r7 for the stores
-// and the near test; this draft swaps them, which moves most rows.
+// Draft, differ 129 of 211 (was 141): the update Func_02001290 gives its
+// shots: while the event work is busy it stops; on a cell of kind 212 it ends
+// (cue 539, its end script gData_020061cc); otherwise, the first time it
+// reaches the leader (within 16 pixels on the same height when the leader
+// climbs, else within 8 on the same level) and flag 0x104 is clear, it
+// carries the leader along (counter 0x16a 200, movement 0); it moves 1.5
+// pixels a frame along its angle, upward when its angle is 0xc000. The
+// counter's 200 goes through an s32 (as a halfword constant it comes from the
+// pool). Left: the native keeps the shot in r6 and reuses the busy counter's
+// zero in r7 for the stores and the near test; this draft swaps them, which
+// moves most rows. Measured: no hit pointer, the fourth counter read into
+// near first (154).
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
@@ -64,7 +67,12 @@ void Func_020010b4(struct ObjectRuntime *shot) {
       leader->priorityFlags &= ~1;
       ((struct FieldSprite *)leader->animation)->priority =
           ((struct FieldSprite *)shot->animation)->priority;
-      *(s16 *)(work + 0x16a) = 200;
+      {
+        s16 *counter = (s16 *)(work + 0x16a);
+        s32 value = 200;
+
+        *counter = value;
+      }
       gPartyState.renderMode = 0;
       *hit = 1;
       ((u8 *)shot)[0x63] = 1;

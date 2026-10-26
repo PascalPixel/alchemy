@@ -1,3 +1,4 @@
+// Draft, differ 97 (117 before statements reordered 2026-10-26).
 // Draft, differ 119 of 152: the VBlank interrupt handler, as ☀️'s
 // System_VBlankHandler (games/tbs/src/runtime/runtime.c) with ⚓️'s input
 // record and its once-a-frame sound step. Left, other than order: the
@@ -95,9 +96,9 @@ void Func_0801399c(void) {
   } else if (gInput.repeatTimer > 0) {
     gInput.repeatTimer--;
   }
-  gInput.previousVblankHeld = keys;
 
   tick = gFrameTick;
+  gInput.previousVblankHeld = keys;
   if (gData_03001138.lastTick != (u8)tick && gData_03001138.unk03 == 0) {
     gData_03001138.unk01 = gData_03007ff0[4];
     Func_081c0088();

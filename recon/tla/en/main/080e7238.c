@@ -1,3 +1,4 @@
+// Draft, differ 103 (245 before statements reordered 2026-10-26).
 // Draft, differ 247 of 306 (2026-10-19, written from the listing; ☀️ has no
 // twin): the controlled actor grows out of a whirl of 100 sparks that
 // spiral in to it (resource 0x1ef, FieldEffect_ColouredOrbs, as Func_080e74d8
@@ -51,20 +52,20 @@ void Func_080e7238(void) {
   struct WhirlSpark *spark;
   struct EffectSprite *sprite;
   s32 position[3];
+  s32 next;
   s32 entry;
   s32 tiles;
   s32 i;
   s32 angle;
   s32 count;
   s32 state;
-  s32 next;
   s32 frame;
 
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs),
                         work);
+  spark = work->sparks;
   entry = Resource_FindFreeEntry();
   tiles = VramCache_Load(entry, 0x400, work);
-  spark = work->sparks;
   sprite = work->sprites;
   for (i = 0; i < WHIRL_COUNT; i++, sprite++, spark++) {
     Func_080eaf98(sprite, 4, 4, 0, tiles + (i & 15) * 2);
@@ -81,8 +82,8 @@ void Func_080e7238(void) {
   ObjectDispatch_SetSingleChildFlagsFar(object, 0);
 
   count = 2;
-  state = 0;
   next = 0;
+  state = 0;
   frame = 0;
   do {
     for (i = count; i != 0; i--) {
@@ -91,9 +92,9 @@ void Func_080e7238(void) {
       spark->age = 0;
       spark->x = object->x;
       spark->y = object->y + Random16() * 20;
+      next = (next + 1) % WHIRL_COUNT;
       spark->z = object->z;
       Vector_AddPolarOffset(Random16() << 3, angle, &spark->x);
-      next = (next + 1) % WHIRL_COUNT;
       spark->angle = angle;
       spark->radius = 0x500000;
     }

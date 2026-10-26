@@ -1,4 +1,4 @@
-// Near miss, differ 300 of 246 (2026-10-18), first pass: The Broken Seal's
+// Near miss, differ 294 (300 before statements reordered 2026-10-26) of 246 (2026-10-18), first pass: The Broken Seal's
 // Map_UpdateLayerScroll for this game's layers: no phase masks or enabled
 // flags, the view's vertical motion clamped to 16 pixels a frame, and the
 // layer-window renderers 0802abbc and 0802ac90. Left: allocation; the native
@@ -117,9 +117,9 @@ void Func_0802ad84(void) {
         Func_0802abbc(layerIndex, tileX, tileY);
     }
     layer->x = x;
-    gBgScroll[3 - layerIndex].x = x >> 16;
-    gBgScroll[3 - layerIndex].y = y >> 16;
     layer->y = y;
     layer++;
+    gBgScroll[3 - layerIndex].x = x >> 16;
+    gBgScroll[3 - layerIndex].y = y >> 16;
   }
 }

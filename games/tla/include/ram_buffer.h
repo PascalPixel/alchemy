@@ -5,6 +5,10 @@
 
 #define Ram_MapCellBuffer FIXED_ADDRESS((u8 *), 0x02010000, gMapCellBuffer)
 #define Ram_MapCollision FIXED_ADDRESS((u8 *), 0x0202c000, gMapCollision)
+/// The metatile table: each metatile's top two tile entries, then its bottom
+/// two. Func_0802abbc reads it at constant addresses inside its loop; as the
+/// symbol the two table addresses hoist out of the loop.
+#define Ram_MapBlocks FIXED_ADDRESS((u8 *), 0x02020000, gMapBlocks)
 
 #define Ram_SoundMixer FIXED_ADDRESS((u8 *), 0x03006000, SoundDriver_Mixer)
 
@@ -20,6 +24,18 @@
 /// as the x word's address plus 4 where that is live, which only constants
 /// give.
 #define Ram_WorldMapScroll FIXED_ADDRESS((s32 *), 0x0202a630, Data_0202a630)
+
+/// The world map screen's work. Its setup (Func_080ebf94) reaches it at a
+/// constant address: the work's fields are read again after stores to the
+/// screen values whose addresses it passes out, which only a constant gives.
+#define Ram_WorldMapWork                                                       \
+  FIXED_ADDRESS((struct WorldMapWork *), 0x0202a000, gWorldMapWork)
+/// Where Func_080ed0a0 reads the cursor from (x, then y, 16.16 pixels): the
+/// setup points it at the work's cursor.
+#define Ram_WorldMapCursor FIXED_ADDRESS((s32 **), 0x0202a62c, Data_0202a62c)
+/// The cursor's place when the screen opens (x, then y, 16.16 pixels).
+#define Ram_WorldMapCursorStart                                                \
+  FIXED_ADDRESS((s32 *), 0x0202a64c, Data_0202a64c)
 
 struct BattleWork;
 struct BattlePresentationTransition;

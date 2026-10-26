@@ -1,74 +1,58 @@
-// Near miss, differ 47 of 96 (2026-10-18; was 53): The Broken Seal's
-// Graphics_UpdatePhasePalette with ⚓️'s levels (each scaled sine plus 16, times
-// the index, over 64) and its statement order (the first sine is scaled before
-// the second call, the other two after the third). Left: allocation. The native
-// keeps the blue phase in r10 and the first level in r8, the index in r4 and
-// the output in r5, and scales green and blue in place; here the blue phase
-// takes r8, the level r10, and green's level is a copy. Tried: the first level
-// pinned to r8 with or without the blue phase pinned to r10, the products
-// written either way round, the output set before the index (differ 64 to 71).
-// 2026-10-15: green's and blue's scaled sines folded into their levels (60 to
-// 53; in place, green += 16: 65; every level in place: 69; red's too: 68). The
-// native still keeps the output pointer in r5 and the index in r4 (here r1 and
-// r5), and copies the first sine through r3, here r2.
-// 2026-10-18: palette[0] cleared after the levels (53 to 47): the final copy
-// now forms its own sp address as the native does, but red's level takes ip
-// (native r7) and the clear's zero and address come after the green and blue
-// shifts. Tried there: red's level after the others (71, 74), in place (63),
-// the index set before the output (47); alchemy permute 4 minutes on the
-// earlier form found blue_level reused as green's product (39 rows but 99
-// instructions, not kept).
+// Near miss, differ 23 of 96 (2026-10-26; 47 before): The Broken Seal's
+// BattleAnim_UpdatePhasePalette (games/tbs/src/battle_anim/parts/prism.c)
+// with ⚓️'s levels: each channel's offset plus 16, times the index, over 64.
+// The levels written inside the loop (loop.c hoists the + 16, as the native
+// adds it in place after the calls) and the palette indexed by the counter
+// (its pointer starts from sp + 2 in two steps, as natively) give the
+// native's loop exactly. Left: the native forms the palette's address afresh
+// for the palette[0] store and for the final copy (mov r2, sp; mov r1, sp),
+// where alchemy-gcc's cse2 keeps the first in a callee-saved register for
+// the second, so one more register is saved; palette[0] cleared after the
+// offsets, as ☀️ does, measured 29, and the permuter (4 minutes) found only a
+// temporary for the blue phase (19, not kept).
 #include "types.h"
 #include "iwram_call.h"
 
 s32 Trig_Sin(s32 angle);
 
-void Func_081496c8(s32 frame, s32 red_phase, s32 green_phase, s32 blue_phase) {
+void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase, s32 bluePhase) {
   u16 palette[64];
-  u16 *output;
   s32 phase;
-  s32 red_level;
-  s32 green_level;
-  s32 blue_level;
+  s32 redOffset;
+  s32 greenOffset;
+  s32 blueOffset;
   s32 index;
-  s32 red;
-  s32 green;
-  s32 blue;
 
-  phase = frame * 0x400;
-  red = (Trig_Sin(phase + red_phase) * 16) >> 15;
-  green = Trig_Sin(phase + green_phase);
-  blue = Trig_Sin(phase + blue_phase);
-
-  red_level = red + 16;
-  green_level = ((green * 16) >> 15) + 16;
-  blue_level = ((blue * 16) >> 15) + 16;
   palette[0] = 0;
+  phase = frame * 0x400;
+  redOffset = (Trig_Sin(phase + redPhase) * 16) >> 15;
+  greenOffset = (Trig_Sin(phase + greenPhase) * 16) >> 15;
+  blueOffset = (Trig_Sin(phase + bluePhase) * 16) >> 15;
+
   index = 1;
-  output = &palette[1];
   do {
-    s32 r;
-    s32 g;
-    s32 b;
+    s32 red;
+    s32 green;
+    s32 blue;
 
-    r = red_level * index / 64;
-    g = green_level * index / 64;
-    b = blue_level * index / 64;
+    red = (redOffset + 16) * index / 64;
+    green = (greenOffset + 16) * index / 64;
+    blue = (blueOffset + 16) * index / 64;
 
-    if (r < 0)
-      r = 0;
-    if (r > 31)
-      r = 31;
-    if (g < 0)
-      g = 0;
-    if (g > 31)
-      g = 31;
-    if (b < 0)
-      b = 0;
-    if (b > 31)
-      b = 31;
+    if (red < 0)
+      red = 0;
+    if (red > 31)
+      red = 31;
+    if (green < 0)
+      green = 0;
+    if (green > 31)
+      green = 31;
+    if (blue < 0)
+      blue = 0;
+    if (blue > 31)
+      blue = 31;
 
-    *output++ = (b << 10) | (g << 5) | r;
+    palette[index] = (blue << 10) | (green << 5) | red;
     index++;
   } while (index != 64);
 

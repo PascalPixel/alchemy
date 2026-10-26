@@ -1,70 +1,47 @@
-// Draft, differ 110 of 90: translated from its listing; names and structure still
-// to do.
-#include "iwram_call.h"
-#include "lib/call.h"
+// Draft, differ 39 of 90: Func_02001e08's twin for the cell west of the leader:
+// pushes the object found there, copies its cells and sets flag 0x8db when it
+// stops at (35, 38). Left: the native copies the leader into r1 and starts the
+// position argument in r0 before the stores, and keeps 99 in r6 and 38 in r8;
+// column as a local set before the search is the closest form (plain
+// constants 45).
+#include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
-#include "ram_buffer.h"
-#include "text/msg_ids.h"
-#include "types.h"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+extern s16 gData_02003de8[];
 
-extern u8 gData_02003de8[];
-s32 Object_GetById();
-s32 Object_FindInCell();
-void Func_0200074c();
-void Func_020005cc();
-s32 Func_02003aa4();
-void Func_020003b4();
-s32 Func_020006cc();
-void GameFlag_SetBit();
+struct ObjectRuntime *Object_GetById(s32 id);
+struct ObjectRuntime *Object_FindInCell(s32 *position);
+void GameFlag_SetBit(s32 flag);
+void Func_0200074c(struct ObjectRuntime *object);
+void Func_020005cc(s32 layer, s32 x, s32 z, s32 height);
+void Func_02003aa4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Func_020003b4(void);
+void Func_020006cc(s16 *ids);
 
-s32 Func_02001edc(s32 a0, s32 a1, s32 a2, s32 a3) {
-  s32 v0, r10, r6, v1, r5, r7, r8, v2, v3, r0, r3, v4;
-  s32 stack[5];
+void Func_02001edc(void) {
+  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  s32 position[3];
+  struct ObjectRuntime *object;
+  s32 column;
 
-  /* sub (s32)stack, #20 */
-  v0 = Object_GetById(FIELD_AT((s32)(s32)&gPartyState, s32, 532));
-  r10 = (s32)((u8 *)stack + 8);
-  FIELD_AT(r10, s32, 0) = (FIELD_AT(v0, s32, 8)) - 1048576;
-  r6 = 99;
-  FIELD_AT(r10, s32, 4) = FIELD_AT(v0, s32, 12);
-  FIELD_AT(r10, s32, 8) = FIELD_AT(v0, s32, 16);
-  v1 = Object_FindInCell(r10, v0);
-  r5 = v1;
-  Func_0200074c();
-  r7 = r5;
-  r7 = r7 + 34;
-  Value4((s32 (*)())Func_020005cc, FIELD_AT(r7, u8, 0),
-         (FIELD_AT(r5, s32, 8)) >> 20, (FIELD_AT(r5, s32, 16)) >> 20,
-         (FIELD_AT(r5, s32, 20)) >> 19);
-  stack[1] = 38;
-  r8 = 38;
-  v2 = Func_02003aa4(94, 44, 5, 1, r6, 38);
+  position[0] = leader->x - 0x100000;
+  position[1] = leader->y;
+  position[2] = leader->z;
+  column = 99;
+  object = Object_FindInCell(position);
+  Func_0200074c(object);
+  Func_020005cc(object->terrainId, object->x >> 20, object->z >> 20,
+                object->terrainHeight >> 19);
+  Func_02003aa4(94, 44, 5, 1, column, 38);
   Func_020003b4();
-  FIELD_AT(r7, u8, 0) = 0;
-  Call6((void (*)())Func_02003aa4, 99, 42, 5, 1, r6, r8);
-  Value4((s32 (*)())Func_020005cc, FIELD_AT(r7, u8, 0),
-         (FIELD_AT(r5, s32, 8)) >> 20, (FIELD_AT(r5, s32, 16)) >> 20,
-         ((FIELD_AT(r5, s32, 20)) >> 19) + 4);
-  v3 = Func_020006cc((s32)gData_02003de8);
-  FIELD_AT(r10, s32, 0) = (FIELD_AT(r5, s32, 8)) >> 20;
-  FIELD_AT(r10, s32, 8) = (FIELD_AT(r5, s32, 16)) >> 20;
-  r0 = v3;
-  r3 = (FIELD_AT(r5, s32, 16)) >> 20;
-  if (((FIELD_AT(r5, s32, 8)) >> 20) != 35)
-    goto L_02009f9a;
-  if (r3 != 38)
-    goto L_02009f9a;
-  Call1((void (*)())GameFlag_SetBit, 0x8db);
-  r0 = v4;
-L_02009f9a:
-  /* add (s32)stack, #20 */
-  return r0;
+  object->terrainId = 0;
+  Func_02003aa4(column, 42, 5, 1, column, 38);
+  Func_020005cc(object->terrainId, object->x >> 20, object->z >> 20,
+                (object->terrainHeight >> 19) + 4);
+  Func_020006cc(gData_02003de8);
+  position[0] = object->x >> 20;
+  position[2] = object->z >> 20;
+  if (position[0] == 35 && position[2] == 38)
+    GameFlag_SetBit(0x8db);
 }

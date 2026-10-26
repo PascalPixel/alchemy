@@ -1,9 +1,13 @@
-// Draft, differ 48 of 162: Jupiter Lighthouse room 4's arrival script: sets the
+// Draft, differ 27 of 162: Jupiter Lighthouse room 4's arrival script: sets the
 // event work's word 0x1ac to 516, runs the map's setup and the parts flags 2567
 // and 2568 enable; arriving by entrance 11 (flag 265 clear) the leader rises
 // from 120 pixels below, spinning, for up to 90 steps of 2 frames, lands facing
 // a quarter turn and falls into place; by entrance 12 Func_02001f00 runs.
-// Returns 0.
+// Returns 0. The rise is a goto loop (the native builds 0x1800 again
+// each pass) behind its own entry test, storing y before the ground height,
+// with the count after the wait. Left: the y read by the entry test is carried
+// into the first pass in r2 where the native keeps it in r3, and the gravity
+// store comes after the party state's pool load.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -52,15 +56,16 @@ s32 Func_02000384(void) {
     Event_StartScreenTransition();
     FieldEvent_WaitFrames(10);
     i = 0;
-    while (leader->y < 0) {
-      leader->y = leader->terrainHeight = leader->y + 0x30000;
+    if (leader->y < 0) {
+    rise:
+      leader->terrainHeight = leader->y = leader->y + 0x30000;
       leader->angle += 0x1800;
-      i++;
       WaitFrames(2);
-      if (i > 89)
-        break;
+      i++;
+      if (i <= 89 && leader->y < 0)
+        goto rise;
     }
-    leader->y = leader->terrainHeight = 0;
+    leader->terrainHeight = leader->y = 0;
     leader->angle = 0x4000;
     leader->motionFlags = 3;
     leader->velocityY = 0x30000;

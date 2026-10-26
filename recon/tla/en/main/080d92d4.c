@@ -1,4 +1,4 @@
-// Draft, differ 226 of 204: stretches a slot's chain of nodes (heap slot
+// Draft, differ 203 (226 before statements reordered 2026-10-26) of 204: stretches a slot's chain of nodes (heap slot
 // 0x9c work) between two objects. When the distance now needs more segments
 // than the chain has, the chain is drawn out to the length it covers, then
 // grown a frame later by Func_080d9790; otherwise it is drawn whole, the
@@ -56,8 +56,8 @@ void Func_080d92d4(s32 index, s32 fromId, s32 toId) {
     if (((u8 *)to)[99] == 99)
       (*(TargetHook *)((u8 *)to + 104))(to, &toX, &toZ);
     dx = (toX - from->x) >> 8;
-    dy = (toY - from->y) >> 8;
     dz = (toZ - from->z) >> 8;
+    dy = (toY - from->y) >> 8;
     segments = Iwram_SqrtEntry(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) +
                                Iwram_MulQ16(dz, dz)) /
                    6 +

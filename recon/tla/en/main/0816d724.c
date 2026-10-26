@@ -5,7 +5,7 @@
 // and 32 motes of its soul drift back into the user (pulled as
 // BattleEffect_RunNirvana's orb is).
 
-// Listing 589 instructions, draft 587, differ 176.
+// Listing 589 instructions, draft 587, differ 144 (2026-10-26).
 // Left: the spark blitter choice. The native computes the mirror choice
 // as a byte offset (4 or 0) right after the cell clamp, and the constant
 // 3 of the divide stays in a pseudo that is spilled (sp 8) and reused for
@@ -26,6 +26,8 @@
 // the choice as a byte offset into the pair                          165
 // alchemy permute 8 minutes, 2 jobs: 170 with one variable expanded
 // in place (an unclear rewrite of the printed source; not kept)
+// the pull's three deltas in locals, each shifted as ☀️'s BattleEffect_RunDrain
+// shifts them (the native's load order)                           144
 
 #include "types.h"
 #include "io_reg.h"
@@ -269,9 +271,13 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
                   (screen.x >> 1) - size / 2, screen.y - size, size, size * 2);
           BattleEffectKernels_IntegrateVector3(mote, 62, 0);
           if (frame > i + 32) {
-            mote->velocityX += (user->x - mote->x) >> 7;
-            mote->velocityY += (user->y + userHalfHeight - mote->y) >> 7;
-            mote->velocityZ += (user->z - mote->z) >> 7;
+            s32 dx = (user->x - mote->x) >> 7;
+            s32 dy = (user->y + userHalfHeight - mote->y) >> 7;
+            s32 dz = (user->z - mote->z) >> 7;
+
+            mote->velocityX += dx;
+            mote->velocityY += dy;
+            mote->velocityZ += dz;
             moteX = mote->x;
             if (moteX < 0)
               moteX = -moteX;

@@ -1,4 +1,4 @@
-// Near miss: listing 76 instructions, draft 73, common 36, differ 77; the rest
+// Near miss: listing 76 instructions, draft 73, common 36, differ 71 (77 before statements reordered 2026-10-26); the rest
 // differs in instruction order.
 #include "types.h"
 #include "ram_buffer.h"
@@ -53,8 +53,8 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 
 void Func_080e446c(u8 *source, u8 *destination, s32 phase) {
-  s32 width = 32;
   s32 height = 32;
+  s32 width = 32;
   s32 column;
   s32 row;
 

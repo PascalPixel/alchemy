@@ -1,4 +1,4 @@
-// Near miss, differ 105 of 290 (2026-10-15): the wave scroll's per-frame
+// Near miss, differ 91 (105 before statements reordered 2026-10-26) of 290 (2026-10-15): the wave scroll's per-frame
 // callback, which wavefx.c removes. The delay, the wave lines and the
 // colour match but for one pair (this builds the page field's offset
 // before the phase's store, the native after it); from the two
@@ -61,7 +61,7 @@ void BattleEffect_ApplyFlickerValue(struct ObjectRuntime *object, s32 value);
 struct WaveFxDescriptor *Scene_FindActorPlacement(s32 id);
 struct WaveFxMetadata *Resource_GetMetadataRecordFarFar(s32 sprite);
 struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-s16 ArcTan2(s32 y, s32 x);
+s32 ArcTan2(s32 y, s32 x);
 void BattleEffect_SetCallbackWhenTargetUnset(struct ObjectRuntime *object);
 
 // Each frame after the delay: rewrites the 160-line wave into the other
@@ -69,8 +69,8 @@ void BattleEffect_SetCallbackWhenTargetUnset(struct ObjectRuntime *object);
 // its 61-frame cycle sends a particle from the target back to the user.
 void Func_080dcb44(void) {
   struct WaveFxWork *work = Ram_HeapSlots->unk4c[3];
-  struct WaveFxVector from;
   struct WaveFxVector to;
+  struct WaveFxVector from;
   struct WaveFxDescriptor *descriptor;
   struct WaveFxMetadata *metadata;
   struct WaveFxSprite *sprite;
@@ -105,9 +105,9 @@ void Func_080dcb44(void) {
       descriptor = Scene_FindActorPlacement(work->sourceId);
       from.x = source->x;
       metadata = Resource_GetMetadataRecordFarFar(descriptor->sprite);
+      sprite = target->animation;
       from.y = source->y + (metadata->boxX << 16) - 0x20000;
       from.z = source->z;
-      sprite = target->animation;
       descriptor = Scene_FindActorPlacement(work->targetId);
       to.x = target->x;
       metadata = Resource_GetMetadataRecordFarFar(descriptor->sprite);

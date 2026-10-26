@@ -1,15 +1,18 @@
-// Draft, differ 97 of 298 (297 here), from the listing (The Broken Seal's
-// BattleEffect_RunDrain is only a hint): a mote leaves the first
+// Draft, differ 48 of 298 (2026-10-26; 95 before), from the listing (The
+// Broken Seal's BattleEffect_RunDrain is only a hint): a mote leaves the first
 // target as a ring of 24 sparks turning about it and is pulled toward the
 // user until it passes it. The blitter declared before the camera and the
 // sheet gives the native's stack slots; the spark size kept in a local set
 // before the ring loop gives the native's unfolded size arithmetic (12 - 2,
-// a register 3); the three deltas taken before the velocities are updated
-// give the native's load order. Left: the user pointer lives in fp and the
-// native copies it to a low register at each of four reads (here two, the
-// third read reuses r4), so the deltas and the abs test take other
-// registers (45 rows) and one copy is missing; the rest is reordered
-// rows. Tried: the deltas in all six orders (97 to 179).
+// a register 3). The pull's three deltas are shifted in their locals, as
+// ☀️'s RunDrain shifts its deltas (95 -> 48: the native's registers and load
+// order there). Left, scheduling: the native spills the effect before it
+// builds the heap base (the known store-before-build pattern) and loads the
+// work's slot before the camera's; after each of the orb's first two
+// position stores it sets an argument before the next load from the target
+// (str, movs, ldr), where alchemy-gcc loads first; and two loads of the ring
+// loop sit a row from the native's. Tried before: the deltas in all six
+// orders (97 to 179); now the six orders of the shifted deltas (71 to 188).
 #include "types.h"
 #include "ram_buffer.h"
 #include "system.h"
@@ -129,14 +132,14 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
       }
       BattleEffectKernels_IntegrateVector3(orb, 62, 0);
       if (frame > 0) {
-        s32 dx = user->x - orb->x;
-        s32 dy = user->y + userHalf - orb->y;
-        s32 dz = user->z - orb->z;
+        s32 dx = (user->x - orb->x) >> 10;
+        s32 dy = (user->y + userHalf - orb->y) >> 10;
+        s32 dz = (user->z - orb->z) >> 10;
         s32 ox;
 
-        orb->velocityX += dx >> 10;
-        orb->velocityY += dy >> 10;
-        orb->velocityZ += dz >> 10;
+        orb->velocityX += dx;
+        orb->velocityY += dy;
+        orb->velocityZ += dz;
         dx = user->x;
         if (dx < 0)
           dx = -dx;

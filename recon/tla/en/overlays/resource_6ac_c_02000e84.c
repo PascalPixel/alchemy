@@ -1,154 +1,119 @@
-// Draft of overlay 6ac's Func_02000e84, translated from its listing: differ
-// 66 of 237. Left: instruction order and register choice.
-#include "types.h"
-#include "call.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+// Draft, differ 4 of 237: rewritten from the listing. Sets the blend in rooms 2
+// to 6, places objects 8 and 9 by the entrance in room 6, sets up room 1's
+// cells for its entrances, and under flag 0xa30 loads the room's palette as
+// Mars Lighthouse entrance's Func_02001930 does. Func_02000058 is declared
+// returning s32 (it returns nothing; as void, its arguments are set r0 first:
+// 36), which would be a signature device; an empty asm with a memory clobber
+// between the two scene tests stops GCSE sharing room 6's id between them (22
+// without), and a volatile asm on the callback's priority builds it before the
+// callback's pool load (6 without). Left: the native's pool holds
+// SceneId_Ov6ACRoom3 twice, once for the first test and once for the palette,
+// where this compile shares one entry, so the closing loads differ and the pool
+// is a word short; a different symbol for one of them would explain it.
+#include "../../../../games/tla/src/scene/mars_lighthouse_room_m/mars_lighthouse_room_m.h"
+
+extern char SceneId_Ov6a8Room2;
+
+void Func_020000c0(void);
+void Func_020003c4(void);
 s32 Func_02000058();
-s32 Func_02000934();
-s32 Func_02002118();
-s32 Func_02003150();
-s32 Func_02003170();
-s32 Func_02003178();
-s32 Func_020031b8();
-s32 Func_020031f8();
-s32 Func_02003270();
-s32 Func_020032b0();
-s32 GameFlag_Test();
-s32 Object_GetById();
-s32 Object_SetPartAttribute();
-s32 Scheduler_AddOrUpdateCallback();
-extern u8 Func_020000c0[];
-extern u8 Func_020003c4[];
-extern u8 gPartyState[];
+void Func_02000934(s32 entrance);
+void Func_02002118(void);
+void Func_02003150(s32 value);
+void Func_02003170(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Func_02003178(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Func_020031b8(s32 scene, s32 a1);
+void Func_020031f8(s32 id, s32 a, s32 b);
+void Func_02003270(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+void Func_020032b0(s32 a);
+void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+
+static __inline__ void SetValue(s32 id, s32 value) {
+  /* FAKEMATCH(wrapper): forwarded inline; see scene_call.h. */
+  Func_02000058(id, value);
+}
+
+static __inline__ void SetBlend(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g) {
+  /* FAKEMATCH(wrapper): forwarded inline; see scene_call.h. */
+  Func_02003270(a, b, c, d, e, f, g);
+}
 
 s32 Func_02000e84(void) {
-  s32 v_r5, v_r6, t0, t1, t4, t9, t14, t19, t24, t27;
-  s32 t36, t38, t40, t42, t44, t45;
+  s16 scene = gPartyState.scene;
+  s32 entrance = gPartyState.entrance;
+  struct ObjectRuntime *object;
 
-  t0 = FIELD_AT((s32)gPartyState, s16, 480);
-  t1 = FIELD_AT((s32)gPartyState, s16, 482);
-  v_r6 = t1;
-  v_r5 = t0;
-  if (v_r5 == 0x128)
-    goto L_02008ebc;
-  if (v_r5 == 0x120)
-    goto L_02008ebc;
-  if (v_r5 == 0x121)
-    goto L_02008ebc;
-  if (v_r5 == 0x122)
-    goto L_02008ebc;
-  if (v_r5 != 0x123)
-    goto L_02008ee2;
-L_02008ebc:
-  Call1((void (*)())Func_020032b0, 1);
-  Call7((void (*)())Func_02003270, 1, 0x10000, 0x40000, 0x20000, 0x10000,
-        0x8000, 0x4000);
-L_02008ee2:
-  if (v_r5 != 0x128)
-    goto L_02008fa6;
-  if (v_r6 == 2)
-    goto L_02008f22;
-  if (v_r6 > 2)
-    goto L_02008ef6;
-  if (v_r6 == 1)
-    goto L_02008f00;
-  goto L_02008f86;
-L_02008ef6:
-  if (v_r6 == 3)
-    goto L_02008f44;
-  if (v_r6 == 4)
-    goto L_02008f66;
-  goto L_02008f86;
-L_02008f00:
-  t4 = Value1((s32 (*)())Object_GetById, 8);
-  Call2((void (*)())Object_SetPartAttribute, t4, 1);
-  Func_02000058(9, 4);
-  Call1((void (*)())Func_02003150, 4);
-  Call1((void (*)())Func_02003150, 5);
-  goto L_02008f86;
-L_02008f22:
-  t9 = Value1((s32 (*)())Object_GetById, 8);
-  Call2((void (*)())Object_SetPartAttribute, t9, 3);
-  Func_02000058(9, 5);
-  Call1((void (*)())Func_02003150, 6);
-  Call1((void (*)())Func_02003150, 7);
-  goto L_02008f86;
-L_02008f44:
-  t14 = Value1((s32 (*)())Object_GetById, 8);
-  Call2((void (*)())Object_SetPartAttribute, t14, 0);
-  Func_02000058(9, 2);
-  Call1((void (*)())Func_02003150, 0);
-  Call1((void (*)())Func_02003150, 1);
-  goto L_02008f86;
-L_02008f66:
-  t19 = Value1((s32 (*)())Object_GetById, 8);
-  Call2((void (*)())Object_SetPartAttribute, t19, 4);
-  Func_02000058(9, 3);
-  Call1((void (*)())Func_02003150, 2);
-  Call1((void (*)())Func_02003150, 3);
-L_02008f86:
-  t24 = Value1((s32 (*)())Object_GetById, 10);
-  FIELD_AT(t24, u8, 85) = 0;
-  FIELD_AT(t24, s32, 16) = 0x680000;
-  Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_020000c0, 0x480);
-  goto L_02009088;
-L_02008fa6:
-  if (v_r5 != 0x11f)
-    goto L_02009088;
-  if ((u32)(v_r6 - 1) <= (u32)1)
-    goto L_02008fc2;
-  if (v_r6 == 8)
-    goto L_02008fc2;
-  if (v_r6 == 10)
-    goto L_02008fc2;
-  if (v_r6 == 12)
-    goto L_02008fc2;
-  if (v_r6 != 14)
-    goto L_02009088;
-L_02008fc2:
-  Func_02002118();
-  t27 = Value1((s32 (*)())GameFlag_Test, 0xa31);
-  if (t27 == 0)
-    goto L_02008ff8;
-  Call6((void (*)())Func_02003170, 30, 12, 4, 3, 12, 12);
-  Call6((void (*)())Func_02003178, 64, 64, 4, 3, 76, 12);
-L_02008ff8:
-  Call1((void (*)())Func_02000934, v_r6);
-  Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_020003c4, 0x480);
-  Func_02000058(12, 4);
-  Func_02000058(13, 5);
-  Func_02000058(14, 2);
-  Call2((void (*)())Func_02000058, 15, 3);
-  t36 = Value1((s32 (*)())GameFlag_Test, 0xa32);
-  if (t36 != 0)
-    goto L_02009040;
-  Call3((void (*)())Func_020031f8, 12, 0, 0);
-L_02009040:
-  t38 = Value1((s32 (*)())GameFlag_Test, 0xa33);
-  if (t38 != 0)
-    goto L_02009058;
-  Call3((void (*)())Func_020031f8, 13, 0, 0);
-L_02009058:
-  t40 = Value1((s32 (*)())GameFlag_Test, 0xa34);
-  if (t40 != 0)
-    goto L_02009070;
-  Call3((void (*)())Func_020031f8, 14, 0, 0);
-L_02009070:
-  t42 = Value1((s32 (*)())GameFlag_Test, 0xa35);
-  if (t42 != 0)
-    goto L_02009088;
-  Call3((void (*)())Func_020031f8, 15, 0, 0);
-L_02009088:
-  t44 = Value1((s32 (*)())GameFlag_Test, 0xa30);
-  if (t44 == 0)
-    goto L_020090b0;
-  t45 = FIELD_AT((s32)gPartyState, s16, 506);
-  Call2((void (*)())Func_020031b8, (t45 + 19), 0x5000000);
-L_020090b0:
+  if (scene == (s32)&SceneId_Ov6ACRoom6 || scene == (s32)&SceneId_Ov6ACRoom2 ||
+      scene == (s32)&SceneId_Ov6ACRoom3 || scene == (s32)&SceneId_Ov6ACRoom4 ||
+      scene == (s32)&SceneId_Ov6ACRoom5) {
+    Func_020032b0(1);
+    SetBlend(1, 0x10000, 0x40000, 0x20000, 0x10000, 0x8000, 0x4000);
+  }
+  __asm__("" : : : "memory");
+  if (scene == (s32)&SceneId_Ov6ACRoom6) {
+    switch (entrance) {
+    case 1:
+      Object_SetPartAttribute(Object_GetById(8), 1);
+      Func_02000058(9, 4);
+      Func_02003150(4);
+      Func_02003150(5);
+      break;
+    case 2:
+      Object_SetPartAttribute(Object_GetById(8), 3);
+      Func_02000058(9, 5);
+      Func_02003150(6);
+      Func_02003150(7);
+      break;
+    case 3:
+      Object_SetPartAttribute(Object_GetById(8), 0);
+      Func_02000058(9, 2);
+      Func_02003150(0);
+      Func_02003150(1);
+      break;
+    case 4:
+      Object_SetPartAttribute(Object_GetById(8), 4);
+      Func_02000058(9, 3);
+      Func_02003150(2);
+      Func_02003150(3);
+      break;
+    }
+    object = Object_GetById(10);
+    object->motionFlags = 0;
+    object->z = 0x680000;
+    Scheduler_AddOrUpdateCallback(Func_020000c0, 0x480);
+  } else if (scene == (s32)&SceneId_Ov6ACRoom1) {
+    if (entrance == 1 || entrance == 2 || entrance == 8 || entrance == 10 ||
+        entrance == 12 || entrance == 14) {
+      Func_02002118();
+      if (GameFlag_Test(0xa31)) {
+        Func_02003170(30, 12, 4, 3, 12, 12);
+        Func_02003178(64, 64, 4, 3, 76, 12);
+      }
+      Func_02000934(entrance);
+      {
+        s32 priority = 0x480;
+
+        asm volatile("" : "+l"(priority));
+        Scheduler_AddOrUpdateCallback(Func_020003c4, priority);
+      }
+      Func_02000058(12, 4);
+      Func_02000058(13, 5);
+      Func_02000058(14, 2);
+      SetValue(15, 3);
+      if (!GameFlag_Test(0xa32))
+        Func_020031f8(12, 0, 0);
+      if (!GameFlag_Test(0xa33))
+        Func_020031f8(13, 0, 0);
+      if (!GameFlag_Test(0xa34))
+        Func_020031f8(14, 0, 0);
+      if (!GameFlag_Test(0xa35))
+        Func_020031f8(15, 0, 0);
+    }
+  }
+  if (GameFlag_Test(0xa30))
+    Func_020031b8(gPartyState.map +
+                      ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),
+                  0x5000000);
   return 0;
 }

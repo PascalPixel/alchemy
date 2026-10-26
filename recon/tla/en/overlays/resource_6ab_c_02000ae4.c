@@ -1,59 +1,50 @@
-// Draft of overlay 6ab's Func_02000ae4, translated from its listing: differ
-// 57 of 80. Left: its shape: 77 instructions against the listing's 80.
-#include "types.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Func_020041e4();
-s32 Func_020042ac();
-s32 Func_0200446c();
-s32 Runtime_AllocateHeapBlockFar();
-s32 Runtime_ReleaseHeapBlock();
-s32 VramCache_Load();
-s32 WaitFrames();
-extern u8 Data_02004cec[];
-extern u8 Func_02000ab4[];
+// Draft, differ 31 of 80 (was 57), rewritten from the listing: creates object
+// kind 0x1e9 (Data_02004cec) at (1408, 224) with full-colour off, palette 0 and
+// priority 1, loads its tiles into VRAM through a heap block, and with rise set
+// lifts it with sound 135 twice. Left: register choice: the block (and the 0 it
+// starts as, which CSE uses for the two byte stores) is in r6 and the sprite in
+// r5, the other way round from the native; and the native loads Data_02004cec's
+// address before the arguments. Tried: the block declared first, its 0 set
+// after the create call (no change).
+#include "../../../../games/tla/src/scene/mars_lighthouse_star_room/mars_lighthouse_star_room.h"
 
-void Func_02000ae4(s32 p0) {
-  s32 v_r0, v_r5, v_r7, v_r8, t0, t1, t2, t3, t4, t6;
-  s32 t10;
+extern struct ObjectRuntime *Data_02004cec;
 
-  t0 = Func_020041e4(0x1e9, 0x2be0000, 0, 0xe00000);
-  *(s32 *)(s32)Data_02004cec = t0;
-  v_r8 = (s32)Data_02004cec;
-  v_r7 = p0;
-  v_r5 = 0;
-  v_r0 = t0;
-  if (v_r0 == v_r5)
-    goto L_02008b92;
-  t1 = FIELD_AT(v_r0, s32, 80);
-  t2 = FIELD_AT(t1, u8, 5);
-  t3 = FIELD_AT(t1, u8, 9);
-  FIELD_AT(t1, u8, 5) = (-0x21 & t2);
-  FIELD_AT(t1, u8, 9) = (((15 & t3) & -13) | 4);
-  FIELD_AT(v_r0, u8, 85) = 3;
-  FIELD_AT(v_r0, u8, 92) = 1;
-  FIELD_AT(v_r0, s32, 108) = (s32)Func_02000ab4;
-  FIELD_AT(t1, u8, 26) = v_r5;
-  FIELD_AT(t1, u8, 27) = v_r5;
-  t4 = Runtime_AllocateHeapBlockFar(68, 0x608);
+void Func_02000ab4(void);
+void Func_020042ac(s32 sound);
+u8 *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
+void Runtime_ReleaseHeapBlock(s32 slot);
+void VramCache_Load(s32 slot, s32 size, const u8 *tiles);
+
+void Func_02000ae4(s32 rise) {
+  u8 *block;
+  struct ObjectRuntime *object;
+  struct FieldSprite *sprite;
+
+  object = Data_02004cec = Func_020041e4(0x1e9, 0x2be0000, 0, 0xe00000);
+  block = NULL;
+  if (object == NULL)
+    return;
+  sprite = object->animation;
+  sprite->fullColor = 0;
+  sprite->palette = 0;
+  sprite->priority = 1;
+  object->motionFlags = 3;
+  object->unk5c[0] = 1;
+  object->update = Func_02000ab4;
+  sprite->nextFrame = 0;
+  sprite->unk1b[0] = 0;
+  block = Runtime_AllocateHeapBlockFar(68, 0x608);
   Func_020042ac(247);
-  t6 = FIELD_AT(t1, u8, 16);
-  v_r5 = (t4 + 0x400);
-  VramCache_Load(t6, 128, v_r5);
+  block += 0x400;
+  VramCache_Load(sprite->vramBlock, 128, block);
   Runtime_ReleaseHeapBlock(68);
-  if (v_r7 == 0)
-    goto L_02008b92;
-  WaitFrames(1);
-  t10 = *(s32 *)v_r8;
-  FIELD_AT(t10, s32, 40) = 0x28000;
-  WaitFrames(4);
-  Func_0200446c(135);
-  WaitFrames(8);
-  Func_0200446c(135);
-L_02008b92:
-  return;
+  if (rise) {
+    WaitFrames(1);
+    Data_02004cec->velocityY = 0x28000;
+    WaitFrames(4);
+    Func_0200446c(135);
+    WaitFrames(8);
+    Func_0200446c(135);
+  }
 }

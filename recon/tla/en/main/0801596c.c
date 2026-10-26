@@ -1,4 +1,4 @@
-// Draft, differ 118 of 164: allocates the save workspace, identifies the
+// Draft, differ 111 (118 before statements reordered 2026-10-26) of 164: allocates the save workspace, identifies the
 // flash chip and scans the sectors three at a time, as ☀️'s
 // SaveState_InitializeWorkspace (games/tbs/src/runtime/runtime.c) over 15
 // sectors. Same instructions in the same shape; what is left is register
@@ -59,9 +59,9 @@ s32 Func_0801596c(void) {
 
     if (SaveState_CompareBytes(slot->signature, (u8 *)gSave_Signature, 7) != 0)
       continue;
-    work->sequence[index] = slot->sequence;
     record = slot->recordId;
     id = record;
+    work->sequence[index] = slot->sequence;
     if (id >= 16)
       continue;
     if (status != 0)

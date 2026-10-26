@@ -1,4 +1,4 @@
-// Draft, differ 501 of 444 (2026-10-25): Move cast on a target, The Broken
+// Draft, differ 403 (501 before statements reordered 2026-10-26) of 444 (2026-10-25): Move cast on a target, The Broken
 // Seal's FieldEffect_SteerPushedTarget with this game's calls. The hand
 // (BattleEffect_StartItemBreak) appears 16 pixels above the target on the
 // caster's side and pushes it 16 pixels the way the d-pad points, for as long
@@ -64,14 +64,14 @@ void Func_080dd054(void) {
   s32 angle = (u16)scene->angle + 0x8000;
   s32 moved = 0;
   u8 *layer = &target->terrainId;
-  u8 savedLayer = *layer;
   s32 pushed = 0;
+  u8 savedLayer = *layer;
   struct ObjectRuntime *pusher;
-  struct PendingEvent *event;
   struct Vec3 position;
   struct Vec3 beyond;
   struct ObjectRuntime *hit;
   u8 *pusherFlags;
+  struct PendingEvent *event;
   s32 direction;
   s32 value;
   s32 cellX, cellZ;
@@ -133,8 +133,8 @@ void Func_080dd054(void) {
       continue;
     }
 
-    value = 0x100000;
     position.x = target->x;
+    value = 0x100000;
     position.y = target->y + value;
     position.z = target->z;
     Vector_AddPolarOffset(value, angle, &position);
@@ -163,8 +163,8 @@ void Func_080dd054(void) {
           Audio_PlayCue(114);
         continue;
       }
-      cellX = user->x & MOVE_CELL_MASK;
       cellZ = user->z & MOVE_CELL_MASK;
+      cellX = user->x & MOVE_CELL_MASK;
       if (cellX == (position.x & MOVE_CELL_MASK) &&
           cellZ == (position.z & MOVE_CELL_MASK)) {
         Object_SetMode(pusher, 4);
@@ -193,8 +193,8 @@ void Func_080dd054(void) {
     target->movementState = 0;
     target->speedLimit = 0x3333;
     target->acceleration = 0x3333;
-    Object_SetPosition(target, position.x, position.y, position.z);
     *pusherFlags = 0;
+    Object_SetPosition(target, position.x, position.y, position.z);
     pusher->speedLimit = 0x3333;
     pusher->acceleration = 0x3333;
     value = 0x100000;

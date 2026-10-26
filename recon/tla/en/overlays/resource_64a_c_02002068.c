@@ -1,6 +1,12 @@
-// Draft, differ 106 of 137: turns packed clear data into password
+// Draft, differ 83 of 137 (was 106): turns packed clear data into password
 // characters, six bits each with every tenth skipped, and scrambles them.
-// Left: register choice and the loops' constants kept inside them.
+// The clearing and saving loops are goto loops walking a pointer, as the
+// native keeps their constants inside them and indexes saved by i (now
+// instruction for instruction but registers). Left: register choice (the
+// native keeps length in r7, shift in r4, size in r9 and dst in r10; here
+// length and shift, size and dst trade places), and p = dst + n, which the
+// native computes from n (r8) where gcse folds n's zero here. Tried: dst[n]
+// for p (121: n then takes r4).
 #include "types.h"
 
 s32 Func_02002068(u8 *src, s32 length, u8 *dst) {
@@ -11,23 +17,35 @@ s32 Func_02002068(u8 *src, s32 length, u8 *dst) {
   s32 shift = 2;
   s32 size = 11;
   u8 *p;
+  u8 *q;
   u8 last;
+  u8 c;
 
   if (length != 16) {
     size = 41;
     if (length != 61)
       size = 175;
   }
-  for (i = 0; i != size; i++)
-    dst[i] = 0;
-  for (i = 0; i != length; i++) {
-    saved[i] = src[i];
-    src[i] = (src[i] - i) & 63;
+  i = 0;
+  if (size != 0) {
+    q = dst;
+  clear:
+    *q++ = 0;
+    if (++i != size)
+      goto clear;
+  }
+  i = 0;
+  if (length != 0) {
+    q = src;
+  save:
+    saved[i] = *q;
+    *q = (saved[i] - i) & 63;
+    q++;
+    if (++i != length)
+      goto save;
   }
   p = dst + n;
   for (i = 0; i != length; i++, k++) {
-    u8 c;
-
     if (i % 10 > 8)
       continue;
     c = src[k];

@@ -43,7 +43,7 @@ SECTIONS
         "*/games/tla/src/scene/airs_rock/s1cc8.o"(.text)
         "*/games/tla/src/scene/airs_rock/s1da8.o"(.text)
         "*/resource_663_overlay.o"(.text.x02009dc4)
-        "*/resource_663_overlay.o"(.text.x02009f7c)
+        "*/games/tla/src/scene/airs_rock/s1f7c.o"(.text)
         "*/resource_663_overlay.o"(.text.x0200a4b0)
         "*/resource_663_overlay.o"(.text.x0200a57c)
         "*/resource_663_overlay.o"(.text.x0200a6b8)

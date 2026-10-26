@@ -1,3 +1,4 @@
+// Draft, differ 140 (318 before statements reordered 2026-10-26).
 // Draft, differ 322 of 447: The Broken Seal twin
 // (DisplayScroll_BuildAndSwapHBlankPage) for the heap slot 0x88 workspace:
 // fills the hidden page with each scanline's BG1, BG2 and BG3 offsets, the
@@ -31,12 +32,12 @@ extern const s16 Data_080f08b0[];
 void Func_080d607c(void) {
   struct DisplayScrollWork *work = Ram_HeapSlots->unk84[1];
   u8 mode = work->mode;
-  s32 x1 = (s16)gBgScroll[1].x;
-  s32 y1 = (s16)gBgScroll[1].y;
-  s32 x2 = (s16)gBgScroll[2].x;
-  s32 y2 = (s16)gBgScroll[2].y;
   s32 y3 = (s16)gBgScroll[3].y;
+  s32 x1 = (s16)gBgScroll[1].x;
+  s32 x2 = (s16)gBgScroll[2].x;
+  s32 y1 = (s16)gBgScroll[1].y;
   s32 x3 = (s16)gBgScroll[3].x;
+  s32 y2 = (s16)gBgScroll[2].y;
   u8 *event = Ram_HeapSlots->eventWork;
   u16 *row;
   s32 step;
@@ -59,8 +60,8 @@ void Func_080d607c(void) {
       }
     } else {
       u16 a = x1;
-      u16 b = x2;
       u16 c = x3;
+      u16 b = x2;
 
       amplitude = work->ampX;
       for (scanline = 0; scanline != 160; scanline++) {

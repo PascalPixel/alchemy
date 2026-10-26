@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "save_state.h"
 #include "mem.h"
+#include "iwram_call.h"
 
 extern u8 MsgNoBackupMemory;
 extern u8 MsgSaveFailed;
@@ -32,4 +33,45 @@ s32 SaveState_WriteSlot(s32 slot) {
   }
   SaveState_ReleaseWorkspace();
   return result;
+}
+
+s32 Func_08043534(void) {
+  void *buffer;
+  s32 value;
+  s32 result;
+  s32 found;
+  s32 token;
+
+  result = 0;
+  buffer = Runtime_BumpAllocateAlternatePool(0x3000);
+  value = gData_020036d0;
+  if (value != -1) {
+    found = Func_0801596c();
+    if (found != 0) {
+      UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
+      result = -9;
+    } else {
+      u8 *dst;
+
+      found = SaveState_ReadRecordPayload(gData_020036d0, buffer);
+      if (found != 0) {
+        UiText_ShowPositionedMessageAndWait((s32)&MsgSaveFailed, 1);
+        result = -2;
+      }
+      dst = (u8 *)buffer + (s32)gData_02000504;
+      dst -= (s32)gData_02000000;
+      Iwram_CopyWords(dst, gData_02000504, 16);
+      token = SaveProgress_Open(0);
+      found = Func_08042f10(gData_020036d0, buffer);
+      SaveProgress_Close(token);
+      if (found != 0) {
+        UiText_ShowPositionedMessageAndWait((s32)&MsgSaveFailed, 1);
+        result = -3;
+      }
+    }
+    SaveState_ReleaseWorkspace();
+    MemFree(buffer);
+    value = result;
+  }
+  return value;
 }

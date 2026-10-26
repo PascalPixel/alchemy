@@ -1,6 +1,10 @@
-// Draft, differ 24 of 65: saves person 10 (a copy of the object, its mode, its
+// Draft, differ 12 of 65: saves person 10 (a copy of the object, its mode, its
 // animation and its place) and stops it where it stands; person 9 halts too
 // when it runs one of its two walking scripts. Func_02000fac restores it.
+// The position is read once into x and z before the copies, and the targets
+// are set x, y, z (from 24). Left: the store-then-load rows: after each store
+// the native issues a pool load or a store before the next load from the
+// objects, where this draft loads at once.
 #include "types.h"
 #include "object_runtime.h"
 #include "iwram_call.h"
@@ -33,15 +37,20 @@ void Func_02000f00(void) {
   Iwram_CopyWords(&gData_0200646c, object, 128);
   gData_020064f8 = animation[21];
   Data_020064f4 = sprite[24];
-  gData_020064ec = object->x;
-  object->update = 0;
-  gData_020064f0 = object->z;
-  object->velocityZ = 0;
-  object->velocityY = 0;
-  object->velocityX = 0;
-  object->targetY = object->y;
-  object->targetX = object->x;
-  object->targetZ = object->z;
+  {
+    s32 x = object->x;
+    s32 z = object->z;
+
+    gData_020064ec = x;
+    object->update = 0;
+    gData_020064f0 = z;
+    object->velocityZ = 0;
+    object->velocityY = 0;
+    object->velocityX = 0;
+    object->targetX = x;
+    object->targetY = object->y;
+    object->targetZ = z;
+  }
   ObjectMotion_ResetTargetsAndVelocity(10);
   ObjectDispatch_SetAnimationSpeed(object, 10);
   object->speedLimit = 0x10000;

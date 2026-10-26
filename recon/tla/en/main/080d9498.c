@@ -1,4 +1,4 @@
-// Draft, differ 341 of 297 (2026-10-24): swings a slot's chain (heap slot
+// Draft, differ 291 (341 before statements reordered 2026-10-26) of 297 (2026-10-24): swings a slot's chain (heap slot
 // 0x9c work) between (x, y, z) and the target point for twice its segment
 // count of frames: the last node rides the line between the ends, raised by
 // a sine wave across the line's heading (ArcTan2 of the distance), and each
@@ -14,7 +14,7 @@
 #include "mem.h"
 #include "ram_buffer.h"
 
-s16 ArcTan2(s32 y, s32 x);
+s32 ArcTan2(s32 y, s32 x);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
 
@@ -47,21 +47,21 @@ struct ChainWork {
 };
 
 s32 Func_080d9498(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
-  struct ChainWork *work = Ram_HeapSlots->unk84[6];
   s32 dx = toX - x;
+  struct ChainWork *work = Ram_HeapSlots->unk84[6];
   s32 dy = toY - y;
-  s32 dz = toZ - z;
+  s32 frame;
+  s32 sine;
+  s32 segments;
   s32 shiftedX = dx >> 8;
+  s32 dz = toZ - z;
   s32 shiftedY = dy >> 8;
   struct ChainSlot *slot = &work->slots[index];
   struct ChainNode *node = slot->head;
-  struct ChainNode **nodes;
   struct ChainNode **cursor;
-  s32 segments;
-  s32 frame;
   s32 i;
   u16 angle;
-  s32 sine;
+  struct ChainNode **nodes;
   s32 cosine;
   s32 lastX, lastY, lastZ;
 
@@ -90,9 +90,9 @@ s32 Func_080d9498(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
         node->y = lastY = y + dy * frame / 2 / i + offset;
         node->z = lastZ = z + dz * frame / 2 / i;
       } else {
+        s32 ez = (lastZ - node->z) >> 8;
         s32 ex = (lastX - node->x) >> 8;
         s32 ey = (lastY - node->y) >> 8;
-        s32 ez = (lastZ - node->z) >> 8;
         s32 distance =
             Iwram_SqrtEntry(Iwram_MulQ16(ex, ex) + Iwram_MulQ16(ey, ey) +
                             Iwram_MulQ16(ez, ez));

@@ -1,63 +1,59 @@
-// Draft, differ 76 of 76: the logic is right. The native keeps the table in r6
-// and the index in r7 and reads the count twice, signed for the first test and
-// unsigned into r2 for the loop-end test (ldrsh r3, [r6, r1]; ldrh r2, [r6,
-// #10]; ... lsls r3, r2, #16; asrs r3, r3, #16); this form keeps the table in
-// r7, the index in r6 and the count in ip. An s16 count local is differ 47, an
-// s16 index 68. Overlay 69a has the same function at 0200189c.
+// Draft, differ 47 of 76: overlay 699's copy of the function drafted in
+// resource_698_c_0200180c.c (overlay 698's Func_0200180c, differ 47 there), whose
+// header says what it is, what still differs and what was tried.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
 
-struct CellTarget {
+struct Spot {
   s16 x;
   s16 z;
   s16 flag;
   s16 unk06;
 };
 
-struct CellTargetTable {
-  s16 unk00;
-  s16 positionFlag;
+struct SpotState {
+  u8 unk00[2];
+  s16 flagByte;
   u8 unk04[6];
   s16 count;
   s16 current;
-  u8 unk0e[18];
-  struct CellTarget targets[1];
+  u8 unk0e[0x12];
+  struct Spot spots[1];
 };
 
-extern struct CellTargetTable gData_020024f8;
+extern struct SpotState gData_020024f8;
 
 struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
-void Func_02001654(struct CellTargetTable *table, struct CellTarget *target);
-void Func_020016c4(struct CellTargetTable *table, struct CellTarget *target);
+void Func_02001654(struct SpotState *state, struct Spot *spot);
+void Func_020016c4(struct SpotState *state, struct Spot *spot);
 
-// Activates the tile mechanism under the party leader; returns one if
-// activated.
 s32 Func_020019f4(void) {
   struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
-  struct CellTargetTable *table = &gData_020024f8;
-  struct CellTarget *target;
+  struct SpotState *state = &gData_020024f8;
+  struct Spot *spot = state->spots;
   s32 i;
+  s16 count = state->count;
 
-  for (i = 0, target = table->targets; i < table->count; i++, target++) {
-    if (target->x == x && target->z == z) {
-      if (GameFlag_Test(target->flag) == 0) {
-        Func_02001654(table, target);
-        GameFlag_SetBit(target->flag);
-        table->current = i;
+  for (i = 0; i < count; i++, spot++) {
+    if (spot->x == x && spot->z == z) {
+      if (!GameFlag_Test(spot->flag)) {
+        Func_02001654(state, spot);
+        GameFlag_SetBit(spot->flag);
+        state->current = i;
         break;
       }
-      if (i == table->current)
+      if (i == state->current)
         break;
-      table->current = i;
-      Func_020016c4(table, target);
-      GameFlag_SetByte(table->positionFlag, x);
-      GameFlag_SetByte(table->positionFlag + 8, z);
+      state->current = i;
+      Func_020016c4(state, spot);
+      GameFlag_SetByte(state->flagByte, x);
+      GameFlag_SetByte(state->flagByte + 8, z);
       return 1;
     }
   }

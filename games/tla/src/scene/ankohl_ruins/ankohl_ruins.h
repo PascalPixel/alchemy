@@ -9,6 +9,17 @@
 #include "scene_ids.h"
 #include "field_sprite.h"
 
+/// The overlay's view of the event work heap slot.
+struct AnkohlRuinsEventWork {
+  u8 unk000[0x154];
+  s16 unk154; ///< 66 when Func_020010f4's step is refused; 40 lets it run
+  u8 unk156[0x14];
+  s16 alarm;
+  u8 unk16c[0x60];
+  /// Moved with the leader while the raft (object 9) carries them.
+  struct ObjectRuntime *unk1cc;
+};
+
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -51,6 +62,11 @@ static inline s32 AnkohlRuins_FlagCheck(s32 flag) {
 static inline void AnkohlRuins_FlagSet(s32 flag) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   GameFlag_SetBit(flag);
+}
+
+static inline void AnkohlRuins_FlagClear(s32 flag) {
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
+  GameFlag_ClearBit(flag);
 }
 
 static inline void AnkohlRuins_Call2e24(s32 a, s32 b, s32 c) {

@@ -1,13 +1,18 @@
-// Draft, differ 242 of 484: a beam of light in Air's Rock: BG0 is hidden while
-// resources 446 (its tiles, two blocks) and 447 (its map, offset to its
-// tiles and copied in 18 rows of 32 bytes) are loaded; object 12 glows
-// (Func_0200092c) and sheds a spark (object type 0x2a0, Func_020008ac)
-// every fourth frame for 45 frames; the camera moves to the light, the
-// screen flashes, BG0 is shown and scrolled (Func_0200257c, cue 163) while
-// the map work's beam at 0x178 sweeps over 272 frames, then the beam
-// flickers (Func_02000ef4) for 257 frames and fades over 129 (cue 390);
-// the display is put back and flag 0x87a set.
-// Left: the native saves only r8 (the beam pointer) with an 8-byte frame, keeps the buffer in r5 and the counters in r7, spills the first object of each spark to the stack and keeps the frame count's low bits in r6 as the sparks' 0.
+// Draft, differ 146 of 484 (was 218): a beam of light in Air's Rock: BG0 is
+// hidden while its tiles (two blocks) and its map (offset to its tiles and
+// copied in 18 rows of 32 bytes) are loaded; object 12 glows (Func_0200092c)
+// and sheds a spark (object type 0x2a0, Func_020008ac) every fourth frame for
+// 45 frames; the camera moves to the light, the screen flashes, BG0 is shown
+// and scrolled (Func_0200257c, cue 163) while the map work's beam at 0x178
+// sweeps over 272 frames, then the beam flickers (Func_02000ef4) for 257
+// frames and fades over 129 (cue 390); the display is put back and flag 0x87a
+// set. Written with the forms that matched overlay 664's Func_02003654.
+// Left: the native saves only r8 (the beam pointer) with an 8-byte frame,
+// keeps the counters in r7, spills the first object of each spark to the
+// stack and keeps the frame count's low bits in r6 as the sparks' 0; this
+// draft keeps the low bits in r8 and the beam in r10. Measured: without the
+// row pointer reuse 184; a counter of its own for the flicker or fade loop
+// 160 to 206; the sweep through the counter 256.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -15,8 +20,20 @@
 #include "field_sprite.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
+#include "lib/call.h"
 
+struct SpriteParts {
+  u8 unk00[9];
+  u8 unk09Low : 2;
+  u8 part : 2;
+};
+struct ObjBits {
+  u8 unk00[35];
+  u8 flags : 8;
+};
 extern s32 gFrameCount;
+extern char ResourceId_WhirlwindMap;
+extern char ResourceId_WhirlwindTiles;
 extern const u8 gData_02003d1c[];
 void *MemAlloc(s32 size);
 void MemFree(void *block);
@@ -62,20 +79,25 @@ void Func_020026b8(void) {
   s32 *beam = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x178);
   u16 *cell;
   struct ObjectRuntime *spark;
-  s32 i, x, z;
+  u32 i;
+  s32 x, z;
 
   Func_02003bc8();
   Func_02003c88(0);
   REG_DISPCNT &= ~0x100;
-  Func_02003af0(Resource_GetTableEntry(446), buffer);
+  Func_02003af0(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles), buffer);
   Dma_Set(buffer, (void *)0x600e800, 0x840000d0, (volatile u32 *)0x040000d4);
   Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, 0x840000d0,
           (volatile u32 *)0x040000d4);
   MemFree(buffer);
-  REG_BG0CNT = 0x40e;
+  do {
+    s32 control = 0x40e;
+
+    REG_BG0CNT = control;
+  } while (0);
   Dma_Fill16(0x10, (void *)0x6002000, 0x500);
   buffer = MemAlloc(0x240);
-  Func_02003af0(Resource_GetTableEntry(447), buffer);
+  Func_02003af0(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
   i = 0;
   cell = buffer;
 offset:
@@ -102,9 +124,13 @@ row:
     if ((gFrameCount & 3) == 0) {
       spark = Engine_ObjectCreate(0x2a0, Object_GetById(12)->x,
                                   Object_GetById(12)->y, Object_GetById(12)->z);
-      ((struct FieldSprite *)spark->animation)->priority =
-          ((struct FieldSprite *)Object_GetById(12)->animation)->priority;
-      spark->priorityFlags |= 1;
+      {
+        s32 priority = ((s8 *)Object_GetById(12)->animation)[9] & 12;
+
+        cell = spark->animation;
+        ((struct SpriteParts *)cell)->part = priority >> 2;
+      }
+      ((struct ObjBits *)spark)->flags |= 1;
       spark->motionFlags = 0;
       spark->bounce = spark->x;
       spark->gravity = 0x18000;
@@ -120,23 +146,23 @@ row:
   }
   Camera_FollowActor(gPartyState.currentOwner, 1);
   Func_02003c30();
-  Func_02003c20(0x10000, 0x2000);
-  Camera_MoveWithinMapBounds(0x980000, -1, 0x900000, 1);
+  Call2((void (*)())Func_02003c20, 0x10000, 0x2000);
+  Call4((void (*)())Camera_MoveWithinMapBounds, 0x980000, -1, 0x900000, 1);
   Func_02003c30();
   Scheduler_RemoveCallbackFar(Func_020024b0);
   REG_BG1CNT &= ~3;
   REG_BG1CNT = REG_BG1CNT;
-  Func_02003c58(0x10000, 0);
-  Func_02003c50(0x7fff, 0);
+  Call2((void (*)())Func_02003c58, 0x10000, 0);
+  Call2((void (*)())Func_02003c50, 0x7fff, 0);
   Func_02003c60(1);
   WaitFrames(1);
-  Func_02003c58(0x7fff, 0);
-  Func_02003c50(0x10000, 0);
+  Call2((void (*)())Func_02003c58, 0x7fff, 0);
+  Call2((void (*)())Func_02003c50, 0x10000, 0);
   Func_02003c60(8);
   Scheduler_AddOrUpdateCallback(Func_0200257c, 0xc80);
   Func_02003cd8(163);
   REG_DISPCNT |= 0x100;
-  Func_02003b98(0x30000, 0x30000, 0x10000);
+  Call3((void (*)())Func_02003b98, 0x30000, 0x30000, 0x10000);
   z = 0xffff8000;
   x = 0x4000;
 sweep:
@@ -162,10 +188,10 @@ flicker:
     goto flicker;
   REG_DISPCNT &= ~0x200;
   WaitFrames(30);
-  Func_02003cd8(390);
+  Call1((void (*)())Func_02003cd8, 390);
   REG_BLDALPHA = 0x10;
   REG_BLDCNT = 0x3f41;
-  Func_02003b98(-1, -1, 0xe666);
+  Call3((void (*)())Func_02003b98, -1, -1, 0xe666);
   ((u8 *)Object_GetById(12))[98] = 6;
   i = 0;
 fade:

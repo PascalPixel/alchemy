@@ -1,7 +1,13 @@
-// Draft, differ 73 of 227: queues the second world map picture (its tiles,
-// frames and palette) and scrolls it in over 96 frames, then fades and
-// restores the window palette. Left: the scroll loop's registers (the native
-// keeps the count in r5 and x in r6) and a 4-byte frame this draft adds.
+// Draft, differ 45 of 227 (was 65): queues the second world map picture (its
+// tiles, frames and palette) and scrolls it in over 96 frames, then fades and
+// restores the window palette. The scroll's x is x * 16 kept in a temporary
+// before the divide by 128 (as one expression GCC folds it to x / 8, which
+// the native does not; a device on adoption). Left: the native reloads
+// gBgScroll's address inside the scroll loop into r8, stores x and y after
+// both are computed, and uses r8 again for the closing stores; here the
+// address is formed before the loop and saved across the call (a 4-byte
+// frame). Tried: a goto loop (58), a BgScroll pointer set before or inside
+// the loop (48).
 #include "types.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
@@ -29,7 +35,7 @@ void Func_020042e0(void) {
   volatile u16 *ime;
   u8 *buffer = Runtime_BumpAllocateAlternatePool(0x4000);
   u8 *frames;
-  s32 x, y, i;
+  s32 x, y, i, t;
 
   Func_02004aa8(gWorldMapPackedTilesB, buffer);
   frames = buffer + 0x2000;
@@ -46,7 +52,8 @@ void Func_020042e0(void) {
   y = 0x2d60;
   x = 561;
   for (i = 95; i >= 0; i--) {
-    gBgScroll[0].x = (x * 16) / 128;
+    t = x * 16;
+    gBgScroll[0].x = t / 128;
     gBgScroll[0].y = -y / 128 + 352;
     WaitFrames(1);
     y += 352;

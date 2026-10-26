@@ -1,109 +1,89 @@
-// Draft of overlay 6a5's Func_0200539c, translated from its listing: differ
-// 63 of 169. Left: its shape: 166 instructions against the listing's 169.
+// Draft of overlay 6a5's Func_0200539c, the twin of overlay 6aa's Func_020042f8
+// (resource_6aa_c_020042f8.c), whose header says what differs: differ 16 of 169
+// (was 63).
 #include "types.h"
-#include "call.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Camera_MoveWithinMapBounds();
-s32 Event_StartScreenTransition();
-s32 Event_WaitTransitionFrames();
-s32 FieldEvent_WaitFrames();
-s32 Func_02004bd4();
-s32 Func_0200577c();
-s32 Func_020057ac();
-s32 Func_020057b4();
-s32 Func_02005814();
-s32 Func_0200581c();
-s32 Func_02005904();
-s32 Func_02005984();
-s32 Func_020059f4();
-s32 Math_Cosine();
-s32 Math_Sine();
-s32 Object_GetById();
-s32 Object_SetModeById();
-s32 Random16Far();
-s32 WaitFrames();
-extern u8 Effect_AdvanceMotion[];
-extern u8 gPartyState[];
+#include "ram_buffer.h"
+#include "party_state.h"
+#include "object_runtime.h"
+#include "field_effect.h"
+
+struct ObjectRuntime *Object_GetById(s32 id);
+void Object_SetModeById(u32 id, s32 mode);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 use_setter);
+void WaitFrames(s32 frames);
+void FieldEvent_WaitFrames(s32 frames);
+void Event_StartScreenTransition(void);
+void Event_WaitTransitionFrames(void);
+u32 Random16Far(void);
+s32 Math_Cosine(s32 angle);
+s32 Math_Sine(s32 angle);
+void Effect_AdvanceMotion(union FieldObject *object);
+void Func_02004bd4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags, struct EffectOptions *options);
+void Func_0200577c(void);
+void Func_020057ac(s32 a, s32 b, s32 c);
+void Func_020057b4(void);
+void Func_02005814(void);
+void Func_0200581c(void);
+void Func_02005904(s32 id, s32 value);
+void Func_02005984(s32 a0);
+void Func_020059f4(s32 cue);
+
+static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) {
+  Camera_MoveWithinMapBounds(x, y, z, use_setter);
+}
+
+static __inline__ void Func_020057ac_(s32 a, s32 b, s32 c) {
+  Func_020057ac(a, b, c);
+}
 
 void Func_0200539c(void) {
-  s32 sp_[1];
-  s32 spo_[4];
-  s32 v_r5, v_r10, v_r7, v_r8, t0, t1, t7, t12, t13, t14;
-  s32 t15, t16, t17, t18, t19, t20, t21, t22, t23, t26;
-  s32 t28, t33, t36;
+  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct EffectOptions options;
+  struct Vector3 velocity;
+  u32 i;
 
-  t0 = FIELD_AT((s32)gPartyState, s32, 532);
-  t1 = Value1((s32 (*)())Object_GetById, t0);
   Func_02005814();
-  Call1((void (*)())Func_02005984, 0);
-  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+  Func_02005984(0);
+  Camera_SetBounds(-1, -1, -1, 0);
   Func_0200577c();
-  Call1((void (*)())WaitFrames, 1);
-  FIELD_AT(t1, s32, 12) = 0x820000;
-  FIELD_AT(t1, s32, 72) = 0x8000;
-  FIELD_AT(t1, s32, 68) = 0;
-  v_r5 = (t1 + 85);
-  *(u8 *)v_r5 = 0;
-  t7 = FIELD_AT(0x3000000, s32, 108);
-  FIELD_AT(t7, s32, 428) = 0x100;
+  WaitFrames(1);
+  leader->y = 0x820000;
+  leader->gravity = 0x8000;
+  leader->bounce = 0;
+  leader->motionFlags = 0;
+  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Call1((void (*)())Func_020059f4, 204);
-  *(u8 *)v_r5 = 3;
-  Call1((void (*)())FieldEvent_WaitFrames, 24);
-  FIELD_AT(sp_, s32, 16) = 7;
-  FIELD_AT(sp_, s32, 48) = (s32)Effect_AdvanceMotion;
-  FIELD_AT(sp_, s32, 20) = 0xa3d7;
-  FIELD_AT(sp_, s32, 24) = 0xa3d7;
-  v_r8 = ((s32)sp_ + 12);
-  v_r7 = t1;
-  v_r10 = 0;
-L_0200d436:
-  v_r5 = (v_r10 << 12);
-  t12 = Value1((s32 (*)())Math_Cosine, v_r5);
-  *(s32 *)sp_ = t12;
-  FIELD_AT(sp_, s32, 4) = 0;
-  t13 = Value2((s32 (*)())Math_Sine, v_r5, 0);
-  t14 = *(s32 *)sp_;
-  FIELD_AT(sp_, s32, 8) = t13;
-  *(s32 *)sp_ = (t14 + (t14 >> 1));
-  t15 = Value0((s32 (*)())Random16Far);
-  t16 = *(s32 *)sp_;
-  *(s32 *)sp_ = ((t16 + ((u32)(((t15 << 1) + t15) << 14) >> 16)) - 0x6000);
-  t17 = Value0((s32 (*)())Random16Far);
-  t18 = FIELD_AT(sp_, s32, 8);
-  t19 = FIELD_AT(sp_, s32, 4);
-  v_r5 = ((t18 + ((u32)(((t17 << 1) + t17) << 13) >> 16)) - 0x3000);
-  FIELD_AT(sp_, s32, 8) = v_r5;
-  t20 = FIELD_AT(v_r7, s32, 16);
-  t21 = *(s32 *)sp_;
-  t22 = FIELD_AT(v_r7, s32, 8);
-  t23 = FIELD_AT(v_r7, s32, 12);
-  Func_02004bd4(t22, t23, t20, t21, v_r8, v_r5, v_r8, v_r8);
-  v_r10 = (v_r10 + 1);
-  if ((u32)v_r10 <= (u32)16)
-    goto L_0200d436;
-  Call1((void (*)())Func_020059f4, 188);
-  v_r5 = ((s32)gPartyState + 0x214);
-  t26 = *(s32 *)v_r5;
-  Call2((void (*)())Func_02005904, t26, 0x101);
-  t28 = *(s32 *)v_r5;
-  Call2((void (*)())Object_SetModeById, t28, 49);
-  Call3((void (*)())Func_020057ac, 0x50000, 0x50000, 0x10000);
-  Call3((void (*)())Func_020057ac, -1, -1, 0xe666);
+  Func_020059f4(204);
+  leader->motionFlags = 3;
+  FieldEvent_WaitFrames(24);
+  options.palette = 7;
+  options.update = Effect_AdvanceMotion;
+  options.startScaleX = 0xa3d7;
+  options.startScaleY = 0xa3d7;
+  for (i = 0; i <= 16; i++) {
+    s32 angle = i << 12;
+
+    velocity.x = Math_Cosine(angle);
+    velocity.y = 0;
+    velocity.z = Math_Sine(angle);
+    velocity.x += velocity.x >> 1;
+    velocity.x += ((u32)(Random16Far() * 3 << 14) >> 16) - 0x6000;
+    velocity.z += ((u32)(Random16Far() * 3 << 13) >> 16) - 0x3000;
+    Func_02004bd4(leader->x, leader->y, leader->z, velocity.x, velocity.y,
+                  velocity.z, 0x1090001, &options);
+  }
+  Func_020059f4(188);
+  Func_02005904(gPartyState.currentOwner, 0x101);
+  Object_SetModeById(gPartyState.currentOwner, 49);
+  Func_020057ac_(0x50000, 0x50000, 0x10000);
+  Func_020057ac_(-1, -1, 0xe666);
   Func_020057b4();
-  t33 = *(s32 *)v_r5;
-  Call2((void (*)())Func_02005904, t33, 0x100);
-  FIELD_AT(v_r7, s32, 72) = 0x10000;
-  FIELD_AT(v_r7, s32, 68) = 0x4000;
-  Call1((void (*)())FieldEvent_WaitFrames, 10);
-  t36 = *(s32 *)v_r5;
-  Call2((void (*)())Object_SetModeById, t36, 1);
+  Func_02005904(gPartyState.currentOwner, 0x100);
+  leader->gravity = 0x10000;
+  leader->bounce = 0x4000;
+  FieldEvent_WaitFrames(10);
+  Object_SetModeById(gPartyState.currentOwner, 1);
   Func_0200581c();
-  return;
 }

@@ -3643,11 +3643,7 @@ main	rom_main_07	recon/tla/raw/0810928c	.text	en
 main	rom_main_07	recon/tla/raw/081093a4	.text	en
 main	rom_main_07	recon/tla/ja/rom	.rom.0010928a	ja
 main	rom_main_07	games/tla/src/menu/shop/buynum	.text
-main	rom_main_07	recon/tla/it/rom	.rom.001096f8	it
-main	rom_main_07	recon/tla/fr/rom	.rom.001096f8	fr
-main	rom_main_07	recon/tla/es/rom	.rom.0010d6f8	es
-main	rom_main_07	recon/tla/de/rom	.rom.001116f8	de
-main	rom_main_07	games/tla/src/menu/shop/f1096f8	.text	en
+main	rom_main_07	games/tla/src/menu/shop/f1096f8	.text	en de es fr it
 main	rom_main_07	recon/tla/ja/rom	.rom.001096f8	ja
 main	rom_main_07	games/tla/src/menu/shop/buy	.text
 main	rom_main_07	games/tla/src/menu/shop/sell_price	.text

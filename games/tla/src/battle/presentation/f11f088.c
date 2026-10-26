@@ -1,21 +1,15 @@
-// Draft, differ 8 of 298: ☀️'s BattlePresentation_RunPsynergyCast
-// (games/tbs/src/battle/battle/ staging.c), ported: turns the camera to the
+// Func_0811f088: The Broken Seal's BattlePresentation_RunPsynergyCast
+// (games/tbs/src/battle/battle/staging.c), ported: turns the camera to the
 // caster (across the field or reversed when the plan's flags say so), raises
 // the caster's hand with its element's glow, then either fails ("But the
-// Psynergy was blocked!" or
-// "...But doesn't have enough PP!") or plays the effect with the events.
-// ⚓️ adds a second effect object (Func_0811e3ac, shown by Func_0811e7dc,
-// put back and freed by Func_0811e830), sets the caster's mode from the
-// battle work's byte 0x869, and skips the playback callback and its wait
-// when the plan's word at 100 is set. mode: 1 a Djinni, 2 an enemy's cast.
-// The two fixed yaws are stores in each arm of an if (as a ternary or one
-// value the arms are folded into a default and an override: 58 differ).
-// Left: instruction order only, four pairs, each a load the native issues
-// ahead of a constant or a register copy: the flags' load ahead of 0x40000,
-// the heap base's lsls after the zero for r0, the battle work's load ahead
-// of the 0x869 offset, and the object's load between that offset's movs and
-// lsls. An empty volatile asm after the flags' load holds the prologue too
-// (12). Messages 3244 and 3245 take ☀️'s names, not yet in the catalogs.
+// Psynergy was blocked!" or "...But doesn't have enough PP!") or plays the
+// effect with the events. This game adds a second effect object
+// (Func_0811e3ac, shown by Func_0811e7dc, put back and freed by
+// Func_0811e830), sets the caster's mode from the battle work's byte 0x869,
+// and skips the playback callback and its wait when the plan's word at 100 is
+// set. mode: 1 a Djinni, 2 an enemy's cast. The two fixed yaws are stores in
+// each arm of an if (as a ternary or one value the arms are folded into a
+// default and an override).
 #include "types.h"
 #include "battle.h"
 #include "battle_unit.h"
@@ -48,6 +42,8 @@ void Object_SetMode(struct MotionObject *object, s32 mode);
 void PartyStatus_DrawFar(s32 flags);
 void *Func_0811e3ac(struct BattlePlan *plan,
                     struct BattlePresentationWork *work);
+void Func_0811ddd8(struct BattlePlan *plan,
+                   struct BattlePresentationWork *work);
 void Func_0811e7dc(void *saved);
 void Func_0811e830(void *saved);
 void Audio_PlayCue(s32 cue);
@@ -101,12 +97,12 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
     transition->frames = 60;
   }
 
-  BattlePres_BuildTargetList(plan, &work);
+  Func_0811ddd8(plan, &work);
   isDjinni = mode & 1;
   if (isDjinni)
     work.flags = 1;
-  heap = Ram_HeapSlots;
   BattlePres_SetActorModes(0, 0);
+  heap = Ram_HeapSlots;
   PartyStatus_DrawFar(heap->battleWork->partyStatus & ~1);
   saved = Func_0811e3ac(plan, &work);
   object = BattleObject_Get(work.actor)->object;

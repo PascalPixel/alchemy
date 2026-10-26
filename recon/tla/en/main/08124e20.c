@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (26 October 2026): differ 31 of 544 in tla-en.
+// Tried, one edit at a time: an empty asm barrier after each statement, each
+// adjacent pair of statements swapped; none reaches 0.
 // Draft, differ 35 of 544: ☀️'s Battle_ProcessRoundEnd
 // (games/tbs/src/battle/battle/ turn_end.c), ported: advances Djinn recovery on
 // each battle side (each Djinni that comes back plays its event and is Set),

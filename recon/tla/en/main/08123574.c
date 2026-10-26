@@ -1,3 +1,9 @@
+// Under -mthumb-slow-loads (26 October 2026): differ 2 of 103 in tla-en.
+// Tried, one edit at a time: an empty asm barrier after each statement, each
+// adjacent pair of statements swapped, a register tie on each local after
+// each statement, each local pinned to each register, each call argument
+// copied into its argument register (pinned) at the call or up to three
+// statements before it; none reaches 0.
 // Near miss, differ 2 of 103 (4 plainly): The Broken Seal's
 // BattleParty_CountStandbyDjinn. An empty barrier on the entry's timer
 // puts its load before the -1 it is compared with, as the native. Left: the

@@ -1,3 +1,9 @@
+// Under -mthumb-slow-loads (26 October 2026): differ 6 of 193 in tla-en.
+// Tried, one edit at a time: an empty asm barrier after each statement, each
+// adjacent pair of statements swapped, a register tie on each local after
+// each statement, each local pinned to each register, each call argument
+// copied into its argument register (pinned) at the call or up to three
+// statements before it, five minutes of permute; none reaches 0.
 // Draft, differ 6 of 193: the enemies' actions for the round, ☀️'s
 // BattlePresentation_BuildOpponentEntries (games/tbs/src/battle/battle.c) with ⚓️'s
 // changes: each action records its index, and an enemy acting several times

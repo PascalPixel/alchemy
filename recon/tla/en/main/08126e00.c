@@ -1,3 +1,10 @@
+// Under -mthumb-slow-loads (26 October 2026): differ 14 of 267 in tla-en.
+// Tried, one edit at a time: an empty asm barrier after each statement, each
+// adjacent pair of statements swapped, each local pinned to each register,
+// each call argument copied into its argument register (pinned) at the call
+// or up to three statements before it; none reaches 0. One barrier (after
+// line 152 of the draft as it stood) lowers it to 12, and no second one
+// lowers it further; six minutes of permute reach 12.
 // Draft of Func_08126e00, The Broken Seal's ElementGlow_UpdateStarField
 // (games/tbs/src/battle/battle.c): differ 14 of 267 (tla-en, 2026-10-15),
 // ported with The Lost Age's heap slots: the work at 92, the canvas at 96,

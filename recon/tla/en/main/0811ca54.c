@@ -1,3 +1,9 @@
+// Under -mthumb-slow-loads (26 October 2026): differ 2 of 180 in tla-en.
+// Tried, one edit at a time: an empty asm barrier after each statement, each
+// adjacent pair of statements swapped, a register tie on each local after
+// each statement, each local pinned to each register, each call argument
+// copied into its argument register (pinned) at the call or up to three
+// statements before it, five minutes of permute; none reaches 0.
 // Near miss, differ 2 of 180 (one reordered row): The Broken Seal's
 // BattlePres_RunUnitAction with its one-pass block, this game's heap slots and
 // Object_SetMode for the dispatch argument. In the reset loop the native stores

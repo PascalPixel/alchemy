@@ -1,3 +1,8 @@
+// Under -mthumb-slow-loads (26 October 2026): differ 40 of 755 in tla-en.
+// Tried, one edit at a time: an empty asm barrier after each statement, each
+// adjacent pair of statements swapped, each call argument copied into its
+// argument register (pinned) at the call or up to three statements before it;
+// none reaches 0.
 // Draft of Func_08122514 with its nested Func_081224d8 (compare both:
 // alchemy-devtools diff 08122514.c 081224d8,08122514): an enemy's choice of
 // action, ☀️'s BattleAI_ChooseAction (games/tbs/src/battle/battle/

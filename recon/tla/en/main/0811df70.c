@@ -1,3 +1,9 @@
+// Under -mthumb-slow-loads (26 October 2026): differ 6 of 453 in tla-en.
+// Tried, one edit at a time: an empty asm barrier after each statement, each
+// adjacent pair of statements swapped, each local pinned to each register,
+// each call argument copied into its argument register (pinned) at the call
+// or up to three statements before it, five minutes of permute; none reaches
+// 0.
 // Draft of Func_0811df70: ☀️'s BattleStaging_HideField
 // (games/tbs/src/battle/battle/staging.c), ported: a summon or full-screen
 // cast. The camera turns (the summon's yaw at once over 60 frames, else the

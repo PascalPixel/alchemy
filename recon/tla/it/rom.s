@@ -2964,13 +2964,19 @@ BattlePresentation_AppendLinkedActions:
 Func_0811ddd8:
 	.incbin "baserom.gba", 0x0011ddf0, 0x00000594
 	.section .rom.0011e3c2, "ax"
-	.incbin "baserom.gba", 0x0011e3c2, 0x00000432
+	.incbin "baserom.gba", 0x0011e3c2, 0x00000002
+	.global Func_0811e3ac
+	.type Func_0811e3ac, %function
+	.thumb_func
+Func_0811e3ac:
+	.incbin "baserom.gba", 0x0011e3c4, 0x00000430
 	.section .rom.0011e848, "ax"
 	.balign 4
+	.global Func_0811e830
+	.type Func_0811e830, %function
+	.thumb_func
+Func_0811e830:
 	.incbin "baserom.gba", 0x0011e848, 0x00000580
-	.section .rom.0011f0a0, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x0011f0a0, 0x000002a8
 	.section .rom.0011f684, "ax"
 	.balign 4
 	.global Func_0811f66c
@@ -3032,12 +3038,6 @@ Func_081263fc:
 	.thumb_func
 BattleCamera_SetRange:
 	.incbin "baserom.gba", 0x00126560, 0x000002bc
-	.section .rom.0012681c, "ax"
-	.global BattlePres_SetupTransitionScene
-	.type BattlePres_SetupTransitionScene, %function
-	.thumb_func
-BattlePres_SetupTransitionScene:
-	.incbin "baserom.gba", 0x0012681c, 0x00000100
 	.section .rom.0012695a, "ax"
 	.incbin "baserom.gba", 0x0012695a, 0x00000002
 	.section .rom.0012695c, "ax"

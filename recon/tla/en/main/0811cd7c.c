@@ -1,3 +1,9 @@
+// Under -mthumb-slow-loads (26 October 2026): differ 4 of 87 in tla-en.
+// Tried, one edit at a time: an empty asm barrier after each statement, each
+// adjacent pair of statements swapped, a register tie on each local after
+// each statement, each local pinned to each register, each call argument
+// copied into its argument register (pinned) at the call or up to three
+// statements before it; none reaches 0.
 // Near miss, differ 4 of 87 (27, then 6 before): The Broken Seal's
 // Camera_ConfigureScene with this game's heap slots. The 1 stored to the
 // transition's active and flag words is a temporary behind a barrier after

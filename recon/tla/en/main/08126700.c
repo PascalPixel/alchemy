@@ -1,3 +1,12 @@
+// Under -mthumb-slow-loads (26 October 2026): differ 2 of 112 in tla-en.
+// Tried, one edit at a time: an empty asm barrier after each statement, each
+// adjacent pair of statements swapped, a register tie on each local after
+// each statement, each local pinned to each register, each call argument
+// copied into its argument register (pinned) at the call or up to three
+// statements before it, five minutes of permute; none reaches 0. A barrier
+// before render_bounds[2] puts the camera's copy after the zero stores, as
+// the native, but then moves the blend entry's copy (mov fp, r2) in the
+// opening (4).
 // Near miss, differ 6 of 112 (15 before, with the camera from gCameraWork;
 // 2026-10-19): the camera now comes from its heap slot, as in its sibling
 // 08126804. Left, as there: the native stores pos[1] and pos[2] before it

@@ -1,3 +1,9 @@
+// Under -mthumb-slow-loads (26 October 2026): differ 6 of 276 in tla-en.
+// Tried, one edit at a time: an empty asm barrier after each statement, each
+// adjacent pair of statements swapped, a register tie on each local after
+// each statement, each local pinned to each register, each call argument
+// copied into its argument register (pinned) at the call or up to three
+// statements before it, five minutes of permute; none reaches 0.
 // Near miss, differ 14 of 276 (seven reordered rows, 28 before): The Broken
 // Seal's BattlePresentation_RunPairedUnitTransition with this game's heap
 // slots. Left are load-before-constant swaps of the ARM9 schedule: the

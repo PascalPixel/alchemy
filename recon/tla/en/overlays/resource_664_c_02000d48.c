@@ -1,11 +1,13 @@
-// Draft, differ 143 of 217: Func_020010b4's twin for another shot: it also
-// stops while the leader's movement is 5, and on a cell of kind 212 it ends
-// with one of two end scripts by its angle; otherwise, the first time it
+// Draft, differ 131 of 217 (was 143): Func_020010b4's twin for another shot:
+// it also stops while the leader's movement is 5, and on a cell of kind 212 it
+// ends with one of two end scripts by its angle; otherwise, the first time it
 // reaches the leader (within 16 pixels on the same height when the leader
-// climbs, else within 8 on the same level) and flag 0x104 is clear, it carries
-// the leader along (counter 0x16a 200, movement 0); it moves 1.5 pixels a frame
-// along its angle, upward when its angle is 0xc000. Left: as Func_020010b4's
-// draft, the shot and the zero swap r6 and r7, which moves most rows.
+// climbs, else within 8 on the same level) and flag 0x104 is clear, it
+// carries the leader along (counter 0x16a 200, movement 0); it moves 1.5
+// pixels a frame along its angle, upward when its angle is 0xc000. The
+// counter's 200 goes through an s32 (as a halfword constant it comes from the
+// pool). Left: as Func_020010b4's draft, the shot and the zero swap r6 and
+// r7, which moves most rows.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
@@ -66,7 +68,12 @@ void Func_02000d48(struct ObjectRuntime *shot) {
       leader->priorityFlags &= ~1;
       ((struct FieldSprite *)leader->animation)->priority =
           ((struct FieldSprite *)shot->animation)->priority;
-      *(s16 *)(work + 0x16a) = 200;
+      {
+        s16 *counter = (s16 *)(work + 0x16a);
+        s32 value = 200;
+
+        *counter = value;
+      }
       gPartyState.renderMode = 0;
       *hit = 1;
       ((u8 *)shot)[0x63] = 1;

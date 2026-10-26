@@ -1,4 +1,4 @@
-// Draft, differ 13 of 107: ☀️'s Render_PlaceSpritePartPair (games/tbs/src/
+// Draft, differ 11 of 107: ☀️'s Render_PlaceSpritePartPair (games/tbs/src/
 // field/field.c) on The Lost Age's sprite, whose shadow part follows the
 // layer count. Left: the height is copied back from ip before its half is
 // taken (one row more), and four pairs are scheduled the other way (the

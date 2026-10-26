@@ -1,4 +1,4 @@
-// Draft, differ 11 of 60: overlay 68f's Func_02002c1c (writes the shape
+// Draft, differ 6 of 60: overlay 68f's Func_02002c1c (writes the shape
 // under an object into the map shape grid), which this overlay has
 // instruction for instruction with its own import stubs; its draft is
 // resource_68f_c_02002c1c.c and its remaining difference is described there.

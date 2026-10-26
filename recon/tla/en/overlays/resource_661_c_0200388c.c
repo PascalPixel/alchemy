@@ -1,4 +1,4 @@
-// Draft, differ 9 of 61: overlay 671's Func_02005428 (finds the current
+// Draft, differ 7 of 61: overlay 671's Func_02005428 (finds the current
 // target's row in a list and shrinks it), which this overlay has
 // instruction for instruction with Func_02003910 for Func_020054ac; its draft
 // is resource_671_c_02005428.c and its remaining difference is described

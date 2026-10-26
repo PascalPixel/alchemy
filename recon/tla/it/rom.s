@@ -1425,14 +1425,13 @@ Func_080ccd78:
 	.thumb_func
 Func_080d0520:
 	.incbin "baserom.gba", 0x000ccec8, 0x000006bc
-	.section .rom.000cd680, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x000cd680, 0x0000029c
+	.section .rom.000cd808, "ax"
+	.incbin "baserom.gba", 0x000cd808, 0x00000114
 	.section .rom.000cd91c, "ax"
-	.global Func_080cc54c
-	.type Func_080cc54c, %function
+	.global Field_FindNearbyTalkTarget
+	.type Field_FindNearbyTalkTarget, %function
 	.thumb_func
-Func_080cc54c:
+Field_FindNearbyTalkTarget:
 	.incbin "baserom.gba", 0x000cd91c, 0x0000013c
 	.section .rom.000cda84, "ax"
 	.balign 4
@@ -1678,22 +1677,22 @@ Func_080da908:
 	.incbin "baserom.gba", 0x000d4aa8, 0x00000058
 	.section .rom.000d4cfc, "ax"
 	.balign 4
-	.global Func_080decb8
-	.type Func_080decb8, %function
-	.thumb_func
-Func_080decb8:
-	.incbin "baserom.gba", 0x000d4cfc, 0x000003f0
-	.section .rom.000d50ec, "ax"
-	.global Func_080dd054
-	.type Func_080dd054, %function
-	.thumb_func
-Func_080dd054:
-	.incbin "baserom.gba", 0x000d50ec, 0x000002c0
-	.section .rom.000d53ac, "ax"
 	.global Func_080d4d08
 	.type Func_080d4d08, %function
 	.thumb_func
 Func_080d4d08:
+	.incbin "baserom.gba", 0x000d4cfc, 0x000003f0
+	.section .rom.000d50ec, "ax"
+	.global Func_080d50f8
+	.type Func_080d50f8, %function
+	.thumb_func
+Func_080d50f8:
+	.incbin "baserom.gba", 0x000d50ec, 0x000002c0
+	.section .rom.000d53ac, "ax"
+	.global Func_080d53b8
+	.type Func_080d53b8, %function
+	.thumb_func
+Func_080d53b8:
 	.incbin "baserom.gba", 0x000d53ac, 0x00000834
 	.section .rom.000d5d64, "ax"
 	.global Func_080daecc
@@ -2106,10 +2105,10 @@ Func_080de21c:
 Func_080de8d0:
 	.incbin "baserom.gba", 0x000de8c4, 0x0000011c
 	.section .rom.000decac, "ax"
-	.global Field_FindNearbyTalkTarget
-	.type Field_FindNearbyTalkTarget, %function
+	.global Func_080decb8
+	.type Func_080decb8, %function
 	.thumb_func
-Field_FindNearbyTalkTarget:
+Func_080decb8:
 	.incbin "baserom.gba", 0x000decac, 0x000000cc
 	.section .rom.000deddc, "ax"
 	.global FieldEffect_RunDouse

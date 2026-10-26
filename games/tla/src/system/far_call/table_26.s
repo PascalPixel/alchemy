@@ -16,7 +16,15 @@ Func_080c82a8:
 	.global Object_GetTriggerTileAheadOfCurrentFar
 	.thumb_func
 Object_GetTriggerTileAheadOfCurrentFar:
+.ifdef TLA_EDITION_ES
+	overlay_veneer Field_FindNearbyTalkTarget
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Field_FindNearbyTalkTarget
+.else
 	overlay_veneer Func_080cc54c
+.endif
+.endif
 	.global Func_080c82b8
 	.thumb_func
 Func_080c82b8:
@@ -32,7 +40,15 @@ Func_080c82b8:
 	.global Func_080c82c0
 	.thumb_func
 Func_080c82c0:
+.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080decb8
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080decb8
+.else
 	overlay_veneer Field_FindNearbyTalkTarget
+.endif
+.endif
 	.global Func_080c82c8
 	.thumb_func
 Func_080c82c8:
@@ -48,15 +64,23 @@ Func_080c82c8:
 	.global Func_080c82d0
 	.thumb_func
 Func_080c82d0:
+.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080d4d08
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080d4d08
+.else
 	overlay_veneer Func_080decb8
+.endif
+.endif
 	.global BattleEffect_FindNearestObjectFar
 	.thumb_func
 BattleEffect_FindNearestObjectFar:
 .ifdef TLA_EDITION_ES
-	overlay_veneer Func_080dd054
+	overlay_veneer Func_080d50f8
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Func_080dd054
+	overlay_veneer Func_080d50f8
 .else
 	overlay_veneer BattleEffect_FindNearestObject
 .endif
@@ -64,7 +88,15 @@ BattleEffect_FindNearestObjectFar:
 	.global Func_080c82e0
 	.thumb_func
 Func_080c82e0:
+.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080d53b8
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080d53b8
+.else
 	overlay_veneer Func_080d4d08
+.endif
+.endif
 	.global Func_080c82e8
 	.thumb_func
 Func_080c82e8:

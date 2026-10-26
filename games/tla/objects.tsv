@@ -1936,11 +1936,11 @@ main	rom_main_04	recon/tla/de/rom	.rom.000d9ec8	de
 main	rom_main_04	recon/tla/raw/080ccec8	.text	en
 main	rom_main_04	recon/tla/ja/rom	.rom.000ccec0	ja
 main	rom_main_04	games/tla/src/battle/effect/run_descriptor_handler	.text
-main	rom_main_04	recon/tla/it/rom	.rom.000cd680	it
-main	rom_main_04	recon/tla/it/rom	.rom.000cd91c	it
-main	rom_main_04	recon/tla/es/rom	.rom.000d6680	es
+main	rom_main_04	games/tla/src/field/common/event/push_keys	.text
+main	rom_main_04	recon/tla/es/rom	.rom.000d6808	es
 main	rom_main_04	recon/tla/es/rom	.rom.000d691c	es
-main	rom_main_04	games/tla/src/field/common/event/push_keys	.text	ja en de fr
+main	rom_main_04	recon/tla/it/rom	.rom.000cd808	it
+main	rom_main_04	recon/tla/it/rom	.rom.000cd91c	it
 main	rom_main_04	recon/tla/fr/rom	.rom.000d2808	fr
 main	rom_main_04	recon/tla/de/rom	.rom.000da808	de
 main	rom_main_04	recon/tla/raw/080cd808	.text	en

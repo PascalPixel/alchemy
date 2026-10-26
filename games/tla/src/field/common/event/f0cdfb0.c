@@ -3,7 +3,6 @@
 #include "field_scene.h"
 #include "object_runtime.h"
 #include "event_work.h"
-#include "edition.h"
 
 // The field's event work as this function reads it: the scene's event list.
 struct FieldStepWork {
@@ -11,11 +10,6 @@ struct FieldStepWork {
   const struct SceneEvent *events;
 };
 
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// The Spanish and Italian scaffolds label this function with the name their
-// far-call table gives the slot that reaches it.
-#define Field_FindNearbyTalkTarget Func_080cc54c
-#endif
 s32 Field_FindNearbyTalkTarget(s32 owner);
 s32 Func_080cb09c(void);
 s32 GameFlag_IsConditionActive(s32 condition);

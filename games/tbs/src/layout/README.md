@@ -34,7 +34,7 @@ event](../../glossary.md#coord-event) runs when the leader steps onto or
 pushes against a cell with that number, and a [bg
 event](../../glossary.md#bg-event) when the player presses A facing one, so
 the same number can be a door in one town and a chest in another
-([Maps](../map/README.md#which-map-events-a-cell-starts)). The rest mean the
+([Maps](../scene/README.md#which-map-events-a-cell-starts)). The rest mean the
 same on every map: ground with random battles of its own, the jars, barrels,
 wooden boxes, graves, books and wells anyone can search, the Lamakan Desert's
 burning sand, and the ledges, climbing spots and gaps the leader jumps when
@@ -270,7 +270,7 @@ The treasure spot list is (column, row, trigger) rows ended by 255, 255, and
 has an event for, up to `TREASURE_SPOT_MAX` (10); a spot the map has no event
 for takes none of the ten. 76 layouts use `layout_000`'s list, which holds
 only the end row. Opening a chest and taking a stone are the map's search
-events ([Maps](../map/README.md#how-a-map-event-is-chosen)).
+events ([Maps](../scene/README.md#how-a-map-event-is-chosen)).
 
 ### Tileset animation and blend scripts
 

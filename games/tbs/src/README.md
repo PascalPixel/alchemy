@@ -22,7 +22,7 @@ the `overworld` folder, runs
 one map on that engine, from its set-up to the [warp](../glossary.md#warp) the party leaves
 by, with random encounters, field [Psynergy](../glossary.md#psynergy-and-pp) and the commands map scripts
 use; `SequenceManager_Run`, the loop that runs one map after another, is there too.
-[Maps](map/README.md) holds the maps, one [overlay](../glossary.md#overlay) each: [object event](../glossary.md#object-event)
+[Maps](scene/README.md) holds the maps, one [overlay](../glossary.md#overlay) each: [object event](../glossary.md#object-event)
 templates, [map events](../glossary.md#map-event), [scripts](../glossary.md#script) and events. [Layouts](layout/README.md)
 holds the [layouts](../glossary.md#layout) as data.
 
@@ -143,7 +143,7 @@ In the source an overlay is three files in its folder:
   image through, chosen from the list in `system/overlay.inc`.
 
 Only one overlay is loaded at a time, so code several maps use is in
-headers under `map/common/`, and each map that includes one compiles its
+headers under `scene/common/`, and each map that includes one compiles its
 own copy. [System](system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
 describes the tables and how an overlay is packed.
 
@@ -167,7 +167,7 @@ includes those headers by name alone.
 
 [`include/unit`](../include/unit) mirrors this folder: each compiled C
 file has a header at the same path under `unit` that declares what it
-defines (`unit/battle/battle.h` for `battle/battle.c`; `unit/map/` has one
+defines (`unit/battle/battle.h` for `battle/battle.c`; `unit/scene/` has one
 for each map). [`include/farcall`](../include/farcall) has a header for
 each bank with its `Far` names. An object written as parts keeps its private
 header beside it.

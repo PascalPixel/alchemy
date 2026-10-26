@@ -12,7 +12,7 @@ Three other folders hold the rest. The loop that drives the engine is in
 `overworld`, whose page is [Running a map](../overworld/README.md); the folder
 is named after the [bank](../../glossary.md#bank) it fills. Each map's own
 code, its [scripts](../../glossary.md#script) included, is an
-[overlay](../../glossary.md#overlay): [Maps](../map/README.md). What a town or
+[overlay](../../glossary.md#overlay): [Maps](../scene/README.md). What a town or
 dungeon shows and stands on is its [layout](../../glossary.md#layout):
 [Layouts](../layout/README.md). [World](../../world.md) gives the whole layer
 in brief.

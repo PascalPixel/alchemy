@@ -165,7 +165,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
       return 0;
     // With Jenna in the party, there are no encounters while she has more
     // than 130 experience points. She is in the party only from Vale
-    // (EventScript_RoofMended, map/vale.c) to the Sol Sanctum's eruption,
+    // (EventScript_RoofMended, scene/vale.c) to the Sol Sanctum's eruption,
     // starting at level 1 with none, so the rule acts only in the Sol
     // Sanctum, where it ends random battles once she nears level 4 (158):
     // the party cannot train there before the journey begins.

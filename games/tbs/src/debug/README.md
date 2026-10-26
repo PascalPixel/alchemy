@@ -7,7 +7,7 @@ icons and letters, and one of shop and message tests. Each is an ordinary
 [map](../../glossary.md#map) [overlay](../../glossary.md#overlay), with an
 [entry table](../../glossary.md#entry-table-and-import-table) of the functions
 the field calls to ask the map its questions and an import table of the
-main-image functions it calls, built exactly as [Maps](../map/README.md)
+main-image functions it calls, built exactly as [Maps](../scene/README.md)
 describes. That makes them the smallest complete examples of a map in the
 game; [the Djinn room](#the-djinn-room) shows one whole.
 

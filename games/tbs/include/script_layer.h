@@ -22,7 +22,7 @@
 #include "unit/shop/shop.h"
 #include "unit/window/window.h"
 #include "unit/menu/menu.h"
-#include "unit/map/common/scroll_initialize_hblank_dma.h"
+#include "unit/scene/common/scroll_initialize_hblank_dma.h"
 #include "fixed_math.h"
 #include "map_grid_copy.h"
 

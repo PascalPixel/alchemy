@@ -5,7 +5,7 @@ world map, is run by the same four parts. The loop in `src/overworld` lets the
 party walk and deals with whatever interrupts it. The engine in `src/field`
 moves everything that moves and draws the [map](glossary.md#map). The
 [layout](glossary.md#layout), in `src/layout`, says what the ground is like.
-And each map's own code, its [overlay](glossary.md#overlay) in `src/map`, says
+And each map's own code, its [overlay](glossary.md#overlay) in `src/scene`, says
 who is there and what happens; only that part knows anything about one map.
 The two engine folders take the names of the [banks](glossary.md#bank) they
 fill, not of what they do. How maps and overlays fit into the whole game is on
@@ -58,7 +58,7 @@ The game runs the first row that fits, so a map lists its rows from the
 latest point in the story down to the default.
 
 The six questions are `struct MapEntries` at the start of every
-overlay, and the rows are `struct MapEvent`. [Maps](src/map/README.md#the-entry-table)
+overlay, and the rows are `struct MapEvent`. [Maps](src/scene/README.md#the-entry-table)
 describes the [entry table](glossary.md#entry-table-and-import-table) and its
 tables, and [Engine](engine.md#overlays) how an overlay is loaded. The front
 page describes [how maps depend on the story](README.md#how-maps-depend-on-the-story),
@@ -76,7 +76,7 @@ kept in a map flag is back in place the next time the party comes in; logs
 floated in one room of a cave, kept in map section flags, stay floated while
 the party moves between the cave's rooms. [The front
 page](README.md#game-flags) gives the ranges, and
-[Maps](src/map/README.md#state-that-cleans-itself-up) says how a map uses
+[Maps](src/scene/README.md#state-that-cleans-itself-up) says how a map uses
 them.
 
 ## Objects and their scripts

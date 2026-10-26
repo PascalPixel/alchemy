@@ -183,7 +183,7 @@ stock row is all that stops a revisited shop from adding its artifacts again.
 Keeper lines are found by distance from the weapon shop's version, so one call
 serves every kind of shop.
 
-Map overlays import these functions by name (`games/tbs/src/map/import/`),
+Map overlays import these functions by name (`games/tbs/src/scene/import/`),
 and the far-call table `system/far_call/SHOP.S` names them with `Far` added,
 so renaming one changes those folders too.
 

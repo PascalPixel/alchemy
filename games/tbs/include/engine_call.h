@@ -11,7 +11,7 @@
 /// `FieldScheduler_AddCallback(callback, TASK_PRIORITY_MAP)` and the inline
 /// calls Task_Add, which resolves to the overlay's import
 /// stub. Main-image code calls the routines as ordinary functions; only the
-/// shared map/common/scroll_initialize_hblank_dma.h, which
+/// shared scene/common/scroll_initialize_hblank_dma.h, which
 /// overworld/field_services.c includes as lemurian_ship.c does, reaches the
 /// layer there. field_service.h includes this layer; rooms without the script
 /// command layer use it directly.

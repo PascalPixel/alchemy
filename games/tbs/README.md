@@ -118,7 +118,7 @@ answer differently as the story moves on.
 
 The six questions are `struct MapEntries`, at the start of every overlay.
 [Engine](engine.md#overlays) describes how an overlay is loaded and
-[Maps](src/map/README.md) how a map event is found.
+[Maps](src/scene/README.md) how a map event is found.
 
 ## The map table and map sections
 
@@ -173,7 +173,7 @@ Destinations are named for where the party comes from
 (`VALE_PLAZA_FROM_SANCTUM`) and warps for where they lead
 (`VALE_PLAZA_TO_WORLD_MAP`), so a door has the same name from both sides. The
 recording's rows are `gSolSanctumEntrance_Warps` in
-[sol_sanctum_entrance.c](src/map/sol_sanctum_entrance.c).
+[sol_sanctum_entrance.c](src/scene/sol_sanctum_entrance.c).
 
 ## Game flags
 
@@ -219,28 +219,28 @@ the dependence takes, in [story order](glossary.md#the-places-in-story-order).
   turn: has the party reached Kalay, has it left Vale, has it just come out
   of the Sanctum, is this the stormy night? The first yes picks the people
   and events; with no yes it is an ordinary day
-  (`ValePlaza_GetEvents` in [vale_plaza.c](src/map/vale_plaza.c)).
+  (`ValePlaza_GetEvents` in [vale_plaza.c](src/scene/vale_plaza.c)).
 - **One map per point in the story.** The prologue's stormy night elsewhere
   in Vale is a map of its own, on its own layout
-  ([vale_stormy_night.c](src/map/vale_stormy_night.c)). A place that changes
+  ([vale_stormy_night.c](src/scene/vale_stormy_night.c)). A place that changes
   completely gets a map; a place whose people change reads the flags.
 - **A map with no map events.** Vale while Mt. Aleph erupts plays its whole
   sequence as it starts and leaves by its one warp
-  ([vale_eruption.c](src/map/vale_eruption.c)).
+  ([vale_eruption.c](src/scene/vale_eruption.c)).
 - **A row that lasts until its flag is set.** Each pedestal in the room of the
   Elemental Stars offers its star until that star's flag is set, so each star
   is taken once, as the chest above is opened once
-  ([sol_sanctum_elemental_star_room.c](src/map/sol_sanctum_elemental_star_room.c)).
+  ([sol_sanctum_elemental_star_room.c](src/scene/sol_sanctum_elemental_star_room.c)).
 - **A flag set by arriving.** The first time the party reaches the World Map
   from Vale, the World Map sets the flag that says the party has left, and
   Vale's gate changes from then on.
 - **One sequence cut into parts.** The top of Venus Lighthouse is one scripted
   sequence broken by two battles and two trips to the World Map; each part
   starts from where the part before sent the party
-  ([venus_lighthouse_aerie.c](src/map/venus_lighthouse_aerie.c)).
+  ([venus_lighthouse_aerie.c](src/scene/venus_lighthouse_aerie.c)).
 - **The last map.** The Lemurian ship at the edge of Lalivero ends the game by
   sending the party to the title screen
-  ([lemurian_ship.c](src/map/lemurian_ship.c)).
+  ([lemurian_ship.c](src/scene/lemurian_ship.c)).
 
 [Places](src/field/scene_headers.s) lists every map in story order with what
 happens there.
@@ -258,7 +258,7 @@ Its code does three kinds of work. Each town or dungeon is a figure standing
 on the map, and touching one takes the warp into that place. It holds what
 the party meets on the map itself: three Djinn and a storm. And it plays the
 story's moments between places, chosen by where the last map sent the party.
-The code is [world_map.c](src/map/world_map.c), and
+The code is [world_map.c](src/scene/world_map.c), and
 [World](world.md#the-world-map) explains how the tilt is drawn.
 
 ## How the code is organised

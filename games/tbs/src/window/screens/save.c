@@ -1303,7 +1303,7 @@ s32 Save_LoadRecordIntoWork(s32 mode) {
 /// bytes) into a free VRAM slot and returns the slot, which the caller frees
 /// with VramCache_FreeEntry. The slot is not checked: with the cache full
 /// the load is given VRAM_CACHE_ENTRY_COUNT. Colosso's markers
-/// (map/common/colosso_marker.h) and, by far call, the world map's cursor
+/// (scene/common/colosso_marker.h) and, by far call, the world map's cursor
 /// (overworld/field_services/world_map.c) use it.
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
   s32 slot;

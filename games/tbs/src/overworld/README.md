@@ -16,7 +16,7 @@ The engine underneath, which moves everything and draws the maps, is
 the [scripts](../../glossary.md#script) they run are described under
 [everything that moves runs a
 script](../field/README.md#everything-that-moves-runs-a-script). What happens
-in each map comes from its own code in [Maps](../map/README.md).
+in each map comes from its own code in [Maps](../scene/README.md).
 [World](../../world.md) gives the whole layer in brief. The folder takes pret's
 name for the same loop, overworld.
 

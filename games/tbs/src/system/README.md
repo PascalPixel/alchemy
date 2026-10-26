@@ -12,7 +12,7 @@ assembly: tables the linker lays out, and code no C
 [compiler](../../glossary.md#the-compilers) emits, each file naming in its
 header the instruction that shows it.
 [Runtime](../runtime/README.md) builds
-directly on it, and [Maps](../map/README.md) are the main users of its
+directly on it, and [Maps](../scene/README.md) are the main users of its
 [overlays](../../glossary.md#overlay).
 
 ## Memory map
@@ -177,7 +177,7 @@ numbers.
 power-on and lends memory from the two heaps laid out here. The field loads
 each map's overlay by the number the map table gives
 ([Running a map](../overworld/README.md)), and every overlay in
-[Maps](../map/README.md), [Menus](../menu/README.md) and
+[Maps](../scene/README.md), [Menus](../menu/README.md) and
 [Debug rooms](../debug/README.md) is built from the entry and import tables
 described here. Code everywhere loads its pictures and layouts through the
 resource directory, and [saving](../runtime/README.md#saving) writes through

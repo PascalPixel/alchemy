@@ -259,7 +259,7 @@ grid of cells under them, 128 by 128; several maps can share one
 A map that packs indoor rooms drawn in one tile style side by side, each with
 a camera box the warp destination chooses; its rooms may belong to different
 places, so it is named for the style they are drawn in, as Cottage rooms or
-Stucco rooms ([Maps](src/map/README.md#design)).
+Stucco rooms ([Maps](src/scene/README.md#design)).
 
 ### Cell
 
@@ -288,7 +288,7 @@ footprints in snow ([World](world.md#objects-and-their-scripts)).
 
 A person or thing a map knows by its local id: the party, and everyone its
 object event templates place. The camera and the footprints are objects but
-not object events ([Maps](src/map/README.md#who-stands-where)).
+not object events ([Maps](src/scene/README.md#who-stands-where)).
 
 ### Local id
 
@@ -301,7 +301,7 @@ map names its own in an enum.
 A row of a map's event table (`struct MapEvent`): a kind, a trigger, a
 condition and what to run. When the player talks, searches, steps on a marked
 cell or uses Psynergy, the first row that fits runs
-([Maps](src/map/README.md#what-a-map-event-row-says)).
+([Maps](src/scene/README.md#what-a-map-event-row-says)).
 
 ### Trigger
 
@@ -336,7 +336,7 @@ Where the party arrives in a map, named for where it comes from
 A function a map event names (`EventScript_EnterIsaacsHouse`), written one step
 to a line as calls into the script layer, each step that takes time running its
 frames before the next starts. An object script is the list of `SC_` commands
-an [object](#object) runs each frame ([Maps](src/map/README.md#scripts)).
+an [object](#object) runs each frame ([Maps](src/scene/README.md#scripts)).
 
 ### Game flag
 

@@ -4,16 +4,16 @@
 // level adjustment, or else, when flag 0x173 is clear and flag 46 set, its
 // base stats through Func_08127a0c, and sets the battle work's byte at 0x868
 // for enemies 101 to 103 while flag 0x173 is clear.
-// Near miss, differ 45 of 456. The enemy-id range is a switch on 101 to 103,
+// Near miss, differ 28 of 456. The enemy-id range is a switch on 101 to 103,
 // which gives the native's cmp r0, #101; blt (as a nested if it was
 // cmp r0, #100; ble). Left: spill-slot and scheduling order in the setup (the
 // work's summon count cleared after the level adjustment's slot, the record
-// copied to the stack before the loop's other setup); in the default case the
-// native counts the copies down in a copy of the count (adds r1, r3, #0)
-// where this draft counts the count's own register down, one instruction
-// fewer. Tried there: the count in a local first (45), a loop counting the
-// count down (67). Kept: freeSpriteSlots declared before enemyCount (their
-// stack slots).
+// copied to the stack before the loop's other setup). The copy loops share
+// spriteSlots as their index (45 to 28, found by permute), which gives the
+// native's copy of the count to count down, though in the default case that
+// copy and the destination swap r1 and r2. Tried there: the count in a local
+// first, a loop counting the count down (67). Kept: freeSpriteSlots declared
+// before enemyCount (their stack slots).
 #include "types.h"
 #include "battle.h"
 #include "battle_calc.h"
@@ -58,7 +58,6 @@ s32 Func_08127cd4(s32 recordId) {
   s32 spriteSlots;
   s32 fittingCount;
   s32 classId;
-  s32 memberOrCopyIndex;
   s32 remainingKinds;
   s32 copies;
   u32 memberOrEnemyIndex;
@@ -168,17 +167,17 @@ s32 Func_08127cd4(s32 recordId) {
       }
       if (remainingKinds == 0)
         break;
-      memberOrCopyIndex = memberOrder[(Random16() * remainingKinds) >> 16];
-      enemyClasses[enemyCount++] = record->memberIds[memberOrCopyIndex] + 8;
-      memberCounts[memberOrCopyIndex]--;
+      spriteSlots = memberOrder[(Random16() * remainingKinds) >> 16];
+      enemyClasses[enemyCount++] = record->memberIds[spriteSlots] + 8;
+      memberCounts[spriteSlots]--;
     }
     break;
   default:
     for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4;
          memberOrEnemyIndex++) {
-      for (memberOrCopyIndex = 0;
-           memberOrCopyIndex < memberCounts[memberOrEnemyIndex];
-           memberOrCopyIndex++)
+      for (spriteSlots = 0;
+           spriteSlots < memberCounts[memberOrEnemyIndex];
+           spriteSlots++)
         enemyClasses[enemyCount++] = record->memberIds[memberOrEnemyIndex] + 8;
     }
     break;

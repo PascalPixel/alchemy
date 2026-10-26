@@ -6,14 +6,15 @@
 // quantity, Func_0810a03c), Shop_RepairItem (Func_0810a2d8) or
 // Forge_OfferItem (Func_0810b6cc), each followed by its "anything else?"
 // message. SELECT held shows the item's details until it is released.
-// Near miss, differ 6 of 374. The locals declared in reverse of their native
+// Near miss, differ 4 of 374. The locals declared in reverse of their native
 // stack slots give those slots (84 to 46); the plain-name message as a
 // symbol, which the native loads from the pool (32); slot set before the
 // count gives their constants' registers (24); the item window read in
 // place keeps the inventory offset in r7 (10); a barrier before the shop
-// work's load keeps it after sub sp (6). Left: the native stores the name
-// window one row after its call returns (a barrier there stores it at once:
-// 8), and loads the input's address one row later at the loop's top.
+// work's load keeps it after sub sp (6), and one after the details are shown
+// reloads the input's address after the store (4). Left: the native stores
+// the name window one row after its call returns (a barrier there stores it
+// at once: 6; an operand barrier on it, 24).
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
@@ -132,6 +133,9 @@ s32 Func_08109cac(s32 unitId) {
         window = UiWindow_CreateFar(0, 9, 16, 10, 2);
         ItemMenu_DrawItemDetailsFar(window, item);
         shop->detailsHidden = 0;
+        /* FAKEMATCH(barrier): the input's address reloads after the store;
+         * as plain statements, 2 of 374 instructions differ in tla-en. */
+        __asm__ volatile("");
         while (gInput.held & 4)
           WaitFrames(1);
         shop->detailsHidden = 1;

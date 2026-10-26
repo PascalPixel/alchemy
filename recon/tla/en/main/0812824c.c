@@ -4,14 +4,14 @@
 // Func_08128228's first digit of their names, alternating slots, with a count
 // up to 2), sets the seen flag only for enemy ids below 0x200, and compares
 // item ids signed.
-// Near miss, differ 151 of 300 (2026-10-19, first draft). The shape matches
-// the native's; what is left is mostly register choice: the native keeps the
-// enemy-class search's index in r0 and the address of the unit's enemy id in
-// ip, and builds the definition's field addresses (coins, experience, item,
-// drop chance) in r3 and r1 where this draft takes r4 and r0, which shifts
-// the registers of everything after. Kept: the slot as the value of its
-// assignment to the s8 field (differ 165 to 153), Battle_RandomFar signed (2
-// fewer).
+// Near miss, differ 2 of 300. The enemy-class search has its own index,
+// classIndex, which the native keeps in r0 (143 to 15), and the item roll is
+// nested under the search's result, so its early exit shares the last
+// return (15 to 2). Left: the native loads lastCount unsigned (for the
+// increment) before the signed load for its test; here the signed load and
+// its offset come first (a barrier after the digit's store, or the count
+// read into a u8 first, change nothing). Kept: the slot as the value of its
+// assignment to the s8 field, Battle_RandomFar signed.
 #include "types.h"
 #include "battle_unit.h"
 #include "ram_buffer.h"
@@ -98,6 +98,7 @@ s32 Func_0812824c(s32 unitId, s32 djinnBonus) {
   s32 lowestSlot;
   s32 itemPriority;
   s32 slot;
+  s32 classIndex;
 
   unit = Unit_Get(unitId);
   battle = (struct DefeatBattleWork *)Ram_HeapSlots->battleWork;
@@ -112,15 +113,15 @@ s32 Func_0812824c(s32 unitId, s32 djinnBonus) {
   if (spoils->lastCount <= 1)
     spoils->lastCount++;
   classSlot = 0;
-  itemOrClassIndex = 0;
+  classIndex = 0;
   if (battle->enemyClasses[0] != unit->enemyId) {
     do {
-      if (++itemOrClassIndex > 5)
+      if (++classIndex > 5)
         break;
-    } while (battle->enemyClasses[itemOrClassIndex] != unit->enemyId);
+    } while (battle->enemyClasses[classIndex] != unit->enemyId);
   }
-  if (itemOrClassIndex != 6)
-    classSlot = itemOrClassIndex;
+  if (classIndex != 6)
+    classSlot = classIndex;
   if (battle->defeatState != 2) {
     if (classSlot < battle->firstDefeated)
       battle->firstDefeated = classSlot;
@@ -152,25 +153,25 @@ s32 Func_0812824c(s32 unitId, s32 djinnBonus) {
         break;
     } while (spoils->items[itemOrClassIndex] != enemy->item);
   }
-  if (itemOrClassIndex != 4)
-    return 0;
-  dropShift = enemy->itemChance;
-  if (djinnBonus != 0)
-    dropShift -= 2;
-  if (dropShift < 0)
-    dropShift = 0;
-  if ((0x20000 >> dropShift) > (Battle_RandomFar() & 0xffff)) {
-    lowestSlot = -1;
-    lowestItemPriority = 0x40000000;
-    for (itemOrClassIndex = 0; itemOrClassIndex <= 3; itemOrClassIndex++) {
-      itemPriority = BattleSpoils_RankItem(spoils->items[itemOrClassIndex]);
-      if (itemPriority < lowestItemPriority) {
-        lowestItemPriority = itemPriority;
-        lowestSlot = itemOrClassIndex;
+  if (itemOrClassIndex == 4) {
+    dropShift = enemy->itemChance;
+    if (djinnBonus != 0)
+      dropShift -= 2;
+    if (dropShift < 0)
+      dropShift = 0;
+    if ((0x20000 >> dropShift) > (Battle_RandomFar() & 0xffff)) {
+      lowestSlot = -1;
+      lowestItemPriority = 0x40000000;
+      for (itemOrClassIndex = 0; itemOrClassIndex <= 3; itemOrClassIndex++) {
+        itemPriority = BattleSpoils_RankItem(spoils->items[itemOrClassIndex]);
+        if (itemPriority < lowestItemPriority) {
+          lowestItemPriority = itemPriority;
+          lowestSlot = itemOrClassIndex;
+        }
       }
+      if ((s32)BattleSpoils_RankItem(enemy->item) > lowestItemPriority)
+        spoils->items[lowestSlot] = enemy->item;
     }
-    if ((s32)BattleSpoils_RankItem(enemy->item) > lowestItemPriority)
-      spoils->items[lowestSlot] = enemy->item;
   }
   return 0;
 }

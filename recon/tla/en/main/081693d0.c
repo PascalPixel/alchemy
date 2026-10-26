@@ -1,22 +1,23 @@
-// 2026-10-26 (round 5): differ 129 of 1632 (1631 here). The sprite tiles are
-// copied through their own pointer, tile, set from tiles after the decode, so
-// tiles stays in a register from the prologue as the native's r8: 141 to 129
-// (tiles + i * 0x400 instead: 281). Moving or widening the palette copy's
-// one-pass block changes nothing (141 or 129); without either block 250. Left:
-// the palette copy's 0x200 is shared with the sheet's step here (the native
-// builds it twice), the tiles in sl rather than r8, one spill slot (sp+24
-// against the native's sp+28) and scheduling rows.
-// Draft, differ 141 of 1632 (1629 here; 2026-10-26: two tagged one-pass
-// blocks from a device sweep, before the serpent's palette copy and after
-// each tile copy, 270 to 153, and BattleEffect_LoadBlitter returning s32, as
-// nibble_pair.c defines it, to 141; 270 was this draft's count before, the
-// 360 below an older one): BattleEffect_RunNeptune, summon 6
+// 2026-10-26 (round 5): differ 109 of 1632 (1631 here). A statement-move search
+// set tiles after Func_0813ba50 and REG_BLDCNT among the serpent's start
+// values: 129 to 109. Before that, the sprite tiles are copied through their
+// own pointer, tile, set from tiles after the decode, so tiles stays in a
+// register from the prologue as the native's r8: 141 to 129 (tiles + i * 0x400
+// instead: 281). Moving or widening the palette copy's one-pass block changes
+// nothing (141 or 129); without either block 250. Left: the palette copy's
+// 0x200 is shared with the sheet's step here (the native builds it twice), the
+// tiles in sl rather than r8, one spill slot (sp+24 against the native's sp+28)
+// and scheduling rows. Draft, differ 141 of 1632 (1629 here; 2026-10-26: two
+// tagged one-pass blocks from a device sweep, before the serpent's palette copy
+// and after each tile copy, 270 to 153, and BattleEffect_LoadBlitter returning
+// s32, as nibble_pair.c defines it, to 141; 270 was this draft's count before,
+// the 360 below an older one): BattleEffect_RunNeptune, summon 6
 // (BattleEffect_RunSceneEffect's case 6, actflags 0x8006), The Broken Seal's
 // BattleEffect_RunNeptune as The Lost Age reworked it.
 
 // Twin: ☀️ BattleEffect_RunNeptune (games/tbs/src/effect/effect.c), with The
-// Lost Age's changes: no BattleEffect_SpawnObjects; instead its own object build
-// (the palette by Iwram_CopyWords to OBJ palette 0x200, the tiles by
+// Lost Age's changes: no BattleEffect_SpawnObjects; instead its own object
+// build (the palette by Iwram_CopyWords to OBJ palette 0x200, the tiles by
 // Resource_DecodeType01 into the map cell buffer, eight
 // Func_0815b290(32, 32, 0x80002000, 0) with priority 1 and a 1 KB tile copy
 // each to 0x06010000 + gResourceTableEntries[slot].offset, as summons 4 and 24
@@ -114,10 +115,12 @@ extern u16 gData_08197410[];       // ☀️ gBattleEffect_MoteCells
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
-void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
-void Func_08163c2c(s32 mode, s32 value);        // Func_08163c2c
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
-                                                // 7, 7, flags, mode)
+void BattleEffect_ProcessPendingGraphicsTransfer(
+    void); // BattleEffect_ProcessPendingGraphicsTransfer
+void Func_08163c2c(s32 mode, s32 value); // Func_08163c2c
+s32 BattleEffect_LoadBlitter(
+    s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
+                                 // 7, 7, flags, mode)
 void BattleEffect_SelectLivingTargets(
     struct BattleEffectArgument *effect); // BattleEffect_SelectLivingTargets
 struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 attributes,
@@ -129,10 +132,10 @@ void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 void Func_08118088(s32 actor,
                    s32 variant); // BattleMotion_ApplyVariantMotionFar
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
-                   s32 frames);   // ObjectGroup_UpdateMembers
-void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
-void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
+                   s32 frames);          // ObjectGroup_UpdateMembers
+void Func_08158ce0(s32 x, s32 y);        // Camera_ApplyShake
+void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
+void BattleEffect_EndCanvasLayer(void);  // BattleEffect_EndCanvasLayer
 void Palette_LoadBasicObjColors(void);
 void Graphics_ResetBg2Pa(void);
 void Graphics_SetBg2AffineScaleHalf(void);
@@ -143,7 +146,7 @@ void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
 void ResourceObject_ReleaseFar(void *object);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 
 // Summon 6: at dusk the window opens on a sea; a great serpent rises out of
 // the spray, light gathers at its mouth, rays reach out and it breathes a
@@ -190,19 +193,20 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  tiles = Ram_MapCellBuffer;
   cells = Ram_HeapSlots->unk64[0];
 
   // Open the canvas over a dark backdrop; BG2 is drawn at half scale
   // below the line the IRQ handler picks.
   BattleEffect_StartCanvasLayer(0);
   Func_0813ba50();
+  tiles = Ram_MapCellBuffer;
   *(u16 *)0x05000000 = 0;
   *(u16 *)0x05000002 = 0;
   Scheduler_AddOrUpdateCallback(Graphics_ResetBg2Pa, 0xc80);
   Runtime_SetIrqHandler(2, 0, Graphics_SetBg2AffineScaleHalf);
   work->transferMode = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
+                                0xc80);
   REG_WININ = 0x2137;
   Func_08163c2c(1, 0);
   REG_WIN0H = 0xf0f0;
@@ -246,12 +250,12 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   REG_DISPCNT = 0x7741;
   REG_BG2PA = 0x80;
   REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f44;
   // The serpent starts low on the right, rising to the left.
   openStep = 1;
   serpentX = 140 << 17;
   serpentY = 200 << 16;
   serpentVX = -0x40000;
+  REG_BLDCNT = 0x3f44;
   serpentVY = -0x80000;
   savedScrollX = gBgScroll[1].x;
   transition = (s32 *)Ram_HeapSlots->transitionWork;
@@ -529,7 +533,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
                     HI(PARTICLES[i].x) - k / 2, HI(PARTICLES[i].y) - k, k,
                     k * 2);
           BattleEffectKernels_IntegrateVector2(&PARTICLES[i], 62,
-                                           Data_08198aec[i & m]);
+                                               Data_08198aec[i & m]);
           PARTICLES[i].variant++;
           if (PARTICLES[i].velocityY > 0 && HI(PARTICLES[i].y) > 104)
             PARTICLES[i].variant = -1;
@@ -567,7 +571,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   }
   for (i = 0; i != effect->count; i++) {
     EffectPosition_ProjectScaledBattler(effect->actors[i],
-                                       (struct EffectPosition *)target);
+                                        (struct EffectPosition *)target);
     work->particles[i].x = target[0] / 2;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet, 1,

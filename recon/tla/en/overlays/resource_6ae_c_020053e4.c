@@ -1,7 +1,9 @@
-// Draft, differ 86 of 112: sets up an object's four 16 by 16 sprites in work: loads
-// their tiles (gData_020057e4, 256 bytes) into a free VRAM entry, resets the
-// work's counters (999, 999, 0), links object and work both ways, hooks the
-// object's update (Func_02005268) and gives each sprite the object's priority.
+// Overlay 6ae's copy of resource_694_c_02003e54.c, with this overlay's symbols:
+// differ 86 of 112. That draft's header follows. Draft, differ 86 of 112: sets
+// up an object's four 16 by 16 sprites in work: loads their tiles
+// (gData_020057e4, 256 bytes) into a free VRAM entry, resets the work's
+// counters (999, 999, 0), links object and work both ways, hooks the object's
+// update (Func_02005268) and gives each sprite the object's priority.
 #include "types.h"
 #include "object_runtime.h"
 

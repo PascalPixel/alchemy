@@ -1,14 +1,15 @@
-// Draft, differ 337 of 305: carries out a push measured by Func_02004240: clears
-// the cells under the object's box, walks the leader up to it (mode 8),
-// slides the object to the push's end with the leader following (cue 239,
-// Func_020054b8), runs the optional callback, restores the leader's speed,
-// plays cues 298 and 213, places the object exactly, copies the spare
-// cells into its new place and back over its old place (Func_020054e8) and
-// marks layer 0 and 2 there. The same listing as overlay 674's
-// Func_02003a5c. Left: registers and stack slots throughout (the native
-// keeps the box sizes, the saved speeds and both cell vectors on the stack
-// and the party state's owner address in r10); the leader's last offset is
-// a guess at the native's shift pair.
+// Overlay 6ad's copy of resource_668_c_020044c4.c, with this overlay's symbols:
+// differ 337 of 305. That draft's header follows. Draft, differ 337 of 305:
+// carries out a push measured by Func_02004240: clears the cells under the
+// object's box, walks the leader up to it (mode 8), slides the object to the
+// push's end with the leader following (cue 239, Func_020054b8), runs the
+// optional callback, restores the leader's speed, plays cues 298 and 213,
+// places the object exactly, copies the spare cells into its new place and back
+// over its old place (Func_020054e8) and marks layer 0 and 2 there. The same
+// listing as overlay 674's Func_02003a5c. Left: registers and stack slots
+// throughout (the native keeps the box sizes, the saved speeds and both cell
+// vectors on the stack and the party state's owner address in r10); the
+// leader's last offset is a guess at the native's shift pair.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
@@ -25,8 +26,7 @@ struct PushTarget {
 extern s8 gData_02005f64[][4];
 extern s32 gData_02005f7c[];
 struct ObjectRuntime *Object_GetById(u32 id);
-void Func_02004a44(s32 layer, s32 x, s32 z, s32 width, s32 height,
-                           s32 value);
+void Func_02004a44(s32 layer, s32 x, s32 z, s32 width, s32 height, s32 value);
 void ObjectMotion_SetSpeedParameters(u32 id, s32 speed, s32 acceleration);
 void Object_SetModeById(u32 id, s32 mode);
 void WaitFrames(s32 frames);

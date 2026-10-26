@@ -1,16 +1,18 @@
-// Draft, differ 16 of 197: shared by thirteen overlays (698 to 6a4): the update of
-// an object that carries the leader. While no event runs it animates, ticks a
-// sound every 32 frames, takes the leader's sprite priority and moves along its
-// angle; when the leader stands close enough (and flag 260 is clear) it links
-// the leader to itself. Off its track it stops, takes its rest script and
-// clears the ride. 200 goes through a temporary so it is built with movs as an
-// SImode constant (as a halfword constant it loads from the pool), and the
-// update is cleared before the byte so both stores share one zero register.
-// Left, all instruction order: the cell lookup's 2 after its x and z loads
-// (an empty asm after the priority store gets x before z: 14), the third word
-// of the position read before the buffer pointer is copied to r0, the
-// leader's link stored after its angle, and the update store before the rest
-// script's arguments. Permute 15 minutes found nothing better.
+// Overlay 6ad's copy of resource_698_c_020005e4.c, with this overlay's symbols:
+// differ 16 of 197. That draft's header follows. Draft, differ 16 of 197:
+// shared by thirteen overlays (698 to 6a4): the update of an object that
+// carries the leader. While no event runs it animates, ticks a sound every 32
+// frames, takes the leader's sprite priority and moves along its angle; when
+// the leader stands close enough (and flag 260 is clear) it links the leader to
+// itself. Off its track it stops, takes its rest script and clears the ride.
+// 200 goes through a temporary so it is built with movs as an SImode constant
+// (as a halfword constant it loads from the pool), and the update is cleared
+// before the byte so both stores share one zero register. Left, all instruction
+// order: the cell lookup's 2 after its x and z loads (an empty asm after the
+// priority store gets x before z: 14), the third word of the position read
+// before the buffer pointer is copied to r0, the leader's link stored after its
+// angle, and the update store before the rest script's arguments. Permute 15
+// minutes found nothing better.
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"

@@ -1,11 +1,13 @@
-// Draft, differ 123 of 216: shared by thirteen overlays (698 to 6a4): the leader
-// rides up with its linked object, spinning and flickering, until that object
-// clears its flag; then it is set down on the 8-pixel grid beside it, falls to
-// the ground and the camera follows it again. The loops are goto loops because
-// the native rebuilds their constants (0x3ffff, 0x100000) on every pass. Left:
-// the native keeps the work pointer in r10 and the two flag pointers in r8 and
-// r9 and recomputes the priority flags' address in the loop; here a fourth high
-// register and a stack slot are used, and 0x3ffff becomes a 0x40000 compare.
+// Overlay 6ad's copy of resource_698_c_020003cc.c, with this overlay's symbols:
+// differ 121 of 216. That draft's header follows. Draft, differ 123 of 216:
+// shared by thirteen overlays (698 to 6a4): the leader rides up with its linked
+// object, spinning and flickering, until that object clears its flag; then it
+// is set down on the 8-pixel grid beside it, falls to the ground and the camera
+// follows it again. The loops are goto loops because the native rebuilds their
+// constants (0x3ffff, 0x100000) on every pass. Left: the native keeps the work
+// pointer in r10 and the two flag pointers in r8 and r9 and recomputes the
+// priority flags' address in the loop; here a fourth high register and a stack
+// slot are used, and 0x3ffff becomes a 0x40000 compare.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"

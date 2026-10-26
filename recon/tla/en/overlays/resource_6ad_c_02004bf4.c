@@ -1,9 +1,10 @@
-// Draft, differ 151 of 132: finds the object the leader is pushing: among objects 8
-// to 63 whose sprite shape is in the six-entry footprint table, the one whose
-// footprint holds the cell one step ahead of the leader, when the leader is
-// not in line with its near edge. Returns the object, with its id and the
-// footprint's index; the leader's step direction is left in step. Shared with
-// overlay 6a1 and others.
+// Overlay 6ad's copy of resource_69c_c_02000f34.c, with this overlay's symbols:
+// differ 151 of 132. That draft's header follows. Draft, differ 151 of 132:
+// finds the object the leader is pushing: among objects 8 to 63 whose sprite
+// shape is in the six-entry footprint table, the one whose footprint holds the
+// cell one step ahead of the leader, when the leader is not in line with its
+// near edge. Returns the object, with its id and the footprint's index; the
+// leader's step direction is left in step. Shared with overlay 6a1 and others.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"

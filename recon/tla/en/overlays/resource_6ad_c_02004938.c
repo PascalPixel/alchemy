@@ -1,7 +1,9 @@
-// Draft, differ 79 of 126: finds an object's footprint by its sprite's shape in a
-// six-entry table and copies the cells under it (Func_020054e8), then fills
-// byte 2 of those cells with 255 on layers 0 and 2; returns 0 for a shape not
-// in the table. Shared with overlay 6a1 and others.
+// Overlay 6ad's copy of resource_69c_c_02000c78.c, with this overlay's symbols:
+// differ 77 of 126. That draft's header follows. Draft, differ 79 of 126: finds
+// an object's footprint by its sprite's shape in a six-entry table and copies
+// the cells under it (Func_020054e8), then fills byte 2 of those cells with 255
+// on layers 0 and 2; returns 0 for a shape not in the table. Shared with
+// overlay 6a1 and others.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -12,8 +14,7 @@ extern const s8 gData_02005f64[][4];
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_020054e8(s32 x, s32 z, s32 width, s32 height, s32 toX, s32 toZ);
-void Func_02004a44(s32 layer, s32 x, s32 z, s32 width, s32 height,
-                           s32 value);
+void Func_02004a44(s32 layer, s32 x, s32 z, s32 width, s32 height, s32 value);
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
@@ -41,8 +42,7 @@ s32 Func_02004938(s32 id) {
   height = (ABS(rect[1]) + ABS(rect[3])) >> 4;
   x = (object->x + (rect[0] << 16)) >> 20;
   z = (object->z + (rect[1] << 16)) >> 20;
-  Func_020054e8(x, z, width, height,
-                x + (u16)(*(s32 *)(map + 328) >> 20),
+  Func_020054e8(x, z, width, height, x + (u16)(*(s32 *)(map + 328) >> 20),
                 z + (u16)(*(s32 *)(map + 332) >> 20));
   Func_02004a44(0, x, z, width, height, 255);
   Func_02004a44(2, x, z, width, height, 255);

@@ -1,8 +1,9 @@
-// Draft, differ 219 of 171: how far a pushed object slides: from the object
-// Func_02004bf4 finds, steps its footprint one step at a time in the push
-// direction until a cell of it is blocked (Func_020054f8 returns 2), and
-// leaves the stopping point in move; returns 0 when it cannot move at all.
-// Shared with overlay 6a1 and others.
+// Overlay 6ad's copy of resource_69c_c_02000dcc.c, with this overlay's symbols:
+// differ 219 of 171. That draft's header follows. Draft, differ 219 of 171: how
+// far a pushed object slides: from the object Func_02004bf4 finds, steps its
+// footprint one step at a time in the push direction until a cell of it is
+// blocked (Func_020054f8 returns 2), and leaves the stopping point in move;
+// returns 0 when it cannot move at all. Shared with overlay 6a1 and others.
 #include "types.h"
 #include "object_runtime.h"
 
@@ -41,10 +42,12 @@ s32 Func_02004a8c(struct PushMove *move) {
   if (object == 0)
     return 0;
   direction = move->direction;
-  width = (ABS(gData_02005f64[direction][0]) +
-           ABS(gData_02005f64[direction][2])) >> 4;
-  height = (ABS(gData_02005f64[direction][1]) +
-            ABS(gData_02005f64[direction][3])) >> 4;
+  width =
+      (ABS(gData_02005f64[direction][0]) + ABS(gData_02005f64[direction][2])) >>
+      4;
+  height =
+      (ABS(gData_02005f64[direction][1]) + ABS(gData_02005f64[direction][3])) >>
+      4;
   dx = gData_02005f7c[stepIndex] & 0xffff0000;
   dz = gData_02005f7c[stepIndex] << 16;
   move->unk14 = 0;

@@ -18827,7 +18827,7 @@ msgctxt "message"
 msgid "04617"
 msgstr "{button_icon:3}-{button_icon:4}:Charaktere"
 
-msgctxt "message"
+msgctxt "MsgExpLabel"
 msgid "04618"
 msgstr "Erf."
 

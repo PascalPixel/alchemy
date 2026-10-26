@@ -1,6 +1,7 @@
 #include "types.h"
 #include "battle_type.h"
 #include "ram_buffer.h"
+#include "edition.h"
 
 struct MenuResult {
   s32 ownerState;
@@ -42,7 +43,7 @@ void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 window, s32 x,
                                   s32 y);
 void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range, s32 style);
-void UiText_DrawStringAtOffsetFar(u8 *text, s32 window, s32 x, s32 y);
+void UiText_DrawStringAtOffsetFar(const u8 *text, s32 window, s32 x, s32 y);
 void UiText_DrawStringInWindowFar(const u8 *text, s32 window, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x,
                                   s32 y);
@@ -113,7 +114,12 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
   UiText_DrawStringAtOffsetFar(owner, window, 40, 0);
   UiText_DrawCharacterAtOffsetFar(
       owner[OWNER_CLASS_MSG_OFFSET] + (s32)MsgClassName, window, 0, 32);
+  // Spanish and French draw the level label at an offset, as the owner's name.
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH
+  UiText_DrawStringAtOffsetFar(gMenu_LvString, window, 0, 48);
+#else
   UiText_DrawStringInWindowFar(gMenu_LvString, window, 0, 48);
+#endif
   UiText_DrawNumberInWindowFar(owner[OWNER_LEVEL_OFFSET], 2, window, 24, 48);
 
   return 1;

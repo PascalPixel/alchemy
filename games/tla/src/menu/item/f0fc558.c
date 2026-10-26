@@ -1,5 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "edition.h"
 
 struct MenuResult {
   s32 ownerState;
@@ -22,6 +23,8 @@ struct InventoryMenuState {
 
 extern char MsgItemPlainName[];
 void RenderOutput_RedrawSavedRectFar(s32 window);
+void RenderOutput_ClearListFar(s32 window);
+void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 s32 Render_SetTilemapFlagRect(s32 window, s32 x, s32 y, s32 width, s32 height,
                               s32 flag);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
@@ -43,14 +46,24 @@ s32 Func_080fc558(s32 arg0, void *arg1, struct MenuResult *state) {
   combined += state->row;
   state->selectedIndex = combined;
 
+  // The Japanese release clears the info window and draws the name as a
+  // resource string.
+#if LANGUAGE == LANGUAGE_JAPANESE
+  RenderOutput_ClearListFar(window);
+#else
   RenderOutput_RedrawSavedRectFar(window);
+#endif
   WaitFrames(1);
 
   combined = state->selectedIndex;
   if (menu->items[combined] != 0) {
     s32 masked = (menu->items[combined] & 0x1ff) + (s32)MsgItemPlainName;
 
+#if LANGUAGE == LANGUAGE_JAPANESE
+    UiText_DrawResourceFar(masked, menu->infoWindow, 0, 0);
+#else
     UiText_DrawCharacterAtOffsetFar(masked, menu->infoWindow, 0, 0);
+#endif
   }
 
   row = 0;

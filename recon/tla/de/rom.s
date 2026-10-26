@@ -47,12 +47,9 @@ Runtime_InstallIwramAndIrqs:
 	.thumb_func
 System_WaitForFrameInterrupt:
 	.incbin "baserom.gba", 0x000134dc, 0x000000b0
-	.section .rom.000138e0, "ax"
-	.global Input_UpdateKeyRepeatAndDirection
-	.type Input_UpdateKeyRepeatAndDirection, %function
-	.thumb_func
-Input_UpdateKeyRepeatAndDirection:
-	.incbin "baserom.gba", 0x000138e0, 0x0000027c
+	.section .rom.000139c8, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000139c8, 0x00000194
 	.section .rom.000141a0, "ax"
 	.global VramCache_AllocateBlocks
 	.type VramCache_AllocateBlocks, %function

@@ -11,12 +11,8 @@ Runtime_InstallIwramAndIrqs:
 	.thumb_func
 System_WaitForFrameInterrupt:
 	.incbin "baserom.gba", 0x000134b0, 0x000000b0
-	.section .rom.000138b4, "ax"
-	.global Input_UpdateKeyRepeatAndDirection
-	.type Input_UpdateKeyRepeatAndDirection, %function
-	.thumb_func
-Input_UpdateKeyRepeatAndDirection:
-	.incbin "baserom.gba", 0x000138b4, 0x000000e8
+	.section .rom.0001399c, "ax"
+	.balign 4
 	.global Func_0801399c
 	.type Func_0801399c, %function
 	.thumb_func

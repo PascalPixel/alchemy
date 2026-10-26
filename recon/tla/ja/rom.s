@@ -2813,13 +2813,14 @@ BattleEnemy_ClaimNameLetter:
 	.section .rom.00127cd0, "ax"
 	.incbin "baserom.gba", 0x00127cd0, 0x000003cc
 	.section .rom.00128224, "ax"
-	.incbin "baserom.gba", 0x00128224, 0x00000024
-	.section .rom.00128248, "ax"
-	.global Func_0812824c
-	.type Func_0812824c, %function
+	.global Func_08128228
+	.type Func_08128228, %function
 	.thumb_func
-Func_0812824c:
-	.incbin "baserom.gba", 0x00128248, 0x00000578
+Func_08128228:
+	.incbin "baserom.gba", 0x00128224, 0x00000024
+	.section .rom.001284bc, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x001284bc, 0x00000304
 	.section .rom.0013bbd8, "ax"
 	.global BattleEffect_RunIce
 	.type BattleEffect_RunIce, %function

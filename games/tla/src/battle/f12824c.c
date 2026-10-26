@@ -1,17 +1,3 @@
-// Draft of Func_0812824c, The Broken Seal's BattleEnemy_RecordDefeat
-// (games/tbs/src/battle/battle/spoils.c), with the battle work from its heap
-// slot. This game also keeps the last two defeated enemies (their ids and
-// Func_08128228's first digit of their names, alternating slots, with a count
-// up to 2), sets the seen flag only for enemy ids below 0x200, and compares
-// item ids signed.
-// Near miss, differ 2 of 300. The enemy-class search has its own index,
-// classIndex, which the native keeps in r0 (143 to 15), and the item roll is
-// nested under the search's result, so its early exit shares the last
-// return (15 to 2). Left: the native loads lastCount unsigned (for the
-// increment) before the signed load for its test; here the signed load and
-// its offset come first (a barrier after the digit's store, or the count
-// read into a u8 first, change nothing). Kept: the slot as the value of its
-// assignment to the s8 field, Battle_RandomFar signed.
 #include "types.h"
 #include "battle_unit.h"
 #include "ram_buffer.h"
@@ -86,6 +72,11 @@ BattleEnemy_CalculateExperienceReward(struct BattleUnit *unit, u16 *reward) {
   return bonus + base;
 }
 
+/// Counts a fallen enemy and adds its spoils, The Broken Seal's
+/// BattleEnemy_RecordDefeat with the battle work from its heap slot. This game
+/// also keeps the last two defeated enemies (their ids and Func_08128228's first
+/// digit of their names, alternating slots, with a count up to 2) and sets the
+/// seen flag only for enemy ids below 0x200.
 s32 Func_0812824c(s32 unitId, s32 djinnBonus) {
   struct BattleUnit *unit;
   struct EnemyDefinition *enemy;
@@ -110,8 +101,13 @@ s32 Func_0812824c(s32 unitId, s32 djinnBonus) {
   slot = spoils->lastSlot = (spoils->lastSlot + 1) % 2;
   spoils->lastEnemyIds[slot] = unit->enemyId;
   spoils->lastDigits[slot] = Func_08128228((u8 *)unit);
-  if (spoils->lastCount <= 1)
-    spoils->lastCount++;
+  /* FAKEMATCH(one-pass): the count test in a once-only block, which loads
+   * the count unsigned for its increment before the signed load for the
+   * test; as the plain if, 2 of 300 instructions differ in tla-en. */
+  do {
+    if (spoils->lastCount <= 1)
+      spoils->lastCount++;
+  } while (0);
   classSlot = 0;
   classIndex = 0;
   if (battle->enemyClasses[0] != unit->enemyId) {

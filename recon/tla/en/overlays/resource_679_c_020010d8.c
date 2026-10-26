@@ -34,9 +34,6 @@ void Func_020010d8(struct ObjectRuntime *object) {
   if (child != NULL) {
     sprite = child->animation;
     child->terrainHeight = object->terrainHeight;
-    /* FAKEMATCH: an empty asm keeps the height store ahead of the script
-     * address load, as in the native (differ 8 without). */
-    asm("");
     Func_02001c74(child, gData_02001ee8);
     child->motionFlags = 0;
     if (sprite != NULL) {

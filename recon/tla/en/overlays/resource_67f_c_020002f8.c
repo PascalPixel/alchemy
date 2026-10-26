@@ -31,6 +31,8 @@ void Func_02000c4c(s32 level, s32 layer);
 void Func_02000aa8(void);
 
 void Func_020002f8(u16 *list) {
+  /* FAKEMATCH(pin): the leader held in r6; as a plain local, 64 of 158
+   * instructions differ in tla-en. */
   register struct ObjectRuntime *leader asm("r6");
   struct ObjectRuntime *pillar;
   s32 position[3];

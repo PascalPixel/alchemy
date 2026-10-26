@@ -807,11 +807,6 @@ Func_080ccec8:
 	.thumb_func
 Func_080cd808:
 	.incbin "baserom.gba", 0x000da808, 0x00000114
-	.section .rom.000daa84, "ax"
-	.balign 4
-	.global Func_080cda84
-Func_080cda84:
-	.incbin "baserom.gba", 0x000daa84, 0x0000003c
 	.section .rom.000daac0, "ax"
 	.global Func_080cdac0
 Func_080cdac0:

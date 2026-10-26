@@ -31,9 +31,6 @@ void Func_080daecc(s32 objectId, s32 mode);
 #define TARGET_KIND_SCATTERS 372 ///< scatters five falling pieces instead
 #define TARGET_KIND_STAYS 394
 
-// The Spanish and Italian scaffolds still label Func_080daecc with another
-// name, so those editions keep this function on the scaffold.
-#if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_ITALIAN)
 /// Animation 12 on a target: the burst of particles, then the target sinks
 /// to the underfoot priority. A target of kind 372 instead throws five pieces
 /// round the scene's position; one of kind 394 only plays the cue (sound 126).
@@ -93,7 +90,6 @@ void Func_080dda30(s32 unused) {
   }
   BattleEffect_PrepareBufferInterpolation();
 }
-#endif
 
 void FieldEffect_RunGrowth(void) {
   u8 *state = Ram_HeapSlots->effectWork;

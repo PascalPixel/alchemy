@@ -12,7 +12,7 @@ s32 Func_08020310(s32 x, s32 z, s32 layer, s32 height);
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-/// Returns the absolute value Func_08020310 gives for the object at position
+/// Returns the absolute value Func_0802d71c gives for the object at position
 /// when it is within the id's table range (pixels), else -1.
 s32 Func_080cda84(s32 id, u8 *object, s32 *position) {
   struct DescriptorEntry *entry = Field_GetPsynergyTargetRule(id);

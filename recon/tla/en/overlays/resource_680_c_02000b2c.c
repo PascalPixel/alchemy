@@ -16,13 +16,23 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 
+struct MapCell {
+  u8 unk0[2];
+  u8 mark;
+  u8 unk3;
+};
+
 void Func_02000b2c(s32 id, s32 x, s32 y, s32 z) {
   struct ObjectRuntime *actor = Object_GetById(id);
-  u8 *cells = *(u8 **)((u8 *)Ram_HeapSlots->mapWork + 424);
-  s32 cellX = x / 0x100000;
-  s32 cellZ = (z - y + 0x7fff) / 0x100000;
+  u8 *cells;
+  s32 cellX;
+  s32 cellZ;
 
-  cells[(cellZ * 128 + cellX) * 4 + 2] = 255;
+  cells = *(u8 **)((u8 *)Ram_HeapSlots->mapWork + 424);
+  cellX = x / 0x100000;
+  cellZ = (z - y + 0x7fff) / 0x100000;
+
+  ((struct MapCell *)cells)[cellZ * 128 + cellX].mark = 255;
   actor->x = (x & 0xfff00000) + 0x80000;
   actor->z = (z & 0xfff00000) + 0x80000;
   actor->y = actor->z - (cellZ << 20);

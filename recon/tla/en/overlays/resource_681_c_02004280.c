@@ -45,14 +45,16 @@ s32 Func_02004280(void) {
     u8 *map = (u8 *)Ram_HeapSlots->mapWork;
 
     if (gPartyState.entrance <= 4) {
-      u8 *unit = Unit_Get(gPartyState.currentOwner);
-      u8 *end = unit + 13;
-      s32 total = 0;
+      u8 *unit;
+      s32 total;
       s32 *stage;
+      s32 i;
 
-      do {
-        total += *unit++;
-      } while (unit <= end);
+      total = 0;
+      unit = Unit_Get(gPartyState.currentOwner);
+
+      for (i = 0; i <= 13; i++)
+        total += unit[i];
       Func_020044f8(total);
       Object_GetById(Func_02004fe4())->priorityFlags |= 32;
       map[261] = 1;
@@ -69,7 +71,7 @@ s32 Func_02004280(void) {
         Func_02004ebc(65, 0x680000, 0x480000);
       if (GameFlag_Test(*stage + 0xa50)) {
         struct ObjectRuntime *climber = Object_GetById(8);
-        s32 angle = Func_02004904();
+        u32 angle = Func_02004904();
 
         climber->collisionFlags = 0;
         Func_02004d9c(climber, ((angle & 0xc000) >> 14) + 2);
@@ -110,6 +112,10 @@ s32 Func_02004280(void) {
     case 8:
       Func_02004274(100);
       break;
+    case 9:
+    case 10:
+      Func_02004274(102);
+      break;
     case 3:
     case 4:
       Func_02004274(103);
@@ -117,10 +123,6 @@ s32 Func_02004280(void) {
     case 6:
     case 7:
       Func_02004274(101);
-      break;
-    case 9:
-    case 10:
-      Func_02004274(102);
       break;
     }
   } else if (gPartyState.scene == (s32)&SceneId_Ov681Room5) {

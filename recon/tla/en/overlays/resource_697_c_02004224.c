@@ -1,8 +1,14 @@
-// Draft, differ 30 of 93: sets up one of the Trial Road's moving objects in its
+// Draft, differ 19 of 93: sets up one of the Trial Road's moving objects in its
 // 28-byte slot (index) of the Trial Road work at gData_020023c4 + 0x18c: unless
 // flag 265 is set, records the object, its value and the range between low and
 // high (sorted), with 360, 60 and 240 and motion off; then creates its marker
-// object (type 0x8000) at the object and returns the slot.
+// object (type 0x8000) at the object and returns the slot. The slot is
+// read as the movers table at gData_020023c4 + 0x188, which keeps the
+// native's separate add of 4. Left: global.c gives low r7 and high r10, the
+// native the other way round, so the compare and the two range stores use the
+// other registers and the low store is scheduled later. Tried: the swap
+// written from either end (28 the other way), a block-local temporary, s16
+// parameters (29, 48), every one-line move.
 #include "../../../../games/tla/src/scene/trial_road/trial_road.h"
 
 struct TrialRoadMover {
@@ -21,13 +27,20 @@ struct TrialRoadMover {
   struct ObjectRuntime *marker;
 };
 
+struct TrialRoadMovers {
+  u8 unk00[2];
+  s16 shape;
+  struct TrialRoadMover movers[16];
+};
+
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
                                         s32 flags);
 
 struct TrialRoadMover *Func_02004224(s32 index, s32 id, s32 value, s32 low,
                                      s32 high) {
-  struct TrialRoadMover *mover =
-      (struct TrialRoadMover *)(gData_020023c4 + 0x188 + index * 28 + 4);
+  struct TrialRoadMovers *work =
+      (struct TrialRoadMovers *)(gData_020023c4 + 0x188);
+  struct TrialRoadMover *mover = &work->movers[index];
   struct ObjectRuntime *object = Object_GetById(id);
   struct ObjectRuntime *marker;
   s32 swap;
@@ -36,9 +49,9 @@ struct TrialRoadMover *Func_02004224(s32 index, s32 id, s32 value, s32 low,
   ObjectDispatch_SetSingleChildFlags(object, 0);
   if (!GameFlag_Test(265)) {
     if (high < low) {
-      swap = low;
-      low = high;
-      high = swap;
+      swap = high;
+      high = low;
+      low = swap;
     }
     mover->id = id;
     mover->value = value;

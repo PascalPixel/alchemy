@@ -1,16 +1,22 @@
-// Draft, differ 123 of 216: shared by thirteen overlays (698 to 6a4): the leader
-// rides up with its linked object, spinning and flickering, until that object
-// clears its flag; then it is set down on the 8-pixel grid beside it, falls to
-// the ground and the camera follows it again. The loops are goto loops because
-// the native rebuilds their constants (0x3ffff, 0x100000) on every pass. Left:
-// the native keeps the work pointer in r10 and the two flag pointers in r8 and
-// r9 and recomputes the priority flags' address in the loop; here a fourth high
-// register and a stack slot are used, and 0x3ffff becomes a 0x40000 compare.
+// Draft, differ 115 of 216: shared by thirteen overlays (698 to 6a4): the
+// leader rides up with its linked object, spinning and flickering, until that
+// object clears its flag; then it is set down on the 8-pixel grid beside it,
+// falls to the ground and the camera follows it again. The loops are goto loops
+// because the native rebuilds their constants (0x3ffff, 0x100000) on every
+// pass. Left: the native keeps the work pointer in r10 and the two flag
+// pointers in r8 and r9 and recomputes the priority flags' address in the loop;
+// here a fourth high register and a stack slot are used, and 0x3ffff becomes a
+// 0x40000 compare. The camera call goes through the call layer (Call4), which
+// builds its three -1s apart as the native does. Tried: the facing as a
+// division (linked->angle / 0x2000; the native shifts it signed, asrs, where
+// this gives lsrs either way), permute 6 minutes (107, only with a stray
+// temporary).
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "frame.h"
+#include "call.h"
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_02001a7c(void);
@@ -56,14 +62,14 @@ void Func_020003cc(void) {
   }
   *(u16 *)(work + 0xd44) = 1;
   *(u16 *)(work + 0xd46) = 1;
-  facing = linked->angle >> 13;
+  facing = linked->angle / 0x2000;
   actor->x = (((linked->x >> 19) & ~1) + facing - 1) << 19;
   actor->z = (((linked->z >> 19) & ~1) - (facing & 2) + 1) << 19;
   actor->velocityY = 0x60000;
   actor->priorityFlags = 1;
   actor->motionFlags = 3;
   ObjectDispatch_SetSingleChildFlags(actor, 1);
-  Camera_MoveWithinMapBounds(-1, -1, -1, 0);
+  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   shadow = Func_02001ae4();
   shadow->speedLimit = 0x80000;
   shadow->acceleration = 0x10000;

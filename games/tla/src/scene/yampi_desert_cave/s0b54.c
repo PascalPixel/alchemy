@@ -17,17 +17,18 @@ void Func_02000b54(const u16 *list) {
   if (list[0] == 0xffff)
     return;
   entry = list;
-loop: {
-  u32 id = entry[0];
-  struct ObjectRuntime *object = Object_GetById(id);
-  s16 column = entry[1];
-  s16 row = entry[2];
+loop:
+  {
+    u32 id = entry[0];
+    struct ObjectRuntime *object = Object_GetById(id);
+    s16 column = entry[1];
+    s16 row = entry[2];
 
-  object->collisionFlags &= ~1;
-  ObjectDispatch_SetSingleChildFlags(object, 0);
-  Func_02000c44(id, (u16)column, (u16)row, object->terrainId);
-  entry += 3;
-}
+    object->collisionFlags &= ~1;
+    ObjectDispatch_SetSingleChildFlags(object, 0);
+    Func_02000c44(id, (u16)column, (u16)row, object->terrainId);
+    entry += 3;
+  }
   if (entry[0] != 0xffff)
     goto loop;
 }

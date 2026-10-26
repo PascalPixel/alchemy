@@ -1,5 +1,5 @@
-// Draft, differ 177 of 1266: Air's Rock's outer map setup: sets the screen
-// effect and Retreat (Ov663Room1's entrance 1) and the leader's priority
+// Draft, differ 125 of 1266 (was 129): Air's Rock's outer map setup: sets the
+// screen effect and Retreat (Ov663Room1's entrance 1) and the leader's priority
 // bit 5, then by room: in Ov663Room1 the cells the Whirlwind has cleared
 // (flags 0x850 to 0x857) and the beam's opening (0x858), with the leader
 // shifted in by entrances 2 to 4 (Func_02002c24); in Ov663Room2, by
@@ -12,9 +12,11 @@
 // Func_02001f7c. Returns 0.
 // Left: register numbering: the native builds gPartyState's 0x214 offset and
 // the leader's moves in r0 and r1 where the draft uses r1 and r2, loads the
-// Retreat scene's id earlier, tests the entrance's lower bound as below 2 (the
-// draft's above 1) and keeps the 1 for the cell calls' stack arguments in a
-// fresh register.
+// Retreat scene's id earlier and keeps the 1 for the cell calls' stack
+// arguments in a fresh register; the leader reached through an inline
+// changes none of it.
+// Measured: entrances 2 to 4 as a switch give the native's bound tests (cmp
+// #4, bgt, cmp #2, blt); nested ifs fold the lower bound to above 1.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -73,9 +75,12 @@ s32 Func_02002ca0(void) {
   gPartyState.retreatEntrance = 1;
   LEADER()->priorityFlags |= 32;
   if (gPartyState.scene == (s32)&SceneId_Ov663Room1) {
-    if (gPartyState.entrance <= 4)
-      if (!(gPartyState.entrance < 2))
-        Func_02002c24(0x580000);
+    switch (gPartyState.entrance) {
+    case 2:
+    case 3:
+    case 4:
+      Func_02002c24(0x580000);
+    }
     if (GameFlag_Test(0x850)) {
       Call6(Func_02003b68, 0x40, 0, 113, 11, 3, 3);
       Call6(Func_02003b80, 0x40, 0, 3, 2, 113, 12);

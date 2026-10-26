@@ -14,8 +14,7 @@
 extern struct FieldEffect *Object_GetById(s32 id);
 extern struct FieldActor *EFFECT_CREATE(s32 type, s32 x, s32 y, s32 z);
 #ifdef EFFECT_SPRITE_PRIORITY
-static inline struct FieldEffect *Effect_Create(s32 type, s32 x, s32 y,
-                                                s32 z) {
+static inline struct FieldEffect *Effect_Create(s32 type, s32 x, s32 y, s32 z) {
   return (struct FieldEffect *)EFFECT_CREATE(type, x, y, z);
 }
 #endif

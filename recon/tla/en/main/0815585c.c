@@ -1,6 +1,6 @@
 // Draft of Func_0815585c, The Broken Seal's BattleEffect_RunDjinniEntrance
-// (games/tbs/src/effect/effect.c): differ 165 of 818 (tla-en,
-// 2026-10-15). The Lost Age reworked it: the kind, the side and the anchor
+// (games/tbs/src/effect/effect.c): differ 132 of 818 (tla-en,
+// 2026-10-26). The Lost Age reworked it: the kind, the side and the anchor
 // come packed in one word (kind | side << 4 | anchor << 5), eleven anchors
 // by jump table where The Broken Seal has five, anchor 6 keeps the effect
 // at 40 frames with no palette fade and brightens the backdrop from frame
@@ -15,12 +15,21 @@
 // zero through a variable of its own in the long branch (546 to 169, found
 // by alchemy permute; tagged below), and BattleEffect_LoadBlitter
 // returning its loader's s32, as nibble_pair.c now does (169 to 165).
+// Under -mthumb-slow-loads (2026-10-26) the same source gives 137; the
+// picture's address kept in palette (its table entry + 128) before the
+// decode, as the native copies it through a register: 132.
 
 // Left: allocation through the frame loop, from the prologue's first
 // spills (the native keeps anchor at sp+20 and reloads it for the test of
-// 8; here it stays in r1) and order rows of the usual kind. alchemy permute
-// 10 minutes: 155 with the clear size held in a variable from the prologue
-// (not kept, it only moves the allocation), 159 with a pointer copy of step.
+// 8, and reloads work for each fade store; here both stay in registers)
+// and order rows of the usual kind: in the goal switch the native puts
+// the copy of goal's address before the load of actor->z in case 2, so
+// case 8 cross-jumps into case 2's tail where here case 2's tail joins
+// case 5's. alchemy permute 10 minutes (2026-10-15): 155 with the clear
+// size held in a variable from the prologue (not kept, it only moves the
+// allocation), 159 with a pointer copy of step. Tried (2026-10-26): the
+// anchor tests as an if-else chain (150), each local scoped to a block,
+// the picture through palette and then palette + 128 (137).
 
 #include "types.h"
 #include "battle_effect.h"
@@ -182,7 +191,8 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
     resource = (s32)ResourceId_JupiterDjinnSmallSheet;
     break;
   }
-  Resource_DecodeType01(Resource_GetTableEntry(resource) + 128, work->sheet);
+  palette = Resource_GetTableEntry(resource) + 128;
+  Resource_DecodeType01(palette, work->sheet);
   Resource_LoadAndDecompress((s32)ResourceId_Data134, sheet, 0, 0);
 
   // Additive and max blitters, clipped (flipped for side 1).

@@ -21,12 +21,23 @@
 // BattleEffect_OrangePaletteB, 0x166 BattleEffect_CyanPalette and the eight Djinn
 // sheets 0x150-0x157.
 
-// Draft: differ 299 of 1243 (draft 1240).
+// Draft: differ 50 of 1243 (draft 1243), tla-en, 2026-10-26.
 
-// Left: from the prologue on, register choice (the frame counter in r9
-// where the native has r11) and the loads the native issues one slot
-// earlier; the member loop (36 rows) and the mote loop (23) hold most of
-// it. Three instructions are still missing.
+// What moved it: the yaw angles written (frame - start) where The Broken
+// Seal's twin writes (frame - member * 8). As member * 8 they are givs of
+// their own, which loop.c combines with start and strength-reduces into a
+// register stepped by 8 (three instructions short, and the frame counter
+// and start swapped between r9 and r11 for the whole member loop); through
+// start the giv is not worth reducing, and the native recomputes member * 8
+// from its stack slot each iteration (269 to 52). shift = 0 after the
+// sheet read: 50.
+
+// Left: the prologue's argument spill before the heap base and order rows
+// in the draws' arguments (the known store-then-load scheduling limit);
+// the member loop's three spilled invariants take their stack slots in
+// another order (camera + 12, mode - 3 and &point at sp+24, sp+28 and
+// sp+20 where the native has sp+20, sp+24 and sp+28: about 12 rows),
+// which follows their pseudo numbers; nothing tried here reorders them.
 
 // Tried (2026-10-15):
 // - The Broken Seal's declaration order: 315; the five arrays declared
@@ -34,6 +45,9 @@
 // frame offsets (blit at sp+80 up to origin at sp+136): 299.
 // - greedy declaration-order sweep, two passes: no gain.
 // - a separate counter for the frame loop's motes: no change.
+// Tried (2026-10-26, from 52): declaration order, statement moves, each
+// local scoped to a block, point through a pointer, member volatile: no
+// gain.
 
 #include "types.h"
 #include "battle_display.h"
@@ -137,8 +151,8 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode)
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sprites = Ram_HeapSlots->unk64[0];
-  shift = 0;
   BattleEffect_StartCanvasLayer(0);
+  shift = 0;
   if (mode == 13)
     work->fadeFrames = 24;
 
@@ -396,9 +410,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode)
       if (frame > start) {
         if (mode == 0 || mode == 6 || mode == 7 || mode == 8 || mode == 10 ||
             mode == 12) {
-          SceneTransform_ApplyYaw((frame - member * 8) << 9);
+          SceneTransform_ApplyYaw((frame - start) << 9);
         } else if (mode == 9) {
-          SceneTransform_ApplyYaw((frame - member * 8) << 11);
+          SceneTransform_ApplyYaw((frame - start) << 11);
         } else if (mode == 11) {
         } else if (mode == 13) {
           Func_080150e4(frame << 9);
@@ -408,10 +422,10 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode)
         } else if (mode == 2 || mode == 12) {
           SceneTransform_ApplyYaw((frame - member * 40) << 9);
         } else if (mode == 3) {
-          SceneTransform_ApplyYaw((frame - member * 8) << 9);
+          SceneTransform_ApplyYaw((frame - start) << 9);
         } else {
-          SceneTransform_ApplyYaw((frame - member * 8) << 9);
-          SceneTransform_ApplyPitch((frame - member * 8) << 9);
+          SceneTransform_ApplyYaw((frame - start) << 9);
+          SceneTransform_ApplyPitch((frame - start) << 9);
         }
 
         // Four motes come out a frame; in modes 3-5 each fades at

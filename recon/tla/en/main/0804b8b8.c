@@ -1,4 +1,5 @@
-// Near miss, differ 31 of 231, 2026-10-18: lets the player pick which
+// Near miss, differ 29 of 231 (31 before; 2026-10-26, result cleared after the
+// battle work is read): lets the player pick which
 // reserve member takes party slot `slot` in battle, previewing each choice
 // in place (left and right cycle, A confirms through Func_08118140 and
 // swaps the two in gPartyState.activeOwners, B restores the slot). The
@@ -11,6 +12,8 @@
 // in the confirm and redraw paths. A pointer to owners declared first puts
 // the owners slot right but re-reads the new id with ldrsh (differ 79);
 // reserve declared after result moves the other slots (differ 59).
+// Devices: a once-only block after the first Audio_PlayCue and an empty asm
+// after the target object's read reach 14 (instruction order in the redraw).
 #include "types.h"
 #include "battle_work.h"
 #include "party_state.h"
@@ -47,8 +50,8 @@ s32 Func_0804b8b8(s32 slot) {
   count = BattleParty_PrepareReserveOwnersFar(owners);
   sel = 0;
   redraw = 1;
-  result = 0;
   battle = Ram_HeapSlots->battleWork;
+  result = 0;
   reserve = Ram_HeapSlots->unke4[0];
   if (count <= 0)
     return -1;

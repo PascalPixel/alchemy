@@ -2,11 +2,11 @@
 #include "../../../include/system/flash_data.h"
 #include "../../../include/system/io_reg.h"
 
-extern FlashWaitProc gFlash_Handler3;
+extern FlashWaitProc gWaitForFlashWrite;
 
 /// Erases the Atmel chip and waits for completion with its configured timing.
 /// Returns 0, or 0xc003 when byte 0 has not read 0xff within the chip-erase
-/// time. Atmel's erase-chip routine (gFlash_Handler1); nothing in ☀️ calls
+/// time. Atmel's erase-chip routine (gEraseFlashChip); nothing in ☀️ calls
 /// through that cell.
 u16 EraseAtmelFlashChip(void) {
   u8 savedCode[64];
@@ -27,7 +27,7 @@ u16 EraseAtmelFlashChip(void) {
   *unlock = 0x55;
   *command = 0x10;
 
-  result = gFlash_Handler3(3, (u8 *)0x0E000000, 255);
+  result = gWaitForFlashWrite(3, (u8 *)0x0E000000, 255);
 
   REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | 3;
 
@@ -59,7 +59,7 @@ u16 EraseAtmelFlashSector(u16 sector) {
   }
   cursor--;
   REG_IME = savedIme;
-  result = gFlash_Handler3(1, cursor, 0xFF);
+  result = gWaitForFlashWrite(1, cursor, 0xFF);
   if (result != 0) {
     result = (result & 0xFF00) | 2;
   }
@@ -142,7 +142,7 @@ u16 ProgramAtmelFlashSector(u32 sector, const u8 *source) {
   destination--;
   input--;
   REG_IME = savedIme;
-  return gFlash_Handler3(1, destination, *input);
+  return gWaitForFlashWrite(1, destination, *input);
 }
 
 extern u16 gFlashNumRemainingBytes;
@@ -150,7 +150,7 @@ extern u16 gFlashNumRemainingBytes;
 /// Programs an Atmel block in small sectors, trying each sector at most twice.
 /// Writes standard sector `sector` (4 KB) from `source` 128 bytes at a time,
 /// gFlashNumRemainingBytes counting what is left. Atmel's program routine
-/// (gFlash_Handler0), which Save_WriteSector calls. Returns 0,
+/// (gProgramFlashSector), which Save_WriteSector calls. Returns 0,
 /// 0x80ff for a sector above 15, or the error of the small sector that failed
 /// twice.
 u16 ProgramAtmelFlashBlock(u16 sector, u8 *source) {

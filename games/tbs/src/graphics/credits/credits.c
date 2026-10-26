@@ -1,7 +1,7 @@
 #include "unit/graphics/credits/credits.h"
 #ifdef UBFIX
 // This object uses the credits' views of the borrowed flash work cells.
-#define OWN_Flash_Handler0
+#define OWN_gProgramFlashSector
 #define OWN_gFlash
 #define OWN_gFlashNumRemainingBytes
 #endif
@@ -288,15 +288,15 @@ struct CreditsOamEntry {
 STATIC_ASSERT(sizeof(struct CreditsOamEntry) == 8);
 
 /// Credits scroll position in pixels, in the low half of a flash work cell.
-extern u16 gFlash_Handler3;
+extern u16 gWaitForFlashWrite;
 
 // ewram.s reserves four bytes for each cell. The credits replace the task table
 // and borrow them while flash operations are inactive: a sprite-buffer pointer,
 // the last rendered pixel position, and a zero/-1 end-of-text latch.
 // Borrowing them is harmless because the flash library sets them again before
 // it reads them: IdentifyFlash, which Save_InitializeWork runs before
-// each use of the save, writes gFlash, gFlash_Handler0 and gFlash_Handler3, and
-// each program routine sets gFlashNumRemainingBytes.
+// each use of the save, writes gFlash, gProgramFlashSector and
+// gWaitForFlashWrite, and each program routine sets gFlashNumRemainingBytes.
 // XXX (no evidence): why the credits borrow them rather than keep globals of
 // their own; only Camelot's link map or source could say whether the sharing
 // was meant.
@@ -305,15 +305,15 @@ extern u16 gFlash_Handler3;
 #ifdef UBFIX
 extern struct CreditsOamEntry *gFlashNumRemainingBytes;
 extern s16 gFlash;
-extern s16 gFlash_Handler0;
+extern s16 gProgramFlashSector;
 
 #define SCROLL_OBJECTS gFlashNumRemainingBytes
 #define CREDITS_LAST_LINE_POSITION gFlash
-#define CREDITS_END_OF_TEXT gFlash_Handler0
+#define CREDITS_END_OF_TEXT gProgramFlashSector
 #else
 #define SCROLL_OBJECTS (*(struct CreditsOamEntry **)&gFlashNumRemainingBytes)
 #define CREDITS_LAST_LINE_POSITION (*(s16 *)&gFlash)
-#define CREDITS_END_OF_TEXT (*(s16 *)&gFlash_Handler0)
+#define CREDITS_END_OF_TEXT (*(s16 *)&gProgramFlashSector)
 #endif
 
 /// Blank credits line
@@ -965,7 +965,7 @@ const void *gCredits_Lines[] = {
 /// visible sixteen rows onto the tile ring and uploads their sprites. Advances
 /// one pixel every fourth frame until the end-of-text latch stops the scroll.
 void Credits_UpdateTextSprites(void) {
-  u32 frame = gFlash_Handler3;
+  u32 frame = gWaitForFlashWrite;
   u32 scrollWithinTile = frame & 7;
   s32 tileIndex =
       (((s16)frame / 8) & (CREDITS_RING_ROWS - 1)) * CREDITS_LINE_TILES;
@@ -988,7 +988,7 @@ void Credits_UpdateTextSprites(void) {
   }
   Dma_Set(SCROLL_OBJECTS, OAM, DMA_COPY_WORDS(OAM_SIZE / 4), REG_DMA3);
   if (CREDITS_END_OF_TEXT == 0 && (gVBlankCount & 3) == 0)
-    gFlash_Handler3++;
+    gWaitForFlashWrite++;
 }
 
 /// A main-loop task added by Credits_InitTextSprites: renders
@@ -1001,9 +1001,9 @@ void Credits_DrawEnteringLine(void) {
   // A line is 8 pixels, so a new one is drawn each time the scroll crosses
   // into the next line, every 32 frames.
   if (CREDITS_END_OF_TEXT == 0) {
-    scrollPosition = gFlash_Handler3;
-    if ((s16)gFlash_Handler3 / 8 != CREDITS_LAST_LINE_POSITION / 8) {
-      lineIndex = (s16)gFlash_Handler3 / 8;
+    scrollPosition = gWaitForFlashWrite;
+    if ((s16)gWaitForFlashWrite / 8 != CREDITS_LAST_LINE_POSITION / 8) {
+      lineIndex = (s16)gWaitForFlashWrite / 8;
       CREDITS_LAST_LINE_POSITION = scrollPosition;
       CREDITS_END_OF_TEXT = Credits_DrawLine(
           gCredits_Lines[lineIndex],
@@ -1018,11 +1018,11 @@ void Credits_DrawEnteringLine(void) {
 /// clears the tile ring and adds the scrolling and line-rendering tasks. Called
 /// by Credits_Run; the credits keep their state in four borrowed
 /// flash-library cells: the sprite buffer's pointer in gFlashNumRemainingBytes
-/// (SCROLL_OBJECTS), the scroll in gFlash_Handler3, the last line drawn in
+/// (SCROLL_OBJECTS), the scroll in gWaitForFlashWrite, the last line drawn in
 /// gFlash (CREDITS_LAST_LINE_POSITION) and the end-of-text latch in
-/// gFlash_Handler0 (CREDITS_END_OF_TEXT). The 1 KB sprite buffer comes from the
-/// EWRAM bump pool and is never freed; each line buffer is taken from the pool
-/// after it and given back.
+/// gProgramFlashSector (CREDITS_END_OF_TEXT). The 1 KB sprite buffer comes from
+/// the EWRAM bump pool and is never freed; each line buffer is taken from the
+/// pool after it and given back.
 void Credits_InitTextSprites(void) {
   // Sharing the three border-strip loops through an ordinary inline helper
   // changes registers at the same 0x178-byte native English extent.
@@ -1072,7 +1072,7 @@ void Credits_InitTextSprites(void) {
     *oamWords++ = 0x00c000c0;
     *oamWords++ = CREDITS_RING_TILES;
   }
-  gFlash_Handler3 = 0;
+  gWaitForFlashWrite = 0;
   CREDITS_LAST_LINE_POSITION = 0;
   CREDITS_END_OF_TEXT = 0;
   Task_Add(Credits_UpdateTextSprites, TASK_PRIORITY_VBLANK);

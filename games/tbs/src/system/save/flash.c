@@ -54,11 +54,11 @@ s32 ReadFlashId(void) {
 }
 
 extern const struct FlashSetupInfo *const gFlash_Chips[];
-extern FlashWaitProc gFlash_Handler3;
-extern u32 gFlash_Handler0;
-extern u32 gFlash_Handler1;
+extern FlashWaitProc gWaitForFlashWrite;
+extern u32 gProgramFlashSector;
+extern u32 gEraseFlashChip;
 extern u32 gEraseFlashSector;
-extern u16 *gFlash_Handler4;
+extern u16 *gFlashMaxTime;
 
 /// Selects matching chip handlers, falling back to the final table entry when
 /// unknown. Returns 0 when the chip's id is one of gFlash_Chips' SST, Atmel,
@@ -86,11 +86,11 @@ s32 IdentifyFlash(void) {
     chip++;
   }
   // Install the selected entry, including the fallback when no ID matched.
-  gFlash_Handler0 = (*chip)->handlers[0];
-  gFlash_Handler1 = (*chip)->handlers[1];
+  gProgramFlashSector = (*chip)->handlers[0];
+  gEraseFlashChip = (*chip)->handlers[1];
   gEraseFlashSector = (*chip)->handlers[2];
-  gFlash_Handler3 = (*chip)->wait;
-  gFlash_Handler4 = (*chip)->maxTime;
+  gWaitForFlashWrite = (*chip)->wait;
+  gFlashMaxTime = (*chip)->maxTime;
   gFlash = &(*chip)->type;
   return missing;
 }
@@ -142,7 +142,7 @@ void StartFlashTimer(u8 timingIndex) {
   // timer's reload and its control. Every row in ☀️ but Atmel's
   // empty row 2 reloads 0xffbd with 0xc2, an interrupt every 67 ticks of 256
   // cycles, about a millisecond.
-  u16 *timing = (u16 *)((u8 *)gFlash_Handler4 + timingIndex * 6);
+  u16 *timing = (u16 *)((u8 *)gFlashMaxTime + timingIndex * 6);
   u16 *timerRegister;
 
   gFlashSavedIme = REG_IME;
@@ -208,7 +208,7 @@ void CopyFlashReadRoutineToRam(void *destination) {
 void StartFlashTimer(u8 index);
 
 /// Polls for the expected byte until success or timeout, returning an operation
-/// error. Every chip's wait routine (gFlash_Handler3). timingIndex is the
+/// error. Every chip's wait routine (gWaitForFlashWrite). timingIndex is the
 /// phase, 1 programming, 2 a sector erase and 3 a chip erase: it picks the
 /// max-time row and is the error's low byte. Returns 0 once address reads
 /// expected, else 0xc000 | timingIndex. Reads through gFlashReadRoutine, which

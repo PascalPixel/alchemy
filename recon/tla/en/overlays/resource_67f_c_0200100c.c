@@ -1,8 +1,11 @@
-// Near miss, differ 8 of 40: written with goto the loop keeps the listing's
+// Near miss, differ 6 of 40: written with goto the loop keeps the listing's
 // shape (one test at the bottom, 0xffff rebuilt on every pass; as a while loop
 // the test is copied and the constant hoisted to r8). Left: the register that
-// holds the offset 4, where object is copied for the flag byte, and where
-// 0xffff is shifted.
+// holds the offset 4 and where object is copied for the flag byte. An empty
+// asm after motionFlags = 0 places the copy (4 left); the offset 4 is the
+// ldrsh's reload scratch, which reload gives r2 where the native has r3, and
+// no plain spelling of the halfword (an offset or index local, a byte
+// pointer, an s16 view) moves it.
 #include "../../../../games/tla/src/scene/izumo_ruins/izumo_ruins.h"
 
 void Func_0200100c(u16 *list) {

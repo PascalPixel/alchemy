@@ -1,6 +1,10 @@
-// Draft, differ 43 of 106: starts the next of the 96 sparks at a point
-// around (x, y, z), in a random direction and speed. Left: the native keeps
-// the work in r8 and the source in r10, this draft the other way round.
+// Draft, differ 2 of 106 (was 43): starts the next of the 96 sparks at a
+// point around (x, y, z), in a random direction and speed. The speed is
+// drawn before velocityZ is cleared (a temporary here, which would be a
+// tagged device on adoption) and the counter's step and wrap are two
+// statements. Left: the parameter spills: the native stores y (r2) before z
+// (r3), here z first and y after the heap slot's address is formed; no
+// barrier or statement move reaches it.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -44,6 +48,7 @@ void Func_0200260c(struct ObjectRuntime *source, s32 x, s32 y, s32 z) {
   s16 *next = &work->next;
   struct SparkSprite *sprite = &work->sprites[*next];
   struct SparkState *state = &work->states[*next];
+  s32 speed;
 
   sprite->priority = Func_02002a24(source);
   sprite->unk1e = Func_02002a2c(source);
@@ -53,8 +58,10 @@ void Func_0200260c(struct ObjectRuntime *source, s32 x, s32 y, s32 z) {
   state->z = z;
   Vector_AddPolarOffsetFar(Random16Far() * 2 + 0x20000, angle, &state->x);
   state->velocityX = 0;
+  speed = (Random16Far() >> 1) + 0xc000;
   state->velocityZ = 0;
-  state->velocityY = (Random16Far() >> 1) + 0xc000;
+  state->velocityY = speed;
   Vector_AddPolarOffsetFar(Random16Far() >> 2, angle, &state->velocityX);
-  *next = (s16)(*next + 1) % 96;
+  *next = *next + 1;
+  *next = *next % 96;
 }

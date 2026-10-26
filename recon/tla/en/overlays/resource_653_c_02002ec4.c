@@ -1,8 +1,14 @@
-// Draft, differ 53 of 177: the leader drops in with a burst of 17 effects.
-// Left: the stack layout of the options and velocity and register choice.
+// Draft, differ 16 of 177 (was 49): the leader drops in with a burst of 17
+// effects. The two camera shakes go through Call3, as the native builds each
+// call's constants afresh. Left: register choice in the burst loop (the
+// native keeps the options' address in r8 and the counter in r10, here the
+// other way round) and the velocity's address, which the native forms after
+// the cosine call in each pass; Func_02001474 in overlay 654 has the same
+// pair. Five permuter minutes found nothing closer.
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 #include "field_effect.h"
 #include "event_work.h"
+#include "call.h"
 
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -55,8 +61,8 @@ void Func_02002ec4(void) {
   Func_020053d8(188);
   Func_020052d0(gPartyState.currentOwner, 0x101);
   Object_SetModeById(gPartyState.currentOwner, 49);
-  Func_02005198(0x50000, 0x50000, 0x10000);
-  Func_02005198(-1, -1, 0xe666);
+  Call3((void (*)())Func_02005198, 0x50000, 0x50000, 0x10000);
+  Call3((void (*)())Func_02005198, -1, -1, 0xe666);
   Func_020051a0();
   Func_020052d0(gPartyState.currentOwner, 0x100);
   leader->gravity = 0x10000;

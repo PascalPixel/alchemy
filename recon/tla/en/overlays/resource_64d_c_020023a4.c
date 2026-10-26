@@ -1,7 +1,13 @@
-// Draft, differ 94 of 215: the Venus Lighthouse entrance glow: takes heap
-// slot 220, loads gField_Tiles64D's tiles, sets up its sixteen sprites and
-// effect 290 over object id, then runs Func_02001fd0 until stage 999. Left:
-// register choice in the sprite loop and the order of the setup stores.
+// Draft, differ 50 of 215 (was 94): the Venus Lighthouse entrance glow:
+// takes heap slot 220, loads gField_Tiles64D's tiles, sets up its sixteen
+// sprites and effect 290 over object id, then runs Func_02001fd0 until
+// stage 999. The wait for stage 999 is a goto loop (the native rebuilds the
+// stage's address and 999 in each pass), and the object's angle is a
+// 16-bit bitfield of its animation, so 0x4000 is built with movs rather
+// than loaded as a halfword constant. Left: register choice in the sprite
+// loop's bitfield stores (r1 and r2 swapped) and the order of three setup
+// loads. Tried: statement moves and four permuter minutes (48 by its count,
+// no closer form).
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -45,6 +51,12 @@ struct GlowWork {
   u16 tile;
   s16 height;
   s8 follow;
+};
+
+struct GlowAnimation {
+  u8 unk00[0x10];
+  u32 unk10 : 16;
+  u32 angle : 16;
 };
 
 extern u8 gField_Tiles64D[];
@@ -107,7 +119,7 @@ void Func_020023a4(s32 id) {
   ObjectDispatch_SetSingleChildFlags(effect, 0);
   effect->priorityFlags = 2;
   ObjectDispatch_SetSingleChildFlags(object, 0);
-  *(u16 *)((u8 *)object->animation + 0x12) = 0x4000;
+  ((struct GlowAnimation *)object->animation)->angle = 0x4000;
   object->x += -0xc0000;
   object->motionFlags = 0;
   work->stage = 0;
@@ -116,8 +128,12 @@ void Func_020023a4(s32 id) {
   work->follow = 1;
   Engine_AudioPlayCue(221);
   Scheduler_AddOrUpdateCallback(Func_02001fd0, 0x480);
-  while (work->stage != 999)
+  if (work->stage != 999) {
+  wait:
     WaitFrames(1);
+    if (work->stage != 999)
+      goto wait;
+  }
   Scheduler_RemoveCallbackFar(Func_02001fd0);
   Func_02002874(effect);
   Resource_ResetEntry(resource);

@@ -1,9 +1,14 @@
-// Draft, differ 279 of 260: shows the world map's placed objects that come
-// within the view and whose flags allow them, hides those that leave it, and
-// starts a placement's event when the leader touches it. Overlay 64c has the
-// same code (its Func_02000d64). Left: the native spills the four view bounds
-// to the stack, loads the first placement's kind before the bounds and keeps
-// the work pointer in r9; register allocation differs throughout.
+// Draft, differ 277 of 260 (was 279, i now u32 as the native's bhi shows):
+// shows the world map's placed objects that come within the view and whose
+// flags allow them, hides those that leave it, and starts a placement's
+// event when the leader touches it. Overlay 64c has the same code (its
+// Func_02000d64). Left: the native spills the four view bounds and i to the
+// stack, loads the first placement's kind and gData_02006c08 before the
+// bounds' if (so in the block before it) and keeps the work pointer in r9;
+// it reaches gPartyState's fields from its address plus a built offset (a
+// rematerialized &gPartyState, as from a local pointer under pressure).
+// Register allocation differs throughout. Tried: slot initialized at its
+// declaration (281), a local party pointer (289).
 #include "types.h"
 #include "ram_buffer.h"
 #include "party_state.h"
@@ -51,7 +56,7 @@ void Func_020036a8(void) {
   s32 x = center->x;
   s32 z = center->z;
   s32 left, right, top, bottom;
-  s32 i;
+  u32 i;
 
   if (*(s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x960) <= 0x10000) {
     left = x - 0xa00000;

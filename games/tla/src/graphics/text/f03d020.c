@@ -1,6 +1,8 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "window.h"
+#include "edition.h"
+#include "text_font.h"
 
 s32 UiText_BuildRenderEntries(s32 message, s32 mode);
 void UiText_MeasureEntryDimensions(s32 entry, s32 *width, s32 *height,
@@ -23,11 +25,17 @@ s32 Func_0803d020(s32 message, u8 *canvas) {
   UiText_MeasureEntryDimensions(entry, &width, &height, 0);
   text = &work->entries[entry];
   if (text[0] == '-') {
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+    if (text[1] == '-')
+      return text[2] == '-' ? 2 : 1;
+    return 0;
+#else
     if (text[1] != '-')
       return 0;
     if (text[2] == '-')
       return text[3] == '-' ? 3 : 2;
     return 1;
+#endif
   }
   x = (192 - width) / 2;
   code = *text++;
@@ -66,6 +74,17 @@ s32 Func_0803d020(s32 message, u8 *canvas) {
         goto skip;
       }
     } else {
+      // Japanese text folds a mark after a kana into the kana's code, which
+      // Func_0803cfd0 draws.
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+      if (*text == TEXT_MARK_VOICED) {
+        code |= 1 << TEXT_MARK_SHIFT;
+        text++;
+      } else if (*text == TEXT_MARK_SEMIVOICED) {
+        code |= 2 << TEXT_MARK_SHIFT;
+        text++;
+      }
+#endif
       x += Func_0803cfd0(canvas, code, x, y);
     }
     code = *text++;

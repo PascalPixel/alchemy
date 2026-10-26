@@ -13,4 +13,8 @@ enum TextMarkGlyph {
   TEXT_MARK_SEMIVOICED = 0xDF ///< the semi-voiced mark (handakuten)
 };
 
+/// Japanese text carries a kana's mark in the top bits of its code, as its
+/// index in gUiText_MarkGlyphCodes.
+#define TEXT_MARK_SHIFT 14
+
 #endif

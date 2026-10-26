@@ -10,7 +10,6 @@
 #include "types.h"
 #include "mem.h"
 #include "text_render_runtime.h"
-#include "edition.h"
 
 u8 *UiText_FormatNumber(u8 *output, s32 value, s32 width);
 
@@ -31,9 +30,6 @@ void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
   UiText_RenderWideStringInWindow(buffer, arg1, x, y);
   MemFree(buffer);
 }
-
-#if (LANGUAGE != LANGUAGE_JAPANESE) // The Japanese scaffold has no label for
-                             // UiText_FormatNumber yet.
 
 /// The number writers format the value in a 16-byte buffer and draw it with
 /// the matching string writer.
@@ -65,5 +61,3 @@ void UiText_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y) {
   UiText_DrawStringInWindow(UiText_FormatNumber(data, pinned, width), output, x,
                             y);
 }
-
-#endif

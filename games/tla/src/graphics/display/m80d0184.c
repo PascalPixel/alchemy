@@ -4,14 +4,9 @@
 #include "dma.h"
 #include "io_reg.h"
 #include "display_transition.h"
-#include "edition.h"
 
 void Func_080cf78c(void);
 
-// The Spanish and Italian far-call tables reach this function under another
-// slot's name (Func_080d6b90); those two editions keep it on their scaffold
-// (S4).
-#if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_ITALIAN)
 void DisplayTransition_InitializeBattleEffectState(s32 mode) {
   struct DisplayTransitionState *state =
       Runtime_AllocateBlock(124, sizeof(*state));
@@ -27,7 +22,6 @@ void DisplayTransition_InitializeBattleEffectState(s32 mode) {
   Scheduler_AddOrUpdateCallback(Func_080cf78c, 0x480);
   Scheduler_AddOrUpdateCallback(BattleEffect_StartWindowHBlankDma, 0xc76);
 }
-#endif
 
 void Func_080d0184(void) {
   Scheduler_SuspendTasks(Func_080cf78c);

@@ -18,6 +18,13 @@
 #define TEXT_WORK_TAIL 0x1384
 #endif
 
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
+// The Spanish and Italian far-call tables reach the controlled owner and its
+// screen position through slots two entries earlier, under those slots' names.
+#define EventRuntime_GetControlledOwnerFar Func_080c8768
+#define Func_080c82a8 Func_080d5becFar
+#endif
+
 struct Work;
 
 s32 UiText_GetResourceDimensions(s32 no, s32 arg1, s32 arg2, s32 arg3,
@@ -29,10 +36,6 @@ s32 UiWork_IsComplete(void);
 void UiWork_Finalize(struct Work *work, s32 release);
 s32 UiWork_IsIdle(struct Work *work);
 
-// Spanish and Italian reach the owner and its screen position through far-call
-// slots two entries earlier, unnamed in their scaffolds: their copies stay on
-// the scaffold (S4)
-#if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_ITALIAN)
 void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags) {
   u8 *base = Ram_HeapSlots->windowTiles;
   s32 release;
@@ -106,7 +109,6 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags) {
   *(u16 *)(base + TEXT_WORK_TAIL + 2) = zero;
   WaitFrames(3);
 }
-#endif
 
 void UiWork_ProcessAll(void) {
   UiWork_ProcessDirectWork();

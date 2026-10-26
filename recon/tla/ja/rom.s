@@ -2687,7 +2687,10 @@ BattlePresentation_AppendLinkedActions:
 	.type Func_0811ddd8, %function
 	.thumb_func
 Func_0811ddd8:
-	.incbin "baserom.gba", 0x0011ddd4, 0x00000594
+	.incbin "baserom.gba", 0x0011ddd4, 0x000000a0
+	.section .rom.0011df6c, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0011df6c, 0x000003fc
 	.section .rom.0011e3a6, "ax"
 	.incbin "baserom.gba", 0x0011e3a6, 0x00000002
 	.global Func_0811e3ac
@@ -2801,9 +2804,6 @@ Func_08126e00:
 	.thumb_func
 Func_08127308:
 	.incbin "baserom.gba", 0x00127304, 0x00000264
-	.section .rom.00127868, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x00127868, 0x000001a0
 	.section .rom.00127ad8, "ax"
 	.global BattleEnemy_ClaimNameLetter
 	.type BattleEnemy_ClaimNameLetter, %function

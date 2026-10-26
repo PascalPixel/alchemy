@@ -4039,9 +4039,14 @@ main	rom_main_08	recon/tla/es/rom	.rom.0011d9e4	es
 main	rom_main_08	recon/tla/de/rom	.rom.0011d9e4	de
 main	rom_main_08	recon/tla/raw/0811d9cc	.text	en
 main	rom_main_08	recon/tla/raw/0811ddd8	.text	en
-main	rom_main_08	recon/tla/raw/0811de78	.text	en
-main	rom_main_08	recon/tla/raw/0811df70	.text	en
 main	rom_main_08	recon/tla/ja/rom	.rom.0011d9c8	ja
+main	rom_main_08	games/tla/src/battle/presentation/f11de78	.text
+main	rom_main_08	recon/tla/ja/rom	.rom.0011df6c	ja
+main	rom_main_08	recon/tla/de/rom	.rom.0011df88	de
+main	rom_main_08	recon/tla/es/rom	.rom.0011df88	es
+main	rom_main_08	recon/tla/fr/rom	.rom.0011df88	fr
+main	rom_main_08	recon/tla/it/rom	.rom.0011df88	it
+main	rom_main_08	recon/tla/raw/0811df70	.text	en
 main	rom_main_08	games/tla/src/battle/presentation/act_run_entries	.text
 main	rom_main_08	recon/tla/it/rom	.rom.0011e3c2	it
 main	rom_main_08	recon/tla/fr/rom	.rom.0011e3c2	fr
@@ -4219,12 +4224,7 @@ main	rom_main_08	recon/tla/ja/rom	.rom.00127304	ja
 main	rom_main_08	games/tla/src/battle/presentation/irqoff	.text
 main	rom_main_08	games/tla/src/battle/f127588	.text
 main	rom_main_08	games/tla/src/battle/formation_select_level_matched_candidate	.text
-main	rom_main_08	recon/tla/it/rom	.rom.00127884	it
-main	rom_main_08	recon/tla/fr/rom	.rom.00127884	fr
-main	rom_main_08	recon/tla/es/rom	.rom.00127884	es
-main	rom_main_08	recon/tla/de/rom	.rom.00127884	de
-main	rom_main_08	recon/tla/raw/0812786c	.text	en
-main	rom_main_08	recon/tla/ja/rom	.rom.00127868	ja
+main	rom_main_08	games/tla/src/battle/f12786c	.text
 main	rom_main_08	games/tla/src/battle/raise_base_stats	.text
 main	rom_main_08	recon/tla/it/rom	.rom.00127af4	it
 main	rom_main_08	recon/tla/fr/rom	.rom.00127af4	fr

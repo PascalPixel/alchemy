@@ -14832,7 +14832,7 @@ msgctxt "message"
 msgid "03688"
 msgstr "¡{argument_actor_name:1} huye!"
 
-msgctxt "message"
+msgctxt "MsgNoEscape"
 msgid "03689"
 msgstr "¡Pero no había escapatoria!"
 

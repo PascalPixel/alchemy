@@ -12975,7 +12975,7 @@ msgctxt "message"
 msgid "03227"
 msgstr "{argument_actor_name:234} にげだした!"
 
-msgctxt "message"
+msgctxt "MsgNoEscape"
 msgid "03228"
 msgstr "しかし にげられなかった!"
 

@@ -1,5 +1,5 @@
 // Draft of Func_0815585c, The Broken Seal's BattleEffect_RunDjinniEntrance
-// (games/tbs/src/effect/effect.c): differ 118 of 818 (tla-en,
+// (games/tbs/src/effect/effect.c): differ 81 of 818 (tla-en,
 // 2026-10-26). The Lost Age reworked it: the kind, the side and the anchor
 // come packed in one word (kind | side << 4 | anchor << 5), eleven anchors
 // by jump table where The Broken Seal has five, anchor 6 keeps the effect
@@ -21,14 +21,15 @@
 // and the two clears through local inline forwarders, as f143d80.c makes
 // them and as The Broken Seal's IWRAM call layer makes every IWRAM call:
 // each clear rebuilds its own 0x4000 as the native does (118).
+// A tagged one-pass block at the end of case 5 of the goal switch keeps
+// jump2 from joining case 2's tail to case 5's, so case 8 shares case 2's
+// code as in the native (81).
 
 // Left: allocation through the frame loop, from the prologue's first
 // spills (the native keeps anchor at sp+20 and reloads it for the test of
 // 8, and reloads work for each fade store; here both stay in registers)
-// and order rows of the usual kind: in the goal switch the native puts
-// the copy of goal's address before the load of actor->z in case 2, so
-// case 8 cross-jumps into case 2's tail where here case 2's tail joins
-// case 5's. alchemy permute 10 minutes (2026-10-15): 155 with the clear
+// and order rows of the usual kind (the known store-then-load limit).
+// alchemy permute 10 minutes (2026-10-15): 155 with the clear
 // size held in a variable from the prologue (not kept, it only moves the
 // allocation), 159 with a pointer copy of step. Tried (2026-10-26): the
 // anchor tests as an if-else chain (150), each local scoped to a block,
@@ -288,6 +289,12 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
     goal[0] = actor->x;
     goal[1] = 0x500000;
     goal[2] = 0;
+    /* FAKEMATCH(one-pass): the block ends this case with a loop note, so
+     * jump2 does not join case 2's tail to this one and case 8 shares case
+     * 2's instead, as the native does; as plain C, 118 of 818 instructions
+     * differ in tla-en. */
+    do {
+    } while (0);
     break;
   case 10:
     goal[0] = actor->x;

@@ -1,4 +1,11 @@
-// Draft, differ 198 of 977 (441 before; 2026-10-26: in the circle case the
+// Draft, differ 176 of 977 (198 before; 2026-10-26): the instruction count
+// is now the listing's. Case 8 clamps the row distance to -120..120 before
+// squaring it, as the listing does, and cases 7, 9 and 77 read the view's x
+// and z through one pointer (the native loads them as [r2, #0] and [r2, #4]);
+// the view is the map work's viewX and viewZ. Left: case 8 reads both view
+// words first and the value after the two header stores in the native (in
+// that order here, 230: allocation elsewhere moves), and instruction order.
+// Earlier: differ 198 of 977 (441 before; 2026-10-26: in the circle case the
 // value is read before the camera's y, which gives the map work r6 as the
 // native has it): the window transition's frame callback, ported from
 // ☀️'s ScreenTransition_UpdateScanlineTable (games/tbs/src/overworld/
@@ -14,6 +21,7 @@
 #include "iwram_call.h"
 #include "object_runtime.h"
 #include "display_transition.h"
+#include "map.h"
 
 struct TransitionSpan {
   u16 count;
@@ -30,12 +38,6 @@ struct TransitionShape {
   struct TransitionSpan spans[3];
 };
 
-struct TransitionView {
-  u8 unk000[0xe4];
-  s32 viewX;
-  s32 viewY;
-};
-
 extern const u8 Data_080f01c4[];
 extern const s8 Data_080f01e6[];
 extern struct TransitionShape Data_080f2e9c[];
@@ -48,7 +50,7 @@ s32 EventRuntime_GetControlledOwner(void);
 u32 Random16(void);
 
 void Func_080cf78c(void) {
-  struct TransitionView *grid = (struct TransitionView *)Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapWork;
   struct DisplayTransitionState *state = Ram_HeapSlots->displayTransition;
   struct TransitionSpan *span;
   struct TransitionShape *shape;
@@ -69,6 +71,7 @@ void Func_080cf78c(void) {
   s32 cameraY;
   u32 leftEdge;
   s32 oppositeEdges;
+  s32 *view;
 
   if (state->duration != 0) {
     if (state->step >= state->duration) {
@@ -225,8 +228,9 @@ void Func_080cf78c(void) {
     break;
 
   case 7:
-    cameraX = grid->viewX & 0xffff0000;
-    cameraY = grid->viewY & 0xffff0000;
+    view = &map->viewX;
+    cameraX = view[0] & 0xffff0000;
+    cameraY = view[1] & 0xffff0000;
     object = ObjectTable_Get(EventRuntime_GetControlledOwner());
     centerX = (object->x - cameraX) / 0x10000;
     centerY = ((object->z - object->y) - cameraY) / 0x10000 - 16;
@@ -261,10 +265,10 @@ void Func_080cf78c(void) {
     break;
 
   case 8:
-    cameraX = grid->viewX & 0xffff0000;
+    cameraX = map->viewX & 0xffff0000;
     centerX = (state->centreX - cameraX) / 0x10000;
     value = state->value;
-    cameraY = grid->viewY & 0xffff0000;
+    cameraY = map->viewZ & 0xffff0000;
     centerY = (state->centreY - cameraY) / 0x10000 - 16;
     k = -centerY * 2 + gFrameCount;
     *scanlineData++ = state->mask;
@@ -277,6 +281,10 @@ void Func_080cf78c(void) {
     radiusSquaredQ16 = (value * value) << 16;
     for (i = 0; i < 160; i++) {
       value = i - centerY;
+      if (value < -120)
+        value = -120;
+      if (value > 120)
+        value = 120;
       horizontalExtent =
           Iwram_Sqrt(radiusSquaredQ16 - ((value * value * 3) << 15)) >> 8;
       left = centerX - horizontalExtent;
@@ -305,8 +313,9 @@ void Func_080cf78c(void) {
     break;
 
   case 9:
-    cameraX = grid->viewX & 0xffff0000;
-    cameraY = grid->viewY & 0xffff0000;
+    view = &map->viewX;
+    cameraX = view[0] & 0xffff0000;
+    cameraY = view[1] & 0xffff0000;
     object = ObjectTable_Get(EventRuntime_GetControlledOwner());
     centerX = (object->x - cameraX) / 0x10000;
     centerY = ((object->z - object->y) - cameraY) / 0x10000 - 16;
@@ -339,8 +348,9 @@ void Func_080cf78c(void) {
     break;
 
   case 77:
-    cameraX = grid->viewX & 0xffff0000;
-    cameraY = grid->viewY & 0xffff0000;
+    view = &map->viewX;
+    cameraX = view[0] & 0xffff0000;
+    cameraY = view[1] & 0xffff0000;
     object = ObjectTable_Get(EventRuntime_GetControlledOwner());
     centerX = (object->x - cameraX) / 0x10000;
     centerY = ((object->z - object->y) - cameraY) / 0x10000 - 8;

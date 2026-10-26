@@ -1,4 +1,11 @@
-// Near miss, differ 34 of 239 (2026-10-26, statements reordered) (2026-10-18): BattleEffect_LoadActionEffectResources,
+// Near miss, differ 2 of 239 (34 before; 2026-10-26): the event work is read
+// through a struct, so its byte stores no longer make the animation reload
+// (through u8 indexing they alias it), the three shake values are copied in
+// field order, and a tagged once-only block keeps the work's copy right after
+// the allocation. Left: after the shake x store the native builds the map id
+// offset's second half before it loads the shake y (the store-then-load
+// pattern no C form reproduces; no single barrier or once-only block helps).
+// Earlier, differ 34 of 239 (2026-10-18): BattleEffect_LoadActionEffectResources,
 // from ☀️'s function of the same name (games/tbs/src/object/psynergy_effects.c)
 // with ⚓️'s 0x7f4-byte effect work and seven lit scenes (SceneId_ symbols:
 // the listing loads each id from the pool). Left: the native loads the event
@@ -42,6 +49,22 @@ struct EffectWork {
   s16 unk7f2;
 };
 
+struct LoadEventWork {
+  u8 unk000[0xca5];
+  u8 unkca5;
+  u8 unkca6[7];
+  u8 unkcad;
+  u8 unkcae[8];
+  s8 unkcb6;
+  u8 unkcb7[0x79];
+  u8 unkd30;
+  s8 target;
+  s8 targetY;
+  s8 targetZ;
+  u8 unkd34[4];
+  u8 unkd38;
+};
+
 void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 struct BattleAct *BattleAction_Get(s32 actionId);
 s32 ResourceTable_CountFreeBlocks(void);
@@ -53,20 +76,25 @@ void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 #define HEAP_SLOT_FX 224
 
 void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
-  u8 *event = Ram_HeapSlots->eventWork;
+  struct LoadEventWork *event = Ram_HeapSlots->eventWork;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct EffectWork *work;
   s32 running;
 
-  if (*(s8 *)(event + 0xcb6) == 0) {
+  if (event->unkcb6 == 0) {
     work = Runtime_AllocateHeapBlock(HEAP_SLOT_FX, sizeof(*work));
+    /* FAKEMATCH(one-pass): an empty once-only block, so the work's copy is
+     * made at once after the allocation; as plain statements, 6 of 239
+     * instructions differ in tla-en. */
+    do {
+    } while (0);
     Iwram_FillWords(work, sizeof(*work), 0);
   } else {
     work = Ram_HeapSlots->effectWork;
   }
   work->action = abilityId;
   work->animation = BattleAction_Get(abilityId)->unk04[2];
-  running = *(s8 *)(event + 0xcb6);
+  running = event->unkcb6;
   if (running != 0)
     return;
   work->freeBlocks = 512 - ResourceTable_CountFreeBlocks();
@@ -77,10 +105,10 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   work->messageMode = 1;
   work->unk713 = 0;
   work->unk7c4 = running;
-  work->savedShakeY = map->shakeY;
   work->unk7c6 = -1;
   work->unk7f2 = running;
   work->savedShakeX = map->shakeX;
+  work->savedShakeY = map->shakeY;
   work->savedShakeDecay = map->shakeDecay;
   if (gPartyState.map == (s32)&SceneId_Ov673Room5)
     work->lit = 1;
@@ -98,14 +126,14 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
     *((u8 *)work + 0x41) = 1;
   BattleEffect_SetupObjectPair(gPartyState.currentOwner, -1);
   if (work->animation != 8)
-    event[0xca5] = 0;
+    event->unkca5 = 0;
   if (work->animation != 28)
-    event[0xcad] = 0;
-  event[0xd31] = 0;
-  event[0xd32] = 0;
-  event[0xd33] = 0;
-  event[0xd38] = 0;
-  event[0xd30] = 255;
+    event->unkcad = 0;
+  event->target = 0;
+  event->targetY = 0;
+  event->targetZ = 0;
+  event->unkd38 = 0;
+  event->unkd30 = 255;
   BattleEffect_StartArcEffect();
   Scheduler_AddOrUpdateCallback(BattleEffect_UpdateAllEffectSlots, 0x480);
 }

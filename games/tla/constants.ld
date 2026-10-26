@@ -6,3 +6,4 @@ Tile_BuildMetatilesCodeSize = Tile_Decompress4bppCode - Tile_BuildMetatilesCode;
 BattleEffect_DecodeFrameBlockSize = BattleEffect_DecodeFrameEnd - BattleEffect_DecodeFrameCode;
 Render_DecodeFrameBlockSize = Render_DecodeFrameEnd - Render_DecodeFrameCode;
 Text_DecodeSymbolCodeSize = Text_DecodeSymbolEnd - Text_DecodeSymbolCode;
+BattleEffect_ExpandCodeSize = BattleEffect_DotProduct2 - BattleEffect_ExpandCode;

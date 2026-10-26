@@ -4989,12 +4989,7 @@ main	rom_main_10	games/tla/src/battle/effect/battle_effect_expand_2_dispatch
 main	rom_main_10	games/tla/src/battle/effect/battle_effect_expand_2_tables
 main	rom_main_10	games/tla/src/battle/effect/battle_effect_expand_2_commands
 main	rom_main_10	games/tla/src/graphics/tile/clear_character_block	.text
-main	rom_main_10	recon/tla/it/rom	.rom.001a052c	it
-main	rom_main_10	recon/tla/fr/rom	.rom.001a052c	fr
-main	rom_main_10	recon/tla/es/rom	.rom.001a052c	es
-main	rom_main_10	recon/tla/de/rom	.rom.001a052c	de
-main	rom_main_10	recon/tla/raw/081a052c	.text	en
-main	rom_main_10	recon/tla/ja/rom	.rom.001a052c	ja
+main	rom_main_10	games/tla/src/graphics/tile/load_character_block	.text
 main	rom_main_10	games/tla/src/graphics/tile/scroll	.text
 main	rom_main_10	recon/tla/it/rom	.rom.001a06e0	it
 main	rom_main_10	recon/tla/fr/rom	.rom.001a06e0	fr

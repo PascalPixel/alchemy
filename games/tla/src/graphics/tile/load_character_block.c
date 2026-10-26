@@ -1,19 +1,7 @@
-// Draft, differ 84 of 138: ⚓️'s Graphics_LoadCharacterBlockAndPalette,
-// ☀️'s in games/tbs/src/graphics/credits/credits.c: loads a backdrop's tiles
-// into one half of BG VRAM through the BattleEffect_Expand kernel (copied
-// into a heap block by DMA here, not a RAM-code slot), then queues its
-// palette, but first greys it: each colour channel becomes
-// (2r + 4g + b + 5 * channel) / 16, in a buffer at gFlash_Handler3 (the
-// listing's label for that EWRAM block). Everything before the loop matches
-// but for pool offsets. Left: other: the native loads the 0x1f mask from the
-// literal pool into lr (a pooled constant, as a halfword one would be) and
-// places that pool inside the loop after the blue channel's divide (with a
-// branch over it), where here the mask is movs into ip and the pool follows
-// the function; with it the loop's registers differ (counter r6 vs r7,
-// source r7 vs r0, the channels r0/r1/r4 vs r4/r1/r5). The channel
-// extraction from the colour shifted into the high half is the native's
-// (red as (value & 0x1f0000) >> 16). Tried: the colour as u16 (168), as s32
-// with (u16) casts per channel (129).
+/// @file
+/// Tiles: load a backdrop into one half of the BG character and palette
+/// storage, its colours greyed.
+
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -29,9 +17,15 @@ extern u8 BattleEffect_ExpandCodeSize[];
 void Graphics_ClearCharacterBlockAndPalette(s32 alternate);
 const u8 *Resource_GetTableEntry(u32 resourceId);
 
-void Graphics_LoadCharacterBlockAndPalette(u32 resourceId, s32 alternate) {
+/// Loads a backdrop resource (its 128 colours, then its packed tiles) into
+/// one half of BG VRAM and queues its palette for the next VBlank, as The
+/// Broken Seal's Credits_LoadBackground does, but greyed: each channel
+/// becomes (2 red + 4 green + blue + 5 * channel) / 16. A zero resource
+/// clears that half instead. The tiles are unpacked by the
+/// BattleEffect_Expand kernel, copied by DMA into a heap block for the call;
+/// the grey colours are built in the EWRAM buffer at gFlash_Handler3.
+void Func_081a052c(u32 resourceId, s32 alternate) {
   const u8 *resourceData;
-  const s16 *color;
   u32 paletteDestination;
   u32 paletteOffset;
   void *tileDestination;
@@ -61,10 +55,10 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resourceId, s32 alternate) {
   MemFree(decoder);
 
   for (i = 0; i < 128; i++) {
-    u32 value = *(const s16 *)resourceData << 16;
-    s32 blue = (u16)(value >> 26) & 0x1f;
-    s32 green = (u16)(value >> 21) & 0x1f;
-    s32 red = (value & 0x1f0000) >> 16;
+    u16 color = *(const s16 *)resourceData;
+    s32 blue = (color >> 10) & 0x1f;
+    s32 green = (color >> 5) & 0x1f;
+    s32 red = color & 0x1f;
     s32 sum = (green * 2 + red) * 2 + blue;
 
     resourceData += 2;

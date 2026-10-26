@@ -3671,8 +3671,6 @@ BattleEffect_RunIris:
 	.thumb_func
 Func_08196404:
 	.incbin "baserom.gba", 0x00196408, 0x00000508
-	.section .rom.001a052c, "ax"
-	.incbin "baserom.gba", 0x001a052c, 0x00000148
 	.section .rom.001a06e0, "ax"
 	.global Func_081a06e0
 	.type Func_081a06e0, %function

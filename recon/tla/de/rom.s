@@ -302,13 +302,6 @@ Func_0802de8c:
 	.incbin "baserom.gba", 0x00030310, 0x00000010
 	.section .rom.000385e0, "ax"
 	.incbin "baserom.gba", 0x000385e0, 0x0000031c
-	.section .rom.000391c4, "ax"
-	.balign 4
-	.global UiWork_DrawByAttributes
-	.type UiWork_DrawByAttributes, %function
-	.thumb_func
-UiWork_DrawByAttributes:
-	.incbin "baserom.gba", 0x000391c4, 0x0000009c
 	.section .rom.0003939a, "ax"
 	.incbin "baserom.gba", 0x0003939a, 0x00000002
 	.section .rom.00039452, "ax"

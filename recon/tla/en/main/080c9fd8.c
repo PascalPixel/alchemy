@@ -1,7 +1,8 @@
-// Draft, differ 26 of 180 (44 before; 2026-10-26: the enemies as s16, a trial:
+// Draft, differ 26 of 180 (2026-10-26: the pick written as a plain for loop,
+// no change; earlier: the enemies as s16, a trial:
 // the native reads the group with ldrh, but the signed read gives the pick
-// loop the native's registers; as u16, 44) (100 before, 2026-10-25), ported from The Broken
-// Seal's Encounter_CountStepsAndSelectFormation
+// loop the native's registers; as u16, 44) (100 before, 2026-10-25), ported
+// from The Broken Seal's Encounter_CountStepsAndSelectFormation
 // (games/tbs/src/overworld/overworld/encounter.c); this game drops the
 // Jenna experience check, reads the cloak byte at 0x26d and the encounter
 // bias and threshold at 0x194 and 0x198 of the event work. gPartyState read
@@ -95,15 +96,10 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
   if (sum == 0)
     return 0;
   pick = (Random16() * sum) >> 16;
-  pick -= entry->weights[0];
-  i = 0;
-  if (pick >= 0) {
-    do {
-      i++;
-      if (i > 7)
-        break;
-      pick -= entry->weights[i];
-    } while (pick >= 0);
+  for (i = 0; i < 8; i++) {
+    pick -= entry->weights[i];
+    if (pick < 0)
+      break;
   }
   sum = entry->enemies[i];
   BattleEffect_SelectBattleCue(zone, i);

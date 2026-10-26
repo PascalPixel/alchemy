@@ -589,12 +589,7 @@ main	rom_main_02	games/tla/src/graphics/tile/expand_opaque_masks
 main	rom_main_02	games/tla/src/graphics/render/output_acquire_free	.text
 main	rom_main_02	games/tla/src/graphics/render/uiinit	.text
 main	rom_main_02	games/tla/src/graphics/window/window	.text
-main	rom_main_02	recon/tla/it/rom	.rom.000391c4	it
-main	rom_main_02	recon/tla/fr/rom	.rom.000391c4	fr
-main	rom_main_02	recon/tla/es/rom	.rom.000391c4	es
-main	rom_main_02	recon/tla/de/rom	.rom.000391c4	de
-main	rom_main_02	recon/tla/raw/080391c4	.text	en
-main	rom_main_02	recon/tla/ja/rom	.rom.000391b8	ja
+main	rom_main_02	games/tla/src/graphics/window/draw_by_attributes	.text
 main	rom_main_02	games/tla/src/graphics/window/finalize	.text
 main	rom_main_02	recon/tla/it/rom	.rom.0003939a	it
 main	rom_main_02	recon/tla/fr/rom	.rom.0003939a	fr

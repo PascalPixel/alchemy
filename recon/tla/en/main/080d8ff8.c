@@ -1,11 +1,10 @@
-// Near miss, differ 25 of 123: lays a slot's chain of nodes along the line
+// Near miss, differ 19 of 123 (2026-10-26): lays a slot's chain of nodes along the line
 // between two points (heap slot 0x9c work), bowed sideways by a half sine of
-// the given height. Callers: Func_080d8fa8 and Func_080d9194. Left: order in
-// the prologue (the argument spills, the dx >> 8 shift built before the slot
-// address in the native) and, after the z store, a fresh copy of the node
-// pointer (mov r2, r8) where the native reuses r3; register choice and order,
-// no instruction missing. The sums are i * d / segments, which loop.c turns
-// into the native's running sums.
+// the given height. Callers: Func_080d8fa8 and Func_080d9194.
+// Left: the argument spills (the native stores x and y before it builds the
+// slot address), the segment count read after i is set, and the node pointer
+// copied again for the visible flag where the native reuses r3. The sums are
+// i * d / segments, which loop.c turns into the native's running sums.
 #include "types.h"
 #include "fixed_math.h"
 #include "iwram_call.h"
@@ -36,12 +35,13 @@ struct ChainWork {
 
 s32 Func_080d8ff8(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
                   s32 height) {
-  struct ChainSlot *slot =
-      &((struct ChainWork *)Ram_HeapSlots->unk84[6])->slots[index];
+  struct ChainWork *work = Ram_HeapSlots->unk84[6];
   s32 dx = toX - x;
+  s32 ax = dx >> 8;
   s32 dy = toY - y;
+  struct ChainSlot *slot = &work->slots[index];
   struct ChainNode *node = slot->head;
-  u16 angle = ArcTan2(dx >> 8, dy >> 8);
+  u16 angle = ArcTan2(ax, dy >> 8);
   s32 sin = Trig_Sin(angle);
   s32 cos = Trig_Cos(angle);
   s32 segments = slot->segments;

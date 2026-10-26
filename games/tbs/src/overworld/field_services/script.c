@@ -86,7 +86,7 @@ void Leader_StopMoving(void) {
   Object_SelectAnimationFar(object, 1);
 }
 
-/// The script command "begin script": closes any map name popup, stops the
+/// The script command "begin script": closes any area name window, stops the
 /// leader, resets the message and timing state, and starts the debug
 /// fast-forward callback with the leader as the message speaker. Map scripts
 /// reach it (SCRIPT_START); the field's item, Psynergy,
@@ -96,7 +96,7 @@ void Leader_StopMoving(void) {
 void FieldScript_Start(void) {
   struct FieldWork *runtime = gFieldWork;
 
-  MapNamePopup_HideFar();
+  AreaNameWindow_HideFar();
   Leader_StopMoving();
   // Keep the script reset's signed halfword read.
   if ((s16)runtime->busy != 0) {

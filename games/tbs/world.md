@@ -65,15 +65,15 @@ page describes [how scenes depend on the story](README.md#how-scenes-depend-on-t
 and [Places](src/field/scene_headers.s) lists every scene in
 [story order](glossary.md#the-places-in-story-order).
 
-## Scene and map section flags
+## Scene and area flags
 
 A scene never undoes what it changed. The game keeps two ranges of
 [game flags](glossary.md#game-flag) for scenes to use and clears them as the
 party moves on: scene flags whenever the party enters a scene, and
-[map section](glossary.md#map-section) flags when it enters another map
-section. Neither is cleared on a return from battle. A pushed stone pillar
+[area](glossary.md#area) flags when it enters another
+area. Neither is cleared on a return from battle. A pushed stone pillar
 kept in a scene flag is back in place the next time the party comes in; logs
-floated in one room of a cave, kept in map section flags, stay floated while
+floated in one room of a cave, kept in area flags, stay floated while
 the party moves between the cave's rooms. [The front
 page](README.md#game-flags) gives the ranges, and
 [Scenes](src/scene/README.md#state-that-cleans-itself-up) says how a scene uses
@@ -224,8 +224,8 @@ covers every moment a scene can answer and each Psynergy's effect.
 - 66 object event places in the field work, the party's 8 and then 58 for
   the scene's object event templates, though only 64 objects exist to fill them.
 - One overlay loaded at a time, in the 32 KB of `gOverlayArea`.
-- 256 scene flags and 256 map section flags, each range reused by every scene or
-  map section.
+- 256 scene flags and 256 area flags, each range reused by every scene or
+  area.
 - 104 encounter zones of eight formations each.
 - 47 script commands, of which the last 11 act as `SC_END`; a jump finds only
   a label within the first 1,024 words of its script.

@@ -123,25 +123,25 @@ The six questions are `struct SceneEntries`, at the start of every overlay.
 [Engine](engine.md#overlays) describes how an overlay is loaded and
 [Scenes](src/scene/README.md) how a map event is found.
 
-## The scene table and map sections
+## The scene table and areas
 
 ![Isaac steps from the world map onto Vale's marker; the village's gate fades in with the name Vale in a small window at the top of the screen, and he walks up through the gate](https://alchemy.pascalpixel.com/guides/front/area-name.gif)
 
 Arriving at Vale from the world map shows the name "Vale" for a moment. The
-name belongs to Vale's [map section](glossary.md#map-section), the group of
+name belongs to Vale's [area](glossary.md#area), the group of
 scenes the village is made of: walking between Vale's houses shows nothing,
 because the party stays in the same section. A scene's code says what happens
-there; its map section chooses the music, the area name and which flags are
+there; its area chooses the music, the area name and which flags are
 kept while the party stays inside. The two are chosen separately: the Bilibin
-Barricade runs on Bilibin's code but is a map section of its own. The name
+Barricade runs on Bilibin's code but is an area of its own. The name
 shows for 90 frames, a second and a half, and a few scenes hide it on purpose.
 
 Every scene is one row of the scene table, which names the scene's code, its
-map section, its map and its type. A town, or a room inside one, is a safer
+area, its map and its type. A town, or a room inside one, is a safer
 kind of scene: there the party regains no
 [PP](glossary.md#psynergy-and-pp) and recovers no
 [Djinn](glossary.md#djinn) as it walks, poison does no damage, Retreat (which
-takes the party back to where it entered the map section) doesn't work, and
+takes the party back to where it entered the area) doesn't work, and
 Avoid doesn't wear off.
 
 The table is `gSceneHeaders`, one `struct SceneHeader` a row; code names each
@@ -151,7 +151,7 @@ scene by its row's symbol, `SceneId_<Place>`.
 | --------------------------------------------------------- | ----- |
 | scenes                                                    | 201   |
 | overlays, the scenes' code, some shared by several scenes | 96    |
-| map sections                                              | 71    |
+| areas                                              | 71    |
 
 ## Warps and warp destinations
 
@@ -191,12 +191,12 @@ saved with the game.
 
 There are 4,096 flags, in a fixed order: the party and the Djinn first, then
 the ones the engine shares, then the story, then the chests and other finds,
-each map section's together. Two ranges are scratch space that a scene never
+each area's together. Two ranges are scratch space that a scene never
 has to tidy up. A scene's own 256 flags are cleared each time the party
 arrives, so a stone pillar pushed out of place is back where it was on the
-next visit; a map section's 256 are cleared only when the party enters
+next visit; an area's 256 are cleared only when the party enters
 another section. Neither is cleared when the party comes back from a battle,
-since it returns to the same moment. Entering a map section also sets the
+since it returns to the same moment. Entering an area also sets the
 flag that puts its marker on the world map screen, and eight flags in a row
 can be read together as a small number, which is how counters live among the
 flags.

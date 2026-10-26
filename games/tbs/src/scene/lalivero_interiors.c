@@ -206,10 +206,10 @@ enum LaliveroInteriorsLocalId {
 /// (graphics/sprite/spr_114.tsv): one frame held, lying asleep on his side.
 enum { ANIM_WORKER_LIE_ASLEEP = 6 };
 
-/// The map-section temp flag FLAG_MAPSEC_TEMP_00, which lasts until the party
-/// enters another map section: the inn worker has apologized. ★ Named from the
+/// The area temp flag FLAG_AREA_TEMP_00, which lasts until the party
+/// enters another area: the inn worker has apologized. ★ Named from the
 /// game: "Oh, I'm sorry..." (MsgLaliveroImSorry)
-enum { FLAG_LALIVERO_INN_WORKER_APOLOGIZED = FLAG_MAPSEC_TEMP_00 };
+enum { FLAG_LALIVERO_INN_WORKER_APOLOGIZED = FLAG_AREA_TEMP_00 };
 
 /// TimberRoomsC: the inn worker sighs between chores.
 static s32 InnWorker_Sigh(struct Object *interpreter) {

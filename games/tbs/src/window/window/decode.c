@@ -612,7 +612,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_ARGUMENT_LOCATION_NAME:
             Message_DecodeRaw(
-                MapSec_GetNameIndexFar(
+                Area_GetNameIndexFar(
                     MessageArgument_Lookup(MESSAGE_ARGUMENT_LOCATION, clear),
                     1) +
                     MsgDebugEntryName,
@@ -1064,7 +1064,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_ARGUMENT_LOCATION_NAME:
             Message_DecodeRaw(
-                MapSec_GetNameIndexFar(
+                Area_GetNameIndexFar(
                     MessageArgument_Lookup(MESSAGE_ARGUMENT_LOCATION, clear),
                     1) +
                     MsgDebugEntryName,

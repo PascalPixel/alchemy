@@ -31,7 +31,7 @@
 /// behind a mossy rock (LamaTemple_RevealPassage); LamaTemple_ShowFalseWall
 /// puts the rock back when Reveal wears off and on entry, the rock cell's own
 /// attributes saved at (21, 73). The temple also holds a Psynergy Stone
-/// (FLAG_LAMA_TEMPLE_PSYNERGY_STONE, a map-section temp flag) and a chest with
+/// (FLAG_LAMA_TEMPLE_PSYNERGY_STONE, an area temp flag) and a chest with
 /// Water of Life.
 ///
 /// Back at the Alpine Crossing after the lesson, until Hsu is freed, Hama and
@@ -80,10 +80,10 @@
 #include "field_effect.h"
 #include "songs.h"
 
-/// The temple's Psynergy Stone, a map-section temp flag: it refills once the
-/// party has been to another map section.
+/// The temple's Psynergy Stone, an area temp flag: it refills once the
+/// party has been to another area.
 /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
-#define FLAG_LAMA_TEMPLE_PSYNERGY_STONE FLAG_MAPSEC_TEMP_50
+#define FLAG_LAMA_TEMPLE_PSYNERGY_STONE FLAG_AREA_TEMP_50
 
 #define MAP_ALPINE_CROSSING ((s32)&SceneId_AlpineCrossing)
 #define MAP_LAMA_TEMPLE ((s32)&SceneId_LamaTemple)
@@ -1227,8 +1227,8 @@ struct MapEvent gLamaTemple_Events[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MONK_SENSING_ANXIETY, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleMasterHamaWillBeVerySad) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_CHI_MONK, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleWithRevealYouWillFindOases) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TRAVELING_HEALER, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleForSomeReasonThesePeopleGive) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(LamaTemple_RevealPassage) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(LamaTemple_ShowFalseWall) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(LamaTemple_RevealPassage) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(LamaTemple_ShowFalseWall) },
     { BG_EVENT(BG_EVENT_SILENT), MB_LAMA_TEMPLE_WALL_WRITING, CONDITION_ALWAYS, EVENT_SCRIPT(LamaTemple_ReadWallWriting) },
     { BG_EVENT_FACING(FACING_NORTH), MB_LAMA_TEMPLE_PSYNERGY_STONE, FLAG_LAMA_TEMPLE_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { BG_EVENT_FACING(FACING_NORTHEAST), MB_LAMA_TEMPLE_PSYNERGY_STONE, FLAG_LAMA_TEMPLE_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
@@ -1258,8 +1258,8 @@ struct MapEvent gAlpineCrossing_Events[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FEIZHI, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleHsuTiresHeLooksExhaustedI) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FIRST_WORKER, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleWeClearedTheWayButWhat) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SECOND_WORKER, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleIAlmostHurtMyBackIt) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AlpineCrossing_RevealPath) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AlpineCrossing_HidePath) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AlpineCrossing_RevealPath) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AlpineCrossing_HidePath) },
     // Frost's first phase, as it reaches the puddle
     { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_WATER_FOR_FROST, FLAG_ALPINE_CROSSING_PUDDLE_FROZEN, EVENT_SCRIPT(AlpineCrossing_PrepareFrost) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_WATER_FOR_FROST, FLAG_ALPINE_CROSSING_PUDDLE_FROZEN, EVENT_SCRIPT(AlpineCrossing_FreezePuddle) },

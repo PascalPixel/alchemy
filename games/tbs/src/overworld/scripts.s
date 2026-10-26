@@ -338,14 +338,14 @@ gFieldEffect_UntargetedObjectScript:
 gFieldEffect_DurationScripts:
 	.4byte gFieldEffect_ShortEffectScript, gFieldEffect_MediumEffectScript, gFieldEffect_LongEffectScript
 @ The world picture's markers (RegionMap_Show): a row for each world map
-@ object event from slot 11 (WORLD_MAP_FIRST_MAPSEC_OBJ_EVENT), whose marker
+@ object event from slot 11 (WORLD_MAP_FIRST_AREA_OBJ_EVENT), whose marker
 @ is drawn where that object event stands, so a place's spot on the picture is
 @ its object event's on the world map. The flag is the place's
-@ FLAG_MAPSEC_VISITED. A row of zeros is an object event with no marker, and
+@ FLAG_AREA_VISITED. A row of zeros is an object event with no marker, and
 @ -1 ends the table.
-@ {tile << 16 | flag, map section name}
-	.global gRegionMap_MapSecMarkers
-gRegionMap_MapSecMarkers:
+@ {tile << 16 | flag, area name}
+	.global gRegionMap_AreaMarkers
+gRegionMap_AreaMarkers:
 	.4byte 0x10183, 3
 	.4byte 0x10185, 20
 	.4byte 0x10199, 75

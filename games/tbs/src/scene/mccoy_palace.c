@@ -151,7 +151,7 @@ enum {
 };
 
 /// The palace's temporary flags: the map temp flags last until the party leaves
-/// the palace's map, the map-section temp flags until it leaves McCoy's Palace.
+/// the palace's map, the area temp flags until it leaves McCoy's Palace.
 enum {
   /// The captain has opened McCoy's door, so walking through it is silent.
   /// ★ Named from its area name: McCoy's Palace
@@ -171,24 +171,24 @@ enum {
   FLAG_TOOK_WATER_OF_LIFE = FLAG_SCENE_TEMP_13,
   /// The old man has praised the party once; he then warns of the holy tree.
   /// ★ Named from the game: "You are a fine warrior." (MsgBilibinFineWarrior)
-  FLAG_OLD_MAN_HAS_PRAISED = FLAG_MAPSEC_TEMP_02,
+  FLAG_OLD_MAN_HAS_PRAISED = FLAG_AREA_TEMP_02,
   /// Mind Read has heard the old man's first thought.
   /// ★ Named from the game: "Sometimes, we need children to remind us of our
   /// own responsibilities." (MsgBilibinSometimesWeNeedChildrenRemind)
-  FLAG_OLD_MAN_THOUGHTS_READ = FLAG_MAPSEC_TEMP_03,
+  FLAG_OLD_MAN_THOUGHTS_READ = FLAG_AREA_TEMP_03,
   /// McCoy has had the captain see the party out after the first audience.
   /// ★ Named from the game: "I dinnae want tae talk about it anymore.
   /// Captain?" (MsgBilibinWellSGoing)
-  FLAG_CAPTAIN_SEEING_PARTY_OUT = FLAG_MAPSEC_TEMP_21,
+  FLAG_CAPTAIN_SEEING_PARTY_OUT = FLAG_AREA_TEMP_21,
   /// McCoy has had the captain take the party to the treasure room, until it
   /// takes a reward.
   /// ★ Named from the game: "Please show them their reward!"
   /// (MsgBilibinLordMccoyOrdered)
-  FLAG_REWARD_OFFERED = FLAG_MAPSEC_TEMP_22,
+  FLAG_REWARD_OFFERED = FLAG_AREA_TEMP_22,
   /// The captain has seen the party off with its reward.
   /// ★ Named from the game: "You are always welcome in the palace of Lord
   /// McCoy." (MsgBilibinAlwaysWelcomeInPalaceLord)
-  FLAG_PARTY_SEEN_OFF = FLAG_MAPSEC_TEMP_33
+  FLAG_PARTY_SEEN_OFF = FLAG_AREA_TEMP_33
 };
 
 static void McCoyPalace_ClaimReward(s32 chestLocalId, s32 itemId,

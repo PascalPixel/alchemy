@@ -104,7 +104,7 @@ enum EncounterZoneId {
 
 void Scene_TakeWarp(s32 warpId);
 void Scene_ReturnFromSequence(s32 result);
-s32 Scene_GetMapSec(s32 sceneId);
+s32 Scene_GetArea(s32 sceneId);
 void SequenceManager_Run(s32 mode);
 void Scene_LoadOverlay(s32 unused);
 void Scene_ResetFlagsOnEnter(s32 unused, s32 keep);
@@ -117,7 +117,7 @@ s32 Encounter_RollWorldMap(s32 pos, s32 steps);
 u16 Encounter_GetFormationAtSlot(s32 zone, s32 slot);
 s16 Encounter_GetDjinnFormation(s32 djinni);
 void Scene_ChooseMusic(void);
-s32 MapSec_GetNameIndex(s32 sceneId, s32 warpDest);
+s32 Area_GetNameIndex(s32 sceneId, s32 warpDest);
 void Scene_SetDefeatReturnPoint(void);
 s16 FieldScript_GetSpecialValue(void);
 void BattleBackground_SelectForMap(void);

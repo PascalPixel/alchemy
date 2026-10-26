@@ -14,15 +14,15 @@
 struct MapGridCell;
 struct ObjectEvent;
 
-/// A scene's row in gSceneHeaders: its overlay's resource, its map section,
+/// A scene's row in gSceneHeaders: its overlay's resource, its area,
 /// its scene type and its map. One row per scene number; field/scene_headers.s
 /// writes them, and its SceneId_ symbols are the row numbers.
 struct SceneHeader {
   s16 resourceId; ///< the overlay Overlay_Load loads into gOverlayArea
-  /// The map section: entering a new one clears the FLAG_MAPSEC_TEMP_xx flags
+  /// The area: entering a new one clears the FLAG_AREA_TEMP_xx flags
   /// and the step counters and moves Retreat's destination;
-  /// FLAG_MAPSEC_VISITED(mapSec) marks it visited (Scene_ResetFlagsOnEnter).
-  s8 mapSec;
+  /// FLAG_AREA_VISITED(area) marks it visited (Scene_ResetFlagsOnEnter).
+  s8 area;
   /// An enum SceneType, copied to gSaveBlock.sceneType:
   /// SCENE_TYPE_TOWN for towns and their interiors (53 rows: Vale,
   /// Bilibin, Kalay, Tolbi and others), SCENE_TYPE_FIELD for the rest.

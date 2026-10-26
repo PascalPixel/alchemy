@@ -147,7 +147,7 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 #define MESSAGE_NAME_HALFWORDS 24
 #define MESSAGE_ARGUMENT_COUNT 8        ///< the message argument table's places
 #define SELECTION_SCREEN_ENTRY_LIMIT 16 ///< entries a selection row can list
-#define MAP_NAME_POPUP_FRAMES 90        ///< how long the area's name shows
+#define AREA_NAME_WINDOW_FRAMES 90      ///< how long the area's name shows
 
 /// The control codes of decoded message text (WindowWork.textBuffer). Codes
 /// from TEXT_SPACE up are characters.

@@ -16,7 +16,7 @@ struct BattleTurn;
 struct Unit;
 struct Object;
 struct FieldEffectSprite;
-struct MapSecNameRule;
+struct AreaNameRule;
 
 /// Battlefield (x, y) pixel pairs by place: 0 to 3 the party's column at x 80,
 /// 32 pixels apart, and 5 to 10 a column at x -80, 20 apart (battle_data.s).
@@ -180,10 +180,10 @@ extern const u32 gBlitterTemplate[];
 extern u8 gMessageSpeed_VoiceRates[];
 extern const u16 gWorldMap_CursorDirectionAngles[];
 extern const u8 gWorldMap_MarkerBlendCycle[];
-/// The world map's map section markers, {tile << 16 | flag, map section} for
-/// each map section's local id from 11, ended by -1; a zero row reserves a
+/// The world map's area markers, {tile << 16 | flag, area} for
+/// each area's local id from 11, ended by -1; a zero row reserves a
 /// local id with no marker.
-extern const s32 gRegionMap_MapSecMarkers[];
+extern const s32 gRegionMap_AreaMarkers[];
 u32 __udivsi3(u32 numerator, u32 denominator);
 #ifndef OWN__call_via_r0
 void _call_via_r0(u32 routine);

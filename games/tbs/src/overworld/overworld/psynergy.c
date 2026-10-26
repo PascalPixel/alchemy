@@ -52,7 +52,7 @@ s32 Field_UsePsynergy(u32 code) {
     return 0;
   }
 
-  // Retreat: ask, then go back to where the party entered this map section.
+  // Retreat: ask, then go back to where the party entered this area.
   if (abilityId == ABILITY_RETREAT) {
     if (GameFlag_GetFar(FLAG_RETREAT_BLOCKED)) {
       PSYNERGY_MESSAGE(userId, ABILITY_RETREAT, MsgDoesNotWorkHere);

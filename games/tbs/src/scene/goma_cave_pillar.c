@@ -17,7 +17,7 @@
 /// the first room or from the room below
 /// (GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST,
 /// GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST), the party finds it set into the
-/// floor underfoot, with the cells along it changed. All three are map-section
+/// floor underfoot, with the cells along it changed. All three are area
 /// temp flags, so the room is as it started again once the party leaves Goma
 /// Cave's four maps. Walking west into a gap (metatile behavior 20) jumps the
 /// leader across it, and a chest holds a Lucky Medal.
@@ -80,7 +80,7 @@
 #include "songs.h"
 
 // Map-section temp flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when
-// the party enters another map section, and other map sections use the numbers
+// the party enters another area, and other areas use the numbers
 // for their own.
 /// The stump has been pushed over into the room below.
 /// ★ Named from what the player sees: a tree stump standing on a ledge (its

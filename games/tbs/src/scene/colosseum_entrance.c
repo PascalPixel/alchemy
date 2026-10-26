@@ -329,12 +329,12 @@ enum {
   /// (EventScript_OfferLuckyGuess).
   /// ★ Named from the game: "Colosso's Lucky Guess makes the battles in the
   /// colosseum better." (MsgColosseumColossosLuckyGuessMakesBattles)
-  FLAG_LUCKY_GUESS_REFUSED_ISAAC = FLAG_MAPSEC_TEMP_C0,
+  FLAG_LUCKY_GUESS_REFUSED_ISAAC = FLAG_AREA_TEMP_C0,
   /// Navampa has explained that Dekka will not answer
   /// (EventScript_TalkToDekka).
   /// ★ Named from the game: "Dekka must win the finals."
   /// (MsgColosseumDekkaMustWinFinalsDekka)
-  FLAG_NAVAMPA_SPOKE_FOR_DEKKA = FLAG_MAPSEC_TEMP_C1,
+  FLAG_NAVAMPA_SPOKE_FOR_DEKKA = FLAG_AREA_TEMP_C1,
   /// The leader has crossed the cells behind the finals line, so stepping onto
   /// it asks whether Isaac is ready.
   /// ★ Named from the game: "If you win there, you advance to the finals."

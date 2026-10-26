@@ -156,7 +156,7 @@ enum {
 
 enum {
   /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
-  FLAG_PSYNERGY_STONE = FLAG_MAPSEC_TEMP_50
+  FLAG_PSYNERGY_STONE = FLAG_AREA_TEMP_50
 };
 
 static void MercuryLighthouseAerie_PartyArrives(void);

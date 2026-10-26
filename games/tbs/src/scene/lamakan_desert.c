@@ -121,24 +121,24 @@ enum {
   /// The heat gauge has passed a quarter, where the first complaints come.
   /// ★ Named from the game: "This desert is much hotter than I ever imagined"
   /// (MsgMountainNorthAltinMineWestLama)
-  FLAG_HEAT_QUARTER = FLAG_MAPSEC_TEMP_00,
+  FLAG_HEAT_QUARTER = FLAG_AREA_TEMP_00,
   /// ★ Named from the game: "I can't keep my cool when it's this hot"
   /// (MsgMountainNorthAltinMineWestLama)
-  FLAG_HEAT_HALF = FLAG_MAPSEC_TEMP_01,
+  FLAG_HEAT_HALF = FLAG_AREA_TEMP_01,
   /// ★ Named from the game: "I can't stand another minute of this!"
   /// (MsgMountainNorthAltinMineWestLama)
-  FLAG_HEAT_THREE_QUARTERS = FLAG_MAPSEC_TEMP_02,
+  FLAG_HEAT_THREE_QUARTERS = FLAG_AREA_TEMP_02,
   /// Who has complained since the gauge last passed a mark: one per member,
   /// in the order of their object events.
   /// ★ Named from the game: "My feet are burning!"
   /// (MsgMountainNorthAltinMineWestLama)
-  FLAG_GARET_COMPLAINED = FLAG_MAPSEC_TEMP_03,
+  FLAG_GARET_COMPLAINED = FLAG_AREA_TEMP_03,
   /// ★ Named from the game: "Just walking around here saps every ounce of my
   /// strength." (MsgMountainNorthAltinMineWestLama)
-  FLAG_IVAN_COMPLAINED = FLAG_MAPSEC_TEMP_04,
+  FLAG_IVAN_COMPLAINED = FLAG_AREA_TEMP_04,
   /// ★ Named from the game: "My clothes are drenched in sweat!"
   /// (MsgMountainNorthAltinMineWestLama)
-  FLAG_MIA_COMPLAINED = FLAG_MAPSEC_TEMP_05
+  FLAG_MIA_COMPLAINED = FLAG_AREA_TEMP_05
 };
 
 /// The object events, numbered in the order of each map's object event
@@ -163,13 +163,13 @@ enum {
   LOCALID_SMOG = LOCALID_LAST_PIT + 1
 };
 
-/// The desert's two Psynergy Stones, map-section temp flags: each is back once
+/// The desert's two Psynergy Stones, area temp flags: each is back once
 /// the party has left Lamakan Desert.
 enum {
   /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
-  FLAG_LAMAKAN_DESERT_FIRST_PSYNERGY_STONE = FLAG_MAPSEC_TEMP_50,
+  FLAG_LAMAKAN_DESERT_FIRST_PSYNERGY_STONE = FLAG_AREA_TEMP_50,
   /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
-  FLAG_LAMAKAN_DESERT_SECOND_PSYNERGY_STONE = FLAG_MAPSEC_TEMP_51
+  FLAG_LAMAKAN_DESERT_SECOND_PSYNERGY_STONE = FLAG_AREA_TEMP_51
 };
 
 #define NULL ((void *)0)
@@ -1369,8 +1369,8 @@ struct MapEvent gLamakanDesertEvents[] = {
     { BG_EVENT(BG_EVENT_CHEST), 105, FLAG_LAMAKAN_DESERT_777_COINS, FIND_COINS(777) },
     { BG_EVENT(BG_EVENT_CHEST), 106, FLAG_LAMAKAN_DESERT_POTION, FIND_ITEM(ITEM_POTION) },
     { BG_EVENT(BG_EVENT_CHEST), 107, FLAG_LAMAKAN_DESERT_MINT, FIND_ITEM(ITEM_MINT) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Reveal_ShowSecrets) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Reveal_HideSecrets) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Reveal_ShowSecrets) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Reveal_HideSecrets) },
     { MAP_EVENT_RAISED, LAMAKAN_DESERT_RAISED_HEAT_QUARTER, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(LamakanDesert_ComplainAboutHeat) },
     { MAP_EVENT_RAISED, LAMAKAN_DESERT_RAISED_HEAT_HALF, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(LamakanDesert_ComplainAboutHeat) },
     { MAP_EVENT_RAISED, LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(LamakanDesert_ComplainAboutHeat) },

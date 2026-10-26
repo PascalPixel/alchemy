@@ -1,6 +1,6 @@
 /// @file
 /// Crossbone Isle, an island reached from the world map, and the main line of
-/// the cave beneath it, in three map sections by their area names: Crossbone
+/// the cave beneath it, in three areas by their area names: Crossbone
 /// Isle, Crossbone Isle Cave and the Pirate Ship.
 ///
 /// No one on the island speaks: it is a run of Psynergy puzzles and battles

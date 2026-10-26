@@ -224,17 +224,16 @@ enum {
   /// ★ Named from the game: "See the water pipes?"
   /// (MsgColossoAreaCalledPipeworks)
   FLAG_PIPES_MOVED =
-      FLAG_MAPSEC_TEMP_01, ///< the Pipeworks' pipes, as water filled them
+      FLAG_AREA_TEMP_01, ///< the Pipeworks' pipes, as water filled them
   /// ★ Named from the game: "This area is called the Pipeworks."
   /// (MsgColossoAreaCalledPipeworks)
-  FLAG_PIPEWORKS_PIPE_PUSHED = FLAG_MAPSEC_TEMP_02,
+  FLAG_PIPEWORKS_PIPE_PUSHED = FLAG_AREA_TEMP_02,
   /// ★ Named from the game: "Growth" (MsgAbilityName)
-  FLAG_PLANT_GROWN =
-      FLAG_MAPSEC_TEMP_03, ///< by Growth, before the Broken Bridge
+  FLAG_PLANT_GROWN = FLAG_AREA_TEMP_03, ///< by Growth, before the Broken Bridge
   /// The byte of flags that keeps the Rock Challenge's second rock's column.
   /// ★ Named from the game: "They call this the Rock Challenge."
   /// (MsgColossoCallRockChallenge)
-  FLAG_SECOND_ROCK_COLUMN = FLAG_MAPSEC_TEMP_10,
+  FLAG_SECOND_ROCK_COLUMN = FLAG_AREA_TEMP_10,
   /// Someone has reached the arena (ColosseumAzartMatch_CollectFinishItem).
   /// ★ Named from the game: "You must get through several stages before you
   /// reach the arena." (MsgColossoWarriorsEnterFinalsWithoutAny)
@@ -602,9 +601,9 @@ static void EventScript_PushPipeworksPillar(void) {
   MapGrid_CopyCellAttributes(43, 12, 1, 1, 41, 12);
 }
 
-/// Unused: sets FLAG_MAPSEC_TEMP_00; nothing calls it.
+/// Unused: sets FLAG_AREA_TEMP_00; nothing calls it.
 UNUSED static void ColosseumAzartMatch_SetCourseFlag(void) {
-  GameFlag_Set(FLAG_MAPSEC_TEMP_00);
+  GameFlag_Set(FLAG_AREA_TEMP_00);
 }
 
 /// Reaching Colosseum Final 1's arena: the leader takes a prize (the Iron
@@ -1635,7 +1634,7 @@ static void ColosseumAzartMatch_PushObjectAhead(void) {
 #define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10
 /// The chest holding an Oil Drop has been opened.
 /// ★ Named from the game: "Oil Drop" (MsgItemName)
-#define FLAG_COLOSSEUM_AZART_MATCH_OIL_DROP_CHEST_OPENED FLAG_MAPSEC_TEMP_09
+#define FLAG_COLOSSEUM_AZART_MATCH_OIL_DROP_CHEST_OPENED FLAG_AREA_TEMP_09
 
 // clang-format off
 const u8 gColosso_LetteringPaletteOffsets[] = {
@@ -1804,9 +1803,9 @@ struct MapEvent gColosseumAzartMatch_Events[] = {
     { COORD_EVENT_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogEastWest) },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogEastWest) },
     { MAP_EVENT_COORD, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT_SCRIPT(EventScript_ReachArena) },
-    { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_MAPSEC_TEMP_08, FIND_ITEM(ITEM_NUT) },
+    { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_AREA_TEMP_08, FIND_ITEM(ITEM_NUT) },
     { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_COLOSSEUM_AZART_MATCH_OIL_DROP_CHEST_OPENED, FIND_ITEM(ITEM_OIL_DROP) },
-    { BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_WEST, 103, FLAG_MAPSEC_TEMP_0A, FIND_ITEM(ITEM_NUT) },
+    { BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_WEST, 103, FLAG_AREA_TEMP_0A, FIND_ITEM(ITEM_NUT) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROCK_A, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleRocks) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROCK_B, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleRocks) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROCK_C, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleRocks) },

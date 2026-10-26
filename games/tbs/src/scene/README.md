@@ -262,8 +262,8 @@ for scenes to use, and forgets them for it as the party moves on.
 
 Scene temp flags last until the party next enters a scene, so a scene keeps a
 pushed stone pillar or an opened door in one and finds it back in place next
-time. [Map-section](../../glossary.md#map-section) temp flags last while the
-party stays anywhere in the map section, so they hold what must survive
+time. [Area](../../glossary.md#area) temp flags last while the
+party stays anywhere in the area, so they hold what must survive
 moving between its rooms, as Fuchin Falls Cave keeps where its logs float.
 Coming back from a battle forgets neither. Because the numbers are reused
 everywhere, each scene names the ones it uses for what they hold there, in its
@@ -277,7 +277,7 @@ page](../../README.md#game-flags) explains the ranges), and the flags are in
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `FLAG_SCENE_TEMP_00` to `FLAG_SCENE_TEMP_FF` | `0x200` to `0x2ff` | cleared on every ordinary arrival in a scene |
-| `FLAG_MAPSEC_TEMP_00` to `FLAG_MAPSEC_TEMP_FF` | `0x300` to `0x3ff` | cleared on entering another map section |
+| `FLAG_AREA_TEMP_00` to `FLAG_AREA_TEMP_FF` | `0x300` to `0x3ff` | cleared on entering another area |
 
 ## Code shared between overlays
 
@@ -305,7 +305,7 @@ that includes the header; each header's opening comment says what it holds.
 Each overlay is three objects, linked in this order into the overlay area:
 `entry/<scene>`, `<scene>` and `import/<scene>`. The scene table, `gSceneHeaders` in
 [`field/scene_headers.s`](../field/scene_headers.s), gives each scene its overlay,
-map section, scene type and map, and names it `SceneId_<Scene>`; several scenes may
+area, scene type and map, and names it `SceneId_<Scene>`; several scenes may
 share one overlay, and then share its file. A scene overlay is never split into
 parts, because its code is laid out by kind (entry points, then handlers,
 then tables), not by scene.
@@ -339,7 +339,7 @@ of an object event, update hooks returning `s32`) are in
 `SceneManager_Run` calls its entries; [Engine](../../engine.md#overlays)
 describes the entry and import tables and how the overlay is loaded. The scene
 table and how scenes depend on the story are on [the front
-page](../../README.md#the-scene-table-and-map-sections). The maps the scenes are
+page](../../README.md#the-scene-table-and-areas). The maps the scenes are
 drawn on are in [Maps](../map/README.md), and the debug rooms, built the
 same way, in [Debug rooms](../debug/README.md).
 
@@ -355,8 +355,8 @@ its `msgctxt` is the name the scene writes (`MsgVaultWelcomeToVaultTheTownAt`).
 - An overlay calls the [main image](../../glossary.md#main-image) only through
   its import table, never another overlay.
 - 66 local ids: the party's 8, then the placed object events.
-- 256 scene temp flags and 256 map-section temp flags, reused by every scene and
-  map section.
+- 256 scene temp flags and 256 area temp flags, reused by every scene and
+  area.
 
 ## Words used here
 
@@ -365,9 +365,9 @@ its `msgctxt` is the name the scene writes (`MsgVaultWelcomeToVaultTheTownAt`).
 - **facing**: `enum Facing`, eight headings in 1/65536 turns from `FACING_EAST`
   through `FACING_SOUTH` to `FACING_NORTHEAST`.
 - **condition**: a table row's test ([Conditions](#conditions)).
-- **scene temp flags** and **map-section temp flags**: `FLAG_SCENE_TEMP_xx` and
-  `FLAG_MAPSEC_TEMP_xx`, the two ranges cleared for scene code
-  ([above](#state-that-cleans-itself-up)). A map-section temp flag with a
+- **scene temp flags** and **area temp flags**: `FLAG_SCENE_TEMP_xx` and
+  `FLAG_AREA_TEMP_xx`, the two ranges cleared for scene code
+  ([above](#state-that-cleans-itself-up)). An area temp flag with a
   proven meaning takes a name in the scene's own file, never in `flags.h`.
 - **messages**: linker symbols written by bare name, `MSGNO(name)` their
   number. A message's `msgctxt` in `games/tbs/text/en.po` is its name;
@@ -380,7 +380,7 @@ its `msgctxt` is the name the scene writes (`MsgVaultWelcomeToVaultTheTownAt`).
 
 ## Evidence
 
-A scene's name is its map section's area name from `gMapSec_NameRules`, or for a
+A scene's name is its area name from `gArea_NameRules`, or for a
 room the game leaves unnamed, what the player sees there. A sheet of rooms
 is named for the interior style its rooms are drawn in, in a word from interior
 design and architecture rather than a place (`CottageRoomsA`, `LogRoomsC`,

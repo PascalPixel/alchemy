@@ -41,7 +41,7 @@ battles chosen ([below](#random-battles)), the party placed at its [warp
 destination](../../glossary.md#warp-destination), its people placed, and its
 own setup run, which may send the party on at once. Then the scene fades in, and
 the area's name is shown if the party has come into a new
-[map section](../../glossary.md#map-section).
+[area](../../glossary.md#area).
 
 `SceneManager_Run` runs one scene, and its state, the requests among it, is
 `struct FieldWork`, reached through `gFieldWork`. `ObjectEvent_Snapshot`
@@ -85,8 +85,8 @@ often. When the party's average level is above the zone's, each level of the
 difference, up to five, spaces its battles further apart, and with Avoid such
 a zone has none at all. With no difference and no random part, a zone of rate
 r brings a battle after about 16 × r frames of walking. There are none at all
-while Cloak is up, in a zone with no rate, or where the scene or its map
-section turns them off.
+while Cloak is up, in a zone with no rate, or where the scene or its
+area turns them off.
 
 One more rule holds only in the Sol Sanctum: Jenna is in the party only from
 Vale to the sanctum's eruption, joining at level 1, and random battles stop
@@ -112,7 +112,7 @@ draws the enemies, `Encounter_SelectMapZones` picks a scene's zones from
 | `ENCOUNTER_ZONE_MIMIC` | 99 | mimic chests, by the chest |
 | `ENCOUNTER_ZONE_VENUS_DJINN` to `ENCOUNTER_ZONE_JUPITER_DJINN` | 100 to 103 | Djinni battles |
 | `FLAG_NO_ENCOUNTERS` | `0x160` | no random battles |
-| `FLAG_NO_ENCOUNTERS_IN_MAPSEC` | `0x161` | no random battles in this map section |
+| `FLAG_NO_ENCOUNTERS_IN_AREA` | `0x161` | no random battles in this area |
 | `FLAG_LURE_CAP` | `0x167` | the counter fills twice as fast |
 
 ## How field Psynergy reaches its effect
@@ -174,7 +174,7 @@ by.
 
 `RegionMap_Show` draws the picture, the screen's own work is in
 [`field_services/world_map.c`](field_services/world_map.c), and
-`gRegionMap_MapSecMarkers` lists each place's visited flag, marker and name.
+`gRegionMap_AreaMarkers` lists each place's visited flag, marker and name.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -197,7 +197,7 @@ and setup, and calls back into this folder through its
 [import table](../../glossary.md#entry-table-and-import-table) for the
 commands its scripts are written in.
 
-Entering a new map section (the scenes that share an area name) also resets the
+Entering a new area (the scenes that share an area name) also resets the
 counters of random battles and hazardous ground, makes the warp destination
 the place Retreat leads back to, and asks for the area name to be shown. The
 screen transitions and the palette fade serve battles as well, and the effect
@@ -256,7 +256,7 @@ action. It is marked [`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix), and
 `BUGFIX` tests each request instead.
 
 `Scene_ResetFlagsOnEnter` clears flags `0x80` to `0xdf` on every ordinary entry
-to a scene, even within a map section: the Djinn's hiding flags
+to a scene, even within an area: the Djinn's hiding flags
 (`FLAG_DJINN_HIDING_FIRST` and the 79 after it), which keep a Djinni that got
 away out of its room until the room is entered again, and 16 more after them
 that nothing else uses.

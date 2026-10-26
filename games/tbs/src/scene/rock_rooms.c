@@ -283,7 +283,7 @@ const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
 
 const u32 *Scene_GetWarps(void) { return gInteriorWarps; }
 
-/// The townsfolk, shopkeepers and counters of all three map sections.
+/// The townsfolk, shopkeepers and counters of all three areas.
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   return gInteriorObjectEventTemplates;
 }

@@ -204,7 +204,7 @@ struct MapEvent {
   /// and bg event lookups; -1 ends the table. The detail bits depend on the
   /// kind. bits: 30..28 Psynergy phase | 15..12 coord facing | 15..8 item or
   /// ability | 11 short push | 10 facing | 9 walking | 8..4 bg target | 7
-  /// Psynergy in area | 5..4 warp sound | 4 on an object event | 3..0 kind
+  /// Psynergy anywhere | 5..4 warp sound | 4 on an object event | 3..0 kind
   u32 kind;
   /// What the event answers: a local id, a metatile behavior, a treasure
   /// spot id or a raised value. Item and Psynergy events read it as bits below;
@@ -318,14 +318,14 @@ enum PsynergyEventTarget {
   PSYNERGY_SCRIPT_PLAYS_EFFECT = 0x400
 };
 /// A Psynergy event on an object event at one phase of the cast, as
-/// PSYNERGY_IN_AREA is for an area.
+/// PSYNERGY_ANYWHERE is for any target.
 #define PSYNERGY_PHASE_ON_OBJ_EVENT(ability, phase)                            \
   ((u32)(phase) << 28 | PSYNERGY_ON_OBJ_EVENT(ability))
 
 /// A Psynergy event for any target, not a particular object event or cell.
-#define MAP_EVENT_PSYNERGY_IN_AREA 0x80
-#define PSYNERGY_IN_AREA(ability, phase)                                       \
-  ((u32)(phase) << 28 | (ability) << 8 | MAP_EVENT_PSYNERGY_IN_AREA |          \
+#define MAP_EVENT_PSYNERGY_ANYWHERE 0x80
+#define PSYNERGY_ANYWHERE(ability, phase)                                      \
+  ((u32)(phase) << 28 | (ability) << 8 | MAP_EVENT_PSYNERGY_ANYWHERE |         \
    MAP_EVENT_PSYNERGY)
 
 // Using an item (one byte) on a metatile behavior, or on an object event, as

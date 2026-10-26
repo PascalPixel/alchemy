@@ -41,7 +41,7 @@ typedef struct WorldMapEncounterRule {
 /// zones from the rule's first one. With useRules 0, or no matching rule, no
 /// ground has encounters. Also resets the random bias and the battle threshold
 /// (the count itself, gSaveBlock.encounterSteps, is reset only when a random
-/// battle starts or a new map section is entered) and chooses the battle
+/// battle starts or a new area is entered) and chooses the battle
 /// background. Called by SceneManager_Run on map load, with useRules 0 on the
 /// world map and 1 in a map; writes work->encounterZones, encounterBias and
 /// encounterThreshold, and gSaveBlock.special.
@@ -122,8 +122,8 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
 /// Advances the encounter counter for zone and returns the formation to fight
 /// (a row of formations.c), or 0 for no battle. steps (16.16) scales how far
 /// the counter moves; a battle starts once it reaches encounterThreshold.
-/// FLAG_NO_ENCOUNTERS, FLAG_NO_ENCOUNTERS_IN_MAPSEC and gSaveBlock.cloaked
-/// (Cloak) prevent battles. FLAG_NO_ENCOUNTERS_IN_MAPSEC is set by Venus
+/// FLAG_NO_ENCOUNTERS, FLAG_NO_ENCOUNTERS_IN_AREA and gSaveBlock.cloaked
+/// (Cloak) prevent battles. FLAG_NO_ENCOUNTERS_IN_AREA is set by Venus
 /// Lighthouse while its Reveal path is shown (the international editions), by
 /// Mercury Lighthouse while the leader carries the pillar's lights and by the
 /// world map's debug warp destination 99, and cleared by every entry that does
@@ -153,7 +153,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
 #endif
   if (GameFlag_GetFar(FLAG_IGNORE_ENCOUNTER_CHECKS) == 0) {
     if (GameFlag_GetFar(FLAG_NO_ENCOUNTERS) != 0 ||
-        GameFlag_GetFar(FLAG_NO_ENCOUNTERS_IN_MAPSEC) != 0)
+        GameFlag_GetFar(FLAG_NO_ENCOUNTERS_IN_AREA) != 0)
       return 0;
     if (zone == 0)
       return 0;
@@ -278,9 +278,9 @@ s16 Encounter_GetDjinnFormation(s32 djinni) {
 /// A rule choosing a map's field music (gMap_MusicRules,
 /// map_rules.s), ended by id -1.
 struct MapMusicRule {
-  s16 id;            ///< a map, or a map section
+  s16 id;            ///< a map, or an area
   s16 warpDest : 15; ///< -1 for any warp destination
-  u16 idIsMap : 1;   ///< 1 when id is a map, 0 when it is a map section
+  u16 idIsMap : 1;   ///< 1 when id is a map, 0 when it is an area
   s16 flag;          ///< -1, or a flag that must be set
   s16 music;         ///< the song (songs.h's MUS_ numbers)
 };
@@ -288,14 +288,14 @@ struct MapMusicRule {
 extern const struct MapMusicRule gMap_MusicRules[];
 
 /// Chooses the current map's field music (gSaveBlock.cue) from the first rule
-/// matching the map or its map section and the warp destination;
+/// matching the map or its area and the warp destination;
 /// SONG_KEEP_BGM when none does. Called by SequenceManager_Run on entering each
 /// map, before Scene_PlayMusic plays it.
 void Scene_ChooseMusic(void) {
   s16 music = SONG_KEEP_BGM;
   s16 sceneId = gSaveBlock.sceneId;
   s16 warpDest = gSaveBlock.warpDest;
-  s16 group = gSaveBlock.mapSec;
+  s16 group = gSaveBlock.area;
   const struct MapMusicRule *rule = gMap_MusicRules;
 
   for (; rule->id != -1; rule++) {
@@ -322,30 +322,30 @@ void Scene_ChooseMusic(void) {
   gSaveBlock.sceneMusic = music;
 }
 
-/// A rule naming the map section a map is in (gMapSec_NameRules, map_rules.s),
+/// A rule naming the area a map is in (gArea_NameRules, map_rules.s),
 /// ended by id -1.
-struct MapSecNameRule {
-  s16 id;            ///< a map, or a map section
+struct AreaNameRule {
+  s16 id;            ///< a map, or an area
   s16 warpDest : 15; ///< -1 for any warp destination
-  u16 useMapId : 1;  ///< 1 when id is a map, 0 when it is a map section
+  u16 useMapId : 1;  ///< 1 when id is a map, 0 when it is an area
   /// The area name, as an offset that most readers add to MsgDebugEntryName.
-  /// 0 is the title screen's name (map section 0's rule), which a map no rule
+  /// 0 is the title screen's name (area 0's rule), which a map no rule
   /// matches also gets.
   s32 areaNameIndex;
 };
 
-extern const struct MapSecNameRule gMapSec_NameRules[];
+extern const struct AreaNameRule gArea_NameRules[];
 
 /// Returns the area name of sceneId and warpDest, from the first rule matching
-/// the map or its map section; 0, the title screen's name, when none does. No
+/// the map or its area; 0, the title screen's name, when none does. No
 /// reader treats 0 apart. Called by the save, debug and
-/// location windows through MapSec_GetNameIndexFar, and by
+/// location windows through Area_GetNameIndexFar, and by
 /// RegionMap_UpdateMarkers; most add it to MsgDebugEntryName for the
 /// message. The save stores it as its area (save.h).
-s32 MapSec_GetNameIndex(s32 sceneId, s32 warpDest) {
-  const struct MapSecNameRule *rule = gMapSec_NameRules;
+s32 Area_GetNameIndex(s32 sceneId, s32 warpDest) {
+  const struct AreaNameRule *rule = gArea_NameRules;
   s32 name = 0;
-  s32 mapSec = Scene_GetMapSec(sceneId);
+  s32 area = Scene_GetArea(sceneId);
 
   while (rule->id != -1) {
     if (rule->useMapId) {
@@ -356,7 +356,7 @@ s32 MapSec_GetNameIndex(s32 sceneId, s32 warpDest) {
         }
       }
     } else {
-      if (rule->id == mapSec) {
+      if (rule->id == area) {
         if (rule->warpDest == -1 || rule->warpDest == warpDest) {
           name = rule->areaNameIndex;
           break;

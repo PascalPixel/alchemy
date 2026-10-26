@@ -300,29 +300,29 @@ enum {
   /// ★ Named from the game: "This place is called the Board Walk."
   /// (MsgColossoPlaceCalledBoard)
   FLAG_OBSTACLE_KNOCKED_DOWN =
-      FLAG_MAPSEC_TEMP_30, ///< by Force, on the Board Walk
+      FLAG_AREA_TEMP_30, ///< by Force, on the Board Walk
   /// ★ Named from the game: "Bestows Frost when equipped" (MsgItemPlainName)
-  FLAG_WEST_TARGET_FROZEN = FLAG_MAPSEC_TEMP_31, ///< by Frost
+  FLAG_WEST_TARGET_FROZEN = FLAG_AREA_TEMP_31, ///< by Frost
   /// ★ Named from the game: "Bestows Frost when equipped" (MsgItemPlainName)
-  FLAG_EAST_TARGET_FROZEN = FLAG_MAPSEC_TEMP_32, ///< by Frost
+  FLAG_EAST_TARGET_FROZEN = FLAG_AREA_TEMP_32, ///< by Frost
   /// ★ Named from the game: "Growth" (MsgAbilityName)
-  FLAG_PLANT_GROWN = FLAG_MAPSEC_TEMP_33, ///< by Growth, up The Wall
+  FLAG_PLANT_GROWN = FLAG_AREA_TEMP_33, ///< by Growth, up The Wall
   /// ★ Named from the game: "Halt" (MsgAbilityName)
-  FLAG_LIFTS_HALTED = FLAG_MAPSEC_TEMP_34, ///< by Halt on LOCALID_LIFT_OPERATOR
+  FLAG_LIFTS_HALTED = FLAG_AREA_TEMP_34, ///< by Halt on LOCALID_LIFT_OPERATOR
   /// The stone pillar by The Wall stands at column 36.
   /// ★ Named from the game: "The fans just call this The Wall."
   /// (MsgColossoFansJustCallWall)
-  FLAG_WALL_PILLAR_MOVED = FLAG_MAPSEC_TEMP_35,
+  FLAG_WALL_PILLAR_MOVED = FLAG_AREA_TEMP_35,
   /// The bytes of flags that keep the Mini-Maze's three pillars' columns.
   /// ★ Named from the game: "This stage is dubbed the Mini-Maze."
   /// (MsgColossoStageDubbedMini)
-  FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN = FLAG_MAPSEC_TEMP_40,
+  FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN = FLAG_AREA_TEMP_40,
   /// ★ Named from the game: "This stage is dubbed the Mini-Maze."
   /// (MsgColossoStageDubbedMini)
-  FLAG_MINI_MAZE_SECOND_PILLAR_COLUMN = FLAG_MAPSEC_TEMP_48,
+  FLAG_MINI_MAZE_SECOND_PILLAR_COLUMN = FLAG_AREA_TEMP_48,
   /// ★ Named from the game: "This stage is dubbed the Mini-Maze."
   /// (MsgColossoStageDubbedMini)
-  FLAG_MINI_MAZE_THIRD_PILLAR_COLUMN = FLAG_MAPSEC_TEMP_50,
+  FLAG_MINI_MAZE_THIRD_PILLAR_COLUMN = FLAG_AREA_TEMP_50,
   /// Someone has reached the arena
   /// (ColosseumSatrageMatch_ApproachFinishAndTakeItem).
   /// ★ Named from the game: "You must get through several stages before you
@@ -1064,7 +1064,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   objectEvent->priorityFlags = 2;
   MapGrid_CopyCellAttributes(52, 28, 1, 3, column, 13);
 
-  // Each Mini-Maze pillar returns to the column its map-section temp flag byte
+  // Each Mini-Maze pillar returns to the column its area temp flag byte
   // keeps.
   x = FieldGameFlag_GetByte(FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN);
   if (x == 0) {
@@ -2017,7 +2017,7 @@ static void ColosseumSatrageMatch_PushAdjacentObstacle(void) {
 #define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10
 /// The chest holding a Smoke Bomb has been opened.
 /// ★ Named from the game: "Smoke Bomb" (MsgItemName)
-#define FLAG_COLOSSEUM_SATRAGE_MATCH_SMOKE_BOMB_CHEST_OPENED FLAG_MAPSEC_TEMP_39
+#define FLAG_COLOSSEUM_SATRAGE_MATCH_SMOKE_BOMB_CHEST_OPENED FLAG_AREA_TEMP_39
 
 const u8 gColosseumSatrageMatch_RollLogScript[] = {2, 2, 3, 3};
 
@@ -2221,9 +2221,9 @@ struct MapEvent gColosseumSatrageMatchEvents[] = {
     { COORD_EVENT_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWallPillar) },
     { COORD_EVENT_WALKING, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWallPillar) },
     { MAP_EVENT_COORD, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT_SCRIPT(EventScript_ReachArena) },
-    { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_MAPSEC_TEMP_38, FIND_ITEM(ITEM_NUT) },
+    { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_AREA_TEMP_38, FIND_ITEM(ITEM_NUT) },
     { BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_WEST, 102, FLAG_COLOSSEUM_SATRAGE_MATCH_SMOKE_BOMB_CHEST_OPENED, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { BG_EVENT(BG_EVENT_CHEST), 104, FLAG_MAPSEC_TEMP_3B, FIND_ITEM(ITEM_NUT) },
+    { BG_EVENT(BG_EVENT_CHEST), 104, FLAG_AREA_TEMP_3B, FIND_ITEM(ITEM_NUT) },
     { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS), LOCALID_PUDDLE_WEST, FLAG_WEST_TARGET_FROZEN, EVENT_SCRIPT(EventScript_FreezeWestTarget) },
     { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS), LOCALID_PUDDLE_EAST, FLAG_EAST_TARGET_FROZEN, EVENT_SCRIPT(EventScript_FreezeEastTarget) },
     { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_FORCE_TARGET, FLAG_OBSTACLE_KNOCKED_DOWN, EVENT_SCRIPT(EventScript_PrepareForce) },

@@ -62,7 +62,7 @@
 /// sends the party to the waitress.
 /// ★ Named from the game: "Two specials! One dinner! One sandwich! One dessert!
 /// Hurry up!" (MsgBilibinTwoSpecialsOneDinnerOne)
-#define FLAG_BILIBIN_CHEF_CALLED_ORDERS FLAG_MAPSEC_TEMP_00
+#define FLAG_BILIBIN_CHEF_CALLED_ORDERS FLAG_AREA_TEMP_00
 
 /// Bilibin's shops, as Shop_Run numbers the shops.
 enum {

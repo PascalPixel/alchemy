@@ -4,9 +4,9 @@
 /// Kite, a Jupiter Djinni, hides in the second. No story flag is read here and
 /// no message is shown: the cave is a side trip from the part of Vale around
 /// Kraden's cottage, a run of Psynergy puzzles whose progress lives in map and
-/// map section flags.
+/// area flags.
 ///
-/// - Vale (SceneId_ValeCaveMouth), the way in, a map section of its own (29).
+/// - Vale (SceneId_ValeCaveMouth), the way in, an area of its own (29).
 ///   VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST and
 ///   VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_EAST lead back to Kraden's part of
 ///   Vale (SceneId_ValeKradensCottage), whose
@@ -15,7 +15,7 @@
 ///   VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE goes on into the cave. Each warp plays
 ///   the warp sound first (EventScript_LeaveRoom). On arrival
 ///   ValeCave_Initialize fades the room in from the backdrop and clears
-///   FLAG_SHOW_LOCATION_NAME: entering a new map section sets that flag, but
+///   FLAG_SHOW_LOCATION_NAME: entering a new area sets that flag, but
 ///   this is still Vale.
 /// - Vale Cave (SceneId_ValeCaveKite), one map in three parts, each with its
 /// own
@@ -50,7 +50,7 @@
 ///   (EventScript_PushLogNorth), each clearing the cells it held. Its warps
 ///   lead back into the second room and between its own parts.
 ///
-/// Vale Cave's two rooms are one map section (30), so their map section flags
+/// Vale Cave's two rooms are one area (30), so their area flags
 /// (FLAG_VALE_CAVE_RIDING_LOG_EAST, FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) last
 /// while the party goes between them. On every arrival ValeCave_ApplyEntryState
 /// rebuilds the cells of each puzzle already solved and, once Kite has run
@@ -192,15 +192,15 @@ enum ValeCaveMetatileBehavior { MB_VALE_CAVE_FIRST_KITE_ROUTE = 45 };
 /// ★ Named from the game: "Kite" (MsgDjinnName)
 #define FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE FLAG_SCENE_TEMP_01
 
-// The cave's map section flags. The second and third rooms are one map section,
+// The cave's area flags. The second and third rooms are one area,
 // so these last while the party goes between them; the first room is another.
 /// The riding log of the second room is at the eastern end of its passage.
 /// ★ Named from what the player sees: the log floating in the holes' part
 /// of the second room, which carries the leader along it (its render)
-#define FLAG_VALE_CAVE_RIDING_LOG_EAST FLAG_MAPSEC_TEMP_01
+#define FLAG_VALE_CAVE_RIDING_LOG_EAST FLAG_AREA_TEMP_01
 /// Kite has run behind the ledge and keeps to its far side.
 /// ★ Named from the game: "Kite" (MsgDjinnName)
-#define FLAG_VALE_CAVE_KITE_BEHIND_LEDGE FLAG_MAPSEC_TEMP_02
+#define FLAG_VALE_CAVE_KITE_BEHIND_LEDGE FLAG_AREA_TEMP_02
 
 static void ValeCave_CenterObjectEventOnCell(s32 localId, s32 column, s32 row);
 static void ValeCave_ApplyEntryState(void);
@@ -1238,8 +1238,8 @@ struct MapEvent gValeCave_KiteEvents[] = {
     { MAP_EVENT_TALK_HALTED, LOCALID_KITE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToKite) },
     { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_VALE_CAVE_HALT_GEM, FIND_ITEM(ITEM_HALT_GEM) },
     { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_VALE_CAVE_NUT, FIND_ITEM(ITEM_NUT) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealHiddenTile) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HideRevealedTile) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealHiddenTile) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HideRevealedTile) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_WEST_CRATES, FLAG_VALE_CAVE_WEST_CRATES_SUNK, EVENT_SCRIPT(EventScript_MoveWestCratesIntoHole) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_EAST_CRATES, FLAG_VALE_CAVE_EAST_CRATES_SUNK, EVENT_SCRIPT(EventScript_MoveEastCratesIntoHole) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_HALT), LOCALID_KITE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HaltKite) },

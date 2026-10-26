@@ -251,7 +251,7 @@ three members standing.
 Inn row 9 is taken to be Tolbi's by three facts:
 
 - The inn rows follow the order of the towns' area names in
-  `gMapSec_NameRules`: Vale 3, Vault 5, and so on up to Lunpa 34, Suhalla 51
+  `gArea_NameRules`: Vale 3, Vault 5, and so on up to Lunpa 34, Suhalla 51
   and Lalivero 55.
 - In that order row 9 falls between Lunpa and Suhalla, where Tolbi (40) is.
 - Tolbi is the one town with an inn door and no inn opened, since its inns

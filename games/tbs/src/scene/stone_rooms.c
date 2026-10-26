@@ -247,7 +247,7 @@ s32 Scene_Initialize(void) {
   warpDest = gSaveBlock.warpDest;
 
   if (warpDest == STONE_ROOMS_FROM_LUNPA) {
-    // XXX (no evidence): why, when gMapSec_NameRules gives "Lunpa" for this
+    // XXX (no evidence): why, when gArea_NameRules gives "Lunpa" for this
     // warp destination.
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   } else if (warpDest == STONE_ROOMS_FROM_VAULT_REVISIT) {

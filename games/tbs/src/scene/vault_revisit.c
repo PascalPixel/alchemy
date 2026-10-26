@@ -8,7 +8,7 @@
 ///
 /// The thieves the party caught have broken out of jail, and most townspeople
 /// say so, or speak of Hammet and Lunpa, in plain message rows. Four speak
-/// through scripts that remember who has spoken in map section flags
+/// through scripts that remember who has spoken in area flags
 /// (FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED to
 /// FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL), so that a Mind Read on one not yet
 /// spoken to plays the conversation first. The old man's praise also sets
@@ -126,25 +126,25 @@ enum VaultRevisitLocalId {
 
 enum { VAULT_PROXIMITY_REACTION_PAUSED = 2 };
 
-/// Map section flags, kept while the party stays in Vault's maps: what the
+/// Area flags, kept while the party stays in Vault's maps: what the
 /// townspeople have already said. A Mind Read before someone has spoken plays
 /// the conversation first.
 enum {
   /// ★ Named from the game: "Hey, it's that warrior guy!"
   /// (MsgVaultWarriorGuy)
-  FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED = FLAG_MAPSEC_TEMP_00,
+  FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED = FLAG_AREA_TEMP_00,
   /// ★ Named from the game: "You're the warriors who captured the thieves"
   /// (MsgVaultWarriorsWhoCaptured)
-  FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY = FLAG_MAPSEC_TEMP_05,
+  FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY = FLAG_AREA_TEMP_05,
   /// ★ Named from the game: "You're all really strong"
   /// (MsgVaultTalkingMayorStrong)
-  FLAG_VAULT_REVISIT_PARTY_PRAISED = FLAG_MAPSEC_TEMP_06,
+  FLAG_VAULT_REVISIT_PARTY_PRAISED = FLAG_AREA_TEMP_06,
   /// ★ Named from the game: "I'm so glad you came back to Vault!"
   /// (MsgVaultWarriorGuy)
-  FLAG_VAULT_REVISIT_BOY_ROUND_THE_WELL_SPOKE = FLAG_MAPSEC_TEMP_07,
+  FLAG_VAULT_REVISIT_BOY_ROUND_THE_WELL_SPOKE = FLAG_AREA_TEMP_07,
   /// ★ Named from the game: "did you guys check out the jail?"
   /// (MsgVaultGuysCheckJail)
-  FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL = FLAG_MAPSEC_TEMP_08
+  FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL = FLAG_AREA_TEMP_08
 };
 
 // Shared effect and proximity routines precede the map's entry points.
@@ -954,8 +954,8 @@ struct MapEvent gVaultRevisit_Events[] = {
     { BG_EVENT(BG_EVENT_SILENT), MB_VAULT_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PeerIntoWell) },
     { BG_EVENT(BG_EVENT_WOODEN_BOX), MB_VAULT_WOODEN_BOX, FLAG_VAULT_BOX_NUT, FIND_ITEM(ITEM_NUT) },
     { USE_ITEM_ON_OBJ_EVENT(ITEM_BONE), LOCALID_VAULT_DOG, FLAG_VAULT_DOG_SHOWN_PASSAGE, EVENT_SCRIPT(EventScript_GiveBoneToDog) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealPassage) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HidePassage) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealPassage) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HidePassage) },
     { MAP_EVENTS_END },
 };
 // clang-format on

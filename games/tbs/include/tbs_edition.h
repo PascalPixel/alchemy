@@ -288,8 +288,8 @@
 #define LUCKY_WHEELS_HINT_BEFORE_LAST_SPIN 0
 #endif
 
-// The first area name message, for the map section name shown on entering a new
-// map section (MapNamePopup_Show).
+// The first area name message, for the area name shown on entering a new
+// area (AreaNameWindow_Show).
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define RENDER_RESOURCE_BASE 0x9D4
 #elif (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||       \

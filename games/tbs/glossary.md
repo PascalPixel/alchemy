@@ -249,11 +249,11 @@ One row of the scene table: a room, a town, a dungeon floor, the world map,
 or a screen such as the title or the main menu, 201 in all, each running an
 overlay's code and drawn on a map ([The front page](README.md#scenes-and-overlays)).
 
-### Map section
+### Area
 
 A group of scenes, 71 in all, sharing their music, their area name and one
 range of [scratch flags](#game-flag)
-([The front page](README.md#the-scene-table-and-map-sections)).
+([The front page](README.md#the-scene-table-and-areas)).
 
 ### Map
 
@@ -354,5 +354,5 @@ an [object](#object) runs each frame ([Scenes](src/scene/README.md#scripts)).
 ### Game flag
 
 One of the 4,096 yes-or-no facts saved with the game, such as a chest being
-open; two ranges are scratch space, cleared as the party enters scenes and map
-sections ([The front page](README.md#game-flags)).
+open; two ranges are scratch space, cleared as the party enters scenes and
+areas ([The front page](README.md#game-flags)).

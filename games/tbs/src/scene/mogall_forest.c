@@ -13,7 +13,7 @@
 /// the third leap at the leader instead, starting a battle with an Ape
 /// (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, slot 0). An ape stays gone
 /// once out, and logs pushed into the river stay there, for as long as the
-/// party is in the forest (map section flags from FLAG_MAPSEC_TEMP_00).
+/// party is in the forest (area flags from FLAG_AREA_TEMP_00).
 ///
 /// - First area (SceneId_MogallForestSign). Arriving the first time, an ape
 ///   peeks out at the leader and hides (FLAG_MOGALL_FOREST_FIRST_APE_SEEN). A
@@ -234,7 +234,7 @@ enum MogallForestLogAnimation {
 /// (or, for two, moved on to a second hiding place) and each rolled log.
 enum {
   /// ★ Named from the game: "Ape" (MsgEnemyName)
-  FLAG_MOGALL_FOREST_FIRST_AREA_NORTH_APE_OUT = FLAG_MAPSEC_TEMP_00,
+  FLAG_MOGALL_FOREST_FIRST_AREA_NORTH_APE_OUT = FLAG_AREA_TEMP_00,
   /// The ape that leaps at the leader instead of pointing the way.
   /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_FIRST_AREA_ATTACKING_APE_OUT,
@@ -261,7 +261,7 @@ enum {
   FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT,
   /// ★ Named from what the player sees: a log pushed over the grass rolls into
   /// the river and lies across it (its render)
-  FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED = FLAG_MAPSEC_TEMP_10,
+  FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED = FLAG_AREA_TEMP_10,
   /// ★ Named from what the player sees: the second area's log rolled into the
   /// river (its render)
   FLAG_MOGALL_FOREST_SECOND_AREA_LOG_ROLLED,
@@ -272,7 +272,7 @@ enum {
   /// into the river (its render)
   FLAG_MOGALL_FOREST_THIRD_AREA_SOUTH_LOG_ROLLED,
   /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
-  FLAG_MOGALL_FOREST_PSYNERGY_STONE = FLAG_MAPSEC_TEMP_50
+  FLAG_MOGALL_FOREST_PSYNERGY_STONE = FLAG_AREA_TEMP_50
 };
 
 /// Map flag, kept while the party stays in the area.

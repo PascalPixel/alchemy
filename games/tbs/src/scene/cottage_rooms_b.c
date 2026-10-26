@@ -76,7 +76,7 @@
 ///   be trusted.
 /// - Back from Kalay (FLAG_KALAY_REACHED): Dora lies ill. The innkeeper
 ///   welcomes Isaac home and a burly grey-haired man at the inn
-///   (LOCALID_MAN_ISAAC_HAS_GROWN) sees how he has grown (Vale's map section
+///   (LOCALID_MAN_ISAAC_HAS_GROWN) sees how he has grown (Vale's area
 ///   flags FLAG_VALE_INNKEEPER_WELCOMED_ISAAC and
 ///   FLAG_VALE_MAN_SAW_ISAAC_GROWN); Mind Read on either tells of Dora's
 ///   illness (FLAG_READ_THOUGHTS_ABOUT_DORA). Visiting her
@@ -90,7 +90,7 @@
 ///   favourite scholar, and of the Venus Ruins under Babi Lighthouse with a
 ///   long tunnel beneath them. They talk differently once the Colosso finals
 ///   are over (FLAG_COLOSSO_OVER), when one asks whether the party knows
-///   Kraden. The setup does not show the map section's name there.
+///   Kraden. The setup does not show the area's name there.
 ///
 /// The warps COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST to
 /// COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_EAST are taken by the metatile
@@ -276,8 +276,8 @@ enum CottageRoomsBBabiScholarLocalId {
   LOCALID_OLD_MAN_ON_BABIS_RESEARCH
 };
 
-/// Vale's map section flags this map keeps while the party is in Vale.
-enum CottageRoomsBMapSecFlag {
+/// Vale's area flags this map keeps while the party is in Vale.
+enum CottageRoomsBAreaFlag {
   /// Back from Kalay, the innkeeper welcomed Isaac home.
   /// ★ Named from the game: "You came back, huh?" (MsgValeCameBack2)
   FLAG_VALE_INNKEEPER_WELCOMED_ISAAC = 0x300,

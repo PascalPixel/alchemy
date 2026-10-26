@@ -32,7 +32,7 @@ struct SaveFileSummary {
   u8 name[12];       ///< the leader's
   u8 level;          ///< the leader's; 0 for an empty file
   u8 classId;        ///< the leader's
-  u16 area;          ///< area name number (MapSec_GetNameIndex)
+  u16 area;          ///< area name number (Area_GetNameIndex)
   u32 playTime;      ///< frames
   u32 coins;
   u8 djinn[4]; ///< the party's Djinn of each element

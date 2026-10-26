@@ -199,13 +199,13 @@ enum {
   LOCALID_CRATE = 26
 };
 
-/// Map section flags of Vault's map section (0x300 to 0x3ff, kept while the
+/// Area flags of Vault's area (0x300 to 0x3ff, kept while the
 /// party stays in Vault and its buildings).
 enum {
   /// Set while the two suspects run from the party, until the party steps
   /// aside to talk it over.
   /// ★ Named from the game: "Don't let him near me!" (MsgVaultWant)
-  FLAG_SUSPECTS_FLEEING = FLAG_MAPSEC_TEMP_00
+  FLAG_SUSPECTS_FLEEING = FLAG_AREA_TEMP_00
 };
 
 // The map flag the inn keeps as FLAG_VAULT_LEADER_BESIDE_BONE

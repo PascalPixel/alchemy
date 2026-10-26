@@ -15,7 +15,7 @@
 ///   him, trains his Psynergy nearby, and Jenna comes by, and the two speak of
 ///   that day before going to fetch Isaac to go to Kraden's.
 ///   VALE_TO_ROOF_MENDED brings the party back in at VALE_FROM_ROOF_MENDED,
-///   where EventScript_RoofMended plays once (map section flag
+///   where EventScript_RoofMended plays once (area flag
 ///   FLAG_VALE_ROOF_MENDED_EVENT_PLAYED): Dora praises the roof, remembers
 ///   Kyle, and sends the three off on their climb of Mt. Aleph with Kraden, the
 ///   scholar who teaches them Alchemy (FLAG_VALE_ROOF_JUST_MENDED); for the
@@ -36,7 +36,7 @@
 ///   the door of Isaac's house to him ("My Isaac would keep his promise... Go
 ///   away."), and the villagers speak of the tremors and of Kraden, who has not
 ///   come back.
-/// - Back from Kalay (FLAG_KALAY_REACHED): Garet meets his sister (map section
+/// - Back from Kalay (FLAG_KALAY_REACHED): Garet meets his sister (area
 ///   flag FLAG_VALE_GARET_MET_SISTER) and asks one of his family to protect it
 ///   while he is gone (FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY), a young man
 ///   asks whether Jenna is back (FLAG_VALE_ASKED_IF_JENNA_IS_BACK), another
@@ -62,7 +62,7 @@
 /// VALE_TO_COTTAGE_ROOMS_B into Isaac's house (SceneId_CottageRoomsB) and
 /// VALE_TO_SANCTUM into SceneId_Sanctum. Two events no table reaches remain:
 /// EventScript_UnusedRoofMended, a copy of the roof's end, and
-/// EventScript_UnusedWaterBurstsByTheRiver, which sets map section flag
+/// EventScript_UnusedWaterBurstsByTheRiver, which sets area flag
 /// FLAG_VALE_UNUSED_WATER_BURST_SEEN. FLAG_VALE_MT_ALEPH_GUARD_PAUSED pauses
 /// the man who watches Isaac while a menu is open. The TBS_PATCH_4 editions
 /// also set Dora's sprite priority before Kalay.
@@ -392,30 +392,30 @@ enum ValeAnimation {
 /// (MsgValeMtAlephIsASacredPeak)
 #define FLAG_VALE_MT_ALEPH_GUARD_PAUSED FLAG_SCENE_TEMP_41
 /// Back from Kalay, Garet has met his sister.
-#define FLAG_VALE_GARET_MET_SISTER FLAG_MAPSEC_TEMP_03
+#define FLAG_VALE_GARET_MET_SISTER FLAG_AREA_TEMP_03
 /// Back from Kalay, Garet has asked his brother to protect the family while he
 /// is gone.
-#define FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY FLAG_MAPSEC_TEMP_04
+#define FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY FLAG_AREA_TEMP_04
 /// Unused: the water has burst up by the river and the strongman has remembered
 /// Felix (EventScript_UnusedWaterBurstsByTheRiver, which nothing reaches).
 /// ★ Named from the game: "I still remember when" (MsgValeIUsedToPlayHere)
-#define FLAG_VALE_UNUSED_WATER_BURST_SEEN FLAG_MAPSEC_TEMP_05
+#define FLAG_VALE_UNUSED_WATER_BURST_SEEN FLAG_AREA_TEMP_05
 /// Back from Kalay, the burly man has asked about the lack of travellers since
 /// the eruption.
-#define FLAG_VALE_ASKED_ABOUT_TRAVELERS FLAG_MAPSEC_TEMP_07
+#define FLAG_VALE_ASKED_ABOUT_TRAVELERS FLAG_AREA_TEMP_07
 /// EventScript_RoofMended has played, in which Dora praises the roof and sends
 /// the three off to Mt. Aleph.
-#define FLAG_VALE_ROOF_MENDED_EVENT_PLAYED FLAG_MAPSEC_TEMP_08
+#define FLAG_VALE_ROOF_MENDED_EVENT_PLAYED FLAG_AREA_TEMP_08
 /// The stone pillar below the cliff stands in its west column.
 /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
-#define FLAG_VALE_PILLAR_IN_WEST_COLUMN FLAG_MAPSEC_TEMP_14
+#define FLAG_VALE_PILLAR_IN_WEST_COLUMN FLAG_AREA_TEMP_14
 /// The stone pillar below the cliff stands in its middle column, where it
 /// starts.
 /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
-#define FLAG_VALE_PILLAR_IN_MIDDLE_COLUMN FLAG_MAPSEC_TEMP_15
+#define FLAG_VALE_PILLAR_IN_MIDDLE_COLUMN FLAG_AREA_TEMP_15
 /// The stone pillar below the cliff stands in its east column.
 /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
-#define FLAG_VALE_PILLAR_IN_EAST_COLUMN FLAG_MAPSEC_TEMP_16
+#define FLAG_VALE_PILLAR_IN_EAST_COLUMN FLAG_AREA_TEMP_16
 
 const struct MapWarpDest *Vale_GetWarpDests(void) { return gVale_WarpDests; }
 
@@ -578,7 +578,7 @@ static void EventScript_ReactToAnotherTremor(void) {
 
 /// A burly grey-haired man asks about the lack of travellers since the
 /// eruption. He (LOCALID_MAN_MISSING_TRAVELERS) is in Vale back from Kalay, and
-/// the talk sets map section flag FLAG_VALE_ASKED_ABOUT_TRAVELERS.
+/// the talk sets area flag FLAG_VALE_ASKED_ABOUT_TRAVELERS.
 static void EventScript_AskAboutTheLackOfTravelers(void) {
   FieldScript_Start();
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MAN_MISSING_TRAVELERS, 2);
@@ -1720,7 +1720,7 @@ s32 Vale_Initialize(void) {
   return 0;
 }
 
-/// Back from Kalay, Garet meets his sister in Vale; sets map section flag
+/// Back from Kalay, Garet meets his sister in Vale; sets area flag
 /// FLAG_VALE_GARET_MET_SISTER. "Ah! It's been a while... You're back?"
 /// ("Sis...").
 static void EventScript_GaretMeetsHisSister(void) {
@@ -1815,7 +1815,7 @@ static void EventScript_GaretMeetsHisSister(void) {
 
 /// Back from Kalay, Garet asks one of his family in Vale
 /// (LOCALID_GARETS_BROTHER_AFTER_KALAY) to protect it while he is gone; sets
-/// map section flag FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY. "WHATEVER YOU DO,
+/// area flag FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY. "WHATEVER YOU DO,
 /// you must protect the family while I'm gone."
 static void EventScript_GaretAsksToProtectFamily(void) {
   struct ObjectEvent *record;
@@ -1911,7 +1911,7 @@ static void EventScript_GaretAsksToProtectFamily(void) {
 ///
 /// No table names it. He would have started, sniffled through `I still remember
 /// when Felix and I used to play here...*Sniff*`, turned to the leader to say
-/// that Felix must be protecting Jenna, and set map section flag
+/// that Felix must be protecting Jenna, and set area flag
 /// FLAG_VALE_UNUSED_WATER_BURST_SEEN. His talk and Mind Read rows show the same
 /// two lines.
 UNUSED static void EventScript_UnusedWaterBurstsByTheRiver(void) {

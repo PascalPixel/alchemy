@@ -1,6 +1,6 @@
 /// @file
 /// Kalay, the merchants' town Lord Hammet founded, the front of his palace, and
-/// the tunnel beneath them: four map sections in six maps.
+/// the tunnel beneath them: four areas in six maps.
 ///
 /// - Kalay (SceneId_Kalay), the town. Eight doors (coord events 1 to 8) open
 /// into
@@ -58,7 +58,7 @@
 ///   is set. The treasure room (KalayTunnelTreasureRoom) holds the puzzle: two
 ///   statues, pushed by walking into them or moved with Move, each open a
 ///   passage step by step once far enough west (FLAG_TUNNEL_FIRST_PASSAGE_OPEN
-///   and FLAG_TUNNEL_SECOND_PASSAGE_OPEN, map-section temp flags, so the
+///   and FLAG_TUNNEL_SECOND_PASSAGE_OPEN, area temp flags, so the
 ///   statues are back once the party leaves the tunnel's maps); while a passage
 ///   is closed, particles stream from its statue as it nears its place. The
 ///   first passage raises a puddle (LOCALID_PUDDLE) that Frost freezes and
@@ -79,7 +79,7 @@
 ///
 /// Every map sets FLAG_KALAY_REACHED on entry. Kalay and Hammet Palace's front
 /// also catch the palace's story up with Lunpa's: hearing in Lunpa that Hammet
-/// is held there (FLAG_LUNPA_HEARD_OF_PRISONER) sets map-section temp flag
+/// is held there (FLAG_LUNPA_HEARD_OF_PRISONER) sets area temp flag
 /// FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA, which changes what Layana says, and
 /// once Hammet is free (FLAG_DODONPA_LOCKED_UP, set as Donpa judges Dodonpa in
 /// Lunpa) Ivan's report and Layana's scolding count as seen and
@@ -298,7 +298,7 @@ enum KalayTunnelLocalId {
 enum { PUDDLE_ANIMATION_FROZEN = 5 };
 
 /// The Kalay Tunnel's own flags: the temporary ones last one entry, the
-/// passages (map-section temp flags) while the party stays in the tunnel's
+/// passages (area temp flags) while the party stays in the tunnel's
 /// maps.
 enum KalayTunnelFlag {
   /// The fade overlay follows the leader.
@@ -312,9 +312,9 @@ enum KalayTunnelFlag {
   /// ★ Named from its area name: Kalay Tunnel
   FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED = FLAG_SCENE_TEMP_03,
   /// ★ Named from its area name: Kalay Tunnel
-  FLAG_TUNNEL_FIRST_PASSAGE_OPEN = FLAG_MAPSEC_TEMP_02,
+  FLAG_TUNNEL_FIRST_PASSAGE_OPEN = FLAG_AREA_TEMP_02,
   /// ★ Named from its area name: Kalay Tunnel
-  FLAG_TUNNEL_SECOND_PASSAGE_OPEN = FLAG_MAPSEC_TEMP_03
+  FLAG_TUNNEL_SECOND_PASSAGE_OPEN = FLAG_AREA_TEMP_03
 };
 
 static void Kalay_PrepareTown(void);
@@ -383,7 +383,7 @@ static s32 Kalay_UpdateTouristFidget(struct Object *interpreter) {
 /// free; it changes what Layana says.
 /// ★ Named from the game: "you sneaked into Lunpa? That's far too dangerous!"
 /// (MsgKalayIsaacSneakedIntoLunpaThats)
-#define FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA FLAG_MAPSEC_TEMP_21
+#define FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA FLAG_AREA_TEMP_21
 
 const struct MapWarpDest *Kalay_GetWarpDests(void) {
   s16 sceneId = gSaveBlock.sceneId;
@@ -1272,7 +1272,7 @@ s32 Kalay_Initialize(void) {
 }
 
 /// Sets up Kalay. Having heard in Lunpa that Hammet is held there sets
-/// map-section temp flag FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA; once Hammet is
+/// area temp flag FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA; once Hammet is
 /// free (FLAG_DODONPA_LOCKED_UP) the palace's FLAG_IVAN_REPORTED_TO_LAYANA,
 /// FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS and FLAG_KALAY_TUNNEL_OPEN are
 /// set too, so its earlier events count as seen and the passage is open. Coming

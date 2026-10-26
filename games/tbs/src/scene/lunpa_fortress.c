@@ -53,8 +53,8 @@
 /// arrival.
 ///
 /// The Cell Key opens the cell doors of all four maps, facing each door with it
-/// in the party, and each opened door is remembered in a map-section temp flag
-/// from FLAG_MAPSEC_TEMP_50 (TOADONPA_DOOR_FLAG and the others). In
+/// in the party, and each opened door is remembered in an area temp flag
+/// from FLAG_AREA_TEMP_50 (TOADONPA_DOOR_FLAG and the others). In
 /// LunpaFortressCave, Whirlwind blows away the ivy that hides two switches and
 /// a passage; the switches show in the wall only while Reveal lasts, and
 /// searching one opens its passage.
@@ -76,7 +76,7 @@
 /// Map-section temp flags: FLAG_LUNPA_FORTRESS_DODONPA_JUDGED once Donpa has
 /// judged Dodonpa, FLAG_LUNPA_FORTRESS_ATTENDANT_TOLD_OF_DONPA once his
 /// attendant has told of him, FLAG_LUNPA_FORTRESS_REWARD_SHOWN once she has
-/// shown his reward, and FLAG_MAPSEC_TEMP_50 to FLAG_MAPSEC_TEMP_5C for the
+/// shown his reward, and FLAG_AREA_TEMP_50 to FLAG_AREA_TEMP_5C for the
 /// opened cell doors.
 ///
 /// Unused: four item pickups that set out an Arctic Blade, a Masamune, a Silver
@@ -346,10 +346,10 @@ enum { CLOAK_NEAR_GUARD = 0x2000 | ABILITY_CLOAK };
 /// The first of the flags that remember which cell doors the Cell Key opened,
 /// per map: one for each door trigger from MB_LUNPA_FORTRESS_FIRST_DOOR.
 enum {
-  TOADONPA_DOOR_FLAG = FLAG_MAPSEC_TEMP_50,
-  CAVE_DOOR_FLAG = FLAG_MAPSEC_TEMP_55,
-  UPPER_FLOOR_DOOR_FLAG = FLAG_MAPSEC_TEMP_58,
-  GROUND_FLOOR_DOOR_FLAG = FLAG_MAPSEC_TEMP_5A
+  TOADONPA_DOOR_FLAG = FLAG_AREA_TEMP_50,
+  CAVE_DOOR_FLAG = FLAG_AREA_TEMP_55,
+  UPPER_FLOOR_DOOR_FLAG = FLAG_AREA_TEMP_58,
+  GROUND_FLOOR_DOOR_FLAG = FLAG_AREA_TEMP_5A
 };
 
 /// The map grid layers the dark passages show
@@ -388,16 +388,16 @@ static void LunpaFortress_RestoreToadonpaDoors(void);
 /// Donpa has judged Dodonpa, so Hammet's cell no longer starts the trap.
 /// ★ Named from the game: "Huh? Donpa, didn't you just say you're going to lock
 /// up Dodonpa?" (MsgLunpaDad)
-#define FLAG_LUNPA_FORTRESS_DODONPA_JUDGED FLAG_MAPSEC_TEMP_01
+#define FLAG_LUNPA_FORTRESS_DODONPA_JUDGED FLAG_AREA_TEMP_01
 /// Donpa's attendant has told the party of Donpa and his spoiled son.
 /// ★ Named from the game: "Donpa knows that he coddled Dodonpa too much as a
 /// child." (MsgLunpaDonpaKnowsCoddled)
-#define FLAG_LUNPA_FORTRESS_ATTENDANT_TOLD_OF_DONPA FLAG_MAPSEC_TEMP_13
+#define FLAG_LUNPA_FORTRESS_ATTENDANT_TOLD_OF_DONPA FLAG_AREA_TEMP_13
 /// Donpa's attendant has shown the party his reward, Tonic, and stands beside
 /// it.
 /// ★ Named from the game: "I have a little something for you, for your teaching
 /// Dodonpa his lesson." (MsgLunpaThankHelpDodonpa)
-#define FLAG_LUNPA_FORTRESS_REWARD_SHOWN FLAG_MAPSEC_TEMP_14
+#define FLAG_LUNPA_FORTRESS_REWARD_SHOWN FLAG_AREA_TEMP_14
 /// A guard has spotted the party.
 /// ★ Named from the game: "How did you get in here?" (MsgLunpaWho2)
 #define FLAG_LUNPA_FORTRESS_PARTY_SPOTTED FLAG_SCENE_TEMP_14
@@ -4216,8 +4216,8 @@ struct MapEvent gLunpaFortressCaveEvents[] = {
     { COORD_EVENT_WALKING, 70, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushCrates) },
     { BG_EVENT(BG_EVENT_SILENT), 51, FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNDER_IVY, EVENT_SCRIPT(EventScript_FlipSecondSwitch) },
     { BG_EVENT(BG_EVENT_SILENT), 52, FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNDER_IVY, EVENT_SCRIPT(EventScript_FlipFirstSwitch) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealSwitches) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HideSwitches) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealSwitches) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HideSwitches) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_CAVE_FIRST_SWITCH_IVY, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_BlowAwayFirstSwitchIvy) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_CAVE_PASSAGE_IVY, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_BlowAwayPassageIvy) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_CAVE_SECOND_SWITCH_IVY, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_BlowAwaySecondSwitchIvy) },

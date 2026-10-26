@@ -96,8 +96,8 @@
 /// (MsgSolSanctumRoomLunaOne)
 #define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED FLAG_SCENE_TEMP_02
 
-// Map section flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
-// party enters another map section, and other map sections use the numbers for
+// Area flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// party enters another area, and other areas use the numbers for
 // their own.
 /// Set once Isaac and Garet's arrival after the Wise One's rescue has played.
 /// ★ Named from the game: "Did that floating eye thing save us?"

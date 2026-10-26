@@ -36,10 +36,10 @@
 /// storm chasing the leader (SuhallaDesert_ChaseLeader), and it catches a
 /// leader on the move.
 ///
-/// A doused storm's flag is a map section flag, five from
+/// A doused storm's flag is an area flag, five from
 /// FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED and five from
 /// FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED, so the storm stays gone
-/// until the party leaves the desert's map section; the chasing storm, once
+/// until the party leaves the desert's area; the chasing storm, once
 /// doused, is gone for good (FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_DOUSED). Its
 /// map flags:
 ///
@@ -101,16 +101,16 @@
 enum {
   /// The first map's storms, five from this one.
   /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
-  FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED = FLAG_MAPSEC_TEMP_01,
+  FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED = FLAG_AREA_TEMP_01,
   /// The second map's storms, five from this one.
   /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
-  FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED = FLAG_MAPSEC_TEMP_11,
+  FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED = FLAG_AREA_TEMP_11,
   /// A storm has risen: the sand haze stays faded in.
   /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
-  FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN = FLAG_MAPSEC_TEMP_40,
-  /// The Psynergy Stone has been found, a map section flag.
+  FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN = FLAG_AREA_TEMP_40,
+  /// The Psynergy Stone has been found, an area flag.
   /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
-  FLAG_SUHALLA_DESERT_PSYNERGY_STONE = FLAG_MAPSEC_TEMP_51
+  FLAG_SUHALLA_DESERT_PSYNERGY_STONE = FLAG_AREA_TEMP_51
 };
 
 /// The object events, numbering the object event template rows of the first two
@@ -1173,8 +1173,8 @@ struct MapEvent gSuhallaDesertEventsOther[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_FIRST_SANDSTORM + 2, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM), EVENT_SCRIPT(EventScript_DouseStorm) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_FIRST_SANDSTORM + 3, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM), EVENT_SCRIPT(EventScript_DouseStorm) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_FIRST_SANDSTORM + 4, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM), EVENT_SCRIPT(EventScript_DouseStorm) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealStarts) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealEnds) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealStarts) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealEnds) },
     { MAP_EVENT_RAISED, RAISED_SANDSTORM_CARRIES_PARTY_AWAY, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StormCarriesPartyAway) },
     { MAP_EVENT_RAISED, RAISED_CHASING_SANDSTORM_CATCHES, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CaughtByFifthStorm) },
     { MAP_EVENTS_END },

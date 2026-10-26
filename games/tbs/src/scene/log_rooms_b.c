@@ -26,7 +26,7 @@
 ///   shops.
 /// - LOG_ROOMS_B_FROM_VAULT_REVISIT_NORTHWEST, the mayor's house,
 ///   where the mayor welcomes Isaac back and warns that the thieves have
-///   escaped (FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, a map section flag, and
+///   escaped (FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, an area flag, and
 ///   FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES); a Mind Read on him before that
 ///   plays the welcome first.
 ///
@@ -146,7 +146,7 @@ enum {
 /// Set once the mayor has told Isaac the thieves escaped from jail.
 /// ★ Named from the game: "You've come back to Vault!"
 /// (MsgVaultIsaacYouveComeBackVault)
-enum { FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK = FLAG_MAPSEC_TEMP_00 };
+enum { FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK = FLAG_AREA_TEMP_00 };
 
 // Shared map routines stay in their linked order.
 #include "common/vault_spotflag.h"

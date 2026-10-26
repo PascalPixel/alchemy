@@ -186,7 +186,7 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
 /// MB_MERCURY_LIGHTHOUSE_POOL_HEART, the pool's heart: the column of light
 /// appears over the leader if it is not there, and grows a stage with each pair
 /// of sparks, half a second apart, up to three lights. The column's cell is
-/// where a sinking leader comes back to; FLAG_NO_ENCOUNTERS_IN_MAPSEC is set
+/// where a sinking leader comes back to; FLAG_NO_ENCOUNTERS_IN_AREA is set
 /// while the leader has lights.
 void MercuryLighthouse_ChargeLights(void) {
   struct MercuryLighthouseLights *state;
@@ -239,7 +239,7 @@ void MercuryLighthouse_ChargeLights(void) {
   state->levels = 3;
   state->targetX = (pillar->x.fixed & -0x100000) + 0x80000;
   state->targetZ = (pillar->z.fixed & -0x100000) + 0x80000;
-  GameFlag_Set(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
+  GameFlag_Set(FLAG_NO_ENCOUNTERS_IN_AREA);
   FieldScript_End();
 }
 
@@ -258,7 +258,7 @@ void MercuryLighthouse_LoseLights(void) {
   }
 
   state->levels = 0;
-  GameFlag_Clear(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
+  GameFlag_Clear(FLAG_NO_ENCOUNTERS_IN_AREA);
 
   target = state->pillar;
   if (target != 0) {
@@ -353,7 +353,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
     if (n == 0) {
       ObjectEvent_Release(state->pillar);
       state->pillar = NULL;
-      GameFlag_Clear(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
+      GameFlag_Clear(FLAG_NO_ENCOUNTERS_IN_AREA);
     } else if (state->pillar != NULL) {
       Object_SelectAnimation(state->pillar, 6 - n);
     }
@@ -416,7 +416,7 @@ void MercuryLighthouse_RippleAroundLeader(void) {
   }
 }
 
-/// Retreat (PSYNERGY_IN_AREA(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST)):
+/// Retreat (PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST)):
 /// remove the column of light.
 static void MercuryLighthouse_RemoveColumnOnRetreat(void) {
   struct MercuryLighthouseLights **published =

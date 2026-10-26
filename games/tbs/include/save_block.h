@@ -92,13 +92,13 @@ struct SaveBlock {
   s16 restartWarpDest; ///< the restart point's warp destination
   s16 defaultScene;    ///< the scene being run, kept as it starts
   s16 defaultWarpDest; ///< the warp destination it was entered by
-  s16 mapSec; ///< the current scene's map section; a new one resets its flags
-  s16 nextScene;      ///< where the script sends the party next; -1 for none
-  s16 nextWarpDest;   ///< where the script sends the party next; -1 for none
-  s16 defeatScene;    ///< where a defeat returns to; -1 for none
-  s16 defeatWarpDest; ///< where a defeat returns to; -1 for none
-  s16 special;        ///< the battle background chosen for the scene or
-                      ///< battle environment
+  s16 area;            ///< the current scene's area; a new one resets its flags
+  s16 nextScene;       ///< where the script sends the party next; -1 for none
+  s16 nextWarpDest;    ///< where the script sends the party next; -1 for none
+  s16 defeatScene;     ///< where a defeat returns to; -1 for none
+  s16 defeatWarpDest;  ///< where a defeat returns to; -1 for none
+  s16 special;         ///< the battle background chosen for the scene or
+                       ///< battle environment
   u8 unusedAfterSpecial[2]; ///< no code names it
   /// The scene header's map (mapIndex); the world map's is 1, which the
   /// code compares as (s32)&SceneId_MainMenu.
@@ -158,18 +158,18 @@ struct SaveBlock {
   s16 hazardMode;  ///< an enum HazardMode
   /// bits: 8 the amount is a percentage of maximum HP | 7..0 the amount
   s16 hazardDamage;
-  s16 hazardSteps; ///< reset on entering a new map section
+  s16 hazardSteps; ///< reset on entering a new area
   ///@}
   /// The Djinni battle pending (DJINNI_BATTLE_EVENT_FIRST plus its number,
   /// flags in bits 15 to 11), resolved on returning to the field.
   s16 pendingDjinnEvent;
   s16 runResult;      ///< the last battle's result; -1 for a defeat
-  s32 encounterSteps; ///< the encounter count, reset with a new map section
+  s32 encounterSteps; ///< the encounter count, reset with a new area
   u16 pendingItem;    ///< given on returning to the field if the party has room
   s16 sceneType;      ///< the current scene's variant from its header
-  s16 retreatScene;   ///< where Retreat goes; the map section's first warp
+  s16 retreatScene;   ///< where Retreat goes; the area's first warp
                       ///< destination
-  s16 retreatWarpDest;     ///< where Retreat goes; the map section's first warp
+  s16 retreatWarpDest;     ///< where Retreat goes; the area's first warp
                            ///< destination
   s32 avoidDistance;       ///< distance left of Avoid, 16.16 pixels; 0 when off
   s8 avoidByItem;          ///< Avoid came from an item (the Sacred Feather)
@@ -198,7 +198,7 @@ STATIC_ASSERT(offsetof(struct SaveBlock, shopGifts) == 0x11c);
 STATIC_ASSERT(offsetof(struct SaveBlock, units) == 0x2c0);
 STATIC_ASSERT(sizeof(struct SaveBlock) == 0xd20);
 STATIC_ASSERT(offsetof(struct SaveBlock, wonPrizes) == 0x12c);
-STATIC_ASSERT(offsetof(struct SaveBlock, mapSec) == 0x1cc);
+STATIC_ASSERT(offsetof(struct SaveBlock, area) == 0x1cc);
 STATIC_ASSERT(offsetof(struct SaveBlock, dashKeys) == 0x21c);
 STATIC_ASSERT(offsetof(struct SaveBlock, avoidDistance) == 0x244);
 STATIC_ASSERT(offsetof(struct SaveBlock, warpDest) == 0x1c2);

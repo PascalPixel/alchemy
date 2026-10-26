@@ -88,8 +88,8 @@
 #include "heap.h"
 #include "fixed_math.h"
 
-// Map section flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
-// party enters another map section, and other map sections use the numbers for
+// Area flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// party enters another area, and other areas use the numbers for
 // their own.
 
 /// "There's a huge sea monster on the ship!": the deck shakes until the

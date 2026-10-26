@@ -15,7 +15,7 @@
 ///   Dora and Kyle send Isaac on to the plaza and go to help; until the flag is
 ///   set the lightning waits for the event.
 /// - FLAG_VALE_STORM_FIRST_ROCK_FELL to FLAG_VALE_STORM_FOURTH_ROCK_FELL, with
-///   the map section flags FLAG_VALE_STORM_FIRST_ROCK_PASSED to
+///   the area flags FLAG_VALE_STORM_FIRST_ROCK_PASSED to
 ///   FLAG_VALE_STORM_FOURTH_ROCK_PASSED: EventScript_FirstRockFalls to
 ///   EventScript_FourthRockFalls drop a rock across a path at four spots. The
 ///   _FELL flag puts back the rock and the metatile behaviors of the cells it
@@ -247,8 +247,8 @@ enum StormNightAnimation {
   ANIM_FELIX_CLING_STILL = 8 ///< ANIM_FELIX_CLING's first frame held
 };
 
-/// Vale's map section flags this map keeps while the party is in Vale.
-enum StormNightMapSecFlag {
+/// Vale's area flags this map keeps while the party is in Vale.
+enum StormNightAreaFlag {
   /// The strongman at the river tried to go for help and could not.
   /// ★ Named from the game: "I'll go!" (MsgValeIllGo)
   FLAG_VALE_STORM_STRONGMAN_TRIED_TO_GO = 0x305,
@@ -263,16 +263,16 @@ enum StormNightMapSecFlag {
   /// does not play again.
   /// ★ Named from the game: "We can't get around this rock!"
   /// (MsgValeCantGetAroundThisRock)
-  FLAG_VALE_STORM_FIRST_ROCK_PASSED = FLAG_MAPSEC_TEMP_10,
+  FLAG_VALE_STORM_FIRST_ROCK_PASSED = FLAG_AREA_TEMP_10,
   /// ★ Named from the game: "We can't get around this rock!"
   /// (MsgValeCantGetAroundThisRock)
-  FLAG_VALE_STORM_SECOND_ROCK_PASSED = FLAG_MAPSEC_TEMP_11,
+  FLAG_VALE_STORM_SECOND_ROCK_PASSED = FLAG_AREA_TEMP_11,
   /// ★ Named from the game: "We can't get around this rock!"
   /// (MsgValeCantGetAroundThisRock)
-  FLAG_VALE_STORM_THIRD_ROCK_PASSED = FLAG_MAPSEC_TEMP_12,
+  FLAG_VALE_STORM_THIRD_ROCK_PASSED = FLAG_AREA_TEMP_12,
   /// ★ Named from the game: "We can't get around this rock!"
   /// (MsgValeCantGetAroundThisRock)
-  FLAG_VALE_STORM_FOURTH_ROCK_PASSED = FLAG_MAPSEC_TEMP_13
+  FLAG_VALE_STORM_FOURTH_ROCK_PASSED = FLAG_AREA_TEMP_13
 };
 
 // Map flags, cleared on every ordinary arrival:

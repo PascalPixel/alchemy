@@ -131,7 +131,7 @@ s32 SceneManager_Run(s32 warpDest) {
       }
       if (GameFlag_GetFar(FLAG_SHOW_LOCATION_NAME) != 0) {
         GameFlag_ClearFar(FLAG_SHOW_LOCATION_NAME);
-        MapNamePopup_ShowFar(gSaveBlock.sceneId);
+        AreaNameWindow_ShowFar(gSaveBlock.sceneId);
       }
       if (gSaveBlock.pendingDjinnEvent != 0) {
         Djinn_ResolvePendingEvent(gSaveBlock.pendingDjinnEvent, 1);
@@ -244,7 +244,7 @@ s32 SceneManager_Run(s32 warpDest) {
           // has an event.
           s32 object;
 
-          MapNamePopup_HideFar();
+          AreaNameWindow_HideFar();
           object = Field_FindNearbyTalkTarget(gSaveBlock.leaderLocalId);
           mode = 0;
           if (object != -1) {
@@ -267,7 +267,7 @@ s32 SceneManager_Run(s32 warpDest) {
           work->examine = 0;
         } else if (work->menu != 0) {
           // The main menu (B + Select in debug mode opens the debug menu).
-          MapNamePopup_HideFar();
+          AreaNameWindow_HideFar();
           Leader_StopMoving();
           Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
           WorldMap_StartScript();
@@ -297,7 +297,7 @@ s32 SceneManager_Run(s32 warpDest) {
           WorldMap_EndScript();
           work->searchCell = 0;
         } else if (work->psynergy != 0) {
-          MapNamePopup_HideFar();
+          AreaNameWindow_HideFar();
           WorldMap_StartScript();
           Field_UsePsynergy(work->psynergy);
           WorldMap_EndScript();
@@ -328,7 +328,7 @@ s32 SceneManager_Run(s32 warpDest) {
             work->raisedEvent = FIELD_RAISED_EVENT_MENUS;
           } else {
             Field_EndBusyAndReveal();
-            MapNamePopup_HideFar();
+            AreaNameWindow_HideFar();
             gSaveBlock.returnMusic = Sound_GetCurrentBgmFar();
             if (GameFlag_GetFar(FLAG_IN_BATTLE_ARENA) == 0) {
               // With fewer than 136 of the 512 sprite VRAM blocks (64 bytes

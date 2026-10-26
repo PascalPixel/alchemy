@@ -1,7 +1,7 @@
 /// @file
 /// Vault Cave's overlay, which holds three rooms, each a map of its own and all
 /// named Vault Cave (SceneId_VaultCavePassage, SceneId_VaultCaveVambrace and
-/// SceneId_VaultCaveMouth, map section 31). The cave opens off Vault as the
+/// SceneId_VaultCaveMouth, area 31). The cave opens off Vault as the
 /// party finds it on its return (SceneId_VaultRevisit), whose warps
 /// VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE and VAULT_REVISIT_TO_VAULT_CAVE_MOUTH
 /// lead in, through the hidden passage the dog shows and through a cave mouth
@@ -48,7 +48,7 @@
 ///   FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN, read by index, and the room's
 ///   entry code freezes again every puddle whose flag is set. Whirlwind blows
 ///   away ivy (LOCALID_IVY) for as long as the party stays in the cave
-///   (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY, a map section flag). A chest holds the
+///   (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY, an area flag). A chest holds the
 ///   Vambrace.
 /// - Vault Cave (SceneId_VaultCaveMouth). In its northern room four water drops
 ///   (LOCALID_FIRST_TIMED_WATER_DROP and the three after it) fall on a fixed
@@ -127,7 +127,7 @@ enum VaultCaveMetatileBehavior {
   MB_VAULT_CAVE_CHEST = 100
 };
 
-/// Map flags, and one map section flag. The six puddles of
+/// Map flags, and one area flag. The six puddles of
 /// SceneId_VaultCaveVambrace keep their frozen state in six flags in a row,
 /// read by index as well.
 enum {
@@ -156,7 +156,7 @@ enum {
   FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK = FLAG_SCENE_TEMP_07,
   /// Whirlwind has blown the ivy away.
   /// ★ Named from the game: "Whirlwind" (MsgAbilityName)
-  FLAG_VAULT_CAVE_IVY_BLOWN_AWAY = FLAG_MAPSEC_TEMP_00
+  FLAG_VAULT_CAVE_IVY_BLOWN_AWAY = FLAG_AREA_TEMP_00
 };
 
 /// The object events of SceneId_VaultCaveVambrace, numbering the rows of
@@ -409,7 +409,7 @@ static void VaultCave_PushPillarAhead(void) {
 
 /// Whirlwind blows the ivy away. It is cast on LOCALID_IVY in the puddle room
 /// of SceneId_VaultCaveVambrace, and the ivy stays gone for as long as the
-/// party stays in the cave (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY is a map section
+/// party stays in the cave (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY is an area
 /// flag).
 static void EventScript_UseWhirlwind(void) {
   GameFlag_Set(FLAG_VAULT_CAVE_IVY_BLOWN_AWAY);

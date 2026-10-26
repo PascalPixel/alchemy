@@ -1,16 +1,16 @@
 /// @file
 /// The World Map (SceneId_WorldMap), the one perspective map (map/world)
-/// that joins the map sections, and the only map of this overlay. Its code does
+/// that joins the areas, and the only map of this overlay. Its code does
 /// three kinds of work.
 ///
-/// It lets the party into the map sections. Each map section stands on the map
+/// It lets the party into the areas. Each area stands on the map
 /// as an object event drawn as a picture of its kind (SPRITE_WORLD_MAP_VILLAGE,
 /// _CAVE, _DOCK and the rest), turned with the map (WorldMap_AlignToMap).
 /// WorldMap_UpdateLocationContacts, run every frame, hides the object events
-/// outside a box around the view and raises the COORD_EVENT_MAPSEC of the one
-/// the leader touches, which the map event table turns into that map section's
+/// outside a box around the view and raises the COORD_EVENT_AREA of the one
+/// the leader touches, which the map event table turns into that area's
 /// warp; a few ways in are cells instead, each carrying the number of its warp.
-/// Five map sections have two ways in, and their scripts choose the warp by the
+/// Five areas have two ways in, and their scripts choose the warp by the
 /// side the leader comes from: the Bilibin Barricade from the west or the east,
 /// and Kolima Bridge, Kalay Docks, Gondowan Passage and Lalivero from the north
 /// or the south. Kolima Bridge's object event shows the drawbridge let down
@@ -189,14 +189,14 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse);
 
 /// The object events WorldMap_UpdateLocationContacts looks at, the placed ones
 /// to the last slot, and the base of the metatile behaviors a touch raises
-/// (COORD_EVENT_MAPSEC).
-enum { CONTACT_LAST_OBJ_EVENT = 65, COORD_EVENT_MAPSEC_BASE = 100 };
+/// (COORD_EVENT_AREA).
+enum { CONTACT_LAST_OBJ_EVENT = 65, COORD_EVENT_AREA_BASE = 100 };
 
 /// The world map's own object events, numbered in the order of
 /// gWorldMapObjectEventTemplates from LOCALID_FIRST_PLACED: the Djinn met on
-/// the map, the map sections, then the Tolbi-bound Ship, the storm and Iodem.
-/// Each map section is named by the map its warp leads into (gWorldMapWarps),
-/// and touching it raises its COORD_EVENT_MAPSEC
+/// the map, the areas, then the Tolbi-bound Ship, the storm and Iodem.
+/// Each area is named by the map its warp leads into (gWorldMapWarps),
+/// and touching it raises its COORD_EVENT_AREA
 /// (WorldMap_UpdateLocationContacts).
 enum WorldMapLocalId {
   /// The Venus Djinni: Flint, circling his spot until the party meets him,
@@ -307,8 +307,8 @@ enum WorldMapLocalId {
   LOCALID_IODEM
 };
 
-/// The metatile behavior raised by touching a map section's object event.
-#define COORD_EVENT_MAPSEC(localId) (COORD_EVENT_MAPSEC_BASE + (localId))
+/// The metatile behavior raised by touching an area's object event.
+#define COORD_EVENT_AREA(localId) (COORD_EVENT_AREA_BASE + (localId))
 
 /// The world map's own metatile behaviors, which the map's cells carry. Each
 /// warp cell carries the number of the warp it leads to, so the warp rows of
@@ -385,7 +385,7 @@ enum {
 
 /// Bunza's wagon at Kalay
 /// (gWorldMapObjectEventTemplatesFromKalayTunnelEntranceSouth), after Kalay's
-/// and the Kalay Tunnel Entrance's map section object events.
+/// and the Kalay Tunnel Entrance's area object events.
 enum {
   /// ★ Named from the game: "go back to Kalay in my wagon." (MsgLunpaBunza)
   LOCALID_KALAY_WAGON = LOCALID_FIRST_PLACED + 2
@@ -650,7 +650,7 @@ static s32 WorldMap_BlinkObjectEventSprite(struct Object *interpreter) {
 
 /// Chooses the object events for the warp destination: each scripted moment has
 /// a table of its own while it is still to play, and every other arrival takes
-/// the map sections, the Djinn, the storm and Iodem
+/// the areas, the Djinn, the storm and Iodem
 /// (gWorldMapObjectEventTemplates) and sets
 /// FLAG_WORLD_MAP_ORDINARY_OBJECT_EVENTS.
 const struct ObjectEventTemplate *WorldMap_GetObjectEventTemplates(void) {
@@ -698,7 +698,7 @@ static void WorldMap_SelectWarpByX(s32 trigger, s32 warpBefore, s32 warpAfter) {
   struct ObjectEvent *subject;
   struct ObjectEvent *other;
 
-  subject = ObjectEvent_GetById(trigger - COORD_EVENT_MAPSEC_BASE);
+  subject = ObjectEvent_GetById(trigger - COORD_EVENT_AREA_BASE);
   other = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   work = gFieldWork;
   if (other->x.fixed < subject->x.fixed) {
@@ -715,7 +715,7 @@ static void WorldMap_SelectWarpByZ(s32 trigger, s32 warpBefore, s32 warpAfter) {
   struct ObjectEvent *subject;
   struct ObjectEvent *other;
 
-  subject = ObjectEvent_GetById(trigger - COORD_EVENT_MAPSEC_BASE);
+  subject = ObjectEvent_GetById(trigger - COORD_EVENT_AREA_BASE);
   other = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   work = gFieldWork;
   if (other->z.fixed < subject->z.fixed) {
@@ -730,7 +730,7 @@ static void WorldMap_SelectWarpByZ(s32 trigger, s32 warpBefore, s32 warpAfter) {
 /// decides the warp, from the west WORLD_MAP_TO_BILIBIN_BARRICADE_WEST, from
 /// the east WORLD_MAP_TO_BILIBIN_BARRICADE_EAST.
 static void EventScript_EnterBilibinBarricade(void) {
-  WorldMap_SelectWarpByX(COORD_EVENT_MAPSEC(LOCALID_TO_BILIBIN_BARRICADE),
+  WorldMap_SelectWarpByX(COORD_EVENT_AREA(LOCALID_TO_BILIBIN_BARRICADE),
                          WORLD_MAP_TO_BILIBIN_BARRICADE_WEST,
                          WORLD_MAP_TO_BILIBIN_BARRICADE_EAST);
 }
@@ -740,7 +740,7 @@ static void EventScript_EnterBilibinBarricade(void) {
 /// WORLD_MAP_TO_KOLIMA_BRIDGE_WEST and from the south by
 /// WORLD_MAP_TO_KOLIMA_BRIDGE_EAST.
 static void EventScript_EnterKolimaBridge(void) {
-  WorldMap_SelectWarpByZ(COORD_EVENT_MAPSEC(LOCALID_TO_KOLIMA_BRIDGE),
+  WorldMap_SelectWarpByZ(COORD_EVENT_AREA(LOCALID_TO_KOLIMA_BRIDGE),
                          WORLD_MAP_TO_KOLIMA_BRIDGE_WEST,
                          WORLD_MAP_TO_KOLIMA_BRIDGE_EAST);
 }
@@ -749,7 +749,7 @@ static void EventScript_EnterKolimaBridge(void) {
 /// WORLD_MAP_TO_KALAY_DOCKS_NORTH, from the south
 /// WORLD_MAP_TO_KALAY_DOCKS_EAST.
 static void EventScript_EnterKalayDocks(void) {
-  WorldMap_SelectWarpByZ(COORD_EVENT_MAPSEC(LOCALID_TO_KALAY_DOCKS),
+  WorldMap_SelectWarpByZ(COORD_EVENT_AREA(LOCALID_TO_KALAY_DOCKS),
                          WORLD_MAP_TO_KALAY_DOCKS_NORTH,
                          WORLD_MAP_TO_KALAY_DOCKS_EAST);
 }
@@ -758,7 +758,7 @@ static void EventScript_EnterKalayDocks(void) {
 /// WORLD_MAP_TO_GONDOWAN_PASSAGE_EAST, from the south
 /// WORLD_MAP_TO_GONDOWAN_PASSAGE_WEST.
 static void EventScript_EnterGondowanPassage(void) {
-  WorldMap_SelectWarpByZ(COORD_EVENT_MAPSEC(LOCALID_TO_GONDOWAN_PASSAGE),
+  WorldMap_SelectWarpByZ(COORD_EVENT_AREA(LOCALID_TO_GONDOWAN_PASSAGE),
                          WORLD_MAP_TO_GONDOWAN_PASSAGE_EAST,
                          WORLD_MAP_TO_GONDOWAN_PASSAGE_WEST);
 }
@@ -767,7 +767,7 @@ static void EventScript_EnterGondowanPassage(void) {
 /// WORLD_MAP_TO_LALIVERO_WEST, from the south WORLD_MAP_TO_LALIVERO_EAST.
 static void EventScript_EnterLalivero(void) {
 
-  WorldMap_SelectWarpByZ(COORD_EVENT_MAPSEC(LOCALID_TO_LALIVERO),
+  WorldMap_SelectWarpByZ(COORD_EVENT_AREA(LOCALID_TO_LALIVERO),
                          WORLD_MAP_TO_LALIVERO_WEST,
                          WORLD_MAP_TO_LALIVERO_EAST);
 }
@@ -776,7 +776,7 @@ const struct MapEvent *WorldMap_GetEvents(void) { return gWorldMapEvents; }
 
 /// Run each frame on the map (WorldMap_Initialize adds it): it hides every
 /// placed object event outside a box around the view, 160 pixels either side,
-/// 300 north and 200 south, and raises the COORD_EVENT_MAPSEC of an object
+/// 300 north and 200 south, and raises the COORD_EVENT_AREA of an object
 /// event within reach of the leader, their radii scaled by their sprites,
 /// measured as the sum of the distances east-west and north-south. With the
 /// debug flag FLAG_DEBUG_STEPS_OFF it raises none.
@@ -832,7 +832,7 @@ static void WorldMap_UpdateLocationContacts(void) {
                   : objectEvent->z.fixed - leader->z.fixed) <
             reach &&
         GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
-      work->coordEvent = i + COORD_EVENT_MAPSEC_BASE;
+      work->coordEvent = i + COORD_EVENT_AREA_BASE;
     }
   }
 }
@@ -879,7 +879,7 @@ s32 WorldMap_Initialize(void) {
 
   if (*warpDest == WORLD_MAP_FROM_DEBUG) {
     GameFlag_Set(FLAG_NO_ENCOUNTERS);
-    GameFlag_Set(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
+    GameFlag_Set(FLAG_NO_ENCOUNTERS_IN_AREA);
     GameFlag_Set(FLAG_DEBUG_STEPS_OFF);
   }
   if (*warpDest == WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT) {
@@ -997,7 +997,7 @@ s32 WorldMap_Initialize(void) {
 /// The object events placed at WORLD_MAP_FROM_WEST_LUNPA_CAVE
 /// (gWorldMapObjectEventTemplatesFromWestLunpaCave), numbered from
 /// LOCALID_FIRST_PLACED: Bunza's wagon, then, after Lunpa's and West Lunpa
-/// Cave's map section object events, Bunza and Hammet.
+/// Cave's area object events, Bunza and Hammet.
 enum {
   /// Bunza's wagon.
   /// ★ Named from the game: "go back to Kalay in my wagon." (MsgLunpaBunza)
@@ -2004,7 +2004,7 @@ static void WorldMap_RunBlackOrbEvent(void) {
 }
 
 /// Turns Gateway Cave's warp (the map event of LOCALID_TO_GATEWAY_CAVE's
-/// COORD_EVENT_MAPSEC) into a coord event that runs
+/// COORD_EVENT_AREA) into a coord event that runs
 /// EventScript_IodemCallsIsaacBack, and stands Iodem (LOCALID_IODEM, whose
 /// object event template row it finds by his sprite) at pixel (6036, 3400); the
 /// object event given is not used. Called by WorldMap_RunBlackOrbEvent, and by
@@ -2017,7 +2017,7 @@ static void WorldMap_BlockGatewayCaveWarp(s32 localId) {
   while (1) {
     if (gWorldMapEvents[i].kind == MAP_EVENT_WARP &&
         gWorldMapEvents[i].trigger ==
-            COORD_EVENT_MAPSEC(LOCALID_TO_GATEWAY_CAVE)) {
+            COORD_EVENT_AREA(LOCALID_TO_GATEWAY_CAVE)) {
       gWorldMapEvents[i].kind = MAP_EVENT_COORD;
       gWorldMapEvents[i].value = (u32)EventScript_IodemCallsIsaacBack;
     }
@@ -2044,7 +2044,7 @@ static void WorldMap_RestoreGatewayCaveWarp(void) {
   while (1) {
     if (gWorldMapEvents[i].kind == MAP_EVENT_COORD &&
         gWorldMapEvents[i].trigger ==
-            COORD_EVENT_MAPSEC(LOCALID_TO_GATEWAY_CAVE)) {
+            COORD_EVENT_AREA(LOCALID_TO_GATEWAY_CAVE)) {
       gWorldMapEvents[i].kind = MAP_EVENT_WARP;
       gWorldMapEvents[i].value = WORLD_MAP_TO_GATEWAY_CAVE;
       break;
@@ -3761,42 +3761,42 @@ struct MapEvent gWorldMapEvents[] = {
     { MAP_EVENT_WARP, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_WEST, CONDITION_ALWAYS, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_WEST },
     { MAP_EVENT_WARP, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_EAST, CONDITION_ALWAYS, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_EAST },
     { MAP_EVENT_WARP, WORLD_MAP_TO_BILIBIN_BARRICADE_EAST, CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN_BARRICADE_EAST },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_VALE_PLAZA), CONDITION_ALWAYS, WORLD_MAP_TO_VALE_PLAZA },
-    { MAP_EVENT_COORD, COORD_EVENT_MAPSEC(LOCALID_TO_VAULT), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterVault) },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_GOMA_CAVE_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_GOMA_CAVE_ENTRANCE },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_GOMA_CAVE_BRIDGE), CONDITION_ALWAYS, WORLD_MAP_TO_GOMA_CAVE_BRIDGE },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_BILIBIN), CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN },
-    { MAP_EVENT_COORD, COORD_EVENT_MAPSEC(LOCALID_TO_BILIBIN_BARRICADE), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterBilibinBarricade) },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_KOLIMA), CONDITION_ALWAYS, WORLD_MAP_TO_KOLIMA_WEST },
-    { MAP_EVENT_COORD, COORD_EVENT_MAPSEC(LOCALID_TO_KOLIMA_BRIDGE), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterKolimaBridge) },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_KOLIMA_FOREST), CONDITION_ALWAYS, WORLD_MAP_TO_KOLIMA_FOREST_ENTRANCE },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_BILIBIN_CAVE_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN_CAVE_ENTRANCE },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_BILIBIN_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN_CAVE_ICE },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_IMIL), CONDITION_ALWAYS, WORLD_MAP_TO_IMIL_SOUTH },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_MERCURY_LIGHTHOUSE), CONDITION_ALWAYS, WORLD_MAP_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_FUCHIN_TEMPLE), CONDITION_ALWAYS, WORLD_MAP_TO_FUCHIN_TEMPLE_GROUNDS },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_MOGALL_FOREST_SIGN), CONDITION_ALWAYS, WORLD_MAP_TO_MOGALL_FOREST_SIGN },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_MOGALL_FOREST_KILLER_APE), CONDITION_ALWAYS, WORLD_MAP_TO_MOGALL_FOREST_KILLER_APE },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_XIAN), CONDITION_ALWAYS, WORLD_MAP_TO_XIAN },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_ALTIN), CONDITION_ALWAYS, WORLD_MAP_TO_ALTIN },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_ALTIN_PEAK), CONDITION_ALWAYS, WORLD_MAP_TO_ALTIN_PEAK_WEST_EXIT },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_LAMA_TEMPLE), CONDITION_ALWAYS, WORLD_MAP_TO_LAMA_TEMPLE },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_LAMAKAN_DESERT_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_LAMAKAN_DESERT_CAVE },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_KALAY), CONDITION_ALWAYS, WORLD_MAP_TO_KALAY_EAST },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_LUNPA), CONDITION_ALWAYS, WORLD_MAP_TO_LUNPA },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_WEST_LUNPA_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_WEST_LUNPA_CAVE },
-    { MAP_EVENT_COORD, COORD_EVENT_MAPSEC(LOCALID_TO_KALAY_DOCKS), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterKalayDocks) },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_TOLBI_DOCKS), CONDITION_ALWAYS, WORLD_MAP_TO_TOLBI_DOCKS },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_TOLBI), CONDITION_ALWAYS, WORLD_MAP_TO_TOLBI },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_ALTMILLER_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_ALTMILLER_CAVE_ENTRANCE },
-    { MAP_EVENT_COORD, COORD_EVENT_MAPSEC(LOCALID_TO_GONDOWAN_PASSAGE), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterGondowanPassage) },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_KALAY_TUNNEL_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_GONDOWAN_CAVE_NORTH), CONDITION_ALWAYS, WORLD_MAP_TO_GONDOWAN_CAVE_NORTH },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_GONDOWAN_CAVE_SOUTH), CONDITION_ALWAYS, WORLD_MAP_TO_GONDOWAN_CAVE_SOUTH },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_SUHALLA), CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_GATEWAY_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_GATEWAY_CAVE },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_TO_ROAD_TO_BABI_LIGHTHOUSE), CONDITION_ALWAYS, WORLD_MAP_TO_ROAD_TO_BABI_LIGHTHOUSE },
-    { MAP_EVENT_COORD, COORD_EVENT_MAPSEC(LOCALID_TO_LALIVERO), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterLalivero) },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_VALE_PLAZA), CONDITION_ALWAYS, WORLD_MAP_TO_VALE_PLAZA },
+    { MAP_EVENT_COORD, COORD_EVENT_AREA(LOCALID_TO_VAULT), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterVault) },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_GOMA_CAVE_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_GOMA_CAVE_ENTRANCE },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_GOMA_CAVE_BRIDGE), CONDITION_ALWAYS, WORLD_MAP_TO_GOMA_CAVE_BRIDGE },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_BILIBIN), CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN },
+    { MAP_EVENT_COORD, COORD_EVENT_AREA(LOCALID_TO_BILIBIN_BARRICADE), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterBilibinBarricade) },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_KOLIMA), CONDITION_ALWAYS, WORLD_MAP_TO_KOLIMA_WEST },
+    { MAP_EVENT_COORD, COORD_EVENT_AREA(LOCALID_TO_KOLIMA_BRIDGE), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterKolimaBridge) },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_KOLIMA_FOREST), CONDITION_ALWAYS, WORLD_MAP_TO_KOLIMA_FOREST_ENTRANCE },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_BILIBIN_CAVE_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN_CAVE_ENTRANCE },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_BILIBIN_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN_CAVE_ICE },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_IMIL), CONDITION_ALWAYS, WORLD_MAP_TO_IMIL_SOUTH },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_MERCURY_LIGHTHOUSE), CONDITION_ALWAYS, WORLD_MAP_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_FUCHIN_TEMPLE), CONDITION_ALWAYS, WORLD_MAP_TO_FUCHIN_TEMPLE_GROUNDS },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_MOGALL_FOREST_SIGN), CONDITION_ALWAYS, WORLD_MAP_TO_MOGALL_FOREST_SIGN },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_MOGALL_FOREST_KILLER_APE), CONDITION_ALWAYS, WORLD_MAP_TO_MOGALL_FOREST_KILLER_APE },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_XIAN), CONDITION_ALWAYS, WORLD_MAP_TO_XIAN },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_ALTIN), CONDITION_ALWAYS, WORLD_MAP_TO_ALTIN },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_ALTIN_PEAK), CONDITION_ALWAYS, WORLD_MAP_TO_ALTIN_PEAK_WEST_EXIT },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_LAMA_TEMPLE), CONDITION_ALWAYS, WORLD_MAP_TO_LAMA_TEMPLE },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_LAMAKAN_DESERT_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_LAMAKAN_DESERT_CAVE },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_KALAY), CONDITION_ALWAYS, WORLD_MAP_TO_KALAY_EAST },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_LUNPA), CONDITION_ALWAYS, WORLD_MAP_TO_LUNPA },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_WEST_LUNPA_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_WEST_LUNPA_CAVE },
+    { MAP_EVENT_COORD, COORD_EVENT_AREA(LOCALID_TO_KALAY_DOCKS), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterKalayDocks) },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_TOLBI_DOCKS), CONDITION_ALWAYS, WORLD_MAP_TO_TOLBI_DOCKS },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_TOLBI), CONDITION_ALWAYS, WORLD_MAP_TO_TOLBI },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_ALTMILLER_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_ALTMILLER_CAVE_ENTRANCE },
+    { MAP_EVENT_COORD, COORD_EVENT_AREA(LOCALID_TO_GONDOWAN_PASSAGE), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterGondowanPassage) },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_KALAY_TUNNEL_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_GONDOWAN_CAVE_NORTH), CONDITION_ALWAYS, WORLD_MAP_TO_GONDOWAN_CAVE_NORTH },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_GONDOWAN_CAVE_SOUTH), CONDITION_ALWAYS, WORLD_MAP_TO_GONDOWAN_CAVE_SOUTH },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_SUHALLA), CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_GATEWAY_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_GATEWAY_CAVE },
+    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_ROAD_TO_BABI_LIGHTHOUSE), CONDITION_ALWAYS, WORLD_MAP_TO_ROAD_TO_BABI_LIGHTHOUSE },
+    { MAP_EVENT_COORD, COORD_EVENT_AREA(LOCALID_TO_LALIVERO), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterLalivero) },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), MB_WORLD_MAP_TOLBI_SHIP, IF_FLAG_SET(FLAG_TOLBI_SHIP_AT_ISLAND), EVENT_SCRIPT(EventScript_ReturnToTolbiShip) },
     { MAP_EVENT_WARP | MAP_EVENT_FLAG_FACING | FACING_NORTH, MB_WORLD_MAP_CROSSBONE_ISLE, CONDITION_ALWAYS, WORLD_MAP_TO_CROSSBONE_ISLE },
     { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_STORM, IF_FLAG_SET(FLAG_WORLD_MAP_CAUGHT_IN_STORM), EVENT_SCRIPT(EventScript_StartDousingStorm) },

@@ -132,8 +132,8 @@
 /// ★ Named from the game: "Anchor Charm" (MsgItemName)
 #define FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN FLAG_SCENE_TEMP_00
 
-// Map section flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
-// party enters another map section, and other map sections use the numbers for
+// Area flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// party enters another area, and other areas use the numbers for
 // their own.
 /// A passenger chosen to row follows the party to the rowing deck.
 /// ★ Named from the game: "Looks like you've been chosen to help row"

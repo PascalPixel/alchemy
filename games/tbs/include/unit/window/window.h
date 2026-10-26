@@ -529,9 +529,9 @@ void PartyStatus_CloseWithMenu(void);
 void SelectionScreen_CreateEmpty(void);
 u32 Menu_RunSelectionForValue(u32 value);
 
-void MapNamePopup_Show(void);
-void MapNamePopup_Update(void);
-void MapNamePopup_Hide(void);
+void AreaNameWindow_Show(void);
+void AreaNameWindow_Update(void);
+void AreaNameWindow_Hide(void);
 s32 Item_RemoveFromInventory(s32 unused, s32 itemId);
 s32 Item_ReturnTrue(void);
 void OptionMenu_StepWindowHue(s32 keys);

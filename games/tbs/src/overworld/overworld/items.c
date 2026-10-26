@@ -208,7 +208,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 /// given group that applies to what the leader faces, or NULL; stores the
 /// object event the Psynergy would target in *target. eventFlags gives the
 /// event's phase and kind (PSYNERGY_EV_ANY for any phase). The event may apply
-/// to any target (MAP_EVENT_PSYNERGY_IN_AREA), to an object event
+/// to any target (MAP_EVENT_PSYNERGY_ANYWHERE), to an object event
 /// (MAP_EVENT_PSYNERGY_ON_OBJ_EVENT) or to a metatile behavior. Called by
 /// Field_UsePsynergy for each phase, by Field_RunPsynergyEvents, and by the
 /// Force, Frost and Reveal effects (field_services/) for their own phases.
@@ -242,7 +242,7 @@ void *Scene_FindPsynergyEvent(s32 eventFlags, s32 group, void *target) {
         (anyPhase || (event->kind & 0x7000000f) == eventFlags)) {
       // Any Psynergy of the same field kind (fieldPsynergy) as the event's
       // matches.
-      if ((event->kind & MAP_EVENT_PSYNERGY_IN_AREA) != 0)
+      if ((event->kind & MAP_EVENT_PSYNERGY_ANYWHERE) != 0)
         return (void *)event;
       if ((event->kind & MAP_EVENT_PSYNERGY_ON_OBJ_EVENT) != 0) {
         if (eventTarget == objectEventAhead)

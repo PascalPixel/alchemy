@@ -155,10 +155,10 @@ void Scene_ReturnFromSequence(s32 result) {
   }
 }
 
-/// Returns the map section sceneId belongs to. The scenes of one map section
+/// Returns the area sceneId belongs to. The scenes of one area
 /// share their music, area name and the flags kept while inside it. Called by
-/// MapSec_GetNameIndex.
-s32 Scene_GetMapSec(s32 sceneId) { return gSceneHeaders[sceneId].mapSec; }
+/// Area_GetNameIndex.
+s32 Scene_GetArea(s32 sceneId) { return gSceneHeaders[sceneId].area; }
 
 /// The last two 16-colour background palettes, which the minigame runners save
 /// and restore around a minigame; palette 15 holds the window colours
@@ -318,26 +318,26 @@ void Scene_LoadOverlay(s32 unused) {
 
 #define MAP_HEADER(id) (&gSceneHeaders[id])
 
-/// Updates the flags and state that last for one scene or one map section, on
+/// Updates the flags and state that last for one scene or one area, on
 /// entering the current scene. Unless keep is set (the party returns to where
 /// it was, as after a battle), the flags of the last scene are cleared, and on
-/// entering a new map section so are the map section's flags and step
+/// entering a new area so are the area's flags and step
 /// counters, the location name is shown and the warp destination becomes the
-/// point Retreat returns to. Then the map section's visited flag
-/// (FLAG_MAPSEC_VISITED) is set. Called by SequenceManager_Run before each
-/// scene, with keep from FLAG_KEEP_PARTY_POSITION; sets gSaveBlock.mapSec and
+/// point Retreat returns to. Then the area's visited flag
+/// (FLAG_AREA_VISITED) is set. Called by SequenceManager_Run before each
+/// scene, with keep from FLAG_KEEP_PARTY_POSITION; sets gSaveBlock.area and
 /// .sceneType.
 void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
-  s32 mapSec = MAP_HEADER(gSaveBlock.sceneId)->mapSec;
+  s32 area = MAP_HEADER(gSaveBlock.sceneId)->area;
   s32 flag;
 
   if (keep == 0) {
     // Local puzzle flags expire on every normal entry to a scene.
     for (flag = FLAG_SCENE_TEMP_FIRST; flag <= FLAG_SCENE_TEMP_LAST; flag++)
       GameFlag_ClearFar(flag);
-    if (mapSec != gSaveBlock.mapSec) {
-      // Map section state and Retreat's destination survive moves within it.
-      for (flag = FLAG_MAPSEC_TEMP_FIRST; flag <= FLAG_MAPSEC_TEMP_LAST; flag++)
+    if (area != gSaveBlock.area) {
+      // Area state and Retreat's destination survive moves within it.
+      for (flag = FLAG_AREA_TEMP_FIRST; flag <= FLAG_AREA_TEMP_LAST; flag++)
         GameFlag_ClearFar(flag);
       GameFlag_SetFar(FLAG_SHOW_LOCATION_NAME);
       gSaveBlock.encounterSteps = 0;
@@ -349,21 +349,21 @@ void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
       gSaveBlock.retreatScene = gSaveBlock.sceneId;
       gSaveBlock.retreatWarpDest = gSaveBlock.warpDest;
     }
-    // The Djinn's hiding flags last for one scene, even within a map section,
+    // The Djinn's hiding flags last for one scene, even within an area,
     // and so do the 16 after them to 0xdf, which nothing else uses.
     for (flag = FLAG_DJINN_HIDING_FIRST; flag <= 0xdf; flag++)
       GameFlag_ClearFar(flag);
     GameFlag_ClearFar(FLAG_LINK_BATTLE);
     GameFlag_ClearFar(FLAG_RETREAT_BLOCKED);
-    // FLAG_NO_ENCOUNTERS_IN_MAPSEC stops random battles
+    // FLAG_NO_ENCOUNTERS_IN_AREA stops random battles
     // (Encounter_CountStepsAndSelectFormation).
-    GameFlag_ClearFar(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
+    GameFlag_ClearFar(FLAG_NO_ENCOUNTERS_IN_AREA);
     GameFlag_ClearFar(FLAG_IN_TOWN);
     GameFlag_ClearFar(FLAG_WORLD_MAP_LEFT);
     gSaveBlock.returnMusic = -1;
   }
-  gSaveBlock.mapSec = mapSec;
-  GameFlag_SetFar(FLAG_MAPSEC_VISITED(mapSec & 0x7f));
+  gSaveBlock.area = area;
+  GameFlag_SetFar(FLAG_AREA_VISITED(area & 0x7f));
   gSaveBlock.sceneType = MAP_HEADER(gSaveBlock.sceneId)->sceneType;
   if (gSaveBlock.sceneType == SCENE_TYPE_TOWN)
     GameFlag_SetFar(FLAG_IN_TOWN);

@@ -122,7 +122,7 @@
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
 
-// Vale's map section flags, kept while the party stays in Vale's maps.
+// Vale's area flags, kept while the party stays in Vale's maps.
 /// Back from Kalay, a young man has welcomed Isaac home.
 /// ★ Named from the game: "You came back home, huh?" (MsgValeYouCameBackHome)
 #define FLAG_VALE_WELCOMED_HOME 0x302

@@ -11,7 +11,7 @@ s32 SceneManager_RunFar(s32 warpDest);
 void SequenceManager_RunFar(s32 mode);
 /// Waits the given number of frames, unless debug fast forward is on.
 void FieldScript_WaitFramesFar(s32 frames);
-/// Opens a script: closes any map name popup, stops the leader and resets the
+/// Opens a script: closes any area name window, stops the leader and resets the
 /// message and timing state.
 void FieldScript_StartFar(void);
 /// Closes a script: gives the camera back to the leader and refreshes
@@ -414,7 +414,7 @@ void FieldEffect_ScheduleRatioTransitionFar(s32 zoom, s32 frames);
 void FieldScript_WaitForZoomTransitionFar(void);
 /// Returns the area name of a map and warp destination, an offset from
 /// MsgDebugEntryName, or 0 when no rule matches.
-s32 MapSec_GetNameIndexFar(s32 sceneId, s32 warpDest);
+s32 Area_GetNameIndexFar(s32 sceneId, s32 warpDest);
 /// Starts an object event's action script: an enum MovementType, or the script
 /// itself.
 void ObjectEvent_SetMovementTypeFar(struct Object *object, s32 kind);

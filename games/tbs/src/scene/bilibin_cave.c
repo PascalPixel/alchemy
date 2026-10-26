@@ -1,5 +1,5 @@
 /// @file
-/// The Bilibin Cave Entrance and Bilibin Cave, two map sections between Bilibin
+/// The Bilibin Cave Entrance and Bilibin Cave, two areas between Bilibin
 /// and Imil that share this overlay: the Bilibin Cave Entrance is
 /// SceneId_BilibinCaveEntrance, and Bilibin Cave is SceneId_BilibinCaveRapier
 /// and, beyond it, SceneId_BilibinCaveIce, whose far end opens onto the world
@@ -12,7 +12,7 @@
 /// (LOCALID_SPROUT) grows it into a vine and changes the metatile behavior of
 /// its cell (EventScript_GrowPlant); FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN
 /// keeps it grown until the party leaves the Bilibin Cave Entrance, into the
-/// cave beyond or out to the world map, since both are other map sections. Two
+/// cave beyond or out to the world map, since both are other areas. Two
 /// warps lead on into Bilibin Cave. The south one's warp cell, at the cave
 /// mouth, lies under the ledge path that runs above the mouth, since the map
 /// grid has one cell for both: coord event 10, the ledge cells either side of
@@ -92,19 +92,19 @@
 /// ice pillar.
 /// ★ Named from what the player sees: a tall pillar of ice beside the lit
 /// torches in the cave's east passage (its render)
-#define FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED FLAG_MAPSEC_TEMP_02
+#define FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED FLAG_AREA_TEMP_02
 /// In Bilibin Cave's ice room, the third torch stands beside the third puddle's
 /// ice pillar.
 /// ★ Named from what the player sees: golden torches burning on their stands
 /// near a pillar of ice (its render)
-#define FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR FLAG_MAPSEC_TEMP_03
+#define FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR FLAG_AREA_TEMP_03
 /// In Bilibin Cave's ice room, the fourth torch stands beside the third
 /// puddle's ice pillar.
 /// ★ Named from what the player sees: golden torches burning on their stands
 /// near a pillar of ice (its render)
-#define FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR FLAG_MAPSEC_TEMP_04
+#define FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR FLAG_AREA_TEMP_04
 /// At the Bilibin Cave Entrance, Growth has grown the sprout into a vine.
-#define FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN FLAG_MAPSEC_TEMP_05
+#define FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN FLAG_AREA_TEMP_05
 
 // BilibinCave_Initialize calls one of these for the map being entered.
 static void BilibinCave_RestoreEntrance(void);
@@ -838,8 +838,8 @@ struct MapEvent gBilibinCaveRapierEvents[] = {
     { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_EAST },
     { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TORCHES_TO_BILIBIN_CAVE_RAPIER },
     { BG_EVENT(BG_EVENT_CHEST), 100, 0xf5d, FIND_ITEM(ITEM_ELVEN_RAPIER) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealHiddenPath) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HideRevealedPath) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealHiddenPath) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HideRevealedPath) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_RAPIER_ROOM_FIRE, FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED, EVENT_SCRIPT(EventScript_DouseRapierRoomFire) },
     { MAP_EVENTS_END },
 };

@@ -40,7 +40,7 @@
 /// greets them, startled, and Mind Read hears her hope its owner will not ask
 /// for it back. In the southeast one stranded passengers argue that the
 /// captain will not sail although they agreed to do whatever it takes
-/// (StuccoRoomsB_WatchPassengersArgue, a map section flag). A man who rode
+/// (StuccoRoomsB_WatchPassengersArgue, an area flag). A man who rode
 /// the ship from Kalay with the party greets it as `the would-be warrior`, and
 /// he and LOCALID_STUCCO_ROOMS_B_COLOSSO_FAN leave once the party has watched
 /// the passengers confront the tour guide on the Tolbi docks
@@ -62,8 +62,8 @@
 #include "objcmd.h"
 #include "songs.h"
 
-// Map section flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
-// party enters another map section, and other map sections use the numbers for
+// Area flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// party enters another area, and other areas use the numbers for
 // their own.
 /// The stranded passengers' argument has played.
 /// ★ Named from the game: "He won't sail the ship"

@@ -14,7 +14,7 @@
 /// (places/goma-cave-pond/map-1.png), are replaced by a copy that adds
 /// MB_JUMP_FORWARD cells, so the leader can jump across the water by
 /// way of it.
-/// The flag is a map-section temp flag, so the stump is back up in the room
+/// The flag is an area temp flag, so the stump is back up in the room
 /// above once the party leaves Goma Cave's four maps.
 #include "unit/scene/goma_cave_pond.h"
 #include "unit/overworld/overworld.h"
@@ -38,7 +38,7 @@
 #include "flags.h"
 
 // Map-section temp flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when
-// the party enters another map section, and other map sections use the numbers
+// the party enters another area, and other areas use the numbers
 // for their own.
 
 /// The stump has been pushed over into the room below (goma_cave_pillar.c).

@@ -192,8 +192,7 @@ u32 Save_BuildFileSummary(void) {
     *destination++ = *source++;
   summary->level = leader->level;
   summary->playTime = gSaveBlock.playTime;
-  summary->area =
-      MapSec_GetNameIndexFar(gSaveBlock.sceneId, gSaveBlock.warpDest);
+  summary->area = Area_GetNameIndexFar(gSaveBlock.sceneId, gSaveBlock.warpDest);
   summary->classId = leader->classId;
   summary->coins = gSaveBlock.coins;
   summary->djinn[0] = Party_SumDjinnCountsFar(0);

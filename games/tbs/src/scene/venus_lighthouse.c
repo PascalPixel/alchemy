@@ -15,8 +15,8 @@
 ///   (FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD), and the metatile behavior of his spot
 ///   changes. VENUS_LIGHTHOUSE_ENTRY_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR, the open
 ///   door, leads in.
-/// - Venus Lighthouse (SceneId_VenusLighthouseGroundFloor, named by a map
-/// section
+/// - Venus Lighthouse (SceneId_VenusLighthouseGroundFloor, named by an
+/// area
 ///   rule of its own), the floor behind the front door, with three scholars.
 ///   The great statue (MB_VENUS_LIGHTHOUSE_GREAT_STATUE) opens one of two paths
 ///   (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH, the first time by the
@@ -67,9 +67,9 @@
 /// Locked doors stand on the second floor and above
 /// (MB_VENUS_LIGHTHOUSE_LOCKED_DOOR). The wall and gate flags
 /// (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED to FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN)
-/// and the Psynergy Stones' flags are map section flags: they last while the
+/// and the Psynergy Stones' flags are area flags: they last while the
 /// party stays in the maps of the climb (SceneId_VenusLighthouseFirstFloor to
-/// SceneId_VenusLighthouseAerie, one map section), so the floors stay solved
+/// SceneId_VenusLighthouseAerie, one area), so the floors stay solved
 /// between them. The FLAG_MAP_TEMP_ states last only until the next change of
 /// map other than a return from battle. Every arrival sets
 /// FLAG_VENUS_LIGHTHOUSE_LIT.
@@ -119,8 +119,8 @@
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
 
-// Map section flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
-// party enters another map section, and other map sections use the numbers for
+// Area flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// party enters another area, and other areas use the numbers for
 // their own.
 
 // The floor switches have slid the walls aside.
@@ -1270,7 +1270,7 @@ static void EventScript_HidePath(void) {
   s32 row;
 
 #if TBS_PATCH_1
-  GameFlag_Clear(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
+  GameFlag_Clear(FLAG_NO_ENCOUNTERS_IN_AREA);
 #endif
   column = 23;
   row = 8;
@@ -1291,7 +1291,7 @@ static void EventScript_RevealPath(void) {
   s32 row;
 
 #if TBS_PATCH_1
-  GameFlag_Set(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
+  GameFlag_Set(FLAG_NO_ENCOUNTERS_IN_AREA);
 #endif
   column = 23;
   row = 8;
@@ -4856,8 +4856,8 @@ struct MapEvent gVenusLighthouseGroundFloorEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_WALL_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MovePillarTowardWall) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FLOOR_SWITCH_STATUE, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(EventScript_MovePillarOntoSwitch) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_WALL_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CarryPillarPastWall) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealPath) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HidePath) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealPath) },
+    { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HidePath) },
     { MAP_EVENTS_END },
 };
 

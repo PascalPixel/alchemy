@@ -78,24 +78,24 @@
 /// offers to apply.
 /// ★ Named from the game: "Please speak to me when you want to fight in a
 /// battle." (MsgLobbyPleaseSpeakWhen)
-#define FLAG_BATTLE_ARENA_ATTENDANT_EXPLAINED FLAG_MAPSEC_TEMP_00
+#define FLAG_BATTLE_ARENA_ATTENDANT_EXPLAINED FLAG_AREA_TEMP_00
 /// This console is the link's child (multiplayer id 1), which receives the
 /// parties first.
 /// ★ Named from the game: "Test your skills in Linked Battles and Monster
 /// Battles!" (MsgFieldWelcomeToBattleArenaWherePeople)
-#define FLAG_BATTLE_ARENA_LINK_CHILD FLAG_MAPSEC_TEMP_02
+#define FLAG_BATTLE_ARENA_LINK_CHILD FLAG_AREA_TEMP_02
 /// The link is up: both consoles were heard (LOBBY_LINK_READY_MASK).
 /// ★ Named from the game: "Your opponent has arrived!"
 /// (MsgLobbyOpponentArrived)
-#define FLAG_BATTLE_ARENA_LINK_UP FLAG_MAPSEC_TEMP_03
+#define FLAG_BATTLE_ARENA_LINK_UP FLAG_AREA_TEMP_03
 /// A linked battle has ended since the leader last walked south of z 224, so
 /// the party and the visitors speak of it.
 /// ★ Named from the game: "Battle results were saved."
 /// (MsgLobbyBattleResultsSaved)
-#define FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED FLAG_MAPSEC_TEMP_04
+#define FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED FLAG_AREA_TEMP_04
 /// The last linked battle was won.
 /// ★ Named from the game: "Yeah! We won!" (MsgLobbyWonToldCountOn)
-#define FLAG_BATTLE_ARENA_LINK_BATTLE_WON FLAG_MAPSEC_TEMP_05
+#define FLAG_BATTLE_ARENA_LINK_BATTLE_WON FLAG_AREA_TEMP_05
 
 // Link transfers use three unit records followed by one recovery-table record.
 // Both sizes are whole 20-byte blocks, since the serial runtime sends 20 bytes
@@ -130,8 +130,8 @@
 // - FLAG_LINK_BATTLE_ARRANGED: a linked battle has been arranged (with
 //   FLAG_LINK_BATTLE): only the first three members take part
 //   (BattleArena_PartyContains).
-// - FLAG_MAPSEC_TEMP_E8: the last linked battle broke off (Battle_Run). In a
-//   monster series, the byte flag at FLAG_MAPSEC_TEMP_E8 instead counts the
+// - FLAG_AREA_TEMP_E8: the last linked battle broke off (Battle_Run). In a
+//   monster series, the byte flag at FLAG_AREA_TEMP_E8 instead counts the
 //   victories, 0 to 2, towards a stronger monster.
 
 /// The object events, numbering the rows of gBattleArenaObjectEventTemplates
@@ -341,7 +341,7 @@ s32 BattleArena_SelectObjectEventTemplates(void) {
 }
 
 /// Returns 1 when the partner's payload holds slot's word in slot's column, 0
-/// when it does not or there is no link. Also sets or clears map section flags
+/// when it does not or there is no link. Also sets or clears area flags
 /// FLAG_BATTLE_ARENA_LINK_UP (the link is up) and FLAG_BATTLE_ARENA_LINK_CHILD
 /// (this console is the child), and reads the other console's payload by them.
 static s32 BattleArena_PeerSlotMatches(s32 slot) {
@@ -855,7 +855,7 @@ done:
   return result;
 }
 
-/// Exchanges the two parties: the parent sends first, the child (map section
+/// Exchanges the two parties: the parent sends first, the child (area
 /// flag FLAG_BATTLE_ARENA_LINK_CHILD) receives first. On success stores the
 /// partner's member count in FLAG_LINK_PARTY_COUNT and returns it; on failure
 /// resets the transfer state and returns a negative result.
@@ -1097,10 +1097,10 @@ static s32 BattleArena_ChooseBattleMode(void) {
       FieldScript_SetMessageId(messageBase + 5);
       FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
       answer = FieldScript_AskYesNoWithObjectEventAnimation(0, 0);
-      // Yes starts a monster series: FLAG_MAPSEC_TEMP_E8's byte and
+      // Yes starts a monster series: FLAG_AREA_TEMP_E8's byte and
       // LINK_TALLY_MONSTER_STREAK start at 0.
       if (answer == YES) {
-        FieldGameFlag_SetByte(FLAG_MAPSEC_TEMP_E8, 0);
+        FieldGameFlag_SetByte(FLAG_AREA_TEMP_E8, 0);
         GameFlag_Set(FLAG_MONSTER_BATTLE);
         GameFlag_Clear(FLAG_LINK_BATTLE_ARRANGED);
         GameFlag_Clear(FLAG_LINK_BATTLE);
@@ -1325,7 +1325,7 @@ static s32 BattleArena_PartyContains(s32 memberId) {
 UNUSED static void State_NoOp(void) {}
 
 /// Talking to Garet, Ivan, Mia or Jenna, who speaks of the last linked battle
-/// (map section flags FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED and
+/// (area flags FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED and
 /// FLAG_BATTLE_ARENA_LINK_BATTLE_WON) and whether they fought in it, or else of
 /// whether Isaac and they are in the battle party. Each message family holds
 /// one line per character, at local id - 1; Felix's holds "?".
@@ -1385,7 +1385,7 @@ static s32 BattleArena_LeaveArena(void) {
 /// LOCALID_FINALS_VISITOR, who explains the linked finals, and
 /// LOCALID_OLD_MANS_ARENA_VISITOR, who wonders whether this is the old man's
 /// Battle Arena. Each says their first line unless a linked battle has ended
-/// since the leader last walked south of z 224 (map section flag
+/// since the leader last walked south of z 224 (area flag
 /// FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED), then their second after a win or their
 /// third after a loss (FLAG_BATTLE_ARENA_LINK_BATTLE_WON).
 static s32 BattleArena_TalkToVisitor(s32 localId) {
@@ -1534,7 +1534,7 @@ static s32 BattleArena_DrawThreeDigitValue(s32 value) {
 
 /// The overlay's initialize entry, run on every arrival: settles the battle
 /// that brought the party here and restarts the Battle Arena's polling. A
-/// linked battle broken off (FLAG_MAPSEC_TEMP_E8) arrives as
+/// linked battle broken off (FLAG_AREA_TEMP_E8) arrives as
 /// BATTLE_ARENA_AFTER_LINK_WIN; any other warp destination than the
 /// BATTLE_ARENA_AFTER_ ones (BATTLE_ARENA_FROM_MAIN_MENU, from the main menu)
 /// restarts the link. Updates gSaveBlock.linkTallies, saves after linked
@@ -1586,7 +1586,7 @@ s32 BattleArena_RunRoundResult(void) {
     gSaveBlock.linkTallies[LINK_TALLY_MONSTER_WINS]++;
     gSaveBlock.linkTallies[LINK_TALLY_MONSTER_STREAK]++;
     // The offer has two lines a level (FLAG_MONSTER_BATTLE_WINS, -1 when a
-    // series starts), the even line capped at 14. FLAG_MAPSEC_TEMP_E8's byte
+    // series starts), the even line capped at 14. FLAG_AREA_TEMP_E8's byte
     // counts the victories 0 to 2; the third raises the level and takes the
     // next, odd line (at most 15), which promises a stronger monster.
     wins = (s8)FieldGameFlag_GetByte(FLAG_MONSTER_BATTLE_WINS);
@@ -1594,13 +1594,13 @@ s32 BattleArena_RunRoundResult(void) {
     if (messageOffset > 14) {
       messageOffset = 14;
     }
-    v = FieldGameFlag_GetByte(FLAG_MAPSEC_TEMP_E8);
+    v = FieldGameFlag_GetByte(FLAG_AREA_TEMP_E8);
     if (v == 2) {
-      FieldGameFlag_SetByte(FLAG_MAPSEC_TEMP_E8, 0);
+      FieldGameFlag_SetByte(FLAG_AREA_TEMP_E8, 0);
       wins++;
       messageOffset++;
     } else {
-      FieldGameFlag_SetByte(FLAG_MAPSEC_TEMP_E8, v + 1);
+      FieldGameFlag_SetByte(FLAG_AREA_TEMP_E8, v + 1);
     }
     ObjectMotion_SetAngleToward(LOCALID_ATTENDANT, gSaveBlock.leaderLocalId, 0);
     FieldScript_SetMessageId(MsgLobbyNotBadNextMonster + messageOffset);
@@ -1668,10 +1668,10 @@ s32 BattleArena_RunRoundResult(void) {
     BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
     BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
     // The battle broke off instead (Battle_Run set
-    // FLAG_MAPSEC_TEMP_E8): report the link lost and restart it.
-    if (Script_GetFlag(FLAG_MAPSEC_TEMP_E8)) {
+    // FLAG_AREA_TEMP_E8): report the link lost and restart it.
+    if (Script_GetFlag(FLAG_AREA_TEMP_E8)) {
       work = gFieldWork;
-      GameFlag_Clear(FLAG_MAPSEC_TEMP_E8);
+      GameFlag_Clear(FLAG_AREA_TEMP_E8);
       work->raisedEvent = LOBBY_EVENT_DISCONNECTED;
       GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED);
       WaitFrames(20);

@@ -183,12 +183,12 @@ Arriving in a new area, the player sees its name in a small window near the
 top of the screen for a second and a half. Opening the field menu hides it at
 once.
 
-`MapNamePopup_Show` draws the name and `MapNamePopup_Update` closes it when its
+`AreaNameWindow_Show` draws the name and `AreaNameWindow_Update` closes it when its
 time is up.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `MAP_NAME_POPUP_FRAMES` | 90 | frames the area's name shows |
+| `AREA_NAME_WINDOW_FRAMES` | 90 | frames the area's name shows |
 
 ## The pause menu
 

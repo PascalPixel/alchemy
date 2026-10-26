@@ -39,7 +39,7 @@
 /// FLAG_BILIBIN_KEEPING_MCCOY_WAITING is set while McCoy's gate guards have let
 /// the party in (FLAG_MCCOY_PALACE_ADMITTED) but it has not yet entered the
 /// palace (FLAG_MCCOY_PALACE_VISITED), for the garden's east guard to scold the
-/// party for keeping McCoy waiting. The garden is another map section
+/// party for keeping McCoy waiting. The garden is another area
 /// (scene_headers.s gives Bilibin 8 and the garden 9), so
 /// Scene_ResetFlagsOnEnter clears the flag on the way in and the guard never
 /// sees it set.
@@ -265,13 +265,13 @@ struct BilibinRippleTimer gBilibin_RippleTimer;
 
 /// The party has looked once at the tree at Bilibin's entrance, so a second
 /// look says it looks like a living person.
-#define FLAG_BILIBIN_TREE_EXAMINED FLAG_MAPSEC_TEMP_01
+#define FLAG_BILIBIN_TREE_EXAMINED FLAG_AREA_TEMP_01
 /// McCoy's gate guards have let the party in but it has not yet entered the
-/// palace; the garden guard who reads it is in another map section, so it is
+/// palace; the garden guard who reads it is in another area, so it is
 /// cleared before he can.
 /// ★ Named from the game: "The master can be quite cranky. Hurry along, now!"
 /// (MsgBilibinMasterQuiteCranky)
-#define FLAG_BILIBIN_KEEPING_MCCOY_WAITING FLAG_MAPSEC_TEMP_04
+#define FLAG_BILIBIN_KEEPING_MCCOY_WAITING FLAG_AREA_TEMP_04
 
 const struct MapWarpDest *Bilibin_GetWarpDests(void) {
   s16 sceneId = gSaveBlock.sceneId;
@@ -374,7 +374,7 @@ static void EventScript_InspectHumanShapedTree(void) {
 /// Talking to the tree at Bilibin's entrance, before the curse is lifted: it
 /// almost looks like a man and, looked at again, like a living person.
 /// Map-section temp flag FLAG_BILIBIN_TREE_EXAMINED remembers the first look
-/// until the party leaves Bilibin's map section.
+/// until the party leaves Bilibin's area.
 static void EventScript_ExamineTreeMan(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgBilibinItsTreeButAlmostLooks);
@@ -692,7 +692,7 @@ s32 Bilibin_Initialize(void) {
 }
 
 /// Sets up Bilibin: the tree or the man by FLAG_KOLIMA_CURSE_LIFTED, the ivy
-/// and the statue by the warp destination used, and map-section temp flag
+/// and the statue by the warp destination used, and area temp flag
 /// FLAG_BILIBIN_KEEPING_MCCOY_WAITING for McCoy's garden guard.
 static void Bilibin_RestoreVillageObjectEvents(void) {
 

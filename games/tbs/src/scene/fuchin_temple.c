@@ -1,9 +1,9 @@
 /// @file
 /// Fuchin Temple's grounds, and the sheet of rooms that shares its overlay: the
 /// game packs rooms of several places that share a tile style onto one map,
-/// here the inside of Fuchin Temple with two masters' rooms in other map
-/// sections, Master Feh's school in Xian and Master Hama's room in Lama Temple.
-/// Two maps hold four map sections, by their area names; in each, story flags
+/// here the inside of Fuchin Temple with two masters' rooms in other
+/// areas, Master Feh's school in Xian and Master Hama's room in Lama Temple.
+/// Two maps hold four areas, by their area names; in each, story flags
 /// pick where the people stand and which script plays on entry.
 ///
 /// - Fuchin Temple (SceneId_FuchinTempleGrounds), outside the temple, reached
@@ -86,17 +86,17 @@
 #include "palbuf.h"
 #include "io_reg.h"
 
-// Fuchin Temple's map-section temp flags, which last until the party enters
-// another map section; FLAG_FUCHIN_TEMPLE_PSYNERGY_STONE is the Psynergy Stone
+// Fuchin Temple's area temp flags, which last until the party enters
+// another area; FLAG_FUCHIN_TEMPLE_PSYNERGY_STONE is the Psynergy Stone
 // outside, which then refills.
 
 /// The party refused Nyunpa's test, so talking to him offers it again.
 /// ★ Named from the game: "Then I cannot tell you. Give up and go back from
 /// whence you came." (MsgXianThenCannotTellGiveUp)
-#define FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED FLAG_MAPSEC_TEMP_00
+#define FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED FLAG_AREA_TEMP_00
 /// Feh's students saw the training tree fall, but not to Chi from the line.
 /// ★ Named from the game: "Look! The tree fell." (MsgXianLookTreeFell)
-#define FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL FLAG_MAPSEC_TEMP_01
+#define FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL FLAG_AREA_TEMP_01
 
 /// The placed object events outside Fuchin Temple (FuchinTempleGrounds),
 /// numbered in the order of gFuchinTempleGroundsObjectEventTemplates.
@@ -229,9 +229,9 @@ static void FuchinTemple_AnimateRevealLesson(void);
 #include "common/effect_spawn.h"
 
 /// The Psynergy Stone outside the temple has been taken; it refills once the
-/// party enters another map section.
+/// party enters another area.
 /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
-#define FLAG_FUCHIN_TEMPLE_PSYNERGY_STONE FLAG_MAPSEC_TEMP_50
+#define FLAG_FUCHIN_TEMPLE_PSYNERGY_STONE FLAG_AREA_TEMP_50
 
 /// Clears the scripted object event's sprite flags and completes the script
 /// command.

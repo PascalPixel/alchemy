@@ -291,55 +291,55 @@ enum MercuryLighthouseExteriorLocalId {
 /// Puzzle states kept until the party leaves the lighthouse.
 enum {
   /// ★ Named from its area name: Mercury Lighthouse
-  FLAG_STAIRS_RAISED = FLAG_MAPSEC_TEMP_02,
+  FLAG_STAIRS_RAISED = FLAG_AREA_TEMP_02,
   /// ★ Named from the game: "peered into the fountain..." (MsgCheckedGround)
-  FLAG_FOUNTAIN_RUNNING = FLAG_MAPSEC_TEMP_06,
+  FLAG_FOUNTAIN_RUNNING = FLAG_AREA_TEMP_06,
   /// ★ Named from the game: "peered into the fountain..." (MsgCheckedGround)
   FLAG_FOUNTAIN_SHOWN =
-      FLAG_MAPSEC_TEMP_07, ///< the camera has shown it start once
+      FLAG_AREA_TEMP_07, ///< the camera has shown it start once
   /// MercuryLighthouseLower's first pipe piece has been pushed into place,
   /// joining the water pipes; with all three joined the water carries the party
   /// down.
   /// ★ Named from what the player sees: a pipe piece pushed along until it
   /// joins the pipes and water sprays through (its render)
-  FLAG_PIPE_1_JOINED = FLAG_MAPSEC_TEMP_10,
+  FLAG_PIPE_1_JOINED = FLAG_AREA_TEMP_10,
   /// ★ Named from what the player sees: the second pipe piece joining the
   /// pipes (its render)
-  FLAG_PIPE_2_JOINED = FLAG_MAPSEC_TEMP_11,
+  FLAG_PIPE_2_JOINED = FLAG_AREA_TEMP_11,
   /// ★ Named from what the player sees: the third pipe piece joining the pipes
   /// (its render)
-  FLAG_PIPE_3_JOINED = FLAG_MAPSEC_TEMP_12,
+  FLAG_PIPE_3_JOINED = FLAG_AREA_TEMP_12,
   /// Unused: cleared with the three, but nothing sets or tests it.
   /// ★ Named from what the player sees: a stone pipe section (its render)
-  FLAG_UNUSED_PIPE_4_JOINED = FLAG_MAPSEC_TEMP_13,
+  FLAG_UNUSED_PIPE_4_JOINED = FLAG_AREA_TEMP_13,
   /// ★ Named from what the player sees: a stone pipe section (its render)
-  FLAG_DOOR_ROOM_PIPE_PUSHED = FLAG_MAPSEC_TEMP_18,
+  FLAG_DOOR_ROOM_PIPE_PUSHED = FLAG_AREA_TEMP_18,
   /// Where the door switch pipe rests: each column opens a different stone door
   /// (MercuryLighthouse_PushStoneDoorPipes). At column 47 it opens
   /// STONE_DOOR_NORTH, along the sliding statue's row.
   /// ★ Named from what the player sees: a stone pipe section (its render)
-  FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR = FLAG_MAPSEC_TEMP_19,
+  FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR = FLAG_AREA_TEMP_19,
   /// At column 48 it opens STONE_DOOR_SOUTH, where the statue slides out and
   /// falls.
   /// ★ Named from what the player sees: a stone pipe section (its render)
-  FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR = FLAG_MAPSEC_TEMP_1A,
+  FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR = FLAG_AREA_TEMP_1A,
   /// At column 53 it leaves every door shut; with none of the three set it
   /// opens STONE_DOOR_WEST.
   /// ★ Named from what the player sees: a stone pipe section (its render)
-  FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS = FLAG_MAPSEC_TEMP_1B,
+  FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS = FLAG_AREA_TEMP_1B,
   /// Two flags per statue of MercuryLighthouseUpper's row along the north wall,
   /// one for each column it can rest at, then the last statue's.
   /// ★ Named from what the player sees: a row of statues along the wall, each
   /// pushed aside with Move (its render)
-  FLAG_FIRST_ROW_STATUE = FLAG_MAPSEC_TEMP_30,
+  FLAG_FIRST_ROW_STATUE = FLAG_AREA_TEMP_30,
   /// ★ Named from what the player sees: the last statue of the row (its render)
-  FLAG_LAST_ROW_STATUE_WEST = FLAG_MAPSEC_TEMP_38,
+  FLAG_LAST_ROW_STATUE_WEST = FLAG_AREA_TEMP_38,
   /// ★ Named from what the player sees: the last statue of the row (its render)
-  FLAG_LAST_ROW_STATUE_EAST = FLAG_MAPSEC_TEMP_39,
+  FLAG_LAST_ROW_STATUE_EAST = FLAG_AREA_TEMP_39,
   /// The statue in front of a passage has been moved aside for good.
   /// ★ Named from what the player sees: Move shifts the statue west, uncovering
   /// an arched passage in the wall behind it (its render)
-  FLAG_PASSAGE_STATUE_MOVED = FLAG_MAPSEC_TEMP_48
+  FLAG_PASSAGE_STATUE_MOVED = FLAG_AREA_TEMP_48
 };
 
 /// Map flags, kept while the party stays on the map.
@@ -3406,7 +3406,7 @@ struct MapEvent gMercuryLighthouseLowerEvents[] = {
     { COORD_EVENT_WALKING, 25, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_PushChannelPipes) },
     { MAP_EVENT_TALK, LOCALID_MIA, FLAG_MIA_JOINED_PARTY, MSGNO(MsgMercuryLighthouseThePathIsBlockedAgainWhat) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MIA, FLAG_MIA_JOINED_PARTY, MSGNO(MsgMercuryLighthouseThisStatueWasntHereBeforeI) },
-    { PSYNERGY_IN_AREA(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_RemoveColumnOnRetreat) },
+    { PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_RemoveColumnOnRetreat) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_STATUE_BLOCKING_MIA, FLAG_MIA_JOINED_PARTY, EVENT_SCRIPT(MercuryLighthouse_MiaJoinsAfterRescue) },
     { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_CHEST_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { MAP_EVENTS_END },
@@ -3436,7 +3436,7 @@ struct MapEvent gMercuryLighthouseMiddleEvents[] = {
     { MAP_EVENT_COORD, 46, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_WalkLeaderIn) },
     { MAP_EVENT_TALK, LOCALID_SLEET, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_StartDjinnBattle) },
     { BG_EVENT(BG_EVENT_SILENT), 20, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_InspectLockedDoor) },
-    { PSYNERGY_IN_AREA(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_RemoveColumnOnRetreat) },
+    { PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_RemoveColumnOnRetreat) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_GATE_STATUE, FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN, EVENT_SCRIPT(MercuryLighthouse_OpenGateWithMovedStatue) },
     { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_CHEST_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
     { BG_EVENT(BG_EVENT_CHEST), 102, FLAG_CHEST_NUT, FIND_ITEM(ITEM_NUT) },
@@ -3465,7 +3465,7 @@ struct MapEvent gMercuryLighthouseUpperEvents[] = {
     { COORD_EVENT_WALKING, 40, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_PushStoneDoorPipes) },
     { COORD_EVENT_WALKING, 47, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_PushAndSaveCrossingStatuePositions) },
     { BG_EVENT(BG_EVENT_SILENT), 20, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_InspectLockedDoor) },
-    { PSYNERGY_IN_AREA(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_RemoveColumnOnRetreat) },
+    { PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_RemoveColumnOnRetreat) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FALLEN_STATUE, FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN, EVENT_SCRIPT(MercuryLighthouse_OpenStairGateWithMovedStatue) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_CROSSING_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_SyncCrossingStatueFlags) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_CROSSING_STATUE + 1, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_SyncCrossingStatueFlags) },
@@ -3502,7 +3502,7 @@ struct MapEvent gMercuryLighthouseEventsOther[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_DOOR_STATUE, FLAG_IMIL_MET_MIA, 0 },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_DOOR_STATUE, FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA, EVENT_SCRIPT(MercuryLighthouse_MiaOpensEntranceWithPly) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_PLY), LOCALID_WATERFALL_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_PlyOpensWaterfallPassage) },
-    { PSYNERGY_IN_AREA(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_RemoveColumnOnRetreat) },
+    { PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_RemoveColumnOnRetreat) },
     { USE_ITEM(ITEM_EMPTY_BOTTLE), 5, IF_FLAG_SET(FLAG_SATUROS_BEATEN_AT_MERCURY), EVENT_SCRIPT(MercuryLighthouse_FillHermesWaterBottle) },
     { MAP_EVENTS_END },
 };

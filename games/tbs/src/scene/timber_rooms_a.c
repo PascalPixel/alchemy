@@ -518,7 +518,7 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
     ObjectEvent_WaitForMove(LOCALID_IODEM);
     ObjectEvent_SetPosition(LOCALID_IODEM, 0, 0);
     Script_Wait(10);
-    // Back to the map section's own music.
+    // Back to the area's own music.
     Scene_PlayMusic();
     Script_End();
   }

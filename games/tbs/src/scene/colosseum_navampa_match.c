@@ -251,35 +251,35 @@ enum {
 /// state.
 enum {
   /// ★ Named from the game: "Growth" (MsgAbilityName)
-  FLAG_PLANT_GROWN = FLAG_MAPSEC_TEMP_60, ///< by Growth, into a shortcut
+  FLAG_PLANT_GROWN = FLAG_AREA_TEMP_60, ///< by Growth, into a shortcut
   /// ★ Named from the game: "This place is called the Wall Wedge."
   /// (MsgColossoPlaceCalledWall)
   FLAG_WALL_WEDGE_HALTED =
-      FLAG_MAPSEC_TEMP_61, ///< by Halt on LOCALID_WALL_OPERATOR
+      FLAG_AREA_TEMP_61, ///< by Halt on LOCALID_WALL_OPERATOR
   /// ★ Named from the game: "This stage is called the Scales of Justice."
   /// (MsgColossoStageCalledScales)
-  FLAG_SCALES_FROZEN = FLAG_MAPSEC_TEMP_62, ///< by Frost on LOCALID_PUDDLE
+  FLAG_SCALES_FROZEN = FLAG_AREA_TEMP_62, ///< by Frost on LOCALID_PUDDLE
   /// By Force on LOCALID_SIDEWALK_LOG: the belt carries no one any more.
   /// ★ Named from the game: "This is called the Moving Sidewalk Stage."
   /// (MsgColossoCalledMovingSidewalkStage)
-  FLAG_SIDEWALK_LOG_KNOCKED_OFF = FLAG_MAPSEC_TEMP_63,
+  FLAG_SIDEWALK_LOG_KNOCKED_OFF = FLAG_AREA_TEMP_63,
   /// Someone stands on the western ledge, which has sunk
   /// (EventScript_StepOnScales).
   /// ★ Named from the game: "This stage is called the Scales of Justice."
   /// (MsgColossoStageCalledScales)
-  FLAG_ON_SCALES = FLAG_MAPSEC_TEMP_67,
+  FLAG_ON_SCALES = FLAG_AREA_TEMP_67,
   /// ★ Named from the game: "This stage is called the Scales of Justice."
   /// (MsgColossoStageCalledScales)
   FLAG_WEIGHT_ON_SCALES =
-      FLAG_MAPSEC_TEMP_68, ///< LOCALID_SCALES_WEIGHT is on the western ledge
+      FLAG_AREA_TEMP_68, ///< LOCALID_SCALES_WEIGHT is on the western ledge
   /// ★ Named from the game: "To get across the tank, you'll need to roll the
   /// logs." (MsgColossoAnotherLogRollingArea)
   FLAG_LONG_LOG_IN_PLACE =
-      FLAG_MAPSEC_TEMP_69, ///< at the east end (EventScript_RollLongLog)
+      FLAG_AREA_TEMP_69, ///< at the east end (EventScript_RollLongLog)
   /// The byte of flags that keeps LOCALID_STONE's column.
   /// ★ Named from the game: "You can get through quickly by moving the logs and
   /// stones." (MsgColossoAnotherLogRollingArea)
-  FLAG_STONE_COLUMN = FLAG_MAPSEC_TEMP_70,
+  FLAG_STONE_COLUMN = FLAG_AREA_TEMP_70,
   /// Someone has reached the arena
   /// (ColosseumNavampaMatch_CollectFinishEquipment).
   /// ★ Named from the game: "You must get through several stages before you
@@ -2373,13 +2373,13 @@ static void ColosseumNavampaMatch_PushObjectEventAhead(void) {
 #define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10
 /// The chest holding a Smoke Bomb has been opened.
 /// ★ Named from the game: "Smoke Bomb" (MsgItemName)
-#define FLAG_COLOSSEUM_NAVAMPA_MATCH_SMOKE_BOMB_CHEST_OPENED FLAG_MAPSEC_TEMP_6A
+#define FLAG_COLOSSEUM_NAVAMPA_MATCH_SMOKE_BOMB_CHEST_OPENED FLAG_AREA_TEMP_6A
 /// The chest holding a Nut has been opened.
 /// ★ Named from the game: "Nut" (MsgItemName)
-#define FLAG_COLOSSEUM_NAVAMPA_MATCH_NUT_CHEST_OPENED FLAG_MAPSEC_TEMP_6B
+#define FLAG_COLOSSEUM_NAVAMPA_MATCH_NUT_CHEST_OPENED FLAG_AREA_TEMP_6B
 /// The chest holding a Sleep Bomb has been opened.
 /// ★ Named from the game: "Sleep Bomb" (MsgItemName)
-#define FLAG_COLOSSEUM_NAVAMPA_MATCH_SLEEP_BOMB_CHEST_OPENED FLAG_MAPSEC_TEMP_6C
+#define FLAG_COLOSSEUM_NAVAMPA_MATCH_SLEEP_BOMB_CHEST_OPENED FLAG_AREA_TEMP_6C
 
 /// The Moving Sidewalk Stage's log where Force has knocked it off the belt,
 /// bobbing a pixel up and down.

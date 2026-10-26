@@ -188,7 +188,7 @@ FarCall_OverworldTable:
 	export ObjectEvent_RestoreFar, ObjectEvent_Restore
 	export FieldEffect_ScheduleRatioTransitionFar, FieldEffect_ScheduleRatioTransition
 	export FieldScript_WaitForZoomTransitionFar, FieldScript_WaitForZoomTransition
-	export MapSec_GetNameIndexFar, MapSec_GetNameIndex
+	export Area_GetNameIndexFar, Area_GetNameIndex
 	export ObjectEvent_SetMovementTypeFar, ObjectEvent_SetMovementType
 	export Scene_QueueMusicFar, Scene_QueueMusic
 	export Scene_PlayQueuedMusicFar, Scene_PlayQueuedMusic

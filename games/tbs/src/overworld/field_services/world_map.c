@@ -1,5 +1,5 @@
 /// @file
-/// The world map screen: map section markers, the cursor and the map section's
+/// The world map screen: area markers, the cursor and the area's
 /// name.
 // Part of field_services.c.
 
@@ -13,9 +13,9 @@
 /// 240 by 160.
 #define WORLD_MAP_WORLD_SIZE 4096
 #define WORLD_MAP_X_ORIGIN PIXELS(4096) ///< field x of the picture's left edge
-/// The first ordinary map section object event, the first slot with a row of
-/// gRegionMap_MapSecMarkers whatever the leader is.
-#define WORLD_MAP_FIRST_MAPSEC_OBJ_EVENT 11
+/// The first ordinary area object event, the first slot with a row of
+/// gRegionMap_AreaMarkers whatever the leader is.
+#define WORLD_MAP_FIRST_AREA_OBJ_EVENT 11
 #define WORLD_MAP_MARKER_CAPACITY 66 ///< one marker per object event slot
 /// The cursor's sprite entry, after the markers'.
 #define WORLD_MAP_CURSOR_PART WORLD_MAP_MARKER_CAPACITY
@@ -66,7 +66,7 @@ struct RegionMapWork {
   u8 padding14[4]; ///< not read by this screen
   s32 cursorSpeed; ///< 16.16 screen pixels per frame
   struct Window *nameWindow; ///< owned until this screen closes
-  // Packed visible map sections, then a nearest-section frame; the last is the
+  // Packed visible areas, then a nearest-section frame; the last is the
   // cursor.
 #ifdef UBFIX
   union RegionMapMarkerPart markers[WORLD_MAP_MARKER_CAPACITY + 1];
@@ -82,7 +82,7 @@ STATIC_ASSERT(WORLD_MAP_MARKER_CAPACITY ==
                   sizeof(((struct FieldWork *)0)->objectEvents[0]));
 
 /// Sets up the world map screen: the marker tiles and their OAM entries, the
-/// cursor where the leader is on the map (or mid-screen when the map section is
+/// cursor where the leader is on the map (or mid-screen when the area is
 /// not on it), and the name window.
 void FieldEffect_SetupResourcesAndWindow(void) {
 #ifdef UBFIX
@@ -174,7 +174,7 @@ void FieldEffect_SetupResourcesAndWindow(void) {
 }
 
 #if TBS_PATCH_2
-/// The cursor snaps to the nearest map section when the d-pad is released.
+/// The cursor snaps to the nearest area when the d-pad is released.
 #define REGION_MAP_CURSOR_SNAPS 1
 #define REGION_MAP_NAME_RANGE                                                  \
   64                          ///< squared distance that shows a marker's name
@@ -195,9 +195,9 @@ void FieldEffect_CleanupResourcesAndWindow(void) {
   Window_CloseFar(work->nameWindow, 2);
 }
 
-/// Task of the world map screen: shows a marker at each map
-/// section whose flag is set, moves the cursor with the d-pad (to the current
-/// map section while L or R is held) and shows the name of the marker nearest
+/// Task of the world map screen: shows a marker at each
+/// area whose flag is set, moves the cursor with the d-pad (to the current
+/// area while L or R is held) and shows the name of the marker nearest
 /// the cursor.
 void RegionMap_UpdateMarkers(void) {
   s32 leader;
@@ -215,7 +215,7 @@ void RegionMap_UpdateMarkers(void) {
   s32 width;
   struct FieldPosition position;
   struct RegionMapWork *work;
-  struct ObjectEvent *mapSecObjectEvent;
+  struct ObjectEvent *areaObjectEvent;
   s32 cursorY;
   s32 tile;
   s32 mode;
@@ -234,12 +234,12 @@ void RegionMap_UpdateMarkers(void) {
   leader = gSaveBlock.leaderLocalId;
   work = (struct RegionMapWork *)Ram_MapGridCellBuffer;
   marker = work->markers;
-  place = gRegionMap_MapSecMarkers;
+  place = gRegionMap_AreaMarkers;
   tileBase = gVramCacheEntries[work->markerVramBlock].offset >> 5;
 #else
   work = (struct RegionMapWork *)Ram_MapGridCellBuffer;
   leader = gSaveBlock.leaderLocalId;
-  place = gRegionMap_MapSecMarkers;
+  place = gRegionMap_AreaMarkers;
   tileBase = gVramCacheEntries[work->markerVramBlock].offset >> 5;
   marker = work->markers;
 #endif
@@ -252,19 +252,19 @@ void RegionMap_UpdateMarkers(void) {
   // this screen. No object event task removes it while the marker callback
   // runs.
   if (!GameFlag_GetFar(FLAG_WORLD_MAP_LEFT) && (gKeysHeld & KEYS_SHOULDERS)) {
-    // L or R: the current map section.
-    mapSecObjectEvent = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
+    // L or R: the current area.
+    areaObjectEvent = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
 #ifdef UBFIX
     // The native null branch leaves this frame's cursor coordinates unset.
     // A missing selected object event violates the screen's lifetime contract;
     // skipping that frame changes tbs-en from 1088 to 1092 bytes.
-    if (mapSecObjectEvent == NULL)
+    if (areaObjectEvent == NULL)
       return;
 #endif
-    if (mapSecObjectEvent != NULL) {
-      cursorX = ((mapSecObjectEvent->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
+    if (areaObjectEvent != NULL) {
+      cursorX = ((areaObjectEvent->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
                 WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE;
-      cursorY = mapSecObjectEvent->z.part.pixel * WORLD_MAP_SCREEN_HEIGHT /
+      cursorY = areaObjectEvent->z.part.pixel * WORLD_MAP_SCREEN_HEIGHT /
                 WORLD_MAP_WORLD_SIZE;
     }
   } else {
@@ -299,7 +299,7 @@ void RegionMap_UpdateMarkers(void) {
   // with no marker and -1 ends the table. A row is (tile << 16 | flag, map id).
   for (markerIndex = 0; markerIndex < WORLD_MAP_MARKER_CAPACITY;
        markerIndex++) {
-    if (markerIndex != leader && markerIndex < WORLD_MAP_FIRST_MAPSEC_OBJ_EVENT)
+    if (markerIndex != leader && markerIndex < WORLD_MAP_FIRST_AREA_OBJ_EVENT)
       continue;
     if (markerIndex == 0) {
       if (GameFlag_GetFar(FLAG_WORLD_MAP_LEFT))
@@ -326,14 +326,14 @@ void RegionMap_UpdateMarkers(void) {
     }
     if (!GameFlag_GetFar(flag))
       continue;
-    mapSecObjectEvent = ObjectEvent_GetByLocalId(markerIndex);
-    if (mapSecObjectEvent == NULL)
+    areaObjectEvent = ObjectEvent_GetByLocalId(markerIndex);
+    if (areaObjectEvent == NULL)
       continue;
 
     // Field x starts at 4096; the picture covers 4096 square world pixels.
-    x = ((mapSecObjectEvent->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
+    x = ((areaObjectEvent->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
         WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE;
-    y = mapSecObjectEvent->z.part.pixel * WORLD_MAP_SCREEN_HEIGHT /
+    y = areaObjectEvent->z.part.pixel * WORLD_MAP_SCREEN_HEIGHT /
         WORLD_MAP_WORLD_SIZE;
     WORLD_MAP_MARKER_VIEW(marker).objectMode = mode;
     WORLD_MAP_MARKER_VIEW(marker).tile = tileBase + tile;
@@ -354,7 +354,7 @@ void RegionMap_UpdateMarkers(void) {
       nearestX = x;
       nearestY = y;
     }
-    // Blink the current map section for eight frames out of sixteen.
+    // Blink the current area for eight frames out of sixteen.
     if (markerIndex != 0 || (gFrameCount & 15) <= 7)
       Oam_AddSpriteAtDepth(&WORLD_MAP_MARKER_VIEW(marker++), y);
   }
@@ -411,7 +411,7 @@ void RegionMap_UpdateMarkers(void) {
       if (nearestMarker == 0)
         nearestName = MsgPresentLocation;
       else
-        nearestName = MapSec_GetNameIndex(nearestName, 1) + MsgDebugEntryName;
+        nearestName = Area_GetNameIndex(nearestName, 1) + MsgDebugEntryName;
       Text_MeasureMessageFar(nearestName, &width, &height);
       cursorX = nearestX;
       cursorY = nearestY;
@@ -580,7 +580,7 @@ void FieldEffect_RunVisibilityTransition(void) {
 #undef WORLD_MAP_SCREEN_HEIGHT
 #undef WORLD_MAP_WORLD_SIZE
 #undef WORLD_MAP_X_ORIGIN
-#undef WORLD_MAP_FIRST_MAPSEC_OBJ_EVENT
+#undef WORLD_MAP_FIRST_AREA_OBJ_EVENT
 #undef WORLD_MAP_MARKER_CAPACITY
 #undef WORLD_MAP_CURSOR_PART
 #undef WORLD_MAP_CURSOR_MIN_SPEED

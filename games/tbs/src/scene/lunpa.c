@@ -1,6 +1,6 @@
 /// @file
 /// Lunpa, the town of the noble thief's family, sealed by Dodonpa's men while
-/// he holds Hammet for ransom in Lunpa Fortress. Two map sections share this
+/// he holds Hammet for ransom in Lunpa Fortress. Two areas share this
 /// overlay, each a map of its own:
 ///
 /// - Lunpa (SceneId_Lunpa, area name Lunpa): the town. Two guards keep the road
@@ -1130,9 +1130,9 @@ struct ObjectEventTemplate gGateObjectEventTemplates[] = {
 #define LUNPA_SECRETS                                                          \
   {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_HIDDEN_PUDDLE,                \
    FLAG_LUNPA_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeHiddenPuddle)},    \
-      {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0,        \
+      {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0,       \
        CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealSecrets)},             \
-      {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0,        \
+      {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0,       \
        CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HideSecrets)},               \
       {BG_EVENT(BG_EVENT_SILENT), MB_LUNPA_HIDDEN_SWITCH,                      \
        FLAG_LUNPA_SECRETS_HIDDEN,                                              \
@@ -1241,8 +1241,8 @@ struct MapEvent gGateEvents[] = {
     // has no row for it, so the engine sends it to LunpaFortressGroundFloor's
     // default warp destination.
     { MAP_EVENT_WARP, MB_LUNPA_FORTRESS_GATES_THIRD_ROAD, CONDITION_ALWAYS, GATE_WARP_THIRD },
-    { PSYNERGY_IN_AREA(ABILITY_CLOAK, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CastCloak) },
-    { PSYNERGY_IN_AREA(ABILITY_CLOAK, PSYNERGY_PHASE_AFTER_END), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CloakFades) },
+    { PSYNERGY_ANYWHERE(ABILITY_CLOAK, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CastCloak) },
+    { PSYNERGY_ANYWHERE(ABILITY_CLOAK, PSYNERGY_PHASE_AFTER_END), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CloakFades) },
     { MAP_EVENT_COORD, MB_LUNPA_FORTRESS_GATES_FORTRESS_DOOR, FLAG_LUNPA_FORTRESS_GATES_ENTERING_FORTRESS,
       EVENT_SCRIPT(EventScript_EnterFortress) },
     { MAP_EVENT_COORD, MB_LUNPA_FORTRESS_GATES_GUARDED_GROUND, FLAG_LUNPA_FORTRESS_GATES_GUARDS_AT_DOOR,

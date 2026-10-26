@@ -109,11 +109,11 @@ enum {
   /// ★ Named from the game: "Where were you?" (MsgBilibinWhere)
   FLAG_GUARD_SCOLDED = FLAG_SCENE_TEMP_01,
   /// Set by Bilibin (bilibin.c) while the guards have let the party in but it
-  /// has not yet entered the palace. The grounds are in another map section
+  /// has not yet entered the palace. The grounds are in another area
   /// than Bilibin, so entering them clears it before the guard can read it.
   /// ★ Named from the game: "The master can be quite cranky. Hurry along,
   /// now!" (MsgBilibinMasterQuiteCranky)
-  FLAG_KEEPING_MCCOY_WAITING = FLAG_MAPSEC_TEMP_04
+  FLAG_KEEPING_MCCOY_WAITING = FLAG_AREA_TEMP_04
 };
 
 static void McCoyPalaceGrounds_RestoreStory(void);

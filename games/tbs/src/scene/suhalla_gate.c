@@ -36,8 +36,8 @@
 /// world map forgets it. From TBS_PATCH_3 on, the editions lay the wounded
 /// soldiers out without collision and patch the gate's cells around them, and
 /// Retreat always leads back to SuhallaGateCheckpoint. Gateway Cave's Psynergy
-/// Stone is kept in a map section flag (FLAG_GATEWAY_CAVE_PSYNERGY_STONE), so
-/// it is back whenever the party returns from another map section.
+/// Stone is kept in an area flag (FLAG_GATEWAY_CAVE_PSYNERGY_STONE), so
+/// it is back whenever the party returns from another area.
 
 #include "save_block.h"
 #include "version.h"
@@ -67,10 +67,10 @@
 #include "item_ids.h"
 #include "fixed_math.h"
 
-/// Gateway Cave's Psynergy Stone has been found; a map section flag, so the
-/// stone is back once the party returns from another map section.
+/// Gateway Cave's Psynergy Stone has been found; an area flag, so the
+/// stone is back once the party returns from another area.
 /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
-#define FLAG_GATEWAY_CAVE_PSYNERGY_STONE FLAG_MAPSEC_TEMP_50
+#define FLAG_GATEWAY_CAVE_PSYNERGY_STONE FLAG_AREA_TEMP_50
 
 #if TBS_PATCH_3
 #define SUHALLA_GATE_RETREAT_MAP(currentMap)                                   \
@@ -203,7 +203,7 @@ s32 Scene_Initialize(void) {
     }
 #endif
     // Out of the house, Retreat leads back to the side the party came in by,
-    // and the map section's name is not shown again.
+    // and the area's name is not shown again.
     if (gSaveBlock.warpDest == SUHALLA_GATE_CHECKPOINT_FROM_ROCK_ROOMS) {
       if (GameFlag_Get(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH)) {
         gSaveBlock.retreatScene = SUHALLA_GATE_RETREAT_MAP(sceneId);

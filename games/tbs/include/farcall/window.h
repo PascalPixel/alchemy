@@ -168,10 +168,10 @@ s32 FileMenu_SelectActionFar(void);
 /// and returns the choice, or -1 when cancelled.
 s32 IconMenu_ChooseSendOptionFar(s32 mode);
 /// Shows the area's name near the top of the screen for 90 frames, counted down
-/// by MapNamePopup_Update.
-void MapNamePopup_ShowFar();
+/// by AreaNameWindow_Update.
+void AreaNameWindow_ShowFar();
 /// Closes the area name at once, if it's shown.
-void MapNamePopup_HideFar(void);
+void AreaNameWindow_HideFar(void);
 /// Shows a message centred across the screen, yOffset tiles lower, waits until
 /// it's typed out and closes it.
 void FieldMessage_ShowCenteredFar(s32 message, s32 mode, s32 yOffset);

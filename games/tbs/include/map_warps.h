@@ -120,7 +120,7 @@ enum {
           ///< here in Venus Lighthouse's colours, then sends the party back to
           ///< the aerie
   /// The world map's debug warp destination, which sets FLAG_NO_ENCOUNTERS,
-  /// FLAG_NO_ENCOUNTERS_IN_MAPSEC and FLAG_DEBUG_STEPS_OFF.
+  /// FLAG_NO_ENCOUNTERS_IN_AREA and FLAG_DEBUG_STEPS_OFF.
   WORLD_MAP_FROM_DEBUG = 99,
 };
 /// SceneId_WorldMap's warps.
@@ -334,7 +334,7 @@ enum {
   VALE_KRADENS_COTTAGE_FROM_VALE_SOUTH = 2,
   VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_NORTH = 3,
   VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_WEST = 4,
-  /// Cleared of the map section name with
+  /// Cleared of the area name with
   /// VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST, but no warp leads here and
   /// the warp destination table has no row for it.
   VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_UNUSED = 5,

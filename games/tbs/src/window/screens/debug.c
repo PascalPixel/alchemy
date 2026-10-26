@@ -23,7 +23,7 @@ UNUSED void DebugMapSelect_Schedule(void) {
 void DebugMapSelect_DrawRow(struct Window *window, s32 sceneId,
                             const s16 *warpDest) {
   s16 mapIndex = sceneId;
-  s32 label = MapSec_GetNameIndexFar(mapIndex, *warpDest) + MsgDebugEntryName;
+  s32 label = Area_GetNameIndexFar(mapIndex, *warpDest) + MsgDebugEntryName;
   WindowSprite_PrepareForRedraw(window);
   Text_DrawNumber(mapIndex, 3, window, 0, 14);
   Text_DrawNumber(*warpDest, 3, window, MENU_LABEL_X, 14);

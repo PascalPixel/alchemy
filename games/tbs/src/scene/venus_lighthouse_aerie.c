@@ -112,8 +112,8 @@
 #include "flags.h"
 #include "item_ids.h"
 
-// Map section flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
-// party enters another map section, and other map sections use the numbers for
+// Area flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// party enters another area, and other areas use the numbers for
 // their own.
 
 /// Plus the party member (0 to 3) who carried the Shaman's Rod when it was
@@ -121,18 +121,18 @@
 /// ★ Named from the game: "Shaman's Rod" (MsgItemName)
 #define FLAG_SHAMANS_ROD_HOLDER 0x345
 
-/// Map section flags that choose the aerie's field music after each battle, by
+/// Area flags that choose the aerie's field music after each battle, by
 /// the map's field music rules (gMap_MusicRules,
 /// overworld/map_rules.s): MUS_SILENCE before the first battle, MUS_BABI once
 /// the first has begun and MUS_ELEMENTAL_STARS once the second has.
-/// VenusLighthouseFirstFloor and VenusLighthouseFourthFloor, in the same map
-/// section, keep their Psynergy Stones in the same two flags, which no one goes
+/// VenusLighthouseFirstFloor and VenusLighthouseFourthFloor, in the same
+/// area, keep their Psynergy Stones in the same two flags, which no one goes
 /// back down to see.
 enum {
   /// ★ Named from its area name: Lighthouse Aerie
-  FLAG_AERIE_FIRST_BATTLE_BEGUN = FLAG_MAPSEC_TEMP_50,
+  FLAG_AERIE_FIRST_BATTLE_BEGUN = FLAG_AREA_TEMP_50,
   /// ★ Named from its area name: Lighthouse Aerie
-  FLAG_AERIE_SECOND_BATTLE_BEGUN = FLAG_MAPSEC_TEMP_51
+  FLAG_AERIE_SECOND_BATTLE_BEGUN = FLAG_AREA_TEMP_51
 };
 
 static void EventScript_FloatPlatforms(void);

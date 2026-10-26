@@ -11,7 +11,7 @@
 ///   when the guards at the door bring the party in (kalay.c); it ends by
 ///   setting FLAG_IVAN_REPORTED_TO_LAYANA.
 /// - Between the two, until the party has heard in Lunpa that Hammet is held
-///   there (map-section temp flag FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA, set by
+///   there (area temp flag FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA, set by
 ///   kalay.c's events), Layana talks of Dodonpa's spies. Afterwards she
 ///   stands elsewhere in her room, and the first time they speak she scolds
 ///   `Isaac, you sneaked into Lunpa? That's far too dangerous!`
@@ -66,7 +66,7 @@
 /// Layana waits elsewhere in her room.
 /// ★ Named from the game: "you sneaked into Lunpa? That's far too dangerous!"
 /// (MsgKalayIsaacSneakedIntoLunpaThats)
-#define FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA FLAG_MAPSEC_TEMP_21
+#define FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA FLAG_AREA_TEMP_21
 
 /// The palace's object events, numbered in the order of
 /// gHammetPalaceObjectEventTemplates from LOCALID_FIRST_PLACED; its rows for
@@ -194,7 +194,7 @@ static void EventScript_AskWhetherSilkTradeHasEnded(void) {
 
 /// Layana scolds Isaac for sneaking into Lunpa. It's the first talk with her in
 /// Hammet Palace after the party has heard in Lunpa that Hammet is held there
-/// (map-section temp flag FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA). `Isaac, you
+/// (area temp flag FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA). `Isaac, you
 /// sneaked into Lunpa? That's far too dangerous!` She is glad Hammet is unhurt,
 /// but asks the party not to go back, and to fulfill their quest.
 static void EventScript_LayanaScoldsLunpaVisit(void) {

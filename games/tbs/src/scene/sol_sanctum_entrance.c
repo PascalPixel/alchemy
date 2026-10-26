@@ -31,10 +31,10 @@
 /// SolSanctumEntrance_GetObjectEventTemplates and _GetEvents choose them by
 /// the warp destination the party came in at, so a room's statues and their
 /// events exist only while the party is in it. Each pushable statue's column
-/// is kept in two map section flags, one for each side, which
+/// is kept in two area flags, one for each side, which
 /// SolSanctumEntrance_RestoreInteriorState reads to put it back on entry;
-/// Scene_ResetFlagsOnEnter clears them when the party enters another map
-/// section, so the statues are back at their starts on the next visit.
+/// Scene_ResetFlagsOnEnter clears them when the party enters another
+/// area, so the statues are back at their starts on the next visit.
 /// Searching a relief while its Small Jewel is held asks for the field menu as
 /// the search ends, so that the jewel can be used on it at once.
 ///
@@ -74,8 +74,8 @@
 #include "songs.h"
 #include "item_ids.h"
 
-// Map section flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
-// party enters another map section, and other map sections use the numbers for
+// Area flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// party enters another area, and other areas use the numbers for
 // their own.
 
 /// The column each statue that can be pushed stands in, east or west of its

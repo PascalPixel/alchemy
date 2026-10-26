@@ -9,7 +9,7 @@
 @ Directory syntax:
 @   resource NAME, PLACE   One entry; NAME defines its ResourceId_NAME.
 @   group KIND, names...   Consecutive named entries KIND_name.
-@   area SET, count, maps... Maps, then palette and tiles A onward; count is ABCD or -.
+@   tileset SET, count, maps... Maps, then palette and tiles A onward; count is ABCD or -.
 @   recolor NN, maps...    Maps followed by a palette; reuse the preceding tiles.
 @   overlays ID...         Map overlays in ID order.
 @   unused N               N unused entries.
@@ -25,7 +25,7 @@
 	.endr
 	.endm
 
-	.macro area set:req, sheets:req, map_ids:vararg
+	.macro tileset set:req, sheets:req, map_ids:vararg
 	.irp m, \map_ids
 	resource , Field_Map\m
 	.endr
@@ -170,79 +170,79 @@ Resource_DirectoryTable:
 	resource , Tileset_BlankTilesB
 	resource , Tileset_BlankTilesC
 	resource , Tileset_BlankTilesD
-	area Set00, ABCD, 000
-	area Set01, ABCD, 002
-	area Set02, ABCD, 003
-	area Set03, ABCD, 004
-	area Set04, ABCD, 005
-	area Set05, ABCD, 006
-	area Set06, ABCD, 007
-	area Set07, ABCD, 008
-	area Set08, ABCD, 009
-	area Set09, ABC, 010
-	area Set10, ABCD, 011
-	area Set11, ABCD, 012, 013
-	area Set12, ABCD, 014
-	area Set13, ABCD, 015
+	tileset Set00, ABCD, 000
+	tileset Set01, ABCD, 002
+	tileset Set02, ABCD, 003
+	tileset Set03, ABCD, 004
+	tileset Set04, ABCD, 005
+	tileset Set05, ABCD, 006
+	tileset Set06, ABCD, 007
+	tileset Set07, ABCD, 008
+	tileset Set08, ABCD, 009
+	tileset Set09, ABC, 010
+	tileset Set10, ABCD, 011
+	tileset Set11, ABCD, 012, 013
+	tileset Set12, ABCD, 014
+	tileset Set13, ABCD, 015
 	recolor 00, 016
-	area Set14, ABCD, 017
-	area Set15, ABCD, 018
-	area Set16, ABCD, 019
-	area Set17, ABCD, 020
-	area Set18, ABCD, 021
-	area Set19, ABCD, 022
-	area Set20, ABCD, 023, 024, 025
-	area Set21, ABCD, 026, 027, 028
-	area Set22, ABC, 029
-	area Set23, ABCD, 030, 031
-	area Set24, AB, 032
-	area Set25, A, 033
-	area Set26, ABC, 034
-	area Set27, ABCD, 035
-	area Set28, ABCD, 036
-	area Set29, ABCD, 037
-	area Set30, A, 038
-	area Set31, ABCD, 039
+	tileset Set14, ABCD, 017
+	tileset Set15, ABCD, 018
+	tileset Set16, ABCD, 019
+	tileset Set17, ABCD, 020
+	tileset Set18, ABCD, 021
+	tileset Set19, ABCD, 022
+	tileset Set20, ABCD, 023, 024, 025
+	tileset Set21, ABCD, 026, 027, 028
+	tileset Set22, ABC, 029
+	tileset Set23, ABCD, 030, 031
+	tileset Set24, AB, 032
+	tileset Set25, A, 033
+	tileset Set26, ABC, 034
+	tileset Set27, ABCD, 035
+	tileset Set28, ABCD, 036
+	tileset Set29, ABCD, 037
+	tileset Set30, A, 038
+	tileset Set31, ABCD, 039
 	recolor 01, 040
-	area Set32, ABCD, 041
-	area Set33, A, 042
+	tileset Set32, ABCD, 041
+	tileset Set33, A, 042
 	recolor 02, 043
-	area Set34, ABCD, 044
-	area Set35, ABCD, 045
-	area Set36, ABCD, 046
-	area Set37, ABCD, 047
-	area Set38, A, 048
-	area Set39, A, 049
-	area Set40, A, 050
-	area Set41, ABCD, 051
-	area Set42, ABCD, 052
-	area Set43, ABCD, 053, 054
-	area Set44, A, 055, 056, 057, 058, 059, 060
-	area Set45, ABCD, 061
+	tileset Set34, ABCD, 044
+	tileset Set35, ABCD, 045
+	tileset Set36, ABCD, 046
+	tileset Set37, ABCD, 047
+	tileset Set38, A, 048
+	tileset Set39, A, 049
+	tileset Set40, A, 050
+	tileset Set41, ABCD, 051
+	tileset Set42, ABCD, 052
+	tileset Set43, ABCD, 053, 054
+	tileset Set44, A, 055, 056, 057, 058, 059, 060
+	tileset Set45, ABCD, 061
 	recolor 03, 062
-	area Set46, ABCD, 063, 064, 065, 066, 067, 068
-	area Set47, ABCD, 069, 070, 071, 072, 073
+	tileset Set46, ABCD, 063, 064, 065, 066, 067, 068
+	tileset Set47, ABCD, 069, 070, 071, 072, 073
 	recolor 04, 074
-	area Set48, ABCD, 075
-	area Set49, A, 076
+	tileset Set48, ABCD, 075
+	tileset Set49, A, 076
 	recolor 05, 077
 	recolor 06, 078, 079, 080, 081, 082, 083, 084, 085, 086
 	recolor 07, 087, 088
-	area Set50, ABCD, 089, 090
-	area Set51, ABCD, 091, 092, 093
-	area Set52, ABCD, 094
+	tileset Set50, ABCD, 089, 090
+	tileset Set51, ABCD, 091, 092, 093
+	tileset Set52, ABCD, 094
 	recolor 08, 095, 096, 097
-	area Set53, AB, 098
+	tileset Set53, AB, 098
 	recolor 09, 099
 	recolor 10, 100
-	area Set54, ABC, 101
-	area Set55, A, 102
-	area Set56, ABCD, 103
+	tileset Set54, ABC, 101
+	tileset Set55, A, 102
+	tileset Set56, ABCD, 103
 	recolor 11, 104
-	area Set57, ABCD, 105
+	tileset Set57, ABCD, 105
 	recolor 12, 106
 	recolor 13, 107
-	area Set58, ABCD, 108
+	tileset Set58, ABCD, 108
 	recolor 14, 109
 	recolor 15, 110
 	recolor 16, 111
@@ -258,12 +258,12 @@ Resource_DirectoryTable:
 	recolor 26, 120
 	recolor 27, 121, 122
 	recolor 28, 123
-	area Set59, ABCD, 124
+	tileset Set59, ABCD, 124
 	recolor 29, 125
 	recolor 30, 126
-	area Set60, ABCD, 127
-	area Set61, ABCD, 128
-	area Set62, ABCD, 129
+	tileset Set60, ABCD, 127
+	tileset Set61, ABCD, 128
+	tileset Set62, ABCD, 129
 	recolor 31, 130
 	recolor 32, 131, 132, 133
 	resource , Field_Map134
@@ -275,11 +275,11 @@ Resource_DirectoryTable:
 	recolor 36, 139
 	recolor 37, 140, 141, 142, 143
 	recolor 38, 144
-	area Set63, A, 145
+	tileset Set63, A, 145
 	recolor 39, 146, 147
 	recolor 40, 148, 149
-	area Set64, ABCD, 150
-	area Set65, ABCD, 151
+	tileset Set64, ABCD, 150
+	tileset Set65, ABCD, 151
 	recolor 41, 152
 	recolor 42, 153, 154
 	recolor 43, 155
@@ -295,17 +295,17 @@ Resource_DirectoryTable:
 	recolor 50, 163
 	recolor 51, 164
 	recolor 52, 165, 166, 167, 168
-	area Set66, ABCD, 169
-	area Set67, ABCD, 170
+	tileset Set66, ABCD, 169
+	tileset Set67, ABCD, 170
 	recolor 53, 171
-	area Set68, ABCD, 172
-	area Set69, ABCD, 173
-	area Set70, ABCD, 174
-	area Set71, ABCD, 175
-	area Set72, ABCD, 176
-	area Set73, ABCD, 177
-	area Set74, ABCD, 178
-	area Set75, ABCD, 179
+	tileset Set68, ABCD, 172
+	tileset Set69, ABCD, 173
+	tileset Set70, ABCD, 174
+	tileset Set71, ABCD, 175
+	tileset Set72, ABCD, 176
+	tileset Set73, ABCD, 177
+	tileset Set74, ABCD, 178
+	tileset Set75, ABCD, 179
 	overlays 36F, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 37A
 	overlays 37B, 37C, 37D, 37E, 37F, 380, 381, 382, 383, 384, 385, 386
 	overlays 387, 388, 389, 38A, 38B, 38C, 38D, 38E, 38F, 390, 391, 392

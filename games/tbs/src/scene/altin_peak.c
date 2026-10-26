@@ -36,7 +36,7 @@
 /// rides (talking to one, AltinPeak_RollCart), which roll along the turns their
 /// route's cells mark; floor switches in AltinPeakSecondWaterBeast,
 /// AltinPeakThirdWaterBeast, AltinPeakPool and AltinPeakSpritz, each remembered
-/// by a map-section temp flag (FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH
+/// by an area temp flag (FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH
 /// and the three after it) and redrawn on entry; and a stone pillar in
 /// AltinPeakSpritz that Move or a push slides along. Spritz, a Mercury Djinni,
 /// waits there too, placed until it has joined, and talking to it starts its
@@ -119,16 +119,16 @@
 #include "audio_engine_symbols.h"
 
 // The rooms' floor switches, each set once flipped from its first position;
-// they are map-section temp flags, kept until the party leaves the mine.
+// they are area temp flags, kept until the party leaves the mine.
 
 /// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
-#define FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH FLAG_MAPSEC_TEMP_23
+#define FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH FLAG_AREA_TEMP_23
 /// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
-#define FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH FLAG_MAPSEC_TEMP_25
+#define FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH FLAG_AREA_TEMP_25
 /// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
-#define FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH FLAG_MAPSEC_TEMP_26
+#define FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH FLAG_AREA_TEMP_26
 /// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
-#define FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH FLAG_MAPSEC_TEMP_27
+#define FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH FLAG_AREA_TEMP_27
 
 static void AltinPeak_RunBoulderChase(s32 boulderDelay);
 static void AltinPeak_RestoreFirstWaterBeastRoom(void);

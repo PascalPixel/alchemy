@@ -59,7 +59,7 @@ struct WorldPosition;
 // takes, which C89 accepts with no prototype in scope. They are the
 // blank-display runners (the warp destination in r0), Unit_LearnPsynergyFar
 // (called with none), Party_ShowJoinedMessageFar (two),
-// MapNamePopup_ShowFar, PauseMenu_RunFar and
+// AreaNameWindow_ShowFar, PauseMenu_RunFar and
 // BuildStamp_GetTimeFar (one each). The near call Text_ResetStyle
 // is declared the same way in unit/window/window.h (Window_Create passes it
 // one).

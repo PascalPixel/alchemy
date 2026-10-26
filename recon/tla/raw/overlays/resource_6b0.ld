@@ -40,7 +40,7 @@ SECTIONS
         "*/games/tla/src/scene/anemos_inner_sanctum/s16fc.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s178c.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s17a0.o"(.text)
-        "*/resource_6b0_overlay.o"(.text.x020097b4)
+        "*/games/tla/src/scene/anemos_inner_sanctum/s17b4.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s1938.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s19a8.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s1a94.o"(.text)

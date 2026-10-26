@@ -1,72 +1,57 @@
-// Draft of overlay 6ae's Func_020004a4, translated from its listing: differ
-// 90 of 103. Left: its shape: 111 instructions against the listing's 103.
+// Draft, differ 87 of 103: rewritten from the listing. Every 16th call, while
+// object 8 exists, spawns an effect of type 0x2a0 above it at a random height
+// that follows it on its sprite's layer. Left: GCSE shares the counter's
+// address between its first read and the closing increment (inserting a load on
+// the path without object 8) and keeps it in r11, which shifts every
+// callee-saved register; the native loads it again at the end.
 #include "types.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Func_0200556c();
-s32 Func_02005574();
-s32 Math_Sine();
-s32 Object_GetById();
-s32 Object_SetPartAttribute();
-s32 Random16Far();
-s32 __divsi3();
-extern u8 Data_0200eb60[];
-extern u8 Func_020005a0[];
-extern u8 gData_02006ad0[];
+#include "object_runtime.h"
 
-s32 Func_020004a4(void) {
-  s32 v_r0, v_r6, v_r8, v_r5, v_r7, v_r3, t0, t1, t2, t3;
-  s32 t4, t5, t6, t7, t8, t11, t12, t13, t14, t15;
-  s32 t16;
+struct MarsLighthouseAerieSprite {
+  u8 unk00[9];
+  u8 unk09_0 : 2;
+  u8 layer : 2;
+  u8 unk09_4 : 4;
+  u8 unk0a[0x10];
+  u8 unk1a;
+};
 
-  t0 = Object_GetById(8);
-  t1 = Random16Far();
-  v_r8 = t0;
-  v_r6 = (((u32)(((t1 << 1) + t1) << 4) >> 16) << 16);
-  v_r0 = t0;
-  if (v_r8 == 0)
-    goto L_0200858a;
-  t2 = *(s32 *)(s32)Data_0200eb60;
-  v_r5 = (t2 & 15);
-  if (v_r5 != 0)
-    goto L_0200858a;
-  t3 = FIELD_AT(v_r0, s32, 12);
-  t4 = FIELD_AT(v_r0, s32, 8);
-  t5 = FIELD_AT(v_r0, s32, 16);
-  t6 = Func_02005574(0x2a0, (t4 + 0x80000), ((t3 + v_r6) + 0x80000), t5);
-  t7 = __divsi3(v_r6, 0x60000);
-  v_r6 = (t7 << 16);
-  v_r7 = t6;
-  v_r0 = t7;
-  if (v_r7 == 0)
-    goto L_0200858a;
-  t8 = FIELD_AT(v_r7, s32, 80);
-  Func_0200556c(v_r7, (s32)gData_02006ad0);
-  Object_SetPartAttribute(v_r7, 10);
-  *(u8 *)(v_r7 + 85) = v_r5;
-  t11 = Random16Far();
-  *(u16 *)(v_r7 + 100) = (0xffff000 & t11);
-  *(u16 *)(v_r7 + 102) = v_r5;
-  FIELD_AT(v_r7, s32, 108) = (s32)Func_020005a0;
-  FIELD_AT(v_r7, s32, 104) = v_r8;
-  v_r6 = (v_r6 & 0xfffff);
-  t12 = Math_Sine((v_r6 >> 4), v_r8);
-  FIELD_AT(v_r7, s32, 48) = ((((t12 << 1) + t12) << 3) >> 16);
-  FIELD_AT(t8, u8, 26) = 0;
-  t13 = FIELD_AT(v_r8, s32, 80);
-  t14 = FIELD_AT(t13, u8, 9);
-  t15 = FIELD_AT(t8, u8, 9);
-  v_r0 = t8;
-  v_r3 = ((-13 & t15) | (12 & t14));
-  goto L_02008588;
-L_02008588:
-  FIELD_AT(v_r0, u8, 9) = v_r3;
-L_0200858a:
-  t16 = *(s32 *)(s32)Data_0200eb60;
-  *(s32 *)(s32)Data_0200eb60 = (t16 + 1);
-  return v_r0;
+extern u32 Data_0200eb60;
+extern const u8 gData_02006ad0[];
+
+struct ObjectRuntime *Object_GetById(s32 id);
+u32 Random16Far(void);
+s32 Math_Sine(s32 angle);
+void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+struct ObjectRuntime *Func_02005574(s32 type, s32 x, s32 y, s32 z);
+void Func_0200556c(struct ObjectRuntime *object, const u8 *script);
+void Func_020005a0(void);
+
+void Func_020004a4(void) {
+  struct ObjectRuntime *anchor = Object_GetById(8);
+  s32 offset = (Random16Far() * 48 >> 16) << 16;
+  struct ObjectRuntime *object;
+  struct MarsLighthouseAerieSprite *sprite;
+  u32 phase;
+
+  if (anchor != NULL && (phase = Data_0200eb60 & 15) == 0) {
+    object = Func_02005574(0x2a0, anchor->x + 0x80000,
+                           anchor->y + offset + 0x80000, anchor->z);
+    offset = (offset / 0x60000) << 16;
+    if (object != NULL) {
+      sprite = object->animation;
+      Func_0200556c(object, gData_02006ad0);
+      Object_SetPartAttribute(object, 10);
+      object->motionFlags = phase;
+      object->action = Random16Far() & 0x0ffff000;
+      object->unk66 = phase;
+      object->update = Func_020005a0;
+      object->linkedObject = anchor;
+      object->speedLimit = Math_Sine((offset & 0xfffff) >> 4) * 24 >> 16;
+      sprite->unk1a = 0;
+      sprite->layer =
+          ((struct MarsLighthouseAerieSprite *)anchor->animation)->layer;
+    }
+  }
+  Data_0200eb60++;
 }

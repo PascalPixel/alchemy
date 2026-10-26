@@ -1,14 +1,3 @@
-// Draft, differ 2 of 171: rewritten from the listing. Anemos Inner Sanctum's
-// update for an object pushed along with the leader: past z 248 it stops on its
-// cell and clears flag 0x200; otherwise it follows the leader's movement,
-// raising dust (type 0x2a0) while the leader moves, and stops where the cell
-// kind is 52 or 51, setting the event work's unk16a to 201 or 200.
-// Vector_AddPolarOffsetFar goes through a forwarding inline (called directly
-// the 0x70000 is built before the angle's 0x8000: 6). Left: the known
-// store-then-load order: after the two position stores the native copies x into
-// r1 before loading terrainId; a temporary for the kind's arguments, the stored
-// fields as arguments, a forwarding inline and an empty asm after the stores
-// change nothing.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -36,10 +25,16 @@ void Vector_AddPolarOffsetFar(s32 length, s32 angle, s32 *position);
 s32 Func_02003348(s32 layer, s32 x, s32 z);
 
 static __inline__ void AddPolar(s32 length, s32 angle, s32 *position) {
-  /* FAKEMATCH(wrapper): forwarded inline; see scene_call.h. */
+  /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as a direct call, 4
+   * of 171 instructions differ in tla-en. */
   Vector_AddPolarOffsetFar(length, angle, position);
 }
 
+/// The update of an object that moves with the leader: once the leader is past
+/// z 248 it settles on its cell and clears flag 0x200; otherwise it repeats the
+/// leader's step, raising an effect of type 0x2a0 on each step, and stops where
+/// the cell kind under it is 52 or 51, setting the event work's unk16a to 201 or
+/// 200. unk4c and acceleration hold the leader's last x and z.
 void Func_020017b4(struct ObjectRuntime *self) {
   struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
   s32 next[2];
@@ -77,9 +72,17 @@ void Func_020017b4(struct ObjectRuntime *self) {
   AddPolar(0x70000, 0x8000 - leader->angle, ahead);
   if (Func_02003348(self->terrainId, ahead[0], ahead[2]) == 255)
     return;
-  self->x = next[0];
-  self->z = next[1];
-  kind = Func_02003348(self->terrainId, next[0], next[1]);
+  {
+    s32 x = next[0];
+
+    self->x = x;
+    self->z = next[1];
+    /* FAKEMATCH(barrier): an empty asm holding x and the z just stored, so x
+     * is copied for the call before terrainId is read; as a call on next[0]
+     * and next[1], 2 of 171 instructions differ in tla-en. */
+    asm("" : "+l"(x), "+m"(self->z));
+    kind = Func_02003348(self->terrainId, x, next[1]);
+  }
   if (kind == 52) {
     ((struct AnemosInnerSanctumEventWork *)Ram_HeapSlots->eventWork)->unk16a =
         201;

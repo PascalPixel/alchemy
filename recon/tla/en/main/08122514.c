@@ -1,3 +1,10 @@
+// 2026-10-26: differ 6 of 783 (both functions). The summon search reads
+// each Djinni count through the definition (summon->djinnRequired[element]),
+// as The Broken Seal's turn.c does, rather than through a pointer to the
+// array: the first comparison then folds element 0 as the native does (12 to
+// 8). Left: the opening stores' zero, issued after the unit reload here and
+// before it natively, and abilityId's copy to r9 for an item, before the two
+// request stores here and after them natively (swapping those statements: 32).
 // Under -mthumb-slow-loads (26 October 2026): differ 40 of 755 in tla-en.
 // Tried, one edit at a time: an empty asm barrier after each statement, each
 // adjacent pair of statements swapped, each call argument copied into its
@@ -113,7 +120,7 @@ s32 Func_08122514(struct BattleActionRecord *request, s32 retry) {
   u8 summons[36];
   s32 summonIndex;
   s32 element;
-  const u8 *required;
+  const struct SummonDefinition *summon;
 
   s32 Func_081224d8(u8 *weights) {
     s32 roll;
@@ -322,10 +329,14 @@ select_again:
         request->command = COMMAND_SUMMON;
         Func_08123574(0, counts);
         summonIndex = Summon_ListLearnedFar(summons);
+        // An empty asm here (one barrier search, 2026-10-26) moves the
+        // summon count call's result copy as the native has it: 8 to 6.
+        asm("");
         for (summonIndex--; summonIndex >= 0; summonIndex--) {
-          required = SummonDefinition_Get(summons[summonIndex])->djinnRequired;
-          for (element = 0;
-               element <= 3 && required[element] <= counts[element]; element++)
+          summon = SummonDefinition_Get(summons[summonIndex]);
+          for (element = 0; element <= 3 &&
+                            summon->djinnRequired[element] <= counts[element];
+               element++)
             ;
           if (element == 4)
             break;

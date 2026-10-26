@@ -1,3 +1,7 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 8 of 260 in tla-en. First difference: the native issues `movs r6, #1` earlier
+// (row 22) than this does (row 70). An empty asm after `redraw = 1;` measured
+// 2. No single empty asm or one-pass block reaches 0.
 // First draft of Func_080fe638: the Djinn menu's list of every Djinn found,
 // two pages of nine rows for each element: each Djinn whose flag (48 + its
 // number) is set shows its element tile and name. Left and Right turn the

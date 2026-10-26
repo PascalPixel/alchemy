@@ -1,3 +1,6 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 10 of 223 in tla-en. First difference: this issues `ldr r3, [r6, #8]` earlier
+// (row 48) than the native does (row 50).
 // Near miss, differ 16 of 223 (2026-10-18, written from the listing; ☀️ has
 // no twin): order only, in four places. The native builds the first mote's
 // address after the polar call (agscc hoists the movs above the bl) and

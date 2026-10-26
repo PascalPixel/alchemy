@@ -1,3 +1,7 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 4 of 90 in tla-en. First difference: this issues `movs r2, #0` earlier (row
+// 18) than the native does (row 24). No single empty asm or one-pass block
+// reaches 0.
 // Near miss of Func_080e9db4 (first written 2026-10-12): differ 4 of 90 since
 // 2026-10-19 (6 on 2026-10-18), two reordered places. The permuter found a
 // one-pass block from the render mode store to the gravity store (6 -> 4);

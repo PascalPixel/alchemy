@@ -1,3 +1,6 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 12 of 141 in tla-en. First difference: this issues `sub sp, #4` earlier (row
+// 8) than the native does (row 11).
 // Near miss, differ 14 of 141 (2026-10-19; 26 before). The native spills
 // the list's start (sp 0) and keeps the map work in r11 and the 0x100000
 // step in r9, set after the first test: both are fixed here, the step set

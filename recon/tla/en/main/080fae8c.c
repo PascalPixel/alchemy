@@ -1,3 +1,7 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 6 of 217 in tla-en. First difference: this issues `lsls r3, r2, #1` earlier
+// (row 21) than the native does (row 23). No single empty asm or one-pass block
+// reaches 0.
 // First draft of Func_080fae8c: the twin of ☀️'s ItemMenu_DrawEquipPreview
 // (games/tbs/src/menu/menu/item.c). Shows in the status panel what the item in
 // owner's slot would mean to member target, previewing it in a copy of

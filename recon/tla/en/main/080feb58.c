@@ -1,3 +1,7 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 6 of 184 in tla-en. First difference: the native issues `mov fp, r3` earlier
+// (row 17) than this does (row 20). No single empty asm or one-pass block
+// reaches 0.
 // Near miss, differ 6 of 184 (2026-10-19): the twin of The Broken Seal's
 // PsynergyMenu_SelectOwner. Written as while (1) the loop keeps the native's
 // order (as for (;;), jump.c moves the B test and the cursor call above the

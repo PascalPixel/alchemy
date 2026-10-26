@@ -1,3 +1,7 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 8 of 289 in tla-en. First difference: this issues `ldr r2, [r2, #60]` earlier
+// (row 15) than the native does (row 18). An empty asm after `selection = 0;`
+// measured 4. No single empty asm or one-pass block reaches 0.
 // First draft of Func_08101d5c: the Djinn menu's help, the twin of ☀️'s
 // DjinnMenu_ShowHelp (games/tbs/src/menu/menu/djinn.c): seven topics in a
 // list, the chosen topic's title and text beside it; right or down and A step

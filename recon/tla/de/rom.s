@@ -1902,12 +1902,6 @@ Menu_UpdateEntryObjectTransformsFar:
 	.thumb_func
 Func_080f8170:
 	.incbin "baserom.gba", 0x00102170, 0x000004a0
-	.section .rom.00102888, "ax"
-	.global UiIcon_PrepareObject
-	.type UiIcon_PrepareObject, %function
-	.thumb_func
-UiIcon_PrepareObject:
-	.incbin "baserom.gba", 0x00102888, 0x0000003c
 	.section .rom.001029a4, "ax"
 	.balign 4
 	.global Func_080f89a4
@@ -1950,8 +1944,6 @@ Func_080fb8b8:
 	.section .rom.00105f30, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00105f30, 0x00000618
-	.section .rom.00106620, "ax"
-	.incbin "baserom.gba", 0x00106620, 0x000000b0
 	.section .rom.00106784, "ax"
 	.incbin "baserom.gba", 0x00106784, 0x00000430
 	.section .rom.00106bb4, "ax"
@@ -2051,13 +2043,6 @@ Func_0810106c:
 	.global DjinnMenu_DrawPage
 DjinnMenu_DrawPage:
 	.incbin "baserom.gba", 0x0010bc94, 0x00000144
-	.section .rom.0010be48, "ax"
-	.balign 4
-	.global Func_08101c7c
-	.type Func_08101c7c, %function
-	.thumb_func
-Func_08101c7c:
-	.incbin "baserom.gba", 0x0010be48, 0x000000b8
 	.section .rom.0010bf28, "ax"
 	.incbin "baserom.gba", 0x0010bf28, 0x00001308
 	.global Func_08103064
@@ -2136,12 +2121,6 @@ Func_0810a108:
 	.incbin "baserom.gba", 0x0011210c, 0x000001a4
 	.section .rom.001122dc, "ax"
 	.incbin "baserom.gba", 0x001122dc, 0x00000394
-	.section .rom.00112710, "ax"
-	.global Forge_FindRecipe
-	.type Forge_FindRecipe, %function
-	.thumb_func
-Forge_FindRecipe:
-	.incbin "baserom.gba", 0x00112710, 0x0000003c
 	.section .rom.00112bf4, "ax"
 	.global Func_0810abf0
 	.type Func_0810abf0, %function
@@ -2366,8 +2345,9 @@ Func_08118158:
 	.incbin "baserom.gba", 0x00118244, 0x00000040
 	.section .rom.0011843c, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x0011843c, 0x000002fc
+	.incbin "baserom.gba", 0x0011843c, 0x00000188
 	.section .rom.00118738, "ax"
+	.balign 4
 	.global DebugParty_LoadPreset
 	.type DebugParty_LoadPreset, %function
 	.thumb_func

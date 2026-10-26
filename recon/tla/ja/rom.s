@@ -2286,12 +2286,6 @@ Data_080f3984:
 	.thumb_func
 Func_080f8170:
 	.incbin "baserom.gba", 0x000f8170, 0x00000498
-	.section .rom.000f8830, "ax"
-	.global UiIcon_PrepareObject
-	.type UiIcon_PrepareObject, %function
-	.thumb_func
-UiIcon_PrepareObject:
-	.incbin "baserom.gba", 0x000f8830, 0x0000003c
 	.section .rom.000f894c, "ax"
 	.balign 4
 	.global Func_080f89a4
@@ -2432,13 +2426,6 @@ Func_0810106c:
 	.global DjinnMenu_DrawPage
 DjinnMenu_DrawPage:
 	.incbin "baserom.gba", 0x00101ad0, 0x00000144
-	.section .rom.00101c84, "ax"
-	.balign 4
-	.global Func_08101c7c
-	.type Func_08101c7c, %function
-	.thumb_func
-Func_08101c7c:
-	.incbin "baserom.gba", 0x00101c84, 0x000000b8
 	.section .rom.00101d64, "ax"
 	.incbin "baserom.gba", 0x00101d64, 0x000012d8
 	.global Func_08103064
@@ -2537,12 +2524,6 @@ EventTable_GetRowLimit:
 	.thumb_func
 EventTable_ApplyRowAbilities:
 	.incbin "baserom.gba", 0x0010a678, 0x00000050
-	.section .rom.0010a71c, "ax"
-	.global Forge_FindRecipe
-	.type Forge_FindRecipe, %function
-	.thumb_func
-Forge_FindRecipe:
-	.incbin "baserom.gba", 0x0010a71c, 0x0000003c
 	.section .rom.0010aa90, "ax"
 	.balign 4
 	.global Shop_ConfirmAct
@@ -2613,8 +2594,9 @@ BattleUnit_GetEffectHeightFar:
 	.incbin "baserom.gba", 0x00118244, 0x00000040
 	.section .rom.0011843c, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x0011843c, 0x000002fc
+	.incbin "baserom.gba", 0x0011843c, 0x00000188
 	.section .rom.00118738, "ax"
+	.balign 4
 	.global DebugParty_LoadPreset
 	.type DebugParty_LoadPreset, %function
 	.thumb_func

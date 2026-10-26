@@ -1,3 +1,8 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 8 of 170 in tla-en. The native spills its arguments to the stack before it
+// builds the heap slots' address; this builds the address first (row 8). An
+// empty asm after `equipped = Inventory_FindEquippedFar(unitId, item->type);`
+// measured 6. No single empty asm or one-pass block reaches 0.
 // Near miss, differ 8 of 170 (2026-10-19; was 10):
 // the shop repairs a unit's damaged item at slot
 // (refusing other kinds, undamaged items, cursed equipped items and a price
@@ -46,7 +51,7 @@ void Shop_DrawItemCount(s32 window, s32 unitId);
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot);
 void Shop_SellOld(s32 unitId, s32 slot);
 
-void Shop_RepairItem(s32 unitId, s32 slot) {
+void Func_0810a2d8(s32 unitId, s32 slot) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   struct BattleUnit *unit = Unit_Get(unitId);
   u32 raw = unit->inventory[slot];

@@ -1,3 +1,6 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 22 of 318 in tla-en. First difference: this issues `movs r2, #128` earlier
+// (row 50) than the native does (row 53).
 // Near miss, differ 10 of 318 (2026-10-18, written from the listing; ☀️ has
 // no twin): field Psynergy kind 24, the glow Func_080e9940 draws each frame.
 // Two tagged empty asm barriers in the fall bring 16 to 10; what remains is

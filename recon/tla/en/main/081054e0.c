@@ -1,3 +1,7 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 2 of 72 in tla-en. First difference: this issues `movs r1, #0` earlier (row
+// 17) than the native does (row 19). No single empty asm or one-pass block
+// reaches 0.
 // Near miss, differ 2 of 72 (one reordered pair): the status panel's list of
 // the five status names, each with its icon, or MsgStatusNameNormal when none
 // is set. The native spills the icon column (str r3, [sp, #0]) before it builds

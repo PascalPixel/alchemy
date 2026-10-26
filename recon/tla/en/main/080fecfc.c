@@ -1,3 +1,7 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 2 of 129 in tla-en. First difference: this issues `ldrb r3, [r5, #0]` earlier
+// (row 55) than the native does (row 57). No single empty asm or one-pass block
+// reaches 0.
 // Draft of Func_080fecfc: moves the party member at selectedIndex one place
 // later (direction 1) or earlier (0) in the party order and returns 1, or 0
 // when it cannot move; the twin of The Broken Seal's

@@ -1,3 +1,6 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 10 of 194 in tla-en. First difference: this issues `adds r5, #1` earlier (row
+// 105) than the native does (row 108).
 // Near miss, differ 14 of 194 (2026-10-15, written from the listing; ☀️ has no
 // twin). Kind 24 (Func_080e9af4) runs it each frame; Func_080e989c gives its
 // colours. What remains is order: the ROM loads the event work just after

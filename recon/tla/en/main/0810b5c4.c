@@ -1,3 +1,7 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 8 of 107 in tla-en. First difference: this issues `ldr r1, [pc, #56]` earlier
+// (row 40) than the native does (row 43). No single empty asm or one-pass block
+// reaches 0.
 // Draft, differ 8 of 107 (2026-10-19; was 10): the forge's counter: opens the
 // shop menu in forge mode, shows the smith's portrait from the speaking
 // object's sprite and the cursor, asks for a material (Func_0810b6bc) and says
@@ -54,7 +58,7 @@ void Func_081084f4(s32 message);
 s32 Func_0810b6bc(void);
 void UiWork_FinalizeFar(void *window, s32 mode);
 
-s32 Forge_Open(s32 objectId) {
+s32 Func_0810b5c4(s32 objectId) {
   struct ShopRuntime *shop;
   struct RenderOutput *icon;
   void *window;

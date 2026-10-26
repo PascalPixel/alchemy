@@ -1,3 +1,6 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 18 of 238 in tla-en. The native spills its arguments to the stack before it
+// builds the heap slots' address; this builds the address first (row 8).
 // Near miss, differ 28 of 238 (2026-10-12): The Broken Seal's
 // Shop_DrawEquipComparison with this game's Unit_Get, Item_Get and menu runtime
 // slot. Every instruction and register is the native's; seven rows are in
@@ -56,7 +59,7 @@ struct RenderOutput *RenderOutput_CreateFar(s32 code, s32 layers,
                                             struct RenderInput *input, s32 x,
                                             s32 y);
 
-void Shop_DrawEquipComparison(s32 window, s32 unitId, s32 itemId) {
+void Func_081093a4(s32 window, s32 unitId, s32 itemId) {
   struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
   struct ShopUnit *unit = Unit_Get(unitId);
   struct ItemDefinition *item = Item_Get(itemId);

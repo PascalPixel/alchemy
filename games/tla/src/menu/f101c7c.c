@@ -3,12 +3,14 @@
 
 struct WindowTiles {
   u8 unk00[3];
-  u8 dirty;
+  u8 dirty; ///< bits: one per four tile rows, from bit 1
   u8 unk04[4];
   u16 cells[32][32];
 };
 
-void Ui_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
+/// Gives every cell of a tile rectangle that uses palette 15 the palette
+/// given instead, clipped to the screen, and marks its rows for upload.
+void Func_08101c7c(s32 x, s32 y, s32 width, s32 height, s32 palette) {
   struct WindowTiles *tiles = (struct WindowTiles *)Ram_HeapSlots->windowTiles;
 
   palette <<= 12;
@@ -46,7 +48,11 @@ void Ui_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
           p++;
         } while (col != 0);
       }
-      tiles->dirty |= 2 << ((u32)y >> 2);
+      /* FAKEMATCH(one-pass): the dirty bit's update in a once-only block;
+       * as the plain statement, 4 of 90 instructions differ in tla-en. */
+      do {
+        tiles->dirty |= 2 << ((u32)y >> 2);
+      } while (0);
 
       height--;
       y++;

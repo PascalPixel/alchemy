@@ -1,11 +1,3 @@
-// Draft, differ 10 of 79: The Broken Seal's ItemMenu_DrawItemDetailPage over
-// The Lost Age's menu offsets. Three rows are scheduled the other way round,
-// each around a split constant: the native saves the state pointer before it
-// starts 0x03000000 (mov r8, r2; movs r3, #192), loads the info window before
-// it opens the frame (ldr r0, [r7, #48]; ... sub sp, #8) and loads the item
-// name base before it finishes 0x1ff (ldr r3, =MsgItemPlainName; lsls r0, r0,
-// #1). MsgItemPlainName is message 146 in English and is not named in the
-// catalogs yet.
 #include "types.h"
 #include "ram_buffer.h"
 
@@ -35,21 +27,23 @@ s32 Render_SetTilemapFlagRect(s32 window, s32 x, s32 y, s32 width, s32 height,
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void WaitFrames(s32 frames);
 
-// Draws the selected item-list row's name and highlights only that row.
-s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1,
-                                struct MenuResult *state) {
+/// Draws the selected item-list row's name and highlights only that row; the
+/// twin of The Broken Seal's ItemMenu_DrawItemDetailPage.
+s32 Func_080fc558(s32 arg0, void *arg1, struct MenuResult *state) {
   struct InventoryMenuState *menu;
   s32 page;
   s32 combined;
   s32 row;
+  s32 window;
 
   page = state->page;
   menu = Ram_HeapSlots->menuRuntime;
+  window = menu->infoWindow;
   combined = page * 5;
   combined += state->row;
   state->selectedIndex = combined;
 
-  RenderOutput_RedrawSavedRectFar(menu->infoWindow);
+  RenderOutput_RedrawSavedRectFar(window);
   WaitFrames(1);
 
   combined = state->selectedIndex;

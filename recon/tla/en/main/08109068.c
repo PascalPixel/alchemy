@@ -1,3 +1,7 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 4 of 136 in tla-en. The native spills its arguments to the stack before it
+// builds the heap slots' address; this builds the address first (row 8). No
+// single empty asm or one-pass block reaches 0.
 // First draft of Func_08109068: draws a seven-item stock page of the shop,
 // the selection highlight, page arrows and price sprites; the twin of ☀️'s
 // Shop_DrawStock (games/tbs/src/shop/shop.c), with the page start written

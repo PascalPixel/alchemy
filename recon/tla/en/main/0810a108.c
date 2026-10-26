@@ -1,3 +1,7 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 6 of 167 in tla-en. The native spills its arguments to the stack before it
+// builds the heap slots' address; this builds the address first (row 8). No
+// single empty asm or one-pass block reaches 0.
 // Near miss, differ 6 of 167 (2026-10-19; was 8):
 // sells count of a unit's item at slot (count -1
 // sells the whole old item), ☀️'s Shop_SellItem in games/tbs/src/shop/shop.c,
@@ -44,7 +48,7 @@ void Party_AdjustCoinsFar(s32 amount);
 void Func_08109188(void);
 void Shop_DrawItemCount(s32 window, s32 unitId);
 
-void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
+void Func_0810a108(s32 unitId, s32 slot, s32 count) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   struct BattleUnit *unit = Unit_Get(unitId);
   u32 raw = unit->inventory[slot];

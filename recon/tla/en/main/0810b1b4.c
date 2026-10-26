@@ -1,3 +1,6 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 18 of 194 in tla-en. First difference: this issues `ldr r2, [r1, #0]` earlier
+// (row 25) than the native does (row 27).
 // Near miss, differ 18 of 194: the sanctum's revival burst for a party member.
 // It hides the cursor, plays the service's sound, darkens the member's icon,
 // spawns 18 radial sparks around the member's position
@@ -68,7 +71,7 @@ void BattleEffect_UpdateRadialMotion(struct Effect_080b2f4c *effect);
 
 extern s8 Data_0810cf28[];
 
-void Shop_RunPartyMemberIconBurst(s32 member) {
+void Func_0810b1b4(s32 member) {
   struct ShopRuntime *shop;
   struct ShopBurstRuntime *burst;
   s8 savedKind;

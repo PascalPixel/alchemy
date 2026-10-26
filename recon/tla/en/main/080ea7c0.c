@@ -1,3 +1,6 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 6 of 104 in tla-en. First difference: at row 11 the native has `mov r8, r0`
+// where this has `mov r9, r0`. No single empty asm or one-pass block reaches 0.
 // Near miss, differ 6 of 104 (2026-10-19; 25 before). The list's start is
 // fixed in r9, as the native keeps it for Func_080eaa14, which also puts the
 // map work in r10 (25 -> 6). What remains is the opening's copies: the

@@ -1,3 +1,8 @@
+// 2026-10-26 (round 5, later): differ 58. Each spark and mote loop has its own
+// block-scoped pointer (the first frame's two, the spark draw loop's, the drain
+// block's): 114 to 96 for the sparks, 58 with the motes; the allocation in both
+// loops now matches. Left: the SameSide arms (below), the prologue's heap base
+// built after the effect's spill and scheduling rows.
 // Draft of BattleEffect_RunSoulShatter, effect kind 115 (Soul Shatter), The
 // Broken Seal's BattleEffect_RunUndeadSword as The Lost Age reworked it
 // (structure twin 0.703): the same two mirrored halves of a column and the same
@@ -126,8 +131,6 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
   DrawRectangle draw[2];
   struct EffectPosition position;
   struct EffectPosition screen;
-  struct EffectStep *spark;
-  struct EffectStep *mote;
   s32 frame;
   s32 i;
 
@@ -157,29 +160,35 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
     // at the target, 52 pixels up, in every direction.
     if (frame == 0) {
       target->y = 0;
-      spark = work->particles;
-      for (i = 0; i != SPARKS; i++, spark++) {
-        s32 speed = (Random16() & 0xff) + 256;
-        s32 angle = (Random16() & 0x7fff) + 0x4000;
+      {
+        struct EffectStep *spark = work->particles;
 
-        spark->x = position.x << 16;
-        spark->y = (96 - (Random16() & 31)) << 16;
-        spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
-        spark->velocityY = (Trig_Cos(angle) * speed) >> 9;
-        spark->variant = Random16() & 7;
+        for (i = 0; i != SPARKS; i++, spark++) {
+          s32 speed = (Random16() & 0xff) + 256;
+          s32 angle = (Random16() & 0x7fff) + 0x4000;
+
+          spark->x = position.x << 16;
+          spark->y = (96 - (Random16() & 31)) << 16;
+          spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
+          spark->velocityY = (Trig_Cos(angle) * speed) >> 9;
+          spark->variant = Random16() & 7;
+        }
       }
-      mote = &work->particles[SPARKS * 2];
-      for (i = 0; i != MOTES; i++, mote++) {
-        s32 speed = (Random16() & 127) + 128;
-        s32 angle = Random16() & 0x7fff;
+      {
+        struct EffectStep *mote = &work->particles[SPARKS * 2];
 
-        mote->x = target->x;
-        mote->y = 52 << 16;
-        mote->z = target->z;
-        mote->velocityY = ((Random16() & 0xff) - 128) << 9;
-        mote->velocityX = (Trig_Sin(angle) * speed) >> 7;
-        mote->velocityZ = (Trig_Cos(angle) * speed) >> 7;
-        mote->variant = 0;
+        for (i = 0; i != MOTES; i++, mote++) {
+          s32 speed = (Random16() & 127) + 128;
+          s32 angle = Random16() & 0x7fff;
+
+          mote->x = target->x;
+          mote->y = 52 << 16;
+          mote->z = target->z;
+          mote->velocityY = ((Random16() & 0xff) - 128) << 9;
+          mote->velocityX = (Trig_Sin(angle) * speed) >> 7;
+          mote->velocityZ = (Trig_Cos(angle) * speed) >> 7;
+          mote->variant = 0;
+        }
       }
     }
 
@@ -243,27 +252,31 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
     // The sparks: from frame 8, two more each frame, through seven
     // pictures three frames apiece; one in four is drawn mirrored.
     BattleEffect_FetchRectangleBlitters(effect->side, draw);
-    spark = work->particles;
-    for (i = 0; i != SPARKS; i++, spark++) {
-      if (frame >= i / 2 + 8 && spark->variant <= 28) {
-        s32 cell = spark->variant / 3;
-        s32 x = HI(spark->x);
-        s32 y = HI(spark->y);
+    {
+      struct EffectStep *spark = work->particles;
 
-        if (cell > 6)
-          cell = 6;
-        draw[(i & 3) ? 0 : 1](
-            canvas, work->sheet + Data_08198b5e[cell] + SPARK_OFFSET,
-            x - Data_08198b6c[cell] / 2, y - Data_08198b6c[cell] / 2,
-            Data_08198b6c[cell], Data_08198b6c[cell]);
-        spark->variant++;
-        BattleEffectKernels_IntegrateVector2(spark, 62, -0x2000);
+      for (i = 0; i != SPARKS; i++, spark++) {
+        if (frame >= i / 2 + 8 && spark->variant <= 28) {
+          s32 cell = spark->variant / 3;
+          s32 x = HI(spark->x);
+          s32 y = HI(spark->y);
+
+          if (cell > 6)
+            cell = 6;
+          draw[(i & 3) ? 0 : 1](
+              canvas, work->sheet + Data_08198b5e[cell] + SPARK_OFFSET,
+              x - Data_08198b6c[cell] / 2, y - Data_08198b6c[cell] / 2,
+              Data_08198b6c[cell], Data_08198b6c[cell]);
+          spark->variant++;
+          BattleEffectKernels_IntegrateVector2(spark, 62, -0x2000);
+        }
       }
     }
 
     // From frame 32 the motes fly; mote i turns toward the user's middle
     // from frame 32 + i and vanishes once it passes the user.
     if (frame > 31) {
+      struct EffectStep *mote;
       struct MotionObject *user;
       s32 userHalfHeight;
       struct BattleCamera *camera;

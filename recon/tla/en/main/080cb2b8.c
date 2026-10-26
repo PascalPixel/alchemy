@@ -1,4 +1,5 @@
-// Draft, differ 91 of 488: written from the listing in the form of The
+// Draft, differ 81 of 488 (87 before; 2026-10-26, the event work read after the
+// controlled owner): written from the listing in the form of The
 // Broken Seal's Field_ProcessStep. One step of the leader onto the cell at
 // (x, y, z) of layer: records the cell (exit code, push attributes), checks
 // warp regions, and while walking rolls encounters, regains PP and recovers
@@ -85,9 +86,9 @@ void Func_080d489c(s32 owner, s32 mode);
 void BattleParty_ApplyHealthDelta(s32 amount, s32 percent);
 
 void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
-  struct StepWork *work = Ram_HeapSlots->eventWork;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 leaderId = EventRuntime_GetControlledOwner();
+  struct StepWork *work = Ram_HeapSlots->eventWork;
   struct ObjectRuntime *leader = Func_080cb8e8();
   s16 previousHp[8];
   struct MapCell *tile;

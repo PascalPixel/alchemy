@@ -1,4 +1,6 @@
-// Draft, differ 768 of 976 (2026-10-25): The Broken Seal's PaletteFade_Build,
+// Draft, differ 737 of 976 (766 before; 2026-10-26, three plain reorders: the
+// second half's dst step after its count, the dark tint's halving before
+// green, a tint declaration) (2026-10-25): The Broken Seal's PaletteFade_Build,
 // which builds the battle effects' colour buffers from a palette (each colour
 // as B, G and R channels shifted up 10 bits). This game adds two tints after
 // the seven The Broken Seal has: 0x10008 darkens bright colours (a fifth off
@@ -58,9 +60,9 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
   if (half == 1) {
     colorCount = COLOR_HALF;
   } else if (half == 2) {
-    dst += COLOR_HALF * 3;
     src += COLOR_HALF;
     colorCount = COLOR_HALF;
+    dst += COLOR_HALF * 3;
   }
 
   // One colour: write it once, then let DMA copy it over the rest. The copy
@@ -219,9 +221,9 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
       for (i = 0; i < colorCount; i++) {
         color = *src++;
         red = color & 31;
+        red -= (u32)red >> 1;
         green = (color >> 5) & 31;
         blue = (color >> 10) & 31;
-        red -= (u32)red >> 1;
         green -= green / 3;
         red += 6;
         green += 4;
@@ -265,8 +267,8 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
     }
   } else if (mode & PALETTE_TINT_CUSTOM) {
     // The brightness (2R + 4G + B) times the colour in mode.
-    u32 tintRed;
     u32 tintGreen;
+    u32 tintRed;
     u32 tintBlue;
     s32 red;
     s32 green;

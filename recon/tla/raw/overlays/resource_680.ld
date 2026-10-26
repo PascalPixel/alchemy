@@ -7,7 +7,7 @@ SECTIONS
         "*/games/tla/src/scene/gaia_rock/exits.o"(.text)
         "*/games/tla/src/scene/gaia_rock/events_a.o"(.text)
         "*/games/tla/src/scene/gaia_rock/events_b.o"(.text)
-        "*/resource_680_overlay.o"(.text.x02008164)
+        "*/games/tla/src/scene/gaia_rock/s0164.o"(.text)
         "*/games/tla/src/scene/gaia_rock/events_c.o"(.text)
         "*/games/tla/src/scene/gaia_rock/wander.o"(.text)
         "*/resource_680_overlay.o"(.text.x02008528)

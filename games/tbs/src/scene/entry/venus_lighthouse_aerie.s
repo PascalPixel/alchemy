@@ -1,7 +1,7 @@
 	.include "games/tbs/src/system/overlay.inc"
 	overlay_veneer VenusLighthouseAerie_Initialize
-	overlay_veneer VenusLighthouseAerie_GetWarpDests
-	overlay_veneer VenusLighthouseAerie_GetWarps
+	overlay_veneer VenusLighthouseAerie_GetEntrances
+	overlay_veneer VenusLighthouseAerie_GetExits
 	overlay_veneer VenusLighthouseAerie_GetObjectEventTemplates
 	overlay_veneer VenusLighthouseAerie_GetEvents
 	overlay_veneer VenusLighthouseAerie_GetRegions

@@ -5,14 +5,14 @@
 #include "map_tables.h"
 #include "scene_header.h"
 
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEvent;
 struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *Scene_GetWarps(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
@@ -27,21 +27,21 @@ extern s32 gAltinPeak_IvanScript[];
 extern s32 gAltinPeak_MiaScript[];
 extern s32 gAltinPeak_StatueSinkScript[];
 extern s32 gAltinPeak_RejoinScript[];
-extern struct MapWarpDest gAltinPeak_WarpDestsOther[];
-extern struct MapWarpDest gAltinPeak_FirstWaterBeastWarpDests[];
-extern struct MapWarpDest gAltinPeak_RailTunnelWarpDests[];
-extern struct MapWarpDest gAltinPeak_SecondWaterBeastWarpDests[];
-extern struct MapWarpDest gAltinPeak_SouthEntranceWarpDests[];
-extern struct MapWarpDest gAltinPeak_ThirdWaterBeastWarpDests[];
-extern struct MapWarpDest gAltinPeak_PoolWarpDests[];
-extern struct MapWarpDest gAltinPeak_SpritzWarpDests[];
-extern struct MapWarpDest gAltinPeak_JunctionWarpDests[];
-extern struct MapWarpDest gAltinPeak_FallingRocksWarpDests[];
-extern struct MapWarpDest gAltinPeak_HydrosStatueWarpDests[];
-extern struct MapWarpDest gAltinPeak_WestExitWarpDests[];
-extern struct MapWarpRegion gAltinPeak_FallingRocksRegions[];
-extern struct MapWarpRegion gAltinPeak_HydrosStatueRegions[];
-extern u32 gAltinPeak_Warps[];
+extern struct SceneEntrance gAltinPeak_EntrancesOther[];
+extern struct SceneEntrance gAltinPeak_FirstWaterBeastEntrances[];
+extern struct SceneEntrance gAltinPeak_RailTunnelEntrances[];
+extern struct SceneEntrance gAltinPeak_SecondWaterBeastEntrances[];
+extern struct SceneEntrance gAltinPeak_SouthEntranceEntrances[];
+extern struct SceneEntrance gAltinPeak_ThirdWaterBeastEntrances[];
+extern struct SceneEntrance gAltinPeak_PoolEntrances[];
+extern struct SceneEntrance gAltinPeak_SpritzEntrances[];
+extern struct SceneEntrance gAltinPeak_JunctionEntrances[];
+extern struct SceneEntrance gAltinPeak_FallingRocksEntrances[];
+extern struct SceneEntrance gAltinPeak_HydrosStatueEntrances[];
+extern struct SceneEntrance gAltinPeak_WestExitEntrances[];
+extern struct SceneExitRegion gAltinPeak_FallingRocksRegions[];
+extern struct SceneExitRegion gAltinPeak_HydrosStatueRegions[];
+extern u32 gAltinPeak_Exits[];
 extern struct ObjectEventTemplate gAltinPeak_ObjectEventTemplatesOther[];
 extern struct ObjectEventTemplate
     gAltinPeak_FirstWaterBeastObjectEventTemplates[];

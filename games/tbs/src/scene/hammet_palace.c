@@ -29,7 +29,7 @@
 /// The people of the palace (LOCALID_WORRIED_ABOUT_THE_TOWNSFOLK to
 /// LOCALID_ASKING_ABOUT_THE_SILK_TRADE) have one line before Hammet is free and
 /// another after. Walking north into a door (coord events 2, 3, 4 and 14) opens
-/// it; the other warps join the rooms plainly.
+/// it; the other exits join the rooms plainly.
 /// HAMMET_PALACE_TO_HAMMET_PALACE_GROUNDS leads out to the front of the palace
 /// (HAMMET_PALACE_GROUNDS_FROM_HAMMET_PALACE), and
 /// HAMMET_PALACE_TO_KALAY_TUNNEL_TREASURE_ROOM down into the Kalay Tunnel
@@ -124,8 +124,8 @@ enum HammetPalaceLocalId {
   LOCALID_ASKING_ABOUT_THE_SILK_TRADE
 };
 
-// Warp destination setup and the two long conversations use the helpers below.
-static void HammetPalace_SetUpWarpDest(void);
+// Entrance setup and the two long conversations use the helpers below.
+static void HammetPalace_SetUpEntrance(void);
 static void HammetPalace_IvanReportsToLayana(void);
 static void HammetPalace_FacePartyOutward(s32 waitFrames);
 static void HammetPalace_FacePartyNorth(s32 waitFrames);
@@ -137,20 +137,20 @@ static __inline__ void HammetPalace_AdvanceMessage(s32 amount) {
   gFieldWork->message += amount;
 }
 
-/// Selects Hammet Palace's warp destinations, or the fallback table for any
+/// Selects Hammet Palace's entrances, or the fallback table for any
 /// other map number.
-const struct MapWarpDest *Scene_GetWarpDests(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_HammetPalace) {
-    return gHammetPalaceWarpDests;
+    return gHammetPalaceEntrances;
   }
-  return gHammetPalaceWarpDestsOther;
+  return gHammetPalaceEntrancesOther;
 }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Scene_GetWarps(void) { return gHammetPalaceWarps; }
+const u32 *Scene_GetExits(void) { return gHammetPalaceExits; }
 
 /// Applies object event template clipping before returning Hammet Palace's
 /// object event rows.
@@ -239,7 +239,7 @@ static void EventScript_LeaveThroughDoor(void) {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 3, -16);
   }
   FieldScript_WaitFrames(16);
-  Import_ScriptRequestWarp(work->coordEvent);
+  Import_ScriptRequestExit(work->coordEvent);
   // Restore the layer entries before returning control to the field engine.
   TilesetAnim_Pause(1);
   TilesetAnim_Pause(2);
@@ -247,12 +247,12 @@ static void EventScript_LeaveThroughDoor(void) {
 }
 
 /// Opens Hammet Palace with its window transition and runs
-/// warp-destination-specific setup.
+/// entrance-specific setup.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   if (gSaveBlock.sceneId == (u32)&SceneId_HammetPalace) {
-    HammetPalace_SetUpWarpDest();
+    HammetPalace_SetUpEntrance();
   }
   return 0;
 }
@@ -266,7 +266,7 @@ s32 Scene_Initialize(void) {
 /// HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM) the door is drawn open once
 /// FLAG_KALAY_TUNNEL_OPEN is set.
 /// HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS is Ivan's report.
-static void HammetPalace_SetUpWarpDest(void) {
+static void HammetPalace_SetUpEntrance(void) {
   struct ObjectEvent *objectEvent;
   s32 facing;
   s32 waitingX = PIXELS(906);
@@ -275,7 +275,7 @@ static void HammetPalace_SetUpWarpDest(void) {
   TilesetAnim_Pause(1);
   TilesetAnim_Pause(2);
 
-  switch (gSaveBlock.warpDest) {
+  switch (gSaveBlock.entrance) {
   case HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM:
     if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
       // Hammet is home.
@@ -1039,12 +1039,12 @@ s32 gHammetPalace_PartyActions[] = {
     SC_END,
 };
 
-struct MapWarpDest gHammetPalaceWarpDestsOther[] = {
+struct SceneEntrance gHammetPalaceEntrancesOther[] = {
     {0, CONDITION_ALWAYS, 168, 0, 168, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gHammetPalaceWarpDests[] = {
+struct SceneEntrance gHammetPalaceEntrances[] = {
     {0, CONDITION_ALWAYS, 168, 0, 168, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {HAMMET_PALACE_FROM_HAMMET_PALACE_GROUNDS, CONDITION_ALWAYS, 240, 0, 648,
      FACING_NORTH, 0, 45, 360, 440, 680, 0},
@@ -1079,38 +1079,38 @@ struct MapWarpDest gHammetPalaceWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gHammetPalaceWarps[] = {
-    MAP_WARPS(HammetPalace),
-    MAP_WARP(HAMMET_PALACE_TO_HAMMET_PALACE_GROUNDS, HammetPalaceGrounds,
-             HAMMET_PALACE_GROUNDS_FROM_HAMMET_PALACE),
-    MAP_WARP(HAMMET_PALACE_ENTRANCE_ROOM_TO_WEST_WING, HammetPalace,
-             HAMMET_PALACE_WEST_WING_FROM_ENTRANCE_ROOM),
-    MAP_WARP(HAMMET_PALACE_ENTRANCE_ROOM_TO_EAST_WING, HammetPalace,
-             HAMMET_PALACE_EAST_WING_FROM_ENTRANCE_ROOM),
-    MAP_WARP(HAMMET_PALACE_ENTRANCE_ROOM_TO_LAYANAS_ROOM, HammetPalace,
-             HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM),
-    MAP_WARP(HAMMET_PALACE_ENTRANCE_ROOM_TO_LANDING, HammetPalace,
-             HAMMET_PALACE_LANDING_FROM_ENTRANCE_ROOM),
-    MAP_WARP(HAMMET_PALACE_WEST_WING_TO_ENTRANCE_ROOM, HammetPalace,
-             HAMMET_PALACE_ENTRANCE_ROOM_FROM_WEST_WING),
-    MAP_WARP(HAMMET_PALACE_EAST_WING_TO_ENTRANCE_ROOM, HammetPalace,
-             HAMMET_PALACE_ENTRANCE_ROOM_FROM_EAST_WING),
-    MAP_WARP(HAMMET_PALACE_EAST_WING_TO_PASSAGE_DOOR, HammetPalace,
-             HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING),
-    MAP_WARP(HAMMET_PALACE_LAYANAS_ROOM_TO_ENTRANCE_ROOM, HammetPalace,
-             HAMMET_PALACE_ENTRANCE_ROOM_FROM_LAYANAS_ROOM),
-    MAP_WARP(HAMMET_PALACE_PASSAGE_DOOR_TO_EAST_WING, HammetPalace,
-             HAMMET_PALACE_EAST_WING_FROM_PASSAGE_DOOR),
-    MAP_WARP(HAMMET_PALACE_TO_KALAY_TUNNEL_TREASURE_ROOM,
-             KalayTunnelTreasureRoom,
-             KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE),
-    MAP_WARP(HAMMET_PALACE_BEDROOM_TO_LANDING, HammetPalace,
-             HAMMET_PALACE_LANDING_FROM_BEDROOM),
-    MAP_WARP(HAMMET_PALACE_LANDING_TO_ENTRANCE_ROOM, HammetPalace,
-             HAMMET_PALACE_ENTRANCE_ROOM_FROM_LANDING),
-    MAP_WARP(HAMMET_PALACE_LANDING_TO_BEDROOM, HammetPalace,
-             HAMMET_PALACE_BEDROOM_FROM_LANDING),
-    MAP_WARPS_END,
+u32 gHammetPalaceExits[] = {
+    SCENE_EXITS(HammetPalace),
+    SCENE_EXIT(HAMMET_PALACE_TO_HAMMET_PALACE_GROUNDS, HammetPalaceGrounds,
+               HAMMET_PALACE_GROUNDS_FROM_HAMMET_PALACE),
+    SCENE_EXIT(HAMMET_PALACE_ENTRANCE_ROOM_TO_WEST_WING, HammetPalace,
+               HAMMET_PALACE_WEST_WING_FROM_ENTRANCE_ROOM),
+    SCENE_EXIT(HAMMET_PALACE_ENTRANCE_ROOM_TO_EAST_WING, HammetPalace,
+               HAMMET_PALACE_EAST_WING_FROM_ENTRANCE_ROOM),
+    SCENE_EXIT(HAMMET_PALACE_ENTRANCE_ROOM_TO_LAYANAS_ROOM, HammetPalace,
+               HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM),
+    SCENE_EXIT(HAMMET_PALACE_ENTRANCE_ROOM_TO_LANDING, HammetPalace,
+               HAMMET_PALACE_LANDING_FROM_ENTRANCE_ROOM),
+    SCENE_EXIT(HAMMET_PALACE_WEST_WING_TO_ENTRANCE_ROOM, HammetPalace,
+               HAMMET_PALACE_ENTRANCE_ROOM_FROM_WEST_WING),
+    SCENE_EXIT(HAMMET_PALACE_EAST_WING_TO_ENTRANCE_ROOM, HammetPalace,
+               HAMMET_PALACE_ENTRANCE_ROOM_FROM_EAST_WING),
+    SCENE_EXIT(HAMMET_PALACE_EAST_WING_TO_PASSAGE_DOOR, HammetPalace,
+               HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING),
+    SCENE_EXIT(HAMMET_PALACE_LAYANAS_ROOM_TO_ENTRANCE_ROOM, HammetPalace,
+               HAMMET_PALACE_ENTRANCE_ROOM_FROM_LAYANAS_ROOM),
+    SCENE_EXIT(HAMMET_PALACE_PASSAGE_DOOR_TO_EAST_WING, HammetPalace,
+               HAMMET_PALACE_EAST_WING_FROM_PASSAGE_DOOR),
+    SCENE_EXIT(HAMMET_PALACE_TO_KALAY_TUNNEL_TREASURE_ROOM,
+               KalayTunnelTreasureRoom,
+               KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE),
+    SCENE_EXIT(HAMMET_PALACE_BEDROOM_TO_LANDING, HammetPalace,
+               HAMMET_PALACE_LANDING_FROM_BEDROOM),
+    SCENE_EXIT(HAMMET_PALACE_LANDING_TO_ENTRANCE_ROOM, HammetPalace,
+               HAMMET_PALACE_ENTRANCE_ROOM_FROM_LANDING),
+    SCENE_EXIT(HAMMET_PALACE_LANDING_TO_BEDROOM, HammetPalace,
+               HAMMET_PALACE_BEDROOM_FROM_LANDING),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gHammetPalaceObjectEventTemplatesOther[] = {
@@ -1151,19 +1151,19 @@ struct MapEvent gHammetPalaceEventsOther[] = {
 };
 
 struct MapEvent gHammetPalaceEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, HAMMET_PALACE_TO_HAMMET_PALACE_GROUNDS },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, HAMMET_PALACE_TO_HAMMET_PALACE_GROUNDS },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveThroughDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveThroughDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveThroughDoor) },
-    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, HAMMET_PALACE_ENTRANCE_ROOM_TO_LANDING },
-    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, HAMMET_PALACE_WEST_WING_TO_ENTRANCE_ROOM },
-    { MAP_EVENT_WARP, 7, CONDITION_ALWAYS, HAMMET_PALACE_EAST_WING_TO_ENTRANCE_ROOM },
-    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, HAMMET_PALACE_EAST_WING_TO_PASSAGE_DOOR },
-    { MAP_EVENT_WARP, 9, CONDITION_ALWAYS, HAMMET_PALACE_LAYANAS_ROOM_TO_ENTRANCE_ROOM },
-    { MAP_EVENT_WARP, 10, CONDITION_ALWAYS, HAMMET_PALACE_PASSAGE_DOOR_TO_EAST_WING },
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 11, CONDITION_ALWAYS, HAMMET_PALACE_TO_KALAY_TUNNEL_TREASURE_ROOM },
-    { MAP_EVENT_WARP, 12, CONDITION_ALWAYS, HAMMET_PALACE_BEDROOM_TO_LANDING },
-    { MAP_EVENT_WARP, 13, CONDITION_ALWAYS, HAMMET_PALACE_LANDING_TO_ENTRANCE_ROOM },
+    { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, HAMMET_PALACE_ENTRANCE_ROOM_TO_LANDING },
+    { MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, HAMMET_PALACE_WEST_WING_TO_ENTRANCE_ROOM },
+    { MAP_EVENT_EXIT, 7, CONDITION_ALWAYS, HAMMET_PALACE_EAST_WING_TO_ENTRANCE_ROOM },
+    { MAP_EVENT_EXIT, 8, CONDITION_ALWAYS, HAMMET_PALACE_EAST_WING_TO_PASSAGE_DOOR },
+    { MAP_EVENT_EXIT, 9, CONDITION_ALWAYS, HAMMET_PALACE_LAYANAS_ROOM_TO_ENTRANCE_ROOM },
+    { MAP_EVENT_EXIT, 10, CONDITION_ALWAYS, HAMMET_PALACE_PASSAGE_DOOR_TO_EAST_WING },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 11, CONDITION_ALWAYS, HAMMET_PALACE_TO_KALAY_TUNNEL_TREASURE_ROOM },
+    { MAP_EVENT_EXIT, 12, CONDITION_ALWAYS, HAMMET_PALACE_BEDROOM_TO_LANDING },
+    { MAP_EVENT_EXIT, 13, CONDITION_ALWAYS, HAMMET_PALACE_LANDING_TO_ENTRANCE_ROOM },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveThroughDoor) },
     { MAP_EVENT_TALK, LOCALID_LAYANA, FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA, MSGNO(MsgHammetPalaceDodonpaIsAVeryShrewdMan) },
     { MAP_EVENT_TALK, LOCALID_LAYANA, FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS, EVENT_SCRIPT(EventScript_LayanaScoldsLunpaVisit) },

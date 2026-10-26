@@ -5,18 +5,18 @@
 #include "map_tables.h"
 #include "scene_header.h"
 
-const struct MapWarpDest *LaliveroInteriors_GetWarpDests(void);
-const struct MapWarpRegion *LaliveroInteriors_GetRegions(void);
-const u32 *LaliveroInteriors_GetWarps(void);
+const struct SceneEntrance *LaliveroInteriors_GetEntrances(void);
+const struct SceneExitRegion *LaliveroInteriors_GetRegions(void);
+const u32 *LaliveroInteriors_GetExits(void);
 const struct ObjectEventTemplate *
 LaliveroInteriors_GetObjectEventTemplates(void);
 const struct MapEvent *LaliveroInteriors_GetEvents(void);
 s32 Scene_Initialize(void);
 extern s32 gLaliveroInteriors_InnWorkerChores[];
-extern struct MapWarpDest gLaliveroInteriors_WarpDests[];
-extern struct MapWarpRegion gTimberRoomsB_Regions[];
-extern struct MapWarpRegion gTimberRoomsC_Regions[];
-extern u32 gLaliveroInteriors_Warps[];
+extern struct SceneEntrance gLaliveroInteriors_Entrances[];
+extern struct SceneExitRegion gTimberRoomsB_Regions[];
+extern struct SceneExitRegion gTimberRoomsC_Regions[];
+extern u32 gLaliveroInteriors_Exits[];
 extern struct ObjectEventTemplate gTimberRoomsB_ObjectEventTemplates[];
 extern struct ObjectEventTemplate gTimberRoomsC_ObjectEventTemplates[];
 extern struct ObjectEventTemplate

@@ -2,8 +2,8 @@
 /// Log rooms A (SceneId_LogRoomsA), a sheet of rooms drawn in logs, all of them
 /// Vault's: the insides of the town's houses, shops and inn, and the inn's
 /// loft, while Hammet's Shaman's Rod is missing and just after it is found.
-/// Every room is on one map, each a warp destination with a camera box of its
-/// own, and Vault's doors (vault.c) lead to the warp destinations named for
+/// Every room is on one map, each an entrance with a camera box of its
+/// own, and Vault's doors (vault.c) lead to the entrances named for
 /// them: the gem owner's house, the child's house, the inn and its guests' room
 /// upstairs, the item shop, the weapon and armor shop, the mayor's house and a
 /// room with a crate, behind which a way climbs to the inn's loft. The loft has
@@ -288,17 +288,17 @@ static void LogRoomsA_EndMindRead(void);
 static void LogRoomsA_UpdateObjectEventStops(void);
 static void LogRoomsA_StartObjectEventStops(void);
 
-const struct MapWarpDest *Scene_GetWarpDests(void) {
-  return gLogRoomsA_WarpDests;
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gLogRoomsA_Entrances;
 }
 
-/// Returns the one warp region: the box around (648, 416) in the room with the
+/// Returns the one exit region: the box around (648, 416) in the room with the
 /// crate, which takes LOG_ROOMS_A_TO_VAULT_WEST back out to Vault.
-const struct MapWarpRegion *Scene_GetWarpRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return gLogRoomsA_Regions;
 }
 
-const u32 *Scene_GetWarps(void) { return gLogRoomsA_Warps; }
+const u32 *Scene_GetExits(void) { return gLogRoomsA_Exits; }
 
 /// Places the townspeople, or, for the inn's loft
 /// (LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM and the two after the battle), the
@@ -307,7 +307,7 @@ const u32 *Scene_GetWarps(void) { return gLogRoomsA_Warps; }
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *table;
 
-  switch (gSaveBlock.warpDest) {
+  switch (gSaveBlock.entrance) {
   case LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM:
   case LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES:
   case LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED:
@@ -535,10 +535,10 @@ static void EventScript_SearchEmptyChest(void) {
   FieldScript_End();
 }
 
-/// Returns the loft's events for the loft's three warp destinations, else the
+/// Returns the loft's events for the loft's three entrances, else the
 /// houses' events, which change once FLAG_VAULT_THIEVES_JAILED is set.
 const struct MapEvent *Scene_GetEvents(void) {
-  switch (gSaveBlock.warpDest) {
+  switch (gSaveBlock.entrance) {
   case LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM:
   case LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES:
   case LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED:
@@ -1547,11 +1547,11 @@ static void EventScript_FreeRooferAndConfrontThieves(void) {
 /// (LOG_ROOMS_A_INN_FROM_INN_UPSTAIRS).
 ///
 /// Reached by stepping on MB_LOG_ROOMS_A_GUESTS_ROOM_STAIRS before the
-/// thieves are jailed (after, the same cell is a plain warp); takes
+/// thieves are jailed (after, the same cell is a plain exit); takes
 /// LOG_ROOMS_A_INN_UPSTAIRS_TO_INN.
 static void EventScript_LeaveGuestsRoom(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  Import_ScriptRequestWarp(LOG_ROOMS_A_INN_UPSTAIRS_TO_INN);
+  Import_ScriptRequestExit(LOG_ROOMS_A_INN_UPSTAIRS_TO_INN);
 }
 
 /// In Vault's room with the crate, the party climbs up into the inn's loft by
@@ -1564,7 +1564,7 @@ static void EventScript_ClimbToLoft(void) {
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 728, 408);
   gFieldWork->transitionFrames = 16;
   Script_PlaySong(SE_MAP_EXIT);
-  Import_ScriptRequestWarp(LOG_ROOMS_A_CRATE_ROOM_TO_LOFT);
+  Import_ScriptRequestExit(LOG_ROOMS_A_CRATE_ROOM_TO_LOFT);
 }
 
 /// Leaving the inn's loft, the party hears the tied-up villager groan.
@@ -1584,7 +1584,7 @@ static void EventScript_LeaveLoft(void) {
   }
   gFieldWork->transitionFrames = 16;
   Sound_PlaySong(SE_MAP_EXIT);
-  Import_ScriptRequestWarp(LOG_ROOMS_A_LOFT_TO_CRATE_ROOM);
+  Import_ScriptRequestExit(LOG_ROOMS_A_LOFT_TO_CRATE_ROOM);
 }
 
 /// In the guests' room at Vault's inn, the two suspects spot "that weird kid"
@@ -2147,7 +2147,7 @@ static void LogRoomsA_AdvanceSuspectRoute(s32 localId, s32 expected, s32 next,
 /// for the story so far, and plays the loft's events: the tied-up villager, the
 /// rematch, and the defeat or victory.
 ///
-/// Called by the engine once the object events are placed, by warp destination.
+/// Called by the engine once the object events are placed, by entrance.
 /// At the inn, after the thieves are jailed, places the Bone and starts
 /// Vault_UpdateBoneProximityFlag. After a lost battle
 /// (LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES) takes
@@ -2157,7 +2157,7 @@ static void LogRoomsA_AdvanceSuspectRoute(s32 localId, s32 expected, s32 next,
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  switch (gSaveBlock.warpDest) {
+  switch (gSaveBlock.entrance) {
   case LOG_ROOMS_A_FROM_VAULT_EAST_SOUTHEAST: {
     s32 zero = 0;
 
@@ -2283,7 +2283,7 @@ s32 Scene_Initialize(void) {
     Import_ObjectEventSetPosition(LOCALID_TIED_UP_VILLAGER, PIXELS(824),
                                   PIXELS(456));
     LogRoomsA_LoseToThieves();
-    Import_ScriptRequestWarp(LOG_ROOMS_A_TO_SANCTUM);
+    Import_ScriptRequestExit(LOG_ROOMS_A_TO_SANCTUM);
     break;
   case LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED:
     // Won: the thieves are caught and the stolen goods handed back.
@@ -3951,8 +3951,8 @@ s32 gLogRoomsA_SuspectAlongToSouthEastCorner[] = {
     SC_END,
 };
 
-struct MapWarpDest gLogRoomsA_WarpDests[] = {
-    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gLogRoomsA_Entrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { LOG_ROOMS_A_FROM_VAULT_EAST_SOUTHEAST, CONDITION_ALWAYS, 192, 0, 220, FACING_NORTH, 0, 32, 0, 272, 240, 0 },
     { LOG_ROOMS_A_FROM_VAULT_SOUTHEAST, CONDITION_ALWAYS, 432, 0, 254, FACING_NORTH, 0, 288, 0, 528, 272, 0 },
     { LOG_ROOMS_A_FROM_VAULT_SOUTHWEST, CONDITION_ALWAYS, 720, 0, 782, FACING_NORTH, 0, 432, 576, 800, 800, 0 },
@@ -3969,26 +3969,26 @@ struct MapWarpDest gLogRoomsA_WarpDests[] = {
     { MAP_TABLE_END },
 };
 
-struct MapWarpRegion gLogRoomsA_Regions[] = {
+struct SceneExitRegion gLogRoomsA_Regions[] = {
     {639, 33, 407, 657, 51, 425, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_WEST},
     {MAP_TABLE_END},
 };
 
-u32 gLogRoomsA_Warps[] = {
-    MAP_WARPS(LogRoomsA),
-    MAP_WARP(LOG_ROOMS_A_TO_VAULT_EAST_SOUTHEAST, Vault, VAULT_FROM_LOG_ROOMS_A_EAST_SOUTHEAST),
-    MAP_WARP(LOG_ROOMS_A_TO_VAULT_SOUTHEAST, Vault, VAULT_FROM_LOG_ROOMS_A_SOUTHEAST),
-    MAP_WARP(LOG_ROOMS_A_TO_VAULT_SOUTHWEST, Vault, VAULT_FROM_LOG_ROOMS_A_SOUTHWEST),
-    MAP_WARP(LOG_ROOMS_A_TO_VAULT_EAST, Vault, VAULT_FROM_LOG_ROOMS_A_EAST),
-    MAP_WARP(LOG_ROOMS_A_TO_VAULT_NORTH_NORTHEAST, Vault, VAULT_FROM_LOG_ROOMS_A_NORTH_NORTHEAST),
-    MAP_WARP(LOG_ROOMS_A_TO_VAULT_NORTHWEST, Vault, VAULT_FROM_LOG_ROOMS_A_NORTHWEST),
-    MAP_WARP(LOG_ROOMS_A_INN_UPSTAIRS_TO_INN, LogRoomsA, LOG_ROOMS_A_INN_FROM_INN_UPSTAIRS),
-    MAP_WARP(LOG_ROOMS_A_INN_TO_INN_UPSTAIRS, LogRoomsA, LOG_ROOMS_A_INN_UPSTAIRS_FROM_INN),
-    MAP_WARP(LOG_ROOMS_A_TO_VAULT_WEST, Vault, VAULT_FROM_LOG_ROOMS_A_WEST),
-    MAP_WARP(LOG_ROOMS_A_LOFT_TO_CRATE_ROOM, LogRoomsA, LOG_ROOMS_A_CRATE_ROOM_FROM_LOFT),
-    MAP_WARP(LOG_ROOMS_A_CRATE_ROOM_TO_LOFT, LogRoomsA, LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM),
-    MAP_WARP(LOG_ROOMS_A_TO_SANCTUM, Sanctum, SANCTUM_FROM_LOG_ROOMS_A),
-    MAP_WARPS_END,
+u32 gLogRoomsA_Exits[] = {
+    SCENE_EXITS(LogRoomsA),
+    SCENE_EXIT(LOG_ROOMS_A_TO_VAULT_EAST_SOUTHEAST, Vault, VAULT_FROM_LOG_ROOMS_A_EAST_SOUTHEAST),
+    SCENE_EXIT(LOG_ROOMS_A_TO_VAULT_SOUTHEAST, Vault, VAULT_FROM_LOG_ROOMS_A_SOUTHEAST),
+    SCENE_EXIT(LOG_ROOMS_A_TO_VAULT_SOUTHWEST, Vault, VAULT_FROM_LOG_ROOMS_A_SOUTHWEST),
+    SCENE_EXIT(LOG_ROOMS_A_TO_VAULT_EAST, Vault, VAULT_FROM_LOG_ROOMS_A_EAST),
+    SCENE_EXIT(LOG_ROOMS_A_TO_VAULT_NORTH_NORTHEAST, Vault, VAULT_FROM_LOG_ROOMS_A_NORTH_NORTHEAST),
+    SCENE_EXIT(LOG_ROOMS_A_TO_VAULT_NORTHWEST, Vault, VAULT_FROM_LOG_ROOMS_A_NORTHWEST),
+    SCENE_EXIT(LOG_ROOMS_A_INN_UPSTAIRS_TO_INN, LogRoomsA, LOG_ROOMS_A_INN_FROM_INN_UPSTAIRS),
+    SCENE_EXIT(LOG_ROOMS_A_INN_TO_INN_UPSTAIRS, LogRoomsA, LOG_ROOMS_A_INN_UPSTAIRS_FROM_INN),
+    SCENE_EXIT(LOG_ROOMS_A_TO_VAULT_WEST, Vault, VAULT_FROM_LOG_ROOMS_A_WEST),
+    SCENE_EXIT(LOG_ROOMS_A_LOFT_TO_CRATE_ROOM, LogRoomsA, LOG_ROOMS_A_CRATE_ROOM_FROM_LOFT),
+    SCENE_EXIT(LOG_ROOMS_A_CRATE_ROOM_TO_LOFT, LogRoomsA, LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM),
+    SCENE_EXIT(LOG_ROOMS_A_TO_SANCTUM, Sanctum, SANCTUM_FROM_LOG_ROOMS_A),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gLogRoomsA_ObjectEventTemplates[] = {
@@ -4070,14 +4070,14 @@ struct ObjectEventTemplate gLogRoomsA_LoftObjectEventTemplates[] = {
 };
 
 struct MapEvent gLogRoomsA_Events[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_EAST_SOUTHEAST },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_SOUTHEAST },
-    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_SOUTHWEST },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_EAST },
-    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_NORTH_NORTHEAST },
-    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_NORTHWEST },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_EAST_SOUTHEAST },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_SOUTHEAST },
+    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_SOUTHWEST },
+    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_EAST },
+    { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_NORTH_NORTHEAST },
+    { MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_NORTHWEST },
     { MAP_EVENT_COORD, MB_LOG_ROOMS_A_GUESTS_ROOM_STAIRS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveGuestsRoom) },
-    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, LOG_ROOMS_A_INN_TO_INN_UPSTAIRS },
+    { MAP_EVENT_EXIT, 8, CONDITION_ALWAYS, LOG_ROOMS_A_INN_TO_INN_UPSTAIRS },
     { MAP_EVENT_COORD, MB_LOG_ROOMS_A_GUESTS_ROOM, IF_FLAG_SET(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH), EVENT_SCRIPT(EventScript_ApproachSuspects) },
     { MAP_EVENT_COORD, MB_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_SuspectsRunFromParty) },
     { MAP_EVENT_COORD, MB_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 1, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_SuspectsRunFromParty) },
@@ -4165,14 +4165,14 @@ struct MapEvent gLogRoomsA_LoftEvents[] = {
 
 struct MapEvent gLogRoomsA_EventsAfterThieves[] = {
     { BG_EVENT(BG_EVENT_SILENT), MB_LOG_ROOMS_A_INN_BARREL, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_FindBone) },
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_EAST_SOUTHEAST },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_SOUTHEAST },
-    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_SOUTHWEST },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_EAST },
-    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_NORTH_NORTHEAST },
-    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_NORTHWEST },
-    { MAP_EVENT_WARP, 7, CONDITION_ALWAYS, LOG_ROOMS_A_INN_UPSTAIRS_TO_INN },
-    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, LOG_ROOMS_A_INN_TO_INN_UPSTAIRS },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_EAST_SOUTHEAST },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_SOUTHEAST },
+    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_SOUTHWEST },
+    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_EAST },
+    { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_NORTH_NORTHEAST },
+    { MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_NORTHWEST },
+    { MAP_EVENT_EXIT, 7, CONDITION_ALWAYS, LOG_ROOMS_A_INN_UPSTAIRS_TO_INN },
+    { MAP_EVENT_EXIT, 8, CONDITION_ALWAYS, LOG_ROOMS_A_INN_TO_INN_UPSTAIRS },
     { MAP_EVENT_COORD, MB_LOG_ROOMS_A_LOFT_CLIMB, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbToLoft) },
     { MAP_EVENT_COORD, MB_LOG_ROOMS_A_LOFT_DESCENT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveLoft) },
     { MAP_EVENT_TALK, LOCALID_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultICanSleepWellNowThat) },

@@ -4,14 +4,14 @@
 #include "types.h"
 #include "map_tables.h"
 
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEvent;
 struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *Scene_GetWarps(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 ColosseumSatrageMatch_Initialize(void);
@@ -29,8 +29,8 @@ extern char gHexDigits[20];
 extern s32 gColosseumSatrageMatch_SparkScript[];
 extern s32 gColosseumSatrageMatch_RaiseScript[];
 extern u32 gColosseumSatrageMatch_DirectionSteps[];
-extern struct MapWarpDest gColosseumSatrageMatchWarpDests[];
-extern u32 gColosseumSatrageMatchWarps[];
+extern struct SceneEntrance gColosseumSatrageMatchEntrances[];
+extern u32 gColosseumSatrageMatchExits[];
 extern struct ObjectEventTemplate gColosseumSatrageMatchObjectEventTemplates[];
 extern s32 gColosseumSatrageMatch_LiftPhase;
 extern s32 gColosseumSatrageMatch_LiftTimer;

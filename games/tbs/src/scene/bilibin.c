@@ -21,11 +21,11 @@
 /// first, so the first row that matches picks the time; a few ask a yes-or-no
 /// question (the EventScript_AskAbout functions).
 ///
-/// Bilibin's doors (coord events 3 to 9, the numbers of the warps they take)
+/// Bilibin's doors (coord events 3 to 9, the numbers of the exits they take)
 /// open before the party walks in (EventScript_OpenDoorAndLeave): six lead into
 /// Bilibin's buildings (SceneId_CottageRoomsC) and the seventh into the
 /// Bilibin Sanctum, out of which (BILIBIN_FROM_SANCTUM) the area name is not
-/// shown again. The other warps lead to the world map, to the garden of McCoy's
+/// shown again. The other exits lead to the world map, to the garden of McCoy's
 /// Palace and, two ways, into the Treasury: past the ivy at the west edge
 /// (LOCALID_IVY), gone when the party comes back out that way
 /// (BILIBIN_FROM_BILIBIN_TREASURY_WEST); its Whirlwind row runs no script, so
@@ -51,7 +51,7 @@
 /// Bilibin_UpdateTreasuryStatueCells keeps the two cells it can stand on in
 /// step. Arriving by BILIBIN_TREASURY_UPPER_FROM_LOWER or
 /// BILIBIN_TREASURY_FROM_BILIBIN_NORTH the leader starts 16 pixels above the
-/// floor; two warp regions (Bilibin_GetRegions) lead down its west ladder to
+/// floor; two exit regions (Bilibin_GetRegions) lead down its west ladder to
 /// the lower room and back to Bilibin by the statue.
 ///
 /// The Bilibin Barricade (SceneId_BilibinBarricade) is the road east to Kolima
@@ -273,31 +273,31 @@ struct BilibinRippleTimer gBilibin_RippleTimer;
 /// (MsgBilibinMasterQuiteCranky)
 #define FLAG_BILIBIN_KEEPING_MCCOY_WAITING FLAG_AREA_TEMP_04
 
-const struct MapWarpDest *Bilibin_GetWarpDests(void) {
+const struct SceneEntrance *Bilibin_GetEntrances(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_Bilibin) {
-    return gBilibinWarpDests;
+    return gBilibinEntrances;
   }
   if (sceneId == (s32)&SceneId_BilibinBarricade) {
-    return gBilibinBarricadeWarpDests;
+    return gBilibinBarricadeEntrances;
   }
   if (sceneId == (s32)&SceneId_BilibinTreasury) {
-    return gBilibinTreasuryWarpDests;
+    return gBilibinTreasuryEntrances;
   }
-  return (const struct MapWarpDest *)gBilibinWarpDestsOther;
+  return (const struct SceneEntrance *)gBilibinEntrancesOther;
 }
 
-/// Only the Bilibin Treasury has warp regions.
-const struct MapWarpRegion *Bilibin_GetRegions(void) {
+/// Only the Bilibin Treasury has exit regions.
+const struct SceneExitRegion *Bilibin_GetRegions(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_BilibinTreasury) {
-    return (const struct MapWarpRegion *)gBilibinTreasuryRegions;
+    return (const struct SceneExitRegion *)gBilibinTreasuryRegions;
   }
   return 0;
 }
 
-/// Returns the packed warps shared by the three maps.
-const u32 *Bilibin_GetWarps(void) { return gBilibinWarps; }
+/// Returns the packed exits shared by the three maps.
+const u32 *Bilibin_GetExits(void) { return gBilibinExits; }
 
 /// Talking to Gust in the Bilibin Treasury: Gust, a Jupiter Djinni, joins the
 /// party.
@@ -438,14 +438,14 @@ static void EventScript_AskAboutImil(void) {
 
 /// Walking into one of Bilibin's doors: everyone stops, the door opens and the
 /// leader walks through it. The doors' coord events, 3 to 9, are the numbers of
-/// the warps they take: BILIBIN_TO_INN to BILIBIN_TO_WEAPON_AND_ARMOR_SHOP lead
+/// the exits they take: BILIBIN_TO_INN to BILIBIN_TO_WEAPON_AND_ARMOR_SHOP lead
 /// into Bilibin's buildings, and BILIBIN_TO_SANCTUM into the Bilibin Sanctum,
 /// whose door sounds and is stepped through differently.
 static void EventScript_OpenDoorAndLeave(void) {
 
   u32 objectEventSlot;
   struct ObjectEvent *objectEvent;
-  s32 warpIndex;
+  s32 exitIndex;
   u8 *originBytes;
   s32 originOffset;
   s32 rowOffset;
@@ -455,7 +455,7 @@ static void EventScript_OpenDoorAndLeave(void) {
 
   work = gFieldWork;
   FieldScript_Start();
-  // Freeze placed object events before the warp cells start animating.
+  // Freeze placed object events before the exit cells start animating.
   for (objectEventSlot = LOCALID_FIRST_PLACED;
        objectEventSlot < BILIBIN_OBJ_EVENT_SLOT_COUNT; objectEventSlot++) {
     objectEvent = ObjectEvent_GetById(objectEventSlot);
@@ -463,35 +463,35 @@ static void EventScript_OpenDoorAndLeave(void) {
       objectEvent->motionFlags = 0;
     }
   }
-  warpIndex = (((u16)work->coordEvent - BILIBIN_TO_INN) << 16) >> 16;
-  if (warpIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
+  exitIndex = (((u16)work->coordEvent - BILIBIN_TO_INN) << 16) >> 16;
+  if (exitIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
     Script_PlaySong(SE_THUMP);
   } else {
     Sound_PlaySong(SE_DOOR_OPEN);
   }
   // Each door has its cell and the steps that draw it opening.
-  originOffset = warpIndex << 2;
+  originOffset = exitIndex << 2;
   originBytes = (u8 *)gBilibin_DoorCells;
   column = *(s16 *)(originBytes + originOffset);
   rowOffset = originOffset + 2;
   row = *(s16 *)(originBytes + rowOffset);
-  MapGrid_PlayMetatileCopySequence(gBilibin_DoorSteps[warpIndex], column, row);
+  MapGrid_PlayMetatileCopySequence(gBilibin_DoorSteps[exitIndex], column, row);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  if (warpIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
+  if (exitIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
     Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
     ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -4);
   } else {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 3, -16);
   }
-  if (warpIndex == BILIBIN_TO_ITEM_SHOP - BILIBIN_TO_INN) {
+  if (exitIndex == BILIBIN_TO_ITEM_SHOP - BILIBIN_TO_INN) {
     ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 3);
   } else {
     ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 2);
   }
   FieldScript_WaitFrames(16);
-  Import_ScriptRequestWarp(warpIndex + BILIBIN_TO_INN);
+  Import_ScriptRequestExit(exitIndex + BILIBIN_TO_INN);
   FieldScript_End();
 }
 
@@ -692,12 +692,12 @@ s32 Bilibin_Initialize(void) {
 }
 
 /// Sets up Bilibin: the tree or the man by FLAG_KOLIMA_CURSE_LIFTED, the ivy
-/// and the statue by the warp destination used, and area temp flag
+/// and the statue by the entrance used, and area temp flag
 /// FLAG_BILIBIN_KEEPING_MCCOY_WAITING for McCoy's garden guard.
 static void Bilibin_RestoreVillageObjectEvents(void) {
 
   struct ObjectEvent *objectEvent;
-  s16 warpDest;
+  s16 entrance;
 
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Import_ObjectEventSetPosition(LOCALID_TREE_MAN, 0, 0);
@@ -713,15 +713,15 @@ static void Bilibin_RestoreVillageObjectEvents(void) {
   // Apply arrival-specific changes after restoring the population.
   objectEvent = ObjectEvent_Get(LOCALID_IVY);
   objectEvent->scaleY = 3 * Q16_ONE / 2;
-  warpDest = gSaveBlock.warpDest;
-  if (warpDest == BILIBIN_FROM_BILIBIN_TREASURY_WEST) {
+  entrance = gSaveBlock.entrance;
+  if (entrance == BILIBIN_FROM_BILIBIN_TREASURY_WEST) {
     ObjectEvent_SetPosition(LOCALID_IVY, 0, 0);
-  } else if (warpDest == BILIBIN_FROM_SANCTUM) {
+  } else if (entrance == BILIBIN_FROM_SANCTUM) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-    warpDest = gSaveBlock.warpDest;
-    if (warpDest == BILIBIN_FROM_BILIBIN_TREASURY_EAST) {
+    entrance = gSaveBlock.entrance;
+    if (entrance == BILIBIN_FROM_BILIBIN_TREASURY_EAST) {
       ObjectEvent_SetPosition(LOCALID_VILLAGE_STATUE, PIXELS(248), PIXELS(216));
     }
   }
@@ -890,8 +890,8 @@ static void Bilibin_SetUpTreasury(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Bilibin_UpdateTreasuryStatueCells();
-  if (gSaveBlock.warpDest == BILIBIN_TREASURY_UPPER_FROM_LOWER ||
-      gSaveBlock.warpDest == BILIBIN_TREASURY_FROM_BILIBIN_NORTH) {
+  if (gSaveBlock.entrance == BILIBIN_TREASURY_UPPER_FROM_LOWER ||
+      gSaveBlock.entrance == BILIBIN_TREASURY_FROM_BILIBIN_NORTH) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       FieldScript_Start();
@@ -1026,16 +1026,16 @@ s32 gBilibin_FaceLeaderScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Unused: the warp destinations for a map other than the three, which never
+/// Unused: the entrances for a map other than the three, which never
 /// loads this overlay. Its words read as a MAPGRID_ANIMATION_STEP list, not as
-/// warp destinations.
-u16 gBilibinWarpDestsOther[] = {
+/// entrances.
+u16 gBilibinEntrancesOther[] = {
     MAPGRID_ANIMATION_STEP(0, 65535, 168, 0, 168),
     MAPGRID_ANIMATION_STEP(16384, 0, 65535, 65535, 65535),
     MAPGRID_ANIMATION_STEPS_END,
 };
 
-struct MapWarpDest gBilibinWarpDests[] = {
+struct SceneEntrance gBilibinEntrances[] = {
     {BILIBIN_FROM_WORLD_MAP, CONDITION_ALWAYS, 240, 0, 472, FACING_NORTH, 0, -1,
      -1, -1, -1, 0},
     {BILIBIN_FROM_MCCOY_PALACE_GROUNDS, CONDITION_ALWAYS, 224, 0, 88,
@@ -1061,7 +1061,7 @@ struct MapWarpDest gBilibinWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gBilibinBarricadeWarpDests[] = {
+struct SceneEntrance gBilibinBarricadeEntrances[] = {
     {0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {BILIBIN_BARRICADE_FROM_WORLD_MAP_WEST, CONDITION_ALWAYS, 56, 0, 376,
      FACING_EAST, 0, 16, 16, 400, 400, 0},
@@ -1070,7 +1070,7 @@ struct MapWarpDest gBilibinBarricadeWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gBilibinTreasuryWarpDests[] = {
+struct SceneEntrance gBilibinTreasuryEntrances[] = {
     {0, CONDITION_ALWAYS, 232, 0, 144, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {BILIBIN_TREASURY_FROM_BILIBIN_SOUTH, CONDITION_ALWAYS, 120, 0, 408,
      FACING_NORTH, 0, 0, 288, 240, 448, 0},
@@ -1090,28 +1090,28 @@ s16 gBilibinTreasuryRegions[] = {
     -1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-u32 gBilibinWarps[] = {
-    MAP_WARPS(Bilibin),
-    MAP_WARP(BILIBIN_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_BILIBIN),
-    MAP_WARP(BILIBIN_TO_MCCOY_PALACE_GROUNDS, McCoyPalaceGrounds, MCCOY_PALACE_GROUNDS_FROM_BILIBIN),
-    MAP_WARP(BILIBIN_TO_INN, CottageRoomsC, COTTAGE_ROOMS_C_INN),
-    MAP_WARP(BILIBIN_TO_HOUSE_EAST, CottageRoomsC, COTTAGE_ROOMS_C_HOUSE_EAST),
-    MAP_WARP(BILIBIN_TO_HOUSE_WEST, CottageRoomsC, COTTAGE_ROOMS_C_HOUSE_WEST),
-    MAP_WARP(BILIBIN_TO_HOUSE_NORTH, CottageRoomsC, COTTAGE_ROOMS_C_HOUSE_NORTH),
-    MAP_WARP(BILIBIN_TO_ITEM_SHOP, CottageRoomsC, COTTAGE_ROOMS_C_ITEM_SHOP),
-    MAP_WARP(BILIBIN_TO_WEAPON_AND_ARMOR_SHOP, CottageRoomsC, COTTAGE_ROOMS_C_WEAPON_AND_ARMOR_SHOP),
-    MAP_WARP(BILIBIN_TO_SANCTUM, Sanctum, SANCTUM_FROM_BILIBIN),
-    MAP_WARP(BILIBIN_TO_BILIBIN_TREASURY_WEST, BilibinTreasury, BILIBIN_TREASURY_FROM_BILIBIN_SOUTH),
-    MAP_WARP(BILIBIN_TO_BILIBIN_TREASURY_EAST, BilibinTreasury, BILIBIN_TREASURY_FROM_BILIBIN_NORTH),
-    MAP_WARPS(BilibinTreasury),
-    MAP_WARP(BILIBIN_TREASURY_TO_BILIBIN_SOUTH, Bilibin, BILIBIN_FROM_BILIBIN_TREASURY_WEST),
-    MAP_WARP(BILIBIN_TREASURY_LOWER_TO_UPPER, BilibinTreasury, BILIBIN_TREASURY_UPPER_FROM_LOWER),
-    MAP_WARP(BILIBIN_TREASURY_UPPER_TO_LOWER, BilibinTreasury, BILIBIN_TREASURY_LOWER_FROM_UPPER),
-    MAP_WARP(BILIBIN_TREASURY_TO_BILIBIN_NORTH, Bilibin, BILIBIN_FROM_BILIBIN_TREASURY_EAST),
-    MAP_WARPS(BilibinBarricade),
-    MAP_WARP(BILIBIN_BARRICADE_TO_WORLD_MAP_EAST, WorldMap, WORLD_MAP_FROM_BILIBIN_BARRICADE_EAST),
-    MAP_WARP(BILIBIN_BARRICADE_TO_WORLD_MAP_WEST, WorldMap, WORLD_MAP_FROM_BILIBIN_BARRICADE_WEST),
-    MAP_WARPS_END,
+u32 gBilibinExits[] = {
+    SCENE_EXITS(Bilibin),
+    SCENE_EXIT(BILIBIN_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_BILIBIN),
+    SCENE_EXIT(BILIBIN_TO_MCCOY_PALACE_GROUNDS, McCoyPalaceGrounds, MCCOY_PALACE_GROUNDS_FROM_BILIBIN),
+    SCENE_EXIT(BILIBIN_TO_INN, CottageRoomsC, COTTAGE_ROOMS_C_INN),
+    SCENE_EXIT(BILIBIN_TO_HOUSE_EAST, CottageRoomsC, COTTAGE_ROOMS_C_HOUSE_EAST),
+    SCENE_EXIT(BILIBIN_TO_HOUSE_WEST, CottageRoomsC, COTTAGE_ROOMS_C_HOUSE_WEST),
+    SCENE_EXIT(BILIBIN_TO_HOUSE_NORTH, CottageRoomsC, COTTAGE_ROOMS_C_HOUSE_NORTH),
+    SCENE_EXIT(BILIBIN_TO_ITEM_SHOP, CottageRoomsC, COTTAGE_ROOMS_C_ITEM_SHOP),
+    SCENE_EXIT(BILIBIN_TO_WEAPON_AND_ARMOR_SHOP, CottageRoomsC, COTTAGE_ROOMS_C_WEAPON_AND_ARMOR_SHOP),
+    SCENE_EXIT(BILIBIN_TO_SANCTUM, Sanctum, SANCTUM_FROM_BILIBIN),
+    SCENE_EXIT(BILIBIN_TO_BILIBIN_TREASURY_WEST, BilibinTreasury, BILIBIN_TREASURY_FROM_BILIBIN_SOUTH),
+    SCENE_EXIT(BILIBIN_TO_BILIBIN_TREASURY_EAST, BilibinTreasury, BILIBIN_TREASURY_FROM_BILIBIN_NORTH),
+    SCENE_EXITS(BilibinTreasury),
+    SCENE_EXIT(BILIBIN_TREASURY_TO_BILIBIN_SOUTH, Bilibin, BILIBIN_FROM_BILIBIN_TREASURY_WEST),
+    SCENE_EXIT(BILIBIN_TREASURY_LOWER_TO_UPPER, BilibinTreasury, BILIBIN_TREASURY_UPPER_FROM_LOWER),
+    SCENE_EXIT(BILIBIN_TREASURY_UPPER_TO_LOWER, BilibinTreasury, BILIBIN_TREASURY_LOWER_FROM_UPPER),
+    SCENE_EXIT(BILIBIN_TREASURY_TO_BILIBIN_NORTH, Bilibin, BILIBIN_FROM_BILIBIN_TREASURY_EAST),
+    SCENE_EXITS(BilibinBarricade),
+    SCENE_EXIT(BILIBIN_BARRICADE_TO_WORLD_MAP_EAST, WorldMap, WORLD_MAP_FROM_BILIBIN_BARRICADE_EAST),
+    SCENE_EXIT(BILIBIN_BARRICADE_TO_WORLD_MAP_WEST, WorldMap, WORLD_MAP_FROM_BILIBIN_BARRICADE_WEST),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gBilibinObjectEventTemplatesOther[] = {
@@ -1185,10 +1185,10 @@ struct MapEvent gBilibinEventsOther[] = {
 };
 
 struct MapEvent gBilibinEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, BILIBIN_TO_WORLD_MAP },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, BILIBIN_TO_MCCOY_PALACE_GROUNDS },
-    { MAP_EVENT_WARP, 10, CONDITION_ALWAYS, BILIBIN_TO_BILIBIN_TREASURY_WEST },
-    { MAP_EVENT_WARP, 11, CONDITION_ALWAYS, BILIBIN_TO_BILIBIN_TREASURY_EAST },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, BILIBIN_TO_WORLD_MAP },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, BILIBIN_TO_MCCOY_PALACE_GROUNDS },
+    { MAP_EVENT_EXIT, 10, CONDITION_ALWAYS, BILIBIN_TO_BILIBIN_TREASURY_WEST },
+    { MAP_EVENT_EXIT, 11, CONDITION_ALWAYS, BILIBIN_TO_BILIBIN_TREASURY_EAST },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenDoorAndLeave) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenDoorAndLeave) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenDoorAndLeave) },
@@ -1250,8 +1250,8 @@ struct MapEvent gBilibinEvents[] = {
 };
 
 struct MapEvent gBilibinBarricadeEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, BILIBIN_BARRICADE_TO_WORLD_MAP_EAST },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, BILIBIN_BARRICADE_TO_WORLD_MAP_WEST },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, BILIBIN_BARRICADE_TO_WORLD_MAP_EAST },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, BILIBIN_BARRICADE_TO_WORLD_MAP_WEST },
     { MAP_EVENT_TALK, LOCALID_BOTTOM_TREE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_InspectHumanShapedTree) },
     { MAP_EVENT_TALK, LOCALID_MIDDLE_TREE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_InspectHumanShapedTree) },
     { MAP_EVENT_TALK, LOCALID_JILL_TREE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_InspectHumanShapedTree) },
@@ -1287,8 +1287,8 @@ struct MapEvent gBilibinBarricadeEvents[] = {
 };
 
 struct MapEvent gBilibinTreasuryEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, BILIBIN_TREASURY_TO_BILIBIN_SOUTH },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, BILIBIN_TREASURY_LOWER_TO_UPPER },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, BILIBIN_TREASURY_TO_BILIBIN_SOUTH },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, BILIBIN_TREASURY_LOWER_TO_UPPER },
     { BG_EVENT(BG_EVENT_SILENT), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadWarehouseSign) },
     { MAP_EVENT_TALK, LOCALID_GUST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_GustJoins) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_TREASURY_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateTreasuryStatueCells) },

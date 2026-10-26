@@ -7,9 +7,9 @@
 struct MapEvent;
 struct ObjectEventTemplate;
 
-const struct MapWarpDest *WorldMap_GetWarpDests(void);
-const struct MapWarpRegion *WorldMap_GetRegions(void);
-const u32 *WorldMap_GetWarps(void);
+const struct SceneEntrance *WorldMap_GetEntrances(void);
+const struct SceneExitRegion *WorldMap_GetRegions(void);
+const u32 *WorldMap_GetExits(void);
 const struct ObjectEventTemplate *WorldMap_GetObjectEventTemplates(void);
 const struct MapEvent *WorldMap_GetEvents(void);
 s32 WorldMap_Initialize(void);
@@ -38,8 +38,8 @@ extern s32 gCrossingShipSailsWest[];
 extern s32 gCrossingShipVeersNorth[];
 extern s32 gIslandDriftsEast[];
 extern s32 gWorldMapFlintScript[];
-extern struct MapWarpDest gWorldMapWarpDests[];
-extern u32 gWorldMapWarps[];
+extern struct SceneEntrance gWorldSceneEntrances[];
+extern u32 gWorldMapExits[];
 extern s32 gWorldMapKolimaBridgeScript[];
 extern s32 gWorldMapAlignToMapScript[];
 extern s32 gWorldMapIodemScript[];

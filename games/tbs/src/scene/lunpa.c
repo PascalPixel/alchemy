@@ -138,30 +138,30 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-const struct MapWarpDest *Scene_GetWarpDests(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s32 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_Lunpa) {
-    return gLunpaWarpDests;
+    return gLunpaEntrances;
   }
   if (sceneId == (s32)&SceneId_LunpaFortressGates) {
-    return gGateWarpDests;
+    return gGateEntrances;
   }
-  return gLunpaWarpDests;
+  return gLunpaEntrances;
 }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Scene_GetWarps(void) {
+const u32 *Scene_GetExits(void) {
   s32 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_Lunpa) {
-    return gLunpaWarps;
+    return gLunpaExits;
   }
   if (sceneId == (s32)&SceneId_LunpaFortressGates) {
-    return gGateWarps;
+    return gGateExits;
   }
-  return gLunpaWarps;
+  return gLunpaExits;
 }
 
 /// The townsfolk of Lunpa, or the guards of the Lunpa Fortress Gates.
@@ -567,7 +567,7 @@ static void EventScript_EnterDoor(void) {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -8);
     FieldScript_WaitFrames(10);
   }
-  Import_ScriptRequestWarp(work->coordEvent);
+  Import_ScriptRequestExit(work->coordEvent);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_End();
@@ -583,7 +583,7 @@ static void EventScript_EnterHiddenPassage(void) {
       Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
       ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -8);
       FieldScript_WaitFrames(13);
-      Import_ScriptRequestWarp(LUNPA_TO_STONE_ROOMS);
+      Import_ScriptRequestExit(LUNPA_TO_STONE_ROOMS);
     }
   }
 }
@@ -602,7 +602,7 @@ static void EventScript_EnterFortress(void) {
   FieldScript_WaitFrames(10);
   MapGrid_CopyCells(53, 6, 2, 2, 41, 4);
   FieldScript_WaitFrames(10);
-  Import_ScriptRequestWarp(LUNPA_FORTRESS_GATES_TO_LUNPA_FORTRESS_GROUND_FLOOR);
+  Import_ScriptRequestExit(LUNPA_FORTRESS_GATES_TO_LUNPA_FORTRESS_GROUND_FLOOR);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_End();
@@ -960,12 +960,12 @@ s32 Scene_Initialize(void) {
   // Restore the gate's arrival event and active detection tasks separately.
   if (gSaveBlock.sceneId == (s32)&SceneId_LunpaFortressGates) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    gSaveBlock.retreatWarpDest = GATE_RETREAT_WARP_DEST;
-    if (gSaveBlock.warpDest == LUNPA_FORTRESS_GATES_AFTER_CAUGHT &&
+    gSaveBlock.retreatEntrance = GATE_RETREAT_ENTRANCE;
+    if (gSaveBlock.entrance == LUNPA_FORTRESS_GATES_AFTER_CAUGHT &&
         GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       EventScript_GuardsThrowIsaacOut();
     }
-    if (gSaveBlock.warpDest ==
+    if (gSaveBlock.entrance ==
             LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA &&
         GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       EventScript_LeaderSneaksOut();
@@ -997,68 +997,68 @@ s32 Scene_Initialize(void) {
 
 #include "common/object_orbit.h"
 
-#define LUNPA_WARP_DEST(warpDest, x, z, facing)                                \
-  {(warpDest), CONDITION_ALWAYS, (x), 0, (z), (facing), 0, -1, -1, -1, -1, 0}
-#define GATE_WARP_DEST(warpDest, x, z, facing)                                 \
-  {(warpDest), CONDITION_ALWAYS, (x), 0, (z), (facing), 0, 32, 48, 272, 344, 0}
+#define LUNPA_ENTRANCE(entrance, x, z, facing)                                 \
+  {(entrance), CONDITION_ALWAYS, (x), 0, (z), (facing), 0, -1, -1, -1, -1, 0}
+#define GATE_ENTRANCE(entrance, x, z, facing)                                  \
+  {(entrance), CONDITION_ALWAYS, (x), 0, (z), (facing), 0, 32, 48, 272, 344, 0}
 
-struct MapWarpDest gLunpaWarpDests[] = {
-    LUNPA_WARP_DEST(0, 172, 149, FACING_SOUTH),
-    LUNPA_WARP_DEST(LUNPA_FROM_WORLD_MAP, 224, 472, FACING_NORTH),
-    LUNPA_WARP_DEST(LUNPA_FROM_LUNPA_FORTRESS_GATES, 232, 32, FACING_SOUTH),
-    LUNPA_WARP_DEST(LUNPA_FROM_WEST_LUNPA_CAVE, 120, 104, FACING_SOUTH),
-    LUNPA_WARP_DEST(LUNPA_FROM_FIRST_HOME, 248, 184, FACING_SOUTH),
-    LUNPA_WARP_DEST(LUNPA_FROM_SECOND_HOME, 344, 232, FACING_SOUTH),
-    LUNPA_WARP_DEST(LUNPA_FROM_THIRD_HOME, 344, 328, FACING_SOUTH),
-    LUNPA_WARP_DEST(LUNPA_FROM_WEAPON_AND_ARMOR_SHOP, 232, 360, FACING_SOUTH),
-    LUNPA_WARP_DEST(LUNPA_FROM_ITEM_SHOP, 328, 120, FACING_SOUTH),
-    LUNPA_WARP_DEST(LUNPA_FROM_INN, 104, 184, FACING_SOUTH),
-    LUNPA_WARP_DEST(LUNPA_FROM_TEMPLE, 48, 168, FACING_SOUTH),
-    LUNPA_WARP_DEST(LUNPA_FROM_CRATE_ROOM, 216, 344, FACING_SOUTH),
-    LUNPA_WARP_DEST(LUNPA_FROM_STONE_ROOMS, 40, 328, FACING_SOUTH),
+struct SceneEntrance gLunpaEntrances[] = {
+    LUNPA_ENTRANCE(0, 172, 149, FACING_SOUTH),
+    LUNPA_ENTRANCE(LUNPA_FROM_WORLD_MAP, 224, 472, FACING_NORTH),
+    LUNPA_ENTRANCE(LUNPA_FROM_LUNPA_FORTRESS_GATES, 232, 32, FACING_SOUTH),
+    LUNPA_ENTRANCE(LUNPA_FROM_WEST_LUNPA_CAVE, 120, 104, FACING_SOUTH),
+    LUNPA_ENTRANCE(LUNPA_FROM_FIRST_HOME, 248, 184, FACING_SOUTH),
+    LUNPA_ENTRANCE(LUNPA_FROM_SECOND_HOME, 344, 232, FACING_SOUTH),
+    LUNPA_ENTRANCE(LUNPA_FROM_THIRD_HOME, 344, 328, FACING_SOUTH),
+    LUNPA_ENTRANCE(LUNPA_FROM_WEAPON_AND_ARMOR_SHOP, 232, 360, FACING_SOUTH),
+    LUNPA_ENTRANCE(LUNPA_FROM_ITEM_SHOP, 328, 120, FACING_SOUTH),
+    LUNPA_ENTRANCE(LUNPA_FROM_INN, 104, 184, FACING_SOUTH),
+    LUNPA_ENTRANCE(LUNPA_FROM_TEMPLE, 48, 168, FACING_SOUTH),
+    LUNPA_ENTRANCE(LUNPA_FROM_CRATE_ROOM, 216, 344, FACING_SOUTH),
+    LUNPA_ENTRANCE(LUNPA_FROM_STONE_ROOMS, 40, 328, FACING_SOUTH),
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gGateWarpDests[] = {
-    GATE_WARP_DEST(0, 152, 328, FACING_NORTH),
-    GATE_WARP_DEST(LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_GROUND_FLOOR, 160,
-                   104, FACING_SOUTH),
-    GATE_WARP_DEST(LUNPA_FORTRESS_GATES_FROM_LUNPA, 152, 328, FACING_NORTH),
-    GATE_WARP_DEST(LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA, 144, 104,
-                   FACING_SOUTH),
-    GATE_WARP_DEST(LUNPA_FORTRESS_GATES_AFTER_CAUGHT, 160, 224, FACING_EAST),
+struct SceneEntrance gGateEntrances[] = {
+    GATE_ENTRANCE(0, 152, 328, FACING_NORTH),
+    GATE_ENTRANCE(LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_GROUND_FLOOR, 160,
+                  104, FACING_SOUTH),
+    GATE_ENTRANCE(LUNPA_FORTRESS_GATES_FROM_LUNPA, 152, 328, FACING_NORTH),
+    GATE_ENTRANCE(LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA, 144, 104,
+                  FACING_SOUTH),
+    GATE_ENTRANCE(LUNPA_FORTRESS_GATES_AFTER_CAUGHT, 160, 224, FACING_EAST),
     {MAP_TABLE_END},
 };
 
-#define ROOM_WARP(warp) MAP_WARP((warp), RockRooms, ROOM_WARP_DEST(warp))
+#define ROOM_EXIT(exit) SCENE_EXIT((exit), RockRooms, ROOM_ENTRANCE(exit))
 
-u32 gLunpaWarps[] = {
-    MAP_WARPS(Lunpa),
-    MAP_WARP(LUNPA_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_LUNPA),
-    MAP_WARP(LUNPA_TO_LUNPA_FORTRESS_GATES, LunpaFortressGates,
-             LUNPA_FORTRESS_GATES_FROM_LUNPA),
-    MAP_WARP(LUNPA_TO_WEST_LUNPA_CAVE, WestLunpaCave,
-             WEST_LUNPA_CAVE_FROM_LUNPA),
-    ROOM_WARP(LUNPA_TO_FIRST_HOME),
-    ROOM_WARP(LUNPA_TO_SECOND_HOME),
-    ROOM_WARP(LUNPA_TO_THIRD_HOME),
-    ROOM_WARP(LUNPA_TO_WEAPON_AND_ARMOR_SHOP),
-    ROOM_WARP(LUNPA_TO_ITEM_SHOP),
-    ROOM_WARP(LUNPA_TO_INN),
-    ROOM_WARP(LUNPA_TO_TEMPLE),
-    ROOM_WARP(LUNPA_TO_CRATE_ROOM),
-    MAP_WARP(LUNPA_TO_STONE_ROOMS, StoneRooms, STONE_ROOMS_FROM_LUNPA),
-    MAP_WARPS_END,
+u32 gLunpaExits[] = {
+    SCENE_EXITS(Lunpa),
+    SCENE_EXIT(LUNPA_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_LUNPA),
+    SCENE_EXIT(LUNPA_TO_LUNPA_FORTRESS_GATES, LunpaFortressGates,
+               LUNPA_FORTRESS_GATES_FROM_LUNPA),
+    SCENE_EXIT(LUNPA_TO_WEST_LUNPA_CAVE, WestLunpaCave,
+               WEST_LUNPA_CAVE_FROM_LUNPA),
+    ROOM_EXIT(LUNPA_TO_FIRST_HOME),
+    ROOM_EXIT(LUNPA_TO_SECOND_HOME),
+    ROOM_EXIT(LUNPA_TO_THIRD_HOME),
+    ROOM_EXIT(LUNPA_TO_WEAPON_AND_ARMOR_SHOP),
+    ROOM_EXIT(LUNPA_TO_ITEM_SHOP),
+    ROOM_EXIT(LUNPA_TO_INN),
+    ROOM_EXIT(LUNPA_TO_TEMPLE),
+    ROOM_EXIT(LUNPA_TO_CRATE_ROOM),
+    SCENE_EXIT(LUNPA_TO_STONE_ROOMS, StoneRooms, STONE_ROOMS_FROM_LUNPA),
+    SCENE_EXITS_END,
 };
 
-u32 gGateWarps[] = {
-    MAP_WARPS(LunpaFortressGates),
-    MAP_WARP(LUNPA_FORTRESS_GATES_TO_LUNPA_FORTRESS_GROUND_FLOOR,
-             LunpaFortressGroundFloor,
-             LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_GATES),
-    MAP_WARP(LUNPA_FORTRESS_GATES_TO_LUNPA, Lunpa,
-             LUNPA_FROM_LUNPA_FORTRESS_GATES),
-    MAP_WARPS_END,
+u32 gGateExits[] = {
+    SCENE_EXITS(LunpaFortressGates),
+    SCENE_EXIT(LUNPA_FORTRESS_GATES_TO_LUNPA_FORTRESS_GROUND_FLOOR,
+               LunpaFortressGroundFloor,
+               LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_GATES),
+    SCENE_EXIT(LUNPA_FORTRESS_GATES_TO_LUNPA, Lunpa,
+               LUNPA_FROM_LUNPA_FORTRESS_GATES),
+    SCENE_EXITS_END,
 };
 
 // clang-format off
@@ -1113,11 +1113,11 @@ struct ObjectEventTemplate gGateObjectEventTemplates[] = {
    EVENT_SCRIPT(EventScript_EnterDoor)}
 
 #define LUNPA_ROADS_AND_DOORS                                                  \
-  {MAP_EVENT_WARP, MB_LUNPA_WORLD_MAP_ROAD, CONDITION_ALWAYS,                  \
+  {MAP_EVENT_EXIT, MB_LUNPA_WORLD_MAP_ROAD, CONDITION_ALWAYS,                  \
    LUNPA_TO_WORLD_MAP},                                                        \
-      {MAP_EVENT_WARP, MB_LUNPA_GATE_ROAD, CONDITION_ALWAYS,                   \
+      {MAP_EVENT_EXIT, MB_LUNPA_GATE_ROAD, CONDITION_ALWAYS,                   \
        LUNPA_TO_LUNPA_FORTRESS_GATES},                                         \
-      {MAP_EVENT_WARP, MB_LUNPA_CAVE_ROAD, CONDITION_ALWAYS,                   \
+      {MAP_EVENT_EXIT, MB_LUNPA_CAVE_ROAD, CONDITION_ALWAYS,                   \
        LUNPA_TO_WEST_LUNPA_CAVE},                                              \
       DOOR(MB_LUNPA_FIRST_HOME_DOOR), DOOR(MB_LUNPA_SECOND_HOME_DOOR),         \
       DOOR(MB_LUNPA_THIRD_HOME_DOOR), DOOR(MB_LUNPA_ARMS_SHOP_DOOR),           \
@@ -1236,11 +1236,11 @@ struct MapEvent gLunpaReopenedEvents[] = {
 
 // clang-format off
 struct MapEvent gGateEvents[] = {
-    { MAP_EVENT_WARP, MB_LUNPA_FORTRESS_GATES_LUNPA_ROAD, CONDITION_ALWAYS, LUNPA_FORTRESS_GATES_TO_LUNPA },
-    // XXX (no evidence): where the third road was meant to lead; gGateWarps
+    { MAP_EVENT_EXIT, MB_LUNPA_FORTRESS_GATES_LUNPA_ROAD, CONDITION_ALWAYS, LUNPA_FORTRESS_GATES_TO_LUNPA },
+    // XXX (no evidence): where the third road was meant to lead; gGateExits
     // has no row for it, so the engine sends it to LunpaFortressGroundFloor's
-    // default warp destination.
-    { MAP_EVENT_WARP, MB_LUNPA_FORTRESS_GATES_THIRD_ROAD, CONDITION_ALWAYS, GATE_WARP_THIRD },
+    // default entrance.
+    { MAP_EVENT_EXIT, MB_LUNPA_FORTRESS_GATES_THIRD_ROAD, CONDITION_ALWAYS, GATE_EXIT_THIRD },
     { PSYNERGY_ANYWHERE(ABILITY_CLOAK, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CastCloak) },
     { PSYNERGY_ANYWHERE(ABILITY_CLOAK, PSYNERGY_PHASE_AFTER_END), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CloakFades) },
     { MAP_EVENT_COORD, MB_LUNPA_FORTRESS_GATES_FORTRESS_DOOR, FLAG_LUNPA_FORTRESS_GATES_ENTERING_FORTRESS,

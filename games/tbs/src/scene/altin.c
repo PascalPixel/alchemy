@@ -5,7 +5,7 @@
 /// of them Altin's: its houses, shops and inn, entered by the village's doors
 /// (COTTAGE_ROOMS_D_FROM_ALTIN_NORTHWEST to
 /// COTTAGE_ROOMS_D_FROM_ALTIN_SOUTHWEST). The getters pick each map's tables by
-/// gSaveBlock.sceneId, both share one warp table, and a third, empty set of
+/// gSaveBlock.sceneId, both share one exit table, and a third, empty set of
 /// tables serves any other map.
 ///
 /// The village is flooded by the water beasts of its mine, whose maps the
@@ -31,11 +31,11 @@
 /// party
 /// steps near it (Altin_ScareOffBeast): it stops, cries out and hops away
 /// into the flood for good (FLAG_ALTIN_WATER_BEAST_LEFT). Doors (coord events 2
-/// to 9, Altin_EnterDoor, each leaving by the warp of its number) lead into
+/// to 9, Altin_EnterDoor, each leaving by the exit of its number) lead into
 /// CottageRoomsD and into the Altin Sanctum (ALTIN_TO_SANCTUM), whose wide
 /// door is redrawn by hand; coming back out of the Sanctum (ALTIN_FROM_SANCTUM)
 /// the area name is not shown again. Three doorways (coord events 10 to
-/// 12, Altin_WalkThroughDoorway) and the warp ALTIN_TO_ALTIN_PEAK_SPRITZ lead
+/// 12, Altin_WalkThroughDoorway) and the exit ALTIN_TO_ALTIN_PEAK_SPRITZ lead
 /// into the mine, to Altin Peak's AltinPeakFirstWaterBeast,
 /// AltinPeakSouthEntrance, AltinPeakJunction and AltinPeakSpritz. A pillar that
 /// Move pushes to column 22 stays there (FLAG_ALTIN_PILLAR_MOVED).
@@ -254,7 +254,7 @@ enum { ALTIN_INN = 6 };
 /// The metatile behaviors Altin's map events answer.
 enum AltinMetatileBehavior {
   /// The doors' coord events are numbered from 2 in the village's map events,
-  /// and each takes the warp of its own number.
+  /// and each takes the exit of its own number.
   MB_ALTIN_FIRST_DOOR = 2,
   MB_ALTIN_NEAR_BEAST = 20
 };
@@ -292,22 +292,22 @@ static void Altin_ApplyWaterLevel(void);
 static void CottageRoomsD_PlaceSheltering(void);
 static void Altin_BeastSpawnSpray(void);
 
-const struct MapWarpDest *Scene_GetWarpDests(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == MAP_ALTIN_VILLAGE) {
-    return gAltin_WarpDests;
+    return gAltin_Entrances;
   }
   if (sceneId == MAP_ALTIN_HOUSES) {
-    return gCottageRoomsD_WarpDests;
+    return gCottageRoomsD_Entrances;
   }
-  return gAltin_NoWarpDests;
+  return gAltin_NoEntrances;
 }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-/// Both maps share one warp table.
-const u32 *Scene_GetWarps(void) { return gAltin_Warps; }
+/// Both maps share one exit table.
+const u32 *Scene_GetExits(void) { return gAltin_Exits; }
 
 /// Some villagers only turn back after talking once the flood is over or
 /// their family has gone home.
@@ -665,7 +665,7 @@ static void Altin_EnterDoor(void) {
     }
   }
   FieldScript_WaitFrames(10);
-  Import_ScriptRequestWarp(work->coordEvent);
+  Import_ScriptRequestExit(work->coordEvent);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_End();
@@ -681,7 +681,7 @@ static void Altin_WalkThroughDoorway(void) {
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   Script_PlaySong(SE_MAP_EXIT);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -16);
-  Import_ScriptRequestWarp(work->coordEvent);
+  Import_ScriptRequestExit(work->coordEvent);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_End();
@@ -833,7 +833,7 @@ static void Altin_ApplyWaterLevel(void) {
                                    WATER_BEAST_ANIMATION_SPIT);
     FieldScheduler_AddCallback(Altin_BeastSpawnSpray, TASK_PRIORITY_MAP);
   }
-  if (gSaveBlock.warpDest == ALTIN_FROM_SANCTUM) {
+  if (gSaveBlock.entrance == ALTIN_FROM_SANCTUM) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
   MapGrid_CopyCellAttributes(0, 33, 4, 3, 20, 41);
@@ -1032,12 +1032,12 @@ s32 gCottageRoomsD_CookScript[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-struct MapWarpDest gAltin_NoWarpDests[] = {
+struct SceneEntrance gAltin_NoEntrances[] = {
     {0, CONDITION_ALWAYS, 380, 0, 433, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gAltin_WarpDests[] = {
+struct SceneEntrance gAltin_Entrances[] = {
     {0, CONDITION_ALWAYS, 380, 0, 433, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_FROM_WORLD_MAP, CONDITION_ALWAYS, 488, 0, 184, FACING_WEST, 0, -1,
      -1, -1, -1, 0},
@@ -1068,7 +1068,7 @@ struct MapWarpDest gAltin_WarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gCottageRoomsD_WarpDests[] = {
+struct SceneEntrance gCottageRoomsD_Entrances[] = {
     {0, CONDITION_ALWAYS, 200, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {COTTAGE_ROOMS_D_FROM_ALTIN_NORTHWEST, CONDITION_ALWAYS, 159, 0, 258,
      FACING_NORTH, 0, 25, 16, 255, 300, 0},
@@ -1091,52 +1091,52 @@ struct MapWarpDest gCottageRoomsD_WarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gAltin_Warps[] = {
-    MAP_WARPS(Altin),
-    MAP_WARP(ALTIN_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_ALTIN),
-    MAP_WARP(ALTIN_TO_COTTAGE_ROOMS_D_SOUTHWEST, CottageRoomsD,
-             COTTAGE_ROOMS_D_FROM_ALTIN_SOUTHWEST),
-    MAP_WARP(ALTIN_TO_SANCTUM, Sanctum, SANCTUM_FROM_ALTIN),
-    MAP_WARP(ALTIN_TO_COTTAGE_ROOMS_D_NORTHWEST, CottageRoomsD,
-             COTTAGE_ROOMS_D_FROM_ALTIN_NORTHWEST),
-    MAP_WARP(ALTIN_TO_COTTAGE_ROOMS_D_NORTH, CottageRoomsD,
-             COTTAGE_ROOMS_D_FROM_ALTIN_NORTH),
-    MAP_WARP(ALTIN_TO_COTTAGE_ROOMS_D_NORTHEAST, CottageRoomsD,
-             COTTAGE_ROOMS_D_FROM_ALTIN_NORTHEAST),
-    MAP_WARP(ALTIN_TO_COTTAGE_ROOMS_D_SOUTHEAST, CottageRoomsD,
-             COTTAGE_ROOMS_D_FROM_ALTIN_SOUTHEAST),
-    MAP_WARP(ALTIN_TO_COTTAGE_ROOMS_D_EAST, CottageRoomsD,
-             COTTAGE_ROOMS_D_FROM_ALTIN_EAST),
-    MAP_WARP(ALTIN_TO_COTTAGE_ROOMS_D_WEST, CottageRoomsD,
-             COTTAGE_ROOMS_D_FROM_ALTIN_WEST),
-    MAP_WARP(ALTIN_TO_ALTIN_PEAK_FIRST_WATER_BEAST, AltinPeakFirstWaterBeast,
-             ALTIN_PEAK_FIRST_WATER_BEAST_FROM_ALTIN),
-    MAP_WARP(ALTIN_TO_ALTIN_PEAK_SOUTH_ENTRANCE, AltinPeakSouthEntrance,
-             ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN),
-    MAP_WARP(ALTIN_TO_ALTIN_PEAK_JUNCTION, AltinPeakJunction,
-             ALTIN_PEAK_JUNCTION_FROM_ALTIN),
-    MAP_WARP(ALTIN_TO_ALTIN_PEAK_SPRITZ, AltinPeakSpritz,
-             ALTIN_PEAK_SPRITZ_FROM_ALTIN),
-    MAP_WARPS(CottageRoomsD),
-    MAP_WARP(COTTAGE_ROOMS_D_TO_ALTIN_NORTHWEST, Altin,
-             ALTIN_FROM_COTTAGE_ROOMS_D_NORTHWEST),
-    MAP_WARP(COTTAGE_ROOMS_D_TO_ALTIN_NORTH, Altin,
-             ALTIN_FROM_COTTAGE_ROOMS_D_NORTH),
-    MAP_WARP(COTTAGE_ROOMS_D_TO_ALTIN_NORTHEAST, Altin,
-             ALTIN_FROM_COTTAGE_ROOMS_D_NORTHEAST),
-    MAP_WARP(COTTAGE_ROOMS_D_TO_ALTIN_WEST, Altin,
-             ALTIN_FROM_COTTAGE_ROOMS_D_WEST),
-    MAP_WARP(COTTAGE_ROOMS_D_TO_ALTIN_SOUTHEAST, Altin,
-             ALTIN_FROM_COTTAGE_ROOMS_D_SOUTHEAST),
-    MAP_WARP(COTTAGE_ROOMS_D_TO_ALTIN_EAST, Altin,
-             ALTIN_FROM_COTTAGE_ROOMS_D_EAST),
-    MAP_WARP(COTTAGE_ROOMS_D_TO_ALTIN_SOUTHWEST, Altin,
-             ALTIN_FROM_COTTAGE_ROOMS_D_SOUTHWEST),
-    MAP_WARP(COTTAGE_ROOMS_D_INN_TO_INN_UPSTAIRS, CottageRoomsD,
-             COTTAGE_ROOMS_D_INN_UPSTAIRS_FROM_INN),
-    MAP_WARP(COTTAGE_ROOMS_D_INN_UPSTAIRS_TO_INN, CottageRoomsD,
-             COTTAGE_ROOMS_D_INN_FROM_INN_UPSTAIRS),
-    MAP_WARPS_END,
+u32 gAltin_Exits[] = {
+    SCENE_EXITS(Altin),
+    SCENE_EXIT(ALTIN_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_ALTIN),
+    SCENE_EXIT(ALTIN_TO_COTTAGE_ROOMS_D_SOUTHWEST, CottageRoomsD,
+               COTTAGE_ROOMS_D_FROM_ALTIN_SOUTHWEST),
+    SCENE_EXIT(ALTIN_TO_SANCTUM, Sanctum, SANCTUM_FROM_ALTIN),
+    SCENE_EXIT(ALTIN_TO_COTTAGE_ROOMS_D_NORTHWEST, CottageRoomsD,
+               COTTAGE_ROOMS_D_FROM_ALTIN_NORTHWEST),
+    SCENE_EXIT(ALTIN_TO_COTTAGE_ROOMS_D_NORTH, CottageRoomsD,
+               COTTAGE_ROOMS_D_FROM_ALTIN_NORTH),
+    SCENE_EXIT(ALTIN_TO_COTTAGE_ROOMS_D_NORTHEAST, CottageRoomsD,
+               COTTAGE_ROOMS_D_FROM_ALTIN_NORTHEAST),
+    SCENE_EXIT(ALTIN_TO_COTTAGE_ROOMS_D_SOUTHEAST, CottageRoomsD,
+               COTTAGE_ROOMS_D_FROM_ALTIN_SOUTHEAST),
+    SCENE_EXIT(ALTIN_TO_COTTAGE_ROOMS_D_EAST, CottageRoomsD,
+               COTTAGE_ROOMS_D_FROM_ALTIN_EAST),
+    SCENE_EXIT(ALTIN_TO_COTTAGE_ROOMS_D_WEST, CottageRoomsD,
+               COTTAGE_ROOMS_D_FROM_ALTIN_WEST),
+    SCENE_EXIT(ALTIN_TO_ALTIN_PEAK_FIRST_WATER_BEAST, AltinPeakFirstWaterBeast,
+               ALTIN_PEAK_FIRST_WATER_BEAST_FROM_ALTIN),
+    SCENE_EXIT(ALTIN_TO_ALTIN_PEAK_SOUTH_ENTRANCE, AltinPeakSouthEntrance,
+               ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN),
+    SCENE_EXIT(ALTIN_TO_ALTIN_PEAK_JUNCTION, AltinPeakJunction,
+               ALTIN_PEAK_JUNCTION_FROM_ALTIN),
+    SCENE_EXIT(ALTIN_TO_ALTIN_PEAK_SPRITZ, AltinPeakSpritz,
+               ALTIN_PEAK_SPRITZ_FROM_ALTIN),
+    SCENE_EXITS(CottageRoomsD),
+    SCENE_EXIT(COTTAGE_ROOMS_D_TO_ALTIN_NORTHWEST, Altin,
+               ALTIN_FROM_COTTAGE_ROOMS_D_NORTHWEST),
+    SCENE_EXIT(COTTAGE_ROOMS_D_TO_ALTIN_NORTH, Altin,
+               ALTIN_FROM_COTTAGE_ROOMS_D_NORTH),
+    SCENE_EXIT(COTTAGE_ROOMS_D_TO_ALTIN_NORTHEAST, Altin,
+               ALTIN_FROM_COTTAGE_ROOMS_D_NORTHEAST),
+    SCENE_EXIT(COTTAGE_ROOMS_D_TO_ALTIN_WEST, Altin,
+               ALTIN_FROM_COTTAGE_ROOMS_D_WEST),
+    SCENE_EXIT(COTTAGE_ROOMS_D_TO_ALTIN_SOUTHEAST, Altin,
+               ALTIN_FROM_COTTAGE_ROOMS_D_SOUTHEAST),
+    SCENE_EXIT(COTTAGE_ROOMS_D_TO_ALTIN_EAST, Altin,
+               ALTIN_FROM_COTTAGE_ROOMS_D_EAST),
+    SCENE_EXIT(COTTAGE_ROOMS_D_TO_ALTIN_SOUTHWEST, Altin,
+               ALTIN_FROM_COTTAGE_ROOMS_D_SOUTHWEST),
+    SCENE_EXIT(COTTAGE_ROOMS_D_INN_TO_INN_UPSTAIRS, CottageRoomsD,
+               COTTAGE_ROOMS_D_INN_UPSTAIRS_FROM_INN),
+    SCENE_EXIT(COTTAGE_ROOMS_D_INN_UPSTAIRS_TO_INN, CottageRoomsD,
+               COTTAGE_ROOMS_D_INN_FROM_INN_UPSTAIRS),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gAltin_NoObjectEventTemplates[] = {
@@ -1232,8 +1232,8 @@ struct MapEvent gAltin_Events[] = {
     {COORD_EVENT_FACING(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Altin_WalkThroughDoorway)},
     {COORD_EVENT_FACING(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Altin_WalkThroughDoorway)},
     {COORD_EVENT_FACING(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Altin_WalkThroughDoorway)},
-    {MAP_EVENT_WARP, 13, CONDITION_ALWAYS, ALTIN_TO_ALTIN_PEAK_SPRITZ},
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS, ALTIN_TO_WORLD_MAP},
+    {MAP_EVENT_EXIT, 13, CONDITION_ALWAYS, ALTIN_TO_ALTIN_PEAK_SPRITZ},
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_TO_WORLD_MAP},
     {COORD_EVENT_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
         EVENT_SCRIPT(Altin_EnterDoor)},
     {COORD_EVENT_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
@@ -1316,15 +1316,15 @@ struct MapEvent gAltin_Events[] = {
 };
 
 struct MapEvent gCottageRoomsD_Events[] = {
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_NORTHWEST},
-    {MAP_EVENT_WARP, 2, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_NORTH},
-    {MAP_EVENT_WARP, 3, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_NORTHEAST},
-    {MAP_EVENT_WARP, 4, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_WEST},
-    {MAP_EVENT_WARP, 5, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_SOUTHEAST},
-    {MAP_EVENT_WARP, 6, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_EAST},
-    {MAP_EVENT_WARP, 7, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_SOUTHWEST},
-    {MAP_EVENT_WARP, 8, CONDITION_ALWAYS, COTTAGE_ROOMS_D_INN_TO_INN_UPSTAIRS},
-    {MAP_EVENT_WARP, 9, CONDITION_ALWAYS, COTTAGE_ROOMS_D_INN_UPSTAIRS_TO_INN},
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_NORTHWEST},
+    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_NORTH},
+    {MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_NORTHEAST},
+    {MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_WEST},
+    {MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_SOUTHEAST},
+    {MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_EAST},
+    {MAP_EVENT_EXIT, 7, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_SOUTHWEST},
+    {MAP_EVENT_EXIT, 8, CONDITION_ALWAYS, COTTAGE_ROOMS_D_INN_TO_INN_UPSTAIRS},
+    {MAP_EVENT_EXIT, 9, CONDITION_ALWAYS, COTTAGE_ROOMS_D_INN_UPSTAIRS_TO_INN},
     {MAP_EVENT_TALK, LOCALID_ROOM_ONE_GUEST, FLAG_ALTIN_WATER_DROPPED_ONCE, MSGNO(MsgAltinNoMatterWhatHappensIdNever)},
     {MAP_EVENT_TALK, LOCALID_ROOM_ONE_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinOhNoTheWholeHouseIs)},
     {MAP_EVENT_TALK, LOCALID_ROOM_ONE_GUEST, CONDITION_ALWAYS, MSGNO(MsgAltinIHearThatSilkRoadIs)},

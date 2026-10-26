@@ -2,7 +2,7 @@
 /// Sol Sanctum (SceneId_SolSanctumPsynergyStone), a room off the statue room
 /// (SceneId_SolSanctumStatue) that holds a Psynergy Stone.
 ///
-/// Its one warp, SOL_SANCTUM_PSYNERGY_STONE_TO_SOL_SANCTUM_STATUE, leads back
+/// Its one exit, SOL_SANCTUM_PSYNERGY_STONE_TO_SOL_SANCTUM_STATUE, leads back
 /// to the statue room, and it places nobody. Searching in it finds the
 /// Psynergy Stone, which restores all PP. The stone is kept by an area
 /// flag (FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN) rather than a story flag, so
@@ -36,19 +36,19 @@
 /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
 #define FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN 0x350
 
-const struct MapWarpDest *Scene_GetWarpDests(void) {
-  return gSolSanctumPsynergyStoneWarpDests;
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gSolSanctumPsynergyStoneEntrances;
 }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Scene_GetWarps(void) { return gSolSanctumPsynergyStoneWarps; }
+const u32 *Scene_GetExits(void) { return gSolSanctumPsynergyStoneExits; }
 
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   return gSolSanctumPsynergyStoneObjectEventTemplates;
 }
 
-/// The warp and the Psynergy Stone.
+/// The exit and the Psynergy Stone.
 const struct MapEvent *Scene_GetEvents(void) {
   return gSolSanctumPsynergyStoneEvents;
 }
@@ -73,19 +73,20 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-struct MapWarpDest gSolSanctumPsynergyStoneWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 87, 0, 142, FACING_NORTH, 0, -1, -1,
+struct SceneEntrance gSolSanctumPsynergyStoneEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 87, 0, 142, FACING_NORTH, 0, -1, -1,
      -1, -1, 0},
     {SOL_SANCTUM_PSYNERGY_STONE_FROM_SOL_SANCTUM_STATUE, CONDITION_ALWAYS, 87,
      0, 142, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {MAP_TABLE_END},
 };
 
-u32 gSolSanctumPsynergyStoneWarps[] = {
-    MAP_WARPS(SolSanctumPsynergyStone),
-    MAP_WARP(SOL_SANCTUM_PSYNERGY_STONE_TO_SOL_SANCTUM_STATUE, SolSanctumStatue,
-             SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_PSYNERGY_STONE),
-    MAP_WARPS_END,
+u32 gSolSanctumPsynergyStoneExits[] = {
+    SCENE_EXITS(SolSanctumPsynergyStone),
+    SCENE_EXIT(SOL_SANCTUM_PSYNERGY_STONE_TO_SOL_SANCTUM_STATUE,
+               SolSanctumStatue,
+               SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_PSYNERGY_STONE),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gSolSanctumPsynergyStoneObjectEventTemplates[] = {
@@ -93,7 +94,7 @@ struct ObjectEventTemplate gSolSanctumPsynergyStoneObjectEventTemplates[] = {
 };
 
 struct MapEvent gSolSanctumPsynergyStoneEvents[] = {
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS,
      SOL_SANCTUM_PSYNERGY_STONE_TO_SOL_SANCTUM_STATUE},
     {BG_EVENT(BG_EVENT_SILENT), 100, FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN,
      FIND_PSYNERGY_STONE},

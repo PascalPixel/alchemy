@@ -226,28 +226,28 @@ LamakanDesert_LeaderSpraySand(union ObjectEventOrEffect *fieldObject) {
 }
 
 /// Where the party can enter each of the four maps.
-const struct MapWarpDest *LamakanDesert_GetWarpDests(void) {
+const struct SceneEntrance *LamakanDesert_GetEntrances(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_LamakanDesertEast) {
-    return gLamakanDesertEastWarpDests;
+    return gLamakanDesertEastEntrances;
   }
   if (sceneId == (s32)&SceneId_LamakanDesertSmog) {
-    return gLamakanDesertSmogWarpDests;
+    return gLamakanDesertSmogEntrances;
   }
   if (sceneId == (s32)&SceneId_LamakanDesertManticore) {
-    return gLamakanDesertManticoreWarpDests;
+    return gLamakanDesertManticoreEntrances;
   }
   if (sceneId == (s32)&SceneId_LamakanDesertCave) {
-    return gLamakanDesertCaveWarpDests;
+    return gLamakanDesertCaveEntrances;
   }
-  return gLamakanDesertWarpDestsOther;
+  return gLamakanDesertEntrancesOther;
 }
 
-const struct MapWarpRegion *LamakanDesert_GetRegions(void) { return 0; }
+const struct SceneExitRegion *LamakanDesert_GetRegions(void) { return 0; }
 
-/// All four desert maps share the packed warp table.
-const u32 *LamakanDesert_GetWarps(void) { return gLamakanDesertWarps; }
+/// All four desert maps share the packed exit table.
+const u32 *LamakanDesert_GetExits(void) { return gLamakanDesertExits; }
 
 /// The pits, the Manticore and Smog of each map. Arriving at
 /// LamakanDesertManticore's LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE, the
@@ -255,7 +255,7 @@ const u32 *LamakanDesert_GetWarps(void) { return gLamakanDesertWarps; }
 /// editions it also sets FLAG_KALAY_REACHED.
 const struct ObjectEventTemplate *LamakanDesert_GetObjectEventTemplates(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertManticore) {
-    if (gSaveBlock.warpDest == LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE) {
+    if (gSaveBlock.entrance == LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE) {
       GameFlag_Set(FLAG_LAMAKAN_MANTICORE_BEATEN);
       // XXX (no evidence): what this patch fixed; only Camelot's notes for
       // the patch would say.
@@ -288,7 +288,7 @@ static void LamakanDesert_LeaveForTheWorldMap(void) {
     }
   }
   Script_PlaySong(SE_MAP_EXIT);
-  Import_ScriptRequestWarp(LAMAKAN_DESERT_CAVE_TO_WORLD_MAP);
+  Import_ScriptRequestExit(LAMAKAN_DESERT_CAVE_TO_WORLD_MAP);
   FieldScript_End();
 }
 
@@ -1246,28 +1246,28 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-struct MapWarpDest gLamakanDesertWarpDestsOther[] = {
-    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gLamakanDesertEntrancesOther[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { 1, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, 0, 0, 0, 0, 0 },
     { MAP_TABLE_END },
 };
 
-struct MapWarpDest gLamakanDesertEastWarpDests[] = {
-    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gLamakanDesertEastEntrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { LAMAKAN_DESERT_EAST_FROM_WORLD_MAP, CONDITION_ALWAYS, 984, 0, 952, FACING_WEST, 0, 0, 0, 1016, 1016, 0 },
     { LAMAKAN_DESERT_EAST_FROM_LAMAKAN_DESERT_SMOG, CONDITION_ALWAYS, 400, 0, 24, FACING_SOUTH, 0, 0, 0, 1016, 1016, 0 },
     { MAP_TABLE_END },
 };
 
-struct MapWarpDest gLamakanDesertSmogWarpDests[] = {
-    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gLamakanDesertSmogEntrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { LAMAKAN_DESERT_SMOG_FROM_LAMAKAN_DESERT_EAST, CONDITION_ALWAYS, 912, 0, 1000, FACING_NORTH, 0, 0, 0, 1016, 1016, 0 },
     { LAMAKAN_DESERT_SMOG_FROM_LAMAKAN_DESERT_MANTICORE, CONDITION_ALWAYS, 24, 0, 584, FACING_EAST, 0, 0, 0, 1016, 1016, 0 },
     { MAP_TABLE_END },
 };
 
-struct MapWarpDest gLamakanDesertManticoreWarpDests[] = {
-    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gLamakanDesertManticoreEntrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_SMOG, CONDITION_ALWAYS, 1511, 0, 104, FACING_WEST, 0, 0, 8, 1528, 504, 0 },
     { LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_EAST, CONDITION_ALWAYS, 727, 0, 104, FACING_SOUTH, 0, 0, 8, 1528, 504, 0 },
     { LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_SOUTH, CONDITION_ALWAYS, 599, 0, 296, FACING_SOUTH, 0, 0, 8, 1528, 504, 0 },
@@ -1276,8 +1276,8 @@ struct MapWarpDest gLamakanDesertManticoreWarpDests[] = {
     { MAP_TABLE_END },
 };
 
-struct MapWarpDest gLamakanDesertCaveWarpDests[] = {
-    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 424, 0, 824, FACING_WEST, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gLamakanDesertCaveEntrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 424, 0, 824, FACING_WEST, 0, -1, -1, -1, -1, 0 },
     { LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_SOUTH, CONDITION_ALWAYS, 424, 0, 968, FACING_NORTH, 0, 304, 560, 624, 1024, 0 },
     { LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_EAST, CONDITION_ALWAYS, 552, 0, 776, FACING_NORTH, 0, 304, 560, 624, 1024, 0 },
     { LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_WEST, CONDITION_ALWAYS, 440, 0, 312, FACING_NORTH, 0, 32, 16, 496, 320, 0 },
@@ -1285,24 +1285,24 @@ struct MapWarpDest gLamakanDesertCaveWarpDests[] = {
     { MAP_TABLE_END },
 };
 
-u32 gLamakanDesertWarps[] = {
-    MAP_WARPS(LamakanDesertEast),
-    MAP_WARP(LAMAKAN_DESERT_EAST_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_LAMAKAN_DESERT_EAST),
-    MAP_WARP(LAMAKAN_DESERT_EAST_TO_LAMAKAN_DESERT_SMOG, LamakanDesertSmog, LAMAKAN_DESERT_SMOG_FROM_LAMAKAN_DESERT_EAST),
-    MAP_WARPS(LamakanDesertSmog),
-    MAP_WARP(LAMAKAN_DESERT_SMOG_TO_LAMAKAN_DESERT_EAST, LamakanDesertEast, LAMAKAN_DESERT_EAST_FROM_LAMAKAN_DESERT_SMOG),
-    MAP_WARP(LAMAKAN_DESERT_SMOG_TO_LAMAKAN_DESERT_MANTICORE, LamakanDesertManticore, LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_SMOG),
-    MAP_WARPS(LamakanDesertManticore),
-    MAP_WARP(LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_SMOG, LamakanDesertSmog, LAMAKAN_DESERT_SMOG_FROM_LAMAKAN_DESERT_MANTICORE),
-    MAP_WARP(LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_CAVE_EAST, LamakanDesertCave, LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_EAST),
-    MAP_WARP(LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_CAVE_SOUTH, LamakanDesertCave, LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_SOUTH),
-    MAP_WARP(LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_CAVE_WEST, LamakanDesertCave, LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_WEST),
-    MAP_WARPS(LamakanDesertCave),
-    MAP_WARP(LAMAKAN_DESERT_CAVE_TO_LAMAKAN_DESERT_MANTICORE_EAST, LamakanDesertManticore, LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_EAST),
-    MAP_WARP(LAMAKAN_DESERT_CAVE_TO_LAMAKAN_DESERT_MANTICORE_SOUTH, LamakanDesertManticore, LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_SOUTH),
-    MAP_WARP(LAMAKAN_DESERT_CAVE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_LAMAKAN_DESERT_CAVE),
-    MAP_WARP(LAMAKAN_DESERT_CAVE_TO_LAMAKAN_DESERT_MANTICORE_WEST, LamakanDesertManticore, LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_WEST),
-    MAP_WARPS_END,
+u32 gLamakanDesertExits[] = {
+    SCENE_EXITS(LamakanDesertEast),
+    SCENE_EXIT(LAMAKAN_DESERT_EAST_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_LAMAKAN_DESERT_EAST),
+    SCENE_EXIT(LAMAKAN_DESERT_EAST_TO_LAMAKAN_DESERT_SMOG, LamakanDesertSmog, LAMAKAN_DESERT_SMOG_FROM_LAMAKAN_DESERT_EAST),
+    SCENE_EXITS(LamakanDesertSmog),
+    SCENE_EXIT(LAMAKAN_DESERT_SMOG_TO_LAMAKAN_DESERT_EAST, LamakanDesertEast, LAMAKAN_DESERT_EAST_FROM_LAMAKAN_DESERT_SMOG),
+    SCENE_EXIT(LAMAKAN_DESERT_SMOG_TO_LAMAKAN_DESERT_MANTICORE, LamakanDesertManticore, LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_SMOG),
+    SCENE_EXITS(LamakanDesertManticore),
+    SCENE_EXIT(LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_SMOG, LamakanDesertSmog, LAMAKAN_DESERT_SMOG_FROM_LAMAKAN_DESERT_MANTICORE),
+    SCENE_EXIT(LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_CAVE_EAST, LamakanDesertCave, LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_EAST),
+    SCENE_EXIT(LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_CAVE_SOUTH, LamakanDesertCave, LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_SOUTH),
+    SCENE_EXIT(LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_CAVE_WEST, LamakanDesertCave, LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_WEST),
+    SCENE_EXITS(LamakanDesertCave),
+    SCENE_EXIT(LAMAKAN_DESERT_CAVE_TO_LAMAKAN_DESERT_MANTICORE_EAST, LamakanDesertManticore, LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_EAST),
+    SCENE_EXIT(LAMAKAN_DESERT_CAVE_TO_LAMAKAN_DESERT_MANTICORE_SOUTH, LamakanDesertManticore, LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_SOUTH),
+    SCENE_EXIT(LAMAKAN_DESERT_CAVE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_LAMAKAN_DESERT_CAVE),
+    SCENE_EXIT(LAMAKAN_DESERT_CAVE_TO_LAMAKAN_DESERT_MANTICORE_WEST, LamakanDesertManticore, LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_WEST),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gLamakanDesertObjectEventTemplatesOther[] = {
@@ -1341,19 +1341,19 @@ struct ObjectEventTemplate gLamakanDesertManticoreObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-/// The four maps' one map event table. Its warp rows keep their numbers: each
-/// takes the warp of that number in whichever map the party is in, which is a
+/// The four maps' one map event table. Its exit rows keep their numbers: each
+/// takes the exit of that number in whichever map the party is in, which is a
 /// different way out in each (LAMAKAN_DESERT_EAST_TO_WORLD_MAP,
 /// LAMAKAN_DESERT_SMOG_TO_LAMAKAN_DESERT_EAST and the others).
 struct MapEvent gLamakanDesertEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, 1 },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, 2 },
-    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, 3 },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, 4 },
-    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, 1 },
-    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, 2 },
-    { MAP_EVENT_WARP, 7, CONDITION_ALWAYS, 3 },
-    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, 4 },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
+    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
+    { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, 1 },
+    { MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, 2 },
+    { MAP_EVENT_EXIT, 7, CONDITION_ALWAYS, 3 },
+    { MAP_EVENT_EXIT, 8, CONDITION_ALWAYS, 4 },
     { MAP_EVENT_COORD, 9, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_LeaveForTheWorldMap) },
     { MAP_EVENT_COORD, MB_LAMAKAN_DESERT_OASIS, FLAG_DESERT_EVENT_RUNNING, EVENT_SCRIPT(LamakanDesert_BatheInOasis) },
     { MAP_EVENT_COORD, MB_LAMAKAN_DESERT_SAND, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },

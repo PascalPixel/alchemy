@@ -29,7 +29,7 @@ void AreaNameWindow_Show(void) {
   notice = (struct TimedNoticeWork *)gFieldWork;
   x = 8;
   y = 8;
-  areaMessage = Area_GetNameIndexFar(gSaveBlock.sceneId, gSaveBlock.warpDest) +
+  areaMessage = Area_GetNameIndexFar(gSaveBlock.sceneId, gSaveBlock.entrance) +
                 RENDER_RESOURCE_BASE;
   Text_GetMessageSize(areaMessage, &x, &y, &width, &height);
   x = (30 - width) >> 1;

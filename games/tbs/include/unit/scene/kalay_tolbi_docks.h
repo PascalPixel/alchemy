@@ -4,25 +4,25 @@
 #include "types.h"
 #include "map_tables.h"
 
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEvent;
 struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *KalayTolbiDocks_GetWarpDests(void);
-const struct MapWarpRegion *KalayTolbiDocks_GetRegions(void);
-const u32 *KalayTolbiDocks_GetWarps(void);
+const struct SceneEntrance *KalayTolbiDocks_GetEntrances(void);
+const struct SceneExitRegion *KalayTolbiDocks_GetRegions(void);
+const u32 *KalayTolbiDocks_GetExits(void);
 const struct ObjectEventTemplate *KalayTolbiDocks_GetObjectEventTemplates(void);
 const struct MapEvent *KalayTolbiDocks_GetEvents(void);
 s32 KalayTolbiDocks_Initialize(void);
 extern u16 gKalayTolbiDocks_KalayDoorCells[];
 extern u16 gKalayTolbiDocks_TolbiDoorCells[];
 extern s32 gKalayTolbiDocks_BodyguardSpinScript[];
-extern struct MapWarpDest gKalayTolbiDocks_NoWarpDests[];
-extern struct MapWarpDest gKalayTolbiDocks_KalayWarpDests[];
-extern struct MapWarpDest gKalayTolbiDocks_TolbiWarpDests[];
-extern struct MapWarpDest gKalayTolbiDocks_InteriorWarpDests[];
-extern u32 gKalayTolbiDocks_Warps[];
+extern struct SceneEntrance gKalayTolbiDocks_NoEntrances[];
+extern struct SceneEntrance gKalayTolbiDocks_KalayEntrances[];
+extern struct SceneEntrance gKalayTolbiDocks_TolbiEntrances[];
+extern struct SceneEntrance gKalayTolbiDocks_InteriorEntrances[];
+extern u32 gKalayTolbiDocks_Exits[];
 extern struct ObjectEventTemplate gKalayTolbiDocks_NoObjectEventTemplates[];
 extern struct ObjectEventTemplate gKalayTolbiDocks_TolbiObjectEventTemplates[];
 extern struct ObjectEventTemplate

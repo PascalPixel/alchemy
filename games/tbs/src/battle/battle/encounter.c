@@ -26,7 +26,7 @@
 /// after each round.
 ///
 /// Reached through its far stub from SequenceManager_Run's map switch
-/// (SEQUENCE_BATTLE, with the warp destination as enemyGroup), and from
+/// (SEQUENCE_BATTLE, with the entrance as enemyGroup), and from
 /// DebugBattle_RunMenu. Allocates the battle's heap slots (the camera,
 /// gBattleWork, the enemy units, the background transition, the battle message
 /// window and others), sets FLAG_IN_BATTLE, and on its way out resets the

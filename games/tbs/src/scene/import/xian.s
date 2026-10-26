@@ -44,7 +44,7 @@
 	.set import.ObjectMotion_ArmCallback, 1
 	.set import.ObjectMotion_SetActionVariant, 1
 	.set import.FieldEffect_SpawnLinked, 1
-	.set import.Import_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestExit, 1
 	.set import.Djinn_JoinParty, 1
 	.set import.Scene_QueueMusic, 1
 	.set import.Scene_PlayQueuedMusic, 1

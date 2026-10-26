@@ -40,7 +40,7 @@
 /// on find the jar only when the party faces north).
 ///
 /// The doors from TOLBI_TO_HOUSE_SOUTH to TOLBI_TO_SANCTUM, whose cells carry
-/// their warps' numbers, lead into Tolbi's houses, inns and shops and into
+/// their exits' numbers, lead into Tolbi's houses, inns and shops and into
 /// Tolbi Sanctum (all SceneId_StuccoRoomsB), but for TOLBI_TO_LUCKY_WHEELS,
 /// which with TOLBI_TO_LUCKY_DICE leads into the Lucky Dice and Lucky Wheels
 /// rooms (SceneId_StuccoRoomsC, whose area name is also Tolbi).
@@ -183,11 +183,11 @@ static s32 Tolbi_UpdateKid(union ObjectEventOrEffect *fieldObject) {
 #endif
 }
 
-const struct MapWarpDest *Tolbi_GetWarpDests(void) { return gTolbiWarpDests; }
+const struct SceneEntrance *Tolbi_GetEntrances(void) { return gTolbiEntrances; }
 
-const struct MapWarpRegion *Tolbi_GetRegions(void) { return 0; }
+const struct SceneExitRegion *Tolbi_GetRegions(void) { return 0; }
 
-const u32 *Tolbi_GetWarps(void) { return gTolbiWarps; }
+const u32 *Tolbi_GetExits(void) { return gTolbiExits; }
 
 const struct ObjectEventTemplate *Tolbi_GetObjectEventTemplates(void) {
   return gTolbiObjectEventTemplates;
@@ -402,7 +402,7 @@ static void Tolbi_TalkToSnackVendor(void) {
 
 /// Walking into one of the town's doors: the door opens, the leader steps in
 /// (except at TOLBI_TO_WEAPON_AND_ARMOR_SHOP) and the map changes through the
-/// door's warp, numbered as its metatile behavior.
+/// door's exit, numbered as its metatile behavior.
 static void Tolbi_EnterDoor(void) {
   struct FieldWork *work = gFieldWork;
   u32 localId;
@@ -426,7 +426,7 @@ static void Tolbi_EnterDoor(void) {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -8);
     FieldScript_WaitFrames(10);
   }
-  Import_ScriptRequestWarp(work->coordEvent);
+  Import_ScriptRequestExit(work->coordEvent);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_End();
@@ -548,15 +548,15 @@ static void Tolbi_TalkToSpringVisitor(void) {
 /// The gate to Tolbi Spring (MB_TOLBI_GATE_TO_SPRING), once the visitor at the
 /// gate has stepped aside.
 static void Tolbi_EnterSpring(void) {
-  Import_ScriptRequestWarp(TOLBI_TO_TOLBI_SPRING);
+  Import_ScriptRequestExit(TOLBI_TO_TOLBI_SPRING);
   FieldScript_End();
 }
 
-/// Leaves by the warp numbered as the metatile behavior the party walked into.
-static void Tolbi_RequestTouchedWarp(void) {
+/// Leaves by the exit numbered as the metatile behavior the party walked into.
+static void Tolbi_RequestTouchedExit(void) {
   s16 *trigger = &gFieldWork->coordEvent;
 
-  Import_ScriptRequestWarp(*trigger);
+  Import_ScriptRequestExit(*trigger);
 }
 
 /// Two soldiers searching for the missing Babi stop the party and show his
@@ -750,7 +750,7 @@ s32 gTolbiYoungerSisterRun[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-struct MapWarpDest gTolbiWarpDests[] = {
+struct SceneEntrance gTolbiEntrances[] = {
     {0, CONDITION_ALWAYS, 296, 0, 232, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {TOLBI_FROM_HOUSE_SOUTH, CONDITION_ALWAYS, 304, 0, 448, FACING_NORTH, 0, -1,
      -1, -1, -1, 0},
@@ -784,31 +784,31 @@ struct MapWarpDest gTolbiWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gTolbiWarps[] = {
-    MAP_WARPS(Tolbi),
-    MAP_WARP(TOLBI_TO_HOUSE_SOUTH, StuccoRoomsB, STUCCO_ROOMS_B_HOUSE_SOUTH),
-    MAP_WARP(TOLBI_TO_HOUSE_NORTHWEST, StuccoRoomsB,
-             STUCCO_ROOMS_B_HOUSE_NORTHWEST),
-    MAP_WARP(TOLBI_TO_INN, StuccoRoomsB, STUCCO_ROOMS_B_INN),
-    MAP_WARP(TOLBI_TO_LUCKY_WHEELS, StuccoRoomsC,
-             STUCCO_ROOMS_C_LUCKY_WHEELS_FROM_TOLBI),
-    MAP_WARP(TOLBI_TO_HOUSE_NORTHEAST, StuccoRoomsB,
-             STUCCO_ROOMS_B_HOUSE_NORTHEAST),
-    MAP_WARP(TOLBI_TO_HOUSE_EAST, StuccoRoomsB, STUCCO_ROOMS_B_HOUSE_EAST),
-    MAP_WARP(TOLBI_TO_WEAPON_AND_ARMOR_SHOP, StuccoRoomsB,
-             STUCCO_ROOMS_B_WEAPON_AND_ARMOR_SHOP),
-    MAP_WARP(TOLBI_TO_HOUSE_SOUTHWEST, StuccoRoomsB,
-             STUCCO_ROOMS_B_HOUSE_SOUTHWEST),
-    MAP_WARP(TOLBI_TO_SANCTUM, StuccoRoomsB, STUCCO_ROOMS_B_SANCTUM),
-    MAP_WARP(TOLBI_TO_BABI_PALACE_ENTRANCE, BabiPalaceEntrance,
-             BABI_PALACE_ENTRANCE_FROM_TOLBI),
-    MAP_WARP(TOLBI_TO_COLOSSEUM_ENTRANCE, ColosseumEntrance,
-             COLOSSEUM_ENTRANCE_FROM_TOLBI),
-    MAP_WARP(TOLBI_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_TOLBI),
-    MAP_WARP(TOLBI_TO_LUCKY_DICE, StuccoRoomsC,
-             STUCCO_ROOMS_C_LUCKY_DICE_FROM_TOLBI),
-    MAP_WARP(TOLBI_TO_TOLBI_SPRING, TolbiSpring, TOLBI_SPRING_FROM_TOLBI),
-    MAP_WARPS_END,
+u32 gTolbiExits[] = {
+    SCENE_EXITS(Tolbi),
+    SCENE_EXIT(TOLBI_TO_HOUSE_SOUTH, StuccoRoomsB, STUCCO_ROOMS_B_HOUSE_SOUTH),
+    SCENE_EXIT(TOLBI_TO_HOUSE_NORTHWEST, StuccoRoomsB,
+               STUCCO_ROOMS_B_HOUSE_NORTHWEST),
+    SCENE_EXIT(TOLBI_TO_INN, StuccoRoomsB, STUCCO_ROOMS_B_INN),
+    SCENE_EXIT(TOLBI_TO_LUCKY_WHEELS, StuccoRoomsC,
+               STUCCO_ROOMS_C_LUCKY_WHEELS_FROM_TOLBI),
+    SCENE_EXIT(TOLBI_TO_HOUSE_NORTHEAST, StuccoRoomsB,
+               STUCCO_ROOMS_B_HOUSE_NORTHEAST),
+    SCENE_EXIT(TOLBI_TO_HOUSE_EAST, StuccoRoomsB, STUCCO_ROOMS_B_HOUSE_EAST),
+    SCENE_EXIT(TOLBI_TO_WEAPON_AND_ARMOR_SHOP, StuccoRoomsB,
+               STUCCO_ROOMS_B_WEAPON_AND_ARMOR_SHOP),
+    SCENE_EXIT(TOLBI_TO_HOUSE_SOUTHWEST, StuccoRoomsB,
+               STUCCO_ROOMS_B_HOUSE_SOUTHWEST),
+    SCENE_EXIT(TOLBI_TO_SANCTUM, StuccoRoomsB, STUCCO_ROOMS_B_SANCTUM),
+    SCENE_EXIT(TOLBI_TO_BABI_PALACE_ENTRANCE, BabiPalaceEntrance,
+               BABI_PALACE_ENTRANCE_FROM_TOLBI),
+    SCENE_EXIT(TOLBI_TO_COLOSSEUM_ENTRANCE, ColosseumEntrance,
+               COLOSSEUM_ENTRANCE_FROM_TOLBI),
+    SCENE_EXIT(TOLBI_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_TOLBI),
+    SCENE_EXIT(TOLBI_TO_LUCKY_DICE, StuccoRoomsC,
+               STUCCO_ROOMS_C_LUCKY_DICE_FROM_TOLBI),
+    SCENE_EXIT(TOLBI_TO_TOLBI_SPRING, TolbiSpring, TOLBI_SPRING_FROM_TOLBI),
+    SCENE_EXITS_END,
 };
 
 // clang-format off
@@ -879,11 +879,11 @@ struct MapEvent gTolbiEventsFestival[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_WEAPON_AND_ARMOR_SHOP, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_SOUTHWEST, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_SANCTUM, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_BABI_PALACE_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedWarp) },
-    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_COLOSSEUM_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedWarp) },
-    { MAP_EVENT_WARP, 12, CONDITION_ALWAYS, TOLBI_TO_WORLD_MAP },
-    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), TOLBI_TO_WORLD_MAP, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedWarp) },
-    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_LUCKY_DICE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedWarp) },
+    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_BABI_PALACE_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
+    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_COLOSSEUM_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
+    { MAP_EVENT_EXIT, 12, CONDITION_ALWAYS, TOLBI_TO_WORLD_MAP },
+    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), TOLBI_TO_WORLD_MAP, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
+    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_LUCKY_DICE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
     { MAP_EVENT_COORD, MB_TOLBI_SOLDIERS, FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI, EVENT_SCRIPT(Tolbi_MeetSearchingSoldiers) },
     { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, MB_TOLBI_GATE_TO_SPRING, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT_SCRIPT(Tolbi_EnterSpring) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTolbisAlwaysReallyBustlingDuringColosso) },
@@ -948,11 +948,11 @@ struct MapEvent gTolbiEventsFinalsDay[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_WEAPON_AND_ARMOR_SHOP, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_SOUTHWEST, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_SANCTUM, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_BABI_PALACE_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedWarp) },
-    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_COLOSSEUM_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedWarp) },
-    { MAP_EVENT_WARP, 12, CONDITION_ALWAYS, TOLBI_TO_WORLD_MAP },
-    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), TOLBI_TO_WORLD_MAP, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedWarp) },
-    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_LUCKY_DICE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedWarp) },
+    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_BABI_PALACE_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
+    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_COLOSSEUM_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
+    { MAP_EVENT_EXIT, 12, CONDITION_ALWAYS, TOLBI_TO_WORLD_MAP },
+    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), TOLBI_TO_WORLD_MAP, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
+    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_LUCKY_DICE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
     { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, MB_TOLBI_GATE_TO_SPRING, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT_SCRIPT(Tolbi_EnterSpring) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiColossoWillReachItsApexAny) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiAreYouPlanningToWatchThe) },
@@ -1019,11 +1019,11 @@ struct MapEvent gTolbiEventsAfterColosso[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_WEAPON_AND_ARMOR_SHOP, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_SOUTHWEST, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_SANCTUM, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
-    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_BABI_PALACE_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedWarp) },
-    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_COLOSSEUM_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedWarp) },
-    { MAP_EVENT_WARP, 12, CONDITION_ALWAYS, TOLBI_TO_WORLD_MAP },
-    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), TOLBI_TO_WORLD_MAP, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedWarp) },
-    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_LUCKY_DICE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedWarp) },
+    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_BABI_PALACE_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
+    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_COLOSSEUM_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
+    { MAP_EVENT_EXIT, 12, CONDITION_ALWAYS, TOLBI_TO_WORLD_MAP },
+    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), TOLBI_TO_WORLD_MAP, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
+    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_LUCKY_DICE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
     { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, MB_TOLBI_GATE_TO_SPRING, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT_SCRIPT(Tolbi_EnterSpring) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiWellThisYearsColossoHasEnded) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiItsBackToOurNormalQuiet) },

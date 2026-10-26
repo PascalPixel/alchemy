@@ -80,14 +80,14 @@
 /// As FLAG_KEEP_MUSIC, for as long as it is set.
 #define FLAG_KEEP_MUSIC_HELD 0x11b
 #define FLAG_WORLD_MAP_LEFT 0x11c ///< the current map is not the world map
-/// The leader left through an WARP_STYLE_STAIRS_UP warp; the next map plays
-/// the leader's arrival (Warp_PlayArrival), unless its setup
+/// The leader left through an EXIT_STYLE_STAIRS_UP exit; the next map plays
+/// the leader's arrival (Entrance_PlayArrival), unless its setup
 /// clears this first.
-#define FLAG_WARP_ARRIVAL_STAIRS_UP 0x120
-/// As FLAG_WARP_ARRIVAL_STAIRS_UP, for an WARP_STYLE_STAIRS_DOWN warp.
-#define FLAG_WARP_ARRIVAL_STAIRS_DOWN 0x121
+#define FLAG_ARRIVAL_STAIRS_UP 0x120
+/// As FLAG_ARRIVAL_STAIRS_UP, for an EXIT_STYLE_STAIRS_DOWN exit.
+#define FLAG_ARRIVAL_STAIRS_DOWN 0x121
 /// The leader falls into the next map from 160 pixels above
-/// (Warp_PlayArrival), as when the world map's airborne
+/// (Entrance_PlayArrival), as when the world map's airborne
 /// travel ends.
 #define FLAG_ARRIVE_FALLING 0x122
 /// The party is in a town (SCENE_TYPE_TOWN); the map loader sets and
@@ -124,16 +124,16 @@
 #define FLAG_RETREAT_BLOCKED 0x144
 #define FLAG_ITEM_USE 0x145 ///< the Psynergy comes from an item
 /// No random encounters while set (Encounter_CountStepsAndSelectFormation),
-/// unless flag 0x15f is set; debug warp destinations set it.
+/// unless flag 0x15f is set; debug entrances set it.
 #define FLAG_NO_ENCOUNTERS 0x160
 /// No random battles until the party enters another area: Venus
-/// Lighthouse sets it on its Reveal path, the world map's debug warp
-/// destination too, and Scene_ResetFlagsOnEnter clears it with a new
+/// Lighthouse sets it on its Reveal path, the world map's debug
+/// entrance too, and Scene_ResetFlagsOnEnter clears it with a new
 /// area.
 #define FLAG_NO_ENCOUNTERS_IN_AREA 0x161
 #define FLAG_DEBUG_BATTLE 0x162 ///< set before every debug battle
 /// In debug mode, steps on the field are not processed (SceneManager_Run) and
-/// the world map's places do not react to the leader; debug warp destinations
+/// the world map's places do not react to the leader; debug entrances
 /// set it.
 #define FLAG_DEBUG_STEPS_OFF 0x163
 /// Set while the Lure Cap is worn: random encounters come twice as fast.
@@ -546,8 +546,8 @@
 #define FLAG_ALTMILLER_CAVE_MIMIC_BEATEN 0xef5
 
 // Babi Lighthouse
-/// Arrival through room 2's warp destination 10 changes its metatiles and
-/// behaviors; warp destinations 10 and 11 restore those changes on later
+/// Arrival through room 2's entrance 10 changes its metatiles and
+/// behaviors; entrances 10 and 11 restore those changes on later
 /// visits. ★ Named from the game: "they opened the stone door"
 /// (MsgBabiYoureSureTheyWentThrough)
 #define FLAG_BABI_LIGHTHOUSE_BACK_FROM_STONE_DOOR 0x980
@@ -1066,7 +1066,7 @@
 #define FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED 0x875
 /// All three small stone pillars on the lighthouse's lower floor are in place,
 /// the water runs, and it carries the party down to the ground floor. Moving
-/// one out again clears it. The ground floor's warp destinations from the lower
+/// one out again clears it. The ground floor's entrances from the lower
 /// floor place the party by whether it is set. ★ Named from its area name:
 /// Mercury Lighthouse
 #define FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN 0x876

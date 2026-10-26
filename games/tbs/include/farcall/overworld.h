@@ -1,10 +1,10 @@
 /// @file
 /// Map events, field Psynergy, objects and effect lifecycles.
 
-/// Runs the field map the party entered by warp destination until it leaves,
-/// and returns the warp kind for Scene_TakeWarp, or WARP_NONE when gSaveBlock
+/// Runs the field map the party entered by entrance until it leaves,
+/// and returns the exit kind for Scene_TakeExit, or EXIT_NONE when gSaveBlock
 /// already holds the next map.
-s32 SceneManager_RunFar(s32 warpDest);
+s32 SceneManager_RunFar(s32 entrance);
 /// The game's main loop, which never returns; mode, an enum GameStart,
 /// picks the first map. System_Initialize starts it at power-on with
 /// GAME_START_TITLE, and Game_Restart starts it again.
@@ -190,24 +190,24 @@ void ObjectEvent_PlaceCurrentWithinCameraBoundsFar(s32 localId, s32 glide);
 struct ObjectEvent *FieldCamera_GetScriptObjectFar(void);
 /// Sets the map rectangle the camera keeps the screen inside.
 void MapGrid_SetViewBoundsFar(s32 minX, s32 minY, s32 maxX, s32 maxY);
-/// Makes the script leave for a warp destination of a map; the title, the
+/// Makes the script leave for an entrance of a map; the title, the
 /// Battle Arena and the debug menus use it as well as a few maps.
 void FieldScript_SetDestinationFar(s32 first, s32 second);
-/// Raises the field's warp request; 999 leaves for the map and warp destination
+/// Raises the field's exit request; 999 leaves for the map and entrance
 /// in gSaveBlock.
-void FieldScript_SetWarpRequestFar(u16 value);
+void FieldScript_SetExitRequestFar(u16 value);
 /// Sets up a battle with one formation of an encounter table, which starts
 /// once the script that asked for it has returned.
 void Field_RequestBattleFromEncounterTableFar(s32 zone_no, s32 slot_no);
 /// Sets up the battle with a Djinni, its object event hopping first unless
 /// DJINN_NO_HOP is set; on re-entering the map the Djinni joins or hides.
 void Field_RequestDjinnBattleFar(s32 flag, s32 no);
-/// Sets the map and warp destination the field goes to next.
+/// Sets the map and entrance the field goes to next.
 void FieldScript_SetNextDestinationFar(s32 first, s32 second);
 /// Sets where the party wakes up after losing a battle, ahead of a scripted
 /// fight.
 void FieldScript_SetDefeatDestinationFar(s32 first, s32 second);
-/// Sets the destination and raises WARP_NONE, so the map loop leaves on its
+/// Sets the destination and raises EXIT_NONE, so the map loop leaves on its
 /// next pass; only Tolbi's spring uses it.
 void FieldScript_RequestDestinationFar(u16 first, u16 second);
 /// Writes an object event's screen position in pixels, y at the top of its
@@ -412,9 +412,9 @@ void ObjectEvent_RestoreFar(void);
 void FieldEffect_ScheduleRatioTransitionFar(s32 zoom, s32 frames);
 /// Waits, at most 300 frames, for the world map's zoom to end.
 void FieldScript_WaitForZoomTransitionFar(void);
-/// Returns the area name of a map and warp destination, an offset from
+/// Returns the area name of a map and entrance, an offset from
 /// MsgDebugEntryName, or 0 when no rule matches.
-s32 Area_GetNameIndexFar(s32 sceneId, s32 warpDest);
+s32 Area_GetNameIndexFar(s32 sceneId, s32 entrance);
 /// Starts an object event's action script: an enum MovementType, or the script
 /// itself.
 void ObjectEvent_SetMovementTypeFar(struct Object *object, s32 kind);

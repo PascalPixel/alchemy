@@ -5,15 +5,15 @@
 #include "map_tables.h"
 #include "scene_header.h"
 
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *Scene_GetWarps(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
-extern struct MapWarpDest gTimberRoomsAWarpDests[];
-extern struct MapWarpRegion gTimberRoomsARegions[];
-extern u32 gTimberRoomsAWarps[];
+extern struct SceneEntrance gTimberRoomsAEntrances[];
+extern struct SceneExitRegion gTimberRoomsARegions[];
+extern u32 gTimberRoomsAExits[];
 extern struct ObjectEventTemplate gTimberRoomsAObjectEventTemplates[];
 extern struct ObjectEventTemplate
     gTimberRoomsAObjectEventTemplatesAfterAudience[];

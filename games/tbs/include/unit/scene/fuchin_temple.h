@@ -4,14 +4,14 @@
 #include "types.h"
 #include "map_tables.h"
 
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEvent;
 struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *Scene_GetWarps(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
@@ -24,9 +24,9 @@ extern s32 gFuchinTemple_HiddenSpriteScript[];
 extern u16 gFuchinTemple_TempleDoorOpens[];
 extern u16 gFuchinTemple_FehsDoorOpens[];
 extern u16 gFuchinTemple_FehsDoorCloses[];
-extern struct MapWarpDest gFuchinTempleGroundsWarpDests[];
-extern struct MapWarpDest gFuchinTempleWarpDestsOther[];
-extern u32 gFuchinTempleWarps[];
+extern struct SceneEntrance gFuchinTempleGroundsEntrances[];
+extern struct SceneEntrance gFuchinTempleEntrancesOther[];
+extern u32 gFuchinTempleExits[];
 extern struct ObjectEventTemplate gFuchinTempleGroundsObjectEventTemplates[];
 extern struct ObjectEventTemplate gFuchinTempleObjectEventTemplates[];
 extern struct ObjectEventTemplate

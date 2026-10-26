@@ -4,9 +4,9 @@
 #include "types.h"
 #include "map_tables.h"
 
-const struct MapWarpDest *ColosseumNavampaMatch_GetWarpDests(void);
-const struct MapWarpRegion *ColosseumNavampaMatch_GetRegions(void);
-const u32 *ColosseumNavampaMatch_GetWarps(void);
+const struct SceneEntrance *ColosseumNavampaMatch_GetEntrances(void);
+const struct SceneExitRegion *ColosseumNavampaMatch_GetRegions(void);
+const u32 *ColosseumNavampaMatch_GetExits(void);
 const struct ObjectEventTemplate *
 ColosseumNavampaMatch_GetObjectEventTemplates(void);
 const struct MapEvent *ColosseumNavampaMatch_GetEvents(void);
@@ -22,8 +22,8 @@ extern char gHexDigits[20];
 extern s32 gColosseumNavampaMatch_PrizeEffectScript[];
 extern s32 gColosseumNavampaMatch_PrizeScript[];
 extern u32 gPushedObject_DirectionSteps[];
-extern struct MapWarpDest gColosseumNavampaMatchWarpDests[];
-extern u32 gColosseumNavampaMatchWarps[];
+extern struct SceneEntrance gColosseumNavampaMatchEntrances[];
+extern u32 gColosseumNavampaMatchExits[];
 extern struct ObjectEventTemplate gColosseumNavampaMatchObjectEventTemplates[];
 extern s32 gColosseumNavampaMatch_WallWedgePatternIndex;
 extern s32 gColosseumNavampaMatch_WallWedgeTimer;

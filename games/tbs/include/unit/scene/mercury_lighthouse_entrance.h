@@ -4,9 +4,9 @@
 #include "types.h"
 #include "map_tables.h"
 
-const struct MapWarpDest *MercuryLighthouseEntrance_GetWarpDests(void);
-const struct MapWarpRegion *MercuryLighthouseEntrance_GetRegions(void);
-const u32 *MercuryLighthouseEntrance_GetWarps(void);
+const struct SceneEntrance *MercuryLighthouseEntrance_GetEntrances(void);
+const struct SceneExitRegion *MercuryLighthouseEntrance_GetRegions(void);
+const u32 *MercuryLighthouseEntrance_GetExits(void);
 const struct ObjectEventTemplate *
 MercuryLighthouseEntrance_GetObjectEventTemplates(void);
 const struct MapEvent *MercuryLighthouseEntrance_GetEvents(void);
@@ -30,8 +30,8 @@ extern s32 gMercuryLighthouseEntrance_LizardManStepEast[];
 extern s32 gPaletteCycleRed;
 extern s32 gPaletteCycleGreen;
 extern s32 gPaletteCycleBlue;
-extern struct MapWarpDest gMercuryLighthouseEntrance_WarpDests[];
-extern u32 gMercuryLighthouseEntrance_Warps[];
+extern struct SceneEntrance gMercuryLighthouseEntrance_Entrances[];
+extern u32 gMercuryLighthouseEntrance_Exits[];
 extern struct ObjectEventTemplate
     gMercuryLighthouseEntrance_ObjectEventTemplates[];
 extern struct MapEvent gMercuryLighthouseEntrance_Events[];

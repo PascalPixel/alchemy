@@ -13,8 +13,8 @@
 /// on, pushing against or searching the cell does.
 enum MetatileBehavior {
   MB_NORMAL = 0, ///< open ground: nothing happens there
-  /// 1 to 239: the map's own events, coord event or warp when stepped on
-  /// (Scene_RunCoordEventOrWarp), bg event when the player presses A facing the
+  /// 1 to 239: the map's own events, coord event or exit when stepped on
+  /// (Scene_RunCoordEventOrExit), bg event when the player presses A facing the
   /// cell.
   MB_EVENT_FIRST = 1,
   MB_EVENT_LAST = 239,

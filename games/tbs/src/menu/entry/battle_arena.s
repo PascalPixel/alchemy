@@ -1,7 +1,7 @@
 	.include "games/tbs/src/system/overlay.inc"
 	overlay_veneer BattleArena_RunRoundResult
-	overlay_veneer BattleArena_GetWarpDests
-	overlay_veneer BattleArena_GetWarps
+	overlay_veneer BattleArena_GetEntrances
+	overlay_veneer BattleArena_GetExits
 	overlay_veneer BattleArena_SelectObjectEventTemplates
 	overlay_veneer BattleArena_GetEvents
-	overlay_veneer Scene_GetWarpRegions
+	overlay_veneer Scene_GetExitRegions

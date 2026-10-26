@@ -6,8 +6,8 @@
 /// (field/scene_headers.s).
 ///
 /// Each SceneId_ is an absolute symbol whose value is the scene's row in the
-/// table; C takes the number as (s32)&SceneId_Vale, and the warp tables name a
-/// scene by its place (MAP_WARP).
+/// table; C takes the number as (s32)&SceneId_Vale, and the exit tables name a
+/// scene by its place (SCENE_EXIT).
 
 /// ★ Named from the game: "Title screen" (MsgDebugEntryName)
 extern char SceneId_Title;

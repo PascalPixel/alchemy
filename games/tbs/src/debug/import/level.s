@@ -46,7 +46,7 @@
 	.ifndef TBS_EDITION_JA
 	.set import.FieldEffect_SpawnLinked, 1
 	.endif
-	.set import.Import_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestExit, 1
 	.set import.ItemMenu_DrawItemDetails, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

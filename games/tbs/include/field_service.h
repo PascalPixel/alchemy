@@ -101,9 +101,9 @@ static inline void Script_OpenScreen(void) {
   FieldScript_StartScreenTransition();
 }
 
-/// Sends the party out of the room by one of its warps, as a door would.
-static inline void Script_RequestWarp(s32 warp) {
-  Import_ScriptRequestWarp(warp);
+/// Sends the party out of the room by one of its exits, as a door would.
+static inline void Script_RequestExit(s32 exit) {
+  Import_ScriptRequestExit(exit);
 }
 
 /// Picks the line of dialogue the script's next message shows.

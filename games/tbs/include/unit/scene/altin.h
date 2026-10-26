@@ -5,21 +5,21 @@
 #include "script_layer.h"
 #include "map_tables.h"
 
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEvent;
 struct ObjectEventTemplate;
-struct MapWarpRegion;
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *Scene_GetWarps(void);
+struct SceneExitRegion;
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
 extern s32 gCottageRoomsD_CookScript[];
-extern struct MapWarpDest gAltin_NoWarpDests[];
-extern struct MapWarpDest gAltin_WarpDests[];
-extern struct MapWarpDest gCottageRoomsD_WarpDests[];
-extern u32 gAltin_Warps[];
+extern struct SceneEntrance gAltin_NoEntrances[];
+extern struct SceneEntrance gAltin_Entrances[];
+extern struct SceneEntrance gCottageRoomsD_Entrances[];
+extern u32 gAltin_Exits[];
 extern struct ObjectEventTemplate gAltin_NoObjectEventTemplates[];
 extern struct ObjectEventTemplate gAltin_ObjectEventTemplates[];
 extern struct ObjectEventTemplate gCottageRoomsD_ObjectEventTemplates[];

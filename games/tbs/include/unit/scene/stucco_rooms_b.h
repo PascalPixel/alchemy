@@ -5,15 +5,15 @@
 #include "script_layer.h"
 #include "map_tables.h"
 
-const struct MapWarpDest *StuccoRoomsB_GetWarpDests(void);
-const struct MapWarpRegion *StuccoRoomsB_GetRegions(void);
-const u32 *StuccoRoomsB_GetWarps(void);
+const struct SceneEntrance *StuccoRoomsB_GetEntrances(void);
+const struct SceneExitRegion *StuccoRoomsB_GetRegions(void);
+const u32 *StuccoRoomsB_GetExits(void);
 const struct ObjectEventTemplate *StuccoRoomsB_SelectObjectEventTemplates(void);
 const struct MapEvent *StuccoRoomsB_SelectEvents(void);
 s32 StuccoRoomsB_ApplyEntryState(void);
 extern s32 gStuccoRoomsBSquashStretch[];
-extern struct MapWarpDest gStuccoRoomsBWarpDests[];
-extern u32 gStuccoRoomsBWarps[];
+extern struct SceneEntrance gStuccoRoomsBEntrances[];
+extern u32 gStuccoRoomsBExits[];
 extern struct ObjectEventTemplate gStuccoRoomsBObjectEventTemplates[];
 extern struct ObjectEventTemplate
     gStuccoRoomsBObjectEventTemplatesAfterColosso[];

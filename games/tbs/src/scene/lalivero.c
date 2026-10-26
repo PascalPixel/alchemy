@@ -22,7 +22,7 @@
 ///
 /// On both visits Torch, a Mars Djinni, waits until it joins;
 /// EventScript_EnterDoor opens the door or the Sanctum's gate before the leader
-/// leaves by the touched coord event's warp into SceneId_TimberRoomsB or
+/// leaves by the touched coord event's exit into SceneId_TimberRoomsB or
 /// SceneId_TimberRoomsC; the world map lies east and west; and a jar, a
 /// stone pillar and a chest hold a Water of Life, a Psy Crystal and a Warrior's
 /// Helm.
@@ -56,11 +56,11 @@
 
 static void Lalivero_TalkAboutIdejimaShip(void);
 
-/// Warp destinations that set up the later visit, 90 as if the party had also
-/// seen the ship at Idejima (FLAG_SAW_SHIP_AT_IDEJIMA). No warp leads to them
-/// and the warp destination table has no row for them (the aerie's warp leads
-/// into Faran's house): only the debug map selector, which warps to any warp
-/// destination from 0 to 99, reaches them.
+/// Entrances that set up the later visit, 90 as if the party had also
+/// seen the ship at Idejima (FLAG_SAW_SHIP_AT_IDEJIMA). No exit leads to them
+/// and the entrance table has no row for them (the aerie's exit leads
+/// into Faran's house): only the debug map selector, which exits to any
+/// entrance from 0 to 99, reaches them.
 enum { ENTRANCE_FROM_AERIE = 90, ENTRANCE_FROM_AERIE_QUIETLY = 91 };
 
 /// The placed object events, numbered in the order of
@@ -165,13 +165,13 @@ static void EventScript_TalkToTorch(void) {
   Djinn_JoinParty(LOCALID_TORCH, ELEMENT_MARS, DJINNI_INDEX(DJINNI_TORCH));
 }
 
-const struct MapWarpDest *Lalivero_GetWarpDests(void) {
-  return gLaliveroWarpDests;
+const struct SceneEntrance *Lalivero_GetEntrances(void) {
+  return gLaliveroEntrances;
 }
 
-const struct MapWarpRegion *Lalivero_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Lalivero_GetRegions(void) { return NULL; }
 
-const u32 *Lalivero_GetWarps(void) { return gLaliveroWarps; }
+const u32 *Lalivero_GetExits(void) { return gLaliveroExits; }
 
 /// The townsfolk, who stand differently once the party is back from Venus
 /// Lighthouse.
@@ -232,7 +232,7 @@ static void EventScript_WharfGuardLetsPartyThrough(void) {
 
 /// The leader walks through one of Lalivero's doors. As the leader walks into a
 /// doorway, the door (or the Sanctum's gate) swings open, the leader steps in
-/// and the warp of the touched coord event is taken.
+/// and the exit of the touched coord event is taken.
 static void EventScript_EnterDoor(void) {
   s32 door = gFieldWork->coordEvent;
   s32 x = gLaliveroDoorCells[door][0];
@@ -249,18 +249,18 @@ static void EventScript_EnterDoor(void) {
   }
   FieldScript_WaitFrames(10);
   gFieldWork->transitionFrames = 16;
-  Import_ScriptRequestWarp(door);
+  Import_ScriptRequestExit(door);
 }
 
 /// Lalivero: a doorway with no door (coord events 8 and 11); leave by the
-/// touched coord event's warp.
+/// touched coord event's exit.
 static void EventScript_EnterDoorway(void) {
   struct FieldWork *work = gFieldWork;
   s16 *trigger = (s16 *)&work->coordEvent;
-  s32 warp = *trigger;
+  s32 exit = *trigger;
 
   work->transitionFrames = 16;
-  Import_ScriptRequestWarp(warp);
+  Import_ScriptRequestExit(exit);
 }
 
 /// Lalivero, the first visit, arriving from the world map: the party and Iodem
@@ -836,11 +836,11 @@ s32 Lalivero_Initialize(void) {
   GlyphTransfer *icon;
 
   // Coming back from the lighthouse switches the town to its later state.
-  if (gSaveBlock.warpDest == ENTRANCE_FROM_AERIE) {
+  if (gSaveBlock.entrance == ENTRANCE_FROM_AERIE) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
     GameFlag_Set(FLAG_SAW_SHIP_AT_IDEJIMA);
   }
-  if (gSaveBlock.warpDest == ENTRANCE_FROM_AERIE_QUIETLY) {
+  if (gSaveBlock.entrance == ENTRANCE_FROM_AERIE_QUIETLY) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
   }
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -906,8 +906,8 @@ s32 Lalivero_Initialize(void) {
     MapGrid_CopyCellAttributes(20, 23, 1, 1, 78, 23);
     MapGrid_CopyCellAttributes(20, 23, 1, 1, 17, 23);
     MapGrid_CopyCellAttributes(20, 23, 1, 1, 18, 23);
-    if ((gSaveBlock.warpDest == LALIVERO_FROM_WORLD_MAP_EAST ||
-         gSaveBlock.warpDest == LALIVERO_FROM_WORLD_MAP_WEST) &&
+    if ((gSaveBlock.entrance == LALIVERO_FROM_WORLD_MAP_EAST ||
+         gSaveBlock.entrance == LALIVERO_FROM_WORLD_MAP_WEST) &&
         !Script_GetFlag(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN)) {
       GameFlag_Set(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN);
       // The woman and the girl who wander nearest the soldiers stay put during
@@ -962,7 +962,7 @@ s32 gLalivero_CryingScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct MapWarpDest gLaliveroWarpDests[] = {
+struct SceneEntrance gLaliveroEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {LALIVERO_FROM_TIMBER_ROOMS_C_NORTHWEST, CONDITION_ALWAYS, 72, 0, 184,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -993,35 +993,35 @@ struct MapWarpDest gLaliveroWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gLaliveroWarps[] = {
-    MAP_WARPS(Lalivero),
-    MAP_WARP(LALIVERO_TO_TIMBER_ROOMS_C_NORTHWEST, TimberRoomsC,
-             TIMBER_ROOMS_C_FROM_LALIVERO_NORTHWEST),
-    MAP_WARP(LALIVERO_TO_TIMBER_ROOMS_B_WEST, TimberRoomsB,
-             TIMBER_ROOMS_B_FROM_LALIVERO_WEST),
-    MAP_WARP(LALIVERO_TO_TIMBER_ROOMS_C_NORTHEAST, TimberRoomsC,
-             TIMBER_ROOMS_C_FROM_LALIVERO_NORTHEAST),
-    MAP_WARP(LALIVERO_TO_TIMBER_ROOMS_B_NORTHWEST, TimberRoomsB,
-             TIMBER_ROOMS_B_FROM_LALIVERO_NORTHWEST),
-    MAP_WARP(LALIVERO_TO_TIMBER_ROOMS_B_NORTH, TimberRoomsB,
-             TIMBER_ROOMS_B_FROM_LALIVERO_NORTH),
-    MAP_WARP(LALIVERO_TO_TIMBER_ROOMS_B_NORTHEAST, TimberRoomsB,
-             TIMBER_ROOMS_B_FROM_LALIVERO_NORTHEAST),
-    MAP_WARP(LALIVERO_TO_TIMBER_ROOMS_C_SOUTHWEST, TimberRoomsC,
-             TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST),
-    MAP_WARP(LALIVERO_TO_TIMBER_ROOMS_C_SOUTH, TimberRoomsC,
-             TIMBER_ROOMS_C_FROM_LALIVERO_SOUTH),
-    MAP_WARP(LALIVERO_TO_TIMBER_ROOMS_B_SOUTH, TimberRoomsB,
-             TIMBER_ROOMS_B_FROM_LALIVERO_SOUTH),
-    MAP_WARP(LALIVERO_TO_TIMBER_ROOMS_B_SOUTHEAST, TimberRoomsB,
-             TIMBER_ROOMS_B_FROM_LALIVERO_SOUTHEAST),
-    MAP_WARP(LALIVERO_TO_TIMBER_ROOMS_B_EAST_SOUTHEAST, TimberRoomsB,
-             TIMBER_ROOMS_B_FROM_LALIVERO_EAST_SOUTHEAST),
-    MAP_WARP(LALIVERO_TO_WORLD_MAP_EAST, WorldMap,
-             WORLD_MAP_FROM_LALIVERO_EAST),
-    MAP_WARP(LALIVERO_TO_WORLD_MAP_WEST, WorldMap,
-             WORLD_MAP_FROM_LALIVERO_WEST),
-    MAP_WARPS_END,
+u32 gLaliveroExits[] = {
+    SCENE_EXITS(Lalivero),
+    SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_C_NORTHWEST, TimberRoomsC,
+               TIMBER_ROOMS_C_FROM_LALIVERO_NORTHWEST),
+    SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_B_WEST, TimberRoomsB,
+               TIMBER_ROOMS_B_FROM_LALIVERO_WEST),
+    SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_C_NORTHEAST, TimberRoomsC,
+               TIMBER_ROOMS_C_FROM_LALIVERO_NORTHEAST),
+    SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_B_NORTHWEST, TimberRoomsB,
+               TIMBER_ROOMS_B_FROM_LALIVERO_NORTHWEST),
+    SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_B_NORTH, TimberRoomsB,
+               TIMBER_ROOMS_B_FROM_LALIVERO_NORTH),
+    SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_B_NORTHEAST, TimberRoomsB,
+               TIMBER_ROOMS_B_FROM_LALIVERO_NORTHEAST),
+    SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_C_SOUTHWEST, TimberRoomsC,
+               TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST),
+    SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_C_SOUTH, TimberRoomsC,
+               TIMBER_ROOMS_C_FROM_LALIVERO_SOUTH),
+    SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_B_SOUTH, TimberRoomsB,
+               TIMBER_ROOMS_B_FROM_LALIVERO_SOUTH),
+    SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_B_SOUTHEAST, TimberRoomsB,
+               TIMBER_ROOMS_B_FROM_LALIVERO_SOUTHEAST),
+    SCENE_EXIT(LALIVERO_TO_TIMBER_ROOMS_B_EAST_SOUTHEAST, TimberRoomsB,
+               TIMBER_ROOMS_B_FROM_LALIVERO_EAST_SOUTHEAST),
+    SCENE_EXIT(LALIVERO_TO_WORLD_MAP_EAST, WorldMap,
+               WORLD_MAP_FROM_LALIVERO_EAST),
+    SCENE_EXIT(LALIVERO_TO_WORLD_MAP_WEST, WorldMap,
+               WORLD_MAP_FROM_LALIVERO_WEST),
+    SCENE_EXITS_END,
 };
 
 // clang-format off
@@ -1121,8 +1121,8 @@ u16 gLaliveroGateOpenSteps[] = {
 };
 
 struct MapEvent gLaliveroEvents[] = {
-    { MAP_EVENT_WARP, 20, CONDITION_ALWAYS, LALIVERO_TO_WORLD_MAP_EAST },
-    { MAP_EVENT_WARP, 21, CONDITION_ALWAYS, LALIVERO_TO_WORLD_MAP_WEST },
+    { MAP_EVENT_EXIT, 20, CONDITION_ALWAYS, LALIVERO_TO_WORLD_MAP_EAST },
+    { MAP_EVENT_EXIT, 21, CONDITION_ALWAYS, LALIVERO_TO_WORLD_MAP_WEST },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },

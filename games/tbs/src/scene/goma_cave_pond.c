@@ -4,7 +4,7 @@
 /// party to pass through on the way to Bilibin.
 ///
 /// The room is reached only from the room above (goma_cave_pillar.c): its
-/// three warps lead back up to that room's
+/// three exits lead back up to that room's
 /// GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_WEST, _SOUTH and _EAST. It has no
 /// map events of its own. Its one placed object event is the stump the party
 /// pushes over the edge up there with Move: once it has fallen
@@ -54,13 +54,13 @@ enum GomaCavePondLocalId {
   LOCALID_FALLEN_STUMP = LOCALID_FIRST_PLACED
 };
 
-const struct MapWarpDest *Scene_GetWarpDests(void) {
-  return gGomaCavePondWarpDests;
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gGomaCavePondEntrances;
 }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Scene_GetWarps(void) { return gGomaCavePondWarps; }
+const u32 *Scene_GetExits(void) { return gGomaCavePondExits; }
 
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   return gGomaCavePondObjectEventTemplates;
@@ -89,8 +89,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-struct MapWarpDest gGomaCavePondWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gGomaCavePondEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_WEST, CONDITION_ALWAYS, 120, 0, 88,
      FACING_SOUTH, 0, 24, 8, 504, 424, 0},
@@ -101,15 +101,15 @@ struct MapWarpDest gGomaCavePondWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gGomaCavePondWarps[] = {
-    MAP_WARPS(GomaCavePond),
-    MAP_WARP(GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_WEST, GomaCavePillar,
-             GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_WEST),
-    MAP_WARP(GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_SOUTH, GomaCavePillar,
-             GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_SOUTH),
-    MAP_WARP(GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_EAST, GomaCavePillar,
-             GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST),
-    MAP_WARPS_END,
+u32 gGomaCavePondExits[] = {
+    SCENE_EXITS(GomaCavePond),
+    SCENE_EXIT(GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_WEST, GomaCavePillar,
+               GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_WEST),
+    SCENE_EXIT(GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_SOUTH, GomaCavePillar,
+               GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_SOUTH),
+    SCENE_EXIT(GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_EAST, GomaCavePillar,
+               GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST),
+    SCENE_EXITS_END,
 };
 
 // clang-format off
@@ -121,11 +121,11 @@ struct ObjectEventTemplate gGomaCavePondObjectEventTemplates[] = {
 // clang-format on
 
 struct MapEvent gGomaCavePondEvents[] = {
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS,
      GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_WEST},
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 6, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 6, CONDITION_ALWAYS,
      GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_SOUTH},
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS,
      GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_EAST},
     {MAP_EVENTS_END},
 };

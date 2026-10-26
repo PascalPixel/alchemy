@@ -4,9 +4,9 @@
 #include "types.h"
 #include "map_tables.h"
 
-const struct MapWarpDest *ValeKradensCottage_GetWarpDests(void);
-const struct MapWarpRegion *ValeKradensCottage_GetRegions(void);
-const u32 *ValeKradensCottage_GetWarps(void);
+const struct SceneEntrance *ValeKradensCottage_GetEntrances(void);
+const struct SceneExitRegion *ValeKradensCottage_GetRegions(void);
+const u32 *ValeKradensCottage_GetExits(void);
 const struct ObjectEventTemplate *
 ValeKradensCottage_GetObjectEventTemplates(void);
 const struct MapEvent *ValeKradensCottage_GetEvents(void);
@@ -14,8 +14,8 @@ s32 ValeKradensCottage_Initialize(void);
 extern s32 gValeKradensCottage_RockslideSurvivorEscapeActions[];
 extern s32 gValeKradensCottage_RockslideSurvivorSquashes[];
 extern s32 gValeKradensCottage_FaceTargetActions[];
-extern struct MapWarpDest gValeKradensCottage_WarpDests[];
-extern u32 gValeKradensCottage_Warps[];
+extern struct SceneEntrance gValeKradensCottage_Entrances[];
+extern u32 gValeKradensCottage_Exits[];
 extern struct ObjectEventTemplate gValeKradensCottage_ObjectEventTemplates[];
 extern struct MapEvent gValeKradensCottage_Events[];
 extern struct MapEvent gValeKradensCottage_StormEvents[];

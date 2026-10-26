@@ -7,7 +7,7 @@
 /// there (ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST and
 /// ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_EAST). Each map is a room
 /// of the mine, and the getters pick each room's tables by gSaveBlock.sceneId,
-/// all the rooms share one warp table, and Scene_Initialize calls the setup of
+/// all the rooms share one exit table, and Scene_Initialize calls the setup of
 /// the room being entered (AltinPeak_RestoreFirstWaterBeastRoom and so on),
 /// which puts back what the party has already done there.
 ///
@@ -21,7 +21,7 @@
 /// the room, freezes the second puddle with Frost and hops across, and stepping
 /// near it again (coord event 11) it hops back and settles down to spit.
 /// Talking to a beast, or reading its mind, starts its battle, and the party
-/// comes back to the room by WARP_DEST_AFTER_BATTLE, where the room's setup
+/// comes back to the room by ENTRANCE_AFTER_BATTLE, where the room's setup
 /// runs a drain: the water layer sinks and flickers away
 /// (AltinPeak_DrainFirstWater and the two after it), and
 /// FLAG_ALTIN_MINE_FIRST_DRAIN to _THIRD_DRAIN remember the three drains, which
@@ -153,8 +153,8 @@ static void AltinPeak_MarkObjectEventTerrainCell(s32 localId);
 static void AltinPeak_RollCart(s32 id, s32 heading);
 static void AltinPeak_StartPaletteAnimation(void);
 
-/// Each room's water beast fight returns the party to this warp destination.
-enum { WARP_DEST_AFTER_BATTLE = 99 };
+/// Each room's water beast fight returns the party to this entrance.
+enum { ENTRANCE_AFTER_BATTLE = 99 };
 
 /// The rooms' object events, from their object event templates.
 /// AltinPeakSecondWaterBeast, AltinPeakThirdWaterBeast, AltinPeakPool and
@@ -218,7 +218,7 @@ enum {
   /// render)
   LOCALID_SPRITZ_ROOM_THIRD_PUDDLE,
   /// Unused: a round boulder at (520, 632), outside both of the room's camera
-  /// boxes (gAltinPeak_SpritzWarpDests': one ends at z 568, the one below it at
+  /// boxes (gAltinPeak_SpritzEntrances': one ends at z 568, the one below it at
   /// x 384), so the player never sees it, and no map event names it. It stands
   /// almost where AltinPeakJunction places its own boulder, (536, 636).
   /// ★ Named from the game: "Mother, look!! A boulder blocking the road!!"
@@ -360,47 +360,47 @@ static s32 AltinPeak_FlyDebris(struct Object *interpreter) {
   return 0;
 }
 
-const struct MapWarpDest *Scene_GetWarpDests(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_AltinPeakFirstWaterBeast) {
-    return gAltinPeak_FirstWaterBeastWarpDests;
+    return gAltinPeak_FirstWaterBeastEntrances;
   }
   if (sceneId == (s32)&SceneId_AltinPeakRailTunnel) {
-    return gAltinPeak_RailTunnelWarpDests;
+    return gAltinPeak_RailTunnelEntrances;
   }
   if (sceneId == (s32)&SceneId_AltinPeakSecondWaterBeast) {
-    return gAltinPeak_SecondWaterBeastWarpDests;
+    return gAltinPeak_SecondWaterBeastEntrances;
   }
   if (sceneId == (s32)&SceneId_AltinPeakSouthEntrance) {
-    return gAltinPeak_SouthEntranceWarpDests;
+    return gAltinPeak_SouthEntranceEntrances;
   }
   if (sceneId == (s32)&SceneId_AltinPeakThirdWaterBeast) {
-    return gAltinPeak_ThirdWaterBeastWarpDests;
+    return gAltinPeak_ThirdWaterBeastEntrances;
   }
   if (sceneId == (s32)&SceneId_AltinPeakPool) {
-    return gAltinPeak_PoolWarpDests;
+    return gAltinPeak_PoolEntrances;
   }
   if (sceneId == (s32)&SceneId_AltinPeakSpritz) {
-    return gAltinPeak_SpritzWarpDests;
+    return gAltinPeak_SpritzEntrances;
   }
   if (sceneId == (s32)&SceneId_AltinPeakJunction) {
-    return gAltinPeak_JunctionWarpDests;
+    return gAltinPeak_JunctionEntrances;
   }
   if (sceneId == (s32)&SceneId_AltinPeakFallingRocks) {
-    return gAltinPeak_FallingRocksWarpDests;
+    return gAltinPeak_FallingRocksEntrances;
   }
   if (sceneId == (s32)&SceneId_AltinPeakHydrosStatue) {
-    return gAltinPeak_HydrosStatueWarpDests;
+    return gAltinPeak_HydrosStatueEntrances;
   }
   if (sceneId == (s32)&SceneId_AltinPeakWestExit) {
-    return gAltinPeak_WestExitWarpDests;
+    return gAltinPeak_WestExitEntrances;
   }
-  return gAltinPeak_WarpDestsOther;
+  return gAltinPeak_EntrancesOther;
 }
 
 /// AltinPeakFallingRocks and AltinPeakHydrosStatue have regions.
-const struct MapWarpRegion *Scene_GetWarpRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_AltinPeakFallingRocks) {
@@ -412,8 +412,8 @@ const struct MapWarpRegion *Scene_GetWarpRegions(void) {
   return 0;
 }
 
-/// All the rooms share one warp table.
-const u32 *Scene_GetWarps(void) { return gAltinPeak_Warps; }
+/// All the rooms share one exit table.
+const u32 *Scene_GetExits(void) { return gAltinPeak_Exits; }
 
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   s16 sceneId = gSaveBlock.sceneId;
@@ -490,11 +490,11 @@ static void AltinPeak_RideCart(s32 log) {
 
 /// The party fights the first water beast. Talking to (or reading the mind of)
 /// a room's water beast starts its battle; afterwards the party returns to the
-/// room's warp destination after battle.
+/// room's entrance after battle.
 static void AltinPeak_FightFirstWaterBeast(void) {
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   FieldScript_SetNextDestination((s32)&SceneId_AltinPeakFirstWaterBeast,
-                                 WARP_DEST_AFTER_BATTLE);
+                                 ENTRANCE_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 2);
 }
@@ -504,7 +504,7 @@ static void AltinPeak_FightFirstWaterBeast(void) {
 static void AltinPeak_FightSecondWaterBeast(void) {
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   FieldScript_SetNextDestination((s32)&SceneId_AltinPeakSecondWaterBeast,
-                                 WARP_DEST_AFTER_BATTLE);
+                                 ENTRANCE_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 2);
 }
@@ -514,7 +514,7 @@ static void AltinPeak_FightSecondWaterBeast(void) {
 static void AltinPeak_FightThirdWaterBeast(void) {
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   FieldScript_SetNextDestination((s32)&SceneId_AltinPeakThirdWaterBeast,
-                                 WARP_DEST_AFTER_BATTLE);
+                                 ENTRANCE_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 2);
 }
@@ -1585,7 +1585,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
   struct MapGridScrollWork *grid;
 
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-    if (gSaveBlock.warpDest == WARP_DEST_AFTER_BATTLE) {
+    if (gSaveBlock.entrance == ENTRANCE_AFTER_BATTLE) {
       AltinPeak_AwardFrostJewelAndDrain();
     }
   }
@@ -1688,7 +1688,7 @@ static void AltinPeak_RestoreSecondWaterBeastRoom(void) {
   } else {
     AltinPeak_StartPaletteAnimation();
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0 &&
-        gSaveBlock.warpDest == WARP_DEST_AFTER_BATTLE) {
+        gSaveBlock.entrance == ENTRANCE_AFTER_BATTLE) {
       AltinPeak_DrainAfterSecondBeast();
     } else {
       MapGrid_CopyCellAttributes(38, 24, 1, 2, 37, 24);
@@ -1722,9 +1722,9 @@ static void AltinPeak_RestoreSouthEntranceRoom(void) {
     MapGrid_CopyCellAttributes(52, 42, 1, 1, 53, 42);
   }
   {
-    // Either warp destination from the Alpine Crossing: _EAST is the number
+    // Either entrance from the Alpine Crossing: _EAST is the number
     // after ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST.
-    if ((u32)(((u16)gSaveBlock.warpDest -
+    if ((u32)(((u16)gSaveBlock.entrance -
                ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST)
               << 16) <= 0x10000) {
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
@@ -1742,7 +1742,7 @@ static void AltinPeak_RestoreThirdWaterBeastRoom(void) {
     ObjectEvent_SetPosition(LOCALID_THIRD_WATER_BEAST, 0, 0);
   } else {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-      if (gSaveBlock.warpDest == WARP_DEST_AFTER_BATTLE) {
+      if (gSaveBlock.entrance == ENTRANCE_AFTER_BATTLE) {
         AltinPeak_DrainAfterThirdBeast();
       }
     }
@@ -1782,7 +1782,7 @@ static void AltinPeak_RestoreThirdWaterBeastRoom(void) {
 static void AltinPeak_RestorePoolRoom(void) {
   struct ObjectEvent *pillar;
 
-  if (gSaveBlock.warpDest == ALTIN_PEAK_POOL_NORTH_FROM_SOUTHWEST) {
+  if (gSaveBlock.entrance == ALTIN_PEAK_POOL_NORTH_FROM_SOUTHWEST) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       ObjectEvent_SetPosition(LOCALID_CART, PIXELS(358), PIXELS(104));
     }
@@ -1894,7 +1894,7 @@ static void AltinPeak_RestoreFallingRocksRoom(void) {
     MapGrid_CenterOnFollowedPoint();
     WaitFrames(1);
   }
-  if (gSaveBlock.warpDest ==
+  if (gSaveBlock.entrance ==
           ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_HYDROS_STATUE &&
       !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     FieldScript_Start();
@@ -1912,7 +1912,7 @@ static void AltinPeak_RestoreHydrosStatueRoom(void) {
   s32 statuesDefeated;
   struct ObjectEvent *leader;
   struct ObjectEvent *objectEvent;
-  s16 warpDest;
+  s16 entrance;
 
   statuesDefeated = GameFlag_Get(FLAG_HYDROS_STATUES_DEFEATED);
   if (statuesDefeated != 0) {
@@ -1927,16 +1927,16 @@ static void AltinPeak_RestoreHydrosStatueRoom(void) {
     ObjectEvent_GetById(LOCALID_STATUE_SHADOW)->collisionFlags =
         statuesDefeated;
   }
-  warpDest = gSaveBlock.warpDest;
-  if (warpDest == ALTIN_PEAK_HYDROS_STATUE_FROM_ALTIN_PEAK_FALLING_ROCKS ||
-      warpDest == 98) {
+  entrance = gSaveBlock.entrance;
+  if (entrance == ALTIN_PEAK_HYDROS_STATUE_FROM_ALTIN_PEAK_FALLING_ROCKS ||
+      entrance == 98) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       FieldScript_Start();
       leader->y.fixed = PIXELS(16);
       FieldScript_End();
     }
-  } else if (warpDest == WARP_DEST_AFTER_BATTLE) {
+  } else if (entrance == ENTRANCE_AFTER_BATTLE) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       AltinPeak_CelebrateHydrosVictory();
     }
@@ -1950,7 +1950,7 @@ static void AltinPeak_RestoreWestExitRoom(void) {
 
   objectEvent = ObjectEvent_Get(LOCALID_WEST_EXIT_ROOM_PILLAR);
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
-  if (gSaveBlock.warpDest == ALTIN_PEAK_WEST_EXIT_TUNNEL_FROM_CHEST_ROOM) {
+  if (gSaveBlock.entrance == ALTIN_PEAK_WEST_EXIT_TUNNEL_FROM_CHEST_ROOM) {
     ObjectEvent_SetPosition(LOCALID_WEST_EXIT_ROOM_PILLAR, PIXELS(184),
                             PIXELS(328));
   }
@@ -2213,7 +2213,7 @@ static void AltinPeak_StartHydrosBattle(void) {
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_STATUE);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   FieldScript_SetNextDestination((s32)&SceneId_AltinPeakHydrosStatue,
-                                 WARP_DEST_AFTER_BATTLE);
+                                 ENTRANCE_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 3);
 }
@@ -2841,37 +2841,37 @@ s32 gAltinPeak_RejoinScript[] = {
     SC_END,
 };
 
-struct MapWarpDest gAltinPeak_WarpDestsOther[] = {
+struct SceneEntrance gAltinPeak_EntrancesOther[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gAltinPeak_FirstWaterBeastWarpDests[] = {
+struct SceneEntrance gAltinPeak_FirstWaterBeastEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_FIRST_WATER_BEAST_FROM_ALTIN, CONDITION_ALWAYS, 456, 0, 520, FACING_NORTH, 0, 0, 56, 506, 530, 0},
     {98, CONDITION_ALWAYS, 456, 0, 488, FACING_NORTH, 0, 0, 56, 506, 530, 0},
-    {WARP_DEST_AFTER_BATTLE, CONDITION_ALWAYS, 104, 0, 232, FACING_SOUTH, 0, 0, 56, 506, 530, 0},
+    {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 104, 0, 232, FACING_SOUTH, 0, 0, 56, 506, 530, 0},
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gAltinPeak_RailTunnelWarpDests[] = {
+struct SceneEntrance gAltinPeak_RailTunnelEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_RAIL_TUNNEL_FROM_ALTIN_PEAK_SOUTH_ENTRANCE, CONDITION_ALWAYS, 248, 0, 464, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_RAIL_TUNNEL_FROM_ALTIN_PEAK_SECOND_WATER_BEAST, CONDITION_ALWAYS, 56, 0, 72, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gAltinPeak_SecondWaterBeastWarpDests[] = {
+struct SceneEntrance gAltinPeak_SecondWaterBeastEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_SECOND_WATER_BEAST_FROM_ALTIN_PEAK_RAIL_TUNNEL, CONDITION_ALWAYS, 488, 0, 560, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_SECOND_WATER_BEAST_LAKE_FROM_CHEST_ROOM, CONDITION_ALWAYS, 664, 0, 380, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_FROM_LAKE, CONDITION_ALWAYS, 904, 0, 214, FACING_NORTH, 0, 842, 40, 1016, 248, 0},
     {98, CONDITION_ALWAYS, 488, 0, 560, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {WARP_DEST_AFTER_BATTLE, CONDITION_ALWAYS, 320, 0, 472, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 320, 0, 472, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gAltinPeak_SouthEntranceWarpDests[] = {
+struct SceneEntrance gAltinPeak_SouthEntranceEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN, CONDITION_ALWAYS, 248, 0, 498, FACING_NORTH, 0, 24, 0, 648, 560, 0},
     {ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_FROM_FLOODED_CHAMBER, CONDITION_ALWAYS, 119, 0, 108, FACING_SOUTH, 0, 24, 0, 648, 560, 0},
@@ -2883,15 +2883,15 @@ struct MapWarpDest gAltinPeak_SouthEntranceWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gAltinPeak_ThirdWaterBeastWarpDests[] = {
+struct SceneEntrance gAltinPeak_ThirdWaterBeastEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_THIRD_WATER_BEAST_FROM_ALTIN_PEAK_POOL, CONDITION_ALWAYS, 585, 0, 501, FACING_NORTH, 0, 0, 0, 798, 530, 0},
     {98, CONDITION_ALWAYS, 585, 0, 501, FACING_NORTH, 0, 0, 0, 798, 530, 0},
-    {WARP_DEST_AFTER_BATTLE, CONDITION_ALWAYS, 747, 0, 258, FACING_SOUTH, 0, 0, 0, 798, 530, 0},
+    {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 747, 0, 258, FACING_SOUTH, 0, 0, 0, 798, 530, 0},
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gAltinPeak_PoolWarpDests[] = {
+struct SceneEntrance gAltinPeak_PoolEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_POOL_FROM_ALTIN_PEAK_SOUTH_ENTRANCE, CONDITION_ALWAYS, 568, 0, 348, FACING_NORTH, 0, 0, 0, 798, 530, 0},
     {ALTIN_PEAK_POOL_NORTH_FROM_SOUTHWEST, CONDITION_ALWAYS, 295, 0, 95, FACING_SOUTH, 0, 0, 0, 798, 530, 0},
@@ -2902,7 +2902,7 @@ struct MapWarpDest gAltinPeak_PoolWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gAltinPeak_SpritzWarpDests[] = {
+struct SceneEntrance gAltinPeak_SpritzEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_SPRITZ_FROM_ALTIN_PEAK_JUNCTION, CONDITION_ALWAYS, 72, 0, 502, FACING_NORTH, 0, 0, 0, 820, 568, 0},
     {ALTIN_PEAK_SPRITZ_FROM_ALTIN_PEAK_FALLING_ROCKS, CONDITION_ALWAYS, 152, 0, 174, FACING_SOUTH, 0, 0, 0, 820, 568, 0},
@@ -2910,7 +2910,7 @@ struct MapWarpDest gAltinPeak_SpritzWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gAltinPeak_JunctionWarpDests[] = {
+struct SceneEntrance gAltinPeak_JunctionEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_SPRITZ, CONDITION_ALWAYS, 392, 0, 116, FACING_SOUTH, 0, 0, 0, 830, 564, 0},
     {ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_FALLING_ROCKS_NORTH, CONDITION_ALWAYS, 40, 0, 116, FACING_NORTH, 0, 0, 0, 830, 564, 0},
@@ -2920,7 +2920,7 @@ struct MapWarpDest gAltinPeak_JunctionWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gAltinPeak_FallingRocksWarpDests[] = {
+struct SceneEntrance gAltinPeak_FallingRocksEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_SPRITZ, CONDITION_ALWAYS, 361, 0, 309, FACING_NORTH, 0, 0, 0, 524, 816, 0},
     {ALTIN_PEAK_FALLING_ROCKS_WEST_FROM_EAST, CONDITION_ALWAYS, 89, 0, 749, FACING_NORTH, 0, 0, 0, 524, 816, 0},
@@ -2931,15 +2931,15 @@ struct MapWarpDest gAltinPeak_FallingRocksWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gAltinPeak_HydrosStatueWarpDests[] = {
+struct SceneEntrance gAltinPeak_HydrosStatueEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_HYDROS_STATUE_FROM_ALTIN_PEAK_FALLING_ROCKS, CONDITION_ALWAYS, 88, 4, 424, FACING_SOUTH, 0, 0, 0, 448, 524, 0},
     {98, CONDITION_ALWAYS, 88, 4, 424, FACING_SOUTH, 0, 0, 0, 448, 524, 0},
-    {WARP_DEST_AFTER_BATTLE, CONDITION_ALWAYS, 328, 0, 118, FACING_NORTH, 0, 0, 0, 448, 524, 0},
+    {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 328, 0, 118, FACING_NORTH, 0, 0, 0, 448, 524, 0},
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gAltinPeak_WestExitWarpDests[] = {
+struct SceneEntrance gAltinPeak_WestExitEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_WEST_EXIT_FROM_ALTIN_PEAK_JUNCTION, CONDITION_ALWAYS, 408, 0, 517, FACING_NORTH, 0, 0, 0, 540, 590, 0},
     {ALTIN_PEAK_WEST_EXIT_TUNNEL_FROM_CHEST_ROOM, CONDITION_ALWAYS, 198, 0, 336, FACING_SOUTH, 0, 0, 0, 540, 590, 0},
@@ -2948,7 +2948,7 @@ struct MapWarpDest gAltinPeak_WestExitWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpRegion gAltinPeak_FallingRocksRegions[] = {
+struct SceneExitRegion gAltinPeak_FallingRocksRegions[] = {
 #if !TBS_PATCH_3
     {790, -106, 575, 794, -102, 579, CONDITION_ALWAYS, 6},
     {788, -108, 579, 796, -100, 587, CONDITION_ALWAYS, 6},
@@ -2958,7 +2958,7 @@ struct MapWarpRegion gAltinPeak_FallingRocksRegions[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpRegion gAltinPeak_HydrosStatueRegions[] = {
+struct SceneExitRegion gAltinPeak_HydrosStatueRegions[] = {
 #if !TBS_PATCH_3
     {84, 38, 420, 92, 46, 428, CONDITION_ALWAYS, 1},
 #else
@@ -2967,58 +2967,58 @@ struct MapWarpRegion gAltinPeak_HydrosStatueRegions[] = {
     {MAP_TABLE_END},
 };
 
-u32 gAltinPeak_Warps[] = {
-    MAP_WARPS(AltinPeakFirstWaterBeast),
-    MAP_WARP(ALTIN_PEAK_FIRST_WATER_BEAST_TO_ALTIN, Altin, ALTIN_FROM_ALTIN_PEAK_FIRST_WATER_BEAST),
-    MAP_WARPS(AltinPeakRailTunnel),
-    MAP_WARP(ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SOUTH_ENTRANCE, AltinPeakSouthEntrance, ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN_PEAK_RAIL_TUNNEL),
-    MAP_WARP(ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SECOND_WATER_BEAST, AltinPeakSecondWaterBeast, ALTIN_PEAK_SECOND_WATER_BEAST_FROM_ALTIN_PEAK_RAIL_TUNNEL),
-    MAP_WARPS(AltinPeakSecondWaterBeast),
-    MAP_WARP(ALTIN_PEAK_SECOND_WATER_BEAST_TO_ALTIN_PEAK_RAIL_TUNNEL, AltinPeakRailTunnel, ALTIN_PEAK_RAIL_TUNNEL_FROM_ALTIN_PEAK_SECOND_WATER_BEAST),
-    MAP_WARP(ALTIN_PEAK_SECOND_WATER_BEAST_LAKE_TO_CHEST_ROOM, AltinPeakSecondWaterBeast, ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_FROM_LAKE),
-    MAP_WARP(ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE, AltinPeakSecondWaterBeast, ALTIN_PEAK_SECOND_WATER_BEAST_LAKE_FROM_CHEST_ROOM),
-    MAP_WARPS(AltinPeakSouthEntrance),
-    MAP_WARP(ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN, Altin, ALTIN_FROM_ALTIN_PEAK_SOUTH_ENTRANCE),
-    MAP_WARP(ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_TO_FLOODED_CHAMBER, AltinPeakSouthEntrance, ALTIN_PEAK_SOUTH_ENTRANCE_FLOODED_CHAMBER_FROM_TUNNEL),
-    MAP_WARP(ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_RAIL_TUNNEL, AltinPeakRailTunnel, ALTIN_PEAK_RAIL_TUNNEL_FROM_ALTIN_PEAK_SOUTH_ENTRANCE),
-    MAP_WARP(ALTIN_PEAK_SOUTH_ENTRANCE_FLOODED_CHAMBER_TO_TUNNEL, AltinPeakSouthEntrance, ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_FROM_FLOODED_CHAMBER),
-    MAP_WARP(ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_POOL, AltinPeakPool, ALTIN_PEAK_POOL_FROM_ALTIN_PEAK_SOUTH_ENTRANCE),
-    MAP_WARP(ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_WEST, AlpineCrossing, ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_WEST),
-    MAP_WARP(ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_EAST, AlpineCrossing, ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST),
-    MAP_WARPS(AltinPeakThirdWaterBeast),
-    MAP_WARP(ALTIN_PEAK_THIRD_WATER_BEAST_TO_ALTIN_PEAK_POOL, AltinPeakPool, ALTIN_PEAK_POOL_FROM_ALTIN_PEAK_THIRD_WATER_BEAST),
-    MAP_WARPS(AltinPeakPool),
-    MAP_WARP(ALTIN_PEAK_POOL_TO_ALTIN_PEAK_SOUTH_ENTRANCE, AltinPeakSouthEntrance, ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN_PEAK_POOL),
-    MAP_WARP(ALTIN_PEAK_POOL_NORTH_TO_SOUTHWEST, AltinPeakPool, ALTIN_PEAK_POOL_SOUTHWEST_FROM_NORTH),
-    MAP_WARP(ALTIN_PEAK_POOL_SOUTHWEST_TO_NORTH, AltinPeakPool, ALTIN_PEAK_POOL_NORTH_FROM_SOUTHWEST),
-    MAP_WARP(ALTIN_PEAK_POOL_SOUTHWEST_TO_SOUTHEAST, AltinPeakPool, ALTIN_PEAK_POOL_SOUTHEAST_FROM_SOUTHWEST),
-    MAP_WARP(ALTIN_PEAK_POOL_SOUTHEAST_TO_SOUTHWEST, AltinPeakPool, ALTIN_PEAK_POOL_SOUTHWEST_FROM_SOUTHEAST),
-    MAP_WARP(ALTIN_PEAK_POOL_TO_ALTIN_PEAK_THIRD_WATER_BEAST, AltinPeakThirdWaterBeast, ALTIN_PEAK_THIRD_WATER_BEAST_FROM_ALTIN_PEAK_POOL),
-    MAP_WARPS(AltinPeakSpritz),
-    MAP_WARP(ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_JUNCTION, AltinPeakJunction, ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_SPRITZ),
-    MAP_WARP(ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_FALLING_ROCKS, AltinPeakFallingRocks, ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_SPRITZ),
-    MAP_WARP(ALTIN_PEAK_SPRITZ_TO_ALTIN, Altin, ALTIN_FROM_ALTIN_PEAK_SPRITZ),
-    MAP_WARPS(AltinPeakJunction),
-    MAP_WARP(ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_SPRITZ, AltinPeakSpritz, ALTIN_PEAK_SPRITZ_FROM_ALTIN_PEAK_JUNCTION),
-    MAP_WARP(ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_FALLING_ROCKS_NORTH, AltinPeakFallingRocks, ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_JUNCTION_NORTH),
-    MAP_WARP(ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_WEST_EXIT, AltinPeakWestExit, ALTIN_PEAK_WEST_EXIT_FROM_ALTIN_PEAK_JUNCTION),
-    MAP_WARP(ALTIN_PEAK_JUNCTION_TO_ALTIN, Altin, ALTIN_FROM_ALTIN_PEAK_JUNCTION),
-    MAP_WARP(ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_FALLING_ROCKS_SOUTH, AltinPeakFallingRocks, ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_JUNCTION_SOUTH),
-    MAP_WARPS(AltinPeakFallingRocks),
-    MAP_WARP(ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_SPRITZ, AltinPeakSpritz, ALTIN_PEAK_SPRITZ_FROM_ALTIN_PEAK_FALLING_ROCKS),
-    MAP_WARP(ALTIN_PEAK_FALLING_ROCKS_WEST_TO_EAST, AltinPeakFallingRocks, ALTIN_PEAK_FALLING_ROCKS_EAST_FROM_WEST),
-    MAP_WARP(ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_JUNCTION_SOUTH, AltinPeakJunction, ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_FALLING_ROCKS_SOUTH),
-    MAP_WARP(ALTIN_PEAK_FALLING_ROCKS_EAST_TO_WEST, AltinPeakFallingRocks, ALTIN_PEAK_FALLING_ROCKS_WEST_FROM_EAST),
-    MAP_WARP(ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_JUNCTION_NORTH, AltinPeakJunction, ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_FALLING_ROCKS_NORTH),
-    MAP_WARP(ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_HYDROS_STATUE, AltinPeakHydrosStatue, ALTIN_PEAK_HYDROS_STATUE_FROM_ALTIN_PEAK_FALLING_ROCKS),
-    MAP_WARPS(AltinPeakHydrosStatue),
-    MAP_WARP(ALTIN_PEAK_HYDROS_STATUE_TO_ALTIN_PEAK_FALLING_ROCKS, AltinPeakFallingRocks, ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_HYDROS_STATUE),
-    MAP_WARPS(AltinPeakWestExit),
-    MAP_WARP(ALTIN_PEAK_WEST_EXIT_TO_ALTIN_PEAK_JUNCTION, AltinPeakJunction, ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_WEST_EXIT),
-    MAP_WARP(ALTIN_PEAK_WEST_EXIT_TUNNEL_TO_CHEST_ROOM, AltinPeakWestExit, ALTIN_PEAK_WEST_EXIT_CHEST_ROOM_FROM_TUNNEL),
-    MAP_WARP(ALTIN_PEAK_WEST_EXIT_CHEST_ROOM_TO_TUNNEL, AltinPeakWestExit, ALTIN_PEAK_WEST_EXIT_TUNNEL_FROM_CHEST_ROOM),
-    MAP_WARP(ALTIN_PEAK_WEST_EXIT_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_ALTIN_PEAK_WEST_EXIT),
-    MAP_WARPS_END,
+u32 gAltinPeak_Exits[] = {
+    SCENE_EXITS(AltinPeakFirstWaterBeast),
+    SCENE_EXIT(ALTIN_PEAK_FIRST_WATER_BEAST_TO_ALTIN, Altin, ALTIN_FROM_ALTIN_PEAK_FIRST_WATER_BEAST),
+    SCENE_EXITS(AltinPeakRailTunnel),
+    SCENE_EXIT(ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SOUTH_ENTRANCE, AltinPeakSouthEntrance, ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN_PEAK_RAIL_TUNNEL),
+    SCENE_EXIT(ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SECOND_WATER_BEAST, AltinPeakSecondWaterBeast, ALTIN_PEAK_SECOND_WATER_BEAST_FROM_ALTIN_PEAK_RAIL_TUNNEL),
+    SCENE_EXITS(AltinPeakSecondWaterBeast),
+    SCENE_EXIT(ALTIN_PEAK_SECOND_WATER_BEAST_TO_ALTIN_PEAK_RAIL_TUNNEL, AltinPeakRailTunnel, ALTIN_PEAK_RAIL_TUNNEL_FROM_ALTIN_PEAK_SECOND_WATER_BEAST),
+    SCENE_EXIT(ALTIN_PEAK_SECOND_WATER_BEAST_LAKE_TO_CHEST_ROOM, AltinPeakSecondWaterBeast, ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_FROM_LAKE),
+    SCENE_EXIT(ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE, AltinPeakSecondWaterBeast, ALTIN_PEAK_SECOND_WATER_BEAST_LAKE_FROM_CHEST_ROOM),
+    SCENE_EXITS(AltinPeakSouthEntrance),
+    SCENE_EXIT(ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN, Altin, ALTIN_FROM_ALTIN_PEAK_SOUTH_ENTRANCE),
+    SCENE_EXIT(ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_TO_FLOODED_CHAMBER, AltinPeakSouthEntrance, ALTIN_PEAK_SOUTH_ENTRANCE_FLOODED_CHAMBER_FROM_TUNNEL),
+    SCENE_EXIT(ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_RAIL_TUNNEL, AltinPeakRailTunnel, ALTIN_PEAK_RAIL_TUNNEL_FROM_ALTIN_PEAK_SOUTH_ENTRANCE),
+    SCENE_EXIT(ALTIN_PEAK_SOUTH_ENTRANCE_FLOODED_CHAMBER_TO_TUNNEL, AltinPeakSouthEntrance, ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_FROM_FLOODED_CHAMBER),
+    SCENE_EXIT(ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_POOL, AltinPeakPool, ALTIN_PEAK_POOL_FROM_ALTIN_PEAK_SOUTH_ENTRANCE),
+    SCENE_EXIT(ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_WEST, AlpineCrossing, ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_WEST),
+    SCENE_EXIT(ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_EAST, AlpineCrossing, ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST),
+    SCENE_EXITS(AltinPeakThirdWaterBeast),
+    SCENE_EXIT(ALTIN_PEAK_THIRD_WATER_BEAST_TO_ALTIN_PEAK_POOL, AltinPeakPool, ALTIN_PEAK_POOL_FROM_ALTIN_PEAK_THIRD_WATER_BEAST),
+    SCENE_EXITS(AltinPeakPool),
+    SCENE_EXIT(ALTIN_PEAK_POOL_TO_ALTIN_PEAK_SOUTH_ENTRANCE, AltinPeakSouthEntrance, ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN_PEAK_POOL),
+    SCENE_EXIT(ALTIN_PEAK_POOL_NORTH_TO_SOUTHWEST, AltinPeakPool, ALTIN_PEAK_POOL_SOUTHWEST_FROM_NORTH),
+    SCENE_EXIT(ALTIN_PEAK_POOL_SOUTHWEST_TO_NORTH, AltinPeakPool, ALTIN_PEAK_POOL_NORTH_FROM_SOUTHWEST),
+    SCENE_EXIT(ALTIN_PEAK_POOL_SOUTHWEST_TO_SOUTHEAST, AltinPeakPool, ALTIN_PEAK_POOL_SOUTHEAST_FROM_SOUTHWEST),
+    SCENE_EXIT(ALTIN_PEAK_POOL_SOUTHEAST_TO_SOUTHWEST, AltinPeakPool, ALTIN_PEAK_POOL_SOUTHWEST_FROM_SOUTHEAST),
+    SCENE_EXIT(ALTIN_PEAK_POOL_TO_ALTIN_PEAK_THIRD_WATER_BEAST, AltinPeakThirdWaterBeast, ALTIN_PEAK_THIRD_WATER_BEAST_FROM_ALTIN_PEAK_POOL),
+    SCENE_EXITS(AltinPeakSpritz),
+    SCENE_EXIT(ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_JUNCTION, AltinPeakJunction, ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_SPRITZ),
+    SCENE_EXIT(ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_FALLING_ROCKS, AltinPeakFallingRocks, ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_SPRITZ),
+    SCENE_EXIT(ALTIN_PEAK_SPRITZ_TO_ALTIN, Altin, ALTIN_FROM_ALTIN_PEAK_SPRITZ),
+    SCENE_EXITS(AltinPeakJunction),
+    SCENE_EXIT(ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_SPRITZ, AltinPeakSpritz, ALTIN_PEAK_SPRITZ_FROM_ALTIN_PEAK_JUNCTION),
+    SCENE_EXIT(ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_FALLING_ROCKS_NORTH, AltinPeakFallingRocks, ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_JUNCTION_NORTH),
+    SCENE_EXIT(ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_WEST_EXIT, AltinPeakWestExit, ALTIN_PEAK_WEST_EXIT_FROM_ALTIN_PEAK_JUNCTION),
+    SCENE_EXIT(ALTIN_PEAK_JUNCTION_TO_ALTIN, Altin, ALTIN_FROM_ALTIN_PEAK_JUNCTION),
+    SCENE_EXIT(ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_FALLING_ROCKS_SOUTH, AltinPeakFallingRocks, ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_JUNCTION_SOUTH),
+    SCENE_EXITS(AltinPeakFallingRocks),
+    SCENE_EXIT(ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_SPRITZ, AltinPeakSpritz, ALTIN_PEAK_SPRITZ_FROM_ALTIN_PEAK_FALLING_ROCKS),
+    SCENE_EXIT(ALTIN_PEAK_FALLING_ROCKS_WEST_TO_EAST, AltinPeakFallingRocks, ALTIN_PEAK_FALLING_ROCKS_EAST_FROM_WEST),
+    SCENE_EXIT(ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_JUNCTION_SOUTH, AltinPeakJunction, ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_FALLING_ROCKS_SOUTH),
+    SCENE_EXIT(ALTIN_PEAK_FALLING_ROCKS_EAST_TO_WEST, AltinPeakFallingRocks, ALTIN_PEAK_FALLING_ROCKS_WEST_FROM_EAST),
+    SCENE_EXIT(ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_JUNCTION_NORTH, AltinPeakJunction, ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_FALLING_ROCKS_NORTH),
+    SCENE_EXIT(ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_HYDROS_STATUE, AltinPeakHydrosStatue, ALTIN_PEAK_HYDROS_STATUE_FROM_ALTIN_PEAK_FALLING_ROCKS),
+    SCENE_EXITS(AltinPeakHydrosStatue),
+    SCENE_EXIT(ALTIN_PEAK_HYDROS_STATUE_TO_ALTIN_PEAK_FALLING_ROCKS, AltinPeakFallingRocks, ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_HYDROS_STATUE),
+    SCENE_EXITS(AltinPeakWestExit),
+    SCENE_EXIT(ALTIN_PEAK_WEST_EXIT_TO_ALTIN_PEAK_JUNCTION, AltinPeakJunction, ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_WEST_EXIT),
+    SCENE_EXIT(ALTIN_PEAK_WEST_EXIT_TUNNEL_TO_CHEST_ROOM, AltinPeakWestExit, ALTIN_PEAK_WEST_EXIT_CHEST_ROOM_FROM_TUNNEL),
+    SCENE_EXIT(ALTIN_PEAK_WEST_EXIT_CHEST_ROOM_TO_TUNNEL, AltinPeakWestExit, ALTIN_PEAK_WEST_EXIT_TUNNEL_FROM_CHEST_ROOM),
+    SCENE_EXIT(ALTIN_PEAK_WEST_EXIT_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_ALTIN_PEAK_WEST_EXIT),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gAltinPeak_ObjectEventTemplatesOther[] = {
@@ -3121,7 +3121,7 @@ struct MapEvent gAltinPeak_EventsOther[] = {
 };
 
 struct MapEvent gAltinPeak_FirstWaterBeastEvents[] = {
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS, ALTIN_PEAK_FIRST_WATER_BEAST_TO_ALTIN},
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_FIRST_WATER_BEAST_TO_ALTIN},
     {MAP_EVENT_COORD, 10, FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN, EVENT_SCRIPT(AltinPeak_ShowFirstBeastRoute)},
     {MAP_EVENT_COORD, 11, FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN, EVENT_SCRIPT(AltinPeak_ShowSecondBeastRoute)},
     {MAP_EVENT_TALK, LOCALID_FIRST_WATER_BEAST, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FightFirstWaterBeast)},
@@ -3131,7 +3131,7 @@ struct MapEvent gAltinPeak_FirstWaterBeastEvents[] = {
 };
 
 struct MapEvent gAltinPeak_FirstWaterBeastEventsDrained[] = {
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS, ALTIN_PEAK_FIRST_WATER_BEAST_TO_ALTIN},
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_FIRST_WATER_BEAST_TO_ALTIN},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_FIRST_WATER_BEAST_ROOM_PUDDLE, FLAG_ALTIN_PEAK_PUDDLE_FROZEN,
         EVENT_SCRIPT(AltinPeak_FreezeFirstWaterBeastRoomPuddle)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE, FLAG_ALTIN_PEAK_SECOND_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezeFirstWaterBeastRoomSecondPuddle)},
@@ -3139,15 +3139,15 @@ struct MapEvent gAltinPeak_FirstWaterBeastEventsDrained[] = {
 };
 
 struct MapEvent gAltinPeak_RailTunnelEvents[] = {
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS, ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SOUTH_ENTRANCE},
-    {MAP_EVENT_WARP, 2, CONDITION_ALWAYS, ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SECOND_WATER_BEAST},
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SOUTH_ENTRANCE},
+    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SECOND_WATER_BEAST},
     {MAP_EVENTS_END},
 };
 
 struct MapEvent gAltinPeak_SecondWaterBeastEvents[] = {
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_TO_ALTIN_PEAK_RAIL_TUNNEL},
-    {MAP_EVENT_WARP, 2, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_LAKE_TO_CHEST_ROOM},
-    {MAP_EVENT_WARP, 3, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE},
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_TO_ALTIN_PEAK_RAIL_TUNNEL},
+    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_LAKE_TO_CHEST_ROOM},
+    {MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE},
     {MAP_EVENT_TALK, LOCALID_CART, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_RideCart)},
     {MAP_EVENT_TALK, LOCALID_SECOND_WATER_BEAST, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FightSecondWaterBeast)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), PSYNERGY_SCRIPT_PLAYS_EFFECT | LOCALID_SECOND_WATER_BEAST, CONDITION_ALWAYS,
@@ -3157,27 +3157,27 @@ struct MapEvent gAltinPeak_SecondWaterBeastEvents[] = {
     {BG_EVENT(BG_EVENT_CHEST), 100, FLAG_ALTIN_PEAK_COOKIE, FIND_ITEM(ITEM_COOKIE)},
     {MAP_EVENTS_END},
     // Unused: two rows past the end marker, which no lookup reaches: a second
-    // ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE warp and a chest on
+    // ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE exit and a chest on
     // trigger 100 holding a Herb under FLAG_ALTIN_PEAK_UNUSED_HERB, the spot
     // where the Cookie chest above already stands.
-    {MAP_EVENT_WARP, 3, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE},
+    {MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE},
     {BG_EVENT(BG_EVENT_CHEST), 100, FLAG_ALTIN_PEAK_UNUSED_HERB, FIND_ITEM(ITEM_HERB)},
     {MAP_EVENTS_END},
 };
 
 struct MapEvent gAltinPeak_SouthEntranceEvents[] = {
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN},
-    {MAP_EVENT_WARP, 2, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_TO_FLOODED_CHAMBER},
-    {MAP_EVENT_WARP, 3, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_RAIL_TUNNEL},
-    {MAP_EVENT_WARP, 4, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_FLOODED_CHAMBER_TO_TUNNEL},
-    {MAP_EVENT_WARP, 5, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_POOL},
-    {MAP_EVENT_WARP, 6, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_WEST},
-    {MAP_EVENT_WARP, 7, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_EAST},
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN},
+    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_TO_FLOODED_CHAMBER},
+    {MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_RAIL_TUNNEL},
+    {MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_FLOODED_CHAMBER_TO_TUNNEL},
+    {MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_POOL},
+    {MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_WEST},
+    {MAP_EVENT_EXIT, 7, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_EAST},
     {MAP_EVENTS_END},
 };
 
 struct MapEvent gAltinPeak_ThirdWaterBeastEvents[] = {
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS, ALTIN_PEAK_THIRD_WATER_BEAST_TO_ALTIN_PEAK_POOL},
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_THIRD_WATER_BEAST_TO_ALTIN_PEAK_POOL},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_THIRD_WATER_BEAST_ROOM_PUDDLE, FLAG_ALTIN_PEAK_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezeThirdWaterBeastRoomPuddle)},
     {MAP_EVENT_TALK, LOCALID_THIRD_WATER_BEAST, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FightThirdWaterBeast)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), PSYNERGY_SCRIPT_PLAYS_EFFECT | LOCALID_THIRD_WATER_BEAST, CONDITION_ALWAYS,
@@ -3192,12 +3192,12 @@ struct MapEvent gAltinPeak_ThirdWaterBeastEvents[] = {
 };
 
 struct MapEvent gAltinPeak_PoolEvents[] = {
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS, ALTIN_PEAK_POOL_TO_ALTIN_PEAK_SOUTH_ENTRANCE},
-    {MAP_EVENT_WARP, 2, CONDITION_ALWAYS, ALTIN_PEAK_POOL_NORTH_TO_SOUTHWEST},
-    {MAP_EVENT_WARP, 3, CONDITION_ALWAYS, ALTIN_PEAK_POOL_SOUTHWEST_TO_NORTH},
-    {MAP_EVENT_WARP, 4, CONDITION_ALWAYS, ALTIN_PEAK_POOL_SOUTHWEST_TO_SOUTHEAST},
-    {MAP_EVENT_WARP, 5, CONDITION_ALWAYS, ALTIN_PEAK_POOL_SOUTHEAST_TO_SOUTHWEST},
-    {MAP_EVENT_WARP, 6, CONDITION_ALWAYS, ALTIN_PEAK_POOL_TO_ALTIN_PEAK_THIRD_WATER_BEAST},
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_POOL_TO_ALTIN_PEAK_SOUTH_ENTRANCE},
+    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_POOL_NORTH_TO_SOUTHWEST},
+    {MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_POOL_SOUTHWEST_TO_NORTH},
+    {MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, ALTIN_PEAK_POOL_SOUTHWEST_TO_SOUTHEAST},
+    {MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, ALTIN_PEAK_POOL_SOUTHEAST_TO_SOUTHWEST},
+    {MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, ALTIN_PEAK_POOL_TO_ALTIN_PEAK_THIRD_WATER_BEAST},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_POOL_ROOM_PUDDLE, FLAG_ALTIN_PEAK_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezePoolRoomPuddle)},
     {MAP_EVENT_TALK, LOCALID_CART, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_RideCart)},
     {BG_EVENT(BG_EVENT_SILENT), 50, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FlipPoolRoomSwitch)},
@@ -3206,9 +3206,9 @@ struct MapEvent gAltinPeak_PoolEvents[] = {
 };
 
 struct MapEvent gAltinPeak_SpritzEvents[] = {
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS, ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_JUNCTION},
-    {MAP_EVENT_WARP, 2, CONDITION_ALWAYS, ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_FALLING_ROCKS},
-    {MAP_EVENT_WARP, 3, CONDITION_ALWAYS, ALTIN_PEAK_SPRITZ_TO_ALTIN},
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_JUNCTION},
+    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_FALLING_ROCKS},
+    {MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_SPRITZ_TO_ALTIN},
     {BG_EVENT(BG_EVENT_CHEST), 101, FLAG_ALTIN_PEAK_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL)},
     {MAP_EVENT_TALK, LOCALID_SPRITZ, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_TalkToDjinni)},
     {MAP_EVENT_TALK, LOCALID_CART, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_RideCart)},
@@ -3228,14 +3228,14 @@ struct MapEvent gAltinPeak_SpritzEvents[] = {
 // clang-format on
 
 struct MapEvent gAltinPeak_JunctionEvents[] = {
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS,
      ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_SPRITZ},
-    {MAP_EVENT_WARP, 2, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS,
      ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_FALLING_ROCKS_NORTH},
-    {MAP_EVENT_WARP, 3, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 3, CONDITION_ALWAYS,
      ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_WEST_EXIT},
-    {MAP_EVENT_WARP, 4, CONDITION_ALWAYS, ALTIN_PEAK_JUNCTION_TO_ALTIN},
-    {MAP_EVENT_WARP, 5, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, ALTIN_PEAK_JUNCTION_TO_ALTIN},
+    {MAP_EVENT_EXIT, 5, CONDITION_ALWAYS,
      ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_FALLING_ROCKS_SOUTH},
     {BG_EVENT(BG_EVENT_CHEST), 100, FLAG_ALTIN_PEAK_LUCKY_MEDAL,
      FIND_ITEM(ITEM_LUCKY_MEDAL)},
@@ -3245,15 +3245,15 @@ struct MapEvent gAltinPeak_JunctionEvents[] = {
 };
 
 struct MapEvent gAltinPeak_FallingRocksEvents[] = {
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS,
      ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_SPRITZ},
-    {MAP_EVENT_WARP, 2, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS,
      ALTIN_PEAK_FALLING_ROCKS_WEST_TO_EAST},
-    {MAP_EVENT_WARP, 3, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 3, CONDITION_ALWAYS,
      ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_JUNCTION_SOUTH},
-    {MAP_EVENT_WARP, 4, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 4, CONDITION_ALWAYS,
      ALTIN_PEAK_FALLING_ROCKS_EAST_TO_WEST},
-    {MAP_EVENT_WARP, 5, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 5, CONDITION_ALWAYS,
      ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_JUNCTION_NORTH},
     {BG_EVENT(BG_EVENT_SILENT), 12, CONDITION_ALWAYS,
      EVENT_SCRIPT(AltinPeak_ReadFallingRockSign)},
@@ -3271,13 +3271,13 @@ struct MapEvent gAltinPeak_HydrosStatueEvents[] = {
 };
 
 struct MapEvent gAltinPeak_WestExitEvents[] = {
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS,
      ALTIN_PEAK_WEST_EXIT_TO_ALTIN_PEAK_JUNCTION},
-    {MAP_EVENT_WARP, 2, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS,
      ALTIN_PEAK_WEST_EXIT_TUNNEL_TO_CHEST_ROOM},
-    {MAP_EVENT_WARP, 3, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 3, CONDITION_ALWAYS,
      ALTIN_PEAK_WEST_EXIT_CHEST_ROOM_TO_TUNNEL},
-    {MAP_EVENT_WARP, 4, CONDITION_ALWAYS, ALTIN_PEAK_WEST_EXIT_TO_WORLD_MAP},
+    {MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, ALTIN_PEAK_WEST_EXIT_TO_WORLD_MAP},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_LIFT), LOCALID_WEST_EXIT_ROOM_BOULDER,
      CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_WEST_EXIT_ROOM_PILLAR,

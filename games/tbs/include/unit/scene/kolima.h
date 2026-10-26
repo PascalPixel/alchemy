@@ -5,14 +5,14 @@
 #include "map_tables.h"
 #include "scene_header.h"
 
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEvent;
 struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *Kolima_GetWarpDests(void);
-const struct MapWarpRegion *Kolima_GetRegions(void);
-const u32 *Kolima_GetWarps(void);
+const struct SceneEntrance *Kolima_GetEntrances(void);
+const struct SceneExitRegion *Kolima_GetRegions(void);
+const u32 *Kolima_GetExits(void);
 const struct ObjectEventTemplate *Kolima_GetObjectEventTemplates(void);
 const struct MapEvent *Kolima_GetEvents(void);
 s32 Kolima_Initialize(void);
@@ -27,11 +27,11 @@ extern s32 gKolima_EntryActions[];
 extern s32 gKolima_DebrisScript[];
 extern s32 gKolima_FaceLeaderScript[];
 extern u16 gKolima_DoorCells[];
-extern struct MapWarpDest gKolimaWarpDests[];
-extern struct MapWarpDest gKolimaBridgeWarpDests[];
-extern struct MapWarpDest gKolimaTunnelWarpDests[];
-extern struct MapWarpRegion gKolimaTunnelRegions[];
-extern u32 gKolimaWarps[];
+extern struct SceneEntrance gKolimaEntrances[];
+extern struct SceneEntrance gKolimaBridgeEntrances[];
+extern struct SceneEntrance gKolimaTunnelEntrances[];
+extern struct SceneExitRegion gKolimaTunnelRegions[];
+extern u32 gKolimaExits[];
 extern struct ObjectEventTemplate gKolimaTunnelObjectEventTemplates[];
 extern struct ObjectEventTemplate gKolimaObjectEventTemplates[];
 extern struct ObjectEventTemplate gKolima_EntryScript[];

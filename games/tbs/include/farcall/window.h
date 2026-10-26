@@ -213,8 +213,8 @@ void Window_SetTilemapEntryFar(struct Window *window, s32 value, s32 x, s32 y,
 /// Debug: the map selector, returning nothing under UBFIX.
 void DebugMapSelect_RunFar(void);
 #else
-/// Debug: the map selector, where A warps to the chosen map and warp
-/// destination and B closes it. The field opens it from the Start menu with B
+/// Debug: the map selector, where An exits to the chosen map and
+/// entrance and B closes it. The field opens it from the Start menu with B
 /// held. Its result is undefined, and nothing reads it.
 s16 DebugMapSelect_RunFar(void);
 #endif

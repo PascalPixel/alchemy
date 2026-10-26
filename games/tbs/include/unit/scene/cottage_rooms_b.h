@@ -4,9 +4,9 @@
 #include "types.h"
 #include "map_tables.h"
 
-const struct MapWarpDest *CottageRoomsB_GetWarpDests(void);
-const struct MapWarpRegion *CottageRoomsB_GetRegions(void);
-const u32 *CottageRoomsB_GetWarps(void);
+const struct SceneEntrance *CottageRoomsB_GetEntrances(void);
+const struct SceneExitRegion *CottageRoomsB_GetRegions(void);
+const u32 *CottageRoomsB_GetExits(void);
 const struct ObjectEventTemplate *CottageRoomsB_GetObjectEventTemplates(void);
 const struct MapEvent *CottageRoomsB_GetEvents(void);
 s32 CottageRoomsB_Initialize(void);
@@ -23,9 +23,9 @@ extern s32 gCottageRoomsB_FlameRisesScript[];
 extern s32 gCottageRoomsB_DoraFacesIsaacScript[];
 extern s32 gCottageRoomsB_MythrilBagRisesScript[];
 extern s32 gCottageRoomsB_MythrilBagWobblesScript[];
-extern struct MapWarpDest gCottageRoomsB_WarpDests[];
-extern u32 gCottageRoomsB_Warps[];
-extern u32 gCottageRoomsB_StormWarps[];
+extern struct SceneEntrance gCottageRoomsB_Entrances[];
+extern u32 gCottageRoomsB_Exits[];
+extern u32 gCottageRoomsB_StormExits[];
 extern struct ObjectEventTemplate gCottageRoomsB_ObjectEventTemplates[];
 extern struct ObjectEventTemplate
     gCottageRoomsB_ObjectEventTemplatesAfterLeaving[];

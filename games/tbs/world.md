@@ -21,7 +21,7 @@ someone or a random battle starting does not act at once: it only raises a
 flag of its own, a request. The walk then stops, the game deals with the
 requests one at a time in a fixed order, and the walk starts again. Each kind
 of request has one flag, so at most one of each can wait. Leaving the scene
-comes first, so an event that ends by taking a [warp](glossary.md#warp),
+comes first, so an event that ends by taking an [exit](glossary.md#exit),
 like this door, simply ends the scene.
 
 A random battle is a way out of the scene too: the game remembers where
@@ -39,8 +39,8 @@ all twelve requests in the order they are handled.
 
 The engine knows nothing about any one scene. It asks the scene's code six
 questions: what can happen here, where the party arrives, who stands where,
-whether anything needs setting up, whether the leader stands in a warp area,
-and where a warp leads. Each answer comes from a function, so a scene can answer
+whether anything needs setting up, whether the leader stands in an exit area,
+and where an exit leads. Each answer comes from a function, so a scene can answer
 differently as the story moves on without the engine knowing any story: Vault
 gives one list of what can happen before its thieves are jailed and another
 after.

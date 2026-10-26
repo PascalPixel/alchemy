@@ -31,7 +31,7 @@
 /// the party its mission.
 #define MUS_TOWN_IN_TROUBLE 2
 /// Field music of McCoy's Palace, Hammet Palace, the Colosseum's halls and
-/// Vale's inn from one warp destination; the debug link test plays it too
+/// Vale's inn from one entrance; the debug link test plays it too
 /// (SerialTest_Run).
 #define MUS_PALACE 3
 /// Field music of the Tret Tree and of Altin.
@@ -66,7 +66,7 @@
 /// Field music of Sol Sanctum's Elemental Star room, Mercury Lighthouse's
 /// aerie, the Lemurian ship, Venus Lighthouse's aerie once its second battle
 /// has begun (FLAG_AERIE_SECOND_BATTLE_BEGUN in venus_lighthouse_aerie.c), and
-/// the world map reached from one of its warp destinations.
+/// the world map reached from one of its entrances.
 #define MUS_ELEMENTAL_STARS 22
 /// Field music of Altin Peak and the Lunpa Fortress, and of Vale once the
 /// stormy night's monster is fought (FLAG_VALE_STORM_MONSTER_FOUGHT); it also
@@ -104,7 +104,7 @@
 /// nine or more tracks.
 #define MUS_UNUSED 40
 /// Field music of the Tolbi-bound ship, and of the world map reached from seven
-/// of its warp destinations.
+/// of its entrances.
 #define MUS_TOLBI_BOUND_SHIP 41
 /// Field music of the world map, and of Goma Cave's entrance, the Bilibin Cave
 /// entrance, the Alpine Crossing, Crossbone Isle, the Gondowan Passage and the
@@ -188,7 +188,7 @@
 /// The main menu's music, and the field music of the Sanctum.
 #define MUS_MAIN_MENU 74
 /// The music of the Golden Sun logo shown after Jenna and Kraden's closing
-/// event on the world map, until a key is pressed (Title_Run's warp destination
+/// event on the world map, until a key is pressed (Title_Run's entrance
 /// 10). ★ Named from what the player sees: the Golden Sun logo after the
 /// ending's last event (its render)
 #define MUS_ENDING_LOGO 75
@@ -301,7 +301,7 @@
 #define SE_FOOTSTEP 118
 /// The guards throwing the leader out of Lunpa.
 #define SE_SCUFFLE 121
-/// Leaving a map through an ordinary warp.
+/// Leaving a map through an ordinary exit.
 #define SE_MAP_EXIT 123
 /// Played as a chest's lid lifts (TreasureSpot_OpenChest); also a Psynergy
 /// target reacting, the Fuchin Temple students' lessons, the Vault mayor's urn,
@@ -319,10 +319,10 @@
 /// A heavy landing: the leader thrown out of Lunpa, or hopping down a step in
 /// the Tunnel Ruins.
 #define SE_LANDING_THUD 127
-/// Climbing stairs: an WARP_STYLE_STAIRS_UP warp, and the stairs up in Vale's
+/// Climbing stairs: an EXIT_STYLE_STAIRS_UP exit, and the stairs up in Vale's
 /// inn and Isaac's house.
 #define SE_STAIRS_UP 128
-/// Going down stairs: an WARP_STYLE_STAIRS_DOWN warp, and the stairs
+/// Going down stairs: an EXIT_STYLE_STAIRS_DOWN exit, and the stairs
 /// down in Vale's inn and Isaac's house.
 #define SE_STAIRS_DOWN 129
 /// Carry, Cloak, Force, Lift, Mind Read and Ply beginning on the field, and a
@@ -434,9 +434,10 @@
 #define SE_GATE_MOVE 157
 /// A door opening as the leader goes through.
 #define SE_DOOR_OPEN 158
-/// The door behind the leader as a warp's arrival plays (Warp_PlayArrival), and
-/// a door shutting in Lalivero; also the Fuchin Temple, the Kalay docks, Altin
-/// Peak's cart, and the lady statues moved in the Tunnel Ruins.
+/// The door behind the leader as an exit's arrival plays
+/// (Entrance_PlayArrival), and a door shutting in Lalivero; also the Fuchin
+/// Temple, the Kalay docks, Altin Peak's cart, and the lady statues moved in
+/// the Tunnel Ruins.
 #define SE_DOOR_CLOSE 159
 /// Plays as Felix is unmasked, as Tret rejects the Hermes' Water, as Levitation
 /// is shown at the gate to Mt. Aleph, as Vale's roof is mended, at Venus

@@ -134,14 +134,16 @@ enum { OBJECT_ELEMENTAL_STAR = 22 };
 #define EMBER_EMISSION_DISABLED 999
 #define ARC_SCAN_STILL_ACTIVE 888
 
-const struct MapWarpDest *SolSanctumEruption_GetWarpDests(void) {
-  return gSolSanctumEruption_WarpDests;
+const struct SceneEntrance *SolSanctumEruption_GetEntrances(void) {
+  return gSolSanctumEruption_Entrances;
 }
 
-const struct MapWarpRegion *SolSanctumEruption_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *SolSanctumEruption_GetRegions(void) {
+  return NULL;
+}
 
-const u32 *SolSanctumEruption_GetWarps(void) {
-  return gSolSanctumEruption_Warps;
+const u32 *SolSanctumEruption_GetExits(void) {
+  return gSolSanctumEruption_Exits;
 }
 
 /// Returns Garet and Jenna, then the platform's shadow
@@ -639,7 +641,7 @@ UNUSED static void SolSanctumEruption_UnusedCallbackB(void) {}
 /// Elemental Star Room (SceneId_SolSanctumElementalStarRoom). Called by
 /// SceneManager_Run once the object events exist.
 s32 SolSanctumEruption_Initialize(void) {
-  if (gSaveBlock.warpDest ==
+  if (gSaveBlock.entrance ==
       SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM) {
     FieldEffect_InitializeSparkles();
     SolSanctumEruption_PlayHostageEvent();
@@ -1526,7 +1528,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
                              TASK_PRIORITY_MAP);
   FieldScript_WaitFrames(20);
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_OBJECTS);
-  // Fade the chamber away, stop its effects and leave through the rescue warp.
+  // Fade the chamber away, stop its effects and leave through the rescue exit.
   PaletteFade_StartInterpolation(60);
   WaitFrames(100);
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_BG);
@@ -1539,7 +1541,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Scene_EndEventPsynergy();
   GameFlag_Set(FLAG_SOL_SANCTUM_ERUPTED);
   GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED);
-  Import_ScriptRequestWarp(SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS);
+  Import_ScriptRequestExit(SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS);
   // Flag 0x100 marks nothing: it is set nowhere else and read nowhere, by no
   // table, script or function, and render probe flag-reads, watching every
   // flag test and every byte and nibble read in the maps after the
@@ -1923,15 +1925,15 @@ s32 gEruption_ArcOrigins[] = {
     -PIXELS(2), PIXELS(15),
 };
 
-struct MapWarpDest gSolSanctumEruption_WarpDests[] = {
-    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 472, 0, 322, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gSolSanctumEruption_Entrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 472, 0, 322, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { MAP_TABLE_END },
 };
 
-u32 gSolSanctumEruption_Warps[] = {
-    MAP_WARPS(SolSanctumEruption),
-    MAP_WARP(SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS, SolSanctumLunaSolRooms, SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION),
-    MAP_WARPS_END,
+u32 gSolSanctumEruption_Exits[] = {
+    SCENE_EXITS(SolSanctumEruption),
+    SCENE_EXIT(SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS, SolSanctumLunaSolRooms, SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gSolSanctumEruption_ObjectEventTemplates[] = {

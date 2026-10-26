@@ -45,12 +45,12 @@ struct MapGridCell;
 struct MenuSprite;
 struct ModeRecord;
 struct FieldRecord;
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEntry;
 struct MapEvent;
 struct MapObject;
 struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneExitRegion;
 struct SparkleFrame;
 struct Swirl;
 union ObjectEventOrEffect;
@@ -238,8 +238,8 @@ extern u8 TileMap_DrawRowsCodeSize[];
 extern u8 Transform_UpdateVerticesSize;
 extern const s32 gWorldMap_FootprintActions[6];
 extern const s16 gWorldMap_KeyHeadings[16];
-s32 FarCall_LuckyWheelsTable(s32 warpDest);
-s32 FarCall_LuckyDiceTable(s32 warpDest);
+s32 FarCall_LuckyWheelsTable(s32 entrance);
+s32 FarCall_LuckyDiceTable(s32 entrance);
 #ifndef OWN_Map_PrepareObjectEvents
 #endif
 void WorldMap_StartStillView(void);

@@ -24,7 +24,7 @@
 /// MCCOY_PALACE_GROUNDS_TO_BILIBIN leads back to Bilibin. From TBS_PATCH_3 on
 /// a patch of ivy (SPRITE_IVY) stands at (132, 388), over a dark opening at the
 /// foot of the cliff on the grounds' south edge, which the earlier editions
-/// show bare (renders of tbs-en and tbs-fr); no warp or map event answers that
+/// show bare (renders of tbs-en and tbs-fr); no exit or map event answers that
 /// opening, so the ivy only hides a way in that leads nowhere.
 
 #include "save_block.h"
@@ -122,13 +122,13 @@ static void McCoyPalaceGrounds_OpenGate(void);
 
 #include "common/object_facing.h"
 
-const struct MapWarpDest *Scene_GetWarpDests(void) {
-  return gMcCoyPalaceGroundsWarpDests;
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gMcCoyPalaceGroundsEntrances;
 }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Scene_GetWarps(void) { return gMcCoyPalaceGroundsWarps; }
+const u32 *Scene_GetExits(void) { return gMcCoyPalaceGroundsExits; }
 
 /// The people outside McCoy's Palace. Once McCoy has turned the party away,
 /// the east guard turns back after talking, and once the curse is lifted Lady
@@ -317,7 +317,7 @@ static void EventScript_EnterPalace(void) {
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -16);
   FieldScript_WaitFrames(16);
-  Import_ScriptRequestWarp(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE);
+  Import_ScriptRequestExit(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE);
   FieldScript_End();
 }
 
@@ -469,7 +469,7 @@ static void EventScript_GuardsArrestParty(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST);
+  Import_ScriptRequestExit(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST);
   FieldScript_End();
 }
 
@@ -494,18 +494,18 @@ s32 gGuardWatchesParty[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct MapWarpDest gMcCoyPalaceGroundsWarpDests[] = {
+struct SceneEntrance gMcCoyPalaceGroundsEntrances[] = {
     { MCCOY_PALACE_GROUNDS_FROM_BILIBIN, CONDITION_ALWAYS, 320, 0, 328, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { MCCOY_PALACE_GROUNDS_FROM_MCCOY_PALACE, CONDITION_ALWAYS, 328, 0, 272, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { MAP_TABLE_END },
 };
 
-u32 gMcCoyPalaceGroundsWarps[] = {
-    MAP_WARPS(McCoyPalaceGrounds),
-    MAP_WARP(MCCOY_PALACE_GROUNDS_TO_BILIBIN, Bilibin, BILIBIN_FROM_MCCOY_PALACE_GROUNDS),
-    MAP_WARP(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE, McCoyPalace, MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_WEST),
-    MAP_WARP(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST, McCoyPalace, MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST),
-    MAP_WARPS_END,
+u32 gMcCoyPalaceGroundsExits[] = {
+    SCENE_EXITS(McCoyPalaceGrounds),
+    SCENE_EXIT(MCCOY_PALACE_GROUNDS_TO_BILIBIN, Bilibin, BILIBIN_FROM_MCCOY_PALACE_GROUNDS),
+    SCENE_EXIT(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE, McCoyPalace, MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_WEST),
+    SCENE_EXIT(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST, McCoyPalace, MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST),
+    SCENE_EXITS_END,
 };
 
 /// Unused: the getters return it for any map but SceneId_McCoyPalaceGrounds,
@@ -540,7 +540,7 @@ struct MapEvent gMcCoyPalaceGroundsNoEvents[] = {
 };
 
 struct MapEvent gMcCoyPalaceGroundsEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, MCCOY_PALACE_GROUNDS_TO_BILIBIN },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, MCCOY_PALACE_GROUNDS_TO_BILIBIN },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterPalace) },
     { MAP_EVENT_TALK, LOCALID_WEST_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheLumberIOrderedFromKolima) },
     { MAP_EVENT_TALK, LOCALID_WEST_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinNowThatTheCurseIsBroken) },

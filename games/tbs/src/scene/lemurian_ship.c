@@ -110,13 +110,13 @@ enum {
 
 s32 Math_DivideUnsigned();
 
-const struct MapWarpDest *LemurianShip_GetWarpDests(void) {
-  return gLemurianShipWarpDests;
+const struct SceneEntrance *LemurianShip_GetEntrances(void) {
+  return gLemurianShipEntrances;
 }
 
-const struct MapWarpRegion *LemurianShip_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *LemurianShip_GetRegions(void) { return NULL; }
 
-const u32 *LemurianShip_GetWarps(void) { return gLemurianShipWarps; }
+const u32 *LemurianShip_GetExits(void) { return gLemurianShipExits; }
 
 /// The gangway's two pieces; the party's own object events fill the first three
 /// rows.
@@ -128,7 +128,7 @@ const struct ObjectEventTemplate *LemurianShip_GetObjectEventTemplates(void) {
 /// colour. Reached by stepping on metatile behavior 1 (gLemurianShipEvents);
 /// takes LEMURIAN_SHIP_TO_TIMBER_ROOMS_C.
 static void EventScript_LeaveTheShip(void) {
-  Import_ScriptRequestWarp(gFieldWork->coordEvent);
+  Import_ScriptRequestExit(gFieldWork->coordEvent);
   Io_Write16(0, &PLTT_BACKDROP);
 }
 
@@ -143,7 +143,7 @@ static void Ripple_Start(void) {
   ScanlineEffect_InitWave(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000, 0x4000);
 }
 
-/// The warp, Reveal and the Black Orb at the water's edge (metatile behavior
+/// The exit, Reveal and the Black Orb at the water's edge (metatile behavior
 /// 10).
 const struct MapEvent *LemurianShip_GetEvents(void) {
   return gLemurianShipEvents;
@@ -713,7 +713,7 @@ s32 LemurianShip_SetupMap(void) {
   volatile u16 cnt;
 
   grid = gMapGridWork[0];
-  if (gSaveBlock.warpDest == LEMURIAN_SHIP_WITH_BLACK_ORB) {
+  if (gSaveBlock.entrance == LEMURIAN_SHIP_WITH_BLACK_ORB) {
     Inventory_AddItem(LOCALID_PARTY_LEADER, ITEM_BLACK_ORB);
   }
   ((struct FieldWork *)gMapGridWork[19])->transition =
@@ -979,19 +979,19 @@ s16 gRippleSine[256] = {
 };
 // clang-format on
 
-struct MapWarpDest gLemurianShipWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 408, 0, 200, FACING_NORTH, 0, -1, -1,
+struct SceneEntrance gLemurianShipEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 408, 0, 200, FACING_NORTH, 0, -1, -1,
      -1, -1, 0},
     {LEMURIAN_SHIP_FROM_TIMBER_ROOMS_C, CONDITION_ALWAYS, 312, 0, 296,
      FACING_NORTH, 0, -1, -1, -1, 328, 0},
     {MAP_TABLE_END},
 };
 
-u32 gLemurianShipWarps[] = {
-    MAP_WARPS(LemurianShip),
-    MAP_WARP(LEMURIAN_SHIP_TO_TIMBER_ROOMS_C, TimberRoomsC,
-             TIMBER_ROOMS_C_FROM_LEMURIAN_SHIP),
-    MAP_WARPS_END,
+u32 gLemurianShipExits[] = {
+    SCENE_EXITS(LemurianShip),
+    SCENE_EXIT(LEMURIAN_SHIP_TO_TIMBER_ROOMS_C, TimberRoomsC,
+               TIMBER_ROOMS_C_FROM_LEMURIAN_SHIP),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gLemurianShipObjectEventTemplates[] = {

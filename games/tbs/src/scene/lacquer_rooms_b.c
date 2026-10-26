@@ -132,20 +132,20 @@ enum { ANIM_HSU_IN_BED = 6 };
 #include "item_ids.h"
 #include "objcmd.h"
 
-const struct MapWarpDest *LacquerRoomsB_GetWarpDests(void) {
-  return gLacquerRoomsB_WarpDests;
+const struct SceneEntrance *LacquerRoomsB_GetEntrances(void) {
+  return gLacquerRoomsB_Entrances;
 }
 
-const struct MapWarpRegion *LacquerRoomsB_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *LacquerRoomsB_GetRegions(void) { return NULL; }
 
-const u32 *LacquerRoomsB_GetWarps(void) { return gLacquerRoomsB_Warps; }
+const u32 *LacquerRoomsB_GetExits(void) { return gLacquerRoomsB_Exits; }
 
 /// The room behind the school places only Master Feh, Feizhi and Hsu. Every
 /// other room shares one table, whose condition 0 Scene_AssignViewFlags
 /// replaces with whether each object event stands inside the view bounds of the
 /// room entered.
 const struct ObjectEventTemplate *LacquerRoomsB_GetObjectEventTemplates(void) {
-  if (gSaveBlock.warpDest == LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
+  if (gSaveBlock.entrance == LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
     return gLacquerRoomsB_SchoolRoomObjectEventTemplates;
   }
   Scene_AssignViewFlags(gLacquerRoomsB_ObjectEventTemplates);
@@ -278,7 +278,7 @@ static void LacquerRoomsB_FeizhiThanksParty(void) {
 
 /// The room behind the school has its own map events.
 const struct MapEvent *LacquerRoomsB_GetEvents(void) {
-  if (gSaveBlock.warpDest == LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
+  if (gSaveBlock.entrance == LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
     return gLacquerRoomsB_SchoolRoomEvents;
   }
   return gLacquerRoomsB_Events;
@@ -291,23 +291,23 @@ const struct MapEvent *LacquerRoomsB_GetEvents(void) {
 /// (LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP). In the room behind the school, it
 /// clears FLAG_SHOW_LOCATION_NAME and lays Hsu in the bed.
 s32 LacquerRoomsB_Initialize(void) {
-  s16 warpDest;
+  s16 entrance;
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  warpDest = gSaveBlock.warpDest;
+  entrance = gSaveBlock.entrance;
   // XXX (no evidence): what these hidden chests are for; the player neither
   // sees nor meets them.
-  if (warpDest == LACQUER_ROOMS_B_INN_SOUTH ||
-      warpDest == LACQUER_ROOMS_B_INN_FROM_INN_GUEST_ROOMS) {
+  if (entrance == LACQUER_ROOMS_B_INN_SOUTH ||
+      entrance == LACQUER_ROOMS_B_INN_FROM_INN_GUEST_ROOMS) {
     ObjectEvent_CreateConfiguredObject(PIXELS(248), 0, PIXELS(417),
                                        SPRITE_CHEST);
-  } else if (warpDest == LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP) {
+  } else if (entrance == LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP) {
     ObjectEvent_CreateConfiguredObject(PIXELS(460), 0, PIXELS(568),
                                        SPRITE_CHEST);
     ObjectEvent_CreateConfiguredObject(PIXELS(484), 0, PIXELS(568),
                                        SPRITE_CHEST);
-  } else if (warpDest == LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
+  } else if (entrance == LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     Import_ObjectEventSetAnimation(LOCALID_HSU, ANIM_HSU_IN_BED);
   }
@@ -335,8 +335,8 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-struct MapWarpDest gLacquerRoomsB_WarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gLacquerRoomsB_Entrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {LACQUER_ROOMS_B_HOUSE, CONDITION_ALWAYS, 128, 0, 184, FACING_NORTH, 0, 24,
      8, 248, 208, 0},
@@ -357,24 +357,25 @@ struct MapWarpDest gLacquerRoomsB_WarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gLacquerRoomsB_Warps[] = {
-    MAP_WARPS(LacquerRoomsB),
-    MAP_WARP(LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_XIAN, Xian,
-             XIAN_FROM_WEAPON_AND_ARMOR_SHOP),
-    MAP_WARP(LACQUER_ROOMS_B_HOUSE_NORTH_TO_XIAN, Xian, XIAN_FROM_HOUSE_NORTH),
-    MAP_WARP(LACQUER_ROOMS_B_TO_XIAN_EAST, Xian,
-             XIAN_FROM_LACQUER_ROOMS_B_EAST),
-    MAP_WARP(LACQUER_ROOMS_B_TO_XIAN_SOUTH, Xian,
-             XIAN_FROM_LACQUER_ROOMS_B_SOUTH),
-    MAP_WARP(LACQUER_ROOMS_B_INN_GUEST_ROOMS_TO_INN, LacquerRoomsB,
-             LACQUER_ROOMS_B_INN_FROM_INN_GUEST_ROOMS),
-    MAP_WARP(LACQUER_ROOMS_B_TO_XIAN_WEST, Xian,
-             XIAN_FROM_LACQUER_ROOMS_B_WEST),
-    MAP_WARP(LACQUER_ROOMS_B_INN_TO_INN_GUEST_ROOMS, LacquerRoomsB,
-             LACQUER_ROOMS_B_INN_GUEST_ROOMS_FROM_INN),
-    MAP_WARP(LACQUER_ROOMS_B_TO_LACQUER_ROOMS_A_FEHS_SCHOOL, LacquerRoomsA,
-             LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_HOUSE),
-    MAP_WARPS_END,
+u32 gLacquerRoomsB_Exits[] = {
+    SCENE_EXITS(LacquerRoomsB),
+    SCENE_EXIT(LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_XIAN, Xian,
+               XIAN_FROM_WEAPON_AND_ARMOR_SHOP),
+    SCENE_EXIT(LACQUER_ROOMS_B_HOUSE_NORTH_TO_XIAN, Xian,
+               XIAN_FROM_HOUSE_NORTH),
+    SCENE_EXIT(LACQUER_ROOMS_B_TO_XIAN_EAST, Xian,
+               XIAN_FROM_LACQUER_ROOMS_B_EAST),
+    SCENE_EXIT(LACQUER_ROOMS_B_TO_XIAN_SOUTH, Xian,
+               XIAN_FROM_LACQUER_ROOMS_B_SOUTH),
+    SCENE_EXIT(LACQUER_ROOMS_B_INN_GUEST_ROOMS_TO_INN, LacquerRoomsB,
+               LACQUER_ROOMS_B_INN_FROM_INN_GUEST_ROOMS),
+    SCENE_EXIT(LACQUER_ROOMS_B_TO_XIAN_WEST, Xian,
+               XIAN_FROM_LACQUER_ROOMS_B_WEST),
+    SCENE_EXIT(LACQUER_ROOMS_B_INN_TO_INN_GUEST_ROOMS, LacquerRoomsB,
+               LACQUER_ROOMS_B_INN_GUEST_ROOMS_FROM_INN),
+    SCENE_EXIT(LACQUER_ROOMS_B_TO_LACQUER_ROOMS_A_FEHS_SCHOOL, LacquerRoomsA,
+               LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_HOUSE),
+    SCENE_EXITS_END,
 };
 
 // clang-format off
@@ -417,13 +418,13 @@ struct ObjectEventTemplate gLacquerRoomsB_SchoolRoomObjectEventTemplates[] = {
 };
 
 struct MapEvent gLacquerRoomsB_Events[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_XIAN },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, LACQUER_ROOMS_B_HOUSE_NORTH_TO_XIAN },
-    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, LACQUER_ROOMS_B_TO_XIAN_EAST },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, LACQUER_ROOMS_B_TO_XIAN_SOUTH },
-    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, LACQUER_ROOMS_B_INN_GUEST_ROOMS_TO_INN },
-    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, LACQUER_ROOMS_B_TO_XIAN_WEST },
-    { MAP_EVENT_WARP, 7, CONDITION_ALWAYS, LACQUER_ROOMS_B_INN_TO_INN_GUEST_ROOMS },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_XIAN },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, LACQUER_ROOMS_B_HOUSE_NORTH_TO_XIAN },
+    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, LACQUER_ROOMS_B_TO_XIAN_EAST },
+    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, LACQUER_ROOMS_B_TO_XIAN_SOUTH },
+    { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, LACQUER_ROOMS_B_INN_GUEST_ROOMS_TO_INN },
+    { MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, LACQUER_ROOMS_B_TO_XIAN_WEST },
+    { MAP_EVENT_EXIT, 7, CONDITION_ALWAYS, LACQUER_ROOMS_B_INN_TO_INN_GUEST_ROOMS },
     { MAP_EVENT_TALK, LOCALID_MAN_ON_THE_MULBERRY_HARVEST, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsTheMulberryHarvestIsOverNow) },
     { MAP_EVENT_TALK, LOCALID_FARM_WORKER, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsFarmWorkIsVeryHardWarriors) },
     { MAP_EVENT_TALK, LOCALID_YOUNG_MAN_ON_SILK_ROAD, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsXianSilkIsSentOnSilk) },
@@ -487,7 +488,7 @@ struct MapEvent gLacquerRoomsB_Events[] = {
 };
 
 struct MapEvent gLacquerRoomsB_SchoolRoomEvents[] = {
-    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, LACQUER_ROOMS_B_TO_LACQUER_ROOMS_A_FEHS_SCHOOL },
+    { MAP_EVENT_EXIT, 8, CONDITION_ALWAYS, LACQUER_ROOMS_B_TO_LACQUER_ROOMS_A_FEHS_SCHOOL },
     { MAP_EVENT_TALK, LOCALID_FEH, FLAG_HSU_RESCUED_WITHOUT_PARTY, MSGNO(MsgXianInteriorsFeizhisPredictionCameTrueNowI) },
     { MAP_EVENT_TALK, LOCALID_FEIZHI, FLAG_HSU_RESCUED_WITHOUT_PARTY, EVENT_SCRIPT(LacquerRoomsB_FeizhiThanksParty) },
     { MAP_EVENT_TALK, LOCALID_HSU, FLAG_HSU_RESCUED_WITHOUT_PARTY, MSGNO(MsgXianInteriorsIWasInjuredByRocksOn) },

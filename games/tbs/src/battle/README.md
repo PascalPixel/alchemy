@@ -496,7 +496,7 @@ where one family of functions ends and the next begins.
 ## How it fits with the rest of the game
 
 To the rest of the game a battle is one more sequence: the field leaves for it
-through a warp and comes back to the same spot
+through an exit and comes back to the same spot
 ([Battle](../../battle.md#starting-a-battle)). While it runs the battle
 borrows the engine's [tasks](../../glossary.md#task), heap and objects, the
 window code for its menus and status window, and the

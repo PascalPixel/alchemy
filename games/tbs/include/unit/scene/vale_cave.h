@@ -4,14 +4,14 @@
 #include "types.h"
 #include "map_tables.h"
 
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEvent;
 struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *ValeCave_GetWarpDests(void);
-const struct MapWarpRegion *ValeCave_GetRegions(void);
-const u32 *ValeCave_GetWarps(void);
+const struct SceneEntrance *ValeCave_GetEntrances(void);
+const struct SceneExitRegion *ValeCave_GetRegions(void);
+const u32 *ValeCave_GetExits(void);
 const struct ObjectEventTemplate *ValeCave_GetObjectEventTemplates(void);
 const struct MapEvent *ValeCave_GetEvents(void);
 s32 ValeCave_Initialize(void);
@@ -23,11 +23,11 @@ extern u32 gPushedObject_FootprintKinds[];
 extern s32 gPushedObject_FootprintBounds[];
 extern s32 gValeCave_WalkTargets[];
 extern const s32 *gFieldEffect_DurationScripts[];
-extern struct MapWarpDest gValeCave_WarpDestsOther[];
-extern struct MapWarpDest gValeCave_MouthWarpDests[];
-extern struct MapWarpDest gValeCave_KiteWarpDests[];
-extern struct MapWarpDest gValeCave_LogsWarpDests[];
-extern u32 gValeCave_Warps[];
+extern struct SceneEntrance gValeCave_EntrancesOther[];
+extern struct SceneEntrance gValeCave_MouthEntrances[];
+extern struct SceneEntrance gValeCave_KiteEntrances[];
+extern struct SceneEntrance gValeCave_LogsEntrances[];
+extern u32 gValeCave_Exits[];
 extern struct ObjectEventTemplate gValeCave_MouthObjectEventTemplates[];
 extern struct ObjectEventTemplate gValeCave_KiteObjectEventTemplates[];
 extern struct ObjectEventTemplate gValeCave_LogsObjectEventTemplates[];

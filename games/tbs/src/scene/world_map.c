@@ -9,8 +9,8 @@
 /// WorldMap_UpdateLocationContacts, run every frame, hides the object events
 /// outside a box around the view and raises the COORD_EVENT_AREA of the one
 /// the leader touches, which the map event table turns into that area's
-/// warp; a few ways in are cells instead, each carrying the number of its warp.
-/// Five areas have two ways in, and their scripts choose the warp by the
+/// exit; a few ways in are cells instead, each carrying the number of its exit.
+/// Five areas have two ways in, and their scripts choose the exit by the
 /// side the leader comes from: the Bilibin Barricade from the west or the east,
 /// and Kolima Bridge, Kalay Docks, Gondowan Passage and Lalivero from the north
 /// or the south. Kolima Bridge's object event shows the drawbridge let down
@@ -27,7 +27,7 @@
 /// in the ground (MB_WORLD_MAP_TURTLE_BOOTS).
 ///
 /// And it plays the story's moments on the map, each run by WorldMap_Initialize
-/// for the warp destination another map sends the party to. In story order:
+/// for the entrance another map sends the party to. In story order:
 /// - Leaving Vale (WORLD_MAP_FROM_VALE_PLAZA) sets FLAG_VALE_PARTY_LEFT the
 ///   first time.
 /// - Flint, the first Djinni, circles his spot until the party walks up to him
@@ -73,7 +73,7 @@
 ///   drifts east, and WORLD_MAP_JENNA_AND_KRADEN_ADRIFT shows Alex leading them
 ///   to Felix and Sheba before the title screen returns.
 ///
-/// WORLD_MAP_FROM_DEBUG, the debug menus' warp destination, turns encounters
+/// WORLD_MAP_FROM_DEBUG, the debug menus' entrance, turns encounters
 /// off.
 
 #include "action_script.h"
@@ -174,7 +174,7 @@ static void WorldMap_SailUntilLandSighted(void);
 static void WorldMap_SailIntoTolbi(void);
 static void WorldMap_StepDownFromBunzasWagon(void);
 static void WorldMap_RunBlackOrbEvent(void);
-static void WorldMap_BlockGatewayCaveWarp(s32 localId);
+static void WorldMap_BlockGatewayCaveExit(s32 localId);
 static void EventScript_IodemCallsIsaacBack(void);
 static void WorldMap_ShowEndingEvent(void);
 static void WorldMap_ShakeVenusLighthouse(void);
@@ -195,7 +195,7 @@ enum { CONTACT_LAST_OBJ_EVENT = 65, COORD_EVENT_AREA_BASE = 100 };
 /// The world map's own object events, numbered in the order of
 /// gWorldMapObjectEventTemplates from LOCALID_FIRST_PLACED: the Djinn met on
 /// the map, the areas, then the Tolbi-bound Ship, the storm and Iodem.
-/// Each area is named by the map its warp leads into (gWorldMapWarps),
+/// Each area is named by the map its exit leads into (gWorldMapExits),
 /// and touching it raises its COORD_EVENT_AREA
 /// (WorldMap_UpdateLocationContacts).
 enum WorldMapLocalId {
@@ -209,7 +209,7 @@ enum WorldMapLocalId {
   /// The Mercury Djinni Hail.
   /// ★ Named from the game: "Hail" (MsgDjinnName)
   LOCALID_HAIL,
-  /// Vale, whose warp leads to the town gate (SceneId_ValePlaza).
+  /// Vale, whose exit leads to the town gate (SceneId_ValePlaza).
   /// ★ Named from the game: "Why's everyone hanging around the town gate?"
   /// (MsgValeWhysEveryoneHanging)
   LOCALID_TO_VALE_PLAZA,
@@ -311,8 +311,8 @@ enum WorldMapLocalId {
 #define COORD_EVENT_AREA(localId) (COORD_EVENT_AREA_BASE + (localId))
 
 /// The world map's own metatile behaviors, which the map's cells carry. Each
-/// warp cell carries the number of the warp it leads to, so the warp rows of
-/// gWorldMapEvents name their metatile behavior by that warp.
+/// exit cell carries the number of the exit it leads to, so the exit rows of
+/// gWorldMapEvents name their metatile behavior by that exit.
 enum WorldMapMetatileBehavior {
   MB_WORLD_MAP_TOLBI_SHIP = 74, ///< the shore beside the anchored ship
   MB_WORLD_MAP_CROSSBONE_ISLE =
@@ -576,13 +576,13 @@ static s32 WorldMap_SetUpFlint(struct Object *interpreter) {
   return 0;
 }
 
-const struct MapWarpDest *WorldMap_GetWarpDests(void) {
-  return gWorldMapWarpDests;
+const struct SceneEntrance *WorldMap_GetEntrances(void) {
+  return gWorldSceneEntrances;
 }
 
-const struct MapWarpRegion *WorldMap_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *WorldMap_GetRegions(void) { return NULL; }
 
-const u32 *WorldMap_GetWarps(void) { return gWorldMapWarps; }
+const u32 *WorldMap_GetExits(void) { return gWorldMapExits; }
 
 /// Kolima Bridge's object script (gWorldMapKolimaBridgeScript): it turns with
 /// the map and shows the drawbridge let down once FLAG_KOLIMA_BRIDGE_LOWERED is
@@ -648,13 +648,13 @@ static s32 WorldMap_BlinkObjectEventSprite(struct Object *interpreter) {
   return 1;
 }
 
-/// Chooses the object events for the warp destination: each scripted moment has
+/// Chooses the object events for the entrance: each scripted moment has
 /// a table of its own while it is still to play, and every other arrival takes
 /// the areas, the Djinn, the storm and Iodem
 /// (gWorldMapObjectEventTemplates) and sets
 /// FLAG_WORLD_MAP_ORDINARY_OBJECT_EVENTS.
 const struct ObjectEventTemplate *WorldMap_GetObjectEventTemplates(void) {
-  switch (gSaveBlock.warpDest) {
+  switch (gSaveBlock.entrance) {
   case WORLD_MAP_FROM_WEST_LUNPA_CAVE:
     if (GameFlag_Get(FLAG_BUNZAS_WAGON_LEFT) == 0 &&
         GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
@@ -691,9 +691,9 @@ const struct ObjectEventTemplate *WorldMap_GetObjectEventTemplates(void) {
   return gWorldMapObjectEventTemplates;
 }
 
-/// Chooses a passage warp from the side of the object event the leader
+/// Chooses a passage exit from the side of the object event the leader
 /// approaches.
-static void WorldMap_SelectWarpByX(s32 trigger, s32 warpBefore, s32 warpAfter) {
+static void WorldMap_SelectExitByX(s32 trigger, s32 exitBefore, s32 exitAfter) {
   struct FieldWork *work;
   struct ObjectEvent *subject;
   struct ObjectEvent *other;
@@ -702,15 +702,15 @@ static void WorldMap_SelectWarpByX(s32 trigger, s32 warpBefore, s32 warpAfter) {
   other = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   work = gFieldWork;
   if (other->x.fixed < subject->x.fixed) {
-    work->warp = warpBefore;
+    work->exit = exitBefore;
   } else {
-    work->warp = warpAfter;
+    work->exit = exitAfter;
   }
   Sound_PlaySong(SE_MAP_EXIT);
 }
 
-/// Chooses a passage warp from the leader's north-south approach.
-static void WorldMap_SelectWarpByZ(s32 trigger, s32 warpBefore, s32 warpAfter) {
+/// Chooses a passage exit from the leader's north-south approach.
+static void WorldMap_SelectExitByZ(s32 trigger, s32 exitBefore, s32 exitAfter) {
   struct FieldWork *work;
   struct ObjectEvent *subject;
   struct ObjectEvent *other;
@@ -719,18 +719,18 @@ static void WorldMap_SelectWarpByZ(s32 trigger, s32 warpBefore, s32 warpAfter) {
   other = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   work = gFieldWork;
   if (other->z.fixed < subject->z.fixed) {
-    work->warp = warpBefore;
+    work->exit = exitBefore;
   } else {
-    work->warp = warpAfter;
+    work->exit = exitAfter;
   }
   Sound_PlaySong(SE_MAP_EXIT);
 }
 
 /// Touching the Bilibin Barricade's object event: the side the party comes from
-/// decides the warp, from the west WORLD_MAP_TO_BILIBIN_BARRICADE_WEST, from
+/// decides the exit, from the west WORLD_MAP_TO_BILIBIN_BARRICADE_WEST, from
 /// the east WORLD_MAP_TO_BILIBIN_BARRICADE_EAST.
 static void EventScript_EnterBilibinBarricade(void) {
-  WorldMap_SelectWarpByX(COORD_EVENT_AREA(LOCALID_TO_BILIBIN_BARRICADE),
+  WorldMap_SelectExitByX(COORD_EVENT_AREA(LOCALID_TO_BILIBIN_BARRICADE),
                          WORLD_MAP_TO_BILIBIN_BARRICADE_WEST,
                          WORLD_MAP_TO_BILIBIN_BARRICADE_EAST);
 }
@@ -740,7 +740,7 @@ static void EventScript_EnterBilibinBarricade(void) {
 /// WORLD_MAP_TO_KOLIMA_BRIDGE_WEST and from the south by
 /// WORLD_MAP_TO_KOLIMA_BRIDGE_EAST.
 static void EventScript_EnterKolimaBridge(void) {
-  WorldMap_SelectWarpByZ(COORD_EVENT_AREA(LOCALID_TO_KOLIMA_BRIDGE),
+  WorldMap_SelectExitByZ(COORD_EVENT_AREA(LOCALID_TO_KOLIMA_BRIDGE),
                          WORLD_MAP_TO_KOLIMA_BRIDGE_WEST,
                          WORLD_MAP_TO_KOLIMA_BRIDGE_EAST);
 }
@@ -749,7 +749,7 @@ static void EventScript_EnterKolimaBridge(void) {
 /// WORLD_MAP_TO_KALAY_DOCKS_NORTH, from the south
 /// WORLD_MAP_TO_KALAY_DOCKS_EAST.
 static void EventScript_EnterKalayDocks(void) {
-  WorldMap_SelectWarpByZ(COORD_EVENT_AREA(LOCALID_TO_KALAY_DOCKS),
+  WorldMap_SelectExitByZ(COORD_EVENT_AREA(LOCALID_TO_KALAY_DOCKS),
                          WORLD_MAP_TO_KALAY_DOCKS_NORTH,
                          WORLD_MAP_TO_KALAY_DOCKS_EAST);
 }
@@ -758,7 +758,7 @@ static void EventScript_EnterKalayDocks(void) {
 /// WORLD_MAP_TO_GONDOWAN_PASSAGE_EAST, from the south
 /// WORLD_MAP_TO_GONDOWAN_PASSAGE_WEST.
 static void EventScript_EnterGondowanPassage(void) {
-  WorldMap_SelectWarpByZ(COORD_EVENT_AREA(LOCALID_TO_GONDOWAN_PASSAGE),
+  WorldMap_SelectExitByZ(COORD_EVENT_AREA(LOCALID_TO_GONDOWAN_PASSAGE),
                          WORLD_MAP_TO_GONDOWAN_PASSAGE_EAST,
                          WORLD_MAP_TO_GONDOWAN_PASSAGE_WEST);
 }
@@ -767,7 +767,7 @@ static void EventScript_EnterGondowanPassage(void) {
 /// WORLD_MAP_TO_LALIVERO_WEST, from the south WORLD_MAP_TO_LALIVERO_EAST.
 static void EventScript_EnterLalivero(void) {
 
-  WorldMap_SelectWarpByZ(COORD_EVENT_AREA(LOCALID_TO_LALIVERO),
+  WorldMap_SelectExitByZ(COORD_EVENT_AREA(LOCALID_TO_LALIVERO),
                          WORLD_MAP_TO_LALIVERO_WEST,
                          WORLD_MAP_TO_LALIVERO_EAST);
 }
@@ -843,10 +843,10 @@ static void WorldMap_UpdateLocationContacts(void) {
 /// it is Vault's door (WORLD_MAP_TO_VAULT_SOUTH).
 static void EventScript_EnterVault(void) {
   if (GameFlag_Get(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
-    Import_ScriptRequestWarp(WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES);
+    Import_ScriptRequestExit(WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES);
   } else {
     Sound_PlaySong(SE_MAP_EXIT);
-    Import_ScriptRequestWarp(WORLD_MAP_TO_VAULT_SOUTH);
+    Import_ScriptRequestExit(WORLD_MAP_TO_VAULT_SOUTH);
   }
 }
 
@@ -858,12 +858,12 @@ static void EventScript_EnterVault(void) {
 static void EventScript_ReturnToTolbiShip(void) {
 
   FieldScript_Start();
-  Import_ScriptRequestWarp(WORLD_MAP_TO_TOLBI_SHIP_DECK_CROSSBONE_ISLE);
+  Import_ScriptRequestExit(WORLD_MAP_TO_TOLBI_SHIP_DECK_CROSSBONE_ISLE);
 }
 
-/// The map's initialization: it runs the moment the warp destination selects,
-/// the story's moments listed at the top of this file. The two lighthouse warp
-/// destinations and WORLD_MAP_AFTER_BLACK_ORB_DEFEAT leave at once; every other
+/// The map's initialization: it runs the moment the entrance selects,
+/// the story's moments listed at the top of this file. The two lighthouse
+/// entrances and WORLD_MAP_AFTER_BLACK_ORB_DEFEAT leave at once; every other
 /// arrival sets FLAG_RETREAT_BLOCKED, starts WorldMap_UpdateLocationContacts,
 /// opens the screen from a centre line, and until the Manticore of the Lamakan
 /// Desert is beaten (FLAG_LAMAKAN_MANTICORE_BEATEN) swaps in the 512-pixel tile
@@ -875,25 +875,25 @@ static void EventScript_ReturnToTolbiShip(void) {
 /// and flag 0x85c, which nothing reads.
 s32 WorldMap_Initialize(void) {
   struct SaveBlock *state = &gSaveBlock;
-  s16 *warpDest = &state->warpDest;
+  s16 *entrance = &state->entrance;
 
-  if (*warpDest == WORLD_MAP_FROM_DEBUG) {
+  if (*entrance == WORLD_MAP_FROM_DEBUG) {
     GameFlag_Set(FLAG_NO_ENCOUNTERS);
     GameFlag_Set(FLAG_NO_ENCOUNTERS_IN_AREA);
     GameFlag_Set(FLAG_DEBUG_STEPS_OFF);
   }
-  if (*warpDest == WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT) {
+  if (*entrance == WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT) {
     WorldMap_PlayLighthouseTransition(WORLD_MAP_LIGHTHOUSE_MERCURY);
     FieldScript_SetDestination((s32)&SceneId_MercuryLighthouseAerie,
                                MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT);
-  } else if (*warpDest == WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT) {
+  } else if (*entrance == WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT) {
     WorldMap_PlayLighthouseTransition(WORLD_MAP_LIGHTHOUSE_VENUS);
     FieldScript_SetDestination((s32)&SceneId_VenusLighthouseAerie,
                                VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT);
-  } else if (*warpDest == WORLD_MAP_AFTER_BLACK_ORB_DEFEAT) {
+  } else if (*entrance == WORLD_MAP_AFTER_BLACK_ORB_DEFEAT) {
     FieldScript_Start();
     PartyInventory_Discard(ITEM_BLACK_ORB);
-    Import_ScriptRequestWarp(WORLD_MAP_TO_ROCK_ROOMS);
+    Import_ScriptRequestExit(WORLD_MAP_TO_ROCK_ROOMS);
   } else {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_CENTRE_LINE, 0);
@@ -906,8 +906,8 @@ s32 WorldMap_Initialize(void) {
     if (GameFlag_Get(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
       Field_SetWorldMapWindowCellTile(128, 256, 176, 56);
     }
-    // Each special warp destination resumes its travel or story sequence.
-    switch (*warpDest) {
+    // Each special entrance resumes its travel or story sequence.
+    switch (*entrance) {
     case WORLD_MAP_FROM_VALE_PLAZA:
       if (Script_GetFlag(FLAG_VALE_PARTY_LEFT) == 0) {
         GameFlag_Set(FLAG_VALE_PARTY_LEFT);
@@ -924,7 +924,7 @@ s32 WorldMap_Initialize(void) {
           ObjectEvent_SetPosition(LOCALID_IODEM, PIXELS(6036), PIXELS(3400));
           ObjectEvent_GetById(gWorldMapIodem)->facing =
               FACING_SOUTHEAST + FACING_STEP;
-          WorldMap_BlockGatewayCaveWarp(gWorldMapIodem);
+          WorldMap_BlockGatewayCaveExit(gWorldMapIodem);
         }
       } else if (GameFlag_Get(FLAG_BLACK_ORB_RETURNED) == 0 &&
                  GameFlag_Get(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN) == 0) {
@@ -1072,7 +1072,7 @@ static void WorldMap_BoardBunzasWagon(void) {
   ObjectEvent_SetDestinationOffset(LOCALID_WAGON, 8, 88);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_WAGON);
   FieldScript_FinishScreenTransition();
-  Import_ScriptRequestWarp(WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE_SOUTH);
+  Import_ScriptRequestExit(WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE_SOUTH);
   FieldScript_End();
 }
 
@@ -1386,7 +1386,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   GameFlag_Set(FLAG_LUNPA_GUARDS_SUSPECT_KALAY);
-  Import_ScriptRequestWarp(WORLD_MAP_TO_VAULT_SOUTH);
+  Import_ScriptRequestExit(WORLD_MAP_TO_VAULT_SOUTH);
   FieldScript_End();
 }
 
@@ -1474,15 +1474,15 @@ static void WorldMap_SailToFirstMonsterAttack(void) {
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   GameFlag_Set(FLAG_TOLBI_SHIP_ROWING);
-  Import_ScriptRequestWarp(WORLD_MAP_TO_TOLBI_SHIP_MAST_FIRST_ATTACK);
+  Import_ScriptRequestExit(WORLD_MAP_TO_TOLBI_SHIP_MAST_FIRST_ATTACK);
   FieldScript_End();
 }
 
 /// The middle legs of the crossing: the ship, seen from above, sails west
 /// across the Karagol Sea from the far east of the map until
 /// gCrossingShipSailsWest says it has gone far enough, and the party leaves
-/// by warp, back aboard. Sets FLAG_TOLBI_SHIP_ROWING.
-static inline void WorldMap_SailCrossingLeg(s32 warp) {
+/// by exit, back aboard. Sets FLAG_TOLBI_SHIP_ROWING.
+static inline void WorldMap_SailCrossingLeg(s32 exit) {
   struct ObjectEvent *objectEvent;
 
   objectEvent = ObjectEvent_GetById(LOCALID_CROSSING_SHIP);
@@ -1505,7 +1505,7 @@ static inline void WorldMap_SailCrossingLeg(s32 warp) {
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   GameFlag_Set(FLAG_TOLBI_SHIP_ROWING);
-  Import_ScriptRequestWarp(warp);
+  Import_ScriptRequestExit(exit);
   FieldScript_End();
 }
 
@@ -1570,7 +1570,7 @@ static void WorldMap_SailUntilLandSighted(void) {
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   GameFlag_Set(FLAG_TOLBI_SHIP_ROWING);
-  Import_ScriptRequestWarp(WORLD_MAP_TO_TOLBI_SHIP_MAST_LAND_HO);
+  Import_ScriptRequestExit(WORLD_MAP_TO_TOLBI_SHIP_MAST_LAND_HO);
   FieldScript_End();
 }
 
@@ -1599,7 +1599,7 @@ static void WorldMap_SailIntoTolbi(void) {
   FieldScript_WaitTransitionFrames();
   GameFlag_Set(FLAG_TOLBI_SHIP_REACHED_TOLBI);
   GameFlag_Clear(FLAG_TOLBI_SHIP_ROWING);
-  Import_ScriptRequestWarp(WORLD_MAP_TO_TOLBI_SHIP_DECK);
+  Import_ScriptRequestExit(WORLD_MAP_TO_TOLBI_SHIP_DECK);
   FieldScript_End();
 }
 
@@ -1912,7 +1912,7 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 5592, 2136);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(WORLD_MAP_TO_KALAY_EAST);
+  Import_ScriptRequestExit(WORLD_MAP_TO_KALAY_EAST);
   FieldScript_End();
 }
 
@@ -1922,13 +1922,13 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
 /// handed back and before the wounded soldiers are seen in Lalivero
 /// (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN). Sets
 /// FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER and FLAG_SAW_SHIP_AT_IDEJIMA, and turns
-/// Gateway Cave's warp into EventScript_IodemCallsIsaacBack.
+/// Gateway Cave's exit into EventScript_IodemCallsIsaacBack.
 static void WorldMap_RunBlackOrbEvent(void) {
   struct ObjectEvent *leader;
 
   FieldScript_Start();
   gWorldMapIodem = LOCALID_IODEM;
-  WorldMap_BlockGatewayCaveWarp(LOCALID_IODEM);
+  WorldMap_BlockGatewayCaveExit(LOCALID_IODEM);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   WorldMap_StartScript();
@@ -1999,23 +1999,23 @@ static void WorldMap_RunBlackOrbEvent(void) {
   GameFlag_Set(FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER);
   GameFlag_Set(FLAG_SAW_SHIP_AT_IDEJIMA);
   gSaveBlock.restartScene = (s32)&SceneId_WorldMap;
-  gSaveBlock.restartWarpDest = WORLD_MAP_AFTER_BLACK_ORB_DEFEAT;
+  gSaveBlock.restartEntrance = WORLD_MAP_AFTER_BLACK_ORB_DEFEAT;
   FieldScript_End();
 }
 
-/// Turns Gateway Cave's warp (the map event of LOCALID_TO_GATEWAY_CAVE's
+/// Turns Gateway Cave's exit (the map event of LOCALID_TO_GATEWAY_CAVE's
 /// COORD_EVENT_AREA) into a coord event that runs
 /// EventScript_IodemCallsIsaacBack, and stands Iodem (LOCALID_IODEM, whose
 /// object event template row it finds by his sprite) at pixel (6036, 3400); the
 /// object event given is not used. Called by WorldMap_RunBlackOrbEvent, and by
 /// WorldMap_Initialize when the party returns to WORLD_MAP_FROM_GATEWAY_CAVE
 /// with the orb still to use.
-static void WorldMap_BlockGatewayCaveWarp(s32 localId) {
+static void WorldMap_BlockGatewayCaveExit(s32 localId) {
   s32 i;
 
   i = 0;
   while (1) {
-    if (gWorldMapEvents[i].kind == MAP_EVENT_WARP &&
+    if (gWorldMapEvents[i].kind == MAP_EVENT_EXIT &&
         gWorldMapEvents[i].trigger ==
             COORD_EVENT_AREA(LOCALID_TO_GATEWAY_CAVE)) {
       gWorldMapEvents[i].kind = MAP_EVENT_COORD;
@@ -2035,9 +2035,9 @@ static void WorldMap_BlockGatewayCaveWarp(s32 localId) {
   }
 }
 
-/// Makes touching Gateway Cave a warp again, to WORLD_MAP_TO_GATEWAY_CAVE.
+/// Makes touching Gateway Cave an exit again, to WORLD_MAP_TO_GATEWAY_CAVE.
 /// Called by EventScript_UseBlackOrb once the orb is handed back.
-static void WorldMap_RestoreGatewayCaveWarp(void) {
+static void WorldMap_RestoreGatewayCaveExit(void) {
   s32 i;
 
   i = 0;
@@ -2045,7 +2045,7 @@ static void WorldMap_RestoreGatewayCaveWarp(void) {
     if (gWorldMapEvents[i].kind == MAP_EVENT_COORD &&
         gWorldMapEvents[i].trigger ==
             COORD_EVENT_AREA(LOCALID_TO_GATEWAY_CAVE)) {
-      gWorldMapEvents[i].kind = MAP_EVENT_WARP;
+      gWorldMapEvents[i].kind = MAP_EVENT_EXIT;
       gWorldMapEvents[i].value = WORLD_MAP_TO_GATEWAY_CAVE;
       break;
     }
@@ -2070,7 +2070,7 @@ static void EventScript_TalkAboutBlackOrb(void) {
 /// Walking back into Gateway Cave with the Black Orb unused: Iodem calls the
 /// leader back to the coast. "Isaac, where you going? I said to use the Orb on
 /// Babi's ship!"
-/// Reached by touching Gateway Cave while WorldMap_BlockGatewayCaveWarp has
+/// Reached by touching Gateway Cave while WorldMap_BlockGatewayCaveExit has
 /// made it a coord event.
 static void EventScript_IodemCallsIsaacBack(void) {
   FieldScript_Start();
@@ -2234,7 +2234,7 @@ static void EventScript_UseBlackOrb(void) {
   WorldMap_EndScript();
   FieldEffect_ScheduleRatioTransition(Q16_ONE, 6);
   Script_Wait(20);
-  WorldMap_RestoreGatewayCaveWarp();
+  WorldMap_RestoreGatewayCaveExit();
   ObjectEvent_DestroyById(gWorldMapIodem);
   GameFlag_Clear(FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER);
   GameFlag_Set(FLAG_BLACK_ORB_RETURNED);
@@ -2415,7 +2415,7 @@ static void WorldMap_ShakeVenusLighthouse(void) {
   PaletteFade_SetTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(80);
   WaitFrames(90);
-  Import_ScriptRequestWarp(WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE);
+  Import_ScriptRequestExit(WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE);
   GameFlag_Set(FLAG_KEEP_MUSIC);
   FieldScript_End();
 }
@@ -2501,7 +2501,7 @@ static void WorldMap_SailTolbiShipToIsland(void) {
   FieldScript_WaitFrames(40);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(WORLD_MAP_TO_SHIP_ROOMS_ROWING_DECK_ISLAND);
+  Import_ScriptRequestExit(WORLD_MAP_TO_SHIP_ROOMS_ROWING_DECK_ISLAND);
 }
 
 /// The rowers' balance, as TolbiShipMast_GetRowingBalance (tolbi_ship_mast.c)
@@ -2619,7 +2619,7 @@ static void WorldMap_ShowIslandDrifting(void) {
   PLTT_BACKDROP = 0x7fff;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT);
+  Import_ScriptRequestExit(WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT);
 }
 
 /// Run each frame while a storm holds the party in the air: it spins the leader
@@ -3220,9 +3220,9 @@ s32 gWorldMapFlintScript[] = {
     SC_END,
 };
 
-struct MapWarpDest gWorldMapWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 5656, 0, 1256, FACING_SOUTH, 0, -1,
-     -1, -1, -1, 0},
+struct SceneEntrance gWorldSceneEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 5656, 0, 1256, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {WORLD_MAP_FROM_VALE_PLAZA, CONDITION_ALWAYS, 5680, 0, 1226, FACING_SOUTH,
      0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_TITLE, CONDITION_ALWAYS, 5688, 0, 1224, FACING_SOUTH, 0, -1,
@@ -3307,7 +3307,7 @@ struct MapWarpDest gWorldMapWarpDests[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_VAULT_NORTH, CONDITION_ALWAYS, 5848, 0, 1544, FACING_NORTH,
      0, -1, -1, -1, -1, 0},
-    // Unused: no warp leads to warp destination 45, 97 or 98.
+    // Unused: no exit leads to entrance 45, 97 or 98.
     {45, CONDITION_ALWAYS, 6248, 0, 520, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_KOLIMA_BRIDGE_WEST, CONDITION_ALWAYS, 7568, 0, 1352,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
@@ -3386,134 +3386,138 @@ struct MapWarpDest gWorldMapWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gWorldMapWarps[] = {
-    MAP_WARPS(WorldMap),
-    MAP_WARP(WORLD_MAP_TO_VALE_PLAZA, ValePlaza, VALE_PLAZA_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_WORLD_MAP_FROM_TITLE, WorldMap, WORLD_MAP_FROM_TITLE),
-    MAP_WARP(WORLD_MAP_TO_VAULT_SOUTH, Vault, VAULT_FROM_WORLD_MAP_SOUTH),
-    MAP_WARP(WORLD_MAP_TO_GOMA_CAVE_ENTRANCE, GomaCaveEntrance,
-             GOMA_CAVE_ENTRANCE_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_BILIBIN, Bilibin, BILIBIN_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_BILIBIN_BARRICADE_WEST, BilibinBarricade,
-             BILIBIN_BARRICADE_FROM_WORLD_MAP_WEST),
-    MAP_WARP(WORLD_MAP_TO_KOLIMA_WEST, Kolima, KOLIMA_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_KOLIMA_FOREST_ENTRANCE, KolimaForestEntrance,
-             KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_IMIL_SOUTH, Imil, IMIL_FROM_HOUSE_SOUTHWEST),
-    MAP_WARP(WORLD_MAP_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST,
-             MercuryLighthouseExterior,
-             MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_KOLIMA_BRIDGE_EAST, KolimaBridge,
-             KOLIMA_BRIDGE_FROM_WORLD_MAP_SOUTH),
-    MAP_WARP(WORLD_MAP_TO_FUCHIN_TEMPLE_GROUNDS, FuchinTempleGrounds,
-             FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_MOGALL_FOREST_SIGN, MogallForestSign,
-             MOGALL_FOREST_SIGN_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_XIAN, Xian, XIAN_FROM_HOUSE),
-    MAP_WARP(WORLD_MAP_TO_ALPINE_CROSSING_EAST, AlpineCrossing,
-             ALPINE_CROSSING_FROM_WORLD_MAP_EAST),
-    MAP_WARP(WORLD_MAP_TO_ALTIN, Altin, ALTIN_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_LAMA_TEMPLE, LamaTemple, LAMA_TEMPLE_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_LAMAKAN_DESERT_EAST, LamakanDesertEast,
-             LAMAKAN_DESERT_EAST_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_WORLD_MAP_FROM_KALAY_WEST, WorldMap,
-             WORLD_MAP_FROM_KALAY_WEST),
-    MAP_WARP(WORLD_MAP_TO_KALAY_EAST, Kalay, KALAY_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_KALAY_DOCKS_EAST, KalayDocks,
-             KALAY_DOCKS_FROM_WORLD_MAP_SOUTH),
-    MAP_WARP(WORLD_MAP_TO_TOLBI_DOCKS, TolbiDocks, TOLBI_DOCKS_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_TOLBI, Tolbi, TOLBI_FROM_HOUSE_SOUTH),
-    MAP_WARP(WORLD_MAP_TO_ALTMILLER_CAVE_ENTRANCE, AltmillerCaveEntrance,
-             ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_GONDOWAN_PASSAGE_EAST, GondowanPassage,
-             GONDOWAN_PASSAGE_FROM_WORLD_MAP_NORTH),
-    MAP_WARP(WORLD_MAP_TO_GONDOWAN_CAVE_NORTH, GondowanCave,
-             GONDOWAN_CAVE_FROM_WORLD_MAP_EAST),
-    MAP_WARP(WORLD_MAP_TO_SUHALLA, Suhalla, SUHALLA_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_SUHALLA_DESERT_NORTH, SuhallaDesertNorth,
-             SUHALLA_DESERT_NORTH_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_SOUTH, SuhallaGateCheckpoint,
-             SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH),
-    MAP_WARP(WORLD_MAP_TO_LALIVERO_EAST, Lalivero,
-             LALIVERO_FROM_WORLD_MAP_EAST),
-    MAP_WARP(WORLD_MAP_TO_ROAD_TO_BABI_LIGHTHOUSE, RoadToBabiLighthouse,
-             ROAD_TO_BABI_LIGHTHOUSE_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_WEST, VenusLighthouseEntry,
-             VENUS_LIGHTHOUSE_ENTRY_FROM_WORLD_MAP_WEST),
-    MAP_WARP(WORLD_MAP_TO_GATEWAY_CAVE, GatewayCave,
-             GATEWAY_CAVE_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_LUNPA, Lunpa, LUNPA_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_BILIBIN_CAVE_ENTRANCE, BilibinCaveEntrance,
-             BILIBIN_CAVE_ENTRANCE_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_GOMA_CAVE_BRIDGE, GomaCaveBridge,
-             GOMA_CAVE_BRIDGE_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_GONDOWAN_CAVE_SOUTH, GondowanCave,
-             GONDOWAN_CAVE_FROM_WORLD_MAP_WEST),
-    MAP_WARP(WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_EAST, SuhallaGateCheckpoint,
-             SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST),
-    MAP_WARP(WORLD_MAP_TO_MOGALL_FOREST_KILLER_APE, MogallForestKillerApe,
-             MOGALL_FOREST_KILLER_APE_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_VAULT_NORTH, Vault, VAULT_FROM_WORLD_MAP_NORTH),
-    MAP_WARP(WORLD_MAP_TO_BILIBIN_CAVE_ENTRANCE_NORTHEAST, BilibinCaveEntrance,
-             BILIBIN_CAVE_ENTRANCE_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_KOLIMA_BRIDGE_WEST, KolimaBridge,
-             KOLIMA_BRIDGE_FROM_WORLD_MAP_NORTH),
-    MAP_WARP(WORLD_MAP_TO_BILIBIN_BARRICADE_EAST, BilibinBarricade,
-             BILIBIN_BARRICADE_FROM_WORLD_MAP_EAST),
-    MAP_WARP(WORLD_MAP_TO_BILIBIN_CAVE_ICE, BilibinCaveIce,
-             BILIBIN_CAVE_ICE_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_WEST_LUNPA_CAVE, WestLunpaCave,
-             WEST_LUNPA_CAVE_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_ALPINE_CROSSING_NORTH, AlpineCrossing,
-             ALPINE_CROSSING_FROM_WORLD_MAP_NORTH),
-    MAP_WARP(WORLD_MAP_TO_ALPINE_CROSSING_WEST, AlpineCrossing,
-             ALPINE_CROSSING_FROM_WORLD_MAP_WEST),
-    MAP_WARP(WORLD_MAP_TO_ALTIN_PEAK_WEST_EXIT, AltinPeakWestExit,
-             ALTIN_PEAK_WEST_EXIT_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_LAMAKAN_DESERT_CAVE, LamakanDesertCave,
-             LAMAKAN_DESERT_CAVE_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_GONDOWAN_PASSAGE_WEST, GondowanPassage,
-             GONDOWAN_PASSAGE_FROM_WORLD_MAP_SOUTH),
-    MAP_WARP(WORLD_MAP_TO_SUHALLA_DESERT_SOUTH, SuhallaDesertSouth,
-             SUHALLA_DESERT_SOUTH_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_KALAY_DOCKS_NORTH, KalayDocks,
-             KALAY_DOCKS_FROM_WORLD_MAP_NORTH),
-    MAP_WARP(WORLD_MAP_TO_LALIVERO_WEST, Lalivero,
-             LALIVERO_FROM_WORLD_MAP_WEST),
-    MAP_WARP(WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE, KalayTunnelEntrance,
-             KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_NORTH),
-    MAP_WARP(WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_EAST, VenusLighthouseEntry,
-             VENUS_LIGHTHOUSE_ENTRY_FROM_WORLD_MAP_EAST),
-    MAP_WARP(WORLD_MAP_TO_TOLBI_SHIP_DECK_CROSSBONE_ISLE, TolbiShipDeck,
-             TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS),
-    MAP_WARP(WORLD_MAP_TO_CROSSBONE_ISLE, CrossboneIsle,
-             CROSSBONE_ISLE_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_WORLD_MAP_FROM_VALE_PLAZA, WorldMap,
-             WORLD_MAP_FROM_VALE_PLAZA),
-    MAP_WARP(WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES, WorldMap,
-             WORLD_MAP_HAMMETS_CARAVAN_LEAVES),
-    MAP_WARP(WORLD_MAP_TO_TOLBI_SHIP_MAST_FIRST_ATTACK, TolbiShipMast,
-             TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK),
-    MAP_WARP(WORLD_MAP_TO_TOLBI_SHIP_MAST_SECOND_ATTACK, TolbiShipMast,
-             TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK),
-    MAP_WARP(WORLD_MAP_TO_TOLBI_SHIP_MAST_THIRD_ATTACK, TolbiShipMast,
-             TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK),
-    MAP_WARP(WORLD_MAP_TO_SHIP_ROOMS, ShipRooms, SHIP_ROOMS_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_TOLBI_SHIP_MAST_LAND_HO, TolbiShipMast,
-             TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO),
-    MAP_WARP(WORLD_MAP_TO_TOLBI_SHIP_DECK, TolbiShipDeck,
-             TOLBI_SHIP_DECK_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE_SOUTH, KalayTunnelEntrance,
-             KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH),
-    MAP_WARP(WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE, VenusLighthouseAerie,
-             VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_SHIP_ROOMS_ROWING_DECK_ISLAND, ShipRooms,
-             SHIP_ROOMS_ROWING_DECK_FROM_WORLD_MAP_ISLAND),
-    MAP_WARP(WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT, WorldMap,
-             WORLD_MAP_JENNA_AND_KRADEN_ADRIFT),
-    MAP_WARP(WORLD_MAP_TO_ROCK_ROOMS, RockRooms,
-             ROCK_ROOMS_FROM_SUHALLA_GATE_CHECKPOINT),
-    MAP_WARPS_END,
+u32 gWorldMapExits[] = {
+    SCENE_EXITS(WorldMap),
+    SCENE_EXIT(WORLD_MAP_TO_VALE_PLAZA, ValePlaza, VALE_PLAZA_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_WORLD_MAP_FROM_TITLE, WorldMap,
+               WORLD_MAP_FROM_TITLE),
+    SCENE_EXIT(WORLD_MAP_TO_VAULT_SOUTH, Vault, VAULT_FROM_WORLD_MAP_SOUTH),
+    SCENE_EXIT(WORLD_MAP_TO_GOMA_CAVE_ENTRANCE, GomaCaveEntrance,
+               GOMA_CAVE_ENTRANCE_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_BILIBIN, Bilibin, BILIBIN_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_BILIBIN_BARRICADE_WEST, BilibinBarricade,
+               BILIBIN_BARRICADE_FROM_WORLD_MAP_WEST),
+    SCENE_EXIT(WORLD_MAP_TO_KOLIMA_WEST, Kolima, KOLIMA_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_KOLIMA_FOREST_ENTRANCE, KolimaForestEntrance,
+               KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_IMIL_SOUTH, Imil, IMIL_FROM_HOUSE_SOUTHWEST),
+    SCENE_EXIT(WORLD_MAP_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST,
+               MercuryLighthouseExterior,
+               MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_KOLIMA_BRIDGE_EAST, KolimaBridge,
+               KOLIMA_BRIDGE_FROM_WORLD_MAP_SOUTH),
+    SCENE_EXIT(WORLD_MAP_TO_FUCHIN_TEMPLE_GROUNDS, FuchinTempleGrounds,
+               FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_MOGALL_FOREST_SIGN, MogallForestSign,
+               MOGALL_FOREST_SIGN_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_XIAN, Xian, XIAN_FROM_HOUSE),
+    SCENE_EXIT(WORLD_MAP_TO_ALPINE_CROSSING_EAST, AlpineCrossing,
+               ALPINE_CROSSING_FROM_WORLD_MAP_EAST),
+    SCENE_EXIT(WORLD_MAP_TO_ALTIN, Altin, ALTIN_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_LAMA_TEMPLE, LamaTemple,
+               LAMA_TEMPLE_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_LAMAKAN_DESERT_EAST, LamakanDesertEast,
+               LAMAKAN_DESERT_EAST_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_WORLD_MAP_FROM_KALAY_WEST, WorldMap,
+               WORLD_MAP_FROM_KALAY_WEST),
+    SCENE_EXIT(WORLD_MAP_TO_KALAY_EAST, Kalay, KALAY_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_KALAY_DOCKS_EAST, KalayDocks,
+               KALAY_DOCKS_FROM_WORLD_MAP_SOUTH),
+    SCENE_EXIT(WORLD_MAP_TO_TOLBI_DOCKS, TolbiDocks,
+               TOLBI_DOCKS_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_TOLBI, Tolbi, TOLBI_FROM_HOUSE_SOUTH),
+    SCENE_EXIT(WORLD_MAP_TO_ALTMILLER_CAVE_ENTRANCE, AltmillerCaveEntrance,
+               ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_GONDOWAN_PASSAGE_EAST, GondowanPassage,
+               GONDOWAN_PASSAGE_FROM_WORLD_MAP_NORTH),
+    SCENE_EXIT(WORLD_MAP_TO_GONDOWAN_CAVE_NORTH, GondowanCave,
+               GONDOWAN_CAVE_FROM_WORLD_MAP_EAST),
+    SCENE_EXIT(WORLD_MAP_TO_SUHALLA, Suhalla, SUHALLA_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_SUHALLA_DESERT_NORTH, SuhallaDesertNorth,
+               SUHALLA_DESERT_NORTH_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_SOUTH,
+               SuhallaGateCheckpoint,
+               SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH),
+    SCENE_EXIT(WORLD_MAP_TO_LALIVERO_EAST, Lalivero,
+               LALIVERO_FROM_WORLD_MAP_EAST),
+    SCENE_EXIT(WORLD_MAP_TO_ROAD_TO_BABI_LIGHTHOUSE, RoadToBabiLighthouse,
+               ROAD_TO_BABI_LIGHTHOUSE_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_WEST, VenusLighthouseEntry,
+               VENUS_LIGHTHOUSE_ENTRY_FROM_WORLD_MAP_WEST),
+    SCENE_EXIT(WORLD_MAP_TO_GATEWAY_CAVE, GatewayCave,
+               GATEWAY_CAVE_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_LUNPA, Lunpa, LUNPA_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_BILIBIN_CAVE_ENTRANCE, BilibinCaveEntrance,
+               BILIBIN_CAVE_ENTRANCE_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_GOMA_CAVE_BRIDGE, GomaCaveBridge,
+               GOMA_CAVE_BRIDGE_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_GONDOWAN_CAVE_SOUTH, GondowanCave,
+               GONDOWAN_CAVE_FROM_WORLD_MAP_WEST),
+    SCENE_EXIT(WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_EAST, SuhallaGateCheckpoint,
+               SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST),
+    SCENE_EXIT(WORLD_MAP_TO_MOGALL_FOREST_KILLER_APE, MogallForestKillerApe,
+               MOGALL_FOREST_KILLER_APE_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_VAULT_NORTH, Vault, VAULT_FROM_WORLD_MAP_NORTH),
+    SCENE_EXIT(WORLD_MAP_TO_BILIBIN_CAVE_ENTRANCE_NORTHEAST,
+               BilibinCaveEntrance, BILIBIN_CAVE_ENTRANCE_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_KOLIMA_BRIDGE_WEST, KolimaBridge,
+               KOLIMA_BRIDGE_FROM_WORLD_MAP_NORTH),
+    SCENE_EXIT(WORLD_MAP_TO_BILIBIN_BARRICADE_EAST, BilibinBarricade,
+               BILIBIN_BARRICADE_FROM_WORLD_MAP_EAST),
+    SCENE_EXIT(WORLD_MAP_TO_BILIBIN_CAVE_ICE, BilibinCaveIce,
+               BILIBIN_CAVE_ICE_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_WEST_LUNPA_CAVE, WestLunpaCave,
+               WEST_LUNPA_CAVE_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_ALPINE_CROSSING_NORTH, AlpineCrossing,
+               ALPINE_CROSSING_FROM_WORLD_MAP_NORTH),
+    SCENE_EXIT(WORLD_MAP_TO_ALPINE_CROSSING_WEST, AlpineCrossing,
+               ALPINE_CROSSING_FROM_WORLD_MAP_WEST),
+    SCENE_EXIT(WORLD_MAP_TO_ALTIN_PEAK_WEST_EXIT, AltinPeakWestExit,
+               ALTIN_PEAK_WEST_EXIT_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_LAMAKAN_DESERT_CAVE, LamakanDesertCave,
+               LAMAKAN_DESERT_CAVE_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_GONDOWAN_PASSAGE_WEST, GondowanPassage,
+               GONDOWAN_PASSAGE_FROM_WORLD_MAP_SOUTH),
+    SCENE_EXIT(WORLD_MAP_TO_SUHALLA_DESERT_SOUTH, SuhallaDesertSouth,
+               SUHALLA_DESERT_SOUTH_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_KALAY_DOCKS_NORTH, KalayDocks,
+               KALAY_DOCKS_FROM_WORLD_MAP_NORTH),
+    SCENE_EXIT(WORLD_MAP_TO_LALIVERO_WEST, Lalivero,
+               LALIVERO_FROM_WORLD_MAP_WEST),
+    SCENE_EXIT(WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE, KalayTunnelEntrance,
+               KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_NORTH),
+    SCENE_EXIT(WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_EAST, VenusLighthouseEntry,
+               VENUS_LIGHTHOUSE_ENTRY_FROM_WORLD_MAP_EAST),
+    SCENE_EXIT(WORLD_MAP_TO_TOLBI_SHIP_DECK_CROSSBONE_ISLE, TolbiShipDeck,
+               TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS),
+    SCENE_EXIT(WORLD_MAP_TO_CROSSBONE_ISLE, CrossboneIsle,
+               CROSSBONE_ISLE_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_WORLD_MAP_FROM_VALE_PLAZA, WorldMap,
+               WORLD_MAP_FROM_VALE_PLAZA),
+    SCENE_EXIT(WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES, WorldMap,
+               WORLD_MAP_HAMMETS_CARAVAN_LEAVES),
+    SCENE_EXIT(WORLD_MAP_TO_TOLBI_SHIP_MAST_FIRST_ATTACK, TolbiShipMast,
+               TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK),
+    SCENE_EXIT(WORLD_MAP_TO_TOLBI_SHIP_MAST_SECOND_ATTACK, TolbiShipMast,
+               TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK),
+    SCENE_EXIT(WORLD_MAP_TO_TOLBI_SHIP_MAST_THIRD_ATTACK, TolbiShipMast,
+               TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK),
+    SCENE_EXIT(WORLD_MAP_TO_SHIP_ROOMS, ShipRooms, SHIP_ROOMS_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_TOLBI_SHIP_MAST_LAND_HO, TolbiShipMast,
+               TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO),
+    SCENE_EXIT(WORLD_MAP_TO_TOLBI_SHIP_DECK, TolbiShipDeck,
+               TOLBI_SHIP_DECK_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE_SOUTH, KalayTunnelEntrance,
+               KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH),
+    SCENE_EXIT(WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE, VenusLighthouseAerie,
+               VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_SHIP_ROOMS_ROWING_DECK_ISLAND, ShipRooms,
+               SHIP_ROOMS_ROWING_DECK_FROM_WORLD_MAP_ISLAND),
+    SCENE_EXIT(WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT, WorldMap,
+               WORLD_MAP_JENNA_AND_KRADEN_ADRIFT),
+    SCENE_EXIT(WORLD_MAP_TO_ROCK_ROOMS, RockRooms,
+               ROCK_ROOMS_FROM_SUHALLA_GATE_CHECKPOINT),
+    SCENE_EXITS_END,
 };
 
 s32 gWorldMapKolimaBridgeScript[] = {
@@ -3749,56 +3753,56 @@ struct MapEvent gWorldMapEvents[] = {
     { BG_EVENT(BG_EVENT_GROUND), MB_WORLD_MAP_TURTLE_BOOTS, FLAG_WORLD_MAP_TURTLE_BOOTS, FIND_ITEM(ITEM_TURTLE_BOOTS) },
     { MAP_EVENT_TALK, LOCALID_IODEM, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutBlackOrb) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_IODEM, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutBlackOrb) },
-    { MAP_EVENT_WARP, WORLD_MAP_TO_MOGALL_FOREST_SIGN, CONDITION_ALWAYS, WORLD_MAP_TO_MOGALL_FOREST_SIGN },
-    { MAP_EVENT_WARP, WORLD_MAP_TO_ALPINE_CROSSING_EAST, CONDITION_ALWAYS, WORLD_MAP_TO_ALPINE_CROSSING_EAST },
-    { MAP_EVENT_WARP, WORLD_MAP_TO_ALPINE_CROSSING_NORTH, CONDITION_ALWAYS, WORLD_MAP_TO_ALPINE_CROSSING_NORTH },
-    { MAP_EVENT_WARP, WORLD_MAP_TO_ALPINE_CROSSING_WEST, CONDITION_ALWAYS, WORLD_MAP_TO_ALPINE_CROSSING_WEST },
-    { MAP_EVENT_WARP, WORLD_MAP_TO_LAMAKAN_DESERT_EAST, CONDITION_ALWAYS, WORLD_MAP_TO_LAMAKAN_DESERT_EAST },
-    { MAP_EVENT_WARP, WORLD_MAP_TO_SUHALLA_DESERT_NORTH, CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA_DESERT_NORTH },
-    { MAP_EVENT_WARP, WORLD_MAP_TO_SUHALLA_DESERT_SOUTH, CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA_DESERT_SOUTH },
-    { MAP_EVENT_WARP, WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_SOUTH, CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_SOUTH },
-    { MAP_EVENT_WARP, WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_EAST, CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_EAST },
-    { MAP_EVENT_WARP, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_WEST, CONDITION_ALWAYS, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_WEST },
-    { MAP_EVENT_WARP, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_EAST, CONDITION_ALWAYS, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_EAST },
-    { MAP_EVENT_WARP, WORLD_MAP_TO_BILIBIN_BARRICADE_EAST, CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN_BARRICADE_EAST },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_VALE_PLAZA), CONDITION_ALWAYS, WORLD_MAP_TO_VALE_PLAZA },
+    { MAP_EVENT_EXIT, WORLD_MAP_TO_MOGALL_FOREST_SIGN, CONDITION_ALWAYS, WORLD_MAP_TO_MOGALL_FOREST_SIGN },
+    { MAP_EVENT_EXIT, WORLD_MAP_TO_ALPINE_CROSSING_EAST, CONDITION_ALWAYS, WORLD_MAP_TO_ALPINE_CROSSING_EAST },
+    { MAP_EVENT_EXIT, WORLD_MAP_TO_ALPINE_CROSSING_NORTH, CONDITION_ALWAYS, WORLD_MAP_TO_ALPINE_CROSSING_NORTH },
+    { MAP_EVENT_EXIT, WORLD_MAP_TO_ALPINE_CROSSING_WEST, CONDITION_ALWAYS, WORLD_MAP_TO_ALPINE_CROSSING_WEST },
+    { MAP_EVENT_EXIT, WORLD_MAP_TO_LAMAKAN_DESERT_EAST, CONDITION_ALWAYS, WORLD_MAP_TO_LAMAKAN_DESERT_EAST },
+    { MAP_EVENT_EXIT, WORLD_MAP_TO_SUHALLA_DESERT_NORTH, CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA_DESERT_NORTH },
+    { MAP_EVENT_EXIT, WORLD_MAP_TO_SUHALLA_DESERT_SOUTH, CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA_DESERT_SOUTH },
+    { MAP_EVENT_EXIT, WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_SOUTH, CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_SOUTH },
+    { MAP_EVENT_EXIT, WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_EAST, CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_EAST },
+    { MAP_EVENT_EXIT, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_WEST, CONDITION_ALWAYS, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_WEST },
+    { MAP_EVENT_EXIT, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_EAST, CONDITION_ALWAYS, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_EAST },
+    { MAP_EVENT_EXIT, WORLD_MAP_TO_BILIBIN_BARRICADE_EAST, CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN_BARRICADE_EAST },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_VALE_PLAZA), CONDITION_ALWAYS, WORLD_MAP_TO_VALE_PLAZA },
     { MAP_EVENT_COORD, COORD_EVENT_AREA(LOCALID_TO_VAULT), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterVault) },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_GOMA_CAVE_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_GOMA_CAVE_ENTRANCE },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_GOMA_CAVE_BRIDGE), CONDITION_ALWAYS, WORLD_MAP_TO_GOMA_CAVE_BRIDGE },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_BILIBIN), CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_GOMA_CAVE_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_GOMA_CAVE_ENTRANCE },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_GOMA_CAVE_BRIDGE), CONDITION_ALWAYS, WORLD_MAP_TO_GOMA_CAVE_BRIDGE },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_BILIBIN), CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN },
     { MAP_EVENT_COORD, COORD_EVENT_AREA(LOCALID_TO_BILIBIN_BARRICADE), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterBilibinBarricade) },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_KOLIMA), CONDITION_ALWAYS, WORLD_MAP_TO_KOLIMA_WEST },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_KOLIMA), CONDITION_ALWAYS, WORLD_MAP_TO_KOLIMA_WEST },
     { MAP_EVENT_COORD, COORD_EVENT_AREA(LOCALID_TO_KOLIMA_BRIDGE), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterKolimaBridge) },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_KOLIMA_FOREST), CONDITION_ALWAYS, WORLD_MAP_TO_KOLIMA_FOREST_ENTRANCE },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_BILIBIN_CAVE_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN_CAVE_ENTRANCE },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_BILIBIN_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN_CAVE_ICE },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_IMIL), CONDITION_ALWAYS, WORLD_MAP_TO_IMIL_SOUTH },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_MERCURY_LIGHTHOUSE), CONDITION_ALWAYS, WORLD_MAP_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_FUCHIN_TEMPLE), CONDITION_ALWAYS, WORLD_MAP_TO_FUCHIN_TEMPLE_GROUNDS },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_MOGALL_FOREST_SIGN), CONDITION_ALWAYS, WORLD_MAP_TO_MOGALL_FOREST_SIGN },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_MOGALL_FOREST_KILLER_APE), CONDITION_ALWAYS, WORLD_MAP_TO_MOGALL_FOREST_KILLER_APE },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_XIAN), CONDITION_ALWAYS, WORLD_MAP_TO_XIAN },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_ALTIN), CONDITION_ALWAYS, WORLD_MAP_TO_ALTIN },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_ALTIN_PEAK), CONDITION_ALWAYS, WORLD_MAP_TO_ALTIN_PEAK_WEST_EXIT },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_LAMA_TEMPLE), CONDITION_ALWAYS, WORLD_MAP_TO_LAMA_TEMPLE },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_LAMAKAN_DESERT_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_LAMAKAN_DESERT_CAVE },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_KALAY), CONDITION_ALWAYS, WORLD_MAP_TO_KALAY_EAST },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_LUNPA), CONDITION_ALWAYS, WORLD_MAP_TO_LUNPA },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_WEST_LUNPA_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_WEST_LUNPA_CAVE },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_KOLIMA_FOREST), CONDITION_ALWAYS, WORLD_MAP_TO_KOLIMA_FOREST_ENTRANCE },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_BILIBIN_CAVE_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN_CAVE_ENTRANCE },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_BILIBIN_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN_CAVE_ICE },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_IMIL), CONDITION_ALWAYS, WORLD_MAP_TO_IMIL_SOUTH },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_MERCURY_LIGHTHOUSE), CONDITION_ALWAYS, WORLD_MAP_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_FUCHIN_TEMPLE), CONDITION_ALWAYS, WORLD_MAP_TO_FUCHIN_TEMPLE_GROUNDS },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_MOGALL_FOREST_SIGN), CONDITION_ALWAYS, WORLD_MAP_TO_MOGALL_FOREST_SIGN },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_MOGALL_FOREST_KILLER_APE), CONDITION_ALWAYS, WORLD_MAP_TO_MOGALL_FOREST_KILLER_APE },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_XIAN), CONDITION_ALWAYS, WORLD_MAP_TO_XIAN },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_ALTIN), CONDITION_ALWAYS, WORLD_MAP_TO_ALTIN },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_ALTIN_PEAK), CONDITION_ALWAYS, WORLD_MAP_TO_ALTIN_PEAK_WEST_EXIT },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_LAMA_TEMPLE), CONDITION_ALWAYS, WORLD_MAP_TO_LAMA_TEMPLE },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_LAMAKAN_DESERT_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_LAMAKAN_DESERT_CAVE },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_KALAY), CONDITION_ALWAYS, WORLD_MAP_TO_KALAY_EAST },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_LUNPA), CONDITION_ALWAYS, WORLD_MAP_TO_LUNPA },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_WEST_LUNPA_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_WEST_LUNPA_CAVE },
     { MAP_EVENT_COORD, COORD_EVENT_AREA(LOCALID_TO_KALAY_DOCKS), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterKalayDocks) },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_TOLBI_DOCKS), CONDITION_ALWAYS, WORLD_MAP_TO_TOLBI_DOCKS },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_TOLBI), CONDITION_ALWAYS, WORLD_MAP_TO_TOLBI },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_ALTMILLER_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_ALTMILLER_CAVE_ENTRANCE },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_TOLBI_DOCKS), CONDITION_ALWAYS, WORLD_MAP_TO_TOLBI_DOCKS },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_TOLBI), CONDITION_ALWAYS, WORLD_MAP_TO_TOLBI },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_ALTMILLER_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_ALTMILLER_CAVE_ENTRANCE },
     { MAP_EVENT_COORD, COORD_EVENT_AREA(LOCALID_TO_GONDOWAN_PASSAGE), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterGondowanPassage) },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_KALAY_TUNNEL_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_GONDOWAN_CAVE_NORTH), CONDITION_ALWAYS, WORLD_MAP_TO_GONDOWAN_CAVE_NORTH },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_GONDOWAN_CAVE_SOUTH), CONDITION_ALWAYS, WORLD_MAP_TO_GONDOWAN_CAVE_SOUTH },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_SUHALLA), CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_GATEWAY_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_GATEWAY_CAVE },
-    { MAP_EVENT_WARP, COORD_EVENT_AREA(LOCALID_TO_ROAD_TO_BABI_LIGHTHOUSE), CONDITION_ALWAYS, WORLD_MAP_TO_ROAD_TO_BABI_LIGHTHOUSE },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_KALAY_TUNNEL_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_GONDOWAN_CAVE_NORTH), CONDITION_ALWAYS, WORLD_MAP_TO_GONDOWAN_CAVE_NORTH },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_GONDOWAN_CAVE_SOUTH), CONDITION_ALWAYS, WORLD_MAP_TO_GONDOWAN_CAVE_SOUTH },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_SUHALLA), CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_GATEWAY_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_GATEWAY_CAVE },
+    { MAP_EVENT_EXIT, COORD_EVENT_AREA(LOCALID_TO_ROAD_TO_BABI_LIGHTHOUSE), CONDITION_ALWAYS, WORLD_MAP_TO_ROAD_TO_BABI_LIGHTHOUSE },
     { MAP_EVENT_COORD, COORD_EVENT_AREA(LOCALID_TO_LALIVERO), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterLalivero) },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), MB_WORLD_MAP_TOLBI_SHIP, IF_FLAG_SET(FLAG_TOLBI_SHIP_AT_ISLAND), EVENT_SCRIPT(EventScript_ReturnToTolbiShip) },
-    { MAP_EVENT_WARP | MAP_EVENT_FLAG_FACING | FACING_NORTH, MB_WORLD_MAP_CROSSBONE_ISLE, CONDITION_ALWAYS, WORLD_MAP_TO_CROSSBONE_ISLE },
+    { MAP_EVENT_EXIT | MAP_EVENT_FLAG_FACING | FACING_NORTH, MB_WORLD_MAP_CROSSBONE_ISLE, CONDITION_ALWAYS, WORLD_MAP_TO_CROSSBONE_ISLE },
     { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_STORM, IF_FLAG_SET(FLAG_WORLD_MAP_CAUGHT_IN_STORM), EVENT_SCRIPT(EventScript_StartDousingStorm) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_STORM, IF_FLAG_SET(FLAG_WORLD_MAP_CAUGHT_IN_STORM), EVENT_SCRIPT(EventScript_DouseMapStorm) },
     { MAP_EVENT_RAISED, RAISED_STORM_TIME_UP, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StormDropsParty) },

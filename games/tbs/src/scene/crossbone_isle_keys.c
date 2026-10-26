@@ -231,24 +231,24 @@ static void EventScript_BaneJoins(void) {
 
 UNUSED static void CrossboneIsleKeys_UnusedHook(void) {}
 
-const struct MapWarpDest *Scene_GetWarpDests(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 selector = gSaveBlock.sceneId;
 
   if (selector == (s32)&SceneId_CrossboneIsleKeys) {
-    return gCrossboneIsleKeysRoomWarpDests;
+    return gCrossboneIsleKeysRoomEntrances;
   }
   if (selector == (s32)&SceneId_CrossboneIsleStatues) {
-    return gCrossboneIsleStatuesWarpDests;
+    return gCrossboneIsleStatuesEntrances;
   }
   if (selector == (s32)&SceneId_CrossboneIsleBane) {
-    return gCrossboneIsleBaneWarpDests;
+    return gCrossboneIsleBaneEntrances;
   }
-  return gCrossboneIsleKeysWarpDestsOther;
+  return gCrossboneIsleKeysEntrancesOther;
 }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Scene_GetWarps(void) { return gCrossboneIsleKeysWarps; }
+const u32 *Scene_GetExits(void) { return gCrossboneIsleKeysExits; }
 
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   s16 selector = gSaveBlock.sceneId;
@@ -1544,40 +1544,40 @@ s32 gCrossboneIsleKeys_BaneWalkTargets[] = {
     888, 840,
 };
 
-struct MapWarpDest gCrossboneIsleKeysWarpDestsOther[] = {
-    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gCrossboneIsleKeysEntrancesOther[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { MAP_TABLE_END },
 };
 
-struct MapWarpDest gCrossboneIsleKeysRoomWarpDests[] = {
+struct SceneEntrance gCrossboneIsleKeysRoomEntrances[] = {
     { CROSSBONE_ISLE_KEYS_FROM_CROSSBONE_ISLE_THIRD_FLOOR_EAST, CONDITION_ALWAYS, 200, 0, 968, FACING_NORTH, 0, 24, 560, 504, 1008, 0 },
     { CROSSBONE_ISLE_KEYS_FROM_CROSSBONE_ISLE_THIRD_FLOOR_WEST, CONDITION_ALWAYS, 88, 0, 968, FACING_NORTH, 0, 24, 560, 504, 1008, 0 },
     { MAP_TABLE_END },
 };
 
-struct MapWarpDest gCrossboneIsleStatuesWarpDests[] = {
+struct SceneEntrance gCrossboneIsleStatuesEntrances[] = {
     { CROSSBONE_ISLE_STATUES_FROM_CROSSBONE_ISLE_FOURTH_FLOOR_EAST, CONDITION_ALWAYS, 200, 0, 408, FACING_NORTH, 0, 40, 0, 464, 440, 0 },
     { CROSSBONE_ISLE_STATUES_FROM_CROSSBONE_ISLE_FOURTH_FLOOR_WEST, CONDITION_ALWAYS, 88, 0, 392, FACING_NORTH, 0, 40, 0, 464, 440, 0 },
     { MAP_TABLE_END },
 };
 
-struct MapWarpDest gCrossboneIsleBaneWarpDests[] = {
+struct SceneEntrance gCrossboneIsleBaneEntrances[] = {
     { CROSSBONE_ISLE_BANE_FROM_CROSSBONE_ISLE_SIXTH_FLOOR_EAST, CONDITION_ALWAYS, 776, 0, 952, FACING_NORTH, 0, 512, 544, 928, 992, 0 },
     { CROSSBONE_ISLE_BANE_FROM_CROSSBONE_ISLE_SIXTH_FLOOR_WEST, CONDITION_ALWAYS, 664, 0, 952, FACING_NORTH, 0, 512, 544, 928, 992, 0 },
     { MAP_TABLE_END },
 };
 
-u32 gCrossboneIsleKeysWarps[] = {
-    MAP_WARPS(CrossboneIsleKeys),
-    MAP_WARP(CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_THIRD_FLOOR_EAST, CrossboneIsleThirdFloor, CROSSBONE_ISLE_THIRD_FLOOR_FROM_CROSSBONE_ISLE_KEYS_EAST),
-    MAP_WARP(CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_THIRD_FLOOR_WEST, CrossboneIsleThirdFloor, CROSSBONE_ISLE_THIRD_FLOOR_FROM_CROSSBONE_ISLE_KEYS_WEST),
-    MAP_WARPS(CrossboneIsleStatues),
-    MAP_WARP(CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_EAST, CrossboneIsleFourthFloor, CROSSBONE_ISLE_FOURTH_FLOOR_FROM_CROSSBONE_ISLE_STATUES_EAST),
-    MAP_WARP(CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_WEST, CrossboneIsleFourthFloor, CROSSBONE_ISLE_FOURTH_FLOOR_FROM_CROSSBONE_ISLE_STATUES_WEST),
-    MAP_WARPS(CrossboneIsleBane),
-    MAP_WARP(CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_SIXTH_FLOOR_EAST, CrossboneIsleSixthFloor, CROSSBONE_ISLE_SIXTH_FLOOR_FROM_CROSSBONE_ISLE_BANE_EAST),
-    MAP_WARP(CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_SIXTH_FLOOR_WEST, CrossboneIsleSixthFloor, CROSSBONE_ISLE_SIXTH_FLOOR_FROM_CROSSBONE_ISLE_BANE_WEST),
-    MAP_WARPS_END,
+u32 gCrossboneIsleKeysExits[] = {
+    SCENE_EXITS(CrossboneIsleKeys),
+    SCENE_EXIT(CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_THIRD_FLOOR_EAST, CrossboneIsleThirdFloor, CROSSBONE_ISLE_THIRD_FLOOR_FROM_CROSSBONE_ISLE_KEYS_EAST),
+    SCENE_EXIT(CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_THIRD_FLOOR_WEST, CrossboneIsleThirdFloor, CROSSBONE_ISLE_THIRD_FLOOR_FROM_CROSSBONE_ISLE_KEYS_WEST),
+    SCENE_EXITS(CrossboneIsleStatues),
+    SCENE_EXIT(CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_EAST, CrossboneIsleFourthFloor, CROSSBONE_ISLE_FOURTH_FLOOR_FROM_CROSSBONE_ISLE_STATUES_EAST),
+    SCENE_EXIT(CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_WEST, CrossboneIsleFourthFloor, CROSSBONE_ISLE_FOURTH_FLOOR_FROM_CROSSBONE_ISLE_STATUES_WEST),
+    SCENE_EXITS(CrossboneIsleBane),
+    SCENE_EXIT(CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_SIXTH_FLOOR_EAST, CrossboneIsleSixthFloor, CROSSBONE_ISLE_SIXTH_FLOOR_FROM_CROSSBONE_ISLE_BANE_EAST),
+    SCENE_EXIT(CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_SIXTH_FLOOR_WEST, CrossboneIsleSixthFloor, CROSSBONE_ISLE_SIXTH_FLOOR_FROM_CROSSBONE_ISLE_BANE_WEST),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gCrossboneIsleKeysObjectEventTemplatesOther[] = {
@@ -1638,8 +1638,8 @@ struct MapEvent gCrossboneIsleKeysEventsOther[] = {
 };
 
 struct MapEvent gCrossboneIsleKeysRoomEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_THIRD_FLOOR_EAST },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_THIRD_FLOOR_WEST },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_THIRD_FLOOR_EAST },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_THIRD_FLOOR_WEST },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ShowRedKey) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HideRedKey) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_CATCH), LOCALID_FIRST_BLUE_KEY, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CatchFirstBlueKey) },
@@ -1663,8 +1663,8 @@ struct MapEvent gCrossboneIsleKeysRoomEvents[] = {
 };
 
 struct MapEvent gCrossboneIsleStatuesEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_EAST },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_WEST },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_EAST },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_WEST },
     { MAP_EVENT_COORD, 53, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ThirdStatueShadowsLeader) },
     { MAP_EVENT_COORD, 54, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FourthStatueShadowsLeader) },
     { MAP_EVENT_COORD, 61, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DodgeThirdPursuer) },
@@ -1688,9 +1688,9 @@ struct MapEvent gCrossboneIsleStatuesEvents[] = {
 // clang-format on
 
 struct MapEvent gCrossboneIsleBaneEvents[] = {
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS,
      CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_SIXTH_FLOOR_EAST},
-    {MAP_EVENT_WARP, 2, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS,
      CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_SIXTH_FLOOR_WEST},
     {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 50, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_PushThirdPillar)},

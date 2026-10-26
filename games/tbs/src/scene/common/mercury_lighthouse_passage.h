@@ -8,8 +8,8 @@
 
 /// Stepping into a passage: the leader moves north with the trail of sparks,
 /// vanishes, and after half a second the screen fades and the party takes that
-/// warp.
-static void MercuryLighthouse_LeaveThroughPassage(s32 warp) {
+/// exit.
+static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
   struct ObjectEvent *v = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   FieldScript_Start();
   Sound_PlaySong(SE_SPARKLING_PASSAGE);
@@ -29,7 +29,7 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 warp) {
   FieldScript_WaitFrames(30);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(warp);
+  Import_ScriptRequestExit(exit);
   FieldScript_End();
 }
 
@@ -37,7 +37,7 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 warp) {
 // MercuryLighthouse_LeaveThroughPassage, which plays the same sound and steps
 // the same way; nothing calls it, so nothing shows what would have followed.
 /// Unused: the leader steps 8 pixels north with the passages' sound and
-/// vanishes, then is put at x 8 * column + 8, z 0, with no warp and no end to
+/// vanishes, then is put at x 8 * column + 8, z 0, with no exit and no end to
 /// the script; nothing in either overlay calls it.
 static void UNUSED MercuryLighthouse_DropLeaderToColumn(s32 column) {
   struct ObjectEvent *record;

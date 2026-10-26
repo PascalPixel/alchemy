@@ -12,7 +12,7 @@
 /// object event template tables, so one enum names them; the woman the
 /// sandstorms brought stands off the map until the audience.
 ///
-/// Five doors, whose metatile behaviors are their warps' numbers
+/// Five doors, whose metatile behaviors are their exits' numbers
 /// (SUHALLA_TO_INN to SUHALLA_TO_HOUSE_EAST), open as the leader walks north
 /// into them (EventScript_EnterDoor, EventScript_EnterWideDoor) and lead into
 /// the village's buildings. Three ways lead out onto the world map, and the
@@ -112,11 +112,13 @@ enum SuhallaLocalId {
   LOCALID_SPROUT
 };
 
-const struct MapWarpDest *Scene_GetWarpDests(void) { return gSuhallaWarpDests; }
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gSuhallaEntrances;
+}
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Scene_GetWarps(void) { return gSuhallaWarps; }
+const u32 *Scene_GetExits(void) { return gSuhallaExits; }
 
 /// Suhalla's people, who stand elsewhere after Babi's audience.
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
@@ -172,35 +174,35 @@ static void EventScript_GrowSprout(void) {
 
 /// Walking north into one of Suhalla's doors (SUHALLA_TO_INN,
 /// SUHALLA_TO_HOUSE_WEST, SUHALLA_TO_HOUSE_NORTHEAST and SUHALLA_TO_HOUSE_EAST,
-/// whose metatile behaviors are their warps' numbers): the door opens, the
-/// leader steps through and the party leaves by that warp into the village's
+/// whose metatile behaviors are their exits' numbers): the door opens, the
+/// leader steps through and the party leaves by that exit into the village's
 /// buildings.
 static void EventScript_EnterDoor(void) {
   struct FieldWork *work = gFieldWork;
-  s32 warpTrigger = work->coordEvent;
-  u16 cellX = gSuhallaDoorCells[warpTrigger][0];
-  u16 cellZ = gSuhallaDoorCells[warpTrigger][1];
+  s32 exitTrigger = work->coordEvent;
+  u16 cellX = gSuhallaDoorCells[exitTrigger][0];
+  u16 cellZ = gSuhallaDoorCells[exitTrigger][1];
 
   Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gSuhallaDoorOpenSteps, cellX, cellZ);
-  // Walk through the opening while the warp transition counts down.
+  // Walk through the opening while the exit transition counts down.
   ObjectEvent_WalkBy(LOCALID_PARTY_LEADER, 0, -16);
   gFieldWork->transitionFrames = 16;
-  Import_ScriptRequestWarp(warpTrigger);
+  Import_ScriptRequestExit(exitTrigger);
 }
 
 /// The same through the wide door of SUHALLA_TO_SANCTUM, into Suhalla Sanctum.
 static void EventScript_EnterWideDoor(void) {
   struct FieldWork *work = gFieldWork;
-  s32 warpTrigger = work->coordEvent;
-  u16 cellX = gSuhallaDoorCells[warpTrigger][0];
-  u16 cellZ = gSuhallaDoorCells[warpTrigger][1];
+  s32 exitTrigger = work->coordEvent;
+  u16 cellX = gSuhallaDoorCells[exitTrigger][0];
+  u16 cellZ = gSuhallaDoorCells[exitTrigger][1];
 
   Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gSuhallaWideDoorOpenSteps, cellX, cellZ);
   ObjectEvent_WalkBy(LOCALID_PARTY_LEADER, 0, -16);
   gFieldWork->transitionFrames = 16;
-  Import_ScriptRequestWarp(warpTrigger);
+  Import_ScriptRequestExit(exitTrigger);
 }
 
 /// Suhalla's doors, people, treasure and sprout, before or after Babi's
@@ -219,7 +221,7 @@ const struct MapEvent *Scene_GetEvents(void) {
 s32 Scene_Initialize(void) {
   struct FieldWork *work;
 
-  if (gSaveBlock.warpDest == SUHALLA_AFTER_BABI_SPOKE) {
+  if (gSaveBlock.entrance == SUHALLA_AFTER_BABI_SPOKE) {
     GameFlag_Set(FLAG_BABI_SPOKE_AFTER_COLOSSO);
   }
 
@@ -234,8 +236,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-struct MapWarpDest gSuhallaWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gSuhallaEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {SUHALLA_FROM_INN, CONDITION_ALWAYS, 136, 0, 152, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
@@ -254,19 +256,20 @@ struct MapWarpDest gSuhallaWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gSuhallaWarps[] = {
-    MAP_WARPS(Suhalla),
-    MAP_WARP(SUHALLA_TO_INN, TimberRoomsA, TIMBER_ROOMS_A_INN),
-    MAP_WARP(SUHALLA_TO_SANCTUM, TimberRoomsA, TIMBER_ROOMS_A_SANCTUM),
-    MAP_WARP(SUHALLA_TO_HOUSE_WEST, TimberRoomsA, TIMBER_ROOMS_A_HOUSE_WEST),
-    MAP_WARP(SUHALLA_TO_HOUSE_NORTHEAST, TimberRoomsA,
-             TIMBER_ROOMS_A_HOUSE_NORTHEAST),
-    MAP_WARP(SUHALLA_TO_HOUSE_EAST, TimberRoomsA, TIMBER_ROOMS_A_HOUSE_EAST),
-    MAP_WARP(SUHALLA_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_SUHALLA),
-    MAP_WARP(SUHALLA_TO_WORLD_MAP_NORTH, WorldMap,
-             WORLD_MAP_FROM_SUHALLA_NORTH),
-    MAP_WARP(SUHALLA_TO_WORLD_MAP_EAST, WorldMap, WORLD_MAP_FROM_SUHALLA_EAST),
-    MAP_WARPS_END,
+u32 gSuhallaExits[] = {
+    SCENE_EXITS(Suhalla),
+    SCENE_EXIT(SUHALLA_TO_INN, TimberRoomsA, TIMBER_ROOMS_A_INN),
+    SCENE_EXIT(SUHALLA_TO_SANCTUM, TimberRoomsA, TIMBER_ROOMS_A_SANCTUM),
+    SCENE_EXIT(SUHALLA_TO_HOUSE_WEST, TimberRoomsA, TIMBER_ROOMS_A_HOUSE_WEST),
+    SCENE_EXIT(SUHALLA_TO_HOUSE_NORTHEAST, TimberRoomsA,
+               TIMBER_ROOMS_A_HOUSE_NORTHEAST),
+    SCENE_EXIT(SUHALLA_TO_HOUSE_EAST, TimberRoomsA, TIMBER_ROOMS_A_HOUSE_EAST),
+    SCENE_EXIT(SUHALLA_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_SUHALLA),
+    SCENE_EXIT(SUHALLA_TO_WORLD_MAP_NORTH, WorldMap,
+               WORLD_MAP_FROM_SUHALLA_NORTH),
+    SCENE_EXIT(SUHALLA_TO_WORLD_MAP_EAST, WorldMap,
+               WORLD_MAP_FROM_SUHALLA_EAST),
+    SCENE_EXITS_END,
 };
 
 // clang-format off
@@ -333,9 +336,9 @@ struct MapEvent gSuhallaEvents[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_NORTHEAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { MAP_EVENT_WARP, 10, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP },
-    { MAP_EVENT_WARP, 11, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_NORTH },
-    { MAP_EVENT_WARP, 12, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_EAST },
+    { MAP_EVENT_EXIT, 10, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP },
+    { MAP_EVENT_EXIT, 11, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_NORTH },
+    { MAP_EVENT_EXIT, 12, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_EAST },
     { MAP_EVENT_TALK, LOCALID_MAN_THIS_IS_SUHALLA, CONDITION_ALWAYS, MSGNO(MsgSuhallaThisIsSuhallaDontTryCrossing) },
     { MAP_EVENT_TALK, LOCALID_WOMAN_ASKING_ABOUT_LALIVERO, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskIfGoingToLalivero) },
     { MAP_EVENT_TALK, LOCALID_MAN_NEVER_TRUSTING_ANGARA, CONDITION_ALWAYS, MSGNO(MsgSuhallaWeGondowansWillNeverTrustAnyone) },
@@ -363,9 +366,9 @@ struct MapEvent gSuhallaEventsLater[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_NORTHEAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { MAP_EVENT_WARP, 10, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP },
-    { MAP_EVENT_WARP, 11, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_NORTH },
-    { MAP_EVENT_WARP, 12, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_EAST },
+    { MAP_EVENT_EXIT, 10, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP },
+    { MAP_EVENT_EXIT, 11, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_NORTH },
+    { MAP_EVENT_EXIT, 12, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_EAST },
     { MAP_EVENT_TALK, LOCALID_MAN_THIS_IS_SUHALLA, CONDITION_ALWAYS, MSGNO(MsgSuhallaWelcomeToSuhallaIBetThe) },
     { MAP_EVENT_TALK, LOCALID_WOMAN_ASKING_ABOUT_LALIVERO, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheDesertIsEnvelopedInSandstorms) },
     { MAP_EVENT_TALK, LOCALID_MAN_NEVER_TRUSTING_ANGARA, CONDITION_ALWAYS, MSGNO(MsgSuhallaSoldiersFromTolbiWereCaughtIn) },

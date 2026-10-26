@@ -8,7 +8,7 @@
 /// Lighthouse, chosen by FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, as the town's
 /// are (lalivero.c).
 ///
-/// Timber rooms B (SceneId_TimberRoomsB) holds, by the warps that lead in, a
+/// Timber rooms B (SceneId_TimberRoomsB) holds, by the exits that lead in, a
 /// house (TIMBER_ROOMS_B_FROM_LALIVERO_WEST), a house
 /// (TIMBER_ROOMS_B_FROM_LALIVERO_SOUTHEAST), the item shop with a room upstairs
 /// (TIMBER_ROOMS_B_FROM_LALIVERO_NORTH), a house with an upper floor
@@ -21,7 +21,7 @@
 /// talk. Stepping into the Sanctum by TIMBER_ROOMS_B_SANCTUM makes it the place
 /// a defeated party wakes. Barrels hold a Lucky Medal and an Antidote.
 ///
-/// Timber rooms C (SceneId_TimberRoomsC) holds, by the warps that lead in,
+/// Timber rooms C (SceneId_TimberRoomsC) holds, by the exits that lead in,
 /// Faran's house (TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST and
 /// TIMBER_ROOMS_C_FROM_LALIVERO_SOUTH), the inn with its upper floor and two
 /// guest rooms (TIMBER_ROOMS_C_FROM_LALIVERO_NORTHEAST), and the way out to the
@@ -66,9 +66,9 @@
 #include "flags.h"
 static void LaliveroInteriors_TellFaranAboutJenna(void);
 
-/// A warp destination that sets FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED. No warp
-/// leads to it and the warp destination table has no row for it: only the debug
-/// map selector, which warps to any warp destination from 0 to 99, reaches it.
+/// An entrance that sets FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED. No exit
+/// leads to it and the entrance table has no row for it: only the debug
+/// map selector, which exits to any entrance from 0 to 99, reaches it.
 enum {
   ENTRANCE_FROM_AERIE = 90,
 };
@@ -218,18 +218,18 @@ static s32 InnWorker_Sigh(struct Object *interpreter) {
   return 0;
 }
 
-const struct MapWarpDest *LaliveroInteriors_GetWarpDests(void) {
-  return gLaliveroInteriors_WarpDests;
+const struct SceneEntrance *LaliveroInteriors_GetEntrances(void) {
+  return gLaliveroInteriors_Entrances;
 }
 
-const struct MapWarpRegion *LaliveroInteriors_GetRegions(void) {
+const struct SceneExitRegion *LaliveroInteriors_GetRegions(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_TimberRoomsB) {
     return gTimberRoomsB_Regions;
   }
   return gTimberRoomsC_Regions;
 }
 
-const u32 *LaliveroInteriors_GetWarps(void) { return gLaliveroInteriors_Warps; }
+const u32 *LaliveroInteriors_GetExits(void) { return gLaliveroInteriors_Exits; }
 
 /// The people of each map; Faran's house fills up after Venus Lighthouse.
 const struct ObjectEventTemplate *
@@ -407,13 +407,13 @@ static void EventScript_TalkToIodem(void) {
   FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
 }
 
-/// Both maps, a doorway out: take the touched coord event's warp with the exit
+/// Both maps, a doorway out: take the touched coord event's exit with the exit
 /// sound.
 static void EventScript_LeaveBuilding(void) {
   struct FieldWork *work = gFieldWork;
   s16 *trigger = (s16 *)&work->coordEvent;
 
-  Import_ScriptRequestWarp(*trigger);
+  Import_ScriptRequestExit(*trigger);
   Sound_PlaySong(SE_MAP_EXIT);
 }
 
@@ -843,10 +843,10 @@ static void LaliveroInteriors_TellFaranAboutJenna(void) {
 /// from Venus Lighthouse.
 s32 Scene_Initialize(void) {
   s32 sceneId;
-  s16 warpDest;
+  s16 entrance;
   struct ObjectEvent *objectEvent;
 
-  if (gSaveBlock.warpDest == ENTRANCE_FROM_AERIE) {
+  if (gSaveBlock.entrance == ENTRANCE_FROM_AERIE) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
   }
   gFieldWork->transition =
@@ -870,10 +870,10 @@ s32 Scene_Initialize(void) {
     objectEvent->sprite->image.priority = 2;
     Import_ObjectEventSetAnimation(LOCALID_NAPPING_WORKER,
                                    ANIM_WORKER_LIE_ASLEEP);
-    warpDest = gSaveBlock.warpDest;
-    if (warpDest == TIMBER_ROOMS_B_SANCTUM) {
+    entrance = gSaveBlock.entrance;
+    if (entrance == TIMBER_ROOMS_B_SANCTUM) {
       gSaveBlock.restartScene = sceneId;
-      gSaveBlock.restartWarpDest = warpDest;
+      gSaveBlock.restartEntrance = entrance;
     }
   }
   if (gSaveBlock.sceneId == (s32)&SceneId_TimberRoomsC) {
@@ -885,7 +885,7 @@ s32 Scene_Initialize(void) {
       ObjectEvent_SetActionScript(LOCALID_INN_WORKER,
                                   gLaliveroInteriors_InnWorkerChores);
     }
-    if (gSaveBlock.warpDest == TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE) {
+    if (gSaveBlock.entrance == TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE) {
       EventScript_ReportToFaran();
       // Iodem and Faran turn toward the leader, as their later object event
       // templates do.
@@ -895,7 +895,7 @@ s32 Scene_Initialize(void) {
       ObjectEvent_SetMovementType(
           (struct Object *)ObjectEvent_GetById(LOCALID_FARAN),
           MOVEMENT_TYPE_FACE_LEADER);
-      gSaveBlock.warpDest = TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST;
+      gSaveBlock.entrance = TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST;
     }
   }
   return 0;
@@ -937,7 +937,7 @@ s32 gLaliveroInteriors_InnWorkerChores[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-struct MapWarpDest gLaliveroInteriors_WarpDests[] = {
+struct SceneEntrance gLaliveroInteriors_Entrances[] = {
     {TIMBER_ROOMS_B_FROM_LALIVERO_WEST, CONDITION_ALWAYS, 144, 0, 168,
      FACING_NORTH, 0, 0, 8, 240, 192, 0},
     {TIMBER_ROOMS_B_FROM_LALIVERO_SOUTHEAST, CONDITION_ALWAYS, 400, 0, 168,
@@ -990,42 +990,42 @@ struct MapWarpDest gLaliveroInteriors_WarpDests[] = {
 };
 
 // clang-format off
-struct MapWarpRegion gTimberRoomsB_Regions[] = {
+struct SceneExitRegion gTimberRoomsB_Regions[] = {
     {196, 28, 595, 204, 36, 603, CONDITION_ALWAYS, TIMBER_ROOMS_B_TO_LALIVERO_EAST_SOUTHEAST},
     {MAP_TABLE_END},
 };
 
-struct MapWarpRegion gTimberRoomsC_Regions[] = {
+struct SceneExitRegion gTimberRoomsC_Regions[] = {
     {212, 28, 83, 220, 36, 91, CONDITION_ALWAYS, TIMBER_ROOMS_C_TO_LALIVERO_SOUTH},
     {MAP_TABLE_END},
 };
 
-u32 gLaliveroInteriors_Warps[] = {
-    MAP_WARPS(TimberRoomsB),
-    MAP_WARP(TIMBER_ROOMS_B_TO_LALIVERO_WEST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_WEST),
-    MAP_WARP(TIMBER_ROOMS_B_TO_LALIVERO_SOUTHEAST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_SOUTHEAST),
-    MAP_WARP(TIMBER_ROOMS_B_ITEM_SHOP_UPSTAIRS_TO_ITEM_SHOP, TimberRoomsB, TIMBER_ROOMS_B_ITEM_SHOP_FROM_ITEM_SHOP_UPSTAIRS),
-    MAP_WARP(TIMBER_ROOMS_B_TO_LALIVERO_NORTH, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_NORTH),
-    MAP_WARP(TIMBER_ROOMS_B_ITEM_SHOP_TO_ITEM_SHOP_UPSTAIRS, TimberRoomsB, TIMBER_ROOMS_B_ITEM_SHOP_UPSTAIRS_FROM_ITEM_SHOP),
-    MAP_WARP(TIMBER_ROOMS_B_TO_LALIVERO_NORTHWEST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_NORTHWEST),
-    MAP_WARP(TIMBER_ROOMS_B_NORTHWEST_HOUSE_TO_NORTHWEST_HOUSE_UPSTAIRS, TimberRoomsB, TIMBER_ROOMS_B_NORTHWEST_HOUSE_UPSTAIRS_FROM_NORTHWEST_HOUSE),
-    MAP_WARP(TIMBER_ROOMS_B_NORTHWEST_HOUSE_UPSTAIRS_TO_NORTHWEST_HOUSE, TimberRoomsB, TIMBER_ROOMS_B_NORTHWEST_HOUSE_FROM_NORTHWEST_HOUSE_UPSTAIRS),
-    MAP_WARP(TIMBER_ROOMS_B_TO_LALIVERO_SOUTH, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_SOUTH),
-    MAP_WARP(TIMBER_ROOMS_B_TO_LALIVERO_EAST_SOUTHEAST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_EAST_SOUTHEAST),
-    MAP_WARP(TIMBER_ROOMS_B_TO_LALIVERO_NORTHEAST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_NORTHEAST),
-    MAP_WARPS(TimberRoomsC),
-    MAP_WARP(TIMBER_ROOMS_C_TO_LALIVERO_SOUTHWEST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_C_SOUTHWEST),
-    MAP_WARP(TIMBER_ROOMS_C_TO_LALIVERO_SOUTH, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_C_SOUTH),
-    MAP_WARP(TIMBER_ROOMS_C_TO_LALIVERO_NORTHEAST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_C_NORTHEAST),
-    MAP_WARP(TIMBER_ROOMS_C_INN_TO_INN_UPSTAIRS, TimberRoomsC, TIMBER_ROOMS_C_INN_UPSTAIRS_FROM_INN),
-    MAP_WARP(TIMBER_ROOMS_C_INN_UPSTAIRS_TO_INN, TimberRoomsC, TIMBER_ROOMS_C_INN_FROM_INN_UPSTAIRS),
-    MAP_WARP(TIMBER_ROOMS_C_INN_UPSTAIRS_TO_GUEST_ROOM_WEST, TimberRoomsC, TIMBER_ROOMS_C_GUEST_ROOM_WEST_FROM_INN_UPSTAIRS),
-    MAP_WARP(TIMBER_ROOMS_C_INN_UPSTAIRS_TO_GUEST_ROOM_EAST, TimberRoomsC, TIMBER_ROOMS_C_GUEST_ROOM_EAST_FROM_INN_UPSTAIRS),
-    MAP_WARP(TIMBER_ROOMS_C_GUEST_ROOM_WEST_TO_INN_UPSTAIRS, TimberRoomsC, TIMBER_ROOMS_C_INN_UPSTAIRS_FROM_GUEST_ROOM_WEST),
-    MAP_WARP(TIMBER_ROOMS_C_GUEST_ROOM_EAST_TO_INN_UPSTAIRS, TimberRoomsC, TIMBER_ROOMS_C_INN_UPSTAIRS_FROM_GUEST_ROOM_EAST),
-    MAP_WARP(TIMBER_ROOMS_C_TO_LALIVERO_NORTHWEST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_C_NORTHWEST),
-    MAP_WARP(TIMBER_ROOMS_C_TO_LEMURIAN_SHIP, LemurianShip, LEMURIAN_SHIP_FROM_TIMBER_ROOMS_C),
-    MAP_WARPS_END,
+u32 gLaliveroInteriors_Exits[] = {
+    SCENE_EXITS(TimberRoomsB),
+    SCENE_EXIT(TIMBER_ROOMS_B_TO_LALIVERO_WEST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_WEST),
+    SCENE_EXIT(TIMBER_ROOMS_B_TO_LALIVERO_SOUTHEAST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_SOUTHEAST),
+    SCENE_EXIT(TIMBER_ROOMS_B_ITEM_SHOP_UPSTAIRS_TO_ITEM_SHOP, TimberRoomsB, TIMBER_ROOMS_B_ITEM_SHOP_FROM_ITEM_SHOP_UPSTAIRS),
+    SCENE_EXIT(TIMBER_ROOMS_B_TO_LALIVERO_NORTH, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_NORTH),
+    SCENE_EXIT(TIMBER_ROOMS_B_ITEM_SHOP_TO_ITEM_SHOP_UPSTAIRS, TimberRoomsB, TIMBER_ROOMS_B_ITEM_SHOP_UPSTAIRS_FROM_ITEM_SHOP),
+    SCENE_EXIT(TIMBER_ROOMS_B_TO_LALIVERO_NORTHWEST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_NORTHWEST),
+    SCENE_EXIT(TIMBER_ROOMS_B_NORTHWEST_HOUSE_TO_NORTHWEST_HOUSE_UPSTAIRS, TimberRoomsB, TIMBER_ROOMS_B_NORTHWEST_HOUSE_UPSTAIRS_FROM_NORTHWEST_HOUSE),
+    SCENE_EXIT(TIMBER_ROOMS_B_NORTHWEST_HOUSE_UPSTAIRS_TO_NORTHWEST_HOUSE, TimberRoomsB, TIMBER_ROOMS_B_NORTHWEST_HOUSE_FROM_NORTHWEST_HOUSE_UPSTAIRS),
+    SCENE_EXIT(TIMBER_ROOMS_B_TO_LALIVERO_SOUTH, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_SOUTH),
+    SCENE_EXIT(TIMBER_ROOMS_B_TO_LALIVERO_EAST_SOUTHEAST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_EAST_SOUTHEAST),
+    SCENE_EXIT(TIMBER_ROOMS_B_TO_LALIVERO_NORTHEAST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_NORTHEAST),
+    SCENE_EXITS(TimberRoomsC),
+    SCENE_EXIT(TIMBER_ROOMS_C_TO_LALIVERO_SOUTHWEST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_C_SOUTHWEST),
+    SCENE_EXIT(TIMBER_ROOMS_C_TO_LALIVERO_SOUTH, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_C_SOUTH),
+    SCENE_EXIT(TIMBER_ROOMS_C_TO_LALIVERO_NORTHEAST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_C_NORTHEAST),
+    SCENE_EXIT(TIMBER_ROOMS_C_INN_TO_INN_UPSTAIRS, TimberRoomsC, TIMBER_ROOMS_C_INN_UPSTAIRS_FROM_INN),
+    SCENE_EXIT(TIMBER_ROOMS_C_INN_UPSTAIRS_TO_INN, TimberRoomsC, TIMBER_ROOMS_C_INN_FROM_INN_UPSTAIRS),
+    SCENE_EXIT(TIMBER_ROOMS_C_INN_UPSTAIRS_TO_GUEST_ROOM_WEST, TimberRoomsC, TIMBER_ROOMS_C_GUEST_ROOM_WEST_FROM_INN_UPSTAIRS),
+    SCENE_EXIT(TIMBER_ROOMS_C_INN_UPSTAIRS_TO_GUEST_ROOM_EAST, TimberRoomsC, TIMBER_ROOMS_C_GUEST_ROOM_EAST_FROM_INN_UPSTAIRS),
+    SCENE_EXIT(TIMBER_ROOMS_C_GUEST_ROOM_WEST_TO_INN_UPSTAIRS, TimberRoomsC, TIMBER_ROOMS_C_INN_UPSTAIRS_FROM_GUEST_ROOM_WEST),
+    SCENE_EXIT(TIMBER_ROOMS_C_GUEST_ROOM_EAST_TO_INN_UPSTAIRS, TimberRoomsC, TIMBER_ROOMS_C_INN_UPSTAIRS_FROM_GUEST_ROOM_EAST),
+    SCENE_EXIT(TIMBER_ROOMS_C_TO_LALIVERO_NORTHWEST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_C_NORTHWEST),
+    SCENE_EXIT(TIMBER_ROOMS_C_TO_LEMURIAN_SHIP, LemurianShip, LEMURIAN_SHIP_FROM_TIMBER_ROOMS_C),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gTimberRoomsB_ObjectEventTemplates[] = {

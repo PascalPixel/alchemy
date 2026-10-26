@@ -140,20 +140,22 @@ enum ValeKradensCottageLocalId {
 #include "common/object_facing.h"
 
 /// The front door of Kraden's cottage stands open since Kraden set off, so
-/// walking in (metatile behavior 3, the warp into the cottage) skips its
+/// walking in (metatile behavior 3, the exit into the cottage) skips its
 /// opening.
 /// ★ Named from what the player sees: the arched wooden door of Kraden's
 /// thatched cottage (its render)
 #define FLAG_VALE_KRADENS_DOOR_OPEN FLAG_SCENE_TEMP_42
 
-const struct MapWarpDest *ValeKradensCottage_GetWarpDests(void) {
-  return gValeKradensCottage_WarpDests;
+const struct SceneEntrance *ValeKradensCottage_GetEntrances(void) {
+  return gValeKradensCottage_Entrances;
 }
 
-const struct MapWarpRegion *ValeKradensCottage_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *ValeKradensCottage_GetRegions(void) {
+  return NULL;
+}
 
-const u32 *ValeKradensCottage_GetWarps(void) {
-  return gValeKradensCottage_Warps;
+const u32 *ValeKradensCottage_GetExits(void) {
+  return gValeKradensCottage_Exits;
 }
 
 /// Returns the one object event template table for every visit;
@@ -514,7 +516,7 @@ static void EventScript_KradenPlansSanctumVisit(void) {
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
     FieldScript_FinishScreenTransition();
     FieldScript_WaitTransitionFrames();
-    Import_ScriptRequestWarp(
+    Import_ScriptRequestExit(
         VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG);
     FieldScript_End();
   }
@@ -607,7 +609,7 @@ static void EventScript_EnterCottage(void) {
     MapGrid_PlayMetatileCopySequence(gValeKradensCottage_DoorOpens, 43, 8);
   }
   ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 229, 217);
-  Import_ScriptRequestWarp(VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH);
+  Import_ScriptRequestExit(VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH);
 }
 
 /// In Vale on the way to Kraden's cottage, walking past the two strangers:
@@ -952,8 +954,8 @@ s32 ValeKradensCottage_Initialize(void) {
   struct ObjectEvent *objectEvent;
   s32 debrisRow;
 
-  if (gSaveBlock.warpDest == VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_UNUSED ||
-      gSaveBlock.warpDest == VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST) {
+  if (gSaveBlock.entrance == VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_UNUSED ||
+      gSaveBlock.entrance == VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
   if (Script_GetFlag(FLAG_KEEP_PARTY_POSITION) != 0) {
@@ -1006,7 +1008,7 @@ s32 ValeKradensCottage_Initialize(void) {
     Import_ObjectEventSetPosition(LOCALID_ROCKSLIDE_SURVIVOR, 0, 0);
     FieldScript_Start();
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-      if (gSaveBlock.warpDest ==
+      if (gSaveBlock.entrance ==
           VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH) {
         EventScript_KradenSetsOff();
       }
@@ -1235,8 +1237,8 @@ s32 gValeKradensCottage_FaceTargetActions[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct MapWarpDest gValeKradensCottage_WarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 228, 0, 172, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gValeKradensCottage_Entrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 228, 0, 172, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {VALE_KRADENS_COTTAGE_FROM_VALE_NORTH, CONDITION_ALWAYS, 454, 0, 290,
      FACING_WEST, 0, -1, -1, -1, -1, 0},
@@ -1253,25 +1255,26 @@ struct MapWarpDest gValeKradensCottage_WarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gValeKradensCottage_Warps[] = {
-    MAP_WARPS(ValeKradensCottage),
-    MAP_WARP(VALE_KRADENS_COTTAGE_TO_VALE_NORTH, Vale,
-             VALE_FROM_VALE_KRADENS_COTTAGE_NORTH),
-    MAP_WARP(VALE_KRADENS_COTTAGE_TO_VALE_SOUTH, Vale,
-             VALE_FROM_VALE_KRADENS_COTTAGE_SOUTH),
-    MAP_WARP(VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH, CottageRoomsB,
-             COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_NORTH),
-    MAP_WARP(VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST, ValeCaveMouth,
-             VALE_CAVE_MOUTH_FROM_VALE_KRADENS_COTTAGE_WEST),
-    MAP_WARP(VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST, ValeCaveMouth,
-             VALE_CAVE_MOUTH_FROM_VALE_KRADENS_COTTAGE_EAST),
-    MAP_WARP(VALE_KRADENS_COTTAGE_TO_VALE_STORMY_NIGHT_NORTH, ValeStormyNight,
-             VALE_STORMY_NIGHT_FROM_VALE_KRADENS_COTTAGE_NORTH),
-    MAP_WARP(VALE_KRADENS_COTTAGE_TO_VALE_STORMY_NIGHT_SOUTH, ValeStormyNight,
-             VALE_STORMY_NIGHT_FROM_VALE_KRADENS_COTTAGE_SOUTH),
-    MAP_WARP(VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG, CottageRoomsB,
-             COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG),
-    MAP_WARPS_END,
+u32 gValeKradensCottage_Exits[] = {
+    SCENE_EXITS(ValeKradensCottage),
+    SCENE_EXIT(VALE_KRADENS_COTTAGE_TO_VALE_NORTH, Vale,
+               VALE_FROM_VALE_KRADENS_COTTAGE_NORTH),
+    SCENE_EXIT(VALE_KRADENS_COTTAGE_TO_VALE_SOUTH, Vale,
+               VALE_FROM_VALE_KRADENS_COTTAGE_SOUTH),
+    SCENE_EXIT(VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH, CottageRoomsB,
+               COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_NORTH),
+    SCENE_EXIT(VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST, ValeCaveMouth,
+               VALE_CAVE_MOUTH_FROM_VALE_KRADENS_COTTAGE_WEST),
+    SCENE_EXIT(VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST, ValeCaveMouth,
+               VALE_CAVE_MOUTH_FROM_VALE_KRADENS_COTTAGE_EAST),
+    SCENE_EXIT(VALE_KRADENS_COTTAGE_TO_VALE_STORMY_NIGHT_NORTH, ValeStormyNight,
+               VALE_STORMY_NIGHT_FROM_VALE_KRADENS_COTTAGE_NORTH),
+    SCENE_EXIT(VALE_KRADENS_COTTAGE_TO_VALE_STORMY_NIGHT_SOUTH, ValeStormyNight,
+               VALE_STORMY_NIGHT_FROM_VALE_KRADENS_COTTAGE_SOUTH),
+    SCENE_EXIT(VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG,
+               CottageRoomsB,
+               COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG),
+    SCENE_EXITS_END,
 };
 
 // clang-format off
@@ -1307,11 +1310,11 @@ struct MapEvent gValeKradensCottage_Events[] = {
     { MAP_EVENT_TALK, LOCALID_SATUROS, CONDITION_ALWAYS, MSGNO(MsgValeDoNotKeepKradenWaiting) },
     { MAP_EVENT_TALK, LOCALID_MENARDI, CONDITION_ALWAYS, MSGNO(MsgValeLeaveBeforeWeChangeMinds) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_BOY_BY_THE_FENCE, CONDITION_ALWAYS, MSGNO(MsgValeCuriousBeyondFence) },
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_NORTH },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_SOUTH },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_NORTH },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_SOUTH },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterCottage) },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST },
-    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST },
+    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST },
+    { MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST },
     { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OverhearKraden) },
     { MAP_EVENT_COORD, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MeetSaturosAndMenardi) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_LIFT), LOCALID_FENCE_BOULDER, CONDITION_ALWAYS, 0 },
@@ -1320,8 +1323,8 @@ struct MapEvent gValeKradensCottage_Events[] = {
 };
 
 struct MapEvent gValeKradensCottage_StormEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_STORMY_NIGHT_NORTH },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_STORMY_NIGHT_SOUTH },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_STORMY_NIGHT_NORTH },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_STORMY_NIGHT_SOUTH },
     { MAP_EVENT_TALK, LOCALID_WEST_ROCK, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
     { MAP_EVENT_TALK, LOCALID_EAST_ROCK, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
     { MAP_EVENT_TALK, LOCALID_ROCKSLIDE_SURVIVOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToRockslideSurvivor) },
@@ -1333,11 +1336,11 @@ struct MapEvent gValeKradensCottage_StormEvents[] = {
 };
 
 struct MapEvent gValeKradensCottage_EventsAfterKalay[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_NORTH },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_SOUTH },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_NORTH },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_SOUTH },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterCottage) },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST },
-    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST },
+    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST },
+    { MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST },
     { MAP_EVENT_TALK, LOCALID_BOY_BY_THE_FENCE, CONDITION_ALWAYS, MSGNO(MsgValeWonderBeyondFence) },
     { MAP_EVENT_TALK, LOCALID_COTTAGE_VISITOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToCottageVisitor) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_BOY_BY_THE_FENCE, CONDITION_ALWAYS, MSGNO(MsgValeAdventuresBeyondFence) },

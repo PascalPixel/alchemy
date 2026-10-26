@@ -5,14 +5,14 @@
 #include "map_tables.h"
 #include "scene_header.h"
 
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEvent;
 struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *Scene_GetWarps(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 TreeRooms_EnterRoom(void);
@@ -28,9 +28,9 @@ extern s32 gTreeRooms_MiaGathersActions[];
 extern s32 gTreeRooms_FaceSinksActions[];
 extern s32 gTreeRooms_RejoinLeaderActions[];
 extern u32 gTreeRooms_TintSteps[];
-extern struct MapWarpDest gTreeRoomsWarpDests[];
-extern struct MapWarpRegion gTreeRoomsRegions[];
-extern u32 gTreeRoomsWarps[];
+extern struct SceneEntrance gTreeRoomsEntrances[];
+extern struct SceneExitRegion gTreeRoomsRegions[];
+extern u32 gTreeRoomsExits[];
 extern struct ObjectEventTemplate gTreeRoomsObjectEventTemplates[];
 extern struct MapEvent gTreeRoomsEvents[];
 extern s32 gTreeRooms_TintIndex;

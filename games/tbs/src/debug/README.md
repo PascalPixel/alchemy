@@ -13,11 +13,11 @@ game; [the Djinn room](#the-djinn-room) shows one whole.
 
 ## How the rooms are reached
 
-![With debug mode switched on, Start pressed with B held in Vale opens a one-line window naming a scene; Left steps the number down past the World Map and the title screen and round to the level room, and A warps there, to a black room where a few testers stand](https://alchemy.pascalpixel.com/guides/debug/map-select.gif)
+![With debug mode switched on, Start pressed with B held in Vale opens a one-line window naming a scene; Left steps the number down past the World Map and the title screen and round to the level room, and An exits there, to a black room where a few testers stand](https://alchemy.pascalpixel.com/guides/debug/map-select.gif)
 
 The debug scene selector is a one-line window that names a scene and an arrival
 point by number; Left and Right step the number, R and L step it by ten, and
-A warps there. It reaches every scene, the test rooms included, but the field
+An exits there. It reaches every scene, the test rooms included, but the field
 opens it only in debug mode, when Start is pressed with B held, and the
 released game never turns debug mode on.
 
@@ -75,9 +75,9 @@ Djinni is one row of the room's event table, which says: when the player
 talks to Flint, always, run Flint's script.
 
 The room answers the field's six questions with `TestRoom_Initialize`,
-`TestRoom_GetWarpDests`, `TestRoom_GetWarps`,
+`TestRoom_GetEntrances`, `TestRoom_GetExits`,
 `TestRoom_GetObjectEventTemplates`, `TestRoom_GetEvents` and
-`Scene_GetWarpRegions` (none). The events are `gTestRoom_Events`, and each
+`Scene_GetExitRegions` (none). The events are `gTestRoom_Events`, and each
 script, such as `TestRoom_ReceiveFlint`, calls `Djinn_JoinParty` and
 `GameFlag_Clear`.
 
@@ -139,7 +139,7 @@ The palette editor's swatch, `swatch.png`, belongs to no room: it is placed
 in the [main image](../../glossary.md#main-image) for the palette editor,
 which opens with L on the pause menu in debug mode
 (`PaletteEditor_Run`). Each room's functions take the room's prefix, except
-the set-up and warp region entries, which take the scene overlays' names.
+the set-up and exit region entries, which take the scene overlays' names.
 
 ## How it fits with the rest of the game
 

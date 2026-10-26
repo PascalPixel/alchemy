@@ -4,22 +4,22 @@
 #include "types.h"
 #include "map_tables.h"
 
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEvent;
 struct ObjectEventTemplate;
 
-const struct MapWarpDest *BilibinCave_GetWarpDests(void);
-const struct MapWarpRegion *BilibinCave_GetRegions(void);
-const u32 *BilibinCave_GetWarps(void);
+const struct SceneEntrance *BilibinCave_GetEntrances(void);
+const struct SceneExitRegion *BilibinCave_GetRegions(void);
+const u32 *BilibinCave_GetExits(void);
 const struct ObjectEventTemplate *BilibinCave_GetObjectEventTemplates(void);
 const struct MapEvent *BilibinCave_GetEvents(void);
 s32 BilibinCave_Initialize(void);
 extern s32 gBilibinCave_ClearSpriteScript[];
-extern struct MapWarpDest gBilibinCaveWarpDestsOther[];
-extern struct MapWarpDest gBilibinCaveEntranceWarpDests[];
-extern struct MapWarpDest gBilibinCaveRapierWarpDests[];
-extern struct MapWarpDest gBilibinCaveIceWarpDests[];
-extern u32 gBilibinCaveWarps[];
+extern struct SceneEntrance gBilibinCaveEntrancesOther[];
+extern struct SceneEntrance gBilibinCaveEntranceEntrances[];
+extern struct SceneEntrance gBilibinCaveRapierEntrances[];
+extern struct SceneEntrance gBilibinCaveIceEntrances[];
+extern u32 gBilibinCaveExits[];
 extern struct ObjectEventTemplate gBilibinCaveObjectEventTemplatesOther[];
 extern struct ObjectEventTemplate gBilibinCaveEntranceObjectEventTemplates[];
 extern struct ObjectEventTemplate gBilibinCaveRapierObjectEventTemplates[];

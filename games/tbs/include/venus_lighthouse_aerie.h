@@ -2,8 +2,8 @@
 #define ALCHEMY_VENUS_LIGHTHOUSE_AERIE_H
 
 /// @file
-/// The Lighthouse Aerie's object events; its warp destinations and warps are in
-/// map_warps.h.
+/// The Lighthouse Aerie's object events; its entrances and exits are in
+/// scene_exits.h.
 
 #include "map_tables.h"
 #include "types.h"

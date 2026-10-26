@@ -63,8 +63,8 @@ found:
 ///
 /// Used for every condition column of a map's tables: events
 /// (Scene_FindEvent, Field_SearchCell), object event templates
-/// (FieldScript_SpawnObjectEventTemplates), warp regions
-/// (Field_CheckWarpRegions) and item events.
+/// (FieldScript_SpawnObjectEventTemplates), exit regions
+/// (Field_CheckExitRegions) and item events.
 s32 GameFlag_IsConditionActive(s32 condition) {
   s32 flagSet;
 
@@ -339,18 +339,18 @@ s32 Scene_RunRaisedEvent(s32 value) {
 }
 
 /// Runs the coord event (MAP_EVENT_COORD) of what the leader touched, or else
-/// takes its warp (MAP_EVENT_WARP): plays the warp's sound (and effect) and
+/// takes its exit (MAP_EVENT_EXIT): plays the exit's sound (and effect) and
 /// records where it leads. Returns 0 when something ran, -1 when there was
 /// nothing.
 ///
 /// Called by SceneManager_Run for its step request (work->action), which
 /// Field_ProcessStep raises for MB_EVENT_FIRST to MB_EVENT_LAST.
-/// Sets work->warp for a warp, and clears work->blockedSteps after a coord
+/// Sets work->exit for an exit, and clears work->blockedSteps after a coord
 /// event that needs pushing.
-s32 Scene_RunCoordEventOrWarp(s32 value) {
+s32 Scene_RunCoordEventOrExit(s32 value) {
   struct MapEventView *touch;
-  struct MapEventView *warp;
-  s32 warpId;
+  struct MapEventView *exit;
+  s32 exitId;
   s32 handled;
   struct FieldWork *work;
 
@@ -372,25 +372,25 @@ s32 Scene_RunCoordEventOrWarp(s32 value) {
       handled = 0;
     }
   } else {
-    warp = Scene_FindEvent(MAP_EVENT_WARP, value);
-    if (warp != 0) {
-      // An enum WarpStyle chooses how the leader leaves; the animated styles'
+    exit = Scene_FindEvent(MAP_EVENT_EXIT, value);
+    if (exit != 0) {
+      // An enum ExitStyle chooses how the leader leaves; the animated styles'
       // flags make the next map play the matching arrival.
-      warpId = warp->flags & WARP_STYLE_MASK;
-      switch (warpId) {
-      case WARP_STYLE_NORMAL:
+      exitId = exit->flags & EXIT_STYLE_MASK;
+      switch (exitId) {
+      case EXIT_STYLE_NORMAL:
         Sound_PlaySongFar(SE_MAP_EXIT);
         break;
-      case WARP_STYLE_STAIRS_UP:
+      case EXIT_STYLE_STAIRS_UP:
         Sound_PlaySongFar(SE_STAIRS_UP);
-        Warp_StartStairsUpExit();
+        Exit_StartStairsUp();
         break;
-      case WARP_STYLE_STAIRS_DOWN:
+      case EXIT_STYLE_STAIRS_DOWN:
         Sound_PlaySongFar(SE_STAIRS_DOWN);
-        Warp_StartStairsDownExit();
+        Exit_StartStairsDown();
         break;
       }
-      work->warp = warp->result;
+      work->exit = exit->result;
       handled = 0;
     }
   }

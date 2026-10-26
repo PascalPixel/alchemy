@@ -2,7 +2,7 @@
 /// The Alpine Crossing (SceneId_AlpineCrossing) and Lama Temple
 /// (SceneId_LamaTemple), two maps on Silk Road west of Xian that share this
 /// overlay. The getters pick each map's tables by gSaveBlock.sceneId, both
-/// maps share one warp table, and Scene_Initialize sets up the map being
+/// maps share one exit table, and Scene_Initialize sets up the map being
 /// entered from the story flags of Hsu's rescue, which runs through both.
 ///
 /// At the Alpine Crossing boulders block Silk Road. Once Feizhi has left Xian
@@ -14,7 +14,7 @@
 /// east, north and west, and by
 /// ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_WEST and
 /// ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_EAST into Altin Peak's
-/// AltinPeakSouthEntrance, whose warp destinations from here the international
+/// AltinPeakSouthEntrance, whose entrances from here the international
 /// editions also call Alpine Crossing. Coming back from the mine
 /// (ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_WEST and _EAST) the area
 /// name is not shown again.
@@ -237,17 +237,17 @@ AlpineCrossing_LeaderFaceFeizhi(union ObjectEventOrEffect *fieldObject) {
 #endif
 }
 
-const struct MapWarpDest *Scene_GetWarpDests(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   if (gSaveBlock.sceneId == MAP_ALPINE_CROSSING) {
-    return gAlpineCrossing_WarpDests;
+    return gAlpineCrossing_Entrances;
   }
-  return gLamaTemple_WarpDests;
+  return gLamaTemple_Entrances;
 }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-/// Both maps share one warp table.
-const u32 *Scene_GetWarps(void) { return gAlpineCrossingLamaTemple_Warps; }
+/// Both maps share one exit table.
+const u32 *Scene_GetExits(void) { return gAlpineCrossingLamaTemple_Exits; }
 
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   if (gSaveBlock.sceneId == MAP_ALPINE_CROSSING) {
@@ -307,7 +307,7 @@ static void LamaTemple_EnterHamasRoom(void) {
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -16);
   FieldScript_WaitFrames(16);
-  Import_ScriptRequestWarp(LAMA_TEMPLE_TO_LACQUER_ROOMS_A_HAMAS_ROOM);
+  Import_ScriptRequestExit(LAMA_TEMPLE_TO_LACQUER_ROOMS_A_HAMAS_ROOM);
 }
 
 /// Hama's farewell, once the party has freed Hsu and been brought back to Lama
@@ -819,7 +819,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   GameFlag_Set(FLAG_HSU_RESCUED);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  Import_ScriptRequestWarp(ALPINE_CROSSING_TO_LAMA_TEMPLE);
+  Import_ScriptRequestExit(ALPINE_CROSSING_TO_LAMA_TEMPLE);
 }
 
 /// Searching the signpost at the Alpine Crossing.
@@ -927,7 +927,7 @@ const struct MapEvent *Scene_GetEvents(void) {
 
 /// Sets up whichever map is being entered and runs its arrival scripts.
 s32 Scene_Initialize(void) {
-  s32 warpDest;
+  s32 entrance;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (gSaveBlock.sceneId == MAP_LAMA_TEMPLE) {
@@ -946,10 +946,10 @@ s32 Scene_Initialize(void) {
       ObjectEvent_SetPosition(LOCALID_CHI_MONK, PIXELS(136), PIXELS(256));
       ObjectMotion_ArmCallback(LOCALID_CHI_MONK, FACING_EAST, 0);
     }
-    warpDest = gSaveBlock.warpDest;
-    if (warpDest == LAMA_TEMPLE_FROM_LACQUER_ROOMS_A_HAMAS_ROOM) {
+    entrance = gSaveBlock.entrance;
+    if (entrance == LAMA_TEMPLE_FROM_LACQUER_ROOMS_A_HAMAS_ROOM) {
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
-    } else if (warpDest == LAMA_TEMPLE_FROM_ALPINE_CROSSING &&
+    } else if (entrance == LAMA_TEMPLE_FROM_ALPINE_CROSSING &&
                !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       LamaTemple_RunHamasFarewell();
     }
@@ -967,9 +967,9 @@ s32 Scene_Initialize(void) {
       Import_ObjectEventSetAnimation(LOCALID_PLANT, SPROUT_ANIMATION_GROWN);
       AlpineCrossing_GrowSprout();
     }
-    if (gSaveBlock.warpDest ==
+    if (gSaveBlock.entrance ==
             ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_WEST ||
-        gSaveBlock.warpDest ==
+        gSaveBlock.entrance ==
             ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST) {
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     }
@@ -985,7 +985,7 @@ s32 Scene_Initialize(void) {
     // Hsu: he has been freed without it and the boulder is gone.
     if (!Script_GetFlag(FLAG_HSU_RESCUED) &&
         GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) &&
-        gSaveBlock.warpDest == ALPINE_CROSSING_FROM_WORLD_MAP_NORTH) {
+        gSaveBlock.entrance == ALPINE_CROSSING_FROM_WORLD_MAP_NORTH) {
       Import_ObjectEventSetPosition(LOCALID_BOULDER, 0, 0);
       GameFlag_Set(FLAG_HSU_RESCUED);
       GameFlag_Set(FLAG_HSU_RESCUED_WITHOUT_PARTY);
@@ -1020,7 +1020,7 @@ s32 Scene_Initialize(void) {
       ObjectEvent_SetActionScript(LOCALID_HSU, gAlpineCrossing_HsuStruggle);
       ObjectEvent_GetById(LOCALID_HSU)->scaleX = -0x10000;
     }
-    if (gSaveBlock.warpDest ==
+    if (gSaveBlock.entrance ==
             ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST &&
         !GameFlag_Get(FLAG_HAMA_REACHED_HSU) &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
@@ -1102,8 +1102,8 @@ u16 gLamaTemple_DoorCloseCells[] = {
     MAPGRID_ANIMATION_STEPS_END,
 };
 
-struct MapWarpDest gLamaTemple_WarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1,
+struct SceneEntrance gLamaTemple_Entrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1,
      -1, -1, 0},
     {LAMA_TEMPLE_FROM_WORLD_MAP, CONDITION_ALWAYS, 216, 0, 520, FACING_NORTH, 0,
      -1, -1, -1, -1, 0},
@@ -1116,8 +1116,8 @@ struct MapWarpDest gLamaTemple_WarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gAlpineCrossing_WarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1,
+struct SceneEntrance gAlpineCrossing_Entrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1,
      -1, -1, 0},
     {ALPINE_CROSSING_FROM_WORLD_MAP_EAST, CONDITION_ALWAYS, 496, 0, 216,
      FACING_WEST, 0, 16, 32, 520, 416, 0},
@@ -1132,27 +1132,27 @@ struct MapWarpDest gAlpineCrossing_WarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gAlpineCrossingLamaTemple_Warps[] = {
-    MAP_WARPS(LamaTemple),
-    MAP_WARP(LAMA_TEMPLE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_LAMA_TEMPLE),
-    MAP_WARP(LAMA_TEMPLE_TO_LACQUER_ROOMS_A_HAMAS_ROOM, LacquerRoomsA,
-             LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE),
-    MAP_WARPS(AlpineCrossing),
-    MAP_WARP(ALPINE_CROSSING_TO_WORLD_MAP_EAST, WorldMap,
-             WORLD_MAP_FROM_ALPINE_CROSSING_EAST),
-    MAP_WARP(ALPINE_CROSSING_TO_WORLD_MAP_NORTH, WorldMap,
-             WORLD_MAP_FROM_ALPINE_CROSSING_NORTH),
-    MAP_WARP(ALPINE_CROSSING_TO_WORLD_MAP_WEST, WorldMap,
-             WORLD_MAP_FROM_ALPINE_CROSSING_WEST),
-    MAP_WARP(ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_WEST,
-             AltinPeakSouthEntrance,
-             ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST),
-    MAP_WARP(ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_EAST,
-             AltinPeakSouthEntrance,
-             ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_EAST),
-    MAP_WARP(ALPINE_CROSSING_TO_LAMA_TEMPLE, LamaTemple,
-             LAMA_TEMPLE_FROM_ALPINE_CROSSING),
-    MAP_WARPS_END,
+u32 gAlpineCrossingLamaTemple_Exits[] = {
+    SCENE_EXITS(LamaTemple),
+    SCENE_EXIT(LAMA_TEMPLE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_LAMA_TEMPLE),
+    SCENE_EXIT(LAMA_TEMPLE_TO_LACQUER_ROOMS_A_HAMAS_ROOM, LacquerRoomsA,
+               LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE),
+    SCENE_EXITS(AlpineCrossing),
+    SCENE_EXIT(ALPINE_CROSSING_TO_WORLD_MAP_EAST, WorldMap,
+               WORLD_MAP_FROM_ALPINE_CROSSING_EAST),
+    SCENE_EXIT(ALPINE_CROSSING_TO_WORLD_MAP_NORTH, WorldMap,
+               WORLD_MAP_FROM_ALPINE_CROSSING_NORTH),
+    SCENE_EXIT(ALPINE_CROSSING_TO_WORLD_MAP_WEST, WorldMap,
+               WORLD_MAP_FROM_ALPINE_CROSSING_WEST),
+    SCENE_EXIT(ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_WEST,
+               AltinPeakSouthEntrance,
+               ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST),
+    SCENE_EXIT(ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_EAST,
+               AltinPeakSouthEntrance,
+               ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_EAST),
+    SCENE_EXIT(ALPINE_CROSSING_TO_LAMA_TEMPLE, LamaTemple,
+               LAMA_TEMPLE_FROM_ALPINE_CROSSING),
+    SCENE_EXITS_END,
 };
 
 // clang-format off
@@ -1203,7 +1203,7 @@ struct ObjectEventTemplate gAlpineCrossing_ObjectEventTemplates[] = {
 };
 
 struct MapEvent gLamaTemple_Events[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, LAMA_TEMPLE_TO_WORLD_MAP },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, LAMA_TEMPLE_TO_WORLD_MAP },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), MB_LAMA_TEMPLE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(LamaTemple_EnterHamasRoom) },
     { MAP_EVENT_TALK, LOCALID_GREETING_MONK, FLAG_HSU_RESCUED, MSGNO(MsgAlpineCrossingLamaTempleThisIsLamaTempleWelcomeTravelers) },
     { MAP_EVENT_TALK, LOCALID_MONK_ASKING_ABOUT_THE_EAST, FLAG_HSU_RESCUED, EVENT_SCRIPT(LamaTemple_TalkToMonkAskingAboutTheEast) },
@@ -1239,11 +1239,11 @@ struct MapEvent gLamaTemple_Events[] = {
 };
 
 struct MapEvent gAlpineCrossing_Events[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, ALPINE_CROSSING_TO_WORLD_MAP_EAST },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, ALPINE_CROSSING_TO_WORLD_MAP_NORTH },
-    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, ALPINE_CROSSING_TO_WORLD_MAP_WEST },
-    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_WEST },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_EAST },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, ALPINE_CROSSING_TO_WORLD_MAP_EAST },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, ALPINE_CROSSING_TO_WORLD_MAP_NORTH },
+    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, ALPINE_CROSSING_TO_WORLD_MAP_WEST },
+    { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_WEST },
+    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_EAST },
     { MAP_EVENT_COORD, MB_ALPINE_CROSSING_FEIZHI_ARRIVAL, FLAG_FEIZHI_SAW_ROCKSLIDE, EVENT_SCRIPT(AlpineCrossing_FeizhiArrives) },
     { MAP_EVENT_TALK, LOCALID_FEIZHI, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(AlpineCrossing_TalkToFeizhi) },
     { MAP_EVENT_TALK, LOCALID_HAMA, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleWellIsaacAdeptsYouCameTo) },

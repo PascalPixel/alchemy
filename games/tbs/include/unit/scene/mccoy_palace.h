@@ -7,16 +7,16 @@
 struct MapEvent;
 struct ObjectEventTemplate;
 
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *Scene_GetWarps(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
 extern s32 gPalace_FacingActions[];
 extern s32 gPalace_PacingActions[];
-extern struct MapWarpDest gMcCoyPalaceWarpDests[];
-extern u32 gMcCoyPalaceWarps[];
+extern struct SceneEntrance gMcCoyPalaceEntrances[];
+extern u32 gMcCoyPalaceExits[];
 extern struct ObjectEventTemplate gMcCoyPalaceNoObjectEventTemplates[];
 extern struct ObjectEventTemplate gMcCoyPalaceObjectEventTemplates[];
 extern struct MapEvent gMcCoyPalaceNoEvents[];

@@ -64,32 +64,32 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
   Encounter_SelectBattleMusic(0, 0);
 }
 
-/// Sets the map and warp destination that the field goes to next
-/// (gSaveBlock.nextScene and nextWarpDest). About 30 maps and the Battle Arena
+/// Sets the map and entrance that the field goes to next
+/// (gSaveBlock.nextScene and nextEntrance). About 30 maps and the Battle Arena
 /// reach it through FieldScript_SetNextDestinationFar.
-void FieldScript_SetNextDestination(s32 sceneId, s32 warpDest) {
+void FieldScript_SetNextDestination(s32 sceneId, s32 entrance) {
   gSaveBlock.nextScene = sceneId;
-  gSaveBlock.nextWarpDest = warpDest;
+  gSaveBlock.nextEntrance = entrance;
 }
 
 /// Sets where the party wakes up after losing a battle
-/// (gSaveBlock.defeatScene and defeatWarpDest). The maps before scripted
+/// (gSaveBlock.defeatScene and defeatEntrance). The maps before scripted
 /// battles (Colosso, the Vault, Vale, the Aerie) and the Battle Arena reach it
 /// through FieldScript_SetDefeatDestinationFar.
-void FieldScript_SetDefeatDestination(s32 sceneId, s32 warpDest) {
+void FieldScript_SetDefeatDestination(s32 sceneId, s32 entrance) {
   gSaveBlock.defeatScene = sceneId;
-  gSaveBlock.defeatWarpDest = warpDest;
+  gSaveBlock.defeatEntrance = entrance;
 }
 
-/// Makes the script leave for warp destination warpDest of map sceneId: sets
-/// gSaveBlock.sceneId and warpDest and raises the warp request WARP_NONE (999),
+/// Makes the script leave for entrance entrance of map sceneId: sets
+/// gSaveBlock.sceneId and entrance and raises the exit request EXIT_NONE (999),
 /// so the map loop leaves on its next pass. Only Tolbi's spring reaches it,
 /// through FieldScript_RequestDestinationFar.
-void FieldScript_RequestDestination(u16 sceneId, u16 warpDest) {
+void FieldScript_RequestDestination(u16 sceneId, u16 entrance) {
   struct FieldWork *work = gFieldWork;
   gSaveBlock.sceneId = sceneId;
-  gSaveBlock.warpDest = warpDest;
-  work->warp = WARP_NONE;
+  gSaveBlock.entrance = entrance;
+  work->exit = EXIT_NONE;
 }
 
 /// Plays SE_STOP_MUSIC_PLAYER_5, then soundId (SONG_FADE_OUT_ACTION_SE for -1),

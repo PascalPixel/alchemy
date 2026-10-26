@@ -4,14 +4,14 @@
 #include "types.h"
 #include "map_tables.h"
 
-u8 *Title_GetWarpDests(void);
-s32 Scene_GetWarpRegions(void);
-u8 *Title_GetWarps(void);
+u8 *Title_GetEntrances(void);
+s32 Scene_GetExitRegions(void);
+u8 *Title_GetExits(void);
 u8 *Title_GetObjectEventTemplates(void);
 u8 *Title_GetEvents(void);
 s32 Title_Run(void);
-extern struct MapWarpDest gTitleWarpDests[];
-extern u32 gTitleWarps[];
+extern struct SceneEntrance gTitleEntrances[];
+extern u32 gTitleExits[];
 extern struct ObjectEventTemplate gTitleObjectEventTemplates[];
 extern struct MapEvent gTitleEvents[];
 extern s16 gTitleVramBlock;

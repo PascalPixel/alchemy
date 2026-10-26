@@ -5,9 +5,9 @@
 #include "map_tables.h"
 #include "field_effect.h"
 
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *Scene_GetWarps(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
@@ -19,8 +19,8 @@ extern struct EffectDurationScripts gGomaCavePillar_FragmentScripts;
 extern s32 gGomaCavePillar_FragmentScriptShort[];
 extern s32 gGomaCavePillar_FragmentScriptMedium[];
 extern s32 gGomaCavePillar_FragmentScriptLong[];
-extern struct MapWarpDest gGomaCavePillar_WarpDests[];
-extern u32 gGomaCavePillar_Warps[];
+extern struct SceneEntrance gGomaCavePillar_Entrances[];
+extern u32 gGomaCavePillar_Exits[];
 extern struct ObjectEventTemplate gGomaCavePillar_ObjectEventTemplates[];
 extern struct MapEvent gGomaCavePillar_Events[];
 

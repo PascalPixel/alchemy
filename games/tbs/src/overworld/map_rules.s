@@ -1,29 +1,29 @@
 	.include "games/tbs/include/game/ed_asm.h"
 
 @ Field music: the music of the first rule matching the scene or its area and
-@ the warp destination (-1 for any) whose flag (-1 for always) is set.
-	.macro scene_music scene:req, warpDest:req, flag:req, cue:req
-	.2byte SceneId_\scene, (\warpDest & 0x7fff) | 0x8000, \flag, \cue
+@ the entrance (-1 for any) whose flag (-1 for always) is set.
+	.macro scene_music scene:req, entrance:req, flag:req, cue:req
+	.2byte SceneId_\scene, (\entrance & 0x7fff) | 0x8000, \flag, \cue
 	.endm
-	.macro area_music area:req, warpDest:req, flag:req, cue:req
-	.2byte \area, \warpDest & 0x7fff, \flag, \cue
+	.macro area_music area:req, entrance:req, flag:req, cue:req
+	.2byte \area, \entrance & 0x7fff, \flag, \cue
 	.endm
 
-@ Area names: the name of the scene or its area and the warp destination (-1
+@ Area names: the name of the scene or its area and the entrance (-1
 @ for any).
-	.macro scene_name scene:req, warpDest:req, name:req
-	.2byte SceneId_\scene, (\warpDest & 0x7fff) | 0x8000
+	.macro scene_name scene:req, entrance:req, name:req
+	.2byte SceneId_\scene, (\entrance & 0x7fff) | 0x8000
 	.4byte \name
 	.endm
-	.macro area_name area:req, warpDest:req, name:req
-	.2byte \area, \warpDest & 0x7fff
+	.macro area_name area:req, entrance:req, name:req
+	.2byte \area, \entrance & 0x7fff
 	.4byte \name
 	.endm
 
-@ Defeat return points: the scene and warp destination (-1 for any), then the
-@ scene and warp destination the party returns to after a defeat there.
-	.macro return_to scene:req, warpDest:req, saved:req, saved_warp_dest:req
-	.2byte SceneId_\scene, \warpDest, SceneId_\saved, \saved_warp_dest
+@ Defeat return points: the scene and entrance (-1 for any), then the
+@ scene and entrance the party returns to after a defeat there.
+	.macro return_to scene:req, entrance:req, saved:req, saved_entrance:req
+	.2byte SceneId_\scene, \entrance, SceneId_\saved, \saved_entrance
 	.endm
 
 @ A battle background and the scenes that use it.

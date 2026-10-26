@@ -7,8 +7,8 @@
 /// Ivan and Mia help from the stages. The stages, by their attendants'
 /// names, are the Rock Challenge, the Pipeworks, the Broken Bridge and the
 /// Lumber Water Crossing Area. Isaac comes here three times, each time at its
-/// own warp destination, and ColosseumAzartMatch_Initialize blocks Retreat and
-/// sets up the visit that warp destination stands for after restoring the
+/// own entrance, and ColosseumAzartMatch_Initialize blocks Retreat and
+/// sets up the visit that entrance stands for after restoring the
 /// stages from their temporary flags (FLAG_PIPES_MOVED,
 /// FLAG_PIPEWORKS_PIPE_PUSHED, FLAG_PLANT_GROWN and the rock's column in
 /// FLAG_SECOND_ROCK_COLUMN), so that what the friends changed stays changed for
@@ -240,14 +240,14 @@ enum {
   FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11
 };
 
-const struct MapWarpDest *ColosseumAzartMatch_GetWarpDests(void) {
-  return gColosseumAzartMatch_WarpDests;
+const struct SceneEntrance *ColosseumAzartMatch_GetEntrances(void) {
+  return gColosseumAzartMatch_Entrances;
 }
 
-const struct MapWarpRegion *ColosseumAzartMatch_GetRegions(void) { return 0; }
+const struct SceneExitRegion *ColosseumAzartMatch_GetRegions(void) { return 0; }
 
-const u32 *ColosseumAzartMatch_GetWarps(void) {
-  return gColosseumAzartMatch_Warps;
+const u32 *ColosseumAzartMatch_GetExits(void) {
+  return gColosseumAzartMatch_Exits;
 }
 
 const struct ObjectEventTemplate *
@@ -800,7 +800,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
   Colosso_ShowItemIcon(LOCALID_PRIZE_A, ITEM_IRON_SHIELD);
   Colosso_ShowItemIcon(LOCALID_PRIZE_B, ITEM_PADDED_GLOVES);
   // Select competition, support, explanation, or post-battle arrival.
-  switch (gSaveBlock.warpDest) {
+  switch (gSaveBlock.entrance) {
   case COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND:
     Colosso_StartRaceGauge(LOCALID_PARTY_LEADER, LOCALID_OPPONENT, 4,
                            PIXELS(1304), PIXELS(192), LOCALID_PRIZE_A,
@@ -844,11 +844,11 @@ s32 ColosseumAzartMatch_Initialize(void) {
     break;
   case COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON:
     ColosseumAzartMatch_RestoreMatchResult(1);
-    Import_ScriptRequestWarp(COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_EAST);
+    Import_ScriptRequestExit(COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_EAST);
     break;
   case COLOSSEUM_AZART_MATCH_AFTER_MATCH_LOST:
     ColosseumAzartMatch_RestoreMatchResult(-1);
-    Import_ScriptRequestWarp(COLOSSEUM_AZART_MATCH_TO_BABI_PALACE);
+    Import_ScriptRequestExit(COLOSSEUM_AZART_MATCH_TO_BABI_PALACE);
     break;
   }
   return 0;
@@ -1004,7 +1004,7 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
 static void EventScript_TalkToRockAttendant(s32 localId) {
   s32 path;
 
-  if (gSaveBlock.warpDest == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
+  if (gSaveBlock.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(localId);
   } else {
     FieldScript_Start();
@@ -1079,7 +1079,7 @@ static void EventScript_TalkToPipeworksAttendant(s32 attendant) {
   struct ObjectEvent *second;
   struct ObjectEvent *first;
 
-  if (gSaveBlock.warpDest == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
+  if (gSaveBlock.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(attendant);
   } else {
     FieldScript_Start();
@@ -1140,7 +1140,7 @@ static void EventScript_TalkToPipeworksAttendant(s32 attendant) {
 static void EventScript_TalkToBridgeAttendant(s32 localId) {
   s32 path;
 
-  if (gSaveBlock.warpDest == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
+  if (gSaveBlock.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(localId);
   } else {
     FieldScript_Start();
@@ -1185,7 +1185,7 @@ static void EventScript_TalkToBridgeAttendant(s32 localId) {
 static void EventScript_TalkToLumberAttendant(s32 localId) {
   s32 path;
 
-  if (gSaveBlock.warpDest == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
+  if (gSaveBlock.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(localId);
     return;
   }
@@ -1254,7 +1254,7 @@ static __inline__ void AdvanceMessage(s32 amount) {
   gFieldWork->message += amount;
 }
 
-// This map's warps for colosso_solo.h.
+// This map's exits for colosso_solo.h.
 #define COLOSSO_SOLO_TO_RACE COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE
 #define COLOSSO_SOLO_TO_COLOSSEUM COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_WEST
 #include "common/colosso_solo.h"
@@ -1728,19 +1728,19 @@ u32 gColosseumAzartMatch_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),
 };
 
-struct MapWarpDest gColosseumAzartMatch_WarpDests[] = {
-    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 920, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gColosseumAzartMatch_Entrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 920, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND, CONDITION_ALWAYS, 312, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { MAP_TABLE_END },
 };
 
-u32 gColosseumAzartMatch_Warps[] = {
-    MAP_WARPS(ColosseumAzartMatch),
-    MAP_WARP(COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE, ColosseumAzartMatch, COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND),
-    MAP_WARP(COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_WEST, Colosseum, COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST),
-    MAP_WARP(COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_EAST, Colosseum, COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST),
-    MAP_WARP(COLOSSEUM_AZART_MATCH_TO_BABI_PALACE, BabiPalace, BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH),
-    MAP_WARPS_END,
+u32 gColosseumAzartMatch_Exits[] = {
+    SCENE_EXITS(ColosseumAzartMatch),
+    SCENE_EXIT(COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE, ColosseumAzartMatch, COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND),
+    SCENE_EXIT(COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_WEST, Colosseum, COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST),
+    SCENE_EXIT(COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_EAST, Colosseum, COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST),
+    SCENE_EXIT(COLOSSEUM_AZART_MATCH_TO_BABI_PALACE, BabiPalace, BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gColosseumAzartMatch_ObjectEventTemplates[] = {

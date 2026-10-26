@@ -1,5 +1,5 @@
 /// @file
-/// Running a scene until the party leaves it, and its warp destination.
+/// Running a scene until the party leaves it, and its entrance.
 // Part of overworld.c.
 
 #include "../overworld_internal.h"
@@ -15,8 +15,8 @@ struct ObjectSystemSuspendView {
   u16 wait;
 };
 
-/// Runs the current scene, which the party entered by warpDest, until it
-/// leaves; returns the warp kind it left by, for Scene_TakeWarp, or WARP_NONE
+/// Runs the current scene, which the party entered by entrance, until it
+/// leaves; returns the exit kind it left by, for Scene_TakeExit, or EXIT_NONE
 /// when the next scene is already in gSaveBlock: a random battle, a
 /// party that fell outside battle, Retreat or a script's destination. Sets the
 /// scene up (map, object events, encounters, return points), runs its
@@ -25,12 +25,12 @@ struct ObjectSystemSuspendView {
 /// requests are handled until none is left.
 ///
 /// Called by SequenceManager_Run for every scene, which
-/// passes the result to Scene_TakeWarp. Allocates the field work in
+/// passes the result to Scene_TakeExit. Allocates the field work in
 /// HEAP_SLOT_FIELD, cleared, and frees it on the way out, with every
 /// block the scene took after it from the same pool; sets gSaveBlock's default,
 /// next and defeat destinations, and clears FLAG_IN_BATTLE and, once the scene
 /// has started, FLAG_KEEP_PARTY_POSITION.
-s32 SceneManager_Run(s32 warpDest) {
+s32 SceneManager_Run(s32 entrance) {
   struct FieldWork *work;
   struct ObjectEvent *objectEvent;
   s32 mode;
@@ -42,11 +42,11 @@ s32 SceneManager_Run(s32 warpDest) {
   Dma_Fill32(0, work, sizeof(struct FieldWork));
   GameFlag_ClearFar(FLAG_IN_BATTLE);
   gSaveBlock.defaultScene = gSaveBlock.sceneId;
-  gSaveBlock.defaultWarpDest = gSaveBlock.warpDest;
+  gSaveBlock.defaultEntrance = gSaveBlock.entrance;
   gSaveBlock.nextScene = -1;
-  gSaveBlock.nextWarpDest = -1;
+  gSaveBlock.nextEntrance = -1;
   gSaveBlock.defeatScene = -1;
-  gSaveBlock.defeatWarpDest = -1;
+  gSaveBlock.defeatEntrance = -1;
   Task_ResetAll();
   Djinn_ResolvePendingEvent(0);
   if (gSaveBlock.mapId == (s32)&SceneId_MainMenu) {
@@ -64,7 +64,7 @@ s32 SceneManager_Run(s32 warpDest) {
   WindowSystem_InitFieldFar();
   Field_ClearRequests();
   work->events = gOverlayArea.events();
-  Scene_ApplyWarpDest();
+  Scene_ApplyEntrance();
   ObjectEvent_ResetForObject(
       (struct ObjectEventTemplate *)gOverlayArea.objectEventTemplates());
   if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) != 0)
@@ -110,11 +110,11 @@ s32 SceneManager_Run(s32 warpDest) {
   work->queuedSound = -1;
   gOverlayArea.initialize();
 
-  // The scene's initialization may already have taken a warp.
-  code = work->warp;
+  // The scene's initialization may already have taken an exit.
+  code = work->exit;
   if (code != 0) {
     result = code;
-    work->warp = 0;
+    work->exit = 0;
   } else {
     GameFlag_ClearFar(FLAG_KEEP_PARTY_POSITION);
     // Fade in, show the area name and give what was left pending.
@@ -124,9 +124,9 @@ s32 SceneManager_Run(s32 warpDest) {
         work->transitionActive = 1;
         PLTT_BACKDROP = 0;
         // An arrival the last scene asked for
-        // (Warp_PlayArrival) plays through the fade; with none,
+        // (Entrance_PlayArrival) plays through the fade; with none,
         // wait out half of it.
-        if (Warp_PlayArrival() == 0)
+        if (Entrance_PlayArrival() == 0)
           WaitFrames((work->transitionFrames + 1) / 2);
       }
       if (GameFlag_GetFar(FLAG_SHOW_LOCATION_NAME) != 0) {
@@ -159,11 +159,11 @@ s32 SceneManager_Run(s32 warpDest) {
 
       // Handle the pending requests, most urgent first.
       while (Field_CountRequests() != 0) {
-        s32 next = work->warp;
+        s32 next = work->exit;
 
         if (next != 0) {
           result = next;
-          work->warp = 0;
+          work->exit = 0;
           goto done;
         }
         if (work->raisedEvent != 0) {
@@ -200,9 +200,9 @@ s32 SceneManager_Run(s32 warpDest) {
               vitals->hp = 1;
               Unit_UpdateGauges(vitals);
               gSaveBlock.sceneId = gSaveBlock.restartScene;
-              gSaveBlock.warpDest = gSaveBlock.restartWarpDest;
+              gSaveBlock.entrance = gSaveBlock.restartEntrance;
               WorldMap_EndScript();
-              result = WARP_NONE;
+              result = EXIT_NONE;
               goto done;
             }
             WorldMap_EndScript();
@@ -225,15 +225,15 @@ s32 SceneManager_Run(s32 warpDest) {
           ObjectEvent_Snapshot();
           gSaveBlock.returnMusic = -1;
           gSaveBlock.sceneId = SEQUENCE_BATTLE;
-          gSaveBlock.warpDest = work->battle;
-          work->warp = WARP_NONE;
+          gSaveBlock.entrance = work->battle;
+          work->exit = EXIT_NONE;
           Field_StartEncounterTransition(work->battle);
           work->encounterBias = 0;
           work->battle = 0;
           gSaveBlock.encounterSteps = 0;
         } else if (work->coordEvent != 0) {
           work->busy = 1;
-          Scene_RunCoordEventOrWarp(work->coordEvent);
+          Scene_RunCoordEventOrExit(work->coordEvent);
           work->busy = 0;
           work->coordEvent = 0;
         } else if (work->pushCell != 0) {
@@ -455,47 +455,47 @@ s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
   return result;
 }
 
-/// Places the party at the warp destination it came in by (the first matching
+/// Places the party at the entrance it came in by (the first matching
 /// entry, or the scene's first one) unless it keeps its position, and sets the
 /// map's scroll bounds, at least a screen (240 x 160 pixels) wide and tall.
 ///
 /// Called by SceneManager_Run once the scene's events are set. Writes
 /// gSaveBlock's position, heading and turn, and the scene's minX to maxY.
-void Scene_ApplyWarpDest(void) {
+void Scene_ApplyEntrance(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
-  s32 warpDest = gSaveBlock.warpDest;
-  const struct MapWarpDest *warpDestEntry = gOverlayArea.warpDests();
-  s32 foundWarpDest = 0;
+  s32 entrance = gSaveBlock.entrance;
+  const struct SceneEntrance *entranceEntry = gOverlayArea.entrances();
+  s32 foundEntrance = 0;
 
-  while (warpDestEntry->warpDest != -1) {
-    if (warpDestEntry->warpDest == warpDest &&
-        (warpDestEntry->requiredFlag == -1 ||
-         GameFlag_GetFar(warpDestEntry->requiredFlag))) {
-      foundWarpDest = 1;
+  while (entranceEntry->entrance != -1) {
+    if (entranceEntry->entrance == entrance &&
+        (entranceEntry->requiredFlag == -1 ||
+         GameFlag_GetFar(entranceEntry->requiredFlag))) {
+      foundEntrance = 1;
       break;
     }
-    warpDestEntry++;
+    entranceEntry++;
   }
-  if (!foundWarpDest)
-    warpDestEntry = gOverlayArea.warpDests();
+  if (!foundEntrance)
+    entranceEntry = gOverlayArea.entrances();
 
   // Camera bounds apply even when returning to a saved party position.
   if (!GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION)) {
-    gSaveBlock.x = REGION_FIXED(warpDestEntry->x);
-    gSaveBlock.y = REGION_FIXED(warpDestEntry->y);
-    gSaveBlock.z = REGION_FIXED(warpDestEntry->z);
-    gSaveBlock.heading = warpDestEntry->facing;
+    gSaveBlock.x = REGION_FIXED(entranceEntry->x);
+    gSaveBlock.y = REGION_FIXED(entranceEntry->y);
+    gSaveBlock.z = REGION_FIXED(entranceEntry->z);
+    gSaveBlock.heading = entranceEntry->facing;
     gSaveBlock.turn = 0;
   }
 
-  if (warpDestEntry->cameraLeft != -1)
-    grid->minX = REGION_FIXED(warpDestEntry->cameraLeft);
-  if (warpDestEntry->cameraTop != -1)
-    grid->minY = REGION_FIXED(warpDestEntry->cameraTop);
-  if (warpDestEntry->cameraRight != -1)
-    grid->maxX = REGION_FIXED(warpDestEntry->cameraRight);
-  if (warpDestEntry->cameraBottom != -1)
-    grid->maxY = REGION_FIXED(warpDestEntry->cameraBottom);
+  if (entranceEntry->cameraLeft != -1)
+    grid->minX = REGION_FIXED(entranceEntry->cameraLeft);
+  if (entranceEntry->cameraTop != -1)
+    grid->minY = REGION_FIXED(entranceEntry->cameraTop);
+  if (entranceEntry->cameraRight != -1)
+    grid->maxX = REGION_FIXED(entranceEntry->cameraRight);
+  if (entranceEntry->cameraBottom != -1)
+    grid->maxY = REGION_FIXED(entranceEntry->cameraBottom);
 
   if (grid->minX + (DISPLAY_WIDTH << 16) > grid->maxX)
     grid->minX = grid->maxX - (DISPLAY_WIDTH << 16);

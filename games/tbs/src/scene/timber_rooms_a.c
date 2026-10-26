@@ -1,15 +1,15 @@
 /// @file
 /// Timber rooms A (SceneId_TimberRoomsA), a sheet of rooms drawn in timber, all
-/// of them inside Suhalla's buildings, whose rooms are told apart by the warp
-/// destination the party arrives at, and whose area name follows it:
+/// of them inside Suhalla's buildings, whose rooms are told apart by the
+/// entrance the party arrives at, and whose area name follows it:
 ///
 /// - Suhalla: the houses, the shop and the inn behind the village's doors,
-///   whose warps from the village (SUHALLA_TO_INN, SUHALLA_TO_HOUSE_WEST,
+///   whose exits from the village (SUHALLA_TO_INN, SUHALLA_TO_HOUSE_WEST,
 ///   SUHALLA_TO_HOUSE_NORTHEAST and SUHALLA_TO_HOUSE_EAST) lead to the
-///   warp destinations of the same numbers. Doorways join the inn to its two
-///   guest rooms, and a ladder to its loft, climbed through two warp regions.
+///   entrances of the same numbers. Doorways join the inn to its two
+///   guest rooms, and a ladder to its loft, climbed through two exit regions.
 /// - Suhalla Sanctum: behind the village's wide door (SUHALLA_TO_SANCTUM),
-///   with TIMBER_ROOMS_A_SANCTUM_NORTH as its second warp destination.
+///   with TIMBER_ROOMS_A_SANCTUM_NORTH as its second entrance.
 ///
 /// The rooms' people and talk come in two sets, each an object event template
 /// table and a map event table, chosen by FLAG_BABI_SPOKE_AFTER_COLOSSO. Before
@@ -30,8 +30,8 @@
 /// once (FLAG_TIMBER_ROOMS_A_OVEN_SMOKE_BOMB) and shows what is cooking.
 ///
 /// Unused: the cactus steak line at the Smoke Bomb's oven, whose item row
-/// always answers first, and the warp destination
-/// TIMBER_ROOMS_A_HOUSE_WEST_UNUSED, to which no warp leads.
+/// always answers first, and the entrance
+/// TIMBER_ROOMS_A_HOUSE_WEST_UNUSED, to which no exit leads.
 
 #include "save_block.h"
 #include "script_layer.h"
@@ -128,15 +128,15 @@ enum TimberRoomsALocalId {
 
 enum { SHOP_SUHALLA = 31, INN_SUHALLA = 10 };
 
-const struct MapWarpDest *Scene_GetWarpDests(void) {
-  return gTimberRoomsAWarpDests;
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gTimberRoomsAEntrances;
 }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return gTimberRoomsARegions;
 }
 
-const u32 *Scene_GetWarps(void) { return gTimberRoomsAWarps; }
+const u32 *Scene_GetExits(void) { return gTimberRoomsAExits; }
 
 /// Suhalla's people, joined after Babi's audience by Iodem, the wounded
 /// soldiers and the travelers the sandstorms brought.
@@ -229,12 +229,12 @@ static void EventScript_AskIfBlownHere(s32 localId) {
 }
 
 /// The doors of Suhalla and Suhalla Sanctum, and the doors between the inn and
-/// its guest rooms: the party leaves by the touched warp.
-static void EventScript_LeaveByWarp(void) {
+/// its guest rooms: the party leaves by the touched exit.
+static void EventScript_LeaveByExit(void) {
   struct FieldWork *state = gFieldWork;
   s16 *touchedTrigger = (s16 *)&state->coordEvent;
 
-  Import_ScriptRequestWarp(*touchedTrigger);
+  Import_ScriptRequestExit(*touchedTrigger);
   Sound_PlaySong(SE_MAP_EXIT);
 }
 
@@ -524,7 +524,7 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
   }
 }
 
-/// The doors and inner warps, people and ovens of Suhalla's buildings and
+/// The doors and inner exits, people and ovens of Suhalla's buildings and
 /// Suhalla Sanctum, before or after Babi's audience.
 const struct MapEvent *Scene_GetEvents(void) {
   if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
@@ -539,7 +539,7 @@ const struct MapEvent *Scene_GetEvents(void) {
 /// FLAG_BABI_SPOKE_AFTER_COLOSSO.
 s32 Scene_Initialize(void) {
   struct ObjectEvent *objectEvent;
-  if (gSaveBlock.warpDest == TIMBER_ROOMS_A_AFTER_BABI_SPOKE)
+  if (gSaveBlock.entrance == TIMBER_ROOMS_A_AFTER_BABI_SPOKE)
     GameFlag_Set(FLAG_BABI_SPOKE_AFTER_COLOSSO);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -560,8 +560,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-struct MapWarpDest gTimberRoomsAWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gTimberRoomsAEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {TIMBER_ROOMS_A_INN, CONDITION_ALWAYS, 256, 0, 456, FACING_NORTH, 0, 0, 280,
      336, 480, 0},
@@ -593,26 +593,26 @@ struct MapWarpDest gTimberRoomsAWarpDests[] = {
 };
 
 // clang-format off
-struct MapWarpRegion gTimberRoomsARegions[] = {
+struct SceneExitRegion gTimberRoomsARegions[] = {
     {83, 28, 356, 91, 36, 364, CONDITION_ALWAYS, TIMBER_ROOMS_A_INN_TO_LOFT},
     {83, -20, 596, 91, -12, 604, CONDITION_ALWAYS, TIMBER_ROOMS_A_LOFT_TO_INN},
     {-1, 0, 0, 0, 0, 0, 0, 0},
 };
 
-u32 gTimberRoomsAWarps[] = {
-    MAP_WARPS(TimberRoomsA),
-    MAP_WARP(TIMBER_ROOMS_A_INN_TO_SUHALLA, Suhalla, SUHALLA_FROM_INN),
-    MAP_WARP(TIMBER_ROOMS_A_SANCTUM_TO_SUHALLA, Suhalla, SUHALLA_FROM_SANCTUM),
-    MAP_WARP(TIMBER_ROOMS_A_HOUSE_WEST_TO_SUHALLA, Suhalla, SUHALLA_FROM_HOUSE_WEST),
-    MAP_WARP(TIMBER_ROOMS_A_HOUSE_NORTHEAST_TO_SUHALLA, Suhalla, SUHALLA_FROM_HOUSE_NORTHEAST),
-    MAP_WARP(TIMBER_ROOMS_A_HOUSE_EAST_TO_SUHALLA, Suhalla, SUHALLA_FROM_HOUSE_EAST),
-    MAP_WARP(TIMBER_ROOMS_A_INN_TO_GUEST_ROOM_WEST, TimberRoomsA, TIMBER_ROOMS_A_GUEST_ROOM_WEST_FROM_INN),
-    MAP_WARP(TIMBER_ROOMS_A_INN_TO_GUEST_ROOM_EAST, TimberRoomsA, TIMBER_ROOMS_A_GUEST_ROOM_EAST_FROM_INN),
-    MAP_WARP(TIMBER_ROOMS_A_GUEST_ROOM_WEST_TO_INN, TimberRoomsA, TIMBER_ROOMS_A_INN_FROM_GUEST_ROOM_WEST),
-    MAP_WARP(TIMBER_ROOMS_A_GUEST_ROOM_EAST_TO_INN, TimberRoomsA, TIMBER_ROOMS_A_INN_FROM_GUEST_ROOM_EAST),
-    MAP_WARP(TIMBER_ROOMS_A_INN_TO_LOFT, TimberRoomsA, TIMBER_ROOMS_A_LOFT_FROM_INN),
-    MAP_WARP(TIMBER_ROOMS_A_LOFT_TO_INN, TimberRoomsA, TIMBER_ROOMS_A_INN_FROM_LOFT),
-    MAP_WARPS_END,
+u32 gTimberRoomsAExits[] = {
+    SCENE_EXITS(TimberRoomsA),
+    SCENE_EXIT(TIMBER_ROOMS_A_INN_TO_SUHALLA, Suhalla, SUHALLA_FROM_INN),
+    SCENE_EXIT(TIMBER_ROOMS_A_SANCTUM_TO_SUHALLA, Suhalla, SUHALLA_FROM_SANCTUM),
+    SCENE_EXIT(TIMBER_ROOMS_A_HOUSE_WEST_TO_SUHALLA, Suhalla, SUHALLA_FROM_HOUSE_WEST),
+    SCENE_EXIT(TIMBER_ROOMS_A_HOUSE_NORTHEAST_TO_SUHALLA, Suhalla, SUHALLA_FROM_HOUSE_NORTHEAST),
+    SCENE_EXIT(TIMBER_ROOMS_A_HOUSE_EAST_TO_SUHALLA, Suhalla, SUHALLA_FROM_HOUSE_EAST),
+    SCENE_EXIT(TIMBER_ROOMS_A_INN_TO_GUEST_ROOM_WEST, TimberRoomsA, TIMBER_ROOMS_A_GUEST_ROOM_WEST_FROM_INN),
+    SCENE_EXIT(TIMBER_ROOMS_A_INN_TO_GUEST_ROOM_EAST, TimberRoomsA, TIMBER_ROOMS_A_GUEST_ROOM_EAST_FROM_INN),
+    SCENE_EXIT(TIMBER_ROOMS_A_GUEST_ROOM_WEST_TO_INN, TimberRoomsA, TIMBER_ROOMS_A_INN_FROM_GUEST_ROOM_WEST),
+    SCENE_EXIT(TIMBER_ROOMS_A_GUEST_ROOM_EAST_TO_INN, TimberRoomsA, TIMBER_ROOMS_A_INN_FROM_GUEST_ROOM_EAST),
+    SCENE_EXIT(TIMBER_ROOMS_A_INN_TO_LOFT, TimberRoomsA, TIMBER_ROOMS_A_LOFT_FROM_INN),
+    SCENE_EXIT(TIMBER_ROOMS_A_LOFT_TO_INN, TimberRoomsA, TIMBER_ROOMS_A_INN_FROM_LOFT),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gTimberRoomsAObjectEventTemplates[] = {
@@ -674,15 +674,15 @@ struct ObjectEventTemplate gTimberRoomsAObjectEventTemplatesAfterAudience[] = {
 };
 
 struct MapEvent gTimberRoomsAEvents[] = {
-    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByWarp) },
-    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByWarp) },
-    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByWarp) },
-    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByWarp) },
-    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByWarp) },
-    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByWarp) },
-    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByWarp) },
-    { MAP_EVENT_COORD, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByWarp) },
-    { MAP_EVENT_COORD, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByWarp) },
+    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
+    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
+    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
+    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
+    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
+    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
+    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
+    { MAP_EVENT_COORD, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
+    { MAP_EVENT_COORD, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
     { MAP_EVENT_TALK, LOCALID_FATHERS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsMyFatherLovesPeopleSoMuch) },
     { MAP_EVENT_TALK, LOCALID_FATHER_WHO_WANTS_TO_HELP, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsLetMeKnowIfYouHave) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FATHERS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWhenISeePeopleInTrouble) },
@@ -708,15 +708,15 @@ struct MapEvent gTimberRoomsAEvents[] = {
 
 struct MapEvent gTimberRoomsAEventsAfterAudience[] = {
     { MAP_EVENT_COORD, 50, FLAG_IODEM_MET_WOUNDED_SOLDIERS, EVENT_SCRIPT(EventScript_IodemQuestionsWoundedSoldiers) },
-    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByWarp) },
-    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByWarp) },
-    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByWarp) },
-    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByWarp) },
-    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByWarp) },
-    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByWarp) },
-    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByWarp) },
-    { MAP_EVENT_COORD, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByWarp) },
-    { MAP_EVENT_COORD, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByWarp) },
+    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
+    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
+    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
+    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
+    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
+    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
+    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
+    { MAP_EVENT_COORD, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
+    { MAP_EVENT_COORD, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveByExit) },
     { MAP_EVENT_TALK, LOCALID_FATHERS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTheWoundedAreSleepingSoDont) },
     { MAP_EVENT_TALK, LOCALID_FATHER_WHO_WANTS_TO_HELP, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsIAmAmazedTheseSoldiersSurvived) },
     { MAP_EVENT_TALK, LOCALID_SOLDIER_SOUTH, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWhyWereTheyHeadedTowardEastern) },

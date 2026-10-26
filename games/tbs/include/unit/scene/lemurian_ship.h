@@ -4,11 +4,11 @@
 #include "types.h"
 #include "map_tables.h"
 
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *LemurianShip_GetWarpDests(void);
-const struct MapWarpRegion *LemurianShip_GetRegions(void);
-const u32 *LemurianShip_GetWarps(void);
+const struct SceneEntrance *LemurianShip_GetEntrances(void);
+const struct SceneExitRegion *LemurianShip_GetRegions(void);
+const u32 *LemurianShip_GetExits(void);
 const struct ObjectEventTemplate *LemurianShip_GetObjectEventTemplates(void);
 const struct MapEvent *LemurianShip_GetEvents(void);
 s32 LemurianShip_SetupMap(void);
@@ -17,8 +17,8 @@ void ScanlineEffect_BuildPage(void);
 extern u16 gShipGlowPalettes[];
 extern s32 gSprayFallScript[];
 extern s16 gRippleSine[256];
-extern struct MapWarpDest gLemurianShipWarpDests[];
-extern u32 gLemurianShipWarps[];
+extern struct SceneEntrance gLemurianShipEntrances[];
+extern u32 gLemurianShipExits[];
 extern struct ObjectEventTemplate gLemurianShipObjectEventTemplates[];
 extern struct MapEvent gLemurianShipEvents[];
 extern s32 gOrbGlowActive;

@@ -46,7 +46,7 @@
 	.set import.FieldScript_ShowMessageAndWait, 1
 	.set import.FieldEffect_SpawnLinked, 1
 	.set import.FieldEffect_ConfigureLinkedObject, 1
-	.set import.Import_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestExit, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.FieldScript_SetNextDestination, 1
 	.set import.ScanlineEffect_InitWave, 1

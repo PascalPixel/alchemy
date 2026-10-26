@@ -45,7 +45,7 @@
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_WaitForArrival, 1
-	.set import.Import_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestExit, 1
 	.set import.Field_TryJumpForward, 1
 	.set import.ItemDisplay_ShowItem, 1
 	.set import.FieldEffect_StartMindReadWave, 1

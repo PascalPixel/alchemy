@@ -19,10 +19,10 @@
 ///   columns, the rock puzzle (AltmillerCave_TurnRock) and the chest that holds
 ///   the Mystic Draught behind the wall the puzzle opens.
 ///
-/// The rooms share one warp destination table and one warp table, and the other
+/// The rooms share one entrance table and one exit table, and the other
 /// getters choose by gSaveBlock.sceneId. AltmillerCave_Initialize sends an
-/// entry from outside the cave (warp destination 0) to the room's first warp
-/// destination, darkens the dark rooms and puts back what the party has done.
+/// entry from outside the cave (entrance 0) to the room's first
+/// entrance, darkens the dark rooms and puts back what the party has done.
 /// Saving Babi (FLAG_BABI_SAVED) is the story flag the rest of Tolbi waits on;
 /// the overlay's own state is in map temp flags and gSceneLocalState, so it
 /// starts over on every ordinary arrival.
@@ -300,14 +300,14 @@ static void AltmillerCave_StartDjinnBattle(void) {
   Field_RequestDjinnBattle(LOCALID_SQUALL, DJINNI_SQUALL);
 }
 
-/// The six rooms share one warp destination table.
-const struct MapWarpDest *AltmillerCave_GetWarpDests(void) {
-  return gAltmillerCave_WarpDests;
+/// The six rooms share one entrance table.
+const struct SceneEntrance *AltmillerCave_GetEntrances(void) {
+  return gAltmillerCave_Entrances;
 }
 
-const struct MapWarpRegion *AltmillerCave_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *AltmillerCave_GetRegions(void) { return NULL; }
 
-const u32 *AltmillerCave_GetWarps(void) { return gAltmillerCave_Warps; }
+const u32 *AltmillerCave_GetExits(void) { return gAltmillerCave_Exits; }
 
 const struct ObjectEventTemplate *AltmillerCave_GetObjectEventTemplates(void) {
   s16 sceneId = gSaveBlock.sceneId;
@@ -2083,8 +2083,8 @@ static __inline__ void AltmillerCave_RedrawObstacleFootprints(void) {
 }
 
 /// Sets up the room being entered: an entry from outside the cave takes the
-/// room's first warp destination; AltmillerCaveEntrance picks its darkness from
-/// the warp destination; AltmillerCaveBabi's Babi is invisible until rescued;
+/// room's first entrance; AltmillerCaveEntrance picks its darkness from
+/// the entrance; AltmillerCaveBabi's Babi is invisible until rescued;
 /// AltmillerCaveSquall's obstacles and pillar and AltmillerCaveDraught's
 /// obstacles, lights and rocks are restored. Returns 0.
 s32 AltmillerCave_Initialize(void) {
@@ -2092,36 +2092,36 @@ s32 AltmillerCave_Initialize(void) {
   struct ObjectEvent *objectEvent;
   s32 i;
 
-  if (gSaveBlock.warpDest == 0) {
+  if (gSaveBlock.entrance == 0) {
     if (gSaveBlock.sceneId == (s32)&SceneId_AltmillerCaveBabi) {
-      gSaveBlock.warpDest = ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_ENTRANCE;
+      gSaveBlock.entrance = ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_ENTRANCE;
     }
     if (gSaveBlock.sceneId == (s32)&SceneId_AltmillerCaveVialChest) {
-      gSaveBlock.warpDest = ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_BABI;
+      gSaveBlock.entrance = ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_BABI;
     }
     if (gSaveBlock.sceneId == (s32)&SceneId_AltmillerCaveSquall) {
-      gSaveBlock.warpDest =
+      gSaveBlock.entrance =
           ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_VIAL_CHEST;
     }
     if (gSaveBlock.sceneId == (s32)&SceneId_AltmillerCaveCookieChest) {
-      gSaveBlock.warpDest =
+      gSaveBlock.entrance =
           ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_SQUALL;
     }
     if (gSaveBlock.sceneId == (s32)&SceneId_AltmillerCaveDraught) {
-      gSaveBlock.warpDest =
+      gSaveBlock.entrance =
           ALTMILLER_CAVE_DRAUGHT_FROM_ALTMILLER_CAVE_COOKIE_CHEST;
     }
   }
   GameFlag_Set(FLAG_ALTMILLER_CAVE_DARK);
   Script_ClearFlag(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS);
   if (gSaveBlock.sceneId == (s32)&SceneId_AltmillerCaveEntrance) {
-    if (gSaveBlock.warpDest == ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP) {
+    if (gSaveBlock.entrance == ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         *(u8 *)((u32)gSceneLocalState + 4) = 0;
       }
       GameFlag_Set(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS);
     }
-    if (gSaveBlock.warpDest == ALTMILLER_CAVE_ENTRANCE_FROM_TORCH_CHAMBER) {
+    if (gSaveBlock.entrance == ALTMILLER_CAVE_ENTRANCE_FROM_TORCH_CHAMBER) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         *(u8 *)((u32)gSceneLocalState + 4) = 5;
       }
@@ -2163,7 +2163,7 @@ s32 AltmillerCave_Initialize(void) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     // UB: the callbacks are stored through an s32 view of update, which keeps
-    // the warp destination read below the last store (as ->update, one store
+    // the entrance read below the last store (as ->update, one store
     // moves: 1 of 403 instructions differ in tbs-en).
 #ifdef UBFIX
     ObjectEvent_GetById(LOCALID_FIRST_OBSTACLE)->update =
@@ -2182,7 +2182,7 @@ s32 AltmillerCave_Initialize(void) {
 #endif
     // Coming up to the rocks (ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE)
     // starts the puzzle over, with the red light first.
-    if (gSaveBlock.warpDest == ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) {
+    if (gSaveBlock.entrance == ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) {
       Dma_Fill32(0, gAltmillerCave_LightWheel, 12);
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         u8 *puzzleState = gSceneLocalState;
@@ -2357,7 +2357,7 @@ s32 gPushedObject_FootprintBounds[] = {
 
 struct LightWheel *gAltmillerCave_LightWheel = &gAltmillerCave_LightWheelState;
 
-struct MapWarpDest gAltmillerCave_WarpDests[] = {
+struct SceneEntrance gAltmillerCave_Entrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP, CONDITION_ALWAYS, 456, 0, 504,
      FACING_NORTH, 0, 0, 0, 544, 528, 0},
@@ -2396,57 +2396,59 @@ struct MapWarpDest gAltmillerCave_WarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gAltmillerCave_Warps[] = {
-    MAP_WARPS(AltmillerCaveEntrance),
-    MAP_WARP(ALTMILLER_CAVE_ENTRANCE_TO_WORLD_MAP, WorldMap,
-             WORLD_MAP_FROM_ALTMILLER_CAVE_ENTRANCE),
-    MAP_WARP(ALTMILLER_CAVE_ENTRANCE_TO_TORCH_CHAMBER, AltmillerCaveEntrance,
-             ALTMILLER_CAVE_ENTRANCE_TORCH_CHAMBER_FROM_PASSAGE),
-    MAP_WARP(ALTMILLER_CAVE_ENTRANCE_TORCH_CHAMBER_TO_PASSAGE,
-             AltmillerCaveEntrance, ALTMILLER_CAVE_ENTRANCE_FROM_TORCH_CHAMBER),
-    MAP_WARP(ALTMILLER_CAVE_ENTRANCE_TO_ALTMILLER_CAVE_BABI, AltmillerCaveBabi,
-             ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_ENTRANCE),
-    MAP_WARPS(AltmillerCaveBabi),
-    MAP_WARP(ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_ENTRANCE,
-             AltmillerCaveEntrance,
-             ALTMILLER_CAVE_ENTRANCE_FROM_ALTMILLER_CAVE_BABI),
-    MAP_WARP(ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_VIAL_CHEST,
-             AltmillerCaveVialChest,
-             ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_BABI),
-    MAP_WARPS(AltmillerCaveVialChest),
-    MAP_WARP(ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_BABI,
-             AltmillerCaveBabi,
-             ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_VIAL_CHEST),
-    MAP_WARP(ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_SQUALL,
-             AltmillerCaveSquall,
-             ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_VIAL_CHEST),
-    MAP_WARPS(AltmillerCaveSquall),
-    MAP_WARP(ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_VIAL_CHEST,
-             AltmillerCaveVialChest,
-             ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_SQUALL),
-    MAP_WARP(ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_COOKIE_CHEST,
-             AltmillerCaveCookieChest,
-             ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_SQUALL),
-    MAP_WARPS(AltmillerCaveCookieChest),
-    MAP_WARP(ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_SQUALL,
-             AltmillerCaveSquall,
-             ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_COOKIE_CHEST),
-    MAP_WARP(ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_DRAUGHT,
-             AltmillerCaveDraught,
-             ALTMILLER_CAVE_DRAUGHT_FROM_ALTMILLER_CAVE_COOKIE_CHEST),
-    MAP_WARPS(AltmillerCaveDraught),
-    MAP_WARP(ALTMILLER_CAVE_DRAUGHT_TO_ALTMILLER_CAVE_COOKIE_CHEST,
-             AltmillerCaveCookieChest,
-             ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_DRAUGHT),
-    MAP_WARP(ALTMILLER_CAVE_DRAUGHT_TO_ROCKS, AltmillerCaveDraught,
-             ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE),
-    MAP_WARP(ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_PILLAR_CAVE, AltmillerCaveDraught,
-             ALTMILLER_CAVE_DRAUGHT_FROM_ROCKS),
-    MAP_WARP(ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_CHEST, AltmillerCaveDraught,
-             ALTMILLER_CAVE_DRAUGHT_CHEST_FROM_ROCKS),
-    MAP_WARP(ALTMILLER_CAVE_DRAUGHT_CHEST_TO_ROCKS, AltmillerCaveDraught,
-             ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_CHEST),
-    MAP_WARPS_END,
+u32 gAltmillerCave_Exits[] = {
+    SCENE_EXITS(AltmillerCaveEntrance),
+    SCENE_EXIT(ALTMILLER_CAVE_ENTRANCE_TO_WORLD_MAP, WorldMap,
+               WORLD_MAP_FROM_ALTMILLER_CAVE_ENTRANCE),
+    SCENE_EXIT(ALTMILLER_CAVE_ENTRANCE_TO_TORCH_CHAMBER, AltmillerCaveEntrance,
+               ALTMILLER_CAVE_ENTRANCE_TORCH_CHAMBER_FROM_PASSAGE),
+    SCENE_EXIT(ALTMILLER_CAVE_ENTRANCE_TORCH_CHAMBER_TO_PASSAGE,
+               AltmillerCaveEntrance,
+               ALTMILLER_CAVE_ENTRANCE_FROM_TORCH_CHAMBER),
+    SCENE_EXIT(ALTMILLER_CAVE_ENTRANCE_TO_ALTMILLER_CAVE_BABI,
+               AltmillerCaveBabi,
+               ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_ENTRANCE),
+    SCENE_EXITS(AltmillerCaveBabi),
+    SCENE_EXIT(ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_ENTRANCE,
+               AltmillerCaveEntrance,
+               ALTMILLER_CAVE_ENTRANCE_FROM_ALTMILLER_CAVE_BABI),
+    SCENE_EXIT(ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_VIAL_CHEST,
+               AltmillerCaveVialChest,
+               ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_BABI),
+    SCENE_EXITS(AltmillerCaveVialChest),
+    SCENE_EXIT(ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_BABI,
+               AltmillerCaveBabi,
+               ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_VIAL_CHEST),
+    SCENE_EXIT(ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_SQUALL,
+               AltmillerCaveSquall,
+               ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_VIAL_CHEST),
+    SCENE_EXITS(AltmillerCaveSquall),
+    SCENE_EXIT(ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_VIAL_CHEST,
+               AltmillerCaveVialChest,
+               ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_SQUALL),
+    SCENE_EXIT(ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_COOKIE_CHEST,
+               AltmillerCaveCookieChest,
+               ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_SQUALL),
+    SCENE_EXITS(AltmillerCaveCookieChest),
+    SCENE_EXIT(ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_SQUALL,
+               AltmillerCaveSquall,
+               ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_COOKIE_CHEST),
+    SCENE_EXIT(ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_DRAUGHT,
+               AltmillerCaveDraught,
+               ALTMILLER_CAVE_DRAUGHT_FROM_ALTMILLER_CAVE_COOKIE_CHEST),
+    SCENE_EXITS(AltmillerCaveDraught),
+    SCENE_EXIT(ALTMILLER_CAVE_DRAUGHT_TO_ALTMILLER_CAVE_COOKIE_CHEST,
+               AltmillerCaveCookieChest,
+               ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_DRAUGHT),
+    SCENE_EXIT(ALTMILLER_CAVE_DRAUGHT_TO_ROCKS, AltmillerCaveDraught,
+               ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE),
+    SCENE_EXIT(ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_PILLAR_CAVE,
+               AltmillerCaveDraught, ALTMILLER_CAVE_DRAUGHT_FROM_ROCKS),
+    SCENE_EXIT(ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_CHEST, AltmillerCaveDraught,
+               ALTMILLER_CAVE_DRAUGHT_CHEST_FROM_ROCKS),
+    SCENE_EXIT(ALTMILLER_CAVE_DRAUGHT_CHEST_TO_ROCKS, AltmillerCaveDraught,
+               ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_CHEST),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gAltmillerCave_ObjectEventTemplatesOther[] = {
@@ -2587,10 +2589,10 @@ s32 gAltmillerCave_BabiLeavePath[] = {
 
 // clang-format off
 struct MapEvent gAltmillerCave_EventsOther[] = {
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_WORLD_MAP},
-    {MAP_EVENT_WARP, 2, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_TORCH_CHAMBER},
-    {MAP_EVENT_WARP, 3, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TORCH_CHAMBER_TO_PASSAGE},
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_ALTMILLER_CAVE_BABI},
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_WORLD_MAP},
+    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_TORCH_CHAMBER},
+    {MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TORCH_CHAMBER_TO_PASSAGE},
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_ALTMILLER_CAVE_BABI},
     {MAP_EVENT_COORD, 60, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel0)},
     {MAP_EVENT_COORD, 61, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel1)},
     {MAP_EVENT_COORD, 62, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel2)},
@@ -2606,8 +2608,8 @@ struct MapEvent gAltmillerCave_EventsOther[] = {
 };
 
 struct MapEvent gAltmillerCave_BabiEvents[] = {
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 10, CONDITION_ALWAYS, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_ENTRANCE},
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 11, CONDITION_ALWAYS, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_VIAL_CHEST},
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 10, CONDITION_ALWAYS, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_ENTRANCE},
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 11, CONDITION_ALWAYS, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_VIAL_CHEST},
     {MAP_EVENT_TALK, LOCALID_INVISIBLE_BABI, FLAG_MET_INVISIBLE_BABI, EVENT_SCRIPT(AltmillerCave_MeetInvisibleBabi)},
     {MAP_EVENT_TALK, LOCALID_INVISIBLE_BABI, FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT, EVENT_SCRIPT(AltmillerCave_RepeatRockOrder)},
     {MAP_EVENT_TALK, LOCALID_INVISIBLE_BABI, FLAG_BABI_SAVED, EVENT_SCRIPT(AltmillerCave_RestoreBabiAndInviteParty)},
@@ -2625,8 +2627,8 @@ struct MapEvent gAltmillerCave_BabiEvents[] = {
 };
 
 struct MapEvent gAltmillerCave_VialChestEvents[] = {
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 20, CONDITION_ALWAYS, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_BABI},
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 21, CONDITION_ALWAYS, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_SQUALL},
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 20, CONDITION_ALWAYS, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_BABI},
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 21, CONDITION_ALWAYS, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_SQUALL},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS,
         EVENT_SCRIPT(AltmillerCave_EndReveal)},
     {PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_StartRetreat)},
@@ -2635,8 +2637,8 @@ struct MapEvent gAltmillerCave_VialChestEvents[] = {
 };
 
 struct MapEvent gAltmillerCave_SquallEvents[] = {
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 30, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_VIAL_CHEST},
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 31, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_COOKIE_CHEST},
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 30, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_VIAL_CHEST},
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 31, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_COOKIE_CHEST},
     {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 72, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedObjectEvent)},
     {COORD_EVENT_WALKING_INTO(FACING_WEST), 73, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedObjectEvent)},
     {COORD_EVENT_WALKING_INTO(FACING_NORTH), 74, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedObjectEvent)},
@@ -2651,8 +2653,8 @@ struct MapEvent gAltmillerCave_SquallEvents[] = {
 };
 
 struct MapEvent gAltmillerCave_CookieChestEvents[] = {
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 40, CONDITION_ALWAYS, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_SQUALL},
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 41, CONDITION_ALWAYS, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_DRAUGHT},
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 40, CONDITION_ALWAYS, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_SQUALL},
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 41, CONDITION_ALWAYS, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_DRAUGHT},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS,
         EVENT_SCRIPT(AltmillerCave_EndReveal)},
     {PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_StartRetreat)},
@@ -2662,14 +2664,14 @@ struct MapEvent gAltmillerCave_CookieChestEvents[] = {
 // clang-format on
 
 struct MapEvent gAltmillerCave_DraughtEvents[] = {
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 50, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 50, CONDITION_ALWAYS,
      ALTMILLER_CAVE_DRAUGHT_TO_ALTMILLER_CAVE_COOKIE_CHEST},
-    {MAP_EVENT_WARP, 51, CONDITION_ALWAYS, ALTMILLER_CAVE_DRAUGHT_TO_ROCKS},
-    {MAP_EVENT_WARP, 52, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 51, CONDITION_ALWAYS, ALTMILLER_CAVE_DRAUGHT_TO_ROCKS},
+    {MAP_EVENT_EXIT, 52, CONDITION_ALWAYS,
      ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_PILLAR_CAVE},
-    {MAP_EVENT_WARP, 53, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 53, CONDITION_ALWAYS,
      ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_CHEST},
-    {MAP_EVENT_WARP, 54, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 54, CONDITION_ALWAYS,
      ALTMILLER_CAVE_DRAUGHT_CHEST_TO_ROCKS},
     {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 70, CONDITION_ALWAYS,
      EVENT_SCRIPT(AltmillerCave_MoveStagedObjectEventToClearPosition)},

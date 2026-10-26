@@ -51,7 +51,7 @@
 /// metatile behaviors 100 and 101 (FLAG_VALE_ON_ROOF while on the roof), and
 /// cells of the bridge over the river that change while the leader is on it
 /// (FLAG_VALE_ON_BRIDGE); after a battle (FLAG_KEEP_PARTY_POSITION) the
-/// setup restores both. Warps: VALE_TO_SOL_ENTRANCE up Mt. Aleph to Sol
+/// setup restores both. Exits: VALE_TO_SOL_ENTRANCE up Mt. Aleph to Sol
 /// Entrance (SceneId_SolEntrance), VALE_TO_VALE_PLAZA to SceneId_ValePlaza,
 /// VALE_TO_VALE_KRADENS_COTTAGE_NORTH and VALE_TO_VALE_KRADENS_COTTAGE_SOUTH to
 /// SceneId_ValeKradensCottage, the doors VALE_TO_COTTAGE_ROOMS_A_EAST,
@@ -417,17 +417,17 @@ enum ValeAnimation {
 /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
 #define FLAG_VALE_PILLAR_IN_EAST_COLUMN FLAG_AREA_TEMP_16
 
-const struct MapWarpDest *Vale_GetWarpDests(void) { return gVale_WarpDests; }
+const struct SceneEntrance *Vale_GetEntrances(void) { return gVale_Entrances; }
 
-const struct MapWarpRegion *Vale_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Vale_GetRegions(void) { return NULL; }
 
-const u32 *Vale_GetWarps(void) { return gVale_Warps; }
+const u32 *Vale_GetExits(void) { return gVale_Exits; }
 
 /// Places the villagers for the story so far, or for the roof repair
 /// (VALE_FROM_TITLE).
 const struct ObjectEventTemplate *Vale_GetObjectEventTemplates(void) {
   u8 *gameStateBytes = (u8 *)&gSaveBlock;
-  if (((struct SaveBlock *)gameStateBytes)->warpDest == VALE_FROM_TITLE)
+  if (((struct SaveBlock *)gameStateBytes)->entrance == VALE_FROM_TITLE)
     return gVale_RepairObjectEventTemplates;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
     return gVale_ObjectEventTemplatesAfterKalay;
@@ -611,7 +611,7 @@ static void EventScript_EnterSanctum(void) {
   Script_PlaySong(SE_THUMP);
   MapGrid_AnimateCells(gVale_SanctumDoorOpens, 45, 11);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 257, 420);
-  Import_ScriptRequestWarp(VALE_TO_SANCTUM);
+  Import_ScriptRequestExit(VALE_TO_SANCTUM);
 }
 
 /// The path to Mt. Aleph in Vale (metatile behavior 2): Jenna stops Isaac until
@@ -623,28 +623,28 @@ static void EventScript_ApproachMtAleph(void) {
     Vale_HaveJennaStopTheAlephDetour();
   } else {
     Sound_PlaySong(SE_MAP_EXIT);
-    Import_ScriptRequestWarp(VALE_TO_SOL_ENTRANCE);
+    Import_ScriptRequestExit(VALE_TO_SOL_ENTRANCE);
   }
 }
 
 /// Metatile behavior 3 in Vale takes the northern way out to
 /// SceneId_ValeKradensCottage.
-static void EventScript_WarpToValeKradensCottageNorth(void) {
+static void EventScript_ExitToValeKradensCottageNorth(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  Import_ScriptRequestWarp(VALE_TO_VALE_KRADENS_COTTAGE_NORTH);
+  Import_ScriptRequestExit(VALE_TO_VALE_KRADENS_COTTAGE_NORTH);
 }
 
 /// Metatile behavior 4 in Vale takes the southern way out to
 /// SceneId_ValeKradensCottage.
-static void EventScript_WarpToValeKradensCottageSouth(void) {
+static void EventScript_ExitToValeKradensCottageSouth(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  Import_ScriptRequestWarp(VALE_TO_VALE_KRADENS_COTTAGE_SOUTH);
+  Import_ScriptRequestExit(VALE_TO_VALE_KRADENS_COTTAGE_SOUTH);
 }
 
 /// Metatile behavior 5 in Vale takes the way out to SceneId_ValePlaza.
-static void EventScript_WarpToValePlaza(void) {
+static void EventScript_ExitToValePlaza(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  Import_ScriptRequestWarp(VALE_TO_VALE_PLAZA);
+  Import_ScriptRequestExit(VALE_TO_VALE_PLAZA);
 }
 
 /// The door of the house of Garet's family in Vale (metatile behavior 6): it
@@ -653,7 +653,7 @@ static void EventScript_EnterGaretsHouse(void) {
   Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_IsaacsDoorOpens, 54, 32);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 406, 727);
-  Import_ScriptRequestWarp(VALE_TO_COTTAGE_ROOMS_A_EAST);
+  Import_ScriptRequestExit(VALE_TO_COTTAGE_ROOMS_A_EAST);
 }
 
 /// A house door in Vale (metatile behavior 7): it opens and
@@ -663,7 +663,7 @@ static void EventScript_EnterCottageRoomsA(void) {
   Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_GrandparentsDoorOpens, 45, 39);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 262, 805);
-  Import_ScriptRequestWarp(VALE_TO_COTTAGE_ROOMS_A_SOUTH);
+  Import_ScriptRequestExit(VALE_TO_COTTAGE_ROOMS_A_SOUTH);
 }
 
 /// The door of Isaac's house in Vale (metatile behavior 8): after the party has
@@ -691,7 +691,7 @@ static void EventScript_EnterIsaacsHouse(void) {
     Sound_PlaySong(SE_DOOR_OPEN);
     MapGrid_PlayMetatileCopySequence(gVale_IsaacsDoorOpens, 50, 44);
     ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 340, 888);
-    Import_ScriptRequestWarp(VALE_TO_COTTAGE_ROOMS_B);
+    Import_ScriptRequestExit(VALE_TO_COTTAGE_ROOMS_B);
   }
 }
 
@@ -701,7 +701,7 @@ static void EventScript_EnterJennasGrandparentsHouse(void) {
   Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_GrandparentsDoorOpens, 49, 69);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 326, 1126);
-  Import_ScriptRequestWarp(VALE_TO_COTTAGE_ROOMS_A_NORTH);
+  Import_ScriptRequestExit(VALE_TO_COTTAGE_ROOMS_A_NORTH);
 }
 
 /// A house door in Vale (metatile behavior 10): it opens and
@@ -711,7 +711,7 @@ static void EventScript_EnterCottageRoomsAWest(void) {
   Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_WestHouseDoorOpens, 52, 76);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 374, 1238);
-  Import_ScriptRequestWarp(VALE_TO_COTTAGE_ROOMS_A_WEST);
+  Import_ScriptRequestExit(VALE_TO_COTTAGE_ROOMS_A_WEST);
 }
 
 /// Unused: its row answers metatile behavior 11, which no cell of Vale's layout
@@ -724,7 +724,7 @@ static void EventScript_UnusedEnterJennasGrandparentsHouseBySecondDoor(void) {
   Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_IsaacsDoorOpens, 35, 74);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 102, 1206);
-  Import_ScriptRequestWarp(VALE_TO_COTTAGE_ROOMS_A_NORTH_SECOND_DOOR);
+  Import_ScriptRequestExit(VALE_TO_COTTAGE_ROOMS_A_NORTH_SECOND_DOOR);
 }
 
 /// On the path to Mt. Aleph in Vale, before the visit is planned: Jenna comes
@@ -1589,8 +1589,8 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   FieldScript_End();
 }
 
-/// Vale's setup: plays the roof mending (VALE_FROM_TITLE) or its end (warp
-/// destination 17, once), floats the Nut, places the pillar by its column, sets
+/// Vale's setup: plays the roof mending (VALE_FROM_TITLE) or its end (
+/// entrance 17, once), floats the Nut, places the pillar by its column, sets
 /// the watching man going, removes the puppies once Saturos and Menardi have
 /// been met, and after a battle restores the roof's and the bridge's
 /// cells.
@@ -1598,7 +1598,7 @@ s32 Vale_Initialize(void) {
   struct ObjectEvent *objectEvent;
   s32 set;
 
-  if (gSaveBlock.warpDest == VALE_FROM_TITLE) {
+  if (gSaveBlock.entrance == VALE_FROM_TITLE) {
     WindowColor_Apply(((u8 *)&gSaveBlock)[517], ((u8 *)&gSaveBlock)[518]);
     EventScript_MendingTheRoof();
   } else {
@@ -1673,14 +1673,14 @@ s32 Vale_Initialize(void) {
           ObjectEvent_GetById(LOCALID_MAN_GUARDING_MT_ALEPH)->paused = set;
           GameFlag_Clear(FLAG_VALE_MT_ALEPH_GUARD_PAUSED);
         }
-        if (gSaveBlock.warpDest != VALE_FROM_TITLE &&
+        if (gSaveBlock.entrance != VALE_FROM_TITLE &&
             !GameFlag_Get(FLAG_KALAY_REACHED)) {
           FieldScheduler_AddCallback(Vale_SynchronizeAlephGuardPause,
                                      TASK_PRIORITY_MAP);
         }
       }
       if (!Script_GetFlag(FLAG_VALE_ROOF_MENDED_EVENT_PLAYED) &&
-          gSaveBlock.warpDest == VALE_FROM_ROOF_MENDED) {
+          gSaveBlock.entrance == VALE_FROM_ROOF_MENDED) {
         EventScript_RoofMended();
         GameFlag_Set(FLAG_VALE_ROOF_MENDED_EVENT_PLAYED);
       }
@@ -2386,7 +2386,7 @@ static void EventScript_MendingTheRoof(void) {
   gFieldWork->transitionFrames = 60;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(VALE_TO_ROOF_MENDED);
+  Import_ScriptRequestExit(VALE_TO_ROOF_MENDED);
   FieldScript_End();
 }
 
@@ -3579,7 +3579,7 @@ s32 gVale_SparkleScript[] = {
     SC_FREE,
 };
 
-struct MapWarpDest gVale_WarpDests[] = {
+struct SceneEntrance gVale_Entrances[] = {
     { 0, CONDITION_ALWAYS, 167, 0, 1281, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_FROM_SANCTUM, CONDITION_ALWAYS, 256, 0, 440, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_FROM_SOL_ENTRANCE, CONDITION_ALWAYS, 113, 0, 303, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -3597,21 +3597,21 @@ struct MapWarpDest gVale_WarpDests[] = {
     { MAP_TABLE_END },
 };
 
-u32 gVale_Warps[] = {
-    MAP_WARPS(Vale),
-    MAP_WARP(VALE_TO_SOL_ENTRANCE, SolEntrance, SOL_ENTRANCE_FROM_VALE),
-    MAP_WARP(VALE_TO_VALE_PLAZA, ValePlaza, VALE_PLAZA_FROM_VALE),
-    MAP_WARP(VALE_TO_VALE_KRADENS_COTTAGE_NORTH, ValeKradensCottage, VALE_KRADENS_COTTAGE_FROM_VALE_NORTH),
-    MAP_WARP(VALE_TO_VALE_KRADENS_COTTAGE_SOUTH, ValeKradensCottage, VALE_KRADENS_COTTAGE_FROM_VALE_SOUTH),
-    MAP_WARP(VALE_TO_COTTAGE_ROOMS_A_EAST, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_EAST),
-    MAP_WARP(VALE_TO_COTTAGE_ROOMS_A_SOUTH, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_SOUTH),
-    MAP_WARP(VALE_TO_COTTAGE_ROOMS_B, CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE),
-    MAP_WARP(VALE_TO_COTTAGE_ROOMS_A_NORTH, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_NORTH),
-    MAP_WARP(VALE_TO_COTTAGE_ROOMS_A_WEST, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_WEST),
-    MAP_WARP(VALE_TO_COTTAGE_ROOMS_A_NORTH_SECOND_DOOR, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_NORTH),
-    MAP_WARP(VALE_TO_SANCTUM, Sanctum, SANCTUM_FROM_VALE),
-    MAP_WARP(VALE_TO_ROOF_MENDED, Vale, VALE_FROM_ROOF_MENDED),
-    MAP_WARPS_END,
+u32 gVale_Exits[] = {
+    SCENE_EXITS(Vale),
+    SCENE_EXIT(VALE_TO_SOL_ENTRANCE, SolEntrance, SOL_ENTRANCE_FROM_VALE),
+    SCENE_EXIT(VALE_TO_VALE_PLAZA, ValePlaza, VALE_PLAZA_FROM_VALE),
+    SCENE_EXIT(VALE_TO_VALE_KRADENS_COTTAGE_NORTH, ValeKradensCottage, VALE_KRADENS_COTTAGE_FROM_VALE_NORTH),
+    SCENE_EXIT(VALE_TO_VALE_KRADENS_COTTAGE_SOUTH, ValeKradensCottage, VALE_KRADENS_COTTAGE_FROM_VALE_SOUTH),
+    SCENE_EXIT(VALE_TO_COTTAGE_ROOMS_A_EAST, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_EAST),
+    SCENE_EXIT(VALE_TO_COTTAGE_ROOMS_A_SOUTH, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_SOUTH),
+    SCENE_EXIT(VALE_TO_COTTAGE_ROOMS_B, CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE),
+    SCENE_EXIT(VALE_TO_COTTAGE_ROOMS_A_NORTH, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_NORTH),
+    SCENE_EXIT(VALE_TO_COTTAGE_ROOMS_A_WEST, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_WEST),
+    SCENE_EXIT(VALE_TO_COTTAGE_ROOMS_A_NORTH_SECOND_DOOR, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_NORTH),
+    SCENE_EXIT(VALE_TO_SANCTUM, Sanctum, SANCTUM_FROM_VALE),
+    SCENE_EXIT(VALE_TO_ROOF_MENDED, Vale, VALE_FROM_ROOF_MENDED),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gVale_ObjectEventTemplates[] = {
@@ -3776,9 +3776,9 @@ struct MapEvent gVale_Events[] = {
     { MAP_EVENT_TALK, LOCALID_MAN_GUARDING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeMtAlephIsASacredPeak) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterSanctum) },
     { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ApproachMtAleph) },
-    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradensCottageNorth) },
-    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradensCottageSouth) },
-    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlaza) },
+    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeKradensCottageNorth) },
+    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeKradensCottageSouth) },
+    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlaza) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterGaretsHouse) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterCottageRoomsA) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterIsaacsHouse) },
@@ -3826,9 +3826,9 @@ struct MapEvent gVale_EventsAfterLeaving[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_KEEPING_VALE_HIDDEN, CONDITION_ALWAYS, MSGNO(MsgValeThePeopleOfValeWillNever) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterSanctum) },
     { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ApproachMtAleph) },
-    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradensCottageNorth) },
-    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradensCottageSouth) },
-    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlaza) },
+    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeKradensCottageNorth) },
+    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeKradensCottageSouth) },
+    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlaza) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterGaretsHouse) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterCottageRoomsA) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterIsaacsHouse) },
@@ -3879,9 +3879,9 @@ struct MapEvent gVale_EventsAfterKalay[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_MISSING_TRAVELERS, CONDITION_ALWAYS, MSGNO(MsgValeHavingNoTravelersIsNoFun) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterSanctum) },
     { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ApproachMtAleph) },
-    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradensCottageNorth) },
-    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradensCottageSouth) },
-    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlaza) },
+    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeKradensCottageNorth) },
+    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeKradensCottageSouth) },
+    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlaza) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterGaretsHouse) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterCottageRoomsA) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterIsaacsHouse) },

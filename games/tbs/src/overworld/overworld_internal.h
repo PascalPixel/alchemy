@@ -97,8 +97,8 @@
 extern struct SpeakerDefinition gSpeakerDefinitions[];
 
 /// Map ids above the field maps, which SequenceManager_Run runs without a
-/// layout; each returns a result to Scene_ReturnFromSequence instead of a warp.
-/// A 16.16 position that Vector_AddPolarOffset moves by a distance and a
+/// layout; each returns a result to Scene_ReturnFromSequence instead of an
+/// exit. A 16.16 position that Vector_AddPolarOffset moves by a distance and a
 /// heading: the routine walks the coordinates as three words, and the callers
 /// read the result by name.
 union PolarOffsetPosition {
@@ -123,8 +123,8 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 #define UNIT_NONE 15
 #define ALLY_MAX 7 ///< the last party member; only users up to it pay PP
 
-/// WARP_NONE's value: Retreat writes its destination itself.
-#define WARP_RETREAT 999
+/// EXIT_NONE's value: Retreat writes its destination itself.
+#define EXIT_RETREAT 999
 
 /// Shows message m with the user's and the Psynergy's names, and waits.
 #define PSYNERGY_MESSAGE(who, act, m)                                          \

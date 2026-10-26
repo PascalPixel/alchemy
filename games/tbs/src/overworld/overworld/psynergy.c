@@ -68,13 +68,13 @@ s32 Field_UsePsynergy(u32 code) {
       return 0;
     {
       struct SaveBlock *state = &gSaveBlock;
-      s32 sceneId, returnWarpDest;
+      s32 sceneId, returnEntrance;
       sceneId = (u16)state->retreatScene;
       state->sceneId = sceneId;
-      returnWarpDest = (u16)state->retreatWarpDest;
-      state->warpDest = returnWarpDest;
+      returnEntrance = (u16)state->retreatEntrance;
+      state->entrance = returnEntrance;
     }
-    work->warp = WARP_RETREAT;
+    work->exit = EXIT_RETREAT;
     retreat = 1;
   }
   // A use that pays no PP only runs the map's ending events.
@@ -86,10 +86,10 @@ s32 Field_UsePsynergy(u32 code) {
     ppCost = Ability_Get(abilityId)->ppCost;
     if (Unit_GetFar(userId)->pp < ppCost) {
       PSYNERGY_MESSAGE(userId, abilityId, MsgNotEnoughPp);
-      // Retreat was already accepted: take its warp back (the map and
-      // warp destination it chose stay in the save block).
+      // Retreat was already accepted: take its exit back (the map and
+      // entrance it chose stay in the save block).
       if (retreat)
-        work->warp = 0;
+        work->exit = 0;
       return 0;
     }
     Unit_AddPpFar(userId, -ppCost);

@@ -196,11 +196,13 @@ Vault_UpdateRoofComplainerProximity(union ObjectEventOrEffect *fieldObject) {
 #endif
 }
 
-const struct MapWarpDest *Scene_GetWarpDests(void) { return gVault_WarpDests; }
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gVault_Entrances;
+}
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Scene_GetWarps(void) { return gVault_Warps; }
+const u32 *Scene_GetExits(void) { return gVault_Exits; }
 
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0)
@@ -227,11 +229,11 @@ static void EventScript_IvanStaysBehind(void) {
   work = gFieldWork;
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0 ||
       GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) == 0) {
-    Import_ScriptRequestWarp(work->coordEvent -
+    Import_ScriptRequestExit(work->coordEvent -
                              (MB_VAULT_SOUTH_GATE - VAULT_TO_WORLD_MAP_SOUTH));
     return;
   }
-  // Bring Ivan out beside the party at the warp they are using.
+  // Bring Ivan out beside the party at the exit they are using.
   FieldScript_Start();
   objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
@@ -261,7 +263,7 @@ static void EventScript_IvanStaysBehind(void) {
     WaitFrames(20);
   }
   Party_RemoveMemberRestored(IVAN);
-  Import_ScriptRequestWarp(work->coordEvent -
+  Import_ScriptRequestExit(work->coordEvent -
                            (MB_VAULT_SOUTH_GATE - VAULT_TO_WORLD_MAP_SOUTH));
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -697,12 +699,12 @@ static void EventScript_ReadWomanWantingTheRoofFixedMind(void) {
 
 #include "common/vault_toggle.h"
 
-/// Walks to the warp's threshold and requests the room's transition.
+/// Walks to the exit's threshold and requests the room's transition.
 static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, x, y);
   gFieldWork->transitionFrames = 16;
-  Import_ScriptRequestWarp(continuation);
+  Import_ScriptRequestExit(continuation);
 }
 
 /// The door of the gem owner's house opens and the party walks in.
@@ -876,7 +878,7 @@ s32 Scene_Initialize(void) {
   // Once the party has reached Kalay (FLAG_KALAY_REACHED), the town is its
   // later map, SceneId_VaultRevisit (vault_revisit.c).
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
-    Import_ScriptRequestWarp(VAULT_TO_VAULT_REVISIT);
+    Import_ScriptRequestExit(VAULT_TO_VAULT_REVISIT);
   }
   // Keep the bridge deck after a battle, and restore the two children's
   // proximity callbacks.
@@ -921,7 +923,7 @@ s32 Scene_Initialize(void) {
   }
   // Back through the gates while Ivan waits in Vault: "Welcome back, you two!
   // Let's go find the rod!"
-  if (gSaveBlock.warpDest <= VAULT_NORTH_UNUSED) {
+  if (gSaveBlock.entrance <= VAULT_NORTH_UNUSED) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       GameFlag_Clear(FLAG_VAULT_SAP_CALLED_BY_BELL);
       if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -932,7 +934,7 @@ s32 Scene_Initialize(void) {
             Import_ObjectEventSetPosition(LOCALID_IVAN, objectEvent->x.fixed,
                                           objectEvent->z.fixed);
           }
-          if (gSaveBlock.warpDest == VAULT_FROM_WORLD_MAP_SOUTH) {
+          if (gSaveBlock.entrance == VAULT_FROM_WORLD_MAP_SOUTH) {
             ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(400), PIXELS(448));
           } else {
             ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(224), PIXELS(162));
@@ -965,7 +967,7 @@ s32 Scene_Initialize(void) {
     ObjectEvent_SetPosition(LOCALID_SAP, PIXELS(408), PIXELS(120));
   }
   // The same welcome out of the Vault Sanctum while Ivan is out of the party.
-  if (gSaveBlock.warpDest == VAULT_FROM_SANCTUM) {
+  if (gSaveBlock.entrance == VAULT_FROM_SANCTUM) {
     if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
       if (GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
         if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) == 0) {
@@ -996,7 +998,7 @@ s32 Scene_Initialize(void) {
     }
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   } else {
-    if (gSaveBlock.warpDest == VAULT_FROM_LOG_ROOMS_A_WEST) {
+    if (gSaveBlock.entrance == VAULT_FROM_LOG_ROOMS_A_WEST) {
       if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
         Import_ObjectEventSetPosition(LOCALID_YOUNG_MAN_FIXING_THE_ROOF, 0, 0);
       }
@@ -1280,8 +1282,8 @@ s32 gVault_GirlRoundTheWellRoute[] = {
     SC_END,
 };
 
-struct MapWarpDest gVault_WarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 223, 0, 135, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gVault_Entrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 223, 0, 135, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {VAULT_FROM_WORLD_MAP_SOUTH, CONDITION_ALWAYS, 400, 0, 472, FACING_NORTH, 0,
      -1, -1, -1, -1, 0},
@@ -1308,26 +1310,28 @@ struct MapWarpDest gVault_WarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gVault_Warps[] = {
-    MAP_WARPS(Vault),
-    MAP_WARP(VAULT_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_VAULT_SOUTH),
-    MAP_WARP(VAULT_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_VAULT_NORTH),
-    MAP_WARP(VAULT_TO_LOG_ROOMS_A_EAST_SOUTHEAST, LogRoomsA,
-             LOG_ROOMS_A_FROM_VAULT_EAST_SOUTHEAST),
-    MAP_WARP(VAULT_TO_LOG_ROOMS_A_SOUTHEAST, LogRoomsA,
-             LOG_ROOMS_A_FROM_VAULT_SOUTHEAST),
-    MAP_WARP(VAULT_TO_LOG_ROOMS_A_SOUTHWEST, LogRoomsA,
-             LOG_ROOMS_A_FROM_VAULT_SOUTHWEST),
-    MAP_WARP(VAULT_TO_LOG_ROOMS_A_EAST, LogRoomsA, LOG_ROOMS_A_FROM_VAULT_EAST),
-    MAP_WARP(VAULT_TO_LOG_ROOMS_A_NORTH_NORTHEAST, LogRoomsA,
-             LOG_ROOMS_A_FROM_VAULT_NORTH_NORTHEAST),
-    MAP_WARP(VAULT_TO_LOG_ROOMS_A_NORTHWEST, LogRoomsA,
-             LOG_ROOMS_A_FROM_VAULT_NORTHWEST),
-    MAP_WARP(VAULT_TO_SANCTUM, Sanctum, SANCTUM_FROM_VAULT),
-    MAP_WARP(VAULT_TO_STONE_ROOMS, StoneRooms, STONE_ROOMS_FROM_VAULT),
-    MAP_WARP(VAULT_TO_LOG_ROOMS_A_WEST, LogRoomsA, LOG_ROOMS_A_FROM_VAULT_WEST),
-    MAP_WARP(VAULT_TO_VAULT_REVISIT, VaultRevisit, VAULT_REVISIT_FROM_VAULT),
-    MAP_WARPS_END,
+u32 gVault_Exits[] = {
+    SCENE_EXITS(Vault),
+    SCENE_EXIT(VAULT_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_VAULT_SOUTH),
+    SCENE_EXIT(VAULT_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_VAULT_NORTH),
+    SCENE_EXIT(VAULT_TO_LOG_ROOMS_A_EAST_SOUTHEAST, LogRoomsA,
+               LOG_ROOMS_A_FROM_VAULT_EAST_SOUTHEAST),
+    SCENE_EXIT(VAULT_TO_LOG_ROOMS_A_SOUTHEAST, LogRoomsA,
+               LOG_ROOMS_A_FROM_VAULT_SOUTHEAST),
+    SCENE_EXIT(VAULT_TO_LOG_ROOMS_A_SOUTHWEST, LogRoomsA,
+               LOG_ROOMS_A_FROM_VAULT_SOUTHWEST),
+    SCENE_EXIT(VAULT_TO_LOG_ROOMS_A_EAST, LogRoomsA,
+               LOG_ROOMS_A_FROM_VAULT_EAST),
+    SCENE_EXIT(VAULT_TO_LOG_ROOMS_A_NORTH_NORTHEAST, LogRoomsA,
+               LOG_ROOMS_A_FROM_VAULT_NORTH_NORTHEAST),
+    SCENE_EXIT(VAULT_TO_LOG_ROOMS_A_NORTHWEST, LogRoomsA,
+               LOG_ROOMS_A_FROM_VAULT_NORTHWEST),
+    SCENE_EXIT(VAULT_TO_SANCTUM, Sanctum, SANCTUM_FROM_VAULT),
+    SCENE_EXIT(VAULT_TO_STONE_ROOMS, StoneRooms, STONE_ROOMS_FROM_VAULT),
+    SCENE_EXIT(VAULT_TO_LOG_ROOMS_A_WEST, LogRoomsA,
+               LOG_ROOMS_A_FROM_VAULT_WEST),
+    SCENE_EXIT(VAULT_TO_VAULT_REVISIT, VaultRevisit, VAULT_REVISIT_FROM_VAULT),
+    SCENE_EXITS_END,
 };
 
 // clang-format off

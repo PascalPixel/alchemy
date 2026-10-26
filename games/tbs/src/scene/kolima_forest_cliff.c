@@ -61,13 +61,13 @@ enum {
 /// river that winds through the clearing (its render)
 #define FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER FLAG_SCENE_TEMP_01
 
-const struct MapWarpDest *KolimaForestCliff_GetWarpDests(void) {
-  return gKolimaForestCliffWarpDests;
+const struct SceneEntrance *KolimaForestCliff_GetEntrances(void) {
+  return gKolimaForestCliffEntrances;
 }
 
-const struct MapWarpRegion *KolimaForestCliff_GetRegions(void) { return 0; }
+const struct SceneExitRegion *KolimaForestCliff_GetRegions(void) { return 0; }
 
-const u32 *KolimaForestCliff_GetWarps(void) { return gKolimaForestCliffWarps; }
+const u32 *KolimaForestCliff_GetExits(void) { return gKolimaForestCliffExits; }
 
 /// The three logs.
 const struct ObjectEventTemplate *
@@ -168,8 +168,8 @@ s32 gPushedObject_FootprintBounds[] = {
     -8, -32, 8, 32,
 };
 
-struct MapWarpDest gKolimaForestCliffWarpDests[] = {
-    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gKolimaForestCliffEntrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_GLADE, CONDITION_ALWAYS, 320, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_FLOODGATE, CONDITION_ALWAYS, 480, 0, 104, FACING_WEST, 0, -1, -1, -1, -1, 0 },
     { MAP_TABLE_END },
@@ -177,11 +177,11 @@ struct MapWarpDest gKolimaForestCliffWarpDests[] = {
 
 /// On into the forest (SceneId_KolimaForestFloodgate) and back
 /// (SceneId_KolimaForestGlade).
-u32 gKolimaForestCliffWarps[] = {
-    MAP_WARPS(KolimaForestCliff),
-    MAP_WARP(KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_FLOODGATE, KolimaForestFloodgate, KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_CLIFF),
-    MAP_WARP(KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_GLADE, KolimaForestGlade, KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_CLIFF),
-    MAP_WARPS_END,
+u32 gKolimaForestCliffExits[] = {
+    SCENE_EXITS(KolimaForestCliff),
+    SCENE_EXIT(KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_FLOODGATE, KolimaForestFloodgate, KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_CLIFF),
+    SCENE_EXIT(KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_GLADE, KolimaForestGlade, KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_CLIFF),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gKolimaForestCliffObjectEventTemplates[] = {
@@ -196,9 +196,9 @@ struct ObjectEventTemplate gKolimaForestCliffObjectEventTemplates[] = {
 // clang-format on
 
 struct MapEvent gKolimaForestCliffEvents[] = {
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS,
      KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_FLOODGATE},
-    {MAP_EVENT_WARP, 2, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS,
      KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_GLADE},
     {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(KolimaForestCliff_PushLog)},

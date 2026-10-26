@@ -7,14 +7,14 @@
 struct MapEvent;
 struct ObjectEventTemplate;
 
-const struct MapWarpDest *TolbiSpring_GetWarpDests(void);
-const struct MapWarpRegion *TolbiSpring_GetRegions(void);
-const u32 *TolbiSpring_GetWarps(void);
+const struct SceneEntrance *TolbiSpring_GetEntrances(void);
+const struct SceneExitRegion *TolbiSpring_GetRegions(void);
+const u32 *TolbiSpring_GetExits(void);
 const struct ObjectEventTemplate *TolbiSpring_GetObjectEventTemplates(void);
 const struct MapEvent *TolbiSpring_GetEvents(void);
 s32 TolbiSpring_Initialize(void);
-extern const struct MapWarpDest gTolbiSpring_WarpDests[];
-extern const u32 gTolbiSpring_Warps[];
+extern const struct SceneEntrance gTolbiSpring_Entrances[];
+extern const u32 gTolbiSpring_Exits[];
 extern const struct ObjectEventTemplate gTolbiSpringObjectEventTemplates[];
 extern const struct ObjectEventTemplate gTolbiSpringObjectEventTemplatesOther[];
 extern const struct MapEvent gTolbiSpringEventsOther[];

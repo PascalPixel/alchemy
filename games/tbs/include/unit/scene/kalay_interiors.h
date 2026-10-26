@@ -5,21 +5,21 @@
 #include "script_layer.h"
 #include "map_tables.h"
 
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEvent;
 struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *KalayInteriors_GetWarpDests(void);
-const struct MapWarpRegion *KalayInteriors_GetRegions(void);
-const u32 *KalayInteriors_GetWarps(void);
+const struct SceneEntrance *KalayInteriors_GetEntrances(void);
+const struct SceneExitRegion *KalayInteriors_GetRegions(void);
+const u32 *KalayInteriors_GetExits(void);
 const struct ObjectEventTemplate *KalayInteriors_GetObjectEventTemplates(void);
 const struct MapEvent *KalayInteriors_GetEvents(void);
 s32 KalayInteriors_Initialize(void);
-extern struct MapWarpDest gKalayInteriors_NoWarpDests[];
-extern struct MapWarpDest gKalayInteriors_HouseWarpDests[];
-extern struct MapWarpDest gKalayInteriors_SanctumWarpDests[];
-extern u32 gKalayInteriors_Warps[];
+extern struct SceneEntrance gKalayInteriors_NoEntrances[];
+extern struct SceneEntrance gKalayInteriors_HouseEntrances[];
+extern struct SceneEntrance gKalayInteriors_SanctumEntrances[];
+extern u32 gKalayInteriors_Exits[];
 extern struct ObjectEventTemplate gKalayInteriors_NoObjectEventTemplates[];
 extern struct ObjectEventTemplate gKalayInteriors_HouseObjectEventTemplates[];
 extern struct ObjectEventTemplate gKalayInteriors_InnObjectEventTemplates[];

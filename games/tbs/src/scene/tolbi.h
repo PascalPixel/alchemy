@@ -142,8 +142,8 @@ enum TolbiLocalId {
 };
 
 /// The metatile behaviors Tolbi's coord and bg events answer besides the
-/// doors, whose own cells carry the numbers of their warps (Tolbi_EnterDoor,
-/// Tolbi_RequestTouchedWarp).
+/// doors, whose own cells carry the numbers of their exits (Tolbi_EnterDoor,
+/// Tolbi_RequestTouchedExit).
 enum TolbiMetatileBehavior {
   /// Where Babi's soldiers stop the party during the festival.
   MB_TOLBI_SOLDIERS = 20,

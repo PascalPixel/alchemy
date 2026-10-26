@@ -59,9 +59,9 @@ struct FieldWork {
   /// The twelve requests: each nonzero value asks the field loop for one
   /// thing; Field_ClearRequests clears them and Field_CountRequests sums them.
   ///@{
-  s16 coordEvent; ///< a step event (1 to 239) for Scene_RunCoordEventOrWarp
+  s16 coordEvent; ///< a step event (1 to 239) for Scene_RunCoordEventOrExit
   s16 pushCell; ///< a metatile behavior (252 to 254) for Field_RunPushCellEvent
-  s16 warp;     ///< the warp taken, which ends the map
+  s16 exit;     ///< the exit taken, which ends the map
   s16 menu;     ///< open the field menu
   s16 examine;  ///< the A button: examine what is ahead
   s16 start;    ///< the Start button: open the pause menu

@@ -6,7 +6,7 @@
 /// The party comes in from the world map (WEST_LUNPA_CAVE_FROM_WORLD_MAP) and
 /// from Lunpa (WEST_LUNPA_CAVE_FROM_LUNPA);
 /// MB_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE and MB_WEST_LUNPA_CAVE_LUNPA_PASSAGE
-/// lead back out. WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED, which no warp names,
+/// lead back out. WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED, which no exit names,
 /// repeats WEST_LUNPA_CAVE_FROM_LUNPA with a shorter camera.
 ///
 /// The gate puzzle runs on map flags, which Scene_Initialize redraws: the
@@ -93,12 +93,12 @@ static void Party_RidesWagon(void);
 // pillar. FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN: the south puddle is frozen
 // into a pillar.
 
-const struct MapWarpDest *Scene_GetWarpDests(void) { return gCaveWarpDests; }
+const struct SceneEntrance *Scene_GetEntrances(void) { return gCaveEntrances; }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-/// Both passages and the wagon departure return through this warp table.
-const u32 *Scene_GetWarps(void) { return gCaveWarps; }
+/// Both passages and the wagon departure return through this exit table.
+const u32 *Scene_GetExits(void) { return gCaveExits; }
 
 /// Only the cave map places puddles, Hammet, Bunza and the party members.
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
@@ -953,7 +953,7 @@ static void Party_StaysBehind(void) {
   GameFlag_Set(FLAG_BUNZAS_WAGON_LEFT);
 }
 
-/// Leads everyone down the passage and requests the wagon departure warp.
+/// Leads everyone down the passage and requests the wagon departure exit.
 static void Party_RidesWagon(void) {
   struct ObjectEvent *leader;
   s32 departure;
@@ -1045,7 +1045,7 @@ static void Party_RidesWagon(void) {
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 168, 640);
   FieldScript_WaitFrames(60);
   FieldScript_FinishScreenTransition();
-  Import_ScriptRequestWarp(WEST_LUNPA_CAVE_BY_WAGON);
+  Import_ScriptRequestExit(WEST_LUNPA_CAVE_BY_WAGON);
 }
 
 /// Restores the gate and frozen puddles from the persistent puzzle flags.
@@ -1080,20 +1080,20 @@ s32 Scene_Initialize(void) {
 }
 
 // clang-format off
-const struct MapWarpDest gCaveWarpDests[] = {
-    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+const struct SceneEntrance gCaveEntrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { WEST_LUNPA_CAVE_FROM_WORLD_MAP, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, 88, 56, 648, 648, 0 },
     { WEST_LUNPA_CAVE_FROM_LUNPA, CONDITION_ALWAYS, 552, 0, 328, FACING_NORTH, 0, 88, 56, 648, 648, 0 },
     { WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED, CONDITION_ALWAYS, 552, 0, 328, FACING_NORTH, 0, 88, 56, 648, 488, 0 },
     { MAP_TABLE_END },
 };
 
-const u32 gCaveWarps[] = {
-    MAP_WARPS(WestLunpaCave),
-    MAP_WARP(WEST_LUNPA_CAVE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_WEST_LUNPA_CAVE),
-    MAP_WARP(WEST_LUNPA_CAVE_TO_LUNPA, Lunpa, LUNPA_FROM_WEST_LUNPA_CAVE),
-    MAP_WARP(WEST_LUNPA_CAVE_BY_WAGON, WorldMap, WORLD_MAP_FROM_WEST_LUNPA_CAVE),
-    MAP_WARPS_END,
+const u32 gCaveExits[] = {
+    SCENE_EXITS(WestLunpaCave),
+    SCENE_EXIT(WEST_LUNPA_CAVE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_WEST_LUNPA_CAVE),
+    SCENE_EXIT(WEST_LUNPA_CAVE_TO_LUNPA, Lunpa, LUNPA_FROM_WEST_LUNPA_CAVE),
+    SCENE_EXIT(WEST_LUNPA_CAVE_BY_WAGON, WorldMap, WORLD_MAP_FROM_WEST_LUNPA_CAVE),
+    SCENE_EXITS_END,
 };
 
 const struct ObjectEventTemplate gCaveNoObjectEventTemplates[] = {
@@ -1122,8 +1122,8 @@ const struct MapEvent gCaveNoEvents[] = {
 };
 
 const struct MapEvent gCaveEvents[] = {
-    { MAP_EVENT_WARP, MB_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_WORLD_MAP },
-    { MAP_EVENT_WARP, MB_WEST_LUNPA_CAVE_LUNPA_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_LUNPA },
+    { MAP_EVENT_EXIT, MB_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_WORLD_MAP },
+    { MAP_EVENT_EXIT, MB_WEST_LUNPA_CAVE_LUNPA_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_LUNPA },
     { MAP_EVENT_COORD, MB_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE, FLAG_LUNPA_CAVE_REUNION_SEEN,
       EVENT_SCRIPT(EventScript_HammetFindsBunza) },
     { BG_EVENT(BG_EVENT_SILENT), MB_WEST_LUNPA_CAVE_LOWERING_SWITCH, CONDITION_ALWAYS,

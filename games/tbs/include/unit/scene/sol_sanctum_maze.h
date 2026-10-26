@@ -4,15 +4,15 @@
 #include "types.h"
 #include "map_tables.h"
 
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *Scene_GetWarps(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
-extern struct MapWarpDest gSolSanctumMazeWarpDests[];
-extern u32 gSolSanctumMazeWarps[];
+extern struct SceneEntrance gSolSanctumMazeEntrances[];
+extern u32 gSolSanctumMazeExits[];
 extern struct ObjectEventTemplate gSolSanctumMazeObjectEventTemplates[];
 extern struct MapEvent gSolSanctumMazeEvents[];
 

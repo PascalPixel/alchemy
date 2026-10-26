@@ -320,11 +320,11 @@ static s32 Xian_WatchWaterCarrierPath(union ObjectEventOrEffect *fieldObject) {
 #define XIAN_WATER_CARRIER_UPDATE ((void *)Xian_WatchWaterCarrierPath)
 #endif
 
-const struct MapWarpDest *Xian_GetWarpDests(void) { return gXian_WarpDests; }
+const struct SceneEntrance *Xian_GetEntrances(void) { return gXian_Entrances; }
 
-const struct MapWarpRegion *Xian_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Xian_GetRegions(void) { return NULL; }
 
-const u32 *Xian_GetWarps(void) { return gXian_Warps; }
+const u32 *Xian_GetExits(void) { return gXian_Exits; }
 
 /// Once Xian has heard Hsu is trapped, LOCALID_MUSCULAR_MAN_ON_DISASTERS turns
 /// to face the party.
@@ -681,23 +681,23 @@ static void Xian_JumpOverSpilledWater(void) {
   }
 }
 
-/// Walks the leader through a doorway and leaves by its warp; through the
+/// Walks the leader through a doorway and leaves by its exit; through the
 /// Sanctum's door the leader walks straight in, without centering on it.
-static void Xian_WalkThroughExit(s32 warpNumber) {
+static void Xian_WalkThroughExit(s32 exitNumber) {
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
-  if (warpNumber == XIAN_TO_SANCTUM) {
+  if (exitNumber == XIAN_TO_SANCTUM) {
     Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
     ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -16);
   } else {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -16);
   }
   gFieldWork->transitionFrames = 16;
-  Import_ScriptRequestWarp(warpNumber);
+  Import_ScriptRequestExit(exitNumber);
 }
 
 /// Walking north into one of Xian's doors: it opens and the party goes in. Each
-/// door's metatile behavior is the number of the warp it leads by: five lead
+/// door's metatile behavior is the number of the exit it leads by: five lead
 /// into the houses, shops and inn, XIAN_TO_SANCTUM into Xian Sanctum (SE_THUMP)
 /// and XIAN_TO_LACQUER_ROOMS_A_FEHS_SCHOOL into Master Feh's school.
 static void Xian_OpenDoorAndLeave(void) {
@@ -835,9 +835,9 @@ s32 Xian_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Scene_QueueMusic(SE_AMBIENT_WIND);
   // Back from the school (XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) or the
-  // Sanctum (XIAN_FROM_SANCTUM_WEST), the last two warp destinations, the name
+  // Sanctum (XIAN_FROM_SANCTUM_WEST), the last two entrances, the name
   // is not shown.
-  if (gSaveBlock.warpDest >= XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
+  if (gSaveBlock.entrance >= XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
   if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED)) {
@@ -1014,7 +1014,7 @@ u16 gXian_SchoolDoorOpens[] = {
     MAPGRID_ANIMATION_STEPS_END,
 };
 
-struct MapWarpDest gXian_WarpDests[] = {
+struct SceneEntrance gXian_Entrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {XIAN_FROM_HOUSE, CONDITION_ALWAYS, 376, 0, 504, FACING_NORTH, 0, -1, -1,
      -1, -1, 0},
@@ -1035,20 +1035,20 @@ struct MapWarpDest gXian_WarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gXian_Warps[] = {
-    MAP_WARPS(Xian),
-    MAP_WARP(XIAN_TO_HOUSE, LacquerRoomsB, LACQUER_ROOMS_B_HOUSE),
-    MAP_WARP(XIAN_TO_HOUSE_NORTH, LacquerRoomsB, LACQUER_ROOMS_B_HOUSE_NORTH),
-    MAP_WARP(XIAN_TO_LACQUER_ROOMS_B_EAST, LacquerRoomsB,
-             LACQUER_ROOMS_B_FROM_XIAN_EAST),
-    MAP_WARP(XIAN_TO_INN, LacquerRoomsB, LACQUER_ROOMS_B_INN_SOUTH),
-    MAP_WARP(XIAN_TO_WEAPON_AND_ARMOR_SHOP, LacquerRoomsB,
-             LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP),
-    MAP_WARP(XIAN_TO_SANCTUM, Sanctum, SANCTUM_FROM_XIAN),
-    MAP_WARP(XIAN_TO_LACQUER_ROOMS_A_FEHS_SCHOOL, LacquerRoomsA,
-             LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_XIAN),
-    MAP_WARP(XIAN_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_XIAN),
-    MAP_WARPS_END,
+u32 gXian_Exits[] = {
+    SCENE_EXITS(Xian),
+    SCENE_EXIT(XIAN_TO_HOUSE, LacquerRoomsB, LACQUER_ROOMS_B_HOUSE),
+    SCENE_EXIT(XIAN_TO_HOUSE_NORTH, LacquerRoomsB, LACQUER_ROOMS_B_HOUSE_NORTH),
+    SCENE_EXIT(XIAN_TO_LACQUER_ROOMS_B_EAST, LacquerRoomsB,
+               LACQUER_ROOMS_B_FROM_XIAN_EAST),
+    SCENE_EXIT(XIAN_TO_INN, LacquerRoomsB, LACQUER_ROOMS_B_INN_SOUTH),
+    SCENE_EXIT(XIAN_TO_WEAPON_AND_ARMOR_SHOP, LacquerRoomsB,
+               LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP),
+    SCENE_EXIT(XIAN_TO_SANCTUM, Sanctum, SANCTUM_FROM_XIAN),
+    SCENE_EXIT(XIAN_TO_LACQUER_ROOMS_A_FEHS_SCHOOL, LacquerRoomsA,
+               LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_XIAN),
+    SCENE_EXIT(XIAN_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_XIAN),
+    SCENE_EXITS_END,
 };
 
 // clang-format off
@@ -1100,7 +1100,7 @@ struct MapEvent gXian_Events[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_OpenDoorAndLeave) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_OpenDoorAndLeave) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_OpenDoorAndLeave) },
-    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, XIAN_TO_WORLD_MAP },
+    { MAP_EVENT_EXIT, 8, CONDITION_ALWAYS, XIAN_TO_WORLD_MAP },
     { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 20, FLAG_XIAN_SPILLED_WATER_FROZEN, EVENT_SCRIPT(Xian_JumpOverSpilledWater) },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 21, FLAG_XIAN_SPILLED_WATER_FROZEN, EVENT_SCRIPT(Xian_JumpOverSpilledWater) },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 2, FLAG_XIAN_SPILLED_WATER_FROZEN, EVENT_SCRIPT(Xian_JumpOverSpilledWater) },

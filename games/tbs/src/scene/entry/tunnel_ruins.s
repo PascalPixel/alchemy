@@ -1,7 +1,7 @@
 	.include "games/tbs/src/system/overlay.inc"
 	overlay_veneer TunnelRuins_Initialize
-	overlay_veneer TunnelRuins_GetWarpDests
-	overlay_veneer TunnelRuins_GetWarps
+	overlay_veneer TunnelRuins_GetEntrances
+	overlay_veneer TunnelRuins_GetExits
 	overlay_veneer TunnelRuins_GetObjectEventTemplates
 	overlay_veneer TunnelRuins_GetEvents
 	overlay_veneer TunnelRuins_GetRegions

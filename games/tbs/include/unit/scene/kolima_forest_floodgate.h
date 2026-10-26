@@ -22,9 +22,9 @@ STATIC_ASSERT(offsetof(struct FloodgateLog, x) == 2);
 STATIC_ASSERT(offsetof(struct FloodgateLog, vertical) == 6);
 STATIC_ASSERT(offsetof(struct FloodgateLog, objectEvent) == 8);
 
-const struct MapWarpDest *KolimaForestFloodgate_GetWarpDests(void);
-const struct MapWarpRegion *KolimaForestFloodgate_GetRegions(void);
-const u32 *KolimaForestFloodgate_GetWarps(void);
+const struct SceneEntrance *KolimaForestFloodgate_GetEntrances(void);
+const struct SceneExitRegion *KolimaForestFloodgate_GetRegions(void);
+const u32 *KolimaForestFloodgate_GetExits(void);
 const struct ObjectEventTemplate *
 KolimaForestFloodgate_GetObjectEventTemplates(void);
 const struct MapEvent *KolimaForestFloodgate_GetEvents(void);
@@ -38,8 +38,8 @@ extern struct FloodgateLog gKolimaForestFloodgate_DefaultRecords[];
 extern u8 gKolimaForestFloodgate_PushAnimations[];
 extern s8 gKolimaForestFloodgate_PushStepX[];
 extern s8 gKolimaForestFloodgate_PushStepZ[];
-extern struct MapWarpDest gKolimaForestFloodgateWarpDests[];
-extern u32 gKolimaForestFloodgateWarps[];
+extern struct SceneEntrance gKolimaForestFloodgateEntrances[];
+extern u32 gKolimaForestFloodgateExits[];
 extern struct ObjectEventTemplate gKolimaForestFloodgateObjectEventTemplates[];
 extern struct MapEvent gKolimaForestFloodgateEvents[];
 

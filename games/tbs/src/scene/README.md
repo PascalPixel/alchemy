@@ -26,12 +26,12 @@ recording, the house's code says where its north door leads, and Vale's code
 says where the party then stands and who else is there.
 
 When the party arrives, the engine asks what can happen here (the map
-events, kept for the whole visit), where the party arrives (the [warp
-destinations](../../glossary.md#warp-destination)), who stands where (the
+events, kept for the whole visit), where the party arrives (the [
+entrances](../../glossary.md#entrance)), who stands where (the
 [object event](../../glossary.md#object-event) templates), and whether
 anything needs setting up. At every step it asks whether the leader is
-standing in a [warp](../../glossary.md#warp) area, and as the party leaves,
-where the warp leads. Each answer comes from a function rather than a fixed
+standing in an [exit](../../glossary.md#exit) area, and as the party leaves,
+where the exit leads. Each answer comes from a function rather than a fixed
 table, so a scene can answer differently as the story goes on
 ([World](../../world.md#scene-entries) gives Vault's example), and an overlay
 that serves several scenes can answer for each.
@@ -44,9 +44,9 @@ after a battle.
 The six are `struct SceneEntries`, in a fixed order at the start of
 every overlay (`entry/<map>.s`), each behind an 8-byte
 [veneer](../../glossary.md#veneer). Vault names them `Scene_Initialize`,
-`Scene_GetWarpDests`, `Scene_GetWarps`, `Scene_GetObjectEventTemplates`,
-`Scene_GetEvents` and `Scene_GetWarpRegions`; some overlays give them names of
-their own (`BabiLighthouse_GetWarps`), since only the order is fixed.
+`Scene_GetEntrances`, `Scene_GetExits`, `Scene_GetObjectEventTemplates`,
+`Scene_GetEvents` and `Scene_GetExitRegions`; some overlays give them names of
+their own (`BabiLighthouse_GetExits`), since only the order is fixed.
 
 ## The tables
 
@@ -56,22 +56,22 @@ the height and x and z the ground, so a position in them is in pixels with x
 east, y up and z south, and a facing is one of eight headings
 ([Words used here](#words-used-here) gives the units).
 
-- **Warp destinations**: for each place the party can arrive, a flag that
+- **Entrances**: for each place the party can arrive, a flag that
   must be set, a position, a facing and how far the camera may go.
-- **Warps**: for each way out, the scene and warp destination it leads to,
-  sometimes only while a flag is clear. One kind of warp leads into a battle.
+- **Exits**: for each way out, the scene and entrance it leads to,
+  sometimes only while a flag is clear. One kind of exit leads into a battle.
 - **Object event templates**: who stands where: a
   [sprite](../../glossary.md#sprite-and-oam), a condition, how they move
   (standing, wandering, or a [script](../../glossary.md#script) of their
   own), a position, a facing and how they turn when spoken to.
-- **Regions**: boxes in which the leader takes a warp, each with a condition.
+- **Regions**: boxes in which the leader takes an exit, each with a condition.
   Most scenes have none.
 - **Map events**: what answers each thing the player does
   ([below](#what-a-map-event-row-says)).
 
-These are `struct MapWarpDest`, the `MAP_WARP` rows of the warp
-table (named in `map_warps.h`), `struct ObjectEventTemplate`,
-`struct MapWarpRegion` and `struct MapEvent`, all in `map_tables.h` and
+These are `struct SceneEntrance`, the `SCENE_EXIT` rows of the exit
+table (named in `scene_exits.h`), `struct ObjectEventTemplate`,
+`struct SceneExitRegion` and `struct MapEvent`, all in `map_tables.h` and
 `scene_header.h`.
 
 ### Conditions
@@ -141,7 +141,7 @@ What starts a row also says what it answers:
 | `MAP_EVENT_TALK` | the A button on someone | that object event |
 | `MAP_EVENT_TALK_HALTED` | talking to someone Halt has stopped | that object event |
 | `MAP_EVENT_COORD` and its forms | stepping onto a spot, facing a way, or pushing against it | the spot's [metatile behavior](../../glossary.md#metatile-behavior) |
-| `MAP_EVENT_WARP` | stepping onto a spot no coord event answers | the spot's metatile behavior |
+| `MAP_EVENT_EXIT` | stepping onto a spot no coord event answers | the spot's metatile behavior |
 | `BG_EVENT(target)` | the A button on what is ahead, when it is nobody | the spot's metatile behavior |
 | `USE_ITEM(item)` and its form | using an item | a spot or an object event |
 | `PSYNERGY_ON_OBJ_EVENT(ability)` and its form | using Psynergy on someone, or anywhere | that object event, or anywhere |
@@ -176,19 +176,19 @@ behavior](../../glossary.md#metatile-behavior) of its
 [cell](../../glossary.md#cell), and the scene's event table says what that
 number does. The same number means different things in different scenes.
 
-In Vale on the day the story begins, each door is a coord event rather than a
-warp: walking north into the doorstep runs a script that opens the door,
-walks the leader in and only then asks for the warp, and that can refuse
+In Vale on the day the story begins, each door is a coord event rather than an
+exit: walking north into the doorstep runs a script that opens the door,
+walks the leader in and only then asks for the exit, and that can refuse
 instead, as Dora does once the party has left Vale. Coord events also climb
 the ladder beside Isaac's house and put the bridge's cells back when the
 leader steps off it. Three cells of the path at the top carry a number no row
 answers, and do nothing.
 
 Stepping on or walking into a cell runs the first coord event that answers
-its number and whose condition holds, or failing one the first such warp;
+its number and whose condition holds, or failing one the first such exit;
 pressing A facing it runs the first such bg event.
 
-`Scene_RunCoordEventOrWarp` runs the stepping, and the numbers a
+`Scene_RunCoordEventOrExit` runs the stepping, and the numbers a
 scene owns are `MB_EVENT_FIRST` to `MB_EVENT_LAST`; the numbers above them mean
 the same in every scene ([Maps](../map/README.md#cells)).
 
@@ -230,14 +230,14 @@ case.
 An event is written as a list of what happens, one step to a line, and the
 game plays it from top to bottom while the party waits. The door in the
 recording is one of the shortest: it plays the door's sound, opens the door,
-starts the leader walking in and asks for the warp into the house.
+starts the leader walking in and asks for the exit into the house.
 
 ```c
 static void EventScript_EnterJennasGrandparentsHouse(void) {
   Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_GrandparentsDoorOpens, 49, 69);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 326, 1126);
-  Import_ScriptRequestWarp(VALE_TO_COTTAGE_ROOMS_A_NORTH);
+  Import_ScriptRequestExit(VALE_TO_COTTAGE_ROOMS_A_NORTH);
 }
 ```
 
@@ -248,7 +248,7 @@ starting a walk, lets the next line follow in the same
 event runs on its own: as an object script (the steps someone runs each
 frame), a callback (a function the scene runs once a frame) or a hook (a
 function one object event runs each frame). A request the script raises, like
-this warp, waits until the script has finished.
+this exit, waits until the script has finished.
 
 A script is plain C written in the calls of `script_layer.h`,
 `field_service.h` and `engine_call.h`. A step that takes time runs the
@@ -313,9 +313,9 @@ then tables), not by scene.
 Indoor rooms are packed several to a map, a
 [sheet of rooms](../../glossary.md#sheet-of-rooms): the rooms drawn in
 one tile style sit side by side on one map, each with a camera box of its
-own, and the warp destination the party arrives at chooses the room by its
+own, and the entrance the party arrives at chooses the room by its
 box. The rooms of one sheet can belong to different places, so its area name
-follows the warp destination too; Vale's inn and the scholars' room in Babi's
+follows the entrance too; Vale's inn and the scholars' room in Babi's
 Palace share `SceneId_CottageRoomsB`. A sheet is therefore named for the style
 its rooms are drawn in, never for a place, and its file lists its rooms and the
 places they belong to.
@@ -393,7 +393,7 @@ Many functions in `common/` keep older descriptive names
 (`ObjectEvent_SetFlagBitByRelativeDepth`, `Scene_`); each takes its name with the
 scenes that call it, as those scenes are humanized.
 
-The animated warps of `enum WarpStyle` play the leader's leaving and arrival
+The animated exits of `enum ExitStyle` play the leader's leaving and arrival
 animations, named in `enum ObjectEventAnimation` from Isaac's sprite
 (`spr_000.tsv`, animations 23 to 26): an arrival grows from a small figure
 seen side-on to full size facing the player, and a leaving turns from his

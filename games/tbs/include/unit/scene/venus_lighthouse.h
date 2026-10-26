@@ -5,13 +5,13 @@
 #include "field.h"
 #include "map_tables.h"
 
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEvent;
 struct ObjectEventTemplate;
 
-const struct MapWarpDest *VenusLighthouse_GetWarpDests(void);
-const struct MapWarpRegion *VenusLighthouse_GetRegions(void);
-const u32 *VenusLighthouse_GetWarps(void);
+const struct SceneEntrance *VenusLighthouse_GetEntrances(void);
+const struct SceneExitRegion *VenusLighthouse_GetRegions(void);
+const u32 *VenusLighthouse_GetExits(void);
 const struct ObjectEventTemplate *VenusLighthouse_GetObjectEventTemplates(void);
 const struct MapEvent *VenusLighthouse_GetEvents(void);
 s32 VenusLighthouse_Initialize(void);
@@ -66,13 +66,13 @@ extern s32 gVenusFourthFloorLightNorthwestToGate[];
 extern u16 gVenusSecondFloorGateCells[];
 extern u16 gVenusThirdFloorGateCells[];
 extern u16 gVenusFourthFloorGateCells[];
-extern struct MapWarpDest gVenusLighthouseEntryWarpDests[];
-extern struct MapWarpDest gVenusLighthouseWarpDestsOther[];
-extern struct MapWarpDest gVenusLighthouseFirstFloorWarpDests[];
-extern struct MapWarpDest gVenusLighthouseSecondFloorWarpDests[];
-extern struct MapWarpDest gVenusLighthouseThirdFloorWarpDests[];
-extern struct MapWarpDest gVenusLighthouseFourthFloorWarpDests[];
-extern u32 gVenusLighthouseWarps[];
+extern struct SceneEntrance gVenusLighthouseEntryEntrances[];
+extern struct SceneEntrance gVenusLighthouseEntrancesOther[];
+extern struct SceneEntrance gVenusLighthouseFirstFloorEntrances[];
+extern struct SceneEntrance gVenusLighthouseSecondFloorEntrances[];
+extern struct SceneEntrance gVenusLighthouseThirdFloorEntrances[];
+extern struct SceneEntrance gVenusLighthouseFourthFloorEntrances[];
+extern u32 gVenusLighthouseExits[];
 extern struct ObjectEventTemplate gVenusLighthouseObjectEventTemplatesOther[];
 extern struct ObjectEventTemplate gVenusLighthouseEntryObjectEventTemplates[];
 extern struct ObjectEventTemplate

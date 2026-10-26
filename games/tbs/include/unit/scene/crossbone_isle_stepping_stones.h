@@ -4,14 +4,14 @@
 #include "types.h"
 #include "map_tables.h"
 
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEvent;
 struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *Scene_GetWarps(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
@@ -28,13 +28,13 @@ extern u16 gCrossboneIsleSteppingStones_SwitchOpenSteps[];
 extern u16 gCrossboneIsleSteppingStones_FloodgateCloseSteps[];
 extern u16 gCrossboneIsleSteppingStones_FloodgateOpenSteps[];
 extern u16 gCrossboneIsleSteppingStones_FloodgateFootSteps[];
-extern struct MapWarpDest gCrossboneIsleSteppingStonesWarpDestsOther[];
-extern struct MapWarpDest gCrossboneIsleSteppingStonesWarpDests[];
-extern struct MapWarpDest gCrossboneIsleIcePillarsWarpDests[];
-extern struct MapWarpDest gCrossboneIsleFloodgateWarpDests[];
-extern struct MapWarpDest gCrossboneIsleStackedPillarsWarpDests[];
-extern struct MapWarpDest gCrossboneIsleDragonStatueWarpDests[];
-extern u32 gCrossboneIsleSteppingStonesWarps[];
+extern struct SceneEntrance gCrossboneIsleSteppingStonesEntrancesOther[];
+extern struct SceneEntrance gCrossboneIsleSteppingStonesEntrances[];
+extern struct SceneEntrance gCrossboneIsleIcePillarsEntrances[];
+extern struct SceneEntrance gCrossboneIsleFloodgateEntrances[];
+extern struct SceneEntrance gCrossboneIsleStackedPillarsEntrances[];
+extern struct SceneEntrance gCrossboneIsleDragonStatueEntrances[];
+extern u32 gCrossboneIsleSteppingStonesExits[];
 extern struct ObjectEventTemplate
     gCrossboneIsleSteppingStonesNoObjectEventTemplates[];
 extern struct ObjectEventTemplate

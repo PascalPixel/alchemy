@@ -86,17 +86,17 @@ struct SaveBlock {
   /// The scene being played: its index in gSceneHeaders (a SceneId_
   /// symbol), or SEQUENCE_BATTLE or another number above the field scenes.
   s16 sceneId;
-  s16 warpDest;        ///< the warp destination taken; in SEQUENCE_BATTLE, the
+  s16 entrance;        ///< the entrance taken; in SEQUENCE_BATTLE, the
                        ///< formation
   s16 restartScene;    ///< where the party restarts: the last Sanctum, usually
-  s16 restartWarpDest; ///< the restart point's warp destination
+  s16 restartEntrance; ///< the restart point's entrance
   s16 defaultScene;    ///< the scene being run, kept as it starts
-  s16 defaultWarpDest; ///< the warp destination it was entered by
+  s16 defaultEntrance; ///< the entrance it was entered by
   s16 area;            ///< the current scene's area; a new one resets its flags
   s16 nextScene;       ///< where the script sends the party next; -1 for none
-  s16 nextWarpDest;    ///< where the script sends the party next; -1 for none
+  s16 nextEntrance;    ///< where the script sends the party next; -1 for none
   s16 defeatScene;     ///< where a defeat returns to; -1 for none
-  s16 defeatWarpDest;  ///< where a defeat returns to; -1 for none
+  s16 defeatEntrance;  ///< where a defeat returns to; -1 for none
   s16 special;         ///< the battle background chosen for the scene or
                        ///< battle environment
   u8 unusedAfterSpecial[2]; ///< no code names it
@@ -167,10 +167,10 @@ struct SaveBlock {
   s32 encounterSteps; ///< the encounter count, reset with a new area
   u16 pendingItem;    ///< given on returning to the field if the party has room
   s16 sceneType;      ///< the current scene's variant from its header
-  s16 retreatScene;   ///< where Retreat goes; the area's first warp
-                      ///< destination
-  s16 retreatWarpDest;     ///< where Retreat goes; the area's first warp
-                           ///< destination
+  s16 retreatScene;   ///< where Retreat goes; the area's first
+                      ///< entrance
+  s16 retreatEntrance;     ///< where Retreat goes; the area's first
+                           ///< entrance
   s32 avoidDistance;       ///< distance left of Avoid, 16.16 pixels; 0 when off
   s8 avoidByItem;          ///< Avoid came from an item (the Sacred Feather)
   s8 pausedPose;           ///< Halt: the stopped object's first animation param
@@ -201,7 +201,7 @@ STATIC_ASSERT(offsetof(struct SaveBlock, wonPrizes) == 0x12c);
 STATIC_ASSERT(offsetof(struct SaveBlock, area) == 0x1cc);
 STATIC_ASSERT(offsetof(struct SaveBlock, dashKeys) == 0x21c);
 STATIC_ASSERT(offsetof(struct SaveBlock, avoidDistance) == 0x244);
-STATIC_ASSERT(offsetof(struct SaveBlock, warpDest) == 0x1c2);
+STATIC_ASSERT(offsetof(struct SaveBlock, entrance) == 0x1c2);
 STATIC_ASSERT(offsetof(struct SaveBlock, special) == 0x1d6);
 STATIC_ASSERT(offsetof(struct SaveBlock, x) == 0x1dc);
 STATIC_ASSERT(offsetof(struct SaveBlock, movementMode) == 0x1f2);
@@ -213,7 +213,7 @@ STATIC_ASSERT(offsetof(struct SaveBlock, aKeys) == 0x210);
 STATIC_ASSERT(offsetof(struct SaveBlock, firstShortcutKeys) == 0x218);
 STATIC_ASSERT(offsetof(struct SaveBlock, secondShortcutKeys) == 0x21a);
 STATIC_ASSERT(offsetof(struct SaveBlock, firstShortcut) == 0x220);
-STATIC_ASSERT(offsetof(struct SaveBlock, retreatWarpDest) == 0x242);
+STATIC_ASSERT(offsetof(struct SaveBlock, retreatEntrance) == 0x242);
 STATIC_ASSERT(offsetof(struct SaveBlock, cloaked) == 0x24c);
 STATIC_ASSERT(offsetof(struct SaveBlock, linkTallies) == 0x2a4);
 STATIC_ASSERT(offsetof(struct SaveBlock, startStamp) == 0x2b8);

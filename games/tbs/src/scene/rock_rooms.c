@@ -2,19 +2,19 @@
 /// Rock rooms (SceneId_RockRooms), a sheet of rooms cut into rock: the game
 /// packs rooms that share a tile style onto one map, and this one holds the
 /// buildings of Lunpa and the house at Suhalla Gate. Its rooms are told apart
-/// by the warp destination the party comes in by, and the area name follows it:
+/// by the entrance the party comes in by, and the area name follows it:
 ///
 /// - Lunpa: the three homes, the weapon and armor shop, the item shop, the inn
 ///   and the crate room, entered by the town's doors (lunpa.c) at
 ///   ROOM_FIRST_HOME to ROOM_INN and ROOM_CRATE_ROOM.
-/// - Lunpa Temple: ROOM_TEMPLE from the town, and ROOM_TEMPLE_SECOND_WARP_DEST,
+/// - Lunpa Temple: ROOM_TEMPLE from the town, and ROOM_TEMPLE_SECOND_ENTRANCE,
 ///   where a party defeated in Lunpa wakes.
 /// - Gate to Suhalla: the house beside Suhalla Gate (suhalla_gate.c), entered
 ///   at ROOM_GATE_TO_SUHALLA (ROCK_ROOMS_FROM_SUHALLA_GATE_CHECKPOINT),
 ///   the sheet's one room that is not Lunpa's, where a traveling Healer offers
 ///   the Sanctum's services.
 ///
-/// A room's warp destination number is also its warp kind and the coord event
+/// A room's entrance number is also its exit kind and the coord event
 /// of its door (ROOM_DOOR), so each door leads back out the way the party came
 /// in. Scene_GetEvents gives the house at Suhalla Gate its own table, and
 /// Lunpa's rooms the sealed town's (gInteriorSealedEvents) until Donpa's
@@ -55,8 +55,8 @@ static void EventScript_TalkToArmorMerchant(void);
 static void EventScript_TalkToTravelingHealer(void);
 
 // clang-format off
-const struct MapWarpDest gInteriorWarpDests[] = {
-    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+const struct SceneEntrance gInteriorEntrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { ROOM_FIRST_HOME, CONDITION_ALWAYS, 192, 0, 184, FACING_NORTH, 0, 16, 0, 256, 224, 0 },
     { ROOM_SECOND_HOME, CONDITION_ALWAYS, 432, 0, 264, FACING_NORTH, 0, 296, 48, 536, 288, 0 },
     { ROOM_THIRD_HOME, CONDITION_ALWAYS, 160, 0, 584, FACING_NORTH, 0, 16, 400, 256, 624, 0 },
@@ -65,27 +65,27 @@ const struct MapWarpDest gInteriorWarpDests[] = {
     { ROOM_INN, CONDITION_ALWAYS, 288, 0, 840, FACING_NORTH, 0, 40, 656, 368, 944, 0 },
     { ROOM_TEMPLE, CONDITION_ALWAYS, 688, 0, 280, FACING_NORTH, 0, 568, 32, 808, 304, 0 },
     { ROOM_CRATE_ROOM, CONDITION_ALWAYS, 560, 0, 880, FACING_NORTH, 0, 400, 656, 640, 912, 0 },
-    // XXX (no evidence): what this warp destination was meant for; no warp
+    // XXX (no evidence): what this entrance was meant for; no exit
     // leads to it, and it stands the leader in the empty dark between the crate
     // room and the house at Suhalla Gate.
     { ROOM_NINTH_UNUSED, CONDITION_ALWAYS, 672, 0, 888, FACING_NORTH, 0, 520, 656, 760, 896, 0 },
     { ROOM_GATE_TO_SUHALLA, CONDITION_ALWAYS, 832, 0, 848, FACING_NORTH, 0, 680, 656, 920, 896, 0 },
-    { ROOM_TEMPLE_SECOND_WARP_DEST, CONDITION_ALWAYS, 688, 0, 184, FACING_NORTH, 0, 568, 32, 808, 288, 0 },
+    { ROOM_TEMPLE_SECOND_ENTRANCE, CONDITION_ALWAYS, 688, 0, 184, FACING_NORTH, 0, 568, 32, 808, 288, 0 },
     { MAP_TABLE_END },
 };
 
-const u32 gInteriorWarps[] = {
-    MAP_WARPS(RockRooms),
-    MAP_WARP(ROOM_FIRST_HOME, Lunpa, LUNPA_FROM_FIRST_HOME),
-    MAP_WARP(ROOM_SECOND_HOME, Lunpa, LUNPA_FROM_SECOND_HOME),
-    MAP_WARP(ROOM_THIRD_HOME, Lunpa, LUNPA_FROM_THIRD_HOME),
-    MAP_WARP(ROOM_ARMS_SHOP, Lunpa, LUNPA_FROM_WEAPON_AND_ARMOR_SHOP),
-    MAP_WARP(ROOM_ITEM_SHOP, Lunpa, LUNPA_FROM_ITEM_SHOP),
-    MAP_WARP(ROOM_INN, Lunpa, LUNPA_FROM_INN),
-    MAP_WARP(ROOM_TEMPLE, Lunpa, LUNPA_FROM_TEMPLE),
-    MAP_WARP(ROOM_CRATE_ROOM, Lunpa, LUNPA_FROM_CRATE_ROOM),
-    MAP_WARP(ROOM_GATE_TO_SUHALLA, SuhallaGateCheckpoint, SUHALLA_GATE_CHECKPOINT_FROM_ROCK_ROOMS),
-    MAP_WARPS_END,
+const u32 gInteriorExits[] = {
+    SCENE_EXITS(RockRooms),
+    SCENE_EXIT(ROOM_FIRST_HOME, Lunpa, LUNPA_FROM_FIRST_HOME),
+    SCENE_EXIT(ROOM_SECOND_HOME, Lunpa, LUNPA_FROM_SECOND_HOME),
+    SCENE_EXIT(ROOM_THIRD_HOME, Lunpa, LUNPA_FROM_THIRD_HOME),
+    SCENE_EXIT(ROOM_ARMS_SHOP, Lunpa, LUNPA_FROM_WEAPON_AND_ARMOR_SHOP),
+    SCENE_EXIT(ROOM_ITEM_SHOP, Lunpa, LUNPA_FROM_ITEM_SHOP),
+    SCENE_EXIT(ROOM_INN, Lunpa, LUNPA_FROM_INN),
+    SCENE_EXIT(ROOM_TEMPLE, Lunpa, LUNPA_FROM_TEMPLE),
+    SCENE_EXIT(ROOM_CRATE_ROOM, Lunpa, LUNPA_FROM_CRATE_ROOM),
+    SCENE_EXIT(ROOM_GATE_TO_SUHALLA, SuhallaGateCheckpoint, SUHALLA_GATE_CHECKPOINT_FROM_ROCK_ROOMS),
+    SCENE_EXITS_END,
 };
 
 const struct ObjectEventTemplate gInteriorObjectEventTemplates[] = {
@@ -275,13 +275,13 @@ const struct MapEvent gGateToSuhallaEvents[] = {
     {MAP_EVENTS_END},
 };
 
-const struct MapWarpDest *Scene_GetWarpDests(void) {
-  return gInteriorWarpDests;
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gInteriorEntrances;
 }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Scene_GetWarps(void) { return gInteriorWarps; }
+const u32 *Scene_GetExits(void) { return gInteriorExits; }
 
 /// The townsfolk, shopkeepers and counters of all three areas.
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
@@ -291,7 +291,7 @@ const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
 /// The map events of Gate to Suhalla, or those of Lunpa's buildings before and
 /// after Donpa's judgment.
 const struct MapEvent *Scene_GetEvents(void) {
-  if (gSaveBlock.warpDest == ROOM_GATE_TO_SUHALLA) {
+  if (gSaveBlock.entrance == ROOM_GATE_TO_SUHALLA) {
     return gGateToSuhallaEvents;
   }
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
@@ -481,15 +481,15 @@ static void EventScript_TalkToArmorMerchant(void) {
 /// Sets the buildings up: entered by Gate to Suhalla, the house is where a
 /// defeated party wakes, and the counters are drawn behind their keepers.
 s32 Scene_Initialize(void) {
-  s16 warpDest;
+  s16 entrance;
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  warpDest = gSaveBlock.warpDest;
-  if (warpDest == ROOM_GATE_TO_SUHALLA) {
+  entrance = gSaveBlock.entrance;
+  if (entrance == ROOM_GATE_TO_SUHALLA) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     gSaveBlock.restartScene = (s32)&SceneId_RockRooms;
-    gSaveBlock.restartWarpDest = warpDest;
+    gSaveBlock.restartEntrance = entrance;
   }
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_WEAPON_COUNTER), 0);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ARMOR_COUNTER), 0);

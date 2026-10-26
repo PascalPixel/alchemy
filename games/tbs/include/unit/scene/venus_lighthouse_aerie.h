@@ -4,14 +4,14 @@
 #include "types.h"
 #include "map_tables.h"
 
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEvent;
 struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *VenusLighthouseAerie_GetWarpDests(void);
-const struct MapWarpRegion *VenusLighthouseAerie_GetRegions(void);
-const u32 *VenusLighthouseAerie_GetWarps(void);
+const struct SceneEntrance *VenusLighthouseAerie_GetEntrances(void);
+const struct SceneExitRegion *VenusLighthouseAerie_GetRegions(void);
+const u32 *VenusLighthouseAerie_GetExits(void);
 const struct ObjectEventTemplate *
 VenusLighthouseAerie_GetObjectEventTemplates(void);
 const struct MapEvent *VenusLighthouseAerie_GetEvents(void);
@@ -37,8 +37,8 @@ extern s32 gVenusLighthouseAerie_StepBackAction[];
 extern s32 gVenusLighthouseAerie_LeapAction[];
 extern s32 gVenusLighthouseAerie_PartyExitAction[];
 extern s32 gVenusLighthouseAerie_PartyHeadingAction[];
-extern struct MapWarpDest gVenusLighthouseAerieWarpDests[];
-extern u32 gVenusLighthouseAerieWarps[];
+extern struct SceneEntrance gVenusLighthouseAerieEntrances[];
+extern u32 gVenusLighthouseAerieExits[];
 extern struct ObjectEventTemplate gVenusLighthouseAerieObjectEventTemplates[];
 extern s32 gVenusLighthouseAerie_LandedPlatform;
 extern struct MapEvent gVenusLighthouseAerieEvents[];

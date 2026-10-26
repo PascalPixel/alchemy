@@ -1,9 +1,9 @@
 /// @file
 /// Cottage rooms A (SceneId_CottageRoomsA), a sheet of rooms drawn as cottages:
 /// the game packs rooms that share a tile style onto one map, and every room on
-/// this one is Vale's. Each room is a warp destination with a camera box of its
-/// own, named for the door it is entered by, and its door takes the warp of the
-/// same number back out. In story order, by the warps that lead in:
+/// this one is Vale's. Each room is an entrance with a camera box of its
+/// own, named for the door it is entered by, and its door takes the exit of the
+/// same number back out. In story order, by the exits that lead in:
 ///
 /// - From the village (SceneId_Vale, and on the stormy night
 ///   SceneId_ValeStormyNight): the house of Garet's family
@@ -19,14 +19,14 @@
 ///   COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH and
 ///   COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH).
 /// - Unused: a ninth room drawn at the sheet's lower left, whose camera box no
-///   warp destination gives, so no door leads in.
+///   entrance gives, so no door leads in.
 ///
 /// The object event templates and map events follow the story:
 ///
 /// - The stormy night of the prologue (FLAG_VALE_STORM). Everyone is out:
 ///   CottageRoomsA_Initialize removes every resident and flashes the
 ///   lightning outside, and the doors out to the village lead into the
-///   storm's map (SceneId_ValeStormyNight) instead (CottageRoomsA_GetWarps).
+///   storm's map (SceneId_ValeStormyNight) instead (CottageRoomsA_GetExits).
 ///   The jars and the barrel are empty, and six more bookcases than by day can
 ///   be read, a notebook called "Study of Alchemy" among them.
 /// - Three years later, the day the story begins. The villagers talk of
@@ -196,17 +196,17 @@ static s32 CottageRoomsA_AdvanceSleepZ(struct Object *interpreter) {
   return 0;
 }
 
-const struct MapWarpDest *CottageRoomsA_GetWarpDests(void) {
-  return gCottageRoomsA_WarpDests;
+const struct SceneEntrance *CottageRoomsA_GetEntrances(void) {
+  return gCottageRoomsA_Entrances;
 }
 
-const struct MapWarpRegion *CottageRoomsA_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *CottageRoomsA_GetRegions(void) { return NULL; }
 
 /// On the stormy night, the doors lead out into the storm.
-const u32 *CottageRoomsA_GetWarps(void) {
+const u32 *CottageRoomsA_GetExits(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0)
-    return gCottageRoomsA_StormWarps;
-  return gCottageRoomsA_Warps;
+    return gCottageRoomsA_StormExits;
+  return gCottageRoomsA_Exits;
 }
 
 /// Selects the object event templates for the day the story begins, after the
@@ -331,9 +331,9 @@ static void EventScript_WorryAboutTravelersHealth(void) {
   FieldScript_End();
 }
 
-/// Leaves a house through its door: the warp sound plays and the screen
+/// Leaves a house through its door: the exit sound plays and the screen
 /// closes, stopping the lightning first on the stormy night.
-static void CottageRoomsA_RequestWindowWarp(s32 warpNumber) {
+static void CottageRoomsA_RequestWindowExit(s32 exitNumber) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0)
     Weather_StopLightning();
   Sound_PlaySong(SE_MAP_EXIT);
@@ -342,62 +342,62 @@ static void CottageRoomsA_RequestWindowWarp(s32 warpNumber) {
   gFieldWork->transitionFrames = 16;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(warpNumber);
+  Import_ScriptRequestExit(exitNumber);
 }
 
 // The rooms' doors: stepping on a door's cell, whose metatile behavior is its
-// warp's number, takes that warp back out, in every table. On the stormy night
-// the warps to SceneId_Vale lead to the storm's map (SceneId_ValeStormyNight)
+// exit's number, takes that exit back out, in every table. On the stormy night
+// the exits to SceneId_Vale lead to the storm's map (SceneId_ValeStormyNight)
 // instead.
 
 /// Leaves the house where a young man dreams of leaving. It's the room entered
 /// from COTTAGE_ROOMS_A_FROM_VALE_WEST, where
 /// LOCALID_YOUNG_MAN_DREAMING_OF_LEAVING wanders.
 static void EventScript_LeaveToValeWest(void) {
-  CottageRoomsA_RequestWindowWarp(COTTAGE_ROOMS_A_TO_VALE_WEST);
+  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_WEST);
 }
 
 /// Leaves Jenna's grandparents' house.
 static void EventScript_LeaveToValeNorth(void) {
-  CottageRoomsA_RequestWindowWarp(COTTAGE_ROOMS_A_TO_VALE_NORTH);
+  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_NORTH);
 }
 
 /// Leaves the empty house. It's the room entered from
 /// COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH, which no object event template
 /// table puts anyone in.
 static void EventScript_LeaveToValePlazaWest(void) {
-  CottageRoomsA_RequestWindowWarp(COTTAGE_ROOMS_A_TO_VALE_PLAZA_WEST);
+  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_PLAZA_WEST);
 }
 
 /// Leaves Vale's shops.
 static void EventScript_LeaveToValePlazaSouth(void) {
-  CottageRoomsA_RequestWindowWarp(COTTAGE_ROOMS_A_TO_VALE_PLAZA_SOUTH);
+  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_PLAZA_SOUTH);
 }
 
 /// Leaves the house where villagers talk of Kraden and his visitors. It's the
 /// room entered from COTTAGE_ROOMS_A_FROM_VALE_SOUTH, where
 /// LOCALID_MAN_ON_KRADENS_STUDIES and LOCALID_WOMAN_ON_VISITORS_IN_TOWN stand.
 static void EventScript_LeaveToValeSouth(void) {
-  CottageRoomsA_RequestWindowWarp(COTTAGE_ROOMS_A_TO_VALE_SOUTH);
+  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_SOUTH);
 }
 
 /// Leaves Garet's house.
 static void EventScript_LeaveToValeEast(void) {
-  CottageRoomsA_RequestWindowWarp(COTTAGE_ROOMS_A_TO_VALE_EAST);
+  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_EAST);
 }
 
 /// Leaves the house where a strongman plans to scare Kraden's visitors. It's
 /// the room entered from COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH, where
 /// LOCALID_STRONGMAN_SCARING_VISITORS stands.
 static void EventScript_LeaveToValePlazaEast(void) {
-  CottageRoomsA_RequestWindowWarp(COTTAGE_ROOMS_A_TO_VALE_PLAZA_EAST);
+  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_PLAZA_EAST);
 }
 
 /// Leaves the house where a woman talks of permission to leave. It's the room
 /// entered from COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST, where
 /// LOCALID_WOMAN_ON_PERMISSION_TO_LEAVE stands.
 static void EventScript_LeaveToValePlazaNorth(void) {
-  CottageRoomsA_RequestWindowWarp(COTTAGE_ROOMS_A_TO_VALE_PLAZA_NORTH);
+  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_PLAZA_NORTH);
 }
 
 /// Arriving in a house of Vale: on the stormy night the residents are gone and
@@ -442,7 +442,7 @@ s32 CottageRoomsA_Initialize(void) {
   }
   // The returning party gets the household reunion only on its first visit.
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
-    if (gSaveBlock.warpDest == COTTAGE_ROOMS_A_FROM_VALE_EAST) {
+    if (gSaveBlock.entrance == COTTAGE_ROOMS_A_FROM_VALE_EAST) {
       if (GameFlag_Get(FLAG_GARET_CAME_HOME) == 0) {
         EventScript_GaretComesHome();
       }
@@ -450,7 +450,7 @@ s32 CottageRoomsA_Initialize(void) {
     ObjectEvent_GetById(LOCALID_GARETS_FATHER)->collisionFlags |= 0x80;
   }
   // Once Jenna is taken, her grandmother lies sick in bed.
-  if (gSaveBlock.warpDest == COTTAGE_ROOMS_A_FROM_VALE_NORTH) {
+  if (gSaveBlock.entrance == COTTAGE_ROOMS_A_FROM_VALE_NORTH) {
     if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
       Import_ObjectEventSetPosition(LOCALID_JENNAS_GRANDMOTHER, PIXELS(454),
                                     PIXELS(150));
@@ -1035,8 +1035,8 @@ s32 gCottageRoomsA_SleepZScript[] = {
     SC_END,
 };
 
-struct MapWarpDest gCottageRoomsA_WarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gCottageRoomsA_Entrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {COTTAGE_ROOMS_A_FROM_VALE_WEST, CONDITION_ALWAYS, 96, 0, 222, FACING_NORTH,
      0, 4, 4, 244, 292, 0},
@@ -1057,46 +1057,46 @@ struct MapWarpDest gCottageRoomsA_WarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gCottageRoomsA_Warps[] = {
-    MAP_WARPS(CottageRoomsA),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_WEST, Vale,
-             VALE_FROM_COTTAGE_ROOMS_A_WEST),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_NORTH, Vale,
-             VALE_FROM_COTTAGE_ROOMS_A_NORTH),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_PLAZA_WEST, ValePlaza,
-             VALE_PLAZA_FROM_COTTAGE_ROOMS_A_WEST),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_PLAZA_SOUTH, ValePlaza,
-             VALE_PLAZA_FROM_COTTAGE_ROOMS_A_SOUTH),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_SOUTH, Vale,
-             VALE_FROM_COTTAGE_ROOMS_A_SOUTH),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_EAST, Vale,
-             VALE_FROM_COTTAGE_ROOMS_A_EAST),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_PLAZA_EAST, ValePlaza,
-             VALE_PLAZA_FROM_COTTAGE_ROOMS_A_EAST),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_PLAZA_NORTH, ValePlaza,
-             VALE_PLAZA_FROM_COTTAGE_ROOMS_A_NORTH),
-    MAP_WARPS_END,
+u32 gCottageRoomsA_Exits[] = {
+    SCENE_EXITS(CottageRoomsA),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_WEST, Vale,
+               VALE_FROM_COTTAGE_ROOMS_A_WEST),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_NORTH, Vale,
+               VALE_FROM_COTTAGE_ROOMS_A_NORTH),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_PLAZA_WEST, ValePlaza,
+               VALE_PLAZA_FROM_COTTAGE_ROOMS_A_WEST),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_PLAZA_SOUTH, ValePlaza,
+               VALE_PLAZA_FROM_COTTAGE_ROOMS_A_SOUTH),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_SOUTH, Vale,
+               VALE_FROM_COTTAGE_ROOMS_A_SOUTH),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_EAST, Vale,
+               VALE_FROM_COTTAGE_ROOMS_A_EAST),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_PLAZA_EAST, ValePlaza,
+               VALE_PLAZA_FROM_COTTAGE_ROOMS_A_EAST),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_PLAZA_NORTH, ValePlaza,
+               VALE_PLAZA_FROM_COTTAGE_ROOMS_A_NORTH),
+    SCENE_EXITS_END,
 };
 
-u32 gCottageRoomsA_StormWarps[] = {
-    MAP_WARPS(CottageRoomsA),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_WEST, ValeStormyNight,
-             VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_WEST),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_NORTH, ValeStormyNight,
-             VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_NORTH),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_PLAZA_WEST, ValePlaza,
-             VALE_PLAZA_FROM_COTTAGE_ROOMS_A_WEST),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_PLAZA_SOUTH, ValePlaza,
-             VALE_PLAZA_FROM_COTTAGE_ROOMS_A_SOUTH),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_SOUTH, ValeStormyNight,
-             VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_SOUTH),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_EAST, ValeStormyNight,
-             VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_EAST),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_PLAZA_EAST, ValePlaza,
-             VALE_PLAZA_FROM_COTTAGE_ROOMS_A_EAST),
-    MAP_WARP(COTTAGE_ROOMS_A_TO_VALE_PLAZA_NORTH, ValePlaza,
-             VALE_PLAZA_FROM_COTTAGE_ROOMS_A_NORTH),
-    MAP_WARPS_END,
+u32 gCottageRoomsA_StormExits[] = {
+    SCENE_EXITS(CottageRoomsA),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_WEST, ValeStormyNight,
+               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_WEST),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_NORTH, ValeStormyNight,
+               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_NORTH),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_PLAZA_WEST, ValePlaza,
+               VALE_PLAZA_FROM_COTTAGE_ROOMS_A_WEST),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_PLAZA_SOUTH, ValePlaza,
+               VALE_PLAZA_FROM_COTTAGE_ROOMS_A_SOUTH),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_SOUTH, ValeStormyNight,
+               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_SOUTH),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_EAST, ValeStormyNight,
+               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_A_EAST),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_PLAZA_EAST, ValePlaza,
+               VALE_PLAZA_FROM_COTTAGE_ROOMS_A_EAST),
+    SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_PLAZA_NORTH, ValePlaza,
+               VALE_PLAZA_FROM_COTTAGE_ROOMS_A_NORTH),
+    SCENE_EXITS_END,
 };
 
 // clang-format off

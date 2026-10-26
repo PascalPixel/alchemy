@@ -22,14 +22,14 @@
 ///   first relief room (SolSanctumEntrance_KradenSuspectsHiddenPassage) and in
 ///   the second (SolSanctumEntrance_KradenSeesStatuesOutOfReach). Two statues
 ///   in the first relief room and the row of six in the second can be pushed,
-///   or moved with Move, a cell east or west. Its warps lead to
+///   or moved with Move, a cell east or west. Its exits lead to
 ///   SceneId_SolSanctumCorridor, SceneId_SolSanctumMaze, Sol Entrance and
 ///   SceneId_SolSanctumLunaSolRooms; the rest lead between its own rooms.
 ///
 /// SceneId_SolSanctumReliefs is one map, but each relief room has object event
 /// template and event tables of its own:
 /// SolSanctumEntrance_GetObjectEventTemplates and _GetEvents choose them by
-/// the warp destination the party came in at, so a room's statues and their
+/// the entrance the party came in at, so a room's statues and their
 /// events exist only while the party is in it. Each pushable statue's column
 /// is kept in two area flags, one for each side, which
 /// SolSanctumEntrance_RestoreInteriorState reads to put it back on entry;
@@ -134,18 +134,18 @@
 // Map flags, cleared on every ordinary arrival:
 // - FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM: set on entering the second relief
 //   room; the Move rows of the first relief room apply only while it is clear,
-//   which it always is there: only the second room's warp destinations set it,
-//   every ordinary warp destination into the first room clears it, and a return
-//   after a battle comes back by the warp destination the party last came in
+//   which it always is there: only the second room's entrances set it,
+//   every ordinary entrance into the first room clears it, and a return
+//   after a battle comes back by the entrance the party last came in
 //   by, so the condition never stops a Move.
 
-// A warp's flag word of -1 stands for no flag: GameFlag_GetFar reads it as
-// flag 0xfff, which nothing sets, so the warp is always taken.
-#define WARP_FLAG_NONE 0xffffffff
+// An exit's flag word of -1 stands for no flag: GameFlag_GetFar reads it as
+// flag 0xfff, which nothing sets, so the exit is always taken.
+#define EXIT_FLAG_NONE 0xffffffff
 
 /// The metatile behaviors of the cells the Sol Sanctum entrance's coord, bg
-/// and item events answer; behaviors 1 to 16 in both maps are the warps, in
-/// the warp table's order.
+/// and item events answer; behaviors 1 to 16 in both maps are the exits, in
+/// the exit table's order.
 enum SolEntranceMetatileBehavior {
   /// ★ Named from what the player sees: the door that slides open as the
   /// leader walks into it (EventScript_OpenDoorAndEnter)
@@ -192,42 +192,42 @@ s32 gSolSanctumEntrance_RumbleTimer __attribute__((section(".bss")));
 
 void FieldEffect_InitializeSparkles();
 
-/// Returns Sol Entrance's warp destinations (SceneId_SolEntrance) or Sol
+/// Returns Sol Entrance's entrances (SceneId_SolEntrance) or Sol
 /// Sanctum's (SceneId_SolSanctumReliefs).
-const struct MapWarpDest *SolSanctumEntrance_GetWarpDests(void) {
+const struct SceneEntrance *SolSanctumEntrance_GetEntrances(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_SolEntrance) {
-    return gSolEntrance_WarpDests;
+    return gSolEntrance_Entrances;
   }
   if (sceneId == (s32)&SceneId_SolSanctumReliefs) {
-    return gSolSanctumReliefs_WarpDests;
+    return gSolSanctumReliefs_Entrances;
   }
-  return gSolSanctumEntrance_FallbackWarpDests;
+  return gSolSanctumEntrance_FallbackEntrances;
 }
 
-const struct MapWarpRegion *SolSanctumEntrance_GetRegions(void) { return 0; }
+const struct SceneExitRegion *SolSanctumEntrance_GetRegions(void) { return 0; }
 
-const u32 *SolSanctumEntrance_GetWarps(void) {
-  return gSolSanctumEntrance_Warps;
+const u32 *SolSanctumEntrance_GetExits(void) {
+  return gSolSanctumEntrance_Exits;
 }
 
 /// Selects the object events for the map and, in Sol Sanctum, the room. The
-/// first relief room's warp destinations place Kraden and that room's eleven
+/// first relief room's entrances place Kraden and that room's eleven
 /// statues, the second relief room's Kraden and the row of six; the rest of Sol
 /// Sanctum places Kraden and one statue (LOCALID_STATUE), and Sol Entrance the
 /// man who warns everyone away (LOCALID_WARNING_MAN).
 const struct ObjectEventTemplate *
 SolSanctumEntrance_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *table;
-  s32 firstStatueRoomWarpDest =
+  s32 firstStatueRoomEntrance =
       SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM;
 
   if (gSaveBlock.sceneId == (s32)&SceneId_SolSanctumReliefs) {
-    if (gSaveBlock.warpDest >= firstStatueRoomWarpDest) {
-      if (gSaveBlock.warpDest >
+    if (gSaveBlock.entrance >= firstStatueRoomEntrance) {
+      if (gSaveBlock.entrance >
           SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM) {
-        if (gSaveBlock.warpDest <=
+        if (gSaveBlock.entrance <=
             SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS) {
           return gSolSanctumReliefs_SecondReliefRoomObjectEventTemplates;
         }
@@ -245,20 +245,20 @@ SolSanctumEntrance_GetObjectEventTemplates(void) {
   return gSolSanctumEntrance_FallbackObjectEventTemplates;
 }
 
-/// Selects the events for the map and room, by the same warp destinations as
+/// Selects the events for the map and room, by the same entrances as
 /// SolSanctumEntrance_GetObjectEventTemplates.
 const struct MapEvent *SolSanctumEntrance_GetEvents(void) {
-  s32 firstStatueRoomWarpDest =
+  s32 firstStatueRoomEntrance =
       SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM;
 
   if (gSaveBlock.sceneId == (s32)&SceneId_SolEntrance) {
     return gSolEntrance_Events;
   }
   if (gSaveBlock.sceneId == (s32)&SceneId_SolSanctumReliefs) {
-    if (gSaveBlock.warpDest >= firstStatueRoomWarpDest) {
-      if (gSaveBlock.warpDest >
+    if (gSaveBlock.entrance >= firstStatueRoomEntrance) {
+      if (gSaveBlock.entrance >
           SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM) {
-        if (gSaveBlock.warpDest <=
+        if (gSaveBlock.entrance <=
             SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS) {
           return gSolSanctumReliefs_SecondReliefRoomEvents;
         }
@@ -297,7 +297,7 @@ static void EventScript_OpenDoorAndEnter(void) {
   FieldScript_WaitFrames(10);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS);
+  Import_ScriptRequestExit(SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS);
   FieldScript_End();
 }
 
@@ -635,7 +635,7 @@ static void EventScript_PushStatue(void) {
       statue->velocityZ = stoppedVelocity;
       Object_SelectAnimation(leader, ANIM_STAND);
       // Save the moved statue in the flag set belonging to this room.
-      switch (gSaveBlock.warpDest) {
+      switch (gSaveBlock.entrance) {
       case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM:
       case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STATUE_NOOK:
       case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM:
@@ -715,7 +715,7 @@ static void SolSanctumEntrance_ApplyEntryState(void) {
 /// FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM is set and the second relief's
 /// doorway shows once it is open.
 static void SolSanctumEntrance_RestoreInteriorState(void) {
-  s32 warpDest;
+  s32 entrance;
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
@@ -724,8 +724,8 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     FieldEffect_InitializeSparkles();
   }
 
-  warpDest = gSaveBlock.warpDest;
-  switch (warpDest) {
+  entrance = gSaveBlock.entrance;
+  switch (entrance) {
   case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST:
   case SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_ROOM:
     if (GameFlag_Get(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET) != 0) {
@@ -743,7 +743,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
 
   case SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE:
     gSaveBlock.retreatScene = (s32)&SceneId_SolSanctumReliefs;
-    gSaveBlock.retreatWarpDest = SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE;
+    gSaveBlock.retreatEntrance = SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE;
     if (GameFlag_Get(FLAG_SOL_SANCTUM_ENTERED) == 0)
       SolSanctumEntrance_IntroduceSanctum();
     break;
@@ -1323,14 +1323,14 @@ static void SolSanctumEntrance_UpdateEruptionRumbles(void) {
   }
 }
 
-struct MapWarpDest gSolSanctumEntrance_FallbackWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gSolSanctumEntrance_FallbackEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gSolEntrance_WarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gSolEntrance_Entrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {SOL_ENTRANCE_FROM_VALE, CONDITION_ALWAYS, 80, 0, 288, FACING_NORTH, 0, -1,
      -1, -1, -1, 0},
@@ -1339,8 +1339,8 @@ struct MapWarpDest gSolEntrance_WarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gSolSanctumReliefs_WarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gSolSanctumReliefs_Entrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST, CONDITION_ALWAYS, 280,
      0, 472, FACING_NORTH, 0, 5, 0, 555, 510, 0},
@@ -1381,70 +1381,72 @@ struct MapWarpDest gSolSanctumReliefs_WarpDests[] = {
 // (SceneId_SolSanctumReliefs). Sol Entrance's way
 // down leads to SceneId_Vale until the eruption, then to Vale during the
 // eruption (SceneId_ValeEruption) until the party has left Vale.
-u32 gSolSanctumEntrance_Warps[] = {
-    MAP_WARPS(SolEntrance),
-    MAP_WARP_UNLESS(SOL_ENTRANCE_TO_VALE, Vale, VALE_FROM_SOL_ENTRANCE,
-                    FLAG_SOL_SANCTUM_ERUPTED),
-    MAP_WARP_UNLESS(SOL_ENTRANCE_TO_VALE, ValeEruption,
-                    VALE_ERUPTION_FROM_SOL_ENTRANCE, FLAG_VALE_PARTY_LEFT),
-    MAP_WARP_UNLESS(SOL_ENTRANCE_TO_VALE, Vale, VALE_FROM_SOL_ENTRANCE,
-                    WARP_FLAG_NONE),
-    MAP_WARP_UNLESS(SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS, SolSanctumReliefs,
-                    SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE, WARP_FLAG_NONE),
-    MAP_WARPS(SolSanctumReliefs),
-    MAP_WARP_UNLESS(
+u32 gSolSanctumEntrance_Exits[] = {
+    SCENE_EXITS(SolEntrance),
+    SCENE_EXIT_UNLESS(SOL_ENTRANCE_TO_VALE, Vale, VALE_FROM_SOL_ENTRANCE,
+                      FLAG_SOL_SANCTUM_ERUPTED),
+    SCENE_EXIT_UNLESS(SOL_ENTRANCE_TO_VALE, ValeEruption,
+                      VALE_ERUPTION_FROM_SOL_ENTRANCE, FLAG_VALE_PARTY_LEFT),
+    SCENE_EXIT_UNLESS(SOL_ENTRANCE_TO_VALE, Vale, VALE_FROM_SOL_ENTRANCE,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS, SolSanctumReliefs,
+                      SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE, EXIT_FLAG_NONE),
+    SCENE_EXITS(SolSanctumReliefs),
+    SCENE_EXIT_UNLESS(
         SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST, SolSanctumCorridor,
-        SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_WEST, WARP_FLAG_NONE),
-    MAP_WARP_UNLESS(
+        SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(
         SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_FIRST_RELIEF_ROOM, SolSanctumReliefs,
-        SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM, WARP_FLAG_NONE),
-    MAP_WARP_UNLESS(
+        SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(
         SOL_SANCTUM_RELIEFS_STATUE_NOOK_TO_FIRST_RELIEF_ROOM, SolSanctumReliefs,
-        SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STATUE_NOOK, WARP_FLAG_NONE),
-    MAP_WARP_UNLESS(SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_TO_ENTRANCE_ROOM,
-                    SolSanctumReliefs,
-                    SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_FROM_STEPPING_STONE_ROOM,
-                    WARP_FLAG_NONE),
-    MAP_WARP_UNLESS(
+        SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STATUE_NOOK, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(
+        SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_TO_ENTRANCE_ROOM,
+        SolSanctumReliefs,
+        SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_FROM_STEPPING_STONE_ROOM,
+        EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(
         SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_EAST, SolSanctumCorridor,
-        SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_EAST, WARP_FLAG_NONE),
-    MAP_WARP_UNLESS(
+        SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(
         SOL_SANCTUM_RELIEFS_STEPS_ROOM_TO_FIRST_RELIEF_ROOM, SolSanctumReliefs,
-        SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM, WARP_FLAG_NONE),
-    MAP_WARP_UNLESS(
+        SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(
         SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST, SolSanctumMaze,
-        SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_SOUTH, WARP_FLAG_NONE),
-    MAP_WARP_UNLESS(SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE, SolEntrance,
-                    SOL_ENTRANCE_FROM_SOL_SANCTUM_RELIEFS, WARP_FLAG_NONE),
-    MAP_WARP_UNLESS(SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_TO_STEPPING_STONE_ROOM,
-                    SolSanctumReliefs,
-                    SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_FROM_ENTRANCE_ROOM,
-                    WARP_FLAG_NONE),
-    MAP_WARP_UNLESS(SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_TO_SECOND_RELIEF_ROOM,
-                    SolSanctumReliefs,
-                    SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_FROM_ROUND_PASSAGE,
-                    WARP_FLAG_NONE),
-    MAP_WARP_UNLESS(
+        SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_SOUTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE, SolEntrance,
+                      SOL_ENTRANCE_FROM_SOL_SANCTUM_RELIEFS, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(
+        SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_TO_STEPPING_STONE_ROOM,
+        SolSanctumReliefs,
+        SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_FROM_ENTRANCE_ROOM,
+        EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_TO_SECOND_RELIEF_ROOM,
+                      SolSanctumReliefs,
+                      SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_FROM_ROUND_PASSAGE,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(
         SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_CHEST_ROOM, SolSanctumReliefs,
-        SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_ROOM, WARP_FLAG_NONE),
-    MAP_WARP_UNLESS(
+        SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_ROOM, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(
         SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STATUE_NOOK, SolSanctumReliefs,
-        SOL_SANCTUM_RELIEFS_STATUE_NOOK_FROM_FIRST_RELIEF_ROOM, WARP_FLAG_NONE),
-    MAP_WARP_UNLESS(
+        SOL_SANCTUM_RELIEFS_STATUE_NOOK_FROM_FIRST_RELIEF_ROOM, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(
         SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STEPS_ROOM, SolSanctumReliefs,
-        SOL_SANCTUM_RELIEFS_STEPS_ROOM_FROM_FIRST_RELIEF_ROOM, WARP_FLAG_NONE),
-    MAP_WARP_UNLESS(
+        SOL_SANCTUM_RELIEFS_STEPS_ROOM_FROM_FIRST_RELIEF_ROOM, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(
         SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST, SolSanctumMaze,
-        SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_NORTH, WARP_FLAG_NONE),
-    MAP_WARP_UNLESS(SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE,
-                    SolSanctumReliefs,
-                    SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_FROM_SECOND_RELIEF_ROOM,
-                    WARP_FLAG_NONE),
-    MAP_WARP_UNLESS(SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS,
-                    SolSanctumLunaSolRooms,
-                    SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_RELIEFS,
-                    WARP_FLAG_NONE),
-    MAP_WARPS_END,
+        SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_NORTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE,
+                      SolSanctumReliefs,
+                      SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_FROM_SECOND_RELIEF_ROOM,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS,
+                      SolSanctumLunaSolRooms,
+                      SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_RELIEFS,
+                      EXIT_FLAG_NONE),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gSolSanctumEntrance_FallbackObjectEventTemplates[] =
@@ -1530,7 +1532,7 @@ struct MapEvent gSolSanctumEntrance_FallbackEvents[] = {
 };
 
 struct MapEvent gSolEntrance_Events[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, SOL_ENTRANCE_TO_VALE },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SOL_ENTRANCE_TO_VALE },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), MB_SOL_ENTRANCE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenDoorAndEnter) },
     { BG_EVENT(BG_EVENT_SILENT), MB_SOL_ENTRANCE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DoorTightlyLocked) },
     { MAP_EVENT_TALK, LOCALID_WARNING_MAN, CONDITION_ALWAYS, MSGNO(MsgValeItIsVeryDangerousToGo) },
@@ -1539,22 +1541,22 @@ struct MapEvent gSolEntrance_Events[] = {
 };
 
 struct MapEvent gSolSanctumReliefs_Events[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_FIRST_RELIEF_ROOM },
-    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STATUE_NOOK_TO_FIRST_RELIEF_ROOM },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_TO_ENTRANCE_ROOM },
-    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_EAST },
-    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPS_ROOM_TO_FIRST_RELIEF_ROOM },
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST },
-    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE },
-    { MAP_EVENT_WARP, 9, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_TO_STEPPING_STONE_ROOM },
-    { MAP_EVENT_WARP, 10, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_TO_SECOND_RELIEF_ROOM },
-    { MAP_EVENT_WARP, 11, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_CHEST_ROOM },
-    { MAP_EVENT_WARP, 12, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STATUE_NOOK },
-    { MAP_EVENT_WARP, 13, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STEPS_ROOM },
-    { MAP_EVENT_WARP, 14, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST },
-    { MAP_EVENT_WARP, 15, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE },
-    { MAP_EVENT_WARP, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_FIRST_RELIEF_ROOM },
+    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STATUE_NOOK_TO_FIRST_RELIEF_ROOM },
+    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_TO_ENTRANCE_ROOM },
+    { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_EAST },
+    { MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPS_ROOM_TO_FIRST_RELIEF_ROOM },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST },
+    { MAP_EVENT_EXIT, 8, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE },
+    { MAP_EVENT_EXIT, 9, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_TO_STEPPING_STONE_ROOM },
+    { MAP_EVENT_EXIT, 10, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_TO_SECOND_RELIEF_ROOM },
+    { MAP_EVENT_EXIT, 11, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_CHEST_ROOM },
+    { MAP_EVENT_EXIT, 12, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STATUE_NOOK },
+    { MAP_EVENT_EXIT, 13, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STEPS_ROOM },
+    { MAP_EVENT_EXIT, 14, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST },
+    { MAP_EVENT_EXIT, 15, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE },
+    { MAP_EVENT_EXIT, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
     { BG_EVENT(BG_EVENT_CHEST), MB_SOL_SANCTUM_RELIEFS_CHEST, FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND, FIND_ITEM(ITEM_SMALL_JEWEL) },
     { USE_ITEM(ITEM_SMALL_JEWEL), SOL_SANCTUM_ITEM_OWN_MESSAGE | MB_SOL_SANCTUM_RELIEFS_FIRST_RELIEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetFirstSmallJewel) },
     { BG_EVENT(BG_EVENT_SILENT), MB_SOL_SANCTUM_RELIEFS_FIRST_RELIEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_InspectFirstMinotaurRelief) },
@@ -1562,22 +1564,22 @@ struct MapEvent gSolSanctumReliefs_Events[] = {
 };
 
 struct MapEvent gSolSanctumReliefs_FirstReliefRoomEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_FIRST_RELIEF_ROOM },
-    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STATUE_NOOK_TO_FIRST_RELIEF_ROOM },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_TO_ENTRANCE_ROOM },
-    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_EAST },
-    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPS_ROOM_TO_FIRST_RELIEF_ROOM },
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST },
-    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE },
-    { MAP_EVENT_WARP, 9, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_TO_STEPPING_STONE_ROOM },
-    { MAP_EVENT_WARP, 10, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_TO_SECOND_RELIEF_ROOM },
-    { MAP_EVENT_WARP, 11, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_CHEST_ROOM },
-    { MAP_EVENT_WARP, 12, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STATUE_NOOK },
-    { MAP_EVENT_WARP, 13, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STEPS_ROOM },
-    { MAP_EVENT_WARP, 14, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST },
-    { MAP_EVENT_WARP, 15, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE },
-    { MAP_EVENT_WARP, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_FIRST_RELIEF_ROOM },
+    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STATUE_NOOK_TO_FIRST_RELIEF_ROOM },
+    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_TO_ENTRANCE_ROOM },
+    { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_EAST },
+    { MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPS_ROOM_TO_FIRST_RELIEF_ROOM },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST },
+    { MAP_EVENT_EXIT, 8, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE },
+    { MAP_EVENT_EXIT, 9, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_TO_STEPPING_STONE_ROOM },
+    { MAP_EVENT_EXIT, 10, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_TO_SECOND_RELIEF_ROOM },
+    { MAP_EVENT_EXIT, 11, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_CHEST_ROOM },
+    { MAP_EVENT_EXIT, 12, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STATUE_NOOK },
+    { MAP_EVENT_EXIT, 13, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STEPS_ROOM },
+    { MAP_EVENT_EXIT, 14, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST },
+    { MAP_EVENT_EXIT, 15, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE },
+    { MAP_EVENT_EXIT, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_WEST_STATUE, FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM, EVENT_SCRIPT(EventScript_WestStatueMoved) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_EAST_STATUE, FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM, EVENT_SCRIPT(EventScript_EastStatueMoved) },
     { COORD_EVENT_WALKING, MB_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatue) },
@@ -1587,22 +1589,22 @@ struct MapEvent gSolSanctumReliefs_FirstReliefRoomEvents[] = {
 };
 
 struct MapEvent gSolSanctumReliefs_SecondReliefRoomEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_FIRST_RELIEF_ROOM },
-    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STATUE_NOOK_TO_FIRST_RELIEF_ROOM },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_TO_ENTRANCE_ROOM },
-    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_EAST },
-    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPS_ROOM_TO_FIRST_RELIEF_ROOM },
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST },
-    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE },
-    { MAP_EVENT_WARP, 9, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_TO_STEPPING_STONE_ROOM },
-    { MAP_EVENT_WARP, 10, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_TO_SECOND_RELIEF_ROOM },
-    { MAP_EVENT_WARP, 11, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_CHEST_ROOM },
-    { MAP_EVENT_WARP, 12, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STATUE_NOOK },
-    { MAP_EVENT_WARP, 13, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STEPS_ROOM },
-    { MAP_EVENT_WARP, 14, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST },
-    { MAP_EVENT_WARP, 15, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE },
-    { MAP_EVENT_WARP, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_FIRST_RELIEF_ROOM },
+    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STATUE_NOOK_TO_FIRST_RELIEF_ROOM },
+    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_TO_ENTRANCE_ROOM },
+    { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_EAST },
+    { MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPS_ROOM_TO_FIRST_RELIEF_ROOM },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST },
+    { MAP_EVENT_EXIT, 8, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE },
+    { MAP_EVENT_EXIT, 9, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_TO_STEPPING_STONE_ROOM },
+    { MAP_EVENT_EXIT, 10, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_TO_SECOND_RELIEF_ROOM },
+    { MAP_EVENT_EXIT, 11, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_CHEST_ROOM },
+    { MAP_EVENT_EXIT, 12, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STATUE_NOOK },
+    { MAP_EVENT_EXIT, 13, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STEPS_ROOM },
+    { MAP_EVENT_EXIT, 14, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST },
+    { MAP_EVENT_EXIT, 15, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE },
+    { MAP_EVENT_EXIT, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROW_STATUE_1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue1Moved) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROW_STATUE_2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue2Moved) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROW_STATUE_3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue3Moved) },

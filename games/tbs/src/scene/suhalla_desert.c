@@ -16,9 +16,9 @@
 /// desert,
 ///   reached from SuhallaDesertSouth; they place nothing.
 ///
-/// One warp table and, for the first two maps, one event table serve the
-/// overlay; the warps in that event table keep their numbers, which each map's
-/// warp rows lead its own way.
+/// One exit table and, for the first two maps, one event table serve the
+/// overlay; the exits in that event table keep their numbers, which each map's
+/// exit rows lead its own way.
 ///
 /// The storms are the desert's mechanism, LOCALID_FIRST_SANDSTORM to
 /// LOCALID_LAST_SANDSTORM in the first two maps. As the party nears one
@@ -241,25 +241,25 @@ static s32 SuhallaDesert_ToggleObjectEventActive(struct Object *interpreter) {
   return 1;
 }
 
-const struct MapWarpDest *Scene_GetWarpDests(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 selector = gSaveBlock.sceneId;
 
   if (selector == (s32)&SceneId_SuhallaDesertNorth) {
-    return gSuhallaDesertNorthWarpDests;
+    return gSuhallaDesertNorthEntrances;
   }
   if (selector == (s32)&SceneId_SuhallaDesertSouth) {
-    return gSuhallaDesertSouthWarpDests;
+    return gSuhallaDesertSouthEntrances;
   }
   if (selector == (s32)&SceneId_SuhallaDesertCaves) {
-    return gSuhallaDesertCavesWarpDests;
+    return gSuhallaDesertCavesEntrances;
   }
-  return gSuhallaDesertWarpDestsOther;
+  return gSuhallaDesertEntrancesOther;
 }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-/// Where each warp of the three maps leads.
-const u32 *Scene_GetWarps(void) { return gSuhallaDesertWarps; }
+/// Where each exit of the three maps leads.
+const u32 *Scene_GetExits(void) { return gSuhallaDesertExits; }
 
 /// The storms, Iodem, and in the second map Flash and what Reveal shows.
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
@@ -828,7 +828,7 @@ static s32 EventScript_RevealStarts(void) {
   }
 }
 
-/// The third map's warps, or the storms, Iodem, treasure and Reveal of the
+/// The third map's exits, or the storms, Iodem, treasure and Reveal of the
 /// first two.
 const struct MapEvent *Scene_GetEvents(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_SuhallaDesertCaves) {
@@ -862,7 +862,7 @@ s32 Scene_Initialize(void) {
   } else {
     Sound_PlaySong(SE_STOP_ACTION_SE);
   }
-  if (gSaveBlock.warpDest == WARP_DEST_DEFAULT) {
+  if (gSaveBlock.entrance == ENTRANCE_DEFAULT) {
     gridState->flags &= ~DISPCNT_BG1_ON;
   }
   return 0;
@@ -1006,13 +1006,13 @@ s32 gSuhallaDesertFourthStormScript[] = {
     SC_END,
 };
 
-struct MapWarpDest gSuhallaDesertWarpDestsOther[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gSuhallaDesertEntrancesOther[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gSuhallaDesertNorthWarpDests[] = {
+struct SceneEntrance gSuhallaDesertNorthEntrances[] = {
     {SUHALLA_DESERT_NORTH_FROM_WORLD_MAP, CONDITION_ALWAYS, 264, 0, 56,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SUHALLA_DESERT_NORTH_FROM_SUHALLA_DESERT_SOUTH, CONDITION_ALWAYS, 24, 0,
@@ -1020,7 +1020,7 @@ struct MapWarpDest gSuhallaDesertNorthWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gSuhallaDesertSouthWarpDests[] = {
+struct SceneEntrance gSuhallaDesertSouthEntrances[] = {
     {SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_NORTH, CONDITION_ALWAYS, 488, 0,
      456, FACING_WEST, 0, -1, -1, -1, -1, 0},
     {SUHALLA_DESERT_SOUTH_FROM_WORLD_MAP, CONDITION_ALWAYS, 488, 0, 1208,
@@ -1032,7 +1032,7 @@ struct MapWarpDest gSuhallaDesertSouthWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gSuhallaDesertCavesWarpDests[] = {
+struct SceneEntrance gSuhallaDesertCavesEntrances[] = {
     {SUHALLA_DESERT_CAVES_FROM_SUHALLA_DESERT_SOUTH_WEST, CONDITION_ALWAYS, 72,
      0, 248, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {SUHALLA_DESERT_CAVES_WEST_FROM_EAST, CONDITION_ALWAYS, 440, 0, 152,
@@ -1044,35 +1044,35 @@ struct MapWarpDest gSuhallaDesertCavesWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gSuhallaDesertWarps[] = {
-    MAP_WARPS(SuhallaDesertNorth),
-    MAP_WARP(SUHALLA_DESERT_NORTH_TO_WORLD_MAP, WorldMap,
-             WORLD_MAP_FROM_SUHALLA_DESERT_NORTH),
-    MAP_WARP(SUHALLA_DESERT_NORTH_TO_SUHALLA_DESERT_SOUTH, SuhallaDesertSouth,
-             SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_NORTH),
-    MAP_WARPS(SuhallaDesertSouth),
-    MAP_WARP(SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_NORTH, SuhallaDesertNorth,
-             SUHALLA_DESERT_NORTH_FROM_SUHALLA_DESERT_SOUTH),
-    MAP_WARP(SUHALLA_DESERT_SOUTH_TO_WORLD_MAP, WorldMap,
-             WORLD_MAP_FROM_SUHALLA_DESERT_SOUTH),
-    MAP_WARP(SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_CAVES_EAST,
-             SuhallaDesertCaves,
-             SUHALLA_DESERT_CAVES_FROM_SUHALLA_DESERT_SOUTH_EAST),
-    MAP_WARP(SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_CAVES_WEST,
-             SuhallaDesertCaves,
-             SUHALLA_DESERT_CAVES_FROM_SUHALLA_DESERT_SOUTH_WEST),
-    MAP_WARPS(SuhallaDesertCaves),
-    MAP_WARP(SUHALLA_DESERT_CAVES_TO_SUHALLA_DESERT_SOUTH_WEST,
-             SuhallaDesertSouth,
-             SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_CAVES_WEST),
-    MAP_WARP(SUHALLA_DESERT_CAVES_WEST_TO_EAST, SuhallaDesertCaves,
-             SUHALLA_DESERT_CAVES_EAST_FROM_WEST),
-    MAP_WARP(SUHALLA_DESERT_CAVES_EAST_TO_WEST, SuhallaDesertCaves,
-             SUHALLA_DESERT_CAVES_WEST_FROM_EAST),
-    MAP_WARP(SUHALLA_DESERT_CAVES_TO_SUHALLA_DESERT_SOUTH_EAST,
-             SuhallaDesertSouth,
-             SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_CAVES_EAST),
-    MAP_WARPS_END,
+u32 gSuhallaDesertExits[] = {
+    SCENE_EXITS(SuhallaDesertNorth),
+    SCENE_EXIT(SUHALLA_DESERT_NORTH_TO_WORLD_MAP, WorldMap,
+               WORLD_MAP_FROM_SUHALLA_DESERT_NORTH),
+    SCENE_EXIT(SUHALLA_DESERT_NORTH_TO_SUHALLA_DESERT_SOUTH, SuhallaDesertSouth,
+               SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_NORTH),
+    SCENE_EXITS(SuhallaDesertSouth),
+    SCENE_EXIT(SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_NORTH, SuhallaDesertNorth,
+               SUHALLA_DESERT_NORTH_FROM_SUHALLA_DESERT_SOUTH),
+    SCENE_EXIT(SUHALLA_DESERT_SOUTH_TO_WORLD_MAP, WorldMap,
+               WORLD_MAP_FROM_SUHALLA_DESERT_SOUTH),
+    SCENE_EXIT(SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_CAVES_EAST,
+               SuhallaDesertCaves,
+               SUHALLA_DESERT_CAVES_FROM_SUHALLA_DESERT_SOUTH_EAST),
+    SCENE_EXIT(SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_CAVES_WEST,
+               SuhallaDesertCaves,
+               SUHALLA_DESERT_CAVES_FROM_SUHALLA_DESERT_SOUTH_WEST),
+    SCENE_EXITS(SuhallaDesertCaves),
+    SCENE_EXIT(SUHALLA_DESERT_CAVES_TO_SUHALLA_DESERT_SOUTH_WEST,
+               SuhallaDesertSouth,
+               SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_CAVES_WEST),
+    SCENE_EXIT(SUHALLA_DESERT_CAVES_WEST_TO_EAST, SuhallaDesertCaves,
+               SUHALLA_DESERT_CAVES_EAST_FROM_WEST),
+    SCENE_EXIT(SUHALLA_DESERT_CAVES_EAST_TO_WEST, SuhallaDesertCaves,
+               SUHALLA_DESERT_CAVES_WEST_FROM_EAST),
+    SCENE_EXIT(SUHALLA_DESERT_CAVES_TO_SUHALLA_DESERT_SOUTH_EAST,
+               SuhallaDesertSouth,
+               SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_CAVES_EAST),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gSuhallaDesertObjectEventTemplatesOther[] = {
@@ -1125,18 +1125,18 @@ s32 gSuhallaDesertChaseScript[] = {
     SC_END,
 };
 
-/// The first two maps' events, in one table. Its warps keep their numbers,
-/// since each map's warp table gives them its own ways out: warp 1 is
+/// The first two maps' events, in one table. Its exits keep their numbers,
+/// since each map's exit table gives them its own ways out: exit 1 is
 /// SUHALLA_DESERT_NORTH_TO_WORLD_MAP in the first and
 /// SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_NORTH in the second.
 struct MapEvent gSuhallaDesertEventsOther[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, 1 },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, 2 },
-    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, 3 },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
 #if !TBS_PATCH_1
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, 4 },
+    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
 #else
-    { MAP_EVENT_WARP | MAP_EVENT_FLAG_FACING | FACING_NORTH, 4, CONDITION_ALWAYS, 4 },
+    { MAP_EVENT_EXIT | MAP_EVENT_FLAG_FACING | FACING_NORTH, 4, CONDITION_ALWAYS, 4 },
 #endif
     { MAP_EVENT_COORD, 9, FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA, EVENT_SCRIPT(EventScript_IodemAsksWhetherToPressOn) },
     { MAP_EVENT_COORD, 41, FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED, EVENT_SCRIPT(EventScript_CaughtByFirstStorm) },
@@ -1182,11 +1182,11 @@ struct MapEvent gSuhallaDesertEventsOther[] = {
 // clang-format on
 
 struct MapEvent gSuhallaDesertCavesEvents[] = {
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS,
      SUHALLA_DESERT_CAVES_TO_SUHALLA_DESERT_SOUTH_WEST},
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
-    {MAP_EVENT_WARP, 4, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
+    {MAP_EVENT_EXIT, 4, CONDITION_ALWAYS,
      SUHALLA_DESERT_CAVES_TO_SUHALLA_DESERT_SOUTH_EAST},
     {MAP_EVENTS_END},
 };

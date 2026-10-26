@@ -4,9 +4,9 @@
 #include "types.h"
 #include "map_tables.h"
 
-const struct MapWarpDest *ColosseumAzartMatch_GetWarpDests(void);
-const struct MapWarpRegion *ColosseumAzartMatch_GetRegions(void);
-const u32 *ColosseumAzartMatch_GetWarps(void);
+const struct SceneEntrance *ColosseumAzartMatch_GetEntrances(void);
+const struct SceneExitRegion *ColosseumAzartMatch_GetRegions(void);
+const u32 *ColosseumAzartMatch_GetExits(void);
 const struct ObjectEventTemplate *
 ColosseumAzartMatch_GetObjectEventTemplates(void);
 const struct MapEvent *ColosseumAzartMatch_GetEvents(void);
@@ -18,8 +18,8 @@ extern char gHexDigits[20];
 extern s32 gColosseumAzartMatch_ScriptA[];
 extern s32 gColosseumAzartMatch_ScriptB[];
 extern u32 gColosseumAzartMatch_DirectionSteps[];
-extern struct MapWarpDest gColosseumAzartMatch_WarpDests[];
-extern u32 gColosseumAzartMatch_Warps[];
+extern struct SceneEntrance gColosseumAzartMatch_Entrances[];
+extern u32 gColosseumAzartMatch_Exits[];
 extern struct ObjectEventTemplate gColosseumAzartMatch_ObjectEventTemplates[];
 extern s32 gColosseumAzartMatch_Countdown;
 extern struct MapEvent gColosseumAzartMatch_Events[];

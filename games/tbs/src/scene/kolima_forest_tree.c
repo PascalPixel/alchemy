@@ -149,18 +149,18 @@ s32 gKolimaForestTreeSparkFrame __attribute__((section(".bss")));
 s32 gKolimaForestTreePlaySparkSound __attribute__((section(".bss")));
 s32 gKolimaForestTreePaletteFrame __attribute__((section(".bss")));
 
-const struct MapWarpDest *KolimaForestTree_GetWarpDests(void) {
-  return gKolimaForestTreeWarpDests;
+const struct SceneEntrance *KolimaForestTree_GetEntrances(void) {
+  return gKolimaForestTreeEntrances;
 }
 
 /// The region at Tret's foot that leads into the Tret Tree.
-const struct MapWarpRegion *KolimaForestTree_GetRegions(void) {
+const struct SceneExitRegion *KolimaForestTree_GetRegions(void) {
   return gKolimaForestTreeRegions;
 }
 
 /// The ways back (SceneId_KolimaForestFloodgate) and into the Tret Tree
 /// (SceneId_TreeRooms).
-const u32 *KolimaForestTree_GetWarps(void) { return gKolimaForestTreeWarps; }
+const u32 *KolimaForestTree_GetExits(void) { return gKolimaForestTreeExits; }
 
 /// Tret and Laurel, the blank object events at their spots, the ones the party
 /// talks to, Tret's wrathful side, and Garet, Ivan and Mia for the healing.
@@ -169,7 +169,7 @@ KolimaForestTree_GetObjectEventTemplates(void) {
   return gKolimaForestTreeObjectEventTemplates;
 }
 
-/// Unused: takes the touched warp after the leader's current movement; no
+/// Unused: takes the touched exit after the leader's current movement; no
 /// map event row names it.
 UNUSED static void KolimaForestTree_ExitTouchedRegion(void) {
   struct FieldWork *work;
@@ -177,7 +177,7 @@ UNUSED static void KolimaForestTree_ExitTouchedRegion(void) {
   work = gFieldWork;
   FieldScript_Start();
   ObjectMotion_CommitPositionAndActivate(LOCALID_PARTY_LEADER, 0, 0);
-  Import_ScriptRequestWarp(work->coordEvent);
+  Import_ScriptRequestExit(work->coordEvent);
   FieldScript_End();
 }
 
@@ -818,7 +818,7 @@ s32 KolimaForestTree_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   gSaveBlock.retreatScene = (s32)&SceneId_KolimaForestEntrance;
-  gSaveBlock.retreatWarpDest = KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP;
+  gSaveBlock.retreatEntrance = KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP;
   if (!GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED))
     KolimaPalette_Curse(3);
   ObjectEvent_GetById(LOCALID_TRET)->radius = 6;
@@ -1121,8 +1121,8 @@ s32 gKolimaForestTree_RejoinPartyActions[] = {
     SC_WAIT(1),      SC_END,
 };
 
-struct MapWarpDest gKolimaForestTreeWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, 0, 0,
+struct SceneEntrance gKolimaForestTreeEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, 0, 0,
      512, 448, 0},
     {KOLIMA_FOREST_TREE_FROM_KOLIMA_FOREST_FLOODGATE, CONDITION_ALWAYS, 136, 0,
      424, FACING_NORTH, 0, 0, 0, 512, 448, 0},
@@ -1132,16 +1132,16 @@ struct MapWarpDest gKolimaForestTreeWarpDests[] = {
 };
 
 // clang-format off
-struct MapWarpRegion gKolimaForestTreeRegions[] = {
+struct SceneExitRegion gKolimaForestTreeRegions[] = {
     {320, 88, 176, 336, 104, 192, -1, KOLIMA_FOREST_TREE_TO_TREE_ROOMS},
     {-1, 0, 0, 0, 0, 0, 0, 0},
 };
 
-u32 gKolimaForestTreeWarps[] = {
-    MAP_WARPS(KolimaForestTree),
-    MAP_WARP(KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_FLOODGATE, KolimaForestFloodgate, KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_TREE),
-    MAP_WARP(KOLIMA_FOREST_TREE_TO_TREE_ROOMS, TreeRooms, TREE_ROOMS_FROM_KOLIMA_FOREST_TREE),
-    MAP_WARPS_END,
+u32 gKolimaForestTreeExits[] = {
+    SCENE_EXITS(KolimaForestTree),
+    SCENE_EXIT(KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_FLOODGATE, KolimaForestFloodgate, KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_TREE),
+    SCENE_EXIT(KOLIMA_FOREST_TREE_TO_TREE_ROOMS, TreeRooms, TREE_ROOMS_FROM_KOLIMA_FOREST_TREE),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gKolimaForestTreeObjectEventTemplates[] = {
@@ -1169,7 +1169,7 @@ struct ObjectEventTemplate gKolimaForestTreeObjectEventTemplates[] = {
 };
 
 struct MapEvent gKolimaForestTreeEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_FLOODGATE },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_FLOODGATE },
     { USE_ITEM_ON_OBJ_EVENT(ITEM_HERMES_WATER), LOCALID_TRET_STAND_IN, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(KolimaForestTree_UseHermesWater) },
     { MAP_EVENT_TALK, LOCALID_LAUREL_STAND_IN, CONDITION_ALWAYS, EVENT_SCRIPT(KolimaForestTree_TalkToLaurel) },
     { MAP_EVENT_TALK, LOCALID_TRET_STAND_IN, CONDITION_ALWAYS, EVENT_SCRIPT(KolimaForestTree_TalkToTret) },

@@ -17,7 +17,7 @@
 /// come down the path and are called over, and Dora's question about Jenna and
 /// Kraden is answered the same way whatever Isaac replies. The Great Healer
 /// then opens the sanctum's door (MapGrid_AnimateCells) and leads everyone in,
-/// and the map's one warp takes the party into the Vale Sanctum
+/// and the map's one exit takes the party into the Vale Sanctum
 /// (SANCTUM_FROM_VALE_ERUPTION), where the Great Healer passes on the Wise
 /// One's quest (Sanctum_RequestQuestAcceptance). The tremors are
 /// MapGrid_SetShake calls, each with a flash (Weather_LastLightning) and
@@ -98,15 +98,15 @@ static void EventScript_ReturnFromMtAleph(void);
 
 /// Returns where the party appears: VALE_ERUPTION_FROM_SOL_ENTRANCE is the path
 /// down from the mountain, Mt. Aleph.
-const struct MapWarpDest *ValeEruption_GetWarpDests(void) {
-  return gValeEruption_WarpDests;
+const struct SceneEntrance *ValeEruption_GetEntrances(void) {
+  return gValeEruption_Entrances;
 }
 
-const struct MapWarpRegion *ValeEruption_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *ValeEruption_GetRegions(void) { return NULL; }
 
-/// Returns the one warp, VALE_ERUPTION_TO_SANCTUM into the Vale Sanctum
+/// Returns the one exit, VALE_ERUPTION_TO_SANCTUM into the Vale Sanctum
 /// (SANCTUM_FROM_VALE_ERUPTION), which EventScript_ReturnFromMtAleph takes.
-const u32 *ValeEruption_GetWarps(void) { return gValeEruption_Warps; }
+const u32 *ValeEruption_GetExits(void) { return gValeEruption_Exits; }
 
 /// Returns Garet and the villagers gathered before the sanctum.
 const struct ObjectEventTemplate *ValeEruption_GetObjectEventTemplates(void) {
@@ -124,7 +124,7 @@ const struct MapEvent *ValeEruption_GetEvents(void) {
 /// VALE_ERUPTION_FROM_SOL_ENTRANCE is where Sol Sanctum's approach leads after
 /// the eruption and before the party leaves Vale.
 s32 ValeEruption_Initialize(void) {
-  if (gSaveBlock.warpDest == VALE_ERUPTION_FROM_SOL_ENTRANCE) {
+  if (gSaveBlock.entrance == VALE_ERUPTION_FROM_SOL_ENTRANCE) {
     EventScript_ReturnFromMtAleph();
   }
   return 0;
@@ -486,7 +486,7 @@ static void EventScript_ReturnFromMtAleph(void) {
   MapGrid_WaitForShakeToSettle();
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   GameFlag_Set(FLAG_VALE_RETURNED_FROM_MT_ALEPH);
-  Import_ScriptRequestWarp(VALE_ERUPTION_TO_SANCTUM);
+  Import_ScriptRequestExit(VALE_ERUPTION_TO_SANCTUM);
   FieldScript_End();
 }
 
@@ -517,18 +517,18 @@ s32 gValeEruption_EnterSanctum[] = {
     SC_END,
 };
 
-struct MapWarpDest gValeEruption_WarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 110, 0, 270, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gValeEruption_Entrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 110, 0, 270, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {VALE_ERUPTION_FROM_SOL_ENTRANCE, CONDITION_ALWAYS, 103, 0, 284,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {MAP_TABLE_END},
 };
 
-u32 gValeEruption_Warps[] = {
-    MAP_WARPS(ValeEruption),
-    MAP_WARP(VALE_ERUPTION_TO_SANCTUM, Sanctum, SANCTUM_FROM_VALE_ERUPTION),
-    MAP_WARPS_END,
+u32 gValeEruption_Exits[] = {
+    SCENE_EXITS(ValeEruption),
+    SCENE_EXIT(VALE_ERUPTION_TO_SANCTUM, Sanctum, SANCTUM_FROM_VALE_ERUPTION),
+    SCENE_EXITS_END,
 };
 
 // clang-format off

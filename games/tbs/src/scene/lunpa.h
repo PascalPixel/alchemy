@@ -14,16 +14,15 @@
 // Lunpa's and the gates' entrances and exits are in scene_links.h.
 
 /// The exit the gates' third road (MB_LUNPA_FORTRESS_GATES_THIRD_ROAD)
-/// requests, which gGateWarps has no row for. Scene_TakeWarp, reaching the end
+/// requests, which gGateExits has no row for. Scene_TakeExit, reaching the end
 /// of the gates' exits, falls back to the event of their first exit at entrance
 /// 0, so the road leads to LunpaFortressGroundFloor's default entrance.
-enum { GATE_WARP_THIRD = 3 };
+enum { GATE_EXIT_THIRD = 3 };
 
 /// The first of the rooms in RockRooms that Lunpa's doors lead into.
-enum { ROOM_WARP_DEST_FIRST = 1 };
+enum { ROOM_ENTRANCE_FIRST = 1 };
 
-#define ROOM_WARP_DEST(warp)                                                   \
-  ((warp) - LUNPA_TO_FIRST_HOME + ROOM_WARP_DEST_FIRST)
+#define ROOM_ENTRANCE(exit) ((exit) - LUNPA_TO_FIRST_HOME + ROOM_ENTRANCE_FIRST)
 
 /// The metatile behaviors Lunpa's map events answer.
 enum LunpaMetatileBehavior {
@@ -141,8 +140,8 @@ enum GateLocalId {
 /// How the switch's sparkle is stretched while Reveal shows it.
 enum { SPARKLE_SCALE_X = 0x13333, SPARKLE_SCALE_Y = 0x18000 };
 
-/// Where Retreat at the gates sends the party (SaveBlock.retreatWarpDest).
-enum { GATE_RETREAT_WARP_DEST = 10 };
+/// Where Retreat at the gates sends the party (SaveBlock.retreatEntrance).
+enum { GATE_RETREAT_ENTRANCE = 10 };
 
 enum CatchMessage {
   CATCH_LEFT_GUARD_CHALLENGES,

@@ -4,9 +4,9 @@
 #include "types.h"
 #include "map_tables.h"
 
-const struct MapWarpDest *SolSanctumElementalStarRoom_GetWarpDests(void);
-const struct MapWarpRegion *SolSanctumElementalStarRoom_GetRegions(void);
-const u32 *SolSanctumElementalStarRoom_GetWarps(void);
+const struct SceneEntrance *SolSanctumElementalStarRoom_GetEntrances(void);
+const struct SceneExitRegion *SolSanctumElementalStarRoom_GetRegions(void);
+const u32 *SolSanctumElementalStarRoom_GetExits(void);
 const struct ObjectEventTemplate *
 SolSanctumElementalStarRoom_GetObjectEventTemplates(void);
 const struct MapEvent *SolSanctumElementalStarRoom_GetEvents(void);
@@ -17,8 +17,8 @@ extern s32 gFieldEffect_LongScript[];
 extern const s32 *gFieldEffect_DurationScripts[];
 extern s32 gSolSanctumElementalStarRoom_AngleScript[];
 extern s32 gSolSanctumElementalStarRoom_PresentItemScript[];
-extern struct MapWarpDest gSolSanctumElementalStarRoom_WarpDests[];
-extern u32 gSolSanctumElementalStarRoom_Warps[];
+extern struct SceneEntrance gSolSanctumElementalStarRoom_Entrances[];
+extern u32 gSolSanctumElementalStarRoom_Exits[];
 extern struct ObjectEventTemplate
     gSolSanctumElementalStarRoom_ObjectEventTemplates[];
 extern struct MapEvent gSolSanctumElementalStarRoom_Events[];

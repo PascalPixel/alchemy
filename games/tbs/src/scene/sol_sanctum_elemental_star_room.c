@@ -158,16 +158,16 @@ static __inline__ void SolSanctumElementalStarRoom_SkipMessages(s32 amount) {
 
 #include "common/object_facing.h"
 
-const struct MapWarpDest *SolSanctumElementalStarRoom_GetWarpDests(void) {
-  return gSolSanctumElementalStarRoom_WarpDests;
+const struct SceneEntrance *SolSanctumElementalStarRoom_GetEntrances(void) {
+  return gSolSanctumElementalStarRoom_Entrances;
 }
 
-const struct MapWarpRegion *SolSanctumElementalStarRoom_GetRegions(void) {
+const struct SceneExitRegion *SolSanctumElementalStarRoom_GetRegions(void) {
   return NULL;
 }
 
-const u32 *SolSanctumElementalStarRoom_GetWarps(void) {
-  return gSolSanctumElementalStarRoom_Warps;
+const u32 *SolSanctumElementalStarRoom_GetExits(void) {
+  return gSolSanctumElementalStarRoom_Exits;
 }
 
 const struct ObjectEventTemplate *
@@ -1326,7 +1326,7 @@ static void EventScript_TakeMarsStar(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(
+  Import_ScriptRequestExit(
       SOL_SANCTUM_ELEMENTAL_STAR_ROOM_TO_SOL_SANCTUM_ERUPTION);
 }
 
@@ -2178,7 +2178,7 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
     SolSanctumElementalStarRoom_LineUpCaptors();
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED) == 0) {
-    if (gSaveBlock.warpDest ==
+    if (gSaveBlock.entrance ==
         SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS) {
       SolSanctumElementalStarRoom_EnterStarRoom();
     }
@@ -2371,18 +2371,18 @@ s32 gSolSanctumElementalStarRoom_PresentItemScript[] = {
     SC_END,
 };
 
-struct MapWarpDest gSolSanctumElementalStarRoom_WarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 472, 0, 322, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gSolSanctumElementalStarRoom_Entrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 472, 0, 322, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {MAP_TABLE_END},
 };
 
-u32 gSolSanctumElementalStarRoom_Warps[] = {
-    MAP_WARPS(SolSanctumElementalStarRoom),
-    MAP_WARP(SOL_SANCTUM_ELEMENTAL_STAR_ROOM_TO_SOL_SANCTUM_ERUPTION,
-             SolSanctumEruption,
-             SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM),
-    MAP_WARPS_END,
+u32 gSolSanctumElementalStarRoom_Exits[] = {
+    SCENE_EXITS(SolSanctumElementalStarRoom),
+    SCENE_EXIT(SOL_SANCTUM_ELEMENTAL_STAR_ROOM_TO_SOL_SANCTUM_ERUPTION,
+               SolSanctumEruption,
+               SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM),
+    SCENE_EXITS_END,
 };
 
 // clang-format off

@@ -1,7 +1,7 @@
 	.include "games/tbs/src/system/overlay.inc"
 	overlay_veneer KolimaForestGlade_Initialize
-	overlay_veneer KolimaForestGlade_GetWarpDests
-	overlay_veneer KolimaForestGlade_GetWarps
+	overlay_veneer KolimaForestGlade_GetEntrances
+	overlay_veneer KolimaForestGlade_GetExits
 	overlay_veneer KolimaForestGlade_GetObjectEventTemplates
 	overlay_veneer KolimaForestGlade_GetEvents
 	overlay_veneer KolimaForestGlade_GetRegions

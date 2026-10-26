@@ -4,9 +4,9 @@
 #include "types.h"
 #include "map_tables.h"
 
-const struct MapWarpDest *Sanctum_GetWarpDests(void);
-const struct MapWarpRegion *Sanctum_GetRegions(void);
-const u32 *Sanctum_GetWarps(void);
+const struct SceneEntrance *Sanctum_GetEntrances(void);
+const struct SceneExitRegion *Sanctum_GetRegions(void);
+const u32 *Sanctum_GetExits(void);
 const struct ObjectEventTemplate *Sanctum_GetObjectEventTemplates(void);
 const struct MapEvent *Sanctum_GetEvents(void);
 s32 Sanctum_Initialize(void);
@@ -14,8 +14,8 @@ extern u32 gSanctum_LeaderCircleScript[];
 extern u32 gSanctum_GaretCircleScript[];
 extern s32 gSanctum_ItemIconGrowScript[];
 extern s32 gSanctum_ItemIconEndScript[];
-extern struct MapWarpDest gSanctum_WarpDests[];
-extern u32 gSanctum_Warps[];
+extern struct SceneEntrance gSanctum_Entrances[];
+extern u32 gSanctum_Exits[];
 extern struct ObjectEventTemplate gSanctum_NoObjectEventTemplates[];
 extern struct ObjectEventTemplate gSanctum_ValeObjectEventTemplates[];
 extern struct ObjectEventTemplate gSanctum_IvanObjectEventTemplate[];

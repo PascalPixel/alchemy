@@ -2,10 +2,10 @@
 /// @file
 /// Stone rooms (SceneId_StoneRooms), a sheet of rooms drawn in stone: the game
 /// packs rooms of several places that share a tile style onto one map, and
-/// this one holds two, whose area names differ by warp destination. The warp
-/// destination also picks the tables: the thieves' for STONE_ROOMS_FROM_VAULT
+/// this one holds two, whose area names differ by entrance. The
+/// entrance also picks the tables: the thieves' for STONE_ROOMS_FROM_VAULT
 /// and STONE_ROOMS_FROM_LUNPA, the prisoner's for
-/// STONE_ROOMS_FROM_VAULT_REVISIT. In story order, by the warps that lead in:
+/// STONE_ROOMS_FROM_VAULT_REVISIT. In story order, by the exits that lead in:
 ///
 /// - Vault (STONE_ROOMS_FROM_VAULT and STONE_ROOMS_FROM_VAULT_REVISIT), the
 /// cell
@@ -20,7 +20,7 @@
 ///   (FLAG_LUNPA_HIDDEN_ROOM_CHEST_*), MB_LUNPA_HIDDEN_ROOM_DOOR leads back up
 ///   into Lunpa, and arriving this way clears FLAG_SHOW_LOCATION_NAME, so no
 ///   area name is shown. The room uses the thieves' tables, so its chests and
-///   warp sit in the same map event table as the thieves' talk and the Vault
+///   exit sit in the same map event table as the thieves' talk and the Vault
 ///   door.
 ///   ★ Named from what the player sees: a hidden stone room of six chests
 ///   behind barred windows (its render)
@@ -94,35 +94,35 @@ enum JailLocalId {
 /// 10/13), so the party reaches them across the bars.
 enum { JAIL_REACH_ACROSS_BARS = OBJ_EVENT_NEAR_TALK | OBJ_EVENT_NEAR_PSYNERGY };
 
-/// Returns the warp destinations from Vault, from Lunpa and from Vault's
+/// Returns the entrances from Vault, from Lunpa and from Vault's
 /// revisit map.
-const struct MapWarpDest *Scene_GetWarpDests(void) {
-  return gStoneRooms_WarpDests;
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gStoneRooms_Entrances;
 }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-/// Returns the warps to Vault, to Vault's revisit map and to Lunpa, each to
-/// the warp destination that map names for the jail (VAULT_FROM_STONE_ROOMS,
+/// Returns the exits to Vault, to Vault's revisit map and to Lunpa, each to
+/// the entrance that map names for the jail (VAULT_FROM_STONE_ROOMS,
 /// VAULT_REVISIT_FROM_STONE_ROOMS and LUNPA_FROM_STONE_ROOMS).
-const u32 *Scene_GetWarps(void) { return gStoneRooms_Warps; }
+const u32 *Scene_GetExits(void) { return gStoneRooms_Exits; }
 
 /// Places the three jailed thieves (each only once FLAG_VAULT_THIEVES_JAILED
 /// is set), or, entered from Vault's revisit map
 /// (STONE_ROOMS_FROM_VAULT_REVISIT, after they have broken out), the lone
 /// prisoner.
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
-  if (gSaveBlock.warpDest == STONE_ROOMS_FROM_VAULT_REVISIT) {
+  if (gSaveBlock.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
     return gStoneRooms_PrisonerObjectEventTemplates;
   }
   return gStoneRooms_ThiefObjectEventTemplates;
 }
 
 /// Returns the thieves' map events, which also hold the Lunpa room's chests and
-/// warp, or the prisoner's when the party came in from Vault's revisit map,
+/// exit, or the prisoner's when the party came in from Vault's revisit map,
 /// matching Scene_GetObjectEventTemplates.
 const struct MapEvent *Scene_GetEvents(void) {
-  if (gSaveBlock.warpDest == STONE_ROOMS_FROM_VAULT_REVISIT) {
+  if (gSaveBlock.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
     return gStoneRooms_PrisonerEvents;
   }
   return gStoneRooms_ThiefEvents;
@@ -221,15 +221,15 @@ static void EventScript_ReadRightThiefMind(void) {
   FieldScript_End();
 }
 
-/// The party steps out of Vault's jail into Vault, with the warp sound.
+/// The party steps out of Vault's jail into Vault, with the exit sound.
 ///
 /// Reached by stepping on the door's cell (MB_VAULT_JAIL_DOOR) under the
 /// thieves' table, that is, entered from Vault or Lunpa; takes
 /// STONE_ROOMS_TO_VAULT to VAULT_FROM_STONE_ROOMS. The prisoner's table leaves
-/// by a plain warp instead, STONE_ROOMS_TO_VAULT_REVISIT.
+/// by a plain exit instead, STONE_ROOMS_TO_VAULT_REVISIT.
 static void EventScript_LeaveForVault(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  Import_ScriptRequestWarp(STONE_ROOMS_TO_VAULT);
+  Import_ScriptRequestExit(STONE_ROOMS_TO_VAULT);
 }
 
 /// Opens the map through a window transition and lets the party reach the
@@ -240,17 +240,17 @@ static void EventScript_LeaveForVault(void) {
 /// FLAG_SHOW_LOCATION_NAME, so no area name is shown; otherwise it adds
 /// JAIL_REACH_ACROSS_BARS to the prisoner or to the three thieves.
 s32 Scene_Initialize(void) {
-  s16 warpDest;
+  s16 entrance;
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  warpDest = gSaveBlock.warpDest;
+  entrance = gSaveBlock.entrance;
 
-  if (warpDest == STONE_ROOMS_FROM_LUNPA) {
+  if (entrance == STONE_ROOMS_FROM_LUNPA) {
     // XXX (no evidence): why, when gArea_NameRules gives "Lunpa" for this
-    // warp destination.
+    // entrance.
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
-  } else if (warpDest == STONE_ROOMS_FROM_VAULT_REVISIT) {
+  } else if (entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
     ObjectEvent_GetById(LOCALID_PRISONER)->collisionFlags |=
         JAIL_REACH_ACROSS_BARS;
   } else {
@@ -266,20 +266,20 @@ s32 Scene_Initialize(void) {
 }
 
 // clang-format off
-const struct MapWarpDest gStoneRooms_WarpDests[] = {
-    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+const struct SceneEntrance gStoneRooms_Entrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { STONE_ROOMS_FROM_VAULT, CONDITION_ALWAYS, 80, 0, 232, FACING_NORTH, 0, 16, 48, 304, 256, 0 },
     { STONE_ROOMS_FROM_LUNPA, CONDITION_ALWAYS, 544, 0, 280, FACING_NORTH, 0, 440, 48, 680, 312, 0 },
     { STONE_ROOMS_FROM_VAULT_REVISIT, CONDITION_ALWAYS, 80, 0, 232, FACING_NORTH, 0, 16, 48, 304, 256, 0 },
     { MAP_TABLE_END },
 };
 
-const u32 gStoneRooms_Warps[] = {
-    MAP_WARPS(StoneRooms),
-    MAP_WARP(STONE_ROOMS_TO_VAULT, Vault, VAULT_FROM_STONE_ROOMS),
-    MAP_WARP(STONE_ROOMS_TO_VAULT_REVISIT, VaultRevisit, VAULT_REVISIT_FROM_STONE_ROOMS),
-    MAP_WARP(STONE_ROOMS_TO_LUNPA, Lunpa, LUNPA_FROM_STONE_ROOMS),
-    MAP_WARPS_END,
+const u32 gStoneRooms_Exits[] = {
+    SCENE_EXITS(StoneRooms),
+    SCENE_EXIT(STONE_ROOMS_TO_VAULT, Vault, VAULT_FROM_STONE_ROOMS),
+    SCENE_EXIT(STONE_ROOMS_TO_VAULT_REVISIT, VaultRevisit, VAULT_REVISIT_FROM_STONE_ROOMS),
+    SCENE_EXIT(STONE_ROOMS_TO_LUNPA, Lunpa, LUNPA_FROM_STONE_ROOMS),
+    SCENE_EXITS_END,
 };
 
 const struct ObjectEventTemplate gStoneRooms_ThiefObjectEventTemplates[] = {
@@ -300,7 +300,7 @@ const struct ObjectEventTemplate gStoneRooms_PrisonerObjectEventTemplates[] = {
 
 const struct MapEvent gStoneRooms_ThiefEvents[] = {
     { MAP_EVENT_COORD, MB_VAULT_JAIL_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveForVault) },
-    { MAP_EVENT_WARP, MB_LUNPA_HIDDEN_ROOM_DOOR, CONDITION_ALWAYS, STONE_ROOMS_TO_LUNPA },
+    { MAP_EVENT_EXIT, MB_LUNPA_HIDDEN_ROOM_DOOR, CONDITION_ALWAYS, STONE_ROOMS_TO_LUNPA },
     { MAP_EVENT_TALK, LOCALID_THIEF_LEADER, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
       EVENT_SCRIPT(EventScript_LeaderSilencesThieves) },
     { MAP_EVENT_TALK, LOCALID_LEFT_THIEF, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
@@ -329,7 +329,7 @@ const struct MapEvent gStoneRooms_ThiefEvents[] = {
 // clang-format on
 
 const struct MapEvent gStoneRooms_PrisonerEvents[] = {
-    {MAP_EVENT_WARP, MB_VAULT_JAIL_DOOR, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, MB_VAULT_JAIL_DOOR, CONDITION_ALWAYS,
      STONE_ROOMS_TO_VAULT_REVISIT},
     {MAP_EVENT_TALK, LOCALID_PRISONER, CONDITION_ALWAYS,
      MsgVaultPrisonerRegretsFight},

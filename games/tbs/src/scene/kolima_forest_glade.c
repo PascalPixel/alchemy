@@ -59,15 +59,15 @@ enum KolimaForestGladeLocalId {
 
 /// Where the party enters, from SceneId_KolimaForestEntrance and
 /// SceneId_KolimaForestCliff.
-const struct MapWarpDest *KolimaForestGlade_GetWarpDests(void) {
-  return gKolimaForestGlade_WarpDests;
+const struct SceneEntrance *KolimaForestGlade_GetEntrances(void) {
+  return gKolimaForestGlade_Entrances;
 }
 
-const struct MapWarpRegion *KolimaForestGlade_GetRegions(void) { return 0; }
+const struct SceneExitRegion *KolimaForestGlade_GetRegions(void) { return 0; }
 
 /// The ways on into the forest (SceneId_KolimaForestCliff) and back
 /// (SceneId_KolimaForestEntrance).
-const u32 *KolimaForestGlade_GetWarps(void) { return gKolimaForestGlade_Warps; }
+const u32 *KolimaForestGlade_GetExits(void) { return gKolimaForestGlade_Exits; }
 
 /// The three logs and the Nut.
 const struct ObjectEventTemplate *
@@ -149,7 +149,7 @@ s32 gPushedObject_FootprintBounds[] = {
     -8, -32, 8, 32,
 };
 
-struct MapWarpDest gKolimaForestGlade_WarpDests[] = {
+struct SceneEntrance gKolimaForestGlade_Entrances[] = {
     { 0, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_ENTRANCE, CONDITION_ALWAYS, 480, 0, 376, FACING_WEST, 0, -1, -1, -1, -1, 0 },
     { KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_CLIFF, CONDITION_ALWAYS, 312, 0, 40, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -158,11 +158,11 @@ struct MapWarpDest gKolimaForestGlade_WarpDests[] = {
 
 /// KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF on into the forest, and
 /// KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE back.
-u32 gKolimaForestGlade_Warps[] = {
-    MAP_WARPS(KolimaForestGlade),
-    MAP_WARP(KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF, KolimaForestCliff, KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_GLADE),
-    MAP_WARP(KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE, KolimaForestEntrance, KOLIMA_FOREST_ENTRANCE_FROM_KOLIMA_FOREST_GLADE),
-    MAP_WARPS_END,
+u32 gKolimaForestGlade_Exits[] = {
+    SCENE_EXITS(KolimaForestGlade),
+    SCENE_EXIT(KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF, KolimaForestCliff, KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_GLADE),
+    SCENE_EXIT(KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE, KolimaForestEntrance, KOLIMA_FOREST_ENTRANCE_FROM_KOLIMA_FOREST_GLADE),
+    SCENE_EXITS_END,
 };
 
 /// Until the third patch the Nut's object event template tested Vale's FLAG_VALE_NUT_CAUGHT, not the flag
@@ -186,9 +186,9 @@ struct ObjectEventTemplate gKolimaForestGlade_ObjectEventTemplates[] = {
 // clang-format on
 
 struct MapEvent gKolimaForestGlade_Events[] = {
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS,
      KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF},
-    {MAP_EVENT_WARP, 2, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS,
      KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE},
     {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(KolimaForestGlade_PushLog)},

@@ -27,9 +27,9 @@ struct LogRoomsAStop {
 STATIC_ASSERT(sizeof(struct LogRoomsAStopConnection) == 4);
 STATIC_ASSERT(sizeof(struct LogRoomsAStop) == 16);
 
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *Scene_GetWarps(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
@@ -60,9 +60,9 @@ extern s32 gLogRoomsA_SuspectToSouthWestCorner[];
 extern s32 gLogRoomsA_SuspectAlongToSouthWestCorner[];
 extern s32 gLogRoomsA_SuspectToSouthEastCorner[];
 extern s32 gLogRoomsA_SuspectAlongToSouthEastCorner[];
-extern struct MapWarpDest gLogRoomsA_WarpDests[];
-extern struct MapWarpRegion gLogRoomsA_Regions[];
-extern u32 gLogRoomsA_Warps[];
+extern struct SceneEntrance gLogRoomsA_Entrances[];
+extern struct SceneExitRegion gLogRoomsA_Regions[];
+extern u32 gLogRoomsA_Exits[];
 extern struct ObjectEventTemplate gLogRoomsA_ObjectEventTemplates[];
 extern struct ObjectEventTemplate gLogRoomsA_LoftObjectEventTemplates[];
 extern struct MapEvent gLogRoomsA_Events[];

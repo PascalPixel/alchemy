@@ -263,7 +263,7 @@ under them, 128 by 128; several scenes can share one ([Maps](src/map/README.md))
 ### Sheet of rooms
 
 A map that packs indoor rooms drawn in one tile style side by side, each its
-own scene with a camera box its warp destination chooses; its rooms may belong
+own scene with a camera box its entrance chooses; its rooms may belong
 to different places, so it is named for the style they are drawn in, as
 Cottage rooms or Stucco rooms ([Scenes](src/scene/README.md#design)).
 
@@ -326,14 +326,14 @@ A map event that runs when the player presses A facing a cell: a jar, a chest,
 a bookcase. "Bg" is pret's word and has nothing to do with the background
 layers.
 
-### Warp
+### Exit
 
 A way out of a scene, named for where it leads (`VALE_PLAZA_TO_WORLD_MAP`); the
-first row for it in the scene's warp table whose condition holds gives the next
-scene and warp destination
-([The front page](README.md#warps-and-warp-destinations)).
+first row for it in the scene's exit table whose condition holds gives the next
+scene and entrance
+([The front page](README.md#exits-and-entrances)).
 
-### Warp destination
+### Entrance
 
 Where the party arrives in a scene, named for where it comes from
 (`VALE_PLAZA_FROM_SANCTUM`): a position, a facing and the camera's limits.

@@ -4,14 +4,14 @@
 #include "types.h"
 #include "map_tables.h"
 
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEvent;
 struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *LamakanDesert_GetWarpDests(void);
-const struct MapWarpRegion *LamakanDesert_GetRegions(void);
-const u32 *LamakanDesert_GetWarps(void);
+const struct SceneEntrance *LamakanDesert_GetEntrances(void);
+const struct SceneExitRegion *LamakanDesert_GetRegions(void);
+const u32 *LamakanDesert_GetExits(void);
 const struct ObjectEventTemplate *LamakanDesert_GetObjectEventTemplates(void);
 const struct MapEvent *LamakanDesert_GetEvents(void);
 s32 LamakanDesert_Initialize(void);
@@ -23,12 +23,12 @@ extern const s32 gLamakanDesertEast_Oases[];
 extern const s32 gLamakanDesertSmog_Oases[];
 extern const s32 gLamakanDesertOasesOther[];
 extern const s32 *gFieldEffect_DurationScripts[];
-extern struct MapWarpDest gLamakanDesertWarpDestsOther[];
-extern struct MapWarpDest gLamakanDesertEastWarpDests[];
-extern struct MapWarpDest gLamakanDesertSmogWarpDests[];
-extern struct MapWarpDest gLamakanDesertManticoreWarpDests[];
-extern struct MapWarpDest gLamakanDesertCaveWarpDests[];
-extern u32 gLamakanDesertWarps[];
+extern struct SceneEntrance gLamakanDesertEntrancesOther[];
+extern struct SceneEntrance gLamakanDesertEastEntrances[];
+extern struct SceneEntrance gLamakanDesertSmogEntrances[];
+extern struct SceneEntrance gLamakanDesertManticoreEntrances[];
+extern struct SceneEntrance gLamakanDesertCaveEntrances[];
+extern u32 gLamakanDesertExits[];
 extern struct ObjectEventTemplate gLamakanDesertObjectEventTemplatesOther[];
 extern struct ObjectEventTemplate gLamakanDesertEastObjectEventTemplates[];
 extern struct ObjectEventTemplate gLamakanDesertSmogObjectEventTemplates[];

@@ -104,7 +104,7 @@ enum ObjectEventAnimation {
   /// number to such a pose (spr_000.png to spr_003.png).
   ANIM_COLLAPSE = 19,
   ANIM_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
-  /// The arrivals and leavings of the animated warps (enum WarpStyle), each
+  /// The arrivals and leavings of the animated exits (enum ExitStyle), each
   /// four frames of the leader turning: an arrival grows from a small figure
   /// seen side-on to full size facing the player, a leaving turns from his
   /// back to side-on as he shrinks and is then hidden. The alternate pair has
@@ -152,19 +152,19 @@ struct MapGridCellAnimation {
 
 // The imports below keep a name of their own, prefixed Import_: the maps' calls
 // of these routines were compiled against declarations that differ from the
-// routines' own, as the bytes measure. Import_ScriptRequestWarp,
+// routines' own, as the bytes measure. Import_ScriptRequestExit,
 // Import_ObjectEventSetPosition, Import_ObjectEventSetAnimation and
 // Import_RandomNext are called with differing argument counts, so they keep
-// old-style declarations; FieldScript_SetWarpRequest also takes a u16 and
+// old-style declarations; FieldScript_SetExitRequest also takes a u16 and
 // Random16 returns a u32, where the maps pass and read an int. Imil's and Sol
 // Sanctum's Psynergy Stone room's calls of GameFlag_Set, which returns the
 // flag, compile only as calls of a void routine (Import_GameFlagSet), where
 // every other map's match through GameFlag_Set itself, and the maps pass
 // FieldScript_ShowTwoMessagesAndWait eleven arguments where it takes ten
 // (Import_ScriptShowTwoMessagesAndWait).
-/// Sets the field's warp request (FieldScript_SetWarpRequest); 999 leaves for
-/// gSaveBlock's map and warp destination.
-void Import_ScriptRequestWarp();
+/// Sets the field's exit request (FieldScript_SetExitRequest); 999 leaves for
+/// gSaveBlock's map and entrance.
+void Import_ScriptRequestExit();
 /// Puts an object event at rest at (x, z), in 16.16 pixels; one that follows
 /// the ground keeps its height above the terrain
 /// (ObjectMotion_SetHorizontalPositionWithTerrain).

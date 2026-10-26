@@ -5,9 +5,9 @@
 #include "map_tables.h"
 #include "scene_header.h"
 
-const struct MapWarpDest *TolbiShipMast_GetWarpDests(void);
-const struct MapWarpRegion *TolbiShipMast_GetRegions(void);
-const u32 *TolbiShipMast_GetWarps(void);
+const struct SceneEntrance *TolbiShipMast_GetEntrances(void);
+const struct SceneExitRegion *TolbiShipMast_GetRegions(void);
+const u32 *TolbiShipMast_GetExits(void);
 const struct ObjectEventTemplate *TolbiShipMast_GetObjectEventTemplates(void);
 const struct MapEvent *TolbiShipMast_GetEvents(void);
 s32 TolbiShipMast_Initialize(void);
@@ -29,9 +29,9 @@ extern s32 gTolbiShipMast_BirdDeparture3[];
 extern s32 gTolbiShipMast_BirdDeparture4[];
 extern s32 gTolbiShipMast_BirdDeparture5[];
 extern u32 gTolbiShipMast_BirdDeparture6[];
-extern struct MapWarpDest gTolbiShipMast_WarpDests[];
-extern struct MapWarpRegion gTolbiShipMast_Regions[];
-extern u32 gTolbiShipMast_Warps[];
+extern struct SceneEntrance gTolbiShipMast_Entrances[];
+extern struct SceneExitRegion gTolbiShipMast_Regions[];
+extern u32 gTolbiShipMast_Exits[];
 extern struct ObjectEventTemplate gTolbiShipMast_ObjectEventTemplates[];
 extern struct ObjectEventTemplate
     gTolbiShipMast_FirstAttackObjectEventTemplates[];

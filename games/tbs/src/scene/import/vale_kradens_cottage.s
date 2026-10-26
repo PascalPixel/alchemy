@@ -39,7 +39,7 @@
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_WaitForArrival, 1
-	.set import.Import_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestExit, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.Weather_StartRain, 1
 	.set import.Weather_StartLightning, 1

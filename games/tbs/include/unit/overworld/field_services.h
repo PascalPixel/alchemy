@@ -77,16 +77,16 @@ void Party_LearnAbility(s32 unit, s32 ability);
 void FieldScript_StartScreenTransition(void);
 void FieldScript_FinishScreenTransition(void);
 void FieldScript_WaitTransitionFrames(void);
-void FieldScript_SetDestination(s32 sceneId, s32 warpDest);
-void FieldScript_SetSavedDestination(u16 sceneId, u16 warpDest);
-void FieldScript_SetWarpRequest(u16 request);
+void FieldScript_SetDestination(s32 sceneId, s32 entrance);
+void FieldScript_SetSavedDestination(u16 sceneId, u16 entrance);
+void FieldScript_SetExitRequest(u16 request);
 void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo);
 /// Field_RequestDjinnBattle's flag: the Djinni does not hop first.
 #define DJINN_NO_HOP 0x800
 void Field_RequestDjinnBattle(s32 flag, s32 no);
-void FieldScript_SetNextDestination(s32 sceneId, s32 warpDest);
-void FieldScript_SetDefeatDestination(s32 sceneId, s32 warpDest);
-void FieldScript_RequestDestination(u16 sceneId, u16 warpDest);
+void FieldScript_SetNextDestination(s32 sceneId, s32 entrance);
+void FieldScript_SetDefeatDestination(s32 sceneId, s32 entrance);
+void FieldScript_RequestDestination(u16 sceneId, u16 entrance);
 void Scene_QueueMusic(s32 soundId);
 void Scene_PlayQueuedMusic(void);
 
@@ -243,17 +243,17 @@ s32 Field_TryJumpForward(void);
 s32 Field_ClimbDown(void);
 s32 Field_ClimbUp(void);
 s32 ObjectEvent_GetScreenPosition(s32 objectId, s32 *position);
-void Warp_NoOp(void);
+void Exit_NoOp(void);
 #ifdef UBFIX
 void Field_StartEncounterTransition(s32 unused);
 #else
 s32 Field_StartEncounterTransition(s32 unused);
 #endif
-void Warp_PrepareExitAnimation(s32 animation);
-void Warp_StartStairsUpExit(void);
-void Warp_StartStairsDownExit(void);
-void Warp_EndArrivalAnimation(s32 animation);
-s32 Warp_PlayArrival(void);
+void Exit_PrepareAnimation(s32 animation);
+void Exit_StartStairsUp(void);
+void Exit_StartStairsDown(void);
+void Entrance_EndArrivalAnimation(s32 animation);
+s32 Entrance_PlayArrival(void);
 
 void ScanlineEffect_ArmDma(void);
 void ScanlineEffect_BuildPage(void);

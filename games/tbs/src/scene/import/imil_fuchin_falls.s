@@ -40,7 +40,7 @@
 	.set import.ObjectEvent_ConfigureSpriteColor, 1
 	.set import.ObjectEvent_SetSpriteColor, 1
 	.set import.ObjectMotion_SetActionVariant, 1
-	.set import.Import_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestExit, 1
 	.set import.Field_RequestDjinnBattle, 1
 	.set import.PaletteFade_SetTarget, 1
 	.set import.PaletteFade_SetSource, 1

@@ -16,11 +16,11 @@
 ///   back out with the Orb of Force (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), he
 ///   sends the party on to Nyunpa (FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST).
 /// - Lacquer rooms A (SceneId_LacquerRoomsA), a sheet of rooms drawn in red
-///   lacquer, each a camera box of its own that the warp destination the party
-///   comes in by chooses. In story order, by the warps that lead in:
+///   lacquer, each a camera box of its own that the entrance the party
+///   comes in by chooses. In story order, by the exits that lead in:
 ///   - Fuchin Temple (by
-///     LACQUER_ROOMS_A_FROM_FUCHIN_TEMPLE_GROUNDS or the default warp
-///     destination), inside, where Nyunpa meditates. Mind Read on him offers
+///     LACQUER_ROOMS_A_FROM_FUCHIN_TEMPLE_GROUNDS or the default
+///     entrance), inside, where Nyunpa meditates. Mind Read on him offers
 ///     the test (EventScript_NyunpaOffersTest, again after
 ///     FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED); back with the Orb,
 ///     Scene_Initialize plays his lesson on Ki (FuchinTemple_NyunpaTeachesKi,
@@ -259,20 +259,20 @@ static s32 FuchinTemple_FaceLeader(union ObjectEventOrEffect *fieldObject) {
 #endif
 }
 
-/// Chooses the outside warp destination table or the shared interior warp
-/// destinations.
-const struct MapWarpDest *Scene_GetWarpDests(void) {
+/// Chooses the outside entrance table or the shared interior
+/// entrances.
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_FuchinTempleGrounds) {
-    return gFuchinTempleGroundsWarpDests;
+    return gFuchinTempleGroundsEntrances;
   }
-  return gFuchinTempleWarpDestsOther;
+  return gFuchinTempleEntrancesOther;
 }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Scene_GetWarps(void) { return gFuchinTempleWarps; }
+const u32 *Scene_GetExits(void) { return gFuchinTempleExits; }
 
 /// Selects the room's object events and applies the post-lesson object event
 /// template changes.
@@ -280,7 +280,7 @@ const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_FuchinTempleGrounds) {
     return gFuchinTempleGroundsObjectEventTemplates;
   }
-  if (gSaveBlock.warpDest == LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
+  if (gSaveBlock.entrance == LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
     return gFuchinTempleObjectEventTemplatesFromLamaTemple;
   }
   // Once Hsu is known to be trapped, the tree and two students are gone, and
@@ -1563,7 +1563,7 @@ static void EventScript_OpenLockedDoor(void) {
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 306, 248);
     ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 304, 216);
     FieldScript_WaitFrames(20);
-    Import_ScriptRequestWarp(LACQUER_ROOMS_A_FEHS_SCHOOL_TO_HOUSE);
+    Import_ScriptRequestExit(LACQUER_ROOMS_A_FEHS_SCHOOL_TO_HOUSE);
     FieldScript_End();
   }
 }
@@ -1605,7 +1605,7 @@ const struct MapEvent *Scene_GetEvents(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_FuchinTempleGrounds) {
     return gFuchinTempleGroundsEvents;
   }
-  if (gSaveBlock.warpDest == LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
+  if (gSaveBlock.entrance == LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
     return gFuchinTempleEventsFromLamaTemple;
   }
   return gFuchinTempleEvents;
@@ -1698,7 +1698,7 @@ static void EventScript_EnterWaterfallGrotto(void) {
   ObjectEvent_SetSpriteFlags(leader, 0);
   Task_Remove(particleTask);
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE);
+  Import_ScriptRequestExit(FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE);
   FieldScript_End();
 }
 
@@ -1708,7 +1708,7 @@ static void EventScript_EnterWaterfallGrotto(void) {
 /// FuchinTempleGrounds.
 static void EventScript_LeaveTemple(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  Import_ScriptRequestWarp(LACQUER_ROOMS_A_TO_FUCHIN_TEMPLE_GROUNDS);
+  Import_ScriptRequestExit(LACQUER_ROOMS_A_TO_FUCHIN_TEMPLE_GROUNDS);
 }
 
 /// Walking north into the temple door at Fuchin Temple (FuchinTempleGrounds,
@@ -1724,7 +1724,7 @@ static void EventScript_EnterTemple(void) {
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -16);
   FieldScript_WaitFrames(16);
-  Import_ScriptRequestWarp(FUCHIN_TEMPLE_GROUNDS_TO_LACQUER_ROOMS_A);
+  Import_ScriptRequestExit(FUCHIN_TEMPLE_GROUNDS_TO_LACQUER_ROOMS_A);
   FieldScript_End();
 }
 
@@ -2437,7 +2437,7 @@ s32 Scene_Initialize(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_LacquerRoomsA) {
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-    if (gSaveBlock.warpDest == LACQUER_ROOMS_A_FROM_FUCHIN_TEMPLE_GROUNDS) {
+    if (gSaveBlock.entrance == LACQUER_ROOMS_A_FROM_FUCHIN_TEMPLE_GROUNDS) {
       if (GameFlag_Get(FLAG_NYUNPA_ENLIGHTENED)) {
         Import_ObjectEventSetAnimation(LOCALID_NYUNPA, ANIM_NYUNPA_WITHERED);
       } else {
@@ -2448,8 +2448,8 @@ s32 Scene_Initialize(void) {
           FuchinTemple_NyunpaTeachesKi();
         }
       }
-    } else if (gSaveBlock.warpDest == LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_XIAN ||
-               gSaveBlock.warpDest == LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_HOUSE) {
+    } else if (gSaveBlock.entrance == LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_XIAN ||
+               gSaveBlock.entrance == LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_HOUSE) {
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
       heardHsuTrapped = GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED);
       if (heardHsuTrapped == 0) {
@@ -2499,7 +2499,7 @@ s32 Scene_Initialize(void) {
                                      ANIM_STUDENT_KICKS);
       Import_ObjectEventSetAnimation(LOCALID_PUNCHING_STUDENT,
                                      ANIM_STUDENT_PUNCHES);
-    } else if (gSaveBlock.warpDest ==
+    } else if (gSaveBlock.entrance ==
                LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
       if (!GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED)) {
@@ -2513,7 +2513,7 @@ s32 Scene_Initialize(void) {
     Scene_QueueMusic(SE_AMBIENT_WATER);
     ObjectEvent_GetById(LOCALID_FALLS_MONK)->collisionFlags |=
         OBJ_EVENT_NEAR_PSYNERGY;
-    if (gSaveBlock.warpDest ==
+    if (gSaveBlock.entrance ==
             FUCHIN_TEMPLE_GROUNDS_FROM_FUCHIN_FALLS_CAVE_ENTRANCE &&
         GameFlag_Get(FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND) &&
         !GameFlag_Get(FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST)) {
@@ -2725,7 +2725,7 @@ u16 gFuchinTemple_FehsDoorCloses[] = {
     MAPGRID_ANIMATION_STEPS_END,
 };
 
-struct MapWarpDest gFuchinTempleGroundsWarpDests[] = {
+struct SceneEntrance gFuchinTempleGroundsEntrances[] = {
     {0, CONDITION_ALWAYS, 296, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP, CONDITION_ALWAYS, 296, 0, 504,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
@@ -2738,7 +2738,7 @@ struct MapWarpDest gFuchinTempleGroundsWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gFuchinTempleWarpDestsOther[] = {
+struct SceneEntrance gFuchinTempleEntrancesOther[] = {
     {0, CONDITION_ALWAYS, 168, 0, 552, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {LACQUER_ROOMS_A_FROM_FUCHIN_TEMPLE_GROUNDS, CONDITION_ALWAYS, 168, 0, 552,
      FACING_NORTH, 0, 48, 384, 288, 576, 0},
@@ -2751,25 +2751,25 @@ struct MapWarpDest gFuchinTempleWarpDestsOther[] = {
     {MAP_TABLE_END},
 };
 
-u32 gFuchinTempleWarps[] = {
-    MAP_WARPS(FuchinTempleGrounds),
-    MAP_WARP(FUCHIN_TEMPLE_GROUNDS_TO_WORLD_MAP, WorldMap,
-             WORLD_MAP_FROM_FUCHIN_TEMPLE_GROUNDS),
-    MAP_WARP(FUCHIN_TEMPLE_GROUNDS_TO_LACQUER_ROOMS_A, LacquerRoomsA,
-             LACQUER_ROOMS_A_FROM_FUCHIN_TEMPLE_GROUNDS),
-    MAP_WARP(FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE,
-             FuchinFallsCaveEntrance,
-             FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_TEMPLE_GROUNDS),
-    MAP_WARPS(LacquerRoomsA),
-    MAP_WARP(LACQUER_ROOMS_A_TO_FUCHIN_TEMPLE_GROUNDS, FuchinTempleGrounds,
-             FUCHIN_TEMPLE_GROUNDS_FROM_LACQUER_ROOMS_A),
-    MAP_WARP(LACQUER_ROOMS_A_FEHS_SCHOOL_TO_XIAN, Xian,
-             XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL),
-    MAP_WARP(LACQUER_ROOMS_A_HAMAS_ROOM_TO_LAMA_TEMPLE, LamaTemple,
-             LAMA_TEMPLE_FROM_LACQUER_ROOMS_A_HAMAS_ROOM),
-    MAP_WARP(LACQUER_ROOMS_A_FEHS_SCHOOL_TO_HOUSE, LacquerRoomsB,
-             LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL),
-    MAP_WARPS_END,
+u32 gFuchinTempleExits[] = {
+    SCENE_EXITS(FuchinTempleGrounds),
+    SCENE_EXIT(FUCHIN_TEMPLE_GROUNDS_TO_WORLD_MAP, WorldMap,
+               WORLD_MAP_FROM_FUCHIN_TEMPLE_GROUNDS),
+    SCENE_EXIT(FUCHIN_TEMPLE_GROUNDS_TO_LACQUER_ROOMS_A, LacquerRoomsA,
+               LACQUER_ROOMS_A_FROM_FUCHIN_TEMPLE_GROUNDS),
+    SCENE_EXIT(FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE,
+               FuchinFallsCaveEntrance,
+               FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_TEMPLE_GROUNDS),
+    SCENE_EXITS(LacquerRoomsA),
+    SCENE_EXIT(LACQUER_ROOMS_A_TO_FUCHIN_TEMPLE_GROUNDS, FuchinTempleGrounds,
+               FUCHIN_TEMPLE_GROUNDS_FROM_LACQUER_ROOMS_A),
+    SCENE_EXIT(LACQUER_ROOMS_A_FEHS_SCHOOL_TO_XIAN, Xian,
+               XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL),
+    SCENE_EXIT(LACQUER_ROOMS_A_HAMAS_ROOM_TO_LAMA_TEMPLE, LamaTemple,
+               LAMA_TEMPLE_FROM_LACQUER_ROOMS_A_HAMAS_ROOM),
+    SCENE_EXIT(LACQUER_ROOMS_A_FEHS_SCHOOL_TO_HOUSE, LacquerRoomsB,
+               LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL),
+    SCENE_EXITS_END,
 };
 
 // clang-format off
@@ -2841,7 +2841,7 @@ struct ObjectEventTemplate gFuchinTempleObjectEventTemplatesFromLamaTemple[] = {
 };
 
 struct MapEvent gFuchinTempleGroundsEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, FUCHIN_TEMPLE_GROUNDS_TO_WORLD_MAP },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, FUCHIN_TEMPLE_GROUNDS_TO_WORLD_MAP },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterTemple) },
     { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterWaterfallGrotto) },
     { MAP_EVENT_COORD, 5, FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST, EVENT_SCRIPT(EventScript_MonkAsksWhetherTestIsDone) },
@@ -2882,7 +2882,7 @@ struct MapEvent gFuchinTempleGroundsEvents[] = {
 
 struct MapEvent gFuchinTempleEvents[] = {
     { COORD_EVENT_FACING(FACING_SOUTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveTemple) },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, LACQUER_ROOMS_A_FEHS_SCHOOL_TO_XIAN },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, LACQUER_ROOMS_A_FEHS_SCHOOL_TO_XIAN },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenLockedDoor) },
     { MAP_EVENT_TALK, LOCALID_NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTemple) },
     { MAP_EVENT_TALK, LOCALID_NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_TAUGHT_FORCE), MSGNO(MsgFuchinTempleUseThisEnergyToFindThe) },
@@ -2975,7 +2975,7 @@ struct MapEvent gFuchinTempleEvents[] = {
 };
 
 struct MapEvent gFuchinTempleEventsFromLamaTemple[] = {
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, LACQUER_ROOMS_A_HAMAS_ROOM_TO_LAMA_TEMPLE },
+    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, LACQUER_ROOMS_A_HAMAS_ROOM_TO_LAMA_TEMPLE },
     { MAP_EVENT_TALK, LOCALID_HAMAS_BOY_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleMasterHamaIsMeditatingAskingFor) },
     { MAP_EVENT_TALK, LOCALID_HAMA, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleTheFutureHoldsManyHardshipsBut) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HAMAS_BOY_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleIDoNotThinkMasterHama) },

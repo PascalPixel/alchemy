@@ -4,17 +4,17 @@
 #include "types.h"
 #include "map_tables.h"
 
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *Lalivero_GetWarpDests(void);
-const struct MapWarpRegion *Lalivero_GetRegions(void);
-const u32 *Lalivero_GetWarps(void);
+const struct SceneEntrance *Lalivero_GetEntrances(void);
+const struct SceneExitRegion *Lalivero_GetRegions(void);
+const u32 *Lalivero_GetExits(void);
 const struct ObjectEventTemplate *Lalivero_GetObjectEventTemplates(void);
 const struct MapEvent *Lalivero_GetEvents(void);
 s32 Lalivero_Initialize(void);
 extern s32 gLalivero_CryingScript[];
-extern struct MapWarpDest gLaliveroWarpDests[];
-extern u32 gLaliveroWarps[];
+extern struct SceneEntrance gLaliveroEntrances[];
+extern u32 gLaliveroExits[];
 extern struct ObjectEventTemplate gLaliveroObjectEventTemplates[];
 extern struct ObjectEventTemplate
     gLaliveroObjectEventTemplatesAfterLighthouse[];

@@ -32,13 +32,13 @@
 ///   Palace (BABI_PALACE_TO_COLOSSEUM_TUNNEL) into the Colosseum, whose end
 ///   of the tunnel (COLOSSEUM_TUNNEL_FROM_COLOSSEUM and
 ///   COLOSSEUM_FROM_COLOSSEUM_TUNNEL) takes the same area name. It has only its
-///   two warps.
+///   two exits.
 /// - Colosseum (SceneId_Colosseum), one map that holds the stands, the trial
 ///   grounds, the finals' waiting room and the passages to the finals stages,
-///   each a warp destination's camera box on it.
-///   Every arrival is a warp destination of its own, and
-///   ColosseumEntrance_ApplyArrivalState plays the event that warp
-///   destination stands for. During the trials the stands' warp destinations
+///   each an entrance's camera box on it.
+///   Every arrival is an entrance of its own, and
+///   ColosseumEntrance_ApplyArrivalState plays the event that
+///   entrance stands for. During the trials the stands' entrances
 ///   (COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST,
 ///   COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS) alternate with the two trial
 ///   events (COLOSSEUM_FAILED_TRIAL_FROM_STANDS,
@@ -47,14 +47,14 @@
 ///   COLOSSEUM_FROM_COLOSSEUM_ENTRANCE keeps the party's items
 ///   (InventorySnapshot_Save) for Babi's Palace to give back, and the waiting
 ///   room's line asks whether Isaac is ready (EventScript_FinalsStart). Each
-///   finals stage returns to its own warp destination here
+///   finals stage returns to its own entrance here
 ///   (COLOSSEUM_FROM_COLOSSEUM_*_MATCH_*), and FLAG_COLOSSO_FIRST_MATCH_WON and
 ///   FLAG_COLOSSO_SECOND_MATCH_WON choose which stage the long passages lead to
 ///   next; the stages themselves are colosseum_azart_match.c,
 ///   colosseum_satrage_match.c and colosseum_navampa_match.c.
 ///
-/// The three maps share one warp table, a run of warps for each map, and
-/// the Colosseum's warps are how its arrivals chain into one another and into
+/// The three maps share one exit table, a run of exits for each map, and
+/// the Colosseum's exits are how its arrivals chain into one another and into
 /// the finals stages.
 
 #include "save_block.h"
@@ -346,24 +346,24 @@ enum {
   FLAG_FINALS_LINE_REACHED = FLAG_SCENE_TEMP_35
 };
 
-const struct MapWarpDest *ColosseumEntrance_GetWarpDests(void) {
+const struct SceneEntrance *ColosseumEntrance_GetEntrances(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_Colosseum) {
-    return gColosseumWarpDests;
+    return gColosseumEntrances;
   }
   if (sceneId == (s32)&SceneId_ColosseumEntrance) {
-    return gColosseumEntranceWarpDests;
+    return gColosseumEntranceEntrances;
   }
-  return gColosseumEntranceWarpDestsOther;
+  return gColosseumEntranceEntrancesOther;
 }
 
-const struct MapWarpRegion *ColosseumEntrance_GetRegions(void) { return 0; }
+const struct SceneExitRegion *ColosseumEntrance_GetRegions(void) { return 0; }
 
-/// Returns the shared colosseum warps.
-const u32 *ColosseumEntrance_GetWarps(void) { return gColosseumEntranceWarps; }
+/// Returns the shared colosseum exits.
+const u32 *ColosseumEntrance_GetExits(void) { return gColosseumEntranceExits; }
 
-/// Selects the object events: in the Colosseum by the warp destination the
+/// Selects the object events: in the Colosseum by the entrance the
 /// party arrives at
 /// (the stands, the trial grounds, the passages, the waiting room or the
 /// soldiers' briefing), at the Colosseum Entrance by how far Colosso has gone.
@@ -372,7 +372,7 @@ ColosseumEntrance_GetObjectEventTemplates(void) {
   const struct ObjectEventTemplate *table;
 
   if (gSaveBlock.sceneId == (s32)&SceneId_Colosseum) {
-    switch (gSaveBlock.warpDest) {
+    switch (gSaveBlock.entrance) {
     case COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST:
     case COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS:
       table = gColosseumStandsObjectEventTemplates;
@@ -381,7 +381,7 @@ ColosseumEntrance_GetObjectEventTemplates(void) {
     case COLOSSEUM_CLEARED_TRIAL_FROM_STANDS:
       table = gColosseumTrialGroundsObjectEventTemplates;
       break;
-    // XXX (no evidence): what warp destinations 3 and 8 were made for; no warp
+    // XXX (no evidence): what entrances 3 and 8 were made for; no exit
     // or code enters by them, only the debug map selector can, and 8 takes the
     // soldiers' table, as the arrivals of the finals day do.
     case 8:
@@ -424,7 +424,7 @@ const struct MapEvent *ColosseumEntrance_GetEvents(void) {
     return gColosseumTunnelEvents;
   }
   if (sceneId == (s32)&SceneId_Colosseum) {
-    if (gSaveBlock.warpDest == COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST) {
+    if (gSaveBlock.entrance == COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST) {
       return gColosseumEventsFromColosseumAzartMatchWest;
     }
     return gColosseumEvents;
@@ -917,7 +917,7 @@ static void EventScript_CrowdRecognizesIsaac(void) {
     }
   }
 
-  Import_ScriptRequestWarp(COLOSSEUM_ENTRANCE_TO_COLOSSEUM);
+  Import_ScriptRequestExit(COLOSSEUM_ENTRANCE_TO_COLOSSEUM);
   GameFlag_Set(FLAG_COLOSSEUM_FINALS_ENTERED);
   FieldScript_End();
 }
@@ -1059,7 +1059,7 @@ static void EventScript_FinalsStart(void) {
       FieldScript_WaitFrames(60);
       ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, script);
       FieldScript_WaitFrames(80);
-      Import_ScriptRequestWarp(COLOSSEUM_WAITING_ROOM_TO_PILLARED_PASSAGE_EAST);
+      Import_ScriptRequestExit(COLOSSEUM_WAITING_ROOM_TO_PILLARED_PASSAGE_EAST);
     } else {
       gFieldWork->message++;
       FieldScript_ShowMessageAndWait(
@@ -1106,9 +1106,9 @@ static void EventScript_TalkToTrialAttendant(void) {
     FieldScript_FinishScreenTransition();
     FieldScript_WaitTransitionFrames();
     if (GameFlag_Get(FLAG_COLOSSO_FAILED_TRIAL_SEEN) != 0) {
-      Import_ScriptRequestWarp(COLOSSEUM_STANDS_TO_CLEARED_TRIAL);
+      Import_ScriptRequestExit(COLOSSEUM_STANDS_TO_CLEARED_TRIAL);
     } else {
-      Import_ScriptRequestWarp(COLOSSEUM_STANDS_TO_FAILED_TRIAL);
+      Import_ScriptRequestExit(COLOSSEUM_STANDS_TO_FAILED_TRIAL);
     }
   }
   FieldScript_End();
@@ -1241,7 +1241,7 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Import_ScriptRequestWarp(COLOSSEUM_TRIAL_GROUNDS_TO_STANDS);
+  Import_ScriptRequestExit(COLOSSEUM_TRIAL_GROUNDS_TO_STANDS);
   FieldScript_End();
 }
 
@@ -1413,12 +1413,12 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   GameFlag_Set(FLAG_COLOSSO_CLEARED_TRIAL_SEEN);
-  Import_ScriptRequestWarp(COLOSSEUM_TRIAL_GROUNDS_TO_STANDS);
+  Import_ScriptRequestExit(COLOSSEUM_TRIAL_GROUNDS_TO_STANDS);
   FieldScript_End();
 }
 
 /// Sets up the Colosseum or its entrance as the party arrives. The Colosseum is
-/// set up by the warp destination the party arrives at, and the Colosseum
+/// set up by the entrance the party arrives at, and the Colosseum
 /// Entrance by how far Colosso has gone.
 s32 ColosseumEntrance_Initialize(void) {
   s32 sceneId = gSaveBlock.sceneId;
@@ -1442,11 +1442,11 @@ s32 ColosseumEntrance_Initialize(void) {
 /// the first and second wins (COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST and
 /// COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH).
 static void ColosseumEntrance_ApplyArrivalState(void) {
-  s32 warpDest;
+  s32 entrance;
 
   WaitFrames(1);
-  warpDest = gSaveBlock.warpDest;
-  switch (warpDest) {
+  entrance = gSaveBlock.entrance;
+  switch (entrance) {
   case COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST:
     Import_ObjectEventSetAnimation(LOCALID_STANDS_WEST_TORCH, ANIM_WALK);
     Import_ObjectEventSetAnimation(LOCALID_STANDS_EAST_TORCH, ANIM_WALK);
@@ -1765,7 +1765,7 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   gFieldWork->transitionFrames = 40;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_EAST);
+  Import_ScriptRequestExit(COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_EAST);
 }
 
 /// The Colosseum's east passage
@@ -1800,9 +1800,9 @@ static void ColosseumEntrance_EscortToEastExit(void) {
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   if (GameFlag_Get(FLAG_COLOSSO_SECOND_MATCH_WON) != 0) {
-    Import_ScriptRequestWarp(COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_NORTH);
+    Import_ScriptRequestExit(COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_NORTH);
   } else {
-    Import_ScriptRequestWarp(COLOSSEUM_TO_COLOSSEUM_AZART_MATCH);
+    Import_ScriptRequestExit(COLOSSEUM_TO_COLOSSEUM_AZART_MATCH);
   }
 }
 
@@ -1870,9 +1870,9 @@ static void ColosseumEntrance_WalkToEastExit(void) {
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   if (GameFlag_Get(FLAG_COLOSSO_SECOND_MATCH_WON) != 0) {
-    Import_ScriptRequestWarp(COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_SOUTH);
+    Import_ScriptRequestExit(COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_SOUTH);
   } else {
-    Import_ScriptRequestWarp(COLOSSEUM_TO_COLOSSEUM_AZART_MATCH_WEST);
+    Import_ScriptRequestExit(COLOSSEUM_TO_COLOSSEUM_AZART_MATCH_WEST);
   }
 }
 
@@ -1925,7 +1925,7 @@ static void ColosseumEntrance_CelebrateAdvancement(void) {
   FieldScript_WaitFrames(60);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_WEST);
+  Import_ScriptRequestExit(COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_WEST);
 }
 
 /// The Colosseum's west passage
@@ -1958,7 +1958,7 @@ static void ColosseumEntrance_EscortToWestExit(void) {
   ObjectEvent_SetDestination(LOCALID_ESCORTING_SOLDIER, 568, 588);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_WEST);
+  Import_ScriptRequestExit(COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_WEST);
 }
 
 /// The Colosseum's west passage (COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_SOUTH):
@@ -1974,7 +1974,7 @@ static void ColosseumEntrance_WalkToWestExit(void) {
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 600, 428);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_EAST);
+  Import_ScriptRequestExit(COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_EAST);
 }
 
 /// Back in the Colosseum after the second win
@@ -2028,7 +2028,7 @@ static void ColosseumEntrance_CelebrateBothWins(void) {
   FieldScript_WaitFrames(60);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_EAST);
+  Import_ScriptRequestExit(COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_EAST);
 }
 
 /// The warriors' child values and their waiting actions in the Colosseum's
@@ -2149,7 +2149,7 @@ s32 gColosseumEntrance_PulseScaleScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct MapWarpDest gColosseumEntranceWarpDestsOther[] = {
+struct SceneEntrance gColosseumEntranceEntrancesOther[] = {
     {0, CONDITION_ALWAYS, 72, 0, 72, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {COLOSSEUM_TUNNEL_FROM_BABI_PALACE, CONDITION_ALWAYS, 72, 0, 72,
      FACING_SOUTH, 0, 16, 16, 528, 256, 0},
@@ -2158,7 +2158,7 @@ struct MapWarpDest gColosseumEntranceWarpDestsOther[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gColosseumWarpDests[] = {
+struct SceneEntrance gColosseumEntrances[] = {
     {0, CONDITION_ALWAYS, 56, 0, 296, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {COLOSSEUM_STONE_PASSAGE_FROM_STANDS_NORTH, CONDITION_ALWAYS, 184, 0, 72,
      FACING_SOUTH, 0, 0, 0, 240, 384, 0},
@@ -2197,61 +2197,64 @@ struct MapWarpDest gColosseumWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gColosseumEntranceWarpDests[] = {
+struct SceneEntrance gColosseumEntranceEntrances[] = {
     {COLOSSEUM_ENTRANCE_FROM_TOLBI, CONDITION_ALWAYS, 96, 0, 288, FACING_NORTH,
      0, 0, 0, 512, 320, 0},
     {2, CONDITION_ALWAYS, 272, 0, 88, FACING_SOUTH, 0, 0, 0, 512, 320, 0},
     {MAP_TABLE_END},
 };
 
-u32 gColosseumEntranceWarps[] = {
-    MAP_WARPS(ColosseumTunnel),
-    MAP_WARP(COLOSSEUM_TUNNEL_TO_BABI_PALACE, BabiPalace,
-             BABI_PALACE_FROM_COLOSSEUM_TUNNEL),
-    MAP_WARP(COLOSSEUM_TUNNEL_TO_COLOSSEUM, Colosseum,
-             COLOSSEUM_FROM_COLOSSEUM_TUNNEL),
-    MAP_WARPS(Colosseum),
-    MAP_WARP(COLOSSEUM_STONE_PASSAGE_TO_STANDS_NORTH, Colosseum,
-             COLOSSEUM_STANDS_FROM_STONE_PASSAGE_NORTH),
-    MAP_WARP(COLOSSEUM_STONE_PASSAGE_TO_STANDS_WEST, Colosseum,
-             COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST),
-    MAP_WARP(COLOSSEUM_STONE_PASSAGE_LOCKED_DOOR_TO_STONE_PASSAGE, Colosseum,
-             COLOSSEUM_STONE_PASSAGE_FROM_STANDS_NORTH),
-    MAP_WARP(COLOSSEUM_TO_COLOSSEUM_TUNNEL, ColosseumTunnel,
-             COLOSSEUM_TUNNEL_FROM_COLOSSEUM),
-    MAP_WARP(COLOSSEUM_STANDS_TO_STONE_PASSAGE_WEST, Colosseum,
-             COLOSSEUM_STONE_PASSAGE_FROM_STANDS_WEST),
-    MAP_WARP(COLOSSEUM_STANDS_TO_STONE_PASSAGE_NORTH, Colosseum,
-             COLOSSEUM_STONE_PASSAGE_FROM_STANDS_NORTH),
-    MAP_WARP(COLOSSEUM_STANDS_TO_FAILED_TRIAL, Colosseum,
-             COLOSSEUM_FAILED_TRIAL_FROM_STANDS),
-    MAP_WARP(COLOSSEUM_TRIAL_GROUNDS_TO_STANDS, Colosseum,
-             COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS),
-    MAP_WARP(COLOSSEUM_STANDS_TO_CLEARED_TRIAL, Colosseum,
-             COLOSSEUM_CLEARED_TRIAL_FROM_STANDS),
-    MAP_WARP(COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_EAST, Colosseum,
-             COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_EAST),
-    MAP_WARP(COLOSSEUM_TO_COLOSSEUM_AZART_MATCH, ColosseumAzartMatch,
-             COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM),
-    MAP_WARP(COLOSSEUM_WAITING_ROOM_TO_PILLARED_PASSAGE_EAST, Colosseum,
-             COLOSSEUM_FROM_COLOSSEUM_NAVAMPA_MATCH),
-    MAP_WARP(COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_WEST, Colosseum,
-             COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_WEST),
-    MAP_WARP(COLOSSEUM_TO_COLOSSEUM_AZART_MATCH_WEST, ColosseumAzartMatch,
-             COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST),
-    MAP_WARP(COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_WEST, ColosseumSatrageMatch,
-             COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_WEST),
-    MAP_WARP(COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_EAST, ColosseumSatrageMatch,
-             COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST),
-    MAP_WARP(COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_NORTH, ColosseumNavampaMatch,
-             COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_NORTH),
-    MAP_WARP(COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_SOUTH, ColosseumNavampaMatch,
-             COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH),
-    MAP_WARPS(ColosseumEntrance),
-    MAP_WARP(COLOSSEUM_ENTRANCE_TO_TOLBI, Tolbi, TOLBI_FROM_COLOSSEUM_ENTRANCE),
-    MAP_WARP(COLOSSEUM_ENTRANCE_TO_COLOSSEUM, Colosseum,
-             COLOSSEUM_FROM_COLOSSEUM_ENTRANCE),
-    MAP_WARPS_END,
+u32 gColosseumEntranceExits[] = {
+    SCENE_EXITS(ColosseumTunnel),
+    SCENE_EXIT(COLOSSEUM_TUNNEL_TO_BABI_PALACE, BabiPalace,
+               BABI_PALACE_FROM_COLOSSEUM_TUNNEL),
+    SCENE_EXIT(COLOSSEUM_TUNNEL_TO_COLOSSEUM, Colosseum,
+               COLOSSEUM_FROM_COLOSSEUM_TUNNEL),
+    SCENE_EXITS(Colosseum),
+    SCENE_EXIT(COLOSSEUM_STONE_PASSAGE_TO_STANDS_NORTH, Colosseum,
+               COLOSSEUM_STANDS_FROM_STONE_PASSAGE_NORTH),
+    SCENE_EXIT(COLOSSEUM_STONE_PASSAGE_TO_STANDS_WEST, Colosseum,
+               COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST),
+    SCENE_EXIT(COLOSSEUM_STONE_PASSAGE_LOCKED_DOOR_TO_STONE_PASSAGE, Colosseum,
+               COLOSSEUM_STONE_PASSAGE_FROM_STANDS_NORTH),
+    SCENE_EXIT(COLOSSEUM_TO_COLOSSEUM_TUNNEL, ColosseumTunnel,
+               COLOSSEUM_TUNNEL_FROM_COLOSSEUM),
+    SCENE_EXIT(COLOSSEUM_STANDS_TO_STONE_PASSAGE_WEST, Colosseum,
+               COLOSSEUM_STONE_PASSAGE_FROM_STANDS_WEST),
+    SCENE_EXIT(COLOSSEUM_STANDS_TO_STONE_PASSAGE_NORTH, Colosseum,
+               COLOSSEUM_STONE_PASSAGE_FROM_STANDS_NORTH),
+    SCENE_EXIT(COLOSSEUM_STANDS_TO_FAILED_TRIAL, Colosseum,
+               COLOSSEUM_FAILED_TRIAL_FROM_STANDS),
+    SCENE_EXIT(COLOSSEUM_TRIAL_GROUNDS_TO_STANDS, Colosseum,
+               COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS),
+    SCENE_EXIT(COLOSSEUM_STANDS_TO_CLEARED_TRIAL, Colosseum,
+               COLOSSEUM_CLEARED_TRIAL_FROM_STANDS),
+    SCENE_EXIT(COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_EAST, Colosseum,
+               COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_EAST),
+    SCENE_EXIT(COLOSSEUM_TO_COLOSSEUM_AZART_MATCH, ColosseumAzartMatch,
+               COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM),
+    SCENE_EXIT(COLOSSEUM_WAITING_ROOM_TO_PILLARED_PASSAGE_EAST, Colosseum,
+               COLOSSEUM_FROM_COLOSSEUM_NAVAMPA_MATCH),
+    SCENE_EXIT(COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_WEST, Colosseum,
+               COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_WEST),
+    SCENE_EXIT(COLOSSEUM_TO_COLOSSEUM_AZART_MATCH_WEST, ColosseumAzartMatch,
+               COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST),
+    SCENE_EXIT(COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_WEST, ColosseumSatrageMatch,
+               COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_WEST),
+    SCENE_EXIT(COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_EAST, ColosseumSatrageMatch,
+               COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST),
+    SCENE_EXIT(COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_NORTH,
+               ColosseumNavampaMatch,
+               COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_NORTH),
+    SCENE_EXIT(COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_SOUTH,
+               ColosseumNavampaMatch,
+               COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH),
+    SCENE_EXITS(ColosseumEntrance),
+    SCENE_EXIT(COLOSSEUM_ENTRANCE_TO_TOLBI, Tolbi,
+               TOLBI_FROM_COLOSSEUM_ENTRANCE),
+    SCENE_EXIT(COLOSSEUM_ENTRANCE_TO_COLOSSEUM, Colosseum,
+               COLOSSEUM_FROM_COLOSSEUM_ENTRANCE),
+    SCENE_EXITS_END,
 };
 
 // clang-format off
@@ -2520,17 +2523,17 @@ struct MapEvent gColosseumEntranceEventsOther[] = {
 };
 
 struct MapEvent gColosseumTunnelEvents[] = {
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, COLOSSEUM_TUNNEL_TO_BABI_PALACE },
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, COLOSSEUM_TUNNEL_TO_COLOSSEUM },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, COLOSSEUM_TUNNEL_TO_BABI_PALACE },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, COLOSSEUM_TUNNEL_TO_COLOSSEUM },
     { MAP_EVENTS_END },
 };
 
 struct MapEvent gColosseumEvents[] = {
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, COLOSSEUM_STONE_PASSAGE_TO_STANDS_NORTH },
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, COLOSSEUM_STONE_PASSAGE_TO_STANDS_WEST },
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, COLOSSEUM_TO_COLOSSEUM_TUNNEL },
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 5, CONDITION_ALWAYS, COLOSSEUM_STANDS_TO_STONE_PASSAGE_WEST },
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, COLOSSEUM_STANDS_TO_STONE_PASSAGE_NORTH },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, COLOSSEUM_STONE_PASSAGE_TO_STANDS_NORTH },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, COLOSSEUM_STONE_PASSAGE_TO_STANDS_WEST },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, COLOSSEUM_TO_COLOSSEUM_TUNNEL },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 5, CONDITION_ALWAYS, COLOSSEUM_STANDS_TO_STONE_PASSAGE_WEST },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, COLOSSEUM_STANDS_TO_STONE_PASSAGE_NORTH },
     { MAP_EVENT_TALK, LOCALID_SPECTATOR_CHEERING, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceGoForItThatsItIm) },
     { MAP_EVENT_TALK, LOCALID_SPECTATOR_EXCITED, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceWatchingTheTrialsMakesMeReally) },
     { MAP_EVENT_TALK, LOCALID_SPECTATOR_ENCHANTED, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceWatchingSuchProudSkilledWarriorsIn) },
@@ -2546,8 +2549,8 @@ struct MapEvent gColosseumEvents[] = {
 };
 
 struct MapEvent gColosseumEntranceEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, COLOSSEUM_ENTRANCE_TO_TOLBI },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, COLOSSEUM_ENTRANCE_TO_COLOSSEUM },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, COLOSSEUM_ENTRANCE_TO_TOLBI },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, COLOSSEUM_ENTRANCE_TO_COLOSSEUM },
     { MAP_EVENT_TALK, LOCALID_VILLAGER_PRELIMINARY_HEATS, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceTheyreHoldingThePreliminaryColossoHeats) },
     { MAP_EVENT_TALK, LOCALID_VILLAGER_PRELIMINARY_HEATS, FLAG_COLOSSO_OVER, MSGNO(MsgColosseumEntranceTheFinalsAreFinallyHereI) },
     { MAP_EVENT_TALK, LOCALID_VILLAGER_PRELIMINARY_HEATS, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceColossoIsOverAndTheColosseum) },

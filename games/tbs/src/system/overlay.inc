@@ -273,7 +273,7 @@
 	import FieldCamera_GetScriptObject, FieldCamera_GetScriptObjectFar
 	import MapGrid_SetViewBounds, MapGrid_SetViewBoundsFar
 	import FieldScript_SetDestination, FieldScript_SetDestinationFar
-	import Import_ScriptRequestWarp, FieldScript_SetWarpRequestFar
+	import Import_ScriptRequestExit, FieldScript_SetExitRequestFar
 	import Field_RequestBattleFromEncounterTable, Field_RequestBattleFromEncounterTableFar
 	import Field_RequestDjinnBattle, Field_RequestDjinnBattleFar
 	import FieldScript_SetNextDestination, FieldScript_SetNextDestinationFar

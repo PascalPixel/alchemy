@@ -2,9 +2,9 @@
 /// Lighthouse Aerie (SceneId_VenusLighthouseAerie), the top of Venus Lighthouse
 /// and the only map of this overlay: one scripted sequence cut by two battles
 /// and two trips to the world map. Each part starts in
-/// VenusLighthouseAerie_Initialize from the warp destination the part before
+/// VenusLighthouseAerie_Initialize from the entrance the part before
 /// sent the party to, and every arrival blocks Retreat and sets
-/// FLAG_VENUS_LIGHTHOUSE_LIT. The parts, in the order the warp destinations
+/// FLAG_VENUS_LIGHTHOUSE_LIT. The parts, in the order the entrances
 /// chain them:
 /// - The arrival (VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR,
 ///   VenusLighthouseAerie_OverhearSaturosAndMenardi): a platform carries the
@@ -292,14 +292,16 @@ static void VenusLighthouseAerie_StepSpriteRotation(
 
 #include "common/object_heading.h"
 
-const struct MapWarpDest *VenusLighthouseAerie_GetWarpDests(void) {
-  return gVenusLighthouseAerieWarpDests;
+const struct SceneEntrance *VenusLighthouseAerie_GetEntrances(void) {
+  return gVenusLighthouseAerieEntrances;
 }
 
-const struct MapWarpRegion *VenusLighthouseAerie_GetRegions(void) { return 0; }
+const struct SceneExitRegion *VenusLighthouseAerie_GetRegions(void) {
+  return 0;
+}
 
-const u32 *VenusLighthouseAerie_GetWarps(void) {
-  return gVenusLighthouseAerieWarps;
+const u32 *VenusLighthouseAerie_GetExits(void) {
+  return gVenusLighthouseAerieExits;
 }
 
 /// Returns the beacon's statues, the platforms, Saturos and Menardi, Felix and
@@ -435,7 +437,7 @@ const struct MapEvent *VenusLighthouseAerie_GetEvents(void) {
 }
 
 /// Sets up the beacon's statues and the six platforms.
-/// It then runs the part of the sequence the warp destination selects (the
+/// It then runs the part of the sequence the entrance selects (the
 /// arrival only when not back from a battle), or, after a lost battle, gives
 /// back the Shaman's Rod and leaves for Lalivero Sanctum. Back from a battle,
 /// the platform nearest the leader stands still.
@@ -443,7 +445,7 @@ s32 VenusLighthouseAerie_Initialize(void) {
   s32 mirroredScale;
   u32 platformId;
   s32 clear;
-  s16 warpDest;
+  s16 entrance;
   struct ObjectEvent *platform;
 
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
@@ -472,9 +474,9 @@ s32 VenusLighthouseAerie_Initialize(void) {
     platformId++;
   } while (platformId <= LOCALID_LAST_PLATFORM);
 
-  warpDest = gSaveBlock.warpDest;
+  entrance = gSaveBlock.entrance;
 
-  switch (warpDest) {
+  switch (entrance) {
   case VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR:
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       VenusLighthouseAerie_OverhearSaturosAndMenardi();
@@ -503,7 +505,7 @@ s32 VenusLighthouseAerie_Initialize(void) {
     } else {
       Inventory_AddItem(3, ITEM_SHAMANS_ROD);
     }
-    Import_ScriptRequestWarp(VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B);
+    Import_ScriptRequestExit(VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B);
     break;
   }
 
@@ -2157,7 +2159,7 @@ static void VenusLighthouseAerie_ShowShebaInDanger(void) {
 
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP);
+  Import_ScriptRequestExit(VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP);
   FieldScript_End();
 }
 
@@ -2248,7 +2250,7 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   FieldScript_WaitFrames(40);
   VenusLighthouseAerie_PlayShebasFall();
   GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
-  Import_ScriptRequestWarp(VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_C);
+  Import_ScriptRequestExit(VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_C);
 }
 
 /// Shows Saturos and Menardi falling into the beacon after their final defeat.
@@ -3514,8 +3516,8 @@ s32 gVenusLighthouseAerie_PartyHeadingAction[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct MapWarpDest gVenusLighthouseAerieWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 304, 0, 216,
+struct SceneEntrance gVenusLighthouseAerieEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 304, 0, 216,
      FACING_SOUTHEAST + FACING_STEP, 0, 0, 0, 600, 420, 0},
     {VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR,
      CONDITION_ALWAYS, 504, 0, 168, FACING_SOUTHEAST + FACING_STEP, 0, 0, 0,
@@ -3529,15 +3531,15 @@ struct MapWarpDest gVenusLighthouseAerieWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gVenusLighthouseAerieWarps[] = {
-    MAP_WARPS(VenusLighthouseAerie),
-    MAP_WARP(VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP, WorldMap,
-             WORLD_MAP_BEFORE_SHEBAS_FALL),
-    MAP_WARP(VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_C, TimberRoomsC,
-             TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE),
-    MAP_WARP(VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B, TimberRoomsB,
-             TIMBER_ROOMS_B_SANCTUM),
-    MAP_WARPS_END,
+u32 gVenusLighthouseAerieExits[] = {
+    SCENE_EXITS(VenusLighthouseAerie),
+    SCENE_EXIT(VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP, WorldMap,
+               WORLD_MAP_BEFORE_SHEBAS_FALL),
+    SCENE_EXIT(VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_C, TimberRoomsC,
+               TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE),
+    SCENE_EXIT(VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B, TimberRoomsB,
+               TIMBER_ROOMS_B_SANCTUM),
+    SCENE_EXITS_END,
 };
 
 // clang-format off

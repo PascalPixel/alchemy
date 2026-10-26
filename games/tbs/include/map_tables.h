@@ -2,12 +2,12 @@
 #define ALCHEMY_MAP_TABLES_H
 
 /// @file
-/// The scene table formats: warp destinations, warps, object event templates
+/// The scene table formats: entrances, exits, object event templates
 /// and map events, and the macros that write them.
 
 #include "static_assert.h"
 #include "scene_ids.h"
-#include "map_warps.h"
+#include "scene_exits.h"
 #include "character_ids.h"
 #include "sprite_ids.h"
 
@@ -58,10 +58,10 @@ enum {
 /// ★ Named from its area name: Vale
 enum { FLAG_VALE_PARTY_LEFT = 0x815 };
 
-/// A scene's warp destination: where and facing which way the party arrives,
+/// A scene's entrance: where and facing which way the party arrives,
 /// and the camera's bounds there (-1 for none).
-struct MapWarpDest {
-  s16 warpDest; ///< the warp destination number the save block names; -1 ends
+struct SceneEntrance {
+  s16 entrance;     ///< the entrance number the save block names; -1 ends
   s16 requiredFlag; ///< a flag that must be set, or -1 for none
   s16 x;            ///< pixels
   s16 y;            ///< pixels
@@ -75,27 +75,27 @@ struct MapWarpDest {
   s16 unused2;      ///< 0 in every table; not read
 };
 
-STATIC_ASSERT(sizeof(struct MapWarpDest) == 24);
-STATIC_ASSERT(offsetof(struct MapWarpDest, cameraLeft) == 14);
+STATIC_ASSERT(sizeof(struct SceneEntrance) == 24);
+STATIC_ASSERT(offsetof(struct SceneEntrance, cameraLeft) == 14);
 
-/// A warp table's header word: the scene whose warps follow, named by its
-/// name (`MAP_WARPS(Bilibin)`). The table is read by Scene_TakeWarp as the
-/// scene ends, with the warp kind it ended on.
-#define MAP_WARPS(map) ((u32)&SceneId_##map)
-/// One warp: warp kind `warp` leads to `warpDest` of the scene `scene`, both
-/// named in map_warps.h. Kind 0xff matches any warp; kind 0 or the next
-/// header sends the party to the first warp's scene. The fields are added
+/// An exit table's header word: the scene whose exits follow, named by its
+/// name (`SCENE_EXITS(Bilibin)`). The table is read by Scene_TakeExit as the
+/// scene ends, with the exit kind it ended on.
+#define SCENE_EXITS(map) ((u32)&SceneId_##map)
+/// One exit: exit kind `exit` leads to `entrance` of the scene `scene`, both
+/// named in scene_exits.h. Kind 0xff matches any exit; kind 0 or the next
+/// header sends the party to the first exit's scene. The fields are added
 /// rather than ORed so the scene can be its SceneId_ symbol, which the linker
-/// fills in; they never overlap. bits: 27..20 warp kind | 19..12 warp
-/// destination | 11..0 scene
-#define MAP_WARP(warp, map, warpDest)                                          \
-  (((u32)(warp) << 20) + ((u32)(warpDest) << 12) + (u32)&SceneId_##map)
-/// A warp with a flag word after it (bit 28): the warp is taken unless `flag`
-/// is set, and when it is set the search goes on to the next warp.
-#define MAP_WARP_UNLESS(warp, map, warpDest, flag)                             \
-  (MAP_WARP(warp, map, warpDest) + 0x10000000), (u32)(flag)
-/// The last header word: it ends the last scene's warps and the table.
-#define MAP_WARPS_END 0x1ff
+/// fills in; they never overlap. bits: 27..20 exit kind | 19..12
+/// entrance | 11..0 scene
+#define SCENE_EXIT(exit, map, entrance)                                        \
+  (((u32)(exit) << 20) + ((u32)(entrance) << 12) + (u32)&SceneId_##map)
+/// An exit with a flag word after it (bit 28): the exit is taken unless `flag`
+/// is set, and when it is set the search goes on to the next exit.
+#define SCENE_EXIT_UNLESS(exit, map, entrance, flag)                           \
+  (SCENE_EXIT(exit, map, entrance) + 0x10000000), (u32)(flag)
+/// The last header word: it ends the last scene's exits and the table.
+#define SCENE_EXITS_END 0x1ff
 
 /// Scene numbers above the field scenes: what runs instead of a scene
 /// (SceneManager_Run). They have no row in gSceneHeaders.
@@ -106,14 +106,14 @@ enum {
                                  ///< SceneId_StuccoRoomsC (lucky_wheels.c)
   SEQUENCE_LUCKY_DICE = 0x1fd,   ///< Lucky Dice in Tolbi's game room,
                                  ///< SceneId_StuccoRoomsC (lucky_dice.c)
-  /// A battle; the warp destination is the formation, and the result -1 a
+  /// A battle; the entrance is the formation, and the result -1 a
   /// defeat.
   SEQUENCE_BATTLE = 0x1fe
 };
 
-/// A warp into a battle: warp kind `warp` fights formation `group`.
-#define WARP_TO_BATTLE(warp, group)                                            \
-  (((u32)(warp) << 20) + ((u32)(group) << 12) + SEQUENCE_BATTLE)
+/// An exit into a battle: exit kind `exit` fights formation `group`.
+#define EXIT_TO_BATTLE(exit, group)                                            \
+  (((u32)(exit) << 20) + ((u32)(group) << 12) + SEQUENCE_BATTLE)
 
 /// An object event a scene places: its sprite, the condition for placing it,
 /// how it behaves, where it stands and which way it faces, and how it turns to
@@ -204,7 +204,7 @@ struct MapEvent {
   /// and bg event lookups; -1 ends the table. The detail bits depend on the
   /// kind. bits: 30..28 Psynergy phase | 15..12 coord facing | 15..8 item or
   /// ability | 11 short push | 10 facing | 9 walking | 8..4 bg target | 7
-  /// Psynergy anywhere | 5..4 warp sound | 4 on an object event | 3..0 kind
+  /// Psynergy anywhere | 5..4 exit sound | 4 on an object event | 3..0 kind
   u32 kind;
   /// What the event answers: a local id, a metatile behavior, a treasure
   /// spot id or a raised value. Item and Psynergy events read it as bits below;
@@ -212,8 +212,8 @@ struct MapEvent {
   /// bits: 15..12 facing | 11 needs facing | 10 own message | 7..0 target
   s16 trigger;
   s16 condition; ///< -1 always, a flag | 0x1000 set, else the flag clear
-  /// A message below 0x10000, else a script function; for a warp, the warp
-  /// kind its scene's warp table matches, and for a bg event, a FIND_ value.
+  /// A message below 0x10000, else a script function; for an exit, the exit
+  /// kind its scene's exit table matches, and for a bg event, a FIND_ value.
   u32 value;
 };
 
@@ -228,8 +228,8 @@ STATIC_ASSERT(sizeof(struct MapEvent) == 12);
 enum MapEventKind {
   MAP_EVENT_TALK = 0, ///< the A button on an object event; trigger is its id
   /// Stepping onto a cell whose metatile behavior is the trigger, when no coord
-  /// event answers it; value is the warp kind.
-  MAP_EVENT_WARP = 1,
+  /// event answers it; value is the exit kind.
+  MAP_EVENT_EXIT = 1,
   MAP_EVENT_COORD = 2, ///< stepping onto or pushing against a metatile behavior
   MAP_EVENT_BG =
       3, ///< the A button on what is ahead, when it is no object event
@@ -242,19 +242,19 @@ enum MapEventKind {
 };
 
 // XXX: what leaving animations 26 and 25 and arrivals 24 and 23 show;
-// recordings of a warp of each style would settle it.
-/// A warp event's control bits 5..4: how the leader leaves
-/// (Scene_RunCoordEventOrWarp).
-enum WarpStyle {
-  WARP_STYLE_NORMAL = 0x00, ///< with SE_MAP_EXIT
-  WARP_STYLE_SILENT = 0x10,
+// recordings of an exit of each style would settle it.
+/// An exit event's control bits 5..4: how the leader leaves
+/// (Scene_RunCoordEventOrExit).
+enum ExitStyle {
+  EXIT_STYLE_NORMAL = 0x00, ///< with SE_MAP_EXIT
+  EXIT_STYLE_SILENT = 0x10,
   /// With SE_STAIRS_UP and ANIM_LEADER_LEAVE; the next scene plays
-  /// ANIM_LEADER_ARRIVE (FLAG_WARP_ARRIVAL_STAIRS_UP).
-  WARP_STYLE_STAIRS_UP = 0x20,
+  /// ANIM_LEADER_ARRIVE (FLAG_ARRIVAL_STAIRS_UP).
+  EXIT_STYLE_STAIRS_UP = 0x20,
   /// With SE_STAIRS_DOWN and ANIM_LEADER_LEAVE_ALTERNATE; the next scene
-  /// plays ANIM_LEADER_ARRIVE_ALTERNATE (FLAG_WARP_ARRIVAL_STAIRS_DOWN).
-  WARP_STYLE_STAIRS_DOWN = 0x30,
-  WARP_STYLE_MASK = 0x30
+  /// plays ANIM_LEADER_ARRIVE_ALTERNATE (FLAG_ARRIVAL_STAIRS_DOWN).
+  EXIT_STYLE_STAIRS_DOWN = 0x30,
+  EXIT_STYLE_MASK = 0x30
 };
 
 /// The raised event the menus and shortcut keys raise instead of opening
@@ -399,6 +399,6 @@ enum BgEventTarget {
 #define EVENT_SCRIPT(script) ((u32)(script))
 #define MAP_EVENTS_END 0xffffffff ///< ends a map event table
 
-struct MapWarpRegion;
+struct SceneExitRegion;
 
 #endif

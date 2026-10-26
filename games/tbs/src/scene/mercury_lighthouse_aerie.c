@@ -23,7 +23,7 @@
 ///   Mars, the clan of fire, had his power bound by the lighthouse's water,
 ///   which lent Mia, of the Mercury Clan like Alex, endless Psynergy; he was
 ///   only stalling until Saturos recovered. Saturos rises, Alex asks whether
-///   the party still holds the Mars Star, and the two warp over to the lift
+///   the party still holds the Mars Star, and the two exit over to the lift
 ///   and ride it down. Mia means to go with the party, since with the
 ///   lighthouse lit the fountain will run over with healing water again
 ///   (FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED, and
@@ -48,13 +48,13 @@
 /// flickers and sheds sparks by callback
 /// (MercuryLighthouseAerie_FlickerBeacon), and the platforms start 50 pixels
 /// down. Jenna, Kraden, Felix and Menardi are placed only on the first arrival:
-/// every other warp destination sets FLAG_HOSTAGES_GONE before the object event
+/// every other entrance sets FLAG_HOSTAGES_GONE before the object event
 /// templates are read.
 ///
 /// Unused: SceneId_UnusedMercuryLighthouseAerieCopy, which the area
 /// names call Mercury Lighthouse and the debug map list labels `MTO07NG`,
 /// loads this overlay and the same map. The setup does nothing for it, and no
-/// warp, table or code leads there; only the debug map selector, which
+/// exit, table or code leads there; only the debug map selector, which
 /// reaches every map, can.
 
 #include "save_block.h"
@@ -175,19 +175,19 @@ static void MercuryLighthouseAerie_FlickerBeacon(void);
 #include "common/effect_spawn.h"
 #include "objcmd.h"
 
-const struct MapWarpDest *MercuryLighthouseAerie_GetWarpDests(void) {
-  return gMercuryLighthouseAerieWarpDests;
+const struct SceneEntrance *MercuryLighthouseAerie_GetEntrances(void) {
+  return gMercuryLighthouseAerieEntrances;
 }
 
-const struct MapWarpRegion *MercuryLighthouseAerie_GetRegions(void) {
+const struct SceneExitRegion *MercuryLighthouseAerie_GetRegions(void) {
   return 0;
 }
 
-/// Returns the one warp: the lift down to SceneId_MercuryLighthouseExterior's
+/// Returns the one exit: the lift down to SceneId_MercuryLighthouseExterior's
 /// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE, by the Fountain
 /// of Healing.
-const u32 *MercuryLighthouseAerie_GetWarps(void) {
-  return gMercuryLighthouseAerieWarps;
+const u32 *MercuryLighthouseAerie_GetExits(void) {
+  return gMercuryLighthouseAerieExits;
 }
 
 /// Returns the object events; only the first arrival
@@ -195,7 +195,7 @@ const u32 *MercuryLighthouseAerie_GetWarps(void) {
 /// and Menardi.
 const struct ObjectEventTemplate *
 MercuryLighthouseAerie_GetObjectEventTemplates(void) {
-  if (gSaveBlock.warpDest != MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
+  if (gSaveBlock.entrance != MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
     GameFlag_Set(FLAG_HOSTAGES_GONE);
   }
   return gMercuryLighthouseAerieObjectEventTemplates;
@@ -263,11 +263,11 @@ s32 MercuryLighthouseAerie_Initialize(void) {
         ObjectEvent_GetById(LOCALID_FIRST_BEACON_STATUE + 3), 0);
     ObjectEvent_GetById(LOCALID_FIRST_BEACON_STATUE + 2)->scaleX = -Q16_ONE;
     ObjectEvent_GetById(LOCALID_FIRST_BEACON_STATUE + 3)->scaleX = -Q16_ONE;
-    if (gSaveBlock.warpDest == MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
+    if (gSaveBlock.entrance == MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         MercuryLighthouseAerie_PartyArrives();
       }
-    } else if (gSaveBlock.warpDest ==
+    } else if (gSaveBlock.entrance ==
                MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE) {
       if (!GameFlag_Get(FLAG_LIFT_UP)) {
         {
@@ -284,7 +284,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
           MercuryLighthouseAerie_AlexAppears();
         }
       }
-    } else if (gSaveBlock.warpDest ==
+    } else if (gSaveBlock.entrance ==
                MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR) {
       GameFlag_Set(FLAG_LIFT_UP);
     }
@@ -941,7 +941,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
 /// from the battle, unless returning after another: Saturos is beaten, but not
 /// for long. "Isaac, we got him!" Alex appears and explains that the
 /// lighthouse bound Saturos' fire Psynergy and lent Mia endless power. Saturos
-/// stands again; the two warp over to the lift and ride it down, and the party
+/// stands again; the two exit over to the lift and ride it down, and the party
 /// regroups on the leader. Sets FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED and
 /// FLAG_SATUROS_BEATEN_AT_MERCURY.
 static void MercuryLighthouseAerie_AlexAppears(void) {
@@ -1535,12 +1535,12 @@ static void MercuryLighthouseAerie_RideLiftDown(void) {
   ObjectMotion_SetActionVariant(LOCALID_SECOND_LIFT_PLATFORM, 0);
   MercuryLighthouseAerie_LowerLift();
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Import_ScriptRequestWarp(
+  Import_ScriptRequestExit(
       MERCURY_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EXTERIOR);
   FieldScript_End();
 }
 
-/// Saturos and Alex warp out in a column of sparkles and vanish.
+/// Saturos and Alex exit out in a column of sparkles and vanish.
 static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
   struct EffectOptions optionsStorage;
   struct EffectOptions *options;
@@ -1597,7 +1597,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
   Import_ObjectEventSetPosition(LOCALID_ALEX, 0, 0);
 }
 
-/// Saturos and Alex warp in where they have been placed.
+/// Saturos and Alex exit in where they have been placed.
 static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
   struct EffectOptions optionsStorage;
   struct EffectOptions *options;
@@ -1767,7 +1767,7 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
 
 /// Unused: Alex raises his hands and casts Ply on the lift's statue.
 ///
-/// Nothing calls it. In the game, Alex and Saturos warp over to the lift and
+/// Nothing calls it. In the game, Alex and Saturos exit over to the lift and
 /// ride it down without it (MercuryLighthouseAerie_AlexAppears).
 UNUSED static void MercuryLighthouseAerie_UnusedAlexCastsPly(void) {
   // XXX (no evidence): what this was for; nothing calls it, so neither the
@@ -1878,8 +1878,8 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-struct MapWarpDest gMercuryLighthouseAerieWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gMercuryLighthouseAerieEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT, CONDITION_ALWAYS, 8, 0, 8,
      FACING_SOUTH, 0, 0, 0, 608, 424, 0},
@@ -1891,12 +1891,12 @@ struct MapWarpDest gMercuryLighthouseAerieWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gMercuryLighthouseAerieWarps[] = {
-    MAP_WARPS(MercuryLighthouseAerie),
-    MAP_WARP(MERCURY_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EXTERIOR,
-             MercuryLighthouseExterior,
-             MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE),
-    MAP_WARPS_END,
+u32 gMercuryLighthouseAerieExits[] = {
+    SCENE_EXITS(MercuryLighthouseAerie),
+    SCENE_EXIT(MERCURY_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EXTERIOR,
+               MercuryLighthouseExterior,
+               MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE),
+    SCENE_EXITS_END,
 };
 
 // clang-format off

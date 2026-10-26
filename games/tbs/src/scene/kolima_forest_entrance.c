@@ -155,16 +155,18 @@ KolimaForestEntrance_TwinkleGroundSparkle(struct Object *interpreter) {
 
 /// Where the party enters, from the next map of the forest
 /// (SceneId_KolimaForestGlade) and from the world map.
-const struct MapWarpDest *KolimaForestEntrance_GetWarpDests(void) {
-  return gKolimaForestEntrance_WarpDests;
+const struct SceneEntrance *KolimaForestEntrance_GetEntrances(void) {
+  return gKolimaForestEntrance_Entrances;
 }
 
-const struct MapWarpRegion *KolimaForestEntrance_GetRegions(void) { return 0; }
+const struct SceneExitRegion *KolimaForestEntrance_GetRegions(void) {
+  return 0;
+}
 
 /// The ways on into the forest (SceneId_KolimaForestGlade) and back to the
 /// world map.
-const u32 *KolimaForestEntrance_GetWarps(void) {
-  return gKolimaForestEntrance_Warps;
+const u32 *KolimaForestEntrance_GetExits(void) {
+  return gKolimaForestEntrance_Exits;
 }
 
 /// The party's companions, the logs, Tret, Laurel, the Psynergy fields and the
@@ -230,7 +232,7 @@ s32 KolimaForestEntrance_Initialize(void) {
   }
   Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
   Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
-  if (gSaveBlock.warpDest == KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP) {
+  if (gSaveBlock.entrance == KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP) {
     if (GameFlag_Get(FLAG_KOLIMA_CURSE_WITNESSED) == 0) {
       KolimaForestEntrance_WitnessForestCurse();
     }
@@ -1396,8 +1398,8 @@ s32 gKolimaForestEntrance_GroundSparkleAction[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct MapWarpDest gKolimaForestEntrance_WarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 384, 0, 312, FACING_NORTH, 0, -1, -1,
+struct SceneEntrance gKolimaForestEntrance_Entrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 384, 0, 312, FACING_NORTH, 0, -1, -1,
      -1, -1, 0},
     {KOLIMA_FOREST_ENTRANCE_FROM_KOLIMA_FOREST_GLADE, CONDITION_ALWAYS, 24, 0,
      128, FACING_EAST, 0, -1, -1, -1, -1, 0},
@@ -1407,18 +1409,18 @@ struct MapWarpDest gKolimaForestEntrance_WarpDests[] = {
 };
 
 /// On into the forest (SceneId_KolimaForestGlade) and out to the world map
-/// (SceneId_WorldMap), with two warps no map event uses back into this map.
-u32 gKolimaForestEntrance_Warps[] = {
-    MAP_WARPS(KolimaForestEntrance),
-    MAP_WARP(KOLIMA_FOREST_ENTRANCE_TO_KOLIMA_FOREST_GLADE, KolimaForestGlade,
-             KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_ENTRANCE),
-    MAP_WARP(KOLIMA_FOREST_ENTRANCE_UNUSED_WARP_A, KolimaForestEntrance,
-             KOLIMA_FOREST_ENTRANCE_UNUSED),
-    MAP_WARP(KOLIMA_FOREST_ENTRANCE_UNUSED_WARP_B, KolimaForestEntrance,
-             KOLIMA_FOREST_ENTRANCE_UNUSED),
-    MAP_WARP(KOLIMA_FOREST_ENTRANCE_TO_WORLD_MAP, WorldMap,
-             WORLD_MAP_FROM_KOLIMA_FOREST_ENTRANCE),
-    MAP_WARPS_END,
+/// (SceneId_WorldMap), with two exits no map event uses back into this map.
+u32 gKolimaForestEntrance_Exits[] = {
+    SCENE_EXITS(KolimaForestEntrance),
+    SCENE_EXIT(KOLIMA_FOREST_ENTRANCE_TO_KOLIMA_FOREST_GLADE, KolimaForestGlade,
+               KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_ENTRANCE),
+    SCENE_EXIT(KOLIMA_FOREST_ENTRANCE_UNUSED_EXIT_A, KolimaForestEntrance,
+               KOLIMA_FOREST_ENTRANCE_UNUSED),
+    SCENE_EXIT(KOLIMA_FOREST_ENTRANCE_UNUSED_EXIT_B, KolimaForestEntrance,
+               KOLIMA_FOREST_ENTRANCE_UNUSED),
+    SCENE_EXIT(KOLIMA_FOREST_ENTRANCE_TO_WORLD_MAP, WorldMap,
+               WORLD_MAP_FROM_KOLIMA_FOREST_ENTRANCE),
+    SCENE_EXITS_END,
 };
 
 /// Garet, Ivan and Mia for the curse; the three logs; Tret and Laurel; the
@@ -1466,9 +1468,9 @@ struct MapEvent gKolimaForestEntrance_Events[] = {
      EVENT_SCRIPT(KolimaForestEntrance_PushLog)},
     {COORD_EVENT_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS,
      EVENT_SCRIPT(KolimaForest_HopEast)},
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS,
      KOLIMA_FOREST_ENTRANCE_TO_KOLIMA_FOREST_GLADE},
-    {MAP_EVENT_WARP, 4, CONDITION_ALWAYS, KOLIMA_FOREST_ENTRANCE_TO_WORLD_MAP},
+    {MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, KOLIMA_FOREST_ENTRANCE_TO_WORLD_MAP},
     {MAP_EVENTS_END},
 };
 

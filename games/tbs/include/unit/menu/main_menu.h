@@ -4,16 +4,16 @@
 #include "types.h"
 #include "map_tables.h"
 
-u8 *MainMenu_GetWarpDests(void);
-s32 Scene_GetWarpRegions(void);
-u8 *MainMenu_GetWarps(void);
+u8 *MainMenu_GetEntrances(void);
+s32 Scene_GetExitRegions(void);
+u8 *MainMenu_GetExits(void);
 u8 *MainMenu_GetObjectEventTemplates(void);
 u8 *MainMenu_GetEvents(void);
 extern const u16 gMainMenu_CodeSequence[];
 extern const u16 gMainMenu_ExtraCodeSequence[];
 s32 MainMenu_Run(void);
-extern struct MapWarpDest gMainMenu_WarpDests[];
-extern u32 gMainMenu_Warps[];
+extern struct SceneEntrance gMainMenu_Entrances[];
+extern u32 gMainMenu_Exits[];
 extern struct ObjectEventTemplate gMainMenu_ObjectEventTemplates[];
 extern struct MapEvent gMainMenu_Events[];
 extern s16 gMainMenu_BlendFrame;

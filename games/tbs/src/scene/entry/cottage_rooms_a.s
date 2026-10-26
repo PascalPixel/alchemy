@@ -1,7 +1,7 @@
 	.include "games/tbs/src/system/overlay.inc"
 	overlay_veneer CottageRoomsA_Initialize
-	overlay_veneer CottageRoomsA_GetWarpDests
-	overlay_veneer CottageRoomsA_GetWarps
+	overlay_veneer CottageRoomsA_GetEntrances
+	overlay_veneer CottageRoomsA_GetExits
 	overlay_veneer CottageRoomsA_GetObjectEventTemplates
 	overlay_veneer CottageRoomsA_GetEvents
 	overlay_veneer CottageRoomsA_GetRegions

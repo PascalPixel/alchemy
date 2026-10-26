@@ -3,11 +3,11 @@
 /// Vault's: the town's houses, shops and inn once the party has reached Kalay.
 /// They replace the first visit's interiors (log_rooms_a.c) as
 /// SceneId_VaultRevisit (vault_revisit.c) replaces the town: each of its six
-/// house doors leads to the warp destination here named for the same door, and
+/// house doors leads to the entrance here named for the same door, and
 /// each room leads back out through it.
 ///
 /// The thieves have broken out of jail, and the talk is of them and of Colosso,
-/// the festival about to begin in Tolbi. The rooms, by warp destination:
+/// the festival about to begin in Tolbi. The rooms, by entrance:
 /// - LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST, the gem owner's
 ///   house: he says a cat ate his precious stone, and his wife does not believe
 ///   him. Arriving here sets him on the floor and takes the stone off his
@@ -151,13 +151,13 @@ enum { FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK = FLAG_AREA_TEMP_00 };
 // Shared map routines stay in their linked order.
 #include "common/vault_spotflag.h"
 
-const struct MapWarpDest *Scene_GetWarpDests(void) {
-  return gLogRoomsB_WarpDests;
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gLogRoomsB_Entrances;
 }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Scene_GetWarps(void) { return gLogRoomsB_Warps; }
+const u32 *Scene_GetExits(void) { return gLogRoomsB_Exits; }
 
 /// Gives the object event templates' condition 0 whether each lies inside the
 /// view bounds of the room entered (Scene_AssignViewFlags), so only that
@@ -402,7 +402,7 @@ static void EventScript_ReadBoneGiverMind(void) {
   FieldScript_End();
 }
 
-/// Returns the talk, Psynergy, bg event and warp table.
+/// Returns the talk, Psynergy, bg event and exit table.
 const struct MapEvent *Scene_GetEvents(void) { return gLogRoomsB_Events; }
 
 /// Opens the room through a window transition. Entering the house at
@@ -413,14 +413,14 @@ const struct MapEvent *Scene_GetEvents(void) { return gLogRoomsB_Events; }
 /// places the floor Bone beside the girl and starts
 /// Vault_UpdateBoneProximityFlag.
 s32 Scene_Initialize(void) {
-  s32 warpDest;
+  s32 entrance;
   s32 clearedState;
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  warpDest = gSaveBlock.warpDest;
+  entrance = gSaveBlock.entrance;
 
-  if (warpDest == LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST) {
+  if (entrance == LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST) {
     // Draw the table bare, its stone gone, and set the gem owner back on the
     // floor.
     MapGrid_CopyCellsTo(0, 120, 8, 67, 4, 3);
@@ -428,8 +428,8 @@ s32 Scene_Initialize(void) {
     ObjectEvent_GetById(LOCALID_GEM_OWNER)->motionFlags = clearedState;
     ObjectEvent_GetById(LOCALID_GEM_OWNER)->y.fixed = clearedState;
     ObjectEvent_GetById(LOCALID_GEM_OWNER)->groundHeight = clearedState;
-  } else if (warpDest == LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST ||
-             warpDest == LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS) {
+  } else if (entrance == LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST ||
+             entrance == LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS) {
     // Show the Bone lying in the room, and track whether the leader stands
     // beside it (FLAG_VAULT_LEADER_BESIDE_BONE).
     Vault_PlaceItemIcon(ITEM_BONE, PIXELS(568), PIXELS(16), PIXELS(672));
@@ -443,8 +443,8 @@ s32 Scene_Initialize(void) {
 // Shared item-object routines follow the map initializer.
 #include "common/vault_itemobj.h"
 
-struct MapWarpDest gLogRoomsB_WarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gLogRoomsB_Entrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST, CONDITION_ALWAYS, 192, 0, 220,
      FACING_NORTH, 0, 32, 0, 272, 240, 0},
@@ -465,25 +465,25 @@ struct MapWarpDest gLogRoomsB_WarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gLogRoomsB_Warps[] = {
-    MAP_WARPS(LogRoomsB),
-    MAP_WARP(LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTHEAST, VaultRevisit,
-             VAULT_REVISIT_FROM_LOG_ROOMS_B_SOUTHEAST),
-    MAP_WARP(LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTH, VaultRevisit,
-             VAULT_REVISIT_FROM_LOG_ROOMS_B_SOUTH),
-    MAP_WARP(LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTHWEST, VaultRevisit,
-             VAULT_REVISIT_FROM_LOG_ROOMS_B_SOUTHWEST),
-    MAP_WARP(LOG_ROOMS_B_TO_VAULT_REVISIT_EAST, VaultRevisit,
-             VAULT_REVISIT_FROM_LOG_ROOMS_B_EAST),
-    MAP_WARP(LOG_ROOMS_B_TO_VAULT_REVISIT_NORTH, VaultRevisit,
-             VAULT_REVISIT_FROM_LOG_ROOMS_B_NORTH),
-    MAP_WARP(LOG_ROOMS_B_TO_VAULT_REVISIT_NORTHWEST, VaultRevisit,
-             VAULT_REVISIT_FROM_LOG_ROOMS_B_NORTHWEST),
-    MAP_WARP(LOG_ROOMS_B_INN_UPSTAIRS_TO_INN, LogRoomsB,
-             LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS),
-    MAP_WARP(LOG_ROOMS_B_INN_TO_INN_UPSTAIRS, LogRoomsB,
-             LOG_ROOMS_B_INN_UPSTAIRS_FROM_INN),
-    MAP_WARPS_END,
+u32 gLogRoomsB_Exits[] = {
+    SCENE_EXITS(LogRoomsB),
+    SCENE_EXIT(LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTHEAST, VaultRevisit,
+               VAULT_REVISIT_FROM_LOG_ROOMS_B_SOUTHEAST),
+    SCENE_EXIT(LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTH, VaultRevisit,
+               VAULT_REVISIT_FROM_LOG_ROOMS_B_SOUTH),
+    SCENE_EXIT(LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTHWEST, VaultRevisit,
+               VAULT_REVISIT_FROM_LOG_ROOMS_B_SOUTHWEST),
+    SCENE_EXIT(LOG_ROOMS_B_TO_VAULT_REVISIT_EAST, VaultRevisit,
+               VAULT_REVISIT_FROM_LOG_ROOMS_B_EAST),
+    SCENE_EXIT(LOG_ROOMS_B_TO_VAULT_REVISIT_NORTH, VaultRevisit,
+               VAULT_REVISIT_FROM_LOG_ROOMS_B_NORTH),
+    SCENE_EXIT(LOG_ROOMS_B_TO_VAULT_REVISIT_NORTHWEST, VaultRevisit,
+               VAULT_REVISIT_FROM_LOG_ROOMS_B_NORTHWEST),
+    SCENE_EXIT(LOG_ROOMS_B_INN_UPSTAIRS_TO_INN, LogRoomsB,
+               LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS),
+    SCENE_EXIT(LOG_ROOMS_B_INN_TO_INN_UPSTAIRS, LogRoomsB,
+               LOG_ROOMS_B_INN_UPSTAIRS_FROM_INN),
+    SCENE_EXITS_END,
 };
 
 // clang-format off
@@ -524,14 +524,14 @@ struct ObjectEventTemplate gLogRoomsB_ObjectEventTemplates[] = {
 };
 
 struct MapEvent gLogRoomsB_Events[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTHEAST },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTH },
-    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTHWEST },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, LOG_ROOMS_B_TO_VAULT_REVISIT_EAST },
-    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, LOG_ROOMS_B_TO_VAULT_REVISIT_NORTH },
-    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, LOG_ROOMS_B_TO_VAULT_REVISIT_NORTHWEST },
-    { MAP_EVENT_WARP, 7, CONDITION_ALWAYS, LOG_ROOMS_B_INN_UPSTAIRS_TO_INN },
-    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, LOG_ROOMS_B_INN_TO_INN_UPSTAIRS },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTHEAST },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTH },
+    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTHWEST },
+    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, LOG_ROOMS_B_TO_VAULT_REVISIT_EAST },
+    { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, LOG_ROOMS_B_TO_VAULT_REVISIT_NORTH },
+    { MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, LOG_ROOMS_B_TO_VAULT_REVISIT_NORTHWEST },
+    { MAP_EVENT_EXIT, 7, CONDITION_ALWAYS, LOG_ROOMS_B_INN_UPSTAIRS_TO_INN },
+    { MAP_EVENT_EXIT, 8, CONDITION_ALWAYS, LOG_ROOMS_B_INN_TO_INN_UPSTAIRS },
     { MAP_EVENT_TALK, LOCALID_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultWaahACatAteMyPrecious) },
     { MAP_EVENT_TALK, LOCALID_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WifeSawCatTakeGem) },
     { MAP_EVENT_TALK, LOCALID_VILLAGER_HEARD_PRISONERS, CONDITION_ALWAYS, MSGNO(MsgVaultThePrisonersSaidTheyWantedTo) },

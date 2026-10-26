@@ -5,10 +5,10 @@
 /// SceneId_TreeRooms (tree_rooms.c), where the story is told.
 /// This map has no story event and tests no story flag.
 ///
-/// Its eight warps (TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHWEST and
+/// Its eight exits (TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHWEST and
 /// the seven after it) lead back into SceneId_TreeRooms; walking into
-/// one for two frames (COORD_EVENT_FLAG_QUICK) plays the warp sound and leaves
-/// at once, the cells' metatile behaviors being the warps' own numbers.
+/// one for two frames (COORD_EVENT_FLAG_QUICK) plays the exit sound and leaves
+/// at once, the cells' metatile behaviors being the exits' own numbers.
 /// Coord events on metatile behaviors 10 to 15 lie in pairs at the top and
 /// bottom of the vines that hang from one branch to the one below (cells
 /// (7, 12) and (8, 17), (37, 11) and (36, 16), (41, 20) and (40, 26) in
@@ -82,13 +82,13 @@ static void EventScript_TalkToBreeze(void) {
   Field_RequestDjinnBattle(LOCALID_BREEZE, DJINNI_BREEZE);
 }
 
-const struct MapWarpDest *TretTreeBranch_GetWarpDests(void) {
-  return gTretTreeBranch_WarpDests;
+const struct SceneEntrance *TretTreeBranch_GetEntrances(void) {
+  return gTretTreeBranch_Entrances;
 }
 
-const struct MapWarpRegion *TretTreeBranch_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *TretTreeBranch_GetRegions(void) { return NULL; }
 
-const u32 *TretTreeBranch_GetWarps(void) { return gTretTreeBranch_Warps; }
+const u32 *TretTreeBranch_GetExits(void) { return gTretTreeBranch_Exits; }
 
 const struct ObjectEventTemplate *TretTreeBranch_GetObjectEventTemplates(void) {
   return gTretTreeBranch_ObjectEventTemplates;
@@ -167,17 +167,17 @@ static void EventScript_GoUpSoutheastVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -6);
 }
 
-/// Walking into one of the eight warps in Tret Tree, whose cells' metatile
-/// behaviors are the warps' own numbers: the warp sound plays and the party
-/// leaves by the warp touched, into Tret Tree's other map
+/// Walking into one of the eight exits in Tret Tree, whose cells' metatile
+/// behaviors are the exits' own numbers: the exit sound plays and the party
+/// leaves by the exit touched, into Tret Tree's other map
 /// (SceneId_TreeRooms).
 static void EventScript_EnterTretTreeRooms(void) {
   struct FieldWork *state = gFieldWork;
-  s16 *touchedWarp;
+  s16 *touchedExit;
 
   Script_PlaySong(SE_MAP_EXIT);
-  touchedWarp = &state->coordEvent;
-  Import_ScriptRequestWarp(*touchedWarp);
+  touchedExit = &state->coordEvent;
+  Import_ScriptRequestExit(*touchedExit);
 }
 
 /// Selects the same mask and window parameters for Reveal and map entry.
@@ -202,7 +202,7 @@ static void EventScript_CastReveal(void) {
   TretTreeBranch_SetRevealWindow(state);
 }
 
-/// Returns the map's warp, coord, talk and Reveal events.
+/// Returns the map's exit, coord, talk and Reveal events.
 const struct MapEvent *TretTreeBranch_GetEvents(void) {
   return gTretTreeBranch_Events;
 }
@@ -289,8 +289,8 @@ static void TretTreeBranch_StartBg3Split(void) {
                              TASK_PRIORITY_MAP);
 }
 
-struct MapWarpDest gTretTreeBranch_WarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 100, 0, 100, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gTretTreeBranch_Entrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 100, 0, 100, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHWEST, CONDITION_ALWAYS, 328, 0,
      424, FACING_WEST, 0, -1, -1, -1, -1, 0},
@@ -311,25 +311,25 @@ struct MapWarpDest gTretTreeBranch_WarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gTretTreeBranch_Warps[] = {
-    MAP_WARPS(TretTreeBranch),
-    MAP_WARP(TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHWEST, TreeRooms,
-             TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHWEST),
-    MAP_WARP(TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHEAST, TreeRooms,
-             TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHEAST),
-    MAP_WARP(TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH, TreeRooms,
-             TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH),
-    MAP_WARP(TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTHEAST, TreeRooms,
-             TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTHEAST),
-    MAP_WARP(TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH, TreeRooms,
-             TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH),
-    MAP_WARP(TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTHWEST, TreeRooms,
-             TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTHWEST),
-    MAP_WARP(TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH_NORTHWEST, TreeRooms,
-             TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH_NORTHWEST),
-    MAP_WARP(TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH_NORTHEAST, TreeRooms,
-             TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH_NORTHEAST),
-    MAP_WARPS_END,
+u32 gTretTreeBranch_Exits[] = {
+    SCENE_EXITS(TretTreeBranch),
+    SCENE_EXIT(TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHWEST, TreeRooms,
+               TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHWEST),
+    SCENE_EXIT(TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHEAST, TreeRooms,
+               TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHEAST),
+    SCENE_EXIT(TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH, TreeRooms,
+               TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH),
+    SCENE_EXIT(TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTHEAST, TreeRooms,
+               TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTHEAST),
+    SCENE_EXIT(TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH, TreeRooms,
+               TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH),
+    SCENE_EXIT(TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTHWEST, TreeRooms,
+               TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTHWEST),
+    SCENE_EXIT(TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH_NORTHWEST, TreeRooms,
+               TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH_NORTHWEST),
+    SCENE_EXIT(TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH_NORTHEAST, TreeRooms,
+               TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH_NORTHEAST),
+    SCENE_EXITS_END,
 };
 
 // clang-format off

@@ -4,9 +4,9 @@
 #include "types.h"
 #include "map_tables.h"
 
-const struct MapWarpDest *ValeStormyNight_GetWarpDests(void);
-const struct MapWarpRegion *ValeStormyNight_GetRegions(void);
-const u32 *ValeStormyNight_GetWarps(void);
+const struct SceneEntrance *ValeStormyNight_GetEntrances(void);
+const struct SceneExitRegion *ValeStormyNight_GetRegions(void);
+const u32 *ValeStormyNight_GetExits(void);
 const struct ObjectEventTemplate *ValeStormyNight_GetObjectEventTemplates(void);
 const struct MapEvent *ValeStormyNight_GetEvents(void);
 s32 ValeStormyNight_Initialize(void);
@@ -33,8 +33,8 @@ extern s32 gValeStormyNight_GaretGatherPath[];
 extern s32 gValeStormyNight_LookAroundScript[];
 extern s32 gValeStormyNight_SquashAndStretchScript[];
 extern s32 gValeStormyNight_BoulderRollsDownriver[];
-extern struct MapWarpDest gValeStormyNight_WarpDests[];
-extern u32 gValeStormyNight_Warps[];
+extern struct SceneEntrance gValeStormyNight_Entrances[];
+extern u32 gValeStormyNight_Exits[];
 extern struct ObjectEventTemplate gValeStormyNight_ObjectEventTemplates[];
 extern struct ObjectEventTemplate gValeStormyNight_BoulderWatchers[];
 extern struct MapEvent gValeStormyNight_Events[];

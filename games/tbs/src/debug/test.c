@@ -100,12 +100,12 @@ static __inline__ void MenuTest_RecalculateParty(void) {
   Unit_Calculate(IVAN);
 }
 
-u8 *MenuTest_GetWarpDests(void) { return (u8 *)gMenuTest_WarpDests; }
+u8 *MenuTest_GetEntrances(void) { return (u8 *)gMenuTest_Entrances; }
 
-/// The room has no warp regions: its regions entry returns none.
-s32 Scene_GetWarpRegions(void) { return 0; }
+/// The room has no exit regions: its regions entry returns none.
+s32 Scene_GetExitRegions(void) { return 0; }
 
-u8 *MenuTest_GetWarps(void) { return (u8 *)gMenuTest_Warps; }
+u8 *MenuTest_GetExits(void) { return (u8 *)gMenuTest_Exits; }
 
 u8 *MenuTest_GetObjectEventTemplates(void) {
   return (u8 *)gMenuTest_ObjectEventTemplates;
@@ -856,7 +856,7 @@ static s32 MenuTest_ConfirmShopAction(s32 unitId) {
 #endif
 
 /// Eight rows of seven words that nothing reads by name, the same 56 words as
-/// the Djinn room's gTestRoom_WarpDestsHead (rooms.c), which says why their
+/// the Djinn room's gTestRoom_EntrancesHead (rooms.c), which says why their
 /// meaning is unknown.
 u32 gDebugItemPromptHead[] = {
     0x500050, 0, 80,  0x500000, 0x10003, 2, 0,
@@ -875,14 +875,14 @@ char gDebugItemCapacityLabel[24] = "A:Get Item  B:Return";
 
 char gDebugItemFullLabel[20] = "ITEM FULL........";
 
-struct MapWarpDest gMenuTest_WarpDests[] = {
+struct SceneEntrance gMenuTest_Entrances[] = {
     {0, CONDITION_ALWAYS, 60, 0, 94, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {MAP_TABLE_END},
 };
 
-/// No warps: 511 is MAP_WARPS_END's value.
-u32 gMenuTest_Warps[] = {
-    MAP_WARPS_END,
+/// No exits: 511 is SCENE_EXITS_END's value.
+u32 gMenuTest_Exits[] = {
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gMenuTest_ObjectEventTemplates[] = {

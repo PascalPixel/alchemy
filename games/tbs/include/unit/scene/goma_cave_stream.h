@@ -4,14 +4,14 @@
 #include "types.h"
 #include "map_tables.h"
 
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEvent;
 struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *Scene_GetWarps(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
@@ -19,9 +19,9 @@ extern s32 gFieldEffect_ShortScript[];
 extern s32 gFieldEffect_MediumScript[];
 extern s32 gFieldEffect_LongScript[];
 extern const s32 *gFieldEffect_DurationScripts[];
-extern struct MapWarpDest gGomaCaveStreamWarpDests[];
-extern struct MapWarpDest gGomaCaveBridgeWarpDests[];
-extern u32 gGomaCaveStreamAndBridgeWarps[];
+extern struct SceneEntrance gGomaCaveStreamEntrances[];
+extern struct SceneEntrance gGomaCaveBridgeEntrances[];
+extern u32 gGomaCaveStreamAndBridgeExits[];
 extern struct ObjectEventTemplate gGomaCaveStreamObjectEventTemplates[];
 extern struct ObjectEventTemplate gGomaCaveBridgeObjectEventTemplates[];
 extern struct MapEvent gGomaCaveStreamEvents[];

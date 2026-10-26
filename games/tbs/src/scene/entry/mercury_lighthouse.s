@@ -1,7 +1,7 @@
 	.include "games/tbs/src/system/overlay.inc"
 	overlay_veneer MercuryLighthouse_Initialize
-	overlay_veneer MercuryLighthouse_GetWarpDests
-	overlay_veneer MercuryLighthouse_GetWarps
+	overlay_veneer MercuryLighthouse_GetEntrances
+	overlay_veneer MercuryLighthouse_GetExits
 	overlay_veneer MercuryLighthouse_GetObjectEventTemplates
 	overlay_veneer MercuryLighthouse_GetEvents
 	overlay_veneer MercuryLighthouse_GetRegions

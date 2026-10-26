@@ -37,8 +37,8 @@ Leaving comes first, and a battle counts as leaving: the game remembers where
 everyone stood, loads the battle as the next scene, and then loads the scene again
 with everyone put back, as in the recording. Before the loop starts, the scene
 is set up: its [map](../../glossary.md#map) is loaded, its random
-battles chosen ([below](#random-battles)), the party placed at its [warp
-destination](../../glossary.md#warp-destination), its people placed, and its
+battles chosen ([below](#random-battles)), the party placed at its [
+entrance](../../glossary.md#entrance), its people placed, and its
 own setup run, which may send the party on at once. Then the scene fades in, and
 the area's name is shown if the party has come into a new
 [area](../../glossary.md#area).
@@ -53,7 +53,7 @@ them back. The requests, in the order the loop takes them:
 | 1 | `exit` | leave the scene |
 | 2 | `event` | run a map event the scene's code raised, or one of the codes below |
 | 3 | `battle` | a random or requested battle |
-| 4 | `action` | a [coord event](../../glossary.md#coord-event) or warp on the [cell](../../glossary.md#cell) stepped onto |
+| 4 | `action` | a [coord event](../../glossary.md#coord-event) or exit on the [cell](../../glossary.md#cell) stepped onto |
 | 5 | `pushCell` | a ledge, climbing spot or jump the leader pushes against |
 | 6 | `examine` | the A button: talking if someone is ahead, else searching, else the menu |
 | 7 | `menu` | the menu |
@@ -198,7 +198,7 @@ and setup, and calls back into this folder through its
 commands its scripts are written in.
 
 Entering a new area (the scenes that share an area name) also resets the
-counters of random battles and hazardous ground, makes the warp destination
+counters of random battles and hazardous ground, makes the entrance
 the place Retreat leads back to, and asks for the area name to be shown. The
 screen transitions and the palette fade serve battles as well, and the effect
 event's work serves the Djinn joining as well as Psynergy.

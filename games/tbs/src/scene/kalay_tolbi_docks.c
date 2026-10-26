@@ -36,7 +36,7 @@
 ///
 /// Cottage rooms E (CottageRoomsE) is a sheet of rooms drawn as cottages: the
 /// game packs rooms of several places that share a tile style onto one map, and
-/// this one holds a room at each dock, in story order by the warps that lead
+/// this one holds a room at each dock, in story order by the exits that lead
 /// in: the room at Kalay Docks (COTTAGE_ROOMS_E_FROM_KALAY_DOCKS), whose area
 /// name is Kalay Docks, and the room at Tolbi Docks
 /// (COTTAGE_ROOMS_E_FROM_TOLBI_DOCKS), whose area name is Tolbi Docks. In the
@@ -59,8 +59,8 @@
 /// FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED) it watches them demand to be taken home
 /// and the tour guide's hired bodyguard knock the angriest flat;
 /// KalayTolbiDocks_PrepareTolbiDocks keeps them where the event left them. Only
-/// the debug menus' map selector, which warps to any map and warp destination
-/// by number, reaches KALAY_TOLBI_DOCKS_WARP_DEST_AFTER_COLOSSO, which sets
+/// the debug menus' map selector, which exits to any map and entrance
+/// by number, reaches KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO, which sets
 /// FLAG_COLOSSO_OVER as Babi Palace's BABI_PALACE_AFTER_COLOSSO does.
 
 #include "save_block.h"
@@ -276,30 +276,30 @@ static void KalayTolbiDocks_GroundJoins(void) {
   Djinn_JoinParty(LOCALID_GROUND, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_GROUND));
 }
 
-/// Selects the warp destinations of Kalay Docks, Tolbi Docks or the rooms
+/// Selects the entrances of Kalay Docks, Tolbi Docks or the rooms
 /// on CottageRoomsE.
-const struct MapWarpDest *KalayTolbiDocks_GetWarpDests(void) {
+const struct SceneEntrance *KalayTolbiDocks_GetEntrances(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_KalayDocks) {
-    return gKalayTolbiDocks_KalayWarpDests;
+    return gKalayTolbiDocks_KalayEntrances;
   }
   if (sceneId == (s32)&SceneId_TolbiDocks) {
-    return gKalayTolbiDocks_TolbiWarpDests;
+    return gKalayTolbiDocks_TolbiEntrances;
   }
   if (sceneId == (s32)&SceneId_CottageRoomsE) {
-    return gKalayTolbiDocks_InteriorWarpDests;
+    return gKalayTolbiDocks_InteriorEntrances;
   }
-  return gKalayTolbiDocks_NoWarpDests;
+  return gKalayTolbiDocks_NoEntrances;
 }
 
-const struct MapWarpRegion *KalayTolbiDocks_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *KalayTolbiDocks_GetRegions(void) { return NULL; }
 
-/// The warps of the three maps, each map's after its header word (a warp of
+/// The exits of the three maps, each map's after its header word (an exit of
 /// kind 0): both docks lead to the world map, onto the ship
 /// (SceneId_TolbiShipDeck) and into their rooms
 /// (SceneId_CottageRoomsE), which lead back to their docks.
-const u32 *KalayTolbiDocks_GetWarps(void) { return gKalayTolbiDocks_Warps; }
+const u32 *KalayTolbiDocks_GetExits(void) { return gKalayTolbiDocks_Exits; }
 
 /// Each map's people before the crossing, once the ship has crossed and not
 /// come back (FLAG_TOLBI_SHIP_REACHED_TOLBI), and once the Colosso Tour's
@@ -684,19 +684,19 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
     }
   }
   FieldScript_WaitFrames(16);
-  Import_ScriptRequestWarp(TOLBI_DOCKS_TO_COTTAGE_ROOMS_E);
+  Import_ScriptRequestExit(TOLBI_DOCKS_TO_COTTAGE_ROOMS_E);
   FieldScript_End();
 }
 
-/// A warp destination no warp, table or code leads to, whose arrival sets
+/// An entrance no exit, table or code leads to, whose arrival sets
 /// FLAG_COLOSSO_OVER; the debug menus' map selector reaches it.
-enum { KALAY_TOLBI_DOCKS_WARP_DEST_AFTER_COLOSSO = 90 };
+enum { KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO = 90 };
 
 /// Prepares whichever of the three maps is entered. Arriving by
-/// KALAY_TOLBI_DOCKS_WARP_DEST_AFTER_COLOSSO sets FLAG_COLOSSO_OVER, which
+/// KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO sets FLAG_COLOSSO_OVER, which
 /// leaves the tour's passengers stranded on the Tolbi Docks.
 s32 KalayTolbiDocks_Initialize(void) {
-  if (gSaveBlock.warpDest == KALAY_TOLBI_DOCKS_WARP_DEST_AFTER_COLOSSO) {
+  if (gSaveBlock.entrance == KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO) {
     GameFlag_Set(FLAG_COLOSSO_OVER);
   }
   if (gSaveBlock.sceneId == (s32)&SceneId_KalayDocks) {
@@ -714,13 +714,13 @@ s32 KalayTolbiDocks_Initialize(void) {
 /// tour's group has left Kalay the ticket taker stands at the ship's plank
 /// until the party goes ashore.
 static void KalayTolbiDocks_PrepareKalayDocks(void) {
-  if (gSaveBlock.warpDest == KALAY_DOCKS_FROM_WORLD_MAP_SOUTH) {
+  if (gSaveBlock.entrance == KALAY_DOCKS_FROM_WORLD_MAP_SOUTH) {
     if (Script_GetFlag(FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL) == 0) {
       GameFlag_Set(FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL);
       KalayTolbiDocks_GaretSeesTheKaragol();
     }
   }
-  if (gSaveBlock.warpDest == KALAY_DOCKS_FROM_TOLBI_SHIP_DECK) {
+  if (gSaveBlock.entrance == KALAY_DOCKS_FROM_TOLBI_SHIP_DECK) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       GameFlag_Clear(FLAG_KALAY_DOCKS_WENT_ASHORE);
     }
@@ -747,10 +747,10 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
     ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_TOUR_GUIDE,
                                      SPRITE_COLOR_RBG);
   }
-  if (gSaveBlock.warpDest == TOLBI_DOCKS_FROM_COTTAGE_ROOMS_E) {
+  if (gSaveBlock.entrance == TOLBI_DOCKS_FROM_COTTAGE_ROOMS_E) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
-  if (gSaveBlock.warpDest == TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK) {
+  if (gSaveBlock.entrance == TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK) {
     GameFlag_Clear(FLAG_TOLBI_DOCKS_ARRIVALS_GREETED);
   }
   if (GameFlag_Get(FLAG_TOLBI_DOCKS_ARRIVALS_GREETED)) {
@@ -1158,12 +1158,12 @@ s32 gKalayTolbiDocks_BodyguardSpinScript[] = {
     SC_END,
 };
 
-struct MapWarpDest gKalayTolbiDocks_NoWarpDests[] = {
+struct SceneEntrance gKalayTolbiDocks_NoEntrances[] = {
     {0, CONDITION_ALWAYS, 128, 0, 128, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gKalayTolbiDocks_KalayWarpDests[] = {
+struct SceneEntrance gKalayTolbiDocks_KalayEntrances[] = {
     {0, CONDITION_ALWAYS, 248, 0, 1368, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {KALAY_DOCKS_FROM_WORLD_MAP_SOUTH, CONDITION_ALWAYS, 288, 0, 1464,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
@@ -1176,7 +1176,7 @@ struct MapWarpDest gKalayTolbiDocks_KalayWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gKalayTolbiDocks_TolbiWarpDests[] = {
+struct SceneEntrance gKalayTolbiDocks_TolbiEntrances[] = {
     {0, CONDITION_ALWAYS, 392, 0, 296, FACING_WEST, 0, -1, -1, -1, -1, 0},
     {TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK, CONDITION_ALWAYS, 408, 0, 296,
      FACING_WEST, 0, 0, 0, 448, 432, 0},
@@ -1187,9 +1187,9 @@ struct MapWarpDest gKalayTolbiDocks_TolbiWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-/// CottageRoomsE's warp destinations, each into the room at the dock it is
+/// CottageRoomsE's entrances, each into the room at the dock it is
 /// entered from.
-struct MapWarpDest gKalayTolbiDocks_InteriorWarpDests[] = {
+struct SceneEntrance gKalayTolbiDocks_InteriorEntrances[] = {
     {0, CONDITION_ALWAYS, 96, 0, 248, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {COTTAGE_ROOMS_E_FROM_KALAY_DOCKS, CONDITION_ALWAYS, 96, 0, 248,
      FACING_NORTH, 0, 32, 32, 272, 272, 0},
@@ -1198,30 +1198,30 @@ struct MapWarpDest gKalayTolbiDocks_InteriorWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-/// Kalay Docks' warps, then Tolbi Docks' and CottageRoomsE's, each after the
-/// header word (a warp of kind 0) for its map.
-u32 gKalayTolbiDocks_Warps[] = {
-    MAP_WARPS(KalayDocks),
-    MAP_WARP(KALAY_DOCKS_TO_WORLD_MAP_SOUTH, WorldMap,
-             WORLD_MAP_FROM_KALAY_DOCKS_EAST),
-    MAP_WARP(KALAY_DOCKS_TO_TOLBI_SHIP_DECK, TolbiShipDeck,
-             TOLBI_SHIP_DECK_FROM_KALAY_DOCKS),
-    MAP_WARP(KALAY_DOCKS_TO_COTTAGE_ROOMS_E, CottageRoomsE,
-             COTTAGE_ROOMS_E_FROM_KALAY_DOCKS),
-    MAP_WARP(KALAY_DOCKS_TO_WORLD_MAP_NORTH, WorldMap,
-             WORLD_MAP_FROM_KALAY_DOCKS_WEST),
-    MAP_WARPS(TolbiDocks),
-    MAP_WARP(TOLBI_DOCKS_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_TOLBI_DOCKS),
-    MAP_WARP(TOLBI_DOCKS_TO_TOLBI_SHIP_DECK, TolbiShipDeck,
-             TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS),
-    MAP_WARP(TOLBI_DOCKS_TO_COTTAGE_ROOMS_E, CottageRoomsE,
-             COTTAGE_ROOMS_E_FROM_TOLBI_DOCKS),
-    MAP_WARPS(CottageRoomsE),
-    MAP_WARP(COTTAGE_ROOMS_E_TO_KALAY_DOCKS, KalayDocks,
-             KALAY_DOCKS_FROM_COTTAGE_ROOMS_E),
-    MAP_WARP(COTTAGE_ROOMS_E_TO_TOLBI_DOCKS, TolbiDocks,
-             TOLBI_DOCKS_FROM_COTTAGE_ROOMS_E),
-    MAP_WARPS_END,
+/// Kalay Docks' exits, then Tolbi Docks' and CottageRoomsE's, each after the
+/// header word (an exit of kind 0) for its map.
+u32 gKalayTolbiDocks_Exits[] = {
+    SCENE_EXITS(KalayDocks),
+    SCENE_EXIT(KALAY_DOCKS_TO_WORLD_MAP_SOUTH, WorldMap,
+               WORLD_MAP_FROM_KALAY_DOCKS_EAST),
+    SCENE_EXIT(KALAY_DOCKS_TO_TOLBI_SHIP_DECK, TolbiShipDeck,
+               TOLBI_SHIP_DECK_FROM_KALAY_DOCKS),
+    SCENE_EXIT(KALAY_DOCKS_TO_COTTAGE_ROOMS_E, CottageRoomsE,
+               COTTAGE_ROOMS_E_FROM_KALAY_DOCKS),
+    SCENE_EXIT(KALAY_DOCKS_TO_WORLD_MAP_NORTH, WorldMap,
+               WORLD_MAP_FROM_KALAY_DOCKS_WEST),
+    SCENE_EXITS(TolbiDocks),
+    SCENE_EXIT(TOLBI_DOCKS_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_TOLBI_DOCKS),
+    SCENE_EXIT(TOLBI_DOCKS_TO_TOLBI_SHIP_DECK, TolbiShipDeck,
+               TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS),
+    SCENE_EXIT(TOLBI_DOCKS_TO_COTTAGE_ROOMS_E, CottageRoomsE,
+               COTTAGE_ROOMS_E_FROM_TOLBI_DOCKS),
+    SCENE_EXITS(CottageRoomsE),
+    SCENE_EXIT(COTTAGE_ROOMS_E_TO_KALAY_DOCKS, KalayDocks,
+               KALAY_DOCKS_FROM_COTTAGE_ROOMS_E),
+    SCENE_EXIT(COTTAGE_ROOMS_E_TO_TOLBI_DOCKS, TolbiDocks,
+               TOLBI_DOCKS_FROM_COTTAGE_ROOMS_E),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gKalayTolbiDocks_NoObjectEventTemplates[] = {
@@ -1366,10 +1366,10 @@ struct MapEvent gKalayTolbiDocks_NoEvents[] = {
 };
 
 struct MapEvent gKalayTolbiDocks_KalayEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, KALAY_DOCKS_TO_WORLD_MAP_SOUTH },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, KALAY_DOCKS_TO_TOLBI_SHIP_DECK },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_DOCKS_TO_WORLD_MAP_SOUTH },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_DOCKS_TO_TOLBI_SHIP_DECK },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_OpenDoorAndLeave) },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, KALAY_DOCKS_TO_WORLD_MAP_NORTH },
+    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, KALAY_DOCKS_TO_WORLD_MAP_NORTH },
     { MAP_EVENT_TALK, LOCALID_YOUNG_MAN_ASKING_ABOUT_TOLBI, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_AskAboutTolbiCrossing) },
     { MAP_EVENT_TALK, LOCALID_WOMAN_IN_A_PICKLE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeCantTakeSilkRoadSo) },
     { MAP_EVENT_TALK, LOCALID_MAN_AT_SILK_ROADS_END, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksYouCantTakeSilkRoadMuch) },
@@ -1397,10 +1397,10 @@ struct MapEvent gKalayTolbiDocks_KalayEvents[] = {
 };
 
 struct MapEvent gKalayTolbiDocks_KalayEventsShipGone[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, KALAY_DOCKS_TO_WORLD_MAP_SOUTH },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, KALAY_DOCKS_TO_TOLBI_SHIP_DECK },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_DOCKS_TO_WORLD_MAP_SOUTH },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_DOCKS_TO_TOLBI_SHIP_DECK },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_OpenDoorAndLeave) },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, KALAY_DOCKS_TO_WORLD_MAP_NORTH },
+    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, KALAY_DOCKS_TO_WORLD_MAP_NORTH },
     { MAP_EVENT_TALK, LOCALID_CHECKING_TICKETS, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheShipHasntReturnedSoWe) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_CHECKING_TICKETS, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksOhHoHoWithoutAShip) },
     { MAP_EVENT_TALK, LOCALID_DOCK_WORKER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksImGladIOnlyWorkOn) },
@@ -1410,8 +1410,8 @@ struct MapEvent gKalayTolbiDocks_KalayEventsShipGone[] = {
 };
 
 struct MapEvent gKalayTolbiDocks_TolbiEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, TOLBI_DOCKS_TO_WORLD_MAP },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, TOLBI_DOCKS_TO_TOLBI_SHIP_DECK },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, TOLBI_DOCKS_TO_WORLD_MAP },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, TOLBI_DOCKS_TO_TOLBI_SHIP_DECK },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_OpenDoorAndLeave) },
     { MAP_EVENT_COORD, 20, FLAG_TOLBI_DOCKS_ARRIVALS_GREETED, EVENT_SCRIPT(KalayTolbiDocks_GreetArrivals) },
     { MAP_EVENT_TALK, LOCALID_MAN_HEARING_OF_THE_SCARY_TRIP, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_AskAboutRoughCrossing) },
@@ -1435,8 +1435,8 @@ struct MapEvent gKalayTolbiDocks_TolbiEvents[] = {
 };
 
 struct MapEvent gKalayTolbiDocks_TolbiEventsStranded[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, TOLBI_DOCKS_TO_WORLD_MAP },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, TOLBI_DOCKS_TO_TOLBI_SHIP_DECK },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, TOLBI_DOCKS_TO_WORLD_MAP },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, TOLBI_DOCKS_TO_TOLBI_SHIP_DECK },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_OpenDoorAndLeave) },
     { MAP_EVENT_COORD, 50, FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED, EVENT_SCRIPT(KalayTolbiDocks_PassengersConfrontTourGuide) },
     { MAP_EVENT_TALK, LOCALID_MAN_HEARING_OF_THE_SCARY_TRIP, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksThereAreManyHereWhoWant) },
@@ -1463,8 +1463,8 @@ struct MapEvent gKalayTolbiDocks_TolbiEventsStranded[] = {
 };
 
 struct MapEvent gKalayTolbiDocks_InteriorEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_KALAY_DOCKS },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_TOLBI_DOCKS },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_KALAY_DOCKS },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_TOLBI_DOCKS },
     { MAP_EVENT_TALK, LOCALID_SELLING_TICKETS, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_TalkToTicketSeller) },
     { MAP_EVENT_TALK, LOCALID_OLD_MAN_AWAITING_THE_REPLACEMENT_SHIP, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksHmmmThatsStrangeIsntTheReplacement) },
     { MAP_EVENT_TALK, LOCALID_OLD_WOMAN_EXCITED_FOR_TOLBI, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksOnceWeveCrossedTheKaragolWell) },
@@ -1482,8 +1482,8 @@ struct MapEvent gKalayTolbiDocks_InteriorEvents[] = {
 };
 
 struct MapEvent gKalayTolbiDocks_InteriorEventsShipGone[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_KALAY_DOCKS },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_TOLBI_DOCKS },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_KALAY_DOCKS },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_TOLBI_DOCKS },
     { MAP_EVENT_TALK, LOCALID_SELLING_TICKETS, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheShipWontBeLeavingHere) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SELLING_TICKETS, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAhhhImBoredWhenAreWe) },
     { MAP_EVENT_TALK, LOCALID_SELLING_NO_TICKETS, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksImSorryButWeJustCant) },
@@ -1496,8 +1496,8 @@ struct MapEvent gKalayTolbiDocks_InteriorEventsShipGone[] = {
 };
 
 struct MapEvent gKalayTolbiDocks_InteriorEventsStranded[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_KALAY_DOCKS },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_TOLBI_DOCKS },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_KALAY_DOCKS },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_TOLBI_DOCKS },
     { MAP_EVENT_TALK, LOCALID_SELLING_TICKETS, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheShipWontBeLeavingHere) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SELLING_TICKETS, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAhhhImBoredWhenAreWe) },
     { MAP_EVENT_TALK, LOCALID_SELLING_NO_TICKETS, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksImStuckIWantToCross) },

@@ -38,7 +38,7 @@
 /// below (GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_WEST,
 /// GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_SOUTH and
 /// GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_EAST).
-/// WARP_DEST_STUMP_FALL, which no warp names and only the debug map selector
+/// ENTRANCE_STUMP_FALL, which no exit names and only the debug map selector
 /// reaches, plays the stump being pushed to the edge and falling.
 #include "action_script.h"
 #include "version.h"
@@ -128,10 +128,10 @@ enum GomaCavePillarLocalId {
   LOCALID_WITNESS
 };
 
-/// The warp destination no warp names, which plays the stump being pushed to
+/// The entrance no exit names, which plays the stump being pushed to
 /// the edge and falling into the room below; only the debug map selector
 /// reaches it.
-enum { WARP_DEST_STUMP_FALL = 99 };
+enum { ENTRANCE_STUMP_FALL = 99 };
 
 /// The map event the man's timer raises once Forge has joined the party
 /// (GomaCavePillar_FidgetWhileForgeFights).
@@ -228,13 +228,13 @@ static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
   }
 }
 
-const struct MapWarpDest *Scene_GetWarpDests(void) {
-  return gGomaCavePillar_WarpDests;
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gGomaCavePillar_Entrances;
 }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Scene_GetWarps(void) { return gGomaCavePillar_Warps; }
+const u32 *Scene_GetExits(void) { return gGomaCavePillar_Exits; }
 
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   return gGomaCavePillar_ObjectEventTemplates;
@@ -595,7 +595,7 @@ static void EventScript_WitnessCheersForgeCaught(void) {
 }
 
 /// Sets up the room as the party enters: the pillars and the stump where the
-/// party left them. WARP_DEST_STUMP_FALL plays the stump's fall; after a won
+/// party left them. ENTRANCE_STUMP_FALL plays the stump's fall; after a won
 /// battle with Forge, the man's reaction starts.
 s32 Scene_Initialize(void) {
   struct ObjectEvent *objectEvent;
@@ -618,8 +618,8 @@ s32 Scene_Initialize(void) {
   }
   if (GameFlag_Get(FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE) != 0) {
     ObjectEvent_SetPosition(LOCALID_EAST_PILLAR, PIXELS(616), PIXELS(232));
-    if (gSaveBlock.warpDest == GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST ||
-        gSaveBlock.warpDest == GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST) {
+    if (gSaveBlock.entrance == GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST ||
+        gSaveBlock.entrance == GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST) {
       ObjectEvent_GetById(LOCALID_EAST_PILLAR)->layer = 2;
       objectEvent = ObjectEvent_GetById(LOCALID_EAST_PILLAR);
       objectEvent->y.fixed--;
@@ -628,7 +628,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(36, 48, 5, 1, 36, 14);
     }
   }
-  if (gSaveBlock.warpDest == WARP_DEST_STUMP_FALL) {
+  if (gSaveBlock.entrance == ENTRANCE_STUMP_FALL) {
     FieldScript_StartScreenTransition();
     FieldScript_WaitTransitionFrames();
     ObjectEvent_SetPosition(LOCALID_STUMP, PIXELS(384), PIXELS(192));
@@ -705,25 +705,25 @@ s32 gGomaCavePillar_FragmentScriptLong[] = {
     SC_FREE,
 };
 
-struct MapWarpDest gGomaCavePillar_WarpDests[] = {
+struct SceneEntrance gGomaCavePillar_Entrances[] = {
     { 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_WEST, CONDITION_ALWAYS, 88, 0, 184, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
     { GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST, CONDITION_ALWAYS, 584, 0, 184, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
     { GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST, CONDITION_ALWAYS, 520, 0, 232, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
     { GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_WEST, CONDITION_ALWAYS, 232, 0, 184, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
     { GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_SOUTH, CONDITION_ALWAYS, 536, 0, 408, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
-    { WARP_DEST_STUMP_FALL, CONDITION_ALWAYS, 376, 0, 200, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
+    { ENTRANCE_STUMP_FALL, CONDITION_ALWAYS, 376, 0, 200, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
     { MAP_TABLE_END },
 };
 
-u32 gGomaCavePillar_Warps[] = {
-    MAP_WARPS(GomaCavePillar),
-    MAP_WARP(GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_WEST, GomaCaveStream, GOMA_CAVE_STREAM_FROM_GOMA_CAVE_PILLAR_WEST),
-    MAP_WARP(GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_WEST, GomaCavePond, GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_WEST),
-    MAP_WARP(GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_SOUTH, GomaCavePond, GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_SOUTH),
-    MAP_WARP(GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_EAST, GomaCavePond, GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_EAST),
-    MAP_WARP(GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_EAST, GomaCaveStream, GOMA_CAVE_STREAM_FROM_GOMA_CAVE_PILLAR_EAST),
-    MAP_WARPS_END,
+u32 gGomaCavePillar_Exits[] = {
+    SCENE_EXITS(GomaCavePillar),
+    SCENE_EXIT(GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_WEST, GomaCaveStream, GOMA_CAVE_STREAM_FROM_GOMA_CAVE_PILLAR_WEST),
+    SCENE_EXIT(GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_WEST, GomaCavePond, GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_WEST),
+    SCENE_EXIT(GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_SOUTH, GomaCavePond, GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_SOUTH),
+    SCENE_EXIT(GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_EAST, GomaCavePond, GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_EAST),
+    SCENE_EXIT(GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_EAST, GomaCaveStream, GOMA_CAVE_STREAM_FROM_GOMA_CAVE_PILLAR_EAST),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gGomaCavePillar_ObjectEventTemplates[] = {
@@ -737,11 +737,11 @@ struct ObjectEventTemplate gGomaCavePillar_ObjectEventTemplates[] = {
 };
 
 struct MapEvent gGomaCavePillar_Events[] = {
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_WEST },
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_WEST },
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_SOUTH },
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 8, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_EAST },
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 9, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_EAST },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_WEST },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_WEST },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_SOUTH },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 8, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_EAST },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 9, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_EAST },
     { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, LOCALID_EAST_PILLAR, FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE, EVENT_SCRIPT(EventScript_PushEastPillar) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpGapWest) },
     { MAP_EVENT_TALK, LOCALID_FORGE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FightForge) },

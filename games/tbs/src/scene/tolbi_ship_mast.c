@@ -4,7 +4,7 @@
 /// on its voyage from Kalay to Tolbi, which tolbi_ship_deck.c describes. The
 /// party climbs up by the deck's ladder (TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK)
 /// and down again by MB_TOLBI_SHIP_MAST_LADDER and the region of
-/// TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK. The warp destinations from
+/// TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK. The entrances from
 /// TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR on are the voyage's
 /// events here, each leading on into the next; during the attacks the
 /// map a defeat returns to (gSaveBlock.restartScene) is set to
@@ -293,19 +293,19 @@ static s32 TolbiShipMast_ShrinkAndStopObjectEvent(struct Object *interpreter) {
   return 1;
 }
 
-/// Returns the warp destinations: from the deck's ladder, and the voyage's
+/// Returns the entrances: from the deck's ladder, and the voyage's
 /// events.
-const struct MapWarpDest *TolbiShipMast_GetWarpDests(void) {
-  return gTolbiShipMast_WarpDests;
+const struct SceneEntrance *TolbiShipMast_GetEntrances(void) {
+  return gTolbiShipMast_Entrances;
 }
 
 /// Returns the ladder's three-dimensional activation region.
-const struct MapWarpRegion *TolbiShipMast_GetRegions(void) {
+const struct SceneExitRegion *TolbiShipMast_GetRegions(void) {
   return gTolbiShipMast_Regions;
 }
 
-/// Returns warps to the deck and the continuing ship maps.
-const u32 *TolbiShipMast_GetWarps(void) { return gTolbiShipMast_Warps; }
+/// Returns exits to the deck and the continuing ship maps.
+const u32 *TolbiShipMast_GetExits(void) { return gTolbiShipMast_Exits; }
 
 /// Returns the lookout, the only object event placed.
 const struct ObjectEventTemplate *TolbiShipMast_GetObjectEventTemplates(void) {
@@ -336,9 +336,9 @@ static void TolbiShipMast_FindAnchorCharm(void) {
 }
 
 /// The mast's setup: sways the view while the ship is under way, puts the
-/// lookout to his spot once the charm is back, and plays what the warp
-/// destination calls for: the climb up from the deck
-/// (TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK) or an event (the warp destinations
+/// lookout to his spot once the charm is back, and plays what the
+/// entrance calls for: the climb up from the deck
+/// (TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK) or an event (the entrances
 /// from TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR on).
 s32 TolbiShipMast_Initialize(void) {
   struct ObjectEvent *leader;
@@ -358,8 +358,8 @@ s32 TolbiShipMast_Initialize(void) {
       GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0) {
     ObjectEvent_SetPosition(LOCALID_LOOKOUT, PIXELS(164), PIXELS(328));
   }
-  // The ship's scripted warp destinations resume their matching lookout events.
-  switch (gSaveBlock.warpDest) {
+  // The ship's scripted entrances resume their matching lookout events.
+  switch (gSaveBlock.entrance) {
   case TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK:
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -383,17 +383,17 @@ s32 TolbiShipMast_Initialize(void) {
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK:
     gSaveBlock.restartScene = (s32)&SceneId_ShipRooms;
-    gSaveBlock.restartWarpDest = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
+    gSaveBlock.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_RunAvastEvent();
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK:
     gSaveBlock.restartScene = (s32)&SceneId_ShipRooms;
-    gSaveBlock.restartWarpDest = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
+    gSaveBlock.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_ShowMonsters();
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK:
     gSaveBlock.restartScene = (s32)&SceneId_ShipRooms;
-    gSaveBlock.restartWarpDest = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
+    gSaveBlock.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_RunLandingSequence();
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO:
@@ -458,7 +458,7 @@ static void TolbiShipMast_AnnounceClearCourse(void) {
   Script_ShowMessageAndWait(LOCALID_LOOKOUT, 0, 20);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(TOLBI_SHIP_MAST_TO_SHIP_ROOMS_CAST_OFF);
+  Import_ScriptRequestExit(TOLBI_SHIP_MAST_TO_SHIP_ROOMS_CAST_OFF);
 }
 
 /// On the mast at TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK, the first
@@ -555,7 +555,7 @@ static void TolbiShipMast_RunAvastEvent(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(TOLBI_SHIP_MAST_TO_SHIP_ROOMS_MONSTERS);
+  Import_ScriptRequestExit(TOLBI_SHIP_MAST_TO_SHIP_ROOMS_MONSTERS);
   FieldScript_End();
 }
 
@@ -684,7 +684,7 @@ static void TolbiShipMast_ShowMonsters(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_LOOKOUT, 2);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_SECOND_ATTACK);
+  Import_ScriptRequestExit(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_SECOND_ATTACK);
   FieldScript_End();
 }
 
@@ -819,13 +819,13 @@ static void TolbiShipMast_RunLandingSequence(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_THIRD_ATTACK);
+  Import_ScriptRequestExit(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_THIRD_ATTACK);
   FieldScript_End();
 }
 
 /// On the mast at TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO: the seven birds fly
 /// off, then the lookout announces land, and the rowing balance chooses the
-/// warp.
+/// exit.
 static void TolbiShipMast_AnnounceLand(void) {
   FieldScript_Start();
   ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
@@ -877,11 +877,11 @@ static void TolbiShipMast_AnnounceLand(void) {
   // The rowing balance picks where the ship comes in: exactly 11 takes
   // TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE, off course to the island.
   gSaveBlock.restartScene = (s32)&SceneId_ShipRooms;
-  gSaveBlock.restartWarpDest = SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK;
+  gSaveBlock.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK;
   if (TolbiShipMast_GetRowingBalance() == 11) {
-    Import_ScriptRequestWarp(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE);
+    Import_ScriptRequestExit(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE);
   } else {
-    Import_ScriptRequestWarp(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_LAND_SIGHTED);
+    Import_ScriptRequestExit(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_LAND_SIGHTED);
   }
   FieldScript_End();
 }
@@ -1047,8 +1047,8 @@ u32 gTolbiShipMast_BirdDeparture6[] = {
     0x1f0e1aad, 0x1f6f227a, 0x23f223b1, 0x2bf727f4,
 };
 
-struct MapWarpDest gTolbiShipMast_WarpDests[] = {
-    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 165, 0, 235, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gTolbiShipMast_Entrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 165, 0, 235, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK, CONDITION_ALWAYS, 184, 56, 352, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR, CONDITION_ALWAYS, 164, 96, 321, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK, CONDITION_ALWAYS, 164, 96, 321, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
@@ -1058,21 +1058,21 @@ struct MapWarpDest gTolbiShipMast_WarpDests[] = {
     { MAP_TABLE_END },
 };
 
-struct MapWarpRegion gTolbiShipMast_Regions[] = {
+struct SceneExitRegion gTolbiShipMast_Regions[] = {
     {176, 16, 348, 192, 32, 364, -1, 1},
     {-1, 0, 0, 0, 0, 0, 0, 0},
 };
 
-u32 gTolbiShipMast_Warps[] = {
-    MAP_WARPS(TolbiShipMast),
-    MAP_WARP(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK, TolbiShipDeck, TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST),
-    MAP_WARP(TOLBI_SHIP_MAST_TO_SHIP_ROOMS_CAST_OFF, ShipRooms, SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_CAST_OFF),
-    MAP_WARP(TOLBI_SHIP_MAST_TO_SHIP_ROOMS_MONSTERS, ShipRooms, SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_MONSTERS),
-    MAP_WARP(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_SECOND_ATTACK, TolbiShipDeck, TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK),
-    MAP_WARP(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_THIRD_ATTACK, TolbiShipDeck, TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK),
-    MAP_WARP(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_LAND_SIGHTED, TolbiShipDeck, TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_LAND_SIGHTED),
-    MAP_WARP(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE, TolbiShipDeck, TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE),
-    MAP_WARPS_END,
+u32 gTolbiShipMast_Exits[] = {
+    SCENE_EXITS(TolbiShipMast),
+    SCENE_EXIT(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK, TolbiShipDeck, TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST),
+    SCENE_EXIT(TOLBI_SHIP_MAST_TO_SHIP_ROOMS_CAST_OFF, ShipRooms, SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_CAST_OFF),
+    SCENE_EXIT(TOLBI_SHIP_MAST_TO_SHIP_ROOMS_MONSTERS, ShipRooms, SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_MONSTERS),
+    SCENE_EXIT(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_SECOND_ATTACK, TolbiShipDeck, TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK),
+    SCENE_EXIT(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_THIRD_ATTACK, TolbiShipDeck, TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK),
+    SCENE_EXIT(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_LAND_SIGHTED, TolbiShipDeck, TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_LAND_SIGHTED),
+    SCENE_EXIT(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE, TolbiShipDeck, TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gTolbiShipMast_ObjectEventTemplates[] = {

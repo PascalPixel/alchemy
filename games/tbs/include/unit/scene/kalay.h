@@ -5,14 +5,14 @@
 #include "script_layer.h"
 #include "map_tables.h"
 
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEvent;
 struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *Kalay_GetWarpDests(void);
-const struct MapWarpRegion *Kalay_GetRegions(void);
-const u32 *Kalay_GetWarps(void);
+const struct SceneEntrance *Kalay_GetEntrances(void);
+const struct SceneExitRegion *Kalay_GetRegions(void);
+const u32 *Kalay_GetExits(void);
 const struct ObjectEventTemplate *Kalay_GetObjectEventTemplates(void);
 const struct MapEvent *Kalay_GetEvents(void);
 s32 Kalay_Initialize(void);
@@ -29,14 +29,14 @@ extern s32 gKalay_SecondGuideReturnScript[];
 extern s32 gKalay_PartyFidgetScript[];
 extern s32 gKalay_PartyGatherScript[];
 extern s32 gKalay_FrostGrowScript[];
-extern struct MapWarpDest gKalay_NoWarpDests[];
-extern struct MapWarpDest gKalay_TownWarpDests[];
-extern struct MapWarpDest gKalay_HammetPalaceWarpDests[];
-extern struct MapWarpDest gKalay_TunnelEntranceWarpDests[];
-extern struct MapWarpDest gKalay_TunnelCaveWarpDests[];
-extern struct MapWarpDest gKalay_TunnelPassageWarpDests[];
-extern struct MapWarpDest gKalay_TunnelWarpDests[];
-extern u32 gKalay_Warps[];
+extern struct SceneEntrance gKalay_NoEntrances[];
+extern struct SceneEntrance gKalay_TownEntrances[];
+extern struct SceneEntrance gKalay_HammetPalaceEntrances[];
+extern struct SceneEntrance gKalay_TunnelEntranceEntrances[];
+extern struct SceneEntrance gKalay_TunnelCaveEntrances[];
+extern struct SceneEntrance gKalay_TunnelPassageEntrances[];
+extern struct SceneEntrance gKalay_TunnelEntrances[];
+extern u32 gKalay_Exits[];
 extern struct ObjectEventTemplate gKalay_NoObjectEventTemplates[];
 extern struct ObjectEventTemplate gKalay_TownObjectEventTemplates[];
 extern struct ObjectEventTemplate gKalay_TourGroupObjectEventTemplates[];

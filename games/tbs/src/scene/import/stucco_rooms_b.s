@@ -24,7 +24,7 @@
 	.set import.FieldScript_ShowMessageAndWait, 1
 	.set import.ObjectMotion_ArmCallback, 1
 	.set import.FieldEffect_SpawnLinked, 1
-	.set import.Import_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestExit, 1
 	.set import.FieldScript_StartScreenTransition, 1
 	.set import.ObjectMotion_CommitPositionAndActivate, 1
 	.set import.Shop_Run, 1

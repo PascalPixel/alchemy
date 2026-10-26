@@ -4,14 +4,14 @@
 #include "types.h"
 #include "map_tables.h"
 
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEvent;
 struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *Scene_GetWarps(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
@@ -20,11 +20,11 @@ extern u32 gPushedObject_FootprintKinds[];
 extern s32 gPushedObject_FootprintBounds[];
 extern s32 gCrossboneIsleKeys_BaneSquashScript[];
 extern s32 gCrossboneIsleKeys_BaneWalkTargets[];
-extern struct MapWarpDest gCrossboneIsleKeysWarpDestsOther[];
-extern struct MapWarpDest gCrossboneIsleKeysRoomWarpDests[];
-extern struct MapWarpDest gCrossboneIsleStatuesWarpDests[];
-extern struct MapWarpDest gCrossboneIsleBaneWarpDests[];
-extern u32 gCrossboneIsleKeysWarps[];
+extern struct SceneEntrance gCrossboneIsleKeysEntrancesOther[];
+extern struct SceneEntrance gCrossboneIsleKeysRoomEntrances[];
+extern struct SceneEntrance gCrossboneIsleStatuesEntrances[];
+extern struct SceneEntrance gCrossboneIsleBaneEntrances[];
+extern u32 gCrossboneIsleKeysExits[];
 extern struct ObjectEventTemplate gCrossboneIsleKeysObjectEventTemplatesOther[];
 extern struct ObjectEventTemplate gCrossboneIsleKeysRoomObjectEventTemplates[];
 extern struct ObjectEventTemplate gCrossboneIsleStatuesObjectEventTemplates[];

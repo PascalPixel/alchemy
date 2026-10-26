@@ -21,7 +21,7 @@
 // own and choose where to cheer from, and the guide at each stage describes it
 // and offers a friend's cheering there.
 //
-// Each match map defines its own two warps before including this file:
+// Each match map defines its own two exits before including this file:
 // COLOSSO_SOLO_TO_RACE, its way from lending a hand to the race, and
 // COLOSSO_SOLO_TO_COLOSSEUM, its way back out to the Colosseum.
 
@@ -198,7 +198,7 @@ static void Colosso_TakePlaceForMatch(void) {
   }
   supporterId++;
   if (supporterId > MIA) {
-    Import_ScriptRequestWarp(COLOSSO_SOLO_TO_RACE);
+    Import_ScriptRequestExit(COLOSSO_SOLO_TO_RACE);
     GameFlag_Set(FLAG_KEEP_MUSIC);
   } else {
     Colosso_ControlCharacterAlone(supporterId);
@@ -248,7 +248,7 @@ void Colosso_AskDoneCheering(s32 id) {
                           objectEvent->z.fixed >> 20);
     slot++;
     if (slot > MIA) {
-      Import_ScriptRequestWarp(COLOSSO_SOLO_TO_RACE);
+      Import_ScriptRequestExit(COLOSSO_SOLO_TO_RACE);
       GameFlag_Set(FLAG_KEEP_MUSIC);
     } else {
       Colosso_ControlCharacterAlone(slot);
@@ -289,7 +289,7 @@ static void Colosso_AskReadyToRace(s32 localId) {
       ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, x, z + 32);
       FieldScript_FinishScreenTransition();
       FieldScript_WaitTransitionFrames();
-      Import_ScriptRequestWarp(COLOSSO_SOLO_TO_COLOSSEUM);
+      Import_ScriptRequestExit(COLOSSO_SOLO_TO_COLOSSEUM);
     }
   } else {
     FieldScript_SetMessageId(MsgColossoWaitShouldntDecideWhereBest);

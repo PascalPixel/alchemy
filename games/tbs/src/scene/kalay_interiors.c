@@ -4,12 +4,12 @@
 /// - Stucco rooms A (SceneId_StuccoRoomsA), a sheet of rooms drawn in stucco,
 /// all
 ///   of them Kalay's, whose area name is Kalay: every house and the inn, each
-///   entered from its own door in the town (kalay.c) at a warp destination of
-///   its own, and left by the matching warp. The inn's warp destinations,
+///   entered from its own door in the town (kalay.c) at an entrance of
+///   its own, and left by the matching exit. The inn's entrances,
 ///   STUCCO_ROOMS_A_INN_FROM_INN_PASSAGE to
 ///   STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST and
 ///   STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE, take the inn's
-///   object event templates and map events; every other warp destination takes
+///   object event templates and map events; every other entrance takes
 ///   the houses'. The inn is full of tourists on their way to see Colosso in
 ///   Tolbi. The innkeeper offers a room when spoken to across the counter; from
 ///   elsewhere he asks `Are you going to Tolbi also?`, and the tour's guide in
@@ -25,7 +25,7 @@
 ///   eggplant line is unused. Barrels hold 11 coins and an Elixir. The inn's
 ///   table and the houses' both carry these bg events.
 /// - Kalay Sanctum (SceneId_KalaySanctum), whose healer offers the
-///   Sanctum's services when spoken to across the counter. Its warp leads
+///   Sanctum's services when spoken to across the counter. Its exit leads
 ///   back into the town (KALAY_FROM_KALAY_SANCTUM).
 
 #include "save_block.h"
@@ -53,7 +53,7 @@
 
 /// Each table numbers its own rows from LOCALID_FIRST_PLACED: the houses'
 /// (gKalayInteriors_HouseObjectEventTemplates), the inn's, whose rooms are
-/// entered through the inn's warp destinations
+/// entered through the inn's entrances
 /// (gKalayInteriors_InnObjectEventTemplates), and the Kalay Sanctum's
 /// (gKalayInteriors_SanctumObjectEventTemplates). Unless a note says otherwise,
 /// it quotes what its object event says before the Colosso tour leaves.
@@ -182,34 +182,34 @@ enum { KALAY_INN = 7 };
 
 static void KalayInteriors_ApplyRoomState(void);
 
-/// Selects the warp destination table of Kalay's houses and inn, or of the
+/// Selects the entrance table of Kalay's houses and inn, or of the
 /// Kalay Sanctum.
-const struct MapWarpDest *KalayInteriors_GetWarpDests(void) {
+const struct SceneEntrance *KalayInteriors_GetEntrances(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_StuccoRoomsA) {
-    return gKalayInteriors_HouseWarpDests;
+    return gKalayInteriors_HouseEntrances;
   }
   if (sceneId == (s32)&SceneId_KalaySanctum) {
-    return gKalayInteriors_SanctumWarpDests;
+    return gKalayInteriors_SanctumEntrances;
   }
-  return gKalayInteriors_NoWarpDests;
+  return gKalayInteriors_NoEntrances;
 }
 
-const struct MapWarpRegion *KalayInteriors_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *KalayInteriors_GetRegions(void) { return NULL; }
 
-const u32 *KalayInteriors_GetWarps(void) { return gKalayInteriors_Warps; }
+const u32 *KalayInteriors_GetExits(void) { return gKalayInteriors_Exits; }
 
 /// The inn's rooms share one object event template table and the houses
-/// another, chosen by warp destination and clipped to the current view.
+/// another, chosen by entrance and clipped to the current view.
 const struct ObjectEventTemplate *KalayInteriors_GetObjectEventTemplates(void) {
   s32 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_StuccoRoomsA) {
-    s32 warpDest = gSaveBlock.warpDest;
+    s32 entrance = gSaveBlock.entrance;
     struct ObjectEventTemplate *table;
 
-    switch (warpDest) {
+    switch (entrance) {
     case STUCCO_ROOMS_A_INN_FROM_INN_PASSAGE:
     case STUCCO_ROOMS_A_INN:
     case STUCCO_ROOMS_A_INN_PASSAGE_FROM_INN:
@@ -233,15 +233,15 @@ const struct ObjectEventTemplate *KalayInteriors_GetObjectEventTemplates(void) {
   return gKalayInteriors_NoObjectEventTemplates;
 }
 
-/// Selects room dialogue with the same warp destination grouping as the object
+/// Selects room dialogue with the same entrance grouping as the object
 /// event templates.
 const struct MapEvent *KalayInteriors_GetEvents(void) {
   s32 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_StuccoRoomsA) {
-    s32 warpDest = gSaveBlock.warpDest;
+    s32 entrance = gSaveBlock.entrance;
 
-    switch (warpDest) {
+    switch (entrance) {
     case STUCCO_ROOMS_A_INN_FROM_INN_PASSAGE:
     case STUCCO_ROOMS_A_INN:
     case STUCCO_ROOMS_A_INN_PASSAGE_FROM_INN:
@@ -380,7 +380,7 @@ static void KalayInteriors_OpenDoorAndExit(void) {
   ObjectMotion_CenterOnColumn(LOCALID_PARTY_LEADER, 3, -8);
   FieldScript_WaitFrames(10);
 
-  Import_ScriptRequestWarp(work->coordEvent);
+  Import_ScriptRequestExit(work->coordEvent);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_End();
@@ -405,9 +405,9 @@ s32 KalayInteriors_Initialize(void) {
 /// otherwise show at the bottom edge of the view (the room's render with and
 /// without the copy).
 static void KalayInteriors_ApplyRoomState(void) {
-  s16 warpDest = gSaveBlock.warpDest;
+  s16 entrance = gSaveBlock.entrance;
 
-  switch (warpDest) {
+  switch (entrance) {
   case STUCCO_ROOMS_A_HOUSE_NORTHEAST_LOWER: {
     MapGrid_CopyCellsTo(30, 14, 30, 16, 4, 2);
     return;
@@ -444,14 +444,14 @@ static void KalayInteriors_ApplyRoomState(void) {
   }
 }
 
-struct MapWarpDest gKalayInteriors_NoWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gKalayInteriors_NoEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gKalayInteriors_HouseWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gKalayInteriors_HouseEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {STUCCO_ROOMS_A_HOUSE_NORTHWEST, CONDITION_ALWAYS, 144, 0, 192,
      FACING_NORTH, 0, 5, 45, 245, 230, 0},
@@ -494,8 +494,8 @@ struct MapWarpDest gKalayInteriors_HouseWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gKalayInteriors_SanctumWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gKalayInteriors_SanctumEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {KALAY_SANCTUM_FROM_KALAY, CONDITION_ALWAYS, 248, 0, 304, FACING_NORTH, 0,
      110, 35, 390, 345, 0},
@@ -503,47 +503,48 @@ struct MapWarpDest gKalayInteriors_SanctumWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gKalayInteriors_Warps[] = {
-    MAP_WARPS(StuccoRoomsA),
-    MAP_WARP(STUCCO_ROOMS_A_HOUSE_NORTHWEST_TO_KALAY, Kalay,
-             KALAY_FROM_HOUSE_NORTHWEST),
-    MAP_WARP(STUCCO_ROOMS_A_HOUSE_NORTHEAST_UPPER_TO_KALAY, Kalay,
-             KALAY_FROM_HOUSE_NORTHEAST_UPPER),
-    MAP_WARP(STUCCO_ROOMS_A_HOUSE_NORTHEAST_LOWER_TO_KALAY, Kalay,
-             KALAY_FROM_HOUSE_NORTHEAST_LOWER),
-    MAP_WARP(STUCCO_ROOMS_A_HOUSE_SOUTHEAST_TO_KALAY, Kalay,
-             KALAY_FROM_HOUSE_SOUTHEAST),
-    MAP_WARP(STUCCO_ROOMS_A_WEAPON_SHOP_COUNTER_TO_KALAY, Kalay,
-             KALAY_FROM_WEAPON_SHOP_COUNTER),
-    MAP_WARP(STUCCO_ROOMS_A_WEAPON_SHOP_TO_KALAY, Kalay,
-             KALAY_FROM_WEAPON_SHOP),
-    MAP_WARP(STUCCO_ROOMS_A_ARMOR_SHOP_TO_KALAY, Kalay, KALAY_FROM_ARMOR_SHOP),
-    MAP_WARP(STUCCO_ROOMS_A_ARMOR_SHOP_COUNTER_TO_KALAY, Kalay,
-             KALAY_FROM_ARMOR_SHOP_COUNTER),
-    MAP_WARP(STUCCO_ROOMS_A_INN_TO_INN_PASSAGE, StuccoRoomsA,
-             STUCCO_ROOMS_A_INN_PASSAGE_FROM_INN),
-    MAP_WARP(STUCCO_ROOMS_A_INN_TO_KALAY, Kalay, KALAY_FROM_INN),
-    MAP_WARP(STUCCO_ROOMS_A_INN_PASSAGE_TO_INN, StuccoRoomsA,
-             STUCCO_ROOMS_A_INN_FROM_INN_PASSAGE),
-    MAP_WARP(STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_NORTHWEST, StuccoRoomsA,
-             STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE),
-    MAP_WARP(STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_NORTHEAST, StuccoRoomsA,
-             STUCCO_ROOMS_A_GUEST_ROOM_NORTHEAST_FROM_INN_PASSAGE),
-    MAP_WARP(STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST, StuccoRoomsA,
-             STUCCO_ROOMS_A_GUEST_ROOM_SOUTHWEST_FROM_INN_PASSAGE),
-    MAP_WARP(STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST, StuccoRoomsA,
-             STUCCO_ROOMS_A_GUEST_ROOM_SOUTHEAST_FROM_INN_PASSAGE),
-    MAP_WARP(STUCCO_ROOMS_A_GUEST_ROOM_SOUTHEAST_TO_INN_PASSAGE, StuccoRoomsA,
-             STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST),
-    MAP_WARP(STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE, StuccoRoomsA,
-             STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_NORTHWEST),
-    MAP_WARP(STUCCO_ROOMS_A_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE, StuccoRoomsA,
-             STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_NORTHEAST),
-    MAP_WARP(STUCCO_ROOMS_A_GUEST_ROOM_SOUTHWEST_TO_INN_PASSAGE, StuccoRoomsA,
-             STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHWEST),
-    MAP_WARPS(KalaySanctum),
-    MAP_WARP(KALAY_SANCTUM_TO_KALAY, Kalay, KALAY_FROM_KALAY_SANCTUM),
-    MAP_WARPS_END,
+u32 gKalayInteriors_Exits[] = {
+    SCENE_EXITS(StuccoRoomsA),
+    SCENE_EXIT(STUCCO_ROOMS_A_HOUSE_NORTHWEST_TO_KALAY, Kalay,
+               KALAY_FROM_HOUSE_NORTHWEST),
+    SCENE_EXIT(STUCCO_ROOMS_A_HOUSE_NORTHEAST_UPPER_TO_KALAY, Kalay,
+               KALAY_FROM_HOUSE_NORTHEAST_UPPER),
+    SCENE_EXIT(STUCCO_ROOMS_A_HOUSE_NORTHEAST_LOWER_TO_KALAY, Kalay,
+               KALAY_FROM_HOUSE_NORTHEAST_LOWER),
+    SCENE_EXIT(STUCCO_ROOMS_A_HOUSE_SOUTHEAST_TO_KALAY, Kalay,
+               KALAY_FROM_HOUSE_SOUTHEAST),
+    SCENE_EXIT(STUCCO_ROOMS_A_WEAPON_SHOP_COUNTER_TO_KALAY, Kalay,
+               KALAY_FROM_WEAPON_SHOP_COUNTER),
+    SCENE_EXIT(STUCCO_ROOMS_A_WEAPON_SHOP_TO_KALAY, Kalay,
+               KALAY_FROM_WEAPON_SHOP),
+    SCENE_EXIT(STUCCO_ROOMS_A_ARMOR_SHOP_TO_KALAY, Kalay,
+               KALAY_FROM_ARMOR_SHOP),
+    SCENE_EXIT(STUCCO_ROOMS_A_ARMOR_SHOP_COUNTER_TO_KALAY, Kalay,
+               KALAY_FROM_ARMOR_SHOP_COUNTER),
+    SCENE_EXIT(STUCCO_ROOMS_A_INN_TO_INN_PASSAGE, StuccoRoomsA,
+               STUCCO_ROOMS_A_INN_PASSAGE_FROM_INN),
+    SCENE_EXIT(STUCCO_ROOMS_A_INN_TO_KALAY, Kalay, KALAY_FROM_INN),
+    SCENE_EXIT(STUCCO_ROOMS_A_INN_PASSAGE_TO_INN, StuccoRoomsA,
+               STUCCO_ROOMS_A_INN_FROM_INN_PASSAGE),
+    SCENE_EXIT(STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_NORTHWEST, StuccoRoomsA,
+               STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE),
+    SCENE_EXIT(STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_NORTHEAST, StuccoRoomsA,
+               STUCCO_ROOMS_A_GUEST_ROOM_NORTHEAST_FROM_INN_PASSAGE),
+    SCENE_EXIT(STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST, StuccoRoomsA,
+               STUCCO_ROOMS_A_GUEST_ROOM_SOUTHWEST_FROM_INN_PASSAGE),
+    SCENE_EXIT(STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST, StuccoRoomsA,
+               STUCCO_ROOMS_A_GUEST_ROOM_SOUTHEAST_FROM_INN_PASSAGE),
+    SCENE_EXIT(STUCCO_ROOMS_A_GUEST_ROOM_SOUTHEAST_TO_INN_PASSAGE, StuccoRoomsA,
+               STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST),
+    SCENE_EXIT(STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE, StuccoRoomsA,
+               STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_NORTHWEST),
+    SCENE_EXIT(STUCCO_ROOMS_A_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE, StuccoRoomsA,
+               STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_NORTHEAST),
+    SCENE_EXIT(STUCCO_ROOMS_A_GUEST_ROOM_SOUTHWEST_TO_INN_PASSAGE, StuccoRoomsA,
+               STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHWEST),
+    SCENE_EXITS(KalaySanctum),
+    SCENE_EXIT(KALAY_SANCTUM_TO_KALAY, Kalay, KALAY_FROM_KALAY_SANCTUM),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gKalayInteriors_NoObjectEventTemplates[] = {
@@ -620,16 +621,16 @@ struct MapEvent gKalayInteriors_NoEvents[] = {
 /// A bare flag as a condition holds while that flag is clear: these lines are
 /// spoken before the Colosso tour leaves, the next ones after.
 struct MapEvent gKalayInteriors_HouseEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, STUCCO_ROOMS_A_HOUSE_NORTHWEST_TO_KALAY },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, STUCCO_ROOMS_A_HOUSE_NORTHEAST_UPPER_TO_KALAY },
-    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, STUCCO_ROOMS_A_HOUSE_NORTHEAST_LOWER_TO_KALAY },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, STUCCO_ROOMS_A_HOUSE_SOUTHEAST_TO_KALAY },
-    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, STUCCO_ROOMS_A_WEAPON_SHOP_COUNTER_TO_KALAY },
-    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, STUCCO_ROOMS_A_WEAPON_SHOP_TO_KALAY },
-    { MAP_EVENT_WARP, 7, CONDITION_ALWAYS, STUCCO_ROOMS_A_ARMOR_SHOP_TO_KALAY },
-    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, STUCCO_ROOMS_A_ARMOR_SHOP_COUNTER_TO_KALAY },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, STUCCO_ROOMS_A_HOUSE_NORTHWEST_TO_KALAY },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, STUCCO_ROOMS_A_HOUSE_NORTHEAST_UPPER_TO_KALAY },
+    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, STUCCO_ROOMS_A_HOUSE_NORTHEAST_LOWER_TO_KALAY },
+    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, STUCCO_ROOMS_A_HOUSE_SOUTHEAST_TO_KALAY },
+    { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, STUCCO_ROOMS_A_WEAPON_SHOP_COUNTER_TO_KALAY },
+    { MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, STUCCO_ROOMS_A_WEAPON_SHOP_TO_KALAY },
+    { MAP_EVENT_EXIT, 7, CONDITION_ALWAYS, STUCCO_ROOMS_A_ARMOR_SHOP_TO_KALAY },
+    { MAP_EVENT_EXIT, 8, CONDITION_ALWAYS, STUCCO_ROOMS_A_ARMOR_SHOP_COUNTER_TO_KALAY },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_OpenDoorAndExit) },
-    { MAP_EVENT_WARP, 18, CONDITION_ALWAYS, STUCCO_ROOMS_A_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE },
+    { MAP_EVENT_EXIT, 18, CONDITION_ALWAYS, STUCCO_ROOMS_A_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 19, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_OpenDoorAndExit) },
     { MAP_EVENT_TALK, LOCALID_YOUNG_MAN_ON_LUNPA_GONE_BAD, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsImShockedToHearTheRighteous) },
     { MAP_EVENT_TALK, LOCALID_WOMAN_SAYING_LUNPA_WAS_KIND, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsLunpaWasAKindThiefHis) },
@@ -672,14 +673,14 @@ struct MapEvent gKalayInteriors_HouseEvents[] = {
 };
 
 struct MapEvent gKalayInteriors_InnEvents[] = {
-    { MAP_EVENT_WARP, 9, CONDITION_ALWAYS, STUCCO_ROOMS_A_INN_TO_INN_PASSAGE },
-    { MAP_EVENT_WARP, 10, CONDITION_ALWAYS, STUCCO_ROOMS_A_INN_TO_KALAY },
-    { MAP_EVENT_WARP, 11, CONDITION_ALWAYS, STUCCO_ROOMS_A_INN_PASSAGE_TO_INN },
+    { MAP_EVENT_EXIT, 9, CONDITION_ALWAYS, STUCCO_ROOMS_A_INN_TO_INN_PASSAGE },
+    { MAP_EVENT_EXIT, 10, CONDITION_ALWAYS, STUCCO_ROOMS_A_INN_TO_KALAY },
+    { MAP_EVENT_EXIT, 11, CONDITION_ALWAYS, STUCCO_ROOMS_A_INN_PASSAGE_TO_INN },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_OpenDoorAndExit) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_OpenDoorAndExit) },
-    { MAP_EVENT_WARP, 14, CONDITION_ALWAYS, STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST },
-    { MAP_EVENT_WARP, 15, CONDITION_ALWAYS, STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST },
-    { MAP_EVENT_WARP, 17, CONDITION_ALWAYS, STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE },
+    { MAP_EVENT_EXIT, 14, CONDITION_ALWAYS, STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST },
+    { MAP_EVENT_EXIT, 15, CONDITION_ALWAYS, STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST },
+    { MAP_EVENT_EXIT, 17, CONDITION_ALWAYS, STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE },
     { MAP_EVENT_TALK, LOCALID_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_TalkToInnkeeper) },
     { MAP_EVENT_TALK, LOCALID_INNKEEPERS_WIFE, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsEveryoneIsGoingToTolbiTo) },
     { MAP_EVENT_TALK, LOCALID_INNKEEPERS_WIFE, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsEvenOurChefLeftSoWe) },
@@ -722,7 +723,7 @@ struct MapEvent gKalayInteriors_InnEvents[] = {
 };
 
 struct MapEvent gKalayInteriors_SanctumEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, KALAY_SANCTUM_TO_KALAY },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_SANCTUM_TO_KALAY },
     { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_TalkToHealer) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HEALER, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsICameHereToSpreadGood) },
     { MAP_EVENTS_END },

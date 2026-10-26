@@ -4,25 +4,25 @@
 #include "types.h"
 #include "map_tables.h"
 
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEvent;
 struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneExitRegion;
 
 extern s32 gFieldEffect_ShortScript[];
 extern s32 gFieldEffect_MediumScript[];
 extern s32 gFieldEffect_LongScript[];
 extern const s32 *gFieldEffect_DurationScripts[];
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *Scene_GetWarps(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
-extern struct MapWarpDest gLunpaWarpDests[];
-extern struct MapWarpDest gGateWarpDests[];
-extern u32 gLunpaWarps[];
-extern u32 gGateWarps[];
+extern struct SceneEntrance gLunpaEntrances[];
+extern struct SceneEntrance gGateEntrances[];
+extern u32 gLunpaExits[];
+extern u32 gGateExits[];
 extern struct ObjectEventTemplate gLunpaObjectEventTemplates[];
 extern struct ObjectEventTemplate gGateObjectEventTemplates[];
 extern struct MapEvent gLunpaSealedEvents[];

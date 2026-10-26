@@ -1,7 +1,7 @@
 	.include "games/tbs/src/system/overlay.inc"
 	overlay_veneer LamakanDesert_Initialize
-	overlay_veneer LamakanDesert_GetWarpDests
-	overlay_veneer LamakanDesert_GetWarps
+	overlay_veneer LamakanDesert_GetEntrances
+	overlay_veneer LamakanDesert_GetExits
 	overlay_veneer LamakanDesert_GetObjectEventTemplates
 	overlay_veneer LamakanDesert_GetEvents
 	overlay_veneer LamakanDesert_GetRegions

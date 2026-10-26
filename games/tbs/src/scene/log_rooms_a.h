@@ -6,7 +6,7 @@
 /// SceneId_LogRoomsA (log_rooms_a.c) and SceneId_LogRoomsB
 /// (log_rooms_b.c) both answer.
 
-/// The cells the interiors' coord events and bg events answer; the warps have
+/// The cells the interiors' coord events and bg events answer; the exits have
 /// metatile behaviors of their own.
 enum LogRoomsAMetatileBehavior {
   /// The stairs down from the inn's guests' room.

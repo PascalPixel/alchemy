@@ -1,6 +1,6 @@
 /// @file
 /// The Sanctum of Vale and of four towns on the party's way, which holds six
-/// places in one map (SceneId_Sanctum): the warp destination the party arrives
+/// places in one map (SceneId_Sanctum): the entrance the party arrives
 /// at decides which, and Sanctum_GetObjectEventTemplates and Sanctum_GetEvents
 /// choose that place's tables by it. Spoken to from the front, each place's
 /// healer opens the Sanctum's services (Sanctum_Run); from any other side the
@@ -52,8 +52,8 @@
 /// - Vault Sanctum again (SANCTUM_FROM_VAULT_REVISIT), when the party passes
 ///   through Vault later (vault_revisit.c): the statue has been polished, and
 ///   the healer worries about earthquakes on Mt. Aleph.
-/// - Sanctum, the name the game gives every other warp destination, which
-///   leaves only SANCTUM_UNUSED; no warp leads there, and it places nobody.
+/// - Sanctum, the name the game gives every other entrance, which
+///   leaves only SANCTUM_UNUSED; no exit leads there, and it places nobody.
 
 #include "speaker.h"
 #include "flags.h"
@@ -113,7 +113,7 @@
 // Sanctum.
 
 /// The placed object events, numbering the rows of the table
-/// Sanctum_GetObjectEventTemplates returns for the warp destination; the
+/// Sanctum_GetObjectEventTemplates returns for the entrance; the
 /// party's rows take their own ids. Every place's first row is its healer.
 enum SanctumLocalId {
   /// The place's healer: the Great Healer in Vale Sanctum, its own healer
@@ -210,16 +210,16 @@ Sanctum_FaceObjectEventNamedByTimer(union ObjectEventOrEffect *fieldObject) {
 #endif
 }
 
-/// Returns the warp destinations, shared by all six places.
-const struct MapWarpDest *Sanctum_GetWarpDests(void) {
-  return gSanctum_WarpDests;
+/// Returns the entrances, shared by all six places.
+const struct SceneEntrance *Sanctum_GetEntrances(void) {
+  return gSanctum_Entrances;
 }
 
-const struct MapWarpRegion *Sanctum_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Sanctum_GetRegions(void) { return NULL; }
 
-const u32 *Sanctum_GetWarps(void) { return gSanctum_Warps; }
+const u32 *Sanctum_GetExits(void) { return gSanctum_Exits; }
 
-/// Chooses the object events by warp destination: Vale Sanctum's Great Healer
+/// Chooses the object events by entrance: Vale Sanctum's Great Healer
 /// and two other healers (SANCTUM_FROM_VALE and SANCTUM_VALE_UNUSED), the
 /// quest's gathering (SANCTUM_FROM_VALE_ERUPTION and
 /// SANCTUM_FROM_QUEST_RESTART), the healer and LOCALID_SANCTUM_MEMBER of Vault
@@ -228,7 +228,7 @@ const u32 *Sanctum_GetWarps(void) { return gSanctum_Warps; }
 /// Altin Sanctum and Xian Sanctum (SANCTUM_FROM_ALTIN and SANCTUM_FROM_XIAN),
 /// and nobody otherwise.
 const struct ObjectEventTemplate *Sanctum_GetObjectEventTemplates(void) {
-  switch (gSaveBlock.warpDest) {
+  switch (gSaveBlock.entrance) {
   case SANCTUM_FROM_VALE:
   case SANCTUM_VALE_UNUSED:
     return gSanctum_ValeObjectEventTemplates;
@@ -252,7 +252,7 @@ const struct ObjectEventTemplate *Sanctum_GetObjectEventTemplates(void) {
   }
 }
 
-/// Chooses the map events by warp destination, and in Vale Sanctum before and
+/// Chooses the map events by entrance, and in Vale Sanctum before and
 /// after the quest by story flag: gSanctum_ValeEvents before the party has left
 /// Vale, gSanctum_ValeEventsAfterLeaving once it has (FLAG_VALE_PARTY_LEFT) and
 /// gSanctum_ValeEventsAfterKalay once it has reached Kalay
@@ -260,7 +260,7 @@ const struct ObjectEventTemplate *Sanctum_GetObjectEventTemplates(void) {
 /// (SANCTUM_FROM_VALE_ERUPTION, SANCTUM_FROM_QUEST_RESTART and
 /// SANCTUM_QUEST_UNUSED).
 const struct MapEvent *Sanctum_GetEvents(void) {
-  switch (gSaveBlock.warpDest) {
+  switch (gSaveBlock.entrance) {
   case SANCTUM_FROM_VAULT:
   case SANCTUM_FROM_LOG_ROOMS_A:
     return gSanctum_VaultEvents;
@@ -302,7 +302,7 @@ static void EventScript_TalkAboutGoldenStatue(void) {
     FieldScript_SetMessageId(MsgSanctumHealerMustWorriedAboutNever);
   }
 
-  if (gSaveBlock.warpDest == SANCTUM_FROM_VAULT_REVISIT) {
+  if (gSaveBlock.entrance == SANCTUM_FROM_VAULT_REVISIT) {
     FieldScript_SetMessageId(MsgSanctumPolishedGoldStatueReturnedUs);
   }
 
@@ -326,7 +326,7 @@ static void EventScript_ReadMindAboutGoldenStatue(void) {
     FieldScript_SetMessageId(MsgSanctumChildHasAwakenedOurTeachings);
   }
 
-  if (gSaveBlock.warpDest == SANCTUM_FROM_VAULT_REVISIT) {
+  if (gSaveBlock.entrance == SANCTUM_FROM_VAULT_REVISIT) {
     FieldScript_SetMessageId(MsgSanctumDirtyGoldenStatueCleanedUp);
   }
 
@@ -393,7 +393,7 @@ static void EventScript_ReconsiderQuest(void) {
         Sound_PlaySong(MUS_INN);
         Sound_WaitForSong();
         GameFlag_Set(FLAG_SANCTUM_QUEST_ACCEPTED);
-        Import_ScriptRequestWarp(SANCTUM_TO_VALE_PLAZA);
+        Import_ScriptRequestExit(SANCTUM_TO_VALE_PLAZA);
       }
     }
   }
@@ -448,7 +448,7 @@ static void EventScript_AskAboutPsynergyChanges(void) {
   FieldScript_End();
 }
 
-/// Sets up the place for its warp destination and plays its opening event.
+/// Sets up the place for its entrance and plays its opening event.
 /// Vault Sanctum places LOCALID_GOLD_STATUE once the thieves are jailed; Vale
 /// Sanctum's quest visits (SANCTUM_FROM_VALE_ERUPTION, and
 /// SANCTUM_FROM_QUEST_RESTART after a refusal, which sets
@@ -460,7 +460,7 @@ s32 Sanctum_Initialize(void) {
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   FieldScript_WaitFrames(1);
-  switch (gSaveBlock.warpDest) {
+  switch (gSaveBlock.entrance) {
   case SANCTUM_FROM_VAULT:
   case SANCTUM_FROM_VAULT_REVISIT:
   case SANCTUM_FROM_LOG_ROOMS_A:
@@ -550,10 +550,10 @@ static void EventScript_LeaveAfterRefusing(void) {
   FieldScript_WaitFrames(60);
   if (Sanctum_ChooseRestartOption() == 0) {
     FieldScript_End();
-    Import_ScriptRequestWarp(SANCTUM_TO_QUEST_RESTART);
+    Import_ScriptRequestExit(SANCTUM_TO_QUEST_RESTART);
   } else {
     FieldScript_End();
-    Import_ScriptRequestWarp(SANCTUM_TO_MAIN_MENU);
+    Import_ScriptRequestExit(SANCTUM_TO_MAIN_MENU);
   }
 }
 
@@ -1175,7 +1175,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Script_PlaySong(MUS_INN);
     Sound_WaitForSong();
     GameFlag_Set(FLAG_SANCTUM_QUEST_ACCEPTED);
-    Import_ScriptRequestWarp(SANCTUM_TO_VALE_PLAZA);
+    Import_ScriptRequestExit(SANCTUM_TO_VALE_PLAZA);
   } else {
     FieldScript_WaitFrames(30);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDFATHER, 1);
@@ -2163,12 +2163,12 @@ static void EventScript_TalkToHealer(void) {
 
 /// Vault Sanctum: talking to the healer. From the front the healer opens the
 /// Sanctum's services; otherwise the healer speaks of the gold statue or, on
-/// the later visit, of the earthquakes. Its case for the quest's warp
-/// destinations (SANCTUM_FROM_VALE_ERUPTION, SANCTUM_FROM_QUEST_RESTART and
+/// the later visit, of the earthquakes. Its case for the quest's
+/// entrances (SANCTUM_FROM_VALE_ERUPTION, SANCTUM_FROM_QUEST_RESTART and
 /// SANCTUM_QUEST_UNUSED) passes to EventScript_ReconsiderQuest, though their
 /// map events (gSanctum_QuestEvents) call that directly.
 static void EventScript_TalkToHealerOnVisit(void) {
-  s32 warpDest;
+  s32 entrance;
 
   if (Sanctum_IsLeaderFacingHealer() != 0) {
     Sanctum_Run(LOCALID_HEALER);
@@ -2177,9 +2177,9 @@ static void EventScript_TalkToHealerOnVisit(void) {
 
   FieldScript_Start();
 
-  warpDest = gSaveBlock.warpDest;
+  entrance = gSaveBlock.entrance;
 
-  switch (warpDest) {
+  switch (entrance) {
   case SANCTUM_FROM_VAULT:
   case SANCTUM_FROM_LOG_ROOMS_A:
     if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
@@ -2353,7 +2353,7 @@ s32 gSanctum_ItemIconEndScript[] = {
     SC_FREE,
 };
 
-struct MapWarpDest gSanctum_WarpDests[] = {
+struct SceneEntrance gSanctum_Entrances[] = {
     { SANCTUM_UNUSED, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SANCTUM_FROM_VALE, CONDITION_ALWAYS, 199, 0, 246, FACING_NORTH, 0, 64, 8, 336, 272, 0 },
     { SANCTUM_VALE_UNUSED, CONDITION_ALWAYS, 199, 0, 164, FACING_SOUTH, 0, 64, 8, 336, 272, 0 },
@@ -2368,18 +2368,18 @@ struct MapWarpDest gSanctum_WarpDests[] = {
     { MAP_TABLE_END },
 };
 
-u32 gSanctum_Warps[] = {
-    MAP_WARPS(Sanctum),
-    MAP_WARP(SANCTUM_TO_VALE, Vale, VALE_FROM_SANCTUM),
-    MAP_WARP(SANCTUM_TO_VAULT, Vault, VAULT_FROM_SANCTUM),
-    MAP_WARP(SANCTUM_TO_VAULT_REVISIT, VaultRevisit, VAULT_REVISIT_FROM_SANCTUM),
-    MAP_WARP(SANCTUM_TO_QUEST_RESTART, Sanctum, SANCTUM_FROM_QUEST_RESTART),
-    MAP_WARP(SANCTUM_TO_VALE_PLAZA, ValePlaza, VALE_PLAZA_FROM_SANCTUM),
-    MAP_WARP(SANCTUM_TO_ALTIN, Altin, ALTIN_FROM_SANCTUM),
-    MAP_WARP(SANCTUM_TO_BILIBIN, Bilibin, BILIBIN_FROM_SANCTUM),
-    MAP_WARP(SANCTUM_TO_XIAN, Xian, XIAN_FROM_SANCTUM_WEST),
-    MAP_WARP(SANCTUM_TO_MAIN_MENU, MainMenu, MAIN_MENU_FROM_SANCTUM),
-    MAP_WARPS_END,
+u32 gSanctum_Exits[] = {
+    SCENE_EXITS(Sanctum),
+    SCENE_EXIT(SANCTUM_TO_VALE, Vale, VALE_FROM_SANCTUM),
+    SCENE_EXIT(SANCTUM_TO_VAULT, Vault, VAULT_FROM_SANCTUM),
+    SCENE_EXIT(SANCTUM_TO_VAULT_REVISIT, VaultRevisit, VAULT_REVISIT_FROM_SANCTUM),
+    SCENE_EXIT(SANCTUM_TO_QUEST_RESTART, Sanctum, SANCTUM_FROM_QUEST_RESTART),
+    SCENE_EXIT(SANCTUM_TO_VALE_PLAZA, ValePlaza, VALE_PLAZA_FROM_SANCTUM),
+    SCENE_EXIT(SANCTUM_TO_ALTIN, Altin, ALTIN_FROM_SANCTUM),
+    SCENE_EXIT(SANCTUM_TO_BILIBIN, Bilibin, BILIBIN_FROM_SANCTUM),
+    SCENE_EXIT(SANCTUM_TO_XIAN, Xian, XIAN_FROM_SANCTUM_WEST),
+    SCENE_EXIT(SANCTUM_TO_MAIN_MENU, MainMenu, MAIN_MENU_FROM_SANCTUM),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gSanctum_NoObjectEventTemplates[] = {
@@ -2448,7 +2448,7 @@ struct MapEvent gSanctum_ValeEvents[] = {
     { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
     { MAP_EVENT_TALK, LOCALID_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumOurPsynergyWasGivenToUs) },
     { MAP_EVENT_TALK, LOCALID_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumPsynergyIsAPowerThatShould) },
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, SANCTUM_TO_VALE },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VALE },
     { MAP_EVENTS_END },
 };
 
@@ -2458,12 +2458,12 @@ struct MapEvent gSanctum_VaultEvents[] = {
     { MAP_EVENT_TALK, LOCALID_SANCTUM_MEMBER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutGoldenStatue) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumGoOnIfThatEasesThe) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SANCTUM_MEMBER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindAboutGoldenStatue) },
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, SANCTUM_TO_VAULT },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VAULT },
     { MAP_EVENTS_END },
 };
 
 struct MapEvent gSanctum_VaultRevisitEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, SANCTUM_TO_VAULT_REVISIT },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VAULT_REVISIT },
     { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealerOnVisit) },
     { MAP_EVENT_TALK, LOCALID_SANCTUM_MEMBER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutGoldenStatue) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumIHopeTheEarthquakesArentA) },
@@ -2484,7 +2484,7 @@ struct MapEvent gSanctum_QuestEvents[] = {
 };
 
 struct MapEvent gSanctum_ValeEventsAfterLeaving[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, SANCTUM_TO_VALE },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VALE },
     { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
     { MAP_EVENT_TALK, LOCALID_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumThePowerOfMtAlephStems) },
     { MAP_EVENT_TALK, LOCALID_EAST_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutPsynergyChanges) },
@@ -2495,7 +2495,7 @@ struct MapEvent gSanctum_ValeEventsAfterLeaving[] = {
 };
 
 struct MapEvent gSanctum_ValeEventsAfterKalay[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, SANCTUM_TO_VALE },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VALE },
     { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
     { MAP_EVENT_TALK, LOCALID_WEST_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutNewAdepts) },
     { MAP_EVENT_TALK, LOCALID_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumWhyIsItThatDifferentAdepts) },
@@ -2506,7 +2506,7 @@ struct MapEvent gSanctum_ValeEventsAfterKalay[] = {
 };
 
 struct MapEvent gSanctum_AltinEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, SANCTUM_TO_ALTIN },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_ALTIN },
     { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutAltinMonsters) },
     // Unused: a copy of the row above, which always answers first.
     { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutAltinMonsters) },
@@ -2523,12 +2523,12 @@ struct MapEvent gSanctum_BilibinEvents[] = {
     { MAP_EVENT_TALK, LOCALID_SANCTUM_MEMBER, CONDITION_ALWAYS, MSGNO(MsgSanctumHowAboutThatOurWishesHave) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumTheSignsOfDangerAreActually) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SANCTUM_MEMBER, CONDITION_ALWAYS, MSGNO(MsgSanctumPeaceWillBeKeptAsLong) },
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, SANCTUM_TO_BILIBIN },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_BILIBIN },
     { MAP_EVENTS_END },
 };
 
 struct MapEvent gSanctum_XianEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, SANCTUM_TO_XIAN },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_XIAN },
     { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutJourneyFromXian) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumWhenYouStayInXianFor) },
     { MAP_EVENTS_END },

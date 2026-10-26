@@ -56,7 +56,7 @@
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_WaitForArrival, 1
 	.set import.ObjectEvent_PlaceCurrentWithinCameraBounds, 1
-	.set import.Import_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestExit, 1
 	.set import.PaletteFade_SetTarget, 1
 	.set import.PaletteFade_SetSource, 1
 	.set import.PaletteFade_StartInterpolation, 1

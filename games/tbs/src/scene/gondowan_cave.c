@@ -14,7 +14,7 @@
 /// - GondowanCaveRiver (SceneId_GondowanCaveRiver): the river between the
 ///   cave's two halves, with a boulder for Lift and two chests.
 ///
-/// One warp table serves every map; the other getters choose by
+/// One exit table serves every map; the other getters choose by
 /// gSaveBlock.sceneId, Gondowan Passage's object event templates and map events
 /// also by FLAG_BABI_SPOKE_AFTER_COLOSSO, and an empty set answers any other
 /// map number. Every map's event table carries GondowanCaveRiver's two chests.
@@ -153,25 +153,25 @@ static void GondowanCave_RunSpinningLeap(s32 localId);
 #include "item_ids.h"
 #include "objcmd.h"
 
-const struct MapWarpDest *Scene_GetWarpDests(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_GondowanPassage) {
-    return gGondowanPassageWarpDests;
+    return gGondowanPassageEntrances;
   }
   if (sceneId == (s32)&SceneId_GondowanCaveRiver) {
-    return gGondowanCaveRiverWarpDests;
+    return gGondowanCaveRiverEntrances;
   }
   if (sceneId == (s32)&SceneId_GondowanCave) {
-    return gGondowanCaveWarpDests;
+    return gGondowanCaveEntrances;
   }
-  return gGondowanCaveWarpDestsOther;
+  return gGondowanCaveEntrancesOther;
 }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-/// Every map of the overlay shares one warp table.
-const u32 *Scene_GetWarps(void) { return gGondowanCaveWarps; }
+/// Every map of the overlay shares one exit table.
+const u32 *Scene_GetExits(void) { return gGondowanCaveExits; }
 
 /// Iodem waits in Gondowan Passage once Babi has spoken to the party after
 /// Colosso.
@@ -245,7 +245,7 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
       ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IODEM);
       Import_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_STAND);
       gSaveBlock.restartScene = (s32)&SceneId_StuccoRoomsB;
-      gSaveBlock.restartWarpDest = STUCCO_ROOMS_B_SANCTUM_NORTH;
+      gSaveBlock.restartEntrance = STUCCO_ROOMS_B_SANCTUM_NORTH;
     } else {
       // "Then we should continue on our way to the lighthouse." He rejoins
       // the party, and Isaac steps away from the coord event.
@@ -336,7 +336,7 @@ static void EventScript_ReadSoldierMind(void) {
   FieldScript_ShowMessageAndWait(LOCALID_SECOND_SOLDIER, 0);
 }
 
-/// Leaving GondowanCave by GONDOWAN_CAVE_TO_WORLD_MAP_EAST (warp 1),
+/// Leaving GondowanCave by GONDOWAN_CAVE_TO_WORLD_MAP_EAST (exit 1),
 /// out to the world map. With FLAG_SCENE_TEMP_04 set, which nothing in the
 /// game sets, three unnamed flags and the pillar's are first put into one
 /// arrangement.
@@ -355,7 +355,7 @@ static void EventScript_LeaveToWorldMapEast(void) {
     GameFlag_Set(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
     GameFlag_Set(0x9a4);
   }
-  Import_ScriptRequestWarp(work->coordEvent);
+  Import_ScriptRequestExit(work->coordEvent);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_End();
@@ -516,7 +516,7 @@ s32 Scene_Initialize(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_GondowanCave) {
     // XXX (no evidence): why this arrival changes the drop's cell; the
     // change has no effect that play shows.
-    if (gSaveBlock.warpDest == GONDOWAN_CAVE_FROM_WORLD_MAP_EAST) {
+    if (gSaveBlock.entrance == GONDOWAN_CAVE_FROM_WORLD_MAP_EAST) {
       MapGrid_CopyCellAttributes(108, 17, 1, 1, 107, 17);
     }
     if (GameFlag_Get(FLAG_GONDOWAN_CAVE_STUMP_MOVED) != 0) {
@@ -581,18 +581,18 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-struct MapWarpDest gGondowanCaveWarpDestsOther[] = {
-    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gGondowanCaveEntrancesOther[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { MAP_TABLE_END },
 };
 
-struct MapWarpDest gGondowanPassageWarpDests[] = {
+struct SceneEntrance gGondowanPassageEntrances[] = {
     { GONDOWAN_PASSAGE_FROM_WORLD_MAP_NORTH, CONDITION_ALWAYS, 152, 0, 120, FACING_SOUTH, 0, 32, 32, 272, 480, 0 },
     { GONDOWAN_PASSAGE_FROM_WORLD_MAP_SOUTH, CONDITION_ALWAYS, 152, 0, 440, FACING_NORTH, 0, 32, 32, 272, 480, 0 },
     { MAP_TABLE_END },
 };
 
-struct MapWarpDest gGondowanCaveRiverWarpDests[] = {
+struct SceneEntrance gGondowanCaveRiverEntrances[] = {
     { GONDOWAN_CAVE_RIVER_FROM_GONDOWAN_CAVE_NORTH, CONDITION_ALWAYS, 728, 0, 312, FACING_NORTH, 0, 96, 48, 768, 432, 0 },
     { GONDOWAN_CAVE_RIVER_FROM_BOULDER_PASSAGE, CONDITION_ALWAYS, 168, 0, 408, FACING_NORTH, 0, 96, 48, 768, 432, 0 },
     { GONDOWAN_CAVE_RIVER_BOULDER_PASSAGE_FROM_RIVER, CONDITION_ALWAYS, 168, 0, 520, FACING_SOUTH, 0, 112, 464, 576, 704, 0 },
@@ -600,7 +600,7 @@ struct MapWarpDest gGondowanCaveRiverWarpDests[] = {
     { MAP_TABLE_END },
 };
 
-struct MapWarpDest gGondowanCaveWarpDests[] = {
+struct SceneEntrance gGondowanCaveEntrances[] = {
     { GONDOWAN_CAVE_FROM_WORLD_MAP_EAST, CONDITION_ALWAYS, 792, 0, 456, FACING_NORTH, 0, 240, 48, 864, 464, 0 },
     { GONDOWAN_CAVE_FROM_GONDOWAN_CAVE_RIVER_NORTH, CONDITION_ALWAYS, 360, 0, 152, FACING_SOUTH, 0, 240, 48, 864, 464, 0 },
     { GONDOWAN_CAVE_FROM_WEST_PASSAGE, CONDITION_ALWAYS, 344, 0, 440, FACING_NORTH, 0, 240, 48, 864, 464, 0 },
@@ -610,23 +610,23 @@ struct MapWarpDest gGondowanCaveWarpDests[] = {
     { MAP_TABLE_END },
 };
 
-u32 gGondowanCaveWarps[] = {
-    MAP_WARPS(GondowanPassage),
-    MAP_WARP(GONDOWAN_PASSAGE_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_GONDOWAN_PASSAGE_EAST),
-    MAP_WARP(GONDOWAN_PASSAGE_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_GONDOWAN_PASSAGE_WEST),
-    MAP_WARPS(GondowanCaveRiver),
-    MAP_WARP(GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_NORTH, GondowanCave, GONDOWAN_CAVE_FROM_GONDOWAN_CAVE_RIVER_NORTH),
-    MAP_WARP(GONDOWAN_CAVE_RIVER_TO_BOULDER_PASSAGE, GondowanCaveRiver, GONDOWAN_CAVE_RIVER_BOULDER_PASSAGE_FROM_RIVER),
-    MAP_WARP(GONDOWAN_CAVE_RIVER_BOULDER_PASSAGE_TO_RIVER, GondowanCaveRiver, GONDOWAN_CAVE_RIVER_FROM_BOULDER_PASSAGE),
-    MAP_WARP(GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_SOUTH, GondowanCave, GONDOWAN_CAVE_FROM_GONDOWAN_CAVE_RIVER_SOUTH),
-    MAP_WARPS(GondowanCave),
-    MAP_WARP(GONDOWAN_CAVE_TO_WORLD_MAP_EAST, WorldMap, WORLD_MAP_FROM_GONDOWAN_CAVE_NORTH),
-    MAP_WARP(GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_NORTH, GondowanCaveRiver, GONDOWAN_CAVE_RIVER_FROM_GONDOWAN_CAVE_NORTH),
-    MAP_WARP(GONDOWAN_CAVE_TO_WEST_PASSAGE, GondowanCave, GONDOWAN_CAVE_WEST_PASSAGE_FROM_EAST_CAVE),
-    MAP_WARP(GONDOWAN_CAVE_WEST_PASSAGE_TO_EAST_CAVE, GondowanCave, GONDOWAN_CAVE_FROM_WEST_PASSAGE),
-    MAP_WARP(GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_SOUTH, GondowanCaveRiver, GONDOWAN_CAVE_RIVER_FROM_GONDOWAN_CAVE_SOUTH),
-    MAP_WARP(GONDOWAN_CAVE_TO_WORLD_MAP_WEST, WorldMap, WORLD_MAP_FROM_GONDOWAN_CAVE_SOUTH),
-    MAP_WARPS_END,
+u32 gGondowanCaveExits[] = {
+    SCENE_EXITS(GondowanPassage),
+    SCENE_EXIT(GONDOWAN_PASSAGE_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_GONDOWAN_PASSAGE_EAST),
+    SCENE_EXIT(GONDOWAN_PASSAGE_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_GONDOWAN_PASSAGE_WEST),
+    SCENE_EXITS(GondowanCaveRiver),
+    SCENE_EXIT(GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_NORTH, GondowanCave, GONDOWAN_CAVE_FROM_GONDOWAN_CAVE_RIVER_NORTH),
+    SCENE_EXIT(GONDOWAN_CAVE_RIVER_TO_BOULDER_PASSAGE, GondowanCaveRiver, GONDOWAN_CAVE_RIVER_BOULDER_PASSAGE_FROM_RIVER),
+    SCENE_EXIT(GONDOWAN_CAVE_RIVER_BOULDER_PASSAGE_TO_RIVER, GondowanCaveRiver, GONDOWAN_CAVE_RIVER_FROM_BOULDER_PASSAGE),
+    SCENE_EXIT(GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_SOUTH, GondowanCave, GONDOWAN_CAVE_FROM_GONDOWAN_CAVE_RIVER_SOUTH),
+    SCENE_EXITS(GondowanCave),
+    SCENE_EXIT(GONDOWAN_CAVE_TO_WORLD_MAP_EAST, WorldMap, WORLD_MAP_FROM_GONDOWAN_CAVE_NORTH),
+    SCENE_EXIT(GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_NORTH, GondowanCaveRiver, GONDOWAN_CAVE_RIVER_FROM_GONDOWAN_CAVE_NORTH),
+    SCENE_EXIT(GONDOWAN_CAVE_TO_WEST_PASSAGE, GondowanCave, GONDOWAN_CAVE_WEST_PASSAGE_FROM_EAST_CAVE),
+    SCENE_EXIT(GONDOWAN_CAVE_WEST_PASSAGE_TO_EAST_CAVE, GondowanCave, GONDOWAN_CAVE_FROM_WEST_PASSAGE),
+    SCENE_EXIT(GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_SOUTH, GondowanCaveRiver, GONDOWAN_CAVE_RIVER_FROM_GONDOWAN_CAVE_SOUTH),
+    SCENE_EXIT(GONDOWAN_CAVE_TO_WORLD_MAP_WEST, WorldMap, WORLD_MAP_FROM_GONDOWAN_CAVE_SOUTH),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gGondowanCaveObjectEventTemplatesOther[] = {
@@ -685,8 +685,8 @@ struct MapEvent gGondowanCaveEventsOther[] = {
 };
 
 struct MapEvent gGondowanPassageEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_NORTH },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_SOUTH },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_NORTH },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_SOUTH },
     { MAP_EVENT_TALK, LOCALID_FIRST_SOLDIER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SoldierAsksAboutCrossing) },
     { MAP_EVENT_TALK, LOCALID_SECOND_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveUsWereTheSoldiersWhoGuard) },
     { MAP_EVENT_TALK, LOCALID_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEvenIfYouHeadEastYou) },
@@ -699,8 +699,8 @@ struct MapEvent gGondowanPassageEvents[] = {
 };
 
 struct MapEvent gGondowanPassageEventsWithIodem[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_NORTH },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_SOUTH },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_NORTH },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_SOUTH },
     { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IodemAsksWhyTurningBack) },
     { MAP_EVENT_COORD, 11, FLAG_IODEM_FOLLOWING_PARTY, EVENT_SCRIPT(EventScript_IodemRejoins) },
     { MAP_EVENT_TALK, LOCALID_FIRST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWhyWouldIodemChooseToWait) },
@@ -717,10 +717,10 @@ struct MapEvent gGondowanPassageEventsWithIodem[] = {
 };
 
 struct MapEvent gGondowanCaveRiverEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_NORTH },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, GONDOWAN_CAVE_RIVER_TO_BOULDER_PASSAGE },
-    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, GONDOWAN_CAVE_RIVER_BOULDER_PASSAGE_TO_RIVER },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_SOUTH },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_NORTH },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_CAVE_RIVER_TO_BOULDER_PASSAGE },
+    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, GONDOWAN_CAVE_RIVER_BOULDER_PASSAGE_TO_RIVER },
+    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_SOUTH },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_LIFT), LOCALID_RIVER_BOULDER, CONDITION_ALWAYS, 0 },
     { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_GONDOWAN_CAVE_APPLE, FIND_ITEM(ITEM_APPLE) },
     { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_GONDOWAN_CAVE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
@@ -730,11 +730,11 @@ struct MapEvent gGondowanCaveRiverEvents[] = {
 /// FLAG_SCENE_TEMP_05 ends Move on the pillar.
 struct MapEvent gGondowanCaveEvents[] = {
     { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToWorldMapEast) },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_NORTH },
-    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_WEST_PASSAGE },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, GONDOWAN_CAVE_WEST_PASSAGE_TO_EAST_CAVE },
-    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_SOUTH },
-    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_WORLD_MAP_WEST },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_NORTH },
+    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_WEST_PASSAGE },
+    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, GONDOWAN_CAVE_WEST_PASSAGE_TO_EAST_CAVE },
+    { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_SOUTH },
+    { MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_WORLD_MAP_WEST },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_LIFT), LOCALID_BOULDER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LiftBoulder) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_STUMP, FLAG_GONDOWAN_CAVE_STUMP_MOVED, EVENT_SCRIPT(EventScript_MoveStump) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_PILLAR, FLAG_SCENE_TEMP_05, EVENT_SCRIPT(EventScript_MovePillar) },

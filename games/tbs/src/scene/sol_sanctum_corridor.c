@@ -2,7 +2,7 @@
 /// Sol Sanctum (SceneId_SolSanctumCorridor), a passage that joins two rooms of
 /// SceneId_SolSanctumReliefs (sol_sanctum_entrance.c).
 ///
-/// It places nobody and has no events but its two warps, one at each end:
+/// It places nobody and has no events but its two exits, one at each end:
 /// SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_WEST leads into the room
 /// with the chest and SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST into
 /// the room with the stepping stones. Its setup, SolSanctumRooms_Initialize
@@ -29,27 +29,27 @@
 
 #include "script_layer.h"
 
-const struct MapWarpDest *Scene_GetWarpDests(void) {
-  return gSolSanctumCorridorWarpDests;
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gSolSanctumCorridorEntrances;
 }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Scene_GetWarps(void) { return gSolSanctumCorridorWarps; }
+const u32 *Scene_GetExits(void) { return gSolSanctumCorridorExits; }
 
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   return gSolSanctumCorridorObjectEventTemplates;
 }
 
-/// Returns the passage's two warps, its only events.
+/// Returns the passage's two exits, its only events.
 const struct MapEvent *Scene_GetEvents(void) {
   return gSolSanctumCorridorEvents;
 }
 
 #include "common/sol_sanctum_init_zoom.h"
 
-struct MapWarpDest gSolSanctumCorridorWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gSolSanctumCorridorEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_EAST, CONDITION_ALWAYS, 727,
      0, 92, FACING_NORTH, 0, -1, -1, -1, -1, 0},
@@ -58,15 +58,15 @@ struct MapWarpDest gSolSanctumCorridorWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gSolSanctumCorridorWarps[] = {
-    MAP_WARPS(SolSanctumCorridor),
-    MAP_WARP(SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST,
-             SolSanctumReliefs,
-             SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_EAST),
-    MAP_WARP(SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_WEST,
-             SolSanctumReliefs,
-             SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST),
-    MAP_WARPS_END,
+u32 gSolSanctumCorridorExits[] = {
+    SCENE_EXITS(SolSanctumCorridor),
+    SCENE_EXIT(SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST,
+               SolSanctumReliefs,
+               SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_EAST),
+    SCENE_EXIT(SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_WEST,
+               SolSanctumReliefs,
+               SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gSolSanctumCorridorObjectEventTemplates[] = {
@@ -74,9 +74,9 @@ struct ObjectEventTemplate gSolSanctumCorridorObjectEventTemplates[] = {
 };
 
 struct MapEvent gSolSanctumCorridorEvents[] = {
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS,
      SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST},
-    {MAP_EVENT_WARP, 2, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS,
      SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_WEST},
     {MAP_EVENTS_END},
 };

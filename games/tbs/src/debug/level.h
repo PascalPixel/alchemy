@@ -11,6 +11,6 @@
 
 void Import_ObjectEventSetAnimation();
 void Import_ObjectEventSetPosition(u32 localId, s32 x, s32 z);
-void Import_ScriptRequestWarp();
+void Import_ScriptRequestExit();
 
 #endif

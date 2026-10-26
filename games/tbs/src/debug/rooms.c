@@ -33,12 +33,12 @@ enum TestRoomsLocalId {
   LOCALID_GUST
 };
 
-u8 *TestRoom_GetWarpDests(void) { return (u8 *)gTestRoom_WarpDests; }
+u8 *TestRoom_GetEntrances(void) { return (u8 *)gTestRoom_Entrances; }
 
-/// The room has no warp regions: its regions entry returns none.
-s32 Scene_GetWarpRegions(void) { return 0; }
+/// The room has no exit regions: its regions entry returns none.
+s32 Scene_GetExitRegions(void) { return 0; }
 
-u8 *TestRoom_GetWarps(void) { return (u8 *)gTestRoom_Warps; }
+u8 *TestRoom_GetExits(void) { return (u8 *)gTestRoom_Exits; }
 
 /// Places one Djinni of each element in the test room, Flint, Fizz, Forge and
 /// Gust, each placed while its caught flag (the template's condition)
@@ -86,7 +86,7 @@ s32 TestRoom_Initialize(void) { return 0; }
 /// same 56 words (gDebugItemPromptHead, test.c), and no other data in the ROM
 /// has their layout. Overlay data is reached only through the room's entries,
 /// and none returns them.
-u32 gTestRoom_WarpDestsHead[] = {
+u32 gTestRoom_EntrancesHead[] = {
     0x500050, 0, 80,  0x500000, 0x10003, 2, 0,
     0x780078, 0, 120, 0x780000, 0x10003, 2, 0,
     0x28003c, 0, 128, 0x800000, 0x10002, 1, 0,
@@ -97,14 +97,14 @@ u32 gTestRoom_WarpDestsHead[] = {
     0x800080, 0, 128, 0x800000, 0x20003, 1, 0,
 };
 
-struct MapWarpDest gTestRoom_WarpDests[] = {
+struct SceneEntrance gTestRoom_Entrances[] = {
     {0, CONDITION_ALWAYS, 192, 0, 192, FACING_WEST, 0, -1, -1, -1, -1, 0},
     {MAP_TABLE_END},
 };
 
-u32 gTestRoom_Warps[] = {
-    MAP_WARPS(TestRoom0), MAP_WARPS(TestRoom1), MAP_WARPS(TestRoom2),
-    MAP_WARPS(TestRoom3), MAP_WARPS_END,
+u32 gTestRoom_Exits[] = {
+    SCENE_EXITS(TestRoom0), SCENE_EXITS(TestRoom1), SCENE_EXITS(TestRoom2),
+    SCENE_EXITS(TestRoom3), SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gTestRoom_ObjectEventTemplates[] = {

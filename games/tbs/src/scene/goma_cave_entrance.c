@@ -119,13 +119,13 @@ static void GomaCaveEntrance_SayThenWait(s32 localId, s32 frames) {
   FieldScript_WaitFrames(frames);
 }
 
-const struct MapWarpDest *Scene_GetWarpDests(void) {
-  return gGomaCaveEntranceWarpDests;
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gGomaCaveEntranceEntrances;
 }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Scene_GetWarps(void) { return gGomaCaveEntranceWarps; }
+const u32 *Scene_GetExits(void) { return gGomaCaveEntranceExits; }
 
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   return gGomaCaveEntranceObjectEventTemplates;
@@ -688,8 +688,8 @@ s32 gGomaCaveEntranceTallIvyScript[] = {
     SC_END,
 };
 
-struct MapWarpDest gGomaCaveEntranceWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 192, 0, 197, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gGomaCaveEntranceEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 192, 0, 197, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {GOMA_CAVE_ENTRANCE_FROM_WORLD_MAP, CONDITION_ALWAYS, 96, 0, 440,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
@@ -698,13 +698,13 @@ struct MapWarpDest gGomaCaveEntranceWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gGomaCaveEntranceWarps[] = {
-    MAP_WARPS(GomaCaveEntrance),
-    MAP_WARP(GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM, GomaCaveStream,
-             GOMA_CAVE_STREAM_FROM_GOMA_CAVE_ENTRANCE),
-    MAP_WARP(GOMA_CAVE_ENTRANCE_TO_WORLD_MAP, WorldMap,
-             WORLD_MAP_FROM_GOMA_CAVE_ENTRANCE),
-    MAP_WARPS_END,
+u32 gGomaCaveEntranceExits[] = {
+    SCENE_EXITS(GomaCaveEntrance),
+    SCENE_EXIT(GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM, GomaCaveStream,
+               GOMA_CAVE_STREAM_FROM_GOMA_CAVE_ENTRANCE),
+    SCENE_EXIT(GOMA_CAVE_ENTRANCE_TO_WORLD_MAP, WorldMap,
+               WORLD_MAP_FROM_GOMA_CAVE_ENTRANCE),
+    SCENE_EXITS_END,
 };
 
 // clang-format off
@@ -735,8 +735,8 @@ struct ObjectEventTemplate gGomaCaveEntranceObjectEventTemplates[] = {
 };
 
 struct MapEvent gGomaCaveEntranceEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, GOMA_CAVE_ENTRANCE_TO_WORLD_MAP },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, GOMA_CAVE_ENTRANCE_TO_WORLD_MAP },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWestPillar) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWestPillar) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_STUMP, FLAG_GOMA_CAVE_IVAN_JOINED, EVENT_SCRIPT(EventScript_IvanRejoins) },

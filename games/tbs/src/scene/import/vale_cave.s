@@ -37,7 +37,7 @@
 	.set import.FieldCamera_FollowObjectEvent, 1
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_WaitForArrival, 1
-	.set import.Import_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestExit, 1
 	.set import.Djinn_JoinParty, 1
 	.set import.Scene_PlayQueuedMusic, 1
 	.set import.Sound_PlaySong, 1

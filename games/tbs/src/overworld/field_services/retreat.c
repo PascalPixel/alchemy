@@ -103,8 +103,8 @@ void FieldEffect_UpdateRadialLaunch(struct FieldEffectSprite *effect) {
 /// cycling, spins up for 70 frames (FieldEffect_UpdateSpinAngle), then rises
 /// and shrinks out of sight (FieldEffect_UpdateDescendingObject) as the
 /// particles fly. It is hidden, not released, and the effect opens a script
-/// (FieldScript_Start) it does not end: the Retreat warp raised before it
-/// (WARP_RETREAT, by Field_UsePsynergy or Field_UseItem) then leaves the map.
+/// (FieldScript_Start) it does not end: the Retreat exit raised before it
+/// (EXIT_RETREAT, by Field_UsePsynergy or Field_UseItem) then leaves the map.
 /// Called by FieldEffect_Run and FieldEffect_DispatchRequestKind.
 void FieldEffect_RunRetreat(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;

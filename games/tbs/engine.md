@@ -85,7 +85,7 @@ each other, and code several scenes need is copied into each.
 An overlay meets the rest of the game at two tables. At its start, the
 [entry table](glossary.md#entry-table-and-import-table) holds the six
 questions the field asks a scene (set yourself up, where can the party arrive,
-where do the warps lead, who stands here, what happens here, which areas lead
+where do the exits lead, who stands here, what happens here, which areas lead
 out). At its end, the import table holds one entrance for each function of
 the main image the scene calls, so the scene need not know where those functions
 are, only the entrances, which stay put.
@@ -114,13 +114,13 @@ and [the driver's ident](src/sound/README.md#the-drivers-ident).
 
 ## Debug rooms
 
-![With debug mode switched on, Start pressed with B held in Vale opens a one-line window naming a scene; Left steps the number down past the World Map and the title screen and round to the menu test room, and A warps there, and the test room's people stand on a black floor](https://alchemy.pascalpixel.com/guides/engine/debug-select.gif)
+![With debug mode switched on, Start pressed with B held in Vale opens a one-line window naming a scene; Left steps the number down past the World Map and the title screen and round to the menu test room, and An exits there, and the test room's people stand on a black floor](https://alchemy.pascalpixel.com/guides/engine/debug-select.gif)
 
 The cartridge keeps three test rooms no player can walk into: one that hands
 out [Djinn](glossary.md#djinn), one for raising levels and browsing items,
 and one of shop and message tests. Only the debug scene selector reaches them,
 and only in debug mode, which the released game never turns on. The selector
-warps to any scene by number; the field opens it when Start is pressed with B
+exits to any scene by number; the field opens it when Start is pressed with B
 held. Each room is an ordinary scene overlay, so the rooms are the smallest
 complete examples of a scene.
 [Debug rooms](src/debug/README.md#how-the-rooms-are-reached) goes through

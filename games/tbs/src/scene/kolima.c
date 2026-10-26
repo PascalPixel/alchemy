@@ -30,7 +30,7 @@
 /// - Kolima Tunnel (SceneId_KolimaTunnel), a passage with no one in it from
 ///   one of the houses (LOG_ROOMS_C_FROM_KOLIMA_TUNNEL) to the village
 ///   (KOLIMA_FROM_KOLIMA_TUNNEL). It shares the village's event table, whose
-///   warps KOLIMA_TO_WORLD_MAP and KOLIMA_TO_WORLD_MAP_EAST are, by the same
+///   exits KOLIMA_TO_WORLD_MAP and KOLIMA_TO_WORLD_MAP_EAST are, by the same
 ///   numbers, its two ways out (KOLIMA_TUNNEL_TO_LOG_ROOMS_C and
 ///   KOLIMA_TUNNEL_TO_KOLIMA). That table's two jars, an Apple and an Herb
 ///   (bg events 100 and 101), are in the village: only Kolima's layout
@@ -270,34 +270,34 @@ static s32 Kolima_UpdateFallingDebris(struct Object *interpreter) {
 
 #include "common/object_facing.h"
 
-/// Selects the warp destinations of Kolima, Kolima Tunnel or Kolima Bridge.
-const struct MapWarpDest *Kolima_GetWarpDests(void) {
+/// Selects the entrances of Kolima, Kolima Tunnel or Kolima Bridge.
+const struct SceneEntrance *Kolima_GetEntrances(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_KolimaBridge) {
-    return gKolimaBridgeWarpDests;
+    return gKolimaBridgeEntrances;
   }
   if (sceneId == (s32)&SceneId_KolimaTunnel) {
-    return gKolimaTunnelWarpDests;
+    return gKolimaTunnelEntrances;
   }
-  return gKolimaWarpDests;
+  return gKolimaEntrances;
 }
 
 /// Only Kolima Tunnel has regions: its two ways out,
 /// KOLIMA_TUNNEL_TO_LOG_ROOMS_C and KOLIMA_TUNNEL_TO_KOLIMA.
-const struct MapWarpRegion *Kolima_GetRegions(void) {
+const struct SceneExitRegion *Kolima_GetRegions(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_KolimaTunnel) {
     return gKolimaTunnelRegions;
   }
   return 0;
 }
 
-/// The warps of all three maps, each map's after its header word (a warp
+/// The exits of all three maps, each map's after its header word (an exit
 /// of kind 0): Kolima's to the world map, the houses (SceneId_LogRoomsC)
 /// and Kolima
 /// Tunnel, Kolima Bridge's to the world map, and Kolima Tunnel's to a house
 /// and the village.
-const u32 *Kolima_GetWarps(void) { return gKolimaWarps; }
+const u32 *Kolima_GetExits(void) { return gKolimaExits; }
 
 /// Selects the people of Kolima or Kolima Bridge; Kolima Tunnel has none. In
 /// Kolima the villagers are trees until the curse is lifted.
@@ -347,19 +347,19 @@ const struct MapEvent *Kolima_GetEvents(void) {
   return gKolimaEvents;
 }
 
-/// Walks the leader north through a door of Kolima into the warp of the same
+/// Walks the leader north through a door of Kolima into the exit of the same
 /// number.
-static void Kolima_WalkThroughExit(s32 warpNumber) {
+static void Kolima_WalkThroughExit(s32 exitNumber) {
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -8);
   gFieldWork->transitionFrames = 16;
-  Import_ScriptRequestWarp(warpNumber);
+  Import_ScriptRequestExit(exitNumber);
 }
 
 /// Kolima: walking into one of the five doorways into the houses and shops,
-/// whose coord events are the numbers of the warps they take (KOLIMA_TO_INN to
+/// whose coord events are the numbers of the exits they take (KOLIMA_TO_INN to
 /// KOLIMA_TO_HOUSE_NORTH). The door sound plays; the four entered walking
 /// north open their door (gKolima_DoorCells) and the leader walks in, while
 /// KOLIMA_TO_HOUSE_NORTH, entered walking south, has no door to draw.
@@ -392,7 +392,7 @@ static void Kolima_EnterDoor(void) {
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
     ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, 0, 8);
     gFieldWork->transitionFrames = 16;
-    Import_ScriptRequestWarp(KOLIMA_TO_HOUSE_NORTH);
+    Import_ScriptRequestExit(KOLIMA_TO_HOUSE_NORTH);
     FieldScript_End();
     return;
   }
@@ -547,7 +547,7 @@ s32 Kolima_Initialize(void) {
   }
 
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_WITNESSED) == 0) {
-    if (gSaveBlock.warpDest == KOLIMA_FROM_WORLD_MAP) {
+    if (gSaveBlock.entrance == KOLIMA_FROM_WORLD_MAP) {
       Kolima_WitnessForestCurse();
     }
   }
@@ -1813,9 +1813,9 @@ u16 gKolima_DoorCells[] = {
     MAPGRID_ANIMATION_STEPS_END,
 };
 
-/// Kolima's warp destinations. No warp leads to warp destinations 2, 10 and 12;
-/// warp destination 10 puts the party where KOLIMA_FROM_WORLD_MAP does.
-struct MapWarpDest gKolimaWarpDests[] = {
+/// Kolima's entrances. No exit leads to entrances 2, 10 and 12;
+/// entrance 10 puts the party where KOLIMA_FROM_WORLD_MAP does.
+struct SceneEntrance gKolimaEntrances[] = {
     {0, CONDITION_ALWAYS, 232, 0, 120, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {KOLIMA_FROM_WORLD_MAP, CONDITION_ALWAYS, 44, 0, 267, FACING_EAST, 0, -1,
      -1, -1, -1, 0},
@@ -1837,7 +1837,7 @@ struct MapWarpDest gKolimaWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gKolimaBridgeWarpDests[] = {
+struct SceneEntrance gKolimaBridgeEntrances[] = {
     {KOLIMA_BRIDGE_FROM_WORLD_MAP_SOUTH, CONDITION_ALWAYS, 170, 0, 386,
      FACING_NORTH, 0, 0, 0, 288, 416, 0},
     {KOLIMA_BRIDGE_FROM_WORLD_MAP_NORTH, CONDITION_ALWAYS, 168, 0, 50,
@@ -1845,7 +1845,7 @@ struct MapWarpDest gKolimaBridgeWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gKolimaTunnelWarpDests[] = {
+struct SceneEntrance gKolimaTunnelEntrances[] = {
     {KOLIMA_TUNNEL_FROM_LOG_ROOMS_C, CONDITION_ALWAYS, 216, 0, 320,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {KOLIMA_TUNNEL_FROM_KOLIMA, CONDITION_ALWAYS, 312, 0, 312, FACING_SOUTH, 0,
@@ -1854,31 +1854,31 @@ struct MapWarpDest gKolimaTunnelWarpDests[] = {
 };
 
 // clang-format off
-struct MapWarpRegion gKolimaTunnelRegions[] = {
+struct SceneExitRegion gKolimaTunnelRegions[] = {
     {207, 31, 311, 225, 49, 329, -1, 1},
     {303, 31, 303, 321, 49, 321, -1, 2},
     {-1, 0, 0, 0, 0, 0, 0, 0},
 };
 
-/// Kolima's warps, then Kolima Bridge's (from the header word for SceneId_KolimaBridge)
+/// Kolima's exits, then Kolima Bridge's (from the header word for SceneId_KolimaBridge)
 /// and Kolima Tunnel's (from the one for SceneId_KolimaTunnel).
-u32 gKolimaWarps[] = {
-    MAP_WARPS(Kolima),
-    MAP_WARP(KOLIMA_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_KOLIMA_WEST),
-    MAP_WARP(KOLIMA_TO_WORLD_MAP_EAST, WorldMap, WORLD_MAP_FROM_KOLIMA_EAST),
-    MAP_WARP(KOLIMA_TO_INN, LogRoomsC, LOG_ROOMS_C_INN_FROM_KOLIMA),
-    MAP_WARP(KOLIMA_TO_ITEM_SHOP, LogRoomsC, LOG_ROOMS_C_ITEM_SHOP_FROM_KOLIMA),
-    MAP_WARP(KOLIMA_TO_HOUSE_SOUTH, LogRoomsC, LOG_ROOMS_C_HOUSE_FROM_KOLIMA_SOUTH),
-    MAP_WARP(KOLIMA_TO_WEAPON_AND_ARMOR_SHOP, LogRoomsC, LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_FROM_KOLIMA),
-    MAP_WARP(KOLIMA_TO_HOUSE_NORTH, LogRoomsC, LOG_ROOMS_C_HOUSE_FROM_KOLIMA_NORTH),
-    MAP_WARP(KOLIMA_TO_KOLIMA_TUNNEL, KolimaTunnel, KOLIMA_TUNNEL_FROM_KOLIMA),
-    MAP_WARPS(KolimaBridge),
-    MAP_WARP(KOLIMA_BRIDGE_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_KOLIMA_BRIDGE_EAST),
-    MAP_WARP(KOLIMA_BRIDGE_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_KOLIMA_BRIDGE_WEST),
-    MAP_WARPS(KolimaTunnel),
-    MAP_WARP(KOLIMA_TUNNEL_TO_LOG_ROOMS_C, LogRoomsC, LOG_ROOMS_C_FROM_KOLIMA_TUNNEL),
-    MAP_WARP(KOLIMA_TUNNEL_TO_KOLIMA, Kolima, KOLIMA_FROM_KOLIMA_TUNNEL),
-    MAP_WARPS_END,
+u32 gKolimaExits[] = {
+    SCENE_EXITS(Kolima),
+    SCENE_EXIT(KOLIMA_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_KOLIMA_WEST),
+    SCENE_EXIT(KOLIMA_TO_WORLD_MAP_EAST, WorldMap, WORLD_MAP_FROM_KOLIMA_EAST),
+    SCENE_EXIT(KOLIMA_TO_INN, LogRoomsC, LOG_ROOMS_C_INN_FROM_KOLIMA),
+    SCENE_EXIT(KOLIMA_TO_ITEM_SHOP, LogRoomsC, LOG_ROOMS_C_ITEM_SHOP_FROM_KOLIMA),
+    SCENE_EXIT(KOLIMA_TO_HOUSE_SOUTH, LogRoomsC, LOG_ROOMS_C_HOUSE_FROM_KOLIMA_SOUTH),
+    SCENE_EXIT(KOLIMA_TO_WEAPON_AND_ARMOR_SHOP, LogRoomsC, LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_FROM_KOLIMA),
+    SCENE_EXIT(KOLIMA_TO_HOUSE_NORTH, LogRoomsC, LOG_ROOMS_C_HOUSE_FROM_KOLIMA_NORTH),
+    SCENE_EXIT(KOLIMA_TO_KOLIMA_TUNNEL, KolimaTunnel, KOLIMA_TUNNEL_FROM_KOLIMA),
+    SCENE_EXITS(KolimaBridge),
+    SCENE_EXIT(KOLIMA_BRIDGE_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_KOLIMA_BRIDGE_EAST),
+    SCENE_EXIT(KOLIMA_BRIDGE_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_KOLIMA_BRIDGE_WEST),
+    SCENE_EXITS(KolimaTunnel),
+    SCENE_EXIT(KOLIMA_TUNNEL_TO_LOG_ROOMS_C, LogRoomsC, LOG_ROOMS_C_FROM_KOLIMA_TUNNEL),
+    SCENE_EXIT(KOLIMA_TUNNEL_TO_KOLIMA, Kolima, KOLIMA_FROM_KOLIMA_TUNNEL),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gKolimaTunnelObjectEventTemplates[] = {
@@ -1966,23 +1966,23 @@ struct ObjectEventTemplate gKolimaBridgeObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-/// The map events Kolima and Kolima Tunnel share: the warps and doorways, the
+/// The map events Kolima and Kolima Tunnel share: the exits and doorways, the
 /// villagers' words once the curse is lifted and their thoughts before and
-/// after, the healer, Granite and two jars. Warps 1 and 2, which cell 99 takes
-/// too, keep their numbers, since each map's warp table gives them its own
+/// after, the healer, Granite and two jars. Exits 1 and 2, which cell 99 takes
+/// too, keep their numbers, since each map's exit table gives them its own
 /// doors: KOLIMA_TO_WORLD_MAP and KOLIMA_TO_WORLD_MAP_EAST in Kolima,
 /// KOLIMA_TUNNEL_TO_LOG_ROOMS_C and KOLIMA_TUNNEL_TO_KOLIMA in Kolima
 /// Tunnel.
 struct MapEvent gKolimaEvents[] = {
-    { MAP_EVENT_WARP, 99, CONDITION_ALWAYS, 1 },
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, 1 },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, 2 },
+    { MAP_EVENT_EXIT, 99, CONDITION_ALWAYS, 1 },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
-    { MAP_EVENT_WARP, 10, CONDITION_ALWAYS, KOLIMA_TO_KOLIMA_TUNNEL },
+    { MAP_EVENT_EXIT, 10, CONDITION_ALWAYS, KOLIMA_TO_KOLIMA_TUNNEL },
     { MAP_EVENT_TALK, LOCALID_YOUNG_MAN_VILLAGE_OF_LUMBERJACKS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaThisIsKolimaVillageOfLumberjacks) },
     { MAP_EVENT_TALK, LOCALID_VILLAGER_RELYING_ON_FORESTS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaWeRelyOnTheForestsSo) },
     { MAP_EVENT_TALK, LOCALID_VILLAGER_TIME_TO_THINK, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaYouKnowBeingATreeGives) },
@@ -2018,8 +2018,8 @@ struct MapEvent gKolimaEvents[] = {
 
 /// Kolima Bridge's map events: its two ends, the bridge's fall and the villager.
 struct MapEvent gKolimaBridgeEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, KOLIMA_BRIDGE_TO_WORLD_MAP_SOUTH },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, KOLIMA_BRIDGE_TO_WORLD_MAP_NORTH },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, KOLIMA_BRIDGE_TO_WORLD_MAP_SOUTH },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, KOLIMA_BRIDGE_TO_WORLD_MAP_NORTH },
     { MAP_EVENT_COORD, 10, FLAG_KOLIMA_BRIDGE_LOWERED, EVENT_SCRIPT(Kolima_LowerBridge) },
     { MAP_EVENT_TALK, LOCALID_BRIDGE_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgKolimaForAWhileIThoughtNo) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_BRIDGE_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgKolimaYouWouldntUnderstandButItsTruly) },

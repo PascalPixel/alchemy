@@ -11,7 +11,7 @@
 /// Sidewalk Stage and another log-rolling area.
 /// ColosseumNavampaMatch_Initialize restores the stages from their temporary
 /// flags (FLAG_PLANT_GROWN to FLAG_LONG_LOG_IN_PLACE, and the stone's column
-/// from FLAG_STONE_COLUMN) and sets up the visit its warp destination
+/// from FLAG_STONE_COLUMN) and sets up the visit its entrance
 /// stands for:
 ///
 /// - COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_NORTH, the tour
@@ -43,7 +43,7 @@
 /// a win also FLAG_WON_COLOSSO. In the event that follows
 /// (ColosseumNavampaMatch_PlayPostBattleReunion), Garet, Ivan and Mia run to
 /// Isaac in the arena, but he falls asleep, exhausted, and they leave him to
-/// sleep; both warps lead to Babi's Palace, where he wakes long after the
+/// sleep; both exits lead to Babi's Palace, where he wakes long after the
 /// finals.
 
 #include "action_script.h"
@@ -306,14 +306,16 @@ static inline void InitializeSelectedObjectEvent(s32 localId) {
 
 extern s32 gColossoParticleCount;
 
-const struct MapWarpDest *ColosseumNavampaMatch_GetWarpDests(void) {
-  return gColosseumNavampaMatchWarpDests;
+const struct SceneEntrance *ColosseumNavampaMatch_GetEntrances(void) {
+  return gColosseumNavampaMatchEntrances;
 }
 
-const struct MapWarpRegion *ColosseumNavampaMatch_GetRegions(void) { return 0; }
+const struct SceneExitRegion *ColosseumNavampaMatch_GetRegions(void) {
+  return 0;
+}
 
-const u32 *ColosseumNavampaMatch_GetWarps(void) {
-  return gColosseumNavampaMatchWarps;
+const u32 *ColosseumNavampaMatch_GetExits(void) {
+  return gColosseumNavampaMatchExits;
 }
 
 const struct ObjectEventTemplate *
@@ -913,12 +915,12 @@ UNUSED static void ColosseumNavampaMatch_UnusedWarriorTalk(s32 warriorId) {
   struct FieldWork *work;
   s32 localId;
   s32 messageOffset;
-  s32 warpDest;
+  s32 entrance;
 
   work = gFieldWork;
   localId = gSaveBlock.leaderLocalId;
-  warpDest = gSaveBlock.warpDest;
-  if (warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  entrance = gSaveBlock.entrance;
+  if (entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     FieldScript_Start();
     messageOffset = warriorId * 3;
     FieldScript_SetMessageId(messageOffset + MsgColossoDidntThinkBattles);
@@ -1178,9 +1180,9 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   Colosso_ShowItemIcon(LOCALID_PRIZE_B, ITEM_HUNTERS_SWORD);
   ObjectEvent_ConfigureSpriteColor(LOCALID_OPPONENT, SPRITE_COLOR_RBG);
 
-  // Warp destinations: the race (1), the friends' turns, the tour, and the end
+  // Entrances: the race (1), the friends' turns, the tour, and the end
   // of Colosso after a win (4) or a loss (5).
-  switch (gSaveBlock.warpDest) {
+  switch (gSaveBlock.entrance) {
   case COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND:
     Colosso_StartRaceGauge(LOCALID_PARTY_LEADER, LOCALID_OPPONENT, 6,
                            PIXELS(1512), PIXELS(192), LOCALID_PRIZE_A,
@@ -1229,14 +1231,14 @@ s32 ColosseumNavampaMatch_Initialize(void) {
 
   case COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON:
     ColosseumNavampaMatch_PlayPostBattleReunion(1);
-    Import_ScriptRequestWarp(COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE);
+    Import_ScriptRequestExit(COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE);
     GameFlag_Set(FLAG_COLOSSO_OVER);
     GameFlag_Set(FLAG_WON_COLOSSO);
     break;
 
   case COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_LOST:
     ColosseumNavampaMatch_PlayPostBattleReunion(-1);
-    Import_ScriptRequestWarp(COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE_LOST);
+    Import_ScriptRequestExit(COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE_LOST);
     GameFlag_Set(FLAG_COLOSSO_OVER);
     break;
   }
@@ -1608,7 +1610,7 @@ static void EventScript_TalkToScalesAttendant(s32 guideId) {
   struct ObjectEvent *eastPanAgain;
   s32 promptResult;
 
-  if (gSaveBlock.warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gSaveBlock.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
     return;
   }
@@ -1672,7 +1674,7 @@ static void EventScript_TalkToSteppingStoneAttendant(s32 guideId) {
   s32 promptResult;
   s32 x;
 
-  if (gSaveBlock.warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gSaveBlock.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
     return;
   }
@@ -1728,7 +1730,7 @@ static void EventScript_TalkToWallWedgeAttendant(s32 guideId) {
   struct FieldWork *work;
   s32 promptResult;
 
-  if (gSaveBlock.warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gSaveBlock.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
     FieldScript_Start();
@@ -1791,7 +1793,7 @@ static void EventScript_TalkToFreeClimbAttendant(s32 guideId) {
   s32 raisedHeight;
   s32 shiftedX;
 
-  if (gSaveBlock.warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gSaveBlock.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
     FieldScript_Start();
@@ -1887,7 +1889,7 @@ static void EventScript_TalkToMovingSidewalkAttendant(s32 guideId) {
   s32 result;
   struct ObjectEvent *objectEvent;
 
-  if (gSaveBlock.warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gSaveBlock.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
     FieldScript_Start();
@@ -1955,7 +1957,7 @@ static void EventScript_TalkToMovingSidewalkAttendant(s32 guideId) {
 static void EventScript_TalkToLogRollingAttendant(s32 localId) {
   s32 state;
 
-  if (gSaveBlock.warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gSaveBlock.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(localId);
     return;
   }
@@ -1992,7 +1994,7 @@ static void EventScript_TalkToLogRollingAttendant(s32 localId) {
   FieldScript_End();
 }
 
-// This map's warps for colosso_solo.h.
+// This map's exits for colosso_solo.h.
 #define COLOSSO_SOLO_TO_RACE COLOSSEUM_NAVAMPA_MATCH_LEND_A_HAND_TO_RACE
 #define COLOSSO_SOLO_TO_COLOSSEUM COLOSSEUM_NAVAMPA_MATCH_TO_COLOSSEUM
 #include "common/colosso_solo.h"
@@ -2507,8 +2509,8 @@ u32 gPushedObject_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),
 };
 
-struct MapWarpDest gColosseumNavampaMatchWarpDests[] = {
-    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gColosseumNavampaMatchEntrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH, CONDITION_ALWAYS, 136, 0, 392, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -2516,13 +2518,13 @@ struct MapWarpDest gColosseumNavampaMatchWarpDests[] = {
     { MAP_TABLE_END },
 };
 
-u32 gColosseumNavampaMatchWarps[] = {
-    MAP_WARPS(ColosseumNavampaMatch),
-    MAP_WARP(COLOSSEUM_NAVAMPA_MATCH_LEND_A_HAND_TO_RACE, ColosseumNavampaMatch, COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND),
-    MAP_WARP(COLOSSEUM_NAVAMPA_MATCH_TO_COLOSSEUM, Colosseum, COLOSSEUM_FROM_COLOSSEUM_NAVAMPA_MATCH),
-    MAP_WARP(COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE, BabiPalace, BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH),
-    MAP_WARP(COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE_LOST, BabiPalace, BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH),
-    MAP_WARPS_END,
+u32 gColosseumNavampaMatchExits[] = {
+    SCENE_EXITS(ColosseumNavampaMatch),
+    SCENE_EXIT(COLOSSEUM_NAVAMPA_MATCH_LEND_A_HAND_TO_RACE, ColosseumNavampaMatch, COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND),
+    SCENE_EXIT(COLOSSEUM_NAVAMPA_MATCH_TO_COLOSSEUM, Colosseum, COLOSSEUM_FROM_COLOSSEUM_NAVAMPA_MATCH),
+    SCENE_EXIT(COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE, BabiPalace, BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH),
+    SCENE_EXIT(COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE_LOST, BabiPalace, BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gColosseumNavampaMatchObjectEventTemplates[] = {

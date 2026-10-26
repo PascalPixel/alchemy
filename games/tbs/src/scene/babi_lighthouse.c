@@ -3,7 +3,7 @@
 /// Lighthouse, entered from the world map; SceneId_BabiLighthouseEntry is the
 /// Babi Lighthouse Entry; SceneId_BabiLighthouseLuff and
 /// SceneId_BabiLighthouseStoneDoor are both Babi Lighthouse. The four share one
-/// warp table, the other getters choose by gSaveBlock.sceneId with the road as
+/// exit table, the other getters choose by gSaveBlock.sceneId with the road as
 /// the fallback, and BabiLighthouse_SetupMap restores the map being
 /// entered. Retreat anywhere but on the road leads back to the Entry.
 ///
@@ -20,7 +20,7 @@
 /// sprout into a vine (FLAG_GROWTH_PASSAGE_OPEN). Two of Babi's soldiers, a
 /// strongman and a bald, muscular man lie trembling on the ground
 /// (gBabiLighthouse_TrembleScript), knocked down by the group the party is
-/// following. Three warp regions drop the party to the floor below,
+/// following. Three exit regions drop the party to the floor below,
 /// TunnelRuinsLadyStatues (tunnel_ruins.c), and the way back up comes out
 /// beside the same holes.
 ///
@@ -28,7 +28,7 @@
 /// locked door. Walking south into one of the pits at coord events 25 to 28,
 /// the leader jumps in and drops from above into a lower room, where he either
 /// lands in dust (BabiLighthouse_LandWithParticles) or falls on through
-/// another hole to the room below that (BabiLighthouse_FallToWarp). Luff, a
+/// another hole to the room below that (BabiLighthouse_FallToExit). Luff, a
 /// Jupiter Djinni, starts its battle when spoken to.
 ///
 /// BabiLighthouseStoneDoor is the cave before a stone door, and its two
@@ -280,9 +280,9 @@ static void BabiLighthouse_LandWithParticles(void) {
   FieldScript_End();
 }
 
-/// Arriving at one of the drop warp destinations of BabiLighthouseLuff: the
-/// leader drops in and falls on, out through the given warp.
-static void BabiLighthouse_FallToWarp(s32 warp) {
+/// Arriving at one of the drop entrances of BabiLighthouseLuff: the
+/// leader drops in and falls on, out through the given exit.
+static void BabiLighthouse_FallToExit(s32 exit) {
   struct ObjectEvent *leader;
 
   // Start above the room with movement disabled until the fall begins.
@@ -308,36 +308,36 @@ static void BabiLighthouse_FallToWarp(s32 warp) {
   leader->velocityY = -0x50000;
   ObjectEvent_WaitUntilIdle(ObjectEvent_Get(LOCALID_PARTY_LEADER));
   ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  Import_ScriptRequestWarp(warp);
+  Import_ScriptRequestExit(exit);
   FieldScript_End();
 }
 
-const struct MapWarpDest *Scene_GetWarpDests(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_BabiLighthouseEntry) {
-    return gBabiLighthouse_EntryWarpDests;
+    return gBabiLighthouse_EntryEntrances;
   }
   if (sceneId == (s32)&SceneId_BabiLighthouseLuff) {
-    return gBabiLighthouse_LuffWarpDests;
+    return gBabiLighthouse_LuffEntrances;
   }
   if (sceneId == (s32)&SceneId_BabiLighthouseStoneDoor) {
-    return gBabiLighthouse_StoneDoorWarpDests;
+    return gBabiLighthouse_StoneDoorEntrances;
   }
-  return gBabiLighthouse_RoadWarpDests;
+  return gBabiLighthouse_RoadEntrances;
 }
 
 /// Only the Entry has regions: the three spots that drop into the Tunnel
 /// Ruins.
-const struct MapWarpRegion *Scene_GetWarpRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_BabiLighthouseEntry) {
     return gBabiLighthouse_EntryRegions;
   }
   return 0;
 }
 
-/// The four maps share one warp table.
-const u32 *BabiLighthouse_GetWarps(void) { return gBabiLighthouse_Warps; }
+/// The four maps share one exit table.
+const u32 *BabiLighthouse_GetExits(void) { return gBabiLighthouse_Exits; }
 
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
   s16 sceneId = gSaveBlock.sceneId;
@@ -436,7 +436,7 @@ static void BabiLighthouse_JumpIntoPit(void) {
 static void BabiLighthouse_DropFromWestRoomEastPit(void) {
   FieldScript_Start();
   BabiLighthouse_JumpIntoPit();
-  Import_ScriptRequestWarp(
+  Import_ScriptRequestExit(
       BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_EAST);
   FieldScript_End();
 }
@@ -447,7 +447,7 @@ static void BabiLighthouse_DropFromEastRoomPit(void) {
   FieldScript_Start();
   ObjectEvent_PrepareObject(PIXELS(464), 0, PIXELS(290), PIT_MASK);
   BabiLighthouse_JumpIntoPit();
-  Import_ScriptRequestWarp(BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_PIT);
+  Import_ScriptRequestExit(BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_PIT);
   FieldScript_End();
 }
 
@@ -459,7 +459,7 @@ static void BabiLighthouse_DropFromWestRoomSouthwestPit(void) {
   ObjectEvent_PrepareObject(PIXELS(143), 0, PIXELS(290), PIT_MASK);
   ObjectEvent_PrepareObject(PIXELS(121), 0, PIXELS(286), SPRITE_CAPPED_PILLAR);
   BabiLighthouse_JumpIntoPit();
-  Import_ScriptRequestWarp(
+  Import_ScriptRequestExit(
       BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_SOUTHWEST);
   FieldScript_End();
 }
@@ -469,7 +469,7 @@ static void BabiLighthouse_DropFromWestRoomSouthwestPit(void) {
 static void BabiLighthouse_DropFromWestRoomNorthwestPit(void) {
   FieldScript_Start();
   BabiLighthouse_JumpIntoPit();
-  Import_ScriptRequestWarp(
+  Import_ScriptRequestExit(
       BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_NORTHWEST);
   FieldScript_End();
 }
@@ -1347,7 +1347,7 @@ s32 BabiLighthouse_SetupMap(void) {
   state = &gSaveBlock;
   sceneId = state->sceneId;
   if (sceneId != (s32)&SceneId_RoadToBabiLighthouse) {
-    state->retreatWarpDest = 1;
+    state->retreatEntrance = 1;
     state->retreatScene = (s32)&SceneId_BabiLighthouseEntry;
     mapCopy = state->sceneId;
   }
@@ -1372,7 +1372,7 @@ s32 BabiLighthouse_SetupMap(void) {
     ((union ObjectEventOrEffect *)ObjectEvent_GetById(LOCALID_RIGHT_PILLAR))
         ->objectEvent.update = BabiLighthouse_MatchLeaderPriority;
 #endif
-    if (state->warpDest ==
+    if (state->entrance ==
             BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTH &&
         GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       ObjectEvent_SetPosition(LOCALID_RIGHT_PILLAR, PIXELS(312), PIXELS(328));
@@ -1424,12 +1424,12 @@ s32 BabiLighthouse_SetupMap(void) {
     placedObjectEvent->sprite->rotation = 0x8000;
     Import_ObjectEventSetAnimation(LOCALID_FALLEN_MAN_SCORCHED_GROUND, 0);
   } else if (mapCopy == (s32)&SceneId_BabiLighthouseLuff) {
-    // Match the arrival effect and fall to the warp destination used in this
+    // Match the arrival effect and fall to the entrance used in this
     // room.
-    switch (state->warpDest) {
+    switch (state->entrance) {
     case BABI_LIGHTHOUSE_LUFF_FROM_BABI_LIGHTHOUSE_STONE_DOOR_WEST:
       GameFlag_Set(FLAG_BABI_LIGHTHOUSE_BACK_FROM_STONE_DOOR);
-      // Both warp destinations restore the same remembered cell changes.
+      // Both entrances restore the same remembered cell changes.
       // fall through
     case BABI_LIGHTHOUSE_LUFF_LOCKED_DOOR_ROOM_FROM_SOUTH_ROOM:
       if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_BACK_FROM_STONE_DOOR) != 0) {
@@ -1440,19 +1440,19 @@ s32 BabiLighthouse_SetupMap(void) {
     case BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_SOUTHWEST:
       ObjectEvent_PrepareObject(PIXELS(440), 0, PIXELS(290), PIT_MASK);
       MapGrid_CopyCellAttributes(22, 13, 1, 1, 27, 13);
-      BabiLighthouse_FallToWarp(
+      BabiLighthouse_FallToExit(
           BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_FALL_SOUTH);
       break;
     case BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_NORTHWEST:
       ObjectEvent_PrepareObject(PIXELS(448), 0, PIXELS(290), PIT_MASK);
       MapGrid_CopyCellAttributes(22, 12, 1, 1, 28, 10);
-      BabiLighthouse_FallToWarp(
+      BabiLighthouse_FallToExit(
           BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_FALL_NORTH);
       break;
     case BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_FALL_NORTH:
       ObjectEvent_PrepareObject(PIXELS(232), 0, PIXELS(594), PIT_MASK);
       MapGrid_CopyCellAttributes(22, 12, 1, 1, 14, 33);
-      BabiLighthouse_FallToWarp(
+      BabiLighthouse_FallToExit(
           BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_STONE_DOOR_EAST);
       break;
     case BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_EAST:
@@ -1473,7 +1473,7 @@ s32 BabiLighthouse_SetupMap(void) {
     ObjectEvent_SetSpeed(LOCALID_LEFT_DOOR, 0x10000, 0x8000);
     ObjectEvent_SetSpeed(LOCALID_RIGHT_DOOR, 0x10000, 0x8000);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-      if (state->warpDest ==
+      if (state->entrance ==
           BABI_LIGHTHOUSE_STONE_DOOR_FROM_TUNNEL_RUINS_GREAT_STATUE) {
         GameFlag_Set(FLAG_BEYOND_DOOR);
       } else {
@@ -1514,7 +1514,7 @@ s32 BabiLighthouse_SetupMap(void) {
       ObjectEvent_FaceDirection(LOCALID_RIGHT_DOOR, FACING_EAST, 0);
       MapGrid_CopyCellAttributes(81, 14, 4, 1, 17, 14);
     }
-    if (gSaveBlock.warpDest ==
+    if (gSaveBlock.entrance ==
         BABI_LIGHTHOUSE_STONE_DOOR_FROM_BABI_LIGHTHOUSE_LUFF_EAST) {
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
         BabiLighthouse_LandWithParticles();
@@ -1600,8 +1600,8 @@ s32 gBabiLighthouse_TrembleScript[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-struct MapWarpDest gBabiLighthouse_EntryWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 136, 0, 376, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gBabiLighthouse_EntryEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 136, 0, 376, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE, CONDITION_ALWAYS, 200,
      0, 424, FACING_NORTH, 0, 0, 0, 384, 448, 0},
@@ -1618,8 +1618,8 @@ struct MapWarpDest gBabiLighthouse_EntryWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gBabiLighthouse_LuffWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 136, 0, 376, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gBabiLighthouse_LuffEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 136, 0, 376, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_WEST_STEPS,
      CONDITION_ALWAYS, 232, 0, 488, FACING_SOUTH, 0, 128, 432, 368, 672, 0},
@@ -1658,7 +1658,7 @@ struct MapWarpDest gBabiLighthouse_LuffWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gBabiLighthouse_StoneDoorWarpDests[] = {
+struct SceneEntrance gBabiLighthouse_StoneDoorEntrances[] = {
     {BABI_LIGHTHOUSE_STONE_DOOR_FROM_TUNNEL_RUINS_GREAT_STATUE,
      CONDITION_ALWAYS, 248, 0, 120, FACING_SOUTH, 0, 96, 48, 384, 432, 0},
     {BABI_LIGHTHOUSE_STONE_DOOR_FROM_BABI_LIGHTHOUSE_LUFF_WEST,
@@ -1668,8 +1668,8 @@ struct MapWarpDest gBabiLighthouse_StoneDoorWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gBabiLighthouse_RoadWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 328, 0, 240, FACING_NORTH, 0, 0, 0,
+struct SceneEntrance gBabiLighthouse_RoadEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 328, 0, 240, FACING_NORTH, 0, 0, 0,
      464, 400, 0},
     {ROAD_TO_BABI_LIGHTHOUSE_FROM_WORLD_MAP, CONDITION_ALWAYS, 112, 0, 360,
      FACING_NORTH, 0, 0, 0, 464, 400, 0},
@@ -1678,7 +1678,7 @@ struct MapWarpDest gBabiLighthouse_RoadWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpRegion gBabiLighthouse_EntryRegions[] = {
+struct SceneExitRegion gBabiLighthouse_EntryRegions[] = {
     {96, -20, 320, 112, -4, 336, CONDITION_ALWAYS,
      BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_WEST},
     {288, -20, 320, 304, -4, 336, CONDITION_ALWAYS,
@@ -1688,95 +1688,95 @@ struct MapWarpRegion gBabiLighthouse_EntryRegions[] = {
     {MAP_TABLE_END},
 };
 
-u32 gBabiLighthouse_Warps[] = {
-    MAP_WARPS(BabiLighthouseEntry),
-    MAP_WARP(BABI_LIGHTHOUSE_ENTRY_TO_ROAD_TO_BABI_LIGHTHOUSE,
-             RoadToBabiLighthouse,
-             ROAD_TO_BABI_LIGHTHOUSE_FROM_BABI_LIGHTHOUSE_ENTRY),
-    MAP_WARP(BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_LUFF_EAST,
-             BabiLighthouseLuff,
-             BABI_LIGHTHOUSE_LUFF_FROM_BABI_LIGHTHOUSE_ENTRY_EAST),
-    MAP_WARP(BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_LUFF_WEST,
-             BabiLighthouseLuff,
-             BABI_LIGHTHOUSE_LUFF_FROM_BABI_LIGHTHOUSE_ENTRY_WEST),
-    MAP_WARP(BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_WEST,
-             TunnelRuinsLadyStatues,
-             TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_WEST),
-    MAP_WARP(BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_SOUTH,
-             TunnelRuinsLadyStatues,
-             TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_SOUTH),
-    MAP_WARP(BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_NORTH,
-             TunnelRuinsLadyStatues,
-             TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_NORTH),
-    MAP_WARPS(BabiLighthouseLuff),
-    MAP_WARP(BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_STEPS,
-             BabiLighthouseLuff,
-             BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_STEPS),
-    MAP_WARP(BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_ENTRY_EAST,
-             BabiLighthouseEntry,
-             BABI_LIGHTHOUSE_ENTRY_FROM_BABI_LIGHTHOUSE_LUFF_EAST),
-    MAP_WARP(BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_WEST_ROOM_STEPS,
-             BabiLighthouseLuff,
-             BABI_LIGHTHOUSE_LUFF_WEST_ROOM_FROM_EAST_ROOM_STEPS),
-    MAP_WARP(BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_WEST_STEPS,
-             BabiLighthouseLuff,
-             BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_WEST_STEPS),
-    MAP_WARP(BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_EAST_STEPS,
-             BabiLighthouseLuff,
-             BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_EAST_STEPS),
-    MAP_WARP(BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_ENTRY_WEST,
-             BabiLighthouseEntry,
-             BABI_LIGHTHOUSE_ENTRY_FROM_BABI_LIGHTHOUSE_LUFF_WEST),
-    MAP_WARP(BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_EAST_ROOM_WEST_STEPS,
-             BabiLighthouseLuff,
-             BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_SOUTH_ROOM_WEST_STEPS),
-    MAP_WARP(BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_EAST_ROOM_EAST_STEPS,
-             BabiLighthouseLuff,
-             BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_SOUTH_ROOM_EAST_STEPS),
-    MAP_WARP(BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_LOCKED_DOOR_ROOM,
-             BabiLighthouseLuff,
-             BABI_LIGHTHOUSE_LUFF_LOCKED_DOOR_ROOM_FROM_SOUTH_ROOM),
-    MAP_WARP(BABI_LIGHTHOUSE_LUFF_LOCKED_DOOR_ROOM_TO_SOUTH_ROOM,
-             BabiLighthouseLuff,
-             BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_LOCKED_DOOR_ROOM),
-    MAP_WARP(BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_EAST,
-             BabiLighthouseLuff,
-             BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_EAST),
-    MAP_WARP(BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_PIT,
-             BabiLighthouseLuff,
-             BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_PIT),
-    MAP_WARP(BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_SOUTHWEST,
-             BabiLighthouseLuff,
-             BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_SOUTHWEST),
-    MAP_WARP(BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_FALL_SOUTH,
-             BabiLighthouseLuff,
-             BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_FALL_SOUTH),
-    MAP_WARP(BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_NORTHWEST,
-             BabiLighthouseLuff,
-             BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_NORTHWEST),
-    MAP_WARP(BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_FALL_NORTH,
-             BabiLighthouseLuff,
-             BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_FALL_NORTH),
-    MAP_WARP(BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_STONE_DOOR_EAST,
-             BabiLighthouseStoneDoor,
-             BABI_LIGHTHOUSE_STONE_DOOR_FROM_BABI_LIGHTHOUSE_LUFF_EAST),
-    MAP_WARP(BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_STONE_DOOR_WEST,
-             BabiLighthouseStoneDoor,
-             BABI_LIGHTHOUSE_STONE_DOOR_FROM_BABI_LIGHTHOUSE_LUFF_WEST),
-    MAP_WARPS(BabiLighthouseStoneDoor),
-    MAP_WARP(BABI_LIGHTHOUSE_STONE_DOOR_TO_TUNNEL_RUINS_GREAT_STATUE,
-             TunnelRuinsGreatStatue,
-             TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR),
-    MAP_WARP(BABI_LIGHTHOUSE_STONE_DOOR_TO_BABI_LIGHTHOUSE_LUFF_WEST,
-             BabiLighthouseLuff,
-             BABI_LIGHTHOUSE_LUFF_FROM_BABI_LIGHTHOUSE_STONE_DOOR_WEST),
-    MAP_WARPS(RoadToBabiLighthouse),
-    MAP_WARP(ROAD_TO_BABI_LIGHTHOUSE_TO_WORLD_MAP, WorldMap,
-             WORLD_MAP_FROM_ROAD_TO_BABI_LIGHTHOUSE),
-    MAP_WARP(ROAD_TO_BABI_LIGHTHOUSE_TO_BABI_LIGHTHOUSE_ENTRY,
-             BabiLighthouseEntry,
-             BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE),
-    MAP_WARPS_END,
+u32 gBabiLighthouse_Exits[] = {
+    SCENE_EXITS(BabiLighthouseEntry),
+    SCENE_EXIT(BABI_LIGHTHOUSE_ENTRY_TO_ROAD_TO_BABI_LIGHTHOUSE,
+               RoadToBabiLighthouse,
+               ROAD_TO_BABI_LIGHTHOUSE_FROM_BABI_LIGHTHOUSE_ENTRY),
+    SCENE_EXIT(BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_LUFF_EAST,
+               BabiLighthouseLuff,
+               BABI_LIGHTHOUSE_LUFF_FROM_BABI_LIGHTHOUSE_ENTRY_EAST),
+    SCENE_EXIT(BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_LUFF_WEST,
+               BabiLighthouseLuff,
+               BABI_LIGHTHOUSE_LUFF_FROM_BABI_LIGHTHOUSE_ENTRY_WEST),
+    SCENE_EXIT(BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_WEST,
+               TunnelRuinsLadyStatues,
+               TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_WEST),
+    SCENE_EXIT(BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_SOUTH,
+               TunnelRuinsLadyStatues,
+               TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_SOUTH),
+    SCENE_EXIT(BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_NORTH,
+               TunnelRuinsLadyStatues,
+               TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_NORTH),
+    SCENE_EXITS(BabiLighthouseLuff),
+    SCENE_EXIT(BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_STEPS,
+               BabiLighthouseLuff,
+               BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_STEPS),
+    SCENE_EXIT(BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_ENTRY_EAST,
+               BabiLighthouseEntry,
+               BABI_LIGHTHOUSE_ENTRY_FROM_BABI_LIGHTHOUSE_LUFF_EAST),
+    SCENE_EXIT(BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_WEST_ROOM_STEPS,
+               BabiLighthouseLuff,
+               BABI_LIGHTHOUSE_LUFF_WEST_ROOM_FROM_EAST_ROOM_STEPS),
+    SCENE_EXIT(BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_WEST_STEPS,
+               BabiLighthouseLuff,
+               BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_WEST_STEPS),
+    SCENE_EXIT(BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_EAST_STEPS,
+               BabiLighthouseLuff,
+               BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_EAST_STEPS),
+    SCENE_EXIT(BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_ENTRY_WEST,
+               BabiLighthouseEntry,
+               BABI_LIGHTHOUSE_ENTRY_FROM_BABI_LIGHTHOUSE_LUFF_WEST),
+    SCENE_EXIT(BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_EAST_ROOM_WEST_STEPS,
+               BabiLighthouseLuff,
+               BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_SOUTH_ROOM_WEST_STEPS),
+    SCENE_EXIT(BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_EAST_ROOM_EAST_STEPS,
+               BabiLighthouseLuff,
+               BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_SOUTH_ROOM_EAST_STEPS),
+    SCENE_EXIT(BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_LOCKED_DOOR_ROOM,
+               BabiLighthouseLuff,
+               BABI_LIGHTHOUSE_LUFF_LOCKED_DOOR_ROOM_FROM_SOUTH_ROOM),
+    SCENE_EXIT(BABI_LIGHTHOUSE_LUFF_LOCKED_DOOR_ROOM_TO_SOUTH_ROOM,
+               BabiLighthouseLuff,
+               BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_LOCKED_DOOR_ROOM),
+    SCENE_EXIT(BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_EAST,
+               BabiLighthouseLuff,
+               BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_EAST),
+    SCENE_EXIT(BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_PIT,
+               BabiLighthouseLuff,
+               BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_PIT),
+    SCENE_EXIT(BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_SOUTHWEST,
+               BabiLighthouseLuff,
+               BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_SOUTHWEST),
+    SCENE_EXIT(BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_FALL_SOUTH,
+               BabiLighthouseLuff,
+               BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_FALL_SOUTH),
+    SCENE_EXIT(BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_NORTHWEST,
+               BabiLighthouseLuff,
+               BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_NORTHWEST),
+    SCENE_EXIT(BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_FALL_NORTH,
+               BabiLighthouseLuff,
+               BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_FALL_NORTH),
+    SCENE_EXIT(BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_STONE_DOOR_EAST,
+               BabiLighthouseStoneDoor,
+               BABI_LIGHTHOUSE_STONE_DOOR_FROM_BABI_LIGHTHOUSE_LUFF_EAST),
+    SCENE_EXIT(BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_STONE_DOOR_WEST,
+               BabiLighthouseStoneDoor,
+               BABI_LIGHTHOUSE_STONE_DOOR_FROM_BABI_LIGHTHOUSE_LUFF_WEST),
+    SCENE_EXITS(BabiLighthouseStoneDoor),
+    SCENE_EXIT(BABI_LIGHTHOUSE_STONE_DOOR_TO_TUNNEL_RUINS_GREAT_STATUE,
+               TunnelRuinsGreatStatue,
+               TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR),
+    SCENE_EXIT(BABI_LIGHTHOUSE_STONE_DOOR_TO_BABI_LIGHTHOUSE_LUFF_WEST,
+               BabiLighthouseLuff,
+               BABI_LIGHTHOUSE_LUFF_FROM_BABI_LIGHTHOUSE_STONE_DOOR_WEST),
+    SCENE_EXITS(RoadToBabiLighthouse),
+    SCENE_EXIT(ROAD_TO_BABI_LIGHTHOUSE_TO_WORLD_MAP, WorldMap,
+               WORLD_MAP_FROM_ROAD_TO_BABI_LIGHTHOUSE),
+    SCENE_EXIT(ROAD_TO_BABI_LIGHTHOUSE_TO_BABI_LIGHTHOUSE_ENTRY,
+               BabiLighthouseEntry,
+               BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE),
+    SCENE_EXITS_END,
 };
 
 /// Unused: an empty object event template table nothing returns.
@@ -1848,9 +1848,9 @@ struct ObjectEventTemplate gBabiLighthouse_RoadObjectEventTemplates[] = {
 };
 
 struct MapEvent gBabiLighthouse_EntryEvents[] = {
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS, BABI_LIGHTHOUSE_ENTRY_TO_ROAD_TO_BABI_LIGHTHOUSE},
-    {MAP_EVENT_WARP, 2, CONDITION_ALWAYS, BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_LUFF_EAST},
-    {MAP_EVENT_WARP, 3, CONDITION_ALWAYS, BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_LUFF_WEST},
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, BABI_LIGHTHOUSE_ENTRY_TO_ROAD_TO_BABI_LIGHTHOUSE},
+    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_LUFF_EAST},
+    {MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_LUFF_WEST},
     {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_PushLedgePillar)},
     {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_PushLedgePillarOrClimbDown)},
     {MAP_EVENT_TALK, LOCALID_FALLEN_SOLDIER_NO_MATCH, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely)},
@@ -1872,17 +1872,17 @@ struct MapEvent gBabiLighthouse_EntryEvents[] = {
 };
 
 struct MapEvent gBabiLighthouse_LuffEvents[] = {
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 5, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_STEPS},
-    {MAP_EVENT_WARP, 6, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_ENTRY_EAST},
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_WEST_ROOM_STEPS},
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_WEST_STEPS},
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_EAST_STEPS},
-    {MAP_EVENT_WARP, 4, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_ENTRY_WEST},
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_EAST_ROOM_WEST_STEPS},
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 8, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_EAST_ROOM_EAST_STEPS},
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_LOCKED_DOOR_ROOM},
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 10, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_LOCKED_DOOR_ROOM_TO_SOUTH_ROOM},
-    {MAP_EVENT_WARP, 11, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_STONE_DOOR_WEST},
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 5, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_STEPS},
+    {MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_ENTRY_EAST},
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_WEST_ROOM_STEPS},
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_WEST_STEPS},
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_EAST_STEPS},
+    {MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_ENTRY_WEST},
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_EAST_ROOM_WEST_STEPS},
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 8, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_EAST_ROOM_EAST_STEPS},
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_LOCKED_DOOR_ROOM},
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 10, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_LOCKED_DOOR_ROOM_TO_SOUTH_ROOM},
+    {MAP_EVENT_EXIT, 11, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_STONE_DOOR_WEST},
     {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 25, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_DropFromWestRoomEastPit)},
     {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_DropFromEastRoomPit)},
     {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_DropFromWestRoomSouthwestPit)},
@@ -1893,8 +1893,8 @@ struct MapEvent gBabiLighthouse_LuffEvents[] = {
 };
 
 struct MapEvent gBabiLighthouse_StoneDoorEvents[] = {
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, BABI_LIGHTHOUSE_STONE_DOOR_TO_TUNNEL_RUINS_GREAT_STATUE},
-    {MAP_EVENT_WARP, 2, CONDITION_ALWAYS, BABI_LIGHTHOUSE_STONE_DOOR_TO_BABI_LIGHTHOUSE_LUFF_WEST},
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, BABI_LIGHTHOUSE_STONE_DOOR_TO_TUNNEL_RUINS_GREAT_STATUE},
+    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, BABI_LIGHTHOUSE_STONE_DOOR_TO_BABI_LIGHTHOUSE_LUFF_WEST},
     {MAP_EVENT_COORD, 10, FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW, EVENT_SCRIPT(BabiLighthouse_FaranAsksPartyToOpenDoor)},
     {MAP_EVENT_COORD, 20, IF_FLAG_SET(FLAG_BEYOND_DOOR), EVENT_SCRIPT(BabiLighthouse_CloseTruthDoor)},
     {MAP_EVENT_COORD, 21, FLAG_BEYOND_DOOR, EVENT_SCRIPT(BabiLighthouse_CloseTruthDoor)},
@@ -1947,8 +1947,8 @@ struct MapEvent gBabiLighthouse_RoadEvents[] = {
      EVENT_SCRIPT(BabiLighthouse_LandCarriedPillarInDust)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_ROAD_PILLAR,
      CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_UpdateMovedPillar)},
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS, ROAD_TO_BABI_LIGHTHOUSE_TO_WORLD_MAP},
-    {MAP_EVENT_WARP, 2, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, ROAD_TO_BABI_LIGHTHOUSE_TO_WORLD_MAP},
+    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS,
      ROAD_TO_BABI_LIGHTHOUSE_TO_BABI_LIGHTHOUSE_ENTRY},
     {MAP_EVENT_TALK, LOCALID_WORKER_DAY_OFF, CONDITION_ALWAYS,
      MSGNO(MsgBabiLighthouseWeHaventBeenOrderedToStart)},

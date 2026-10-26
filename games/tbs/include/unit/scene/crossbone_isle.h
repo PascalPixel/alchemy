@@ -4,14 +4,14 @@
 #include "types.h"
 #include "map_tables.h"
 
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEvent;
 struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *Scene_GetWarps(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
@@ -23,12 +23,12 @@ extern s32 gFieldEffect_MediumScript[];
 extern s32 gFieldEffect_LongScript[];
 extern u16 gCrossboneIsle_EntranceCells[];
 extern const s32 *gFieldEffect_DurationScripts[];
-extern struct MapWarpDest gCrossboneIsle_IsleWarpDests[];
-extern struct MapWarpDest gCrossboneIsle_CaveEntranceWarpDests[];
-extern struct MapWarpDest gCrossboneIsle_FloatingLogsWarpDests[];
-extern struct MapWarpDest gCrossboneIsle_PierWarpDests[];
-extern struct MapWarpDest gCrossboneIsle_PirateShipWarpDests[];
-extern u32 gCrossboneIsleWarps[];
+extern struct SceneEntrance gCrossboneIsle_IsleEntrances[];
+extern struct SceneEntrance gCrossboneIsle_CaveEntranceEntrances[];
+extern struct SceneEntrance gCrossboneIsle_FloatingLogsEntrances[];
+extern struct SceneEntrance gCrossboneIsle_PierEntrances[];
+extern struct SceneEntrance gCrossboneIsle_PirateShipEntrances[];
+extern u32 gCrossboneIsleExits[];
 extern struct ObjectEventTemplate gCrossboneIsle_NoObjectEventTemplates[];
 extern struct ObjectEventTemplate gCrossboneIsle_IsleObjectEventTemplates[];
 extern struct ObjectEventTemplate

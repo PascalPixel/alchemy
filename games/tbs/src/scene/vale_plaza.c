@@ -54,14 +54,14 @@
 /// (SceneId_CottageRoomsA) and into the inn and the forge
 /// (SceneId_CottageRoomsB), the path west to the village (SceneId_Vale) or, on
 /// the stormy night, back to the storm's map (SceneId_ValeStormyNight), and the
-/// warp row of metatile behavior 11 to VALE_PLAZA_TO_GOMA_CAVE_STREAM, which
-/// the warp table sends to Goma Cave (SceneId_GomaCaveStream,
+/// exit row of metatile behavior 11 to VALE_PLAZA_TO_GOMA_CAVE_STREAM, which
+/// the exit table sends to Goma Cave (SceneId_GomaCaveStream,
 /// GOMA_CAVE_STREAM_FROM_VALE_PLAZA). Behavior 11 lies on one cell, (11, 28),
 /// in every state of the map, the cell north of where the party arrives from
 /// Goma Cave (VALE_PLAZA_FROM_GOMA_CAVE_STREAM, at (186, 474)), so that way
 /// back is the way in (render probe vale-gate).
 ///
-/// Three debug warp destinations are in no warp destination table and no warp
+/// Three debug entrances are in no entrance table and no exit
 /// leads to them: VALE_PLAZA_DEBUG_BEFORE_TRAVELERS_LEAVE replays the
 /// strangers' departure, VALE_PLAZA_DEBUG_CHILDHOOD sets FLAG_CHILDHOOD and
 /// takes VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST into Isaac's house
@@ -450,19 +450,19 @@ static inline s32 ValePlaza_TurnAndWaitValue(s32 localId, s32 facing,
 
 #include "common/object_facing.h"
 
-const struct MapWarpDest *ValePlaza_GetWarpDests(void) {
-  return gValePlaza_WarpDests;
+const struct SceneEntrance *ValePlaza_GetEntrances(void) {
+  return gValePlaza_Entrances;
 }
 
-const struct MapWarpRegion *ValePlaza_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *ValePlaza_GetRegions(void) { return NULL; }
 
-/// Returns the stormy night's warps while FLAG_VALE_STORM is set, else the
+/// Returns the stormy night's exits while FLAG_VALE_STORM is set, else the
 /// day's.
-const u32 *ValePlaza_GetWarps(void) {
+const u32 *ValePlaza_GetExits(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
-    return gValePlaza_StormWarps;
+    return gValePlaza_StormExits;
   }
-  return gValePlaza_Warps;
+  return gValePlaza_Exits;
 }
 
 /// Selects the object event templates: the stormy night's, the farewell's
@@ -471,7 +471,7 @@ const struct ObjectEventTemplate *ValePlaza_GetObjectEventTemplates(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     return gValePlaza_StormObjectEventTemplates;
   }
-  if (gSaveBlock.warpDest == VALE_PLAZA_FROM_SANCTUM) {
+  if (gSaveBlock.entrance == VALE_PLAZA_FROM_SANCTUM) {
     return gValePlaza_DepartureObjectEventTemplates;
   }
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
@@ -505,7 +505,7 @@ const struct MapEvent *ValePlaza_GetEvents(void) {
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     return gValePlaza_EventsAfterLeaving;
   }
-  if (gSaveBlock.warpDest == VALE_PLAZA_FROM_SANCTUM) {
+  if (gSaveBlock.entrance == VALE_PLAZA_FROM_SANCTUM) {
     return gValePlaza_DepartureEvents;
   }
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
@@ -834,14 +834,14 @@ static inline void EventScript_OpenDoorAndWalkThrough(s32 cellX, s32 cellZ,
 }
 
 // Vale's doors here: walking north into metatile behavior n opens door n and
-// takes warp n (Vale_RequestBackdropWarp), into the houses
+// takes exit n (Vale_RequestBackdropExit), into the houses
 // (SceneId_CottageRoomsA) or the inn and the forge (SceneId_CottageRoomsB).
 
 /// In Vale, opens the northwest door, into a house (SceneId_CottageRoomsA,
 /// COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST).
 static void EventScript_OpenNorthwestDoor(void) {
   EventScript_OpenDoorAndWalkThrough(44, 7, 248, 279);
-  Vale_RequestBackdropWarp(VALE_PLAZA_TO_COTTAGE_ROOMS_A_EAST);
+  Vale_RequestBackdropExit(VALE_PLAZA_TO_COTTAGE_ROOMS_A_EAST);
 }
 
 /// In Vale back from Kalay, opens the northeast doorway in two stages and walks
@@ -859,42 +859,42 @@ static void EventScript_OpenNortheastDoor(void) {
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 352, 306);
   ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 3);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 352, 296);
-  Vale_RequestBackdropWarp(VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTH);
+  Vale_RequestBackdropExit(VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTH);
 }
 
 /// In Vale, enters through the western door of the middle row of houses
 /// (SceneId_CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH).
 static void EventScript_OpenCentralWestDoor(void) {
   EventScript_OpenDoorAndWalkThrough(43, 15, 230, 407);
-  Vale_RequestBackdropWarp(VALE_PLAZA_TO_COTTAGE_ROOMS_A_NORTH);
+  Vale_RequestBackdropExit(VALE_PLAZA_TO_COTTAGE_ROOMS_A_NORTH);
 }
 
 /// In Vale, enters through the eastern door of the middle row of houses
 /// (SceneId_CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH).
 static void EventScript_OpenCentralEastDoor(void) {
   EventScript_OpenDoorAndWalkThrough(52, 18, 374, 419);
-  Vale_RequestBackdropWarp(VALE_PLAZA_TO_COTTAGE_ROOMS_A_SOUTH);
+  Vale_RequestBackdropExit(VALE_PLAZA_TO_COTTAGE_ROOMS_A_SOUTH);
 }
 
 /// In Vale, opens the southwest door, into Vale's shops
 /// (SceneId_CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST).
 static void EventScript_OpenSouthwestDoor(void) {
   EventScript_OpenDoorAndWalkThrough(41, 32, 200, 546);
-  Vale_RequestBackdropWarp(VALE_PLAZA_TO_COTTAGE_ROOMS_A_WEST);
+  Vale_RequestBackdropExit(VALE_PLAZA_TO_COTTAGE_ROOMS_A_WEST);
 }
 
 /// In Vale, opens the door at the west edge, into the forge
 /// (SceneId_CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHWEST).
 static void EventScript_OpenWestEdgeDoor(void) {
   EventScript_OpenDoorAndWalkThrough(35, 36, 102, 611);
-  Vale_RequestBackdropWarp(VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTHWEST);
+  Vale_RequestBackdropExit(VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTHWEST);
 }
 
 /// In Vale, opens the southeast door, into the inn
 /// (SceneId_CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_WEST).
 static void EventScript_OpenSoutheastDoor(void) {
   EventScript_OpenDoorAndWalkThrough(51, 39, 358, 670);
-  Vale_RequestBackdropWarp(VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTH);
+  Vale_RequestBackdropExit(VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTH);
 }
 
 /// In Vale on the stormy night, leaves by the west passage, back to the
@@ -902,7 +902,7 @@ static void EventScript_OpenSoutheastDoor(void) {
 /// the storm's VALE_STORMY_NIGHT_FROM_VALE_PLAZA.
 static void EventScript_LeaveThroughWestPassage(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  Vale_RequestBackdropWarp(VALE_PLAZA_TO_VALE);
+  Vale_RequestBackdropExit(VALE_PLAZA_TO_VALE);
 }
 
 /// In Vale, leaves by the town gate for the world map, once the party has
@@ -911,11 +911,11 @@ static void EventScript_LeaveThroughWestPassage(void) {
 /// Reached by stepping on metatile behavior 8; takes VALE_PLAZA_TO_WORLD_MAP
 /// once FLAG_VALE_PARTY_LEFT is set, else does nothing. The farewell
 /// (EventScript_DepartForQuest) shows the villagers gathered at the gate and
-/// leaves by the same warp.
+/// leaves by the same exit.
 static void EventScript_LeaveThroughTownGate(void) {
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     Sound_PlaySong(SE_MAP_EXIT);
-    Vale_RequestBackdropWarp(VALE_PLAZA_TO_WORLD_MAP);
+    Vale_RequestBackdropExit(VALE_PLAZA_TO_WORLD_MAP);
   }
 }
 
@@ -944,7 +944,7 @@ static void EventScript_BlowAwayThirdIvy(void) {
 }
 
 /// Arriving in this part of Vale: hides the ivy Whirlwind has blown away, runs
-/// the three debug warp destinations (the strangers' departure and two
+/// the three debug entrances (the strangers' departure and two
 /// presets), and sets up the storm, the farewell or the village after Kalay.
 ///
 /// The map's initialize entry. VALE_PLAZA_DEBUG_CHILDHOOD sets FLAG_CHILDHOOD
@@ -970,10 +970,10 @@ s32 ValePlaza_Initialize(void) {
   if (GameFlag_Get((FLAG_VALE_THIRD_IVY_BLOWN_AWAY)) != 0) {
     Import_ObjectEventSetPosition(LOCALID_THIRD_IVY, 0, 0);
   }
-  switch (gSaveBlock.warpDest) {
+  switch (gSaveBlock.entrance) {
   case VALE_PLAZA_DEBUG_CHILDHOOD:
     GameFlag_Set(FLAG_CHILDHOOD);
-    Import_ScriptRequestWarp(VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST);
+    Import_ScriptRequestExit(VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST);
     return 0;
   case VALE_PLAZA_DEBUG_STORY_FLAGS:
     ValePlaza_SetProgressFlagsAndExit();
@@ -1017,7 +1017,7 @@ s32 ValePlaza_Initialize(void) {
         WaitFrames(1);
       }
     }
-    if (gSaveBlock.warpDest == VALE_PLAZA_FROM_SANCTUM) {
+    if (gSaveBlock.entrance == VALE_PLAZA_FROM_SANCTUM) {
       EventScript_DepartForQuest();
     } else {
       if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
@@ -1052,7 +1052,7 @@ s32 ValePlaza_Initialize(void) {
         Import_ObjectEventSetPosition(LOCALID_STORM_JENNA, 0, 0);
         Import_ObjectEventSetPosition(LOCALID_STORM_CHARGED_UP_STRONGMAN, 0, 0);
       }
-      if (gSaveBlock.warpDest == VALE_PLAZA_AFTER_TRAVELERS_BATTLE) {
+      if (gSaveBlock.entrance == VALE_PLAZA_AFTER_TRAVELERS_BATTLE) {
         EventScript_TravelersLeaveAfterBattle();
       } else {
         if (GameFlag_Get(FLAG_VALE_STORM) != 0 &&
@@ -1565,7 +1565,7 @@ static void EventScript_TravelersLeaveAfterBattle(void) {
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   GameFlag_Clear(FLAG_VALE_STORM);
-  Import_ScriptRequestWarp(VALE_PLAZA_TO_TITLE);
+  Import_ScriptRequestExit(VALE_PLAZA_TO_TITLE);
   FieldScript_End();
 }
 
@@ -2005,7 +2005,7 @@ static void EventScript_DepartForQuest(void) {
   FieldScript_WaitTransitionFrames();
   ObjectMotion_EnableActionAndResetMotion(LOCALID_PARTY_LEADER);
   ObjectMotion_EnableActionAndResetMotion(LOCALID_GARET);
-  Import_ScriptRequestWarp(VALE_PLAZA_TO_WORLD_MAP);
+  Import_ScriptRequestExit(VALE_PLAZA_TO_WORLD_MAP);
   FieldScript_End();
 }
 
@@ -2199,7 +2199,7 @@ static void ValePlaza_SetProgressFlagsAndExit(void) {
   GameFlag_Set(FLAG_TRET_DEFEATED);
   GameFlag_Set(FLAG_KOLIMA_CURSE_LIFTED);
 #endif
-  Import_ScriptRequestWarp(VALE_PLAZA_TO_BILIBIN);
+  Import_ScriptRequestExit(VALE_PLAZA_TO_BILIBIN);
 }
 
 // clang-format off
@@ -2459,8 +2459,8 @@ s32 gValePlaza_StormGaretStepActions[] = {
     SC_END,
 };
 
-struct MapWarpDest gValePlaza_WarpDests[] = {
-    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 248, 0, 295, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gValePlaza_Entrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 248, 0, 295, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_PLAZA_FROM_COTTAGE_ROOMS_A_NORTH, CONDITION_ALWAYS, 248, 0, 295, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_PLAZA_FROM_COTTAGE_ROOMS_B_NORTH, CONDITION_ALWAYS, 352, 0, 308, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_PLAZA_FROM_COTTAGE_ROOMS_A_WEST, CONDITION_ALWAYS, 230, 0, 423, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -2477,40 +2477,40 @@ struct MapWarpDest gValePlaza_WarpDests[] = {
     { MAP_TABLE_END },
 };
 
-u32 gValePlaza_Warps[] = {
-    MAP_WARPS(ValePlaza),
-    MAP_WARP(VALE_PLAZA_TO_COTTAGE_ROOMS_A_EAST, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST),
-    MAP_WARP(VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTH, CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHEAST),
-    MAP_WARP(VALE_PLAZA_TO_COTTAGE_ROOMS_A_NORTH, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH),
-    MAP_WARP(VALE_PLAZA_TO_COTTAGE_ROOMS_A_SOUTH, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH),
-    MAP_WARP(VALE_PLAZA_TO_COTTAGE_ROOMS_A_WEST, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST),
-    MAP_WARP(VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTHWEST, CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHWEST),
-    MAP_WARP(VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTH, CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_WEST),
-    MAP_WARP(VALE_PLAZA_TO_VALE, Vale, VALE_FROM_VALE_PLAZA),
-    MAP_WARP(VALE_PLAZA_TO_TITLE, Title, TITLE_FROM_VALE_PLAZA),
-    MAP_WARP(VALE_PLAZA_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_VALE_PLAZA),
-    MAP_WARP(VALE_PLAZA_TO_GOMA_CAVE_STREAM, GomaCaveStream, GOMA_CAVE_STREAM_FROM_VALE_PLAZA),
-    MAP_WARP(VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST, CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST),
+u32 gValePlaza_Exits[] = {
+    SCENE_EXITS(ValePlaza),
+    SCENE_EXIT(VALE_PLAZA_TO_COTTAGE_ROOMS_A_EAST, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST),
+    SCENE_EXIT(VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTH, CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHEAST),
+    SCENE_EXIT(VALE_PLAZA_TO_COTTAGE_ROOMS_A_NORTH, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH),
+    SCENE_EXIT(VALE_PLAZA_TO_COTTAGE_ROOMS_A_SOUTH, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH),
+    SCENE_EXIT(VALE_PLAZA_TO_COTTAGE_ROOMS_A_WEST, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST),
+    SCENE_EXIT(VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTHWEST, CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHWEST),
+    SCENE_EXIT(VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTH, CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_WEST),
+    SCENE_EXIT(VALE_PLAZA_TO_VALE, Vale, VALE_FROM_VALE_PLAZA),
+    SCENE_EXIT(VALE_PLAZA_TO_TITLE, Title, TITLE_FROM_VALE_PLAZA),
+    SCENE_EXIT(VALE_PLAZA_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_VALE_PLAZA),
+    SCENE_EXIT(VALE_PLAZA_TO_GOMA_CAVE_STREAM, GomaCaveStream, GOMA_CAVE_STREAM_FROM_VALE_PLAZA),
+    SCENE_EXIT(VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST, CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST),
 #if !TBS_PATCH_3
-    MAP_WARP(VALE_PLAZA_TO_BILIBIN, Bilibin, BILIBIN_FROM_WORLD_MAP),
+    SCENE_EXIT(VALE_PLAZA_TO_BILIBIN, Bilibin, BILIBIN_FROM_WORLD_MAP),
 #else
-    MAP_WARP(VALE_PLAZA_TO_BILIBIN, SolSanctumStatue, SOL_SANCTUM_STATUE_FROM_VALE_PLAZA),
+    SCENE_EXIT(VALE_PLAZA_TO_BILIBIN, SolSanctumStatue, SOL_SANCTUM_STATUE_FROM_VALE_PLAZA),
 #endif
-    MAP_WARPS_END,
+    SCENE_EXITS_END,
 };
 
-u32 gValePlaza_StormWarps[] = {
-    MAP_WARPS(ValePlaza),
-    MAP_WARP(VALE_PLAZA_TO_COTTAGE_ROOMS_A_EAST, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST),
-    MAP_WARP(VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTH, CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHEAST),
-    MAP_WARP(VALE_PLAZA_TO_COTTAGE_ROOMS_A_NORTH, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH),
-    MAP_WARP(VALE_PLAZA_TO_COTTAGE_ROOMS_A_SOUTH, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH),
-    MAP_WARP(VALE_PLAZA_TO_COTTAGE_ROOMS_A_WEST, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST),
-    MAP_WARP(VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTHWEST, CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHWEST),
-    MAP_WARP(VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTH, CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_WEST),
-    MAP_WARP(VALE_PLAZA_TO_VALE, ValeStormyNight, VALE_STORMY_NIGHT_FROM_VALE_PLAZA),
-    MAP_WARP(VALE_PLAZA_TO_TITLE, Title, TITLE_FROM_VALE_PLAZA),
-    MAP_WARPS_END,
+u32 gValePlaza_StormExits[] = {
+    SCENE_EXITS(ValePlaza),
+    SCENE_EXIT(VALE_PLAZA_TO_COTTAGE_ROOMS_A_EAST, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST),
+    SCENE_EXIT(VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTH, CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHEAST),
+    SCENE_EXIT(VALE_PLAZA_TO_COTTAGE_ROOMS_A_NORTH, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH),
+    SCENE_EXIT(VALE_PLAZA_TO_COTTAGE_ROOMS_A_SOUTH, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH),
+    SCENE_EXIT(VALE_PLAZA_TO_COTTAGE_ROOMS_A_WEST, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST),
+    SCENE_EXIT(VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTHWEST, CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHWEST),
+    SCENE_EXIT(VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTH, CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_WEST),
+    SCENE_EXIT(VALE_PLAZA_TO_VALE, ValeStormyNight, VALE_STORMY_NIGHT_FROM_VALE_PLAZA),
+    SCENE_EXIT(VALE_PLAZA_TO_TITLE, Title, TITLE_FROM_VALE_PLAZA),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gValePlaza_ObjectEventTemplates[] = {
@@ -2711,8 +2711,8 @@ struct MapEvent gValePlaza_Events[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenWestEdgeDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenSoutheastDoor) },
     { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveThroughTownGate) },
-    { MAP_EVENT_WARP, 9, CONDITION_ALWAYS, VALE_PLAZA_TO_VALE },
-    { MAP_EVENT_WARP, 11, CONDITION_ALWAYS, VALE_PLAZA_TO_GOMA_CAVE_STREAM },
+    { MAP_EVENT_EXIT, 9, CONDITION_ALWAYS, VALE_PLAZA_TO_VALE },
+    { MAP_EVENT_EXIT, 11, CONDITION_ALWAYS, VALE_PLAZA_TO_GOMA_CAVE_STREAM },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_FIRST_IVY, (FLAG_VALE_FIRST_IVY_BLOWN_AWAY), EVENT_SCRIPT(EventScript_BlowAwayFirstIvy) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_SECOND_IVY, (FLAG_VALE_SECOND_IVY_BLOWN_AWAY), EVENT_SCRIPT(EventScript_BlowAwaySecondIvy) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_THIRD_IVY, (FLAG_VALE_THIRD_IVY_BLOWN_AWAY), EVENT_SCRIPT(EventScript_BlowAwayThirdIvy) },
@@ -2774,8 +2774,8 @@ struct MapEvent gValePlaza_EventsAfterLeaving[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenWestEdgeDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenSoutheastDoor) },
     { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveThroughTownGate) },
-    { MAP_EVENT_WARP, 9, CONDITION_ALWAYS, VALE_PLAZA_TO_VALE },
-    { MAP_EVENT_WARP, 11, CONDITION_ALWAYS, VALE_PLAZA_TO_GOMA_CAVE_STREAM },
+    { MAP_EVENT_EXIT, 9, CONDITION_ALWAYS, VALE_PLAZA_TO_VALE },
+    { MAP_EVENT_EXIT, 11, CONDITION_ALWAYS, VALE_PLAZA_TO_GOMA_CAVE_STREAM },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_FIRST_IVY, (FLAG_VALE_FIRST_IVY_BLOWN_AWAY), EVENT_SCRIPT(EventScript_BlowAwayFirstIvy) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_SECOND_IVY, (FLAG_VALE_SECOND_IVY_BLOWN_AWAY), EVENT_SCRIPT(EventScript_BlowAwaySecondIvy) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_THIRD_IVY, (FLAG_VALE_THIRD_IVY_BLOWN_AWAY), EVENT_SCRIPT(EventScript_BlowAwayThirdIvy) },
@@ -2815,8 +2815,8 @@ struct MapEvent gValePlaza_EventsAfterKalay[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenWestEdgeDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenSoutheastDoor) },
     { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveThroughTownGate) },
-    { MAP_EVENT_WARP, 9, CONDITION_ALWAYS, VALE_PLAZA_TO_VALE },
-    { MAP_EVENT_WARP, 11, CONDITION_ALWAYS, VALE_PLAZA_TO_GOMA_CAVE_STREAM },
+    { MAP_EVENT_EXIT, 9, CONDITION_ALWAYS, VALE_PLAZA_TO_VALE },
+    { MAP_EVENT_EXIT, 11, CONDITION_ALWAYS, VALE_PLAZA_TO_GOMA_CAVE_STREAM },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_FIRST_IVY, (FLAG_VALE_FIRST_IVY_BLOWN_AWAY), EVENT_SCRIPT(EventScript_BlowAwayFirstIvy) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_SECOND_IVY, (FLAG_VALE_SECOND_IVY_BLOWN_AWAY), EVENT_SCRIPT(EventScript_BlowAwaySecondIvy) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_THIRD_IVY, (FLAG_VALE_THIRD_IVY_BLOWN_AWAY), EVENT_SCRIPT(EventScript_BlowAwayThirdIvy) },

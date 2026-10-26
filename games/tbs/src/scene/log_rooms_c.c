@@ -1,6 +1,6 @@
 /// @file
 /// Log rooms C (SceneId_LogRoomsC), a sheet of rooms drawn in logs, all of them
-/// Kolima's: the village's houses, shops and inn. Some of its warps join its
+/// Kolima's: the village's houses, shops and inn. Some of its exits join its
 /// own rooms by the stairs up the inn and the weapon and armor shop, five lead
 /// back out to the village (SceneId_Kolima) and one into Kolima Tunnel
 /// (SceneId_KolimaTunnel, LOG_ROOMS_C_TO_KOLIMA_TUNNEL).
@@ -165,14 +165,14 @@ LogRoomsC_TurnVillagersIntoTrees(struct ObjectEventTemplate *template) {
   } while (villagerIndex < LOCALID_LAST_VILLAGER - LOCALID_FIRST_VILLAGER + 1);
 }
 
-const struct MapWarpDest *LogRoomsC_GetWarpDests(void) {
-  return gLogRoomsC_WarpDests;
+const struct SceneEntrance *LogRoomsC_GetEntrances(void) {
+  return gLogRoomsC_Entrances;
 }
 
-const struct MapWarpRegion *LogRoomsC_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *LogRoomsC_GetRegions(void) { return NULL; }
 
-/// The warps between the rooms, back to the village and into Kolima Tunnel.
-const u32 *LogRoomsC_GetWarps(void) { return gLogRoomsC_Warps; }
+/// The exits between the rooms, back to the village and into Kolima Tunnel.
+const u32 *LogRoomsC_GetExits(void) { return gLogRoomsC_Exits; }
 
 /// Kolima's residents, turned into trees first while the curse lasts.
 const struct ObjectEventTemplate *LogRoomsC_GetObjectEventTemplates(void) {
@@ -251,7 +251,7 @@ static void LogRoomsC_TalkToInnkeeper(void) {
   FieldScript_End();
 }
 
-/// The warps, the residents' words and thoughts, the shops, the bookcases, the
+/// The exits, the residents' words and thoughts, the shops, the bookcases, the
 /// jar and the barrel.
 const struct MapEvent *LogRoomsC_GetEvents(void) { return gLogRoomsC_Events; }
 
@@ -261,7 +261,7 @@ const struct MapEvent *LogRoomsC_GetEvents(void) { return gLogRoomsC_Events; }
 s32 LogRoomsC_Initialize(void) {
   struct FieldWork *work = gFieldWork;
   s32 localId;
-  u32 warpDest;
+  u32 entrance;
 
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -277,13 +277,13 @@ s32 LogRoomsC_Initialize(void) {
     } while ((u32)localId <= LOCALID_LAST_VILLAGER);
   }
 
-  warpDest = (u16)gSaveBlock.warpDest;
+  entrance = (u16)gSaveBlock.entrance;
 
   // LOG_ROOMS_C_HOUSE_FROM_KOLIMA_SOUTH uses one layout;
   // LOG_ROOMS_C_HOUSE_FROM_KOLIMA_NORTH and
   // LOG_ROOMS_C_FROM_KOLIMA_TUNNEL use the other. The unsigned packed
   // comparison below tests the low 16-bit difference.
-  if ((s16)warpDest == LOG_ROOMS_C_HOUSE_FROM_KOLIMA_SOUTH) {
+  if ((s16)entrance == LOG_ROOMS_C_HOUSE_FROM_KOLIMA_SOUTH) {
     s32 height;
     s32 width;
     width = 13;
@@ -291,7 +291,7 @@ s32 LogRoomsC_Initialize(void) {
     MapGrid_CopyCellsTo(34, 34, 18, 16, width, height);
     MapGrid_CopyCellsTo(34, 94, 18, 76, width, height);
     MapGrid_CopyCellsTo(94, 34, 78, 16, width, height);
-  } else if (((warpDest - LOG_ROOMS_C_HOUSE_FROM_KOLIMA_NORTH) << 16) <=
+  } else if (((entrance - LOG_ROOMS_C_HOUSE_FROM_KOLIMA_NORTH) << 16) <=
              (1u << 16)) {
     s32 height;
     s32 width;
@@ -307,7 +307,7 @@ s32 LogRoomsC_Initialize(void) {
   return 0;
 }
 
-struct MapWarpDest gLogRoomsC_WarpDests[] = {
+struct SceneEntrance gLogRoomsC_Entrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP,
      CONDITION_ALWAYS, 128, 0, 192, FACING_EAST, 0, 16, 56, 256, 216, 0},
@@ -340,43 +340,43 @@ struct MapWarpDest gLogRoomsC_WarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gLogRoomsC_Warps[] = {
-    MAP_WARPS(LogRoomsC),
-    MAP_WARP(
+u32 gLogRoomsC_Exits[] = {
+    SCENE_EXITS(LogRoomsC),
+    SCENE_EXIT(
         LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_TO_WEAPON_AND_ARMOR_SHOP,
         LogRoomsC,
         LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_FROM_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR),
-    MAP_WARP(
+    SCENE_EXIT(
         LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_TO_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR,
         LogRoomsC,
         LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR),
-    MAP_WARP(LOG_ROOMS_C_ITEM_SHOP_TO_KOLIMA, Kolima, KOLIMA_FROM_ITEM_SHOP),
-    MAP_WARP(LOG_ROOMS_C_INN_TO_KOLIMA, Kolima, KOLIMA_FROM_INN),
-    MAP_WARP(LOG_ROOMS_C_INN_TO_INN_SECOND_FLOOR, LogRoomsC,
-             LOG_ROOMS_C_INN_SECOND_FLOOR_FROM_INN),
-    MAP_WARP(LOG_ROOMS_C_INN_THIRD_FLOOR_TO_INN_SECOND_FLOOR, LogRoomsC,
-             LOG_ROOMS_C_INN_SECOND_FLOOR_FROM_INN_THIRD_FLOOR),
-    MAP_WARP(LOG_ROOMS_C_HOUSE_TO_KOLIMA_SOUTH, Kolima,
-             KOLIMA_FROM_HOUSE_SOUTH),
-    MAP_WARP(LOG_ROOMS_C_HOUSE_TO_KOLIMA_NORTH, Kolima,
-             KOLIMA_FROM_HOUSE_NORTH),
-    MAP_WARP(LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_TO_KOLIMA, Kolima,
-             KOLIMA_FROM_WEAPON_AND_ARMOR_SHOP),
-    MAP_WARP(
+    SCENE_EXIT(LOG_ROOMS_C_ITEM_SHOP_TO_KOLIMA, Kolima, KOLIMA_FROM_ITEM_SHOP),
+    SCENE_EXIT(LOG_ROOMS_C_INN_TO_KOLIMA, Kolima, KOLIMA_FROM_INN),
+    SCENE_EXIT(LOG_ROOMS_C_INN_TO_INN_SECOND_FLOOR, LogRoomsC,
+               LOG_ROOMS_C_INN_SECOND_FLOOR_FROM_INN),
+    SCENE_EXIT(LOG_ROOMS_C_INN_THIRD_FLOOR_TO_INN_SECOND_FLOOR, LogRoomsC,
+               LOG_ROOMS_C_INN_SECOND_FLOOR_FROM_INN_THIRD_FLOOR),
+    SCENE_EXIT(LOG_ROOMS_C_HOUSE_TO_KOLIMA_SOUTH, Kolima,
+               KOLIMA_FROM_HOUSE_SOUTH),
+    SCENE_EXIT(LOG_ROOMS_C_HOUSE_TO_KOLIMA_NORTH, Kolima,
+               KOLIMA_FROM_HOUSE_NORTH),
+    SCENE_EXIT(LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_TO_KOLIMA, Kolima,
+               KOLIMA_FROM_WEAPON_AND_ARMOR_SHOP),
+    SCENE_EXIT(
         LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_TO_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR,
         LogRoomsC,
         LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP),
-    MAP_WARP(LOG_ROOMS_C_INN_SECOND_FLOOR_TO_INN, LogRoomsC,
-             LOG_ROOMS_C_INN_FROM_INN_SECOND_FLOOR),
-    MAP_WARP(LOG_ROOMS_C_INN_SECOND_FLOOR_TO_INN_THIRD_FLOOR, LogRoomsC,
-             LOG_ROOMS_C_INN_THIRD_FLOOR_FROM_INN_SECOND_FLOOR),
-    MAP_WARP(
+    SCENE_EXIT(LOG_ROOMS_C_INN_SECOND_FLOOR_TO_INN, LogRoomsC,
+               LOG_ROOMS_C_INN_FROM_INN_SECOND_FLOOR),
+    SCENE_EXIT(LOG_ROOMS_C_INN_SECOND_FLOOR_TO_INN_THIRD_FLOOR, LogRoomsC,
+               LOG_ROOMS_C_INN_THIRD_FLOOR_FROM_INN_SECOND_FLOOR),
+    SCENE_EXIT(
         LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR_TO_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR,
         LogRoomsC,
         LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR),
-    MAP_WARP(LOG_ROOMS_C_TO_KOLIMA_TUNNEL, KolimaTunnel,
-             KOLIMA_TUNNEL_FROM_LOG_ROOMS_C),
-    MAP_WARPS_END,
+    SCENE_EXIT(LOG_ROOMS_C_TO_KOLIMA_TUNNEL, KolimaTunnel,
+               KOLIMA_TUNNEL_FROM_LOG_ROOMS_C),
+    SCENE_EXITS_END,
 };
 
 // clang-format off
@@ -415,20 +415,20 @@ struct ObjectEventTemplate gLogRoomsC_ObjectEventTemplates[] = {
 };
 
 struct MapEvent gLogRoomsC_Events[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_TO_WEAPON_AND_ARMOR_SHOP },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_TO_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR },
-    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, LOG_ROOMS_C_ITEM_SHOP_TO_KOLIMA },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, LOG_ROOMS_C_INN_TO_KOLIMA },
-    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, LOG_ROOMS_C_INN_TO_INN_SECOND_FLOOR },
-    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, LOG_ROOMS_C_INN_THIRD_FLOOR_TO_INN_SECOND_FLOOR },
-    { MAP_EVENT_WARP, 7, CONDITION_ALWAYS, LOG_ROOMS_C_HOUSE_TO_KOLIMA_SOUTH },
-    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, LOG_ROOMS_C_HOUSE_TO_KOLIMA_NORTH },
-    { MAP_EVENT_WARP, 9, CONDITION_ALWAYS, LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_TO_KOLIMA },
-    { MAP_EVENT_WARP, 10, CONDITION_ALWAYS, LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_TO_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR },
-    { MAP_EVENT_WARP, 11, CONDITION_ALWAYS, LOG_ROOMS_C_INN_SECOND_FLOOR_TO_INN },
-    { MAP_EVENT_WARP, 12, CONDITION_ALWAYS, LOG_ROOMS_C_INN_SECOND_FLOOR_TO_INN_THIRD_FLOOR },
-    { MAP_EVENT_WARP, 13, CONDITION_ALWAYS, LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR_TO_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR },
-    { MAP_EVENT_WARP, 14, CONDITION_ALWAYS, LOG_ROOMS_C_TO_KOLIMA_TUNNEL },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_TO_WEAPON_AND_ARMOR_SHOP },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_TO_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR },
+    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, LOG_ROOMS_C_ITEM_SHOP_TO_KOLIMA },
+    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, LOG_ROOMS_C_INN_TO_KOLIMA },
+    { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, LOG_ROOMS_C_INN_TO_INN_SECOND_FLOOR },
+    { MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, LOG_ROOMS_C_INN_THIRD_FLOOR_TO_INN_SECOND_FLOOR },
+    { MAP_EVENT_EXIT, 7, CONDITION_ALWAYS, LOG_ROOMS_C_HOUSE_TO_KOLIMA_SOUTH },
+    { MAP_EVENT_EXIT, 8, CONDITION_ALWAYS, LOG_ROOMS_C_HOUSE_TO_KOLIMA_NORTH },
+    { MAP_EVENT_EXIT, 9, CONDITION_ALWAYS, LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_TO_KOLIMA },
+    { MAP_EVENT_EXIT, 10, CONDITION_ALWAYS, LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_TO_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR },
+    { MAP_EVENT_EXIT, 11, CONDITION_ALWAYS, LOG_ROOMS_C_INN_SECOND_FLOOR_TO_INN },
+    { MAP_EVENT_EXIT, 12, CONDITION_ALWAYS, LOG_ROOMS_C_INN_SECOND_FLOOR_TO_INN_THIRD_FLOOR },
+    { MAP_EVENT_EXIT, 13, CONDITION_ALWAYS, LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR_TO_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR },
+    { MAP_EVENT_EXIT, 14, CONDITION_ALWAYS, LOG_ROOMS_C_TO_KOLIMA_TUNNEL },
     { MAP_EVENT_TALK, LOCALID_OLD_MAN_HEARD_OF_WARRIORS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIHeardThatTravelingWarriorsFrom) },
     { MAP_EVENT_TALK, LOCALID_OLD_WOMAN_BEARDED_WARRIORS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsBigStrongWarriorsWithGreatBeards) },
     { MAP_EVENT_TALK, LOCALID_FATHER_WITH_A_SECRET, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsYouSavedKolimaWowThatMakes) },

@@ -34,7 +34,7 @@
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_WaitForArrival, 1
 	.set import.ObjectEvent_PlaceCurrentWithinCameraBounds, 1
-	.set import.Import_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestExit, 1
 	.set import.Weather_LastLightning, 1
 	.set import.Weather_StartLightningFlash, 1
 	.set import.FieldScript_StartScreenTransition, 1

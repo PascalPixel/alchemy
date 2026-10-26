@@ -66,8 +66,8 @@ s32 Field_FindItemEvent(s32 item) {
 /// Returns 0 when the map's event ran or Retreat was declined, else -1, the
 /// item's own action included; SceneManager_Run ignores it.
 /// Called by SceneManager_Run for the item request (work->item and
-/// work->itemArgument). Retreat sets gSaveBlock.sceneId and .warpDest to the
-/// Retreat point and raises work->warp.
+/// work->itemArgument). Retreat sets gSaveBlock.sceneId and .entrance to the
+/// Retreat point and raises work->exit.
 s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 result;
   s32 itemId;
@@ -171,8 +171,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
           return 0;
 
         gSaveBlock.sceneId = gSaveBlock.retreatScene;
-        gSaveBlock.warpDest = gSaveBlock.retreatWarpDest;
-        work->warp = WARP_RETREAT;
+        gSaveBlock.entrance = gSaveBlock.retreatEntrance;
+        work->exit = EXIT_RETREAT;
       }
 
       MessageArgument_PushFar(localId, MESSAGE_ARGUMENT_ACTOR);

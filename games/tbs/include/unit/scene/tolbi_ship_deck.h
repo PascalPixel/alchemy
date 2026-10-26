@@ -5,9 +5,9 @@
 #include "map_tables.h"
 #include "scene_header.h"
 
-const struct MapWarpDest *TolbiShipDeck_GetWarpDests(void);
-const struct MapWarpRegion *TolbiShipDeck_GetRegions(void);
-const u32 *TolbiShipDeck_GetWarps(void);
+const struct SceneEntrance *TolbiShipDeck_GetEntrances(void);
+const struct SceneExitRegion *TolbiShipDeck_GetRegions(void);
+const u32 *TolbiShipDeck_GetExits(void);
 const struct ObjectEventTemplate *TolbiShipDeck_GetObjectEventTemplates(void);
 const struct MapEvent *TolbiShipDeck_GetEvents(void);
 s32 TolbiShipDeck_Initialize(void);
@@ -29,9 +29,9 @@ extern const s32 gTolbiShipDeck_HopActions[];
 extern const s32 gTolbiShipDeck_RowerLeavesActions[];
 extern const s32 gTolbiShipDeck_GoBelowActions[];
 extern const s32 gTolbiShipDeck_SeanLooksAboutActions[];
-extern const struct MapWarpDest gTolbiShipDeckWarpDests[];
-extern const struct MapWarpRegion gTolbiShipDeckRegions[];
-extern const u32 gTolbiShipDeckWarps[];
+extern const struct SceneEntrance gTolbiShipDeckEntrances[];
+extern const struct SceneExitRegion gTolbiShipDeckRegions[];
+extern const u32 gTolbiShipDeckExits[];
 extern const struct ObjectEventTemplate gTolbiShipDeckObjectEventTemplates[];
 #ifdef UBFIX
 extern struct ObjectEventTemplate gTolbiShipDeckObjectEventTemplatesWaiting[];

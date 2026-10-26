@@ -7,11 +7,11 @@
 /// It works as Colosseum Final 1 does (colosseum_azart_match.c), and is reached
 /// by the Colosseum's west passage. The stages run from east to west, through
 /// the Mini-Maze, the shifting floor stage, the Log-Rolling Stage, The Wall and
-/// the Board Walk. Isaac comes here three times, each at its own warp
-/// destination, and ColosseumSatrageMatch_Initialize restores the stages from
+/// the Board Walk. Isaac comes here three times, each at its own
+/// entrance, and ColosseumSatrageMatch_Initialize restores the stages from
 /// their temporary flags (FLAG_OBSTACLE_KNOCKED_DOWN to FLAG_WALL_PILLAR_MOVED,
 /// and the Mini-Maze pillars' columns from FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN)
-/// before setting up the visit its warp destination stands for:
+/// before setting up the visit its entrance stands for:
 ///
 /// - COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_WEST, the tour
 ///   (ColosseumSatrageMatch_IntroduceSecondFinals). The guide only greets the
@@ -341,14 +341,14 @@ static inline void InitializeSelectedObjectEvent(s32 localId) {
   ObjectMotion_SetSpeedParameters(localId, PIXELS(1), PIXELS(1) / 2);
 }
 
-const struct MapWarpDest *Scene_GetWarpDests(void) {
-  return gColosseumSatrageMatchWarpDests;
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gColosseumSatrageMatchEntrances;
 }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-/// Returns the packed stage and battle-result warps.
-const u32 *Scene_GetWarps(void) { return gColosseumSatrageMatchWarps; }
+/// Returns the packed stage and battle-result exits.
+const u32 *Scene_GetExits(void) { return gColosseumSatrageMatchExits; }
 
 /// Returns Colosseum Final 2's warriors, obstacles and attendants.
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
@@ -1129,7 +1129,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   Colosso_ShowItemIcon(LOCALID_PRIZE_A, ITEM_CHAIN_MAIL);
   ObjectEvent_ConfigureSpriteColor(LOCALID_OPPONENT, SPRITE_COLOR_GRB);
   // The race, the friends' turns, the tour, and the battle's result.
-  switch (gSaveBlock.warpDest) {
+  switch (gSaveBlock.entrance) {
   case COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND:
     Scene_BuildDescriptorAndInstallTask(LOCALID_PARTY_LEADER, LOCALID_OPPONENT,
                                         5, PIXELS(104), PIXELS(256),
@@ -1171,11 +1171,11 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     break;
   case COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON:
     ColosseumSatrageMatch_StageBattleResult(2);
-    Import_ScriptRequestWarp(COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_NORTH);
+    Import_ScriptRequestExit(COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_NORTH);
     break;
   case COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_LOST:
     ColosseumSatrageMatch_StageBattleResult(-2);
-    Import_ScriptRequestWarp(COLOSSEUM_SATRAGE_MATCH_TO_BABI_PALACE);
+    Import_ScriptRequestExit(COLOSSEUM_SATRAGE_MATCH_TO_BABI_PALACE);
     break;
   }
   return 0;
@@ -1267,7 +1267,7 @@ static void EventScript_TalkToMiniMazeAttendant(s32 attendant) {
   s32 result;
   struct ObjectEvent *objectEvent;
 
-  if (gSaveBlock.warpDest == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
+  if (gSaveBlock.entrance == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
     FieldScript_Start();
@@ -1314,7 +1314,7 @@ static void EventScript_TalkToMiniMazeAttendant(s32 attendant) {
 static void EventScript_TalkToShiftingFloorAttendant(s32 attendant) {
   s32 result;
 
-  if (gSaveBlock.warpDest == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
+  if (gSaveBlock.entrance == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
     FieldScript_Start();
@@ -1360,7 +1360,7 @@ static void EventScript_TalkToShiftingFloorAttendant(s32 attendant) {
 static void EventScript_TalkToLogRollingAttendant(s32 attendant) {
   s32 result;
 
-  if (gSaveBlock.warpDest == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
+  if (gSaveBlock.entrance == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
     FieldScript_Start();
@@ -1418,7 +1418,7 @@ static void EventScript_TalkToWallAttendant(s32 attendant) {
   struct ObjectEvent *objectEvent;
   s32 result;
 
-  if (gSaveBlock.warpDest == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
+  if (gSaveBlock.entrance == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
     return;
   }
@@ -1516,7 +1516,7 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
 static void EventScript_TalkToBoardWalkAttendant(s32 attendant) {
   s32 result;
 
-  if (gSaveBlock.warpDest == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
+  if (gSaveBlock.entrance == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
     return;
   }
@@ -1558,7 +1558,7 @@ static void EventScript_TalkToBoardWalkAttendant(s32 attendant) {
   FieldScript_End();
 }
 
-// This map's warps for colosso_solo.h.
+// This map's exits for colosso_solo.h.
 #define COLOSSO_SOLO_TO_RACE COLOSSEUM_SATRAGE_MATCH_LEND_A_HAND_TO_RACE
 #define COLOSSO_SOLO_TO_COLOSSEUM COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_SOUTH
 #include "common/colosso_solo.h"
@@ -2109,20 +2109,20 @@ u32 gColosseumSatrageMatch_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),
 };
 
-struct MapWarpDest gColosseumSatrageMatchWarpDests[] = {
+struct SceneEntrance gColosseumSatrageMatchEntrances[] = {
     { COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND, CONDITION_ALWAYS, 1272, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST, CONDITION_ALWAYS, 1224, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { 10, CONDITION_ALWAYS, 384, 0, 264, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { MAP_TABLE_END },
 };
 
-u32 gColosseumSatrageMatchWarps[] = {
-    MAP_WARPS(ColosseumSatrageMatch),
-    MAP_WARP(COLOSSEUM_SATRAGE_MATCH_LEND_A_HAND_TO_RACE, ColosseumSatrageMatch, COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND),
-    MAP_WARP(COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_SOUTH, Colosseum, COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_SOUTH),
-    MAP_WARP(COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_NORTH, Colosseum, COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH),
-    MAP_WARP(COLOSSEUM_SATRAGE_MATCH_TO_BABI_PALACE, BabiPalace, BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH),
-    MAP_WARPS_END,
+u32 gColosseumSatrageMatchExits[] = {
+    SCENE_EXITS(ColosseumSatrageMatch),
+    SCENE_EXIT(COLOSSEUM_SATRAGE_MATCH_LEND_A_HAND_TO_RACE, ColosseumSatrageMatch, COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND),
+    SCENE_EXIT(COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_SOUTH, Colosseum, COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_SOUTH),
+    SCENE_EXIT(COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_NORTH, Colosseum, COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH),
+    SCENE_EXIT(COLOSSEUM_SATRAGE_MATCH_TO_BABI_PALACE, BabiPalace, BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gColosseumSatrageMatchObjectEventTemplates[] = {

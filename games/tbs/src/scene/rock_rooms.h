@@ -22,13 +22,13 @@ enum InteriorRoom {
   ROOM_CRATE_ROOM,
   ROOM_NINTH_UNUSED, ///< no exit leads here
   ROOM_GATE_TO_SUHALLA,
-  ROOM_TEMPLE_SECOND_WARP_DEST
+  ROOM_TEMPLE_SECOND_ENTRANCE
 };
 
-#define ROOM_DOOR(room) {MAP_EVENT_WARP, (room), CONDITION_ALWAYS, (room)}
+#define ROOM_DOOR(room) {MAP_EVENT_EXIT, (room), CONDITION_ALWAYS, (room)}
 
 /// The metatile behaviors the rooms' bg events answer; each door's cells carry
-/// the number of its warp.
+/// the number of its exit.
 enum RockRoomsMetatileBehavior {
   MB_ROCK_ROOMS_WOODEN_BOX = 100,
   /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)

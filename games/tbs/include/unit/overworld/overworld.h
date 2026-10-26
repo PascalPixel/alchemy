@@ -17,13 +17,13 @@ struct ObjectEventTemplate;
 struct Window;
 union ObjectEventOrEffect;
 
-/// The warp request whose destination is already in gSaveBlock.sceneId and
-/// .warpDest, so that Scene_TakeWarp leaves them as they are. Random battles,
+/// The exit request whose destination is already in gSaveBlock.sceneId and
+/// .entrance, so that Scene_TakeExit leaves them as they are. Random battles,
 /// Retreat and the script commands that set a destination
 /// (FieldScript_SetDestination) raise it, and SceneManager_Run returns it when
-/// the whole party falls; Scene_TakeWarp also uses it for "no warp found"
+/// the whole party falls; Scene_TakeExit also uses it for "no exit found"
 /// (map.c, run_map.c).
-#define WARP_NONE 999
+#define EXIT_NONE 999
 
 /// gSaveBlock.movementMode: how the map loop hands the party leader back to
 /// the player (SceneManager_Run).
@@ -102,7 +102,7 @@ enum EncounterZoneId {
   ENCOUNTER_ZONE_JUPITER_DJINN = 103
 };
 
-void Scene_TakeWarp(s32 warpId);
+void Scene_TakeExit(s32 exitId);
 void Scene_ReturnFromSequence(s32 result);
 s32 Scene_GetArea(s32 sceneId);
 void SequenceManager_Run(s32 mode);
@@ -117,7 +117,7 @@ s32 Encounter_RollWorldMap(s32 pos, s32 steps);
 u16 Encounter_GetFormationAtSlot(s32 zone, s32 slot);
 s16 Encounter_GetDjinnFormation(s32 djinni);
 void Scene_ChooseMusic(void);
-s32 Area_GetNameIndex(s32 sceneId, s32 warpDest);
+s32 Area_GetNameIndex(s32 sceneId, s32 entrance);
 void Scene_SetDefeatReturnPoint(void);
 s16 FieldScript_GetSpecialValue(void);
 void BattleBackground_SelectForMap(void);
@@ -174,16 +174,16 @@ void ObjectEvent_Restore(void);
 void Field_ClearRequests(void);
 s32 Field_CountRequests(void);
 s32 Field_GetCollisionAheadOfLeader(void);
-void Field_CheckWarpRegions(s32 positionX, s32 positionY, s32 positionZ);
+void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ);
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z);
 void Party_AddPp(s32 amount, s32 unused);
 void Party_AddHp(s32 amount, s32 percent);
 s32 Party_ApplyPoisonDamage(void);
 void WorldMap_StartScript(void);
 void WorldMap_EndScript(void);
-s32 SceneManager_Run(s32 warpDest);
+s32 SceneManager_Run(s32 entrance);
 s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void);
-void Scene_ApplyWarpDest(void);
+void Scene_ApplyEntrance(void);
 void PaletteEditor_Run(void);
 
 struct ObjectEventTemplate *Scene_FindObjectEventTemplate(s32 id);
@@ -194,7 +194,7 @@ void Overlay_CallInitialize(void);
 s32 Scene_FindObjectEventTalkEvent(s32 id);
 s32 Scene_TalkToObjectEvent(s32 id);
 s32 Scene_RunRaisedEvent(s32 value);
-s32 Scene_RunCoordEventOrWarp(s32 value);
+s32 Scene_RunCoordEventOrExit(s32 value);
 s32 Field_RunPushCellEvent(s32 behavior);
 s32 Field_SearchCell(s32 tile);
 s32 Field_GetPsynergyTargetRange(s32 kind);

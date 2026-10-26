@@ -88,15 +88,15 @@ enum IncreaseItemAndLevelLocalId {
   LOCALID_SECOND_EMOTE_TESTER
 };
 
-u8 *IncreaseItemAndLevel_GetWarpDests(void) {
-  return (u8 *)gIncreaseItemAndLevel_WarpDests;
+u8 *IncreaseItemAndLevel_GetEntrances(void) {
+  return (u8 *)gIncreaseItemAndLevel_Entrances;
 }
 
-/// The room has no warp regions: its regions entry returns none.
-s32 Scene_GetWarpRegions(void) { return 0; }
+/// The room has no exit regions: its regions entry returns none.
+s32 Scene_GetExitRegions(void) { return 0; }
 
-u8 *IncreaseItemAndLevel_GetWarps(void) {
-  return (u8 *)gIncreaseItemAndLevel_Warps;
+u8 *IncreaseItemAndLevel_GetExits(void) {
+  return (u8 *)gIncreaseItemAndLevel_Exits;
 }
 
 u8 *IncreaseItemAndLevel_GetObjectEventTemplates(void) {
@@ -472,12 +472,12 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
 }
 #endif
 
-/// Unused: requests a warp through TRANSITION_WINDOW over 24 frames; no event
+/// Unused: requests an exit through TRANSITION_WINDOW over 24 frames; no event
 /// row names it.
-UNUSED static void IncreaseItemAndLevel_RequestWarp(void) {
+UNUSED static void IncreaseItemAndLevel_RequestExit(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   gFieldWork->transitionFrames = 24;
-  Import_ScriptRequestWarp();
+  Import_ScriptRequestExit();
 }
 
 /// Starts the window transition and edition-specific object event
@@ -584,14 +584,14 @@ char gIncreaseItemAndLevel_GlyphsLower[28] = "P Q R S T U V W X Y Z a b c";
 char gIncreaseItemAndLevel_GlyphsMarks[12] = "! ? # $ %";
 #endif
 
-struct MapWarpDest gIncreaseItemAndLevel_WarpDests[] = {
+struct SceneEntrance gIncreaseItemAndLevel_Entrances[] = {
     {0, CONDITION_ALWAYS, 824, 0, 864, FACING_NORTH, 0, 280, 504, 912, 896, 0},
     {MAP_TABLE_END},
 };
 
-/// No warps: 511 is MAP_WARPS_END's value.
-u32 gIncreaseItemAndLevel_Warps[] = {
-    MAP_WARPS_END,
+/// No exits: 511 is SCENE_EXITS_END's value.
+u32 gIncreaseItemAndLevel_Exits[] = {
+    SCENE_EXITS_END,
 };
 
 /// The room's object events, in the order of enum IncreaseItemAndLevelLocalId:

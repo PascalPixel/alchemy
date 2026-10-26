@@ -68,13 +68,13 @@ running: its per-frame jobs, its screen effects and all the memory it
 borrowed. Then it works out which flags the new scene starts with, starts the
 scene's music (unless a flag asks to keep the music already playing), unpacks
 the scene's code and hands it to the scene manager, which draws its map and
-runs it. The scene runs until the party takes a [warp](glossary.md#warp), a
-way out, and the warp names the next scene and the place in it where the
+runs it. The scene runs until the party takes an [exit](glossary.md#exit), a
+way out, and the exit names the next scene and the place in it where the
 party appears.
 
 A battle or a minigame takes a scene's place in the loop. It has no code of
 its own to unpack, since its code is always loaded, and when it ends it
-reports a result rather than a warp. The game then goes back to the scene the
+reports a result rather than an exit. The game then goes back to the scene the
 battle started from, with everyone standing where they stood; after a defeat
 it goes to the place a [script](glossary.md#script) chose for losing that
 battle, or else to the last Sanctum. A random battle starts the same way as
@@ -86,9 +86,9 @@ any scene though the party never walks there.
 
 The loop is `SequenceManager_Run`; one pass through a scene is
 `Scene_ResetFlagsOnEnter`, `Scene_LoadOverlay`, `SceneManager_Run` and
-`Scene_TakeWarp`, and a battle's return is `Scene_ReturnFromSequence`.
+`Scene_TakeExit`, and a battle's return is `Scene_ReturnFromSequence`.
 [Running a scene](src/overworld/README.md) follows a scene from its arrival to
-its warp.
+its exit.
 
 The sequence manager is unlike most games' main loops. In most games, the
 Pokémon games among them, the main loop goes round once a frame, a sixtieth
@@ -113,7 +113,7 @@ and unpacked into the same 32 KB of memory over the scene before it. Overlays
 never call each other; code several scenes need is copied into each.
 
 The rest of the game knows a scene only through six questions it can ask the
-scene's code: set yourself up; where can the party arrive; where do your warps
+scene's code: set yourself up; where can the party arrive; where do your exits
 lead; who stands here; what happens when the player talks, searches or steps
 somewhere (the [map events](glossary.md#map-event)); and which areas of you
 lead out. Each answer is a function rather than a fixed table, so a scene can
@@ -153,29 +153,29 @@ scene by its row's symbol, `SceneId_<Place>`.
 | overlays, the scenes' code, some shared by several scenes | 96    |
 | areas                                              | 71    |
 
-## Warps and warp destinations
+## Exits and entrances
 
-![Isaac walks down the path from Sol Sanctum's entrance and arrives at the foot of the steps in Vale; then the same walk again, and this time the warp leads to Vale erupting, the villagers crowded beside the bridge while the river and the cliffs glow red](https://alchemy.pascalpixel.com/guides/front/sol-entrance-warp.gif)
+![Isaac walks down the path from Sol Sanctum's entrance and arrives at the foot of the steps in Vale; then the same walk again, and this time the exit leads to Vale erupting, the villagers crowded beside the bridge while the river and the cliffs glow red](https://alchemy.pascalpixel.com/guides/front/sol-entrance-warp.gif)
 
-The path down from Sol Sanctum's entrance is one warp, but where it leads
+The path down from Sol Sanctum's entrance is one exit, but where it leads
 depends on the story: to Vale, or, on the night Mt. Aleph erupts, to the
-village in flames. A warp only names where it goes. The scene's warp table
-turns that name into a scene and a [warp
-destination](glossary.md#warp-destination), the spot where the party appears
+village in flames. An exit only names where it goes. The scene's exit table
+turns that name into a scene and a [
+entrance](glossary.md#entrance), the spot where the party appears
 and the way it faces, and a row of the table can be made to count only until
 a certain flag is set. The game takes the first row that counts.
 
 The path in the recording has three rows: one to Vale that counts until the
 sanctum erupts, one to Vale erupting that counts until the party leaves the
 village, and one to Vale again for the rest of the game. A scene's set-up
-often looks at the warp destination too, to play the part of an event the
+often looks at the entrance too, to play the part of an event the
 last scene sent the party to.
 
-Every way between scenes has a name in [map_warps.h](include/map_warps.h).
+Every way between scenes has a name in [scene_exits.h](include/scene_exits.h).
 Destinations are named for where the party comes from
-(`VALE_PLAZA_FROM_SANCTUM`) and warps for where they lead
+(`VALE_PLAZA_FROM_SANCTUM`) and exits for where they lead
 (`VALE_PLAZA_TO_WORLD_MAP`), so a door has the same name from both sides. The
-recording's rows are `gSolSanctumEntrance_Warps` in
+recording's rows are `gSolSanctumEntrance_Exits` in
 [sol_sanctum_entrance.c](src/scene/sol_sanctum_entrance.c).
 
 ## Game flags
@@ -230,7 +230,7 @@ order](glossary.md#the-places-in-story-order).
   ([vale_stormy_night.c](src/scene/vale_stormy_night.c)). A place that changes
   completely gets a scene; a place whose people change reads the flags.
 - **A scene with no map events.** Vale while Mt. Aleph erupts plays its whole
-  event as it starts and leaves by its one warp
+  event as it starts and leaves by its one exit
   ([vale_eruption.c](src/scene/vale_eruption.c)).
 - **A row that lasts until its flag is set.** Each pedestal in the room of the
   Elemental Stars offers its star until that star's flag is set, so each star
@@ -260,7 +260,7 @@ whole of its map laid flat. The world is stored as squares 512 pixels on a
 side, and only the four squares around the party are unpacked at a time.
 
 Its code does three kinds of work. Each town or dungeon is a figure standing
-on the map, and touching one takes the warp into that place. It holds what
+on the map, and touching one takes the exit into that place. It holds what
 the party meets on the map itself: three Djinn and a storm. And it plays the
 story's moments between places, chosen by where the last scene sent the
 party. The code is [world_map.c](src/scene/world_map.c), and
@@ -284,7 +284,7 @@ The source's folders follow the cartridge:
 
 - The nine large banks each have a folder, in cartridge order: `runtime`,
   `field`, `window`, `game`, `overworld`, `menu`, `shop`, `battle` and
-  `battle_anim`. `overworld` runs a scene from arrival to warp; `field` moves
+  `battle_anim`. `overworld` runs a scene from arrival to exit; `field` moves
   and draws the objects.
 - The five small banks' code sits in the folder it belongs with.
 - `graphics`, `map`, `sound` and `system` are grouped by topic and linked

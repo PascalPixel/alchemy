@@ -263,13 +263,13 @@ static __inline__ void Io_SetBlendControl(s32 value) { REG_BLDCNT = value; }
 
 static __inline__ void Io_SetBlendAlpha(s32 value) { REG_BLDALPHA = value; }
 
-const struct MapWarpDest *TolbiSpring_GetWarpDests(void) {
-  return gTolbiSpring_WarpDests;
+const struct SceneEntrance *TolbiSpring_GetEntrances(void) {
+  return gTolbiSpring_Entrances;
 }
 
-const struct MapWarpRegion *TolbiSpring_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *TolbiSpring_GetRegions(void) { return NULL; }
 
-const u32 *TolbiSpring_GetWarps(void) { return gTolbiSpring_Warps; }
+const u32 *TolbiSpring_GetExits(void) { return gTolbiSpring_Exits; }
 
 /// Selects the object events of Tolbi Spring or of the Lucky Dice and Lucky
 /// Wheels rooms.
@@ -384,7 +384,7 @@ s32 TolbiSpring_Initialize(void) {
     ObjectEvent_GetById(LOCALID_TOLBI_SPRING_WEST_SIGN_GRASS)->priorityFlags =
         OBJ_EVENT_PRIORITY_UNDERFOOT;
     FieldScript_StartScreenTransition();
-    if (gSaveBlock.warpDest == TOLBI_SPRING_FROM_TOLBI) {
+    if (gSaveBlock.entrance == TOLBI_SPRING_FROM_TOLBI) {
       TolbiSpring_InitializeTossSimulation();
       if (GameFlag_Get(FLAG_TOLBI_SPRING_RISEN)) {
         Io_SetBlendControl(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND |
@@ -398,14 +398,14 @@ s32 TolbiSpring_Initialize(void) {
     }
     gOamCopyEnabled = 1;
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-    if (gSaveBlock.warpDest == STUCCO_ROOMS_C_LUCKY_DICE_FROM_TOLBI) {
+    if (gSaveBlock.entrance == STUCCO_ROOMS_C_LUCKY_DICE_FROM_TOLBI) {
       ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT,
                                        SPRITE_COLOR_GRB);
       ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_SPRING_DICE_ATTENDANT,
                                        SPRITE_COLOR_RBG);
     }
     // Lucky Dice returns here to report the change in the party's coins.
-    if (gSaveBlock.warpDest == STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE &&
+    if (gSaveBlock.entrance == STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       FieldScript_Start();
       ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT,
@@ -439,7 +439,7 @@ s32 TolbiSpring_Initialize(void) {
       FieldScript_End();
     }
     // Lucky Wheels returns item categories for the attendant to award.
-    if (gSaveBlock.warpDest == STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS &&
+    if (gSaveBlock.entrance == STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       wonPrizes = gSaveBlock.wonPrizes;
       FieldScript_Start();
@@ -1529,7 +1529,7 @@ static s32 TolbiSpring_RunToss(s32 tossKind) {
   return sTossResult;
 }
 
-const struct MapWarpDest gTolbiSpring_WarpDests[] = {
+const struct SceneEntrance gTolbiSpring_Entrances[] = {
     {0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {TOLBI_SPRING_FROM_TOLBI, CONDITION_ALWAYS, 120, 0, 168, FACING_NORTH, 0,
      -1, -1, -1, -1, 0},
@@ -1543,16 +1543,16 @@ const struct MapWarpDest gTolbiSpring_WarpDests[] = {
     {MAP_TABLE_END},
 };
 
-const u32 gTolbiSpring_Warps[] = {
-    MAP_WARPS(TolbiSpring),
-    MAP_WARP_UNLESS(TOLBI_SPRING_TO_TOLBI, Tolbi, TOLBI_FROM_TOLBI_SPRING,
-                    0xffffffff),
-    MAP_WARPS(StuccoRoomsC),
-    MAP_WARP_UNLESS(STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI, Tolbi,
-                    TOLBI_FROM_LUCKY_DICE, 0xffffffff),
-    MAP_WARP_UNLESS(STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI, Tolbi,
-                    TOLBI_FROM_HOUSE_NORTHEAST, 0xffffffff),
-    MAP_WARPS_END,
+const u32 gTolbiSpring_Exits[] = {
+    SCENE_EXITS(TolbiSpring),
+    SCENE_EXIT_UNLESS(TOLBI_SPRING_TO_TOLBI, Tolbi, TOLBI_FROM_TOLBI_SPRING,
+                      0xffffffff),
+    SCENE_EXITS(StuccoRoomsC),
+    SCENE_EXIT_UNLESS(STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI, Tolbi,
+                      TOLBI_FROM_LUCKY_DICE, 0xffffffff),
+    SCENE_EXIT_UNLESS(STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI, Tolbi,
+                      TOLBI_FROM_HOUSE_NORTHEAST, 0xffffffff),
+    SCENE_EXITS_END,
 };
 
 // clang-format off
@@ -1629,8 +1629,8 @@ const struct ObjectEventTemplate gTolbiSpringObjectEventTemplatesOther[] = {
 };
 
 const struct MapEvent gTolbiSpringEventsOther[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI },
     { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_TalkToWheelsAttendant) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringHmmIWonderIfTheseKids) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_DICE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_OfferLuckyDice) },
@@ -1655,8 +1655,8 @@ const struct MapEvent gTolbiSpringEventsOther[] = {
 };
 
 const struct MapEvent gTolbiSpringEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, TOLBI_SPRING_TO_TOLBI },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, 2 },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, TOLBI_SPRING_TO_TOLBI },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_MEDAL_SIGN, CONDITION_ALWAYS, MSGNO(MsgTolbiTossLuckyMedal) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_COIN_SIGN, CONDITION_ALWAYS, MSGNO(MsgTolbiFaceAwayTolbi) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_VISITOR_MYSTERIOUS_POWERS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringTolbiSpringHasMysteriousPowersStand) },

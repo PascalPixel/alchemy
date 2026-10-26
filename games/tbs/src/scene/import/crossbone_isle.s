@@ -38,7 +38,7 @@
 	.set import.Import_ObjectEventSetAnimation, 1
 	.set import.ObjectEvent_SetSpriteColor, 1
 	.set import.ObjectMotion_SetActionVariant, 1
-	.set import.Import_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestExit, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.FieldScript_SetNextDestination, 1
 	.set import.FieldScript_StartScreenTransition, 1

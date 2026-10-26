@@ -4,9 +4,9 @@
 #include "types.h"
 #include "map_tables.h"
 
-const struct MapWarpDest *Vale_GetWarpDests(void);
-const struct MapWarpRegion *Vale_GetRegions(void);
-const u32 *Vale_GetWarps(void);
+const struct SceneEntrance *Vale_GetEntrances(void);
+const struct SceneExitRegion *Vale_GetRegions(void);
+const u32 *Vale_GetExits(void);
 const struct ObjectEventTemplate *Vale_GetObjectEventTemplates(void);
 const struct MapEvent *Vale_GetEvents(void);
 s32 Vale_Initialize(void);
@@ -18,8 +18,8 @@ extern s32 gVale_LeaderHammers[];
 extern s32 gVale_GaretWalksToTheHouse[];
 extern s32 gVale_UnusedWaterGrows[];
 extern s32 gVale_SparkleScript[];
-extern struct MapWarpDest gVale_WarpDests[];
-extern u32 gVale_Warps[];
+extern struct SceneEntrance gVale_Entrances[];
+extern u32 gVale_Exits[];
 extern struct ObjectEventTemplate gVale_ObjectEventTemplates[];
 extern struct ObjectEventTemplate gVale_ObjectEventTemplatesAfterLeaving[];
 extern struct ObjectEventTemplate gVale_ObjectEventTemplatesAfterKalay[];

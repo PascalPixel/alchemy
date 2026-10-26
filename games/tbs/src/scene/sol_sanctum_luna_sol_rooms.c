@@ -22,7 +22,7 @@
 ///   Kraden runs off to the statue room
 ///   (SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed,
 ///   FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING). Both take the party back
-///   to the statue room by the warp named for the event.
+///   to the statue room by the exit named for the event.
 /// - With all four quarters lit, Kraden sees that the picture of Luna has
 ///   become Sol (EventScript_KradenSeesLunaPictureChange,
 ///   FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) and that the floor's symbol has
@@ -43,7 +43,7 @@
 /// remembers which colours show, so a return after a battle keeps them. On
 /// entry SolSanctumLunaSolRooms_Initialize copies each lit quarter into its
 /// FLAG_SOL_SANCTUM_*_LIGHT_SHOWN and redraws the pictures, the floor and the
-/// open way up from the story flags, unless the warp destination's own event
+/// open way up from the story flags, unless the entrance's own event
 /// draws them. The falling lights are four callbacks, each with a random timer
 /// of its own, that the trap adds and removes. A third statue-room event, the
 /// lit quarters flashing for Kraden
@@ -110,7 +110,7 @@
 #define SOL_SANCTUM_WARM_TINT (PALETTE_TINT_CUSTOM | RGB(17, 13, 11))
 
 /// The metatile behaviors of the floor cells the events answer; behaviors 1
-/// and 2 are the warps.
+/// and 2 are the exits.
 enum SolSanctumLunaSolRoomsMetatileBehavior {
   /// Before Kraden in the Luna room.
   MB_SOL_SANCTUM_LUNA_SOL_ROOMS_BEFORE_KRADEN = 8,
@@ -135,7 +135,7 @@ enum SolSanctumLunaSolRoomsMetatileBehavior {
   MB_SOL_SANCTUM_LUNA_SOL_ROOMS_CHEST = 100
 };
 
-// Map flags, cleared at every ordinary warp destination; one of the three is
+// Map flags, cleared at every ordinary entrance; one of the three is
 // set at a time, for the colours the rooms show, so a return after a battle
 // keeps them:
 // - FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED: the plain colours
@@ -152,16 +152,16 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void);
 
 void FieldEffect_InitializeSparkles(void);
 
-const struct MapWarpDest *SolSanctumLunaSolRooms_GetWarpDests(void) {
-  return gSolSanctumLunaSolRoomsWarpDests;
+const struct SceneEntrance *SolSanctumLunaSolRooms_GetEntrances(void) {
+  return gSolSanctumLunaSolRoomsEntrances;
 }
 
-const struct MapWarpRegion *SolSanctumLunaSolRooms_GetRegions(void) {
+const struct SceneExitRegion *SolSanctumLunaSolRooms_GetRegions(void) {
   return 0;
 }
 
-const u32 *SolSanctumLunaSolRooms_GetWarps(void) {
-  return gSolSanctumLunaSolRoomsWarps;
+const u32 *SolSanctumLunaSolRooms_GetExits(void) {
+  return gSolSanctumLunaSolRoomsExits;
 }
 
 /// Returns the eight statues, four in each room, Kraden, Jenna and Garet, all
@@ -949,7 +949,7 @@ static void SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed(void) {
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   GameFlag_Set(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING);
-  Import_ScriptRequestWarp(
+  Import_ScriptRequestExit(
       SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_DISARMED);
 }
 
@@ -1033,7 +1033,7 @@ static void SolSanctumLunaSolRooms_SpringTrap(void) {
   gFieldWork->transitionFrames = 32;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(
+  Import_ScriptRequestExit(
       SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_TRIGGERED);
 }
 
@@ -1127,7 +1127,7 @@ static void SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights(void) {
   gFieldWork->transitionFrames = 32;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(
+  Import_ScriptRequestExit(
       SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_LIGHTS_SHOWN);
 }
 
@@ -1386,17 +1386,17 @@ static void EventScript_RiseToElementalStarRoom(void) {
     PaletteFade_SetTarget(RGB(0, 0, 0), PALETTES_ALL);
     PaletteFade_StartInterpolation(1);
     WaitFrames(1);
-    Import_ScriptRequestWarp(
+    Import_ScriptRequestExit(
         SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ELEMENTAL_STAR_ROOM);
     FieldScript_End();
   }
 }
 
-/// Sets up Sol Sanctum's rooms of Sol and Luna and plays the event this warp
-/// destination calls for. Called by SceneManager_Run once the object events
+/// Sets up Sol Sanctum's rooms of Sol and Luna and plays the event this
+/// entrance calls for. Called by SceneManager_Run once the object events
 /// exist. Blocks Retreat (FLAG_RETREAT_BLOCKED) from Kraden's find until the
 /// way up opens, before the eruption; sets
-/// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED at an ordinary warp destination;
+/// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED at an ordinary entrance;
 /// copies each lit quarter into its FLAG_SOL_SANCTUM_*_LIGHT_SHOWN; plays the
 /// disarmed trap's flash at
 /// SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED, the trap
@@ -1438,9 +1438,9 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
       ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(576), PIXELS(120));
     }
   }
-  // Play the one-time event this warp destination comes back from
+  // Play the one-time event this entrance comes back from
   // SceneId_SolSanctumStatue for.
-  if (gSaveBlock.warpDest ==
+  if (gSaveBlock.entrance ==
       SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED) {
     if (Script_GetFlag(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING) == 0) {
       SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed();
@@ -1448,7 +1448,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
       playedEntrySequence = 1;
     }
   } else if (
-      gSaveBlock.warpDest ==
+      gSaveBlock.entrance ==
       SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_TRIGGERED) {
     if (Script_GetFlag(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) == 0) {
       SolSanctumLunaSolRooms_SpringTrap();
@@ -1459,7 +1459,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
       GameFlag_Clear(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN);
       playedEntrySequence = 1;
     }
-  } else if (gSaveBlock.warpDest ==
+  } else if (gSaveBlock.entrance ==
              SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_LIGHTS_SHOWN) {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) != 0) {
       SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights();
@@ -1480,8 +1480,8 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
     GameFlag_Set(FLAG_SOL_SANCTUM_SOUTHEAST_LIGHT_SHOWN);
   }
   WaitFrames(4);
-  // Restore completed puzzle tiles without replaying the warp
-  // destination's event.
+  // Restore completed puzzle tiles without replaying the
+  // entrance's event.
   if (playedEntrySequence == 0) {
     if (SolSanctumLunaSolRooms_AreAllStatueLightsLit() != 0) {
       MapGrid_CopyCellsTo(30, 44, 30, 38, 12, 5);
@@ -1490,7 +1490,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
       MapGrid_CopyCellsTo(45, 28, 34, 10, 4, 2);
       MapGrid_CopyCellsTo(45, 30, 16, 10, 4, 2);
       MapGrid_CopyCellsTo(14, 45, 14, 41, 8, 4);
-      if (gSaveBlock.warpDest !=
+      if (gSaveBlock.entrance !=
           SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION) {
         if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) == 0) {
           if (GameFlag_Get(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) != 0) {
@@ -1541,7 +1541,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
   }
   // The arrival after the Wise One's rescue plays only once.
   if (Script_GetFlag(FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN) == 0 &&
-      gSaveBlock.warpDest ==
+      gSaveBlock.entrance ==
           SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION) {
     SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue();
     GameFlag_Set(FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN);
@@ -1711,8 +1711,8 @@ static void EventScript_TalkToKraden(void) {
   FieldScript_End();
 }
 
-struct MapWarpDest gSolSanctumLunaSolRoomsWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 288, 0, 157, FACING_SOUTH, 0, 0, 0,
+struct SceneEntrance gSolSanctumLunaSolRoomsEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 288, 0, 157, FACING_SOUTH, 0, 0, 0,
      752, 496, 0},
     {SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_RELIEFS, CONDITION_ALWAYS, 55,
      0, 477, FACING_NORTH, 0, 0, 0, 752, 496, 0},
@@ -1733,30 +1733,33 @@ struct MapWarpDest gSolSanctumLunaSolRoomsWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gSolSanctumLunaSolRoomsWarps[] = {
-    MAP_WARPS(SolSanctumLunaSolRooms),
-    MAP_WARP(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_RELIEFS,
-             SolSanctumReliefs,
-             SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS),
-    MAP_WARP(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE, SolSanctumStatue,
-             SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS),
-    MAP_WARP(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_DISARMED,
-             SolSanctumStatue,
-             SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED),
-    MAP_WARP(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_TRIGGERED,
-             SolSanctumStatue,
-             SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED),
-    MAP_WARP(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_LIGHTS_SHOWN,
-             SolSanctumStatue,
-             SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_LIGHTS_SHOWN),
-    MAP_WARP(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_UNUSED,
-             SolSanctumStatue,
-             SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_UNUSED),
-    MAP_WARP(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ELEMENTAL_STAR_ROOM,
-             SolSanctumElementalStarRoom,
-             SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS),
-    WARP_TO_BATTLE(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_BATTLE, 1),
-    MAP_WARPS_END,
+u32 gSolSanctumLunaSolRoomsExits[] = {
+    SCENE_EXITS(SolSanctumLunaSolRooms),
+    SCENE_EXIT(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_RELIEFS,
+               SolSanctumReliefs,
+               SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS),
+    SCENE_EXIT(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE,
+               SolSanctumStatue,
+               SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS),
+    SCENE_EXIT(
+        SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_DISARMED,
+        SolSanctumStatue,
+        SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED),
+    SCENE_EXIT(
+        SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_TRIGGERED,
+        SolSanctumStatue,
+        SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED),
+    SCENE_EXIT(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_LIGHTS_SHOWN,
+               SolSanctumStatue,
+               SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_LIGHTS_SHOWN),
+    SCENE_EXIT(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_UNUSED,
+               SolSanctumStatue,
+               SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_UNUSED),
+    SCENE_EXIT(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ELEMENTAL_STAR_ROOM,
+               SolSanctumElementalStarRoom,
+               SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS),
+    EXIT_TO_BATTLE(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_BATTLE, 1),
+    SCENE_EXITS_END,
 };
 
 // clang-format off
@@ -1804,9 +1807,9 @@ struct MapEvent gSolSanctumLunaSolRoomsEvents[] = {
      CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RiseToElementalStarRoom)},
     {MAP_EVENT_COORD, MB_SOL_SANCTUM_LUNA_SOL_ROOMS_BEFORE_KRADEN,
      CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_KradenSeesLunaPictureChange)},
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS,
      SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_RELIEFS},
-    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS,
      SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE},
     {MAP_EVENT_COORD, MB_SOL_SANCTUM_LUNA_SOL_ROOMS_HEART_OF_SANCTUM,
      CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_KradenFindsHeartOfSanctum)},

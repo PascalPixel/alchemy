@@ -4,14 +4,14 @@
 #include "types.h"
 #include "map_tables.h"
 
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEvent;
 struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *ColosseumEntrance_GetWarpDests(void);
-const struct MapWarpRegion *ColosseumEntrance_GetRegions(void);
-const u32 *ColosseumEntrance_GetWarps(void);
+const struct SceneEntrance *ColosseumEntrance_GetEntrances(void);
+const struct SceneExitRegion *ColosseumEntrance_GetRegions(void);
+const u32 *ColosseumEntrance_GetExits(void);
 const struct ObjectEventTemplate *
 ColosseumEntrance_GetObjectEventTemplates(void);
 const struct MapEvent *ColosseumEntrance_GetEvents(void);
@@ -25,10 +25,10 @@ extern s32 gColosseumEntrance_JoinFinalsFromEastScript[];
 extern s32 gColosseumEntrance_JoinFinalsFromSouthScript[];
 extern s32 gColosseumEntrance_EnterFinalsScript[];
 extern s32 gColosseumEntrance_PulseScaleScript[];
-extern struct MapWarpDest gColosseumEntranceWarpDestsOther[];
-extern struct MapWarpDest gColosseumWarpDests[];
-extern struct MapWarpDest gColosseumEntranceWarpDests[];
-extern u32 gColosseumEntranceWarps[];
+extern struct SceneEntrance gColosseumEntranceEntrancesOther[];
+extern struct SceneEntrance gColosseumEntrances[];
+extern struct SceneEntrance gColosseumEntranceEntrances[];
+extern u32 gColosseumEntranceExits[];
 extern struct ObjectEventTemplate gColosseumEntranceObjectEventTemplatesOther[];
 extern struct ObjectEventTemplate gColosseumStandsObjectEventTemplates[];
 extern struct ObjectEventTemplate gColosseumTrialGroundsObjectEventTemplates[];

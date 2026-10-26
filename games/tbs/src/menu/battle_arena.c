@@ -296,12 +296,12 @@ static s32 sBattleArenaWaitFrames;
 #define LOBBY_NO_RESULT
 #endif
 
-/// The Battle Arena's warp destinations, which SceneManager_Run reads through
+/// The Battle Arena's entrances, which SceneManager_Run reads through
 /// entry/battle_arena.s.
-u8 *BattleArena_GetWarpDests(void) { return (u8 *)gBattleArenaWarpDests; }
+u8 *BattleArena_GetEntrances(void) { return (u8 *)gBattleArenaEntrances; }
 
-/// The warp regions entry: the Battle Arena has no warp boxes.
-s32 Scene_GetWarpRegions(void) { return 0; }
+/// The exit regions entry: the Battle Arena has no exit boxes.
+s32 Scene_GetExitRegions(void) { return 0; }
 
 /// Restarts the link with interrupts locked: removes the serial and timer 3
 /// handlers, then runs Serial_Initialize. Called when no partner
@@ -322,7 +322,7 @@ static s32 BattleArena_InitializeSerial(void) {
 #endif
 }
 
-u8 *BattleArena_GetWarps(void) { return (u8 *)gBattleArenaWarps; }
+u8 *BattleArena_GetExits(void) { return (u8 *)gBattleArenaExits; }
 
 /// The object event templates entry. After a defeat
 /// (BATTLE_ARENA_AFTER_MONSTER_LOSS or BATTLE_ARENA_AFTER_LINK_LOSS) the party
@@ -331,10 +331,10 @@ u8 *BattleArena_GetWarps(void) { return (u8 *)gBattleArenaWarps; }
 /// three of the visitors' spots, and the visitors stand around where the party
 /// stood.
 s32 BattleArena_SelectObjectEventTemplates(void) {
-  s16 warpDest = gSaveBlock.warpDest;
+  s16 entrance = gSaveBlock.entrance;
 
-  if (warpDest == BATTLE_ARENA_AFTER_LINK_LOSS ||
-      warpDest == BATTLE_ARENA_AFTER_MONSTER_LOSS) {
+  if (entrance == BATTLE_ARENA_AFTER_LINK_LOSS ||
+      entrance == BATTLE_ARENA_AFTER_MONSTER_LOSS) {
     return (s32)gBattleArenaBattleObjectEventTemplates;
   }
   return (s32)gBattleArenaObjectEventTemplates;
@@ -911,7 +911,7 @@ check:
 /// LOBBY_PEER_WAIT_FRAMES. The leader then walks in while the parties are
 /// exchanged; a failed exchange walks back, restarts the Battle Arena's polling
 /// and raises LOBBY_EVENT_DISCONNECTED. Sets where the battle returns to (the
-/// BATTLE_ARENA_AFTER_ warp destinations) and requests it. The original returns
+/// BATTLE_ARENA_AFTER_ entrances) and requests it. The original returns
 /// have no defined status.
 static s32 BattleArena_EnterBattle(void) {
   struct FieldWork *work;
@@ -1368,7 +1368,7 @@ static s32 BattleArena_TalkByProgress(s32 localId) {
 }
 
 /// Coord event 1, the way out: stops the link, loads the normal reverb code and
-/// goes back to the main menu (its warp destination MAIN_MENU_FROM_SANCTUM).
+/// goes back to the main menu (its entrance MAIN_MENU_FROM_SANCTUM).
 static s32 BattleArena_LeaveArena(void) {
   Serial_RemoveIrqHandlers();
   Sound_LoadReverbCode(SOUND_REVERB_NORMAL);
@@ -1535,7 +1535,7 @@ static s32 BattleArena_DrawThreeDigitValue(s32 value) {
 /// The overlay's initialize entry, run on every arrival: settles the battle
 /// that brought the party here and restarts the Battle Arena's polling. A
 /// linked battle broken off (FLAG_AREA_TEMP_E8) arrives as
-/// BATTLE_ARENA_AFTER_LINK_WIN; any other warp destination than the
+/// BATTLE_ARENA_AFTER_LINK_WIN; any other entrance than the
 /// BATTLE_ARENA_AFTER_ ones (BATTLE_ARENA_FROM_MAIN_MENU, from the main menu)
 /// restarts the link. Updates gSaveBlock.linkTallies, saves after linked
 /// battles and new monster records, and restores the party's HP, PP and Djinn
@@ -1574,7 +1574,7 @@ s32 BattleArena_RunRoundResult(void) {
     }
   }
   // A monster battle won: offer the next one.
-  if (gSaveBlock.warpDest == BATTLE_ARENA_AFTER_MONSTER_WIN) {
+  if (gSaveBlock.entrance == BATTLE_ARENA_AFTER_MONSTER_WIN) {
     s32 wins;
     s32 messageOffset;
     s32 v;
@@ -1632,7 +1632,7 @@ s32 BattleArena_RunRoundResult(void) {
     FieldScript_End();
     // A monster battle lost: the series ends, and a new
     // record is saved.
-  } else if (gSaveBlock.warpDest == BATTLE_ARENA_AFTER_MONSTER_LOSS) {
+  } else if (gSaveBlock.entrance == BATTLE_ARENA_AFTER_MONSTER_LOSS) {
     gSaveBlock.linkTallies[LINK_TALLY_MONSTER_LOSSES]++;
     FieldScript_Start();
     FieldScript_StartScreenTransition();
@@ -1659,7 +1659,7 @@ s32 BattleArena_RunRoundResult(void) {
     FieldScript_End();
     // A linked battle won: count the win and the run; a
     // longer run is the board's new record. Saved.
-  } else if (gSaveBlock.warpDest == BATTLE_ARENA_AFTER_LINK_WIN) {
+  } else if (gSaveBlock.entrance == BATTLE_ARENA_AFTER_LINK_WIN) {
     s32 v;
 
     FieldScript_Start();
@@ -1693,7 +1693,7 @@ s32 BattleArena_RunRoundResult(void) {
     FieldScript_End();
     // A linked battle lost: count the loss and end the
     // run. Saved.
-  } else if (gSaveBlock.warpDest == BATTLE_ARENA_AFTER_LINK_LOSS) {
+  } else if (gSaveBlock.entrance == BATTLE_ARENA_AFTER_LINK_LOSS) {
     s32 v;
 
     FieldScript_Start();
@@ -1735,7 +1735,7 @@ s32 BattleArena_RunRoundResult(void) {
   callback = (TaskFunc)BattleArena_PollPeerReady;
   FieldScheduler_AddCallback(callback, TASK_PRIORITY_MAIN_LOOP);
   Task_SetFlags(callback, 1);
-  if (gSaveBlock.warpDest != BATTLE_ARENA_AFTER_MONSTER_WIN ||
+  if (gSaveBlock.entrance != BATTLE_ARENA_AFTER_MONSTER_WIN ||
       !GameFlag_Get(FLAG_MONSTER_BATTLE)) {
     Party_RestoreHpPp(1);
     DjinnRecovery_TickTwenty();
@@ -1752,7 +1752,7 @@ u8 gBattleArena_SlotColumns[] = {
 
 /// Where the party appears: BATTLE_ARENA_FROM_MAIN_MENU from the main menu,
 /// the BATTLE_ARENA_AFTER_ ones after a battle (BattleArena_EnterBattle).
-struct MapWarpDest gBattleArenaWarpDests[] = {
+struct SceneEntrance gBattleArenaEntrances[] = {
     { BATTLE_ARENA_AFTER_LINK_LOSS, CONDITION_ALWAYS, 128, 0, 164, FACING_NORTH, 0, 16, 0, 416, 310, 0 },
     { BATTLE_ARENA_AFTER_LINK_WIN, CONDITION_ALWAYS, 352, 0, 148, FACING_NORTH, 0, 16, 0, 416, 310, 0 },
     { BATTLE_ARENA_AFTER_MONSTER_WIN, CONDITION_ALWAYS, 216, 0, 200, FACING_WEST, 0, 16, 0, 416, 310, 0 },
@@ -1762,8 +1762,8 @@ struct MapWarpDest gBattleArenaWarpDests[] = {
     { MAP_TABLE_END },
 };
 
-u32 gBattleArenaWarps[] = {
-    MAP_WARPS_END,
+u32 gBattleArenaExits[] = {
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gBattleArenaObjectEventTemplates[] = {

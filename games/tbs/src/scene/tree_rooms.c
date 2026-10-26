@@ -5,30 +5,30 @@
 /// face Tret's wrathful side. FLAG_TRET_DEFEATED, whether that battle is won
 /// and Tret has spoken with the party since, decides most of the map.
 ///
-/// The map is six rooms, the six camera boxes of its warp destination table.
+/// The map is six rooms, the six camera boxes of its entrance table.
 /// The party comes in from Kolima Forest (SceneId_KolimaForestTree) at
 /// TREE_ROOMS_FROM_KOLIMA_FOREST_TREE and leaves by
-/// TREE_ROOMS_TO_KOLIMA_FOREST_TREE; eight warps, from
+/// TREE_ROOMS_TO_KOLIMA_FOREST_TREE; eight exits, from
 /// TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST to _NORTH_NORTHEAST,
 /// lead out to Tret Tree's other map (SceneId_TretTreeBranch), and six more,
 /// TREE_ROOMS_ENTRANCE_TO_SECOND_FLOOR to
 /// TREE_ROOMS_ENTRANCE_TO_TRET, lead from room to room, three of them
-/// through regions 28 to 36 pixels up (Scene_GetWarpRegions).
+/// through regions 28 to 36 pixels up (Scene_GetExitRegions).
 ///
 /// Webs hold cocoons, each a coord event (metatile behaviors 21 to 29, 31, 32
 /// and 50 to 59) with a temporary flag of its own
 /// (FLAG_TRET_TREE_SECOND_FLOOR_COCOON_1_TORN and the others). The first step
 /// on a cocoon tears it: its cell is redrawn and its flag set. The next step on
 /// a torn cocoon breaks through, and the leader spins and falls to the room
-/// below, arriving at the warp destination numbered as the cocoon
+/// below, arriving at the entrance numbered as the cocoon
 /// (FLAG_ARRIVE_FALLING plays the landing): the cocoons 21 to 29 and 31 and 32
 /// drop the leader into one room and 50 to 59 into another of the map's six
 /// rooms. The layout draws four cocoons already
 /// torn (22, 52, 54 and 58) and the setup sets their flags, so they give way at
 /// the first step. A latch in the map state (sLastCocoon) keeps a step from
 /// counting twice until the leader walks on. Cocoon 50 is the way down to Tret:
-/// warp destinations 50, 40, 30 and 20 each let the leader fall on to the warp
-/// destination numbered ten lower, and at warp destination 10 the leader lands
+/// entrances 50, 40, 30 and 20 each let the leader fall on to the
+/// entrance numbered ten lower, and at entrance 10 the leader lands
 /// in a ring of dust as the map shakes, in front of Tret. Torn cocoons stay
 /// torn across a battle: after one (FLAG_KEEP_PARTY_POSITION) the setup redraws
 /// them from gTreeRooms_MapPatches.
@@ -46,7 +46,7 @@
 /// resolve to heal him. Only then is FLAG_TRET_DEFEATED set; in Kolima Forest
 /// it lets Hermes' Water heal Tret and lift the curse. Once it is set, the
 /// setup moves both Tret object events away, opens that passage and redraws
-/// cells near warp destination 20; before, it keeps the passage closed.
+/// cells near entrance 20; before, it keeps the passage closed.
 ///
 /// The setup also saves the background palettes and starts a slow tint that
 /// shifts them every 32 frames (not after the battle until the conversation
@@ -267,20 +267,20 @@ static s16 *sLastCocoon;
 /// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON_TORN FLAG_SCENE_TEMP_14
 
-/// Returns the map's warp destinations, the cocoons' landing spots among them.
-const struct MapWarpDest *Scene_GetWarpDests(void) {
-  return gTreeRoomsWarpDests;
+/// Returns the map's entrances, the cocoons' landing spots among them.
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gTreeRoomsEntrances;
 }
 
-/// Returns the three warp regions 28 to 36 pixels up: up to the second floor
+/// Returns the three exit regions 28 to 36 pixels up: up to the second floor
 /// (TREE_ROOMS_ENTRANCE_TO_SECOND_FLOOR), up to the fourth
 /// (TREE_ROOMS_THIRD_FLOOR_TO_FOURTH_FLOOR) and back from Tret
 /// (TREE_ROOMS_TRET_TO_ENTRANCE).
-const struct MapWarpRegion *Scene_GetWarpRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return gTreeRoomsRegions;
 }
 
-const u32 *Scene_GetWarps(void) { return gTreeRoomsWarps; }
+const u32 *Scene_GetExits(void) { return gTreeRoomsExits; }
 
 /// Returns the party's other slots (Garet, Ivan and, once she has joined,
 /// Mia), placed for the events, and the two Tret object events.
@@ -291,10 +291,10 @@ const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
 /// Stepping on a cocoon in Tret Tree: the first step tears it, copying its
 /// torn picture from the staging cell (row 35) and setting its temporary flag;
 /// the next step breaks through (row 36's cell), and the leader spins and
-/// falls, to land at the given warp destination, numbered as the cocoon. The
+/// falls, to land at the given entrance, numbered as the cocoon. The
 /// latch ignores the same cocoon again until the leader walks on.
 static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
-                                   s32 sourceRow, s32 warpDest) {
+                                   s32 sourceRow, s32 entrance) {
   s32 destinationColumn;
   s32 destinationRow;
   s32 leaderLocalId;
@@ -305,9 +305,9 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   destinationRow = gSaveBlock.z >> 20;
   leaderLocalId = gSaveBlock.leaderLocalId;
   objectEvent = ObjectEvent_GetById(leaderLocalId);
-  if (warpDest == *sLastCocoon)
+  if (entrance == *sLastCocoon)
     return;
-  *sLastCocoon = warpDest;
+  *sLastCocoon = entrance;
   if (GameFlag_Get(cocoonFlag) == 0) {
     MapGrid_CopyCells(sourceColumn, sourceRow, 1, 1, destinationColumn,
                       destinationRow);
@@ -321,7 +321,7 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
                     destinationRow);
   Script_PlaySong(SE_CURSE_FALL);
   FieldScript_Start();
-  FieldScript_SetDestination((s32)&SceneId_TreeRooms, warpDest);
+  FieldScript_SetDestination((s32)&SceneId_TreeRooms, entrance);
   Import_ObjectEventSetAnimation(leaderLocalId, ANIM_LEADER_SPIN_AWAY);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(leaderLocalId), 0);
   ObjectEvent_SetAttachedEffect(leaderLocalId, ATTACHED_EFFECT_IN_FRONT |
@@ -340,15 +340,15 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
     objectEvent->facing += 2 * FACING_STEP;
     WaitFrames(1);
   }
-  if (warpDest != TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON)
+  if (entrance != TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON)
     GameFlag_Set(FLAG_ARRIVE_FALLING);
 }
 
 // The cocoons' coord events in Tret Tree, one per cocoon: each passes its
 // flag, the staging cell of its torn picture and its own number, the landing
-// warp destination, to TreeRooms_StepOnCocoon. The second floor's nine
+// entrance, to TreeRooms_StepOnCocoon. The second floor's nine
 // are alike, on one web, and keep their numbers 1 to 9 in the order of their
-// coord events and landing warp destinations, 21 to 29.
+// coord events and landing entrances, 21 to 29.
 
 static void EventScript_StepOnSecondFloorCocoon1(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_1_TORN, 64, 35,
@@ -435,8 +435,8 @@ static void EventScript_StepOnFifthFloorEastCocoon(void) {
                          TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_COCOON);
 }
 
-/// Cocoon 56 lands at the same spot as cocoon 54: their warp
-/// destinations agree.
+/// Cocoon 56 lands at the same spot as cocoon 54: their
+/// entrances agree.
 static void EventScript_StepOnFifthFloorSouthwestCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHWEST_COCOON_TORN, 81,
                          35, TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_COCOON);
@@ -465,7 +465,7 @@ static void EventScript_JumpFromCocoon(void) {
     *sLastCocoon = -1;
 }
 
-/// Returns the warps, the cocoons, Tret, Reveal and the chests' events.
+/// Returns the exits, the cocoons, Tret, Reveal and the chests' events.
 const struct MapEvent *Scene_GetEvents(void) { return gTreeRoomsEvents; }
 
 /// Walking up to Tret in Tret Tree (metatile behavior 40, while
@@ -785,7 +785,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
 }
 
 /// Sets the map grid by FLAG_TRET_DEFEATED: the passage in Tret's room closed
-/// before, open after, with cells near warp destination 20 redrawn. With
+/// before, open after, with cells near entrance 20 redrawn. With
 /// playRecoveryEvent it first plays the conversation after the battle, unless
 /// FLAG_KEEP_PARTY_POSITION is set.
 static void TreeRooms_ApplyPostBattleState(s32 playRecoveryEvent) {
@@ -812,8 +812,8 @@ static void TreeRooms_ApplyPostBattleState(s32 playRecoveryEvent) {
 
 /// Tret Tree's setup: places or removes the Tret object events, starts the
 /// tint, redraws the torn cocoons after a battle, sets the map grid by
-/// FLAG_TRET_DEFEATED, and plays what the warp destination calls for: the falls
-/// on from warp destinations 50, 40, 30 and 20, the landing at warp destination
+/// FLAG_TRET_DEFEATED, and plays what the entrance calls for: the falls
+/// on from entrances 50, 40, 30 and 20, the landing at entrance
 /// 10, or the conversation after the battle at
 /// TREE_ROOMS_AFTER_FIGHT_TRET.
 s32 TreeRooms_EnterRoom(void) {
@@ -822,7 +822,7 @@ s32 TreeRooms_EnterRoom(void) {
   struct MapGridScrollWork *grid;
   struct MapGridLayerScroll *layer;
   struct FieldWork *work;
-  s32 warpDest;
+  s32 entrance;
   s32 leaderLocalId;
 
   tret = ObjectEvent_GetById(LOCALID_TRET);
@@ -839,7 +839,7 @@ s32 TreeRooms_EnterRoom(void) {
   }
   ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_TRET, SPRITE_COLOR_HIDDEN);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
-  if (gSaveBlock.warpDest != TREE_ROOMS_AFTER_FIGHT_TRET)
+  if (gSaveBlock.entrance != TREE_ROOMS_AFTER_FIGHT_TRET)
     FieldScheduler_AddCallback(TretPalette_UpdateMapTint, TASK_PRIORITY_MAP);
   if (GameFlag_Get(FLAG_TRET_DEFEATED)) {
     Import_ObjectEventSetPosition(LOCALID_SECOND_TRET, 0, 0);
@@ -865,14 +865,14 @@ s32 TreeRooms_EnterRoom(void) {
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
-  warpDest = gSaveBlock.warpDest;
+  entrance = gSaveBlock.entrance;
   leaderLocalId = gSaveBlock.leaderLocalId;
   objectEvent = ObjectEvent_GetById(leaderLocalId);
-  // Warp destinations 20, 30, 40 and 50: the leader falls on through the room,
-  // to the warp destination numbered ten lower. Warp destination 10: the leader
+  // Entrances 20, 30, 40 and 50: the leader falls on through the room,
+  // to the entrance numbered ten lower. Entrance 10: the leader
   // lands in a cloud of dust in front of Tret.
   // TREE_ROOMS_AFTER_FIGHT_TRET: back from the battle with Tret.
-  if (warpDest == 50 || warpDest == 40 || warpDest == 30 || warpDest == 20) {
+  if (entrance == 50 || entrance == 40 || entrance == 30 || entrance == 20) {
     FieldScript_StartScreenTransition();
     Import_ObjectEventSetAnimation(leaderLocalId, ANIM_LEADER_SPIN_AWAY);
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(leaderLocalId), 0);
@@ -884,7 +884,7 @@ s32 TreeRooms_EnterRoom(void) {
     objectEvent->groundHeight = -PIXELS(160);
     objectEvent->gravity = PIXELS(1) / 2;
     Script_PlaySong(SE_DUST_PUFF);
-    FieldScript_SetDestination((s32)&SceneId_TreeRooms, warpDest - 10);
+    FieldScript_SetDestination((s32)&SceneId_TreeRooms, entrance - 10);
     FieldScript_WaitFrames(20);
     objectEvent->layer = 2;
     ObjectMotion_SetActionVariant(leaderLocalId, 3);
@@ -892,10 +892,10 @@ s32 TreeRooms_EnterRoom(void) {
     FieldEffect_ConfigureLinkedObject(
         leaderLocalId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
     FieldScript_WaitFrames(8);
-  } else if (warpDest == 10) {
+  } else if (entrance == 10) {
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
       TreeRooms_RunLandingDustEvent();
-  } else if (warpDest == TREE_ROOMS_AFTER_FIGHT_TRET) {
+  } else if (entrance == TREE_ROOMS_AFTER_FIGHT_TRET) {
     TreeRooms_ApplyPostBattleState(1);
   }
   return 0;
@@ -1156,7 +1156,7 @@ static void EventScript_CastReveal(void) {
 
 #include "common/effect_advance.h"
 
-/// Warp destination 10, at the end of the fall from cocoon 50: the leader drops
+/// Entrance 10, at the end of the fall from cocoon 50: the leader drops
 /// in from 130 pixels up in front of Tret, lands in a ring of dust and the map
 /// shakes.
 static void TreeRooms_RunLandingDustEvent(void) {
@@ -1388,8 +1388,8 @@ u32 gTreeRooms_TintSteps[] = {
     99, 99, 99,
 };
 
-struct MapWarpDest gTreeRoomsWarpDests[] = {
-    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 136, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gTreeRoomsEntrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 136, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { TREE_ROOMS_FROM_KOLIMA_FOREST_TREE, CONDITION_ALWAYS, 488, 0, 248, FACING_NORTH, 0, 352, 0, 640, 272, 0 },
     { TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHWEST, CONDITION_ALWAYS, 712, 0, 152, FACING_EAST, 0, 672, 0, 944, 272, 0 },
     { TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHEAST, CONDITION_ALWAYS, 920, 0, 152, FACING_WEST, 0, 672, 0, 944, 272, 0 },
@@ -1434,7 +1434,7 @@ struct MapWarpDest gTreeRoomsWarpDests[] = {
     { MAP_TABLE_END },
 };
 
-struct MapWarpRegion gTreeRoomsRegions[] = {
+struct SceneExitRegion gTreeRoomsRegions[] = {
     { 420, 28, 68, 428, 36, 76, -1, TREE_ROOMS_ENTRANCE_TO_SECOND_FLOOR },
     { 228, 28, 338, 236, 36, 346, -1, TREE_ROOMS_THIRD_FLOOR_TO_FOURTH_FLOOR },
 #if !TBS_PATCH_3
@@ -1445,24 +1445,24 @@ struct MapWarpRegion gTreeRoomsRegions[] = {
     { -1, 0, 0, 0, 0, 0, 0, 0 },
 };
 
-u32 gTreeRoomsWarps[] = {
-    MAP_WARPS(TreeRooms),
-    MAP_WARP(TREE_ROOMS_TO_KOLIMA_FOREST_TREE, KolimaForestTree, KOLIMA_FOREST_TREE_FROM_TREE_ROOMS),
-    MAP_WARP(TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHWEST),
-    MAP_WARP(TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHEAST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHEAST),
-    MAP_WARP(TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH),
-    MAP_WARP(TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTHEAST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTHEAST),
-    MAP_WARP(TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTHWEST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTHWEST),
-    MAP_WARP(TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH),
-    MAP_WARP(TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHWEST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH_NORTHWEST),
-    MAP_WARP(TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHEAST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH_NORTHEAST),
-    MAP_WARP(TREE_ROOMS_ENTRANCE_TO_SECOND_FLOOR, TreeRooms, TREE_ROOMS_SECOND_FLOOR_FROM_ENTRANCE),
-    MAP_WARP(TREE_ROOMS_SECOND_FLOOR_TO_ENTRANCE, TreeRooms, TREE_ROOMS_ENTRANCE_FROM_SECOND_FLOOR),
-    MAP_WARP(TREE_ROOMS_THIRD_FLOOR_TO_FOURTH_FLOOR, TreeRooms, TREE_ROOMS_FOURTH_FLOOR_FROM_THIRD_FLOOR),
-    MAP_WARP(TREE_ROOMS_FOURTH_FLOOR_TO_THIRD_FLOOR, TreeRooms, TREE_ROOMS_THIRD_FLOOR_FROM_FOURTH_FLOOR),
-    MAP_WARP(TREE_ROOMS_TRET_TO_ENTRANCE, TreeRooms, TREE_ROOMS_ENTRANCE_FROM_TRET),
-    MAP_WARP(TREE_ROOMS_ENTRANCE_TO_TRET, TreeRooms, TREE_ROOMS_TRET_FROM_ENTRANCE),
-    MAP_WARPS_END,
+u32 gTreeRoomsExits[] = {
+    SCENE_EXITS(TreeRooms),
+    SCENE_EXIT(TREE_ROOMS_TO_KOLIMA_FOREST_TREE, KolimaForestTree, KOLIMA_FOREST_TREE_FROM_TREE_ROOMS),
+    SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHWEST),
+    SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHEAST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHEAST),
+    SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH),
+    SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTHEAST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTHEAST),
+    SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTHWEST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTHWEST),
+    SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH),
+    SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHWEST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH_NORTHWEST),
+    SCENE_EXIT(TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHEAST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH_NORTHEAST),
+    SCENE_EXIT(TREE_ROOMS_ENTRANCE_TO_SECOND_FLOOR, TreeRooms, TREE_ROOMS_SECOND_FLOOR_FROM_ENTRANCE),
+    SCENE_EXIT(TREE_ROOMS_SECOND_FLOOR_TO_ENTRANCE, TreeRooms, TREE_ROOMS_ENTRANCE_FROM_SECOND_FLOOR),
+    SCENE_EXIT(TREE_ROOMS_THIRD_FLOOR_TO_FOURTH_FLOOR, TreeRooms, TREE_ROOMS_FOURTH_FLOOR_FROM_THIRD_FLOOR),
+    SCENE_EXIT(TREE_ROOMS_FOURTH_FLOOR_TO_THIRD_FLOOR, TreeRooms, TREE_ROOMS_THIRD_FLOOR_FROM_FOURTH_FLOOR),
+    SCENE_EXIT(TREE_ROOMS_TRET_TO_ENTRANCE, TreeRooms, TREE_ROOMS_ENTRANCE_FROM_TRET),
+    SCENE_EXIT(TREE_ROOMS_ENTRANCE_TO_TRET, TreeRooms, TREE_ROOMS_TRET_FROM_ENTRANCE),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gTreeRoomsObjectEventTemplates[] = {
@@ -1481,28 +1481,28 @@ struct ObjectEventTemplate gTreeRoomsObjectEventTemplates[] = {
 // clang-format on
 
 struct MapEvent gTreeRoomsEvents[] = {
-    {MAP_EVENT_WARP | MAP_EVENT_FLAG_FACING | FACING_SOUTH, 1, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT | MAP_EVENT_FLAG_FACING | FACING_SOUTH, 1, CONDITION_ALWAYS,
      TREE_ROOMS_TO_KOLIMA_FOREST_TREE},
-    {MAP_EVENT_WARP | MAP_EVENT_FLAG_FACING | FACING_WEST, 2, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT | MAP_EVENT_FLAG_FACING | FACING_WEST, 2, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST},
-    {MAP_EVENT_WARP | MAP_EVENT_FLAG_FACING | FACING_EAST, 3, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT | MAP_EVENT_FLAG_FACING | FACING_EAST, 3, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHEAST},
-    {MAP_EVENT_WARP | MAP_EVENT_FLAG_FACING | FACING_SOUTH, 4, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT | MAP_EVENT_FLAG_FACING | FACING_SOUTH, 4, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH},
-    {MAP_EVENT_WARP | MAP_EVENT_FLAG_FACING | FACING_EAST, 5, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT | MAP_EVENT_FLAG_FACING | FACING_EAST, 5, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTHEAST},
-    {MAP_EVENT_WARP | MAP_EVENT_FLAG_FACING | FACING_WEST, 6, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT | MAP_EVENT_FLAG_FACING | FACING_WEST, 6, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTHWEST},
-    {MAP_EVENT_WARP | MAP_EVENT_FLAG_FACING | FACING_SOUTH, 7, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT | MAP_EVENT_FLAG_FACING | FACING_SOUTH, 7, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH},
-    {MAP_EVENT_WARP | MAP_EVENT_FLAG_FACING | FACING_WEST, 8, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT | MAP_EVENT_FLAG_FACING | FACING_WEST, 8, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHWEST},
-    {MAP_EVENT_WARP | MAP_EVENT_FLAG_FACING | FACING_EAST, 9, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT | MAP_EVENT_FLAG_FACING | FACING_EAST, 9, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHEAST},
-    {MAP_EVENT_WARP, 11, CONDITION_ALWAYS, TREE_ROOMS_SECOND_FLOOR_TO_ENTRANCE},
-    {MAP_EVENT_WARP, 13, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 11, CONDITION_ALWAYS, TREE_ROOMS_SECOND_FLOOR_TO_ENTRANCE},
+    {MAP_EVENT_EXIT, 13, CONDITION_ALWAYS,
      TREE_ROOMS_FOURTH_FLOOR_TO_THIRD_FLOOR},
-    {MAP_EVENT_WARP, 15, CONDITION_ALWAYS, TREE_ROOMS_ENTRANCE_TO_TRET},
+    {MAP_EVENT_EXIT, 15, CONDITION_ALWAYS, TREE_ROOMS_ENTRANCE_TO_TRET},
     {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 21, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_JumpFromCocoon)},
     {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 22, CONDITION_ALWAYS,

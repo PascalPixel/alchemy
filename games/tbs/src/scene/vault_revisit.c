@@ -154,13 +154,13 @@ enum {
 #include "common/vault_range.h"
 #include "common/vault_nearby.h"
 
-const struct MapWarpDest *Scene_GetWarpDests(void) {
-  return gVaultRevisit_WarpDests;
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gVaultRevisit_Entrances;
 }
 
-const struct MapWarpRegion *Scene_GetWarpRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Scene_GetWarps(void) { return gVaultRevisit_Warps; }
+const u32 *Scene_GetExits(void) { return gVaultRevisit_Exits; }
 
 /// Returns the villagers, dog, and Djinni object event templates.
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
@@ -451,14 +451,14 @@ static void EventScript_RingBell(void) {
   FieldScript_End();
 }
 
-/// Walks the leader into a doorway during the sixteen-frame warp delay.
-static void Vault_WalkThroughExit(s32 x, s32 z, s32 warpNumber) {
+/// Walks the leader into a doorway during the sixteen-frame exit delay.
+static void Vault_WalkThroughExit(s32 x, s32 z, s32 exitNumber) {
   s32 leaderId = LOCALID_PARTY_LEADER;
 
   ObjectEvent_SetSpeed(leaderId, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_WalkTo(leaderId, x, z);
   gFieldWork->transitionFrames = 16;
-  Import_ScriptRequestWarp(warpNumber);
+  Import_ScriptRequestExit(exitNumber);
 }
 
 /// The door of the gem owner's house opens and the party walks in.
@@ -652,13 +652,13 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 /// that shows nothing, mends the inn's roof, which vault.c
 /// leaves holed, and hooks the two children round the well to
 /// Vault_UpdateWalkingVillager. The dog waits at the hidden passage once it has
-/// shown it. Coming in by a gate (WARP_DEST_DEFAULT to
+/// shown it. Coming in by a gate (ENTRANCE_DEFAULT to
 /// VAULT_REVISIT_NORTH_UNUSED, forwarded from vault.c) before Sap has joined
 /// clears FLAG_VAULT_SAP_CALLED_BY_BELL, so Sap is hidden again; while it is
 /// called and has not joined, it stands by the bell. Coming out of Vault
 /// Sanctum (VAULT_REVISIT_FROM_SANCTUM) clears FLAG_SHOW_LOCATION_NAME, and
 /// coming up from Vault Cave (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE) clears
-/// FLAG_WARP_ARRIVAL_STAIRS_UP, so the leader's arrival animation does not
+/// FLAG_ARRIVAL_STAIRS_UP, so the leader's arrival animation does not
 /// play.
 s32 Scene_Initialize(void) {
 
@@ -700,17 +700,17 @@ s32 Scene_Initialize(void) {
   // Restore the dog's clue position and the bell's current Djinni position.
   if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE))
     ObjectEvent_SetPosition(LOCALID_VAULT_DOG, PIXELS(216), PIXELS(392));
-  if (gSaveBlock.warpDest <= VAULT_REVISIT_NORTH_UNUSED &&
+  if (gSaveBlock.entrance <= VAULT_REVISIT_NORTH_UNUSED &&
       !GameFlag_Get(FLAG_DJINNI(DJINNI_SAP)) &&
       !VaultRevisit_ShouldKeepBellDjinniPosition())
     GameFlag_Clear(FLAG_VAULT_SAP_CALLED_BY_BELL);
   if (GameFlag_Get(FLAG_VAULT_SAP_CALLED_BY_BELL) &&
       !GameFlag_Get(FLAG_DJINNI(DJINNI_SAP)))
     ObjectEvent_SetPosition(LOCALID_SAP, PIXELS(408), PIXELS(120));
-  if (gSaveBlock.warpDest == VAULT_REVISIT_FROM_SANCTUM)
+  if (gSaveBlock.entrance == VAULT_REVISIT_FROM_SANCTUM)
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
-  if (gSaveBlock.warpDest == VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE)
-    GameFlag_Clear(FLAG_WARP_ARRIVAL_STAIRS_UP);
+  if (gSaveBlock.entrance == VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE)
+    GameFlag_Clear(FLAG_ARRIVAL_STAIRS_UP);
   return 0;
 }
 
@@ -786,8 +786,8 @@ s32 gVaultRevisit_GirlRoundTheWellScript[] = {
     SC_END,
 };
 
-struct MapWarpDest gVaultRevisit_WarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gVaultRevisit_Entrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {VAULT_REVISIT_FROM_VAULT, CONDITION_ALWAYS, 400, 0, 472, FACING_NORTH, 0,
      -1, -1, -1, -1, 0},
@@ -816,32 +816,32 @@ struct MapWarpDest gVaultRevisit_WarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gVaultRevisit_Warps[] = {
-    MAP_WARPS(VaultRevisit),
-    MAP_WARP(VAULT_REVISIT_TO_WORLD_MAP_SOUTH, WorldMap,
-             WORLD_MAP_FROM_VAULT_SOUTH),
-    MAP_WARP(VAULT_REVISIT_TO_WORLD_MAP_NORTH, WorldMap,
-             WORLD_MAP_FROM_VAULT_NORTH),
-    MAP_WARP(VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHEAST, LogRoomsB,
-             LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST),
-    MAP_WARP(VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTH, LogRoomsB,
-             LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTH),
-    MAP_WARP(VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHWEST, LogRoomsB,
-             LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST),
-    MAP_WARP(VAULT_REVISIT_TO_LOG_ROOMS_B_EAST, LogRoomsB,
-             LOG_ROOMS_B_FROM_VAULT_REVISIT_EAST),
-    MAP_WARP(VAULT_REVISIT_TO_LOG_ROOMS_B_NORTH, LogRoomsB,
-             LOG_ROOMS_B_FROM_VAULT_REVISIT_NORTH),
-    MAP_WARP(VAULT_REVISIT_TO_LOG_ROOMS_B_NORTHWEST, LogRoomsB,
-             LOG_ROOMS_B_FROM_VAULT_REVISIT_NORTHWEST),
-    MAP_WARP(VAULT_REVISIT_TO_SANCTUM, Sanctum, SANCTUM_FROM_VAULT_REVISIT),
-    MAP_WARP(VAULT_REVISIT_TO_STONE_ROOMS, StoneRooms,
-             STONE_ROOMS_FROM_VAULT_REVISIT),
-    MAP_WARP(VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE, VaultCavePassage,
-             VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT),
-    MAP_WARP(VAULT_REVISIT_TO_VAULT_CAVE_MOUTH, VaultCaveMouth,
-             VAULT_CAVE_MOUTH_FROM_VAULT_REVISIT),
-    MAP_WARPS_END,
+u32 gVaultRevisit_Exits[] = {
+    SCENE_EXITS(VaultRevisit),
+    SCENE_EXIT(VAULT_REVISIT_TO_WORLD_MAP_SOUTH, WorldMap,
+               WORLD_MAP_FROM_VAULT_SOUTH),
+    SCENE_EXIT(VAULT_REVISIT_TO_WORLD_MAP_NORTH, WorldMap,
+               WORLD_MAP_FROM_VAULT_NORTH),
+    SCENE_EXIT(VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHEAST, LogRoomsB,
+               LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST),
+    SCENE_EXIT(VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTH, LogRoomsB,
+               LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTH),
+    SCENE_EXIT(VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHWEST, LogRoomsB,
+               LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST),
+    SCENE_EXIT(VAULT_REVISIT_TO_LOG_ROOMS_B_EAST, LogRoomsB,
+               LOG_ROOMS_B_FROM_VAULT_REVISIT_EAST),
+    SCENE_EXIT(VAULT_REVISIT_TO_LOG_ROOMS_B_NORTH, LogRoomsB,
+               LOG_ROOMS_B_FROM_VAULT_REVISIT_NORTH),
+    SCENE_EXIT(VAULT_REVISIT_TO_LOG_ROOMS_B_NORTHWEST, LogRoomsB,
+               LOG_ROOMS_B_FROM_VAULT_REVISIT_NORTHWEST),
+    SCENE_EXIT(VAULT_REVISIT_TO_SANCTUM, Sanctum, SANCTUM_FROM_VAULT_REVISIT),
+    SCENE_EXIT(VAULT_REVISIT_TO_STONE_ROOMS, StoneRooms,
+               STONE_ROOMS_FROM_VAULT_REVISIT),
+    SCENE_EXIT(VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE, VaultCavePassage,
+               VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT),
+    SCENE_EXIT(VAULT_REVISIT_TO_VAULT_CAVE_MOUTH, VaultCaveMouth,
+               VAULT_CAVE_MOUTH_FROM_VAULT_REVISIT),
+    SCENE_EXITS_END,
 };
 
 // clang-format off
@@ -906,10 +906,10 @@ u16 gVaultRevisit_JailDoorCells[] = {
 };
 
 struct MapEvent gVaultRevisit_Events[] = {
-    { MAP_EVENT_WARP, 20, CONDITION_ALWAYS, VAULT_REVISIT_TO_WORLD_MAP_SOUTH },
-    { MAP_EVENT_WARP, 21, CONDITION_ALWAYS, VAULT_REVISIT_TO_WORLD_MAP_NORTH },
-    { MAP_EVENT_WARP, MB_VAULT_HIDDEN_PASSAGE, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE },
-    { MAP_EVENT_WARP, MB_VAULT_CLIFF_CAVE_MOUTH, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_MOUTH },
+    { MAP_EVENT_EXIT, 20, CONDITION_ALWAYS, VAULT_REVISIT_TO_WORLD_MAP_SOUTH },
+    { MAP_EVENT_EXIT, 21, CONDITION_ALWAYS, VAULT_REVISIT_TO_WORLD_MAP_NORTH },
+    { MAP_EVENT_EXIT, MB_VAULT_HIDDEN_PASSAGE, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE },
+    { MAP_EVENT_EXIT, MB_VAULT_CLIFF_CAVE_MOUTH, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_MOUTH },
     { MAP_EVENT_COORD, MB_VAULT_BRIDGE_END, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RaisePathToBridge) },
     { MAP_EVENT_COORD, MB_VAULT_WEST_OF_BRIDGE, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_LowerPathUnderBridge) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), MB_VAULT_GEM_OWNERS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterGemOwnersHouse) },

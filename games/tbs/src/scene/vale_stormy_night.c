@@ -48,9 +48,9 @@
 /// leaves
 ///   for the plaza again; the night ends in vale_plaza.c.
 ///
-/// Every way out goes through Vale_RequestBackdropWarp (common/vale.h), which
+/// Every way out goes through Vale_RequestBackdropExit (common/vale.h), which
 /// stops the lightning first, and each door plays its opening cells before it;
-/// gValeStormyNight_Warps gives each warp's destination. Two cells start a
+/// gValeStormyNight_Exits gives each exit's destination. Two cells start a
 /// battle once each (slots 2 and 3 of ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
 
 #include "action_script.h"
@@ -326,13 +326,13 @@ ValeStormyNight_RerollHeadingOnCountdown(struct Object *interpreter) {
 /// VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA is where Dora and Isaac
 /// come out of the door of their house, from SceneId_CottageRoomsB's
 /// COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WITH_DORA.
-const struct MapWarpDest *ValeStormyNight_GetWarpDests(void) {
-  return gValeStormyNight_WarpDests;
+const struct SceneEntrance *ValeStormyNight_GetEntrances(void) {
+  return gValeStormyNight_Entrances;
 }
 
-const struct MapWarpRegion *ValeStormyNight_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *ValeStormyNight_GetRegions(void) { return NULL; }
 
-const u32 *ValeStormyNight_GetWarps(void) { return gValeStormyNight_Warps; }
+const u32 *ValeStormyNight_GetExits(void) { return gValeStormyNight_Exits; }
 
 const struct ObjectEventTemplate *
 ValeStormyNight_GetObjectEventTemplates(void) {
@@ -369,23 +369,23 @@ static void EventScript_StepOffBridge(void) {
 /// (SceneId_CottageRoomsA, at COTTAGE_ROOMS_A_FROM_VALE_WEST, the
 /// house VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST and its second door lead to
 /// as well). No map event names it, and nothing
-/// else takes that warp.
+/// else takes that exit.
 UNUSED static void ValeStormyNight_UnusedOpenSanctumDoor(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
   MapGrid_PlayMetatileCopySequence(gValeStormyNight_SanctumDoorOpens, 45, 11);
   ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 257, 420);
   FieldScript_WaitFrames(3);
-  Vale_RequestBackdropWarp(
+  Vale_RequestBackdropExit(
       VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST_SANCTUM_DOOR);
 }
 
-/// Leaves through a warp the warp table doesn't list. In Vale on the stormy
-/// night, stepping on metatile behavior 2 requests warp 1, the one number the
-/// warp table leaves out; Scene_TakeWarp therefore falls back to the first
-/// warp's map, Vale's SceneId_ValePlaza, at WARP_DEST_DEFAULT.
+/// Leaves through an exit the exit table doesn't list. In Vale on the stormy
+/// night, stepping on metatile behavior 2 requests exit 1, the one number the
+/// exit table leaves out; Scene_TakeExit therefore falls back to the first
+/// exit's map, Vale's SceneId_ValePlaza, at ENTRANCE_DEFAULT.
 static void EventScript_LeaveNorthwestToValePlaza(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  Vale_RequestBackdropWarp(1);
+  Vale_RequestBackdropExit(1);
 }
 
 /// In Vale on the stormy night, leaves for the part of Vale around Kraden's
@@ -394,7 +394,7 @@ static void EventScript_LeaveNorthwestToValePlaza(void) {
 /// VALE_KRADENS_COTTAGE_FROM_VALE_NORTH.
 static void EventScript_LeaveToValeKradensCottageNorth(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  Vale_RequestBackdropWarp(VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_NORTH);
+  Vale_RequestBackdropExit(VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_NORTH);
 }
 
 /// In Vale on the stormy night, leaves for the part of Vale around Kraden's
@@ -403,7 +403,7 @@ static void EventScript_LeaveToValeKradensCottageNorth(void) {
 /// VALE_KRADENS_COTTAGE_FROM_VALE_SOUTH.
 static void EventScript_LeaveToValeKradensCottageSouth(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  Vale_RequestBackdropWarp(VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_SOUTH);
+  Vale_RequestBackdropExit(VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_SOUTH);
 }
 
 /// In Vale on the stormy night, leaves for the plaza, where the villagers have
@@ -417,7 +417,7 @@ static void EventScript_LeaveToValePlaza(void) {
       GameFlag_Get(FLAG_VALE_STORM_GARET_LEFT) == 0) {
     ValeStormyNight_GaretFollowsIsaac();
   }
-  Vale_RequestBackdropWarp(VALE_STORMY_NIGHT_TO_VALE_PLAZA);
+  Vale_RequestBackdropExit(VALE_STORMY_NIGHT_TO_VALE_PLAZA);
 }
 
 /// In Vale on the stormy night, opens the door of Garet's house and goes in.
@@ -428,7 +428,7 @@ static void EventScript_LeaveToCottageRoomsAEast(void) {
   MapGrid_PlayMetatileCopySequence(gValeStormyNight_IsaacsDoorOpens, 54, 32);
   ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 406, 727);
   FieldScript_WaitFrames(3);
-  Vale_RequestBackdropWarp(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_EAST);
+  Vale_RequestBackdropExit(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_EAST);
 }
 
 /// A stout man runs out of a house and shoves Isaac. In Vale on the stormy
@@ -451,7 +451,7 @@ static void EventScript_LeaveToCottageRoomsA(void) {
   } else {
     ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 262, 805);
     FieldScript_WaitFrames(3);
-    Vale_RequestBackdropWarp(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_SOUTH);
+    Vale_RequestBackdropExit(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_SOUTH);
   }
 }
 
@@ -468,7 +468,7 @@ static void EventScript_LeaveToIsaacsHouse(void) {
   }
   ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 340, 888);
   FieldScript_WaitFrames(3);
-  Vale_RequestBackdropWarp(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_ISAACS_HOUSE);
+  Vale_RequestBackdropExit(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_ISAACS_HOUSE);
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
@@ -480,7 +480,7 @@ static void EventScript_LeaveToCottageRoomsANorth(void) {
                                    69);
   ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 326, 1126);
   FieldScript_WaitFrames(3);
-  Vale_RequestBackdropWarp(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_NORTH);
+  Vale_RequestBackdropExit(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_NORTH);
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
@@ -493,7 +493,7 @@ static void EventScript_LeaveToCottageRoomsAWest(void) {
   MapGrid_PlayMetatileCopySequence(gValeStormyNight_WestHouseDoorOpens, 52, 76);
   ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 374, 1238);
   FieldScript_WaitFrames(3);
-  Vale_RequestBackdropWarp(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST);
+  Vale_RequestBackdropExit(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST);
 }
 
 /// Unused: its row answers metatile behavior 11, which no cell of the stormy
@@ -508,7 +508,7 @@ static void EventScript_UnusedLeaveToCottageRoomsAWestBySecondDoor(void) {
   MapGrid_AnimateCells(gValeStormyNight_IsaacsDoorOpens, 35, 74);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 102, 1206);
   FieldScript_WaitFrames(3);
-  Vale_RequestBackdropWarp(
+  Vale_RequestBackdropExit(
       VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST_SECOND_DOOR);
 }
 
@@ -520,7 +520,7 @@ static void EventScript_LeaveToCottageRoomsBWest(void) {
   MapGrid_AnimateCells(gValeStormyNight_IsaacsDoorOpens, 35, 73);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 102, 1206);
   FieldScript_WaitFrames(3);
-  Vale_RequestBackdropWarp(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_WEST);
+  Vale_RequestBackdropExit(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_WEST);
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
@@ -531,7 +531,7 @@ static void EventScript_LeaveToCottageRoomsBEast(void) {
   MapGrid_AnimateCells(gValeStormyNight_GrandparentsDoorOpens, 38, 72);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 146, 1182);
   FieldScript_WaitFrames(3);
-  Vale_RequestBackdropWarp(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_EAST);
+  Vale_RequestBackdropExit(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_EAST);
 }
 
 /// Arriving in Vale on the stormy night: restores the fallen rocks, the river
@@ -712,7 +712,7 @@ s32 ValeStormyNight_Initialize(void) {
     Import_ObjectEventSetPosition(LOCALID_FIRST_ROCK + 7, 0, 0);
   }
   // The lightning starts at once, except before Dora and Kyle's event.
-  if (gSaveBlock.warpDest != VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA ||
+  if (gSaveBlock.entrance != VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA ||
       GameFlag_Get(FLAG_VALE_STORM_SENT_TO_PLAZA) != 0) {
     Weather_StartRain();
     Weather_StartLightning();
@@ -737,7 +737,7 @@ s32 ValeStormyNight_Initialize(void) {
   }
   WaitFrames(1);
   if (GameFlag_Get(FLAG_VALE_STORM_SENT_TO_PLAZA) == 0 &&
-      gSaveBlock.warpDest == VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA) {
+      gSaveBlock.entrance == VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA) {
     EventScript_DoraSendsIsaacToThePlaza();
     return 0;
   }
@@ -3413,8 +3413,8 @@ s32 gValeStormyNight_BoulderRollsDownriver[] = {
     SC_END,
 };
 
-struct MapWarpDest gValeStormyNight_WarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 167, 0, 1281, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gValeStormyNight_Entrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 167, 0, 1281, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {1, CONDITION_ALWAYS, 257, 0, 456, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {2, CONDITION_ALWAYS, 113, 0, 303, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -3446,34 +3446,35 @@ struct MapWarpDest gValeStormyNight_WarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gValeStormyNight_Warps[] = {
-    MAP_WARPS(ValeStormyNight),
-    MAP_WARP(VALE_STORMY_NIGHT_TO_VALE_PLAZA, ValePlaza, VALE_PLAZA_FROM_VALE),
-    MAP_WARP(VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_NORTH,
-             ValeKradensCottage, VALE_KRADENS_COTTAGE_FROM_VALE_NORTH),
-    MAP_WARP(VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_SOUTH,
-             ValeKradensCottage, VALE_KRADENS_COTTAGE_FROM_VALE_SOUTH),
-    MAP_WARP(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_EAST, CottageRoomsA,
-             COTTAGE_ROOMS_A_FROM_VALE_EAST),
-    MAP_WARP(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_SOUTH, CottageRoomsA,
-             COTTAGE_ROOMS_A_FROM_VALE_SOUTH),
-    MAP_WARP(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_ISAACS_HOUSE, CottageRoomsB,
-             COTTAGE_ROOMS_B_FROM_VALE),
-    MAP_WARP(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_NORTH, CottageRoomsA,
-             COTTAGE_ROOMS_A_FROM_VALE_NORTH),
-    MAP_WARP(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST, CottageRoomsA,
-             COTTAGE_ROOMS_A_FROM_VALE_WEST),
-    MAP_WARP(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST_SECOND_DOOR,
-             CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_WEST),
-    MAP_WARP(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST_SANCTUM_DOOR,
-             CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_WEST),
-    MAP_WARP(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_WEST, CottageRoomsB,
-             COTTAGE_ROOMS_B_FROM_VALE_STORMY_NIGHT_WEST),
-    MAP_WARP(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_EAST, CottageRoomsB,
-             COTTAGE_ROOMS_B_FROM_VALE_STORMY_NIGHT_EAST),
-    MAP_WARP(VALE_STORMY_NIGHT_TO_BOULDER_PASSED, ValeStormyNight,
-             VALE_STORMY_NIGHT_FROM_BOULDER_PASSED),
-    MAP_WARPS_END,
+u32 gValeStormyNight_Exits[] = {
+    SCENE_EXITS(ValeStormyNight),
+    SCENE_EXIT(VALE_STORMY_NIGHT_TO_VALE_PLAZA, ValePlaza,
+               VALE_PLAZA_FROM_VALE),
+    SCENE_EXIT(VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_NORTH,
+               ValeKradensCottage, VALE_KRADENS_COTTAGE_FROM_VALE_NORTH),
+    SCENE_EXIT(VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_SOUTH,
+               ValeKradensCottage, VALE_KRADENS_COTTAGE_FROM_VALE_SOUTH),
+    SCENE_EXIT(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_EAST, CottageRoomsA,
+               COTTAGE_ROOMS_A_FROM_VALE_EAST),
+    SCENE_EXIT(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_SOUTH, CottageRoomsA,
+               COTTAGE_ROOMS_A_FROM_VALE_SOUTH),
+    SCENE_EXIT(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_ISAACS_HOUSE, CottageRoomsB,
+               COTTAGE_ROOMS_B_FROM_VALE),
+    SCENE_EXIT(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_NORTH, CottageRoomsA,
+               COTTAGE_ROOMS_A_FROM_VALE_NORTH),
+    SCENE_EXIT(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST, CottageRoomsA,
+               COTTAGE_ROOMS_A_FROM_VALE_WEST),
+    SCENE_EXIT(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST_SECOND_DOOR,
+               CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_WEST),
+    SCENE_EXIT(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST_SANCTUM_DOOR,
+               CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_WEST),
+    SCENE_EXIT(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_WEST, CottageRoomsB,
+               COTTAGE_ROOMS_B_FROM_VALE_STORMY_NIGHT_WEST),
+    SCENE_EXIT(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_EAST, CottageRoomsB,
+               COTTAGE_ROOMS_B_FROM_VALE_STORMY_NIGHT_EAST),
+    SCENE_EXIT(VALE_STORMY_NIGHT_TO_BOULDER_PASSED, ValeStormyNight,
+               VALE_STORMY_NIGHT_FROM_BOULDER_PASSED),
+    SCENE_EXITS_END,
 };
 
 // clang-format off

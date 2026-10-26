@@ -5,14 +5,14 @@
 #include "map_tables.h"
 #include "scene_header.h"
 
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEvent;
 struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *Scene_GetWarpDests(void);
-const struct MapWarpRegion *Scene_GetWarpRegions(void);
-const u32 *BabiLighthouse_GetWarps(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *BabiLighthouse_GetExits(void);
 const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 BabiLighthouse_SetupMap(void);
@@ -24,12 +24,12 @@ extern s32 gFieldEffect_MediumScript[];
 extern s32 gFieldEffect_LongScript[];
 extern const s32 *gFieldEffect_DurationScripts[];
 extern s32 gBabiLighthouse_TrembleScript[];
-extern struct MapWarpDest gBabiLighthouse_EntryWarpDests[];
-extern struct MapWarpDest gBabiLighthouse_LuffWarpDests[];
-extern struct MapWarpDest gBabiLighthouse_StoneDoorWarpDests[];
-extern struct MapWarpDest gBabiLighthouse_RoadWarpDests[];
-extern struct MapWarpRegion gBabiLighthouse_EntryRegions[];
-extern u32 gBabiLighthouse_Warps[];
+extern struct SceneEntrance gBabiLighthouse_EntryEntrances[];
+extern struct SceneEntrance gBabiLighthouse_LuffEntrances[];
+extern struct SceneEntrance gBabiLighthouse_StoneDoorEntrances[];
+extern struct SceneEntrance gBabiLighthouse_RoadEntrances[];
+extern struct SceneExitRegion gBabiLighthouse_EntryRegions[];
+extern u32 gBabiLighthouse_Exits[];
 extern struct ObjectEventTemplate gBabiLighthouse_NoObjectEventTemplates[];
 extern struct ObjectEventTemplate gBabiLighthouse_EntryObjectEventTemplates[];
 extern struct ObjectEventTemplate gBabiLighthouse_LuffObjectEventTemplates[];

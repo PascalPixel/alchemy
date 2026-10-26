@@ -61,7 +61,7 @@ the behavior and a byte the shape. The behaviors are
 | Name | Value | Meaning |
 | --- | --- | --- |
 | (open ground) | 0 | nothing happens |
-| `MB_EVENT_FIRST` to `MB_EVENT_LAST` | 1 to 239 | the scene's own coord events, [warps](../../glossary.md#warp) and bg events |
+| `MB_EVENT_FIRST` to `MB_EVENT_LAST` | 1 to 239 | the scene's own coord events, [exits](../../glossary.md#exit) and bg events |
 | `MB_ENCOUNTER_GROUND_1`, `_2` | 240, 241 | ground with random battles of its own |
 | `MB_JAR` to `MB_WELL` | 242 to 247 | search spots with lines every scene shares: a jar, a barrel, a wooden box, a grave, books, a well |
 | `MB_DESERT_SAND` | 250 | ground that hurts the [party](../../glossary.md#the-party) over time: the Lamakan Desert's sand |

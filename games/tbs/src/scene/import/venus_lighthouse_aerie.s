@@ -77,7 +77,7 @@
 	.set import.FieldCamera_WaitForArrival, 1
 	.set import.FieldCamera_GetScriptObject, 1
 	.set import.FieldScript_SetDestination, 1
-	.set import.Import_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestExit, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.FieldScript_SetNextDestination, 1
 	.set import.FieldScript_SetDefeatDestination, 1

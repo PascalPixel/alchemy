@@ -4,20 +4,20 @@
 #include "types.h"
 #include "map_tables.h"
 
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEvent;
 struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *SolSanctumLunaSolRooms_GetWarpDests(void);
-const struct MapWarpRegion *SolSanctumLunaSolRooms_GetRegions(void);
-const u32 *SolSanctumLunaSolRooms_GetWarps(void);
+const struct SceneEntrance *SolSanctumLunaSolRooms_GetEntrances(void);
+const struct SceneExitRegion *SolSanctumLunaSolRooms_GetRegions(void);
+const u32 *SolSanctumLunaSolRooms_GetExits(void);
 const struct ObjectEventTemplate *
 SolSanctumLunaSolRooms_GetObjectEventTemplates(void);
 const struct MapEvent *SolSanctumLunaSolRooms_GetEvents(void);
 s32 SolSanctumLunaSolRooms_Initialize(void);
-extern struct MapWarpDest gSolSanctumLunaSolRoomsWarpDests[];
-extern u32 gSolSanctumLunaSolRoomsWarps[];
+extern struct SceneEntrance gSolSanctumLunaSolRoomsEntrances[];
+extern u32 gSolSanctumLunaSolRoomsExits[];
 extern struct ObjectEventTemplate gSolSanctumLunaSolRoomsObjectEventTemplates[];
 extern struct MapEvent gSolSanctumLunaSolRoomsEvents[];
 

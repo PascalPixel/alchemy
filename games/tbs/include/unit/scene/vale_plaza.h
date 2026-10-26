@@ -4,9 +4,9 @@
 #include "types.h"
 #include "map_tables.h"
 
-const struct MapWarpDest *ValePlaza_GetWarpDests(void);
-const struct MapWarpRegion *ValePlaza_GetRegions(void);
-const u32 *ValePlaza_GetWarps(void);
+const struct SceneEntrance *ValePlaza_GetEntrances(void);
+const struct SceneExitRegion *ValePlaza_GetRegions(void);
+const u32 *ValePlaza_GetExits(void);
 const struct ObjectEventTemplate *ValePlaza_GetObjectEventTemplates(void);
 const struct MapEvent *ValePlaza_GetEvents(void);
 s32 ValePlaza_Initialize(void);
@@ -28,9 +28,9 @@ extern s32 gValePlaza_HutOwnerSearchActions[];
 extern s32 gValePlaza_AideRunActions[];
 extern s32 gValePlaza_LeaderStepActions[];
 extern s32 gValePlaza_StormGaretStepActions[];
-extern struct MapWarpDest gValePlaza_WarpDests[];
-extern u32 gValePlaza_Warps[];
-extern u32 gValePlaza_StormWarps[];
+extern struct SceneEntrance gValePlaza_Entrances[];
+extern u32 gValePlaza_Exits[];
+extern u32 gValePlaza_StormExits[];
 extern struct ObjectEventTemplate gValePlaza_ObjectEventTemplates[];
 extern struct ObjectEventTemplate gValePlaza_StormObjectEventTemplates[];
 extern struct ObjectEventTemplate gValePlaza_DepartureObjectEventTemplates[];

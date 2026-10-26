@@ -1,7 +1,7 @@
 	.include "games/tbs/src/system/overlay.inc"
 	overlay_veneer SolSanctumEntrance_Initialize
-	overlay_veneer SolSanctumEntrance_GetWarpDests
-	overlay_veneer SolSanctumEntrance_GetWarps
+	overlay_veneer SolSanctumEntrance_GetEntrances
+	overlay_veneer SolSanctumEntrance_GetExits
 	overlay_veneer SolSanctumEntrance_GetObjectEventTemplates
 	overlay_veneer SolSanctumEntrance_GetEvents
 	overlay_veneer SolSanctumEntrance_GetRegions

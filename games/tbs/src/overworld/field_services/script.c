@@ -67,7 +67,7 @@ void FieldScript_WaitFrames(s32 frames) {
 /// speed (1.0) and acceleration (0.5), no destination, and the standing pose,
 /// or the climbing pose (12) while the leader is on a climbable wall. Called by
 /// FieldScript_Start, by SceneManager_Run before it handles several requests,
-/// by Field_UsePsynergy, Scene_TalkToObjectEvent, Field_CheckWarpRegions and
+/// by Field_UsePsynergy, Scene_TalkToObjectEvent, Field_CheckExitRegions and
 /// the world map's zoom (FieldEffect_RunVisibilityTransition).
 void Leader_StopMoving(void) {
   struct Object *object;
@@ -512,33 +512,33 @@ void FieldScript_WaitTransitionFrames(void) {
   WaitFrames(gFieldWork->transitionFrames);
 }
 
-/// Makes the script leave for the given warp destination of the given map:
-/// raises the warp request WARP_NONE and writes gSaveBlock.sceneId and
-/// warpDest. Called by the title, the main menu, the Battle Arena, the debug
+/// Makes the script leave for the given entrance of the given map:
+/// raises the exit request EXIT_NONE and writes gSaveBlock.sceneId and
+/// entrance. Called by the title, the main menu, the Battle Arena, the debug
 /// battle command and five map scripts (the Lemurian ship and the world map
 /// among them).
-void FieldScript_SetDestination(s32 sceneId, s32 warpDest) {
-  gFieldWork->warp = WARP_NONE;
+void FieldScript_SetDestination(s32 sceneId, s32 entrance) {
+  gFieldWork->exit = EXIT_NONE;
   gSaveBlock.sceneId = sceneId;
-  gSaveBlock.warpDest = warpDest;
+  gSaveBlock.entrance = entrance;
 }
 
-/// Makes the script leave and records map and warp destination as the saved
+/// Makes the script leave and records map and entrance as the saved
 /// destination. Reached only through an unnamed veneer in the overworld bank's
 /// far-call table; nothing in ☀️ names it.
-void FieldScript_SetSavedDestination(u16 sceneId, u16 warpDest) {
+void FieldScript_SetSavedDestination(u16 sceneId, u16 entrance) {
   struct FieldWork *state = gFieldWork;
-  state->warp = WARP_NONE;
+  state->exit = EXIT_NONE;
   gSaveBlock.restartScene = sceneId;
-  gSaveBlock.restartWarpDest = warpDest;
+  gSaveBlock.restartEntrance = entrance;
 }
 
-/// The script command "request warp": sets the field's warp request (999 leaves
-/// for gSaveBlock's sceneId and warpDest). Map scripts reach it as
-/// Import_ScriptRequestWarp (about 61 of them).
-void FieldScript_SetWarpRequest(u16 request) {
+/// The script command "request exit": sets the field's exit request (999 leaves
+/// for gSaveBlock's sceneId and entrance). Map scripts reach it as
+/// Import_ScriptRequestExit (about 61 of them).
+void FieldScript_SetExitRequest(u16 request) {
   struct FieldWork *state = gFieldWork;
-  state->warp = request;
+  state->exit = request;
 }
 
 #undef GIFT_RECEIVED_MESSAGE

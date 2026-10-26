@@ -385,34 +385,34 @@ static s32 Kalay_UpdateTouristFidget(struct Object *interpreter) {
 /// (MsgKalayIsaacSneakedIntoLunpaThats)
 #define FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA FLAG_AREA_TEMP_21
 
-const struct MapWarpDest *Kalay_GetWarpDests(void) {
+const struct SceneEntrance *Kalay_GetEntrances(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_Kalay) {
-    return gKalay_TownWarpDests;
+    return gKalay_TownEntrances;
   }
   if (sceneId == (s32)&SceneId_HammetPalaceGrounds) {
-    return gKalay_HammetPalaceWarpDests;
+    return gKalay_HammetPalaceEntrances;
   }
   if (sceneId == (s32)&SceneId_KalayTunnelEntrance) {
-    return gKalay_TunnelEntranceWarpDests;
+    return gKalay_TunnelEntranceEntrances;
   }
   if (sceneId == (s32)&SceneId_KalayTunnelCave) {
-    return gKalay_TunnelCaveWarpDests;
+    return gKalay_TunnelCaveEntrances;
   }
   if (sceneId == (s32)&SceneId_KalayTunnelPassage) {
-    return gKalay_TunnelPassageWarpDests;
+    return gKalay_TunnelPassageEntrances;
   }
   if (sceneId == (s32)&SceneId_KalayTunnelTreasureRoom) {
-    return gKalay_TunnelWarpDests;
+    return gKalay_TunnelEntrances;
   }
-  return gKalay_NoWarpDests;
+  return gKalay_NoEntrances;
 }
 
-const struct MapWarpRegion *Kalay_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Kalay_GetRegions(void) { return NULL; }
 
-/// The numbered warps of all six maps.
-const u32 *Kalay_GetWarps(void) { return gKalay_Warps; }
+/// The numbered exits of all six maps.
+const u32 *Kalay_GetExits(void) { return gKalay_Exits; }
 
 /// The people of Kalay, Hammet Palace's front, the Kalay Tunnel Entrance and
 /// the Kalay Tunnel's treasure room.
@@ -453,7 +453,7 @@ static void Kalay_CatchTunnelEntranceNut(void) {
   FieldScript_End();
 }
 
-/// The conversations, warps and Psynergy targets of each map.
+/// The conversations, exits and Psynergy targets of each map.
 const struct MapEvent *Kalay_GetEvents(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
@@ -615,7 +615,7 @@ static void Kalay_OpenDoorAndExit(void) {
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -8);
   FieldScript_WaitFrames(10);
-  Import_ScriptRequestWarp(*trigger);
+  Import_ScriptRequestExit(*trigger);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_End();
@@ -640,7 +640,7 @@ static void Kalay_EnterPalace(void) {
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -8);
   FieldScript_WaitFrames(10);
-  Import_ScriptRequestWarp(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE);
+  Import_ScriptRequestExit(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_End();
@@ -1188,7 +1188,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     GameFlag_Set(FLAG_KALAY_COLOSSO_TOUR_LEFT);
   } else {
     Script_PlaySong(SE_MAP_EXIT);
-    Import_ScriptRequestWarp(work->coordEvent);
+    Import_ScriptRequestExit(work->coordEvent);
     FieldScript_FinishScreenTransition();
     FieldScript_WaitTransitionFrames();
   }
@@ -1293,7 +1293,7 @@ static void Kalay_PrepareTown(void) {
   if (GameFlag_Get(FLAG_LUNPA_HEARD_OF_PRISONER) != 0) {
     GameFlag_Set(FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA);
   }
-  if (gSaveBlock.warpDest == KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) {
+  if (gSaveBlock.entrance == KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) {
     ObjectEvent_SetPosition(LOCALID_TOWN_STATUE, PIXELS(424), PIXELS(88));
   }
   // The second guide shares the first's sprite, drawn with its green and blue
@@ -1338,7 +1338,7 @@ static void Kalay_PrepareHammetPalace(void) {
   if (GameFlag_Get(FLAG_LUNPA_HEARD_OF_PRISONER) != 0) {
     GameFlag_Set(FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA);
   }
-  if (gSaveBlock.warpDest != WARP_DEST_DEFAULT) {
+  if (gSaveBlock.entrance != ENTRANCE_DEFAULT) {
     if (GameFlag_Get(FLAG_IVAN_REPORTED_TO_LAYANA) == 0) {
       Kalay_IvanMeetsPalaceGuards();
     }
@@ -1359,7 +1359,7 @@ static void Kalay_PrepareTunnelEntrance(void) {
     guard = ObjectEvent_GetById(LOCALID_TUNNEL_GUARD);
     guard->facing = 0;
   }
-  if (gSaveBlock.warpDest == KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH) {
+  if (gSaveBlock.entrance == KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH) {
     Kalay_HammetReturnsToPalace();
   }
 }
@@ -1384,7 +1384,7 @@ static void Kalay_StartWindowTransition(void) {
     MapGrid_CenterOnFollowedPoint();
     WaitFrames(1);
   }
-  if (gSaveBlock.warpDest <=
+  if (gSaveBlock.entrance <=
       KALAY_TUNNEL_PASSAGE_LONG_PATH_FROM_NORTHEAST_ROOM) {
     Scene_QueueMusic(SE_AMBIENT_WATER);
   }
@@ -1433,7 +1433,7 @@ static void Kalay_PrepareTunnel(void) {
 #endif
   } else {
     Script_SetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
-    if (gSaveBlock.warpDest == KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
+    if (gSaveBlock.entrance == KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
       ((struct FadeOverlayWork *)
            workSlots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD])
           ->objectEvent = NULL;
@@ -1459,7 +1459,7 @@ static void Kalay_PrepareTunnel(void) {
     }
     effectWork->objectEvent = (struct ObjectEvent *)trackingValue;
 #endif
-  } else if (gSaveBlock.warpDest == KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
+  } else if (gSaveBlock.entrance == KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
     ((struct FadeOverlayWork *)
          workSlots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD])
         ->objectEvent = NULL;
@@ -1533,7 +1533,7 @@ static void Kalay_PrepareTunnel(void) {
     MapGrid_CopyCellAttributes(6, 13, 12, 12, 6, 44);
     MapGrid_CopyCellAttributes(0, 1, 1, 1, 7, 44);
   } else {
-    switch (gSaveBlock.warpDest) {
+    switch (gSaveBlock.entrance) {
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE:
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_WEST:
       Scene_QueueMusic(SE_AMBIENT_WATER);
@@ -1564,7 +1564,7 @@ static void Kalay_PrepareTunnel(void) {
     MapGrid_CopyCellsTo(102, 14, 102, 44, 8, 12);
     MapGrid_CopyCellAttributes(37, 13, 10, 12, 37, 43);
   } else {
-    switch (gSaveBlock.warpDest) {
+    switch (gSaveBlock.entrance) {
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_EAST:
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY:
       Scene_QueueMusic(SE_AMBIENT_WATER);
@@ -1845,7 +1845,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM);
+  Import_ScriptRequestExit(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM);
   FieldScript_End();
 }
 
@@ -2148,7 +2148,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_SOUTH);
+  Import_ScriptRequestExit(KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_SOUTH);
   FieldScript_End();
 }
 
@@ -2660,14 +2660,14 @@ s32 gKalay_FrostGrowScript[] = {
     SC_END,
 };
 
-struct MapWarpDest gKalay_NoWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gKalay_NoEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gKalay_TownWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 224, 0, 280, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gKalay_TownEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 224, 0, 280, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {KALAY_FROM_HOUSE_NORTHWEST, CONDITION_ALWAYS, 72, 0, 200, FACING_SOUTH, 0,
      -1, -1, -1, -1, 0},
@@ -2700,8 +2700,8 @@ struct MapWarpDest gKalay_TownWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gKalay_HammetPalaceWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gKalay_HammetPalaceEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {HAMMET_PALACE_GROUNDS_FROM_KALAY, CONDITION_ALWAYS, 192, 0, 280,
      FACING_NORTH, 0, 0, 0, 400, 352, 0},
@@ -2710,8 +2710,8 @@ struct MapWarpDest gKalay_HammetPalaceWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gKalay_TunnelEntranceWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gKalay_TunnelEntranceEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {KALAY_TUNNEL_ENTRANCE_FROM_KALAY_TUNNEL_CAVE, CONDITION_ALWAYS, 248, 0,
      152, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -2722,8 +2722,8 @@ struct MapWarpDest gKalay_TunnelEntranceWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gKalay_TunnelCaveWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gKalay_TunnelCaveEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {KALAY_TUNNEL_CAVE_FROM_KALAY_TUNNEL_PASSAGE, CONDITION_ALWAYS, 296, 0, 104,
      FACING_SOUTH, 0, 100, 50, 440, 445, 0},
@@ -2732,8 +2732,8 @@ struct MapWarpDest gKalay_TunnelCaveWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gKalay_TunnelPassageWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gKalay_TunnelPassageEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_WEST,
      CONDITION_ALWAYS, 296, 0, 456, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -2748,8 +2748,8 @@ struct MapWarpDest gKalay_TunnelPassageWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gKalay_TunnelWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gKalay_TunnelEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE, CONDITION_ALWAYS, 408, 0,
      632, FACING_SOUTH, 0, 85, 400, 465, 880, 0},
@@ -2762,76 +2762,77 @@ struct MapWarpDest gKalay_TunnelWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gKalay_Warps[] = {
-    MAP_WARPS(Kalay),
-    MAP_WARP(KALAY_TO_HOUSE_NORTHWEST, StuccoRoomsA,
-             STUCCO_ROOMS_A_HOUSE_NORTHWEST),
-    MAP_WARP(KALAY_TO_HOUSE_NORTHEAST_UPPER, StuccoRoomsA,
-             STUCCO_ROOMS_A_HOUSE_NORTHEAST_UPPER),
-    MAP_WARP(KALAY_TO_HOUSE_NORTHEAST_LOWER, StuccoRoomsA,
-             STUCCO_ROOMS_A_HOUSE_NORTHEAST_LOWER),
-    MAP_WARP(KALAY_TO_HOUSE_SOUTHEAST, StuccoRoomsA,
-             STUCCO_ROOMS_A_HOUSE_SOUTHEAST),
-    MAP_WARP(KALAY_TO_WEAPON_SHOP, StuccoRoomsA, STUCCO_ROOMS_A_WEAPON_SHOP),
-    MAP_WARP(KALAY_TO_ARMOR_SHOP, StuccoRoomsA, STUCCO_ROOMS_A_ARMOR_SHOP),
-    MAP_WARP(KALAY_TO_INN, StuccoRoomsA, STUCCO_ROOMS_A_INN),
-    MAP_WARP(KALAY_TO_KALAY_SANCTUM, KalaySanctum, KALAY_SANCTUM_FROM_KALAY),
-    MAP_WARP(KALAY_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_KALAY_EAST),
-    MAP_WARP(KALAY_TO_WORLD_MAP_WEST, WorldMap, WORLD_MAP_FROM_KALAY_WEST),
-    MAP_WARP(KALAY_TO_HAMMET_PALACE_GROUNDS, HammetPalaceGrounds,
-             HAMMET_PALACE_GROUNDS_FROM_KALAY),
-    MAP_WARP(KALAY_TO_WEAPON_SHOP_COUNTER, StuccoRoomsA,
-             STUCCO_ROOMS_A_WEAPON_SHOP_COUNTER),
-    MAP_WARP(KALAY_TO_ARMOR_SHOP_COUNTER, StuccoRoomsA,
-             STUCCO_ROOMS_A_ARMOR_SHOP_COUNTER),
-    MAP_WARP(KALAY_TO_KALAY_TUNNEL_TREASURE_ROOM, KalayTunnelTreasureRoom,
-             KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY),
-    MAP_WARPS(HammetPalaceGrounds),
-    MAP_WARP(HAMMET_PALACE_GROUNDS_TO_KALAY, Kalay,
-             KALAY_FROM_HAMMET_PALACE_GROUNDS),
-    MAP_WARP(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE, HammetPalace,
-             HAMMET_PALACE_FROM_HAMMET_PALACE_GROUNDS),
-    MAP_WARP(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM, HammetPalace,
-             HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS),
-    MAP_WARPS(KalayTunnelEntrance),
-    MAP_WARP(KALAY_TUNNEL_ENTRANCE_TO_KALAY_TUNNEL_CAVE, KalayTunnelCave,
-             KALAY_TUNNEL_CAVE_FROM_KALAY_TUNNEL_ENTRANCE),
-    MAP_WARP(KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_NORTH, WorldMap,
-             WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_NORTH),
-    MAP_WARP(KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_SOUTH, WorldMap,
-             WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH),
-    MAP_WARPS(KalayTunnelCave),
-    MAP_WARP(KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_PASSAGE, KalayTunnelPassage,
-             KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_CAVE),
-    MAP_WARP(KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_ENTRANCE, KalayTunnelEntrance,
-             KALAY_TUNNEL_ENTRANCE_FROM_KALAY_TUNNEL_CAVE),
-    MAP_WARPS(KalayTunnelPassage),
-    MAP_WARP(KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_WEST,
-             KalayTunnelTreasureRoom,
-             KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_WEST),
-    MAP_WARP(KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_EAST,
-             KalayTunnelTreasureRoom,
-             KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_EAST),
-    MAP_WARP(KALAY_TUNNEL_PASSAGE_LONG_PATH_TO_NORTHEAST_ROOM,
-             KalayTunnelPassage,
-             KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_FROM_LONG_PATH),
-    MAP_WARP(KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_TO_LONG_PATH,
-             KalayTunnelPassage,
-             KALAY_TUNNEL_PASSAGE_LONG_PATH_FROM_NORTHEAST_ROOM),
-    MAP_WARP(KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_CAVE, KalayTunnelCave,
-             KALAY_TUNNEL_CAVE_FROM_KALAY_TUNNEL_PASSAGE),
-    MAP_WARPS(KalayTunnelTreasureRoom),
-    MAP_WARP(KALAY_TUNNEL_TREASURE_ROOM_TO_HAMMET_PALACE, HammetPalace,
-             HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM),
-    MAP_WARP(KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_WEST,
-             KalayTunnelPassage,
-             KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_WEST),
-    MAP_WARP(KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_EAST,
-             KalayTunnelPassage,
-             KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_EAST),
-    MAP_WARP(KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY, Kalay,
-             KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM),
-    MAP_WARPS_END,
+u32 gKalay_Exits[] = {
+    SCENE_EXITS(Kalay),
+    SCENE_EXIT(KALAY_TO_HOUSE_NORTHWEST, StuccoRoomsA,
+               STUCCO_ROOMS_A_HOUSE_NORTHWEST),
+    SCENE_EXIT(KALAY_TO_HOUSE_NORTHEAST_UPPER, StuccoRoomsA,
+               STUCCO_ROOMS_A_HOUSE_NORTHEAST_UPPER),
+    SCENE_EXIT(KALAY_TO_HOUSE_NORTHEAST_LOWER, StuccoRoomsA,
+               STUCCO_ROOMS_A_HOUSE_NORTHEAST_LOWER),
+    SCENE_EXIT(KALAY_TO_HOUSE_SOUTHEAST, StuccoRoomsA,
+               STUCCO_ROOMS_A_HOUSE_SOUTHEAST),
+    SCENE_EXIT(KALAY_TO_WEAPON_SHOP, StuccoRoomsA, STUCCO_ROOMS_A_WEAPON_SHOP),
+    SCENE_EXIT(KALAY_TO_ARMOR_SHOP, StuccoRoomsA, STUCCO_ROOMS_A_ARMOR_SHOP),
+    SCENE_EXIT(KALAY_TO_INN, StuccoRoomsA, STUCCO_ROOMS_A_INN),
+    SCENE_EXIT(KALAY_TO_KALAY_SANCTUM, KalaySanctum, KALAY_SANCTUM_FROM_KALAY),
+    SCENE_EXIT(KALAY_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_KALAY_EAST),
+    SCENE_EXIT(KALAY_TO_WORLD_MAP_WEST, WorldMap, WORLD_MAP_FROM_KALAY_WEST),
+    SCENE_EXIT(KALAY_TO_HAMMET_PALACE_GROUNDS, HammetPalaceGrounds,
+               HAMMET_PALACE_GROUNDS_FROM_KALAY),
+    SCENE_EXIT(KALAY_TO_WEAPON_SHOP_COUNTER, StuccoRoomsA,
+               STUCCO_ROOMS_A_WEAPON_SHOP_COUNTER),
+    SCENE_EXIT(KALAY_TO_ARMOR_SHOP_COUNTER, StuccoRoomsA,
+               STUCCO_ROOMS_A_ARMOR_SHOP_COUNTER),
+    SCENE_EXIT(KALAY_TO_KALAY_TUNNEL_TREASURE_ROOM, KalayTunnelTreasureRoom,
+               KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY),
+    SCENE_EXITS(HammetPalaceGrounds),
+    SCENE_EXIT(HAMMET_PALACE_GROUNDS_TO_KALAY, Kalay,
+               KALAY_FROM_HAMMET_PALACE_GROUNDS),
+    SCENE_EXIT(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE, HammetPalace,
+               HAMMET_PALACE_FROM_HAMMET_PALACE_GROUNDS),
+    SCENE_EXIT(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM,
+               HammetPalace,
+               HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS),
+    SCENE_EXITS(KalayTunnelEntrance),
+    SCENE_EXIT(KALAY_TUNNEL_ENTRANCE_TO_KALAY_TUNNEL_CAVE, KalayTunnelCave,
+               KALAY_TUNNEL_CAVE_FROM_KALAY_TUNNEL_ENTRANCE),
+    SCENE_EXIT(KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_NORTH, WorldMap,
+               WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_NORTH),
+    SCENE_EXIT(KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_SOUTH, WorldMap,
+               WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH),
+    SCENE_EXITS(KalayTunnelCave),
+    SCENE_EXIT(KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_PASSAGE, KalayTunnelPassage,
+               KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_CAVE),
+    SCENE_EXIT(KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_ENTRANCE, KalayTunnelEntrance,
+               KALAY_TUNNEL_ENTRANCE_FROM_KALAY_TUNNEL_CAVE),
+    SCENE_EXITS(KalayTunnelPassage),
+    SCENE_EXIT(KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_WEST,
+               KalayTunnelTreasureRoom,
+               KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_WEST),
+    SCENE_EXIT(KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_EAST,
+               KalayTunnelTreasureRoom,
+               KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_EAST),
+    SCENE_EXIT(KALAY_TUNNEL_PASSAGE_LONG_PATH_TO_NORTHEAST_ROOM,
+               KalayTunnelPassage,
+               KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_FROM_LONG_PATH),
+    SCENE_EXIT(KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_TO_LONG_PATH,
+               KalayTunnelPassage,
+               KALAY_TUNNEL_PASSAGE_LONG_PATH_FROM_NORTHEAST_ROOM),
+    SCENE_EXIT(KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_CAVE, KalayTunnelCave,
+               KALAY_TUNNEL_CAVE_FROM_KALAY_TUNNEL_PASSAGE),
+    SCENE_EXITS(KalayTunnelTreasureRoom),
+    SCENE_EXIT(KALAY_TUNNEL_TREASURE_ROOM_TO_HAMMET_PALACE, HammetPalace,
+               HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM),
+    SCENE_EXIT(KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_WEST,
+               KalayTunnelPassage,
+               KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_WEST),
+    SCENE_EXIT(KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_EAST,
+               KalayTunnelPassage,
+               KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_EAST),
+    SCENE_EXIT(KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY, Kalay,
+               KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gKalay_NoObjectEventTemplates[] = {
@@ -2958,10 +2959,10 @@ struct MapEvent gKalay_TownEvents[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_OpenDoorAndExit) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_OpenDoorAndExit) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_OpenDoorAndExit) },
-    { MAP_EVENT_WARP, 11, CONDITION_ALWAYS, KALAY_TO_HAMMET_PALACE_GROUNDS },
-    { MAP_EVENT_WARP, 12, CONDITION_ALWAYS, KALAY_TO_WEAPON_SHOP_COUNTER },
-    { MAP_EVENT_WARP, 13, CONDITION_ALWAYS, KALAY_TO_ARMOR_SHOP_COUNTER },
-    { MAP_EVENT_WARP, 14, CONDITION_ALWAYS, KALAY_TO_KALAY_TUNNEL_TREASURE_ROOM },
+    { MAP_EVENT_EXIT, 11, CONDITION_ALWAYS, KALAY_TO_HAMMET_PALACE_GROUNDS },
+    { MAP_EVENT_EXIT, 12, CONDITION_ALWAYS, KALAY_TO_WEAPON_SHOP_COUNTER },
+    { MAP_EVENT_EXIT, 13, CONDITION_ALWAYS, KALAY_TO_ARMOR_SHOP_COUNTER },
+    { MAP_EVENT_EXIT, 14, CONDITION_ALWAYS, KALAY_TO_KALAY_TUNNEL_TREASURE_ROOM },
     { MAP_EVENT_COORD, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_WatchTourGroupDeparture) },
     { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_WatchTourGroupDeparture) },
     { MAP_EVENT_TALK, LOCALID_WELCOMING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgKalayWelcomeInPeace) },
@@ -3008,7 +3009,7 @@ struct MapEvent gKalay_TownEvents[] = {
 };
 
 struct MapEvent gKalay_HammetPalaceEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, HAMMET_PALACE_GROUNDS_TO_KALAY },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, HAMMET_PALACE_GROUNDS_TO_KALAY },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_EnterPalace) },
     { MAP_EVENT_TALK, LOCALID_PALACE_GUARD, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersHandleAffairs) },
     { MAP_EVENT_TALK, LOCALID_SECOND_PALACE_GUARD, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersRescueHammet) },
@@ -3018,8 +3019,8 @@ struct MapEvent gKalay_HammetPalaceEvents[] = {
 };
 
 struct MapEvent gKalay_TunnelEntranceEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, KALAY_TUNNEL_ENTRANCE_TO_KALAY_TUNNEL_CAVE },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_NORTH },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_TUNNEL_ENTRANCE_TO_KALAY_TUNNEL_CAVE },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_NORTH },
     { MAP_EVENT_TALK, LOCALID_TUNNEL_GUARD, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_AskAboutCaveAccess) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TUNNEL_GUARD, CONDITION_ALWAYS, MSGNO(MsgKalayPassageClosedByOrders) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_CATCH), LOCALID_TUNNEL_ENTRANCE_NUT, FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT, EVENT_SCRIPT(Kalay_CatchTunnelEntranceNut) },
@@ -3027,26 +3028,26 @@ struct MapEvent gKalay_TunnelEntranceEvents[] = {
 };
 
 struct MapEvent gKalay_TunnelCaveEvents[] = {
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_PASSAGE },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_ENTRANCE },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_PASSAGE },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_ENTRANCE },
     { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_KALAY_TUNNEL_APPLE_CHEST, FIND_ITEM(ITEM_APPLE) },
     { MAP_EVENTS_END },
 };
 
 struct MapEvent gKalay_TunnelPassageEvents[] = {
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_WEST },
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_EAST },
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_LONG_PATH_TO_NORTHEAST_ROOM },
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_TO_LONG_PATH },
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_CAVE },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_WEST },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_EAST },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_LONG_PATH_TO_NORTHEAST_ROOM },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_TO_LONG_PATH },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_CAVE },
     { MAP_EVENTS_END },
 };
 
 struct MapEvent gKalay_TunnelEvents[] = {
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_HAMMET_PALACE },
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_WEST },
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_EAST },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_HAMMET_PALACE },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_WEST },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_EAST },
+    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY },
     { MAP_EVENT_TALK, LOCALID_WAITING_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkAboutLayana) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WAITING_MAN, CONDITION_ALWAYS, MSGNO(MsgKalayTreasureBeyondDoors) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_STATUE, FLAG_TUNNEL_FIRST_PASSAGE_OPEN, EVENT_SCRIPT(Kalay_UpdateTunnelPassages) },

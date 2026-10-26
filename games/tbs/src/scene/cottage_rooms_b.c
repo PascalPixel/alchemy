@@ -1,10 +1,10 @@
 /// @file
 /// Cottage rooms B (SceneId_CottageRoomsB), a sheet of rooms drawn as cottages:
 /// the game packs rooms of several places that share a tile style onto one map,
-/// each room a camera box of its own that the warp destination the party comes
+/// each room a camera box of its own that the entrance the party comes
 /// in by chooses. This sheet's rooms are in Vale but for one in Babi's Palace,
-/// and its tables and setup choose by the warp destination and the story
-/// flags. The rooms, in story order, by the warps that lead in:
+/// and its tables and setup choose by the entrance and the story
+/// flags. The rooms, in story order, by the exits that lead in:
 ///
 /// - Isaac's house in Vale: its upper floor, where a new game begins
 ///   (COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST, from menu/main_menu.c), and
@@ -56,7 +56,7 @@
 ///   ValeStormyNight (VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA). While
 ///   FLAG_VALE_STORM is set the villagers are put out of sight, lightning
 ///   flashes, and COTTAGE_ROOMS_B_TO_VALE leads into the storm
-///   (ValeStormyNight) instead of Vale (gCottageRoomsB_StormWarps). Kyle dies
+///   (ValeStormyNight) instead of Vale (gCottageRoomsB_StormExits). Kyle dies
 ///   that night, as the village says later.
 /// - Vale before the party leaves (FLAG_VALE_PARTY_LEFT clear): from Kraden's
 ///   cottage (ValeKradensCottage's
@@ -92,7 +92,7 @@
 ///   are over (FLAG_COLOSSO_OVER), when one asks whether the party knows
 ///   Kraden. The setup does not show the area's name there.
 ///
-/// The warps COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST to
+/// The exits COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST to
 /// COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_EAST are taken by the metatile
 /// behaviors of the same numbers, leading to the rest of Vale (ValePlaza,
 /// ValeKradensCottage, Vale and ValeStormyNight) or between this map's own
@@ -306,7 +306,7 @@ enum CottageRoomsBAnimation {
 
 // FLAG_VALE_DORA_OUT_OF_BED: Dora got out of her sickbed on this visit.
 
-/// Returns the warp destinations, among them the events played on arrival:
+/// Returns the entrances, among them the events played on arrival:
 /// COTTAGE_ROOMS_B_FROM_BABI_PALACE from Babi's palace
 /// (BABI_PALACE_TO_COTTAGE_ROOMS_B),
 /// COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST where a new game begins
@@ -316,25 +316,25 @@ enum CottageRoomsBAnimation {
 /// own COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, and
 /// COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG from Kraden's cottage
 /// (VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG).
-const struct MapWarpDest *CottageRoomsB_GetWarpDests(void) {
-  return gCottageRoomsB_WarpDests;
+const struct SceneEntrance *CottageRoomsB_GetEntrances(void) {
+  return gCottageRoomsB_Entrances;
 }
 
-const struct MapWarpRegion *CottageRoomsB_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *CottageRoomsB_GetRegions(void) { return NULL; }
 
-/// On the stormy night the warps lead into the storm.
-const u32 *CottageRoomsB_GetWarps(void) {
+/// On the stormy night the exits lead into the storm.
+const u32 *CottageRoomsB_GetExits(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
-    return gCottageRoomsB_StormWarps;
+    return gCottageRoomsB_StormExits;
   }
-  return gCottageRoomsB_Warps;
+  return gCottageRoomsB_Exits;
 }
 
 /// Places Babi's scholars, or Vale's villagers as the story has left them.
 const struct ObjectEventTemplate *CottageRoomsB_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *table;
 
-  if (gSaveBlock.warpDest == COTTAGE_ROOMS_B_FROM_BABI_PALACE)
+  if (gSaveBlock.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE)
     return gCottageRoomsB_BabiScholarsObjectEventTemplates;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
     table = gCottageRoomsB_ObjectEventTemplatesAfterKalay;
@@ -367,7 +367,7 @@ static void EventScript_ScholarAsksAboutKraden(s32 speakerId) {
 /// Chooses the events: Babi's scholars talk differently once the Colosso
 /// finals are over; Vale's villagers follow the storm and the story.
 const struct MapEvent *CottageRoomsB_GetEvents(void) {
-  if (gSaveBlock.warpDest == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
+  if (gSaveBlock.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gCottageRoomsB_BabiScholarsLaterEvents;
     }
@@ -434,9 +434,9 @@ static void EventScript_AskWhetherMaskedManWasFelix(void) {
   FieldScript_End();
 }
 
-/// Stops storm lightning before fading through the requested warp.
-/// Called by the warps below.
-static void CottageRoomsB_CloseScreenAndExit(s32 warpNumber) {
+/// Stops storm lightning before fading through the requested exit.
+/// Called by the exits below.
+static void CottageRoomsB_CloseScreenAndExit(s32 exitNumber) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     Weather_StopLightning();
   }
@@ -444,24 +444,24 @@ static void CottageRoomsB_CloseScreenAndExit(s32 warpNumber) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(warpNumber);
+  Import_ScriptRequestExit(exitNumber);
 }
 
-// The warps in Vale: stepping on the metatile behavior of the same number in
-// any of the Vale tables plays a step sound and takes that warp
-// (gCottageRoomsB_Warps, or gCottageRoomsB_StormWarps on the stormy
+// The exits in Vale: stepping on the metatile behavior of the same number in
+// any of the Vale tables plays a step sound and takes that exit
+// (gCottageRoomsB_Exits, or gCottageRoomsB_StormExits on the stormy
 // night).
 
 /// Reached by metatile behavior 1; leads to ValePlaza
 /// (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_WEST).
-static void EventScript_WarpToValePlazaNorthwest(void) {
+static void EventScript_ExitToValePlazaNorthwest(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST);
 }
 
 /// Reached by metatile behavior 2; leads to Kraden's cottage
 /// (VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_NORTH).
-static void EventScript_WarpToValeKradensCottageNorth(void) {
+static void EventScript_ExitToValeKradensCottageNorth(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(
       COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_NORTH);
@@ -469,21 +469,21 @@ static void EventScript_WarpToValeKradensCottageNorth(void) {
 
 /// Reached by metatile behavior 3; leads to ValePlaza
 /// (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_NORTH).
-static void EventScript_WarpToValePlazaNortheast(void) {
+static void EventScript_ExitToValePlazaNortheast(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHEAST);
 }
 
 /// Reached by metatile behavior 4; leads to ValePlaza
 /// (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_SOUTH).
-static void EventScript_WarpToValePlazaWest(void) {
+static void EventScript_ExitToValePlazaWest(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PLAZA_WEST);
 }
 
 /// Reached by metatile behavior 5, the inn's stairs; climbs to its guest room
 /// at COTTAGE_ROOMS_B_VALE_INN_FROM_GROUND_FLOOR.
-static void EventScript_WarpToInnUpstairs(void) {
+static void EventScript_ExitToInnUpstairs(void) {
   Sound_PlaySong(SE_STAIRS_UP);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_VALE_INN_TO_UPSTAIRS);
 }
@@ -491,28 +491,28 @@ static void EventScript_WarpToInnUpstairs(void) {
 /// Reached by metatile behavior 6; leads to Vale
 /// (VALE_FROM_COTTAGE_ROOMS_B), or on the stormy night to ValeStormyNight
 /// (VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_ISAACS_HOUSE).
-static void EventScript_WarpToVale(void) {
+static void EventScript_ExitToVale(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE);
 }
 
 /// Reached by metatile behavior 7, the stairs of Isaac's house; climbs to its
 /// upper floor.
-static void EventScript_WarpToIsaacsHouseUpstairs(void) {
+static void EventScript_ExitToIsaacsHouseUpstairs(void) {
   Sound_PlaySong(SE_STAIRS_UP);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_UPSTAIRS);
 }
 
 /// Reached by metatile behavior 8, the stairs of the inn's guest room; goes
 /// back down.
-static void EventScript_WarpToInnDownstairs(void) {
+static void EventScript_ExitToInnDownstairs(void) {
   Sound_PlaySong(SE_STAIRS_DOWN);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_VALE_INN_TO_GROUND_FLOOR);
 }
 
 /// Reached by metatile behavior 9, the stairs on the upper floor of Isaac's
 /// house; goes back down.
-static void EventScript_WarpToIsaacsHouseDownstairs(void) {
+static void EventScript_ExitToIsaacsHouseDownstairs(void) {
   Sound_PlaySong(SE_STAIRS_DOWN);
   CottageRoomsB_CloseScreenAndExit(
       COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR);
@@ -520,14 +520,14 @@ static void EventScript_WarpToIsaacsHouseDownstairs(void) {
 
 /// Reached by metatile behavior 10; leads to ValeStormyNight
 /// (VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WEST).
-static void EventScript_WarpToValeStormyNightWest(void) {
+static void EventScript_ExitToValeStormyNightWest(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WEST);
 }
 
 /// Reached by metatile behavior 11; leads to ValeStormyNight
 /// (VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_EAST).
-static void EventScript_WarpToValeStormyNightEast(void) {
+static void EventScript_ExitToValeStormyNightEast(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_EAST);
 }
@@ -543,7 +543,7 @@ static void EventScript_WarpToValeStormyNightEast(void) {
 s32 CottageRoomsB_Initialize(void) {
   struct ObjectEvent *objectEvent;
 
-  if (gSaveBlock.warpDest == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
+  if (gSaveBlock.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -562,8 +562,8 @@ s32 CottageRoomsB_Initialize(void) {
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
       objectEvent = ObjectEvent_GetById(LOCALID_INVISIBLE_AFTER_KALAY);
       ObjectEvent_SetSpriteFlags(objectEvent, 0);
-      if (gSaveBlock.warpDest == COTTAGE_ROOMS_B_FROM_VALE ||
-          gSaveBlock.warpDest == COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS) {
+      if (gSaveBlock.entrance == COTTAGE_ROOMS_B_FROM_VALE ||
+          gSaveBlock.entrance == COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS) {
         if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
           if (GameFlag_Get(FLAG_VALE_DORA_OUT_OF_BED) != 0) {
             TilesetAnim_Resume(12);
@@ -576,15 +576,15 @@ s32 CottageRoomsB_Initialize(void) {
         }
       }
     } else {
-      if (gSaveBlock.warpDest ==
+      if (gSaveBlock.entrance ==
           COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA) {
         EventScript_HurryToThePlaza();
       } else {
-        if (gSaveBlock.warpDest == COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST) {
+        if (gSaveBlock.entrance == COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST) {
           GameFlag_Set(FLAG_VALE_STORM);
           EventScript_DoraWakesIsaac();
         } else {
-          if (gSaveBlock.warpDest ==
+          if (gSaveBlock.entrance ==
               COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG) {
             EventScript_ShowMythrilBag();
           } else {
@@ -782,7 +782,7 @@ static void EventScript_DoraWakesIsaac(void) {
   (*eventSlot)->transitionFrames = 16;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(
+  Import_ScriptRequestExit(
       COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA);
 }
 
@@ -928,7 +928,7 @@ ramp:
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 32;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WITH_DORA);
+  Import_ScriptRequestExit(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WITH_DORA);
 }
 
 /// Vale's innkeeper offers a room from behind the counter; elsewhere talks of
@@ -1221,7 +1221,7 @@ static void EventScript_ShowMythrilBag(void) {
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_EAST, 40);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_SOUTH);
+  Import_ScriptRequestExit(COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_SOUTH);
 }
 
 /// Unused: an update hook that flashes between two palettes and gives off a
@@ -1485,7 +1485,7 @@ s32 gCottageRoomsB_MythrilBagWobblesScript[] = {
     SC_END,
 };
 
-struct MapWarpDest gCottageRoomsB_WarpDests[] = {
+struct SceneEntrance gCottageRoomsB_Entrances[] = {
     {0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHWEST, CONDITION_ALWAYS, 160, 0, 228,
      FACING_NORTH, 0, 24, 0, 248, 256, 0},
@@ -1522,71 +1522,74 @@ struct MapWarpDest gCottageRoomsB_WarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gCottageRoomsB_Warps[] = {
-    MAP_WARPS(CottageRoomsB),
-    MAP_WARP(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST, ValePlaza,
-             VALE_PLAZA_FROM_COTTAGE_ROOMS_B_WEST),
-    MAP_WARP(COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_NORTH, ValeKradensCottage,
-             VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_NORTH),
-    MAP_WARP(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHEAST, ValePlaza,
-             VALE_PLAZA_FROM_COTTAGE_ROOMS_B_NORTH),
-    MAP_WARP(COTTAGE_ROOMS_B_TO_VALE_PLAZA_WEST, ValePlaza,
-             VALE_PLAZA_FROM_COTTAGE_ROOMS_B_SOUTH),
-    MAP_WARP(COTTAGE_ROOMS_B_VALE_INN_TO_UPSTAIRS, CottageRoomsB,
-             COTTAGE_ROOMS_B_VALE_INN_FROM_GROUND_FLOOR),
-    MAP_WARP(COTTAGE_ROOMS_B_TO_VALE, Vale, VALE_FROM_COTTAGE_ROOMS_B),
-    MAP_WARP(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_UPSTAIRS, CottageRoomsB,
-             COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_GROUND_FLOOR),
-    MAP_WARP(COTTAGE_ROOMS_B_VALE_INN_TO_GROUND_FLOOR, CottageRoomsB,
-             COTTAGE_ROOMS_B_VALE_INN_FROM_UPSTAIRS),
-    MAP_WARP(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR, CottageRoomsB,
-             COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS),
-    MAP_WARP(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WEST, ValeStormyNight,
-             VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WEST),
-    MAP_WARP(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_EAST, ValeStormyNight,
-             VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_EAST),
-    MAP_WARP(COTTAGE_ROOMS_B_TO_BABI_PALACE, BabiPalace,
-             BABI_PALACE_FROM_COTTAGE_ROOMS_B),
-    MAP_WARP(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA,
-             CottageRoomsB,
-             COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA),
-    MAP_WARP(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WITH_DORA, ValeStormyNight,
-             VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA),
-    MAP_WARP(COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_SOUTH, ValeKradensCottage,
-             VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH),
-    MAP_WARPS_END,
+u32 gCottageRoomsB_Exits[] = {
+    SCENE_EXITS(CottageRoomsB),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST, ValePlaza,
+               VALE_PLAZA_FROM_COTTAGE_ROOMS_B_WEST),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_NORTH,
+               ValeKradensCottage,
+               VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_NORTH),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHEAST, ValePlaza,
+               VALE_PLAZA_FROM_COTTAGE_ROOMS_B_NORTH),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_PLAZA_WEST, ValePlaza,
+               VALE_PLAZA_FROM_COTTAGE_ROOMS_B_SOUTH),
+    SCENE_EXIT(COTTAGE_ROOMS_B_VALE_INN_TO_UPSTAIRS, CottageRoomsB,
+               COTTAGE_ROOMS_B_VALE_INN_FROM_GROUND_FLOOR),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE, Vale, VALE_FROM_COTTAGE_ROOMS_B),
+    SCENE_EXIT(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_UPSTAIRS, CottageRoomsB,
+               COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_GROUND_FLOOR),
+    SCENE_EXIT(COTTAGE_ROOMS_B_VALE_INN_TO_GROUND_FLOOR, CottageRoomsB,
+               COTTAGE_ROOMS_B_VALE_INN_FROM_UPSTAIRS),
+    SCENE_EXIT(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR, CottageRoomsB,
+               COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WEST, ValeStormyNight,
+               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WEST),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_EAST, ValeStormyNight,
+               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_EAST),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_BABI_PALACE, BabiPalace,
+               BABI_PALACE_FROM_COTTAGE_ROOMS_B),
+    SCENE_EXIT(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA,
+               CottageRoomsB,
+               COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WITH_DORA, ValeStormyNight,
+               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_SOUTH,
+               ValeKradensCottage,
+               VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH),
+    SCENE_EXITS_END,
 };
 
-u32 gCottageRoomsB_StormWarps[] = {
-    MAP_WARPS(CottageRoomsB),
-    MAP_WARP(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST, ValePlaza,
-             VALE_PLAZA_FROM_COTTAGE_ROOMS_B_WEST),
-    MAP_WARP(COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_NORTH, ValeKradensCottage,
-             VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_NORTH),
-    MAP_WARP(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHEAST, ValePlaza,
-             VALE_PLAZA_FROM_COTTAGE_ROOMS_B_NORTH),
-    MAP_WARP(COTTAGE_ROOMS_B_TO_VALE_PLAZA_WEST, ValePlaza,
-             VALE_PLAZA_FROM_COTTAGE_ROOMS_B_SOUTH),
-    MAP_WARP(COTTAGE_ROOMS_B_VALE_INN_TO_UPSTAIRS, CottageRoomsB,
-             COTTAGE_ROOMS_B_VALE_INN_FROM_GROUND_FLOOR),
-    MAP_WARP(COTTAGE_ROOMS_B_TO_VALE, ValeStormyNight,
-             VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_ISAACS_HOUSE),
-    MAP_WARP(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_UPSTAIRS, CottageRoomsB,
-             COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_GROUND_FLOOR),
-    MAP_WARP(COTTAGE_ROOMS_B_VALE_INN_TO_GROUND_FLOOR, CottageRoomsB,
-             COTTAGE_ROOMS_B_VALE_INN_FROM_UPSTAIRS),
-    MAP_WARP(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR, CottageRoomsB,
-             COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS),
-    MAP_WARP(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WEST, ValeStormyNight,
-             VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WEST),
-    MAP_WARP(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_EAST, ValeStormyNight,
-             VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_EAST),
-    MAP_WARP(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA,
-             CottageRoomsB,
-             COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA),
-    MAP_WARP(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WITH_DORA, ValeStormyNight,
-             VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA),
-    MAP_WARPS_END,
+u32 gCottageRoomsB_StormExits[] = {
+    SCENE_EXITS(CottageRoomsB),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST, ValePlaza,
+               VALE_PLAZA_FROM_COTTAGE_ROOMS_B_WEST),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_NORTH,
+               ValeKradensCottage,
+               VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_NORTH),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHEAST, ValePlaza,
+               VALE_PLAZA_FROM_COTTAGE_ROOMS_B_NORTH),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_PLAZA_WEST, ValePlaza,
+               VALE_PLAZA_FROM_COTTAGE_ROOMS_B_SOUTH),
+    SCENE_EXIT(COTTAGE_ROOMS_B_VALE_INN_TO_UPSTAIRS, CottageRoomsB,
+               COTTAGE_ROOMS_B_VALE_INN_FROM_GROUND_FLOOR),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE, ValeStormyNight,
+               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_ISAACS_HOUSE),
+    SCENE_EXIT(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_UPSTAIRS, CottageRoomsB,
+               COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_GROUND_FLOOR),
+    SCENE_EXIT(COTTAGE_ROOMS_B_VALE_INN_TO_GROUND_FLOOR, CottageRoomsB,
+               COTTAGE_ROOMS_B_VALE_INN_FROM_UPSTAIRS),
+    SCENE_EXIT(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR, CottageRoomsB,
+               COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WEST, ValeStormyNight,
+               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WEST),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_EAST, ValeStormyNight,
+               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_EAST),
+    SCENE_EXIT(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA,
+               CottageRoomsB,
+               COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA),
+    SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WITH_DORA, ValeStormyNight,
+               VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA),
+    SCENE_EXITS_END,
 };
 
 // clang-format off
@@ -1675,17 +1678,17 @@ struct ObjectEventTemplate gCottageRoomsB_BabiScholarsObjectEventTemplates[] = {
 };
 
 struct MapEvent gCottageRoomsB_StormEvents[] = {
-    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaNorthwest) },
-    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradensCottageNorth) },
-    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaNortheast) },
-    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaWest) },
-    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToInnUpstairs) },
-    { MAP_EVENT_COORD, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToVale) },
-    { MAP_EVENT_COORD, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToIsaacsHouseUpstairs) },
-    { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToInnDownstairs) },
-    { MAP_EVENT_COORD, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToIsaacsHouseDownstairs) },
-    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormyNightWest) },
-    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormyNightEast) },
+    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaNorthwest) },
+    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeKradensCottageNorth) },
+    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaNortheast) },
+    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaWest) },
+    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToInnUpstairs) },
+    { MAP_EVENT_COORD, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToVale) },
+    { MAP_EVENT_COORD, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToIsaacsHouseUpstairs) },
+    { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToInnDownstairs) },
+    { MAP_EVENT_COORD, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToIsaacsHouseDownstairs) },
+    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeStormyNightWest) },
+    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeStormyNightEast) },
     { BG_EVENT(BG_EVENT_WOODEN_BOX), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeWoodenBoxEmpty)) },
     { BG_EVENT(BG_EVENT_JAR), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeJarEmpty)) },
     { BG_EVENT(BG_EVENT_BARREL), 102, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultButDidntFindAnything)) },
@@ -1706,17 +1709,17 @@ struct MapEvent gCottageRoomsB_Events[] = {
     { MAP_EVENT_TALK, LOCALID_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgValeTwoOfThoseThreeGuestsStaying) },
     { MAP_EVENT_TALK, LOCALID_MASKED_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskIsaacHisBusiness) },
     { MAP_EVENT_TALK, LOCALID_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToInnkeeper) },
-    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaNorthwest) },
-    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradensCottageNorth) },
-    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaNortheast) },
-    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaWest) },
-    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToInnUpstairs) },
-    { MAP_EVENT_COORD, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToVale) },
-    { MAP_EVENT_COORD, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToIsaacsHouseUpstairs) },
-    { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToInnDownstairs) },
-    { MAP_EVENT_COORD, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToIsaacsHouseDownstairs) },
-    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormyNightWest) },
-    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormyNightEast) },
+    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaNorthwest) },
+    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeKradensCottageNorth) },
+    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaNortheast) },
+    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaWest) },
+    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToInnUpstairs) },
+    { MAP_EVENT_COORD, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToVale) },
+    { MAP_EVENT_COORD, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToIsaacsHouseUpstairs) },
+    { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToInnDownstairs) },
+    { MAP_EVENT_COORD, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToIsaacsHouseDownstairs) },
+    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeStormyNightWest) },
+    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeStormyNightEast) },
     { BG_EVENT(BG_EVENT_WOODEN_BOX), 100, FLAG_VALE_WOODEN_BOX_HERB, FIND_ITEM(ITEM_HERB) },
     { BG_EVENT(BG_EVENT_JAR), 101, FLAG_VALE_JAR_COINS, FIND_COINS(5) },
     { BG_EVENT(BG_EVENT_BARREL), 102, FLAG_VALE_BARREL_COIN, FIND_COINS(1) },
@@ -1741,17 +1744,17 @@ struct MapEvent gCottageRoomsB_EventsAfterLeaving[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_YOUNG_MAN_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeIWonderIfFelixChangedMuch) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgValeFelixAndHisGangMustHave) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgValeWhoCouldHaveKnownThatMasked) },
-    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaNorthwest) },
-    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradensCottageNorth) },
-    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaNortheast) },
-    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaWest) },
-    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToInnUpstairs) },
-    { MAP_EVENT_COORD, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToVale) },
-    { MAP_EVENT_COORD, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToIsaacsHouseUpstairs) },
-    { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToInnDownstairs) },
-    { MAP_EVENT_COORD, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToIsaacsHouseDownstairs) },
-    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormyNightWest) },
-    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormyNightEast) },
+    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaNorthwest) },
+    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeKradensCottageNorth) },
+    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaNortheast) },
+    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaWest) },
+    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToInnUpstairs) },
+    { MAP_EVENT_COORD, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToVale) },
+    { MAP_EVENT_COORD, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToIsaacsHouseUpstairs) },
+    { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToInnDownstairs) },
+    { MAP_EVENT_COORD, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToIsaacsHouseDownstairs) },
+    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeStormyNightWest) },
+    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeStormyNightEast) },
     { BG_EVENT(BG_EVENT_WOODEN_BOX), 100, FLAG_VALE_WOODEN_BOX_HERB, FIND_ITEM(ITEM_HERB) },
     { BG_EVENT(BG_EVENT_JAR), 101, FLAG_VALE_JAR_COINS, FIND_COINS(5) },
     { BG_EVENT(BG_EVENT_BARREL), 102, FLAG_VALE_BARREL_COIN, FIND_COINS(1) },
@@ -1788,17 +1791,17 @@ struct MapEvent gCottageRoomsB_EventsAfterKalay[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_DORA, FLAG_VISITED_SICK_DORA, EVENT_SCRIPT(EventScript_VisitSickDora) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_DORA, FLAG_VALE_DORA_OUT_OF_BED, MSGNO(MsgValeKyleWatchOutTheBoulderThe) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_DORA, CONDITION_ALWAYS, MSGNO(MsgValeImSorryISeemedSoHarsh) },
-    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaNorthwest) },
-    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradensCottageNorth) },
-    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaNortheast) },
-    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaWest) },
-    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToInnUpstairs) },
-    { MAP_EVENT_COORD, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToVale) },
-    { MAP_EVENT_COORD, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToIsaacsHouseUpstairs) },
-    { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToInnDownstairs) },
-    { MAP_EVENT_COORD, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToIsaacsHouseDownstairs) },
-    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormyNightWest) },
-    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormyNightEast) },
+    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaNorthwest) },
+    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeKradensCottageNorth) },
+    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaNortheast) },
+    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValePlazaWest) },
+    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToInnUpstairs) },
+    { MAP_EVENT_COORD, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToVale) },
+    { MAP_EVENT_COORD, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToIsaacsHouseUpstairs) },
+    { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToInnDownstairs) },
+    { MAP_EVENT_COORD, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToIsaacsHouseDownstairs) },
+    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeStormyNightWest) },
+    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ExitToValeStormyNightEast) },
     { BG_EVENT(BG_EVENT_WOODEN_BOX), 100, FLAG_VALE_WOODEN_BOX_HERB, FIND_ITEM(ITEM_HERB) },
     { BG_EVENT(BG_EVENT_JAR), 101, FLAG_VALE_JAR_COINS, FIND_COINS(5) },
     { BG_EVENT(BG_EVENT_BARREL), 102, FLAG_VALE_BARREL_COIN, FIND_COINS(1) },
@@ -1826,7 +1829,7 @@ struct MapEvent gCottageRoomsB_BabiScholarsEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SCHOLAR_SEALED_ALCHEMY, CONDITION_ALWAYS, MSGNO(MsgBabiKradensJourneyWasMeantToRevive) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SCHOLAR_VENUS_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiTheVenusRuinsAreTheRemnants) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_OLD_MAN_ON_BABIS_RESEARCH, CONDITION_ALWAYS, MSGNO(MsgBabiLordBabiExpectedGreatResultsFrom) },
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 20, CONDITION_ALWAYS, COTTAGE_ROOMS_B_TO_BABI_PALACE },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 20, CONDITION_ALWAYS, COTTAGE_ROOMS_B_TO_BABI_PALACE },
     { BG_EVENT(BG_EVENT_JAR), 103, FLAG_BABI_PALACE_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
     { BG_EVENT(BG_EVENT_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresABookEntitledEncyclopediaOf)) },
     { BG_EVENT(BG_EVENT_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresANotebookEntitledExperimentsIn)) },
@@ -1845,7 +1848,7 @@ struct MapEvent gCottageRoomsB_BabiScholarsLaterEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SCHOLAR_SEALED_ALCHEMY, CONDITION_ALWAYS, MSGNO(MsgBabiTheresGotToBeAGood) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SCHOLAR_VENUS_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiWhatSortOfUnfathomableRiddlesAre) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_OLD_MAN_ON_BABIS_RESEARCH, CONDITION_ALWAYS, MSGNO(MsgBabiThereMustBeAReasonWhy) },
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 20, CONDITION_ALWAYS, COTTAGE_ROOMS_B_TO_BABI_PALACE },
+    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 20, CONDITION_ALWAYS, COTTAGE_ROOMS_B_TO_BABI_PALACE },
     { BG_EVENT(BG_EVENT_JAR), 103, FLAG_BABI_PALACE_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
     { BG_EVENT(BG_EVENT_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresABookEntitledEncyclopediaOf)) },
     { BG_EVENT(BG_EVENT_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresANotebookEntitledExperimentsIn)) },

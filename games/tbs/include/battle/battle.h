@@ -161,8 +161,8 @@ extern struct BattleBackgroundWork *gBattleBackgroundWork;
 /// SC_FACE_LINK every frame, forever: the script of an object event told to
 /// keep facing its linked object.
 extern const u8 gObjectMotion_LinkedActionScript[];
-/// Where the party returns after a defeat: {map, warp destination (-1 any),
-/// return map, return warp destination} rows, ended by map -1
+/// Where the party returns after a defeat: {map, entrance (-1 any),
+/// return map, return entrance} rows, ended by map -1
 /// (Scene_SetDefeatReturnPoint).
 extern const s16 gDefeatReturnPoints[];
 /// Isaac's weapon sprite by weapon kind (BattleUnit_LookupWeaponValueByClass).

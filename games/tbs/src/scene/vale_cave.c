@@ -12,14 +12,14 @@
 ///   Vale (SceneId_ValeKradensCottage), whose
 ///   VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST and
 ///   VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST lead here;
-///   VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE goes on into the cave. Each warp plays
-///   the warp sound first (EventScript_LeaveRoom). On arrival
+///   VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE goes on into the cave. Each exit plays
+///   the exit sound first (EventScript_LeaveRoom). On arrival
 ///   ValeCave_Initialize fades the room in from the backdrop and clears
 ///   FLAG_SHOW_LOCATION_NAME: entering a new area sets that flag, but
 ///   this is still Vale.
 /// - Vale Cave (SceneId_ValeCaveKite), one map in three parts, each with its
 /// own
-///   warp destinations and camera box; walking south into a ledge's cells hops
+///   entrances and camera box; walking south into a ledge's cells hops
 ///   the leader down it (EventScript_HopDownLedge). In the first part
 ///   (VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH to
 ///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST) Reveal shows a hidden cell while
@@ -42,12 +42,12 @@
 ///   (FLAG_VALE_CAVE_WEST_CRATES_SUNK and FLAG_VALE_CAVE_EAST_CRATES_SUNK),
 ///   opening the way, and a log carries the leader along the passage when
 ///   walked into from the west or the east (FLAG_VALE_CAVE_RIDING_LOG_EAST).
-///   Its warps lead back to the first room, on to the third, and between its
+///   Its exits lead back to the first room, on to the third, and between its
 ///   own parts.
 /// - Vale Cave (SceneId_ValeCaveLogs), the inner room, with three logs to push:
 ///   one off a ledge (EventScript_PushLogOffLedge), one along the ledge until
 ///   it drops at its edge (EventScript_PushLogOverEdge) and one north
-///   (EventScript_PushLogNorth), each clearing the cells it held. Its warps
+///   (EventScript_PushLogNorth), each clearing the cells it held. Its exits
 ///   lead back into the second room and between its own parts.
 ///
 /// Vale Cave's two rooms are one area (30), so their area flags
@@ -290,27 +290,27 @@ ValeCave_FaceObjectEventTowardLeader(union ObjectEventOrEffect *fieldObject) {
   ((void (*)(union ObjectEventOrEffect *))ValeCave_FaceObjectEventTowardLeader)
 #endif
 
-/// Selects warp destination positions and camera bounds for the current cave
+/// Selects entrance positions and camera bounds for the current cave
 /// room.
-const struct MapWarpDest *ValeCave_GetWarpDests(void) {
+const struct SceneEntrance *ValeCave_GetEntrances(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_ValeCaveMouth) {
-    return gValeCave_MouthWarpDests;
+    return gValeCave_MouthEntrances;
   }
   if (sceneId == (s32)&SceneId_ValeCaveKite) {
-    return gValeCave_KiteWarpDests;
+    return gValeCave_KiteEntrances;
   }
   if (sceneId == (s32)&SceneId_ValeCaveLogs) {
-    return gValeCave_LogsWarpDests;
+    return gValeCave_LogsEntrances;
   }
-  return gValeCave_WarpDestsOther;
+  return gValeCave_EntrancesOther;
 }
 
-const struct MapWarpRegion *ValeCave_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *ValeCave_GetRegions(void) { return NULL; }
 
-/// Returns the shared packed warps for all cave rooms.
-const u32 *ValeCave_GetWarps(void) { return gValeCave_Warps; }
+/// Returns the shared packed exits for all cave rooms.
+const u32 *ValeCave_GetExits(void) { return gValeCave_Exits; }
 
 /// Selects the current room's object event templates: Kite, and the crates and
 /// logs.
@@ -823,18 +823,18 @@ s32 ValeCave_Initialize(void) {
   return 0;
 }
 
-/// In Vale, the cave's way in (SceneId_ValeCaveMouth), each warp plays the warp
+/// In Vale, the cave's way in (SceneId_ValeCaveMouth), each exit plays the exit
 /// sound before leaving.
 ///
 /// Reached by stepping on metatile behaviors 1 to 3 in the first room; takes
-/// the warp of the same number (VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST,
+/// the exit of the same number (VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST,
 /// VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE or
 /// VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_EAST).
 static void EventScript_LeaveRoom(void) {
-  s32 warpNumber = gFieldWork->coordEvent;
+  s32 exitNumber = gFieldWork->coordEvent;
 
   Sound_PlaySong(SE_MAP_EXIT);
-  Import_ScriptRequestWarp(warpNumber);
+  Import_ScriptRequestExit(exitNumber);
 }
 
 /// Rebuilds the passage cells around the riding log's saved end.
@@ -910,7 +910,7 @@ static void ValeCave_ApplyEntryState(void) {
 
   // Each room reuses the temporary flags for its own puzzle state.
   if (gSaveBlock.sceneId == (s32)&SceneId_ValeCaveKite) {
-    switch (gSaveBlock.warpDest) {
+    switch (gSaveBlock.entrance) {
     case VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH:
     case VALE_CAVE_KITE_WEST_FROM_EAST:
     case VALE_CAVE_KITE_WEST_FROM_SOUTH:
@@ -934,7 +934,7 @@ static void ValeCave_ApplyEntryState(void) {
         break;
       }
       GameFlag_Set(FLAG_VALE_CAVE_KITE_RAN_OFF);
-      if (gSaveBlock.warpDest == VALE_CAVE_KITE_EAST_FROM_WEST) {
+      if (gSaveBlock.entrance == VALE_CAVE_KITE_EAST_FROM_WEST) {
         GameFlag_Set(FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE);
       }
       WaitFrames(1);
@@ -964,7 +964,7 @@ static void ValeCave_ApplyEntryState(void) {
       break;
     }
   } else if (gSaveBlock.sceneId == (s32)&SceneId_ValeCaveLogs) {
-    switch (gSaveBlock.warpDest) {
+    switch (gSaveBlock.entrance) {
     case VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_WEST:
     case VALE_CAVE_LOGS_NORTH_FROM_SOUTH:
     case VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_EAST:
@@ -1084,21 +1084,21 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gValeCave_LongEffectScript,
 };
 
-struct MapWarpDest gValeCave_WarpDestsOther[] = {
-    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gValeCave_EntrancesOther[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { MAP_TABLE_END },
 };
 
-struct MapWarpDest gValeCave_MouthWarpDests[] = {
-    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, 16, 0, 336, 368, 0 },
+struct SceneEntrance gValeCave_MouthEntrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, 16, 0, 336, 368, 0 },
     { VALE_CAVE_MOUTH_FROM_VALE_KRADENS_COTTAGE_WEST, CONDITION_ALWAYS, 104, 0, 344, FACING_NORTH, 0, 16, 0, 336, 368, 0 },
     { VALE_CAVE_MOUTH_FROM_VALE_CAVE_KITE, CONDITION_ALWAYS, 136, 0, 184, FACING_SOUTH, 0, 16, 0, 336, 368, 0 },
     { VALE_CAVE_MOUTH_FROM_VALE_KRADENS_COTTAGE_EAST, CONDITION_ALWAYS, 136, 0, 376, FACING_NORTH, 0, 16, 0, 336, 368, 0 },
     { MAP_TABLE_END },
 };
 
-struct MapWarpDest gValeCave_KiteWarpDests[] = {
-    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gValeCave_KiteEntrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH, CONDITION_ALWAYS, 328, 0, 392, FACING_NORTH, 0, 48, 32, 544, 416, 0 },
     { VALE_CAVE_KITE_WEST_FROM_EAST, CONDITION_ALWAYS, 312, 0, 160, FACING_SOUTH, 0, 48, 32, 544, 416, 0 },
     { VALE_CAVE_KITE_WEST_FROM_SOUTH, CONDITION_ALWAYS, 120, 0, 120, FACING_SOUTH, 0, 48, 32, 544, 416, 0 },
@@ -1112,8 +1112,8 @@ struct MapWarpDest gValeCave_KiteWarpDests[] = {
     { MAP_TABLE_END },
 };
 
-struct MapWarpDest gValeCave_LogsWarpDests[] = {
-    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 200, 0, 432, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gValeCave_LogsEntrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 200, 0, 432, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_WEST, CONDITION_ALWAYS, 200, 0, 432, FACING_NORTH, 0, 64, 24, 416, 464, 0 },
     { VALE_CAVE_LOGS_NORTH_FROM_SOUTH, CONDITION_ALWAYS, 344, 0, 120, FACING_SOUTH, 0, 64, 24, 416, 464, 0 },
     { VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_EAST, CONDITION_ALWAYS, 120, 0, 264, FACING_NORTH, 0, 64, 24, 416, 464, 0 },
@@ -1122,29 +1122,29 @@ struct MapWarpDest gValeCave_LogsWarpDests[] = {
     { MAP_TABLE_END },
 };
 
-u32 gValeCave_Warps[] = {
-    MAP_WARPS(ValeCaveMouth),
-    MAP_WARP(VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST, ValeKradensCottage, VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_WEST),
-    MAP_WARP(VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE, ValeCaveKite, VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH),
-    MAP_WARP(VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_EAST, ValeKradensCottage, VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST),
-    MAP_WARPS(ValeCaveKite),
-    MAP_WARP(VALE_CAVE_KITE_TO_VALE_CAVE_MOUTH, ValeCaveMouth, VALE_CAVE_MOUTH_FROM_VALE_CAVE_KITE),
-    MAP_WARP(VALE_CAVE_KITE_WEST_TO_EAST, ValeCaveKite, VALE_CAVE_KITE_EAST_FROM_WEST),
-    MAP_WARP(VALE_CAVE_KITE_WEST_TO_SOUTH, ValeCaveKite, VALE_CAVE_KITE_SOUTH_FROM_WEST),
-    MAP_WARP(VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_WEST, ValeCaveLogs, VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_WEST),
-    MAP_WARP(VALE_CAVE_KITE_EAST_TO_WEST, ValeCaveKite, VALE_CAVE_KITE_WEST_FROM_EAST),
-    MAP_WARP(VALE_CAVE_KITE_EAST_TO_SOUTH, ValeCaveKite, VALE_CAVE_KITE_SOUTH_FROM_EAST),
-    MAP_WARP(VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_EAST, ValeCaveLogs, VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_EAST),
-    MAP_WARP(VALE_CAVE_KITE_SOUTH_TO_WEST, ValeCaveKite, VALE_CAVE_KITE_WEST_FROM_SOUTH),
-    MAP_WARP(VALE_CAVE_KITE_SOUTH_TO_EAST, ValeCaveKite, VALE_CAVE_KITE_EAST_FROM_SOUTH),
-    MAP_WARP(VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_SOUTH, ValeCaveLogs, VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_SOUTH),
-    MAP_WARPS(ValeCaveLogs),
-    MAP_WARP(VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_WEST, ValeCaveKite, VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST),
-    MAP_WARP(VALE_CAVE_LOGS_NORTH_TO_SOUTH, ValeCaveLogs, VALE_CAVE_LOGS_SOUTH_FROM_NORTH),
-    MAP_WARP(VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_EAST, ValeCaveKite, VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST),
-    MAP_WARP(VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_SOUTH, ValeCaveKite, VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH),
-    MAP_WARP(VALE_CAVE_LOGS_SOUTH_TO_NORTH, ValeCaveLogs, VALE_CAVE_LOGS_NORTH_FROM_SOUTH),
-    MAP_WARPS_END,
+u32 gValeCave_Exits[] = {
+    SCENE_EXITS(ValeCaveMouth),
+    SCENE_EXIT(VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST, ValeKradensCottage, VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_WEST),
+    SCENE_EXIT(VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE, ValeCaveKite, VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH),
+    SCENE_EXIT(VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_EAST, ValeKradensCottage, VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST),
+    SCENE_EXITS(ValeCaveKite),
+    SCENE_EXIT(VALE_CAVE_KITE_TO_VALE_CAVE_MOUTH, ValeCaveMouth, VALE_CAVE_MOUTH_FROM_VALE_CAVE_KITE),
+    SCENE_EXIT(VALE_CAVE_KITE_WEST_TO_EAST, ValeCaveKite, VALE_CAVE_KITE_EAST_FROM_WEST),
+    SCENE_EXIT(VALE_CAVE_KITE_WEST_TO_SOUTH, ValeCaveKite, VALE_CAVE_KITE_SOUTH_FROM_WEST),
+    SCENE_EXIT(VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_WEST, ValeCaveLogs, VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_WEST),
+    SCENE_EXIT(VALE_CAVE_KITE_EAST_TO_WEST, ValeCaveKite, VALE_CAVE_KITE_WEST_FROM_EAST),
+    SCENE_EXIT(VALE_CAVE_KITE_EAST_TO_SOUTH, ValeCaveKite, VALE_CAVE_KITE_SOUTH_FROM_EAST),
+    SCENE_EXIT(VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_EAST, ValeCaveLogs, VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_EAST),
+    SCENE_EXIT(VALE_CAVE_KITE_SOUTH_TO_WEST, ValeCaveKite, VALE_CAVE_KITE_WEST_FROM_SOUTH),
+    SCENE_EXIT(VALE_CAVE_KITE_SOUTH_TO_EAST, ValeCaveKite, VALE_CAVE_KITE_EAST_FROM_SOUTH),
+    SCENE_EXIT(VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_SOUTH, ValeCaveLogs, VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_SOUTH),
+    SCENE_EXITS(ValeCaveLogs),
+    SCENE_EXIT(VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_WEST, ValeCaveKite, VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST),
+    SCENE_EXIT(VALE_CAVE_LOGS_NORTH_TO_SOUTH, ValeCaveLogs, VALE_CAVE_LOGS_SOUTH_FROM_NORTH),
+    SCENE_EXIT(VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_EAST, ValeCaveKite, VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST),
+    SCENE_EXIT(VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_SOUTH, ValeCaveKite, VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH),
+    SCENE_EXIT(VALE_CAVE_LOGS_SOUTH_TO_NORTH, ValeCaveLogs, VALE_CAVE_LOGS_NORTH_FROM_SOUTH),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gValeCave_MouthObjectEventTemplates[] = {
@@ -1205,16 +1205,16 @@ struct MapEvent gValeCave_MouthEvents[] = {
 };
 
 struct MapEvent gValeCave_KiteEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_MOUTH },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, VALE_CAVE_KITE_WEST_TO_EAST },
-    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, VALE_CAVE_KITE_WEST_TO_SOUTH },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_WEST },
-    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, VALE_CAVE_KITE_EAST_TO_WEST },
-    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, VALE_CAVE_KITE_EAST_TO_SOUTH },
-    { MAP_EVENT_WARP, 7, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_EAST },
-    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, VALE_CAVE_KITE_SOUTH_TO_WEST },
-    { MAP_EVENT_WARP, 9, CONDITION_ALWAYS, VALE_CAVE_KITE_SOUTH_TO_EAST },
-    { MAP_EVENT_WARP, 10, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_SOUTH },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_MOUTH },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, VALE_CAVE_KITE_WEST_TO_EAST },
+    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, VALE_CAVE_KITE_WEST_TO_SOUTH },
+    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_WEST },
+    { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, VALE_CAVE_KITE_EAST_TO_WEST },
+    { MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, VALE_CAVE_KITE_EAST_TO_SOUTH },
+    { MAP_EVENT_EXIT, 7, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_EAST },
+    { MAP_EVENT_EXIT, 8, CONDITION_ALWAYS, VALE_CAVE_KITE_SOUTH_TO_WEST },
+    { MAP_EVENT_EXIT, 9, CONDITION_ALWAYS, VALE_CAVE_KITE_SOUTH_TO_EAST },
+    { MAP_EVENT_EXIT, 10, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_SOUTH },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RideLogEast) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RideLogWest) },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopDownLedge) },
@@ -1248,14 +1248,14 @@ struct MapEvent gValeCave_KiteEvents[] = {
 // clang-format on
 
 struct MapEvent gValeCave_LogsEvents[] = {
-    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS,
      VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_WEST},
-    {MAP_EVENT_WARP, 2, CONDITION_ALWAYS, VALE_CAVE_LOGS_NORTH_TO_SOUTH},
-    {MAP_EVENT_WARP, 3, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, VALE_CAVE_LOGS_NORTH_TO_SOUTH},
+    {MAP_EVENT_EXIT, 3, CONDITION_ALWAYS,
      VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_EAST},
-    {MAP_EVENT_WARP, 4, CONDITION_ALWAYS,
+    {MAP_EVENT_EXIT, 4, CONDITION_ALWAYS,
      VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_SOUTH},
-    {MAP_EVENT_WARP, 5, CONDITION_ALWAYS, VALE_CAVE_LOGS_SOUTH_TO_NORTH},
+    {MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, VALE_CAVE_LOGS_SOUTH_TO_NORTH},
     {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 20, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_PushLogOverEdge)},
     {COORD_EVENT_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS,

@@ -4,14 +4,14 @@
 #include "types.h"
 #include "map_tables.h"
 
-struct MapWarpDest;
+struct SceneEntrance;
 struct MapEvent;
 struct ObjectEventTemplate;
-struct MapWarpRegion;
+struct SceneExitRegion;
 
-const struct MapWarpDest *KolimaForestEntrance_GetWarpDests(void);
-const struct MapWarpRegion *KolimaForestEntrance_GetRegions(void);
-const u32 *KolimaForestEntrance_GetWarps(void);
+const struct SceneEntrance *KolimaForestEntrance_GetEntrances(void);
+const struct SceneExitRegion *KolimaForestEntrance_GetRegions(void);
+const u32 *KolimaForestEntrance_GetExits(void);
 const struct ObjectEventTemplate *
 KolimaForestEntrance_GetObjectEventTemplates(void);
 const struct MapEvent *KolimaForestEntrance_GetEvents(void);
@@ -27,8 +27,8 @@ extern s32 gKolimaForestEntrance_RestoreScaleAction[];
 extern s32 gKolimaForestEntrance_PsynergyFieldGrowAction[];
 extern s32 gKolimaForestEntrance_PsynergyFieldShrinkAction[];
 extern s32 gKolimaForestEntrance_GroundSparkleAction[];
-extern struct MapWarpDest gKolimaForestEntrance_WarpDests[];
-extern u32 gKolimaForestEntrance_Warps[];
+extern struct SceneEntrance gKolimaForestEntrance_Entrances[];
+extern u32 gKolimaForestEntrance_Exits[];
 extern struct ObjectEventTemplate gKolimaForestEntrance_ObjectEventTemplates[];
 extern struct MapEvent gKolimaForestEntrance_Events[];
 extern s32 gKolimaForestEntrance_SparkleScript[];

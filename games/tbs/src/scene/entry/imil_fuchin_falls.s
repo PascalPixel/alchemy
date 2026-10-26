@@ -1,7 +1,7 @@
 	.include "games/tbs/src/system/overlay.inc"
 	overlay_veneer ImilFuchinFalls_Initialize
-	overlay_veneer ImilFuchinFalls_GetWarpDests
-	overlay_veneer ImilFuchinFalls_GetWarps
+	overlay_veneer ImilFuchinFalls_GetEntrances
+	overlay_veneer ImilFuchinFalls_GetExits
 	overlay_veneer ImilFuchinFalls_GetObjectEventTemplates
 	overlay_veneer ImilFuchinFalls_GetEvents
 	overlay_veneer ImilFuchinFalls_GetRegions

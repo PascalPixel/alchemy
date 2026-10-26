@@ -13,10 +13,10 @@
 /// its cell (EventScript_GrowPlant); FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN
 /// keeps it grown until the party leaves the Bilibin Cave Entrance, into the
 /// cave beyond or out to the world map, since both are other areas. Two
-/// warps lead on into Bilibin Cave. The south one's warp cell, at the cave
+/// exits lead on into Bilibin Cave. The south one's exit cell, at the cave
 /// mouth, lies under the ledge path that runs above the mouth, since the map
 /// grid has one cell for both: coord event 10, the ledge cells either side of
-/// it, turns the warp off so the leader can walk the ledge across it, and coord
+/// it, turns the exit off so the leader can walk the ledge across it, and coord
 /// event 11, a step further out, turns it back on
 /// (EventScript_WalkOntoLedgeOverCaveMouth,
 /// EventScript_WalkOffLedgeOverCaveMouth; its recording,
@@ -192,24 +192,24 @@ BilibinCave_ClearScriptedObjectEventSpriteFlags(struct Object *interpreter) {
   return 0;
 }
 
-const struct MapWarpDest *BilibinCave_GetWarpDests(void) {
+const struct SceneEntrance *BilibinCave_GetEntrances(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_BilibinCaveEntrance) {
-    return gBilibinCaveEntranceWarpDests;
+    return gBilibinCaveEntranceEntrances;
   }
   if (sceneId == (s32)&SceneId_BilibinCaveRapier) {
-    return gBilibinCaveRapierWarpDests;
+    return gBilibinCaveRapierEntrances;
   }
   if (sceneId == (s32)&SceneId_BilibinCaveIce) {
-    return gBilibinCaveIceWarpDests;
+    return gBilibinCaveIceEntrances;
   }
-  return gBilibinCaveWarpDestsOther;
+  return gBilibinCaveEntrancesOther;
 }
 
-const struct MapWarpRegion *BilibinCave_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *BilibinCave_GetRegions(void) { return NULL; }
 
-const u32 *BilibinCave_GetWarps(void) { return gBilibinCaveWarps; }
+const u32 *BilibinCave_GetExits(void) { return gBilibinCaveExits; }
 
 const struct ObjectEventTemplate *BilibinCave_GetObjectEventTemplates(void) {
   s16 sceneId = gSaveBlock.sceneId;
@@ -242,7 +242,7 @@ const struct MapEvent *BilibinCave_GetEvents(void) {
 }
 
 /// Stepping on coord event 10 at the Bilibin Cave Entrance, on either side of
-/// the way into Bilibin Cave: the way's cell (21, 14), the warp cell of
+/// the way into Bilibin Cave: the way's cell (21, 14), the exit cell of
 /// BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH, takes the
 /// metatile behavior of source cell (1, 0), which has none.
 static void EventScript_WalkOntoLedgeOverCaveMouth(void) {
@@ -250,7 +250,7 @@ static void EventScript_WalkOntoLedgeOverCaveMouth(void) {
 }
 
 /// Stepping on coord event 11 at the Bilibin Cave Entrance, a cell further out:
-/// the way's cell (21, 14) takes back the warp, from source cell (0, 0).
+/// the way's cell (21, 14) takes back the exit, from source cell (0, 0).
 static void EventScript_WalkOffLedgeOverCaveMouth(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 21, 14);
 }
@@ -662,14 +662,14 @@ s32 gBilibinCave_ClearSpriteScript[] = {
     SC_END,
 };
 
-struct MapWarpDest gBilibinCaveWarpDestsOther[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 72, 0, 488, FACING_NORTH, 0, -1, -1,
+struct SceneEntrance gBilibinCaveEntrancesOther[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 72, 0, 488, FACING_NORTH, 0, -1, -1,
      -1, -1, 0},
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gBilibinCaveEntranceWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 372, 0, 272, FACING_NORTH, 0, -1, -1,
+struct SceneEntrance gBilibinCaveEntranceEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 372, 0, 272, FACING_NORTH, 0, -1, -1,
      -1, -1, 0},
     {BILIBIN_CAVE_ENTRANCE_FROM_WORLD_MAP, CONDITION_ALWAYS, 99, 0, 447,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
@@ -680,8 +680,8 @@ struct MapWarpDest gBilibinCaveEntranceWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gBilibinCaveRapierWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 864, 0, 168, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gBilibinCaveRapierEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 864, 0, 168, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ENTRANCE_WEST, CONDITION_ALWAYS, 312,
      0, 756, FACING_NORTH, 0, 40, 60, 630, 840, 0},
@@ -698,8 +698,8 @@ struct MapWarpDest gBilibinCaveRapierWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gBilibinCaveIceWarpDests[] = {
-    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 172, 0, 300, FACING_SOUTH, 0, -1, -1,
+struct SceneEntrance gBilibinCaveIceEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 300, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {BILIBIN_CAVE_ICE_FROM_BILIBIN_CAVE_RAPIER_WEST, CONDITION_ALWAYS, 120, 0,
      472, FACING_NORTH, 0, 60, 60, 790, 600, 0},
@@ -714,43 +714,43 @@ struct MapWarpDest gBilibinCaveIceWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-u32 gBilibinCaveWarps[] = {
-    MAP_WARPS(BilibinCaveEntrance),
-    MAP_WARP(BILIBIN_CAVE_ENTRANCE_TO_WORLD_MAP, WorldMap,
-             WORLD_MAP_FROM_BILIBIN_CAVE_ENTRANCE),
-    MAP_WARP(BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH,
-             BilibinCaveRapier,
-             BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ENTRANCE_WEST),
-    MAP_WARP(BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_NORTH,
-             BilibinCaveRapier,
-             BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ENTRANCE_EAST),
-    MAP_WARPS(BilibinCaveRapier),
-    MAP_WARP(BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_WEST,
-             BilibinCaveEntrance,
-             BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_RAPIER_SOUTH),
-    MAP_WARP(BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_EAST,
-             BilibinCaveEntrance,
-             BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_RAPIER_NORTH),
-    MAP_WARP(BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_WEST, BilibinCaveIce,
-             BILIBIN_CAVE_ICE_FROM_BILIBIN_CAVE_RAPIER_WEST),
-    MAP_WARP(BILIBIN_CAVE_RAPIER_TO_TORCHES, BilibinCaveRapier,
-             BILIBIN_CAVE_RAPIER_TORCHES_FROM_BILIBIN_CAVE_RAPIER),
-    MAP_WARP(BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_EAST, BilibinCaveIce,
-             BILIBIN_CAVE_ICE_FROM_BILIBIN_CAVE_RAPIER_EAST),
-    MAP_WARP(BILIBIN_CAVE_RAPIER_TORCHES_TO_BILIBIN_CAVE_RAPIER,
-             BilibinCaveRapier, BILIBIN_CAVE_RAPIER_FROM_TORCHES),
-    MAP_WARPS(BilibinCaveIce),
-    MAP_WARP(BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_WEST, BilibinCaveRapier,
-             BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ICE_WEST),
-    MAP_WARP(BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_EAST, BilibinCaveRapier,
-             BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ICE_EAST),
-    MAP_WARP(BILIBIN_CAVE_ICE_TO_WORLD_MAP, WorldMap,
-             WORLD_MAP_FROM_BILIBIN_CAVE_ICE),
-    MAP_WARP(BILIBIN_CAVE_ICE_TO_CHESTS, BilibinCaveIce,
-             BILIBIN_CAVE_ICE_CHESTS_FROM_BILIBIN_CAVE_ICE),
-    MAP_WARP(BILIBIN_CAVE_ICE_CHESTS_TO_BILIBIN_CAVE_ICE, BilibinCaveIce,
-             BILIBIN_CAVE_ICE_FROM_CHESTS),
-    MAP_WARPS_END,
+u32 gBilibinCaveExits[] = {
+    SCENE_EXITS(BilibinCaveEntrance),
+    SCENE_EXIT(BILIBIN_CAVE_ENTRANCE_TO_WORLD_MAP, WorldMap,
+               WORLD_MAP_FROM_BILIBIN_CAVE_ENTRANCE),
+    SCENE_EXIT(BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH,
+               BilibinCaveRapier,
+               BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ENTRANCE_WEST),
+    SCENE_EXIT(BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_NORTH,
+               BilibinCaveRapier,
+               BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ENTRANCE_EAST),
+    SCENE_EXITS(BilibinCaveRapier),
+    SCENE_EXIT(BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_WEST,
+               BilibinCaveEntrance,
+               BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_RAPIER_SOUTH),
+    SCENE_EXIT(BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_EAST,
+               BilibinCaveEntrance,
+               BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_RAPIER_NORTH),
+    SCENE_EXIT(BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_WEST, BilibinCaveIce,
+               BILIBIN_CAVE_ICE_FROM_BILIBIN_CAVE_RAPIER_WEST),
+    SCENE_EXIT(BILIBIN_CAVE_RAPIER_TO_TORCHES, BilibinCaveRapier,
+               BILIBIN_CAVE_RAPIER_TORCHES_FROM_BILIBIN_CAVE_RAPIER),
+    SCENE_EXIT(BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_EAST, BilibinCaveIce,
+               BILIBIN_CAVE_ICE_FROM_BILIBIN_CAVE_RAPIER_EAST),
+    SCENE_EXIT(BILIBIN_CAVE_RAPIER_TORCHES_TO_BILIBIN_CAVE_RAPIER,
+               BilibinCaveRapier, BILIBIN_CAVE_RAPIER_FROM_TORCHES),
+    SCENE_EXITS(BilibinCaveIce),
+    SCENE_EXIT(BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_WEST, BilibinCaveRapier,
+               BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ICE_WEST),
+    SCENE_EXIT(BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_EAST, BilibinCaveRapier,
+               BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ICE_EAST),
+    SCENE_EXIT(BILIBIN_CAVE_ICE_TO_WORLD_MAP, WorldMap,
+               WORLD_MAP_FROM_BILIBIN_CAVE_ICE),
+    SCENE_EXIT(BILIBIN_CAVE_ICE_TO_CHESTS, BilibinCaveIce,
+               BILIBIN_CAVE_ICE_CHESTS_FROM_BILIBIN_CAVE_ICE),
+    SCENE_EXIT(BILIBIN_CAVE_ICE_CHESTS_TO_BILIBIN_CAVE_ICE, BilibinCaveIce,
+               BILIBIN_CAVE_ICE_FROM_CHESTS),
+    SCENE_EXITS_END,
 };
 
 struct ObjectEventTemplate gBilibinCaveObjectEventTemplatesOther[] = {
@@ -821,9 +821,9 @@ struct MapEvent gBilibinCaveEventsOther[] = {
 };
 
 struct MapEvent gBilibinCaveEntranceEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_WORLD_MAP },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH },
-    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_NORTH },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_WORLD_MAP },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH },
+    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_NORTH },
     { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WalkOntoLedgeOverCaveMouth) },
     { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WalkOffLedgeOverCaveMouth) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_SPROUT, FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN, EVENT_SCRIPT(EventScript_GrowPlant) },
@@ -831,12 +831,12 @@ struct MapEvent gBilibinCaveEntranceEvents[] = {
 };
 
 struct MapEvent gBilibinCaveRapierEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_WEST },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_EAST },
-    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_WEST },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_TORCHES },
-    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_EAST },
-    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TORCHES_TO_BILIBIN_CAVE_RAPIER },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_WEST },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_EAST },
+    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_WEST },
+    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_TORCHES },
+    { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_EAST },
+    { MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TORCHES_TO_BILIBIN_CAVE_RAPIER },
     { BG_EVENT(BG_EVENT_CHEST), 100, 0xf5d, FIND_ITEM(ITEM_ELVEN_RAPIER) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealHiddenPath) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HideRevealedPath) },
@@ -845,11 +845,11 @@ struct MapEvent gBilibinCaveRapierEvents[] = {
 };
 
 struct MapEvent gBilibinCaveIceEvents[] = {
-    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_WEST },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_EAST },
-    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_WORLD_MAP },
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_CHESTS },
-    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_CHESTS_TO_BILIBIN_CAVE_ICE },
+    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_WEST },
+    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_EAST },
+    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_WORLD_MAP },
+    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_CHESTS },
+    { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_CHESTS_TO_BILIBIN_CAVE_ICE },
     { MAP_EVENT_COORD, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StartFootprints) },
     { MAP_EVENT_COORD, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StopFootprints) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_ICE_ROOM_FIRE, FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED, EVENT_SCRIPT(EventScript_DouseIceRoomFire) },

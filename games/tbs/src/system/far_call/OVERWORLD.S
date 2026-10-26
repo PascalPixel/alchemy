@@ -75,7 +75,7 @@ FarCall_OverworldTable:
 	export MapGrid_SetViewBoundsFar, MapGrid_SetViewBounds
 	export FieldScript_SetDestinationFar, FieldScript_SetDestination
 	overlay_veneer FieldScript_SetSavedDestination
-	export FieldScript_SetWarpRequestFar, FieldScript_SetWarpRequest
+	export FieldScript_SetExitRequestFar, FieldScript_SetExitRequest
 	export Field_RequestBattleFromEncounterTableFar, Field_RequestBattleFromEncounterTable
 	export Field_RequestDjinnBattleFar, Field_RequestDjinnBattle
 	export FieldScript_SetNextDestinationFar, FieldScript_SetNextDestination

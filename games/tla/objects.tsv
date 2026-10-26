@@ -5040,12 +5040,7 @@ main	rom_main_10	recon/tla/ja/rom	.rom.001a1328	ja
 main	rom_main_10	recon/tla/ja/rom	.rom.001a14f8	ja
 main	rom_main_10	recon/tla/ja/rom	.rom.001a15c8	ja
 main	rom_main_10	games/tla/src/graphics/display/scroll_wait	.text
-main	rom_main_10	recon/tla/it/rom	.rom.001a1830	it
-main	rom_main_10	recon/tla/fr/rom	.rom.001a1830	fr
-main	rom_main_10	recon/tla/es/rom	.rom.001a1830	es
-main	rom_main_10	recon/tla/de/rom	.rom.001a1830	de
-main	rom_main_10	recon/tla/raw/081a1830	.text	en
-main	rom_main_10	recon/tla/ja/rom	.rom.001a181c	ja
+main	rom_main_10	games/tla/src/graphics/display/scroll_border	.text
 main	rom_main_10	games/tla/src/graphics/display/scroll_fade	.text
 main	rom_main_10	games/tla/src/graphics/display/slides	.rodata
 main	rom_main_10	games/tla/src/graphics/display/slides	.data

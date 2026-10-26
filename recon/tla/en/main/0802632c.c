@@ -1,4 +1,5 @@
-// Near miss, differ 330 of 535: script command 0x23, from the listing and
+// Near miss, differ 64 of 535 (2026-10-26: movementAnimation set before
+// collision, 72 to 64): script command 0x23, from the listing and
 // The Broken Seal's FieldObject_UpdatePlayerControl (its later layout: one
 // probe ahead and four 22.5 and 45 degrees off, six retry headings). Moves an
 // object on the field by the direction pad at a slow pace, stepping round
@@ -41,8 +42,7 @@ void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
 s32 Func_0802d958(struct ObjectRuntime *object, struct FieldPosition *position);
 s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
-void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object,
-                                            s32 argument);
+void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object, s32 argument);
 s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void *Unit_Get(s32 owner);
 s32 Func_0802d45c(s32 terrainId, s32 x, s32 z);
@@ -62,8 +62,8 @@ s32 Func_0802632c(struct ObjectRuntime *object) {
   struct ObjectRuntime *other;
   s32 pressed;
 
-  collision = 0;
   movementAnimation = 2;
+  collision = 0;
   object->motionFlags = 4;
   if (gInput.held & ((struct PartyKeys *)&gPartyState)->dashKeys) {
     object->speedLimit = 0x8000;

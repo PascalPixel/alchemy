@@ -101,23 +101,7 @@ Func_020055a4:
 	.global Func_020055ac
 	.thumb_func
 Func_020055ac:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:
@@ -141,23 +125,7 @@ Animation_ApplyChildValues:
 	.global Func_020055dc
 	.thumb_func
 Func_020055dc:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_08020388
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_08020388
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_08020388
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_08020388
-	.else
 	overlay_veneer Func_08020390
-	.endif
-	.endif
-	.endif
-	.endif
 	.global UiText_ShowPositionedMessageAndWait
 	.thumb_func
 UiText_ShowPositionedMessageAndWait:

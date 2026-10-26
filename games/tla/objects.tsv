@@ -203,116 +203,32 @@ main	rom_main_00	games/tla/src/system/save/program_flash_sector	.rodata
 main	rom_main_00	games/tla/src/system/save/flashat	.rodata
 main	rom_main_00	games/tla/src/system/save/atmel	.rodata
 main	rom_main_01	games/tla/src/system/far_call/resource
-main	rom_main_01	recon/tla/it/rom	.rom.00020010	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020030	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020038	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00020010	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020030	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020038	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00020010	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020030	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020038	es
-main	rom_main_01	recon/tla/de/rom	.rom.00020010	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020030	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020038	de
 main	rom_main_01	games/tla/src/system/far_call/table
-main	rom_main_01	recon/tla/it/rom	.rom.00020060	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020068	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020070	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020078	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00020060	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020068	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020070	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020078	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00020060	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020068	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020070	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020078	es
-main	rom_main_01	recon/tla/de/rom	.rom.00020060	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020068	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020070	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020078	de
-main	rom_main_01	games/tla/src/system/far_call/animation		ja en
-main	rom_main_01	games/tla/src/system/far_call/table_2		ja en
-main	rom_main_01	games/tla/src/system/far_call/resource_2		ja en
+main	rom_main_01	games/tla/src/system/far_call/animation
+main	rom_main_01	games/tla/src/system/far_call/table_2
+main	rom_main_01	games/tla/src/system/far_call/resource_2
 main	rom_main_01	games/tla/src/system/far_call/object_dispatch
 main	rom_main_01	games/tla/src/system/far_call/object_dispatch_2
 main	rom_main_01	games/tla/src/system/far_call/object_dispatch_3
 main	rom_main_01	games/tla/src/system/far_call/object_dispatch_4
 main	rom_main_01	games/tla/src/system/far_call/object
 main	rom_main_01	games/tla/src/system/far_call/object_dispatch_5
-main	rom_main_01	recon/tla/it/rom	.rom.00020180	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020198	it
-main	rom_main_01	recon/tla/it/rom	.rom.000201a0	it
-main	rom_main_01	recon/tla/it/rom	.rom.000201a8	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00020180	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020198	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.000201a0	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.000201a8	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00020180	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020198	es
-main	rom_main_01	recon/tla/es/rom	.rom.000201a0	es
-main	rom_main_01	recon/tla/es/rom	.rom.000201a8	es
-main	rom_main_01	recon/tla/de/rom	.rom.00020180	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020198	de
-main	rom_main_01	recon/tla/de/rom	.rom.000201a0	de
-main	rom_main_01	recon/tla/de/rom	.rom.000201a8	de
 main	rom_main_01	games/tla/src/system/far_call/table_3
-main	rom_main_01	recon/tla/it/rom	.rom.000201f0	it
-main	rom_main_01	recon/tla/it/rom	.rom.000201f8	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020200	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020208	it
-main	rom_main_01	recon/tla/fr/rom	.rom.000201f0	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.000201f8	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020200	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020208	fr
-main	rom_main_01	recon/tla/es/rom	.rom.000201f0	es
-main	rom_main_01	recon/tla/es/rom	.rom.000201f8	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020200	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020208	es
-main	rom_main_01	recon/tla/de/rom	.rom.000201f0	de
-main	rom_main_01	recon/tla/de/rom	.rom.000201f8	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020200	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020208	de
-main	rom_main_01	games/tla/src/system/far_call/table_4		ja en
-main	rom_main_01	games/tla/src/system/far_call/table_5		ja en
+main	rom_main_01	games/tla/src/system/far_call/table_4
+main	rom_main_01	games/tla/src/system/far_call/table_5
 main	rom_main_01	games/tla/src/system/far_call/object_dispatch_6
 main	rom_main_01	games/tla/src/system/far_call/table_6
-main	rom_main_01	recon/tla/it/rom	.rom.00020238	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020240	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020248	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020250	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00020238	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020240	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020248	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020250	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00020238	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020240	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020248	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020250	es
-main	rom_main_01	recon/tla/de/rom	.rom.00020238	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020240	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020248	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020250	de
-main	rom_main_01	games/tla/src/system/far_call/animation_2		ja en
+main	rom_main_01	games/tla/src/system/far_call/animation_2
 main	rom_main_01	games/tla/src/system/far_call/object_dispatch_7
 main	rom_main_01	games/tla/src/system/far_call/animation_3
 main	rom_main_01	games/tla/src/system/far_call/resource_3
-main	rom_main_01	recon/tla/it/rom	.rom.00020308	it
-main	rom_main_01	recon/tla/it/rom	.rom.00020318	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00020308	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00020318	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00020308	es
-main	rom_main_01	recon/tla/es/rom	.rom.00020318	es
-main	rom_main_01	recon/tla/de/rom	.rom.00020308	de
-main	rom_main_01	recon/tla/de/rom	.rom.00020318	de
 main	rom_main_01	games/tla/src/system/far_call/table_7
 main	rom_main_01	games/tla/src/system/far_call/table_8
 main	rom_main_01	games/tla/src/system/far_call/table_9
-main	rom_main_01	games/tla/src/system/far_call/table_10		ja en
-main	rom_main_01	games/tla/src/system/far_call/table_11		ja en
+main	rom_main_01	games/tla/src/system/far_call/table_10
+main	rom_main_01	games/tla/src/system/far_call/table_11
 main	rom_main_01	games/tla/src/system/far_call/table_12
-main	rom_main_01	games/tla/src/system/far_call/table_13		ja en
+main	rom_main_01	games/tla/src/system/far_call/table_13
 main	rom_main_01	games/tla/src/system/resource/colconv	.rodata
 main	rom_main_01	games/tla/src/field/common/remap	.rodata
 main	rom_main_01	games/tla/src/graphics/render/decode_frame

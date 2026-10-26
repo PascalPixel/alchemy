@@ -145,123 +145,27 @@ Func_02004214:
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_08020190
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_08020190
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_08020190
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_08020190
-	.else
 	overlay_veneer Map_GetTerrainHeightFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02004224
 	.thumb_func
 Func_02004224:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_08020198
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_08020198
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_08020198
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_08020198
-	.else
 	overlay_veneer GetMapCellCollisionFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_0200422c
 	.thumb_func
 Func_0200422c:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer DisplayBlend_DisableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer DisplayBlend_DisableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer DisplayBlend_DisableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer DisplayBlend_DisableRunScriptFar
-	.else
 	overlay_veneer Func_080201d8
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02004234
 	.thumb_func
 Func_02004234:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
 	overlay_veneer Map_CopyCellsRectFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_0200423c
 	.thumb_func
 Func_0200423c:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02004244
 	.thumb_func
 Func_02004244:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Map_GetTerrainHeightFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Map_GetTerrainHeightFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Map_GetTerrainHeightFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Map_GetTerrainHeightFar
-	.else
 	overlay_veneer Func_080201f0
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_0200424c
 	.thumb_func
 Func_0200424c:
@@ -297,43 +201,11 @@ Func_02004284:
 	.global Func_0200428c
 	.thumb_func
 Func_0200428c:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_08020318
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_08020318
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_08020318
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_08020318
-	.else
 	overlay_veneer Runtime_CheckRadiusOverlapFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02004294
 	.thumb_func
 Func_02004294:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_08020388
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_08020388
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_08020388
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_08020388
-	.else
 	overlay_veneer Func_08020390
-	.endif
-	.endif
-	.endif
-	.endif
 	.global UiText_ShowPositionedMessageAndWait
 	.thumb_func
 UiText_ShowPositionedMessageAndWait:

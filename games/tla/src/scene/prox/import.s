@@ -109,103 +109,23 @@ Func_02004404:
 	.global Func_0200440c
 	.thumb_func
 Func_0200440c:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer MapLayer_ClearField22Far
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer MapLayer_ClearField22Far
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer MapLayer_ClearField22Far
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer MapLayer_ClearField22Far
-	.else
 	overlay_veneer Func_08020198
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02004414
 	.thumb_func
 Func_02004414:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer MapLayer_SetField22Far
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer MapLayer_SetField22Far
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer MapLayer_SetField22Far
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer MapLayer_SetField22Far
-	.else
 	overlay_veneer Func_080201a0
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_08020190
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_08020190
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_08020190
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_08020190
-	.else
 	overlay_veneer Map_GetTerrainHeightFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02004424
 	.thumb_func
 Func_02004424:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_08020198
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_08020198
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_08020198
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_08020198
-	.else
 	overlay_veneer GetMapCellCollisionFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_0200442c
 	.thumb_func
 Func_0200442c:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:
@@ -225,23 +145,7 @@ Func_0200444c:
 	.global Func_02004454
 	.thumb_func
 Func_02004454:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_08020318
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_08020318
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_08020318
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_08020318
-	.else
 	overlay_veneer Runtime_CheckRadiusOverlapFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global FieldEvent_WaitFrames
 	.thumb_func
 FieldEvent_WaitFrames:

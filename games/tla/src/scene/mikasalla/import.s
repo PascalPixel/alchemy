@@ -21,63 +21,15 @@ Func_02000618:
 	.global Func_02000620
 	.thumb_func
 Func_02000620:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer MapLayer_SetField22Far
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer MapLayer_SetField22Far
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer MapLayer_SetField22Far
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer MapLayer_SetField22Far
-	.else
 	overlay_veneer Func_080201a0
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02000628
 	.thumb_func
 Func_02000628:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
 	overlay_veneer Map_CopyCellsRectFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02000630
 	.thumb_func
 Func_02000630:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:

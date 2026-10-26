@@ -105,23 +105,7 @@ GameFlag_ClearBit:
 	.global Func_0200561c
 	.thumb_func
 Func_0200561c:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_08022b80Far
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_08022b80Far
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_08022b80Far
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_08022b80Far
-	.else
 	overlay_veneer Func_08020038
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02005624
 	.thumb_func
 Func_02005624:
@@ -161,63 +145,15 @@ Func_02005664:
 	.global Func_0200566c
 	.thumb_func
 Func_0200566c:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
 	overlay_veneer Map_CopyCellsRectFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02005674
 	.thumb_func
 Func_02005674:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_0200567c
 	.thumb_func
 Func_0200567c:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Map_GetTerrainHeightFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Map_GetTerrainHeightFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Map_GetTerrainHeightFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Map_GetTerrainHeightFar
-	.else
 	overlay_veneer Func_080201f0
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02005684
 	.thumb_func
 Func_02005684:

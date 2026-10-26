@@ -101,163 +101,35 @@ Func_02004dcc:
 	.global Func_02004dd4
 	.thumb_func
 Func_02004dd4:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Map_DisableBlendScriptFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Map_DisableBlendScriptFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Map_DisableBlendScriptFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Map_DisableBlendScriptFar
-	.else
 	overlay_veneer DisplayBlend_DisableRunScriptFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02004ddc
 	.thumb_func
 Func_02004ddc:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_08020180
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_08020180
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_08020180
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_08020180
-	.else
 	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02004de4
 	.thumb_func
 Func_02004de4:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_08020188
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_08020188
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_08020188
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_08020188
-	.else
 	overlay_veneer DisplayBlend_StartScriptFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02004dec
 	.thumb_func
 Func_02004dec:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_08020198
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_08020198
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_08020198
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_08020198
-	.else
 	overlay_veneer GetMapCellCollisionFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02004df4
 	.thumb_func
 Func_02004df4:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
 	overlay_veneer Map_CopyCellsRectFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02004dfc
 	.thumb_func
 Func_02004dfc:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02004e04
 	.thumb_func
 Func_02004e04:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Map_GetTerrainHeightFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Map_GetTerrainHeightFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Map_GetTerrainHeightFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Map_GetTerrainHeightFar
-	.else
 	overlay_veneer Func_080201f0
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02004e0c
 	.thumb_func
 Func_02004e0c:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer GetMapCellCollisionFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer GetMapCellCollisionFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer GetMapCellCollisionFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer GetMapCellCollisionFar
-	.else
 	overlay_veneer Func_080201f8
-	.endif
-	.endif
-	.endif
-	.endif
 	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:

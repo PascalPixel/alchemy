@@ -81,23 +81,7 @@ Func_02001f2c:
 	.global Func_02001f34
 	.thumb_func
 Func_02001f34:
-	.ifdef TLA_EDITION_IT
-	overlay_veneer MapLayer_ClearField22Far
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer MapLayer_ClearField22Far
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer MapLayer_ClearField22Far
-	.else
-	.ifdef TLA_EDITION_DE
-	overlay_veneer MapLayer_ClearField22Far
-	.else
 	overlay_veneer Func_08020198
-	.endif
-	.endif
-	.endif
-	.endif
 	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:

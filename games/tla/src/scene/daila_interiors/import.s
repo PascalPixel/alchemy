@@ -25,43 +25,11 @@ Func_02000c9c:
 	.global Func_02000ca4
 	.thumb_func
 Func_02000ca4:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer MapLayer_SetField22Far
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer MapLayer_SetField22Far
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer MapLayer_SetField22Far
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer MapLayer_SetField22Far
-	.else
 	overlay_veneer Func_080201a0
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02000cac
 	.thumb_func
 Func_02000cac:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer DisplayBlend_EnableRunScriptFar
-	.else
 	overlay_veneer Map_CopyCellsRectFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:

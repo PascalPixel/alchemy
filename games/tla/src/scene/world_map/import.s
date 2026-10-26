@@ -137,43 +137,11 @@ Func_02004b58:
 	.global Func_02004b60
 	.thumb_func
 Func_02004b60:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201d0
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201d0
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201d0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201d0
-	.else
 	overlay_veneer Func_08020200
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02004b68
 	.thumb_func
 Func_02004b68:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080201d8
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080201d8
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_080201d8
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080201d8
-	.else
 	overlay_veneer Func_08020208
-	.endif
-	.endif
-	.endif
-	.endif
 	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:
@@ -189,63 +157,15 @@ Animation_ApplyChildValues:
 	.global Func_02004b88
 	.thumb_func
 Func_02004b88:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_0802db64Far
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_0802db64Far
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_0802db64Far
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_0802db64Far
-	.else
 	overlay_veneer Func_08020318
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02004b90
 	.thumb_func
 Func_02004b90:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_08020320
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_08020320
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_08020320
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_08020320
-	.else
 	overlay_veneer Func_08020350
-	.endif
-	.endif
-	.endif
-	.endif
 	.global GetWorldMapCollision
 	.thumb_func
 GetWorldMapCollision:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_08020328
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_08020328
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer Func_08020328
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_08020328
-	.else
 	overlay_veneer GetWorldMapCollisionFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global UiText_ShowPositionedMessageAndWait
 	.thumb_func
 UiText_ShowPositionedMessageAndWait:

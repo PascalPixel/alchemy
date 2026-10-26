@@ -101,63 +101,15 @@ Func_02001984:
 	.global Func_0200198c
 	.thumb_func
 Func_0200198c:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer MapLayer_ClearField22Far
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer MapLayer_ClearField22Far
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer MapLayer_ClearField22Far
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer MapLayer_ClearField22Far
-	.else
 	overlay_veneer Func_08020198
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02001994
 	.thumb_func
 Func_02001994:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer MapLayer_SetField22Far
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer MapLayer_SetField22Far
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer MapLayer_SetField22Far
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer MapLayer_SetField22Far
-	.else
 	overlay_veneer Func_080201a0
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_0200199c
 	.thumb_func
 Func_0200199c:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer DisplayBlend_StartScriptFar
-	.else
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global UiWindow_Create
 	.thumb_func
 UiWindow_Create:

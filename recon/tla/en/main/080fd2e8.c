@@ -1,3 +1,8 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 6 of 254 in tla-en. First difference: this issues `movs r1, #139` earlier
+// (row 12) than the native does (row 16). An empty asm after `selection =
+// menu->tabIndex[1];` measured 4. No single empty asm or one-pass block reaches
+// 0.
 // First draft of Func_080fd2e8: a second member row of the Psynergy menu,
 // with a cursor icon over the members. With browseOnly 0 each move redraws
 // the member's status and Psynergy; A returns the chosen member's id, B -1.

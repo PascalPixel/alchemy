@@ -1,3 +1,6 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 18 of 501 in tla-en. First difference: the native issues `str r1, [sp, #12]`
+// earlier (row 9) than this does (row 14).
 // First draft of BattleEffect_ApplyToTargets: applies healing, revival or
 // permanent-stat effects of a menu action to one member or the whole party,
 // the twin of The Broken Seal's function of the same name

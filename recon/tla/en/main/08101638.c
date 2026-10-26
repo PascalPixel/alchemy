@@ -1,3 +1,6 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 16 of 237 in tla-en. First difference: this issues `ldrh r3, [r6, #0]`
+// earlier (row 108) than the native does (row 111).
 // First draft of Func_08101638: opens the Djinn menu's backdrop screen, the
 // twin of The Broken Seal's Menu_OpenBackdropScreen
 // (games/tbs/src/menu/menu/djinn.c): saves the tiles and palettes it covers,

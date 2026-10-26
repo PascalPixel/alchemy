@@ -1,3 +1,7 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 4 of 261 in tla-en. The native spills its arguments to the stack before it
+// builds the heap slots' address; this builds the address first (row 8). No
+// single empty asm or one-pass block reaches 0.
 // First draft of Func_080ff370: draws member ownerId's status page, the twin
 // of The Broken Seal's CharacterMenu_DrawStatusAilments
 // (games/tbs/src/menu/menu/status.c). ⚓️ draws the ailments with

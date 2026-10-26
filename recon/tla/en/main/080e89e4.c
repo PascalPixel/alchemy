@@ -1,3 +1,7 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 6 of 169 in tla-en. First difference: this issues `ldr r3, [r1, #12]` earlier
+// (row 88) than the native does (row 90). No single empty asm or one-pass block
+// reaches 0.
 // Near miss, differ 8 of 169 (2026-10-19; 22 on 2026-10-15, written from the
 // listing; ☀️ has no twin). Func_080e8c9c restores what this keeps. viewX is
 // fixed in r11, which also gives minZ and maxZ the ROM's r10 and r9 (22 ->

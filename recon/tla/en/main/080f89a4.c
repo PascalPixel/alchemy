@@ -1,3 +1,7 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 2 of 77 in tla-en. First difference: this issues `ldr r3, [r5, #64]` earlier
+// (row 43) than the native does (row 45). No single empty asm or one-pass block
+// reaches 0.
 // First draft of Func_080f89a4: scheduler callback that places every party
 // member figure of the menu at its position and scale each frame, through the
 // projected placement (Func_08020018, with a fifth argument 250). The twin of

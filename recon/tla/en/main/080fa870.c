@@ -1,3 +1,6 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 10 of 387 in tla-en. First difference: this issues `movs r2, #139` earlier
+// (row 12) than the native does (row 16).
 // First draft of Func_080fa870: the twin of ☀️'s ItemMenu_SelectTarget
 // (games/tbs/src/menu/menu/item.c), choosing the party member to use (mode 0)
 // or give (mode 1) the selected item to. This game pages the members four at a

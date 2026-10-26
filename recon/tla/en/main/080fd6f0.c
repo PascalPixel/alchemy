@@ -1,3 +1,6 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 9 of 136 in tla-en. First difference: at row 8 the native has `ldr r2, [pc,
+// #48]` where this has `ldr r2, [pc, #44]`.
 // First draft of Func_080fd6f0: lists a unit's Psynergy into actions (32
 // entries, cleared first) and returns how many; the twin of ☀️'s
 // PsynergyMenu_CollectActions (games/tbs/src/menu/menu.c). mode 1 lists those

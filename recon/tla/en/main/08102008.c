@@ -1,3 +1,6 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 166 of 1832 in tla-en. The native spills its arguments to the stack before it
+// builds the heap slots' address; this builds the address first (row 8).
 // First draft of Func_08102008, the Djinn list's chooser, the twin of The
 // Broken Seal's DjinnMenu_SelectDjinn (games/tbs/src/menu/menu/djinn.c).
 // Mode 0 chooses a Djinni in any member's column, mode 1 what to do with it.

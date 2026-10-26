@@ -1,3 +1,6 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 57 of 906 in tla-en. First difference: this issues `lsls r3, r3, #18` earlier
+// (row 18) than the native does (row 20).
 // First draft of Func_08103218: draws a member's status with a djinni change
 // applied, the twin of ☀️'s DjinnMenu_DrawStatPreview
 // (games/tbs/src/menu/menu/djinn.c): the unit is saved, the change applied

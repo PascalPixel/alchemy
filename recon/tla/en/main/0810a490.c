@@ -1,5 +1,8 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 10 of 196 in tla-en. First difference: the native issues `sub sp, #8` earlier
+// (row 12) than this does (row 22).
 // Draft, differ 35 of 196: the shop's Game Ticket gift, as ☀️'s
-// Shop_BuySpecialItem (games/tbs/src/shop/shop.c), with ⚓️'s party cursor
+// Func_0810a490 (games/tbs/src/shop/shop.c), with ⚓️'s party cursor
 // helper (Func_08108690) in place of the left and right tests. Left: the
 // prologue's order (shop load, the zero store to memberIndex and the saved
 // item's store sit two to six slots apart), the B test reusing the pressed
@@ -45,7 +48,7 @@ void Party_AdjustShopCreditFar(s32 amount);
 void Party_AdjustShopGiftsFar(s32 amount);
 s32 Func_08108690(s32 *cursor, s32 count, s32 columns);
 
-void Shop_BuySpecialItem(void *window, void *itemWindow) {
+void Func_0810a490(void *window, void *itemWindow) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   u32 savedSelectedItem = shop->selectedItem;
   s32 memberIndex = 0;

@@ -1,3 +1,8 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 4 of 157 in tla-en. First difference: this issues `ldrh r2, [r6, #0]` earlier
+// (row 84) than the native does (row 86). An empty asm after `commandStates[4]
+// = COMMAND_DISABLED;` measured 2. No single empty asm or one-pass block
+// reaches 0.
 // Near miss, differ 8 of 157: the item menu's command availability (use,
 // equip, give, drop, trade, remove) for the selected item, ☀️'s
 // ItemMenu_BuildCommands in games/tbs/src/menu/menu.c. Instruction order only:
@@ -22,7 +27,7 @@ struct InventoryMenuState {
 s32 Item_ClassifyUseMode(s32 owner, s32 item);
 s32 BattleEffect_HasTriggerFar(s32 item);
 
-void ItemMenu_BuildCommands(s8 *commandStates) {
+void Func_080fb410(s8 *commandStates) {
   struct InventoryMenuState *menu;
   struct ItemDefinition *item;
 

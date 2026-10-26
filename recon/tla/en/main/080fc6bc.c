@@ -1,3 +1,7 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 8 of 466 in tla-en. First difference: this issues `add r4, sp, #32` earlier
+// (row 14) than the native does (row 17). No single empty asm or one-pass block
+// reaches 0.
 // First draft of Func_080fc6bc: the twin of ☀️'s ItemMenu_RunList
 // (games/tbs/src/menu/menu/item.c), the item list of the member in pane
 // (0: the owner, 1: the receiver of a trade), five items a page. This game

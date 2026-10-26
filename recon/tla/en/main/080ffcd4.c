@@ -1,3 +1,7 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 4 of 235 in tla-en. First difference: this issues `ldr r1, [r3, #0]` earlier
+// (row 33) than the native does (row 35). No single empty asm or one-pass block
+// reaches 0.
 // First draft of Func_080ffcd4: the Psynergy page of the status menu, the
 // twin of The Broken Seal's PsynergyMenu_SelectAction
 // (games/tbs/src/menu/menu/status.c). ⚓️ runs one loop with a refresh state

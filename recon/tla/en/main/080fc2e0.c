@@ -1,3 +1,7 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 8 of 179 in tla-en. First difference: this issues `lsls r3, r3, #1` earlier
+// (row 25) than the native does (row 27). No single empty asm or one-pass block
+// reaches 0.
 // First draft of Func_080fc2e0: after giving or trading the selected item to
 // the member in pane 1, offers to equip it there; the twin of ☀️'s
 // ItemMenu_ConfirmEquip (games/tbs/src/menu/menu.c) in its first-release

@@ -1,3 +1,6 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 10 of 300 in tla-en. First difference: the native issues `movs r2, #0`
+// earlier (row 16) than this does (row 21).
 // First draft of Func_0810021c: the item page of the status menu, the twin
 // of The Broken Seal's ItemMenu_SelectItem (games/tbs/src/menu/menu/status.c).
 // ⚓️ runs one loop with a refresh state, as Func_080ffcd4 does: 2 collects

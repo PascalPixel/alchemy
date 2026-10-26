@@ -1,3 +1,7 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 4 of 134 in tla-en. The native spills its arguments to the stack before it
+// builds the heap slots' address; this builds the address first (row 8). No
+// single empty asm or one-pass block reaches 0.
 // First draft of Func_0810928c: draws one page of four party figures in the
 // shop: the page arrows, the selected member's figure animating (30, others
 // 1) and members who cannot equip the candidate item dimmed to scale 0xcccc.

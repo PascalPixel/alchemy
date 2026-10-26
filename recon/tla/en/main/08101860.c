@@ -1,3 +1,7 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 2 of 153 in tla-en. First difference: this issues `movs r1, #1` earlier (row
+// 31) than the native does (row 33). No single empty asm or one-pass block
+// reaches 0.
 #include "types.h"
 #include "owner_state.h"
 
@@ -5,7 +9,7 @@
 #define FLAG_FIRST 0x8000
 #define FLAG_SECOND 0x4000
 
-s32 OwnerAction_DiffSlots(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
+s32 Func_08101860(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
                           u16 *out, s32 *firstCount, s32 *secondCount) {
   s32 i;
   s32 j;

@@ -1,3 +1,8 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 8 of 494 in tla-en. The native spills its arguments to the stack before it
+// builds the heap slots' address; this builds the address first (row 9). An
+// empty asm after `created = 0;` measured 4. No single empty asm or one-pass
+// block reaches 0.
 // First draft of Func_080f8170, written from the listing and ☀️'s twin
 // Menu_DrawOwnerStatusPanel (games/tbs/src/menu/menu/common.c): the item
 // menu's status panel for a party member (window at tile 0,5, 13 by 12): the

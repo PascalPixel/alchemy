@@ -1,5 +1,4 @@
-// Draft, differ 36 (74 before statements reordered 2026-10-26).
-// Draft, differ 80 of 178, first pass (2026-10-15). The per-frame routine
+// Near miss, differ 8 of 178 (80 before, 2026-10-26). The per-frame routine
 // Func_080da9a8 schedules second: for each of the eight chains in the heap-
 // offset-164 work (worka0.h's WorkA4 slots), advance its phase and hang its
 // five links from the anchor in a swinging arc, then ease the swing towards
@@ -7,6 +6,12 @@
 // otherwise. The native reuses one counter for the chains and the links (the
 // link loop leaves it at 6, so after one chain the outer loop takes one more
 // and stops); this keeps that.
+// Each slot starts with the object id (stride 28 from work + 4), and the
+// links' phase is slot->phase - i * 800, which loop.c strength-reduces to
+// the native's spilled step. Left: the native computes the first slot's
+// address after storing the target, and loads x before the leader's x in
+// the first distance test; a one-pass block found by permute (6) was not
+// kept.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -21,6 +26,8 @@ struct ChainLink {
 };
 
 struct ChainSlot {
+  s16 objectId;
+  u8 unk02[2];
   s32 swing;   // the arc's width, eased each frame
   s32 spacing; // between links
   u8 unk08[4];
@@ -31,7 +38,6 @@ struct ChainSlot {
 
 struct ChainWork {
   u8 unk00[4];
-  u8 unk04[4];
   struct ChainSlot slots[8];
 };
 
@@ -57,7 +63,7 @@ void Func_080dacb8(void) {
   i = 0;
   leader = Object_GetById(EventRuntime_GetControlledOwner());
   target = 0x100;
-  for (slot = (struct ChainSlot *)((u8 *)work + 8); i <= 7; i++, slot++) {
+  for (slot = work->slots; i <= 7; i++, slot++) {
     if (slot->root == 0 || slot->active == 0)
       continue;
 
@@ -79,18 +85,15 @@ void Func_080dacb8(void) {
     // Hang the five links below the anchor.
     // BUG: the link loop reuses the chain counter, which it leaves at 6, so
     // after the first active chain only the chain after it is updated.
-    phase = 800;
     link = link->next;
-    sway = swing;
-    for (i = 1; i <= 5; i++) {
+    for (i = 1, sway = swing; i <= 5; i++) {
       radius = i * slot->spacing;
-      angle = Iwram_MulQ16(Trig_Sin(slot->phase - phase), swing + sway / 2);
+      angle = Iwram_MulQ16(Trig_Sin(slot->phase - i * 800), swing + sway / 2);
       link->x = x - Iwram_MulQ16(Trig_Sin(angle), radius);
       sway += swing;
       link->y = y - Iwram_MulQ16(Trig_Cos(angle), radius);
       link->z = z;
       link = link->next;
-      phase += 800;
     }
 
     // Ease the swing towards the target.

@@ -1,5 +1,8 @@
-// Draft of overlay 6ae's Func_02001f10, translated from its listing: differ
-// 242 of 1038. Left: its shape: 1036 instructions against the listing's 1038.
+// Draft of overlay 6ae's Func_02001f10, translated from its listing: differ 234
+// of 1038 in tla-en (was 242). The object the native keeps at sp+4 is a plain
+// local here rather than a one-word array read past its end. Left: the native
+// spills that object to the stack where this keeps it in sl, and register
+// choice and order through the function.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -64,7 +67,7 @@ extern u8 gData_02006c20[];
 extern u8 gPartyState[];
 
 void Func_02001f10(void) {
-  s32 sp_[1];
+  s32 spill;
   s32 v_r10, v_r0, v_r1, v_r8, v_r7, v_r6, v_r2, v_r11, t0, t1;
   s32 t2, t3, t7, t8, t16, t22, t24, t26, t34, t43;
   s32 t44, t45, t46, t47, t64, t65, t66, t67, t68, t71;
@@ -77,7 +80,7 @@ void Func_02001f10(void) {
   t1 = Value1((s32 (*)())Object_GetById, 30);
   t2 = Value1((s32 (*)())Object_GetById, 31);
   t3 = Value1((s32 (*)())Object_GetById, 32);
-  FIELD_AT(sp_, s32, 4) = t3;
+  spill = t3;
   Func_0200560c();
   Call1((void (*)())Func_02005784, 0);
   Call2((void (*)())Object_SetModeById, 17, 2);
@@ -135,7 +138,7 @@ void Func_02001f10(void) {
   FIELD_AT(t46, s32, 108) = (s32)Func_02001eb0;
   FIELD_AT(t1, s32, 108) = (s32)Func_02001ee4;
   FIELD_AT(t2, s32, 108) = (s32)Func_02001ee4;
-  t47 = FIELD_AT(sp_, s32, 4);
+  t47 = spill;
   FIELD_AT(t47, s32, 108) = (s32)Func_02001ee4;
   Call1((void (*)())Func_020057dc, 0x253);
   Call1((void (*)())WaitFrames, 10);
@@ -165,7 +168,7 @@ void Func_02001f10(void) {
   FIELD_AT(t67, s32, 108) = 0;
   FIELD_AT(t1, s32, 108) = 0;
   FIELD_AT(t2, s32, 108) = 0;
-  t68 = FIELD_AT(sp_, s32, 4);
+  t68 = spill;
   FIELD_AT(t68, s32, 108) = 0;
   Call1((void (*)())WaitFrames, 1);
   Call1((void (*)())Func_020057dc, 103);
@@ -188,11 +191,11 @@ void Func_02001f10(void) {
   t86 = Value0((s32 (*)())Random16Far);
   FIELD_AT(t2, u8, 98) = (((u32)(((t86 << 2) + t86) << 4) >> 16) + 40);
   t87 = Value0((s32 (*)())Random16Far);
-  t88 = FIELD_AT(sp_, s32, 4);
+  t88 = spill;
   FIELD_AT(t88, u8, 98) = (((u32)(((t87 << 2) + t87) << 4) >> 16) + 40);
   FIELD_AT(t1, s32, 108) = (s32)Func_0200008c;
   FIELD_AT(t2, s32, 108) = (s32)Func_0200008c;
-  t89 = FIELD_AT(sp_, s32, 4);
+  t89 = spill;
   FIELD_AT(t89, s32, 108) = (s32)Func_0200008c;
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call2((void (*)())Func_0200575c, 0x10000, 1);

@@ -1,6 +1,10 @@
-// Draft, differ 43 of 106: starts the next of the 96 sparks at a point
-// around (x, y, z), in a random direction and speed. Left: the native keeps
-// the work in r8 and the source in r10, this draft the other way round.
+// Draft, differ 2 of 106 (was 43): starts the next of the 96 sparks at a
+// point around (x, y, z), in a random direction and speed. The speed is
+// drawn before velocityZ is cleared (a temporary here, which would be a
+// tagged device on adoption) and the counter's step and wrap are two
+// statements. Left: the parameter spills: the native stores y (r2) before z
+// (r3), here z first and y after the heap slot's address is formed; no
+// barrier or statement move reaches it.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"

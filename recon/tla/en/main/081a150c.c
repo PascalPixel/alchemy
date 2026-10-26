@@ -1,12 +1,12 @@
-// Draft, differ 32 of 69: sets up a scrolling picture scene: clears the
-// frame flags and the scroll words, resets the scheduler and adds
+// Draft, differ 12 of 69 (was 32): sets up a scrolling picture scene:
+// clears the frame flags and the scroll words, resets the scheduler and adds
 // Func_081a133c, then sets up BG2, BG3 and blending as Func_081a06e0 does,
-// with BLDALPHA 16, and calls Func_081a1830. Left: instruction order in the
-// run of scroll-word stores: the draft loads Data_02007524's and the
-// callback's addresses early (Data_02007524 into r1 ahead of gData_02007520,
-// whose store then goes through r3), where the native loads each address
-// just before its store in statement order. The pool follows the load
-// order, so most pool offsets differ by 4; every store and call matches.
+// with BLDALPHA 16, and calls Func_081a1830. gData_02007520 is cleared after
+// Data_02007524 is set, which puts the native's loads of the scroll words'
+// addresses one store ahead. Left: instruction order in that run: the native
+// loads Data_02007520's address into r1 before Data_02007528's store, the
+// rest one step earlier; the pool follows the load order. A barrier after
+// Data_02007514's store gives 14; no second barrier helps.
 #include "types.h"
 #include "io_reg.h"
 #include "iowrite.h"

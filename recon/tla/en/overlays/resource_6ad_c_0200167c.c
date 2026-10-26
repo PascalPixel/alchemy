@@ -1,144 +1,96 @@
-// Draft of overlay 6ad's Func_0200167c, translated from its listing: differ
-// 158 of 216. Left: its shape: 208 instructions against the listing's 216.
+// Draft, differ 123 of 216: shared by thirteen overlays (698 to 6a4): the leader
+// rides up with its linked object, spinning and flickering, until that object
+// clears its flag; then it is set down on the 8-pixel grid beside it, falls to
+// the ground and the camera follows it again. The loops are goto loops because
+// the native rebuilds their constants (0x3ffff, 0x100000) on every pass. Left:
+// the native keeps the work pointer in r10 and the two flag pointers in r8 and
+// r9 and recomputes the priority flags' address in the loop; here a fourth high
+// register and a stack slot are used, and 0x3ffff becomes a 0x40000 compare.
 #include "types.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Camera_FollowActor();
-s32 Camera_MoveWithinMapBounds();
-s32 Func_020054b8();
-s32 Func_020054c0();
-s32 Func_02005560();
-s32 Func_02005568();
-s32 Func_020055e8();
-s32 Func_02005648();
-s32 Func_020056c0();
-s32 Map_GetTerrainHeight();
-s32 ObjectDispatch_SetSingleChildFlags();
-s32 Object_GetById();
-s32 WaitFrames();
-extern u8 gFrameCount[];
-extern u8 gPartyState[];
+#include "ram_buffer.h"
+#include "object_runtime.h"
+#include "party_state.h"
+#include "frame.h"
+
+struct ObjectRuntime *Object_GetById(s32 id);
+void Func_02005560(void);
+void Func_02005648(s32 value);
+void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
+                                        s32 flags);
+void WaitFrames(s32 frames);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
+struct ObjectRuntime *Func_020055e8(void);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+void Func_020054b8(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Func_020056c0(s32 sound);
+void Func_020054c0(struct ObjectRuntime *object);
+void Camera_FollowActor(s32 id, s32 flag);
+void Func_02005568(void);
 
 void Func_0200167c(void) {
-  s32 v_r9, v_r10, v_r7, v_r6, v_r5, v_r8, v_r0, v_r1, v_r2, v_r3;
-  s32 t0, t1, t2, t3, t7, t8, t9, t10, t11, t12;
-  s32 t13, t15, t16, t17, t18, t21, t22, t23, t24, t25;
-  s32 t26, t28, t29, t31, t32, t34, t36, t38, t39, t40;
-  s32 t41;
+  u8 *work = Ram_HeapSlots->eventWork;
+  struct ObjectRuntime *actor = Object_GetById(gPartyState.currentOwner);
+  struct ObjectRuntime *linked = actor->linkedObject;
+  struct ObjectRuntime *shadow;
+  s32 facing;
+  s32 i;
 
-  t0 = FIELD_AT(0x3000000, s32, 108);
-  t1 = *(s32 *)((s32)gPartyState + 0x214);
-  t2 = Object_GetById(t1);
-  t3 = FIELD_AT(t2, s32, 104);
   Func_02005560();
   Func_02005648(0);
-  *(u16 *)(0xd46 + t0) = 0;
-  v_r9 = (85 + t2);
-  *(u8 *)v_r9 = 4;
-  ObjectDispatch_SetSingleChildFlags(t2, 0);
-  t7 = *(u8 *)(99 + t3);
-  v_r8 = (99 + t3);
-  v_r5 = 0;
-  v_r6 = t2;
-  v_r7 = t3;
-  v_r10 = t0;
-  if (t7 == v_r5)
-    goto L_0200971c;
-L_020096d6:
-  t8 = FIELD_AT(v_r7, s32, 8);
-  FIELD_AT(v_r6, s32, 8) = t8;
-  t9 = FIELD_AT(v_r7, s32, 12);
-  FIELD_AT(v_r6, s32, 12) = (t9 + v_r5);
-  t10 = FIELD_AT(v_r7, s32, 16);
-  FIELD_AT(v_r6, s32, 16) = t10;
-  if (v_r5 > 0x3ffff)
-    goto L_020096f2;
-  v_r5 = (v_r5 + 0x1999);
-L_020096f2:
-  t11 = *(s32 *)(s32)gFrameCount;
-  t12 = *(u8 *)(s32)gFrameCount;
-  FIELD_AT(v_r6, u16, 6) = (t12 << 12);
-  t13 = *(u8 *)(v_r6 + 35);
-  *(u8 *)(v_r6 + 35) = ((2 << (t11 & 1)) ^ t13);
-  WaitFrames(1);
-  t15 = *(u8 *)v_r8;
-  if (t15 != 0)
-    goto L_020096d6;
-L_0200971c:
-  *(u16 *)(0xd44 + v_r10) = 1;
-  *(u16 *)(0xd46 + v_r10) = 1;
-  t16 = FIELD_AT(v_r7, s32, 8);
-  t17 = FIELD_AT(v_r7, u16, 6);
-  FIELD_AT(v_r6, s32, 8) = (((((t16 >> 19) & -2) + (t17 >> 13)) - 1) << 19);
-  t18 = FIELD_AT(v_r7, s32, 16);
-  FIELD_AT(v_r6, s32, 16) =
-      (((((t18 >> 19) & -2) - ((t17 >> 13) & 2)) + 1) << 19);
-  FIELD_AT(v_r6, s32, 40) = 0x60000;
-  *(u8 *)(v_r6 + 35) = 1;
-  *(u8 *)v_r9 = 3;
-  ObjectDispatch_SetSingleChildFlags(v_r6, 1);
-  v_r3 = 0;
-  v_r2 = -1;
-  v_r1 = -1;
-  v_r0 = -1;
-  goto L_02009794;
-L_02009794:
-  Camera_MoveWithinMapBounds(v_r0, v_r1, v_r2, v_r3);
-  t21 = Func_020055e8();
-  FIELD_AT(t21, s32, 48) = 0x80000;
-  FIELD_AT(t21, s32, 52) = 0x10000;
-  *(u8 *)(t21 + 85) = 0;
-  t22 = FIELD_AT(v_r6, s32, 8);
-  t23 = FIELD_AT(v_r6, s32, 16);
-  t24 = Map_GetTerrainHeight(0, t22, t23);
-  t25 = FIELD_AT(v_r6, s32, 16);
-  t26 = FIELD_AT(v_r6, s32, 8);
-  Func_020054b8(t21, t26, t24, t25);
-  t28 = FIELD_AT(v_r6, s32, 20);
-  t29 = FIELD_AT(v_r6, s32, 12);
-  v_r5 = 0;
-  v_r7 = t21;
-  if (t29 <= (t28 + 0x100000))
-    goto L_020097fa;
-  goto L_020097e0;
-L_020097e0:
-  WaitFrames(1);
-  v_r5 = (v_r5 + 1);
-  if (v_r5 > 59)
-    goto L_020097fa;
-  t31 = FIELD_AT(v_r6, s32, 20);
-  t32 = FIELD_AT(v_r6, s32, 12);
-  if (t32 > (t31 + 0x100000))
-    goto L_020097e0;
-L_020097fa:
+  i = 0;
+  *(u16 *)(work + 0xd46) = 0;
+  actor->motionFlags = 4;
+  ObjectDispatch_SetSingleChildFlags(actor, 0);
+  if (*((u8 *)linked + 0x63) != 0) {
+  rise:
+    actor->x = linked->x;
+    actor->y = linked->y + i;
+    actor->z = linked->z;
+    if (i <= 0x3ffff)
+      i += 0x1999;
+    actor->angle = (u8)gFrameCount << 12;
+    actor->priorityFlags ^= 2 << (gFrameCount & 1);
+    WaitFrames(1);
+    if (*((u8 *)linked + 0x63) != 0)
+      goto rise;
+  }
+  *(u16 *)(work + 0xd44) = 1;
+  *(u16 *)(work + 0xd46) = 1;
+  facing = linked->angle >> 13;
+  actor->x = (((linked->x >> 19) & ~1) + facing - 1) << 19;
+  actor->z = (((linked->z >> 19) & ~1) - (facing & 2) + 1) << 19;
+  actor->velocityY = 0x60000;
+  actor->priorityFlags = 1;
+  actor->motionFlags = 3;
+  ObjectDispatch_SetSingleChildFlags(actor, 1);
+  Camera_MoveWithinMapBounds(-1, -1, -1, 0);
+  shadow = Func_020055e8();
+  shadow->speedLimit = 0x80000;
+  shadow->acceleration = 0x10000;
+  shadow->motionFlags = 0;
+  Func_020054b8(shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z),
+                actor->z);
+  i = 0;
+  if (actor->y > actor->terrainHeight + 0x100000) {
+  fall:
+    i++;
+    WaitFrames(1);
+    if (i <= 59 && actor->y > actor->terrainHeight + 0x100000)
+      goto fall;
+  }
   Func_020056c0(127);
-  t34 = FIELD_AT(v_r6, s32, 40);
-  v_r5 = 0;
-  if (t34 == v_r5)
-    goto L_0200981a;
-L_02009808:
-  WaitFrames(1);
-  v_r5 = (v_r5 + 1);
-  if (v_r5 > 59)
-    goto L_0200981a;
-  t36 = FIELD_AT(v_r6, s32, 40);
-  if (t36 != 0)
-    goto L_02009808;
-L_0200981a:
-  Func_020054c0(v_r7);
-  v_r5 = ((s32)gPartyState + 0x214);
-  t38 = *(s32 *)v_r5;
-  t39 = Object_GetById(t38);
-  t40 = *(u8 *)(t39 + 35);
-  *(u8 *)(t39 + 35) = (1 | t40);
-  t41 = *(s32 *)v_r5;
-  Camera_FollowActor(t41, 1);
-  *(u16 *)(0xd46 + v_r10) = 1;
-  *(u16 *)(0x154 + v_r10) = 0;
+  i = 0;
+  if (actor->velocityY != 0) {
+  settle:
+    i++;
+    WaitFrames(1);
+    if (i <= 59 && actor->velocityY != 0)
+      goto settle;
+  }
+  Func_020054c0(shadow);
+  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
+  Camera_FollowActor(gPartyState.currentOwner, 1);
+  *(u16 *)(work + 0xd46) = 1;
+  *(u16 *)(work + 0x154) = 0;
   Func_02005568();
-  return;
 }

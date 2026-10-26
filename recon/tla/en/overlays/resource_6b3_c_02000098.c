@@ -1,51 +1,61 @@
-// Draft of overlay 6b3's Func_02000098, translated from its listing: differ
-// 69 of 69. Left: its shape: 72 instructions against the listing's 69.
+// Draft, differ 59 of 69: the epilogue's setup: loads its palette and tiles,
+// sets up its sprite and schedules Func_0200005c. Left: the native loads the
+// resource id 0x1f8 and the stored zero from the pool (as reload does for a
+// spilled constant), keeps the buffer in r8 and the sprite's address in r6 from
+// before the first resource call, and builds 0x800 again for VramCache_Load;
+// here the buffer is in r6 and 0x800 is shared. The resource id as u16 changes
+// nothing.
 #include "types.h"
 #include "dma.h"
-#include "call.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Func_020007ac();
-s32 Func_02000834();
-s32 MemAlloc();
-s32 MemFree();
-s32 Resource_FindFreeEntry();
-s32 Resource_GetTableEntry();
-s32 Scheduler_AddOrUpdateCallback();
-s32 VramCache_Load();
-extern u8 Data_02000874[];
-extern u8 Data_020008f0[];
-extern u8 Data_02000a30[];
-extern u8 Func_0200005c[];
-extern u8 gData_02000a00[];
-extern u8 gData_02000a34[];
+#include "io_reg.h"
+
+struct EpilogueSprite {
+  u8 unk00[5];
+  u8 unk05_0 : 5;
+  u8 unk05_5 : 1;
+  u8 unk05_6 : 2;
+  u8 unk06[3];
+  u8 unk09_0 : 2;
+  u8 unk09_2 : 2;
+  u8 unk09_4 : 4;
+  u8 unk0a[0x14];
+  u16 unk1e;
+};
+
+extern const u16 Data_02000874[];
+extern s32 Data_020008f0;
+extern s32 Data_02000a30;
+extern struct EpilogueSprite gData_02000a00;
+extern s8 gData_02000a34;
+
+void *MemAlloc(s32 size);
+void MemFree(void *block);
+void *Resource_GetTableEntry(u16 id);
+s32 Resource_FindFreeEntry(void);
+s32 VramCache_Load(s32 entry, s32 size, void *data);
+void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Func_020007ac(void *resource, void *destination);
+void Func_02000834(struct EpilogueSprite *sprite, s32 a, s32 b, u32 c,
+                   s32 tile);
+void Func_0200005c(void);
 
 void Func_02000098(void) {
-  s32 t0, t1, t3, t4, t6, t7;
+  void *buffer = MemAlloc(0x800);
+  s32 entry;
+  s32 tile;
 
-  t0 = Value1((s32 (*)())MemAlloc, 0x800);
-  Dma_Set((const void *)(s32)Data_02000874, (void *)0x50003c0, 0x80000010,
-          (volatile u32 *)0x40000d4);
-  t1 = Value1((s32 (*)())Resource_GetTableEntry, 0x1f8);
-  Call2((void (*)())Func_020007ac, t1, t0);
-  t3 = Value0((s32 (*)())Resource_FindFreeEntry);
-  *(s32 *)(s32)Data_020008f0 = t3;
-  t4 = Value3((s32 (*)())VramCache_Load, t3, 0x800, t0);
-  *(s32 *)(s32)Data_02000a30 = t4;
-  Func_02000834((s32)gData_02000a00, 0, 0, 0xc0000000, t4);
-  FIELD_AT((s32)gData_02000a00, u16, 30) = 240;
-  t6 = FIELD_AT((s32)gData_02000a00, u8, 9);
-  t7 = FIELD_AT((s32)gData_02000a00, u8, 5);
-  FIELD_AT((s32)gData_02000a00, u8, 5) = (-0x21 & t7);
-  FIELD_AT((s32)gData_02000a00, u8, 9) = (((-13 & t6) & 15) | 224);
-  Call1((void (*)())MemFree, t0);
-  *(u8 *)(s32)gData_02000a34 = 0;
-  Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_0200005c, 0x480);
-  goto L_02008150;
-L_02008150:
-  return;
+  Dma_Set(Data_02000874, (void *)0x050003c0, 0x80000010, REG_DMA3);
+  Func_020007ac(Resource_GetTableEntry(0x1f8), buffer);
+  entry = Resource_FindFreeEntry();
+  Data_020008f0 = entry;
+  tile = VramCache_Load(entry, 0x800, buffer);
+  Data_02000a30 = tile;
+  Func_02000834(&gData_02000a00, 0, 0, 0xc0000000, tile);
+  gData_02000a00.unk1e = 240;
+  gData_02000a00.unk09_2 = 0;
+  gData_02000a00.unk05_5 = 0;
+  gData_02000a00.unk09_4 = 14;
+  MemFree(buffer);
+  gData_02000a34 = 0;
+  Scheduler_AddOrUpdateCallback(Func_0200005c, 0x480);
 }

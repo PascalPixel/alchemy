@@ -1,129 +1,92 @@
-// Draft of overlay 6b1's Func_02000588, translated from its listing: differ
-// 49 of 157. Left: its shape: 152 instructions against the listing's 157.
-#include "types.h"
-#include "call.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Func_02000388();
-s32 Func_02000c74();
-s32 Func_02000c7c();
-s32 Func_02000c8c();
-s32 Func_02000d44();
-s32 Func_02000d64();
-s32 GameFlag_Test();
-s32 ObjectDispatch_SetSingleChildFlags();
-s32 ObjectMotion_ArmCallback();
-s32 Object_GetById();
-s32 Object_SetModeById();
-s32 Random16Far();
-s32 WaitFrames();
-extern u8 Func_020004b4[];
-extern u8 gData_02000eec[];
-extern u8 gPartyState[];
+// Draft, differ 10 of 157: rewritten from the listing with the loops as goto
+// loops (as for loops loop.c hoists the masks and the zero: 79). Under flag
+// 0x200, when the leader stands on a cell of kind 77, it centres the leader
+// there, turns it, raises the seven objects of gData_02000eec one after
+// another, then moves objects 9 to 14 by the leader's side's shift and lands
+// them. Left, all scheduling and one register: the first mask in r2 (here r4,
+// as y is loaded after it), 0x8000 built before y is loaded (the known
+// store-then-load order; a temporary or the sum reversed changes nothing), and
+// the mask's pool load in the second loop one instruction earlier. Permute 5
+// minutes found nothing better.
+#include "../../../../games/tla/src/scene/anemos_inner_sanctum_entrance/anemos_inner_sanctum_entrance.h"
+
+extern const s8 gData_02000eec[];
+
+void Func_02000388(void);
+void Func_020004b4(void);
+void Func_02000c74(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Func_02000c7c(void);
+s32 Func_02000c8c(s32 layer, s32 x, s32 z);
+void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 a);
+void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+u32 Random16Far(void);
 
 void Func_02000588(void) {
-  s32 v_r6, v_r5, v_r7, v_r0, t0, t1, t2, t4, t5, t6;
-  s32 t7, t8, t9, t11, t12, t13, t15, t19, t20, t21;
-  s32 t23, t24, t27, t31, t32, t33, t38, t39, t43;
+  struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
+  s32 shift = 0x1300000;
+  s32 i;
 
-  v_r6 = ((s32)gPartyState + 0x214);
-  t0 = *(s32 *)v_r6;
-  t1 = Value1((s32 (*)())Object_GetById, t0);
-  t2 = FIELD_AT(t1, s32, 16);
-  v_r7 = 0x1300000;
-  v_r5 = t1;
-  if ((t2 >> 20) > 9)
-    goto L_020085a8;
-  v_r7 = -v_r7;
-L_020085a8:
-  Call1((void (*)())Func_02000d44, 0);
-  t4 = Value1((s32 (*)())GameFlag_Test, 0x200);
-  if (t4 != 0)
-    goto L_020085bc;
-  goto L_020086f8;
-L_020085bc:
-  t5 = FIELD_AT(v_r5, u8, 34);
-  t6 = FIELD_AT(v_r5, s32, 8);
-  t7 = FIELD_AT(v_r5, s32, 16);
-  t8 = Value3((s32 (*)())Func_02000c8c, t5, t6, t7);
-  if (t8 == 77)
-    goto L_020085d0;
-  goto L_020086f8;
-L_020085d0:
-  t9 = *(s32 *)v_r6;
-  Call2((void (*)())Object_SetModeById, t9, 1);
-  t11 = FIELD_AT(v_r5, s32, 8);
-  t12 = FIELD_AT(v_r5, s32, 16);
-  t13 = FIELD_AT(v_r5, s32, 12);
-  Call4((void (*)())Func_02000c74, v_r5, ((t11 & 0xfff00000) + 0x80000), t13,
-        ((t12 & 0xfff00000) + 0x80000));
-  t15 = *(s32 *)v_r6;
-  v_r0 = t15;
-  if (v_r7 <= 0)
-    goto L_02008604;
-  Call3((void (*)())ObjectMotion_ArmCallback, v_r0, 0xc000, 0);
-  goto L_0200860e;
-L_02008604:
-  Call3((void (*)())ObjectMotion_ArmCallback, v_r0, 0x4000, 0);
-L_0200860e:
-  Call1((void (*)())WaitFrames, 10);
-  v_r6 = 0;
-L_02008616:
-  t19 = *(s8 *)((s32)gData_02000eec + v_r6);
-  t20 = Value1((s32 (*)())Object_GetById, t19);
-  FIELD_AT(t20, u8, 85) = 0;
-  t21 = FIELD_AT(t20, s32, 12);
-  FIELD_AT(t20, s32, 12) = (t21 + 0x8000);
-  FIELD_AT(t20, s32, 52) = 0x1000;
-  FIELD_AT(t20, s32, 48) = 0x20000;
-  Call2((void (*)())ObjectDispatch_SetSingleChildFlags, t20, 1);
-  t23 = FIELD_AT(t20, s32, 8);
-  t24 = FIELD_AT(t20, s32, 16);
-  Call4((void (*)())Func_02000c74, t20, t23, 0xfff80000, t24);
-  FIELD_AT(t20, s32, 108) = (s32)Func_020004b4;
-  Call1((void (*)())Func_02000d64, 152);
-  t27 = Value0((s32 (*)())Random16Far);
-  Call1((void (*)())WaitFrames, (((u32)(t27 << 2) >> 16) + 3));
-  v_r6 = (v_r6 + 1);
-  if (v_r6 <= 6)
-    goto L_02008616;
-  Call1((void (*)())WaitFrames, 40);
-  Call1((void (*)())Func_02000d64, 198);
-  v_r6 = 9;
-L_0200867c:
-  t31 = Value1((s32 (*)())Object_GetById, v_r6);
-  t32 = FIELD_AT(t31, s32, 16);
-  t33 = FIELD_AT(t31, s32, 8);
-  Call4((void (*)())Func_02000c74, t31, t33, 0xfff80000, (t32 - v_r7));
-  v_r6 = (v_r6 + 1);
-  if (v_r6 <= 14)
-    goto L_0200867c;
-  Call1((void (*)())Object_GetById, 9);
+  if (object->z >> 20 <= 9)
+    shift = -shift;
+  Func_02000d44(0);
+  if (!GameFlag_Test(0x200))
+    return;
+  if (Func_02000c8c(object->terrainId, object->x, object->z) != 77)
+    return;
+  Object_SetModeById(gPartyState.currentOwner, 1);
+  Func_02000c74(object, (object->x & 0xfff00000) + 0x80000, object->y,
+                (object->z & 0xfff00000) + 0x80000);
+  {
+    s32 id = gPartyState.currentOwner;
+
+    if (shift > 0)
+      ObjectMotion_ArmCallback(id, 0xc000, 0);
+    else
+      ObjectMotion_ArmCallback(id, 0x4000, 0);
+  }
+  WaitFrames(10);
+  i = 0;
+next:
+  {
+    object = Object_GetById(gData_02000eec[i]);
+    object->motionFlags = 0;
+    object->y += 0x8000;
+    object->acceleration = 0x1000;
+    object->speedLimit = 0x20000;
+    ObjectDispatch_SetSingleChildFlags(object, 1);
+    Func_02000c74(object, object->x, 0xfff80000, object->z);
+    object->update = Func_020004b4;
+    Func_02000d64(152);
+    WaitFrames((Random16Far() * 4 >> 16) + 3);
+  }
+  if (++i <= 6)
+    goto next;
+  WaitFrames(40);
+  Func_02000d64(198);
+  i = 9;
+lower:
+  {
+    object = Object_GetById(i);
+    Func_02000c74(object, object->x, 0xfff80000, object->z - shift);
+  }
+  if (++i <= 14)
+    goto lower;
+  Object_GetById(9);
   Func_02000c7c();
-  Call1((void (*)())WaitFrames, 40);
-  v_r6 = 9;
-L_020086a8:
-  t38 = Value1((s32 (*)())Object_GetById, v_r6);
-  t39 = FIELD_AT(t38, s32, 16);
-  FIELD_AT(t38, s32, 16) = ((t39 & 0xfff00000) + 0x80000);
-  FIELD_AT(t38, u8, 85) = 3;
-  FIELD_AT(t38, s32, 108) = 0;
-  v_r6 = (v_r6 + 1);
-  if (v_r6 <= 14)
-    goto L_020086a8;
-  Call1((void (*)())WaitFrames, 3);
-  Call1((void (*)())Func_02000d64, 188);
-  Call1((void (*)())WaitFrames, 10);
-  t43 = Value1((s32 (*)())GameFlag_Test, 0xa9f);
-  if (t43 != 0)
-    goto L_020086f8;
-  if (v_r7 <= 0)
-    goto L_020086f8;
-  Func_02000388();
-L_020086f8:
-  return;
+  WaitFrames(40);
+  i = 9;
+land:
+  {
+    object = Object_GetById(i);
+    object->z = (object->z & 0xfff00000) + 0x80000;
+    object->motionFlags = 3;
+    object->update = 0;
+  }
+  if (++i <= 14)
+    goto land;
+  WaitFrames(3);
+  Func_02000d64(188);
+  WaitFrames(10);
+  if (!GameFlag_Test(0xa9f) && shift > 0)
+    Func_02000388();
 }

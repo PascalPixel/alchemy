@@ -19,7 +19,7 @@ SECTIONS
         "*/games/tla/src/scene/loho/s0eec.o"(.text)
         "*/games/tla/src/scene/loho/s0f38.o"(.text)
         "*/games/tla/src/scene/loho/push.o"(.text)
-        "*/resource_6a6_overlay.o"(.text.x020090c0)
+        "*/games/tla/src/scene/loho/s10c0.o"(.text)
         "*/games/tla/src/scene/loho/s11ec.o"(.text)
         "*/games/tla/src/scene/loho/import.o"(.text)
         "*/games/tla/src/graphics/field/pal685.o"(.rodata)

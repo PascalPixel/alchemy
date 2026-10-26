@@ -1,6 +1,11 @@
-// Draft, differ 123 of 216: overlay 6a4's copy of the function drafted in
-// resource_698_c_020003cc.c (overlay 698's Func_020003cc, differ 123 there), whose
-// header says what it is, what still differs and what was tried.
+// Draft, differ 115 of 216 (was 121): overlay 6a4's copy of the function
+// drafted in resource_698_c_020003cc.c (overlay 698's Func_020003cc), whose
+// header says what it is and what was tried. The camera call forwarded through
+// an inline wrapper gained 6. Left: the native keeps the event work in sl and
+// the motion-flags address in r9 (here r9 and fp); it compares the rise with
+// 0x3ffff from the pool (bgt) where the source's form gives 0x40000 (bge); it
+// stores the two halfword 1s from a word constant, where these plain stores
+// load a halfword from the pool.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -21,6 +26,10 @@ void Func_02002b68(s32 sound);
 void Func_02002a30(struct ObjectRuntime *object);
 void Camera_FollowActor(s32 id, s32 flag);
 void Func_02002a90(void);
+
+static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z, s32 mode) {
+  Camera_MoveWithinMapBounds(x, y, z, mode);
+}
 
 void Func_02000930(void) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -58,7 +67,7 @@ void Func_02000930(void) {
   actor->priorityFlags = 1;
   actor->motionFlags = 3;
   ObjectDispatch_SetSingleChildFlags(actor, 1);
-  Camera_MoveWithinMapBounds(-1, -1, -1, 0);
+  Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
   shadow = Func_02002af8();
   shadow->speedLimit = 0x80000;
   shadow->acceleration = 0x10000;

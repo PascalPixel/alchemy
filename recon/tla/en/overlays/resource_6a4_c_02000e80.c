@@ -1,75 +1,59 @@
-// Draft, differ 94 of 165: overlay 6a4's copy of the function drafted in
-// resource_698_c_0200091c.c (overlay 698's Func_0200091c), whose
-// header says what it is, what still differs and what was tried.
+// Draft, differ 10 of 165 (was 94): overlay 6a4's copy of overlay 698's
+// Func_0200091c, as resource_6a2_c_02000a88.c, whose header says what is left.
 #include "types.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+#include "object_runtime.h"
+#include "field_sprite.h"
 
-#include "call.h"
-s32 Object_GetById();
-s32 Func_02002ab8();
-s32 GameFlag_Test();
-s32 Animation_ApplyChildValues();
+struct ObjectRuntime *Object_GetById(s32 id);
+s32 GameFlag_Test(s32 flag);
+void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
+void Func_02002ab8(s32 id, s32 x, s32 z);
+
+static __inline__ void Func_02001c10_(s32 id, s32 x, s32 z) {
+  Func_02002ab8(id, x, z);
+}
+
+static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Test(flag); }
 
 void Func_02000e80(void) {
-  s32 t7;
-  s32 t0;
-  s32 t1;
-  s32 t2;
-  s32 t8;
-  s32 t13;
-  s32 t18;
-  s32 t19;
+  struct ObjectRuntime *left = Object_GetById(9);
+  struct ObjectRuntime *right = Object_GetById(10);
+  struct ObjectRuntime *rider = Object_GetById(23);
+  struct FieldSprite *sprite = rider->animation;
 
-  t0 = Value1(Object_GetById, 9);
-  t1 = Value1(Object_GetById, 0xa);
-  t2 = Value1(Object_GetById, 0x17);
-  Call3(Func_02002ab8, 0x18, 0x2000000, 0xf80000);
-  Call3(Func_02002ab8, 0x17, 0x2000000, 0xf80000);
-  Call3(Func_02002ab8, 9, 0x1d80000, 0x1000000);
-  Call3(Func_02002ab8, 0xa, 0x2280000, 0x1000000);
-  t7 = Value1(Object_GetById, 0x18);
-  FIELD_AT(t7, s32, 24) = 0;
-  FIELD_AT((0x55 + t2), u8, 0) = 0;
-  FIELD_AT(t2, s32, 12) = FIELD_AT(t2, s32, 20);
-  FIELD_AT((0x55 + t0), u8, 0) = 0;
-  FIELD_AT(t0, s32, 12) = FIELD_AT(t0, s32, 20);
-  FIELD_AT((0x55 + t1), u8, 0) = 0;
-  FIELD_AT(t1, s32, 12) = FIELD_AT(t1, s32, 20);
-  t8 = Value1(GameFlag_Test, 0xa0a);
-  if (t8 != 0) {
-    FIELD_AT(t0, s32, 12) = (FIELD_AT(t0, s32, 12) + 0x66640);
-    FIELD_AT(t2, s32, 12) = (FIELD_AT(t2, s32, 12) + 0x1eb80);
-    FIELD_AT(t2, s32, 8) = (FIELD_AT(t2, s32, 8) + -167744);
-    FIELD_AT(FIELD_AT(t2, s32, 80), u16, 18) =
-        (FIELD_AT(FIELD_AT(t2, s32, 80), u16, 18) + 0x800);
-    Call2(Animation_ApplyChildValues, Value1(Object_GetById, 9), 4);
-    Call2(Animation_ApplyChildValues, Value1(Object_GetById, 0xb), 4);
+  Func_02001c10_(24, 0x2000000, 0xf80000);
+  Func_02001c10_(23, 0x2000000, 0xf80000);
+  Func_02001c10_(9, 0x1d80000, 0x1000000);
+  Func_02001c10_(10, 0x2280000, 0x1000000);
+  Object_GetById(24)->scaleX = 0;
+  rider->motionFlags = 0;
+  rider->y = rider->terrainHeight;
+  left->motionFlags = 0;
+  left->y = left->terrainHeight;
+  right->motionFlags = 0;
+  right->y = right->terrainHeight;
+  if (GameFlag_Test_(0xa0a)) {
+    left->y += 0x66640;
+    rider->y += 0x1eb80;
+    rider->x += -0x28f40;
+    sprite->rotation += 0x800;
+    Animation_ApplyChildValues(Object_GetById(9), 4);
+    Animation_ApplyChildValues(Object_GetById(11), 4);
   }
-  t13 = Value1(GameFlag_Test, 0xa0b);
-  if (t13 != 0) {
-    FIELD_AT(t1, s32, 12) = (FIELD_AT(t1, s32, 12) + 0x66640);
-    FIELD_AT(t2, s32, 12) = (FIELD_AT(t2, s32, 12) + 0x1eb80);
-    FIELD_AT(t2, s32, 8) = (FIELD_AT(t2, s32, 8) + 0x28f40);
-    FIELD_AT(FIELD_AT(t2, s32, 80), u16, 18) =
-        (FIELD_AT(FIELD_AT(t2, s32, 80), u16, 18) + -2048);
-    Call2(Animation_ApplyChildValues, Value1(Object_GetById, 0xa), 4);
-    Call2(Animation_ApplyChildValues, Value1(Object_GetById, 0xc), 4);
+  if (GameFlag_Test_(0xa0b)) {
+    right->y += 0x66640;
+    rider->y += 0x1eb80;
+    rider->x += 0x28f40;
+    *(s16 *)&sprite->rotation += -0x800;
+    Animation_ApplyChildValues(Object_GetById(10), 4);
+    Animation_ApplyChildValues(Object_GetById(12), 4);
   }
-  t18 = Value1(GameFlag_Test, 0xa0a);
-  if (t18 != 0) {
-    t19 = Value1(GameFlag_Test, 0xa0b);
-    if (t19 != 0) {
-      FIELD_AT(t0, s32, 12) = (FIELD_AT(t0, s32, 12) + 0x199900);
-      FIELD_AT(t1, s32, 12) = (FIELD_AT(t1, s32, 12) + 0x199900);
-      FIELD_AT(t2, s32, 12) = (FIELD_AT(t2, s32, 12) + 0x1b8480);
-      FIELD_AT((0x55 + t0), u8, 0) = 4;
-      FIELD_AT((0x55 + t1), u8, 0) = 4;
-      FIELD_AT((0x55 + t2), u8, 0) = 4;
-    }
+  if (GameFlag_Test_(0xa0a) && GameFlag_Test_(0xa0b)) {
+    left->y += 0x199900;
+    right->y += 0x199900;
+    rider->y += 0x1b8480;
+    left->motionFlags = 4;
+    right->motionFlags = 4;
+    rider->motionFlags = 4;
   }
 }

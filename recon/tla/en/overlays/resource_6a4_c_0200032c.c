@@ -1,9 +1,14 @@
-// Draft, differ 58 of 222: Jupiter Lighthouse aerie's two pushed objects: object 13
-// on cell (6, 12) or object 14 on cell (57, 12) sets its flag (2570, 2571),
-// falls into place (waited on for at most 30 frames), copies cells (Func_02002a50,
-// Func_02002a48) with sounds 134 and 167 and runs its part (Func_020001b4,
-// Func_02000264); off its cell it only marks the cell it stands on
-// (Func_02002a78). With both flags set, flag 2591 is set.
+// Draft, differ 12 of 222 (was 56): Jupiter Lighthouse aerie's two pushed
+// objects: object 13 on cell (6, 12) or object 14 on cell (57, 12) sets its
+// flag (2570, 2571), falls into place (waited on for at most 30 frames), copies
+// cells (Func_02002a50, Func_02002a48) with sounds 134 and 167 and runs its
+// part (Func_020001b4, Func_02000264); off its cell it only marks the cell it
+// stands on (Func_02002a78). With both flags set, flag 2591 is set. The fall
+// wait is an if around a do-while. Left: gcse's PRE makes the z-fail path reuse
+// the z it loaded for the test (into r1) and jump past the reload, where the
+// native reloads z into r3 and both failing tests reach the same reload (two
+// places, 12 instructions). Tried: the call's z through another struct type
+// (same alias set, no change).
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
@@ -33,11 +38,14 @@ void Func_0200032c(s32 unused, s32 id) {
       GameFlag_SetBit(2570);
       object->motionFlags = 3;
       WaitFrames(2);
-      for (i = 0; object->y > object->terrainHeight || object->velocityY != 0;) {
-        i++;
-        WaitFrames(1);
-        if (i > 29)
-          break;
+      i = 0;
+      if (object->y > object->terrainHeight || object->velocityY != 0) {
+        do {
+          WaitFrames(1);
+          i++;
+          if (i > 29)
+            break;
+        } while (object->y > object->terrainHeight || object->velocityY != 0);
       }
       object->motionFlags = 0;
       ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);
@@ -60,11 +68,14 @@ void Func_0200032c(s32 unused, s32 id) {
       GameFlag_SetBit(2571);
       object->motionFlags = 3;
       WaitFrames(2);
-      for (i = 0; object->y > object->terrainHeight || object->velocityY != 0;) {
-        i++;
-        WaitFrames(1);
-        if (i > 29)
-          break;
+      i = 0;
+      if (object->y > object->terrainHeight || object->velocityY != 0) {
+        do {
+          WaitFrames(1);
+          i++;
+          if (i > 29)
+            break;
+        } while (object->y > object->terrainHeight || object->velocityY != 0);
       }
       object->motionFlags = 0;
       ObjectMotion_EnableActionAndResetMotion(gPartyState.currentOwner);

@@ -1,6 +1,7 @@
-// Draft, differ 79 of 126: overlay 6a1's copy of the function drafted in
-// resource_69c_c_02000c78.c (overlay 69c's Func_02000c78, differ 79 there), whose
-// header says what it is, what still differs and what was tried.
+// Draft, differ 73 of 126 (was 77): overlay 6a1's copy of the function drafted
+// in resource_69c_c_02000c78.c (overlay 69c's Func_02000c78), whose header says
+// what it is and what was tried. Forwarding one call through an inline wrapper
+// (a FAKEMATCH(wrapper) on adoption) gained 4.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -15,6 +16,10 @@ void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 width, s32 height,
                            s32 value);
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
+
+static __inline__ void Func_020021b0_(s32 x, s32 z, s32 width, s32 height, s32 toX, s32 toZ) {
+  Func_020021b0(x, z, width, height, toX, toZ);
+}
 
 s32 Func_02000af0(s32 id) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
@@ -40,7 +45,7 @@ s32 Func_02000af0(s32 id) {
   height = (ABS(rect[1]) + ABS(rect[3])) >> 4;
   x = (object->x + (rect[0] << 16)) >> 20;
   z = (object->z + (rect[1] << 16)) >> 20;
-  Func_020021b0(x, z, width, height,
+  Func_020021b0_(x, z, width, height,
                 x + (u16)(*(s32 *)(map + 328) >> 20),
                 z + (u16)(*(s32 *)(map + 332) >> 20));
   Map_FillCellRectByte2(0, x, z, width, height, 255);

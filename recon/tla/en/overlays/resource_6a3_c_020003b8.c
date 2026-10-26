@@ -1,11 +1,14 @@
-// Draft, differ 79 of 237: Jupiter Lighthouse room M's pushed object placed on cell
-// (63, 15): sets flag 2572, falls into place (at most 30 frames), and the
-// scene plays: sound 134, the camera to (1016, 232), the leader walked
-// to (1000, 248) (from 1032 or 1000 first by its column), turning and looking
-// about, emote 257, motion 22, the room's change (Func_020000c4 between the
-// two Func_02002efc calls), object 4's emote 258, the screen shaken, the
-// camera over to (1048, 174) and back to (984, 248) with sound 80. In any case
-// the object marks the cell it stands on (Func_02004774).
+// Draft, differ 14 of 237 (was 79): Jupiter Lighthouse room M's pushed object
+// placed on cell (63, 15): sets flag 2572, falls into place (at most 30
+// frames), and the leader steps and spins while the room changes
+// (Func_020000c4); off the cell it only marks the cell it stands on
+// (Func_02004774). The fall wait is an if around a do-while, as the native's
+// loop is entered at its test; calls go through inline wrappers
+// (FAKEMATCH(wrapper) on adoption). Left: the native loads the object's x into
+// r3 for the cell test, where this keeps it in r0 for the final call
+// (jump-following CSE); and it builds the final call's -6 before loading the
+// coordinates. Tried: x in a local (21), the final call without its wrapper
+// (16), permute 6 minutes.
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_room_m/jupiter_lighthouse_room_m.h"
 
 s32 GameFlag_Test(s32 flag);
@@ -31,6 +34,18 @@ void Func_020048e4(s32 a, s32 b);
 void AudioCommand_WaitForStateByteClear(void);
 void Func_02004774(s32 x, s32 z, s32 a, s32 b);
 
+static __inline__ void Func_02004774_(s32 x, s32 z, s32 a, s32 b) {
+  Func_02004774(x, z, a, b);
+}
+
+static __inline__ void Func_020048b4_(s32 id, s32 angle) {
+  Func_020048b4(id, angle);
+}
+
+static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z, s32 mode) {
+  Camera_MoveWithinMapBounds(x, y, z, mode);
+}
+
 void Func_020003b8(s32 unused, s32 id) {
   struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
   struct ObjectRuntime *object = Object_GetById(id);
@@ -41,17 +56,20 @@ void Func_020003b8(s32 unused, s32 id) {
     GameFlag_SetBit(2572);
     object->motionFlags = 3;
     WaitFrames(2);
-    for (i = 0; object->y > object->terrainHeight || object->velocityY != 0;) {
-      i++;
-      WaitFrames(1);
-      if (i > 29)
-        break;
+    i = 0;
+    if (object->y > object->terrainHeight || object->velocityY != 0) {
+      do {
+        WaitFrames(1);
+        i++;
+        if (i > 29)
+          break;
+      } while (object->y > object->terrainHeight || object->velocityY != 0);
     }
     object->motionFlags = 0;
     Func_020049c4(134);
     Func_020047d4();
     Func_0200494c(0);
-    Camera_MoveWithinMapBounds(254 << 18, -1, 232 << 16, 1);
+    Camera_MoveWithinMapBounds_(254 << 18, -1, 232 << 16, 1);
     Func_020048f4();
     ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x10000, 0x8000);
     x = leader->x >> 20;
@@ -62,23 +80,23 @@ void Func_020003b8(s32 unused, s32 id) {
       ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 1000, 232);
     }
     ObjectMotion_SetPositionAndReset(gPartyState.currentOwner, 1000, 248);
-    Func_020048b4(gPartyState.currentOwner, 0);
+    Func_020048b4_(gPartyState.currentOwner, 0);
     Func_02004924(0x10000, 0);
     Func_0200491c(0x10003, 0);
     Func_0200492c(60);
     FieldEvent_WaitFrames(50);
-    Func_020048b4(gPartyState.currentOwner, 0x6000);
+    Func_020048b4_(gPartyState.currentOwner, 0x6000);
     FieldEvent_WaitFrames(20);
-    Func_020048b4(gPartyState.currentOwner, 0x2000);
+    Func_020048b4_(gPartyState.currentOwner, 0x2000);
     FieldEvent_WaitFrames(20);
-    Func_020048b4(gPartyState.currentOwner, 0x6000);
+    Func_020048b4_(gPartyState.currentOwner, 0x6000);
     FieldEvent_WaitFrames(20);
-    Func_020048b4(gPartyState.currentOwner, 0x2000);
+    Func_020048b4_(gPartyState.currentOwner, 0x2000);
     FieldEvent_WaitFrames(20);
-    Func_020048b4(gPartyState.currentOwner, 0x4000);
+    Func_020048b4_(gPartyState.currentOwner, 0x4000);
     FieldEvent_WaitFrames(20);
     Func_020048cc(gPartyState.currentOwner, 257, 50);
-    Func_020048b4(gPartyState.currentOwner, 0);
+    Func_020048b4_(gPartyState.currentOwner, 0);
     FieldEvent_WaitFrames(20);
     Object_SetModeById(gPartyState.currentOwner, 22);
     FieldEvent_WaitFrames(40);
@@ -91,18 +109,18 @@ void Func_020003b8(s32 unused, s32 id) {
     FieldEvent_WaitFrames(40);
     FieldEvent_WaitFrames(60);
     Func_020048e4(0x30000, 0x6000);
-    Camera_MoveWithinMapBounds(131 << 19, 0, 174 << 16, 1);
+    Camera_MoveWithinMapBounds_(131 << 19, 0, 174 << 16, 1);
     Func_020048f4();
     FieldEvent_WaitFrames(10);
     object->update = 0;
     Func_020049c4(80);
     AudioCommand_WaitForStateByteClear();
     FieldEvent_WaitFrames(10);
-    Camera_MoveWithinMapBounds(246 << 18, -0x400000, 248 << 16, 1);
+    Camera_MoveWithinMapBounds_(246 << 18, -0x400000, 248 << 16, 1);
     Func_020048f4();
     FieldEvent_WaitFrames(10);
     Func_02002efc(1);
     Func_020047dc();
   }
-  Func_02004774(object->x, object->z, 0, -6);
+  Func_02004774_(object->x, object->z, 0, -6);
 }

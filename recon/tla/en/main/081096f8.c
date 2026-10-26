@@ -1,8 +1,10 @@
-// Near miss, differ 30: (1) each Shop_FillSelector call finishes its count in
-// r0 before loading r1 and r2 in the native, where this draft loads r1 and r2
-// first (an inline wrapper leaves the order unchanged); (2) the native keeps
-// the result in r5 and the B-button test in r6, this draft the other way round.
-// Everything else matches.
+// Near miss, differ 8 of 192: The Broken Seal's Shop_SelectQuantity. Each
+// Shop_FillSelector call loads its arguments in another order: the native
+// finishes the count in r0 (and sets r0 before r1 for the constants) before
+// r1 and r2, where this draft loads r1 and r2 first (an inline wrapper leaves
+// the order unchanged). The quantity held in a temporary across the last
+// two fills gives the native's registers (the result in r5, the B-button
+// test, reused as the zero, in r6; 36 without it).
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -39,6 +41,7 @@ s32 Func_081096f8(s32 minimum, s32 maximum, s32 price) {
   s32 count;
   s32 result;
   struct UiSprite *sprite;
+  s32 selected;
 
   buffer = Runtime_AllocateBlock(56, 0x400);
   changed = 1;
@@ -83,9 +86,13 @@ s32 Func_081096f8(s32 minimum, s32 maximum, s32 price) {
           Shop_FillSelector(30, 14, buffer);
           Shop_FillSelector(minimum + maximum, 0, buffer);
           Shop_FillSelector(minimum + count + 1, 10, buffer);
+          /* FAKEMATCH(temporary): the quantity in its own local before the
+           * last fill; as result = count + 1 after VramCache_Load, 36 of 192
+           * instructions differ in tla-en. */
+          selected = count + 1;
           Shop_FillSelector(minimum, 2, buffer);
           VramCache_Load(slot, 0x100, buffer);
-          result = count + 1;
+          result = selected;
           UiText_DrawNumberInWindowFar(result, 2, window, 72, 0);
           UiText_DrawNumberInWindowFar(price * result, 6, window, 88, 0);
           UiText_DrawCharacterAtOffsetFar((s32)MsgCoins, window, 136, 0);

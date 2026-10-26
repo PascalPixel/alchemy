@@ -75,12 +75,12 @@ void Sound_PlaySong(s32 id) {
     // MUSIC_PLAYER_SE_LAST's sound is cut off.
     player = gSongTable[id].ms;
     if (player == MUSIC_PLAYER_SE_LAST) {
-    next:
-      if (((u8 *)&gMPlayTable[player].info->status)[0] != 0) {
+      while (((u8 *)&gMPlayTable[player].info->status)[0] != 0) {
         player--;
-        if (player >= MUSIC_PLAYER_SE_FIRST)
-          goto next;
-        player = MUSIC_PLAYER_SE_LAST;
+        if (player < MUSIC_PLAYER_SE_FIRST) {
+          player = MUSIC_PLAYER_SE_LAST;
+          break;
+        }
       }
     }
     MPlayStart(gMPlayTable[player].info, gSongTable[id].header);

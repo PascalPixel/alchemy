@@ -1,6 +1,11 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 18 of 438; left: the flag
-// loop's counter and flag number swap registers, and the sched2 ties recorded
-// below.
+// Differ 12 of 438 (was 18): the flag loop's counter also holds the entrance
+// (i = gPartyState.entrance), which raises its allocation priority over the
+// flag number, so the loop takes the native's registers; but the entrance
+// then lives in r5 where the native compares it in r3, the four compares
+// differing. A one-pass block after the name stores keeps the counter's zero
+// apart from the earlier stores' (differ 20, so not kept); reusing i as wins,
+// msg or v is worse (18 to 55); ten minutes of permute found nothing better.
+// Older notes:
 // Draft of overlay 6b5's Func_0200145c (0x0200945c, 0x46c bytes with its
 // pool), the lobby's set-up by entrance: differ 28 of 438. Devices in place:
 // one scalar holds the score row's address, then its score, in entrances 8
@@ -108,7 +113,8 @@ s32 Func_0200145c(void) {
     if (Func_02000f6c(i))
       Flag_Set(0x2f0 + i);
   }
-  if (gPartyState.entrance == 8) {
+  i = gPartyState.entrance;
+  if (i == 8) {
     s32 wins;
     s32 msg;
     s32 v;

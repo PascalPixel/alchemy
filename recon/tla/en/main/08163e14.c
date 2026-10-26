@@ -16,6 +16,13 @@
 // ahead of an independent constant (the argument's store before 0x03000000,
 // the work's reloads, the pooled values, the 58 multiply), the kind
 // Func_08164b2c's header traces to a load costing 3 and a store 2.
+// 2026-10-26, under -mthumb-slow-loads: differ 16 of 699, the instructions
+// and registers otherwise the native's. What remains is single rows where
+// the native issues a spill or argument store before a load (the known
+// store-then-load scheduling limit); barriers and one-pass blocks at each
+// statement, statement moves and each local scoped to a block gain only
+// the prologue's row or rows of that kind.
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

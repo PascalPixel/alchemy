@@ -40,6 +40,13 @@
 // declaration order, greedy scan of every local                no gain
 // alchemy permute 6 min (trial 1), 10 min on the kept form     no gain
 
+// 2026-10-26, under -mthumb-slow-loads: differ 14 of 453, the instructions
+// and registers otherwise the native's. What remains is single rows where
+// the native issues a spill or argument store before a load (the known
+// store-then-load scheduling limit); barriers and one-pass blocks at each
+// statement, statement moves and each local scoped to a block gain only
+// the prologue's row or rows of that kind.
+
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"

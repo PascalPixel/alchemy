@@ -1,47 +1,3 @@
-// Draft, differ 6 of 354: BattleEffect_RunTorch, effect kind 214, The Broken Seal's
-// BattleEffect_RunTorch.
-
-// Twin: ☀️ BattleEffect_RunTorch (games/tbs/src/effect/effect.c), ported
-// with The Lost Age's changes: the canvas set up through Func_0815585c
-// (kind | side << 4 | anchor << 5), 80 frames where ☀️ has 96 (the fade out
-// from frame 72), and a hit at frame 48 (results phase, eight frames of shake,
-// the target's knock-back motion) that ☀️'s disc does not have.
-
-// Devices: the empty asm at the start stores the argument before 0x03000000 is
-// started (differ 8 without it); the BG2CNT halfword pinned to r3 in a
-// one-pass block loads from the pool before the register address is started.
-// Without the pin the halfword loads after movs r2, #128 and the call pair
-// below matches (differ 6 again); the pin alone, without its block, loads first
-// and keeps the call pair, but the pool entry lands 4 bytes off (differ 6);
-// the pin behind an empty asm holding r2 (12), an unpinned u16 behind an empty
-// asm (30), the store alone in a one-pass block (28), an unpinned u16 set in a
-// one-pass block (40).
-
-// Left, two reordered pairs:
-// - the native starts the third argument of Func_0815585c (add r2, sp, #44)
-// between the side's shift and its orrs;
-// - in the I/O queue push it increments the count before it scales the entry
-// offset, and stores the count before it adds the queue's base.
-
-// Both are ties in sched2 that agscc breaks the other way. In the push,
-// the increment and the offset's second shift are both ready at the same
-// cycle with priority 10; the shift is data-dependent on the last insn and
-// the increment only anti-dependent, so the shift wins. A pooled load costing
-// 3 cycles instead of 2 would give the increment priority 11 (it leads to
-// the pooled value), which is the native order (the 08164b2c.c header's
-// finding). At the call, the orrs has one more dependent (add r3 reuses
-// r3), so it wins its tie with add r2.
-
-// Tried (differ): the flags written 70 | side << 4, with 0x46, (side << 4) ^
-// 70,
-// side * 16 | 70, or in a local first (6); &screenX through a local (64); the
-// screens as struct EffectPosition (6); the push written out with the count
-// stored first (6, the increment then takes r3), ++count (6), the count store
-// in a one-pass block (8); alchemy permute 6 minutes, 2 jobs, on this draft
-// (no candidate beat it). screenX declared first takes sp+44, as the
-// native's.
-// 2026-10-18: each void callee declared s32 (6 or 8); alchemy permute 5
-// minutes, 2 jobs (nothing below 6).
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -74,26 +30,25 @@
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 flags, s32 *screenX,
                    s32 *screenY); // BattleEffect_RunDjinniEntrance
-void BattleEffect_FetchRectangleBlitters(
-    s32 side,
-    DrawRectangle *draw); // BattleEffect_FetchRectangleBlitters
-void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
-void BattleEffect_ArmBg2AffineHBlankDma(void); // BattleEffect_ArmBg2AffineHBlankDma
+void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *draw);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_ArmBg2AffineHBlankDma(void);
 void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 void Func_08118088(s32 actor,
                    s32 variant);  // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
-void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
-void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
+void ObjectGroup_TickMemberTimers(void);
+void BattleEffect_EndCanvasLayer(void);
 
-// A disc of rings rises on BG2 over the target's side, its colour ramp
-// cycling outward one ring a frame while each scanline sways on a sine wave.
-//
-// Setup: open the canvas, draw the distance map into the sheet and a warm
-// ramp into BG palette 1-63, blit the disc to the canvas, and arm the
-// per-scanline BG2 offsets. Each frame: fade in over the first 8 frames,
-// rebuild the 160 sway offsets, rotate the ramp by one colour, shake the
-// camera. At frame 48 the target is struck; from frame 72 the disc fades.
+/// A disc of rings rises on BG2 over the target's side, its colour ramp
+/// cycling outward one ring a frame while each scanline sways on a sine wave.
+/// Abilities: Torch (kind 214).
+///
+/// Setup: open the canvas, draw the distance map into the sheet and a warm
+/// ramp into BG palette 1-63, blit the disc to the canvas, and arm the
+/// per-scanline BG2 offsets. Each frame: fade in over the first 8 frames,
+/// rebuild the 160 sway offsets, rotate the ramp by one colour, shake the
+/// camera. At frame 48 the target is struck; from frame 72 the disc fades.
 void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -118,9 +73,8 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
   s32 angle;
   s32 *line;
 
-  /* FAKEMATCH: stores the argument before the 0x03000000 base is started; the
-   * native's first instruction after sub sp is str r0 (the base first without
-   * it, differ 8). */
+  /* FAKEMATCH(barrier): the empty asm stores the argument before the RAM base
+   * is started; as plain statements, 2 of 354 instructions differ in tla-en. */
   __asm__("");
   work = Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -128,23 +82,14 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
   // Open the canvas on BG2 over the target's side.
   BattleEffect_StartCanvasLayer(0x2000);
   Func_0815585c(effect, 6 | effect->side << 4 | 2 << 5, screenX, screenY);
-  {
-    /* FAKEMATCH: the native loads the BG2CNT halfword from the pool before it
-     * starts the register's address; pinned to r3 in a one-pass block it does
-     * (as a plain store it loads after the address's first half). */
-    register u16 value __asm__("r3");
-
-    do {
-      value = 0x2784;
-    } while (0);
-    REG_BG2CNT = value;
-  }
+  REG_BG2CNT = 0x2784;
   REG_BLDALPHA = 0x1000;
   REG_BG2PA = 0xaa;
   BattleEffect_FetchRectangleBlitters(effect->side, draw);
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
+                                0xc80);
 
   // The distance map, one quarter at a time mirrored into the other three,
   // the centre an eighth lower than the middle so the disc leans back.

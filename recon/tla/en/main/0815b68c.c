@@ -1,3 +1,9 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 6 of 101 with the one-pass
+// block, 12 without it. Left: the native starts the particle's offset
+// (movs r2, #192) before the position's zero stores, and stores the new x
+// and y (str r3, [r5] and [r6]) right after starting the next offset; here
+// each store comes after that offset is built.
+
 // Near miss of Func_0815b68c, decompiled from the listing (101 instructions,
 // draft 101, differ 6; 12 without the tagged one-pass block): the native
 // starts the 0x6e4 offset (movs r2, #192) before the zero for the position

@@ -4668,8 +4668,8 @@ main	rom_main_09	recon/tla/fr/rom	.rom.0015f16c	fr
 main	rom_main_09	recon/tla/es/rom	.rom.0015f16c	es
 main	rom_main_09	recon/tla/de/rom	.rom.0015f16c	de
 main	rom_main_09	recon/tla/raw/0815f16c	.text	en
-main	rom_main_09	recon/tla/raw/081638d0	.text	en
 main	rom_main_09	recon/tla/ja/rom	.rom.0015f16c	ja
+main	rom_main_09	games/tla/src/battle/effect/f1638d0	.text
 main	rom_main_09	games/tla/src/battle/effect/m8163c00	.text
 main	rom_main_09	recon/tla/it/rom	.rom.00163c2c	it
 main	rom_main_09	recon/tla/fr/rom	.rom.00163c2c	fr

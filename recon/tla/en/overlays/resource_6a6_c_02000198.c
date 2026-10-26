@@ -1,5 +1,7 @@
-// Draft of overlay 6a6's Func_02000198, translated from its listing: differ
-// 181 of 1050. Left: its shape: 1049 instructions against the listing's 1050.
+// Draft of overlay Func_02000198, translated from its listing: differ 178 of
+// 1050 in tla-en (was 181). Read-modify-writes are compound assignments where
+// that loads as the native does. Left: register choice and order through the
+// function.
 #include "types.h"
 #include "dma.h"
 #include "call.h"
@@ -428,8 +430,7 @@ L_020089c4:
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x1cc0000, -1, 0x15e0000, 1);
   Call1((void (*)())FieldEvent_WaitFrames, 30);
   t233 = Value1((s32 (*)())Object_GetById, 16);
-  t234 = FIELD_AT(t233, u8, 90);
-  FIELD_AT(t233, u8, 90) = (254 & t234);
+  FIELD_AT(t233, u8, 90) &= 254;
   Call3((void (*)())ObjectMotion_OffsetPositionAndReset, 18, -0x28, -0x14);
   Call3((void (*)())ObjectMotion_OffsetPositionAndReset, 17, -0x28, -0x14);
   Call3((void (*)())ObjectMotion_OffsetPositionAndReset, 16, -0x28, -0x14);

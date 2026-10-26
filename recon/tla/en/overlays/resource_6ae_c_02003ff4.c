@@ -1,5 +1,7 @@
-// Draft of overlay 6ae's Func_02003ff4, translated from its listing: differ
-// 201 of 1176. Left: its shape: 1171 instructions against the listing's 1176.
+// Draft of overlay Func_02003ff4, translated from its listing: differ 183 of
+// 1176 in tla-en (was 201). Read-modify-writes are compound assignments where
+// that loads as the native does. Left: register choice and order through the
+// function.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -282,8 +284,7 @@ L_0200c4a0:
   FIELD_AT(t191, s32, 28) = 0xffff0000;
   FIELD_AT(t191, s32, 24) = 0x1999;
   FIELD_AT(t191, u8, 85) = v_r10;
-  t192 = FIELD_AT(t191, u8, 35);
-  FIELD_AT(t191, u8, 35) = (2 | t192);
+  FIELD_AT(t191, u8, 35) |= 2;
   Call4((void (*)())Object_SetPositionAndResetMotion, t191, 0x2000000, 0x400000,
         0xcc0000);
   v_r7 = t191;
@@ -380,8 +381,7 @@ L_0200c72a:
   Call2((void (*)())Object_SetPartAttribute, t271, 7);
   Call2((void (*)())ObjectMotion_SetActionVariant, 9, 1);
   t274 = Value1((s32 (*)())Object_GetById, 9);
-  t275 = FIELD_AT(t274, u8, 35);
-  FIELD_AT(t274, u8, 35) = (253 & t275);
+  FIELD_AT(t274, u8, 35) &= 253;
   Call1((void (*)())Func_020057dc, 140);
   Call3((void (*)())Func_020055c4, 0x30000, 0x30000, 0x10000);
   Call2((void (*)())Func_0200575c, 0x203210, 0);
@@ -404,13 +404,11 @@ L_0200c9e8:
   Call3((void (*)())ObjectMotion_Launch, 1, 4, 0);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 1, 0x33333, 0x19999);
   t292 = Value1((s32 (*)())Object_GetById, 1);
-  t293 = FIELD_AT(t292, u8, 90);
-  FIELD_AT(t292, u8, 90) = (254 & t293);
+  FIELD_AT(t292, u8, 90) &= 254;
   Call3((void (*)())ObjectMotion_SetPositionAndReset, 1, 0x21e, 0x148);
   Call1((void (*)())FieldEvent_WaitFrames, 1);
   t296 = Value1((s32 (*)())Object_GetById, 1);
-  t297 = FIELD_AT(t296, u8, 90);
-  FIELD_AT(t296, u8, 90) = (1 | t297);
+  FIELD_AT(t296, u8, 90) |= 1;
   Call2((void (*)())Func_020056f4, 1, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 0, 0x4000, 0);
   Call3((void (*)())ObjectMotion_ArmCallback, 3, 0x2000, 0);

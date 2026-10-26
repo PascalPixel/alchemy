@@ -38,6 +38,9 @@ next:
       size = Random16Far();
       Func_02005490(object, gData_02005e00);
       ObjectDispatch_SetSingleChildFlags(object, 0);
+      /* FAKEMATCH(temporary): the scale is taken before the velocity stores, as
+       * in the native; as object->scaleX = (size >> 1) + 0x4000, 14 of 98
+       * instructions differ in tla-en. */
       scale = (size >> 1) + 0x4000;
       object->velocityY = rise + 0x14000;
       object->velocityZ = Iwram_MulQ16(radius, Math_Cosine(angle));

@@ -36,3 +36,4 @@ tools/out/
 /games/**/*.sprites
 /games/**/*.spriteblocks
 /games/**/*.table
+/games/**/*.d

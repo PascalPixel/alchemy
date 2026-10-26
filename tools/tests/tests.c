@@ -227,6 +227,39 @@ graphics(void)
 	RUN("graphics", true, "redrawn.png", "redrawn.4bpp16x16");
 	Buffer redrawn = readFile("redrawn.4bpp16x16");
 	equal(&tiles, &redrawn, "redrawing preserves the tile stream");
+	textFile("list.tsv", "TILES\t4bpp\n");
+	RUN("graphics", true, "list.tsv", "list.parts");
+	Buffer listed = readFile("list.parts"),
+		   rules = readFile("list.parts.d");
+	equal(&tiles, &listed, "a part list writes its parts in turn");
+	check(!strcmp((char *) rules.data, "list.parts: tiles.png\ntiles.png:\n"),
+		  "a part list names its parts as prerequisites");
+	check(!exists("tiles.4bpp.d"), "a single source needs no dependency file");
+	free(listed.data);
+	free(rules.data);
+	Buffer frameRun = {0};
+	for (unsigned frame = 0; frame < 2; frame++)
+	{
+		Image picture = {.width = frame + 1, .height = 2, .depth = 8};
+		for (unsigned i = 0; i < 256; i++)
+			for (unsigned c = 0; c < 3; c++)
+				byte(&picture.palette, i);
+		for (unsigned i = 0; i < picture.width * 2; i++)
+			byte(&picture.pixels, frame * 16 + i);
+		append(&frameRun, picture.pixels.data, picture.pixels.len);
+		Buffer framePng = writeImage(&picture);
+		char *name = formatString("run_%02u.png", frame);
+		writeFile(name, &framePng);
+		free(name);
+		free(framePng.data);
+		freeImage(&picture);
+	}
+	RUN("graphics", true, "run_00.png", "run.bitmaps");
+	Buffer frames = readFile("run.bitmaps");
+	equal(&frameRun, &frames, "a frame run writes each frame's pixels in turn");
+	RUN("graphics", false, "run_01.png", "run.bitmaps");
+	free(frames.data);
+	free(frameRun.data);
 	textFile("map.tsv", "cell:u8\tgrid:2x3\tat:0,0\tfill:ff\n01 02\n\n03 04\n");
 	RUN("graphics", true, "map.tsv", "map.plane");
 	Buffer plane = readFile("map.plane");
@@ -641,6 +674,8 @@ buildFiles(void)
 	check(strstr((char *) deps.data,
 				 "out/obj/a.o: a.h b.h out/text/messages.inc") != NULL,
 		  "include cycles terminate and generated dependencies remain");
+	check(strstr((char *) deps.data, "DEPENDENCIES := a.h b.h\n") != NULL,
+		  "the scan lists the sources it found, not generated files");
 	free(deps.data);
 	textFile("cycle.c", "#include \"b.h\"\n");
 	textFile("extra.h", "");

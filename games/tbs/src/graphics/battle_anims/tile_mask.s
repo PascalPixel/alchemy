@@ -3,7 +3,7 @@
 	.global BattleAnim_TileAnimationMask
 BattleAnim_TileAnimationMask:
 	.incbin "games/tbs/src/graphics/battle_anims/tile_mask_00.gbapal"
-	.incbin "games/tbs/src/graphics/battle_anims/tile_mask.parts.lz"
+	.incbin "games/tbs/src/graphics/battle_anims/tile_mask.bitmaps.lz"
 	.ifdef TBS_EDITION_EN
 	.byte 0x32, 0xb9, 0x81	@ PACKER: left in the buffer by LuckyDice_Sprites+0x845
 	.else

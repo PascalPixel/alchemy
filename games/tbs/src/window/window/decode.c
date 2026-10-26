@@ -57,7 +57,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   u16 head;
   u16 code;
   s8 *p;
-  s8 c8;
+  s8 letter;
   s32 cnt;
 
 #if (LANGUAGE == LANGUAGE_SPANISH)
@@ -103,11 +103,11 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
     // At most 8 letters, the first capitalised (less 0x20) at the start of a
     // sentence.
     for (cnt = 0; cnt < 8; cnt++) {
-      if ((c8 = *p++) == 0)
+      if ((letter = *p++) == 0)
         break;
       if (cnt == 0 && *suffix == 2)
-        c8 -= 0x20;
-      entries[writePosition] = c8;
+        letter -= 0x20;
+      entries[writePosition] = letter;
       writePosition = (writePosition + 1) & 0x1ff;
     }
   }
@@ -153,7 +153,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   u16 head;
   u16 code;
   u8 *p;
-  s8 c8;
+  s8 letter;
   s32 cnt;
 
   if (mode != 0) {
@@ -184,9 +184,9 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
     }
     p = table.text[kind & 7];
     for (cnt = 0; cnt < 8; cnt++) {
-      if ((c8 = *p++) == 0)
+      if ((letter = *p++) == 0)
         break;
-      entries[writePosition] = c8;
+      entries[writePosition] = letter;
       writePosition = (writePosition + 1) & 0x1ff;
     }
   } else {
@@ -342,7 +342,7 @@ s32 Message_Decode(s32 script, s32 clear) {
   s32 running = 1;
 #endif
   s8 *word;
-  s8 c8;
+  s8 letter;
   u32 writePosition = start;
 #endif
   u16 *entry = work->textBuffer;
@@ -746,11 +746,11 @@ s32 Message_Decode(s32 script, s32 clear) {
             // value counts the letters, compared unsigned: with i or j the
             // registers differ, and a signed compare changes the branch.
             for (value = 0; (u32)value < 16; value++) {
-              if ((c8 = *word++) == 0)
+              if ((letter = *word++) == 0)
                 break;
               if (value == 0 && suffix == 2)
-                c8 -= 0x20;
-              entry[writePosition] = c8;
+                letter -= 0x20;
+              entry[writePosition] = letter;
               writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             }
             break;
@@ -768,11 +768,11 @@ s32 Message_Decode(s32 script, s32 clear) {
             word = gLocalizedWord_ItemPronoun;
 #endif
             for (i = 0; i < 16; i++) {
-              if ((c8 = *word++) == 0)
+              if ((letter = *word++) == 0)
                 break;
               if (i == 0 && suffix == 2)
-                c8 -= 0x20;
-              entry[writePosition] = c8;
+                letter -= 0x20;
+              entry[writePosition] = letter;
               writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             }
             suffix = 0;

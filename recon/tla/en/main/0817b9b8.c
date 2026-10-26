@@ -1,4 +1,11 @@
-// Draft (tla-en): listing 436 instructions, draft 436, common 409, differ 54.
+// Draft (tla-en): listing 436 instructions, draft 436, common 424, differ 24
+// (2026-10-26: the pinned BLDALPHA value and its one-pass block are gone,
+// under -mthumb-slow-loads the plain store measures the same;
+// BattleEffect_LoadBlitter returns s32, as nibble_pair.c defines it, 46 to
+// 44; the star drawing loop walks a pointer of its own, which the native
+// keeps in r5, 44 to 24). Left: the star base (work + 0x380) is built
+// after the projection call here and before the divisions in the native,
+// and order rows of one or two instructions.
 // Written from the listing (☀️'s BattleEffect_RunJupiter is only a
 // hint). The pink star burst: 32 smoke puffs rise from the caster for 24
 // frames, the caster rises and leans to the target, and at frame 32 the
@@ -66,7 +73,7 @@ extern char ResourceId_SmokeSheet;
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 resourceId);
-void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
+s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
@@ -76,7 +83,7 @@ s32 Trig_Cos(s32 angle);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
-void BattleEffect_LoadBlitter(s32 slot, s32 blitter);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 blitter);
 void BattleObject_SetRecordPriority(s32 id, s32 priority);
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
@@ -122,16 +129,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(0);
-  {
-    /* FAKEMATCH: the native loads BLDALPHA's 0x1010 from the pool before
-     * it starts the register address; pinned behind a one-pass block it
-     * does the same (plain: one reordered pair). */
-    register u16 alpha __asm__("r3") = 0x1010;
-
-    do {
-    } while (0);
-    REG_BLDALPHA = alpha;
-  }
+  REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet,
                              work->sheet + STAR_CELS, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
@@ -226,12 +224,14 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
 
     // The stars twinkle through their six cels as they fly.
     if (frame >= STAR_BURST_FRAME && frame < STAR_BURST_FRAME + 24) {
-      for (i = 0, step = &work->particles[SMOKE_COUNT]; i != STAR_COUNT; i++, step++) {
-        if (step->variant >= 0) {
+      struct EffectStep *star;
+
+      for (i = 0, star = &work->particles[SMOKE_COUNT]; i != STAR_COUNT; i++, star++) {
+        if (star->variant >= 0) {
           draw[0](canvas, work->sheet + STAR_CELS + (((frame + i) / 4) % 6) * 256,
-               HI(step->x) - 8, HI(step->y) - 8, 16, 16);
-          BattleEffectKernels_IntegrateVector2(step, 56, 0);
-          step->variant--;
+               HI(star->x) - 8, HI(star->y) - 8, 16, 16);
+          BattleEffectKernels_IntegrateVector2(star, 56, 0);
+          star->variant--;
         }
       }
     }

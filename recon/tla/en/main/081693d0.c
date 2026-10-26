@@ -1,4 +1,8 @@
-// Draft, differ 360 of 1632 (1628 here): BattleEffect_RunNeptune, summon 6
+// Draft, differ 141 of 1632 (1629 here; 2026-10-26: two tagged one-pass
+// blocks from a device sweep, before the serpent's palette copy and after
+// each tile copy, 270 to 153, and BattleEffect_LoadBlitter returning s32, as
+// nibble_pair.c defines it, to 141; 270 was this draft's count before, the
+// 360 below an older one): BattleEffect_RunNeptune, summon 6
 // (BattleEffect_RunSceneEffect's case 6, actflags 0x8006), The Broken Seal's
 // BattleEffect_RunNeptune as The Lost Age reworked it.
 
@@ -104,7 +108,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void Func_08163c2c(s32 mode, s32 value);        // Func_08163c2c
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
                                                 // 7, 7, flags, mode)
 void BattleEffect_SelectLivingTargets(
     struct BattleEffectArgument *effect); // BattleEffect_SelectLivingTargets
@@ -198,6 +202,10 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   ((u8 *)Ram_HeapSlots->battleWork)[0x867] = 1;
   {
     u8 *sheet = Resource_GetTableEntry((s32)&ResourceId_SeaSerpentTiles);
+    /* FAKEMATCH(one-pass): an empty one-pass block before the palette copy;
+     * as plain C, 157 of 1632 instructions differ in tla-en (here 141). */
+    do {
+    } while (0);
 
     Iwram_CopyWords((void *)0x05000200, sheet, 0x200);
     sheet += 0x200;
@@ -210,6 +218,10 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
       Iwram_CopyWords(
           (void *)(0x06010000 + gResourceTableEntries[object->slot].offset),
           tiles, 0x400);
+      /* FAKEMATCH(one-pass): an empty one-pass block after each tile copy;
+       * as plain C, 274 of 1632 instructions differ in tla-en (here 141). */
+      do {
+      } while (0);
       tiles += 0x400;
     }
   }

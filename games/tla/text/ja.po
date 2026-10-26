@@ -18184,7 +18184,7 @@ msgctxt "message"
 msgid "04470"
 msgstr "ひきつぐデータがへんかします"
 
-msgctxt "message"
+msgctxt "MsgPasswordLevel"
 msgid "04471"
 msgstr "レベル"
 

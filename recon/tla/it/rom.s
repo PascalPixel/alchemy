@@ -814,9 +814,6 @@ Menu_RunResourceSelectionLoop:
 	.thumb_func
 Menu_CenterResourceEntries:
 	.incbin "baserom.gba", 0x0004d5dc, 0x0000009c
-	.section .rom.0004d948, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x0004d948, 0x00000080
 	.section .rom.0004d9c8, "ax"
 	.global Func_0804d7fc
 	.type Func_0804d7fc, %function

@@ -1943,12 +1943,6 @@ Func_0811f66c:
 	.incbin "baserom.gba", 0x0011f668, 0x000007d0
 	.section .rom.0011ff02, "ax"
 	.incbin "baserom.gba", 0x0011ff02, 0x00000002
-	.section .rom.0011ff04, "ax"
-	.global BattlePresentation_WaitForAdvance
-	.type BattlePresentation_WaitForAdvance, %function
-	.thumb_func
-BattlePresentation_WaitForAdvance:
-	.incbin "baserom.gba", 0x0011ff04, 0x00000158
 	.section .rom.00120450, "ax"
 	.global BattleTarget_Execute
 	.type BattleTarget_Execute, %function

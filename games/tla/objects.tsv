@@ -3442,17 +3442,12 @@ main	rom_main_08	recon/tla/raw/0811f66c	.text	en
 main	rom_main_08	recon/tla/ja/rom	.rom.0011f668	ja
 main	rom_main_08	games/tla/src/battle/actor_reset_runtime_fields	.text
 main	rom_main_08	recon/tla/it/rom	.rom.0011ff1e	it
-main	rom_main_08	recon/tla/it/rom	.rom.0011ff20	it
 main	rom_main_08	recon/tla/fr/rom	.rom.0011ff1e	fr
-main	rom_main_08	recon/tla/fr/rom	.rom.0011ff20	fr
 main	rom_main_08	recon/tla/es/rom	.rom.0011ff1e	es
-main	rom_main_08	recon/tla/es/rom	.rom.0011ff20	es
 main	rom_main_08	recon/tla/de/rom	.rom.0011ff1e	de
-main	rom_main_08	recon/tla/de/rom	.rom.0011ff20	de
 main	rom_main_08	recon/tla/raw/0811ff06	.text	en
-main	rom_main_08	recon/tla/raw/0811ff08	.text	en
 main	rom_main_08	recon/tla/ja/rom	.rom.0011ff02	ja
-main	rom_main_08	recon/tla/ja/rom	.rom.0011ff04	ja
+main	rom_main_08	games/tla/src/battle/wait_advance	.text
 main	rom_main_08	games/tla/src/battle/f120060	.text
 main	rom_main_08	games/tla/src/battle/f120158	.text
 main	rom_main_08	games/tla/src/battle/event_queue_set_flag_bit0	.text

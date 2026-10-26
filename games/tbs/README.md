@@ -1,30 +1,9 @@
 # The Broken Seal
 
-[The Broken Seal](glossary.md#the-two-games) is the first game in the series,
-released as simply "Golden Sun" outside of Japan.
-
-Everything the [party](glossary.md#the-party) walks around in is a
-[map](glossary.md#map): a room, a town, a dungeon floor or the world map. The
-game is always in exactly one map. Walking through a door ends that map and
-starts the next. The game's [main loop](#the-main-loop) does that: it runs
-one map, then the next, for as long as the game is on.
-
-A map is made of two things. Its [layout](glossary.md#layout) is the picture
-and the ground: what is drawn, and where the party can walk. Its
-[scripts](glossary.md#script) are code: who stands where, and what happens when
-the party talks to someone or steps somewhere. A map's scripts are loaded
-only while the party is in it. On the cartridge they are packed in
-[overlays](#maps-and-overlays), each holding the scripts of one map or of a
-few neighbouring maps: 201 maps share 96 overlays.
-
-The rest of the game's code is always loaded: the engine that moves and draws
-everyone, the windows and menus, battles, the Lucky Dice and Lucky Wheels
-minigames, and saving. A battle or a minigame takes a turn of the main loop as
-if it were a map, but needs no overlay, because its code is always there. A
-map knows how far the story has gone from the
-[game flags](glossary.md#game-flag), a long list of yes-or-no facts saved with
-the game. The always-loaded code is cut into [banks](glossary.md#bank)
-([How the code is organised](#how-the-code-is-organised)).
+"The Broken Seal" is the subtitle of the Japanese release of the game known
+everywhere else simply as Golden Sun. To keep [the two
+games](glossary.md#the-two-games) apart, these pages call the first one The
+Broken Seal, or TBS for short.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE"}, "flowchart": {"curve": "basis", "padding": 14}}}%%
@@ -54,19 +33,23 @@ flowchart LR
   style back width:1px,height:1px
 ```
 
-That main loop is unlike most games'. In most games, the Pokémon games among
-them, the main loop goes round once a [frame](glossary.md#frame), a sixtieth
-of a second, and calls each part of the game in turn, so anything that takes
-time is cut into steps that remember where they got to. This game's main loop
-goes round once per map, battle or minigame, and one turn can last minutes.
-Frames are counted inside: a cutscene, a menu or a map's script is an ordinary
-function that runs from start to finish, and when time has to pass it asks to
-wait a number of frames. While it waits, small jobs called
-[tasks](glossary.md#task) keep everything else moving, each run once a frame
-([Engine](engine.md#waiting-and-tasks)). So a scene's code reads top to
-bottom, in the order things happen; the price is that only one piece of code
-waits at a time, and whatever moves alongside it, an animation or a flashing
-light, has to be a task of its own.
+When the Game Boy Advance is switched on, the game first sets up the machine
+(`System_Initialize`): it clears the fast memory, installs the code that
+always stays loaded and the interrupt handlers, loads the window graphics and
+starts the sound. Then it starts the [main loop](#the-main-loop), which runs
+for the rest of the game. Each time round, the main loop chooses one thing to
+run: a [map](glossary.md#map), a battle, Lucky Dice or Lucky Wheels.
+
+The first thing it chooses is the title map. It shows the Nintendo and Camelot
+logos and, when there is a save file, the title intro with its "Press Start"
+prompt, then hands over to the main menu, another map, where the player picks
+New Game or Continue. From there each door leads to the next map.
+
+A map is its [layout](glossary.md#layout), the picture and the ground, plus
+its [scripts](glossary.md#script), the code for who stands where and what
+happens. The scripts are packed in [overlays](#maps-and-overlays) and loaded
+only while the party is in the map; everything else, battles and the two
+minigames included, is always loaded.
 
 ## The main loop
 
@@ -103,6 +86,20 @@ The loop is `Game_MainLoop`; one pass through a field map is
 `Map_ResetFlagsOnEnter`, `Map_LoadOverlay`, `Map_Run` and `Map_TakeWarp`, and
 a battle's return is `Map_ReturnFromRun`. [Running a map](src/overworld/README.md)
 follows a field map from its arrival to its warp.
+
+The main loop is unlike most games'. In most games, the Pokémon games among
+them, the main loop goes round once a frame, a sixtieth
+of a second, and calls each part of the game in turn, so anything that takes
+time is cut into steps that remember where they got to. This game's main loop
+goes round once per map, battle or minigame, and one turn can last minutes.
+Frames are counted inside: a cutscene, a menu or a map's script is an ordinary
+function that runs from start to finish, and when time has to pass it asks to
+wait a number of frames. While it waits, small jobs called
+[tasks](glossary.md#task) keep everything else moving, each run once a frame
+([Engine](engine.md#waiting-and-tasks)). So a scene's code reads top to
+bottom, in the order things happen; the price is that only one piece of code
+waits at a time, and whatever moves alongside it, an animation or a flashing
+light, has to be a task of its own.
 
 ## Maps and overlays
 
@@ -182,7 +179,7 @@ recording's rows are `gSolSanctumEntrance_Warps` in
 
 ![In a small room of Sol Sanctum, Isaac searches the chest in front of him: a green Small Jewel rises out of it, he holds it over his head and a window reads "Isaac got a Small Jewel."](https://alchemy.pascalpixel.com/guides/front/chest.gif)
 
-The chest gives its Small Jewel once. Opening it sets a game flag, and the
+The chest gives its Small Jewel once. Opening it sets a [game flag](glossary.md#game-flag), and the
 chest's row in the map's event table counts only while that flag is clear;
 from then on the chest is drawn open and searching it finds it empty. A map
 keeps nothing of its own between visits: whatever the game must remember, a
@@ -267,7 +264,7 @@ The code is [world_map.c](src/map/world_map.c), and
 ## How the code is organised
 
 The main program runs straight from the cartridge and is laid out in fourteen
-banks, about 1 MB of the English cartridge, followed by the sound code, the
+[banks](glossary.md#bank), about 1 MB of the English cartridge, followed by the sound code, the
 music and the packed pictures and maps. Each bank starts at a fixed place, and
 code in one bank calls another bank only through a short list of entrances at
 that bank's start, so a bank can grow without moving the others. In the code

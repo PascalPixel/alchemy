@@ -100,9 +100,9 @@ struct SaveBlock {
   s16 special;        ///< the battle background chosen for the map or
                       ///< battle environment
   u8 unusedAfterSpecial[2]; ///< no code names it
-  /// The map header's layout (layoutIndex); the world map's is 1, which the
+  /// The map header's layout (mapIndex); the world map's is 1, which the
   /// code compares as (s32)&SceneId_MainMenu.
-  s16 layoutId;
+  s16 mapId;
   s32 x;                   ///< 16.16 fixed-point pixels
   s32 y;                   ///< 16.16 fixed-point pixels
   s32 z;                   ///< 16.16 fixed-point pixels

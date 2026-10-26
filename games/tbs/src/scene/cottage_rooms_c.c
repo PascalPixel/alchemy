@@ -32,7 +32,7 @@
 /// and draws one diner, LOCALID_BILIBIN_DINER, at a fixed sprite priority. He
 /// stands at the north edge of the restaurant's table, on cell (7, 49), which
 /// alone of the diners' cells gives an object standing on it priority 3
-/// (layout_032's map.txt). Taken from that cell, his priority would
+/// (map_032's map.txt). Taken from that cell, his priority would
 /// put him behind the middle layer (`BG2`, priority 2 in this map); the fixed
 /// priority 2 draws him in front of it, as the other diners are.
 

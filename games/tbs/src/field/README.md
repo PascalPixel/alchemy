@@ -14,7 +14,7 @@ is named after the [bank](../../glossary.md#bank) it fills. Each map's own
 code, its [scripts](../../glossary.md#script) included, is an
 [overlay](../../glossary.md#overlay): [Maps](../scene/README.md). What a town or
 dungeon shows and stands on is its [layout](../../glossary.md#layout):
-[Layouts](../layout/README.md). [World](../../world.md) gives the whole layer
+[Layouts](../map/README.md). [World](../../world.md) gives the whole layer
 in brief.
 
 ## The walk and what interrupts it
@@ -269,9 +269,9 @@ the pictures of a few tiles (a waterfall, a flickering torch), a blend script
 that changes how the layers mix, and palette cycles, which nothing in the
 game starts.
 
-`MapGrid_LoadLayout` loads a layout from its row of `gLayouts`,
+`MapGrid_LoadMap` loads a layout from its row of `gMaps`,
 `MapGrid_UpdateLayerScroll` scrolls the layers, and the timed effects are in
-`field/tile_animation.c`. [Layouts](../layout/README.md#tileset-animation-and-blend-scripts)
+`field/tile_animation.c`. [Layouts](../map/README.md#tileset-animation-and-blend-scripts)
 gives the scripts' format.
 
 | Name | Value | Background | Meaning |
@@ -308,7 +308,7 @@ distance, `Transform_UpdateVertices` turns them into the console's values
 each frame, and `WorldMap_ApplyAffineFrame` feeds them line by line;
 `WorldMap_StartStillView` makes the still picture and
 `WorldMap_LoadAreaGraphics` brings the moving view back. The world map's data
-is in [Layouts](../layout/README.md#the-world-maps-data).
+is in [Layouts](../map/README.md#the-world-maps-data).
 
 ## Design
 
@@ -385,7 +385,7 @@ differences from this one.
   [`objcmd.h`](../../include/objcmd.h) and their operands. An **animation
   script** is a list of byte pairs that a sprite anim plays.
 - A map **layer** is one of a town's three backgrounds
-  ([Layouts](../layout/README.md#one-grid-three-layers)).
+  ([Layouts](../map/README.md#one-grid-three-layers)).
 - Positions are 16.16 fixed-point pixels: x across the map, y up, z down the
   map. Angles are 16-bit fractions of a turn (`FACING_EAST` is 0,
   `FACING_SOUTH` a quarter turn).

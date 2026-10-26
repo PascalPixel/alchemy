@@ -4,7 +4,7 @@ Everywhere the [party](glossary.md#the-party) walks, a town, a dungeon or the
 world map, is run by the same four parts. The loop in `src/overworld` lets the
 party walk and deals with whatever interrupts it. The engine in `src/field`
 moves everything that moves and draws the [map](glossary.md#map). The
-[layout](glossary.md#layout), in `src/layout`, says what the ground is like.
+[layout](glossary.md#layout), in `src/map`, says what the ground is like.
 And each map's own code, its [overlay](glossary.md#overlay) in `src/scene`, says
 who is there and what happens; only that part knows anything about one map.
 The two engine folders take the names of the [banks](glossary.md#bank) they
@@ -136,9 +136,9 @@ another. A few mean the same on every map: the jars, barrels and wooden boxes
 anyone can search, as in the recording, ledges, the desert's sand and walls.
 
 A loaded cell is `struct MapGridCell`, and the behaviors are
-`enum MetatileBehavior`. [Layouts](src/layout/README.md#cells) gives every
+`enum MetatileBehavior`. [Layouts](src/map/README.md#cells) gives every
 behavior and [how the build makes each
-layout](src/layout/README.md#how-the-build-makes-a-layout).
+layout](src/map/README.md#how-the-build-makes-a-layout).
 
 ## Map layers
 
@@ -165,7 +165,7 @@ priority of the cell under it.
 | `MAPGRID_LAYER_OVERHEAD` | 2 | `BG1` | roofs and tree tops, over the characters |
 
 [Field](src/field/README.md#towns-and-dungeons-on-screen) shows how the layers
-are put on screen, and [Layouts](src/layout/README.md#one-grid-three-layers)
+are put on screen, and [Layouts](src/map/README.md#one-grid-three-layers)
 how they share one grid.
 
 ## The world map
@@ -183,7 +183,7 @@ still picture, so that the windows can use the layer the tilt was using.
 `WorldMap_BuildScanlineTable` works out each line's scale and
 `WorldMap_StartStillView` makes the still picture.
 [Field](src/field/README.md#the-world-map-in-perspective) works through the
-lines, [Layouts](src/layout/README.md#the-world-maps-data) the world map's
+lines, [Layouts](src/map/README.md#the-world-maps-data) the world map's
 data, and [Running a map](src/overworld/README.md#the-world-map-screen) the
 picture of the whole world R brings up. The world map's own places and events
 are on [the front page](README.md#the-world-map).

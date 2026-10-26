@@ -67,7 +67,7 @@ hands out in blocks of 64 bytes. The credits divide the background memory in
 two halves instead ([Graphics](../graphics/README.md)).
 
 The window tiles are placed by `Window_LoadGraphics`, the layout's by
-`MapGrid_LoadLayout` ([Layouts](../layout/README.md)), and the sprite tiles
+`MapGrid_LoadMap` ([Layouts](../map/README.md)), and the sprite tiles
 by the cache in `runtime/vram_cache.c`.
 
 ## Why the program is cut into banks

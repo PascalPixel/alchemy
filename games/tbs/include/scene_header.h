@@ -27,8 +27,8 @@ struct SceneHeader {
   /// MAP_TYPE_TOWN for towns and their interiors (53 rows: Vale,
   /// Bilibin, Kalay, Tolbi and others), MAP_TYPE_FIELD for the rest.
   s8 mapType;
-  u16 layoutIndex; ///< the layout loaded for it, copied to gSaveBlock.layoutId
-  u16 reserved;    ///< 0 in every row; not read
+  u16 mapIndex; ///< the layout loaded for it, copied to gSaveBlock.mapId
+  u16 reserved; ///< 0 in every row; not read
 };
 
 STATIC_ASSERT(sizeof(struct SceneHeader) == 8);

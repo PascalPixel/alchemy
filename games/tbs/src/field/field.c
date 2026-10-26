@@ -19,7 +19,7 @@
 ///                   Object_SetMoveTarget
 ///   Object scripts  script_commands.c (the SC_ commands of objcmd.h);
 ///                   player_control.c: Object_UpdateLeaderControl
-///   Maps            map_layers.c: MapGrid_LoadLayout,
+///   Maps            map_layers.c: MapGrid_LoadMap,
 ///                   MapGrid_UpdateLayerScroll; world_map.c:
 ///                   WorldMap_InitializePerspective, WorldMap_UpdateView
 ///   Ground          terrain.c: MapGrid_GetTerrainHeight,

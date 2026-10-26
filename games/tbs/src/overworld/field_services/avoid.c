@@ -43,7 +43,7 @@ void FieldEffect_UpdatePairedArcSpawner(
   elapsedFrames = caster->arcFrames++;
 
   // SceneId_MainMenu is the world map's map (SceneManager_Run).
-  if (gSaveBlock.layoutId == (s32)&SceneId_MainMenu) {
+  if (gSaveBlock.mapId == (s32)&SceneId_MainMenu) {
     if (elapsedFrames % 7 == 0)
       FieldEffect_SpawnDescendingArcParticles((struct ObjectEvent *)caster);
   } else if (elapsedFrames % 5 == 0) {

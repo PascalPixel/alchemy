@@ -252,7 +252,7 @@ of [scratch flags](#game-flag)
 
 What a town or dungeon map shows and stands on: three background layers and a
 grid of cells under them, 128 by 128; several maps can share one
-([Layouts](src/layout/README.md)).
+([Layouts](src/map/README.md)).
 
 ### Sheet of rooms
 
@@ -265,7 +265,7 @@ Stucco rooms ([Maps](src/scene/README.md#design)).
 
 One 16 by 16 pixel square of a layout: which metatile is drawn there, the
 shape and height of the ground, and its metatile behavior
-([Layouts](src/layout/README.md#cells)).
+([Layouts](src/map/README.md#cells)).
 
 ### Metatile
 

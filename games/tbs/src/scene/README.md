@@ -190,7 +190,7 @@ pressing A facing it runs the first such bg event.
 
 `Scene_RunCoordEventOrWarp` runs the stepping, and the numbers a
 map owns are `MB_EVENT_FIRST` to `MB_EVENT_LAST`; the numbers above them mean
-the same on every map ([Layouts](../layout/README.md#cells)).
+the same on every map ([Layouts](../map/README.md#cells)).
 
 ## How a map event is chosen
 
@@ -340,7 +340,7 @@ of an object event, update hooks returning `s32`) are in
 describes the entry and import tables and how the overlay is loaded. The map
 table and how maps depend on the story are on [the front
 page](../../README.md#the-map-table-and-map-sections). The layouts the maps are
-built on are in [Layouts](../layout/README.md), and the debug rooms, built the
+built on are in [Layouts](../map/README.md), and the debug rooms, built the
 same way, in [Debug rooms](../debug/README.md).
 
 To find the code for a map, find its row in `field/scene_headers.s`: the

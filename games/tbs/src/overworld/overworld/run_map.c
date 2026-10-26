@@ -49,13 +49,13 @@ s32 SceneManager_Run(s32 warpDest) {
   gSaveBlock.defeatWarpDest = -1;
   Task_ResetAll();
   Djinn_ResolvePendingEvent(0);
-  if (gSaveBlock.layoutId == (s32)&SceneId_MainMenu) {
+  if (gSaveBlock.mapId == (s32)&SceneId_MainMenu) {
     WorldMap_InitializePerspectiveFar();
     gSaveBlock.perspectiveMap = 1;
     mode = OBJECT_SYSTEM_WORLD_MAP;
     Encounter_SelectMapZones(0);
   } else {
-    MapGrid_LoadLayoutFar(gSaveBlock.layoutId);
+    MapGrid_LoadMapFar(gSaveBlock.mapId);
     mode = OBJECT_SYSTEM_LAYOUT;
     Encounter_SelectMapZones(1);
   }

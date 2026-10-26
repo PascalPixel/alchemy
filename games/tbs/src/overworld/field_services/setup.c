@@ -46,9 +46,9 @@ void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   effectWork->savedShakeX = grid->shakeX;
   effectWork->savedShakeY = grid->shakeY;
   effectWork->savedShakeDecay = grid->shakeDecay;
-  if (gSaveBlock.layoutId == (s32)&SceneId_MercuryLighthouseEntrance)
+  if (gSaveBlock.mapId == (s32)&SceneId_MercuryLighthouseEntrance)
     effectWork->lit = 1;
-  if (gSaveBlock.layoutId == (s32)&SceneId_MercuryLighthouseMiddle)
+  if (gSaveBlock.mapId == (s32)&SceneId_MercuryLighthouseMiddle)
     effectWork->lit = 1;
   FieldEffect_SetupObjectPair(gSaveBlock.leaderLocalId, -1);
   // Every effect but Reveal's own pauses Reveal's countdown (running is 0

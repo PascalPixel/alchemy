@@ -116,7 +116,7 @@ $(foreach form,$(PICTURE_FORMS),$(foreach codec,$(CODECS),$(eval %.$(form).$(cod
 $(foreach form,$(TABLE_FORMS),$(eval %.$(form): %.tsv $$(AGSGFX) ; $$(AGSGFX) $$< $$@))
 $(foreach form,$(TABLE_FORMS),$(foreach codec,$(CODECS),$(eval %.$(form).$(codec): %.tsv $(PATCH) $$(AGSGFX) ; $$(AGSGFX) $$< $$@)))
 
-# A layout's grid: map.txt, one cell per square, builds the three planes the
+# A map's grid: map.txt, one cell per square, builds the three planes the
 # game reads.
 %.grid.lz: %.txt $$(wildcard $$(basename $$(basename $$@))_patch.tsv) $(AGSGFX) ; $(AGSGFX) $< $@
 

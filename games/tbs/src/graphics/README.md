@@ -10,7 +10,7 @@ handwritten decoders that unpack tiles and animation
 of the German and Italian message text that sit beside them on the cartridge.
 [Battle animations](../battle_anim/README.md) load their sheets from
 `battle_anims/`, and each [layout](../../glossary.md#layout) in
-[Layouts](../layout/README.md) places its tiles from `tileset/`.
+[Layouts](../map/README.md) places its tiles from `tileset/`.
 
 ## How a picture is built and placed
 

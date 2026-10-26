@@ -297,10 +297,10 @@ extern char ResourceId_Icons;
 /// The command icons, a halfword offset each and then 1 KB of 256-colour
 /// pixels compressed; an icon's number is also its name's in MsgCommandName.
 extern char ResourceId_CommandIcons;
-/// The first layout row, layout 1's header (layout/layout_001), whose number
-/// it is named for: gLayouts counts its rows from here, and
-/// MapGrid_LoadLayout adds them to it.
-extern char ResourceId_Layout001;
+/// The first layout row, layout 1's header (map/map_001), whose number
+/// it is named for: gMaps counts its rows from here, and
+/// MapGrid_LoadMap adds them to it.
+extern char ResourceId_Map001;
 
 // Battle animation pictures, continued.
 

@@ -147,7 +147,7 @@ struct WorldPosition {
 };
 
 /// The layout's metatiles, 32 KB of EWRAM at 0x02020000: each metatile 8 bytes,
-/// its four tile entries. MapGrid_LoadLayout decodes them in.
+/// its four tile entries. MapGrid_LoadMap decodes them in.
 extern u32 gMetatiles[];
 
 /// The tileset animations' tiles, 16 KB of EWRAM at 0x02028000. A tileset
@@ -169,11 +169,11 @@ extern u8 gBgTileBuffer[];
 /// map keeps its struct WorldMapFrameWork in the slot.
 extern u8 *gWorldMapFrameWork;
 
-/// A row of gLayouts: a layout's resources, counted from
-/// ResourceId_Layout001: its header, palette, three tilesets and the tileset
+/// A row of gMaps: a layout's resources, counted from
+/// ResourceId_Map001: its header, palette, three tilesets and the tileset
 /// animations' tiles.
-struct LayoutResources {
-  /// Offsets from ResourceId_Layout001: the header, the palette, the
+struct MapResources {
+  /// Offsets from ResourceId_Map001: the header, the palette, the
   /// tilesets for char blocks 1, 2 and 3, and the tileset animations' tiles
   /// (gMapGridAnimTiles).
   u16 resources[6];

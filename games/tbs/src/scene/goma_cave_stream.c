@@ -20,7 +20,7 @@
 ///   a passage walled off from the rest of the room, its own camera box with
 ///   a chest at its north end (its render,
 ///   places/goma-cave-stream/map-5.png). Its only way out is the metatile
-///   behavior 1 cell at its south tip, cell (38, 55) in layout_023's
+///   behavior 1 cell at its south tip, cell (38, 55) in map_023's
 ///   map.txt, two cells south of the arrival, which leads back to
 ///   Vale (GOMA_CAVE_STREAM_TO_VALE_PLAZA).
 /// - SceneId_GomaCaveBridge, the way out, where a wooden bridge crosses the

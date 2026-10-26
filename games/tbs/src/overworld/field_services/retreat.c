@@ -188,7 +188,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(
 
   limit = particle->groundHeight + 0xA0000;
   source = particle->linkedObject;
-  if (gSaveBlock.layoutId == (s32)&SceneId_MainMenu)
+  if (gSaveBlock.mapId == (s32)&SceneId_MainMenu)
     limit = particle->groundHeight + 0x40000;
 
   y = particle->y.fixed;
@@ -219,7 +219,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(
 
   limit = particle->groundHeight + 0xA0000;
   source = particle->linkedObject;
-  if (gSaveBlock.layoutId == (s32)&SceneId_MainMenu)
+  if (gSaveBlock.mapId == (s32)&SceneId_MainMenu)
     limit = particle->groundHeight + 0x40000;
 
   y = particle->y.fixed;

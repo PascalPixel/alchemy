@@ -23,7 +23,7 @@ one map on that engine, from its set-up to the [warp](../glossary.md#warp) the p
 by, with random encounters, field [Psynergy](../glossary.md#psynergy-and-pp) and the commands map scripts
 use; `SequenceManager_Run`, the loop that runs one map after another, is there too.
 [Maps](scene/README.md) holds the maps, one [overlay](../glossary.md#overlay) each: [object event](../glossary.md#object-event)
-templates, [map events](../glossary.md#map-event), [scripts](../glossary.md#script) and events. [Layouts](layout/README.md)
+templates, [map events](../glossary.md#map-event), [scripts](../glossary.md#script) and events. [Layouts](map/README.md)
 holds the [layouts](../glossary.md#layout) as data.
 
 [Battles](battle/README.md) runs a fight: turn order, the enemies' choices,

@@ -301,7 +301,7 @@ void SequenceManager_Run(s32 mode) {
     } else {
       Scene_PlayMusic();
     }
-    gSaveBlock.layoutId = record->layoutIndex;
+    gSaveBlock.mapId = record->mapIndex;
     Scene_LoadOverlay(0);
     Scene_TakeWarp(SceneManager_Run(warpDest));
   }

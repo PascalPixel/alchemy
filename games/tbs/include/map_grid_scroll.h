@@ -23,7 +23,7 @@ struct MapGridLayerScroll {
 
 /// The field map's work: the followed position, screen shake, tileset
 /// animations, blend script, view and its bounds, and three scrolling layers.
-/// HEAP_SLOT_MAP_GRID: MapGrid_LoadLayout takes and clears it as a
+/// HEAP_SLOT_MAP_GRID: MapGrid_LoadMap takes and clears it as a
 /// field map with a layout starts, and the next map change frees it.
 struct MapGridScrollWork {
   /// The followed point, read as x, height and z in 16.16 fixed-point pixels;

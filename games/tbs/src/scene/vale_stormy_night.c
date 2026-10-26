@@ -497,7 +497,7 @@ static void EventScript_LeaveToCottageRoomsAWest(void) {
 }
 
 /// Unused: its row answers metatile behavior 11, which no cell of the stormy
-/// night's layout (layout/layout_000) carries. It would have opened Isaac's
+/// night's layout (map/map_000) carries. It would have opened Isaac's
 /// door, as EventScript_LeaveToCottageRoomsBWest does for behavior 12,
 /// walked the leader to the same spot and taken
 /// VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST_SECOND_DOOR into the house

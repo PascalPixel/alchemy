@@ -474,7 +474,7 @@ damage, and [Battle](../../battle.md#animations) stages the animation. The
 animation only draws, and tells the battle when to show the damage. While it
 draws it borrows from the rest of the game: the heap from
 [Runtime](../runtime/README.md), the map grid's buffer
-([Layouts](../layout/README.md)), and the battle's own background, camera and
+([Layouts](../map/README.md)), and the battle's own background, camera and
 fighters, which it shakes, tints and moves through the battle's helpers. The
 blitter builder also serves the battle's star field and the Lucky Wheels.
 

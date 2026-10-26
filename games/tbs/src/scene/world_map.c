@@ -1,5 +1,5 @@
 /// @file
-/// The World Map (SceneId_WorldMap), the one perspective map (layout/world)
+/// The World Map (SceneId_WorldMap), the one perspective map (map/world)
 /// that joins the map sections, and the only map of this overlay. Its code does
 /// three kinds of work.
 ///

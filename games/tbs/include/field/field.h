@@ -93,7 +93,7 @@ extern s32 gDjinnFigures_SpriteIds[];
 extern s32 gShipRooms_ShakeTimer;
 /// The bend's water level in gMapLocalState's second halfword: 1 high (the logs
 /// float), 0 low; the floodgate switch flips it.
-extern s16 *gKolimaForestFloodgateLayout;
+extern s16 *gKolimaForestFloodgateMap;
 struct FloodgateLog;
 /// The bend's logs in gMapLocalState from byte 4, so they survive a battle.
 extern struct FloodgateLog *gKolimaForestFloodgateRecords;

@@ -84,7 +84,7 @@ void SpriteDissolve_RunManyFar(u8 **table, s32 cnt);
 /// Loads layout `index` (metatiles, metatile behaviors, cells, tileset
 /// animations, blend script, treasure spots and graphics) and starts its layers
 /// scrolling. Returns 2.
-s32 MapGrid_LoadLayoutFar(s32 index);
+s32 MapGrid_LoadMapFar(s32 index);
 // XXX: returns no value; the world map ignores it.
 /// Sets up the world map's perspective view: the affine ground plane, its
 /// camera and projection, and its per-frame and HBlank updates.

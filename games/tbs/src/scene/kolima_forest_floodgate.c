@@ -11,7 +11,7 @@
 /// (FLAG_KOLIMA_CURSE_LIFTED).
 ///
 /// The water level, the short log's place and each log's cells are kept in
-/// gMapLocalState (gKolimaForestFloodgateLayout, gKolimaForestFloodgateReturned
+/// gMapLocalState (gKolimaForestFloodgateMap, gKolimaForestFloodgateReturned
 /// and gKolimaForestFloodgateRecords), so they survive a battle. Under each
 /// log KolimaForestFloodgate_StampLogCells writes MB_JUMP_FORWARD while
 /// the water is high, so the leader jumps across the floating logs, and
@@ -145,14 +145,14 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
   struct ObjectEvent *piece;
   struct FloodgateLog *record = gKolimaForestFloodgateRecords;
 
-  if (*gKolimaForestFloodgateLayout != 0) {
+  if (*gKolimaForestFloodgateMap != 0) {
     MapGrid_CopyCells(65, 53, 2, 1, 79, 29);
     MapGrid_CopyCells(65, 40, 2, 4, 15, 28);
   } else {
     MapGrid_CopyCells(65, 50, 2, 5, 79, 25);
   }
 
-  if (*gKolimaForestFloodgateLayout != 0) {
+  if (*gKolimaForestFloodgateMap != 0) {
     MapGrid_CopyCells(0, 32, 32, 32, 32, 0);
     MapGrid_CopyCells(32, 32, 32, 32, 64, 0);
     MapGrid_CopyCellAttributes(0, 32, 32, 32, 0, 0);
@@ -166,7 +166,7 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
   while (record->sprite != -1) {
     piece = record->objectEvent;
 
-    if (*gKolimaForestFloodgateLayout == 1) {
+    if (*gKolimaForestFloodgateMap == 1) {
       Object_SelectAnimation(piece, 4);
       piece->priorityFlags =
           OBJ_EVENT_PRIORITY_AUTOMATIC | OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -189,7 +189,7 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
 
   MapGrid_CopyCells(70, 42, 1, 1, 10, 50);
 
-  if (*gKolimaForestFloodgateLayout == 1) {
+  if (*gKolimaForestFloodgateMap == 1) {
     MapGrid_CopyCellAttributes(0, 32, 32, 32, 0, 0);
     KolimaForestFloodgate_StampLogCells(gKolimaForestFloodgateRecords,
                                         MB_JUMP_FORWARD);
@@ -254,7 +254,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   FieldCamera_WaitForArrival();
   FieldMessage_Show(MsgFieldFlippedSwitch, 1);
   Sound_PlaySong(SE_CRUNCH);
-  if (*gKolimaForestFloodgateLayout == 0) {
+  if (*gKolimaForestFloodgateMap == 0) {
     ObjectEvent_SetPosition(LOCALID_FLOODGATE_SPRAY, PIXELS(256), PIXELS(462));
     MapGrid_CopyCells(77, 34, 1, 2, 83, 25);
     WaitFrames(3);
@@ -301,8 +301,8 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
     MapGrid_CopyCells(65, 50, 2, 5, 79, 25);
     WaitFrames(30);
   }
-  if (*gKolimaForestFloodgateLayout == 0) {
-    MapGrid_DrawCellPanel(9, 19, 16, 5, *gKolimaForestFloodgateLayout, 9, 30);
+  if (*gKolimaForestFloodgateMap == 0) {
+    MapGrid_DrawCellPanel(9, 19, 16, 5, *gKolimaForestFloodgateMap, 9, 30);
     MapGrid_DrawCellPanel(9, 51, 16, 5, 1, 9, 30);
     MapGrid_DrawCellPanel(41, 51, 16, 5, 2, 9, 30);
   } else {
@@ -326,8 +326,8 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
     gKolimaForestFloodgate_ShakeChance += 1;
   } while (nextShakeChance <= 100);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  if (*gKolimaForestFloodgateLayout == 0) {
-    MapGrid_DrawCellPanel(9, 19, 16, 5, *gKolimaForestFloodgateLayout, 9, 19);
+  if (*gKolimaForestFloodgateMap == 0) {
+    MapGrid_DrawCellPanel(9, 19, 16, 5, *gKolimaForestFloodgateMap, 9, 19);
     MapGrid_DrawCellPanel(9, 51, 16, 5, 1, 9, 19);
     MapGrid_DrawCellPanel(41, 51, 16, 5, 2, 9, 19);
   } else {
@@ -339,7 +339,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   Irq_SetHandler(IRQ_HBLANK, 0, 0);
   WaitFrames(1);
   Task_Remove(KolimaForestFloodgate_CaptureShakeScroll);
-  *(u16 *)gKolimaForestFloodgateLayout ^= 1;
+  *(u16 *)gKolimaForestFloodgateMap ^= 1;
   KolimaForestFloodgate_DrawWaterLevel();
   MapGrid_CenterOnFollowedPoint();
   FieldScript_End();
@@ -407,7 +407,7 @@ s32 KolimaForestFloodgate_Initialize(void) {
   struct ObjectEvent *objectEvent;
 
   gKolimaForestFloodgateReturned = (u16 *)gMapLocalState;
-  gKolimaForestFloodgateLayout = (s16 *)gMapLocalState + 1;
+  gKolimaForestFloodgateMap = (s16 *)gMapLocalState + 1;
   // The return flag and water level occupy the first two halfwords.
   gKolimaForestFloodgateRecords =
       (struct FloodgateLog *)(gMapLocalState + 2 * sizeof(u16));
@@ -419,7 +419,7 @@ s32 KolimaForestFloodgate_Initialize(void) {
             gKolimaForestFloodgateRecords,
             (DMA_ENABLE | DMA_32BIT) << 16 | 0x12, REG_DMA3);
     *gKolimaForestFloodgateReturned = 0;
-    *gKolimaForestFloodgateLayout = 1;
+    *gKolimaForestFloodgateMap = 1;
   }
   KolimaForestFloodgate_CreateLogs(gKolimaForestFloodgateRecords);
   KolimaForestFloodgate_StampLogCells(gKolimaForestFloodgate_DefaultRecords,

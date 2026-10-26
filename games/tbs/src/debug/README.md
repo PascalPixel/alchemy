@@ -165,7 +165,7 @@ empty function nothing calls, `MenuTest_NoOp`, marked
 [`UNUSED`](../../glossary.md#unused).
 
 The eight Djinn room maps use layouts 172 to 179, which no other map uses. The
-eight layouts are one placeholder copied eight times: each `layout.s` places
+eight layouts are one placeholder copied eight times: each `map.s` places
 the same data, borrowed from layouts 0 and 1 and tileset 68, and differs only
 in its labels, so the rooms are reserved slots never given their own content,
 which is why one overlay serves them all.

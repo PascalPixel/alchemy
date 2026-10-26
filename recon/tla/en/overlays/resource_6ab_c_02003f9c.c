@@ -1,9 +1,11 @@
-// Draft, differ 47 of 76: overlay 6ab's copy of the spot check drafted in
-// resource_698_c_0200180c.c, with this overlay's symbols; that header lists
-// what was tried. Also tried: the loop testing state->count itself, and a u16
-// copy compared as s16 (76 each: CSE merges the copy with the first ldrsh and
-// keeps it in ip, where the listing reloads it with ldrh and sign-extends it
-// every pass).
+// Draft, differ 34 of 76: overlay 6ab's copy of the spot check drafted in
+// resource_698_c_0200180c.c, with this overlay's symbols, its loop as a goto
+// loop. The listing tests the count once with ldrsh before the loop and loads
+// it again unextended (ldrh) for the loop's own test, sign-extending it on
+// every pass: here the second read follows an empty asm with a memory clobber
+// (as plain reads CSE shares one ldrsh: 47). Left: the native keeps the state
+// in r6 and the index in r7, here the other way round (an asm on the state,
+// other declaration orders and permute for 4 minutes change nothing).
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
@@ -41,24 +43,35 @@ s32 Func_02003f9c(void) {
   struct SpotState *state = &gData_02004cf4;
   struct Spot *spot = state->spots;
   s32 i;
-  s16 count = state->count;
+  s32 first;
+  s32 count;
 
-  for (i = 0; i < count; i++, spot++) {
+  first = state->count;
+  __asm__("" : : : "memory");
+  count = (u16)state->count;
+  i = 0;
+  if (i < first) {
+  next:
     if (spot->x == x && spot->z == z) {
       if (!GameFlag_Test(spot->flag)) {
         Func_02003bfc(state, spot);
         GameFlag_SetBit(spot->flag);
         state->current = i;
-        break;
+        goto done;
       }
       if (i == state->current)
-        break;
+        goto done;
       state->current = i;
       Func_02003c6c(state, spot);
       GameFlag_SetByte(state->flagByte, x);
       GameFlag_SetByte(state->flagByte + 8, z);
       return 1;
     }
+    i++;
+    spot++;
+    if (i < (s16)count)
+      goto next;
   }
+done:
   return 0;
 }

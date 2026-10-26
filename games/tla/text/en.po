@@ -13869,11 +13869,11 @@ msgctxt "message"
 msgid "03434"
 msgstr "Winnings: "
 
-msgctxt "message"
+msgctxt "MsgSlotsChangeBet"
 msgid "03435"
 msgstr "Press up or down to change value"
 
-msgctxt "message"
+msgctxt "MsgSlotsControls"
 msgid "03436"
 msgstr "{button_icon:1}:Start machine      {button_icon:2}:Quit"
 

@@ -15782,11 +15782,11 @@ msgctxt "message"
 msgid "03895"
 msgstr "Gewinn:"
 
-msgctxt "message"
+msgctxt "MsgSlotsChangeBet"
 msgid "03896"
 msgstr "Ändere Wert mit Oben/Unten."
 
-msgctxt "message"
+msgctxt "MsgSlotsControls"
 msgid "03897"
 msgstr "{button_icon:1}:Starten     {button_icon:2}:Stopp"
 

@@ -22,7 +22,7 @@ Resource_DirectoryTable:
 	resource , Resource_FarCall009
 	resource FarCall00A, Resource_FarCall00A
 	resource FarCall00B, Resource_FarCall00B
-	resource , Resource_FarCall00C
+	resource FarCall00C, Resource_FarCall00C
 	resource , Resource_FarCall00D
 	resource , Resource_FarCall00E
 	resource , Resource_FarCall00F
@@ -139,9 +139,9 @@ Resource_DirectoryTable:
 	resource , Ending_ReunionPicture
 	resource , Ending_SunsetPlainPicture
 	resource , Ending_TheEndPicture
-	resource , Slots_FramePicture
-	resource , Slots_Icons
-	resource , Slots_JackpotBanner
+	resource SlotsFramePicture, Slots_FramePicture
+	resource SlotsIcons, Slots_Icons
+	resource SlotsJackpotBanner, Slots_JackpotBanner
 	resource , LuckyDice_Board
 	resource , Slots_DomePicture
 	resource , LuckyDice_Sprites
@@ -321,7 +321,7 @@ Resource_DirectoryTable:
 	resource Data134, Resource_Data134
 	resource , Resource_Data135
 	resource , BattleEffect_ParticleSpritesC
-	resource , BattleEffect_ParticleSpritesD
+	resource ParticleSpritesD, BattleEffect_ParticleSpritesD
 	resource , BattleEffect_GreenPalette
 	resource , BattleEffect_CrossedDaggersSheet
 	resource RuneSheet, BattleEffect_RuneSheet
@@ -348,11 +348,11 @@ Resource_DirectoryTable:
 	resource , BattleEffect_StarDotSheet
 	resource , BattleEffect_MarsDjinnSheet
 	resource , BattleEffect_MarsDjinnSmallSheet
-	resource , BattleEffect_JupiterDjinnSheet
+	resource JupiterDjinnSheet, BattleEffect_JupiterDjinnSheet
 	resource , BattleEffect_JupiterDjinnSmallSheet
-	resource , BattleEffect_MercuryDjinnSheet
+	resource MercuryDjinnSheet, BattleEffect_MercuryDjinnSheet
 	resource , BattleEffect_MercuryDjinnSmallSheet
-	resource , BattleEffect_VenusDjinnSheet
+	resource VenusDjinnSheet, BattleEffect_VenusDjinnSheet
 	resource , BattleEffect_VenusDjinnSmallSheet
 	resource , BattleEffect_FireBlobSheet
 	resource , BattleEffect_FireStreakSheet
@@ -365,7 +365,7 @@ Resource_DirectoryTable:
 	resource , BattleEffect_PaletteRampImage
 	resource , BattleEffect_SmokeSheet
 	resource , BattleEffect_BluePalette
-	resource , BattleEffect_LimePalette
+	resource LimePalette, BattleEffect_LimePalette
 	resource , BattleEffect_PinkPalette
 	resource , BattleEffect_VioletPaletteC
 	resource , BattleEffect_CyanPalette

@@ -13865,11 +13865,11 @@ msgctxt "message"
 msgid "03436"
 msgstr "しはらい"
 
-msgctxt "message"
+msgctxt "MsgSlotsChangeBet"
 msgid "03437"
 msgstr "じょうげで まいすうきりかえ"
 
-msgctxt "message"
+msgctxt "MsgSlotsControls"
 msgid "03438"
 msgstr "A スロットスタート Bやめる"
 

@@ -1,5 +1,6 @@
-// Draft of overlay 6a5's Func_0200539c, the twin of overlay 6aa's
-// Func_020042f8 (resource_6aa_c_020042f8.c), whose header says what differs.
+// Draft of overlay 6a5's Func_0200539c, the twin of overlay 6aa's Func_020042f8
+// (resource_6aa_c_020042f8.c), whose header says what differs: differ 16 of 169
+// (was 63).
 #include "types.h"
 #include "ram_buffer.h"
 #include "party_state.h"

@@ -1,4 +1,11 @@
-// Draft of overlay 6aa's Func_020042f8.
+// Draft, differ 16 of 169 (was 63), rewritten from the listing: the leader is
+// dropped from 0x82 pixels with the screen transition, 17 sparks
+// (Func_02003b30, update Effect_AdvanceMotion) burst around it and it lands
+// with the screen shaken. The camera and Func_02004c50 calls go through inline
+// wrappers (FAKEMATCH(wrapper) on adoption). Left: gcse's PRE hoists the
+// velocity's frame address out of the loop into r6 and the counter and options
+// address swap (r8, sl); the native rebuilds sp+16 after each Math_Cosine.
+// Tried: a goto loop and the velocity declared in the loop body (no change).
 #include "../../../../games/tla/src/scene/mars_lighthouse_entrance/room.h"
 #include "field_effect.h"
 

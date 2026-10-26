@@ -1,6 +1,7 @@
-// Draft, differ 79 of 126: overlay 6a1's copy of the function drafted in
-// resource_69c_c_02000c78.c (overlay 69c's Func_02000c78, differ 79 there), whose
-// header says what it is, what still differs and what was tried.
+// Draft, differ 73 of 126 (was 77): overlay 6a1's copy of the function drafted
+// in resource_69c_c_02000c78.c (overlay 69c's Func_02000c78), whose header says
+// what it is and what was tried. Forwarding one call through an inline wrapper
+// (a FAKEMATCH(wrapper) on adoption) gained 4.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"

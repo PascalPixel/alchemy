@@ -1,4 +1,14 @@
-// Draft of overlay 6aa's Func_02000414.
+// Draft, differ 31 of 113 (was 85), rewritten from the listing as its sibling
+// Func_02002b4c in mars_lighthouse_entrance/s2b4c.c: six sparks (object kind
+// 0x145) around the object, each thrown upward at a random angle and speed. The
+// create call goes through room.h's inline wrapper, which evaluates the random
+// offsets before the loads as the native does. Left: register choice for the
+// angle, the radius and Iwram_MulQ16's address: the native loads the address
+// before shifting the radius (radius r6, angle r8, address sl), where this
+// shifts first (address r6, radius r8, angle sl) and so needs one more
+// instruction. Tried: the radius scaled at once (57), u16 angle (53), unsigned
+// locals, the locals at function scope, the radius scaled in place (all 31),
+// permute 5 minutes.
 #include "../../../../games/tla/src/scene/mars_lighthouse_entrance/room.h"
 #include "iwram_call.h"
 

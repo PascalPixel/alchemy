@@ -1,4 +1,6 @@
-// Draft of overlay 6ab's Func_02000080.
+// Draft of overlay 6ab's Func_02000080, the twin of overlay 6aa's Func_02000414
+// (resource_6aa_c_02000414.c), whose header says what differs: differ 31 of 113
+// (was 85).
 #include "../../../../games/tla/src/scene/mars_lighthouse_star_room/mars_lighthouse_star_room.h"
 #include "iwram_call.h"
 

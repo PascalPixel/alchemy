@@ -137,39 +137,15 @@ Party_SetFields1f2And1f4:
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattlePalette_StopBlendAndReleaseBufferFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattlePalette_StopBlendAndReleaseBufferFar
-	.else
 	overlay_veneer Event_StartScreenTransitionFar
-	.endif
-	.endif
 	.global Event_WaitTransitionFrames
 	.thumb_func
 Event_WaitTransitionFrames:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_DelayEffectFramesFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_DelayEffectFramesFar
-	.else
 	overlay_veneer Event_WaitTransitionFramesFar
-	.endif
-	.endif
 	.global Func_02000a70
 	.thumb_func
 Func_02000a70:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
-	.endif
-	.endif
 	.global Func_02000a78
 	.thumb_func
 Func_02000a78:
@@ -181,39 +157,15 @@ ObjectMotion_CommitPositionAndActivate:
 	.global Object_SetActionCallback
 	.thumb_func
 Object_SetActionCallback:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8670
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8670
-	.else
 	overlay_veneer Object_SetActionCallbackFar
-	.endif
-	.endif
 	.global Func_02000a90
 	.thumb_func
 Func_02000a90:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87a0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87a0
-	.else
 	overlay_veneer Func_080c87b0
-	.endif
-	.endif
 	.global Func_02000a98
 	.thumb_func
 Func_02000a98:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87a8
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87a8
-	.else
 	overlay_veneer Func_080c87b8
-	.endif
-	.endif
 	.global Func_02000aa0
 	.thumb_func
 Func_02000aa0:

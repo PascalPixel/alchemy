@@ -28,13 +28,7 @@ void Func_08029810(struct FieldActor *object) {
   object->x = x + (first - second);
 }
 
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-// Spanish and Italian builds use a different name for this far call, as in
-// objlayer.c.
-s32 BattleEffect_WaitForArcGroupsFar(s32 arg);
-#else
 s32 Func_080c8828(s32 arg);
-#endif
 
 /// When one of three party key sets is pressed: plays cue 113 if the far call
 /// accepts the argument, else posts event request 0x208b and returns 1 while
@@ -62,11 +56,7 @@ s32 Func_08029838(s32 arg) {
       pressed = 1;
   }
   if (pressed) {
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-    if (BattleEffect_WaitForArcGroupsFar(arg)) {
-#else
     if (Func_080c8828(arg)) {
-#endif
       Audio_PlayCue(113);
     } else if (!GameFlag_Test(0x146)) {
       work->unk166 = 0x208b;

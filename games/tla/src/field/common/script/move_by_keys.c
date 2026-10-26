@@ -87,13 +87,7 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object) {
     position.y = object->y - position.z;
     position.z = object->z;
     map = Ram_HeapSlots->mapWork;
-#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-    // Spanish and Italian builds name this far call differently, as in
-    // cell_collision.c.
-    sourceCell = &map->layers[object->terrainId].cells[Func_080c8700(object)];
-#else
     sourceCell = &map->layers[object->terrainId].cells[Func_080c8710(object)];
-#endif
     destinationCell =
         &map->layers[object->terrainId]
              .cells[position.x / 0x100000 + (position.z / 0x100000) * 128];

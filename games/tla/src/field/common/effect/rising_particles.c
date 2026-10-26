@@ -4,13 +4,6 @@
 
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// The Spanish and Italian far-call tables reach this function through
-// another slot (Func_080c8320), under that slot's name; Func_080d6b90 is
-// DisplayTransition_InitializeBattleEffectState's there.
-#define Func_080d6b90 Func_080d7408
-#endif
-
 /// One rising particle: its sprite's attribute words, world position, drift
 /// and frames left.
 struct RisingParticle {

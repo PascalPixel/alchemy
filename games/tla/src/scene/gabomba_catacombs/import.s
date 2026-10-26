@@ -129,123 +129,43 @@ Func_0200122c:
 	.global Func_02001234
 	.thumb_func
 Func_02001234:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer DisplayTransition_FinishFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer DisplayTransition_FinishFar
-	.else
 	overlay_veneer Func_080c8368
-	.endif
-	.endif
 	.global Func_0200123c
 	.thumb_func
 Func_0200123c:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8368
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8368
-	.else
 	overlay_veneer BattleEffect_ApplyColorToTargetBufferFar
-	.endif
-	.endif
 	.global Func_02001244
 	.thumb_func
 Func_02001244:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_InitializeBuffersFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_InitializeBuffersFar
-	.else
 	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
-	.endif
-	.endif
 	.global Func_0200124c
 	.thumb_func
 Func_0200124c:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
-	.else
 	overlay_veneer BattleEffect_StartBufferInterpolationFar
-	.endif
-	.endif
 	.global Func_02001254
 	.thumb_func
 Func_02001254:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8470
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8470
-	.else
 	overlay_veneer Func_080c8480
-	.endif
-	.endif
 	.global Func_0200125c
 	.thumb_func
 Func_0200125c:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
-	.endif
-	.endif
 	.global Func_02001264
 	.thumb_func
 Func_02001264:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Encounter_GetEnemyGroupAtSlotFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Encounter_GetEnemyGroupAtSlotFar
-	.else
 	overlay_veneer Party_PlaySavedMusicFar
-	.endif
-	.endif
 	.global Func_0200126c
 	.thumb_func
 Func_0200126c:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8870
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8870
-	.else
 	overlay_veneer Func_080c8880
-	.endif
-	.endif
 	.global Func_02001274
 	.thumb_func
 Func_02001274:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer ObjectGroup_ApplyRandomChildValuesFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer ObjectGroup_ApplyRandomChildValuesFar
-	.else
 	overlay_veneer Func_080c88d0
-	.endif
-	.endif
 	.global Func_0200127c
 	.thumb_func
 Func_0200127c:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8938
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8938
-	.else
 	overlay_veneer Func_080c8948
-	.endif
-	.endif
 	.global Func_02001284
 	.thumb_func
 Func_02001284:

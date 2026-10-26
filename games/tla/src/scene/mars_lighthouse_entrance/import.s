@@ -289,243 +289,83 @@ Func_02004d38:
 	.global Func_02004d40
 	.thumb_func
 Func_02004d40:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c82d0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c82d0
-	.else
 	overlay_veneer Func_080c82e0
-	.endif
-	.endif
 	.global Func_02004d48
 	.thumb_func
 Func_02004d48:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c82e8
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c82e8
-	.else
 	overlay_veneer EventRuntime_PrepareCurrentObjectFar
-	.endif
-	.endif
 	.global Func_02004d50
 	.thumb_func
 Func_02004d50:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8340
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8340
-	.else
 	overlay_veneer DisplayTransition_StartFar
-	.endif
-	.endif
 	.global Func_02004d58
 	.thumb_func
 Func_02004d58:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8368
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8368
-	.else
 	overlay_veneer BattleEffect_ApplyColorToTargetBufferFar
-	.endif
-	.endif
 	.global Func_02004d60
 	.thumb_func
 Func_02004d60:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
-	.else
 	overlay_veneer BattleEffect_StartBufferInterpolationFar
-	.endif
-	.endif
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattlePalette_StopBlendAndReleaseBufferFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattlePalette_StopBlendAndReleaseBufferFar
-	.else
 	overlay_veneer Event_StartScreenTransitionFar
-	.endif
-	.endif
 	.global Event_FinishScreenTransition
 	.thumb_func
 Event_FinishScreenTransition:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
-	.else
 	overlay_veneer Event_FinishScreenTransitionFar
-	.endif
-	.endif
 	.global Event_WaitTransitionFrames
 	.thumb_func
 Event_WaitTransitionFrames:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_DelayEffectFramesFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_DelayEffectFramesFar
-	.else
 	overlay_veneer Event_WaitTransitionFramesFar
-	.endif
-	.endif
 	.global ObjectTable_Get
 	.thumb_func
 ObjectTable_Get:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_SpawnObjectTableFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_SpawnObjectTableFar
-	.else
 	overlay_veneer ObjectTable_GetFar
-	.endif
-	.endif
 	.global Func_02004d88
 	.thumb_func
 Func_02004d88:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8470
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8470
-	.else
 	overlay_veneer Func_080c8480
-	.endif
-	.endif
 	.global BattleEffect_PrepareBufferInterpolation
 	.thumb_func
 BattleEffect_PrepareBufferInterpolation:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer EventObject_InitializeFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer EventObject_InitializeFar
-	.else
 	overlay_veneer BattleEffect_PrepareBufferInterpolationFar
-	.endif
-	.endif
 	.global Func_02004d98
 	.thumb_func
 Func_02004d98:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_InitializeSharedSceneFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_InitializeSharedSceneFar
-	.else
 	overlay_veneer EventRuntime_ResolveAllPendingActionsFar
-	.endif
-	.endif
 	.global Func_02004da0
 	.thumb_func
 Func_02004da0:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
-	.endif
-	.endif
 	.global Func_02004da8
 	.thumb_func
 Func_02004da8:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer UpdateRisingParticleBurstFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer UpdateRisingParticleBurstFar
-	.else
 	overlay_veneer BattleParty_ApplyHealthDeltaFar
-	.endif
-	.endif
 	.global Func_02004db0
 	.thumb_func
 Func_02004db0:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Object_BuildRecordSnapshotFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Object_BuildRecordSnapshotFar
-	.else
 	overlay_veneer ObjectTable_SnapshotFar
-	.endif
-	.endif
 	.global Func_02004db8
 	.thumb_func
 Func_02004db8:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8700
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8700
-	.else
 	overlay_veneer Func_080c8710
-	.endif
-	.endif
 	.global Func_02004dc0
 	.thumb_func
 Func_02004dc0:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8768
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8768
-	.else
 	overlay_veneer EventRuntime_GetControlledOwnerFar
-	.endif
-	.endif
 	.global Func_02004dc8
 	.thumb_func
 Func_02004dc8:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c88c8
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c88c8
-	.else
 	overlay_veneer Func_080c88d8
-	.endif
-	.endif
 	.global Func_02004dd0
 	.thumb_func
 Func_02004dd0:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c88d8
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c88d8
-	.else
 	overlay_veneer Func_080c88e8
-	.endif
-	.endif
 	.global Func_02004dd8
 	.thumb_func
 Func_02004dd8:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer ObjectEffect_StartContextEffect25Far
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer ObjectEffect_StartContextEffect25Far
-	.else
 	overlay_veneer Func_080c8918
-	.endif
-	.endif
 	.global Func_02004de0
 	.thumb_func
 Func_02004de0:

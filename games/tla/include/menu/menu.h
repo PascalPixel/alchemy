@@ -36,7 +36,6 @@ extern u8 gData_08105948[];
 extern u16 gShop_GlyphRowOffsets[];
 extern u16 gShop_SelectorOffsets[];
 void DjinnMenu_DrawPage(struct UiPanel *panel, s32 first);
-void Event_DelayEffectFramesFar(void);
 void Event_FinishScreenTransitionFar(void);
 void Func_080c8368(s32, s32);
 void BattleEffect_ApplyColorToSourceBufferFar(s32);

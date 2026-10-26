@@ -226,64 +226,24 @@ Func_02002940:
 	.global Func_02002948
 	.thumb_func
 Func_02002948:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c82d0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c82d0
-	.else
 	overlay_veneer Func_080c82e0
-	.endif
-	.endif
 	.endif
 	.global Object_SetWideSprite
 	.thumb_func
 Object_SetWideSprite:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer ObjectEvent_RemoveFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer ObjectEvent_RemoveFar
-	.else
 	overlay_veneer Object_SetWideSpriteFar
-	.endif
-	.endif
 	.global Func_02002958
 	.thumb_func
 Func_02002958:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8418
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8418
-	.else
 	overlay_veneer Object_ReturnHomeFar
-	.endif
-	.endif
 	.global Func_02002960
 	.thumb_func
 Func_02002960:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8470
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8470
-	.else
 	overlay_veneer Func_080c8480
-	.endif
-	.endif
 	.global Func_02002968
 	.thumb_func
 Func_02002968:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
-	.endif
-	.endif
 	.global ObjectMotion_CommitPositionAndActivate
 	.thumb_func
 ObjectMotion_CommitPositionAndActivate:
@@ -291,87 +251,31 @@ ObjectMotion_CommitPositionAndActivate:
 	.global Func_02002978
 	.thumb_func
 Func_02002978:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8678
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8678
-	.else
 	overlay_veneer Func_080c8688
-	.endif
-	.endif
 	.global Func_02002980
 	.thumb_func
 Func_02002980:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8698
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8698
-	.else
 	overlay_veneer Func_080c86a8
-	.endif
-	.endif
 	.global Func_02002988
 	.thumb_func
 Func_02002988:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c86d8
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c86d8
-	.else
 	overlay_veneer Func_080c86e8
-	.endif
-	.endif
 	.global Func_02002990
 	.thumb_func
 Func_02002990:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8750
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8750
-	.else
 	overlay_veneer Func_080c8760
-	.endif
-	.endif
 	.global Func_02002998
 	.thumb_func
 Func_02002998:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8768
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8768
-	.else
 	overlay_veneer EventRuntime_GetControlledOwnerFar
-	.endif
-	.endif
 	.global Func_020029a0
 	.thumb_func
 Func_020029a0:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8888
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8888
-	.else
 	overlay_veneer Func_080c8898
-	.endif
-	.endif
 	.global Func_020029a8
 	.thumb_func
 Func_020029a8:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8938
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8938
-	.else
 	overlay_veneer Func_080c8948
-	.endif
-	.endif
 	.global Func_020029b0
 	.thumb_func
 Func_020029b0:

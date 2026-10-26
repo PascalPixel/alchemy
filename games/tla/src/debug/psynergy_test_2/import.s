@@ -97,60 +97,20 @@ Func_020005d8:
 	.global Func_020005e0
 	.thumb_func
 Func_020005e0:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8698
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8698
-	.else
 	overlay_veneer Func_080c86a8
-	.endif
-	.endif
 	.global Func_020005e8
 	.thumb_func
 Func_020005e8:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c86a8
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c86a8
-	.else
 	overlay_veneer Func_080c86b8
-	.endif
-	.endif
 	.global Func_020005f0
 	.thumb_func
 Func_020005f0:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87b0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87b0
-	.else
 	overlay_veneer Func_080c87c0
-	.endif
-	.endif
 	.global Func_020005f8
 	.thumb_func
 Func_020005f8:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87c0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87c0
-	.else
 	overlay_veneer Func_080c87d0
-	.endif
-	.endif
 	.global Func_02000600
 	.thumb_func
 Func_02000600:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87d0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87d0
-	.else
 	overlay_veneer BattleEffect_StepVector3Far
-	.endif
-	.endif

@@ -117,75 +117,27 @@ Engine_EventSetCountdown:
 	.global Func_02000d18
 	.thumb_func
 Func_02000d18:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c82d0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c82d0
-	.else
 	overlay_veneer Func_080c82e0
-	.endif
-	.endif
 	.global Engine_EventCloseScreen
 	.thumb_func
 Engine_EventCloseScreen:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_SetPrimaryBufferValueFar
-	.else
 	overlay_veneer Event_FinishScreenTransitionFar
-	.endif
-	.endif
 	.global Engine_EventWaitDelay
 	.thumb_func
 Engine_EventWaitDelay:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_DelayEffectFramesFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_DelayEffectFramesFar
-	.else
 	overlay_veneer Event_WaitTransitionFramesFar
-	.endif
-	.endif
 	.global Object_SetWideSprite
 	.thumb_func
 Object_SetWideSprite:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer ObjectEvent_RemoveFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer ObjectEvent_RemoveFar
-	.else
 	overlay_veneer Object_SetWideSpriteFar
-	.endif
-	.endif
 	.global Engine_ActorReturnHome
 	.thumb_func
 Engine_ActorReturnHome:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8418
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8418
-	.else
 	overlay_veneer Object_ReturnHomeFar
-	.endif
-	.endif
 	.global Engine_EventResolvePendingActions
 	.thumb_func
 Engine_EventResolvePendingActions:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
-	.endif
-	.endif
 	.global Func_02000d48
 	.thumb_func
 Func_02000d48:
@@ -193,51 +145,19 @@ Func_02000d48:
 	.global Func_02000d50
 	.thumb_func
 Func_02000d50:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c86e8
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c86e8
-	.else
 	overlay_veneer Func_080c86f8
-	.endif
-	.endif
 	.global Func_02000d58
 	.thumb_func
 Func_02000d58:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c86f8
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c86f8
-	.else
 	overlay_veneer Func_080c8708
-	.endif
-	.endif
 	.global Engine_PartyGetLeaderActor
 	.thumb_func
 Engine_PartyGetLeaderActor:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8768
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8768
-	.else
 	overlay_veneer EventRuntime_GetControlledOwnerFar
-	.endif
-	.endif
 	.global Func_02000d68
 	.thumb_func
 Func_02000d68:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87a0
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87a0
-	.else
 	overlay_veneer Func_080c87b0
-	.endif
-	.endif
 	.global Engine_ShopOpen
 	.thumb_func
 Engine_ShopOpen:

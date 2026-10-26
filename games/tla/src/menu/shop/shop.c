@@ -104,9 +104,6 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x,
   return sprite;
 }
 
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-#else
-#endif
 
 void Shop_RestoreSceneTiles(s32 layer) {
   u8 *map = Ram_HeapSlots->eventWork;
@@ -115,22 +112,12 @@ void Shop_RestoreSceneTiles(s32 layer) {
 
   Dma_Set(saved, map + 0x222, 0x84000150, REG_DMA3);
   Dma_Set(saved, work + 0x380, 0x840002a0, REG_DMA3);
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-  Func_080c8368(layer, 1);
-  BattleEffect_ApplyColorToSourceBufferFar(16);
-#else
   BattleEffect_ApplyColorToTargetBufferFar(layer, 1);
   BattleEffect_StartBufferInterpolationFar(16);
-#endif
 }
 
 void Shop_InitializeEffect(void) {
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-  Func_080c8368((s32)Ram_HeapSlots->eventWork + 0x222, 1);
-  BattleEffect_ApplyColorToSourceBufferFar(16);
-#else
   BattleEffect_ApplyColorToTargetBufferFar((s32)Ram_HeapSlots->eventWork + 0x222,
                                        1);
   BattleEffect_StartBufferInterpolationFar(16);
-#endif
 }

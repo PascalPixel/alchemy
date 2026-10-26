@@ -225,19 +225,18 @@ select_again:
         Ability_IsPsynergy(abilityId) != 0) {
       request->command = COMMAND_PSYNERGY;
       request->parameter = abilityId;
-      if (ability->ppCost > unit->pp &&
-          enemy->targetStrategy != TARGET_STRATEGY_MOST_HP)
-        goto next_candidate;
-      if (unit->psySeal != 0 && enemy->targetStrategy == TARGET_STRATEGY_RANDOM)
+      if ((ability->ppCost > unit->pp &&
+           enemy->targetStrategy != TARGET_STRATEGY_MOST_HP) ||
+          (unit->psySeal != 0 &&
+           enemy->targetStrategy == TARGET_STRATEGY_RANDOM))
         goto next_candidate;
     }
     // A challenged enemy won't flee, and at its turn it no longer chooses a
     // guard (guards are settled as the round is built): both pick again.
     command = request->command;
-    if (command == COMMAND_FLEE && (u8)unit->challenge != 0)
-      goto next_candidate;
-    if (retry != 0 &&
-        (command == COMMAND_DEFEND || command == COMMAND_TOTAL_DEFENSE))
+    if ((command == COMMAND_FLEE && (u8)unit->challenge != 0) ||
+        (retry != 0 &&
+         (command == COMMAND_DEFEND || command == COMMAND_TOTAL_DEFENSE)))
       goto next_candidate;
 
     if (command == COMMAND_ENEMY_ABILITY) {

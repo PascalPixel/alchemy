@@ -1,8 +1,8 @@
 list	0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 20 21 22
-anim	00 64 f1 00
-anim	00 64 fd 00
-anim	00 03 05 03 fd 00
-anim	0a 64 fd 00
-anim	0f 64 fd 00
-anim	f0 58 14 64 fd 00
-anim	f0 58 19 64 fd 00
+anim	frame 0 100, hold
+anim	frame 0 100, loop
+anim	frame 0 3, frame 5 3, loop
+anim	frame 10 100, loop
+anim	frame 15 100, loop
+anim	kind 88, frame 20 100, loop
+anim	kind 88, frame 25 100, loop

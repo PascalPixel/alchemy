@@ -1,3 +1,3 @@
-anim	00 0b f1 00
-anim	00 09 01 09 02 09 03 09 04 09 fe 02
-anim	04 0b f1 00
+anim	frame 0 11, hold
+anim	frame 0 9, frame 1 9, frame 2 9, frame 3 9, frame 4 9, play 2
+anim	frame 4 11, hold

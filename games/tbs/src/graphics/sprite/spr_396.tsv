@@ -1,4 +1,4 @@
-anim	00 0a f1 00
-anim	01 0a 02 0a fd 00
-anim	00 0a 01 0a 02 0a 03 0a fd 00
-anim	04 06 05 06 04 06 05 06 04 06 05 06 04 06 05 06 04 06 05 06 f1 00
+anim	frame 0 10, hold
+anim	frame 1 10, frame 2 10, loop
+anim	frame 0 10, frame 1 10, frame 2 10, frame 3 10, loop
+anim	frame 4 6, frame 5 6, frame 4 6, frame 5 6, frame 4 6, frame 5 6, frame 4 6, frame 5 6, frame 4 6, frame 5 6, hold

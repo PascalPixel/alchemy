@@ -1,5 +1,5 @@
-anim	00 07 f1 00
-anim	00 29 f1 00
-anim	01 05 fe 04
-anim	01 05 fe 01
-anim	02 29 f1 00
+anim	frame 0 7, hold
+anim	frame 0 41, hold
+anim	frame 1 5, play 4
+anim	frame 1 5, play 1
+anim	frame 2 41, hold

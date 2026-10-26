@@ -1,6 +1,6 @@
-anim	ff 64 f1 00
-anim	00 02 01 02 02 02 03 02 04 02 05 03 06 03 07 04 fe 00
-anim	00 04 01 04 02 04 03 04 04 04 05 06 06 06 07 08 fe 00
-anim	00 0c 01 0c 02 0c 03 0c 04 0c 05 12 06 12 07 18 fe 00
-anim	00 06 fd 00
-anim	00 08 01 08 02 08 03 08 04 08 05 08 06 08 07 08 fe 00
+anim	blank 100, hold
+anim	frame 0 2, frame 1 2, frame 2 2, frame 3 2, frame 4 2, frame 5 3, frame 6 3, frame 7 4, play 0
+anim	frame 0 4, frame 1 4, frame 2 4, frame 3 4, frame 4 4, frame 5 6, frame 6 6, frame 7 8, play 0
+anim	frame 0 12, frame 1 12, frame 2 12, frame 3 12, frame 4 12, frame 5 18, frame 6 18, frame 7 24, play 0
+anim	frame 0 6, loop
+anim	frame 0 8, frame 1 8, frame 2 8, frame 3 8, frame 4 8, frame 5 8, frame 6 8, frame 7 8, play 0

@@ -1,10 +1,10 @@
-anim	00 09 f1 00
-anim	00 79 03 09 00 5b 09 bf 00 5b 03 09 00 bf 03 09 fd 00
-anim	1e 09 0f 09 12 09 15 09 18 09 1b 09 fd 00
-anim	06 10 fe 01
-anim	09 08 00 07 0c 08 00 07 09 08 00 07 0c 08 00 07 fe 01
-anim	21 79 24 09 21 5b 2a bf 21 5b 24 09 21 bf 24 09 fd 00
-anim	3f 0b 30 0b 33 0b 36 0b 39 0b 3c 0b fd 00
-anim	27 10 fe 05
-anim	2a 08 21 07 2d 08 21 07 2a 08 21 07 2d 08 21 07 fe 05
-anim	f0 11 42 08 fd 00
+anim	frame 0 9, hold
+anim	frame 0 121, frame 3 9, frame 0 91, frame 9 191, frame 0 91, frame 3 9, frame 0 191, frame 3 9, loop
+anim	frame 30 9, frame 15 9, frame 18 9, frame 21 9, frame 24 9, frame 27 9, loop
+anim	frame 6 16, play 1
+anim	frame 9 8, frame 0 7, frame 12 8, frame 0 7, frame 9 8, frame 0 7, frame 12 8, frame 0 7, play 1
+anim	frame 33 121, frame 36 9, frame 33 91, frame 42 191, frame 33 91, frame 36 9, frame 33 191, frame 36 9, loop
+anim	frame 63 11, frame 48 11, frame 51 11, frame 54 11, frame 57 11, frame 60 11, loop
+anim	frame 39 16, play 5
+anim	frame 42 8, frame 33 7, frame 45 8, frame 33 7, frame 42 8, frame 33 7, frame 45 8, frame 33 7, play 5
+anim	kind 17, frame 66 8, loop

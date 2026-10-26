@@ -857,8 +857,7 @@ main	rom_main_02	games/tla/src/graphics/text/f03ce64	.text
 main	rom_main_02	games/tla/src/graphics/text/build_mode1	.text
 main	rom_main_02	games/tla/src/graphics/text/f03cf6c	.text
 main	rom_main_02	games/tla/src/graphics/text/plot_glyph	.text
-main	rom_main_02	games/tla/src/graphics/text/f03cfd0	.text	en de es fr it
-main	rom_main_02	recon/tla/ja/rom	.rom.0003d088	ja
+main	rom_main_02	games/tla/src/graphics/text/f03cfd0	.text
 main	rom_main_02	games/tla/src/graphics/text/f03d020	.text
 main	rom_main_02	games/tla/src/graphics/text/lookup_message	.text
 main	rom_main_02	games/tla/src/graphics/text/f03d1c4	.text

@@ -273,10 +273,10 @@ s32 BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
 /// later ones take the next free letter, wrapping. Returns -1 when five classes
 /// are already listed. Called by BattleFormation_BuildEnemyList for each enemy
 /// and by BattleAbility_ApplyToTarget for an enemy called into the battle.
-/// Changes BattleWork's enemyKinds, the up to five classes listed, and fields
-/// that despite their names hold the letters: lastNameLetter each class's last
-/// letter given (-1 for none yet), nameLetterMasks its letters in use (bit n
-/// for letter n), and enemyKindCount how many classes are listed.
+/// Changes BattleWork's enemyKinds, the up to five classes listed, and their
+/// letters: lastNameLetter each class's last letter given (-1 for none yet),
+/// nameLetterMasks its letters in use (bit n for letter n), and enemyKindCount
+/// how many classes are listed.
 s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
   struct BattleWork *battle;
   s32 classCount;

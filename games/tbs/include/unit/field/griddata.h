@@ -4,6 +4,6 @@
 #include "types.h"
 #include "render_placement.h"
 
-extern const struct SpriteScale gBattle_FormationPlacementScale;
+extern const struct SpriteScale gSpriteViewer_Scale;
 
 #endif

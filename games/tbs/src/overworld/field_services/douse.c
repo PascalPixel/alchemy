@@ -33,8 +33,8 @@ struct ObjectEventDouseView {
 struct FieldEffectDouseView {
   s32 angle;             ///< 1/65536 turns: the way the caster faces
   s32 x, y, z;           ///< the ground under the orb's destination
-  struct Object *target; ///< mainObject: the caster, despite the name
-  s32 initialized;       ///< child: the target's object, 0 for none
+  struct Object *caster; ///< mainObject
+  s32 targetObject;      ///< child: the target's object, 0 for none
   u8 reserved18[8];
   /// enabled: set at the start, cleared when a map event names the target
   /// (FieldEffect_DispatchRequestKind). Set, 10 particles fall; cleared, 24
@@ -128,7 +128,7 @@ void FieldEffect_RunDouse(void) {
   struct Vector3 start;
   struct Vector3 end;
   struct FieldEffectDouseView *work = gFieldEffectWork;
-  struct Object *target = work->target;
+  struct Object *caster = work->caster;
   struct ObjectEventDouseView *lightOrb;
   struct Vector3 *from;
   struct Vector3 *to;
@@ -144,14 +144,14 @@ void FieldEffect_RunDouse(void) {
   FieldEffect_FadeToEffectColor();
   Sound_PlaySongFar(SE_ITEM_BREAK);
   // No target: 16 pixels in front of the caster, at the ground's height.
-  if (work->initialized == 0) {
-    work->x = target->x;
-    work->z = target->z;
+  if (work->targetObject == 0) {
+    work->x = caster->x;
+    work->z = caster->z;
     Vector_AddPolarOffset(16 << 16, work->angle, (struct Vector3 *)&work->x);
     work->y = MapGrid_GetTerrainHeightFar(0, work->x, work->z);
   }
   from = &start;
-  SET_POSITION(from, target->x, target->y + (16 << 16), target->z);
+  SET_POSITION(from, caster->x, caster->y + (16 << 16), caster->z);
   to = &end;
   to->x = work->x;
   y = work->y;
@@ -234,7 +234,7 @@ void FieldEffect_RunDouse(void) {
       if (particle != 0) {
         particle->callback = FieldEffect_UpdateDriftingFallObject;
         particle->flag = 0;
-        particle->sprite->mode = 2;
+        particle->sprite->priority = 2;
         Object_SelectAnimationFar(particle, 8);
         Anim_ApplyChildValuesFar((struct Object *)particle, SPRITE_COLOR_WHITE);
       }

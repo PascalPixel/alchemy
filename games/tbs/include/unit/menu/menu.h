@@ -89,8 +89,8 @@ void Menu_EnsureCancelSound(void);
 void WindowPalette_SetNormalTextColor(void);
 void WindowPalette_SetNoHpTextColor(void);
 void WindowPalette_SetLowHpTextColor(void);
-void DjinnFigures_ClearSlotsAndSchedule(void);
-void DjinnFigures_ClearSlotsAndScheduleAlt(void);
+void DjinnFigures_ReleaseTopRow(void);
+void DjinnFigures_ReleaseBottomRow(void);
 
 #define LIST_PAGE_SIZE 5
 
@@ -107,7 +107,7 @@ s32 ItemMenu_RunMemberSelection(u16 *memberIds, u16 *items);
 void ItemMenu_OpenCategory(s32 memberId);
 s32 ItemMenu_SelectTarget(s32 mode);
 void EquipmentMenu_UpdateCompatibilityIndicators(void);
-void EquipmentMenu_StartCompatibilityIndicators(void);
+void EquipmentMenu_StopCompatibilityIndicators(void);
 s32 ItemMenu_IsSpecial(s32 itemId);
 void ItemMenu_DrawMessage(s32 unused, s32 message);
 void Menu_HideEmptyEntryIcons(const u16 *items);
@@ -215,8 +215,8 @@ void PsynergyMenu_PreparedIconsNoOp(void);
 void PsynergyMenu_PreparedIconsSecondNoOp(void);
 s32 ItemMenu_DrawEquipPage(struct Window *window, s32 unused,
                            struct PagedList *state);
-s32 Shop_DrawItemPage(struct Window *window, s32 unused,
-                      struct PagedList *state);
+s32 ItemMenu_DrawItemPage(struct Window *window, s32 unused,
+                          struct PagedList *state);
 s32 ItemMenu_SelectItem(void);
 s32 Menu_MoveGridCursor(s32 *columnOut, s32 *rowOut, s32 direction);
 s32 Menu_ReservedStatusOne(void);

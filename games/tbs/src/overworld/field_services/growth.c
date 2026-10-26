@@ -18,15 +18,15 @@ struct BurstParticleVector {
 /// other names here.
 struct BurstParticleVisual {
   u8 reserved00[5];
-  u8 flagsALow : 5;  ///< affine, objectMode and mosaic
-  u8 flip : 1;       ///< fullColor, despite the name
+  u8 flagsALow : 5; ///< affine, objectMode and mosaic
+  u8 fullColor : 1;
   u8 flagsAHigh : 2; ///< shape
   u8 reserved06;
   u8 flagsBLow : 6;  ///< x's top bit and affineIndex
   u8 flagsBHigh : 2; ///< size
   union {
     struct {
-      u16 shape : 10; ///< tile, despite the name
+      u16 tile : 10;
       u16 unused : 6;
     } bits;
     struct {
@@ -154,10 +154,10 @@ void FieldEffect_SpawnBurstParticleField(void) {
                                                   pos[1], pos[2]);
     visual = &((struct BurstParticleVisualGroup *)particle->sprite)->primary;
     child = &((struct BurstParticleVisualGroup *)particle->sprite)->child;
-    child->flip = visual->flip;
+    child->fullColor = visual->fullColor;
     child->flagsAHigh = visual->flagsAHigh;
     child->flagsBHigh = visual->flagsBHigh;
-    child->attributes.bits.shape = visual->attributes.bits.shape;
+    child->attributes.bits.tile = visual->attributes.bits.tile;
     child->attributes.bytes.palette = visual->attributes.bytes.palette;
 
     if (particle != 0) {

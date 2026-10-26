@@ -123,7 +123,7 @@ s32 DjinnMenu_Run(void) {
   menu->selection[1] = 0;
   DjinnFigures_InitializeBottomRow((s32)menu->helpWindow, 0);
   DjinnMenu_RunScreen();
-  DjinnFigures_ClearSlotsAndScheduleAlt();
+  DjinnFigures_ReleaseBottomRow();
   IconMenu_ReleaseArrows();
   WaitFrames(1);
   ItemMenu_Close();

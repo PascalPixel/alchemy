@@ -477,6 +477,6 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
                                  struct SpritePlacement *positions);
 void SpriteViewer_StartStaggeredAnims(s32 layerIndex, s32 animationIndex);
 void SpriteViewer_SetGridColumnNumber(s32 layerIndex, s32 spriteId);
-void Battle_PlaceActorsByFormationKind(void);
+void SpriteViewer_PlaceRing(void);
 
 #endif

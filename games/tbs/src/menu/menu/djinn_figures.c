@@ -9,7 +9,7 @@
 /// task: one Djinni figure of each element (gDjinnFigures_SpriteIds) in
 /// animation 2, at (16, 32) until the screen moves them, placed each frame by
 /// DjinnFigures_UpdateAllPositions. The Status menu calls it when the
-/// party has Djinn; DjinnFigures_ClearSlotsAndSchedule releases them.
+/// party has Djinn; DjinnFigures_ReleaseTopRow releases them.
 void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1) {
   struct ItemMenuFiguresView *state = gMenuWork;
   s32 index;
@@ -37,9 +37,8 @@ void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1) {
 }
 
 /// Releases the four objects and removes their task. It defines
-/// DjinnFigures_ClearSlotsAndSchedule (the Status menu's row) and
-/// DjinnFigures_ClearSlotsAndScheduleAlt (the Djinn menu's), which
-/// schedule nothing despite their names.
+/// DjinnFigures_ReleaseTopRow (the Status menu's row) and
+/// DjinnFigures_ReleaseBottomRow (the Djinn menu's).
 #define FOUR_OBJECT_MOTION_DEFINE_RELEASE(name, update)                        \
   void name(void) {                                                            \
     struct ItemMenuFiguresView *state = gMenuWork;                             \
@@ -57,7 +56,7 @@ void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1) {
     Task_Remove(update);                                                       \
   }
 
-FOUR_OBJECT_MOTION_DEFINE_RELEASE(DjinnFigures_ClearSlotsAndSchedule,
+FOUR_OBJECT_MOTION_DEFINE_RELEASE(DjinnFigures_ReleaseTopRow,
                                   DjinnFigures_UpdateAllPositions)
 
 /// Full size, 1.0 in 16.16, and the height the figures are placed from: 482
@@ -156,7 +155,7 @@ void DjinnFigures_UpdateBottomRow(void) {
 /// Replaces the bottom row's four objects and starts its easing task: one
 /// Djinni figure of each element in animation 2, at full size, at (16, 200)
 /// below the screen until the Djinn menu moves one. DjinnMenu_Run calls it
-/// and DjinnFigures_ClearSlotsAndScheduleAlt releases them.
+/// and DjinnFigures_ReleaseBottomRow releases them.
 void DjinnFigures_InitializeBottomRow(s32 unused0, s32 unused1) {
   struct ItemMenuFiguresView *state = gMenuWork;
   s32 index;
@@ -228,7 +227,7 @@ s32 DjinnFigures_ReplaceSlot(s32 index, s32 resourceKind, s32 value) {
   return 1;
 }
 
-FOUR_OBJECT_MOTION_DEFINE_RELEASE(DjinnFigures_ClearSlotsAndScheduleAlt,
+FOUR_OBJECT_MOTION_DEFINE_RELEASE(DjinnFigures_ReleaseBottomRow,
                                   DjinnFigures_UpdateBottomRow)
 
 /// Starts the walking animation (1) of each party figure. Nothing calls it.

@@ -7,7 +7,7 @@
 // The scene overlay's warp table: a header word holding a scene id, then that
 // scene's warps, one packed word each (and a flag word after it when
 // WARP_HAS_FLAG is set). Scene id WARP_TABLE_END ends the warps of a scene and
-// the whole table. MAP_WARP and MAP_WARP_IF (map_tables.h) give a warp
+// the whole table. MAP_WARP and MAP_WARP_UNLESS (map_tables.h) give a warp
 // word's bits.
 #define WARP_MAP_MASK 0xfff
 #define WARP_DEST(word) (((word) & 0xff000) >> 12)

@@ -154,10 +154,10 @@ struct WaveEffectSprite {
   u32 linkAndPosition[2]; ///< image.link and its first two attributes
   u8 tileLow;             ///< image.tile's low byte
   u32 tileHigh : 2;       ///< image.tile's high bits
-  u32 mode : 2;           ///< image.priority, despite the name
+  u32 priority : 2;       ///< image.priority
   u32 paletteBits : 4;    ///< image.palette
   u8 attr3ToDirty[0x1c];  ///< image.attr3 to the sprite's dirty flag
-  u8 palette; ///< flags, despite the name: 0 drops shadow and outline
+  u8 flags;               ///< 0 drops shadow and outline
 };
 
 /// Move's hand and Carry shed the same short-lived falling particle: it falls

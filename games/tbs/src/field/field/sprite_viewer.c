@@ -45,7 +45,7 @@ struct UiSpriteViewerLayer {
 ///
 /// It has a bare veneer in the field far-call table, and no caller names it.
 /// Takes HEAP_SLOT_BATTLE for the ring of ten positions and runs
-/// Battle_PlaceActorsByFormationKind each frame to draw the copies.
+/// SpriteViewer_PlaceRing each frame to draw the copies.
 void SpriteViewer_Run(void) {
   struct UiSpriteViewerLayer layers[ANIM_LAYER_COUNT];
   struct AnimationMetadata *spriteMetadata;
@@ -163,7 +163,7 @@ restart:
 
   SpriteViewer_BuildProbeRing(x, y, ring);
   // Order 3200 (0xc80), where the field camera runs.
-  Task_Add(Battle_PlaceActorsByFormationKind, TASK_PRIORITY_MAIN_LOOP);
+  Task_Add(SpriteViewer_PlaceRing, TASK_PRIORITY_MAIN_LOOP);
 
 next:
   WaitFrames(1);
@@ -616,11 +616,10 @@ void SpriteViewer_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
 }
 
 /// Each frame in the sprite viewer: places each copy of the sprite at its
-/// ring position, facing the way that position stands for.
-/// Despite its name it belongs to the sprite viewer, which adds it as a task;
-/// its ring is the placements in HEAP_SLOT_BATTLE and its sprites the pool in
-/// HEAP_SLOT_SPRITES.
-void Battle_PlaceActorsByFormationKind(void) {
+/// ring position, facing the way that position stands for. SpriteViewer_Run
+/// adds it as a task; its ring is the placements in HEAP_SLOT_BATTLE and its
+/// sprites the pool in HEAP_SLOT_SPRITES.
+void SpriteViewer_PlaceRing(void) {
   struct Sprite *sprite = HEAP_SLOT_BLOCK(HEAP_SLOT_SPRITES);
   u32 facingKind = sprite->entries[0]->kind;
   struct SpriteScale scale;
@@ -631,7 +630,7 @@ void Battle_PlaceActorsByFormationKind(void) {
   u32 count;
   u32 spriteIndex;
 
-  scale = gBattle_FormationPlacementScale;
+  scale = gSpriteViewer_Scale;
   facingPositions = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
 
   switch (facingKind) {

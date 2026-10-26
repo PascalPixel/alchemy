@@ -448,7 +448,7 @@ static void EventScript_AskAboutPsynergyChanges(void) {
   FieldScript_End();
 }
 
-/// Sets up the place for its warp destination and plays its opening scene.
+/// Sets up the place for its warp destination and plays its opening event.
 /// Vault Sanctum places LOCALID_GOLD_STATUE once the thieves are jailed; Vale
 /// Sanctum's quest visits (SANCTUM_FROM_VALE_ERUPTION, and
 /// SANCTUM_FROM_QUEST_RESTART after a refusal, which sets

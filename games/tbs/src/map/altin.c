@@ -84,7 +84,7 @@
 #define MAP_ALTIN_HOUSES ((s32)&MapId_CottageRoomsD)
 
 /// The village's object events, numbering the rows of
-/// gAltin_ObjectEventTemplates. The people without a scene of their own
+/// gAltin_ObjectEventTemplates. The people without an event of their own
 /// are named by their sprite and by what they say before the hydros statues are
 /// beaten.
 enum AltinVillageLocalId {

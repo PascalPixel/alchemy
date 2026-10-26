@@ -286,7 +286,7 @@ enum BabiPalaceMetatileBehavior {
 };
 
 /// A companion walks into the leader and is taken off the map, as the party
-/// closes up into one walking sprite at the end of a scene.
+/// closes up into one walking sprite at the end of an event.
 static inline void BabiPalace_WalkIntoLeader(s32 member) {
   struct ObjectEvent *leader;
 
@@ -2488,7 +2488,7 @@ const struct MapEvent *Map_GetEvents(void) {
 }
 
 /// Sets up the map being entered: the doors, the Cloak Ball on show, and
-/// the scenes that play on arrival (Babi after Colosso, the attendant during
+/// the events that play on arrival (Babi after Colosso, the attendant during
 /// the finals, waking after a night's rest). Returns 0.
 s32 BabiPalace_ApplyEntryState(void) {
   struct ObjectEvent *objectEvent;

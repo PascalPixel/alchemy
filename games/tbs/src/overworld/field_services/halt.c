@@ -61,7 +61,7 @@ top:
     FieldEffect_ClearOwnedSlot(effect);
 }
 
-/// Pauses the target (scene->child) and runs
+/// Pauses the target (effectWork->child) and runs
 /// FieldEffect_RunHalt. Called by FieldEffect_Run and
 /// FieldEffect_DispatchRequestKind for Halt on a target; sets the target's
 /// paused field.
@@ -77,7 +77,7 @@ void FieldEffect_RunHaltOnTarget(s32 unused) {
 /// and scatters it into 16 particles. Halt's visible effect: called by
 /// FieldEffect_Run when no target with a talk event is near, and through
 /// FieldEffect_RunHaltOnTarget otherwise. Fills field effect sprites 0
-/// to 15 and sets scene->y to the caster's height.
+/// to 15 and sets effectWork->y to the caster's height.
 ///
 /// Abilities: Halt (FIELD_PSYNERGY_HALT).
 void FieldEffect_RunHalt(void) {

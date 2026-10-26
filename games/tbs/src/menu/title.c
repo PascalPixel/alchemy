@@ -1,6 +1,6 @@
 /// @file
 /// The title overlay: the start screen, the Golden Sun logo shown after the
-/// ending, and the screens that lead from the prologue and the last scene on
+/// ending, and the screens that lead from the prologue and the last event on
 /// to Vale and the main menu. Title_Run chooses by warp destination.
 
 #include "save_block.h"
@@ -66,8 +66,8 @@ u8 *Title_GetEvents(void) { return (u8 *)gTitleEvents; }
 
 /// The overlay's initialize entry: plays what the warp destination asks for,
 /// sets the next destination and returns 0.
-/// - Warp destination 10, after Jenna and Kraden's closing scene on the world
-///   map (WorldMap_ShowEndingScene): the Golden Sun logo for two seconds, then
+/// - Warp destination 10, after Jenna and Kraden's closing event on the world
+///   map (WorldMap_ShowEndingEvent): the Golden Sun logo for two seconds, then
 ///   until a key is pressed or a minute passes, then warp destination 2.
 /// - Warp destination 9, after the ship sails (lemurian_ship.c's SetSail): the
 ///   credits, then the main menu's warp destination 2, which offers to

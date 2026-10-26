@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-void Map_StartCutscenePsynergy(void);
-void Map_EndCutscenePsynergy(void);
+void Map_StartEventPsynergy(void);
+void Map_EndEventPsynergy(void);
 
 #endif

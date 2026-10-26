@@ -141,7 +141,7 @@
 #include "fixed_math.h"
 #include "fx_work.h"
 
-// The arrival scenes are defined after the scripts.
+// The arrival events are defined after the scripts.
 static void EventScript_DoraWakesIsaac(void);
 static void EventScript_HurryToThePlaza(void);
 static void CottageRoomsB_RestoreRoomPatch(void);
@@ -218,7 +218,7 @@ enum CottageRoomsBLocalId {
   /// ★ Named from the game: "Don't go out without your tunic!"
   /// (MsgValeComeOnHurry)
   LOCALID_TUNIC,
-  /// Kraden's sprite (0x1e, as in Sol Sanctum's scenes), seen only from
+  /// Kraden's sprite (0x1e, as in Sol Sanctum's events), seen only from
   /// COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG.
   /// ★ Named from the game: "from you, Kraden?" (MsgValeKradenOhIsaac)
   LOCALID_KRADEN
@@ -306,7 +306,7 @@ enum CottageRoomsBAnimation {
 
 // FLAG_VALE_DORA_OUT_OF_BED: Dora got out of her sickbed on this visit.
 
-/// Returns the warp destinations, among them the scenes played on arrival:
+/// Returns the warp destinations, among them the events played on arrival:
 /// COTTAGE_ROOMS_B_FROM_BABI_PALACE from Babi's palace
 /// (BABI_PALACE_TO_COTTAGE_ROOMS_B),
 /// COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST where a new game begins
@@ -533,7 +533,7 @@ static void EventScript_WarpToValeStormyNightEast(void) {
 }
 
 /// Sets up these rooms for the stormy night or the story's villagers. It also
-/// plays the scenes of COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST,
+/// plays the events of COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST,
 /// COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA and
 /// COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG. Called by Map_Run
 /// once the object events are placed. COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST
@@ -639,7 +639,7 @@ static void EventScript_DoraWakesIsaac(void) {
     viewCenter = (struct ObjectEvent *)work->camera;
   }
   sprite = ObjectEvent_GetById(LOCALID_TUNIC)->sprite;
-  // Present the bedside conversation before revealing the wider storm scene.
+  // Present the bedside conversation before revealing the wider storm event.
   FieldScript_Start();
   Import_ObjectEventSetPosition(LOCALID_YOUNG_SMITH, 0, 0);
   Import_ObjectEventSetPosition(LOCALID_YOUNG_SMITHS_MOTHER, 0, 0);

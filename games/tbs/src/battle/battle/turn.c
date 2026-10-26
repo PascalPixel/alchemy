@@ -486,7 +486,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
   } break;
 
   case COMMAND_DJINN:
-    // A Djinni not set: one ready again is set, with its own short scene
+    // A Djinni not set: one ready again is set, with its own short animation
     // played through the playback queue, and nothing else happens
     // (TURN_NO_ACTION); one still recovering says so (TURN_REPORTED). A set
     // Djinni is unleashed below.

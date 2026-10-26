@@ -131,7 +131,7 @@ void TilesetAnim_PauseFar(u32 no);
 /// Lets the map's blend script run again after BlendScript_SuspendFar.
 void BlendScript_ResumeFar(void);
 /// Stops the map's blend script, as the lighthouse maps and Vale's Babi
-/// scene do while they set the blend themselves.
+/// event do while they set the blend themselves.
 void BlendScript_SuspendFar(void);
 /// Returns the ground height of `layer` at (x, y) in 16.16 pixels, where y is
 /// the map's down axis (an object's z).

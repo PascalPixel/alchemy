@@ -39,7 +39,7 @@ struct CursorSlot {
 ///
 /// Returns 0x100 | the party place or 0x180 | the enemy place of the unit
 /// chosen with A, or -1 when cancelled or when the link battle's time runs
-/// out. While it runs, the battle scene slides (targetViewOffset of
+/// out. While it runs, the battle view slides (targetViewOffset of
 /// BattleMenuWork: -2 for the party, 16 for the enemies) and the covered
 /// units are marked (BattleHighlight_SetModesFar). The Djinn tutorial
 /// presses A every 60 frames.

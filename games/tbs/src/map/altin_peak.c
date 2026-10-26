@@ -1094,7 +1094,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   FieldScript_WaitFrames(60);
   Script_PlaySong(SONG_FADE_OUT_BGM);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  // Return Garet to the party if the warning sign brought him into the scene.
+  // Return Garet to the party if the warning sign brought him into the event.
   FieldScript_WaitFrames(120);
   if (Script_GetFlag(FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS) != 0) {
     ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);

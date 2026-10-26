@@ -846,7 +846,7 @@
 /// ★ Named from its area name: Venus Lighthouse
 #define FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED 0x9a7
 /// Out of Gateway Cave, Iodem saw a ship off the coast at Idejima, took it for
-/// Babi's and handed over the Black Orb (WorldMap_RunBlackOrbScene). Back from
+/// Babi's and handed over the Black Orb (WorldMap_RunBlackOrbEvent). Back from
 /// Venus Lighthouse, it picks the version of the report to Faran that knows
 /// the ship was swept away, and Garet's guess that it was Saturos's.
 /// ★ Named from the game: "I thought the ship we saw at Idejima was Babi's..."
@@ -854,7 +854,7 @@
 #define FLAG_SAW_SHIP_AT_IDEJIMA 0x9bf
 /// The party has first come into Lalivero with Iodem and found more of Tolbi's
 /// soldiers beaten in the street, who say Sheba's captors went to the ruins
-/// beneath Babi Lighthouse. After it, Gateway Cave's Black Orb scene no longer
+/// beneath Babi Lighthouse. After it, Gateway Cave's Black Orb event no longer
 /// plays.
 /// ★ Named from the game: "More of Tolbi's soldiers lay defeated..."
 /// (MsgLaliveroMoreTolbisSoldiersLayDefeated)
@@ -1127,7 +1127,7 @@
 /// Iodem has questioned the two wounded soldiers in a house in Suhalla, who
 /// lost Sheba in a sandstorm and warn that monsters cause the storms. Stepping
 /// into the house sets it even once Iodem has reached Babi Lighthouse, when
-/// the scene no longer plays; Suhalla Desert and Suhalla Gate read it.
+/// the event no longer plays; Suhalla Desert and Suhalla Gate read it.
 /// ★ Named from the game: "You soldiers were supposed to be heading for
 /// Babi Lighthouse!" (MsgSuhallaIodem)
 #define FLAG_IODEM_MET_WOUNDED_SOLDIERS 0x9b0

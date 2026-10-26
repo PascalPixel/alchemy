@@ -122,7 +122,7 @@ after equipping, setting a Djinni, levelling up or a class change.
 
 ![In Lunpa Fortress the Mercury Djinni Tonic, beside Isaac, vanishes, a stream of blue drops falls onto him, and a window says `The Mercury Djinni Tonic joined Isaac.`](https://alchemy.pascalpixel.com/places/lunpa-fortress-upper-floor/events/Event_DjinniJoins.gif)
 
-The game remembers what has happened (a chest opened, a Djinni found, a scene
+The game remembers what has happened (a chest opened, a Djinni found, an event
 already played) as yes-or-no flags, 4,096 of them, one bit each. When Tonic
 joins, its found flag is set: a Djinni found once cannot join again, and the
 save files count the Djinn found. The title screen offers its Battle command

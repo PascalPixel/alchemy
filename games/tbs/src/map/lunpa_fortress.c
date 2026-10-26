@@ -1900,7 +1900,7 @@ static void LunpaFortress_PositionPartyForMonster(void) {
 /// LunpaFortressToadonpa, coord event 20: walking into Hammet's cell. The first
 /// time, Hammet hears the party out and recognizes Ivan, then Dodonpa arrives,
 /// gloats, pulls a lever and frees Toadonpa on them; after a lost battle, the
-/// scene goes straight to the trap. Either way, the battle follows.
+/// event goes straight to the trap. Either way, the battle follows.
 static void EventScript_FindHammet(void) {
   s32 messageBase;
 

@@ -255,7 +255,7 @@ const struct MapEvent *SolSanctumStatue_GetEvents(void) {
   return gSolSanctumStatue_Events;
 }
 
-/// Chooses the scripted scene in the Luna and Sol rooms that a newly opened
+/// Chooses the event in the Luna and Sol rooms that a newly opened
 /// seal leads to, and requests its warp: once the centre statue has moved,
 /// the quarter it lit flashing in the Luna and Sol rooms
 /// (SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED), until
@@ -307,7 +307,7 @@ static void SolSanctumStatue_OpenCentralHole(void) {
   EventScript_CenterStatueMoved();
 }
 
-/// Kraden's second visit, a scripted scene: the first seal opened after the
+/// Kraden's second visit, an event: the first seal opened after the
 /// centre statue dropped has set the quarter it lit flashing in the Luna and
 /// Sol rooms, and Kraden comes to find the hole in the floor. "You found
 /// it, Isaac!"
@@ -474,7 +474,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   FieldScript_End();
 }
 
-/// Kraden's first visit, a scripted scene: the party's first seal has sent
+/// Kraden's first visit, an event: the party's first seal has sent
 /// lights falling through the Luna room around him, and he runs
 /// here to warn that the mechanism is a trap. "Wait, Isaac!" Moving one statue
 /// springs it; whoever set it hid something very important, perhaps the key
@@ -1604,7 +1604,7 @@ static void SolSanctumStatue_OpenSoutheastSeal(void) {
 
 /// Animates the seal and either advances the story or resets its statue.
 /// Called by the four OpenXSeal functions with sSealOpening filled in. Sets the
-/// seal's flag; when no scripted scene follows and the centre statue has not
+/// seal's flag; when no event follows and the centre statue has not
 /// moved, the statue slides back, the leader jumps clear and the flag is
 /// cleared again.
 static void SolSanctumStatue_OpenSeal(void) {

@@ -36,7 +36,7 @@ The cartridge's first instruction leads to `System_Entry`, which calls
 
 While a line of dialogue waits for A, the code that showed it simply stops
 and waits, yet the arrow keeps bobbing and the river keeps rippling. The
-game has no main loop that calls each part once a frame. A talk, a cutscene,
+game has no main loop that calls each part once a frame. A talk, an event,
 a menu screen or a battle animation is an ordinary piece of code that runs
 from start to finish, and when time has to pass it asks to wait a number of
 frames. What must keep moving meanwhile is a task, a short job run once every
@@ -76,7 +76,7 @@ chest's fanfare with `Sound_PlaySongFar`, which leads to `Sound_PlaySong`.
 
 Each map's code is an [overlay](glossary.md#overlay), unpacked into one 32 KB
 area of memory when the party arrives, over the map before it. A town's
-people and cutscenes matter only while the party is there, and all the maps'
+people and events matter only while the party is there, and all the maps'
 code would not fit in memory at once. The 201 maps share 96 overlays, since
 the rooms of one dungeon often share their code: all fourteen of Crossbone
 Isle's maps run one. Only one is loaded at a time, so overlays never call

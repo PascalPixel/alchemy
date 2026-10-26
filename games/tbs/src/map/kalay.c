@@ -1272,7 +1272,7 @@ s32 Kalay_Initialize(void) {
 /// map-section temp flag FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA; once Hammet is
 /// free (FLAG_DODONPA_LOCKED_UP) the palace's FLAG_IVAN_REPORTED_TO_LAYANA,
 /// FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS and FLAG_KALAY_TUNNEL_OPEN are
-/// set too, so its earlier scenes count as seen and the passage is open. Coming
+/// set too, so its earlier events count as seen and the passage is open. Coming
 /// up from the Kalay Tunnel (KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) finds its
 /// statue moved aside, and until it is caught the Nut circles in the air.
 static void Kalay_PrepareTown(void) {
@@ -1324,7 +1324,7 @@ static void Kalay_PrepareTown(void) {
 
 /// Sets up Hammet Palace's front (HammetPalaceGrounds): the palace flags as in
 /// the town, and, the first time the party comes before Ivan has reported to
-/// Layana, the guards scene.
+/// Layana, the guards event.
 static void Kalay_PrepareHammetPalace(void) {
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     GameFlag_Set(FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA);

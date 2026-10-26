@@ -144,7 +144,7 @@ enum TreeRoomsGesture {
 static void TreeRooms_PlayGesture(s32 gesture);
 static void TreeRooms_SpawnSwirlSparks(void);
 static void TreeRooms_ApplyFlaggedMapPatches(void);
-static void TreeRooms_RunLandingDustScene(void);
+static void TreeRooms_RunLandingDustEvent(void);
 
 static struct FieldPosition sSparkOrigin;
 static s32 sSparkFrame;
@@ -281,7 +281,7 @@ const struct MapWarpRegion *Map_GetWarpRegions(void) {
 const u32 *Map_GetWarps(void) { return gTreeRoomsWarps; }
 
 /// Returns the party's other slots (Garet, Ivan and, once she has joined,
-/// Mia), placed for the scripted scenes, and the two Tret object events.
+/// Mia), placed for the events, and the two Tret object events.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   return gTreeRoomsObjectEventTemplates;
 }
@@ -825,10 +825,10 @@ static void TreeRooms_PlayPostBattleConversation(void) {
 
 /// Sets the map grid by FLAG_TRET_DEFEATED: the passage in Tret's room closed
 /// before, open after, with cells near warp destination 20 redrawn. With
-/// playRecoveryScene it first plays the conversation after the battle, unless
+/// playRecoveryEvent it first plays the conversation after the battle, unless
 /// FLAG_KEEP_PARTY_POSITION is set.
-static void TreeRooms_ApplyPostBattleState(s32 playRecoveryScene) {
-  if (playRecoveryScene != 0 && GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0)
+static void TreeRooms_ApplyPostBattleState(s32 playRecoveryEvent) {
+  if (playRecoveryEvent != 0 && GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0)
     TreeRooms_PlayPostBattleConversation();
 
   WaitFrames(1);
@@ -932,7 +932,7 @@ s32 TreeRooms_EnterRoom(void) {
     FieldScript_WaitFrames(8);
   } else if (warpDest == 10) {
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
-      TreeRooms_RunLandingDustScene();
+      TreeRooms_RunLandingDustEvent();
   } else if (warpDest == TREE_ROOMS_AFTER_FIGHT_TRET) {
     TreeRooms_ApplyPostBattleState(1);
   }
@@ -1197,7 +1197,7 @@ static void EventScript_CastReveal(void) {
 /// Warp destination 10, at the end of the fall from cocoon 50: the leader drops
 /// in from 130 pixels up in front of Tret, lands in a ring of dust and the map
 /// shakes.
-static void TreeRooms_RunLandingDustScene(void) {
+static void TreeRooms_RunLandingDustEvent(void) {
   struct EffectOptions options;
   struct FieldPosition velocity;
   struct EffectOptions *particleOptions;

@@ -667,7 +667,7 @@ BattleAnimHandler gBattleAnim_Handlers[BATTLE_ANIM_COUNT - 1] = {
         BattleAnim_RunDeadlyGas, // burst_shower.c: Deadly Gas
 };
 
-// boreas.c, cybele.c and drain.c: Rock and ice scene geometry.
+// boreas.c, cybele.c and drain.c: Rock and ice animation geometry.
 
 /// The poses of the two halves of Cybele's face, three pairs, by
 /// CYBELE_POSE_FACE_LEFT and _RIGHT.
@@ -694,8 +694,8 @@ u8 gCybele_SparkSizes[] = {8, 15, 11, 9, 5};
 // drawn.
 u16 gCybele_EmberOffsets[] = {5760, 6016, 7040, 9344, 11648, 13952, 16256};
 u16 gCybele_EmberSizes[] = {16, 32, 48, 48, 48, 48, 48};
-/// Rock and ice scene: where the rocks stand (and later the boulders, 56 pixels
-/// further left), by the bottom-left corner.
+/// Rock and ice animation: where the rocks stand (and later the boulders, 56
+/// pixels further left), by the bottom-left corner.
 u8 gBoreas_Points[][2] = {{57, 130}, {75, 128}, {71, 104}, {101, 130},
                           {86, 126}, {85, 98},  {64, 98},  {98, 96},
                           {77, 87},  {84, 88},  {68, 67},  {81, 49},
@@ -708,13 +708,13 @@ u8 gBoreas_RockWidths[] = {24, 24, 20};
 u8 gBoreas_RockHeights[] = {48, 38, 26};
 /// The third object's animations from frame 209, one every 4 frames.
 u8 gBoreas_Animations[] = {2, 9, 10, 11};
-// Rock and ice scene: the chips thrown up as the rocks crumble: four large
+// Rock and ice animation: the chips thrown up as the rocks crumble: four large
 // ones, then from frame 192 seven small ones.
 u8 gBoreas_DebrisWidths[] = {12, 11, 8, 10, 8, 12, 5, 7, 7, 6, 7};
 u8 gBoreas_DebrisHeights[] = {10, 16, 14, 15, 4, 4, 3, 4, 6, 12, 10};
 u16 gBoreas_DebrisCells[] = {2584, 2704, 2880, 2992, 5062, 5094,
                              5142, 5157, 5185, 5227, 5299};
-// Rock and ice scene: the three 16x16 spray images.
+// Rock and ice animation: the three 16x16 spray images.
 u8 gBoreas_SprayWidths[] = {16, 16, 16};
 u8 gBoreas_SprayHeights[] = {16, 16, 16};
 u16 gBoreas_SprayCells[] = {4294, 4550, 4806};
@@ -908,7 +908,7 @@ u16 gHail_ChipCells[] = {0, 1152, 1243, 1341, 1533, 1677, 1898, 2098, 2252};
 u8 gHail_ChipX[] = {0, 9, 9, 11, 10, 0, 3, 13, 7};
 u8 gHail_ChipY[] = {0, 18, 18, 0, 24, 20, 5, 22, 26};
 
-// spire.c and thor.c: Storm scene colours and shattering rocks.
+// spire.c and thor.c: Storm animation colours and shattering rocks.
 
 /// The colours a target flashes when a bolt strikes it, chosen at random, as
 /// SPRITE_COLOR_ values: white, black, red raised to full, or its colour
@@ -937,9 +937,9 @@ u8 gSpire_ShardHeights[] = {11, 6,  10, 11, 10, 7,  17, 21,
 u16 gSpire_ShardCells[] = {0,   55,   121,  221,  298,  368,  452,  673,
                            862, 1090, 1342, 1631, 1917, 2157, 2413, 2623};
 
-// gaia.c and burst_scene.c: Burst scene rows and rising wall geometry.
+// gaia.c and burst_scene.c: Burst animation rows and rising wall geometry.
 
-/// Each burst scene mode (enum BurstSequenceMode), by the BURST_SEQUENCE_
+/// Each burst animation mode (enum BurstSequenceMode), by the BURST_SEQUENCE_
 /// columns (burst_scene.c).
 // clang-format off
 u8 gBurstSequence_Styles[][7] = {
@@ -1030,7 +1030,7 @@ u8 gHelmSplitter_ImpactBurstCellHeights[] = {96, 96, 90, 74, 74, 62, 52, 12};
 u16 gHelmSplitter_ImpactBurstCells[] = {0,     4608,  9216,  13356,
                                         16020, 18684, 20668, 22020};
 
-// particle_streams.c and ramses.c: Particle stream paths and circling scene
+// particle_streams.c and ramses.c: Particle stream paths and circling animation
 // geometry.
 
 /// The seven sparks that orbit the rising formation.

@@ -3,7 +3,7 @@
 /// Kalay. The map before its door, also Hammet Palace in the game's area names,
 /// is kalay.c's HammetPalaceGrounds.
 ///
-/// Two cutscenes in the room where Lady Layana stands frame the party's part in
+/// Two events in the room where Lady Layana stands frame the party's part in
 /// Hammet's rescue from Lunpa, and between them three flags pick where she
 /// stands and what she says:
 ///
@@ -12,7 +12,7 @@
 ///   setting FLAG_IVAN_REPORTED_TO_LAYANA.
 /// - Between the two, until the party has heard in Lunpa that Hammet is held
 ///   there (map-section temp flag FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA, set by
-///   kalay.c's cutscenes), Layana talks of Dodonpa's spies. Afterwards she
+///   kalay.c's events), Layana talks of Dodonpa's spies. Afterwards she
 ///   stands elsewhere in her room, and the first time they speak she scolds
 ///   `Isaac, you sneaked into Lunpa? That's far too dangerous!`
 ///   (FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS); from then on she talks of

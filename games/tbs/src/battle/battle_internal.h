@@ -205,8 +205,8 @@ enum BattleCastKind {
 #define YAW_PARTY_TURN 0x2000
 #define YAW_ENEMY_TURN -0x2000
 
-/// The camera's yaw from behind the enemies, which an enemy's staged scene and
-/// cast take in place of YAW_ENEMY_TURN.
+/// The camera's yaw from behind the enemies, which an enemy's staged animation
+/// and cast take in place of YAW_ENEMY_TURN.
 #define YAW_BEHIND_ENEMIES 0x5000
 
 /// REG_BLDCNT: blend the semi-transparent sprites (SPRITE_SEMI_TRANSPARENT)

@@ -2,7 +2,7 @@
 #define ALCHEMY_FX_WORK_H
 
 /// @file
-/// FieldEffectWork, the work of a field Psynergy effect scene.
+/// FieldEffectWork, the work of a field Psynergy effect.
 
 #include "types.h"
 #include "static_assert.h"
@@ -11,7 +11,7 @@
 struct Sprite;
 union ObjectEventOrEffect;
 
-/// The work of a Psynergy effect scene: its caster and target, where it takes
+/// The work of a Psynergy effect: its caster and target, where it takes
 /// place, the map state it restores and its 24 field effect sprites.
 /// It is the HEAP_SLOT_FIELD_EFFECT heap slot, read as gFieldEffectWork,
 /// cleared when allocated: FieldEffect_LoadActionEffectResources takes it for a

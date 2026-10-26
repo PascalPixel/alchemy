@@ -794,7 +794,7 @@ void WorldMap_LoadAreaGraphics(void) {
 
 /// Puts the default world map cells back after the still view and returns to
 /// the perspective view, without reloading the area's palette or tiles. Called
-/// three times by WorldMap_ShowEndingScene, each time after its messages.
+/// three times by WorldMap_ShowEndingEvent, each time after its messages.
 /// Unlike WorldMap_LoadAreaGraphics it leaves animationActive set, which only
 /// stops a menu suspending and resuming the tileset animations; the ending
 /// opens no menu before it leaves for the title screen.

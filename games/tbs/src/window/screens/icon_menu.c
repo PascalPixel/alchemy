@@ -523,7 +523,7 @@ s32 FieldMenu_SelectCommand(s32 selection) {
 /// Returns the final icon position after closing the menu. The Djinn icon is
 /// always shown, so `command` (enum FieldMenuCommand, as
 /// FieldMenu_SelectCommand gives it) is position command - 1. The world map's
-/// cutscenes show it picking Djinn (map/world_map.c).
+/// events show it picking Djinn (map/world_map.c).
 s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   PartyStatus_OpenAndWait();
   IconMenu_Open();

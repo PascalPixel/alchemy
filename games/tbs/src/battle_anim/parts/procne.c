@@ -14,7 +14,7 @@
 ///
 /// Abilities: Procne (SUMMON_ANIM_PROCNE).
 ///
-/// The scene runs for 400 frames:
+/// The animation runs for 400 frames:
 ///   0 to 159   : a whirlwind rises over the field and lifts the targets,
 ///                spinning them round it and drawing them in, while dust
 ///                spirals up;
@@ -31,7 +31,7 @@
 /// work->particles hold the dust (0 to 23 drawn), then from frame 160 the
 /// gathering motes (0 to 31), the comets' rings (32 to 59) and the four
 /// comets (60 to 63). PARTICLES 0 to 511 hold the sparks, 128 for each comet
-/// of which 96 are thrown. The scene moves the targets' objects (position,
+/// of which 96 are thrown. The animation moves the targets' objects (position,
 /// height, angle and gravity) and puts back their places and angles at the
 /// end; it loads the whirlwind's and then the comets' palette into the first
 /// 64 background colours, moves gProjection.centerX to 72 from frame 160 and
@@ -380,7 +380,7 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
       } while (index != 9);
 
       // From frame 256 the motes, sparks and comets are drawn 256 pixels
-      // into the scene.
+      // into the animation.
       // XXX: likely none of these points projects, because each result is
       // read back as a 16.16 point (x >> 17 for the canvas, y and depth
       // >> 16): Transform_ProjectPoint leaves the transformed point for a depth

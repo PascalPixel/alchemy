@@ -32,7 +32,7 @@
 /// Jupiter Djinni, starts its battle when spoken to.
 ///
 /// BabiLighthouseStoneDoor is the cave before a stone door, and its two
-/// cutscenes are ordered by flags: walking up to the door the first time plays
+/// events are ordered by flags: walking up to the door the first time plays
 /// BabiLighthouse_FaranAsksPartyToOpenDoor
 /// (FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW), and the door's first opening plays
 /// BabiLighthouse_ExplainTruthDoor (FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN);

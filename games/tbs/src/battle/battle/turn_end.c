@@ -268,7 +268,7 @@ s32 DjinnRecovery_Tick(void) {
 
 /// Runs DjinnRecovery_Tick twenty times, which sets every recovering Djinni
 /// of a party member with HP; those on standby stay so. Returns 0.
-/// Called by the Battle Arena when it restores the party, and by Vault's scene
+/// Called by the Battle Arena when it restores the party, and by Vault's event
 /// before Ivan hands back Isaac's Djinni.
 s32 DjinnRecovery_TickTwenty(void) {
   s32 turns;

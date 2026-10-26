@@ -31,7 +31,7 @@
 /// sails the Karagol, and the visitors are stranded; one of them says they
 /// made it to Tolbi with the party's help.
 ///
-/// After Colosso two short scripted scenes play, each once, on entering their
+/// After Colosso two short events play, each once, on entering their
 /// rooms (StuccoRoomsB_ApplyEntryState). In the northeast guest room a
 /// woman finds something on the floor, starts at the sight of the party and
 /// hides it behind the trash pile (StuccoRoomsB_WatchWomanHideMedal,
@@ -310,7 +310,7 @@ static void StuccoRoomsB_WatchPassengersArgue(void) {
 
 /// Sets up the rooms on entry. After Colosso: a row of three map cells takes
 /// new metatile behaviors, two of the passengers are drawn at a fixed priority,
-/// the medal woman stands where she hid the medal, the two short scenes play
+/// the medal woman stands where she hid the medal, the two short events play
 /// once each on their warp destinations, and the passenger who rode the ship
 /// with the party and LOCALID_STUCCO_ROOMS_B_COLOSSO_FAN have left once the
 /// party has seen the tour guide on the Tolbi docks tell a passenger his ticket
@@ -337,7 +337,7 @@ s32 StuccoRoomsB_ApplyEntryState(void) {
       ObjectEvent_FaceDirection(LOCALID_STUCCO_ROOMS_B_MEDAL_WOMAN, FACING_WEST,
                                 0);
     }
-    // Each short scene plays once, only when entering its room.
+    // Each short event plays once, only when entering its room.
     if (gSaveBlock.warpDest ==
         STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_FROM_INN_PASSAGE) {
       if (Script_GetFlag(FLAG_STUCCO_ROOMS_B_MEDAL_HIDDEN) == 0) {

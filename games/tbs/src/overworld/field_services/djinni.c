@@ -301,8 +301,8 @@ void Djinn_ResolvePendingEvent(s32 shown) {
 void FieldEffect_UpdateAllSlots(void) { FieldEffect_UpdateEffectSlots(); }
 
 /// Allocates and clears the field effect sprites (HEAP_SLOT_FIELD_EFFECT) and
-/// starts their update callback. The block is a whole effect scene,
-/// gFieldEffectWork, the slot a Psynergy effect's scene also takes. Called by
+/// starts their update callback. The block is a whole field effect,
+/// gFieldEffectWork, the slot a Psynergy effect also takes. Called by
 /// the Djinn joining effects (jupiter.c, mars.c, venus.c and mercury.c) and
 /// Altmiller Cave's map script; each ends with
 /// FieldEffect_ClearActiveSlotsAndScheduleUpdates.

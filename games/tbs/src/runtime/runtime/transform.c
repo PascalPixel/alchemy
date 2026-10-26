@@ -14,7 +14,7 @@ typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
 
 /// Allocates the one-level save area (heap slot HEAP_SLOT_TRANSFORM_STACK),
 /// clears gTransformStackDepth and resets gTransform to identity. Called by
-/// the battle scene setup and the field camera before a scene's first
+/// the battle view setup and the field camera before an event's first
 /// transform.
 void Transform_Reset(void) {
   gTransformStackTop =

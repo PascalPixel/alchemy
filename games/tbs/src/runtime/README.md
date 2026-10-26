@@ -1,6 +1,6 @@
 # Runtime
 
-When a cutscene pauses for half a second, the code that runs it simply waits,
+When an event pauses for half a second, the code that runs it simply waits,
 yet the screen keeps moving: windows still type, the [map](../../glossary.md#map)
 still scrolls with the camera. Everything in the game waits the same way,
 through one function, `WaitFrames`, which runs a short list of jobs, the
@@ -206,7 +206,7 @@ The exchange is `Serial_ExchangePayloads`, and larger data starts with
 ## Design
 
 The game is written as ordinary functions that run until they are done. A
-battle animation, a cutscene or a menu screen is a function with its own loop
+battle animation, an event or a menu screen is a function with its own loop
 that waits when time has to pass and carries on from the same place; nothing
 returns to a main loop between frames. Most of the runtime's shape follows:
 tasks keep the world moving while such a function waits, the stack switch

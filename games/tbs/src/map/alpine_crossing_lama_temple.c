@@ -39,7 +39,7 @@
 /// AltinPeakSouthEntrance (ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST)
 /// the first time plays AlpineCrossing_HamaReachesHsu
 /// (FLAG_HAMA_REACHED_HSU). Lift on the boulder (AlpineCrossing_LiftBoulder)
-/// raises it while Hama and Feizhi pull him free; the scene sets
+/// raises it while Hama and Feizhi pull him free; the event sets
 /// FLAG_HSU_RESCUED and leaves for Lama Temple (ALPINE_CROSSING_TO_LAMA_TEMPLE,
 /// to LAMA_TEMPLE_FROM_ALPINE_CROSSING), where Map_Initialize plays Hama's
 /// farewell (LamaTemple_RunHamasFarewell). Coming back instead by the world
@@ -696,7 +696,7 @@ static void AlpineCrossing_HamaReachesHsu(void) {
 /// Lift on the boulder at the Alpine Crossing, until Hsu is freed: it floats,
 /// and Hama and Feizhi pull him free in two heaves of two tugs each, asking the
 /// leader in between to hold on. Hsu is free; they will ask Master Feh to tend
-/// him and clear the road, and the scene fades out to Hama's farewell at Lama
+/// him and clear the road, and the event fades out to Hama's farewell at Lama
 /// Temple.
 static void AlpineCrossing_LiftBoulder(void) {
 

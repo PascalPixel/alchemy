@@ -250,7 +250,7 @@ void FieldEffect_StartCast(void) {
 /// forced by flags 0x148 to 0x14f, over 8 frames. Most field Psynergy
 /// effects open with it, and FieldEffect_FadeFromEffectColor fades back.
 void FieldEffect_FadeToEffectColor(void) {
-  u8 *scene;
+  u8 *field;
   struct PaletteFade *work;
   s32 no;
 
@@ -261,12 +261,12 @@ void FieldEffect_FadeToEffectColor(void) {
   // before it must stay. Then show the targets at once.
   // Both blocks are read through gHeapSlots, the spelling this site matched
   // with; gFieldWork and gPaletteFadeWork are not measured here.
-  scene = *(gHeapSlots + HEAP_SLOT_FIELD);
+  field = *(gHeapSlots + HEAP_SLOT_FIELD);
   work = *(gHeapSlots + HEAP_SLOT_PALETTE_FADE);
-  Dma_Set(&work->target[0x2a0], scene + 0x776,
+  Dma_Set(&work->target[0x2a0], field + 0x776,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x150, REG_DMA3);
-  if (((struct FieldWork *)scene)->revealActive == 0)
-    Dma_Set(work->target, scene + 0x236, (DMA_ENABLE | DMA_32BIT) << 16 | 0x150,
+  if (((struct FieldWork *)field)->revealActive == 0)
+    Dma_Set(work->target, field + 0x236, (DMA_ENABLE | DMA_32BIT) << 16 | 0x150,
             REG_DMA3);
   Dma_Set(work->target, work->current,
           (DMA_ENABLE | DMA_32BIT) << 16 | (sizeof work->current / 4),

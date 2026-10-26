@@ -1800,7 +1800,7 @@ static void LogRoomsA_ResetSuspectRoutes(void) {
 }
 
 /// Sets the three party images to the priority used during the mind-reading
-/// scene.
+/// event.
 static inline void LogRoomsA_SetPartyImagePriority(void) {
   {
     struct Sprite *sprite = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->sprite;
@@ -2144,7 +2144,7 @@ static void LogRoomsA_AdvanceSuspectRoute(s32 localId, s32 expected, s32 next,
 #include "common/vault_spotflag.h"
 
 /// Arriving in any room of Vault's houses, shops and inn: restores the room
-/// for the story so far, and plays the loft's scenes: the tied-up villager, the
+/// for the story so far, and plays the loft's events: the tied-up villager, the
 /// rematch, and the defeat or victory.
 ///
 /// Called by the engine once the object events are placed, by warp destination.
@@ -2324,7 +2324,7 @@ static void LogRoomsA_FaceSuspectsTowardLeader(void) {
 /// lies beaten, and the thieves hold it and the tied-up villager as hostages.
 ///
 /// Called by Map_Initialize at LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES,
-/// the battle's defeat destination; the scene then takes
+/// the battle's defeat destination; the event then takes
 /// LOG_ROOMS_A_TO_SANCTUM to the Vault Sanctum (MapId_Sanctum,
 /// SANCTUM_FROM_LOG_ROOMS_A).
 static void LogRoomsA_LoseToThieves(void) {
@@ -3204,7 +3204,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
   FieldScript_WaitFrames(30);
-  // Clear the loft of everyone the cutscene used.
+  // Clear the loft of everyone the event used.
   ObjectEvent_SetPosition(LOCALID_TIED_UP_VILLAGER, 0, 0);
   ObjectEvent_SetPosition(LOCALID_LOFT_MAYOR, 0, 0);
   ObjectEvent_SetPosition(LOCALID_LOFT_ESCORT, 0, 0);
@@ -3264,7 +3264,7 @@ static void LogRoomsA_StartMindRead(s32 casterId, s32 targetId) {
   WaitFrames(1);
 }
 
-/// Finishes Mind Read and releases its scene effect objects.
+/// Finishes Mind Read and releases its event effect objects.
 static void LogRoomsA_EndMindRead(void) {
   Field_DispatchTypeHandler(2);
   FieldEffect_StopCasterHook();

@@ -1807,7 +1807,7 @@ static void EventScript_CarryPillarAcrossGap(void) {
 
 /// In VenusLighthouseSecondFloor, stepping on the floor switch
 /// (MB_VENUS_LIGHTHOUSE_WALL_SWITCH): the wall slides aside in a cloud of dust,
-/// the first time only (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED), and the scene cuts
+/// the first time only (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED), and the event cuts
 /// to VenusLighthouseFirstFloor by
 /// VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_EAST, where
 /// VenusLighthouse_AnimatePairedTileWaves shows what moved there before
@@ -2368,7 +2368,7 @@ static void EventScript_PushPuzzlePillar(void) {
 
 /// In VenusLighthouseFourthFloor, stepping on the west floor switch: the west
 /// wall slides aside, the first time only
-/// (FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED), and the scene cuts to
+/// (FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED), and the event cuts to
 /// VenusLighthouseThirdFloor by
 /// VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST,
 /// where VenusLighthouse_AnimateWestTileWave shows what moved there before
@@ -2442,7 +2442,7 @@ static void EventScript_StepOnWestWallSwitch(void) {
 
 /// In VenusLighthouseFourthFloor, stepping on the east floor switch: the east
 /// wall slides aside, the first time only
-/// (FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED), and the scene cuts to
+/// (FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED), and the event cuts to
 /// VenusLighthouseThirdFloor by
 /// VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST,
 /// where VenusLighthouse_AnimateEastTileWave shows what moved there before

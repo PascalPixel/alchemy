@@ -940,7 +940,7 @@ static void EventScript_LeaderSneaksOut(void) {
 
 /// Sets Lunpa or the Lunpa Fortress Gates up: in the town, Reveal's secrets
 /// hidden and the floating Nut; at the gates, the thrown-out or sneaking-out
-/// cutscene, the watchers, and the fortress's puzzle and guard flags cleared.
+/// event, the watchers, and the fortress's puzzle and guard flags cleared.
 s32 Map_Initialize(void) {
   struct ObjectEvent *puddle;
 
@@ -956,7 +956,7 @@ s32 Map_Initialize(void) {
     }
     GameFlag_Set(FLAG_LUNPA_SECRETS_HIDDEN);
   }
-  // Restore the gate's arrival cutscene and active detection tasks separately.
+  // Restore the gate's arrival event and active detection tasks separately.
   if (gSaveBlock.mapId == (s32)&MapId_LunpaFortressGates) {
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gSaveBlock.retreatWarpDest = GATE_RETREAT_WARP_DEST;

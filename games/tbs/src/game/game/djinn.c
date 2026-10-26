@@ -61,7 +61,7 @@ s32 Djinn_GiveToParty(s32 element, s32 djinn) {
 /// Gives Djinni `djinnIndex` of `element` to a unit: sets its bit in
 /// djinnHeld and counts it. Returns -1 when the unit holds ten of the
 /// element or has it already. Called by Djinn_GiveToParty and
-/// Djinn_Transfer, by the scenes where a member joins with Djinn, and by the
+/// Djinn_Transfer, by the events where a member joins with Djinn, and by the
 /// debug menus.
 s32 Djinn_Give(s32 unitId, s32 element, s32 djinnIndex) {
   struct Unit *unit = Unit_Get(unitId);
@@ -184,7 +184,7 @@ s32 DjinnRecovery_Remove(s32 unitId, s32 element, s32 djinnIndex) {
 /// (DJINN_RECOVERY_AFTER_BATTLE), moving it there if it was already listed.
 /// Returns a pointer to the list's count. Nothing checks the list's 64-entry
 /// capacity. Called when a Djinni joins, by the Djinn menu's standby command,
-/// by battle and by the scene where Flint joins.
+/// by battle and by the event where Flint joins.
 u32 *DjinnRecovery_AddStandby(u32 unitId, u32 element, u32 djinnIndex) {
   struct DjinnRecoveryList *list;
   s32 entryIndex;

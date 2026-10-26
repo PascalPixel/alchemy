@@ -1,7 +1,7 @@
 /// @file
 /// Kolima Forest (MapId_KolimaForestEntrance), the first of the forest's five
 /// maps, entered from the world map (KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP). If
-/// the party comes here before it has been to Kolima, the curse's cutscene
+/// the party comes here before it has been to Kolima, the curse's event
 /// plays here instead of in the village
 /// (KolimaForestEntrance_WitnessForestCurse, until
 /// FLAG_KOLIMA_CURSE_WITNESSED): sparkles of Tret's glamour rain down, fields
@@ -247,7 +247,7 @@ s32 KolimaForestEntrance_Initialize(void) {
 
 /// Kolima Forest, the first entry from the world map before the curse has been
 /// seen in Kolima (FLAG_KOLIMA_CURSE_WITNESSED clear): the party sees the
-/// curse fall, the same cutscene as Kolima_WitnessForestCurse without the trees
+/// curse fall, the same event as Kolima_WitnessForestCurse without the trees
 /// that were people. Ivan notices sparkly stuff on the ground; sparkles rain
 /// from the sky, the party sinks under them, and fields of Psynergy rise around
 /// each member before the sparkles reach them. They argue over whether it was

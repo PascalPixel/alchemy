@@ -22,7 +22,8 @@
 ///
 /// Abilities: Ramses (SUMMON_ANIM_RAMSES).
 ///
-/// The scene plays for up to RAMSES_FRAMES frames, and A or B ends it early.
+/// The animation plays for up to RAMSES_FRAMES frames, and A or B ends it
+/// early.
 ///
 ///   0 to 90     the orb circles above the formation
 ///   91 to 196   it drops three times, 40 frames apart, throwing puffs, and
@@ -34,7 +35,7 @@
 /// steps matters: later steps draw over earlier ones, and several of them
 /// consume random numbers.
 void BattleAnim_RunRamses(struct BattleAnimArgs *effect) {
-  // Every object of the scene takes this scale.
+  // Every object of the animation takes this scale.
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
   struct SpritePlacement position;
   DrawRectangle draw[2];
@@ -310,7 +311,7 @@ void BattleAnim_RunRamses(struct BattleAnimArgs *effect) {
     ANIM_END_FRAME(work);
   }
 
-  // The battle shows the damage once the scene is over, and gets its own
+  // The battle shows the damage once the animation is over, and gets its own
   // background back.
   ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   BattleAnim_SetupBlendedDisplay();

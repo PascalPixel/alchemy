@@ -109,7 +109,7 @@ void Serial_DisableTransfer(void) {
 /// Serial_ExchangePayloads). When SIOCNT shows the parent's id with
 /// SIO_MULTI_SD set and SIO_MULTI_SI and SIO_START clear, and no packet is
 /// being sent, this console arms timer 3 to clock the transfers and so acts as
-/// the parent. Called by the Tret tree branch scene for its own exchange.
+/// the parent. Called by the Tret tree branch event for its own exchange.
 /// Returns the link status (see Serial_ExchangePayloads).
 s32 Serial_PollAndTransfer(void *send, void *receive) {
   volatile u32 *siocnt;

@@ -149,7 +149,7 @@ void FieldScript_RunObjectHookAndWait(struct ObjectEventTemplate *table) {
 
 /// Spawns the object events of an object event template table after the last
 /// object event in use. Called by the Kolima, Kalay and Tolbi ship map scripts
-/// to bring object events in during a scene.
+/// to bring object events in during an event.
 void FieldScript_CallWithLastActiveObjectId(struct ObjectEventTemplate *table) {
   FieldScript_SpawnObjectEventTemplates(table, ObjectEvent_FindLastActiveId());
 }

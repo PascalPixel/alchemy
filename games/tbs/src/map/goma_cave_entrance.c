@@ -8,7 +8,7 @@
 /// once the thieves in Vault are jailed (FLAG_VAULT_THIEVES_JAILED) does Ivan
 /// walk up, blow the ivy off with Whirlwind and rejoin with the Shaman's Rod
 /// equipped. The ivy is never the player's target (OBJ_EVENT_NOT_TARGETED), so
-/// that cutscene is the only way past it. After it, Move runs
+/// that event is the only way past it. After it, Move runs
 /// EventScript_MoveStump, which sends the stump leaping out of the way once it
 /// stands on column 11: it lands in the pool under the waterfall and sinks
 /// until only its top shows, a stepping stone beside LOCALID_SUNKEN_STUMP
@@ -104,7 +104,7 @@ enum GomaCaveEntranceLocalId {
   LOCALID_IVY
 };
 
-// Private cutscene actions used by the reunion sequence.
+// Private event actions used by the reunion sequence.
 static void GomaCaveEntrance_WhirlwindOnStumpIvy(void);
 static void GomaCaveEntrance_LeapStump(s32 stumpId);
 static void GomaCaveEntrance_GiveShamansRod(void);
@@ -514,7 +514,7 @@ static void EventScript_MoveStump(void) {
   FieldScript_End();
 }
 
-/// Ivan casts Whirlwind on the stump's ivy, and the cutscene waits for it. The
+/// Ivan casts Whirlwind on the stump's ivy, and the event waits for it. The
 /// announcement is lowered to a fixed place (FIELD_MESSAGE_LOWER), since
 /// it would otherwise be placed by where the leader, not Ivan, stands.
 static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {

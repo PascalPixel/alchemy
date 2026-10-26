@@ -209,7 +209,7 @@ const struct MapEvent *MercuryLighthouseAerie_GetEvents(void) {
 /// sit 50 pixels down; the first arrival
 /// (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) plays the party's arrival, the
 /// return from the battle with Saturos
-/// (MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE) Alex's scene, and
+/// (MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE) Alex's event, and
 /// arriving by the lift
 /// (MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR) leaves the lift
 /// up.
@@ -1771,7 +1771,7 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
 /// ride it down without it (MercuryLighthouseAerie_AlexAppears).
 UNUSED static void MercuryLighthouseAerie_UnusedAlexCastsPly(void) {
   // XXX (no evidence): what this was for; nothing calls it, so neither the
-  // ROM nor a render shows it in a scene.
+  // ROM nor a render shows it in an event.
   FieldEffect_LoadActionEffectResources(ABILITY_PLY, 1);
   FieldEffect_SetupObjectPair(LOCALID_ALEX, LOCALID_LIFT_STATUE);
   FieldEffect_StartCast();

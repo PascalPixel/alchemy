@@ -283,7 +283,7 @@ void Sound_Initialize(void) {
 
 /// Sets the BGM tempo scale directly; 0x100 preserves its native tempo. The
 /// scale lasts until the next song starts (MPlayStart sets 0x100)
-/// or the tempo and pitch ramp moves. Called only by the Lemurian ship scene,
+/// or the tempo and pitch ramp moves. Called only by the Lemurian ship event,
 /// which plays MUS_ENDING at 240 (0.94 of its tempo) as the ship sails off.
 void Sound_SetBgmTempo(u16 tempoScale) {
   m4aMPlayTempoControl(&gMPlayInfo_BGM, tempoScale);

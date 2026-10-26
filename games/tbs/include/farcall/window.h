@@ -317,7 +317,7 @@ void Graphics_ExpandVramTilesByColorTableFar(u16 *dst);
 /// too, doubling the room for text to 256 tiles while a menu is open.
 void Text_UseExtraTilesFar(s32 flag);
 /// Opens the field command menu and moves its cursor to a command's icon, as
-/// the world map's scenes show it picking Djinn. Returns the icon's position.
+/// the world map's events show it picking Djinn. Returns the icon's position.
 s32 Menu_AnimateSelectionToEntryFar(s32 start, s32 command);
 /// Returns the first entry of gWindowSprite_PointerTiles, whatever no is.
 s32 WindowSprite_GetPointerTilesFar(s32 no);

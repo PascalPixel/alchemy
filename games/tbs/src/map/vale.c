@@ -16,7 +16,7 @@
 ///   that day before going to fetch Isaac to go to Kraden's.
 ///   VALE_TO_ROOF_MENDED brings the party back in at VALE_FROM_ROOF_MENDED,
 ///   where EventScript_RoofMended plays once (map section flag
-///   FLAG_VALE_ROOF_MENDED_SCENE_PLAYED): Dora praises the roof, remembers
+///   FLAG_VALE_ROOF_MENDED_EVENT_PLAYED): Dora praises the roof, remembers
 ///   Kyle, and sends the three off on their climb of Mt. Aleph with Kraden, the
 ///   scholar who teaches them Alchemy (FLAG_VALE_ROOF_JUST_MENDED); for the
 ///   rest of that visit Dora frets about the hole clumsy Garet left.
@@ -60,7 +60,7 @@
 /// VALE_TO_COTTAGE_ROOMS_A_NORTH_SECOND_DOOR into the houses
 /// (MapId_CottageRoomsA, cottage_rooms_a.c),
 /// VALE_TO_COTTAGE_ROOMS_B into Isaac's house (MapId_CottageRoomsB) and
-/// VALE_TO_SANCTUM into MapId_Sanctum. Two scenes no table reaches remain:
+/// VALE_TO_SANCTUM into MapId_Sanctum. Two events no table reaches remain:
 /// EventScript_UnusedRoofMended, a copy of the roof's end, and
 /// EventScript_UnusedWaterBurstsByTheRiver, which sets map section flag
 /// FLAG_VALE_UNUSED_WATER_BURST_SEEN. FLAG_VALE_MT_ALEPH_GUARD_PAUSED pauses
@@ -405,7 +405,7 @@ enum ValeAnimation {
 #define FLAG_VALE_ASKED_ABOUT_TRAVELERS FLAG_MAPSEC_TEMP_07
 /// EventScript_RoofMended has played, in which Dora praises the roof and sends
 /// the three off to Mt. Aleph.
-#define FLAG_VALE_ROOF_MENDED_SCENE_PLAYED FLAG_MAPSEC_TEMP_08
+#define FLAG_VALE_ROOF_MENDED_EVENT_PLAYED FLAG_MAPSEC_TEMP_08
 /// The stone pillar below the cliff stands in its west column.
 /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
 #define FLAG_VALE_PILLAR_IN_WEST_COLUMN FLAG_MAPSEC_TEMP_14
@@ -1017,10 +1017,10 @@ static void EventScript_RepeatMtAlephWarningAtEitherPause(void) {
 /// Unused: another cut of EventScript_RoofMended, the end of the morning the
 /// story begins.
 ///
-/// No table names it. It plays the same lines as the scene the game uses, `Good
+/// No table names it. It plays the same lines as the event the game uses, `Good
 /// job, Garet.` and `I was devastated when Kyle died...` among them, but frames
 /// them with its own camera and map grid cells, and sets
-/// FLAG_VALE_ROOF_JUST_MENDED as that scene does.
+/// FLAG_VALE_ROOF_JUST_MENDED as that event does.
 UNUSED static void EventScript_UnusedRoofMended(void) {
   struct ObjectEvent *leader;
   struct ObjectEvent *objectEvent;
@@ -1679,10 +1679,10 @@ s32 Vale_Initialize(void) {
                                      TASK_PRIORITY_MAP);
         }
       }
-      if (!Script_GetFlag(FLAG_VALE_ROOF_MENDED_SCENE_PLAYED) &&
+      if (!Script_GetFlag(FLAG_VALE_ROOF_MENDED_EVENT_PLAYED) &&
           gSaveBlock.warpDest == VALE_FROM_ROOF_MENDED) {
         EventScript_RoofMended();
-        GameFlag_Set(FLAG_VALE_ROOF_MENDED_SCENE_PLAYED);
+        GameFlag_Set(FLAG_VALE_ROOF_MENDED_EVENT_PLAYED);
       }
 #if TBS_PATCH_4
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
@@ -2061,7 +2061,7 @@ static void Vale_PlaceOrHideBoards(s32 first, u32 count, s32 mode) {
 static void EventScript_MendingTheRoof(void) {
   u32 i;
   /* FAKEMATCH(dead): repairObjectEvent's zero initializer, never read, keeps
-   * the scene's register allocation; without it, 59 of 1024 instructions differ
+   * the event's register allocation; without it, 59 of 1024 instructions differ
    * in tbs-en. */
   struct ObjectEvent *repairObjectEvent = NULL;
   struct ObjectEvent *leader;
@@ -2206,7 +2206,7 @@ static void EventScript_MendingTheRoof(void) {
 
   // Garet trains his Psynergy: the hand of Move pushes the pillar, shedding
   // sparkles.
-  Map_StartCutscenePsynergy();
+  Map_StartEventPsynergy();
   Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_CAST_PSYNERGY);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_GARET, 0, 20);
   Script_PlaySong(SE_PSYNERGY_SPARKLE);
@@ -2249,7 +2249,7 @@ static void EventScript_MendingTheRoof(void) {
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   Vale_VanishMoveHand(moveHand);
-  Map_EndCutscenePsynergy();
+  Map_EndEventPsynergy();
 
   // Finish the reunion conversation after the repair effects settle.
   FieldScript_WaitFrames(10);
@@ -2476,7 +2476,7 @@ static void EventScript_RoofMended(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 1);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 40);
-  Map_StartCutscenePsynergy();
+  Map_StartEventPsynergy();
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_CAST_PSYNERGY);
   FieldScheduler_AddCallback(Vale_PlayStepSound, TASK_PRIORITY_MAP);
   for (i = 0; i < 40; i++) {
@@ -2602,7 +2602,7 @@ static void EventScript_RoofMended(void) {
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_HAMMER);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gVale_LeaderHammers);
   FieldScript_WaitFrames(120);
-  Map_EndCutscenePsynergy();
+  Map_EndEventPsynergy();
   MapGrid_CopyCellsTo(5, 103, 82, 42, 1, 1);
   ObjectEvent_SetBuiltinAction(LOCALID_PARTY_LEADER, OBJ_EVENT_ACTION_IDLE);
   leader->scaleX = Q16_ONE;

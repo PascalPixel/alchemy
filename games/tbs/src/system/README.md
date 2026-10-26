@@ -91,7 +91,7 @@ A caller uses the jump's name, the function's with `Far` added:
 
 ## How an overlay reaches the rest of the game
 
-A town's people, cutscenes and puzzles matter only while the party is there,
+A town's people, events and puzzles matter only while the party is there,
 and all the maps' code together would not fit in memory. So each map's code
 is packed on the cartridge as an overlay and unpacked, when the party
 arrives, into the 32 KB overlay area, over the map before. Every overlay is

@@ -18,7 +18,7 @@ void FieldScript_StartFar(void);
 /// FLAG_LURE_CAP.
 void FieldScript_EndFar(void);
 /// Spawns the object events of an object event template table after the last
-/// object event in use, so a ship map can bring people in mid-scene.
+/// object event in use, so a ship map can bring people in mid-event.
 void FieldScript_CallWithLastActiveObjectIdFar(
     struct ObjectEventTemplate *table);
 /// Gives each unconditional object event template a condition that shows it

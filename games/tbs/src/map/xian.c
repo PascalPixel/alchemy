@@ -14,7 +14,7 @@
 /// until she has found the road blocked at Alpine Crossing
 /// (FLAG_FEIZHI_SAW_ROCKSLIDE) or Xian has heard the news.
 ///
-/// Two small scenes run on map flags, which last until the party next enters a
+/// Two small events run on map flags, which last until the party next enters a
 /// map other than by returning from a battle:
 /// - the water carrier walks her round (gXian_WaterCarrierRoute). Spoken to on
 ///   its eastern part, she spills her water (FLAG_XIAN_WATER_SPILLED): a puddle

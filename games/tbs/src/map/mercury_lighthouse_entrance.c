@@ -138,7 +138,7 @@ enum MercuryLighthouseEntranceLocalId {
   /// then three on its east (x 184).
   /// ★ Named from the game: "checked the stone statue..." (MsgCheckedGround)
   LOCALID_FIRST_STATUE,
-  /// The east side's three statues, which the doorway's scenes draw mirrored.
+  /// The east side's three statues, which the doorway's events draw mirrored.
   /// ★ Named from the game: "checked the stone statue..." (MsgCheckedGround)
   LOCALID_FIRST_EAST_STATUE = LOCALID_FIRST_STATUE + 3,
   /// ★ Named from the game: "used Ply." (MsgMercuryDidThat)
@@ -308,7 +308,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
   leaderRow = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed / PIXELS(16);
   if (leaderColumn == 12 && leaderRow == 32) {
     FieldScript_Start();
-    // Fade the scene before releasing fifteen sparks above the pool.
+    // Fade the event before releasing fifteen sparks above the pool.
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_StartInterpolation(60);
     FieldScript_WaitFrames(120);
@@ -416,8 +416,8 @@ static void MercuryLighthouseEntrance_FightLizardMan(void) {
 
 /// Sets up Mercury Lighthouse's ground floor: the lights the leader carries,
 /// FLAG_MERCURY_LIGHTHOUSE_LIT, the Retreat point, the pool's colours and the
-/// routes Ply has opened, then the scene of the warp destination taken: the
-/// Lizard Man scene until Mia has gone in, the drop from above, the passages'
+/// routes Ply has opened, then the event of the warp destination taken: the
+/// Lizard Man event until Mia has gone in, the drop from above, the passages'
 /// arrivals and the rise from the channels.
 s32 MercuryLighthouseEntrance_Initialize(void) {
   struct EffectOptions options;
@@ -450,7 +450,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   // Each warp destination restores its route or plays its one-time arrival.
   switch (gSaveBlock.warpDest) {
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR:
-    // Until Mia has gone in, arriving here plays the Lizard Man scene.
+    // Until Mia has gone in, arriving here plays the Lizard Man event.
     if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA))
       Import_ScriptRequestWarp(
           MERCURY_LIGHTHOUSE_ENTRANCE_TO_SIX_STATUES_BEFORE_LIZARD_MAN);

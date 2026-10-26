@@ -149,7 +149,8 @@ s32 Battle_Run(s32 enemyGroup) {
   }
   Task_Add(BattleCamera_Update, TASK_PRIORITY_MAIN_LOOP - 1);
 
-  // The battle music: the scene's own song, or the usual battle songs.
+  // The battle music: the song an event set for this battle, or the usual
+  // battle songs.
   cue = gSaveBlock.battleMusic;
   if (cue != 0) {
     Sound_PlaySongFar(cue);

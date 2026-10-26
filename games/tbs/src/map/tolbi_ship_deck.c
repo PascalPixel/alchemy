@@ -11,7 +11,7 @@
 /// The setup redraws the deck's cells for the stage, rocks the view and
 /// scrolls the sea while under sail, rows the oars to the strokes of the
 /// passengers at the seats (gTolbiShipDeckRowerStrokes), and plays the
-/// cutscene its warp destination names. Each cutscene leaves into the next, in
+/// event its warp destination names. Each event leaves into the next, in
 /// another of the ship's maps or on the world map, whose warp destinations sail
 /// the ship on. In story order:
 ///
@@ -146,7 +146,7 @@ static void TolbiShipDeck_PlaceLeaderOnDeck(void);
 
 /// Who is who on deck, numbering each object event template table's rows from
 /// LOCALID_FIRST_PLACED. Every table starts with the same twelve rows of oars,
-/// and the cutscenes add their object events after a table's last row
+/// and the events add their object events after a table's last row
 /// (FieldScript_CallWithLastActiveObjectId), so each stage of the voyage has
 /// its own names, which carry its prefix. At Kalay
 /// (gTolbiShipDeckObjectEventTemplatesWaiting) the captain talks the delay over
@@ -215,7 +215,7 @@ enum TolbiShipDeckLocalId {
   LOCALID_KALAY_PASSENGER_KARAGOL,
 
   // At sea: gTolbiShipDeck_CrewObjectEventTemplates after the oars, then each
-  // cutscene's own rows.
+  // event's own rows.
   /// ★ Named from the game: "Say, Kaja, how are the oarsmen doing?"
   /// (MsgTolbiShipWonderCouldHaveHappened)
   LOCALID_SEA_KAJA = LOCALID_FIRST_OAR + 8,
@@ -1302,9 +1302,9 @@ s32 TolbiShipDeck_Initialize(void) {
 }
 
 /// Applies the voyage's state: which cells and oars are drawn, whether the deck
-/// rocks and the sea scrolls, and which cutscene the warp destination starts
+/// rocks and the sea scrolls, and which event the warp destination starts
 /// (the warp destinations from TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_READY
-/// on are the voyage's cutscenes, chained by their warps).
+/// on are the voyage's events, chained by their warps).
 static void TolbiShipDeck_ApplyEntryState(void) {
   s32 flag;
 
@@ -1641,7 +1641,7 @@ static void TolbiShipDeck_DepartWithParty(void) {
 }
 
 /// The messenger comes up through the first door to report, the crew member
-/// waiting there calls the ship ready, and the scene moves on to the next stage
+/// waiting there calls the ship ready, and the event moves on to the next stage
 /// of the voyage. "Preparations... Ready!"
 static void TolbiShipDeck_AnnouncePreparationsReady(s32 messenger,
                                                     s32 crewMember) {
@@ -3066,7 +3066,7 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
 }
 
 /// Back on deck from the island: on yes, the crew make ready to sail and the
-/// scene moves on. "How was it, Isaac? Did you explore the island
+/// event moves on. "How was it, Isaac? Did you explore the island
 /// thoroughly?"
 static void TolbiShipDeck_ReturnFromIsland(void) {
   FieldScript_Start();

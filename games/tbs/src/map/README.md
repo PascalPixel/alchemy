@@ -4,7 +4,7 @@ Everything that makes a [map](../../glossary.md#map) itself is in its own
 code here: who stands where, what each person says, what happens when the
 [party](../../glossary.md#the-party) steps on a doorstep, searches a jar or
 uses an item or [Psynergy](../../glossary.md#psynergy-and-pp), and the
-cutscenes the map plays. That code is a map
+events the map plays. That code is a map
 [overlay](../../glossary.md#overlay): a piece of code unpacked into one 32 KB
 area of RAM when the party arrives, and replaced when it leaves.
 [Running a map](../overworld/README.md) runs the map and asks the overlay what
@@ -37,8 +37,8 @@ table, so a map can answer differently as the story goes on
 that serves several maps can answer for each.
 
 The setup restores what the flags say has happened, starts the map's own
-timed work, or plays an arrival cutscene; it may send the party on at once. It
-skips arrival cutscenes when the party is coming back to where it stood, as
+timed work, or plays an arrival event; it may send the party on at once. It
+skips arrival events when the party is coming back to where it stood, as
 after a battle.
 
 The six are `struct MapEntries`, in a fixed order at the start of
@@ -227,7 +227,7 @@ case.
 
 ![Isaac walks north into the door of Jenna's grandparents' house in Vale; the door opens, he walks in, and the room inside fades in](https://alchemy.pascalpixel.com/guides/world/door.gif)
 
-A cutscene is written as a list of what happens, one step to a line, and the
+An event is written as a list of what happens, one step to a line, and the
 game plays it from top to bottom while the party waits. The door in the
 recording is one of the shortest: it plays the door's sound, opens the door,
 starts the leader walking in and asks for the warp into the house.
@@ -245,7 +245,7 @@ A step that takes time, such as opening the door, a line of dialogue or a
 wait, holds the script until it is done; a step that takes no time, such as
 starting a walk, lets the next line follow in the same
 [frame](../../glossary.md#frame). Whatever has to keep moving during a
-cutscene runs on its own: as an object script (the steps someone runs each
+event runs on its own: as an object script (the steps someone runs each
 frame), a callback (a function the map runs once a frame) or a hook (a
 function one object event runs each frame). A request the script raises, like
 this warp, waits until the script has finished.

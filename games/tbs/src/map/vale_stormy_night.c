@@ -13,7 +13,7 @@
 /// played on
 ///   the first arrival by VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA.
 ///   Dora and Kyle send Isaac on to the plaza and go to help; until the flag is
-///   set the lightning waits for the cutscene.
+///   set the lightning waits for the event.
 /// - FLAG_VALE_STORM_FIRST_ROCK_FELL to FLAG_VALE_STORM_FOURTH_ROCK_FELL, with
 ///   the map section flags FLAG_VALE_STORM_FIRST_ROCK_PASSED to
 ///   FLAG_VALE_STORM_FOURTH_ROCK_PASSED: EventScript_FirstRockFalls to
@@ -535,8 +535,8 @@ static void EventScript_LeaveToCottageRoomsBEast(void) {
 }
 
 /// Arriving in Vale on the stormy night: restores the fallen rocks, the river
-/// scene and the Boulder from their flags, starts the storm, and plays the
-/// scene with Dora and Kyle on the first arrival by
+/// event and the Boulder from their flags, starts the storm, and plays the
+/// event with Dora and Kyle on the first arrival by
 /// VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA. Called by Map_Run once
 /// the object events are placed. Sets FLAG_VALE_STORM; after a battle
 /// (FLAG_KEEP_PARTY_POSITION) the two doors close again. Garet, until he joins,
@@ -711,7 +711,7 @@ s32 ValeStormyNight_Initialize(void) {
     Import_ObjectEventSetPosition(LOCALID_FIRST_ROCK + 6, 0, 0);
     Import_ObjectEventSetPosition(LOCALID_FIRST_ROCK + 7, 0, 0);
   }
-  // The lightning starts at once, except before Dora and Kyle's scene.
+  // The lightning starts at once, except before Dora and Kyle's event.
   if (gSaveBlock.warpDest != VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA ||
       GameFlag_Get(FLAG_VALE_STORM_SENT_TO_PLAZA) != 0) {
     Weather_StartRain();
@@ -1339,7 +1339,7 @@ static void ValeStormyNight_GaretLeavesHisChest(void) {
 /// where Isaac hears Garet struggling (behavior 30,
 /// EventScript_HearGaretStruggling) and where Garet calls after him and joins
 /// (behavior 31, EventScript_GaretCallsAfterIsaac), so Garet has always joined
-/// by then and the scene's first test, FLAG_VALE_STORM_GARET_JOINED, ends it.
+/// by then and the event's first test, FLAG_VALE_STORM_GARET_JOINED, ends it.
 /// Its lines appear nowhere else: Garet runs up
 /// (gValeStormyNight_UnusedGaretRunsUpScript), heaves for breath, `*Hah*
 /// *Hah*`, while gValeStormyNight_UnusedGaretPantingScript swells and shrinks
@@ -1477,7 +1477,7 @@ static void ValeStormyNight_GaretCommentsOnBlockedPath(s32 x, s32 y) {
 /// Reached by stepping on metatile behavior 34 until FLAG_VALE_BOULDER_FELL is
 /// set, which this sets. The elders and their two stand-ins
 /// (gValeStormyNight_BoulderWatchers, LOCALID_ELDER_EAST_STAND_IN to
-/// LOCALID_ELDER_WEST) are placed for the scene and removed after it.
+/// LOCALID_ELDER_WEST) are placed for the event and removed after it.
 static void EventScript_WatchBoulderFall(void) {
   u32 i;
   struct ObjectEvent *movingObjectEvent;
@@ -1490,7 +1490,7 @@ static void EventScript_WatchBoulderFall(void) {
   if (GameFlag_Get(FLAG_VALE_BOULDER_FELL) == 0) {
     FieldScript_Start();
     FieldScript_CallWithLastActiveObjectId(gValeStormyNight_BoulderWatchers);
-    Map_StartCutscenePsynergy();
+    Map_StartEventPsynergy();
     WaitFrames(1);
     Script_PlaySong(SE_RUMBLE);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
@@ -1654,7 +1654,7 @@ static void EventScript_WatchBoulderFall(void) {
     Script_ShowMessage(LOCALID_GARET_CHILD, 0);
     ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_GARET_CHILD, 0);
     FieldScript_WaitFrames(20);
-    Map_EndCutscenePsynergy();
+    Map_EndEventPsynergy();
     Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_GARET_CHILD, ANIM_NOD);
     FieldScript_WaitFrames(20);
@@ -2714,7 +2714,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
 
 /// A lightning flash that freezes the picture: holds the rain
 /// (FLAG_WEATHER_HELD) and pauses the map's tileset animations 0 to 5,
-/// shows the scene in PALETTE_TINT_WARM for two seconds, fades it to
+/// shows the event in PALETTE_TINT_WARM for two seconds, fades it to
 /// black, then lets the rain and the animations run again.
 static void ValeStormyNight_FlashLightning(void) {
   WaitFrames(20);

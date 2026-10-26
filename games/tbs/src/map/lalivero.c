@@ -828,7 +828,7 @@ const struct MapEvent *Lalivero_GetEvents(void) {
 }
 
 /// Sets Lalivero up as the party enters: the Black Orb Iodem will hold out,
-/// the wounded soldiers of the first visit (and its cutscene), or the sign at
+/// the wounded soldiers of the first visit (and its event), or the sign at
 /// the north exit after Venus Lighthouse.
 s32 Lalivero_Initialize(void) {
   union ObjectEventOrEffect *fieldObject;
@@ -911,7 +911,7 @@ s32 Lalivero_Initialize(void) {
         !Script_GetFlag(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN)) {
       GameFlag_Set(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN);
       // The woman and the girl who wander nearest the soldiers stay put during
-      // the cutscene.
+      // the event.
       fieldObject = (union ObjectEventOrEffect *)ObjectEvent_Get(
           LOCALID_WOMAN_OUR_ONLY_HOPE);
       fieldObject->objectEvent.paused = 1;

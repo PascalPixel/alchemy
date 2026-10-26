@@ -178,14 +178,14 @@ builds the per-line table that an HBlank DMA writes into `BG2CNT`.
 
 ![Isaac summons Ramses: the screen goes black, Ramses rises over a desert under a purple sky and brings down his fist in a burst of fire, the battle comes back with `Garet takes 151 damage!!!`, and `Isaac's Earth Power rises by 30!`.](https://alchemy.pascalpixel.com/abilities/ramses.gif)
 
-Every ability's animation, from a sword swing to a summon's whole scene, is one
+Every ability's animation, from a sword swing to a summon's whole animation, is one
 function that draws it frame by frame and returns when it is over, while the
 battle waits. Most draw into a small hidden picture, the canvas, which the
 screen shows stretched and blended over the battle.
 
 There are three ways in: the ordinary animations from one table, a range of
-numbered scenes (the impacts of Djinn and weapon unleashes, the plain attacks'
-beams and critical hits), and the summons' scenes. Each borrows three blocks
+numbered animations (the impacts of Djinn and weapon unleashes, the plain attacks'
+beams and critical hits), and the summons' animations. Each borrows three blocks
 of memory for the animation (its pictures, its working space and the canvas)
 and gives them back afterwards, so an animation must stop everything that
 reads them before it returns. Within a frame its steps run in a fixed order,

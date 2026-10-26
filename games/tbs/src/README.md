@@ -23,7 +23,7 @@ one map on that engine, from its set-up to the [warp](../glossary.md#warp) the p
 by, with random encounters, field [Psynergy](../glossary.md#psynergy-and-pp) and the commands map scripts
 use; `Game_MainLoop`, the loop that runs one map after another, is there too.
 [Maps](map/README.md) holds the maps, one [overlay](../glossary.md#overlay) each: [object event](../glossary.md#object-event)
-templates, [map events](../glossary.md#map-event), [scripts](../glossary.md#script) and cutscenes. [Layouts](layout/README.md)
+templates, [map events](../glossary.md#map-event), [scripts](../glossary.md#script) and events. [Layouts](layout/README.md)
 holds the [layouts](../glossary.md#layout) as data.
 
 [Battles](battle/README.md) runs a fight: turn order, the enemies' choices,
@@ -122,7 +122,7 @@ files.
 The 201 maps of the map table share 96 overlays, unpacked one at a time
 into the overlay area when a map loads.
 
-Each map's people, scripts and cutscenes are code that is needed only while
+Each map's people, scripts and events are code that is needed only while
 the party is there, so it is kept apart from the main image as an overlay,
 packed on the cartridge and unpacked into one 32 KB area of EWRAM when the
 party arrives ([Engine](../engine.md#overlays)). The map table,

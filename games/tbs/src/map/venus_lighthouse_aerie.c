@@ -982,7 +982,7 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
   ObjectMotion_ArmCallback(LOCALID_SHEBA, FACING_EAST, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_SHEBA, ANIM_NOD);
   FieldScript_WaitFrames(40);
-  Map_StartCutscenePsynergy();
+  Map_StartEventPsynergy();
   WaitFrames(1);
   frame = 0;
   do {
@@ -1013,7 +1013,7 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
   WaitFrames(1);
   ObjectEvent_SetSpriteColorById(LOCALID_SHEBA, SPRITE_COLOR_NORMAL);
   WaitFrames(10);
-  Map_EndCutscenePsynergy();
+  Map_EndEventPsynergy();
   ObjectMotion_Launch(LOCALID_SHEBA, 2, 40);
   VenusLighthouseAerie_ShowMessage(LOCALID_SHEBA);
   ObjectEvent_ShowEmote(LOCALID_SATUROS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);

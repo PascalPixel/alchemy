@@ -427,7 +427,7 @@ void ObjectMotion_NoOp(void) {}
 /// speed pixels per frame with a jump sound (a higher one above 5), then waits
 /// frames frames. Sets bit 1 of the object event's motion flags, so gravity
 /// brings it down, and its velocityY. Map scripts reach it (ObjectEvent_Jump),
-/// about 40 of them; the scenes of Djinn joining the party (djinni.c and the
+/// about 40 of them; the events of Djinn joining the party (djinni.c and the
 /// four element parts) call it too.
 void ObjectMotion_Launch(u32 objectId, s32 speed, s32 frames) {
   struct Object *object;
@@ -473,7 +473,7 @@ void ObjectMotion_SetVariantCallback(u32 objectId, s32 count) {
 /// The script command "run repeated motion": as
 /// ObjectMotion_SetVariantCallback, then waits for it to end. Map scripts reach
 /// it (ObjectEvent_RunRepeatedMotion);
-/// the scenes of Djinn joining the party call it too.
+/// the events of Djinn joining the party call it too.
 void ObjectMotion_SetVarCbAndRefresh(u32 objectId, s32 count) {
   ObjectMotion_SetVariantCallback(objectId, count);
   ObjectEvent_RefreshSelectorById(objectId);

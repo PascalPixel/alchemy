@@ -11,7 +11,7 @@
 /// mayor, Isaac's mother Dora, Garet's sister and brother, and the guard who
 /// saw the two hanging around on his watch.
 ///
-/// The map has no map events. ValeEruption_Initialize plays the whole scene on
+/// The map has no map events. ValeEruption_Initialize plays the whole event on
 /// arrival by VALE_ERUPTION_FROM_SOL_ENTRANCE (EventScript_ReturnFromMtAleph):
 /// the ground shakes, the villagers wonder where the two are, Isaac and Garet
 /// come down the path and are called over, and Dora's question about Jenna and

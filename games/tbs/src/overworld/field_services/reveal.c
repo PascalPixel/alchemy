@@ -134,14 +134,14 @@ void FieldEffect_RunReveal(void) {
 void FieldEffect_EndReveal(void) {
 #ifdef UBFIX
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct ScreenTransitionState *scene = gScreenTransitionWork;
+  struct ScreenTransitionState *transition = gScreenTransitionWork;
   struct FieldWork *state = gFieldWork;
 #else
   // Named slots avoid stepping outside gFieldEffectWork. They add 8 bytes to
   // this function in the forced native EN build (0xe8 -> 0xf0).
   struct FieldEffectWork **cell = &gFieldEffectWork;
   struct FieldEffectWork *effectWork = *cell;
-  struct ScreenTransitionState *scene =
+  struct ScreenTransitionState *transition =
       *(struct ScreenTransitionState **)((u8 *)cell - 0x64);
   struct FieldWork *state = *(struct FieldWork **)((u8 *)cell - 0x74);
 #endif
@@ -171,9 +171,9 @@ void FieldEffect_EndReveal(void) {
       Field_RunEventAction(event, gSaveBlock.leaderLocalId, eventTarget);
 
     if (effectWork->childOption == 0) {
-      scene->nextMode = 0;
-      scene->duration = 1;
-      scene->step = 1;
+      transition->nextMode = 0;
+      transition->duration = 1;
+      transition->step = 1;
       WaitFrames(10);
     }
   }

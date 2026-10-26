@@ -6,7 +6,7 @@ it loads until the party leaves: it sets the map up, hands the leader to the
 player, and deals with whatever stops the walk, a doorway, a random battle,
 the A button, the menu. Around that loop sit random battles, the people a map
 puts in it, items and [Psynergy](../../glossary.md#psynergy-and-pp) used
-outside a battle, the commands cutscenes are written in,
+outside a battle, the commands events are written in,
 [Djinn](../../glossary.md#djinn) joining the party, and the picture of the
 world R brings up on the world map. Lucky Wheels, played in Tolbi's game room, is here
 too, in another [bank](../../glossary.md#bank).
@@ -30,7 +30,7 @@ time until nothing is left. Each thing that can stop the walk has a flag of
 its own, a request; stepping onto a doorway, pressing A or a script asking for
 a battle only raises its flag. The loop works down the list in a fixed order,
 deals with the first raised flag, and starts again from the top. A request a
-script raises waits until the script has finished, so a battle a cutscene
+script raises waits until the script has finished, so a battle an event
 asks for starts after its last line.
 
 Leaving comes first, and a battle counts as leaving: the game remembers where
@@ -184,7 +184,7 @@ by.
 ## Design
 
 Several structures are reached by more than one spelling (the field work, the
-effect scene, the map's view, the palette fade), each site keeping the one it
+field effect, the map's view, the palette fade), each site keeping the one it
 matches with; [Matching](../MATCHING.md#heap-slots) explains why.
 
 ## How it fits with the rest of the game
@@ -201,14 +201,14 @@ Entering a new map section (the maps that share an area name) also resets the
 counters of random battles and hazardous ground, makes the warp destination
 the place Retreat leads back to, and asks for the area name to be shown. The
 screen transitions and the palette fade serve battles as well, and the effect
-scene's work serves the Djinn joining as well as Psynergy.
+event's work serves the Djinn joining as well as Psynergy.
 
 ## Limits
 
 - 104 encounter zones of eight formations each.
 - 66 local ids in the field work, each pointing at one of Field's 64
   objects, and ten treasure spots; 24 field effect sprites in the effect
-  scene.
+  event.
 - A battle snapshot keeps up to 32 object events.
 - One Halt target at a time.
 
@@ -226,10 +226,10 @@ scene's work serves the Djinn joining as well as Psynergy.
   `games/tbs/src/game/abilities.tsv`, named by `enum FieldPsynergy`
   (`unit/overworld/field_services.h`). Whirlwind and Gale share
   `FIELD_PSYNERGY_WHIRLWIND`.
-- **effect scene**: `struct FieldEffectWork` (`field/fx_work.h`), the work of
+- **field effect**: `struct FieldEffectWork` (`field/fx_work.h`), the work of
   the field effect playing: the ability, its field kind (`fieldPsynergy`), its
   caster and target, and 24 field effect sprites. It is
-  `HEAP_SLOT_FIELD_EFFECT`, reached as `gFieldEffectWork`. Local name `scene`.
+  `HEAP_SLOT_FIELD_EFFECT`, reached as `gFieldEffectWork`. Local name `event`.
 - **field effect sprite**: `struct FieldEffectSprite`, one particle an effect
   moves and draws.
 - **treasure spot**: a chest or Psynergy Stone the layout places at one of

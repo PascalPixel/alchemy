@@ -4,7 +4,7 @@
 
 #include "../field_services_internal.h"
 
-// The scene owns PSYNERGY_EFFECT_SLOT_COUNT particle slots.
+// The event owns PSYNERGY_EFFECT_SLOT_COUNT particle slots.
 
 /// Per-frame update: spins by 0x1000 + timer * 0x50 a frame, speeding up
 /// (timer counts up) until timer * 0x50 reaches 0x1000: from 1/16 turn a
@@ -277,8 +277,8 @@ struct DescendingArcSprite {
 };
 
 /// Spawns a pair of falling arcs (one upside down) on arc, 64 pixels above
-/// it, at 0.4 of full size, drawn with the tiles in scene->arcTileSlot. The
-/// upside-down arc draws in front of everything (priority 0), the other at
+/// it, at 0.4 of full size, drawn with the tiles in effectWork->arcTileSlot.
+/// The upside-down arc draws in front of everything (priority 0), the other at
 /// the caster's priority, as FieldEffect_SpawnScaledArcObjects does. Called by
 /// FieldEffect_UpdatePairedArcSpawner, so arc is Avoid's caster.
 void FieldEffect_SpawnDescendingArcParticles(struct ObjectEvent *arc) {

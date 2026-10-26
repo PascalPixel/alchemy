@@ -600,7 +600,7 @@ static void Kolima_ReadVillagerThoughts(s32 localId, s32 targetId) {
   WaitFrames(1);
 }
 
-/// Finishes Mind Read and releases its temporary scene objects.
+/// Finishes Mind Read and releases its temporary event objects.
 static void Kolima_FinishReadingThoughts(void) {
   Field_DispatchTypeHandler(2);
   FieldEffect_StopCasterHook();
@@ -630,7 +630,7 @@ static __inline__ void Kolima_NodTogether(void) {
 /// his gentle side and look for Tret deep within the forest. Whatever the
 /// leader answers to Ivan and Garet, the party resolves to save Kolima. Mia's
 /// lines and moves are skipped without her. Sets FLAG_KOLIMA_CURSE_WITNESSED;
-/// KolimaForestEntrance_WitnessForestCurse plays the same scene in Kolima
+/// KolimaForestEntrance_WitnessForestCurse plays the same event in Kolima
 /// Forest.
 static void Kolima_WitnessForestCurse(void) {
   struct ObjectEvent *objectEvent;
@@ -1595,7 +1595,7 @@ static void Kolima_ShowMessageAndWait(s32 localId, s32 waitFrames) {
   FieldScript_WaitFrames(waitFrames);
 }
 
-/// Turns an object event immediately, then leaves time for the next scene beat.
+/// Turns an object event immediately, then leaves time for the next event beat.
 static void Kolima_FaceObjectEventAndWait(s32 localId, s32 facing,
                                           s32 waitFrames) {
   ObjectMotion_ArmCallback(localId, facing, 0);

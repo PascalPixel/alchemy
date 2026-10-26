@@ -246,7 +246,7 @@ static void EventScript_LeaveByWarp(void) {
 /// ones the party follows, resolves either way to search the desert for Sheba
 /// and pursue them, and rejoins the party. Sets
 /// FLAG_IODEM_MET_WOUNDED_SOLDIERS either way; once Iodem has reached Babi
-/// Lighthouse (FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED), the scene does not play.
+/// Lighthouse (FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED), the event does not play.
 static void EventScript_IodemQuestionsWoundedSoldiers(void) {
   struct ObjectEvent *leader;
   GameFlag_Set(FLAG_IODEM_MET_WOUNDED_SOLDIERS);

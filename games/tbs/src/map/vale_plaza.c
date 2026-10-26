@@ -598,7 +598,7 @@ static void EventScript_DemonstratePsynergy(void) {
     ObjectMotion_SetVariantCallback(LOCALID_STRONGMAN_SHOWING_PSYNERGY, 2);
     FieldScript_WaitFrames(15);
     // Flash the caster before starting the palette cycle and camera shake.
-    Map_StartCutscenePsynergy();
+    Map_StartEventPsynergy();
     shakes = 0;
     for (i = 0; i < 40; i++) {
       ValePlaza_FlashPsynergyPalette(
@@ -623,7 +623,7 @@ static void EventScript_DemonstratePsynergy(void) {
     Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
     Task_Remove(ValePlaza_UpdateShowingStrongmanPsynergy);
     WaitFrames(1);
-    Map_EndCutscenePsynergy();
+    Map_EndEventPsynergy();
     ObjectEvent_ConfigureSpriteColor(LOCALID_STRONGMAN_SHOWING_PSYNERGY,
                                      SPRITE_COLOR_NORMAL);
     FieldScript_WaitFrames(40);
@@ -716,7 +716,7 @@ static void EventScript_BoyLiftsSmallRock(void) {
                                     ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(20);
   // Charge the caster's display, then start both palette updates.
-  Map_StartCutscenePsynergy();
+  Map_StartEventPsynergy();
   for (i = 0; i < 40; i++) {
     ValePlaza_FlashPsynergyPalette(
         ObjectEvent_GetById(LOCALID_STORM_ROCK_LIFTING_BOY));
@@ -744,7 +744,7 @@ static void EventScript_BoyLiftsSmallRock(void) {
                                  SPRITE_COLOR_NORMAL);
   ObjectEvent_SetSpriteColorById(LOCALID_STORM_SMALL_ROCK, SPRITE_COLOR_NORMAL);
   FieldScript_WaitFrames(40);
-  Map_EndCutscenePsynergy();
+  Map_EndEventPsynergy();
   ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_STORM_ROCK_LIFTING_BOY,
                        30);
   Script_ShowMessage(LOCALID_STORM_ROCK_LIFTING_BOY, 0);

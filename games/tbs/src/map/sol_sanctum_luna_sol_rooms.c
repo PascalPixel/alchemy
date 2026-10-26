@@ -4,7 +4,7 @@
 /// (sol_sanctum_entrance.c), the statue room (MapId_SolSanctumStatue,
 /// sol_sanctum_statue.c) and the way up to MapId_SolSanctumElementalStarRoom.
 ///
-/// Kraden's scenes here follow the story flags in order:
+/// Kraden's events here follow the story flags in order:
 /// - EventScript_KradenFindsHeartOfSanctum, on the first step onto the symbol
 /// of
 ///   the sun on the floor (FLAG_SOL_SANCTUM_FOUND). From then until the way up
@@ -22,7 +22,7 @@
 ///   Kraden runs off to the statue room
 ///   (SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed,
 ///   FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING). Both take the party back
-///   to the statue room by the warp named for the scene.
+///   to the statue room by the warp named for the event.
 /// - With all four quarters lit, Kraden sees that the picture of Luna has
 ///   become Sol (EventScript_KradenSeesLunaPictureChange,
 ///   FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) and that the floor's symbol has
@@ -43,9 +43,9 @@
 /// remembers which colours show, so a return after a battle keeps them. On
 /// entry SolSanctumLunaSolRooms_Initialize copies each lit quarter into its
 /// FLAG_SOL_SANCTUM_*_LIGHT_SHOWN and redraws the pictures, the floor and the
-/// open way up from the story flags, unless the warp destination's own scene
+/// open way up from the story flags, unless the warp destination's own event
 /// draws them. The falling lights are four callbacks, each with a random timer
-/// of its own, that the trap adds and removes. A third statue-room scene, the
+/// of its own, that the trap adds and removes. A third statue-room event, the
 /// lit quarters flashing for Kraden
 /// (SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights), is never reached.
 
@@ -172,7 +172,7 @@ SolSanctumLunaSolRooms_GetObjectEventTemplates(void) {
 }
 
 /// Returns the floor's metatile behaviors that tint the rooms, Kraden's talk
-/// and cutscenes, the floor symbol and the Herb's chest.
+/// and events, the floor symbol and the Herb's chest.
 const struct MapEvent *SolSanctumLunaSolRooms_GetEvents(void) {
   return gSolSanctumLunaSolRoomsEvents;
 }
@@ -184,7 +184,7 @@ const struct MapEvent *SolSanctumLunaSolRooms_GetEvents(void) {
 /// EventScript_KradenFindsHeartOfSanctum after the eruption. Sets one of
 /// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED and
 /// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED, clearing the other tint flags;
-/// Kraden's scenes set FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN and
+/// Kraden's events set FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN and
 /// FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN.
 static void EventScript_TintSolRoom(void) {
   s32 paletteActive;
@@ -859,7 +859,7 @@ static void SolSanctumLunaSolRooms_UpdateFourthFallingLight(void) {
 }
 
 /// Opens on Kraden in the Luna room in SOL_SANCTUM_BLUE_TINT, as a flash
-/// crosses it. Shared by the three scenes that play on arriving from
+/// crosses it. Shared by the three events that play on arriving from
 /// MapId_SolSanctumStatue's statue puzzle. Sets
 /// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED and clears the other two tint
 /// flags.
@@ -899,7 +899,7 @@ static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
 /// SolSanctumLunaSolRooms_Initialize at
 /// SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED until
 /// FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING is set, which it sets; the flag
-/// marks this scene, not the trap. Takes
+/// marks this event, not the trap. Takes
 /// SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_DISARMED back to
 /// MapId_SolSanctumStatue.
 static void SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed(void) {
@@ -1392,7 +1392,7 @@ static void EventScript_RiseToElementalStarRoom(void) {
   }
 }
 
-/// Sets up Sol Sanctum's rooms of Sol and Luna and plays the scene this warp
+/// Sets up Sol Sanctum's rooms of Sol and Luna and plays the event this warp
 /// destination calls for. Called by Map_Run once the object events exist.
 /// Blocks Retreat (FLAG_RETREAT_BLOCKED) from Kraden's find until the way up
 /// opens, before the eruption; sets FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED at
@@ -1437,7 +1437,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
       ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(576), PIXELS(120));
     }
   }
-  // Play the one-time scene this warp destination comes back from
+  // Play the one-time event this warp destination comes back from
   // MapId_SolSanctumStatue for.
   if (gSaveBlock.warpDest ==
       SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED) {
@@ -1480,7 +1480,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
   }
   WaitFrames(4);
   // Restore completed puzzle tiles without replaying the warp
-  // destination's scene.
+  // destination's event.
   if (playedEntrySequence == 0) {
     if (SolSanctumLunaSolRooms_AreAllStatueLightsLit() != 0) {
       MapGrid_CopyCellsTo(30, 44, 30, 38, 12, 5);

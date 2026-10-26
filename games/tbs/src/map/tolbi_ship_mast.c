@@ -6,7 +6,7 @@
 /// and down again by MB_TOLBI_SHIP_MAST_LADDER and the region of
 /// TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK. The warp destinations from
 /// TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR on are the voyage's
-/// cutscenes here, each leading on into the next; during the attacks the
+/// events here, each leading on into the next; during the attacks the
 /// map a defeat returns to (gSaveBlock.restartMap) is set to
 /// SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT, which starts the voyage
 /// over. While the ship is under way (rowing, or at sea after the first
@@ -79,11 +79,11 @@
 #include "heap.h"
 #include "macros.h"
 
-// Scene sequences and the mast's per-frame updates.
+// Event sequences and the mast's per-frame updates.
 static void TolbiShipMast_SetupHiddenLeaderLookout(void);
 static void TolbiShipMast_SetupVisibleLeaderLookout(void);
 static void TolbiShipMast_AnnounceClearCourse(void);
-static void TolbiShipMast_RunAvastScene(void);
+static void TolbiShipMast_RunAvastEvent(void);
 static void TolbiShipMast_ShowMonsters(void);
 static void TolbiShipMast_InitializeDriftingObjectEvent(s32 localId);
 static void TolbiShipMast_RunLandingSequence(void);
@@ -131,7 +131,7 @@ enum TolbiShipMastFirstAttackLocalId {
   LOCALID_FIRST_SIGHTED_MONSTER
 };
 
-/// The object events of the later cutscenes (from
+/// The object events of the later events (from
 /// TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK on), placed after the lookout
 /// from gTolbiShipMast_BirdObjectEventTemplates and, at
 /// TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK, then from
@@ -294,7 +294,7 @@ static s32 TolbiShipMast_ShrinkAndStopObjectEvent(struct Object *interpreter) {
 }
 
 /// Returns the warp destinations: from the deck's ladder, and the voyage's
-/// cutscenes.
+/// events.
 const struct MapWarpDest *TolbiShipMast_GetWarpDests(void) {
   return gTolbiShipMast_WarpDests;
 }
@@ -338,7 +338,7 @@ static void TolbiShipMast_FindAnchorCharm(void) {
 /// The mast's setup: sways the view while the ship is under way, puts the
 /// lookout to his spot once the charm is back, and plays what the warp
 /// destination calls for: the climb up from the deck
-/// (TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK) or a cutscene (the warp destinations
+/// (TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK) or an event (the warp destinations
 /// from TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR on).
 s32 TolbiShipMast_Initialize(void) {
   struct ObjectEvent *leader;
@@ -358,7 +358,7 @@ s32 TolbiShipMast_Initialize(void) {
       GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0) {
     ObjectEvent_SetPosition(LOCALID_LOOKOUT, PIXELS(164), PIXELS(328));
   }
-  // The ship's scripted warp destinations resume their matching lookout scenes.
+  // The ship's scripted warp destinations resume their matching lookout events.
   switch (gSaveBlock.warpDest) {
   case TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK:
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
@@ -384,7 +384,7 @@ s32 TolbiShipMast_Initialize(void) {
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK:
     gSaveBlock.restartMap = (s32)&MapId_ShipRooms;
     gSaveBlock.restartWarpDest = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
-    TolbiShipMast_RunAvastScene();
+    TolbiShipMast_RunAvastEvent();
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK:
     gSaveBlock.restartMap = (s32)&MapId_ShipRooms;
@@ -463,7 +463,7 @@ static void TolbiShipMast_AnnounceClearCourse(void) {
 
 /// On the mast at TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK, the first
 /// attack: three monsters close in and the lookout cries out. "Avast!"
-static void TolbiShipMast_RunAvastScene(void) {
+static void TolbiShipMast_RunAvastEvent(void) {
   s32 *placement = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
   struct ObjectEvent *objectEvent;
   struct FieldWork **work;

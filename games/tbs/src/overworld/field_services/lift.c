@@ -154,8 +154,8 @@ again:
   }
 
   if (state == OUT_AND_BACK_AIM_BACK) {
-    // 8 pixels toward scene->angle from 16 pixels above the main object, on
-    // screen, give or take 4 pixels.
+    // 8 pixels toward effectWork->angle from 16 pixels above the main object,
+    // on screen, give or take 4 pixels.
     struct Object *caster = effectWork->mainObject;
 
     pos.x = caster->x;

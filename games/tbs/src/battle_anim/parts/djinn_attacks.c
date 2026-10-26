@@ -478,7 +478,7 @@ void BattleAnim_RunVenus(struct BattleAnimArgs *effect) {
 ///
 /// Abilities: Mars (BATTLE_ANIM_MARS).
 ///
-/// The scene runs for 112 frames:
+/// The animation runs for 112 frames:
 ///
 ///   0 to 23    the orb flares
 ///   20 to 31   the Djinni appears, then dives from frame 24

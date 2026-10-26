@@ -40,7 +40,7 @@
 ///
 /// Win or lose, the third match ends Colosso:
 /// COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON and _LOST set FLAG_COLOSSO_OVER, and
-/// a win also FLAG_WON_COLOSSO. In the scene that follows
+/// a win also FLAG_WON_COLOSSO. In the event that follows
 /// (ColosseumNavampaMatch_PlayPostBattleReunion), Garet, Ivan and Mia run to
 /// Isaac in the arena, but he falls asleep, exhausted, and they leave him to
 /// sleep; both warps lead to Babi's Palace, where he wakes long after the

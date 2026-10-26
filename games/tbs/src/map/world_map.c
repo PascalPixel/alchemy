@@ -132,7 +132,7 @@
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
 
-/// The falling rock of Hammet's caravan scene has landed and shattered.
+/// The falling rock of Hammet's caravan event has landed and shattered.
 /// ★ Named from the game: "being smashed by falling rocks here"
 /// (MsgWorldMapWeCantStayAnotherMinute)
 #define FLAG_WORLD_MAP_FALLING_ROCK_LANDED FLAG_MAP_TEMP_00
@@ -173,10 +173,10 @@ static void WorldMap_SailToKraken(void);
 static void WorldMap_SailUntilLandSighted(void);
 static void WorldMap_SailIntoTolbi(void);
 static void WorldMap_StepDownFromBunzasWagon(void);
-static void WorldMap_RunBlackOrbScene(void);
+static void WorldMap_RunBlackOrbEvent(void);
 static void WorldMap_BlockGatewayCaveWarp(s32 localId);
 static void EventScript_IodemCallsIsaacBack(void);
-static void WorldMap_ShowEndingScene(void);
+static void WorldMap_ShowEndingEvent(void);
 static void WorldMap_ShakeVenusLighthouse(void);
 static void WorldMap_UpdateLighthouseQuake(void);
 static void WorldMap_SailTolbiShipToIsland(void);
@@ -394,7 +394,7 @@ enum {
 /// The one object event of gWorldMapObjectEventTemplatesFromClear, before the
 /// ending: the island Jenna and Kraden are adrift on ("How long will this
 /// island continue to drift?"). It drifts east trailing a wake
-/// (WorldMap_SpawnIslandWake) until the map leads into their scene.
+/// (WorldMap_SpawnIslandWake) until the map leads into their event.
 enum {
   /// ★ Named from what the player sees: an island of green hills around a
   /// mountain, drifting on the sea, spr_504.png (its render)
@@ -431,7 +431,7 @@ enum {
 };
 
 // The world map's map flags: FLAG_WORLD_MAP_FALLING_ROCK_LANDED: the falling
-// rock has landed, in Hammet's caravan scene.
+// rock has landed, in Hammet's caravan event.
 // FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER: Iodem has handed over the Black Orb.
 // FLAG_WORLD_MAP_ORDINARY_OBJECT_EVENTS: the map's ordinary object event
 // templates are in use. FLAG_WORLD_MAP_CAUGHT_IN_STORM: the storm holds the
@@ -928,7 +928,7 @@ s32 WorldMap_Initialize(void) {
         }
       } else if (GameFlag_Get(FLAG_BLACK_ORB_RETURNED) == 0 &&
                  GameFlag_Get(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN) == 0) {
-        WorldMap_RunBlackOrbScene();
+        WorldMap_RunBlackOrbEvent();
       }
       break;
     case WORLD_MAP_FROM_WEST_LUNPA_CAVE:
@@ -983,7 +983,7 @@ s32 WorldMap_Initialize(void) {
       WorldMap_SailTolbiShipToIsland();
       break;
     case WORLD_MAP_JENNA_AND_KRADEN_ADRIFT:
-      WorldMap_ShowEndingScene();
+      WorldMap_ShowEndingEvent();
       break;
     default:
       ObjectEvent_GetById(LOCALID_TOLBI_SHIP)->scaleX = 5 * Q16_ONE / 4;
@@ -1923,7 +1923,7 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
 /// (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN). Sets
 /// FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER and FLAG_SAW_SHIP_AT_IDEJIMA, and turns
 /// Gateway Cave's warp into EventScript_IodemCallsIsaacBack.
-static void WorldMap_RunBlackOrbScene(void) {
+static void WorldMap_RunBlackOrbEvent(void) {
   struct ObjectEvent *leader;
 
   FieldScript_Start();
@@ -2007,7 +2007,7 @@ static void WorldMap_RunBlackOrbScene(void) {
 /// COORD_EVENT_MAPSEC) into a coord event that runs
 /// EventScript_IodemCallsIsaacBack, and stands Iodem (LOCALID_IODEM, whose
 /// object event template row it finds by his sprite) at pixel (6036, 3400); the
-/// object event given is not used. Called by WorldMap_RunBlackOrbScene, and by
+/// object event given is not used. Called by WorldMap_RunBlackOrbEvent, and by
 /// WorldMap_Initialize when the party returns to WORLD_MAP_FROM_GATEWAY_CAVE
 /// with the orb still to use.
 static void WorldMap_BlockGatewayCaveWarp(s32 localId) {
@@ -2262,7 +2262,7 @@ u16 gWorldMapBlend;
 /// lit Venus beacon and of Felix and Isaac until Alex comes and leads them to
 /// Felix and Sheba, and the title screen returns (TITLE_FROM_WORLD_MAP).
 /// Called by WorldMap_Initialize at WORLD_MAP_JENNA_AND_KRADEN_ADRIFT.
-static void WorldMap_ShowEndingScene(void) {
+static void WorldMap_ShowEndingEvent(void) {
   WindowColor_Apply(gSaveBlock.windowColor[0], gSaveBlock.windowColor[1]);
   FieldScript_Start();
   FieldEffect_ScheduleRatioTransition(Q16_ONE, 300);
@@ -2584,7 +2584,7 @@ static void WorldMap_SpawnIslandWake(void) {
 
 /// Before the ending, the island Jenna and Kraden are adrift on drifts east
 /// with its wake under warm colours, and the map fades to white and leads into
-/// their scene (WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT).
+/// their event (WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT).
 /// Called by WorldMap_Initialize at WORLD_MAP_FROM_MAIN_MENU, once the cleared
 /// game is saved (menu/main_menu.c).
 static void WorldMap_ShowIslandDrifting(void) {

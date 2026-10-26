@@ -221,7 +221,7 @@ void BattleAnim_RunEruption(struct BattleAnimArgs *effect, s32 mode) {
 
 /// Creates the animation's sprites in gBattleAnimWork's objects.
 ///
-/// Called by the summon scenes (Ramses, Nereid, Kirin, Atalanta, Cybele,
+/// Called by the summon animations (Ramses, Nereid, Kirin, Atalanta, Cybele,
 /// Neptune, Tiamat, Procne, Boreas, Thor), Judgment and the particle streams.
 /// Fills work->animations[0] to [entryCount - 1]: object n plays animation n,
 /// with its flags cleared and its sprite priority set. A slot whose object

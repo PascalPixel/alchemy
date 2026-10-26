@@ -126,7 +126,7 @@ enum SpriteId {
   /// ★ Named from what the player sees: a tree stump (its render)
   SPRITE_STUMP = 0xd4,
   /// The hand Move reaches out with; Goma Cave's entrance and Vale place it
-  /// to push something in a cutscene.
+  /// to push something in an event.
   /// ★ Named from what the player sees: a large open hand (spr_215.png)
   SPRITE_MOVE_HAND = 0xd7,
   /// Spray thrown up where water is struck: where Goma Cave's stumps land,
@@ -683,7 +683,7 @@ enum SpriteId {
   /// ★ Named from what the player sees: a grey gatehouse between green walls
   /// (spr_279.png)
   SPRITE_WORLD_MAP_GATEHOUSE = 0x117,
-  // The summons' figures: each summon's scene creates its objects of its own
+  // The summons' figures: each summon's event creates its objects of its own
   // sprite (BattleAnim_SpawnObjects), each playing one of its animations.
   /// ★ Named from the game: "Atalanta" (MsgDjinnName)
   SPRITE_ATALANTA = 0x172,

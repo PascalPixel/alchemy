@@ -21,7 +21,7 @@ someone or a random battle starting does not act at once: it only raises a
 flag of its own, a request. The walk then stops, the game deals with the
 requests one at a time in a fixed order, and the walk starts again. Each kind
 of request has one flag, so at most one of each can wait. Leaving the map
-comes first, so a cutscene that ends by taking a [warp](glossary.md#warp),
+comes first, so an event that ends by taking a [warp](glossary.md#warp),
 like this door, simply ends the map.
 
 A random battle is a way out of the map too: the game remembers where

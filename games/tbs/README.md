@@ -92,11 +92,11 @@ them, the main loop goes round once a frame, a sixtieth
 of a second, and calls each part of the game in turn, so anything that takes
 time is cut into steps that remember where they got to. This game's main loop
 goes round once per map, battle or minigame, and one turn can last minutes.
-Frames are counted inside: a cutscene, a menu or a map's script is an ordinary
+Frames are counted inside: an event, a menu or a map's script is an ordinary
 function that runs from start to finish, and when time has to pass it asks to
 wait a number of frames. While it waits, small jobs called
 [tasks](glossary.md#task) keep everything else moving, each run once a frame
-([Engine](engine.md#waiting-and-tasks)). So a scene's code reads top to
+([Engine](engine.md#waiting-and-tasks)). So an event's code reads top to
 bottom, in the order things happen; the price is that only one piece of code
 waits at a time, and whatever moves alongside it, an animation or a flashing
 light, has to be a task of its own.
@@ -104,7 +104,7 @@ light, has to be a task of its own.
 ## Maps and overlays
 
 Only one map's code is in memory at a time. Most of what a map needs (who
-stands there, what they say, its cutscenes) matters nowhere else, so each
+stands there, what they say, its events) matters nowhere else, so each
 map's code is packed on the cartridge as an [overlay](glossary.md#overlay)
 and unpacked into the same 32 KB of memory over the map before it. Overlays
 never call each other; code several maps need is copied into each.

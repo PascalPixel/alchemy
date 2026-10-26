@@ -2528,7 +2528,7 @@ s32 Map_Initialize(void) {
   return 0;
 }
 
-/// Starts Mind Read from caster on target as part of a cutscene, without the
+/// Starts Mind Read from caster on target as part of an event, without the
 /// window that announces its name. Nyunpa's Mind Read map events carry
 /// PSYNERGY_SCRIPT_PLAYS_EFFECT, so the field plays nothing of its own.
 static void FuchinTemple_StartMindReadDemonstration(s32 caster, s32 target) {

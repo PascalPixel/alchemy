@@ -92,7 +92,7 @@
 #include "ability_ids.h"
 #include "sprite_ids.h"
 
-/// The field effect sprites of a Psynergy effect's scene
+/// The field effect sprites of a Psynergy effect
 /// (gFieldEffectWork->sprites).
 #define PSYNERGY_EFFECT_SLOT_COUNT 24
 

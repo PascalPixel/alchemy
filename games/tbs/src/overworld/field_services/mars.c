@@ -104,7 +104,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   WaitFrames(100);
 
   // Every spark still in use goes. This loop's cursor starts as
-  // the scene plus 152, the first slot's state: written as above, the
+  // the field effect plus 152, the first slot's state: written as above, the
   // cursor's two loads swap (differ 22).
   {
     s32 nextState;

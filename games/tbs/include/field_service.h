@@ -80,7 +80,7 @@ static inline void PaletteFade_Interpolate(s32 frames) {
   PaletteFade_StartInterpolation(frames);
 }
 
-/// Starts a scripted scene, taking the field out of the player's hands.
+/// Starts an event, taking the field out of the player's hands.
 static inline void Script_Start(void) { FieldScript_Start(); }
 
 /// Lets the player answer yes or no to the line on screen; 0 means yes.
@@ -88,7 +88,7 @@ static inline s32 Script_ChooseYesNo(s32 localId, s32 flags) {
   return FieldScript_AskYesNoWithObjectEventAnimation(localId, flags);
 }
 
-/// Ends a scripted scene and gives the field back to the player.
+/// Ends an event and gives the field back to the player.
 static inline void Script_End(void) { FieldScript_End(); }
 
 /// Returns the camera object, for a script that moves the view itself.

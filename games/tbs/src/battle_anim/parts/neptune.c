@@ -30,8 +30,8 @@ void BattleAnim_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 ///
 /// Abilities: Neptune (SUMMON_ANIM_NEPTUNE).
 ///
-/// The scene runs in two stages. The first (244 frames; A or B ends it after
-/// frame 16) places NEPTUNE_OBJECTS objects at one and a half times their
+/// The animation runs in two stages. The first (244 frames; A or B ends it
+/// after frame 16) places NEPTUNE_OBJECTS objects at one and a half times their
 /// size, opens the window with an edge table built every frame, sprays
 /// particles under gravity, converges a ring of flares, then breaks into a
 /// burst of light; meanwhile a frame callback and an interrupt change BG2's
@@ -46,7 +46,7 @@ void BattleAnim_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 /// back, removes the scale callback and interrupt, and
 /// BattleAnim_SetupBlendedDisplay puts the centre back at 120, which its
 /// BattleCamera_Shake then moves while the screen shakes. The formation's
-/// objects are released before the scene returns.
+/// objects are released before the animation returns.
 ///
 /// In the first stage work->particles 0 to 31 are the converging flares, then
 /// from frame 222 0 to 63 the burst points; PARTICLES holds the spray
@@ -133,7 +133,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
   view = (struct BattleBackgroundWork *)CANVAS_SLOT(
       cache, HEAP_SLOT_BATTLE_BACKGROUND);
   ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  // The scene owns BG1's scroll until the second stage.
+  // The animation owns BG1's scroll until the second stage.
   view->busy = 1;
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
   blit[0] = (DrawRectangle)CANVAS_SLOT(cache, HEAP_SLOT_RAM_CODE);

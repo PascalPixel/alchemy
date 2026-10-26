@@ -1,12 +1,12 @@
 /// @file
 /// Elemental Star Room (MapId_SolSanctumEruption), the chamber of
 /// MapId_SolSanctumElementalStarRoom (sol_sanctum_elemental_star_room.c) as it
-/// collapses once the Mars Star is taken: one scripted scene, with no events of
-/// its own.
+/// collapses once the Mars Star is taken: one event, with no map events
+/// of its own.
 ///
 /// SolSanctumEruption_Initialize plays it on arrival at
 /// SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, in two parts:
-/// - SolSanctumEruption_PlayHostageScene: the chamber quakes, the Wise One
+/// - SolSanctumEruption_PlayHostageEvent: the chamber quakes, the Wise One
 ///   appears and stills it, and Saturos's group leaves with Jenna and Kraden,
 ///   rising out of the chamber one by one. Jenna leaves the party.
 /// - SolSanctumEruption_PlayWiseOneRescue: the Wise One has Isaac keep the Mars
@@ -16,7 +16,7 @@
 ///   SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS to the Luna and Sol
 ///   rooms (MapId_SolSanctumLunaSolRooms).
 ///
-/// The effects are the scene's own. Sixteen blue crystals thrown out in a ring
+/// The effects are the event's own. Sixteen blue crystals thrown out in a ring
 /// (SolSanctumEruption_ThrowEruptionRing) become embers launched from a pool at
 /// a varying rate (SolSanctumEruption_StepEmbers and
 /// SolSanctumEruption_UpdateEmberFrequency, callbacks the first part adds and
@@ -109,7 +109,7 @@ static void SolSanctumEruption_UpdateWiseOnePalette(void);
 //   leave; from then on the embers fall without their sound (SE_GLITTER).
 
 /// The four corners of the chamber where SolSanctumEruption_RaiseElementalArcs
-/// raises lights, in the order the Wise One's scene visits them.
+/// raises lights, in the order the Wise One's event visits them.
 enum SolSanctumEruptionCorner {
   CHAMBER_NORTHWEST = 0,
   CHAMBER_SOUTHWEST = 1,
@@ -147,14 +147,14 @@ const u32 *SolSanctumEruption_GetWarps(void) {
 /// Returns Garet and Jenna, then the platform's shadow
 /// (LOCALID_PLATFORM_SHADOW), Kraden, Saturos, Menardi, Felix masked and
 /// unmasked, Alex, the Wise One (LOCALID_WISE_ONE) and sixteen crystals (from
-/// LOCALID_FIRST_CRYSTAL), all placed off the map until the cutscene moves
+/// LOCALID_FIRST_CRYSTAL), all placed off the map until the event moves
 /// them.
 const struct ObjectEventTemplate *
 SolSanctumEruption_GetObjectEventTemplates(void) {
   return gSolSanctumEruption_ObjectEventTemplates;
 }
 
-/// Returns the empty event table: the map is one cutscene.
+/// Returns the empty event table: the map is one event.
 const struct MapEvent *SolSanctumEruption_GetEvents(void) {
   return gSolSanctumEruption_Events;
 }
@@ -177,7 +177,7 @@ static inline void SolSanctumEruption_PlaceHostageGroup(void) {
 /// MapId_SolSanctumElementalStarRoom. Sets
 /// FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING, plays
 /// SolSanctumEruption_PlayWiseOneRescue and then removes Jenna from the party.
-static void SolSanctumEruption_PlayHostageScene(void) {
+static void SolSanctumEruption_PlayHostageEvent(void) {
   void ObjectEvent_ShowEmote();
   void PaletteFade_ApplyTarget();
   void Script_PlaySong();
@@ -210,7 +210,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
 #ifndef UBFIX
   // UB: these are separate work-pointer globals. The native sequence reaches
   // the field heap slot through the particle heap slot; named globals add
-  // four bytes and change this scene's register allocation in tbs-en.
+  // four bytes and change this event's register allocation in tbs-en.
   fieldWorkSlot = (struct FieldWork **)((u8 *)particleWorkSlot - 8);
 #endif
   FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(156), 0);
@@ -643,7 +643,7 @@ s32 SolSanctumEruption_Initialize(void) {
   if (gSaveBlock.warpDest ==
       SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM) {
     FieldEffect_InitializeSparkles();
-    SolSanctumEruption_PlayHostageScene();
+    SolSanctumEruption_PlayHostageEvent();
   }
   return 0;
 }
@@ -727,7 +727,7 @@ static void SolSanctumEruption_ResetEmberEmission(void) {
 
 /// Retires landed embers and launches new ones, shaking the map. It launches
 /// the next free one at the current frequency, shaking the map after each. Run
-/// each frame as a callback that SolSanctumEruption_PlayHostageScene adds and
+/// each frame as a callback that SolSanctumEruption_PlayHostageEvent adds and
 /// SolSanctumEruption_PlayWiseOneRescue removes.
 static void SolSanctumEruption_StepEmbers(void) {
   struct WeatherWork *sparkles;
@@ -864,7 +864,7 @@ static inline void SolSanctumEruption_FinishMaterialization(void) {
 /// Elemental Star Room, collapsing: left behind, Isaac and Garet face the Wise
 /// One, which makes the Mars Star glow, warns them of Alchemy's threat and
 /// sends them out as the volcano erupts. Isaac keeps the Star. Called by
-/// SolSanctumEruption_PlayHostageScene. Sets FLAG_SOL_SANCTUM_ERUPTED and
+/// SolSanctumEruption_PlayHostageEvent. Sets FLAG_SOL_SANCTUM_ERUPTED and
 /// FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED and takes
 /// SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS, to the rooms of Sol and
 /// Luna (SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION).
@@ -1241,7 +1241,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(30, 12, 4), PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   FieldScript_WaitFrames(20);
-  Map_StartCutscenePsynergy();
+  Map_StartEventPsynergy();
   ObjectMotion_SetAnimationAndWait(LOCALID_WISE_ONE, 2);
   for (frame = 0; frame < 40; frame++) {
     SolSanctumEruption_FlashMaterializingObjectEvent(wiseOne);
@@ -1537,7 +1537,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   sparkles->stopped = 1;
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
-  Map_EndCutscenePsynergy();
+  Map_EndEventPsynergy();
   GameFlag_Set(FLAG_SOL_SANCTUM_ERUPTED);
   GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED);
   Import_ScriptRequestWarp(SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS);

@@ -21,7 +21,7 @@ struct LinkSignature {
 };
 
 /// A task while the party's commands are chosen
-/// (Battle_CollectPartyCommands): eases the battle scene a third of the way
+/// (Battle_CollectPartyCommands): eases the battle view a third of the way
 /// to BattleMenuWork.targetViewOffset each frame (a pixel at least), draws
 /// the sprites of BattleMenuWork.icons that are shown (the chosen command's
 /// and ability's icons, the member's portrait) and slides the page arrows.

@@ -14,7 +14,7 @@
 
 // Kolima Forest, while Tret's curse lasts (FLAG_KOLIMA_CURSE_LIFTED clear):
 // the forest's colours turned redder and darker, and both sets of colours kept
-// for the scene where the curse lifts.
+// for the event where the curse lifts.
 
 // Forward declarations.
 static u16 KolimaPalette_AdjustColorChannels(u16 color, s32 adj);
@@ -87,7 +87,7 @@ static void KolimaPalette_Capture(void) {
 }
 
 /// Makes the healthy colours (second 0) or the cursed ones (second 1) the
-/// colours to fade to; the scene then fades with
+/// colours to fade to; the event then fades with
 /// PaletteFade_StartInterpolation.
 void KolimaPalette_Restore(s32 second) {
   u16 *buf = gPaletteFadeWork->palette;

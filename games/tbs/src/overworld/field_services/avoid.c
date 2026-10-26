@@ -32,7 +32,7 @@ void FieldEffect_BlinkAvoidCaster(void) {
 /// (7 on the world map), and spins in phase 1, 3/64 turn a frame.
 /// FieldEffect_RunAvoid makes it the caster's callback; it counts the caster's
 /// step and turns its angle. The arcs draw with the tiles FieldEffect_RunAvoid
-/// loads into scene->arcTileSlot.
+/// loads into effectWork->arcTileSlot.
 void FieldEffect_UpdatePairedArcSpawner(
     union ObjectEventOrEffect *fieldObject) {
   struct Object *caster = (struct Object *)fieldObject;

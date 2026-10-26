@@ -15,7 +15,7 @@
 
 /// The exit the gates' third road (MB_LUNPA_FORTRESS_GATES_THIRD_ROAD)
 /// requests, which gGateWarps has no row for. Map_TakeWarp, reaching the end of
-/// the gates' exits, falls back to the scene of their first exit at entrance 0,
+/// the gates' exits, falls back to the event of their first exit at entrance 0,
 /// so the road leads to LunpaFortressGroundFloor's default entrance.
 enum { GATE_WARP_THIRD = 3 };
 

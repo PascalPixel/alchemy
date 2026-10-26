@@ -1252,7 +1252,7 @@ static void SolSanctumElementalStarRoom_LineUpCaptors(void) {
 
 /// Elemental Star Room: searching the Mars Star's pedestal, until
 /// FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED is set. Isaac bags the last star, and
-/// the room quakes until the scene cuts away by
+/// the room quakes until the event cuts away by
 /// SOL_SANCTUM_ELEMENTAL_STAR_ROOM_TO_SOL_SANCTUM_ERUPTION to the chamber's
 /// collapse (MapId_SolSanctumEruption).
 static void EventScript_TakeMarsStar(void) {
@@ -2124,7 +2124,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
 /// where the explanation left them, the captors line up once Alex holds the
 /// stars, and the first arrival by
 /// SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS plays its
-/// scene.
+/// event.
 s32 SolSanctumElementalStarRoom_Initialize(void) {
   s32 ringLocalId;
 

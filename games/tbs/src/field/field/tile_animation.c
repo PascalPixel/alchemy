@@ -257,7 +257,7 @@ void BlendScript_Start(u16 *script) {
     Task_Add(BlendScript_Run, TASK_PRIORITY_MAIN_LOOP);
 }
 
-/// Suspends the blend script. The lighthouse maps and Vale's Babi scene
+/// Suspends the blend script. The lighthouse maps and Vale's Babi event
 /// reach it through BlendScript_SuspendFar.
 void BlendScript_Suspend(void) { Task_SuspendAll(BlendScript_Run); }
 

@@ -764,7 +764,7 @@ stay:
   Party_StaysBehind();
 }
 
-/// The scene menu encodes Yes as zero; expose it as a Boolean to the dialogue.
+/// The yes-or-no menu answers 0 for Yes; this turns that into true or false.
 static u8 WestLunpaCave_LeaderAnswersYes(void) {
   return FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
                                                       0) == 0;

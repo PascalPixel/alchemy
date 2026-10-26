@@ -10,7 +10,7 @@
 
 /// Judgment's work block, laid over struct BattleAnimWork from its start.
 /// It is the HEAP_SLOT_BATTLE_ANIM block BattleAnim_RunSummonEffect lends
-/// the scene and frees after it; only BattleAnim_RunJudgment reads it this
+/// the animation and frees after it; only BattleAnim_RunJudgment reads it this
 /// way. The sweep's 120x120 wave picture (14,400 bytes from the block's start)
 /// later overwrites sheet and the dimmed copies up to most of copy 5, which
 /// only the gathering reads.
@@ -58,15 +58,15 @@ struct JudgmentWork {
 ///
 /// Abilities: Judgment (SUMMON_ANIM_JUDGMENT).
 ///
-/// The scene then cuts to an aerial view where the blast spreads in rings, to a
-/// beach, and to a forest swept by an explosion front, before brightening back
-/// into the battle. The folder README describes both parts.
+/// The animation then cuts to an aerial view where the blast spreads in rings,
+/// to a beach, and to a forest swept by an explosion front, before brightening
+/// back into the battle. The folder README describes both parts.
 ///
 /// Reached through BattleAnim_RunSummonEffect, whose sheet slot holds the
-/// mote sheet here. The scene projects with gProjection.centerY at 240 until
-/// BattleAnim_SetupBlendedDisplay, on frame 280 of the sweep, puts it back at
-/// 120, and holds BG1's scroll from the battle camera until that frame too.
-/// It releases its formation and then its debris objects (16 each), and
+/// mote sheet here. The animation projects with gProjection.centerY at 240
+/// until BattleAnim_SetupBlendedDisplay, on frame 280 of the sweep, puts it
+/// back at 120, and holds BG1's scroll from the battle camera until that frame
+/// too. It releases its formation and then its debris objects (16 each), and
 /// before it returns removes its transfer callback and closes the canvas
 /// layer.
 void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
@@ -133,7 +133,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
   WaitFrames(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            (s32)&ResourceId_VioletSkyBackdrop, 0);
-  // The scene owns BG1's scroll until frame 280 of the sweep.
+  // The animation owns BG1's scroll until frame 280 of the sweep.
   view->busy = 1;
   gBgScroll[1].x = 0;
   BattleAnim_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);

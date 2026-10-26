@@ -58,7 +58,7 @@
 /// the ships not sailing, and the first time the party comes (coord event 50,
 /// FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED) it watches them demand to be taken home
 /// and the tour guide's hired bodyguard knock the angriest flat;
-/// KalayTolbiDocks_PrepareTolbiDocks keeps them where the scene left them. Only
+/// KalayTolbiDocks_PrepareTolbiDocks keeps them where the event left them. Only
 /// the debug menus' map selector, which warps to any map and warp destination
 /// by number, reaches KALAY_TOLBI_DOCKS_WARP_DEST_AFTER_COLOSSO, which sets
 /// FLAG_COLOSSO_OVER as Babi Palace's BABI_PALACE_AFTER_COLOSSO does.

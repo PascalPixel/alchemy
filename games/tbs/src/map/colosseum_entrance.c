@@ -37,11 +37,11 @@
 ///   grounds, the finals' waiting room and the passages to the finals stages,
 ///   each a warp destination's camera box on it.
 ///   Every arrival is a warp destination of its own, and
-///   ColosseumEntrance_ApplyArrivalState plays the cutscene that warp
+///   ColosseumEntrance_ApplyArrivalState plays the event that warp
 ///   destination stands for. During the trials the stands' warp destinations
 ///   (COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST,
 ///   COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS) alternate with the two trial
-///   cutscenes (COLOSSEUM_FAILED_TRIAL_FROM_STANDS,
+///   events (COLOSSEUM_FAILED_TRIAL_FROM_STANDS,
 ///   COLOSSEUM_CLEARED_TRIAL_FROM_STANDS), which FLAG_COLOSSO_FAILED_TRIAL_SEEN
 ///   and FLAG_COLOSSO_CLEARED_TRIAL_SEEN record. On the finals day
 ///   COLOSSEUM_FROM_COLOSSEUM_ENTRANCE keeps the party's items
@@ -1431,7 +1431,7 @@ s32 ColosseumEntrance_Initialize(void) {
   return 0;
 }
 
-/// Each arrival in the Colosseum has its own scene: the trials (the stands and
+/// Each arrival in the Colosseum has its own event: the trials (the stands and
 /// the trial grounds), the briefing before the finals
 /// (COLOSSEUM_FROM_COLOSSEUM_ENTRANCE), the passages to the finals stages
 /// (COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_EAST,

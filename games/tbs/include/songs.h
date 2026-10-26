@@ -160,7 +160,7 @@
 /// (VenusLighthouseAerie_TryToPreventFall).
 #define MUS_SHEBA_HANGS_ON 62
 /// Field music of Sol Sanctum once Mt. Aleph has erupted
-/// (FLAG_SOL_SANCTUM_ERUPTED) and of the eruption scene; it also plays as the
+/// (FLAG_SOL_SANCTUM_ERUPTED) and of the eruption event; it also plays as the
 /// Tolbi-bound ship rocks and as Saturos and Menardi combine.
 #define MUS_ERUPTION 63
 /// The title screen's music as the intro holds the title, without its prompt,
@@ -188,9 +188,9 @@
 /// The main menu's music, and the field music of the Sanctum.
 #define MUS_MAIN_MENU 74
 /// The music of the Golden Sun logo shown after Jenna and Kraden's closing
-/// scene on the world map, until a key is pressed (Title_Run's warp destination
+/// event on the world map, until a key is pressed (Title_Run's warp destination
 /// 10). ★ Named from what the player sees: the Golden Sun logo after the
-/// ending's last scene (its render)
+/// ending's last event (its render)
 #define MUS_ENDING_LOGO 75
 /// Battle music gEncounter_BattleMusic gives the battles that end the Colosso
 /// finals' matches (ENCOUNTER_ZONE_COLOSSO); Battle_Run plays it after
@@ -469,7 +469,7 @@
 /// Goma Cave entrance.
 #define SE_AMBIENT_WATER 170
 /// Thunder: lightning on the field (Weather_UpdateLightning), the flash in
-/// Sol Sanctum's Luna room as the scene opens on Kraden, the flash of a Lucky
+/// Sol Sanctum's Luna room as the event opens on Kraden, the flash of a Lucky
 /// Wheels win, and the Jupiter battle animation.
 /// ★ Named from what the player sees: lightning flashing over the stormy night
 /// (its render)

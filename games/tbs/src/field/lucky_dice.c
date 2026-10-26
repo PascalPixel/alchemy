@@ -34,7 +34,7 @@ s32 LuckyDice_Start(void) {
   return 0;
 }
 
-/// Puts the 3D camera back at its scene defaults: at the origin, unturned,
+/// Puts the 3D camera back at its starting view: at the origin, unturned,
 /// pitched to 152 and 510 units away, following nothing. Recomputes the eye
 /// and sets the projection's focal length (250), near plane and far plane.
 /// Called only by LuckyDice_Run, once the camera's heap block is allocated;

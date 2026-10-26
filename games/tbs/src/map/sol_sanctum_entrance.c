@@ -16,12 +16,12 @@
 ///   an empty eye socket, and a Small Jewel set in it opens the way on: the
 ///   first from this map's chest (FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET), the
 ///   second from the chest in MapId_SolSanctumMaze
-///   (FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET). Kraden has a scene on the first
-///   entry at the door (SolSanctumEntrance_IntroduceSanctum), in the first
-///   relief room (SolSanctumEntrance_KradenSuspectsHiddenPassage) and in the
-///   second (SolSanctumEntrance_KradenSeesStatuesOutOfReach). Two statues in
-///   the first relief room and the row of six in the second can be pushed, or
-///   moved with Move, a cell east or west. Its warps lead to
+///   (FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET). Kraden has an event on the
+///   first entry at the door (SolSanctumEntrance_IntroduceSanctum), in the
+///   first relief room (SolSanctumEntrance_KradenSuspectsHiddenPassage) and in
+///   the second (SolSanctumEntrance_KradenSeesStatuesOutOfReach). Two statues
+///   in the first relief room and the row of six in the second can be pushed,
+///   or moved with Move, a cell east or west. Its warps lead to
 ///   MapId_SolSanctumCorridor, MapId_SolSanctumMaze, Sol Entrance and
 ///   MapId_SolSanctumLunaSolRooms; the rest lead between its own rooms.
 ///

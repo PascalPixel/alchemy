@@ -44,7 +44,7 @@ a fixed order:
 
 Leaving comes first, so once a doorway or a battle has been asked for the map
 ends before anything raised with it is looked at. Because the walk stays
-stopped while a request is handled, a cutscene is one script that plays from
+stopped while a request is handled, an event is one script that plays from
 start to end while the party waits; whatever must keep moving meanwhile moves
 on its own, as an object script ([below](#everything-that-moves-runs-a-script)).
 

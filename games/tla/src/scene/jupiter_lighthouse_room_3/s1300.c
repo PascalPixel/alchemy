@@ -1,9 +1,4 @@
-// Draft of overlay 69C Func_02001300 (first written 2026-10-12): differ 42
-// of 61. The native rereads other->animation->value28 and reloads the table
-// address on every pass with the index in r4, and builds the angle through two
-// registers before it copies the position; the draft hoists all three in a for
-// loop, a goto loop and with a one-pass block around the test.
-#include "../../../../games/tla/src/scene/jupiter_lighthouse_room_3/local.h"
+#include "local.h"
 
 extern const u16 gData_02002478[];
 
@@ -11,15 +6,18 @@ void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *position);
 struct ObjectRuntime *Func_02002438(s32 *position, s32 mode);
 s32 Func_02002338(struct ObjectRuntime *object, s32 *position);
 
+/// Stops the object where it stands (Object_SetPositionAndResetMotion) when
+/// the point a cell ahead along its facing holds another object
+/// (Func_02002438) whose sprite shape is not in the footprint table, and again
+/// when its own cell test (Func_02002338) is positive.
 void Func_02001300(struct ObjectRuntime *object) {
   s32 position[3];
   struct ObjectRuntime *other;
   u32 i;
   s32 angle;
-  s32 dir;
 
-  dir = object->angle >> 12;
-  angle = ((dir + 2) & 12) << 12;
+  angle = object->angle >> 12;
+  angle = ((angle + 2) & 12) << 12;
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
@@ -28,6 +26,11 @@ void Func_02001300(struct ObjectRuntime *object) {
   if (other != NULL) {
     i = 0;
   next:
+    /* FAKEMATCH(barrier): a memory barrier at the top of the shape search, so
+     * the shape, its pointers and the table address are read again on every
+     * pass as the native does; without it, 28 of 61 instructions differ in
+     * tla-en. */
+    asm volatile("" ::: "memory");
     if (*((struct BattleAnimationState *)other->animation)->value28 ==
         gData_02002478[i])
       return;

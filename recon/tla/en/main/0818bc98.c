@@ -1,3 +1,8 @@
+// 2026-10-26 (round 5): differ 147 of 1251. The mouth's y declared before its x
+// in the frame loop's block: 173 to 147 (x keeps the native's slot, sp+32).
+// Left: the loop's copy of the user's address and the mouth's y swap slots (the
+// native's copy at sp+36, y at sp+28); a block around the loop or a pointer to
+// the user's position changes nothing.
 // 2026-10-26: differ 173 of 1251, with BattleEffect_LoadBlitter returning s32
 // as nibble_pair.c defines it.
 // Near miss: listing 1251 instructions, draft 1252, differ 203. No close ☀️ twin
@@ -246,8 +251,8 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
   EffectPosition_ProjectBattler(effect->actors[0], &target);
 
   for (frame = 0; frame != Data_08199d97[mode]; frame++) {
-    s32 mouthX;
     s32 mouthY;
+    s32 mouthX;
 
     // Frame 0: 32 motes wait around the mouth, each a frame later; the
     // rolling ball sets out from the mouth toward the target.

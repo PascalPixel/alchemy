@@ -16667,7 +16667,7 @@ msgctxt "message"
 msgid "04098"
 msgstr "That's a cursed item."
 
-msgctxt "message"
+msgctxt "MsgConfirmDrop"
 msgid "04099"
 msgstr "Are you sure you"
 
@@ -16811,7 +16811,7 @@ msgctxt "MsgStatLabel"
 msgid "04134"
 msgstr "Attack"
 
-msgctxt "message"
+msgctxt "MsgDefenseLabel"
 msgid "04135"
 msgstr "Defense"
 
@@ -17019,7 +17019,7 @@ msgctxt "message"
 msgid "04186"
 msgstr "Ring"
 
-msgctxt "message"
+msgctxt "MsgYes"
 msgid "04187"
 msgstr "Yes"
 
@@ -17083,7 +17083,7 @@ msgctxt "message"
 msgid "04202"
 msgstr "Effect of Equipping"
 
-msgctxt "message"
+msgctxt "MsgEquipEffectName"
 msgid "04203"
 msgstr "No effect"
 
@@ -17243,7 +17243,7 @@ msgctxt "message"
 msgid "04242"
 msgstr "Multiple uses"
 
-msgctxt "message"
+msgctxt "MsgSingleUse"
 msgid "04243"
 msgstr "Single-use"
 
@@ -17251,7 +17251,7 @@ msgctxt "message"
 msgid "04244"
 msgstr "Breaks when used"
 
-msgctxt "message"
+msgctxt "MsgBestowsPsynergy"
 msgid "04245"
 msgstr "Bestows Psynergy"
 
@@ -17267,11 +17267,11 @@ msgctxt "message"
 msgid "04248"
 msgstr "Can't be removed"
 
-msgctxt "message"
+msgctxt "MsgRareItem"
 msgid "04249"
 msgstr "A rare item"
 
-msgctxt "message"
+msgctxt "MsgImportantItem"
 msgid "04250"
 msgstr "An important item"
 
@@ -17279,19 +17279,19 @@ msgctxt "message"
 msgid "04251"
 msgstr "Carry up to 30"
 
-msgctxt "message"
+msgctxt "MsgDetailsUnknown"
 msgid "04252"
 msgstr "Details are unknown"
 
-msgctxt "message"
+msgctxt "MsgEquipEffectHeading"
 msgid "04253"
 msgstr "Effect of Equipping"
 
-msgctxt "message"
+msgctxt "MsgUsesHeading"
 msgid "04254"
 msgstr "Number of Uses"
 
-msgctxt "message"
+msgctxt "MsgNumberHeading"
 msgid "04255"
 msgstr "Number"
 
@@ -17299,7 +17299,7 @@ msgctxt "message"
 msgid "04256"
 msgstr "I have {argument_signed_number}."
 
-msgctxt "message"
+msgctxt "MsgMightBreak"
 msgid "04257"
 msgstr "It might break"
 
@@ -17307,7 +17307,7 @@ msgctxt "message"
 msgid "04258"
 msgstr "if used in battle"
 
-msgctxt "message"
+msgctxt "MsgBrokenNotice"
 msgid "04259"
 msgstr "It's broken, so"
 
@@ -17319,7 +17319,7 @@ msgctxt "message"
 msgid "04261"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgItemCursed"
 msgid "04262"
 msgstr "It's cursed"
 

@@ -1,14 +1,3 @@
-// First draft of Func_080fcab8: a second item picker an event script opens,
-// built as Func_080f94a4 (recon/tla/en/main/080f94a4.c, ☀️'s
-// ItemMenu_Run) without the window tile save: opens the item menu
-// over the field, runs the command loop PsynergyMenu_RunSteps, and when it returns 1
-// looks up the chosen item's action (BattleAction_Get, result unused) and records
-// owner << 10 | item in the event work at 0x166. Returns the loop's result.
-// No ☀️ twin. Differ 50 of 117, register choice only: the native builds the
-// heap slots base in r1 and keeps that pseudo in r8, and takes r1 for the
-// offsets 0x16c and 0x166 and r2 for the base reloads, where this draft takes
-// r2 and r3 (item | owner << 10 in this operand order is measured: the
-// other order gives differ 58).
 #include "types.h"
 #include "mem.h"
 #include "ram_buffer.h"
@@ -48,6 +37,10 @@ void ItemMenu_Close(void);
 void Event_ClearInvalidPackedValuesFar(void);
 void WaitFrames(s32 frames);
 
+/// A second item picker an event script opens, built as Func_080f94a4: opens
+/// the item menu over the field and runs its command loop; when that returns 1,
+/// looks up the chosen item's action (unused) and records owner << 10 | item in
+/// the event work at 0x166. Returns the loop's result.
 s32 Func_080fcab8(void) {
   struct InventoryMenuState *screen;
   s32 item;
@@ -71,9 +64,11 @@ s32 Func_080fcab8(void) {
   Menu_EnsureCancelSound();
   if (result == 1) {
     u8 *event = Ram_HeapSlots->eventWork;
+    u16 request;
 
-    BattleAction_Get(screen->selectedItems[0] & 0x3fff);
-    *(u16 *)(event + 0x166) = item | (owner << 10);
+    BattleAction_Get(0x3fff & screen->selectedItems[0]);
+    request = item | (owner << 10);
+    *(u16 *)(event + 0x166) = request;
   }
 
   RenderOutput_ClearListFar(screen->statusWindow);

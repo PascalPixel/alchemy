@@ -18501,7 +18501,7 @@ msgctxt "message"
 msgid "04559"
 msgstr "Strumento maledetto."
 
-msgctxt "message"
+msgctxt "MsgConfirmDrop"
 msgid "04560"
 msgstr "Davvero vuoi"
 
@@ -18645,7 +18645,7 @@ msgctxt "MsgStatLabel"
 msgid "04595"
 msgstr "Attacco"
 
-msgctxt "message"
+msgctxt "MsgDefenseLabel"
 msgid "04596"
 msgstr "Difesa"
 
@@ -18853,7 +18853,7 @@ msgctxt "message"
 msgid "04647"
 msgstr "Anello"
 
-msgctxt "message"
+msgctxt "MsgYes"
 msgid "04648"
 msgstr "Sì"
 
@@ -18913,7 +18913,7 @@ msgctxt "message"
 msgid "04662"
 msgstr "Effetto se attivato:"
 
-msgctxt "message"
+msgctxt "MsgEquipEffectName"
 msgid "04663"
 msgstr "Nessun effetto"
 
@@ -19073,7 +19073,7 @@ msgctxt "message"
 msgid "04702"
 msgstr "Uso multiplo"
 
-msgctxt "message"
+msgctxt "MsgSingleUse"
 msgid "04703"
 msgstr "Monouso"
 
@@ -19081,7 +19081,7 @@ msgctxt "message"
 msgid "04704"
 msgstr "Se usato si rompe"
 
-msgctxt "message"
+msgctxt "MsgBestowsPsynergy"
 msgid "04705"
 msgstr "Conferisce Psinergia"
 
@@ -19097,11 +19097,11 @@ msgctxt "message"
 msgid "04708"
 msgstr "Non si può riporre"
 
-msgctxt "message"
+msgctxt "MsgRareItem"
 msgid "04709"
 msgstr "Strumento raro"
 
-msgctxt "message"
+msgctxt "MsgImportantItem"
 msgid "04710"
 msgstr "Strumento importante"
 
@@ -19109,19 +19109,19 @@ msgctxt "message"
 msgid "04711"
 msgstr "Se ne portano fino a 30"
 
-msgctxt "message"
+msgctxt "MsgDetailsUnknown"
 msgid "04712"
 msgstr "Info sconosciute"
 
-msgctxt "message"
+msgctxt "MsgEquipEffectHeading"
 msgid "04713"
 msgstr "Effetto se attivato"
 
-msgctxt "message"
+msgctxt "MsgUsesHeading"
 msgid "04714"
 msgstr "Numero di utilizzi"
 
-msgctxt "message"
+msgctxt "MsgNumberHeading"
 msgid "04715"
 msgstr "Quantità"
 
@@ -19129,7 +19129,7 @@ msgctxt "message"
 msgid "04716"
 msgstr "Ne hai {argument_signed_number}."
 
-msgctxt "message"
+msgctxt "MsgMightBreak"
 msgid "04717"
 msgstr "Può rompersi se"
 
@@ -19137,7 +19137,7 @@ msgctxt "message"
 msgid "04718"
 msgstr "si usa in battaglia"
 
-msgctxt "message"
+msgctxt "MsgBrokenNotice"
 msgid "04719"
 msgstr "Strumento rotto:"
 
@@ -19149,7 +19149,7 @@ msgctxt "message"
 msgid "04721"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgItemCursed"
 msgid "04722"
 msgstr "Strumento maledetto"
 

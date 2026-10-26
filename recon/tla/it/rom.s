@@ -482,12 +482,12 @@ UiText_QueueRenderEntries:
 	.incbin "baserom.gba", 0x0003954c, 0x000000b0
 	.section .rom.0003972a, "ax"
 	.incbin "baserom.gba", 0x0003972a, 0x0000002a
-	.section .rom.000397e0, "ax"
-	.global UiWork_ProcessRenderChannels
-	.type UiWork_ProcessRenderChannels, %function
+	.section .rom.00039864, "ax"
+	.global Func_08039864
+	.type Func_08039864, %function
 	.thumb_func
-UiWork_ProcessRenderChannels:
-	.incbin "baserom.gba", 0x000397e0, 0x000006d4
+Func_08039864:
+	.incbin "baserom.gba", 0x00039864, 0x00000650
 	.section .rom.00039f78, "ax"
 	.global Func_08039f94
 	.type Func_08039f94, %function

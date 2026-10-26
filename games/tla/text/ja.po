@@ -16800,7 +16800,7 @@ msgctxt "MsgStatLabel"
 msgid "04134"
 msgstr "こうげき"
 
-msgctxt "message"
+msgctxt "MsgDefenseLabel"
 msgid "04135"
 msgstr "ぼうぎょ"
 
@@ -17060,7 +17060,7 @@ msgctxt "message"
 msgid "04199"
 msgstr "そうびこうか"
 
-msgctxt "message"
+msgctxt "MsgEquipEffectName"
 msgid "04200"
 msgstr "こうかなし"
 
@@ -17220,7 +17220,7 @@ msgctxt "message"
 msgid "04239"
 msgstr "なんどでもつかえる"
 
-msgctxt "message"
+msgctxt "MsgSingleUse"
 msgid "04240"
 msgstr "つかうとなくなる"
 
@@ -17228,7 +17228,7 @@ msgctxt "message"
 msgid "04241"
 msgstr "つかうとこわれる"
 
-msgctxt "message"
+msgctxt "MsgBestowsPsynergy"
 msgid "04242"
 msgstr "エナジーしゅうとく"
 
@@ -17244,11 +17244,11 @@ msgctxt "message"
 msgid "04245"
 msgstr "はずせない"
 
-msgctxt "message"
+msgctxt "MsgRareItem"
 msgid "04246"
 msgstr "めずらしいアイテムです"
 
-msgctxt "message"
+msgctxt "MsgImportantItem"
 msgid "04247"
 msgstr "たいせつなアイテムです"
 
@@ -17256,19 +17256,19 @@ msgctxt "message"
 msgid "04248"
 msgstr "30こまでもてる"
 
-msgctxt "message"
+msgctxt "MsgDetailsUnknown"
 msgid "04249"
 msgstr "しょうさいはふめいです"
 
-msgctxt "message"
+msgctxt "MsgEquipEffectHeading"
 msgid "04250"
 msgstr "そうびこうか"
 
-msgctxt "message"
+msgctxt "MsgUsesHeading"
 msgid "04251"
 msgstr "しようこうか"
 
-msgctxt "message"
+msgctxt "MsgNumberHeading"
 msgid "04252"
 msgstr "しょじすう"
 
@@ -17276,7 +17276,7 @@ msgctxt "message"
 msgid "04253"
 msgstr "こ もっている"
 
-msgctxt "message"
+msgctxt "MsgMightBreak"
 msgid "04254"
 msgstr "つかうとこわれる"
 
@@ -17284,7 +17284,7 @@ msgctxt "message"
 msgid "04255"
 msgstr "ばあいがある"
 
-msgctxt "message"
+msgctxt "MsgBrokenNotice"
 msgid "04256"
 msgstr "こわれていて"
 
@@ -17292,11 +17292,11 @@ msgctxt "message"
 msgid "04257"
 msgstr "つかえません"
 
-msgctxt "message"
+msgctxt "MsgTimesSuffix"
 msgid "04258"
 msgstr "ばい"
 
-msgctxt "message"
+msgctxt "MsgItemCursed"
 msgid "04259"
 msgstr "のろわれている"
 
@@ -20362,7 +20362,7 @@ msgctxt "message"
 msgid "04915"
 msgstr "あら いらないのね{page_break}"
 
-msgctxt "message"
+msgctxt "MsgTestName"
 msgid "04916"
 msgstr "ピポイ{end_wait}"
 

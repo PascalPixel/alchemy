@@ -55,7 +55,7 @@ s32 Func_0804e3f4(void) {
   cancel = ((u32)(u16)count >> 16) | 2;
   /* FAKEMATCH(temporary): the slot's offset defined before the loop; as the
    * offset written at its load, 10 of 180 instructions differ in tla-en. */
-  slotOffset = 0x1382;
+  slotOffset = offsetof(struct UiRenderWork, outputIds[1]);
   while (1) {
     if (gInput.repeat & 0x20) {
       redraw = 1;

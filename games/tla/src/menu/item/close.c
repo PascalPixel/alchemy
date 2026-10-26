@@ -95,10 +95,14 @@ s32 ItemMenu_SelectMember(s32 pane) {
   return result;
 }
 
-#if LANGUAGE != LANGUAGE_JAPANESE
 /// The item menu's help, followed by the equipment help. "L+A: Arrange
 /// items"; the next message is "R: View equipment".
 extern u8 MsgArrangeItemsHelp[];
+#if LANGUAGE == LANGUAGE_JAPANESE
+/// The key names Japanese draws before the help: "L+A:" and "R:".
+extern const u8 gItemMenu_ArrangeKeysString[];
+extern const u8 gItemMenu_EquipmentKeyString[];
+#endif
 
 s32 UiWindow_UpdateOrCreate(void **window, s32 x, s32 y, s32 width, s32 height,
                             s32 style);
@@ -107,6 +111,7 @@ struct ItemMenuIcon *RenderOutput_CreateFromResourceFar(s32 kind, s32 index,
                                                         void *window, s32 x,
                                                         s32 y);
 void UiText_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
+void UiText_DrawStringInWindowFar(const u8 *text, void *window, s32 x, s32 y);
 s32 GameFlag_Test(s32 flag);
 void Func_080fa84c(s32 owner);
 void Func_080f8170(void *window, s32 owner, s32 slot, s32 style);
@@ -125,8 +130,7 @@ s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 /// members are paged four at a time by Menu_MoveGridCursor, which moves the
 /// selection and says what to redraw (2 for a new page). Returns the chosen
 /// member's id, or -1.
-// As The Broken Seal's ItemMenu_RunOwnerSelection. Japanese, which draws the
-// key names as separate strings, keeps its scaffold.
+// As The Broken Seal's ItemMenu_RunOwnerSelection.
 s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
   s32 selection = menu->paneIndex[0];
@@ -160,10 +164,22 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
         RenderOutput_CreateFromResourceFar(2, 0, menu->helpWindow, 0, result);
     menu->selectedItemIcon->state = 13;
   }
+#if LANGUAGE == LANGUAGE_JAPANESE
+  // Japanese draws the key names as their own strings, the help beside them.
+  UiText_DrawStringInWindowFar(gItemMenu_ArrangeKeysString, menu->helpWindow, 0,
+                               0);
+  UiText_DrawCharacterAtOffsetFar((s32)MsgArrangeItemsHelp, menu->helpWindow,
+                                  32, 0);
+  UiText_DrawStringInWindowFar(gItemMenu_EquipmentKeyString, menu->helpWindow,
+                               16, 8);
+  UiText_DrawCharacterAtOffsetFar((s32)MsgArrangeItemsHelp + 1,
+                                  menu->helpWindow, 32, 8);
+#else
   UiText_DrawCharacterAtOffsetFar((s32)MsgArrangeItemsHelp, menu->helpWindow, 0,
                                   0);
   UiText_DrawCharacterAtOffsetFar((s32)MsgArrangeItemsHelp + 1,
                                   menu->helpWindow, 0, 8);
+#endif
   menu->paneIcons[0]->state = 1;
   while (!GameFlag_Test(0x150)) {
     if (redraw) {
@@ -171,8 +187,8 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
       window = menu->statusWindow;
       owner = Unit_Get(ownerIds[selection]);
       if (showEquipment) {
-        menu->itemCount =
-            ItemMenu_CollectItems(Unit_Get(ownerIds[selection]), menu->items, 0);
+        menu->itemCount = ItemMenu_CollectItems(Unit_Get(ownerIds[selection]),
+                                                menu->items, 0);
         Func_080fa84c(ownerIds[selection]);
         Func_080f8170(window, ownerIds[selection], 0, 8);
       } else {
@@ -224,4 +240,3 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
   menu->ownerIcons[1]->state = 13;
   return result;
 }
-#endif

@@ -2,6 +2,15 @@
 #include "system.h"
 #include "input.h"
 #include "ram_buffer.h"
+#include "edition.h"
+
+// The Details window's width in tiles: Japanese opens it over the left part
+// only, beside the item window, the other editions over the whole top half.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define DETAILS_WINDOW_WIDTH 13
+#else
+#define DETAILS_WINDOW_WIDTH 30
+#endif
 
 struct ItemMenuIcon {
   u8 unk00[5];
@@ -15,6 +24,7 @@ struct ItemDetailsMenu {
   struct ItemMenuIcon *cursor;
   u8 unk174[0xa4];
   struct ItemMenuIcon *selectedItemIcon;
+  u16 unk21c; ///< bit 1 read by Func_080fd968; Japanese's Details sets 1
 };
 
 void Menu_UpdateEntryObjectTransforms(void);
@@ -31,18 +41,22 @@ void Palette_LightenBankHighlight(s32);
 void UiWindow_DrawFrameFar(s32, s32, s32, s32);
 
 /// The item menu's Details screen: describes the item entry value in a window
-/// over the whole top half and waits for A or B. Up and Down move an unused
-/// counter from 0 to 4. Returns the counter after A or Start, or -1 after B.
-/// The twin of The Broken Seal's ItemMenu_ShowDetails.
+/// over the top half (DETAILS_WINDOW_WIDTH) and waits for A or B. Up and Down
+/// move an unused counter from 0 to 4. Returns the counter after A or Start, or
+/// -1 after B. The twin of The Broken Seal's ItemMenu_ShowDetails.
 s32 Func_080fb780(s32 value) {
   struct ItemDetailsMenu *menu = Ram_HeapSlots->menuRuntime;
   s32 changed = 1;
+#if LANGUAGE != LANGUAGE_JAPANESE
   struct ItemMenuIcon *itemIcon = menu->selectedItemIcon;
+#endif
   s32 window;
   s32 counter = 0;
 
+#if LANGUAGE != LANGUAGE_JAPANESE
   itemIcon->motion = 13;
-  window = UiWindow_CreateFar(0, 0, 30, 10, 2);
+#endif
+  window = UiWindow_CreateFar(0, 0, DETAILS_WINDOW_WIDTH, 10, 2);
   Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
 
   {
@@ -96,7 +110,11 @@ s32 Func_080fb780(s32 value) {
     struct ItemMenuIcon *cursor = menu->cursor;
     cursor->motion = 1;
   }
+#if LANGUAGE == LANGUAGE_JAPANESE
+  menu->unk21c = 1;
+#else
   UiWindow_DrawFrameFar(13, 0, 17, 10);
+#endif
 
   return counter;
 }

@@ -1080,18 +1080,8 @@ main	rom_main_02	recon/tla/ja/rom	.rom.00042ac0	ja
 main	rom_main_02	games/tla/src/system/save/release	.text
 main	rom_main_02	games/tla/src/system/save/progress_bar	.text
 main	rom_main_02	games/tla/src/system/save/save_progress	.text
-main	rom_main_02	recon/tla/it/rom	.rom.00042f74	it
-main	rom_main_02	recon/tla/it/rom	.rom.00043054	it
-main	rom_main_02	recon/tla/fr/rom	.rom.00042f60	fr
-main	rom_main_02	recon/tla/fr/rom	.rom.00043040	fr
-main	rom_main_02	recon/tla/es/rom	.rom.00042f7c	es
-main	rom_main_02	recon/tla/es/rom	.rom.0004305c	es
-main	rom_main_02	recon/tla/de/rom	.rom.00042f64	de
-main	rom_main_02	recon/tla/de/rom	.rom.00043044	de
-main	rom_main_02	recon/tla/raw/08042f10	.text	en
-main	rom_main_02	recon/tla/raw/08042ff0	.text	en
-main	rom_main_02	recon/tla/ja/rom	.rom.00043054	ja
-main	rom_main_02	recon/tla/ja/rom	.rom.00043134	ja
+main	rom_main_02	games/tla/src/system/save/f042f10	.text
+main	rom_main_02	games/tla/src/system/save/f042ff0	.text
 main	rom_main_02	games/tla/src/system/save/play_time	.text
 main	rom_main_02	games/tla/src/system/save/find_free_summary_slot	.text
 main	rom_main_02	games/tla/src/system/save/scan_record_flags	.text

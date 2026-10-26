@@ -546,18 +546,6 @@ UiText_DrawNumberInWindow:
 	.thumb_func
 PartyStatus_Draw:
 	.incbin "baserom.gba", 0x00042ac0, 0x00000430
-	.section .rom.00043054, "ax"
-	.global Func_08042f10
-	.type Func_08042f10, %function
-	.thumb_func
-Func_08042f10:
-	.incbin "baserom.gba", 0x00043054, 0x000000e0
-	.section .rom.00043134, "ax"
-	.global Func_08042ff0
-	.type Func_08042ff0, %function
-	.thumb_func
-Func_08042ff0:
-	.incbin "baserom.gba", 0x00043134, 0x000000d4
 	.section .rom.0004349c, "ax"
 	.global SaveState_BuildSummaryHeader
 	.type SaveState_BuildSummaryHeader, %function

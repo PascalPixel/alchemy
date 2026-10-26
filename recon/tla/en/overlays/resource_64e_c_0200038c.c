@@ -1,18 +1,19 @@
 // Draft of overlay 64e's Func_0200038c (0x0200838c), ported from ☀️'s
-// StagedActor_AdvancePair (scene/common/object_staged_actor.h): differ 24 of
-// 175, all scheduling and the registers that follow from it. The native
-// keeps the leader's copy to r8 and the first argument's copy early, right
-// after the field loads, where this draft moves them next to the calls, and
-// stores the zeroed velocities in another order. Copied in overlays 691 and
-// 692 (copy group 64e:Func_0200038c). Six minutes of alchemy permute: 18,
-// by rewrites that are no source form.
-// Measured (2026-10-26): most spots left are a load the native issues one slot
-// after a store to memory it may alias (through a pointer from a call or a
-// load, against the stack, the object or a global), with an independent
-// instruction between; -mthumb-slow-loads delays only a load from the address
-// just stored, so this draft issues the load at once. A matched pointer
-// parameter (Gabomba Catacombs' Func_020008a0) cannot alias the stack and
-// shows no gap, which fits. No source form found to make it wait.
+// StagedActor_AdvancePair (scene/common/object_staged_actor.h): differ 20 of
+// 175 (was 24; the raised probe sets z before y, and the pushed object's z is
+// written after its x velocity), all scheduling and the registers that follow
+// from it. The native keeps the leader's copy to r8 and the first argument's
+// copy early, right after the field loads, where this draft moves them next to
+// the calls, and stores the zeroed velocities in another order. Copied in
+// overlays 691 and 692 (copy group 64e:Func_0200038c). Six minutes of alchemy
+// permute: 18, by rewrites that are no source form. Measured (2026-10-26): most
+// spots left are a load the native issues one slot after a store to memory it
+// may alias (through a pointer from a call or a load, against the stack, the
+// object or a global), with an independent instruction between;
+// -mthumb-slow-loads delays only a load from the address just stored, so this
+// draft issues the load at once. A matched pointer parameter (Gabomba
+// Catacombs' Func_020008a0) cannot alias the stack and shows no gap, which
+// fits. No source form found to make it wait.
 #include "types.h"
 #include "party_state.h"
 
@@ -81,8 +82,8 @@ void Func_0200038c(void) {
     return;
 
   dst[0] = next->x;
-  dst[1] = next->y + 0x100000;
   dst[2] = next->z;
+  dst[1] = next->y + 0x100000;
   blocker = Object_FindInCell(dst, next);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
     return;
@@ -112,8 +113,8 @@ void Func_0200038c(void) {
   Func_02001b4c(next);
   Func_02001cbc();
   next->x = dst[0];
-  next->z = dst[2];
   next->velocityX = 0;
+  next->z = dst[2];
   next->velocityZ = 0;
   lead->targetX = 0x80000000;
   lead->targetZ = 0x80000000;

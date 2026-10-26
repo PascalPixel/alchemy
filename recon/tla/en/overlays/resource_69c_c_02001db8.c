@@ -1,16 +1,19 @@
 // Draft of overlay 69C Func_02001db8 (first written 2026-10-12); overlay 6A3
 // has the same function at 0200c1ac. Its sibling Func_02001d48 is adopted in
 // games/tla/src/scene/jupiter_lighthouse_room_3/s1cc0.c.
-// Func_02001db8: differ 18 of 131, order only, at four places: the base and
-// offset registers of the first currentOwner address are exchanged; the pool
-// zero for motionFlags loads between the two halves of 0x4000 in the native and
-// after the angle store here; the branch over the literal pool sits one
-// instruction earlier in the native; and the last block builds its zero before
-// the animationKind address. What the bytes needed so far: x reused as the loop
-// counter (differ 83 to 34), a word temporary for 0xf1f, the mask in a variable
-// set before a one-pass boundary after the x shift, and a one-pass boundary
-// after the WINOUT store. Those three devices need FAKEMATCH tags with these
-// reasons when the function is adopted.
+// Func_02001db8: differ 8 of 131 under -mthumb-slow-loads, one place left: the
+// first currentOwner address builds its pool load in r3 and the 0x214 offset in
+// r1 (adds r1, r1, r3), where the native loads the pool word into r1 and the
+// offset into r2 (adds r1, r1, r2). Combine folds the offset into the add here,
+// so reload builds it in the output register. A one-pass block around the
+// animationKind reset now orders its zero as the native does (differ 12 to 8).
+// What the bytes needed so far: x reused as the loop counter (differ 83 to 34),
+// a word temporary for 0xf1f, the mask in a variable set before a one-pass
+// boundary after the x shift, a one-pass boundary after the WINOUT store and
+// the one around animationKind. Those devices need FAKEMATCH tags in the S2
+// form when the function is adopted. Tried: the owner through a PartyState
+// pointer (44) or an s32 pointer (58), a byte-offset read of 0x214 (9), the
+// object declared after the mask, alchemy permute 8 minutes (8).
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_room_3/local.h"
 #include "io_reg.h"
 

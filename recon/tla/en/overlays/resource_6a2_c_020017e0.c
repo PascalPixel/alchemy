@@ -1,4 +1,4 @@
-// Draft, differ 10 of 169: overlay 6a2's copy of the function drafted in
+// Draft, differ 4 of 169 under -mthumb-slow-loads: overlay 6a2's copy of the function drafted in
 // resource_698_c_02001674.c (overlay 698's Func_02001674, differ 10 there), whose
 // header says what it is, what still differs and what was tried.
 #include "types.h"

@@ -1,6 +1,3 @@
-// Draft, differ 6 of 51: the copy of overlay 662's Func_02000b54 (whose draft
-// holds the notes), calling Izumo Ruins' Func_02000128 for its cell placement.
-// Translated from its listing; names and structure still to do.
 #include "iwram_call.h"
 #include "lib/call.h"
 #include "object_runtime.h"
@@ -45,8 +42,8 @@ L_0200804e:
   r4 = (u32)r4 >> 16;
   r6 = (u32)r6 >> 16;
   r5 = r5 + 34;
-  r7 = r7 + 6;
   v1 = Func_02000128(r8, r6, r4, FIELD_AT(r5, u8, 0));
+  r7 = r7 + 6;
   r0 = v1;
   r3 = FIELD_AT(r7, u16, 0);
   if ((FIELD_AT(r7, u16, 0)) != 0xffff)

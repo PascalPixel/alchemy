@@ -1,7 +1,3 @@
-// Draft of overlay 6aa's Func_020002bc, the twin of overlay 68f's
-// Func_02000404: its draft (resource_68f_c_02000404.c) with this overlay's
-// symbols: differ 8 of 56. Left: what that draft's header records.
-
 #include "types.h"
 #include "field_event.h"
 
@@ -29,10 +25,14 @@ loop:
     ObjectDispatch_SetSingleChildFlags(object, 0);
     Func_02004bc0(object, (u16)animation + GameFlag_Test((u16)flag));
     object->motionFlags = 0;
+    /* FAKEMATCH(barrier): the collision byte's address is built after the
+     * motion store, as in the native; as plain statements, 2 of 56
+     * instructions differ in tla-en. */
+    asm("");
     object->collisionFlags &= 0xfe;
     object->timer = flag;
-    row += 3;
     Func_020001f8(object);
+    row += 3;
   }
   if (row[0] != 0xffff)
     goto loop;

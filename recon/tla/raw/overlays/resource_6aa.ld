@@ -9,7 +9,7 @@ SECTIONS
         "*/games/tla/src/scene/mars_lighthouse_entrance/map.o"(.text)
         "*/games/tla/src/field/common/object/set_sprite_priority.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s01f8.o"(.text)
-        "*/resource_6aa_overlay.o"(.text.x020082bc)
+        "*/games/tla/src/scene/mars_lighthouse_entrance/s02bc.o"(.text)
         "*/resource_6aa_overlay.o"(.text.x02008338)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s040c.o"(.text)
         "*/resource_6aa_overlay.o"(.text.x02008414)

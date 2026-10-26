@@ -1,11 +1,14 @@
-// Draft, differ 10 of 169: the landing burst shared by thirteen overlays (698 to
-// 6a4): the leader drops from 130 pixels while the screen transition runs, then
-// seventeen effects burst outward and the leader bounces. Overlay 671's
-// Func_02002394 (resource_671_c_02002394.c) is the same sequence with a 0xcccc
-// start scale, FieldEvent_WaitFrames for its first wait and a closing work
-// store; its header lists what was tried. Left, as there: the velocity array's
-// address is built before the cosine call, and both random terms load the
-// velocity word one row later than the native.
+// Draft, differ 4 of 169 under -mthumb-slow-loads: the landing burst shared by
+// thirteen overlays (698 to 6a4): the leader drops from 130 pixels while the
+// screen transition runs, then seventeen effects burst outward and the leader
+// bounces. Overlay 671's Func_02002394 (resource_671_c_02002394.c) is the same
+// sequence with a 0xcccc start scale, FieldEvent_WaitFrames for its first wait
+// and a closing work store; its header lists what was tried. Left: the
+// velocity array's address (add r6, sp, #16) is built once before the loop,
+// where the native builds it after the cosine call in every pass. The 07.gcse
+// dump shows the hoist: GCSE's partial redundancy elimination moves the
+// address out of the loop whatever the loop's form (do-while, for, goto) or
+// the array's scope, and a pinned pointer only copies the hoisted register.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"

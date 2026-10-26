@@ -1,3 +1,4 @@
+// Near miss, differ 120 (2026-10-26, statements reordered).
 // First draft of Func_0810106c: the Djinn menu's screen loop, the twin of
 // The Broken Seal's DjinnMenu_RunScreen (games/tbs/src/menu/menu/djinn.c).
 // ⚓️ drops the pair steps 4 and 8 (they close the screen), hides the page
@@ -95,8 +96,8 @@ s32 Func_0810106c(void) {
   s32 done;
   s32 listIndex;
 
-  done = 0;
   result = 0;
+  done = 0;
   menuResult = 0;
   menu = Ram_HeapSlots->menuRuntime;
   cursor = menu->cursor;
@@ -109,8 +110,8 @@ s32 Func_0810106c(void) {
     switch (step) {
     case 0:
       if (result < 0) {
-        menuResult = -1;
         done = 1;
+        menuResult = -1;
       }
       step = 2;
       break;

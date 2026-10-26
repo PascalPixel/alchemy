@@ -1,3 +1,4 @@
+// Near miss, differ 158 (2026-10-26, statements reordered).
 // First draft of Func_080fdad4: the Psynergy list of the member in
 // paneIndex, the twin of The Broken Seal's PsynergyMenu_RunList
 // (games/tbs/src/menu/menu/psynergy.c). ⚓️ sets the field shortcuts as the
@@ -121,10 +122,10 @@ s32 Func_080fdad4(s32 paneIndex) {
   struct MenuResult state;
 
   menu = Ram_HeapSlots->menuRuntime;
+  menu->paneIcon[paneIndex]->active = 13;
   result = 0;
   previous = 0;
   shortcutHelp = 0;
-  menu->paneIcon[paneIndex]->active = 13;
   UiWindow_UpdateOrCreate(&menu->listWindow, 13, 3, 17, 14, 2);
   window = menu->listWindow;
   done = 0;
@@ -240,9 +241,9 @@ s32 Func_080fdad4(s32 paneIndex) {
 
       if (((gInput.repeat & 0x100) || (gInput.repeat & 0x200)) &&
           (gInput.held & 4) == 0) {
-        member = menu->tabIndex[paneIndex];
         ownerCount = menu->ownerCount;
         listMode = menu->mode != 0 ? 1 : 2;
+        member = menu->tabIndex[paneIndex];
         Audio_PlayCue(111);
         menu->selectedIndexByOwner[menu->ownerIds[paneIndex]] =
             state.selectedIndex;

@@ -1,14 +1,16 @@
-// Draft, differ 16 of 172 (was 83): inside an event, the leader drops from
+// Draft, differ 10 of 172 (was 83): inside an event, the leader drops from
 // height 130 after a screen transition (cue 204), lands in a ring of
 // seventeen dust effects, plays cue 188 and mode 22 while the screen shakes
 // twice, then gets its normal gravity back. The same listing as overlay 68f's
-// Func_020011e0; the ring is written as overlay 655's Func_02003764.
-// Left: the native keeps &options in r8 and the count in r10, this draft the
-// reverse (global.c ranks the count first: 9 refs over 110 insns against 7
-// over 62), and the velocity's address is built after the first call there.
-// Measured: the loop as do, while or goto, s32 or u8 count, the count
-// declared in a block, an options pointer (23), the count set at its
-// declaration (40); 12 minutes of permute found nothing better.
+// Func_020011e0; the ring is written as overlay 655's Func_02003764. The
+// count is cleared between the options' palette and update, so global.c
+// ranks &options above it and they take r8 and r10 as the native's do (with
+// the count cleared in the loop's own first clause they swap).
+// Left: the native clears the count after the options' stores and builds the
+// velocity's address after the first call of each pass (here once, before
+// the loop). Measured: the count cleared at its declaration, before the
+// options or after them (16 to 40), the loop as do, while or goto, an options
+// pointer; permute found nothing better.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
@@ -61,10 +63,11 @@ void Func_0200505c(void) {
   leader->motionFlags = 3;
   FieldEvent_WaitFrames(24);
   options.palette = 7;
+  i = 0;
   options.update = Effect_AdvanceMotion;
   options.startScaleX = 0xcccc;
   options.startScaleY = 0xcccc;
-  for (i = 0; i <= 16; i++) {
+  for (; i <= 16; i++) {
     s32 velocity[3];
 
     velocity[0] = Math_Cosine(i << 12);

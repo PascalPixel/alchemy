@@ -1,8 +1,9 @@
-// Draft, differ 16 of 177 (was 49): overlay 653's Func_02002ec4 (the leader
+// Draft, differ 10 of 177 (was 49): overlay 653's Func_02002ec4 (the leader
 // drops in with a burst of 17 effects) with this overlay's calls and 0xa3d7
-// as the effects' scale. Left: as overlay 664's Func_0200505c: the native
-// keeps &options in r8 and the count in r10, this draft the reverse, and the
-// velocity's address is built after the first call there.
+// as the effects' scale. Left: as overlay 664's Func_0200505c (the count
+// cleared between the options' palette and update there and here): the
+// native clears the count after the options' stores and builds the
+// velocity's address after the first call of each pass.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -105,10 +106,11 @@ void Func_02003764(void) {
   leader->motionFlags = 3;
   FieldEvent_WaitFrames(24);
   options.palette = 7;
+  i = 0;
   options.update = Effect_AdvanceMotion;
   options.startScaleX = 0xa3d7;
   options.startScaleY = 0xa3d7;
-  for (i = 0; i <= 16; i++) {
+  for (; i <= 16; i++) {
     s32 velocity[3];
 
     velocity[0] = Math_Cosine(i << 12);

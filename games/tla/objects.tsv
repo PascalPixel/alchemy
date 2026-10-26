@@ -3176,13 +3176,13 @@ main	rom_main_07	recon/tla/ja/rom	.rom.0010b5d4	ja
 main	rom_main_07	games/tla/src/menu/shop/fwd6bc	.text
 main	rom_main_07	games/tla/src/menu/shop/f10b6cc	.text
 main	rom_main_07	games/tla/src/menu/shop/fwd79c	.text
-main	rom_main_07	recon/tla/it/rom	.rom.0010b798	it
 main	rom_main_07	recon/tla/fr/rom	.rom.0010b7b8	fr
 main	rom_main_07	recon/tla/es/rom	.rom.0010f7b8	es
-main	rom_main_07	recon/tla/de/rom	.rom.001137b8	de
 main	rom_main_07	recon/tla/raw/0810b7b4	.text	en
 main	rom_main_07	recon/tla/raw/0810b9c0	.text	en
-main	rom_main_07	recon/tla/raw/0810bca0	.text	en
+main	rom_main_07	recon/tla/de/rom	.rom.001137b8	de
+main	rom_main_07	recon/tla/it/rom	.rom.0010b798	it
+main	rom_main_07	games/tla/src/menu/shop/f10bca0	.text	en de it
 main	rom_main_07	recon/tla/ja/rom	.rom.0010b7c4	ja
 main	rom_main_07	games/tla/src/menu/shop/item_icon	.text
 main	rom_main_07	recon/tla/it/rom	.rom.0010bde8	it

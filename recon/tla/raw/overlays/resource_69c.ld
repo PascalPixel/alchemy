@@ -20,7 +20,7 @@ SECTIONS
         "*/resource_69c_overlay.o"(.text.x02008dcc)
         "*/resource_69c_overlay.o"(.text.x02008f34)
         "*/resource_69c_overlay.o"(.text.x02009050)
-        "*/resource_69c_overlay.o"(.text.x02009300)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_3/s1300.o"(.text)
         "*/resource_69c_overlay.o"(.text.x02009388)
         "*/games/tla/src/scene/jupiter_lighthouse_room_3/light.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_3/lightcue.o"(.text)

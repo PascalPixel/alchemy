@@ -1,11 +1,20 @@
-// Draft, differ 134 of 145: starts the spark ring between from and to: allocates
-// its work in heap slot 220, loads the spark picture (resource 0x1ef) into
-// VRAM, sets up its 96 4 by 4 sprites at the leader's priority with every
-// spark idle (age -1), and schedules its update (Func_02001538).
+// Draft, differ 43 of 145: starts the spark ring between from and to: allocates
+// its work in heap slot 220, loads the spark picture (ResourceId_ColouredOrbs,
+// entry 0x1ef of the resource directory, which needs that name added there
+// before adoption) into VRAM, sets up its 96 4 by 4 sprites at the leader's
+// priority with every spark idle (age -1), and schedules its update
+// (Func_02001538). The sprites' bits are written through the OAM bitfields, the
+// VRAM load goes through the call layer (CSE kept its 0x400 for the sparks'
+// address) and the sprite loop is a goto loop (the native builds 15 again each
+// pass). Left: the native reads the resource id from the pool after keeping the
+// leader in r11, its from and to stores derive every second offset from the one
+// before (adds r1, #8), and its priority mask is copied (adds r2, r1, #0)
+// before the and.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
 #include "party_state.h"
+#include "call.h"
 
 struct Spark {
   u8 unk00[0x18];
@@ -13,10 +22,17 @@ struct Spark {
 };
 
 struct SparkSprite {
-  u8 unk00[5];
-  u8 attr5;
-  u8 unk06[3];
-  u8 attr9;
+  u8 unk00[4];
+  u16 y : 8;
+  u16 affine : 2;
+  u16 blendMode : 2;
+  u16 mosaic : 1;
+  u16 fullColor : 1;
+  u16 shape : 2;
+  u16 attr1;
+  u16 tile : 10;
+  u16 priority : 2;
+  u16 palette : 4;
   u8 unk0a[0x14];
   u16 depth;
   u8 unk20[8];
@@ -36,6 +52,7 @@ struct SparkWork {
 struct ObjectRuntime *Object_GetById(s32 id);
 void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
 void *Resource_GetTableEntry(s32 id);
+extern char ResourceId_ColouredOrbs;
 void Func_020027b8(void *resource, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(s32 entry, s32 size, void *data);
@@ -62,23 +79,26 @@ void Func_02001718(const s32 *from, const s32 *to) {
   work->to[0] = to[0];
   work->to[1] = to[1];
   work->to[2] = to[2];
-  Func_020027b8(Resource_GetTableEntry(0x1ef), work);
+  Func_020027b8(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs), work);
   entry = Resource_FindFreeEntry();
-  tile = VramCache_Load(entry, 0x400, work);
+  tile = Value3((s32 (*)())VramCache_Load, entry, 0x400, (s32)work);
   work->tile = tile;
   work->vramEntry = entry;
+  i = 0;
   spark = work->sparks;
   sprite = work->sprites;
-  for (i = 0; i <= 95; i++) {
-    Func_020029e0(sprite, 4, 4, 0, tile + (i & 15) * 2);
-    sprite->attr5 |= 32;
-    sprite->attr9 &= 15;
-    sprite->attr9 = (sprite->attr9 & ~12) | ((Func_020029f0(leader) & 3) << 2);
-    sprite->depth = Func_020029f8(leader) - 1;
-    spark->age = -1;
-    sprite++;
-    spark++;
-  }
+next:
+  Func_020029e0(sprite, 4, 4, 0, tile + (i & 15) * 2);
+  sprite->fullColor = 1;
+  sprite->palette = 0;
+  sprite->priority = Func_020029f0(leader);
+  sprite->depth = Func_020029f8(leader) - 1;
+  spark->age = -1;
+  i++;
+  sprite++;
+  spark++;
+  if (i <= 95)
+    goto next;
   work->next = 0;
   Scheduler_AddOrUpdateCallback(Func_02001538, 0x480);
 }

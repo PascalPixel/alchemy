@@ -1,13 +1,13 @@
 // Draft of overlay 698's Func_020014dc, in 18 overlays of the 698 family:
-// differ 60 of 131. The leader's cell copied with sound 229, the party walks
+// differ 16 of 131. The leader's cell copied with sound 229, the party walks
 // off it shrinking while REG_WINOUT shows the sprite window, then the screen
-// transition. Left: register choice; the native keeps the leader in r6 and the
-// cell column (later the frame count) in r7, here they swap. The column reused
-// as the frame count puts the table in r8 and the leader's address in r10, as
-// the native has them (differ 71 with a separate count). Tried: pinning the
-// leader to r6 (37, but the table and the address then swap), the table
-// pinned as well (45), the owner's address in a local (55), permute 2 minutes
-// (30, only by breaking the count).
+// transition. The frame count is the column variable set to 0 just before
+// its loop and counted after the wait, which gives the leader r6 and the count
+// r7 as the native has them (54 with the count set before the stores). Left:
+// the party state's base and its offset take each other's registers when the
+// owner's address is first built, and the table is copied out of r8 before
+// the last flag store. Tried: the owner's address in a local (66), the
+// declarations split from their initialisers, permute 6 minutes.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -56,18 +56,18 @@ void Func_020014dc(struct CellTarget *table, struct CellTargetEntry *entry) {
                                      0);
   Io_Write16(0xf1f, &REG_WINOUT);
   REG_DISPCNT |= 0x8000;
-  x = 0;
   table->shown = 1;
   Object_SetModeById(gPartyState.currentOwner, 28);
   FieldEvent_WaitFrames(16);
+  x = 0;
   do {
     if (x == 5)
       Func_02001b44(204);
     leader->scaleX += -0x400;
     leader->scaleY += -0x300;
     leader->y += -0x9999;
-    x++;
     WaitFrames(1);
+    x++;
   } while (x <= 39);
   Object_GetById(gPartyState.currentOwner)->animationKind = 0;
   table->shown = 0;

@@ -1,4 +1,5 @@
-// 2026-10-26 (round 5): differ 108 of 2055 (draft 2055). Both decodes go
+// 2026-10-26 (round 5): differ 104 of 2055 (draft 2055); resetDice set before
+// the state after a loss (a statement-move search): 108 to 104. Both decodes go
 // through Call2 with Ram_MapCellBuffer as an integer, as The Broken Seal's
 // LuckyDice_Run calls its decoder: the native then reloads the cell buffer's
 // address from the pool for each transfer instead of keeping it in a register:
@@ -361,8 +362,8 @@ void LuckyDice_Run(void) {
           state = 3;
           payoutTimer = 0;
         } else {
-          state = 0;
           resetDice = 1;
+          state = 0;
         }
       }
       resultTimer++;

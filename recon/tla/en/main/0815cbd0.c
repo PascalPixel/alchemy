@@ -118,7 +118,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
   frame = 0;
   size = 32;
   do {
-    /* FAKEMATCH(asm): work passes through an empty asm each frame, so loop.c
+    /* FAKEMATCH(barrier): work passes through an empty asm each frame, so loop.c
      * cannot hoist the sheet (work + 0x700) out of the frame loop; as plain
      * C, 168 of 232 instructions differ in tla-en (here 59). */
     __asm__("" : "+r"(work));

@@ -1,3 +1,7 @@
+// Draft, differ 6 of 69 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer, nor any pair of empty asm statements or
+// one-pass blocks (device search).
 // Draft, differ 8 of 69 (2026-10-24): a one-pass block around x = left >> 3
 // takes six rows off. Left: instruction order only.
 // Near miss, differ 14 of 69: The Broken Seal's UiWindow_ClearInteriorTiles,

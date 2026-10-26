@@ -1,3 +1,9 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 2 of
+// 149 with the angle's store in a one-pass block, found by a greedy device
+// search (4 without it): only mov r3, sl after the terrain height's store,
+// which the native issues first. An empty asm or a one-pass block there
+// orders it but swaps the arguments of the two calls Func_02004b18(leader,
+// 7) and (leader, 6) (differ 4).
 // Draft, differ 8 of 149: boards the ship (actor 8) once flag 0x8de is set
 // and the leader is beside it or already aboard: the leader jumps to the
 // ship's deck and the party's position becomes the ship's. Japanese keeps
@@ -55,7 +61,9 @@ void Func_02000574(void) {
   GameFlag_SetBit(0x176);
   gPartyState.savedX = ship->x;
   gPartyState.savedZ = ship->z;
+  do {
   gPartyState.unk280 = ship->angle;
+  } while (0);
   Func_02004e30(78);
   Func_02004b18(leader, 6);
   WaitFrames(6);

@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 8 of 200 in tla-en, instruction
+// order and register choice. No empty asm before any one statement lowers it.
 // Near miss, differ 14 of 200: ☀️'s FadeOverlay_DrawMarks. The native loads
 // the terrain layer byte (ldrb r3, [r3, #0]) a slot before movs r2, #189 and
 // the resource table after lsls, issues mov r0, r8 for the first terrain call

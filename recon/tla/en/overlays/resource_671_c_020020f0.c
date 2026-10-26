@@ -1,3 +1,7 @@
+// 26 October 2026, under -mthumb-slow-loads: differ 4 of 198: the gPartyState
+// load at the start, where the native issues a load one slot later after a
+// store, where alchemy-gcc issues it at once; alchemy permute (5 to 6 minutes)
+// and an empty asm or one-pass block after any one statement do not move it.
 // Draft, differ 4 of 198: stores its argument and makes each room's calls by
 // gPartyState.scene. Its Func_02005674 calls go through an inline that keeps
 // each call's own constants, as ☀️'s scene layer does (differ 96 called

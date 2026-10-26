@@ -1,3 +1,7 @@
+// Draft, differ 2 of 66 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer, nor any pair of empty asm statements or
+// one-pass blocks (device search).
 #include "types.h"
 #include "ram_buffer.h"
 #include "window.h"

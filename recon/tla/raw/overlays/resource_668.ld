@@ -9,7 +9,7 @@ SECTIONS
         "*/resource_668_overlay.o"(.text.x02008514)
         "*/games/tla/src/scene/eastern_alhafra/scene_events.o"(.text)
         "*/games/tla/src/scene/eastern_alhafra/wave.o"(.text)
-        "*/resource_668_overlay.o"(.text.x02008b18)
+        "*/games/tla/src/scene/eastern_alhafra/s0b18.o"(.text)
         "*/games/tla/src/scene/eastern_alhafra/prepare.o"(.text)
         "*/games/tla/src/scene/eastern_alhafra/s0fa4.o"(.text)
         "*/games/tla/src/scene/eastern_alhafra/events.o"(.text)

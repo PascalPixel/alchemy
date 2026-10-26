@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 18 of 438; left: the flag
+// loop's counter and flag number swap registers, and the sched2 ties recorded
+// below.
 // Draft of overlay 6b5's Func_0200145c (0x0200945c, 0x46c bytes with its
 // pool), the lobby's set-up by entrance: differ 28 of 438. Devices in place:
 // one scalar holds the score row's address, then its score, in entrances 8

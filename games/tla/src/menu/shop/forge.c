@@ -8,7 +8,20 @@ struct ForgeRecipe {
   s16 weights[8];
 };
 
-struct ForgeRecipe *Forge_FindRecipe(s32 item);
+extern struct ForgeRecipe gData_0810cc34[];
+
+/// The forge's recipe for an item, or NULL when it has none; the table ends at
+/// an item of -1.
+struct ForgeRecipe *Forge_FindRecipe(s32 item) {
+  struct ForgeRecipe *recipe;
+
+  item &= 0x1ff;
+  for (recipe = gData_0810cc34; recipe->item != -1; recipe++) {
+    if (recipe->item == item)
+      return recipe;
+  }
+  return NULL;
+}
 
 s32 Forge_GetMaterialChance(s32 item) {
   struct ForgeRecipe *recipe = Forge_FindRecipe(item);
@@ -18,7 +31,6 @@ s32 Forge_GetMaterialChance(s32 item) {
   return 0;
 }
 
-struct ForgeRecipe *Forge_FindRecipe(s32 item);
 u32 Random16(void);
 
 s32 Forge_RollResult(s32 item) {

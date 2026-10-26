@@ -1,3 +1,6 @@
+// Draft, differ 4 of 161 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer (device search).
 // Near miss, differ 6 of 161 (three reordered pairs), 2026-10-15: The
 // Broken Seal's Menu_CreateWorkspaceWindows; this game has three rows (one
 // with flag 0x17e), three more in debug mode, no cursor object (the fixed

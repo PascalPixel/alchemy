@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 8 of 256 in tla-en, instruction
+// order only. No empty asm before any one statement lowers it.
 // Near miss, differ 8 (four swapped pairs), on this game's structs with the
 // scale interpolation as an inline helper (called out of line or written in
 // place, the compiler strength-reduces step * 0xc000 and the frame grows;

@@ -1,3 +1,7 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 10 of 238 in tla-en,
+// instruction order only. An empty asm before the loop lowers it to 8. Written
+// with redraw set first, the decrements' -1 comes from the mask's 32 (subs r2,
+// #33) and the registers swap (differ 29).
 // Near miss, differ 10 of 238 (five reordered pairs), 2026-10-15: The
 // Broken Seal's DebugMenu_BrowseIcons with twelve pages, gData_0805f8f0 to
 // gData_0805f910 for the labels and the object system's suspend flag.

@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 29 of 320 in tla-en,
+// instruction order and register choice. No empty asm before any one statement
+// lowers it.
 // Draft, differ 39 of 320 (2026-10-18): the twin of ☀️'s
 // Debug_RunPaletteEditor, reading this game's gInput (repeat for the keys,
 // held for Start's blink) and closing with Func_08014b70. Left: when L wraps

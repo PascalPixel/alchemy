@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 82; left: the plane (r5,
+// #76) loads after the leader's z, before it in the native; operand orders, a
+// plane local with a barrier or a one-pass block were worse.
 // Draft, differ 12 of 82: the leader's reflection in the floor, written from
 // the listing (no twin). Above the mirror plane it copies the leader's x and y,
 // mirrors z about the plane, flips the angle and copies three sprite fields;

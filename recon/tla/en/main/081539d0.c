@@ -1,3 +1,15 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 272, one row. The
+// native copies the frame counter's zero to sl (mov sl, r5) after the
+// record's three stores, here before them. Tried (differ): the record set
+// before the transfer mode (51), frame = 0 apart from its loop (2), the
+// record's stores in other orders (4, 6), the record declared later (6) or
+// as struct EffectPosition (2), frame declared first (2), the loop as do
+// while (2); an empty asm after the record's stores or a one-pass block
+// around frame = 0 or record[2] puts the copy after the stores but moves
+// the transfer value's offset and the 0xc80 shift before the scheduler call
+// (4); an asm before the call as well (6); alchemy permute 5 minutes,
+// 2 jobs (nothing below 2).
+
 // Near miss of Func_081539d0, an unused effect (no caller): differ 14 of
 // 272 (draft 272).
 

@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 109 in tla-en, instruction
+// order only. An empty asm before `object->velocityY = 0;` lowers it to 2; no
+// second one closes it.
 // Near miss, differ 4 of 109, instruction order only. The one-pass block
 // round the six target and velocity stores keeps the y and z velocities
 // ahead of the sound byte's load (differ 8 without). Left: the native stores

@@ -1,3 +1,8 @@
+// Draft, differ 6 of 736 in tla-en under -mthumb-slow-loads (2026-10-26). A
+// device search (each statement followed by an empty asm or a one-pass block,
+// wrapped in one, or swapped with the next, kept when it helps) reaches 2 with
+// an empty asm after `object->acceleration = 0x8000;`, and finds nothing
+// closer.
 // Near miss, differ 46 of 736, instruction order only: script command 0x21,
 // the flying sibling of Func_08028534. Moves an object over the world map by
 // the direction pad at a pace that grows with its height, refuses steps into

@@ -1,3 +1,7 @@
+// Draft, differ 4 of 49 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer, nor any pair of empty asm statements or
+// one-pass blocks (device search).
 // Draft, differ 10 of 49, three pairs in the other order: the native loads
 // the window work before it starts the count's offset, loads the entry mask
 // from the pool before it rereads the count, and advances to the entries

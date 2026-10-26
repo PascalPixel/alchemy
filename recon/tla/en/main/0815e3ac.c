@@ -1,3 +1,12 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 10 of 687. Both BG1CNT
+// stores are plain again (the pinned halfwords and their one-pass blocks
+// matched no better); the empty asm at the start still saves two rows (12
+// without it). Left, three places, each a load or store one or two slots
+// from the native's: the flipped blitter's slot read (ldr r3, [r3, #0])
+// before the first blitter's spill, here after; the step pointer's spill
+// (str r6, [sp, #8]) before the loop's zero, here after; and a stack reload
+// (ldr r5, [sp, #12]) before the two stacked argument stores, here after.
+
 // Draft of Func_0815e3ac, the cast sequence BattleEffect_DispatchByIdRange
 // runs for kinds below 100 (except 10): a beam strikes the target and
 // sparks fly from it.
@@ -141,9 +150,8 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
 
-  /* FAKEMATCH: stores the argument before the 0x03000000 base is started; the
-   * native's first instruction after sub sp is str r0 (differ 46 without it).
-   */
+  /* FAKEMATCH(barrier): the empty asm stores the argument before the RAM base
+   * is started; as plain statements, 12 of 687 instructions differ in tla-en. */
   __asm__("");
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -156,17 +164,7 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   WaitFrames(1);
   Func_0813ba50();
   Func_08143d80();
-  {
-    /* FAKEMATCH: the native loads the BG1CNT halfword from the pool before it
-     * starts the register's address; pinned to r3 in a one-pass block it does
-     * (differ 46 without it). */
-    register u16 value __asm__("r3");
-
-    do {
-      value = 0x1f80;
-    } while (0);
-    REG_BG1CNT = value;
-  }
+  REG_BG1CNT = 0x1f80;
   WaitFrames(1);
   if (kind == 5 || kind == 6) {
     if (effect->side == 0) {
@@ -240,15 +238,7 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The layer is centred on the first target, kept within 128 pixels.
-  {
-    /* FAKEMATCH: as at the first BG1CNT store (differ 46 without it). */
-    register u16 value __asm__("r3");
-
-    do {
-      value = 0x1f81;
-    } while (0);
-    REG_BG1CNT = value;
-  }
+  REG_BG1CNT = 0x1f81;
   EffectPosition_ProjectSprite(effect->actors[0], &anchor);
   if (effect->side == 0)
     shake = 96 - anchor.x;

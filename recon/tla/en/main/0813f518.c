@@ -1,4 +1,7 @@
-// Near miss, differ 40 of 380.
+// Near miss, differ 28 of 380.
+//
+// Measured 2026-10-25 under -mthumb-slow-loads: differ 28; an empty asm before
+// the first statement does not help (differ 32).
 
 // Twin: The Broken Seal's BattleEffect_RunElementBurst, reached from the
 // scenes through the far-call table (table_47.s). Like 0813e3d0 it sets up

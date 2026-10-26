@@ -51,7 +51,7 @@ SECTIONS
         "*/games/tla/src/scene/gabomba_statue/s359c.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/s35f0.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/owner_sum.o"(.text)
-        "*/resource_671_overlay.o"(.text.x0200b634)
+        "*/games/tla/src/scene/gabomba_statue/s3634.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/leader_flags.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/s38ac.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/cell_grid.o"(.text)

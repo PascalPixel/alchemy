@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 133 in tla-en, instruction
+// order only. No empty asm before any one statement lowers it.
 // Near miss, differ 6 of 133 (three reordered pairs), 2026-10-15: The
 // Broken Seal's Menu_RunResourceSelectionLoop on this game's menu work, cues
 // and gInput, the keys read through a volatile view of gInput, as the native

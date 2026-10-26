@@ -1,3 +1,6 @@
+// Draft, differ 8 of 217 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer (device search).
 // Near miss, differ 10 of 217: The Broken Seal's international
 // UiText_MeasureEntryDimensions with ⚓️'s changes: code 176 is a control
 // code, a page break (1) resets the counters before it ends the text, a text

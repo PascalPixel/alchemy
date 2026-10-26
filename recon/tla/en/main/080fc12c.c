@@ -1,4 +1,8 @@
-// Draft, differ 8 of 57: The Broken Seal's ItemMenu_DrawItemHead (the icon must
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 4 of 57 in tla-en. First difference: this issues `ldr r2, [r5, #0]` earlier
+// (row 24) than the native does (row 30). No single empty asm or one-pass block
+// reaches 0.
+// Draft, differ 8 of 57: The Broken Seal's Func_080fc12c (the icon must
 // be the shared struct RenderOutput for the native's reloads of the icon
 // pointer after each store). Four rows are scheduled the other way round: the
 // icon load before the item offset 0x16c is started (ldr r3, [r5]; movs r2,
@@ -29,7 +33,7 @@ void UiText_DrawStringAtOffsetFar(void *string, s32 window, s32 x, s32 y);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 
 // Draws the selected item's icon, owner and item name in the heading.
-void ItemMenu_DrawItemHead(void) {
+void Func_080fc12c(void) {
   struct InventoryMenuState *menu = Ram_HeapSlots->menuRuntime;
 
   Func_08038288(2, menu->selectedItems[0], (u8)menu->selectedItemIcon->index,

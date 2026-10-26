@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 87 in tla-en, instruction
+// order only. No empty asm before any one statement lowers it.
 // Near miss, differ 2 of 87: Func_080d5720 for the heap slot 0xa0
 // workspace's nodes (Func_080d5930), the render mode becoming 4: the leader
 // grabs the nearest node, saving its motion flags, frame and priority.

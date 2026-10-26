@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 40; left: the sprite
+// pointer and its priority byte load before the mask, after it in the native.
 // Draft, differ 4 of 40: the native builds the priority mask 3 before it loads
 // the sprite pointer and masks the priority before it reads the sprite byte;
 // this form loads first. Tried: masking the parameter in its own statement

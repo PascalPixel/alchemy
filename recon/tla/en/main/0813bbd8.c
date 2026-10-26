@@ -1,4 +1,7 @@
-// Near miss, differ 41 of 558.
+// Near miss, differ 21 of 558.
+//
+// Measured 2026-10-25 under -mthumb-slow-loads: differ 21; an empty asm before
+// the first statement does not help (differ 23).
 
 // Twin: The Broken Seal's BattleEffect_RunIce (effect kind 7 in
 // both games), ported as is apart from ⚓️'s calling conventions: the effect is

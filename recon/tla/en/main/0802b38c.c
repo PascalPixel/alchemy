@@ -1,3 +1,7 @@
+// Draft, differ 2 of 92 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer, nor any pair of empty asm statements or
+// one-pass blocks (device search).
 // Near miss, differ 4 of 92 (2026-10-18): copies the attributes of a
 // rectangle of map cells (keeping each destination's block number) and their
 // shape grid bytes, written as its matched twin Func_0802b590 (edit.c):

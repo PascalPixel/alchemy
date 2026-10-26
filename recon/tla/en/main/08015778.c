@@ -1,3 +1,7 @@
+// Draft, differ 6 of 82 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer, nor any pair of empty asm statements or
+// one-pass blocks (device search).
 // Draft, differ 6 of 82 (2026-10-24): an empty asm after the transform call
 // takes one reordered pair off. Left: the native forms the view's address
 // twice (mov r1, sp before the call, mov r6, sp after); here one copy serves

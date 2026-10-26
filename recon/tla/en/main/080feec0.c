@@ -1,3 +1,6 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 22 of 365 in tla-en. First difference: this issues `movs r0, #0` earlier (row
+// 13) than the native does (row 23).
 // First draft of Func_080feec0: the status page of the status menu, the twin
 // of The Broken Seal's CharacterMenu_SelectCommand
 // (games/tbs/src/menu/menu/status.c): pane 0 walks the member's ailments,

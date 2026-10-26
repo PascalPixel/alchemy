@@ -1,5 +1,11 @@
-// Near miss, differ 89 of 744: Func_0814b350, an effect no table reaches
+// Near miss, differ 36 of 744: Func_0814b350, an effect no table reaches
 // (unused), with one tagged dead store (462 without).
+//
+// Measured 2026-10-25 under -mthumb-slow-loads: differ 36. Most rows left are
+// loads from memory or the stack that alchemy-gcc issues one slot earlier than
+// the native, which issues only its pool loads early. The first is the
+// argument's spill, which the native stores before it starts the 0x03000000
+// base; an empty asm before the first statement closes that row (differ 34).
 
 // ☀️ twin: BattleEffect_RunSparkTravel (games/tbs/src/effect/effect.c), shape
 // 0.888, structure 1.000. ⚓️'s changes: the effect argument read directly,

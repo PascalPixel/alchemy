@@ -1,3 +1,7 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 119 in tla-en, instruction
+// order only. After a store the native copies an argument before the next load,
+// where alchemy-gcc issues the load at once (AGENTS.md's recurring row); no
+// empty asm placement lowers it.
 // Near miss: listing 119 instructions, draft 119, common 116, differ 6; the
 // rest differs in instruction order.
 #include "types.h"

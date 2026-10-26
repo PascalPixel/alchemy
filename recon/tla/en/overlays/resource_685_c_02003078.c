@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 103; left: two stores of
+// the position array issue one row later than the native's; a barrier after
+// position[0] fixes one.
 // Draft, differ 4 of 103: hides the glow: shrinks its second sprite, then its
 // first, waits a frame, stops its callback and the shake and frees its
 // video slots and work. Left: the native stores position[0] before it

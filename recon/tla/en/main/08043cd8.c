@@ -1,3 +1,8 @@
+// Draft, differ 10 of 749 in tla-en under -mthumb-slow-loads (2026-10-26). A
+// device search (each statement followed by an empty asm or a one-pass block,
+// wrapped in one, or swapped with the next, kept when it helps) reaches 8 with
+// an empty asm after `summaryDirty = 0;`; the volatile reads made plain, and
+// finds nothing closer.
 // Near miss, differ 14 of 749: the save file menu, The Broken Seal's
 // SaveMenu_SelectSlot with this game's modes: 1 skips files whose send flag
 // is set, 4 files with no flag count, 5 files whose send flag is clear and 6

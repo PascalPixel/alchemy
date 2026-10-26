@@ -1,3 +1,7 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 130 in tla-en, instruction
+// order only. After a store the native builds a constant's half before the next
+// load, where alchemy-gcc issues the load at once (AGENTS.md's recurring row);
+// no empty asm placement lowers it.
 // Near miss, differ 4 of 130 (2026-10-15), ported from ☀️'s FieldEffect_RunLift
 // (DEFINE_ITEM_BREAK_EFFECT) with ⚓️'s fragment object 673 and its script
 // gData_080f0e78. In the fragment loop the listing starts the 0x100000 lift

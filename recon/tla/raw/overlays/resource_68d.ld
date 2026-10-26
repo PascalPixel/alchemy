@@ -13,7 +13,7 @@ SECTIONS
         "*/resource_68d_overlay.o"(.text.x020083a0)
         "*/games/tla/src/scene/lemuria_palace/s04e8.o"(.text)
         "*/games/tla/src/scene/lemuria_palace/blend_fade.o"(.text)
-        "*/resource_68d_overlay.o"(.text.x0200858c)
+        "*/games/tla/src/scene/lemuria_palace/s058c.o"(.text)
         "*/games/tla/src/scene/lemuria_palace/import.o"(.text)
         "*/games/tla/src/scene/lemuria_palace/data.o"(.data)
         "*/games/tla/src/scene/lemuria_palace/tiles.o"(.rodata)

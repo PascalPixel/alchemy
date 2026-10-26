@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 46; left: as overlay 679's
+// Func_020010d8 (resource_679_c_020010d8.c), the parent's sprite copy before
+// nextFrame's store.
 // Draft, differ 8 of 46: the listing loads sprite (child->animation) right
 // after object->terrainHeight, before the store and the gData_0200411c pool
 // load; the draft loads the pool first and the sprite after the store, and

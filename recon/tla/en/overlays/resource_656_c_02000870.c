@@ -1,3 +1,6 @@
+// 26 October 2026, under -mthumb-slow-loads: differ 18 of 260: the constant 1
+// and 2 kept in r8 by the native are rebuilt in other registers; alchemy
+// permute 6 minutes leaves 14.
 // Draft, differ 18 of 260: the second door scene, the twin of Func_02000af4
 // with a helper (actor 9) who walks ahead when flag 0x932 is clear. Left:
 // register allocation of two constants in the helper's branch. The native

@@ -1,3 +1,7 @@
+// Draft, differ 2 of 20 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer, nor any pair of empty asm statements or
+// one-pass blocks (device search).
 // Near miss, differ 6 of 20: The Broken Seal's UiText_ApplyChannelStyle. The
 // native loads the work pointer before it builds the 0xf3e offset, and each
 // field's load between the two halves of its split offset constant (movs r4,

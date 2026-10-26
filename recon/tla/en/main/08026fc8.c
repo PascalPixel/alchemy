@@ -1,3 +1,7 @@
+// Draft, differ 2 of 69 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer, nor any pair of empty asm statements or
+// one-pass blocks (device search).
 // Near miss, differ 4 of 69, instruction order only. Creates object kind 14
 // above this one, plays cue 623 unless bit 0 of unk66 is set, and gives the
 // new sprite this one's layer bits; mode 2 also applies child values 13 and 8.

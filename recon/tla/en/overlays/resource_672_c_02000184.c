@@ -1,3 +1,8 @@
+// 26 October 2026, under -mthumb-slow-loads: differ 10 of 895: the rise loop's
+// count, the palette address register and, at the end, the native issues a load
+// one slot later after a store, where alchemy-gcc issues it at once; an empty
+// asm after the rise loop's WaitFrames leaves 6; alchemy permute (5 to 6
+// minutes) and a second asm or block does not move it.
 // Draft, differ 14 of 895: the long scene in the Gabomba Statue's chamber
 // (message MsgOhYoungWitch on): the statue object rises 40 pixels, actors 9,
 // 10, 12, 13 and 14 move, emote and speak, the screen flashes white, the party

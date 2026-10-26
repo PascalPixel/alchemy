@@ -1,3 +1,7 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 2 of 43 in tla-en. First difference: the native issues `mov r2, r8` earlier
+// (row 35) than this does (row 38). No single empty asm or one-pass block
+// reaches 0.
 // Near miss under -mthumb-slow-loads, differ 2 of 43 (2026-10-25, the Makefile's
 // options): the native copies the camera pointer back (mov r2, r8) right after
 // the second __divsi3 call; this compiles it after the quotient's shift and

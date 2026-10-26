@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 10 of 263 in tla-en,
+// instruction order only. An empty asm before `copy->actionFlags |= 1;` lowers
+// it to 8.
 // Near miss, differ 14 of 263: The Broken Seal twin (Djinn_RunBattleStartHop):
 // the Djinni bounces twice, turns away from the leader, spins up and falls
 // back three times (Func_080d47b4's effect 0x103 first), then leaps 16 pixels

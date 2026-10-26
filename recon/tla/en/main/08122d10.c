@@ -1,3 +1,9 @@
+// Under -mthumb-slow-loads (26 October 2026): differ 46 of 844 in tla-en.
+// Tried, one edit at a time: an empty asm barrier after each statement, each
+// adjacent pair of statements swapped, each call argument copied into its
+// argument register (pinned) at the call or up to three statements before it;
+// none reaches 0. One barrier (after line 221 of the draft as it stood)
+// lowers it to 42, and no second one lowers it further.
 // Draft of BattleEvent_Playback with its nested Func_08122cd0 (compare both:
 // alchemy-devtools diff 08122d10.c 08122cd0,08122d10): ☀️'s BattlePlayback_Run
 // (games/tbs/src/battle/battle/playback.c), ported; the nested function is

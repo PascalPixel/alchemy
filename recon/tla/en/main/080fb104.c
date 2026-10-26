@@ -1,3 +1,6 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 16 of 338 in tla-en. First difference: this issues `mov r8, r1` earlier (row
+// 10) than the native does (row 12).
 // First draft of Func_080fb104: the twin of ☀️'s ItemMenu_ChooseCmd
 // (games/tbs/src/menu/menu/item.c) in its first-release form (the cursor at
 // column * 40 + 86, row * 8 + 30), choosing a command in the item command grid:

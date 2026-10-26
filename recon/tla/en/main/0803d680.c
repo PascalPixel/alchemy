@@ -1,3 +1,8 @@
+// Draft, differ 4 of 259 in tla-en under -mthumb-slow-loads (2026-10-26). A
+// device search (each statement followed by an empty asm or a one-pass block,
+// wrapped in one, or swapped with the next, kept when it helps) reaches 2 with
+// an empty asm after `item = Item_Get(code & 0x1ff);`, and finds nothing
+// closer.
 // Draft, differ 20 of 259 (2026-10-18): only scheduling remains; ten times
 // the native loads (the code from its stack slot, the item, the work) between
 // the first two instructions of a split constant, where this builds the

@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 36 of 640; left: as recorded
+// below.
 // Draft, differ 36 of 640: the scene after the statue is lifted in the Gabomba
 // Statue's chamber: the party is placed around the statue object (its sprite
 // reloaded with item 242's picture), the statue rises and moves while the

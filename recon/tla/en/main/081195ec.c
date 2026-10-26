@@ -1,3 +1,12 @@
+// Under -mthumb-slow-loads (26 October 2026): differ 2 of 122 in tla-en.
+// Tried, one edit at a time: an empty asm barrier after each statement, each
+// adjacent pair of statements swapped, a register tie on each local after
+// each statement, each local pinned to each register, each call argument
+// copied into its argument register (pinned) at the call or up to three
+// statements before it, five minutes of permute; none reaches 0. Left: the
+// native copies the object into r0 before the position's three loads; with
+// -mthumb-slow-loads the loads outrank the copy in sched2. A pinned copy in
+// r0 changes the allocation (45).
 // Near miss, differ 4 of 122 (two reordered rows): swaps the party's front
 // line for its reserves in battle: lists the actors and the reserve owners,
 // sends the actors out (mode 4), puts each reserve's object where the actor

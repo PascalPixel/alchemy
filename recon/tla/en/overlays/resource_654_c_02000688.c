@@ -1,3 +1,7 @@
+// 26 October 2026, under -mthumb-slow-loads: differ 2 of 206: the native issues
+// a load one slot later after a store, where alchemy-gcc issues it at once;
+// alchemy permute (5 to 6 minutes) and an empty asm or one-pass block after any
+// one statement do not move it.
 // Near miss, differ 2 of 206, from the listing (the twin, ☀️'s
 // Scene_RunTransitionCue, is a false match): the blend fades through
 // Io_Write16, the rectangle copies through shrine_of_the_sea_god.h. Left: after

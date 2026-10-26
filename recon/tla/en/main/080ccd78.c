@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 12 of 127 in tla-en,
+// instruction order and register choice. No empty asm before any one statement
+// lowers it.
 // Draft, differ 16 of 127: ⚓️'s Scene_FindEvent, as ☀️'s
 // (games/tbs/src/object/object.c): returns the first of the scene's events
 // (12-byte entries, flags -1 ends) of kind for target whose condition holds,

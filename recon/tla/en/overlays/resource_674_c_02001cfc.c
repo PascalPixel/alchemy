@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 65; left: as recorded
+// below; no single barrier or one-pass block after any statement changes it.
 // Near miss, differ 2 of 65: the wave scanline table of map layer 2, from its
 // sibling in overlay 68b. The sine and the counter live on the stack as an
 // array (sp and sp + 4), the counter through a pointer, as the native reloads

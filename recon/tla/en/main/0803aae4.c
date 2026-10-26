@@ -1,3 +1,7 @@
+// Draft, differ 2 of 126 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer, nor any pair of empty asm statements or
+// one-pass blocks (device search).
 // Draft, differ 10 of 126: The Broken Seal's international
 // UiText_RenderWideStringAtOffset with ⚓️'s additions: code 176 joins the
 // control codes (with no case of its own) and glyphs are drawn by

@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 6 of 104 in tla-en, instruction
+// order and register choice. An empty asm before the loop lowers it to 4.
 // Draft of Func_080cb1dc (UpdateMapRegionAtPosition here): differ 8 of 104
 // (tla-en, 2026-10-18). It asks the overlay for the map's region list and,
 // at the first region whose condition holds and whose box holds the

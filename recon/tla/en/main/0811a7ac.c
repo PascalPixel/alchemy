@@ -1,3 +1,9 @@
+// Under -mthumb-slow-loads (26 October 2026): differ 2 of 426 in tla-en.
+// Tried, one edit at a time: an empty asm barrier after each statement, each
+// adjacent pair of statements swapped, a register tie on each local after
+// each statement, each local pinned to each register, each call argument
+// copied into its argument register (pinned) at the call or up to three
+// statements before it; none reaches 0.
 // Near miss, differ 2 of 426 (one reordered row), from The Broken Seal's
 // BattleObject_Make (games/tbs/src/battle/battle/placement.c): this game keys the
 // sprite and scale by the unit's enemy id, has eight characters, sets the

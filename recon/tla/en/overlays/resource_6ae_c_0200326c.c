@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 92; left: as overlay 69e's
+// Func_020001a4 (resource_69e_c_020001a4.c), the priority byte loads before the
+// radius store.
 // Draft, differ 2 of 92 under -mthumb-slow-loads: adopted in ee174ba9e6 and
 // exact under the old options; with the new option it no longer compiles
 // exactly, so it is back on its listing. Overlay 69e's Func_020001a4

@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 8 of 204; left: two loads issue
+// one row early, and the sprite's priority byte loads before the radius store,
+// as in overlay 69e's Func_020001a4.
 // Near miss, differ 16 of 204: the twin of ☀️'s VenusLighthouseAerie_RunTransitionStep
 // (scene/venus_lighthouse_aerie.c), with object 36, type 672, no rise counters in cases 25
 // and 26 and no gated rise step at the end, its imported calls through inlines

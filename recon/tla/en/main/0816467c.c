@@ -1,3 +1,13 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 6 of 430, with no device:
+// the BG2PA store is plain and the empty asm at the start is gone (both
+// matched no better). Left, two places: the native spills formation and y
+// (str r0, str r2) before it starts the RAM base, here after the base's
+// first half, and spills the canvas (str r1, [sp, #24]) right after copying
+// the work, here three rows later; at the end it loads Iwram_ClearWords'
+// address (ldr r3) before the size's shift, here after. An empty asm or
+// one-pass block at the start stores the arguments first but moves x's copy
+// to fp up as well (6); the heap reads in the other order (18).
+
 // Draft, differ 44 of 430 (2026-10-15; 46 before BattleEffect_LoadBlitter returned its
 // loader's s32, as nibble_pair.c now does): The Broken Seal's
 // BattleEffect_RunImpactBurst with The Lost Age's blitter loads
@@ -52,21 +62,13 @@ void Func_0816467c(s32 formation, s32 x, s32 y) {
   s32 frame;
   s32 i;
 
-  __asm__("");
   work = (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
   orgX = x;
   x += 40 << 16;
   x /= 2;
-  {
-    register u16 value __asm__("r3");
-
-    do {
-      value = 0x80;
-    } while (0);
-    REG_BG2PA = value;
-  }
+  REG_BG2PA = 0x80;
   REG_BG2X = 0;
   REG_BLDCNT = 0x3f46;
   BattleEffect_LoadBlitter(104, 19);

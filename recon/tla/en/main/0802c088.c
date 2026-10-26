@@ -1,3 +1,7 @@
+// Draft, differ 6 of 113 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer, nor any pair of empty asm statements or
+// one-pass blocks (device search).
 // Draft, differ 16 of 113, instruction order only: the perspective map's
 // HBlank setup each frame, ☀️'s MapAnimation_ApplyAffineFrame
 // (games/tbs/src/field/field.c) written over ⚓️'s heap slots: stops HBlank

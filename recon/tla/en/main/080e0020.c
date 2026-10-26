@@ -1,3 +1,7 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 117 in tla-en, instruction
+// order only. After a store the native copies an argument before the next load,
+// where alchemy-gcc issues the load at once (AGENTS.md's recurring row); no
+// empty asm placement lowers it.
 // Near miss, differ 6 of 117 (2026-10-15), ported from ☀️'s
 // BattleEffect_UpdateRadialCamera. The listing loads the effect work before it
 // copies the slot argument (ldr r3, [r3]; adds r7, r0, #0) and keeps two later

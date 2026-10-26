@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 82 in tla-en, instruction
+// order only. The native sets UiWindow_Create's second argument before its
+// fourth; no single empty asm and 1 minute of permute lower it.
 // Near miss: listing 82 instructions, draft 82, common 77, differ 10; the rest
 // differs in instruction order.
 #include "types.h"

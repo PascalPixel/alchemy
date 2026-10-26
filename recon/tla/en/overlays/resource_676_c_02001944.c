@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 30 of 367; left: as recorded
+// below (the wait loop's address recomputed in the native is the same GCSE
+// hoist as overlay 698's landing burst).
 // Draft, differ 30 of 367: a scene in Yallam (message MsgHereLetMe on): actors
 // 9 and 10 run off, actor 5 walks to the controlled character, the party is
 // placed, Func_02001688 is scheduled and actor 8 is walked through three steps

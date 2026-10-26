@@ -1,3 +1,16 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 6 of 519. Declared returning
+// s32, as nibble_pair.c defines it, BattleEffect_LoadBlitter gets r1 before
+// r0 at both calls (12 to 8); the tagged empty one-pass block stores the
+// argument before the RAM base (8 to 6). Left, two places: before the bolt
+// loop the native spills frame << 11 (str r2, [sp, #8]) before it copies the
+// zero to fp, here after; after count++ in the spark loop the native reloads
+// count (ldr r2, [sp, #16]) right after the variant, here just before the
+// compare, and the table address moves with it. Tried (differ): the angle's
+// operands in either order (6), bolt set before its loop (6), count set
+// after the angle (10), ++count or count = count + 1 in the test (6), the
+// table read first (8), count declared in the bolt loop (6), alchemy permute
+// 6 minutes, 2 jobs (nothing below 6).
+
 // Near miss of BattleEffect_RunRay, effect kind 17.
 
 // Twin: The Broken Seal's BattleEffect_RunRay (effect.c), call for
@@ -40,7 +53,7 @@ void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_081180e8(s32 phase);       // BattleEventRuntime_StartPhaseFar
@@ -86,6 +99,11 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
   struct EffectPosition midpoint;
   s32 i;
 
+  /* FAKEMATCH(one-pass): an empty one-pass block keeps the argument's spill
+   * ahead of the RAM base, as the native stores it; as the function without
+   * it, 8 of 519 instructions differ in tla-en. */
+  do {
+  } while (0);
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];

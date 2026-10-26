@@ -1,3 +1,7 @@
+// Draft, differ 8 of 99 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer, nor any pair of empty asm statements or
+// one-pass blocks (device search).
 // Near miss, differ 8 of 99, 2026-10-15: The Broken Seal's
 // ObjectPlacement_CreateGroup on this game's menu runtime (party icons at
 // 0xf8, positions at 0x118 and 0x128, scales at 0x138), without the party

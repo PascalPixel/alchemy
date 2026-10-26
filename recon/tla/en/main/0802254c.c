@@ -1,3 +1,6 @@
+// Draft, differ 8 of 279 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer (device search).
 // Near miss, differ 12 of 279 (four reordered pairs, no register or frame
 // difference): ☀️'s Render_PlaceProjectedSprite (games/tbs/src/field/field.c)
 // on The Lost Age's sprite: the image's attributes written as one word, a

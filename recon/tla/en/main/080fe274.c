@@ -1,3 +1,7 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 2 of 216 in tla-en. First difference: this issues `movs r3, #192` earlier
+// (row 23) than the native does (row 25). No single empty asm or one-pass block
+// reaches 0.
 // Near miss, differ 4 of 216: the twin of The Broken Seal's StatusMenu_Run.
 // Two pairs are in the other order: the native stores the result's -1 to its
 // stack slot before it starts the heap slots' address (str r2, [sp, #8]; movs

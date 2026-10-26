@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 6 of 69 in tla-en, instruction
+// order and register choice. No empty asm before any one statement lowers it.
 // Near miss, differ 6: the native starts the mode offset (movs r2, #197) before
 // it loads z, and loads the map block table into r1 before the cell index is
 // summed; here z is loaded first and the table comes after the sum, into r2.

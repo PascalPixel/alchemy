@@ -1,3 +1,7 @@
+// Draft, differ 4 of 124 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer, nor any pair of empty asm statements or
+// one-pass blocks (device search).
 // Near miss, differ 10 of 124 (14 before UiText_QueueRenderEntries was
 // declared returning s32, as msgwait.c defines it), 2026-10-25: The Broken Seal's
 // Djinn_ShowJoinedMessage on this game's window tiles, its window at x 2 and

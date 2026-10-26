@@ -1,3 +1,7 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 4 of 84 in tla-en. First difference: this issues `ldr r4, [sp, #0]` earlier
+// (row 20) than the native does (row 23). An empty asm after `menu->objects[i]
+// = NULL;` measured 2. No single empty asm or one-pass block reaches 0.
 // First draft of Func_081051a8: (re)creates the menu's four icon figures
 // from gFourObjectMotion_ResourceIds at animation 2 and priority 0, each at
 // (16, 200), scale 1.0 and frame 0x4000, then starts

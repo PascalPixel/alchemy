@@ -1,4 +1,10 @@
-// Near miss, differ 84 of 518.
+// Near miss, differ 48 of 518.
+//
+// Measured 2026-10-25 under -mthumb-slow-loads: differ 48. Most rows left are
+// loads from memory or the stack that alchemy-gcc issues one slot earlier than
+// the native, which issues only its pool loads early. The first is the
+// argument's spill, which the native stores before it starts the 0x03000000
+// base; an empty asm before the first statement closes that row (differ 46).
 
 // Effect kinds 38 and 218. Twin: The Broken Seal's
 // BattleEffect_RunBind, ported call for call; the body is

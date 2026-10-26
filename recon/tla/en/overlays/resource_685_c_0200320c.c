@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 68; left: 999 is built
+// before the 0x14ccc store's last add, after it in the native; a barrier after
+// the store puts it after the store (differ 2).
 // Draft of overlay 685's Func_0200320c, differ 4 of 68: allocates the
 // 0x1078-byte work in heap slot 55, starts Func_02002de4 and raises field106c
 // in two steps until it reaches 0x14ccc. The priority temporary is needed (the

@@ -1,3 +1,5 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 35 of
+// 593 (draft 592); not worked this pass.
 // Draft, differ 41 of 593: the world map's fade: queues the world map palette
 // for mode and its frames, then steps the blend through 0xe00 down to 0x800
 // and back. Overlay 64c has the same code (its Func_02001400). Left: a few

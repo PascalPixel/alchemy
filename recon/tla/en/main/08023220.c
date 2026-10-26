@@ -1,3 +1,6 @@
+// Draft, differ 2 of 181 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer (device search).
 // Near miss, differ 8 of 181: ☀️'s FieldObject_Create (games/tbs/src/field/
 // field.c) on The Lost Age's object, which also clears the four words at its
 // end. Left: the native loads the halfword zero for collisionFlags from the

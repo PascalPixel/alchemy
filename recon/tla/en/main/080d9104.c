@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 69 in tla-en, instruction
+// order only. As Func_080d8d68: an empty asm before the call lowers it to 2.
 // Near miss, differ 6 of 69, instruction order only: links two objects in a
 // slot of the work at Ram_HeapSlots 0x9c and hands their positions, each
 // raised by 0x80000, to Func_080d9194. Func_080d8d68 is the same body calling

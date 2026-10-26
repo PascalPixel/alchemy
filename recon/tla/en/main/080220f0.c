@@ -1,3 +1,6 @@
+// Draft, differ 4 of 258 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer (device search).
 // Near miss of Render_ApplyProjectedPlacement: differ 8 of 258 (four
 // reordered pairs; 214 before this pass, 332 as The Broken Seal's C). The
 // Broken Seal's function of the same name (games/tbs/src/field/field.c) as The

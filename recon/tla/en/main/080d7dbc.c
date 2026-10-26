@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 14 of 208 in tla-en,
+// instruction order only. No empty asm before any one statement lowers it.
 // differ 16: ported from the twin in ☀️ radpart.c; native leaves several loads
 // after independent moves
 #include "types.h"

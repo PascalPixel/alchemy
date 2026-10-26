@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 42; left: the shape grid's
+// base address loads after the shift, where the native loads it into r2 before
+// the first add.
 // Near miss, differ 4 of 42: the shape grid entry of a layer cell. The grid
 // offset of the cells pointer goes through an inline (permute found it): written
 // in one expression the cell offset is added before the grid (8). Left: the

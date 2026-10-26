@@ -1,3 +1,7 @@
+// 26 October 2026, under -mthumb-slow-loads: differ 2 of 61: the native issues
+// a load one slot later after a store, where alchemy-gcc issues it at once;
+// alchemy permute (5 to 6 minutes) and an empty asm or one-pass block after any
+// one statement do not move it.
 // Near miss, differ 2: the listing loads object->y after it copies the
 // position pointer into r2 (adds r2, r5, #0; ldr r3, [r0, #12]); this draft
 // loads it before. Array, struct-field and pointer-alias forms give the same.

@@ -13,6 +13,14 @@
 // effect's copy, r1 before r0 for both BattleEffect_LoadBlitter calls, the particle
 // buffer before its counter, the cell offset table before the size).
 
+// Under -mthumb-slow-loads (2026-10-26): differ 14 of 513. Declared
+// returning s32, as nibble_pair.c defines it, BattleEffect_LoadBlitter
+// gets r1 before r0 at both calls (18 to 14). Left: five rows, each a
+// stack or field load agscc issues one slot earlier than the native (the
+// camera word before the effect copy, a reload before an argument store,
+// the trail's coordinates). An empty one-pass block or asm before the heap
+// reads: 22.
+
 // Tried (2026-10-15):
 // - greedy declaration-order sweep, two passes: no gain.
 // - a separate counter for the frame loop's embers: no change.
@@ -41,7 +49,7 @@ void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void Camera_ApplyPhasedDelta(void); // Camera_ApplyPhasedDelta
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
 void Func_081180e8(s32 phase);       // BattleEventRuntime_StartPhaseFar

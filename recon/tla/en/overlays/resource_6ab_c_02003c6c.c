@@ -1,6 +1,6 @@
 // Draft of overlay 6ab's Func_02003c6c, the twin of overlay 69c's
 // Func_02001db8: its draft (resource_69c_c_02001db8.c) with this overlay's
-// symbols: differ 18 of 131. Left: what that draft's header records.
+// symbols: differ 8 of 131 under -mthumb-slow-loads. Left: what that draft's header records.
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_room_3/local.h"
 #include "io_reg.h"
 
@@ -65,7 +65,9 @@ void Func_02003c6c(struct PushEvent *event) {
     object->y += -0x9999;
     WaitFrames(1);
   }
-  Object_GetById(gPartyState.currentOwner)->animationKind = 0;
+  do {
+    Object_GetById(gPartyState.currentOwner)->animationKind = 0;
+  } while (0);
   event->busy = 0;
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
   Event_FinishScreenTransition();

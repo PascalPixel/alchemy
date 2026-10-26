@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 110 in tla-en, instruction
+// order only. No empty asm before any one statement lowers it.
 // Near miss, differ 4 of 110: The Broken Seal twin (BattleEffect_UpdateStormFlash).
 // After the second Random16 the native interleaves the two products as a*3,
 // 100, <<3, muls, +a, <<4 (movs r2, #100 one step later and muls one step later

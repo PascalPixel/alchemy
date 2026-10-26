@@ -1,3 +1,8 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 8 of
+// 374 with an empty asm the greedy device search placed before the stack
+// offset's reload (10 without it): the second word's copy to fp after the
+// store to sp+40, the loop's 0 and its copy to r9 after the two stack
+// pointers' stores, and the reload of sp+8 after the store to sp+16.
 // Draft of BattleEffect_RunStoneJustice, effect kind 100 (Stone Justice), written from the
 // listing on The Broken Seal's canvas skeleton. No close twin (shape
 // BattleEffect_RunSpire 0.502, call order BattleEffect_RunPrism
@@ -180,6 +185,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
       scrollSpeed = scrollSpeed * 60 / 64;
     }
     scrollX = scroll >> 16;
+  __asm__("");
     REG_BG2X = (64 - (userPosition.x - scrollX)) << 8;
     /* FAKEMATCH: the native stores REG_BG2X before it clears the hit flag
      * (differ 16 without the barrier). */

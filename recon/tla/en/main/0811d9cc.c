@@ -1,3 +1,10 @@
+// Under -mthumb-slow-loads (26 October 2026): differ 12 of 421 in tla-en.
+// Tried, one edit at a time: an empty asm barrier after each statement, each
+// adjacent pair of statements swapped, each local pinned to each register,
+// each call argument copied into its argument register (pinned) at the call
+// or up to three statements before it, five minutes of permute; none reaches
+// 0. Barriers after lines 102 and 113 of the draft as it stood lower it to 8,
+// and no third single barrier lowers it further.
 // Draft of Func_0811d9cc: ☀️'s BattleStaging_DispatchAction
 // (games/tbs/src/battle/battle/staging.c), ported: plays one action of the
 // round. An enemy picks its ability now (Func_08122514 with retry 1), the

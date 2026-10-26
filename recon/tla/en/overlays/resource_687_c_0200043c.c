@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 10 of 124; left: the object's z
+// load and the copies out of r11 are scheduled otherwise.
 // Near miss (16 of 120 instructions differ): three loads of the object's
 // position sit one slot earlier or later than the native's, and the native
 // stores the turned x after it sums z.

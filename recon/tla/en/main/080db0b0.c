@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 32 of 378 in tla-en,
+// instruction order and register choice. Empty asms before `leader->motionFlags
+// = 0;` and the root's x lower it to 22.
 // Near miss, differ 40 of 378 (2026-10-25): the leader swings on the chain
 // hanging from object `id` (its WORK_A4 slot, Func_080dae70). The chain first
 // swings to the leader's side and over to the other, then holds there while the

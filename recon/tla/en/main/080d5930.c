@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 84 in tla-en, instruction
+// order only. As Func_080d5670.
 // Near miss, differ 6 of 84: Func_080d5670 over the heap slot 0xa0 workspace's
 // nodes: finds the used node nearest to a position, within a squared distance
 // of 0x400 (coordinates in 1/256 units, squared with the IWRAM Q16 multiply);

@@ -1,3 +1,8 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 8 of 239 in tla-en. First difference: this issues `str r3, [r1, #24]` earlier
+// (row 21) than the native does (row 23). A one-pass block around
+// `Render_SetTilemapFlagRect(window, 9, row * 2 + 2, 15, 1, 15);` measured 4.
+// No single empty asm or one-pass block reaches 0.
 // Near miss, differ 14 of 239: the psynergy menu's description page (the
 // selected ability's description and where it can be used, then each row's
 // element icon and highlight), ☀️'s PsynergyMenu_DrawRangePage in

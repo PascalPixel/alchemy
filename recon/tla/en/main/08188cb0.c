@@ -1,3 +1,5 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 10 of
+// 529; a greedy device search found nothing lower.
 // Near miss: listing 529 instructions, draft 529, differ 12. ☀️ twin:
 // BattleEffect_RunHelmSplitter (effect.c, structure 0.800): the same swirl and
 // spark burst, with a second variant ⚓️ added at the target.

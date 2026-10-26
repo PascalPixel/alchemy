@@ -1,4 +1,10 @@
-// Near miss, differ 102 of 604 (effect kind 13, the fire pillars).
+// Near miss, differ 40 of 604 (effect kind 13, the fire pillars).
+//
+// Measured 2026-10-25 under -mthumb-slow-loads: differ 40. Most rows left are
+// loads from memory or the stack that alchemy-gcc issues one slot earlier than
+// the native, which issues only its pool loads early. The first is the
+// argument's spill, which the native stores before it starts the 0x03000000
+// base; an empty asm before the first statement closes that row (differ 38).
 
 // ☀️ twin: BattleEffect_RunVolcano (games/tbs/src/effect/effect.c), shape
 // 0.847, structure 1.000. ⚓️'s changes: the effect argument read directly,

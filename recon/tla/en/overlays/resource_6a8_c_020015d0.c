@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 172; left: as recorded
+// below.
 // Near miss, differ 2 of 172 (4 without the two barriers). The two barriers put
 // each flag store ahead of the next call's arguments, as the native has them,
 // but the first one moves an earlier pair: where the 1 for the first byte store

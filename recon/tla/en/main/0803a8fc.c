@@ -1,3 +1,6 @@
+// Draft, differ 2 of 203 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer (device search).
 // Near miss, differ 2 of 203: The Broken Seal's international
 // UiText_RenderGlyphPair. ⚓️ reads the first glyph's width before it clears
 // the pixels, the second glyph's width signed, and sets the shadow colour

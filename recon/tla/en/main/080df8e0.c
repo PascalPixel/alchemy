@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 6 of 218 in tla-en, instruction
+// order only. No empty asm before any one statement lowers it.
 // Near miss, differ 8 of 218 (2026-10-15): ☀️'s EFFECT_SPAWN
 // (Effect_SpawnResident) with ⚓️'s calls (Object_GetById(0), Func_080200c0,
 // default type 285, the gData_080f3978 scripts, Object_SetPartAttribute). Left:

@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 192 in tla-en, instruction
+// order only. The native sets Item_AdjustCounterFar's second argument (movs r1,
+// #1) before copying the first; no single empty asm lowers it.
 // Draft of PartyInventory_GiveItem: differ 6 of 192 (tla-en, 2026-10-18).
 // It gives the party an item. When nobody can carry it, it asks what to
 // drop: the chosen item is dropped (unless Inventory_CountItemFar finds the

@@ -1,3 +1,11 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 142, one place in the
+// prologue: the native copies last to r9 after the size's sign shift (lsrs
+// r3, r6, #31) and finishes the halving (adds r3, r6, r3) before the
+// clear's size multiply; here the copy comes first and the add after the
+// multiply. The scale and center reloads now match. Tried (differ): the
+// size written size * 2 * size, (size * size) << 1 or size * (size * 2)
+// (4), last declared before center (4), center as (size - 2) / 2 (50).
+
 // Draft of Func_0815b510, decompiled from the listing: differ 10 of 142
 // (tla-en, 2026-10-18; was 210). The logic is Func_0815b434's mirrored in
 // four quarters. What moved it: center declared before last, as in

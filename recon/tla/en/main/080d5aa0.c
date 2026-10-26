@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 8 of 145 in tla-en, instruction
+// order only. An empty asm before `leader->priorityFlags |= 1;` lowers it to 6.
 // Near miss, differ 14 of 145: Func_080d57e4 without the scale reset, the
 // motion values stored in the order the native shows (acceleration first):
 // the leader lets go of a grabbed node (Func_080d59dc) toward the held

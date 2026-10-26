@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 165; left: twice the copy
+// out of r8 comes before the x store, after it in the native.
 // Draft of overlay 6ad's Func_02001bcc, translated from its listing, with the
 // vertical steps pinned as the blend writes are: differ 4 of 165. Left: in both
 // flag branches the native copies the sprite pointer from r8 for the rotation

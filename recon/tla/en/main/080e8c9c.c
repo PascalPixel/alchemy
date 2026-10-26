@@ -1,3 +1,8 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 4 of 45 in tla-en. First difference: this issues `ldr r3, [r0, #16]` earlier
+// (row 32) than the native does (row 34). A one-pass block around `map->minX =
+// work->savedMinX;` measured 2. No single empty asm or one-pass block reaches
+// 0.
 // Near miss, differ 6 of 45 (2026-10-19; 10 on 2026-10-15). The permuter
 // found a one-pass block around the third bound store, which keeps the
 // loads after their address steps as the ROM has them (10 -> 6); a second

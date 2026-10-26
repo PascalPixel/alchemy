@@ -1,5 +1,5 @@
-// Near miss, differ 12 of 300 (effect kind 37, the bouncing sheep; 2026-10-19,
-// was 20).
+// Near miss, differ 2 of 300 (effect kind 37, the bouncing sheep; 2026-10-25,
+// under -mthumb-slow-loads; 6 as plain C).
 
 // ☀️ twin: BattleEffect_RunSleep (games/tbs/src/effect/effect.c), shape
 // 0.776, structure 0.977. ⚓️'s changes: the canvas layer at priority 1; the
@@ -10,29 +10,30 @@
 // the blitters are transparent, ⚓️ mode 2 (☀️ 1).
 
 // Declaration order sets the native frame: the middle above the position
-// record, and drawB, drawA, scroll spilled in that order. Two tagged devices
-// put the argument's spill (str r0) before the 0x03000000 base and the
-// REG_BG2PA pool word before its address, and with them the literal pool's
-// branch lands after the second BattleEffect_LoadBlitter call as the native's
-// does. What is left: the canvas slot load and store one row apart, the
-// BLDCNT value's stack address before the BG2PA store, the sheep record's
-// pool load before the draw size 32, the transfer flag's offset built
-// before the work's reload, and pool offsets that move with them.
+// record, and drawB, drawA, scroll spilled in that order. Under
+// -mthumb-slow-loads the REG_BG2PA pin is no longer needed, and a one-pass
+// block around the four set-up assignments (sheep, work, canvas, scroll)
+// puts the argument's spill before the 0x03000000 base and the rest of the
+// prologue in the native's order. Left: the native sets the canvas layer's
+// argument (movs r0, #1) before it loads the canvas slot; here after.
 
 // Tried (differ):
 // trial 0's port with ☀️'s declaration order (2026-10-15)            42
 // the declaration order above                                        22
-// BattleEffect_LoadBlitter declared returning s32 as ☀️'s LoadWork does         22
-// the sheep in the gMapCellBuffer symbol (extern)                    56
-// the sheep through Ram_MapCellBuffer, a constant, as the tree's
-// ram_buffer.h writes the buffer                                   20
-// greedy declaration-order scan, every local through every place     20
-// alchemy permute, 10 minutes, 2 jobs: nothing below 20 (its best
-// weighted candidate, an added integer mask, is 21)
+// BattleEffect_LoadBlitter declared returning s32 as ☀️'s LoadWork does 22 the
+// sheep in the gMapCellBuffer symbol (extern)                    56 the sheep
+// through Ram_MapCellBuffer, a constant, as the tree's ram_buffer.h writes the
+// buffer                                   20 greedy declaration-order scan,
+// every local through every place     20 alchemy permute, 10 minutes, 2 jobs:
+// nothing below 20 (its best weighted candidate, an added integer mask, is 21)
 // 2026-10-19, with the two tagged devices (12): the sheep record behind a
 // one-pass block, with or without the draw size in a local set after it
 // (12 to 14); the work read into a local behind a block for the transfer
 // flag (12); alchemy permute 4 minutes (12).
+// 2026-10-25, under -mthumb-slow-loads: plain C 6; the empty one-pass block
+// at the top 4; the block around the set-up 2, around sheep and work only 6,
+// around all but scroll 6, with scroll before canvas 6; alchemy permute 5
+// and 6 minutes from plain C and from the block (2).
 
 #include "types.h"
 #include "system.h"
@@ -63,10 +64,12 @@ enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 extern char ResourceId_SheepCardSheet; // directory row 0xe3
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);               // ☀️ BattleEffect_EndCanvasLayer
-void BattleEffect_ProcessPendingGraphicsTransfer(void);               // ☀️ ProcessPendingGraphicsTransfer
-void Func_081180e8(s32 phase);          // ☀️ BattleEvent_StartPhaseFar
-s32 BattleEffect_LoadBlitter(s32 slot, s32 flags); // ☀️ BattleEffect_BuildBlitter
+void BattleEffect_EndCanvasLayer(void); // ☀️ BattleEffect_EndCanvasLayer
+void BattleEffect_ProcessPendingGraphicsTransfer(
+    void);                     // ☀️ ProcessPendingGraphicsTransfer
+void Func_081180e8(s32 phase); // ☀️ BattleEvent_StartPhaseFar
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 flags); // ☀️ BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void Func_0815e22c(struct EffectPosition *middle); // the targets' middle
@@ -90,40 +93,29 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
   s32 scroll;
   s32 member;
 
-  /* FAKEMATCH(one-pass block): an empty one-pass block before the first
-   * statement keeps the argument's spill (str r0) ahead of the RAM base, as
-   * the native stores it; without it, 14 of 300 instructions differ in tla-en
-   * (this draft: 12). */
-  do {
-  } while (0);
   // Set up: the canvas layer, the sheep sheet and a transparent blitter
   // pair, the second mirrored.
-  sheep = (struct EffectStep *)Ram_MapCellBuffer;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  scroll = 0;
+  /* FAKEMATCH(one-pass): the set-up ends a scheduling region, so the
+   * argument's spill comes before the 0x03000000 base; as plain statements, 6
+   * of 300 instructions differ in tla-en. */
+  do {
+    sheep = (struct EffectStep *)Ram_MapCellBuffer;
+    work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+    canvas = Ram_HeapSlots->battleFxWork[1];
+    scroll = 0;
+  } while (0);
   BattleEffect_StartCanvasLayer(1);
-  {
-    /* FAKEMATCH(fixed register, one-pass block): the BG2PA halfword pinned to
-     * r3 and set behind a one-pass block, so its pool load comes before the
-     * register's address; as REG_BG2PA = 0x100, 18 of 300 instructions differ
-     * in tla-en (this draft: 12; the pool's branch also moves). */
-    register u16 value asm("r3");
-
-    do {
-      value = 0x100;
-    } while (0);
-    REG_BG2PA = value;
-  }
+  REG_BG2PA = 0x100;
   REG_BLDCNT = scroll;
   Resource_LoadAndDecompress((s32)&ResourceId_SheepCardSheet, work->sheet, 1,
                              1);
-  BattleEffect_LoadBlitter(HEAP_BLITTER,
-                BLITTER_TRANSPARENT << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
+  BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_TRANSPARENT << 4 |
+                                             COMPOSITE_CLIP_X |
+                                             COMPOSITE_CLIP_Y);
   drawA = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE, BLITTER_TRANSPARENT << 4 |
-                                            COMPOSITE_CLIP_X |
-                                            COMPOSITE_CLIP_Y | COMPOSITE_FLIP);
+  BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
+                           BLITTER_TRANSPARENT << 4 | COMPOSITE_CLIP_X |
+                               COMPOSITE_CLIP_Y | COMPOSITE_FLIP);
   drawB = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 
   // The sheep wait above the screen with a random spin and starting cel.
@@ -149,7 +141,8 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
   REG_BG2X = -middle.x << 8;
   work->transferMode = 1;
   work->transferValue = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
+                                CALLBACK_ORDER);
   Audio_PlayCue(142);
 
   for (frame = 0; frame != SHEEP_FRAMES; frame++) {

@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 94 in tla-en, instruction
+// order only. No empty asm before any one statement lowers it.
 // Near miss, differ 2 of 94 (☀️'s BattleEffect_SpawnBurstParticle): the native
 // stores the cleared action (strh r5) before it starts the priority flags'
 // address (adds r0, r6, #0); sched2 here ranks the address first by one

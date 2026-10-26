@@ -1,3 +1,6 @@
+// Draft, differ 8 of 212 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer (device search).
 // Draft, differ 8 of 212 (2026-10-24): a one-pass block around the
 // records[1].base store and an empty asm after the status store, as in its
 // sibling 0803eb2c, take six rows off. Left: load-before-constant orders of

@@ -1,3 +1,5 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 10 of
+// 120; a greedy device search found nothing lower.
 // Draft, differ 16 of 120 (no device): summon 25's
 // falling drop with its trail, written from the listing. The native frame
 // (28 bytes) holds x at sp+24, the blitter pair at sp+16/20 (only the first

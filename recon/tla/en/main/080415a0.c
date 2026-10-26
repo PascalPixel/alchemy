@@ -1,3 +1,8 @@
+// Draft, differ 6 of 144 in tla-en under -mthumb-slow-loads (2026-10-26). A
+// device search (each statement followed by an empty asm or a one-pass block,
+// wrapped in one, or swapped with the next, kept when it helps) reaches 4 with
+// an empty asm after `u32 following = (value + 1) % 128;`, and finds nothing
+// closer.
 // Near miss, differ 8 of 144 (four reordered rows), 2026-10-15: The Broken
 // Seal's UiWindow_OverlayTilePattern; this game finds the free tile in a
 // do-while (as a for loop the first pass is peeled). Remaining: the native

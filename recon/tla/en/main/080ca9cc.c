@@ -1,3 +1,8 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 43 in tla-en, instruction
+// order only. Read through the constant address (FIXED_ADDRESS((u8 *),
+// 0x0202e008, gData_0202e008), as the Ram_ buffers are), plain `key = *cursor;
+// cursor++;` keeps both of the cursor's stores with no device: differ 8 of 43,
+// the two key loads one slot early.
 // Draft, differ 4 of 43 (6 before the loop's barriers): the native stores the
 // cursor to its stack slot before the first key read (str r3, [sp]; ldrb r2,
 // [r3]); flow drops that store as dead unless something stands between it

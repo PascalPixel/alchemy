@@ -1,3 +1,8 @@
+// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
+// 6 of 298 in tla-en. First difference: the native issues `mov r8, r0` earlier
+// (row 17) than this does (row 30). An empty asm after `menu =
+// Ram_HeapSlots->menuRuntime;` measured 4. No single empty asm or one-pass
+// block reaches 0.
 // First draft of Func_080fd000: the party member row of the Psynergy menu,
 // the twin of The Broken Seal's PsynergyMenu_SelectMember
 // (games/tbs/src/menu/menu/psynergy.c). ⚓️ moves the selection through

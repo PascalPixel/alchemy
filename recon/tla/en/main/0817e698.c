@@ -1,3 +1,5 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 20 of
+// 386; a greedy device search found nothing lower.
 // Draft (tla-en): listing 386 instructions, draft 386, common 374, differ 24.
 // The body of effect kinds 348, 353, 389 and 431 (BattleEffect_RunSpasm to
 // BattleEffect_RunSack in variant_k.c pass modes 0 to 3). Written from the

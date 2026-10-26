@@ -1,3 +1,6 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 8 of
+// 620; a greedy search over an empty asm after, or a one-pass block around,
+// each statement found nothing lower.
 // Draft, differ 44 of 620: BattleEffect_RunRagnarok, effect kind 58, The Broken Seal's
 // BattleEffect_RunRagnarok.
 

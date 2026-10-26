@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 6 of 69 in tla-en, instruction
+// order and register choice. No empty asm before any one statement lowers it.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"

@@ -1,3 +1,7 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 4 of
+// 73: only the outer preheader's order is left (the width's shift and its
+// spill before 4 * height); the inner preheader now matches. A greedy device
+// search found nothing lower.
 // Draft, differ 6 of 73: mirrors a width x height block of bytes into a
 // 2*width x 2*height one, each byte written to all four quadrants (no
 // twin: The Broken Seal has none). Left, all scheduling: in the outer

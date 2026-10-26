@@ -1,3 +1,7 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 130 in tla-en, instruction
+// order only. After a store the native builds a constant's half before the next
+// load, where alchemy-gcc issues the load at once (AGENTS.md's recurring row);
+// no empty asm placement lowers it.
 // Near miss, differ 4 of 130 (2026-10-15): ☀️'s FieldEffect_RunCarry (the
 // item-break macro around BattleEffect_SpawnItemBreakMode1), the same body as draft
 // 080ddea8 and the same two pairs in the fragment loop. Replaces the earlier

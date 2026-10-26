@@ -1,3 +1,9 @@
+// Draft, differ 6 of 428 in tla-en under -mthumb-slow-loads (2026-10-26). A
+// device search (each statement followed by an empty asm or a one-pass block,
+// wrapped in one, or swapped with the next, kept when it helps) reaches 2 with
+// an empty asm after `u32 bits;`; an empty asm after `glyphs =
+// Resource_GetTableEntry((s32)&ResourceId_WindowTiles);`, and finds nothing
+// closer.
 // Near miss, differ 26 of 428, 2026-10-15: The Broken Seal's
 // UiText_RenderStringTiles in the form of its English edition (the German
 // one is the same size; Spanish, French and Italian are 12 bytes longer and

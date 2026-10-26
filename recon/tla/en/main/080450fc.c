@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 68 in tla-en, instruction
+// order only. No empty asm before any one statement lowers it.
 // Near miss: differ 6 of 68 (three reordered rows; differ 8 before). The empty
 // asm on the two addresses and the one-pass block on the source fix the table
 // load and the position add. Left: the packed-field store masks the matrix

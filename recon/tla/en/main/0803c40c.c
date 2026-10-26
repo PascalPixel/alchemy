@@ -1,3 +1,7 @@
+// Draft, differ 4 of 146 in tla-en under -mthumb-slow-loads (2026-10-26). A
+// device search (each statement followed by an empty asm or a one-pass block,
+// wrapped in one, or swapped with the next, kept when it helps) reaches 2 with
+// the earlier barrier or pin removed, and finds nothing closer.
 // Draft, differ 6 of 146 (2026-10-24): an empty asm after the affine index
 // store takes one reordered pair off. Left: instruction order only.
 // Draft of RenderOutput_UpdateScaleAnimation: differ 8 of 146 (tla-en,

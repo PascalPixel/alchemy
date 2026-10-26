@@ -1,3 +1,5 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 137
+// of 2055 (draft 2056); not worked this pass.
 // Draft, differ 231 of 2055: LuckyDice_Run, the Lucky Dice minigame, ported
 // from ☀️'s LuckyDice_Run (games/tbs/src/field/lucky_dice.c) with this
 // game's names: its heap blocks, the sprite block's windows at 0x4c4..0x4cc,

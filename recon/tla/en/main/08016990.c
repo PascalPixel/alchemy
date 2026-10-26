@@ -1,3 +1,6 @@
+// Draft, differ 4 of 268 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer (device search).
 // Draft, differ 4 of 268 (2026-10-24): The Broken Seal's
 // Serial_StepBlockTransfer (games/tbs/src/runtime/runtime/serial.c) on this
 // game's names, the same source but for one one-pass block. As ☀️ wrote it,

@@ -1,3 +1,8 @@
+// Draft, differ 38 of 535 in tla-en under -mthumb-slow-loads (2026-10-26). A
+// device search (each statement followed by an empty asm or a one-pass block,
+// wrapped in one, or swapped with the next, kept when it helps) reaches 30
+// with the volatile reads made plain; `work->preset++;` moved after `redraw =
+// 1;`, and finds nothing closer.
 // Draft, differ 52 of 535 (145 before the saved settings were written as
 // gPartyState's fields rather than through a byte pointer, 2026-10-25): the option screen, as ☀️'s
 // Menu_RunWorkspaceOptions (games/tbs/src/window/window.c). The five messages

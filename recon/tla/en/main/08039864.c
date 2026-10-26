@@ -1,3 +1,6 @@
+// Draft, differ 12 of 697 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer (device search).
 // Near miss, differ 34 of 697: The Broken Seal's English
 // UiWork_StepChannelScript with ⚓️'s changes: the lag clamps at 3, the
 // page and wait codes take their countdown from gData_080aa0df by text speed

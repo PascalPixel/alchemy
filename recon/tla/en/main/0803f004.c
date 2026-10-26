@@ -1,3 +1,9 @@
+// Draft, differ 20 of 223 in tla-en under -mthumb-slow-loads (2026-10-26). A
+// device search (each statement followed by an empty asm or a one-pass block,
+// wrapped in one, or swapped with the next, kept when it helps) reaches 6 with
+// an empty asm after `p->x = screen->baseX - 16;`; an empty asm after
+// `p->scaleEnd = 256;`; an empty asm after `first->prev = NULL;`; an empty asm
+// after `p->scaleStep = -32;`, and finds nothing closer.
 // Near miss: The Broken Seal source unchanged; nine reordered rows, all of one
 // kind. The native stores a node field as soon as its value is ready and
 // finishes the next field offset afterwards (movs r4, #230; adds r3, #80; strh

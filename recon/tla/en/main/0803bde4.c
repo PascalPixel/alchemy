@@ -1,3 +1,6 @@
+// Draft, differ 8 of 292 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer (device search).
 // Draft, differ 18 of 292 (2026-10-18): only scheduling remains; the native
 // stores x before y's copy, takes the character and both spacing loads
 // earlier, loads the window's x before it builds 0xfffe, and moves the

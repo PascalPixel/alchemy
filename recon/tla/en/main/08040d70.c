@@ -1,3 +1,7 @@
+// Draft, differ 4 of 105 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer, nor any pair of empty asm statements or
+// one-pass blocks (device search).
 // Near miss: differ 4 of 106 (6 with moved set after the window's call: the
 // native builds -1 fully before it copies the window out of r0). Left: it
 // finishes x (subs r1, r3, #4) before it starts the load of the window row,

@@ -1,3 +1,6 @@
+// Draft, differ 14 of 641 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer (device search).
 // Draft, differ 58 of 641: The Broken Seal's MenuSelection_DrawFrame with this
 // game's three-word projected position (frame 24). Every remaining row is
 // instruction order under the ARM9TDMI scheduling: the halves of split

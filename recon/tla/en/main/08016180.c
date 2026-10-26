@@ -1,3 +1,8 @@
+// Draft, differ 8 of 127 in tla-en under -mthumb-slow-loads (2026-10-26). A
+// device search (each statement followed by an empty asm or a one-pass block,
+// wrapped in one, or swapped with the next, kept when it helps) reaches 4 with
+// an empty asm after `REG_IME = 0;`; an empty asm after `REG_IME = 0;`, and
+// finds nothing closer.
 // Draft, differ 8 of 127: three one-slot swaps around the interrupt
 // registers. The native stores REG_IME = 0 before it loads &REG_IE (twice),
 // and loads 0x4003 before it reads SIOCNT. Measured: an empty asm after the

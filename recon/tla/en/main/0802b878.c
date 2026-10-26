@@ -1,3 +1,7 @@
+// Draft, differ 8 of 131 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer, nor any pair of empty asm statements or
+// one-pass blocks (device search).
 // Near miss, differ 18 of 131 (2026-10-18): The Broken Seal's
 // Map_WriteLayerCellTile; this game clears the block (IwramClearWords)
 // where the tile has no data instead of decoding it, and uses heap slot 56.

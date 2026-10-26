@@ -1,3 +1,7 @@
+// Draft, differ 4 of 84 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer, nor any pair of empty asm statements or
+// one-pass blocks (device search).
 // Draft, differ 4 of 84 (2026-10-24): an empty asm after found->unk26 = 0
 // takes one reordered pair off. Left: instruction order only.
 // Near miss, differ 6 of 84: ☀️'s UiText_QueueRenderEntries. The native

@@ -1,3 +1,7 @@
+// Draft, differ 2 of 39 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer, nor any pair of empty asm statements or
+// one-pass blocks (device search).
 // Near miss, differ 2 of 39 (one reordered row; 4 before the barrier):
 // written from the listing. It opens a 15x9 window at (7, 3), creates an
 // output there from fixed block B, keeps it in the work at 0x5a4 and places

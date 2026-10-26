@@ -1,3 +1,6 @@
+// Draft, differ 6 of 170 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer (device search).
 // Near miss, differ 8 of 170 (four reordered pairs), 2026-10-15: The
 // Broken Seal's UiWindow_DrawStatusBarTiles, the window's x and y read as
 // signed halfwords. Remaining: the native stores x to its stack slot right

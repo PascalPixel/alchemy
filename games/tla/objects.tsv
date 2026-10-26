@@ -489,9 +489,14 @@ main	rom_main_01	recon/tla/fr/rom	.rom.00027e20	fr
 main	rom_main_01	recon/tla/es/rom	.rom.00027e20	es
 main	rom_main_01	recon/tla/de/rom	.rom.00027e20	de
 main	rom_main_01	recon/tla/raw/08027e20	.text	en
-main	rom_main_01	recon/tla/raw/08028534	.text	en
-main	rom_main_01	recon/tla/raw/08028aac	.text	en
 main	rom_main_01	recon/tla/ja/rom	.rom.00027d9c	ja
+main	rom_main_01	games/tla/src/field/common/script/s28534	.text
+main	rom_main_01	recon/tla/ja/rom	.rom.00028a28	ja
+main	rom_main_01	recon/tla/de/rom	.rom.00028aac	de
+main	rom_main_01	recon/tla/es/rom	.rom.00028aac	es
+main	rom_main_01	recon/tla/fr/rom	.rom.00028aac	fr
+main	rom_main_01	recon/tla/it/rom	.rom.00028aac	it
+main	rom_main_01	recon/tla/raw/08028aac	.text	en
 main	rom_main_01	games/tla/src/field/common/script/move_by_keys	.text
 main	rom_main_01	recon/tla/it/rom	.rom.000292fc	it
 main	rom_main_01	recon/tla/fr/rom	.rom.000292fc	fr
@@ -792,6 +797,7 @@ main	rom_main_02	recon/tla/ja/rom	.rom.0003aa84	ja
 main	rom_main_02	recon/tla/ja/rom	.rom.0003ac3c	ja
 main	rom_main_02	games/tla/src/graphics/text/render_wide	.text	en de es fr it
 main	rom_main_02	games/tla/src/graphics/text/format_number	.text
+main	rom_main_02	games/tla/src/graphics/text/article_name	.text	en
 main	rom_main_02	recon/tla/it/rom	.rom.0003aea0	it
 main	rom_main_02	recon/tla/it/rom	.rom.0003afe4	it
 main	rom_main_02	recon/tla/fr/rom	.rom.0003ae6c	fr
@@ -800,7 +806,6 @@ main	rom_main_02	recon/tla/es/rom	.rom.0003aea0	es
 main	rom_main_02	recon/tla/es/rom	.rom.0003b044	es
 main	rom_main_02	recon/tla/de/rom	.rom.0003ae60	de
 main	rom_main_02	recon/tla/de/rom	.rom.0003afcc	de
-main	rom_main_02	recon/tla/raw/0803aed8	.text	en
 main	rom_main_02	recon/tla/raw/0803b094	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.0003ae38	ja
 main	rom_main_02	recon/tla/ja/rom	.rom.0003b77c	ja
@@ -1104,12 +1109,6 @@ main	rom_main_02	recon/tla/de/rom	.rom.00043588	de
 main	rom_main_02	recon/tla/raw/08043534	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.00043678	ja
 main	rom_main_02	games/tla/src/system/save/saveslot	.text
-main	rom_main_02	recon/tla/it/rom	.rom.000436f4	it
-main	rom_main_02	recon/tla/fr/rom	.rom.000436e0	fr
-main	rom_main_02	recon/tla/es/rom	.rom.000436fc	es
-main	rom_main_02	recon/tla/de/rom	.rom.000436e4	de
-main	rom_main_02	recon/tla/raw/08043690	.text	en
-main	rom_main_02	recon/tla/ja/rom	.rom.000437d4	ja
 main	rom_main_02	games/tla/src/system/save/saveload	.text
 main	rom_main_02	games/tla/src/window/glow_update_sine	.text
 main	rom_main_02	games/tla/src/graphics/window/tilefill	.text

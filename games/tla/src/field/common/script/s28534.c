@@ -1,16 +1,3 @@
-// Near miss, differ 67 of 636: script command 0x20, a sibling of
-// Func_080279b0 in The Broken Seal's later Object_MoveOnWorldMap layout (one
-// probe ahead, then four probes 22.5 and 45 degrees off it; six retry
-// headings). Records the kind of ground under the object in the event work
-// (byte 0xd3a), moves at a run, and lets the shortcut keys post requests 252
-// and, while byte 0xd39 is set, clear flag 0x147 and post 253; turns at most
-// 0x400 a step while moving. Left: scheduling throughout, mostly literal pool
-// loads the native issues earlier, and the retry list's address built as
-// movs #16; add sp (native add sp, #16). Measured: count reset before the
-// list or the first index written as 0 (no better); the animation kind in a
-// local (testing the field, differ 112); the probes as gotos, as
-// Func_08028aac has them (no change); the
-// later event work in a second local (as one, differ 146: it stays in r5).
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -75,6 +62,12 @@ void ObjectDispatch_Initialize(struct ObjectRuntime *, const s32 *);
 s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32);
 s32 Field_CheckConfiguredKeys(void);
 
+/// Script command 0x20, a sibling of Func_080279b0 in The Broken Seal's later
+/// Object_MoveOnWorldMap layout (one probe ahead, then four probes 22.5 and 45
+/// degrees off it; six retry headings). Records the kind of ground under the
+/// object in the event work (byte 0xd3a), moves at a run, and lets the shortcut
+/// keys post requests 252 and, while byte 0xd39 is set, clear flag 0x147 and
+/// post 253; turns at most 0x400 a step while moving.
 s32 Func_08028534(struct ObjectRuntime *object) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
@@ -111,6 +104,10 @@ s32 Func_08028534(struct ObjectRuntime *object) {
   collision = 0;
   object->speedLimit = 0x14000;
   object->acceleration = 0x8000;
+  /* FAKEMATCH(barrier): the input and the heading table load after the
+   * acceleration store; as plain statements, 4 of 636 instructions differ in
+   * tla-en. */
+  asm("");
   angle = gData_0802ec5c[(gInput.held >> 4) & 15];
   direction = angle;
   if (direction == 0xffff) {
@@ -154,6 +151,10 @@ s32 Func_08028534(struct ObjectRuntime *object) {
       angleOffsets[count++] = direction - 0x2000;
       angleOffsets[count++] = direction + 0x3000;
       angleOffsets[count++] = direction - 0x3000;
+      /* FAKEMATCH(barrier): the retry count is spilled before the first index
+       * is set; as plain statements, 8 of 636 instructions differ in tla-en.
+       */
+      asm("");
       for (angleIndex = 0; angleIndex < count; angleIndex++) {
         direction = angleOffsets[angleIndex];
         position.x = object->x;

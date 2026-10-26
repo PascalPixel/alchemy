@@ -1,3 +1,6 @@
+// Draft, differ 4 of 210 in tla-en under -mthumb-slow-loads (2026-10-26). No
+// single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer (device search).
 // Near miss, differ 10 of 210 (2026-10-18): sets the world map's region (map
 // work 0x973) and steps its screen tint (0x974) toward the region's target
 // (0x975) one level every 16 frames, or at once when gradual is 0, queueing

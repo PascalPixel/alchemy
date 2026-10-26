@@ -1,3 +1,8 @@
+// Draft, differ 14 of 300 in tla-en under -mthumb-slow-loads (2026-10-26). A
+// device search (each statement followed by an empty asm or a one-pass block,
+// wrapped in one, or swapped with the next, kept when it helps) reaches 10
+// with an empty asm after `sprite = object->animation;`, and finds nothing
+// closer.
 // Near miss, differ 30 of 300, all instruction order but one register (127
 // is built in r0, the native r1): script command 0x1c, a sibling of
 // Object_MoveByKeys that moves an object along the nearest rail point within

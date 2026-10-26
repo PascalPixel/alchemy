@@ -287,13 +287,6 @@ Object_SetMoveTarget:
 	.thumb_func
 Func_0802493c:
 	.incbin "baserom.gba", 0x0002493c, 0x00000314
-	.section .rom.00024efe, "ax"
-	.incbin "baserom.gba", 0x00024efe, 0x00000002
-	.global Script_CallWithOperand
-	.type Script_CallWithOperand, %function
-	.thumb_func
-Script_CallWithOperand:
-	.incbin "baserom.gba", 0x00024f00, 0x00000020
 	.section .rom.00025160, "ax"
 	.global Func_08025160
 	.type Func_08025160, %function
@@ -1595,32 +1588,6 @@ Func_080d1e18:
 	.thumb_func
 Func_080d2d70:
 	.incbin "baserom.gba", 0x000d2d64, 0x00000014
-	.section .rom.000d310a, "ax"
-	.incbin "baserom.gba", 0x000d310a, 0x00000002
-	.section .rom.000d310c, "ax"
-	.global ObjectMotion_SetHorizontalPositionWithTerrain
-	.type ObjectMotion_SetHorizontalPositionWithTerrain, %function
-	.thumb_func
-ObjectMotion_SetHorizontalPositionWithTerrain:
-	.incbin "baserom.gba", 0x000d310c, 0x0000004c
-	.section .rom.000d3158, "ax"
-	.global ObjectMotion_SetHorizontalPositionAndAngleWithTerrain
-	.type ObjectMotion_SetHorizontalPositionAndAngleWithTerrain, %function
-	.thumb_func
-ObjectMotion_SetHorizontalPositionAndAngleWithTerrain:
-	.incbin "baserom.gba", 0x000d3158, 0x0000005c
-	.section .rom.000d31b4, "ax"
-	.global ObjectMotion_SetPositionWithTerrain
-	.type ObjectMotion_SetPositionWithTerrain, %function
-	.thumb_func
-ObjectMotion_SetPositionWithTerrain:
-	.incbin "baserom.gba", 0x000d31b4, 0x00000054
-	.section .rom.000d3208, "ax"
-	.global ObjectMotion_MoveToObject
-	.type ObjectMotion_MoveToObject, %function
-	.thumb_func
-ObjectMotion_MoveToObject:
-	.incbin "baserom.gba", 0x000d3208, 0x0000002c
 	.section .rom.000d336a, "ax"
 	.incbin "baserom.gba", 0x000d336a, 0x00000002
 	.section .rom.000d336c, "ax"
@@ -1960,20 +1927,8 @@ Func_080dbb78:
 	.thumb_func
 Map_GetCellAtPosition:
 	.incbin "baserom.gba", 0x000dbb6c, 0x0000008c
-	.section .rom.000dbbf8, "ax"
-	.global Func_080dbc04
-Func_080dbc04:
-	.incbin "baserom.gba", 0x000dbbf8, 0x000000a4
-	.section .rom.000dbc9c, "ax"
-	.global Func_080dbca8
-	.type Func_080dbca8, %function
-	.thumb_func
-Func_080dbca8:
-	.incbin "baserom.gba", 0x000dbc9c, 0x00000018
-	.section .rom.000dbcb4, "ax"
-	.global Func_080dbcc0
-Func_080dbcc0:
-	.incbin "baserom.gba", 0x000dbcb4, 0x00000018
+	.section .rom.000dbcca, "ax"
+	.incbin "baserom.gba", 0x000dbcca, 0x00000002
 	.section .rom.000dbccc, "ax"
 	.global Func_080dbcd8
 Func_080dbcd8:
@@ -1988,10 +1943,6 @@ Map_TestSpecialTerrainPair:
 	.thumb_func
 Func_080e25e8:
 	.incbin "baserom.gba", 0x000dbd3c, 0x00000014
-	.section .rom.000dbd50, "ax"
-	.global Func_080dbd5c
-Func_080dbd5c:
-	.incbin "baserom.gba", 0x000dbd50, 0x0000004c
 	.section .rom.000dbd9c, "ax"
 	.global Func_080dbda8
 	.type Func_080dbda8, %function

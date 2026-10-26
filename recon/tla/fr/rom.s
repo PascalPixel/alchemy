@@ -1060,32 +1060,6 @@ Func_080d1f20:
 	.thumb_func
 PartyInventory_GiveItem:
 	.incbin "baserom.gba", 0x000d760c, 0x000001d4
-	.section .rom.000d810a, "ax"
-	.incbin "baserom.gba", 0x000d810a, 0x00000002
-	.section .rom.000d810c, "ax"
-	.global ObjectMotion_SetHorizontalPositionWithTerrain
-	.type ObjectMotion_SetHorizontalPositionWithTerrain, %function
-	.thumb_func
-ObjectMotion_SetHorizontalPositionWithTerrain:
-	.incbin "baserom.gba", 0x000d810c, 0x0000004c
-	.section .rom.000d8158, "ax"
-	.global ObjectMotion_SetHorizontalPositionAndAngleWithTerrain
-	.type ObjectMotion_SetHorizontalPositionAndAngleWithTerrain, %function
-	.thumb_func
-ObjectMotion_SetHorizontalPositionAndAngleWithTerrain:
-	.incbin "baserom.gba", 0x000d8158, 0x0000005c
-	.section .rom.000d81b4, "ax"
-	.global ObjectMotion_SetPositionWithTerrain
-	.type ObjectMotion_SetPositionWithTerrain, %function
-	.thumb_func
-ObjectMotion_SetPositionWithTerrain:
-	.incbin "baserom.gba", 0x000d81b4, 0x00000054
-	.section .rom.000d8208, "ax"
-	.global ObjectMotion_MoveToObject
-	.type ObjectMotion_MoveToObject, %function
-	.thumb_func
-ObjectMotion_MoveToObject:
-	.incbin "baserom.gba", 0x000d8208, 0x0000002c
 	.section .rom.000d836a, "ax"
 	.incbin "baserom.gba", 0x000d836a, 0x00000002
 	.section .rom.000d836c, "ax"
@@ -1340,31 +1314,14 @@ BattleEffect_DispatchRequestKind:
 	.global Func_080dbb78
 Func_080dbb78:
 	.incbin "baserom.gba", 0x000e0b6c, 0x0000008c
-	.section .rom.000e0bf8, "ax"
-	.global Func_080dbc04
-Func_080dbc04:
-	.incbin "baserom.gba", 0x000e0bf8, 0x000000a4
-	.section .rom.000e0c9c, "ax"
-	.global Func_080dbca8
-	.type Func_080dbca8, %function
-	.thumb_func
-Func_080dbca8:
-	.incbin "baserom.gba", 0x000e0c9c, 0x00000018
-	.section .rom.000e0cb4, "ax"
-	.global Func_080dbcc0
-Func_080dbcc0:
-	.incbin "baserom.gba", 0x000e0cb4, 0x00000018
+	.section .rom.000e0cca, "ax"
+	.incbin "baserom.gba", 0x000e0cca, 0x00000002
 	.section .rom.000e0ccc, "ax"
 	.global Func_080dbcd8
 	.type Func_080dbcd8, %function
 	.thumb_func
 Func_080dbcd8:
 	.incbin "baserom.gba", 0x000e0ccc, 0x00000070
-	.section .rom.000e0d50, "ax"
-	.balign 4
-	.global Func_080dbd5c
-Func_080dbd5c:
-	.incbin "baserom.gba", 0x000e0d50, 0x0000004c
 	.section .rom.000e0ec4, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000e0ec4, 0x00000174

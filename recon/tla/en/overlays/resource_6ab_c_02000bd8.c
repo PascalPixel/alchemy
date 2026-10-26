@@ -11,7 +11,10 @@
 // for loop over the inventory array gets the pool load and the offset giv but
 // hoists the mask into r7 (41); and the palette store loads its address before
 // its value. Tried: (u16) casts on the mask (no change), a plain store (no
-// change).
+// change), the item read into a u16 local (no change), and a for loop over
+// struct OwnerInventoryState's inventory with the flag's result kept for the
+// motion flags' zero, as the native keeps it in r7: the loop then has the
+// native's layout and giv but hoists the mask into r7 (41).
 #include "../../../../games/tla/src/scene/mars_lighthouse_star_room/mars_lighthouse_star_room.h"
 
 extern struct ObjectRuntime *Data_02004cec;

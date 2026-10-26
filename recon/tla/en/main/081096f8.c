@@ -1,4 +1,4 @@
-// Near miss, differ 8 of 192: The Broken Seal's Shop_SelectQuantity. Each
+// Near miss, differ 6 of 192: The Broken Seal's Shop_SelectQuantity. Each
 // Shop_FillSelector call loads its arguments in another order: the native
 // finishes the count in r0 (and sets r0 before r1 for the constants) before
 // r1 and r2, where this draft loads r1 and r2 first (an inline wrapper leaves
@@ -85,6 +85,10 @@ s32 Func_081096f8(s32 minimum, s32 maximum, s32 price) {
           Dma_Set(gShop_QuantityTiles, buffer, 0x84000040, REG_DMA3);
           Shop_FillSelector(30, 14, buffer);
           Shop_FillSelector(minimum + maximum, 0, buffer);
+          /* FAKEMATCH(barrier): the third fill's count is built after the
+           * second call; as plain statements, 8 of 192 instructions differ in
+           * tla-en. */
+          __asm__ volatile("");
           Shop_FillSelector(minimum + count + 1, 10, buffer);
           /* FAKEMATCH(temporary): the quantity in its own local before the
            * last fill; as result = count + 1 after VramCache_Load, 36 of 192

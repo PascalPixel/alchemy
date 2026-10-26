@@ -1,5 +1,8 @@
-// Draft of overlay 6aa's Func_0200138c, translated from its listing: differ
-// 137 of 549. Left: its shape: 556 instructions against the listing's 549.
+// Draft of overlay 6aa's Func_0200138c, translated from its listing: differ 37
+// of 549 in tla-en (was 137). Read-modify-writes are compound assignments and
+// scene numbers their SceneId symbols, as the native's pool shows. Left:
+// register choice and order through the function. The last call goes through
+// Call4, as the native sets r0 first.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -67,6 +70,13 @@ extern u8 gData_0200587c[];
 extern u8 gData_020058a8[];
 extern u8 gData_020058d4[];
 extern u8 gPartyState[];
+extern char SceneId_Ov6aaRoom1;
+extern char SceneId_Ov6aaRoom2;
+extern char SceneId_Ov6aaRoom3;
+extern char SceneId_Ov6aaRoom4;
+extern char SceneId_Ov6aaRoom5;
+extern char SceneId_Ov6aaRoom6;
+extern char SceneId_Ov6aaRoom7;
 
 s32 Func_0200138c(void) {
   s32 v_r8, v_r7, v_r5, t0, t1, t2, t8, t12, t17, t21;
@@ -84,12 +94,12 @@ s32 Func_0200138c(void) {
   Func_02002270();
   v_r7 = t1;
   v_r8 = t0;
-  if (v_r8 != 0x117)
+  if (v_r8 != (s32)&SceneId_Ov6aaRoom1)
     goto L_020093dc;
   Call1((void (*)())Func_02004dd8, 1);
   goto L_020098be;
 L_020093dc:
-  if (v_r8 != 0x118)
+  if (v_r8 != (s32)&SceneId_Ov6aaRoom2)
     goto L_0200944c;
   Call1((void (*)())Func_02004d88, 0);
   Call1((void (*)())Func_02001234, 10);
@@ -108,7 +118,7 @@ L_02009436:
   Call6((void (*)())Func_02004c30, 50, 125, 3, 3, 39, 85);
   goto L_020098be;
 L_0200944c:
-  if (v_r8 == 0x119)
+  if (v_r8 == (s32)&SceneId_Ov6aaRoom3)
     goto L_02009454;
   goto L_02009680;
 L_02009454:
@@ -129,15 +139,13 @@ L_020094ae:
     goto L_020094d6;
   Call1((void (*)())GameFlag_SetBit, 0x230);
   t23 = Value1((s32 (*)())Object_GetById, 18);
-  t24 = FIELD_AT(t23, u8, 35);
-  FIELD_AT(t23, u8, 35) = (2 | t24);
+  FIELD_AT(t23, u8, 35) |= 2;
   goto L_020094e0;
 L_020094d6:
   Call3((void (*)())Func_02004cd8, 18, 0, 0);
 L_020094e0:
   t26 = Value1((s32 (*)())Object_GetById, 20);
-  t27 = FIELD_AT(t26, u8, 35);
-  FIELD_AT(t26, u8, 35) = (2 | t27);
+  FIELD_AT(t26, u8, 35) |= 2;
   Call2((void (*)())ObjectMotion_SetActionVariant, 20, 2);
   t29 = Value1((s32 (*)())GameFlag_Test, 0xa47);
   if (t29 == 0)
@@ -184,8 +192,7 @@ L_020095b4:
   Call3((void (*)())Func_02004cd8, t48, 0, 0);
   Call3((void (*)())Func_02004cd8, 18, 0, 0);
   t51 = Value1((s32 (*)())Object_GetById, 18);
-  t52 = FIELD_AT(t51, u8, 35);
-  FIELD_AT(t51, u8, 35) = (2 | t52);
+  FIELD_AT(t51, u8, 35) |= 2;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   t55 = Value1((s32 (*)())Object_GetById, 18);
@@ -207,7 +214,7 @@ L_0200963c:
   Call1((void (*)())GameFlag_SetBit, 0x109);
   goto L_020098be;
 L_02009680:
-  if (v_r8 != 0x11a)
+  if (v_r8 != (s32)&SceneId_Ov6aaRoom4)
     goto L_020096b0;
   Call1((void (*)())Func_02004d88, 0);
   if (v_r7 == 10)
@@ -222,12 +229,11 @@ L_020096a8:
   Call1((void (*)())Func_020002bc, (s32)gData_02005418);
   goto L_020098be;
 L_020096b0:
-  if (v_r8 != 0x11b)
+  if (v_r8 != (s32)&SceneId_Ov6aaRoom5)
     goto L_02009784;
   Call1((void (*)())Func_02004d88, 0);
   t72 = Value1((s32 (*)())Object_GetById, 12);
-  t73 = FIELD_AT(t72, u8, 35);
-  FIELD_AT(t72, u8, 35) = (2 | t73);
+  FIELD_AT(t72, u8, 35) |= 2;
   t74 = Value1((s32 (*)())GameFlag_Test, 0xa4d);
   if (t74 == 0)
     goto L_0200970c;
@@ -252,7 +258,7 @@ L_0200977e:
   Func_02000c1c();
   goto L_020098be;
 L_02009784:
-  if (v_r8 == 0x11c)
+  if (v_r8 == (s32)&SceneId_Ov6aaRoom6)
     goto L_0200978c;
   goto L_020098b2;
 L_0200978c:
@@ -318,25 +324,23 @@ L_020097fa:
   FIELD_AT(t108, s32, 104) = t96;
 L_02009884:
   t109 = Value1((s32 (*)())Object_GetById, 9);
-  t110 = FIELD_AT(t109, u8, 35);
-  FIELD_AT(t109, u8, 35) = (2 | t110);
+  FIELD_AT(t109, u8, 35) |= 2;
   t111 = Value1((s32 (*)())GameFlag_Test, 0xa4e);
   if (t111 == 0)
     goto L_020098be;
   Call3((void (*)())Func_02004cd8, 8, 0x580000, 0x2b80000);
   goto L_020098be;
 L_020098b2:
-  if (v_r8 != 0x11d)
+  if (v_r8 != (s32)&SceneId_Ov6aaRoom7)
     goto L_020098be;
   Call1((void (*)())Func_02004d88, 0);
 L_020098be:
-  if (v_r8 != 0x11c)
+  if (v_r8 != (s32)&SceneId_Ov6aaRoom6)
     goto L_020098d0;
   if (v_r7 != 13)
     goto L_020098d0;
   Call1((void (*)())GameFlag_ClearBit, 0x104);
 L_020098d0:
-  Func_020045f8((s32)gData_0200586c, (s32)gData_0200587c, (s32)gData_020058a8,
-                (s32)gData_020058d4);
+  Call4((void (*)())Func_020045f8, (s32)gData_0200586c, (s32)gData_0200587c, (s32)gData_020058a8, (s32)gData_020058d4);
   return 0;
 }

@@ -1,5 +1,8 @@
-// Draft of overlay 6ab's Func_020002f4, translated from its listing: differ
-// 33 of 255. Left: its shape: 256 instructions against the listing's 255.
+// Draft of overlay 6ab's Func_020002f4, translated from its listing: differ 18
+// of 255 in tla-en (was 33). The scene compared first is SceneId_Ov6abRoom1, as
+// the native's pool shows, and the second flag test reuses an earlier
+// temporary, which gives the native's registers there. Left: the order and
+// registers of the leader's position from the two saved cells.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -28,6 +31,7 @@ s32 Object_GetById();
 s32 WaitFrames();
 extern u8 Data_02004cec[];
 extern u8 gPartyState[];
+extern char SceneId_Ov6abRoom1;
 
 s32 Func_020002f4(void) {
   s32 v_r7, v_r8, v_r10, v_r6, v_r5, t0, t1, t2, t7, t12;
@@ -45,7 +49,7 @@ s32 Func_020002f4(void) {
   v_r10 = 0x3000000;
   v_r8 = (s32)gPartyState;
   v_r7 = t1;
-  if (t0 == 0x11e)
+  if (t0 == (s32)&SceneId_Ov6abRoom1)
     goto L_02008350;
   goto L_0200853a;
 L_02008350:
@@ -81,8 +85,8 @@ L_020083ac:
 L_0200840a:
   if ((u32)(v_r7 - 9) > (u32)1)
     goto L_02008422;
-  t22 = Value1((s32 (*)())GameFlag_Test, 0x109);
-  if (t22 != 0)
+  t16 = Value1((s32 (*)())GameFlag_Test, 0x109);
+  if (t16 != 0)
     goto L_02008422;
   Func_02003e04();
 L_02008422:

@@ -46,7 +46,7 @@ SECTIONS
         "*/resource_6ac_overlay.o"(.text.x0200a708)
         "*/games/tla/src/scene/mars_lighthouse_room_m/ride_active.o"(.text)
         "*/resource_6ac_overlay.o"(.text.x0200a870)
-        "*/resource_6ac_overlay.o"(.text.x0200a9f4)
+        "*/games/tla/src/scene/mars_lighthouse_room_m/s29f4.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_m/flag_state.o"(.text)
         "*/resource_6ac_overlay.o"(.text.x0200aae8)
         "*/games/tla/src/scene/mars_lighthouse_room_m/s2df4.o"(.text)

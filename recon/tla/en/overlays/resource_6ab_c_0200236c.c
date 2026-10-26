@@ -1,111 +1,111 @@
-// Draft of overlay 6ab's Func_0200236c, translated from its listing: differ
-// 31 of 138. Left: its shape: 137 instructions against the listing's 138.
-#include "types.h"
+// Draft of overlay 6ab's Func_0200236c, rewritten from its listing as C over
+// the ride's state (the four Mars Lighthouse overlays keep one copy each):
+// differ 4 of 138 in tla-en. Left: the native loads the leader's z before the
+// car's z step, and sets r0 for the last Animation_ApplyChildValues before it
+// clears the update hook (one row each). The -10 call is declared returning
+// s32, which it does not, so its arguments are set in the native's order
+// (declared void: 6). Ride_CarSteps reloads the car for the second step test
+// into r3 as the native does (as ride->car: 10).
+#include "../../../../games/tla/src/scene/mars_lighthouse_star_room/mars_lighthouse_star_room.h"
 #include "call.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Animation_ApplyChildValues();
-s32 FieldEvent_WaitFrames();
-s32 Func_02001fcc();
-s32 Func_020041cc();
-s32 Func_0200422c();
-s32 Func_020042dc();
-s32 Func_020043c4();
-s32 Func_020043fc();
-s32 Func_0200444c();
-s32 GameFlag_ClearBit();
-s32 GameFlag_SetBit();
-s32 Object_GetById();
-s32 WaitFrames();
-extern u8 Func_02002120[];
+
+s32 Func_02001fcc(s32 a, s32 b);
+void Func_020043c4(s32 a, s32 b);
+void Func_020043fc(s32 a, s32 b);
+s32 Func_0200422c(s32 layer, s32 x, s32 z);
+void Func_02002120(void);
+void Func_020042dc(void);
+void Func_0200444c(s32 value);
+void Func_020041cc(struct ObjectRuntime *object, s32 value);
 extern u8 gData_020023c4[];
-extern u8 gPartyState[];
+void Animation_ApplyChildValues(struct ObjectRuntime *object, s32 value);
+
+struct RideEvent {
+  u8 unk000[0x15a];
+  u16 field15a;
+  u16 field15c;
+  u16 field15e;
+  u8 unk160[4];
+  u16 field164;
+  u16 field166;
+  u8 unk168[0x44];
+  s32 field1ac;
+  u8 unk1b0[2];
+  u16 started;
+  s32 field1b4;
+};
+
+struct RideCar {
+  u8 unk00[0x64];
+  s16 stopped;
+  u8 unk66[0xa];
+  s32 stepX;
+  s32 unk74;
+  s32 stepZ;
+};
+
+struct RideState {
+  s32 counter;
+  s16 active;
+  u8 unk06[0x66];
+  s32 car;
+};
+
+static __inline__ u8 *Ride_CarSteps(u8 *slot) {
+  return ((struct ObjectRuntime *)*(s32 *)slot)->unk70;
+}
 
 void Func_0200236c(void) {
-  s32 v_r6, v_r5, v_r1, v_r7, v_r3, t0, t1, t2, t3, t8;
-  s32 t9, t15, t16, t17, t18, t19, t20, t21, t22, t23;
-  s32 t24, t25, t26, t27, t28, t29, t31, t32;
+  struct RideEvent *event = Ram_HeapSlots->eventWork;
+  struct RideState *ride;
+  struct ObjectRuntime *leader;
+  s32 frame[3];
 
-  t0 = FIELD_AT(0x3000000, s32, 108);
-  v_r6 = (t0 + 0x1b2);
-  t1 = *(u16 *)v_r6;
-  v_r1 = 0x1b2;
-  v_r5 = t0;
-  if (t1 != 0)
-    goto L_0200a398;
-  t2 = FIELD_AT(v_r5, s32, 428);
-  t3 = *(s32 *)(v_r5 + (v_r1 + 2));
-  Call2((void (*)())Func_020043fc, t2, t3);
-  *(u16 *)v_r6 = 1;
-L_0200a398:
+  if (event->started == 0) {
+    Func_020043fc(event->field1ac, event->field1b4);
+    event->started = 1;
+  }
   Call1((void (*)())GameFlag_ClearBit, 0x106);
-  FIELD_AT(v_r5, u16, 358) = 0;
-  FIELD_AT(v_r5, u16, 346) = 0;
-  FIELD_AT(v_r5, u16, 350) = 0;
-  FIELD_AT(v_r5, u16, 348) = 0;
-  FIELD_AT(v_r5, u16, 356) = 0;
+  event->field166 = 0;
+  event->field15a = 0;
+  event->field15e = 0;
+  event->field15c = 0;
+  event->field164 = 0;
   Func_02001fcc(-10, 0);
-  Call2((void (*)())Func_020043c4, 0x70000, 0xe000);
-  t8 = FIELD_AT((s32)gPartyState, s32, 532);
-  t9 = Value1((s32 (*)())Object_GetById, t8);
+  Func_020043c4(0x70000, 0xe000);
+  leader = Object_GetById(gPartyState.currentOwner);
+  ride = (struct RideState *)(gData_020023c4 + 0x188);
   Call1((void (*)())GameFlag_SetBit, 0x106);
   Func_020042dc();
-  Call1((void (*)())Func_0200444c, 0);
+  Func_0200444c(0);
   Call1((void (*)())GameFlag_ClearBit, 0x106);
-  FIELD_AT(t9, s32, 108) = (s32)Func_02002120;
-  FIELD_AT(t9, u16, 6) = 0x4000;
-  Call2((void (*)())Func_020041cc, t9, 49);
-  v_r7 = ((s32)gData_020023c4 + 0x188);
-  t15 = FIELD_AT(v_r7, s32, 108);
-  t16 = FIELD_AT(t15, s16, 100);
-  v_r6 = t9;
-  if (t16 != 0)
-    goto L_0200a484;
-L_0200a424:
-  t17 = FIELD_AT(v_r6, s32, 8);
-  t18 = FIELD_AT(v_r6, s32, 16);
-  t19 = Value3((s32 (*)())Func_0200422c, 0, t17, t18);
-  t20 = FIELD_AT(v_r7, s32, 108);
-  v_r1 = t20;
-  if (t19 == 7)
-    goto L_0200a444;
-  t21 = FIELD_AT(v_r1, s32, 112);
-  t22 = FIELD_AT(v_r6, s32, 8);
-  FIELD_AT(v_r6, s32, 8) = (t22 + t21);
-  t23 = FIELD_AT(v_r6, s32, 16);
-  t24 = FIELD_AT(v_r1, s32, 120);
-  v_r3 = (t23 + t24);
-  goto L_0200a46c;
-L_0200a444:
-  t25 = FIELD_AT(v_r1, s32, 112);
-  if (t25 == 0)
-    goto L_0200a458;
-  t26 = FIELD_AT(v_r6, s32, 8);
-  FIELD_AT(v_r6, s32, 8) = ((t26 & 0xfff00000) + 0x80000);
-L_0200a458:
-  t27 = FIELD_AT(v_r7, s32, 108);
-  t28 = FIELD_AT(t27, s32, 120);
-  if (t28 == 0)
-    goto L_0200a46e;
-  t29 = FIELD_AT(v_r6, s32, 16);
-  v_r3 = ((t29 & 0xfff00000) + 0x80000);
-L_0200a46c:
-  FIELD_AT(v_r6, s32, 16) = v_r3;
-L_0200a46e:
-  FIELD_AT(v_r7, u16, 4) = 0;
-  Call1((void (*)())WaitFrames, 1);
-  t31 = FIELD_AT(v_r7, s32, 108);
-  t32 = FIELD_AT(t31, s16, 100);
-  if (t32 == 0)
-    goto L_0200a424;
-L_0200a484:
-  Call1((void (*)())FieldEvent_WaitFrames, 30);
-  FIELD_AT(v_r6, s32, 108) = 0;
-  Call2((void (*)())Animation_ApplyChildValues, v_r6, 0);
-  FIELD_AT(v_r7, u16, 4) = 0;
-  return;
+  leader->update = Func_02002120;
+  leader->angle = 0x4000;
+  Func_020041cc(leader, 49);
+  if (((struct RideCar *)ride->car)->stopped != 0)
+    goto done;
+step:
+  {
+    s32 kind = Func_0200422c(0, leader->x, leader->z);
+    struct RideCar *car = (struct RideCar *)ride->car;
+
+    if (kind != 7) {
+      leader->x += car->stepX;
+      leader->z += car->stepZ;
+    } else {
+      if (car->stepX != 0)
+        leader->x = (leader->x & 0xfff00000) + 0x80000;
+      if (((s32 *)Ride_CarSteps((u8 *)ride + 0x6c))[2] != 0)
+        leader->z = (leader->z & 0xfff00000) + 0x80000;
+    }
+    ride->active = 0;
+    WaitFrames(1);
+  }
+  if (((struct RideCar *)ride->car)->stopped == 0)
+    goto step;
+done:
+  FieldEvent_WaitFrames(30);
+  leader->update = 0;
+  Animation_ApplyChildValues(leader, 0);
+  ride->active = 0;
 }

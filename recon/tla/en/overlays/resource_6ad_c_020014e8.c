@@ -1,6 +1,10 @@
-// Draft of overlay 6ad's Func_020014e8, the twin of overlay 69f's
-// Func_020002e8: its draft (resource_69f_c_020002e8.c) with this overlay's
-// symbols: differ 14 of 83. Left: what that draft's header records.
+// Draft of overlay 6ad's Func_020014e8, the palette cycle of overlay 69f's
+// Func_020002e8 with this overlay's symbols: differ 6 of 83 in tla-en. The
+// colours' address goes through p, set before the loop, so it takes r7 as the
+// native's does (as colors throughout: 14). Left: the native builds that
+// address (mov r7, sp) inside the loop, before the __modsi3 call, where gcse's
+// PRE hoists it out of the goto loop here; and it loads the table word as
+// [table, offset] where this has [offset, table], however the sum is written.
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_room_6/jupiter_lighthouse_room_6.h"
 #include "iwram_call.h"
 #include "dma.h"
@@ -26,6 +30,7 @@ void Func_020014e8(void) {
   s32 phase;
   s32 i;
   s32 offset;
+  u16 *p;
 
   phase = (gData_0200703c / 4) % 5;
   if (gData_02007040 != 0) {
@@ -38,6 +43,7 @@ void Func_020014e8(void) {
     if (*(s16 *)(work + 350) != 0)
       return;
   }
+  p = colors;
   i = 0;
   offset = 4;
 next:
@@ -46,6 +52,6 @@ next:
   offset += 2;
   if (i <= 4)
     goto next;
-  Dma_Set(colors, (void *)0x05000184, 0x84000002, REG_DMA3);
+  Dma_Set(p, (void *)0x05000184, 0x84000002, REG_DMA3);
   gData_0200703c++;
 }

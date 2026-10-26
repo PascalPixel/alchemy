@@ -215,8 +215,8 @@ void PsynergyMenu_PreparedIconsNoOp(void);
 void PsynergyMenu_PreparedIconsSecondNoOp(void);
 s32 ItemMenu_DrawEquipPage(struct Window *window, s32 unused,
                            struct PagedList *state);
-s32 Shop_DrawItemPage(struct Window *window, s32 unused,
-                      struct PagedList *state);
+s32 ItemMenu_DrawItemPage(struct Window *window, s32 unused,
+                          struct PagedList *state);
 s32 ItemMenu_SelectItem(void);
 s32 Menu_MoveGridCursor(s32 *columnOut, s32 *rowOut, s32 direction);
 s32 Menu_ReservedStatusOne(void);

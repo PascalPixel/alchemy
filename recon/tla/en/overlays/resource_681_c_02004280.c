@@ -1,8 +1,14 @@
-// Draft, differ 85 of 229: Gaia Rock's entry setup. In the first room (scene
+// Draft, differ 49 of 229: Gaia Rock's entry setup. In the first room (scene
 // 0xb1) from entrances up to 4 it hides the leader's sprite layer, sets the
 // sky cell window, places the statues by the stage and, once that stage's flag
 // is set, starts person 8's climbing; from entrances past 8 it resets layer
-// 2's scroll; in the next rooms it picks the music for the entrance.
+// 2's scroll; in the next rooms it picks the music for the entrance. The sum
+// is a signed indexed loop with its total set before Unit_Get (so it lives in
+// r5), the angle is unsigned, and the second room's cases run 102 before 103
+// (the 100 and 101 blocks cross-jump into the third room's). Left, ordering:
+// the BG0CNT address is begun before the sky byte's store, *stage is loaded
+// into r0 rather than r3, the scroll reset's 0x3f80 is built early, and
+// Data_0202de00 stays in r5 where the native loads it from the pool twice.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"

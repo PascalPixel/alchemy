@@ -1270,63 +1270,6 @@ Func_02000818:
 	.4byte gData_02001674
 .L_0200921c:
 	.4byte gPartyState
-	.section .text.x02009230,"ax",%progbits
-	.global Func_02001230
-	.thumb_func
-Func_02001230:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	movs r2, #255
-	ldrh r3, [r0]
-	lsls r2, r2, #8
-	adds r2, #255
-	sub sp, #4
-	cmp r3, r2
-	beq .L_02009294
-	adds r7, r0, #0
-.L_02009246:
-	ldrh r3, [r7]
-	mov r8, r3
-	mov r0, r8
-	bl Object_GetById
-	adds r5, r0, #0
-	adds r1, r5, #0
-	adds r1, #89
-	movs r2, #2
-	ldrsh r6, [r7, r2]
-	ldrb r2, [r1]
-	movs r3, #4
-	ldrsh r4, [r7, r3]
-	movs r3, #254
-	ands r3, r2
-	strb r3, [r1]
-	movs r1, #0
-	str r4, [sp, #0]
-	bl ObjectDispatch_SetSingleChildFlags
-	ldr r4, [sp, #0]
-	lsls r6, r6, #16
-	lsls r4, r4, #16
-	lsrs r4, r4, #16
-	lsrs r6, r6, #16
-	adds r5, #34
-	ldrb r3, [r5]
-	adds r2, r4, #0
-	mov r0, r8
-	adds r1, r6, #0
-	adds r7, #6
-	bl Func_02001320
-	movs r2, #255
-	ldrh r3, [r7]
-	lsls r2, r2, #8
-	adds r2, #255
-	cmp r3, r2
-	bne .L_02009246
-.L_02009294:
-	add sp, #4
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
 	.section .text.x0200929c,"ax",%progbits
 	.global Func_0200129c
 	.thumb_func

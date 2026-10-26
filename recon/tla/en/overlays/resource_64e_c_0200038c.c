@@ -6,6 +6,13 @@
 // stores the zeroed velocities in another order. Copied in overlays 691 and
 // 692 (copy group 64e:Func_0200038c). Six minutes of alchemy permute: 18,
 // by rewrites that are no source form.
+// Measured (2026-10-26): most spots left are a load the native issues one slot
+// after a store to memory it may alias (through a pointer from a call or a
+// load, against the stack, the object or a global), with an independent
+// instruction between; -mthumb-slow-loads delays only a load from the address
+// just stored, so this draft issues the load at once. A matched pointer
+// parameter (Gabomba Catacombs' Func_020008a0) cannot alias the stack and
+// shows no gap, which fits. No source form found to make it wait.
 #include "types.h"
 #include "party_state.h"
 

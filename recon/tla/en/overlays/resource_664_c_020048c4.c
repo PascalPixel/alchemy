@@ -1,10 +1,16 @@
-// Draft, differ 52 of 219: finds the paired object the leader stands on (the
-// pair list gData_0200621c, three halfwords an entry, ended by 0xffff) and,
-// when neither of the pair is busy, swaps them inside an event over eight
-// frames as Func_020007b4 does a step at a time, the leader sinking with
-// the first; then sets the first's flag, clears the second's and writes
-// both cells again. Left: registers and order in the search and around
-// the transfers.
+// Draft, differ 34 of 219 (was 52): finds the paired object the leader stands
+// on (the pair list gData_0200621c, three halfwords an entry, ended by 0xffff)
+// and, when neither of the pair is busy, swaps them inside an event over eight
+// frames as Func_020007b4 does a step at a time, the leader sinking with the
+// first; then sets the first's flag, clears the second's and writes both cells
+// again. Measured: the search is a goto loop, as the native rebuilds 0xffff at
+// each test (a do-while hoists it into r9; 52 to 42); the busy bytes are read
+// first's then second's (38); the step counter moves after the wait (34).
+// Left: register choice only, the pair pointer and id swapped (r5 and r6; the
+// pointer ranks above the id in global.c, 0.71 against 0.67) and the leader
+// and busy swapped (r9 and r10). Tried: the declarations reordered, id as s32
+// or u16, the first test on the table itself (51), 25 minutes of alchemy
+// permute.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
@@ -34,19 +40,20 @@ void Func_020048c4(void) {
 
   leader = Object_GetById(gPartyState.currentOwner);
   pair = gData_0200621c;
-  if (*pair != 0xffff) {
-    do {
-      id = *pair;
-      first = Object_GetById(id);
-      if (first->x >> 20 == leader->x >> 20 &&
-          first->z >> 20 == leader->z >> 20) {
-        second = Object_GetById(id - ((id & 1) << 1) + 1);
-        break;
-      }
-      pair += 3;
-    } while (*pair != 0xffff);
+  if (*pair == 0xffff)
+    goto found;
+search:
+  id = *pair;
+  first = Object_GetById(id);
+  if (first->x >> 20 == leader->x >> 20 && first->z >> 20 == leader->z >> 20) {
+    second = Object_GetById(id - ((id & 1) << 1) + 1);
+    goto found;
   }
-  busy = ((u8 *)second)[0x63] | ((u8 *)first)[0x63];
+  pair += 3;
+  if (*pair != 0xffff)
+    goto search;
+found:
+  busy = ((u8 *)first)[0x63] | ((u8 *)second)[0x63];
   if (busy != 0)
     return;
   Func_02005e14();
@@ -78,8 +85,8 @@ step:
   leader->y += -0x38000;
   leader->terrainHeight = leader->y;
   first->scaleY += -0x1f00;
-  i++;
   WaitFrames(1);
+  i++;
   if (i != 8)
     goto step;
   leader->motionFlags = 3;

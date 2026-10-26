@@ -1,12 +1,9 @@
-// Draft, differ 50 of 308: Aqua Rock's entry setup: in each room it shows the
-// statues already filled by their flags (or dims those still empty), opens
-// what the story has opened and arms the room's water and cell handlers by
-// entrance.
 #include "types.h"
 #include "lib/call.h"
 #include "object_runtime.h"
 #include "party_state.h"
 #include "ram_buffer.h"
+#include "scene_ids.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -15,13 +12,6 @@
    } *)(base))                                                                 \
        ->v)
 
-extern char SceneId_Ov67cRoom1;
-extern char SceneId_Ov67cRoom2;
-extern char SceneId_Ov67cRoom3;
-extern char SceneId_Ov67cRoom4;
-extern char SceneId_Ov67cRoom5;
-extern char SceneId_Ov67cRoom6;
-extern char SceneId_Ov67cRoom9;
 extern const u8 gData_020040f4[];
 extern const u8 gData_02004102[];
 extern const u8 gData_02004106[];
@@ -37,7 +27,8 @@ void Func_02003d1c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02003ddc(s32 id, s32 x, s32 z);
 void Func_02002ffc(void);
 void Func_02000b5c(void);
-void Func_02003ab0(const u8 *a, const u8 *b, void (*handler)(void));
+// Returns what its closing Scheduler_AddOrUpdateCallback call leaves in r0.
+s32 Func_02003ab0(const u8 *a, const u8 *b, void (*handler)(void));
 void Func_02003ecc(s32 value);
 void Func_0200107c(s32 a, s32 b);
 void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
@@ -46,12 +37,16 @@ void Func_02001f04(void);
 void Func_02001fcc(void);
 void Func_02001ea0(struct ObjectRuntime *object);
 
+/// Aqua Rock's entry setup: in each room it shows the statues already filled by
+/// their flags (or dims those still empty), opens what the story has opened and
+/// arms the room's water and cell handlers by entrance.
 s32 Func_02002020(void) {
+  s32 scene = gPartyState.scene;
   s32 entrance = gPartyState.entrance;
   struct ObjectRuntime *object;
 
   FIELD_AT(Ram_HeapSlots->eventWork, s32, 428) = 0x204;
-  if (gPartyState.scene == (s32)&SceneId_Ov67cRoom1) {
+  if (scene == (s32)&SceneId_Ov67cRoom1) {
     if (GameFlag_Test(0x230)) {
       Call1((void (*)())Func_02001e78, 8);
       Call2((void (*)())Object_SetModeById, 8, 3);
@@ -64,7 +59,7 @@ s32 Func_02002020(void) {
     } else {
       Call2((void (*)())Object_SetPartAttribute, Object_GetById(9), 6);
     }
-  } else if (gPartyState.scene == (s32)&SceneId_Ov67cRoom2) {
+  } else if (scene == (s32)&SceneId_Ov67cRoom2) {
     if (GameFlag_Test(0x240)) {
       Call6((void (*)())Func_02003d24, 118, 15, 5, 32, 110, 15);
       Call6((void (*)())Func_02003d1c, 59, 16, 5, 32, 46, 16);
@@ -81,10 +76,10 @@ s32 Func_02002020(void) {
       object->y = 0;
       object->terrainHeight = 0;
     }
-  } else if (gPartyState.scene == (s32)&SceneId_Ov67cRoom3) {
+  } else if (scene == (s32)&SceneId_Ov67cRoom3) {
     if (entrance == 7)
       Func_02002ffc();
-  } else if (gPartyState.scene == (s32)&SceneId_Ov67cRoom4) {
+  } else if (scene == (s32)&SceneId_Ov67cRoom4) {
     Call1((void (*)())Func_02001e78, 10);
     Call2((void (*)())Object_SetModeById, 10, 3);
     Call1((void (*)())Func_02001e78, 11);
@@ -107,12 +102,12 @@ s32 Func_02002020(void) {
       object->terrainHeight = -0x200000;
       object->y = -0x200000;
     }
-  } else if (gPartyState.scene == (s32)&SceneId_Ov67cRoom5) {
+  } else if (scene == (s32)&SceneId_Ov67cRoom5) {
     if ((u32)(entrance - 5) <= 1) {
       Func_02003ab0(gData_020040f4, gData_02004102, Func_02001fcc);
       Call1((void (*)())Func_02003ecc, 170);
     }
-  } else if (gPartyState.scene == (s32)&SceneId_Ov67cRoom6) {
+  } else if (scene == (s32)&SceneId_Ov67cRoom6) {
     if (entrance == 5 || entrance == 7) {
       Func_02003ab0(gData_02004106, gData_02004114, Func_02001fcc);
       Call1((void (*)())Func_02003ecc, 170);
@@ -124,12 +119,17 @@ s32 Func_02002020(void) {
     }
     object = Object_GetById(12);
     Call2((void (*)())ObjectDispatch_SetSingleChildFlags, object, 0);
-    object->collisionFlags = 0;
+    /* FAKEMATCH(one-pass): the collision byte stored in a once-only block, so
+     * the priority byte is addressed after the store; as a plain store, 2 of
+     * 308 instructions differ in tla-en. */
+    do {
+      object->collisionFlags = 0;
+    } while (0);
     object->priorityFlags |= 2;
     object->update = (void (*)(void))Func_02001ea0;
     if (!GameFlag_Test(0x109) && entrance == 13)
       Func_02001f04();
-  } else if (gPartyState.scene == (s32)&SceneId_Ov67cRoom9) {
+  } else if (scene == (s32)&SceneId_Ov67cRoom9) {
     if (GameFlag_Test(0x24b)) {
       Call2((void (*)())Object_SetPartAttribute, Object_GetById(9), 5);
       Call1((void (*)())Func_02001e78, 9);

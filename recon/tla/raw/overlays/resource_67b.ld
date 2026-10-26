@@ -7,7 +7,7 @@ SECTIONS
         "*/games/tla/src/field/common/object/prepare_object.o"(.text)
         "*/games/tla/src/scene/aqua_rock/s00d0.o"(.text)
         "*/games/tla/src/field/common/effect/move.o"(.text)
-        "*/resource_67b_overlay.o"(.text.x0200815c)
+        "*/games/tla/src/scene/aqua_rock/s015c.o"(.text)
         "*/games/tla/src/scene/aqua_rock/scene_tables.o"(.text)
         "*/games/tla/src/scene/aqua_rock/s0344.o"(.text)
         "*/games/tla/src/scene/aqua_rock/exits.o"(.text)

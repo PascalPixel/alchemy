@@ -9,7 +9,7 @@ SECTIONS
         "*/games/tla/src/scene/alhafran_cave/s07a4.o"(.text)
         "*/resource_66a_overlay.o"(.text.x02008818)
         "*/games/tla/src/scene/alhafran_cave/s1220.o"(.text)
-        "*/resource_66a_overlay.o"(.text.x02009230)
+        "*/games/tla/src/scene/alhafran_cave/s1230.o"(.text)
         "*/resource_66a_overlay.o"(.text.x0200929c)
         "*/games/tla/src/scene/alhafran_cave/s1320.o"(.text)
         "*/games/tla/src/scene/alhafran_cave/import.o"(.text)

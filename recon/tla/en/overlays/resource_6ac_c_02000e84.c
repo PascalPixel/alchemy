@@ -1,14 +1,13 @@
-// Draft, differ 22 of 237: rewritten from the listing; the matching twin of
-// Mars Lighthouse entrance's Func_02001930 for this overlay's rooms. Sets the
-// blend in rooms 2 to 6, places objects 8 and 9 by the entrance in room 6, sets
-// up room 1's cells for its entrances, and under flag 0xa30 loads the room's
-// palette. Func_02000058 is declared returning s32 (it returns nothing; as
-// void, its arguments are set r0 first: 36), which would be a signature device.
-// Left: GCSE shares room 6's id between the two tests, so reload puts it in r2
-// where the native has r3 (permute only fixed it with a dead store between
-// them), the blend's stack arguments are built in another order even through a
-// forwarding inline, and the closing palette call takes its pool loads in
-// another order.
+// Draft, differ 22 of 237: rewritten from the listing. Sets the blend in rooms
+// 2 to 6, places objects 8 and 9 by the entrance in room 6, sets up room 1's
+// cells for its entrances, and under flag 0xa30 loads the room's palette as
+// Mars Lighthouse entrance's Func_02001930 does. Func_02000058 is declared
+// returning s32 (it returns nothing; as void, its arguments are set r0 first:
+// 36), which would be a signature device. Left: GCSE shares room 6's id between
+// the two tests, so reload puts it in r2 where the native has r3 (permute only
+// fixed it with a dead store between them), the blend's stack arguments are
+// built in another order even through a forwarding inline, and the closing
+// palette call takes its pool loads in another order.
 #include "../../../../games/tla/src/scene/mars_lighthouse_room_m/mars_lighthouse_room_m.h"
 
 extern char SceneId_Ov6a8Room2;

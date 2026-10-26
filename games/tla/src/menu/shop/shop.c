@@ -104,7 +104,6 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x,
   return sprite;
 }
 
-
 void Shop_RestoreSceneTiles(s32 layer) {
   u8 *map = Ram_HeapSlots->eventWork;
   u8 *work = Ram_HeapSlots->block32;
@@ -117,7 +116,7 @@ void Shop_RestoreSceneTiles(s32 layer) {
 }
 
 void Shop_InitializeEffect(void) {
-  BattleEffect_ApplyColorToTargetBufferFar((s32)Ram_HeapSlots->eventWork + 0x222,
-                                       1);
+  BattleEffect_ApplyColorToTargetBufferFar(
+      (s32)Ram_HeapSlots->eventWork + 0x222, 1);
   BattleEffect_StartBufferInterpolationFar(16);
 }

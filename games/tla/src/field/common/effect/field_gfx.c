@@ -15,7 +15,7 @@
 void Func_080d67e8(void);
 
 void BattleEffect_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
-                                 s32 frames);
+                                     s32 frames);
 
 #define Resource_DecodeByteLzInRam                                             \
   ((void (*)(const void *, void *))Resource_DecodeByteLzInRam)

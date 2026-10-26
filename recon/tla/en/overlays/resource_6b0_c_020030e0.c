@@ -1,6 +1,6 @@
-// Draft of overlay 6b0's Func_020030e0, the twin of overlay 698's
-// Func_0200180c: its draft (resource_698_c_0200180c.c) with this overlay's
-// symbols: differ 47 of 76. Left: what that draft's header records.
+// Draft, differ 47 of 76: overlay 6b0's copy of the spot check drafted in
+// resource_698_c_0200180c.c, with this overlay's symbols;
+// resource_6ab_c_02003f9c.c says what is left.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"

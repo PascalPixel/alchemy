@@ -5,7 +5,6 @@
 // which the earlier draft left out. Left, allocation: the native keeps the
 // leader in r7, spread in r8 and the count in r10 (here r8, r10 and r7), and
 // its bitfield mask comes from r0 through a copy.
-// overlay 691's Func_020034ac (differ 81 of 122).
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"

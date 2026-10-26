@@ -333,6 +333,41 @@ tileLayouts(void)
 		}
 }
 
+/* Sprite animations are named commands; each packs as a command byte and its
+ * argument, with a jump counted in commands and written as a byte offset. */
+static void
+spriteAnimations(void)
+{
+	textFile("bank.tsv", "sprite\twidth\theight\tscale\tdraw\tadjust_x\t"
+						 "adjust_y\tbox_x\tbox_y\tcodec\tframes\tanimations\n"
+						 "Walker\t8\t8\t0x100\t0\t0\t0\t0\t0\t0\t-\tWalker\n");
+	textFile("Walker.tsv",
+			 "anim\tframe 3 6, wait 2, kind 17, jump 1\n"
+			 "anim\tblank 4, command 242 10, play 0, hold 1, end\n"
+			 "anim\tframe 0 1, loop\n");
+	RUN("graphics", true, "bank.tsv", "bank.sprites");
+	Buffer bank = readFile("bank.sprites");
+	const char *scripts[] = {
+		"Sprite_Walker_Animation0:\n"
+		"\t.byte 0x03, 0x06, 0xf5, 0x02, 0xf0, 0x11, 0xfd, 0x02\n",
+		"Sprite_Walker_Animation1:\n"
+		"\t.byte 0xff, 0x04, 0xf2, 0x0a, 0xfe, 0x00, 0xf1, 0x01, 0xef, 0x00\n",
+		"Sprite_Walker_Animation2:\n\t.byte 0x00, 0x01, 0xfd, 0x00\n"};
+	for (size_t i = 0; i < sizeof(scripts) / sizeof(*scripts); i++)
+		check(strstr((char *) bank.data, scripts[i]) != NULL,
+			  "animation commands pack as command and argument bytes");
+	free(bank.data);
+	const char *rejected[] = {"anim\tframe 0 1, jump 0\n",
+							  "anim\tframe 0 1, jump 2\n",
+							  "anim\tframe 239 1\n", "anim\tcommand 253 0\n",
+							  "anim\tframe 0\n", "anim\tplay\n"};
+	for (size_t i = 0; i < sizeof(rejected) / sizeof(*rejected); i++)
+	{
+		textFile("Walker.tsv", rejected[i]);
+		RUN("graphics", false, "bank.tsv", "bank.sprites");
+	}
+}
+
 static void
 audio(void)
 {
@@ -733,6 +768,7 @@ main(int argc, char **argv)
 	assembly();
 	graphics();
 	tileLayouts();
+	spriteAnimations();
 	audio();
 	music();
 	catalog();

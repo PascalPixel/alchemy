@@ -1,2 +1,2 @@
-anim	00 0a f1 00
-anim	00 02 01 02 02 02 03 02 04 02 05 02 06 14 ff 64 f1 00
+anim	frame 0 10, hold
+anim	frame 0 2, frame 1 2, frame 2 2, frame 3 2, frame 4 2, frame 5 2, frame 6 20, blank 100, hold

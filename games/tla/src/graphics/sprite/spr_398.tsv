@@ -1,4 +1,4 @@
-anim	f0 11 00 32 f1 00
-anim	f0 11 00 14 fd 00
-anim	f0 11 01 14 02 14 03 14 fd 00
-anim	f0 11 03 14 02 14 01 14 fd 00
+anim	kind 17, frame 0 50, hold
+anim	kind 17, frame 0 20, loop
+anim	kind 17, frame 1 20, frame 2 20, frame 3 20, loop
+anim	kind 17, frame 3 20, frame 2 20, frame 1 20, loop

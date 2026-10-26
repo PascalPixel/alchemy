@@ -1,4 +1,4 @@
-anim	04 07 f1 00
-anim	04 07 f1 00
-anim	fe 03
-anim	00 02 01 02 02 02 03 02 04 02 fe 01
+anim	frame 4 7, hold
+anim	frame 4 7, hold
+anim	play 3
+anim	frame 0 2, frame 1 2, frame 2 2, frame 3 2, frame 4 2, play 1

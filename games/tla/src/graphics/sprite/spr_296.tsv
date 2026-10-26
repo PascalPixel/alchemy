@@ -1,5 +1,5 @@
-anim	00 10 03 10 06 10 03 10 fd 00
-anim	00 10 03 10 06 10 03 10 fd 00
-anim	00 10 03 10 06 10 03 10 fd 00
-anim	00 10 03 10 06 10 03 10 fd 00
-anim	00 10 03 10 06 10 03 10 fd 00
+anim	frame 0 16, frame 3 16, frame 6 16, frame 3 16, loop
+anim	frame 0 16, frame 3 16, frame 6 16, frame 3 16, loop
+anim	frame 0 16, frame 3 16, frame 6 16, frame 3 16, loop
+anim	frame 0 16, frame 3 16, frame 6 16, frame 3 16, loop
+anim	frame 0 16, frame 3 16, frame 6 16, frame 3 16, loop

@@ -1,23 +1,23 @@
-anim	00 04 f1 00
-anim	00 82 05 08 00 50 19 08 1e a0 19 08 00 5a 05 08 00 2d 05 06 fd 00
-anim	3c 06 23 06 28 06 2d 06 32 06 37 06 fd 00
-anim	0a 0a fe 01
-anim	14 05 00 03 0f 05 00 03 14 05 00 03 0f 05 00 03 fe 01
-anim	5a 03 41 04 46 03 4b 03 50 04 55 03 fd 00
-anim	fe 01
-anim	fe 01
-anim	fe 01
-anim	00 82 05 08 00 50 19 08 1e a0 19 08 00 5a 05 08 00 2d 05 06 fd 00
-anim	fe 01
-anim	fe 01
-anim	fe 01
-anim	fe 01
-anim	fe 01
-anim	fe 01
-anim	f0 11 5f 1e f1 00
-anim	f0 11 60 78 f1 00
-anim	f0 11 61 78 f1 00
-anim	f0 11 62 05 63 78 f1 00
-anim	fe 01
-anim	f0 11 5f 1e f1 00
-anim	0a 0a f1 00
+anim	frame 0 4, hold
+anim	frame 0 130, frame 5 8, frame 0 80, frame 25 8, frame 30 160, frame 25 8, frame 0 90, frame 5 8, frame 0 45, frame 5 6, loop
+anim	frame 60 6, frame 35 6, frame 40 6, frame 45 6, frame 50 6, frame 55 6, loop
+anim	frame 10 10, play 1
+anim	frame 20 5, frame 0 3, frame 15 5, frame 0 3, frame 20 5, frame 0 3, frame 15 5, frame 0 3, play 1
+anim	frame 90 3, frame 65 4, frame 70 3, frame 75 3, frame 80 4, frame 85 3, loop
+anim	play 1
+anim	play 1
+anim	play 1
+anim	frame 0 130, frame 5 8, frame 0 80, frame 25 8, frame 30 160, frame 25 8, frame 0 90, frame 5 8, frame 0 45, frame 5 6, loop
+anim	play 1
+anim	play 1
+anim	play 1
+anim	play 1
+anim	play 1
+anim	play 1
+anim	kind 17, frame 95 30, hold
+anim	kind 17, frame 96 120, hold
+anim	kind 17, frame 97 120, hold
+anim	kind 17, frame 98 5, frame 99 120, hold
+anim	play 1
+anim	kind 17, frame 95 30, hold
+anim	frame 10 10, hold

@@ -54,6 +54,84 @@ integer(const char *s, bool sign, unsigned max)
 	return negative ? (unsigned) -v : (unsigned) v;
 }
 
+/*
+ * An animation script is a list of commands, two bytes each, which the field
+ * engine reads (enum AnimationCommand in games/tbs/src/field/field_internal.h).
+ * An anim line names them, separated by commas:
+ *
+ *   frame N D   show frame N for D frames (N below 239)
+ *   wait D      keep the current frame D frames longer
+ *   blank D     show nothing for D frames
+ *   kind N      use facing table N
+ *   play N      switch to animation N
+ *   loop        continue at the first command
+ *   jump N      continue at command N
+ *   hold        stay on this command for good
+ *   end         blank the sprite and stop
+ *   command C A a command with no name here, C, with argument A
+ *
+ * hold and end take an optional argument, which the engine ignores.
+ */
+static const struct
+{
+	const char *name;
+	unsigned code;
+	bool optional;
+} animationCommands[] = {
+	{"end", 239, true},	  {"kind", 240, false}, {"hold", 241, true},
+	{"wait", 245, false}, {"jump", 253, false}, {"play", 254, false},
+	{"blank", 255, false},
+};
+enum
+{
+	ANIMATION_COMMAND_COUNT =
+		sizeof(animationCommands) / sizeof(*animationCommands)
+};
+
+static Buffer
+animationScript(const char *text)
+{
+	Buffer script = {0};
+	Strings commands = split(text, ',');
+	for (size_t i = 0; i < commands.len; i++)
+	{
+		Strings words = split(trim(commands.items[i]), ' ');
+		const char *name = words.items[0];
+		size_t n = words.len;
+		unsigned code = 256,
+				 argument = n > 1 ? number(words.items[n - 1], 10, 255) : 0;
+		if (!strcmp(name, "frame") && n == 3)
+			code = number(words.items[1], 10, 238);
+		else if (!strcmp(name, "loop") && n == 1)
+			code = 253;
+		else if (!strcmp(name, "command") && n == 3)
+		{
+			code = number(words.items[1], 10, 255);
+			for (size_t j = 0; j < ANIMATION_COMMAND_COUNT; j++)
+				if (code < 239 || animationCommands[j].code == code)
+					fail("command %u has a name", code);
+		}
+		for (size_t j = 0; code == 256 && j < ANIMATION_COMMAND_COUNT; j++)
+			if (!strcmp(name, animationCommands[j].name) &&
+				(n == 2 || (n == 1 && animationCommands[j].optional)))
+				code = animationCommands[j].code;
+		if (code == 256)
+			fail("unknown animation command: %s", commands.items[i]);
+		// The engine jumps to a byte offset; the text counts commands.
+		if (!strcmp(name, "jump"))
+		{
+			if (!argument || argument >= commands.len || argument > 127)
+				fail("jump %u is the first command or past the end", argument);
+			argument *= 2;
+		}
+		byte(&script, code);
+		byte(&script, argument);
+		freeStrings(&words);
+	}
+	freeStrings(&commands);
+	return script;
+}
+
 static void
 metadata(Sprite *sprite, const Buffer *data)
 {
@@ -70,12 +148,9 @@ metadata(Sprite *sprite, const Buffer *data)
 		Strings values = split(tab, ' ');
 		if (!strcmp(line, "anim"))
 		{
-			Buffer script = {0};
-			for (size_t j = 0; j < values.len; j++)
-				byte(&script, number(values.items[j], 16, 255));
 			sprite->scripts = resize(sprite->scripts, sprite->scriptCount + 1,
 									 sizeof(Buffer));
-			sprite->scripts[sprite->scriptCount++] = script;
+			sprite->scripts[sprite->scriptCount++] = animationScript(tab);
 		}
 		else if (!strcmp(line, "animations"))
 		{

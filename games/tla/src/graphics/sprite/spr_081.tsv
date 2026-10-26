@@ -1,3 +1,3 @@
-anim	f0 11 1b 09 f1 00
-anim	09 96 06 06 03 08 00 14 03 18 00 15 03 12 00 14 03 18 00 12 03 14 00 0f 03 14 00 12 06 0a 09 f0 fd 00
-anim	0c 09 0f 09 12 09 15 09 18 09 15 09 12 09 0f 09 fd 00
+anim	kind 17, frame 27 9, hold
+anim	frame 9 150, frame 6 6, frame 3 8, frame 0 20, frame 3 24, frame 0 21, frame 3 18, frame 0 20, frame 3 24, frame 0 18, frame 3 20, frame 0 15, frame 3 20, frame 0 18, frame 6 10, frame 9 240, loop
+anim	frame 12 9, frame 15 9, frame 18 9, frame 21 9, frame 24 9, frame 21 9, frame 18 9, frame 15 9, loop

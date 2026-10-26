@@ -1,16 +1,16 @@
-anim	03 04 f1 00
-anim	00 3c f1 00
-anim	03 3c f1 00
-anim	06 3c f1 00
-anim	01 03 02 03 fe 02
-anim	04 03 05 03 fe 03
-anim	05 03 04 03 fe 02
-anim	02 03 01 03 fe 01
-anim	07 04 f1 00
-anim	07 3c f1 00
-anim	07 3c f1 00
-anim	09 3c f1 00
-anim	07 03 07 03 fe 0a
-anim	07 03 08 03 fe 0b
-anim	08 03 07 03 fe 0a
-anim	07 03 07 03 fe 09
+anim	frame 3 4, hold
+anim	frame 0 60, hold
+anim	frame 3 60, hold
+anim	frame 6 60, hold
+anim	frame 1 3, frame 2 3, play 2
+anim	frame 4 3, frame 5 3, play 3
+anim	frame 5 3, frame 4 3, play 2
+anim	frame 2 3, frame 1 3, play 1
+anim	frame 7 4, hold
+anim	frame 7 60, hold
+anim	frame 7 60, hold
+anim	frame 9 60, hold
+anim	frame 7 3, frame 7 3, play 10
+anim	frame 7 3, frame 8 3, play 11
+anim	frame 8 3, frame 7 3, play 10
+anim	frame 7 3, frame 7 3, play 9

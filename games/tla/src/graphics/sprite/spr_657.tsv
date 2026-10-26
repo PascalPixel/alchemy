@@ -1,2 +1,2 @@
-anim	00 09 f1 00
-anim	01 09 f1 00
+anim	frame 0 9, hold
+anim	frame 1 9, hold

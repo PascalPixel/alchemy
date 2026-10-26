@@ -1,4 +1,4 @@
-anim	0a 02 ff 64 f1 00
-anim	00 04 01 05 02 06 03 07 04 07 ff 01 f1 00
-anim	05 05 06 05 07 05 08 05 05 05 06 05 07 05 08 05 05 05 06 05 07 05 08 05 05 05 06 05 07 05 08 05 05 05 06 05 07 05 08 05 05 05 06 05 07 05 08 05 05 05 06 05 07 05 08 05 09 04 0a 03 ff 01 f1 00
-anim	00 04 fd 00
+anim	frame 10 2, blank 100, hold
+anim	frame 0 4, frame 1 5, frame 2 6, frame 3 7, frame 4 7, blank 1, hold
+anim	frame 5 5, frame 6 5, frame 7 5, frame 8 5, frame 5 5, frame 6 5, frame 7 5, frame 8 5, frame 5 5, frame 6 5, frame 7 5, frame 8 5, frame 5 5, frame 6 5, frame 7 5, frame 8 5, frame 5 5, frame 6 5, frame 7 5, frame 8 5, frame 5 5, frame 6 5, frame 7 5, frame 8 5, frame 5 5, frame 6 5, frame 7 5, frame 8 5, frame 9 4, frame 10 3, blank 1, hold
+anim	frame 0 4, loop

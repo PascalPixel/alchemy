@@ -1,5 +1,5 @@
-anim	00 05 f1 00
-anim	00 1e 01 0f 02 28 fd 00
-anim	03 19 04 14 05 19 06 14 fd 00
-anim	07 1e 08 23 09 37 08 23 07 28 fd 00
-anim	0a 0a f1 00
+anim	frame 0 5, hold
+anim	frame 0 30, frame 1 15, frame 2 40, loop
+anim	frame 3 25, frame 4 20, frame 5 25, frame 6 20, loop
+anim	frame 7 30, frame 8 35, frame 9 55, frame 8 35, frame 7 40, loop
+anim	frame 10 10, hold

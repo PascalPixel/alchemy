@@ -1,8 +1,8 @@
-anim	05 14 06 14 07 14 08 14 09 14 f1 00
-anim	09 14 f1 00
-anim	00 14 01 14 02 14 03 14 04 14 f1 00
-anim	04 14 f1 00
-anim	05 14 06 14 07 14 08 14 09 50 fd 00
-anim	00 14 01 14 02 14 03 14 04 50 fd 00
-anim	f2 20 09 14 f1 00
-anim	f2 20 04 14 f1 00
+anim	frame 5 20, frame 6 20, frame 7 20, frame 8 20, frame 9 20, hold
+anim	frame 9 20, hold
+anim	frame 0 20, frame 1 20, frame 2 20, frame 3 20, frame 4 20, hold
+anim	frame 4 20, hold
+anim	frame 5 20, frame 6 20, frame 7 20, frame 8 20, frame 9 80, loop
+anim	frame 0 20, frame 1 20, frame 2 20, frame 3 20, frame 4 80, loop
+anim	command 242 32, frame 9 20, hold
+anim	command 242 32, frame 4 20, hold

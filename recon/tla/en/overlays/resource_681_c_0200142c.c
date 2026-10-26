@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 75; left: the Iwram_MulQ16
+// address loads before the cosine call; a barrier after that call fixes it but
+// then the angle step reads the angle before the speed.
 // Near miss, differ 2 of 75 (was 67): the native loads the multiply
 // routine's address (ldr r6) after the cosine call, beside the radius; this
 // draft loads it before the call, in the free cycle after the angle is

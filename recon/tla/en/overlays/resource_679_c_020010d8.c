@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 46; left: the native
+// stores nextFrame before copying the parent's sprite pointer out of r8; no
+// single barrier or one-pass block after any statement changes it.
 // Draft of Func_020010d8 (overlay 679, 46 instructions), differ 4: spawns
 // object 14 above the given object, copies its ground height and sprite
 // priority. Loading the child's sprite before copying the height took it from

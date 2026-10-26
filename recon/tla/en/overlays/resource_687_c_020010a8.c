@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 41; left: the options
+// pointer's stack store and a zero argument are scheduled otherwise.
 // Near miss (6 of 41 instructions differ): the native loads the
 // 0xfff20000 offset from the pool before it masks the random value, and
 // stores the spark's address to the stack before the position loads. Also

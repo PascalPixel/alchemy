@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 46; left: as overlay 679's
+// Func_020010d8 (resource_679_c_020010d8.c), the parent's sprite copy before
+// nextFrame's store.
 // differ 8: the listing loads the child's sprite between the load and the
 // store of terrainHeight and the pool address after them, and the parent
 // sprite's attribute byte before the child's. Assigning the sprite after the

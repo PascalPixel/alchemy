@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 79; left: the message
+// counter's sign extension (lsls, asrs) is scheduled around its store
+// otherwise.
 // Near miss of Func_02000d4c of overlay 682 (79 instructions, 4 differ): one
 // scheduling row. The fifth argument, volatile, is read from the stack before
 // r1 and r2 are set for the first Func_02002a2c call, as the native has it (6

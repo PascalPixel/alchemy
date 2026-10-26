@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 56; left: the first
+// parameter's copy and its + 8 come after the second's here, before it in the
+// native.
 // Draft, differ 6 of 56: the distance test and the facing within 0x1000 of
 // the angle to the other object. Self's x is taken before other's and the
 // left test (angle - 0x1000) declared before the right, with the tests in the

@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 6 of 175; left: in three places
+// the object's x loads one row before the constant added to it.
 // Draft of overlay 6a0's Func_020005e8, translated from its listing: differ 6
 // of 175. Left: instruction order around
 //   movs r3, #0

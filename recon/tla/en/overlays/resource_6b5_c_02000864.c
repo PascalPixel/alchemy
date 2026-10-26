@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 329; left: the payload's
+// 0x43 store, as recorded below; no single barrier or one-pass block after any
+// statement changes it.
 // Draft of overlay 6b5's Func_02000864 (0x02008864), ported from ☀️'s
 // EV10_TOUCH: differ 4 of 329. Devices in place, each measured: the 0x173
 // test's result kept while the scene symbol is loaded once for both

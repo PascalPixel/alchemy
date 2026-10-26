@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "battle_unit.h"
+#include "edition.h"
 
 struct ItemMenuCursor {
   u8 unk00[5];
@@ -30,6 +31,19 @@ void UiWork_SetParamNibbleFar(s32 color);
 struct BattleUnit *Unit_Get(s32 owner);
 void WaitFrames(s32 frames);
 
+// The Japanese edition draws the Lv, HP and PP labels through
+// UiText_DrawStringInWindowFar, and the four stats a digit wider, starting a
+// tile further left.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define DRAW_STAT_LABEL UiText_DrawStringInWindowFar
+#define STAT_DIGITS 4
+#define STAT_X 192
+#else
+#define DRAW_STAT_LABEL UiText_DrawStringAtOffsetFar
+#define STAT_DIGITS 3
+#define STAT_X 200
+#endif
+
 void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags) {
   struct ItemMenuState *menu;
   struct BattleUnit *unit;
@@ -43,14 +57,14 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags) {
   UiText_DrawStringAtOffsetFar(unit->name, window, 40, 0);
   UiText_DrawCharacterAtOffsetFar(unit->classIndex + (s32)MsgClassName, window,
                                   0, 32);
-  UiText_DrawStringAtOffsetFar(gMenu_LvString, window, 104, 0);
+  DRAW_STAT_LABEL(gMenu_LvString, window, 104, 0);
   UiWork_SetParamNibbleFar(15);
   UiText_DrawNumberInWindowFar(unit->level, 2, window, 128, 0);
-  UiText_DrawStringAtOffsetFar(gMenu_HpString, window, 40, 16);
+  DRAW_STAT_LABEL(gMenu_HpString, window, 40, 16);
   UiText_DrawNumberInWindowFar(unit->hp, 4, window, 72, 16);
   UiText_DrawNumberInWindowFar(unit->maxHp, 4, window, 112, 16);
   UiText_DrawStringInWindowFar(gMenu_SlashString, window, 104, 16);
-  UiText_DrawStringAtOffsetFar(gMenu_PpString, window, 40, 24);
+  DRAW_STAT_LABEL(gMenu_PpString, window, 40, 24);
   UiText_DrawNumberInWindowFar(unit->pp, 4, window, 72, 24);
   UiText_DrawNumberInWindowFar(unit->maxPp, 4, window, 112, 24);
   UiText_DrawStringInWindowFar(gMenu_SlashString, window, 104, 24);
@@ -64,8 +78,8 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags) {
   UiText_DrawCharacterAtOffsetFar((s32)MsgExpLabel - 22, window, 152, 8);
   UiText_DrawCharacterAtOffsetFar((s32)MsgExpLabel - 21, window, 152, 16);
   UiText_DrawCharacterAtOffsetFar((s32)MsgExpLabel - 20, window, 152, 24);
-  UiText_DrawNumberInWindowFar(unit->atk, 3, window, 200, 0);
-  UiText_DrawNumberInWindowFar(unit->def, 3, window, 200, 8);
-  UiText_DrawNumberInWindowFar(unit->agi, 3, window, 200, 16);
-  UiText_DrawNumberInWindowFar(unit->luck, 3, window, 200, 24);
+  UiText_DrawNumberInWindowFar(unit->atk, STAT_DIGITS, window, STAT_X, 0);
+  UiText_DrawNumberInWindowFar(unit->def, STAT_DIGITS, window, STAT_X, 8);
+  UiText_DrawNumberInWindowFar(unit->agi, STAT_DIGITS, window, STAT_X, 16);
+  UiText_DrawNumberInWindowFar(unit->luck, STAT_DIGITS, window, STAT_X, 24);
 }

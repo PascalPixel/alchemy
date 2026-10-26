@@ -780,8 +780,6 @@ Menu_RunResourceSelectionLoop:
 	.thumb_func
 Menu_CenterResourceEntries:
 	.incbin "baserom.gba", 0x0004d610, 0x0000009c
-	.section .rom.0004d8a0, "ax"
-	.incbin "baserom.gba", 0x0004d8a0, 0x00000170
 	.section .rom.0004da10, "ax"
 	.global Func_0804d7fc
 	.type Func_0804d7fc, %function
@@ -1828,7 +1826,7 @@ Func_080fdad4:
 	.type Func_080fe274, %function
 	.thumb_func
 Func_080fe274:
-	.incbin "baserom.gba", 0x001003c4, 0x0000030c
+	.incbin "baserom.gba", 0x001003c4, 0x00000228
 	.section .rom.00100788, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00100788, 0x0000025c
@@ -1854,10 +1852,20 @@ Func_080feec0:
 	.type Func_080ff370, %function
 	.thumb_func
 Func_080ff370:
-	.incbin "baserom.gba", 0x001014c0, 0x00000444
+	.incbin "baserom.gba", 0x001014c0, 0x0000024c
 	.section .rom.00101a9c, "ax"
-	.incbin "baserom.gba", 0x00101a9c, 0x000005b8
+	.incbin "baserom.gba", 0x00101a9c, 0x00000210
+	.section .rom.00101e24, "ax"
+	.global Func_080ffcd4
+	.type Func_080ffcd4, %function
+	.thumb_func
+Func_080ffcd4:
+	.incbin "baserom.gba", 0x00101e24, 0x00000230
 	.section .rom.0010238c, "ax"
+	.global Func_0810021c
+	.type Func_0810021c, %function
+	.thumb_func
+Func_0810021c:
 	.incbin "baserom.gba", 0x0010238c, 0x0000029c
 	.section .rom.001028a8, "ax"
 	.balign 4

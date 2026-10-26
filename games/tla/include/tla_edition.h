@@ -20,10 +20,13 @@
 #define SAVE_SLOT_MENU_WIDTH 4
 #endif
 
+// Where the destination row's cursor text sits; further right in Japanese.
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 #define MENU_TEXT_X 74
-#define MENU_TEXT_Y 60
+#else
+#define MENU_TEXT_X 100
 #endif
+#define MENU_TEXT_Y 60
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)

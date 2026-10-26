@@ -16888,7 +16888,7 @@ msgctxt "message"
 msgid "04156"
 msgstr "LR:ならびかえ"
 
-msgctxt "message"
+msgctxt "MsgExpLabel"
 msgid "04157"
 msgstr "けいけんち"
 
@@ -18184,7 +18184,7 @@ msgctxt "message"
 msgid "04470"
 msgstr "ひきつぐデータがへんかします"
 
-msgctxt "message"
+msgctxt "MsgPasswordLevel"
 msgid "04471"
 msgstr "レベル"
 

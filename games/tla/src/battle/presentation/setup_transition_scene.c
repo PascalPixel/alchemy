@@ -1,10 +1,8 @@
-// Near miss, differ 6 of 111 (two reordered rows, 15 before): The Broken
-// Seal's BattlePres_SetupTransitionScene with the camera from its heap slot.
-// The native stores pos[1] and pos[2] before it loads Iwram_RatioMulQ14's entry
-// and stores pos[0] after it; this draft stores pos[0] between them. Later the
-// native copies the camera to r1 (mov r1, r8) before the three render bound
-// stores, this draft after them. Measured: the position stores reordered
-// (differ 12 and 16), the bounds unchanged.
+// BattlePres_SetupTransitionScene: The Broken Seal's function of that name
+// with the camera from its heap slot. Places the battle camera at a position
+// and zoom for a transition: sets the projection, turns the scene to the
+// camera's yaw and pitch, projects the origin and gives the camera its
+// range from where the origin lands on the screen.
 #include "types.h"
 #include "battle_display.h"
 #include "graphics.h"
@@ -46,10 +44,17 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom) {
   SceneTransform_ApplyPosition(pos);
   SceneTransform_ApplyYaw((s16)scene->yaw);
   SceneTransform_ApplyPitch((s16)scene->pitch);
-  renderBounds[0] = 0;
-  renderBounds[1] = 0;
-  renderBounds[2] = span;
-  Iwram_TransformVector(renderBounds, (s32 *)scene);
+  {
+    /* FAKEMATCH(pin): the camera pinned to r1, copied before the bound
+     * stores; as Iwram_TransformVector(renderBounds, (s32 *)scene), 2 of
+     * 111 instructions differ in tla-en. */
+    register s32 *camera asm("r1") = (s32 *)scene;
+
+    renderBounds[0] = 0;
+    renderBounds[1] = 0;
+    renderBounds[2] = span;
+    Iwram_TransformVector(renderBounds, camera);
+  }
   gCameraSceneParameters[3] = 120;
   gCameraSceneParameters[4] = 120;
   Render_ResetTransformState();

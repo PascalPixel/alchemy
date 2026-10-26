@@ -4193,19 +4193,14 @@ main	rom_main_08	games/tla/src/battle/presentation/pallevel	.text
 main	rom_main_08	games/tla/src/battle/presentation/f12628c	.text
 main	rom_main_08	games/tla/src/battle/presentation/transition_work	.text
 main	rom_main_08	recon/tla/it/rom	.rom.00126414	it
-main	rom_main_08	recon/tla/it/rom	.rom.0012681c	it
 main	rom_main_08	recon/tla/fr/rom	.rom.00126414	fr
-main	rom_main_08	recon/tla/fr/rom	.rom.0012681c	fr
 main	rom_main_08	recon/tla/es/rom	.rom.00126414	es
-main	rom_main_08	recon/tla/es/rom	.rom.0012681c	es
 main	rom_main_08	recon/tla/de/rom	.rom.00126414	de
-main	rom_main_08	recon/tla/de/rom	.rom.0012681c	de
 main	rom_main_08	recon/tla/raw/081263fc	.text	en
 main	rom_main_08	recon/tla/raw/08126548	.text	en
 main	rom_main_08	recon/tla/raw/08126700	.text	en
-main	rom_main_08	recon/tla/raw/08126804	.text	en
 main	rom_main_08	recon/tla/ja/rom	.rom.001263f8	ja
-main	rom_main_08	recon/tla/ja/rom	.rom.00126800	ja
+main	rom_main_08	games/tla/src/battle/presentation/setup_transition_scene	.text
 main	rom_main_08	games/tla/src/battle/presentation/setup_transition_at_pair_midpoint	.text
 main	rom_main_08	recon/tla/it/rom	.rom.0012695a	it
 main	rom_main_08	recon/tla/it/rom	.rom.0012695c	it

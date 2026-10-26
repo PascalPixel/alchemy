@@ -2807,12 +2807,6 @@ Func_081263fc:
 	.thumb_func
 BattleCamera_SetRange:
 	.incbin "baserom.gba", 0x00126544, 0x000002bc
-	.section .rom.00126800, "ax"
-	.global BattlePres_SetupTransitionScene
-	.type BattlePres_SetupTransitionScene, %function
-	.thumb_func
-BattlePres_SetupTransitionScene:
-	.incbin "baserom.gba", 0x00126800, 0x00000100
 	.section .rom.0012693e, "ax"
 	.incbin "baserom.gba", 0x0012693e, 0x00000002
 	.section .rom.00126940, "ax"

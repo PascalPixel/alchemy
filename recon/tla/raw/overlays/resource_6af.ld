@@ -12,7 +12,7 @@ SECTIONS
         "*/games/tla/src/scene/treasure_isle/s0350.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s03b4.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s03fc.o"(.text)
-        "*/resource_6af_overlay.o"(.text.x0200843c)
+        "*/games/tla/src/scene/treasure_isle/s043c.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s05ac.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s0864.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s0870.o"(.text)

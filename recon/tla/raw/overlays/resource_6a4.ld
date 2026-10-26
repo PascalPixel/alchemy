@@ -6,7 +6,7 @@ SECTIONS
         "*/games/tla/src/scene/jupiter_lighthouse_aerie/scene_tables.o"(.text)
         "*/resource_6a4_overlay.o"(.text.x02008054)
         "*/games/tla/src/scene/jupiter_lighthouse_aerie/lever.o"(.text)
-        "*/resource_6a4_overlay.o"(.text.x0200832c)
+        "*/games/tla/src/scene/jupiter_lighthouse_aerie/s032c.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_aerie/scene_events.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_aerie/s0538.o"(.text)
         "*/games/tla/src/field/common/scene_set_arrival_flags.o"(.text)

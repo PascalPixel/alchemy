@@ -19,7 +19,7 @@ SECTIONS
         "*/games/tla/src/field/common/object/wait_until_idle.o"(.text)
         "*/resource_664_overlay.o"(.text.x0200868e)
         "*/games/tla/src/scene/airs_rock_inside/cell_get.o"(.text)
-        "*/resource_664_overlay.o"(.text.x020086cc)
+        "*/games/tla/src/scene/airs_rock_inside/s06cc.o"(.text)
         "*/games/tla/src/scene/airs_rock_inside/s07b4.o"(.text)
         "*/resource_664_overlay.o"(.text.x02008908)
         "*/resource_664_overlay.o"(.text.x02008988)

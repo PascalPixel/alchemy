@@ -1,7 +1,14 @@
 	.include "games/tbs/include/game/ed_asm.h"
 	.section .rodata
-	.include "games/tbs/src/graphics/lucky_wheels/frame.s"
-	.include "games/tbs/src/graphics/lucky_wheels/icons.s"
+	.global LuckyWheels_FramePicture
+LuckyWheels_FramePicture:
+	.incbin "games/tbs/src/graphics/lucky_wheels/frame.gbapal"
+	.incbin "games/tbs/src/graphics/lucky_wheels/frame.4bpp.lz"
+	.byte 0x0f, 0x8b, 0xa4	@ PACKER: left in the buffer by Battle_AerialViewBackdrop+0x781
+	.global LuckyWheels_Icons
+LuckyWheels_Icons:
+	.incbin "games/tbs/src/graphics/lucky_wheels/icons.gbapal"
+	.incbin "games/tbs/src/graphics/lucky_wheels/icons.8bpp.lz"
 	.global LuckyWheels_Jackpot
 LuckyWheels_Jackpot:
 	.ifeq EDITION_INTERNATIONAL

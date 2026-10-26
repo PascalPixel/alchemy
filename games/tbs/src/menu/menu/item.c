@@ -911,7 +911,7 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
 
 /// Creates the 32 item icon sprites in window, off screen until placed: slots 0
 /// to 7 at x 248, the rest at x 256, all at y 168, each showing item graphic
-/// slot of the same number. The item, Psynergy and summary screens call it for
+/// slot of the same number. The item, Psynergy and Status screens call it for
 /// the window that holds their icons; the sprites are that window's render
 /// outputs and go back to the pool when it closes.
 void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {

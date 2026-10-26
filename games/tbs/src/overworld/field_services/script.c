@@ -487,7 +487,7 @@ void Party_LearnAbility(s32 unit, s32 ability) {
 
 /// The script command "open screen": starts the script's screen transition and
 /// sets work->transitionActive. Map scripts reach it; the inn, the title, the
-/// main menu, the Battle Arena and RegionMap_Show call it too.
+/// main menu, the Battle Arena and WorldPicture_Show call it too.
 void FieldScript_StartScreenTransition(void) {
   struct FieldWork *runtime = gFieldWork;
 
@@ -497,7 +497,7 @@ void FieldScript_StartScreenTransition(void) {
 
 /// The script command "close screen": finishes the script's screen transition
 /// and clears work->transitionActive. Map scripts reach it; the inn, the main
-/// menu and RegionMap_Show call it too.
+/// menu and WorldPicture_Show call it too.
 void FieldScript_FinishScreenTransition(void) {
   struct FieldWork *runtime = gFieldWork;
 

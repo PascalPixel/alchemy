@@ -229,8 +229,8 @@ static void MenuTest_TestItemSelection(void) {
   ItemPicker_Run(&selectedOwner, &selectedSlot);
 }
 
-/// Talking to Mia: the naming screen for Isaac.
-static void MenuTest_EditIsaacName(void) { NamingScreen_EditMemberName(ISAAC); }
+/// Talking to Mia: the name entry screen for Isaac.
+static void MenuTest_EditIsaacName(void) { NameEntry_EditMemberName(ISAAC); }
 
 /// Leaves the test actor unchanged when targeted by Psynergy. The event
 /// for Whirlwind, Force and Catch cast at ACTOR_IVY.

@@ -76,7 +76,7 @@ UNUSED void System_IdleForever(void) {
 /// Returns the language of this cartridge from the header's game code letter,
 /// an enum CartridgeLanguage. Only the Spanish and
 /// Italian editions have it. Called by the battle target selection and the
-/// summary screen, which lay text out by language.
+/// Status screen, which lay text out by language.
 s32 System_GetLanguage(void) {
   s32 language;
 

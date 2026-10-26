@@ -1460,7 +1460,7 @@ s32 FieldMenu_Run(void) {
         continue;
       break;
     case FIELD_MENU_STATUS:
-      ret = SummaryScreen_RunFar();
+      ret = StatusScreen_RunFar();
       if (ret == -1)
         continue;
       break;

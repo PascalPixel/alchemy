@@ -47,7 +47,7 @@ UNUSED void Object_SetUpdateValue(void *rawObject, s32 value) {
 /// requests (enum FieldShortcutKind) and the low 14 bits which one. With
 /// FLAG_MENUS_RAISE_EVENT set it raises FIELD_RAISED_EVENT_MENUS instead, as
 /// the menus do then; on the world map R raises
-/// FIELD_RAISED_EVENT_REGION_MAP and L FIELD_RAISED_EVENT_WORLD_MAP_ZOOM.
+/// FIELD_RAISED_EVENT_WORLD_PICTURE and L FIELD_RAISED_EVENT_WORLD_MAP_ZOOM.
 /// Returns the request id, the assignment's low 14 bits, even when it raised an
 /// event instead; a shortcut with nothing assigned returns 0, as no key pressed
 /// does.
@@ -64,7 +64,7 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
     work->raisedEvent = FIELD_RAISED_EVENT_MENUS;
   } else if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     if (FIELD_SHORTCUT_KEYS & KEY_R) {
-      work->raisedEvent = FIELD_RAISED_EVENT_REGION_MAP;
+      work->raisedEvent = FIELD_RAISED_EVENT_WORLD_PICTURE;
     } else if (FIELD_SHORTCUT_KEYS & KEY_L) {
       work->raisedEvent = FIELD_RAISED_EVENT_WORLD_MAP_ZOOM;
     }

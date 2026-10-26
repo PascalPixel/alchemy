@@ -53,7 +53,7 @@ symbol (`MsgGameSaved`).
 
 ## The field menu
 
-![Isaac opens the field menu in Vale: the party's HP and PP window comes up with a row of command icons, the selection steps from Psynergy to Item to Status, the summary screen opens on Isaac's stats, turns to a page of his elemental levels, Power and Resist, and closes back to the icons.](https://alchemy.pascalpixel.com/guides/menu/menus.gif)
+![Isaac opens the field menu in Vale: the party's HP and PP window comes up with a row of command icons, the selection steps from Psynergy to Item to Status, the Status screen opens on Isaac's stats, turns to a page of his elemental levels, Power and Resist, and closes back to the icons.](https://alchemy.pascalpixel.com/guides/menu/menus.gif)
 
 Pressing A with nothing in front of the leader (or Select) opens a row of
 icons: Psynergy, Djinn, Item and Status, the Djinn icon only once the first

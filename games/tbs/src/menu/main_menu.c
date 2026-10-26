@@ -304,7 +304,7 @@ static void MainMenu_CheckButtonCodes(void) {
 /// hiragana, the last 18 with the voiced mark. The six left out are the three
 /// pairs that look alike (I, l and 1; O, o and 0), so a password copied by hand
 /// reads back one way.
-static void MainMenu_NamingScreenCharacter(s32 cell, u8 *text) {
+static void MainMenu_NameEntryCharacter(s32 cell, u8 *text) {
   text[1] = 0;
   text[2] = 0;
 #if (LANGUAGE != LANGUAGE_JAPANESE)
@@ -516,7 +516,7 @@ menu_top:;
     v7 = 0;
     for (;;) {
       WaitFrames(6);
-      v6 = NamingScreen_EditMemberName(v7);
+      v6 = NameEntry_EditMemberName(v7);
       if (v6 == -1) {
         if (v7 == 0) {
           goto menu_top;
@@ -901,8 +901,8 @@ menu_top:;
              * glyph's address as the ROM does; without it, 98 of 921
              * instructions differ in tbs-en. */
             do {
-              MainMenu_NamingScreenCharacter(
-                  password[v7] & PASSWORD_SYMBOL_MASK, glyph);
+              MainMenu_NameEntryCharacter(password[v7] & PASSWORD_SYMBOL_MASK,
+                                          glyph);
             } while (0);
             passwordColumn = (v7 % 10);
             if (passwordColumn > 4) {

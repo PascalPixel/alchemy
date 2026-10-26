@@ -4,7 +4,7 @@
 FarCall_MenuTable:
 	export ItemMenu_RunFar, ItemMenu_Run
 	export PsynergyMenu_RunFar, PsynergyMenu_Run
-	export SummaryScreen_RunFar, SummaryScreen_Run
+	export StatusScreen_RunFar, StatusScreen_Run
 	export MemberChooser_OpenFar, MemberChooser_Open
 	overlay_veneer Icon_CreateWithResourceVariant
 	export PsynergyMenu_InitializeEntryObjectsFar, PsynergyMenu_InitializeEntryObjects

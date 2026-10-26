@@ -153,7 +153,7 @@
 	import Save_EraseSelectedFile, Save_EraseSelectedFileFar
 	import Save_ProcessSelectedFile, Save_ProcessSelectedFileFar
 	import Save_ScanRecordFlags, Save_ScanRecordFlagsFar
-	import NamingScreen_EditMemberName, NamingScreen_EditMemberNameFar
+	import NameEntry_EditMemberName, NameEntry_EditMemberNameFar
 	import DebugBrowser_Icons, DebugBrowser_IconsFar
 	import DebugBrowser_Portraits, DebugBrowser_PortraitsFar
 	import WindowColor_Apply, WindowColor_ApplyFar

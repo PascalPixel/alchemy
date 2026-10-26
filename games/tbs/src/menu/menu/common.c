@@ -34,7 +34,7 @@
 
 /// Resumes the overlay tasks and tileset animations when a menu closes, and
 /// clears FLAG_WEATHER_HELD and FLAG_PALETTE_BLEND_HELD: undoes
-/// Menu_SuspendFieldTasks. Called as DjinnMenu_Run and SummaryScreen_Run close,
+/// Menu_SuspendFieldTasks. Called as DjinnMenu_Run and StatusScreen_Run close,
 /// and as ItemMenu_Run (TBS_PATCH_1) and PsynergyMenu_Run (TBS_PATCH_2) close.
 /// Returns nothing useful; callers ignore the value.
 s32 Menu_ResumeFieldTasks(void) {
@@ -54,7 +54,7 @@ s32 Menu_ResumeFieldTasks(void) {
 /// sets FLAG_PALETTE_BLEND_HELD and FLAG_WEATHER_HELD, so that the field's
 /// palette blend and weather stand still behind it (see Menu_ResumeFieldTasks,
 /// which undoes it). Returns Task_SuspendOverlayTasks' result, the last
-/// task index changed or -1; callers ignore it. The Djinn and summary screens
+/// task index changed or -1; callers ignore it. The Djinn and Status screens
 /// call it in every edition, the Item screen from TBS_PATCH_1 (the
 /// international editions) and the Psynergy screen from TBS_PATCH_2 (German,
 /// French, Spanish and Italian).
@@ -162,7 +162,7 @@ void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
       Window_ClearInteriorTilesFar(menu->statusWindow, 0, 0, 88, 32);
     }
     Text_DrawStringAtOffsetFar(unit->name, window, STATUS_PANEL_TEXT_X, 0);
-    SummaryScreen_BuildAvailability(ailments, 1, member);
+    StatusScreen_BuildAvailability(ailments, 1, member);
     ailmentRows = 0;
     if (ailments[CHARACTER_POISON]) {
       Text_DrawMessageAsTilesFar(MsgPoisonLabel, window, STATUS_PANEL_TEXT_X,
@@ -511,7 +511,7 @@ void PsynergyMenu_CallIconRoutineWithValue(const void *unused, s32 unit) {
 /// in it, hidden for now, as sideIcon[0]. Selects no tab yet (the s8
 /// tabIndex[0] = 255 reads as -1). Returns the window, which
 /// ItemMenu_Initialize (the Item, Psynergy and Djinn screens) and
-/// Menu_InitializeSelectorCursorAndEntries (the summary screen and the member
+/// Menu_InitializeSelectorCursorAndEntries (the Status screen and the member
 /// chooser) pass on to PsynergyMenu_InitializeEntryObjects for the party
 /// figures.
 struct Window *MenuCursor_Create(void *source) {
@@ -1190,7 +1190,7 @@ void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
 /// Lends HIGHLIGHT_PALETTE to the element icons:
 /// copies the first sprite palette, the icons' colours, into it, then
 /// WINDOW_BACKGROUND_COLOR over its TEXT_BACKGROUND_COLOR (as
-/// SummaryScreen_Run does for palettes 0 and 1). The Details window draws its
+/// StatusScreen_Run does for palettes 0 and 1). The Details window draws its
 /// element icons (window tiles 1 to 4) in HIGHLIGHT_PALETTE, so
 /// ItemMenu_ShowDetails calls this first, as do ItemMenu_OpenDetail and
 /// Item_PrepareUsePalette, which nothing calls. It replaces the row highlight
@@ -1206,7 +1206,7 @@ void Palette_LoadIconsIntoHighlight(void) {
 /// Shows the icons of one page of a list, one row of 16 pixels each from
 /// (x, y): entries first to first + pageSize - 1, stopping early at an empty
 /// icon slot or the work's itemCount. Hides all the others. Used by the item
-/// and Psynergy lists and the summary screen's lists.
+/// and Psynergy lists and the Status screen's lists.
 void Menu_SetPageIcons(s32 pageSize, s32 first, struct Window *window, s32 x,
                        s32 y) {
   struct ItemMenuWork *menu = gMenuWork;
@@ -1284,7 +1284,7 @@ void Menu_CancelSoundTick(void) {
 }
 
 /// Starts watching for Start: clears FLAG_MENU_START_PRESSED and adds
-/// Menu_CancelSoundTick. ItemMenu_Run, PsynergyMenu_Run and SummaryScreen_Run
+/// Menu_CancelSoundTick. ItemMenu_Run, PsynergyMenu_Run and StatusScreen_Run
 /// call it before their command loops and Menu_EnsureCancelSound after them.
 void Menu_CancelSoundReset(void) {
   GameFlag_ClearFar(FLAG_MENU_START_PRESSED);

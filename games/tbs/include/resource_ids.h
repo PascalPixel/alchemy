@@ -39,8 +39,8 @@ extern char ResourceId_CamelotLogo;
 /// The title picture on BG2, loaded by Title_LoadBackground and, for the main
 /// menu, by MainMenu_LoadBackground.
 extern char ResourceId_GoldenSunLogo;
-/// The still world map RegionMap_Show shows for a
-/// FIELD_RAISED_EVENT_REGION_MAP event; it loads this one whatever picture
+/// The still world map WorldPicture_Show shows for a
+/// FIELD_RAISED_EVENT_WORLD_PICTURE event; it loads this one whatever picture
 /// it's passed.
 extern char ResourceId_WorldMapPicture;
 /// The lettering sprites Title_LoadSprites loads: 40 tiles of 16 colours in

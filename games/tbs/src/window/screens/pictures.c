@@ -334,7 +334,7 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
 /// the status icons come from (Icon_DrawMisc), in a
 /// transfer block taken from HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache entry
 /// `index` with it and returns the entry's first tile. The heap block is
-/// released before it returns. The summary screen loads its status icons
+/// released before it returns. The Status screen loads its status icons
 /// this way, by status kind (1 to 18).
 s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
   s32 result;
@@ -383,7 +383,7 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
 /// Loads the portrait of character `member` (ISAAC to PIERS, 0 to 7; any
 /// higher value shows Isaac's) into VRAM cache entry `cacheSlot`, in OBJ
 /// palette 14, and returns its first tile. In the prologue, Isaac and Garet
-/// use their childhood portraits. The summary screen
+/// use their childhood portraits. The Status screen
 /// and the battle command menus draw the member's portrait with it.
 s32 Portrait_Load(u32 member, s32 cacheSlot) {
   s32 tile;

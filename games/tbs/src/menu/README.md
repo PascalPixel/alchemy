@@ -29,7 +29,7 @@ In the code the block is `gMenuWork`, borrowed from the
 [heap](../../glossary.md#heap-and-pools) under the
 [heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_MENU`. Each screen reads it
 through its own struct, which names only the fields that screen uses
-(`ItemMenuWork`, `PsynergyMenuWork`, `SummaryScreenWork`, `DjinnMenuWork`; the
+(`ItemMenuWork`, `PsynergyMenuWork`, `StatusScreenWork`, `DjinnMenuWork`; the
 counters' is `ShopWork`).
 
 | Name | Value | Meaning |
@@ -52,7 +52,7 @@ Each screen is an ordinary function that loops, waiting one
 [frame](../../glossary.md#frame) at a time, until it has an answer.
 `FieldMenu_Run`, in the window code, calls the one picked through the menu
 [bank](../../glossary.md#bank)'s [far-call](../../glossary.md#far-call) table:
-`PsynergyMenu_Run`, `DjinnMenu_Run`, `ItemMenu_Run` or `SummaryScreen_Run`.
+`PsynergyMenu_Run`, `DjinnMenu_Run`, `ItemMenu_Run` or `StatusScreen_Run`.
 Each says in its comment what its result means to the field menu.
 
 ### The Psynergy screen
@@ -112,11 +112,11 @@ screens it watches for Start itself, in each of its choosers.
 [`menu/djinn_preview.c`](menu/djinn_preview.c) draws the preview and checks
 that the change keeps the members' Djinn counts even.
 
-### The summary screen
+### The Status screen
 
 ![In Xian, Isaac opens Status and chooses himself: his status page with his Djinn and elemental Power and Resist, A to his Psynergy page, A to his equipment page, A back to the status page, R to Garet's, and B back to the member row.](https://alchemy.pascalpixel.com/guides/menu/summary-screen.gif)
 
-The summary screen, which the field menu labels Status, shows one member at a
+The Status screen, which the field menu labels Status, shows one member at a
 time: a row to pick the member, then a page of their status, Djinn and
 elemental [Power](../../glossary.md#power-and-resist) and Resist, a page of
 their Psynergy and a page of their equipment. A turns the page, L and R switch
@@ -125,7 +125,7 @@ party's order instead. When the party has Djinn, four Djinn figures, one for
 each [element](../../glossary.md#the-four-elements), stand on the status page
 and step out of sight for the other two.
 
-`SummaryScreen_Run` ([`menu/status.c`](menu/status.c)) runs it, with
+`StatusScreen_Run` ([`menu/status.c`](menu/status.c)) runs it, with
 `MemberChooser_RunRearrange` as the member row and `DjinnFigures_`
 ([`menu/djinn_figures.c`](menu/djinn_figures.c)) placing the figures.
 `MemberChooser_Open`, the same row on its own over the field, is how the
@@ -167,8 +167,8 @@ The screens hold the field still while they run. Each tells the object system
 to stop drawing the field's sprites, which also frees the video memory they
 held, and pauses the scene's tasks, its animated tiles, the weather and any
 colour change in progress; closing undoes it. The earliest
-[editions](../../glossary.md#editions) did this only for the Djinn and summary
-screens, and the later ones added the Item and then the Psynergy screen
+[editions](../../glossary.md#editions) did this only for the Djinn and
+Status screens, and the later ones added the Item and then the Psynergy screen
 (`Menu_SuspendFieldTasks`).
 
 [Start](../../menus.md#start) closes a screen from any depth through one
@@ -231,7 +231,7 @@ it holds (`itemWindows`, `figureRow`), with the view that names its fields.
 `Window_InitializeWork` clears the whole work as each screen opens. Bytes
 no view names are `unused` runs: the first eight, the 36 after the category
 icons and a few more. Three window handles have no window behind them: the
-summary screen's `unopenedWindow` (`struct SummaryScreenWork`), which it
+Status screen's `unopenedWindow` (`struct StatusScreenWork`), which it
 only clears, and the Item screen's `unopenedWindow` and
 `secondUnopenedWindow` (`struct ItemMenuWork`), which it only closes, so
 they stay NULL and closing them does nothing. The Djinn screen's

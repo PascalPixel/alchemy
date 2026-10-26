@@ -31,7 +31,7 @@
 	.set import.Save_CopyFile, 1
 	.set import.Save_EraseSelectedFile, 1
 	.set import.Save_ScanRecordFlags, 1
-	.set import.NamingScreen_EditMemberName, 1
+	.set import.NameEntry_EditMemberName, 1
 	.set import.WindowColor_Apply, 1
 	.set import.YesNoMenu_Run, 1
 	.set import.Graphics_ExpandVramTilesByColorTable, 1

@@ -205,9 +205,9 @@ s32 SceneManager_Run(s32 entrance) {
               goto done;
             }
             WorldMap_EndScript();
-          } else if (work->raisedEvent == FIELD_RAISED_EVENT_REGION_MAP) {
+          } else if (work->raisedEvent == FIELD_RAISED_EVENT_WORLD_PICTURE) {
             Leader_StopMoving();
-            RegionMap_Show((s32)&ResourceId_WorldMapPicture);
+            WorldPicture_Show((s32)&ResourceId_WorldMapPicture);
           } else if (work->raisedEvent == FIELD_RAISED_EVENT_WORLD_MAP_ZOOM) {
             Leader_StopMoving();
             FieldEffect_RunVisibilityTransition();

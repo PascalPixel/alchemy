@@ -753,7 +753,7 @@ void WorldMap_ShowBg1FromBuffer(void) {
 ///
 /// Called through WorldMap_LoadAreaGraphicsFar by
 /// WorldMap_EndScript when a menu or script ends, by
-/// RegionMap_Show, and by the world map's lighthouse transition.
+/// WorldPicture_Show, and by the world map's lighthouse transition.
 /// Decodes into gMapGridCellBuffer and gBgTileBuffer, sets gVBlankCallback to
 /// WorldMap_ShowBg1FromBuffer, sets the window rows back to 0 and 159, clears
 /// animationActive and resumes the tileset animations. Waits two frames.

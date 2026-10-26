@@ -340,7 +340,7 @@ extern const struct AreaNameRule gArea_NameRules[];
 /// the map or its area; 0, the title screen's name, when none does. No
 /// reader treats 0 apart. Called by the save, debug and
 /// location windows through Area_GetNameIndexFar, and by
-/// RegionMap_UpdateMarkers; most add it to MsgDebugEntryName for the
+/// WorldPicture_UpdateMarkers; most add it to MsgDebugEntryName for the
 /// message. The save stores it as its area (save.h).
 s32 Area_GetNameIndex(s32 sceneId, s32 entrance) {
   const struct AreaNameRule *rule = gArea_NameRules;

@@ -1,8 +1,8 @@
-#ifndef ALCHEMY_SUMMARY_SCREEN_H
-#define ALCHEMY_SUMMARY_SCREEN_H
+#ifndef ALCHEMY_STATUS_SCREEN_H
+#define ALCHEMY_STATUS_SCREEN_H
 
 /// @file
-/// The summary screen's state, and the statuses it shows.
+/// The Status screen's state, and the statuses it shows.
 
 #include "unit/window/window.h"
 #include "unit/window/screens.h"
@@ -18,7 +18,7 @@ struct PsynergyEntry;
 
 /// The work of the member chooser and the Status menu, in the HEAP_SLOT_MENU
 /// heap slot, which each takes as it opens and frees before it returns.
-struct SummaryScreenWork {
+struct StatusScreenWork {
   u8 unused[8]; ///< no view of the menu work names it (see menu/README.md)
   s32 selectedMember;         ///< the party member chosen
   struct Window *moneyWindow; ///< ShopWork's; not named here
@@ -62,24 +62,24 @@ struct SummaryScreenWork {
   s16 rowY[4]; ///< screen pixels
 };
 
-STATIC_ASSERT(offsetof(struct SummaryScreenWork, memberWindow) == 0x10);
-STATIC_ASSERT(offsetof(struct SummaryScreenWork, memberCursors) == 0x14);
-STATIC_ASSERT(offsetof(struct SummaryScreenWork, statusWindow) == 0x24);
-STATIC_ASSERT(offsetof(struct SummaryScreenWork, entryIcons) == 0x48);
-STATIC_ASSERT(offsetof(struct SummaryScreenWork, selectorWindow) == 0x10c);
-STATIC_ASSERT(offsetof(struct SummaryScreenWork, selectedColumn) == 0x110);
-STATIC_ASSERT(offsetof(struct SummaryScreenWork, memberObjects) == 0x114);
-STATIC_ASSERT(offsetof(struct SummaryScreenWork, memberY) == 0x144);
-STATIC_ASSERT(offsetof(struct SummaryScreenWork, selectedSlots) == 0x174);
-STATIC_ASSERT(offsetof(struct SummaryScreenWork, statusCursor) == 0x17c);
-STATIC_ASSERT(offsetof(struct SummaryScreenWork, memberIds) == 0x208);
-STATIC_ASSERT(offsetof(struct SummaryScreenWork, selectedIds) == 0x21a);
-STATIC_ASSERT(offsetof(struct SummaryScreenWork, page) == 0x220);
-STATIC_ASSERT(offsetof(struct SummaryScreenWork, rowObjects) == 0x224);
-STATIC_ASSERT(offsetof(struct SummaryScreenWork, rowX) == 0x234);
-STATIC_ASSERT(sizeof(struct SummaryScreenWork) == 0x244);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, memberWindow) == 0x10);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, memberCursors) == 0x14);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, statusWindow) == 0x24);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, entryIcons) == 0x48);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, selectorWindow) == 0x10c);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, selectedColumn) == 0x110);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, memberObjects) == 0x114);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, memberY) == 0x144);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, selectedSlots) == 0x174);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, statusCursor) == 0x17c);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, memberIds) == 0x208);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, selectedIds) == 0x21a);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, page) == 0x220);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, rowObjects) == 0x224);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, rowX) == 0x234);
+STATIC_ASSERT(sizeof(struct StatusScreenWork) == 0x244);
 
-/// The statuses the summary screens show, as SummaryScreen_BuildAvailability
+/// The statuses the Status screens show, as StatusScreen_BuildAvailability
 /// fills them: one byte each, nonzero while the member has it.
 enum UnitStatus {
   CHARACTER_DOWN,   ///< HP 0; listed only when the caller asks for it

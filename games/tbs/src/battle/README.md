@@ -315,8 +315,8 @@ nothing at 200 behind. A blow feels the element at half strength. Healing
 uses the healer's Power alone: each point above or below 100 moves it one
 percent.
 
-A character's Power and Resist come from the element levels the summary
-screen shows, an enemy's from its element preset, and equipment adds to both.
+A character's Power and Resist come from the element levels the
+Status screen shows, an enemy's from its element preset, and equipment adds to both.
 A Resistance stage adds 20 Resist in every element. A summon's boost raises
 the element it spent most Djinn of by 10, 30, 60 or 100 Power for one to four
 Djinn. A Djinni striking the element the target resists worst may also earn
@@ -529,11 +529,11 @@ staging and hand back control when they finish.
 - **ability kind**: which formula an ability's targets go through. The
   animation an ability plays is chosen separately.
 - **power**: what an ability's power counts depends on its kind. A unit's
-  **Power** and **Resist**, capitalized as the summary screen writes them,
+  **Power** and **Resist**, capitalized as the Status screen writes them,
   are its stats in each element.
 - **added effect**: what an ability does besides damage or healing
   (`enum AbilityEffect`).
-- **element level**: the level the summary screen shows under each element.
+- **element level**: the level the Status screen shows under each element.
   A character's Power and Resist start from it, and it moves the chance of an
   added effect.
 - **place**: a unit's position in its side's line-up.

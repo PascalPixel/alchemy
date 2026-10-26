@@ -260,9 +260,9 @@ s32 Save_ProcessSelectedFileFar(void);
 /// are, plus 100 when every file has its send flag; it also decides whether
 /// Battle and Send are offered.
 s32 Save_ScanRecordFlagsFar(void);
-/// Runs the naming screen for member entry. Returns 0, or -1 when
+/// Runs the name entry screen for member entry. Returns 0, or -1 when
 /// cancelled; the name changes only when the player ends on End.
-s32 NamingScreen_EditMemberNameFar(s32 entry);
+s32 NameEntry_EditMemberNameFar(s32 entry);
 /// Debug: pages through the item, Psynergy and status icons. Returns 0.
 s32 DebugBrowser_IconsFar(void);
 /// Debug: steps through the character and sprite portrait maps, showing each

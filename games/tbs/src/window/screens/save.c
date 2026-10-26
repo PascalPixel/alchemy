@@ -796,8 +796,8 @@ void FileMenu_DrawSummary(struct Window *window,
     Window_DrawDividerLine(window, 0, 4, 13, 4);
     Text_DrawStringAtOffset(summary->name, window, 0, 0);
     y = 0;
-    SUMMARY_DRAW_LEVEL(gSummaryScreen_LevelLetterString, window,
-                       SUMMARY_LEVEL_X, 0);
+    SUMMARY_DRAW_LEVEL(gStatusScreen_LevelLetterString, window, SUMMARY_LEVEL_X,
+                       0);
     Text_DrawNumberAtOffset(summary->level, 2, window, 80, y);
     Text_DrawMessageAsTiles(summary->classId + MsgClassName, window, 0, 16);
 #if LANGUAGE == LANGUAGE_JAPANESE

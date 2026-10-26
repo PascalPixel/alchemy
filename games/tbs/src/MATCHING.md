@@ -222,7 +222,7 @@ unions, keeps `ObjectArmView`; and the operand handlers of `SC_SET`,
 `SC_ADD` and `SC_CMP` keep `ScriptOperands`. The window sprites
 (`struct WindowSpriteCellView`), the selection records (`struct GlyphCursor`), the
 menu cursors (`union MenuCursorRef`) and each menu screen's work
-(`ItemMenuWork`, `SummaryScreenWork` and the others) follow the same rule. A
+(`ItemMenuWork`, `StatusScreenWork` and the others) follow the same rule. A
 field's own type is likewise the one every site matches with: `Object.sprite`
 is a plain `struct Sprite *`, because as a union or a `void *` a store or a
 load moves.

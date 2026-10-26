@@ -33,7 +33,7 @@ one function for each animation.
 
 [Windows](window/README.md) draws the framed boxes text appears in, decodes
 the compressed messages and types them out, and holds the screens built from
-windows, among them the battle menus, the file menu and the naming screen.
+windows, among them the battle menus, the file menu and the name entry screen.
 [Menus](menu/README.md) holds the field menu's Psynergy, [Djinn](../glossary.md#djinn), Item and
 Status screens, and three overlays: the title, the main menu and the
 Battle Arena. [Shops](shop/README.md) holds every counter that buys,

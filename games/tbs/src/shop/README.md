@@ -202,8 +202,8 @@ Scenes open the counters through their
 [import tables](../../glossary.md#entry-table-and-import-table), and the rest
 of the program through the shop [bank](../../glossary.md#bank)'s
 [far-call](../../glossary.md#far-call) table. Some of the shop's pieces serve
-other screens: its hand cursor also moves in the option menu, the naming
-screen and the file menu; the Item screen draws its quantity bar with the
+other screens: its hand cursor also moves in the option menu, the
+name entry screen and the file menu; the Item screen draws its quantity bar with the
 shop's; and the colour fade a sanctum plays first also runs before a
 [Djinni](../../glossary.md#djinn) joins the party and before the wall in
 Altmiller Cave bursts.

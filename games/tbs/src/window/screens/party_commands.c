@@ -179,7 +179,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     } else {
       mode = COMMAND_ICON_FIGHT;
     }
-    // Status: the party's summary screens, from the first member; the
+    // Status: the party's Status screens, from the first member; the
     // debug build with Start held lists the enemies instead.
     if (mode == COMMAND_ICON_STATUS) {
       void *block;
@@ -194,7 +194,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       }
       handle = BattleUnit_ListIdsFar(selection, block);
       WaitFrames(1);
-      BattleSummaryScreen_Run(block, handle, *(u16 *)block);
+      BattleStatusScreen_Run(block, handle, *(u16 *)block);
       Free(block);
       continue;
     }
@@ -295,7 +295,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         handle = BattleUnit_ListIdsFar(1, block);
         state->iconShown[2] = 0;
         WaitFrames(1);
-        BattleSummaryScreen_Run(block, handle, actorId);
+        BattleStatusScreen_Run(block, handle, actorId);
         state->iconShown[2] = 1;
         Free(block);
         continue;

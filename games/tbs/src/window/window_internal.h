@@ -71,7 +71,7 @@
 #include "party_state.h"
 #include "save.h"
 #include "irq.h"
-#include "summary_screen.h"
+#include "status_screen.h"
 #include "animspr.h"
 #include "four_object_motion.h"
 #include "io_write_queue.h"

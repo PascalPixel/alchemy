@@ -66,7 +66,7 @@ them back. The requests, in the order the loop takes them:
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `FIELD_RAISED_EVENT_PARTY_FELL` | -1 | characters fell to poison or hazardous ground; if no one is left standing, the party goes back to the last place it saved, with the leader at 1 HP |
-| `FIELD_RAISED_EVENT_REGION_MAP` | -888 | R on the world map: the picture of the world |
+| `FIELD_RAISED_EVENT_WORLD_PICTURE` | -888 | R on the world map: the picture of the world |
 | `FIELD_RAISED_EVENT_WORLD_MAP_ZOOM` | -889 | L on the world map: the view pulls back |
 | `FLAG_KEEP_PARTY_POSITION` | `0x109` | the next scene starts where the party was, everyone put back |
 | `ACTOR_SNAPSHOT_CAPACITY` | 32 | people a battle's snapshot keeps |
@@ -172,14 +172,14 @@ Italian [editions](../../glossary.md#editions) the hand also glides onto the
 nearest place when the d-pad is let go, and a place's name shows from closer
 by.
 
-`RegionMap_Show` draws the picture, the screen's own work is in
+`WorldPicture_Show` draws the picture, the screen's own work is in
 [`field_services/world_map.c`](field_services/world_map.c), and
-`gRegionMap_AreaMarkers` lists each place's visited flag, marker and name.
+`gWorldPicture_AreaMarkers` lists each place's visited flag, marker and name.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `REGION_MAP_CURSOR_SNAPS` | 1 in `TBS_PATCH_2` editions, else 0 | the hand glides onto the nearest place when the d-pad is let go |
-| `REGION_MAP_NAME_RANGE` | 64 in `TBS_PATCH_2` editions, else 100 | how near the hand must be, squared, for a name to show |
+| `WORLD_PICTURE_CURSOR_SNAPS` | 1 in `TBS_PATCH_2` editions, else 0 | the hand glides onto the nearest place when the d-pad is let go |
+| `WORLD_PICTURE_NAME_RANGE` | 64 in `TBS_PATCH_2` editions, else 100 | how near the hand must be, squared, for a name to show |
 
 ## Design
 

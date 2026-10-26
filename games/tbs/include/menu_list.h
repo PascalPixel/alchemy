@@ -70,7 +70,7 @@ struct CursorSprite {
 
 /// Sets sprite shape (attr0/attr1) and clears the remaining fields.
 /* FAKEMATCH(one-pass): the two stores in a once-only block; as the plain stores
- * Battle_CollectPartyCommands and BattleSummaryScreen_Run match with, 4 of 49
+ * Battle_CollectPartyCommands and BattleStatusScreen_Run match with, 4 of 49
  * instructions differ in tbs-en (Text_DrawCharacter). */
 #define MenuSprite_Initialize(sprite, shape)                                   \
   do {                                                                         \

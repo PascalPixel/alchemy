@@ -26,7 +26,7 @@
 #include "io_reg.h"
 #include "window.h"
 #include "mem.h"
-#include "summary_screen.h"
+#include "status_screen.h"
 #include "battle_unit.h"
 #include "item.h"
 #include "edition.h"
@@ -127,11 +127,11 @@ enum ItemUseResult {
   ITEM_USE_RESULT_DEFENSE_UP = 21  ///< "Your Defense increased!"
 };
 
-/// SummaryScreenWork.page: which screen the member row belongs to.
-enum SummaryScreenPage {
-  SUMMARY_SCREEN_PAGE_STATUS = 0, ///< the Status menu (SummaryScreen_Run)
+/// StatusScreenWork.page: which screen the member row belongs to.
+enum StatusScreenPage {
+  STATUS_SCREEN_PAGE_STATUS = 0, ///< the Status menu (StatusScreen_Run)
   /// The member chooser (MemberChooser_Open).
-  SUMMARY_SCREEN_PAGE_CHOOSER = 3
+  STATUS_SCREEN_PAGE_CHOOSER = 3
 };
 
 /// PsynergyMenuWork.mode: what choosing a Psynergy does.

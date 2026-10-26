@@ -114,7 +114,7 @@ run the shop, message and inventory tests with the ready-made party.
 
 Garet raises the four to level 10, then 20 on the next talk, and so on, which
 changes nothing until the target passes the 30 set on entry. Jenna hands out
-test equipment, Ivan items to use, and Mia opens the naming screen for Isaac.
+test equipment, Ivan items to use, and Mia opens the name entry screen for Isaac.
 The other people open the screen for choosing an item to give up when the
 bags are full, give out Djinn and treasure, wound and afflict Isaac and
 Garet, and run a ready-made shop with 200,000 coins, broken equipment and

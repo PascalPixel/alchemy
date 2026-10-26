@@ -96,8 +96,7 @@
 /// member's id, or -1 when the player backs out. Owns the menu work
 /// (HEAP_SLOT_MENU) while it runs and frees it before returning.
 s32 MemberChooser_Open(void) {
-  struct SummaryScreenWork *menu =
-      AllocHeapSlot(HEAP_SLOT_MENU, MENU_WORK_SIZE);
+  struct StatusScreenWork *menu = AllocHeapSlot(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   s32 result;
   s32 index;
 
@@ -111,7 +110,7 @@ s32 MemberChooser_Open(void) {
   menu->selectorWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
   for (index = 0; index < MEMBER_CHOOSER_MEMBER_COUNT; index++)
     menu->memberY[index] = 30;
-  menu->page = SUMMARY_SCREEN_PAGE_CHOOSER;
+  menu->page = STATUS_SCREEN_PAGE_CHOOSER;
 
   result = MemberChooser_Run();
 
@@ -125,7 +124,7 @@ s32 MemberChooser_Open(void) {
 
 /// The member chooser's loop. Returns the chosen member's id, or -1.
 s32 MemberChooser_Run(void) {
-  struct SummaryScreenWork *work = gMenuWork;
+  struct StatusScreenWork *work = gMenuWork;
   s32 result = 0;
 
   /* FAKEMATCH(one-pass): the slot's clearing in a one-pass block stores the
@@ -134,23 +133,22 @@ s32 MemberChooser_Run(void) {
   do {
     work->selectedSlots[0] = result;
   } while (0);
-  if (SummaryScreen_SelectMember(0) == -1)
+  if (StatusScreen_SelectMember(0) == -1)
     result = -1;
   else
     result = work->selectedIds[0];
   return result;
 }
 
-/// The summary screen, the field menu's Status (FieldMenu_Run,
+/// The Status screen, the field menu's Status (FieldMenu_Run,
 /// FIELD_MENU_STATUS), over the field: saves the first two background palettes
 /// and the window tiles it draws over, sets up the party row and, when the
 /// party has Djinn, the four Djinn sprites, runs the status pages, then puts
 /// everything back. Returns their result; -1 (backed out or Start) opens the
 /// field menu again. The menu work and the two saved copies, taken from the
 /// EWRAM pool, are freed before returning.
-s32 SummaryScreen_Run(void) {
-  struct SummaryScreenWork *menu =
-      AllocHeapSlot(HEAP_SLOT_MENU, MENU_WORK_SIZE);
+s32 StatusScreen_Run(void) {
+  struct StatusScreenWork *menu = AllocHeapSlot(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   void *palette = AllocEwram(64);
   void *tiles = AllocEwram(STATUS_SAVED_TILE_BYTES);
   s32 result;
@@ -162,7 +160,7 @@ s32 SummaryScreen_Run(void) {
   WaitFrames(1);
   Menu_SuspendFieldTasks();
   Window_InitializeWork(0);
-  menu->page = SUMMARY_SCREEN_PAGE_STATUS;
+  menu->page = STATUS_SCREEN_PAGE_STATUS;
   menu->partyCount = Party_ListMembersFar(menu->memberIds);
   Menu_InitializeSelectorCursorAndEntries(0, 3, 0, 7);
   Iwram_CopyWords(palette, (void *)BG_PLTT, 64);
@@ -202,9 +200,9 @@ s32 SummaryScreen_Run(void) {
   Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
   // Run the pages.
   Menu_CancelSoundReset();
-  menu->page = SUMMARY_SCREEN_PAGE_STATUS;
+  menu->page = STATUS_SCREEN_PAGE_STATUS;
 
-  result = SummaryScreen_RunPages();
+  result = StatusScreen_RunPages();
 
   // Close, and put the palettes and tiles back.
   Menu_EnsureCancelSound();
@@ -236,8 +234,8 @@ s32 SummaryScreen_Run(void) {
   return result;
 }
 
-/// The steps of the Status menu (SummaryScreen_RunPages).
-enum SummaryScreenStep {
+/// The steps of the Status menu (StatusScreen_RunPages).
+enum StatusScreenStep {
   STATUS_STEP_MEMBER = 0,   ///< choose a member
   STATUS_STEP_STATUS = 1,   ///< their status page
   STATUS_STEP_PSYNERGY = 2, ///< their Psynergy page
@@ -248,8 +246,8 @@ enum SummaryScreenStep {
 /// for their Psynergy page and A again for their equipment page, whose A goes
 /// back round to the status page; B on any page goes back to the member row.
 /// Returns -1 when the player backs out of the member row or presses Start.
-s32 SummaryScreen_RunPages(void) {
-  struct SummaryScreenWork *menu = gMenuWork;
+s32 StatusScreen_RunPages(void) {
+  struct StatusScreenWork *menu = gMenuWork;
   s32 step = STATUS_STEP_MEMBER;
   s32 finished = step;
   s32 result = 0;
@@ -259,7 +257,7 @@ s32 SummaryScreen_RunPages(void) {
     switch (step) {
     case STATUS_STEP_MEMBER:
       menu->selectedSlots[0] = finished;
-      if (SummaryScreen_SelectMember(0) == -1) {
+      if (StatusScreen_SelectMember(0) == -1) {
         result = -1;
         finished = 1;
       }
@@ -267,7 +265,7 @@ s32 SummaryScreen_RunPages(void) {
       break;
     case STATUS_STEP_STATUS:
       menu->memberCursors[0]->motion = ICON_HIDDEN;
-      result = SummaryScreen_SelectCommand();
+      result = StatusScreen_SelectCommand();
       step = result == -1 ? STATUS_STEP_MEMBER : STATUS_STEP_PSYNERGY;
       break;
     case STATUS_STEP_PSYNERGY:
@@ -297,11 +295,11 @@ s32 SummaryScreen_RunPages(void) {
 }
 
 /// Lets the player choose a party member in slot, from the one chosen last: the
-/// member chooser on SUMMARY_SCREEN_PAGE_CHOOSER, else the Status menu's party
+/// member chooser on STATUS_SCREEN_PAGE_CHOOSER, else the Status menu's party
 /// row. Returns the chooser's result: 1 when a member was chosen, -1 when the
 /// player backed out, and on the party row 0 when Start ended it.
-s32 SummaryScreen_SelectMember(s32 slot) {
-  struct SummaryScreenWork *menu;
+s32 StatusScreen_SelectMember(s32 slot) {
+  struct StatusScreenWork *menu;
   struct WindowSprite *cursor;
   s32 result;
   s32 index;
@@ -323,7 +321,7 @@ s32 SummaryScreen_SelectMember(s32 slot) {
     menu->memberIndex[slot] = 0;
   else
     MenuCursor_Slide(index * 24 - 10, 16);
-  if (menu->page == SUMMARY_SCREEN_PAGE_CHOOSER)
+  if (menu->page == STATUS_SCREEN_PAGE_CHOOSER)
     result = PsynergyMenu_ChooseMember();
   else
     result = MemberChooser_RunRearrange();
@@ -412,8 +410,8 @@ struct ItemMenuWork;
 
 /// Lowers the party figures, then raises the currently selected member.
 static __inline__ void
-SummaryScreen_SetSelectedMemberRow(struct SummaryScreenWork *menu,
-                                   s32 selectedMember) {
+StatusScreen_SetSelectedMemberRow(struct StatusScreenWork *menu,
+                                  s32 selectedMember) {
   s32 rowIndex;
 
   for (rowIndex = MENU_ROW_COUNT - 1; rowIndex >= 0; rowIndex--)
@@ -428,7 +426,7 @@ SummaryScreen_SetSelectedMemberRow(struct SummaryScreenWork *menu,
 /// it, with the member in the work's memberIndex[0] and selectedIds[0]. Moving
 /// a member changes the party order for good (MemberChooser_MoveEntry).
 s32 MemberChooser_RunRearrange(void) {
-  struct SummaryScreenWork *menu;
+  struct StatusScreenWork *menu;
   s32 memberIndex;
   s32 memberCount;
   s32 page;
@@ -448,7 +446,7 @@ s32 MemberChooser_RunRearrange(void) {
     menu->rowY[rowIndex] = 128;
   }
   // The highlight palette, and the first sprite palette into background
-  // palettes 0 and 1, as SummaryScreen_Run sets them.
+  // palettes 0 and 1, as StatusScreen_Run sets them.
   Palette_LightenBankHighlight(HIGHLIGHT_PALETTE);
   Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_ENABLE << 16 | 16, REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, WINDOW_BACKGROUND_COLOR),
@@ -473,9 +471,9 @@ s32 MemberChooser_RunRearrange(void) {
       memberIndex = (memberIndex + memberCount) % memberCount;
       Unit_GetFar(menu->memberIds[memberIndex]);
       page = (page + 3) % 3;
-      SummaryScreen_ShowMemberStatus(menu->memberIds[memberIndex], page);
+      StatusScreen_ShowMemberStatus(menu->memberIds[memberIndex], page);
       PsynergyMenu_CallIconRoutineWithValue(menu, menu->memberIds[memberIndex]);
-      SummaryScreen_SetSelectedMemberRow(menu, memberIndex);
+      StatusScreen_SetSelectedMemberRow(menu, memberIndex);
     }
     MenuCursor_Position(memberIndex * 24 - 10, 16);
     WaitFrames(1);
@@ -496,7 +494,7 @@ s32 MemberChooser_RunRearrange(void) {
         memberIndex++;
         Menu_ReleaseEntryObjects();
         PsynergyMenu_InitializeEntryObjects(menu->memberWindow, 2, 2, 8, 0);
-        SummaryScreen_SetSelectedMemberRow(menu, memberIndex);
+        StatusScreen_SetSelectedMemberRow(menu, memberIndex);
       } else {
         Sound_PlaySongFar(SE_MENU_ERROR);
       }
@@ -507,7 +505,7 @@ s32 MemberChooser_RunRearrange(void) {
         memberIndex--;
         Menu_ReleaseEntryObjects();
         PsynergyMenu_InitializeEntryObjects(menu->memberWindow, 2, 2, 8, 0);
-        SummaryScreen_SetSelectedMemberRow(menu, memberIndex);
+        StatusScreen_SetSelectedMemberRow(menu, memberIndex);
       } else {
         Sound_PlaySongFar(SE_MENU_ERROR);
       }
@@ -562,7 +560,7 @@ s32 PsynergyMenu_ChooseMember(void) {
       memberIndex = (memberIndex + memberCount) % memberCount;
       Unit_GetFar(menu->memberTable[memberIndex]);
       page = (page + 3) % 3;
-      SummaryScreen_ShowMemberStatus(menu->memberTable[memberIndex], page);
+      StatusScreen_ShowMemberStatus(menu->memberTable[memberIndex], page);
       PsynergyMenu_CallIconRoutineWithValue(menu,
                                             menu->memberTable[memberIndex]);
       for (rowIndex = 0; rowIndex < MENU_ROW_COUNT; rowIndex++)
@@ -613,7 +611,7 @@ s32 PsynergyMenu_ChooseMember(void) {
 /// Moves the party member at selectedIndex one place later (direction 1) or
 /// earlier (0) in the party order. Returns 1, or 0 when it cannot move.
 s32 MemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
-  struct SummaryScreenWork *menu = gMenuWork;
+  struct StatusScreenWork *menu = gMenuWork;
   u32 reordered[14];
   s32 index;
 
@@ -680,7 +678,7 @@ s32 MemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
 /// not used.
 void Menu_InitializeSelectorCursorAndEntries(s32 unused0, s32 unused1,
                                              s32 unused2, s32 unused3) {
-  struct SummaryScreenWork *menu;
+  struct StatusScreenWork *menu;
 
   menu = gMenuWork;
   PsynergyMenu_InitializeEntryObjects(MenuCursor_Create(menu), 2, 2, 8, 0);
@@ -699,11 +697,11 @@ void Menu_InitializeSelectorCursorAndEntries(s32 unused0, s32 unused1,
 /// statusCursor), the 32 entry icons (the chooser's Psynergy icons) on the
 /// chooser page, and the eight category sprites that show the status icons;
 /// then draws the stats and statuses. frame is not used.
-void SummaryScreen_ShowMemberStatus(s32 member, s32 frame) {
+void StatusScreen_ShowMemberStatus(s32 member, s32 frame) {
   s32 created;
   struct Window *window;
   struct WindowSprite *cursor;
-  struct SummaryScreenWork *menu;
+  struct StatusScreenWork *menu;
 
   menu = gMenuWork;
   created = 0;
@@ -716,14 +714,14 @@ void SummaryScreen_ShowMemberStatus(s32 member, s32 frame) {
     cursor = Portrait_CreateFar(member, 0, 0, window, 0, 0);
     menu->statusCursor = cursor;
     // The portrait goes to depth slot 240, as the category sprites do.
-    if ((cursor->sentinel = 0xF0, menu->page) == SUMMARY_SCREEN_PAGE_CHOOSER) {
+    if ((cursor->sentinel = 0xF0, menu->page) == STATUS_SCREEN_PAGE_CHOOSER) {
       Menu_SpawnIconEntries((struct ItemMenuWork *)menu, window);
     }
     Menu_CreateEightEntryObjects(window);
-    SummaryScreen_DrawStatusAilments(window, member, 0x100);
+    StatusScreen_DrawStatusAilments(window, member, 0x100);
     return;
   }
-  SummaryScreen_DrawStatusAilments(window, member, 0);
+  StatusScreen_DrawStatusAilments(window, member, 0);
 }
 
 /// The member's status page. The left side lists their statuses (or the stat
@@ -733,8 +731,8 @@ void SummaryScreen_ShowMemberStatus(s32 member, s32 frame) {
 /// help window. Up and Down move in a side, Left and Right switch sides, L and
 /// R switch to the previous or next member; A goes on to the Psynergy page and
 /// B backs out. Returns 1 or -1.
-s32 SummaryScreen_SelectCommand(void) {
-  struct SummaryScreenWork *menu;
+s32 StatusScreen_SelectCommand(void) {
+  struct StatusScreenWork *menu;
   s32 side;
   s32 result;
   s32 selected;
@@ -770,9 +768,9 @@ s32 SummaryScreen_SelectCommand(void) {
   // One member's page at a time; L and R start the next.
   while (done == 0 && GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0) {
     Unit_GetFar(menu->selectedIds[0]);
-    SummaryScreen_DrawStatusAilments(menu->statusWindow, menu->selectedIds[0],
-                                     1);
-    count = SummaryScreen_BuildAvailability(entries, 1, menu->selectedIds[0]);
+    StatusScreen_DrawStatusAilments(menu->statusWindow, menu->selectedIds[0],
+                                    1);
+    count = StatusScreen_BuildAvailability(entries, 1, menu->selectedIds[0]);
     hasAilments = 0;
     if (count == 0)
       count = 1;
@@ -804,15 +802,14 @@ s32 SummaryScreen_SelectCommand(void) {
           else
             selected = (selected + 7) % 7;
         }
-        SummaryScreen_DrawSelectionCursor(side, selected, entries, 0);
+        StatusScreen_DrawSelectionCursor(side, selected, entries, 0);
         WindowSprite_ClearListFar(menu->helpWindow);
         WaitFrames(1);
         if (side == 0)
-          SummaryScreen_DrawSelectionLabels(menu->helpWindow, selected,
-                                            entries);
+          StatusScreen_DrawSelectionLabels(menu->helpWindow, selected, entries);
         else
-          SummaryScreen_ShowMemberProgressMessage(menu->helpWindow, selected,
-                                                  hasDjinn);
+          StatusScreen_ShowMemberProgressMessage(menu->helpWindow, selected,
+                                                 hasDjinn);
       }
       // The statuses are 16 pixels apart; the right side's first four rows
       // (name to PP) are 8 apart, the rows below them 8 apart from y 112.
@@ -826,7 +823,7 @@ s32 SummaryScreen_SelectCommand(void) {
       WaitFrames(1);
       // Take the highlight off before the cursor moves.
       if (gKeysRepeat & KEYS_DPAD)
-        SummaryScreen_DrawSelectionCursor(side, selected, entries, 1);
+        StatusScreen_DrawSelectionCursor(side, selected, entries, 1);
       if (gKeysPressed & KEY_A) {
         Sound_PlaySongFar(SE_MENU_CONFIRM);
         done = 1;
@@ -888,11 +885,11 @@ s32 SummaryScreen_SelectCommand(void) {
 
 /// Highlights (invert 0) or unhighlights (invert 1) the selected entry of the
 /// status page: in side 0 the selected status row, as wide as its label
-/// (gSummaryScreen_CursorWidths); in side 1 one of the first four status rows
+/// (gStatusScreen_CursorWidths); in side 1 one of the first four status rows
 /// or of the rows below.
-void SummaryScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
-                                       s32 invert) {
-  struct SummaryScreenWork *menu = gMenuWork;
+void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
+                                      s32 invert) {
+  struct StatusScreenWork *menu = gMenuWork;
   u32 different;
   s32 count;
   s32 index;
@@ -910,7 +907,7 @@ void SummaryScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
     while (index <= 4) {
       if (entries[index] != 0) {
         if (selected == count) {
-          width = gSummaryScreen_CursorWidths[index];
+          width = gStatusScreen_CursorWidths[index];
           break;
         }
         count++;
@@ -936,8 +933,8 @@ void SummaryScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
 /// Writes the advice for the selected status (two lines, for example how to
 /// revive a member who is down) into window target, or that the member is well
 /// when they have no status.
-void SummaryScreen_DrawSelectionLabels(struct Window *target, s32 selected,
-                                       const u8 *entries) {
+void StatusScreen_DrawSelectionLabels(struct Window *target, s32 selected,
+                                      const u8 *entries) {
   s32 labelCount = 0;
   s32 labelIndex = 0;
 
@@ -971,10 +968,10 @@ typedef u32 ExperienceDifference;
 /// experience entry says how many points the next level needs, or, at level 99,
 /// gives the plain experience text. The text is copied into a heap buffer of
 /// STATUS_HELP_TEXT_MAX characters, freed before returning.
-void SummaryScreen_ShowMemberProgressMessage(struct Window *destination,
-                                             s32 messageVariant,
-                                             s32 preserveVariant) {
-  struct SummaryScreenWork *menu = gMenuWork;
+void StatusScreen_ShowMemberProgressMessage(struct Window *destination,
+                                            s32 messageVariant,
+                                            s32 preserveVariant) {
+  struct StatusScreenWork *menu = gMenuWork;
   void *buffer;
 
   // Entry 4 is the Djinn row's help: without Djinn the rows below it come
@@ -1008,9 +1005,9 @@ void SummaryScreen_ShowMemberProgressMessage(struct Window *destination,
 /// chooser page the Djinn counts by element and, in mode 1, the elemental
 /// levels, Power and Resist. mode's 0x100 keeps what is drawn instead of
 /// clearing it.
-void SummaryScreen_DrawStatusAilments(struct Window *window, s32 memberId,
-                                      s32 mode) {
-  struct SummaryScreenWork *menu = gMenuWork;
+void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
+                                     s32 mode) {
+  struct StatusScreenWork *menu = gMenuWork;
   struct Unit *unit;
   s32 djinnRow;
   s32 hasDjinn;
@@ -1031,8 +1028,8 @@ void SummaryScreen_DrawStatusAilments(struct Window *window, s32 memberId,
     djinnRow = 10;
   menu->statusCursor->motion = ICON_SHOWN;
   ItemMenu_DrawMemberStatus(window, memberId, mode);
-  SummaryScreen_BuildAvailability(ailments, 1, memberId);
-  SummaryScreen_UpdateSelectionIcons(ailments);
+  StatusScreen_BuildAvailability(ailments, 1, memberId);
+  StatusScreen_UpdateSelectionIcons(ailments);
   keepDrawn = mode & 0x100;
   if (keepDrawn == 0)
     Window_ClearInteriorTilesFar(window, 0, 40, 96, 96);
@@ -1064,7 +1061,7 @@ void SummaryScreen_DrawStatusAilments(struct Window *window, s32 memberId,
   }
   if (ailmentIndex == 0)
     Text_DrawMessageAsTilesFar(MsgNormalLabel, window, 0, 40);
-  SummaryScreen_UpdateSelectionIcons(ailments);
+  StatusScreen_UpdateSelectionIcons(ailments);
   ItemMenu_ApplyFlags(ailments);
   if (menu->page == 3)
     return;
@@ -1183,7 +1180,7 @@ void ItemMenu_DrawMemberStatus(struct Window *window, s32 memberId, s32 flags) {
 /// Fills ailments[0..4] (UnitStatus) with member memberId's statuses: down
 /// (only when requested is 1), poison or venom, curse and haunt. Returns how
 /// many they have.
-s32 SummaryScreen_BuildAvailability(u8 *ailments, s32 requested, s32 memberId) {
+s32 StatusScreen_BuildAvailability(u8 *ailments, s32 requested, s32 memberId) {
   struct Unit *unit;
   s32 ailmentIndex;
   s32 count;
@@ -1525,7 +1522,7 @@ s32 PsynergyMenu_SelectAction(void) {
   Menu_BuildPatternTiles();
   WindowSprite_RedrawSavedRectFar(menu->messageWindow);
   Window_UpdateOrCreate(&menu->infoWindow, 0, 0, 30, 5, 2);
-  // slotY is SummaryScreenWork's rowY: the four Djinn figures go above the
+  // slotY is StatusScreenWork's rowY: the four Djinn figures go above the
   // screen (y -16) while this page is up, until the member row or the status
   // page puts them back.
   for (iconIndex = 3; iconIndex >= 0; iconIndex--)
@@ -2145,7 +2142,7 @@ void ItemMenu_PositionCategory(void) {
 
 /// Creates the eight category sprites in window, off screen at (248, 168),
 /// each on item graphic slot of the same number; the Status menu shows the
-/// status icons with the first five (SummaryScreen_UpdateSelectionIcons).
+/// status icons with the first five (StatusScreen_UpdateSelectionIcons).
 /// Returns 1.
 s32 Menu_CreateEightEntryObjects(struct Window *window) {
   struct WindowSprite **slot;
@@ -2169,8 +2166,8 @@ s32 Menu_CreateEightEntryObjects(struct Window *window) {
 }
 
 /// Shows the icon of each status that flags marks
-/// (SummaryScreen_BuildAvailability) down the left edge from y 88, 16 pixels
-/// apart, beside the status labels of SummaryScreen_DrawStatusAilments.
+/// (StatusScreen_BuildAvailability) down the left edge from y 88, 16 pixels
+/// apart, beside the status labels of StatusScreen_DrawStatusAilments.
 void ItemMenu_ApplyFlags(const u8 *flags) {
   struct ItemMenuWork *menu;
   struct WindowSprite **slot;
@@ -2215,7 +2212,7 @@ void ItemMenu_ResetCategory(void) {
 }
 
 /// Loads each enabled status's icon into its category resource slot.
-s32 SummaryScreen_UpdateSelectionIcons(const u8 *enabled) {
+s32 StatusScreen_UpdateSelectionIcons(const u8 *enabled) {
   struct ItemMenuWork *menu = gMenuWork;
   s32 index = 0;
 

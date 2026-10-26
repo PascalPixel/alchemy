@@ -70,7 +70,7 @@
 #include "party_state.h"
 #include "save.h"
 #include "irq.h"
-#include "summary_screen.h"
+#include "status_screen.h"
 #include "animspr.h"
 #include "four_object_motion.h"
 #include "io_write_queue.h"
@@ -142,7 +142,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define PSYNERGY_COST_SECOND_TILE 0xf01e
 #endif
 
-// The summary screen's level label, after the member's name, in pixels.
+// The Status screen's level label, after the member's name, in pixels.
 #if (LANGUAGE == LANGUAGE_FRENCH)
 #define OWNER_STATUS_LEVEL_X 51
 #else

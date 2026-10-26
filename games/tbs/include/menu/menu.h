@@ -8,9 +8,9 @@
 #include "edition.h"
 #include "farcall.h"
 
-/// The summary screen highlight's width in tiles on each status row: Down,
+/// The Status screen highlight's width in tiles on each status row: Down,
 /// Poison, Venom, Curse and Haunt.
-extern u8 gSummaryScreen_CursorWidths[];
+extern u8 gStatusScreen_CursorWidths[];
 extern u8 gMenu_ListOrderItemsFirst[];
 extern u8 gMenu_ListOrderEquippedThenItems[];
 extern u8 gMenu_ListOrderEquippedThenEquipment[];
@@ -29,7 +29,7 @@ extern s8 gFieldMenu_PositionByCommand[];
 /// sprite's tiles (Shop_CopyGlyphs).
 extern u8 gShop_GlyphBytes[];
 /// The level label of a save summary: `L`; `Nv.` in Spanish, `Niv` in French.
-extern u8 gSummaryScreen_LevelLetterString[];
+extern u8 gStatusScreen_LevelLetterString[];
 
 struct Sprite;
 struct AbilityDefinition;
@@ -104,7 +104,7 @@ extern const u8 gMenu_HexDigitsString[];
 /// Italian.
 extern const u8 gMenu_HpString[];
 #ifndef OWN_Menu_LvString
-/// The summary screen's level label: `Lv`; `Nv.` in Spanish, `Niv` in French.
+/// The Status screen's level label: `Lv`; `Nv.` in Spanish, `Niv` in French.
 extern const u8 gMenu_LvString[];
 #endif
 /// The four Djinn sprites, one per element from Venus (90 to 93), that

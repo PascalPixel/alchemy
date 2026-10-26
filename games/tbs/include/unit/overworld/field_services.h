@@ -427,8 +427,8 @@ void FieldEffect_ClearOwnedSlot(struct FieldEffectSprite *effect);
 
 void FieldEffect_SetupResourcesAndWindow(void);
 void FieldEffect_CleanupResourcesAndWindow(void);
-void RegionMap_UpdateMarkers(void);
-void RegionMap_Show(s32 picture);
+void WorldPicture_UpdateMarkers(void);
+void WorldPicture_Show(s32 picture);
 void Field_UpdateObjectVisibilityBounds(void);
 void FieldEffect_RunVisibilityTransition(void);
 

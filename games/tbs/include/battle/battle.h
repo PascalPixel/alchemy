@@ -183,7 +183,7 @@ extern const u8 gWorldMap_MarkerBlendCycle[];
 /// The world map's area markers, {tile << 16 | flag, area} for
 /// each area's actor id from 11, ended by -1; a zero row reserves an
 /// actor id with no marker.
-extern const s32 gRegionMap_AreaMarkers[];
+extern const s32 gWorldPicture_AreaMarkers[];
 u32 __udivsi3(u32 numerator, u32 denominator);
 #ifndef OWN__call_via_r0
 void _call_via_r0(u32 routine);

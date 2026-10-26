@@ -3366,10 +3366,9 @@ main	rom_main_07	recon/tla/es/rom	.rom.0010cb70	es
 main	rom_main_07	recon/tla/de/rom	.rom.00110b70	de
 main	rom_main_07	recon/tla/raw/08108b70	.text	en
 main	rom_main_07	recon/tla/raw/08109068	.text	en
-main	rom_main_07	games/tla/src/menu/shop/coin_window	.text	en de es fr it
 main	rom_main_07	recon/tla/ja/rom	.rom.00108b70	ja
-main	rom_main_07	recon/tla/ja/rom	.rom.00109170	ja
-main	rom_main_07	games/tla/src/menu/shop/item_price	.text	en de es fr it
+main	rom_main_07	games/tla/src/menu/shop/coin_window	.text
+main	rom_main_07	games/tla/src/menu/shop/item_price	.text
 main	rom_main_07	games/tla/src/menu/shop/draw_message	.text
 main	rom_main_07	recon/tla/it/rom	.rom.0010928c	it
 main	rom_main_07	recon/tla/fr/rom	.rom.0010928c	fr
@@ -3422,13 +3421,13 @@ main	rom_main_07	games/tla/src/menu/shop/rowtype	.text
 main	rom_main_07	games/tla/src/menu/shop/forge	.text
 main	rom_main_07	games/tla/src/menu/shop/service	.text
 main	rom_main_07	games/tla/src/menu/shop/f10a960	.text
-main	rom_main_07	games/tla/src/menu/shop/f10aa80	.text	en de es fr it
+main	rom_main_07	games/tla/src/menu/shop/f10aa80	.text
+main	rom_main_07	recon/tla/ja/rom	.rom.0010ac00	ja
 main	rom_main_07	recon/tla/de/rom	.rom.00112bf4	de
 main	rom_main_07	recon/tla/es/rom	.rom.0010ebf4	es
 main	rom_main_07	recon/tla/fr/rom	.rom.0010abf4	fr
 main	rom_main_07	recon/tla/it/rom	.rom.0010abf4	it
 main	rom_main_07	recon/tla/raw/0810abf0	.text	en
-main	rom_main_07	recon/tla/ja/rom	.rom.0010aa90	ja
 main	rom_main_07	games/tla/src/menu/shop/reset_state_by_mode	.text
 main	rom_main_07	games/tla/src/menu/shop/f10af24	.text
 main	rom_main_07	recon/tla/ja/rom	.rom.0010b05a	ja
@@ -3449,8 +3448,7 @@ main	rom_main_07	recon/tla/de/rom	.rom.001131b8	de
 main	rom_main_07	recon/tla/raw/0810b1b4	.text	en
 main	rom_main_07	recon/tla/ja/rom	.rom.0010b1c4	ja
 main	rom_main_07	games/tla/src/menu/shop/run_room_price	.text
-main	rom_main_07	games/tla/src/menu/shop/f10b418	.text	en de es fr it
-main	rom_main_07	recon/tla/ja/rom	.rom.0010b428	ja
+main	rom_main_07	games/tla/src/menu/shop/f10b418	.text
 main	rom_main_07	games/tla/src/menu/shop/inn_sleep	.text
 main	rom_main_07	recon/tla/it/rom	.rom.0010b5a8	it
 main	rom_main_07	recon/tla/fr/rom	.rom.0010b5c8	fr

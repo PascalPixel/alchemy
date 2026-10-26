@@ -1810,12 +1810,6 @@ Func_081051a8:
 	.thumb_func
 Func_08108b70:
 	.incbin "baserom.gba", 0x00108b70, 0x00000600
-	.section .rom.00109170, "ax"
-	.global Func_08109188
-	.type Func_08109188, %function
-	.thumb_func
-Func_08109188:
-	.incbin "baserom.gba", 0x00109170, 0x000000f8
 	.section .rom.0010928a, "ax"
 	.incbin "baserom.gba", 0x0010928a, 0x00000326
 	.section .rom.001096f8, "ax"
@@ -1850,13 +1844,12 @@ Func_0810a108:
 	.thumb_func
 EventTable_ApplyRowAbilities:
 	.incbin "baserom.gba", 0x0010a678, 0x00000050
-	.section .rom.0010aa90, "ax"
-	.balign 4
-	.global Shop_ConfirmAct
-	.type Shop_ConfirmAct, %function
+	.section .rom.0010ac00, "ax"
+	.global Func_0810abf0
+	.type Func_0810abf0, %function
 	.thumb_func
-Shop_ConfirmAct:
-	.incbin "baserom.gba", 0x0010aa90, 0x00000424
+Func_0810abf0:
+	.incbin "baserom.gba", 0x0010ac00, 0x000002b4
 	.section .rom.0010b05a, "ax"
 	.incbin "baserom.gba", 0x0010b05a, 0x00000002
 	.section .rom.0010b176, "ax"
@@ -1864,13 +1857,6 @@ Shop_ConfirmAct:
 	.section .rom.0010b1c4, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0010b1c4, 0x000001c4
-	.section .rom.0010b428, "ax"
-	.balign 4
-	.global Inn_CheckIn
-	.type Inn_CheckIn, %function
-	.thumb_func
-Inn_CheckIn:
-	.incbin "baserom.gba", 0x0010b428, 0x00000108
 	.section .rom.0010b5d4, "ax"
 	.global Func_0810b5c4
 	.type Func_0810b5c4, %function

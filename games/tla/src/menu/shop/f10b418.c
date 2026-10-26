@@ -8,6 +8,7 @@
 // clean up) and its work-block offsets; this game has no special-inn flag.
 // Messages from MsgInnWelcome ("Welcome to our inn.").
 #include "types.h"
+#include "shop.h"
 #include "party_state.h"
 #include "ram_buffer.h"
 
@@ -49,7 +50,6 @@ s32 Inn_RoomPrice(s32 mode);
 void UiText_DrawQuantity(s32 value, s32 slot);
 void Func_081084f4(s32 message);
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
-void Func_08109188(void);
 s32 Func_08108630(s32 value);
 void UiWork_FinalizeFar(s32 window, s32 style);
 void Inn_PlaySleep(s32 price);
@@ -73,7 +73,7 @@ s32 Inn_CheckIn(s32 mode, s32 objectId) {
   UiText_DrawQuantity(amount, 5);
   messageBase = (s32)MsgInnWelcome;
   Func_081084f4(messageBase);
-  state->window = UiWindow_CreateFar(0, 16, 12, 4, 2);
+  state->window = UiWindow_CreateFar(0, 16, SHOP_COIN_WINDOW_WIDTH, 4, 2);
   Func_08109188();
 
   if (Func_08108630(0) != 0) {

@@ -1,9 +1,14 @@
 #include "types.h"
 #include "edition.h"
 
-// The price line reads "Price", the price, then "Coins". French draws the
-// price 8 pixels nearer its label, Spanish and Italian the coins label 8
-// pixels further right.
+// The price line reads "Price", the price, then "Coins". Japanese indents
+// the line and its notes by 8 pixels, French draws the price 8 pixels nearer
+// its label, Spanish and Italian the coins label 8 pixels further right.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define SHOP_PRICE_LABEL_X 8
+#else
+#define SHOP_PRICE_LABEL_X 0
+#endif
 #if LANGUAGE == LANGUAGE_FRENCH
 #define SHOP_PRICE_NUMBER_X 24
 #else
@@ -35,14 +40,16 @@ void Func_081091cc(s32 window, s32 itemId, s32 price, s32 priceKind) {
     return;
   goto draw;
 cannot_buy:
-  UiText_DrawCharacterAtOffsetFar((s32)MsgCannotBuyThat, window, 0, 8);
+  UiText_DrawCharacterAtOffsetFar((s32)MsgCannotBuyThat, window,
+                                  SHOP_PRICE_LABEL_X, 8);
   return;
 not_broken:
-  UiText_DrawCharacterAtOffsetFar((s32)MsgNotBroken, window, 0, 8);
+  UiText_DrawCharacterAtOffsetFar((s32)MsgNotBroken, window, SHOP_PRICE_LABEL_X,
+                                  8);
   return;
 show_price:
   labelMessage = (s32)MsgPrice;
-  UiText_DrawCharacterAtOffsetFar(labelMessage, window, 0, 8);
+  UiText_DrawCharacterAtOffsetFar(labelMessage, window, SHOP_PRICE_LABEL_X, 8);
   labelMessage -= 3;
   UiText_DrawNumberInWindowFar(price, 5, window, SHOP_PRICE_NUMBER_X, 8);
   UiText_DrawCharacterAtOffsetFar(labelMessage, window, SHOP_PRICE_COINS_X, 8);

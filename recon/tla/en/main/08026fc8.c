@@ -41,11 +41,6 @@ void Func_08026fc8(struct ObjectRuntime *object, s32 mode) {
     struct Child *child = created->animation;
 
     created->terrainHeight = object->terrainHeight;
-    /* FAKEMATCH(barrier): an empty asm after the height's store, so the
-     * sprite loads between the height's load and store and the call's
-     * arguments follow; as plain statements, 10 of 69 instructions differ in
-     * tla-en. */
-    asm("");
     ObjectDispatch_Initialize((struct DispatchObject *)created, gData_0802ec88);
     created->motionFlags = 0;
     if (child != NULL) {

@@ -27,12 +27,6 @@ void BattleEffect_UpdateDescendingParticlePositiveArc(
   s32 scale;
   struct PartyState *party = &gPartyState;
 
-  /* FAKEMATCH: the one-pass block after the party pointer loads the particle's
-   * floor before 0x1fa is built (one reordered pair, differ 2 more without it).
-   */
-  do {
-  } while (0);
-
   limit = particle->terrainHeight + 0xA0000;
   source = particle->linkedObject;
   if (party->map == (s32)&SceneId_Ov64a)

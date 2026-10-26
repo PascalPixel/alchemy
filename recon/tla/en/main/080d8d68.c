@@ -33,8 +33,8 @@ void Func_080d8d68(s32 index, s32 id, s32 other) {
     slot->value = other;
     *(s16 *)slot->unk06 = priority;
     lift = 128;
-    /* FAKEMATCH: starts 0x80000 before the stack arguments load, as the
-     * native does (differ 12 without it). */
+    /* FAKEMATCH(barrier): the lift built before the stack arguments load;
+     * as plain statements, 10 of 75 instructions differ in tla-en. */
     asm volatile("" : "+l"(lift));
     lift <<= 12;
     Func_080d8e08(index, first->x, first->y + lift, first->z, second->x,

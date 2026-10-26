@@ -52,8 +52,8 @@ void Func_080d9104(s32 slot, s32 firstId, s32 secondId) {
     ends->second = secondId;
     ends->layer = layer;
     lift = 128;
-    /* FAKEMATCH: starts 0x80000 before the stack arguments load, as the
-     * native does (differ 12 without it). */
+    /* FAKEMATCH(barrier): the lift built before the stack arguments load;
+     * as plain statements, 10 of 69 instructions differ in tla-en. */
     asm volatile("" : "+l"(lift));
     lift <<= 12;
     Func_080d9194(slot, first->x, first->y + lift, first->z, second->x,

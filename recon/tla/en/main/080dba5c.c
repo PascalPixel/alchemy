@@ -70,7 +70,7 @@ void Func_080dba5c(void) {
     scene->active = 1;
     buffer = MemAlloc(0x200);
     /* FAKEMATCH(one-pass): an empty once-only block, so the frame's zero is
-     * not the active flag's; as plain statements, 16 of 103 instructions
+     * not the active flag's; as plain statements, 12 of 103 instructions
      * differ in tla-en. */
     do {
     } while (0);

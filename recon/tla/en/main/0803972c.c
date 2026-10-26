@@ -18,8 +18,6 @@
 void UiText_ApplyChannelStyle(struct UiChannelSlot *channel) {
   struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
 
-  /* FAKEMATCH: the work pointer loads before the offset is built. */
-  asm("");
   work->colour = channel->colour;
   work->outline = channel->outline;
   work->lineSpacing = channel->lineSpacing;

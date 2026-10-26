@@ -171,9 +171,6 @@ void BattleEffect_UpdateRandomTargetParticle(struct EffectSlot *effect) {
     {
       struct EffectVector *p = &position;
 
-      asm volatile(
-          ""
-          : "+l"(p)); /* FAKEMATCH: ⚓️ passes the position before it loads z */
       position.z = source->z;
       Camera_WorldToScreen(p);
     }

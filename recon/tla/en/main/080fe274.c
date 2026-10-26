@@ -64,9 +64,9 @@ void Func_08038290(void);
 
 static __inline__ void CopyWords_(void *destination, const void *source,
                                   s32 size) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as the scene layer does: called directly, CSE keeps 0x05000000 in a saved
-   * register across the calls. */
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants; as direct Iwram_CopyWords calls, CSE keeps 0x05000000 in a
+   * saved register and 48 of 216 instructions differ in tla-en. */
   Iwram_CopyWords(destination, source, size);
 }
 

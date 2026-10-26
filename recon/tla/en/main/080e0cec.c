@@ -57,10 +57,7 @@ void Func_080e0cec(struct EffectSlot *slot) {
 
   if (state == 0) {
     pos.x = src->x;
-    /* FAKEMATCH: the native copies the camera argument before it loads y
-     * (differ 4 without the barrier). */
     arg = &pos;
-    asm("" : "+r"(arg) : : "memory");
     pos.y = src->y;
     pos.z = src->z;
     Camera_WorldToScreen(arg);

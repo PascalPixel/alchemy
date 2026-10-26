@@ -4,7 +4,7 @@
 
 // Twin: The Broken Seal's BattleEffect_RunBolt (effect.c), the same
 // kind, with the same tables, frame counts and cues.
-// Listing 552 instructions, draft 552, differ 6 (tla-en, 2026-10-26).
+// Listing 552 instructions, draft 552, differ 4 (tla-en, 2026-10-26).
 
 // Changes from the twin: the effect argument is read directly (the Lost
 // Age never stores work->effect), the blitter loads through BattleEffect_LoadBlitter
@@ -19,13 +19,13 @@
 // they stay apart until loop.c has run, cse2 merges them within the
 // iteration, and the bases stay in sl and r5 across the calls with kind
 // reloaded from the stack, as the native has them (101 with the earlier
-// glint-pointer device, 6 now).
+// glint-pointer device; 6 with the block). The flip's random number drawn into a
+// local before the block (found by alchemy permute): 4.
 
 // What remains, one row each: the prologue's canvas read after the
-// argument for the canvas layer, the spread's subtraction after kind's
-// reload, and the glint's height read after its stacked width; the known
-// store-then-load scheduling limit (spill and argument stores before
-// loads).
+// argument for the canvas layer, and the glint's height read after its
+// stacked width; the known store-then-load scheduling limit (a spill store
+// and an argument store before loads).
 
 // Tried (differ):
 // the twin as is, with the Lost Age's names                    204
@@ -201,10 +201,12 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
           s32 y = pos.y - drop - (gData_08197498[kind] >> 1) + 8;
           u32 r = Random16();
           s32 x = pos.x;
+          u32 flip;
 
           x += r % spread;
           x -= spread / 2;
           x -= gData_08197492[kind] >> 1;
+          flip = Random16();
 
           /* FAKEMATCH(one-pass): the block ends cse1's block, so the two reads
            * of each size table's address stay apart until loop.c has run; as
@@ -212,7 +214,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
           do {
           } while (0);
           Func_08196404(188, 7, 7,
-                        Data_0819846e[Random16() & 3] | COMPOSITE_CLIP_X |
+                        Data_0819846e[flip & 3] | COMPOSITE_CLIP_X |
                             COMPOSITE_CLIP_Y,
                         Data_08198472[effect->variant]);
           DRAW_GLINT(canvas, work->sheet + gData_08197486[kind], x, y,

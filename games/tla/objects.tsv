@@ -3656,33 +3656,28 @@ main	rom_main_09	recon/tla/it/rom	.rom.0013d098	it
 main	rom_main_09	recon/tla/it/rom	.rom.0013e114	it
 main	rom_main_09	recon/tla/it/rom	.rom.0013e3d0	it
 main	rom_main_09	recon/tla/it/rom	.rom.0013eb70	it
-main	rom_main_09	recon/tla/it/rom	.rom.0013f518	it
 main	rom_main_09	recon/tla/fr/rom	.rom.0013d098	fr
 main	rom_main_09	recon/tla/fr/rom	.rom.0013e114	fr
 main	rom_main_09	recon/tla/fr/rom	.rom.0013e3d0	fr
 main	rom_main_09	recon/tla/fr/rom	.rom.0013eb70	fr
-main	rom_main_09	recon/tla/fr/rom	.rom.0013f518	fr
 main	rom_main_09	recon/tla/es/rom	.rom.0013d098	es
 main	rom_main_09	recon/tla/es/rom	.rom.0013e114	es
 main	rom_main_09	recon/tla/es/rom	.rom.0013e3d0	es
 main	rom_main_09	recon/tla/es/rom	.rom.0013eb70	es
-main	rom_main_09	recon/tla/es/rom	.rom.0013f518	es
 main	rom_main_09	recon/tla/de/rom	.rom.0013d098	de
 main	rom_main_09	recon/tla/de/rom	.rom.0013e114	de
 main	rom_main_09	recon/tla/de/rom	.rom.0013e3d0	de
 main	rom_main_09	recon/tla/de/rom	.rom.0013eb70	de
-main	rom_main_09	recon/tla/de/rom	.rom.0013f518	de
 main	rom_main_09	recon/tla/raw/0813d098	.text	en
 main	rom_main_09	recon/tla/raw/0813e114	.text	en
 main	rom_main_09	recon/tla/raw/0813e3d0	.text	en
 main	rom_main_09	recon/tla/raw/0813e7e0	.text	en
 main	rom_main_09	recon/tla/raw/0813eb70	.text	en
-main	rom_main_09	recon/tla/raw/0813f518	.text	en
 main	rom_main_09	recon/tla/ja/rom	.rom.0013d098	ja
 main	rom_main_09	recon/tla/ja/rom	.rom.0013e114	ja
 main	rom_main_09	recon/tla/ja/rom	.rom.0013e3d0	ja
 main	rom_main_09	recon/tla/ja/rom	.rom.0013eb70	ja
-main	rom_main_09	recon/tla/ja/rom	.rom.0013f518	ja
+main	rom_main_09	games/tla/src/battle/effect/element_burst	.text
 main	rom_main_09	games/tla/src/battle/effect/halved_canvas_transfer	.text
 main	rom_main_09	recon/tla/it/rom	.rom.0013f8d4	it
 main	rom_main_09	recon/tla/fr/rom	.rom.0013f8d4	fr

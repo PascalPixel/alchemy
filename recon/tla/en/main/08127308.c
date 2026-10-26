@@ -1,4 +1,13 @@
-// Under -mthumb-slow-loads (26 October 2026): differ 24 of 280 in tla-en.
+// Differ 12 of 280 in tla-en (26 October 2026; 24 before): mode 3's launch
+// fields set in the order flags, kind, variant, actor, firstTarget, actors[0],
+// count, initialValue (found by alchemy permute over that block's lines).
+// Left: the IME push in mode 0 stores the value before the count in the
+// native; written out by hand with the count stepped first and an empty asm
+// between the two stores it reaches 6 (not kept: a barrier inside the
+// shared push). The 6 left: the brightness pointer's spill before the IME
+// address's pool load at the mode 0 loop's head, and in mode 1 the
+// origin's base copied (mov r2, r8) before position2.y is loaded.
+// Earlier, at 24:
 // Tried, one edit at a time: an empty asm barrier after each statement, each
 // adjacent pair of statements swapped, each call argument copied into its
 // argument register (pinned) at the call or up to three statements before it;
@@ -122,12 +131,12 @@ void Func_08127308(s32 unit, s32 kind, s32 mode, s32 variant) {
     launch.initialValue = 1;
     Func_08138020(&launch);
   } else {
-    launch2.kind = kind;
     launch2.flags = 0;
+    launch2.kind = kind;
     launch2.variant = 0;
     launch2.actor = unit;
-    launch2.actors[0] = unit;
     launch2.firstTarget = unit;
+    launch2.actors[0] = unit;
     launch2.count = 1;
     launch2.initialValue = 1;
     Func_08138030(&launch2);

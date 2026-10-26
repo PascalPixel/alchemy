@@ -1,26 +1,9 @@
-// Near miss, differ 28 of 380.
-//
-// Measured 2026-10-25 under -mthumb-slow-loads: differ 28; an empty asm before
-// the first statement does not help (differ 32).
-
 // Twin: The Broken Seal's BattleEffect_RunElementBurst, reached from the
 // scenes through the far-call table (table_47.s). Like 0813e3d0 it sets up
 // its own heap blocks, stores work->effect and marks the work active
 // itself, and reads the actors from the argument. The corner sparks' four
 // blitters are loaded through Func_08196404 directly, with all five
 // arguments.
-
-// Left: in the corner-spark loop the native hoists the loader's mode (1)
-// into r6 and reads the alternate blitter's slot afresh each turn; here the
-// slot's address is the hoisted value and the 1 is built each turn. The
-// rest are single rows where the native builds a constant or issues a load
-// one slot earlier, and the pool offsets they move.
-
-// Tried:
-// the twin, work block allocated by sizeof (the struct is short)  44
-// the work block's real size, 0x7b7c                             40
-// the slot read inside the loop: the address is no longer
-// hoisted, but neither is the 1                                60
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -73,11 +56,12 @@ extern char ResourceId_RedPaletteA;
 extern char ResourceId_VioletPaletteA;
 
 void BattleEffect_StartCanvasLayer(s32 control);
-void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
+void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
-void Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                   s32 mode); // BattleEffect_BuildBlitter
-s32 BattleEffect_ProcessPendingGraphicsTransfer(void);      // the canvas transfer callback
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
+                  u32 mode); // BattleEffect_BuildBlitter
+s32 BattleEffect_ProcessPendingGraphicsTransfer(
+    void); // the canvas transfer callback
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -85,7 +69,7 @@ void Audio_PlayCue(s32 cue);
 u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
-void ObjectGroup_TickMemberTimers(void);            // ObjectGroup_TickMemberTimers
+void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 
 // Light gathering on the user and bursting, for the scenes.
@@ -135,7 +119,14 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
     palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteA);
     break;
   }
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  {
+    /* FAKEMATCH(temporary): called through a local pointer to its fixed entry,
+     * which the native loads before the palette address; as a plain
+     * Iwram_CopyWords call, 2 of 380 instructions differ in tla-en. */
+    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
+
+    copy((void *)BG_PLTT, palette, 128);
+  }
 
   for (i = 0; i != 128; i++) {
     gSparkles[i].y = 0x800000;
@@ -153,8 +144,10 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
   }
   work->transferMode = 2;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
-  BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_ADDITIVE, CLIP | COMPOSITE_FLIP_X));
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
+                                CALLBACK_ORDER);
+  BattleEffect_LoadBlitter(SLOT_BLITTER,
+                           BLITTER(BLIT_ADDITIVE, CLIP | COMPOSITE_FLIP_X));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Audio_PlayCue(140);
 
@@ -176,12 +169,15 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
     // The corner sparks, each with its own flips.
     if (frame >= 0 && frame <= 14) {
       s32 picture = frame / 3 % 5;
-      DrawRectangle *slot = (DrawRectangle *)&Ram_HeapSlots->unkb8[1];
+      /* FAKEMATCH(temporary): the mode set once before the loop, which the
+       * native keeps in r6; as BLIT_MAX in the call, 38 of 380 instructions
+       * differ in tla-en. */
+      s32 mode;
 
-      for (i = 0; i != 4; i++) {
+      for (i = 0, mode = BLIT_MAX; i != 4; i++) {
         Func_08196404(SLOT_BLITTER_ALTERNATE, 7, 7, Data_081976da[i] | CLIP,
-                      BLIT_MAX);
-        draw[1] = *slot;
+                      mode);
+        draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
         draw[1](canvas, work->sheet + (picture << 10), Data_081976d2[i] + 32,
                 ground.y + Data_081976d6[i] - 32, 32, 32);
         Runtime_ReleaseHeapBlock(SLOT_BLITTER_ALTERNATE);

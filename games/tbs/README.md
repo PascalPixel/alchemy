@@ -9,8 +9,8 @@ Broken Seal, or TBS for short.
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE"}, "flowchart": {"curve": "basis", "padding": 14}}}%%
 flowchart LR
   start(["The game starts"]) --> loop(["The main loop"])
-  loop --> map["A map"]
-  loop --> battle["A battle"]
+  loop --> map["Map"]
+  loop --> battle["Battle"]
   loop --> dice["Lucky Dice"]
   loop --> wheels["Lucky Wheels"]
   map --- back(( ))

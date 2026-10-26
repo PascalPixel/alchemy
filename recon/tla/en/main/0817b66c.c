@@ -71,7 +71,7 @@ extern const u8 gData_08199474[];
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack,
                                 s32 wait);
-void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
+s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
 void *GetBattleObjectSlotFar(s32 id);
 void EffectPosition_ProjectBattler(

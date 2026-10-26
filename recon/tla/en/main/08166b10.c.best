@@ -1,0 +1,436 @@
+// Draft, differ 48 of 863 (863 here; 2026-10-26: 91 before the column blits
+// were reordered as the listing has them, the second, lower one first, with
+// the sheet local before the blitter, 91 to 52; BattleEffect_LoadBlitter
+// returns s32, as nibble_pair.c defines it, 52 to 48): Func_08166b10, the body of two effect
+// kinds (series_h.c's BattleEffect_RunTitanBlade and BattleEffect_RunAcheronsGrief pass modes 0 and 1),
+// The Broken Seal's BattleEffect_RunTitanBlade.
+
+// Twin: ☀️ BattleEffect_RunTitanBlade (games/tbs/src/effect/effect.c) with The
+// Lost Age's mode argument: mode 2 skips the sword sheet, mode 1 rotates each
+// BG colour's three fields first and at frame 61 copies resource 0x188's
+// palette and calls Func_0815b634, mode 0 steps the palette toward the blast
+// sheet on frames 41 to 63; frame 60 starts phase 144 or 145; frame 9 also
+// flashes the first target. The blitters come from BattleEffect_LoadBlitter(104, 19) and
+// (188, 35).
+
+// frame declared before the blitters, and the sheet held in a local for the
+// column blits, give the native's stack slots (252 to 149).
+
+// Left: 41 rows differ by register, the frame reloads in the dust loop taking
+// other scratch registers (the loop's pointer and counter start in r1 here,
+// r5 and r6 in the native), and one extra row; the rest is reordered rows of
+// the kind Func_08164b2c's header traces to memory costs.
+#include "types.h"
+#include "ram_buffer.h"
+#include "io_reg.h"
+#include "system.h"
+#include "fixed_math.h"
+#include "iwram_call.h"
+#include "callback_scheduler.h"
+#include "resource.h"
+#include "effect_step.h"
+#include "battle_effect.h"
+#include "battle_effect_work.h"
+
+// The pixel half of a 16.16 fixed-point value.
+#define HI(v) (((s16 *)&(v))[1])
+
+// The heap blocks the dispatcher hands every canvas effect, as byte offsets
+// into Ram_HeapSlots (☀️ uses slot indices).
+#define HEAP_BLITTER 104
+#define HEAP_BLITTER_ALTERNATE 188
+
+// BattleEffect_LoadBlitter's argument: The Lost Age's blitter mode (☀️'s counted down
+// from 3) in the high nibble, the COMPOSITE_ flags in the low one.
+#define BLITTER(mode, flags) ((mode) << 4 | (flags))
+#define BLIT_MAX 1
+#define BLIT_TRANSPARENT 2
+
+// The sheet: the fire pillar, the flashes after it, the sword far after.
+#define FLASH_SHEET (221 << 4)
+#define SWORD_SHEET 20000
+
+// The map cell buffer: 684 motes of dust, then the sword's sparks.
+#define DUST ((struct EffectStep *)Ram_MapCellBuffer)
+#define SPARK                                                                  \
+  ((struct EffectStep *)(Ram_MapCellBuffer + 684 * sizeof(struct EffectStep)))
+
+#define SE_SWING 212
+#define SE_SPRAY 164
+
+extern char ResourceId_SwordSheet;
+extern char ResourceId_FirePillarSheetA;
+extern char ResourceId_FlashBurstSheet;
+extern char ResourceId_Data134; // ☀️ ParticleSpritesA
+extern char ResourceId_BlastSheet;
+extern char ResourceId_Data188;
+extern u8 gData_08198a9e[];  // ☀️ gPlasma_FlashCells
+extern s32 gData_08198aa4[]; // the dust's four gravities
+extern u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells
+
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
+void EffectPosition_ProjectBattler(
+    s32 id, struct EffectPosition *position);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
+                                                // 7, 7, flags, mode)
+void Func_0815f0a0(s32 resourceId); // BattleEffect_StepPaletteToResource
+void Func_0815b634(void);
+void Audio_PlayCue(s32 cue);
+void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+                                      s32 gravity);
+void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
+                   s32 frames); // ObjectGroup_UpdateMembers
+void Func_08118088(s32 actor,
+                   s32 variant);  // BattleMotion_ApplyVariantMotionFar
+void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
+void ObjectGroup_TickMemberTimers(void);         // ObjectGroup_TickMemberTimers
+void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
+
+// A great sword falls from the sky onto the target, a pillar of fire and dust
+// spouting under it, and drives into the ground in a burst of flashes and
+// sparks.
+//
+// Setup: open the canvas on BG1, load the pillar, flash, sword and spark
+// pictures (mode 1 turns the BG colours first), place 32 flash rings and 340
+// sparks under the target, and empty the dust. Each frame (102): the sword
+// comes down 16 pixels a frame for 10 frames, holds, sinks slowly from 33 and
+// plunges after 60; a fountain of dust at frame 28 and 16 more a frame from 32
+// to 63, while the pillar rises; the flashes from 56 and the sparks from 60,
+// bouncing on the ground; the canvas floods at frames 9 and 60; every target
+// is struck at frame 68.
+void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
+  struct BattleEffectWork *work;
+  void *canvas;
+  s32 frame;
+  DrawRectangle draw[2];
+  u8 *cells;
+  struct EffectPosition target;
+  s32 centerX;
+  s32 step;
+  s32 origin;
+  s32 i;
+
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleFxWork[1];
+  cells = Ram_HeapSlots->unk64[0];
+
+  // Open the canvas on BG1 over the target and build the blitters.
+  BattleEffect_StartCanvasLayer(1);
+  REG_BLDALPHA = 0x1010;
+  EffectPosition_ProjectBattler(effect->actors[0], &target);
+  centerX = target.x / 2;
+
+  BattleEffect_LoadBlitter(HEAP_BLITTER,
+                BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
+                BLITTER(BLIT_TRANSPARENT, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+
+  if (mode != 2)
+    Resource_LoadAndDecompress((s32)&ResourceId_SwordSheet,
+                               work->sheet + SWORD_SHEET, 1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
+                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+                             work->sheet + FLASH_SHEET, 1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data134, cells, 0, 0);
+
+  // Mode 1 turns the first 64 BG colours: red to blue, blue to green, green
+  // to red.
+  if (mode == 1) {
+    u16 *color = (u16 *)0x05000000;
+
+    for (i = 0; i != 64; i++) {
+      s32 red = *color & 0x1f;
+      s32 green = (*color >> 5) & 0x1f;
+      s32 blue = (*color >> 10) & 0x1f;
+
+      *color++ = (red << 10) | (blue << 5) | green;
+    }
+  }
+
+  work->transferMode = 2;
+  work->transferValue = 75;
+  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+
+  // 32 flashes on rings, two pixels apart.
+  i = 0;
+  do {
+    struct EffectStep *flash = &work->particles[i];
+    s32 scale = i * 2;
+    s32 angle = Random16() & 0xFFFF;
+
+    flash->x = Trig_Sin(angle) * scale;
+    flash->y = -(Trig_Cos(angle) * scale);
+    flash->variant = i / 2 + 25;
+    i++;
+  } while (i != 32);
+
+  i = 0;
+  do {
+    DUST[i].variant = -1;
+    i++;
+  } while (i != 171 << 2);
+
+  // The sparks wait at the target's feet.
+  i = 0;
+  origin = centerX << 16;
+  do {
+    struct EffectStep *spark = &SPARK[i];
+    s32 speed;
+    s32 angle;
+
+    speed = 0x1FF;
+    speed &= Random16();
+    angle = Random16() & 0xFFFF;
+    spark->x = origin;
+    spark->y = 176 << 15;
+    spark->velocityX = (Trig_Sin(angle) * (speed + 32)) >> 5;
+    spark->velocityY = -(Trig_Cos(angle) * (speed + 32)) >> 6;
+    spark->variant = (Random16() & 7) + 32;
+    i++;
+  } while (i != 170 << 1);
+
+  frame = 0;
+  do {
+    if (mode == 0) {
+      if (frame >= 41 && frame <= 63)
+        Func_0815f0a0((s32)&ResourceId_BlastSheet);
+    } else if (mode == 1) {
+      if (frame == 61) {
+        Iwram_CopyWords((void *)0x05000000,
+                        Resource_GetTableEntry((s32)&ResourceId_Data188), 128);
+        Func_0815b634();
+      }
+    }
+
+    if (frame == 8)
+      work->shakeFrames = frame;
+    if (frame == 48)
+      work->shakeFrames = 8;
+    if (frame == 60)
+      work->shakeFrames = 16;
+
+    if (frame == 4)
+      Audio_PlayCue(SE_SWING);
+    if (frame == 32)
+      Audio_PlayCue(SE_SPRAY);
+    if (frame == 60) {
+      if (mode == 1)
+        Func_081180e8(144);
+      else
+        Func_081180e8(145);
+    }
+
+    // The flashes, from frame 56.
+    if (frame > 55) {
+      i = 0;
+      do {
+        struct EffectStep *flash = &work->particles[i];
+        s32 x;
+        s32 life;
+        s32 y;
+
+        y = HI(flash->y);
+        x = HI(flash->x) + centerX;
+        life = flash->variant;
+        if (life >= 0 && life <= 17)
+          draw[0](canvas,
+                  work->sheet + (gData_08198a9e[life / 3] << 11) + FLASH_SHEET,
+                  x - 16, y + 48, 32, 64);
+        life = flash->variant;
+        flash->variant = life > 0 ? life - 1 : -1;
+        i++;
+      } while (i != 16);
+    }
+
+    // The dust: a fountain at frame 28, then 16 more a frame until 63.
+    if (frame == 28) {
+      i = 0;
+      do {
+        struct EffectStep *dust = &DUST[i];
+
+        if (dust->variant == -1) {
+          s32 speed;
+          s32 angle;
+
+          speed = Random16() & 63;
+          angle = Random16() & 0xFFFF;
+          dust->x = ((Trig_Sin(angle) * speed) >> 3) + origin;
+          dust->y = ((Trig_Cos(angle) * speed) >> 2) + (192 << 15);
+          dust->velocityX = ((Random16() & 63) - 32) << 14;
+          dust->velocityY = (-(Random16() & 63) - 8) << 13;
+          dust->variant = 0;
+        }
+        i++;
+      } while (i != 128 << 1);
+    }
+
+    step = frame - 32;
+    if (step >= 0 && step <= 31) {
+      s32 spawned;
+
+      spawned = 0;
+      i = 0;
+      do {
+        struct EffectStep *dust = &DUST[i];
+
+        if (dust->variant == -1) {
+          s32 speed;
+          s32 angle;
+
+          speed = Random16() & 63;
+          angle = Random16() & 0xFFFF;
+          dust->x = ((Trig_Sin(angle) * speed) >> 3) + origin;
+          dust->y = ((Trig_Cos(angle) * speed) >> 2) + (192 << 15);
+          dust->velocityX = ((Random16() & 63) - 32) << 14;
+          dust->velocityY = (-(Random16() & 63) - 8) << 13;
+          dust->variant = 0;
+          spawned++;
+          if (spawned == 16)
+            break;
+        }
+        i++;
+      } while (i != 171 << 2);
+    }
+
+    if (step >= 0 && step <= 31) {
+      s32 phase = frame * 16;
+      DrawRectangle blit = draw[0];
+      u8 *src = work->sheet;
+      s32 x = centerX - 17;
+      s32 size = (phase - 256) % 104;
+
+      blit(canvas, src, x, 4 - size, 34, 104);
+      blit(canvas, src, x, 108 - size, 34, size);
+    }
+
+    // The dust grows as it falls and toward the end.
+    if (frame <= 71) {
+      i = 0;
+      do {
+        struct EffectStep *dust = &DUST[i];
+
+        if (dust->variant >= 0) {
+          s32 size;
+
+          size = i % 3 + 2;
+          if (dust->velocityY > 0)
+            size += 2;
+          if (frame > 68 && size <= 5)
+            size = 6;
+          if (frame > 70 && size <= 6)
+            size = 7;
+          if (frame > 72 && size <= 7)
+            size = 8;
+          if (frame > 74 && size <= 8)
+            size = 9;
+          if (frame > 76)
+            size = 10;
+          draw[0](canvas, cells + gData_08197410[size - 1],
+                  HI(dust->x) - size / 2, HI(dust->y) - size, size, size * 2);
+
+          dust->x += dust->velocityX;
+          dust->y += dust->velocityY;
+          if (frame > 80)
+            dust->velocityY += -32768;
+          else
+            dust->velocityY += gData_08198aa4[i & 3];
+          dust->velocityX = dust->velocityX * 62 / 64;
+          dust->velocityY = dust->velocityY * 62 / 64;
+          dust->variant++;
+          if (dust->velocityY > 0 && HI(dust->y) > 108)
+            dust->variant = -1;
+        }
+        i++;
+      } while (i != 171 << 1);
+    }
+
+    // The sword: down for 10 frames, held, sinking from 33, plunging after
+    // 60; nothing below y = 108 is drawn.
+    if (frame <= 95) {
+      s32 x;
+      s32 high;
+      s32 top;
+
+      x = centerX - 18;
+      high = 120;
+      if (frame > 60)
+        top = frame * 8 - 450;
+      else if (frame > 32)
+        top = step / 2 + 16;
+      else if (frame <= 9)
+        top = frame * 16 - 128;
+      else
+        top = 16;
+      if (top + 120 > 108)
+        high = high - top - 12;
+      if (high > 0)
+        draw[1](canvas, work->sheet + SWORD_SHEET, x, top, 36, high);
+    }
+
+    // The sparks bounce on the ground.
+    if (frame > 59) {
+      i = 0;
+      do {
+        struct EffectStep *spark = &SPARK[i];
+
+        if (spark->variant > 0) {
+          s32 x;
+          s32 y;
+          s32 size;
+
+          BattleEffectKernels_IntegrateVector2(spark, 64, 128 << 6);
+          y = spark->y;
+          spark->variant--;
+          if (y > (216 << 15)) {
+            spark->velocityY = -spark->velocityY / 2;
+          } else {
+            x = spark->x;
+            if ((x >= 0 && x <= 0x7effff) && y >= 0) {
+              u8 *cell;
+
+              size = spark->variant / 5 + 1;
+              cell = cells + gData_08197410[size - 1];
+              x >>= 16;
+              y >>= 16;
+              x -= size / 2;
+              y -= size;
+              draw[0](canvas, cell, x, y, size, size * 2);
+            }
+          }
+        }
+        i++;
+      } while (i != 170 << 1);
+    }
+
+    // The hit, and the canvas flooded at frames 9 and 60.
+    if (frame == 68) {
+      for (i = 0; i != effect->count; i++) {
+        Func_0814cd48(effect->actors[i], 7, 5, i, 16);
+        Func_08118088(effect->actors[i], 7);
+      }
+    }
+
+    if (frame == 9) {
+      Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
+      Iwram_FillWords(canvas, 128 << 7, 0x3F3F3F3F);
+    }
+    if (frame == 60)
+      Iwram_FillWords(canvas, 128 << 7, 0x3F3F3F3F);
+
+    Func_08158ce0(16, 16);
+    ObjectGroup_TickMemberTimers();
+    work->transferPending = 1;
+    WaitFrames(1);
+    frame++;
+  } while (frame != 102);
+
+  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Runtime_ReleaseHeapBlock(HEAP_BLITTER_ALTERNATE);
+  Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+  BattleEffect_EndCanvasLayer();
+}

@@ -20797,7 +20797,7 @@ msgctxt "MsgYourCoins"
 msgid "05123"
 msgstr "Tue monete:"
 
-msgctxt "message"
+msgctxt "MsgPrice"
 msgid "05124"
 msgstr "Costo"
 
@@ -20827,11 +20827,11 @@ msgstr ""
 "Nessuno\n"
 "strumento"
 
-msgctxt "message"
+msgctxt "MsgCannotBuyThat"
 msgid "05131"
 msgstr "Non acquistiamo."
 
-msgctxt "message"
+msgctxt "MsgNotBroken"
 msgid "05132"
 msgstr "Funziona bene."
 
@@ -20867,7 +20867,7 @@ msgctxt "message"
 msgid "05140"
 msgstr "FORT."
 
-msgctxt "message"
+msgctxt "MsgItemCondition"
 msgid "05141"
 msgstr "----------"
 

@@ -1,4 +1,4 @@
-// Near miss, differ 104 of 503 (effect kind 8, the falling crystals).
+// Near miss, differ 46 of 503 (effect kind 8, the falling crystals).
 
 // ☀️ twin: BattleEffect_RunPrism (games/tbs/src/effect/effect.c),
 // shape 0.800, structure 0.979. ⚓️'s changes: the counts table
@@ -9,9 +9,14 @@
 // Ram_HeapSlots->cameraWork; BattleEffect_FetchRectangleBlitters fetches the
 // blitter pair.
 
-// Same frame and instruction count. What is left: the loop counters i and j
-// take r8 and r10 the other way round, which moves every row that uses
-// them, and order rows elsewhere.
+// Same frame, instruction count and registers. The crystals are seeded
+// with a counter of their own (k), which gives it r8 and the two masks r10
+// and r11, as natively (98 -> 46). What is left: the native sets the first
+// half of the work's transfer offset (movs r7, #239) before
+// BattleEffect_StartCanvasLayer and keeps it across the setup calls, where
+// alchemy-gcc builds it at its use, which moves the first literal pool and
+// every pc offset across it; the rest are single rows where the native
+// issues a load one slot earlier.
 
 // Tried (differ):
 // trial 1's port (effects trial, 2026-10-15)                        104
@@ -21,6 +26,7 @@
 // greedy declaration-order scan, every local through every place   104
 // a separate counter k for the shard draw loop (414) or the actor
 // loop (158); j declared before i (104)
+// the seeding loop through i (64) or its own counter k (46, kept)
 
 #include "types.h"
 #include "system.h"
@@ -85,6 +91,7 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
   s32 cell;
   s32 i;
   s32 j;
+  s32 k;
 
   // Set up: the canvas layer, the two sheets and the blitter pair.
   shards = (struct EffectStep *)Ram_MapCellBuffer;
@@ -101,8 +108,8 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
 
   // The crystals wait above the screen, each eight frames behind the last,
   // and drift sideways so that they land over the targets.
-  for (j = 0; j != Data_081979b7[effect->variant * 3]; j++) {
-    seed = &work->particles[j];
+  for (k = 0; k != Data_081979b7[effect->variant * 3]; k++) {
+    seed = &work->particles[k];
     x = Random16() & 31;
     seed->y = -0x400000;
     if (effect->side == 1) {
@@ -115,7 +122,7 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
     seed->x = x - seed->velocityX * 18;
     seed->velocityY = 0;
     seed->z = 0;
-    seed->variant = j * 8;
+    seed->variant = k * 8;
   }
 
   for (frame = 0; frame != Data_081979b7[effect->variant * 3 + 1]; frame++) {

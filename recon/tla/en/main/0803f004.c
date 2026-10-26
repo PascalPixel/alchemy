@@ -1,3 +1,5 @@
+// Draft, differ 18 of 223 (2026-10-26, 20 before): the forward branch sets the
+// new node's dx right after its y. Earlier notes follow.
 // Draft, differ 20 of 223 in tla-en under -mthumb-slow-loads (2026-10-26). A
 // device search (each statement followed by an empty asm or a one-pass block,
 // wrapped in one, or swapped with the next, kept when it helps) reaches 6 with
@@ -44,11 +46,11 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
     z = screen->baseY;
     p->targetX = y + 64;
     p->y = z;
+    p->dx = -2;
     p->targetY = z;
     p->scaleStep = 32;
     p->scale = 32;
     p->scaleEnd = 256;
-    p->dx = -2;
     last = p;
     p = screen->head;
     p->scaleStep = -32;

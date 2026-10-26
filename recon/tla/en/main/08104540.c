@@ -1,3 +1,13 @@
+// Near miss, differ 36 of 436 (2026-10-26; 93 before). The twin's result = 0
+// before frame, with selectedPages cleared from it (80); the page row marked
+// through UiRender_MarkRow with the signed row (54); the help window's
+// address kept in its own slot pointer beside the left and right ones, and
+// pageCount declared before counts (36): the frame's spill slots now follow
+// the native's for the declared pointers. Left: the heap slot's load before
+// sub sp in the prologue, and the three loop-invariant addresses (the pair
+// owner's, the selected page's and the page count's) spilled in another order
+// (the native keeps the page count's lowest, at sp+20, as if it were made
+// last, by loop.c rather than a declaration).
 // First draft of Func_08104540: the Djinn menu's view of the shown member's
 // current status, the twin of ☀️'s DjinnMenu_ShowOwnerStatus
 // (games/tbs/src/menu/menu/djinn_preview.c), without its blink phase: both
@@ -53,7 +63,7 @@ void UiWindow_SetTilemapEntryFar(struct UiWindow *window, s32 tile, s32 x,
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void MemFree(void *block);
 s32 Func_08101860(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
-                          u16 *out, s32 *firstCount, s32 *secondCount);
+                  u16 *out, s32 *firstCount, s32 *secondCount);
 void Func_08103218(s32 window, s32 x, s32 y, s32 owner, s32 a, s32 b, s32 c,
                    s32 param, s32 d);
 s32 Menu_GetModuloOfSum(s32 value, s32 count);
@@ -73,6 +83,7 @@ s32 Func_08104540(void) {
   s32 frame;
   s32 *leftWindowSlot;
   s32 *rightWindowSlot;
+  s32 *helpWindowSlot;
   struct UiRenderWork *render;
   u32 pressedKeys;
   u32 repeatedKeys;
@@ -85,15 +96,16 @@ s32 Func_08104540(void) {
   s32 tile;
   s32 pageIndex;
   s32 side;
-  s32 *counts;
   s32 *pageCount;
+  s32 *counts;
   s32 blink;
 
   menu = Ram_HeapSlots->menuRuntime;
-  frame = 0;
   redraw = 1;
+  result = 0;
+  frame = 0;
   menu->cursor->active = 13;
-  selectedPages[1] = selectedPages[0] = 0;
+  selectedPages[1] = selectedPages[0] = result;
   for (side = 3; side >= 0; side--)
     menu->ownerY[side] = 200;
   RenderOutput_ClearListFar(menu->listWindow);
@@ -103,8 +115,8 @@ s32 Func_08104540(void) {
   listedActions = Runtime_BumpAllocateAlternatePool(96);
   saved = Runtime_BumpAllocateAlternatePool(332);
   unit = Unit_Get(menu->shownOwner[0]);
-  counts[1] = counts[0] = Func_08101860(
-      unit->actionSlots, unit->actionSlots, listedActions, &gained, &lost);
+  counts[1] = counts[0] = Func_08101860(unit->actionSlots, unit->actionSlots,
+                                        listedActions, &gained, &lost);
   MemFree(saved);
   MemFree(listedActions);
   counts[0] = (counts[0] - 1) / 6 + 1;
@@ -117,7 +129,8 @@ s32 Func_08104540(void) {
   UiWindow_UpdateOrCreate(leftWindowSlot, 0, 5, 15, 15, 2);
   rightWindowSlot = &menu->secondWindow;
   UiWindow_UpdateOrCreate(rightWindowSlot, 15, 5, 15, 15, 2);
-  RenderOutput_RedrawSavedRectFar(menu->helpWindow);
+  helpWindowSlot = &menu->helpWindow;
+  RenderOutput_RedrawSavedRectFar(*helpWindowSlot);
   RenderOutput_RedrawSavedRectFar((s32)menu->statusWindow);
   UiText_DrawCharacterAtOffsetFar((s32)MsgCurrentStatus, menu->statusWindow, 0,
                                   0);
@@ -152,7 +165,7 @@ s32 Func_08104540(void) {
       UiWindow_SetTilemapEntryFar(window, 0xf128,
                                   window->width - counts[side] - 3, -1, 0);
       UiWindow_SetTilemapEntryFar(window, 0xf129, window->width - 2, -1, 0);
-      render->dirty |= 2 << ((s16)window->y >> 2);
+      UiRender_MarkRow(render, (s16)window->y);
     }
     frame++;
     blink = frame % 60 - 5;
@@ -195,9 +208,9 @@ s32 Func_08104540(void) {
   }
   Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0x480);
   ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->menuBusy = 1;
-  UiWindow_CloseIfOpen(&menu->helpWindow, 1);
+  UiWindow_CloseIfOpen(helpWindowSlot, 1);
   WaitFrames(1);
-  UiWindow_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, 2);
+  UiWindow_UpdateOrCreate(helpWindowSlot, 13, 0, 17, 5, 2);
   UiWindow_CloseIfOpen(leftWindowSlot, 1);
   UiWindow_CloseIfOpen(rightWindowSlot, 1);
   RenderOutput_RedrawSavedRectFar((s32)menu->listWindow);

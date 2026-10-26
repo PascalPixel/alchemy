@@ -35,6 +35,13 @@
 
 // 2026-10-18: alchemy-devtools permute (6 min, 2 jobs, seed 31): no candidate below
 // the draft.
+// 2026-10-26, under -mthumb-slow-loads: differ 18 of 422, the instructions
+// and registers otherwise the native's. What remains is single rows where
+// the native issues a spill or argument store before a load (the known
+// store-then-load scheduling limit); barriers and one-pass blocks at each
+// statement, statement moves and each local scoped to a block gain only
+// the prologue's row or rows of that kind.
+
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_effect.h"

@@ -93,7 +93,7 @@ void BattleEffect_SelectLivingTargets(
 void BattleEffect_SpawnObjects(s32 count, s32 resource,
                    s32 priority); // BattleEffect_SpawnObjects
 void ResourceObject_ReleaseFar(void *object);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
                                                 // 7, 7, flags, mode)
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
 void Audio_PlayCue(s32 cue);

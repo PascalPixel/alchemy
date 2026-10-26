@@ -20847,7 +20847,7 @@ msgctxt "message"
 msgid "05132"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgPriceHeading"
 msgid "05133"
 msgstr "Vale"
 
@@ -20875,11 +20875,11 @@ msgctxt "MsgNotBroken"
 msgid "05139"
 msgstr "Sin desperfectos."
 
-msgctxt "message"
+msgctxt "MsgCannotDrop"
 msgid "05140"
 msgstr "No puede tirarse."
 
-msgctxt "message"
+msgctxt "MsgCannotRemove"
 msgid "05141"
 msgstr "No puede quitarse."
 

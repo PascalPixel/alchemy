@@ -1,3 +1,10 @@
+// 2026-10-26 (round 5): differ 104 of 2055 (draft 2055); resetDice set before
+// the state after a loss (a statement-move search): 108 to 104. Both decodes go
+// through Call2 with Ram_MapCellBuffer as an integer, as The Broken Seal's
+// LuckyDice_Run calls its decoder: the native then reloads the cell buffer's
+// address from the pool for each transfer instead of keeping it in a register:
+// 137 to 108. Left: scheduling rows only (pool loads one row early or late,
+// argument stores).
 // 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 137
 // of 2055 (draft 2056); not worked this pass.
 // Draft, differ 231 of 2055: LuckyDice_Run, the Lucky Dice minigame, ported
@@ -10,6 +17,8 @@
 // constants from the pool at each use) and in the key tests; the resource
 // and message names are not in directory.s and en.po yet.
 #include "types.h"
+#include "lib/call.h"
+#include "ram_buffer.h"
 #include "io_reg.h"
 #include "dma.h"
 #include "iwram_call.h"
@@ -52,7 +61,6 @@ struct DiceCamera {
 };
 
 extern u8 gRenderOamEnabled;
-extern u8 gMapCellBuffer[];
 extern const u8 gLuckyDice_LabelCounts[];
 extern const u8 gLuckyDice_LabelTiles[];
 extern const u8 gLuckyDice_FaceTiles[];
@@ -173,8 +181,16 @@ void LuckyDice_Run(void) {
   Dma_Set((void *)0x05000000, bgPalette, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
           REG_DMA3);
   resourceAddress += 0x1c0;
-  Resource_DecodeType01((const void *)resourceAddress, gMapCellBuffer);
-  Dma_Set(gMapCellBuffer, (void *)0x06004000,
+  // UB: Call2 passes integers to the decoder's two pointer parameters, as
+  // The Broken Seal's LuckyDice_Run does; typed calls keep the cell buffer
+  // in a register for the transfer after each decode (137 against 108).
+#ifdef UBFIX
+  Resource_DecodeType01((const void *)resourceAddress, Ram_MapCellBuffer);
+#else
+  Call2((void (*)())Resource_DecodeType01, resourceAddress,
+        (s32)Ram_MapCellBuffer);
+#endif
+  Dma_Set(Ram_MapCellBuffer, (void *)0x06004000,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
   resourceAddress =
       (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceSprites);
@@ -183,8 +199,13 @@ void LuckyDice_Run(void) {
   Dma_Set((void *)resourceAddress, (void *)0x05000200,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
   resourceAddress += 0x200;
-  Resource_DecodeType01((const void *)resourceAddress, gMapCellBuffer);
-  Dma_Set(gMapCellBuffer, (void *)0x06010000,
+#ifdef UBFIX
+  Resource_DecodeType01((const void *)resourceAddress, Ram_MapCellBuffer);
+#else
+  Call2((void (*)())Resource_DecodeType01, resourceAddress,
+        (s32)Ram_MapCellBuffer);
+#endif
+  Dma_Set(Ram_MapCellBuffer, (void *)0x06010000,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x1f00, REG_DMA3);
   Graphics_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, 0, 256);
   Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, 0, 256);
@@ -341,8 +362,8 @@ void LuckyDice_Run(void) {
           state = 3;
           payoutTimer = 0;
         } else {
-          state = 0;
           resetDice = 1;
+          state = 0;
         }
       }
       resultTimer++;

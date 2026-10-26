@@ -1,3 +1,6 @@
+// Differ 13 of 89 (2026-10-26); the arc sprites are now the field effects'
+// EffectSprite (effect_sprite.h), the three bitfields its OAM's palette256,
+// palette and priority (no change in the count).
 // Near miss, differ 15 of 89 with the age's zero through a temporary (36
 // without, when it loads a halfword 0 from the pool): the native adds the
 // group's offset to the work (adds r5, r3, r6) where this adds the work to
@@ -14,44 +17,31 @@
 #include "object_runtime.h"
 #include "ram_buffer.h"
 #include "vram_tab.h"
-
-struct ArcSprite {
-  u8 unk00[5];
-  u8 unk05_0 : 5;
-  u8 hidden : 1;
-  u8 unk05_6 : 2;
-  u8 unk06[3];
-  u8 unk09_0 : 2;
-  u8 priority : 2;
-  u8 layer : 4;
-  u8 unk0a[30];
-};
+#include "effect_sprite.h"
 
 struct ArcWork {
-  struct ArcSprite sprites[2][2];
+  struct EffectSprite sprites[2][2];
   s16 age[2];
   s16 resource;
   s16 group;
   struct ObjectRuntime *target;
 };
 
-void Func_080eaf98(struct ArcSprite *sprite, s32 width, s32 height,
-                   u32 attributes, s32 tiles);
 s32 BattleEffect_GetObjectPriority(struct ObjectRuntime *object);
 
 void BattleEffect_SpawnScaledArcObjects(struct ObjectRuntime *target) {
   struct ArcWork *work = Ram_HeapSlots->block62;
   s32 tiles = gResourceTableEntries[work->resource].offset >> 5;
   s32 group = work->group;
-  struct ArcSprite *sprite = work->sprites[group];
+  struct EffectSprite *sprite = work->sprites[group];
   s32 i;
   s32 zero;
 
   for (i = 0; i < 2; i++, sprite++) {
     Func_080eaf98(sprite, 16, 16, 0x80004000, tiles);
-    sprite->hidden = 0;
-    sprite->layer = 0;
-    sprite->priority = BattleEffect_GetObjectPriority(target);
+    sprite->oam.palette256 = 0;
+    sprite->oam.palette = 0;
+    sprite->oam.priority = BattleEffect_GetObjectPriority(target);
   }
   /* FAKEMATCH: the age's zero through a temporary, so it is a register
      zero rather than a pool load (differ 36 without) */

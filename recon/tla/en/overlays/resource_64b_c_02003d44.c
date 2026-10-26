@@ -1,10 +1,12 @@
-// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 35 of
-// 593 (draft 592); not worked this pass.
-// Draft, differ 41 of 593: the world map's fade: queues the world map palette
-// for mode and its frames, then steps the blend through 0xe00 down to 0x800
-// and back. Overlay 64c has the same code (its Func_02001400). Left: a few
-// literal-pool loads the native issues one instruction earlier, and mode 1
-// building its first two 0x20000 arguments apart.
+// Draft, differ 16 of 593 (was 35): the world map's fade: queues the world
+// map palette for mode and its frames, then steps the blend through 0xe00 down
+// to 0x800 and back. Overlay 64c has the same code (its Func_02001400). Mode
+// 1's Func_02004b78 goes through Call3, as the native builds its two 0x20000
+// arguments apart. Left: instruction order only, all of it a load the native
+// issues between the halves of a split constant or in another order: the
+// event work's load inside 0x1b4, gData_02006e08's inside 0x04000052 at the
+// two QueueIoWriteDelay2 calls, the two pool loads after the frames are
+// unpacked, and the queue count's store in the first push.
 #include "types.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
@@ -12,6 +14,7 @@
 #include "party_state.h"
 #include "object_runtime.h"
 #include "event_work.h"
+#include "lib/call.h"
 
 extern u8 gWorldMapPackedTiles[];
 extern u8 gWorldMapPackedFrames[];
@@ -107,7 +110,7 @@ void Func_02003d44(s32 mode) {
   gData_02006e08 = 0xc00;
   PUSH_FRAME(0x3a80);
   if (mode == 1) {
-    Func_02004b78(0x20000, 0x20000, 0x10000);
+    Call3((void (*)())Func_02004b78, 0x20000, 0x20000, 0x10000);
     Func_02004e30(141);
     gData_02006e08 = 0xd00;
     FieldEvent_WaitFrames(4);

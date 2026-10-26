@@ -1,3 +1,7 @@
+// Draft, differ 16 of 292 (2026-10-26, 26 before): renderMode 0 stored through
+// a byte pointer, so the layer's read stays after it as in the native. Left:
+// the opening table's offset halves around its stores, and two pool and
+// field loads one row apart. Earlier notes follow.
 // Under -mthumb-slow-loads (2026-10-26): differ 26 of 292 in tla-en,
 // instruction order and register choice. Empty asms before `entry->sprite =
 // leader;` and the cell's load lower it to 14.
@@ -92,7 +96,9 @@ void Func_080caa4c(s32 table) {
   } else if (gPartyState.ownerOverride != 0) {
     gPartyState.renderMode = 6;
   } else {
-    gPartyState.renderMode = 0;
+    // Stored through a byte pointer, which may alias the terrain layer's load
+    // after it; as a plain field store that load moves above it (differ 26).
+    *(u8 *)&gPartyState.renderMode = 0;
     cell = Ram_HeapSlots->mapWork->layers[object->terrainId].cells +
            ((object->x / 0x100000) + ((object->z / 0x100000) << 7));
     above = cell - 128;

@@ -1,4 +1,12 @@
-// Near miss, differ 20 of 103 (2026-10-18; 46 before, counted with
+// Near miss, differ 4 of 103 (16 before; 2026-10-26): the active flag's
+// halfword store leaves a zero that CSE gave the frame store at the top of
+// the block; a tagged once-only block before the fill ends that, and the
+// frame takes the zero the slot's store leaves, after VramCache_Load, as the
+// native does (no zero local needed). Left: after the x store the native
+// builds the callback's arguments before it loads the y (the store-then-load
+// pattern no C form reproduces; no barrier or once-only block helps, and six
+// minutes of permute found nothing).
+// Earlier: differ 20 of 103 (2026-10-18; 46 before, counted with
 // Func_080dbb40, adopted as depthend.c and now dropped here). Order only. The
 // native builds the frame's zero in r2 after VramCache_Load (movs r2, #0; mov
 // sl, r2); a plain zero local is set at the top of the block instead, and
@@ -56,21 +64,24 @@ void Func_080dba5c(void) {
   void *buffer;
   s32 slot;
   s32 tiles;
-  s32 zero;
 
   mainObject = scene->mainObject;
   if (scene->mode == 0xc000) {
     scene->active = 1;
     buffer = MemAlloc(0x200);
+    /* FAKEMATCH(one-pass): an empty once-only block, so the frame's zero is
+     * not the active flag's; as plain statements, 16 of 103 instructions
+     * differ in tla-en. */
+    do {
+    } while (0);
     Iwram_FillWords(buffer, 0x200, 0);
     slot = Resource_FindFreeEntry();
     tiles = VramCache_Load(slot, 0x200, buffer);
-    zero = 0;
     scene->vramSlot = slot;
     MemFree(buffer);
     sprite = &scene->sprite;
     Func_080eaf98(sprite, 16, 31, 0x80000000, tiles);
-    sprite->frame = zero;
+    sprite->frame = 0;
     sprite->priority = 0;
     sprite->hidden = 0;
     sprite->layer = 0;

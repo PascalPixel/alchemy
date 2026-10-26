@@ -18976,7 +18976,7 @@ msgctxt "message"
 msgid "04665"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgPriceHeading"
 msgid "04666"
 msgstr "Price"
 
@@ -19004,11 +19004,11 @@ msgctxt "MsgNotBroken"
 msgid "04672"
 msgstr "It's not broken."
 
-msgctxt "message"
+msgctxt "MsgCannotDrop"
 msgid "04673"
 msgstr "Can't drop."
 
-msgctxt "message"
+msgctxt "MsgCannotRemove"
 msgid "04674"
 msgstr "Can't remove."
 

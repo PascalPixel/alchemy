@@ -1,3 +1,5 @@
+// Draft, differ 20 of 495 (2026-10-26, 22 before): the window read before the
+// work pointer. Earlier notes follow.
 // Draft, differ 22 of 495 in tla-en under -mthumb-slow-loads (2026-10-26). A
 // device search (each statement followed by an empty asm or a one-pass block,
 // wrapped in one, or swapped with the next, kept when it helps) reaches 20
@@ -70,8 +72,8 @@ void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y,
 void PartyStatus_Draw(s32 flags) {
   struct PartyStatusWindow *layout = Ram_HeapSlots->windowLayout;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
-  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
   struct UiWindow *window = layout->window;
+  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
   s32 x = 0;
   u32 count;
   s32 y = 0;

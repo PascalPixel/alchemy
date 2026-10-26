@@ -1,3 +1,9 @@
+// 2026-10-26 (round 5): differ 22 of 863. The column's two blits written with
+// their width and height as numbers (34 and 104), not locals, so the native's
+// register choice follows: 48 to 30; the blitter read first, then the sheet and
+// x: 22. Left: the prologue's heap base built after the effect's spill and the
+// 0 for r8 a row early (the known store-before-build pattern), and the column's
+// blitter load and pool load in the other order.
 // Draft, differ 48 of 863 (863 here; 2026-10-26: 91 before the column blits
 // were reordered as the listing has them, the second, lower one first, with
 // the sheet local before the blitter, 91 to 52; BattleEffect_LoadBlitter
@@ -299,15 +305,13 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
 
     if (step >= 0 && step <= 31) {
       s32 phase = frame * 16;
-      s32 x = centerX - 17;
-      s32 width = 34;
-      u8 *src = work->sheet;
       DrawRectangle blit = draw[0];
-      s32 high = 104;
-      s32 size = (phase - 256) % high;
+      u8 *src = work->sheet;
+      s32 x = centerX - 17;
+      s32 size = (phase - 256) % 104;
 
-      blit(canvas, src, x, 108 - size, width, size);
-      blit(canvas, src, x, 4 - size, width, high);
+      blit(canvas, src, x, 4 - size, 34, 104);
+      blit(canvas, src, x, 108 - size, 34, size);
     }
 
     // The dust grows as it falls and toward the end.

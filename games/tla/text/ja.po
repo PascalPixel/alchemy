@@ -18908,7 +18908,7 @@ msgctxt "message"
 msgid "04651"
 msgstr "まい"
 
-msgctxt "message"
+msgctxt "MsgPriceHeading"
 msgid "04652"
 msgstr "うりね"
 
@@ -18936,11 +18936,11 @@ msgctxt "MsgNotBroken"
 msgid "04658"
 msgstr "こわれてません"
 
-msgctxt "message"
+msgctxt "MsgCannotDrop"
 msgid "04659"
 msgstr "すてられません"
 
-msgctxt "message"
+msgctxt "MsgCannotRemove"
 msgid "04660"
 msgstr "はずせません"
 

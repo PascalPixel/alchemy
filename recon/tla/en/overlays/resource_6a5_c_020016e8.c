@@ -1,3 +1,13 @@
+// Draft, differ 20 of 400 (was 58), the twin of Func_02001388's draft. The
+// sixth Func_0200588c call passes a speed too (0xc000, in r3 and kept in sl
+// for Func_020058ec(6, ...)). The speeds several calls share are locals (fast
+// 0xa000, slow 0x2000, mid 0xc000), as the native keeps them in r6, r8 and sl
+// while it rebuilds every coordinate; the other calls go through call.h's
+// forwarding inlines, and Func_020058fc's through an inline of its own that
+// calls it directly. Left, all sched2 ties: in Func_0200588c's calls the
+// speed's copy into r3 comes after the coordinates' shifts (native: before
+// r0), three later calls load their arguments in another order, and MsgShield
+// loads before the byte store.
 #include "types.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -36,7 +46,14 @@ extern u8 MsgAlhafra19[];
 extern u8 gPartyState[];
 extern u8 MsgShield[];
 
+static __inline__ void W_020058fc(s32 a, s32 b, s32 c) {
+  Func_020058fc(a, b, c);
+}
+
 void Func_020016e8(void) {
+  s32 fast;
+  s32 slow;
+  s32 mid;
   s32 t28;
   s32 t29;
   s32 t30;
@@ -61,12 +78,15 @@ void Func_020016e8(void) {
 
   Func_02005814();
   Call1(Func_02005984, 0);
-  Func_0200588c(4, 0x2000000, 0x1380000, 0xa000);
-  Call4(Func_0200588c, 7, 0x2100000, 0x1300000, 0xa000);
-  Call4(Func_0200588c, 0x1b, 0x1f80000, 0x1300000, 0x2000);
-  Func_0200588c(0x1c, 0x2080000, 0x1200000, 0x2000);
-  Call4(Func_0200588c, 5, 0x2100000, 0x1400000, 0xa000);
-  Call3(Func_0200588c, 6, 0x2200000, 0x1800000);
+  fast = 0xa000;
+  Call4(Func_0200588c, 4, 0x2000000, 0x1380000, fast);
+  Call4(Func_0200588c, 7, 0x2100000, 0x1300000, fast);
+  slow = 0x2000;
+  Call4(Func_0200588c, 0x1b, 0x1f80000, 0x1300000, slow);
+  Call4(Func_0200588c, 0x1c, 0x2080000, 0x1200000, slow);
+  Call4(Func_0200588c, 5, 0x2100000, 0x1400000, fast);
+  mid = 0xc000;
+  Call4(Func_0200588c, 6, 0x2200000, 0x1800000, mid);
   Call4(Camera_MoveWithinMapBounds, 0x2080000, 0x680000, 0x1380000, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -77,11 +97,11 @@ void Func_020016e8(void) {
   Call2(Object_SetModeById, 4, 0x32);
   Call2(Object_SetModeById, 7, 0xc);
   Call2(Object_SetModeById, 5, 0x1b);
-  Call3(Func_020058fc, 4, 0x100, 0);
-  Call3(Func_020058fc, 7, 0x100, 0);
-  Call3(Func_020058fc, 5, 0x100, 0);
-  Call3(Func_020058fc, 0x1c, 0x100, 0);
-  Call3(Func_020058fc, 0x1b, 0x100, 0x1e);
+  W_020058fc(4, 0x100, 0);
+  W_020058fc(7, 0x100, 0);
+  W_020058fc(5, 0x100, 0);
+  W_020058fc(0x1c, 0x100, 0);
+  W_020058fc(0x1b, 0x100, 0x1e);
   t23 = Value1(Object_GetById, 4);
   FIELD_AT((t23 + 0x5a), u8, 0) = (0xfe & FIELD_AT((t23 + 0x5a), u8, 0));
   t24 = Value1(Object_GetById, 7);
@@ -120,7 +140,7 @@ void Func_020016e8(void) {
   FIELD_AT((t43 + 0x5a), u8, 0) = (1 | FIELD_AT((t43 + 0x5a), u8, 0));
   Call2(Camera_FollowActor, 4, 1);
   Call3(ObjectMotion_SetPositionAndReset, 6, 0x228, 0x158);
-  Call3(Func_020058fc, 6, 0x102, 0x1e);
+  W_020058fc(6, 0x102, 0x1e);
   Call3(Func_020058d4, 6, 0, 0);
   Call2(Motion_SetVarCbAndRefresh, 5, 2);
   Call1(FieldEvent_WaitFrames, 5);
@@ -131,18 +151,18 @@ void Func_020016e8(void) {
   Call1(FieldEvent_WaitFrames, 5);
   Call3(Func_020058d4, 0x1b, 0, 0);
   Call1(FieldEvent_WaitFrames, 0xa);
-  Call2(Func_020058ec, 6, 0xc000);
+  Call2(Func_020058ec, 6, mid);
   Call1(FieldEvent_WaitFrames, 0xa);
   Call3(Func_020058d4, 6, 0, 0);
   Call3(ObjectMotion_OffsetPositionAndReset, 6, 0, -24);
   Call1(ObjectMotion_CommitCurrentPositionAndActivate, 6);
-  Call2(Func_020058ec, 4, 0x2000);
-  Call3(ObjectMotion_ArmCallback, 6, 0xa000, 0);
+  Func_020058ec(4, slow);
+  Call3(ObjectMotion_ArmCallback, 6, fast, 0);
   Call2(Object_SetModeById, 4, 3);
   Call1(FieldEvent_WaitFrames, 0x14);
-  Call3(ObjectMotion_ArmCallback, 7, 0xa000, 0);
-  Call2(Func_020058ec, 4, 0xa000);
-  Call2(Func_020058ec, 5, 0xa000);
+  Call3(ObjectMotion_ArmCallback, 7, fast, 0);
+  Call2(Func_020058ec, 4, fast);
+  Call2(Func_020058ec, 5, fast);
   Call1(FieldEvent_WaitFrames, 0xa);
   Call3(ObjectMotion_OffsetPositionAndResetMotion, 4, -16, -8);
   Call3(ObjectMotion_OffsetPositionAndResetMotion, 7, -16, -8);

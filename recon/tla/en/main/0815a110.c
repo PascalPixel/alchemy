@@ -42,12 +42,19 @@
 // The Lost Age's heap slots, blitter modes (3 minus ☀️'s) and callback
 // order, and no work->effect store.
 
-// Listing 989 instructions, draft 990, differ 189 (2026-10-15). Left: the
-// hoisted pointers' spill slots one word off (&actorPos, &draw and
-// camera + 12 at sp+20, 24 and 16 where the native has 24, 28 and 20), the
-// glint loop's invariants (the native keeps the constant 3 in r9 for both
-// masks and re-reads the width and height tables; here the height table
-// and cel * 2 are hoisted), and rows one place apart.
+// Listing 989 instructions, draft 989, differ 74 (2026-10-26; 173 under
+// -mthumb-slow-loads before the glint loop's rework). The glint loop as
+// the native has it: cel taken from the frame inside the loop, so the
+// constant 3 of its mask is a movable with a long life and is hoisted into
+// r9 for both masks; the width table, like the height table, without const,
+// so both are read again for the draw; and a tagged one-pass block between
+// the glint's position and its blitter, so that cse1 does not merge the
+// two reads of each table's address before loop.c (merged, the height
+// table's address is hoisted out of the loop) while cse2 still does
+// (the native spills it at sp+8 for the draw). With that, the hoisted
+// pointers take the native's spill slots (&actorPos, &draw and camera + 12
+// at sp+24, 28 and 20). Left: rows one place apart, the known
+// store-then-load scheduling limit.
 
 // Tried:
 // ☀️'s body with The Lost Age's changes as read from the
@@ -69,6 +76,9 @@
 // (the width table without const, or both: 295 and 311;
 // frame & 3 in place of cel: 351)
 // declaration order again                                    211 -> 189
+// 2026-10-26, under -mthumb-slow-loads (173): cel set inside the glint
+// loop (377: the 3 is hoisted, the frame four bytes short), with the
+// one-pass block (123), and the width table without const (74)
 
 #include "types.h"
 #include "battle_effect_work.h"
@@ -137,7 +147,7 @@ extern const u16 gData_08197410[];
 // The glint's six cels: ☀️'s gBattleEffect_GlintCells, _GlintCellWidths
 // and _GlintCellHeights.
 extern const u16 gData_08197486[];
-extern const u8 gData_08197492[];
+extern u8 gData_08197492[];
 extern u8 gData_08197498[];
 // A glint's four flips.
 extern const u8 Data_0819861b[];
@@ -420,18 +430,21 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
       // The glints: three a frame around the target, each with its own
       // random flip, until frame 31.
       if (RECORD(RECORD_EXTRA) == EXTRA_GLINTS && frame <= 31) {
-        s32 cel;
-
         EffectPosition_ProjectScaledBattler(effect->actors[0], &spot);
-        cel = frame & 3;
         for (i = 0; i != 3; i++) {
           s32 angle = Random16() & 0xffff;
+          s32 cel = frame & 3;
           s32 radius = (Random16() & 31) + 4;
           s32 x = spot.x / 2 + ((Trig_Sin(angle) * radius) >> 17) -
                   gData_08197492[cel] / 2;
           s32 y = spot.y - ((Trig_Cos(angle) * radius) >> 17) -
                   gData_08197498[cel] / 2;
 
+          /* FAKEMATCH(one-pass): the block ends cse1's block, so the two reads
+           * of each table's address stay apart until loop.c has run; as plain
+           * C, 431 of 989 instructions differ in tla-en. */
+          do {
+          } while (0);
           Func_08196404(HEAP_BLITTER_ALTERNATE, 7, 7,
                         Data_0819861b[Random16() & 3] | COMPOSITE_CLIP_X |
                             COMPOSITE_CLIP_Y,

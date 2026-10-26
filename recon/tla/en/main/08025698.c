@@ -1,3 +1,5 @@
+// Draft, differ 20 of 188 (2026-10-26, 28 before): each probe copies y after
+// z. Earlier notes follow.
 // Near miss, differ 28 of 188, all instruction order (the same 188
 // instructions): The Broken Seal's Object_Wander on this game's headers. Where
 // a position is copied field by field before a call, the native puts one
@@ -64,18 +66,18 @@ retry:
       goto retry;
     radius += 0x80000;
     probe.x = object->x;
-    probe.y = object->y;
     probe.z = object->z;
+    probe.y = object->y;
     Vector_AddPolarOffset(radius, heading, &probe);
     probe.x = object->x;
-    probe.y = object->y;
     probe.z = object->z;
+    probe.y = object->y;
     Vector_AddPolarOffset(radius, heading + 0x2000, &probe);
     if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
       goto retry;
     probe.x = object->x;
-    probe.y = object->y;
     probe.z = object->z;
+    probe.y = object->y;
     Vector_AddPolarOffset(radius, heading - 0x2000, &probe);
     if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
       goto retry;

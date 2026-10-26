@@ -1,17 +1,19 @@
-// Near miss, differ 56 of 376 (250 before, 2026-10-26): The Broken Seal's
-// Map_InitializePerspectiveScene on this game's map work (0x978 bytes, heap
-// slot offset 32) and frame work (offset 28), with the world map's update
+// Near miss, differ 32 of 376 (56 before, 2026-10-26: the affine identity,
+// REG_BG3Y, REG_BLDALPHA and REG_DISPCNT written with Io_Write16 and the
+// scroll cleared layer by layer, as the twin does; 250 before that): The Broken
+// Seal's Map_InitializePerspectiveScene on this game's map work (0x978 bytes,
+// heap slot offset 32) and frame work (offset 28), with the world map's update
 // (0802c240) and affine frame (0802c088) callbacks. Resource ids 0x197 to
 // 0x199: PerspectiveDataA and DefaultMapCells as ☀️ names them, the third a
 // placeholder. The ARM routine is copied by its linker size
 // (Data_0802146cSize, to define in constants.ld as Render_ConvertMapCode -
 // Data_0802146c when this adopts), the halfword constants the native builds
 // in registers go through int stores (Io_Set16, Store16), and the frame
-// fields are at 0x968 and 0x96c. Left: scheduling: the native copies the zero
-// from r9 after each register address step, loads Func_0802c240's address
-// before the scroll stores, and builds 0x106 afresh where this adds 2 to
-// 0x104.
+// fields are at 0x968 and 0x96c. Left: scheduling: the native clears the eye
+// offset's x and y after the pitch call's load, two pool loads a row apart,
+// and builds 0x106 afresh where this adds 2 to 0x104.
 #include "types.h"
+#include "iowrite.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -83,11 +85,10 @@ void Func_0802b998(void) {
   *(void **)(perspective + 0x114) =
       Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
   Io_Set16(0x3f9e, &REG_BLDCNT);
-  Io_Set16(0x1010, &REG_BLDALPHA);
+  Io_Write16(0x1010, &REG_BLDALPHA);
   REG_BLDY = 0;
   Resource_DecodeType01(
-      Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells),
-      gMapCellBuffer);
+      Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), gMapCellBuffer);
   Store16(0x1f00, (u16 *)(perspective + 0x14));
   perspective[0x16] = 0x80;
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Data199),
@@ -95,18 +96,18 @@ void Func_0802b998(void) {
   Io_Set16(0xa80a, &REG_BG3CNT);
   Io_Set16(0xaa0e, &REG_BG2CNT);
   Io_Set16(0x8501, &REG_BG1CNT);
-  Io_Set16(0x100, &REG_BG2PA);
+  Io_Write16(0x100, &REG_BG2PA);
   REG_BG2PB = 0;
   REG_BG2PC = 0;
-  Io_Set16(0x100, &REG_BG2PD);
+  Io_Write16(0x100, &REG_BG2PD);
   REG_BG2X = 0;
   REG_BG2Y = 0;
-  Io_Set16(0x100, &REG_BG3PA);
+  Io_Write16(0x100, &REG_BG3PA);
   REG_BG3PB = 0;
   REG_BG3PC = 0;
-  Io_Set16(0x100, &REG_BG3PD);
+  Io_Write16(0x100, &REG_BG3PD);
   REG_BG3X = 0;
-  REG_BG3Y = 0;
+  Io_Write16(0, &REG_BG3Y);
 
   camera = Runtime_AllocateBlock(48, 76);
   frameWork = Runtime_AllocateHeapBlock(28, 0x3484);
@@ -163,12 +164,12 @@ void Func_0802b998(void) {
     Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   }
   REG_MOSAIC = 0;
-  Io_Set16(0x42, &REG_DISPCNT);
+  Io_Write16(0x42, &REG_DISPCNT);
   gBgScroll[1].x = 0;
-  gBgScroll[2].x = 0;
-  gBgScroll[3].x = 0;
   gBgScroll[1].y = 0;
+  gBgScroll[2].x = 0;
   gBgScroll[2].y = 0;
+  gBgScroll[3].x = 0;
   gBgScroll[3].y = 0;
   *(u16 *)(perspective + 0x104) = 0;
   Store16(159, (u16 *)(perspective + 0x106));

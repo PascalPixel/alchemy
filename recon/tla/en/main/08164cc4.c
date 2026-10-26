@@ -1,4 +1,4 @@
-// Draft, differ 187 of 1681 (the two nested helpers first, then the body;
+// Draft, differ 50 of 1681 (the two nested helpers first, then the body;
 // alchemy diff DRAFT 08164c0c,08164c70,08164cc4):
 // BattleEffect_RunParticleStreams, summon 11 and summon 0's default
 // (BattleEffect_RunSceneEffect's default case, through BattleEffect_RunMeteor and
@@ -18,15 +18,17 @@
 // the mode test through direction, the frame count and work pinned in the
 // heat loop with their barrier, the r6 clobber around the first cue, and the
 // level pin. The two nested helpers, AddFlame (08164c0c) and AddMote
-// (08164c70), each differ 4 alone: the native puts ldr r2, [r1] between the
-// x28 index's lsls and subs, and ldr r3, [r2, #24] before movs r7, #1 (order
-// only; tried direct, offset and cast indexing, do-while, other counter types).
+// (08164c70), now match alone (2026-10-26, under -mthumb-slow-loads; they
+// differed by 4 rows each before it).
 
-// Left, 187 rows: the prologue's argument spill and heap reads in the other
-// order (the 0x03000000 base first here); the map cell buffer kept in r5
-// across the two IWRAM fills where the native loads it from the pool twice;
-// elsewhere loads issued one slot earlier in the native, the kind
-// Func_08164b2c's header traces to a load costing 3.
+// Left, 50 rows (2026-10-26; 73 before the IWRAM calls went through local
+// inline forwarders, as f143d80.c makes them and as The Broken Seal's IWRAM
+// call layer makes every IWRAM call, which reloads the map cell buffer for
+// each fill as the native does): the prologue's argument spill and heap
+// reads in the other order (the 0x03000000 base first here), and loads
+// issued one slot earlier in the native, the known store-then-load
+// scheduling limit; and the constant 3 that the native keeps in r6 across
+// the blitter build for the transfer mode, where here it is set again.
 
 // Tried (differ): the plain port without devices and with the unused fill
 // word ☀️ needs for its DMA (877 listed parent first, 709 helpers first);
@@ -49,6 +51,15 @@
 #include "resource.h"
 #include "system.h"
 #include "types.h"
+
+static __inline__ s32 CopyWords_(void *destination, const void *source,
+                                 s32 size) {
+  return Iwram_CopyWords(destination, source, size);
+}
+
+static __inline__ s32 FillWords_(void *destination, s32 size, u32 value) {
+  return Iwram_FillWords(destination, size, value);
+}
 
 // The pixel half of a 16.16 fixed-point value.
 #define HI(v) (((s16 *)&(v))[1])
@@ -259,13 +270,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   }
   Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetB, work->sheet, 1, 1);
   if (mode == 1)
-    Iwram_CopyWords((void *)BG_PLTT,
+    CopyWords_((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
                     128);
 
   // BG1 shows the ground: the map cell buffer filled with colour 1.
-  Iwram_FillWords(Ram_MapCellBuffer, 0x8000, 0x01010101);
-  Iwram_CopyWords((void *)0x06008000, Ram_MapCellBuffer, 0x7800);
+  FillWords_(Ram_MapCellBuffer, 0x8000, 0x01010101);
+  CopyWords_((void *)0x06008000, Ram_MapCellBuffer, 0x7800);
   WaitFrames(1);
   REG_BLDCNT = 0;
   REG_BG2PA = 0x100;
@@ -280,7 +291,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
 
     ((u16 *)0x05000100)[i] = (blue << 10) | (green << 5) | red;
   }
-  Iwram_FillWords(canvas, 0x4000, 0);
+  FillWords_(canvas, 0x4000, 0);
   for (i = 0; i != 256; i++) {
     s32 x = Random16() & 127;
     s32 y = Random16() & 127;
@@ -288,7 +299,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
 
     ((u8 *)canvas)[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = shade;
   }
-  Iwram_CopyWords((void *)0x06004000, canvas, 0x4000);
+  CopyWords_((void *)0x06004000, canvas, 0x4000);
   gCameraSceneParameters[4] = 240;
   BattleEffect_SelectLivingTargets(work->effect);
 

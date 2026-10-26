@@ -1,12 +1,14 @@
-// Draft of Event_SpawnObjectTable, differ 43 of 347 (321 before), rewritten
-// from the listing (2026-10-26):
+// Draft of Event_SpawnObjectTable, differ 33 of 347 (43 before, 2026-10-26: the
+// row loop tests the table's sprite and reads the id in its body; 321
+// before the rewrite from the listing):
 // it records the placement table in the event work, then creates or moves
 // each row's object whose condition holds, links paired sprites and sets each
 // actor's home, facing and terrain height.
-// Left: the row loop. The native tests the row id at the loop foot only,
-// entering by a jump (its two copies of the test cross-jumped), keeping the
-// id zero-extended in r2 and sign-extending it in the test; here the test is
-// copied before the loop and the shifted id is shared with the body.
+// Left: the row loop. Both enter it by a jump to the test at its foot, but the
+// native first reads the id and the signed sprite and jumps into the test
+// past its constant (its copy of the test cross-jumped), and at the foot
+// reads the sprite once and sign-extends the id from it; here the foot reads
+// it twice. The table search above then branches the long way.
 #include "types.h"
 #include "ram_buffer.h"
 #include "field_scene.h"
@@ -67,7 +69,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
   struct FieldStepWork *work = Ram_HeapSlots->eventWork;
   s32 index = 0;
   s32 i;
-  u16 id;
+  s16 id;
 
   for (i = 0; i < 4; i++) {
     if (work->tables[i] == entry)
@@ -77,16 +79,16 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
       break;
     }
   }
-  for (id = entry->sprite; (s16)id != -1 && slot <= 63;
-       entry++, id = entry->sprite) {
+  for (; entry->sprite != -1 && slot <= 63; entry++) {
     struct ObjectRuntime *object;
     struct SpawnSprite *sprite;
     s32 condition;
     s32 character;
 
-    if ((s16)id <= 7)
-      index = (s16)id;
-    else if ((s16)id <= 0x2705)
+    id = entry->sprite;
+    if (id <= 7)
+      index = id;
+    else if (id <= 0x2705)
       index = slot++;
     condition = entry->condition;
     if (!GameFlag_IsConditionActive(condition))

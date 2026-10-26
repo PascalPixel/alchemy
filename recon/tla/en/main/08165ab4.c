@@ -1,3 +1,5 @@
+// 2026-10-26: differ 18 of 804, with BattleEffect_LoadBlitter returning s32 as
+// nibble_pair.c defines it.
 // 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 20 of
 // 804 with two empty asm the greedy device search placed (26 without them);
 // the rest is the instruction order described below.
@@ -102,7 +104,7 @@ void BattleEffect_SpawnObjects(s32 count, s32 resource,
 void *ResourceObject_CreateFar(s32 resource);
 void ResourceObject_ReleaseFar(void *object);
 void Animation_ApplyChildArgumentFar(void *object, s32 animation);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
                                                 // 7, 7, flags, mode)
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
 void Audio_PlayCue(s32 cue);

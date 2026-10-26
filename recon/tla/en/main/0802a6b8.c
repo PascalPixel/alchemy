@@ -1,3 +1,5 @@
+// Draft, differ 46 of 406 (2026-10-26, 58 before): the layer's cell pointer set
+// after its x position. Earlier notes follow.
 // Near miss, differ 74 of 406, instruction order and register choice: the
 // twin of The Broken Seal's Map_LoadLayeredScene. Loads layered scene index
 // from gData_0802f380: its blocks, collision (filled with -1 first), cells,
@@ -187,9 +189,9 @@ s32 Func_0802a6b8(s32 index) {
     mapLayer->cellY = y;
     cell = y + x;
     mapLayer->scaleX = scaleX;
-    mapLayer->cells = (struct MapCell *)Ram_MapCellBuffer + cell;
     mapLayer->cellX = x;
     mapLayer->shapes = gMapShapeGrid + cell;
+    mapLayer->cells = (struct MapCell *)Ram_MapCellBuffer + cell;
     mapLayer->x = Iwram_MulQ16(*viewX, scaleX) + mapLayer->offsetX;
     mapLayer->y = Iwram_MulQ16(*viewY, mapLayer->scaleY) + mapLayer->offsetY;
     layerSource++;

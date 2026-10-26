@@ -1,9 +1,12 @@
-// Draft, differ 184 of 989: translated from its listing; names and structure
-// still to do.
+// Draft, differ 139 of 989: translated from its listing, with the rooms
+// compared as their linker ids (SceneId_Ov686Room1 to 8, loaded from the pool
+// as the native does); names and structure still to do. Left: the native saves
+// r8 and r10 only, and branch offsets follow.
 #include "types.h"
 #include "lib/call.h"
 #include "object_runtime.h"
 #include "party_state.h"
+#include "scene_ids.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 
@@ -51,9 +54,9 @@ s32 Func_02002438(s32 a0) {
   /* sub (s32)stack, #8 */
   r1 = 0;
   r2 = FIELD_AT(r7, s16, 480);
-  r3 = 189;
+  r3 = (s32)&SceneId_Ov686Room1;
   r0 = a0;
-  if ((FIELD_AT(r7, s16, 480)) == (189))
+  if ((FIELD_AT(r7, s16, 480)) == ((s32)&SceneId_Ov686Room1))
     goto L_0200a456;
   goto L_0200a686;
 L_0200a456:
@@ -172,7 +175,7 @@ L_0200a662:
   Call6((void (*)())Func_02002dfc, 4, 68, 1, 1, 2, 69);
   goto L_0200ad2a;
 L_0200a686:
-  if (r2 != (190))
+  if (r2 != ((s32)&SceneId_Ov686Room2))
     goto L_0200a758;
   v22 = GameFlag_Test(0x99e);
   if (v22 == 0)
@@ -216,7 +219,7 @@ L_0200a73e:
   Call1((void (*)())Func_02002eec, 0x23f);
   goto L_0200ad2a;
 L_0200a758:
-  if (r2 != (191))
+  if (r2 != ((s32)&SceneId_Ov686Room3))
     goto L_0200a7fa;
   v27 = GameFlag_Test(0x9c7);
   if (v27 == 0)
@@ -242,7 +245,7 @@ L_0200a7be:
   Call6((void (*)())Func_02002dfc, 41, 48, 3, 2, r5, 41);
   goto L_0200ad2a;
 L_0200a7fa:
-  if (r2 == (192))
+  if (r2 == ((s32)&SceneId_Ov686Room4))
     goto L_0200a802;
   goto L_0200aae8;
 L_0200a802:
@@ -399,7 +402,7 @@ L_0200aac2:
 L_0200aada:
   goto L_0200ab54;
 L_0200aae8:
-  if (r2 != (193))
+  if (r2 != ((s32)&SceneId_Ov686Room5))
     goto L_0200ab60;
   v51 = GameFlag_Test(0x9db);
   if (v51 == 0)
@@ -426,7 +429,7 @@ L_0200ab54:
   Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_020010f4, 0x480);
   goto L_0200ad2a;
 L_0200ab60:
-  if (r2 == (194))
+  if (r2 == ((s32)&SceneId_Ov686Room6))
     goto L_0200ab68;
   goto L_0200ad04;
 L_0200ab68:
@@ -494,8 +497,8 @@ L_0200ace4:
   Func_02002dec();
   goto L_0200ad2a;
 L_0200ad04:
-  r3 = 196;
-  if (r2 != (196))
+  r3 = (s32)&SceneId_Ov686Room8;
+  if (r2 != ((s32)&SceneId_Ov686Room8))
     goto L_0200ad2a;
   v59 = Object_GetById(64);
   r5 = v59;

@@ -1,8 +1,12 @@
-// Draft, differ 144 of 946: the three scripts run on entrances 9, 74 and
-// the rest after flag 0xa76 (actors 20 to 23 and 4). Calls go through call.h
-// where the native rebuilds their constants and 0x4000 and 0xc000 are
-// locals where it shares them. Left: argument order at the sites the native
-// calls directly, and a few constants shared or rebuilt the other way.
+// Draft, differ 122 of 946 (was 142): the three scripts run on entrances 9, 74
+// and the rest after flag 0xa76 (actors 20 to 23 and 4). Calls go through
+// call.h where the native rebuilds their constants and 0x4000 and 0xc000 are
+// locals where it shares them. A greedy pass over every call, direct or through
+// call.h, kept four changes (142 to 122): two Func_02004d08 calls and one
+// Func_02004c90 call direct, one ObjectMotion_SetSpeedParameters call
+// wrapped. Left: argument order at about 25 calls, where sched2 issues the
+// first argument between the halves of a split constant and the native issues
+// it last, and a few constants shared or rebuilt the other way.
 #include "types.h"
 #include "ram_buffer.h"
 #include "party_state.h"
@@ -131,7 +135,7 @@ void Func_020012bc(s32 entrance) {
     ObjectMotion_CommitCurrentPositionAndActivate(23);
     Call3((void (*)())ObjectMotion_ArmCallback, 4, west, 0);
     Call3((void (*)())ObjectMotion_ArmCallback, 23, west, 0);
-    Call3((void (*)())Func_02004d08, 4, 0x102, 30);
+    Func_02004d08(4, 0x102, 30);
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 20, 3);
     FieldEvent_WaitFrames(10);
     Call3((void (*)())Func_02004ce8, 20, 0, 5);
@@ -193,7 +197,7 @@ void Func_020012bc(s32 entrance) {
     eastB = 0x4000;
     westB = 0xc000;
     GameFlag_ClearBit(0xa76);
-    Call4((void (*)())Func_02004c90, 20, 0x27b80000, 0x25a00000, eastB);
+    Func_02004c90(20, 0x27b80000, 0x25a00000, eastB);
     Call4((void (*)())Func_02004c90, 21, 0x27a80000, 0x25a00000, eastB);
     Call4((void (*)())Func_02004c90, 22, 0x27c80000, 0x25a00000, eastB);
     Call4((void (*)())Func_02004c90, 23, 0x27b00000, 0x25d00000, westB);
@@ -245,7 +249,7 @@ void Func_020012bc(s32 entrance) {
     Object_LinkPair(20, 21, 0);
     Call3((void (*)())ObjectMotion_ArmCallback, 22, 0x8000, 0);
     Call3((void (*)())Func_02004d08, 22, 0x105, 30);
-    Call3((void (*)())Func_02004d08, 20, 0x102, 40);
+    Func_02004d08(20, 0x102, 40);
     Call2((void (*)())Func_02004d00, 20, eastB);
     FieldEvent_WaitFrames(20);
     UiText_OpenMessageAtObject(20, 0);
@@ -312,7 +316,7 @@ void Func_020012bc(s32 entrance) {
     Call2((void (*)())Object_SetModeById, 4, 3);
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 23, 3);
     FieldEvent_WaitFrames(10);
-    ObjectMotion_SetSpeedParameters(23, 0x13333, 0x9999);
+    Call3((void (*)())ObjectMotion_SetSpeedParameters, 23, 0x13333, 0x9999);
     Call2((void (*)())Object_SetModeById, 23, 2);
     {
       struct ObjectRuntime *object = Object_GetById(4);

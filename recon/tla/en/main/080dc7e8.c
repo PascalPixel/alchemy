@@ -1,6 +1,7 @@
-// Draft, differ 30 of 171 (2026-10-26, statements reordered) (2026-10-18; 59 before): order and register choice.
-// The held unsigned kind (as in BattleEffect_InitializeSharedScene) and a
-// halfword 17 (found by permuter) are tagged devices. Left: the prologue
+// Draft, differ 30 of 171 (2026-10-26): the event work is now read through a
+// struct, which makes the held unsigned kind device unneeded (the byte
+// stores no longer make the kind reload); still 30. Order and register
+// choice. A halfword 17 (found by permuter) is a tagged device. Left: the prologue
 // loads (the owner spilled after the 0x80 slot here), the slot loop's two
 // pointers swapped (r5/r6; counting i up instead measured 49), the wait
 // loop's counter zeroed after the test, and register choice round the
@@ -51,6 +52,18 @@ struct CleanupMap {
   s32 z;
 };
 
+struct CleanupEventWork {
+  u8 unk000[394];
+  s8 mode;
+  u8 unk18b[0xca5 - 395];
+  s8 unkca5;
+  u8 unkca6[7];
+  s8 unkcad;
+  u8 unkcae[8];
+  s8 unkcb6;
+  s8 unkcb7;
+};
+
 void BattleEffect_ClearOwnedSlot(void *slot);
 void Func_080dc954(void);
 void BattleEffect_WaitForArcGroups(void);
@@ -64,13 +77,12 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 
 void BattleEffect_CleanupSceneObjects(void) {
   struct CleanupWork *work = Ram_HeapSlots->effectWork;
-  s8 *event = Ram_HeapSlots->eventWork;
+  struct CleanupEventWork *event = Ram_HeapSlots->eventWork;
   s8 *block = Ram_HeapSlots->block32;
   struct CleanupMap *map = (struct CleanupMap *)Ram_HeapSlots->mapWork;
   struct ObjectRuntime *owner = work->owner;
   struct CleanupSlot *slot = work->slots;
   s32 i;
-  s32 raw;
   s16 first;
 
   for (i = 23; i >= 0; i--, slot++) {
@@ -82,11 +94,11 @@ void BattleEffect_CleanupSceneObjects(void) {
   first = 17;
   if (work->kind >= first && (work->kind <= 27 || work->kind == 30))
     Func_080dc954();
-  if (event[0xcb6] != 0)
+  if (event->unkcb6 != 0)
     return;
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
-  if (event[394] == 3 && block != NULL && block[0x2a01] != 0) {
+  if (event->mode == 3 && block != NULL && block[0x2a01] != 0) {
     i = 0;
     do {
       WaitFrames(1);
@@ -94,7 +106,7 @@ void BattleEffect_CleanupSceneObjects(void) {
         break;
     } while (block[0x2a01] != 0);
   }
-  event[0xcb7] = 0;
+  event->unkcb7 = 0;
   Func_080dbb40();
   Scheduler_RemoveCallback(BattleEffect_UpdateAllEffectSlots);
   map->x = work->x;
@@ -104,15 +116,10 @@ void BattleEffect_CleanupSceneObjects(void) {
     ((u8 *)owner)[35] = work->ownerByte;
     ((struct CleanupAnimation *)owner->animation)->layer = work->layer;
   }
-  /* FAKEMATCH: the kind read unsigned and held, so the != 28 test shifts
-   * that copy without reading it again after the 0xca5 store (differ 59
-   * without). */
-  raw = *(u16 *)&work->kind;
-  asm("" : "+r"(raw));
   if (work->kind != 8)
-    event[0xca5] = 1;
-  if ((s16)raw != 28)
-    event[0xcad] = 1;
+    event->unkca5 = 1;
+  if (work->kind != 28)
+    event->unkcad = 1;
   Event_NoOp();
   Runtime_ReleaseHeapBlock(224);
 }

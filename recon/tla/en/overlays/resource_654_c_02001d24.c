@@ -1,8 +1,11 @@
-// Near miss (80 of 656 instructions differ): the scratch register that
-// reloads gPartyState.currentOwner's address from r9 (native r1/r3/r2,
-// draft r2/r3), the fall speed's register stored as the motion flags byte
-// (native strb of 0xffff0000, draft the known zero in r6), and the order of
-// one ldr against a speed constant. Destined for the end of event6.c.
+// Near miss (16 of 656 instructions differ, was 80). Object 13's motion flags
+// are cleared after its sprite's rotation is set, so the zero is the low byte
+// of the register holding field18's -0x10000, as the native stores it (with
+// the flags cleared first, or chained to field18, the known zero in r6 is
+// shared and the registers after it move). Left: instruction order only, the
+// motion flags' address formed and stored ahead of the rotation's store, and
+// the rotation's closing store against the mode call's argument. Destined
+// for the end of event6.c.
 #include "../../../../games/tla/src/scene/shrine_of_the_sea_god/shrine_of_the_sea_god.h"
 #include "text/msg_ids.h"
 
@@ -59,8 +62,9 @@ void Func_02001d24(void) {
   ShrineOfTheSeaGod_ObjLaunch(13, 4, 0);
   ShrineOfTheSeaGod_ObjCommit(13, 248, 168);
   ShrineOfTheSeaGod_ObjMode(13, 6);
-  object->motionFlags = object->field18 = -0x10000;
+  object->field18 = -0x10000;
   sprite->rotation = 0xd000;
+  object->motionFlags = 0;
   object->y += 0x60000;
   ObjectDispatch_SetSingleChildFlags(Object_GetById(13), 0);
   ShrineOfTheSeaGod_ObjSpeed(13, 0x6666, 0x3333);

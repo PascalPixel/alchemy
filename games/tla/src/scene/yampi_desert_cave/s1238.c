@@ -1,14 +1,6 @@
-// Draft, differ 18 of 95 (was 24; ja 28 of 92 before): the chest that
-// follows the step count: when the tracked object stands on its cell, mode 1
-// stops the follower and mode 2 drops the chest. The 17 stored at 0x160 of
-// the event work goes through an s32 and a pointer, so it is built with a
-// move as the native does (as a halfword constant it comes from the pool).
-// Left: register choice: the native keeps the pixel column and row in r0 and
-// r5 and the tracked object's cell in r1 and r4 (here r1, r0, r4 and r5).
-// Measured: the declarations in other orders (18 to 41).
-#include "../../../../games/tla/src/scene/yampi_desert_cave/yampi_desert_cave.h"
+#include "yampi_desert_cave.h"
 #include "object_runtime.h"
-#include "game/edition.h"
+#include "edition.h"
 
 extern const s16 gData_020019cc[];
 
@@ -20,15 +12,17 @@ void Func_020018a8(s32 id, s32 x, s32 z);
 void Scheduler_RemoveCallbackFar(void (*callback)(void));
 void WaitFrames(s32 frames);
 
+/// The chest that follows the step count: when the tracked object stands on
+/// its cell, mode 1 stops the follower and mode 2 drops the chest.
 void Func_02001238(s32 mode) {
   s32 index = (GameFlag_GetByte(0x278) / 32) * 2;
   s16 column = gData_020019cc[index];
+  s32 px = column * 8;
   s16 row = gData_020019cc[index + 1];
+  s32 pz = row * 8;
   u8 *work = Ram_HeapSlots->eventWork;
   struct ObjectRuntime *tracked =
       *(struct ObjectRuntime **)(Ram_HeapSlots->battleFxWork[0] + 0x1930);
-  s32 px = column * 8;
-  s32 pz = row * 8;
   s32 x = 0, z = 0;
 
   if (tracked != NULL) {
@@ -49,6 +43,8 @@ void Func_02001238(s32 mode) {
     chest->motionFlags = 3;
     chest->gravity = 0x170a;
     WaitFrames(50);
+    // Through an s32 and a pointer the 17 is built with a move; as a halfword
+    // constant it comes from the pool.
     {
       s16 *counter = (s16 *)(work + 0x160);
       s32 value = 17;

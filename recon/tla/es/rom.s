@@ -1,39 +1,3 @@
-	.section .rom.0001319c, "ax"
-	.global Func_0801319c
-	.type Func_0801319c, %function
-	.thumb_func
-Func_0801319c:
-	.incbin "baserom.gba", 0x0001319c, 0x00000148
-	.section .rom.000132e4, "ax"
-	.global Func_080132b8
-	.type Func_080132b8, %function
-	.thumb_func
-Func_080132b8:
-	.incbin "baserom.gba", 0x000132e4, 0x00000004
-	.section .rom.000132e8, "ax"
-	.global Func_080132bc
-	.type Func_080132bc, %function
-	.thumb_func
-Func_080132bc:
-	.incbin "baserom.gba", 0x000132e8, 0x00000004
-	.section .rom.000132ec, "ax"
-	.global Func_080132c0
-	.type Func_080132c0, %function
-	.thumb_func
-Func_080132c0:
-	.incbin "baserom.gba", 0x000132ec, 0x00000004
-	.section .rom.000132f0, "ax"
-	.global Func_080132c4
-	.type Func_080132c4, %function
-	.thumb_func
-Func_080132c4:
-	.incbin "baserom.gba", 0x000132f0, 0x00000004
-	.section .rom.000132f4, "ax"
-	.global Func_080132c8
-	.type Func_080132c8, %function
-	.thumb_func
-Func_080132c8:
-	.incbin "baserom.gba", 0x000132f4, 0x00000004
 	.section .rom.000133f0, "ax"
 	.balign 4
 	.global Runtime_InstallIwramAndIrqs
@@ -49,6 +13,10 @@ System_WaitForFrameInterrupt:
 	.incbin "baserom.gba", 0x000134dc, 0x000000b0
 	.section .rom.000139c8, "ax"
 	.balign 4
+	.global Func_0801399c
+	.type Func_0801399c, %function
+	.thumb_func
+Func_0801399c:
 	.incbin "baserom.gba", 0x000139c8, 0x00000194
 	.section .rom.000141a0, "ax"
 	.global VramCache_AllocateBlocks

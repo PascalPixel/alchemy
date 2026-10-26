@@ -7,7 +7,7 @@
 /// (FLAG_KOLIMA_CURSE_LIFTED), KolimaPalette_Curse gives the forest redder,
 /// darker colours.
 ///
-/// Until the third patch the Nut's object event template row tested Vale's
+/// Until the third patch the Nut's actor template row tested Vale's
 /// FLAG_VALE_NUT_CAUGHT rather than FLAG_KOLIMA_FOREST_NUT_CAUGHT, so once
 /// Vale's Nut had been caught this one was never placed.
 ///
@@ -43,19 +43,19 @@
 #include "item_ids.h"
 #include "heap.h"
 
-/// Kolima Forest's object events, numbering the rows of
-/// gKolimaForestGlade_ObjectEventTemplates.
-enum KolimaForestGladeLocalId {
+/// Kolima Forest's actors, numbering the rows of
+/// gKolimaForestGlade_ActorTemplates.
+enum KolimaForestGladeActorId {
   /// The three logs.
   /// ★ Named from what the player sees: logs lying on the forest grass among
   /// the stumps (its render)
-  LOCALID_FIRST_LOG = LOCALID_FIRST_PLACED,
+  ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
   /// The Nut that floats until Catch pulls it in.
   /// ★ Named from the game: "Nut" (MsgItemName)
-  LOCALID_NUT = LOCALID_FIRST_LOG + 3
+  ACTOR_NUT = ACTOR_FIRST_LOG + 3
 };
 
-#include "common/object_staged_object_event.h"
+#include "common/object_staged_actor.h"
 
 /// Where the party enters, from SceneId_KolimaForestEntrance and
 /// SceneId_KolimaForestCliff.
@@ -70,9 +70,8 @@ const struct SceneExitRegion *KolimaForestGlade_GetRegions(void) { return 0; }
 const u32 *KolimaForestGlade_GetExits(void) { return gKolimaForestGlade_Exits; }
 
 /// The three logs and the Nut.
-const struct ObjectEventTemplate *
-KolimaForestGlade_GetObjectEventTemplates(void) {
-  return gKolimaForestGlade_ObjectEventTemplates;
+const struct ActorTemplate *KolimaForestGlade_GetActorTemplates(void) {
+  return gKolimaForestGlade_ActorTemplates;
 }
 
 /// Kolima Forest (SceneId_KolimaForestGlade), walking into a log: it rolls
@@ -81,7 +80,7 @@ static void KolimaForestGlade_PushLog(void) {
   struct PushedObjectProbe result;
   FieldScript_Start();
   if (PushedObject_FindClearPosition(&result))
-    ObjectEvent_MoveAndRedraw(result);
+    Actor_MoveAndRedraw(result);
   FieldScript_End();
 }
 
@@ -89,7 +88,7 @@ static void KolimaForestGlade_PushLog(void) {
 /// FLAG_KOLIMA_FOREST_NUT_CAUGHT): it vanishes and the party finds a Nut.
 static void KolimaForestGlade_CatchNut(void) {
   FieldScript_Start();
-  Import_ObjectEventSetPosition(LOCALID_NUT, 0, 0);
+  Import_ActorSetPosition(ACTOR_NUT, 0, 0);
   GameFlag_Set(FLAG_KOLIMA_FOREST_NUT_CAUGHT);
   ItemDisplay_ShowItem(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
@@ -109,11 +108,11 @@ s32 KolimaForestGlade_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_NUT_CAUGHT) == 0) {
-    Scene_FloatNut(LOCALID_NUT);
+    Scene_FloatNut(ACTOR_NUT);
   }
-  Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
-  Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
-  Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 2);
+  Scene_RedrawActorFootprint(ACTOR_FIRST_LOG);
+  Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 1);
+  Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 2);
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     KolimaPalette_Curse(11);
   }
@@ -165,9 +164,9 @@ u32 gKolimaForestGlade_Exits[] = {
     SCENE_EXITS_END,
 };
 
-/// Until the third patch the Nut's object event template tested Vale's FLAG_VALE_NUT_CAUGHT, not the flag
+/// Until the third patch the Nut's actor template tested Vale's FLAG_VALE_NUT_CAUGHT, not the flag
 /// catching it sets.
-struct ObjectEventTemplate gKolimaForestGlade_ObjectEventTemplates[] = {
+struct ActorTemplate gKolimaForestGlade_ActorTemplates[] = {
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(360), 0, PIXELS(368), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -192,8 +191,8 @@ struct MapEvent gKolimaForestGlade_Events[] = {
      KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE},
     {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(KolimaForestGlade_PushLog)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_CATCH), LOCALID_NUT,
-     FLAG_KOLIMA_FOREST_NUT_CAUGHT, EVENT_SCRIPT(KolimaForestGlade_CatchNut)},
+    {PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT, FLAG_KOLIMA_FOREST_NUT_CAUGHT,
+     EVENT_SCRIPT(KolimaForestGlade_CatchNut)},
     {MAP_EVENTS_END},
 };
 

@@ -32,16 +32,16 @@ struct ColossoGaugeWork {
   /// Nonzero keeps the gauge down (level 2); only the unused
   /// Colosso_SetGaugeHold sets it.
   s16 hold;
-  s16 playerLocalId; ///< the local id drawn as the player's marker
-  /// The local id drawn as the opponent's marker, and the object event that
+  s16 playerActorId; ///< the actor id drawn as the player's marker
+  /// The actor id drawn as the opponent's marker, and the actor that
   /// runs the recorded path.
-  s16 opponentLocalId;
-  /// The first finisher's prize: the object event raised over that finisher,
+  s16 opponentActorId;
+  /// The first finisher's prize: the actor raised over that finisher,
   /// who stops at finishZ minus 16 pixels.
-  u16 finishItemLocalIdA;
+  u16 finishItemActorIdA;
   /// The second finisher's prize; that finisher stops at finishZ plus 16
   /// pixels.
-  u16 finishItemLocalIdB;
+  u16 finishItemActorIdB;
   /// 16-pixel bar pieces either side of the centre: 6 in Colosseum Final 3,
   /// 4 in Final 1 and 5 in Final 2.
   s16 segments;
@@ -56,10 +56,10 @@ STATIC_ASSERT(sizeof(struct ColossoGaugeWork) == 240);
 STATIC_ASSERT(offsetof(struct ColossoGaugeWork, vramBlock) == 216);
 STATIC_ASSERT(offsetof(struct ColossoGaugeWork, level) == 218);
 STATIC_ASSERT(offsetof(struct ColossoGaugeWork, hold) == 220);
-STATIC_ASSERT(offsetof(struct ColossoGaugeWork, playerLocalId) == 222);
-STATIC_ASSERT(offsetof(struct ColossoGaugeWork, opponentLocalId) == 224);
-STATIC_ASSERT(offsetof(struct ColossoGaugeWork, finishItemLocalIdA) == 226);
-STATIC_ASSERT(offsetof(struct ColossoGaugeWork, finishItemLocalIdB) == 228);
+STATIC_ASSERT(offsetof(struct ColossoGaugeWork, playerActorId) == 222);
+STATIC_ASSERT(offsetof(struct ColossoGaugeWork, opponentActorId) == 224);
+STATIC_ASSERT(offsetof(struct ColossoGaugeWork, finishItemActorIdA) == 226);
+STATIC_ASSERT(offsetof(struct ColossoGaugeWork, finishItemActorIdB) == 228);
 STATIC_ASSERT(offsetof(struct ColossoGaugeWork, segments) == 230);
 STATIC_ASSERT(offsetof(struct ColossoGaugeWork, finishX) == 232);
 STATIC_ASSERT(offsetof(struct ColossoGaugeWork, finishZ) == 236);

@@ -17,7 +17,7 @@
 #include "system.h"
 #include "level.h"
 #include "field_service.h"
-#include "object_event.h"
+#include "actor.h"
 #include "party_state.h"
 #include "types.h"
 #include "io_reg.h"
@@ -50,42 +50,42 @@
 #define BROWSER_ROW_STEP 10 ///< Right and Left move ten numbers.
 #define BROWSER_PAGE_STEP 30 ///< R and L move thirty.
 
-/// The room's object events, numbering the rows of
-/// gIncreaseItemAndLevel_ObjectEventTemplates; the game names none of them, so
+/// The room's actors, numbering the rows of
+/// gIncreaseItemAndLevel_ActorTemplates; the game names none of them, so
 /// each is named for what talking to it opens (gIncreaseItemAndLevel_Events),
 /// as a render of each talk shows it.
-enum IncreaseItemAndLevelLocalId {
+enum IncreaseItemAndLevelActorId {
   /// IncreaseItemAndLevel_SelectItem.
   /// ★ Named from what the player sees: `Item No:` over an item's name and
   /// what equipping it does, with `A:Get Item  B:Return` (its render)
-  LOCALID_ITEM_BROWSER = LOCALID_FIRST_PLACED,
+  ACTOR_ITEM_BROWSER = ACTOR_FIRST_PLACED,
   /// IncreaseItemAndLevel_OpenIconBrowser.
   /// ★ Named from what the player sees: a page of 32 item icons headed
   /// `ITEM PAGE:0` (its render)
-  LOCALID_ICON_BROWSER,
+  ACTOR_ICON_BROWSER,
   /// IncreaseItemAndLevel_OpenPortraitBrowser; Force cast at it runs the Force
   /// tests.
   /// ★ Named from what the player sees: Isaac's portrait over `0 Isaac`, the
   /// first of the portraits Left and Right step through (its render)
-  LOCALID_PORTRAIT_BROWSER,
+  ACTOR_PORTRAIT_BROWSER,
   /// IncreaseItemAndLevel_RunLevelEditor, drawn larger than the others.
   /// ★ Named from what the player sees: `Raise everyone's level.` over the
   /// leader's name and level, A raising it one and Start five (its render)
-  LOCALID_LEVEL_EDITOR,
+  ACTOR_LEVEL_EDITOR,
   /// IncreaseItemAndLevel_SelectAbility; placed outside Japanese only, like the
   /// two
   /// emote testers after it.
   /// ★ Named from what the player sees: `Psy No:` over an ability's name,
   /// with `B:Return` (its render)
-  LOCALID_ABILITY_BROWSER,
+  ACTOR_ABILITY_BROWSER,
   /// IncreaseItemAndLevel_ShowMessageThenEmote.
-  /// ★ Named from what the player sees: a wince over the object event, then its
+  /// ★ Named from what the player sees: a wince over the actor, then its
   /// message (its render)
-  LOCALID_FIRST_EMOTE_TESTER,
+  ACTOR_FIRST_EMOTE_TESTER,
   /// IncreaseItemAndLevel_ShowEmoteThenMessage.
   /// ★ Named from what the player sees: an ellipsis over the first tester,
   /// then the first tester's message (its render)
-  LOCALID_SECOND_EMOTE_TESTER
+  ACTOR_SECOND_EMOTE_TESTER
 };
 
 u8 *IncreaseItemAndLevel_GetEntrances(void) {
@@ -99,29 +99,27 @@ u8 *IncreaseItemAndLevel_GetExits(void) {
   return (u8 *)gIncreaseItemAndLevel_Exits;
 }
 
-u8 *IncreaseItemAndLevel_GetObjectEventTemplates(void) {
-  return (u8 *)gIncreaseItemAndLevel_ObjectEventTemplates;
+u8 *IncreaseItemAndLevel_GetActorTemplates(void) {
+  return (u8 *)gIncreaseItemAndLevel_ActorTemplates;
 }
 
 #if TBS_PATCH_1
-/// Sets the test message before displaying the first emote on the object event
-/// spoken to, LOCALID_FIRST_EMOTE_TESTER.
+/// Sets the test message before displaying the first emote on the actor
+/// spoken to, ACTOR_FIRST_EMOTE_TESTER.
 static void IncreaseItemAndLevel_ShowMessageThenEmote(void) {
   FieldScript_SetMessageId(MsgDebugWontStopYou);
-  ObjectEvent_ShowEmote(LOCALID_FIRST_EMOTE_TESTER,
-                        EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  FieldScript_ShowMessageAndWait(LOCALID_FIRST_EMOTE_TESTER, 0);
+  Actor_ShowEmote(ACTOR_FIRST_EMOTE_TESTER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_FIRST_EMOTE_TESTER, 0);
 }
 
-/// Displays the other test emote before setting LOCALID_FIRST_EMOTE_TESTER's
+/// Displays the other test emote before setting ACTOR_FIRST_EMOTE_TESTER's
 /// message. Talking to
-/// LOCALID_SECOND_EMOTE_TESTER, though the emote and the message are
-/// LOCALID_FIRST_EMOTE_TESTER's.
+/// ACTOR_SECOND_EMOTE_TESTER, though the emote and the message are
+/// ACTOR_FIRST_EMOTE_TESTER's.
 static void IncreaseItemAndLevel_ShowEmoteThenMessage(void) {
-  ObjectEvent_ShowEmote(LOCALID_FIRST_EMOTE_TESTER,
-                        EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(ACTOR_FIRST_EMOTE_TESTER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   FieldScript_SetMessageId(MsgDebugWontStopYou);
-  FieldScript_ShowMessageAndWait(LOCALID_FIRST_EMOTE_TESTER, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_FIRST_EMOTE_TESTER, 0);
 }
 #endif
 
@@ -157,7 +155,7 @@ static void IncreaseItemAndLevel_AdjustPartyLevels(s32 amount) {
 
 /// Displays the selected member's level and changes the whole party.
 /// B closes the window and recalculates the original four heroes. Talking to
-/// LOCALID_LEVEL_EDITOR: under `Raise everyone's level.` it shows the leader's
+/// ACTOR_LEVEL_EDITOR: under `Raise everyone's level.` it shows the leader's
 /// name and level; Start or Select raises the whole party five levels with
 /// fanfare MUS_FANFARE_LARGE, A one level with MUS_FANFARE_SMALL.
 static void IncreaseItemAndLevel_RunLevelEditor(void) {
@@ -166,7 +164,7 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
   s32 redraw;
   s32 messageId;
 
-  unit = Unit_Get(gSaveBlock.leaderLocalId);
+  unit = Unit_Get(gSaveBlock.leaderActorId);
   window = Window_Create(0, 0, 30, 9, WINDOW_FLAG_INSTANT);
 
   messageId = MsgDebugRaiseEveryonesLevel;
@@ -216,7 +214,7 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
 }
 
 /// Browses nonempty item definitions and gives the selected item to the party.
-/// Talking to LOCALID_ITEM_BROWSER. Up and Down step one number, Right and Left
+/// Talking to ACTOR_ITEM_BROWSER. Up and Down step one number, Right and Left
 /// ten, R and L thirty, passing over numbers whose item has no icon; A gives
 /// the item to the first member with room (SE_NOTE_HIGH), and B, or A with
 /// every bag full, closes the browser.
@@ -353,9 +351,9 @@ static void IncreaseItemAndLevel_SelectItem(void) {
 #if TBS_PATCH_1
 /// Browses ability names and descriptions, skipping unavailable entries. B
 /// closes the sole window created by this browser. Talking to
-/// LOCALID_ABILITY_BROWSER in English and German; in French, Spanish and
-/// Italian the room keeps the function and the object event but no event, and
-/// moves the object event to x 80.
+/// ACTOR_ABILITY_BROWSER in English and German; in French, Spanish and
+/// Italian the room keeps the function and the actor but no event, and
+/// moves the actor to x 80.
 UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
   // Ordinary while scans grow the native function from 0x248 to 0x260; retain
   // the original polling edges.
@@ -480,46 +478,46 @@ UNUSED static void IncreaseItemAndLevel_RequestExit(void) {
   Import_ScriptRequestExit();
 }
 
-/// Starts the window transition and edition-specific object event
+/// Starts the window transition and edition-specific actor
 /// scale/animation setup. Returns zero through the exported map entry. The
 /// room's initialize entry, which SceneManager_Run runs on entry and whose
-/// result it ignores: LOCALID_LEVEL_EDITOR is drawn 1.6 times its size (1.7 in
+/// result it ignores: ACTOR_LEVEL_EDITOR is drawn 1.6 times its size (1.7 in
 /// Japanese; 16.16 scales), and outside Japanese the two emote testers start
 /// animations 5 and 2.
 s32 IncreaseItemAndLevel_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   gFieldWork->transitionFrames = 24;
 #if TBS_PATCH_1
-  ObjectEvent_GetById(LOCALID_LEVEL_EDITOR)->scaleY = 0x19999;
-  ObjectEvent_GetById(LOCALID_LEVEL_EDITOR)->scaleX = 0x19999;
-  Import_ObjectEventSetAnimation(LOCALID_FIRST_EMOTE_TESTER, 5);
-  Import_ObjectEventSetAnimation(LOCALID_SECOND_EMOTE_TESTER, 2);
+  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = 0x19999;
+  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleX = 0x19999;
+  Import_ActorSetAnimation(ACTOR_FIRST_EMOTE_TESTER, 5);
+  Import_ActorSetAnimation(ACTOR_SECOND_EMOTE_TESTER, 2);
 #else
-  ObjectEvent_GetById(LOCALID_LEVEL_EDITOR)->scaleY = 0x1b333;
-  ObjectEvent_GetById(LOCALID_LEVEL_EDITOR)->scaleX = 0x1b333;
+  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = 0x1b333;
+  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleX = 0x1b333;
 #endif
   return 0;
 }
 
 #if !TBS_PATCH_1
-/// Runs the Japanese animation test, then moves LOCALID_LEVEL_EDITOR to its
-/// test position. Force cast at LOCALID_PORTRAIT_BROWSER: it takes
-/// ANIM_WALK and LOCALID_LEVEL_EDITOR ANIM_SHAKE_HEAD; once
-/// LOCALID_PORTRAIT_BROWSER's animation has changed, LOCALID_LEVEL_EDITOR moves
+/// Runs the Japanese animation test, then moves ACTOR_LEVEL_EDITOR to its
+/// test position. Force cast at ACTOR_PORTRAIT_BROWSER: it takes
+/// ANIM_WALK and ACTOR_LEVEL_EDITOR ANIM_SHAKE_HEAD; once
+/// ACTOR_PORTRAIT_BROWSER's animation has changed, ACTOR_LEVEL_EDITOR moves
 /// to (312, 416).
 static void IncreaseItemAndLevel_RunMotionTest(void) {
   FieldScript_Start();
-  Import_ObjectEventSetAnimation(LOCALID_PORTRAIT_BROWSER, ANIM_WALK);
-  Import_ObjectEventSetAnimation(LOCALID_LEVEL_EDITOR, ANIM_SHAKE_HEAD);
-  ObjectMotion_WaitForAnimationChange(LOCALID_PORTRAIT_BROWSER);
-  ObjectEvent_SetPosition(LOCALID_LEVEL_EDITOR, PIXELS(312), PIXELS(416));
+  Import_ActorSetAnimation(ACTOR_PORTRAIT_BROWSER, ANIM_WALK);
+  Import_ActorSetAnimation(ACTOR_LEVEL_EDITOR, ANIM_SHAKE_HEAD);
+  ObjectMotion_WaitForAnimationChange(ACTOR_PORTRAIT_BROWSER);
+  Actor_SetPosition(ACTOR_LEVEL_EDITOR, PIXELS(312), PIXELS(416));
   FieldScript_End();
 }
 #endif
 
 #if LANGUAGE != LANGUAGE_JAPANESE
 /// Displays the three character-set caption rows in a debug window. Force cast
-/// at LOCALID_PORTRAIT_BROWSER, outside Japanese. The window is left open.
+/// at ACTOR_PORTRAIT_BROWSER, outside Japanese. The window is left open.
 static void IncreaseItemAndLevel_ShowGlyphCaptions(void) {
   struct Window *window;
   /* FAKEMATCH(dead): an unread text buffer for the frame's 32 bytes; as no
@@ -533,7 +531,7 @@ static void IncreaseItemAndLevel_ShowGlyphCaptions(void) {
 }
 #endif
 
-/// Keeps Force from moving LOCALID_PORTRAIT_BROWSER: run at phase 1 of Force
+/// Keeps Force from moving ACTOR_PORTRAIT_BROWSER: run at phase 1 of Force
 /// cast at it, this sets the effect's childMode, and Force's shot then leaves
 /// its target where it is (overworld/field_services/force.c).
 static void IncreaseItemAndLevel_EnableEffectChildMode(void) {
@@ -544,13 +542,13 @@ static void IncreaseItemAndLevel_EnableEffectChildMode(void) {
 }
 
 /// Returns the icon browser's status to the event dispatcher. Talking to
-/// LOCALID_ICON_BROWSER.
+/// ACTOR_ICON_BROWSER.
 static int IncreaseItemAndLevel_OpenIconBrowser(void) {
   return DebugBrowser_Icons();
 }
 
 /// Returns the portrait browser's status to the event dispatcher. Talking
-/// to LOCALID_PORTRAIT_BROWSER.
+/// to ACTOR_PORTRAIT_BROWSER.
 static int IncreaseItemAndLevel_OpenPortraitBrowser(void) {
   return DebugBrowser_Portraits();
 }
@@ -594,12 +592,12 @@ u32 gIncreaseItemAndLevel_Exits[] = {
     SCENE_EXITS_END,
 };
 
-/// The room's object events, in the order of enum IncreaseItemAndLevelLocalId:
+/// The room's actors, in the order of enum IncreaseItemAndLevelActorId:
 /// the item, icon and portrait browsers and the level editor; outside Japanese
 /// also the ability browser (reachable in English and German only) and the two
 /// emote testers.
 // clang-format off
-struct ObjectEventTemplate gIncreaseItemAndLevel_ObjectEventTemplates[] = {
+struct ActorTemplate gIncreaseItemAndLevel_ActorTemplates[] = {
     {0x1f4, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(864), FACING_SOUTHEAST,
         TALK_FACING_PARTY, 0},
     {0x20, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(480), FACING_SOUTHEAST,
@@ -634,38 +632,38 @@ struct ObjectEventTemplate gIncreaseItemAndLevel_ObjectEventTemplates[] = {
 
 /// Talking to each tester runs its tool. The ability browser has a talk row
 /// only in English and German (TBS_PATCH_1 without TBS_PATCH_3); French,
-/// Spanish and Italian keep its code and its object event. Force cast at the
+/// Spanish and Italian keep its code and its actor. Force cast at the
 /// portrait browser runs a motion test in Japanese and shows the three
 /// character-set caption rows elsewhere; in every edition a second row on the
 /// same person, run before the cast (PSYNERGY_PHASE_BEFORE_CAST), sets the
 /// effect's child mode, so Force's shot leaves the portrait browser where it
 /// stands.
 struct MapEvent gIncreaseItemAndLevel_Events[] = {
-    {MAP_EVENT_TALK, LOCALID_ITEM_BROWSER, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_ITEM_BROWSER, CONDITION_ALWAYS,
      EVENT_SCRIPT(IncreaseItemAndLevel_SelectItem)},
-    {MAP_EVENT_TALK, LOCALID_ICON_BROWSER, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_ICON_BROWSER, CONDITION_ALWAYS,
      EVENT_SCRIPT(IncreaseItemAndLevel_OpenIconBrowser)},
-    {MAP_EVENT_TALK, LOCALID_PORTRAIT_BROWSER, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
      EVENT_SCRIPT(IncreaseItemAndLevel_OpenPortraitBrowser)},
-    {MAP_EVENT_TALK, LOCALID_LEVEL_EDITOR, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_LEVEL_EDITOR, CONDITION_ALWAYS,
      EVENT_SCRIPT(IncreaseItemAndLevel_RunLevelEditor)},
 #if !TBS_PATCH_1
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_PORTRAIT_BROWSER,
-     CONDITION_ALWAYS, EVENT_SCRIPT(IncreaseItemAndLevel_RunMotionTest)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
+     EVENT_SCRIPT(IncreaseItemAndLevel_RunMotionTest)},
 #else
 #if !TBS_PATCH_3
-    {MAP_EVENT_TALK, LOCALID_ABILITY_BROWSER, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_ABILITY_BROWSER, CONDITION_ALWAYS,
      EVENT_SCRIPT(IncreaseItemAndLevel_SelectAbility)},
 #endif
-    {MAP_EVENT_TALK, LOCALID_FIRST_EMOTE_TESTER, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_FIRST_EMOTE_TESTER, CONDITION_ALWAYS,
      EVENT_SCRIPT(IncreaseItemAndLevel_ShowMessageThenEmote)},
-    {MAP_EVENT_TALK, LOCALID_SECOND_EMOTE_TESTER, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_SECOND_EMOTE_TESTER, CONDITION_ALWAYS,
      EVENT_SCRIPT(IncreaseItemAndLevel_ShowEmoteThenMessage)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_PORTRAIT_BROWSER,
-     CONDITION_ALWAYS, EVENT_SCRIPT(IncreaseItemAndLevel_ShowGlyphCaptions)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
+     EVENT_SCRIPT(IncreaseItemAndLevel_ShowGlyphCaptions)},
 #endif
-    {PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST),
-     LOCALID_PORTRAIT_BROWSER, CONDITION_ALWAYS,
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
      EVENT_SCRIPT(IncreaseItemAndLevel_EnableEffectChildMode)},
     {MAP_EVENTS_END},
 };

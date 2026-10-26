@@ -2,6 +2,6 @@
 	overlay_veneer MercuryLighthouseAerie_Initialize
 	overlay_veneer MercuryLighthouseAerie_GetEntrances
 	overlay_veneer MercuryLighthouseAerie_GetExits
-	overlay_veneer MercuryLighthouseAerie_GetObjectEventTemplates
+	overlay_veneer MercuryLighthouseAerie_GetActorTemplates
 	overlay_veneer MercuryLighthouseAerie_GetEvents
 	overlay_veneer MercuryLighthouseAerie_GetRegions

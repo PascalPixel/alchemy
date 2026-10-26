@@ -14,7 +14,7 @@ void FieldEffect_BlinkAvoidCaster(void) {
   struct SpriteAnim *entry;
   s32 phase;
 
-  caster = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
+  caster = Actor_GetByActorId(gSaveBlock.leaderActorId);
   rec = caster->sprite;
   entry = rec->entries[0];
   phase = gFrameCount % 5;
@@ -33,8 +33,7 @@ void FieldEffect_BlinkAvoidCaster(void) {
 /// FieldEffect_RunAvoid makes it the caster's callback; it counts the caster's
 /// step and turns its angle. The arcs draw with the tiles FieldEffect_RunAvoid
 /// loads into effectWork->arcTileSlot.
-void FieldEffect_UpdatePairedArcSpawner(
-    union ObjectEventOrEffect *fieldObject) {
+void FieldEffect_UpdatePairedArcSpawner(union ActorOrEffect *fieldObject) {
   struct Object *caster = (struct Object *)fieldObject;
   s16 phase;
   s32 elapsedFrames;
@@ -45,9 +44,9 @@ void FieldEffect_UpdatePairedArcSpawner(
   // SceneId_MainMenu is the world map's map (SceneManager_Run).
   if (gSaveBlock.mapId == (s32)&SceneId_MainMenu) {
     if (elapsedFrames % 7 == 0)
-      FieldEffect_SpawnDescendingArcParticles((struct ObjectEvent *)caster);
+      FieldEffect_SpawnDescendingArcParticles((struct Actor *)caster);
   } else if (elapsedFrames % 5 == 0) {
-    FieldEffect_SpawnDescendingArcParticles((struct ObjectEvent *)caster);
+    FieldEffect_SpawnDescendingArcParticles((struct Actor *)caster);
   }
 
   if (phase == 1)

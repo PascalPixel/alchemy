@@ -48,50 +48,50 @@
 #include "songs.h"
 #include "fixed_math.h"
 
-/// The placed object events, numbered in the order of
-/// gValeEruption_ObjectEventTemplates; Garet's row places the party's Garet and
+/// The placed actors, numbered in the order of
+/// gValeEruption_ActorTemplates; Garet's row places the party's Garet and
 /// takes no number.
-enum ValeEruptionLocalId {
+enum ValeEruptionActorId {
   /// The Great Healer, a man with a white beard in a tall hat and a long
   /// purple and blue robe (the sprite of sanctum.c's healer), who leads the
   /// villagers into the sanctum. "Come into the sanctum, both of you."
   /// ★ Named from the game: "Come into the sanctum" (MsgValeMtAlephWasInactive)
-  LOCALID_GREAT_HEALER = LOCALID_FIRST_PLACED,
+  ACTOR_GREAT_HEALER = ACTOR_FIRST_PLACED,
   /// Garet's grandfather, an old man with white hair and a cane, the mayor
   /// (whom the Great Healer calls Mayor in sanctum.c). "Oooh, my grandson! Will
   /// Garet be safe in this eruption?!?"
   /// ★ Named from the game: "Oooh, my grandson!" (MsgValeMtAlephWasInactive)
-  LOCALID_GARETS_GRANDFATHER = LOCALID_FIRST_PLACED + 1,
+  ACTOR_GARETS_GRANDFATHER = ACTOR_FIRST_PLACED + 1,
   /// Isaac's mother (Dora in sanctum.c). "Isaac and Garet went to Mr. Kraden's
   /// house."
   /// ★ Named from the game: "your mother, Dora, has been crying"
   /// (MsgValeDoraHasBeenCrying)
-  LOCALID_DORA = LOCALID_FIRST_PLACED + 2,
+  ACTOR_DORA = ACTOR_FIRST_PLACED + 2,
   /// Garet's sister, a young woman with an orange ponytail, whom Garet calls
   /// Sis at the farewell (vale_plaza.c). She calls the mayor Grandpa, and
-  /// LOCALID_GARETS_BROTHER calls her Sis. "Grandpa, we don't even know if he's
+  /// ACTOR_GARETS_BROTHER calls her Sis. "Grandpa, we don't even know if he's
   /// up there!"
   /// ★ Named from the game: "we don't even know if he's up there"
   /// (MsgValeMtAlephWasInactive)
-  LOCALID_GARETS_SISTER = LOCALID_FIRST_PLACED + 3,
+  ACTOR_GARETS_SISTER = ACTOR_FIRST_PLACED + 3,
   /// Garet's brother, the small boy with orange hair of vale.c's
-  /// LOCALID_GARETS_BROTHER, who says someone saw Garet climb and is first to
+  /// ACTOR_GARETS_BROTHER, who says someone saw Garet climb and is first to
   /// cry
   /// "Garet!"
   /// ★ Named from the game: "But, Sis, someone saw him"
   /// (MsgValeMtAlephWasInactive), to Garet's sister
-  LOCALID_GARETS_BROTHER = LOCALID_FIRST_PLACED + 4,
+  ACTOR_GARETS_BROTHER = ACTOR_FIRST_PLACED + 4,
   /// The guard, the man with long brown hair and a beard in a long robe who
-  /// guards Mt. Aleph in vale.c (LOCALID_MAN_GUARDING_MT_ALEPH). "They were
+  /// guards Mt. Aleph in vale.c (ACTOR_MAN_GUARDING_MT_ALEPH). "They were
   /// hanging around here while I was on guard duty."
   /// ★ Named from the game: "on guard duty" (MsgValeMtAlephWasInactive)
-  LOCALID_GUARD = LOCALID_FIRST_PLACED + 5,
+  ACTOR_GUARD = ACTOR_FIRST_PLACED + 5,
   /// The first of the six villagers gathered behind them: a burly grey-haired
   /// man, a bald muscular man, a woman in a green dress, a little girl with
   /// pigtails, a young man with brown hair and a strongman.
   /// ★ Named from what the player sees: men, a woman and children of Vale in
   /// their sprites (its render)
-  LOCALID_FIRST_VILLAGER = LOCALID_FIRST_PLACED + 6
+  ACTOR_FIRST_VILLAGER = ACTOR_FIRST_PLACED + 6
 };
 
 static void EventScript_ReturnFromMtAleph(void);
@@ -109,8 +109,8 @@ const struct SceneExitRegion *ValeEruption_GetRegions(void) { return NULL; }
 const u32 *ValeEruption_GetExits(void) { return gValeEruption_Exits; }
 
 /// Returns Garet and the villagers gathered before the sanctum.
-const struct ObjectEventTemplate *ValeEruption_GetObjectEventTemplates(void) {
-  return gValeEruption_ObjectEventTemplates;
+const struct ActorTemplate *ValeEruption_GetActorTemplates(void) {
+  return gValeEruption_ActorTemplates;
 }
 
 /// The map has no map events of its own: everything happens on arrival.
@@ -120,7 +120,7 @@ const struct MapEvent *ValeEruption_GetEvents(void) {
 
 /// Arriving in Vale during the eruption: plays the return from the mountain
 /// when the party comes by VALE_ERUPTION_FROM_SOL_ENTRANCE. Called by
-/// SceneManager_Run once the object events are placed;
+/// SceneManager_Run once the actors are placed;
 /// VALE_ERUPTION_FROM_SOL_ENTRANCE is where Sol Sanctum's approach leads after
 /// the eruption and before the party leaves Vale.
 s32 ValeEruption_Initialize(void) {
@@ -142,16 +142,16 @@ static void EventScript_ReturnFromMtAleph(void) {
   const s32 *actionScript;
 
   FieldScript_Start();
-  Import_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER, ANIM_STILL);
-  Import_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 1, ANIM_STILL);
-  Import_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 2, ANIM_STILL);
-  Import_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 3, ANIM_STILL);
-  Import_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 4, ANIM_STILL);
-  Import_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 5, ANIM_STILL);
-  ObjectEvent_WalkToAndWait(LOCALID_GARETS_SISTER, 265, 487);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_SISTER, FACING_NORTHWEST, 0);
-  ObjectEvent_WalkToAndWait(LOCALID_GARETS_BROTHER, 256, 500);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_BROTHER, FACING_NORTHWEST, 0);
+  Import_ActorSetAnimation(ACTOR_FIRST_VILLAGER, ANIM_STILL);
+  Import_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 1, ANIM_STILL);
+  Import_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 2, ANIM_STILL);
+  Import_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 3, ANIM_STILL);
+  Import_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 4, ANIM_STILL);
+  Import_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 5, ANIM_STILL);
+  Actor_WalkToAndWait(ACTOR_GARETS_SISTER, 265, 487);
+  Actor_FaceDirection(ACTOR_GARETS_SISTER, FACING_NORTHWEST, 0);
+  Actor_WalkToAndWait(ACTOR_GARETS_BROTHER, 256, 500);
+  Actor_FaceDirection(ACTOR_GARETS_BROTHER, FACING_NORTHWEST, 0);
   // A lightning flash, then the screen opens on the villagers below.
   Weather_StartLightningFlash(PALETTE_TINT_WARM, PALETTE_TINT_RED);
   Weather_LastLightning();
@@ -185,294 +185,288 @@ static void EventScript_ReturnFromMtAleph(void) {
   // "I thought Mt. Aleph was inactive..." The villagers worry about Isaac and
   // Garet, last seen going to Kraden's house.
   FieldScript_SetMessageId(MsgValeMtAlephWasInactive);
-  ObjectEvent_ShowEmote(LOCALID_GREAT_HEALER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_GREAT_HEALER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(60);
-  Script_ShowMessage(LOCALID_GREAT_HEALER, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDFATHER,
-                            FACING_SOUTH + FACING_STEP, 0);
+  Script_ShowMessage(ACTOR_GREAT_HEALER, 0);
+  Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTH + FACING_STEP, 0);
   FieldScript_WaitFrames(30);
   // The mayor: "Oooh, my grandson!"
-  Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
+  Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(30);
   // Garet's sister doubts he is up there; her brother says someone saw him
   // climb.
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_SISTER, ANIM_SHAKE_HEAD);
-  Script_ShowMessage(LOCALID_GARETS_SISTER, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDFATHER,
-                            FACING_SOUTHEAST + FACING_STEP, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARETS_BROTHER, LOCALID_GARETS_SISTER, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_SISTER, ANIM_SHAKE_HEAD);
+  Script_ShowMessage(ACTOR_GARETS_SISTER, 0);
+  Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTHEAST + FACING_STEP,
+                      0);
+  Actor_FaceActor(ACTOR_GARETS_BROTHER, ACTOR_GARETS_SISTER, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_BROTHER, ANIM_SHAKE_HEAD);
-  Script_ShowMessage(LOCALID_GARETS_BROTHER, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_BROTHER, ANIM_SHAKE_HEAD);
+  Script_ShowMessage(ACTOR_GARETS_BROTHER, 0);
   // The guard saw them hanging around; Dora says they went to Kraden's house,
   // and the mayor and Dora wonder what Alchemy has to do with the eruption.
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GUARD, 1);
-  Script_ShowMessage(LOCALID_GUARD, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_DORA, LOCALID_GUARD, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GUARD, 1);
+  Script_ShowMessage(ACTOR_GUARD, 0);
+  Actor_FaceActor(ACTOR_DORA, ACTOR_GUARD, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 1);
-  Script_ShowMessage(LOCALID_DORA, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER, LOCALID_DORA, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_DORA, 1);
+  Script_ShowMessage(ACTOR_DORA, 0);
+  Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_DORA, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDFATHER, 1);
-  Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_DORA, LOCALID_GARETS_GRANDFATHER, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDFATHER, 1);
+  Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
+  Actor_FaceActor(ACTOR_DORA, ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIM_SHAKE_HEAD);
-  Script_ShowMessage(LOCALID_DORA, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
+  Script_ShowMessage(ACTOR_DORA, 0);
   FieldScript_WaitFrames(60);
   MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
   Weather_LastLightning();
   Script_PlaySong(SE_CRASH);
   FieldScript_WaitFrames(60);
-  ObjectEvent_LinkPair(LOCALID_GREAT_HEALER, LOCALID_GARETS_GRANDFATHER, 0);
-  ObjectEvent_LinkPair(LOCALID_DORA, LOCALID_GARETS_SISTER, 0);
-  ObjectEvent_LinkPair(LOCALID_GARETS_BROTHER, LOCALID_GUARD, 0);
-  ObjectMotion_SetVariantCallback(LOCALID_GREAT_HEALER, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_GARETS_GRANDFATHER, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_DORA, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_GARETS_SISTER, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_GARETS_BROTHER, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_GUARD, 2);
+  Actor_LinkPair(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
+  Actor_LinkPair(ACTOR_DORA, ACTOR_GARETS_SISTER, 0);
+  Actor_LinkPair(ACTOR_GARETS_BROTHER, ACTOR_GUARD, 0);
+  ObjectMotion_SetVariantCallback(ACTOR_GREAT_HEALER, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_GARETS_GRANDFATHER, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_DORA, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_GARETS_SISTER, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_GARETS_BROTHER, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_GUARD, 2);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
 
   // Isaac and Garet come down the path, and Garet sees the villagers: "Uh-oh.
   // It's Grandpa and the others."
-  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1) / 2, PIXELS(1) / 4);
-  ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(120), PIXELS(258));
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_GARET, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(120), PIXELS(258));
   FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
   FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(320), 1);
   FieldScript_WaitFrames(40);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
-  ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 120, 320);
-  ObjectEvent_MoveToAndWait(LOCALID_GARET, 104, 320);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
+  Actor_SetDestination(ACTOR_PARTY_LEADER, 120, 320);
+  Actor_MoveToAndWait(ACTOR_GARET, 104, 320);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(30);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
-  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldScript_WaitFrames(50);
-  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(3) / 2, PIXELS(3) / 4);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
-  ObjectEvent_MoveToAndWait(LOCALID_GARET, 105, 342);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
-  Script_ShowMessage(LOCALID_GARET, 0);
+  Actor_SetSpeed(ACTOR_GARET, PIXELS(3) / 2, PIXELS(3) / 4);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
+  Actor_MoveToAndWait(ACTOR_GARET, 105, 342);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
+  Script_ShowMessage(ACTOR_GARET, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
+  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 1);
+  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
   FieldScript_WaitFrames(20);
 
   // "What should we do, Isaac? Should we go back up?" Either way, the two stay.
-  Script_OpenMessage(LOCALID_GARET, 0);
-  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+  Script_OpenMessage(ACTOR_GARET, 0);
+  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
     FieldScript_WaitFrames(60);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
     FieldScript_WaitFrames(50);
-    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
-    ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
-    ObjectEvent_MoveToAndWait(LOCALID_GARET, 103, 320);
-    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
+    Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
+    Actor_MoveToAndWait(ACTOR_GARET, 103, 320);
+    Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
   } else {
     FieldScript_WaitFrames(60);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
     FieldScript_WaitFrames(50);
-    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
-    ObjectEvent_MoveToAndWait(LOCALID_PARTY_LEADER, 120, 340);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 120, 340);
+    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   }
 
   // The villagers spot them: "Garet!" "Isaac!" Garet's brother cries "Garet!"
   // and the villagers turn to the path.
-  Script_ShowMessage(LOCALID_GARETS_BROTHER, 0);
-  ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
-                                                   ATTACHED_EFFECT_ONCE);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
+  Script_ShowMessage(ACTOR_GARETS_BROTHER, 0);
+  Actor_SetAttachedEffect(ACTOR_GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
   FieldScript_WaitFrames(40);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDFATHER, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_SISTER, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(LOCALID_DORA, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_BROTHER, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(LOCALID_GUARD, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_GARETS_SISTER, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_DORA, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_GARETS_BROTHER, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_GUARD, FACING_NORTHWEST, 0);
   // The camera flies to Dora: "Isaac!" The Great Healer: "You're safe!"
   FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
-  ObjectEvent_PlaceCurrentWithinCameraBounds(LOCALID_DORA, 1);
+  Actor_PlaceCurrentWithinCameraBounds(ACTOR_DORA, 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(50);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
-  Script_ShowMessage(LOCALID_DORA, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_DORA, 2);
+  Script_ShowMessage(ACTOR_DORA, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GREAT_HEALER, 1);
-  Script_ShowMessage(LOCALID_GREAT_HEALER, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GREAT_HEALER, 1);
+  Script_ShowMessage(ACTOR_GREAT_HEALER, 0);
   FieldScript_WaitFrames(40);
   // The mayor: "Come over here, both of you!"
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDFATHER, 1);
-  Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDFATHER, 1);
+  Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(40);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER,
-                            FACING_SOUTHEAST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(320), 1);
   FieldCamera_WaitForArrival();
-  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
-  ObjectEvent_RefreshSelectorById(LOCALID_GARET);
+  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);
+  Actor_RefreshSelectorById(ACTOR_GARET);
   FieldScript_WaitFrames(50);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  ObjectEvent_RefreshSelectorById(LOCALID_GARET);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_RefreshSelectorById(ACTOR_GARET);
   FieldScript_WaitFrames(60);
 
   // "Come over here, both of you!" The two walk down to the villagers.
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(214), -1, PIXELS(472), 1);
-  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
-                              gValeEruption_LeaderWalksDown);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeEruption_LeaderWalksDown);
   FieldScript_WaitFrames(30);
-  ObjectEvent_SetActionScript(LOCALID_GARET, gValeEruption_GaretWalksDown);
-  ObjectEvent_RefreshSelectorById(LOCALID_GARET);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST, 0);
+  Actor_SetActionScript(ACTOR_GARET, gValeEruption_GaretWalksDown);
+  Actor_RefreshSelectorById(ACTOR_GARET);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
   FieldCamera_WaitForArrival();
-  ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDFATHER, FACING_WEST, 0);
-  ObjectEvent_SetSpeed(LOCALID_GREAT_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Import_ObjectEventSetAnimation(LOCALID_GREAT_HEALER, ANIM_WALK);
-  ObjectEvent_MoveToAndWait(LOCALID_GREAT_HEALER, 265, 455);
-  ObjectEvent_MoveToAndWait(LOCALID_GREAT_HEALER, 246, 455);
-  Import_ObjectEventSetAnimation(LOCALID_GREAT_HEALER, ANIM_STAND);
+  Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_WEST, 0);
+  Actor_SetSpeed(ACTOR_GREAT_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Import_ActorSetAnimation(ACTOR_GREAT_HEALER, ANIM_WALK);
+  Actor_MoveToAndWait(ACTOR_GREAT_HEALER, 265, 455);
+  Actor_MoveToAndWait(ACTOR_GREAT_HEALER, 246, 455);
+  Import_ActorSetAnimation(ACTOR_GREAT_HEALER, ANIM_STAND);
   FieldScript_WaitFrames(30);
 
   // "Where have you been?" "What happened?"
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDFATHER, 1);
-  Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
-  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDFATHER, 1);
+  Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(50);
-  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(50);
   // The Great Healer: "What happened?" The two look at each other and shake
   // their heads.
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GREAT_HEALER, 1);
-  Script_ShowMessage(LOCALID_GREAT_HEALER, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GREAT_HEALER, 1);
+  Script_ShowMessage(ACTOR_GREAT_HEALER, 0);
   FieldScript_WaitFrames(40);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
+  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
   FieldScript_WaitFrames(50);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
   FieldScript_WaitFrames(20);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_SHAKE_HEAD);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(40);
   // Dora notices who is missing.
-  ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(50);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   FieldScript_WaitFrames(10);
 
   // "Weren't Jenna and Kraden with you?" Yes: "They were taken away? By
   // whom?"; no: "What do you mean, they were taken away?"
-  Script_OpenMessage(LOCALID_DORA, 0);
-  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+  Script_OpenMessage(ACTOR_DORA, 0);
+  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
     // The mayor answers either reply; the other reply is skipped.
     FieldScript_WaitFrames(40);
-    ObjectEvent_LinkPair(LOCALID_GREAT_HEALER, LOCALID_GARETS_GRANDFATHER, 0);
+    Actor_LinkPair(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
     FieldScript_WaitFrames(50);
-    ObjectEvent_FaceDirection(LOCALID_GREAT_HEALER, FACING_WEST, 0);
-    ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDFATHER, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_GREAT_HEALER, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_WEST, 0);
     FieldScript_WaitFrames(40);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDFATHER, 1);
-    Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDFATHER, 1);
+    Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     Script_SkipMessages(1);
   } else {
     FieldScript_WaitFrames(40);
-    ObjectEvent_LinkPair(LOCALID_GREAT_HEALER, LOCALID_GARETS_GRANDFATHER, 0);
+    Actor_LinkPair(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
     FieldScript_WaitFrames(50);
-    ObjectEvent_FaceDirection(LOCALID_GREAT_HEALER, FACING_WEST, 0);
-    ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDFATHER, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_GREAT_HEALER, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_WEST, 0);
     FieldScript_WaitFrames(40);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDFATHER, 1);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDFATHER, 1);
     Script_SkipMessages(1);
-    Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
+    Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   }
   FieldScript_WaitFrames(30);
   // Garet starts to tell, and both shake their heads again.
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
   FieldScript_WaitFrames(40);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_SHAKE_HEAD);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(60);
 
   // "This is all very complicated... Come into the sanctum, both of you."
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GREAT_HEALER, 1);
-  Script_ShowMessage(LOCALID_GREAT_HEALER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GREAT_HEALER, LOCALID_GARETS_GRANDFATHER,
-                              0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GREAT_HEALER, 1);
+  Script_ShowMessage(ACTOR_GREAT_HEALER, 0);
+  Actor_FaceActor(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GREAT_HEALER, 1);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GREAT_HEALER, 1);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GREAT_HEALER, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GREAT_HEALER, ANIM_NOD);
   FieldScript_WaitFrames(30);
-  Script_ShowMessage(LOCALID_GREAT_HEALER, 0);
+  Script_ShowMessage(ACTOR_GREAT_HEALER, 0);
   FieldScript_WaitFrames(20);
   // The mayor agrees with a nod; the Great Healer sends them inside.
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDFATHER, 1);
-  ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDFATHER,
-                            FACING_NORTHWEST + FACING_STEP, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDFATHER, 1);
+  Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_NORTHWEST + FACING_STEP,
+                      0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
   FieldScript_WaitFrames(50);
-  ObjectEvent_FaceDirection(LOCALID_GREAT_HEALER, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_GREAT_HEALER, FACING_WEST, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GREAT_HEALER, 1);
-  Script_ShowMessage(LOCALID_GREAT_HEALER, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GREAT_HEALER, 1);
+  Script_ShowMessage(ACTOR_GREAT_HEALER, 0);
   FieldScript_WaitFrames(40);
-  ObjectEvent_LinkPair(LOCALID_GREAT_HEALER, LOCALID_GARETS_GRANDFATHER, 0);
+  Actor_LinkPair(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(40);
-  Import_ObjectEventSetAnimation(LOCALID_GREAT_HEALER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_GREAT_HEALER, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
   FieldScript_WaitFrames(30);
 
   // The sanctum's door opens and everyone files inside.
-  ObjectEvent_WalkToAndWait(LOCALID_GREAT_HEALER, 255, 445);
+  Actor_WalkToAndWait(ACTOR_GREAT_HEALER, 255, 445);
   FieldScript_WaitFrames(40);
   MapGrid_AnimateCells(gValeEruption_SanctumDoorOpens, 45, 11);
   Script_PlaySong(SE_THUMP);
   FieldScript_WaitFrames(30);
-  ObjectEvent_WalkTo(LOCALID_GREAT_HEALER, 255, 390);
+  Actor_WalkTo(ACTOR_GREAT_HEALER, 255, 390);
   FieldScript_WaitFrames(20);
-  ObjectEvent_SetSpeed(LOCALID_GARETS_GRANDFATHER, PIXELS(4) / 5,
-                       PIXELS(2) / 5);
-  ObjectEvent_SetSpeed(LOCALID_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
-  ObjectEvent_WalkTo(LOCALID_GARETS_GRANDFATHER, 255, 390);
-  ObjectEvent_WalkToAndWait(LOCALID_DORA, 255, 460);
-  ObjectEvent_FaceDirection(LOCALID_DORA, FACING_WEST, 0);
+  Actor_SetSpeed(ACTOR_GARETS_GRANDFATHER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_WalkTo(ACTOR_GARETS_GRANDFATHER, 255, 390);
+  Actor_WalkToAndWait(ACTOR_DORA, 255, 460);
+  Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 0);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
+  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 1);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 1);
   FieldScript_WaitFrames(40);
-  ObjectEvent_WalkTo(LOCALID_DORA, 255, 390);
+  Actor_WalkTo(ACTOR_DORA, 255, 390);
   actionScript = gValeEruption_EnterSanctum;
-  ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, actionScript);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, actionScript);
   FieldScript_WaitFrames(40);
-  ObjectEvent_SetActionScript(LOCALID_GARET, actionScript);
-  ObjectEvent_RefreshSelectorById(LOCALID_GARET);
-  ObjectEvent_ShowEmote(LOCALID_GARETS_SISTER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  ObjectEvent_ShowEmote(LOCALID_GARETS_BROTHER, EMOTE_IN_FRONT | EMOTE_WINCE,
-                        0);
+  Actor_SetActionScript(ACTOR_GARET, actionScript);
+  Actor_RefreshSelectorById(ACTOR_GARET);
+  Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_GARETS_BROTHER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(40);
   MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
   Weather_LastLightning();
@@ -532,8 +526,8 @@ u32 gValeEruption_Exits[] = {
 };
 
 // clang-format off
-struct ObjectEventTemplate gValeEruption_ObjectEventTemplates[] = {
-    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+struct ActorTemplate gValeEruption_ActorTemplates[] = {
+    { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(104), 0, PIXELS(258), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(265), 0, PIXELS(468), FACING_NORTHWEST, TALK_FACING_PARTY, 0 },

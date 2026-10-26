@@ -3,8 +3,8 @@
 
 #include "types.h"
 
-struct ObjectEvent;
+struct Actor;
 
-void WorldMap_CreateLinkedEffects(struct ObjectEvent *parent);
+void WorldMap_CreateLinkedEffects(struct Actor *parent);
 
 #endif

@@ -47,7 +47,7 @@ static void Title_RevealScreen(s32 unused);
 static void Title_LoadBackground(void);
 
 /// The title overlay's scene tables, which SceneManager_Run reads through
-/// entry/title.s: one entrance row, the exit, and no object event
+/// entry/title.s: one entrance row, the exit, and no actor
 /// templates or map events.
 u8 *Title_GetEntrances(void) { return (u8 *)gTitleEntrances; }
 
@@ -56,10 +56,8 @@ s32 Scene_GetExitRegions(void) { return 0; }
 
 u8 *Title_GetExits(void) { return (u8 *)gTitleExits; }
 
-/// The title overlay has no object events.
-u8 *Title_GetObjectEventTemplates(void) {
-  return (u8 *)gTitleObjectEventTemplates;
-}
+/// The title overlay has no actors.
+u8 *Title_GetActorTemplates(void) { return (u8 *)gTitleActorTemplates; }
 
 /// The title overlay has no map events.
 u8 *Title_GetEvents(void) { return (u8 *)gTitleEvents; }
@@ -86,7 +84,7 @@ s32 Title_Run(void) {
   // After 120 frames, the logo waits up to 3600 frames (a minute) for a key
   // press.
   if (gSaveBlock.entrance == TITLE_FROM_WORLD_MAP) {
-    ObjectEvent_GetById(gSaveBlock.leaderLocalId)->motionFlags = 0;
+    Actor_GetById(gSaveBlock.leaderActorId)->motionFlags = 0;
     Sound_PlaySong(MUS_ENDING_LOGO);
     Title_RevealScreen(0);
     WaitFrames(120);
@@ -390,7 +388,7 @@ u32 gTitleExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ObjectEventTemplate gTitleObjectEventTemplates[] = {
+struct ActorTemplate gTitleActorTemplates[] = {
     {MAP_TABLE_END},
 };
 

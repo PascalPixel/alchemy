@@ -7,8 +7,7 @@
 const struct SceneEntrance *ColosseumNavampaMatch_GetEntrances(void);
 const struct SceneExitRegion *ColosseumNavampaMatch_GetRegions(void);
 const u32 *ColosseumNavampaMatch_GetExits(void);
-const struct ObjectEventTemplate *
-ColosseumNavampaMatch_GetObjectEventTemplates(void);
+const struct ActorTemplate *ColosseumNavampaMatch_GetActorTemplates(void);
 const struct MapEvent *ColosseumNavampaMatch_GetEvents(void);
 s32 ColosseumNavampaMatch_Initialize(void);
 extern const s32 gColosseumNavampaMatch_SidewalkLogOffBelt[];
@@ -24,7 +23,7 @@ extern s32 gColosseumNavampaMatch_PrizeScript[];
 extern u32 gPushedObject_DirectionSteps[];
 extern struct SceneEntrance gColosseumNavampaMatchEntrances[];
 extern u32 gColosseumNavampaMatchExits[];
-extern struct ObjectEventTemplate gColosseumNavampaMatchObjectEventTemplates[];
+extern struct ActorTemplate gColosseumNavampaMatchActorTemplates[];
 extern s32 gColosseumNavampaMatch_WallWedgePatternIndex;
 extern s32 gColosseumNavampaMatch_WallWedgeTimer;
 extern struct MapEvent gColosseumNavampaMatchEvents[];

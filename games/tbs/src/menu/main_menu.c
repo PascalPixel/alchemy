@@ -136,7 +136,7 @@ static s32 MainMenu_EncodePassword(u8 *data, s32 size, u8 *out);
 static u16 MainMenu_CalculatePasswordCrc16(u32 byteCount, u8 *data);
 
 /// The main menu overlay's map tables, for the map loader: one
-/// entrance, the exit, and no object event templates or map events.
+/// entrance, the exit, and no actor templates or map events.
 u8 *MainMenu_GetEntrances(void) { return (u8 *)gMainMenu_Entrances; }
 
 /// The exit regions entry: the main menu has no exit boxes.
@@ -144,9 +144,7 @@ s32 Scene_GetExitRegions(void) { return 0; }
 
 u8 *MainMenu_GetExits(void) { return (u8 *)gMainMenu_Exits; }
 
-u8 *MainMenu_GetObjectEventTemplates(void) {
-  return (u8 *)gMainMenu_ObjectEventTemplates;
-}
+u8 *MainMenu_GetActorTemplates(void) { return (u8 *)gMainMenu_ActorTemplates; }
 
 u8 *MainMenu_GetEvents(void) { return (u8 *)gMainMenu_Events; }
 
@@ -193,9 +191,9 @@ static void MainMenu_LoadBackground(void) {
   ((struct MapGridScrollWork *)gMapGridWork[0])->flags =
       DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   {
-    struct ObjectEvent *leader;
+    struct Actor *leader;
 
-    leader = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
+    leader = Actor_GetById(gSaveBlock.leaderActorId);
     leader->motionFlags = 0;
   }
 }
@@ -614,7 +612,7 @@ menu_top:;
     if (v6 == -1) {
       goto menu_top;
     }
-    gSaveBlock.leaderLocalId = 0;
+    gSaveBlock.leaderActorId = 0;
     if (Script_GetFlag(FLAG_COLOSSO_HOLDS_EQUIPMENT) != 0) {
       InventorySnapshot_Restore();
       Party_RemoveMember(0);
@@ -1359,7 +1357,7 @@ u32 gMainMenu_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ObjectEventTemplate gMainMenu_ObjectEventTemplates[] = {
+struct ActorTemplate gMainMenu_ActorTemplates[] = {
     {MAP_TABLE_END},
 };
 

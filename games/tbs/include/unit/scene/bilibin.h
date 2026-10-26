@@ -6,13 +6,13 @@
 
 struct SceneEntrance;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 struct SceneExitRegion;
 
 const struct SceneEntrance *Bilibin_GetEntrances(void);
 const struct SceneExitRegion *Bilibin_GetRegions(void);
 const u32 *Bilibin_GetExits(void);
-const struct ObjectEventTemplate *Bilibin_GetObjectEventTemplates(void);
+const struct ActorTemplate *Bilibin_GetActorTemplates(void);
 const struct MapEvent *Bilibin_GetEvents(void);
 s32 Bilibin_Initialize(void);
 extern s32 gBilibin_FaceLeaderScript[];
@@ -22,10 +22,10 @@ extern struct SceneEntrance gBilibinBarricadeEntrances[];
 extern struct SceneEntrance gBilibinTreasuryEntrances[];
 extern s16 gBilibinTreasuryRegions[];
 extern u32 gBilibinExits[];
-extern struct ObjectEventTemplate gBilibinObjectEventTemplatesOther[];
-extern struct ObjectEventTemplate gBilibinObjectEventTemplates[];
-extern struct ObjectEventTemplate gBilibinBarricadeObjectEventTemplates[];
-extern struct ObjectEventTemplate gBilibinTreasuryObjectEventTemplates[];
+extern struct ActorTemplate gBilibinActorTemplatesOther[];
+extern struct ActorTemplate gBilibinActorTemplates[];
+extern struct ActorTemplate gBilibinBarricadeActorTemplates[];
+extern struct ActorTemplate gBilibinTreasuryActorTemplates[];
 extern struct MapEvent gBilibinEventsOther[];
 extern struct MapEvent gBilibinEvents[];
 extern struct MapEvent gBilibinBarricadeEvents[];

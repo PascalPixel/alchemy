@@ -7,7 +7,7 @@
 u8 *IncreaseItemAndLevel_GetEntrances(void);
 s32 Scene_GetExitRegions(void);
 u8 *IncreaseItemAndLevel_GetExits(void);
-u8 *IncreaseItemAndLevel_GetObjectEventTemplates(void);
+u8 *IncreaseItemAndLevel_GetActorTemplates(void);
 u8 *IncreaseItemAndLevel_GetEvents(void);
 s32 IncreaseItemAndLevel_Initialize(void);
 extern char gIncreaseItemAndLevel_LvLabel[4];
@@ -21,7 +21,7 @@ extern char gIncreaseItemAndLevel_GlyphsLower[28];
 extern char gIncreaseItemAndLevel_GlyphsMarks[12];
 extern struct SceneEntrance gIncreaseItemAndLevel_Entrances[];
 extern u32 gIncreaseItemAndLevel_Exits[];
-extern struct ObjectEventTemplate gIncreaseItemAndLevel_ObjectEventTemplates[];
+extern struct ActorTemplate gIncreaseItemAndLevel_ActorTemplates[];
 extern struct MapEvent gIncreaseItemAndLevel_Events[];
 
 #endif

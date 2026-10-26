@@ -22,7 +22,7 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
   if (zone == ENCOUNTER_ZONE_SCRIPTED && slot == 0)
     gSaveBlock.special = (s32)&ResourceId_VenusLighthouseAerieStormBackdrop;
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
-    struct Object *leader = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
+    struct Object *leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
   }
@@ -30,7 +30,7 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
 }
 
 /// Sets up the battle with Djinni number `no`. The low 8 bits of flag are the
-/// Djinni's object event, which hops first unless DJINN_NO_HOP is set. Djinn
+/// Djinni's actor, which hops first unless DJINN_NO_HOP is set. Djinn
 /// are numbered 20 to an element (Djinn_ResolvePendingEvent). Sets
 /// gSaveBlock.pendingDjinnEvent and the field work's battle request; when
 /// the map is entered again after the battle, Djinn_ResolvePendingEvent
@@ -49,13 +49,13 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
     Djinn_RunBattleStartHop(flag);
 
   state = &gSaveBlock;
-  // DJINN_NO_HOP rides along: it tells ObjectEvent_PlaceMapObjectEvents to put
+  // DJINN_NO_HOP rides along: it tells Actor_PlaceMapActors to put
   // the Djinni back 32 pixels north of the leader, not at its template's
   // position.
   state->pendingDjinnEvent = (no + DJINNI_BATTLE_EVENT_FIRST) | skipHop;
   work->battle = Encounter_GetDjinnFormation(no);
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
-    struct Object *leader = ObjectEvent_GetByLocalId(state->leaderLocalId);
+    struct Object *leader = Actor_GetByActorId(state->leaderActorId);
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
   }
@@ -108,7 +108,7 @@ void Scene_QueueMusic(s32 soundId) {
 
 /// Plays the sound Scene_QueueMusic remembered, if any. Called
 /// by maps, by the event runner (overworld/events.c), by setup.c and by an
-/// object event's landing (object_event_commands.c).
+/// actor's landing (actor_commands.c).
 void Scene_PlayQueuedMusic(void) {
   s16 soundId = gFieldWork->queuedSound;
 

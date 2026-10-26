@@ -48,7 +48,7 @@
 #include "heap_slots.h"
 #include "object.h"
 #include "animspr.h"
-#include "object_event.h"
+#include "actor.h"
 #include "object_dispatch.h"
 #include "script_layer.h"
 #include "heap.h"

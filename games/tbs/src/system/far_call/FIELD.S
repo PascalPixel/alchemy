@@ -1,4 +1,4 @@
-@ Object events, movement, map drawing and map services.
+@ Actors, movement, map drawing and map services.
 #include "stub.inc"
 	.global FarCall_FieldTable
 FarCall_FieldTable:

@@ -305,7 +305,7 @@ and bank it goes in, and [Source](src/README.md) goes through every folder.
 - [Engine](engine.md): start-up, frame timing and tasks, banks and far calls,
   overlays and songs.
 - [Places](src/field/scene_headers.s): every scene in story order, with its
-  object event templates and map events.
+  actor templates and map events.
 - [Game rules](src/game/README.md): stats, items, Djinn, classes, levels and
   the flags.
 - [Unused](https://alchemy.pascalpixel.com/tbs/unused): the scenes, scripts

@@ -4,7 +4,7 @@
 #include "types.h"
 #include "static_assert.h"
 
-struct ObjectEvent;
+struct Actor;
 
 /// The metatile behaviors Ply gives the pool's cells in
 /// MercuryLighthouseEntrance and MercuryLighthouseLower, which the hops and the
@@ -34,10 +34,10 @@ struct MercuryLighthouseLights {
   /// 16.16 fixed-point pixels: the centre of the column's cell, where a
   /// sinking leader is put back.
   s32 targetX;
-  s32 targetZ;                ///< as targetX
-  struct ObjectEvent *pillar; ///< the column of light over the leader, or null
+  s32 targetZ;          ///< as targetX
+  struct Actor *pillar; ///< the column of light over the leader, or null
   /// The light holding the leader up where they landed in the pool, or null.
-  struct ObjectEvent *stepEffect;
+  struct Actor *stepEffect;
 };
 
 STATIC_ASSERT(sizeof(struct MercuryLighthouseLights) == 0x1c);

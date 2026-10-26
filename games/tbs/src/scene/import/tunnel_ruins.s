@@ -30,24 +30,24 @@
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
 	.set import.Scene_AssignViewFlags, 1
-	.set import.ObjectEvent_GetById, 1
+	.set import.Actor_GetById, 1
 	.set import.ObjectMotion_SetSpeedParameters, 1
 	.set import.ObjectMotion_EnableActionAndSetCallback, 1
 	.set import.ObjectMotion_SetPositionAndCommit, 1
 	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
 	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
-	.set import.Import_ObjectEventSetPosition, 1
-	.set import.Import_ObjectEventSetAnimation, 1
+	.set import.Import_ActorSetPosition, 1
+	.set import.Import_ActorSetAnimation, 1
 	.set import.ObjectMotion_WaitForAnimationChange, 1
-	.set import.ObjectEvent_JumpDownLedge, 1
-	.set import.ObjectEvent_ConfigureSpriteColor, 1
-	.set import.ObjectEvent_SetSpriteColor, 1
+	.set import.Actor_JumpDownLedge, 1
+	.set import.Actor_ConfigureSpriteColor, 1
+	.set import.Actor_SetSpriteColor, 1
 	.set import.ObjectMotion_SetActionVariant, 1
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_WaitForArrival, 1
 	.set import.FieldCamera_GetScriptObject, 1
-	.set import.TreasureSpot_SetObjectEventPosition, 1
+	.set import.TreasureSpot_SetActorPosition, 1
 	.set import.FieldEffect_StartFadeOverlay, 1
 	.set import.Scene_PlayQueuedMusic, 1
 	.set import.Sound_PlaySong, 1

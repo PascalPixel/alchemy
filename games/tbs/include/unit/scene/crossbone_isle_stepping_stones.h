@@ -6,13 +6,13 @@
 
 struct SceneEntrance;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 struct SceneExitRegion;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
+const struct ActorTemplate *Scene_GetActorTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
 extern s32 gFieldEffect_ShortScript[];
@@ -35,17 +35,12 @@ extern struct SceneEntrance gCrossboneIsleFloodgateEntrances[];
 extern struct SceneEntrance gCrossboneIsleStackedPillarsEntrances[];
 extern struct SceneEntrance gCrossboneIsleDragonStatueEntrances[];
 extern u32 gCrossboneIsleSteppingStonesExits[];
-extern struct ObjectEventTemplate
-    gCrossboneIsleSteppingStonesNoObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gCrossboneIsleSteppingStonesObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gCrossboneIsleIcePillarsObjectEventTemplates[];
-extern struct ObjectEventTemplate gCrossboneIsleFloodgateObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gCrossboneIsleSteppingStonesObjectEventTemplatesOther[];
-extern struct ObjectEventTemplate
-    gCrossboneIsleDragonStatueObjectEventTemplates[];
+extern struct ActorTemplate gCrossboneIsleSteppingStonesNoActorTemplates[];
+extern struct ActorTemplate gCrossboneIsleSteppingStonesActorTemplates[];
+extern struct ActorTemplate gCrossboneIsleIcePillarsActorTemplates[];
+extern struct ActorTemplate gCrossboneIsleFloodgateActorTemplates[];
+extern struct ActorTemplate gCrossboneIsleSteppingStonesActorTemplatesOther[];
+extern struct ActorTemplate gCrossboneIsleDragonStatueActorTemplates[];
 extern struct MapEvent gCrossboneIsleSteppingStonesEventsOther[];
 extern struct MapEvent gCrossboneIsleSteppingStonesEvents[];
 extern struct MapEvent gCrossboneIsleIcePillarsEvents[];

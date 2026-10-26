@@ -7,13 +7,13 @@
 
 struct SceneEntrance;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 struct SceneExitRegion;
 
 const struct SceneEntrance *Kalay_GetEntrances(void);
 const struct SceneExitRegion *Kalay_GetRegions(void);
 const u32 *Kalay_GetExits(void);
-const struct ObjectEventTemplate *Kalay_GetObjectEventTemplates(void);
+const struct ActorTemplate *Kalay_GetActorTemplates(void);
 const struct MapEvent *Kalay_GetEvents(void);
 s32 Kalay_Initialize(void);
 extern s32 gKalay_TileStepByFacing[];
@@ -37,12 +37,12 @@ extern struct SceneEntrance gKalay_TunnelCaveEntrances[];
 extern struct SceneEntrance gKalay_TunnelPassageEntrances[];
 extern struct SceneEntrance gKalay_TunnelEntrances[];
 extern u32 gKalay_Exits[];
-extern struct ObjectEventTemplate gKalay_NoObjectEventTemplates[];
-extern struct ObjectEventTemplate gKalay_TownObjectEventTemplates[];
-extern struct ObjectEventTemplate gKalay_TourGroupObjectEventTemplates[];
-extern struct ObjectEventTemplate gKalay_HammetPalaceObjectEventTemplates[];
-extern struct ObjectEventTemplate gKalay_TunnelEntranceObjectEventTemplates[];
-extern struct ObjectEventTemplate gKalay_TunnelObjectEventTemplates[];
+extern struct ActorTemplate gKalay_NoActorTemplates[];
+extern struct ActorTemplate gKalay_TownActorTemplates[];
+extern struct ActorTemplate gKalay_TourGroupActorTemplates[];
+extern struct ActorTemplate gKalay_HammetPalaceActorTemplates[];
+extern struct ActorTemplate gKalay_TunnelEntranceActorTemplates[];
+extern struct ActorTemplate gKalay_TunnelActorTemplates[];
 extern struct MapEvent gKalay_NoEvents[];
 extern struct MapEvent gKalay_TownEvents[];
 extern struct MapEvent gKalay_HammetPalaceEvents[];

@@ -7,13 +7,13 @@
 
 struct SceneEntrance;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 struct SceneExitRegion;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
+const struct ActorTemplate *Scene_GetActorTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 TreeRooms_EnterRoom(void);
 extern s32 gFieldEffect_ShortScript[];
@@ -31,7 +31,7 @@ extern u32 gTreeRooms_TintSteps[];
 extern struct SceneEntrance gTreeRoomsEntrances[];
 extern struct SceneExitRegion gTreeRoomsRegions[];
 extern u32 gTreeRoomsExits[];
-extern struct ObjectEventTemplate gTreeRoomsObjectEventTemplates[];
+extern struct ActorTemplate gTreeRoomsActorTemplates[];
 extern struct MapEvent gTreeRoomsEvents[];
 extern s32 gTreeRooms_TintIndex;
 

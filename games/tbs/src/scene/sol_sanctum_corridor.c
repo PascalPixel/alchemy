@@ -25,7 +25,7 @@
 
 #include "resource_37de_map.h"
 #include "map_tables.h"
-#include "object_event.h"
+#include "actor.h"
 
 #include "script_layer.h"
 
@@ -37,8 +37,8 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gSolSanctumCorridorExits; }
 
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
-  return gSolSanctumCorridorObjectEventTemplates;
+const struct ActorTemplate *Scene_GetActorTemplates(void) {
+  return gSolSanctumCorridorActorTemplates;
 }
 
 /// Returns the passage's two exits, its only events.
@@ -69,7 +69,7 @@ u32 gSolSanctumCorridorExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ObjectEventTemplate gSolSanctumCorridorObjectEventTemplates[] = {
+struct ActorTemplate gSolSanctumCorridorActorTemplates[] = {
     {MAP_TABLE_END},
 };
 

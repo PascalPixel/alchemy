@@ -7,8 +7,7 @@
 const struct SceneEntrance *KolimaForestCliff_GetEntrances(void);
 const struct SceneExitRegion *KolimaForestCliff_GetRegions(void);
 const u32 *KolimaForestCliff_GetExits(void);
-const struct ObjectEventTemplate *
-KolimaForestCliff_GetObjectEventTemplates(void);
+const struct ActorTemplate *KolimaForestCliff_GetActorTemplates(void);
 const struct MapEvent *KolimaForestCliff_GetEvents(void);
 s32 KolimaForestCliff_Initialize(void);
 extern s32 gPushedObject_DirectionSteps[];
@@ -16,7 +15,7 @@ extern u32 gPushedObject_FootprintKinds[];
 extern s32 gPushedObject_FootprintBounds[];
 extern struct SceneEntrance gKolimaForestCliffEntrances[];
 extern u32 gKolimaForestCliffExits[];
-extern struct ObjectEventTemplate gKolimaForestCliffObjectEventTemplates[];
+extern struct ActorTemplate gKolimaForestCliffActorTemplates[];
 extern struct MapEvent gKolimaForestCliffEvents[];
 
 #endif

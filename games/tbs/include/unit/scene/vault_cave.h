@@ -7,12 +7,12 @@
 
 struct SceneEntrance;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
+const struct ActorTemplate *Scene_GetActorTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
 extern const s16 gVaultCave_DirectionSteps[];
@@ -26,10 +26,10 @@ extern u32 gVaultCave_FallbackExits[];
 extern u32 gVaultCavePassage_Exits[];
 extern u32 gVaultCaveVambrace_Exits[];
 extern u32 gVaultCaveMouth_Exits[];
-extern struct ObjectEventTemplate gVaultCave_FallbackObjectEventTemplates[];
-extern struct ObjectEventTemplate gVaultCavePassage_ObjectEventTemplates[];
-extern struct ObjectEventTemplate gVaultCaveVambrace_ObjectEventTemplates[];
-extern struct ObjectEventTemplate gVaultCaveMouth_ObjectEventTemplates[];
+extern struct ActorTemplate gVaultCave_FallbackActorTemplates[];
+extern struct ActorTemplate gVaultCavePassage_ActorTemplates[];
+extern struct ActorTemplate gVaultCaveVambrace_ActorTemplates[];
+extern struct ActorTemplate gVaultCaveMouth_ActorTemplates[];
 extern struct MapEvent gVaultCave_FallbackEvents[];
 extern struct MapEvent gVaultCavePassage_Events[];
 extern struct MapEvent gVaultCaveVambrace_Events[];

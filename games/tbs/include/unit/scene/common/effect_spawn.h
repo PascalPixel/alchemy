@@ -3,9 +3,8 @@
 
 #include "types.h"
 
-union ObjectEventOrEffect;
+union ActorOrEffect;
 
-void FieldEffect_UpdateMotionScaleAndSpin(
-    union ObjectEventOrEffect *fieldObject);
+void FieldEffect_UpdateMotionScaleAndSpin(union ActorOrEffect *fieldObject);
 
 #endif

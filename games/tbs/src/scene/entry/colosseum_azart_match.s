@@ -2,6 +2,6 @@
 	overlay_veneer ColosseumAzartMatch_Initialize
 	overlay_veneer ColosseumAzartMatch_GetEntrances
 	overlay_veneer ColosseumAzartMatch_GetExits
-	overlay_veneer ColosseumAzartMatch_GetObjectEventTemplates
+	overlay_veneer ColosseumAzartMatch_GetActorTemplates
 	overlay_veneer ColosseumAzartMatch_GetEvents
 	overlay_veneer ColosseumAzartMatch_GetRegions

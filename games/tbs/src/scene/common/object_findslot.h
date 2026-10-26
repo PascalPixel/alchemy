@@ -1,23 +1,23 @@
 #include "types.h"
-#include "object_event.h"
+#include "actor.h"
 #include "scene_header.h"
 
 // Colosseum Final 1, 2 and 3, and Venus Lighthouse.
 
-/// Returns the placed object event (8 to 65) whose cell, and 16-pixel step of
+/// Returns the placed actor (8 to 65) whose cell, and 16-pixel step of
 /// height, is that of the 16.16 position, or 0. self is not read.
-static void *ObjectEvent_FindAtPosition(const struct FieldPosition *position,
-                                        void *self) {
+static void *Actor_FindAtPosition(const struct FieldPosition *position,
+                                  void *self) {
   const struct FieldPosition *pos = position;
   struct FieldWork *work = gFieldWork;
-  struct ObjectEvent **slots = work->objectEvents;
+  struct Actor **slots = work->actors;
   u32 i;
 
-  for (i = LOCALID_FIRST_PLACED;
-       i < sizeof(work->objectEvents) / sizeof(work->objectEvents[0]); i++) {
-    struct ObjectEvent *p = slots[i];
+  for (i = ACTOR_FIRST_PLACED;
+       i < sizeof(work->actors) / sizeof(work->actors[0]); i++) {
+    struct Actor *p = slots[i];
 
-    // UB: ObjectEvent_ClearAll leaves unused slots null. Skipping them grows
+    // UB: Actor_ClearAll leaves unused slots null. Skipping them grows
     // this helper from 0x48 to 0x4c bytes in the native English trial.
 #ifdef UBFIX
     if (p == NULL)

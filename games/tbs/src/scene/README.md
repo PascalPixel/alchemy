@@ -28,7 +28,7 @@ says where the party then stands and who else is there.
 When the party arrives, the engine asks what can happen here (the map
 events, kept for the whole visit), where the party arrives (the [
 entrances](../../glossary.md#entrance)), who stands where (the
-[object event](../../glossary.md#object-event) templates), and whether
+[actor](../../glossary.md#actor) templates), and whether
 anything needs setting up. At every step it asks whether the leader is
 standing in an [exit](../../glossary.md#exit) area, and as the party leaves,
 where the exit leads. Each answer comes from a function rather than a fixed
@@ -44,7 +44,7 @@ after a battle.
 The six are `struct SceneEntries`, in a fixed order at the start of
 every overlay (`entry/<map>.s`), each behind an 8-byte
 [veneer](../../glossary.md#veneer). Vault names them `Scene_Initialize`,
-`Scene_GetEntrances`, `Scene_GetExits`, `Scene_GetObjectEventTemplates`,
+`Scene_GetEntrances`, `Scene_GetExits`, `Scene_GetActorTemplates`,
 `Scene_GetEvents` and `Scene_GetExitRegions`; some overlays give them names of
 their own (`BabiLighthouse_GetExits`), since only the order is fixed.
 
@@ -60,7 +60,7 @@ east, y up and z south, and a facing is one of eight headings
   must be set, a position, a facing and how far the camera may go.
 - **Exits**: for each way out, the scene and entrance it leads to,
   sometimes only while a flag is clear. One kind of exit leads into a battle.
-- **Object event templates**: who stands where: a
+- **Actor templates**: who stands where: a
   [sprite](../../glossary.md#sprite-and-oam), a condition, how they move
   (standing, wandering, or a [script](../../glossary.md#script) of their
   own), a position, a facing and how they turn when spoken to.
@@ -70,13 +70,13 @@ east, y up and z south, and a facing is one of eight headings
   ([below](#what-a-map-event-row-says)).
 
 These are `struct SceneEntrance`, the `SCENE_EXIT` rows of the exit
-table (named in `scene_exits.h`), `struct ObjectEventTemplate`,
+table (named in `scene_exits.h`), `struct ActorTemplate`,
 `struct SceneExitRegion` and `struct MapEvent`, all in `map_tables.h` and
 `scene_header.h`.
 
 ### Conditions
 
-The object event templates and the map events carry a condition, which says
+The actor templates and the map events carry a condition, which says
 whether the row holds. Most often it is a [game flag](../../glossary.md#game-flag),
 and the row holds until that flag is set: "until this has happened" is the
 common case.
@@ -86,18 +86,18 @@ common case.
 | `CONDITION_ALWAYS` (-1) | always |
 | a game flag, such as `FLAG_VALE_NUT_CAUGHT` | while the flag is clear |
 | `IF_FLAG_SET(flag)` | while the flag is set |
-| `CONDITION_IN_VIEW` (0), object event templates only | while the object event lies within the view |
+| `CONDITION_IN_VIEW` (0), actor templates only | while the actor lies within the view |
 
 ### Who stands where
 
-Each row of a scene's object event templates puts one person or thing in the
-scene, an object event, and each row owns a numbered place of its own, its
-[local id](../../glossary.md#local-id), whether or not it appears.
+Each row of a scene's actor templates puts one person or thing in the
+scene, an actor, and each row owns a numbered place of its own, its
+[actor id](../../glossary.md#actor-id), whether or not it appears.
 
 A row can carry a condition, a [story flag](../../glossary.md#game-flag) that
 must be set or clear, and a row whose condition fails puts nobody on the map.
-Its place stays empty rather than going to the next row, so every object
-event keeps one number all game and the scene's code can name it once: on
+Its place stays empty rather than going to the next row, so every
+actor keeps one number all game and the scene's code can name it once: on
 Mercury Lighthouse's upper floor the blue statue has one row for its place on
 the ledge and another for where it lands after it falls, and only one of the
 two appears.
@@ -106,9 +106,9 @@ The party takes the first eight places, and the table's rows take the places
 after them in order. A row whose sprite is one of the party's characters
 takes that character's own place instead.
 
-Each scene names its object events in an enum in row order,
-starting from `LOCALID_FIRST_PLACED`; `LOCALID_PARTY_LEADER` is the one the
-player moves, and `FieldScript_SpawnObjectEventTemplates` places the rows.
+Each scene names its actors in an enum in row order,
+starting from `ACTOR_FIRST_PLACED`; `ACTOR_PARTY_LEADER` is the one the
+player moves, and `FieldScript_SpawnActorTemplates` places the rows.
 
 ### What a map event row says
 
@@ -120,11 +120,11 @@ answers, when it holds, and what runs. These are four rows of Vale's table on
 the day the story begins:
 
 ```c
-{ MAP_EVENT_TALK, LOCALID_DORA, CONDITION_ALWAYS,
+{ MAP_EVENT_TALK, ACTOR_DORA, CONDITION_ALWAYS,
   EVENT_SCRIPT(EventScript_DoraFretsAboutTheRoof) },
 { COORD_EVENT_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
   EVENT_SCRIPT(EventScript_EnterIsaacsHouse) },
-{ PSYNERGY_ON_OBJ_EVENT(ABILITY_CATCH), LOCALID_NUT, FLAG_VALE_NUT_CAUGHT,
+{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT, FLAG_VALE_NUT_CAUGHT,
   EVENT_SCRIPT(EventScript_CatchNut) },
 { BG_EVENT(BG_EVENT_SILENT), 24, CONDITION_ALWAYS,
   EVENT_SCRIPT(EventScript_SearchTheLockedDoor) },
@@ -138,13 +138,13 @@ What starts a row also says what it answers:
 
 | Kind | Started by | Answers |
 | --- | --- | --- |
-| `MAP_EVENT_TALK` | the A button on someone | that object event |
-| `MAP_EVENT_TALK_HALTED` | talking to someone Halt has stopped | that object event |
+| `MAP_EVENT_TALK` | the A button on someone | that actor |
+| `MAP_EVENT_TALK_HALTED` | talking to someone Halt has stopped | that actor |
 | `MAP_EVENT_COORD` and its forms | stepping onto a spot, facing a way, or pushing against it | the spot's [metatile behavior](../../glossary.md#metatile-behavior) |
 | `MAP_EVENT_EXIT` | stepping onto a spot no coord event answers | the spot's metatile behavior |
 | `BG_EVENT(target)` | the A button on what is ahead, when it is nobody | the spot's metatile behavior |
-| `USE_ITEM(item)` and its form | using an item | a spot or an object event |
-| `PSYNERGY_ON_OBJ_EVENT(ability)` and its form | using Psynergy on someone, or anywhere | that object event, or anywhere |
+| `USE_ITEM(item)` and its form | using an item | a spot or an actor |
+| `PSYNERGY_ON_ACTOR(ability)` and its form | using Psynergy on someone, or anywhere | that actor, or anywhere |
 | `MAP_EVENT_RAISED` | the scene's code asking for it | a number the code gives |
 
 A Psynergy row also says when it runs around the effect: before it plays,
@@ -205,8 +205,8 @@ that always holds, so the first talk welcomes Isaac and every later one warns
 of the thieves ([`log_rooms_b.c`](log_rooms_b.c)):
 
 ```c
-{ MAP_EVENT_TALK, LOCALID_MAYOR, FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, EVENT_SCRIPT(EventScript_WelcomeIsaacBack) },
-{ MAP_EVENT_TALK, LOCALID_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarnOfThievesRevenge) },
+{ MAP_EVENT_TALK, ACTOR_MAYOR, FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, EVENT_SCRIPT(EventScript_WelcomeIsaacBack) },
+{ MAP_EVENT_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarnOfThievesRevenge) },
 ```
 
 A row behind one that always fits is never reached.
@@ -236,7 +236,7 @@ starts the leader walking in and asks for the exit into the house.
 static void EventScript_EnterJennasGrandparentsHouse(void) {
   Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_GrandparentsDoorOpens, 49, 69);
-  ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 326, 1126);
+  Actor_WalkTo(ACTOR_PARTY_LEADER, 326, 1126);
   Import_ScriptRequestExit(VALE_TO_COTTAGE_ROOMS_A_NORTH);
 }
 ```
@@ -247,7 +247,7 @@ starting a walk, lets the next line follow in the same
 [frame](../../glossary.md#frame). Whatever has to keep moving during a
 event runs on its own: as an object script (the steps someone runs each
 frame), a callback (a function the scene runs once a frame) or a hook (a
-function one object event runs each frame). A request the script raises, like
+function one actor runs each frame). A request the script raises, like
 this exit, waits until the script has finished.
 
 A script is plain C written in the calls of `script_layer.h`,
@@ -290,7 +290,7 @@ share the friends' cheering spots, the stage guides, the race gauge and the
 opponent's recorded run; Vault and its houses share the walking villagers;
 Mercury Lighthouse's scenes share the pool's lights and the passages between
 floors; and many scenes share the small effects and the helpers that move
-object events. The ROM holds a copy in each overlay, alike but for the
+actors. The ROM holds a copy in each overlay, alike but for the
 addresses they hold.
 
 A header in `common/` is code, not declarations: each scene includes it where
@@ -330,7 +330,7 @@ A run of functions inside one overlay that is about one thing takes that
 thing's name, and a party member's or the leader's part in a script takes
 that character's (`Garet_`, `Mia_`, `Ivan_`, `Leader_`). The spellings some
 sites keep to match (fields reached through `offsetof`, another struct's view
-of an object event, update hooks returning `s32`) are in
+of an actor, update hooks returning `s32`) are in
 [Matching](../MATCHING.md).
 
 ## How it fits with the rest of the game
@@ -354,7 +354,7 @@ its `msgctxt` is the name the scene writes (`MsgVaultWelcomeToVaultTheTownAt`).
   32 KB of [EWRAM](../../glossary.md#iwram-and-ewram).
 - An overlay calls the [main image](../../glossary.md#main-image) only through
   its import table, never another overlay.
-- 66 local ids: the party's 8, then the placed object events.
+- 66 actor ids: the party's 8, then the placed actors.
 - 256 scene temp flags and 256 area temp flags, reused by every scene and
   area.
 
@@ -375,8 +375,8 @@ its `msgctxt` is the name the scene writes (`MsgVaultWelcomeToVaultTheTownAt`).
   follows a named one has no name of its own.
 - **callback**: a function a scene adds with `FieldScheduler_AddCallback` at
   `TASK_PRIORITY_MAP`, run once a frame until removed.
-- **update hook**: an object event's `update`, run each frame with the object
-  event.
+- **update hook**: an actor's `update`, run each frame with the
+  actor.
 
 ## Evidence
 
@@ -390,11 +390,11 @@ sees; its messages are linker symbols made from their English text. Overlay
 numbers are their rows of the resource directory.
 
 Many functions in `common/` keep older descriptive names
-(`ObjectEvent_SetFlagBitByRelativeDepth`, `Scene_`); each takes its name with the
+(`Actor_SetFlagBitByRelativeDepth`, `Scene_`); each takes its name with the
 scenes that call it, as those scenes are humanized.
 
 The animated exits of `enum ExitStyle` play the leader's leaving and arrival
-animations, named in `enum ObjectEventAnimation` from Isaac's sprite
+animations, named in `enum ActorAnimation` from Isaac's sprite
 (`spr_000.tsv`, animations 23 to 26): an arrival grows from a small figure
 seen side-on to full size facing the player, and a leaving turns from his
 back to side-on as he shrinks and is then hidden. The alternate pair, which

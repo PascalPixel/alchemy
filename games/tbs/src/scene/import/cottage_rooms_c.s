@@ -5,8 +5,8 @@
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
 	.set import.Scene_AssignViewFlags, 1
-	.set import.FieldScript_AskYesNoWithObjectEventAnimation, 1
-	.set import.ObjectEvent_GetById, 1
+	.set import.FieldScript_AskYesNoWithActorAnimation, 1
+	.set import.Actor_GetById, 1
 	.set import.ObjectMotion_SetVariantCallback, 1
 	.set import.ObjectMotion_SetAngleToward, 1
 	.set import.FieldScript_SetMessageId, 1

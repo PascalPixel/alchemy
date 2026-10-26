@@ -2,6 +2,6 @@
 	overlay_veneer LemurianShip_SetupMap
 	overlay_veneer LemurianShip_GetEntrances
 	overlay_veneer LemurianShip_GetExits
-	overlay_veneer LemurianShip_GetObjectEventTemplates
+	overlay_veneer LemurianShip_GetActorTemplates
 	overlay_veneer LemurianShip_GetEvents
 	overlay_veneer LemurianShip_GetRegions

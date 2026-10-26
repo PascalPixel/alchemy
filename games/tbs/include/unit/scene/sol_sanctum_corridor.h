@@ -9,11 +9,11 @@ struct SceneExitRegion;
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
+const struct ActorTemplate *Scene_GetActorTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 extern struct SceneEntrance gSolSanctumCorridorEntrances[];
 extern u32 gSolSanctumCorridorExits[];
-extern struct ObjectEventTemplate gSolSanctumCorridorObjectEventTemplates[];
+extern struct ActorTemplate gSolSanctumCorridorActorTemplates[];
 extern struct MapEvent gSolSanctumCorridorEvents[];
 
 #endif

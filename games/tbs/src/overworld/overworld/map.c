@@ -106,7 +106,7 @@ void Scene_ReturnFromSequence(s32 result) {
   gSaveBlock.runResult = result;
   if (result == -1) {
     // Revive the leader before choosing the defeat return point.
-    unit = Unit_GetFar(gSaveBlock.leaderLocalId);
+    unit = Unit_GetFar(gSaveBlock.leaderActorId);
     if (unit->hp == 0) {
       unit->hp = 1;
       Unit_UpdateGauges(unit);

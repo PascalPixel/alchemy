@@ -7,7 +7,7 @@
 const struct SceneEntrance *CottageRoomsB_GetEntrances(void);
 const struct SceneExitRegion *CottageRoomsB_GetRegions(void);
 const u32 *CottageRoomsB_GetExits(void);
-const struct ObjectEventTemplate *CottageRoomsB_GetObjectEventTemplates(void);
+const struct ActorTemplate *CottageRoomsB_GetActorTemplates(void);
 const struct MapEvent *CottageRoomsB_GetEvents(void);
 s32 CottageRoomsB_Initialize(void);
 extern s32 gCottageRoomsB_LeaveHouseScript[];
@@ -26,13 +26,10 @@ extern s32 gCottageRoomsB_MythrilBagWobblesScript[];
 extern struct SceneEntrance gCottageRoomsB_Entrances[];
 extern u32 gCottageRoomsB_Exits[];
 extern u32 gCottageRoomsB_StormExits[];
-extern struct ObjectEventTemplate gCottageRoomsB_ObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gCottageRoomsB_ObjectEventTemplatesAfterLeaving[];
-extern struct ObjectEventTemplate
-    gCottageRoomsB_ObjectEventTemplatesAfterKalay[];
-extern struct ObjectEventTemplate
-    gCottageRoomsB_BabiScholarsObjectEventTemplates[];
+extern struct ActorTemplate gCottageRoomsB_ActorTemplates[];
+extern struct ActorTemplate gCottageRoomsB_ActorTemplatesAfterLeaving[];
+extern struct ActorTemplate gCottageRoomsB_ActorTemplatesAfterKalay[];
+extern struct ActorTemplate gCottageRoomsB_BabiScholarsActorTemplates[];
 extern struct MapEvent gCottageRoomsB_StormEvents[];
 extern struct MapEvent gCottageRoomsB_Events[];
 extern struct MapEvent gCottageRoomsB_EventsAfterLeaving[];

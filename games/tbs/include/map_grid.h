@@ -84,16 +84,15 @@ struct TilesetAnim {
 };
 
 /// A layout's three layers, by what they hold. Most layouts give them
-/// priorities 3, 2 and 1. An object event takes its sprite's priority from the
-/// cell under it (OBJ_EVENT_PRIORITY_AUTOMATIC, ObjectSystem_PlaceSprites):
+/// priorities 3, 2 and 1. An actor takes its sprite's priority from the
+/// cell under it (ACTOR_PRIORITY_AUTOMATIC, ObjectSystem_PlaceSprites):
 /// 2 on open ground, which puts it over the middle layer and under the overhead
 /// one, and 3 where the cells put it behind a building. Each layer shows on its
 /// own background: `BG3`, `BG2` and `BG1`.
 enum MapGridLayerIndex {
-  MAPGRID_LAYER_GROUND = 0, ///< `BG3`: the ground, at the back
-  MAPGRID_LAYER_MIDDLE = 1, ///< `BG2`: walls and edges, under the object events
-  MAPGRID_LAYER_OVERHEAD =
-      2, ///< `BG1`: roofs and tree tops, over the object events
+  MAPGRID_LAYER_GROUND = 0,   ///< `BG3`: the ground, at the back
+  MAPGRID_LAYER_MIDDLE = 1,   ///< `BG2`: walls and edges, under the actors
+  MAPGRID_LAYER_OVERHEAD = 2, ///< `BG1`: roofs and tree tops, over the actors
   MAPGRID_LAYER_COUNT = 3
 };
 

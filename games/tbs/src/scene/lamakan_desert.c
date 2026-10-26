@@ -54,7 +54,7 @@
 #include "unit/overworld/field_services.h"
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
-#include "object_event.h"
+#include "actor.h"
 #include "types.h"
 #include "script_layer.h"
 #include "map_tables.h"
@@ -129,7 +129,7 @@ enum {
   /// (MsgMountainNorthAltinMineWestLama)
   FLAG_HEAT_THREE_QUARTERS = FLAG_AREA_TEMP_02,
   /// Who has complained since the gauge last passed a mark: one per member,
-  /// in the order of their object events.
+  /// in the order of their actors.
   /// ★ Named from the game: "My feet are burning!"
   /// (MsgMountainNorthAltinMineWestLama)
   FLAG_GARET_COMPLAINED = FLAG_AREA_TEMP_03,
@@ -141,8 +141,8 @@ enum {
   FLAG_MIA_COMPLAINED = FLAG_AREA_TEMP_05
 };
 
-/// The object events, numbered in the order of each map's object event
-/// templates from LOCALID_FIRST_PLACED. LamakanDesertEast to
+/// The actors, numbered in the order of each map's actor
+/// templates from ACTOR_FIRST_PLACED. LamakanDesertEast to
 /// LamakanDesertManticore place the Manticore, then the LamakanDesertEast and
 /// LamakanDesertManticore one pit and LamakanDesertSmog all four pits and Smog;
 /// LamakanDesertCave places none.
@@ -150,17 +150,17 @@ enum {
   /// The Manticore, until FLAG_LAMAKAN_MANTICORE_BEATEN; talking to it starts
   /// its battle.
   /// ★ Named from the game: "Manticore" (MsgEnemyName)
-  LOCALID_MANTICORE = LOCALID_FIRST_PLACED,
-  /// The first of the Ant Lions' pits Reveal shows, up to LOCALID_LAST_PIT.
+  ACTOR_MANTICORE = ACTOR_FIRST_PLACED,
+  /// The first of the Ant Lions' pits Reveal shows, up to ACTOR_LAST_PIT.
   /// ★ Named from what the player sees: a pit in the sand, shown under
   /// Reveal, that pulls the leader down to an Ant Lion (its render)
-  LOCALID_FIRST_PIT = LOCALID_MANTICORE + 1,
+  ACTOR_FIRST_PIT = ACTOR_MANTICORE + 1,
   /// ★ Named from what the player sees: the last of the pits in the sand,
   /// shown under Reveal (its render)
-  LOCALID_LAST_PIT = LOCALID_FIRST_PIT + 3,
+  ACTOR_LAST_PIT = ACTOR_FIRST_PIT + 3,
   /// Smog, a Jupiter Djinni.
   /// ★ Named from the game: "Smog" (MsgDjinnName)
-  LOCALID_SMOG = LOCALID_LAST_PIT + 1
+  ACTOR_SMOG = ACTOR_LAST_PIT + 1
 };
 
 /// The desert's two Psynergy Stones, area temp flags: each is back once
@@ -180,7 +180,7 @@ enum {
 /// LamakanDesertSmog: talking to Smog, whom Reveal uncovers, adds the
 /// Jupiter Djinni to the party.
 static void LamakanDesert_TalkToSmog(void) {
-  Djinn_JoinParty(LOCALID_SMOG, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_SMOG));
+  Djinn_JoinParty(ACTOR_SMOG, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_SMOG));
 }
 
 #include "common/object_waitdown.h"
@@ -190,13 +190,11 @@ static void LamakanDesert_TalkToSmog(void) {
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 104 to 100 bytes in tbs-en.
 #ifdef UBFIX
-static void
-LamakanDesert_LeaderSpraySand(union ObjectEventOrEffect *fieldObject) {
+static void LamakanDesert_LeaderSpraySand(union ActorOrEffect *fieldObject) {
 #else
-static s32
-LamakanDesert_LeaderSpraySand(union ObjectEventOrEffect *fieldObject) {
+static s32 LamakanDesert_LeaderSpraySand(union ActorOrEffect *fieldObject) {
 #endif
-  struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
+  struct Actor *actor = (struct Actor *)fieldObject;
   struct EffectOptions params;
   s32 phase;
 
@@ -215,8 +213,7 @@ LamakanDesert_LeaderSpraySand(union ObjectEventOrEffect *fieldObject) {
   params.startScaleY = 0xcccc;
   params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
   FieldEffect_Spawn(
-      objectEvent->x.fixed, objectEvent->y.fixed, objectEvent->z.fixed, 0,
-      phase, phase,
+      actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, phase, phase,
       EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | EFFECT_SCRIPT_MEDIUM, &params);
 #ifdef UBFIX
   return;
@@ -253,7 +250,7 @@ const u32 *LamakanDesert_GetExits(void) { return gLamakanDesertExits; }
 /// LamakanDesertManticore's LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE, the
 /// way back from the Manticore's battle, marks it beaten; in the patched
 /// editions it also sets FLAG_KALAY_REACHED.
-const struct ObjectEventTemplate *LamakanDesert_GetObjectEventTemplates(void) {
+const struct ActorTemplate *LamakanDesert_GetActorTemplates(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertManticore) {
     if (gSaveBlock.entrance == LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE) {
       GameFlag_Set(FLAG_LAMAKAN_MANTICORE_BEATEN);
@@ -265,15 +262,15 @@ const struct ObjectEventTemplate *LamakanDesert_GetObjectEventTemplates(void) {
     }
   }
   if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertEast) {
-    return gLamakanDesertEastObjectEventTemplates;
+    return gLamakanDesertEastActorTemplates;
   }
   if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertSmog) {
-    return gLamakanDesertSmogObjectEventTemplates;
+    return gLamakanDesertSmogActorTemplates;
   }
   if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertManticore) {
-    return gLamakanDesertManticoreObjectEventTemplates;
+    return gLamakanDesertManticoreActorTemplates;
   }
-  return gLamakanDesertObjectEventTemplatesOther;
+  return gLamakanDesertActorTemplatesOther;
 }
 
 /// Lamakan Desert, coord event 9: LAMAKAN_DESERT_CAVE_TO_WORLD_MAP. If
@@ -355,16 +352,16 @@ static s32 Reveal_HideSecrets(void) {
     MapGrid_CopyCells(9, 120, 3, 1, 44, 5);
     MapGrid_CopyCellAttributes(9, 0, 3, 3, 9, 6);
   }
-  Import_ObjectEventSetPosition(LOCALID_MANTICORE, 0, 0);
-  Import_ObjectEventSetPosition(LOCALID_FIRST_PIT, 0, 0);
-  Import_ObjectEventSetPosition(LOCALID_FIRST_PIT + 1, 0, 0);
-  Import_ObjectEventSetPosition(LOCALID_FIRST_PIT + 2, 0, 0);
-  Import_ObjectEventSetPosition(LOCALID_LAST_PIT, 0, 0);
-  Import_ObjectEventSetPosition(LOCALID_SMOG, 0, 0);
-  // Hide the treasure spots independently of the object event templates.
+  Import_ActorSetPosition(ACTOR_MANTICORE, 0, 0);
+  Import_ActorSetPosition(ACTOR_FIRST_PIT, 0, 0);
+  Import_ActorSetPosition(ACTOR_FIRST_PIT + 1, 0, 0);
+  Import_ActorSetPosition(ACTOR_FIRST_PIT + 2, 0, 0);
+  Import_ActorSetPosition(ACTOR_LAST_PIT, 0, 0);
+  Import_ActorSetPosition(ACTOR_SMOG, 0, 0);
+  // Hide the treasure spots independently of the actor templates.
   markerId = 100;
   do {
-    TreasureSpot_SetObjectEventPosition(markerId, 0, 0);
+    TreasureSpot_SetActorPosition(markerId, 0, 0);
     markerId = markerId + 1;
   } while (markerId <= 107);
   if (gSaveBlock.sceneId != (s32)&SceneId_LamakanDesertCave) {
@@ -397,7 +394,7 @@ static s32 Reveal_ShowSecrets(void) {
     MapGrid_CopyCells(76, 126, 4, 2, 16, 42);
     MapGrid_CopyCells(80, 126, 4, 2, 36, 44);
     MapGrid_CopyCells(84, 126, 4, 2, 14, 55);
-    ObjectEvent_SetPosition(LOCALID_FIRST_PIT, PIXELS(400), PIXELS(364));
+    Actor_SetPosition(ACTOR_FIRST_PIT, PIXELS(400), PIXELS(364));
   } else if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertSmog) {
     MapGrid_CopyCells(64, 126, 4, 2, 42, 5);
     MapGrid_CopyCells(68, 126, 4, 2, 20, 11);
@@ -417,11 +414,11 @@ static s32 Reveal_ShowSecrets(void) {
     MapGrid_CopyCells(108, 126, 4, 2, 6, 46);
     MapGrid_CopyCells(112, 126, 4, 2, 27, 55);
     MapGrid_CopyCells(116, 126, 4, 2, 43, 56);
-    ObjectEvent_SetPosition(LOCALID_FIRST_PIT, PIXELS(352), PIXELS(204));
-    ObjectEvent_SetPosition(LOCALID_FIRST_PIT + 1, PIXELS(736), PIXELS(396));
-    ObjectEvent_SetPosition(LOCALID_FIRST_PIT + 2, PIXELS(144), PIXELS(380));
-    ObjectEvent_SetPosition(LOCALID_LAST_PIT, PIXELS(576), PIXELS(716));
-    ObjectEvent_SetPosition(LOCALID_SMOG, PIXELS(648), PIXELS(408));
+    Actor_SetPosition(ACTOR_FIRST_PIT, PIXELS(352), PIXELS(204));
+    Actor_SetPosition(ACTOR_FIRST_PIT + 1, PIXELS(736), PIXELS(396));
+    Actor_SetPosition(ACTOR_FIRST_PIT + 2, PIXELS(144), PIXELS(380));
+    Actor_SetPosition(ACTOR_LAST_PIT, PIXELS(576), PIXELS(716));
+    Actor_SetPosition(ACTOR_SMOG, PIXELS(648), PIXELS(408));
   } else if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertManticore) {
     MapGrid_CopyCells(64, 124, 4, 4, 8, 14);
     MapGrid_CopyCells(68, 124, 4, 4, 6, 18);
@@ -431,8 +428,8 @@ static s32 Reveal_ShowSecrets(void) {
     MapGrid_CopyCells(5, 121, 5, 7, 43, 32);
     MapGrid_CopyCells(0, 120, 3, 1, 9, 5);
     MapGrid_CopyCells(3, 120, 3, 1, 44, 5);
-    ObjectEvent_SetPosition(LOCALID_MANTICORE, PIXELS(168), PIXELS(92));
-    ObjectEvent_SetPosition(LOCALID_FIRST_PIT, PIXELS(128), PIXELS(316));
+    Actor_SetPosition(ACTOR_MANTICORE, PIXELS(168), PIXELS(92));
+    Actor_SetPosition(ACTOR_FIRST_PIT, PIXELS(128), PIXELS(316));
     MapGrid_CopyCellAttributes(6, 0, 3, 3, 9, 6);
     if (GameFlag_Get(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
       MapGrid_CopyCells(0, 119, 3, 1, 9, 5);
@@ -451,7 +448,7 @@ static s32 Reveal_ShowSecrets(void) {
 /// Manticore starts its battle, which returns the party to
 /// LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE.
 static void LamakanDesert_FightManticore(void) {
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_MANTICORE, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_MANTICORE, 2);
   FieldScript_SetNextDestination(
       (s32)&SceneId_LamakanDesertManticore,
       LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE);
@@ -573,7 +570,7 @@ static void LamakanDesert_BatheInOasis(void) {
   const s32 *point;
   s32 nearest;
   s32 distance;
-  struct ObjectEvent *leader;
+  struct Actor *leader;
   struct EffectOptions options;
   struct EffectOptions puff;
   s16 *progress;
@@ -603,7 +600,7 @@ static void LamakanDesert_BatheInOasis(void) {
     offset = 0;
     do {
       distance = LamakanDesert_DistanceInPixels(
-          &ObjectEvent_Get(LOCALID_PARTY_LEADER)->x.fixed, (s32 *)point);
+          &Actor_Get(ACTOR_PARTY_LEADER)->x.fixed, (s32 *)point);
       if (distance <= best) {
         best = distance;
         nearest = left - count;
@@ -614,35 +611,34 @@ static void LamakanDesert_BatheInOasis(void) {
   }
   nearest <<= 1;
   // Hop the leader into the middle of the oasis before draining the heat gauge.
-  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x20000, 0x10000);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
   {
-    struct ObjectEvent *objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+    struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
     const struct LamakanDesertOasis *spot =
         (const struct LamakanDesertOasis *)&points[nearest];
 
-    Object_SetPosition(objectEvent, spot->x, 0, spot->z);
+    Object_SetPosition(actor, spot->x, 0, spot->z);
   }
-  ObjectEvent_Get(LOCALID_PARTY_LEADER)->velocityY = 0x60000;
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = 0x60000;
   Script_PlaySong(SE_JUMP);
-  leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
-  ObjectEvent_WaitBelowHeight(leader,
-                              ObjectEvent_Get(LOCALID_PARTY_LEADER)->y.fixed);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
+  Actor_WaitBelowHeight(leader, Actor_Get(ACTOR_PARTY_LEADER)->y.fixed);
   Script_PlaySong(SE_WATER_MOVE);
   {
-    struct ObjectEvent *objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+    struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
     options.type = SPRITE_SPLASH;
     options.startScaleX = 0x8000;
     options.startScaleY = 0xcccc;
     options.targetScaleX = 0x10000;
     options.targetScaleY = 0x13333;
-    FieldEffect_Spawn(
-        objectEvent->x.fixed, objectEvent->y.fixed, objectEvent->z.fixed, 0, 0,
-        0, EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
-        &options);
+    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
+                      EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                          EFFECT_SCALE_TO_TARGET,
+                      &options);
   }
-  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_HEART, 0);
-  ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_BATHE);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_HEART, 0);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_BATHE);
   revealFrames = (u16 *)&((struct FieldWork *)work)->revealFrames;
   progress = &gSaveBlock.hazardSteps;
   zero = 0;
@@ -664,23 +660,22 @@ static void LamakanDesert_BatheInOasis(void) {
     Task_Wait(1);
   } while (frames != 0);
   {
-    struct ObjectEvent *objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+    struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
     puff.type = SPRITE_SPLASH;
     puff.startScaleX = 0x8000;
     puff.startScaleY = 0xcccc;
     puff.targetScaleX = 0x8000;
     puff.targetScaleY = 0x13333;
-    FieldEffect_Spawn(objectEvent->x.fixed, objectEvent->y.fixed,
-                      objectEvent->z.fixed, 0, frames, frames,
-                      EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                          EFFECT_SCALE_TO_TARGET,
-                      &puff);
+    FieldEffect_Spawn(
+        actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, frames, frames,
+        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
+        &puff);
   }
   Script_PlaySong(SE_STOP_ACTION_SE);
   Script_PlaySong(SE_JUMP);
-  ObjectEvent_Get(LOCALID_PARTY_LEADER)->velocityY = 0x60000;
-  ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = 0x60000;
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Script_Wait(10);
   // frames is 0 here, so a running Reveal ends as the leader gets up.
   *(u16 *)&((struct FieldWork *)work)->revealFrames = frames;
@@ -690,22 +685,22 @@ static void LamakanDesert_BatheInOasis(void) {
 /// Lamakan Desert, walking on sand (coord events 21 and 100 to 107): each
 /// moving frame adds a step of heat and kicks up dust, faster on the run.
 static void HeatGauge_CountStep(void) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   struct FieldWork *work;
   struct EffectOptions params;
   s32 dx;
   s32 z;
   s32 phase;
-  objectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
+  actor = Actor_GetById(gSaveBlock.leaderActorId);
   work = gFieldWork;
-  if (objectEvent->targetX == OBJ_EVENT_NO_TARGET) {
+  if (actor->targetX == ACTOR_NO_TARGET) {
     return;
   }
   gSaveBlock.hazardSteps++;
   if (work->coordEvent == MB_LAMAKAN_DESERT_SLOPE) {
     return;
   }
-  if (objectEvent->speed <= 0x10000) {
+  if (actor->speed <= 0x10000) {
     if ((gFrameCount & 15) != 0) {
       return;
     }
@@ -713,17 +708,16 @@ static void HeatGauge_CountStep(void) {
     params.startScaleY = 0x8000;
     dx = 0;
     params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
-    if (objectEvent->facing != FACING_EAST &&
-        objectEvent->facing != FACING_WEST) {
-      z = objectEvent->z.fixed;
+    if (actor->facing != FACING_EAST && actor->facing != FACING_WEST) {
+      z = actor->z.fixed;
       dx = 0x20000 - ((((z >> 20) & 1) * 5) << 16);
     } else {
-      z = objectEvent->z.fixed;
+      z = actor->z.fixed;
     }
-    FieldEffect_Spawn(
-        objectEvent->x.fixed + dx, objectEvent->y.fixed, z, 0, 0, 0,
-        EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | EFFECT_SCRIPT_MEDIUM,
-        &params);
+    FieldEffect_Spawn(actor->x.fixed + dx, actor->y.fixed, z, 0, 0, 0,
+                      EFFECT_USE_SPIN | EFFECT_USE_START_SCALE |
+                          EFFECT_SCRIPT_MEDIUM,
+                      &params);
   } else {
     phase = gFrameCount & 7;
     if (phase != 0) {
@@ -734,9 +728,8 @@ static void HeatGauge_CountStep(void) {
     params.startScaleX = 0xcccc;
     params.startScaleY = 0xcccc;
     params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
-    FieldEffect_Spawn(objectEvent->x.fixed, objectEvent->y.fixed + 0x20000,
-                      objectEvent->z.fixed, 0,
-                      ((u32)(Import_RandomNext() * 5) >> 16) * 0x1999, phase,
+    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed + 0x20000, actor->z.fixed,
+                      0, ((u32)(Import_RandomNext() * 5) >> 16) * 0x1999, phase,
                       EFFECT_USE_SPIN | EFFECT_USE_START_SCALE |
                           EFFECT_SCRIPT_MEDIUM,
                       &params);
@@ -747,22 +740,22 @@ static void HeatGauge_CountStep(void) {
 /// at the nearest pit, is pulled backwards into it and a battle with an Ant
 /// Lion begins.
 static void LamakanDesert_FallIntoPit(void) {
-  struct ObjectEvent *target;
-  struct ObjectEvent *objectEvent;
-  struct ObjectEvent *record;
+  struct Actor *target;
+  struct Actor *actor;
+  struct Actor *record;
   s32 id;
   s32 best;
   s32 min;
   s32 dx;
   s32 dz;
 
-  target = ObjectEvent_Get(gSaveBlock.leaderLocalId);
-  best = LOCALID_FIRST_PIT;
+  target = Actor_Get(gSaveBlock.leaderActorId);
+  best = ACTOR_FIRST_PIT;
   GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
   min = 0x100000;
   // Select the closest live pit using Manhattan distance in whole pixels.
-  for (id = LOCALID_FIRST_PIT; id <= LOCALID_LAST_PIT; id++) {
-    struct ObjectEvent *other = ObjectEvent_Get(id);
+  for (id = ACTOR_FIRST_PIT; id <= ACTOR_LAST_PIT; id++) {
+    struct Actor *other = Actor_Get(id);
 
     if (other != 0) {
       dx = (target->x.fixed - other->x.fixed) / 0x10000;
@@ -783,44 +776,42 @@ static void LamakanDesert_FallIntoPit(void) {
       }
     }
   }
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   // Face the pit, then reverse the walking direction while being pulled in.
-  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
-      ~OBJ_EVENT_FACES_MOTION;
-  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, best, 0);
+  Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  ObjectMotion_SetAngleToward(ACTOR_PARTY_LEADER, best, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
-                                                          ATTACHED_EFFECT_ONCE);
-  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
   FieldScript_WaitFrames(60);
-  ObjectEvent_SetAttachedEffect(
-      LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
-  record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  objectEvent->facing = (record->facing + 0x8000) & -0x1000;
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_RUN);
-  ObjectEvent_SetActionById(LOCALID_PARTY_LEADER, 24);
-  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x1999, 0xccc);
-  record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
+  record = Actor_GetById(ACTOR_PARTY_LEADER);
+  actor->facing = (record->facing + 0x8000) & -0x1000;
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_RUN);
+  Actor_SetActionById(ACTOR_PARTY_LEADER, 24);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1999, 0xccc);
+  record = Actor_GetById(ACTOR_PARTY_LEADER);
 #ifdef UBFIX
   record->update = LamakanDesert_LeaderSpraySand;
 #else
   record->update =
-      (void (*)(union ObjectEventOrEffect *))LamakanDesert_LeaderSpraySand;
+      (void (*)(union ActorOrEffect *))LamakanDesert_LeaderSpraySand;
 #endif
-  record = ObjectEvent_Get(best);
+  record = Actor_Get(best);
   if (record != 0) {
-    ObjectMotion_ResetAndSetPosition(LOCALID_PARTY_LEADER, record->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(ACTOR_PARTY_LEADER, record->x.part.pixel,
                                      record->z.part.pixel);
   }
   FieldScript_WaitFrames(60);
-  ObjectEvent_ShowEmote(best, EMOTE_IN_FRONT | EMOTE_HEART, 0);
+  Actor_ShowEmote(best, EMOTE_IN_FRONT | EMOTE_HEART, 0);
   FieldScript_WaitFrames(60);
-  ObjectEvent_SetAttachedEffect(
-      LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
-      OBJ_EVENT_FACES_MOTION;
-  record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
+  Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
+  record = Actor_GetById(ACTOR_PARTY_LEADER);
   record->update = NULL;
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 4);
@@ -830,9 +821,9 @@ static void LamakanDesert_FallIntoPit(void) {
 /// carries the leader south 1.5 pixels a frame, and at a ledge the leader hops
 /// down 8 pixels.
 static void LamakanDesert_SlideDownDune(void) {
-  struct ObjectEvent *center;
+  struct Actor *center;
   s32 id;
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   struct FieldPosition probePosition;
   struct EffectOptions params;
   s32 hit;
@@ -843,63 +834,63 @@ static void LamakanDesert_SlideDownDune(void) {
   {
     struct FieldWork *work = gFieldWork;
 
-    id = gSaveBlock.leaderLocalId;
-    center = (struct ObjectEvent *)work->camera;
+    id = gSaveBlock.leaderActorId;
+    center = (struct Actor *)work->camera;
   }
-  objectEvent = ObjectEvent_GetById(id);
-  // First check for a ledge immediately below the sliding object event.
-  probePosition.x = objectEvent->x.fixed;
-  probePosition.y = objectEvent->y.fixed;
-  probePosition.z = objectEvent->z.fixed + 0x18000;
-  hit = FieldObject_CheckMovementCollision(objectEvent, &probePosition);
+  actor = Actor_GetById(id);
+  // First check for a ledge immediately below the sliding actor.
+  probePosition.x = actor->x.fixed;
+  probePosition.y = actor->y.fixed;
+  probePosition.z = actor->z.fixed + 0x18000;
+  hit = FieldObject_CheckMovementCollision(actor, &probePosition);
   phase = gFrameCount & 4;
   if (phase == 0) {
     params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
-    x = objectEvent->x.fixed + (((u32)(Import_RandomNext() * 12) >> 16) << 16) -
+    x = actor->x.fixed + (((u32)(Import_RandomNext() * 12) >> 16) << 16) -
         0x60000;
-    FieldEffect_Spawn(x, objectEvent->y.fixed, objectEvent->z.fixed, 0, phase,
+    FieldEffect_Spawn(x, actor->y.fixed, actor->z.fixed, 0, phase,
                       ((u32)(Import_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd,
                       EFFECT_USE_SPIN, &params);
   }
   if (hit < 0) {
     // Let the fall complete before returning to ordinary field movement.
-    ObjectEvent_SetAttachedEffect(id, ATTACHED_EFFECT_IN_FRONT |
-                                          ATTACHED_EFFECT_ONCE);
-    Object_SetPosition(objectEvent, objectEvent->x.fixed, objectEvent->y.fixed,
-                       objectEvent->z.fixed + 0x80000);
-    Object_SelectAnimation(objectEvent, ANIM_LEADER_LEAP);
-    Object_WaitForMove(objectEvent);
+    Actor_SetAttachedEffect(id,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Object_SetPosition(actor, actor->x.fixed, actor->y.fixed,
+                       actor->z.fixed + 0x80000);
+    Object_SelectAnimation(actor, ANIM_LEADER_LEAP);
+    Object_WaitForMove(actor);
     do {
       WaitFrames(1);
-    } while (objectEvent->y.fixed != objectEvent->groundHeight);
-    Object_SelectAnimation(objectEvent, ANIM_LEADER_SPRING);
+    } while (actor->y.fixed != actor->groundHeight);
+    Object_SelectAnimation(actor, ANIM_LEADER_SPRING);
     WaitFrames(3);
     return;
   }
-  // Probe ahead and on both diagonals before advancing object event and camera.
-  probePosition.x = objectEvent->x.fixed;
-  probePosition.y = objectEvent->y.fixed;
-  probePosition.z = objectEvent->z.fixed + 0x80000;
-  hit = FieldObject_CheckMovementCollision(objectEvent, &probePosition);
+  // Probe ahead and on both diagonals before advancing actor and camera.
+  probePosition.x = actor->x.fixed;
+  probePosition.y = actor->y.fixed;
+  probePosition.z = actor->z.fixed + 0x80000;
+  hit = FieldObject_CheckMovementCollision(actor, &probePosition);
   if (hit > 0) {
     return;
   }
-  probePosition.x = objectEvent->x.fixed + 0x5b333;
-  probePosition.y = objectEvent->y.fixed;
-  probePosition.z = objectEvent->z.fixed + 0x5b333;
-  hit = FieldObject_CheckMovementCollision(objectEvent, &probePosition);
+  probePosition.x = actor->x.fixed + 0x5b333;
+  probePosition.y = actor->y.fixed;
+  probePosition.z = actor->z.fixed + 0x5b333;
+  hit = FieldObject_CheckMovementCollision(actor, &probePosition);
   if (hit > 0) {
     return;
   }
-  probePosition.x = objectEvent->x.fixed - 0x5b333;
-  probePosition.y = objectEvent->y.fixed;
-  probePosition.z = objectEvent->z.fixed + 0x5b333;
-  hit = FieldObject_CheckMovementCollision(objectEvent, &probePosition);
+  probePosition.x = actor->x.fixed - 0x5b333;
+  probePosition.y = actor->y.fixed;
+  probePosition.z = actor->z.fixed + 0x5b333;
+  hit = FieldObject_CheckMovementCollision(actor, &probePosition);
   if (hit > 0) {
     return;
   }
   center->z.fixed += 0x18000;
-  objectEvent->z.fixed += 0x18000;
+  actor->z.fixed += 0x18000;
 }
 
 /// Lamakan Desert, coord event 40 in LamakanDesertManticore, until the
@@ -907,7 +898,7 @@ static void LamakanDesert_SlideDownDune(void) {
 /// out of the sand.
 static void LamakanDesert_MeetManticore(void) {
   s32 paused;
-  struct ObjectEvent *record;
+  struct Actor *record;
   struct FieldPosition backwardOffset;
   s32 holdFrames;
   u16 *revealFrames;
@@ -926,47 +917,43 @@ static void LamakanDesert_MeetManticore(void) {
       revealFrames = (u16 *)&((struct FieldWork *)eventBytes)->revealFrames;
       holdFrames = 600;
       *revealFrames = holdFrames;
-      record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+      record = Actor_GetById(ACTOR_PARTY_LEADER);
       record->velocityX = paused;
-      record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+      record = Actor_GetById(ACTOR_PARTY_LEADER);
       record->velocityZ = paused;
-      record = ObjectEvent_Get(LOCALID_PARTY_LEADER);
-      record->targetX = OBJ_EVENT_NO_TARGET;
-      record = ObjectEvent_Get(LOCALID_PARTY_LEADER);
-      record->targetZ = OBJ_EVENT_NO_TARGET;
-      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-      ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_MANTICORE, 0);
+      record = Actor_Get(ACTOR_PARTY_LEADER);
+      record->targetX = ACTOR_NO_TARGET;
+      record = Actor_Get(ACTOR_PARTY_LEADER);
+      record->targetZ = ACTOR_NO_TARGET;
+      Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+      Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_MANTICORE, 0);
       FieldScript_WaitFrames(40);
-      ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-      ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER,
-                                    ATTACHED_EFFECT_IN_FRONT |
-                                        ATTACHED_EFFECT_ONCE);
+      ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
+      Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       FieldScript_WaitFrames(40);
-      ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
-          ~OBJ_EVENT_FACES_MOTION;
+      Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
       backwardOffset.x = paused;
       // Step backward without turning away from the emerging Manticore.
       backwardOffset.y = paused;
       backwardOffset.z = paused;
-      record = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+      record = Actor_Get(ACTOR_PARTY_LEADER);
       FieldVector_AddPolarOffset(-0x100000, record->facing, &backwardOffset);
-      ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x20000, 0x10000);
-      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
-      ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER,
-                                       backwardOffset.x / 0x10000,
-                                       backwardOffset.z / 0x10000);
-      ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
+      Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+      Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, backwardOffset.x / 0x10000,
+                                 backwardOffset.z / 0x10000);
+      ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
       FieldScript_WaitFrames(2);
-      ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
-          OBJ_EVENT_FACES_MOTION;
+      Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
       FieldScript_WaitFrames(30);
       Script_PlaySong(SE_BOSS_ROAR);
-      ObjectMotion_SetVarCbAndRefresh(LOCALID_MANTICORE, 2);
+      ObjectMotion_SetVarCbAndRefresh(ACTOR_MANTICORE, 2);
       FieldScript_WaitFrames(20);
-      ObjectEvent_SetSpeed(LOCALID_MANTICORE, 0x28000, 0x14000);
-      ObjectEvent_WalkToAndWait(LOCALID_MANTICORE, 168, 104);
-      ObjectEvent_SetSpeed(LOCALID_MANTICORE, 0x8000, 0x4000);
-      ObjectEvent_WalkToAndWait(LOCALID_MANTICORE, 168, 92);
+      Actor_SetSpeed(ACTOR_MANTICORE, 0x28000, 0x14000);
+      Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 104);
+      Actor_SetSpeed(ACTOR_MANTICORE, 0x8000, 0x4000);
+      Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 92);
       *revealFrames = holdFrames;
       HeatGauge_SetHeld(0);
     }
@@ -1025,10 +1012,10 @@ s32 LamakanDesert_Initialize(void) {
 /// Unused: the Manticore walks back to its spot (168, 96) and settles. Nothing
 /// calls it.
 static UNUSED void Manticore_UnusedReturn(void) {
-  ObjectEvent_SetSpeed(LOCALID_MANTICORE, 0x8000, 0x4000);
-  Import_ObjectEventSetAnimation(LOCALID_MANTICORE, 1);
-  ObjectEvent_WalkToAndWait(LOCALID_MANTICORE, 168, 96);
-  Import_ObjectEventSetAnimation(LOCALID_MANTICORE, 2);
+  Actor_SetSpeed(ACTOR_MANTICORE, 0x8000, 0x4000);
+  Import_ActorSetAnimation(ACTOR_MANTICORE, 1);
+  Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 96);
+  Import_ActorSetAnimation(ACTOR_MANTICORE, 2);
 }
 
 /// Every frame: draws the heat gauge down the screen's left edge, 8 pixels
@@ -1305,11 +1292,11 @@ u32 gLamakanDesertExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ObjectEventTemplate gLamakanDesertObjectEventTemplatesOther[] = {
+struct ActorTemplate gLamakanDesertActorTemplatesOther[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gLamakanDesertEastObjectEventTemplates[] = {
+struct ActorTemplate gLamakanDesertEastActorTemplates[] = {
     { 0xc3, FLAG_LAMAKAN_MANTICORE_BEATEN, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xc1, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1317,7 +1304,7 @@ struct ObjectEventTemplate gLamakanDesertEastObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gLamakanDesertSmogObjectEventTemplates[] = {
+struct ActorTemplate gLamakanDesertSmogActorTemplates[] = {
     { 0xc3, FLAG_LAMAKAN_MANTICORE_BEATEN, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xc1, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1333,7 +1320,7 @@ struct ObjectEventTemplate gLamakanDesertSmogObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gLamakanDesertManticoreObjectEventTemplates[] = {
+struct ActorTemplate gLamakanDesertManticoreActorTemplates[] = {
     { 0xc3, FLAG_LAMAKAN_MANTICORE_BEATEN, MOVEMENT_TYPE_STAND,
         PIXELS(168), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xc1, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1360,8 +1347,8 @@ struct MapEvent gLamakanDesertEvents[] = {
     { MAP_EVENT_COORD, MB_LAMAKAN_DESERT_PIT, FLAG_DESERT_EVENT_RUNNING, EVENT_SCRIPT(LamakanDesert_FallIntoPit) },
     { MAP_EVENT_COORD, MB_LAMAKAN_DESERT_SLOPE, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_SlideDownDune) },
     { MAP_EVENT_COORD, 40, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_MeetManticore) },
-    { MAP_EVENT_TALK, LOCALID_MANTICORE, FLAG_LAMAKAN_MANTICORE_BEATEN, EVENT_SCRIPT(LamakanDesert_FightManticore) },
-    { MAP_EVENT_TALK, LOCALID_SMOG, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_TalkToSmog) },
+    { MAP_EVENT_TALK, ACTOR_MANTICORE, FLAG_LAMAKAN_MANTICORE_BEATEN, EVENT_SCRIPT(LamakanDesert_FightManticore) },
+    { MAP_EVENT_TALK, ACTOR_SMOG, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_TalkToSmog) },
     { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_LAMAKAN_DESERT_VULCAN_AXE, FIND_ITEM(ITEM_VULCAN_AXE) },
     { BG_EVENT(BG_EVENT_SILENT), 101, FLAG_LAMAKAN_DESERT_FIRST_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { BG_EVENT(BG_EVENT_CHEST), 102, FLAG_LAMAKAN_DESERT_LUCKY_PEPPER, FIND_ITEM(ITEM_LUCKY_PEPPER) },

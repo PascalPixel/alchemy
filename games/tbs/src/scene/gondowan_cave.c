@@ -15,12 +15,12 @@
 ///   cave's two halves, with a boulder for Lift and two chests.
 ///
 /// One exit table serves every map; the other getters choose by
-/// gSaveBlock.sceneId, Gondowan Passage's object event templates and map events
+/// gSaveBlock.sceneId, Gondowan Passage's actor templates and map events
 /// also by FLAG_BABI_SPOKE_AFTER_COLOSSO, and an empty set answers any other
 /// map number. Every map's event table carries GondowanCaveRiver's two chests.
 ///
 /// Gondowan Passage sets FLAG_RETREAT_BLOCKED on every entry. While Iodem
-/// travels with the party (FLAG_IODEM_FOLLOWING_PARTY) his object event is kept
+/// travels with the party (FLAG_IODEM_FOLLOWING_PARTY) his actor is kept
 /// out of sight; talking to him or walking up to him while he waits (coord
 /// event 11) makes him come along (EventScript_IodemRejoins), and until he has
 /// reached Babi Lighthouse (FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) turning back
@@ -33,7 +33,7 @@
 /// Both are kept in story flags, so the cave stays solved and Scene_Initialize
 /// puts them back: FLAG_GONDOWAN_CAVE_STUMP_MOVED once the stump has leapt in,
 /// and FLAG_GONDOWAN_CAVE_PILLAR_DROPPED once the pillar has gone in past
-/// column 42, shown from then on by LOCALID_DROPPED_PILLAR.
+/// column 42, shown from then on by ACTOR_DROPPED_PILLAR.
 ///
 /// Cell (107, 17) of the map grid is cell (43, 17) of layout layer 2,
 /// whose window starts 64 columns in: the crevice east of the pillar,
@@ -70,65 +70,65 @@
 #include "pushed_object.h"
 #include "field_effect.h"
 #include "text/msg_ids.h"
-#include "object_event.h"
+#include "actor.h"
 #include "fixed_math.h"
 #include "flags.h"
 #include "songs.h"
 
-/// Gondowan Passage's placed object events, numbered in the order of
-/// gGondowanPassageObjectEventTemplates and
-/// gGondowanPassageObjectEventTemplatesWithIodem from LOCALID_FIRST_PLACED: the
+/// Gondowan Passage's placed actors, numbered in the order of
+/// gGondowanPassageActorTemplates and
+/// gGondowanPassageActorTemplatesWithIodem from ACTOR_FIRST_PLACED: the
 /// soldiers who guard the bridge, and in the second table Iodem after them.
-enum GondowanPassageLocalId {
+enum GondowanPassageActorId {
   /// Asks whether the party will cross into Gondowan.
   /// ★ Named from the game: "Us? We're the soldiers who guard the bridge to
   /// Gondowan." (MsgGondowanCaveUsWereTheSoldiersWhoGuard)
-  LOCALID_FIRST_SOLDIER = LOCALID_FIRST_PLACED,
+  ACTOR_FIRST_SOLDIER = ACTOR_FIRST_PLACED,
   /// ★ Named from the game: "Us? We're the soldiers who guard the bridge to
   /// Gondowan." (MsgGondowanCaveUsWereTheSoldiersWhoGuard)
-  LOCALID_SECOND_SOLDIER,
+  ACTOR_SECOND_SOLDIER,
   /// Warns that the cave to the east leads nowhere.
   /// ★ Named from the game: "Us? We're the soldiers who guard the bridge to
   /// Gondowan." (MsgGondowanCaveUsWereTheSoldiersWhoGuard)
-  LOCALID_THIRD_SOLDIER,
+  ACTOR_THIRD_SOLDIER,
   /// Waits for the party once Babi has spoken after Colosso.
   /// ★ Named from the game: "Why would Iodem choose to wait for us"
   /// (MsgGondowanCaveWhyWouldIodemChooseToWait)
-  LOCALID_IODEM
+  ACTOR_IODEM
 };
 
-/// GondowanCaveRiver's placed object event, the one row of
-/// gGondowanCaveRiverObjectEventTemplates that a map event names.
-enum GondowanCaveRiverLocalId {
+/// GondowanCaveRiver's placed actor, the one row of
+/// gGondowanCaveRiverActorTemplates that a map event names.
+enum GondowanCaveRiverActorId {
   /// Raised by Lift.
   /// ★ Named from what the player sees: a round grey boulder by the river
   /// (its render)
-  LOCALID_RIVER_BOULDER = LOCALID_FIRST_PLACED
+  ACTOR_RIVER_BOULDER = ACTOR_FIRST_PLACED
 };
 
-/// GondowanCave's placed object events, numbered in the order of
-/// gGondowanCaveObjectEventTemplates from LOCALID_FIRST_PLACED.
-enum GondowanCaveLocalId {
+/// GondowanCave's placed actors, numbered in the order of
+/// gGondowanCaveActorTemplates from ACTOR_FIRST_PLACED.
+enum GondowanCaveActorId {
   /// Moved with Move, in the sprite of the Goma Cave stump.
   /// ★ Named from the game: "that stump" (MsgGomaNoUsePsynergy)
-  LOCALID_STUMP = LOCALID_FIRST_PLACED,
+  ACTOR_STUMP = ACTOR_FIRST_PLACED,
   /// Pushed or moved with Move, in the sprite the stone pillars of other maps
   /// use (crossbone_isle_stepping_stones.c).
   /// ★ Named from what the player sees: a tall tan stone pillar standing on
   /// the cave floor (its render)
-  LOCALID_PILLAR,
+  ACTOR_PILLAR,
   /// Stands in for the pillar once it has dropped in; out of sight at first.
   /// It is drawn in the stump's sprite, splashing in (STUMP_ANIMATION_SPLASH)
   /// and
   /// on later visits afloat (STUMP_ANIMATION_SINK).
   /// ★ Named from what the player sees: the pillar's top in the water, after
   /// the splash it drops in with (its render)
-  LOCALID_DROPPED_PILLAR,
+  ACTOR_DROPPED_PILLAR,
   /// Raised by Lift.
   /// ★ Named from what the player sees: a round boulder in the cave passage,
   /// which floats up under Lift (its render)
-  LOCALID_BOULDER,
-  /// An invisible object event (SPRITE_BLANK, its shadow turned off) 16 pixels
+  ACTOR_BOULDER,
+  /// An invisible actor (SPRITE_BLANK, its shadow turned off) 16 pixels
   /// west
   /// of the boulder. It fills the gap between the boulder and the passage's
   /// west wall, so the boulder blocks the passage until Lift takes both away
@@ -136,19 +136,19 @@ enum GondowanCaveLocalId {
   /// the gap).
   /// ★ Named from what the player sees: the open-looking gap between the
   /// boulder and the passage's west wall, map-4.png (its render)
-  LOCALID_BOULDER_GAP
+  ACTOR_BOULDER_GAP
 };
 
 // The leap script also runs after the shared pushed object movement.
 static void EventScript_MovePillar(void);
-static void GondowanCave_RunSpinningLeap(s32 localId);
+static void GondowanCave_RunSpinningLeap(s32 actorId);
 
 // Shared effect routines retain their position before the map's scripts.
 #include "common/effect_create.h"
 
 // Particle and movable-object routines precede this map's entry points.
 #include "common/effect_spawn.h"
-#include "common/object_staged_object_event.h"
+#include "common/object_staged_actor.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
@@ -175,22 +175,22 @@ const u32 *Scene_GetExits(void) { return gGondowanCaveExits; }
 
 /// Iodem waits in Gondowan Passage once Babi has spoken to the party after
 /// Colosso.
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+const struct ActorTemplate *Scene_GetActorTemplates(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_GondowanPassage) {
     if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
-      return gGondowanPassageObjectEventTemplatesWithIodem;
+      return gGondowanPassageActorTemplatesWithIodem;
     }
-    return gGondowanPassageObjectEventTemplates;
+    return gGondowanPassageActorTemplates;
   }
   if (sceneId == (s32)&SceneId_GondowanCaveRiver) {
-    return gGondowanCaveRiverObjectEventTemplates;
+    return gGondowanCaveRiverActorTemplates;
   }
   if (sceneId == (s32)&SceneId_GondowanCave) {
-    return gGondowanCaveObjectEventTemplates;
+    return gGondowanCaveActorTemplates;
   }
-  return gGondowanCaveObjectEventTemplatesOther;
+  return gGondowanCaveActorTemplatesOther;
 }
 
 /// The map events of each map, with Iodem's in Gondowan Passage when he is
@@ -218,52 +218,52 @@ const struct MapEvent *Scene_GetEvents(void) {
 /// going back. Yes: he waits here for the party's return. No: he rejoins the
 /// party and Isaac steps away from the coord event.
 static void EventScript_IodemAsksWhyTurningBack(void) {
-  struct ObjectEvent *leader;
+  struct Actor *leader;
 
   if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) == 0 &&
       Script_GetFlag(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
     FieldScript_Start();
     // Bring Iodem out of the party before opening his question.
-    ObjectMotion_SetSpeedParameters(LOCALID_IODEM, PIXELS(1), PIXELS(1) / 2);
-    leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+    ObjectMotion_SetSpeedParameters(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
-      ObjectEvent_SetPosition(LOCALID_IODEM, leader->x.fixed, leader->z.fixed);
+      Actor_SetPosition(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
     }
-    ObjectMotion_OffsetPositionAndResetMotion(LOCALID_IODEM, -8, 16);
-    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IODEM);
-    ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTH + FACING_STEP, 0);
+    ObjectMotion_OffsetPositionAndResetMotion(ACTOR_IODEM, -8, 16);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IODEM);
+    Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 0);
     FieldScript_WaitFrames(10);
-    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_IODEM, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
     FieldScript_SetMessageId(MsgKaragolWhyGoingBackIsaacDo);
-    Script_OpenMessage(LOCALID_IODEM, 0);
-    if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+    Script_OpenMessage(ACTOR_IODEM, 0);
+    if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
       // "I see... In that case, I shall wait here for you to return." The
       // saved place becomes Tolbi's.
-      Script_ShowMessage(LOCALID_IODEM, 0);
-      ObjectEvent_WalkTo(LOCALID_IODEM, 152, 232);
+      Script_ShowMessage(ACTOR_IODEM, 0);
+      Actor_WalkTo(ACTOR_IODEM, 152, 232);
       Script_ClearFlag(FLAG_IODEM_FOLLOWING_PARTY);
-      ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IODEM);
-      Import_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_STAND);
+      ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IODEM);
+      Import_ActorSetAnimation(ACTOR_IODEM, ANIM_STAND);
       gSaveBlock.restartScene = (s32)&SceneId_StuccoRoomsB;
       gSaveBlock.restartEntrance = STUCCO_ROOMS_B_SANCTUM_NORTH;
     } else {
       // "Then we should continue on our way to the lighthouse." He rejoins
       // the party, and Isaac steps away from the coord event.
       gFieldWork->message += 1;
-      Script_ShowMessage(LOCALID_IODEM, 0);
-      Import_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_WALK);
-      leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+      Script_ShowMessage(ACTOR_IODEM, 0);
+      Import_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
+      leader = Actor_Get(ACTOR_PARTY_LEADER);
       if (leader != 0) {
-        ObjectEvent_SetDestination(LOCALID_IODEM, leader->x.part.pixel,
-                                   leader->z.part.pixel);
+        Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
+                             leader->z.part.pixel);
       }
-      ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IODEM);
-      ObjectEvent_SetPosition(LOCALID_IODEM, PIXELS(0), PIXELS(0));
+      ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IODEM);
+      Actor_SetPosition(ACTOR_IODEM, PIXELS(0), PIXELS(0));
       FieldScript_WaitFrames(30);
-      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
-      ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, 0, 16);
-      ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+      Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+      ObjectMotion_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0, 16);
+      ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+      Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
     }
     FieldScript_End();
   }
@@ -275,23 +275,23 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
 /// Babi Lighthouse soon.`
 static void EventScript_IodemRejoins(void) {
   FieldScript_Start();
-  ObjectMotion_SetAngleToward(LOCALID_IODEM, LOCALID_PARTY_LEADER, 0);
-  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_IODEM, 0);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  ObjectMotion_SetAngleToward(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);
+  ObjectMotion_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldScript_WaitFrames(10);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_IODEM, 0);
+  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
   FieldScript_SetMessageId(MsgKaragolIveBeenWaitingForIsaac);
-  FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
-  Import_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_WALK);
+  FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Import_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
   {
-    struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+    struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
 
     if (leader != 0)
-      ObjectMotion_ResetAndSetPosition(LOCALID_IODEM, leader->x.part.pixel,
+      ObjectMotion_ResetAndSetPosition(ACTOR_IODEM, leader->x.part.pixel,
                                        leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IODEM);
-  Import_ObjectEventSetPosition(LOCALID_IODEM, 0, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IODEM);
+  Import_ActorSetPosition(ACTOR_IODEM, 0, 0);
   FieldScript_WaitFrames(20);
   GameFlag_Set(FLAG_IODEM_FOLLOWING_PARTY);
   FieldScript_End();
@@ -308,18 +308,18 @@ static void EventScript_SoldierAsksAboutCrossing(void) {
 
   firstMessage = MsgKaragolDoYouWishCrossInto;
   FieldScript_SetMessageId(firstMessage);
-  FieldMessage_ShowAtObject(LOCALID_FIRST_SOLDIER, 0);
-  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+  FieldMessage_ShowAtObject(ACTOR_FIRST_SOLDIER, 0);
+  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) == 0) {
         // The shorter answer, without the advice to watch Colosso.
         FieldScript_SetMessageId(firstMessage + 8);
       }
     }
-    FieldScript_ShowMessageAndWait(LOCALID_FIRST_SOLDIER, 0);
+    FieldScript_ShowMessageAndWait(ACTOR_FIRST_SOLDIER, 0);
   } else {
     gFieldWork->message++;
-    FieldScript_ShowMessageAndWait(LOCALID_FIRST_SOLDIER, 0);
+    FieldScript_ShowMessageAndWait(ACTOR_FIRST_SOLDIER, 0);
   }
 }
 
@@ -333,7 +333,7 @@ static void EventScript_ReadSoldierMind(void) {
     FieldScript_SetMessageId(MsgKaragolWeMissedColossoBecauseWe);
   else
     FieldScript_SetMessageId(MsgKaragolWarriorsHaveBeenFightingWhile);
-  FieldScript_ShowMessageAndWait(LOCALID_SECOND_SOLDIER, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_SECOND_SOLDIER, 0);
 }
 
 /// Leaving GondowanCave by GONDOWAN_CAVE_TO_WORLD_MAP_EAST (exit 1),
@@ -369,13 +369,13 @@ static void EventScript_JumpAcross(void) { Field_TryJumpForward(); }
 /// Move on the stump in GondowanCave, until it has leapt: from column 30 or
 /// less it spins and leaps into the water, freeing the cell where it stood.
 static void EventScript_MoveStump(void) {
-  ObjectEvent_GetById(LOCALID_STUMP);
+  Actor_GetById(ACTOR_STUMP);
   FieldScript_Start();
   {
-    struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_STUMP);
+    struct Actor *actor = Actor_GetById(ACTOR_STUMP);
 
-    if ((objectEvent->x.fixed >> 20) <= 30) {
-      GondowanCave_RunSpinningLeap(LOCALID_STUMP);
+    if ((actor->x.fixed >> 20) <= 30) {
+      GondowanCave_RunSpinningLeap(ACTOR_STUMP);
       MapGrid_CopyCellAttributes(29, 19, 1, 1, 27, 19);
       GameFlag_Set(FLAG_GONDOWAN_CAVE_STUMP_MOVED);
     }
@@ -390,19 +390,19 @@ static void EventScript_PushPillar(void) {
   EventScript_MovePillar();
 }
 
-/// Hides the pillar and shows the object event that stands in for it in its
+/// Hides the pillar and shows the actor that stands in for it in its
 /// place.
 static inline void GondowanCave_PlaceDroppedPillar(s32 animation) {
-  ObjectEvent_SetPosition(LOCALID_PILLAR, PIXELS(0), PIXELS(0));
-  ObjectEvent_SetPosition(LOCALID_DROPPED_PILLAR, PIXELS(696), PIXELS(288));
-  Import_ObjectEventSetAnimation(LOCALID_DROPPED_PILLAR, animation);
+  Actor_SetPosition(ACTOR_PILLAR, PIXELS(0), PIXELS(0));
+  Actor_SetPosition(ACTOR_DROPPED_PILLAR, PIXELS(696), PIXELS(288));
+  Import_ActorSetAnimation(ACTOR_DROPPED_PILLAR, animation);
 }
 
 /// Move on the pillar in GondowanCave, and after each push: past column 42 it
 /// drops into the water with a splash, for good.
 static void EventScript_MovePillar(void) {
   FieldScript_Start();
-  if ((ObjectEvent_GetById(LOCALID_PILLAR)->x.fixed >> 20) > 42) {
+  if ((Actor_GetById(ACTOR_PILLAR)->x.fixed >> 20) > 42) {
     s32 destinationCellX = 107;
     s32 destinationCellZ = 17;
 
@@ -416,24 +416,22 @@ static void EventScript_MovePillar(void) {
   FieldScript_End();
 }
 
-static UNUSED void GondowanCave_UnusedObjectEventCallback(void) {}
+static UNUSED void GondowanCave_UnusedActorCallback(void) {}
 
 /// Rotates the sprite during the airborne part of the leap.
-static void
-GondowanCave_RotateLeapingObject(union ObjectEventOrEffect *fieldObject) {
-  fieldObject->objectEvent.sprite->rotation -= 0x400;
+static void GondowanCave_RotateLeapingObject(union ActorOrEffect *fieldObject) {
+  fieldObject->actor.sprite->rotation -= 0x400;
 }
 
-/// Waits at most forty frames for the object event to descend to the height
+/// Waits at most forty frames for the actor to descend to the height
 /// limit.
-static void GondowanCave_WaitForDescent(struct ObjectEvent *objectEvent,
-                                        s32 heightLimit) {
+static void GondowanCave_WaitForDescent(struct Actor *actor, s32 heightLimit) {
   s32 framesRemaining = 40;
 
   while (framesRemaining != 0) {
     WaitFrames(1);
     framesRemaining--;
-    if (objectEvent->y.fixed <= heightLimit) {
+    if (actor->y.fixed <= heightLimit) {
       break;
     }
   }
@@ -441,31 +439,31 @@ static void GondowanCave_WaitForDescent(struct ObjectEvent *objectEvent,
 
 /// The object spins in place, leaps and lands with a shake and a ring of dust,
 /// then comes to rest a little further on.
-static void GondowanCave_RunSpinningLeap(s32 localId) {
-  struct ObjectEvent *objectEvent;
+static void GondowanCave_RunSpinningLeap(s32 actorId) {
+  struct Actor *actor;
   u32 stepIndex;
   struct Vector3 particleVelocity;
   s32 angle;
 
-  objectEvent = ObjectEvent_GetById(localId);
+  actor = Actor_GetById(actorId);
   // Wind up the spin while horizontal motion is disabled.
-  objectEvent->motionFlags = 0;
+  actor->motionFlags = 0;
   for (stepIndex = 0; stepIndex < 9; stepIndex++) {
     WaitFrames(1);
-    objectEvent->sprite->rotation -= 0x100;
-    objectEvent->x.fixed -= Trig_Cos(objectEvent->sprite->rotation) / 2;
-    objectEvent->targetX = OBJ_EVENT_NO_TARGET;
+    actor->sprite->rotation -= 0x100;
+    actor->x.fixed -= Trig_Cos(actor->sprite->rotation) / 2;
+    actor->targetX = ACTOR_NO_TARGET;
   }
-  objectEvent->update = GondowanCave_RotateLeapingObject;
+  actor->update = GondowanCave_RotateLeapingObject;
   // Continue spinning through the first jump.
   Sound_PlaySong(SE_WHOOSH);
-  ObjectEvent_SetSpeed(localId, PIXELS(2), PIXELS(1));
-  ObjectEvent_SetDestination(localId, 472, 288);
-  objectEvent->gravity = 4 * PIXELS(1) / 5;
-  objectEvent->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
-  objectEvent->layer = 0;
-  ObjectMotion_CommitCurrentPositionAndActivate(localId);
-  GondowanCave_WaitForDescent(objectEvent, PIXELS(32));
+  Actor_SetSpeed(actorId, PIXELS(2), PIXELS(1));
+  Actor_SetDestination(actorId, 472, 288);
+  actor->gravity = 4 * PIXELS(1) / 5;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  actor->layer = 0;
+  ObjectMotion_CommitCurrentPositionAndActivate(actorId);
+  GondowanCave_WaitForDescent(actor, PIXELS(32));
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   // Emit a complete particle fan, including its closing direction.
@@ -476,41 +474,41 @@ static void GondowanCave_RunSpinningLeap(s32 localId) {
     particleVelocity.z = Trig_Sin(angle);
     particleVelocity.x -= particleVelocity.x / 4;
     particleVelocity.z -= particleVelocity.z / 2;
-    FieldEffect_Spawn(objectEvent->x.fixed, objectEvent->y.fixed,
-                      objectEvent->z.fixed, particleVelocity.x,
-                      particleVelocity.y, particleVelocity.z, 0, 0);
+    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
+                      particleVelocity.x, particleVelocity.y,
+                      particleVelocity.z, 0, 0);
   }
-  ObjectEvent_SetDestination(localId, 440, 308);
+  Actor_SetDestination(actorId, 440, 308);
   // Finish the second movement before restoring the resting animation.
-  ObjectMotion_CommitCurrentPositionAndActivate(localId);
-  GondowanCave_WaitForDescent(objectEvent, PIXELS(32));
-  objectEvent->update = 0;
-  objectEvent->sprite->rotation = 0x1000;
+  ObjectMotion_CommitCurrentPositionAndActivate(actorId);
+  GondowanCave_WaitForDescent(actor, PIXELS(32));
+  actor->update = 0;
+  actor->sprite->rotation = 0x1000;
   Sound_PlaySong(SE_CAST);
-  Import_ObjectEventSetAnimation(localId, STUMP_ANIMATION_SPLASH);
+  Import_ActorSetAnimation(actorId, STUMP_ANIMATION_SPLASH);
   MapGrid_WaitForShakeToSettle();
   FieldScript_WaitFrames(10);
-  Import_ObjectEventSetAnimation(localId, STUMP_ANIMATION_SINK);
+  Import_ActorSetAnimation(actorId, STUMP_ANIMATION_SINK);
 }
 
 static UNUSED void GondowanCave_UnusedMapCallback(void) {}
 
 /// Lift on the boulder in GondowanCave also takes away the
-/// invisible object event beside it.
+/// invisible actor beside it.
 static void EventScript_LiftBoulder(void) {
-  Import_ObjectEventSetPosition(LOCALID_BOULDER_GAP, 0, 0);
+  Import_ActorSetPosition(ACTOR_BOULDER_GAP, 0, 0);
 }
 
 /// Sets up the map as the party enters. Gondowan Passage blocks Retreat and
 /// keeps Iodem out of sight while he travels with the party; Gondowan Cave's
 /// GondowanCave puts the stump and the pillar where the party left them.
 s32 Scene_Initialize(void) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
 
   if (gSaveBlock.sceneId == (s32)&SceneId_GondowanPassage) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     if (GameFlag_Get(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
-      ObjectEvent_SetPosition(LOCALID_IODEM, PIXELS(0), PIXELS(0));
+      Actor_SetPosition(ACTOR_IODEM, PIXELS(0), PIXELS(0));
     }
   }
   if (gSaveBlock.sceneId == (s32)&SceneId_GondowanCave) {
@@ -520,15 +518,15 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(108, 17, 1, 1, 107, 17);
     }
     if (GameFlag_Get(FLAG_GONDOWAN_CAVE_STUMP_MOVED) != 0) {
-      ObjectEvent_SetPosition(LOCALID_STUMP, PIXELS(440), PIXELS(308));
-      Import_ObjectEventSetAnimation(LOCALID_STUMP, STUMP_ANIMATION_SINK);
+      Actor_SetPosition(ACTOR_STUMP, PIXELS(440), PIXELS(308));
+      Import_ActorSetAnimation(ACTOR_STUMP, STUMP_ANIMATION_SINK);
       MapGrid_CopyCellAttributes(29, 19, 1, 1, 27, 19);
     }
     if (GameFlag_Get(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED) != 0) {
       GondowanCave_PlaceDroppedPillar(STUMP_ANIMATION_SINK);
     }
-    objectEvent = ObjectEvent_Get(LOCALID_BOULDER_GAP);
-    ObjectEvent_SetSpriteFlags(objectEvent, 0);
+    actor = Actor_Get(ACTOR_BOULDER_GAP);
+    Actor_SetSpriteFlags(actor, 0);
   }
   return 0;
 }
@@ -629,11 +627,11 @@ u32 gGondowanCaveExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ObjectEventTemplate gGondowanCaveObjectEventTemplatesOther[] = {
+struct ActorTemplate gGondowanCaveActorTemplatesOther[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gGondowanPassageObjectEventTemplates[] = {
+struct ActorTemplate gGondowanPassageActorTemplates[] = {
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(144), 0, PIXELS(168), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -643,7 +641,7 @@ struct ObjectEventTemplate gGondowanPassageObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gGondowanPassageObjectEventTemplatesWithIodem[] = {
+struct ActorTemplate gGondowanPassageActorTemplatesWithIodem[] = {
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(104), 0, PIXELS(136), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -656,7 +654,7 @@ struct ObjectEventTemplate gGondowanPassageObjectEventTemplatesWithIodem[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gGondowanCaveRiverObjectEventTemplates[] = {
+struct ActorTemplate gGondowanCaveRiverActorTemplates[] = {
     { SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(504), 0, PIXELS(624), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -666,7 +664,7 @@ struct ObjectEventTemplate gGondowanCaveRiverObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gGondowanCaveObjectEventTemplates[] = {
+struct ActorTemplate gGondowanCaveActorTemplates[] = {
     { SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(496), 0, PIXELS(304), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -687,12 +685,12 @@ struct MapEvent gGondowanCaveEventsOther[] = {
 struct MapEvent gGondowanPassageEvents[] = {
     { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_NORTH },
     { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_SOUTH },
-    { MAP_EVENT_TALK, LOCALID_FIRST_SOLDIER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SoldierAsksAboutCrossing) },
-    { MAP_EVENT_TALK, LOCALID_SECOND_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveUsWereTheSoldiersWhoGuard) },
-    { MAP_EVENT_TALK, LOCALID_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEvenIfYouHeadEastYou) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FIRST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveThoseWhoGoToGondowanRarely) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SECOND_SOLDIER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadSoldierMind) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveYoudThinkYouCouldGetThrough) },
+    { MAP_EVENT_TALK, ACTOR_FIRST_SOLDIER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SoldierAsksAboutCrossing) },
+    { MAP_EVENT_TALK, ACTOR_SECOND_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveUsWereTheSoldiersWhoGuard) },
+    { MAP_EVENT_TALK, ACTOR_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEvenIfYouHeadEastYou) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveThoseWhoGoToGondowanRarely) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_SOLDIER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadSoldierMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveYoudThinkYouCouldGetThrough) },
     { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_GONDOWAN_CAVE_APPLE, FIND_ITEM(ITEM_APPLE) },
     { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_GONDOWAN_CAVE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { MAP_EVENTS_END },
@@ -703,14 +701,14 @@ struct MapEvent gGondowanPassageEventsWithIodem[] = {
     { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_SOUTH },
     { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IodemAsksWhyTurningBack) },
     { MAP_EVENT_COORD, 11, FLAG_IODEM_FOLLOWING_PARTY, EVENT_SCRIPT(EventScript_IodemRejoins) },
-    { MAP_EVENT_TALK, LOCALID_FIRST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWhyWouldIodemChooseToWait) },
-    { MAP_EVENT_TALK, LOCALID_SECOND_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWeHaventSeenAnybodyUnusualCrossing) },
-    { MAP_EVENT_TALK, LOCALID_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEvenIfYouGoEastFrom) },
-    { MAP_EVENT_TALK, LOCALID_IODEM, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IodemRejoins) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FIRST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveIodemIsGoingToBabiLighthouse) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SECOND_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveItsALotOfStressBut) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEveryoneComesDownThisWayWhen) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_IODEM, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWeHaveToHeadForThe) },
+    { MAP_EVENT_TALK, ACTOR_FIRST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWhyWouldIodemChooseToWait) },
+    { MAP_EVENT_TALK, ACTOR_SECOND_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWeHaventSeenAnybodyUnusualCrossing) },
+    { MAP_EVENT_TALK, ACTOR_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEvenIfYouGoEastFrom) },
+    { MAP_EVENT_TALK, ACTOR_IODEM, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IodemRejoins) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveIodemIsGoingToBabiLighthouse) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveItsALotOfStressBut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEveryoneComesDownThisWayWhen) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_IODEM, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWeHaveToHeadForThe) },
     { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_GONDOWAN_CAVE_APPLE, FIND_ITEM(ITEM_APPLE) },
     { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_GONDOWAN_CAVE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { MAP_EVENTS_END },
@@ -721,7 +719,7 @@ struct MapEvent gGondowanCaveRiverEvents[] = {
     { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_CAVE_RIVER_TO_BOULDER_PASSAGE },
     { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, GONDOWAN_CAVE_RIVER_BOULDER_PASSAGE_TO_RIVER },
     { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_SOUTH },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_LIFT), LOCALID_RIVER_BOULDER, CONDITION_ALWAYS, 0 },
+    { PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_RIVER_BOULDER, CONDITION_ALWAYS, 0 },
     { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_GONDOWAN_CAVE_APPLE, FIND_ITEM(ITEM_APPLE) },
     { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_GONDOWAN_CAVE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { MAP_EVENTS_END },
@@ -735,9 +733,9 @@ struct MapEvent gGondowanCaveEvents[] = {
     { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, GONDOWAN_CAVE_WEST_PASSAGE_TO_EAST_CAVE },
     { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_SOUTH },
     { MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_WORLD_MAP_WEST },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_LIFT), LOCALID_BOULDER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LiftBoulder) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_STUMP, FLAG_GONDOWAN_CAVE_STUMP_MOVED, EVENT_SCRIPT(EventScript_MoveStump) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_PILLAR, FLAG_SCENE_TEMP_05, EVENT_SCRIPT(EventScript_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_BOULDER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LiftBoulder) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GONDOWAN_CAVE_STUMP_MOVED, EVENT_SCRIPT(EventScript_MoveStump) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, FLAG_SCENE_TEMP_05, EVENT_SCRIPT(EventScript_MovePillar) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpAcross) },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpAcross) },
     { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 50, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },

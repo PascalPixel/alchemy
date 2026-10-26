@@ -19,26 +19,26 @@ enum WestLunpaCaveMetatileBehavior {
   MB_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE = 10
 };
 
-enum CaveLocalId {
+enum CaveActorId {
   /// Placed at (0, 0, 0), outside the cave's camera bounds, so the player
   /// never sees it (EventScript_UnusedFreezePuddle).
   /// ★ Named from what the player sees: SPRITE_PUDDLE, the small blue puddle
   /// the cave's other three show, map-1.png (its render)
-  LOCALID_UNUSED_PUDDLE = LOCALID_FIRST_PLACED,
+  ACTOR_UNUSED_PUDDLE = ACTOR_FIRST_PLACED,
   /// ★ Named from what the player sees: a small blue puddle in the cave's
   /// southwest end (its render)
-  LOCALID_SOUTH_PUDDLE,
+  ACTOR_SOUTH_PUDDLE,
   /// ★ Named from what the player sees: a small blue puddle at the foot of the
   /// gate (its render)
-  LOCALID_GATE_PUDDLE,
+  ACTOR_GATE_PUDDLE,
   /// ★ Named from what the player sees: a small blue puddle in the cave's
   /// north passage (its render)
-  LOCALID_NORTH_PUDDLE,
+  ACTOR_NORTH_PUDDLE,
   /// ★ Named from the game: "Then what should we do, Bunza?" (MsgLunpaBunza)
-  LOCALID_BUNZA,
+  ACTOR_BUNZA,
   /// ★ Named from the game: "So, Dodonpa never had any intention of releasing
   /// Hammet?" (MsgLunpaDodonpaNeverIntention)
-  LOCALID_HAMMET
+  ACTOR_HAMMET
 };
 
 enum { PUDDLE_ANIMATION_FROZEN = 5 };

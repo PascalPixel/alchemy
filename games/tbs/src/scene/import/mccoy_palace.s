@@ -16,11 +16,11 @@
 	.set import.FieldScript_End, 1
 	.set import.Scene_AssignViewFlags, 1
 	.set import.PartyInventory_GiveItem, 1
-	.set import.FieldScript_AskYesNoWithObjectEventAnimation, 1
-	.set import.ObjectEvent_GetById, 1
+	.set import.FieldScript_AskYesNoWithActorAnimation, 1
+	.set import.Actor_GetById, 1
 	.set import.ObjectMotion_SetSpeedParameters, 1
 	.set import.ObjectMotion_EnableActionAndSetCallback, 1
-	.set import.ObjectEvent_RefreshSelectorById, 1
+	.set import.Actor_RefreshSelectorById, 1
 	.set import.ObjectMotion_EnableActionAndResetMotion, 1
 	.set import.ObjectMotion_ResetAndSetPosition, 1
 	.set import.ObjectMotion_SetPositionAndCommit, 1
@@ -29,14 +29,14 @@
 	.set import.ObjectMotion_CenterOnColumn, 1
 	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
 	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
-	.set import.Import_ObjectEventSetPosition, 1
-	.set import.Import_ObjectEventSetAnimation, 1
+	.set import.Import_ActorSetPosition, 1
+	.set import.Import_ActorSetAnimation, 1
 	.set import.ObjectMotion_SetAnimationAndWait, 1
 	.set import.ObjectMotion_Launch, 1
 	.set import.ObjectMotion_SetVariantCallback, 1
 	.set import.ObjectMotion_SetVarCbAndRefresh, 1
 	.set import.ObjectMotion_SetAngleToward, 1
-	.set import.ObjectEvent_SetTargetAndCallback, 1
+	.set import.Actor_SetTargetAndCallback, 1
 	.set import.FieldScript_SetMessageId, 1
 	.set import.FieldMessage_ShowAtObject, 1
 	.set import.FieldScript_ShowMessageAndWait, 1

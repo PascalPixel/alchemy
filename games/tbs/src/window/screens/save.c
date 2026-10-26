@@ -185,7 +185,7 @@ u32 Save_BuildFileSummary(void) {
   }
   gSaveBlock.idleSleepEnabled = gIdleSleepEnabled;
 
-  leader = Unit_GetFar(gSaveBlock.leaderLocalId);
+  leader = Unit_GetFar(gSaveBlock.leaderActorId);
   destination = summary->name;
   source = leader->name;
   for (i = 11; i >= 0; i--)
@@ -253,7 +253,7 @@ u32 Save_BuildFileSummary(void) {
 /// gSaveSlot + SAVE_FILE_COUNT. Returns 0, gSaveSlot itself (-1) when no
 /// file is chosen, or a SAVE_ERROR_* after showing its message. Unlike
 /// Save_ToChosenFile it asks nothing and does not capture the object
-/// table first (Save_CaptureObjectEventsFar).
+/// table first (Save_CaptureActorsFar).
 s16 Save_WriteCurrentFile(void) {
   s16 file;
   s16 result;
@@ -1238,7 +1238,7 @@ s32 Save_ToChosenFile(void) {
         WaitFrames(1);
       }
       Save_BuildFileSummary();
-      Save_CaptureObjectEventsFar();
+      Save_CaptureActorsFar();
       error = Save_WriteRecord(file, gSaveBuffer);
       error |= Save_WriteRecord(file + SAVE_FILE_COUNT,
                                 gSaveBuffer + SAVE_RECORD_BYTES);

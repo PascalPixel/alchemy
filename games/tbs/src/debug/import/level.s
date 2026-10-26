@@ -29,11 +29,11 @@
 	.ifdef TBS_EDITION_JA
 	.set import.FieldScript_End, 1
 	.endif
-	.set import.ObjectEvent_GetById, 1
+	.set import.Actor_GetById, 1
 	.ifdef TBS_EDITION_JA
-	.set import.Import_ObjectEventSetPosition, 1
+	.set import.Import_ActorSetPosition, 1
 	.endif
-	.set import.Import_ObjectEventSetAnimation, 1
+	.set import.Import_ActorSetAnimation, 1
 	.ifdef TBS_EDITION_JA
 	.set import.ObjectMotion_WaitForAnimationChange, 1
 	.endif

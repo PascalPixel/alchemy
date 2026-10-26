@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-void *Colosso_FindObjectEventAhead(void);
+void *Colosso_FindActorAhead(void);
 
 #endif

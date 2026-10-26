@@ -7,14 +7,14 @@
 u8 *MainMenu_GetEntrances(void);
 s32 Scene_GetExitRegions(void);
 u8 *MainMenu_GetExits(void);
-u8 *MainMenu_GetObjectEventTemplates(void);
+u8 *MainMenu_GetActorTemplates(void);
 u8 *MainMenu_GetEvents(void);
 extern const u16 gMainMenu_CodeSequence[];
 extern const u16 gMainMenu_ExtraCodeSequence[];
 s32 MainMenu_Run(void);
 extern struct SceneEntrance gMainMenu_Entrances[];
 extern u32 gMainMenu_Exits[];
-extern struct ObjectEventTemplate gMainMenu_ObjectEventTemplates[];
+extern struct ActorTemplate gMainMenu_ActorTemplates[];
 extern struct MapEvent gMainMenu_Events[];
 extern s16 gMainMenu_BlendFrame;
 extern s16 gMainMenu_CodeUnlocked;

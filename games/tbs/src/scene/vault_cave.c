@@ -33,13 +33,13 @@
 ///   and its changed cells. The room's chest is a mimic (FIND_MIMIC, slot 3 of
 ///   ENCOUNTER_ZONE_MIMIC).
 /// - Vault Cave (SceneId_VaultCaveVambrace). In its southern room a pillar
-///   (LOCALID_SOUTHERN_PILLAR) goes onto its switch by pushing
+///   (ACTOR_SOUTHERN_PILLAR) goes onto its switch by pushing
 ///   (EventScript_PushSouthernPillar) or Move (EventScript_MoveSouthernPillar);
 ///   once it rests there the puzzle chime plays and the switch opens the way
 ///   (FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH). In the puddle room, six drops of
-///   water (LOCALID_FIRST_WATER_DROP and the five after it) fall at random, one
-///   every 64 frames, over six puddles (LOCALID_WEST_UPPER_PUDDLE to
-///   LOCALID_FAR_EAST_PUDDLE) that Frost freezes. A frozen puddle changes its
+///   water (ACTOR_FIRST_WATER_DROP and the five after it) fall at random, one
+///   every 64 frames, over six puddles (ACTOR_WEST_UPPER_PUDDLE to
+///   ACTOR_FAR_EAST_PUDDLE) that Frost freezes. A frozen puddle changes its
 ///   map cell, and a drop falling onto it stops 32 pixels up instead of
 ///   reaching the floor (VaultCave_UpdateFrostControlledFallingObjects); while
 ///   the leader is 16 pixels or more above the floor, the puddles are drawn
@@ -47,13 +47,13 @@
 ///   FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN to
 ///   FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN, read by index, and the room's
 ///   entry code freezes again every puddle whose flag is set. Whirlwind blows
-///   away ivy (LOCALID_IVY) for as long as the party stays in the cave
+///   away ivy (ACTOR_IVY) for as long as the party stays in the cave
 ///   (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY, an area flag). A chest holds the
 ///   Vambrace.
 /// - Vault Cave (SceneId_VaultCaveMouth). In its northern room four water drops
-///   (LOCALID_FIRST_TIMED_WATER_DROP and the three after it) fall on a fixed
+///   (ACTOR_FIRST_TIMED_WATER_DROP and the three after it) fall on a fixed
 ///   schedule (gVaultCave_ScheduleFrames) while the party pushes or Moves a
-///   pillar (LOCALID_NORTHERN_PILLAR) onto its switch
+///   pillar (ACTOR_NORTHERN_PILLAR) onto its switch
 ///   (FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH). A water drop that lands on that
 ///   pillar marks it struck (FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK,
 ///   SE_DUST_PUFF), and a struck pillar no longer opens the switch until the
@@ -62,7 +62,7 @@
 ///
 /// Each room has a door that only says it is locked
 /// (EventScript_ShowLockedDoor). The pushes share VaultCave_PushPillarAhead,
-/// which moves the pillar the leader faces one cell unless another object event
+/// which moves the pillar the leader faces one cell unless another actor
 /// or the terrain is in the way, and the water drops run as map callbacks
 /// started by Scene_Initialize.
 
@@ -105,7 +105,7 @@
 static void VaultCave_ApplySouthernSwitchCells(void);
 static void VaultCave_UseUnderfootFrostPriorities(void);
 static void VaultCave_UseAutomaticFrostPriorities(void);
-static void VaultCave_SpawnPuffs(struct ObjectEvent *source);
+static void VaultCave_SpawnPuffs(struct Actor *source);
 
 #include "io_write_queue.h"
 
@@ -159,26 +159,26 @@ enum {
   FLAG_VAULT_CAVE_IVY_BLOWN_AWAY = FLAG_AREA_TEMP_00
 };
 
-/// The object events of SceneId_VaultCaveVambrace, numbering the rows of
-/// gVaultCaveVambrace_ObjectEventTemplates.
-enum VaultCaveVambraceLocalId {
-  /// A pillar, drawn as LOCALID_SOUTHERN_PILLAR is, two cells east of the
+/// The actors of SceneId_VaultCaveVambrace, numbering the rows of
+/// gVaultCaveVambrace_ActorTemplates.
+enum VaultCaveVambraceActorId {
+  /// A pillar, drawn as ACTOR_SOUTHERN_PILLAR is, two cells east of the
   /// southern switch, drawn underfoot when the party arrives by
   /// VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTH or
   /// VAULT_CAVE_VAMBRACE_SOUTH_FROM_FROST_ROOM.
   /// ★ Named from what the player sees: a pink stone pillar with a flame
   /// burning on top (its render)
-  LOCALID_PILLAR_EAST_OF_SOUTHERN_SWITCH = LOCALID_FIRST_PLACED,
+  ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH = ACTOR_FIRST_PLACED,
   /// Pushed or Moved onto the southern switch, map cell (15, 54).
   /// ★ Named from what the player sees: a pink stone pillar with a flame
   /// burning on top, beside the switch marked with a flame (its render)
-  LOCALID_SOUTHERN_PILLAR,
+  ACTOR_SOUTHERN_PILLAR,
   /// The first of six water drops (in the sprite VaultCave_SpawnPuffs also
   /// uses for the puffs where one lands) that fall at random, one every 64
   /// frames (VaultCave_UpdateFrostControlledFallingObjects).
   /// ★ Named from what the player sees: blue drops of water above the puddles
   /// (its render)
-  LOCALID_FIRST_WATER_DROP,
+  ACTOR_FIRST_WATER_DROP,
   /// The six puddles under the water drops, in their order and in the order of
   /// their flags (FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN to
   /// FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN). Drawn as the puddle that Frost
@@ -186,51 +186,51 @@ enum VaultCaveVambraceLocalId {
   /// water drop 32 pixels up.
   /// ★ Named from what the player sees: six blue puddles on the cave floor,
   /// each under a drop of water (its render)
-  LOCALID_WEST_UPPER_PUDDLE = LOCALID_FIRST_WATER_DROP + 6,
+  ACTOR_WEST_UPPER_PUDDLE = ACTOR_FIRST_WATER_DROP + 6,
   /// ★ Named from what the player sees: the western puddle of the lower row
   /// (its render)
-  LOCALID_WEST_LOWER_PUDDLE,
+  ACTOR_WEST_LOWER_PUDDLE,
   /// ★ Named from what the player sees: the lower row's puddle just east of it
   /// (its render)
-  LOCALID_INNER_WEST_LOWER_PUDDLE,
+  ACTOR_INNER_WEST_LOWER_PUDDLE,
   /// ★ Named from what the player sees: the eastern puddle of the upper row
   /// (its render)
-  LOCALID_EAST_UPPER_PUDDLE,
+  ACTOR_EAST_UPPER_PUDDLE,
   /// ★ Named from what the player sees: the eastern puddle of the lower row
   /// (its render)
-  LOCALID_EAST_LOWER_PUDDLE,
+  ACTOR_EAST_LOWER_PUDDLE,
   /// ★ Named from what the player sees: the easternmost puddle, between the
   /// rows (its render)
-  LOCALID_FAR_EAST_PUDDLE,
+  ACTOR_FAR_EAST_PUDDLE,
   /// Ivy (SPRITE_IVY), as in bilibin.c, drawn half as tall again, placed until
   /// Whirlwind blows it away (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY).
   /// ★ Named from what the player sees: leafy green ivy against the cave
   /// wall (its render)
-  LOCALID_IVY
+  ACTOR_IVY
 };
 
-/// The object events of SceneId_VaultCaveMouth, numbering the rows of
-/// gVaultCaveMouth_ObjectEventTemplates. The northern switch is map cell (16,
+/// The actors of SceneId_VaultCaveMouth, numbering the rows of
+/// gVaultCaveMouth_ActorTemplates. The northern switch is map cell (16,
 /// 12).
-enum VaultCaveMouthLocalId {
+enum VaultCaveMouthActorId {
   /// A pillar two cells east of the northern switch.
   /// ★ Named from what the player sees: a pink stone pillar with a flame
   /// burning on top (its render)
-  LOCALID_PILLAR_EAST_OF_NORTHERN_SWITCH = LOCALID_FIRST_PLACED,
+  ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH = ACTOR_FIRST_PLACED,
   /// A pillar two cells south of the northern switch, which Move leaves where
   /// it is (EventScript_IgnoreMove).
   /// ★ Named from what the player sees: a pink stone pillar, its flame out
   /// (its render)
-  LOCALID_PILLAR_SOUTH_OF_NORTHERN_SWITCH,
+  ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH,
   /// Pushed or Moved onto the northern switch.
   /// ★ Named from what the player sees: a pink stone pillar with a flame
   /// burning on top (its render)
-  LOCALID_NORTHERN_PILLAR,
+  ACTOR_NORTHERN_PILLAR,
   /// The first of four water drops, in the same sprite, that fall on a fixed
   /// schedule (VaultCave_UpdateTimedFallingObjects).
   /// ★ Named from what the player sees: blue drops of water on the cave floor
   /// (its render)
-  LOCALID_FIRST_TIMED_WATER_DROP
+  ACTOR_FIRST_TIMED_WATER_DROP
 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -269,53 +269,49 @@ const u32 *Scene_GetExits(void) {
 }
 
 /// Selects the pillars, water drops, puddles and ivy of the room.
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+const struct ActorTemplate *Scene_GetActorTemplates(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_VaultCavePassage) {
-    return gVaultCavePassage_ObjectEventTemplates;
+    return gVaultCavePassage_ActorTemplates;
   }
   if (sceneId == (s32)&SceneId_VaultCaveVambrace) {
-    return gVaultCaveVambrace_ObjectEventTemplates;
+    return gVaultCaveVambrace_ActorTemplates;
   }
   if (sceneId == (s32)&SceneId_VaultCaveMouth) {
-    return gVaultCaveMouth_ObjectEventTemplates;
+    return gVaultCaveMouth_ActorTemplates;
   }
-  return gVaultCave_FallbackObjectEventTemplates;
+  return gVaultCave_FallbackActorTemplates;
 }
 
-/// Finds a placed object event with collision enabled at the requested map
+/// Finds a placed actor with collision enabled at the requested map
 /// cell.
-static struct ObjectEvent *VaultCave_FindCollidableObjectEventAtCell(s32 column,
-                                                                     s32 row) {
-  // UB: map creation leaves unused object event slots NULL. The plain safe
+static struct Actor *VaultCave_FindCollidableActorAtCell(s32 column, s32 row) {
+  // UB: map creation leaves unused actor slots NULL. The plain safe
   // lookup adds four native bytes in EN; retain the original reads for
   // matching.
 #ifdef UBFIX
   struct FieldWork *work = gFieldWork;
-  u32 objectEventSlot;
+  u32 actorSlot;
 
-  for (objectEventSlot = LOCALID_FIRST_PLACED; objectEventSlot <= 65;
-       objectEventSlot++) {
-    struct ObjectEvent *objectEvent = work->objectEvents[objectEventSlot];
+  for (actorSlot = ACTOR_FIRST_PLACED; actorSlot <= 65; actorSlot++) {
+    struct Actor *actor = work->actors[actorSlot];
 
-    if (objectEvent != NULL && column == (objectEvent->x.fixed >> 20) &&
-        row == (objectEvent->z.fixed >> 20) &&
-        objectEvent->collisionFlags != 0) {
-      return objectEvent;
+    if (actor != NULL && column == (actor->x.fixed >> 20) &&
+        row == (actor->z.fixed >> 20) && actor->collisionFlags != 0) {
+      return actor;
     }
   }
 #else
   s32 **slots = (s32 **)((u8 *)gFieldWork + 0x14);
-  u32 objectEventSlot;
+  u32 actorSlot;
 
-  for (objectEventSlot = 8; objectEventSlot <= 65; objectEventSlot++) {
-    s32 *objectEventWords = slots[objectEventSlot];
+  for (actorSlot = 8; actorSlot <= 65; actorSlot++) {
+    s32 *actorWords = slots[actorSlot];
 
-    if (column == (objectEventWords[2] >> 20) &&
-        row == (objectEventWords[4] >> 20) &&
-        *((u8 *)objectEventWords + 0x59) != 0) {
-      return (struct ObjectEvent *)objectEventWords;
+    if (column == (actorWords[2] >> 20) && row == (actorWords[4] >> 20) &&
+        *((u8 *)actorWords + 0x59) != 0) {
+      return (struct Actor *)actorWords;
     }
   }
 #endif
@@ -340,13 +336,13 @@ struct DirectionSteps {
   (((struct DirectionSteps *)gVaultCave_DirectionSteps)->xz[heading])
 #endif
 
-/// Pushes the faced pillar one cell unless another object event or terrain
+/// Pushes the faced pillar one cell unless another actor or terrain
 /// blocks it.
 static void VaultCave_PushPillarAhead(void) {
-  struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
   s32 direction = leader->facing >> 12;
-  struct ObjectEvent *pillar;
-  struct ObjectEvent *beyond;
+  struct Actor *pillar;
+  struct Actor *beyond;
   struct FieldPosition destination;
   s32 fallingIndex;
   s32 column;
@@ -354,7 +350,7 @@ static void VaultCave_PushPillarAhead(void) {
 
   column = (leader->x.part.pixel + (DIRECTION_STEP(direction) >> 16)) >> 4;
   row = (leader->z.part.pixel + (s16)DIRECTION_STEP(direction)) >> 4;
-  pillar = VaultCave_FindCollidableObjectEventAtCell(column, row);
+  pillar = VaultCave_FindCollidableActorAtCell(column, row);
   // UB: the lookup may return NULL. The plain safe guard moves the null
   // branch ahead of the byte load in EN, so matching keeps its original order.
 #ifdef UBFIX
@@ -367,14 +363,13 @@ static void VaultCave_PushPillarAhead(void) {
   // SceneId_VaultCaveMouth's water drops are never pushed; in
   // SceneId_VaultCaveVambrace these slots hold water drops too.
   for (fallingIndex = 0; fallingIndex <= 3; fallingIndex++) {
-    if (pillar ==
-        ObjectEvent_GetById(fallingIndex + LOCALID_FIRST_TIMED_WATER_DROP)) {
+    if (pillar == Actor_GetById(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP)) {
       return;
     }
   }
   column = (pillar->x.part.pixel + (DIRECTION_STEP(direction) >> 16)) >> 4;
   row = (pillar->z.part.pixel + (s16)DIRECTION_STEP(direction)) >> 4;
-  beyond = VaultCave_FindCollidableObjectEventAtCell(column, row);
+  beyond = VaultCave_FindCollidableActorAtCell(column, row);
   if (beyond != 0 && (beyond->collisionFlags & 1)) {
     return;
   }
@@ -402,12 +397,12 @@ static void VaultCave_PushPillarAhead(void) {
   pillar->velocityZ = 0;
   leader->velocityX = 0;
   leader->velocityZ = 0;
-  leader->targetX = OBJ_EVENT_NO_TARGET;
-  leader->targetZ = OBJ_EVENT_NO_TARGET;
+  leader->targetX = ACTOR_NO_TARGET;
+  leader->targetZ = ACTOR_NO_TARGET;
   Object_SelectAnimation(leader, ANIM_STAND);
 }
 
-/// Whirlwind blows the ivy away. It is cast on LOCALID_IVY in the puddle room
+/// Whirlwind blows the ivy away. It is cast on ACTOR_IVY in the puddle room
 /// of SceneId_VaultCaveVambrace, and the ivy stays gone for as long as the
 /// party stays in the cave (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY is an area
 /// flag).
@@ -439,7 +434,7 @@ const struct MapEvent *Scene_GetEvents(void) {
 
 /// Tests the southern pillar's cell, rounding fixed coordinates toward zero.
 static s32 VaultCave_IsSouthernPillarOnSwitch(void) {
-  struct ObjectEvent *pillar = ObjectEvent_GetById(LOCALID_SOUTHERN_PILLAR);
+  struct Actor *pillar = Actor_GetById(ACTOR_SOUTHERN_PILLAR);
   s32 fixedZ = pillar->z.fixed;
   s32 fixedX;
   s32 row;
@@ -504,7 +499,7 @@ static void VaultCave_ApplyNorthernSwitchCells(void) {
 
 /// Tests the northern pillar's cell with the same signed-coordinate rounding.
 static s32 VaultCave_IsNorthernPillarOnSwitch(void) {
-  struct ObjectEvent *pillar = ObjectEvent_GetById(LOCALID_NORTHERN_PILLAR);
+  struct Actor *pillar = Actor_GetById(ACTOR_NORTHERN_PILLAR);
   s32 fixedZ = pillar->z.fixed;
   s32 fixedX;
   s32 row;
@@ -546,7 +541,7 @@ static void EventScript_PushNorthernPillar(void) {
 }
 
 /// In VaultCaveMouth's northern room, Move on
-/// LOCALID_PILLAR_SOUTH_OF_NORTHERN_SWITCH does nothing.
+/// ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH does nothing.
 static void EventScript_IgnoreMove(void) {}
 
 /// In VaultCaveMouth's northern room, Move on the northern pillar, with the
@@ -561,14 +556,14 @@ static void EventScript_MoveNorthernPillar(void) {
 static void EventScript_FreezeWestUpperPuddle(void) {
   // An ordinary shared Frost helper keeps the extents but saves r5-r7 instead
   // of r5 alone and changes the map-copy argument registers in native English.
-  struct ObjectEvent *target = ObjectEvent_GetById(LOCALID_WEST_UPPER_PUDDLE);
+  struct Actor *target = Actor_GetById(ACTOR_WEST_UPPER_PUDDLE);
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 23, 32);
 
   if (target != 0) {
 
-    ObjectEvent_GetById(LOCALID_WEST_UPPER_PUDDLE)->motionFlags = 0;
-    target->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
+    Actor_GetById(ACTOR_WEST_UPPER_PUDDLE)->motionFlags = 0;
+    target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
 
   GameFlag_Set(FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN);
@@ -577,14 +572,14 @@ static void EventScript_FreezeWestUpperPuddle(void) {
 /// In VaultCaveVambrace's puddle room, Frost on the lower western puddle, as on
 /// the upper one.
 static void EventScript_FreezeWestLowerPuddle(void) {
-  struct ObjectEvent *target = ObjectEvent_GetById(LOCALID_WEST_LOWER_PUDDLE);
+  struct Actor *target = Actor_GetById(ACTOR_WEST_LOWER_PUDDLE);
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 23, 34);
 
   if (target != 0) {
 
-    ObjectEvent_GetById(LOCALID_WEST_LOWER_PUDDLE)->motionFlags = 0;
-    target->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
+    Actor_GetById(ACTOR_WEST_LOWER_PUDDLE)->motionFlags = 0;
+    target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
 
   GameFlag_Set(FLAG_VAULT_CAVE_WEST_LOWER_PUDDLE_FROZEN);
@@ -592,15 +587,14 @@ static void EventScript_FreezeWestLowerPuddle(void) {
 
 /// In VaultCaveVambrace's puddle room, Frost on the inner lower western puddle.
 static void EventScript_FreezeInnerWestLowerPuddle(void) {
-  struct ObjectEvent *target =
-      ObjectEvent_GetById(LOCALID_INNER_WEST_LOWER_PUDDLE);
+  struct Actor *target = Actor_GetById(ACTOR_INNER_WEST_LOWER_PUDDLE);
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 24, 34);
 
   if (target != 0) {
 
-    ObjectEvent_GetById(LOCALID_INNER_WEST_LOWER_PUDDLE)->motionFlags = 0;
-    target->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
+    Actor_GetById(ACTOR_INNER_WEST_LOWER_PUDDLE)->motionFlags = 0;
+    target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
 
   GameFlag_Set(FLAG_VAULT_CAVE_INNER_WEST_LOWER_PUDDLE_FROZEN);
@@ -608,15 +602,15 @@ static void EventScript_FreezeInnerWestLowerPuddle(void) {
 
 /// In VaultCaveVambrace's puddle room, Frost on the upper eastern puddle.
 static void EventScript_FreezeEastUpperPuddle(void) {
-  struct ObjectEvent *target = ObjectEvent_GetById(LOCALID_EAST_UPPER_PUDDLE);
+  struct Actor *target = Actor_GetById(ACTOR_EAST_UPPER_PUDDLE);
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 26, 32);
 
   if (target != 0) {
-    ObjectEvent_SetSpriteFlags(target, 0);
+    Actor_SetSpriteFlags(target, 0);
 
-    ObjectEvent_GetById(LOCALID_EAST_UPPER_PUDDLE)->motionFlags = 0;
-    target->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
+    Actor_GetById(ACTOR_EAST_UPPER_PUDDLE)->motionFlags = 0;
+    target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
 
   GameFlag_Set(FLAG_VAULT_CAVE_EAST_UPPER_PUDDLE_FROZEN);
@@ -624,15 +618,15 @@ static void EventScript_FreezeEastUpperPuddle(void) {
 
 /// In VaultCaveVambrace's puddle room, Frost on the lower eastern puddle.
 static void EventScript_FreezeEastLowerPuddle(void) {
-  struct ObjectEvent *target = ObjectEvent_GetById(LOCALID_EAST_LOWER_PUDDLE);
+  struct Actor *target = Actor_GetById(ACTOR_EAST_LOWER_PUDDLE);
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 26, 34);
 
   if (target != 0) {
-    ObjectEvent_SetSpriteFlags(target, 0);
+    Actor_SetSpriteFlags(target, 0);
 
-    ObjectEvent_GetById(LOCALID_EAST_LOWER_PUDDLE)->motionFlags = 0;
-    target->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
+    Actor_GetById(ACTOR_EAST_LOWER_PUDDLE)->motionFlags = 0;
+    target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
 
   GameFlag_Set(FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN);
@@ -640,15 +634,15 @@ static void EventScript_FreezeEastLowerPuddle(void) {
 
 /// In VaultCaveVambrace's puddle room, Frost on the far eastern puddle.
 static void EventScript_FreezeFarEastPuddle(void) {
-  struct ObjectEvent *target = ObjectEvent_GetById(LOCALID_FAR_EAST_PUDDLE);
+  struct Actor *target = Actor_GetById(ACTOR_FAR_EAST_PUDDLE);
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 28, 33);
 
   if (target != 0) {
-    ObjectEvent_SetSpriteFlags(target, 0);
+    Actor_SetSpriteFlags(target, 0);
 
-    ObjectEvent_GetById(LOCALID_FAR_EAST_PUDDLE)->motionFlags = 0;
-    target->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
+    Actor_GetById(ACTOR_FAR_EAST_PUDDLE)->motionFlags = 0;
+    target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
 
   GameFlag_Set(FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN);
@@ -656,7 +650,7 @@ static void EventScript_FreezeFarEastPuddle(void) {
 
 /// Changes the puddles' draw priorities when the leader is above them.
 static void VaultCave_UpdatePuddlePriorities(void) {
-  struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
 
   if (leader->y.fixed >= PIXELS(16)) {
     VaultCave_UseUnderfootFrostPriorities();
@@ -668,28 +662,27 @@ static void VaultCave_UpdatePuddlePriorities(void) {
 /// Keeps all six puddles beneath the leader's feet.
 static void VaultCave_UseUnderfootFrostPriorities(void) {
   s32 targetIndex;
-  s32 objectEventSlot;
+  s32 actorSlot;
 
-  objectEventSlot = LOCALID_WEST_UPPER_PUDDLE;
+  actorSlot = ACTOR_WEST_UPPER_PUDDLE;
   for (targetIndex = 0; targetIndex < 6; targetIndex++) {
-    ObjectEvent_GetById(objectEventSlot)->priorityFlags |=
-        OBJ_EVENT_PRIORITY_UNDERFOOT;
-    objectEventSlot++;
+    Actor_GetById(actorSlot)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    actorSlot++;
   }
 }
 
 /// Restores automatic draw priority for the same six puddles.
 static void VaultCave_UseAutomaticFrostPriorities(void) {
-  s32 objectEventSlot = LOCALID_WEST_UPPER_PUDDLE;
-  s32 priority = OBJ_EVENT_PRIORITY_AUTOMATIC;
+  s32 actorSlot = ACTOR_WEST_UPPER_PUDDLE;
+  s32 priority = ACTOR_PRIORITY_AUTOMATIC;
   s32 remaining = 5;
 
   do {
-    struct ObjectEvent *target = ObjectEvent_GetById(objectEventSlot);
+    struct Actor *target = Actor_GetById(actorSlot);
 
     remaining--;
     target->priorityFlags = priority;
-    objectEventSlot++;
+    actorSlot++;
   } while (remaining >= 0);
 }
 
@@ -775,26 +768,26 @@ static void EventScript_FlipSwitch(void) {
 }
 
 /// Resets a low water drop sharing the subject's cell and reports a hit.
-static s32 VaultCave_ResetFallingObjectAtObjectEventCell(s32 subjectLocalId) {
-  struct ObjectEvent *subject = ObjectEvent_GetById(subjectLocalId);
+static s32 VaultCave_ResetFallingObjectAtActorCell(s32 subjectActorId) {
+  struct Actor *subject = Actor_GetById(subjectActorId);
   s32 fallingIndex = 0;
 
   do {
-    struct ObjectEvent *fallingObjectEvent =
-        ObjectEvent_GetById(fallingIndex + LOCALID_FIRST_TIMED_WATER_DROP);
+    struct Actor *fallingActor =
+        Actor_GetById(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP);
 
-    if ((u32)(fallingObjectEvent->y.fixed - 1) <= 0x000ffffe) {
-      s32 fallingRow = TILE(fallingObjectEvent->z.fixed);
-      s32 fallingColumn = TILE(fallingObjectEvent->x.fixed);
+    if ((u32)(fallingActor->y.fixed - 1) <= 0x000ffffe) {
+      s32 fallingRow = TILE(fallingActor->z.fixed);
+      s32 fallingColumn = TILE(fallingActor->x.fixed);
       s32 subjectRow = TILE(subject->z.fixed);
       s32 subjectColumn = TILE(subject->x.fixed);
       s32 zDelta = subjectRow - fallingRow;
       s32 xDelta = subjectColumn - fallingColumn;
 
       if (xDelta == 0 && zDelta == 0) {
-        fallingObjectEvent->y.fixed = PIXELS(255);
-        fallingObjectEvent->gravity = 0;
-        fallingObjectEvent->velocityY = 0;
+        fallingActor->y.fixed = PIXELS(255);
+        fallingActor->gravity = 0;
+        fallingActor->velocityY = 0;
         return 1;
       }
     }
@@ -808,43 +801,40 @@ static s32 VaultCave_ResetFallingObjectAtObjectEventCell(s32 subjectLocalId) {
 /// Drops four objects on a repeating schedule and handles their landings.
 static void VaultCave_UpdateTimedFallingObjects(void) {
   s32 fallingIndex;
-  struct ObjectEvent *fallingObjectEvent;
+  struct Actor *fallingActor;
   s32 paused;
   s32 scheduleIndex;
 
-  paused = ObjectEvent_GetById(LOCALID_NORTHERN_PILLAR)->paused;
+  paused = Actor_GetById(ACTOR_NORTHERN_PILLAR)->paused;
   if (paused == 0) {
     if (++gVaultCave_ScheduleTimer > 190) {
       gVaultCave_ScheduleTimer = 0;
     }
     scheduleIndex = gVaultCave_ScheduleIndex;
     if (gVaultCave_ScheduleFrames[scheduleIndex] == gVaultCave_ScheduleTimer) {
-      fallingObjectEvent =
-          ObjectEvent_Get((scheduleIndex + LOCALID_FIRST_TIMED_WATER_DROP));
-      fallingObjectEvent->gravity = 0xa3d;
+      fallingActor = Actor_Get((scheduleIndex + ACTOR_FIRST_TIMED_WATER_DROP));
+      fallingActor->gravity = 0xa3d;
       if (++gVaultCave_ScheduleIndex > 3) {
         gVaultCave_ScheduleIndex = 0;
       }
     }
     // Reset objects that have reached the floor and spawn their landing puffs.
     for (fallingIndex = 0; fallingIndex <= 3; fallingIndex++) {
-      fallingObjectEvent =
-          ObjectEvent_Get((fallingIndex + LOCALID_FIRST_TIMED_WATER_DROP));
-      if (fallingObjectEvent->velocityY >= 0) {
-        if (fallingObjectEvent->y.fixed <= 0xffff) {
-          VaultCave_SpawnPuffs(fallingObjectEvent);
-          fallingObjectEvent->y.fixed = PIXELS(255);
-          fallingObjectEvent->gravity = 0;
-          fallingObjectEvent->velocityY = 0;
-          fallingObjectEvent->paused = 0;
+      fallingActor = Actor_Get((fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP));
+      if (fallingActor->velocityY >= 0) {
+        if (fallingActor->y.fixed <= 0xffff) {
+          VaultCave_SpawnPuffs(fallingActor);
+          fallingActor->y.fixed = PIXELS(255);
+          fallingActor->gravity = 0;
+          fallingActor->velocityY = 0;
+          fallingActor->paused = 0;
           Script_PlaySong(SE_DRIP);
         }
       }
     }
     // A water drop landing on either movable pillar restarts at the top.
-    if (VaultCave_ResetFallingObjectAtObjectEventCell(
-            LOCALID_NORTHERN_PILLAR) != 0) {
-      Import_ObjectEventSetAnimation(LOCALID_NORTHERN_PILLAR, 1);
+    if (VaultCave_ResetFallingObjectAtActorCell(ACTOR_NORTHERN_PILLAR) != 0) {
+      Import_ActorSetAnimation(ACTOR_NORTHERN_PILLAR, 1);
       if (Script_GetFlag(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
         GameFlag_Set(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK);
         Script_PlaySong(SE_DUST_PUFF);
@@ -852,8 +842,8 @@ static void VaultCave_UpdateTimedFallingObjects(void) {
         Script_PlaySong(SE_DRIP);
       }
     }
-    if (VaultCave_ResetFallingObjectAtObjectEventCell(
-            LOCALID_PILLAR_SOUTH_OF_NORTHERN_SWITCH) != 0) {
+    if (VaultCave_ResetFallingObjectAtActorCell(
+            ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH) != 0) {
       Script_PlaySong(SE_DRIP);
     }
   }
@@ -864,110 +854,105 @@ static void VaultCave_UpdateTimedFallingObjects(void) {
 static void VaultCave_UpdateFrostControlledFallingObjects(void) {
 
   s32 fallingIndex;
-  struct ObjectEvent *fallingObjectEvent;
+  struct Actor *fallingActor;
   s32 stateValue;
   s32 *selectedIndex;
 
-  fallingObjectEvent = ObjectEvent_GetById(LOCALID_FIRST_WATER_DROP);
-  if (fallingObjectEvent->paused == 0) {
+  fallingActor = Actor_GetById(ACTOR_FIRST_WATER_DROP);
+  if (fallingActor->paused == 0) {
     // Preserve one random selection per 64 frames.
     if ((++gVaultCave_TickCounter & 63) == 0) {
       selectedIndex = &gVaultCave_TickValue;
       stateValue = Import_RandomNext();
       stateValue = Math_RemainderUnsigned(stateValue, 6);
       *selectedIndex = stateValue;
-      fallingObjectEvent =
-          ObjectEvent_GetById((stateValue + LOCALID_FIRST_WATER_DROP));
-      fallingObjectEvent->gravity = 0xa3d;
+      fallingActor = Actor_GetById((stateValue + ACTOR_FIRST_WATER_DROP));
+      fallingActor->gravity = 0xa3d;
     }
     // Each object's paired Frost flag selects its reset height.
     for (fallingIndex = 0; fallingIndex <= 5; fallingIndex++) {
-      fallingObjectEvent =
-          ObjectEvent_GetById((fallingIndex + LOCALID_FIRST_WATER_DROP));
+      fallingActor = Actor_GetById((fallingIndex + ACTOR_FIRST_WATER_DROP));
       stateValue = GameFlag_Get(
           (fallingIndex + FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN));
       if (stateValue != 0) {
-        if (fallingObjectEvent->velocityY <= 0) {
-          if (fallingObjectEvent->y.fixed > 0x20ffff) {
+        if (fallingActor->velocityY <= 0) {
+          if (fallingActor->y.fixed > 0x20ffff) {
             continue;
           }
         }
-        fallingObjectEvent->y.fixed = PIXELS(255);
-        fallingObjectEvent->gravity = 0;
-        fallingObjectEvent->velocityY = 0;
+        fallingActor->y.fixed = PIXELS(255);
+        fallingActor->gravity = 0;
+        fallingActor->velocityY = 0;
         Sound_PlaySong(SE_DRIP);
       } else {
-        if (fallingObjectEvent->velocityY <= 0) {
-          if (fallingObjectEvent->y.fixed > 0xffff) {
+        if (fallingActor->velocityY <= 0) {
+          if (fallingActor->y.fixed > 0xffff) {
             continue;
           }
         }
-        fallingObjectEvent->gravity = stateValue;
-        fallingObjectEvent->velocityY = stateValue;
-        fallingObjectEvent->y.fixed = PIXELS(255);
+        fallingActor->gravity = stateValue;
+        fallingActor->velocityY = stateValue;
+        fallingActor->y.fixed = PIXELS(255);
         Sound_PlaySong(SE_DRIP);
       }
     }
   }
 }
 
-/// Offsets an object event's current position by a polar displacement.
-static void VaultCave_OffsetObjectEventRadially(struct ObjectEvent *objectEvent,
-                                                s32 radius, s32 angle) {
+/// Offsets an actor's current position by a polar displacement.
+static void VaultCave_OffsetActorRadially(struct Actor *actor, s32 radius,
+                                          s32 angle) {
   s32 destination[3];
 
-  if (objectEvent == NULL) {
+  if (actor == NULL) {
     return;
   }
-  SET_VECTOR(destination, objectEvent->x.fixed, objectEvent->y.fixed,
-             objectEvent->z.fixed);
+  SET_VECTOR(destination, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   Vector_AddPolarOffset(radius, angle, destination);
-  Object_SetPosition(objectEvent, destination[0], destination[1],
-                     destination[2]);
+  Object_SetPosition(actor, destination[0], destination[1], destination[2]);
 }
 
 /// Spawns up to four short-lived puffs around a landing object.
-static void VaultCave_SpawnPuffs(struct ObjectEvent *source) {
-  struct ObjectEvent *puff;
+static void VaultCave_SpawnPuffs(struct Actor *source) {
+  struct Actor *puff;
   s32 puffIndex;
 
   for (puffIndex = 0; puffIndex < 4; puffIndex++) {
-    puff = ObjectEvent_Create(240, source->x.fixed, source->y.fixed,
-                              source->z.fixed);
+    puff = Actor_Create(240, source->x.fixed, source->y.fixed, source->z.fixed);
     if (puff == 0)
       break;
     puff->scaleY = 0x8ccc;
     puff->scaleX = 0x8ccc;
-    puff->motionFlags = OBJ_EVENT_FALLS;
+    puff->motionFlags = ACTOR_FALLS;
     puff->velocityY = -0x10000;
     puff->speed = Import_RandomNext() + 0xcccc;
     puff->collisionFlags = 1;
-    VaultCave_OffsetObjectEventRadially(puff, 0x200000, Import_RandomNext());
+    VaultCave_OffsetActorRadially(puff, 0x200000, Import_RandomNext());
     {
       u16 *timer = &puff->wait;
       s32 frames = 8;
 
       *timer = frames;
     }
-    ObjectEvent_SetScript(puff, gVaultCave_PuffScript);
+    Actor_SetScript(puff, gVaultCave_PuffScript);
   }
 }
 
 /// Initializes six water drops and starts their Frost-controlled updater.
 static void VaultCave_StartFrostControlledFalls(void) {
-  s32 objectEventSlot = LOCALID_FIRST_WATER_DROP;
+  s32 actorSlot = ACTOR_FIRST_WATER_DROP;
   s32 remaining = 5;
 
   do {
-    struct ObjectEvent *fallingObjectEvent;
+    struct Actor *fallingActor;
 
-    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(objectEventSlot), 0);
-    fallingObjectEvent = ObjectEvent_GetById(objectEventSlot);
-    fallingObjectEvent->bounce = 0x1999;
-    fallingObjectEvent->gravity = 0;
+    Actor_SetSpriteFlags(Actor_GetById(actorSlot), 0);
+    fallingActor = Actor_GetById(actorSlot);
+    fallingActor->bounce = 0x1999;
+    fallingActor->gravity = 0;
     remaining--;
-    fallingObjectEvent->y.fixed = PIXELS(255);
-    objectEventSlot++;
+    fallingActor->y.fixed = PIXELS(255);
+    actorSlot++;
   } while (remaining >= 0);
 
   FieldScheduler_AddCallback(VaultCave_UpdateFrostControlledFallingObjects,
@@ -976,29 +961,29 @@ static void VaultCave_StartFrostControlledFalls(void) {
 
 /// Initializes four water drops and starts their timed updater.
 static void VaultCave_StartTimedFalls(void) {
-  s32 objectEventSlot = LOCALID_FIRST_TIMED_WATER_DROP;
+  s32 actorSlot = ACTOR_FIRST_TIMED_WATER_DROP;
   s32 fallingIndex = 0;
 
   do {
-    struct ObjectEvent *fallingObjectEvent;
+    struct Actor *fallingActor;
 
-    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(objectEventSlot), 0);
-    fallingObjectEvent = ObjectEvent_GetById(objectEventSlot);
-    fallingObjectEvent->bounce = 0x1999;
-    fallingObjectEvent->gravity = 0;
-    fallingObjectEvent->y.fixed = PIXELS(255);
-    ObjectMotion_SetActionVariant(fallingIndex + LOCALID_FIRST_TIMED_WATER_DROP,
+    Actor_SetSpriteFlags(Actor_GetById(actorSlot), 0);
+    fallingActor = Actor_GetById(actorSlot);
+    fallingActor->bounce = 0x1999;
+    fallingActor->gravity = 0;
+    fallingActor->y.fixed = PIXELS(255);
+    ObjectMotion_SetActionVariant(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP,
                                   1);
     fallingIndex++;
-    objectEventSlot++;
+    actorSlot++;
   } while (fallingIndex <= 3);
 
   FieldScheduler_AddCallback(VaultCave_UpdateTimedFallingObjects,
                              TASK_PRIORITY_MAP);
 }
 
-/// Arriving in any room of Vault Cave: restores the room's puzzles and object
-/// events, then sets the Retreat destination, the foot of the ladder from
+/// Arriving in any room of Vault Cave: restores the room's puzzles and
+/// actors, then sets the Retreat destination, the foot of the ladder from
 /// Vault.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
@@ -1029,7 +1014,7 @@ s32 Scene_Initialize(void) {
   }
   if (gSaveBlock.sceneId == (s32)&SceneId_VaultCaveVambrace) {
     if (GameFlag_Get(FLAG_VAULT_CAVE_IVY_BLOWN_AWAY) == 0) {
-      ObjectEvent_GetById(LOCALID_IVY)->scaleY = 0x18000;
+      Actor_GetById(ACTOR_IVY)->scaleY = 0x18000;
     }
     switch (gSaveBlock.entrance) {
     case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH:
@@ -1048,27 +1033,27 @@ s32 Scene_Initialize(void) {
     case VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_CHEST:
       VaultCave_StartFrostControlledFalls();
       if (GameFlag_Get(FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN) != 0) {
-        Import_ObjectEventSetAnimation(LOCALID_WEST_UPPER_PUDDLE, 5);
+        Import_ActorSetAnimation(ACTOR_WEST_UPPER_PUDDLE, 5);
         EventScript_FreezeWestUpperPuddle();
       }
       if (GameFlag_Get(FLAG_VAULT_CAVE_WEST_LOWER_PUDDLE_FROZEN) != 0) {
-        Import_ObjectEventSetAnimation(LOCALID_WEST_LOWER_PUDDLE, 5);
+        Import_ActorSetAnimation(ACTOR_WEST_LOWER_PUDDLE, 5);
         EventScript_FreezeWestLowerPuddle();
       }
       if (GameFlag_Get(FLAG_VAULT_CAVE_INNER_WEST_LOWER_PUDDLE_FROZEN) != 0) {
-        Import_ObjectEventSetAnimation(LOCALID_INNER_WEST_LOWER_PUDDLE, 5);
+        Import_ActorSetAnimation(ACTOR_INNER_WEST_LOWER_PUDDLE, 5);
         EventScript_FreezeInnerWestLowerPuddle();
       }
       if (GameFlag_Get(FLAG_VAULT_CAVE_EAST_UPPER_PUDDLE_FROZEN) != 0) {
-        Import_ObjectEventSetAnimation(LOCALID_EAST_UPPER_PUDDLE, 5);
+        Import_ActorSetAnimation(ACTOR_EAST_UPPER_PUDDLE, 5);
         EventScript_FreezeEastUpperPuddle();
       }
       if (GameFlag_Get(FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN) != 0) {
-        Import_ObjectEventSetAnimation(LOCALID_EAST_LOWER_PUDDLE, 5);
+        Import_ActorSetAnimation(ACTOR_EAST_LOWER_PUDDLE, 5);
         EventScript_FreezeEastLowerPuddle();
       }
       if (GameFlag_Get(FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN) != 0) {
-        Import_ObjectEventSetAnimation(LOCALID_FAR_EAST_PUDDLE, 5);
+        Import_ActorSetAnimation(ACTOR_FAR_EAST_PUDDLE, 5);
         EventScript_FreezeFarEastPuddle();
       }
       FieldScheduler_AddCallback(VaultCave_UpdatePuddlePriorities,
@@ -1078,53 +1063,46 @@ s32 Scene_Initialize(void) {
     case VAULT_CAVE_VAMBRACE_SOUTH_FROM_FROST_ROOM:
       if (GameFlag_Get(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) != 0) {
         VaultCave_ApplySouthernSwitchCells();
-        ObjectEvent_SetPosition(LOCALID_SOUTHERN_PILLAR, PIXELS(248),
-                                PIXELS(876));
+        Actor_SetPosition(ACTOR_SOUTHERN_PILLAR, PIXELS(248), PIXELS(876));
       }
-      ObjectEvent_GetById(LOCALID_PILLAR_EAST_OF_SOUTHERN_SWITCH)
-          ->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
+      Actor_GetById(ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH)->priorityFlags =
+          ACTOR_PRIORITY_UNDERFOOT;
       break;
     }
-    Import_ObjectEventSetAnimation(LOCALID_PILLAR_EAST_OF_SOUTHERN_SWITCH, 2);
-    Import_ObjectEventSetAnimation(LOCALID_SOUTHERN_PILLAR, 2);
-    ObjectEvent_SetSpriteFlags(
-        ObjectEvent_GetById(LOCALID_PILLAR_EAST_OF_SOUTHERN_SWITCH), 0);
-    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SOUTHERN_PILLAR), 0);
-    ObjectEvent_GetById(LOCALID_SOUTHERN_PILLAR)->collisionFlags = 1;
+    Import_ActorSetAnimation(ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH, 2);
+    Import_ActorSetAnimation(ACTOR_SOUTHERN_PILLAR, 2);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH),
+                         0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_SOUTHERN_PILLAR), 0);
+    Actor_GetById(ACTOR_SOUTHERN_PILLAR)->collisionFlags = 1;
   }
   if (gSaveBlock.sceneId == (s32)&SceneId_VaultCaveMouth) {
-    Import_ObjectEventSetAnimation(LOCALID_PILLAR_EAST_OF_NORTHERN_SWITCH, 2);
+    Import_ActorSetAnimation(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH, 2);
     if (GameFlag_Get(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
-      Import_ObjectEventSetAnimation(LOCALID_NORTHERN_PILLAR, 2);
+      Import_ActorSetAnimation(ACTOR_NORTHERN_PILLAR, 2);
     }
-    ObjectEvent_SetSpriteFlags(
-        ObjectEvent_GetById(LOCALID_PILLAR_EAST_OF_NORTHERN_SWITCH), 0);
-    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_NORTHERN_PILLAR), 0);
-    ObjectEvent_SetSpriteFlags(
-        ObjectEvent_GetById(LOCALID_PILLAR_SOUTH_OF_NORTHERN_SWITCH), 0);
-    ObjectEvent_GetById(LOCALID_NORTHERN_PILLAR)->collisionFlags |= 0x80;
-    ObjectEvent_GetById(LOCALID_PILLAR_SOUTH_OF_NORTHERN_SWITCH)
-        ->collisionFlags |= 0x80;
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH),
+                         0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_NORTHERN_PILLAR), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH),
+                         0);
+    Actor_GetById(ACTOR_NORTHERN_PILLAR)->collisionFlags |= 0x80;
+    Actor_GetById(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH)->collisionFlags |=
+        0x80;
     switch (gSaveBlock.entrance) {
     case VAULT_CAVE_MOUTH_NORTH_FROM_SOUTH:
     case VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_NORTH:
       VaultCave_StartTimedFalls();
-      ObjectEvent_GetById(LOCALID_FIRST_TIMED_WATER_DROP)->collisionFlags = 2;
-      ObjectEvent_GetById(LOCALID_FIRST_TIMED_WATER_DROP + 1)->collisionFlags =
-          2;
-      ObjectEvent_GetById(LOCALID_FIRST_TIMED_WATER_DROP + 2)->collisionFlags =
-          2;
-      ObjectEvent_GetById(LOCALID_FIRST_TIMED_WATER_DROP + 3)->collisionFlags =
-          2;
-      ObjectEvent_GetById(LOCALID_PILLAR_EAST_OF_NORTHERN_SWITCH)
-          ->collisionFlags = 1;
-      ObjectEvent_GetById(LOCALID_NORTHERN_PILLAR)->collisionFlags = 1;
-      ObjectEvent_GetById(LOCALID_PILLAR_SOUTH_OF_NORTHERN_SWITCH)
-          ->collisionFlags = 1;
+      Actor_GetById(ACTOR_FIRST_TIMED_WATER_DROP)->collisionFlags = 2;
+      Actor_GetById(ACTOR_FIRST_TIMED_WATER_DROP + 1)->collisionFlags = 2;
+      Actor_GetById(ACTOR_FIRST_TIMED_WATER_DROP + 2)->collisionFlags = 2;
+      Actor_GetById(ACTOR_FIRST_TIMED_WATER_DROP + 3)->collisionFlags = 2;
+      Actor_GetById(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH)->collisionFlags = 1;
+      Actor_GetById(ACTOR_NORTHERN_PILLAR)->collisionFlags = 1;
+      Actor_GetById(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH)->collisionFlags = 1;
       if (GameFlag_Get(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH) != 0) {
         VaultCave_ApplyNorthernSwitchCells();
-        ObjectEvent_SetPosition(LOCALID_NORTHERN_PILLAR, PIXELS(264),
-                                PIXELS(204));
+        Actor_SetPosition(ACTOR_NORTHERN_PILLAR, PIXELS(264), PIXELS(204));
       }
       break;
     }
@@ -1271,15 +1249,15 @@ u32 gVaultCaveMouth_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ObjectEventTemplate gVaultCave_FallbackObjectEventTemplates[] = {
+struct ActorTemplate gVaultCave_FallbackActorTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gVaultCavePassage_ObjectEventTemplates[] = {
+struct ActorTemplate gVaultCavePassage_ActorTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gVaultCaveVambrace_ObjectEventTemplates[] = {
+struct ActorTemplate gVaultCaveVambrace_ActorTemplates[] = {
     { 0x12b, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(280), 0, PIXELS(876), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0x12b, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1313,7 +1291,7 @@ struct ObjectEventTemplate gVaultCaveVambrace_ObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gVaultCaveMouth_ObjectEventTemplates[] = {
+struct ActorTemplate gVaultCaveMouth_ActorTemplates[] = {
     { 0x12b, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(296), 0, PIXELS(204), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0x12b, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1371,15 +1349,15 @@ struct MapEvent gVaultCaveVambrace_Events[] = {
     { MAP_EVENT_EXIT, 14, CONDITION_ALWAYS, VAULT_CAVE_VAMBRACE_CHEST_TO_FROST_ROOM },
     { BG_EVENT(BG_EVENT_CHEST), MB_VAULT_CAVE_CHEST, FLAG_VAULT_CAVE_VAMBRACE_CHEST, FIND_ITEM(ITEM_VAMBRACE) },
     { BG_EVENT(BG_EVENT_SILENT), MB_VAULT_CAVE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ShowLockedDoor) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_SOUTHERN_PILLAR, FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH, EVENT_SCRIPT(EventScript_MoveSouthernPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SOUTHERN_PILLAR, FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH, EVENT_SCRIPT(EventScript_MoveSouthernPillar) },
     { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, MB_VAULT_CAVE_SOUTHERN_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushSouthernPillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_WEST_UPPER_PUDDLE, FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeWestUpperPuddle) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_WEST_LOWER_PUDDLE, FLAG_VAULT_CAVE_WEST_LOWER_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeWestLowerPuddle) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_INNER_WEST_LOWER_PUDDLE, FLAG_VAULT_CAVE_INNER_WEST_LOWER_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeInnerWestLowerPuddle) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_EAST_UPPER_PUDDLE, FLAG_VAULT_CAVE_EAST_UPPER_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeEastUpperPuddle) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_EAST_LOWER_PUDDLE, FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeEastLowerPuddle) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_FAR_EAST_PUDDLE, FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeFarEastPuddle) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_IVY, FLAG_VAULT_CAVE_IVY_BLOWN_AWAY, EVENT_SCRIPT(EventScript_UseWhirlwind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_WEST_UPPER_PUDDLE, FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeWestUpperPuddle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_WEST_LOWER_PUDDLE, FLAG_VAULT_CAVE_WEST_LOWER_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeWestLowerPuddle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_INNER_WEST_LOWER_PUDDLE, FLAG_VAULT_CAVE_INNER_WEST_LOWER_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeInnerWestLowerPuddle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_EAST_UPPER_PUDDLE, FLAG_VAULT_CAVE_EAST_UPPER_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeEastUpperPuddle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_EAST_LOWER_PUDDLE, FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeEastLowerPuddle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FAR_EAST_PUDDLE, FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN, EVENT_SCRIPT(EventScript_FreezeFarEastPuddle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, FLAG_VAULT_CAVE_IVY_BLOWN_AWAY, EVENT_SCRIPT(EventScript_UseWhirlwind) },
     { MAP_EVENTS_END },
 };
 
@@ -1391,8 +1369,8 @@ struct MapEvent gVaultCaveMouth_Events[] = {
     { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, VAULT_CAVE_MOUTH_NORTH_TO_SOUTH },
     { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 6, CONDITION_ALWAYS, VAULT_CAVE_MOUTH_TO_VAULT_CAVE_VAMBRACE_NORTH },
     { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, MB_VAULT_CAVE_NORTHERN_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushNorthernPillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_NORTHERN_PILLAR, FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH, EVENT_SCRIPT(EventScript_MoveNorthernPillar) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_PILLAR_SOUTH_OF_NORTHERN_SWITCH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IgnoreMove) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_NORTHERN_PILLAR, FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH, EVENT_SCRIPT(EventScript_MoveNorthernPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IgnoreMove) },
     { BG_EVENT(BG_EVENT_SILENT), MB_VAULT_CAVE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ShowLockedDoor) },
     { MAP_EVENTS_END },
 };

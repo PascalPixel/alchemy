@@ -26,9 +26,9 @@
 ///   SceneId_SolSanctumCorridor, SceneId_SolSanctumMaze, Sol Entrance and
 ///   SceneId_SolSanctumLunaSolRooms; the rest lead between its own rooms.
 ///
-/// SceneId_SolSanctumReliefs is one map, but each relief room has object event
+/// SceneId_SolSanctumReliefs is one map, but each relief room has actor
 /// template and event tables of its own:
-/// SolSanctumEntrance_GetObjectEventTemplates and _GetEvents choose them by
+/// SolSanctumEntrance_GetActorTemplates and _GetEvents choose them by
 /// the entrance the party came in at, so a room's statues and their
 /// events exist only while the party is in it. Each pushable statue's column
 /// is kept in two area flags, one for each side, which
@@ -68,7 +68,7 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "object_event.h"
+#include "actor.h"
 #include "fixed_math.h"
 #include "macros.h"
 #include "songs.h"
@@ -185,7 +185,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void);
 static void SolSanctumEntrance_IntroduceSanctum(void);
 static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void);
 static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void);
-static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeObjectEvents);
+static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeActors);
 static void SolSanctumEntrance_UpdateEruptionRumbles(void);
 
 s32 gSolSanctumEntrance_RumbleTimer __attribute__((section(".bss")));
@@ -212,14 +212,13 @@ const u32 *SolSanctumEntrance_GetExits(void) {
   return gSolSanctumEntrance_Exits;
 }
 
-/// Selects the object events for the map and, in Sol Sanctum, the room. The
+/// Selects the actors for the map and, in Sol Sanctum, the room. The
 /// first relief room's entrances place Kraden and that room's eleven
 /// statues, the second relief room's Kraden and the row of six; the rest of Sol
-/// Sanctum places Kraden and one statue (LOCALID_STATUE), and Sol Entrance the
-/// man who warns everyone away (LOCALID_WARNING_MAN).
-const struct ObjectEventTemplate *
-SolSanctumEntrance_GetObjectEventTemplates(void) {
-  struct ObjectEventTemplate *table;
+/// Sanctum places Kraden and one statue (ACTOR_STATUE), and Sol Entrance the
+/// man who warns everyone away (ACTOR_WARNING_MAN).
+const struct ActorTemplate *SolSanctumEntrance_GetActorTemplates(void) {
+  struct ActorTemplate *table;
   s32 firstStatueRoomEntrance =
       SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM;
 
@@ -229,24 +228,24 @@ SolSanctumEntrance_GetObjectEventTemplates(void) {
           SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM) {
         if (gSaveBlock.entrance <=
             SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS) {
-          return gSolSanctumReliefs_SecondReliefRoomObjectEventTemplates;
+          return gSolSanctumReliefs_SecondReliefRoomActorTemplates;
         }
       } else {
-        return gSolSanctumReliefs_FirstReliefRoomObjectEventTemplates;
+        return gSolSanctumReliefs_FirstReliefRoomActorTemplates;
       }
     }
-    table = gSolSanctumReliefs_ObjectEventTemplates;
+    table = gSolSanctumReliefs_ActorTemplates;
     Scene_AssignViewFlags(table);
     return table;
   }
   if (gSaveBlock.sceneId == (s32)&SceneId_SolEntrance) {
-    return gSolEntrance_ObjectEventTemplates;
+    return gSolEntrance_ActorTemplates;
   }
-  return gSolSanctumEntrance_FallbackObjectEventTemplates;
+  return gSolSanctumEntrance_FallbackActorTemplates;
 }
 
 /// Selects the events for the map and room, by the same entrances as
-/// SolSanctumEntrance_GetObjectEventTemplates.
+/// SolSanctumEntrance_GetActorTemplates.
 const struct MapEvent *SolSanctumEntrance_GetEvents(void) {
   s32 firstStatueRoomEntrance =
       SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM;
@@ -289,11 +288,11 @@ static void EventScript_OpenDoorAndEnter(void) {
   WaitFrames(10);
   MapGrid_CopyCellsTo(16, 32, 21, 3, width, height);
   WaitFrames(10);
-  ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 2);
-  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
-  ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 120, 98);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
-  ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -8);
+  ObjectMotion_SetActionVariant(ACTOR_PARTY_LEADER, 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 98);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
   FieldScript_WaitFrames(10);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -328,16 +327,15 @@ static void EventScript_InspectFirstMinotaurRelief(void) {
 static inline void SolSanctumEntrance_ReactToOpeningPassage(void) {
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   FieldScript_WaitFrames(20);
-  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
-                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 40);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 20);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 20);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 10);
-  ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 20);
-  ObjectMotion_Launch(LOCALID_PARTY_LEADER, 6, 40);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 20);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
+  ObjectMotion_Launch(ACTOR_PARTY_LEADER, 4, 20);
+  ObjectMotion_Launch(ACTOR_PARTY_LEADER, 6, 40);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   FieldScript_WaitFrames(40);
 }
@@ -455,12 +453,12 @@ static inline void SolSanctumEntrance_RecordStatueColumn(s32 column,
 }
 
 /// Sol Sanctum, the first relief room: Move on the west statue
-/// (LOCALID_WEST_STATUE) while FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM is clear,
+/// (ACTOR_WEST_STATUE) while FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM is clear,
 /// and called by EventScript_PushStatue there. The column it stops in is saved:
 /// sets FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST or _AT_WEST, or clears both when
 /// it stands in neither column.
 static void EventScript_WestStatueMoved(void) {
-  struct ObjectEvent *statue = ObjectEvent_GetById(LOCALID_WEST_STATUE);
+  struct Actor *statue = Actor_GetById(ACTOR_WEST_STATUE);
   s32 column;
 
   if (statue == NULL) {
@@ -472,10 +470,10 @@ static void EventScript_WestStatueMoved(void) {
 }
 
 /// Sol Sanctum, the first relief room: Move on the east statue
-/// (LOCALID_EAST_STATUE), as the west one. Sets
+/// (ACTOR_EAST_STATUE), as the west one. Sets
 /// FLAG_SOL_SANCTUM_EAST_STATUE_AT_EAST or _AT_WEST, or clears both.
 static void EventScript_EastStatueMoved(void) {
-  struct ObjectEvent *statue = ObjectEvent_GetById(LOCALID_EAST_STATUE);
+  struct Actor *statue = Actor_GetById(ACTOR_EAST_STATUE);
   s32 column;
 
   if (statue == NULL) {
@@ -492,11 +490,11 @@ static void EventScript_EastStatueMoved(void) {
 }
 
 /// Sol Sanctum, the second relief room: Move on the first statue of the
-/// row (LOCALID_ROW_STATUE_1), and called by EventScript_PushStatue there. The
+/// row (ACTOR_ROW_STATUE_1), and called by EventScript_PushStatue there. The
 /// column it stops in is saved and the cells under all six are set again. Sets
 /// FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_EAST or _AT_WEST, or clears both.
 static void EventScript_RowStatue1Moved(void) {
-  struct ObjectEvent *statue = ObjectEvent_GetById(LOCALID_ROW_STATUE_1);
+  struct Actor *statue = Actor_GetById(ACTOR_ROW_STATUE_1);
   s32 column;
 
   if (statue == NULL) {
@@ -509,9 +507,9 @@ static void EventScript_RowStatue1Moved(void) {
 }
 
 /// Sol Sanctum, the second relief room: as EventScript_RowStatue1Moved, for
-/// the row's second statue (LOCALID_ROW_STATUE_2).
+/// the row's second statue (ACTOR_ROW_STATUE_2).
 static void EventScript_RowStatue2Moved(void) {
-  struct ObjectEvent *statue = ObjectEvent_GetById(LOCALID_ROW_STATUE_2);
+  struct Actor *statue = Actor_GetById(ACTOR_ROW_STATUE_2);
   s32 column;
 
   if (statue == NULL) {
@@ -524,9 +522,9 @@ static void EventScript_RowStatue2Moved(void) {
 }
 
 /// Sol Sanctum, the second relief room: as EventScript_RowStatue1Moved, for
-/// the row's third statue (LOCALID_ROW_STATUE_3).
+/// the row's third statue (ACTOR_ROW_STATUE_3).
 static void EventScript_RowStatue3Moved(void) {
-  struct ObjectEvent *statue = ObjectEvent_GetById(LOCALID_ROW_STATUE_3);
+  struct Actor *statue = Actor_GetById(ACTOR_ROW_STATUE_3);
   s32 column;
 
   if (statue == NULL) {
@@ -539,9 +537,9 @@ static void EventScript_RowStatue3Moved(void) {
 }
 
 /// Sol Sanctum, the second relief room: as EventScript_RowStatue1Moved, for
-/// the row's fourth statue (LOCALID_ROW_STATUE_4).
+/// the row's fourth statue (ACTOR_ROW_STATUE_4).
 static void EventScript_RowStatue4Moved(void) {
-  struct ObjectEvent *statue = ObjectEvent_GetById(LOCALID_ROW_STATUE_4);
+  struct Actor *statue = Actor_GetById(ACTOR_ROW_STATUE_4);
   s32 column;
 
   if (statue == NULL) {
@@ -554,9 +552,9 @@ static void EventScript_RowStatue4Moved(void) {
 }
 
 /// Sol Sanctum, the second relief room: as EventScript_RowStatue1Moved, for
-/// the row's fifth statue (LOCALID_ROW_STATUE_5).
+/// the row's fifth statue (ACTOR_ROW_STATUE_5).
 static void EventScript_RowStatue5Moved(void) {
-  struct ObjectEvent *statue = ObjectEvent_GetById(LOCALID_ROW_STATUE_5);
+  struct Actor *statue = Actor_GetById(ACTOR_ROW_STATUE_5);
   s32 column;
 
   if (statue == NULL) {
@@ -569,9 +567,9 @@ static void EventScript_RowStatue5Moved(void) {
 }
 
 /// Sol Sanctum, the second relief room: as EventScript_RowStatue1Moved, for
-/// the row's sixth statue (LOCALID_ROW_STATUE_6).
+/// the row's sixth statue (ACTOR_ROW_STATUE_6).
 static void EventScript_RowStatue6Moved(void) {
-  struct ObjectEvent *statue = ObjectEvent_GetById(LOCALID_ROW_STATUE_6);
+  struct Actor *statue = Actor_GetById(ACTOR_ROW_STATUE_6);
   s32 column;
 
   if (statue == NULL)
@@ -594,8 +592,8 @@ static void EventScript_RowStatue6Moved(void) {
 /// pushes it one cell, the leader behind it, if nothing is in the way, and its
 /// column is saved through the room's Moved events.
 static void EventScript_PushStatue(void) {
-  struct ObjectEvent *leader;
-  struct ObjectEvent *statue;
+  struct Actor *leader;
+  struct Actor *statue;
   s32 stoppedVelocity;
   s32 packedStep;
   u32 direction;
@@ -603,9 +601,9 @@ static void EventScript_PushStatue(void) {
   struct FieldPosition *destination;
 
   // Find the statue one map cell ahead in the leader's facing direction.
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
   direction = leader->facing >> 12;
-  statue = ObjectEvent_FindAtCell(
+  statue = Actor_FindAtCell(
       (leader->x.part.pixel + (gSolSanctumPushSteps[direction] >> 16)) >> 4,
       (leader->z.part.pixel + (s16)gSolSanctumPushSteps[direction]) >> 4);
   if (statue != NULL) {
@@ -658,7 +656,7 @@ static void EventScript_PushStatue(void) {
 }
 
 /// Sets up Sol Entrance or Sol Sanctum. Called by SceneManager_Run once the
-/// object events exist.
+/// actors exist.
 s32 SolSanctumEntrance_Initialize(void) {
   s32 sceneId = gSaveBlock.sceneId;
 
@@ -695,7 +693,7 @@ static void SolSanctumEntrance_ApplyEntryState(void) {
     MapGrid_CopyCellAttributes(0, 1, 3, 1, 6, 5);
   }
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
-    ObjectEvent_SetPosition(LOCALID_WARNING_MAN, PIXELS(120), PIXELS(232));
+    Actor_SetPosition(ACTOR_WARNING_MAN, PIXELS(120), PIXELS(232));
     MapGrid_CopyCellAttributes(2, 10, 1, 1, 6, 14);
     MapGrid_CopyCellAttributes(2, 10, 1, 1, 7, 14);
     MapGrid_CopyCellAttributes(2, 10, 1, 1, 8, 14);
@@ -738,7 +736,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     break;
 
   case SOL_SANCTUM_RELIEFS_STATUE_NOOK_FROM_FIRST_RELIEF_ROOM:
-    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_STATUE), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_STATUE), 0);
     break;
 
   case SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE:
@@ -752,48 +750,39 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
   case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STATUE_NOOK:
   case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM:
     // Put back this room's statues after its introduction has played.
-    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_WEST_STATUE), 0);
-    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_EAST_STATUE), 0);
-    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_FIRST_FIXED_STATUE),
-                               0);
-    ObjectEvent_SetSpriteFlags(
-        ObjectEvent_GetById(LOCALID_FIRST_FIXED_STATUE + 1), 0);
-    ObjectEvent_SetSpriteFlags(
-        ObjectEvent_GetById(LOCALID_FIRST_FIXED_STATUE + 2), 0);
-    ObjectEvent_SetSpriteFlags(
-        ObjectEvent_GetById(LOCALID_FIRST_FIXED_STATUE + 3), 0);
-    ObjectEvent_SetSpriteFlags(
-        ObjectEvent_GetById(LOCALID_FIRST_FIXED_STATUE + 4), 0);
-    ObjectEvent_SetSpriteFlags(
-        ObjectEvent_GetById(LOCALID_FIRST_FIXED_STATUE + 5), 0);
-    ObjectEvent_SetSpriteFlags(
-        ObjectEvent_GetById(LOCALID_FIRST_FIXED_STATUE + 6), 0);
-    ObjectEvent_SetSpriteFlags(
-        ObjectEvent_GetById(LOCALID_FIRST_FIXED_STATUE + 7), 0);
-    ObjectEvent_SetSpriteFlags(
-        ObjectEvent_GetById(LOCALID_FIRST_FIXED_STATUE + 8), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_WEST_STATUE), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_EAST_STATUE), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIXED_STATUE), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIXED_STATUE + 1), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIXED_STATUE + 2), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIXED_STATUE + 3), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIXED_STATUE + 4), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIXED_STATUE + 5), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIXED_STATUE + 6), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIXED_STATUE + 7), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIXED_STATUE + 8), 0);
     if (GameFlag_Get(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE) == 0)
       SolSanctumEntrance_KradenSuspectsHiddenPassage();
     if (GameFlag_Get(FLAG_SOL_SANCTUM_WEST_STATUE_AT_WEST) != 0)
-      ObjectEvent_SetPosition(LOCALID_WEST_STATUE, PIXELS(1496), PIXELS(136));
+      Actor_SetPosition(ACTOR_WEST_STATUE, PIXELS(1496), PIXELS(136));
     else if (GameFlag_Get(FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST) != 0)
-      ObjectEvent_SetPosition(LOCALID_WEST_STATUE, PIXELS(1528), PIXELS(136));
+      Actor_SetPosition(ACTOR_WEST_STATUE, PIXELS(1528), PIXELS(136));
     if (GameFlag_Get(FLAG_SOL_SANCTUM_EAST_STATUE_AT_WEST) != 0)
-      ObjectEvent_SetPosition(LOCALID_EAST_STATUE, PIXELS(1816), PIXELS(136));
+      Actor_SetPosition(ACTOR_EAST_STATUE, PIXELS(1816), PIXELS(136));
     else if (GameFlag_Get(FLAG_SOL_SANCTUM_EAST_STATUE_AT_EAST) != 0)
-      ObjectEvent_SetPosition(LOCALID_EAST_STATUE, PIXELS(1848), PIXELS(136));
+      Actor_SetPosition(ACTOR_EAST_STATUE, PIXELS(1848), PIXELS(136));
     break;
 
   case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_EAST:
   case SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_FROM_ROUND_PASSAGE:
   case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS:
     // Restore the row of statues and the second gem's doorway.
-    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ROW_STATUE_1), 0);
-    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ROW_STATUE_2), 0);
-    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ROW_STATUE_3), 0);
-    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ROW_STATUE_4), 0);
-    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ROW_STATUE_5), 0);
-    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ROW_STATUE_6), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_ROW_STATUE_1), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_ROW_STATUE_2), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_ROW_STATUE_3), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_ROW_STATUE_4), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_ROW_STATUE_5), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_ROW_STATUE_6), 0);
     if (GameFlag_Get(FLAG_SOL_SANCTUM_MORE_STATUES_SEEN) == 0)
       SolSanctumEntrance_KradenSeesStatuesOutOfReach();
     SolSanctumEntrance_RestoreRowStatueCells(1);
@@ -816,84 +805,84 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
 /// SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE until FLAG_SOL_SANCTUM_ENTERED is
 /// set, which it sets; clears FLAG_SHOW_LOCATION_NAME.
 static void SolSanctumEntrance_IntroduceSanctum(void) {
-  struct ObjectEvent *leader;
+  struct Actor *leader;
 
   FieldScript_Start();
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldScript_StartScreenTransition();
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
   FieldScript_WaitFrames(4);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   // Gather the followers around the leader for Kraden's introduction.
   FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
   FieldCamera_MoveTo(PIXELS(1224), -1, PIXELS(136), 1);
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectEvent_SetPosition(LOCALID_KRADEN, leader->x.fixed, leader->z.fixed);
+    Actor_SetPosition(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
   }
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectEvent_SetPosition(LOCALID_JENNA, leader->x.fixed, leader->z.fixed);
+    Actor_SetPosition(ACTOR_JENNA, leader->x.fixed, leader->z.fixed);
   }
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectEvent_SetPosition(LOCALID_GARET, leader->x.fixed, leader->z.fixed);
+    Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
-  ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
-  ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
-  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(3) / 5, PIXELS(3) / 10);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
-  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_WALK);
-  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
-  ObjectEvent_SetDestinationOffset(LOCALID_GARET, -16, 0);
-  ObjectEvent_SetDestinationOffset(LOCALID_JENNA, 16, 0);
-  ObjectEvent_SetDestinationOffset(LOCALID_KRADEN, 0, -32);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STILL);
-  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STILL);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTH, 0);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KRADEN);
-  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
+  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_GARET, PIXELS(3) / 5, PIXELS(3) / 10);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
+  Import_ActorSetAnimation(ACTOR_JENNA, ANIM_WALK);
+  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
+  Actor_SetDestinationOffset(ACTOR_GARET, -16, 0);
+  Actor_SetDestinationOffset(ACTOR_JENNA, 16, 0);
+  Actor_SetDestinationOffset(ACTOR_KRADEN, 0, -32);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GARET);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_STILL);
+  Import_ActorSetAnimation(ACTOR_JENNA, ANIM_STILL);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_KRADEN);
+  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_KRADEN, 2);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST + FACING_STEP, 40);
-  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH + FACING_STEP, 40);
-  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST + FACING_STEP, 20);
-  ObjectMotion_Launch(LOCALID_KRADEN, 4, 20);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 20);
+  ObjectMotion_Launch(ACTOR_KRADEN, 4, 20);
   // Kraden: "This is your first time here, right?" Yes: "Take a good look at
   // it." No: "I doubt that..."
   FieldScript_SetMessageId(MsgSolSanctumKradenFirstTimeAtSol);
-  Script_AskYesNo(SPEAKER_WINDOW_ABOVE | LOCALID_KRADEN, 0);
+  Script_AskYesNo(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   FieldScript_WaitFrames(20);
   FieldCamera_MoveTo(PIXELS(1224), -1, PIXELS(148), 1);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectEvent_SetDestination(LOCALID_GARET, leader->x.part.pixel,
-                               leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
+                         leader->z.part.pixel);
   }
-  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_WALK);
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  Import_ActorSetAnimation(ACTOR_JENNA, ANIM_WALK);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectEvent_SetDestination(LOCALID_JENNA, leader->x.part.pixel,
-                               leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_JENNA, leader->x.part.pixel,
+                         leader->z.part.pixel);
   }
-  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectEvent_SetDestination(LOCALID_KRADEN, leader->x.part.pixel,
-                               leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_KRADEN, leader->x.part.pixel,
+                         leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
-  ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
-  ObjectEvent_SetPosition(LOCALID_JENNA, 0, 0);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KRADEN);
-  ObjectEvent_SetPosition(LOCALID_KRADEN, 0, 0);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
-  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
-  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GARET);
+  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Actor_SetPosition(ACTOR_JENNA, 0, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_KRADEN);
+  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
+  Import_ActorSetAnimation(ACTOR_JENNA, ANIM_STAND);
+  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
   GameFlag_Set(FLAG_SOL_SANCTUM_ENTERED);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -910,71 +899,68 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
 /// FLAG_SEARCHING_FOR_HIDDEN_PASSAGE is set, which it sets; clears
 /// FLAG_SHOW_LOCATION_NAME.
 static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
-  struct ObjectEvent *leader;
+  struct Actor *leader;
 
   FieldScript_Start();
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
 
   // Spread the party out while Kraden examines the room.
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Import_ObjectEventSetPosition(LOCALID_KRADEN, leader->x.fixed,
-                                  leader->z.fixed);
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+    Import_ActorSetPosition(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Import_ObjectEventSetPosition(LOCALID_JENNA, leader->x.fixed,
-                                  leader->z.fixed);
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+    Import_ActorSetPosition(ACTOR_JENNA, leader->x.fixed, leader->z.fixed);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Import_ObjectEventSetPosition(LOCALID_GARET, leader->x.fixed,
-                                  leader->z.fixed);
+    Import_ActorSetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
 
-  ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
-  ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
-  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(3) / 5, PIXELS(3) / 10);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
-  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_WALK);
-  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
-  ObjectEvent_SetDestinationOffset(LOCALID_GARET, -16, 0);
-  ObjectEvent_SetDestinationOffset(LOCALID_JENNA, 16, 0);
-  ObjectEvent_SetDestinationOffset(LOCALID_KRADEN, 0, -16);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KRADEN);
-  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STILL);
-  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STILL);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
-  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 30);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_EAST, 0);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_WEST, 30);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
-  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH, 30);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
-  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 40);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
+  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_GARET, PIXELS(3) / 5, PIXELS(3) / 10);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
+  Import_ActorSetAnimation(ACTOR_JENNA, ANIM_WALK);
+  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
+  Actor_SetDestinationOffset(ACTOR_GARET, -16, 0);
+  Actor_SetDestinationOffset(ACTOR_JENNA, 16, 0);
+  Actor_SetDestinationOffset(ACTOR_KRADEN, 0, -16);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_KRADEN);
+  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_STILL);
+  Import_ActorSetAnimation(ACTOR_JENNA, ANIM_STILL);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 30);
+  Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 30);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 30);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 40);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_KRADEN, 2);
   FieldScript_WaitFrames(10);
-  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
-  ObjectMotion_OffsetPositionAndResetMotion(LOCALID_KRADEN, 0, -16);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KRADEN);
-  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
+  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
+  ObjectMotion_OffsetPositionAndResetMotion(ACTOR_KRADEN, 0, -16);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_KRADEN);
+  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
   FieldScript_WaitFrames(6);
-  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_WEST, 20);
-  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_EAST, 20);
-  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 40);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 20);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 40);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_KRADEN, 2);
   FieldScript_WaitFrames(20);
-  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
-  ObjectMotion_OffsetPositionAndResetMotion(LOCALID_KRADEN, 0, -32);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KRADEN);
-  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
+  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
+  ObjectMotion_OffsetPositionAndResetMotion(ACTOR_KRADEN, 0, -32);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_KRADEN);
+  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
 
   // Survey both sides of the room before returning to Kraden.
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
@@ -986,145 +972,144 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   FieldCamera_WaitForArrival();
   FieldCamera_MoveTo(PIXELS(1718), -1, PIXELS(100), 1);
   FieldCamera_WaitForArrival();
-  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
+  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
   FieldCamera_MoveTo(PIXELS(1752), -1, PIXELS(150), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(40);
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   FieldCamera_MoveTo(PIXELS(1668), -1, PIXELS(256), 1);
   FieldCamera_WaitForArrival();
-  ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldScript_WaitFrames(10);
 
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
-  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST, 10);
-  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 10);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   // Garet: "What's wrong, Kraden?"
   FieldScript_SetMessageId(MsgSolSanctumWrongKraden);
-  Script_ShowMessageAndWait(LOCALID_GARET, 0, 10);
-  ObjectEvent_ShowEmote(LOCALID_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  ObjectMotion_SetVariantCallback(LOCALID_KRADEN, 2);
+  Script_ShowMessageAndWait(ACTOR_GARET, 0, 10);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  ObjectMotion_SetVariantCallback(ACTOR_KRADEN, 2);
   // Kraden: "Those two said there was a hidden passage leading deeper into
   // the sanctum."
-  Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
-  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_JENNA, 2);
-  ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
-                                                          ATTACHED_EFFECT_ONCE);
-  ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
-                                                   ATTACHED_EFFECT_ONCE);
-  ObjectEvent_SetAttachedEffect(LOCALID_JENNA, ATTACHED_EFFECT_IN_FRONT |
-                                                   ATTACHED_EFFECT_ONCE);
+  Script_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
+  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_JENNA, 2);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_JENNA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_KRADEN, 2);
   FieldScript_WaitFrames(20);
   // Kraden: the sanctum always looked strange to him, not as he imagined.
-  Script_ShowMessage(LOCALID_KRADEN, 0);
-  ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
-  Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, 5, 0);
+  Script_ShowMessage(ACTOR_KRADEN, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  Script_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
+  Actor_LinkPair(ACTOR_PARTY_LEADER, 5, 0);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_JENNA, 1);
+  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 1);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_JENNA, 1);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST, 20);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_JENNA, 2);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 20);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_JENNA, 2);
   // Jenna: "What do you mean?"
-  Script_ShowMessageAndWait(LOCALID_JENNA, 0, 10);
-  ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
+  Script_ShowMessageAndWait(ACTOR_JENNA, 0, 10);
+  ObjectMotion_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   // Kraden: a sanctum built in honour of the sun ought to show it somewhere.
-  Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
-  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
-  Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 40);
-  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 20);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 1);
+  Script_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
+  Script_ShowMessageAndWait(ACTOR_KRADEN, 0, 40);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 20);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_KRADEN, 1);
   FieldScript_WaitFrames(10);
-  ObjectEvent_SetAttachedEffect(LOCALID_KRADEN, ATTACHED_EFFECT_IN_FRONT |
-                                                    ATTACHED_EFFECT_ONCE);
-  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_WEST, 20);
-  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_EAST, 20);
-  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 60);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
+  Actor_SetAttachedEffect(ACTOR_KRADEN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 20);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 60);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_KRADEN, 2);
   FieldScript_WaitFrames(10);
   // Kraden: "If there is a hidden passage, then maybe it leads to..."
-  Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
-  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH, 20);
-  ObjectMotion_Launch(LOCALID_KRADEN, 2, 20);
+  Script_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 20);
+  ObjectMotion_Launch(ACTOR_KRADEN, 2, 20);
 
   // Kraden hops: "Let's see if we can find it!"
-  Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 40);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST, 20);
+  Script_ShowMessageAndWait(ACTOR_KRADEN, 0, 40);
+  Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 20);
   // Garet: "I think he's serious! Should we help him?"
-  Script_OpenMessage(LOCALID_GARET, 0);
-  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+  Script_OpenMessage(ACTOR_GARET, 0);
+  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
     // Yes: Garet says it is too dangerous to split up; they stay together.
     FieldScript_SetMessageId(MsgSolSanctumDangerousSplitStay);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
-    FieldScript_ShowMessageThenWait(LOCALID_GARET, 0, 10);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 1);
+    FieldScript_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   } else {
     // No: Jenna objects to turning back now; Isaac nods and Garet agrees to
     // help Kraden.
     FieldScript_SetMessageId(MsgSolSanctumCantSeriouslyWant);
-    ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_WEST, 20);
-    Script_ShowMessageAndWait(LOCALID_JENNA, 0, 10);
-    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
-    ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST, 60);
-    ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
-                          40);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 20);
+    Script_ShowMessageAndWait(ACTOR_JENNA, 0, 10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 1);
     FieldScript_WaitFrames(10);
-    ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     FieldScript_WaitFrames(10);
-    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST, 0);
-    ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_WEST, 30);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
+    Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 30);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 1);
     FieldScript_WaitFrames(10);
-    FieldScript_ShowMessageThenWait(LOCALID_GARET, 0, 10);
+    FieldScript_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   }
 
   // Bring Kraden back and return the followers to the party.
-  ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
-  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
-  ObjectMotion_OffsetPositionAndResetMotion(LOCALID_KRADEN, 0, 48);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KRADEN);
-  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
+  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
+  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
+  ObjectMotion_OffsetPositionAndResetMotion(ACTOR_KRADEN, 0, 48);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_KRADEN);
+  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
   FieldScript_WaitFrames(6);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
-  ObjectMotion_ArmCallback(LOCALID_JENNA, FACING_NORTHWEST, 0);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KRADEN);
-  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
+  ObjectMotion_ArmCallback(ACTOR_JENNA, FACING_NORTHWEST, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_KRADEN);
+  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
   FieldScript_WaitFrames(20);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_JENNA, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(6);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
 
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    ObjectMotion_ResetAndSetPosition(LOCALID_GARET, leader->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(ACTOR_GARET, leader->x.part.pixel,
                                      leader->z.part.pixel);
-  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_WALK);
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  Import_ActorSetAnimation(ACTOR_JENNA, ANIM_WALK);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    ObjectMotion_ResetAndSetPosition(LOCALID_JENNA, leader->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(ACTOR_JENNA, leader->x.part.pixel,
                                      leader->z.part.pixel);
-  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    ObjectMotion_ResetAndSetPosition(LOCALID_KRADEN, leader->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(ACTOR_KRADEN, leader->x.part.pixel,
                                      leader->z.part.pixel);
 
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KRADEN);
-  ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
-  ObjectEvent_SetPosition(LOCALID_JENNA, 0, 0);
-  ObjectEvent_SetPosition(LOCALID_KRADEN, 0, 0);
-  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
-  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_KRADEN);
+  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Actor_SetPosition(ACTOR_JENNA, 0, 0);
+  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
+  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
+  Import_ActorSetAnimation(ACTOR_JENNA, ANIM_STAND);
   GameFlag_Set(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   FieldScript_End();
@@ -1136,7 +1121,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
 /// Isaac to try his Psynergy. Called by SolSanctumEntrance_RestoreInteriorState
 /// there until FLAG_SOL_SANCTUM_MORE_STATUES_SEEN is set, which it sets.
 static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
-  struct ObjectEvent *leader;
+  struct Actor *leader;
 
   FieldScript_Start();
   gFieldWork->transition =
@@ -1144,18 +1129,18 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(20);
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectEvent_SetPosition(LOCALID_KRADEN, leader->x.fixed, leader->z.fixed);
+    Actor_SetPosition(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
   }
-  ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
-  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
-  ObjectEvent_SetDestinationOffset(LOCALID_KRADEN, 24, -10);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KRADEN);
-  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
+  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
+  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
+  Actor_SetDestinationOffset(ACTOR_KRADEN, 24, -10);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_KRADEN);
+  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
   FieldScript_WaitFrames(6);
-  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTHWEST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 40);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   // Pan across the statues, then return to the party's position.
   FieldCamera_MoveTo(PIXELS(1672), -1, PIXELS(524), 1);
@@ -1169,33 +1154,33 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   FieldCamera_MoveTo(PIXELS(1769), -1, PIXELS(548), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
-  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_EAST, 30);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_KRADEN, 2);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 30);
   // Kraden: "More statues... It doesn't look like we can reach them".
   FieldScript_SetMessageId(MsgSolSanctumMoreStatuesOutOfReach);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_KRADEN, 0, 10);
-  ObjectEvent_ShowEmote(LOCALID_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 1);
-  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH + FACING_STEP, 20);
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0, 10);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_KRADEN, 1);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 20);
   // Kraden: "Perhaps Psynergy is the key..."
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_KRADEN, 0, 10);
-  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0, 10);
+  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectEvent_SetDestination(LOCALID_KRADEN, leader->x.part.pixel,
-                               leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_KRADEN, leader->x.part.pixel,
+                         leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KRADEN);
-  ObjectEvent_SetPosition(LOCALID_KRADEN, 0, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_KRADEN);
+  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   GameFlag_Set(FLAG_SOL_SANCTUM_MORE_STATUES_SEEN);
   FieldScript_End();
 }
 
 /// Sol Sanctum, the second relief room: sets the cells the six statues
 /// start on, one metatile behavior while a statue stands there and another once
-/// it has been pushed to either side, and, when placeObjectEvents is nonzero
+/// it has been pushed to either side, and, when placeActors is nonzero
 /// (on entry), moves the statues to their saved columns.
-static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeObjectEvents) {
+static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeActors) {
   // Clear all six destinations before restoring occupied cells.
   MapGrid_CopyCellAttributes(122, 20, 1, 1, 100, 32);
   MapGrid_CopyCellAttributes(122, 20, 1, 1, 104, 32);
@@ -1205,85 +1190,79 @@ static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeObjectEvents) {
   MapGrid_CopyCellAttributes(122, 20, 1, 1, 120, 32);
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 100, 32);
-    if (placeObjectEvents != 0) {
-      ObjectEvent_SetPosition(LOCALID_ROW_STATUE_1, PIXELS(1592), PIXELS(520));
+    if (placeActors != 0) {
+      Actor_SetPosition(ACTOR_ROW_STATUE_1, PIXELS(1592), PIXELS(520));
     }
   } else {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 100, 32);
-      if (placeObjectEvents != 0) {
-        ObjectEvent_SetPosition(LOCALID_ROW_STATUE_1, PIXELS(1624),
-                                PIXELS(520));
+      if (placeActors != 0) {
+        Actor_SetPosition(ACTOR_ROW_STATUE_1, PIXELS(1624), PIXELS(520));
       }
     }
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 104, 32);
-    if (placeObjectEvents != 0) {
-      ObjectEvent_SetPosition(LOCALID_ROW_STATUE_2, PIXELS(1656), PIXELS(520));
+    if (placeActors != 0) {
+      Actor_SetPosition(ACTOR_ROW_STATUE_2, PIXELS(1656), PIXELS(520));
     }
   } else {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 104, 32);
-      if (placeObjectEvents != 0) {
-        ObjectEvent_SetPosition(LOCALID_ROW_STATUE_2, PIXELS(1688),
-                                PIXELS(520));
+      if (placeActors != 0) {
+        Actor_SetPosition(ACTOR_ROW_STATUE_2, PIXELS(1688), PIXELS(520));
       }
     }
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 108, 32);
-    if (placeObjectEvents != 0) {
-      ObjectEvent_SetPosition(LOCALID_ROW_STATUE_3, PIXELS(1720), PIXELS(520));
+    if (placeActors != 0) {
+      Actor_SetPosition(ACTOR_ROW_STATUE_3, PIXELS(1720), PIXELS(520));
     }
   } else {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 108, 32);
-      if (placeObjectEvents != 0) {
-        ObjectEvent_SetPosition(LOCALID_ROW_STATUE_3, PIXELS(1752),
-                                PIXELS(520));
+      if (placeActors != 0) {
+        Actor_SetPosition(ACTOR_ROW_STATUE_3, PIXELS(1752), PIXELS(520));
       }
     }
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 112, 32);
-    if (placeObjectEvents != 0) {
-      ObjectEvent_SetPosition(LOCALID_ROW_STATUE_4, PIXELS(1784), PIXELS(520));
+    if (placeActors != 0) {
+      Actor_SetPosition(ACTOR_ROW_STATUE_4, PIXELS(1784), PIXELS(520));
     }
   } else {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 112, 32);
-      if (placeObjectEvents != 0) {
-        ObjectEvent_SetPosition(LOCALID_ROW_STATUE_4, PIXELS(1816),
-                                PIXELS(520));
+      if (placeActors != 0) {
+        Actor_SetPosition(ACTOR_ROW_STATUE_4, PIXELS(1816), PIXELS(520));
       }
     }
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 116, 32);
-    if (placeObjectEvents != 0) {
-      ObjectEvent_SetPosition(LOCALID_ROW_STATUE_5, PIXELS(1848), PIXELS(520));
+    if (placeActors != 0) {
+      Actor_SetPosition(ACTOR_ROW_STATUE_5, PIXELS(1848), PIXELS(520));
     }
   } else {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 116, 32);
-      if (placeObjectEvents != 0) {
-        ObjectEvent_SetPosition(LOCALID_ROW_STATUE_5, PIXELS(1880),
-                                PIXELS(520));
+      if (placeActors != 0) {
+        Actor_SetPosition(ACTOR_ROW_STATUE_5, PIXELS(1880), PIXELS(520));
       }
     }
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 120, 32);
-    if (placeObjectEvents != 0) {
-      ObjectEvent_SetPosition(LOCALID_ROW_STATUE_6, PIXELS(1912), PIXELS(520));
+    if (placeActors != 0) {
+      Actor_SetPosition(ACTOR_ROW_STATUE_6, PIXELS(1912), PIXELS(520));
     }
   } else {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 120, 32);
-      if (placeObjectEvents != 0) {
-        ObjectEvent_SetPosition(LOCALID_ROW_STATUE_6, PIXELS(1944),
-                                PIXELS(520));
+      if (placeActors != 0) {
+        Actor_SetPosition(ACTOR_ROW_STATUE_6, PIXELS(1944), PIXELS(520));
       }
     }
   }
@@ -1449,16 +1428,15 @@ u32 gSolSanctumEntrance_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ObjectEventTemplate gSolSanctumEntrance_FallbackObjectEventTemplates[] =
-    {
-        {MAP_TABLE_END},
+struct ActorTemplate gSolSanctumEntrance_FallbackActorTemplates[] = {
+    {MAP_TABLE_END},
 };
 
 // clang-format off
-struct ObjectEventTemplate gSolSanctumReliefs_ObjectEventTemplates[] = {
-    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+struct ActorTemplate gSolSanctumReliefs_ActorTemplates[] = {
+    { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { LOCALID_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
@@ -1467,61 +1445,61 @@ struct ObjectEventTemplate gSolSanctumReliefs_ObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gSolSanctumReliefs_FirstReliefRoomObjectEventTemplates[] = {
-    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+struct ActorTemplate gSolSanctumReliefs_FirstReliefRoomActorTemplates[] = {
+    { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { LOCALID_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(1512), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1832), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1832), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1560), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1560), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1784), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1784), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1640), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1640), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1640), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1640), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1640), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1640), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1672), 0, PIXELS(88), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1672), 0, PIXELS(88), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1704), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1704), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1704), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1704), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1704), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1704), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gSolSanctumReliefs_SecondReliefRoomObjectEventTemplates[] = {
-    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+struct ActorTemplate gSolSanctumReliefs_SecondReliefRoomActorTemplates[] = {
+    { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { LOCALID_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(1608), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1672), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1672), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1736), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1736), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1800), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1800), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1864), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1864), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1928), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1928), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gSolEntrance_ObjectEventTemplates[] = {
+struct ActorTemplate gSolEntrance_ActorTemplates[] = {
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
@@ -1535,8 +1513,8 @@ struct MapEvent gSolEntrance_Events[] = {
     { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SOL_ENTRANCE_TO_VALE },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), MB_SOL_ENTRANCE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenDoorAndEnter) },
     { BG_EVENT(BG_EVENT_SILENT), MB_SOL_ENTRANCE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DoorTightlyLocked) },
-    { MAP_EVENT_TALK, LOCALID_WARNING_MAN, CONDITION_ALWAYS, MSGNO(MsgValeItIsVeryDangerousToGo) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WARNING_MAN, CONDITION_ALWAYS, MSGNO(MsgValeIAmAllAloneInThis) },
+    { MAP_EVENT_TALK, ACTOR_WARNING_MAN, CONDITION_ALWAYS, MSGNO(MsgValeItIsVeryDangerousToGo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARNING_MAN, CONDITION_ALWAYS, MSGNO(MsgValeIAmAllAloneInThis) },
     { MAP_EVENTS_END },
 };
 
@@ -1580,8 +1558,8 @@ struct MapEvent gSolSanctumReliefs_FirstReliefRoomEvents[] = {
     { MAP_EVENT_EXIT, 14, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST },
     { MAP_EVENT_EXIT, 15, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE },
     { MAP_EVENT_EXIT, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_WEST_STATUE, FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM, EVENT_SCRIPT(EventScript_WestStatueMoved) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_EAST_STATUE, FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM, EVENT_SCRIPT(EventScript_EastStatueMoved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_STATUE, FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM, EVENT_SCRIPT(EventScript_WestStatueMoved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_STATUE, FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM, EVENT_SCRIPT(EventScript_EastStatueMoved) },
     { COORD_EVENT_WALKING, MB_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatue) },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), MB_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatue) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), MB_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatue) },
@@ -1605,12 +1583,12 @@ struct MapEvent gSolSanctumReliefs_SecondReliefRoomEvents[] = {
     { MAP_EVENT_EXIT, 14, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST },
     { MAP_EVENT_EXIT, 15, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE },
     { MAP_EVENT_EXIT, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROW_STATUE_1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue1Moved) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROW_STATUE_2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue2Moved) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROW_STATUE_3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue3Moved) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROW_STATUE_4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue4Moved) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROW_STATUE_5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue5Moved) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROW_STATUE_6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue6Moved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue1Moved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue2Moved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue3Moved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue4Moved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue5Moved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue6Moved) },
     { COORD_EVENT_WALKING, MB_SOL_SANCTUM_RELIEFS_ROW_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatue) },
     { USE_ITEM(ITEM_SMALL_JEWEL), SOL_SANCTUM_ITEM_OWN_MESSAGE | MB_SOL_SANCTUM_RELIEFS_SECOND_RELIEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetSecondSmallJewel) },
     { BG_EVENT(BG_EVENT_SILENT), MB_SOL_SANCTUM_RELIEFS_SECOND_RELIEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_InspectSecondMinotaurRelief) },

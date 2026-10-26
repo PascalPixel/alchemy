@@ -95,7 +95,7 @@
 #include "edition.h"
 #include "item_ids.h"
 #include "objcmd.h"
-#include "object_event.h"
+#include "actor.h"
 #include "heap.h"
 #include "scene_header.h"
 #include "fixed_math.h"
@@ -129,121 +129,121 @@ static void ColosseumNavampaMatch_EmptyHook(void);
 static void ColosseumNavampaMatch_WaitForOpponentToFinish(void);
 static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
                                                         s32 secondItem);
-static void ColosseumNavampaMatch_PushObjectEventAhead(void);
+static void ColosseumNavampaMatch_PushActorAhead(void);
 
 typedef void (*MapTaskEntry)(void);
 
-/// The third finals match's object events, numbered in the order of
-/// gColosseumNavampaMatchObjectEventTemplates from LOCALID_FIRST_PLACED; the
-/// rows of Isaac, Garet, Ivan and Mia take their own object events. By the
+/// The third finals match's actors, numbered in the order of
+/// gColosseumNavampaMatchActorTemplates from ACTOR_FIRST_PLACED; the
+/// rows of Isaac, Garet, Ivan and Mia take their own actors. By the
 /// guide's and attendants' explanations, the Scales of Justice, the
 /// Stepping-Stone Stage, the Wall Wedge, the Free-Climb Area, the Moving
 /// Sidewalk Stage and another log-rolling area lead to the arena.
-/// LOCALID_SCALES_WEIGHT to LOCALID_LOG_AREA_STONE_C are all drawn as the rocks
+/// ACTOR_SCALES_WEIGHT to ACTOR_LOG_AREA_STONE_C are all drawn as the rocks
 /// of Colosseum Final 1's Rock Challenge; the attendant of this match's
 /// log-rolling area calls the ones there stones.
 enum {
   /// Navampa, racing Isaac to the arena.
   /// ★ Named from the game: "I am Navampa of Gondowan"
   /// (MsgColosseumAmNavampaGondowanSixthRanked)
-  LOCALID_OPPONENT = 8,
+  ACTOR_OPPONENT = 8,
   /// The puddle Frost freezes on the Scales of Justice's eastern ledge.
   /// ★ Named from what the player sees: a small puddle of water
   /// (SPRITE_PUDDLE) on the eastern ledge of the Scales of Justice (its
   /// render)
-  LOCALID_PUDDLE = 9,
+  ACTOR_PUDDLE = 9,
   /// The Scales of Justice's two ledges.
   /// ★ Named from the game: "There are two ledges that actually form a
   /// scale." (MsgColossoStageCalledScales)
-  LOCALID_SCALES_WEST_LEDGE = 10,
+  ACTOR_SCALES_WEST_LEDGE = 10,
   /// ★ Named from the game: "There are two ledges that actually form a
   /// scale." (MsgColossoStageCalledScales)
-  LOCALID_SCALES_EAST_LEDGE = 11,
+  ACTOR_SCALES_EAST_LEDGE = 11,
   /// ★ Named from what the player sees: a stone pillar west of the Scales of
   /// Justice, which Move sets on the western ledge to hold it down (its
   /// render)
-  LOCALID_SCALES_WEIGHT = 12,
+  ACTOR_SCALES_WEIGHT = 12,
   /// ★ Named from what the player sees: a stone pillar on the
   /// Stepping-Stone Stage that Move shifts along its row (its render)
-  LOCALID_STONE = 13,
+  ACTOR_STONE = 13,
   /// East of the Wall Wedge's pistons, by the operator; Move on it needs
   /// nothing more (EventScript_IgnoreMove).
   /// ★ Named from what the player sees: a stone pillar east of the Wall
   /// Wedge's pistons (its render)
-  LOCALID_ROCK = 14,
+  ACTOR_ROCK = 14,
   /// The log-rolling area's three stones; each settles where Move drops it
   /// (EventScript_SettleStones, FLAG_FIRST_LOG_AREA_STONE_SETTLED and the two
   /// after it).
   /// ★ Named from the game: "You can get through quickly by moving the logs
   /// and stones." (MsgColossoAnotherLogRollingArea)
-  LOCALID_LOG_AREA_STONE_A = 15,
+  ACTOR_LOG_AREA_STONE_A = 15,
   /// ★ Named from the game: "You can get through quickly by moving the logs
   /// and stones." (MsgColossoAnotherLogRollingArea)
-  LOCALID_LOG_AREA_STONE_B = 16,
+  ACTOR_LOG_AREA_STONE_B = 16,
   /// ★ Named from the game: "You can get through quickly by moving the logs
   /// and stones." (MsgColossoAnotherLogRollingArea)
-  LOCALID_LOG_AREA_STONE_C = 17,
-  /// The Wall Wedge's five pistons, west to east; each is drawn by two object
-  /// events, LOCALID_FIRST_PISTON + n and LOCALID_FIRST_PISTON + PISTON_COUNT
+  ACTOR_LOG_AREA_STONE_C = 17,
+  /// The Wall Wedge's five pistons, west to east; each is drawn by two
+  /// actors, ACTOR_FIRST_PISTON + n and ACTOR_FIRST_PISTON + PISTON_COUNT
   /// + n.
   /// ★ Named from the game: "The pistons move back and forth."
   /// (MsgColossoPlaceCalledWall)
-  LOCALID_FIRST_PISTON = 18,
+  ACTOR_FIRST_PISTON = 18,
   /// ★ Named from the game: "The pistons move back and forth."
   /// (MsgColossoPlaceCalledWall)
-  LOCALID_LAST_PISTON = 22,
+  ACTOR_LAST_PISTON = 22,
   /// A young man with fair hair who works the Wall Wedge.
   /// ★ Named from the game: "The operator of the walls will cheer for you on
   /// this stage." (MsgColossoOperatorWallsCheer)
-  LOCALID_WALL_OPERATOR = 28,
+  ACTOR_WALL_OPERATOR = 28,
   /// The plant Growth grows into a shortcut.
   /// ★ Named from what the player sees: a small sprout (SPRITE_SPROUT) on the
   /// ground past the Wall Wedge (its render)
-  LOCALID_GROWTH_PLANT = 29,
+  ACTOR_GROWTH_PLANT = 29,
   /// The log Force knocks off the Moving Sidewalk Stage's conveyor belt.
   /// ★ Named from what the player sees: a log (spr_294.png) at the conveyor
   /// belt of the Moving Sidewalk Stage (its render)
-  LOCALID_SIDEWALK_LOG = 30,
+  ACTOR_SIDEWALK_LOG = 30,
   /// The log-rolling area's long log.
   /// ★ Named from the game: "To get across the tank, you'll need to roll the
   /// logs." (MsgColossoAnotherLogRollingArea)
-  LOCALID_LONG_LOG = 31,
+  ACTOR_LONG_LOG = 31,
   /// A soldier who explains the third finals match.
   /// ★ Named from the game: "This is the site of the third finals match."
   /// (MsgColossoSiteThirdFinals)
-  LOCALID_GUIDE = 32,
+  ACTOR_GUIDE = 32,
   /// The stages' attendants, young men with fair hair in white tunics.
   /// ★ Named from the game: "This stage is called the Scales of Justice."
   /// (MsgColossoStageCalledScales)
-  LOCALID_SCALES_ATTENDANT = 33,
+  ACTOR_SCALES_ATTENDANT = 33,
   /// ★ Named from the game: "You can reach the next stage by jumping from
   /// stone to stone." (MsgColossoSteppingStoneStage)
-  LOCALID_STEPPING_STONE_ATTENDANT = 34,
+  ACTOR_STEPPING_STONE_ATTENDANT = 34,
   /// ★ Named from the game: "This place is called the Wall Wedge."
   /// (MsgColossoPlaceCalledWall)
-  LOCALID_WALL_WEDGE_ATTENDANT = 35,
+  ACTOR_WALL_WEDGE_ATTENDANT = 35,
   /// ★ Named from the game: "This sheer wall has a bumpy surface."
   /// (MsgColossoPlaceNormallyCalledFreeClimb)
-  LOCALID_FREE_CLIMB_ATTENDANT = 36,
+  ACTOR_FREE_CLIMB_ATTENDANT = 36,
   /// ★ Named from the game: "This is called the Moving Sidewalk Stage."
   /// (MsgColossoCalledMovingSidewalkStage)
-  LOCALID_MOVING_SIDEWALK_ATTENDANT = 37,
+  ACTOR_MOVING_SIDEWALK_ATTENDANT = 37,
   /// ★ Named from the game: "This is another log-rolling area."
   /// (MsgColossoAnotherLogRollingArea)
-  LOCALID_LOG_ROLLING_ATTENDANT = 38,
-  /// The arena's prizes, drawn as item icons at two blank object events
+  ACTOR_LOG_ROLLING_ATTENDANT = 38,
+  /// The arena's prizes, drawn as item icons at two blank actors
   /// (Colosso_ShowItemIcon).
   /// ★ Named from what the player sees: the Claymore's icon at the arena's
   /// finish, taken by whoever reaches it first (its render)
-  LOCALID_PRIZE_A = 39,
+  ACTOR_PRIZE_A = 39,
   /// ★ Named from what the player sees: the Hunter's Sword's icon at the
   /// arena's finish, taken by whoever reaches it second (its render)
-  LOCALID_PRIZE_B = 40,
+  ACTOR_PRIZE_B = 40,
   /// The first of the three particles that rise from the sleeping Isaac after
   /// the last match (ColosseumNavampaMatch_SpawnPeriodicParticle).
   /// ★ Named from what the player sees: a "z" (spr_280.png) rising from Isaac
   /// as he sleeps (its render)
-  LOCALID_FIRST_SLEEP_PARTICLE = 41
+  ACTOR_FIRST_SLEEP_PARTICLE = 41
 };
 
 /// The temporary flags that keep what the friends changed on the stages, for
@@ -255,11 +255,11 @@ enum {
   /// ★ Named from the game: "This place is called the Wall Wedge."
   /// (MsgColossoPlaceCalledWall)
   FLAG_WALL_WEDGE_HALTED =
-      FLAG_AREA_TEMP_61, ///< by Halt on LOCALID_WALL_OPERATOR
+      FLAG_AREA_TEMP_61, ///< by Halt on ACTOR_WALL_OPERATOR
   /// ★ Named from the game: "This stage is called the Scales of Justice."
   /// (MsgColossoStageCalledScales)
-  FLAG_SCALES_FROZEN = FLAG_AREA_TEMP_62, ///< by Frost on LOCALID_PUDDLE
-  /// By Force on LOCALID_SIDEWALK_LOG: the belt carries no one any more.
+  FLAG_SCALES_FROZEN = FLAG_AREA_TEMP_62, ///< by Frost on ACTOR_PUDDLE
+  /// By Force on ACTOR_SIDEWALK_LOG: the belt carries no one any more.
   /// ★ Named from the game: "This is called the Moving Sidewalk Stage."
   /// (MsgColossoCalledMovingSidewalkStage)
   FLAG_SIDEWALK_LOG_KNOCKED_OFF = FLAG_AREA_TEMP_63,
@@ -271,12 +271,12 @@ enum {
   /// ★ Named from the game: "This stage is called the Scales of Justice."
   /// (MsgColossoStageCalledScales)
   FLAG_WEIGHT_ON_SCALES =
-      FLAG_AREA_TEMP_68, ///< LOCALID_SCALES_WEIGHT is on the western ledge
+      FLAG_AREA_TEMP_68, ///< ACTOR_SCALES_WEIGHT is on the western ledge
   /// ★ Named from the game: "To get across the tank, you'll need to roll the
   /// logs." (MsgColossoAnotherLogRollingArea)
   FLAG_LONG_LOG_IN_PLACE =
       FLAG_AREA_TEMP_69, ///< at the east end (EventScript_RollLongLog)
-  /// The byte of flags that keeps LOCALID_STONE's column.
+  /// The byte of flags that keeps ACTOR_STONE's column.
   /// ★ Named from the game: "You can get through quickly by moving the logs and
   /// stones." (MsgColossoAnotherLogRollingArea)
   FLAG_STONE_COLUMN = FLAG_AREA_TEMP_70,
@@ -285,7 +285,7 @@ enum {
   /// ★ Named from the game: "You must get through several stages before you
   /// reach the arena." (MsgColossoWarriorsEnterFinalsWithoutAny)
   FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11,
-  /// LOCALID_LOG_AREA_STONE_A has settled; the next two flags are B's and C's.
+  /// ACTOR_LOG_AREA_STONE_A has settled; the next two flags are B's and C's.
   /// ★ Named from the game: "You can get through quickly by moving the logs and
   /// stones." (MsgColossoAnotherLogRollingArea)
   FLAG_FIRST_LOG_AREA_STONE_SETTLED = FLAG_SCENE_TEMP_14
@@ -294,14 +294,13 @@ enum {
 enum { PISTON_COUNT = 5 };
 
 /// Sets the leader speed for the shared solo-party placement routine.
-static inline void InitializeObjectEventZero(void) {
-  ObjectMotion_SetSpeedParameters(LOCALID_PARTY_LEADER, PIXELS(1),
-                                  PIXELS(1) / 2);
+static inline void InitializeActorZero(void) {
+  ObjectMotion_SetSpeedParameters(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
 }
 
 /// Sets a companion speed for the shared solo-party placement routine.
-static inline void InitializeSelectedObjectEvent(s32 localId) {
-  ObjectMotion_SetSpeedParameters(localId, PIXELS(1), PIXELS(1) / 2);
+static inline void InitializeSelectedActor(s32 actorId) {
+  ObjectMotion_SetSpeedParameters(actorId, PIXELS(1), PIXELS(1) / 2);
 }
 
 extern s32 gColossoParticleCount;
@@ -318,9 +317,8 @@ const u32 *ColosseumNavampaMatch_GetExits(void) {
   return gColosseumNavampaMatchExits;
 }
 
-const struct ObjectEventTemplate *
-ColosseumNavampaMatch_GetObjectEventTemplates(void) {
-  return gColosseumNavampaMatchObjectEventTemplates;
+const struct ActorTemplate *ColosseumNavampaMatch_GetActorTemplates(void) {
+  return gColosseumNavampaMatchActorTemplates;
 }
 
 /// The Wall Wedge's callback: cycles its pistons through their four patterns,
@@ -328,38 +326,37 @@ ColosseumNavampaMatch_GetObjectEventTemplates(void) {
 /// gap.
 static void ColosseumNavampaMatch_UpdateWallWedge(void) {
   struct FieldWork *work = gFieldWork;
-  struct ObjectEvent *objectEvent =
-      ObjectEvent_GetById(gSaveBlock.leaderLocalId);
-  s32 row = objectEvent->z.fixed >> 20;
+  struct Actor *actor = Actor_GetById(gSaveBlock.leaderActorId);
+  s32 row = actor->z.fixed >> 20;
   s32 i;
   s32 kind;
 
   if (gColosseumNavampaMatch_WallWedgeTimer == 0) {
     gColosseumNavampaMatch_WallWedgePatternIndex =
         (gColosseumNavampaMatch_WallWedgePatternIndex + 1) & 3;
-    for (i = LOCALID_FIRST_PISTON; i <= LOCALID_LAST_PISTON; i++) {
+    for (i = ACTOR_FIRST_PISTON; i <= ACTOR_LAST_PISTON; i++) {
       kind = gColosseumNavampaMatch_WallWedgePattern
           [gColosseumNavampaMatch_WallWedgePatternIndex]
-          [i - LOCALID_FIRST_PISTON];
-      Import_ObjectEventSetAnimation(i, kind);
-      Import_ObjectEventSetAnimation(i + PISTON_COUNT, kind + 8);
+          [i - ACTOR_FIRST_PISTON];
+      Import_ActorSetAnimation(i, kind);
+      Import_ActorSetAnimation(i + PISTON_COUNT, kind + 8);
       MapGrid_CopyCellAttributeRect(32, 11, 1, 2,
-                                    (i - LOCALID_FIRST_PISTON) * 2 + 33, 11);
+                                    (i - ACTOR_FIRST_PISTON) * 2 + 33, 11);
       if (kind != 7) {
         MapGrid_CopyCellAttributeRect(74, 12, 1, 1,
-                                      (i - LOCALID_FIRST_PISTON) * 2 + 33, 11);
+                                      (i - ACTOR_FIRST_PISTON) * 2 + 33, 11);
       }
     }
-    Import_ObjectEventSetAnimation(
-        LOCALID_WALL_OPERATOR,
+    Import_ActorSetAnimation(
+        ACTOR_WALL_OPERATOR,
         gColosseumNavampaMatch_WallWedgePattern
             [gColosseumNavampaMatch_WallWedgePatternIndex][PISTON_COUNT]);
   } else {
-    for (i = LOCALID_FIRST_PISTON; i <= LOCALID_LAST_PISTON; i++) {
+    for (i = ACTOR_FIRST_PISTON; i <= ACTOR_LAST_PISTON; i++) {
       kind = gColosseumNavampaMatch_WallWedgePattern
           [gColosseumNavampaMatch_WallWedgePatternIndex]
-          [i - LOCALID_FIRST_PISTON];
-      if ((u32)(objectEvent->x.fixed - (i << 21) + 0x31ffff) <= 0x13fffe) {
+          [i - ACTOR_FIRST_PISTON];
+      if ((u32)(actor->x.fixed - (i << 21) + 0x31ffff) <= 0x13fffe) {
         if (row == 11 && kind == 4)
           work->raisedEvent = kind;
         if (row == 12 && kind == 5)
@@ -411,18 +408,18 @@ static void ColosseumNavampaMatch_WaitForWallWedgeOpening(void) {
 
 /// The Moving Sidewalk Stage's belt carries the party west. It's coord event
 /// 11, and until FLAG_SIDEWALK_LOG_KNOCKED_OFF is set the belt carries the
-/// controlled object event and the camera west.
+/// controlled actor and the camera west.
 static void EventScript_RideMovingSidewalk(void) {
   struct FieldWork *work = gFieldWork;
   struct SaveBlock *state = &gSaveBlock;
-  s32 id = state->leaderLocalId;
-  struct ObjectEvent *subject = (struct ObjectEvent *)work->camera;
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(id);
-  s32 z = objectEvent->z.part.pixel;
+  s32 id = state->leaderActorId;
+  struct Actor *subject = (struct Actor *)work->camera;
+  struct Actor *actor = Actor_GetById(id);
+  s32 z = actor->z.part.pixel;
 
   if ((u32)(z - 183) <= 3) {
     subject->x.fixed += -(PIXELS(4) / 5);
-    objectEvent->x.fixed += -(PIXELS(4) / 5);
+    actor->x.fixed += -(PIXELS(4) / 5);
   }
 }
 
@@ -437,7 +434,7 @@ static void EventScript_GrowPlant(void) {
 }
 
 /// Moves a scale ledge vertically at the shared speed and acceleration.
-static inline void ColosseumNavampaMatch_MoveOnScales(struct ObjectEvent *ledge,
+static inline void ColosseumNavampaMatch_MoveOnScales(struct Actor *ledge,
                                                       s32 height) {
   ledge->acceleration = PIXELS(2) / 5;
   ledge->speed = PIXELS(4) / 5;
@@ -448,17 +445,17 @@ static inline void ColosseumNavampaMatch_MoveOnScales(struct ObjectEvent *ledge,
 /// the scales tip, the western ledge down and the eastern ledge up
 /// (FLAG_SCALES_FROZEN).
 static void EventScript_FreezeOnScales(void) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
 
-  objectEvent = ObjectEvent_GetById(LOCALID_PUDDLE);
-  objectEvent->scaleX = Q16_ONE;
-  objectEvent->scaleY = Q16_ONE;
+  actor = Actor_GetById(ACTOR_PUDDLE);
+  actor->scaleX = Q16_ONE;
+  actor->scaleY = Q16_ONE;
 
-  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_EAST_LEDGE);
-  ColosseumNavampaMatch_MoveOnScales(objectEvent, PIXELS(32));
+  actor = Actor_GetById(ACTOR_SCALES_EAST_LEDGE);
+  ColosseumNavampaMatch_MoveOnScales(actor, PIXELS(32));
 
-  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
-  ColosseumNavampaMatch_MoveOnScales(objectEvent, PIXELS(4));
+  actor = Actor_GetById(ACTOR_SCALES_WEST_LEDGE);
+  ColosseumNavampaMatch_MoveOnScales(actor, PIXELS(4));
 
   GameFlag_Set(FLAG_SCALES_FROZEN);
   MapGrid_CopyCellAttributes(15, 12, 1, 1, 13, 12);
@@ -469,36 +466,36 @@ static void EventScript_FreezeOnScales(void) {
 /// frozen: it sinks with the rider as the eastern ledge rises
 /// (FLAG_ON_SCALES).
 static void EventScript_StepOnScales(void) {
-  s32 localId;
+  s32 actorId;
   s32 lowered;
-  struct ObjectEvent *log;
-  struct ObjectEvent *rider;
+  struct Actor *log;
+  struct Actor *rider;
   u8 *flags;
 
-  localId = gSaveBlock.leaderLocalId;
+  actorId = gSaveBlock.leaderActorId;
   lowered = GameFlag_Get(FLAG_SCALES_FROZEN);
   if (lowered == 0) {
-    log = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
+    log = Actor_GetById(ACTOR_SCALES_WEST_LEDGE);
     if (log != NULL) {
-      ObjectEvent_SetDestination(localId, log->x.part.pixel, log->z.part.pixel);
+      Actor_SetDestination(actorId, log->x.part.pixel, log->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(localId);
-    log = ObjectEvent_GetById(LOCALID_SCALES_EAST_LEDGE);
+    ObjectMotion_CommitCurrentPositionAndActivate(actorId);
+    log = Actor_GetById(ACTOR_SCALES_EAST_LEDGE);
     log->motionFlags = lowered;
     ColosseumNavampaMatch_MoveOnScales(log, PIXELS(32));
-    log = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
+    log = Actor_GetById(ACTOR_SCALES_WEST_LEDGE);
     log->motionFlags = lowered;
     ColosseumNavampaMatch_MoveOnScales(log, PIXELS(4));
-    rider = ObjectEvent_GetById(localId);
+    rider = Actor_GetById(actorId);
     flags = &rider->motionFlags;
     *flags = lowered;
     ColosseumNavampaMatch_MoveOnScales(rider, PIXELS(4));
-    ObjectEvent_SetSpriteFlags(rider, SPRITE_FLAG_SHADOW);
-    ObjectMotion_CommitCurrentPositionAndActivate(localId);
+    Actor_SetSpriteFlags(rider, SPRITE_FLAG_SHADOW);
+    ObjectMotion_CommitCurrentPositionAndActivate(actorId);
     MapGrid_CopyCellAttributes(0, 24, 1, 1, 9, 12);
     WaitFrames(2);
-    ObjectEvent_SetSpriteFlags(rider, SPRITE_FLAG_SHADOW);
-    *flags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
+    Actor_SetSpriteFlags(rider, SPRITE_FLAG_SHADOW);
+    *flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     rider->groundHeight = rider->y.fixed;
     GameFlag_Set(FLAG_ON_SCALES);
   }
@@ -506,19 +503,19 @@ static void EventScript_StepOnScales(void) {
 
 /// Stepping off the Scales of Justice's western ledge: the scales swing back.
 static void EventScript_StepOffScales(void) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
 
-  Import_ObjectEventSetAnimation(gSaveBlock.leaderLocalId, 1);
+  Import_ActorSetAnimation(gSaveBlock.leaderActorId, 1);
 
-  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_EAST_LEDGE);
-  objectEvent->motionFlags = 0;
-  ColosseumNavampaMatch_MoveOnScales(objectEvent, PIXELS(4));
+  actor = Actor_GetById(ACTOR_SCALES_EAST_LEDGE);
+  actor->motionFlags = 0;
+  ColosseumNavampaMatch_MoveOnScales(actor, PIXELS(4));
 
-  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
-  objectEvent->motionFlags = 0;
-  ColosseumNavampaMatch_MoveOnScales(objectEvent, PIXELS(32));
+  actor = Actor_GetById(ACTOR_SCALES_WEST_LEDGE);
+  actor->motionFlags = 0;
+  ColosseumNavampaMatch_MoveOnScales(actor, PIXELS(32));
 
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_SCALES_WEST_LEDGE);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_SCALES_WEST_LEDGE);
   {
     MapGrid_CopyCellAttributes(0, 25, 1, 1, 9, 12);
   }
@@ -530,27 +527,27 @@ static void EventScript_StepOffScales(void) {
 /// ledge, it sinks the ledge and the eastern ledge rises
 /// (FLAG_WEIGHT_ON_SCALES).
 static void EventScript_SetWeightOnScales(void) {
-  struct ObjectEvent *probe;
-  struct ObjectEvent *log;
-  struct ObjectEvent *upper;
-  struct ObjectEvent *lower;
+  struct Actor *probe;
+  struct Actor *log;
+  struct Actor *upper;
+  struct Actor *lower;
   s32 x;
   s32 z;
 
-  probe = ObjectEvent_GetById(LOCALID_SCALES_WEIGHT);
+  probe = Actor_GetById(ACTOR_SCALES_WEIGHT);
   x = probe->x.fixed >> 20;
   if (x == 9) {
     z = probe->z.fixed >> 20;
     if (z == 12) {
-      log = ObjectEvent_GetById(LOCALID_SCALES_WEIGHT);
-      ObjectEvent_SetSpriteFlags(log, 0);
-      log->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
+      log = Actor_GetById(ACTOR_SCALES_WEIGHT);
+      Actor_SetSpriteFlags(log, 0);
+      log->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       log->motionFlags = 0;
       ColosseumNavampaMatch_MoveOnScales(log, PIXELS(4));
-      upper = ObjectEvent_GetById(LOCALID_SCALES_EAST_LEDGE);
-      upper->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
+      upper = Actor_GetById(ACTOR_SCALES_EAST_LEDGE);
+      upper->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       ColosseumNavampaMatch_MoveOnScales(upper, PIXELS(32));
-      lower = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
+      lower = Actor_GetById(ACTOR_SCALES_WEST_LEDGE);
       ColosseumNavampaMatch_MoveOnScales(lower, PIXELS(4));
       GameFlag_Set(FLAG_WEIGHT_ON_SCALES);
       MapGrid_CopyCellAttributes(15, 12, 1, 1, 13, z);
@@ -562,7 +559,7 @@ static void EventScript_SetWeightOnScales(void) {
 /// Walking into the weight by the Scales of Justice pushes it, perhaps onto the
 /// scales.
 static void EventScript_PushWeight(void) {
-  ColosseumNavampaMatch_PushObjectEventAhead();
+  ColosseumNavampaMatch_PushActorAhead();
   EventScript_SetWeightOnScales();
 }
 
@@ -570,50 +567,48 @@ static void EventScript_PushWeight(void) {
 /// column is kept (the byte of flags from FLAG_STONE_COLUMN) and its cell
 /// rebuilt.
 static void EventScript_MoveStone(void) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 x;
 
-  objectEvent = ObjectEvent_GetById(LOCALID_STONE);
-  x = objectEvent->x.fixed >> 20;
+  actor = Actor_GetById(ACTOR_STONE);
+  x = actor->x.fixed >> 20;
   FieldGameFlag_SetByte(FLAG_STONE_COLUMN, x);
   MapGrid_CopyCellAttributes(18, 10, 3, 1, 18, 11);
   MapGrid_CopyCellAttributes(17, 11, 1, 1, x, 11);
 }
 
-/// Move on LOCALID_ROCK in Colosseum Final 3 needs nothing more.
+/// Move on ACTOR_ROCK in Colosseum Final 3 needs nothing more.
 static void EventScript_IgnoreMove(void) {}
 
 /// Walking into a rock on Colosseum Final 3's stages (coord event 22) pushes
 /// it.
 static void EventScript_PushRock(void) {
-  ColosseumNavampaMatch_PushObjectEventAhead();
+  ColosseumNavampaMatch_PushActorAhead();
 }
 
 /// Move on one of the log-rolling area's three stones, and each push there: a
 /// stone resting on the floor becomes a step (FLAG_FIRST_LOG_AREA_STONE_SETTLED
 /// and the two after it).
 static void EventScript_SettleStones(void) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 slot;
   s32 x;
   s32 z;
   s32 x2;
   s32 z2;
 
-  for (slot = LOCALID_LOG_AREA_STONE_A; slot <= LOCALID_LOG_AREA_STONE_C;
-       slot++) {
-    objectEvent = ObjectEvent_GetById(slot);
-    if (MapGrid_GetTerrainHeight(0, objectEvent->x.fixed,
-                                 objectEvent->z.fixed) == 0) {
-      objectEvent->priorityFlags = 2;
-      objectEvent->motionFlags = 0;
-      x = objectEvent->x.fixed >> 20;
-      z = objectEvent->z.fixed >> 20;
+  for (slot = ACTOR_LOG_AREA_STONE_A; slot <= ACTOR_LOG_AREA_STONE_C; slot++) {
+    actor = Actor_GetById(slot);
+    if (MapGrid_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed) == 0) {
+      actor->priorityFlags = 2;
+      actor->motionFlags = 0;
+      x = actor->x.fixed >> 20;
+      z = actor->z.fixed >> 20;
       MapGrid_CopyCellAttributes(83, 13, 1, 1, x, z);
-      x2 = objectEvent->x.fixed >> 20;
-      z2 = objectEvent->z.fixed >> 20;
+      x2 = actor->x.fixed >> 20;
+      z2 = actor->z.fixed >> 20;
       MapGrid_CopyCellAttributes(83, 13, 1, 1, x2, z2 + 52);
-      GameFlag_Set(slot - LOCALID_LOG_AREA_STONE_A +
+      GameFlag_Set(slot - ACTOR_LOG_AREA_STONE_A +
                    FLAG_FIRST_LOG_AREA_STONE_SETTLED);
     }
   }
@@ -622,17 +617,17 @@ static void EventScript_SettleStones(void) {
 /// A callback for Colosseum Final 3's eastern end: the cell at column 81, row
 /// 12 lets the rider through only while facing south.
 static void ColosseumNavampaMatch_UpdateEastEndCollision(void) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 x;
   s32 z;
   s32 behavior;
 
-  objectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
-  x = objectEvent->x.fixed >> 20;
+  actor = Actor_GetById(gSaveBlock.leaderActorId);
+  x = actor->x.fixed >> 20;
   behavior = 23;
-  z = objectEvent->z.fixed >> 20;
+  z = actor->z.fixed >> 20;
   if (x == 81 && z == 12) {
-    if ((objectEvent->facing & 0xE000) == 0x4000) {
+    if ((actor->facing & 0xE000) == 0x4000) {
       behavior = MB_CLIMB;
     }
     MapGrid_SetMetatileBehaviorAt(0, x << 20, z << 20, behavior);
@@ -642,23 +637,23 @@ static void ColosseumNavampaMatch_UpdateEastEndCollision(void) {
 /// Rejects blocked cells and cells occupied by one of the log-rolling area's
 /// three stones.
 static s32 ColosseumNavampaMatch_CheckLongLogCell(s32 x, s32 z) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
 
   if (MapGrid_GetMetatileBehaviorAt(0, x, z) == MB_WALL) {
     return -2;
   }
-  objectEvent = ObjectEvent_GetById(LOCALID_LOG_AREA_STONE_A);
+  actor = Actor_GetById(ACTOR_LOG_AREA_STONE_A);
   x >>= 20;
   z >>= 20;
-  if (objectEvent->x.fixed >> 20 == x && objectEvent->z.fixed >> 20 == z) {
+  if (actor->x.fixed >> 20 == x && actor->z.fixed >> 20 == z) {
     return -1;
   }
-  objectEvent = ObjectEvent_GetById(LOCALID_LOG_AREA_STONE_B);
-  if (objectEvent->x.fixed >> 20 == x && objectEvent->z.fixed >> 20 == z) {
+  actor = Actor_GetById(ACTOR_LOG_AREA_STONE_B);
+  if (actor->x.fixed >> 20 == x && actor->z.fixed >> 20 == z) {
     return -1;
   }
-  objectEvent = ObjectEvent_GetById(LOCALID_LOG_AREA_STONE_C);
-  if (objectEvent->x.fixed >> 20 == x && objectEvent->z.fixed >> 20 == z) {
+  actor = Actor_GetById(ACTOR_LOG_AREA_STONE_C);
+  if (actor->x.fixed >> 20 == x && actor->z.fixed >> 20 == z) {
     return -1;
   }
   return 0;
@@ -681,11 +676,11 @@ static s32 ColosseumNavampaMatch_CheckLongLogPath(s32 x, s32 z) {
 /// made (FLAG_LONG_LOG_IN_PLACE). Away from the log, a stone ahead is pushed
 /// instead.
 static void EventScript_RollLongLog(void) {
-  struct ObjectEvent *rider;
-  struct ObjectEvent *log;
+  struct Actor *rider;
+  struct Actor *log;
   struct FieldWork *work;
   s32 angle;
-  s32 localId;
+  s32 actorId;
   s32 x;
   s32 z;
   s32 steps;
@@ -696,17 +691,17 @@ static void EventScript_RollLongLog(void) {
   s32 step;
   s32 ahead[3];
 
-  rider = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
-  log = ObjectEvent_GetById(LOCALID_LONG_LOG);
+  rider = Actor_GetById(gSaveBlock.leaderActorId);
+  log = Actor_GetById(ACTOR_LONG_LOG);
   steps = 0;
   angle = gColosseumNavampaMatch_FacingAngles[rider->facing >> 13];
-  localId = gSaveBlock.leaderLocalId;
+  actorId = gSaveBlock.leaderActorId;
   SET_VECTOR(ahead, (rider->x.fixed & -0x100000) + PIXELS(8), rider->y.fixed,
              (rider->z.fixed & -0x100000) + PIXELS(8));
   Vector_AddPolarOffset(PIXELS(16), angle, ahead);
   x = log->x.fixed;
   z = log->z.fixed;
-  // Only a nearby rider rolls the log; other interactions push the object event
+  // Only a nearby rider rolls the log; other interactions push the actor
   // ahead.
   if ((ahead[0] - x >= 0 ? ahead[0] - x : x - ahead[0]) > PIXELS(8) ||
       (ahead[2] - z >= 0 ? ahead[2] - z : z - ahead[2]) > PIXELS(32)) {
@@ -747,7 +742,7 @@ static void EventScript_RollLongLog(void) {
   MapGrid_CopyCellAttributes(74, 8, 1, 4, log->x.fixed >> 20, 9);
   MapGrid_CopyCellAttributes(120, 60, 8, 5, 74, 60);
   FieldScript_Start();
-  Import_ObjectEventSetAnimation(localId, 8);
+  Import_ActorSetAnimation(actorId, 8);
   FieldScript_WaitFrames(6);
   log->speed = PIXELS(1) / 2;
   acceleration = PIXELS(1) / 5;
@@ -755,10 +750,10 @@ static void EventScript_RollLongLog(void) {
   Object_SelectAnimation(log, mode);
   Object_SetPosition(log, x, 0, z);
   FieldScript_WaitFrames(6);
-  Import_ObjectEventSetAnimation(localId, ANIM_WALK);
+  Import_ActorSetAnimation(actorId, ANIM_WALK);
   work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   Object_StartCamera((struct Object *)work->camera, (s32)log);
-  ObjectEvent_SetSpeed(localId, PIXELS(1) / 2, acceleration);
+  Actor_SetSpeed(actorId, PIXELS(1) / 2, acceleration);
   Script_PlaySong(SE_HEAVY_MOVE);
   Object_SelectAnimation(rider, 2);
   Object_SetPosition(rider, (steps * step * PIXELS(1)) + rider->x.fixed, 0,
@@ -769,12 +764,12 @@ static void EventScript_RollLongLog(void) {
   // At the eastern end the log settles at the end of its stage.
   if (x >= PIXELS(1328)) {
     GameFlag_Set(FLAG_LONG_LOG_IN_PLACE);
-    Import_ObjectEventSetAnimation(LOCALID_LONG_LOG, ANIM_NOD);
-    ObjectEvent_SetDestinationOffset(LOCALID_LONG_LOG, 18, 6);
+    Import_ActorSetAnimation(ACTOR_LONG_LOG, ANIM_NOD);
+    Actor_SetDestinationOffset(ACTOR_LONG_LOG, 18, 6);
     FieldScript_WaitFrames(30);
     Object_SelectAnimation(log, 8);
     Object_WaitForMove(log);
-    log->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
+    log->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     column = 84;
     MapGrid_CopyCellAttributes(86, 10, 1, 2, column, 10);
     MapGrid_CopyCellAttributes(86, 9, 1, 1, column, 12);
@@ -792,7 +787,7 @@ static void EventScript_RollLongLog(void) {
   FieldScript_End();
   return;
 far:
-  ColosseumNavampaMatch_PushObjectEventAhead();
+  ColosseumNavampaMatch_PushActorAhead();
   EventScript_SettleStones();
 }
 
@@ -809,23 +804,23 @@ ColosseumNavampaMatch_ShowActivatedSidewalkLayer(struct Object *interpreter) {
 /// Force on the Moving Sidewalk Stage's log: it slides away and the belt
 /// carries no one any more (FLAG_SIDEWALK_LOG_KNOCKED_OFF).
 static void EventScript_ForceSidewalkLog(void) {
-  struct ObjectEvent *effect;
+  struct Actor *effect;
   s32 moveRate;
 
-  effect = ObjectEvent_GetById(LOCALID_SIDEWALK_LOG);
+  effect = Actor_GetById(ACTOR_SIDEWALK_LOG);
   effect->motionFlags = 0;
   moveRate = PIXELS(8) / 5;
   effect->acceleration = moveRate;
   effect->speed = moveRate;
   Object_SelectAnimation(effect, 2);
-  ObjectEvent_SetScript(effect, gColosseumNavampaMatch_SidewalkLogScript);
+  Actor_SetScript(effect, gColosseumNavampaMatch_SidewalkLogScript);
   GameFlag_Set(FLAG_SIDEWALK_LOG_KNOCKED_OFF);
 }
 
 /// Halt on the Wall Wedge's operator: the pistons stop at their next open
 /// pattern (FLAG_WALL_WEDGE_HALTED).
 static void EventScript_HaltWall(void) {
-  FieldEffect_PauseObject(LOCALID_WALL_OPERATOR);
+  FieldEffect_PauseObject(ACTOR_WALL_OPERATOR);
   GameFlag_Set(FLAG_WALL_WEDGE_HALTED);
   WaitFrames(10);
   while (gColosseumNavampaMatch_WallWedgePatternIndex != 1 &&
@@ -838,65 +833,63 @@ static void EventScript_HaltWall(void) {
 /// Raised by the Wall Wedge (4): the rider passes through the pistons'
 /// northern opening.
 static void EventScript_PassNorthWallOpening(void) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
 #ifndef UBFIX
   s16 *gameWords;
 #endif
-  s32 *localId;
+  s32 *actorId;
   s32 z;
 
 #ifdef UBFIX
-  localId = &gSaveBlock.leaderLocalId;
+  actorId = &gSaveBlock.leaderActorId;
 #else
   // The original word-indexed address takes three more instructions here.
   gameWords = (s16 *)&gSaveBlock;
-  localId = (s32 *)&gameWords[offsetof(struct SaveBlock, leaderLocalId) /
+  actorId = (s32 *)&gameWords[offsetof(struct SaveBlock, leaderActorId) /
                               sizeof(s16)];
 #endif
-  objectEvent = ObjectEvent_GetById(*localId);
-  objectEvent->acceleration = PIXELS(1);
-  objectEvent->speed = PIXELS(2);
-  FieldEffect_ConfigureLinkedObject(*localId, ATTACHED_EFFECT_IN_FRONT |
+  actor = Actor_GetById(*actorId);
+  actor->acceleration = PIXELS(1);
+  actor->speed = PIXELS(2);
+  FieldEffect_ConfigureLinkedObject(*actorId, ATTACHED_EFFECT_IN_FRONT |
                                                   ATTACHED_EFFECT_ONCE);
-  Object_SelectAnimation(objectEvent, 5);
-  z = objectEvent->z.fixed & 0xFFF00000;
-  Object_SetPosition(objectEvent, objectEvent->x.fixed, objectEvent->y.fixed,
-                     z + PIXELS(24));
-  Object_WaitForMove(objectEvent);
+  Object_SelectAnimation(actor, 5);
+  z = actor->z.fixed & 0xFFF00000;
+  Object_SetPosition(actor, actor->x.fixed, actor->y.fixed, z + PIXELS(24));
+  Object_WaitForMove(actor);
 }
 
 /// Raised by the Wall Wedge (5): the rider passes through the pistons'
 /// southern opening.
 static void EventScript_PassSouthWallOpening(void) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
 #ifndef UBFIX
   s16 *gameWords;
 #endif
-  s32 *localId;
+  s32 *actorId;
   s32 z;
 
 #ifdef UBFIX
-  localId = &gSaveBlock.leaderLocalId;
+  actorId = &gSaveBlock.leaderActorId;
 #else
   // The original word-indexed address takes three more instructions here.
   gameWords = (s16 *)&gSaveBlock;
-  localId = (s32 *)&gameWords[offsetof(struct SaveBlock, leaderLocalId) /
+  actorId = (s32 *)&gameWords[offsetof(struct SaveBlock, leaderActorId) /
                               sizeof(s16)];
 #endif
-  objectEvent = ObjectEvent_GetById(*localId);
-  if (objectEvent->x.fixed > PIXELS(664)) {
-    objectEvent->x.fixed = PIXELS(664);
+  actor = Actor_GetById(*actorId);
+  if (actor->x.fixed > PIXELS(664)) {
+    actor->x.fixed = PIXELS(664);
   }
-  objectEvent->acceleration = PIXELS(1);
-  objectEvent->speed = PIXELS(2);
-  Object_SelectAnimation(objectEvent, 5);
-  z = objectEvent->z.fixed & 0xFFF00000;
-  Object_SetPosition(objectEvent, objectEvent->x.fixed, objectEvent->y.fixed,
-                     z + PIXELS(12));
-  Object_WaitForMove(objectEvent);
-  FieldEffect_ConfigureLinkedObject(*localId, ATTACHED_EFFECT_IN_FRONT |
+  actor->acceleration = PIXELS(1);
+  actor->speed = PIXELS(2);
+  Object_SelectAnimation(actor, 5);
+  z = actor->z.fixed & 0xFFF00000;
+  Object_SetPosition(actor, actor->x.fixed, actor->y.fixed, z + PIXELS(12));
+  Object_WaitForMove(actor);
+  FieldEffect_ConfigureLinkedObject(*actorId, ATTACHED_EFFECT_IN_FRONT |
                                                   ATTACHED_EFFECT_ONCE);
-  FieldObjectEvent_JumpDownLedge(*localId, 6, 0);
+  FieldActor_JumpDownLedge(*actorId, 6, 0);
 }
 
 UNUSED static void ColosseumNavampaMatch_UnusedEventHook(void) {}
@@ -913,19 +906,19 @@ UNUSED static void ColosseumNavampaMatch_UnusedEventHook(void) {}
 /// the one the player moves alone, as the friends' turns do.
 UNUSED static void ColosseumNavampaMatch_UnusedWarriorTalk(s32 warriorId) {
   struct FieldWork *work;
-  s32 localId;
+  s32 actorId;
   s32 messageOffset;
   s32 entrance;
 
   work = gFieldWork;
-  localId = gSaveBlock.leaderLocalId;
+  actorId = gSaveBlock.leaderActorId;
   entrance = gSaveBlock.entrance;
   if (entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     FieldScript_Start();
     messageOffset = warriorId * 3;
     FieldScript_SetMessageId(messageOffset + MsgColossoDidntThinkBattles);
     FieldMessage_ShowAtObject(warriorId, 0);
-    if (FieldScript_AskYesNoWithObjectEventAnimation(localId, 0) == 0) {
+    if (FieldScript_AskYesNoWithActorAnimation(actorId, 0) == 0) {
       FieldScript_SetMessageId(messageOffset + MsgColossoDidntThinkBattles + 1);
       FieldScript_ShowMessageAndWait(warriorId, 0);
       work->transition =
@@ -961,25 +954,24 @@ static void EventScript_ReachArena(void) {
                                                        ITEM_HUNTERS_SWORD);
   ColosseumNavampaMatch_WaitForOpponentToFinish();
   for (i = 0; i < 10; i++) {
-    ObjectEvent_RefreshSelectorById(LOCALID_OPPONENT);
+    Actor_RefreshSelectorById(ACTOR_OPPONENT);
   }
-  ObjectEvent_SetSpeed(LOCALID_OPPONENT, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_WalkTo(LOCALID_OPPONENT, 1528, 192);
-  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 1496, 192);
-  Import_ObjectEventSetAnimation(LOCALID_OPPONENT, ANIM_STAND);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_OPPONENT, 0);
+  Actor_SetSpeed(ACTOR_OPPONENT, PIXELS(1), PIXELS(1) / 2);
+  Actor_WalkTo(ACTOR_OPPONENT, 1528, 192);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1496, 192);
+  Import_ActorSetAnimation(ACTOR_OPPONENT, ANIM_STAND);
+  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 0);
   FieldScript_WaitFrames(10);
-  Import_ObjectEventSetAnimation(LOCALID_OPPONENT, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_OPPONENT, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(1));
-  ObjectEvent_SetSpeed(LOCALID_OPPONENT, PIXELS(2), PIXELS(1));
-  ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 1504, 192);
-  ObjectEvent_WalkToAndWait(LOCALID_OPPONENT, 1520, 192);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
-  Import_ObjectEventSetAnimation(LOCALID_OPPONENT,
-                                 WARRIOR_ANIMATION_FIGHTING_STANCE);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_OPPONENT, PIXELS(2), PIXELS(1));
+  Actor_WalkTo(ACTOR_PARTY_LEADER, 1504, 192);
+  Actor_WalkToAndWait(ACTOR_OPPONENT, 1520, 192);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
+  Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
   FieldScript_WaitFrames(10);
   /* FAKEMATCH(temporary): last, set to 4 at the top, keeps the + 1 unfolded;
    * as 4 - place + 1, 1 of 106 instructions differ in tbs-en. */
@@ -994,10 +986,10 @@ static void EventScript_ReachArena(void) {
 }
 
 /// Walking into something on Colosseum Final 3's stages (coord event 90):
-/// unless it is an object event, the leader jumps forward where he can
+/// unless it is an actor, the leader jumps forward where he can
 /// (Field_TryJumpForward).
 static void EventScript_JumpAtLogAreaEnd(void) {
-  if (Colosso_FindObjectEventAhead() == 0) {
+  if (Colosso_FindActorAhead() == 0) {
     Field_TryJumpForward();
   }
 }
@@ -1005,7 +997,7 @@ static void EventScript_JumpAtLogAreaEnd(void) {
 /// Walking into something by the Scales of Justice (coord event 91): the weight
 /// is pushed, anything else is checked.
 static void EventScript_PushWeightOrCheckAhead(void) {
-  if (Colosso_FindObjectEventAhead() == 0) {
+  if (Colosso_FindActorAhead() == 0) {
     Field_TryJumpForward();
   } else {
     EventScript_PushWeight();
@@ -1023,7 +1015,7 @@ const struct MapEvent *ColosseumNavampaMatch_GetEvents(void) {
 /// after a win (COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON) or a loss
 /// (COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_LOST).
 s32 ColosseumNavampaMatch_Initialize(void) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 i;
   s32 height;
   s32 column;
@@ -1035,29 +1027,29 @@ s32 ColosseumNavampaMatch_Initialize(void) {
                              TASK_PRIORITY_MAP);
   MapGrid_CopyCellAttributes(74, 60, 8, 6, 120, 60);
 
-  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PUDDLE), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_PUDDLE), 0);
 
-  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
-  ObjectEvent_SetSpriteFlags(objectEvent, 0);
-  objectEvent->motionFlags = 0;
-  objectEvent->y.fixed = PIXELS(32);
+  actor = Actor_GetById(ACTOR_SCALES_WEST_LEDGE);
+  Actor_SetSpriteFlags(actor, 0);
+  actor->motionFlags = 0;
+  actor->y.fixed = PIXELS(32);
 
-  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_EAST_LEDGE);
-  ObjectEvent_SetSpriteFlags(objectEvent, 0);
-  objectEvent->motionFlags = 0;
-  objectEvent->y.fixed = PIXELS(4);
+  actor = Actor_GetById(ACTOR_SCALES_EAST_LEDGE);
+  Actor_SetSpriteFlags(actor, 0);
+  actor->motionFlags = 0;
+  actor->y.fixed = PIXELS(4);
 
   if (GameFlag_Get(FLAG_SCALES_FROZEN) != 0) {
-    Import_ObjectEventSetAnimation(LOCALID_PUDDLE, 5);
-    objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
-    objectEvent->y.fixed = PIXELS(4);
-    objectEvent = ObjectEvent_GetById(LOCALID_SCALES_EAST_LEDGE);
-    objectEvent->y.fixed = PIXELS(32);
+    Import_ActorSetAnimation(ACTOR_PUDDLE, 5);
+    actor = Actor_GetById(ACTOR_SCALES_WEST_LEDGE);
+    actor->y.fixed = PIXELS(4);
+    actor = Actor_GetById(ACTOR_SCALES_EAST_LEDGE);
+    actor->y.fixed = PIXELS(32);
     MapGrid_CopyCellAttributes(15, 12, 1, 1, 13, 12);
   } else {
-    objectEvent = ObjectEvent_GetById(LOCALID_PUDDLE);
-    objectEvent->scaleX = 3 * Q16_ONE / 2;
-    objectEvent->scaleY = 3 * Q16_ONE / 2;
+    actor = Actor_GetById(ACTOR_PUDDLE);
+    actor->scaleX = 3 * Q16_ONE / 2;
+    actor->scaleY = 3 * Q16_ONE / 2;
     if (GameFlag_Get(FLAG_ON_SCALES) != 0) {
       MapGrid_CopyCellAttributes(0, 24, 1, 1, 9, 12);
     } else {
@@ -1068,151 +1060,147 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   if (GameFlag_Get(FLAG_WEIGHT_ON_SCALES) != 0) {
     MapGrid_CopyCellAttributes(15, 12, 1, 1, 13, 12);
     MapGrid_CopyCellAttributes(1, 25, 1, 1, 9, 12);
-    objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEIGHT);
-    ObjectEvent_SetSpriteFlags(objectEvent, 0);
-    objectEvent->motionFlags = 0;
-    objectEvent->y.fixed = PIXELS(2);
-    objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-    objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
-    objectEvent->y.fixed = PIXELS(4);
-    objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-    objectEvent = ObjectEvent_GetById(LOCALID_SCALES_EAST_LEDGE);
-    objectEvent->y.fixed = PIXELS(32);
+    actor = Actor_GetById(ACTOR_SCALES_WEIGHT);
+    Actor_SetSpriteFlags(actor, 0);
+    actor->motionFlags = 0;
+    actor->y.fixed = PIXELS(2);
+    actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+    actor = Actor_GetById(ACTOR_SCALES_WEST_LEDGE);
+    actor->y.fixed = PIXELS(4);
+    actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+    actor = Actor_GetById(ACTOR_SCALES_EAST_LEDGE);
+    actor->y.fixed = PIXELS(32);
   }
 
   column = FieldGameFlag_GetByte(FLAG_STONE_COLUMN);
   if (column == 0) {
     column = 19;
   }
-  objectEvent = ObjectEvent_GetById(LOCALID_STONE);
-  objectEvent->x.fixed = (column << 20) + (PIXELS(8));
-  objectEvent->motionFlags = 0;
-  objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
+  actor = Actor_GetById(ACTOR_STONE);
+  actor->x.fixed = (column << 20) + (PIXELS(8));
+  actor->motionFlags = 0;
+  actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(18, 10, 3, 1, 18, 11);
   MapGrid_CopyCellAttributes(17, 11, 1, 1, column, 11);
 
-  for (i = LOCALID_LOG_AREA_STONE_A; i <= LOCALID_LOG_AREA_STONE_C; i++) {
-    objectEvent = ObjectEvent_GetById(i);
-    height =
-        MapGrid_GetTerrainHeight(0, objectEvent->x.fixed, objectEvent->z.fixed);
-    if (objectEvent->y.fixed == 0 && height == 0) {
-      objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-      objectEvent->motionFlags = height;
-      MapGrid_CopyCellAttributes(83, 13, 1, 1, objectEvent->x.fixed >> 20,
-                                 objectEvent->z.fixed >> 20);
-      MapGrid_CopyCellAttributes(83, 13, 1, 1, objectEvent->x.fixed >> 20,
-                                 (objectEvent->z.fixed >> 20) + 52);
+  for (i = ACTOR_LOG_AREA_STONE_A; i <= ACTOR_LOG_AREA_STONE_C; i++) {
+    actor = Actor_GetById(i);
+    height = MapGrid_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
+    if (actor->y.fixed == 0 && height == 0) {
+      actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+      actor->motionFlags = height;
+      MapGrid_CopyCellAttributes(83, 13, 1, 1, actor->x.fixed >> 20,
+                                 actor->z.fixed >> 20);
+      MapGrid_CopyCellAttributes(83, 13, 1, 1, actor->x.fixed >> 20,
+                                 (actor->z.fixed >> 20) + 52);
     }
   }
 
   // Halt preserves a stationary wall; otherwise restart its pattern cycle.
   if (GameFlag_Get(FLAG_WALL_WEDGE_HALTED) != 0) {
-    for (i = LOCALID_FIRST_PISTON; i <= LOCALID_LAST_PISTON; i++) {
-      objectEvent = ObjectEvent_GetById(i);
-      objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-      Object_SelectAnimation(objectEvent, 2);
-      objectEvent = ObjectEvent_GetById(i + PISTON_COUNT);
-      objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-      objectEvent->motionFlags = 0;
-      objectEvent->y.fixed = PIXELS(32);
-      Object_SelectAnimation(objectEvent, 10);
+    for (i = ACTOR_FIRST_PISTON; i <= ACTOR_LAST_PISTON; i++) {
+      actor = Actor_GetById(i);
+      actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+      Object_SelectAnimation(actor, 2);
+      actor = Actor_GetById(i + PISTON_COUNT);
+      actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+      actor->motionFlags = 0;
+      actor->y.fixed = PIXELS(32);
+      Object_SelectAnimation(actor, 10);
       MapGrid_CopyCellAttributes(74, 12, 1, 1, i * 2 - 3, 11);
     }
-    Import_ObjectEventSetAnimation(LOCALID_WALL_OPERATOR, 10);
-    FieldEffect_PauseObject(LOCALID_WALL_OPERATOR);
+    Import_ActorSetAnimation(ACTOR_WALL_OPERATOR, 10);
+    FieldEffect_PauseObject(ACTOR_WALL_OPERATOR);
   } else {
-    for (i = LOCALID_FIRST_PISTON; i <= LOCALID_LAST_PISTON; i++) {
-      objectEvent = ObjectEvent_GetById(i);
-      objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-      objectEvent = ObjectEvent_GetById(i + PISTON_COUNT);
-      objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-      objectEvent->motionFlags = 0;
-      objectEvent->y.fixed = PIXELS(32);
+    for (i = ACTOR_FIRST_PISTON; i <= ACTOR_LAST_PISTON; i++) {
+      actor = Actor_GetById(i);
+      actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+      actor = Actor_GetById(i + PISTON_COUNT);
+      actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+      actor->motionFlags = 0;
+      actor->y.fixed = PIXELS(32);
     }
     FieldScheduler_AddCallback(ColosseumNavampaMatch_UpdateWallWedge,
                                TASK_PRIORITY_MAP);
   }
 
   if (GameFlag_Get(FLAG_PLANT_GROWN) != 0) {
-    Import_ObjectEventSetAnimation(LOCALID_GROWTH_PLANT, ANIM_SHAKE_HEAD);
+    Import_ActorSetAnimation(ACTOR_GROWTH_PLANT, ANIM_SHAKE_HEAD);
     MapGrid_CopyCellAttributes(47, 61, 1, 4, 49, 61);
   }
 
   if (GameFlag_Get(FLAG_SIDEWALK_LOG_KNOCKED_OFF) != 0) {
     TilesetAnim_Pause(1);
-    objectEvent = ObjectEvent_GetById(LOCALID_SIDEWALK_LOG);
-    objectEvent->motionFlags = 0;
-    objectEvent->x.fixed = PIXELS(1130);
-    objectEvent->z.fixed = PIXELS(184);
-    ObjectEvent_SetSpriteFlags(objectEvent, 0);
-    Object_SelectAnimation(objectEvent, 3);
-    ObjectEvent_SetScript(objectEvent,
-                          gColosseumNavampaMatch_SidewalkLogOffBelt);
+    actor = Actor_GetById(ACTOR_SIDEWALK_LOG);
+    actor->motionFlags = 0;
+    actor->x.fixed = PIXELS(1130);
+    actor->z.fixed = PIXELS(184);
+    Actor_SetSpriteFlags(actor, 0);
+    Object_SelectAnimation(actor, 3);
+    Actor_SetScript(actor, gColosseumNavampaMatch_SidewalkLogOffBelt);
   } else {
     TilesetAnim_Pause(2);
   }
 
   if (GameFlag_Get(FLAG_LONG_LOG_IN_PLACE) != 0) {
-    objectEvent = ObjectEvent_GetById(LOCALID_LONG_LOG);
-    Object_SelectAnimation(objectEvent, 8);
-    objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
+    actor = Actor_GetById(ACTOR_LONG_LOG);
+    Object_SelectAnimation(actor, 8);
+    actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(86, 10, 1, 2, 84, 10);
     MapGrid_CopyCellAttributes(86, 9, 1, 1, 84, 12);
   } else {
-    objectEvent = ObjectEvent_GetById(LOCALID_LONG_LOG);
-    MapGrid_CopyCellAttributes(85, 9, 1, 4, objectEvent->x.fixed >> 20, 9);
-    MapGrid_CopyCellAttributes(85, 9, 1, 4, objectEvent->x.fixed >> 20, 61);
+    actor = Actor_GetById(ACTOR_LONG_LOG);
+    MapGrid_CopyCellAttributes(85, 9, 1, 4, actor->x.fixed >> 20, 9);
+    MapGrid_CopyCellAttributes(85, 9, 1, 4, actor->x.fixed >> 20, 61);
   }
 
-  objectEvent = ObjectEvent_GetById(LOCALID_PUDDLE);
-  objectEvent->motionFlags = 0;
-  objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
-  objectEvent->motionFlags = 0;
-  objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_EAST_LEDGE);
-  objectEvent->motionFlags = 0;
-  objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-  Import_ObjectEventSetAnimation(LOCALID_OPPONENT,
-                                 WARRIOR_ANIMATION_FIGHTING_STANCE);
+  actor = Actor_GetById(ACTOR_PUDDLE);
+  actor->motionFlags = 0;
+  actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+  actor = Actor_GetById(ACTOR_SCALES_WEST_LEDGE);
+  actor->motionFlags = 0;
+  actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+  actor = Actor_GetById(ACTOR_SCALES_EAST_LEDGE);
+  actor->motionFlags = 0;
+  actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+  Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
   gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
-  Colosso_ShowItemIcon(LOCALID_PRIZE_A, ITEM_CLAYMORE);
-  Colosso_ShowItemIcon(LOCALID_PRIZE_B, ITEM_HUNTERS_SWORD);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_OPPONENT, SPRITE_COLOR_RBG);
+  Colosso_ShowItemIcon(ACTOR_PRIZE_A, ITEM_CLAYMORE);
+  Colosso_ShowItemIcon(ACTOR_PRIZE_B, ITEM_HUNTERS_SWORD);
+  Actor_ConfigureSpriteColor(ACTOR_OPPONENT, SPRITE_COLOR_RBG);
 
   // Entrances: the race (1), the friends' turns, the tour, and the end
   // of Colosso after a win (4) or a loss (5).
   switch (gSaveBlock.entrance) {
   case COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND:
-    Colosso_StartRaceGauge(LOCALID_PARTY_LEADER, LOCALID_OPPONENT, 6,
-                           PIXELS(1512), PIXELS(192), LOCALID_PRIZE_A,
-                           LOCALID_PRIZE_B);
+    Colosso_StartRaceGauge(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 6, PIXELS(1512),
+                           PIXELS(192), ACTOR_PRIZE_A, ACTOR_PRIZE_B);
     MapGrid_CopyCellsLayered(127, 0, 1, 2, 5, 2);
-    ObjectEvent_DestroyById(LOCALID_GUIDE);
-    ObjectEvent_DestroyById(LOCALID_SCALES_ATTENDANT);
-    ObjectEvent_DestroyById(LOCALID_STEPPING_STONE_ATTENDANT);
-    ObjectEvent_DestroyById(LOCALID_WALL_WEDGE_ATTENDANT);
-    ObjectEvent_DestroyById(LOCALID_FREE_CLIMB_ATTENDANT);
-    ObjectEvent_DestroyById(LOCALID_MOVING_SIDEWALK_ATTENDANT);
-    ObjectEvent_DestroyById(LOCALID_LOG_ROLLING_ATTENDANT);
+    Actor_DestroyById(ACTOR_GUIDE);
+    Actor_DestroyById(ACTOR_SCALES_ATTENDANT);
+    Actor_DestroyById(ACTOR_STEPPING_STONE_ATTENDANT);
+    Actor_DestroyById(ACTOR_WALL_WEDGE_ATTENDANT);
+    Actor_DestroyById(ACTOR_FREE_CLIMB_ATTENDANT);
+    Actor_DestroyById(ACTOR_MOVING_SIDEWALK_ATTENDANT);
+    Actor_DestroyById(ACTOR_LOG_ROLLING_ATTENDANT);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       Sound_PlaySong(SONG_FADE_OUT_BGM);
       Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
-      ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, LOCALID_PARTY_LEADER);
+      Actor_LinkObjectAndSetCallback(ACTOR_GARET, ACTOR_PARTY_LEADER);
       ColosseumNavampaMatch_ShowRoundStartLettering(3);
     }
-    ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, LOCALID_PARTY_LEADER);
-    ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, LOCALID_PARTY_LEADER);
-    ObjectEvent_LinkObjectAndSetCallback(LOCALID_MIA, LOCALID_PARTY_LEADER);
+    Actor_LinkObjectAndSetCallback(ACTOR_GARET, ACTOR_PARTY_LEADER);
+    Actor_LinkObjectAndSetCallback(ACTOR_IVAN, ACTOR_PARTY_LEADER);
+    Actor_LinkObjectAndSetCallback(ACTOR_MIA, ACTOR_PARTY_LEADER);
     Colosso_StartOpponent((s32)&ResourceId_OpponentPathC);
     break;
 
   case COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH:
     FieldScheduler_AddCallback(Colosso_RaiseTakePlaceOnPsynergy,
                                TASK_PRIORITY_MAP);
-    ObjectEvent_DestroyById(LOCALID_PRIZE_A);
-    ObjectEvent_DestroyById(LOCALID_PRIZE_B);
+    Actor_DestroyById(ACTOR_PRIZE_A);
+    Actor_DestroyById(ACTOR_PRIZE_B);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
       break;
     }
@@ -1225,7 +1213,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
       break;
     }
-    ColosseumNavampaMatch_IntroduceThirdFinals(LOCALID_GUIDE);
+    ColosseumNavampaMatch_IntroduceThirdFinals(ACTOR_GUIDE);
     Colosso_ClearCheeringSpots();
     break;
 
@@ -1249,7 +1237,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
 /// last match; timer and work hold signed 1/256-pixel steps.
 static s32
 ColosseumNavampaMatch_AdvanceParticleMotion(struct Object *interpreter) {
-  struct ObjectEvent *particle = (struct ObjectEvent *)interpreter;
+  struct Actor *particle = (struct Actor *)interpreter;
   particle->x.fixed += particle->timer * 256;
   particle->y.fixed += (s16)particle->work * 256;
   particle->scaleX += Q16_ONE / 40;
@@ -1262,16 +1250,16 @@ ColosseumNavampaMatch_AdvanceParticleMotion(struct Object *interpreter) {
 /// Shows one of the three particles that rise from the sleeping Isaac, each at
 /// its point in a three-second cycle.
 static void ColosseumNavampaMatch_SpawnPeriodicParticle(void) {
-  struct ObjectEvent *particle;
-  struct ObjectEvent *source;
+  struct Actor *particle;
+  struct Actor *source;
   s32 x;
   s32 y;
   s32 kind;
   s32 count;
 
-  particle = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  particle = Actor_GetById(ACTOR_PARTY_LEADER);
   count = gColossoParticleCount + 1;
-  kind = LOCALID_FIRST_SLEEP_PARTICLE;
+  kind = ACTOR_FIRST_SLEEP_PARTICLE;
   x = particle->x.fixed;
   y = particle->y.fixed;
   gColossoParticleCount = count;
@@ -1279,23 +1267,23 @@ static void ColosseumNavampaMatch_SpawnPeriodicParticle(void) {
   case 10:
     break;
   case 20:
-    kind = LOCALID_FIRST_SLEEP_PARTICLE + 1;
+    kind = ACTOR_FIRST_SLEEP_PARTICLE + 1;
     break;
   case 30:
-    kind = LOCALID_FIRST_SLEEP_PARTICLE + 2;
+    kind = ACTOR_FIRST_SLEEP_PARTICLE + 2;
     break;
   default:
     return;
   }
-  particle = ObjectEvent_GetById(kind);
+  particle = Actor_GetById(kind);
   if (particle == 0) {
     return;
   }
-  source = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  source = Actor_GetById(ACTOR_PARTY_LEADER);
   if (source != 0) {
-    Import_ObjectEventSetPosition(kind, source->x.fixed, source->z.fixed);
+    Import_ActorSetPosition(kind, source->x.fixed, source->z.fixed);
   }
-  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(kind), 0);
+  Actor_SetSpriteFlags(Actor_GetById(kind), 0);
   particle->motionFlags = 0;
   particle->scaleX = 2 * Q16_ONE / 5;
   particle->scaleY = 2 * Q16_ONE / 5;
@@ -1308,69 +1296,67 @@ static void ColosseumNavampaMatch_SpawnPeriodicParticle(void) {
   }
   particle->timer = 25;
   particle->work = 128;
-  ObjectEvent_SetActionScript(kind, gColossoParticleKinds);
+  Actor_SetActionScript(kind, gColossoParticleKinds);
 }
 
 /// After the last match (COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON or _LOST):
 /// Garet, Ivan and Mia run to Isaac in the arena and call his name, but he
 /// falls asleep, exhausted, and they leave him to sleep.
 static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   const s32 *leaderScaleScript;
   TaskFunc particleCallback;
 
   // Place the opponent and companions around the resting leader.
-  ObjectEvent_DestroyById(LOCALID_PRIZE_A);
-  ObjectEvent_DestroyById(LOCALID_PRIZE_B);
+  Actor_DestroyById(ACTOR_PRIZE_A);
+  Actor_DestroyById(ACTOR_PRIZE_B);
   Party_RestoreHpPp(1);
   Sound_PlaySong(SONG_FADE_OUT_BGM);
   FieldScript_Start();
-  ObjectEvent_SetPosition(LOCALID_OPPONENT, PIXELS(1544), PIXELS(192));
+  Actor_SetPosition(ACTOR_OPPONENT, PIXELS(1544), PIXELS(192));
   if (battleResult < 0) {
-    Import_ObjectEventSetAnimation(LOCALID_OPPONENT,
-                                   WARRIOR_ANIMATION_ARMS_RAISED);
+    Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_ARMS_RAISED);
   } else {
-    Import_ObjectEventSetAnimation(LOCALID_OPPONENT,
-                                   WARRIOR_ANIMATION_DEFEATED);
+    Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_DEFEATED);
   }
-  ObjectEvent_SetActionScript(LOCALID_OPPONENT,
-                              gColosseumNavampaMatch_OpponentAfterBattle);
-  ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(1504), PIXELS(192));
-  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  Actor_SetActionScript(ACTOR_OPPONENT,
+                        gColosseumNavampaMatch_OpponentAfterBattle);
+  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(1504), PIXELS(192));
+  actor = Actor_GetById(ACTOR_PARTY_LEADER);
   {
     u16 shown = 0;
 
-    objectEvent->facing = shown;
+    actor->facing = shown;
   }
-  ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
-                              gColosseumNavampaMatch_LeaderActionA);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_CROUCH);
-  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(1464), PIXELS(184));
-  ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(1464), PIXELS(200));
-  ObjectEvent_SetPosition(LOCALID_MIA, PIXELS(1448), PIXELS(192));
-  objectEvent = ObjectEvent_GetById(LOCALID_GARET);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER,
+                        gColosseumNavampaMatch_LeaderActionA);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CROUCH);
+  Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetPosition(ACTOR_GARET, PIXELS(1464), PIXELS(184));
+  Actor_SetPosition(ACTOR_IVAN, PIXELS(1464), PIXELS(200));
+  Actor_SetPosition(ACTOR_MIA, PIXELS(1448), PIXELS(192));
+  actor = Actor_GetById(ACTOR_GARET);
   {
     u16 shown = 0;
 
-    objectEvent->facing = shown;
+    actor->facing = shown;
   }
-  objectEvent = ObjectEvent_GetById(LOCALID_IVAN);
+  actor = Actor_GetById(ACTOR_IVAN);
   {
     u16 shown = 0;
 
-    objectEvent->facing = shown;
+    actor->facing = shown;
   }
-  objectEvent = ObjectEvent_GetById(LOCALID_MIA);
+  actor = Actor_GetById(ACTOR_MIA);
   {
     u16 shown = 0;
 
-    objectEvent->facing = shown;
+    actor->facing = shown;
   }
   WaitFrames(1);
-  FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
+  FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   PaletteFade_ApplyTarget(PALETTE_TINT_GRAYSCALE, PALETTES_BG);
   FieldScript_StartScreenTransition();
@@ -1378,73 +1364,72 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   FieldScript_SetMessageId(MsgColossoIsaac);
   FieldScript_WaitFrames(60);
   leaderScaleScript = gColosseumNavampaMatch_LeaderScaleScript;
-  ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, leaderScaleScript);
-  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  objectEvent->scaleX = Q16_ONE;
-  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  objectEvent->scaleY = Q16_ONE;
-  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, 36);
-  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  objectEvent->x.fixed += PIXELS(3);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, leaderScaleScript);
+  actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  actor->scaleX = Q16_ONE;
+  actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  actor->scaleY = Q16_ONE;
+  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, 36);
+  actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  actor->x.fixed += PIXELS(3);
   FieldScript_WaitFrames(10);
-  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  ObjectEvent_SetSpriteFlags(objectEvent, 0);
+  actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  Actor_SetSpriteFlags(actor, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
-                              gColosseumNavampaMatch_LeaderActionB);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER,
+                        gColosseumNavampaMatch_LeaderActionB);
   // Let each companion react before the leader settles back to sleep.
-  Script_ShowMessage(LOCALID_GARET, 0);
+  Script_ShowMessage(ACTOR_GARET, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_WalkToAndWait(LOCALID_GARET, 1504, 176);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 10);
-  FieldEffect_SpawnLinked(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                          20);
-  Script_ShowMessage(LOCALID_IVAN, 0);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, LOCALID_IVAN);
+  Actor_WalkToAndWait(ACTOR_GARET, 1504, 176);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 10);
+  FieldEffect_SpawnLinked(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Script_ShowMessage(ACTOR_IVAN, 0);
+  Actor_LinkObjectAndSetCallback(ACTOR_GARET, ACTOR_IVAN);
   FieldScript_WaitFrames(30);
-  ObjectEvent_WalkToAndWait(LOCALID_IVAN, 1488, 176);
-  ObjectEvent_WalkTo(LOCALID_GARET, 1520, 184);
-  ObjectEvent_WalkToAndWait(LOCALID_IVAN, 1504, 176);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 0);
-  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTH, 10);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
+  Actor_WalkToAndWait(ACTOR_IVAN, 1488, 176);
+  Actor_WalkTo(ACTOR_GARET, 1520, 184);
+  Actor_WalkToAndWait(ACTOR_IVAN, 1504, 176);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 10);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
   FieldScript_WaitFrames(10);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, LOCALID_GARET);
+  Actor_LinkObjectAndSetCallback(ACTOR_IVAN, ACTOR_GARET);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(30);
-  Script_ShowMessage(LOCALID_MIA, 0);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, LOCALID_MIA);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, LOCALID_MIA);
-  ObjectEvent_WalkToAndWait(LOCALID_MIA, 1488, 184);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, LOCALID_PARTY_LEADER);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, LOCALID_PARTY_LEADER);
-  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, LOCALID_GARET);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, LOCALID_IVAN);
+  Script_ShowMessage(ACTOR_MIA, 0);
+  Actor_LinkObjectAndSetCallback(ACTOR_GARET, ACTOR_MIA);
+  Actor_LinkObjectAndSetCallback(ACTOR_IVAN, ACTOR_MIA);
+  Actor_WalkToAndWait(ACTOR_MIA, 1488, 184);
+  Actor_LinkObjectAndSetCallback(ACTOR_IVAN, ACTOR_PARTY_LEADER);
+  Actor_LinkObjectAndSetCallback(ACTOR_GARET, ACTOR_PARTY_LEADER);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  Actor_LinkObjectAndSetCallback(ACTOR_IVAN, ACTOR_GARET);
+  Actor_LinkObjectAndSetCallback(ACTOR_GARET, ACTOR_IVAN);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_MIA, 2);
   FieldScript_WaitFrames(10);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, LOCALID_MIA);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, LOCALID_MIA);
+  Actor_LinkObjectAndSetCallback(ACTOR_IVAN, ACTOR_MIA);
+  Actor_LinkObjectAndSetCallback(ACTOR_GARET, ACTOR_MIA);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(LOCALID_MIA, 0);
-  ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
-                              gColosseumNavampaMatch_LeaderActionC);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, LOCALID_PARTY_LEADER);
+  Script_ShowMessage(ACTOR_MIA, 0);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER,
+                        gColosseumNavampaMatch_LeaderActionC);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
+  Actor_LinkObjectAndSetCallback(ACTOR_GARET, ACTOR_PARTY_LEADER);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(LOCALID_GARET, 0);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, LOCALID_PARTY_LEADER);
+  Script_ShowMessage(ACTOR_GARET, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
+  Actor_LinkObjectAndSetCallback(ACTOR_IVAN, ACTOR_PARTY_LEADER);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(LOCALID_IVAN, 0);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_MIA, LOCALID_PARTY_LEADER);
+  Script_ShowMessage(ACTOR_IVAN, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_MIA, 2);
+  Actor_LinkObjectAndSetCallback(ACTOR_MIA, ACTOR_PARTY_LEADER);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(LOCALID_MIA, 0);
-  ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, leaderScaleScript);
+  Script_ShowMessage(ACTOR_MIA, 0);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, leaderScaleScript);
   FieldScript_WaitFrames(60);
   particleCallback = ColosseumNavampaMatch_SpawnPeriodicParticle;
   // Time the small reunion effects to the companions' reactions.
@@ -1453,72 +1438,72 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   FieldScript_WaitFrames(5);
   Task_Remove(particleCallback);
   FieldScript_WaitFrames(55);
-  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Task_AddCallback(particleCallback, TASK_PRIORITY_MAP);
   FieldScript_WaitFrames(20);
   Task_Remove(particleCallback);
   FieldScript_WaitFrames(40);
-  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   gColossoParticleCount = 9;
   Task_AddCallback(particleCallback, TASK_PRIORITY_MAP);
   FieldScript_WaitFrames(35);
   Task_Remove(particleCallback);
   FieldScript_WaitFrames(25);
-  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   gColossoParticleCount = 9;
   Task_AddCallback(particleCallback, TASK_PRIORITY_MAP);
   FieldScript_WaitFrames(35);
   Task_Remove(particleCallback);
   FieldScript_WaitFrames(25);
-  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_MIA, LOCALID_IVAN);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, LOCALID_MIA);
+  Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  Actor_LinkObjectAndSetCallback(ACTOR_MIA, ACTOR_IVAN);
+  Actor_LinkObjectAndSetCallback(ACTOR_IVAN, ACTOR_MIA);
   FieldScript_WaitFrames(60);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_MIA, LOCALID_PARTY_LEADER);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, LOCALID_PARTY_LEADER);
+  Actor_LinkObjectAndSetCallback(ACTOR_MIA, ACTOR_PARTY_LEADER);
+  Actor_LinkObjectAndSetCallback(ACTOR_IVAN, ACTOR_PARTY_LEADER);
   gColossoParticleCount = 9;
   Task_AddCallback(particleCallback, TASK_PRIORITY_MAP);
   FieldScript_WaitFrames(35);
   Task_Remove(particleCallback);
   FieldScript_WaitFrames(25);
-  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
-  ObjectMotion_SetVariantCallback(LOCALID_GARET, 3);
-  ObjectMotion_SetVariantCallback(LOCALID_IVAN, 3);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 3);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_MIA, LOCALID_IVAN);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, LOCALID_IVAN);
+  Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
+  ObjectMotion_SetVariantCallback(ACTOR_GARET, 3);
+  ObjectMotion_SetVariantCallback(ACTOR_IVAN, 3);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_MIA, 3);
+  Actor_LinkObjectAndSetCallback(ACTOR_MIA, ACTOR_IVAN);
+  Actor_LinkObjectAndSetCallback(ACTOR_GARET, ACTOR_IVAN);
   gColossoParticleCount = 9;
   Task_AddCallback(particleCallback, TASK_PRIORITY_MAP);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
   FieldScript_WaitFrames(60);
   // The companions begin to leave, then discuss the sleeping leader off-screen.
-  ObjectEvent_WalkTo(LOCALID_MIA, 1464, 200);
+  Actor_WalkTo(ACTOR_MIA, 1464, 200);
   FieldScript_WaitFrames(5);
-  ObjectEvent_WalkTo(LOCALID_IVAN, 1368, 184);
+  Actor_WalkTo(ACTOR_IVAN, 1368, 184);
   FieldScript_WaitFrames(3);
-  ObjectEvent_WalkToAndWait(LOCALID_GARET, 1512, 184);
-  ObjectEvent_WalkTo(LOCALID_GARET, 1368, 184);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
-  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_STAND);
-  ObjectEvent_LinkObjectAndSetCallback(LOCALID_MIA, LOCALID_PARTY_LEADER);
+  Actor_WalkToAndWait(ACTOR_GARET, 1512, 184);
+  Actor_WalkTo(ACTOR_GARET, 1368, 184);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
+  Import_ActorSetAnimation(ACTOR_MIA, ANIM_STAND);
+  Actor_LinkObjectAndSetCallback(ACTOR_MIA, ACTOR_PARTY_LEADER);
   FieldScript_WaitFrames(60);
-  ObjectEvent_WalkToAndWait(LOCALID_MIA, 1432, 200);
-  ObjectEvent_WalkTo(LOCALID_MIA, 1368, 184);
+  Actor_WalkToAndWait(ACTOR_MIA, 1432, 200);
+  Actor_WalkTo(ACTOR_MIA, 1368, 184);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(30);
-  ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(1512), PIXELS(176));
-  ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(1464), PIXELS(192));
-  ObjectEvent_SetPosition(LOCALID_MIA, PIXELS(1560), PIXELS(200));
+  Actor_SetPosition(ACTOR_GARET, PIXELS(1512), PIXELS(176));
+  Actor_SetPosition(ACTOR_IVAN, PIXELS(1464), PIXELS(192));
+  Actor_SetPosition(ACTOR_MIA, PIXELS(1560), PIXELS(200));
   ObjectSystem_SuspendProjectionAndShowSprites();
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(1);
   FieldScript_SetMessageId(MsgColossoIsaacFellAsleep);
-  Script_ShowMessage(LOCALID_GARET, 0);
-  Script_ShowMessage(LOCALID_IVAN, 0);
-  Script_ShowMessage(LOCALID_MIA, 0);
+  Script_ShowMessage(ACTOR_GARET, 0);
+  Script_ShowMessage(ACTOR_IVAN, 0);
+  Script_ShowMessage(ACTOR_MIA, 0);
   FieldScript_WaitFrames(60);
   FieldScript_End();
 }
@@ -1530,30 +1515,30 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
 static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
   s32 guideZ;
   s32 guideX;
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
 
-  objectEvent = ObjectEvent_GetById(guideId);
-  guideX = objectEvent->x.part.pixel;
-  guideZ = objectEvent->z.part.pixel;
+  actor = Actor_GetById(guideId);
+  guideX = actor->x.part.pixel;
+  guideZ = actor->z.part.pixel;
   FieldScript_Start();
-  ObjectEvent_SetSpeed(guideId, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(1), PIXELS(1) / 2);
-  Import_ObjectEventSetPosition(LOCALID_PARTY_LEADER, PIXELS(guideX),
-                                (PIXELS(guideZ) - PIXELS(48)));
-  Import_ObjectEventSetPosition(LOCALID_GARET, PIXELS(guideX) - PIXELS(16),
-                                PIXELS(guideZ) - PIXELS(40));
-  Import_ObjectEventSetPosition(LOCALID_IVAN, PIXELS(guideX) + PIXELS(16),
-                                PIXELS(guideZ) - PIXELS(40));
-  Import_ObjectEventSetPosition(LOCALID_MIA, PIXELS(guideX),
-                                (PIXELS(guideZ) - PIXELS(32)));
-  Import_ObjectEventSetPosition(guideId, PIXELS(guideX),
-                                (PIXELS(guideZ) - PIXELS(80)));
-  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  objectEvent->facing = FACING_NORTH;
-  FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
+  Actor_SetSpeed(guideId, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
+  Import_ActorSetPosition(ACTOR_PARTY_LEADER, PIXELS(guideX),
+                          (PIXELS(guideZ) - PIXELS(48)));
+  Import_ActorSetPosition(ACTOR_GARET, PIXELS(guideX) - PIXELS(16),
+                          PIXELS(guideZ) - PIXELS(40));
+  Import_ActorSetPosition(ACTOR_IVAN, PIXELS(guideX) + PIXELS(16),
+                          PIXELS(guideZ) - PIXELS(40));
+  Import_ActorSetPosition(ACTOR_MIA, PIXELS(guideX),
+                          (PIXELS(guideZ) - PIXELS(32)));
+  Import_ActorSetPosition(guideId, PIXELS(guideX),
+                          (PIXELS(guideZ) - PIXELS(80)));
+  actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  actor->facing = FACING_NORTH;
+  FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_SetMessageId(MsgColossoSiteThirdFinals);
@@ -1565,33 +1550,33 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
   FieldScript_ShowMessageAndWait(guideId, 0);
   ObjectMotion_SetVarCbAndRefresh(guideId, 2);
   FieldScript_ShowMessageAndWait(guideId, 0);
-  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(6);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
-  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  if (objectEvent != 0) {
-    ObjectMotion_ResetAndSetPosition(LOCALID_GARET, objectEvent->x.part.pixel,
-                                     objectEvent->z.part.pixel);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
+  actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  if (actor != 0) {
+    ObjectMotion_ResetAndSetPosition(ACTOR_GARET, actor->x.part.pixel,
+                                     actor->z.part.pixel);
   }
-  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
-  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  if (objectEvent != 0) {
-    ObjectMotion_ResetAndSetPosition(LOCALID_IVAN, objectEvent->x.part.pixel,
-                                     objectEvent->z.part.pixel);
+  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_WALK);
+  actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  if (actor != 0) {
+    ObjectMotion_ResetAndSetPosition(ACTOR_IVAN, actor->x.part.pixel,
+                                     actor->z.part.pixel);
   }
-  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
-  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  if (objectEvent != 0) {
-    ObjectMotion_ResetAndSetPosition(LOCALID_MIA, objectEvent->x.part.pixel,
-                                     objectEvent->z.part.pixel);
+  Import_ActorSetAnimation(ACTOR_MIA, ANIM_WALK);
+  actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  if (actor != 0) {
+    ObjectMotion_ResetAndSetPosition(ACTOR_MIA, actor->x.part.pixel,
+                                     actor->z.part.pixel);
   }
   ObjectMotion_SetPositionAndReset(guideId, (guideX - 16), (guideZ - 64));
-  Import_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
-  Import_ObjectEventSetPosition(LOCALID_IVAN, 0, 0);
-  Import_ObjectEventSetPosition(LOCALID_MIA, 0, 0);
+  Import_ActorSetPosition(ACTOR_GARET, 0, 0);
+  Import_ActorSetPosition(ACTOR_IVAN, 0, 0);
+  Import_ActorSetPosition(ACTOR_MIA, 0, 0);
   ObjectMotion_SetPositionAndReset(guideId, (guideX - 16), (guideZ - 16));
   ObjectMotion_SetPositionAndReset(guideId, guideX, guideZ);
   ObjectMotion_ArmCallback(guideId, FACING_NORTH, 10);
@@ -1604,10 +1589,10 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
 /// on the stages (COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) he asks whether
 /// they are done cheering instead.
 static void EventScript_TalkToScalesAttendant(s32 guideId) {
-  struct ObjectEvent *westPan;
-  struct ObjectEvent *eastPan;
-  struct ObjectEvent *westPanAgain;
-  struct ObjectEvent *eastPanAgain;
+  struct Actor *westPan;
+  struct Actor *eastPan;
+  struct Actor *westPanAgain;
+  struct Actor *eastPanAgain;
   s32 promptResult;
 
   if (gSaveBlock.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
@@ -1631,18 +1616,18 @@ static void EventScript_TalkToScalesAttendant(s32 guideId) {
     FieldScript_ShowMessageAndWait(guideId, 0);
     Colosso_HidePointer();
     WaitFrames(2);
-    westPan = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
+    westPan = Actor_GetById(ACTOR_SCALES_WEST_LEDGE);
     westPan->motionFlags = 0;
     ColosseumNavampaMatch_MoveOnScales(westPan, PIXELS(4));
-    eastPan = ObjectEvent_GetById(LOCALID_SCALES_EAST_LEDGE);
+    eastPan = Actor_GetById(ACTOR_SCALES_EAST_LEDGE);
     eastPan->motionFlags = 0;
     ColosseumNavampaMatch_MoveOnScales(eastPan, PIXELS(32));
     Object_WaitForMove(eastPan);
     FieldScript_WaitFrames(45);
-    westPanAgain = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
+    westPanAgain = Actor_GetById(ACTOR_SCALES_WEST_LEDGE);
     westPanAgain->motionFlags = 0;
     ColosseumNavampaMatch_MoveOnScales(westPanAgain, PIXELS(32));
-    eastPanAgain = ObjectEvent_GetById(LOCALID_SCALES_EAST_LEDGE);
+    eastPanAgain = Actor_GetById(ACTOR_SCALES_EAST_LEDGE);
     eastPanAgain->motionFlags = 0;
     ColosseumNavampaMatch_MoveOnScales(eastPanAgain, PIXELS(4));
     Object_WaitForMove(eastPanAgain);
@@ -1657,7 +1642,7 @@ static void EventScript_TalkToScalesAttendant(s32 guideId) {
     FieldScript_ShowMessageAndWait(guideId, 0);
     Colosso_HidePointer();
     WaitFrames(2);
-    FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
+    FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
     Colosso_RepeatStageNumber(guideId, 1);
   } else if (promptResult == COLOSSO_GUIDE_OFFER_CHEERING) {
     FieldScript_SetMessageId(MsgColossoObjectiveGetAcross);
@@ -1688,20 +1673,20 @@ static void EventScript_TalkToSteppingStoneAttendant(s32 guideId) {
     FieldCamera_WaitForArrival();
     FieldScript_WaitFrames(30);
     Script_ShowMessage(guideId, 0);
-    Colosso_FadeInWarrior(LOCALID_PARTY_LEADER, x, 200);
-    ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-    Colosso_WalkObjectEventToAndStand(LOCALID_PARTY_LEADER, x, 152);
-    Colosso_WalkObjectEventToAndStand(LOCALID_PARTY_LEADER, 296, 152);
+    Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, x, 200);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+    Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, x, 152);
+    Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 296, 152);
     FieldScript_WaitFrames(10);
     Field_TryJumpForward();
     FieldCamera_MoveTo(-1, -1, -1, 0);
-    ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_NORTH, 15);
+    ObjectMotion_ArmCallback(ACTOR_PARTY_LEADER, FACING_NORTH, 15);
     Field_TryJumpForward();
     FieldCamera_MoveTo(-1, -1, -1, 0);
-    ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_EAST, 15);
+    ObjectMotion_ArmCallback(ACTOR_PARTY_LEADER, FACING_EAST, 15);
     Field_TryJumpForward();
     FieldCamera_MoveTo(-1, -1, -1, 0);
-    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 15);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 15);
     Script_ShowMessage(guideId, 0);
     Colosso_ShowPointer(96, 40, 0);
     Colosso_MovePointer(128, 40, 10);
@@ -1712,8 +1697,8 @@ static void EventScript_TalkToSteppingStoneAttendant(s32 guideId) {
     FieldScript_WaitFrames(30);
     Script_ShowMessage(guideId, 0);
     Colosso_HidePointer();
-    Colosso_RestoreWarrior(LOCALID_PARTY_LEADER);
-    FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
+    Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
+    FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
     Colosso_RepeatStageNumber(guideId, 2);
   } else if (promptResult == COLOSSO_GUIDE_OFFER_CHEERING) {
     FieldScript_SetMessageId(MsgColossoYourGoalInStageSimple);
@@ -1748,14 +1733,14 @@ static void EventScript_TalkToWallWedgeAttendant(s32 guideId) {
       ColosseumNavampaMatch_StartWallWedge();
       FieldScript_WaitFrames(60);
       FieldScript_ShowMessageAndWait(guideId, 0);
-      Colosso_FadeInWarrior(LOCALID_PARTY_LEADER, 504, 200);
+      Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 504, 200);
       /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
        * show, which sets r0 last; as a direct call, 1 of 136 instructions
        * differ in tbs-en. */
-      COLOSSEUM_NAVAMPA_MATCH_FACE_DIRECTION(LOCALID_PARTY_LEADER, 0, 0);
+      COLOSSEUM_NAVAMPA_MATCH_FACE_DIRECTION(ACTOR_PARTY_LEADER, 0, 0);
       ColosseumNavampaMatch_WaitForWallWedgeOpening();
-      ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-      Colosso_WalkObjectEventTo(LOCALID_PARTY_LEADER, 680, 200);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+      Colosso_WalkActorTo(ACTOR_PARTY_LEADER, 680, 200);
       if (work->raisedEvent != 5) {
         do {
           WaitFrames(1);
@@ -1765,12 +1750,12 @@ static void EventScript_TalkToWallWedgeAttendant(s32 guideId) {
         } while (work->raisedEvent != 5);
       }
       EventScript_PassSouthWallOpening();
-      ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
-      ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
-                            EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
+      Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
+      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
+                      60);
       FieldScript_ShowMessageAndWait(guideId, 0);
-      Colosso_RestoreWarrior(LOCALID_PARTY_LEADER);
-      FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
+      Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
+      FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(guideId, 3);
       work->raisedEvent = 0;
     } else if (promptResult == COLOSSO_GUIDE_OFFER_CHEERING) {
@@ -1787,7 +1772,7 @@ static void EventScript_TalkToWallWedgeAttendant(s32 guideId) {
 /// friend to cheer.
 static void EventScript_TalkToFreeClimbAttendant(s32 guideId) {
   s32 result;
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 x;
   s32 y;
   s32 raisedHeight;
@@ -1806,40 +1791,35 @@ static void EventScript_TalkToFreeClimbAttendant(s32 guideId) {
       FieldScript_WaitFrames(30);
       Script_ShowMessage(guideId, 0);
       Script_ShowMessage(guideId, 0);
-      Colosso_FadeInWarrior(LOCALID_PARTY_LEADER, 816, 200);
-      ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-      ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 840, 200);
-      ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
+      Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 816, 200);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 840, 200);
+      ObjectMotion_ArmCallback(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
       Field_ClimbUp();
       FieldCamera_MoveTo(-1, -1, -1, 0);
-      ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-      objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-      y = objectEvent->y.fixed;
-      x = objectEvent->x.fixed;
-      ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_CLIMB);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+      actor = Actor_GetById(ACTOR_PARTY_LEADER);
+      y = actor->y.fixed;
+      x = actor->x.fixed;
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+      Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB);
       raisedHeight = PIXELS(6) + y;
-      Object_SetPosition(objectEvent, x, raisedHeight, objectEvent->z.fixed);
-      Object_WaitForMove(objectEvent);
-      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
-                                     ANIM_LEADER_CLIMB_EAST);
+      Object_SetPosition(actor, x, raisedHeight, actor->z.fixed);
+      Object_WaitForMove(actor);
+      Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB_EAST);
       shiftedX = PIXELS(64) + x;
-      Object_SetPosition(objectEvent, shiftedX, raisedHeight,
-                         objectEvent->z.fixed);
-      Object_WaitForMove(objectEvent);
-      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_CLIMB);
-      Object_SetPosition(objectEvent, shiftedX, y + PIXELS(54),
-                         objectEvent->z.fixed);
-      Object_WaitForMove(objectEvent);
-      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
-                                     ANIM_LEADER_CLIMB_WEST);
-      Object_SetPosition(objectEvent, x + PIXELS(48), y + PIXELS(54),
-                         objectEvent->z.fixed);
-      Object_WaitForMove(objectEvent);
-      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_CLING);
+      Object_SetPosition(actor, shiftedX, raisedHeight, actor->z.fixed);
+      Object_WaitForMove(actor);
+      Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB);
+      Object_SetPosition(actor, shiftedX, y + PIXELS(54), actor->z.fixed);
+      Object_WaitForMove(actor);
+      Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB_WEST);
+      Object_SetPosition(actor, x + PIXELS(48), y + PIXELS(54), actor->z.fixed);
+      Object_WaitForMove(actor);
+      Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLING);
       Script_ShowMessage(guideId, 0);
-      Colosso_RestoreWarrior(LOCALID_PARTY_LEADER);
-      FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
+      Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
+      FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(guideId, 4);
     } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
       FieldScript_SetMessageId(MsgColossoClearStageMustAbleChange);
@@ -1850,34 +1830,33 @@ static void EventScript_TalkToFreeClimbAttendant(s32 guideId) {
   }
 }
 
-/// Starts a scripted pixel destination while preserving the object event's
+/// Starts a scripted pixel destination while preserving the actor's
 /// height.
-static void ColosseumNavampaMatch_PositionObjectEvent(s32 selector, s32 x,
-                                                      s32 z) {
-  struct ObjectEvent *objectEvent;
+static void ColosseumNavampaMatch_PositionActor(s32 selector, s32 x, s32 z) {
+  struct Actor *actor;
 
-  objectEvent = ObjectEvent_GetByLocalId(selector);
-  if (objectEvent != 0) {
-    Object_StartIdle((struct Object *)objectEvent);
-    Object_SelectAnimation(objectEvent, 5);
-    Object_SetMoveTarget((struct Object *)objectEvent, x << 16,
-                         objectEvent->y.fixed, z << 16);
+  actor = Actor_GetByActorId(selector);
+  if (actor != 0) {
+    Object_StartIdle((struct Object *)actor);
+    Object_SelectAnimation(actor, 5);
+    Object_SetMoveTarget((struct Object *)actor, x << 16, actor->y.fixed,
+                         z << 16);
   }
 }
 
 /// Moves to a scripted pixel destination, waits, then restores the idle mode.
-static void ColosseumNavampaMatch_PositionAndActivateObjectEvent(s32 selector,
-                                                                 s32 x, s32 z) {
-  struct ObjectEvent *objectEvent;
+static void ColosseumNavampaMatch_PositionAndActivateActor(s32 selector, s32 x,
+                                                           s32 z) {
+  struct Actor *actor;
 
-  objectEvent = ObjectEvent_GetByLocalId(selector);
-  if (objectEvent != 0) {
-    Object_StartIdle((struct Object *)objectEvent);
-    Object_SelectAnimation(objectEvent, 5);
-    Object_SetMoveTarget((struct Object *)objectEvent, x << 16,
-                         objectEvent->y.fixed, z << 16);
-    Object_WaitForMove(objectEvent);
-    Object_SelectAnimation(objectEvent, 1);
+  actor = Actor_GetByActorId(selector);
+  if (actor != 0) {
+    Object_StartIdle((struct Object *)actor);
+    Object_SelectAnimation(actor, 5);
+    Object_SetMoveTarget((struct Object *)actor, x << 16, actor->y.fixed,
+                         z << 16);
+    Object_WaitForMove(actor);
+    Object_SelectAnimation(actor, 1);
   }
 }
 
@@ -1887,7 +1866,7 @@ static void ColosseumNavampaMatch_PositionAndActivateObjectEvent(s32 selector,
 static void EventScript_TalkToMovingSidewalkAttendant(s32 guideId) {
   s32 i;
   s32 result;
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
 
   if (gSaveBlock.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
@@ -1903,44 +1882,38 @@ static void EventScript_TalkToMovingSidewalkAttendant(s32 guideId) {
       FieldScript_WaitFrames(30);
       Script_ShowMessage(guideId, 0);
       Script_ShowMessage(guideId, 0);
-      Colosso_FadeInWarrior(LOCALID_PARTY_LEADER, 984, 184);
-      ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-      ColosseumNavampaMatch_PositionAndActivateObjectEvent(LOCALID_PARTY_LEADER,
-                                                           992, 184);
-      ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 10,
-                           PIXELS(3) / 20);
-      ColosseumNavampaMatch_PositionObjectEvent(LOCALID_PARTY_LEADER, 1120,
-                                                184);
+      Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 984, 184);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+      ColosseumNavampaMatch_PositionAndActivateActor(ACTOR_PARTY_LEADER, 992,
+                                                     184);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 10, PIXELS(3) / 20);
+      ColosseumNavampaMatch_PositionActor(ACTOR_PARTY_LEADER, 1120, 184);
       FieldScript_WaitFrames(120);
-      ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER,
-                                    ATTACHED_EFFECT_IN_FRONT |
-                                        ATTACHED_EFFECT_ATTACH);
+      Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
+                                                      ATTACHED_EFFECT_ATTACH);
       FieldScript_WaitFrames(120);
-      ObjectEvent_ResetMotionFields(LOCALID_PARTY_LEADER);
-      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+      Actor_ResetMotionFields(ACTOR_PARTY_LEADER);
+      Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 #if !TBS_PATCH_3
-      ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER,
-                                    ATTACHED_EFFECT_IN_FRONT |
-                                        ATTACHED_EFFECT_REMOVE);
+      Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
+                                                      ATTACHED_EFFECT_REMOVE);
 #endif
-      ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
-                            EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-      objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+      actor = Actor_GetById(ACTOR_PARTY_LEADER);
       for (i = 119; i >= 0; i--) {
-        if (objectEvent->x.fixed > PIXELS(992)) {
-          objectEvent->x.fixed -= PIXELS(6) / 5;
+        if (actor->x.fixed > PIXELS(992)) {
+          actor->x.fixed -= PIXELS(6) / 5;
         }
         WaitFrames(1);
       }
-      ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
-                            EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
-      ColosseumNavampaMatch_PositionObjectEvent(LOCALID_PARTY_LEADER, 1120,
-                                                184);
+      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
+                      60);
+      ColosseumNavampaMatch_PositionActor(ACTOR_PARTY_LEADER, 1120, 184);
       Script_ShowMessage(guideId, 0);
-      ObjectEvent_ResetMotionFields(LOCALID_PARTY_LEADER);
+      Actor_ResetMotionFields(ACTOR_PARTY_LEADER);
       gSaveBlock.movementMode = LEADER_MOVEMENT_CLIMB;
-      Colosso_RestoreWarrior(LOCALID_PARTY_LEADER);
-      FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
+      Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
+      FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(guideId, 5);
     } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
       FieldScript_SetMessageId(MsgColossoInStageMustTryOutpace);
@@ -1954,16 +1927,16 @@ static void EventScript_TalkToMovingSidewalkAttendant(s32 guideId) {
 /// The log-rolling area's attendant, stage 6 of Colosseum Final 3: the first
 /// time, a pointer traces the log's route; then the objective, and a place for
 /// a friend to cheer.
-static void EventScript_TalkToLogRollingAttendant(s32 localId) {
+static void EventScript_TalkToLogRollingAttendant(s32 actorId) {
   s32 state;
 
   if (gSaveBlock.entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
-    Colosso_AskDoneCheering(localId);
+    Colosso_AskDoneCheering(actorId);
     return;
   }
 
   FieldScript_Start();
-  state = Colosso_GreetAtStage(localId, 6);
+  state = Colosso_GreetAtStage(actorId, 6);
 
   if (state == COLOSSO_GUIDE_DESCRIBE) {
     FieldScript_SetMessageId(MsgColossoAnotherLogRollingArea);
@@ -1971,26 +1944,26 @@ static void EventScript_TalkToLogRollingAttendant(s32 localId) {
     FieldCamera_MoveWithinMapBounds(PIXELS(1288), -1, PIXELS(152), 1);
     FieldCamera_WaitForArrival();
     FieldScript_WaitFrames(30);
-    FieldScript_ShowMessageAndWait(localId, 0);
+    FieldScript_ShowMessageAndWait(actorId, 0);
     Colosso_ShowPointer(180, 88, 0);
     FieldScript_WaitFrames(60);
-    FieldScript_ShowMessageAndWait(localId, 0);
+    FieldScript_ShowMessageAndWait(actorId, 0);
     Colosso_MovePointer(32, 84, 10);
     FieldScript_WaitFrames(30);
-    FieldScript_ShowMessageAndWait(localId, 0);
+    FieldScript_ShowMessageAndWait(actorId, 0);
     Colosso_MovePointer(96, 84, 30);
     FieldScript_WaitFrames(60);
-    FieldScript_ShowMessageAndWait(localId, 0);
+    FieldScript_ShowMessageAndWait(actorId, 0);
     Colosso_HidePointer();
     FieldScript_WaitFrames(2);
-    FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
-    Colosso_RepeatStageNumber(localId, 6);
+    FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
+    Colosso_RepeatStageNumber(actorId, 6);
   } else if (state == COLOSSO_GUIDE_OFFER_CHEERING) {
     FieldScript_SetMessageId(MsgColossoHereMustFigureOutHow);
-    FieldScript_ShowMessageAndWait(localId, 0);
+    FieldScript_ShowMessageAndWait(actorId, 0);
   }
 
-  Colosso_OfferCheeringSpot(state, localId, 6);
+  Colosso_OfferCheeringSpot(state, actorId, 6);
   FieldScript_End();
 }
 
@@ -2094,7 +2067,7 @@ static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
 /// Unused: a lettering countdown before the match, for a signed number of
 /// seconds; nothing calls it.
 UNUSED static void ColosseumNavampaMatch_UnusedCountdown(s32 countdown) {
-  s32 localId;
+  s32 actorId;
 
   Sound_PlaySong(SE_COLOSSO_LETTERING);
   FieldScript_StartScreenTransition();
@@ -2111,7 +2084,7 @@ UNUSED static void ColosseumNavampaMatch_UnusedCountdown(s32 countdown) {
      * differ in tbs-en. */
     COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK(3, 1);
     FieldScript_WaitFrames(-countdown * 60 + 60);
-    localId = LOCALID_PARTY_LEADER;
+    actorId = ACTOR_PARTY_LEADER;
   } else {
     FieldScript_WaitFrames(30);
     Sound_PlaySong(countdown + 90);
@@ -2120,9 +2093,9 @@ UNUSED static void ColosseumNavampaMatch_UnusedCountdown(s32 countdown) {
      * r0; as a direct call, 1 of 72 instructions differ in tbs-en. */
     COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK(3, 0);
     FieldScript_WaitFrames(countdown * 60 + 60);
-    localId = LOCALID_OPPONENT;
+    actorId = ACTOR_OPPONENT;
   }
-  FieldEffect_SpawnLinked(localId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  FieldEffect_SpawnLinked(actorId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   while (Sound_GetBgmRestoreDelay() != 0) {
     WaitFrames(1);
   }
@@ -2172,8 +2145,8 @@ static void ColosseumNavampaMatch_WaitForOpponentToFinish(void) {
 /// Occasionally scatters an effect around the prize being raised at the
 /// arena.
 static void ColosseumNavampaMatch_SpawnRandomFinishEffect(
-    union ObjectEventOrEffect *fieldObject) {
-  struct ObjectEvent *source = (struct ObjectEvent *)fieldObject;
+    union ActorOrEffect *fieldObject) {
+  struct Actor *source = (struct Actor *)fieldObject;
 
   s32 position[3];
   u32 randomValue;
@@ -2183,7 +2156,7 @@ static void ColosseumNavampaMatch_SpawnRandomFinishEffect(
   }
   randomValue = Import_RandomNext();
   if (randomValue * 100 >> 16 <= 9) {
-    struct ObjectEvent *effect;
+    struct Actor *effect;
     s32 angle;
     s32 radius;
 
@@ -2196,12 +2169,12 @@ static void ColosseumNavampaMatch_SpawnRandomFinishEffect(
       s32 y = position[1];
       s32 z = position[2];
 
-      effect = ObjectEvent_Create(SPRITE_SPARKLE, x, y, z);
+      effect = Actor_Create(SPRITE_SPARKLE, x, y, z);
     }
     if (effect != 0) {
       effect->motionFlags = 0;
-      ObjectEvent_SetSpriteFlags(effect, 0);
-      ObjectEvent_SetScript(effect, gColosseumNavampaMatch_PrizeEffectScript);
+      Actor_SetSpriteFlags(effect, 0);
+      Actor_SetScript(effect, gColosseumNavampaMatch_PrizeEffectScript);
       Object_SelectAnimation(effect, 1);
       Object_SelectAnimation(effect, 0);
     }
@@ -2210,16 +2183,16 @@ static void ColosseumNavampaMatch_SpawnRandomFinishEffect(
 
 /// Presents the prize above the warrior who took it, with the treasure fanfare,
 /// and clears the link.
-static s32 ColosseumNavampaMatch_PlaceFinishItemAboveObjectEvent(
-    struct Object *interpreter) {
-  struct ObjectEvent *source = (struct ObjectEvent *)interpreter;
+static s32
+ColosseumNavampaMatch_PlaceFinishItemAboveActor(struct Object *interpreter) {
+  struct Actor *source = (struct Actor *)interpreter;
 
-  struct ObjectEvent *effect = ObjectEvent_GetById(source->timer);
+  struct Actor *effect = Actor_GetById(source->timer);
 
   Object_SetPosition(effect, source->x.fixed, source->y.fixed + PIXELS(36),
                      source->z.fixed);
   effect->motionFlags = 0;
-  ObjectEvent_SetScript(effect, gColosseumNavampaMatch_PrizeScript);
+  Actor_SetScript(effect, gColosseumNavampaMatch_PrizeScript);
   Sound_PlaySong(MUS_TREASURE_FOUND);
   source->timer = 0;
   return 0;
@@ -2229,35 +2202,35 @@ static s32 ColosseumNavampaMatch_PlaceFinishItemAboveObjectEvent(
 static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
                                                         s32 secondItem) {
   struct ColossoGaugeWork *gauge = (struct ColossoGaugeWork *)gColossoWork;
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 opponentFinishedFirst;
   s32 x;
   s32 z;
-  u16 *itemLocalId;
-  s16 *linkedItemLocalId;
+  u16 *itemActorId;
+  s16 *linkedItemActorId;
 
   opponentFinishedFirst = GameFlag_Get(FLAG_ARENA_REACHED);
-  objectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
-  if (gauge->finishX < objectEvent->x.fixed) {
+  actor = Actor_GetById(gSaveBlock.leaderActorId);
+  if (gauge->finishX < actor->x.fixed) {
     x = gauge->finishX + PIXELS(12);
   } else {
     x = gauge->finishX - PIXELS(12);
   }
   if (opponentFinishedFirst != 0) {
     z = gauge->finishZ + PIXELS(16);
-    itemLocalId = &gauge->finishItemLocalIdB;
+    itemActorId = &gauge->finishItemActorIdB;
   } else {
     z = gauge->finishZ - PIXELS(16);
-    itemLocalId = &gauge->finishItemLocalIdA;
+    itemActorId = &gauge->finishItemActorIdA;
   }
-  linkedItemLocalId = &objectEvent->timer;
-  *linkedItemLocalId = *itemLocalId;
-  objectEvent->acceleration = PIXELS(1) / 4;
-  objectEvent->speed = PIXELS(1);
-  Object_SetPosition(objectEvent, x, 0, z);
+  linkedItemActorId = &actor->timer;
+  *linkedItemActorId = *itemActorId;
+  actor->acceleration = PIXELS(1) / 4;
+  actor->speed = PIXELS(1);
+  Object_SetPosition(actor, x, 0, z);
   GameFlag_Set(FLAG_ARENA_REACHED);
-  ObjectEvent_SetScript(objectEvent, gColosseumNavampaMatch_PlaceScript);
-  while (*linkedItemLocalId != 0) {
+  Actor_SetScript(actor, gColosseumNavampaMatch_PlaceScript);
+  while (*linkedItemActorId != 0) {
     WaitFrames(1);
   }
   if (opponentFinishedFirst == 0) {
@@ -2272,9 +2245,9 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
     COLOSSEUM_NAVAMPA_MATCH_APPLY_MATCHING_SLOT_VALUES(ISAAC, secondItem);
     MessageArgument_Push(secondItem, 2);
   }
-  MessageArgument_Push(gSaveBlock.leaderLocalId, 1);
+  MessageArgument_Push(gSaveBlock.leaderActorId, 1);
   FieldMessage_Show(MsgColossoIsaacGotItem, 3);
-  Object_WaitForScriptEnd(objectEvent);
+  Object_WaitForScriptEnd(actor);
   return opponentFinishedFirst;
 }
 
@@ -2283,20 +2256,20 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
 #include "common/colosso_map_state.h"
 #include "common/object_findslot.h"
 
-/// Pushes a neighboring object event one cell when its destination and overhead
+/// Pushes a neighboring actor one cell when its destination and overhead
 /// are clear.
-static void ColosseumNavampaMatch_PushObjectEventAhead(void) {
-  struct ObjectEvent *subject;
-  struct ObjectEvent *target;
-  struct ObjectEvent *blocker;
+static void ColosseumNavampaMatch_PushActorAhead(void) {
+  struct Actor *subject;
+  struct Actor *target;
+  struct Actor *blocker;
   u32 step;
   u32 direction;
   struct FieldPosition position;
   s32 zero;
   s32 subjectHandle;
 
-  subjectHandle = gSaveBlock.leaderLocalId;
-  subject = ObjectEvent_GetById(subjectHandle);
+  subjectHandle = gSaveBlock.leaderActorId;
+  subject = Actor_GetById(subjectHandle);
 
   direction = subject->facing >> 12;
 
@@ -2306,7 +2279,7 @@ static void ColosseumNavampaMatch_PushObjectEventAhead(void) {
   step <<= 16;
   position.z = subject->z.fixed + step;
 
-  target = ObjectEvent_FindAtPosition(&position, subject);
+  target = Actor_FindAtPosition(&position, subject);
   if (target == 0) {
     return;
   }
@@ -2317,7 +2290,7 @@ static void ColosseumNavampaMatch_PushObjectEventAhead(void) {
   step <<= 16;
   position.z = target->z.fixed + step;
 
-  blocker = ObjectEvent_FindAtPosition(&position, target);
+  blocker = Actor_FindAtPosition(&position, target);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0) {
     return;
   }
@@ -2326,7 +2299,7 @@ static void ColosseumNavampaMatch_PushObjectEventAhead(void) {
   position.y = target->y.fixed + PIXELS(16);
   position.z = target->z.fixed;
 
-  blocker = ObjectEvent_FindAtPosition(&position, target);
+  blocker = Actor_FindAtPosition(&position, target);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0) {
     return;
   }
@@ -2527,14 +2500,14 @@ u32 gColosseumNavampaMatchExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ObjectEventTemplate gColosseumNavampaMatchObjectEventTemplates[] = {
+struct ActorTemplate gColosseumNavampaMatchActorTemplates[] = {
     { 0x0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(88), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_WEST, TALK_FACING_PARTY, 0 },
@@ -2543,7 +2516,7 @@ struct ObjectEventTemplate gColosseumNavampaMatchObjectEventTemplates[] = {
     { 0x122, CONDITION_ALWAYS, 7,
         PIXELS(152), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0x122, CONDITION_ALWAYS, 7,
-        PIXELS(216), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(216), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(88), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2605,9 +2578,9 @@ struct ObjectEventTemplate gColosseumNavampaMatchObjectEventTemplates[] = {
     { 0x118, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0x118, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { 0x118, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { MAP_TABLE_END },
 };
 
@@ -2620,40 +2593,40 @@ struct MapEvent gColosseumNavampaMatchEvents[] = {
     { COORD_EVENT_WALKING, 91, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWeightOrCheckAhead) },
     { MAP_EVENT_COORD, 11, FLAG_SIDEWALK_LOG_KNOCKED_OFF, EVENT_SCRIPT(EventScript_RideMovingSidewalk) },
     { COORD_EVENT_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWeight) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_SCALES_WEIGHT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetWeightOnScales) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_STONE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveStone) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SCALES_WEIGHT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetWeightOnScales) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveStone) },
     { COORD_EVENT_WALKING, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushRock) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROCK, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IgnoreMove) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IgnoreMove) },
     { COORD_EVENT_WALKING, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLongLog) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_LOG_AREA_STONE_A, FLAG_FIRST_LOG_AREA_STONE_SETTLED, EVENT_SCRIPT(EventScript_SettleStones) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_LOG_AREA_STONE_B, FLAG_FIRST_LOG_AREA_STONE_SETTLED + 1, EVENT_SCRIPT(EventScript_SettleStones) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_LOG_AREA_STONE_C, FLAG_FIRST_LOG_AREA_STONE_SETTLED + 2, EVENT_SCRIPT(EventScript_SettleStones) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_A, FLAG_FIRST_LOG_AREA_STONE_SETTLED, EVENT_SCRIPT(EventScript_SettleStones) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_B, FLAG_FIRST_LOG_AREA_STONE_SETTLED + 1, EVENT_SCRIPT(EventScript_SettleStones) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_C, FLAG_FIRST_LOG_AREA_STONE_SETTLED + 2, EVENT_SCRIPT(EventScript_SettleStones) },
     { MAP_EVENT_COORD, 15, FLAG_ON_SCALES, EVENT_SCRIPT(EventScript_StepOnScales) },
     { MAP_EVENT_COORD, 16, IF_FLAG_SET(FLAG_ON_SCALES), EVENT_SCRIPT(EventScript_StepOffScales) },
     { MAP_EVENT_COORD, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT_SCRIPT(EventScript_ReachArena) },
     { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_COLOSSEUM_NAVAMPA_MATCH_SMOKE_BOMB_CHEST_OPENED, FIND_ITEM(ITEM_SMOKE_BOMB) },
     { BG_EVENT(BG_EVENT_CHEST), 102, FLAG_COLOSSEUM_NAVAMPA_MATCH_NUT_CHEST_OPENED, FIND_ITEM(ITEM_NUT) },
     { BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_WEST, 103, FLAG_COLOSSEUM_NAVAMPA_MATCH_SLEEP_BOMB_CHEST_OPENED, FIND_ITEM(ITEM_SLEEP_BOMB) },
-    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS), LOCALID_PUDDLE, FLAG_SCALES_FROZEN, EVENT_SCRIPT(EventScript_FreezeOnScales) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_GROWTH_PLANT, FLAG_PLANT_GROWN, EVENT_SCRIPT(EventScript_GrowPlant) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_HALT), LOCALID_WALL_OPERATOR, FLAG_WALL_WEDGE_HALTED, EVENT_SCRIPT(EventScript_HaltWall) },
-    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FORCE, PSYNERGY_PHASE_EFFECT_ACTS), LOCALID_SIDEWALK_LOG, FLAG_SIDEWALK_LOG_KNOCKED_OFF, EVENT_SCRIPT(EventScript_ForceSidewalkLog) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS), ACTOR_PUDDLE, FLAG_SCALES_FROZEN, EVENT_SCRIPT(EventScript_FreezeOnScales) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_GROWTH_PLANT, FLAG_PLANT_GROWN, EVENT_SCRIPT(EventScript_GrowPlant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_WALL_OPERATOR, FLAG_WALL_WEDGE_HALTED, EVENT_SCRIPT(EventScript_HaltWall) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_EFFECT_ACTS), ACTOR_SIDEWALK_LOG, FLAG_SIDEWALK_LOG_KNOCKED_OFF, EVENT_SCRIPT(EventScript_ForceSidewalkLog) },
     { MAP_EVENT_RAISED, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PassNorthWallOpening) },
     { MAP_EVENT_RAISED, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PassSouthWallOpening) },
-    { MAP_EVENT_TALK, LOCALID_GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },
-    { MAP_EVENT_TALK, LOCALID_SCALES_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToScalesAttendant) },
-    { MAP_EVENT_TALK, LOCALID_STEPPING_STONE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToSteppingStoneAttendant) },
-    { MAP_EVENT_TALK, LOCALID_WALL_WEDGE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWallWedgeAttendant) },
-    { MAP_EVENT_TALK, LOCALID_FREE_CLIMB_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToFreeClimbAttendant) },
-    { MAP_EVENT_TALK, LOCALID_MOVING_SIDEWALK_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToMovingSidewalkAttendant) },
-    { MAP_EVENT_TALK, LOCALID_LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToLogRollingAttendant) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GUIDE, CONDITION_ALWAYS, MSGNO(MsgColossoRiverThisYearsFinalsAreIncredibleThis) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SCALES_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogTheStreetVendorsCornOnThe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STEPPING_STONE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogICantSeeAnythingWhenIm) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WALL_WEDGE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogItsNotVeryExcitingWorkBut) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FREE_CLIMB_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogStandingForLongPeriodsOfTime) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MOVING_SIDEWALK_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogIWasUpAllNightTrying) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogSomeTouristToldMeILook) },
+    { MAP_EVENT_TALK, ACTOR_GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },
+    { MAP_EVENT_TALK, ACTOR_SCALES_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToScalesAttendant) },
+    { MAP_EVENT_TALK, ACTOR_STEPPING_STONE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToSteppingStoneAttendant) },
+    { MAP_EVENT_TALK, ACTOR_WALL_WEDGE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWallWedgeAttendant) },
+    { MAP_EVENT_TALK, ACTOR_FREE_CLIMB_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToFreeClimbAttendant) },
+    { MAP_EVENT_TALK, ACTOR_MOVING_SIDEWALK_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToMovingSidewalkAttendant) },
+    { MAP_EVENT_TALK, ACTOR_LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToLogRollingAttendant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUIDE, CONDITION_ALWAYS, MSGNO(MsgColossoRiverThisYearsFinalsAreIncredibleThis) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCALES_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogTheStreetVendorsCornOnThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STEPPING_STONE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogICantSeeAnythingWhenIm) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WALL_WEDGE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogItsNotVeryExcitingWorkBut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FREE_CLIMB_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogStandingForLongPeriodsOfTime) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MOVING_SIDEWALK_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogIWasUpAllNightTrying) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogSomeTouristToldMeILook) },
     { MAP_EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_TakePlaceForMatch) },
     { MAP_EVENTS_END },
 };
@@ -2823,7 +2796,7 @@ s32 gColosso_OpponentFinishScript[] = {
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(6),
-    SC_CALL(ColosseumNavampaMatch_PlaceFinishItemAboveObjectEvent),
+    SC_CALL(ColosseumNavampaMatch_PlaceFinishItemAboveActor),
     SC_WAIT(3),
     SC_ANIMATION(10),
     SC_WAIT(150),
@@ -2837,7 +2810,7 @@ s32 gColosseumNavampaMatch_PlaceScript[] = {
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(6),
-    SC_CALL(ColosseumNavampaMatch_PlaceFinishItemAboveObjectEvent),
+    SC_CALL(ColosseumNavampaMatch_PlaceFinishItemAboveActor),
     SC_WAIT(3),
     SC_ANIMATION(28),
     SC_WAIT(150),

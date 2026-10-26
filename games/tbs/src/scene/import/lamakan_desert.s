@@ -29,19 +29,19 @@
 	.set import.FieldScript_WaitFrames, 1
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
-	.set import.ObjectEvent_GetById, 1
+	.set import.Actor_GetById, 1
 	.set import.ObjectMotion_SetSpeedParameters, 1
 	.set import.ObjectMotion_ResetAndSetPosition, 1
 	.set import.ObjectMotion_SetPositionAndReset, 1
 	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
 	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
-	.set import.Import_ObjectEventSetPosition, 1
-	.set import.Import_ObjectEventSetAnimation, 1
-	.set import.ObjectEvent_SetActionById, 1
+	.set import.Import_ActorSetPosition, 1
+	.set import.Import_ActorSetAnimation, 1
+	.set import.Actor_SetActionById, 1
 	.set import.ObjectMotion_SetVariantCallback, 1
 	.set import.ObjectMotion_SetVarCbAndRefresh, 1
 	.set import.ObjectMotion_SetAngleToward, 1
-	.set import.ObjectEvent_SetSpriteColor, 1
+	.set import.Actor_SetSpriteColor, 1
 	.set import.FieldScript_SetMessageId, 1
 	.set import.FieldScript_ShowMessageAndWait, 1
 	.set import.FieldEffect_SpawnLinked, 1
@@ -51,7 +51,7 @@
 	.set import.FieldScript_SetNextDestination, 1
 	.set import.ScanlineEffect_InitWave, 1
 	.set import.ScanlineEffect_Stop, 1
-	.set import.TreasureSpot_SetObjectEventPosition, 1
+	.set import.TreasureSpot_SetActorPosition, 1
 	.set import.TreasureSpot_MoveLeaderAway, 1
 	.set import.Djinn_JoinParty, 1
 	.set import.Scene_QueueMusic, 1

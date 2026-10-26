@@ -33,7 +33,7 @@
 /// torn across a battle: after one (FLAG_KEEP_PARTY_POSITION) the setup redraws
 /// them from gTreeRooms_MapPatches.
 ///
-/// Tret's face (LOCALID_TRET) and a second Tret object event at the same spot
+/// Tret's face (ACTOR_TRET) and a second Tret actor at the same spot
 /// speak his lines. Walking up to him (metatile behavior 40, while
 /// FLAG_TRET_DEFEATED is clear) runs EventScript_FightTret: he roars, the party
 /// gathers in front of him, and the evil within him scorns them before the
@@ -45,7 +45,7 @@
 /// free them but cannot reach that far, and his face sinks away as the party
 /// resolve to heal him. Only then is FLAG_TRET_DEFEATED set; in Kolima Forest
 /// it lets Hermes' Water heal Tret and lift the curse. Once it is set, the
-/// setup moves both Tret object events away, opens that passage and redraws
+/// setup moves both Tret actors away, opens that passage and redraws
 /// cells near entrance 20; before, it keeps the passage closed.
 ///
 /// The setup also saves the background palettes and starts a slow tint that
@@ -65,7 +65,7 @@
 #include "unit/game/game.h"
 #include "unit/runtime/runtime.h"
 
-#include "object_event.h"
+#include "actor.h"
 #include "types.h"
 #include "script_layer.h"
 #include "map_tables.h"
@@ -94,22 +94,22 @@
 #include "songs.h"
 #include "audio_engine_symbols.h"
 
-/// Tret's face (SPRITE_TRET), the first object event placed after the party,
-/// and a second Tret object event (SPRITE_TRET_RAISED) placed at the same spot.
+/// Tret's face (SPRITE_TRET), the first actor placed after the party,
+/// and a second Tret actor (SPRITE_TRET_RAISED) placed at the same spot.
 /// Both speak Tret's lines: the face as he attacks, the second after the
 /// battle.
 enum {
   /// ★ Named from the game: "Tret was once a kindly forest king."
   /// (MsgKolimaWatchOutItsHappeningAgain)
-  LOCALID_TRET = LOCALID_FIRST_PLACED,
+  ACTOR_TRET = ACTOR_FIRST_PLACED,
   /// Draws nothing the render shows beyond Tret's face.
   /// ★ Named from the game: "We can't let Tret die like this!" (MsgTretMmmmm)
-  LOCALID_SECOND_TRET
+  ACTOR_SECOND_TRET
 };
 
 /// The speaker of a message; every speaker on this map has
 /// SPEAKER_WINDOW_BELOW.
-#define SPEAKER(localId) (SPEAKER_WINDOW_BELOW | (localId))
+#define SPEAKER(actorId) (SPEAKER_WINDOW_BELOW | (actorId))
 
 // The map's temporary flags: FLAG_TRET_TREE_SECOND_FLOOR_COCOON_1_TORN and the
 // others are set the first time each cocoon is stepped on, tearing it; the next
@@ -283,9 +283,9 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) {
 const u32 *Scene_GetExits(void) { return gTreeRoomsExits; }
 
 /// Returns the party's other slots (Garet, Ivan and, once she has joined,
-/// Mia), placed for the events, and the two Tret object events.
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
-  return gTreeRoomsObjectEventTemplates;
+/// Mia), placed for the events, and the two Tret actors.
+const struct ActorTemplate *Scene_GetActorTemplates(void) {
+  return gTreeRoomsActorTemplates;
 }
 
 /// Stepping on a cocoon in Tret Tree: the first step tears it, copying its
@@ -297,14 +297,14 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
                                    s32 sourceRow, s32 entrance) {
   s32 destinationColumn;
   s32 destinationRow;
-  s32 leaderLocalId;
-  struct ObjectEvent *objectEvent;
+  s32 leaderActorId;
+  struct Actor *actor;
   s32 spinFrame;
 
   destinationColumn = (gSaveBlock.x >> 20) + 64;
   destinationRow = gSaveBlock.z >> 20;
-  leaderLocalId = gSaveBlock.leaderLocalId;
-  objectEvent = ObjectEvent_GetById(leaderLocalId);
+  leaderActorId = gSaveBlock.leaderActorId;
+  actor = Actor_GetById(leaderActorId);
   if (entrance == *sLastCocoon)
     return;
   *sLastCocoon = entrance;
@@ -314,7 +314,7 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
     GameFlag_Set(cocoonFlag);
     return;
   }
-  // On the next touch, replace the cell and spin the object event into the
+  // On the next touch, replace the cell and spin the actor into the
   // fall.
   *sLastCocoon = -1;
   MapGrid_CopyCells(sourceColumn, sourceRow + 1, 1, 1, destinationColumn,
@@ -322,22 +322,22 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   Script_PlaySong(SE_CURSE_FALL);
   FieldScript_Start();
   FieldScript_SetDestination((s32)&SceneId_TreeRooms, entrance);
-  Import_ObjectEventSetAnimation(leaderLocalId, ANIM_LEADER_SPIN_AWAY);
-  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(leaderLocalId), 0);
-  ObjectEvent_SetAttachedEffect(leaderLocalId, ATTACHED_EFFECT_IN_FRONT |
-                                                   ATTACHED_EFFECT_ATTACH);
+  Import_ActorSetAnimation(leaderActorId, ANIM_LEADER_SPIN_AWAY);
+  Actor_SetSpriteFlags(Actor_GetById(leaderActorId), 0);
+  Actor_SetAttachedEffect(leaderActorId,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   FieldScript_WaitFrames(30);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  objectEvent->motionFlags = OBJ_EVENT_FALLS;
-  objectEvent->groundHeight = -PIXELS(160);
-  objectEvent->gravity = PIXELS(1) / 2;
+  actor->motionFlags = ACTOR_FALLS;
+  actor->groundHeight = -PIXELS(160);
+  actor->gravity = PIXELS(1) / 2;
   Script_PlaySong(SE_DUST_PUFF);
   FieldScript_WaitFrames(3);
-  objectEvent->layer = 2;
-  ObjectMotion_SetActionVariant(leaderLocalId, 3);
+  actor->layer = 2;
+  ObjectMotion_SetActionVariant(leaderActorId, 3);
   for (spinFrame = COCOON_FALL_SPIN_FRAMES - 1; spinFrame >= 0; spinFrame--) {
 
-    objectEvent->facing += 2 * FACING_STEP;
+    actor->facing += 2 * FACING_STEP;
     WaitFrames(1);
   }
   if (entrance != TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON)
@@ -475,85 +475,77 @@ const struct MapEvent *Scene_GetEvents(void) { return gTreeRoomsEvents; }
 /// to TREE_ROOMS_AFTER_FIGHT_TRET.
 static void EventScript_FightTret(void) {
   s32 hasMia;
-  struct ObjectEvent *leader;
+  struct Actor *leader;
 
   hasMia = GameFlag_Get(FLAG_IN_PARTY(MIA));
   FieldScript_Start();
   Script_PlaySong(SONG_FADE_OUT_BGM);
   FieldScript_SetMessageId(MsgTretHmHrooom);
-  FieldScript_ShowMessageThenWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
+  FieldScript_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Script_PlaySong(MUS_CONFRONTATION);
-  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_GetById(LOCALID_MIA)->priorityFlags &=
-      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
-  ObjectMotion_SetActionVariant(LOCALID_MIA, 2);
-  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags &=
-      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
-  ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 2);
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
+  Actor_GetById(ACTOR_MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  ObjectMotion_SetActionVariant(ACTOR_MIA, 2);
+  Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  ObjectMotion_SetActionVariant(ACTOR_PARTY_LEADER, 2);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Import_ObjectEventSetPosition(LOCALID_GARET, leader->x.fixed,
-                                  leader->z.fixed);
+    Import_ActorSetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Import_ObjectEventSetPosition(LOCALID_IVAN, leader->x.fixed,
-                                  leader->z.fixed);
+    Import_ActorSetPosition(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
   }
   if (hasMia != 0) {
-    leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+    leader = Actor_GetById(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Import_ObjectEventSetPosition(LOCALID_MIA, leader->x.fixed,
-                                    leader->z.fixed);
+      Import_ActorSetPosition(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
     }
-    ObjectEvent_SetActionScript(LOCALID_MIA, gTreeRooms_MiaGathersActions);
+    Actor_SetActionScript(ACTOR_MIA, gTreeRooms_MiaGathersActions);
   }
-  ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
-                              gTreeRooms_LeaderGathersActions);
-  ObjectEvent_SetActionScript(LOCALID_GARET, gTreeRooms_GaretGathersActions);
-  ObjectEvent_RunActionScriptAndWait(LOCALID_IVAN,
-                                     gTreeRooms_IvanGathersActions);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gTreeRooms_LeaderGathersActions);
+  Actor_SetActionScript(ACTOR_GARET, gTreeRooms_GaretGathersActions);
+  Actor_RunActionScriptAndWait(ACTOR_IVAN, gTreeRooms_IvanGathersActions);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 40);
-  Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_TURNING_WRATHFUL);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 40);
+  Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_TURNING_WRATHFUL);
   FieldScript_WaitFrames(10);
-  Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_CLOSED);
+  Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
   FieldScript_WaitFrames(20);
   TreeRooms_PlayGesture(TRET_GESTURE_WRATHFUL_OPEN_EYES);
-  Script_ShowMessage(SPEAKER(LOCALID_TRET), 0);
-  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_MIA, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_IVAN, 2);
-  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
-                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  Script_ShowMessage(SPEAKER(ACTOR_TRET), 0);
+  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_MIA, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_IVAN, 2);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   TreeRooms_PlayGesture(TRET_GESTURE_WRATHFUL_BLINK);
-  Script_ShowMessageAndWait(SPEAKER(LOCALID_TRET), 0, 10);
-  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
-  ObjectMotion_SetVariantCallback(LOCALID_GARET, 1);
-  ObjectMotion_SetVariantCallback(LOCALID_MIA, 1);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 1);
-  Script_ShowMessage(SPEAKER(LOCALID_TRET), 0);
-  ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
-                                                          ATTACHED_EFFECT_ONCE);
-  ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
-                                                   ATTACHED_EFFECT_ONCE);
-  ObjectEvent_SetAttachedEffect(LOCALID_MIA, ATTACHED_EFFECT_IN_FRONT |
-                                                 ATTACHED_EFFECT_ONCE);
-  FieldEffect_ConfigureLinkedObject(LOCALID_IVAN, ATTACHED_EFFECT_IN_FRONT |
-                                                      ATTACHED_EFFECT_ONCE);
+  Script_ShowMessageAndWait(SPEAKER(ACTOR_TRET), 0, 10);
+  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 1);
+  ObjectMotion_SetVariantCallback(ACTOR_GARET, 1);
+  ObjectMotion_SetVariantCallback(ACTOR_MIA, 1);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 1);
+  Script_ShowMessage(SPEAKER(ACTOR_TRET), 0);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_MIA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldEffect_ConfigureLinkedObject(ACTOR_IVAN, ATTACHED_EFFECT_IN_FRONT |
+                                                    ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(40);
   TreeRooms_PlayGesture(TRET_GESTURE_WRATHFUL_BLINK);
-  FieldScript_ShowMessageAndWait(SPEAKER(LOCALID_TRET), 0);
+  FieldScript_ShowMessageAndWait(SPEAKER(ACTOR_TRET), 0);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   gFieldWork->transitionFrames = 64;
@@ -574,39 +566,37 @@ static void EventScript_FightTret(void) {
 /// Water heal him in Kolima Forest.
 static void TreeRooms_PlayPostBattleConversation(void) {
   s32 hasMia;
-  struct ObjectEvent *partyObjectEvent;
+  struct Actor *partyActor;
   s32 openingColumn;
   TaskFunc sparkTask;
   const s32 *actions;
 
   // Restore the party positions before opening the post-battle conversation.
   hasMia = GameFlag_Get(FLAG_IN_PARTY(MIA));
-  ObjectEvent_GetById(LOCALID_MIA)->priorityFlags &=
-      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
-  ObjectMotion_SetActionVariant(LOCALID_MIA, 2);
-  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags &=
-      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
-  ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 2);
+  Actor_GetById(ACTOR_MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  ObjectMotion_SetActionVariant(ACTOR_MIA, 2);
+  Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  ObjectMotion_SetActionVariant(ACTOR_PARTY_LEADER, 2);
   PartyInventory_FindMember(ITEM_HERMES_WATER);
   Script_PlaySong(SONG_FADE_OUT_BGM);
   FieldScript_Start();
-  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0xcccc, 0x6666);
-  ObjectEvent_SetSpeed(LOCALID_GARET, 0xcccc, 0x6666);
-  ObjectEvent_SetSpeed(LOCALID_IVAN, 0xcccc, 0x6666);
-  ObjectEvent_SetSpeed(LOCALID_MIA, 0xcccc, 0x6666);
-  ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(166), PIXELS(80));
-  partyObjectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
-  partyObjectEvent->facing = FACING_NORTH;
-  ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(148), PIXELS(90));
-  partyObjectEvent = ObjectEvent_Get(LOCALID_GARET);
-  partyObjectEvent->facing = FACING_NORTH;
-  ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(182), PIXELS(90));
-  partyObjectEvent = ObjectEvent_GetById(LOCALID_IVAN);
-  partyObjectEvent->facing = FACING_NORTH;
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_GARET, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_MIA, 0xcccc, 0x6666);
+  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(166), PIXELS(80));
+  partyActor = Actor_Get(ACTOR_PARTY_LEADER);
+  partyActor->facing = FACING_NORTH;
+  Actor_SetPosition(ACTOR_GARET, PIXELS(148), PIXELS(90));
+  partyActor = Actor_Get(ACTOR_GARET);
+  partyActor->facing = FACING_NORTH;
+  Actor_SetPosition(ACTOR_IVAN, PIXELS(182), PIXELS(90));
+  partyActor = Actor_GetById(ACTOR_IVAN);
+  partyActor->facing = FACING_NORTH;
   if (hasMia != 0) {
-    ObjectEvent_SetPosition(LOCALID_MIA, PIXELS(166), PIXELS(104));
-    partyObjectEvent = ObjectEvent_GetById(LOCALID_MIA);
-    partyObjectEvent->facing = FACING_NORTH;
+    Actor_SetPosition(ACTOR_MIA, PIXELS(166), PIXELS(104));
+    partyActor = Actor_GetById(ACTOR_MIA);
+    partyActor->facing = FACING_NORTH;
   }
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   WaitFrames(10);
@@ -633,11 +623,11 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   WaitFrames(80);
   // Tret comes to: "Oh... Mmmmm... What has happened to me?"
   FieldScript_SetMessageId(MsgTretMmmmm);
-  Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
-  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_MIA, 2);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
+  Script_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_MIA, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
   FieldScript_WaitFrames(20);
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(90), 1);
   FieldCamera_WaitForArrival();
@@ -646,72 +636,71 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   FieldScript_WaitFrames(60);
   Script_PlaySong(MUS_FOREST);
   TreeRooms_PlayGesture(TRET_GESTURE_BLINK);
-  Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
-  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
-                        0);
-  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
-  Script_ShowMessage(SPEAKER(LOCALID_SECOND_TRET), 0);
+  Script_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
+  Script_ShowMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
   FieldScript_WaitFrames(40);
-  Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
+  Script_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
+  Script_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   FieldScript_WaitFrames(40);
-  Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
-  ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
-                                                          ATTACHED_EFFECT_ONCE);
-  ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
-                                                   ATTACHED_EFFECT_ONCE);
-  ObjectEvent_SetAttachedEffect(LOCALID_MIA, ATTACHED_EFFECT_IN_FRONT |
-                                                 ATTACHED_EFFECT_ONCE);
-  ObjectEvent_SetAttachedEffect(LOCALID_IVAN, ATTACHED_EFFECT_IN_FRONT |
-                                                  ATTACHED_EFFECT_ONCE);
+  Script_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_MIA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_IVAN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(60);
   // Garet and Ivan will not let Tret die while they still need his help.
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 10);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 10);
-  Script_ShowMessageAndWait(SPEAKER(LOCALID_GARET), 0, 10);
-  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
-  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST, 0);
-  Script_ShowMessageAndWait(SPEAKER(LOCALID_IVAN), 0, 20);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 10);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
+  Script_ShowMessageAndWait(SPEAKER(ACTOR_GARET), 0, 10);
+  ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
+  Script_ShowMessageAndWait(SPEAKER(ACTOR_IVAN), 0, 20);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   FieldScript_WaitFrames(40);
-  Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 10);
-  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_MIA, 2);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 40);
+  Script_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
+  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_MIA, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 40);
   TreeRooms_PlayGesture(TRET_GESTURE_BLINK);
   // "Do you need something?" Answering no: "What are you doing, Isaac! Now's
   // not the time to fool around!"
-  Script_OpenMessage(SPEAKER(LOCALID_SECOND_TRET), 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
-  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST, 0);
-  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) != 0) {
-    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
-    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_SHAKE_HEAD);
+  Script_OpenMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
+  if (FieldScript_AskYesNoWithActorAnimation(0, 0) != 0) {
+    Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+    Import_ActorSetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
     FieldScript_SetMessageId(MsgTretDoingNowsNot);
-    Script_ShowMessage(SPEAKER(LOCALID_GARET), 0);
-    ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 10);
-    Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
-    Script_ShowMessage(SPEAKER(LOCALID_IVAN), 0);
+    Script_ShowMessage(SPEAKER(ACTOR_GARET), 0);
+    Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 10);
+    Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+    Script_ShowMessage(SPEAKER(ACTOR_IVAN), 0);
   }
   FieldScript_WaitFrames(20);
   TreeRooms_PlayGesture(TRET_GESTURE_BLINK);
   FieldScript_SetMessageId(MsgTretTurnedPeopleKolima);
-  Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
-  Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 10);
+  Script_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+  Script_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   FieldScript_WaitFrames(20);
   // Tret tries to release the people of Kolima: the colours shift and sparks
@@ -720,12 +709,12 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   WaitFrames(40);
-  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_MIA, 2);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 20);
+  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_MIA, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 2);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 20);
   FieldScript_WaitFrames(20);
   sSparkFrame = 0;
   {
@@ -746,39 +735,38 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   // "I can't do it... My power no longer reaches Kolima..." His face sinks
   // away on "People of Kolima... Forgive me...", and the party resolve to
   // heal him.
-  Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 10);
+  Script_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
-  Script_ShowMessage(SPEAKER(LOCALID_SECOND_TRET), 0);
-  ObjectEvent_RunActionScriptAndWait(LOCALID_TRET, gTreeRooms_FaceSinksActions);
+  Script_ShowMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
+  Actor_RunActionScriptAndWait(ACTOR_TRET, gTreeRooms_FaceSinksActions);
   FieldScript_WaitFrames(40);
-  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Script_ShowMessage(SPEAKER(LOCALID_GARET), 0);
-  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 10);
-  Script_ShowMessage(SPEAKER(LOCALID_IVAN), 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
-  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST, 10);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 10);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
-  Script_ShowMessageAndWait(SPEAKER(LOCALID_GARET), 0, 10);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 1);
-  Script_ShowMessageAndWait(SPEAKER(LOCALID_IVAN), 0, 10);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  Script_ShowMessage(SPEAKER(ACTOR_GARET), 0);
+  Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 10);
+  Script_ShowMessage(SPEAKER(ACTOR_IVAN), 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 10);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 1);
+  Script_ShowMessageAndWait(SPEAKER(ACTOR_GARET), 0, 10);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 1);
+  Script_ShowMessageAndWait(SPEAKER(ACTOR_IVAN), 0, 10);
   if (hasMia != 0) {
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
-    FieldScript_ShowMessageThenWait(SPEAKER(LOCALID_MIA), 0, 10);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_MIA, 1);
+    FieldScript_ShowMessageThenWait(SPEAKER(ACTOR_MIA), 0, 10);
   }
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   actions = gTreeRooms_RejoinLeaderActions;
-  ObjectEvent_SetActionScript(LOCALID_GARET, actions);
+  Actor_SetActionScript(ACTOR_GARET, actions);
   if (hasMia != 0) {
-    ObjectEvent_SetActionScript(LOCALID_MIA, actions);
+    Actor_SetActionScript(ACTOR_MIA, actions);
   }
-  ObjectEvent_RunActionScriptAndWait(LOCALID_IVAN, actions);
+  Actor_RunActionScriptAndWait(ACTOR_IVAN, actions);
   FieldScript_WaitFrames(20);
-  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags |=
-      OBJ_EVENT_PRIORITY_AUTOMATIC;
+  Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   GameFlag_Set(FLAG_TRET_DEFEATED);
   FieldScheduler_AddCallback(TretPalette_UpdateMapTint, TASK_PRIORITY_MAP);
   FieldScript_End();
@@ -810,40 +798,40 @@ static void TreeRooms_ApplyPostBattleState(s32 playRecoveryEvent) {
   }
 }
 
-/// Tret Tree's setup: places or removes the Tret object events, starts the
+/// Tret Tree's setup: places or removes the Tret actors, starts the
 /// tint, redraws the torn cocoons after a battle, sets the map grid by
 /// FLAG_TRET_DEFEATED, and plays what the entrance calls for: the falls
 /// on from entrances 50, 40, 30 and 20, the landing at entrance
 /// 10, or the conversation after the battle at
 /// TREE_ROOMS_AFTER_FIGHT_TRET.
 s32 TreeRooms_EnterRoom(void) {
-  struct ObjectEvent *tret;
-  struct ObjectEvent *objectEvent;
+  struct Actor *tret;
+  struct Actor *actor;
   struct MapGridScrollWork *grid;
   struct MapGridLayerScroll *layer;
   struct FieldWork *work;
   s32 entrance;
-  s32 leaderLocalId;
+  s32 leaderActorId;
 
-  tret = ObjectEvent_GetById(LOCALID_TRET);
+  tret = Actor_GetById(ACTOR_TRET);
   // Point the cocoon latch at the map state and save the palette first.
   sLastCocoon = (s16 *)gSceneLocalState;
   TretPalette_SaveMapColors();
   tret->motionFlags = 0;
   tret->y.fixed = -PIXELS(10);
   {
-    struct ObjectEvent *tretSpeaker = ObjectEvent_GetById(LOCALID_SECOND_TRET);
+    struct Actor *tretSpeaker = Actor_GetById(ACTOR_SECOND_TRET);
 
     tretSpeaker->motionFlags = 0;
     tretSpeaker->y.fixed = -PIXELS(10);
   }
-  ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_TRET, SPRITE_COLOR_HIDDEN);
+  Actor_ConfigureSpriteColor(ACTOR_SECOND_TRET, SPRITE_COLOR_HIDDEN);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   if (gSaveBlock.entrance != TREE_ROOMS_AFTER_FIGHT_TRET)
     FieldScheduler_AddCallback(TretPalette_UpdateMapTint, TASK_PRIORITY_MAP);
   if (GameFlag_Get(FLAG_TRET_DEFEATED)) {
-    Import_ObjectEventSetPosition(LOCALID_SECOND_TRET, 0, 0);
-    Import_ObjectEventSetPosition(LOCALID_TRET, 0, 0);
+    Import_ActorSetPosition(ACTOR_SECOND_TRET, 0, 0);
+    Import_ActorSetPosition(ACTOR_TRET, 0, 0);
   }
   if (Script_GetFlag(FLAG_KEEP_PARTY_POSITION))
     TreeRooms_ApplyFlaggedMapPatches();
@@ -866,31 +854,31 @@ s32 TreeRooms_EnterRoom(void) {
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   entrance = gSaveBlock.entrance;
-  leaderLocalId = gSaveBlock.leaderLocalId;
-  objectEvent = ObjectEvent_GetById(leaderLocalId);
+  leaderActorId = gSaveBlock.leaderActorId;
+  actor = Actor_GetById(leaderActorId);
   // Entrances 20, 30, 40 and 50: the leader falls on through the room,
   // to the entrance numbered ten lower. Entrance 10: the leader
   // lands in a cloud of dust in front of Tret.
   // TREE_ROOMS_AFTER_FIGHT_TRET: back from the battle with Tret.
   if (entrance == 50 || entrance == 40 || entrance == 30 || entrance == 20) {
     FieldScript_StartScreenTransition();
-    Import_ObjectEventSetAnimation(leaderLocalId, ANIM_LEADER_SPIN_AWAY);
-    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(leaderLocalId), 0);
-    ObjectEvent_SetAttachedEffect(leaderLocalId, ATTACHED_EFFECT_IN_FRONT |
-                                                     ATTACHED_EFFECT_ATTACH);
+    Import_ActorSetAnimation(leaderActorId, ANIM_LEADER_SPIN_AWAY);
+    Actor_SetSpriteFlags(Actor_GetById(leaderActorId), 0);
+    Actor_SetAttachedEffect(leaderActorId,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
     FieldCamera_MoveTo(-1, -1, -1, 0);
-    objectEvent->motionFlags = OBJ_EVENT_FALLS;
-    objectEvent->y.fixed = PIXELS(100);
-    objectEvent->groundHeight = -PIXELS(160);
-    objectEvent->gravity = PIXELS(1) / 2;
+    actor->motionFlags = ACTOR_FALLS;
+    actor->y.fixed = PIXELS(100);
+    actor->groundHeight = -PIXELS(160);
+    actor->gravity = PIXELS(1) / 2;
     Script_PlaySong(SE_DUST_PUFF);
     FieldScript_SetDestination((s32)&SceneId_TreeRooms, entrance - 10);
     FieldScript_WaitFrames(20);
-    objectEvent->layer = 2;
-    ObjectMotion_SetActionVariant(leaderLocalId, 3);
+    actor->layer = 2;
+    ObjectMotion_SetActionVariant(leaderActorId, 3);
     FieldScript_WaitFrames(2);
     FieldEffect_ConfigureLinkedObject(
-        leaderLocalId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
+        leaderActorId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
     FieldScript_WaitFrames(8);
   } else if (entrance == 10) {
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
@@ -982,78 +970,78 @@ static void TretPalette_UpdateMapTint(void) {
 static void TreeRooms_PlayGesture(s32 gesture) {
   switch (gesture) {
   case TRET_GESTURE_CLOSE_EYES:
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_OPEN);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
     WaitFrames(6);
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_CLOSED);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
     break;
   case TRET_GESTURE_OPEN_EYES:
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_OPEN);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
     break;
   case TRET_GESTURE_LOOK_LEFT:
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_OPEN);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
     WaitFrames(6);
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_LOOK_LEFT);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_LOOK_LEFT);
     break;
   case TRET_GESTURE_LOOK_RIGHT:
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_OPEN);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
     WaitFrames(6);
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_LOOK_RIGHT);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_LOOK_RIGHT);
     break;
   case TRET_GESTURE_BLINK:
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_OPEN);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
     WaitFrames(6);
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_CLOSED);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
     WaitFrames(6);
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_OPEN);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
     WaitFrames(6);
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_CLOSED);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
     WaitFrames(6);
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_OPEN);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
     break;
   case TRET_GESTURE_HALF_CLOSE_EYES:
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_OPEN);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
     WaitFrames(6);
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_HALF_CLOSED);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_HALF_CLOSED);
     break;
   case TRET_GESTURE_WRATHFUL_CLOSE_EYES:
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     WaitFrames(6);
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_CLOSED);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
     break;
   case TRET_GESTURE_WRATHFUL_OPEN_EYES:
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     break;
   case TRET_GESTURE_WRATHFUL_LOOK_RIGHT:
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     WaitFrames(6);
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_LOOK_RIGHT);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_LOOK_RIGHT);
     break;
   case TRET_GESTURE_WRATHFUL_LOOK_LEFT:
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     WaitFrames(6);
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_LOOK_LEFT);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_LOOK_LEFT);
     break;
   case TRET_GESTURE_WRATHFUL_BLINK:
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     WaitFrames(6);
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_CLOSED);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
     WaitFrames(6);
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     WaitFrames(6);
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_CLOSED);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
     WaitFrames(6);
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     break;
   case TRET_GESTURE_WRATHFUL_STARE:
-    Import_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
+    Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     break;
   }
   WaitFrames(12);
 }
 
 /// Moves a fading spark outward from its saved origin, then releases it.
-static void TreeRooms_UpdateSwirlSpark(union ObjectEventOrEffect *fieldObject) {
-  struct ObjectEvent *spark = (struct ObjectEvent *)fieldObject;
+static void TreeRooms_UpdateSwirlSpark(union ActorOrEffect *fieldObject) {
+  struct Actor *spark = (struct Actor *)fieldObject;
   struct FieldPosition position;
   s32 frame;
 
@@ -1078,13 +1066,13 @@ static void TreeRooms_UpdateSwirlSpark(union ObjectEventOrEffect *fieldObject) {
     spark->timer++;
   } else {
     VramCache_FreeEntry(spark->sprite->slot);
-    ObjectEvent_Release(spark);
+    Actor_Release(spark);
   }
 }
 
 /// Emits five shrinking waves of fading sparks from the saved origin.
 static void TreeRooms_SpawnSwirlSparks(void) {
-  struct ObjectEvent *spark;
+  struct Actor *spark;
   u32 frame;
   void *previousResourceEntry;
   s32 wave;
@@ -1103,14 +1091,14 @@ static void TreeRooms_SpawnSwirlSparks(void) {
     // Waves contain 6, 5, 4, 3 and 2 sparks. Divide degrees before
     // converting them to turns, preserving the original rounding.
     for (sparkIndex = 0; sparkIndex < 6 - wave; sparkIndex++) {
-      spark = ObjectEvent_Create(SPRITE_SPARKLE, sSparkOrigin.x, sSparkOrigin.y,
-                                 sSparkOrigin.z);
+      spark = Actor_Create(SPRITE_SPARKLE, sSparkOrigin.x, sSparkOrigin.y,
+                           sSparkOrigin.z);
       if (spark != 0) {
         previousResourceEntry =
             Sprite_ShareVramCacheEntry(spark->sprite, previousResourceEntry);
         spark->motionFlags = 0;
         spark->sprite->image.priority = 0;
-        ObjectEvent_SetSpriteFlags(spark, 0);
+        Actor_SetSpriteFlags(spark, 0);
         Object_SelectAnimation(spark, 1);
         spark->timer = 0;
         spark->work = ((360 / (u32)(6 - wave) * sparkIndex) << 16) / 360;
@@ -1164,7 +1152,7 @@ static void TreeRooms_RunLandingDustEvent(void) {
   struct FieldPosition velocity;
   struct EffectOptions *particleOptions;
   struct FieldPosition *particleVelocity;
-  struct ObjectEvent *leader;
+  struct Actor *leader;
   u32 particleIndex;
   s32 velocityX;
   s32 velocityZ;
@@ -1173,17 +1161,17 @@ static void TreeRooms_RunLandingDustEvent(void) {
   FieldCamera_MoveTo(-1, -1, -1, 0);
   MapGrid_CenterOnFollowedPoint();
   WaitFrames(1);
-  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed = PIXELS(130);
-  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->gravity = 0x8000;
-  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->bounce = 0;
-  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
+  Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed = PIXELS(130);
+  Actor_GetById(ACTOR_PARTY_LEADER)->gravity = 0x8000;
+  Actor_GetById(ACTOR_PARTY_LEADER)->bounce = 0;
+  Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   Script_PlaySong(SE_DUST_PUFF);
-  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags =
-      OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
+  Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags =
+      ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   FieldScript_WaitFrames(24);
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
   // Spread particles around the leader while the landing effect finishes.
   particleOptions = &options;
   particleOptions->palette = 7;
@@ -1206,16 +1194,16 @@ static void TreeRooms_RunLandingDustEvent(void) {
                       particleOptions);
   }
   Script_PlaySong(SE_THUMP);
-  ObjectEvent_SetAttachedEffect(
-      LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   MapGrid_WaitForShakeToSettle();
   FieldEffect_ConfigureLinkedObject(
-      LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->gravity = 0x10000;
-  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->bounce = 0x4000;
+      ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
+  Actor_GetById(ACTOR_PARTY_LEADER)->gravity = 0x10000;
+  Actor_GetById(ACTOR_PARTY_LEADER)->bounce = 0x4000;
   FieldScript_End();
 }
 
@@ -1465,12 +1453,12 @@ u32 gTreeRoomsExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ObjectEventTemplate gTreeRoomsObjectEventTemplates[] = {
-    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+struct ActorTemplate gTreeRoomsActorTemplates[] = {
+    { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
-    { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
-    { LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_TRET, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(168), 0, PIXELS(48), FACING_SOUTH, TALK_FACING_KEEP, 0 },

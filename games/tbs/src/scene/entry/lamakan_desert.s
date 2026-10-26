@@ -2,6 +2,6 @@
 	overlay_veneer LamakanDesert_Initialize
 	overlay_veneer LamakanDesert_GetEntrances
 	overlay_veneer LamakanDesert_GetExits
-	overlay_veneer LamakanDesert_GetObjectEventTemplates
+	overlay_veneer LamakanDesert_GetActorTemplates
 	overlay_veneer LamakanDesert_GetEvents
 	overlay_veneer LamakanDesert_GetRegions

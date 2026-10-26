@@ -17,7 +17,7 @@
 /// Each vine has metatile behaviors of its own, so 12 and 13 repeat 10's and
 /// 11's events for the second vine. Breeze, a Jupiter Djinni, stands here until
 /// it has joined the party: its own flag (FLAG_DJINNI(DJINNI_BREEZE))
-/// removes its object event template. Talking to it starts a battle with it.
+/// removes its actor template. Talking to it starts a battle with it.
 ///
 /// The setup opens the map with a backdrop fade, blends BG1 over the rest of
 /// the screen and splits BG3's scroll at a scanline, 192 less the ground
@@ -59,12 +59,12 @@
 #include "flags.h"
 #include "songs.h"
 
-/// Breeze, a Jupiter Djinni (DJINNI_BREEZE), the only placed object event; its
-/// object event template is gone once its flag (FLAG_DJINNI(DJINNI_BREEZE))
+/// Breeze, a Jupiter Djinni (DJINNI_BREEZE), the only placed actor; its
+/// actor template is gone once its flag (FLAG_DJINNI(DJINNI_BREEZE))
 /// is set.
 enum {
   /// ★ Named from the game: "Breeze" (MsgDjinnName)
-  LOCALID_BREEZE = LOCALID_FIRST_PLACED
+  ACTOR_BREEZE = ACTOR_FIRST_PLACED
 };
 
 /// Starts the scanline-dependent BG3 scroll callbacks.
@@ -79,7 +79,7 @@ static u16 sHofsBeforeSplit;
 /// Talking to Breeze in Tret Tree: the Djinni hops and the battle with it
 /// starts.
 static void EventScript_TalkToBreeze(void) {
-  Field_RequestDjinnBattle(LOCALID_BREEZE, DJINNI_BREEZE);
+  Field_RequestDjinnBattle(ACTOR_BREEZE, DJINNI_BREEZE);
 }
 
 const struct SceneEntrance *TretTreeBranch_GetEntrances(void) {
@@ -90,8 +90,8 @@ const struct SceneExitRegion *TretTreeBranch_GetRegions(void) { return NULL; }
 
 const u32 *TretTreeBranch_GetExits(void) { return gTretTreeBranch_Exits; }
 
-const struct ObjectEventTemplate *TretTreeBranch_GetObjectEventTemplates(void) {
-  return gTretTreeBranch_ObjectEventTemplates;
+const struct ActorTemplate *TretTreeBranch_GetActorTemplates(void) {
+  return gTretTreeBranch_ActorTemplates;
 }
 
 /// Moves the leader and camera by signed 16-pixel cell offsets, placing each
@@ -99,35 +99,35 @@ const struct ObjectEventTemplate *TretTreeBranch_GetObjectEventTemplates(void) {
 static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
                                                        s32 cellOffsetZ) {
   struct FieldWork *state = gFieldWork;
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 offsetX = cellOffsetX;
   s32 offsetZ = cellOffsetZ;
   s32 groundHeight;
 
-  objectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
+  actor = Actor_GetById(gSaveBlock.leaderActorId);
   // Multiplication keeps negative cell offsets defined; every caller is within
   // six cells, so the fixed-point result fits in s32.
   offsetX *= PIXELS(16);
   offsetZ *= PIXELS(16);
 
-  // Shift the selected object event before the separate camera object.
-  if (objectEvent != 0) {
-    objectEvent->x.fixed += offsetX;
-    objectEvent->z.fixed += offsetZ;
-    groundHeight = MapGrid_GetTerrainHeight(
-        objectEvent->layer, objectEvent->x.fixed, objectEvent->z.fixed);
-    objectEvent->y.fixed = groundHeight;
-    objectEvent->groundHeight = groundHeight;
+  // Shift the selected actor before the separate camera object.
+  if (actor != 0) {
+    actor->x.fixed += offsetX;
+    actor->z.fixed += offsetZ;
+    groundHeight =
+        MapGrid_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
+    actor->y.fixed = groundHeight;
+    actor->groundHeight = groundHeight;
   }
 
-  objectEvent = (struct ObjectEvent *)state->camera;
-  if (objectEvent != 0) {
-    objectEvent->x.fixed += offsetX;
-    objectEvent->z.fixed += offsetZ;
-    groundHeight = MapGrid_GetTerrainHeight(
-        objectEvent->layer, objectEvent->x.fixed, objectEvent->z.fixed);
-    objectEvent->y.fixed = groundHeight;
-    objectEvent->groundHeight = groundHeight;
+  actor = (struct Actor *)state->camera;
+  if (actor != 0) {
+    actor->x.fixed += offsetX;
+    actor->z.fixed += offsetZ;
+    groundHeight =
+        MapGrid_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
+    actor->y.fixed = groundHeight;
+    actor->groundHeight = groundHeight;
   }
 }
 
@@ -333,7 +333,7 @@ u32 gTretTreeBranch_Exits[] = {
 };
 
 // clang-format off
-struct ObjectEventTemplate gTretTreeBranch_ObjectEventTemplates[] = {
+struct ActorTemplate gTretTreeBranch_ActorTemplates[] = {
     { JUPITER_DJINNI, FLAG_DJINNI(DJINNI_BREEZE), MOVEMENT_TYPE_STAND,
         PIXELS(648), 0, PIXELS(88), FACING_WEST, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
@@ -369,7 +369,7 @@ struct MapEvent gTretTreeBranch_Events[] = {
      EVENT_SCRIPT(EventScript_GoDownSoutheastVine)},
     {MAP_EVENT_COORD, 15, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_GoUpSoutheastVine)},
-    {MAP_EVENT_TALK, LOCALID_BREEZE, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_BREEZE, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_TalkToBreeze)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_AFTER_END), 0,
      CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CastReveal)},

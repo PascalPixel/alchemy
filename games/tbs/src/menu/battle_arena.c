@@ -62,7 +62,7 @@
 /// The party is on its way into the battle.
 /// ★ Named from the game: "Good luck!" (MsgLobbyGoodLuck)
 #define FLAG_BATTLE_ARENA_ENTERING_BATTLE FLAG_SCENE_TEMP_03
-/// LOCALID_PARTY_ORDER_VISITOR has given the linked finals' limit of three
+/// ACTOR_PARTY_ORDER_VISITOR has given the linked finals' limit of three
 /// allies, so the next talk explains how to change the party's order.
 /// ★ Named from the game: "You can change the order of your party in the status
 /// screen." (MsgLobbyChangeOrderParty)
@@ -134,69 +134,69 @@
 //   monster series, the byte flag at FLAG_AREA_TEMP_E8 instead counts the
 //   victories, 0 to 2, towards a stronger monster.
 
-/// The object events, numbering the rows of gBattleArenaObjectEventTemplates
-/// and gBattleArenaBattleObjectEventTemplates, which list the same people in
+/// The actors, numbering the rows of gBattleArenaActorTemplates
+/// and gBattleArenaBattleActorTemplates, which list the same people in
 /// the same order; the rows of Garet, Ivan, Mia and Jenna take those
 /// characters' own ids.
-enum BattleArenaLocalId {
-  /// The attendant, who arranges every battle; LOCALID_GREETER calls her the
+enum BattleArenaActorId {
+  /// The attendant, who arranges every battle; ACTOR_GREETER calls her the
   /// girl at the counter.
   /// ★ Named from the game: "Please speak to me when you want to fight in a
   /// battle." (MsgLobbyPleaseSpeakWhen)
-  LOCALID_ATTENDANT = LOCALID_FIRST_PLACED,
-  /// Reports the linked battles won, and answers for LOCALID_DEBUG_HELPER.
+  ACTOR_ATTENDANT = ACTOR_FIRST_PLACED,
+  /// Reports the linked battles won, and answers for ACTOR_DEBUG_HELPER.
   /// ★ Named from the game: "I will tell you your total wins when you finish
   /// the linked finals." (MsgLobbyTellTotalWins)
-  LOCALID_LINKED_WINS_TELLER,
+  ACTOR_LINKED_WINS_TELLER,
   /// Opens a Sanctum's services (BattleArena_OpenSanctum); sprite 0x79, the
   /// healer of every Sanctum in sanctum.c.
   /// ★ Named from the game: "Healer" (MsgDebugGlyphName)
-  LOCALID_HEALER,
+  ACTOR_HEALER,
   /// ★ Named from the game: "Welcome to Battle Arena, where people craving
   /// battle meet!" (MsgFieldWelcomeToBattleArenaWherePeople)
-  LOCALID_GREETER,
+  ACTOR_GREETER,
   /// ★ Named from the game: "I am a traveling warrior. I came here to become
   /// stronger..." (MsgLobbyTravelingWarrior)
-  LOCALID_TRAVELING_WARRIOR,
+  ACTOR_TRAVELING_WARRIOR,
   /// ★ Named from the game: "Up to three allies can fight in Linked Battle
   /// finals." (MsgLobbyThreeAlliesFight)
-  LOCALID_FINALS_VISITOR,
+  ACTOR_FINALS_VISITOR,
   /// ★ Named from the game: "Is this the Battle Arena the old man spoke of?"
   /// (MsgLobbyBattleArenaOld)
-  LOCALID_OLD_MANS_ARENA_VISITOR,
+  ACTOR_OLD_MANS_ARENA_VISITOR,
   /// Loads a debug party (BattleArena_ChooseDebugPartyPreset).
   /// ★ Named from the game: "Choose your parameters here."
   /// (MsgLobbyChooseParameters)
-  LOCALID_DEBUG_HELPER,
+  ACTOR_DEBUG_HELPER,
   /// Explains the linked finals' limit of three allies, then the party order.
   /// ★ Named from the game: "You can change the order of your party in the
   /// status screen." (MsgLobbyChangeOrderParty)
-  LOCALID_PARTY_ORDER_VISITOR,
+  ACTOR_PARTY_ORDER_VISITOR,
   /// ★ Named from the game: "In the linked finals, you can't delay after your
   /// opponent selects a move." (MsgFieldInTheLinkedFinalsYouCant)
-  LOCALID_COMMAND_TIME_VISITOR,
+  ACTOR_COMMAND_TIME_VISITOR,
   /// ★ Named from the game: "To use Summon quickly, Djinn must be on standby."
   /// (MsgFieldToUseSummonQuicklyDjinnMust)
-  LOCALID_SUMMON_VISITOR,
+  ACTOR_SUMMON_VISITOR,
   /// ★ Named from the game: "Do you put Djinn on standby before a battle, or
   /// do you set them?" (MsgFieldDoYouPutDjinnOnStandby)
-  LOCALID_SET_DJINN_VISITOR,
+  ACTOR_SET_DJINN_VISITOR,
   /// ★ Named from the game: "Remove Djinn you rarely use so you can summon
   /// quickly." (MsgFieldRemoveDjinnYouRarelyUseSo)
-  LOCALID_STANDBY_DJINN_VISITOR,
+  ACTOR_STANDBY_DJINN_VISITOR,
   /// ★ Named from the game: "Monster Battle rules say you all must fight as a
   /// team against a monster." (MsgFieldMonsterBattleRulesSayYouAll)
-  LOCALID_MONSTER_RULES_VISITOR,
+  ACTOR_MONSTER_RULES_VISITOR,
   /// Reports the most Monster Battles won in a row.
   /// ★ Named from the game: "I'll be counting your victories!"
   /// (MsgLobbyCantWaitSee)
-  LOCALID_MONSTER_WINS_TELLER,
+  ACTOR_MONSTER_WINS_TELLER,
   /// ★ Named from the game: "All the warriors are impressive, so I get edgy
   /// before battles begin." (MsgFieldAllTheWarriorsAreImpressiveSo)
-  LOCALID_EDGY_VISITOR,
+  ACTOR_EDGY_VISITOR,
   /// ★ Named from the game: "I could enter, but I'd just get hurt if I did..."
   /// (MsgFieldICouldEnterButIdJust)
-  LOCALID_WARY_VISITOR
+  ACTOR_WARY_VISITOR
 };
 
 /// The words of gBattleArena_SlotValues, by slot: the signature, then the state
@@ -324,20 +324,20 @@ static s32 BattleArena_InitializeSerial(void) {
 
 u8 *BattleArena_GetExits(void) { return (u8 *)gBattleArenaExits; }
 
-/// The object event templates entry. After a defeat
+/// The actor templates entry. After a defeat
 /// (BATTLE_ARENA_AFTER_MONSTER_LOSS or BATTLE_ARENA_AFTER_LINK_LOSS) the party
 /// members and four visitors roughly trade places
-/// (gBattleArenaBattleObjectEventTemplates): Garet, Ivan and Mia or Jenna take
+/// (gBattleArenaBattleActorTemplates): Garet, Ivan and Mia or Jenna take
 /// three of the visitors' spots, and the visitors stand around where the party
 /// stood.
-s32 BattleArena_SelectObjectEventTemplates(void) {
+s32 BattleArena_SelectActorTemplates(void) {
   s16 entrance = gSaveBlock.entrance;
 
   if (entrance == BATTLE_ARENA_AFTER_LINK_LOSS ||
       entrance == BATTLE_ARENA_AFTER_MONSTER_LOSS) {
-    return (s32)gBattleArenaBattleObjectEventTemplates;
+    return (s32)gBattleArenaBattleActorTemplates;
   }
-  return (s32)gBattleArenaObjectEventTemplates;
+  return (s32)gBattleArenaActorTemplates;
 }
 
 /// Returns 1 when the partner's payload holds slot's word in slot's column, 0
@@ -407,7 +407,7 @@ static s32 BattleArena_PollPeerReady(void) {
   result = 1;
   // The leader is south of z 224 (16.16 pixels), towards the way out: the
   // party stops talking about the last battle.
-  if (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed > 0xe00000) {
+  if (Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed > 0xe00000) {
     GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED);
   }
   // While LOBBY_EVENT_DISCONNECTED waits, skip the partner tracking.
@@ -498,7 +498,7 @@ static s32 BattleArena_PromptToParticipate(void) {
   }
   FieldScript_Start();
   FieldScript_SetMessageId(MsgLobbyWantParticipatePlease);
-  FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
+  FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
   WaitFrames(5);
   GameFlag_Set(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
   FieldScript_End();
@@ -521,7 +521,7 @@ static s32 BattleArena_ReportDisconnection(void) {
   FieldScript_Start();
   work->raisedEvent = LOBBY_EVENT_NONE;
   FieldScript_SetMessageId(MsgLobbyLinkDisconnected);
-  FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
+  FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
   GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED);
   FieldScript_End();
 #ifdef UBFIX
@@ -985,33 +985,32 @@ static s32 BattleArena_EnterBattle(void) {
     WaitFrames(8);
     TilesetAnim_Pause(5);
     if (GameFlag_Get(FLAG_MONSTER_BATTLE)) {
-      ObjectMotion_SetAngleToward(LOCALID_ATTENDANT, gSaveBlock.leaderLocalId,
-                                  0);
+      ObjectMotion_SetAngleToward(ACTOR_ATTENDANT, gSaveBlock.leaderActorId, 0);
       FieldScript_SetMessageId(MsgLobbyGoodLuck);
-      FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
+      FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
       WaitFrames(45);
-      ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, Q16_ONE, 0x8000);
-      ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 216, 184);
-      ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-      ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 216, 168);
-      ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE, 0x8000);
+      ObjectMotion_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 184);
+      ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+      ObjectMotion_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 168);
+      ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
     } else {
       // Speeds are 16.16 pixels a frame: one to (216, 200), a tenth while
       // the parties are exchanged, then a half.
-      ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, Q16_ONE, 0x8000);
-      ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 216, 200);
-      ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-      ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x1999, 0xccc);
-      ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 216, 168);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE, 0x8000);
+      ObjectMotion_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 200);
+      ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1999, 0xccc);
+      ObjectMotion_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 168);
       // A failed exchange: walk back out and return to the Battle Arena,
       // reporting the link lost (LOBBY_EVENT_DISCONNECTED).
       if (BattleArena_ExchangePartyRecords() < 0) {
-        ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, Q16_ONE, 0x8000);
-        ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 216, 200);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE, 0x8000);
+        ObjectMotion_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 200);
         TilesetAnim_Resume(5);
         WaitFrames(8);
         TilesetAnim_Pause(5);
-        ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
+        ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
         FreeHeapSlot(HEAP_SLOT_ENEMY_UNITS);
         BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
         BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
@@ -1027,8 +1026,8 @@ static s32 BattleArena_EnterBattle(void) {
         FieldScript_End();
         return LOBBY_NO_RESULT;
       }
-      ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
-      ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+      ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
     }
     if (GameFlag_Get(FLAG_MONSTER_BATTLE)) {
       FieldScript_SetNextDestination((s32)&SceneId_BattleArena,
@@ -1066,7 +1065,7 @@ static s32 BattleArena_EnterBattle(void) {
 #endif
 }
 
-/// Talking to LOCALID_ATTENDANT, who arranges a battle. With no partner, offers
+/// Talking to ACTOR_ATTENDANT, who arranges a battle. With no partner, offers
 /// a monster battle. With one, calls off a monster battle in waiting, then asks
 /// the player to apply or to accept the partner's request; a yes is published
 /// as LOBBY_SLOT_ASKED. Agreeing sets FLAG_BATTLE_ARENA_PLAYER_AGREED, and for
@@ -1085,7 +1084,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
   // +6 asks the player to wait for an opponent.
   messageBase = MsgLobbyPleaseSpeakWhen;
   FieldScript_Start();
-  ObjectMotion_SetAngleToward(LOCALID_ATTENDANT, gSaveBlock.leaderLocalId, 0);
+  ObjectMotion_SetAngleToward(ACTOR_ATTENDANT, gSaveBlock.leaderActorId, 0);
   // Look for the partner's signature twice, a frame apart.
   if (BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) == 0) {
     WaitFrames(1);
@@ -1095,8 +1094,8 @@ static s32 BattleArena_ChooseBattleMode(void) {
     BattleArena_InitializeSerial();
     if (!Script_GetFlag(FLAG_MONSTER_BATTLE)) {
       FieldScript_SetMessageId(messageBase + 5);
-      FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
-      answer = FieldScript_AskYesNoWithObjectEventAnimation(0, 0);
+      FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
+      answer = FieldScript_AskYesNoWithActorAnimation(0, 0);
       // Yes starts a monster series: FLAG_AREA_TEMP_E8's byte and
       // LINK_TALLY_MONSTER_STREAK start at 0.
       if (answer == YES) {
@@ -1123,7 +1122,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
     if (Script_GetFlag(FLAG_MONSTER_BATTLE)) {
       BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
       FieldScript_SetMessageId(MsgLobbyOpponentArrived);
-      FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
+      FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
       GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_AGREED);
       GameFlag_Clear(FLAG_MONSTER_BATTLE);
     }
@@ -1137,11 +1136,11 @@ static s32 BattleArena_ChooseBattleMode(void) {
     message:
       FieldScript_SetMessageId(messageId);
     open_message:
-      FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
+      FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
     } else if (!GameFlag_Get(FLAG_BATTLE_ARENA_PARTNER_ASKED) &&
                !Script_GetFlag(FLAG_BATTLE_ARENA_ATTENDANT_EXPLAINED)) {
       FieldScript_SetMessageId(messageBase);
-      FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
+      FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
       GameFlag_Set(FLAG_BATTLE_ARENA_ATTENDANT_EXPLAINED);
     } else {
       GameFlag_Set(FLAG_BATTLE_ARENA_ATTENDANT_EXPLAINED);
@@ -1150,8 +1149,8 @@ static s32 BattleArena_ChooseBattleMode(void) {
       } else {
         FieldScript_SetMessageId(messageBase + 1);
       }
-      FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
-      if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == YES) {
+      FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
+      if (FieldScript_AskYesNoWithActorAnimation(0, 0) == YES) {
         // Yes, and the partner is still there; else the link is lost.
         if (BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE)) {
           GameFlag_Set(FLAG_LINK_BATTLE);
@@ -1169,7 +1168,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
         }
       } else {
         FieldScript_SetMessageId(messageBase);
-        FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
+        FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
       }
     }
   }
@@ -1179,17 +1178,17 @@ static s32 BattleArena_ChooseBattleMode(void) {
 #endif
 }
 
-/// Talking to LOCALID_LINKED_WINS_TELLER, who reports the linked battles won,
+/// Talking to ACTOR_LINKED_WINS_TELLER, who reports the linked battles won,
 /// the total when the leader faces north and those won in a row otherwise;
 /// before the first, the line says it will tell them later. Like the original
 /// handler, it never ends its script (no FieldScript_End) and returns nothing.
-static s32 BattleArena_ReportWinTallies(s32 localId) {
-  u32 facing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
+static s32 BattleArena_ReportWinTallies(s32 actorId) {
+  u32 facing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
   u16 *tally;
   s32 messageBase;
 
   FieldScript_Start();
-  ObjectMotion_SetAngleToward(localId, gSaveBlock.leaderLocalId, 0);
+  ObjectMotion_SetAngleToward(actorId, gSaveBlock.leaderActorId, 0);
   // FACING_IS_NORTH's test, written out: strictly between northwest and
   // northeast.
   if ((facing - 0xa001) <= 0x3ffe) {
@@ -1199,10 +1198,10 @@ static s32 BattleArena_ReportWinTallies(s32 localId) {
       MessageArgument_ClearAll();
       MessageArgument_Push(*tally, MESSAGE_ARGUMENT_NUMBER);
       FieldScript_SetMessageId(messageBase + 1);
-      FieldScript_ShowMessageAndWait(localId, 0);
+      FieldScript_ShowMessageAndWait(actorId, 0);
     } else {
       FieldScript_SetMessageId(MsgLobbyTellTotalWins);
-      FieldScript_ShowMessageAndWait(localId, 0);
+      FieldScript_ShowMessageAndWait(actorId, 0);
     }
   } else {
     messageBase = MsgLobbyLooksLikeFirstTime;
@@ -1211,30 +1210,30 @@ static s32 BattleArena_ReportWinTallies(s32 localId) {
       MessageArgument_ClearAll();
       MessageArgument_Push(*tally, MESSAGE_ARGUMENT_NUMBER);
       FieldScript_SetMessageId(messageBase + 1);
-      FieldScript_ShowMessageAndWait(localId, 0);
+      FieldScript_ShowMessageAndWait(actorId, 0);
     } else {
       FieldScript_SetMessageId(MsgLobbyTellConsecutiveWins);
-      FieldScript_ShowMessageAndWait(localId, 0);
+      FieldScript_ShowMessageAndWait(actorId, 0);
     }
   }
 #ifdef UBFIX
   return 0;
 #endif
 }
-/// Talking to LOCALID_DEBUG_HELPER: Left and Right choose a preset number from
+/// Talking to ACTOR_DEBUG_HELPER: Left and Right choose a preset number from
 /// 0 up, A loads it (DebugParty_LoadPreset) and B cancels.
-/// LOCALID_LINKED_WINS_TELLER replies: one line for a cancel, one for a preset
+/// ACTOR_LINKED_WINS_TELLER replies: one line for a cancel, one for a preset
 /// past the table's end (the loader's nonzero result), one for a loaded party.
-static s32 BattleArena_ChooseDebugPartyPreset(s32 localId) {
+static s32 BattleArena_ChooseDebugPartyPreset(s32 actorId) {
   struct Window *window;
   s32 presetIndex;
   s32 displayedPreset;
   s32 loadResult;
 
   FieldScript_Start();
-  ObjectMotion_SetAngleToward(localId, gSaveBlock.leaderLocalId, 0);
+  ObjectMotion_SetAngleToward(actorId, gSaveBlock.leaderActorId, 0);
   FieldScript_SetMessageId(MsgLobbyChooseParameters);
-  FieldScript_ShowMessageAndWait(localId, 0);
+  FieldScript_ShowMessageAndWait(actorId, 0);
   window = Window_Create(0, 0, 6, 4, WINDOW_FLAG_INSTANT);
   presetIndex = 0;
   displayedPreset = -1;
@@ -1268,13 +1267,13 @@ static s32 BattleArena_ChooseDebugPartyPreset(s32 localId) {
   }
   if (presetIndex < 0) {
     FieldScript_SetMessageId(MsgLobbyTease);
-    FieldScript_ShowMessageAndWait(LOCALID_LINKED_WINS_TELLER, 0);
+    FieldScript_ShowMessageAndWait(ACTOR_LINKED_WINS_TELLER, 0);
   } else if (loadResult != 0) {
     FieldScript_SetMessageId(MsgLobbyNoParameterAsk);
-    FieldScript_ShowMessageAndWait(LOCALID_LINKED_WINS_TELLER, 0);
+    FieldScript_ShowMessageAndWait(ACTOR_LINKED_WINS_TELLER, 0);
   } else {
     FieldScript_SetMessageId(MsgLobbySettingsMadeRest);
-    FieldScript_ShowMessageAndWait(LOCALID_LINKED_WINS_TELLER, 0);
+    FieldScript_ShowMessageAndWait(ACTOR_LINKED_WINS_TELLER, 0);
   }
   WaitFrames(10);
   FieldScript_End();
@@ -1283,11 +1282,11 @@ static s32 BattleArena_ChooseDebugPartyPreset(s32 localId) {
 #endif
 }
 
-/// Talking to LOCALID_HEALER, who serves as a Sanctum's healer
+/// Talking to ACTOR_HEALER, who serves as a Sanctum's healer
 /// (Sanctum_Run).
-static s32 BattleArena_OpenSanctum(s32 localId) {
+static s32 BattleArena_OpenSanctum(s32 actorId) {
   FieldScript_Start();
-  Sanctum_Run(localId);
+  Sanctum_Run(actorId);
   FieldScript_End();
 #ifdef UBFIX
   return 0;
@@ -1328,20 +1327,20 @@ UNUSED static void State_NoOp(void) {}
 /// (area flags FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED and
 /// FLAG_BATTLE_ARENA_LINK_BATTLE_WON) and whether they fought in it, or else of
 /// whether Isaac and they are in the battle party. Each message family holds
-/// one line per character, at local id - 1; Felix's holds "?".
-static s32 BattleArena_TalkByProgress(s32 localId) {
+/// one line per character, at actor id - 1; Felix's holds "?".
+static s32 BattleArena_TalkByProgress(s32 actorId) {
   s32 messageBase = MsgLobbyCantWaitLets;
   s32 isaacPresent = BattleArena_PartyContains(0);
-  s32 speakerPresent = BattleArena_PartyContains(localId);
+  s32 speakerPresent = BattleArena_PartyContains(actorId);
 
   FieldScript_Start();
-  ObjectMotion_SetAngleToward(localId, gSaveBlock.leaderLocalId, 0);
+  ObjectMotion_SetAngleToward(actorId, gSaveBlock.leaderActorId, 0);
   if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED)) {
 
     // Isaac's flag is tested and the result dropped; messageBase first holds
-    // whether the speaker fought (FLAG_BATTLE_ARENA_IN_PARTY_FIRST + local id).
+    // whether the speaker fought (FLAG_BATTLE_ARENA_IN_PARTY_FIRST + actor id).
     Script_GetFlag(FLAG_BATTLE_ARENA_IN_PARTY_FIRST);
-    messageBase = GameFlag_Get(localId + FLAG_BATTLE_ARENA_IN_PARTY_FIRST);
+    messageBase = GameFlag_Get(actorId + FLAG_BATTLE_ARENA_IN_PARTY_FIRST);
     if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_BATTLE_WON)) {
       if (messageBase)
         messageBase = MsgLobbyWonToldCountOn;
@@ -1359,8 +1358,8 @@ static s32 BattleArena_TalkByProgress(s32 localId) {
   } else {
     messageBase = MsgLobbyTryingGetAway;
   }
-  FieldScript_SetMessageId(messageBase + localId - 1);
-  FieldScript_ShowMessageAndWait(localId, 0);
+  FieldScript_SetMessageId(messageBase + actorId - 1);
+  FieldScript_ShowMessageAndWait(actorId, 0);
   FieldScript_End();
 #ifdef UBFIX
   return 0;
@@ -1381,50 +1380,50 @@ static s32 BattleArena_LeaveArena(void) {
 // The handlers below are s32 and return no value: r0 is whatever
 // FieldScript_End left.
 
-/// Talking to one of three visitors: LOCALID_TRAVELING_WARRIOR,
-/// LOCALID_FINALS_VISITOR, who explains the linked finals, and
-/// LOCALID_OLD_MANS_ARENA_VISITOR, who wonders whether this is the old man's
+/// Talking to one of three visitors: ACTOR_TRAVELING_WARRIOR,
+/// ACTOR_FINALS_VISITOR, who explains the linked finals, and
+/// ACTOR_OLD_MANS_ARENA_VISITOR, who wonders whether this is the old man's
 /// Battle Arena. Each says their first line unless a linked battle has ended
 /// since the leader last walked south of z 224 (area flag
 /// FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED), then their second after a win or their
 /// third after a loss (FLAG_BATTLE_ARENA_LINK_BATTLE_WON).
-static s32 BattleArena_TalkToVisitor(s32 localId) {
+static s32 BattleArena_TalkToVisitor(s32 actorId) {
   s32 message;
   s32 step = 0;
 
   FieldScript_Start();
-  switch (localId) {
-  case LOCALID_TRAVELING_WARRIOR:
+  switch (actorId) {
+  case ACTOR_TRAVELING_WARRIOR:
     message = MsgLobbyTravelingWarrior;
     break;
-  case LOCALID_FINALS_VISITOR:
+  case ACTOR_FINALS_VISITOR:
     message = MsgLobbyThreeAlliesFight;
     break;
-  case LOCALID_OLD_MANS_ARENA_VISITOR:
+  case ACTOR_OLD_MANS_ARENA_VISITOR:
   default:
     message = MsgLobbyBattleArenaOld;
     break;
   }
-  ObjectMotion_SetAngleToward(localId, gSaveBlock.leaderLocalId, 0);
+  ObjectMotion_SetAngleToward(actorId, gSaveBlock.leaderActorId, 0);
   if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED))
     step = 2 - (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_BATTLE_WON) != 0);
   FieldScript_SetMessageId(message + step);
-  FieldMessage_ShowAtObject(localId, 0);
+  FieldMessage_ShowAtObject(actorId, 0);
   FieldScript_End();
 #ifdef UBFIX
   return 0;
 #endif
 }
 
-/// Talking to LOCALID_PARTY_ORDER_VISITOR, who alternates, by
+/// Talking to ACTOR_PARTY_ORDER_VISITOR, who alternates, by
 /// FLAG_BATTLE_ARENA_PARTY_ORDER_NEXT, between the linked finals' limit of
 /// three allies (worded for the party's size) and how to change the party's
 /// order.
-static s32 BattleArena_ExplainPartyOrder(s32 localId) {
+static s32 BattleArena_ExplainPartyOrder(s32 actorId) {
   s32 message;
 
   FieldScript_Start();
-  ObjectMotion_SetAngleToward(localId, gSaveBlock.leaderLocalId, 0);
+  ObjectMotion_SetAngleToward(actorId, gSaveBlock.leaderActorId, 0);
   if (!Script_GetFlag(FLAG_BATTLE_ARENA_PARTY_ORDER_NEXT)) {
     if (Party_CountMembers() <= 3)
       message = MsgLobbyThreeAlliesFightLinkedFinals;
@@ -1436,21 +1435,21 @@ static s32 BattleArena_ExplainPartyOrder(s32 localId) {
     GameFlag_Clear(FLAG_BATTLE_ARENA_PARTY_ORDER_NEXT);
   }
   FieldScript_SetMessageId(message);
-  FieldMessage_ShowAtObject(localId, 0);
+  FieldMessage_ShowAtObject(actorId, 0);
   FieldScript_End();
 #ifdef UBFIX
   return 0;
 #endif
 }
 
-/// Talking to LOCALID_MONSTER_WINS_TELLER, who reports the most monster battles
+/// Talking to ACTOR_MONSTER_WINS_TELLER, who reports the most monster battles
 /// won in a row (tally 2), or before any, that the speaker will count them.
-static s32 BattleArena_ReportMonsterRecord(s32 localId) {
+static s32 BattleArena_ReportMonsterRecord(s32 actorId) {
   struct SaveBlock *state;
 
   FieldScript_Start();
   state = &gSaveBlock;
-  ObjectMotion_SetAngleToward(localId, state->leaderLocalId, 0);
+  ObjectMotion_SetAngleToward(actorId, state->leaderActorId, 0);
   if (state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] != 0) {
     MessageArgument_Push(state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK],
                          MESSAGE_ARGUMENT_NUMBER);
@@ -1458,7 +1457,7 @@ static s32 BattleArena_ReportMonsterRecord(s32 localId) {
   } else {
     FieldScript_SetMessageId(MsgLobbyCantWaitSee);
   }
-  FieldMessage_ShowAtObject(localId, 0);
+  FieldMessage_ShowAtObject(actorId, 0);
   FieldScript_End();
 #ifdef UBFIX
   return 0;
@@ -1602,10 +1601,10 @@ s32 BattleArena_RunRoundResult(void) {
     } else {
       FieldGameFlag_SetByte(FLAG_AREA_TEMP_E8, v + 1);
     }
-    ObjectMotion_SetAngleToward(LOCALID_ATTENDANT, gSaveBlock.leaderLocalId, 0);
+    ObjectMotion_SetAngleToward(ACTOR_ATTENDANT, gSaveBlock.leaderActorId, 0);
     FieldScript_SetMessageId(MsgLobbyNotBadNextMonster + messageOffset);
-    FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
-    if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == YES) {
+    FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
+    if (FieldScript_AskYesNoWithActorAnimation(0, 0) == YES) {
       if (wins > 90) {
         wins = 90;
       }
@@ -1621,11 +1620,11 @@ s32 BattleArena_RunRoundResult(void) {
         gSaveBlock.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] =
             gSaveBlock.linkTallies[LINK_TALLY_MONSTER_STREAK];
         FieldScript_SetMessageId(MsgLobbyWonNumberBattleBroke);
-        FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
+        FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
         BattleArena_SaveMonsterBattleResults();
       } else {
         FieldScript_SetMessageId(MsgLobbyWonNumberBattle);
-        FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
+        FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
       }
       BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
     }
@@ -1638,7 +1637,7 @@ s32 BattleArena_RunRoundResult(void) {
     FieldScript_StartScreenTransition();
     FieldScript_WaitTransitionFrames();
     BattleArena_WriteSlotValue(LOBBY_SLOT_ALONE);
-    ObjectMotion_SetAngleToward(LOCALID_ATTENDANT, gSaveBlock.leaderLocalId, 0);
+    ObjectMotion_SetAngleToward(ACTOR_ATTENDANT, gSaveBlock.leaderActorId, 0);
     MessageArgument_Push(gSaveBlock.linkTallies[LINK_TALLY_MONSTER_STREAK],
                          MESSAGE_ARGUMENT_NUMBER);
     if (gSaveBlock.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] <
@@ -1646,11 +1645,11 @@ s32 BattleArena_RunRoundResult(void) {
       gSaveBlock.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] =
           gSaveBlock.linkTallies[LINK_TALLY_MONSTER_STREAK];
       FieldScript_SetMessageId(MsgLobbyWonNumberBattleBroke);
-      FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
+      FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
       BattleArena_SaveMonsterBattleResults();
     } else {
       FieldScript_SetMessageId(MsgLobbyWonNumberBattleTold);
-      FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
+      FieldMessage_ShowAtObject(ACTOR_ATTENDANT, 0);
     }
     gSaveBlock.linkTallies[LINK_TALLY_MONSTER_STREAK] = 0;
     GameFlag_Clear(FLAG_MONSTER_BATTLE);
@@ -1720,10 +1719,9 @@ s32 BattleArena_RunRoundResult(void) {
       FieldScript_Start();
       FieldScript_StartScreenTransition();
       FieldScript_WaitTransitionFrames();
-      ObjectMotion_SetAngleToward(LOCALID_ATTENDANT, gSaveBlock.leaderLocalId,
-                                  0);
+      ObjectMotion_SetAngleToward(ACTOR_ATTENDANT, gSaveBlock.leaderActorId, 0);
       FieldScript_SetMessageId(MsgLobbyNoteCantUse);
-      FieldScript_ShowMessageAndWait(LOCALID_ATTENDANT, 0);
+      FieldScript_ShowMessageAndWait(ACTOR_ATTENDANT, 0);
       FieldScript_End();
     }
     gSaveBlock.idleSleepEnabled = 0;
@@ -1766,9 +1764,9 @@ u32 gBattleArenaExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ObjectEventTemplate gBattleArenaObjectEventTemplates[] = {
+struct ActorTemplate gBattleArenaActorTemplates[] = {
     { 0x6a, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(204), FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(152), 0, PIXELS(204), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { 0x74, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(280), 0, PIXELS(204), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1812,9 +1810,9 @@ struct ObjectEventTemplate gBattleArenaObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gBattleArenaBattleObjectEventTemplates[] = {
+struct ActorTemplate gBattleArenaBattleActorTemplates[] = {
     { 0x6a, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(204), FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(152), 0, PIXELS(204), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { 0x74, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(280), 0, PIXELS(204), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1868,39 +1866,39 @@ struct MapEvent gBattleArenaEvents[] = {
      EVENT_SCRIPT(BattleArena_TalkByProgress)},
     {MAP_EVENT_TALK, JENNA, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_TalkByProgress)},
-    {MAP_EVENT_TALK, LOCALID_ATTENDANT, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_ATTENDANT, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_ChooseBattleMode)},
-    {MAP_EVENT_TALK, LOCALID_LINKED_WINS_TELLER, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_LINKED_WINS_TELLER, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_ReportWinTallies)},
-    {MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_OpenSanctum)},
-    {MAP_EVENT_TALK, LOCALID_GREETER, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_GREETER, CONDITION_ALWAYS,
      MSGNO(MsgFieldWelcomeToBattleArenaWherePeople)},
-    {MAP_EVENT_TALK, LOCALID_TRAVELING_WARRIOR, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_TRAVELING_WARRIOR, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_TalkToVisitor)},
-    {MAP_EVENT_TALK, LOCALID_FINALS_VISITOR, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_FINALS_VISITOR, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_TalkToVisitor)},
-    {MAP_EVENT_TALK, LOCALID_OLD_MANS_ARENA_VISITOR, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_OLD_MANS_ARENA_VISITOR, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_TalkToVisitor)},
-    {MAP_EVENT_TALK, LOCALID_DEBUG_HELPER, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_DEBUG_HELPER, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_ChooseDebugPartyPreset)},
-    {MAP_EVENT_TALK, LOCALID_PARTY_ORDER_VISITOR, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_PARTY_ORDER_VISITOR, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_ExplainPartyOrder)},
-    {MAP_EVENT_TALK, LOCALID_COMMAND_TIME_VISITOR, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_COMMAND_TIME_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgFieldInTheLinkedFinalsYouCant)},
-    {MAP_EVENT_TALK, LOCALID_SUMMON_VISITOR, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_SUMMON_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgFieldToUseSummonQuicklyDjinnMust)},
-    {MAP_EVENT_TALK, LOCALID_SET_DJINN_VISITOR, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_SET_DJINN_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgFieldDoYouPutDjinnOnStandby)},
-    {MAP_EVENT_TALK, LOCALID_STANDBY_DJINN_VISITOR, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_STANDBY_DJINN_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgFieldRemoveDjinnYouRarelyUseSo)},
-    {MAP_EVENT_TALK, LOCALID_MONSTER_RULES_VISITOR, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_MONSTER_RULES_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgFieldMonsterBattleRulesSayYouAll)},
-    {MAP_EVENT_TALK, LOCALID_MONSTER_WINS_TELLER, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_MONSTER_WINS_TELLER, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_ReportMonsterRecord)},
-    {MAP_EVENT_TALK, LOCALID_EDGY_VISITOR, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_EDGY_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgFieldAllTheWarriorsAreImpressiveSo)},
-    {MAP_EVENT_TALK, LOCALID_WARY_VISITOR, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_WARY_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgFieldICouldEnterButIdJust)},
     {MAP_EVENT_COORD, 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_EnterBattle)},

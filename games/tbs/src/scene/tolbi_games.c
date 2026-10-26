@@ -91,119 +91,119 @@ static s32 TolbiSpring_RunToss(s32 tossKind);
 
 enum SpringTossKind { SPRING_TOSS_COIN, SPRING_TOSS_MEDAL };
 
-/// The object events of the Lucky Dice and Lucky Wheels rooms (StuccoRoomsC),
-/// numbered in the order of gTolbiSpringObjectEventTemplatesOther from
-/// LOCALID_FIRST_PLACED.
-enum TolbiSpringGameRoomLocalId {
+/// The actors of the Lucky Dice and Lucky Wheels rooms (StuccoRoomsC),
+/// numbered in the order of gTolbiSpringActorTemplatesOther from
+/// ACTOR_FIRST_PLACED.
+enum TolbiSpringGameRoomActorId {
   /// A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN), who runs Lucky
   /// Wheels (TolbiSpring_TalkToWheelsAttendant).
   /// ★ Named from the game: "Step right up and try your hand at lucky wheels!"
   /// (MsgTolbiStepRightTry)
-  LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT = LOCALID_FIRST_PLACED,
+  ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT = ACTOR_FIRST_PLACED,
   /// A young man with fair hair (SPRITE_YOUNG_MAN_WITH_FAIR_HAIR), who runs
   /// Lucky Dice (TolbiSpring_OfferLuckyDice).
   /// ★ Named from the game: "Hey, buddy, wanna try yer luck at the dice?"
   /// (MsgTolbiBuddyWannaTry)
-  LOCALID_TOLBI_SPRING_DICE_ATTENDANT,
+  ACTOR_TOLBI_SPRING_DICE_ATTENDANT,
   /// Beside the Lucky Dice attendant, in his sprite: likely a second
   /// attendant, because the Colosso's attendants wear the same sprite.
   /// ★ Named from the game: "Read the sign if ya don't know the rules."
   /// (MsgTolbiSpringReadTheSignIfYaDont)
-  LOCALID_TOLBI_SPRING_DICE_RULES_ATTENDANT,
+  ACTOR_TOLBI_SPRING_DICE_RULES_ATTENDANT,
   /// A Lucky Dice player, a burly grey-haired man
   /// (SPRITE_BURLY_MAN_WITH_GREY_HAIR).
   /// ★ Named from the game: "Is this yer first time to play Lucky Dice?"
   /// (MsgTolbiYerFirstTime)
-  LOCALID_TOLBI_SPRING_DICE_PLAYER_FIRST_TIME,
+  ACTOR_TOLBI_SPRING_DICE_PLAYER_FIRST_TIME,
   /// An old man with a cane (SPRITE_OLD_MAN_WITH_CANE).
   /// ★ Named from the game: "Getting triple digits is real tough!"
   /// (MsgTolbiSpringWhoaGettingTripleDigitsIsReal)
-  LOCALID_TOLBI_SPRING_DICE_PLAYER_TRIPLE_DIGITS,
+  ACTOR_TOLBI_SPRING_DICE_PLAYER_TRIPLE_DIGITS,
   /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS).
   /// ★ Named from the game: "I don't want to stop playing Lucky Dice"
   /// (MsgTolbiSpringIDontWantToStopPlaying)
-  LOCALID_TOLBI_SPRING_DICE_PLAYER_OUT_OF_COINS,
-  /// The Lucky Wheels prize sign the layout draws, read through an object
-  /// event with a blank sprite (TolbiSpring_ReadLuckyWheelsPrizes).
+  ACTOR_TOLBI_SPRING_DICE_PLAYER_OUT_OF_COINS,
+  /// The Lucky Wheels prize sign the layout draws, read through an
+  /// actor with a blank sprite (TolbiSpring_ReadLuckyWheelsPrizes).
   /// ★ Named from the game: "Lucky Wheels Prizes"
   /// (MsgTolbiLuckyWheelsPrizesPrizesDetermined)
-  LOCALID_TOLBI_SPRING_WHEELS_PRIZE_SIGN,
+  ACTOR_TOLBI_SPRING_WHEELS_PRIZE_SIGN,
   /// The Lucky Wheels rules sign, read the same way
   /// (TolbiSpring_ReadLuckyWheelsRules).
   /// ★ Named from the game: "Lucky Wheels Rules"
   /// (MsgTolbiLuckyWheelsRulesPullLever)
-  LOCALID_TOLBI_SPRING_WHEELS_RULES_SIGN,
+  ACTOR_TOLBI_SPRING_WHEELS_RULES_SIGN,
   /// ★ Named from the game: "Throw the dice on the table"
   /// (MsgTolbiSpringLuckyDiceThrowTheDiceOn)
-  LOCALID_TOLBI_SPRING_DICE_RULES_SIGN,
+  ACTOR_TOLBI_SPRING_DICE_RULES_SIGN,
   /// A soldier, gone after Colosso, drawn with the long-haired fighter's
   /// sprite (SPRITE_PERSON_WITH_SWORD).
   /// ★ Named from the game: "poor soldiers like us"
   /// (MsgTolbiSpringTheresNoWayPoorSoldiersLike)
-  LOCALID_TOLBI_SPRING_SOLDIER,
+  ACTOR_TOLBI_SPRING_SOLDIER,
   /// ★ Named from the game: "If two numbers match on either"
   /// (MsgTolbiSpringLuckyDiceIfTwoNumbersMatch)
-  LOCALID_TOLBI_SPRING_DICE_PAIRS_SIGN
+  ACTOR_TOLBI_SPRING_DICE_PAIRS_SIGN
 };
 
-/// Tolbi Spring's own object events (TolbiSpring), numbered in the order of
-/// gTolbiSpringObjectEventTemplates from LOCALID_FIRST_PLACED. The toss draws
+/// Tolbi Spring's own actors (TolbiSpring), numbered in the order of
+/// gTolbiSpringActorTemplates from ACTOR_FIRST_PLACED. The toss draws
 /// the coin or the medal with its shadow and three trailing copies, which
 /// TOLBI_SPRING_COIN_TRAIL and TOLBI_SPRING_MEDAL_TRAIL number.
-enum TolbiSpringLocalId {
+enum TolbiSpringActorId {
   /// ★ Named from what the player sees: the tossed coin's shadow, drawn at
   /// ground level below it as it flies (its render)
-  LOCALID_TOLBI_SPRING_COIN_SHADOW = LOCALID_FIRST_PLACED + 3,
+  ACTOR_TOLBI_SPRING_COIN_SHADOW = ACTOR_FIRST_PLACED + 3,
   /// The coin the party tosses (SPRITE_SPRING_COIN).
   /// ★ Named from the game: "Face away from Tolbi Spring and toss a coin into
   /// it." (MsgTolbiFaceAwayTolbi)
-  LOCALID_TOLBI_SPRING_COIN,
+  ACTOR_TOLBI_SPRING_COIN,
   /// ★ Named from what the player sees: the tossed Lucky Medal's shadow,
   /// drawn at ground level below it as it flies (its render)
-  LOCALID_TOLBI_SPRING_MEDAL_SHADOW = LOCALID_TOLBI_SPRING_COIN + 4,
+  ACTOR_TOLBI_SPRING_MEDAL_SHADOW = ACTOR_TOLBI_SPRING_COIN + 4,
   /// The Lucky Medal the party tosses (SPRITE_SPRING_LUCKY_MEDAL).
   /// ★ Named from the game: "If you toss a Lucky Medal"
   /// (MsgTolbiTossLuckyMedal)
-  LOCALID_TOLBI_SPRING_MEDAL,
+  ACTOR_TOLBI_SPRING_MEDAL,
   /// The four obstacles that move in the spring during a toss, in the order
   /// of sObstacles: two crabs (SPRITE_CRAB), then two turtles
   /// (SPRITE_TURTLE).
   /// ★ Named from what the player sees: two crabs and two turtles moving in
   /// the spring's water in the way of the toss (its render)
-  LOCALID_TOLBI_SPRING_FIRST_OBSTACLE,
+  ACTOR_TOLBI_SPRING_FIRST_OBSTACLE,
   /// A sign east of the spring (SPRITE_SIGNPOST).
   /// ★ Named from the game: "If you toss a Lucky Medal"
   /// (MsgTolbiTossLuckyMedal)
-  LOCALID_TOLBI_SPRING_MEDAL_SIGN = LOCALID_TOLBI_SPRING_FIRST_OBSTACLE + 4,
+  ACTOR_TOLBI_SPRING_MEDAL_SIGN = ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 4,
   /// A sign west of the spring, in the same sprite.
   /// ★ Named from the game: "Face away from Tolbi Spring and toss a coin into
   /// it." (MsgTolbiFaceAwayTolbi)
-  LOCALID_TOLBI_SPRING_COIN_SIGN,
+  ACTOR_TOLBI_SPRING_COIN_SIGN,
   /// The tufts of grass at the foot of each sign: the signs' sprite in its
   /// second frame, mirrored and drawn underfoot (TolbiSpring_Initialize).
   /// ★ Named from what the player sees: a tuft of grass at the foot of each
   /// sign (its render)
-  LOCALID_TOLBI_SPRING_EAST_SIGN_GRASS,
+  ACTOR_TOLBI_SPRING_EAST_SIGN_GRASS,
   /// ★ Named from what the player sees: a tuft of grass at the foot of the
   /// west sign (its render)
-  LOCALID_TOLBI_SPRING_WEST_SIGN_GRASS,
+  ACTOR_TOLBI_SPRING_WEST_SIGN_GRASS,
   /// A visitor, a man carrying a pack (SPRITE_MAN_CARRYING_A_PACK).
   /// ★ Named from the game: "Tolbi Spring has mysterious powers."
   /// (MsgTolbiSpringTolbiSpringHasMysteriousPowersStand)
-  LOCALID_TOLBI_SPRING_VISITOR_MYSTERIOUS_POWERS,
+  ACTOR_TOLBI_SPRING_VISITOR_MYSTERIOUS_POWERS,
   /// A man carrying a pack (SPRITE_MAN_CARRYING_A_PACK) who asks for a medal.
   /// ★ Named from the game: "Do you have a Lucky Medal?" (MsgTolbiLuckyMedal)
-  LOCALID_TOLBI_SPRING_MEDAL_SEEKER,
+  ACTOR_TOLBI_SPRING_MEDAL_SEEKER,
   /// A visitor, a woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR).
   /// ★ Named from the game: "Too bad I only have one Lucky Medal."
   /// (MsgTolbiSpringTooBadIOnlyHaveOne)
-  LOCALID_TOLBI_SPRING_VISITOR_ONE_MEDAL
+  ACTOR_TOLBI_SPRING_VISITOR_ONE_MEDAL
 };
 
-/// The object event that draws toss->trail[n] of a tossed coin or medal, n from
+/// The actor that draws toss->trail[n] of a tossed coin or medal, n from
 /// 1 to 3: the rows before each shadow, the oldest copy first.
-#define TOLBI_SPRING_COIN_TRAIL(n) (LOCALID_TOLBI_SPRING_COIN_SHADOW - (n))
-#define TOLBI_SPRING_MEDAL_TRAIL(n) (LOCALID_TOLBI_SPRING_MEDAL_SHADOW - (n))
+#define TOLBI_SPRING_COIN_TRAIL(n) (ACTOR_TOLBI_SPRING_COIN_SHADOW - (n))
+#define TOLBI_SPRING_MEDAL_TRAIL(n) (ACTOR_TOLBI_SPRING_MEDAL_SHADOW - (n))
 
 /// What searching answers in Tolbi Spring.
 enum TolbiSpringMetatileBehavior {
@@ -271,48 +271,48 @@ const struct SceneExitRegion *TolbiSpring_GetRegions(void) { return NULL; }
 
 const u32 *TolbiSpring_GetExits(void) { return gTolbiSpring_Exits; }
 
-/// Selects the object events of Tolbi Spring or of the Lucky Dice and Lucky
+/// Selects the actors of Tolbi Spring or of the Lucky Dice and Lucky
 /// Wheels rooms.
-const struct ObjectEventTemplate *TolbiSpring_GetObjectEventTemplates(void) {
+const struct ActorTemplate *TolbiSpring_GetActorTemplates(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_TolbiSpring) {
-    return gTolbiSpringObjectEventTemplates;
+    return gTolbiSpringActorTemplates;
   }
-  return gTolbiSpringObjectEventTemplatesOther;
+  return gTolbiSpringActorTemplatesOther;
 }
 
 /// A visitor at Tolbi Spring asks whether the party has a Lucky Medal.
-static void TolbiSpring_AskAboutLuckyMedal(s32 localId) {
+static void TolbiSpring_AskAboutLuckyMedal(s32 actorId) {
   s32 question = MsgTolbiLuckyMedal;
   FieldScript_SetMessageId(question);
-  FieldMessage_ShowAtObject(localId, 0);
-  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+  FieldMessage_ShowAtObject(actorId, 0);
+  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
     FieldScript_WaitFrames(10);
     FieldScript_SetMessageId(question + 1);
   } else {
     FieldScript_SetMessageId(question + 2);
   }
-  FieldScript_ShowMessageAndWait(localId, 0);
+  FieldScript_ShowMessageAndWait(actorId, 0);
 }
 
 /// A Lucky Dice player in Tolbi asks whether this is the party's first game.
-static void TolbiSpring_AskAboutFirstDiceGame(s32 localId) {
+static void TolbiSpring_AskAboutFirstDiceGame(s32 actorId) {
   s32 question = MsgTolbiYerFirstTime;
   FieldScript_SetMessageId(question);
-  FieldMessage_ShowAtObject(localId, 0);
-  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+  FieldMessage_ShowAtObject(actorId, 0);
+  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
     FieldScript_WaitFrames(10);
     FieldScript_SetMessageId(question + 1);
   } else {
     FieldScript_SetMessageId(question + 2);
   }
-  FieldScript_ShowMessageAndWait(localId, 0);
+  FieldScript_ShowMessageAndWait(actorId, 0);
 }
 
 /// Searching Tolbi Spring: the spring rises into view the first time in the
 /// visit, and the leader stands with their back to it to toss a coin or a
 /// Lucky Medal.
 static void TolbiSpring_TossCoinOrMedal(void) {
-  s32 leader = gSaveBlock.leaderLocalId;
+  s32 leader = gSaveBlock.leaderActorId;
 
   if (Script_GetFlag(FLAG_TOLBI_SPRING_RISEN) == 0) {
     GameFlag_Set(FLAG_TOLBI_SPRING_RISEN);
@@ -373,16 +373,14 @@ s32 TolbiSpring_Initialize(void) {
     Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
                &REG_BLDCNT);
     Io_Write16(BLEND_ALPHA(12, 8), &REG_BLDALPHA);
-    Import_ObjectEventSetAnimation(LOCALID_TOLBI_SPRING_EAST_SIGN_GRASS, 2);
-    Import_ObjectEventSetAnimation(LOCALID_TOLBI_SPRING_WEST_SIGN_GRASS, 2);
-    ObjectEvent_GetById(LOCALID_TOLBI_SPRING_EAST_SIGN_GRASS)->scaleX =
-        -Q16_ONE;
-    ObjectEvent_GetById(LOCALID_TOLBI_SPRING_WEST_SIGN_GRASS)->scaleX =
-        -Q16_ONE;
-    ObjectEvent_GetById(LOCALID_TOLBI_SPRING_EAST_SIGN_GRASS)->priorityFlags =
-        OBJ_EVENT_PRIORITY_UNDERFOOT;
-    ObjectEvent_GetById(LOCALID_TOLBI_SPRING_WEST_SIGN_GRASS)->priorityFlags =
-        OBJ_EVENT_PRIORITY_UNDERFOOT;
+    Import_ActorSetAnimation(ACTOR_TOLBI_SPRING_EAST_SIGN_GRASS, 2);
+    Import_ActorSetAnimation(ACTOR_TOLBI_SPRING_WEST_SIGN_GRASS, 2);
+    Actor_GetById(ACTOR_TOLBI_SPRING_EAST_SIGN_GRASS)->scaleX = -Q16_ONE;
+    Actor_GetById(ACTOR_TOLBI_SPRING_WEST_SIGN_GRASS)->scaleX = -Q16_ONE;
+    Actor_GetById(ACTOR_TOLBI_SPRING_EAST_SIGN_GRASS)->priorityFlags =
+        ACTOR_PRIORITY_UNDERFOOT;
+    Actor_GetById(ACTOR_TOLBI_SPRING_WEST_SIGN_GRASS)->priorityFlags =
+        ACTOR_PRIORITY_UNDERFOOT;
     FieldScript_StartScreenTransition();
     if (gSaveBlock.entrance == TOLBI_SPRING_FROM_TOLBI) {
       TolbiSpring_InitializeTossSimulation();
@@ -394,28 +392,28 @@ s32 TolbiSpring_Initialize(void) {
     }
   } else {
     if (GameFlag_Get(FLAG_COLOSSO_OVER)) {
-      Import_ObjectEventSetPosition(LOCALID_TOLBI_SPRING_SOLDIER, 0, 0);
+      Import_ActorSetPosition(ACTOR_TOLBI_SPRING_SOLDIER, 0, 0);
     }
     gOamCopyEnabled = 1;
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     if (gSaveBlock.entrance == STUCCO_ROOMS_C_LUCKY_DICE_FROM_TOLBI) {
-      ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT,
-                                       SPRITE_COLOR_GRB);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_SPRING_DICE_ATTENDANT,
-                                       SPRITE_COLOR_RBG);
+      Actor_ConfigureSpriteColor(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT,
+                                 SPRITE_COLOR_GRB);
+      Actor_ConfigureSpriteColor(ACTOR_TOLBI_SPRING_DICE_ATTENDANT,
+                                 SPRITE_COLOR_RBG);
     }
     // Lucky Dice returns here to report the change in the party's coins.
     if (gSaveBlock.entrance == STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       FieldScript_Start();
-      ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT,
-                                       SPRITE_COLOR_GRB);
-      ObjectEvent_ConfigureSpriteColor(LOCALID_TOLBI_SPRING_DICE_ATTENDANT,
-                                       SPRITE_COLOR_RBG);
+      Actor_ConfigureSpriteColor(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT,
+                                 SPRITE_COLOR_GRB);
+      Actor_ConfigureSpriteColor(ACTOR_TOLBI_SPRING_DICE_ATTENDANT,
+                                 SPRITE_COLOR_RBG);
       FieldScript_StartScreenTransition();
       FieldScript_WaitTransitionFrames();
       FieldScript_WaitFrames(10);
-      ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, 120, 112);
+      ObjectMotion_SetPositionAndReset(ACTOR_PARTY_LEADER, 120, 112);
       FieldScript_WaitFrames(20);
       coinChange = gSaveBlock.coins - *(s32 *)gSceneLocalState;
       if (coinChange > 0) {
@@ -429,12 +427,12 @@ s32 TolbiSpring_Initialize(void) {
         FieldScript_WaitFrames(20);
         FieldScript_SetMessageId(MsgTolbiYaWonNumber);
         MessageArgument_Push(coinChange, 5);
-        FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SPRING_DICE_ATTENDANT, 0);
+        FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
         Sound_WaitForFanfare();
       } else if (coinChange < 0) {
         FieldScript_SetMessageId(MsgTolbiYaLostNumber);
         MessageArgument_Push(-coinChange, 5);
-        FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SPRING_DICE_ATTENDANT, 0);
+        FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
       }
       FieldScript_End();
     }
@@ -450,8 +448,7 @@ s32 TolbiSpring_Initialize(void) {
         TolbiSpring_OfferLuckyWheels(1);
       } else if (wonPrizes[0] != -2) {
         FieldScript_SetMessageId(MsgTolbiCongratulations);
-        FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT,
-                                       0);
+        FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
         if (*wonPrizes != -1) {
           for (prizeIndex = 0; wonPrizes[prizeIndex] != -1; prizeIndex++) {
             if (prizeIndex == 0) {
@@ -461,19 +458,18 @@ s32 TolbiSpring_Initialize(void) {
             }
             item = TolbiSpring_SelectLuckyWheelsPrize(wonPrizes[prizeIndex]);
             MessageArgument_Push(item, 2);
-            FieldScript_ShowMessageAndWait(
-                LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+            FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT,
+                                           0);
             ItemDisplay_ShowItem(item, 3);
             PartyInventory_GiveItem(item, 0);
             FieldScript_WaitFrames(10);
-            ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
+            ObjectMotion_ArmCallback(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
             FieldScript_WaitFrames(30);
           }
         }
         gSaveBlock.wonPrizes[0] = -2;
         FieldScript_SetMessageId(MsgTolbiComeAgain);
-        FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT,
-                                       0);
+        FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
       }
       FieldScript_End();
     }
@@ -494,7 +490,7 @@ static void TolbiSpring_RevealPrize(s32 item) {
   FieldScript_WaitFrames(30);
   Sound_PlaySong(SE_BOSS_ROAR);
   FieldScript_WaitFrames(100);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   FieldScript_WaitFrames(40);
 
   MapGrid_CopyCellsTo(82, 20, 70, 0, 3, 8);
@@ -569,52 +565,52 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
   s32 tickets = PartyInventory_CountItem(ITEM_GAME_TICKET);
   s32 room;
 
-  ObjectEvent_Snapshot();
+  Actor_Snapshot();
   if (spoken == 0) {
     s32 message = MsgTolbiStepRightTry;
 
     FieldScript_SetMessageId(message);
-    FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+    FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
     if (tickets == 0) {
-      FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+      FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
       return;
     }
     FieldScript_SetMessageId(message + 2);
     MessageArgument_Push(tickets, 5);
-    FieldMessage_ShowAtObject(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
-    if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) != 0) {
-      FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+    FieldMessage_ShowAtObject(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+    if (FieldScript_AskYesNoWithActorAnimation(0, 0) != 0) {
+      FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
       return;
     }
     room = PartyInventory_CountFreeSlots();
     if (room == 0) {
       FieldScript_SetMessageId(message + 4);
-      FieldMessage_ShowAtObject(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+      FieldMessage_ShowAtObject(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
     } else if (room <= 6) {
       FieldScript_SetMessageId(message + 5);
-      FieldMessage_ShowAtObject(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+      FieldMessage_ShowAtObject(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
     }
-    if (room <= 6 && FieldScript_AskYesNoWithObjectEventAnimation(0, 0) != 0) {
+    if (room <= 6 && FieldScript_AskYesNoWithActorAnimation(0, 0) != 0) {
       FieldScript_SetMessageId(MsgTolbiGetRidItems);
-      FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+      FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
       return;
     }
   } else {
     if (tickets == 0) {
       FieldScript_SetMessageId(MsgTolbiBadComeBack);
-      FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+      FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
       return;
     }
     FieldScript_SetMessageId(MsgTolbiBadLikeUse);
-    FieldMessage_ShowAtObject(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
-    if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) != 0) {
+    FieldMessage_ShowAtObject(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+    if (FieldScript_AskYesNoWithActorAnimation(0, 0) != 0) {
       FieldScript_SetMessageId(MsgTolbiComeAgain);
-      FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+      FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
       return;
     }
   }
   FieldScript_SetMessageId(MsgTolbiStepRightEnjoy);
-  FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
   FieldScript_RequestDestination(SEQUENCE_LUCKY_WHEELS, 0);
   FieldScript_SetNextDestination((s32)&SceneId_StuccoRoomsC,
                                  STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS);
@@ -632,26 +628,26 @@ static void TolbiSpring_OfferLuckyDice(void) {
   coins = gSaveBlock.coins;
   if (coins < cost) {
     FieldScript_SetMessageId(MsgTolbiYaDontEnough);
-    FieldMessage_ShowAtObject(LOCALID_TOLBI_SPRING_DICE_ATTENDANT, 0);
+    FieldMessage_ShowAtObject(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
     return;
   }
   *(u32 *)gSceneLocalState = coins;
-  ObjectEvent_Snapshot();
+  Actor_Snapshot();
   FieldScript_SetMessageId(MsgTolbiBuddyWannaTry);
   MessageArgument_Push(cost, 5);
-  FieldMessage_ShowAtObject(LOCALID_TOLBI_SPRING_DICE_ATTENDANT, 0);
-  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
-    FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SPRING_DICE_ATTENDANT, 0);
-    ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, 120, 128);
-    ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, 120, 152);
-    ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_WEST, 0);
+  FieldMessage_ShowAtObject(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
+  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
+    FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
+    ObjectMotion_SetPositionAndReset(ACTOR_PARTY_LEADER, 120, 128);
+    ObjectMotion_SetPositionAndReset(ACTOR_PARTY_LEADER, 120, 152);
+    ObjectMotion_ArmCallback(ACTOR_PARTY_LEADER, FACING_WEST, 0);
     FieldScript_WaitFrames(20);
     FieldScript_RequestDestination(SEQUENCE_LUCKY_DICE, 0);
     FieldScript_SetNextDestination((s32)&SceneId_StuccoRoomsC,
                                    STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE);
   } else {
     gFieldWork->message++;
-    FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SPRING_DICE_ATTENDANT, 0);
+    FieldScript_ShowMessageAndWait(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
   }
   FieldScript_End();
 }
@@ -930,28 +926,27 @@ static s32 TolbiSpring_SelectLuckyWheelsPrize(s32 category) {
   return gTolbiSpring_LuckyWheelsPrizeItems[category * 3 + variant];
 }
 
-/// Copies three coordinates and sets the object event's facing, child value and
+/// Copies three coordinates and sets the actor's facing, child value and
 /// colors.
-static void TolbiSpring_SetObjectEventAppearance(s32 localId,
-                                                 const s32 *coordinate,
-                                                 s32 facing, s32 colorVariant,
-                                                 s32 childValue) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
+static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
+                                           s32 facing, s32 colorVariant,
+                                           s32 childValue) {
+  struct Actor *actor = Actor_GetById(actorId);
   struct Sprite *sprite;
   u32 entryCount;
 
-  if (objectEvent != 0) {
-    objectEvent->x.fixed = *coordinate++;
-    objectEvent->y.fixed = *coordinate++;
-    objectEvent->z.fixed = *coordinate;
-    objectEvent->facing = facing;
-    objectEvent->motionFlags = 0;
-    objectEvent->sprite->flags = 0;
-    Object_SetAnimationSpeed((struct Object *)objectEvent, childValue);
+  if (actor != 0) {
+    actor->x.fixed = *coordinate++;
+    actor->y.fixed = *coordinate++;
+    actor->z.fixed = *coordinate;
+    actor->facing = facing;
+    actor->motionFlags = 0;
+    actor->sprite->flags = 0;
+    Object_SetAnimationSpeed((struct Object *)actor, childValue);
   }
-  // BUG: the original still dereferences objectEvent here when lookup returned
+  // BUG: the original still dereferences actor here when lookup returned
   // NULL.
-  sprite = objectEvent->sprite;
+  sprite = actor->sprite;
   entryCount = sprite->count;
   if (entryCount != 0) {
     u32 invalidFrame = 255;
@@ -975,12 +970,12 @@ static void TolbiSpring_SetObjectEventAppearance(s32 localId,
   }
 }
 
-/// Sets whether the specified object event draws its sprite.
-static void TolbiSpring_SetSpriteStorageKind(s32 localId, s32 storageKind) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
+/// Sets whether the specified actor draws its sprite.
+static void TolbiSpring_SetSpriteStorageKind(s32 actorId, s32 storageKind) {
+  struct Actor *actor = Actor_GetById(actorId);
 
-  if (objectEvent != 0) {
-    u8 *spriteStorageKind = &objectEvent->spriteStorageKind;
+  if (actor != 0) {
+    u8 *spriteStorageKind = &actor->spriteStorageKind;
 
     *spriteStorageKind = storageKind;
   }
@@ -1039,11 +1034,9 @@ static void TolbiSpring_UpdateTossSimulation(void) {
       if (toss->velocity.y != 0) {
         toss->velocity.y = 0;
         if (sTossKind == SPRING_TOSS_MEDAL) {
-          Object_SelectAnimation(
-              ObjectEvent_GetById(LOCALID_TOLBI_SPRING_MEDAL), 1);
+          Object_SelectAnimation(Actor_GetById(ACTOR_TOLBI_SPRING_MEDAL), 1);
         } else {
-          Object_SelectAnimation(ObjectEvent_GetById(LOCALID_TOLBI_SPRING_COIN),
-                                 1);
+          Object_SelectAnimation(Actor_GetById(ACTOR_TOLBI_SPRING_COIN), 1);
         }
       }
 
@@ -1075,14 +1068,12 @@ static void TolbiSpring_UpdateTossSimulation(void) {
         }
         if (toss->velocity.x == 0 && toss->velocity.z == 0) {
           if (sTossKind == SPRING_TOSS_MEDAL) {
-            Object_SelectAnimation(
-                ObjectEvent_GetById(LOCALID_TOLBI_SPRING_MEDAL), 2);
+            Object_SelectAnimation(Actor_GetById(ACTOR_TOLBI_SPRING_MEDAL), 2);
             TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_MEDAL_TRAIL(1), 0);
             TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_MEDAL_TRAIL(2), 0);
             TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_MEDAL_TRAIL(3), 0);
           } else {
-            Object_SelectAnimation(
-                ObjectEvent_GetById(LOCALID_TOLBI_SPRING_COIN), 2);
+            Object_SelectAnimation(Actor_GetById(ACTOR_TOLBI_SPRING_COIN), 2);
             TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_COIN_TRAIL(1), 0);
             TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_COIN_TRAIL(2), 0);
             TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_COIN_TRAIL(3), 0);
@@ -1213,18 +1204,18 @@ static void TolbiSpring_UpdateTossSimulation(void) {
       if (obstacle->reactionFrames > 0) {
         if (index == 0) {
           Object_SelectAnimation(
-              ObjectEvent_GetById(LOCALID_TOLBI_SPRING_FIRST_OBSTACLE), 3);
+              Actor_GetById(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE), 3);
         } else {
           Object_SelectAnimation(
-              ObjectEvent_GetById(LOCALID_TOLBI_SPRING_FIRST_OBSTACLE + 1), 3);
+              Actor_GetById(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 1), 3);
         }
       } else {
         if (index == 0) {
           Object_SelectAnimation(
-              ObjectEvent_GetById(LOCALID_TOLBI_SPRING_FIRST_OBSTACLE), 1);
+              Actor_GetById(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE), 1);
         } else {
           Object_SelectAnimation(
-              ObjectEvent_GetById(LOCALID_TOLBI_SPRING_FIRST_OBSTACLE + 1), 1);
+              Actor_GetById(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 1), 1);
         }
         if (obstacle->pauseOrPhase == 0) {
           if (obstacle->heading == 0) {
@@ -1259,10 +1250,10 @@ static void TolbiSpring_UpdateTossSimulation(void) {
       }
       if (obstacle->reactionFrames > 0) {
         Object_SelectAnimation(
-            ObjectEvent_GetById(LOCALID_TOLBI_SPRING_FIRST_OBSTACLE + 2), 3);
+            Actor_GetById(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 2), 3);
       } else {
         Object_SelectAnimation(
-            ObjectEvent_GetById(LOCALID_TOLBI_SPRING_FIRST_OBSTACLE + 2), 2);
+            Actor_GetById(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 2), 2);
         obstacle->position.x = Trig_Sin(obstacle->heading) * 48 + PIXELS(112);
         obstacle->position.z = Trig_Cos(obstacle->heading) * 40 + PIXELS(72);
         cycleFrame = (u16)obstacle->heading + motionStep;
@@ -1281,16 +1272,16 @@ static void TolbiSpring_UpdateTossSimulation(void) {
       }
       if (obstacle->reactionFrames > 0) {
         Object_SelectAnimation(
-            ObjectEvent_GetById(LOCALID_TOLBI_SPRING_FIRST_OBSTACLE + 3), 3);
+            Actor_GetById(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 3), 3);
       } else if (cycleFrame <= 383) {
         obstacle->position.x = Trig_Sin(obstacle->heading) * 52 + PIXELS(112);
         obstacle->position.z = Trig_Cos(obstacle->heading) * 24 + PIXELS(72);
         obstacle->heading = obstacle->heading + motionStep;
         Object_SelectAnimation(
-            ObjectEvent_GetById(LOCALID_TOLBI_SPRING_FIRST_OBSTACLE + 3), 2);
+            Actor_GetById(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 3), 2);
       } else {
         Object_SelectAnimation(
-            ObjectEvent_GetById(LOCALID_TOLBI_SPRING_FIRST_OBSTACLE + 3), 3);
+            Actor_GetById(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 3), 3);
       }
       obstacle->pauseOrPhase = obstacle->pauseOrPhase + 1;
     }
@@ -1341,29 +1332,29 @@ static void TolbiSpring_UpdateTossSimulation(void) {
     // Apply the obstacle's position, orientation and speed-dependent colors.
     switch (index) {
     case 0:
-      TolbiSpring_SetObjectEventAppearance(
-          LOCALID_TOLBI_SPRING_FIRST_OBSTACLE,
+      TolbiSpring_SetActorAppearance(
+          ACTOR_TOLBI_SPRING_FIRST_OBSTACLE,
           Vector3_Coordinates(&obstacle->position), 0,
           gTolbiSpring_SliderFrames[obstacle->speedMode],
           (obstacle->speedMode << 4) + 16);
       break;
     case 1:
-      TolbiSpring_SetObjectEventAppearance(
-          LOCALID_TOLBI_SPRING_FIRST_OBSTACLE + 1,
+      TolbiSpring_SetActorAppearance(
+          ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 1,
           Vector3_Coordinates(&obstacle->position), 0,
           gTolbiSpring_SliderFrames[obstacle->speedMode],
           (obstacle->speedMode << 4) + 16);
       break;
     case 2:
-      TolbiSpring_SetObjectEventAppearance(
-          LOCALID_TOLBI_SPRING_FIRST_OBSTACLE + 2,
+      TolbiSpring_SetActorAppearance(
+          ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 2,
           Vector3_Coordinates(&obstacle->position), 0x8000 - obstacle->heading,
           gTolbiSpring_CircleFrames[obstacle->speedMode],
           (obstacle->speedMode << 4) + 16);
       break;
     case 3:
-      TolbiSpring_SetObjectEventAppearance(
-          LOCALID_TOLBI_SPRING_FIRST_OBSTACLE + 3,
+      TolbiSpring_SetActorAppearance(
+          ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 3,
           Vector3_Coordinates(&obstacle->position), 0xffff - obstacle->heading,
           gTolbiSpring_CircleFrames[obstacle->speedMode],
           (obstacle->speedMode << 4) + 16);
@@ -1379,43 +1370,43 @@ static void TolbiSpring_UpdateTossSimulation(void) {
   toss->shadow.z = toss->trail[0].z;
 
   if (sTossKind == SPRING_TOSS_MEDAL) {
-    TolbiSpring_SetObjectEventAppearance(LOCALID_TOLBI_SPRING_MEDAL,
-                                         Vector3_Coordinates(&toss->trail[0]),
-                                         0, 0, 16);
-    TolbiSpring_SetObjectEventAppearance(LOCALID_TOLBI_SPRING_MEDAL_SHADOW,
-                                         Vector3_Coordinates(&toss->shadow), 0,
-                                         0, 16);
-    TolbiSpring_SetObjectEventAppearance(TOLBI_SPRING_MEDAL_TRAIL(1),
-                                         Vector3_Coordinates(&toss->trail[1]),
-                                         0, 0, 16);
-    TolbiSpring_SetObjectEventAppearance(TOLBI_SPRING_MEDAL_TRAIL(2),
-                                         Vector3_Coordinates(&toss->trail[2]),
-                                         0, 0, 16);
-    TolbiSpring_SetObjectEventAppearance(TOLBI_SPRING_MEDAL_TRAIL(3),
-                                         Vector3_Coordinates(&toss->trail[3]),
-                                         0, 0, 16);
-    Object_SelectAnimation(ObjectEvent_GetById(TOLBI_SPRING_MEDAL_TRAIL(1)), 4);
-    Object_SelectAnimation(ObjectEvent_GetById(TOLBI_SPRING_MEDAL_TRAIL(2)), 4);
-    Object_SelectAnimation(ObjectEvent_GetById(TOLBI_SPRING_MEDAL_TRAIL(3)), 4);
+    TolbiSpring_SetActorAppearance(ACTOR_TOLBI_SPRING_MEDAL,
+                                   Vector3_Coordinates(&toss->trail[0]), 0, 0,
+                                   16);
+    TolbiSpring_SetActorAppearance(ACTOR_TOLBI_SPRING_MEDAL_SHADOW,
+                                   Vector3_Coordinates(&toss->shadow), 0, 0,
+                                   16);
+    TolbiSpring_SetActorAppearance(TOLBI_SPRING_MEDAL_TRAIL(1),
+                                   Vector3_Coordinates(&toss->trail[1]), 0, 0,
+                                   16);
+    TolbiSpring_SetActorAppearance(TOLBI_SPRING_MEDAL_TRAIL(2),
+                                   Vector3_Coordinates(&toss->trail[2]), 0, 0,
+                                   16);
+    TolbiSpring_SetActorAppearance(TOLBI_SPRING_MEDAL_TRAIL(3),
+                                   Vector3_Coordinates(&toss->trail[3]), 0, 0,
+                                   16);
+    Object_SelectAnimation(Actor_GetById(TOLBI_SPRING_MEDAL_TRAIL(1)), 4);
+    Object_SelectAnimation(Actor_GetById(TOLBI_SPRING_MEDAL_TRAIL(2)), 4);
+    Object_SelectAnimation(Actor_GetById(TOLBI_SPRING_MEDAL_TRAIL(3)), 4);
   } else {
-    TolbiSpring_SetObjectEventAppearance(LOCALID_TOLBI_SPRING_COIN,
-                                         Vector3_Coordinates(&toss->trail[0]),
-                                         0, 0, 16);
-    TolbiSpring_SetObjectEventAppearance(LOCALID_TOLBI_SPRING_COIN_SHADOW,
-                                         Vector3_Coordinates(&toss->shadow), 0,
-                                         0, 16);
-    TolbiSpring_SetObjectEventAppearance(TOLBI_SPRING_COIN_TRAIL(1),
-                                         Vector3_Coordinates(&toss->trail[1]),
-                                         0, 0, 16);
-    TolbiSpring_SetObjectEventAppearance(TOLBI_SPRING_COIN_TRAIL(2),
-                                         Vector3_Coordinates(&toss->trail[2]),
-                                         0, 0, 16);
-    TolbiSpring_SetObjectEventAppearance(TOLBI_SPRING_COIN_TRAIL(3),
-                                         Vector3_Coordinates(&toss->trail[3]),
-                                         0, 0, 16);
-    Object_SelectAnimation(ObjectEvent_GetById(TOLBI_SPRING_COIN_TRAIL(1)), 4);
-    Object_SelectAnimation(ObjectEvent_GetById(TOLBI_SPRING_COIN_TRAIL(2)), 4);
-    Object_SelectAnimation(ObjectEvent_GetById(TOLBI_SPRING_COIN_TRAIL(3)), 4);
+    TolbiSpring_SetActorAppearance(ACTOR_TOLBI_SPRING_COIN,
+                                   Vector3_Coordinates(&toss->trail[0]), 0, 0,
+                                   16);
+    TolbiSpring_SetActorAppearance(ACTOR_TOLBI_SPRING_COIN_SHADOW,
+                                   Vector3_Coordinates(&toss->shadow), 0, 0,
+                                   16);
+    TolbiSpring_SetActorAppearance(TOLBI_SPRING_COIN_TRAIL(1),
+                                   Vector3_Coordinates(&toss->trail[1]), 0, 0,
+                                   16);
+    TolbiSpring_SetActorAppearance(TOLBI_SPRING_COIN_TRAIL(2),
+                                   Vector3_Coordinates(&toss->trail[2]), 0, 0,
+                                   16);
+    TolbiSpring_SetActorAppearance(TOLBI_SPRING_COIN_TRAIL(3),
+                                   Vector3_Coordinates(&toss->trail[3]), 0, 0,
+                                   16);
+    Object_SelectAnimation(Actor_GetById(TOLBI_SPRING_COIN_TRAIL(1)), 4);
+    Object_SelectAnimation(Actor_GetById(TOLBI_SPRING_COIN_TRAIL(2)), 4);
+    Object_SelectAnimation(Actor_GetById(TOLBI_SPRING_COIN_TRAIL(3)), 4);
   }
 
   if (toss->launchFrame != -1) {
@@ -1432,10 +1423,10 @@ static void TolbiSpring_InitializeTossSimulation(void) {
   struct SpringObstacle *obstacle;
   const u8 *pixelZ;
 
-  pixelX = gTolbiSpring_ObjectEventPixelX;
+  pixelX = gTolbiSpring_ActorPixelX;
   obstacle = sObstacles;
-  headings = gTolbiSpring_ObjectEventHeadings;
-  pixelZ = gTolbiSpring_ObjectEventPixelZ;
+  headings = gTolbiSpring_ActorHeadings;
+  pixelZ = gTolbiSpring_ActorPixelZ;
 
   do {
     obstacle->position.x = *pixelX << 16;
@@ -1462,10 +1453,10 @@ static void TolbiSpring_InitializeTossSimulation(void) {
   toss->velocity.z = 0;
   toss->attractionFrames = 0;
 
-  Object_SelectAnimation(
-      ObjectEvent_GetById(LOCALID_TOLBI_SPRING_FIRST_OBSTACLE + 2), 2);
-  Object_SelectAnimation(
-      ObjectEvent_GetById(LOCALID_TOLBI_SPRING_FIRST_OBSTACLE + 3), 2);
+  Object_SelectAnimation(Actor_GetById(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 2),
+                         2);
+  Object_SelectAnimation(Actor_GetById(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 3),
+                         2);
 
   {
     s32 budget = 0xc83;
@@ -1493,8 +1484,7 @@ static s32 TolbiSpring_RunToss(s32 tossKind) {
     }
     // Release the token on the leader's throw frame.
     if (sTossFrame == 16) {
-      Import_ObjectEventSetAnimation(gSaveBlock.leaderLocalId,
-                                     ANIM_LEADER_TOSS);
+      Import_ActorSetAnimation(gSaveBlock.leaderActorId, ANIM_LEADER_TOSS);
       toss->launchFrame = 0;
       toss->velocity.x = 13 * PIXELS(1) / 10;
       toss->velocity.y = PIXELS(4);
@@ -1504,18 +1494,16 @@ static s32 TolbiSpring_RunToss(s32 tossKind) {
       toss->trail[0].z = PIXELS(152);
       toss->attractionFrames = 300;
       if (sTossKind == SPRING_TOSS_MEDAL) {
-        Object_SelectAnimation(
-            ObjectEvent_GetById(LOCALID_TOLBI_SPRING_MEDAL_SHADOW), 3);
-        Object_SelectAnimation(ObjectEvent_GetById(LOCALID_TOLBI_SPRING_MEDAL),
-                               0);
+        Object_SelectAnimation(Actor_GetById(ACTOR_TOLBI_SPRING_MEDAL_SHADOW),
+                               3);
+        Object_SelectAnimation(Actor_GetById(ACTOR_TOLBI_SPRING_MEDAL), 0);
         TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_MEDAL_TRAIL(1), 1);
         TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_MEDAL_TRAIL(2), 1);
         TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_MEDAL_TRAIL(3), 1);
       } else {
-        Object_SelectAnimation(
-            ObjectEvent_GetById(LOCALID_TOLBI_SPRING_COIN_SHADOW), 3);
-        Object_SelectAnimation(ObjectEvent_GetById(LOCALID_TOLBI_SPRING_COIN),
-                               0);
+        Object_SelectAnimation(Actor_GetById(ACTOR_TOLBI_SPRING_COIN_SHADOW),
+                               3);
+        Object_SelectAnimation(Actor_GetById(ACTOR_TOLBI_SPRING_COIN), 0);
         TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_COIN_TRAIL(1), 1);
         TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_COIN_TRAIL(2), 1);
         TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_COIN_TRAIL(3), 1);
@@ -1556,7 +1544,7 @@ const u32 gTolbiSpring_Exits[] = {
 };
 
 // clang-format off
-const struct ObjectEventTemplate gTolbiSpringObjectEventTemplates[] = {
+const struct ActorTemplate gTolbiSpringActorTemplates[] = {
     { SPRITE_SPRING_COIN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SPRING_COIN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1602,7 +1590,7 @@ const struct ObjectEventTemplate gTolbiSpringObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-const struct ObjectEventTemplate gTolbiSpringObjectEventTemplatesOther[] = {
+const struct ActorTemplate gTolbiSpringActorTemplatesOther[] = {
     { SPRITE_YOUNG_WOMAN_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(144), 0, PIXELS(360), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1631,40 +1619,40 @@ const struct ObjectEventTemplate gTolbiSpringObjectEventTemplatesOther[] = {
 const struct MapEvent gTolbiSpringEventsOther[] = {
     { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI },
     { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI },
-    { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_TalkToWheelsAttendant) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringHmmIWonderIfTheseKids) },
-    { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_DICE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_OfferLuckyDice) },
-    { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_DICE_RULES_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringReadTheSignIfYaDont) },
-    { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_DICE_PLAYER_FIRST_TIME, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_AskAboutFirstDiceGame) },
-    { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_DICE_PLAYER_TRIPLE_DIGITS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringWhoaGettingTripleDigitsIsReal) },
-    { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_DICE_PLAYER_OUT_OF_COINS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringIDontWantToStopPlaying) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_DICE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringWinningOrLosingIsPureLuck) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_DICE_RULES_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringTheRulesForLuckyDiceAint) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_DICE_PLAYER_FIRST_TIME, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringSometimesPeopleWhoHaveNeverPlayed) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_DICE_PLAYER_TRIPLE_DIGITS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringThinkingWontHelpYouWinThis) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_DICE_PLAYER_OUT_OF_COINS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringMyLuckHasRunOutFor) },
-    { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_WHEELS_PRIZE_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_ReadLuckyWheelsPrizes) },
-    { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_WHEELS_RULES_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_ReadLuckyWheelsRules) },
-    { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_DICE_RULES_SIGN, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringLuckyDiceThrowTheDiceOn) },
-    { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_DICE_PAIRS_SIGN, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringLuckyDiceIfTwoNumbersMatch) },
-    { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_SOLDIER, FLAG_BABI_SAVED, MSGNO(MsgTolbiSpringYeahThatDiceGameLooksKinda) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_SOLDIER, FLAG_BABI_SAVED, MSGNO(MsgTolbiSpringILikePlayingLuckyDiceBut) },
-    { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringOhThereAreAlwaysScalpersAt) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringTheresNoWayPoorSoldiersLike) },
+    { MAP_EVENT_TALK, ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_TalkToWheelsAttendant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringHmmIWonderIfTheseKids) },
+    { MAP_EVENT_TALK, ACTOR_TOLBI_SPRING_DICE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_OfferLuckyDice) },
+    { MAP_EVENT_TALK, ACTOR_TOLBI_SPRING_DICE_RULES_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringReadTheSignIfYaDont) },
+    { MAP_EVENT_TALK, ACTOR_TOLBI_SPRING_DICE_PLAYER_FIRST_TIME, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_AskAboutFirstDiceGame) },
+    { MAP_EVENT_TALK, ACTOR_TOLBI_SPRING_DICE_PLAYER_TRIPLE_DIGITS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringWhoaGettingTripleDigitsIsReal) },
+    { MAP_EVENT_TALK, ACTOR_TOLBI_SPRING_DICE_PLAYER_OUT_OF_COINS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringIDontWantToStopPlaying) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_DICE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringWinningOrLosingIsPureLuck) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_DICE_RULES_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringTheRulesForLuckyDiceAint) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_DICE_PLAYER_FIRST_TIME, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringSometimesPeopleWhoHaveNeverPlayed) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_DICE_PLAYER_TRIPLE_DIGITS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringThinkingWontHelpYouWinThis) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_DICE_PLAYER_OUT_OF_COINS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringMyLuckHasRunOutFor) },
+    { MAP_EVENT_TALK, ACTOR_TOLBI_SPRING_WHEELS_PRIZE_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_ReadLuckyWheelsPrizes) },
+    { MAP_EVENT_TALK, ACTOR_TOLBI_SPRING_WHEELS_RULES_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_ReadLuckyWheelsRules) },
+    { MAP_EVENT_TALK, ACTOR_TOLBI_SPRING_DICE_RULES_SIGN, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringLuckyDiceThrowTheDiceOn) },
+    { MAP_EVENT_TALK, ACTOR_TOLBI_SPRING_DICE_PAIRS_SIGN, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringLuckyDiceIfTwoNumbersMatch) },
+    { MAP_EVENT_TALK, ACTOR_TOLBI_SPRING_SOLDIER, FLAG_BABI_SAVED, MSGNO(MsgTolbiSpringYeahThatDiceGameLooksKinda) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_SOLDIER, FLAG_BABI_SAVED, MSGNO(MsgTolbiSpringILikePlayingLuckyDiceBut) },
+    { MAP_EVENT_TALK, ACTOR_TOLBI_SPRING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringOhThereAreAlwaysScalpersAt) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringTheresNoWayPoorSoldiersLike) },
     { MAP_EVENTS_END },
 };
 
 const struct MapEvent gTolbiSpringEvents[] = {
     { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, TOLBI_SPRING_TO_TOLBI },
     { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_MEDAL_SIGN, CONDITION_ALWAYS, MSGNO(MsgTolbiTossLuckyMedal) },
-    { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_COIN_SIGN, CONDITION_ALWAYS, MSGNO(MsgTolbiFaceAwayTolbi) },
-    { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_VISITOR_MYSTERIOUS_POWERS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringTolbiSpringHasMysteriousPowersStand) },
-    { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_MEDAL_SEEKER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_AskAboutLuckyMedal) },
-    { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_VISITOR_ONE_MEDAL, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringTooBadIOnlyHaveOne) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_VISITOR_MYSTERIOUS_POWERS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringIGetNervousWhenIToss) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_MEDAL_SEEKER, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringWhyWontAnyoneGiveMeA) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_VISITOR_ONE_MEDAL, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringThisIsALuckyMedalSo) },
+    { MAP_EVENT_TALK, ACTOR_TOLBI_SPRING_MEDAL_SIGN, CONDITION_ALWAYS, MSGNO(MsgTolbiTossLuckyMedal) },
+    { MAP_EVENT_TALK, ACTOR_TOLBI_SPRING_COIN_SIGN, CONDITION_ALWAYS, MSGNO(MsgTolbiFaceAwayTolbi) },
+    { MAP_EVENT_TALK, ACTOR_TOLBI_SPRING_VISITOR_MYSTERIOUS_POWERS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringTolbiSpringHasMysteriousPowersStand) },
+    { MAP_EVENT_TALK, ACTOR_TOLBI_SPRING_MEDAL_SEEKER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_AskAboutLuckyMedal) },
+    { MAP_EVENT_TALK, ACTOR_TOLBI_SPRING_VISITOR_ONE_MEDAL, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringTooBadIOnlyHaveOne) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_VISITOR_MYSTERIOUS_POWERS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringIGetNervousWhenIToss) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_MEDAL_SEEKER, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringWhyWontAnyoneGiveMeA) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_VISITOR_ONE_MEDAL, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringThisIsALuckyMedalSo) },
     { BG_EVENT(BG_EVENT_SILENT), MB_TOLBI_SPRING_WATER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_TossCoinOrMedal) },
     { MAP_EVENTS_END },
 };
@@ -1696,15 +1684,15 @@ const u8 gTolbiSpring_CircleFrames[] = {
     0, 3, 4,
 };
 
-const u8 gTolbiSpring_ObjectEventPixelX[] = {
+const u8 gTolbiSpring_ActorPixelX[] = {
     80, 160, 80, 72,
 };
 
-const u8 gTolbiSpring_ObjectEventPixelZ[] = {
+const u8 gTolbiSpring_ActorPixelZ[] = {
     32, 104, 68, 72,
 };
 
-const u16 gTolbiSpring_ObjectEventHeadings[] = {
+const u16 gTolbiSpring_ActorHeadings[] = {
     FACING_EAST, 0x1, FACING_EAST, FACING_WEST,
 };
 // clang-format on

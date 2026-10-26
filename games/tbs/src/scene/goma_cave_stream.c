@@ -24,7 +24,7 @@
 ///   map.txt, two cells south of the arrival, which leads back to
 ///   Vale (GOMA_CAVE_STREAM_TO_VALE_PLAZA).
 /// - SceneId_GomaCaveBridge, the way out, where a wooden bridge crosses the
-///   river. It has no object events and only its two exits: back south into
+///   river. It has no actors and only its two exits: back south into
 ///   SceneId_GomaCaveStream and out onto the world map toward Bilibin
 ///   (GOMA_CAVE_BRIDGE_TO_WORLD_MAP).
 #include "save_block.h"
@@ -33,7 +33,7 @@
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
 #include "unit/field/field.h"
-#include "object_event.h"
+#include "actor.h"
 #include "types.h"
 #include "script_layer.h"
 #include "battle.h"
@@ -57,13 +57,13 @@
 #include "ability_ids.h"
 #include "vector3.h"
 
-/// SceneId_GomaCaveStream's object events, numbering its object event template
-/// rows from LOCALID_FIRST_PLACED.
-enum GomaCaveStreamLocalId {
+/// SceneId_GomaCaveStream's actors, numbering its actor template
+/// rows from ACTOR_FIRST_PLACED.
+enum GomaCaveStreamActorId {
   /// The stump Move pushes, as Garet calls the one at the Goma Cave Entrance.
   /// ★ Named from the game: "It's no use. Our Psynergy isn't strong enough to
   /// free that stump." (MsgGomaNoUsePsynergy)
-  LOCALID_STUMP = LOCALID_FIRST_PLACED
+  ACTOR_STUMP = ACTOR_FIRST_PLACED
 };
 
 /// SceneId_GomaCaveStream's entrance that no exit names, standing the
@@ -87,30 +87,29 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gGomaCaveStreamAndBridgeExits; }
 
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+const struct ActorTemplate *Scene_GetActorTemplates(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_GomaCaveBridge) {
-    return gGomaCaveBridgeObjectEventTemplates;
+    return gGomaCaveBridgeActorTemplates;
   }
-  return gGomaCaveStreamObjectEventTemplates;
+  return gGomaCaveStreamActorTemplates;
 }
 
 /// Move on the stump in Goma Cave (SceneId_GomaCaveStream), until it has leapt
 /// (FLAG_GOMA_CAVE_STREAM_STUMP_MOVED): from column 24 it spins, leaps away
 /// and lies where it lands.
 static void EventScript_MoveStump(void) {
-  struct ObjectEvent *stump;
-  struct ObjectEvent *landed;
+  struct Actor *stump;
+  struct Actor *landed;
   s32 column;
 
-  stump = ObjectEvent_GetById(LOCALID_STUMP);
+  stump = Actor_GetById(ACTOR_STUMP);
   column = stump->x.fixed / PIXELS(16);
   if (column == 24) {
-    GomaCaveStream_LeapStump(LOCALID_STUMP);
-    ObjectEvent_GetById(LOCALID_STUMP)->priorityFlags |=
-        OBJ_EVENT_PRIORITY_UNDERFOOT;
+    GomaCaveStream_LeapStump(ACTOR_STUMP);
+    Actor_GetById(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(19, 74, 9, 3, 19, 17);
-    landed = ObjectEvent_GetById(LOCALID_STUMP);
-    ObjectEvent_SetSpriteFlags(landed, 0);
+    landed = Actor_GetById(ACTOR_STUMP);
+    Actor_SetSpriteFlags(landed, 0);
     GameFlag_Set(FLAG_GOMA_CAVE_STREAM_STUMP_MOVED);
   }
 }
@@ -127,7 +126,7 @@ const struct MapEvent *Scene_GetEvents(void) {
 /// Arriving from Vale (GOMA_CAVE_STREAM_FROM_VALE_PLAZA) shows no area
 /// name; otherwise the stump lies where the party moved it.
 s32 Scene_Initialize(void) {
-  struct ObjectEvent *stump;
+  struct Actor *stump;
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -135,15 +134,13 @@ s32 Scene_Initialize(void) {
     if (gSaveBlock.entrance == GOMA_CAVE_STREAM_FROM_VALE_PLAZA) {
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     } else {
-      ObjectEvent_GetById(LOCALID_STUMP)->collisionFlags |=
-          OBJ_EVENT_NEAR_PSYNERGY;
+      Actor_GetById(ACTOR_STUMP)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
       if (GameFlag_Get(FLAG_GOMA_CAVE_STREAM_STUMP_MOVED) != 0) {
-        Import_ObjectEventSetPosition(LOCALID_STUMP, PIXELS(346), PIXELS(292));
-        stump = ObjectEvent_GetById(LOCALID_STUMP);
-        ObjectEvent_SetSpriteFlags(stump, 0);
-        ObjectEvent_GetById(LOCALID_STUMP)->priorityFlags |=
-            OBJ_EVENT_PRIORITY_UNDERFOOT;
-        Import_ObjectEventSetAnimation(LOCALID_STUMP, STUMP_ANIMATION_SINK);
+        Import_ActorSetPosition(ACTOR_STUMP, PIXELS(346), PIXELS(292));
+        stump = Actor_GetById(ACTOR_STUMP);
+        Actor_SetSpriteFlags(stump, 0);
+        Actor_GetById(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+        Import_ActorSetAnimation(ACTOR_STUMP, STUMP_ANIMATION_SINK);
         MapGrid_CopyCellAttributes(19, 74, 9, 3, 19, 17);
       }
     }
@@ -152,8 +149,8 @@ s32 Scene_Initialize(void) {
 }
 
 /// The leaping stump's update hook turns its sprite a fixed amount per frame.
-static void GomaCaveStream_SpinStump(union ObjectEventOrEffect *fieldObject) {
-  struct Sprite *sprite = fieldObject->objectEvent.sprite;
+static void GomaCaveStream_SpinStump(union ActorOrEffect *fieldObject) {
+  struct Sprite *sprite = fieldObject->actor.sprite;
 
   sprite->rotation -= 0x800;
 }
@@ -164,27 +161,27 @@ static void GomaCaveStream_SpinStump(union ObjectEventOrEffect *fieldObject) {
 /// then hops on into the water with a splash and sinks
 /// (STUMP_ANIMATION_SPLASH).
 static void GomaCaveStream_LeapStump(s32 stumpId) {
-  struct ObjectEvent *stump;
+  struct Actor *stump;
   u32 i;
   struct Vector3 dir;
   struct EffectOptions options;
 
-  stump = ObjectEvent_GetById(stumpId);
+  stump = Actor_GetById(stumpId);
   stump->motionFlags = 0;
   for (i = 0; i < 18; i++) {
     WaitFrames(1);
     stump->sprite->rotation -= 256;
     stump->x.fixed -= Trig_Cos(stump->sprite->rotation) / 2;
-    stump->targetX = OBJ_EVENT_NO_TARGET;
+    stump->targetX = ACTOR_NO_TARGET;
   }
   stump->update = GomaCaveStream_SpinStump;
-  ObjectEvent_SetSpeed(stumpId, PIXELS(3), 3 * PIXELS(1) / 2);
-  ObjectEvent_SetDestination(stumpId, 376, 288);
+  Actor_SetSpeed(stumpId, PIXELS(3), 3 * PIXELS(1) / 2);
+  Actor_SetDestination(stumpId, 376, 288);
   stump->gravity = 4 * PIXELS(1) / 5;
-  stump->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
+  stump->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   stump->layer = 0;
   ObjectMotion_CommitCurrentPositionAndActivate(stumpId);
-  ObjectEvent_WaitBelowHeight(stump, 0);
+  Actor_WaitBelowHeight(stump, 0);
   Sound_PlaySong(SE_THUMP);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   Sound_PlaySong(SE_RUMBLE);
@@ -199,9 +196,9 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
                       dir.y, dir.z, 0, NULL);
   }
   stump->velocityY = PIXELS(5);
-  ObjectEvent_SetDestination(stumpId, 346, 292);
+  Actor_SetDestination(stumpId, 346, 292);
   ObjectMotion_CommitCurrentPositionAndActivate(stumpId);
-  ObjectEvent_WaitBelowHeight(stump, 0);
+  Actor_WaitBelowHeight(stump, 0);
   // UB: the native integer store aliases the update pointer. A typed clear
   // swaps this store with the following sprite-pointer load.
 #ifdef UBFIX
@@ -220,7 +217,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
                         EFFECT_SCALE_TO_TARGET,
                     &options);
   Sound_PlaySong(SE_CAST);
-  Import_ObjectEventSetAnimation(stumpId, STUMP_ANIMATION_SPLASH);
+  Import_ActorSetAnimation(stumpId, STUMP_ANIMATION_SPLASH);
   MapGrid_WaitForShakeToSettle();
 }
 
@@ -292,14 +289,14 @@ u32 gGomaCaveStreamAndBridgeExits[] = {
 };
 
 // clang-format off
-struct ObjectEventTemplate gGomaCaveStreamObjectEventTemplates[] = {
+struct ActorTemplate gGomaCaveStreamActorTemplates[] = {
     { SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(400), 0, PIXELS(288), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 // clang-format on
 
-struct ObjectEventTemplate gGomaCaveBridgeObjectEventTemplates[] = {
+struct ActorTemplate gGomaCaveBridgeActorTemplates[] = {
     {MAP_TABLE_END},
 };
 
@@ -313,7 +310,7 @@ struct MapEvent gGomaCaveStreamEvents[] = {
      GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_EAST},
     {MAP_EVENT_EXIT, 8, CONDITION_ALWAYS, GOMA_CAVE_STREAM_TO_GOMA_CAVE_BRIDGE},
     {BG_EVENT(BG_EVENT_CHEST), 100, 0xf28, FIND_ITEM(ITEM_POWER_BREAD)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_STUMP,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP,
      FLAG_GOMA_CAVE_STREAM_STUMP_MOVED, EVENT_SCRIPT(EventScript_MoveStump)},
     {MAP_EVENTS_END},
 };

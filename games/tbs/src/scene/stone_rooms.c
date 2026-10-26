@@ -65,34 +65,34 @@ enum StoneRoomsMetatileBehavior {
   MB_LUNPA_HIDDEN_ROOM_CHEST_ELIXIR
 };
 
-/// The placed object events, numbering the rows of the table
-/// Scene_GetObjectEventTemplates returns: the three thieves of
-/// gStoneRooms_ThiefObjectEventTemplates, or the prisoner of
-/// gStoneRooms_PrisonerObjectEventTemplates in the same first slot.
-enum JailLocalId {
+/// The placed actors, numbering the rows of the table
+/// Scene_GetActorTemplates returns: the three thieves of
+/// gStoneRooms_ThiefActorTemplates, or the prisoner of
+/// gStoneRooms_PrisonerActorTemplates in the same first slot.
+enum JailActorId {
   /// The thieves' leader (SPRITE_MAN_WITH_LONG_DARK_HAIR), in the middle of the
   /// cell.
   /// ★ Named from the game: "Shut yer yaps!"
   /// (MsgVaultThiefLeaderSilencesThieves)
-  LOCALID_THIEF_LEADER = LOCALID_FIRST_PLACED,
+  ACTOR_THIEF_LEADER = ACTOR_FIRST_PLACED,
   /// The thief on the left (SPRITE_PERSON_IN_PURPLE).
   /// ★ Named from the game: "If only we had escaped to the cave northeast of
   /// Goma Range." (MsgVaultLeftThiefRegretsEscape)
-  LOCALID_LEFT_THIEF,
+  ACTOR_LEFT_THIEF,
   /// The thief on the right (SPRITE_PERSON_IN_PURPLE).
   /// ★ Named from the game: "Blast! I knew we should have skipped town sooner."
   /// (MsgVaultRightThiefRegretsStaying)
-  LOCALID_RIGHT_THIEF,
+  ACTOR_RIGHT_THIEF,
   /// The lone prisoner after the thieves have broken out (SPRITE_STRONGMAN).
   /// ★ Named from the game: "I hit somebody, so they put me in here."
   /// (MsgVaultPrisonerRegretsFight)
-  LOCALID_PRISONER = LOCALID_FIRST_PLACED
+  ACTOR_PRISONER = ACTOR_FIRST_PLACED
 };
 
 /// The jail's occupants count as nearer than they stand for talk and
 /// Psynergy targets (Field_FindNearbyTalkTarget scales their distance by
 /// 10/13), so the party reaches them across the bars.
-enum { JAIL_REACH_ACROSS_BARS = OBJ_EVENT_NEAR_TALK | OBJ_EVENT_NEAR_PSYNERGY };
+enum { JAIL_REACH_ACROSS_BARS = ACTOR_NEAR_TALK | ACTOR_NEAR_PSYNERGY };
 
 /// Returns the entrances from Vault, from Lunpa and from Vault's
 /// revisit map.
@@ -111,16 +111,16 @@ const u32 *Scene_GetExits(void) { return gStoneRooms_Exits; }
 /// is set), or, entered from Vault's revisit map
 /// (STONE_ROOMS_FROM_VAULT_REVISIT, after they have broken out), the lone
 /// prisoner.
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+const struct ActorTemplate *Scene_GetActorTemplates(void) {
   if (gSaveBlock.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
-    return gStoneRooms_PrisonerObjectEventTemplates;
+    return gStoneRooms_PrisonerActorTemplates;
   }
-  return gStoneRooms_ThiefObjectEventTemplates;
+  return gStoneRooms_ThiefActorTemplates;
 }
 
 /// Returns the thieves' map events, which also hold the Lunpa room's chests and
 /// exit, or the prisoner's when the party came in from Vault's revisit map,
-/// matching Scene_GetObjectEventTemplates.
+/// matching Scene_GetActorTemplates.
 const struct MapEvent *Scene_GetEvents(void) {
   if (gSaveBlock.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
     return gStoneRooms_PrisonerEvents;
@@ -132,33 +132,33 @@ const struct MapEvent *Scene_GetEvents(void) {
 /// "Shut yer yaps!", so that both start, then turns to the party: they got us
 /// this time, but next time they'll pay for this.
 ///
-/// Reached by talking to the leader (LOCALID_THIEF_LEADER) while
+/// Reached by talking to the leader (ACTOR_THIEF_LEADER) while
 /// FLAG_VAULT_THIEVES_JAILED is set.
 static void EventScript_LeaderSilencesThieves(void) {
   FieldScript_Start();
 
-  ObjectMotion_SetAngleToward(LOCALID_THIEF_LEADER, LOCALID_LEFT_THIEF, 0);
+  ObjectMotion_SetAngleToward(ACTOR_THIEF_LEADER, ACTOR_LEFT_THIEF, 0);
   FieldScript_WaitFrames(40);
 
-  ObjectMotion_SetAngleToward(LOCALID_THIEF_LEADER, LOCALID_RIGHT_THIEF, 0);
+  ObjectMotion_SetAngleToward(ACTOR_THIEF_LEADER, ACTOR_RIGHT_THIEF, 0);
   FieldScript_WaitFrames(40);
 
   // "Shut yer yaps!"; the two thieves start.
   FieldScript_SetMessageId(MsgVaultThiefLeaderSilencesThieves);
-  FieldScript_ShowMessageAndWait(LOCALID_THIEF_LEADER, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_THIEF_LEADER, 0);
 
-  ObjectMotion_SetVariantCallback(LOCALID_LEFT_THIEF, 2);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_RIGHT_THIEF, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_LEFT_THIEF, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_RIGHT_THIEF, 2);
   FieldScript_WaitFrames(20);
 
   // Turn from the two thieves to the party for the remaining dialogue.
-  ObjectEvent_LinkPair(LOCALID_THIEF_LEADER, LOCALID_PARTY_LEADER, 0);
+  Actor_LinkPair(ACTOR_THIEF_LEADER, ACTOR_PARTY_LEADER, 0);
   FieldScript_WaitFrames(20);
 
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_THIEF_LEADER, 1);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_THIEF_LEADER, 1);
   FieldScript_WaitFrames(20);
 
-  FieldScript_ShowMessageAndWait(LOCALID_THIEF_LEADER, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_THIEF_LEADER, 0);
 
   FieldScript_End();
 }
@@ -166,41 +166,41 @@ static void EventScript_LeaderSilencesThieves(void) {
 /// In Vault's jail, the thief on the left wishes they had escaped to the cave
 /// northeast of Goma Range.
 ///
-/// Reached by talking to him (LOCALID_LEFT_THIEF) while
+/// Reached by talking to him (ACTOR_LEFT_THIEF) while
 /// FLAG_VAULT_THIEVES_JAILED is set.
 static void EventScript_LeftThiefRegretsEscape(void) {
   FieldScript_Start();
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_LEFT_THIEF, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_LEFT_THIEF, 2);
   FieldScript_WaitFrames(20);
   FieldScript_SetMessageId(MsgVaultLeftThiefRegretsEscape);
-  FieldScript_ShowMessageAndWait(LOCALID_LEFT_THIEF, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_LEFT_THIEF, 0);
   FieldScript_End();
 }
 
 /// In Vault's jail, the thief on the right shakes his head: he knew they
 /// should have skipped town sooner.
 ///
-/// Reached by talking to him (LOCALID_RIGHT_THIEF) while
+/// Reached by talking to him (ACTOR_RIGHT_THIEF) while
 /// FLAG_VAULT_THIEVES_JAILED is set.
 static void EventScript_RightThiefRegretsStaying(void) {
   FieldScript_Start();
-  ObjectMotion_SetAnimationAndWait(LOCALID_RIGHT_THIEF, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   FieldScript_SetMessageId(MsgVaultRightThiefRegretsStaying);
-  FieldScript_ShowMessageAndWait(LOCALID_RIGHT_THIEF, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_RIGHT_THIEF, 0);
   FieldScript_End();
 }
 
 /// Mind Read on the thieves' leader in Vault's jail: he'll be out of this jail
 /// before you know it.
 ///
-/// Reached by Mind Read on LOCALID_THIEF_LEADER while FLAG_VAULT_THIEVES_JAILED
-/// is set; the two below are reached the same way on LOCALID_LEFT_THIEF and
-/// LOCALID_RIGHT_THIEF.
+/// Reached by Mind Read on ACTOR_THIEF_LEADER while FLAG_VAULT_THIEVES_JAILED
+/// is set; the two below are reached the same way on ACTOR_LEFT_THIEF and
+/// ACTOR_RIGHT_THIEF.
 static void EventScript_ReadLeaderMind(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgVaultThiefLeaderThoughts);
-  FieldScript_ShowMessageAndWait(LOCALID_THIEF_LEADER, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_THIEF_LEADER, 0);
   FieldScript_End();
 }
 
@@ -208,7 +208,7 @@ static void EventScript_ReadLeaderMind(void) {
 static void EventScript_ReadLeftThiefMind(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgVaultLeftThiefThoughts);
-  FieldScript_ShowMessageAndWait(LOCALID_LEFT_THIEF, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_LEFT_THIEF, 0);
   FieldScript_End();
 }
 
@@ -217,7 +217,7 @@ static void EventScript_ReadLeftThiefMind(void) {
 static void EventScript_ReadRightThiefMind(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgVaultRightThiefThoughts);
-  FieldScript_ShowMessageAndWait(LOCALID_RIGHT_THIEF, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_RIGHT_THIEF, 0);
   FieldScript_End();
 }
 
@@ -235,7 +235,7 @@ static void EventScript_LeaveForVault(void) {
 /// Opens the map through a window transition and lets the party reach the
 /// jail's occupants across the bars.
 ///
-/// Called by the engine once the object events are placed. Coming in through
+/// Called by the engine once the actors are placed. Coming in through
 /// Lunpa's hidden passage (STONE_ROOMS_FROM_LUNPA) clears
 /// FLAG_SHOW_LOCATION_NAME, so no area name is shown; otherwise it adds
 /// JAIL_REACH_ACROSS_BARS to the prisoner or to the three thieves.
@@ -251,15 +251,11 @@ s32 Scene_Initialize(void) {
     // entrance.
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   } else if (entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
-    ObjectEvent_GetById(LOCALID_PRISONER)->collisionFlags |=
-        JAIL_REACH_ACROSS_BARS;
+    Actor_GetById(ACTOR_PRISONER)->collisionFlags |= JAIL_REACH_ACROSS_BARS;
   } else {
-    ObjectEvent_GetById(LOCALID_THIEF_LEADER)->collisionFlags |=
-        JAIL_REACH_ACROSS_BARS;
-    ObjectEvent_GetById(LOCALID_LEFT_THIEF)->collisionFlags |=
-        JAIL_REACH_ACROSS_BARS;
-    ObjectEvent_GetById(LOCALID_RIGHT_THIEF)->collisionFlags |=
-        JAIL_REACH_ACROSS_BARS;
+    Actor_GetById(ACTOR_THIEF_LEADER)->collisionFlags |= JAIL_REACH_ACROSS_BARS;
+    Actor_GetById(ACTOR_LEFT_THIEF)->collisionFlags |= JAIL_REACH_ACROSS_BARS;
+    Actor_GetById(ACTOR_RIGHT_THIEF)->collisionFlags |= JAIL_REACH_ACROSS_BARS;
   }
 
   return 0;
@@ -282,7 +278,7 @@ const u32 gStoneRooms_Exits[] = {
     SCENE_EXITS_END,
 };
 
-const struct ObjectEventTemplate gStoneRooms_ThiefObjectEventTemplates[] = {
+const struct ActorTemplate gStoneRooms_ThiefActorTemplates[] = {
     { SPRITE_MAN_WITH_LONG_DARK_HAIR, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), MOVEMENT_TYPE_STAND,
       PIXELS(168), 0, PIXELS(144), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PERSON_IN_PURPLE, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), MOVEMENT_TYPE_STAND,
@@ -292,7 +288,7 @@ const struct ObjectEventTemplate gStoneRooms_ThiefObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-const struct ObjectEventTemplate gStoneRooms_PrisonerObjectEventTemplates[] = {
+const struct ActorTemplate gStoneRooms_PrisonerActorTemplates[] = {
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(168), 0, PIXELS(144), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
@@ -301,17 +297,17 @@ const struct ObjectEventTemplate gStoneRooms_PrisonerObjectEventTemplates[] = {
 const struct MapEvent gStoneRooms_ThiefEvents[] = {
     { MAP_EVENT_COORD, MB_VAULT_JAIL_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveForVault) },
     { MAP_EVENT_EXIT, MB_LUNPA_HIDDEN_ROOM_DOOR, CONDITION_ALWAYS, STONE_ROOMS_TO_LUNPA },
-    { MAP_EVENT_TALK, LOCALID_THIEF_LEADER, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
+    { MAP_EVENT_TALK, ACTOR_THIEF_LEADER, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
       EVENT_SCRIPT(EventScript_LeaderSilencesThieves) },
-    { MAP_EVENT_TALK, LOCALID_LEFT_THIEF, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
+    { MAP_EVENT_TALK, ACTOR_LEFT_THIEF, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
       EVENT_SCRIPT(EventScript_LeftThiefRegretsEscape) },
-    { MAP_EVENT_TALK, LOCALID_RIGHT_THIEF, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
+    { MAP_EVENT_TALK, ACTOR_RIGHT_THIEF, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
       EVENT_SCRIPT(EventScript_RightThiefRegretsStaying) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_THIEF_LEADER,
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIEF_LEADER,
       IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(EventScript_ReadLeaderMind) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LEFT_THIEF,
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LEFT_THIEF,
       IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(EventScript_ReadLeftThiefMind) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_RIGHT_THIEF,
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_RIGHT_THIEF,
       IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(EventScript_ReadRightThiefMind) },
     { BG_EVENT(BG_EVENT_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE, FLAG_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE,
       FIND_ITEM(ITEM_WATER_OF_LIFE) },
@@ -331,9 +327,9 @@ const struct MapEvent gStoneRooms_ThiefEvents[] = {
 const struct MapEvent gStoneRooms_PrisonerEvents[] = {
     {MAP_EVENT_EXIT, MB_VAULT_JAIL_DOOR, CONDITION_ALWAYS,
      STONE_ROOMS_TO_VAULT_REVISIT},
-    {MAP_EVENT_TALK, LOCALID_PRISONER, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_PRISONER, CONDITION_ALWAYS,
      MsgVaultPrisonerRegretsFight},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_PRISONER,
-     CONDITION_ALWAYS, MsgVaultPrisonerThoughts},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRISONER, CONDITION_ALWAYS,
+     MsgVaultPrisonerThoughts},
     {MAP_EVENTS_END},
 };

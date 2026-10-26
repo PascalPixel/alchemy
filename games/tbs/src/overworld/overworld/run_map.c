@@ -19,7 +19,7 @@ struct ObjectSystemSuspendView {
 /// leaves; returns the exit kind it left by, for Scene_TakeExit, or EXIT_NONE
 /// when the next scene is already in gSaveBlock: a random battle, a
 /// party that fell outside battle, Retreat or a script's destination. Sets the
-/// scene up (map, object events, encounters, return points), runs its
+/// scene up (map, actors, encounters, return points), runs its
 /// initialization, fades it in, then runs the field loop: the party walks
 /// (Field_ProcessStep each frame) until a request is made, and then the
 /// requests are handled until none is left.
@@ -32,7 +32,7 @@ struct ObjectSystemSuspendView {
 /// has started, FLAG_KEEP_PARTY_POSITION.
 s32 SceneManager_Run(s32 entrance) {
   struct FieldWork *work;
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 mode;
   s32 result = 0;
   s32 code;
@@ -65,12 +65,11 @@ s32 SceneManager_Run(s32 entrance) {
   Field_ClearRequests();
   work->events = gOverlayArea.events();
   Scene_ApplyEntrance();
-  ObjectEvent_ResetForObject(
-      (struct ObjectEventTemplate *)gOverlayArea.objectEventTemplates());
+  Actor_ResetForObject((struct ActorTemplate *)gOverlayArea.actorTemplates());
   if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) != 0)
-    ObjectEvent_Restore();
+    Actor_Restore();
   if (gSaveBlock.pendingDjinnEvent != 0)
-    ObjectEvent_PlaceMapObjectEvents();
+    Actor_PlaceMapActors();
   if (mode == OBJECT_SYSTEM_WORLD_MAP) {
     WorldMap_UpdateCurrentTileBlockFar();
     WorldMap_LoadGraphicsFar(gSaveBlock.x, gSaveBlock.z);
@@ -97,7 +96,7 @@ s32 SceneManager_Run(s32 entrance) {
   }
   work->previousCell = (struct MapGridCell *)Ram_MapGridCellBuffer;
   // A fresh entry (not a return from battle) resets the hazard count to its
-  // defaults (damage 1 every 16 steps), the stopped object event and Cloak.
+  // defaults (damage 1 every 16 steps), the stopped actor and Cloak.
   if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) == 0) {
     Scene_SetDefeatReturnPoint();
     gSaveBlock.hazardLimit = 16;
@@ -149,13 +148,13 @@ s32 SceneManager_Run(s32 entrance) {
     for (;;) {
       // Note where the leader is, for the requests to use.
       GameFlag_SetFar(FLAG_FIELD_HANDLING_REQUESTS);
-      objectEvent = work->objectEvents[gSaveBlock.leaderLocalId];
-      Object_StartIdleFar((struct Object *)objectEvent);
-      gSaveBlock.x = objectEvent->x.fixed;
+      actor = work->actors[gSaveBlock.leaderActorId];
+      Object_StartIdleFar((struct Object *)actor);
+      gSaveBlock.x = actor->x.fixed;
       gSaveBlock.y = 0;
-      gSaveBlock.z = objectEvent->z.fixed;
-      gSaveBlock.heading = objectEvent->facing;
-      gSaveBlock.turn = objectEvent->layer;
+      gSaveBlock.z = actor->z.fixed;
+      gSaveBlock.heading = actor->facing;
+      gSaveBlock.turn = actor->layer;
 
       // Handle the pending requests, most urgent first.
       while (Field_CountRequests() != 0) {
@@ -175,7 +174,7 @@ s32 SceneManager_Run(s32 entrance) {
             Leader_StopMoving();
             WorldMap_StartScript();
             for (i = 0; i < work->fallenCount; i++) {
-              Object_SelectAnimationFar(objectEvent, ANIM_LEADER_LEAN_BACK);
+              Object_SelectAnimationFar(actor, ANIM_LEADER_LEAN_BACK);
               MessageArgument_PushFar(work->fallenOwners[i],
                                       MESSAGE_ARGUMENT_ACTOR);
               FieldMessage_ShowFar(MsgFieldStrengthExhausted,
@@ -185,18 +184,18 @@ s32 SceneManager_Run(s32 entrance) {
               // The whole party fell: back to the last sanctum with 1 HP.
               struct Unit *vitals;
 
-              if (gSaveBlock.leaderLocalId == 0) {
+              if (gSaveBlock.leaderActorId == 0) {
                 if (GameFlag_GetFar(FLAG_CHILDHOOD) != 0)
-                  Object_SelectAnimationFar(objectEvent, 21);
+                  Object_SelectAnimationFar(actor, 21);
                 else
-                  Object_SelectAnimationFar(objectEvent, 37);
+                  Object_SelectAnimationFar(actor, 37);
               } else {
-                Object_SelectAnimationFar(objectEvent, ANIM_COLLAPSE);
+                Object_SelectAnimationFar(actor, ANIM_COLLAPSE);
               }
               Sound_PlaySongFar(MUS_DEFEAT);
               FieldMessage_ShowFar(MsgFieldPartyAnnihilated,
                                    FIELD_MESSAGE_ZOOM);
-              vitals = Unit_GetFar(gSaveBlock.leaderLocalId);
+              vitals = Unit_GetFar(gSaveBlock.leaderActorId);
               vitals->hp = 1;
               Unit_UpdateGauges(vitals);
               gSaveBlock.sceneId = gSaveBlock.restartScene;
@@ -218,11 +217,11 @@ s32 SceneManager_Run(s32 entrance) {
           work->busy = 0;
           work->raisedEvent = 0;
         } else if (work->battle != 0) {
-          // A random encounter: save the object events and go to the battle.
+          // A random encounter: save the actors and go to the battle.
           // Field_StartEncounterTransition closes the screen itself and
           // clears transitionActive, so the scene ends without another fade.
           Leader_StopMoving();
-          ObjectEvent_Snapshot();
+          Actor_Snapshot();
           gSaveBlock.returnMusic = -1;
           gSaveBlock.sceneId = SEQUENCE_BATTLE;
           gSaveBlock.entrance = work->battle;
@@ -240,23 +239,23 @@ s32 SceneManager_Run(s32 entrance) {
           Field_RunPushCellEvent(work->pushCell);
           work->pushCell = 0;
         } else if (work->examine != 0) {
-          // Examine the object event or cell ahead, or open the menu if neither
+          // Examine the actor or cell ahead, or open the menu if neither
           // has an event.
           s32 object;
 
           AreaNameWindow_HideFar();
-          object = Field_FindNearbyTalkTarget(gSaveBlock.leaderLocalId);
+          object = Field_FindNearbyTalkTarget(gSaveBlock.leaderActorId);
           mode = 0;
           if (object != -1) {
-            mode = Scene_FindObjectEventTalkEvent(object) != 0;
+            mode = Scene_FindActorTalkEvent(object) != 0;
           }
           if (mode != 0) {
-            // 0x1000 keeps object event 0's request non-zero; the handler
+            // 0x1000 keeps actor 0's request non-zero; the handler
             // masks it.
             work->talk = object | 0x1000;
             work->menu = 0;
           } else {
-            mode = ObjectEvent_GetTriggerTileAheadOfCurrent();
+            mode = Actor_GetTriggerTileAheadOfCurrent();
             if (mode != 0) {
               work->searchCell = mode;
               work->menu = 0;
@@ -288,7 +287,7 @@ s32 SceneManager_Run(s32 entrance) {
           work->menu = 0;
         } else if ((s16)work->talk != 0) {
           WorldMap_StartScript();
-          Scene_TalkToObjectEvent(work->talk & 0xfff);
+          Scene_TalkToActor(work->talk & 0xfff);
           WorldMap_EndScript();
           work->talk = 0;
         } else if (work->searchCell != 0) {
@@ -366,23 +365,23 @@ s32 SceneManager_Run(s32 entrance) {
       // air (only a key check runs), on the world map or walking, and step
       // until the next request.
       GameFlag_ClearFar(FLAG_FIELD_HANDLING_REQUESTS);
-      objectEvent = work->objectEvents[gSaveBlock.leaderLocalId];
-      if (objectEvent != NULL) {
+      actor = work->actors[gSaveBlock.leaderActorId];
+      if (actor != NULL) {
         if (gSaveBlock.movementMode == LEADER_MOVEMENT_AIRBORNE)
-          Object_StartKeyCheckFar((struct Object *)objectEvent);
+          Object_StartKeyCheckFar((struct Object *)actor);
         else if (gSaveBlock.movementMode == LEADER_MOVEMENT_CLIMB)
-          Object_StartMoveByKeysFar((struct Object *)objectEvent);
+          Object_StartMoveByKeysFar((struct Object *)actor);
         else if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
-          Object_StartWorldMapControlFar((struct Object *)objectEvent);
+          Object_StartWorldMapControlFar((struct Object *)actor);
         else
-          Object_StartPlayerControlFar((struct Object *)objectEvent);
+          Object_StartPlayerControlFar((struct Object *)actor);
       }
       do {
         WaitFrames(1);
-        objectEvent = work->objectEvents[gSaveBlock.leaderLocalId];
+        actor = work->actors[gSaveBlock.leaderActorId];
         if (gDebugMode == 0 || GameFlag_GetFar(FLAG_DEBUG_STEPS_OFF) == 0)
-          Field_ProcessStep(objectEvent->layer, objectEvent->x.fixed,
-                            objectEvent->y.fixed, objectEvent->z.fixed);
+          Field_ProcessStep(actor->layer, actor->x.fixed, actor->y.fixed,
+                            actor->z.fixed);
       } while (Field_CountRequests() == 0);
     }
   }
@@ -405,8 +404,8 @@ done:
 ///
 /// Called by SceneManager_Run for the A button (a non-zero result becomes
 /// work->tile, for Field_SearchCell), and by FieldMenu_Run's search
-/// entry through ObjectEvent_GetTriggerTileAheadOfCurrentFar. Changes nothing.
-s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
+/// entry through Actor_GetTriggerTileAheadOfCurrentFar. Changes nothing.
+s32 Actor_GetTriggerTileAheadOfCurrent(void) {
   u8 *workBytes;
   u8 *gridBytes;
   struct Object *leader;
@@ -418,7 +417,7 @@ s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
   s32 result;
 
   result = 0;
-  leader = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
+  leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
   workBytes = *(u8 **)Ram_FieldWork;
   gridBytes = *(u8 **)Ram_MapGridWork;
   if (leader != 0) {

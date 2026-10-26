@@ -15,7 +15,7 @@
 // gSpeakerDefinitions, gFieldEffect_GroundParticleFrames,
 // gFieldEffect_PulseScales, gFieldEffect_CyclePatternWords and
 // gFieldEffect_RandomChildValues, graphics.h's gScreenTransition_NoiseWidths
-// and gScreenTransition_EdgeOffsets, field.h's gObjectEvent_BlinkSpriteColors
+// and gScreenTransition_EdgeOffsets, field.h's gActor_BlinkSpriteColors
 // and overworld.c's three gColorBuffer_ChannelCurve tables. All are defined
 // const all the same: in rom_main_04 .data follows scripts.o, and these tables
 // would move. So this file includes none of those headers.
@@ -355,9 +355,9 @@ const s32 gObjectMotion_VariantScripts[97] = {
     SC_END,
 };
 
-/// A blinking object event's sprite param by frame ((gFrameCount >> 1) & 3,
-/// ObjectEvent_UpdateBlink): 7 for two frames out of eight.
-const u8 gObjectEvent_BlinkSpriteColors[4] = {7, 0, 0, 0};
+/// A blinking actor's sprite param by frame ((gFrameCount >> 1) & 3,
+/// Actor_UpdateBlink): 7 for two frames out of eight.
+const u8 gActor_BlinkSpriteColors[4] = {7, 0, 0, 0};
 
 /// Sine times 4096, 256 steps to a turn.
 const s16 gScanlineEffect_WaveSine[256] = {
@@ -465,7 +465,7 @@ const struct SparkleFrame gFieldEffect_SparkleFrames[32] = {
 /// third word.
 const u32 gFieldEffect_PulseScales[3] = {0x10000, 0xf851, 16};
 
-/// [0] only frees the object event, +1 waits for it to arrive and frees it; +3 is
+/// [0] only frees the actor, +1 waits for it to arrive and frees it; +3 is
 /// gFieldEffect_SourceHoldScript, which follows.
 const s32 gFieldEffect_CommonParticleScript[] = {
     SC_FREE,

@@ -4,8 +4,8 @@
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
 	.set import.FieldScript_WaitFrames, 1
-	.set import.FieldScript_AskYesNoWithObjectEventAnimation, 1
-	.set import.Import_ObjectEventSetAnimation, 1
+	.set import.FieldScript_AskYesNoWithActorAnimation, 1
+	.set import.Import_ActorSetAnimation, 1
 	.set import.FieldScript_SetMessageId, 1
 	.set import.FieldMessage_ShowAtObject, 1
 	.set import.FieldScript_ShowMessageAndWait, 1

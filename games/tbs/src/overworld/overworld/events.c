@@ -4,18 +4,18 @@
 
 #include "../overworld_internal.h"
 
-/// Returns the object event template of object event id in the map's object
-/// event template tables, or NULL: for a party character (0 to 7) the row with
-/// its sprite, and for a placed object event (8 on) the row it was created
+/// Returns the actor template of actor id in the map's
+/// actor template tables, or NULL: for a party character (0 to 7) the row with
+/// its sprite, and for a placed actor (8 on) the row it was created
 /// from, counting the placed rows in order.
 ///
-/// Called by Scene_TalkToObjectEvent for the talk facing, and by the field
-/// Psynergy effects that read an object event's template (Mind Read, the
+/// Called by Scene_TalkToActor for the talk facing, and by the field
+/// Psynergy effects that read an actor's template (Mind Read, the
 /// Djinni effect, the script messages and the view).
-struct ObjectEventTemplate *Scene_FindObjectEventTemplate(s32 id) {
-  struct ObjectEventTemplate *template;
+struct ActorTemplate *Scene_FindActorTemplate(s32 id) {
+  struct ActorTemplate *template;
   s32 tableIndex;
-  s32 placedLocalId = LOCALID_FIRST_PLACED;
+  s32 placedActorId = ACTOR_FIRST_PLACED;
 
   for (tableIndex = 0; tableIndex < 4; tableIndex++) {
     template = gFieldWork->tables[tableIndex];
@@ -34,14 +34,14 @@ struct ObjectEventTemplate *Scene_FindObjectEventTemplate(s32 id) {
     } else {
       for (; (s16)template->sprite != -1; template++) {
         if ((s16)template->sprite > 7) {
-          if (placedLocalId == id) {
+          if (placedActorId == id) {
 #ifdef UBFIX
             return template;
 #else
             goto found;
 #endif
           }
-          placedLocalId++;
+          placedActorId++;
         }
       }
     }
@@ -50,7 +50,7 @@ struct ObjectEventTemplate *Scene_FindObjectEventTemplate(s32 id) {
   return NULL;
 #else
 found:
-  // BUG: a missing object event leaves entry NULL if the final table is absent.
+  // BUG: a missing actor leaves entry NULL if the final table is absent.
   if ((s16)template->sprite == -1)
     return NULL;
   return template;
@@ -62,8 +62,8 @@ found:
 /// The flag is the low 12 bits, since GameFlag_Get ignores bit 12.
 ///
 /// Used for every condition column of a map's tables: events
-/// (Scene_FindEvent, Field_SearchCell), object event templates
-/// (FieldScript_SpawnObjectEventTemplates), exit regions
+/// (Scene_FindEvent, Field_SearchCell), actor templates
+/// (FieldScript_SpawnActorTemplates), exit regions
 /// (Field_CheckExitRegions) and item events.
 s32 GameFlag_IsConditionActive(s32 condition) {
   s32 flagSet;
@@ -111,14 +111,13 @@ u32 Scene_BgEventIgnoresCondition(s32 flags, s32 result) {
 /// the direction in the top four bits.
 ///
 /// Called by every lookup of a map's events in this part and by
-/// ObjectEvent_GetTriggerTileAheadOfCurrent. Changes nothing.
+/// Actor_GetTriggerTileAheadOfCurrent. Changes nothing.
 struct MapEventView *Scene_FindEvent(s32 kind, s32 target) {
   struct FieldWork *work = gFieldWork;
   struct MapEventView *event = (struct MapEventView *)work->events;
   s32 flags;
   u32 facing =
-      ((struct ObjectEvent *)ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId))
-          ->facing;
+      ((struct Actor *)Actor_GetByActorId(gSaveBlock.leaderActorId))->facing;
 
   flags = event->flags;
   // Preserve the full control word: direction and push-delay bits refine kind.
@@ -173,22 +172,22 @@ struct MapEventView *Scene_FindEvent(s32 kind, s32 target) {
 /// Unused: runs the loaded overlay's initialize entry; nothing calls it.
 UNUSED void Overlay_CallInitialize(void) { gOverlayArea.initialize(); }
 
-/// Returns the talk event of object event id, or 0: for the object event
+/// Returns the talk event of actor id, or 0: for the actor
 /// stopped with Halt
 /// (gSaveBlock.pausedObject), its MAP_EVENT_TALK_HALTED event if it has one,
 /// the event for talking to it while it is stopped (Crossbone Isle's Bane has
 /// one).
 ///
 /// Called by SceneManager_Run for the A button, to choose between talking and
-/// searching, and by the field Psynergy dispatch, which Halts only an object
-/// event with a talk event; both test the result only for non-zero.
-s32 Scene_FindObjectEventTalkEvent(s32 id) {
+/// searching, and by the field Psynergy dispatch, which Halts only an
+/// actor with a talk event; both test the result only for non-zero.
+s32 Scene_FindActorTalkEvent(s32 id) {
   struct MapEventView *talkEvent = Scene_FindEvent(MAP_EVENT_TALK, id);
-  s32 pausedLocalId = gSaveBlock.pausedObject;
+  s32 pausedActorId = gSaveBlock.pausedObject;
 
-  if (pausedLocalId == id) {
+  if (pausedActorId == id) {
     struct MapEventView *pausedEvent =
-        Scene_FindEvent(MAP_EVENT_TALK_HALTED, pausedLocalId);
+        Scene_FindEvent(MAP_EVENT_TALK_HALTED, pausedActorId);
 
     if (pausedEvent != 0) {
       return (s32)pausedEvent;
@@ -197,29 +196,29 @@ s32 Scene_FindObjectEventTalkEvent(s32 id) {
   return (s32)talkEvent;
 }
 
-/// Talks to object event id: shows its event's message or calls its event
-/// function, with the object event stopped and turned as its template says.
-/// For the object event stopped with Halt, its MAP_EVENT_TALK_HALTED event
+/// Talks to actor id: shows its event's message or calls its event
+/// function, with the actor stopped and turned as its template says.
+/// For the actor stopped with Halt, its MAP_EVENT_TALK_HALTED event
 /// comes first; without one, a talk event that is a function gives one of two
 /// lines at random instead, from MsgPonderEllipsis on (dots spoken with
 /// pauses). Returns 0 when an event ran, -1 when there was none or such a line
 /// stood in for it; SceneManager_Run ignores the result.
 ///
 /// Called by SceneManager_Run for its talk request (work->talk). Resumes
-/// the stopped object event and sets gSaveBlock.pausedObject back to -1
+/// the stopped actor and sets gSaveBlock.pausedObject back to -1
 /// afterwards.
-s32 Scene_TalkToObjectEvent(s32 id) {
-  struct ObjectEventTemplate *template = Scene_FindObjectEventTemplate(id);
+s32 Scene_TalkToActor(s32 id) {
+  struct ActorTemplate *template = Scene_FindActorTemplate(id);
   s32 result = -1;
-  struct Object *objectEvent = (struct Object *)ObjectEvent_GetById(id);
+  struct Object *actor = (struct Object *)Actor_GetById(id);
   struct MapEventView *event;
-  s32 objectEventPaused = 0;
+  s32 actorPaused = 0;
   u32 savedAngle;
   u32 talkFacing;
   s32 usePausedDialogue = 0;
 
   if (gSaveBlock.pausedObject == id) {
-    objectEventPaused = 1;
+    actorPaused = 1;
     event = Scene_FindEvent(7, id);
     if (event == 0) {
       event = Scene_FindEvent(MAP_EVENT_TALK, id);
@@ -227,7 +226,7 @@ s32 Scene_TalkToObjectEvent(s32 id) {
       if (event == 0) {
         return -1;
       }
-      // A function talk event is not run for a stopped object event: it says
+      // A function talk event is not run for a stopped actor: it says
       // one of two lines picked at random from the pair its definition flags
       // choose.
       if (event->result >= 0x10000) {
@@ -247,24 +246,24 @@ s32 Scene_TalkToObjectEvent(s32 id) {
   }
 
   if (event != 0 && event->result != 0) {
-    if (!objectEventPaused) {
-      // Stop the object event; with talk facing 0, 1 or 3, also stop the leader
+    if (!actorPaused) {
+      // Stop the actor; with talk facing 0, 1 or 3, also stop the leader
       // and link the two.
-      u8 *movementState = &objectEvent->paused;
+      u8 *movementState = &actor->paused;
 
       *movementState = 1;
-      Object_SetAnimationSpeedFar((struct Object *)objectEvent, 0);
-      savedAngle = objectEvent->facing;
+      Object_SetAnimationSpeedFar((struct Object *)actor, 0);
+      savedAngle = actor->facing;
       talkFacing = (u8)template->talkFacing << 24;
       if (talkFacing <= (1 << 24) || talkFacing == (3 << 24)) {
         struct Object *leader =
-            (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
+            (struct Object *)Actor_GetById(gSaveBlock.leaderActorId);
 
         leader->targetX = leader->x;
         leader->targetY = leader->y;
         leader->targetZ = leader->z;
         SET_VELOCITY(leader, 0, 0, 0);
-        ObjectEvent_LinkPair(id, gSaveBlock.leaderLocalId, 0);
+        Actor_LinkPair(id, gSaveBlock.leaderActorId, 0);
       }
     }
     // A result below 0x10000 is a message; above, a function to call.
@@ -278,31 +277,30 @@ s32 Scene_TalkToObjectEvent(s32 id) {
       Leader_StopMoving();
       ((void (*)(s32))event->result)(id);
     }
-    if (!objectEventPaused) {
-      // An object event left idle (script command 16) goes back to what its
+    if (!actorPaused) {
+      // An actor left idle (script command 16) goes back to what its
       // talk facing says: following the leader (3) or its old angle (1).
-      if (objectEvent->script[objectEvent->scriptCursor] == 16) {
+      if (actor->script[actor->scriptCursor] == 16) {
         if ((s8)template->talkFacing == 3) {
-          objectEvent->linkedObject =
-              (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
-          objectEvent->steeringFlags |= 1;
-          ObjectEvent_SetMovementType(objectEvent,
-                                      (s32)gObjectMotion_LinkedActionScript);
+          actor->linkedObject =
+              (struct Object *)Actor_GetById(gSaveBlock.leaderActorId);
+          actor->steeringFlags |= 1;
+          Actor_SetMovementType(actor, (s32)gObjectMotion_LinkedActionScript);
         } else if ((s8)template->talkFacing == 1) {
-          objectEvent->action = savedAngle;
-          Object_InitializeFar((struct Object *)objectEvent,
+          actor->action = savedAngle;
+          Object_InitializeFar((struct Object *)actor,
                                (const s32 *)gObjectMotion_StepAngleScript);
         }
       }
-      objectEvent->paused = 0;
-      Object_SetAnimationSpeedFar((struct Object *)objectEvent, 16);
+      actor->paused = 0;
+      Object_SetAnimationSpeedFar((struct Object *)actor, 16);
     }
     result = 0;
   }
 finish:
-  // Both a normal event and the paused object event's fallback line release
+  // Both a normal event and the paused actor's fallback line release
   // the pause.
-  if (objectEventPaused) {
+  if (actorPaused) {
     FieldEffect_ResumeObject(gSaveBlock.pausedObject);
     gSaveBlock.pausedObject = -1;
   }
@@ -406,12 +404,12 @@ s32 Scene_RunCoordEventOrExit(s32 value) {
 /// Clears work->blockedSteps when it acts.
 s32 Field_RunPushCellEvent(s32 behavior) {
   struct FieldWork *work = gFieldWork;
-  s32 leader = gSaveBlock.leaderLocalId;
+  s32 leader = gSaveBlock.leaderActorId;
 
   switch (behavior) {
   case MB_LEDGE:
     if (work->blockedSteps > 12 && (gKeysHeld & KEY_DOWN)) {
-      ObjectEvent_JumpDownLedge(leader, 6, 0);
+      Actor_JumpDownLedge(leader, 6, 0);
       work->blockedSteps = 0;
     }
     break;
@@ -454,7 +452,7 @@ s32 Field_SearchCell(s32 tile) {
   s32 rewardType;
   s32 canOpen;
 
-  leader = gSaveBlock.leaderLocalId;
+  leader = gSaveBlock.leaderActorId;
   // Each fixed spot has its own pair of lines, chosen through
   // gField_BgEventMessageOffsets; the unsigned compare also rejects codes below
   // MB_JAR.
@@ -494,7 +492,7 @@ s32 Field_SearchCell(s32 tile) {
         if ((searchResult & 0x0f000000) != 0) {
           // A function.
           if (GameFlag_IsConditionActive(condition) != 0)
-            ((void (*)(s32))event->value)(gSaveBlock.leaderLocalId);
+            ((void (*)(s32))event->value)(gSaveBlock.leaderActorId);
           if (GameFlag_GetFar(FLAG_NOTHING_HAPPENS) != 0)
             FieldMessage_ShowFar(MsgTileResult + messageOffset,
                                  FIELD_MESSAGE_ZOOM);
@@ -527,7 +525,7 @@ s32 Field_SearchCell(s32 tile) {
 
               if ((event->kind & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
                 TreasureSpot_ShowOpened(tile);
-              object = TreasureSpot_GetObjectEvent(tile);
+              object = TreasureSpot_GetActor(tile);
               ItemDisplay_RaiseAboveLeader(object);
               Sound_PlaySongFar(MUS_TREASURE_FOUND);
               MessageArgument_PushFar((u16)event->value,
@@ -575,7 +573,7 @@ s32 Field_SearchCell(s32 tile) {
               void *object;
 
               object = FieldEffect_StartRandomParticleEmitter(
-                  gSaveBlock.leaderLocalId, 0);
+                  gSaveBlock.leaderActorId, 0);
               WaitFrames(30);
               if ((event->kind & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
                 TreasureSpot_ShowOpened(tile);
@@ -596,7 +594,7 @@ s32 Field_SearchCell(s32 tile) {
               s32 recipient;
 
               object = FieldEffect_StartRandomParticleEmitter(
-                  gSaveBlock.leaderLocalId, event->value & 0xfff);
+                  gSaveBlock.leaderActorId, event->value & 0xfff);
               WaitFrames(30);
               recipient = PartyInventory_AddFar((u16)event->value);
               // messageOffset is reused here as the item id's 0xffff mask.
@@ -616,7 +614,7 @@ s32 Field_SearchCell(s32 tile) {
                 Sound_PlaySongFar(MUS_TREASURE_FOUND);
                 MessageArgument_PushFar(event->value & messageOffset,
                                         MESSAGE_ARGUMENT_ITEM);
-                if (recipient == gSaveBlock.leaderLocalId) {
+                if (recipient == gSaveBlock.leaderActorId) {
                   FieldMessage_ShowFar(MsgColossoIsaacGotItem,
                                        FIELD_MESSAGE_ZOOM |
                                            FIELD_MESSAGE_WAITING_FOR_SOUND);

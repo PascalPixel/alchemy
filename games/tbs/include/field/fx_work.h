@@ -9,7 +9,7 @@
 #include "field_effect_sprite.h"
 
 struct Sprite;
-union ObjectEventOrEffect;
+union ActorOrEffect;
 
 /// The work of a Psynergy effect: its caster and target, where it takes
 /// place, the map state it restores and its 24 field effect sprites.
@@ -44,7 +44,7 @@ struct FieldEffectWork {
   /// The target's update hook and script, saved at the start and restored
   /// when Move or Carry lets it go.
   ///@{
-  void (*savedCallback)(union ObjectEventOrEffect *fieldObject);
+  void (*savedCallback)(union ActorOrEffect *fieldObject);
   const s32 *savedScript;
   ///@}
   u8 unusedAfterSavedScript[4]; ///< no code names it

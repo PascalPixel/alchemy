@@ -1,18 +1,18 @@
 /// @file
-/// An object event's screen position, the encounter transition, context
+/// An actor's screen position, the encounter transition, context
 /// effects.
 // Part of field_services.c.
 
 #include "../field_services_internal.h"
 
-/// Finds where an object event is on screen: position[0] and position[1]
+/// Finds where an actor is on screen: position[0] and position[1]
 /// receive its x and y in pixels, y at the top of its sprite. Returns 0, or -1
-/// if there is no such object event. Called by the message window code in
+/// if there is no such actor. Called by the message window code in
 /// messages.c to place a speaker's bubble, and through
-/// ObjectEvent_GetScreenPositionFar by the window frames to open a message
+/// Actor_GetScreenPositionFar by the window frames to open a message
 /// window above or below the leader.
-s32 ObjectEvent_GetScreenPosition(s32 objectId, s32 *position) {
-  struct Object *object = ObjectEvent_GetByLocalId(objectId);
+s32 Actor_GetScreenPosition(s32 objectId, s32 *position) {
+  struct Object *object = Actor_GetByActorId(objectId);
 #ifdef UBFIX
   struct MapGridScrollWork *grid;
 #else
@@ -111,7 +111,7 @@ void Exit_PrepareAnimation(s32 animation) {
   struct Sprite *context;
   struct SpriteAnim *effect;
 
-  object = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
+  object = Actor_GetByActorId(gSaveBlock.leaderActorId);
   context = object->sprite;
   effect = (struct SpriteAnim *)Sprite_AddAnimFar(context, 27);
   zero = 0;
@@ -126,8 +126,8 @@ void Exit_PrepareAnimation(s32 animation) {
   object->z = (object->z & 0xFFF00000) + 0x100000;
   object->velocityX = zero;
   object->velocityZ = zero;
-  object->targetX = OBJ_EVENT_NO_TARGET;
-  object->targetZ = OBJ_EVENT_NO_TARGET;
+  object->targetX = ACTOR_NO_TARGET;
+  object->targetZ = ACTOR_NO_TARGET;
   Object_SelectAnimationFar(object, animation);
   WaitFrames(18);
 }
@@ -158,7 +158,7 @@ void Exit_StartStairsDown(void) {
 void Entrance_EndArrivalAnimation(s32 animation) {
   s32 zero;
   s32 mask;
-  struct Object *leader = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
+  struct Object *leader = Actor_GetByActorId(gSaveBlock.leaderActorId);
   struct Sprite *spriteAnimation = leader->sprite;
   struct SpriteAnim *eff =
       (struct SpriteAnim *)Sprite_AddAnimFar(spriteAnimation, 27);
@@ -212,8 +212,8 @@ s32 Entrance_PlayArrival(void) {
         struct Object *leader;
 
         GameFlag_ClearFar(flag);
-        leaderId = gSaveBlock.leaderLocalId;
-        leader = ObjectEvent_GetByLocalId(leaderId);
+        leaderId = gSaveBlock.leaderActorId;
+        leader = Actor_GetByActorId(leaderId);
         // FLAG_ARRIVE_FALLING is set by maps the party drops out of (the
         // Suhalla storm, a floor giving way in the Tret tree): start 160 pixels
         // up and let gravity bring the leader down to the ground.
@@ -227,7 +227,7 @@ s32 Entrance_PlayArrival(void) {
         leader->y = leader->groundHeight;
         Object_SelectAnimationFar(leader, ANIM_LEADER_LEAN_BACK);
         FieldScript_WaitFrames(15);
-        FieldCamera_FollowObjectEvent(leaderId, 1);
+        FieldCamera_FollowActor(leaderId, 1);
         result = 3;
       }
     }

@@ -14,7 +14,7 @@
 struct FieldPosition;
 struct Object;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 struct Window;
 
 #endif

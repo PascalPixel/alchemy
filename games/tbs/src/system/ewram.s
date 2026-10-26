@@ -26,9 +26,9 @@ gSceneLocalState:
 	.global gInventorySnapshot
 gInventorySnapshot:
 	.space 0x0000008c
-	@ Slot ids, object event copies and their sprite state: ObjectEventSnapshot.
-	.global gObjectEventSnapshot
-gObjectEventSnapshot:
+	@ Slot ids, actor copies and their sprite state: ActorSnapshot.
+	.global gActorSnapshot
+gActorSnapshot:
 	.space 0x00000efc
 	.global gSleepActive
 gSleepActive:

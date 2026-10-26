@@ -7,7 +7,7 @@
 const struct SceneEntrance *CottageRoomsA_GetEntrances(void);
 const struct SceneExitRegion *CottageRoomsA_GetRegions(void);
 const u32 *CottageRoomsA_GetExits(void);
-const struct ObjectEventTemplate *CottageRoomsA_GetObjectEventTemplates(void);
+const struct ActorTemplate *CottageRoomsA_GetActorTemplates(void);
 const struct MapEvent *CottageRoomsA_GetEvents(void);
 s32 CottageRoomsA_Initialize(void);
 extern s32 gCottageRoomsA_FaceTargetScript[];
@@ -17,11 +17,9 @@ extern s32 gCottageRoomsA_SleepZScript[];
 extern struct SceneEntrance gCottageRoomsA_Entrances[];
 extern u32 gCottageRoomsA_Exits[];
 extern u32 gCottageRoomsA_StormExits[];
-extern struct ObjectEventTemplate gCottageRoomsA_ObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gCottageRoomsA_ObjectEventTemplatesAfterLeaving[];
-extern struct ObjectEventTemplate
-    gCottageRoomsA_ObjectEventTemplatesAfterKalay[];
+extern struct ActorTemplate gCottageRoomsA_ActorTemplates[];
+extern struct ActorTemplate gCottageRoomsA_ActorTemplatesAfterLeaving[];
+extern struct ActorTemplate gCottageRoomsA_ActorTemplatesAfterKalay[];
 extern struct MapEvent gCottageRoomsA_StormEvents[];
 extern struct MapEvent gCottageRoomsA_Events[];
 extern struct MapEvent gCottageRoomsA_EventsAfterLeaving[];

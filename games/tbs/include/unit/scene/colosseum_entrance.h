@@ -6,14 +6,13 @@
 
 struct SceneEntrance;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 struct SceneExitRegion;
 
 const struct SceneEntrance *ColosseumEntrance_GetEntrances(void);
 const struct SceneExitRegion *ColosseumEntrance_GetRegions(void);
 const u32 *ColosseumEntrance_GetExits(void);
-const struct ObjectEventTemplate *
-ColosseumEntrance_GetObjectEventTemplates(void);
+const struct ActorTemplate *ColosseumEntrance_GetActorTemplates(void);
 const struct MapEvent *ColosseumEntrance_GetEvents(void);
 s32 ColosseumEntrance_Initialize(void);
 extern s32 gColosseumEntrance_GatherIntoIsaacScript[];
@@ -29,20 +28,17 @@ extern struct SceneEntrance gColosseumEntranceEntrancesOther[];
 extern struct SceneEntrance gColosseumEntrances[];
 extern struct SceneEntrance gColosseumEntranceEntrances[];
 extern u32 gColosseumEntranceExits[];
-extern struct ObjectEventTemplate gColosseumEntranceObjectEventTemplatesOther[];
-extern struct ObjectEventTemplate gColosseumStandsObjectEventTemplates[];
-extern struct ObjectEventTemplate gColosseumTrialGroundsObjectEventTemplates[];
-extern struct ObjectEventTemplate gColosseumObjectEventTemplates[];
-extern struct ObjectEventTemplate gColosseumSoldiersObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gColosseumObjectEventTemplatesFromColosseumAzartMatchWest[];
-extern struct ObjectEventTemplate
-    gColosseumObjectEventTemplatesFromColosseumNavampaMatch[];
-extern struct ObjectEventTemplate gColosseumEntranceObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gColosseumEntranceObjectEventTemplatesFinalsDay[];
-extern struct ObjectEventTemplate
-    gColosseumEntranceObjectEventTemplatesAfterColosso[];
+extern struct ActorTemplate gColosseumEntranceActorTemplatesOther[];
+extern struct ActorTemplate gColosseumStandsActorTemplates[];
+extern struct ActorTemplate gColosseumTrialGroundsActorTemplates[];
+extern struct ActorTemplate gColosseumActorTemplates[];
+extern struct ActorTemplate gColosseumSoldiersActorTemplates[];
+extern struct ActorTemplate
+    gColosseumActorTemplatesFromColosseumAzartMatchWest[];
+extern struct ActorTemplate gColosseumActorTemplatesFromColosseumNavampaMatch[];
+extern struct ActorTemplate gColosseumEntranceActorTemplates[];
+extern struct ActorTemplate gColosseumEntranceActorTemplatesFinalsDay[];
+extern struct ActorTemplate gColosseumEntranceActorTemplatesAfterColosso[];
 extern struct MapEvent gColosseumEntranceEventsOther[];
 extern struct MapEvent gColosseumTunnelEvents[];
 extern struct MapEvent gColosseumEvents[];

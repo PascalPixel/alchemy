@@ -9,7 +9,7 @@
 /// being entered.
 ///
 /// At the Bilibin Cave Entrance, entered from the world map, Growth on a sprout
-/// (LOCALID_SPROUT) grows it into a vine and changes the metatile behavior of
+/// (ACTOR_SPROUT) grows it into a vine and changes the metatile behavior of
 /// its cell (EventScript_GrowPlant); FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN
 /// keeps it grown until the party leaves the Bilibin Cave Entrance, into the
 /// cave beyond or out to the world map, since both are other areas. Two
@@ -23,7 +23,7 @@
 /// places/bilibin-cave-entrance/events/EventScript_WalkOntoLedgeOverCaveMouth.gif).
 ///
 /// In SceneId_BilibinCaveRapier a fire burns between two torches, the west one
-/// cold and the east one lit (LOCALID_RAPIER_ROOM_FIRE), and Douse puts it out
+/// cold and the east one lit (ACTOR_RAPIER_ROOM_FIRE), and Douse puts it out
 /// for good (FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED). Reveal shows a hidden path,
 /// a strip of tiles and the cells under them, which
 /// EventScript_HideRevealedPath takes away again when Reveal wears off. A chest
@@ -32,12 +32,12 @@
 /// SceneId_BilibinCaveIce holds the cave's one puzzle of several steps, built
 /// from fires, torches and puddles that Frost freezes into ice pillars and the
 /// heat of a fire or a torch melts back (PUDDLE_ANIMATION_MELT). While
-/// LOCALID_ICE_ROOM_FIRE burns, Frost on the puddle beside it only melts back;
+/// ACTOR_ICE_ROOM_FIRE burns, Frost on the puddle beside it only melts back;
 /// Douse puts the fire out (FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED), and the
 /// puddle freezes into a pillar drawn underfoot, which the party walks over.
 /// The second puddle stands beside a torch that cannot be moved, and Frost on
 /// it always melts back. The third is an ice pillar: two of the six torches
-/// (LOCALID_THIRD_TORCH and LOCALID_FOURTH_TORCH) can be pushed or moved with
+/// (ACTOR_THIRD_TORCH and ACTOR_FOURTH_TORCH) can be pushed or moved with
 /// Move, and while either stands beside the pillar, on cell (35, 23), the
 /// pillar melts into a puddle and the cells north and south of it change with
 /// it; when both leave it freezes again
@@ -49,8 +49,8 @@
 /// and FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED that the pillar has melted, so
 /// coming back from SceneId_BilibinCaveRapier puts the torches and the pillar
 /// back; leaving Bilibin Cave resets them. Nine more pieces of ice only stand
-/// there: five pillars from LOCALID_FIRST_ICE_PILLAR and four lower pieces from
-/// LOCALID_FIRST_LOW_ICE. Coord event 20 covers the snow blown in at the cave's
+/// there: five pillars from ACTOR_FIRST_ICE_PILLAR and four lower pieces from
+/// ACTOR_FIRST_LOW_ICE. Coord event 20 covers the snow blown in at the cave's
 /// mouth to the world map, around BILIBIN_CAVE_ICE_FROM_WORLD_MAP, and makes
 /// the leader leave footprints; coord event 21, rimming it, stops them
 /// (EventScript_StartFootprints, EventScript_StopFootprints; the snow is in
@@ -83,7 +83,7 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
-#include "object_event.h"
+#include "actor.h"
 #include "flags.h"
 #include "songs.h"
 #include "map_grid_scroll.h"
@@ -110,85 +110,85 @@
 static void BilibinCave_RestoreEntrance(void);
 static void BilibinCave_RestoreRapierRoom(void);
 static void BilibinCave_RestoreIceRoom(void);
-static void BilibinCave_EmptyObjectEventSetupHook(s32 localId);
+static void BilibinCave_EmptyActorSetupHook(s32 actorId);
 
-/// Object events of the Bilibin Cave Entrance (SceneId_BilibinCaveEntrance).
+/// Actors of the Bilibin Cave Entrance (SceneId_BilibinCaveEntrance).
 enum {
   /// The sprout Growth grows into a vine.
   /// ★ Named from what the player sees: a green sprout, SPRITE_SPROUT (its
   /// render)
-  LOCALID_SPROUT = 8
+  ACTOR_SPROUT = 8
 };
 
-/// Object events of SceneId_BilibinCaveRapier, numbered by the rows of
-/// gBilibinCaveRapierObjectEventTemplates.
+/// Actors of SceneId_BilibinCaveRapier, numbered by the rows of
+/// gBilibinCaveRapierActorTemplates.
 enum {
   /// A torch west of the fire, cold (TORCH_ANIMATION_UNLIT) where its twin
   /// burns.
   /// ★ Named from what the player sees: a golden torch on its stand, its bowl
   /// grey with ash, places/bilibin-cave-rapier/map-5.png (its render)
-  LOCALID_RAPIER_ROOM_WEST_TORCH = 8,
+  ACTOR_RAPIER_ROOM_WEST_TORCH = 8,
   /// A fire between two torches, which Douse puts out.
   /// ★ Named from what the player sees: a flickering flame, SPRITE_FIRE (its
   /// render)
-  LOCALID_RAPIER_ROOM_FIRE = 9,
+  ACTOR_RAPIER_ROOM_FIRE = 9,
   /// A torch east of the fire.
   /// ★ Named from what the player sees: a golden torch burning on its stand
   /// (its render)
-  LOCALID_RAPIER_ROOM_EAST_TORCH = 10
+  ACTOR_RAPIER_ROOM_EAST_TORCH = 10
 };
 
-/// Object events of SceneId_BilibinCaveIce, numbered by the rows of
-/// gBilibinCaveIceObjectEventTemplates.
+/// Actors of SceneId_BilibinCaveIce, numbered by the rows of
+/// gBilibinCaveIceActorTemplates.
 enum {
   /// A fire beside the first puddle, which Douse puts out.
   /// ★ Named from what the player sees: a flickering flame, SPRITE_FIRE (its
   /// render)
-  LOCALID_ICE_ROOM_FIRE = 8,
-  /// Six torches, 9 to 14; the second stands beside LOCALID_SECOND_PUDDLE.
+  ACTOR_ICE_ROOM_FIRE = 8,
+  /// Six torches, 9 to 14; the second stands beside ACTOR_SECOND_PUDDLE.
   /// ★ Named from what the player sees: a golden torch burning on its stand
   /// (its render)
-  LOCALID_FIRST_TORCH = 9,
+  ACTOR_FIRST_TORCH = 9,
   /// The third torch, moved by Move or pushed.
   /// ★ Named from what the player sees: a golden torch burning on its stand
   /// (its render)
-  LOCALID_THIRD_TORCH = 11,
+  ACTOR_THIRD_TORCH = 11,
   /// The fourth torch, moved by Move or pushed.
   /// ★ Named from what the player sees: a golden torch burning on its stand
   /// (its render)
-  LOCALID_FOURTH_TORCH = 12,
-  /// A puddle beside LOCALID_ICE_ROOM_FIRE, which freezes into a pillar the
+  ACTOR_FOURTH_TORCH = 12,
+  /// A puddle beside ACTOR_ICE_ROOM_FIRE, which freezes into a pillar the
   /// party walks over once the fire is out.
   /// ★ Named from what the player sees: a puddle of water, SPRITE_PUDDLE (its
   /// render)
-  LOCALID_FIRST_PUDDLE = 15,
+  ACTOR_FIRST_PUDDLE = 15,
   /// A puddle beside a torch that stays put, so it never stays frozen.
   /// ★ Named from what the player sees: a puddle of water, SPRITE_PUDDLE (its
   /// render)
-  LOCALID_SECOND_PUDDLE = 16,
+  ACTOR_SECOND_PUDDLE = 16,
   /// A puddle frozen into an ice pillar, melted while a torch stands on cell
   /// (35, 23).
   /// ★ Named from what the player sees: a puddle of water, SPRITE_PUDDLE (its
   /// render)
-  LOCALID_THIRD_PUDDLE = 17,
+  ACTOR_THIRD_PUDDLE = 17,
   /// Five ice pillars, 18 to 22 (PUDDLE_ANIMATION_PILLAR); nothing acts on
   /// them.
   /// ★ Named from what the player sees: tall pillars of pale blue ice (its
   /// render)
-  LOCALID_FIRST_ICE_PILLAR = 18,
+  ACTOR_FIRST_ICE_PILLAR = 18,
   /// Four pieces of ice, 23 to 26, held at the second step of freezing
   /// (PUDDLE_ANIMATION_LOW_ICE); nothing acts on them.
   /// ★ Named from what the player sees: low, jagged lumps of pale blue ice
   /// (its render)
-  LOCALID_FIRST_LOW_ICE = 23
+  ACTOR_FIRST_LOW_ICE = 23
 };
 
-/// Clears the scripted object event's sprite flags and completes this script
+/// Clears the scripted actor's sprite flags and completes this script
 /// command.
 static s32
-BilibinCave_ClearScriptedObjectEventSpriteFlags(struct Object *interpreter) {
-  struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
-  ObjectEvent_SetSpriteFlags(objectEvent, 0);
+BilibinCave_ClearScriptedActorSpriteFlags(struct Object *interpreter) {
+  struct Actor *actor = (struct Actor *)interpreter;
+  Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
 
@@ -211,19 +211,19 @@ const struct SceneExitRegion *BilibinCave_GetRegions(void) { return NULL; }
 
 const u32 *BilibinCave_GetExits(void) { return gBilibinCaveExits; }
 
-const struct ObjectEventTemplate *BilibinCave_GetObjectEventTemplates(void) {
+const struct ActorTemplate *BilibinCave_GetActorTemplates(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_BilibinCaveEntrance) {
-    return gBilibinCaveEntranceObjectEventTemplates;
+    return gBilibinCaveEntranceActorTemplates;
   }
   if (sceneId == (s32)&SceneId_BilibinCaveRapier) {
-    return gBilibinCaveRapierObjectEventTemplates;
+    return gBilibinCaveRapierActorTemplates;
   }
   if (sceneId == (s32)&SceneId_BilibinCaveIce) {
-    return gBilibinCaveIceObjectEventTemplates;
+    return gBilibinCaveIceActorTemplates;
   }
-  return gBilibinCaveObjectEventTemplatesOther;
+  return gBilibinCaveActorTemplatesOther;
 }
 
 const struct MapEvent *BilibinCave_GetEvents(void) {
@@ -295,7 +295,7 @@ static void EventScript_HideRevealedPath(void) {
 /// out: it goes out for good.
 static void EventScript_DouseRapierRoomFire(void) {
   FieldScript_Start();
-  Import_ObjectEventSetPosition(LOCALID_RAPIER_ROOM_FIRE, 0, 0);
+  Import_ActorSetPosition(ACTOR_RAPIER_ROOM_FIRE, 0, 0);
   GameFlag_Set(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED);
   FieldScript_End();
 }
@@ -305,16 +305,14 @@ static void EventScript_DouseRapierRoomFire(void) {
 /// walk over.
 static void EventScript_DouseIceRoomFire(void) {
   FieldScript_Start();
-  ObjectEvent_SetPosition(LOCALID_ICE_ROOM_FIRE, 0, 0);
+  Actor_SetPosition(ACTOR_ICE_ROOM_FIRE, 0, 0);
   GameFlag_Set(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED);
   FieldScript_WaitFrames(40);
   // Match the replacement's drawing priority to its metatile behavior.
-  ObjectMotion_SetAnimationAndWait(LOCALID_FIRST_PUDDLE,
-                                   PUDDLE_ANIMATION_FREEZE);
-  ObjectEvent_Get(LOCALID_FIRST_PUDDLE)->motionFlags = 0;
-  ObjectEvent_Get(LOCALID_FIRST_PUDDLE)->priorityFlags |=
-      OBJ_EVENT_PRIORITY_UNDERFOOT;
-  ObjectMotion_SetActionVariant(LOCALID_FIRST_PUDDLE, 2);
+  ObjectMotion_SetAnimationAndWait(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_FREEZE);
+  Actor_Get(ACTOR_FIRST_PUDDLE)->motionFlags = 0;
+  Actor_Get(ACTOR_FIRST_PUDDLE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  ObjectMotion_SetActionVariant(ACTOR_FIRST_PUDDLE, 2);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 18, 14);
   FieldScript_End();
 }
@@ -322,31 +320,31 @@ static void EventScript_DouseIceRoomFire(void) {
 /// Frost on a puddle in Bilibin Cave (SceneId_BilibinCaveIce) that heat keeps
 /// from freezing: clears the Psynergy's child effect and plays the ice melting
 /// back into a puddle.
-static inline void BilibinCave_MeltFrostBack(s32 localId) {
+static inline void BilibinCave_MeltFrostBack(s32 actorId) {
   FieldScript_Start();
-  ObjectEvent_ConfigureSpriteColor(localId, SPRITE_COLOR_NORMAL);
+  Actor_ConfigureSpriteColor(actorId, SPRITE_COLOR_NORMAL);
   FieldScript_WaitFrames(40);
   Sound_PlaySong(SE_HIDDEN_PASSAGE_OPEN);
-  ObjectMotion_SetAnimationAndWait(localId, PUDDLE_ANIMATION_MELT);
+  ObjectMotion_SetAnimationAndWait(actorId, PUDDLE_ANIMATION_MELT);
   FieldScript_End();
 }
 
 /// Frost on the first puddle in Bilibin Cave (SceneId_BilibinCaveIce), while
 /// the fire beside it burns.
 static void EventScript_FreezeFirstPuddle(void) {
-  BilibinCave_MeltFrostBack(LOCALID_FIRST_PUDDLE);
+  BilibinCave_MeltFrostBack(ACTOR_FIRST_PUDDLE);
 }
 
 /// Frost on the second puddle in Bilibin Cave (SceneId_BilibinCaveIce), beside
 /// a torch that stays put.
 static void EventScript_FreezeSecondPuddle(void) {
-  BilibinCave_MeltFrostBack(LOCALID_SECOND_PUDDLE);
+  BilibinCave_MeltFrostBack(ACTOR_SECOND_PUDDLE);
 }
 
 /// Frost on the third puddle in Bilibin Cave (SceneId_BilibinCaveIce), while a
 /// torch beside it keeps it melted (FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED).
 static void EventScript_FreezeThirdPuddle(void) {
-  BilibinCave_MeltFrostBack(LOCALID_THIRD_PUDDLE);
+  BilibinCave_MeltFrostBack(ACTOR_THIRD_PUDDLE);
 }
 
 /// A movable torch melts the ice pillar beside it. This runs after a push or
@@ -356,22 +354,21 @@ static void EventScript_FreezeThirdPuddle(void) {
 /// with a sound, and FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED says so; when both
 /// leave, it freezes again.
 static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
-  struct ObjectEvent *firstObjectEvent;
-  struct ObjectEvent *secondObjectEvent;
+  struct Actor *firstActor;
+  struct Actor *secondActor;
   s32 destinationCellX;
 
-  // Track each movable object event independently before changing the Frost
+  // Track each movable actor independently before changing the Frost
   // target.
-  firstObjectEvent = ObjectEvent_GetById(LOCALID_THIRD_TORCH);
-  secondObjectEvent = ObjectEvent_Get(LOCALID_FOURTH_TORCH);
-  if ((firstObjectEvent->x.fixed >> 20) == 35 &&
-      (firstObjectEvent->z.fixed >> 20) == 23) {
+  firstActor = Actor_GetById(ACTOR_THIRD_TORCH);
+  secondActor = Actor_Get(ACTOR_FOURTH_TORCH);
+  if ((firstActor->x.fixed >> 20) == 35 && (firstActor->z.fixed >> 20) == 23) {
     GameFlag_Set(FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR);
   } else {
     GameFlag_Clear(FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR);
   }
-  if ((secondObjectEvent->x.fixed >> 20) == 35 &&
-      (secondObjectEvent->z.fixed >> 20) == 23) {
+  if ((secondActor->x.fixed >> 20) == 35 &&
+      (secondActor->z.fixed >> 20) == 23) {
     GameFlag_Set(FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR);
   } else {
     GameFlag_Clear(FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR);
@@ -383,7 +380,7 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
       FieldScript_WaitFrames(40);
       Script_PlaySong(SE_HIDDEN_PASSAGE_OPEN);
       destinationCellX = 36;
-      ObjectMotion_SetAnimationAndWait(LOCALID_THIRD_PUDDLE,
+      ObjectMotion_SetAnimationAndWait(ACTOR_THIRD_PUDDLE,
                                        PUDDLE_ANIMATION_MELT);
       MapGrid_CopyCellAttributes(0, 1, 1, 1, destinationCellX, 22);
       MapGrid_CopyCellAttributes(0, 2, 1, 1, destinationCellX, 24);
@@ -396,7 +393,7 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
       FieldScript_WaitFrames(40);
       Script_PlaySong(SE_SHIMMER);
       destinationCellX = 36;
-      ObjectMotion_SetAnimationAndWait(LOCALID_THIRD_PUDDLE,
+      ObjectMotion_SetAnimationAndWait(ACTOR_THIRD_PUDDLE,
                                        PUDDLE_ANIMATION_FREEZE);
       MapGrid_CopyCellAttributes(1, 1, 1, 1, destinationCellX, 22);
       MapGrid_CopyCellAttributes(1, 2, 1, 1, destinationCellX, 24);
@@ -449,7 +446,7 @@ static void BilibinCave_RestoreEntrance(void) {
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN) != 0) {
 
     MapGrid_CopyCellAttributes(31, 0, 1, 1, 8, 13);
-    Import_ObjectEventSetAnimation(LOCALID_SPROUT, 0);
+    Import_ActorSetAnimation(ACTOR_SPROUT, 0);
   }
 }
 
@@ -460,124 +457,106 @@ static void BilibinCave_RestoreRapierRoom(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 
-  Import_ObjectEventSetAnimation(LOCALID_RAPIER_ROOM_WEST_TORCH,
-                                 TORCH_ANIMATION_UNLIT);
-  Import_ObjectEventSetAnimation(LOCALID_RAPIER_ROOM_EAST_TORCH,
-                                 TORCH_ANIMATION_LIT);
+  Import_ActorSetAnimation(ACTOR_RAPIER_ROOM_WEST_TORCH, TORCH_ANIMATION_UNLIT);
+  Import_ActorSetAnimation(ACTOR_RAPIER_ROOM_EAST_TORCH, TORCH_ANIMATION_LIT);
 
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED) != 0) {
-    Import_ObjectEventSetPosition(LOCALID_RAPIER_ROOM_FIRE, 0, 0);
+    Import_ActorSetPosition(ACTOR_RAPIER_ROOM_FIRE, 0, 0);
   } else {
-    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_RAPIER_ROOM_FIRE),
-                               0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_RAPIER_ROOM_FIRE), 0);
   }
 }
 
-/// Clears the drawing flags of an object event used by the cave's animations.
-static inline void BilibinCave_ClearObjectEventSpriteFlags(s32 localId) {
-  struct ObjectEvent *objectEvent = ObjectEvent_Get(localId);
-  ObjectEvent_SetSpriteFlags(objectEvent, 0);
+/// Clears the drawing flags of an actor used by the cave's animations.
+static inline void BilibinCave_ClearActorSpriteFlags(s32 actorId) {
+  struct Actor *actor = Actor_Get(actorId);
+  Actor_SetSpriteFlags(actor, 0);
 }
 
 /// Sets up Bilibin Cave's SceneId_BilibinCaveIce: its torches, puddles and
 /// pillars, and the steps of its puzzle already solved.
 static void BilibinCave_RestoreIceRoom(void) {
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 destinationCellX;
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  // Set up the decorative animations before restoring interactive object
-  // events.
-  BilibinCave_ClearObjectEventSpriteFlags(LOCALID_FIRST_ICE_PILLAR);
-  BilibinCave_ClearObjectEventSpriteFlags(LOCALID_FIRST_ICE_PILLAR + 1);
-  BilibinCave_ClearObjectEventSpriteFlags(LOCALID_FIRST_ICE_PILLAR + 2);
-  BilibinCave_ClearObjectEventSpriteFlags(LOCALID_FIRST_ICE_PILLAR + 3);
-  BilibinCave_ClearObjectEventSpriteFlags(LOCALID_FIRST_ICE_PILLAR + 4);
-  BilibinCave_ClearObjectEventSpriteFlags(LOCALID_FIRST_LOW_ICE);
-  BilibinCave_ClearObjectEventSpriteFlags(LOCALID_FIRST_LOW_ICE + 1);
-  BilibinCave_ClearObjectEventSpriteFlags(LOCALID_FIRST_LOW_ICE + 2);
-  BilibinCave_ClearObjectEventSpriteFlags(LOCALID_FIRST_LOW_ICE + 3);
-  Import_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR,
-                                 PUDDLE_ANIMATION_PILLAR);
-  Import_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR + 1,
-                                 PUDDLE_ANIMATION_PILLAR);
-  Import_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR + 2,
-                                 PUDDLE_ANIMATION_PILLAR);
-  Import_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR + 3,
-                                 PUDDLE_ANIMATION_PILLAR);
-  Import_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR + 4,
-                                 PUDDLE_ANIMATION_PILLAR);
-  Import_ObjectEventSetAnimation(LOCALID_FIRST_LOW_ICE,
-                                 PUDDLE_ANIMATION_LOW_ICE);
-  Import_ObjectEventSetAnimation(LOCALID_FIRST_LOW_ICE + 1,
-                                 PUDDLE_ANIMATION_LOW_ICE);
-  Import_ObjectEventSetAnimation(LOCALID_FIRST_LOW_ICE + 2,
-                                 PUDDLE_ANIMATION_LOW_ICE);
-  Import_ObjectEventSetAnimation(LOCALID_FIRST_LOW_ICE + 3,
-                                 PUDDLE_ANIMATION_LOW_ICE);
-  Import_ObjectEventSetAnimation(LOCALID_FIRST_TORCH, TORCH_ANIMATION_LIT);
-  Import_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 1, TORCH_ANIMATION_LIT);
-  Import_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 2, TORCH_ANIMATION_LIT);
-  Import_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 3, TORCH_ANIMATION_LIT);
-  Import_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 4, TORCH_ANIMATION_LIT);
-  Import_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 5, TORCH_ANIMATION_LIT);
-  BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_ICE_PILLAR);
-  BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_ICE_PILLAR + 1);
-  BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_ICE_PILLAR + 2);
-  BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_ICE_PILLAR + 3);
-  BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_ICE_PILLAR + 4);
-  BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_LOW_ICE);
-  BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_LOW_ICE + 1);
-  BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_LOW_ICE + 2);
-  BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_LOW_ICE + 3);
-  BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_TORCH);
-  BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_TORCH + 1);
-  BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_TORCH + 2);
-  BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_TORCH + 3);
-  BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_TORCH + 4);
-  BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_TORCH + 5);
+  // Set up the decorative animations before restoring interactive
+  // actors.
+  BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_ICE_PILLAR);
+  BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_ICE_PILLAR + 1);
+  BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_ICE_PILLAR + 2);
+  BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_ICE_PILLAR + 3);
+  BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_ICE_PILLAR + 4);
+  BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_LOW_ICE);
+  BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_LOW_ICE + 1);
+  BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_LOW_ICE + 2);
+  BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_LOW_ICE + 3);
+  Import_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR, PUDDLE_ANIMATION_PILLAR);
+  Import_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR + 1, PUDDLE_ANIMATION_PILLAR);
+  Import_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR + 2, PUDDLE_ANIMATION_PILLAR);
+  Import_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR + 3, PUDDLE_ANIMATION_PILLAR);
+  Import_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR + 4, PUDDLE_ANIMATION_PILLAR);
+  Import_ActorSetAnimation(ACTOR_FIRST_LOW_ICE, PUDDLE_ANIMATION_LOW_ICE);
+  Import_ActorSetAnimation(ACTOR_FIRST_LOW_ICE + 1, PUDDLE_ANIMATION_LOW_ICE);
+  Import_ActorSetAnimation(ACTOR_FIRST_LOW_ICE + 2, PUDDLE_ANIMATION_LOW_ICE);
+  Import_ActorSetAnimation(ACTOR_FIRST_LOW_ICE + 3, PUDDLE_ANIMATION_LOW_ICE);
+  Import_ActorSetAnimation(ACTOR_FIRST_TORCH, TORCH_ANIMATION_LIT);
+  Import_ActorSetAnimation(ACTOR_FIRST_TORCH + 1, TORCH_ANIMATION_LIT);
+  Import_ActorSetAnimation(ACTOR_FIRST_TORCH + 2, TORCH_ANIMATION_LIT);
+  Import_ActorSetAnimation(ACTOR_FIRST_TORCH + 3, TORCH_ANIMATION_LIT);
+  Import_ActorSetAnimation(ACTOR_FIRST_TORCH + 4, TORCH_ANIMATION_LIT);
+  Import_ActorSetAnimation(ACTOR_FIRST_TORCH + 5, TORCH_ANIMATION_LIT);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_ICE_PILLAR);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_ICE_PILLAR + 1);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_ICE_PILLAR + 2);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_ICE_PILLAR + 3);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_ICE_PILLAR + 4);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_LOW_ICE);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_LOW_ICE + 1);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_LOW_ICE + 2);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_LOW_ICE + 3);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH + 1);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH + 2);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH + 3);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH + 4);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH + 5);
   // Restore the surface exposed by Douse, including its metatile behavior and
   // priority.
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED) != 0) {
-    ObjectEvent_SetPosition(LOCALID_ICE_ROOM_FIRE, 0, 0);
-    Import_ObjectEventSetAnimation(LOCALID_FIRST_PUDDLE,
-                                   PUDDLE_ANIMATION_PILLAR);
-    ObjectEvent_Get(LOCALID_FIRST_PUDDLE)->motionFlags = 0;
-    ObjectEvent_Get(LOCALID_FIRST_PUDDLE)->y.fixed = -PIXELS(4);
-    ObjectEvent_Get(LOCALID_FIRST_PUDDLE)->priorityFlags |=
-        OBJ_EVENT_PRIORITY_UNDERFOOT;
-    ObjectMotion_SetActionVariant(LOCALID_FIRST_PUDDLE, 2);
+    Actor_SetPosition(ACTOR_ICE_ROOM_FIRE, 0, 0);
+    Import_ActorSetAnimation(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_PILLAR);
+    Actor_Get(ACTOR_FIRST_PUDDLE)->motionFlags = 0;
+    Actor_Get(ACTOR_FIRST_PUDDLE)->y.fixed = -PIXELS(4);
+    Actor_Get(ACTOR_FIRST_PUDDLE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    ObjectMotion_SetActionVariant(ACTOR_FIRST_PUDDLE, 2);
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 18, 14);
   } else {
-    Import_ObjectEventSetAnimation(LOCALID_ICE_ROOM_FIRE, 2);
-    objectEvent = ObjectEvent_Get(LOCALID_ICE_ROOM_FIRE);
-    ObjectEvent_SetSpriteFlags(objectEvent, 0);
-    Import_ObjectEventSetAnimation(LOCALID_FIRST_PUDDLE,
-                                   PUDDLE_ANIMATION_PUDDLE);
+    Import_ActorSetAnimation(ACTOR_ICE_ROOM_FIRE, 2);
+    actor = Actor_Get(ACTOR_ICE_ROOM_FIRE);
+    Actor_SetSpriteFlags(actor, 0);
+    Import_ActorSetAnimation(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
   }
-  // Rebuild the Frost target and return moved object events to their saved
+  // Rebuild the Frost target and return moved actors to their saved
   // cells.
-  Import_ObjectEventSetAnimation(LOCALID_SECOND_PUDDLE,
-                                 PUDDLE_ANIMATION_PUDDLE);
+  Import_ActorSetAnimation(ACTOR_SECOND_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) != 0) {
     destinationCellX = 36;
-    Import_ObjectEventSetAnimation(LOCALID_THIRD_PUDDLE,
-                                   PUDDLE_ANIMATION_PUDDLE);
+    Import_ActorSetAnimation(ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
     MapGrid_CopyCellAttributes(0, 1, 1, 1, destinationCellX, 22);
     MapGrid_CopyCellAttributes(0, 2, 1, 1, destinationCellX, 24);
   } else {
     destinationCellX = 36;
-    Import_ObjectEventSetAnimation(LOCALID_THIRD_PUDDLE,
-                                   PUDDLE_ANIMATION_PILLAR);
+    Import_ActorSetAnimation(ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_PILLAR);
     MapGrid_CopyCellAttributes(1, 1, 1, 1, destinationCellX, 22);
     MapGrid_CopyCellAttributes(1, 2, 1, 1, destinationCellX, 24);
   }
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR) != 0) {
-    ObjectEvent_SetPosition(LOCALID_THIRD_TORCH, PIXELS(570), PIXELS(376));
+    Actor_SetPosition(ACTOR_THIRD_TORCH, PIXELS(570), PIXELS(376));
   }
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR) != 0) {
-    ObjectEvent_SetPosition(LOCALID_FOURTH_TORCH, PIXELS(570), PIXELS(376));
+    Actor_SetPosition(ACTOR_FOURTH_TORCH, PIXELS(570), PIXELS(376));
   }
 }
 
@@ -588,22 +567,22 @@ static void BilibinCave_RestoreIceRoom(void) {
 /// (SceneId_BilibinCaveIce): it moves only when its next cell and movement
 /// probe are clear.
 static void EventScript_PushTorch(void) {
-  struct ObjectEvent *leader;
-  struct ObjectEvent *target;
-  struct ObjectEvent *blocker;
+  struct Actor *leader;
+  struct Actor *target;
+  struct Actor *blocker;
   s32 heading;
   s32 nextCellX;
   s32 nextCellZ;
   struct FieldPosition destination;
 
-  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
   heading = leader->facing >> 12;
 
   nextCellX =
       (leader->x.part.pixel + (gBilibinCave_PushSteps[heading] >> 16)) >> 4;
   nextCellZ =
       (leader->z.part.pixel + (s16)gBilibinCave_PushSteps[heading]) >> 4;
-  target = ObjectEvent_FindAtCell(nextCellX, nextCellZ);
+  target = Actor_FindAtCell(nextCellX, nextCellZ);
   if (target == 0)
     return;
 
@@ -611,11 +590,11 @@ static void EventScript_PushTorch(void) {
       (target->x.part.pixel + (gBilibinCave_PushSteps[heading] >> 16)) >> 4;
   nextCellZ =
       (target->z.part.pixel + (s16)gBilibinCave_PushSteps[heading]) >> 4;
-  blocker = ObjectEvent_FindAtCell(nextCellX, nextCellZ);
+  blocker = Actor_FindAtCell(nextCellX, nextCellZ);
   if (blocker != 0)
     return;
 
-  // Check the destination before moving both object events into their push
+  // Check the destination before moving both actors into their push
   // states.
   target->layer = 2;
 
@@ -648,17 +627,17 @@ static void EventScript_PushTorch(void) {
   target->velocityX = (s32)blocker;
   target->velocityZ = (s32)blocker;
 
-  // Resume the leader and refresh the mechanism affected by the moved object
-  // event.
+  // Resume the leader and refresh the mechanism affected by the moved
+  // actor.
   Object_SelectAnimation(leader, ANIM_STAND);
   BilibinCave_UpdateThirdPuddleFromTorches();
 }
 
-/// The original setup invokes this empty hook for every animated object event.
-static void BilibinCave_EmptyObjectEventSetupHook(s32 localId) {}
+/// The original setup invokes this empty hook for every animated actor.
+static void BilibinCave_EmptyActorSetupHook(s32 actorId) {}
 
 s32 gBilibinCave_ClearSpriteScript[] = {
-    SC_CALL(BilibinCave_ClearScriptedObjectEventSpriteFlags),
+    SC_CALL(BilibinCave_ClearScriptedActorSpriteFlags),
     SC_END,
 };
 
@@ -753,18 +732,18 @@ u32 gBilibinCaveExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ObjectEventTemplate gBilibinCaveObjectEventTemplatesOther[] = {
+struct ActorTemplate gBilibinCaveActorTemplatesOther[] = {
     {MAP_TABLE_END},
 };
 
 // clang-format off
-struct ObjectEventTemplate gBilibinCaveEntranceObjectEventTemplates[] = {
+struct ActorTemplate gBilibinCaveEntranceActorTemplates[] = {
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(136), 0, PIXELS(208), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gBilibinCaveRapierObjectEventTemplates[] = {
+struct ActorTemplate gBilibinCaveRapierActorTemplates[] = {
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(840), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -774,21 +753,21 @@ struct ObjectEventTemplate gBilibinCaveRapierObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gBilibinCaveIceObjectEventTemplates[] = {
+struct ActorTemplate gBilibinCaveIceActorTemplates[] = {
     { SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(280), 0, PIXELS(232), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(152), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(520), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(520), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(504), 0, PIXELS(360), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(504), 0, PIXELS(360), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(536), 0, PIXELS(360), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(536), 0, PIXELS(360), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(504), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(504), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(584), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(584), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, (s32)gBilibinCave_ClearSpriteScript,
         PIXELS(296), 0, PIXELS(230), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, (s32)gBilibinCave_ClearSpriteScript,
@@ -798,21 +777,21 @@ struct ObjectEventTemplate gBilibinCaveIceObjectEventTemplates[] = {
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(344), 0, PIXELS(224), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(392), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(392), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(424), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(424), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(456), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(456), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(328), 0, PIXELS(288), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(328), 0, PIXELS(288), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(200), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(248), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(248), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(136), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(136), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(184), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(184), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { MAP_TABLE_END },
 };
 
@@ -826,7 +805,7 @@ struct MapEvent gBilibinCaveEntranceEvents[] = {
     { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_NORTH },
     { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WalkOntoLedgeOverCaveMouth) },
     { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WalkOffLedgeOverCaveMouth) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_SPROUT, FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN, EVENT_SCRIPT(EventScript_GrowPlant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN, EVENT_SCRIPT(EventScript_GrowPlant) },
     { MAP_EVENTS_END },
 };
 
@@ -840,7 +819,7 @@ struct MapEvent gBilibinCaveRapierEvents[] = {
     { BG_EVENT(BG_EVENT_CHEST), 100, 0xf5d, FIND_ITEM(ITEM_ELVEN_RAPIER) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealHiddenPath) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HideRevealedPath) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_RAPIER_ROOM_FIRE, FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED, EVENT_SCRIPT(EventScript_DouseRapierRoomFire) },
+    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_RAPIER_ROOM_FIRE, FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED, EVENT_SCRIPT(EventScript_DouseRapierRoomFire) },
     { MAP_EVENTS_END },
 };
 
@@ -852,12 +831,12 @@ struct MapEvent gBilibinCaveIceEvents[] = {
     { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_CHESTS_TO_BILIBIN_CAVE_ICE },
     { MAP_EVENT_COORD, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StartFootprints) },
     { MAP_EVENT_COORD, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StopFootprints) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_ICE_ROOM_FIRE, FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED, EVENT_SCRIPT(EventScript_DouseIceRoomFire) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_FIRST_PUDDLE, FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED, EVENT_SCRIPT(EventScript_FreezeFirstPuddle) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_SECOND_PUDDLE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FreezeSecondPuddle) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_THIRD_PUDDLE, IF_FLAG_SET(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED), EVENT_SCRIPT(EventScript_FreezeThirdPuddle) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_THIRD_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateThirdPuddleFromTorches) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FOURTH_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateThirdPuddleFromTorches) },
+    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_ICE_ROOM_FIRE, FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED, EVENT_SCRIPT(EventScript_DouseIceRoomFire) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE, FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED, EVENT_SCRIPT(EventScript_FreezeFirstPuddle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FreezeSecondPuddle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_THIRD_PUDDLE, IF_FLAG_SET(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED), EVENT_SCRIPT(EventScript_FreezeThirdPuddle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateThirdPuddleFromTorches) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FOURTH_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateThirdPuddleFromTorches) },
     { COORD_EVENT_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushTorch) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushTorch) },
     { BG_EVENT(BG_EVENT_CHEST), 100, 0xf5e, FIND_ITEM(ITEM_VIAL) },

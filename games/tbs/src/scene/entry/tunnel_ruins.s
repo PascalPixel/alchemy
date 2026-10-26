@@ -2,6 +2,6 @@
 	overlay_veneer TunnelRuins_Initialize
 	overlay_veneer TunnelRuins_GetEntrances
 	overlay_veneer TunnelRuins_GetExits
-	overlay_veneer TunnelRuins_GetObjectEventTemplates
+	overlay_veneer TunnelRuins_GetActorTemplates
 	overlay_veneer TunnelRuins_GetEvents
 	overlay_veneer TunnelRuins_GetRegions

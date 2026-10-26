@@ -24,7 +24,7 @@ struct MindReadWork {
   u8 counter;   ///< particle spawn cycle (0 to 60)
 };
 
-/// Starts the wave effect of caster x on target y (local ids): fades the
+/// Starts the wave effect of caster x on target y (actor ids): fades the
 /// palettes toward a hue that shifts with the frame counter, and starts its
 /// per-frame update (FieldEffect_UpdateMindReadWave) after 8 frames.
 ///
@@ -59,9 +59,9 @@ void FieldEffect_FinishWaveAndReleaseHeapBlock(void) {
   work = *(void **)((u32)&gMindReadWork);
   FieldEffect_RestoreMindReadPalette();
   Task_Remove(FieldEffect_UpdateMindReadWave);
-  Anim_ApplyChildPalette((struct Object *)ObjectEvent_GetById(
-                             ((struct MindReadWork *)work)->sourceId),
-                         1);
+  Anim_ApplyChildPalette(
+      (struct Object *)Actor_GetById(((struct MindReadWork *)work)->sourceId),
+      1);
   FieldEffect_FadeFromEffectColor();
   FreeHeapSlot(HEAP_SLOT_MIND_READ);
 }
@@ -75,9 +75,9 @@ void FieldEffect_UpdateMindReadWave(void) {
   struct MindReadWork *work = gMindReadWork;
   u16 *line;
   u32 scanline;
-  struct ObjectEvent *caster;
-  struct ObjectEvent *target;
-  struct ObjectEvent *particle;
+  struct Actor *caster;
+  struct Actor *target;
+  struct Actor *particle;
   struct WaveEffectSprite *sprite;
   struct Vector3 from;
   struct Vector3 to;
@@ -103,27 +103,26 @@ void FieldEffect_UpdateMindReadWave(void) {
     PaletteFade_StartInterpolation(1);
     FieldEffect_AdvanceHueCycle();
   }
-  Anim_ApplyChildPalette((struct Object *)ObjectEvent_GetById(work->sourceId),
-                         0);
+  Anim_ApplyChildPalette((struct Object *)Actor_GetById(work->sourceId), 0);
 
   // At steps 0, 8 and 16 of the cycle, a particle from the target to the
   // caster.
   if (work->counter == 0 || work->counter == 8 || work->counter == 16) {
-    caster = ObjectEvent_GetById(work->sourceId);
-    target = ObjectEvent_GetById(work->targetId);
+    caster = Actor_GetById(work->sourceId);
+    target = Actor_GetById(work->targetId);
     if (caster != 0 && target != 0) {
       // From 2 pixels below each one's sprite height (its metadata's boxX).
       from.x = caster->x.fixed;
       meta = Resource_GetMetadataRecordFar(
-          (s16)Scene_FindObjectEventTemplate(work->sourceId)->sprite);
+          (s16)Scene_FindActorTemplate(work->sourceId)->sprite);
       from.y = caster->y.fixed + ((s8)meta->boxX << 16) - (2 << 16);
       from.z = caster->z.fixed;
       to.x = target->x.fixed;
       meta = Resource_GetMetadataRecordFar(
-          (s16)Scene_FindObjectEventTemplate(work->targetId)->sprite);
+          (s16)Scene_FindActorTemplate(work->targetId)->sprite);
       to.y = target->y.fixed + ((s8)meta->boxX << 16) - (2 << 16);
       to.z = target->z.fixed;
-      particle = (struct ObjectEvent *)Object_CreateFar(281, to.x, to.y, to.z);
+      particle = (struct Actor *)Object_CreateFar(281, to.x, to.y, to.z);
       if (particle != 0) {
         sprite = (struct WaveEffectSprite *)particle->sprite;
         particle->motionFlags = 0;
@@ -240,8 +239,7 @@ s32 FixedPoint_Remainder(s32 value, s32 divisor) {
 /// Per-frame update: once the object has arrived (no destination left on any
 /// axis), frees it: gFieldEffect_UntargetedObjectScript is a lone SC_FREE.
 /// Mind Read's particles end this way at the caster.
-void FieldEffect_SetCallbackWhenTargetUnset(
-    union ObjectEventOrEffect *fieldObject) {
+void FieldEffect_SetCallbackWhenTargetUnset(union ActorOrEffect *fieldObject) {
   struct Object *object = (struct Object *)fieldObject;
   s32 targetY;
   s32 targetX;

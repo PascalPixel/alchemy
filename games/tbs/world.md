@@ -51,7 +51,7 @@ using Psynergy), whom or where it answers, when it holds, and what it runs.
 This is the row for the young man above:
 
 ```c
-{ MAP_EVENT_TALK, LOCALID_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgVaultWelcomeToVaultTheTownAt) },
+{ MAP_EVENT_TALK, ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgVaultWelcomeToVaultTheTownAt) },
 ```
 
 The game runs the first row that fits, so a scene lists its rows from the
@@ -221,12 +221,12 @@ covers every moment a scene can answer and each Psynergy's effect.
 ## Limits
 
 - 64 objects, and 64 sprites sharing 64 sprite anims, up to four each.
-- 66 object event places in the field work, the party's 8 and then 58 for
-  the scene's object event templates, though only 64 objects exist to fill them.
+- 66 actor places in the field work, the party's 8 and then 58 for
+  the scene's actor templates, though only 64 objects exist to fill them.
 - One overlay loaded at a time, in the 32 KB of `gOverlayArea`.
 - 256 scene flags and 256 area flags, each range reused by every scene or
   area.
 - 104 encounter zones of eight formations each.
 - 47 script commands, of which the last 11 act as `SC_END`; a jump finds only
   a label within the first 1,024 words of its script.
-- A battle snapshot keeps up to 32 object events.
+- A battle snapshot keeps up to 32 actors.

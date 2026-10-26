@@ -47,7 +47,7 @@ s32 Inn_RoomPrice(s32 innId) {
 /// innkeeper, whose portrait the lines show.
 s32 Inn_CheckIn(s32 innId, s32 objectId) {
   struct InnWork *state;
-  struct ObjectEvent *innkeeper;
+  struct Actor *innkeeper;
   struct Window *innkeeperWindow;
   s32 roomPrice;
   s32 messageBase;
@@ -60,7 +60,7 @@ s32 Inn_CheckIn(s32 innId, s32 objectId) {
   if (innId == INN_XIAN)
     state->specialActive = 1;
 
-  innkeeper = ObjectEvent_GetByIdFar(objectId);
+  innkeeper = Actor_GetByIdFar(objectId);
   state->resourceId =
       ((struct Sprite *)innkeeper->sprite)->entries[0]->animationId;
   innkeeperWindow = Portrait_OpenWindowFar(state->resourceId, 0, 0, 0);
@@ -88,7 +88,7 @@ s32 Inn_CheckIn(s32 innId, s32 objectId) {
     Window_CloseFar(innkeeperWindow, 2);
     Inn_PlaySleep(roomPrice);
 
-    innkeeper = ObjectEvent_GetByIdFar(objectId);
+    innkeeper = Actor_GetByIdFar(objectId);
     state->resourceId =
         ((struct Sprite *)innkeeper->sprite)->entries[0]->animationId;
     innkeeperWindow = Portrait_OpenWindowFar(state->resourceId, 0, 0, 0);

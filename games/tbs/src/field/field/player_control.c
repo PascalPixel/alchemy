@@ -337,7 +337,7 @@ s32 Object_UpdateLeaderControl(struct Object *interpreter) {
       collision |= 1;
 
     push_objects:
-      // Push the movable objects (OBJ_EVENT_PUSHABLE) just ahead 4 pixels
+      // Push the movable objects (ACTOR_PUSHABLE) just ahead 4 pixels
       // further, when they have room; any other solid object there blocks the
       // step (bit 1 of collision). Pushing slows the player down.
       contact.x = object->x;
@@ -351,7 +351,7 @@ s32 Object_UpdateLeaderControl(struct Object *interpreter) {
         radius = object->radius - 2;
         if (pushedObject->script == 0)
           continue;
-        if ((pushedObject->collisionFlags & OBJ_EVENT_SOLID) == 0)
+        if ((pushedObject->collisionFlags & ACTOR_SOLID) == 0)
           continue;
         if (pushedObject == object)
           continue;
@@ -361,7 +361,7 @@ s32 Object_UpdateLeaderControl(struct Object *interpreter) {
         // A movable object that is not paused slides a quarter pixel away from
         // the player, if no solid object is there and the ground 10 pixels on,
         // straight and 22.5 degrees either side, is clear.
-        if ((pushedObject->collisionFlags & OBJ_EVENT_PUSHABLE) != 0 &&
+        if ((pushedObject->collisionFlags & ACTOR_PUSHABLE) != 0 &&
             pushedObject->paused == 0) {
           direction =
               ArcTan2(pushedObject->z - object->z, pushedObject->x - object->x);
@@ -430,7 +430,7 @@ s32 Object_UpdateLeaderControl(struct Object *interpreter) {
     s32 action;
 
     action = 9;
-    if (Unit_GetFar(gSaveBlock.leaderLocalId)->hp == 0)
+    if (Unit_GetFar(gSaveBlock.leaderActorId)->hp == 0)
       action = 22;
     Object_SelectAnimation(object, action);
   } else {
@@ -494,7 +494,7 @@ s32 Object_UpdateLeaderControl(struct Object *interpreter) {
       effect->groundHeight = object->groundHeight;
       animation = effect->sprite;
       Object_Initialize((struct Object *)effect, gWorldMap_FootprintActions);
-      effect->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
+      effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       effect->motionFlags = collision;
       if (animation != 0) {
         Sprite_StartAnim(animation, 1);

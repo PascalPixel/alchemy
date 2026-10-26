@@ -7,10 +7,10 @@ Object_CameraFollowScript:
 	.global gField_LeaderScript
 gField_LeaderScript:
 	.4byte 16
-@ The party leader's object event template table (struct ObjectEventTemplate): {sprite,
+@ The party leader's actor template table (struct ActorTemplate): {sprite,
 @ condition, behavior, x, y, z, facing, talk facing, flags}
-	.global gField_DefaultObjectEventTemplates
-gField_DefaultObjectEventTemplates:
+	.global gField_DefaultActorTemplates
+gField_DefaultActorTemplates:
 	.2byte 0, -1
 	.4byte gField_LeaderScript, 300 << 16, 0, 300 << 16
 	.2byte 0x5bb0
@@ -338,10 +338,10 @@ gFieldEffect_UntargetedObjectScript:
 gFieldEffect_DurationScripts:
 	.4byte gFieldEffect_ShortEffectScript, gFieldEffect_MediumEffectScript, gFieldEffect_LongEffectScript
 @ The world picture's markers (RegionMap_Show): a row for each world map
-@ object event from slot 11 (WORLD_MAP_FIRST_AREA_OBJ_EVENT), whose marker
-@ is drawn where that object event stands, so a place's spot on the picture is
-@ its object event's on the world map. The flag is the place's
-@ FLAG_AREA_VISITED. A row of zeros is an object event with no marker, and
+@ actor from slot 11 (WORLD_MAP_FIRST_AREA_ACTOR), whose marker
+@ is drawn where that actor stands, so a place's spot on the picture is
+@ its actor's on the world map. The flag is the place's
+@ FLAG_AREA_VISITED. A row of zeros is an actor with no marker, and
 @ -1 ends the table.
 @ {tile << 16 | flag, area name}
 	.global gRegionMap_AreaMarkers

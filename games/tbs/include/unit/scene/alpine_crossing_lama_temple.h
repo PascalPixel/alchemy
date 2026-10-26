@@ -6,16 +6,16 @@
 
 struct SceneEntrance;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 struct SceneExitRegion;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
+const struct ActorTemplate *Scene_GetActorTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
-extern s32 gAlpineCrossing_WorkerObjectEventTemplateScript[];
+extern s32 gAlpineCrossing_WorkerActorTemplateScript[];
 extern s32 gAlpineCrossing_FeizhiPath[];
 extern s32 gAlpineCrossing_LeaderPath[];
 extern s32 gAlpineCrossing_HsuStruggle[];
@@ -24,8 +24,8 @@ extern u16 gLamaTemple_DoorCloseCells[];
 extern struct SceneEntrance gLamaTemple_Entrances[];
 extern struct SceneEntrance gAlpineCrossing_Entrances[];
 extern u32 gAlpineCrossingLamaTemple_Exits[];
-extern struct ObjectEventTemplate gLamaTemple_ObjectEventTemplates[];
-extern struct ObjectEventTemplate gAlpineCrossing_ObjectEventTemplates[];
+extern struct ActorTemplate gLamaTemple_ActorTemplates[];
+extern struct ActorTemplate gAlpineCrossing_ActorTemplates[];
 extern struct MapEvent gLamaTemple_Events[];
 extern struct MapEvent gAlpineCrossing_Events[];
 

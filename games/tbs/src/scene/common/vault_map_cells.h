@@ -35,8 +35,8 @@ static inline void Vault_DrawDoorwayFrame(s32 sourceColumn) {
 /// Sanctum.
 /// The leader passes behind the doorframe through the exit.
 static void Vault_OpenDoorwayAndEnter(void) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  struct Sprite *sprite = objectEvent->sprite;
+  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Sprite *sprite = actor->sprite;
 
   Sound_PlaySong(SE_THUMP);
   Vault_DrawDoorwayFrame(VAULT_DOOR_OPENING_FRAME_COLUMN);
@@ -44,7 +44,7 @@ static void Vault_OpenDoorwayAndEnter(void) {
   Vault_DrawDoorwayFrame(VAULT_DOOR_OPEN_FRAME_COLUMN);
   FieldScript_WaitFrames(4);
   MapGrid_CopyCellAttributes(33, 21, 2, 2, 3, 16);
-  objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;
   Vault_WalkThroughExit(64, 272, 11);
 }

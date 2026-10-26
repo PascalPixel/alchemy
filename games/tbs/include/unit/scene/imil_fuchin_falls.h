@@ -7,14 +7,14 @@
 
 struct SceneEntrance;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 struct SceneExitRegion;
 
 extern s32 gImilFuchinFalls_TrackLeader;
 const struct SceneEntrance *ImilFuchinFalls_GetEntrances(void);
 const struct SceneExitRegion *ImilFuchinFalls_GetRegions(void);
 const u32 *ImilFuchinFalls_GetExits(void);
-const struct ObjectEventTemplate *ImilFuchinFalls_GetObjectEventTemplates(void);
+const struct ActorTemplate *ImilFuchinFalls_GetActorTemplates(void);
 const struct MapEvent *ImilFuchinFalls_GetEvents(void);
 s32 ImilFuchinFalls_Initialize(void);
 void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
@@ -22,7 +22,7 @@ void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
                                const struct EffectOptions *extra);
 extern s16 gImilFuchinFalls_KeyHeadings[];
 extern s16 gImilFuchinFalls_SlideHeadings[];
-extern struct ObjectEvent *gImilFuchinFalls_DragonsEye;
+extern struct Actor *gImilFuchinFalls_DragonsEye;
 extern struct SceneEntrance gImilFuchinFalls_NoEntrances[];
 extern struct SceneEntrance gImilFuchinFalls_ImilFallsCaveEntrances[];
 extern struct SceneEntrance gImilFuchinFalls_EntranceEntrances[];
@@ -32,19 +32,13 @@ extern struct SceneEntrance gImilFuchinFalls_ArcticBladeRoomEntrances[];
 extern struct SceneEntrance gImilFuchinFalls_KiRoomEntrances[];
 extern struct SceneEntrance gImilFuchinFalls_DragonRoomEntrances[];
 extern u32 gImilFuchinFalls_Exits[];
-extern struct ObjectEventTemplate gImilFuchinFalls_NoObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gImilFuchinFalls_ImilFallsCaveObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gImilFuchinFalls_EntranceObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gImilFuchinFalls_ZephyrRoomObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gImilFuchinFalls_DragonsEyeRoomObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gImilFuchinFalls_ArcticBladeRoomObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gImilFuchinFalls_DragonRoomObjectEventTemplates[];
+extern struct ActorTemplate gImilFuchinFalls_NoActorTemplates[];
+extern struct ActorTemplate gImilFuchinFalls_ImilFallsCaveActorTemplates[];
+extern struct ActorTemplate gImilFuchinFalls_EntranceActorTemplates[];
+extern struct ActorTemplate gImilFuchinFalls_ZephyrRoomActorTemplates[];
+extern struct ActorTemplate gImilFuchinFalls_DragonsEyeRoomActorTemplates[];
+extern struct ActorTemplate gImilFuchinFalls_ArcticBladeRoomActorTemplates[];
+extern struct ActorTemplate gImilFuchinFalls_DragonRoomActorTemplates[];
 extern struct MapEvent gImilFuchinFalls_NoEvents[];
 extern struct MapEvent gImilFuchinFalls_ImilFallsCaveEvents[];
 extern struct MapEvent gImilFuchinFalls_EntranceEvents[];

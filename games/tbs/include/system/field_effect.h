@@ -11,7 +11,7 @@
 /// A field effect: a small object on the field that moves at its velocity and
 /// grows and spins at its rates, run by its script and update hook.
 struct FieldEffect {
-  /// ObjectEvent's script pointer, cursor and facing; not named by this view.
+  /// Actor's script pointer, cursor and facing; not named by this view.
   ///@{
   const s32 *script;
   u16 scriptCursor;
@@ -20,42 +20,42 @@ struct FieldEffect {
   s32 x;            ///< 16.16 fixed-point pixels
   s32 y;            ///< 16.16 fixed-point pixels
   s32 z;            ///< 16.16 fixed-point pixels
-  s32 groundHeight; ///< ObjectEvent's; not named by this view
+  s32 groundHeight; ///< Actor's; not named by this view
   s32 scaleX;       ///< 16.16 fixed point, 0x10000 full size
   s32 scaleY;       ///< 16.16 fixed point, 0x10000 full size
-  u16 radius;       ///< ObjectEvent's; not named by this view
-  u8 layer;         ///< ObjectEvent's; not named by this view
-  /// ObjectEventPriorityFlag bits: the spawner clears
-  /// OBJ_EVENT_PRIORITY_AUTOMATIC when EFFECT_USE_PRIORITY sets the sprite's
+  u16 radius;       ///< Actor's; not named by this view
+  u8 layer;         ///< Actor's; not named by this view
+  /// ActorPriorityFlag bits: the spawner clears
+  /// ACTOR_PRIORITY_AUTOMATIC when EFFECT_USE_PRIORITY sets the sprite's
   /// priority.
   u8 priorityFlags;
-  /// ObjectEvent's velocityX to velocityZ; effects move by velocity instead.
+  /// Actor's velocityX to velocityZ; effects move by velocity instead.
   struct Vector3 objectVelocity;
   /// Added to scaleX each frame by the update hooks, in 16.16 fixed point a
   /// frame; zeroed by the spawner.
   s32 scaleRateX;
   s32 scaleRateY; ///< as scaleRateX, for scaleY
-  /// ObjectEvent's targetX to targetZ; not named by this view.
+  /// Actor's targetX to targetZ; not named by this view.
   ///@{
   s32 targetX;
   s32 targetY;
   s32 targetZ;
   ///@}
   /// Added to x, y and z each frame by the update hooks, in 16.16 fixed-point
-  /// pixels per frame; ObjectEvent's bounce, gravity and riseBaseY.
+  /// pixels per frame; Actor's bounce, gravity and riseBaseY.
   struct Vector3 velocity;
   struct Sprite *sprite; ///< the sprite spin turns
-  u8 spriteStorageKind;  ///< ObjectEvent's; not named by this view
-  u8 motionFlags;        ///< ObjectEventMotionFlag bits; zeroed by the spawner
-  /// ObjectEvent's arrival axis, last flag test and snap flag; not named by
+  u8 spriteStorageKind;  ///< Actor's; not named by this view
+  u8 motionFlags;        ///< ActorMotionFlag bits; zeroed by the spawner
+  /// Actor's arrival axis, last flag test and snap flag; not named by
   /// this view.
   ///@{
   u8 arrivalAxis;
   u8 conditionResult;
   u8 snapToTarget;
   ///@}
-  u8 collisionFlags; ///< ObjectEvent's collisionFlags; not named by this view
-  /// ObjectEvent's steeringFlags to riseEnabled; not named by this view.
+  u8 collisionFlags; ///< Actor's collisionFlags; not named by this view
+  /// Actor's steeringFlags to riseEnabled; not named by this view.
   ///@{
   u8 steeringFlags;
   u8 paused;
@@ -70,13 +70,13 @@ struct FieldEffect {
   /// Added to the sprite's rotation each frame by the update hooks, in
   /// 1/65536 turns per frame; Imil's rising effects keep a drift here instead.
   u16 spin;
-  u16 work; ///< ObjectEvent's; not named by this view
+  u16 work; ///< Actor's; not named by this view
   /// Frames until a map's update hook releases the effect: 20 for Altin
   /// Peak's spray, 60 for Imil's rising effects.
   s32 countdown;
   /// Called each frame while the effect is live: the spawner sets
   /// FieldEffect_UpdateMotionScaleAndSpin, or options.update.
-  void (*update)(union ObjectEventOrEffect *fieldObject);
+  void (*update)(union ActorOrEffect *fieldObject);
 };
 
 STATIC_ASSERT(offsetof(struct FieldEffect, scaleRateX) == 0x30);
@@ -86,9 +86,9 @@ STATIC_ASSERT(offsetof(struct FieldEffect, spin) == 0x64);
 STATIC_ASSERT(offsetof(struct FieldEffect, countdown) == 0x68);
 STATIC_ASSERT(offsetof(struct FieldEffect, update) == 0x6c);
 
-/// An object on the field, read as an object event or as an effect.
-union ObjectEventOrEffect {
-  struct ObjectEvent objectEvent;
+/// An object on the field, read as an actor or as an effect.
+union ActorOrEffect {
+  struct Actor actor;
   struct FieldEffect effect;
 };
 
@@ -142,7 +142,7 @@ struct EffectDurationScripts {
 /// (or EFFECT_SCALE_TO_TARGET) is set.
 struct EffectOptions {
   s32 priority;      ///< the sprite's priority
-  s32 palette;       ///< passed to ObjectEvent_SetSpriteColor
+  s32 palette;       ///< passed to Actor_SetSpriteColor
   s32 startScaleX;   ///< 16.16 fixed point, 0x10000 full size
   s32 startScaleY;   ///< 16.16 fixed point, 0x10000 full size
   s32 targetScaleX;  ///< 16.16 fixed point, 0x10000 full size
@@ -152,7 +152,7 @@ struct EffectOptions {
   u16 rotation;      ///< 1/65536 turns
   u16 spin;          ///< 1/65536 turns per frame
   void (*update)(
-      union ObjectEventOrEffect *fieldObject); ///< replaces the update hook
+      union ActorOrEffect *fieldObject); ///< replaces the update hook
 };
 
 STATIC_ASSERT(offsetof(struct EffectOptions, type) == 0x18);

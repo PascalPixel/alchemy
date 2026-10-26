@@ -6,13 +6,12 @@
 
 struct SceneEntrance;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 
 const struct SceneEntrance *MercuryLighthouse_GetEntrances(void);
 const struct SceneExitRegion *MercuryLighthouse_GetRegions(void);
 const u32 *MercuryLighthouse_GetExits(void);
-const struct ObjectEventTemplate *
-MercuryLighthouse_GetObjectEventTemplates(void);
+const struct ActorTemplate *MercuryLighthouse_GetActorTemplates(void);
 const struct MapEvent *MercuryLighthouse_GetEvents(void);
 s32 MercuryLighthouse_Initialize(void);
 extern s32 gFieldEffect_ShortScript[];
@@ -46,13 +45,11 @@ extern struct SceneEntrance gMercuryLighthouseMiddleEntrances[];
 extern struct SceneEntrance gMercuryLighthouseUpperEntrances[];
 extern struct SceneEntrance gMercuryLighthouseExteriorEntrances[];
 extern u32 gMercuryLighthouse_Exits[];
-extern struct ObjectEventTemplate gMercuryLighthouseObjectEventTemplatesOther[];
-extern struct ObjectEventTemplate gMercuryLighthouseLowerObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gMercuryLighthouseMiddleObjectEventTemplates[];
-extern struct ObjectEventTemplate gMercuryLighthouseUpperObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gMercuryLighthouseExteriorObjectEventTemplates[];
+extern struct ActorTemplate gMercuryLighthouseActorTemplatesOther[];
+extern struct ActorTemplate gMercuryLighthouseLowerActorTemplates[];
+extern struct ActorTemplate gMercuryLighthouseMiddleActorTemplates[];
+extern struct ActorTemplate gMercuryLighthouseUpperActorTemplates[];
+extern struct ActorTemplate gMercuryLighthouseExteriorActorTemplates[];
 extern struct MapEvent gMercuryLighthouseLowerEvents[];
 extern struct MapEvent gMercuryLighthouseMiddleEvents[];
 extern struct MapEvent gMercuryLighthouseUpperEvents[];

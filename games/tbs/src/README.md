@@ -22,7 +22,7 @@ the `overworld` folder, runs
 one scene on that engine, from its set-up to the [exit](../glossary.md#exit) the party leaves
 by, with random encounters, field [Psynergy](../glossary.md#psynergy-and-pp) and the commands scene scripts
 use; `SequenceManager_Run`, the loop that runs one scene after another, is there too.
-[Scenes](scene/README.md) holds the scenes, one [overlay](../glossary.md#overlay) each: [object event](../glossary.md#object-event)
+[Scenes](scene/README.md) holds the scenes, one [overlay](../glossary.md#overlay) each: [actor](../glossary.md#actor)
 templates, [map events](../glossary.md#map-event), [scripts](../glossary.md#script) and events. [Maps](map/README.md)
 holds the [maps](../glossary.md#map) as data.
 
@@ -85,7 +85,7 @@ three overlays beside its bank.
 Every file the build compiles or assembles is one object, and an object too
 long to read as one file is written as parts that only its `.c` compiles.
 Object here means the linker's object file; it has nothing to do with the
-field's objects or the object events in a scene.
+field's objects or the actors in a scene.
 
 [The original](../glossary.md#the-original) program was built from pieces, objects, laid one after another in
 a fixed order, and within an object the code lies in the order it was

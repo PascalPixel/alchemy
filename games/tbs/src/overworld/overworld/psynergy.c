@@ -11,13 +11,13 @@
 /// between the map's Psynergy events for what the leader faces:
 /// PSYNERGY_PHASE_BEFORE_CAST before and PSYNERGY_PHASE_AFTER_CAST after. A
 /// PSYNERGY_PHASE_EFFECT_ACTS event is not run here; it only makes
-/// the effect aim at the object event ahead, and the effects that act on it
+/// the effect aim at the actor ahead, and the effects that act on it
 /// (Force, Frost, Reveal) find it themselves. An after event whose trigger has
 /// MAP_EVENT_TRIGGER_OWN_EFFECT plays the effect itself. Called by
 /// SceneManager_Run for the Psynergy request (work->psynergy); sets
-/// work->psynergyActing while the effect plays. On the world map, placed object
-/// events far from the view are destroyed for the effect, and all placed object
-/// events are placed again afterwards. Returns 0 whatever happens;
+/// work->psynergyActing while the effect plays. On the world map, placed
+/// actors far from the view are destroyed for the effect, and all placed
+/// actors are placed again afterwards. Returns 0 whatever happens;
 /// SceneManager_Run ignores it.
 s32 Field_UsePsynergy(u32 code) {
   s32 abilityId = ABILITY_ID(code);
@@ -35,7 +35,7 @@ s32 Field_UsePsynergy(u32 code) {
   abilityGroup = Ability_Get(abilityId)->fieldPsynergy;
   userId = ACT_UNIT(code);
   // The leader is looked up and the result is not used.
-  ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
+  Actor_GetByActorId(gSaveBlock.leaderActorId);
   retreat = 0;
   Leader_StopMoving();
   GameFlag_ClearFar(FLAG_ITEM_USE);
@@ -108,7 +108,7 @@ s32 Field_UsePsynergy(u32 code) {
   GameFlag_SetFar(FLAG_PSYNERGY_TARGET);
   if (before || after || during) {
     target =
-        Field_FindNearbyPsynergyTarget(gSaveBlock.leaderLocalId, abilityGroup);
+        Field_FindNearbyPsynergyTarget(gSaveBlock.leaderActorId, abilityGroup);
     // The after event plays the effect itself.
     if (after && (after->trigger & MAP_EVENT_TRIGGER_OWN_EFFECT)) {
       GameFlag_ClearFar(FLAG_PSYNERGY_EFFECT);
@@ -119,10 +119,10 @@ s32 Field_UsePsynergy(u32 code) {
 
   // Play the effect.
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
-    ObjectEvent_ClearOutOfBounds();
+    Actor_ClearOutOfBounds();
   FieldEffect_LoadActionEffectResources(abilityId, 0);
   work->psynergyActing = 1;
-  FieldEffect_SetupObjectPair(gSaveBlock.leaderLocalId, target);
+  FieldEffect_SetupObjectPair(gSaveBlock.leaderActorId, target);
   FieldEffect_StartCast();
 
   Field_RunEventAction(before, userId, target);
@@ -141,7 +141,7 @@ s32 Field_UsePsynergy(u32 code) {
   work->psynergyActing = 0;
   FieldEffect_End();
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
-    ObjectEvent_Respawn();
+    Actor_Respawn();
   return 0;
 }
 

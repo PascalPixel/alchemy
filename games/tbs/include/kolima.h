@@ -15,7 +15,7 @@ extern s32 gFallingEffectOffset;
 extern s32 gFallingEffectWidth; ///< the band's width in 1/256 pixels
 extern u32 gFallingEffectState; ///< the dust's phase, 0 to 3
 
-/// Nonzero asks Kolima_ApplyPendingPose to give its object event mode 2, once.
+/// Nonzero asks Kolima_ApplyPendingPose to give its actor mode 2, once.
 extern s32 gKolima_PendingPose;
 /// Whether Mia was in the party as the curse struck, which decides her part
 /// in the event; read from FLAG_IN_PARTY(MIA) as it begins.

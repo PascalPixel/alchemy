@@ -7,12 +7,12 @@
 
 struct SceneEntrance;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 
 const struct SceneEntrance *VenusLighthouse_GetEntrances(void);
 const struct SceneExitRegion *VenusLighthouse_GetRegions(void);
 const u32 *VenusLighthouse_GetExits(void);
-const struct ObjectEventTemplate *VenusLighthouse_GetObjectEventTemplates(void);
+const struct ActorTemplate *VenusLighthouse_GetActorTemplates(void);
 const struct MapEvent *VenusLighthouse_GetEvents(void);
 s32 VenusLighthouse_Initialize(void);
 extern s32 gFieldEffect_ShortScript[];
@@ -73,18 +73,13 @@ extern struct SceneEntrance gVenusLighthouseSecondFloorEntrances[];
 extern struct SceneEntrance gVenusLighthouseThirdFloorEntrances[];
 extern struct SceneEntrance gVenusLighthouseFourthFloorEntrances[];
 extern u32 gVenusLighthouseExits[];
-extern struct ObjectEventTemplate gVenusLighthouseObjectEventTemplatesOther[];
-extern struct ObjectEventTemplate gVenusLighthouseEntryObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gVenusLighthouseGroundFloorObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gVenusLighthouseFirstFloorObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gVenusLighthouseSecondFloorObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gVenusLighthouseThirdFloorObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gVenusLighthouseFourthFloorObjectEventTemplates[];
+extern struct ActorTemplate gVenusLighthouseActorTemplatesOther[];
+extern struct ActorTemplate gVenusLighthouseEntryActorTemplates[];
+extern struct ActorTemplate gVenusLighthouseGroundFloorActorTemplates[];
+extern struct ActorTemplate gVenusLighthouseFirstFloorActorTemplates[];
+extern struct ActorTemplate gVenusLighthouseSecondFloorActorTemplates[];
+extern struct ActorTemplate gVenusLighthouseThirdFloorActorTemplates[];
+extern struct ActorTemplate gVenusLighthouseFourthFloorActorTemplates[];
 extern struct MapEvent gVenusLighthouseEntryEvents[];
 extern struct MapEvent gVenusLighthouseGroundFloorEvents[];
 extern struct MapEvent gVenusLighthouseFirstFloorEvents[];

@@ -4,17 +4,17 @@
 /// on the ground... What is it?"
 #include "action_script.h"
 #include "types.h"
-#include "object_event.h"
+#include "actor.h"
 #include "script_layer.h"
 
 /// An object script call, each frame of the fall: the speck flickers between
 /// palettes 10 and 7, every second frame.
 static s32 Kolima_FlickerCurseDust(struct Object *interpreter) {
-  struct ObjectEvent *speck = (struct ObjectEvent *)interpreter;
+  struct Actor *speck = (struct Actor *)interpreter;
   if ((gFrameCount >> 1) & 1) {
-    ObjectEvent_SetSpriteColor(speck, SPRITE_COLOR_RED_TINT);
+    Actor_SetSpriteColor(speck, SPRITE_COLOR_RED_TINT);
   } else {
-    ObjectEvent_SetSpriteColor(speck, SPRITE_COLOR_WHITE);
+    Actor_SetSpriteColor(speck, SPRITE_COLOR_WHITE);
   }
   return 0;
 }

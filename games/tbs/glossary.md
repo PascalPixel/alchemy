@@ -290,16 +290,16 @@ One of the 64 slots of `gObjects` (`struct Object`): anything in a scene that
 acts on its own, from the party and the townspeople to the camera and the
 footprints in snow ([World](world.md#objects-and-their-scripts)).
 
-### Object event
+### Actor
 
-A person or thing a scene knows by its local id: the party, and everyone its
-object event templates place. The camera and the footprints are objects but
-not object events ([Scenes](src/scene/README.md#who-stands-where)).
+A person or thing a scene knows by its actor id: the party, and everyone its
+actor templates place. The camera and the footprints are objects but
+not actors ([Scenes](src/scene/README.md#who-stands-where)).
 
-### Local id
+### Actor id
 
-An object event's number in its scene: 0 to 7 the party, the leader at 0, and
-from 8 (`LOCALID_FIRST_PLACED`) the object event templates' rows in order; each
+An actor's number in its scene: 0 to 7 the party, the leader at 0, and
+from 8 (`ACTOR_FIRST_PLACED`) the actor templates' rows in order; each
 scene names its own in an enum.
 
 ### Map event
@@ -311,7 +311,7 @@ marked cell or uses Psynergy, the first row that fits runs
 
 ### Trigger
 
-What a map event row answers: an object event's local id for talking, a
+What a map event row answers: an actor's actor id for talking, a
 metatile behavior for a cell, or a value the scene's code raises. Object,
 coord and bg events are the triggers.
 

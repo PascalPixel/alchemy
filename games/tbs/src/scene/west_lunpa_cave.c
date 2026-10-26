@@ -101,11 +101,11 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) { return gCaveExits; }
 
 /// Only the cave map places puddles, Hammet, Bunza and the party members.
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+const struct ActorTemplate *Scene_GetActorTemplates(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_WestLunpaCave) {
-    return gCaveObjectEventTemplates;
+    return gCaveActorTemplates;
   }
-  return gCaveNoObjectEventTemplates;
+  return gCaveNoActorTemplates;
 }
 
 /// Routes switches, Frost targets and the reunion coord event to their
@@ -115,22 +115,22 @@ const struct MapEvent *Scene_GetEvents(void) { return gCaveEvents; }
 /// Unused: Frost can never target the puddle placed at (0, 0, 0), outside the
 /// cave's camera bounds. It would freeze, and no flag would remember it.
 static void EventScript_UnusedFreezePuddle(void) {
-  struct ObjectEvent *puddle;
+  struct Actor *puddle;
 
-  puddle = ObjectEvent_GetById(LOCALID_UNUSED_PUDDLE);
+  puddle = Actor_GetById(ACTOR_UNUSED_PUDDLE);
   if (puddle != NULL) {
-    ObjectEvent_SetSpriteFlags(puddle, 0);
+    Actor_SetSpriteFlags(puddle, 0);
   }
 }
 
 /// In West Lunpa Cave, Frost on the south puddle: it rises as an ice pillar the
 /// party can climb.
 static void EventScript_FreezeSouthPuddle(void) {
-  struct ObjectEvent *puddle;
+  struct Actor *puddle;
 
-  puddle = ObjectEvent_Get(LOCALID_SOUTH_PUDDLE);
+  puddle = Actor_Get(ACTOR_SOUTH_PUDDLE);
   if (puddle != NULL) {
-    puddle->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
+    puddle->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     puddle->motionFlags = 0;
   }
   MapGrid_CopyCellAttributes(7, 32, 1, 1, 8, 32);
@@ -140,13 +140,13 @@ static void EventScript_FreezeSouthPuddle(void) {
 /// Animates the raised gate resting on the frozen pillar, then opens the way
 /// through its metatile behaviors.
 static void WestLunpaCave_GateDrawPropped(void) {
-  struct ObjectEvent *pillar;
+  struct Actor *pillar;
 
-  pillar = ObjectEvent_Get(LOCALID_GATE_PUDDLE);
-  Import_ObjectEventSetAnimation(LOCALID_GATE_PUDDLE, PUDDLE_ANIMATION_FROZEN);
+  pillar = Actor_Get(ACTOR_GATE_PUDDLE);
+  Import_ActorSetAnimation(ACTOR_GATE_PUDDLE, PUDDLE_ANIMATION_FROZEN);
   if (pillar != NULL) {
-    ObjectEvent_SetSpriteFlags(pillar, 0);
-    pillar->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
+    Actor_SetSpriteFlags(pillar, 0);
+    pillar->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
   MapGrid_CopyCells(41, 87, 2, 5, 21, 59);
   WaitFrames(4);
@@ -166,13 +166,13 @@ static void WestLunpaCave_GateDrawPropped(void) {
 /// gate open, and if the gate was down the player sees it rise and hears the
 /// puzzle solved.
 static void EventScript_FreezeGatePuddle(void) {
-  struct ObjectEvent *pillar;
+  struct Actor *pillar;
 
-  pillar = ObjectEvent_Get(LOCALID_GATE_PUDDLE);
+  pillar = Actor_Get(ACTOR_GATE_PUDDLE);
   GameFlag_Set(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN);
   if (pillar != NULL) {
-    ObjectEvent_SetSpriteFlags(pillar, 0);
-    pillar->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
+    Actor_SetSpriteFlags(pillar, 0);
+    pillar->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
   if (Script_GetFlag(FLAG_WEST_LUNPA_CAVE_GATE_RAISED) == 0) {
     Script_PlaySong(SE_GATE_MOVE);
@@ -209,7 +209,7 @@ static void WestLunpaCave_GateLower(void) {
   MapGrid_CopyCells(3, 94, 1, 1, 21, 55);
   MapGrid_CopyCells(43, 86, 2, 6, 21, 59);
   WaitFrames(4);
-  ObjectMotion_SetActionVariant(LOCALID_GATE_PUDDLE, GATE_PILLAR_PRIORITY);
+  ObjectMotion_SetActionVariant(ACTOR_GATE_PUDDLE, GATE_PILLAR_PRIORITY);
   MapGrid_CopyCellAttributes(19, 17, 1, 1, 22, 15);
 }
 
@@ -268,7 +268,7 @@ static void EventScript_FlipRaisingSwitch(void) {
 /// Bunza knows Hammet's voice, and the reunion and the wagon talk follow. Sets
 /// FLAG_LUNPA_CAVE_REUNION_SEEN, so it plays once.
 static void EventScript_HammetFindsBunza(void) {
-  struct ObjectEvent *leader;
+  struct Actor *leader;
   s32 sighting;
   s32 recognition;
 
@@ -276,110 +276,107 @@ static void EventScript_HammetFindsBunza(void) {
     // Bring Hammet and the party into view as Bunza leaves his hiding place.
     GameFlag_Set(FLAG_LUNPA_CAVE_REUNION_SEEN);
     FieldScript_Start();
-    ObjectEvent_SetPosition(LOCALID_BUNZA, PIXELS(144), PIXELS(400));
-    ObjectEvent_SetSpeed(LOCALID_BUNZA, PIXELS(3) / 2, PIXELS(3) / 4);
-    ObjectEvent_WalkTo(LOCALID_BUNZA, 184, 400);
-    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_BUNZA);
-    Import_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_STAND);
-    ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH - FACING_STEP, 0);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 1);
+    Actor_SetPosition(ACTOR_BUNZA, PIXELS(144), PIXELS(400));
+    Actor_SetSpeed(ACTOR_BUNZA, PIXELS(3) / 2, PIXELS(3) / 4);
+    Actor_WalkTo(ACTOR_BUNZA, 184, 400);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_BUNZA);
+    Import_ActorSetAnimation(ACTOR_BUNZA, ANIM_STAND);
+    Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_PARTY_LEADER, 1);
     FieldScript_WaitFrames(30);
     FieldCamera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
     FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(432), 1);
-    leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      ObjectEvent_SetPosition(LOCALID_HAMMET, leader->x.fixed, leader->z.fixed);
+      Actor_SetPosition(ACTOR_HAMMET, leader->x.fixed, leader->z.fixed);
     }
-    ObjectEvent_SetSpeed(LOCALID_HAMMET, PIXELS(13) / 10, PIXELS(13) / 20);
-    ObjectEvent_WalkTo(LOCALID_HAMMET, 168, 464);
-    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_HAMMET);
-    ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_NORTH, 0);
-    leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+    Actor_SetSpeed(ACTOR_HAMMET, PIXELS(13) / 10, PIXELS(13) / 20);
+    Actor_WalkTo(ACTOR_HAMMET, 168, 464);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_HAMMET);
+    Actor_FaceDirection(ACTOR_HAMMET, FACING_NORTH, 0);
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      ObjectEvent_SetPosition(LOCALID_IVAN, leader->x.fixed, leader->z.fixed);
+      Actor_SetPosition(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
     }
-    ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(13) / 10, PIXELS(13) / 20);
-    ObjectEvent_WalkTo(LOCALID_IVAN, 152, 488);
-    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IVAN);
-    ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
-    leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+    Actor_SetSpeed(ACTOR_IVAN, PIXELS(13) / 10, PIXELS(13) / 20);
+    Actor_WalkTo(ACTOR_IVAN, 152, 488);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      ObjectEvent_SetPosition(LOCALID_MIA, leader->x.fixed, leader->z.fixed);
+      Actor_SetPosition(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
     }
-    ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(13) / 10, PIXELS(13) / 20);
-    ObjectEvent_WalkTo(LOCALID_MIA, 168, 488);
-    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
-    ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
-    leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+    Actor_SetSpeed(ACTOR_MIA, PIXELS(13) / 10, PIXELS(13) / 20);
+    Actor_WalkTo(ACTOR_MIA, 168, 488);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      ObjectEvent_SetPosition(LOCALID_GARET, leader->x.fixed, leader->z.fixed);
+      Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
     }
-    ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(13) / 10, PIXELS(13) / 20);
-    ObjectEvent_WalkTo(LOCALID_GARET, 184, 488);
-    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
-    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
+    Actor_SetSpeed(ACTOR_GARET, PIXELS(13) / 10, PIXELS(13) / 20);
+    Actor_WalkTo(ACTOR_GARET, 184, 488);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GARET);
+    Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
     FieldScript_WaitFrames(30);
 
     // The party spots someone ahead, before Bunza recognizes Hammet's voice.
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 1);
     sighting = MsgLunpaThinkSawSomeone;
     FieldScript_SetMessageId(sighting + SIGHTING_GARET_SAW_SOMEONE);
-    Script_ShowMessage(LOCALID_GARET, 0);
+    Script_ShowMessage(ACTOR_GARET, 0);
     FieldScript_WaitFrames(30);
-    ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
     FieldScript_WaitFrames(10);
     FieldScript_SetMessageId(sighting + SIGHTING_MIA_SAW_SOMETHING);
-    Script_ShowMessage(LOCALID_MIA, 0);
-    ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
-    ObjectEvent_FaceObjectEvent(LOCALID_IVAN, LOCALID_PARTY_LEADER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_IVAN, 0);
+    Script_ShowMessage(ACTOR_MIA, 0);
+    Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
+    Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
     FieldScript_SetMessageId(sighting + SIGHTING_IVAN_ASKS_IF_FOUND);
-    Script_OpenMessage(LOCALID_IVAN, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_MIA, LOCALID_PARTY_LEADER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
+    Script_OpenMessage(ACTOR_IVAN, 0);
+    Actor_FaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
+    Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
     FieldScript_WaitFrames(30);
-    if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
-        0) {
+    if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       FieldScript_SetMessageId(sighting + SIGHTING_GARET_WILL_FIGHT);
-      Script_ShowMessage(LOCALID_GARET, 0);
+      Script_ShowMessage(ACTOR_GARET, 0);
     } else {
       FieldScript_SetMessageId(sighting + SIGHTING_GARET_ASKS_WHAT_ELSE);
-      Script_ShowMessage(LOCALID_GARET, 0);
+      Script_ShowMessage(ACTOR_GARET, 0);
     }
 
-    ObjectEvent_ShowEmote(LOCALID_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                          70);
+    Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 70);
     recognition = MsgLunpaMoment;
     FieldScript_SetMessageId(recognition + RECOGNITION_HAMMET_CALLS_OUT);
-    Script_ShowMessage(LOCALID_HAMMET, 0);
-    ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-    ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
-    ObjectMotion_SetVariantCallback(LOCALID_IVAN, 2);
-    ObjectMotion_SetVariantCallback(LOCALID_MIA, 2);
-    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
-    ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
-    ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
-    Import_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_WALK);
-    ObjectEvent_WalkBy(LOCALID_HAMMET, 0, -16);
-    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_HAMMET);
-    Import_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_STAND);
+    Script_ShowMessage(ACTOR_HAMMET, 0);
+    ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
+    ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);
+    ObjectMotion_SetVariantCallback(ACTOR_IVAN, 2);
+    ObjectMotion_SetVariantCallback(ACTOR_MIA, 2);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
+    Import_ActorSetAnimation(ACTOR_HAMMET, ANIM_WALK);
+    Actor_WalkBy(ACTOR_HAMMET, 0, -16);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_HAMMET);
+    Import_ActorSetAnimation(ACTOR_HAMMET, ANIM_STAND);
     FieldScript_SetMessageId(recognition + RECOGNITION_HAMMET_NAMES_BUNZA);
-    Script_ShowMessage(LOCALID_HAMMET, 0);
-    ObjectEvent_ShowEmote(LOCALID_BUNZA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                          65);
+    Script_ShowMessage(ACTOR_HAMMET, 0);
+    Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 65);
     FieldScript_SetMessageId(recognition + RECOGNITION_BUNZA_KNOWS_VOICE);
-    Script_ShowMessage(LOCALID_BUNZA, 0);
-    ObjectMotion_SetAnimationAndWait(LOCALID_HAMMET, ANIM_NOD);
+    Script_ShowMessage(ACTOR_BUNZA, 0);
+    ObjectMotion_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
     FieldScript_WaitFrames(80);
-    ObjectEvent_SetSpeed(LOCALID_BUNZA, PIXELS(2) / 5, PIXELS(1) / 5);
-    ObjectEvent_WalkBy(LOCALID_BUNZA, -13, 0);
-    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_BUNZA);
-    ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH, 0);
-    ObjectEvent_ShowEmote(LOCALID_BUNZA, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
+    Actor_SetSpeed(ACTOR_BUNZA, PIXELS(2) / 5, PIXELS(1) / 5);
+    Actor_WalkBy(ACTOR_BUNZA, -13, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_BUNZA);
+    Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH, 0);
+    Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
     FieldScript_SetMessageId(recognition + RECOGNITION_BUNZA_NAMES_HAMMET);
-    Script_ShowMessage(LOCALID_BUNZA, 0);
-    ObjectEvent_WalkTo(LOCALID_BUNZA, 168, 432);
+    Script_ShowMessage(ACTOR_BUNZA, 0);
+    Actor_WalkTo(ACTOR_BUNZA, 168, 432);
     FieldScript_WaitFrames(40);
     FieldScript_FinishScreenTransition();
     FieldScript_WaitTransitionFrames();
@@ -399,20 +396,20 @@ static void Reunion_Converse(void) {
 
   // Arrange the reunion while the screen is closed, then reveal the group.
   FieldScript_Start();
-  ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(200), PIXELS(544));
-  ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(184), PIXELS(544));
-  ObjectEvent_SetPosition(LOCALID_MIA, PIXELS(168), PIXELS(544));
-  ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(212), PIXELS(528));
-  ObjectEvent_SetPosition(LOCALID_HAMMET, PIXELS(200), PIXELS(512));
-  ObjectEvent_SetPosition(LOCALID_BUNZA, PIXELS(168), PIXELS(512));
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_EAST, 0);
-  Import_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_STAND);
-  FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
+  Actor_SetPosition(ACTOR_GARET, PIXELS(200), PIXELS(544));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(184), PIXELS(544));
+  Actor_SetPosition(ACTOR_MIA, PIXELS(168), PIXELS(544));
+  Actor_SetPosition(ACTOR_IVAN, PIXELS(212), PIXELS(528));
+  Actor_SetPosition(ACTOR_HAMMET, PIXELS(200), PIXELS(512));
+  Actor_SetPosition(ACTOR_BUNZA, PIXELS(168), PIXELS(512));
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_HAMMET, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_EAST, 0);
+  Import_ActorSetAnimation(ACTOR_BUNZA, ANIM_STAND);
+  FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   WaitFrames(1);
   MapGrid_CenterOnFollowedPoint();
   WaitFrames(1);
@@ -420,271 +417,270 @@ static void Reunion_Converse(void) {
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(20);
 
-  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(30);
-  ObjectEvent_ShowEmote(LOCALID_BUNZA, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
+  Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
   reunion = MsgLunpaDodonpaNeverIntention;
   FieldScript_SetMessageId(reunion + REUNION_BUNZA_ASKS_ABOUT_RELEASE);
-  Script_ShowMessage(LOCALID_BUNZA, 0);
-  ObjectMotion_SetAnimationAndWait(LOCALID_HAMMET, ANIM_NOD);
+  Script_ShowMessage(ACTOR_BUNZA, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
   FieldScript_SetMessageId(reunion + REUNION_HAMMET_CREDITS_IVAN);
-  Script_ShowMessage(LOCALID_HAMMET, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_IVAN, LOCALID_HAMMET, 0);
+  Script_ShowMessage(ACTOR_HAMMET, 0);
+  Actor_FaceActor(ACTOR_IVAN, ACTOR_HAMMET, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 1);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_IVAN, 1);
   FieldScript_WaitFrames(40);
   FieldScript_SetMessageId(reunion + REUNION_IVAN_CREDITS_LEADER);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_IVAN, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_IVAN, 0);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0);
+  Actor_FaceActor(ACTOR_GARET, ACTOR_IVAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 80);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 80);
   FieldScript_SetMessageId(reunion + REUNION_GARET_QUESTIONS_IVAN);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_GARET, 0);
-  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 70);
-  ObjectEvent_FaceObjectEvent(LOCALID_IVAN, LOCALID_GARET, 0);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
+  Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 70);
+  Actor_FaceActor(ACTOR_IVAN, ACTOR_GARET, 0);
   FieldScript_SetMessageId(reunion + REUNION_IVAN_CREDITS_EVERYONE);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_IVAN, 0);
-  ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_SOUTH - FACING_STEP, 0);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0);
+  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH - FACING_STEP, 0);
   FieldScript_WaitFrames(60);
-  ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH + FACING_STEP, 0);
   FieldScript_WaitFrames(60);
   FieldScript_SetMessageId(reunion + REUNION_HAMMET_THANKS_PARTY);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_HAMMET, 0);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HAMMET, 0);
   FieldScript_WaitFrames(30);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   FieldScript_WaitFrames(120);
-  ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_SOUTH - FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH - FACING_STEP, 0);
   FieldScript_WaitFrames(30);
-  ObjectEvent_ShowEmote(LOCALID_HAMMET, EMOTE_IN_FRONT | EMOTE_SMILE, 80);
+  Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | EMOTE_SMILE, 80);
   FieldScript_SetMessageId(reunion + REUNION_HAMMET_THANKS_IVAN);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_HAMMET, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_IVAN, LOCALID_HAMMET, 0);
-  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
-  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HAMMET, 0);
+  Actor_FaceActor(ACTOR_IVAN, ACTOR_HAMMET, 0);
+  Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
+  ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(30);
 
   // Bunza explains how he reached the cave despite being refused entry.
-  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  ObjectEvent_FaceObjectEvent(LOCALID_MIA, LOCALID_BUNZA, 0);
+  Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Actor_FaceActor(ACTOR_MIA, ACTOR_BUNZA, 0);
   FieldScript_SetMessageId(reunion + REUNION_MIA_PRAISES_BUNZA);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_MIA, 0);
-  ObjectEvent_ShowEmote(LOCALID_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  ObjectEvent_FaceObjectEvent(LOCALID_HAMMET, LOCALID_BUNZA, 0);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_MIA, 0);
+  Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  Actor_FaceActor(ACTOR_HAMMET, ACTOR_BUNZA, 0);
   FieldScript_SetMessageId(reunion + REUNION_HAMMET_PRAISES_BUNZA);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_HAMMET, 0);
-  ObjectEvent_ShowEmote(LOCALID_BUNZA, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HAMMET, 0);
+  Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
   FieldScript_SetMessageId(reunion + REUNION_BUNZA_CALLS_IT_CHANCE);
-  Script_ShowMessage(LOCALID_BUNZA, 0);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_BUNZA, 1);
+  Script_ShowMessage(ACTOR_BUNZA, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_BUNZA, 1);
   FieldScript_WaitFrames(20);
   FieldScript_SetMessageId(reunion + REUNION_BUNZA_AVOIDED_LUNPA);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
-  ObjectEvent_LinkPair(LOCALID_HAMMET, LOCALID_IVAN, 0);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
+  Actor_LinkPair(ACTOR_HAMMET, ACTOR_IVAN, 0);
   FieldScript_WaitFrames(60);
-  ObjectEvent_FaceObjectEvent(LOCALID_HAMMET, LOCALID_BUNZA, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_IVAN, LOCALID_BUNZA, 0);
-  ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_SHAKE_HEAD);
+  Actor_FaceActor(ACTOR_HAMMET, ACTOR_BUNZA, 0);
+  Actor_FaceActor(ACTOR_IVAN, ACTOR_BUNZA, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(30);
   FieldScript_SetMessageId(reunion + REUNION_BUNZA_KNEW_OF_PRISON);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 1);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_BUNZA, 0);
+  Actor_FaceActor(ACTOR_GARET, ACTOR_BUNZA, 0);
   FieldScript_SetMessageId(reunion + REUNION_GARET_ASKS_WHY_BUNZA_CAME);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_GARET, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_BUNZA, LOCALID_GARET, 0);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
+  Actor_FaceActor(ACTOR_BUNZA, ACTOR_GARET, 0);
   FieldScript_WaitFrames(20);
   FieldScript_SetMessageId(reunion + REUNION_BUNZA_RECALLS_ADVICE);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_MIA, LOCALID_BUNZA, 0);
-  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 70);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
+  Actor_FaceActor(ACTOR_MIA, ACTOR_BUNZA, 0);
+  Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 70);
   FieldScript_SetMessageId(reunion + REUNION_MIA_ASKS_ABOUT_TRADE);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_MIA, 0);
-  ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_NOD);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_MIA, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
   FieldScript_WaitFrames(40);
   FieldScript_SetMessageId(reunion + REUNION_BUNZA_MEANS_WISDOM);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
-  ObjectEvent_ShowEmote(LOCALID_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 70);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
+  Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 70);
   FieldScript_SetMessageId(reunion + REUNION_HAMMET_ON_APPEARANCES);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_HAMMET, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_BUNZA, LOCALID_HAMMET, 0);
-  ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_NOD);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HAMMET, 0);
+  Actor_FaceActor(ACTOR_BUNZA, ACTOR_HAMMET, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
   FieldScript_WaitFrames(30);
   FieldScript_SetMessageId(reunion + REUNION_BUNZA_ON_UNPLEASANT_PLACES);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
-  ObjectMotion_SetAnimationAndWait(LOCALID_HAMMET, ANIM_NOD);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
   FieldScript_WaitFrames(30);
   FieldScript_SetMessageId(reunion + REUNION_HAMMET_ON_SELLING);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_HAMMET, 0);
-  ObjectEvent_ShowEmote(LOCALID_BUNZA, EMOTE_IN_FRONT | EMOTE_SMILE, 70);
-  ObjectMotion_SetVariantCallback(LOCALID_IVAN, 1);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HAMMET, 0);
+  Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | EMOTE_SMILE, 70);
+  ObjectMotion_SetVariantCallback(ACTOR_IVAN, 1);
   FieldScript_WaitFrames(30);
   FieldScript_SetMessageId(reunion + REUNION_IVAN_ASKS_ABOUT_SERVING);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_IVAN, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_BUNZA, LOCALID_IVAN, 0);
-  ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_NOD);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0);
+  Actor_FaceActor(ACTOR_BUNZA, ACTOR_IVAN, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
   FieldScript_WaitFrames(30);
   FieldScript_SetMessageId(reunion + REUNION_IVAN_ON_FATE);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_IVAN, 0);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 1);
   FieldScript_SetMessageId(reunion + REUNION_GARET_ASKS_ABOUT_ENTRY);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_GARET, 0);
-  ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH - FACING_STEP, 0);
-  ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_SHAKE_HEAD);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
   FieldScript_SetMessageId(reunion + REUNION_BUNZA_WAS_REFUSED);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_MIA, 1);
   FieldScript_SetMessageId(reunion + REUNION_MIA_ASKS_WHY_BUNZA_STILL_CAME);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_MIA, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_BUNZA, LOCALID_MIA, 0);
-  ObjectEvent_ShowEmote(LOCALID_BUNZA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_MIA, 0);
+  Actor_FaceActor(ACTOR_BUNZA, ACTOR_MIA, 0);
+  Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   FieldScript_SetMessageId(reunion + REUNION_BUNZA_MENTIONS_COMMOTION);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
-  ObjectEvent_LinkPair(LOCALID_IVAN, LOCALID_HAMMET, 0);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
+  Actor_LinkPair(ACTOR_IVAN, ACTOR_HAMMET, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(30);
   FieldScript_SetMessageId(reunion + REUNION_IVAN_EXPLAINS_COMMOTION);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_IVAN, 0);
-  ObjectMotion_SetAnimationAndWait(LOCALID_HAMMET, ANIM_NOD);
-  ObjectEvent_FaceObjectEvent(LOCALID_HAMMET, LOCALID_BUNZA, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_IVAN, LOCALID_BUNZA, 0);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
+  Actor_FaceActor(ACTOR_HAMMET, ACTOR_BUNZA, 0);
+  Actor_FaceActor(ACTOR_IVAN, ACTOR_BUNZA, 0);
   FieldScript_WaitFrames(20);
   FieldScript_SetMessageId(reunion + REUNION_BUNZA_LINKS_COMMOTION);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
-  ObjectEvent_SetAttachedEffect(LOCALID_BUNZA, ATTACHED_EFFECT_IN_FRONT |
-                                                   ATTACHED_EFFECT_ONCE);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
+  Actor_SetAttachedEffect(ACTOR_BUNZA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldScript_SetMessageId(reunion + REUNION_BUNZA_HAD_TO_KNOW);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_BUNZA, 0);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
+  Actor_FaceActor(ACTOR_GARET, ACTOR_BUNZA, 0);
   FieldScript_SetMessageId(reunion + REUNION_GARET_ASKS_ABOUT_CAVE);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_GARET, 0);
-  ObjectEvent_ShowEmote(LOCALID_BUNZA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
-  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_SHAKE_HEAD);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
+  Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
+  ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   FieldScript_SetMessageId(reunion + REUNION_MIA_ON_GATE);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_MIA, 0);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_BUNZA, 1);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_MIA, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_BUNZA, 1);
   FieldScript_SetMessageId(reunion + REUNION_BUNZA_HID);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_BUNZA, 1);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_BUNZA, 1);
   FieldScript_SetMessageId(reunion + REUNION_HAMMET_STARTLED_BUNZA);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_HAMMET, 0);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HAMMET, 0);
   FieldScript_WaitFrames(30);
-  ObjectEvent_FaceObjectEvent(LOCALID_BUNZA, LOCALID_HAMMET, 0);
+  Actor_FaceActor(ACTOR_BUNZA, ACTOR_HAMMET, 0);
   FieldScript_WaitFrames(60);
-  ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
   FieldScript_SetMessageId(reunion + REUNION_BUNZA_IS_GLAD);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
-  ObjectMotion_SetAnimationAndWait(LOCALID_HAMMET, ANIM_NOD);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
   FieldScript_WaitFrames(30);
 
   // Bunza checks the passage, worries about pursuit and proposes his wagon.
-  ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH, 0);
-  ObjectEvent_ShowEmote(LOCALID_BUNZA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  ObjectEvent_SetSpeed(LOCALID_BUNZA, PIXELS(3) / 2, PIXELS(3) / 4);
-  ObjectEvent_WalkTo(LOCALID_BUNZA, 144, 528);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_BUNZA);
-  ObjectEvent_WalkTo(LOCALID_BUNZA, 168, 560);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_BUNZA);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH, 0);
+  Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  Actor_SetSpeed(ACTOR_BUNZA, PIXELS(3) / 2, PIXELS(3) / 4);
+  Actor_WalkTo(ACTOR_BUNZA, 144, 528);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_BUNZA);
+  Actor_WalkTo(ACTOR_BUNZA, 168, 560);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_BUNZA);
   FieldScript_WaitFrames(60);
-  ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH - FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
   FieldScript_WaitFrames(40);
-  ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH + FACING_STEP, 0);
   FieldScript_WaitFrames(40);
-  ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH - FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
   FieldScript_WaitFrames(40);
-  ObjectEvent_WalkTo(LOCALID_BUNZA, 144, 528);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_BUNZA);
-  ObjectEvent_WalkTo(LOCALID_BUNZA, 168, 488);
+  Actor_WalkTo(ACTOR_BUNZA, 144, 528);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_BUNZA);
+  Actor_WalkTo(ACTOR_BUNZA, 168, 488);
   FieldScript_SetMessageId(reunion + REUNION_IVAN_ASKS_WHY);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_IVAN, 0);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_BUNZA);
-  ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH - FACING_STEP, 0);
-  Import_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_STAND);
-  ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_SHAKE_HEAD);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_BUNZA);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
+  Import_ActorSetAnimation(ACTOR_BUNZA, ANIM_STAND);
+  ObjectMotion_SetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   FieldScript_SetMessageId(reunion + REUNION_BUNZA_WARNS_OF_SEARCH);
-  Script_ShowMessage(LOCALID_BUNZA, 0);
+  Script_ShowMessage(ACTOR_BUNZA, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_LinkPair(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
+  Actor_LinkPair(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   FieldScript_WaitFrames(60);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
-  ObjectEvent_ShowEmote(LOCALID_BUNZA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
+  Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   FieldScript_SetMessageId(reunion + REUNION_BUNZA_FEARS_CAPTURE);
-  Script_ShowMessage(LOCALID_BUNZA, 0);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
+  Script_ShowMessage(ACTOR_BUNZA, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_MIA, 1);
   FieldScript_SetMessageId(reunion + REUNION_MIA_URGES_ESCAPE);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_MIA, 0);
-  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_MIA, 0);
+  Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   FieldScript_SetMessageId(reunion + REUNION_IVAN_WANTS_STEALTH);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_IVAN, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0);
+  Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
+  Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   FieldScript_SetMessageId(reunion + REUNION_GARET_ASKS_TO_FIGHT);
-  Script_OpenMessage(SPEAKER_WINDOW_ABOVE | LOCALID_GARET, 0);
-  if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
-      0) {
+  Script_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
+  if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     FieldScript_SetMessageId(reunion + REUNION_BUNZA_DISCOURAGES_FIGHT);
-    Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
+    Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
   } else {
     FieldScript_SetMessageId(reunion + REUNION_BUNZA_AGREES_NOT_TO_FIGHT);
-    Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
+    Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
   }
 
-  ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH - FACING_STEP, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_BUNZA, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_BUNZA, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_MIA, LOCALID_BUNZA, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_IVAN, LOCALID_BUNZA, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_HAMMET, LOCALID_BUNZA, 0);
-  ObjectEvent_ShowEmote(LOCALID_HAMMET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_BUNZA, 0);
+  Actor_FaceActor(ACTOR_GARET, ACTOR_BUNZA, 0);
+  Actor_FaceActor(ACTOR_MIA, ACTOR_BUNZA, 0);
+  Actor_FaceActor(ACTOR_IVAN, ACTOR_BUNZA, 0);
+  Actor_FaceActor(ACTOR_HAMMET, ACTOR_BUNZA, 0);
+  Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   messageBase = MsgLunpaBunza;
   FieldScript_SetMessageId(messageBase + PLAN_HAMMET_ASKS_PLAN);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_HAMMET, 0);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HAMMET, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_ShowEmote(LOCALID_BUNZA, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
+  Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
   FieldScript_SetMessageId(messageBase + PLAN_BUNZA_HAS_WAGON);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
-  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
+  Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   FieldScript_SetMessageId(messageBase + PLAN_MIA_ASKS_ABOUT_WAGON);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_MIA, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_BUNZA, LOCALID_MIA, 0);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_MIA, 0);
+  Actor_FaceActor(ACTOR_BUNZA, ACTOR_MIA, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_NOD);
-  ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH - FACING_STEP, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
   FieldScript_SetMessageId(messageBase + PLAN_BUNZA_OFFERS_RIDE);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_IVAN, LOCALID_BUNZA, 0);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
+  Actor_FaceActor(ACTOR_IVAN, ACTOR_BUNZA, 0);
   FieldScript_SetMessageId(messageBase + PLAN_IVAN_DOUBTS_WAGON);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_IVAN, 0);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
   FieldScript_SetMessageId(messageBase + PLAN_BUNZA_REASSURES);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
+  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
   FieldScript_WaitFrames(60);
-  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_BUNZA, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_BUNZA, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_BUNZA, 0);
+  Actor_FaceActor(ACTOR_GARET, ACTOR_BUNZA, 0);
   FieldScript_SetMessageId(messageBase + PLAN_GARET_AGREES);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_GARET, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_BUNZA, LOCALID_GARET, 0);
-  ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_NOD);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
+  Actor_FaceActor(ACTOR_BUNZA, ACTOR_GARET, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   FieldScript_SetMessageId(messageBase + PLAN_BUNZA_IS_UNSUSPECTED);
-  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
-  ObjectEvent_LinkPair(LOCALID_HAMMET, LOCALID_IVAN, 0);
+  Script_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
+  Actor_LinkPair(ACTOR_HAMMET, ACTOR_IVAN, 0);
   FieldScript_WaitFrames(60);
-  Import_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_HAMMET, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(60);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
-  ObjectEvent_FaceObjectEvent(LOCALID_BUNZA, LOCALID_PARTY_LEADER, 0);
-  Import_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
+  Actor_FaceActor(ACTOR_BUNZA, ACTOR_PARTY_LEADER, 0);
+  Import_ActorSetAnimation(ACTOR_BUNZA, ANIM_NOD);
   FieldScript_WaitFrames(60);
   WagonChoice_Run();
 }
@@ -709,14 +705,14 @@ static void WagonChoice_Run(void) {
 
   wagon = MsgLunpaLetsTakeWagon;
   FieldScript_SetMessageId(wagon + WAGON_BUNZA_LEADS_THE_WAY);
-  FieldScript_ShowMessageAndWait(LOCALID_BUNZA, 0);
-  ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_BUNZA, 0);
+  ObjectMotion_SetAngleToward(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   FieldScript_SetMessageId(wagon + WAGON_GARET_ASKS_TO_RIDE);
-  FieldMessage_ShowAtObject(LOCALID_GARET, 0);
-  ObjectMotion_SetAngleToward(LOCALID_IVAN, LOCALID_PARTY_LEADER, 0);
-  ObjectMotion_SetAngleToward(LOCALID_MIA, LOCALID_PARTY_LEADER, 0);
-  ObjectMotion_SetAngleToward(LOCALID_HAMMET, LOCALID_PARTY_LEADER, 0);
-  ObjectMotion_SetAngleToward(LOCALID_BUNZA, LOCALID_PARTY_LEADER, 0);
+  FieldMessage_ShowAtObject(ACTOR_GARET, 0);
+  ObjectMotion_SetAngleToward(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
+  ObjectMotion_SetAngleToward(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
+  ObjectMotion_SetAngleToward(ACTOR_HAMMET, ACTOR_PARTY_LEADER, 0);
+  ObjectMotion_SetAngleToward(ACTOR_BUNZA, ACTOR_PARTY_LEADER, 0);
 
 ask_to_ride:
   if (WestLunpaCave_LeaderAnswersYes()) {
@@ -730,8 +726,7 @@ ask_to_ride:
       insisted = TRUE;
     check_nothing_left:
       WestLunpaCave_GaretChecksNothingLeftToDo();
-      if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
-                                                       0) == 0) {
+      if (FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
         goto ride;
       }
     }
@@ -751,9 +746,9 @@ ask_to_ride:
     }
     confusion = MsgLunpaTotallyConfusedChanged;
     FieldScript_SetMessageId(confusion + CONFUSION_IVAN_IS_CONFUSED);
-    FieldScript_ShowMessageAndWait(LOCALID_IVAN, 0);
+    FieldScript_ShowMessageAndWait(ACTOR_IVAN, 0);
     FieldScript_SetMessageId(confusion + CONFUSION_GARET_ASKS_AGAIN);
-    FieldMessage_ShowAtObject(LOCALID_GARET, 0);
+    FieldMessage_ShowAtObject(ACTOR_GARET, 0);
     goto ask_to_ride;
   ride:
     Party_RidesWagon();
@@ -766,24 +761,21 @@ stay:
 
 /// The yes-or-no menu answers 0 for Yes; this turns that into true or false.
 static u8 WestLunpaCave_LeaderAnswersYes(void) {
-  return FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
-                                                      0) == 0;
+  return FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
 /// Asks whether the party really intends to refuse the ride.
 static u8 WestLunpaCave_GaretAsksIfNotRiding(void) {
   FieldScript_SetMessageId(MsgLunpaGaretAsksIfNotRiding);
-  FieldMessage_ShowAtObject(LOCALID_GARET, 0);
-  return FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
-                                                      0) == 0;
+  FieldMessage_ShowAtObject(ACTOR_GARET, 0);
+  return FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
 /// Asks whether unfinished business explains the refusal to ride.
 static u8 WestLunpaCave_GaretAsksAboutUnfinishedBusiness(void) {
   FieldScript_SetMessageId(MsgLunpaGaretAsksAboutUnfinishedBusiness);
-  FieldMessage_ShowAtObject(LOCALID_GARET, 0);
-  return FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
-                                                      0) == 0;
+  FieldMessage_ShowAtObject(ACTOR_GARET, 0);
+  return FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
 /// Reserved confirmation step; it always succeeds and displays no message.
@@ -792,257 +784,249 @@ static u8 Party_ConfirmsStaying(void) { return TRUE; }
 /// Lets Bunza check whether the party has unfinished business before leaving.
 static u8 WestLunpaCave_BunzaAsksAboutUnfinishedBusiness(void) {
   FieldScript_SetMessageId(MsgLunpaBunzaAsksAboutUnfinishedBusiness);
-  FieldMessage_ShowAtObject(LOCALID_BUNZA, 0);
-  return FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
-                                                      0) == 0;
+  FieldMessage_ShowAtObject(ACTOR_BUNZA, 0);
+  return FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
 /// Opens Garet's confirmation prompt; WagonChoice_Run collects the answer.
 static u8 WestLunpaCave_GaretChecksNothingLeftToDo(void) {
   FieldScript_SetMessageId(MsgLunpaGaretChecksNothingLeft);
-  FieldMessage_ShowAtObject(LOCALID_GARET, 0);
+  FieldMessage_ShowAtObject(ACTOR_GARET, 0);
   return TRUE;
 }
 
 /// Asks whether the party has changed its mind about taking the wagon.
 static u8 WestLunpaCave_MiaAsksIfRidingAfterAll(void) {
   FieldScript_SetMessageId(MsgLunpaMiaAsksIfRidingAfter);
-  FieldMessage_ShowAtObject(LOCALID_MIA, 0);
-  return FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
-                                                      0) == 0;
+  FieldMessage_ShowAtObject(ACTOR_MIA, 0);
+  return FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
 /// Explains that Bunza cannot wait and asks again about the party's business.
 static u8 WestLunpaCave_BunzaCannotWait(void) {
   s32 warning;
 
-  ObjectEvent_FaceObjectEvent(LOCALID_IVAN, LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
+  Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   warning = MsgLunpaMeaningWontRide;
   FieldScript_SetMessageId(warning + WARNING_IVAN_ASKS_IF_STAYING);
-  Script_ShowMessage(LOCALID_IVAN, 0);
-  ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH - FACING_STEP, 0);
+  Script_ShowMessage(ACTOR_IVAN, 0);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
   FieldScript_SetMessageId(warning + WARNING_BUNZA_CANNOT_WAIT);
-  Script_ShowMessage(LOCALID_BUNZA, 0);
-  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  Script_ShowMessage(ACTOR_BUNZA, 0);
+  Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   FieldScript_SetMessageId(warning + WARNING_MIA_ASKS_ABOUT_BUSINESS);
-  Script_OpenMessage(LOCALID_MIA, 0);
-  return FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
-                                                      0) == 0;
+  Script_OpenMessage(ACTOR_MIA, 0);
+  return FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
 /// Asks the leader to confirm that something still needs doing here.
 static u8 WestLunpaCave_GaretAsksAboutThingsToDo(void) {
   FieldScript_SetMessageId(MsgLunpaGaretAsksAboutThingsTo);
-  FieldMessage_ShowAtObject(LOCALID_GARET, 0);
-  return FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
-                                                      0) == 0;
+  FieldMessage_ShowAtObject(ACTOR_GARET, 0);
+  return FieldScript_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
 /// Sends Hammet and Bunza ahead, then returns the companions to the leader.
 static void Party_StaysBehind(void) {
-  struct ObjectEvent *leader;
+  struct Actor *leader;
   s32 farewell;
 
-  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   farewell = MsgLunpaInsistStick;
   FieldScript_SetMessageId(farewell + FAREWELL_GARET_STAYS);
-  Script_ShowMessage(LOCALID_GARET, 0);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
+  Script_ShowMessage(ACTOR_GARET, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_MIA, 1);
   FieldScript_SetMessageId(farewell + FAREWELL_MIA_STAYS);
-  Script_ShowMessage(LOCALID_MIA, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_IVAN, LOCALID_HAMMET, 0);
+  Script_ShowMessage(ACTOR_MIA, 0);
+  Actor_FaceActor(ACTOR_IVAN, ACTOR_HAMMET, 0);
   FieldScript_WaitFrames(60);
   FieldScript_SetMessageId(farewell + FAREWELL_IVAN_STAYS);
-  Script_ShowMessage(LOCALID_IVAN, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_HAMMET, LOCALID_IVAN, 0);
-  ObjectEvent_ShowEmote(LOCALID_HAMMET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
+  Script_ShowMessage(ACTOR_IVAN, 0);
+  Actor_FaceActor(ACTOR_HAMMET, ACTOR_IVAN, 0);
+  Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
   FieldScript_SetMessageId(farewell + FAREWELL_HAMMET_LETS_IVAN_GO);
-  Script_ShowMessage(LOCALID_HAMMET, 0);
-  ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_SHAKE_HEAD);
+  Script_ShowMessage(ACTOR_HAMMET, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
   FieldScript_SetMessageId(farewell + FAREWELL_BUNZA_SAYS_GOODBYE);
-  Script_ShowMessage(LOCALID_BUNZA, 0);
-  ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH - FACING_STEP, 0);
+  Script_ShowMessage(ACTOR_BUNZA, 0);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
   FieldScript_WaitFrames(60);
-  ObjectEvent_SetDestinationOffset(LOCALID_HAMMET, -16, 0);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_HAMMET);
-  Import_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_STAND);
+  Actor_SetDestinationOffset(ACTOR_HAMMET, -16, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_HAMMET);
+  Import_ActorSetAnimation(ACTOR_HAMMET, ANIM_STAND);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetAnimationAndWait(LOCALID_HAMMET, ANIM_NOD);
-  ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_SOUTH + FACING_STEP, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
+  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH + FACING_STEP, 0);
   FieldScript_WaitFrames(30);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
-  ObjectEvent_WalkTo(LOCALID_BUNZA, 156, 528);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
+  Actor_WalkTo(ACTOR_BUNZA, 156, 528);
   FieldScript_WaitFrames(20);
-  ObjectEvent_WalkTo(LOCALID_HAMMET, 164, 528);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_BUNZA);
-  ObjectEvent_WalkTo(LOCALID_BUNZA, 168, 640);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_HAMMET);
-  ObjectEvent_WalkTo(LOCALID_HAMMET, 168, 640);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH + FACING_STEP,
-                            0);
-  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTH + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTH + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 0);
+  Actor_WalkTo(ACTOR_HAMMET, 164, 528);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_BUNZA);
+  Actor_WalkTo(ACTOR_BUNZA, 168, 640);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_HAMMET);
+  Actor_WalkTo(ACTOR_HAMMET, 168, 640);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   FieldScript_WaitFrames(60);
-  ObjectEvent_SetPosition(LOCALID_HAMMET, 0, 0);
-  ObjectEvent_SetPosition(LOCALID_BUNZA, 0, 0);
+  Actor_SetPosition(ACTOR_HAMMET, 0, 0);
+  Actor_SetPosition(ACTOR_BUNZA, 0, 0);
   FieldScript_WaitFrames(110);
 
   FieldScript_SetMessageId(farewell + FAREWELL_GARET_SIGHS);
-  Script_ShowMessage(LOCALID_GARET, 0);
-  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
+  Script_ShowMessage(ACTOR_GARET, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   FieldScript_WaitFrames(30);
   FieldScript_SetMessageId(farewell + FAREWELL_MIA_HOPES_FOR_SAFETY);
-  Script_ShowMessage(LOCALID_MIA, 0);
-  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
+  Script_ShowMessage(ACTOR_MIA, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   FieldScript_SetMessageId(farewell + FAREWELL_IVAN_REASSURES);
-  Script_ShowMessage(LOCALID_IVAN, 0);
+  Script_ShowMessage(ACTOR_IVAN, 0);
   FieldScript_WaitFrames(140);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
+  Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   FieldScript_SetMessageId(farewell + FAREWELL_GARET_MOVES_ON);
-  Script_ShowMessage(LOCALID_GARET, 0);
+  Script_ShowMessage(ACTOR_GARET, 0);
 
   // Merge the companions back into the leader and restore player camera
   // control.
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
-  leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectEvent_SetDestination(LOCALID_GARET, leader->x.part.pixel,
-                               leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
+                         leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
-  ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
-  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
-  leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GARET);
+  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectEvent_SetDestination(LOCALID_IVAN, leader->x.part.pixel,
-                               leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
+                         leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IVAN);
-  ObjectEvent_SetPosition(LOCALID_IVAN, 0, 0);
-  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
-  leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
+  Actor_SetPosition(ACTOR_IVAN, 0, 0);
+  Import_ActorSetAnimation(ACTOR_MIA, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectEvent_SetDestination(LOCALID_MIA, leader->x.part.pixel,
-                               leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
-  ObjectEvent_SetPosition(LOCALID_MIA, 0, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
+  Actor_SetPosition(ACTOR_MIA, 0, 0);
   FieldScript_WaitFrames(30);
-  ObjectEvent_PlaceCurrentWithinCameraBounds(LOCALID_PARTY_LEADER, 1);
+  Actor_PlaceCurrentWithinCameraBounds(ACTOR_PARTY_LEADER, 1);
   FieldCamera_WaitForArrival();
-  FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
+  FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   GameFlag_Set(FLAG_BUNZAS_WAGON_LEFT);
 }
 
 /// Leads everyone down the passage and requests the wagon departure exit.
 static void Party_RidesWagon(void) {
-  struct ObjectEvent *leader;
+  struct Actor *leader;
   s32 departure;
 
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
   departure = MsgLunpaDontUnfinishedBusiness;
   FieldScript_SetMessageId(departure + DEPARTURE_GARET_HEADS_FOR_KALAY);
-  Script_ShowMessage(LOCALID_GARET, 0);
-  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
+  Script_ShowMessage(ACTOR_GARET, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   FieldScript_SetMessageId(departure + DEPARTURE_IVAN_THINKS_OF_LAYANA);
-  Script_ShowMessage(LOCALID_IVAN, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_HAMMET, LOCALID_IVAN, 0);
-  ObjectMotion_SetAnimationAndWait(LOCALID_HAMMET, ANIM_NOD);
+  Script_ShowMessage(ACTOR_IVAN, 0);
+  Actor_FaceActor(ACTOR_HAMMET, ACTOR_IVAN, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
   FieldScript_WaitFrames(20);
   FieldScript_SetMessageId(departure + DEPARTURE_HAMMET_LONGS_FOR_LAYANA);
-  Script_ShowMessage(LOCALID_HAMMET, 0);
-  ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH - FACING_STEP, 0);
-  ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_NOD);
+  Script_ShowMessage(ACTOR_HAMMET, 0);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
   FieldScript_WaitFrames(30);
   FieldScript_SetMessageId(departure + DEPARTURE_BUNZA_SETS_OFF);
-  Script_ShowMessage(LOCALID_BUNZA, 0);
-  ObjectMotion_SetAnimationAndWait(LOCALID_HAMMET, ANIM_NOD);
+  Script_ShowMessage(ACTOR_BUNZA, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
   FieldScript_WaitFrames(80);
-  ObjectEvent_SetDestinationOffset(LOCALID_HAMMET, -16, 0);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_HAMMET);
-  Import_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_STAND);
+  Actor_SetDestinationOffset(ACTOR_HAMMET, -16, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_HAMMET);
+  Import_ActorSetAnimation(ACTOR_HAMMET, ANIM_STAND);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetAnimationAndWait(LOCALID_HAMMET, ANIM_NOD);
-  ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_SOUTH + FACING_STEP, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
+  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH + FACING_STEP, 0);
   FieldScript_WaitFrames(30);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
-  ObjectEvent_WalkTo(LOCALID_BUNZA, 152, 528);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
+  Actor_WalkTo(ACTOR_BUNZA, 152, 528);
   FieldScript_WaitFrames(20);
-  ObjectEvent_WalkTo(LOCALID_HAMMET, 160, 528);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_BUNZA);
-  ObjectEvent_WalkTo(LOCALID_BUNZA, 168, 640);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_HAMMET);
-  ObjectEvent_WalkTo(LOCALID_HAMMET, 168, 640);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH + FACING_STEP,
-                            0);
-  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTH + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTH + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 0);
+  Actor_WalkTo(ACTOR_HAMMET, 160, 528);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_BUNZA);
+  Actor_WalkTo(ACTOR_BUNZA, 168, 640);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_HAMMET);
+  Actor_WalkTo(ACTOR_HAMMET, 168, 640);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   FieldScript_WaitFrames(200);
-  ObjectEvent_SetPosition(LOCALID_HAMMET, 0, 0);
-  ObjectEvent_SetPosition(LOCALID_BUNZA, 0, 0);
+  Actor_SetPosition(ACTOR_HAMMET, 0, 0);
+  Actor_SetPosition(ACTOR_BUNZA, 0, 0);
 
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
-  leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectEvent_SetDestination(LOCALID_GARET, leader->x.part.pixel,
-                               leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
+                         leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
-  ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
-  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
-  leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GARET);
+  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectEvent_SetDestination(LOCALID_IVAN, leader->x.part.pixel,
-                               leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
+                         leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IVAN);
-  ObjectEvent_SetPosition(LOCALID_IVAN, 0, 0);
-  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
-  leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
+  Actor_SetPosition(ACTOR_IVAN, 0, 0);
+  Import_ActorSetAnimation(ACTOR_MIA, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectEvent_SetDestination(LOCALID_MIA, leader->x.part.pixel,
-                               leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
-  ObjectEvent_SetPosition(LOCALID_MIA, 0, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
+  Actor_SetPosition(ACTOR_MIA, 0, 0);
   FieldScript_WaitFrames(30);
-  ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, -16, 0);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  ObjectEvent_PlaceCurrentWithinCameraBounds(LOCALID_PARTY_LEADER, 1);
-  ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 168, 640);
+  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, -16, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+  Actor_PlaceCurrentWithinCameraBounds(ACTOR_PARTY_LEADER, 1);
+  Actor_WalkTo(ACTOR_PARTY_LEADER, 168, 640);
   FieldScript_WaitFrames(60);
   FieldScript_FinishScreenTransition();
   Import_ScriptRequestExit(WEST_LUNPA_CAVE_BY_WAGON);
@@ -1053,11 +1037,11 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gSaveBlock.sceneId == (s32)&SceneId_WestLunpaCave) {
-    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_UNUSED_PUDDLE), 0);
-    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SOUTH_PUDDLE), 0);
-    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_GATE_PUDDLE), 0);
-    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_NORTH_PUDDLE), 0);
-    ObjectEvent_GetById(LOCALID_NORTH_PUDDLE)->scaleY = 19 * Q16_ONE / 20;
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_UNUSED_PUDDLE), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_SOUTH_PUDDLE), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_GATE_PUDDLE), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_NORTH_PUDDLE), 0);
+    Actor_GetById(ACTOR_NORTH_PUDDLE)->scaleY = 19 * Q16_ONE / 20;
     if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED) != 0) {
       WestLunpaCave_GateLower();
     }
@@ -1068,12 +1052,10 @@ s32 Scene_Initialize(void) {
       WestLunpaCave_GateDrawPropped();
     }
     if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN) != 0) {
-      Import_ObjectEventSetAnimation(LOCALID_NORTH_PUDDLE,
-                                     PUDDLE_ANIMATION_FROZEN);
+      Import_ActorSetAnimation(ACTOR_NORTH_PUDDLE, PUDDLE_ANIMATION_FROZEN);
     }
     if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN) != 0) {
-      Import_ObjectEventSetAnimation(LOCALID_SOUTH_PUDDLE,
-                                     PUDDLE_ANIMATION_FROZEN);
+      Import_ActorSetAnimation(ACTOR_SOUTH_PUDDLE, PUDDLE_ANIMATION_FROZEN);
     }
   }
   return 0;
@@ -1096,11 +1078,11 @@ const u32 gCaveExits[] = {
     SCENE_EXITS_END,
 };
 
-const struct ObjectEventTemplate gCaveNoObjectEventTemplates[] = {
+const struct ActorTemplate gCaveNoActorTemplates[] = {
     { MAP_TABLE_END },
 };
 
-const struct ObjectEventTemplate gCaveObjectEventTemplates[] = {
+const struct ActorTemplate gCaveActorTemplates[] = {
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(136), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_PARTY, 0 },
@@ -1110,9 +1092,9 @@ const struct ObjectEventTemplate gCaveObjectEventTemplates[] = {
       PIXELS(424), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BUNZA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_HAMMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0 },
-    { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
-    { LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
-    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
+    { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
+    { ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
+    { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
@@ -1130,13 +1112,13 @@ const struct MapEvent gCaveEvents[] = {
       EVENT_SCRIPT(EventScript_FlipLoweringSwitch) },
     { BG_EVENT(BG_EVENT_SILENT), MB_WEST_LUNPA_CAVE_RAISING_SWITCH, CONDITION_ALWAYS,
       EVENT_SCRIPT(EventScript_FlipRaisingSwitch) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_UNUSED_PUDDLE, CONDITION_ALWAYS,
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_UNUSED_PUDDLE, CONDITION_ALWAYS,
       EVENT_SCRIPT(EventScript_UnusedFreezePuddle) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_SOUTH_PUDDLE, CONDITION_ALWAYS,
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SOUTH_PUDDLE, CONDITION_ALWAYS,
       EVENT_SCRIPT(EventScript_FreezeSouthPuddle) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_GATE_PUDDLE, CONDITION_ALWAYS,
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_GATE_PUDDLE, CONDITION_ALWAYS,
       EVENT_SCRIPT(EventScript_FreezeGatePuddle) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_NORTH_PUDDLE, CONDITION_ALWAYS,
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_NORTH_PUDDLE, CONDITION_ALWAYS,
       EVENT_SCRIPT(EventScript_FreezeNorthPuddle) },
     { MAP_EVENTS_END },
 };

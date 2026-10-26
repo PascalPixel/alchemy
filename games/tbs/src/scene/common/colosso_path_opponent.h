@@ -37,19 +37,19 @@ STATIC_ASSERT(sizeof(struct ColossoRaceWork) == 0x7170);
 /// frame the opponent steps to the next point (mirrored across the finish when
 /// asked), turning by at most a sixteenth of a turn, and stands once still for
 /// three frames. At the path's end the opponent walks to the finish, beside the
-/// first finisher's item object event or the second's, and sets
+/// first finisher's item actor or the second's, and sets
 /// FLAG_SCENE_TEMP_11 (a racer has finished). PATH_RECORDER_RECORD records the
-/// object event's own path instead, up to 0x383e halfwords, then plays it back
+/// actor's own path instead, up to 0x383e halfwords, then plays it back
 /// with the opponent.
 static void Colosso_UpdatePathOpponent(void) {
   struct ColossoRaceWork *work = (struct ColossoRaceWork *)gColossoWork;
   struct PathRecorder *rec = (struct PathRecorder *)gSceneLocalState;
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 x, z, d;
-  u16 *itemLocalId;
+  u16 *itemActorId;
 
-  objectEvent = ObjectEvent_GetById(rec->localId);
-  if (objectEvent == NULL) {
+  actor = Actor_GetById(rec->actorId);
+  if (actor == NULL) {
     return;
   }
   if (rec->mode == PATH_RECORDER_PLAY) {
@@ -58,25 +58,25 @@ static void Colosso_UpdatePathOpponent(void) {
     if (x == 0 && z == 0) {
       s32 fz;
       rec->mode = PATH_RECORDER_FINISHED;
-      Object_SelectAnimation(objectEvent, 1);
-      if (work->gauge.finishX < objectEvent->x.fixed) {
+      Object_SelectAnimation(actor, 1);
+      if (work->gauge.finishX < actor->x.fixed) {
         x = work->gauge.finishX + 0xc0000;
       } else {
         x = work->gauge.finishX - 0xc0000;
       }
       if (GameFlag_Get(FLAG_SCENE_TEMP_11)) {
         fz = work->gauge.finishZ + 0x100000;
-        itemLocalId = &work->gauge.finishItemLocalIdB;
+        itemActorId = &work->gauge.finishItemActorIdB;
       } else {
         fz = work->gauge.finishZ - 0x100000;
-        itemLocalId = &work->gauge.finishItemLocalIdA;
+        itemActorId = &work->gauge.finishItemActorIdA;
       }
-      objectEvent->timer = *itemLocalId;
-      objectEvent->acceleration = 0x4000;
-      objectEvent->speed = 0x10000;
-      Object_SetPosition(objectEvent, x, 0, fz);
+      actor->timer = *itemActorId;
+      actor->acceleration = 0x4000;
+      actor->speed = 0x10000;
+      Object_SetPosition(actor, x, 0, fz);
       GameFlag_Set(FLAG_SCENE_TEMP_11);
-      ObjectEvent_SetScript(objectEvent, gColosso_OpponentFinishScript);
+      Actor_SetScript(actor, gColosso_OpponentFinishScript);
       return;
     }
     x <<= 16;
@@ -84,10 +84,10 @@ static void Colosso_UpdatePathOpponent(void) {
     if (rec->mirror != 0) {
       x = work->gauge.finishX * 2 - x;
     }
-    if (objectEvent->x.fixed != x || objectEvent->z.fixed != z) {
+    if (actor->x.fixed != x || actor->z.fixed != z) {
       {
-        u16 angle = ArcTan2(z - objectEvent->z.fixed, x - objectEvent->x.fixed);
-        d = (s16)(angle - objectEvent->facing);
+        u16 angle = ArcTan2(z - actor->z.fixed, x - actor->x.fixed);
+        d = (s16)(angle - actor->facing);
       }
       if (d > 0x1000) {
         d = 0x1000;
@@ -95,27 +95,27 @@ static void Colosso_UpdatePathOpponent(void) {
       if (d < -0x1000) {
         d = -0x1000;
       }
-      objectEvent->facing += d;
-      objectEvent->x.fixed = x;
-      objectEvent->z.fixed = z;
+      actor->facing += d;
+      actor->x.fixed = x;
+      actor->z.fixed = z;
       rec->still = 0;
     } else {
       rec->still++;
     }
     if (rec->still > 2) {
-      Object_SelectAnimation(objectEvent, 1);
+      Object_SelectAnimation(actor, 1);
     } else {
-      Object_SelectAnimation(objectEvent, 5);
+      Object_SelectAnimation(actor, 5);
     }
   } else if (rec->mode == PATH_RECORDER_RECORD) {
-    x = objectEvent->x.part.pixel;
-    z = objectEvent->z.part.pixel;
+    x = actor->x.part.pixel;
+    z = actor->z.part.pixel;
     work->path[(s16)rec->pathIndex++] = x;
     work->path[(s16)rec->pathIndex++] = z;
     if ((s16)rec->pathIndex == 0x383e) {
       work->path[(s16)rec->pathIndex++] = 0;
       work->path[(s16)rec->pathIndex] = 0;
-      rec->localId = work->gauge.opponentLocalId;
+      rec->actorId = work->gauge.opponentActorId;
       rec->pathIndex = 0;
       rec->mode = PATH_RECORDER_PLAY;
     }
@@ -140,7 +140,7 @@ static void Colosso_DrawGauge(void) {
   s32 x;
   s32 width;
   u8 *buf;
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   u32 shape;
 
   tile = gVramCacheEntries[gauge->vramBlock].offset >> 5;
@@ -214,11 +214,10 @@ static void Colosso_DrawGauge(void) {
 
   if ((gFrameCount & 15) > 4) {
     shape = 0x40000000;
-    objectEvent = ObjectEvent_GetByLocalId(gauge->opponentLocalId);
-    if (objectEvent != 0) {
-      x = ((objectEvent->x.fixed - gauge->finishX) / 0xe0000) + 112;
-      y = ((objectEvent->z.fixed - gauge->finishZ) / 0xe0000) +
-          gauge->level * 6 - 4;
+    actor = Actor_GetByActorId(gauge->opponentActorId);
+    if (actor != 0) {
+      x = ((actor->x.fixed - gauge->finishX) / 0xe0000) + 112;
+      y = ((actor->z.fixed - gauge->finishZ) / 0xe0000) + gauge->level * 6 - 4;
       y &= 255;
       *dst++ = 0;
       y |= x << 16;
@@ -227,11 +226,10 @@ static void Colosso_DrawGauge(void) {
       *dst++ = (tile + 12) | 0xe400;
       Oam_AddSpriteAtDepth(entry++, 255);
     }
-    objectEvent = ObjectEvent_GetByLocalId(gauge->playerLocalId);
-    if (objectEvent != 0) {
-      x = ((objectEvent->x.fixed - gauge->finishX) / 0xe0000) + 112;
-      y = ((objectEvent->z.fixed - gauge->finishZ) / 0xe0000) +
-          gauge->level * 6 - 4;
+    actor = Actor_GetByActorId(gauge->playerActorId);
+    if (actor != 0) {
+      x = ((actor->x.fixed - gauge->finishX) / 0xe0000) + 112;
+      y = ((actor->z.fixed - gauge->finishZ) / 0xe0000) + gauge->level * 6 - 4;
       y &= 255;
       *dst++ = 0;
       y |= x << 16;

@@ -1,7 +1,7 @@
 /// @file
 /// The Sanctum of Vale and of four towns on the party's way, which holds six
 /// places in one map (SceneId_Sanctum): the entrance the party arrives
-/// at decides which, and Sanctum_GetObjectEventTemplates and Sanctum_GetEvents
+/// at decides which, and Sanctum_GetActorTemplates and Sanctum_GetEvents
 /// choose that place's tables by it. Spoken to from the front, each place's
 /// healer opens the Sanctum's services (Sanctum_Run); from any other side the
 /// healer talks. Each place's door leads back out to its own town.
@@ -9,8 +9,8 @@
 /// - Vale Sanctum (SANCTUM_FROM_VALE, SANCTUM_FROM_VALE_ERUPTION,
 ///   SANCTUM_VALE_UNUSED and SANCTUM_FROM_QUEST_RESTART), the Great Healer's,
 ///   entered from Vale at SANCTUM_FROM_VALE. Before the trip up Mt. Aleph, the
-///   Great Healer and two other healers (LOCALID_WEST_HEALER and
-///   LOCALID_EAST_HEALER) speak of Psynergy. After the eruption the Great
+///   Great Healer and two other healers (ACTOR_WEST_HEALER and
+///   ACTOR_EAST_HEALER) speak of Psynergy. After the eruption the Great
 ///   Healer brings Isaac and Garet in from Vale (vale_eruption.c) to
 ///   SANCTUM_FROM_VALE_ERUPTION, where Dora, the Mayor and the healers hear
 ///   what happened on the mountain, acted out in sepia
@@ -18,7 +18,7 @@
 ///   sprite palette to PALETTE_TINT_SEPIA for the account and fades back to
 ///   PALETTE_TINT_NONE over 60 frames after it. The Great Healer asks Isaac to
 ///   take on the Wise One's quest (Sanctum_RequestQuestAcceptance). Each time
-///   his Psynergy shows, LOCALID_HEALER_AFTERIMAGE, a copy of him in
+///   his Psynergy shows, ACTOR_HEALER_AFTERIMAGE, a copy of him in
 ///   SPRITE_COLOR_RED_TINT, jumps round him by a few pixels a frame
 ///   (Sanctum_UpdateHealerAfterimage) while effects circle him
 ///   (Sanctum_SpawnOrbitingEffect). Accepting plays
@@ -36,13 +36,13 @@
 ///   and again after it has reached Kalay (FLAG_KALAY_REACHED), the three talk
 ///   of what the eruption and the Wise One changed.
 /// - Vault Sanctum (SANCTUM_FROM_VAULT and SANCTUM_FROM_LOG_ROOMS_A). Its
-///   healer and the other person there (LOCALID_SANCTUM_MEMBER) miss a gold
+///   healer and the other person there (ACTOR_SANCTUM_MEMBER) miss a gold
 ///   statue stolen during the eruption, until the party has the thieves jailed
 ///   and the statue is returned (FLAG_VAULT_THIEVES_JAILED); then the statue
-///   (LOCALID_GOLD_STATUE), placed off the map until then, stands behind the
+///   (ACTOR_GOLD_STATUE), placed off the map until then, stands behind the
 ///   healer.
 /// - Bilibin Sanctum (SANCTUM_FROM_BILIBIN), whose healer and the other person
-///   there (LOCALID_SANCTUM_MEMBER) talk of Kolima's curse, before and after it
+///   there (ACTOR_SANCTUM_MEMBER) talk of Kolima's curse, before and after it
 ///   is lifted (FLAG_KOLIMA_CURSE_LIFTED).
 /// - Xian Sanctum (SANCTUM_FROM_XIAN), whose healer came to Xian from very
 ///   distant lands.
@@ -112,18 +112,18 @@
 // after a refusal (SANCTUM_FROM_QUEST_RESTART), which skips the account of Sol
 // Sanctum.
 
-/// The placed object events, numbering the rows of the table
-/// Sanctum_GetObjectEventTemplates returns for the entrance; the
+/// The placed actors, numbering the rows of the table
+/// Sanctum_GetActorTemplates returns for the entrance; the
 /// party's rows take their own ids. Every place's first row is its healer.
-enum SanctumLocalId {
+enum SanctumActorId {
   /// The place's healer: the Great Healer in Vale Sanctum, its own healer
   /// elsewhere, a man with a white beard in a tall hat and a long purple and
   /// blue robe.
   /// ★ Named from the game: "What is it, Great Healer?"
   /// (MsgSanctumWeHadIdeaTrueSanctum)
-  LOCALID_HEALER = LOCALID_FIRST_PLACED,
-  // Vale Sanctum (gSanctum_ValeObjectEventTemplates, and
-  // gSanctum_QuestObjectEventTemplates at the
+  ACTOR_HEALER = ACTOR_FIRST_PLACED,
+  // Vale Sanctum (gSanctum_ValeActorTemplates, and
+  // gSanctum_QuestActorTemplates at the
   // quest).
   /// The western of Vale Sanctum's two other healers, men with long brown hair
   /// and beards in long robes, as Mind Read hears a villager in
@@ -132,77 +132,74 @@ enum SanctumLocalId {
   /// given to us by the sacred power of Mt. Aleph."
   /// ★ Named from the game: "The healers are supposed to guard"
   /// (MsgValeTheHealersAreSupposedToGuard)
-  LOCALID_WEST_HEALER,
+  ACTOR_WEST_HEALER,
   /// The eastern one. "Psynergy is a power that should only be used for
   /// good... Never for evil!"
   /// ★ Named from the game: "should only be used for"
   /// (MsgSanctumPsynergyIsAPowerThatShould)
-  LOCALID_EAST_HEALER,
-  // The quest (gSanctum_QuestObjectEventTemplates).
+  ACTOR_EAST_HEALER,
+  // The quest (gSanctum_QuestActorTemplates).
   /// Isaac's mother, a woman with fair hair tied up.
   /// ★ Named from the game: "Please, call me Dora."
   /// (MsgValeAsStubbornAsYourFather)
-  LOCALID_DORA,
+  ACTOR_DORA,
   /// The Mayor, Garet's grandfather, an old man with white hair and a cane, as
   /// the Great Healer calls him: "That is all, Mayor."
   /// ★ Named from the game: "That is all, Mayor"
   /// (MsgSanctumAcceptIsaacCantMean)
-  LOCALID_GARETS_GRANDFATHER,
+  ACTOR_GARETS_GRANDFATHER,
   /// Appears to the Great Healer.
   /// ★ Named from the game: "It must be the Wise One, guardian of the Elemental
   /// Stars." (MsgSanctumWeHadIdeaTrueSanctum)
-  LOCALID_WISE_ONE,
+  ACTOR_WISE_ONE,
   /// A copy of the Great Healer for its afterimages.
   /// ★ Named from what the player sees: a red-tinted copy of the Great Healer
   /// beside him while his Psynergy shows, healer-afterimages.gif (its render)
-  LOCALID_HEALER_AFTERIMAGE,
+  ACTOR_HEALER_AFTERIMAGE,
   // Vault Sanctum and Bilibin Sanctum
-  // (gSanctum_VaultBilibinObjectEventTemplates).
+  // (gSanctum_VaultBilibinActorTemplates).
   /// The other person of the Sanctum, in the western healer's sprite (a man
   /// with long brown hair and a beard in a long robe), who wanders, and who
   /// speaks of the healer as someone else and of "our teachings" and "our
   /// meditations". In Vault: "I wonder if we'll ever see our stolen gold statue
   /// again..."
   /// ★ Named from the game: "stolen gold statue" (MsgSanctumWonderIfEverSeeOur)
-  LOCALID_SANCTUM_MEMBER = LOCALID_FIRST_PLACED + 1,
+  ACTOR_SANCTUM_MEMBER = ACTOR_FIRST_PLACED + 1,
   /// Vault Sanctum's gold statue (the sprite of the one a chest gives back in
   /// log_rooms_a.c), placed off the map until the thieves are jailed
   /// (FLAG_VAULT_THIEVES_JAILED).
   /// ★ Named from the game: "our stolen gold statue"
   /// (MsgSanctumWonderIfEverSeeOur)
-  LOCALID_GOLD_STATUE
+  ACTOR_GOLD_STATUE
 };
 
 static void Sanctum_RequestQuestAcceptance(void);
 static void Sanctum_ReceiveWiseOnesMission(void);
 static void Sanctum_ShowHealerAfterimage(void);
 static void Sanctum_HideHealerAfterimage(void);
-static void
-Sanctum_UpdateHealerAfterimage(union ObjectEventOrEffect *fieldObject);
-static void Sanctum_SpawnOrbitingEffect(s32 localId, s32 angleStep);
+static void Sanctum_UpdateHealerAfterimage(union ActorOrEffect *fieldObject);
+static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep);
 static s32 Sanctum_ChooseRestartOption(void);
 static void Sanctum_ReenactSolSanctum(void);
 static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY, s32 fixedZ);
-static void Sanctum_SpawnObjectEventSpark(s32 id);
+static void Sanctum_SpawnActorSpark(s32 id);
 static void Sanctum_RestoreQuestFloor(void);
 
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 44 to 42 bytes in tbs-en.
 #ifdef UBFIX
-/// Faces the object event whose ID this callback stores in the timer field.
-static void
-Sanctum_FaceObjectEventNamedByTimer(union ObjectEventOrEffect *fieldObject) {
+/// Faces the actor whose ID this callback stores in the timer field.
+static void Sanctum_FaceActorNamedByTimer(union ActorOrEffect *fieldObject) {
 #else
-/// Faces the object event whose ID this callback stores in the timer field.
-static s32
-Sanctum_FaceObjectEventNamedByTimer(union ObjectEventOrEffect *fieldObject) {
+/// Faces the actor whose ID this callback stores in the timer field.
+static s32 Sanctum_FaceActorNamedByTimer(union ActorOrEffect *fieldObject) {
 #endif
-  struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
-  struct ObjectEvent *target;
+  struct Actor *actor = (struct Actor *)fieldObject;
+  struct Actor *target;
 
-  target = ObjectEvent_GetById((s16)objectEvent->timer);
-  objectEvent->facing = ArcTan2(target->z.fixed - objectEvent->z.fixed,
-                                target->x.fixed - objectEvent->x.fixed);
+  target = Actor_GetById((s16)actor->timer);
+  actor->facing = ArcTan2(target->z.fixed - actor->z.fixed,
+                          target->x.fixed - actor->x.fixed);
 #ifdef UBFIX
   return;
 #else
@@ -219,36 +216,36 @@ const struct SceneExitRegion *Sanctum_GetRegions(void) { return NULL; }
 
 const u32 *Sanctum_GetExits(void) { return gSanctum_Exits; }
 
-/// Chooses the object events by entrance: Vale Sanctum's Great Healer
+/// Chooses the actors by entrance: Vale Sanctum's Great Healer
 /// and two other healers (SANCTUM_FROM_VALE and SANCTUM_VALE_UNUSED), the
 /// quest's gathering (SANCTUM_FROM_VALE_ERUPTION and
-/// SANCTUM_FROM_QUEST_RESTART), the healer and LOCALID_SANCTUM_MEMBER of Vault
+/// SANCTUM_FROM_QUEST_RESTART), the healer and ACTOR_SANCTUM_MEMBER of Vault
 /// Sanctum and Bilibin Sanctum (SANCTUM_FROM_VAULT, SANCTUM_FROM_VAULT_REVISIT,
 /// SANCTUM_FROM_LOG_ROOMS_A and SANCTUM_FROM_BILIBIN), the healer alone in
 /// Altin Sanctum and Xian Sanctum (SANCTUM_FROM_ALTIN and SANCTUM_FROM_XIAN),
 /// and nobody otherwise.
-const struct ObjectEventTemplate *Sanctum_GetObjectEventTemplates(void) {
+const struct ActorTemplate *Sanctum_GetActorTemplates(void) {
   switch (gSaveBlock.entrance) {
   case SANCTUM_FROM_VALE:
   case SANCTUM_VALE_UNUSED:
-    return gSanctum_ValeObjectEventTemplates;
+    return gSanctum_ValeActorTemplates;
 
   case SANCTUM_FROM_VAULT:
   case SANCTUM_FROM_VAULT_REVISIT:
   case SANCTUM_FROM_LOG_ROOMS_A:
   case SANCTUM_FROM_BILIBIN:
-    return gSanctum_VaultBilibinObjectEventTemplates;
+    return gSanctum_VaultBilibinActorTemplates;
 
   case SANCTUM_FROM_VALE_ERUPTION:
   case SANCTUM_FROM_QUEST_RESTART:
-    return gSanctum_QuestObjectEventTemplates;
+    return gSanctum_QuestActorTemplates;
 
   case SANCTUM_FROM_ALTIN:
   case SANCTUM_FROM_XIAN:
-    return gSanctum_AltinXianObjectEventTemplates;
+    return gSanctum_AltinXianActorTemplates;
 
   default:
-    return gSanctum_NoObjectEventTemplates;
+    return gSanctum_NoActorTemplates;
   }
 }
 
@@ -289,7 +286,7 @@ const struct MapEvent *Sanctum_GetEvents(void) {
   return gSanctum_ValeEvents;
 }
 
-/// Vault Sanctum: talking to LOCALID_SANCTUM_MEMBER, about the stolen gold
+/// Vault Sanctum: talking to ACTOR_SANCTUM_MEMBER, about the stolen gold
 /// statue until the thieves are jailed (FLAG_VAULT_THIEVES_JAILED) and about
 /// fate afterwards; on the later visit (SANCTUM_FROM_VAULT_REVISIT), the statue
 /// polished.
@@ -306,14 +303,14 @@ static void EventScript_TalkAboutGoldenStatue(void) {
     FieldScript_SetMessageId(MsgSanctumPolishedGoldStatueReturnedUs);
   }
 
-  Import_ObjectEventSetAnimation(LOCALID_SANCTUM_MEMBER, 1);
-  ObjectEvent_LinkPair(LOCALID_SANCTUM_MEMBER, LOCALID_PARTY_LEADER, 0);
+  Import_ActorSetAnimation(ACTOR_SANCTUM_MEMBER, 1);
+  Actor_LinkPair(ACTOR_SANCTUM_MEMBER, ACTOR_PARTY_LEADER, 0);
   FieldScript_WaitFrames(2);
-  FieldScript_ShowMessageAndWait(LOCALID_SANCTUM_MEMBER, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_SANCTUM_MEMBER, 0);
   FieldScript_End();
 }
 
-/// Vault Sanctum: Mind Read on LOCALID_SANCTUM_MEMBER, about the stolen statue,
+/// Vault Sanctum: Mind Read on ACTOR_SANCTUM_MEMBER, about the stolen statue,
 /// or once it is back, about Isaac awakening to the Sanctum's teachings; on the
 /// later visit, the statue cleaned up.
 static void EventScript_ReadMindAboutGoldenStatue(void) {
@@ -330,11 +327,11 @@ static void EventScript_ReadMindAboutGoldenStatue(void) {
     FieldScript_SetMessageId(MsgSanctumDirtyGoldenStatueCleanedUp);
   }
 
-  ObjectMotion_EnableActionAndResetMotion(LOCALID_SANCTUM_MEMBER);
-  Import_ObjectEventSetAnimation(LOCALID_SANCTUM_MEMBER, 1);
+  ObjectMotion_EnableActionAndResetMotion(ACTOR_SANCTUM_MEMBER);
+  Import_ActorSetAnimation(ACTOR_SANCTUM_MEMBER, 1);
   FieldScript_WaitFrames(2);
-  FieldScript_ShowMessageAndWait(LOCALID_SANCTUM_MEMBER, 0);
-  ObjectEvent_SetBuiltinAction(LOCALID_SANCTUM_MEMBER, 2);
+  FieldScript_ShowMessageAndWait(ACTOR_SANCTUM_MEMBER, 0);
+  Actor_SetBuiltinAction(ACTOR_SANCTUM_MEMBER, 2);
   FieldScript_End();
 }
 
@@ -344,47 +341,43 @@ static void EventScript_ReadMindAboutGoldenStatue(void) {
 static void EventScript_ReconsiderQuest(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgSanctumAreYouSure);
-  FieldMessage_ShowAtObject(LOCALID_HEALER, 0);
-  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
-    ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 3);
+  FieldMessage_ShowAtObject(ACTOR_HEALER, 0);
+  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
+    ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 3);
     FieldScript_WaitFrames(20);
   } else {
     FieldScript_WaitFrames(20);
-    FieldMessage_ShowAtObject(LOCALID_HEALER, 0);
-    if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+    FieldMessage_ShowAtObject(ACTOR_HEALER, 0);
+    if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
       FieldScript_WaitFrames(20);
-      FieldMessage_ShowAtObject(LOCALID_HEALER, 0);
-      if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+      FieldMessage_ShowAtObject(ACTOR_HEALER, 0);
+      if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
         FieldScript_WaitFrames(20);
-        if (ObjectEvent_GetById(LOCALID_HEALER)->facing >= FACING_NORTHWEST &&
-            ObjectEvent_GetById(LOCALID_HEALER)->facing <= FACING_NORTHEAST) {
-          ObjectEvent_SetSpeed(LOCALID_HEALER, PIXELS(1) / 2, PIXELS(1) / 4);
-          ObjectMotion_ArmCallback(LOCALID_HEALER, FACING_EAST, 0);
+        if (Actor_GetById(ACTOR_HEALER)->facing >= FACING_NORTHWEST &&
+            Actor_GetById(ACTOR_HEALER)->facing <= FACING_NORTHEAST) {
+          Actor_SetSpeed(ACTOR_HEALER, PIXELS(1) / 2, PIXELS(1) / 4);
+          ObjectMotion_ArmCallback(ACTOR_HEALER, FACING_EAST, 0);
           FieldScript_WaitFrames(10);
-          ObjectEvent_GetById(LOCALID_HEALER)->steeringFlags &=
-              ~OBJ_EVENT_FACES_MOTION;
-          ObjectMotion_SetPositionAndReset(LOCALID_HEALER, 152, 120);
+          Actor_GetById(ACTOR_HEALER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+          ObjectMotion_SetPositionAndReset(ACTOR_HEALER, 152, 120);
           FieldScript_WaitFrames(1);
-          ObjectEvent_GetById(LOCALID_HEALER)->steeringFlags |=
-              OBJ_EVENT_FACES_MOTION;
+          Actor_GetById(ACTOR_HEALER)->steeringFlags |= ACTOR_FACES_MOTION;
           FieldScript_WaitFrames(20);
-          ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 3);
+          ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 3);
           FieldScript_WaitFrames(20);
-          ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, 168, 120);
-          ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 192,
-                                                  168);
+          ObjectMotion_SetPositionAndReset(ACTOR_PARTY_LEADER, 168, 120);
+          ObjectMotion_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 192, 168);
           FieldScript_WaitFrames(20);
-          ObjectMotion_SetPositionAndReset(LOCALID_HEALER, 168, 120);
-          ObjectMotion_ArmCallback(LOCALID_HEALER,
-                                   FACING_SOUTHEAST + FACING_STEP, 0);
-          ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
+          ObjectMotion_SetPositionAndReset(ACTOR_HEALER, 168, 120);
+          ObjectMotion_ArmCallback(ACTOR_HEALER, FACING_SOUTHEAST + FACING_STEP,
+                                   0);
+          ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
         } else {
-          ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 192,
-                                                  168);
+          ObjectMotion_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 192, 168);
           FieldScript_WaitFrames(20);
-          ObjectMotion_ArmCallback(LOCALID_HEALER,
-                                   FACING_SOUTHEAST + FACING_STEP, 0);
-          ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
+          ObjectMotion_ArmCallback(ACTOR_HEALER, FACING_SOUTHEAST + FACING_STEP,
+                                   0);
+          ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
         }
         Sanctum_ReceiveWiseOnesMission();
         PaletteFade_SetTarget(RGB(0, 0, 0), PALETTES_ALL);
@@ -407,49 +400,49 @@ static void EventScript_ReconsiderQuest(void) {
 #endif
 
 /// Vale Sanctum, once the party has reached Kalay: talking to
-/// LOCALID_WEST_HEALER, who asks about the party's new friends. "Isaac, are
+/// ACTOR_WEST_HEALER, who asks about the party's new friends. "Isaac, are
 /// your new friends Adepts by any chance?" Denied, a friend's silence says they
 /// must be: in every edition but the Japanese, that friend is Ivan, placed for
 /// it; in the Japanese, Garet.
 static void EventScript_AskAboutNewAdepts(void) {
   FieldScript_Start();
 #if TBS_PATCH_1
-  FieldScript_CallWithLastActiveObjectId(gSanctum_IvanObjectEventTemplate);
+  FieldScript_CallWithLastActiveObjectId(gSanctum_IvanActorTemplate);
   WaitFrames(1);
 #endif
   FieldScript_SetMessageId(MsgSanctumIsaacYourNewFriendsAdepts);
-  FieldMessage_ShowAtObject(LOCALID_WEST_HEALER, 0);
-  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
-    FieldScript_ShowMessageAndWait(LOCALID_WEST_HEALER, 0);
+  FieldMessage_ShowAtObject(ACTOR_WEST_HEALER, 0);
+  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
+    FieldScript_ShowMessageAndWait(ACTOR_WEST_HEALER, 0);
   } else {
     gFieldWork->message++;
     Script_ShowTwoMessagesAndWait(SANCTUM_NEW_FRIENDS_SPEAKER, 16, 1, 24, 1, 3,
                                   7, 16, 1, 14, 0);
-    FieldScript_ShowMessageAndWait(LOCALID_WEST_HEALER, 0);
+    FieldScript_ShowMessageAndWait(ACTOR_WEST_HEALER, 0);
   }
   FieldScript_End();
 }
 
-/// Vale Sanctum, once the party has left Vale: talking to LOCALID_EAST_HEALER,
+/// Vale Sanctum, once the party has left Vale: talking to ACTOR_EAST_HEALER,
 /// who asks whether Isaac feels any change in his Psynergy.
 static void EventScript_AskAboutPsynergyChanges(void) {
 
   FieldScript_Start();
-  ObjectMotion_SetAngleToward(LOCALID_EAST_HEALER, LOCALID_PARTY_LEADER, 0);
+  ObjectMotion_SetAngleToward(ACTOR_EAST_HEALER, ACTOR_PARTY_LEADER, 0);
   FieldScript_WaitFrames(10);
   FieldScript_SetMessageId(MsgSanctumDoFeelAnyChangeIn);
-  FieldMessage_ShowAtObject(LOCALID_EAST_HEALER, 0);
+  FieldMessage_ShowAtObject(ACTOR_EAST_HEALER, 0);
 
-  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
+  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 1) {
     (gFieldWork->message)++;
   }
 
-  FieldScript_ShowMessageAndWait(LOCALID_EAST_HEALER, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_EAST_HEALER, 0);
   FieldScript_End();
 }
 
 /// Sets up the place for its entrance and plays its opening event.
-/// Vault Sanctum places LOCALID_GOLD_STATUE once the thieves are jailed; Vale
+/// Vault Sanctum places ACTOR_GOLD_STATUE once the thieves are jailed; Vale
 /// Sanctum's quest visits (SANCTUM_FROM_VALE_ERUPTION, and
 /// SANCTUM_FROM_QUEST_RESTART after a refusal, which sets
 /// FLAG_SANCTUM_QUEST_RESTARTED) restore the floor and play the request, unless
@@ -465,7 +458,7 @@ s32 Sanctum_Initialize(void) {
   case SANCTUM_FROM_VAULT_REVISIT:
   case SANCTUM_FROM_LOG_ROOMS_A:
     if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
-      ObjectEvent_SetPosition(LOCALID_GOLD_STATUE, PIXELS(200), PIXELS(80));
+      Actor_SetPosition(ACTOR_GOLD_STATUE, PIXELS(200), PIXELS(80));
     }
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     break;
@@ -499,15 +492,15 @@ s32 Sanctum_Initialize(void) {
 static void EventScript_WarnBeforeLeaving(void) {
   FieldScript_Start();
   FieldCamera_SetSpeedParameters(PIXELS(1), PIXELS(1) / 8);
-  ObjectEvent_PlaceCurrentWithinCameraBounds(LOCALID_GARET, 1);
+  Actor_PlaceCurrentWithinCameraBounds(ACTOR_GARET, 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAngleToward(LOCALID_HEALER, LOCALID_PARTY_LEADER, 0);
+  ObjectMotion_SetAngleToward(ACTOR_HEALER, ACTOR_PARTY_LEADER, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 4);
+  ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 4);
   FieldScript_WaitFrames(20);
   FieldScript_SetMessageId(MsgSanctumOnceStepOutsideVillageCannot);
-  FieldScript_ShowMessageAndWait(LOCALID_HEALER, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_HEALER, 0);
   GameFlag_Set(FLAG_SANCTUM_WARNED_BEFORE_LEAVING);
   FieldScript_End();
 }
@@ -521,13 +514,13 @@ static void EventScript_LeaveAfterRefusing(void) {
   struct PaletteFade *paletteWork;
 
   FieldScript_Start();
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STILL);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STILL);
-  Import_ObjectEventSetAnimation(LOCALID_DORA, 0);
-  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 0);
-  Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);
-  Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 0);
-  Import_ObjectEventSetAnimation(LOCALID_EAST_HEALER, 0);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_STILL);
+  Import_ActorSetAnimation(ACTOR_DORA, 0);
+  Import_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, 0);
+  Import_ActorSetAnimation(ACTOR_HEALER, 0);
+  Import_ActorSetAnimation(ACTOR_WEST_HEALER, 0);
+  Import_ActorSetAnimation(ACTOR_EAST_HEALER, 0);
   PaletteFade_SetTarget(PALETTE_TINT_SEPIA, PALETTES_ALL);
   PaletteFade_StartInterpolation(120);
   FieldScript_WaitFrames(180);
@@ -560,18 +553,17 @@ static void EventScript_LeaveAfterRefusing(void) {
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 66 to 64 bytes in tbs-en.
 #ifdef UBFIX
-/// Keeps this object event at the party leader's drawing priority.
-static void
-Sanctum_MatchLeaderPriority(union ObjectEventOrEffect *fieldObject) {
+/// Keeps this actor at the party leader's drawing priority.
+static void Sanctum_MatchLeaderPriority(union ActorOrEffect *fieldObject) {
 #else
-/// Keeps this object event at the party leader's drawing priority.
-static s32 Sanctum_MatchLeaderPriority(union ObjectEventOrEffect *fieldObject) {
+/// Keeps this actor at the party leader's drawing priority.
+static s32 Sanctum_MatchLeaderPriority(union ActorOrEffect *fieldObject) {
 #endif
-  struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
-  objectEvent->sprite->image.priority =
-      ObjectEvent_GetById(LOCALID_PARTY_LEADER)->sprite->image.priority;
-  objectEvent->sprite->shadow.priority =
-      ObjectEvent_GetById(LOCALID_PARTY_LEADER)->sprite->image.priority;
+  struct Actor *actor = (struct Actor *)fieldObject;
+  actor->sprite->image.priority =
+      Actor_GetById(ACTOR_PARTY_LEADER)->sprite->image.priority;
+  actor->sprite->shadow.priority =
+      Actor_GetById(ACTOR_PARTY_LEADER)->sprite->image.priority;
 #ifdef UBFIX
   return;
 #else
@@ -582,33 +574,32 @@ static s32 Sanctum_MatchLeaderPriority(union ObjectEventOrEffect *fieldObject) {
 /// Has Isaac, Garet, Dora, the Mayor and the two healers nod, waiting for the
 /// last of them.
 static inline void Sanctum_NodAll(void) {
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Import_ObjectEventSetAnimation(LOCALID_DORA, 3);
-  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
-  Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
-  ObjectMotion_SetAnimationAndWait(LOCALID_EAST_HEALER, 3);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_DORA, 3);
+  Import_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, 3);
+  Import_ActorSetAnimation(ACTOR_WEST_HEALER, 3);
+  ObjectMotion_SetAnimationAndWait(ACTOR_EAST_HEALER, 3);
 }
 
 /// Starts the same six's repeated motions and waits for the last of them.
 static inline void Sanctum_StartAllRepeatedMotion(void) {
-  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
-  ObjectMotion_SetVariantCallback(LOCALID_GARET, 1);
-  ObjectMotion_SetVariantCallback(LOCALID_DORA, 1);
-  ObjectMotion_SetVariantCallback(LOCALID_GARETS_GRANDFATHER, 1);
-  ObjectMotion_SetVariantCallback(LOCALID_WEST_HEALER, 1);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_EAST_HEALER, 1);
+  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 1);
+  ObjectMotion_SetVariantCallback(ACTOR_GARET, 1);
+  ObjectMotion_SetVariantCallback(ACTOR_DORA, 1);
+  ObjectMotion_SetVariantCallback(ACTOR_GARETS_GRANDFATHER, 1);
+  ObjectMotion_SetVariantCallback(ACTOR_WEST_HEALER, 1);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_EAST_HEALER, 1);
 }
 
 /// Shows the same emote on the same six.
 static inline void Sanctum_ShowAllEmotes(void) {
-  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  ObjectEvent_ShowEmote(LOCALID_GARETS_GRANDFATHER,
-                        EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  ObjectEvent_ShowEmote(LOCALID_WEST_HEALER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  ObjectEvent_ShowEmote(LOCALID_EAST_HEALER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_GARETS_GRANDFATHER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_WEST_HEALER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_EAST_HEALER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
 }
 
 /// Vale Sanctum, SANCTUM_FROM_VALE_ERUPTION and SANCTUM_FROM_QUEST_RESTART: the
@@ -623,13 +614,12 @@ static void Sanctum_RequestQuestAcceptance(void) {
   FieldScript_Start();
   // A repeat visit skips the account of Sol Sanctum.
   if (GameFlag_Get(FLAG_SANCTUM_QUEST_RESTARTED) != 0) {
-    ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_DORA, LOCALID_PARTY_LEADER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER,
-                                LOCALID_PARTY_LEADER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_WEST_HEALER, LOCALID_PARTY_LEADER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_EAST_HEALER, LOCALID_PARTY_LEADER, 0);
+    Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
+    Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
+    Actor_FaceActor(ACTOR_DORA, ACTOR_PARTY_LEADER, 0);
+    Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_PARTY_LEADER, 0);
+    Actor_FaceActor(ACTOR_WEST_HEALER, ACTOR_PARTY_LEADER, 0);
+    Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_PARTY_LEADER, 0);
     FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
     FieldCamera_WaitForArrival();
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -652,522 +642,492 @@ static void Sanctum_RequestQuestAcceptance(void) {
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_StartInterpolation(60);
     FieldScript_WaitFrames(100);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+    Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
     FieldScript_WaitFrames(30);
-    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER,
-                                LOCALID_GARETS_GRANDFATHER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_GARETS_GRANDFATHER, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GARETS_GRANDFATHER, 0);
+    Actor_FaceActor(ACTOR_GARET, ACTOR_GARETS_GRANDFATHER, 0);
     FieldScript_WaitFrames(20);
-    ObjectEvent_SetBuiltinAction(LOCALID_HEALER, OBJ_EVENT_ACTION_IDLE);
-    ObjectEvent_SetBuiltinAction(LOCALID_GARETS_GRANDFATHER,
-                                 OBJ_EVENT_ACTION_IDLE);
-    ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-    ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-    ObjectEvent_SetSpeed(LOCALID_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
-    ObjectEvent_SetSpeed(LOCALID_GARETS_GRANDFATHER, PIXELS(4) / 5,
-                         PIXELS(2) / 5);
-    ObjectEvent_SetSpeed(LOCALID_WEST_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
-    ObjectEvent_SetSpeed(LOCALID_EAST_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
-    ObjectEvent_SetSpeed(LOCALID_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetBuiltinAction(ACTOR_HEALER, ACTOR_ACTION_IDLE);
+    Actor_SetBuiltinAction(ACTOR_GARETS_GRANDFATHER, ACTOR_ACTION_IDLE);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_GARETS_GRANDFATHER, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_WEST_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_EAST_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
     FieldScript_WaitFrames(30);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDFATHER, 2);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDFATHER, 2);
     FieldScript_SetMessageId(MsgSanctumWeHadIdeaTrueSanctum);
-    Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
+    Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     FieldScript_WaitFrames(10);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     FieldScript_WaitFrames(30);
-    ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, 3);
+    ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, 3);
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_DORA, 2);
     FieldScript_WaitFrames(20);
-    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_DORA, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
+    Actor_FaceActor(ACTOR_GARET, ACTOR_DORA, 0);
     FieldScript_WaitFrames(20);
-    Script_OpenMessage(LOCALID_DORA, 0);
-    if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+    Script_OpenMessage(ACTOR_DORA, 0);
+    if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
       FieldScript_WaitFrames(20);
-      ObjectMotion_SetAnimationAndWait(LOCALID_DORA, 3);
+      ObjectMotion_SetAnimationAndWait(ACTOR_DORA, 3);
       FieldScript_WaitFrames(20);
-      Script_ShowMessage(LOCALID_DORA, 0);
+      Script_ShowMessage(ACTOR_DORA, 0);
       gFieldWork->message++;
     } else {
       FieldScript_WaitFrames(20);
-      ObjectMotion_SetAnimationAndWait(LOCALID_DORA, 4);
+      ObjectMotion_SetAnimationAndWait(ACTOR_DORA, 4);
       FieldScript_WaitFrames(20);
       gFieldWork->message++;
-      Script_ShowMessage(LOCALID_DORA, 0);
+      Script_ShowMessage(ACTOR_DORA, 0);
     }
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_WEST_HEALER, 1);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_WEST_HEALER, 1);
     FieldScript_WaitFrames(20);
-    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_WEST_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_WEST_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_DORA, LOCALID_WEST_HEALER, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_WEST_HEALER, 0);
+    Actor_FaceActor(ACTOR_GARET, ACTOR_WEST_HEALER, 0);
+    Actor_FaceActor(ACTOR_DORA, ACTOR_WEST_HEALER, 0);
     FieldScript_WaitFrames(20);
-    Script_OpenMessage(LOCALID_WEST_HEALER, 0);
-    if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+    Script_OpenMessage(ACTOR_WEST_HEALER, 0);
+    if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
       FieldScript_WaitFrames(20);
-      ObjectMotion_SetAnimationAndWait(LOCALID_WEST_HEALER, 3);
+      ObjectMotion_SetAnimationAndWait(ACTOR_WEST_HEALER, 3);
       FieldScript_WaitFrames(20);
-      Script_ShowMessage(LOCALID_WEST_HEALER, 0);
+      Script_ShowMessage(ACTOR_WEST_HEALER, 0);
       gFieldWork->message++;
     } else {
       FieldScript_WaitFrames(20);
-      ObjectMotion_SetAnimationAndWait(LOCALID_WEST_HEALER, 4);
+      ObjectMotion_SetAnimationAndWait(ACTOR_WEST_HEALER, 4);
       FieldScript_WaitFrames(20);
       gFieldWork->message++;
-      Script_ShowMessage(LOCALID_WEST_HEALER, 0);
+      Script_ShowMessage(ACTOR_WEST_HEALER, 0);
     }
     FieldScript_WaitFrames(20);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-    Import_ObjectEventSetAnimation(LOCALID_DORA, 3);
-    Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
-    Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
-    ObjectMotion_SetAnimationAndWait(LOCALID_EAST_HEALER, 3);
+    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+    Import_ActorSetAnimation(ACTOR_DORA, 3);
+    Import_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, 3);
+    Import_ActorSetAnimation(ACTOR_WEST_HEALER, 3);
+    ObjectMotion_SetAnimationAndWait(ACTOR_EAST_HEALER, 3);
     FieldScript_WaitFrames(30);
-    ObjectEvent_ShowEmote(LOCALID_GARETS_GRANDFATHER,
-                          EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    Actor_ShowEmote(ACTOR_GARETS_GRANDFATHER, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                    0);
     FieldScript_WaitFrames(60);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER, LOCALID_HEALER, 0);
+    Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_HEALER, 0);
     FieldScript_WaitFrames(20);
-    ObjectEvent_WalkToAndWait(LOCALID_GARETS_GRANDFATHER, 0xe0, 0x78);
+    Actor_WalkToAndWait(ACTOR_GARETS_GRANDFATHER, 0xe0, 0x78);
     FieldScript_WaitFrames(10);
-    Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
+    Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     FieldScript_WaitFrames(20);
-    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_DORA, LOCALID_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_WEST_HEALER, LOCALID_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_EAST_HEALER, LOCALID_HEALER, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
+    Actor_FaceActor(ACTOR_GARET, ACTOR_HEALER, 0);
+    Actor_FaceActor(ACTOR_DORA, ACTOR_HEALER, 0);
+    Actor_FaceActor(ACTOR_WEST_HEALER, ACTOR_HEALER, 0);
+    Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_HEALER, 0);
     FieldScript_WaitFrames(10);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 1);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_DORA, 1);
     FieldScript_WaitFrames(10);
-    Script_ShowMessage(LOCALID_DORA, 0);
+    Script_ShowMessage(ACTOR_DORA, 0);
     FieldScript_WaitFrames(30);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 3);
-    ObjectEvent_ShowEmote(LOCALID_HEALER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                          0);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_HEALER, 3);
+    Actor_ShowEmote(ACTOR_HEALER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     FieldScript_WaitFrames(60);
-    ObjectEvent_FaceObjectEvent(LOCALID_HEALER, LOCALID_GARETS_GRANDFATHER, 0);
+    Actor_FaceActor(ACTOR_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 3);
+    ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 3);
     FieldScript_WaitFrames(10);
-    Script_ShowMessage(LOCALID_HEALER, 0);
+    Script_ShowMessage(ACTOR_HEALER, 0);
     FieldScript_WaitFrames(20);
-    ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDFATHER,
-                              FACING_SOUTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTH + FACING_STEP,
+                        0);
     FieldScript_WaitFrames(60);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER, LOCALID_HEALER, 0);
+    Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_HEALER, 0);
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, 3);
+    ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, 3);
     FieldScript_WaitFrames(10);
-    Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
+    Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     FieldScript_WaitFrames(10);
-    ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 3);
+    ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 3);
     FieldScript_WaitFrames(20);
-    ObjectEvent_FaceDirection(LOCALID_HEALER, FACING_SOUTHEAST + FACING_STEP,
-                              0);
+    Actor_FaceDirection(ACTOR_HEALER, FACING_SOUTHEAST + FACING_STEP, 0);
     FieldScript_WaitFrames(10);
-    Script_ShowMessage(LOCALID_HEALER, 0);
+    Script_ShowMessage(ACTOR_HEALER, 0);
     FieldScript_WaitFrames(20);
-    ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDFATHER,
-                              FACING_SOUTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTH + FACING_STEP,
+                        0);
     FieldScript_WaitFrames(60);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER, LOCALID_HEALER, 0);
+    Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_HEALER, 0);
     FieldScript_WaitFrames(50);
-    ObjectEvent_ShowEmote(LOCALID_GARETS_GRANDFATHER,
-                          EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    Actor_ShowEmote(ACTOR_GARETS_GRANDFATHER, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                    0);
     FieldScript_WaitFrames(40);
-    ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
-                          0);
-    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-    ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-    ObjectEvent_ShowEmote(LOCALID_WEST_HEALER, EMOTE_IN_FRONT | EMOTE_QUESTION,
-                          0);
-    ObjectEvent_ShowEmote(LOCALID_EAST_HEALER, EMOTE_IN_FRONT | EMOTE_QUESTION,
-                          0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    Actor_ShowEmote(ACTOR_WEST_HEALER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    Actor_ShowEmote(ACTOR_EAST_HEALER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     FieldScript_WaitFrames(60);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 1);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_HEALER, 1);
     FieldScript_WaitFrames(10);
-    Script_ShowMessage(LOCALID_HEALER, 0);
+    Script_ShowMessage(ACTOR_HEALER, 0);
     FieldScript_WaitFrames(10);
-    ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
-                          EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    ObjectEvent_ShowEmote(LOCALID_GARETS_GRANDFATHER,
-                          EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    ObjectEvent_ShowEmote(LOCALID_WEST_HEALER,
-                          EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    ObjectEvent_ShowEmote(LOCALID_EAST_HEALER,
-                          EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    Actor_ShowEmote(ACTOR_GARETS_GRANDFATHER,
+                    EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    Actor_ShowEmote(ACTOR_WEST_HEALER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    Actor_ShowEmote(ACTOR_EAST_HEALER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     FieldScript_WaitFrames(60);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
     FieldScript_WaitFrames(10);
-    Script_ShowMessage(LOCALID_GARET, 0);
+    Script_ShowMessage(ACTOR_GARET, 0);
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 3);
+    ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 3);
     FieldScript_WaitFrames(10);
-    Script_ShowMessage(LOCALID_HEALER, 0);
+    Script_ShowMessage(ACTOR_HEALER, 0);
     FieldScript_WaitFrames(10);
-    ObjectEvent_ShowEmote(LOCALID_GARETS_GRANDFATHER,
-                          EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-    ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
-    ObjectMotion_SetVariantCallback(LOCALID_GARET, 1);
-    ObjectMotion_SetVariantCallback(LOCALID_DORA, 1);
-    ObjectMotion_SetVariantCallback(LOCALID_WEST_HEALER, 1);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_EAST_HEALER, 1);
+    Actor_ShowEmote(ACTOR_GARETS_GRANDFATHER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 1);
+    ObjectMotion_SetVariantCallback(ACTOR_GARET, 1);
+    ObjectMotion_SetVariantCallback(ACTOR_DORA, 1);
+    ObjectMotion_SetVariantCallback(ACTOR_WEST_HEALER, 1);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_EAST_HEALER, 1);
     FieldScript_WaitFrames(10);
-    ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 4);
+    ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 4);
     FieldScript_WaitFrames(10);
-    Script_ShowMessage(LOCALID_HEALER, 0);
+    Script_ShowMessage(ACTOR_HEALER, 0);
     FieldScript_WaitFrames(30);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER,
-                                LOCALID_PARTY_LEADER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_DORA, LOCALID_PARTY_LEADER, 0);
+    Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_PARTY_LEADER, 0);
+    Actor_FaceActor(ACTOR_DORA, ACTOR_PARTY_LEADER, 0);
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_PARTY_LEADER, 2);
     FieldScript_WaitFrames(60);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDFATHER, 2);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDFATHER, 2);
     FieldScript_WaitFrames(20);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER, LOCALID_HEALER, 0);
+    Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_HEALER, 0);
     FieldScript_WaitFrames(20);
-    Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
+    Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     FieldScript_WaitFrames(30);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_DORA, 2);
     FieldScript_WaitFrames(20);
-    ObjectEvent_FaceObjectEvent(LOCALID_HEALER, LOCALID_PARTY_LEADER, 0);
+    Actor_FaceActor(ACTOR_HEALER, ACTOR_PARTY_LEADER, 0);
     FieldScript_WaitFrames(20);
-    Script_ShowMessage(LOCALID_DORA, 0);
+    Script_ShowMessage(ACTOR_DORA, 0);
     FieldScript_WaitFrames(20);
     FieldScript_WaitFrames(40);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
-    Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);
-    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, SPRITE_COLOR_BLINK);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_HEALER, 2);
+    Import_ActorSetAnimation(ACTOR_HEALER, 0);
+    Actor_SetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_BLINK);
     Sanctum_ShowHealerAfterimage();
     Script_PlaySong(SE_WISE_ONE_QUEST);
-    Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
     FieldScript_WaitFrames(32);
-    Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
     FieldScript_WaitFrames(16);
     for (effectIndex = 0; effectIndex < 6; effectIndex++) {
-      Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
+      Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
       FieldScript_WaitFrames(8);
     }
     FieldScript_WaitFrames(8);
-    Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
     FieldScript_WaitFrames(32);
-    Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
     FieldScript_WaitFrames(96);
     FieldScript_WaitFrames(32);
-    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, SPRITE_COLOR_NORMAL);
+    Actor_SetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_NORMAL);
     FieldScript_WaitFrames(30);
     // Return to the gathering and finish the departure conversation.
     Sanctum_HideHealerAfterimage();
-    Import_ObjectEventSetAnimation(LOCALID_HEALER, 1);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
+    Import_ActorSetAnimation(ACTOR_HEALER, 1);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_HEALER, 2);
     FieldScript_WaitFrames(20);
-    Script_ShowMessage(LOCALID_HEALER, 0);
+    Script_ShowMessage(ACTOR_HEALER, 0);
     FieldScript_WaitFrames(20);
-    ObjectEvent_SetAttachedEffect(LOCALID_GARETS_GRANDFATHER,
-                                  ATTACHED_EFFECT_IN_FRONT |
-                                      ATTACHED_EFFECT_ONCE);
-    ObjectEvent_SetAttachedEffect(
-        LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
-                                                     ATTACHED_EFFECT_ONCE);
-    ObjectEvent_SetAttachedEffect(LOCALID_DORA, ATTACHED_EFFECT_IN_FRONT |
-                                                    ATTACHED_EFFECT_ONCE);
-    ObjectEvent_SetAttachedEffect(
-        LOCALID_WEST_HEALER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    ObjectEvent_SetAttachedEffect(
-        LOCALID_EAST_HEALER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(ACTOR_GARETS_GRANDFATHER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(ACTOR_GARET,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(ACTOR_DORA,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(ACTOR_WEST_HEALER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(ACTOR_EAST_HEALER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     FieldScript_WaitFrames(60);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_EAST_HEALER, 1);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_EAST_HEALER, 1);
     FieldScript_WaitFrames(20);
-    Script_ShowMessage(LOCALID_EAST_HEALER, 0);
+    Script_ShowMessage(ACTOR_EAST_HEALER, 0);
     FieldScript_WaitFrames(20);
-    ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
+    Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
     FieldScript_WaitFrames(60);
-    ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 4);
+    ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 4);
     FieldScript_WaitFrames(20);
-    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_HEALER, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
+    Actor_FaceActor(ACTOR_GARET, ACTOR_HEALER, 0);
     FieldScript_WaitFrames(20);
-    Script_ShowMessage(LOCALID_HEALER, 0);
+    Script_ShowMessage(ACTOR_HEALER, 0);
     FieldScript_WaitFrames(30);
-    ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
+    Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
     FieldScript_WaitFrames(20);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-    ObjectEvent_LinkPair(LOCALID_WEST_HEALER, LOCALID_EAST_HEALER, 0);
+    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+    Actor_LinkPair(ACTOR_WEST_HEALER, ACTOR_EAST_HEALER, 0);
     FieldScript_WaitFrames(20);
-    Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
-    Import_ObjectEventSetAnimation(LOCALID_EAST_HEALER, 3);
-    ObjectMotion_WaitForAnimationChange(LOCALID_EAST_HEALER);
+    Import_ActorSetAnimation(ACTOR_WEST_HEALER, 3);
+    Import_ActorSetAnimation(ACTOR_EAST_HEALER, 3);
+    ObjectMotion_WaitForAnimationChange(ACTOR_EAST_HEALER);
     FieldScript_WaitFrames(30);
-    ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
-    ObjectEvent_LinkPair(LOCALID_GARET, LOCALID_GARETS_GRANDFATHER, 0);
+    Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
+    Actor_LinkPair(ACTOR_GARET, ACTOR_GARETS_GRANDFATHER, 0);
     FieldScript_WaitFrames(20);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Import_ObjectEventSetAnimation(LOCALID_DORA, 3);
-    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-    Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
-    ObjectMotion_WaitForAnimationChange(LOCALID_GARETS_GRANDFATHER);
+    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Import_ActorSetAnimation(ACTOR_DORA, 3);
+    Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+    Import_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, 3);
+    ObjectMotion_WaitForAnimationChange(ACTOR_GARETS_GRANDFATHER);
     FieldScript_WaitFrames(60);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
-    Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);
-    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, SPRITE_COLOR_BLINK);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_HEALER, 2);
+    Import_ActorSetAnimation(ACTOR_HEALER, 0);
+    Actor_SetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_BLINK);
     Sanctum_ShowHealerAfterimage();
     Script_PlaySong(SE_WISE_ONE_QUEST);
-    Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
     FieldScript_WaitFrames(32);
-    Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
-    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_DORA, LOCALID_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER, LOCALID_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_WEST_HEALER, LOCALID_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_EAST_HEALER, LOCALID_HEALER, 0);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
+    Actor_FaceActor(ACTOR_GARET, ACTOR_HEALER, 0);
+    Actor_FaceActor(ACTOR_DORA, ACTOR_HEALER, 0);
+    Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_HEALER, 0);
+    Actor_FaceActor(ACTOR_WEST_HEALER, ACTOR_HEALER, 0);
+    Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_HEALER, 0);
     FieldScript_WaitFrames(16);
-    ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
-    ObjectMotion_SetVariantCallback(LOCALID_GARET, 1);
-    ObjectMotion_SetVariantCallback(LOCALID_DORA, 1);
-    ObjectMotion_SetVariantCallback(LOCALID_GARETS_GRANDFATHER, 1);
-    ObjectMotion_SetVariantCallback(LOCALID_WEST_HEALER, 1);
-    ObjectMotion_SetVariantCallback(LOCALID_EAST_HEALER, 1);
+    ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 1);
+    ObjectMotion_SetVariantCallback(ACTOR_GARET, 1);
+    ObjectMotion_SetVariantCallback(ACTOR_DORA, 1);
+    ObjectMotion_SetVariantCallback(ACTOR_GARETS_GRANDFATHER, 1);
+    ObjectMotion_SetVariantCallback(ACTOR_WEST_HEALER, 1);
+    ObjectMotion_SetVariantCallback(ACTOR_EAST_HEALER, 1);
     for (effectIndex = 0; effectIndex < 6; effectIndex++) {
-      Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
+      Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
       FieldScript_WaitFrames(8);
     }
     FieldScript_WaitFrames(8);
-    Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
     FieldScript_WaitFrames(32);
-    Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
     FieldScript_WaitFrames(128);
-    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, SPRITE_COLOR_NORMAL);
+    Actor_SetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_NORMAL);
     FieldScript_WaitFrames(30);
     Sanctum_HideHealerAfterimage();
-    Import_ObjectEventSetAnimation(LOCALID_HEALER, 1);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
+    Import_ActorSetAnimation(ACTOR_HEALER, 1);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_HEALER, 2);
     FieldScript_WaitFrames(30);
-    ObjectEvent_ShowEmote(LOCALID_GARETS_GRANDFATHER,
-                          EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+    Actor_ShowEmote(ACTOR_GARETS_GRANDFATHER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
+                    0);
     FieldScript_WaitFrames(20);
-    ObjectEvent_LinkPair(LOCALID_WEST_HEALER, LOCALID_EAST_HEALER, 0);
+    Actor_LinkPair(ACTOR_WEST_HEALER, ACTOR_EAST_HEALER, 0);
     FieldScript_WaitFrames(40);
-    ObjectEvent_FaceObjectEvent(LOCALID_WEST_HEALER, LOCALID_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_EAST_HEALER, LOCALID_HEALER, 0);
-    Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
+    Actor_FaceActor(ACTOR_WEST_HEALER, ACTOR_HEALER, 0);
+    Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_HEALER, 0);
+    Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_DORA, 2);
     FieldScript_WaitFrames(20);
-    Script_ShowMessage(LOCALID_DORA, 0);
+    Script_ShowMessage(ACTOR_DORA, 0);
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
-    ObjectMotion_SetVariantCallback(LOCALID_GARET, 1);
-    ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
-    ObjectMotion_SetVariantCallback(LOCALID_WEST_HEALER, 1);
-    ObjectMotion_SetVariantCallback(LOCALID_EAST_HEALER, 1);
-    ObjectEvent_LinkPair(LOCALID_WEST_HEALER, LOCALID_EAST_HEALER, 0);
-    ObjectEvent_SetAttachedEffect(LOCALID_GARETS_GRANDFATHER,
-                                  ATTACHED_EFFECT_IN_FRONT |
-                                      ATTACHED_EFFECT_ONCE);
+    ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 1);
+    ObjectMotion_SetVariantCallback(ACTOR_GARET, 1);
+    Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
+    ObjectMotion_SetVariantCallback(ACTOR_WEST_HEALER, 1);
+    ObjectMotion_SetVariantCallback(ACTOR_EAST_HEALER, 1);
+    Actor_LinkPair(ACTOR_WEST_HEALER, ACTOR_EAST_HEALER, 0);
+    Actor_SetAttachedEffect(ACTOR_GARETS_GRANDFATHER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     FieldScript_WaitFrames(60);
-    Script_ShowMessage(LOCALID_HEALER, 0);
+    Script_ShowMessage(ACTOR_HEALER, 0);
     FieldScript_WaitFrames(20);
-    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_WEST_HEALER, LOCALID_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_EAST_HEALER, LOCALID_HEALER, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
+    Actor_FaceActor(ACTOR_GARET, ACTOR_HEALER, 0);
+    Actor_FaceActor(ACTOR_WEST_HEALER, ACTOR_HEALER, 0);
+    Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_HEALER, 0);
     FieldScript_WaitFrames(20);
-    Script_ShowMessage(LOCALID_GARET, 0);
+    Script_ShowMessage(ACTOR_GARET, 0);
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 3);
+    ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 3);
     FieldScript_WaitFrames(20);
-    Script_ShowMessage(LOCALID_HEALER, 0);
+    Script_ShowMessage(ACTOR_HEALER, 0);
     FieldScript_WaitFrames(20);
-    ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
-                          0);
-    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-    ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-    ObjectEvent_ShowEmote(LOCALID_GARETS_GRANDFATHER,
-                          EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-    ObjectEvent_ShowEmote(LOCALID_WEST_HEALER, EMOTE_IN_FRONT | EMOTE_QUESTION,
-                          0);
-    ObjectEvent_ShowEmote(LOCALID_EAST_HEALER, EMOTE_IN_FRONT | EMOTE_QUESTION,
-                          0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    Actor_ShowEmote(ACTOR_GARETS_GRANDFATHER, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                    0);
+    Actor_ShowEmote(ACTOR_WEST_HEALER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    Actor_ShowEmote(ACTOR_EAST_HEALER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     FieldScript_WaitFrames(60);
-    ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 4);
+    ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 4);
     FieldScript_WaitFrames(20);
-    Script_ShowMessage(LOCALID_HEALER, 0);
+    Script_ShowMessage(ACTOR_HEALER, 0);
     FieldScript_WaitFrames(20);
-    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-    Import_ObjectEventSetAnimation(LOCALID_DORA, 3);
-    Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
-    Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
-    Import_ObjectEventSetAnimation(LOCALID_EAST_HEALER, 3);
-    ObjectMotion_WaitForAnimationChange(LOCALID_EAST_HEALER);
+    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+    Import_ActorSetAnimation(ACTOR_DORA, 3);
+    Import_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, 3);
+    Import_ActorSetAnimation(ACTOR_WEST_HEALER, 3);
+    Import_ActorSetAnimation(ACTOR_EAST_HEALER, 3);
+    ObjectMotion_WaitForAnimationChange(ACTOR_EAST_HEALER);
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDFATHER, 1);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDFATHER, 1);
     FieldScript_WaitFrames(20);
-    Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
+    Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     FieldScript_WaitFrames(20);
-    ObjectEvent_FaceObjectEvent(LOCALID_HEALER, LOCALID_GARETS_GRANDFATHER, 0);
+    Actor_FaceActor(ACTOR_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 3);
+    ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 3);
     FieldScript_WaitFrames(20);
-    Script_ShowMessage(LOCALID_HEALER, 0);
+    Script_ShowMessage(ACTOR_HEALER, 0);
     FieldScript_WaitFrames(50);
-    ObjectEvent_FaceObjectEvent(LOCALID_HEALER, LOCALID_PARTY_LEADER, 0);
+    Actor_FaceActor(ACTOR_HEALER, ACTOR_PARTY_LEADER, 0);
     FieldScript_WaitFrames(20);
-    Script_ShowMessage(LOCALID_HEALER, 0);
+    Script_ShowMessage(ACTOR_HEALER, 0);
     FieldScript_WaitFrames(30);
-    ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
-                          0);
-    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-    ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-    ObjectEvent_ShowEmote(LOCALID_GARETS_GRANDFATHER,
-                          EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-    ObjectEvent_ShowEmote(LOCALID_WEST_HEALER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-    ObjectEvent_ShowEmote(LOCALID_EAST_HEALER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    Actor_ShowEmote(ACTOR_GARETS_GRANDFATHER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    Actor_ShowEmote(ACTOR_WEST_HEALER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    Actor_ShowEmote(ACTOR_EAST_HEALER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     FieldScript_WaitFrames(80);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 1);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_DORA, 1);
     FieldScript_WaitFrames(20);
-    Script_ShowMessage(LOCALID_DORA, 0);
+    Script_ShowMessage(ACTOR_DORA, 0);
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 4);
+    ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 4);
     FieldScript_WaitFrames(20);
-    ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
-                          0);
-    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-    ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-    ObjectEvent_ShowEmote(LOCALID_GARETS_GRANDFATHER,
-                          EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-    ObjectEvent_ShowEmote(LOCALID_WEST_HEALER, EMOTE_IN_FRONT | EMOTE_QUESTION,
-                          0);
-    ObjectEvent_ShowEmote(LOCALID_EAST_HEALER, EMOTE_IN_FRONT | EMOTE_QUESTION,
-                          0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    Actor_ShowEmote(ACTOR_GARETS_GRANDFATHER, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                    0);
+    Actor_ShowEmote(ACTOR_WEST_HEALER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    Actor_ShowEmote(ACTOR_EAST_HEALER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     FieldScript_WaitFrames(80);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 1);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_HEALER, 1);
     FieldScript_WaitFrames(20);
-    Script_ShowMessage(LOCALID_HEALER, 0);
+    Script_ShowMessage(ACTOR_HEALER, 0);
     FieldScript_WaitFrames(20);
-    ObjectEvent_SetAttachedEffect(
-        LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
-                                                     ATTACHED_EFFECT_ONCE);
-    ObjectEvent_SetAttachedEffect(LOCALID_DORA, ATTACHED_EFFECT_IN_FRONT |
-                                                    ATTACHED_EFFECT_ONCE);
-    ObjectEvent_SetAttachedEffect(LOCALID_GARETS_GRANDFATHER,
-                                  ATTACHED_EFFECT_IN_FRONT |
-                                      ATTACHED_EFFECT_ONCE);
-    ObjectEvent_SetAttachedEffect(
-        LOCALID_WEST_HEALER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    ObjectEvent_SetAttachedEffect(
-        LOCALID_EAST_HEALER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(ACTOR_GARET,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(ACTOR_DORA,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(ACTOR_GARETS_GRANDFATHER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(ACTOR_WEST_HEALER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(ACTOR_EAST_HEALER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     FieldScript_WaitFrames(60);
-    ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, 4);
+    ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, 4);
     FieldScript_WaitFrames(20);
-    Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
+    Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 1);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_HEALER, 1);
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 4);
+    ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 4);
     FieldScript_WaitFrames(20);
-    Script_ShowMessage(LOCALID_HEALER, 0);
+    Script_ShowMessage(ACTOR_HEALER, 0);
     FieldScript_WaitFrames(40);
-    ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
-    ObjectEvent_LinkPair(LOCALID_WEST_HEALER, LOCALID_EAST_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER,
-                                LOCALID_PARTY_LEADER, 0);
+    Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
+    Actor_LinkPair(ACTOR_WEST_HEALER, ACTOR_EAST_HEALER, 0);
+    Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_PARTY_LEADER, 0);
     FieldScript_WaitFrames(60);
-    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_DORA, LOCALID_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER, LOCALID_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_WEST_HEALER, LOCALID_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_EAST_HEALER, LOCALID_HEALER, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
+    Actor_FaceActor(ACTOR_GARET, ACTOR_HEALER, 0);
+    Actor_FaceActor(ACTOR_DORA, ACTOR_HEALER, 0);
+    Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_HEALER, 0);
+    Actor_FaceActor(ACTOR_WEST_HEALER, ACTOR_HEALER, 0);
+    Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_HEALER, 0);
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 1);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_DORA, 1);
     FieldScript_WaitFrames(20);
-    Script_ShowMessage(LOCALID_DORA, 0);
+    Script_ShowMessage(ACTOR_DORA, 0);
     FieldScript_WaitFrames(60);
-    ObjectEvent_WalkToAndWait(LOCALID_HEALER, 0xc8, 0x88);
-    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER,
-                                LOCALID_PARTY_LEADER, 0);
-    ObjectEvent_LinkPair(LOCALID_HEALER, LOCALID_GARET, 0);
+    Actor_WalkToAndWait(ACTOR_HEALER, 0xc8, 0x88);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
+    Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_PARTY_LEADER, 0);
+    Actor_LinkPair(ACTOR_HEALER, ACTOR_GARET, 0);
     FieldScript_WaitFrames(40);
-    ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 3);
+    ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 3);
     FieldScript_WaitFrames(50);
-    ObjectEvent_FaceObjectEvent(LOCALID_HEALER, LOCALID_PARTY_LEADER, 0);
+    Actor_FaceActor(ACTOR_HEALER, ACTOR_PARTY_LEADER, 0);
     FieldScript_WaitFrames(40);
-    ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 3);
+    ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 3);
     FieldScript_WaitFrames(50);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 1);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_HEALER, 1);
     FieldScript_WaitFrames(20);
-    Script_ShowMessage(LOCALID_HEALER, 0);
+    Script_ShowMessage(ACTOR_HEALER, 0);
     FieldScript_WaitFrames(30);
-    ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
-                          0);
-    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     FieldScript_WaitFrames(60);
-    ObjectEvent_SetAttachedEffect(LOCALID_DORA, ATTACHED_EFFECT_IN_FRONT |
-                                                    ATTACHED_EFFECT_ONCE);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 1);
-    Script_ShowMessage(LOCALID_DORA, 0);
+    Actor_SetAttachedEffect(ACTOR_DORA,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_DORA, 1);
+    Script_ShowMessage(ACTOR_DORA, 0);
     FieldScript_WaitFrames(30);
-    ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 3);
+    ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 3);
     FieldScript_WaitFrames(30);
-    ObjectEvent_ShowEmote(LOCALID_GARETS_GRANDFATHER,
-                          EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-    ObjectMotion_SetVariantCallback(LOCALID_GARETS_GRANDFATHER, 1);
+    Actor_ShowEmote(ACTOR_GARETS_GRANDFATHER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    ObjectMotion_SetVariantCallback(ACTOR_GARETS_GRANDFATHER, 1);
     FieldScript_WaitFrames(20);
-    Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
+    Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     FieldScript_WaitFrames(30);
-    ObjectEvent_WalkToAndWait(LOCALID_HEALER, 0xa8, 0x78);
-    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_HEALER, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER, LOCALID_HEALER, 0);
-    ObjectEvent_FaceDirection(LOCALID_HEALER, FACING_NORTH + FACING_STEP, 0);
+    Actor_WalkToAndWait(ACTOR_HEALER, 0xa8, 0x78);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
+    Actor_FaceActor(ACTOR_GARET, ACTOR_HEALER, 0);
+    Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_HEALER, 0);
+    Actor_FaceDirection(ACTOR_HEALER, FACING_NORTH + FACING_STEP, 0);
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 4);
+    ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 4);
     FieldScript_WaitFrames(20);
-    Script_ShowMessage(LOCALID_HEALER, 0);
+    Script_ShowMessage(ACTOR_HEALER, 0);
     FieldScript_WaitFrames(30);
-    ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
-                          0);
-    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     FieldScript_WaitFrames(60);
-    ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 3);
+    ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 3);
     FieldScript_WaitFrames(10);
-    Script_ShowMessage(LOCALID_HEALER, 0);
+    Script_ShowMessage(ACTOR_HEALER, 0);
     FieldScript_WaitFrames(10);
-    ObjectEvent_FaceObjectEvent(LOCALID_HEALER, LOCALID_PARTY_LEADER, 0);
+    Actor_FaceActor(ACTOR_HEALER, ACTOR_PARTY_LEADER, 0);
     FieldScript_WaitFrames(20);
-    Script_ShowMessage(LOCALID_HEALER, 0);
+    Script_ShowMessage(ACTOR_HEALER, 0);
     FieldScript_WaitFrames(20);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER,
-                                LOCALID_PARTY_LEADER, 0);
-    ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
-                                                     ATTACHED_EFFECT_ONCE);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
-    ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
+    Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_PARTY_LEADER, 0);
+    Actor_SetAttachedEffect(ACTOR_GARET,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
+    Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
     FieldScript_WaitFrames(20);
-    Script_ShowMessage(LOCALID_GARET, 0);
+    Script_ShowMessage(ACTOR_GARET, 0);
     FieldScript_WaitFrames(30);
   }
   // Ask Isaac to commit, or leave the group waiting for his answer.
   FieldScript_SetMessageId(MsgSanctumIsaacWillAcceptResponsibilityFor);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 1);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_HEALER, 1);
   FieldScript_WaitFrames(20);
-  Script_OpenMessage(LOCALID_HEALER, 0);
-  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+  Script_OpenMessage(ACTOR_HEALER, 0);
+  if (FieldScript_AskYesNoWithActorAnimation(0, 0) == 0) {
     Sanctum_ReceiveWiseOnesMission();
     PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
     PaletteFade_StartInterpolation(120);
@@ -1178,19 +1138,18 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Import_ScriptRequestExit(SANCTUM_TO_VALE_PLAZA);
   } else {
     FieldScript_WaitFrames(30);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDFATHER, 1);
-    ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, 4);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDFATHER, 1);
+    ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, 4);
     FieldScript_WaitFrames(20);
-    Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
+    Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     FieldScript_WaitFrames(20);
-    ObjectEvent_GetById(LOCALID_EAST_HEALER)->priorityFlags &=
-        ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+    Actor_GetById(ACTOR_EAST_HEALER)->priorityFlags &=
+        ~ACTOR_PRIORITY_AUTOMATIC;
 #ifdef UBFIX
-    ObjectEvent_GetById(LOCALID_EAST_HEALER)->update =
-        Sanctum_MatchLeaderPriority;
+    Actor_GetById(ACTOR_EAST_HEALER)->update = Sanctum_MatchLeaderPriority;
 #else
-    ObjectEvent_GetById(LOCALID_EAST_HEALER)->update =
-        (void (*)(union ObjectEventOrEffect *))Sanctum_MatchLeaderPriority;
+    Actor_GetById(ACTOR_EAST_HEALER)->update =
+        (void (*)(union ActorOrEffect *))Sanctum_MatchLeaderPriority;
 #endif
   }
   FieldScript_End();
@@ -1202,72 +1161,70 @@ static void Sanctum_RequestQuestAcceptance(void) {
 static void Sanctum_ReceiveWiseOnesMission(void) {
 
   u32 sparkIndex;
-  struct ObjectEvent *wiseOne;
+  struct Actor *wiseOne;
 
-  ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
-                                                   ATTACHED_EFFECT_ONCE);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
+  Actor_SetAttachedEffect(ACTOR_GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
   FieldScript_WaitFrames(20);
-  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  ObjectEvent_SetSpeed(LOCALID_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
-  ObjectEvent_SetSpeed(LOCALID_GARETS_GRANDFATHER, PIXELS(4) / 5,
-                       PIXELS(2) / 5);
-  ObjectEvent_SetSpeed(LOCALID_WEST_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
-  ObjectEvent_SetSpeed(LOCALID_EAST_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
-  ObjectEvent_SetSpeed(LOCALID_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_GARETS_GRANDFATHER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_WEST_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_EAST_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
   FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
   FieldCamera_WaitForArrival();
-  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER, LOCALID_PARTY_LEADER,
-                              0);
-  ObjectEvent_FaceObjectEvent(LOCALID_WEST_HEALER, LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_EAST_HEALER, LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
+  Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceActor(ACTOR_WEST_HEALER, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_PARTY_LEADER, 0);
+  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
   FieldScript_WaitFrames(10);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_DORA, 3);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_DORA, 3);
   FieldScript_WaitFrames(60);
-  Import_ObjectEventSetAnimation(LOCALID_HEALER, 3);
-  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
-  Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
-  ObjectMotion_SetAnimationAndWait(LOCALID_EAST_HEALER, 3);
+  Import_ActorSetAnimation(ACTOR_HEALER, 3);
+  Import_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, 3);
+  Import_ActorSetAnimation(ACTOR_WEST_HEALER, 3);
+  ObjectMotion_SetAnimationAndWait(ACTOR_EAST_HEALER, 3);
   FieldScript_WaitFrames(50);
-  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_HEALER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_DORA, LOCALID_HEALER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER, LOCALID_HEALER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_WEST_HEALER, LOCALID_HEALER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_EAST_HEALER, LOCALID_HEALER, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
+  Actor_FaceActor(ACTOR_DORA, ACTOR_HEALER, 0);
+  Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_HEALER, 0);
+  Actor_FaceActor(ACTOR_WEST_HEALER, ACTOR_HEALER, 0);
+  Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_HEALER, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   // Garet and the Mayor react to Isaac accepting the burden.
   FieldScript_SetMessageId(MsgSanctumAcceptIsaacCantMean);
-  Script_ShowMessage(LOCALID_GARET, 0);
+  Script_ShowMessage(ACTOR_GARET, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER, LOCALID_GARET, 0);
-  ObjectMotion_SetVariantCallback(LOCALID_GARETS_GRANDFATHER, 2);
-  FieldEffect_SpawnLinked(LOCALID_GARETS_GRANDFATHER,
+  Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_GARET, 0);
+  ObjectMotion_SetVariantCallback(ACTOR_GARETS_GRANDFATHER, 2);
+  FieldEffect_SpawnLinked(ACTOR_GARETS_GRANDFATHER,
                           EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   FieldScript_WaitFrames(60);
-  Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
+  Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_GARETS_GRANDFATHER, 0);
+  Actor_FaceActor(ACTOR_GARET, ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   FieldScript_WaitFrames(40);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_HEALER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER, LOCALID_HEALER, 0);
+  Actor_FaceActor(ACTOR_GARET, ACTOR_HEALER, 0);
+  Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_HEALER, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 3);
+  ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 3);
   FieldScript_WaitFrames(20);
-  ObjectMotion_ArmCallback(LOCALID_HEALER, FACING_NORTH + FACING_STEP, 0);
+  ObjectMotion_ArmCallback(ACTOR_HEALER, FACING_NORTH + FACING_STEP, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 3);
+  ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 3);
   FieldScript_WaitFrames(30);
-  Script_ShowMessage(LOCALID_HEALER, 0);
+  Script_ShowMessage(ACTOR_HEALER, 0);
   FieldScript_WaitFrames(80);
   Script_PlaySong(SONG_FADE_OUT_BGM);
   PaletteFade_SetTarget(PALETTE_TINT_PALE, PALETTES_BG);
@@ -1279,47 +1236,47 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Script_PlaySong(MUS_FOREST);
   Script_PlaySong(SE_MATERIALIZE);
   // The Wise One enters while the healer's afterimages appear.
-  ObjectEvent_SetPosition(LOCALID_WISE_ONE, PIXELS(200), PIXELS(8));
-  ObjectEvent_SetSpeed(LOCALID_WISE_ONE, PIXELS(2) / 5, PIXELS(1) / 5);
-  ObjectEvent_MoveToAndWait(LOCALID_WISE_ONE, 200, 72);
+  Actor_SetPosition(ACTOR_WISE_ONE, PIXELS(200), PIXELS(8));
+  Actor_SetSpeed(ACTOR_WISE_ONE, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_MoveToAndWait(ACTOR_WISE_ONE, 200, 72);
   Script_PlaySong(SE_STOP_ACTION_SE);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
-  Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_HEALER, 2);
+  Import_ActorSetAnimation(ACTOR_HEALER, 0);
   Sanctum_ShowHealerAfterimage();
-  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_WISE_ONE, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_WISE_ONE, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_DORA, LOCALID_WISE_ONE, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER, LOCALID_WISE_ONE, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_WEST_HEALER, LOCALID_WISE_ONE, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_EAST_HEALER, LOCALID_WISE_ONE, 0);
-  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_DORA, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_GARETS_GRANDFATHER, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_WEST_HEALER, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_EAST_HEALER, 2);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_WISE_ONE, 0);
+  Actor_FaceActor(ACTOR_GARET, ACTOR_WISE_ONE, 0);
+  Actor_FaceActor(ACTOR_DORA, ACTOR_WISE_ONE, 0);
+  Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_WISE_ONE, 0);
+  Actor_FaceActor(ACTOR_WEST_HEALER, ACTOR_WISE_ONE, 0);
+  Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_WISE_ONE, 0);
+  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_DORA, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_GARETS_GRANDFATHER, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_WEST_HEALER, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_EAST_HEALER, 2);
   FieldScript_WaitFrames(40);
-  Script_ShowMessage(LOCALID_WISE_ONE, 0);
+  Script_ShowMessage(ACTOR_WISE_ONE, 0);
   FieldScript_WaitFrames(20);
   FieldScript_WaitFrames(40);
-  Script_ShowMessage(LOCALID_WISE_ONE, 0);
+  Script_ShowMessage(ACTOR_WISE_ONE, 0);
   FieldScript_WaitFrames(60);
-  ObjectEvent_ConfigureSpriteColor(LOCALID_WISE_ONE, SPRITE_COLOR_BLINK);
+  Actor_ConfigureSpriteColor(ACTOR_WISE_ONE, SPRITE_COLOR_BLINK);
   Script_PlaySong(SONG_FADE_OUT_BGM);
   Script_PlaySong(SE_MATERIALIZE);
   // Shrink the Wise One amid sparks before restoring the room.
   for (sparkIndex = 0; sparkIndex < 32; sparkIndex++) {
-    Sanctum_SpawnObjectEventSpark(LOCALID_WISE_ONE);
+    Sanctum_SpawnActorSpark(ACTOR_WISE_ONE);
     FieldScript_WaitFrames(4);
-    wiseOne = ObjectEvent_GetById(LOCALID_WISE_ONE);
+    wiseOne = Actor_GetById(ACTOR_WISE_ONE);
     wiseOne->scaleX += -Q16_ONE / 100;
-    wiseOne = ObjectEvent_GetById(LOCALID_WISE_ONE);
+    wiseOne = Actor_GetById(ACTOR_WISE_ONE);
     wiseOne->scaleY += -Q16_ONE / 100;
   }
   Script_PlaySong(SE_STOP_ACTION_SE);
-  ObjectEvent_SetSpriteColorById(LOCALID_WISE_ONE, SPRITE_COLOR_NORMAL);
-  ObjectEvent_SetPosition(LOCALID_WISE_ONE, 0, 0);
+  Actor_SetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_NORMAL);
+  Actor_SetPosition(ACTOR_WISE_ONE, 0, 0);
   FieldScript_WaitFrames(40);
   FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
   FieldCamera_WaitForArrival();
@@ -1327,293 +1284,281 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   PaletteFade_StartInterpolation(60);
   FieldScript_WaitFrames(120);
   Sanctum_HideHealerAfterimage();
-  Import_ObjectEventSetAnimation(LOCALID_HEALER, 1);
+  Import_ActorSetAnimation(ACTOR_HEALER, 1);
   Script_PlaySong(MUS_TOWN_IN_TROUBLE);
   FieldScript_WaitFrames(60);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_HEALER, 2);
   FieldScript_WaitFrames(20);
   Sanctum_StartAllRepeatedMotion();
   FieldScript_WaitFrames(30);
-  Script_ShowMessage(LOCALID_DORA, 0);
+  Script_ShowMessage(ACTOR_DORA, 0);
   FieldScript_WaitFrames(30);
-  ObjectEvent_FaceObjectEvent(LOCALID_HEALER, LOCALID_PARTY_LEADER, 0);
+  Actor_FaceActor(ACTOR_HEALER, ACTOR_PARTY_LEADER, 0);
   FieldScript_WaitFrames(30);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER, LOCALID_HEALER, 0);
+  Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_HEALER, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_HEALER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_HEALER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_DORA, LOCALID_HEALER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_WEST_HEALER, LOCALID_HEALER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_EAST_HEALER, LOCALID_HEALER, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
+  Actor_FaceActor(ACTOR_GARET, ACTOR_HEALER, 0);
+  Actor_FaceActor(ACTOR_DORA, ACTOR_HEALER, 0);
+  Actor_FaceActor(ACTOR_WEST_HEALER, ACTOR_HEALER, 0);
+  Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_HEALER, 0);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
+  Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceObjectEvent(LOCALID_HEALER, LOCALID_GARETS_GRANDFATHER, 0);
+  Actor_FaceActor(ACTOR_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 3);
+  ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 3);
   FieldScript_WaitFrames(20);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceObjectEvent(LOCALID_HEALER, LOCALID_PARTY_LEADER, 0);
+  Actor_FaceActor(ACTOR_HEALER, ACTOR_PARTY_LEADER, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 3);
+  ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 3);
   FieldScript_WaitFrames(30);
-  Script_ShowMessage(LOCALID_HEALER, 0);
+  Script_ShowMessage(ACTOR_HEALER, 0);
   FieldScript_WaitFrames(20);
   Sanctum_ShowAllEmotes();
   FieldScript_WaitFrames(30);
-  ObjectEvent_ShowEmote(LOCALID_HEALER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_HEALER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(30);
-  Script_ShowMessage(LOCALID_HEALER, 0);
+  Script_ShowMessage(ACTOR_HEALER, 0);
   FieldScript_WaitFrames(20);
   Sanctum_NodAll();
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 3);
+  ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 3);
   FieldScript_WaitFrames(180);
-  ObjectEvent_ShowEmote(LOCALID_GARETS_GRANDFATHER,
-                        EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(ACTOR_GARETS_GRANDFATHER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   FieldScript_WaitFrames(60);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
-  ObjectEvent_LinkPair(LOCALID_WEST_HEALER, LOCALID_EAST_HEALER, 0);
+  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
+  Actor_LinkPair(ACTOR_WEST_HEALER, ACTOR_EAST_HEALER, 0);
   FieldScript_WaitFrames(40);
-  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_HEALER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_HEALER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_WEST_HEALER, LOCALID_HEALER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_EAST_HEALER, LOCALID_HEALER, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
+  Actor_FaceActor(ACTOR_GARET, ACTOR_HEALER, 0);
+  Actor_FaceActor(ACTOR_WEST_HEALER, ACTOR_HEALER, 0);
+  Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_HEALER, 0);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(LOCALID_GARET, 0);
+  Script_ShowMessage(ACTOR_GARET, 0);
   FieldScript_WaitFrames(30);
-  ObjectEvent_ShowEmote(LOCALID_HEALER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_HEALER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   FieldScript_WaitFrames(60);
   Sanctum_StartAllRepeatedMotion();
   FieldScript_WaitFrames(30);
-  Script_ShowMessage(LOCALID_DORA, 0);
+  Script_ShowMessage(ACTOR_DORA, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_ShowEmote(LOCALID_HEALER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_HEALER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   FieldScript_WaitFrames(80);
-  ObjectEvent_ShowEmote(LOCALID_GARETS_GRANDFATHER,
-                        EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_GARETS_GRANDFATHER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(60);
-  Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
+  Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(30);
-  ObjectEvent_ShowEmote(LOCALID_HEALER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(ACTOR_HEALER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   FieldScript_WaitFrames(60);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 1);
-  FieldEffect_SpawnLinked(LOCALID_HEALER, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_HEALER, 1);
+  FieldEffect_SpawnLinked(ACTOR_HEALER, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
   FieldScript_WaitFrames(20);
   Sanctum_StartAllRepeatedMotion();
   FieldScript_WaitFrames(40);
-  Script_ShowMessage(LOCALID_HEALER, 0);
+  Script_ShowMessage(ACTOR_HEALER, 0);
   FieldScript_WaitFrames(20);
   Sanctum_NodAll();
   FieldScript_WaitFrames(30);
-  Script_ShowMessage(LOCALID_HEALER, 0);
+  Script_ShowMessage(ACTOR_HEALER, 0);
   FieldScript_WaitFrames(30);
   Sanctum_NodAll();
   FieldScript_WaitFrames(120);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 1);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(LOCALID_GARET, 0);
+  Script_ShowMessage(ACTOR_GARET, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 3);
+  ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 3);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(LOCALID_HEALER, 0);
+  Script_ShowMessage(ACTOR_HEALER, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
-                        0);
-  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  ObjectEvent_ShowEmote(LOCALID_GARETS_GRANDFATHER,
-                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_ShowEmote(LOCALID_WEST_HEALER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
-                        0);
-  ObjectEvent_ShowEmote(LOCALID_EAST_HEALER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
-                        0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(ACTOR_GARETS_GRANDFATHER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  0);
+  Actor_ShowEmote(ACTOR_WEST_HEALER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(ACTOR_EAST_HEALER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   FieldScript_WaitFrames(60);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDFATHER, 1);
-  Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDFATHER, 1);
+  Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceObjectEvent(LOCALID_HEALER, LOCALID_GARETS_GRANDFATHER, 0);
+  Actor_FaceActor(ACTOR_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 4);
+  ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 4);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(LOCALID_HEALER, 0);
+  Script_ShowMessage(ACTOR_HEALER, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
-                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_ShowEmote(LOCALID_GARETS_GRANDFATHER,
-                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_ShowEmote(LOCALID_WEST_HEALER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                        0);
-  ObjectEvent_ShowEmote(LOCALID_EAST_HEALER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                        0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_GARETS_GRANDFATHER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  0);
+  Actor_ShowEmote(ACTOR_WEST_HEALER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_EAST_HEALER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldScript_WaitFrames(60);
-  ObjectEvent_FaceObjectEvent(LOCALID_HEALER, LOCALID_PARTY_LEADER, 0);
+  Actor_FaceActor(ACTOR_HEALER, ACTOR_PARTY_LEADER, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 3);
-  Script_ShowMessage(LOCALID_HEALER, 0);
+  ObjectMotion_SetAnimationAndWait(ACTOR_HEALER, 3);
+  Script_ShowMessage(ACTOR_HEALER, 0);
   FieldScript_WaitFrames(40);
-  ObjectEvent_WalkToAndWait(LOCALID_HEALER, 168, 176);
-  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_HEALER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_HEALER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_DORA, LOCALID_HEALER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER, LOCALID_HEALER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_WEST_HEALER, LOCALID_HEALER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_EAST_HEALER, LOCALID_HEALER, 0);
-  ObjectEvent_WalkToAndWait(LOCALID_HEALER, 200, 200);
-  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_HEALER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_HEALER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER, LOCALID_HEALER, 0);
-  ObjectEvent_FaceDirection(LOCALID_DORA, FACING_EAST, 0);
-  ObjectEvent_FaceDirection(LOCALID_WEST_HEALER, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(LOCALID_EAST_HEALER, FACING_WEST, 0);
-  ObjectEvent_WalkTo(LOCALID_HEALER, 200, 0x110);
+  Actor_WalkToAndWait(ACTOR_HEALER, 168, 176);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
+  Actor_FaceActor(ACTOR_GARET, ACTOR_HEALER, 0);
+  Actor_FaceActor(ACTOR_DORA, ACTOR_HEALER, 0);
+  Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_HEALER, 0);
+  Actor_FaceActor(ACTOR_WEST_HEALER, ACTOR_HEALER, 0);
+  Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_HEALER, 0);
+  Actor_WalkToAndWait(ACTOR_HEALER, 200, 200);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
+  Actor_FaceActor(ACTOR_GARET, ACTOR_HEALER, 0);
+  Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_HEALER, 0);
+  Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_WEST_HEALER, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_EAST_HEALER, FACING_WEST, 0);
+  Actor_WalkTo(ACTOR_HEALER, 200, 0x110);
   FieldScript_WaitFrames(40);
-  ObjectEvent_FaceDirection(LOCALID_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(LOCALID_WEST_HEALER, FACING_SOUTH + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(LOCALID_EAST_HEALER, FACING_SOUTH + FACING_STEP, 0);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_HEALER);
-  ObjectEvent_SetPosition(LOCALID_HEALER, 0, 0);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_WEST_HEALER, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_EAST_HEALER, FACING_SOUTH + FACING_STEP, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_HEALER);
+  Actor_SetPosition(ACTOR_HEALER, 0, 0);
   FieldScript_WaitFrames(60);
   Sanctum_ShowAllEmotes();
   FieldScript_WaitFrames(60);
   FieldScript_WaitFrames(120);
-  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_WEST_HEALER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_EAST_HEALER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_DORA, LOCALID_WEST_HEALER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER, LOCALID_WEST_HEALER,
-                              0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_WEST_HEALER, 0);
+  Actor_FaceActor(ACTOR_GARET, ACTOR_EAST_HEALER, 0);
+  Actor_FaceActor(ACTOR_DORA, ACTOR_WEST_HEALER, 0);
+  Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_WEST_HEALER, 0);
   FieldScript_WaitFrames(120);
-  ObjectEvent_ShowEmote(LOCALID_WEST_HEALER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
-                        0);
+  Actor_ShowEmote(ACTOR_WEST_HEALER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   FieldScript_WaitFrames(60);
-  ObjectEvent_FaceObjectEvent(LOCALID_WEST_HEALER, LOCALID_PARTY_LEADER, 0);
+  Actor_FaceActor(ACTOR_WEST_HEALER, ACTOR_PARTY_LEADER, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_WEST_HEALER, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_WEST_HEALER, 2);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(LOCALID_WEST_HEALER, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_WEST_HEALER, FACING_SOUTH + FACING_STEP, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_ShowEmote(LOCALID_WEST_HEALER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_WEST_HEALER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(80);
-  ObjectEvent_FaceObjectEvent(LOCALID_WEST_HEALER, LOCALID_EAST_HEALER, 0);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_WEST_HEALER, 1);
+  Actor_FaceActor(ACTOR_WEST_HEALER, ACTOR_EAST_HEALER, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_WEST_HEALER, 1);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(LOCALID_WEST_HEALER, 0);
+  Script_ShowMessage(ACTOR_WEST_HEALER, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(LOCALID_EAST_HEALER, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_EAST_HEALER, FACING_SOUTH + FACING_STEP, 0);
   FieldScript_WaitFrames(20);
-  FieldEffect_SpawnLinked(LOCALID_EAST_HEALER, EMOTE_IN_FRONT | EMOTE_QUESTION,
+  FieldEffect_SpawnLinked(ACTOR_EAST_HEALER, EMOTE_IN_FRONT | EMOTE_QUESTION,
                           0);
   FieldScript_WaitFrames(60);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_WEST_HEALER, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_WEST_HEALER, 2);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceObjectEvent(LOCALID_EAST_HEALER, LOCALID_PARTY_LEADER, 0);
+  Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_PARTY_LEADER, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_EAST_HEALER, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_EAST_HEALER, 2);
   FieldScript_WaitFrames(30);
-  ObjectMotion_ArmCallback(LOCALID_EAST_HEALER, FACING_SOUTH + FACING_STEP, 0);
+  ObjectMotion_ArmCallback(ACTOR_EAST_HEALER, FACING_SOUTH + FACING_STEP, 0);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(LOCALID_EAST_HEALER, 0);
+  Script_ShowMessage(ACTOR_EAST_HEALER, 0);
   FieldScript_WaitFrames(20);
-  Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
-  ObjectMotion_SetAnimationAndWait(LOCALID_EAST_HEALER, 3);
+  Import_ActorSetAnimation(ACTOR_WEST_HEALER, 3);
+  ObjectMotion_SetAnimationAndWait(ACTOR_EAST_HEALER, 3);
   FieldScript_WaitFrames(20);
-  ObjectEvent_WalkTo(LOCALID_WEST_HEALER, 200, 0x110);
-  ObjectEvent_WalkToAndWait(LOCALID_EAST_HEALER, 200, 0x110);
-  ObjectEvent_SetPosition(LOCALID_WEST_HEALER, 0, 0);
-  ObjectEvent_SetPosition(LOCALID_EAST_HEALER, 0, 0);
-  FieldEffect_SpawnLinked(LOCALID_GARETS_GRANDFATHER,
+  Actor_WalkTo(ACTOR_WEST_HEALER, 200, 0x110);
+  Actor_WalkToAndWait(ACTOR_EAST_HEALER, 200, 0x110);
+  Actor_SetPosition(ACTOR_WEST_HEALER, 0, 0);
+  Actor_SetPosition(ACTOR_EAST_HEALER, 0, 0);
+  FieldEffect_SpawnLinked(ACTOR_GARETS_GRANDFATHER,
                           EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   FieldScript_WaitFrames(60);
-  ObjectEvent_WalkToAndWait(LOCALID_GARETS_GRANDFATHER, 200, 136);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARETS_GRANDFATHER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_GARETS_GRANDFATHER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_DORA, LOCALID_GARETS_GRANDFATHER, 0);
+  Actor_WalkToAndWait(ACTOR_GARETS_GRANDFATHER, 200, 136);
+  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARETS_GRANDFATHER, 0);
+  Actor_FaceActor(ACTOR_GARET, ACTOR_GARETS_GRANDFATHER, 0);
+  Actor_FaceActor(ACTOR_DORA, ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, 4);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, 4);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
+  Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(30);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(LOCALID_DORA, 0);
+  Script_ShowMessage(ACTOR_DORA, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_WalkToAndWait(LOCALID_DORA, 168, 168);
-  ObjectEvent_FaceObjectEvent(LOCALID_DORA, LOCALID_GARETS_GRANDFATHER, 0);
+  Actor_WalkToAndWait(ACTOR_DORA, 168, 168);
+  Actor_FaceActor(ACTOR_DORA, ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_DORA, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
+  Actor_FaceActor(ACTOR_GARET, ACTOR_DORA, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(LOCALID_DORA, 4);
+  ObjectMotion_SetAnimationAndWait(ACTOR_DORA, 4);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(LOCALID_DORA, 0);
+  Script_ShowMessage(ACTOR_DORA, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(60);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, 4);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, 4);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_GARETS_GRANDFATHER,
-                              0);
-  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_GARETS_GRANDFATHER, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GARETS_GRANDFATHER, 0);
+  Actor_FaceActor(ACTOR_GARET, ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
+  Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_DORA, 2);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(LOCALID_DORA, 0);
+  Script_ShowMessage(ACTOR_DORA, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(60);
-  FieldEffect_SpawnLinked(LOCALID_GARETS_GRANDFATHER,
+  FieldEffect_SpawnLinked(ACTOR_GARETS_GRANDFATHER,
                           EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(60);
-  Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
+  Script_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
-  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
-                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  FieldEffect_SpawnLinked(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_GARET, 2);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldEffect_SpawnLinked(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldScript_WaitFrames(60);
-  ObjectMotion_SetAnimationAndWait(LOCALID_DORA, 3);
+  ObjectMotion_SetAnimationAndWait(ACTOR_DORA, 3);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(LOCALID_DORA, 0);
+  Script_ShowMessage(ACTOR_DORA, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
   FieldScript_WaitFrames(30);
-  Import_ObjectEventSetAnimation(LOCALID_DORA, 3);
+  Import_ActorSetAnimation(ACTOR_DORA, 3);
   FieldScript_WaitFrames(30);
-  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
+  Import_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, 3);
 }
 
-/// Copies the healer into the afterimage object event.
+/// Copies the healer into the afterimage actor.
 static void Sanctum_ShowHealerAfterimage(void) {
   u32 entryIndex;
-  struct ObjectEvent *afterimage;
-  struct ObjectEvent *objectEvent;
+  struct Actor *afterimage;
+  struct Actor *actor;
   struct Sprite *sprite;
 
-  objectEvent = ObjectEvent_GetById(LOCALID_HEALER);
-  if (objectEvent != 0) {
-    Import_ObjectEventSetPosition(LOCALID_HEALER_AFTERIMAGE,
-                                  objectEvent->x.fixed, objectEvent->z.fixed);
+  actor = Actor_GetById(ACTOR_HEALER);
+  if (actor != 0) {
+    Import_ActorSetPosition(ACTOR_HEALER_AFTERIMAGE, actor->x.fixed,
+                            actor->z.fixed);
   }
-  Import_ObjectEventSetAnimation(LOCALID_HEALER_AFTERIMAGE, 0);
-  afterimage = ObjectEvent_GetById(LOCALID_HEALER_AFTERIMAGE);
-  objectEvent = ObjectEvent_GetById(LOCALID_HEALER);
-  afterimage->facing = objectEvent->facing;
-  objectEvent = ObjectEvent_GetById(LOCALID_HEALER_AFTERIMAGE);
-  objectEvent->update = Sanctum_UpdateHealerAfterimage;
-  objectEvent = ObjectEvent_GetById(LOCALID_HEALER_AFTERIMAGE);
-  sprite = objectEvent->sprite;
+  Import_ActorSetAnimation(ACTOR_HEALER_AFTERIMAGE, 0);
+  afterimage = Actor_GetById(ACTOR_HEALER_AFTERIMAGE);
+  actor = Actor_GetById(ACTOR_HEALER);
+  afterimage->facing = actor->facing;
+  actor = Actor_GetById(ACTOR_HEALER_AFTERIMAGE);
+  actor->update = Sanctum_UpdateHealerAfterimage;
+  actor = Actor_GetById(ACTOR_HEALER_AFTERIMAGE);
+  sprite = actor->sprite;
   {
     for (entryIndex = 0; entryIndex < sprite->count; entryIndex++) {
       struct SpriteAnim *entry = sprite->entries[entryIndex];
@@ -1624,49 +1569,46 @@ static void Sanctum_ShowHealerAfterimage(void) {
     }
   }
   sprite->dirty = 1;
-  ObjectEvent_GetById(LOCALID_HEALER_AFTERIMAGE)->priorityFlags &=
-      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  Actor_GetById(ACTOR_HEALER_AFTERIMAGE)->priorityFlags &=
+      ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 2;
 }
 
 static void Sanctum_HideHealerAfterimage(void) {
-  struct ObjectEvent *state = ObjectEvent_GetById(LOCALID_HEALER_AFTERIMAGE);
+  struct Actor *state = Actor_GetById(ACTOR_HEALER_AFTERIMAGE);
   state->update = 0;
-  Import_ObjectEventSetPosition(LOCALID_HEALER_AFTERIMAGE, 0, 0);
+  Import_ActorSetPosition(ACTOR_HEALER_AFTERIMAGE, 0, 0);
 }
 
 /// Cycles the afterimage through four offsets from the healer.
-static void
-Sanctum_UpdateHealerAfterimage(union ObjectEventOrEffect *fieldObject) {
-  struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
-  struct ObjectEvent *healer;
+static void Sanctum_UpdateHealerAfterimage(union ActorOrEffect *fieldObject) {
+  struct Actor *actor = (struct Actor *)fieldObject;
+  struct Actor *healer;
 
-  healer = ObjectEvent_GetById(LOCALID_HEALER);
-  objectEvent->targetX = objectEvent->x.fixed = healer->x.fixed;
-  objectEvent->targetY = objectEvent->y.fixed = healer->y.fixed;
-  objectEvent->targetZ = objectEvent->z.fixed = healer->z.fixed - PIXELS(2);
+  healer = Actor_GetById(ACTOR_HEALER);
+  actor->targetX = actor->x.fixed = healer->x.fixed;
+  actor->targetY = actor->y.fixed = healer->y.fixed;
+  actor->targetZ = actor->z.fixed = healer->z.fixed - PIXELS(2);
   switch (gFrameCount & 3) {
   case 0:
-    objectEvent->targetX = objectEvent->x.fixed =
-        healer->x.fixed - PIXELS(7) / 2;
+    actor->targetX = actor->x.fixed = healer->x.fixed - PIXELS(7) / 2;
     break;
   case 1:
-    objectEvent->targetX = objectEvent->x.fixed = healer->x.fixed + PIXELS(3);
+    actor->targetX = actor->x.fixed = healer->x.fixed + PIXELS(3);
     break;
   case 2:
-    objectEvent->targetY = objectEvent->y.fixed = healer->y.fixed + PIXELS(2);
+    actor->targetY = actor->y.fixed = healer->y.fixed + PIXELS(2);
     break;
   case 3:
-    objectEvent->targetZ = objectEvent->z.fixed = healer->z.fixed;
+    actor->targetZ = actor->z.fixed = healer->z.fixed;
     break;
   }
 }
 
-/// Advances an effect around its linked object event on an elliptical path.
-static void
-Sanctum_UpdateOrbitingEffect(union ObjectEventOrEffect *fieldObject) {
-  struct ObjectEvent *effect = (struct ObjectEvent *)fieldObject;
-  struct ObjectEvent *anchor = effect->linkedObject;
+/// Advances an effect around its linked actor on an elliptical path.
+static void Sanctum_UpdateOrbitingEffect(union ActorOrEffect *fieldObject) {
+  struct Actor *effect = (struct Actor *)fieldObject;
+  struct Actor *anchor = effect->linkedObject;
   u16 *angle = &effect->timer;
   u16 orbitAngle = *angle;
   s32 x;
@@ -1686,21 +1628,21 @@ Sanctum_UpdateOrbitingEffect(union ObjectEventOrEffect *fieldObject) {
 }
 
 /// Creates an orbiting effect with the requested angular step.
-static void Sanctum_SpawnOrbitingEffect(s32 localId, s32 angleStep) {
+static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep) {
   s32 orbitStep;
-  struct ObjectEvent *center;
-  struct ObjectEvent *effect;
+  struct Actor *center;
+  struct Actor *effect;
   struct Sprite *sprite;
   struct Sprite *sourceSprite;
 
   orbitStep = angleStep;
-  center = ObjectEvent_GetById(localId);
+  center = Actor_GetById(actorId);
   if (center != 0) {
-    effect = ObjectEvent_Create(SPRITE_SPARKLE, center->x.fixed,
-                                center->y.fixed + PIXELS(45), center->z.fixed);
+    effect = Actor_Create(SPRITE_SPARKLE, center->x.fixed,
+                          center->y.fixed + PIXELS(45), center->z.fixed);
     if (effect != 0) {
       sprite = effect->sprite;
-      ObjectEvent_SetScript(effect, gSanctum_OwnerEffectScript);
+      Actor_SetScript(effect, gSanctum_OwnerEffectScript);
       {
         s32 zero = 0;
 
@@ -1738,13 +1680,13 @@ static s32 Sanctum_ChooseRestartOption(void) {
   s32 text;
   s32 choice;
 
-  Import_ObjectEventSetPosition(LOCALID_HEALER, 0, 0);
-  Import_ObjectEventSetPosition(LOCALID_WEST_HEALER, 0, 0);
-  Import_ObjectEventSetPosition(LOCALID_EAST_HEALER, 0, 0);
-  Import_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
-  Import_ObjectEventSetPosition(LOCALID_DORA, 0, 0);
-  Import_ObjectEventSetPosition(LOCALID_GARETS_GRANDFATHER, 0, 0);
-  Import_ObjectEventSetPosition(LOCALID_PARTY_LEADER, 0, 0);
+  Import_ActorSetPosition(ACTOR_HEALER, 0, 0);
+  Import_ActorSetPosition(ACTOR_WEST_HEALER, 0, 0);
+  Import_ActorSetPosition(ACTOR_EAST_HEALER, 0, 0);
+  Import_ActorSetPosition(ACTOR_GARET, 0, 0);
+  Import_ActorSetPosition(ACTOR_DORA, 0, 0);
+  Import_ActorSetPosition(ACTOR_GARETS_GRANDFATHER, 0, 0);
+  Import_ActorSetPosition(ACTOR_PARTY_LEADER, 0, 0);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(1);
   FieldScript_WaitFrames(1);
@@ -1778,267 +1720,255 @@ static s32 Sanctum_ChooseRestartOption(void) {
 /// happened in Sol Sanctum.
 static void Sanctum_ReenactSolSanctum(void) {
 
-  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(3) / 2, PIXELS(3) / 4);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDFATHER, 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+  Actor_SetSpeed(ACTOR_GARET, PIXELS(3) / 2, PIXELS(3) / 4);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARETS_GRANDFATHER, 2);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, 3);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, 3);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(15);
-  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
-  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
-  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
-      ~OBJ_EVENT_FACES_MOTION;
-  ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 184, 168);
-  ObjectEvent_GetById(LOCALID_GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
-  ObjectMotion_SetPositionAndReset(LOCALID_GARET, 200, 168);
+  ObjectMotion_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
+  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 1);
+  Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  ObjectMotion_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 184, 168);
+  Actor_GetById(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  ObjectMotion_SetPositionAndReset(ACTOR_GARET, 200, 168);
   FieldScript_WaitFrames(1);
-  ObjectEvent_GetById(LOCALID_GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
-      OBJ_EVENT_FACES_MOTION;
-  ObjectEvent_GetById(LOCALID_GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
-  ObjectMotion_Launch(LOCALID_GARET, 2, 0);
+  Actor_GetById(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_GetById(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
+  ObjectMotion_Launch(ACTOR_GARET, 2, 0);
   FieldScript_WaitFrames(15);
-  ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_HEALER, 0);
+  ObjectMotion_SetAngleToward(ACTOR_GARET, ACTOR_HEALER, 0);
   FieldScript_WaitFrames(5);
-  ObjectMotion_Launch(LOCALID_GARET, 2, 0);
+  ObjectMotion_Launch(ACTOR_GARET, 2, 0);
   FieldScript_WaitFrames(25);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
-  ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_GARETS_GRANDFATHER, 0);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
+  ObjectMotion_SetAngleToward(ACTOR_GARET, ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(5);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(5);
-  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
+  ObjectMotion_SetAngleToward(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   FieldScript_WaitFrames(15);
-  Import_ObjectEventSetAnimation(LOCALID_DORA, 3);
-  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
-  Import_ObjectEventSetAnimation(LOCALID_HEALER, 3);
-  Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
-  ObjectMotion_SetAnimationAndWait(LOCALID_EAST_HEALER, 3);
+  Import_ActorSetAnimation(ACTOR_DORA, 3);
+  Import_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, 3);
+  Import_ActorSetAnimation(ACTOR_HEALER, 3);
+  Import_ActorSetAnimation(ACTOR_WEST_HEALER, 3);
+  ObjectMotion_SetAnimationAndWait(ACTOR_EAST_HEALER, 3);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_GARETS_GRANDFATHER,
-                              0);
-  ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_GARETS_GRANDFATHER, 0);
+  ObjectMotion_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_GARETS_GRANDFATHER, 0);
+  ObjectMotion_SetAngleToward(ACTOR_GARET, ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(10);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
-  ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_DORA, 0);
+  ObjectMotion_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
+  ObjectMotion_SetAngleToward(ACTOR_GARET, ACTOR_DORA, 0);
   FieldScript_WaitFrames(10);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_EAST, 0);
+  ObjectMotion_ArmCallback(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   FieldScript_WaitFrames(15);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_PARTY_LEADER, 2);
   FieldScript_WaitFrames(10);
   // Illustrate the account with the floating item icon.
   Sanctum_RaiseItemIcon(ITEM_MARS_STAR, PIXELS(184), PIXELS(27), PIXELS(168));
-  ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
+  ObjectMotion_SetAngleToward(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 1);
   FieldScript_WaitFrames(10);
-  ObjectMotion_Launch(LOCALID_GARET, 4, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH + FACING_STEP, 0);
+  ObjectMotion_Launch(ACTOR_GARET, 4, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
   FieldScript_WaitFrames(15);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST + FACING_STEP, 0);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST + FACING_STEP, 0);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_Launch(LOCALID_GARET, 4, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  ObjectMotion_Launch(ACTOR_GARET, 4, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   FieldScript_WaitFrames(15);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   FieldScript_WaitFrames(30);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   FieldScript_WaitFrames(10);
-  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(60);
-  ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_GARETS_GRANDFATHER, 0);
+  ObjectMotion_SetAngleToward(ACTOR_GARET, ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   FieldScript_WaitFrames(10);
-  ObjectEvent_GetById(LOCALID_HEALER)->timer = GARET;
+  Actor_GetById(ACTOR_HEALER)->timer = GARET;
 #ifdef UBFIX
-  ObjectEvent_GetById(LOCALID_HEALER)->update =
-      Sanctum_FaceObjectEventNamedByTimer;
+  Actor_GetById(ACTOR_HEALER)->update = Sanctum_FaceActorNamedByTimer;
 #else
-  ObjectEvent_GetById(LOCALID_HEALER)->update = (void (*)(
-      union ObjectEventOrEffect *))Sanctum_FaceObjectEventNamedByTimer;
+  Actor_GetById(ACTOR_HEALER)->update =
+      (void (*)(union ActorOrEffect *))Sanctum_FaceActorNamedByTimer;
 #endif
-  ObjectEvent_GetById(LOCALID_GARETS_GRANDFATHER)->timer = GARET;
+  Actor_GetById(ACTOR_GARETS_GRANDFATHER)->timer = GARET;
 #ifdef UBFIX
-  ObjectEvent_GetById(LOCALID_GARETS_GRANDFATHER)->update =
-      Sanctum_FaceObjectEventNamedByTimer;
+  Actor_GetById(ACTOR_GARETS_GRANDFATHER)->update =
+      Sanctum_FaceActorNamedByTimer;
 #else
-  ObjectEvent_GetById(LOCALID_GARETS_GRANDFATHER)->update = (void (*)(
-      union ObjectEventOrEffect *))Sanctum_FaceObjectEventNamedByTimer;
+  Actor_GetById(ACTOR_GARETS_GRANDFATHER)->update =
+      (void (*)(union ActorOrEffect *))Sanctum_FaceActorNamedByTimer;
 #endif
-  ObjectMotion_SetPositionAndReset(LOCALID_GARET, 196, 180);
-  ObjectMotion_SetPositionAndReset(LOCALID_GARET, 184, 184);
-  ObjectMotion_SetPositionAndReset(LOCALID_GARET, 180, 180);
-  ObjectMotion_SetPositionAndReset(LOCALID_GARET, 168, 168);
-  ObjectMotion_SetPositionAndReset(LOCALID_GARET, 180, 156);
-  ObjectMotion_ResetAndSetPositionInMode2(LOCALID_GARET, 200, 104);
-  ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, 192, 168);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
+  ObjectMotion_SetPositionAndReset(ACTOR_GARET, 196, 180);
+  ObjectMotion_SetPositionAndReset(ACTOR_GARET, 184, 184);
+  ObjectMotion_SetPositionAndReset(ACTOR_GARET, 180, 180);
+  ObjectMotion_SetPositionAndReset(ACTOR_GARET, 168, 168);
+  ObjectMotion_SetPositionAndReset(ACTOR_GARET, 180, 156);
+  ObjectMotion_ResetAndSetPositionInMode2(ACTOR_GARET, 200, 104);
+  ObjectMotion_SetPositionAndReset(ACTOR_PARTY_LEADER, 192, 168);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GARET);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 1);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
   FieldScript_WaitFrames(15);
-  ObjectEvent_GetById(LOCALID_GARETS_GRANDFATHER)->update = NULL;
-  ObjectEvent_GetById(LOCALID_HEALER)->update = NULL;
-  ObjectMotion_SetVariantCallback(LOCALID_HEALER, 2);
-  FieldEffect_SpawnLinked(LOCALID_HEALER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                          0);
+  Actor_GetById(ACTOR_GARETS_GRANDFATHER)->update = NULL;
+  Actor_GetById(ACTOR_HEALER)->update = NULL;
+  ObjectMotion_SetVariantCallback(ACTOR_HEALER, 2);
+  FieldEffect_SpawnLinked(ACTOR_HEALER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldScript_WaitFrames(60);
-  Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);
-  FieldEffect_SpawnLinked(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
-                          0);
+  Import_ActorSetAnimation(ACTOR_HEALER, 0);
+  FieldEffect_SpawnLinked(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(60);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
+  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(LOCALID_DORA, 3);
+  ObjectMotion_SetAnimationAndWait(ACTOR_DORA, 3);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_PARTY_LEADER, 2);
   FieldScript_WaitFrames(10);
-  ObjectMotion_Launch(LOCALID_PARTY_LEADER, 2, 0);
+  ObjectMotion_Launch(ACTOR_PARTY_LEADER, 2, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_Launch(LOCALID_PARTY_LEADER, 2, 0);
+  ObjectMotion_Launch(ACTOR_PARTY_LEADER, 2, 0);
   FieldScript_WaitFrames(20);
   FieldScript_WaitFrames(15);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARETS_GRANDFATHER, 0);
+  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, 3);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, 3);
   FieldScript_WaitFrames(60);
-  ObjectMotion_SetPositionAndReset(LOCALID_GARET, 208, 168);
-  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
-  ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_GARETS_GRANDFATHER, 0);
+  ObjectMotion_SetPositionAndReset(ACTOR_GARET, 208, 168);
+  ObjectMotion_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
+  ObjectMotion_SetAngleToward(ACTOR_GARET, ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(10);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_SHAKE_HEAD);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
+  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 1);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 1);
   FieldScript_WaitFrames(10);
-  ObjectMotion_ArmCallback(LOCALID_GARET, FACING_EAST, 0);
+  ObjectMotion_ArmCallback(ACTOR_GARET, FACING_EAST, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_GARETS_GRANDFATHER, 0);
+  ObjectMotion_SetAngleToward(ACTOR_GARET, ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, 3);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, 3);
   FieldScript_WaitFrames(10);
-  ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_EAST, 0);
-  ObjectMotion_ArmCallback(LOCALID_GARET, FACING_EAST, 0);
+  ObjectMotion_ArmCallback(ACTOR_PARTY_LEADER, FACING_EAST, 0);
+  ObjectMotion_ArmCallback(ACTOR_GARET, FACING_EAST, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
+  ObjectMotion_SetVariantCallback(ACTOR_PARTY_LEADER, 2);
+  ObjectMotion_SetVarCbAndRefresh(ACTOR_GARET, 2);
   FieldScript_WaitFrames(10);
   // Repeat the synchronized eight-point paths around the room.
-  ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
-                              gSanctum_LeaderCircleScript);
-  ObjectEvent_SetActionScript(LOCALID_GARET, gSanctum_GaretCircleScript);
-  ObjectEvent_RefreshSelectorById(LOCALID_PARTY_LEADER);
-  ObjectEvent_RefreshSelectorById(LOCALID_GARET);
-  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(3) / 2, PIXELS(3) / 4);
-  ObjectMotion_Launch(LOCALID_PARTY_LEADER, 6, 0);
-  ObjectMotion_Launch(LOCALID_GARET, 6, 0);
-  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_WEST_HEALER, 0);
-  ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_HEALER, 0);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gSanctum_LeaderCircleScript);
+  Actor_SetActionScript(ACTOR_GARET, gSanctum_GaretCircleScript);
+  Actor_RefreshSelectorById(ACTOR_PARTY_LEADER);
+  Actor_RefreshSelectorById(ACTOR_GARET);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+  Actor_SetSpeed(ACTOR_GARET, PIXELS(3) / 2, PIXELS(3) / 4);
+  ObjectMotion_Launch(ACTOR_PARTY_LEADER, 6, 0);
+  ObjectMotion_Launch(ACTOR_GARET, 6, 0);
+  ObjectMotion_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_WEST_HEALER, 0);
+  ObjectMotion_SetAngleToward(ACTOR_GARET, ACTOR_HEALER, 0);
   FieldScript_WaitFrames(1);
-  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_GARETS_GRANDFATHER,
-                              0);
-  ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_DORA, 0);
+  ObjectMotion_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_GARETS_GRANDFATHER, 0);
+  ObjectMotion_SetAngleToward(ACTOR_GARET, ACTOR_DORA, 0);
   FieldScript_WaitFrames(1);
-  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_HEALER, 0);
-  ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_WEST_HEALER, 0);
+  ObjectMotion_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
+  ObjectMotion_SetAngleToward(ACTOR_GARET, ACTOR_WEST_HEALER, 0);
   FieldScript_WaitFrames(1);
-  ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 192, 168);
-  ObjectMotion_SetPositionAndReset(LOCALID_GARET, 208, 168);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
+  ObjectMotion_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 192, 168);
+  ObjectMotion_SetPositionAndReset(ACTOR_GARET, 208, 168);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER,
-                            FACING_SOUTHEAST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH + FACING_STEP,
-                            0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST + FACING_STEP, 0);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER,
-                            FACING_SOUTHEAST + FACING_STEP, 0);
-  ObjectMotion_ArmCallback(LOCALID_GARET, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST + FACING_STEP, 0);
+  ObjectMotion_ArmCallback(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH + FACING_STEP,
-                            0);
-  ObjectMotion_ArmCallback(LOCALID_GARET, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH + FACING_STEP, 0);
+  ObjectMotion_ArmCallback(ACTOR_GARET, FACING_NORTHWEST + FACING_STEP, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
-  ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_GARETS_GRANDFATHER, 0);
+  ObjectMotion_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
+  ObjectMotion_SetAngleToward(ACTOR_GARET, ACTOR_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(20);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   FieldScript_WaitFrames(10);
-  Import_ObjectEventSetAnimation(LOCALID_DORA, 3);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, 3);
+  Import_ActorSetAnimation(ACTOR_DORA, 3);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, 3);
   FieldScript_WaitFrames(30);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
+  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
   FieldScript_WaitFrames(20);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   FieldScript_WaitFrames(10);
-  ObjectMotion_ArmCallback(LOCALID_GARET, FACING_EAST, 0);
+  ObjectMotion_ArmCallback(ACTOR_GARET, FACING_EAST, 0);
   FieldScript_WaitFrames(10);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
-  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
   FieldScript_WaitFrames(60);
 }
 
 /// Shows an item icon rising from the supplied fixed-point position.
 static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
                                   s32 fixedZ) {
-  struct ObjectEvent *icon;
+  struct Actor *icon;
   struct Sprite *sprite;
   u8 *transferBuffer;
   u32 frame;
   u8 zero;
 
-  icon = ObjectEvent_Create(SPRITE_BLANK, fixedX, fixedY, fixedZ);
+  icon = Actor_Create(SPRITE_BLANK, fixedX, fixedY, fixedZ);
   zero = 0;
   if (icon != 0) {
-    ObjectEvent_SetScript(icon, gSanctum_ItemIconGrowScript);
+    Actor_SetScript(icon, gSanctum_ItemIconGrowScript);
     sprite = icon->sprite;
     sprite->flags = zero;
     sprite->count = zero;
@@ -2055,13 +1985,13 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
         icon->motionFlags = 0;
       WaitFrames(1);
     }
-    ObjectEvent_SetScript(icon, gSanctum_ItemIconEndScript);
+    Actor_SetScript(icon, gSanctum_ItemIconEndScript);
   }
 }
 
 /// Moves a spark upward, cycles its scale, and expires its lifetime.
-static void Sanctum_UpdateRisingSpark(union ObjectEventOrEffect *fieldObject) {
-  struct ObjectEvent *spark = &fieldObject->objectEvent;
+static void Sanctum_UpdateRisingSpark(union ActorOrEffect *fieldObject) {
+  struct Actor *spark = &fieldObject->actor;
   s32 scale;
   s32 timer;
 
@@ -2086,28 +2016,28 @@ static void Sanctum_UpdateRisingSpark(union ObjectEventOrEffect *fieldObject) {
   timer = spark->work - 1;
   spark->work = timer;
   if ((s16)timer <= 0)
-    ObjectEvent_SetScript(spark, gSanctum_SparkEndScript);
+    Actor_SetScript(spark, gSanctum_SparkEndScript);
 }
 
-/// Creates a short-lived spark beside the specified object event.
-static void Sanctum_SpawnObjectEventSpark(s32 id) {
-  struct ObjectEvent *objectEvent;
-  struct ObjectEvent *spark;
+/// Creates a short-lived spark beside the specified actor.
+static void Sanctum_SpawnActorSpark(s32 id) {
+  struct Actor *actor;
+  struct Actor *spark;
   struct Sprite *sprite;
   s32 x;
   s32 randomOffset;
 
-  objectEvent = ObjectEvent_GetById(id);
-  if (objectEvent == 0)
+  actor = Actor_GetById(id);
+  if (actor == 0)
     return;
   randomOffset = Math_RemainderUnsigned(Import_RandomNext(), 20);
-  x = objectEvent->x.fixed;
+  x = actor->x.fixed;
   x += randomOffset << 16;
   x += -PIXELS(10);
-  spark = ObjectEvent_Create(
-      SPRITE_GLINT, x,
-      objectEvent->y.fixed + ((Import_RandomNext() & 15) << 16) + -PIXELS(8),
-      objectEvent->z.fixed);
+  spark = Actor_Create(SPRITE_GLINT, x,
+                       actor->y.fixed + ((Import_RandomNext() & 15) << 16) +
+                           -PIXELS(8),
+                       actor->z.fixed);
   if (spark == 0)
     return;
   sprite = spark->sprite;
@@ -2116,7 +2046,7 @@ static void Sanctum_SpawnObjectEventSpark(s32 id) {
   spark->work = Math_RemainderUnsigned(Import_RandomNext(), 60) + 30;
   spark->update = Sanctum_UpdateRisingSpark;
   sprite->flags = 0;
-  sprite->image.priority = objectEvent->sprite->image.priority;
+  sprite->image.priority = actor->sprite->image.priority;
 }
 
 /// Copies two blocks of map grid cells for the quest's visits, the metatiles of
@@ -2132,9 +2062,9 @@ static void Sanctum_RestoreQuestFloor(void) {
 }
 
 static s32 Sanctum_IsLeaderFacingHealer(void) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
 
-  if ((u32)((objectEvent->facing + 0x5fff) << 16) <= 0x3ffe0000) {
+  if ((u32)((actor->facing + 0x5fff) << 16) <= 0x3ffe0000) {
     return 1;
   }
   return 0;
@@ -2146,7 +2076,7 @@ static s32 Sanctum_IsLeaderFacingHealer(void) {
 /// left Vale to the closed path to Sol Sanctum once it has reached Kalay.
 static void EventScript_TalkToHealer(void) {
   if (Sanctum_IsLeaderFacingHealer() != 0) {
-    Sanctum_Run(LOCALID_HEALER);
+    Sanctum_Run(ACTOR_HEALER);
     return;
   }
 
@@ -2157,7 +2087,7 @@ static void EventScript_TalkToHealer(void) {
     FieldScript_SetMessageId(MsgSanctumMyControlOverPsynergyHas);
   else
     FieldScript_SetMessageId(MsgSanctumWieldersPsynergyCalledAdeptsAdepts);
-  FieldScript_ShowMessageAndWait(LOCALID_HEALER, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_HEALER, 0);
   FieldScript_End();
 }
 
@@ -2171,7 +2101,7 @@ static void EventScript_TalkToHealerOnVisit(void) {
   s32 entrance;
 
   if (Sanctum_IsLeaderFacingHealer() != 0) {
-    Sanctum_Run(LOCALID_HEALER);
+    Sanctum_Run(ACTOR_HEALER);
     return;
   }
 
@@ -2201,7 +2131,7 @@ static void EventScript_TalkToHealerOnVisit(void) {
     break;
   }
 
-  FieldScript_ShowMessageAndWait(LOCALID_HEALER, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_HEALER, 0);
   FieldScript_End();
 }
 
@@ -2209,7 +2139,7 @@ static void EventScript_TalkToHealerOnVisit(void) {
 /// from the front, the Sanctum's services.
 static void EventScript_TalkAboutCurse(void) {
   if (Sanctum_IsLeaderFacingHealer() != 0) {
-    Sanctum_Run(LOCALID_HEALER);
+    Sanctum_Run(ACTOR_HEALER);
     return;
   }
 
@@ -2218,7 +2148,7 @@ static void EventScript_TalkAboutCurse(void) {
     FieldScript_SetMessageId(MsgSanctumCurseMayOverButWe);
   else
     FieldScript_SetMessageId(MsgSanctumAmStartingFeelOnlyBeginning);
-  FieldScript_ShowMessageAndWait(LOCALID_HEALER, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_HEALER, 0);
   FieldScript_End();
 }
 
@@ -2226,7 +2156,7 @@ static void EventScript_TalkAboutCurse(void) {
 /// party's saving Altin from them; from the front, the Sanctum's services.
 static void EventScript_TalkAboutAltinMonsters(void) {
   if (Sanctum_IsLeaderFacingHealer() != 0) {
-    Sanctum_Run(LOCALID_HEALER);
+    Sanctum_Run(ACTOR_HEALER);
     return;
   }
 
@@ -2234,7 +2164,7 @@ static void EventScript_TalkAboutAltinMonsters(void) {
   FieldScript_SetMessageId(MsgSanctumWasAfterEerieNightWhen);
   if (GameFlag_Get(FLAG_HYDROS_STATUES_DEFEATED) != 0)
     FieldScript_SetMessageId(MsgSanctumSavedAltinFromMonstersClearly);
-  FieldScript_ShowMessageAndWait(LOCALID_HEALER, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_HEALER, 0);
   FieldScript_End();
 }
 
@@ -2242,13 +2172,13 @@ static void EventScript_TalkAboutAltinMonsters(void) {
 /// lands; from the front, the Sanctum's services.
 static void EventScript_TalkAboutJourneyFromXian(void) {
   if (Sanctum_IsLeaderFacingHealer() != 0) {
-    Sanctum_Run(LOCALID_HEALER);
+    Sanctum_Run(ACTOR_HEALER);
     return;
   }
 
   FieldScript_Start();
   FieldScript_SetMessageId(MsgSanctumCameXianFromVeryDistant);
-  FieldScript_ShowMessageAndWait(LOCALID_HEALER, 0);
+  FieldScript_ShowMessageAndWait(ACTOR_HEALER, 0);
   FieldScript_End();
 }
 
@@ -2382,14 +2312,14 @@ u32 gSanctum_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ObjectEventTemplate gSanctum_NoObjectEventTemplates[] = {
+struct ActorTemplate gSanctum_NoActorTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gSanctum_ValeObjectEventTemplates[] = {
-    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+struct ActorTemplate gSanctum_ValeActorTemplates[] = {
+    { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(200), 0, PIXELS(130), FACING_SOUTH, TALK_FACING_PARTY, 0 },
@@ -2401,14 +2331,14 @@ struct ObjectEventTemplate gSanctum_ValeObjectEventTemplates[] = {
 };
 
 #if TBS_PATCH_1
-struct ObjectEventTemplate gSanctum_IvanObjectEventTemplate[] = {
-    { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+struct ActorTemplate gSanctum_IvanActorTemplate[] = {
+    { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 #endif
 
-struct ObjectEventTemplate gSanctum_VaultBilibinObjectEventTemplates[] = {
+struct ActorTemplate gSanctum_VaultBilibinActorTemplates[] = {
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(200), 0, PIXELS(130), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
@@ -2418,8 +2348,8 @@ struct ObjectEventTemplate gSanctum_VaultBilibinObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gSanctum_QuestObjectEventTemplates[] = {
-    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+struct ActorTemplate gSanctum_QuestActorTemplates[] = {
+    { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(208), 0, PIXELS(168), FACING_NORTH + FACING_STEP, 3, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(168), 0, PIXELS(120), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
@@ -2438,46 +2368,46 @@ struct ObjectEventTemplate gSanctum_QuestObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gSanctum_AltinXianObjectEventTemplates[] = {
+struct ActorTemplate gSanctum_AltinXianActorTemplates[] = {
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(200), 0, PIXELS(132), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { MAP_TABLE_END },
 };
 
 struct MapEvent gSanctum_ValeEvents[] = {
-    { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
-    { MAP_EVENT_TALK, LOCALID_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumOurPsynergyWasGivenToUs) },
-    { MAP_EVENT_TALK, LOCALID_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumPsynergyIsAPowerThatShould) },
+    { MAP_EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
+    { MAP_EVENT_TALK, ACTOR_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumOurPsynergyWasGivenToUs) },
+    { MAP_EVENT_TALK, ACTOR_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumPsynergyIsAPowerThatShould) },
     { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VALE },
     { MAP_EVENTS_END },
 };
 
 struct MapEvent gSanctum_VaultEvents[] = {
-    { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealerOnVisit) },
-    { MAP_EVENT_TALK, LOCALID_SANCTUM_MEMBER, FLAG_VAULT_THIEVES_JAILED, EVENT_SCRIPT(EventScript_TalkAboutGoldenStatue) },
-    { MAP_EVENT_TALK, LOCALID_SANCTUM_MEMBER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutGoldenStatue) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumGoOnIfThatEasesThe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SANCTUM_MEMBER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindAboutGoldenStatue) },
+    { MAP_EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealerOnVisit) },
+    { MAP_EVENT_TALK, ACTOR_SANCTUM_MEMBER, FLAG_VAULT_THIEVES_JAILED, EVENT_SCRIPT(EventScript_TalkAboutGoldenStatue) },
+    { MAP_EVENT_TALK, ACTOR_SANCTUM_MEMBER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutGoldenStatue) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumGoOnIfThatEasesThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SANCTUM_MEMBER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindAboutGoldenStatue) },
     { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VAULT },
     { MAP_EVENTS_END },
 };
 
 struct MapEvent gSanctum_VaultRevisitEvents[] = {
     { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VAULT_REVISIT },
-    { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealerOnVisit) },
-    { MAP_EVENT_TALK, LOCALID_SANCTUM_MEMBER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutGoldenStatue) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumIHopeTheEarthquakesArentA) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SANCTUM_MEMBER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindAboutGoldenStatue) },
+    { MAP_EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealerOnVisit) },
+    { MAP_EVENT_TALK, ACTOR_SANCTUM_MEMBER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutGoldenStatue) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumIHopeTheEarthquakesArentA) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SANCTUM_MEMBER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindAboutGoldenStatue) },
     { MAP_EVENTS_END },
 };
 
 struct MapEvent gSanctum_QuestEvents[] = {
-    { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReconsiderQuest) },
-    { MAP_EVENT_TALK, LOCALID_GARET, CONDITION_ALWAYS, MSGNO(MsgSanctumItIsATerribleBurdenTo) },
-    { MAP_EVENT_TALK, LOCALID_DORA, CONDITION_ALWAYS, MSGNO(MsgSanctumMotherWouldNeverDoubtYourCourage) },
-    { MAP_EVENT_TALK, LOCALID_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgSanctumIDontBlameYouICouldnt) },
-    { MAP_EVENT_TALK, LOCALID_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumWasItRightToRefuseWhen) },
-    { MAP_EVENT_TALK, LOCALID_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumItsClearThatTheGreatHealer) },
+    { MAP_EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReconsiderQuest) },
+    { MAP_EVENT_TALK, ACTOR_GARET, CONDITION_ALWAYS, MSGNO(MsgSanctumItIsATerribleBurdenTo) },
+    { MAP_EVENT_TALK, ACTOR_DORA, CONDITION_ALWAYS, MSGNO(MsgSanctumMotherWouldNeverDoubtYourCourage) },
+    { MAP_EVENT_TALK, ACTOR_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgSanctumIDontBlameYouICouldnt) },
+    { MAP_EVENT_TALK, ACTOR_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumWasItRightToRefuseWhen) },
+    { MAP_EVENT_TALK, ACTOR_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumItsClearThatTheGreatHealer) },
     { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveAfterRefusing) },
     { MAP_EVENT_COORD, 2, FLAG_SANCTUM_WARNED_BEFORE_LEAVING, EVENT_SCRIPT(EventScript_WarnBeforeLeaving) },
     { MAP_EVENTS_END },
@@ -2485,52 +2415,52 @@ struct MapEvent gSanctum_QuestEvents[] = {
 
 struct MapEvent gSanctum_ValeEventsAfterLeaving[] = {
     { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VALE },
-    { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
-    { MAP_EVENT_TALK, LOCALID_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumThePowerOfMtAlephStems) },
-    { MAP_EVENT_TALK, LOCALID_EAST_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutPsynergyChanges) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumThePowerOfMyPsynergyHas) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumTheAngaranContinentWillCertainlySee) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumMyPsynergyHasntChangedAtAll) },
+    { MAP_EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
+    { MAP_EVENT_TALK, ACTOR_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumThePowerOfMtAlephStems) },
+    { MAP_EVENT_TALK, ACTOR_EAST_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutPsynergyChanges) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumThePowerOfMyPsynergyHas) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumTheAngaranContinentWillCertainlySee) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumMyPsynergyHasntChangedAtAll) },
     { MAP_EVENTS_END },
 };
 
 struct MapEvent gSanctum_ValeEventsAfterKalay[] = {
     { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VALE },
-    { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
-    { MAP_EVENT_TALK, LOCALID_WEST_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutNewAdepts) },
-    { MAP_EVENT_TALK, LOCALID_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumWhyIsItThatDifferentAdepts) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumItllBeDifficultToReachSol) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumISeeABeautifulGirlHas) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumItsNotFairIWantTo) },
+    { MAP_EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
+    { MAP_EVENT_TALK, ACTOR_WEST_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutNewAdepts) },
+    { MAP_EVENT_TALK, ACTOR_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumWhyIsItThatDifferentAdepts) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumItllBeDifficultToReachSol) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumISeeABeautifulGirlHas) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumItsNotFairIWantTo) },
     { MAP_EVENTS_END },
 };
 
 struct MapEvent gSanctum_AltinEvents[] = {
     { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_ALTIN },
-    { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutAltinMonsters) },
+    { MAP_EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutAltinMonsters) },
     // Unused: a copy of the row above, which always answers first.
-    { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutAltinMonsters) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HEALER, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgSanctumPleaseSaveTheHelplessInAltin) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumAlmightyFateMustHaveHeardMe) },
+    { MAP_EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutAltinMonsters) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgSanctumPleaseSaveTheHelplessInAltin) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumAlmightyFateMustHaveHeardMe) },
     { MAP_EVENTS_END },
 };
 
 struct MapEvent gSanctum_BilibinEvents[] = {
-    { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutCurse) },
-    { MAP_EVENT_TALK, LOCALID_SANCTUM_MEMBER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgSanctumPleaseGiveMeStrengthAtTimes) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HEALER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgSanctumWillITurnIntoATree) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SANCTUM_MEMBER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgSanctumSomeoneWillSaveUsJustKeep) },
-    { MAP_EVENT_TALK, LOCALID_SANCTUM_MEMBER, CONDITION_ALWAYS, MSGNO(MsgSanctumHowAboutThatOurWishesHave) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumTheSignsOfDangerAreActually) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SANCTUM_MEMBER, CONDITION_ALWAYS, MSGNO(MsgSanctumPeaceWillBeKeptAsLong) },
+    { MAP_EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutCurse) },
+    { MAP_EVENT_TALK, ACTOR_SANCTUM_MEMBER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgSanctumPleaseGiveMeStrengthAtTimes) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgSanctumWillITurnIntoATree) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SANCTUM_MEMBER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgSanctumSomeoneWillSaveUsJustKeep) },
+    { MAP_EVENT_TALK, ACTOR_SANCTUM_MEMBER, CONDITION_ALWAYS, MSGNO(MsgSanctumHowAboutThatOurWishesHave) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumTheSignsOfDangerAreActually) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SANCTUM_MEMBER, CONDITION_ALWAYS, MSGNO(MsgSanctumPeaceWillBeKeptAsLong) },
     { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_BILIBIN },
     { MAP_EVENTS_END },
 };
 
 struct MapEvent gSanctum_XianEvents[] = {
     { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_XIAN },
-    { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutJourneyFromXian) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumWhenYouStayInXianFor) },
+    { MAP_EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutJourneyFromXian) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumWhenYouStayInXianFor) },
     { MAP_EVENTS_END },
 };
 // clang-format on

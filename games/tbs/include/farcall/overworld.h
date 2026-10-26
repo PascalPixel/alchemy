@@ -17,13 +17,12 @@ void FieldScript_StartFar(void);
 /// Closes a script: gives the camera back to the leader and refreshes
 /// FLAG_LURE_CAP.
 void FieldScript_EndFar(void);
-/// Spawns the object events of an object event template table after the last
-/// object event in use, so a ship map can bring people in mid-event.
-void FieldScript_CallWithLastActiveObjectIdFar(
-    struct ObjectEventTemplate *table);
-/// Gives each unconditional object event template a condition that shows it
+/// Spawns the actors of an actor template table after the last
+/// actor in use, so a ship map can bring people in mid-event.
+void FieldScript_CallWithLastActiveObjectIdFar(struct ActorTemplate *table);
+/// Gives each unconditional actor template a condition that shows it
 /// only while it lies inside the map's view bounds.
-void Scene_AssignViewFlagsFar(struct ObjectEventTemplate *entry);
+void Scene_AssignViewFlagsFar(struct ActorTemplate *entry);
 /// Replaces the map's event table, the one the field checks as the leader
 /// moves.
 void FieldScript_SetMapEventsFar(const struct MapEvent *events);
@@ -42,140 +41,139 @@ void Party_RemoveMemberRestoredFar(s32 owner);
 s32 PartyInventory_GiveItemFar(s32 item, s32 unused);
 /// Asks yes or no once the message on screen is read, with the speaker
 /// nodding at yes and shaking its head at no. Returns 0 for yes, 1 for no.
-s32 FieldScript_AskYesNoWithObjectEventAnimationFar(s32 localId,
-                                                    s32 force_bottom);
+s32 FieldScript_AskYesNoWithActorAnimationFar(s32 actorId, s32 force_bottom);
 /// Teaches a character a Psynergy ability with its fanfare and
 /// `<unit> learned <ability>.`
 void Party_LearnAbilityFar(s32 unit, s32 ability);
-/// Returns the object event with this id, or NULL; the form of
-/// ObjectEvent_GetByLocalId the other banks call.
-struct ObjectEvent *ObjectEvent_GetByIdFar(s32 objectId);
-/// Releases an object event and empties its slot in the field work's object
-/// event table.
-void ObjectEvent_DestroyByIdFar(s32 index);
-/// Sets an object event's top speed and acceleration, in 16.16 pixels per
+/// Returns the actor with this id, or NULL; the form of
+/// Actor_GetByActorId the other banks call.
+struct Actor *Actor_GetByIdFar(s32 objectId);
+/// Releases an actor and empties its slot in the field work's
+/// actor table.
+void Actor_DestroyByIdFar(s32 index);
+/// Sets an actor's top speed and acceleration, in 16.16 pixels per
 /// frame.
 void ObjectMotion_SetSpeedParametersFar(u32 objectId, s32 speedLimit,
                                         s32 acceleration);
-/// Starts a built-in action or a supplied script on an object event and makes
-/// it face the way it moves (OBJ_EVENT_FACES_MOTION).
+/// Starts a built-in action or a supplied script on an actor and makes
+/// it face the way it moves (ACTOR_FACES_MOTION).
 void ObjectMotion_EnableActionAndSetCallbackFar(u32 objectId, s32 action);
-/// Waits, for at most 300 frames, until an object event's script reaches its
+/// Waits, for at most 300 frames, until an actor's script reaches its
 /// end.
-void ObjectEvent_RefreshSelectorByIdFar(u32 objectId);
-/// Stops an object event's action and puts it back on the idle script under
+void Actor_RefreshSelectorByIdFar(u32 objectId);
+/// Stops an actor's action and puts it back on the idle script under
 /// script control.
 void ObjectMotion_EnableActionAndResetMotionFar(u32 objectId);
-/// Starts an action or script on an object event, then waits up to 300 frames
+/// Starts an action or script on an actor, then waits up to 300 frames
 /// for it to finish.
-void ObjectEvent_SetActionCallbackAndRefreshByIdFar(u32 objectId, s32 action);
-/// Sends an object event toward (x, z), in pixels, keeping its current
+void Actor_SetActionCallbackAndRefreshByIdFar(u32 objectId, s32 action);
+/// Sends an actor toward (x, z), in pixels, keeping its current
 /// animation and unpausing it.
 void ObjectMotion_ResetAndSetPositionFar(u32 objectId, s32 x, s32 z);
-/// Sends an object event toward (x, z) and waits, at most 600 frames, for it to
+/// Sends an actor toward (x, z) and waits, at most 600 frames, for it to
 /// get there.
 void ObjectMotion_SetPositionAndCommitFar(u32 objectId, s32 x, s32 z);
-/// Walks an object event toward (x, z), in pixels, in its walking animation.
+/// Walks an actor toward (x, z), in pixels, in its walking animation.
 void ObjectMotion_ResetAndSetPositionInMode2Far(u32 objectId, s32 x, s32 z);
-/// Walks an object event to (x, z), waits for it to arrive and stands it still.
+/// Walks an actor to (x, z), waits for it to arrive and stands it still.
 void ObjectMotion_SetPositionAndResetFar(u32 objectId, s32 x, s32 z);
-/// Steps an object event sideways to the middle of its 16-pixel column, fixes
+/// Steps an actor sideways to the middle of its 16-pixel column, fixes
 /// its sprite priority, then sends it z_offset pixels along z. Kalay's
 /// interiors use it.
 void ObjectMotion_CenterOnColumnFar(u32 objectId, s32 action, s32 z_offset);
-/// Sends an object event toward a point offset in pixels from where it stands.
+/// Sends an actor toward a point offset in pixels from where it stands.
 void ObjectMotion_OffsetPositionAndResetMotionFar(u32 objectId, s32 x_offset,
                                                   s32 z_offset);
-/// Waits, at most 600 frames, for an object event to reach its destination,
+/// Waits, at most 600 frames, for an actor to reach its destination,
 /// then stands it still.
 void ObjectMotion_CommitCurrentPositionAndActivateFar(u32 objectId);
-/// Puts an object event at rest at (x, z), in 16.16 pixels; one that follows
+/// Puts an actor at rest at (x, z), in 16.16 pixels; one that follows
 /// the ground keeps the same height above it there.
 void ObjectMotion_SetHorizontalPositionWithTerrainFar(u32 objectId, s32 x,
                                                       s32 z);
-/// Sets an object event's animation: 1 stands, 2 walks, 3 nods, 4 shakes the
+/// Sets an actor's animation: 1 stands, 2 walks, 3 nods, 4 shakes the
 /// head.
-void ObjectEvent_SetModeByIdFar(u32 objectId, s32 action);
-/// Sets the animation timer steps of each of an object event's sprites, as the
+void Actor_SetModeByIdFar(u32 objectId, s32 action);
+/// Sets the animation timer steps of each of an actor's sprites, as the
 /// Tolbi ship and Lamakan Desert maps do.
-void ObjectEvent_SetActionByIdFar(u32 objectId, s32 action);
-/// Plays an object event's animation and waits for it to end.
+void Actor_SetActionByIdFar(u32 objectId, s32 action);
+/// Plays an actor's animation and waits for it to end.
 void ObjectMotion_SetAnimationAndWaitFar(u32 objectId, s32 action);
-/// Waits, at most 90 frames, for an animated object event's animation to
+/// Waits, at most 90 frames, for an animated actor's animation to
 /// change.
 void ObjectMotion_WaitForAnimationChangeFar(u32 objectId);
-/// Throws an object event upward at speed pixels per frame with a jump sound,
+/// Throws an actor upward at speed pixels per frame with a jump sound,
 /// lets gravity bring it down, and waits event_id frames.
 void ObjectMotion_LaunchFar(u32 objectId, s32 speed, s32 event_id);
-/// Makes an object event squash and spring back one to three times, through
+/// Makes an actor squash and spring back one to three times, through
 /// gObjectMotion_VariantScripts.
 void ObjectMotion_SetVariantCallbackFar(u32 objectId, s32 variant);
 /// Runs that squash-and-spring motion and waits for it to end.
 void ObjectMotion_SetVarCbAndRefreshFar(u32 objectId, s32 variant);
-/// Makes an object event hop down off the ledge in front of it and land 16
+/// Makes an actor hop down off the ledge in front of it and land 16
 /// pixels south, playing the queued sound as it lands. The field runs it for
 /// the leader at a ledge, and seven maps import it.
-void ObjectEvent_JumpDownLedgeFar(s32 sequence_arg, s32 mode_or_frame,
-                                  s32 optional_action);
-/// Turns the first object event at once to face the second, then waits wait
+void Actor_JumpDownLedgeFar(s32 sequence_arg, s32 mode_or_frame,
+                            s32 optional_action);
+/// Turns the first actor at once to face the second, then waits wait
 /// frames.
 void ObjectMotion_SetAngleTowardFar(s32 firstId, s32 second_id, s32 wait);
-/// Turns two object events toward each other, then waits wait frames; talking
+/// Turns two actors toward each other, then waits wait frames; talking
 /// to someone turns the leader and them this way.
-void ObjectEvent_LinkPairFar(s32 firstId, s32 second_id, s32 wait);
-/// Gives every sprite part of an object event a param, or with bit 8 set makes
-/// the object event blink until another param is given.
-void ObjectEvent_ConfigureSpriteColorFar(s32 objectId, s32 value);
-/// Sets the param byte of every animated part of an object event's sprite; maps
-/// flash an object event by alternating 0 and 15.
-void ObjectEvent_SetSpriteColorFar(struct ObjectEvent *objectEvent, s32 value);
-/// Links an object event to a target and starts a script on it; unless
-/// OBJ_EVENT_LINK_KEEP_MOTION is set it trails 40 pixels behind, fast enough to
+void Actor_LinkPairFar(s32 firstId, s32 second_id, s32 wait);
+/// Gives every sprite part of an actor a param, or with bit 8 set makes
+/// the actor blink until another param is given.
+void Actor_ConfigureSpriteColorFar(s32 objectId, s32 value);
+/// Sets the param byte of every animated part of an actor's sprite; maps
+/// flash an actor by alternating 0 and 15.
+void Actor_SetSpriteColorFar(struct Actor *actor, s32 value);
+/// Links an actor to a target and starts a script on it; unless
+/// ACTOR_LINK_KEEP_MOTION is set it trails 40 pixels behind, fast enough to
 /// keep up and unable to block the target.
-void ObjectEvent_SetTargetAndCallbackFar(u32 objectId, s32 targetId,
-                                         const void *callback);
+void Actor_SetTargetAndCallbackFar(u32 objectId, s32 targetId,
+                                   const void *callback);
 /// Sets the number of the script's next message.
 void FieldScript_SetMessageIdFar(s32 value);
 /// Opens the script's current message in a speech window beside the speaker,
 /// with its portrait, and moves on to the next message. Returns the window
 /// once its text is typed out; the caller waits for it to be read.
 struct Window *FieldMessage_ShowAtObjectFar(s32 arg, s32 unused);
-/// Shows the current message at an object event and waits until it has been
+/// Shows the current message at an actor and waits until it has been
 /// read and its window has closed.
 void FieldScript_ShowMessageAndWaitFar(s32 action, s32 flag);
 /// Shows a message, then waits the given number of frames.
 void FieldScript_ShowMessageThenWaitFar(s32 first, s32 second, s32 value);
-/// Asks a question at an object event and shows the reply for yes or for no;
+/// Asks a question at an actor and shows the reply for yes or for no;
 /// the script carries on past both replies. Returns 0 for yes, 1 for no.
 s32 FieldScript_AskYesNoAndShowResponseFar(s32 objectId, s32 actionId);
-/// Turns an object event toward an angle, 65536 to a full turn, then waits wait
+/// Turns an actor toward an angle, 65536 to a full turn, then waits wait
 /// frames.
 void ObjectMotion_ArmCallbackFar(s32 objectId, s32 angle, s32 wait);
-/// Two object events speak at once, each message and portrait at its own tile
+/// Two actors speak at once, each message and portrait at its own tile
 /// position; waits for A, B, L or R, then closes both.
 void FieldScript_ShowTwoMessagesAndWaitFar(s32 first, s32 first_x, s32 first_y,
                                            s32 first_arg, s32 first_extra,
                                            s32 second, s32 second_x,
                                            s32 second_y, s32 second_arg,
                                            s32 second_extra);
-/// Gives the messages that follow the voice of an object event's sprite, at the
+/// Gives the messages that follow the voice of an actor's sprite, at the
 /// rate the message speed option picks; the top bit alone silences them.
-void Message_SetVoiceFromObjectEventFar(s32 localId);
-/// Fixes the priority of an object event's sprite so it no longer follows its
+void Message_SetVoiceFromActorFar(s32 actorId);
+/// Fixes the priority of an actor's sprite so it no longer follows its
 /// depth.
 void ObjectMotion_SetActionVariantFar(s32 objectId, s32 priority);
-/// Shows an emote bubble over an object event, then waits wait frames; the
-/// bubble rides the object event and pops after 46 frames whatever the wait.
+/// Shows an emote bubble over an actor, then waits wait frames; the
+/// bubble rides the actor and pops after 46 frames whatever the wait.
 void FieldEffect_SpawnLinkedFar(s32 id, s32 mode, s32 wait);
-/// Attaches, removes or briefly shows the effect object on an object event, by
+/// Attaches, removes or briefly shows the effect object on an actor, by
 /// enum AttachedEffectFlag; the leader's step uses it on hazard ground.
 void FieldEffect_ConfigureLinkedObjectFar(s32 id, s32 flags);
-/// Makes the target object event's sprite show the source object event's
+/// Makes the target actor's sprite show the source actor's
 /// graphics; neither is checked for NULL. The Tolbi ship deck uses it.
-void ObjectEvent_CopyGraphicsFar(u32 targetId, u32 sourceId);
-/// Makes the camera follow an object event; unless flag is set it jumps there
+void Actor_CopyGraphicsFar(u32 targetId, u32 sourceId);
+/// Makes the camera follow an actor; unless flag is set it jumps there
 /// at once and the map is redrawn around it.
-void FieldCamera_FollowObjectEventFar(s32 id, s32 flag);
+void FieldCamera_FollowActorFar(s32 id, s32 flag);
 /// Sets the camera's top speed and acceleration, in 16.16 pixels per frame.
 void FieldCamera_SetSpeedParametersFar(s32 first, s32 second);
 /// Sends the camera to a point (-1 keeps an axis), kept inside the map so the
@@ -184,10 +182,10 @@ void FieldCamera_MoveWithinMapBoundsFar(s32 requested_x, s32 requested_y,
                                         s32 requested_z, s32 use_setter);
 /// Waits, at most 600 frames, for the camera to arrive, then 2 frames more.
 void FieldCamera_WaitForArrivalFar(void);
-/// Moves the camera to an object event's position, kept inside the map.
-void ObjectEvent_PlaceCurrentWithinCameraBoundsFar(s32 localId, s32 glide);
+/// Moves the camera to an actor's position, kept inside the map.
+void Actor_PlaceCurrentWithinCameraBoundsFar(s32 actorId, s32 glide);
 /// Returns the camera object, the script's view centre.
-struct ObjectEvent *FieldCamera_GetScriptObjectFar(void);
+struct Actor *FieldCamera_GetScriptObjectFar(void);
 /// Sets the map rectangle the camera keeps the screen inside.
 void MapGrid_SetViewBoundsFar(s32 minX, s32 minY, s32 maxX, s32 maxY);
 /// Makes the script leave for an entrance of a map; the title, the
@@ -199,7 +197,7 @@ void FieldScript_SetExitRequestFar(u16 value);
 /// Sets up a battle with one formation of an encounter table, which starts
 /// once the script that asked for it has returned.
 void Field_RequestBattleFromEncounterTableFar(s32 zone_no, s32 slot_no);
-/// Sets up the battle with a Djinni, its object event hopping first unless
+/// Sets up the battle with a Djinni, its actor hopping first unless
 /// DJINN_NO_HOP is set; on re-entering the map the Djinni joins or hides.
 void Field_RequestDjinnBattleFar(s32 flag, s32 no);
 /// Sets the map and entrance the field goes to next.
@@ -210,13 +208,13 @@ void FieldScript_SetDefeatDestinationFar(s32 first, s32 second);
 /// Sets the destination and raises EXIT_NONE, so the map loop leaves on its
 /// next pass; only Tolbi's spring uses it.
 void FieldScript_RequestDestinationFar(u16 first, u16 second);
-/// Writes an object event's screen position in pixels, y at the top of its
-/// sprite. Returns 0, or -1 when there is no such object event.
-s32 ObjectEvent_GetScreenPositionFar(s32 objectId, s32 *position);
+/// Writes an actor's screen position in pixels, y at the top of its
+/// sprite. Returns 0, or -1 when there is no such actor.
+s32 Actor_GetScreenPositionFar(s32 objectId, s32 *position);
 /// Returns the metatile behavior of the searchable cell 16 pixels ahead of the
 /// leader, or 0 when there is nothing to search; the field menu's search
 /// entry asks it.
-s32 ObjectEvent_GetTriggerTileAheadOfCurrentFar(void);
+s32 Actor_GetTriggerTileAheadOfCurrentFar(void);
 /// Returns the sprite a character is drawn with, which depends on
 /// FLAG_CHILDHOOD and FLAG_ISAAC_WEARS_TUNIC.
 s32 Party_RemapCharacterIdByFlagsFar(s32 character);
@@ -272,7 +270,7 @@ void ScanlineEffect_InitWaveFar(s32 mode, s32 freqX, s32 stepX, s32 ampX,
                                 s32 freqY, s32 stepY, s32 ampY);
 /// Stops the scanline effect: removes its two callbacks and stops DMA 0.
 void ScanlineEffect_StopFar(void);
-/// Has the target object event present an item: SE_CHEST_OPEN, animation 4,
+/// Has the target actor present an item: SE_CHEST_OPEN, animation 4,
 /// then the item's picture with sparkles. Returns the picture, or 0 when either
 /// is missing.
 s32 FieldEffect_PlayCueAndStartEmitterOnTargetFar(s32 effect, s32 target,
@@ -283,9 +281,9 @@ void ItemDisplay_ShowPictureFar(void *object, s32 flags);
 /// Holds an item's picture above the leader for 80 frames, the way a found
 /// item is shown in most maps.
 void ItemDisplay_ShowItemFar(s32 value, s32 flags);
-/// Moves a treasure spot's object event to (x, z) on the ground, in 16.16
+/// Moves a treasure spot's actor to (x, z) on the ground, in 16.16
 /// pixels; -1 keeps the centre of its cell on that axis.
-void TreasureSpot_SetObjectEventPositionFar(s32 id, s32 x, s32 y);
+void TreasureSpot_SetActorPositionFar(s32 id, s32 x, s32 y);
 /// Moves a leader standing within 16 pixels of a treasure spot cell's centre 20
 /// pixels away from it.
 void TreasureSpot_MoveLeaderAwayFar(void);
@@ -294,9 +292,9 @@ void TreasureSpot_MoveLeaderAwayFar(void);
 void WorldMap_StartScriptFar(void);
 /// Undoes WorldMap_StartScript, reloading the area's graphics.
 void WorldMap_EndScriptFar(void);
-/// Returns the object event in a slot, or NULL; map overlays look object events
+/// Returns the actor in a slot, or NULL; map overlays look actors
 /// up through it.
-void *ObjectEvent_GetByLocalIdFar(u32 index);
+void *Actor_GetByActorIdFar(u32 index);
 /// Starts the fade overlay on an object (the leader when NULL), which lasts
 /// until the next map change.
 void FieldEffect_StartFadeOverlayFar(void *object);
@@ -347,7 +345,7 @@ void Party_AddPpFar(s32 amount, s32 unused);
 s32 FieldYesNo_AskFar(s32 value);
 /// Starts the current map's field music.
 void Scene_PlayMusicFar(void);
-/// A Djinni joins the member with the fewest Djinn, after its object event in
+/// A Djinni joins the member with the fewest Djinn, after its actor in
 /// slot plays its element's capture effect (none for slot -1).
 void Djinn_JoinPartyFar(s32 slot, s32 element, s32 djinn);
 /// Updates one field effect sprite for a frame: its age, callback, motion and
@@ -385,29 +383,28 @@ void FieldScript_ClearInvalidPackedValuesFar(void);
 void FieldEffect_InitializeSlotsFar(void);
 /// Frees every field effect sprite and its work, then waits a frame.
 void FieldEffect_ClearActiveSlotsAndScheduleUpdatesFar(void);
-/// Places an object event on the leader and walks it out to an offset, then
+/// Places an actor on the leader and walks it out to an offset, then
 /// gives it an action.
 void ObjectMotion_LaunchFromFocusedObjectFar(u32 objectId, s32 xOffset,
                                              s32 zOffset, s32 action);
-/// Walks an object event a given offset in pixels from where it stands.
+/// Walks an actor a given offset in pixels from where it stands.
 void ObjectMotion_OffsetPositionAndResetFar(u32 objectId, s32 x_offset,
                                             s32 z_offset);
-/// Walks an object event an offset in pixels, waits for it to arrive and stands
+/// Walks an actor an offset in pixels, waits for it to arrive and stands
 /// it still.
 void ObjectMotion_CommitPositionAndActivateFar(u32 objectId, s32 x_offset,
                                                s32 z_offset);
-/// Makes an object event follow another through the linked action script.
-void ObjectEvent_LinkObjectAndSetCallbackFar(u32 objectId,
-                                             u32 linked_object_id);
+/// Makes an actor follow another through the linked action script.
+void Actor_LinkObjectAndSetCallbackFar(u32 objectId, u32 linked_object_id);
 /// Pauses an object, keeping its update and pose in gSaveBlock for later;
 /// Halt and the Colosso operators use it.
 void FieldEffect_PauseObjectFar(s32 id);
-/// Captures up to 32 object events into gObjectEventSnapshot, for
-/// ObjectEvent_Restore (ObjectEvent_Snapshot); the save menu calls it.
-void Save_CaptureObjectEventsFar(void);
-/// Puts back the object events ObjectEvent_Snapshot saved and moves the camera
+/// Captures up to 32 actors into gActorSnapshot, for
+/// Actor_Restore (Actor_Snapshot); the save menu calls it.
+void Save_CaptureActorsFar(void);
+/// Puts back the actors Actor_Snapshot saved and moves the camera
 /// to the leader's height.
-void ObjectEvent_RestoreFar(void);
+void Actor_RestoreFar(void);
 /// Starts a zoom to a 16.16 factor over the given frames, on the world map.
 void FieldEffect_ScheduleRatioTransitionFar(s32 zoom, s32 frames);
 /// Waits, at most 300 frames, for the world map's zoom to end.
@@ -415,9 +412,9 @@ void FieldScript_WaitForZoomTransitionFar(void);
 /// Returns the area name of a map and entrance, an offset from
 /// MsgDebugEntryName, or 0 when no rule matches.
 s32 Area_GetNameIndexFar(s32 sceneId, s32 entrance);
-/// Starts an object event's action script: an enum MovementType, or the script
+/// Starts an actor's action script: an enum MovementType, or the script
 /// itself.
-void ObjectEvent_SetMovementTypeFar(struct Object *object, s32 kind);
+void Actor_SetMovementTypeFar(struct Object *object, s32 kind);
 /// Plays SE_STOP_MUSIC_PLAYER_5 and then sound_id (SONG_FADE_OUT_ACTION_SE for
 /// -1), and remembers sound_id to play again later.
 void Scene_QueueMusicFar(s32 sound_id);

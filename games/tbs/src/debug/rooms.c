@@ -17,20 +17,20 @@
 #include "flags.h"
 #include "djinn_ids.h"
 
-/// The placed object events, numbered in the order of
-/// gTestRoom_ObjectEventTemplates:
+/// The placed actors, numbered in the order of
+/// gTestRoom_ActorTemplates:
 /// the first Djinni of each element, which TestRoom_GiveDjinniForTesting
 /// gives, placed while its flag (FLAG_DJINN_FIRST + element *
 /// DJINN_PER_ELEMENT) is clear.
-enum TestRoomsLocalId {
+enum TestRoomsActorId {
   /// ★ Named from the game: "Flint" (MsgDjinnName)
-  LOCALID_FLINT = LOCALID_FIRST_PLACED,
+  ACTOR_FLINT = ACTOR_FIRST_PLACED,
   /// ★ Named from the game: "Fizz" (MsgDjinnName)
-  LOCALID_FIZZ,
+  ACTOR_FIZZ,
   /// ★ Named from the game: "Forge" (MsgDjinnName)
-  LOCALID_FORGE,
+  ACTOR_FORGE,
   /// ★ Named from the game: "Gust" (MsgDjinnName)
-  LOCALID_GUST
+  ACTOR_GUST
 };
 
 u8 *TestRoom_GetEntrances(void) { return (u8 *)gTestRoom_Entrances; }
@@ -43,34 +43,32 @@ u8 *TestRoom_GetExits(void) { return (u8 *)gTestRoom_Exits; }
 /// Places one Djinni of each element in the test room, Flint, Fizz, Forge and
 /// Gust, each placed while its caught flag (the template's condition)
 /// is clear.
-u8 *TestRoom_GetObjectEventTemplates(void) {
-  return (u8 *)gTestRoom_ObjectEventTemplates;
-}
+u8 *TestRoom_GetActorTemplates(void) { return (u8 *)gTestRoom_ActorTemplates; }
 
 /// Grants the first Djinni of an element, then clears its found flag for
-/// testing. Djinn_JoinParty plays the element's capture effect on the object
-/// event, frees its slot and gives the element's first Djinni to the member
+/// testing. Djinn_JoinParty plays the element's capture effect on the
+/// actor, frees its slot and gives the element's first Djinni to the member
 /// with the fewest Djinn; clearing the flag the template tests lets the room
 /// place the Djinni again on the next entry.
-static __inline__ void TestRoom_GiveDjinniForTesting(s32 localId, s32 element) {
-  Djinn_JoinParty(localId, element, 0);
+static __inline__ void TestRoom_GiveDjinniForTesting(s32 actorId, s32 element) {
+  Djinn_JoinParty(actorId, element, 0);
   GameFlag_Clear(FLAG_DJINN_FIRST + element * DJINN_PER_ELEMENT);
 }
 
 static void TestRoom_ReceiveFlint(void) {
-  TestRoom_GiveDjinniForTesting(LOCALID_FLINT, ELEMENT_VENUS);
+  TestRoom_GiveDjinniForTesting(ACTOR_FLINT, ELEMENT_VENUS);
 }
 
 static void TestRoom_ReceiveFizz(void) {
-  TestRoom_GiveDjinniForTesting(LOCALID_FIZZ, ELEMENT_MERCURY);
+  TestRoom_GiveDjinniForTesting(ACTOR_FIZZ, ELEMENT_MERCURY);
 }
 
 static void TestRoom_ReceiveForge(void) {
-  TestRoom_GiveDjinniForTesting(LOCALID_FORGE, ELEMENT_MARS);
+  TestRoom_GiveDjinniForTesting(ACTOR_FORGE, ELEMENT_MARS);
 }
 
 static void TestRoom_ReceiveGust(void) {
-  TestRoom_GiveDjinniForTesting(LOCALID_GUST, ELEMENT_JUPITER);
+  TestRoom_GiveDjinniForTesting(ACTOR_GUST, ELEMENT_JUPITER);
 }
 
 /// The room's events: talking to Flint, Fizz, Forge or Gust gives that
@@ -107,7 +105,7 @@ u32 gTestRoom_Exits[] = {
     SCENE_EXITS(TestRoom3), SCENE_EXITS_END,
 };
 
-struct ObjectEventTemplate gTestRoom_ObjectEventTemplates[] = {
+struct ActorTemplate gTestRoom_ActorTemplates[] = {
     {0x5a, 0x30, MOVEMENT_TYPE_STAND, PIXELS(496), 0, PIXELS(176), FACING_EAST,
      TALK_FACING_PARTY, 0},
     {0x5b, 0x44, MOVEMENT_TYPE_STAND, PIXELS(496), 0, PIXELS(200), FACING_EAST,
@@ -120,13 +118,13 @@ struct ObjectEventTemplate gTestRoom_ObjectEventTemplates[] = {
 };
 
 struct MapEvent gTestRoom_Events[] = {
-    {MAP_EVENT_TALK, LOCALID_FLINT, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_FLINT, CONDITION_ALWAYS,
      EVENT_SCRIPT(TestRoom_ReceiveFlint)},
-    {MAP_EVENT_TALK, LOCALID_FIZZ, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_FIZZ, CONDITION_ALWAYS,
      EVENT_SCRIPT(TestRoom_ReceiveFizz)},
-    {MAP_EVENT_TALK, LOCALID_FORGE, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_FORGE, CONDITION_ALWAYS,
      EVENT_SCRIPT(TestRoom_ReceiveForge)},
-    {MAP_EVENT_TALK, LOCALID_GUST, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, ACTOR_GUST, CONDITION_ALWAYS,
      EVENT_SCRIPT(TestRoom_ReceiveGust)},
     {MAP_EVENTS_END},
 };

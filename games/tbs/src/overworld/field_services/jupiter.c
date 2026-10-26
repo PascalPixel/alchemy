@@ -7,8 +7,8 @@
 /// A Jupiter Djinni joins the party: it bounces three times, spins, leaps out
 /// of sight and bursts into 24 light particles that circle and close in on the
 /// leader, who turns to the camera and plays ANIM_LEADER_ARMS_RAISED. Called by
-/// Djinn_JoinParty for a Jupiter Djinni, which then clears the Djinni's object
-/// event slot; the Djinni's object is released here. Uses all 24 field effect
+/// Djinn_JoinParty for a Jupiter Djinni, which then clears the Djinni's
+/// actor slot; the Djinni's object is released here. Uses all 24 field effect
 /// sprites (FieldEffect_InitializeSlots), tints the field palette and fades it
 /// back at the end.
 void Djinn_RunJupiterJoinEffect(s32 djinniId) {
@@ -19,7 +19,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   s32 scale;
   s32 remainingParticles;
 
-  djinni = (struct Object *)ObjectEvent_GetById(djinniId);
+  djinni = (struct Object *)Actor_GetById(djinniId);
   if (djinni == NULL)
     return;
   FieldEffect_InitializeSlots();
@@ -66,9 +66,9 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   } while (remainingParticles >= 0);
 
   WaitFrames(60);
-  ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, FACING_SOUTH, 0);
+  ObjectMotion_ArmCallback(gSaveBlock.leaderActorId, FACING_SOUTH, 0);
   WaitFrames(20);
-  Object_SelectAnimationFar(ObjectEvent_GetById(gSaveBlock.leaderLocalId),
+  Object_SelectAnimationFar(Actor_GetById(gSaveBlock.leaderActorId),
                             ANIM_LEADER_ARMS_RAISED);
   WaitFrames(40);
   Sound_PlaySongFar(SE_SCATTER);
@@ -80,8 +80,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
 /// Per-frame update: makes an object pulse, switching its scale between the
 /// two values of gFieldEffect_PulseScales every 4 frames. The Mars Djinni's
 /// joining sets it on the leader, and clears it to end the pulse.
-void FieldEffect_SetObjectAlternatingWords(
-    union ObjectEventOrEffect *fieldObject) {
+void FieldEffect_SetObjectAlternatingWords(union ActorOrEffect *fieldObject) {
   u8 *object = (u8 *)fieldObject;
   u32 *table = gFieldEffect_PulseScales;
   u32 index = ((u32)gVBlankCount >> 2) & 1;
@@ -94,7 +93,7 @@ void FieldEffect_SetObjectAlternatingWords(
 /// just over 1/8 (0x2040), 0x50 more each frame for 52 frames. The caller
 /// zeroes the frame count first (Object.spinRampFrames), as the Mars Djinni's
 /// joining does.
-void FieldEffect_AdvanceAngleWithRamp(union ObjectEventOrEffect *fieldObject) {
+void FieldEffect_AdvanceAngleWithRamp(union ActorOrEffect *fieldObject) {
   void *obj = (void *)fieldObject;
   struct Object *spin = obj;
   u32 step;
@@ -120,7 +119,7 @@ void FieldEffect_UpdatePhasedRadialParticle(struct FieldEffectSprite *effect) {
   struct Vector3 position;
   s32 state;
 
-  owner = (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
+  owner = (struct Object *)Actor_GetById(gSaveBlock.leaderActorId);
   state = effect->state;
 
   if (state == MARS_SPARK_AIM) {

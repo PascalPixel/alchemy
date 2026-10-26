@@ -9,7 +9,7 @@
 /// starts and 0 as it ends.
 void Object_SetRevealSpriteColor(s32 value) {
   struct Object *object = gObjects;
-  s32 remainingObjectEvents = 63;
+  s32 remainingActors = 63;
 
   do {
     if (object->script != NULL) {
@@ -25,9 +25,9 @@ void Object_SetRevealSpriteColor(s32 value) {
         }
       }
     }
-    remainingObjectEvents--;
+    remainingActors--;
     object++;
-  } while (remainingObjectEvents >= 0);
+  } while (remainingActors >= 0);
 }
 
 /// Task of the timed effect (FIELD_PSYNERGY_REVEAL): asks for it
@@ -38,13 +38,13 @@ void Object_SetRevealSpriteColor(s32 value) {
 /// FieldEffect_EndReveal removes it.
 void FieldEffect_WatchLeaderDistance(void) {
   struct FieldWork *work;
-  struct Object *objectEvent;
+  struct Object *actor;
   s16 *timer;
   s32 distanceX;
   s32 distanceZ;
 
   work = gFieldWork;
-  objectEvent = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
+  actor = Actor_GetByActorId(gSaveBlock.leaderActorId);
   if (work->effectTimerRunning != 0) {
     timer = &work->revealFrames;
     if (*timer != 0)
@@ -54,9 +54,8 @@ void FieldEffect_WatchLeaderDistance(void) {
   // On screen pixels (y is z less the height). x is scaled by 0xd105 (about
   // 0.82) for the comparison, so the edge is an ellipse 60 pixels up and
   // down from the centre and about 73 to either side.
-  distanceX =
-      Iwram_MulQ16(work->revealCenterX - objectEvent->x / Q16_ONE, 0xd105);
-  distanceZ = work->revealCenterY - (objectEvent->z - objectEvent->y) / Q16_ONE;
+  distanceX = Iwram_MulQ16(work->revealCenterX - actor->x / Q16_ONE, 0xd105);
+  distanceZ = work->revealCenterY - (actor->z - actor->y) / Q16_ONE;
   if (distanceX * distanceX + distanceZ * distanceZ >= 3600 ||
       work->revealFrames == 0) {
     // Raise Reveal as a Psynergy request that pays no PP (ACT_PACKED 0x2000
@@ -81,7 +80,7 @@ void FieldEffect_WatchLeaderDistance(void) {
 void FieldEffect_RunReveal(void) {
   struct FieldWork *work;
   struct ScreenTransitionState *state;
-  struct ObjectEvent *target;
+  struct Actor *target;
   s32 eventTarget;
   void *event;
   s32 frame;
@@ -90,7 +89,7 @@ void FieldEffect_RunReveal(void) {
   Object_SetRevealSpriteColor(6);
   ScreenTransition_InitializeBattleEffectState(8);
   state = HEAP_SLOT_BLOCK(HEAP_SLOT_SCREEN_TRANSITION);
-  target = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
+  target = Actor_GetByActorId(gSaveBlock.leaderActorId);
   state->centreX = target->x.fixed;
   state->centreY = target->z.fixed - target->y.fixed;
   // From the plain colours (PALETTE_TINT_NONE, 0x10000) the BG palettes
@@ -106,7 +105,7 @@ void FieldEffect_RunReveal(void) {
   event = Scene_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ACTS),
                                   FIELD_PSYNERGY_REVEAL, &eventTarget);
   if (event != NULL)
-    Field_RunEventAction(event, gSaveBlock.leaderLocalId, eventTarget);
+    Field_RunEventAction(event, gSaveBlock.leaderActorId, eventTarget);
   Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
 
   // Record the centre (in pixels) and the time in the field work, and put
@@ -168,7 +167,7 @@ void FieldEffect_EndReveal(void) {
     event = Scene_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ENDS),
                                     FIELD_PSYNERGY_REVEAL, &eventTarget);
     if (event != NULL)
-      Field_RunEventAction(event, gSaveBlock.leaderLocalId, eventTarget);
+      Field_RunEventAction(event, gSaveBlock.leaderActorId, eventTarget);
 
     if (effectWork->childOption == 0) {
       transition->nextMode = 0;

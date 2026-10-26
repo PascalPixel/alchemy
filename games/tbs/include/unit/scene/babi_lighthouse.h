@@ -7,13 +7,13 @@
 
 struct SceneEntrance;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 struct SceneExitRegion;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *BabiLighthouse_GetExits(void);
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
+const struct ActorTemplate *Scene_GetActorTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 BabiLighthouse_SetupMap(void);
 extern s32 gPushedObject_DirectionSteps[];
@@ -30,12 +30,11 @@ extern struct SceneEntrance gBabiLighthouse_StoneDoorEntrances[];
 extern struct SceneEntrance gBabiLighthouse_RoadEntrances[];
 extern struct SceneExitRegion gBabiLighthouse_EntryRegions[];
 extern u32 gBabiLighthouse_Exits[];
-extern struct ObjectEventTemplate gBabiLighthouse_NoObjectEventTemplates[];
-extern struct ObjectEventTemplate gBabiLighthouse_EntryObjectEventTemplates[];
-extern struct ObjectEventTemplate gBabiLighthouse_LuffObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gBabiLighthouse_StoneDoorObjectEventTemplates[];
-extern struct ObjectEventTemplate gBabiLighthouse_RoadObjectEventTemplates[];
+extern struct ActorTemplate gBabiLighthouse_NoActorTemplates[];
+extern struct ActorTemplate gBabiLighthouse_EntryActorTemplates[];
+extern struct ActorTemplate gBabiLighthouse_LuffActorTemplates[];
+extern struct ActorTemplate gBabiLighthouse_StoneDoorActorTemplates[];
+extern struct ActorTemplate gBabiLighthouse_RoadActorTemplates[];
 extern struct MapEvent gBabiLighthouse_EntryEvents[];
 extern struct MapEvent gBabiLighthouse_LuffEvents[];
 extern struct MapEvent gBabiLighthouse_StoneDoorEvents[];

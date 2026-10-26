@@ -42,29 +42,29 @@ extern s32 gPushedObject_FootprintBounds[];
 
 #include "object_distance.h"
 
-/// Returns the placed object event on the cell of the 16.16 position and at its
+/// Returns the placed actor on the cell of the 16.16 position and at its
 /// height (in whole pixels), or 0. origin is not read.
-static struct ObjectEvent *
+static struct Actor *
 PushedObject_FindAtTile(const struct FieldPosition *position,
-                        const struct ObjectEvent *origin) {
+                        const struct Actor *origin) {
   struct FieldWork *work = gFieldWork;
-  struct ObjectEvent **slots = work->objectEvents;
+  struct Actor **slots = work->actors;
   u32 i;
 
-  for (i = LOCALID_FIRST_PLACED;
-       i < sizeof(work->objectEvents) / sizeof(work->objectEvents[0]); i++) {
-    struct ObjectEvent *objectEvent = (struct ObjectEvent *)slots[i];
+  for (i = ACTOR_FIRST_PLACED;
+       i < sizeof(work->actors) / sizeof(work->actors[0]); i++) {
+    struct Actor *actor = (struct Actor *)slots[i];
 
-    // UB: ObjectEvent_ClearAll leaves unfilled slots null. The guard grows
+    // UB: Actor_ClearAll leaves unfilled slots null. The guard grows
     // this helper from 0x58 to 0x5c bytes in the native English trial.
 #ifdef UBFIX
-    if (objectEvent == NULL)
+    if (actor == NULL)
       continue;
 #endif
-    if ((position->x >> 20) == (objectEvent->x.fixed >> 20) &&
-        (position->y / 0x10000) == (objectEvent->y.fixed / 0x10000) &&
-        (position->z >> 20) == (objectEvent->z.fixed >> 20)) {
-      return objectEvent;
+    if ((position->x >> 20) == (actor->x.fixed >> 20) &&
+        (position->y / 0x10000) == (actor->y.fixed / 0x10000) &&
+        (position->z >> 20) == (actor->z.fixed >> 20)) {
+      return actor;
     }
   }
   return 0;
@@ -76,14 +76,14 @@ PushedObject_FindAtTile(const struct FieldPosition *position,
 /// the leader slide one cell together, with SE_PUSH.
 UNUSED static void PushedObject_AdvancePair(void) {
   struct FieldPosition dst;
-  struct ObjectEvent *lead;
-  struct ObjectEvent *next;
-  struct ObjectEvent *blocker;
+  struct Actor *lead;
+  struct Actor *next;
+  struct Actor *blocker;
   s32 dir;
   u32 step;
   s32 rate;
 
-  lead = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  lead = Actor_GetById(ACTOR_PARTY_LEADER);
   dir = lead->facing >> 12;
   step = gPushedObject_DirectionSteps[dir];
   dst.x = lead->x.fixed + (step & 0xffff0000);
@@ -177,33 +177,32 @@ static s32 PushedObject_FillGridAttributeRectangle(u32 layer, s32 x, s32 z,
   return 0;
 }
 
-// UB: the native s32 callback is called through ObjectEvent's void hook. The
+// UB: the native s32 callback is called through Actor's void hook. The
 // void form keeps 0xa4 bytes in Altmiller English but changes the return move.
 #ifdef UBFIX
 /// The leader's movement callback while pushing a large thing: stop the leader
-/// when another object event that is not a large thing, or a wall, is in the
+/// when another actor that is not a large thing, or a wall, is in the
 /// way.
-static void
-PushedObject_StopBlockedMotion(union ObjectEventOrEffect *fieldObject) {
-  struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
+static void PushedObject_StopBlockedMotion(union ActorOrEffect *fieldObject) {
+  struct Actor *actor = (struct Actor *)fieldObject;
 #else
 /// The leader's movement callback while pushing a large thing: stop the leader
-/// when another object event that is not a large thing, or a wall, is in the
+/// when another actor that is not a large thing, or a wall, is in the
 /// way.
-static s32 PushedObject_StopBlockedMotion(struct ObjectEvent *objectEvent) {
+static s32 PushedObject_StopBlockedMotion(struct Actor *actor) {
 #endif
   struct FieldPosition probe;
   u32 dir;
   s32 step;
-  struct ObjectEvent *target;
+  struct Actor *target;
 
-  dir = objectEvent->facing >> 12;
+  dir = actor->facing >> 12;
   step = gPushedObject_DirectionSteps[dir];
-  probe.x = objectEvent->x.fixed + (step & 0xffff0000);
-  probe.y = objectEvent->y.fixed;
+  probe.x = actor->x.fixed + (step & 0xffff0000);
+  probe.y = actor->y.fixed;
   step <<= 16;
-  probe.z = objectEvent->z.fixed + step;
-  target = PushedObject_FindAtTile(&probe, objectEvent);
+  probe.z = actor->z.fixed + step;
+  target = PushedObject_FindAtTile(&probe, actor);
   if (target != 0) {
     u32 i = 0;
     s32 kind = target->sprite->entries[0]->animationId;
@@ -219,21 +218,21 @@ static s32 PushedObject_StopBlockedMotion(struct ObjectEvent *objectEvent) {
       }
       i++;
     } while (i <= 5);
-    objectEvent->velocityX = 0;
-    objectEvent->velocityZ = 0;
-    objectEvent->targetX = 0x80000000;
-    objectEvent->targetZ = 0x80000000;
+    actor->velocityX = 0;
+    actor->velocityZ = 0;
+    actor->targetX = 0x80000000;
+    actor->targetZ = 0x80000000;
   }
   step = gPushedObject_DirectionSteps[dir];
-  probe.x = objectEvent->x.fixed + (step & 0xffff0000);
-  probe.y = objectEvent->y.fixed;
+  probe.x = actor->x.fixed + (step & 0xffff0000);
+  probe.y = actor->y.fixed;
   step <<= 16;
-  probe.z = objectEvent->z.fixed + step;
-  if (FieldObject_CheckMovementCollision(objectEvent, &probe) > 0) {
-    objectEvent->velocityX = 0;
-    objectEvent->velocityZ = 0;
-    objectEvent->targetX = 0x80000000;
-    objectEvent->targetZ = 0x80000000;
+  probe.z = actor->z.fixed + step;
+  if (FieldObject_CheckMovementCollision(actor, &probe) > 0) {
+    actor->velocityX = 0;
+    actor->velocityZ = 0;
+    actor->targetX = 0x80000000;
+    actor->targetZ = 0x80000000;
   }
 #ifndef UBFIX
   return 0;
@@ -242,29 +241,28 @@ static s32 PushedObject_StopBlockedMotion(struct ObjectEvent *objectEvent) {
 
 /// Returns the large thing whose footprint covers the cell ahead of the leader
 /// (the leader not standing in line with its first column or row), with the
-/// leader's direction, its local id and its footprint; or NULL.
-static struct ObjectEvent *
-Scene_FindObjectEventRegion(s32 *direction, s32 *slot, s32 *footprint) {
+/// leader's direction, its actor id and its footprint; or NULL.
+static struct Actor *Scene_FindActorRegion(s32 *direction, s32 *slot,
+                                           s32 *footprint) {
   struct FieldWork *work = gFieldWork;
-  struct ObjectEvent *player = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  struct ObjectEvent **list;
+  struct Actor *player = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor **list;
   u32 i, j;
 
   *direction = player->facing >> 12;
-  list = work->objectEvents + LOCALID_FIRST_PLACED;
-  for (i = LOCALID_FIRST_PLACED;
-       i < sizeof(work->objectEvents) / sizeof(work->objectEvents[0]);
-       list++, i++) {
-    struct ObjectEvent *objectEvent = (struct ObjectEvent *)*list;
+  list = work->actors + ACTOR_FIRST_PLACED;
+  for (i = ACTOR_FIRST_PLACED;
+       i < sizeof(work->actors) / sizeof(work->actors[0]); list++, i++) {
+    struct Actor *actor = (struct Actor *)*list;
     s32 kind;
     j = 0;
     // UB: the same empty slots are scanned here; the null guard grows the
     // native English helper from 0x128 to 0x134 bytes.
 #ifdef UBFIX
-    if (objectEvent == NULL)
+    if (actor == NULL)
       continue;
 #endif
-    kind = objectEvent->sprite->entries[0]->animationId;
+    kind = actor->sprite->entries[0]->animationId;
     for (j = 0; j < 6; j++) {
       if (kind == gPushedObject_FootprintKinds[j]) {
         s32 x, z, left, top, right, bottom;
@@ -275,27 +273,27 @@ Scene_FindObjectEventRegion(s32 *direction, s32 *slot, s32 *footprint) {
         z = ((player->z.fixed >> 16) +
              (s16)gPushedObject_DirectionSteps[*direction]) >>
             4;
-        left = (objectEvent->x.part.pixel +
-                gPushedObject_FootprintBounds[j * 4 + 0]) >>
-               4;
-        top = (objectEvent->z.part.pixel +
-               gPushedObject_FootprintBounds[j * 4 + 1]) >>
-              4;
-        right = (objectEvent->x.part.pixel +
-                 gPushedObject_FootprintBounds[j * 4 + 2]) >>
-                4;
-        bottom = (objectEvent->z.part.pixel +
-                  gPushedObject_FootprintBounds[j * 4 + 3]) >>
-                 4;
+        left =
+            (actor->x.part.pixel + gPushedObject_FootprintBounds[j * 4 + 0]) >>
+            4;
+        top =
+            (actor->z.part.pixel + gPushedObject_FootprintBounds[j * 4 + 1]) >>
+            4;
+        right =
+            (actor->x.part.pixel + gPushedObject_FootprintBounds[j * 4 + 2]) >>
+            4;
+        bottom =
+            (actor->z.part.pixel + gPushedObject_FootprintBounds[j * 4 + 3]) >>
+            4;
         if (left <= x && x < right && top <= z && z < bottom) {
           if (j & 1) {
             if (left != (player->x.fixed >> 20)) {
               *slot = i;
-              return objectEvent;
+              return actor;
             }
           } else if (top != (player->z.fixed >> 20)) {
             *slot = i;
-            return objectEvent;
+            return actor;
           }
         }
       }
@@ -313,7 +311,7 @@ UNUSED static s32
 PushedObject_FindClearPosition(struct PushedObjectProbe *probe) {
   s32 direction;
   struct FieldPosition position;
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 steps;
   s32 width, height;
   u8 *mode;
@@ -322,12 +320,12 @@ PushedObject_FindClearPosition(struct PushedObjectProbe *probe) {
   s32 offset;
 
   probe->callback = 0;
-  objectEvent = Scene_FindObjectEventRegion(&direction, &probe->objectEventSlot,
-                                            &probe->footprintIndex);
-  if (objectEvent == 0) {
+  actor = Scene_FindActorRegion(&direction, &probe->actorSlot,
+                                &probe->footprintIndex);
+  if (actor == 0) {
     return 0;
   }
-  mode = &objectEvent->layer;
+  mode = &actor->layer;
   *mode = 2;
   {
     s32 footprint = probe->footprintIndex;
@@ -353,14 +351,14 @@ PushedObject_FindClearPosition(struct PushedObjectProbe *probe) {
     }
     width = (nearEdge + farEdge) >> 4;
   }
-  position.x = objectEvent->x.fixed +
-               (gPushedObject_DirectionSteps[direction] & 0xffff0000);
+  position.x =
+      actor->x.fixed + (gPushedObject_DirectionSteps[direction] & 0xffff0000);
   {
-    s32 y = objectEvent->y.fixed;
+    s32 y = actor->y.fixed;
 
     position.y = y;
     position.z =
-        objectEvent->z.fixed + (gPushedObject_DirectionSteps[direction] << 16);
+        actor->z.fixed + (gPushedObject_DirectionSteps[direction] << 16);
     probe->position.y = y;
   }
   for (;;) {
@@ -372,8 +370,7 @@ PushedObject_FindClearPosition(struct PushedObjectProbe *probe) {
           position.x +
           (gPushedObject_FootprintBounds[probe->footprintIndex * 4] << 16);
       for (column = 0; column < width; column++) {
-        if (FieldObject_CheckMovementCollision(objectEvent, &probe->position) ==
-            2) {
+        if (FieldObject_CheckMovementCollision(actor, &probe->position) == 2) {
           goto found;
         }
         probe->position.x += 0x100000;
@@ -390,11 +387,11 @@ found:
     return 0;
   }
   probe->position.x =
-      objectEvent->x.fixed +
+      actor->x.fixed +
       (gPushedObject_DirectionSteps[direction] & 0xffff0000) * steps;
-  probe->position.y = objectEvent->y.fixed;
-  probe->position.z = objectEvent->z.fixed +
-                      (gPushedObject_DirectionSteps[direction] << 16) * steps;
+  probe->position.y = actor->y.fixed;
+  probe->position.z =
+      actor->z.fixed + (gPushedObject_DirectionSteps[direction] << 16) * steps;
   return 1;
 }
 
@@ -404,9 +401,9 @@ found:
 /// SE_STOP_ACTION_SE and SE_HEAVY_STOP. Its cells are blocked (metatile
 /// behavior 255) at its new place, through the map grid's layer 1 offset, and
 /// its old place is given back what was under it.
-UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
+UNUSED static void Actor_MoveAndRedraw(struct PushedObjectProbe probe) {
   struct MapGridScrollWork *workspace;
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   struct FieldPosition originalPosition;
   struct FieldPosition tilePosition;
   u8 *footprintTable;
@@ -421,8 +418,8 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
 #else
   workspace = (struct MapGridScrollWork *)*(u32 *)gMapGridWork;
 #endif
-  direction = (ObjectEvent_GetById(LOCALID_PARTY_LEADER))->facing >> 12;
-  objectEvent = ObjectEvent_GetById(probe.objectEventSlot);
+  direction = (Actor_GetById(ACTOR_PARTY_LEADER))->facing >> 12;
+  actor = Actor_GetById(probe.actorSlot);
   footprintTable = (u8 *)gPushedObject_FootprintBounds;
   {
     s32 extentA = gPushedObject_FootprintBounds[probe.footprintIndex * 4 + 1];
@@ -443,17 +440,17 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
     horizontalExtent = (extentA + extentB) >> 4;
   }
 
-  objectEvent->speed = 0x8000;
-  objectEvent->acceleration = 0x1999;
-  originalPosition.x = objectEvent->x.fixed;
-  originalPosition.z = objectEvent->z.fixed;
+  actor->speed = 0x8000;
+  actor->acceleration = 0x1999;
+  originalPosition.x = actor->x.fixed;
+  originalPosition.z = actor->z.fixed;
   {
     s32 tableOffset = probe.footprintIndex << 4;
     tilePosition.x =
-        (objectEvent->x.fixed + (*(s32 *)(footprintTable + tableOffset) << 16));
+        (actor->x.fixed + (*(s32 *)(footprintTable + tableOffset) << 16));
     tableOffset += 4;
     tilePosition.z =
-        (objectEvent->z.fixed + (*(s32 *)(footprintTable + tableOffset) << 16));
+        (actor->z.fixed + (*(s32 *)(footprintTable + tableOffset) << 16));
     tilePosition.x >>= 20;
     tilePosition.z >>= 20;
   }
@@ -461,8 +458,8 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
   PushedObject_FillGridAttributeRectangle(0, tilePosition.x, tilePosition.z,
                                           horizontalExtent, verticalExtent,
                                           MB_NORMAL);
-  ObjectMotion_SetSpeedParameters(LOCALID_PARTY_LEADER, 0x8000, 0x1999);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_PUSH);
+  ObjectMotion_SetSpeedParameters(ACTOR_PARTY_LEADER, 0x8000, 0x1999);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   FieldScript_WaitFrames(15);
 
   {
@@ -475,30 +472,29 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
       if (verticalDelta < 0)
         verticalDelta += 0x1ffff;
       verticalDelta >>= 17;
-      ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER,
+      ObjectMotion_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER,
                                                 horizontalDelta, verticalDelta);
     }
   }
 
 #ifdef UBFIX
-  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->update =
-      PushedObject_StopBlockedMotion;
+  Actor_GetById(ACTOR_PARTY_LEADER)->update = PushedObject_StopBlockedMotion;
 #else
-  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->update =
-      (void (*)(union ObjectEventOrEffect *))PushedObject_StopBlockedMotion;
+  Actor_GetById(ACTOR_PARTY_LEADER)->update =
+      (void (*)(union ActorOrEffect *))PushedObject_StopBlockedMotion;
 #endif
   FieldScript_WaitFrames(4);
   if ((u32)(direction - 6) <= 7)
-    Object_SelectAnimation(objectEvent, 3);
+    Object_SelectAnimation(actor, 3);
   else
-    Object_SelectAnimation(objectEvent, 2);
+    Object_SelectAnimation(actor, 2);
 
   Sound_PlaySong(SE_HEAVY_MOVE);
-  Object_SetPosition(objectEvent, probe.position.x, probe.position.y,
+  Object_SetPosition(actor, probe.position.x, probe.position.y,
                      probe.position.z);
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
-  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x4ccc, 0x1999);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x4ccc, 0x1999);
 
   {
     s32 packedOrientation = gPushedObject_DirectionSteps[direction];
@@ -508,18 +504,18 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
   if (probe.callback != 0)
     probe.callback();
 
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->update = NULL;
-  Object_WaitForMove(objectEvent);
+  ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_GetById(ACTOR_PARTY_LEADER)->update = NULL;
+  Object_WaitForMove(actor);
   Sound_PlaySong(SE_STOP_ACTION_SE);
   Sound_PlaySong(SE_HEAVY_STOP);
 
-  objectEvent->x.fixed = probe.position.x;
-  objectEvent->z.fixed = probe.position.z;
-  objectEvent->velocityX = 0;
-  objectEvent->velocityZ = 0;
-  Object_SelectAnimation(objectEvent, 1);
+  actor->x.fixed = probe.position.x;
+  actor->z.fixed = probe.position.z;
+  actor->velocityX = 0;
+  actor->velocityZ = 0;
+  Object_SelectAnimation(actor, 1);
 
   {
     u8 *table = (u8 *)gPushedObject_FootprintBounds;
@@ -575,9 +571,9 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
 /// Block large thing id's cells (metatile behavior 255) where it stands,
 /// through the map grid's layer 1 offset; returns 0 when its sprite is no large
 /// thing.
-UNUSED static s32 Scene_RedrawObjectEventFootprint(s32 id) {
+UNUSED static s32 Scene_RedrawActorFootprint(s32 id) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
   struct PushedObjectProbe probe;
   u32 idx = 0;
   s32 offset;
@@ -590,7 +586,7 @@ UNUSED static s32 Scene_RedrawObjectEventFootprint(s32 id) {
   s32 dstZ;
 
   for (idx = 0; idx <= 5; idx++) {
-    if (objectEvent->sprite->entries[0]->animationId ==
+    if (actor->sprite->entries[0]->animationId ==
         gPushedObject_FootprintKinds[idx]) {
       probe.footprintIndex = idx;
       break;
@@ -600,9 +596,9 @@ UNUSED static s32 Scene_RedrawObjectEventFootprint(s32 id) {
 
   if ((u32)probe.footprintIndex > 6)
     return 0;
-  probe.position.x = objectEvent->x.fixed;
-  probe.position.y = objectEvent->y.fixed;
-  probe.position.z = objectEvent->z.fixed;
+  probe.position.x = actor->x.fixed;
+  probe.position.y = actor->y.fixed;
+  probe.position.z = actor->z.fixed;
   offset = probe.footprintIndex * 4;
   z0 = gPushedObject_FootprintBounds[offset + 1];
   if (z0 < 0)

@@ -34,7 +34,7 @@ typedef struct OrbitingMapObjectSprite {
   u8 state; ///< Sprite's count of layers; the Nut's maps zero it
 } OrbitingMapObjectSprite;
 
-/// A floating Nut's object event: its position, the spot it sways around and
+/// A floating Nut's actor: its position, the spot it sways around and
 /// how far through the sway it is, its sprite and its callback.
 typedef struct OrbitingMapObject {
   u8 padding00[8];
@@ -42,8 +42,8 @@ typedef struct OrbitingMapObject {
   s32 y; ///< 16.16 fixed-point pixels
   s32 z; ///< 16.16 fixed-point pixels
   u8 padding14[15];
-  /// ObjectEvent's priorityFlags; the Nut's maps clear bit 0,
-  /// OBJ_EVENT_PRIORITY_AUTOMATIC.
+  /// Actor's priorityFlags; the Nut's maps clear bit 0,
+  /// ACTOR_PRIORITY_AUTOMATIC.
   u8 priorityFlags;
   u8 padding24[12];
   /// 1/65536 turns; advanced by 0x400 plus two random steps each frame.
@@ -55,20 +55,20 @@ typedef struct OrbitingMapObject {
   u8 padding44[12];
   OrbitingMapObjectSprite *sprite;
   u8 padding54;
-  u8 mode; ///< ObjectEvent's motionFlags; the Nut's maps zero it
+  u8 mode; ///< Actor's motionFlags; the Nut's maps zero it
   /// Object.arrivalAxis, the axis watched for arrival; Scene_FloatNut
   /// zeroes it.
   u8 state;
   u8 padding57[5];
-  /// ObjectEvent.retainSpriteCache: the Nut's maps keep its sprite's VRAM
+  /// Actor.retainSpriteCache: the Nut's maps keep its sprite's VRAM
   /// cache entry.
   u8 active;
   u8 padding5d[4];
-  /// ObjectEvent's frozen, which skips steering, terrain, gravity and floating;
+  /// Actor's frozen, which skips steering, terrain, gravity and floating;
   /// the Nut's maps set it.
   u8 visible;
   u8 padding62[10];
-  /// ObjectEvent's update hook; Scene_FloatNut sets
+  /// Actor's update hook; Scene_FloatNut sets
   /// Scene_UpdateFloatingNut.
   u32 callback;
 } OrbitingMapObject;

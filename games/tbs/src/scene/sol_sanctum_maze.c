@@ -32,7 +32,7 @@
 
 #include "resource_37de_map.h"
 #include "map_tables.h"
-#include "object_event.h"
+#include "actor.h"
 
 #include "script_layer.h"
 #include "flags.h"
@@ -46,8 +46,8 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gSolSanctumMazeExits; }
 
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
-  return gSolSanctumMazeObjectEventTemplates;
+const struct ActorTemplate *Scene_GetActorTemplates(void) {
+  return gSolSanctumMazeActorTemplates;
 }
 
 /// The exits, and the Small Jewel's chest.
@@ -74,7 +74,7 @@ u32 gSolSanctumMazeExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ObjectEventTemplate gSolSanctumMazeObjectEventTemplates[] = {
+struct ActorTemplate gSolSanctumMazeActorTemplates[] = {
     {MAP_TABLE_END},
 };
 

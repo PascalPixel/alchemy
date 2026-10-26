@@ -6,12 +6,12 @@
 
 struct SceneEntrance;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 
 const struct SceneEntrance *BilibinCave_GetEntrances(void);
 const struct SceneExitRegion *BilibinCave_GetRegions(void);
 const u32 *BilibinCave_GetExits(void);
-const struct ObjectEventTemplate *BilibinCave_GetObjectEventTemplates(void);
+const struct ActorTemplate *BilibinCave_GetActorTemplates(void);
 const struct MapEvent *BilibinCave_GetEvents(void);
 s32 BilibinCave_Initialize(void);
 extern s32 gBilibinCave_ClearSpriteScript[];
@@ -20,10 +20,10 @@ extern struct SceneEntrance gBilibinCaveEntranceEntrances[];
 extern struct SceneEntrance gBilibinCaveRapierEntrances[];
 extern struct SceneEntrance gBilibinCaveIceEntrances[];
 extern u32 gBilibinCaveExits[];
-extern struct ObjectEventTemplate gBilibinCaveObjectEventTemplatesOther[];
-extern struct ObjectEventTemplate gBilibinCaveEntranceObjectEventTemplates[];
-extern struct ObjectEventTemplate gBilibinCaveRapierObjectEventTemplates[];
-extern struct ObjectEventTemplate gBilibinCaveIceObjectEventTemplates[];
+extern struct ActorTemplate gBilibinCaveActorTemplatesOther[];
+extern struct ActorTemplate gBilibinCaveEntranceActorTemplates[];
+extern struct ActorTemplate gBilibinCaveRapierActorTemplates[];
+extern struct ActorTemplate gBilibinCaveIceActorTemplates[];
 extern struct MapEvent gBilibinCaveEventsOther[];
 extern struct MapEvent gBilibinCaveEntranceEvents[];
 extern struct MapEvent gBilibinCaveRapierEvents[];

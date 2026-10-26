@@ -2,6 +2,6 @@
 	overlay_veneer IncreaseItemAndLevel_Initialize
 	overlay_veneer IncreaseItemAndLevel_GetEntrances
 	overlay_veneer IncreaseItemAndLevel_GetExits
-	overlay_veneer IncreaseItemAndLevel_GetObjectEventTemplates
+	overlay_veneer IncreaseItemAndLevel_GetActorTemplates
 	overlay_veneer IncreaseItemAndLevel_GetEvents
 	overlay_veneer Scene_GetExitRegions

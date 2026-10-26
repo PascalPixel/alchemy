@@ -116,7 +116,7 @@ void Object_UpdateAllThumb(void) {
 
     // The hook runs even for a paused object, and may free it.
     if (object->update != NULL) {
-      object->update((union ObjectEventOrEffect *)object);
+      object->update((union ActorOrEffect *)object);
       script = (const ObjectScriptWords *)object->script;
     }
     if (script == NULL)
@@ -262,7 +262,7 @@ void Object_UpdateAllThumb(void) {
         // pixels above the ground. Unless bit 4 is set, a climb or drop also
         // slows it, by three times the change (at most half its
         // acceleration).
-        if ((object->motionFlags & OBJ_EVENT_FOLLOWS_TERRAIN) != 0) {
+        if ((object->motionFlags & ACTOR_FOLLOWS_TERRAIN) != 0) {
           velocityX = x + object->velocityX;
           velocityZ = z + object->velocityZ;
           ground =
@@ -277,7 +277,7 @@ void Object_UpdateAllThumb(void) {
             velocityY = maxTerrainChange;
           velocityY *= 3;
           if (velocityY != 0 &&
-              (object->motionFlags & OBJ_EVENT_KEEPS_SPEED_ON_SLOPES) == 0) {
+              (object->motionFlags & ACTOR_KEEPS_SPEED_ON_SLOPES) == 0) {
             dx = object->velocityX;
             dy = object->velocityY;
             dz = object->velocityZ;
@@ -296,7 +296,7 @@ void Object_UpdateAllThumb(void) {
         }
 
         // Gravity, and a bounce that loses energy on landing.
-        if ((object->motionFlags & OBJ_EVENT_FALLS) != 0) {
+        if ((object->motionFlags & ACTOR_FALLS) != 0) {
           ground = object->groundHeight;
           if (y > ground) {
             object->velocityY -= object->gravity;
@@ -311,15 +311,15 @@ void Object_UpdateAllThumb(void) {
           }
         }
 
-        // Float: bob up and down on a triangle wave (OBJ_EVENT_FLOATS_HIGH
+        // Float: bob up and down on a triangle wave (ACTOR_FLOATS_HIGH
         // makes it bigger). The phase runs over 64 frames, each table entry
         // held for two. The first 32 frames' velocities sum to 128 * gravity /
         // 64, so the object rises and falls by about 2 * gravity pixels, or 8 *
-        // gravity with OBJ_EVENT_FLOATS_HIGH (2 and 8 pixels at the default
+        // gravity with ACTOR_FLOATS_HIGH (2 and 8 pixels at the default
         // gravity of 1.0).
-        if ((object->motionFlags & OBJ_EVENT_FLOATS) != 0) {
+        if ((object->motionFlags & ACTOR_FLOATS) != 0) {
           phase = (object->bounce & 0x3f);
-          if ((object->motionFlags & OBJ_EVENT_FLOATS_HIGH) != 0)
+          if ((object->motionFlags & ACTOR_FLOATS_HIGH) != 0)
             object->velocityY =
                 gScriptObject_CycleTable[phase >> 1] * object->gravity / 16;
           else
@@ -334,11 +334,11 @@ void Object_UpdateAllThumb(void) {
     y += object->velocityY;
     z += object->velocityZ;
 
-    // An object with OBJ_EVENT_BLOCKED_BY_SOLID does not move into an
-    // OBJ_EVENT_SOLID one; count the refusals. A refused object keeps last
+    // An object with ACTOR_BLOCKED_BY_SOLID does not move into an
+    // ACTOR_SOLID one; count the refusals. A refused object keeps last
     // frame's position and skips arrival and turning; SC_SYNC stops waiting for
     // it after 60.
-    if ((object->collisionFlags & OBJ_EVENT_BLOCKED_BY_SOLID) != 0) {
+    if ((object->collisionFlags & ACTOR_BLOCKED_BY_SOLID) != 0) {
       SET_VECTOR(pos, x, y, z);
       if (ObjectScript_CheckOverlap((struct Object *)object, pos) != 0) {
         object->refused++;
@@ -412,7 +412,7 @@ void Object_UpdateAllThumb(void) {
 /// Places the object at (x, y, z), in 16.16 pixels, clears its movement target
 /// and stops it. Reached through SC_POSITION and Object_CreateField, and as
 /// Object_SetPositionAndResetMotionFar from the Psynergy effects and the
-/// field map's object events.
+/// field map's actors.
 void Object_SetPositionAndResetMotion(struct Object *object, s32 x, s32 y,
                                       s32 z) {
   object->z = z;
@@ -609,7 +609,7 @@ void Object_UpdateAllMotion(void) {
         }
       }
       // Gravity, and a bounce that loses energy on landing.
-      if (object->motionFlags & OBJ_EVENT_FALLS) {
+      if (object->motionFlags & ACTOR_FALLS) {
         if (y > object->groundHeight) {
           object->velocityY -= object->gravity;
         } else if (object->velocityY < 0) {

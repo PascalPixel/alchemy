@@ -7,13 +7,13 @@
 
 struct SceneEntrance;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 struct SceneExitRegion;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
+const struct ActorTemplate *Scene_GetActorTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
 extern s8 gAltinPeak_PaletteScript[];
@@ -42,19 +42,16 @@ extern struct SceneEntrance gAltinPeak_WestExitEntrances[];
 extern struct SceneExitRegion gAltinPeak_FallingRocksRegions[];
 extern struct SceneExitRegion gAltinPeak_HydrosStatueRegions[];
 extern u32 gAltinPeak_Exits[];
-extern struct ObjectEventTemplate gAltinPeak_ObjectEventTemplatesOther[];
-extern struct ObjectEventTemplate
-    gAltinPeak_FirstWaterBeastObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gAltinPeak_SecondWaterBeastObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gAltinPeak_ThirdWaterBeastObjectEventTemplates[];
-extern struct ObjectEventTemplate gAltinPeak_PoolObjectEventTemplates[];
-extern struct ObjectEventTemplate gAltinPeak_SpritzObjectEventTemplates[];
-extern struct ObjectEventTemplate gAltinPeak_JunctionObjectEventTemplates[];
-extern struct ObjectEventTemplate gAltinPeak_FallingRocksObjectEventTemplates[];
-extern struct ObjectEventTemplate gAltinPeak_HydrosStatueObjectEventTemplates[];
-extern struct ObjectEventTemplate gAltinPeak_WestExitObjectEventTemplates[];
+extern struct ActorTemplate gAltinPeak_ActorTemplatesOther[];
+extern struct ActorTemplate gAltinPeak_FirstWaterBeastActorTemplates[];
+extern struct ActorTemplate gAltinPeak_SecondWaterBeastActorTemplates[];
+extern struct ActorTemplate gAltinPeak_ThirdWaterBeastActorTemplates[];
+extern struct ActorTemplate gAltinPeak_PoolActorTemplates[];
+extern struct ActorTemplate gAltinPeak_SpritzActorTemplates[];
+extern struct ActorTemplate gAltinPeak_JunctionActorTemplates[];
+extern struct ActorTemplate gAltinPeak_FallingRocksActorTemplates[];
+extern struct ActorTemplate gAltinPeak_HydrosStatueActorTemplates[];
+extern struct ActorTemplate gAltinPeak_WestExitActorTemplates[];
 extern struct MapEvent gAltinPeak_EventsOther[];
 extern struct MapEvent gAltinPeak_FirstWaterBeastEvents[];
 extern struct MapEvent gAltinPeak_FirstWaterBeastEventsDrained[];

@@ -4,18 +4,18 @@
 
 #include "../field_services_internal.h"
 
-/// The script command "camera follow object event": the camera (the script's
-/// view centre) follows localId. Unless keepPosition is set it jumps there
+/// The script command "camera follow actor": the camera (the script's
+/// view centre) follows actorId. Unless keepPosition is set it jumps there
 /// at once and, off the world map, the map is redrawn around it.
 /// FieldScript_End calls it with the leader and keepPosition 1, so after a
 /// script the view follows the leader again from where it is, without a jump.
-void FieldCamera_FollowObjectEvent(s32 localId, s32 keepPosition) {
+void FieldCamera_FollowActor(s32 actorId, s32 keepPosition) {
   struct Object *subject;
   struct Object *camera;
   struct FieldWork *work;
   struct MapGridScrollWork *grid;
 
-  subject = ObjectEvent_GetByLocalId(localId);
+  subject = Actor_GetByActorId(actorId);
   // The slot already holds the field work, which this returns; the camera
   // commands here all find it this way.
   work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
@@ -113,12 +113,12 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
   }
 }
 
-/// The script command "camera move to object event":
-/// FieldCamera_MoveWithinMapBounds to the object event's x and z.
-void ObjectEvent_PlaceCurrentWithinCameraBounds(s32 localId, s32 glide) {
+/// The script command "camera move to actor":
+/// FieldCamera_MoveWithinMapBounds to the actor's x and z.
+void Actor_PlaceCurrentWithinCameraBounds(s32 actorId, s32 glide) {
   struct Object *subject;
 
-  subject = ObjectEvent_GetByLocalId(localId);
+  subject = Actor_GetByActorId(actorId);
   // The field work, looked up and not used.
   AllocHeapSlotEwram(HEAP_SLOT_FIELD, 0xCCC);
   if (subject != NULL) {
@@ -136,9 +136,9 @@ void FieldCamera_WaitForArrival(void) {
 }
 
 /// The script command "get view centre": returns the camera object.
-struct ObjectEvent *FieldCamera_GetScriptObject(void) {
-  return (struct ObjectEvent *)((struct FieldWork *)AllocHeapSlotEwram(
-                                    HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
+struct Actor *FieldCamera_GetScriptObject(void) {
+  return (struct Actor *)((struct FieldWork *)AllocHeapSlotEwram(
+                              HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
       ->camera;
 }
 

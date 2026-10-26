@@ -194,7 +194,7 @@ void Anim_ApplyChildValuesFar(struct Object *object, u32 val);
 /// drawn hidden (SPRITE_COLOR_HIDDEN), and marks the sprite for redrawing.
 void Sprite_SetAnimColorModesFar(void *raw_parent, u32 value);
 /// Returns -1 when an object at `values` would overlap a solid object
-/// (OBJ_EVENT_SOLID), each radius less 2 pixels, else 0.
+/// (ACTOR_SOLID), each radius less 2 pixels, else 0.
 s32 ObjectScript_CheckOverlapFar(struct Object *object, s32 *values);
 /// Sets which of BG1 to BG3 the map shows, in bits 9 to 11 of its display
 /// flags as REG_DISPCNT lays them out.

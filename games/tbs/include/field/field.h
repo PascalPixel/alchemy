@@ -37,10 +37,10 @@ struct Unit;
 struct BurstParticle;
 struct ScreenPoint;
 struct Particle;
-struct ObjectEvent;
+struct Actor;
 struct FieldPosition;
 struct MercuryLighthouseLights;
-struct MapObjectEvent;
+struct MapActor;
 struct MapGridCell;
 struct MenuSprite;
 struct ModeRecord;
@@ -49,11 +49,11 @@ struct SceneEntrance;
 struct MapEntry;
 struct MapEvent;
 struct MapObject;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 struct SceneExitRegion;
 struct SparkleFrame;
 struct Swirl;
-union ObjectEventOrEffect;
+union ActorOrEffect;
 
 /// The Colosso opponent's path player, at the start of gSceneLocalState: the
 /// path in ColossoRaceWork is played back or recorded by
@@ -61,9 +61,9 @@ union ObjectEventOrEffect;
 struct PathRecorder {
   s16 mode;      ///< 1 plays the path, 2 records it, 9 finished
   s16 mirror;    ///< nonzero mirrors the path across the finish
-  s16 localId;   ///< the local id moved along the path
+  s16 actorId;   ///< the actor id moved along the path
   u16 pathIndex; ///< the next halfword of ColossoRaceWork.path, x then z
-  /// Frames the object event has not moved; from 3 it stands
+  /// Frames the actor has not moved; from 3 it stands
   /// (Object_SelectAnimation 1).
   s16 still;
 };
@@ -176,9 +176,9 @@ extern u16 gLogRoomsA_StopTimer;
 /// (constants.ld). Only the unused Object_RunUpdateAllFromHeap reads it, to
 /// copy the routine to the heap and run it once.
 extern u8 Object_UpdateAllCodeSize[];
-extern u8 gObjectEvent_BlinkSpriteColors[];
+extern u8 gActor_BlinkSpriteColors[];
 // The object motion scripts: actions 1 to 7, which
-// ObjectEvent_SetMovementType starts by number, and two turning scripts
+// Actor_SetMovementType starts by number, and two turning scripts
 // with no action number.
 /// Action 1: a lone SC_END.
 extern const u8 gMovementType_StandScript[];
@@ -240,7 +240,7 @@ extern const s32 gWorldMap_FootprintActions[6];
 extern const s16 gWorldMap_KeyHeadings[16];
 s32 FarCall_LuckyWheelsTable(s32 entrance);
 s32 FarCall_LuckyDiceTable(s32 entrance);
-#ifndef OWN_Map_PrepareObjectEvents
+#ifndef OWN_Map_PrepareActors
 #endif
 void WorldMap_StartStillView(void);
 #ifndef OWN_Object_Destroy

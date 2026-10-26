@@ -106,7 +106,7 @@ An overlay meets the rest of the game at two tables:
   [entry table](../../glossary.md#entry-table-and-import-table): the six
   questions the field asks a scene, for its set-up and for its
   [entrances](../../glossary.md#entrance),
-  [exits](../../glossary.md#exit), [object events](../../glossary.md#object-event),
+  [exits](../../glossary.md#exit), [actors](../../glossary.md#actor),
   [map events](../../glossary.md#map-event) and exit regions (the areas of the
   scene that lead out).
 - At its end, the import table: one entrance for each function of the main

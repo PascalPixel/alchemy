@@ -4,12 +4,12 @@
 #include "types.h"
 #include "map_tables.h"
 
-struct ObjectEvent;
+struct Actor;
 
 const struct SceneEntrance *ShipRooms_SelectEntrances(void);
 const struct SceneExitRegion *ShipRooms_GetRegions(void);
 const u32 *ShipRooms_GetExits(void);
-const struct ObjectEventTemplate *ShipRooms_SelectObjectEventTemplates(void);
+const struct ActorTemplate *ShipRooms_SelectActorTemplates(void);
 const struct MapEvent *ShipRooms_SelectEvents(void);
 s32 ShipRooms_ApplyEntryState(void);
 extern s32 gShipRooms_TurnSteps[];
@@ -25,26 +25,22 @@ extern s32 gShipRooms_LeaveByStairs[];
 extern s32 gShipRooms_StepIntoAisle[];
 extern s32 gShipRooms_LookAroundScript[];
 extern s32 gShipRooms_LieFlatScript[];
-extern struct ObjectEvent *gShipRooms_AnchorObject;
+extern struct Actor *gShipRooms_AnchorObject;
 extern struct SceneEntrance gShipRooms_EntrancesOther[];
 extern struct SceneEntrance gShipRooms_Entrances[];
 extern u32 gShipRooms_Exits[];
-extern struct ObjectEventTemplate gShipRooms_ObjectEventTemplatesNone[];
-extern struct ObjectEventTemplate
-    gShipRooms_CaptainsQuartersObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gShipRooms_CaptainsQuartersObjectEventTemplatesWarriors[];
-extern struct ObjectEventTemplate
-    gShipRooms_CaptainsQuartersObjectEventTemplatesArrived[];
-extern struct ObjectEventTemplate gShipRooms_HoldObjectEventTemplatesEmpty[];
-extern struct ObjectEventTemplate gShipRooms_HoldObjectEventTemplates[];
-extern struct ObjectEventTemplate gShipRooms_HoldObjectEventTemplatesAtSea[];
-extern struct ObjectEventTemplate gShipRooms_RowingDeckObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gShipRooms_PartyFollowerObjectEventTemplates[];
-extern struct ObjectEventTemplate gShipRooms_FirstAttackMonsters[];
-extern struct ObjectEventTemplate gShipRooms_SecondAttackMonsters[];
-extern struct ObjectEventTemplate gShipRooms_ThirdAttackMonsters[];
+extern struct ActorTemplate gShipRooms_ActorTemplatesNone[];
+extern struct ActorTemplate gShipRooms_CaptainsQuartersActorTemplates[];
+extern struct ActorTemplate gShipRooms_CaptainsQuartersActorTemplatesWarriors[];
+extern struct ActorTemplate gShipRooms_CaptainsQuartersActorTemplatesArrived[];
+extern struct ActorTemplate gShipRooms_HoldActorTemplatesEmpty[];
+extern struct ActorTemplate gShipRooms_HoldActorTemplates[];
+extern struct ActorTemplate gShipRooms_HoldActorTemplatesAtSea[];
+extern struct ActorTemplate gShipRooms_RowingDeckActorTemplates[];
+extern struct ActorTemplate gShipRooms_PartyFollowerActorTemplates[];
+extern struct ActorTemplate gShipRooms_FirstAttackMonsters[];
+extern struct ActorTemplate gShipRooms_SecondAttackMonsters[];
+extern struct ActorTemplate gShipRooms_ThirdAttackMonsters[];
 extern struct MapEvent gShipRooms_EventsOther[];
 extern struct MapEvent gShipRooms_HoldEvents[];
 extern struct MapEvent gShipRooms_HoldEventsChoosingRowers[];

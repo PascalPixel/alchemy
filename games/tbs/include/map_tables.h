@@ -2,7 +2,7 @@
 #define ALCHEMY_MAP_TABLES_H
 
 /// @file
-/// The scene table formats: entrances, exits, object event templates
+/// The scene table formats: entrances, exits, actor templates
 /// and map events, and the macros that write them.
 
 #include "static_assert.h"
@@ -40,8 +40,8 @@ enum { MAP_TABLE_END = -1 };
 /// (GameFlag_IsConditionActive).
 enum {
   CONDITION_ALWAYS = -1,
-  /// An object event template's condition that Scene_AssignViewFlags replaces
-  /// with whether the object event lies within the map's view bounds, in the
+  /// An actor template's condition that Scene_AssignViewFlags replaces
+  /// with whether the actor lies within the map's view bounds, in the
   /// scenes that call it, so only the room entered is populated.
   CONDITION_IN_VIEW = 0,
   CONDITION_FLAG_SET = 0x1000 ///< the flag must be set, not clear
@@ -51,7 +51,7 @@ enum {
 #define IF_FLAG_SET(flag) ((flag) | CONDITION_FLAG_SET)
 
 /// Set once the party has left Vale (WORLD_MAP_FROM_VALE_PLAZA): Vale's
-/// scenes then place their later object events and lines, the Sanctum takes
+/// scenes then place their later actors and lines, the Sanctum takes
 /// another map event table and Healer line, and the Sol Sanctum approach moves
 /// its sentry, changes metatile behaviors and stops sending its way down to
 /// SceneId_ValeEruption.
@@ -115,12 +115,12 @@ enum {
 #define EXIT_TO_BATTLE(exit, group)                                            \
   (((u32)(exit) << 20) + ((u32)(group) << 12) + SEQUENCE_BATTLE)
 
-/// An object event a scene places: its sprite, the condition for placing it,
+/// An actor a scene places: its sprite, the condition for placing it,
 /// how it behaves, where it stands and which way it faces, and how it turns to
 /// talk.
-struct ObjectEventTemplate {
-  /// The object event's sprite; 0 to 7 are the party's characters, each in its
-  /// own object event slot, and -1 ends the table.
+struct ActorTemplate {
+  /// The actor's sprite; 0 to 7 are the party's characters, each in its
+  /// own actor slot, and -1 ends the table.
   s16 sprite;
   /// -1 always, a flag | 0x1000 set, else the flag clear. Off the world map,
   /// a Djinni's flag (from FLAG_DJINN_FIRST) also needs its
@@ -128,22 +128,22 @@ struct ObjectEventTemplate {
   /// scene is entered normally again.
   s16 condition;
   /// A built-in action (enum MovementType) or an action script, for
-  /// ObjectEvent_SetMovementType.
+  /// Actor_SetMovementType.
   s32 movement;
   s32 x;         ///< 16.16 fixed-point pixels
   s32 y;         ///< 16.16 fixed-point pixels
   s32 z;         ///< 16.16 fixed-point pixels
   u16 facing;    ///< 1/65536 turns (enum Facing)
-  u8 talkFacing; ///< enum ObjectEventTalkFacing; 3 follows the leader
+  u8 talkFacing; ///< enum ActorTalkFacing; 3 follows the leader
                  ///< afterwards
-  u8 flags;      ///< OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE
+  u8 flags;      ///< ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE
 };
 
-STATIC_ASSERT(sizeof(struct ObjectEventTemplate) == 24);
-STATIC_ASSERT(offsetof(struct ObjectEventTemplate, talkFacing) == 22);
+STATIC_ASSERT(sizeof(struct ActorTemplate) == 24);
+STATIC_ASSERT(offsetof(struct ActorTemplate, talkFacing) == 22);
 
-/// The built-in actions an object event template's behavior can name, which
-/// ObjectEvent_SetMovementType turns into scripts.
+/// The built-in actions an actor template's behavior can name, which
+/// Actor_SetMovementType turns into scripts.
 enum MovementType {
   MOVEMENT_TYPE_STAND = 1, ///< its script only ends
   /// Wanders about where it stands (SC_WANDER_HOME), within 16 pixels.
@@ -155,10 +155,10 @@ enum MovementType {
   MOVEMENT_TYPE_RESET_ACTION = 7   ///< gMovementType_ResetActionScript
 };
 
-/// How a placed object event turns when the leader talks to it
-/// (Scene_TalkToObjectEvent). With all but TALK_FACING_KEEP the leader stops
+/// How a placed actor turns when the leader talks to it
+/// (Scene_TalkToActor). With all but TALK_FACING_KEEP the leader stops
 /// and the two are linked.
-enum ObjectEventTalkFacing {
+enum ActorTalkFacing {
   TALK_FACING_PARTY = 0,
   /// Faces the party, then turns back to its old heading.
   TALK_FACING_PARTY_AND_BACK = 1,
@@ -168,30 +168,30 @@ enum ObjectEventTalkFacing {
   TALK_FACING_PARTY_THEN_WATCH = 3
 };
 
-/// ObjectEventTemplate.flags: the object event takes the previous object
-/// event's sprite resource instead of loading its own, when both are single
+/// ActorTemplate.flags: the actor takes the previous
+/// actor's sprite resource instead of loading its own, when both are single
 /// sprites.
-#define OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE 0x01
+#define ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE 0x01
 
-/// Local ids: 0 to 7 the party's characters, the placed object events from 8.
-/// A party member's object event takes its character's number
-/// (character_ids.h) as its local id.
-enum LocalId {
-  LOCALID_PARTY_LEADER = 0,
+/// Actor ids: 0 to 7 the party's characters, the placed actors from 8.
+/// A party member's actor takes its character's number
+/// (character_ids.h) as its actor id.
+enum ActorId {
+  ACTOR_PARTY_LEADER = 0,
   /// ★ Named from the game: "Garet" (MsgCharacterName)
-  LOCALID_GARET = 1,
+  ACTOR_GARET = 1,
   /// ★ Named from the game: "Ivan" (MsgCharacterName)
-  LOCALID_IVAN = 2,
+  ACTOR_IVAN = 2,
   /// ★ Named from the game: "Mia" (MsgCharacterName)
-  LOCALID_MIA = 3,
+  ACTOR_MIA = 3,
   /// ★ Named from the game: "Jenna" (MsgCharacterName)
-  LOCALID_JENNA = 5,
+  ACTOR_JENNA = 5,
   /// ★ Named from the game: "Sheba" (MsgCharacterName)
-  LOCALID_SHEBA = 6,
-  LOCALID_FIRST_PLACED = 8,
-  /// The last of the 66 object event slots, as scenes loop over every placed
-  /// object event.
-  LOCALID_LAST_SLOT = 65
+  ACTOR_SHEBA = 6,
+  ACTOR_FIRST_PLACED = 8,
+  /// The last of the 66 actor slots, as scenes loop over every placed
+  /// actor.
+  ACTOR_LAST_SLOT = 65
 };
 
 /// Whole pixels as 16.16 fixed point.
@@ -204,9 +204,9 @@ struct MapEvent {
   /// and bg event lookups; -1 ends the table. The detail bits depend on the
   /// kind. bits: 30..28 Psynergy phase | 15..12 coord facing | 15..8 item or
   /// ability | 11 short push | 10 facing | 9 walking | 8..4 bg target | 7
-  /// Psynergy anywhere | 5..4 exit sound | 4 on an object event | 3..0 kind
+  /// Psynergy anywhere | 5..4 exit sound | 4 on an actor | 3..0 kind
   u32 kind;
-  /// What the event answers: a local id, a metatile behavior, a treasure
+  /// What the event answers: an actor id, a metatile behavior, a treasure
   /// spot id or a raised value. Item and Psynergy events read it as bits below;
   /// bit 10 also skips a bg event's checking message and a Psynergy's effect.
   /// bits: 15..12 facing | 11 needs facing | 10 own message | 7..0 target
@@ -226,18 +226,17 @@ STATIC_ASSERT(sizeof(struct MapEvent) == 12);
 
 /// MapEvent.kind's low four bits: what the event answers.
 enum MapEventKind {
-  MAP_EVENT_TALK = 0, ///< the A button on an object event; trigger is its id
+  MAP_EVENT_TALK = 0, ///< the A button on an actor; trigger is its id
   /// Stepping onto a cell whose metatile behavior is the trigger, when no coord
   /// event answers it; value is the exit kind.
   MAP_EVENT_EXIT = 1,
   MAP_EVENT_COORD = 2, ///< stepping onto or pushing against a metatile behavior
-  MAP_EVENT_BG =
-      3, ///< the A button on what is ahead, when it is no object event
-  MAP_EVENT_ITEM = 4, ///< an item used on a cell or an object event
+  MAP_EVENT_BG = 3,    ///< the A button on what is ahead, when it is no actor
+  MAP_EVENT_ITEM = 4,  ///< an item used on a cell or an actor
   MAP_EVENT_PSYNERGY = 5,
   MAP_EVENT_RAISED = 6, ///< raised by code through FieldWork.raisedEvent
-  /// Talking to an object event Halt has stopped
-  /// (Scene_FindObjectEventTalkEvent).
+  /// Talking to an actor Halt has stopped
+  /// (Scene_FindActorTalkEvent).
   MAP_EVENT_TALK_HALTED = 7
 };
 
@@ -280,7 +279,7 @@ enum ExitStyle {
 
 /// When a Psynergy event runs around its effect, control bits 30..28.
 enum PsynergyPhase {
-  /// After the effect (Field_UsePsynergy), PSYNERGY_ON_OBJ_EVENT's phase. With
+  /// After the effect (Field_UsePsynergy), PSYNERGY_ON_ACTOR's phase. With
   /// PSYNERGY_SCRIPT_PLAYS_EFFECT the event plays the effect itself.
   PSYNERGY_PHASE_AFTER_CAST = 0,
   PSYNERGY_PHASE_BEFORE_CAST = 1, ///< once the PP is paid, before the effect
@@ -294,7 +293,7 @@ enum PsynergyPhase {
   PSYNERGY_PHASE_EFFECT_ENDS = 4,
   /// Run by the effect itself as it acts (force.c, frost.c and reveal.c): as
   /// Force strikes, Frost freezes or Reveal shows what is hidden. An event in
-  /// this phase also makes Field_UsePsynergy aim the effect at the object event
+  /// this phase also makes Field_UsePsynergy aim the effect at the actor
   /// ahead.
   PSYNERGY_PHASE_EFFECT_ACTS = 5,
   PSYNERGY_PHASE_ANY = 7 ///< Scene_FindPsynergyEvent matches every phase
@@ -306,34 +305,34 @@ enum PsynergyPhase {
 #define PSYNERGY_EVENT(phase) ((phase) << 28 | MAP_EVENT_PSYNERGY)
 #define PSYNERGY_EV_ANY PSYNERGY_EVENT(PSYNERGY_PHASE_ANY)
 
-/// A Psynergy event on the object event the leader faces.
-#define MAP_EVENT_PSYNERGY_ON_OBJ_EVENT 0x10
-#define PSYNERGY_ON_OBJ_EVENT(ability)                                         \
-  (MAP_EVENT_PSYNERGY | MAP_EVENT_PSYNERGY_ON_OBJ_EVENT | (ability) << 8)
-/// Bits of an after-cast Psynergy event's target word, beside the object
-/// event's number.
+/// A Psynergy event on the actor the leader faces.
+#define MAP_EVENT_PSYNERGY_ON_ACTOR 0x10
+#define PSYNERGY_ON_ACTOR(ability)                                             \
+  (MAP_EVENT_PSYNERGY | MAP_EVENT_PSYNERGY_ON_ACTOR | (ability) << 8)
+/// Bits of an after-cast Psynergy event's target word, beside the
+/// actor's number.
 enum PsynergyEventTarget {
   /// Field_UsePsynergy clears FLAG_PSYNERGY_EFFECT and plays no effect of its
   /// own, leaving it to the event's script.
   PSYNERGY_SCRIPT_PLAYS_EFFECT = 0x400
 };
-/// A Psynergy event on an object event at one phase of the cast, as
+/// A Psynergy event on an actor at one phase of the cast, as
 /// PSYNERGY_ANYWHERE is for any target.
-#define PSYNERGY_PHASE_ON_OBJ_EVENT(ability, phase)                            \
-  ((u32)(phase) << 28 | PSYNERGY_ON_OBJ_EVENT(ability))
+#define PSYNERGY_PHASE_ON_ACTOR(ability, phase)                                \
+  ((u32)(phase) << 28 | PSYNERGY_ON_ACTOR(ability))
 
-/// A Psynergy event for any target, not a particular object event or cell.
+/// A Psynergy event for any target, not a particular actor or cell.
 #define MAP_EVENT_PSYNERGY_ANYWHERE 0x80
 #define PSYNERGY_ANYWHERE(ability, phase)                                      \
   ((u32)(phase) << 28 | (ability) << 8 | MAP_EVENT_PSYNERGY_ANYWHERE |         \
    MAP_EVENT_PSYNERGY)
 
-// Using an item (one byte) on a metatile behavior, or on an object event, as
+// Using an item (one byte) on a metatile behavior, or on an actor, as
 // Field_FindItemEvent reads them.
-#define MAP_EVENT_ITEM_ON_OBJ_EVENT 0x10
+#define MAP_EVENT_ITEM_ON_ACTOR 0x10
 #define USE_ITEM(item) (MAP_EVENT_ITEM | (item) << 8)
-#define USE_ITEM_ON_OBJ_EVENT(item)                                            \
-  (MAP_EVENT_ITEM | MAP_EVENT_ITEM_ON_OBJ_EVENT | (item) << 8)
+#define USE_ITEM_ON_ACTOR(item)                                                \
+  (MAP_EVENT_ITEM | MAP_EVENT_ITEM_ON_ACTOR | (item) << 8)
 
 #define BG_EVENT(target) (MAP_EVENT_BG | (target) << 4)
 /// A bg event searched while facing the given way, as a counter is searched
@@ -341,7 +340,7 @@ enum PsynergyEventTarget {
 #define BG_EVENT_FACING(facing)                                                \
   (MAP_EVENT_BG | MAP_EVENT_FLAG_FACING | (facing))
 /// A talk event that answers only while the leader faces the given way, so one
-/// object event can answer differently from each side.
+/// actor can answer differently from each side.
 #define TALK_EVENT_FACING(facing)                                              \
   (MAP_EVENT_TALK | MAP_EVENT_FLAG_FACING | (facing))
 

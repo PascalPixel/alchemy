@@ -12,7 +12,7 @@
 #include "field_work.h"
 
 struct MapGridCell;
-struct ObjectEvent;
+struct Actor;
 
 /// A scene's row in gSceneHeaders: its overlay's resource, its area,
 /// its scene type and its map. One row per scene number; field/scene_headers.s
@@ -45,8 +45,8 @@ struct SceneExitRegion {
 STATIC_ASSERT(sizeof(struct SceneExitRegion) == 16);
 
 /// The entry table at the start of each scene overlay: its initialize
-/// function and the functions returning its entrances, exits, object
-/// event templates, map events and exit regions, each behind a veneer word.
+/// function and the functions returning its entrances, exits,
+/// actor templates, map events and exit regions, each behind a veneer word.
 /// The field reads each entry's veneer as the address word in its last four
 /// bytes, so member i of the six sits at 8 * i + 4; the field calls them as
 /// gOverlayArea.initialize(), gOverlayArea.events() and so on.
@@ -57,8 +57,8 @@ struct SceneEntries {
   const struct SceneEntrance *(*entrances)(void);
   u32 exitsVeneer;
   const u32 *(*exits)(void);
-  u32 objectEventTemplatesVeneer;
-  const struct ObjectEventTemplate *(*objectEventTemplates)(void);
+  u32 actorTemplatesVeneer;
+  const struct ActorTemplate *(*actorTemplates)(void);
   u32 eventsVeneer;
   const struct MapEvent *(*events)(void);
   u32 regionsVeneer;

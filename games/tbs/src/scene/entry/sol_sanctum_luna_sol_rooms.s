@@ -2,6 +2,6 @@
 	overlay_veneer SolSanctumLunaSolRooms_Initialize
 	overlay_veneer SolSanctumLunaSolRooms_GetEntrances
 	overlay_veneer SolSanctumLunaSolRooms_GetExits
-	overlay_veneer SolSanctumLunaSolRooms_GetObjectEventTemplates
+	overlay_veneer SolSanctumLunaSolRooms_GetActorTemplates
 	overlay_veneer SolSanctumLunaSolRooms_GetEvents
 	overlay_veneer SolSanctumLunaSolRooms_GetRegions

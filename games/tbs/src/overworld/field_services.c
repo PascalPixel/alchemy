@@ -1,6 +1,6 @@
 /// @file
 /// The field Psynergy and script object: the commands map scripts run (waits,
-/// items, questions, destinations, object events, messages and the camera),
+/// items, questions, destinations, actors, messages and the camera),
 /// moving on the field (views, jumps and climbing), the field's weather and
 /// scanline effects, Djinn joining the party, each field Psynergy's effect, the
 /// field effect sprites its particles use, and the world map screen.
@@ -21,11 +21,11 @@
 // The parts, in ROM order (src/README.md, "Objects and parts").
 #include "field_services/script.c"
 #include "field_services/requests.c"
-#include "field_services/object_event_commands.c"
+#include "field_services/actor_commands.c"
 #include "field_services/messages.c"
 #include "field_services/camera.c"
 #include "field_services/view.c"
-#include "field_services/object_event_motion.c"
+#include "field_services/actor_motion.c"
 #include "field_services/climbing.c"
 #include "field_services/context.c"
 #include "field_services/wave_scroll.c"

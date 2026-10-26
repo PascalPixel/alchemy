@@ -6,12 +6,12 @@
 
 struct SceneEntrance;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 
 const struct SceneEntrance *Imil_GetEntrances(void);
 const struct SceneExitRegion *Imil_GetRegions(void);
 const u32 *Imil_GetExits(void);
-const struct ObjectEventTemplate *Imil_GetObjectEventTemplates(void);
+const struct ActorTemplate *Imil_GetActorTemplates(void);
 const struct MapEvent *Imil_GetEvents(void);
 s32 Imil_Initialize(void);
 extern s16 gImil_KeyHeadings[];
@@ -29,9 +29,9 @@ extern s32 gImil_FollowMiaOutScript[];
 extern struct SceneEntrance gImil_TownEntrances[];
 extern struct SceneEntrance gImil_InteriorEntrances[];
 extern u32 gImil_Exits[];
-extern struct ObjectEventTemplate gImil_TownObjectEventTemplates[];
-extern struct ObjectEventTemplate gImil_TownObjectEventTemplatesCured[];
-extern struct ObjectEventTemplate gImil_InteriorObjectEventTemplates[];
+extern struct ActorTemplate gImil_TownActorTemplates[];
+extern struct ActorTemplate gImil_TownActorTemplatesCured[];
+extern struct ActorTemplate gImil_InteriorActorTemplates[];
 extern struct MapEvent gImil_TownEvents[];
 extern struct MapEvent gImil_InteriorEvents[];
 extern u16 gImil_SanctumDoorSteps[];

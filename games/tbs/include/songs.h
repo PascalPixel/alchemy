@@ -267,7 +267,7 @@
 /// and as the ground shakes under Hammet's caravan on the world map.
 /// It sounds like a low rumble held until it is stopped.
 #define SE_TREMOR 107
-/// The low triple tone: Halt freezing an object event, and the link session
+/// The low triple tone: Halt freezing an actor, and the link session
 /// countdown.
 #define SE_TRIPLE_TONE_LOW 108
 /// The high triple tone: Halt ending.
@@ -414,7 +414,7 @@
 #define SE_UNUSED_DEFEAT_CRY 150
 /// Altmiller Cave's lights growing in, one by one, and a Venus Djinni caught.
 #define SE_LIGHT_APPEAR 151
-/// An object event jumps: ObjectMotion_Launch plays the high jump above 5
+/// An actor jumps: ObjectMotion_Launch plays the high jump above 5
 /// pixels a frame.
 #define SE_JUMP 152
 /// A high jump: ObjectMotion_Launch above 5 pixels a frame, Djinn leaping, and
@@ -546,7 +546,7 @@
 /// The curse's sparkles at Kolima and Kolima Forest, Tret rejecting the party,
 /// and Sol Sanctum's statue opening its central hole.
 #define SE_SPARKLE_FALL 200
-/// The party rising to the Elemental Star room, and an object event raised and
+/// The party rising to the Elemental Star room, and an actor raised and
 /// shrunk in the eruption.
 #define SE_ASCEND 201
 /// On the stormy night, as Isaac and Dora hurry to the plaza, a flame flares up
@@ -576,7 +576,7 @@
 #define SE_POWER_UP 212
 /// A pushed log or pillar coming to rest, after SE_STOP_ACTION_SE cuts
 /// SE_HEAVY_MOVE: the Colosso matches, Kolima Forest's floodgate, Vale Cave,
-/// and the maps' pushed objects (ObjectEvent_MoveAndRedraw).
+/// and the maps' pushed objects (Actor_MoveAndRedraw).
 /// ★ Named from what the player sees: a pushed log or pillar stopping (its
 /// render)
 #define SE_HEAVY_STOP 213
@@ -594,7 +594,7 @@
 /// about two seconds.
 #define SE_BURST 216
 /// Mercury Lighthouse's floor switches and gates, the Colosso's
-/// moving walkway, and an object event jumping down a ledge.
+/// moving walkway, and an actor jumping down a ledge.
 #define SE_FLOOR_SWITCH 217
 /// Mercury Lighthouse's fountain, and the storm carrying the party off in
 /// Suhalla Desert and dropping it on the world map.
@@ -605,8 +605,8 @@
 /// Temple's Reveal lesson, Mia in Imil and at Mercury Lighthouse, the curse on
 /// Kolima, and the Elemental Stars taken by Alex.
 #define SE_SHIMMER 220
-/// An object event lifted into a passage of Mercury Lighthouse amid sparks
-/// (MercuryLighthouse_RaiseObjectEventWithSparks).
+/// An actor lifted into a passage of Mercury Lighthouse amid sparks
+/// (MercuryLighthouse_RaiseActorWithSparks).
 #define SE_RISE_WITH_SPARKS 221
 /// The lifts of Mercury Lighthouse and its aerie, as they carry the party.
 /// ★ Named from what the player sees: the party riding Mercury Lighthouse's
@@ -684,7 +684,7 @@
 /// A Colosso warrior fading in (Colosso_FadeInWarrior).
 /// ★ Named from what the player sees: a Colosso warrior appearing (its render)
 #define SE_COLOSSO_WARRIOR_APPEAR 252
-/// The first voice blip of a message: an object event's voice is 0x100 plus its
+/// The first voice blip of a message: an actor's voice is 0x100 plus its
 /// sprite's value (Speaker_GetVoice), and every few letters typed play
 /// it plus the letter code's low two bits (TextPrinter_Step), so a voice is
 /// four blips. gSpeakerDefinitions gives each sprite one of eight voices; this

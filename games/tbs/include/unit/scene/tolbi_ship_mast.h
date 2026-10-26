@@ -8,7 +8,7 @@
 const struct SceneEntrance *TolbiShipMast_GetEntrances(void);
 const struct SceneExitRegion *TolbiShipMast_GetRegions(void);
 const u32 *TolbiShipMast_GetExits(void);
-const struct ObjectEventTemplate *TolbiShipMast_GetObjectEventTemplates(void);
+const struct ActorTemplate *TolbiShipMast_GetActorTemplates(void);
 const struct MapEvent *TolbiShipMast_GetEvents(void);
 s32 TolbiShipMast_Initialize(void);
 extern s32 gTolbiShipMast_DriftY;
@@ -32,11 +32,10 @@ extern u32 gTolbiShipMast_BirdDeparture6[];
 extern struct SceneEntrance gTolbiShipMast_Entrances[];
 extern struct SceneExitRegion gTolbiShipMast_Regions[];
 extern u32 gTolbiShipMast_Exits[];
-extern struct ObjectEventTemplate gTolbiShipMast_ObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gTolbiShipMast_FirstAttackObjectEventTemplates[];
-extern struct ObjectEventTemplate gTolbiShipMast_BirdObjectEventTemplates[];
-extern struct ObjectEventTemplate gTolbiShipMast_LandingObjectEventTemplates[];
+extern struct ActorTemplate gTolbiShipMast_ActorTemplates[];
+extern struct ActorTemplate gTolbiShipMast_FirstAttackActorTemplates[];
+extern struct ActorTemplate gTolbiShipMast_BirdActorTemplates[];
+extern struct ActorTemplate gTolbiShipMast_LandingActorTemplates[];
 extern struct MapEvent gTolbiShipMast_Events[];
 extern u32 gTolbiShipMast_PassengerRowValues[];
 

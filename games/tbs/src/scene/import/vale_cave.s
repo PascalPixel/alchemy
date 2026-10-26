@@ -20,21 +20,21 @@
 	.set import.FieldScript_WaitFrames, 1
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
-	.set import.ObjectEvent_GetById, 1
+	.set import.Actor_GetById, 1
 	.set import.ObjectMotion_SetSpeedParameters, 1
 	.set import.ObjectMotion_SetPositionAndCommit, 1
 	.set import.ObjectMotion_ResetAndSetPositionInMode2, 1
 	.set import.ObjectMotion_SetPositionAndReset, 1
 	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
 	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
-	.set import.Import_ObjectEventSetPosition, 1
-	.set import.Import_ObjectEventSetAnimation, 1
+	.set import.Import_ActorSetPosition, 1
+	.set import.Import_ActorSetAnimation, 1
 	.set import.ObjectMotion_SetVarCbAndRefresh, 1
-	.set import.ObjectEvent_SetSpriteColor, 1
+	.set import.Actor_SetSpriteColor, 1
 	.set import.ObjectMotion_ArmCallback, 1
 	.set import.ObjectMotion_SetActionVariant, 1
 	.set import.FieldEffect_ConfigureLinkedObject, 1
-	.set import.FieldCamera_FollowObjectEvent, 1
+	.set import.FieldCamera_FollowActor, 1
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_WaitForArrival, 1
 	.set import.Import_ScriptRequestExit, 1

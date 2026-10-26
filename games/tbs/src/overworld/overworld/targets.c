@@ -1,5 +1,5 @@
 /// @file
-/// The object event a field action aims at, and the helpers that follow it.
+/// The actor a field action aims at, and the helpers that follow it.
 // Part of overworld.c.
 
 #include "../overworld_internal.h"
@@ -25,19 +25,19 @@ s32 Field_GetPsynergyTargetRange(s32 kind) {
   return range;
 }
 
-/// Returns the object event nearest to object event id that it could talk to,
+/// Returns the actor nearest to actor id that it could talk to,
 /// or -1: within 48 pixels of height and 32 pixels of distance and, beyond 11
-/// pixels, within 0x2fff (about 67 degrees) of the direction it faces. Object
-/// events with collision flag 8 are skipped, and those with flag 4 count as
+/// pixels, within 0x2fff (about 67 degrees) of the direction it faces.
+/// Actors with collision flag 8 are skipped, and those with flag 4 count as
 /// 10/13 as far, so they can be talked to from up to 41 pixels. Called with the
 /// leader by SceneManager_Run for the A button, and by the item code (items.c)
 /// to find whom an item is used on.
 s32 Field_FindNearbyTalkTarget(s32 id) {
   struct Object *source;
   struct Object *candidate;
-  s32 nearestLocalId;
+  s32 nearestActorId;
   s32 nearestDistance;
-  s32 objectEventIndex;
+  s32 actorIndex;
   s32 dx;
   s32 dy;
   s32 dz;
@@ -48,20 +48,19 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
   s32 distance;
   s32 angle;
 
-  nearestLocalId = -1;
+  nearestActorId = -1;
   nearestDistance = 32;
-  source = ObjectEvent_GetByLocalId(id);
+  source = Actor_GetByActorId(id);
   if (source != 0) {
-    for (objectEventIndex = 0; objectEventIndex <= OBJECT_LAST;
-         objectEventIndex++) {
-      if (objectEventIndex == id)
+    for (actorIndex = 0; actorIndex <= OBJECT_LAST; actorIndex++) {
+      if (actorIndex == id)
         continue;
 
-      candidate = ObjectEvent_GetByLocalId(objectEventIndex);
+      candidate = Actor_GetByActorId(actorIndex);
       if (candidate == 0 || (candidate->collisionFlags & 8) != 0)
         continue;
 
-      // y is height: an object event more than 48 pixels above or below is out
+      // y is height: an actor more than 48 pixels above or below is out
       // of reach.
       if (candidate->y - source->y >= 0) {
         if (candidate->y - source->y >= 48 << 16)
@@ -85,8 +84,8 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
       if (distance >= nearestDistance)
         continue;
 
-      // Close object events count from any side; further ones must be within
-      // 0x2fff (about 67 degrees) of where the object event faces.
+      // Close actors count from any side; further ones must be within
+      // 0x2fff (about 67 degrees) of where the actor faces.
       angle = (u16)ArcTan2(candidate->z - source->z, candidate->x - source->x);
       if (distance > 11) {
         s32 angleDifference = (s16)(angle - source->facing);
@@ -97,27 +96,27 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
           continue;
       }
 
-      nearestLocalId = objectEventIndex;
+      nearestActorId = actorIndex;
       nearestDistance = distance;
     }
   }
-  return nearestLocalId;
+  return nearestActorId;
 }
 
-/// Returns the object event nearest in front of object event id that a field
+/// Returns the actor nearest in front of actor id that a field
 /// Psynergy of the given kind can reach, or -1. The direction is rounded to a
 /// quarter turn and the distance measured on the ground; kind sets the range,
-/// the height allowed and the width of the cone. Object events with collision
+/// the height allowed and the width of the cone. Actors with collision
 /// flag 0x10 count as 2/3 as far. Called with the leader by Field_UsePsynergy,
 /// by the item code (items.c) and by the Psynergy dispatch
 /// (field_services/dispatch.c).
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   struct Object *source;
   struct Object *candidate;
-  s32 nearestLocalId;
+  s32 nearestActorId;
   s32 nearestDistance;
   s32 facingQuadrant;
-  s32 objectEventIndex;
+  s32 actorIndex;
   s32 heightLimit;
   s32 dx;
   s32 dz;
@@ -126,20 +125,19 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   s32 angle;
   s32 coneHalfAngle;
 
-  nearestLocalId = -1;
+  nearestActorId = -1;
   nearestDistance = Field_GetPsynergyTargetRange(kind);
-  source = (struct Object *)ObjectEvent_GetByLocalId(id);
+  source = (struct Object *)Actor_GetByActorId(id);
   if (source == 0)
-    return nearestLocalId;
+    return nearestActorId;
 
   // The facing rounded to the nearest of the four quarter turns.
   facingQuadrant = (source->facing + 0x2000) & 0xc000;
-  for (objectEventIndex = 0; objectEventIndex <= OBJECT_LAST;
-       objectEventIndex++) {
-    if (objectEventIndex == id)
+  for (actorIndex = 0; actorIndex <= OBJECT_LAST; actorIndex++) {
+    if (actorIndex == id)
       continue;
 
-    candidate = (struct Object *)ObjectEvent_GetByLocalId(objectEventIndex);
+    candidate = (struct Object *)Actor_GetByActorId(actorIndex);
     if (candidate == 0 || (candidate->collisionFlags & 8) != 0)
       continue;
 
@@ -197,30 +195,30 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
         continue;
     }
 
-    nearestLocalId = objectEventIndex;
+    nearestActorId = actorIndex;
     nearestDistance = distance;
   }
 
-  return nearestLocalId;
+  return nearestActorId;
 }
 
-/// If object event target exists, plays SE_CHEST_OPEN, gives it animation 4
-/// and, 12 frames later, shows itemId in front of object event with sparkles.
-/// Returns the picture's encoded object event pointer, or 0 when the target or
+/// If actor target exists, plays SE_CHEST_OPEN, gives it animation 4
+/// and, 12 frames later, shows itemId in front of actor with sparkles.
+/// Returns the picture's encoded actor pointer, or 0 when the target or
 /// picture is absent. Called by two map overlays: McCoy's palace, when a reward
 /// chest opens, and Vault's interiors, when Ivan finds the Shaman's Rod.
-s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 localId, s32 target,
+s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
                                                s32 itemId) {
-  void *targetObjectEvent;
+  void *targetActor;
   s32 emitter;
 
-  targetObjectEvent = ObjectEvent_GetById(target);
+  targetActor = Actor_GetById(target);
   emitter = 0;
-  if (targetObjectEvent != 0) {
+  if (targetActor != 0) {
     Sound_PlaySongFar(SE_CHEST_OPEN);
-    Object_SelectAnimationFar(targetObjectEvent, 4);
+    Object_SelectAnimationFar(targetActor, 4);
     WaitFrames(12);
-    emitter = (s32)FieldEffect_StartRandomParticleEmitter(localId, itemId);
+    emitter = (s32)FieldEffect_StartRandomParticleEmitter(actorId, itemId);
   }
   return emitter;
 }

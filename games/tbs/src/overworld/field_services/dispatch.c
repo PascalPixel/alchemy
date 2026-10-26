@@ -5,7 +5,7 @@
 #include "../field_services_internal.h"
 
 // The dispatchers use the common field effect. Individual update hooks use
-// their object event or FieldEffectSprite contract; neither is a map-script
+// their actor or FieldEffectSprite contract; neither is a map-script
 // callback.
 
 /// Runs one step of the current Psynergy effect: an enum PsynergyEffectStep.
@@ -31,7 +31,7 @@ void _call_via_r3(s32, s32);
 /// Called by Field_UsePsynergy when no map event names a target
 /// (FLAG_PSYNERGY_TARGET clear), by Field_UseItem for an item with a field
 /// action, and by Field_DispatchTypeHandler(PSYNERGY_STEP_UNTARGETED). Halt
-/// also moves gSaveBlock.pausedObject to the object event it stops.
+/// also moves gSaveBlock.pausedObject to the actor it stops.
 void FieldEffect_Run(void) {
   struct FieldEffectWork *effectWork;
   struct FieldWork *runtime;
@@ -83,10 +83,10 @@ void FieldEffect_Run(void) {
     }
 
     nearestTargetId =
-        Field_FindNearbyPsynergyTarget(gSaveBlock.leaderLocalId, kind);
+        Field_FindNearbyPsynergyTarget(gSaveBlock.leaderActorId, kind);
     nearestTargetId = FieldEffect_FilterObjectIdByFlags(nearestTargetId);
-    if (Scene_FindObjectEventTalkEvent(nearestTargetId) != 0) {
-      FieldEffect_SetupObjectPair(gSaveBlock.leaderLocalId, nearestTargetId);
+    if (Scene_FindActorTalkEvent(nearestTargetId) != 0) {
+      FieldEffect_SetupObjectPair(gSaveBlock.leaderActorId, nearestTargetId);
       FieldEffect_RunHaltOnTarget(nearestTargetId);
       FieldEffect_PauseObject(nearestTargetId);
       gSaveBlock.pausedObject = nearestTargetId;
@@ -269,7 +269,7 @@ s32 Field_RunEventAction(const void *event, s32 param, s32 target) {
 /// frame % 6, which cycles its colours. Move, Lift and Carry give it to the
 /// target they hold, Retreat to its caster. A sprite that keeps its VRAM
 /// cache entry (retainCacheEntry) is left alone.
-void Object_CycleSpriteColors(union ObjectEventOrEffect *fieldObject) {
+void Object_CycleSpriteColors(union ActorOrEffect *fieldObject) {
   struct Object *owner = (struct Object *)fieldObject;
   s32 kind;
   struct Sprite *animation;
@@ -398,19 +398,19 @@ struct Object *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
 /// player's and except. FieldEffect_StartCast pauses them
 /// (animation speed 0) while an effect plays and lets them go again at
 /// normal speed.
-void ObjectEvent_SetOthersPaused(struct Object *except, s32 state, s32 value) {
+void Actor_SetOthersPaused(struct Object *except, s32 state, s32 value) {
   s16 *player;
   struct Object *object;
-  s32 localId;
+  s32 actorId;
 
-  localId = 0;
+  actorId = 0;
   player = (s16 *)gPlayerObjectId;
   do {
-    object = ObjectEvent_GetByLocalId(localId);
-    if (localId != *player && object != NULL && object != except) {
+    object = Actor_GetByActorId(actorId);
+    if (actorId != *player && object != NULL && object != except) {
       object->paused = state;
       Object_SetAnimationSpeedFar((struct Object *)object, value);
     }
-    localId++;
-  } while (localId <= OBJECT_LAST);
+    actorId++;
+  } while (actorId <= OBJECT_LAST);
 }

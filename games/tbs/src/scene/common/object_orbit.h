@@ -22,31 +22,31 @@ static s32 Scene_UpdateFloatingNut(s32 *p) {
   return 0;
 }
 
-/// Draws object event id as the Nut's icon and starts it floating, 32 pixels up
+/// Draws actor id as the Nut's icon and starts it floating, 32 pixels up
 /// unless the party returns to where it was.
 void Scene_FloatNut(s32 id) {
-  OrbitingMapObject *objectEvent;
+  OrbitingMapObject *actor;
   OrbitingMapObjectSprite *sprite;
   u8 *transfer;
   s32 zero;
 
-  objectEvent = (OrbitingMapObject *)ObjectEvent_GetById(id);
-  sprite = objectEvent->sprite;
+  actor = (OrbitingMapObject *)Actor_GetById(id);
+  sprite = actor->sprite;
   sprite->priority = 1;
   sprite->fullColor = 0;
   sprite->paletteNumber = 0;
 
   zero = 0;
   sprite->state = zero;
-  ObjectEvent_SetSpriteFlags((struct ObjectEvent *)objectEvent, zero);
-  objectEvent->active = zero;
-  objectEvent->mode = zero;
+  Actor_SetSpriteFlags((struct Actor *)actor, zero);
+  actor->active = zero;
+  actor->mode = zero;
 
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0)
-    objectEvent->y += 0x200000;
+    actor->y += 0x200000;
 
-  objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
-  objectEvent->visible = 1;
+  actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  actor->visible = 1;
 
   transfer = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   Icon_DrawItem(ITEM_NUT);
@@ -54,10 +54,10 @@ void Scene_FloatNut(s32 id) {
   VramCache_Load(sprite->palette, 128, transfer);
   FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
 
-  objectEvent->orbitCenterX = objectEvent->x;
-  objectEvent->orbitAngle = zero;
-  objectEvent->orbitCenterY = objectEvent->y;
-  objectEvent->active = 1;
-  objectEvent->callback = (u32)Scene_UpdateFloatingNut;
-  objectEvent->state = zero;
+  actor->orbitCenterX = actor->x;
+  actor->orbitAngle = zero;
+  actor->orbitCenterY = actor->y;
+  actor->active = 1;
+  actor->callback = (u32)Scene_UpdateFloatingNut;
+  actor->state = zero;
 }

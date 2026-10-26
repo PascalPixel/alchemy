@@ -7,12 +7,12 @@
 
 struct SceneEntrance;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 struct SceneExitRegion;
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
+const struct ActorTemplate *Scene_GetActorTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
 extern s32 gCottageRoomsD_CookScript[];
@@ -20,9 +20,9 @@ extern struct SceneEntrance gAltin_NoEntrances[];
 extern struct SceneEntrance gAltin_Entrances[];
 extern struct SceneEntrance gCottageRoomsD_Entrances[];
 extern u32 gAltin_Exits[];
-extern struct ObjectEventTemplate gAltin_NoObjectEventTemplates[];
-extern struct ObjectEventTemplate gAltin_ObjectEventTemplates[];
-extern struct ObjectEventTemplate gCottageRoomsD_ObjectEventTemplates[];
+extern struct ActorTemplate gAltin_NoActorTemplates[];
+extern struct ActorTemplate gAltin_ActorTemplates[];
+extern struct ActorTemplate gCottageRoomsD_ActorTemplates[];
 extern struct MapEvent gAltin_NoEvents[];
 extern struct MapEvent gAltin_Events[];
 extern struct MapEvent gCottageRoomsD_Events[];

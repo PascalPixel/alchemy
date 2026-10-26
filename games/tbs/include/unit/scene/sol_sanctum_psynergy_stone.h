@@ -9,13 +9,12 @@ struct SceneExitRegion;
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
+const struct ActorTemplate *Scene_GetActorTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
 extern struct SceneEntrance gSolSanctumPsynergyStoneEntrances[];
 extern u32 gSolSanctumPsynergyStoneExits[];
-extern struct ObjectEventTemplate
-    gSolSanctumPsynergyStoneObjectEventTemplates[];
+extern struct ActorTemplate gSolSanctumPsynergyStoneActorTemplates[];
 extern struct MapEvent gSolSanctumPsynergyStoneEvents[];
 
 #endif

@@ -36,24 +36,24 @@
 #include "tbs_edition.h"
 
 #include "pushed_object.h"
-#include "object_event.h"
+#include "actor.h"
 #include "save_block.h"
 #include "script_layer.h"
 #include "map_tables.h"
 #include "songs.h"
 
-/// The map's object events, numbering the rows of
-/// gKolimaForestCliffObjectEventTemplates.
+/// The map's actors, numbering the rows of
+/// gKolimaForestCliffActorTemplates.
 enum {
   /// The three logs; the third is the one that can reach the river.
   /// ★ Named from what the player sees: a log lying west to east (its render)
-  LOCALID_FIRST_LOG = LOCALID_FIRST_PLACED,
+  ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
   /// ★ Named from what the player sees: a log lying north to south (its
   /// render)
-  LOCALID_RIVER_LOG = LOCALID_FIRST_LOG + 2
+  ACTOR_RIVER_LOG = ACTOR_FIRST_LOG + 2
 };
 
-#include "common/object_staged_object_event.h"
+#include "common/object_staged_actor.h"
 
 /// The river log has tipped into the river and floats there as ground the party
 /// can cross.
@@ -70,9 +70,8 @@ const struct SceneExitRegion *KolimaForestCliff_GetRegions(void) { return 0; }
 const u32 *KolimaForestCliff_GetExits(void) { return gKolimaForestCliffExits; }
 
 /// The three logs.
-const struct ObjectEventTemplate *
-KolimaForestCliff_GetObjectEventTemplates(void) {
-  return gKolimaForestCliffObjectEventTemplates;
+const struct ActorTemplate *KolimaForestCliff_GetActorTemplates(void) {
+  return gKolimaForestCliffActorTemplates;
 }
 
 /// Kolima Forest (SceneId_KolimaForestCliff), walking into a log: it rolls
@@ -84,23 +83,21 @@ static void KolimaForestCliff_PushLog(void) {
   struct PushedObjectProbe result;
   FieldScript_Start();
   if (PushedObject_FindClearPosition(&result)) {
-    ObjectEvent_MoveAndRedraw(result);
-    if (result.objectEventSlot == LOCALID_RIVER_LOG &&
+    Actor_MoveAndRedraw(result);
+    if (result.actorSlot == ACTOR_RIVER_LOG &&
         (result.position.x >> 20) == 12) {
-      struct ObjectEvent *objectEvent;
-      Import_ObjectEventSetAnimation(LOCALID_RIVER_LOG,
-                                     LOG_ANIMATION_ROLL_WEST);
-      ObjectMotion_OffsetPositionAndResetMotion(LOCALID_RIVER_LOG, -18, 6);
+      struct Actor *actor;
+      Import_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_ROLL_WEST);
+      ObjectMotion_OffsetPositionAndResetMotion(ACTOR_RIVER_LOG, -18, 6);
       FieldScript_WaitFrames(30);
       Sound_PlaySong(SE_LOG_FALL);
-      Import_ObjectEventSetAnimation(LOCALID_RIVER_LOG, LOG_ANIMATION_DROP_IN);
-      ObjectEvent_GetById(LOCALID_RIVER_LOG)->priorityFlags =
-          OBJ_EVENT_PRIORITY_UNDERFOOT;
+      Import_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_DROP_IN);
+      Actor_GetById(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       MapGrid_CopyCellAttributes(32, 20, 2, 4, 11, 16);
       PushedObject_FillGridAttributeRectangle(2, 12, 16, 1, 4, MB_NORMAL);
       GameFlag_Set(FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER);
-      objectEvent = ObjectEvent_GetById(LOCALID_RIVER_LOG);
-      ObjectEvent_SetSpriteFlags(objectEvent, 0);
+      actor = Actor_GetById(ACTOR_RIVER_LOG);
+      Actor_SetSpriteFlags(actor, 0);
     }
   }
   FieldScript_End();
@@ -121,18 +118,17 @@ s32 KolimaForestCliff_Initialize(void) {
 
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  Scene_RedrawObjectEventFootprint(LOCALID_RIVER_LOG);
+  Scene_RedrawActorFootprint(ACTOR_RIVER_LOG);
 
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER) != 0) {
-    ObjectEvent_GetById(LOCALID_RIVER_LOG)->priorityFlags =
-        OBJ_EVENT_PRIORITY_UNDERFOOT;
+    Actor_GetById(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(32, 20, 2, 4, 11, 16);
     PushedObject_FillGridAttributeRectangle(2, 12, 16, 1, 4, MB_NORMAL);
-    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_RIVER_LOG), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_RIVER_LOG), 0);
   }
 
-  Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
-  Scene_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
+  Scene_RedrawActorFootprint(ACTOR_FIRST_LOG);
+  Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 1);
 
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     KolimaPalette_Curse(6);
@@ -184,7 +180,7 @@ u32 gKolimaForestCliffExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ObjectEventTemplate gKolimaForestCliffObjectEventTemplates[] = {
+struct ActorTemplate gKolimaForestCliffActorTemplates[] = {
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(256), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,

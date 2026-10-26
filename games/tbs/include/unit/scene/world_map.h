@@ -5,12 +5,12 @@
 #include "map_tables.h"
 
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 
 const struct SceneEntrance *WorldMap_GetEntrances(void);
 const struct SceneExitRegion *WorldMap_GetRegions(void);
 const u32 *WorldMap_GetExits(void);
-const struct ObjectEventTemplate *WorldMap_GetObjectEventTemplates(void);
+const struct ActorTemplate *WorldMap_GetActorTemplates(void);
 const struct MapEvent *WorldMap_GetEvents(void);
 s32 WorldMap_Initialize(void);
 extern s32 gWorldMapIodem;
@@ -44,19 +44,16 @@ extern s32 gWorldMapKolimaBridgeScript[];
 extern s32 gWorldMapAlignToMapScript[];
 extern s32 gWorldMapIodemScript[];
 extern s32 gWorldMapStormScript[];
-extern struct ObjectEventTemplate gWorldMapObjectEventTemplates[];
-extern struct ObjectEventTemplate gWorldMapObjectEventTemplatesHammetsCaravan[];
-extern struct ObjectEventTemplate
-    gWorldMapObjectEventTemplatesFromWestLunpaCave[];
-extern struct ObjectEventTemplate gWorldMapObjectEventTemplatesCrossingEnds[];
-extern struct ObjectEventTemplate gWorldMapObjectEventTemplatesCrossing[];
-extern struct ObjectEventTemplate
-    gWorldMapObjectEventTemplatesFromKalayTunnelEntranceSouth[];
-extern struct ObjectEventTemplate
-    gWorldMapObjectEventTemplatesJennaAndKradenAdrift[];
-extern struct ObjectEventTemplate gWorldMapObjectEventTemplatesFromClear[];
-extern struct ObjectEventTemplate
-    gWorldMapObjectEventTemplatesBeforeShebasFall[];
+extern struct ActorTemplate gWorldMapActorTemplates[];
+extern struct ActorTemplate gWorldMapActorTemplatesHammetsCaravan[];
+extern struct ActorTemplate gWorldMapActorTemplatesFromWestLunpaCave[];
+extern struct ActorTemplate gWorldMapActorTemplatesCrossingEnds[];
+extern struct ActorTemplate gWorldMapActorTemplatesCrossing[];
+extern struct ActorTemplate
+    gWorldMapActorTemplatesFromKalayTunnelEntranceSouth[];
+extern struct ActorTemplate gWorldMapActorTemplatesJennaAndKradenAdrift[];
+extern struct ActorTemplate gWorldMapActorTemplatesFromClear[];
+extern struct ActorTemplate gWorldMapActorTemplatesBeforeShebasFall[];
 extern struct MapEvent gWorldMapEvents[];
 extern u32 gWorldMapPassengerRowValues[];
 extern s32 gIslandWakeScript[];

@@ -9,15 +9,15 @@
 #include "edition.h"
 #include "static_assert.h"
 
-struct ObjectEventTemplate;
+struct ActorTemplate;
 struct MapEvent;
-struct ObjectEvent;
+struct Actor;
 struct Object;
 struct MapGridCell;
 
-/// A treasure spot placed as an object event: a chest or a Psynergy Stone.
+/// A treasure spot placed as an actor: a chest or a Psynergy Stone.
 struct TreasureSpot {
-  struct Object *object; ///< the object event placed for it
+  struct Object *object; ///< the actor placed for it
   u8 id;                 ///< the trigger of its map event, 100 to 239
   u8 unused;             ///< cleared with the slot; no code names it
   u8 column;             ///< its 16-pixel cell
@@ -47,13 +47,13 @@ enum FieldRaisedEvent {
 /// twelve requests from coordEvent to raisedEvent are handled by the field
 /// loop.
 struct FieldWork {
-  /// The object event template tables placed so far, recorded by
-  /// FieldScript_SpawnObjectEventTemplates.
-  struct ObjectEventTemplate *tables[4];
+  /// The actor template tables placed so far, recorded by
+  /// FieldScript_SpawnActorTemplates.
+  struct ActorTemplate *tables[4];
   const struct MapEvent *events; ///< the map's event table
-  /// The object events by local id: 0 to 7 the party's characters, 8 on the
-  /// placed object events.
-  struct ObjectEvent *objectEvents[66];
+  /// The actors by actor id: 0 to 7 the party's characters, 8 on the
+  /// placed actors.
+  struct Actor *actors[66];
   struct TreasureSpot
       treasureSpots[10]; ///< the map's treasure spots (TREASURE_SPOT_MAX)
   /// The twelve requests: each nonzero value asks the field loop for one
@@ -65,7 +65,7 @@ struct FieldWork {
   s16 menu;     ///< open the field menu
   s16 examine;  ///< the A button: examine what is ahead
   s16 start;    ///< the Start button: open the pause menu
-  u16 talk;     ///< an object event's talk event, as local id | 0x1000
+  u16 talk;     ///< an actor's talk event, as actor id | 0x1000
   s16 searchCell; ///< a cell's metatile behavior, for Field_SearchCell
   s16 battle;     ///< the formation of a random encounter
   s16 psynergy;   ///< a field Psynergy to use, as unit << 10 | Psynergy
@@ -96,7 +96,7 @@ struct FieldWork {
   u16 unused;           ///< no code names it
   u16 transitionActive; ///< set once the opening transition has started
   s32 transitionFrames; ///< frames; 16 on entry and at each script
-  s32 fastForward; ///< debug: skip timed script waits and object event messages
+  s32 fastForward;      ///< debug: skip timed script waits and actor messages
   u8 unusedAfterFastForward[8]; ///< no code names it
   s16 message; ///< the next message, advanced as each window opens
   /// Set to 0xffff by FieldScript_Start at each script; nothing reads it.
@@ -104,13 +104,13 @@ struct FieldWork {
   /// Both set to -1 by FieldScript_Start at each script; nothing reads them.
   s16 unusedBeforeCamera[2];
   struct Object
-      *camera; ///< the object the map view follows, which has no local id
+      *camera; ///< the object the map view follows, which has no actor id
   u8 unusedAfterCamera[0x10]; ///< no code names it
-  s32 speaker;       ///< the object event speaking; the leader at each script
-  s32 messageWindow; ///< the open message window, 0 for none
-  s32 sideWindow;    ///< the speaker's portrait window
-  /// The leader's two-row object event template table (its row and an end
-  /// row), which ObjectEvent_ResetForObject builds through its offset.
+  s32 speaker;                ///< the actor speaking; the leader at each script
+  s32 messageWindow;          ///< the open message window, 0 for none
+  s32 sideWindow;             ///< the speaker's portrait window
+  /// The leader's two-row actor template table (its row and an end
+  /// row), which Actor_ResetForObject builds through its offset.
   u8 leaderTemplates[0x30];
   u8 unusedAfterTemplates[0xa86]; ///< no code names it
   /// Set while a raised or coord event runs; FieldScript_Start then resets the
@@ -135,7 +135,7 @@ struct FieldWork {
 STATIC_ASSERT(sizeof(struct FieldWork) == 0xccc);
 STATIC_ASSERT(offsetof(struct FieldWork, tables) == 0);
 STATIC_ASSERT(offsetof(struct FieldWork, events) == 0x10);
-STATIC_ASSERT(offsetof(struct FieldWork, objectEvents) == 0x14);
+STATIC_ASSERT(offsetof(struct FieldWork, actors) == 0x14);
 STATIC_ASSERT(offsetof(struct FieldWork, treasureSpots) == 0x11c);
 STATIC_ASSERT(offsetof(struct FieldWork, coordEvent) == 0x16c);
 STATIC_ASSERT(offsetof(struct FieldWork, talk) == 0x178);

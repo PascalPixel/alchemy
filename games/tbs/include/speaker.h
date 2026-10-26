@@ -2,7 +2,7 @@
 #define ALCHEMY_SPEAKER_H
 
 /// @file
-/// The speaker lookup's view of an object event's sprite, the speaker
+/// The speaker lookup's view of an actor's sprite, the speaker
 /// definitions, and the palette fade's heap slot.
 
 #include "unit/overworld/overworld.h"
@@ -10,7 +10,7 @@
 #include "static_assert.h"
 #include "palbuf.h"
 
-/// An object event's animated sprite (struct Sprite), as far as the
+/// An actor's animated sprite (struct Sprite), as far as the
 /// pointer to its sprite id.
 struct SpeakerSprite {
   u8 beforeEntries[0x28]; ///< Sprite's fields before its layers

@@ -38,7 +38,7 @@ static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
 /// Debug only: while debug mode is on, R makes every script wait
 /// (FieldScript_WaitFrames) end at once and L restores normal waits. Runs as a
 /// task for the length of a script (FieldScript_Start). R also
-/// skips the object events' messages, which open nothing while fastForward is
+/// skips the actors' messages, which open nothing while fastForward is
 /// set (FieldMessage_ShowAtObject).
 void FieldScript_UpdateDebugSkip(void) {
   struct FieldWork *runtime = gFieldWork;
@@ -55,7 +55,7 @@ void FieldScript_UpdateDebugSkip(void) {
 
 /// The script command "wait": waits the requested frames, unless debug fast
 /// forward (FieldScript_UpdateDebugSkip) is on. Map scripts reach it (the WAIT
-/// command); this object's object event, message, camera and climbing commands
+/// command); this object's actor, message, camera and climbing commands
 /// wait through it too.
 void FieldScript_WaitFrames(s32 frames) {
   if (gFieldWork->fastForward == 0 && frames != 0) {
@@ -67,16 +67,16 @@ void FieldScript_WaitFrames(s32 frames) {
 /// speed (1.0) and acceleration (0.5), no destination, and the standing pose,
 /// or the climbing pose (12) while the leader is on a climbable wall. Called by
 /// FieldScript_Start, by SceneManager_Run before it handles several requests,
-/// by Field_UsePsynergy, Scene_TalkToObjectEvent, Field_CheckExitRegions and
+/// by Field_UsePsynergy, Scene_TalkToActor, Field_CheckExitRegions and
 /// the world map's zoom (FieldEffect_RunVisibilityTransition).
 void Leader_StopMoving(void) {
   struct Object *object;
 
-  object = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
+  object = Actor_GetByActorId(gSaveBlock.leaderActorId);
   object->speedLimit = Q16_ONE;
   object->acceleration = 0x8000;
-  object->targetX = OBJ_EVENT_NO_TARGET;
-  object->targetZ = OBJ_EVENT_NO_TARGET;
+  object->targetX = ACTOR_NO_TARGET;
+  object->targetZ = ACTOR_NO_TARGET;
   object->velocityX = 0;
   object->velocityZ = 0;
   if (gSaveBlock.movementMode == LEADER_MOVEMENT_CLIMB) {
@@ -114,7 +114,7 @@ void FieldScript_Start(void) {
   // XXX (no evidence): what flag 0x132 marks; it is cleared at every script,
   // and no code or table in the game sets or tests it.
   GameFlag_ClearFar(0x132);
-  runtime->speaker = gSaveBlock.leaderLocalId;
+  runtime->speaker = gSaveBlock.leaderActorId;
   runtime->messageWindow = 0;
 }
 
@@ -124,7 +124,7 @@ void FieldScript_Start(void) {
 /// opens with FieldScript_Start closes with it.
 void FieldScript_End(void) {
   Task_Remove(FieldScript_UpdateDebugSkip);
-  FieldCamera_FollowObjectEvent(gSaveBlock.leaderLocalId, 1);
+  FieldCamera_FollowActor(gSaveBlock.leaderActorId, 1);
   GameFlag_RefreshLureCapFar();
 }
 
@@ -134,23 +134,23 @@ UNUSED void FieldScript_NoOpHookA(void) {}
 /// FieldScript_RunObjectHookAndWait calls it.
 void FieldScript_NoOpHook(void) {}
 
-/// Respawns the map's object events from an object event template table and
+/// Respawns the map's actors from an actor template table and
 /// waits one frame for them to appear. Reached only through an unnamed veneer
 /// in the overworld bank's far-call table; nothing in ☀️ names it.
-void FieldScript_RunObjectHookAndWait(struct ObjectEventTemplate *table) {
+void FieldScript_RunObjectHookAndWait(struct ActorTemplate *table) {
   FieldScript_NoOpHook();
-  ObjectEvent_ResetForObject(table);
+  Actor_ResetForObject(table);
   WaitFrames(1);
   // XXX (no evidence): why the leader's object is fetched and dropped; no
   // code calls this function, so no caller reads a result.
-  ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
+  Actor_GetByActorId(gSaveBlock.leaderActorId);
 }
 
-/// Spawns the object events of an object event template table after the last
-/// object event in use. Called by the Kolima, Kalay and Tolbi ship map scripts
-/// to bring object events in during an event.
-void FieldScript_CallWithLastActiveObjectId(struct ObjectEventTemplate *table) {
-  FieldScript_SpawnObjectEventTemplates(table, ObjectEvent_FindLastActiveId());
+/// Spawns the actors of an actor template table after the last
+/// actor in use. Called by the Kolima, Kalay and Tolbi ship map scripts
+/// to bring actors in during an event.
+void FieldScript_CallWithLastActiveObjectId(struct ActorTemplate *table) {
+  FieldScript_SpawnActorTemplates(table, Actor_FindLastActiveId());
 }
 
 /// Sets the map's event table, which the field checks as the leader moves:
@@ -237,7 +237,7 @@ void Party_RemoveMemberRestored(s32 unit) {
       survivingMembers++;
   }
   if (survivingMembers == 0) {
-    vitals = Unit_GetFar(gSaveBlock.leaderLocalId);
+    vitals = Unit_GetFar(gSaveBlock.leaderActorId);
     vitals->hp = 1;
     Unit_UpdateGauges(vitals);
   }
@@ -348,7 +348,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
         Inventory_DiscardFar(member, slot);
       owner = PartyInventory_AddFar(item);
       Sound_PlaySongFar(MUS_TREASURE_FOUND);
-      if (owner == gSaveBlock.leaderLocalId) {
+      if (owner == gSaveBlock.leaderActorId) {
         ItemGift_ShowGotItem(item, 3);
       } else {
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
@@ -365,7 +365,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
     // <member>." when someone other than the leader carries it.
     Sound_PlaySongFar(MUS_TREASURE_FOUND);
     ItemGift_ShowGotItem(item, 3);
-    if (owner != gSaveBlock.leaderLocalId) {
+    if (owner != gSaveBlock.leaderActorId) {
       MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
       MessageArgument_PushFar(owner, MESSAGE_ARGUMENT_ACTOR);
       FieldMessage_ShowFar(GIFT_RECEIVED_MESSAGE, GIFT_RECEIVED_MESSAGE_MODE);
@@ -390,17 +390,16 @@ void Inventory_NoOpCallback(void) {}
 /// An empty function; nothing in ☀️ calls it.
 void Inventory_ReservedNoOp(void) {}
 
-/// Waits, at most 90 frames, for an object event's animation to stop being
-/// animation: the object event has finished a one-off animation such as a nod.
-/// Only object events drawn as a sprite (OBJECT_SPRITE_ONE) are
-/// waited for. Called by FieldScript_AskYesNoWithObjectEventAnimation.
-void ObjectEvent_WaitForAnimationEnd(s32 localId, s32 animation) {
-  struct Object *objectEventObject = ObjectEvent_GetByLocalId(localId);
+/// Waits, at most 90 frames, for an actor's animation to stop being
+/// animation: the actor has finished a one-off animation such as a nod.
+/// Only actors drawn as a sprite (OBJECT_SPRITE_ONE) are
+/// waited for. Called by FieldScript_AskYesNoWithActorAnimation.
+void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
+  struct Object *actorObject = Actor_GetByActorId(actorId);
 
-  if (objectEventObject != 0 &&
-      objectEventObject->spriteStorageKind == OBJECT_SPRITE_ONE) {
+  if (actorObject != 0 && actorObject->spriteStorageKind == OBJECT_SPRITE_ONE) {
     s32 frames = 0;
-    u8 *animationNumber = &objectEventObject->sprite->lastNo;
+    u8 *animationNumber = &actorObject->sprite->lastNo;
 
     while (frames <= 89) {
       WaitFrames(1);
@@ -419,9 +418,9 @@ void ObjectEvent_WaitForAnimationEnd(s32 localId, s32 animation) {
 /// Map scripts reach it (about
 /// 54 of them); the Battle Arena and FieldScript_AskYesNoAndShowResponse call
 /// it too.
-s32 FieldScript_AskYesNoWithObjectEventAnimation(s32 localId, s32 forceBottom) {
+s32 FieldScript_AskYesNoWithActorAnimation(s32 actorId, s32 forceBottom) {
   struct FieldWork *work = gFieldWork;
-  s32 sprite = Scene_FindObjectEventTemplate(work->speaker)->sprite;
+  s32 sprite = Scene_FindActorTemplate(work->speaker)->sprite;
   struct Window *window = (struct Window *)work->messageWindow;
   struct Window *side = (struct Window *)work->sideWindow;
   s32 useBottom = 1;
@@ -454,15 +453,15 @@ s32 FieldScript_AskYesNoWithObjectEventAnimation(s32 localId, s32 forceBottom) {
   answer =
       YesNoMenu_RunFar(useBottom, work->choiceMessage, work->choiceWidth, 0);
   if (answer != 0) {
-    ObjectEvent_SetModeById(localId, 4);
+    Actor_SetModeById(actorId, 4);
     Portrait_CloseWindowFar(sprite);
     TextPrinter_CloseFinishedWindowsFar();
-    ObjectEvent_WaitForAnimationEnd(localId, 4);
+    Actor_WaitForAnimationEnd(actorId, 4);
   } else {
-    ObjectEvent_SetModeById(localId, 3);
+    Actor_SetModeById(actorId, 3);
     Portrait_CloseWindowFar(sprite);
     TextPrinter_CloseFinishedWindowsFar();
-    ObjectEvent_WaitForAnimationEnd(localId, 3);
+    Actor_WaitForAnimationEnd(actorId, 3);
   }
 
   return answer;

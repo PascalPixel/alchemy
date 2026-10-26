@@ -9,12 +9,10 @@
 /// Abilities: Force (FIELD_PSYNERGY_FORCE).
 void FieldEffect_RunForceOnTarget(s32 unused) { FieldEffect_RunForce(); }
 
-/// Writes the position 16 pixels above the object event.
-static __inline__ void
-FieldEffect_GetPositionAboveObjectEvent(struct ObjectEvent *objectEvent,
-                                        struct Vector3 *pos) {
-  SET_POSITION(pos, objectEvent->x.fixed, objectEvent->y.fixed + ABOVE,
-               objectEvent->z.fixed);
+/// Writes the position 16 pixels above the actor.
+static __inline__ void FieldEffect_GetPositionAboveActor(struct Actor *actor,
+                                                         struct Vector3 *pos) {
+  SET_POSITION(pos, actor->x.fixed, actor->y.fixed + ABOVE, actor->z.fixed);
 }
 
 /// A shot appears in front of the caster, grows and flies forward with three
@@ -27,13 +25,13 @@ FieldEffect_GetPositionAboveObjectEvent(struct ObjectEvent *objectEvent,
 /// (gFieldEffect_HeavyImpactScript, SpawnHeavyImpactEffect). Called by
 /// FieldEffect_Run, and through FieldEffect_RunForceOnTarget.
 void FieldEffect_RunForce(void) {
-  struct ObjectEvent *target;
+  struct Actor *target;
   s32 eventTarget;
-  struct ObjectEvent *copies[4];
+  struct Actor *copies[4];
   struct Vector3 pos;
-  struct ObjectEvent *projectile;
-  struct ObjectEvent *copy;
-  struct ObjectEvent *caster;
+  struct Actor *projectile;
+  struct Actor *copy;
+  struct Actor *caster;
   struct FieldEffectWork *effectWork;
   struct FieldEffectSprite *effect;
   struct Sprite *sharedAnimation;
@@ -51,7 +49,7 @@ void FieldEffect_RunForce(void) {
   // 12 flashes burst from over the caster's head, one every 2 frames.
   for (i = 0; i <= 11; i++) {
     caster = effectWork->mainObject;
-    FieldEffect_GetPositionAboveObjectEvent(caster, &pos);
+    FieldEffect_GetPositionAboveActor(caster, &pos);
     Camera_WorldToScreen(&pos);
     FieldEffectSprite_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
     FieldEffectSprite_SetCallback(effect, FieldEffect_UpdateRadialBurst);
@@ -71,7 +69,7 @@ void FieldEffect_RunForce(void) {
   pos.z = caster->z.fixed;
   Vector_AddPolarOffset(8 << 16, effectWork->angle, &pos);
   projectile =
-      (struct ObjectEvent *)Object_Spawn(SPRITE_MOVE_HAND, pos.x, pos.y, pos.z);
+      (struct Actor *)Object_Spawn(SPRITE_MOVE_HAND, pos.x, pos.y, pos.z);
   if (projectile == NULL) {
     FieldEffect_FadeFromEffectColor();
     return;
@@ -99,9 +97,9 @@ void FieldEffect_RunForce(void) {
   // Three afterimages, sharing one set of graphics.
   sharedAnimation = NULL;
   for (i = 2; i >= 0; i--) {
-    copy = copies[i] = (struct ObjectEvent *)Object_Spawn(
-        SPRITE_MOVE_HAND, projectile->x.fixed, projectile->y.fixed,
-        projectile->z.fixed);
+    copy = copies[i] =
+        (struct Actor *)Object_Spawn(SPRITE_MOVE_HAND, projectile->x.fixed,
+                                     projectile->y.fixed, projectile->z.fixed);
     if (copy != NULL) {
       copy->scaleY = 0xf000;
       copy->scaleX = 0xf000;
@@ -177,7 +175,7 @@ void FieldEffect_RunForce(void) {
   event = Scene_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ACTS),
                                   FIELD_PSYNERGY_FORCE, &eventTarget);
   if (event != NULL)
-    Field_RunEventAction(event, gSaveBlock.leaderLocalId, eventTarget);
+    Field_RunEventAction(event, gSaveBlock.leaderActorId, eventTarget);
   WaitFrames(10);
   FieldEffect_FadeFromEffectColor();
   WaitFrames(20);

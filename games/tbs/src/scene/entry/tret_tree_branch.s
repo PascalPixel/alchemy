@@ -2,6 +2,6 @@
 	overlay_veneer TretTreeBranch_Initialize
 	overlay_veneer TretTreeBranch_GetEntrances
 	overlay_veneer TretTreeBranch_GetExits
-	overlay_veneer TretTreeBranch_GetObjectEventTemplates
+	overlay_veneer TretTreeBranch_GetActorTemplates
 	overlay_veneer TretTreeBranch_GetEvents
 	overlay_veneer TretTreeBranch_GetRegions

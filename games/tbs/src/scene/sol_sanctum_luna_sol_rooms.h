@@ -5,17 +5,17 @@
 #include "script_layer.h"
 #include "map_tables.h"
 
-/// The placed object events, numbered in the order of
-/// gSolSanctumLunaSolRoomsObjectEventTemplates; Jenna and Garet, its last rows,
+/// The placed actors, numbered in the order of
+/// gSolSanctumLunaSolRoomsActorTemplates; Jenna and Garet, its last rows,
 /// keep their characters' ids.
-enum SolSanctumLunaSolRoomsLocalId {
+enum SolSanctumLunaSolRoomsActorId {
   /// Eight statues, four in each room, with the sprite of
   /// SceneId_SolSanctumStatue's statues (sol_sanctum_statue.c).
   /// ★ Named from what the player sees: winged stone statues standing at the
   /// corners of each room's floor (its render)
-  LOCALID_FIRST_STATUE = LOCALID_FIRST_PLACED,
+  ACTOR_FIRST_STATUE = ACTOR_FIRST_PLACED,
   /// ★ Named from the game: "What's wrong, Kraden?" (MsgSolSanctumWrongKraden)
-  LOCALID_KRADEN = LOCALID_FIRST_STATUE + 8
+  ACTOR_KRADEN = ACTOR_FIRST_STATUE + 8
 };
 
 extern u16 gSolSanctumLunaSolRooms_Light1Timer;

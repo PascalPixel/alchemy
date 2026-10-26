@@ -6,9 +6,8 @@
 
 /// Per-frame update Frost leaves on its target: sprite param 2 for 2 frames in
 /// every 8, otherwise 0, so the target glints.
-void FieldEffect_UpdateOrbitingParticleMain(
-    union ObjectEventOrEffect *fieldObject) {
-  struct ObjectEvent *particle = (struct ObjectEvent *)fieldObject;
+void FieldEffect_UpdateOrbitingParticleMain(union ActorOrEffect *fieldObject) {
+  struct Actor *particle = (struct Actor *)fieldObject;
   s32 frame = gFrameCount & 7;
   if (frame == 0) {
     Anim_ApplyChildValuesFar((struct Object *)particle, SPRITE_COLOR_RBG);
@@ -18,9 +17,8 @@ void FieldEffect_UpdateOrbitingParticleMain(
 }
 
 /// Per-frame update: shrinks by 1/16 a frame and is released at 1/16.
-void FieldEffect_UpdateOrbitingParticleFade(
-    union ObjectEventOrEffect *fieldObject) {
-  struct ObjectEvent *particle = (struct ObjectEvent *)fieldObject;
+void FieldEffect_UpdateOrbitingParticleFade(union ActorOrEffect *fieldObject) {
+  struct Actor *particle = (struct Actor *)fieldObject;
   s32 scale;
 
   if (particle != NULL) {
@@ -38,9 +36,9 @@ void FieldEffect_UpdateOrbitingParticleFade(
 /// (targetX to targetZ) at a radius of 2 pixels and an angle of 1/32 turn for
 /// each frame left, so it closes in from 118 pixels.
 static inline void
-FieldEffect_UpdateSpiralParticle(union ObjectEventOrEffect *fieldObject,
+FieldEffect_UpdateSpiralParticle(union ActorOrEffect *fieldObject,
                                  s32 clockwise) {
-  struct ObjectEvent *particle = (struct ObjectEvent *)fieldObject;
+  struct Actor *particle = (struct Actor *)fieldObject;
   struct Vector3 position;
   s16 remainingFrames;
   s32 decrementedTimer;
@@ -69,14 +67,12 @@ FieldEffect_UpdateSpiralParticle(union ObjectEventOrEffect *fieldObject,
 }
 
 /// Spirals anticlockwise at twice the frames left in pixels, then fades.
-void FieldEffect_UpdateOrbitingParticleLeft(
-    union ObjectEventOrEffect *fieldObject) {
+void FieldEffect_UpdateOrbitingParticleLeft(union ActorOrEffect *fieldObject) {
   FieldEffect_UpdateSpiralParticle(fieldObject, 0);
 }
 
 /// Per-frame update: as FieldEffect_UpdateOrbitingParticleLeft, clockwise.
-void FieldEffect_UpdateOrbitingParticleRight(
-    union ObjectEventOrEffect *fieldObject) {
+void FieldEffect_UpdateOrbitingParticleRight(union ActorOrEffect *fieldObject) {
   FieldEffect_UpdateSpiralParticle(fieldObject, 1);
 }
 
@@ -84,18 +80,18 @@ void FieldEffect_UpdateOrbitingParticleRight(
 ///
 /// Abilities: Frost (FIELD_PSYNERGY_FROST).
 ///
-/// The target is the object event in effectWork->child. With childMode the
+/// The target is the actor in effectWork->child. With childMode the
 /// target is left as it is and only the particles appear.
 void FieldEffect_RunFrostOnTarget(s32 unused) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct ObjectEvent *target = effectWork->child;
+  struct Actor *target = effectWork->child;
 
   if (target != 0) {
     // enabled set skips the target's part of FieldEffect_RunFrost.
     if (effectWork->childMode != 0) {
       effectWork->enabled = 1;
     }
-    target->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
+    target->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     FieldEffect_RunFrost();
   }
 }
@@ -116,8 +112,8 @@ void FieldEffect_RunFrost(void) {
   struct Vector3 pos;
   struct Vector3 *p;
   struct FieldEffectWork *effectWork;
-  struct ObjectEvent *target;
-  struct ObjectEvent *particle;
+  struct Actor *target;
+  struct Actor *particle;
   void *event;
   s32 remainingCycles;
 
@@ -131,7 +127,7 @@ void FieldEffect_RunFrost(void) {
   p = &pos;
   remainingCycles = 15;
   do {
-    particle = (struct ObjectEvent *)Object_Spawn(0xe8, 0, 0, 0);
+    particle = (struct Actor *)Object_Spawn(0xe8, 0, 0, 0);
     if (particle != NULL) {
       u32 scale;
       s32 radius;
@@ -188,7 +184,7 @@ void FieldEffect_RunFrost(void) {
     event = Scene_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ACTS),
                                     FIELD_PSYNERGY_FROST, &eventTarget);
     if (event != NULL) {
-      Field_RunEventAction(event, gSaveBlock.leaderLocalId, eventTarget);
+      Field_RunEventAction(event, gSaveBlock.leaderActorId, eventTarget);
     }
     WaitFrames(20);
   }

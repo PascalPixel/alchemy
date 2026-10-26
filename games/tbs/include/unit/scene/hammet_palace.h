@@ -6,21 +6,21 @@
 
 struct SceneEntrance;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 struct SceneExitRegion;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
+const struct ActorTemplate *Scene_GetActorTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
 extern s32 gHammetPalace_PartyActions[];
 extern struct SceneEntrance gHammetPalaceEntrancesOther[];
 extern struct SceneEntrance gHammetPalaceEntrances[];
 extern u32 gHammetPalaceExits[];
-extern struct ObjectEventTemplate gHammetPalaceObjectEventTemplatesOther[];
-extern struct ObjectEventTemplate gHammetPalaceObjectEventTemplates[];
+extern struct ActorTemplate gHammetPalaceActorTemplatesOther[];
+extern struct ActorTemplate gHammetPalaceActorTemplates[];
 extern struct MapEvent gHammetPalaceEventsOther[];
 extern struct MapEvent gHammetPalaceEvents[];
 

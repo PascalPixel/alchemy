@@ -53,9 +53,9 @@ struct BurstParticleVisualGroup {
 ///
 /// The target plays animation 2, stops being solid,
 /// loses its shadow and is depth-sorted as if 320 pixels higher
-/// (OBJ_EVENT_PRIORITY_UNDERFOOT); the effect leaves it so.
+/// (ACTOR_PRIORITY_UNDERFOOT); the effect leaves it so.
 void FieldEffect_RunGrowthOnTarget(s32 unused) {
-  struct ObjectEvent *target;
+  struct Actor *target;
 
   target = ((struct FieldEffectWork *)gFieldEffectWork)->child;
   if (target != NULL) {
@@ -63,7 +63,7 @@ void FieldEffect_RunGrowthOnTarget(s32 unused) {
     Object_SelectAnimationFar(target, 2);
     target->collisionFlags = 0;
     Object_SetSpriteFlagsFar((struct Object *)target, 0);
-    target->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
+    target->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     WaitFrames(10);
     Sound_PlaySongFar(SE_RECOVERY);
     WaitFrames(40);
@@ -90,7 +90,7 @@ void FieldEffect_RunGrowth(void) {
   p = &pos;
   remainingObjects = GROWTH_FALL_LAST;
   do {
-    struct ObjectEvent *particle;
+    struct Actor *particle;
     s32 radius;
 
     p->values[0] = effectWork->x;
@@ -98,12 +98,12 @@ void FieldEffect_RunGrowth(void) {
     radius = (Random16() * 6) + 0x40000;
     Vector_AddPolarOffset(radius, Random16(), p);
     p->values[1] = effectWork->y;
-    particle = (struct ObjectEvent *)Object_Spawn(
-        GROWTH_FALL_OBJECT, p->values[0], p->values[1], p->values[2]);
+    particle = (struct Actor *)Object_Spawn(GROWTH_FALL_OBJECT, p->values[0],
+                                            p->values[1], p->values[2]);
     if (particle != 0) {
       Object_InitializeFar((struct Object *)particle,
                            gFieldEffect_BurstParticleObjectScript);
-      particle->motionFlags = OBJ_EVENT_FALLS;
+      particle->motionFlags = ACTOR_FALLS;
     }
     WaitFrames(((Random16() * 2) >> 16) + 2);
     remainingObjects--;
@@ -119,7 +119,7 @@ void FieldEffect_RunGrowth(void) {
 /// points are 14 pixels further north.
 void FieldEffect_SpawnBurstParticleField(void) {
   struct FieldEffectWork *effectWork;
-  struct ObjectEvent *caster;
+  struct Actor *caster;
   s32 pos[3];
   s32 particleIndex;
 
@@ -129,7 +129,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
 
   for (particleIndex = 0; particleIndex < GROWTH_PARTICLE_MAX;
        particleIndex++) {
-    struct ObjectEvent *particle;
+    struct Actor *particle;
     struct BurstParticleVisual *visual;
     struct BurstParticleVisual *child;
     s32 radius;
@@ -150,8 +150,8 @@ void FieldEffect_SpawnBurstParticleField(void) {
     // palette, so the shadow (turned on by SPRITE_FLAG_SHADOW below) is drawn
     // with the particle's picture. BUG: the copy comes before the NULL test, so
     // a failed spawn (a full object table) is read through.
-    particle = (struct ObjectEvent *)Object_Spawn(SPRITE_PARTICLE, pos[0],
-                                                  pos[1], pos[2]);
+    particle =
+        (struct Actor *)Object_Spawn(SPRITE_PARTICLE, pos[0], pos[1], pos[2]);
     visual = &((struct BurstParticleVisualGroup *)particle->sprite)->primary;
     child = &((struct BurstParticleVisualGroup *)particle->sprite)->child;
     child->fullColor = visual->fullColor;

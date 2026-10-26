@@ -2,6 +2,6 @@
 	overlay_veneer SolSanctumEruption_Initialize
 	overlay_veneer SolSanctumEruption_GetEntrances
 	overlay_veneer SolSanctumEruption_GetExits
-	overlay_veneer SolSanctumEruption_GetObjectEventTemplates
+	overlay_veneer SolSanctumEruption_GetActorTemplates
 	overlay_veneer SolSanctumEruption_GetEvents
 	overlay_veneer SolSanctumEruption_GetRegions

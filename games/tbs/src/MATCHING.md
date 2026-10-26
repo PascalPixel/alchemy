@@ -165,8 +165,8 @@ site keeps the equivalent, untagged, with a short `//` note beside it saying
 what the plain spelling would change. The patterns below are the ones that
 recur, each with one example; the sites themselves carry the rest. They use the
 engine's words: a [heap slot](../glossary.md#heap-slot) is one of the numbered
-words of `gHeapSlots` that hold a system's working block, and an `ObjectEvent`
-is the struct an [object event](../glossary.md#object-event) is read through.
+words of `gHeapSlots` that hold a system's working block, and an `Actor`
+is the struct an [actor](../glossary.md#actor) is read through.
 
 ### Indexes, pointers and casts
 
@@ -181,11 +181,11 @@ is the struct an [object event](../glossary.md#object-event) is read through.
   `Battle_RollEffectSuccess` each status test written as `unit->field` merges
   with its neighbour's into one halfword or word load.
 - A field can be read or written by its byte offset,
-  `*(T *)((u8 *)p + offsetof(struct ObjectEvent, field))`, or a run of fields
+  `*(T *)((u8 *)p + offsetof(struct Actor, field))`, or a run of fields
   through a byte cursor indexed with `sizeof` and `offsetof`. These views are
   valid and keep the original's address bases: `Colosso_RestoreWarrior`
   stores its two bytes that way, because a struct store at a varying address
-  may pass a load the ROM keeps after it. Through `ObjectEvent`'s
+  may pass a load the ROM keeps after it. Through `Actor`'s
   single/group union, the plain member form usually moves a load. A
   pointer can likewise be stepped as an integer: a window's tilemap cell is
   `work->tilemap + y * 32 + x` or a byte offset added to `(u32)work->tilemap`.

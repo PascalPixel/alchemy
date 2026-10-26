@@ -2,6 +2,6 @@
 	overlay_veneer MainMenu_Run
 	overlay_veneer MainMenu_GetEntrances
 	overlay_veneer MainMenu_GetExits
-	overlay_veneer MainMenu_GetObjectEventTemplates
+	overlay_veneer MainMenu_GetActorTemplates
 	overlay_veneer MainMenu_GetEvents
 	overlay_veneer Scene_GetExitRegions

@@ -7,23 +7,23 @@
 
 struct SceneEntrance;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 struct SceneExitRegion;
 
 const struct SceneEntrance *KalayInteriors_GetEntrances(void);
 const struct SceneExitRegion *KalayInteriors_GetRegions(void);
 const u32 *KalayInteriors_GetExits(void);
-const struct ObjectEventTemplate *KalayInteriors_GetObjectEventTemplates(void);
+const struct ActorTemplate *KalayInteriors_GetActorTemplates(void);
 const struct MapEvent *KalayInteriors_GetEvents(void);
 s32 KalayInteriors_Initialize(void);
 extern struct SceneEntrance gKalayInteriors_NoEntrances[];
 extern struct SceneEntrance gKalayInteriors_HouseEntrances[];
 extern struct SceneEntrance gKalayInteriors_SanctumEntrances[];
 extern u32 gKalayInteriors_Exits[];
-extern struct ObjectEventTemplate gKalayInteriors_NoObjectEventTemplates[];
-extern struct ObjectEventTemplate gKalayInteriors_HouseObjectEventTemplates[];
-extern struct ObjectEventTemplate gKalayInteriors_InnObjectEventTemplates[];
-extern struct ObjectEventTemplate gKalayInteriors_SanctumObjectEventTemplates[];
+extern struct ActorTemplate gKalayInteriors_NoActorTemplates[];
+extern struct ActorTemplate gKalayInteriors_HouseActorTemplates[];
+extern struct ActorTemplate gKalayInteriors_InnActorTemplates[];
+extern struct ActorTemplate gKalayInteriors_SanctumActorTemplates[];
 extern struct MapEvent gKalayInteriors_NoEvents[];
 extern struct MapEvent gKalayInteriors_HouseEvents[];
 extern struct MapEvent gKalayInteriors_InnEvents[];

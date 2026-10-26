@@ -7,12 +7,12 @@
 struct SceneEntrance;
 struct SceneExitRegion;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
+const struct ActorTemplate *Scene_GetActorTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
 extern s32 gLunpaFortressRandomPick;
@@ -28,15 +28,12 @@ extern struct SceneEntrance gLunpaFortressEntrancesOther[];
 extern u32 gLunpaFortressExitsOther[];
 extern u32 gLunpaFortressUpperFloorExits[];
 extern u32 gLunpaFortressCaveAndToadonpaExits[];
-extern struct ObjectEventTemplate gLunpaFortressObjectEventTemplatesOther[];
-extern struct ObjectEventTemplate
-    gLunpaFortressUnusedWestLunpaCaveObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gLunpaFortressGroundFloorObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gLunpaFortressUpperFloorObjectEventTemplates[];
-extern struct ObjectEventTemplate gLunpaFortressCaveObjectEventTemplates[];
-extern struct ObjectEventTemplate gLunpaFortressToadonpaObjectEventTemplates[];
+extern struct ActorTemplate gLunpaFortressActorTemplatesOther[];
+extern struct ActorTemplate gLunpaFortressUnusedWestLunpaCaveActorTemplates[];
+extern struct ActorTemplate gLunpaFortressGroundFloorActorTemplates[];
+extern struct ActorTemplate gLunpaFortressUpperFloorActorTemplates[];
+extern struct ActorTemplate gLunpaFortressCaveActorTemplates[];
+extern struct ActorTemplate gLunpaFortressToadonpaActorTemplates[];
 extern struct MapEvent gLunpaFortressNoEvents[];
 extern struct MapEvent gLunpaFortressGroundFloorEvents[];
 extern struct MapEvent gLunpaFortressUpperFloorEvents[];

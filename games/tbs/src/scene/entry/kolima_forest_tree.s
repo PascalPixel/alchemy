@@ -2,6 +2,6 @@
 	overlay_veneer KolimaForestTree_Initialize
 	overlay_veneer KolimaForestTree_GetEntrances
 	overlay_veneer KolimaForestTree_GetExits
-	overlay_veneer KolimaForestTree_GetObjectEventTemplates
+	overlay_veneer KolimaForestTree_GetActorTemplates
 	overlay_veneer KolimaForestTree_GetEvents
 	overlay_veneer KolimaForestTree_GetRegions

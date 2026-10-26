@@ -6,13 +6,13 @@
 
 struct SceneEntrance;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 struct SceneExitRegion;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void);
+const struct ActorTemplate *Scene_GetActorTemplates(void);
 const struct MapEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
 extern s32 gPushedObject_DirectionSteps[];
@@ -29,11 +29,10 @@ extern struct SceneEntrance gCrossboneIsle_FloatingLogsEntrances[];
 extern struct SceneEntrance gCrossboneIsle_PierEntrances[];
 extern struct SceneEntrance gCrossboneIsle_PirateShipEntrances[];
 extern u32 gCrossboneIsleExits[];
-extern struct ObjectEventTemplate gCrossboneIsle_NoObjectEventTemplates[];
-extern struct ObjectEventTemplate gCrossboneIsle_IsleObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gCrossboneIsle_FloatingLogsObjectEventTemplates[];
-extern struct ObjectEventTemplate gCrossboneIsle_CorridorObjectEventTemplates[];
+extern struct ActorTemplate gCrossboneIsle_NoActorTemplates[];
+extern struct ActorTemplate gCrossboneIsle_IsleActorTemplates[];
+extern struct ActorTemplate gCrossboneIsle_FloatingLogsActorTemplates[];
+extern struct ActorTemplate gCrossboneIsle_CorridorActorTemplates[];
 extern struct MapEvent gCrossboneIsle_CorridorEvents[];
 extern struct MapEvent gCrossboneIsle_CaveEntranceEvents[];
 extern struct MapEvent gCrossboneIsle_IsleEvents[];

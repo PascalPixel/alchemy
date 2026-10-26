@@ -6,13 +6,13 @@
 
 struct SceneEntrance;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 struct SceneExitRegion;
 
 const struct SceneEntrance *LamakanDesert_GetEntrances(void);
 const struct SceneExitRegion *LamakanDesert_GetRegions(void);
 const u32 *LamakanDesert_GetExits(void);
-const struct ObjectEventTemplate *LamakanDesert_GetObjectEventTemplates(void);
+const struct ActorTemplate *LamakanDesert_GetActorTemplates(void);
 const struct MapEvent *LamakanDesert_GetEvents(void);
 s32 LamakanDesert_Initialize(void);
 void HeatGauge_Start(void);
@@ -29,10 +29,10 @@ extern struct SceneEntrance gLamakanDesertSmogEntrances[];
 extern struct SceneEntrance gLamakanDesertManticoreEntrances[];
 extern struct SceneEntrance gLamakanDesertCaveEntrances[];
 extern u32 gLamakanDesertExits[];
-extern struct ObjectEventTemplate gLamakanDesertObjectEventTemplatesOther[];
-extern struct ObjectEventTemplate gLamakanDesertEastObjectEventTemplates[];
-extern struct ObjectEventTemplate gLamakanDesertSmogObjectEventTemplates[];
-extern struct ObjectEventTemplate gLamakanDesertManticoreObjectEventTemplates[];
+extern struct ActorTemplate gLamakanDesertActorTemplatesOther[];
+extern struct ActorTemplate gLamakanDesertEastActorTemplates[];
+extern struct ActorTemplate gLamakanDesertSmogActorTemplates[];
+extern struct ActorTemplate gLamakanDesertManticoreActorTemplates[];
 extern struct MapEvent gLamakanDesertEvents[];
 extern s16 gHeatGaugeLevel;
 extern s16 gHeatGaugeSlide;

@@ -3,9 +3,9 @@
 
 #include "types.h"
 
-struct ObjectEvent;
+struct Actor;
 
-s32 Vault_StopIfFacingNear(struct ObjectEvent *objectEvent,
-                           struct ObjectEvent *target, s32 range, s32 force);
+s32 Vault_StopIfFacingNear(struct Actor *actor, struct Actor *target, s32 range,
+                           s32 force);
 
 #endif

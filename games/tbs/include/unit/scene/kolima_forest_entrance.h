@@ -6,14 +6,13 @@
 
 struct SceneEntrance;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 struct SceneExitRegion;
 
 const struct SceneEntrance *KolimaForestEntrance_GetEntrances(void);
 const struct SceneExitRegion *KolimaForestEntrance_GetRegions(void);
 const u32 *KolimaForestEntrance_GetExits(void);
-const struct ObjectEventTemplate *
-KolimaForestEntrance_GetObjectEventTemplates(void);
+const struct ActorTemplate *KolimaForestEntrance_GetActorTemplates(void);
 const struct MapEvent *KolimaForestEntrance_GetEvents(void);
 s32 KolimaForestEntrance_Initialize(void);
 extern s32 gPushedObject_DirectionSteps[];
@@ -29,7 +28,7 @@ extern s32 gKolimaForestEntrance_PsynergyFieldShrinkAction[];
 extern s32 gKolimaForestEntrance_GroundSparkleAction[];
 extern struct SceneEntrance gKolimaForestEntrance_Entrances[];
 extern u32 gKolimaForestEntrance_Exits[];
-extern struct ObjectEventTemplate gKolimaForestEntrance_ObjectEventTemplates[];
+extern struct ActorTemplate gKolimaForestEntrance_ActorTemplates[];
 extern struct MapEvent gKolimaForestEntrance_Events[];
 extern s32 gKolimaForestEntrance_SparkleScript[];
 extern s32 gKolimaForestEntrance_SparkleBurstScript[];

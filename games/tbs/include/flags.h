@@ -28,7 +28,7 @@
 #define FLAG_DJINN_HIDING_FIRST 128
 /// Set while `djinni` is hiding, its DjinniId counting from
 /// FLAG_DJINN_HIDING_FIRST: Djinn_ResolvePendingEvent sets it after a lost or
-/// fled Djinni battle, and the Djinni's object event stays away until the map
+/// fled Djinni battle, and the Djinni's actor stays away until the map
 /// is entered normally again, which clears it.
 /// ★ Named from the game: "It must be hiding somewhere again"
 /// (MsgVaultHmmmItMustBeHidingSomewhere)
@@ -48,7 +48,7 @@
 /// walks (SceneManager_Run); the deserts' heat gauges and the Colosso's wall
 /// test it.
 #define FLAG_FIELD_HANDLING_REQUESTS 0x104
-/// Set while the field menu is open; maps hold their moving object events
+/// Set while the field menu is open; maps hold their moving actors
 /// still.
 #define FLAG_MENU_OPEN 0x106
 /// While set, opening the field menu or the pause menu, or pressing a shortcut,
@@ -106,9 +106,9 @@
 /// clears it when the after event has trigger bit 0x400 and plays its own; the
 /// before event's script may clear it too.
 #define FLAG_PSYNERGY_EFFECT 0x140
-/// Aim the effect at the object event ahead (FieldEffect_DispatchRequestKind)
+/// Aim the effect at the actor ahead (FieldEffect_DispatchRequestKind)
 /// rather than run the kind's untargeted body (FieldEffect_Run, where Halt
-/// still stops the nearest object event when it has a talk event, and Force and
+/// still stops the nearest actor when it has a talk event, and Force and
 /// Reveal run their PSYNERGY_PHASE_EFFECT_ACTS event). Field_UsePsynergy keeps
 /// it set only when a map event applies to what the leader faces.
 #define FLAG_PSYNERGY_TARGET 0x141
@@ -244,7 +244,7 @@
 /// equipment." (MsgColossoWarriorsEnterFinalsWithoutAny)
 #define FLAG_COLOSSO_HOLDS_EQUIPMENT 0x952
 /// The next field map starts where the party was, as after a battle: the
-/// map's flags are not reset, the object events come back from their snapshot,
+/// map's flags are not reset, the actors come back from their snapshot,
 /// and the music saved in gSaveBlock.returnMusic resumes if there is one (a
 /// random battle clears it, so the map's own music plays). SceneManager_Run
 /// clears it once the map starts.
@@ -1452,7 +1452,7 @@
 #define FLAG_VALE_WARNED_AGAINST_MT_ALEPH 0x823
 
 // Vale on the stormy night, the paths outside
-/// The first of the four rocks that fall across the paths (local ids 11 to 14).
+/// The first of the four rocks that fall across the paths (actor ids 11 to 14).
 /// ★ Named from the game: "We can't get around this rock!"
 /// (MsgValeCantGetAroundThisRock)
 #define FLAG_VALE_STORM_FIRST_ROCK_FELL 0x830
@@ -1520,7 +1520,7 @@
 /// with Jenna to show the way.
 /// ★ Named from the game: "Go aid the elders!" (MsgValeGoAidElders)
 #define FLAG_VALE_STORM_SENT_TO_AID_ELDERS 0x840
-/// Whirlwind blew away the first of the three clumps of ivy (local ids 8 to 10)
+/// Whirlwind blew away the first of the three clumps of ivy (actor ids 8 to 10)
 /// in the village.
 /// ★ Named from what the player sees: ivy growing on the cliff above a house,
 /// which Whirlwind blows away (its render)

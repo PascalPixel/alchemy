@@ -77,7 +77,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   s32 fixedZ;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
-  leader = (struct Object *)work->objectEvents[gSaveBlock.leaderLocalId];
+  leader = (struct Object *)work->actors[gSaveBlock.leaderActorId];
 
   gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
 
@@ -199,8 +199,8 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
    * 472 instructions differ in tbs-en. */
   struct FieldWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   struct MapGridScrollAnimView *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
-  s32 leaderId = gSaveBlock.leaderLocalId;
-  struct Object *leader = (struct Object *)work->objectEvents[leaderId];
+  s32 leaderId = gSaveBlock.leaderActorId;
+  struct Object *leader = (struct Object *)work->actors[leaderId];
   s16 previousHp[8];
   struct MapGridCell *tile;
 #ifdef UBFIX
@@ -254,7 +254,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
 
   // Only while walking (not climbing) towards a target.
   if (gSaveBlock.movementMode == LEADER_MOVEMENT_WALK && leader != NULL &&
-      leader->targetX != OBJ_EVENT_NO_TARGET) {
+      leader->targetX != ACTOR_NO_TARGET) {
     // Encounters: the zone comes from the world map's encounter region and
     // battle environment, or from the ground the leader stands on.
     // FLAG_LURE_CAP doubles the speed the roll counts.

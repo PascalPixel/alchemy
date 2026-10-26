@@ -11,6 +11,6 @@
 
 #define NULL ((void *)0)
 
-struct ObjectEvent;
+struct Actor;
 
 #endif

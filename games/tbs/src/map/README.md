@@ -226,7 +226,7 @@ so a layer shows the cells from its start out as far as the camera can go.
 The ground layer shows on `BG3`, the middle layer on `BG2` and the overhead
 layer on `BG1`; [Field](../field/README.md#towns-and-dungeons-on-screen)
 explains how their priorities put
-[object events](../../glossary.md#object-event) between them.
+[actors](../../glossary.md#actor) between them.
 
 ### Placeholder metatiles
 

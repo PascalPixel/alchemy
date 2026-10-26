@@ -26,7 +26,7 @@
 /// sprite, turned to face the centre, and starts its motion script
 /// (gBattleObject_EmptyScript). Called by
 /// BattleUnit_RefreshPlacement and by BattleAbility_ApplyToTarget for an enemy
-/// that joins. Fills in actor, creates an object event for it and, for an
+/// that joins. Fills in actor, creates an actor for it and, for an
 /// enemy, claims its sprite slots.
 void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   s32 fixedX;
@@ -44,7 +44,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   fixedX = x * 65536;
   fixedZ = y * 65536;
   // The id 0xf000 has no sprite kind of enum ObjectCreateKind, so
-  // ObjectEvent_Create makes no sprite; BattleObject_SpawnObjectsForList
+  // Actor_Create makes no sprite; BattleObject_SpawnObjectsForList
   // attaches the battle sprites later.
   object = (struct Object *)Object_CreateFar(0xf000, fixedX, 0, fixedZ);
   unit = Unit_GetFar(unitId);
@@ -260,11 +260,11 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
 
   // Face the centre of the battlefield (0x8000 is half a turn, so the
   // angle points back along the line to the origin); enemies are drawn at
-  // 1.3 times their size. OBJ_EVENT_FALLS lets the object fall.
+  // 1.3 times their size. ACTOR_FALLS lets the object fall.
   facingAngle = ArcTan2(y / 8, x) + 0x8000;
   object->facing = facingAngle;
   object->collisionFlags = 3;
-  object->motionFlags = OBJ_EVENT_FALLS;
+  object->motionFlags = ACTOR_FALLS;
   if (unit->classId == CLASS_NONE) {
     object->scaleX = 0x14ccc;
     object->scaleY = 0x14ccc;

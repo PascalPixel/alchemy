@@ -20,8 +20,8 @@
 /// overlay; the exits in that event table keep their numbers, which each map's
 /// exit rows lead its own way.
 ///
-/// The storms are the desert's mechanism, LOCALID_FIRST_SANDSTORM to
-/// LOCALID_LAST_SANDSTORM in the first two maps. As the party nears one
+/// The storms are the desert's mechanism, ACTOR_FIRST_SANDSTORM to
+/// ACTOR_LAST_SANDSTORM in the first two maps. As the party nears one
 /// (metatile behaviors 61 to 65 and 71 to 73) it rises, growing to full size,
 /// and the sand haze, BG1 blended over the rest (SUHALLA_DESERT_HAZE_BLEND),
 /// fades in the first time (SuhallaDesert_RaiseStorm); the first storm to rise
@@ -44,8 +44,8 @@
 /// map flags:
 ///
 /// - FLAG_SUHALLA_DESERT_FIRST_SANDSTORM_RISEN to
-///   FLAG_SUHALLA_DESERT_FIFTH_SANDSTORM_RISEN: storms LOCALID_FIRST_SANDSTORM
-///   to LOCALID_LAST_SANDSTORM have risen on this visit.
+///   FLAG_SUHALLA_DESERT_FIFTH_SANDSTORM_RISEN: storms ACTOR_FIRST_SANDSTORM
+///   to ACTOR_LAST_SANDSTORM have risen on this visit.
 /// - FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_SET_OFF: the chasing storm has set
 ///   off.
 /// - FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM: a storm has caught the leader.
@@ -64,7 +64,7 @@
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
 #include "unit/game/game.h"
-#include "object_event.h"
+#include "actor.h"
 #include "types.h"
 #include "script_layer.h"
 #include "map_tables.h"
@@ -113,37 +113,37 @@ enum {
   FLAG_SUHALLA_DESERT_PSYNERGY_STONE = FLAG_AREA_TEMP_51
 };
 
-/// The object events, numbering the object event template rows of the first two
-/// maps from LOCALID_FIRST_PLACED; the third map places none.
+/// The actors, numbering the actor template rows of the first two
+/// maps from ACTOR_FIRST_PLACED; the third map places none.
 enum {
   /// The storms, five in each map.
   /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
-  LOCALID_FIRST_SANDSTORM = LOCALID_FIRST_PLACED,
+  ACTOR_FIRST_SANDSTORM = ACTOR_FIRST_PLACED,
   /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
-  LOCALID_FOURTH_SANDSTORM = LOCALID_FIRST_SANDSTORM + 3,
+  ACTOR_FOURTH_SANDSTORM = ACTOR_FIRST_SANDSTORM + 3,
   /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
-  LOCALID_LAST_SANDSTORM = LOCALID_FIRST_SANDSTORM + 4,
+  ACTOR_LAST_SANDSTORM = ACTOR_FIRST_SANDSTORM + 4,
   /// In the second map the last storm gives chase.
   /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
-  LOCALID_CHASING_SANDSTORM = LOCALID_LAST_SANDSTORM,
+  ACTOR_CHASING_SANDSTORM = ACTOR_LAST_SANDSTORM,
   /// Iodem, who steps out of the party to talk and then rejoins it.
   /// ★ Named from the game: "Iodem..." (MsgSuhallaIodem)
-  LOCALID_IODEM,
+  ACTOR_IODEM,
   /// In the second map, seen only while Reveal lasts, drawn as Goma Cave's
   /// stone pillars.
   /// ★ Named from what the player sees: its sprite, SPRITE_STONE_PILLAR, a
   /// stone pillar (its render)
-  LOCALID_REVEALED_PILLAR,
+  ACTOR_REVEALED_PILLAR,
   /// In the second map, the Mars Djinni.
   /// ★ Named from the game: "Flash" (MsgDjinnName)
-  LOCALID_FLASH
+  ACTOR_FLASH
 };
 
 /// Frames a caught party spins before the storm carries it away.
 enum { SANDSTORM_CAPTURE_FRAMES = 180 };
 
 /// The treasure spot of SuhallaDesertSouth's hidden Psynergy Stone, whose
-/// search row finds the stone (FIND_PSYNERGY_STONE). Its object event stands in
+/// search row finds the stone (FIND_PSYNERGY_STONE). Its actor stands in
 /// its cell only while Reveal lasts (EventScript_RevealStarts moves it to the
 /// cell's centre) and is moved off the map as Reveal ends.
 enum { TREASURE_SPOT_PSYNERGY_STONE = 100 };
@@ -170,7 +170,7 @@ static u16 sSuhallaDesertSavedColor;
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-/// The first sandstorm (LOCALID_FIRST_SANDSTORM) has risen on this visit; the
+/// The first sandstorm (ACTOR_FIRST_SANDSTORM) has risen on this visit; the
 /// four flags after it are the next four sandstorms'.
 /// ★ Named from the game: "The sandstorms suddenly increased... I hope no one
 /// gets caught in one and gets injured."
@@ -186,12 +186,12 @@ static u16 sSuhallaDesertSavedColor;
 /// gets caught in one and gets injured."
 /// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
 #define FLAG_SUHALLA_DESERT_THIRD_SANDSTORM_RISEN FLAG_SCENE_TEMP_08
-/// The fourth sandstorm (LOCALID_FOURTH_SANDSTORM) has risen on this visit.
+/// The fourth sandstorm (ACTOR_FOURTH_SANDSTORM) has risen on this visit.
 /// ★ Named from the game: "The sandstorms suddenly increased... I hope no one
 /// gets caught in one and gets injured."
 /// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
 #define FLAG_SUHALLA_DESERT_FOURTH_SANDSTORM_RISEN FLAG_SCENE_TEMP_09
-/// The fifth sandstorm (LOCALID_LAST_SANDSTORM) has risen on this visit.
+/// The fifth sandstorm (ACTOR_LAST_SANDSTORM) has risen on this visit.
 /// ★ Named from the game: "The sandstorms suddenly increased... I hope no one
 /// gets caught in one and gets injured."
 /// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
@@ -212,7 +212,7 @@ static u16 sSuhallaDesertSavedColor;
 /// ★ Named from the game: "For some reason, anyone who gets caught in a
 /// sandstorm winds up here." (MsgSuhallaInteriorsForSomeReasonAnyoneWhoGets)
 #define FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT FLAG_SCENE_TEMP_10
-/// A byte flag: the local id of the sandstorm that caught the leader.
+/// A byte flag: the actor id of the sandstorm that caught the leader.
 /// ★ Named from the game: "For some reason, anyone who gets caught in a
 /// sandstorm winds up here." (MsgSuhallaInteriorsForSomeReasonAnyoneWhoGets)
 #define FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM FLAG_SCENE_TEMP_18
@@ -221,23 +221,23 @@ void Scene_QueueMusic(s32 cue);
 
 /// In SuhallaDesertSouth, talking to Flash, a Mars Djinni, starts its battle.
 static void EventScript_FightFlash(void) {
-  Field_RequestDjinnBattle(LOCALID_FLASH, DJINNI_FLASH);
+  Field_RequestDjinnBattle(ACTOR_FLASH, DJINNI_FLASH);
 }
 
-/// A storm's object event template script: clears its sprite and collision
+/// A storm's actor template script: clears its sprite and collision
 /// flags.
-static s32 SuhallaDesert_ClearObjectEventSpriteAndCollisionFlags(
-    struct Object *interpreter) {
-  struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
-  ObjectEvent_SetSpriteFlags(objectEvent, 0);
-  objectEvent->collisionFlags = 0;
+static s32
+SuhallaDesert_ClearActorSpriteAndCollisionFlags(struct Object *interpreter) {
+  struct Actor *actor = (struct Actor *)interpreter;
+  Actor_SetSpriteFlags(actor, 0);
+  actor->collisionFlags = 0;
   return 0;
 }
 
-/// A storm's object event template script: toggles its single-sprite storage.
-static s32 SuhallaDesert_ToggleObjectEventActive(struct Object *interpreter) {
-  struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
-  objectEvent->spriteStorageKind ^= 1;
+/// A storm's actor template script: toggles its single-sprite storage.
+static s32 SuhallaDesert_ToggleActorActive(struct Object *interpreter) {
+  struct Actor *actor = (struct Actor *)interpreter;
+  actor->spriteStorageKind ^= 1;
   return 1;
 }
 
@@ -262,31 +262,31 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) { return gSuhallaDesertExits; }
 
 /// The storms, Iodem, and in the second map Flash and what Reveal shows.
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
+const struct ActorTemplate *Scene_GetActorTemplates(void) {
   s16 selector = gSaveBlock.sceneId;
 
   if (selector == (s32)&SceneId_SuhallaDesertNorth) {
-    return gSuhallaDesertNorthObjectEventTemplates;
+    return gSuhallaDesertNorthActorTemplates;
   }
   if (selector == (s32)&SceneId_SuhallaDesertSouth) {
-    return gSuhallaDesertSouthObjectEventTemplates;
+    return gSuhallaDesertSouthActorTemplates;
   }
   if (selector == (s32)&SceneId_SuhallaDesertCaves) {
-    return gSuhallaDesertCavesObjectEventTemplates;
+    return gSuhallaDesertCavesActorTemplates;
   }
-  return gSuhallaDesertObjectEventTemplatesOther;
+  return gSuhallaDesertActorTemplatesOther;
 }
 
 /// Each frame while caught: spins the leader, and counts down to raising event
 /// 99, the storm carrying the party away.
 static void SuhallaDesert_UpdateCaptureTimer(void) {
-  struct ObjectEvent *selectedObjectEvent;
+  struct Actor *selectedActor;
   struct FieldWork *requests;
   s32 remainingFrames;
 
-  selectedObjectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
+  selectedActor = Actor_GetById(gSaveBlock.leaderActorId);
   requests = gFieldWork;
-  selectedObjectEvent->facing = (gFrameCount << 12);
+  selectedActor->facing = (gFrameCount << 12);
 
   remainingFrames =
       FieldGameFlag_GetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT);
@@ -306,39 +306,39 @@ static void SuhallaDesert_UpdateCaptureTimer(void) {
 static void SuhallaDesert_CatchInStorm(s32 stormId) {
   s32 stormIdCopy;
   s32 captureActive;
-  struct ObjectEvent *selectedObjectEvent;
-  struct ObjectEvent *storm;
-  s32 leaderLocalId;
+  struct Actor *selectedActor;
+  struct Actor *storm;
+  s32 leaderActorId;
 
-  // The event-selected object event is pulled toward the storm before being
+  // The event-selected actor is pulled toward the storm before being
   // lifted.
-  leaderLocalId = gSaveBlock.leaderLocalId;
+  leaderActorId = gSaveBlock.leaderActorId;
   stormIdCopy = stormId;
-  selectedObjectEvent = ObjectEvent_GetById(leaderLocalId);
-  ObjectEvent_Get(stormIdCopy);
+  selectedActor = Actor_GetById(leaderActorId);
+  Actor_Get(stormIdCopy);
   captureActive = Script_GetFlag(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM);
   if (captureActive == 0) {
     FieldScript_Start();
-    ObjectEvent_SetAttachedEffect(leaderLocalId, ATTACHED_EFFECT_IN_FRONT |
-                                                     ATTACHED_EFFECT_ATTACH);
-    Import_ObjectEventSetAnimation(leaderLocalId, ANIM_LEADER_LOOK_AROUND);
-    storm = ObjectEvent_GetById(stormIdCopy);
+    Actor_SetAttachedEffect(leaderActorId,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
+    Import_ActorSetAnimation(leaderActorId, ANIM_LEADER_LOOK_AROUND);
+    storm = Actor_GetById(stormIdCopy);
     if (storm != 0) {
-      ObjectEvent_SetDestination(leaderLocalId, storm->x.part.pixel,
-                                 storm->z.part.pixel);
+      Actor_SetDestination(leaderActorId, storm->x.part.pixel,
+                           storm->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(leaderLocalId);
+    ObjectMotion_CommitCurrentPositionAndActivate(leaderActorId);
     // Start the capture countdown once the approach finishes.
     Script_PlaySong(SE_SANDSTORM);
     FieldScheduler_AddCallback(SuhallaDesert_UpdateCaptureTimer,
                                TASK_PRIORITY_MAP);
-    selectedObjectEvent->motionFlags = captureActive;
-    Object_SetPosition(selectedObjectEvent, selectedObjectEvent->x.fixed,
-                       selectedObjectEvent->y.fixed + PIXELS(32),
-                       selectedObjectEvent->z.fixed);
-    ObjectMotion_CommitCurrentPositionAndActivate(leaderLocalId);
-    selectedObjectEvent->velocityY = captureActive;
-    selectedObjectEvent->motionFlags = OBJ_EVENT_FLOATS;
+    selectedActor->motionFlags = captureActive;
+    Object_SetPosition(selectedActor, selectedActor->x.fixed,
+                       selectedActor->y.fixed + PIXELS(32),
+                       selectedActor->z.fixed);
+    ObjectMotion_CommitCurrentPositionAndActivate(leaderActorId);
+    selectedActor->velocityY = captureActive;
+    selectedActor->motionFlags = ACTOR_FLOATS;
     gSaveBlock.movementMode = LEADER_MOVEMENT_AIRBORNE;
     GameFlag_Set(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM);
     FieldGameFlag_SetByte(FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM, stormIdCopy);
@@ -353,35 +353,35 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
 /// SceneId_SuhallaDesertSouth), the leader walks into the map's first storm
 /// (metatile behavior 41 or 51).
 static void EventScript_CaughtByFirstStorm(void) {
-  SuhallaDesert_CatchInStorm(LOCALID_FIRST_SANDSTORM);
+  SuhallaDesert_CatchInStorm(ACTOR_FIRST_SANDSTORM);
 }
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
 /// SceneId_SuhallaDesertSouth), the leader walks into the second storm
 /// (metatile behavior 42 or 52).
 static void EventScript_CaughtBySecondStorm(void) {
-  SuhallaDesert_CatchInStorm(LOCALID_FIRST_SANDSTORM + 1);
+  SuhallaDesert_CatchInStorm(ACTOR_FIRST_SANDSTORM + 1);
 }
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
 /// SceneId_SuhallaDesertSouth), the leader walks into the third storm (metatile
 /// behavior 43 or 53).
 static void EventScript_CaughtByThirdStorm(void) {
-  SuhallaDesert_CatchInStorm(LOCALID_FIRST_SANDSTORM + 2);
+  SuhallaDesert_CatchInStorm(ACTOR_FIRST_SANDSTORM + 2);
 }
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
 /// SceneId_SuhallaDesertSouth), the leader walks into the fourth storm
 /// (metatile behavior 44 or 54).
 static void EventScript_CaughtByFourthStorm(void) {
-  SuhallaDesert_CatchInStorm(LOCALID_FIRST_SANDSTORM + 3);
+  SuhallaDesert_CatchInStorm(ACTOR_FIRST_SANDSTORM + 3);
 }
 
 /// The fifth storm catches the leader. In SuhallaDesertNorth the leader walks
 /// into it (metatile behavior 45); in SuhallaDesertSouth it's the chasing
 /// storm, which reaches the moving leader (event 55).
 static void EventScript_CaughtByFifthStorm(void) {
-  SuhallaDesert_CatchInStorm(LOCALID_FIRST_SANDSTORM + 4);
+  SuhallaDesert_CatchInStorm(ACTOR_FIRST_SANDSTORM + 4);
 }
 
 /// As the party nears a storm it rises, growing to full size with the sand
@@ -394,17 +394,17 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
   s32 stormIdCopy;
   s32 leaderX;
   s32 leaderZ;
-  struct ObjectEvent *storm;
+  struct Actor *storm;
   s32 appearanceRestored;
-  struct ObjectEvent *selectedObjectEvent;
-  struct ObjectEvent *leader;
+  struct Actor *selectedActor;
+  struct Actor *leader;
 
   stormIdCopy = stormId;
-  selectedObjectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
-  storm = ObjectEvent_GetById(stormIdCopy);
+  selectedActor = Actor_GetById(gSaveBlock.leaderActorId);
+  storm = Actor_GetById(stormIdCopy);
   appearanceRestored = GameFlag_Get(FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN);
-  leaderX = selectedObjectEvent->x.part.pixel;
-  leaderZ = selectedObjectEvent->z.part.pixel;
+  leaderX = selectedActor->x.part.pixel;
+  leaderZ = selectedActor->z.part.pixel;
   FieldScript_Start();
   Sound_PlaySong(SE_SANDSTORM);
   // Grow over 16 frames and, the first time, fade the haze in with it.
@@ -423,62 +423,58 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     frame = nextFrame;
   } while (frame <= 15);
   GameFlag_Set((FLAG_SUHALLA_DESERT_FIRST_SANDSTORM_RISEN -
-                LOCALID_FIRST_SANDSTORM + stormIdCopy));
+                ACTOR_FIRST_SANDSTORM + stormIdCopy));
   GameFlag_Set(FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN);
   // XXX (no evidence): what flag 0x1b7 holds; nothing else in the game sets
   // or reads it, so the test always passes.
   if (GameFlag_Get(FLAG_IODEM_FOLLOWING_PARTY) != 0 &&
       Script_GetFlag(FLAG_SUHALLA_DESERT_IODEM_WARNED) == 0) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_IODEM_WARNED);
-    ObjectEvent_SetSpeed(LOCALID_IODEM, PIXELS(1), PIXELS(1) / 2);
-    ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-    leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+    Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+    leader = Actor_GetById(ACTOR_PARTY_LEADER);
     if ((s32)leader != 0) {
-      Import_ObjectEventSetPosition(LOCALID_IODEM, leader->x.fixed,
-                                    leader->z.fixed);
+      Import_ActorSetPosition(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
     }
 #ifdef BUGFIX
-    ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
 #else
-    // BUG: a heading where ObjectEvent_FaceObjectEvent takes a local id.
-    ObjectEvent_FaceObjectEvent(LOCALID_IODEM, FACING_SOUTH, 0);
+    // BUG: a heading where Actor_FaceActor takes an actor id.
+    Actor_FaceActor(ACTOR_IODEM, FACING_SOUTH, 0);
 #endif
-    ObjectEvent_GetById(LOCALID_IODEM)->steeringFlags &=
-        ~OBJ_EVENT_FACES_MOTION;
-    ObjectMotion_ResetAndSetPositionInMode2(LOCALID_IODEM, leaderX,
+    Actor_GetById(ACTOR_IODEM)->steeringFlags &= ~ACTOR_FACES_MOTION;
+    ObjectMotion_ResetAndSetPositionInMode2(ACTOR_IODEM, leaderX,
                                             (leaderZ - 16));
-    ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
-        ~OBJ_EVENT_FACES_MOTION;
-    ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, (leaderX + 8),
+    Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+    ObjectMotion_SetPositionAndReset(ACTOR_PARTY_LEADER, (leaderX + 8),
                                      (leaderZ - 40));
     FieldScript_WaitFrames(1);
-    ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
-        OBJ_EVENT_FACES_MOTION;
-    Import_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_STAND);
-    ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
+    Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
+    Import_ActorSetAnimation(ACTOR_IODEM, ANIM_STAND);
+    ObjectMotion_ArmCallback(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     FieldScript_SetMessageId(MsgSuhallaSandstorm);
-    ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
-    FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
-    ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-    FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
-    ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTHEAST, 0);
-    ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-    FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
+    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
+    FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
+    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+    FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
+    Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
+    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+    FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
     FieldScript_WaitFrames(10);
-    ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTH, 30);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_IODEM, 2);
-    FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
-    ObjectMotion_SetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
-    FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
-    ObjectEvent_SetSpeed(LOCALID_IODEM, PIXELS(1), PIXELS(1) / 2);
-    Import_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_WALK);
-    leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+    Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 30);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_IODEM, 2);
+    FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
+    ObjectMotion_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+    FieldScript_ShowMessageAndWait(ACTOR_IODEM, 0);
+    Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
+    Import_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
+    leader = Actor_GetById(ACTOR_PARTY_LEADER);
     if ((s32)leader != 0) {
-      ObjectMotion_ResetAndSetPosition(LOCALID_IODEM, leader->x.part.pixel,
+      ObjectMotion_ResetAndSetPosition(ACTOR_IODEM, leader->x.part.pixel,
                                        leader->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IODEM);
-    Import_ObjectEventSetPosition(LOCALID_IODEM, 0, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IODEM);
+    Import_ActorSetPosition(ACTOR_IODEM, 0, 0);
   }
   FieldScript_End();
 }
@@ -487,33 +483,33 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
 /// SceneId_SuhallaDesertSouth), the party nears the map's first storm (metatile
 /// behavior 61 or 71).
 static void EventScript_FirstStormRises(void) {
-  SuhallaDesert_RaiseStorm(LOCALID_FIRST_SANDSTORM);
+  SuhallaDesert_RaiseStorm(ACTOR_FIRST_SANDSTORM);
 }
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
 /// SceneId_SuhallaDesertSouth), the party nears the second storm (metatile
 /// behavior 62 or 72).
 static void EventScript_SecondStormRises(void) {
-  SuhallaDesert_RaiseStorm(LOCALID_FIRST_SANDSTORM + 1);
+  SuhallaDesert_RaiseStorm(ACTOR_FIRST_SANDSTORM + 1);
 }
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
 /// SceneId_SuhallaDesertSouth), the party nears the third storm (metatile
 /// behavior 63 or 73).
 static void EventScript_ThirdStormRises(void) {
-  SuhallaDesert_RaiseStorm(LOCALID_FIRST_SANDSTORM + 2);
+  SuhallaDesert_RaiseStorm(ACTOR_FIRST_SANDSTORM + 2);
 }
 
 /// In SuhallaDesertNorth, the party nears the fourth storm (metatile behavior
 /// 64).
 static void EventScript_FourthStormRises(void) {
-  SuhallaDesert_RaiseStorm(LOCALID_FIRST_SANDSTORM + 3);
+  SuhallaDesert_RaiseStorm(ACTOR_FIRST_SANDSTORM + 3);
 }
 
 /// In SuhallaDesertNorth, the party nears the fifth storm (metatile behavior
 /// 65).
 static void EventScript_FifthStormRises(void) {
-  SuhallaDesert_RaiseStorm(LOCALID_FIRST_SANDSTORM + 4);
+  SuhallaDesert_RaiseStorm(ACTOR_FIRST_SANDSTORM + 4);
 }
 
 /// Iodem asks whether to search the desert for Sheba again or press on. It
@@ -525,7 +521,7 @@ static void EventScript_FifthStormRises(void) {
 /// soldiers there, and rejoins the party. Sets
 /// FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA.
 static void EventScript_IodemAsksWhetherToPressOn(void) {
-  struct ObjectEvent *leader;
+  struct Actor *leader;
 
   if (GameFlag_Get(FLAG_IODEM_FOLLOWING_PARTY) != 0 &&
       GameFlag_Get(0x1b7) == 0 &&
@@ -533,50 +529,48 @@ static void EventScript_IodemAsksWhetherToPressOn(void) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA);
     FieldScript_Start();
     FieldScript_SetMessageId(MsgSuhallaNowhereFound);
-    leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
-      ObjectEvent_SetPosition(LOCALID_IODEM, leader->x.fixed, leader->z.fixed);
+      Actor_SetPosition(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
     }
 #ifdef BUGFIX
-    ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
 #else
-    // BUG: a heading where ObjectEvent_FaceObjectEvent takes a local id.
-    ObjectEvent_FaceObjectEvent(LOCALID_IODEM, FACING_NORTH, 0);
+    // BUG: a heading where Actor_FaceActor takes an actor id.
+    Actor_FaceActor(ACTOR_IODEM, FACING_NORTH, 0);
 #endif
-    ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 440, 1256);
-    ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTH, 0);
-    ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 444, 1240);
-    ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
-                          EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 30);
-    ObjectMotion_SetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
-    Script_ShowMessage(LOCALID_IODEM, 0);
-    ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
-                          60);
-    ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-    Script_ShowMessage(LOCALID_IODEM, 0);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 440, 1256);
+    Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 444, 1240);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 30);
+    ObjectMotion_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
+    Script_ShowMessage(ACTOR_IODEM, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+    Script_ShowMessage(ACTOR_IODEM, 0);
     FieldScript_WaitFrames(30);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_IODEM, 2);
-    Script_ShowMessage(LOCALID_IODEM, 0);
-    ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTH, 30);
-    Script_AskYesNo(LOCALID_IODEM, 0);
+    ObjectMotion_SetVarCbAndRefresh(ACTOR_IODEM, 2);
+    Script_ShowMessage(ACTOR_IODEM, 0);
+    Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 30);
+    Script_AskYesNo(ACTOR_IODEM, 0);
     FieldScript_WaitFrames(30);
-    ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
-    Script_ShowMessage(LOCALID_IODEM, 0);
-    ObjectMotion_SetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
-    Script_ShowMessage(LOCALID_IODEM, 0);
-    ObjectEvent_SetSpeed(LOCALID_IODEM, PIXELS(7) / 10, PIXELS(7) / 20);
-    ObjectEvent_WalkToAndWait(LOCALID_IODEM, 440, 1256);
-    Script_ShowMessage(LOCALID_IODEM, 0);
-    ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Import_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_WALK);
-    leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+    Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
+    Script_ShowMessage(ACTOR_IODEM, 0);
+    ObjectMotion_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+    Script_ShowMessage(ACTOR_IODEM, 0);
+    Actor_SetSpeed(ACTOR_IODEM, PIXELS(7) / 10, PIXELS(7) / 20);
+    Actor_WalkToAndWait(ACTOR_IODEM, 440, 1256);
+    Script_ShowMessage(ACTOR_IODEM, 0);
+    ObjectMotion_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Import_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
-      ObjectEvent_SetDestination(LOCALID_IODEM, leader->x.part.pixel,
-                                 leader->z.part.pixel);
+      Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
+                           leader->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IODEM);
-    ObjectEvent_SetPosition(LOCALID_IODEM, 0, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IODEM);
+    Actor_SetPosition(ACTOR_IODEM, 0, 0);
     FieldScript_End();
   }
 }
@@ -585,44 +579,44 @@ static void EventScript_IodemAsksWhetherToPressOn(void) {
 /// eight frames, and catches a moving leader it comes within 8 pixels of
 /// (event 55).
 static s32 SuhallaDesert_ChaseLeader(struct Object *interpreter) {
-  struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
+  struct Actor *actor = (struct Actor *)interpreter;
   struct EffectOptions options;
-  struct ObjectEvent *selectedObjectEvent;
+  struct Actor *selectedActor;
   s32 dx;
   s32 dz;
   s32 sparkFrame;
 
-  selectedObjectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
-  objectEvent->acceleration = PIXELS(1) / 4;
-  objectEvent->speed = PIXELS(3) / 2;
-  objectEvent->motionFlags = 0;
-  ObjectEvent_SetSpriteFlags(objectEvent, 0);
-  objectEvent->spriteStorageKind ^= 1;
+  selectedActor = Actor_GetById(gSaveBlock.leaderActorId);
+  actor->acceleration = PIXELS(1) / 4;
+  actor->speed = PIXELS(3) / 2;
+  actor->motionFlags = 0;
+  Actor_SetSpriteFlags(actor, 0);
+  actor->spriteStorageKind ^= 1;
   if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS)) {
-    objectEvent->targetX = OBJ_EVENT_NO_TARGET;
-    objectEvent->targetY = OBJ_EVENT_NO_TARGET;
-    objectEvent->targetZ = OBJ_EVENT_NO_TARGET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetY = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
   } else {
-    objectEvent->targetX = selectedObjectEvent->x.fixed;
-    objectEvent->targetY = selectedObjectEvent->groundHeight;
-    objectEvent->targetZ = selectedObjectEvent->z.fixed;
-    dx = objectEvent->x.fixed - selectedObjectEvent->x.fixed;
+    actor->targetX = selectedActor->x.fixed;
+    actor->targetY = selectedActor->groundHeight;
+    actor->targetZ = selectedActor->z.fixed;
+    dx = actor->x.fixed - selectedActor->x.fixed;
     if (dx < 0) {
-      dx = selectedObjectEvent->x.fixed - objectEvent->x.fixed;
+      dx = selectedActor->x.fixed - actor->x.fixed;
     }
-    dz = objectEvent->z.fixed - selectedObjectEvent->z.fixed;
-    if (dx + (dz >= 0 ? objectEvent->z.fixed - selectedObjectEvent->z.fixed
-                      : selectedObjectEvent->z.fixed - objectEvent->z.fixed) <
+    dz = actor->z.fixed - selectedActor->z.fixed;
+    if (dx + (dz >= 0 ? actor->z.fixed - selectedActor->z.fixed
+                      : selectedActor->z.fixed - actor->z.fixed) <
         PIXELS(8)) {
       struct FieldWork *work = gFieldWork;
 
-      if (selectedObjectEvent->motionFlags != 0) {
+      if (selectedActor->motionFlags != 0) {
         work->raisedEvent = RAISED_CHASING_SANDSTORM_CATCHES;
       }
-      objectEvent->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
-      objectEvent->targetX = selectedObjectEvent->x.fixed;
-      objectEvent->targetY = selectedObjectEvent->y.fixed;
-      objectEvent->targetZ = selectedObjectEvent->z.fixed;
+      actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+      actor->targetX = selectedActor->x.fixed;
+      actor->targetY = selectedActor->y.fixed;
+      actor->targetZ = selectedActor->z.fixed;
     }
   }
   // Sand every eight frames, with a random spin.
@@ -631,8 +625,8 @@ static s32 SuhallaDesert_ChaseLeader(struct Object *interpreter) {
     options.startScaleX = 4 * Q16_ONE / 5;
     options.startScaleY = 4 * Q16_ONE / 5;
     options.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
-    FieldEffect_Spawn(objectEvent->x.fixed, objectEvent->y.fixed,
-                      objectEvent->z.fixed, 0, sparkFrame, sparkFrame,
+    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0,
+                      sparkFrame, sparkFrame,
                       EFFECT_USE_SPIN | EFFECT_USE_START_SCALE |
                           EFFECT_SCRIPT_MEDIUM,
                       &options);
@@ -645,10 +639,8 @@ static s32 SuhallaDesert_ChaseLeader(struct Object *interpreter) {
 static void EventScript_StormGivesChase(void) {
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_DOUSED) == 0) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_SET_OFF);
-    ObjectEvent_SetPosition(LOCALID_CHASING_SANDSTORM, PIXELS(120),
-                            PIXELS(824));
-    ObjectEvent_SetActionScript(LOCALID_CHASING_SANDSTORM,
-                                gSuhallaDesertChaseScript);
+    Actor_SetPosition(ACTOR_CHASING_SANDSTORM, PIXELS(120), PIXELS(824));
+    Actor_SetActionScript(ACTOR_CHASING_SANDSTORM, gSuhallaDesertChaseScript);
   }
 }
 
@@ -676,11 +668,11 @@ static void EventScript_DouseStorm(s32 unused, s32 stormId) {
   GameFlag_Clear(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM);
   if (gSaveBlock.sceneId == (s32)&SceneId_SuhallaDesertNorth) {
     GameFlag_Set((stormId + FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED -
-                  LOCALID_FIRST_SANDSTORM));
+                  ACTOR_FIRST_SANDSTORM));
   } else {
     if (gSaveBlock.sceneId == (s32)&SceneId_SuhallaDesertSouth) {
       GameFlag_Set((stormId + FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED -
-                    LOCALID_FIRST_SANDSTORM));
+                    ACTOR_FIRST_SANDSTORM));
     }
   }
   FieldGameFlag_SetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT, 0);
@@ -688,18 +680,18 @@ static void EventScript_DouseStorm(s32 unused, s32 stormId) {
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   state = &gSaveBlock;
   if (state->sceneId == (s32)&SceneId_SuhallaDesertSouth) {
-    if (stormId == LOCALID_FOURTH_SANDSTORM) {
+    if (stormId == ACTOR_FOURTH_SANDSTORM) {
       Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 7);
     } else {
-      if (stormId == LOCALID_CHASING_SANDSTORM) {
+      if (stormId == ACTOR_CHASING_SANDSTORM) {
         Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 6);
-        ObjectMotion_EnableActionAndResetMotion(LOCALID_CHASING_SANDSTORM);
-        Import_ObjectEventSetPosition(LOCALID_CHASING_SANDSTORM, 0, 0);
+        ObjectMotion_EnableActionAndResetMotion(ACTOR_CHASING_SANDSTORM);
+        Import_ActorSetPosition(ACTOR_CHASING_SANDSTORM, 0, 0);
       }
     }
   }
-  ObjectEvent_GetById(gSaveBlock.leaderLocalId)->motionFlags =
-      OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
+  Actor_GetById(gSaveBlock.leaderActorId)->motionFlags =
+      ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 }
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
@@ -709,30 +701,30 @@ static void EventScript_DouseStorm(s32 unused, s32 stormId) {
 /// second map's fourth storm drops it.
 static void EventScript_StormCarriesPartyAway(void) {
   s32 stormId;
-  struct ObjectEvent *selectedObjectEvent;
-  struct ObjectEvent *storm;
+  struct Actor *selectedActor;
+  struct Actor *storm;
   s32 frame;
 
   stormId = FieldGameFlag_GetByte(FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM);
-  selectedObjectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
-  storm = ObjectEvent_GetById(stormId);
+  selectedActor = Actor_GetById(gSaveBlock.leaderActorId);
+  storm = Actor_GetById(stormId);
   FieldScript_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Sound_PlaySong(SE_GUSH);
-  // BUG: the native passes a local id where the sprite helper needs a pointer.
+  // BUG: the native passes an actor id where the sprite helper needs a pointer.
 #ifdef BUGFIX
-  Object_SetSpriteFlags(selectedObjectEvent, 0);
+  Object_SetSpriteFlags(selectedActor, 0);
 #else
-  ObjectEvent_SetSpriteFlags((struct ObjectEvent *)gSaveBlock.leaderLocalId, 0);
+  Actor_SetSpriteFlags((struct Actor *)gSaveBlock.leaderActorId, 0);
 #endif
   storm->motionFlags = 0;
-  selectedObjectEvent->motionFlags = 0;
-  selectedObjectEvent->velocityY = 0;
-  selectedObjectEvent->frozen = 1;
+  selectedActor->motionFlags = 0;
+  selectedActor->velocityY = 0;
+  selectedActor->frozen = 1;
   storm->frozen = 1;
   // Both rise faster and faster for a second.
   for (frame = 0; frame < 60; frame++) {
-    selectedObjectEvent->velocityY += PIXELS(1) / 5;
+    selectedActor->velocityY += PIXELS(1) / 5;
     storm->velocityY += PIXELS(1) / 5;
     WaitFrames(1);
   }
@@ -742,7 +734,7 @@ static void EventScript_StormCarriesPartyAway(void) {
   GameFlag_Set(FLAG_ARRIVE_FALLING);
   if (gSaveBlock.sceneId == (s32)&SceneId_SuhallaDesertSouth &&
       FieldGameFlag_GetByte(FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM) ==
-          LOCALID_FOURTH_SANDSTORM) {
+          ACTOR_FOURTH_SANDSTORM) {
     FieldScript_SetDestination((s32)&SceneId_WorldMap,
                                WORLD_MAP_FROM_SUHALLA_DESERT_SANDSTORM);
   } else {
@@ -777,11 +769,11 @@ static s32 EventScript_RevealEnds(void) {
   s32 removalResult;
 #endif
   if (gSaveBlock.sceneId == (s32)&SceneId_SuhallaDesertSouth) {
-    ObjectEvent_GetById(LOCALID_REVEALED_PILLAR)->priorityFlags =
-        OBJ_EVENT_PRIORITY_UNDERFOOT;
-    ObjectEvent_GetById(LOCALID_REVEALED_PILLAR)->motionFlags =
-        OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
-    ObjectEvent_SetPosition(LOCALID_REVEALED_PILLAR, 0, 0);
+    Actor_GetById(ACTOR_REVEALED_PILLAR)->priorityFlags =
+        ACTOR_PRIORITY_UNDERFOOT;
+    Actor_GetById(ACTOR_REVEALED_PILLAR)->motionFlags =
+        ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    Actor_SetPosition(ACTOR_REVEALED_PILLAR, 0, 0);
     MapGrid_CopyCellAttributes(16, 44, 1, 1, 15, 44);
     TreasureSpot_SetPosition(TREASURE_SPOT_PSYNERGY_STONE, 0, 0);
     MapGrid_CopyCellAttributes(12, 71, 1, 1, 127, 127);
@@ -810,10 +802,10 @@ static void EventScript_RevealStarts(void) {
 static s32 EventScript_RevealStarts(void) {
 #endif
   if (gSaveBlock.sceneId == (s32)&SceneId_SuhallaDesertSouth) {
-    ObjectEvent_GetById(LOCALID_REVEALED_PILLAR)->priorityFlags =
-        OBJ_EVENT_PRIORITY_UNDERFOOT;
-    ObjectEvent_GetById(LOCALID_REVEALED_PILLAR)->motionFlags = 0;
-    ObjectEvent_SetPosition(LOCALID_REVEALED_PILLAR, PIXELS(248), PIXELS(712));
+    Actor_GetById(ACTOR_REVEALED_PILLAR)->priorityFlags =
+        ACTOR_PRIORITY_UNDERFOOT;
+    Actor_GetById(ACTOR_REVEALED_PILLAR)->motionFlags = 0;
+    Actor_SetPosition(ACTOR_REVEALED_PILLAR, PIXELS(248), PIXELS(712));
     MapGrid_CopyCellAttributes(31, 95, 1, 1, 15, 44);
     TreasureSpot_SetPosition(TREASURE_SPOT_PSYNERGY_STONE, -1, -1);
     TreasureSpot_MoveLeaderAway();
@@ -874,7 +866,7 @@ s32 Scene_Initialize(void) {
 static void SuhallaDesert_SetUpFirstMapStorms(void) {
   // Trial: sharing the blend tail through an ordinary inline shrinks this
   // function from 0x144 to 0x138 bytes in tbs-en; retain the original body.
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   s32 stormId;
   s32 stormAlpha = 0;
 
@@ -893,15 +885,15 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED + 4)) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_FIFTH_SANDSTORM_RISEN);
   }
-  for (stormId = LOCALID_FIRST_SANDSTORM; stormId <= LOCALID_LAST_SANDSTORM;
+  for (stormId = ACTOR_FIRST_SANDSTORM; stormId <= ACTOR_LAST_SANDSTORM;
        stormId++) {
-    objectEvent = ObjectEvent_GetById(stormId);
-    if (objectEvent != 0) {
+    actor = Actor_GetById(stormId);
+    if (actor != 0) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-        objectEvent->scaleX = Q16_ONE / 32;
-        objectEvent->scaleY = Q16_ONE / 32;
+        actor->scaleX = Q16_ONE / 32;
+        actor->scaleY = Q16_ONE / 32;
       }
-      objectEvent->sprite->flags = 0;
+      actor->sprite->flags = 0;
     }
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND, IO_WRITE_16);
@@ -921,7 +913,7 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
 static void SuhallaDesert_SetUpSecondMapStorms(void) {
   // Trial: the same blend-tail inline shrinks this function from 0x158 to 0x14c
   // bytes in tbs-en; retain the original body.
-  struct ObjectEvent *objectEvent;
+  struct Actor *actor;
   struct Sprite *sprite;
   s32 stormId;
   s32 stormAlpha = 0;
@@ -935,23 +927,23 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED + 2)) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_THIRD_SANDSTORM_RISEN);
   }
-  for (stormId = LOCALID_FIRST_SANDSTORM; stormId < LOCALID_FOURTH_SANDSTORM;
+  for (stormId = ACTOR_FIRST_SANDSTORM; stormId < ACTOR_FOURTH_SANDSTORM;
        stormId++) {
-    objectEvent = ObjectEvent_GetById(stormId);
-    if (objectEvent != 0) {
+    actor = Actor_GetById(stormId);
+    if (actor != 0) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-        objectEvent->scaleX = Q16_ONE / 32;
-        objectEvent->scaleY = Q16_ONE / 32;
+        actor->scaleX = Q16_ONE / 32;
+        actor->scaleY = Q16_ONE / 32;
       }
-      sprite = objectEvent->sprite;
+      sprite = actor->sprite;
       sprite->flags = 0;
     }
   }
-  objectEvent = ObjectEvent_GetById(LOCALID_FOURTH_SANDSTORM);
-  if (objectEvent != 0) {
+  actor = Actor_GetById(ACTOR_FOURTH_SANDSTORM);
+  if (actor != 0) {
     struct SpriteAnim *part;
 
-    sprite = objectEvent->sprite;
+    sprite = actor->sprite;
     part = sprite->entries[0];
     if (part != 0) {
       part->colorMode = 10;
@@ -995,14 +987,14 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 s32 gSuhallaDesertStormScript[] = {
-    SC_CALL(SuhallaDesert_ClearObjectEventSpriteAndCollisionFlags),
-    SC_CALL(SuhallaDesert_ToggleObjectEventActive),
+    SC_CALL(SuhallaDesert_ClearActorSpriteAndCollisionFlags),
+    SC_CALL(SuhallaDesert_ToggleActorActive),
     SC_END,
 };
 
 s32 gSuhallaDesertFourthStormScript[] = {
-    SC_CALL(SuhallaDesert_ClearObjectEventSpriteAndCollisionFlags),
-    SC_CALL(SuhallaDesert_ToggleObjectEventActive),
+    SC_CALL(SuhallaDesert_ClearActorSpriteAndCollisionFlags),
+    SC_CALL(SuhallaDesert_ToggleActorActive),
     SC_END,
 };
 
@@ -1075,34 +1067,34 @@ u32 gSuhallaDesertExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ObjectEventTemplate gSuhallaDesertObjectEventTemplatesOther[] = {
+struct ActorTemplate gSuhallaDesertActorTemplatesOther[] = {
     {MAP_TABLE_END},
 };
 
 // clang-format off
-struct ObjectEventTemplate gSuhallaDesertNorthObjectEventTemplates[] = {
+struct ActorTemplate gSuhallaDesertNorthActorTemplates[] = {
     { SPRITE_SANDSTORM, FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED, (s32)gSuhallaDesertStormScript,
         PIXELS(56), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SANDSTORM, FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED + 1, (s32)gSuhallaDesertStormScript,
-        PIXELS(456), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(456), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SANDSTORM, FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED + 2, (s32)gSuhallaDesertStormScript,
-        PIXELS(120), 0, PIXELS(712), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(120), 0, PIXELS(712), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SANDSTORM, FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED + 3, (s32)gSuhallaDesertStormScript,
-        PIXELS(264), 0, PIXELS(712), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(264), 0, PIXELS(712), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SANDSTORM, FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED + 4, (s32)gSuhallaDesertStormScript,
-        PIXELS(440), 0, PIXELS(744), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(440), 0, PIXELS(744), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_IODEM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gSuhallaDesertSouthObjectEventTemplates[] = {
+struct ActorTemplate gSuhallaDesertSouthActorTemplates[] = {
     { SPRITE_SANDSTORM, FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED, (s32)gSuhallaDesertStormScript,
         PIXELS(216), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SANDSTORM, FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED + 1, (s32)gSuhallaDesertStormScript,
-        PIXELS(296), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(296), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SANDSTORM, FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED + 2, (s32)gSuhallaDesertStormScript,
-        PIXELS(408), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(408), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SANDSTORM, FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED + 3, (s32)gSuhallaDesertFourthStormScript,
         PIXELS(376), 0, PIXELS(632), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SANDSTORM, FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED + 4, MOVEMENT_TYPE_RESET_ACTION,
@@ -1116,7 +1108,7 @@ struct ObjectEventTemplate gSuhallaDesertSouthObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gSuhallaDesertCavesObjectEventTemplates[] = {
+struct ActorTemplate gSuhallaDesertCavesActorTemplates[] = {
     { MAP_TABLE_END },
 };
 
@@ -1157,22 +1149,22 @@ struct MapEvent gSuhallaDesertEventsOther[] = {
     { MAP_EVENT_COORD, 73, FLAG_SUHALLA_DESERT_THIRD_SANDSTORM_RISEN, EVENT_SCRIPT(EventScript_ThirdStormRises) },
     { MAP_EVENT_COORD, 54, FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED + 3, EVENT_SCRIPT(EventScript_CaughtByFourthStorm) },
     { MAP_EVENT_COORD, 81, FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_SET_OFF, EVENT_SCRIPT(EventScript_StormGivesChase) },
-    { MAP_EVENT_TALK, LOCALID_FLASH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FightFlash) },
+    { MAP_EVENT_TALK, ACTOR_FLASH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FightFlash) },
     { BG_EVENT(BG_EVENT_SILENT), TREASURE_SPOT_PSYNERGY_STONE, FLAG_SUHALLA_DESERT_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { BG_EVENT(BG_EVENT_CHEST), 103, FLAG_SUHALLA_DESERT_VIRTUOUS_ARMLET, FIND_ITEM(ITEM_VIRTUOUS_ARMLET) },
     { BG_EVENT(BG_EVENT_CHEST), 104, FLAG_SUHALLA_DESERT_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_SUHALLA_DESERT_COOKIE, FIND_ITEM(ITEM_COOKIE) },
     { BG_EVENT(BG_EVENT_CHEST), 102, FLAG_SUHALLA_DESERT_MIMIC_BEATEN, FIND_MIMIC | 6 },
-    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_FIRST_SANDSTORM, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM), EVENT_SCRIPT(EventScript_DouseCastAtStorm) },
-    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_FIRST_SANDSTORM + 1, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM), EVENT_SCRIPT(EventScript_DouseCastAtStorm) },
-    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_FIRST_SANDSTORM + 2, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM), EVENT_SCRIPT(EventScript_DouseCastAtStorm) },
-    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_FIRST_SANDSTORM + 3, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM), EVENT_SCRIPT(EventScript_DouseCastAtStorm) },
-    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_FIRST_SANDSTORM + 4, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM), EVENT_SCRIPT(EventScript_DouseCastAtStorm) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_FIRST_SANDSTORM, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM), EVENT_SCRIPT(EventScript_DouseStorm) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_FIRST_SANDSTORM + 1, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM), EVENT_SCRIPT(EventScript_DouseStorm) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_FIRST_SANDSTORM + 2, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM), EVENT_SCRIPT(EventScript_DouseStorm) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_FIRST_SANDSTORM + 3, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM), EVENT_SCRIPT(EventScript_DouseStorm) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_FIRST_SANDSTORM + 4, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM), EVENT_SCRIPT(EventScript_DouseStorm) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_SANDSTORM, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM), EVENT_SCRIPT(EventScript_DouseCastAtStorm) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_SANDSTORM + 1, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM), EVENT_SCRIPT(EventScript_DouseCastAtStorm) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_SANDSTORM + 2, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM), EVENT_SCRIPT(EventScript_DouseCastAtStorm) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_SANDSTORM + 3, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM), EVENT_SCRIPT(EventScript_DouseCastAtStorm) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_SANDSTORM + 4, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM), EVENT_SCRIPT(EventScript_DouseCastAtStorm) },
+    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_FIRST_SANDSTORM, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM), EVENT_SCRIPT(EventScript_DouseStorm) },
+    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_FIRST_SANDSTORM + 1, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM), EVENT_SCRIPT(EventScript_DouseStorm) },
+    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_FIRST_SANDSTORM + 2, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM), EVENT_SCRIPT(EventScript_DouseStorm) },
+    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_FIRST_SANDSTORM + 3, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM), EVENT_SCRIPT(EventScript_DouseStorm) },
+    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_FIRST_SANDSTORM + 4, IF_FLAG_SET(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM), EVENT_SCRIPT(EventScript_DouseStorm) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealStarts) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealEnds) },
     { MAP_EVENT_RAISED, RAISED_SANDSTORM_CARRIES_PARTY_AWAY, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StormCarriesPartyAway) },

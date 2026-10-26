@@ -6,19 +6,18 @@
 
 struct SceneEntrance;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 struct SceneExitRegion;
 
 const struct SceneEntrance *SolSanctumLunaSolRooms_GetEntrances(void);
 const struct SceneExitRegion *SolSanctumLunaSolRooms_GetRegions(void);
 const u32 *SolSanctumLunaSolRooms_GetExits(void);
-const struct ObjectEventTemplate *
-SolSanctumLunaSolRooms_GetObjectEventTemplates(void);
+const struct ActorTemplate *SolSanctumLunaSolRooms_GetActorTemplates(void);
 const struct MapEvent *SolSanctumLunaSolRooms_GetEvents(void);
 s32 SolSanctumLunaSolRooms_Initialize(void);
 extern struct SceneEntrance gSolSanctumLunaSolRoomsEntrances[];
 extern u32 gSolSanctumLunaSolRoomsExits[];
-extern struct ObjectEventTemplate gSolSanctumLunaSolRoomsObjectEventTemplates[];
+extern struct ActorTemplate gSolSanctumLunaSolRoomsActorTemplates[];
 extern struct MapEvent gSolSanctumLunaSolRoomsEvents[];
 
 #endif

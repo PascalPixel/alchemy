@@ -7,8 +7,7 @@
 const struct SceneEntrance *SolSanctumElementalStarRoom_GetEntrances(void);
 const struct SceneExitRegion *SolSanctumElementalStarRoom_GetRegions(void);
 const u32 *SolSanctumElementalStarRoom_GetExits(void);
-const struct ObjectEventTemplate *
-SolSanctumElementalStarRoom_GetObjectEventTemplates(void);
+const struct ActorTemplate *SolSanctumElementalStarRoom_GetActorTemplates(void);
 const struct MapEvent *SolSanctumElementalStarRoom_GetEvents(void);
 s32 SolSanctumElementalStarRoom_Initialize(void);
 extern s32 gFieldEffect_ShortScript[];
@@ -19,8 +18,7 @@ extern s32 gSolSanctumElementalStarRoom_AngleScript[];
 extern s32 gSolSanctumElementalStarRoom_PresentItemScript[];
 extern struct SceneEntrance gSolSanctumElementalStarRoom_Entrances[];
 extern u32 gSolSanctumElementalStarRoom_Exits[];
-extern struct ObjectEventTemplate
-    gSolSanctumElementalStarRoom_ObjectEventTemplates[];
+extern struct ActorTemplate gSolSanctumElementalStarRoom_ActorTemplates[];
 extern struct MapEvent gSolSanctumElementalStarRoom_Events[];
 extern u16 gSolSanctumElementalStarRoom_StarCells[];
 extern u8 gSolSanctum_RingDrift[][3];

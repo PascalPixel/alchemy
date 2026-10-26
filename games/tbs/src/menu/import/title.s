@@ -14,7 +14,7 @@
 	.set import.Save_ScanRecordFlags, 1
 	.set import.Party_EndChildhood, 1
 	.set import.FieldScript_WaitFrames, 1
-	.set import.ObjectEvent_GetById, 1
+	.set import.Actor_GetById, 1
 	.set import.FieldScript_SetDestination, 1
 	.set import.FieldScript_StartScreenTransition, 1
 	.set import.FieldScript_WaitTransitionFrames, 1

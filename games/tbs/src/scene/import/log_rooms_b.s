@@ -15,13 +15,13 @@
 	.set import.FieldScript_End, 1
 	.set import.Scene_AssignViewFlags, 1
 	.set import.PartyInventory_GiveItem, 1
-	.set import.FieldScript_AskYesNoWithObjectEventAnimation, 1
-	.set import.ObjectEvent_GetById, 1
+	.set import.FieldScript_AskYesNoWithActorAnimation, 1
+	.set import.Actor_GetById, 1
 	.set import.ObjectMotion_EnableActionAndSetCallback, 1
-	.set import.Import_ObjectEventSetAnimation, 1
+	.set import.Import_ActorSetAnimation, 1
 	.set import.ObjectMotion_SetAnimationAndWait, 1
 	.set import.ObjectMotion_SetVarCbAndRefresh, 1
-	.set import.ObjectEvent_LinkPair, 1
+	.set import.Actor_LinkPair, 1
 	.set import.FieldScript_SetMessageId, 1
 	.set import.FieldMessage_ShowAtObject, 1
 	.set import.FieldScript_ShowMessageAndWait, 1

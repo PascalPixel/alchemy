@@ -195,7 +195,7 @@ void SpriteAnim_Reset(struct SpriteAnim *layer) {
 /// has four anims already. Called by Sprite_Create for a sprite's
 /// first anim, by Object_RegisterSpriteMetadata and the sprite
 /// viewer, and as Sprite_AddAnimFar by the battle, the Psynergy
-/// effects and the field map's object events.
+/// effects and the field map's actors.
 s32 Sprite_AddAnim(struct Sprite *sprite, s32 id) {
   s32 layerHandle = (s32)sprite->entries[0];
   s32 freeIndex = 0;

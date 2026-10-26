@@ -6,14 +6,13 @@
 
 struct SceneEntrance;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 struct SceneExitRegion;
 
 const struct SceneEntrance *VenusLighthouseAerie_GetEntrances(void);
 const struct SceneExitRegion *VenusLighthouseAerie_GetRegions(void);
 const u32 *VenusLighthouseAerie_GetExits(void);
-const struct ObjectEventTemplate *
-VenusLighthouseAerie_GetObjectEventTemplates(void);
+const struct ActorTemplate *VenusLighthouseAerie_GetActorTemplates(void);
 const struct MapEvent *VenusLighthouseAerie_GetEvents(void);
 s32 VenusLighthouseAerie_Initialize(void);
 extern s32 gFieldEffect_ShortScript[];
@@ -39,7 +38,7 @@ extern s32 gVenusLighthouseAerie_PartyExitAction[];
 extern s32 gVenusLighthouseAerie_PartyHeadingAction[];
 extern struct SceneEntrance gVenusLighthouseAerieEntrances[];
 extern u32 gVenusLighthouseAerieExits[];
-extern struct ObjectEventTemplate gVenusLighthouseAerieObjectEventTemplates[];
+extern struct ActorTemplate gVenusLighthouseAerieActorTemplates[];
 extern s32 gVenusLighthouseAerie_LandedPlatform;
 extern struct MapEvent gVenusLighthouseAerieEvents[];
 extern s32 gVenusLighthouseAerie_BesideParticleScript[];

@@ -63,7 +63,7 @@
 #define Ram_CameraWork ((void **)&gHeapSlots[HEAP_SLOT_CAMERA])
 #define Ram_FieldWork ((void **)&gHeapSlots[HEAP_SLOT_FIELD])
 #define Ram_DisplayWork ((void **)&gHeapSlots[HEAP_SLOT_SCREEN_TRANSITION])
-#define Ram_ObjectEventEffectWork ((void **)&gHeapSlots[HEAP_SLOT_FADE_OVERLAY])
+#define Ram_ActorEffectWork ((void **)&gHeapSlots[HEAP_SLOT_FADE_OVERLAY])
 #define Ram_BattleEntryTimer                                                   \
   ((void **)&gHeapSlots[HEAP_SLOT_BATTLE_ENTRY_TIMER])
 #define Ram_FieldEffectWork ((void **)&gHeapSlots[HEAP_SLOT_FIELD_EFFECT])

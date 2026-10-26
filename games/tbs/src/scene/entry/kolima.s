@@ -2,6 +2,6 @@
 	overlay_veneer Kolima_Initialize
 	overlay_veneer Kolima_GetEntrances
 	overlay_veneer Kolima_GetExits
-	overlay_veneer Kolima_GetObjectEventTemplates
+	overlay_veneer Kolima_GetActorTemplates
 	overlay_veneer Kolima_GetEvents
 	overlay_veneer Kolima_GetRegions

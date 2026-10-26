@@ -5,21 +5,21 @@
 #include "vram_cache.h"
 #include "fx_work.h"
 
-// Vale and the world map: the particles that rise around a glowing object
-// event.
+// Vale and the world map: the particles that rise around a glowing
+// actor.
 
-/// Attaches two rising particles to the object event, sharing the effect's
+/// Attaches two rising particles to the actor, sharing the effect's
 /// cached tiles.
-void WorldMap_CreateLinkedEffects(struct ObjectEvent *parent) {
-  struct ObjectEvent *pair[2];
-  struct ObjectEvent *child;
+void WorldMap_CreateLinkedEffects(struct Actor *parent) {
+  struct Actor *pair[2];
+  struct Actor *child;
   struct Sprite *sprite;
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   s32 i;
 
   for (i = 0; i < 2; ++i) {
-    child = ObjectEvent_Create(SPRITE_GOLDEN_RINGS, parent->x.fixed,
-                               parent->y.fixed, parent->z.fixed);
+    child = Actor_Create(SPRITE_GOLDEN_RINGS, parent->x.fixed, parent->y.fixed,
+                         parent->z.fixed);
     pair[i] = child;
     if (child != NULL) {
       child->groundHeight = parent->groundHeight;
@@ -43,14 +43,14 @@ void WorldMap_CreateLinkedEffects(struct ObjectEvent *parent) {
     }
   }
   {
-    struct ObjectEvent *effect = pair[0];
+    struct Actor *effect = pair[0];
     struct Sprite *effectSprite = effect->sprite;
 
     effect->update = FieldEffect_AnimateVerticalNegative;
     effectSprite->image.priority = 1;
   }
   {
-    struct ObjectEvent *effect = pair[1];
+    struct Actor *effect = pair[1];
     struct Sprite *effectSprite = effect->sprite;
 
     effectSprite->image.priority = 1;

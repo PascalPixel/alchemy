@@ -1,7 +1,7 @@
 /// @file
 /// Vale's storm and Vale's homes: going indoors through a door.
 #include "types.h"
-#include "object_event.h"
+#include "actor.h"
 #include "script_layer.h"
 #include "flags.h"
 

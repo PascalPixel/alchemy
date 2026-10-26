@@ -111,8 +111,8 @@ struct SaveBlock {
   s16 battleMusic;         ///< the battle music chosen for the encounter
   s16 sceneMusic;          ///< the current scene's field music
   u8 movementMode;         ///< 1 while the leader is climbing, 0 otherwise
-  u8 paddingAfterMovement; ///< up to the word leaderLocalId starts on
-  s32 leaderLocalId;       ///< the leader: its unit and its object event
+  u8 paddingAfterMovement; ///< up to the word leaderActorId starts on
+  s32 leaderActorId;       ///< the leader: its unit and its actor
   u8 party[8];             ///< the party in order
   u8 unusedAfterOwners[5]; ///< no code names it
   u8 windowColor[2];       ///< window hue (0 to 23), brightness (0 to 14)
@@ -205,7 +205,7 @@ STATIC_ASSERT(offsetof(struct SaveBlock, entrance) == 0x1c2);
 STATIC_ASSERT(offsetof(struct SaveBlock, special) == 0x1d6);
 STATIC_ASSERT(offsetof(struct SaveBlock, x) == 0x1dc);
 STATIC_ASSERT(offsetof(struct SaveBlock, movementMode) == 0x1f2);
-STATIC_ASSERT(offsetof(struct SaveBlock, leaderLocalId) == 0x1f4);
+STATIC_ASSERT(offsetof(struct SaveBlock, leaderActorId) == 0x1f4);
 STATIC_ASSERT(offsetof(struct SaveBlock, party) == 0x1f8);
 STATIC_ASSERT(offsetof(struct SaveBlock, speech) == 0x20a);
 STATIC_ASSERT(offsetof(struct SaveBlock, messageSpeed) == 0x20c);

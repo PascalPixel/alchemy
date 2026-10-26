@@ -9,7 +9,7 @@
 /// FLAG_VAULT_ON_BRIDGE remembers the deck, which each map restores on a
 /// kept-position return, such as after battle.
 #include "types.h"
-#include "object_event.h"
+#include "actor.h"
 #include "script_layer.h"
 #include "flags.h"
 

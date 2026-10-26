@@ -2,7 +2,7 @@
 /// Vault's interiors, before and after the thieves are caught: an item lying on
 /// the floor, drawn as its menu icon (the Bone, at (568, 16, 672)).
 #include "types.h"
-#include "object_event.h"
+#include "actor.h"
 #include "script_layer.h"
 
 /// Creates object 22 at the 16.16 position and draws it as the item's icon: the
@@ -20,7 +20,7 @@ void Vault_PlaceItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z) {
   zero = 0;
   object = (u8 *)Object_CreateField(SPRITE_BLANK, fixed_x, fixed_y, fixed_z);
   if (object != 0) {
-    sprite = (u8 *)((struct ObjectEvent *)object)->sprite;
+    sprite = (u8 *)((struct Actor *)object)->sprite;
     field = sprite + 38; // flags, then count
     *field = zero;
     field += 1;

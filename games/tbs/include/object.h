@@ -9,7 +9,7 @@
 #include "static_assert.h"
 
 struct Sprite;
-union ObjectEventOrEffect;
+union ActorOrEffect;
 
 /// One of the 64 objects (HEAP_SLOT_OBJECTS): its script, position, motion
 /// toward a target, sprites and update hook.
@@ -17,7 +17,7 @@ union ObjectEventOrEffect;
 /// ObjectSystem_Initialize takes the objects with the object system's work
 /// (HEAP_SLOT_OBJECT_SYSTEM), so it lives until the next map change. The
 /// engine reads every object through this struct; maps read the same 0x70
-/// bytes as struct ObjectEvent, or as struct FieldEffect for an effect, and
+/// bytes as struct Actor, or as struct FieldEffect for an effect, and
 /// the few views kept for matching are listed in the field README.
 struct Object {
   const s32
@@ -32,7 +32,7 @@ struct Object {
   s32 scaleY;       ///< 16.16 fixed point, 0x10000 full size
   u16 radius;       ///< collision radius in pixels
   u8 layer;         ///< the map layer its ground height is read from
-  /// ObjectEvent.priorityFlags: 1 for placed object events, 2 for footprints.
+  /// Actor.priorityFlags: 1 for placed actors, 2 for footprints.
   u8 priorityFlags;
   s32 velocityX;  ///< 16.16 fixed-point pixels per frame
   s32 velocityY;  ///< 16.16 fixed-point pixels per frame
@@ -57,18 +57,18 @@ struct Object {
   /// sprite pointers, empty ones null, read through a (void **) or (struct
   /// Sprite **) cast. Neither a union nor a void pointer: as a union its
   /// stores move after the next store (Object_CreateField,
-  /// ObjectEvent_Restore), and as void * the leader's sprite priority load in
+  /// Actor_Restore), and as void * the leader's sprite priority load in
   /// FieldEffect_UpdatePhasedRadialParticle moves.
   struct Sprite *sprite;
   u8 spriteStorageKind; ///< an enum ObjectSpriteKind in its low four bits
-  /// ObjectEventMotionFlag bits: 3 when created, 4 for a placed object event
+  /// ActorMotionFlag bits: 3 when created, 4 for a placed actor
   /// above the ground; zero is free flight in 3D.
   u8 motionFlags;
   u8 arrivalAxis;     ///< the ARRIVAL_AXIS_* that decides arrival
   u8 conditionResult; ///< the object script's last flag test
   u8 snapToTarget;    ///< nonzero lands it exactly on its target
-  /// ObjectEvent.collisionFlags: bit 0 solid, bit 1 the player pushes it,
-  /// bits 2 to 4 for talk and Psynergy targets; placed object events take 1.
+  /// Actor.collisionFlags: bit 0 solid, bit 1 the player pushes it,
+  /// bits 2 to 4 for talk and Psynergy targets; placed actors take 1.
   u8 collisionFlags;
   u8 steeringFlags; ///< bit 0 faces its motion
   u8 paused;        ///< nonzero skips its script and motion
@@ -125,9 +125,9 @@ struct Object {
   };
   /// The object its action script follows or faces.
   struct Object *linkedObject;
-  /// The update hook (ObjectEvent.update), which the unused
+  /// The update hook (Actor.update), which the unused
   /// Object_SetUpdateValue sets as a word.
-  void (*update)(union ObjectEventOrEffect *fieldObject);
+  void (*update)(union ActorOrEffect *fieldObject);
 };
 
 STATIC_ASSERT(sizeof(struct Object) == 0x70);
@@ -140,34 +140,34 @@ STATIC_ASSERT(offsetof(struct Object, wait) == 0x5e);
 STATIC_ASSERT(offsetof(struct Object, footprintSide) == 0x66);
 
 enum {
-  OBJECT_EVENT_SNAPSHOT_CAPACITY = 32, ///< object events a snapshot keeps
-  OBJECT_EVENT_SNAPSHOT_EMPTY = 255    ///< a free slot, and the end of the list
+  ACTOR_SNAPSHOT_CAPACITY = 32, ///< actors a snapshot keeps
+  ACTOR_SNAPSHOT_EMPTY = 255    ///< a free slot, and the end of the list
 };
 
-/// Object events kept across a battle or a saved map, with parallel sprite
-/// state. The slot list ends in OBJECT_EVENT_SNAPSHOT_EMPTY unless every entry
+/// Actors kept across a battle or a saved map, with parallel sprite
+/// state. The slot list ends in ACTOR_SNAPSHOT_EMPTY unless every entry
 /// is filled.
-struct ObjectEventSnapshot {
-  u8 slots[OBJECT_EVENT_SNAPSHOT_CAPACITY]; ///< local ids, or
-                                            ///< OBJECT_EVENT_SNAPSHOT_EMPTY
-  struct Object objectEvents[OBJECT_EVENT_SNAPSHOT_CAPACITY]; ///< copied by DMA
-  u8 animations[OBJECT_EVENT_SNAPSHOT_CAPACITY];  ///< each sprite's lastNo
-  u8 spriteFlags[OBJECT_EVENT_SNAPSHOT_CAPACITY]; ///< restored through the
-                                                  ///< dispatcher
-  u8 priorities[OBJECT_EVENT_SNAPSHOT_CAPACITY];  ///< both image and shadow
-                                                  ///< priority
+struct ActorSnapshot {
+  u8 slots[ACTOR_SNAPSHOT_CAPACITY];             ///< actor ids, or
+                                                 ///< ACTOR_SNAPSHOT_EMPTY
+  struct Object actors[ACTOR_SNAPSHOT_CAPACITY]; ///< copied by DMA
+  u8 animations[ACTOR_SNAPSHOT_CAPACITY];        ///< each sprite's lastNo
+  u8 spriteFlags[ACTOR_SNAPSHOT_CAPACITY];       ///< restored through the
+                                                 ///< dispatcher
+  u8 priorities[ACTOR_SNAPSHOT_CAPACITY];        ///< both image and shadow
+                                                 ///< priority
 };
 
-STATIC_ASSERT(offsetof(struct ObjectEventSnapshot, objectEvents) == 0x20);
-STATIC_ASSERT(offsetof(struct ObjectEventSnapshot, animations) == 0xe20);
-STATIC_ASSERT(offsetof(struct ObjectEventSnapshot, spriteFlags) == 0xe40);
-STATIC_ASSERT(offsetof(struct ObjectEventSnapshot, priorities) == 0xe60);
-STATIC_ASSERT(sizeof(struct ObjectEventSnapshot) == 0xe80);
+STATIC_ASSERT(offsetof(struct ActorSnapshot, actors) == 0x20);
+STATIC_ASSERT(offsetof(struct ActorSnapshot, animations) == 0xe20);
+STATIC_ASSERT(offsetof(struct ActorSnapshot, spriteFlags) == 0xe40);
+STATIC_ASSERT(offsetof(struct ActorSnapshot, priorities) == 0xe60);
+STATIC_ASSERT(sizeof(struct ActorSnapshot) == 0xe80);
 
 /// The one snapshot, in EWRAM outside the heap so that it outlives the map
-/// change into and out of a battle. ObjectEvent_Snapshot fills it before a
-/// random battle and when saving; ObjectEvent_Restore puts the object events
+/// change into and out of a battle. Actor_Snapshot fills it before a
+/// random battle and when saving; Actor_Restore puts the actors
 /// back when the party returns keeping its position (FLAG_KEEP_PARTY_POSITION).
-extern struct ObjectEventSnapshot gObjectEventSnapshot;
+extern struct ActorSnapshot gActorSnapshot;
 
 #endif

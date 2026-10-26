@@ -50,7 +50,7 @@ void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
     effectWork->lit = 1;
   if (gSaveBlock.mapId == (s32)&SceneId_MercuryLighthouseMiddle)
     effectWork->lit = 1;
-  FieldEffect_SetupObjectPair(gSaveBlock.leaderLocalId, -1);
+  FieldEffect_SetupObjectPair(gSaveBlock.leaderActorId, -1);
   // Every effect but Reveal's own pauses Reveal's countdown (running is 0
   // here) until FieldEffect_End lets it run again.
   if (effectWork->fieldPsynergy != FIELD_PSYNERGY_REVEAL)
@@ -74,10 +74,10 @@ void FieldEffect_SetupObjectPair(s32 userId, s32 targetId) {
 
   effectWork = gFieldEffectWork;
   effectWork->firstObjectId = userId;
-  user = ObjectEvent_GetByLocalId((s16)userId);
+  user = Actor_GetByActorId((s16)userId);
   effectWork->secondObjectId = targetId;
   effectWork->mainObject = user;
-  target = ObjectEvent_GetByLocalId((s16)targetId);
+  target = Actor_GetByActorId((s16)targetId);
   dir = (user->facing + 0x2000) & 0xc000; // to the nearest quarter turn
   effectWork->child = target;
   effectWork->angle = dir;
@@ -152,9 +152,9 @@ void FieldEffect_End(void) {
   // from inside it frees only the slots; the rest waits for its own.
   if (runtime->psynergyActing == 0) {
     s32 waited = 0;
-    void (*firstActiveUpdate)(union ObjectEventOrEffect *) =
+    void (*firstActiveUpdate)(union ActorOrEffect *) =
         FieldEffect_UpdateScaledArcObjectB;
-    void (*secondActiveUpdate)(union ObjectEventOrEffect *) =
+    void (*secondActiveUpdate)(union ActorOrEffect *) =
         FieldEffect_UpdateScaledArcObjectA;
     s32 active;
 
@@ -164,7 +164,7 @@ void FieldEffect_End(void) {
       active = 0;
       remaining = 0;
       while (remaining <= 63) {
-        void (*update)(union ObjectEventOrEffect *) = slot->update;
+        void (*update)(union ActorOrEffect *) = slot->update;
 
         if (update == firstActiveUpdate || update == secondActiveUpdate) {
           active = 1;
@@ -204,7 +204,7 @@ void FieldEffect_End(void) {
 void FieldEffect_StartCast(void) {
   s32 ability;
   s32 announcedAbility;
-  struct ObjectEvent *caster;
+  struct Actor *caster;
   struct FieldEffectWork *effectWork;
   void *renderState;
 
@@ -223,7 +223,7 @@ void FieldEffect_StartCast(void) {
     caster->update = FieldEffect_FlickerObjectAndTick;
   }
   if (effectWork->active != 0) {
-    ObjectEvent_SetOthersPaused((struct Object *)caster, 1, 0);
+    Actor_SetOthersPaused((struct Object *)caster, 1, 0);
     MessageArgument_PushFar(announcedAbility, MESSAGE_ARGUMENT_ABILITY);
     // The mode branches currently show the same message. Merging them shrinks
     // the native English function by 32 bytes, so keep this existing form.
@@ -232,7 +232,7 @@ void FieldEffect_StartCast(void) {
     } else {
       FieldMessage_ShowFar(MsgAbilityAnnounce, effectWork->messageMode);
     }
-    ObjectEvent_SetOthersPaused((struct Object *)caster, 0, 0x10);
+    Actor_SetOthersPaused((struct Object *)caster, 0, 0x10);
   }
   if (GameFlag_GetFar(FLAG_PSYNERGY_EFFECT) != 0) {
     if (effectWork->visible != 0) {

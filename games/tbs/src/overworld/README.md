@@ -44,8 +44,8 @@ the area's name is shown if the party has come into a new
 [area](../../glossary.md#area).
 
 `SceneManager_Run` runs one scene, and its state, the requests among it, is
-`struct FieldWork`, reached through `gFieldWork`. `ObjectEvent_Snapshot`
-remembers where everyone stood before a battle and `ObjectEvent_Restore` puts
+`struct FieldWork`, reached through `gFieldWork`. `Actor_Snapshot`
+remembers where everyone stood before a battle and `Actor_Restore` puts
 them back. The requests, in the order the loop takes them:
 
 | Order | Field | What it asks for |
@@ -69,7 +69,7 @@ them back. The requests, in the order the loop takes them:
 | `FIELD_RAISED_EVENT_REGION_MAP` | -888 | R on the world map: the picture of the world |
 | `FIELD_RAISED_EVENT_WORLD_MAP_ZOOM` | -889 | L on the world map: the view pulls back |
 | `FLAG_KEEP_PARTY_POSITION` | `0x109` | the next scene starts where the party was, everyone put back |
-| `OBJECT_EVENT_SNAPSHOT_CAPACITY` | 32 | people a battle's snapshot keeps |
+| `ACTOR_SNAPSHOT_CAPACITY` | 32 | people a battle's snapshot keeps |
 
 ## Random battles
 
@@ -206,19 +206,19 @@ event's work serves the Djinn joining as well as Psynergy.
 ## Limits
 
 - 104 encounter zones of eight formations each.
-- 66 local ids in the field work, each pointing at one of Field's 64
+- 66 actor ids in the field work, each pointing at one of Field's 64
   objects, and ten treasure spots; 24 field effect sprites in the effect
   event.
-- A battle snapshot keeps up to 32 object events.
+- A battle snapshot keeps up to 32 actors.
 - One Halt target at a time.
 
 ## Words used here
 
 - **field work**: `struct FieldWork`, the running scene's state
   ([above](#the-scene-loop-handles-requests-not-scripts)). Local name `work`.
-- **object event**: an [object](../../glossary.md#object) the field work's
-  `objectEvents` array, 66 long, points at by
-  [local id](../../glossary.md#local-id). Local names `objectEvent`, `actor`,
+- **actor**: an [object](../../glossary.md#object) the field work's
+  `actors` array, 66 long, points at by
+  [actor id](../../glossary.md#actor-id). Local names `actor`,
   `object`, `leader`.
 - **request**: a field of the field work that something sets to interrupt the
   walk (above).
@@ -233,7 +233,7 @@ event's work serves the Djinn joining as well as Psynergy.
 - **field effect sprite**: `struct FieldEffectSprite`, one particle an effect
   moves and draws.
 - **treasure spot**: a chest or Psynergy Stone the map places at one of
-  its cells; the field work holds up to ten, apart from the object events.
+  its cells; the field work holds up to ten, apart from the actors.
 - **mode**: `work->mode` is `OBJECT_SYSTEM_LAYOUT` on a town or dungeon scene
   and `OBJECT_SYSTEM_WORLD_MAP` on the world map.
 

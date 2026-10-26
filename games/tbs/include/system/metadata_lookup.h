@@ -22,10 +22,10 @@ struct AnimationMetadata {
   s8 adjustX; ///< pixels
   s8 adjustY; ///< pixels
   /// Pixels from the object's position up to the top of its sprite
-  /// (ObjectEvent_GetScreenPosition).
+  /// (Actor_GetScreenPosition).
   u8 boxX;
   /// Pixels; half of it is a battle unit's Object.radius, and can be an
-  /// object's radius (ObjectEvent.radius).
+  /// object's radius (Actor.radius).
   u8 boxY;
   u8 frameCodec; ///< SpriteAnim.mode: 1 tagged LZ, 3 LZ, anything else raw
   /// The frame pointers; null takes them from the sprite frame cache slot

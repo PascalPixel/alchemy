@@ -6,13 +6,13 @@
 
 struct SceneEntrance;
 struct MapEvent;
-struct ObjectEventTemplate;
+struct ActorTemplate;
 struct SceneExitRegion;
 
 const struct SceneEntrance *KalayTolbiDocks_GetEntrances(void);
 const struct SceneExitRegion *KalayTolbiDocks_GetRegions(void);
 const u32 *KalayTolbiDocks_GetExits(void);
-const struct ObjectEventTemplate *KalayTolbiDocks_GetObjectEventTemplates(void);
+const struct ActorTemplate *KalayTolbiDocks_GetActorTemplates(void);
 const struct MapEvent *KalayTolbiDocks_GetEvents(void);
 s32 KalayTolbiDocks_Initialize(void);
 extern u16 gKalayTolbiDocks_KalayDoorCells[];
@@ -23,19 +23,14 @@ extern struct SceneEntrance gKalayTolbiDocks_KalayEntrances[];
 extern struct SceneEntrance gKalayTolbiDocks_TolbiEntrances[];
 extern struct SceneEntrance gKalayTolbiDocks_InteriorEntrances[];
 extern u32 gKalayTolbiDocks_Exits[];
-extern struct ObjectEventTemplate gKalayTolbiDocks_NoObjectEventTemplates[];
-extern struct ObjectEventTemplate gKalayTolbiDocks_TolbiObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gKalayTolbiDocks_TolbiObjectEventTemplatesStranded[];
-extern struct ObjectEventTemplate gKalayTolbiDocks_KalayObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gKalayTolbiDocks_KalayObjectEventTemplatesShipGone[];
-extern struct ObjectEventTemplate
-    gKalayTolbiDocks_InteriorObjectEventTemplates[];
-extern struct ObjectEventTemplate
-    gKalayTolbiDocks_InteriorObjectEventTemplatesShipGone[];
-extern struct ObjectEventTemplate
-    gKalayTolbiDocks_InteriorObjectEventTemplatesStranded[];
+extern struct ActorTemplate gKalayTolbiDocks_NoActorTemplates[];
+extern struct ActorTemplate gKalayTolbiDocks_TolbiActorTemplates[];
+extern struct ActorTemplate gKalayTolbiDocks_TolbiActorTemplatesStranded[];
+extern struct ActorTemplate gKalayTolbiDocks_KalayActorTemplates[];
+extern struct ActorTemplate gKalayTolbiDocks_KalayActorTemplatesShipGone[];
+extern struct ActorTemplate gKalayTolbiDocks_InteriorActorTemplates[];
+extern struct ActorTemplate gKalayTolbiDocks_InteriorActorTemplatesShipGone[];
+extern struct ActorTemplate gKalayTolbiDocks_InteriorActorTemplatesStranded[];
 extern struct MapEvent gKalayTolbiDocks_NoEvents[];
 extern struct MapEvent gKalayTolbiDocks_KalayEvents[];
 extern struct MapEvent gKalayTolbiDocks_KalayEventsShipGone[];

@@ -7,12 +7,12 @@
 /// Sets an object's y and groundHeight to the map's height at its x and z.
 /// Called by Field_PlaceTreasureSpots for each treasure spot it places.
 void ObjectMotion_SnapToTerrain(void *object) {
-  struct Object *objectEvent = object;
+  struct Object *actor = object;
   s32 groundHeight;
 
-  groundHeight = MapGrid_GetTerrainHeightFar(0, objectEvent->x, objectEvent->z);
-  objectEvent->y = groundHeight;
-  objectEvent->groundHeight = groundHeight;
+  groundHeight = MapGrid_GetTerrainHeightFar(0, actor->x, actor->z);
+  actor->y = groundHeight;
+  actor->groundHeight = groundHeight;
 }
 
 /// The map grid's work (gMapGridWork[0], HEAP_SLOT_MAP_GRID), seen as its
@@ -48,7 +48,7 @@ enum {
 /// once its flag is set and gone once its mimic was beaten, and a Psynergy
 /// Stone for a bg event giving one, until it is taken. A treasure spot with no
 /// such event takes no slot. The objects are kept in work->treasureSpots, not
-/// in object event slots. Called by SceneManager_Run on map load; clears and
+/// in actor slots. Called by SceneManager_Run on map load; clears and
 /// fills work->treasureSpots.
 void Field_PlaceTreasureSpots(void) {
   u32 id;
@@ -64,7 +64,7 @@ void Field_PlaceTreasureSpots(void) {
   u8 *list = grid->markers;
   struct TreasureSpot *marker = work->treasureSpots;
   const struct MapEvent *event;
-  struct Object *markerObjectEvent;
+  struct Object *markerActor;
   u32 column;
   u32 row;
 
@@ -88,33 +88,32 @@ void Field_PlaceTreasureSpots(void) {
         if ((event->kind & 0x1ff) == BG_EVENT(BG_EVENT_CHEST)) {
           // A chest, at the centre of its cell (cells are 16 pixels, and
           // positions 16.16).
-          markerObjectEvent = (struct Object *)Object_CreateFar(
+          markerActor = (struct Object *)Object_CreateFar(
               TREASURE_SPOT_CHEST_SPRITE, (column << 20) + 0x80000, 0,
               (row << 20) + 0x80000);
-          if (markerObjectEvent == NULL)
+          if (markerActor == NULL)
             continue;
-          ObjectMotion_SnapToTerrain(markerObjectEvent);
-          Object_SetSpriteFlagsFar((struct Object *)markerObjectEvent, 0);
+          ObjectMotion_SnapToTerrain(markerActor);
+          Object_SetSpriteFlagsFar((struct Object *)markerActor, 0);
           // An opened chest shows open; an opened mimic's chest
           // is not placed at all. A mimic's flag is set only after its battle,
           // when the one enemy was defeated (Djinn_ResolvePendingEvent).
           if (GameFlag_GetFar(event->condition)) {
             if ((event->value & 0xfff00000) == 0x500000) {
-              Object_ReleaseFar((struct Object *)markerObjectEvent);
+              Object_ReleaseFar((struct Object *)markerActor);
               continue;
             }
-            Object_SelectAnimationFar(markerObjectEvent,
-                                      TREASURE_SPOT_CHEST_OPEN);
+            Object_SelectAnimationFar(markerActor, TREASURE_SPOT_CHEST_OPEN);
           }
-          Object_StartIdleFar((struct Object *)markerObjectEvent);
-          markerObjectEvent->homeX = markerObjectEvent->x / Q16_ONE;
-          markerObjectEvent->homeZ = markerObjectEvent->z / Q16_ONE;
-          markerObjectEvent->priorityFlags = 1;
-          markerObjectEvent->collisionFlags = 1;
+          Object_StartIdleFar((struct Object *)markerActor);
+          markerActor->homeX = markerActor->x / Q16_ONE;
+          markerActor->homeZ = markerActor->z / Q16_ONE;
+          markerActor->priorityFlags = 1;
+          markerActor->collisionFlags = 1;
           marker->id = event->trigger;
-          marker->object = (struct Object *)markerObjectEvent;
-          marker->column = markerObjectEvent->x / 0x100000;
-          marker->row = markerObjectEvent->z / 0x100000;
+          marker->object = (struct Object *)markerActor;
+          marker->column = markerActor->x / 0x100000;
+          marker->row = markerActor->z / 0x100000;
           marker++;
           markerCount++;
           if (markerCount >= TREASURE_SPOT_MAX)
@@ -125,23 +124,23 @@ void Field_PlaceTreasureSpots(void) {
             continue;
           if (GameFlag_GetFar(event->condition))
             continue;
-          markerObjectEvent = (struct Object *)Object_CreateFar(
+          markerActor = (struct Object *)Object_CreateFar(
               TREASURE_SPOT_PSYNERGY_STONE_SPRITE, (column << 20) + 0x80000, 0,
               (row << 20) + 0x80000);
-          if (markerObjectEvent == NULL)
+          if (markerActor == NULL)
             continue;
-          ObjectMotion_SnapToTerrain(markerObjectEvent);
-          Object_SetSpriteFlagsFar((struct Object *)markerObjectEvent, 0);
-          Object_StartIdleFar((struct Object *)markerObjectEvent);
-          Object_SelectAnimationFar(markerObjectEvent, 1);
-          markerObjectEvent->homeX = markerObjectEvent->x / Q16_ONE;
-          markerObjectEvent->homeZ = markerObjectEvent->z / Q16_ONE;
-          markerObjectEvent->collisionFlags = 1;
-          markerObjectEvent->priorityFlags = 1;
-          marker->object = (struct Object *)markerObjectEvent;
+          ObjectMotion_SnapToTerrain(markerActor);
+          Object_SetSpriteFlagsFar((struct Object *)markerActor, 0);
+          Object_StartIdleFar((struct Object *)markerActor);
+          Object_SelectAnimationFar(markerActor, 1);
+          markerActor->homeX = markerActor->x / Q16_ONE;
+          markerActor->homeZ = markerActor->z / Q16_ONE;
+          markerActor->collisionFlags = 1;
+          markerActor->priorityFlags = 1;
+          marker->object = (struct Object *)markerActor;
           marker->id = event->trigger;
-          marker->column = markerObjectEvent->x / 0x100000;
-          marker->row = markerObjectEvent->z / 0x100000;
+          marker->column = markerActor->x / 0x100000;
+          marker->row = markerActor->z / 0x100000;
           marker++;
           markerCount++;
           if (markerCount >= TREASURE_SPOT_MAX)
@@ -254,7 +253,7 @@ void TreasureSpot_ShowOpened(s32 id) {
 /// Returns the object of treasure spot id, or NULL when no slot has it. Called
 /// by Field_SearchCell, and by Reveal's marks (field_fx.c) to skip a treasure
 /// spot already placed.
-struct Object *TreasureSpot_GetObjectEvent(s32 id) {
+struct Object *TreasureSpot_GetActor(s32 id) {
   s32 slotIndex = TreasureSpot_FindSlot(id);
   struct TreasureSpot *marker;
 
@@ -283,7 +282,7 @@ void TreasureSpot_Hide(s32 id) {
 
 /// Moves the object of treasure spot id to (x, z) on the ground; -1 keeps the
 /// centre of its cell on that axis. Positions are 16.16. Map overlays call it.
-void TreasureSpot_SetObjectEventPosition(s32 id, s32 x, s32 z) {
+void TreasureSpot_SetActorPosition(s32 id, s32 x, s32 z) {
   s32 slotIndex;
   s32 groundHeight;
   s32 objectX;

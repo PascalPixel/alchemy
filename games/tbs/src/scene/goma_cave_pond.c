@@ -6,7 +6,7 @@
 /// The room is reached only from the room above (goma_cave_pillar.c): its
 /// three exits lead back up to that room's
 /// GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_WEST, _SOUTH and _EAST. It has no
-/// map events of its own. Its one placed object event is the stump the party
+/// map events of its own. Its one placed actor is the stump the party
 /// pushes over the edge up there with Move: once it has fallen
 /// (FLAG_GOMA_CAVE_STUMP_FELL), entering finds it sunk in the pond until only
 /// its top shows (STUMP_ANIMATION_SINK), drawn underfoot with no collision
@@ -32,7 +32,7 @@
 
 #include "heap_slots.h"
 #include "map_tables.h"
-#include "object_event.h"
+#include "actor.h"
 
 #include "script_layer.h"
 #include "flags.h"
@@ -46,12 +46,12 @@
 /// room above (its render)
 #define FLAG_GOMA_CAVE_STUMP_FELL 0x300
 
-/// The room's one placed object event.
-enum GomaCavePondLocalId {
+/// The room's one placed actor.
+enum GomaCavePondActorId {
   /// The stump the party pushes over in the room above, lying in this room.
   /// ★ Named from the game: "It's no use. Our Psynergy isn't strong enough to
   /// free that stump." (MsgGomaNoUsePsynergy)
-  LOCALID_FALLEN_STUMP = LOCALID_FIRST_PLACED
+  ACTOR_FALLEN_STUMP = ACTOR_FIRST_PLACED
 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -62,8 +62,8 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gGomaCavePondExits; }
 
-const struct ObjectEventTemplate *Scene_GetObjectEventTemplates(void) {
-  return gGomaCavePondObjectEventTemplates;
+const struct ActorTemplate *Scene_GetActorTemplates(void) {
+  return gGomaCavePondActorTemplates;
 }
 
 const struct MapEvent *Scene_GetEvents(void) { return gGomaCavePondEvents; }
@@ -78,12 +78,11 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = 24;
   if (GameFlag_Get(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
-    ObjectEvent_SetPosition(LOCALID_FALLEN_STUMP, PIXELS(216), PIXELS(136));
-    Import_ObjectEventSetAnimation(LOCALID_FALLEN_STUMP, STUMP_ANIMATION_SINK);
-    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_FALLEN_STUMP), 0);
-    ObjectEvent_GetById(LOCALID_FALLEN_STUMP)->priorityFlags =
-        OBJ_EVENT_PRIORITY_UNDERFOOT;
-    ObjectEvent_GetById(LOCALID_FALLEN_STUMP)->collisionFlags = 0;
+    Actor_SetPosition(ACTOR_FALLEN_STUMP, PIXELS(216), PIXELS(136));
+    Import_ActorSetAnimation(ACTOR_FALLEN_STUMP, STUMP_ANIMATION_SINK);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FALLEN_STUMP), 0);
+    Actor_GetById(ACTOR_FALLEN_STUMP)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+    Actor_GetById(ACTOR_FALLEN_STUMP)->collisionFlags = 0;
     MapGrid_CopyCellAttributes(11, 36, 5, 5, 11, 6);
   }
   return 0;
@@ -113,7 +112,7 @@ u32 gGomaCavePondExits[] = {
 };
 
 // clang-format off
-struct ObjectEventTemplate gGomaCavePondObjectEventTemplates[] = {
+struct ActorTemplate gGomaCavePondActorTemplates[] = {
     { SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },

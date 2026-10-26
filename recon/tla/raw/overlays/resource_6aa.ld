@@ -30,7 +30,7 @@ SECTIONS
         "*/resource_6aa_overlay.o"(.text.x02008e3c)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s0fa4.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s0fd4.o"(.text)
-        "*/resource_6aa_overlay.o"(.text.x02008fe0)
+        "*/games/tla/src/scene/mars_lighthouse_entrance/s0fe0.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s112c.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s1138.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/dismiss.o"(.text)

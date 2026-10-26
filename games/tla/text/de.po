@@ -18739,7 +18739,7 @@ msgctxt "MsgStatLabel"
 msgid "04595"
 msgstr "Attacke"
 
-msgctxt "message"
+msgctxt "MsgDefenseLabel"
 msgid "04596"
 msgstr "Vert."
 
@@ -19007,7 +19007,7 @@ msgctxt "message"
 msgid "04662"
 msgstr "Effekt, wenn angelegt:"
 
-msgctxt "message"
+msgctxt "MsgEquipEffectName"
 msgid "04663"
 msgstr "Kein Effekt"
 
@@ -19175,7 +19175,7 @@ msgctxt "message"
 msgid "04704"
 msgstr "Mehrfach einsetzbar"
 
-msgctxt "message"
+msgctxt "MsgSingleUse"
 msgid "04705"
 msgstr "Einmal einsetzbar"
 
@@ -19183,7 +19183,7 @@ msgctxt "message"
 msgid "04706"
 msgstr "Kaputt nach Einsatz"
 
-msgctxt "message"
+msgctxt "MsgBestowsPsynergy"
 msgid "04707"
 msgstr "Schenkt Psynergy"
 
@@ -19199,11 +19199,11 @@ msgctxt "message"
 msgid "04710"
 msgstr "Es ist verflucht!"
 
-msgctxt "message"
+msgctxt "MsgRareItem"
 msgid "04711"
 msgstr "Ein seltenes Item"
 
-msgctxt "message"
+msgctxt "MsgImportantItem"
 msgid "04712"
 msgstr "Ein wichtiges Item"
 
@@ -19211,19 +19211,19 @@ msgctxt "message"
 msgid "04713"
 msgstr "Bis zu 30 mitführbar"
 
-msgctxt "message"
+msgctxt "MsgDetailsUnknown"
 msgid "04714"
 msgstr "Details unbekannt"
 
-msgctxt "message"
+msgctxt "MsgEquipEffectHeading"
 msgid "04715"
 msgstr "Effekt, wenn angelegt:"
 
-msgctxt "message"
+msgctxt "MsgUsesHeading"
 msgid "04716"
 msgstr "Anzahl der Rationen:"
 
-msgctxt "message"
+msgctxt "MsgNumberHeading"
 msgid "04717"
 msgstr "Anzahl:"
 
@@ -19231,7 +19231,7 @@ msgctxt "message"
 msgid "04718"
 msgstr "{argument_signed_number} im Besitz."
 
-msgctxt "message"
+msgctxt "MsgMightBreak"
 msgid "04719"
 msgstr "Könnte zerbrechen,"
 
@@ -19239,7 +19239,7 @@ msgctxt "message"
 msgid "04720"
 msgstr "wenn im Kampf"
 
-msgctxt "message"
+msgctxt "MsgBrokenNotice"
 msgid "04721"
 msgstr "Es ist zerbrochen,"
 
@@ -19251,7 +19251,7 @@ msgctxt "message"
 msgid "04723"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgItemCursed"
 msgid "04724"
 msgstr "Es ist verflucht"
 

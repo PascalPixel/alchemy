@@ -6,7 +6,7 @@
 
 struct InventoryMenuState {
   u8 unk000[0x30];
-  s32 infoWindow;
+  void *infoWindow;
   s32 equipWindow;
   u8 unk038[0x18c];
   u16 items[32];
@@ -22,18 +22,27 @@ struct MenuResult {
   s32 selectedIndex;
 };
 
+// The rows one page of the item list shows: Japanese fits six, the other
+// editions five.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define PAGE_ROWS 6
+#else
 #define PAGE_ROWS 5
+#endif
+
 #define EQUIP_SLOT_X 2
-// The equipment slots' highlight is a tile wider outside the English edition.
-#if LANGUAGE == LANGUAGE_ENGLISH
+// The equipment slots' highlight is a tile wider in the European editions.
+#if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_JAPANESE
 #define EQUIP_SLOT_WIDTH 9
 #else
 #define EQUIP_SLOT_WIDTH 10
 #endif
 
-void RenderOutput_RedrawSavedRectFar(s32 window);
+void RenderOutput_RedrawSavedRectFar(void *window);
+void RenderOutput_ClearListFar(void *window);
 void WaitFrames(s32 frames);
-void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
+void UiText_DrawCharacterAtOffsetFar(u8 *message, void *window, s32 x, s32 y);
+void UiText_DrawResourceFar(s32 message, void *window, s32 x, s32 y);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y,
                                  s32 palette);
 void Render_SetTilemapFlagRect(s32 window, s32 x, s32 y, s32 width, s32 height,
@@ -50,6 +59,16 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
   menu = Ram_HeapSlots->menuRuntime;
   base = state->page * PAGE_ROWS;
   state->selectedIndex = base + state->row;
+#if LANGUAGE == LANGUAGE_JAPANESE
+  // Japanese clears the name's window and draws the name as a resource.
+  RenderOutput_ClearListFar(menu->infoWindow);
+  WaitFrames(1);
+  if (menu->items[state->selectedIndex] != 0) {
+    UiText_DrawResourceFar((menu->items[state->selectedIndex] & ITEM_ID_MASK) +
+                               (s32)MsgItemPlainName,
+                           menu->infoWindow, 0, 0);
+  }
+#else
   RenderOutput_RedrawSavedRectFar(menu->infoWindow);
   WaitFrames(1);
   if (menu->items[state->selectedIndex] != 0) {
@@ -57,6 +76,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
         (menu->items[state->selectedIndex] & ITEM_ID_MASK) + MsgItemPlainName,
         menu->infoWindow, 0, 0);
   }
+#endif
 
   for (row = 0; row < PAGE_ROWS; row++) {
     if (row == state->row) {

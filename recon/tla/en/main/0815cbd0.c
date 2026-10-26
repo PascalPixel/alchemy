@@ -21,13 +21,19 @@
 // blitter mode is a constant, and the effect ends by chaining into the
 // summon canvas effect instead of closing the canvas.
 
-// Listing 228 instructions, draft 232, differ 166 (2026-10-15). Left: an
-// allocation cascade. loop.c hoists work->sheet (work + 0x700) out of the
-// frame loop, where the native adds 0x700 to work at each of the four
-// draws; with the sheet in r8, work itself is spilled (the native keeps
-// effect, work and canvas in r9, r10 and r11, size in r8 and the frame in
-// r7), and the native also forms REG_BLDALPHA's address from REG_BG2PA's
-// (adds r2, #50) where here it is built apart.
+// Listing 228 instructions, draft 228, differ 28 (2026-10-26), with no
+// device. Each quarter is one statement macro, QUARTER, that builds its
+// blitter, draws and releases it inside do { } while (0): the block's loop
+// notes end CSE's block at each quarter, so the native's work + 0x700 is
+// formed again for each draw rather than hoisted out of the frame loop or
+// kept across the calls (it replaces the empty asm on work, 43). The two
+// clears go through a local inline forwarder, as f143d80.c makes them and
+// as The Broken Seal's IWRAM call layer makes every IWRAM call, so each
+// rebuilds its own 0x3c00 (43 to 35 with the asm, 28 with the macro).
+// Left: in each quarter the native stores the two stacked arguments before
+// it builds the heap base and the sheet (the known store-then-load
+// scheduling limit), and for the second to fourth blitters it loads r1
+// before r0; 7 rows of 4.
 
 // Tried:
 // ☀️'s body, reworked as the listing shows, with ☀️'s device
@@ -40,10 +46,9 @@
 // the top of the frame loop stops the sheet's hoisting (166 to 107), the
 // blend register through a local pointer (alchemy-devtools permute's find; 107 to
 // 67), and the canvas read before the work (67 to 59: the native loads
-// [r6, #96] first). Left: the native rebuilds work + 0x700 for each draw
-// and 0x3c00 for each clear, where agscc keeps them across the calls in r5
-// (CSE shares the constant; an asm on each use only moves the sharing to
-// the asm's input: 158), and the stores and loads that shift with them.
+// [r6, #96] first).
+// 2026-10-26: QUARTER with the release outside its block, or the draw
+// alone inside it: 34; the blitter build outside it: 28.
 
 #include "types.h"
 #include "battle_effect_work.h"
@@ -52,6 +57,10 @@
 #include "io_reg.h"
 #include "iwram_call.h"
 #include "ram_buffer.h"
+
+static __inline__ s32 ClearWords_(void *destination, s32 size) {
+  return Iwram_ClearWords(destination, size);
+}
 
 // Byte offset of the blitter slot in gHeapSlots (unk64[1]).
 #define HEAP_BLITTER 104
@@ -90,6 +99,16 @@ s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void SummonEffect_RunCanvasMode1(void *action);
 
+// One quarter of the web, drawn with its own transparent blitter, built and
+// released around the draw.
+#define QUARTER(flags, x, y)                                                   \
+  do {                                                                         \
+    BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_TRANSPARENT, flags));  \
+    ((DrawRectangle)Ram_HeapSlots->unk64[1])(canvas, work->sheet, x, y, size,  \
+                                             size);                            \
+    Runtime_ReleaseHeapBlock(HEAP_BLITTER);                                    \
+  } while (0)
+
 void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
   struct EffectPosition middle;
   void *canvas;
@@ -118,10 +137,6 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
   frame = 0;
   size = 32;
   do {
-    /* FAKEMATCH(barrier): work passes through an empty asm each frame, so loop.c
-     * cannot hoist the sheet (work + 0x700) out of the frame loop; as plain
-     * C, 168 of 232 instructions differ in tla-en (here 59). */
-    __asm__("" : "+r"(work));
     // It fades in over nine frames and out over the last ten.
     if (frame <= 8)
       *blend = (frame << 1) | 0x1000;
@@ -130,25 +145,10 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
 
     // The four quarters: the one picture as it is, mirrored, flipped, and
     // both.
-    BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_TRANSPARENT, CLIP));
-    ((DrawRectangle)Ram_HeapSlots->unk64[1])(canvas, work->sheet, 33, 41, size,
-                                             size);
-    Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-    BattleEffect_LoadBlitter(HEAP_BLITTER,
-                  BLITTER(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_X));
-    ((DrawRectangle)Ram_HeapSlots->unk64[1])(canvas, work->sheet, 64, 41, size,
-                                             size);
-    Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-    BattleEffect_LoadBlitter(HEAP_BLITTER,
-                  BLITTER(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_Y));
-    ((DrawRectangle)Ram_HeapSlots->unk64[1])(canvas, work->sheet, 33, 72, size,
-                                             size);
-    Runtime_ReleaseHeapBlock(HEAP_BLITTER);
-    BattleEffect_LoadBlitter(HEAP_BLITTER,
-                  BLITTER(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP));
-    ((DrawRectangle)Ram_HeapSlots->unk64[1])(canvas, work->sheet, 64, 72, size,
-                                             size);
-    Runtime_ReleaseHeapBlock(HEAP_BLITTER);
+    QUARTER(CLIP, 33, 41);
+    QUARTER(CLIP | COMPOSITE_FLIP_X, 64, 41);
+    QUARTER(CLIP | COMPOSITE_FLIP_Y, 33, 72);
+    QUARTER(CLIP | COMPOSITE_FLIP, 64, 72);
 
     // The battle resumes, hit cue 143; every target flashes at frame 10.
     if (frame == 32)
@@ -165,9 +165,11 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
 
   // Teardown: clear both canvases and hand over to the summon canvas.
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-  Iwram_ClearWords((void *)0x06004000, 0x3c00);
-  Iwram_ClearWords(canvas, 0x3c00);
+  ClearWords_((void *)0x06004000, 0x3c00);
+  ClearWords_(canvas, 0x3c00);
   effect->prelude = 0;
   Scheduler_RemoveCallback(Palette_StepFadeTransfer);
   SummonEffect_RunCanvasMode1(effect);
 }
+
+#undef QUARTER

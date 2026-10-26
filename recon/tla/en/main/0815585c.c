@@ -1,5 +1,5 @@
 // Draft of Func_0815585c, The Broken Seal's BattleEffect_RunDjinniEntrance
-// (games/tbs/src/effect/effect.c): differ 132 of 818 (tla-en,
+// (games/tbs/src/effect/effect.c): differ 118 of 818 (tla-en,
 // 2026-10-26). The Lost Age reworked it: the kind, the side and the anchor
 // come packed in one word (kind | side << 4 | anchor << 5), eleven anchors
 // by jump table where The Broken Seal has five, anchor 6 keeps the effect
@@ -17,7 +17,10 @@
 // returning its loader's s32, as nibble_pair.c now does (169 to 165).
 // Under -mthumb-slow-loads (2026-10-26) the same source gives 137; the
 // picture's address kept in palette (its table entry + 128) before the
-// decode, as the native copies it through a register: 132.
+// decode, as the native copies it through a register: 132. The palette copy
+// and the two clears through local inline forwarders, as f143d80.c makes
+// them and as The Broken Seal's IWRAM call layer makes every IWRAM call:
+// each clear rebuilds its own 0x4000 as the native does (118).
 
 // Left: allocation through the frame loop, from the prologue's first
 // spills (the native keeps anchor at sp+20 and reloads it for the test of
@@ -39,6 +42,15 @@
 #include "iwram_call.h"
 #include "ram_buffer.h"
 #include "transform.h"
+
+static __inline__ s32 ClearWords_(void *destination, s32 size) {
+  return Iwram_ClearWords(destination, size);
+}
+
+static __inline__ s32 CopyWords_(void *destination, const void *source,
+                                 s32 size) {
+  return Iwram_CopyWords(destination, source, size);
+}
 
 // The packed preparer word: kind | side << 4 | anchor << 5.
 #define PREPARE_KIND(packed) ((packed) & 7)
@@ -176,7 +188,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
     break;
   }
   palette = Resource_GetTableEntry(resource);
-  Iwram_CopyWords((void *)0x05000000, palette, 128);
+  CopyWords_((void *)0x05000000, palette, 128);
   switch (kind) {
   case 0:
     resource = (s32)ResourceId_VenusDjinnSmallSheet;
@@ -414,7 +426,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(188);
   Runtime_ReleaseHeapBlock(104);
-  Iwram_ClearWords((void *)0x06004000, 0x4000);
-  Iwram_ClearWords(canvas, 0x4000);
+  ClearWords_((void *)0x06004000, 0x4000);
+  ClearWords_(canvas, 0x4000);
   REG_BLDALPHA = 0x1010;
 }

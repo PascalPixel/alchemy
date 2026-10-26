@@ -21,7 +21,7 @@
 // BattleEffect_OrangePaletteB, 0x166 BattleEffect_CyanPalette and the eight Djinn
 // sheets 0x150-0x157.
 
-// Draft: differ 50 of 1243 (draft 1243), tla-en, 2026-10-26.
+// Draft: differ 34 of 1243 (draft 1243), tla-en, 2026-10-26.
 
 // What moved it: the yaw angles written (frame - start) where The Broken
 // Seal's twin writes (frame - member * 8). As member * 8 they are givs of
@@ -30,14 +30,15 @@
 // and start swapped between r9 and r11 for the whole member loop); through
 // start the giv is not worth reducing, and the native recomputes member * 8
 // from its stack slot each iteration (269 to 52). shift = 0 after the
-// sheet read: 50.
+// sheet read: 50. The IWRAM calls through local inline forwarders, as
+// f143d80.c makes them and as The Broken Seal's IWRAM call layer makes
+// every one: the palette copy's constants no longer share registers with
+// the frame loop's invariants, whose spill slots (camera + 12, mode - 3
+// and &point) then fall in the native's order (50 to 34).
 
-// Left: the prologue's argument spill before the heap base and order rows
-// in the draws' arguments (the known store-then-load scheduling limit);
-// the member loop's three spilled invariants take their stack slots in
-// another order (camera + 12, mode - 3 and &point at sp+24, sp+28 and
-// sp+20 where the native has sp+20, sp+24 and sp+28: about 12 rows),
-// which follows their pseudo numbers; nothing tried here reorders them.
+// Left: the prologue's argument spill and shift's zero before the first
+// call, and order rows in the draws' arguments: the known store-then-load
+// scheduling limit, one row each.
 
 // Tried (2026-10-15):
 // - The Broken Seal's declaration order: 315; the five arrays declared
@@ -45,9 +46,9 @@
 // frame offsets (blit at sp+80 up to origin at sp+136): 299.
 // - greedy declaration-order sweep, two passes: no gain.
 // - a separate counter for the frame loop's motes: no change.
-// Tried (2026-10-26, from 52): declaration order, statement moves, each
-// local scoped to a block, point through a pointer, member volatile: no
-// gain.
+// Tried (2026-10-26): declaration order, statement moves, each local
+// scoped to a block, point through a pointer, member volatile: no gain;
+// shift = 0 back before the canvas layer: 36.
 
 #include "types.h"
 #include "battle_display.h"
@@ -67,6 +68,13 @@
 #include "resource.h"
 #include "system.h"
 #include "transform.h"
+
+static __inline__ s32 CopyWords_(void *destination, const void *source,
+                                 s32 size) {
+  return Iwram_CopyWords(destination, source, size);
+}
+
+static __inline__ s32 Sqrt_(s32 value) { return Iwram_Sqrt(value); }
 
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
@@ -209,7 +217,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode)
   } else {
     palette = Resource_GetTableEntry((s32)&ResourceId_BlastSheet);
   }
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  CopyWords_((void *)BG_PLTT, palette, 128);
 
   // The Djinni: 40x40 at full width, a 20x40 picture when narrow.
   if (narrow == 0) {
@@ -444,7 +452,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode)
             s32 xx = (spark->x >> 8) * (spark->x >> 8);
             s32 yy = (spark->y >> 8) * (spark->y >> 8);
             s32 zz = (spark->z >> 8) * (spark->z >> 8);
-            s32 distance = Iwram_Sqrt(xx + yy + zz) >> 9;
+            s32 distance = Sqrt_(xx + yy + zz) >> 9;
 
             distance = distance * 48 / 64;
             if (distance != 0) {

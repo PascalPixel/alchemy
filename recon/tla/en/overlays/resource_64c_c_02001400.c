@@ -1,4 +1,4 @@
-// Draft, differ 41 of 593: overlay 64b's Func_02003d44 (the world map's
+// Draft, differ 16 of 593: overlay 64b's Func_02003d44 (the world map's
 // fade), which this overlay has instruction for instruction under its own
 // names; its draft is resource_64b_c_02003d44.c and its remaining difference
 // is described there.

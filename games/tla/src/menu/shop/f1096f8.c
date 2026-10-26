@@ -1,10 +1,3 @@
-// Near miss, differ 6 of 192: The Broken Seal's Shop_SelectQuantity. Each
-// Shop_FillSelector call loads its arguments in another order: the native
-// finishes the count in r0 (and sets r0 before r1 for the constants) before
-// r1 and r2, where this draft loads r1 and r2 first (an inline wrapper leaves
-// the order unchanged). The quantity held in a temporary across the last
-// two fills gives the native's registers (the result in r5, the B-button
-// test, reused as the zero, in r6; 36 without it).
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -27,12 +20,20 @@ extern volatile struct InputState gInput;
 extern const u8 gShop_QuantityTiles[];
 extern u8 MsgCoins[];
 
+s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+void Shop_FillSelector(s32 count, s32 selector, u8 *base);
+void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void UiWork_FinalizeFar(s32 window, s32 style);
+
 struct UiSprite {
   u8 unk00[24];
   u16 tile : 10;
   u16 flags : 6;
 };
 
+/// Lets the player pick a quantity with left and right in a small window that
+/// shows it and its price in coins; returns it, or -1 when B cancels. The Broken
+/// Seal's Shop_SelectQuantity.
 s32 Func_081096f8(s32 minimum, s32 maximum, s32 price) {
   u8 *buffer;
   s32 window;
@@ -81,17 +82,13 @@ s32 Func_081096f8(s32 minimum, s32 maximum, s32 price) {
         }
         if (changed) {
           changed = 0;
-          count = __modsi3(count + maximum, maximum);
+          count = (count + maximum) % maximum;
           Dma_Set(gShop_QuantityTiles, buffer, 0x84000040, REG_DMA3);
           Shop_FillSelector(30, 14, buffer);
           Shop_FillSelector(minimum + maximum, 0, buffer);
-          /* FAKEMATCH(barrier): the third fill's count is built after the
-           * second call; as plain statements, 8 of 192 instructions differ in
-           * tla-en. */
-          __asm__ volatile("");
           Shop_FillSelector(minimum + count + 1, 10, buffer);
           /* FAKEMATCH(temporary): the quantity in its own local before the
-           * last fill; as result = count + 1 after VramCache_Load, 36 of 192
+           * last fill; as result = count + 1 after VramCache_Load, 28 of 192
            * instructions differ in tla-en. */
           selected = count + 1;
           Shop_FillSelector(minimum, 2, buffer);

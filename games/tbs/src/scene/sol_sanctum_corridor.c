@@ -24,7 +24,7 @@
 #include "types.h"
 
 #include "resource_37de_map.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "actor.h"
 
 #include "script_layer.h"
@@ -55,7 +55,7 @@ struct SceneEntrance gSolSanctumCorridorEntrances[] = {
      0, 92, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_WEST, CONDITION_ALWAYS, 56,
      0, 616, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gSolSanctumCorridorExits[] = {
@@ -70,7 +70,7 @@ u32 gSolSanctumCorridorExits[] = {
 };
 
 struct ActorTemplate gSolSanctumCorridorActorTemplates[] = {
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct Trigger gSolSanctumCorridorTriggers[] = {

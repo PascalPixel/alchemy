@@ -102,7 +102,7 @@
 #include "call.h"
 #include "script_layer.h"
 #include "field_service.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "iwram_call.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
@@ -3502,7 +3502,7 @@ struct SceneEntrance gVale_Entrances[] = {
     { VALE_FROM_COTTAGE_ROOMS_A_NORTH_SECOND_DOOR, CONDITION_ALWAYS, 102, 0, 1222, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_FROM_TITLE, CONDITION_ALWAYS, 400, 0, 852, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { VALE_FROM_ROOF_MENDED, CONDITION_ALWAYS, 400, 0, 852, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 u32 gVale_Exits[] = {
@@ -3565,7 +3565,7 @@ struct ActorTemplate gVale_ActorTemplates[] = {
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, 7,
         PIXELS(152), 0, PIXELS(1016), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gVale_ActorTemplatesAfterLeaving[] = {
@@ -3611,7 +3611,7 @@ struct ActorTemplate gVale_ActorTemplatesAfterLeaving[] = {
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, 7,
         PIXELS(152), 0, PIXELS(1016), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gVale_ActorTemplatesAfterKalay[] = {
@@ -3645,7 +3645,7 @@ struct ActorTemplate gVale_ActorTemplatesAfterKalay[] = {
         PIXELS(152), 0, PIXELS(1016), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(378), 0, PIXELS(584), FACING_EAST, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gVale_RepairActorTemplates[] = {
@@ -3667,7 +3667,7 @@ struct ActorTemplate gVale_RepairActorTemplates[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xd7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gVale_Triggers[] = {

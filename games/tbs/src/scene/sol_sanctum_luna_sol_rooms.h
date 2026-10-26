@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 /// The placed actors, numbered in the order of
 /// gSolSanctumLunaSolRoomsActorTemplates; Jenna and Garet, its last rows,

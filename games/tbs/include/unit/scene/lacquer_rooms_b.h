@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MAP_LACQUER_ROOMS_B_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 const struct SceneEntrance *LacquerRoomsB_GetEntrances(void);
 const struct SceneExitRegion *LacquerRoomsB_GetRegions(void);

@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_MAP_TABLES_H
-#define ALCHEMY_MAP_TABLES_H
+#ifndef ALCHEMY_SCENE_TABLES_H
+#define ALCHEMY_SCENE_TABLES_H
 
 /// @file
 /// The scene table formats: entrances, exits, actor templates
@@ -33,7 +33,7 @@ enum { FACING_STEP = 0x1000 };
    FACING_NORTHEAST - FACING_NORTHWEST - 2)
 
 /// In the first column of a scene table, ends the table.
-enum { MAP_TABLE_END = -1 };
+enum { SCENE_TABLE_END = -1 };
 
 /// A table row's condition: CONDITION_ALWAYS, a flag number that must be
 /// clear, or IF_FLAG_SET of a flag that must be set

@@ -88,7 +88,7 @@
 #include "types.h"
 #include "text/msg_ids.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "field_effect.h"
 #include "fx_work.h"
 #include "speaker.h"
@@ -1797,7 +1797,7 @@ struct SceneEntrance gImil_TownEntrances[] = {
     { IMIL_FROM_ICE_ROOMS_WEST, CONDITION_ALWAYS, 120, 0, 208, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { IMIL_FROM_ICE_ROOMS_SOUTHWEST, CONDITION_ALWAYS, 64, 0, 360, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { IMIL_FROM_IMIL_FALLS_CAVE, CONDITION_ALWAYS, 229, 0, 88, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gImil_InteriorEntrances[] = {
@@ -1810,7 +1810,7 @@ struct SceneEntrance gImil_InteriorEntrances[] = {
     { ICE_ROOMS_INN_UPSTAIRS_FROM_INN, CONDITION_ALWAYS, 446, 0, 825, FACING_SOUTH, 0, 402, 740, 670, 921, 0 },
     { ICE_ROOMS_FROM_IMIL_EAST_NORTHEAST, CONDITION_ALWAYS, 687, 0, 264, FACING_NORTH, 0, 594, 49, 806, 295, 0 },
     { ICE_ROOMS_INN_FROM_INN_UPSTAIRS, CONDITION_ALWAYS, 182, 0, 772, FACING_SOUTH, 0, 50, 706, 350, 949, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 u32 gImil_Exits[] = {
@@ -1845,7 +1845,7 @@ struct ActorTemplate gImil_TownActorTemplates[] = {
         PIXELS(408), 0, PIXELS(248), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_SNOWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(262), 0, PIXELS(124), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gImil_TownActorTemplatesCured[] = {
@@ -1857,7 +1857,7 @@ struct ActorTemplate gImil_TownActorTemplatesCured[] = {
         PIXELS(408), 0, PIXELS(248), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_SNOWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(262), 0, PIXELS(124), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gImil_InteriorActorTemplates[] = {
@@ -1895,7 +1895,7 @@ struct ActorTemplate gImil_InteriorActorTemplates[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_CRATE, 0x0, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(192), 0, PIXELS(124), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gImil_TownTriggers[] = {

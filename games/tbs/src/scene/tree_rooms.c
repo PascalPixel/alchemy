@@ -68,7 +68,7 @@
 #include "actor.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "create_configured_overlay_object.h"
 #include "battle.h"
 #include "debug.h"
@@ -1419,7 +1419,7 @@ struct SceneEntrance gTreeRoomsEntrances[] = {
     { 30, CONDITION_ALWAYS, 808, 0, 152, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
     { 20, CONDITION_ALWAYS, 488, 0, 152, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
     { TREE_ROOMS_AFTER_FIGHT_TRET, CONDITION_ALWAYS, 168, 0, 72, FACING_SOUTH, 0, 32, 0, 304, 272, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct SceneExitRegion gTreeRoomsRegions[] = {
@@ -1464,7 +1464,7 @@ struct ActorTemplate gTreeRoomsActorTemplates[] = {
         PIXELS(168), 0, PIXELS(48), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_TRET_RAISED, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(168), 0, PIXELS(48), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 // clang-format on
 

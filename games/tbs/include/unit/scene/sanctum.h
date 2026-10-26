@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MAP_SANCTUM_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 const struct SceneEntrance *Sanctum_GetEntrances(void);
 const struct SceneExitRegion *Sanctum_GetRegions(void);

@@ -40,7 +40,7 @@
 #include "script_layer.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "item_ids.h"
 #include "songs.h"
 #include "flags.h"
@@ -251,7 +251,7 @@ struct SceneEntrance gSuhallaEntrances[] = {
      -1, -1, -1, 0},
     {SUHALLA_FROM_WORLD_MAP, CONDITION_ALWAYS, 40, 0, 176, FACING_EAST, 0, -1,
      -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gSuhallaExits[] = {
@@ -290,7 +290,7 @@ struct ActorTemplate gSuhallaActorTemplates[] = {
         PIXELS(168), 0, PIXELS(208), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(72), 0, PIXELS(144), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gSuhallaActorTemplatesLater[] = {
@@ -312,7 +312,7 @@ struct ActorTemplate gSuhallaActorTemplatesLater[] = {
         PIXELS(168), 0, PIXELS(208), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(72), 0, PIXELS(144), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 /// The cell each door's opening is drawn at, by metatile behavior.

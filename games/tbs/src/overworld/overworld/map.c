@@ -7,8 +7,8 @@
 // The scene overlay's exit table: a header word holding a scene id, then that
 // scene's exits, one packed word each (and a flag word after it when
 // EXIT_HAS_FLAG is set). Scene id EXIT_TABLE_END ends the exits of a scene and
-// the whole table. SCENE_EXIT and SCENE_EXIT_UNLESS (map_tables.h) give an exit
-// word's bits.
+// the whole table. SCENE_EXIT and SCENE_EXIT_UNLESS (scene_tables.h) give an
+// exit word's bits.
 #define EXIT_MAP_MASK 0xfff
 #define ENTRANCE(word) (((word) & 0xff000) >> 12)
 #define EXIT_ID(word) (((word) & 0x0ff00000) >> 20)
@@ -295,7 +295,7 @@ void SequenceManager_Run(s32 mode) {
         Scene_PlayMusic();
     } else if (gSaveBlock.returnMusic != -1) {
       // Back where the party was: resume the music saved when the pause menu
-      // last opened (run_map.c). A random battle and every normal entry set
+      // last opened (run_scene.c). A random battle and every normal entry set
       // returnMusic to -1, so the scene's own music plays instead.
       Sound_PlaySongFar(gSaveBlock.returnMusic);
     } else {

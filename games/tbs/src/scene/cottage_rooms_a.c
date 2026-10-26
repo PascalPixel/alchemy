@@ -61,7 +61,7 @@
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "call.h"
 #include "fxblend.h"
 #include "script_layer.h"
@@ -69,7 +69,7 @@
 #include "text/msg_ids.h"
 #include "types.h"
 #include "ability_ids.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "item_ids.h"
 #include "objcmd.h"
 #include "fixed_math.h"
@@ -1016,7 +1016,7 @@ struct SceneEntrance gCottageRoomsA_Entrances[] = {
      FACING_NORTH, 0, 324, 604, 588, 884, 0},
     {COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST, CONDITION_ALWAYS, 769, 0, 857,
      FACING_NORTH, 0, 580, 628, 852, 884, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gCottageRoomsA_Exits[] = {
@@ -1093,7 +1093,7 @@ struct ActorTemplate gCottageRoomsA_ActorTemplates[] = {
         PIXELS(232), 0, PIXELS(440), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_IN_GREEN, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(264), 0, PIXELS(440), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gCottageRoomsA_ActorTemplatesAfterLeaving[] = {
@@ -1127,7 +1127,7 @@ struct ActorTemplate gCottageRoomsA_ActorTemplatesAfterLeaving[] = {
         PIXELS(232), 0, PIXELS(440), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_IN_GREEN, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(264), 0, PIXELS(440), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gCottageRoomsA_ActorTemplatesAfterKalay[] = {
@@ -1173,7 +1173,7 @@ struct ActorTemplate gCottageRoomsA_ActorTemplatesAfterKalay[] = {
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { 280, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gCottageRoomsA_StormTriggers[] = {

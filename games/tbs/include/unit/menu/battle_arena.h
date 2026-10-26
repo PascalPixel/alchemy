@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MENU_BATTLE_ARENA_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 extern const s32 gBattleArena_SlotValues[];
 u8 *BattleArena_GetEntrances(void);

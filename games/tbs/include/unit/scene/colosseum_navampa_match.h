@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MAP_COLOSSEUM_NAVAMPA_MATCH_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 const struct SceneEntrance *ColosseumNavampaMatch_GetEntrances(void);
 const struct SceneExitRegion *ColosseumNavampaMatch_GetRegions(void);

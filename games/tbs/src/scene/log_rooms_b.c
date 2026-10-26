@@ -60,7 +60,7 @@
 #include "types.h"
 #include "script_layer.h"
 #include "engine_call.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "inventory.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
@@ -460,7 +460,7 @@ struct SceneEntrance gLogRoomsB_Entrances[] = {
      FACING_SOUTH, 0, 432, 576, 800, 800, 0},
     {LOG_ROOMS_B_INN_UPSTAIRS_FROM_INN, CONDITION_ALWAYS, 358, 0, 632,
      FACING_SOUTH, 0, 32, 576, 400, 776, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gLogRoomsB_Exits[] = {
@@ -518,7 +518,7 @@ struct ActorTemplate gLogRoomsB_ActorTemplates[] = {
         PIXELS(696), 0, PIXELS(696), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_IN_PINK_APRON, 0, MOVEMENT_TYPE_WANDER,
         PIXELS(248), 0, PIXELS(712), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gLogRoomsB_Triggers[] = {

@@ -31,7 +31,7 @@
 #include "types.h"
 
 #include "heap_slots.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "actor.h"
 
 #include "script_layer.h"
@@ -97,7 +97,7 @@ struct SceneEntrance gGomaCavePondEntrances[] = {
      FACING_SOUTH, 0, 24, 8, 504, 424, 0},
     {GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_EAST, CONDITION_ALWAYS, 408, 0, 136,
      FACING_SOUTH, 0, 24, 8, 504, 424, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gGomaCavePondExits[] = {
@@ -115,7 +115,7 @@ u32 gGomaCavePondExits[] = {
 struct ActorTemplate gGomaCavePondActorTemplates[] = {
     { SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 // clang-format on
 

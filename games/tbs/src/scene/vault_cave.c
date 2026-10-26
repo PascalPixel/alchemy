@@ -88,7 +88,7 @@
 #include "types.h"
 #include "text/msg_ids.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "task.h"
 #include "call.h"
 #include "object.h"
@@ -1141,7 +1141,7 @@ const s32 gVaultCave_PuffScript[] = {
 
 struct SceneEntrance gVaultCave_FallbackEntrances[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gVaultCavePassage_Entrances[] = {
@@ -1159,7 +1159,7 @@ struct SceneEntrance gVaultCavePassage_Entrances[] = {
     { VAULT_CAVE_PASSAGE_CHEST_FROM_LADDER, CONDITION_ALWAYS, 184, 0, 864, FACING_SOUTH, 0, 40, 632, 352, 912, 0 },
     { VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT, CONDITION_ALWAYS, 456, 0, 800, FACING_SOUTH, 0, 336, 696, 576, 856, 0 },
     { VAULT_CAVE_PASSAGE_LADDER_FROM_CHEST, CONDITION_ALWAYS, 456, 0, 840, FACING_NORTH, 0, 336, 696, 576, 856, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gVaultCaveVambrace_Entrances[] = {
@@ -1177,7 +1177,7 @@ struct SceneEntrance gVaultCaveVambrace_Entrances[] = {
     { VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTH, CONDITION_ALWAYS, 200, 0, 776, FACING_SOUTH, 0, 104, 696, 344, 944, 0 },
     { VAULT_CAVE_VAMBRACE_SOUTH_FROM_FROST_ROOM, CONDITION_ALWAYS, 264, 0, 808, FACING_SOUTH, 0, 104, 696, 344, 944, 0 },
     { VAULT_CAVE_VAMBRACE_CHEST_FROM_FROST_ROOM, CONDITION_ALWAYS, 536, 0, 168, FACING_NORTH, 0, 416, 24, 656, 184, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gVaultCaveMouth_Entrances[] = {
@@ -1188,7 +1188,7 @@ struct SceneEntrance gVaultCaveMouth_Entrances[] = {
     { VAULT_CAVE_MOUTH_SOUTH_FROM_NORTH, CONDITION_ALWAYS, 168, 0, 544, FACING_SOUTH, 0, 8, 472, 248, 632, 0 },
     { VAULT_CAVE_MOUTH_NORTH_FROM_SOUTH, CONDITION_ALWAYS, 248, 0, 336, FACING_NORTH, 0, 128, 40, 376, 384, 0 },
     { VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_NORTH, CONDITION_ALWAYS, 280, 0, 104, FACING_SOUTH, 0, 128, 40, 376, 384, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct SceneExitRegion gVaultCave_Regions[] = {
@@ -1251,11 +1251,11 @@ u32 gVaultCaveMouth_Exits[] = {
 };
 
 struct ActorTemplate gVaultCave_FallbackActorTemplates[] = {
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gVaultCavePassage_ActorTemplates[] = {
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gVaultCaveVambrace_ActorTemplates[] = {
@@ -1289,7 +1289,7 @@ struct ActorTemplate gVaultCaveVambrace_ActorTemplates[] = {
         PIXELS(456), 0, PIXELS(536), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_IVY, FLAG_VAULT_CAVE_IVY_BLOWN_AWAY, MOVEMENT_TYPE_STAND,
         PIXELS(456), 0, PIXELS(456), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gVaultCaveMouth_ActorTemplates[] = {
@@ -1307,7 +1307,7 @@ struct ActorTemplate gVaultCaveMouth_ActorTemplates[] = {
         PIXELS(264), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xf0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(280), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gVaultCave_FallbackTriggers[] = {

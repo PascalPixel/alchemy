@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MAP_GOMA_CAVE_POND_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);

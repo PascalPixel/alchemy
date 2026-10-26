@@ -101,7 +101,7 @@
 #include "mem.h"
 #include "types.h"
 #include "mercury.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "pushed_object.h"
 #include "battle.h"
 #include "debug.h"
@@ -876,7 +876,7 @@ struct SceneEntrance gMercuryLighthouseEntrance_Entrances[] = {
     // or code leads to them.
     { MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_UNUSED_NORTH, CONDITION_ALWAYS, 136, 0, 152, FACING_SOUTH, 0, 16, 32, 256, 320, 0 },
     { MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_UNUSED_MIDDLE, CONDITION_ALWAYS, 136, 0, 232, FACING_EAST, 0, 16, 32, 256, 320, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 u32 gMercuryLighthouseEntrance_Exits[] = {
@@ -927,7 +927,7 @@ struct ActorTemplate gMercuryLighthouseEntrance_ActorTemplates[] = {
         PIXELS(200), 0, PIXELS(616), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(200), 0, PIXELS(512), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gMercuryLighthouseEntrance_Triggers[] = {

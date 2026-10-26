@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "field.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 struct SceneEntrance;
 struct Trigger;

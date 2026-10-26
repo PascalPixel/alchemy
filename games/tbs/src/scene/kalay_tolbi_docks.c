@@ -91,7 +91,7 @@
 #include "call.h"
 #include "field_service.h"
 #include "ability_ids.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "objcmd.h"
 #include "flags.h"
 #include "songs.h"
@@ -1134,7 +1134,7 @@ s32 gKalayTolbiDocks_BodyguardSpinScript[] = {
 
 struct SceneEntrance gKalayTolbiDocks_NoEntrances[] = {
     {0, CONDITION_ALWAYS, 128, 0, 128, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gKalayTolbiDocks_KalayEntrances[] = {
@@ -1147,7 +1147,7 @@ struct SceneEntrance gKalayTolbiDocks_KalayEntrances[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {KALAY_DOCKS_FROM_WORLD_MAP_NORTH, CONDITION_ALWAYS, 296, 0, 1048,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gKalayTolbiDocks_TolbiEntrances[] = {
@@ -1158,7 +1158,7 @@ struct SceneEntrance gKalayTolbiDocks_TolbiEntrances[] = {
      0, 0, 448, 432, 0},
     {TOLBI_DOCKS_FROM_COTTAGE_ROOMS_E, CONDITION_ALWAYS, 240, 0, 216,
      FACING_SOUTH, 0, 0, 0, 448, 432, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 /// CottageRoomsE's entrances, each into the room at the dock it is
@@ -1169,7 +1169,7 @@ struct SceneEntrance gKalayTolbiDocks_InteriorEntrances[] = {
      FACING_NORTH, 0, 32, 32, 272, 272, 0},
     {COTTAGE_ROOMS_E_FROM_TOLBI_DOCKS, CONDITION_ALWAYS, 384, 0, 248,
      FACING_NORTH, 0, 320, 32, 560, 272, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 /// Kalay Docks' exits, then Tolbi Docks' and CottageRoomsE's, each after the
@@ -1199,7 +1199,7 @@ u32 gKalayTolbiDocks_Exits[] = {
 };
 
 struct ActorTemplate gKalayTolbiDocks_NoActorTemplates[] = {
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off
@@ -1220,7 +1220,7 @@ struct ActorTemplate gKalayTolbiDocks_TolbiActorTemplates[] = {
         PIXELS(136), 0, PIXELS(190), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(152), 0, PIXELS(190), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gKalayTolbiDocks_TolbiActorTemplatesStranded[] = {
@@ -1244,7 +1244,7 @@ struct ActorTemplate gKalayTolbiDocks_TolbiActorTemplatesStranded[] = {
         PIXELS(280), 0, PIXELS(288), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(280), 0, PIXELS(248), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gKalayTolbiDocks_KalayActorTemplates[] = {
@@ -1264,7 +1264,7 @@ struct ActorTemplate gKalayTolbiDocks_KalayActorTemplates[] = {
         PIXELS(120), 0, PIXELS(1368), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { VENUS_DJINNI, 0x35, MOVEMENT_TYPE_STAND,
         PIXELS(272), 0, PIXELS(1144), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gKalayTolbiDocks_KalayActorTemplatesShipGone[] = {
@@ -1284,7 +1284,7 @@ struct ActorTemplate gKalayTolbiDocks_KalayActorTemplatesShipGone[] = {
         PIXELS(216), 0, PIXELS(1288), FACING_WEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { VENUS_DJINNI, 0x35, MOVEMENT_TYPE_STAND,
         PIXELS(272), 0, PIXELS(1144), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gKalayTolbiDocks_InteriorActorTemplates[] = {
@@ -1300,7 +1300,7 @@ struct ActorTemplate gKalayTolbiDocks_InteriorActorTemplates[] = {
         PIXELS(392), 0, PIXELS(168), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(408), 0, PIXELS(168), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gKalayTolbiDocks_InteriorActorTemplatesShipGone[] = {
@@ -1316,7 +1316,7 @@ struct ActorTemplate gKalayTolbiDocks_InteriorActorTemplatesShipGone[] = {
         PIXELS(392), 0, PIXELS(168), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(408), 0, PIXELS(168), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gKalayTolbiDocks_InteriorActorTemplatesStranded[] = {
@@ -1332,7 +1332,7 @@ struct ActorTemplate gKalayTolbiDocks_InteriorActorTemplatesStranded[] = {
         PIXELS(456), 0, PIXELS(200), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(408), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gKalayTolbiDocks_NoTriggers[] = {

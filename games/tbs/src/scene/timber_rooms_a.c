@@ -43,7 +43,7 @@
 #include "text/msg_ids.h"
 #include "types.h"
 #include "ability_ids.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "item_ids.h"
 #include "flags.h"
 #include "songs.h"
@@ -575,7 +575,7 @@ struct SceneEntrance gTimberRoomsAEntrances[] = {
      0, 0, 280, 336, 480, 0},
     {TIMBER_ROOMS_A_LOFT_FROM_INN, CONDITION_ALWAYS, 88, 0, 584, FACING_NORTH,
      0, 16, 528, 256, 688, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off
@@ -624,7 +624,7 @@ struct ActorTemplate gTimberRoomsAActorTemplates[] = {
         PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(432), 0, PIXELS(600), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gTimberRoomsAActorTemplatesAfterAudience[] = {
@@ -656,7 +656,7 @@ struct ActorTemplate gTimberRoomsAActorTemplatesAfterAudience[] = {
         PIXELS(416), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(416), 0, PIXELS(80), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gTimberRoomsATriggers[] = {

@@ -72,7 +72,7 @@
 #include "types.h"
 #include "io_reg.h"
 #include "field_service.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "script_layer.h"
@@ -2612,18 +2612,18 @@ struct SceneEntrance gBabiPalace_Entrances[] = {
     { BABI_PALACE_SHEBAS_ROOM_FROM_SHEBAS_LANDING, CONDITION_ALWAYS, 728, 0, 824, FACING_NORTH, 0, 552, 656, 792, 848, 0 },
     { BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH, CONDITION_ALWAYS, 152, 0, 104, FACING_SOUTH, 0, 0, 0, 512, 240, 0 },
     { BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH, CONDITION_ALWAYS, 152, 0, 104, FACING_SOUTH, 0, 0, 0, 512, 240, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gBabiPalace_OutsideEntrances[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 264, 0, 440, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { BABI_PALACE_ENTRANCE_FROM_TOLBI, CONDITION_ALWAYS, 264, 0, 424, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { BABI_PALACE_ENTRANCE_FROM_BABI_PALACE, CONDITION_ALWAYS, 200, 0, 248, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct SceneExitRegion gBabiPalace_Regions[] = {
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 u32 gBabiPalace_Exits[] = {
@@ -2678,7 +2678,7 @@ struct ActorTemplate gBabiPalace_OutsideActorTemplates[] = {
         PIXELS(232), 0, PIXELS(248), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(168), 0, PIXELS(248), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gBabiPalace_ActorTemplatesBabiMissing[] = {
@@ -2720,7 +2720,7 @@ struct ActorTemplate gBabiPalace_ActorTemplatesBabiMissing[] = {
         PIXELS(392), 0, PIXELS(352), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER, FLAG_IODEM_HEARD_SOLDIERS, MOVEMENT_TYPE_STAND,
         PIXELS(392), 0, PIXELS(368), FACING_EAST, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gBabiPalace_ActorTemplatesFinals[] = {
@@ -2744,7 +2744,7 @@ struct ActorTemplate gBabiPalace_ActorTemplatesFinals[] = {
         PIXELS(728), 0, PIXELS(744), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { ACTOR_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(600), 0, PIXELS(744), FACING_SOUTHWEST, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gBabiPalace_ActorTemplatesAfterColosso[] = {
@@ -2780,7 +2780,7 @@ struct ActorTemplate gBabiPalace_ActorTemplatesAfterColosso[] = {
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_IODEM, FLAG_BABI_SPOKE_AFTER_COLOSSO, MOVEMENT_TYPE_STAND,
         PIXELS(184), 0, PIXELS(704), FACING_SOUTHEAST, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gBabiPalace_TriggersBabiMissing[] = {

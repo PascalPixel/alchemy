@@ -11,7 +11,7 @@
 #include "dma.h"
 #include "ram_buffer.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "object.h"
 #include "animspr.h"
 #include "map_grid.h"

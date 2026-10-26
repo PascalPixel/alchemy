@@ -75,7 +75,7 @@
 #include "types.h"
 #include "script_layer.h"
 #include "field_service.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "kolima.h"
 #include "object.h"
 #include "call.h"
@@ -1781,7 +1781,7 @@ struct SceneEntrance gKolimaEntrances[] = {
      -1, -1, -1, -1, 0},
     {10, CONDITION_ALWAYS, 44, 0, 267, FACING_EAST, 0, -1, -1, -1, -1, 0},
     {12, CONDITION_ALWAYS, 232, 0, 176, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gKolimaBridgeEntrances[] = {
@@ -1789,7 +1789,7 @@ struct SceneEntrance gKolimaBridgeEntrances[] = {
      FACING_NORTH, 0, 0, 0, 288, 416, 0},
     {KOLIMA_BRIDGE_FROM_WORLD_MAP_NORTH, CONDITION_ALWAYS, 168, 0, 50,
      FACING_SOUTH, 0, 48, 0, 288, 416, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gKolimaTunnelEntrances[] = {
@@ -1797,7 +1797,7 @@ struct SceneEntrance gKolimaTunnelEntrances[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {KOLIMA_TUNNEL_FROM_KOLIMA, CONDITION_ALWAYS, 312, 0, 312, FACING_SOUTH, 0,
      -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off
@@ -1829,7 +1829,7 @@ u32 gKolimaExits[] = {
 };
 
 struct ActorTemplate gKolimaTunnelActorTemplates[] = {
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 /// Kolima's people: Garet, Ivan and Mia for the curse, the nine villagers,
@@ -1883,7 +1883,7 @@ struct ActorTemplate gKolimaActorTemplates[] = {
         PIXELS(40), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { VENUS_DJINNI, 0x31, MOVEMENT_TYPE_STAND,
         PIXELS(328), 0, PIXELS(360), FACING_EAST, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 /// Five more sparkles, placed by Kolima_Initialize once the curse has been seen
@@ -1899,7 +1899,7 @@ struct ActorTemplate gKolima_EntryScript[] = {
         PIXELS(296), 0, PIXELS(232), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
         PIXELS(152), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 /// Kolima Bridge's villager, as a man (ACTOR_BRIDGE_VILLAGER) and as a tree
@@ -1910,7 +1910,7 @@ struct ActorTemplate gKolimaBridgeActorTemplates[] = {
         PIXELS(234), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, 3, 0 },
     { SPRITE_TREE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(234), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 /// The triggers Kolima and Kolima Tunnel share: the exits and doorways, the

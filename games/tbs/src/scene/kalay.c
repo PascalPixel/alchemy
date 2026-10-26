@@ -112,7 +112,7 @@
 #include "edition.h"
 #include "task.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "call.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
@@ -2578,7 +2578,7 @@ s32 gKalay_FrostGrowScript[] = {
 struct SceneEntrance gKalay_NoEntrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gKalay_TownEntrances[] = {
@@ -2612,7 +2612,7 @@ struct SceneEntrance gKalay_TownEntrances[] = {
      0, -1, -1, -1, -1, 0},
     {KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM, CONDITION_ALWAYS, 440, 0, 88,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gKalay_HammetPalaceEntrances[] = {
@@ -2622,7 +2622,7 @@ struct SceneEntrance gKalay_HammetPalaceEntrances[] = {
      FACING_NORTH, 0, 0, 0, 400, 352, 0},
     {HAMMET_PALACE_GROUNDS_FROM_HAMMET_PALACE, CONDITION_ALWAYS, 192, 0, 232,
      FACING_SOUTH, 0, 0, 0, 400, 352, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gKalay_TunnelEntranceEntrances[] = {
@@ -2634,7 +2634,7 @@ struct SceneEntrance gKalay_TunnelEntranceEntrances[] = {
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH, CONDITION_ALWAYS, 440, 0, 540,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gKalay_TunnelCaveEntrances[] = {
@@ -2644,7 +2644,7 @@ struct SceneEntrance gKalay_TunnelCaveEntrances[] = {
      FACING_SOUTH, 0, 100, 50, 440, 445, 0},
     {KALAY_TUNNEL_CAVE_FROM_KALAY_TUNNEL_ENTRANCE, CONDITION_ALWAYS, 280, 0,
      392, FACING_NORTH, 0, 100, 50, 440, 445, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gKalay_TunnelPassageEntrances[] = {
@@ -2660,7 +2660,7 @@ struct SceneEntrance gKalay_TunnelPassageEntrances[] = {
      0, 152, FACING_SOUTH, 0, 390, 0, 630, 220, 0},
     {KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_CAVE, CONDITION_ALWAYS, 472, 0, 72,
      FACING_SOUTH, 0, 390, 0, 630, 220, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gKalay_TunnelEntrances[] = {
@@ -2674,7 +2674,7 @@ struct SceneEntrance gKalay_TunnelEntrances[] = {
      CONDITION_ALWAYS, 744, 0, 488, FACING_SOUTH, 0, 595, 400, 930, 880, 0},
     {KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY, CONDITION_ALWAYS, 856, 0, 856,
      FACING_NORTH, 0, 595, 400, 930, 880, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gKalay_Exits[] = {
@@ -2751,7 +2751,7 @@ u32 gKalay_Exits[] = {
 };
 
 struct ActorTemplate gKalay_NoActorTemplates[] = {
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off
@@ -2794,7 +2794,7 @@ struct ActorTemplate gKalay_TownActorTemplates[] = {
         PIXELS(440), 0, PIXELS(88), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(56), 0, PIXELS(332), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gKalay_TourGroupActorTemplates[] = {
@@ -2814,7 +2814,7 @@ struct ActorTemplate gKalay_TourGroupActorTemplates[] = {
         0, 0, 0, FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_RED_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_WEST, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gKalay_HammetPalaceActorTemplates[] = {
@@ -2824,7 +2824,7 @@ struct ActorTemplate gKalay_HammetPalaceActorTemplates[] = {
         PIXELS(168), 0, PIXELS(232), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(212), 0, PIXELS(232), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gKalay_TunnelEntranceActorTemplates[] = {
@@ -2844,7 +2844,7 @@ struct ActorTemplate gKalay_TunnelEntranceActorTemplates[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(136), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gKalay_TunnelActorTemplates[] = {
@@ -2858,7 +2858,7 @@ struct ActorTemplate gKalay_TunnelActorTemplates[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MARS_DJINNI, FLAG_DJINNI(DJINNI_SCORCH), MOVEMENT_TYPE_STAND,
         PIXELS(632), 0, PIXELS(712), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gKalay_NoTriggers[] = {

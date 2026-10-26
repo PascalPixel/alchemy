@@ -62,7 +62,7 @@
 #include "map_grid_copy.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "djinn_ids.h"
 #include "field_effect.h"
 #include "pushed_object.h"
@@ -1581,7 +1581,7 @@ struct SceneEntrance gBabiLighthouse_EntryEntrances[] = {
      CONDITION_ALWAYS, 296, 0, 312, FACING_SOUTH, 0, 0, 0, 384, 448, 0},
     {BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_NORTH,
      CONDITION_ALWAYS, 312, 0, 88, FACING_SOUTH, 0, 0, 0, 384, 448, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gBabiLighthouse_LuffEntrances[] = {
@@ -1621,7 +1621,7 @@ struct SceneEntrance gBabiLighthouse_LuffEntrances[] = {
      CONDITION_ALWAYS, 456, 0, 168, FACING_SOUTH, 0, 352, 64, 592, 320, 0},
     {BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_FALL_NORTH,
      CONDITION_ALWAYS, 232, 0, 536, FACING_SOUTH, 0, 128, 432, 368, 672, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gBabiLighthouse_StoneDoorEntrances[] = {
@@ -1631,7 +1631,7 @@ struct SceneEntrance gBabiLighthouse_StoneDoorEntrances[] = {
      CONDITION_ALWAYS, 136, 0, 368, FACING_NORTH, 0, 96, 48, 384, 432, 0},
     {BABI_LIGHTHOUSE_STONE_DOOR_FROM_BABI_LIGHTHOUSE_LUFF_EAST,
      CONDITION_ALWAYS, 168, 0, 344, FACING_SOUTH, 0, 96, 48, 384, 432, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gBabiLighthouse_RoadEntrances[] = {
@@ -1641,7 +1641,7 @@ struct SceneEntrance gBabiLighthouse_RoadEntrances[] = {
      FACING_NORTH, 0, 0, 0, 464, 400, 0},
     {ROAD_TO_BABI_LIGHTHOUSE_FROM_BABI_LIGHTHOUSE_ENTRY, CONDITION_ALWAYS, 136,
      0, 32, FACING_SOUTH, 0, 0, 0, 464, 400, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneExitRegion gBabiLighthouse_EntryRegions[] = {
@@ -1651,7 +1651,7 @@ struct SceneExitRegion gBabiLighthouse_EntryRegions[] = {
      BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_SOUTH},
     {304, -20, 96, 320, -4, 112, CONDITION_ALWAYS,
      BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_NORTH},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gBabiLighthouse_Exits[] = {
@@ -1747,7 +1747,7 @@ u32 gBabiLighthouse_Exits[] = {
 
 /// Unused: an empty actor template table nothing returns.
 struct ActorTemplate gBabiLighthouse_NoActorTemplates[] = {
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct ActorTemplate gBabiLighthouse_EntryActorTemplates[] = {
@@ -1767,13 +1767,13 @@ struct ActorTemplate gBabiLighthouse_EntryActorTemplates[] = {
     {SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS,
      (s32)gBabiLighthouse_TrembleScript, PIXELS(184), 0, PIXELS(248),
      FACING_SOUTH, TALK_FACING_KEEP, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct ActorTemplate gBabiLighthouse_LuffActorTemplates[] = {
     {JUPITER_DJINNI, FLAG_DJINNI(DJINNI_LUFF), MOVEMENT_TYPE_STAND, PIXELS(472),
      0, PIXELS(184), FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off
@@ -1796,7 +1796,7 @@ struct ActorTemplate gBabiLighthouse_StoneDoorActorTemplates[] = {
         TALK_FACING_PARTY_AND_BACK, 0},
     {SPRITE_FARAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(328), 0, PIXELS(312), FACING_WEST,
         TALK_FACING_PARTY_AND_BACK, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct ActorTemplate gBabiLighthouse_RoadActorTemplates[] = {
@@ -1810,7 +1810,7 @@ struct ActorTemplate gBabiLighthouse_RoadActorTemplates[] = {
         TALK_FACING_PARTY, 0},
     {SPRITE_SPIRAL_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(376), 0, PIXELS(216), FACING_SOUTH,
         TALK_FACING_PARTY, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct Trigger gBabiLighthouse_EntryTriggers[] = {

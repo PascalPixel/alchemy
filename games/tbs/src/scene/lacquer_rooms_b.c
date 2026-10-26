@@ -33,7 +33,7 @@
 #include "unit/overworld/field_services.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -351,7 +351,7 @@ struct SceneEntrance gLacquerRoomsB_Entrances[] = {
      FACING_EAST, 0, 48, 288, 336, 496, 0},
     {LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL, CONDITION_ALWAYS, 120, 0,
      696, FACING_NORTH, 0, 64, 544, 304, 744, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gLacquerRoomsB_Exits[] = {
@@ -401,7 +401,7 @@ struct ActorTemplate gLacquerRoomsB_ActorTemplates[] = {
         PIXELS(568), 0, PIXELS(416), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_COOK, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(280), 0, PIXELS(408), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gLacquerRoomsB_SchoolRoomActorTemplates[] = {
@@ -411,7 +411,7 @@ struct ActorTemplate gLacquerRoomsB_SchoolRoomActorTemplates[] = {
         PIXELS(200), 0, PIXELS(704), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_HSU, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), MOVEMENT_TYPE_STAND,
         PIXELS(224), 0, PIXELS(704), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gLacquerRoomsB_Triggers[] = {

@@ -59,7 +59,7 @@
 #include "edition.h"
 #include "script_layer.h"
 #include "field_service.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "pushed_object.h"
 #include "io_reg.h"
 #include "resource.h"
@@ -1530,25 +1530,25 @@ s32 gCrossboneIsleKeys_BaneWalkTargets[] = {
 
 struct SceneEntrance gCrossboneIsleKeysEntrancesOther[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gCrossboneIsleKeysRoomEntrances[] = {
     { CROSSBONE_ISLE_KEYS_FROM_CROSSBONE_ISLE_THIRD_FLOOR_EAST, CONDITION_ALWAYS, 200, 0, 968, FACING_NORTH, 0, 24, 560, 504, 1008, 0 },
     { CROSSBONE_ISLE_KEYS_FROM_CROSSBONE_ISLE_THIRD_FLOOR_WEST, CONDITION_ALWAYS, 88, 0, 968, FACING_NORTH, 0, 24, 560, 504, 1008, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gCrossboneIsleStatuesEntrances[] = {
     { CROSSBONE_ISLE_STATUES_FROM_CROSSBONE_ISLE_FOURTH_FLOOR_EAST, CONDITION_ALWAYS, 200, 0, 408, FACING_NORTH, 0, 40, 0, 464, 440, 0 },
     { CROSSBONE_ISLE_STATUES_FROM_CROSSBONE_ISLE_FOURTH_FLOOR_WEST, CONDITION_ALWAYS, 88, 0, 392, FACING_NORTH, 0, 40, 0, 464, 440, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gCrossboneIsleBaneEntrances[] = {
     { CROSSBONE_ISLE_BANE_FROM_CROSSBONE_ISLE_SIXTH_FLOOR_EAST, CONDITION_ALWAYS, 776, 0, 952, FACING_NORTH, 0, 512, 544, 928, 992, 0 },
     { CROSSBONE_ISLE_BANE_FROM_CROSSBONE_ISLE_SIXTH_FLOOR_WEST, CONDITION_ALWAYS, 664, 0, 952, FACING_NORTH, 0, 512, 544, 928, 992, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 u32 gCrossboneIsleKeysExits[] = {
@@ -1565,7 +1565,7 @@ u32 gCrossboneIsleKeysExits[] = {
 };
 
 struct ActorTemplate gCrossboneIsleKeysActorTemplatesOther[] = {
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gCrossboneIsleKeysRoomActorTemplates[] = {
@@ -1579,7 +1579,7 @@ struct ActorTemplate gCrossboneIsleKeysRoomActorTemplates[] = {
         PIXELS(80), 0, PIXELS(1016), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(80), 0, PIXELS(1016), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gCrossboneIsleStatuesActorTemplates[] = {
@@ -1593,7 +1593,7 @@ struct ActorTemplate gCrossboneIsleStatuesActorTemplates[] = {
         PIXELS(344), 0, PIXELS(360), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LADY_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(312), 0, PIXELS(232), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gCrossboneIsleBaneActorTemplates[] = {
@@ -1614,7 +1614,7 @@ struct ActorTemplate gCrossboneIsleBaneActorTemplates[] = {
     // Bane, until it is caught
     { VENUS_DJINNI, FLAG_DJINNI(DJINNI_BANE), MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gCrossboneIsleKeysTriggersOther[] = {

@@ -78,7 +78,7 @@
 #include "venus_lighthouse_aerie.h"
 #include "field_effect.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "songs.h"
 #include "audio_engine_symbols.h"
 #include "create_configured_overlay_object.h"
@@ -3428,7 +3428,7 @@ struct SceneEntrance gVenusLighthouseAerieEntrances[] = {
      FACING_WEST, 0, 0, 0, 600, 420, 0},
     {VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT, CONDITION_ALWAYS, 0, 0, 0,
      FACING_WEST, 0, 0, 0, 600, 420, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gVenusLighthouseAerieExits[] = {
@@ -3494,7 +3494,7 @@ struct ActorTemplate gVenusLighthouseAerieActorTemplates[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 // clang-format on
 

@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MAP_LOG_ROOMS_C_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 const struct SceneEntrance *LogRoomsC_GetEntrances(void);
 const struct SceneExitRegion *LogRoomsC_GetRegions(void);

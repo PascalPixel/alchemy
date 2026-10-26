@@ -56,7 +56,7 @@
 #include "field_service.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "item_ids.h"
 #include "objcmd.h"
 #include "fixed_math.h"
@@ -1591,7 +1591,7 @@ struct SceneEntrance gMcCoyPalaceEntrances[] = {
      760, FACING_EAST, 0, 512, 560, 752, 816, 0},
     {MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST, CONDITION_ALWAYS, 896, 0, 728,
      FACING_NORTH, 0, 776, 560, 1016, 768, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gMcCoyPalaceExits[] = {
@@ -1660,7 +1660,7 @@ u32 gMcCoyPalaceExits[] = {
 /// Unused: the getters return it for any map but SceneId_McCoyPalace, and the
 /// overlay serves no other.
 struct ActorTemplate gMcCoyPalaceNoActorTemplates[] = {
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off
@@ -1725,7 +1725,7 @@ struct ActorTemplate gMcCoyPalaceActorTemplates[] = {
         PIXELS(648), 0, PIXELS(664), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_CHEST, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(664), 0, PIXELS(664), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 /// Unused, as gMcCoyPalaceNoActorTemplates is.

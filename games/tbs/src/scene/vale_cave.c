@@ -72,7 +72,7 @@
 #include "map_grid_copy.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "create_configured_overlay_object.h"
 #include "pushed_object.h"
 #include "battle.h"
@@ -1070,7 +1070,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 struct SceneEntrance gValeCave_EntrancesOther[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gValeCave_MouthEntrances[] = {
@@ -1078,7 +1078,7 @@ struct SceneEntrance gValeCave_MouthEntrances[] = {
     { VALE_CAVE_MOUTH_FROM_VALE_KRADENS_COTTAGE_WEST, CONDITION_ALWAYS, 104, 0, 344, FACING_NORTH, 0, 16, 0, 336, 368, 0 },
     { VALE_CAVE_MOUTH_FROM_VALE_CAVE_KITE, CONDITION_ALWAYS, 136, 0, 184, FACING_SOUTH, 0, 16, 0, 336, 368, 0 },
     { VALE_CAVE_MOUTH_FROM_VALE_KRADENS_COTTAGE_EAST, CONDITION_ALWAYS, 136, 0, 376, FACING_NORTH, 0, 16, 0, 336, 368, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gValeCave_KiteEntrances[] = {
@@ -1093,7 +1093,7 @@ struct SceneEntrance gValeCave_KiteEntrances[] = {
     { VALE_CAVE_KITE_SOUTH_FROM_WEST, CONDITION_ALWAYS, 408, 0, 872, FACING_NORTH, 0, 312, 472, 704, 896, 0 },
     { VALE_CAVE_KITE_SOUTH_FROM_EAST, CONDITION_ALWAYS, 488, 0, 744, FACING_NORTH, 0, 312, 472, 704, 896, 0 },
     { VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH, CONDITION_ALWAYS, 632, 0, 552, FACING_SOUTH, 0, 312, 472, 704, 896, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gValeCave_LogsEntrances[] = {
@@ -1103,7 +1103,7 @@ struct SceneEntrance gValeCave_LogsEntrances[] = {
     { VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_EAST, CONDITION_ALWAYS, 120, 0, 264, FACING_NORTH, 0, 64, 24, 416, 464, 0 },
     { VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_SOUTH, CONDITION_ALWAYS, 536, 0, 776, FACING_NORTH, 0, 400, 440, 896, 800, 0 },
     { VALE_CAVE_LOGS_SOUTH_FROM_NORTH, CONDITION_ALWAYS, 840, 0, 776, FACING_NORTH, 0, 400, 440, 896, 800, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 u32 gValeCave_Exits[] = {
@@ -1142,7 +1142,7 @@ struct ActorTemplate gValeCave_MouthActorTemplates[] = {
         PIXELS(192), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(208), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gValeCave_KiteActorTemplates[] = {
@@ -1162,7 +1162,7 @@ struct ActorTemplate gValeCave_KiteActorTemplates[] = {
         PIXELS(384), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(400), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gValeCave_LogsActorTemplates[] = {
@@ -1174,7 +1174,7 @@ struct ActorTemplate gValeCave_LogsActorTemplates[] = {
         PIXELS(312), 0, PIXELS(288), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(240), 0, PIXELS(360), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gValeCave_TriggersOther[] = {

@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MAP_MERCURY_LIGHTHOUSE_ENTRANCE_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 const struct SceneEntrance *MercuryLighthouseEntrance_GetEntrances(void);
 const struct SceneExitRegion *MercuryLighthouseEntrance_GetRegions(void);

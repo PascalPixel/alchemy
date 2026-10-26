@@ -81,7 +81,7 @@
 #include "script_layer.h"
 #include "animspr.h"
 #include "field_effect.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "io_reg.h"
 #include "save.h"
@@ -2295,7 +2295,7 @@ struct SceneEntrance gSanctum_Entrances[] = {
     { SANCTUM_FROM_ALTIN, CONDITION_ALWAYS, 200, 0, 240, FACING_NORTH, 0, 128, 0, 320, 272, 0 },
     { SANCTUM_FROM_XIAN, CONDITION_ALWAYS, 200, 0, 240, FACING_NORTH, 0, 128, 0, 320, 272, 0 },
     { SANCTUM_FROM_BILIBIN, CONDITION_ALWAYS, 200, 0, 240, FACING_NORTH, 0, 128, 0, 320, 272, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 u32 gSanctum_Exits[] = {
@@ -2313,7 +2313,7 @@ u32 gSanctum_Exits[] = {
 };
 
 struct ActorTemplate gSanctum_NoActorTemplates[] = {
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gSanctum_ValeActorTemplates[] = {
@@ -2327,14 +2327,14 @@ struct ActorTemplate gSanctum_ValeActorTemplates[] = {
         PIXELS(152), 0, PIXELS(152), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(248), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 #if TBS_PATCH_1
 struct ActorTemplate gSanctum_IvanActorTemplate[] = {
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 #endif
 
@@ -2345,7 +2345,7 @@ struct ActorTemplate gSanctum_VaultBilibinActorTemplates[] = {
         PIXELS(200), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { 0xdd, CONDITION_ALWAYS, 7,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gSanctum_QuestActorTemplates[] = {
@@ -2365,13 +2365,13 @@ struct ActorTemplate gSanctum_QuestActorTemplates[] = {
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gSanctum_AltinXianActorTemplates[] = {
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(200), 0, PIXELS(132), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gSanctum_ValeTriggers[] = {

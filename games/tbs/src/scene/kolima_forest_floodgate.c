@@ -53,7 +53,7 @@
 #include "io_reg.h"
 #include "irq.h"
 #include "text/msg_ids.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "map_grid_scroll.h"
 #include "macros.h"
 #include "songs.h"
@@ -637,7 +637,7 @@ struct SceneEntrance gKolimaForestFloodgateEntrances[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 407, 0, 276, FACING_WEST, 0, -1, -1, -1, -1, 0 },
     { KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_CLIFF, CONDITION_ALWAYS, 50, 32, 369, FACING_EAST, 0, -1, -1, -1, -1, 0 },
     { KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_TREE, CONDITION_ALWAYS, 162, 32, 84, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 u32 gKolimaForestFloodgateExits[] = {
@@ -654,7 +654,7 @@ struct ActorTemplate gKolimaForestFloodgateActorTemplates[] = {
         PIXELS(256), 0, PIXELS(464), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SIGNPOST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(348), 0, PIXELS(456), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 // clang-format on
 

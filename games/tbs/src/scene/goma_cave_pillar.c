@@ -61,7 +61,7 @@
 #include "types.h"
 #include "animspr.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "djinn_ids.h"
 #include "pushed_object.h"
 #include "edition.h"
@@ -703,7 +703,7 @@ struct SceneEntrance gGomaCavePillar_Entrances[] = {
     { GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_WEST, CONDITION_ALWAYS, 232, 0, 184, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
     { GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_SOUTH, CONDITION_ALWAYS, 536, 0, 408, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
     { ENTRANCE_STUMP_FALL, CONDITION_ALWAYS, 376, 0, 200, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 u32 gGomaCavePillar_Exits[] = {
@@ -723,7 +723,7 @@ struct ActorTemplate gGomaCavePillar_ActorTemplates[] = {
     {SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {MARS_DJINNI, FLAG_DJINNI(DJINNI_FORGE), MOVEMENT_TYPE_STAND, PIXELS(664), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_PARTY, 0},
     {SPRITE_MAN_IN_ORANGE, FLAG_GOMA_CAVE_WITNESS_LEFT, MOVEMENT_TYPE_STAND, PIXELS(628), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct Trigger gGomaCavePillar_Triggers[] = {

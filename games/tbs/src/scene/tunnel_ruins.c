@@ -74,7 +74,7 @@
 #include "text/msg_ids.h"
 #include "script_layer.h"
 #include "field_service.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "field_effect.h"
 #include "pushed_object.h"
 #include "edition.h"
@@ -1904,7 +1904,7 @@ struct SceneEntrance gTunnelRuinsEntrancesOther[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 744, 0, 104, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {10, CONDITION_ALWAYS, 440, 0, 552, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gTunnelRuinsGreatStatueEntrances[] = {
@@ -1946,7 +1946,7 @@ struct SceneEntrance gTunnelRuinsGreatStatueEntrances[] = {
      CONDITION_ALWAYS, 744, 0, 944, FACING_NORTH, 0, 688, 736, 928, 976, 0},
     {TUNNEL_RUINS_GREAT_STATUE_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTHEAST,
      CONDITION_ALWAYS, 872, 0, 880, FACING_NORTH, 0, 688, 736, 928, 976, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gTunnelRuinsLadyStatuesEntrances[] = {
@@ -1986,7 +1986,7 @@ struct SceneEntrance gTunnelRuinsLadyStatuesEntrances[] = {
      CONDITION_ALWAYS, 776, 0, 904, FACING_SOUTH, 0, 608, 816, 848, 976, 0},
     {TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST,
      CONDITION_ALWAYS, 696, 0, 680, FACING_SOUTH, 0, 624, 592, 864, 768, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneExitRegion gTunnelRuinsLadyStatuesRegions[] = {
@@ -2148,7 +2148,7 @@ struct ActorTemplate gTunnelRuinsGreatStatueActorTemplates[] = {
     // and no shadow.
     {SPRITE_WORLD_MAP_VENUS_LIGHTHOUSE, 0, (s32)gTunnelRuins_ShrinkScript,
      PIXELS(232), 0, PIXELS(248), FACING_SOUTH, TALK_FACING_KEEP, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct ActorTemplate gTunnelRuinsActorTemplatesOther[] = {
@@ -2185,7 +2185,7 @@ struct ActorTemplate gTunnelRuinsActorTemplatesOther[] = {
      FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_LADY_STATUE, 0, MOVEMENT_TYPE_STAND, PIXELS(392), 0, PIXELS(824),
      FACING_SOUTH, TALK_FACING_KEEP, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off

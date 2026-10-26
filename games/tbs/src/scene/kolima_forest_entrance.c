@@ -50,7 +50,7 @@
 #include "tbs_edition.h"
 #include "script_layer.h"
 #include "engine_call.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "kolima.h"
 #include "pushed_object.h"
 #include "text/msg_ids.h"
@@ -1339,7 +1339,7 @@ struct SceneEntrance gKolimaForestEntrance_Entrances[] = {
      128, FACING_EAST, 0, -1, -1, -1, -1, 0},
     {KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP, CONDITION_ALWAYS, 172, 0, 602,
      FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 /// On into the forest (SceneId_KolimaForestGlade) and out to the world map
@@ -1393,7 +1393,7 @@ struct ActorTemplate gKolimaForestEntrance_ActorTemplates[] = {
     { SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(331), 0, PIXELS(659), FACING_SOUTH, TALK_FACING_PARTY,
         ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 // clang-format on
 

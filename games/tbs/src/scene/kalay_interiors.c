@@ -44,7 +44,7 @@
 #include "system.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
@@ -446,7 +446,7 @@ static void KalayInteriors_ApplyRoomState(void) {
 struct SceneEntrance gKalayInteriors_NoEntrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gKalayInteriors_HouseEntrances[] = {
@@ -490,7 +490,7 @@ struct SceneEntrance gKalayInteriors_HouseEntrances[] = {
      584, 0, 872, FACING_NORTH, 0, 540, 740, 730, 900, 0},
     {STUCCO_ROOMS_A_GUEST_ROOM_SOUTHWEST_FROM_INN_PASSAGE, CONDITION_ALWAYS,
      840, 0, 792, FACING_SOUTH, 0, 710, 740, 940, 900, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gKalayInteriors_SanctumEntrances[] = {
@@ -499,7 +499,7 @@ struct SceneEntrance gKalayInteriors_SanctumEntrances[] = {
     {KALAY_SANCTUM_FROM_KALAY, CONDITION_ALWAYS, 248, 0, 304, FACING_NORTH, 0,
      110, 35, 390, 345, 0},
     {2, CONDITION_ALWAYS, 248, 0, 128, FACING_SOUTH, 0, 110, 35, 390, 345, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gKalayInteriors_Exits[] = {
@@ -547,7 +547,7 @@ u32 gKalayInteriors_Exits[] = {
 };
 
 struct ActorTemplate gKalayInteriors_NoActorTemplates[] = {
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off
@@ -576,7 +576,7 @@ struct ActorTemplate gKalayInteriors_HouseActorTemplates[] = {
         PIXELS(795), 0, PIXELS(806), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_WHITE_TURBAN, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(857), 0, PIXELS(841), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gKalayInteriors_InnActorTemplates[] = {
@@ -604,13 +604,13 @@ struct ActorTemplate gKalayInteriors_InnActorTemplates[] = {
         PIXELS(417), 0, PIXELS(810), FACING_EAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BLUE_HAIR, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(459), 0, PIXELS(820), FACING_WEST + FACING_STEP, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gKalayInteriors_SanctumActorTemplates[] = {
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(248), 0, PIXELS(106), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gKalayInteriors_NoTriggers[] = {

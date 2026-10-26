@@ -1,7 +1,7 @@
 /// @file
-/// The field object: the main loop and map changes, random encounters, a field
-/// map's actors, the leader's steps and the requests they raise, the
-/// map's events, using items and Psynergy on the field, the map's treasure
+/// The field object: the sequence manager and scene changes, random encounters,
+/// a field map's actors, the leader's steps and the requests they raise, the
+/// scene's triggers, using items and Psynergy on the field, the map's treasure
 /// spots, and the screen transitions and palette fade that the field and
 /// battles share. overworld_internal.h holds the includes and the few macros
 /// and types more than one part uses; the code is in the files under
@@ -19,7 +19,7 @@
 #include "overworld/encounter.c"
 #include "overworld/actors.c"
 #include "overworld/step.c"
-#include "overworld/run_map.c"
+#include "overworld/run_scene.c"
 #include "overworld/palette_editor.c"
 #include "overworld/triggers.c"
 #include "overworld/targets.c"

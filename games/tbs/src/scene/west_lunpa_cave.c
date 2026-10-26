@@ -1067,7 +1067,7 @@ const struct SceneEntrance gCaveEntrances[] = {
     { WEST_LUNPA_CAVE_FROM_WORLD_MAP, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, 88, 56, 648, 648, 0 },
     { WEST_LUNPA_CAVE_FROM_LUNPA, CONDITION_ALWAYS, 552, 0, 328, FACING_NORTH, 0, 88, 56, 648, 648, 0 },
     { WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED, CONDITION_ALWAYS, 552, 0, 328, FACING_NORTH, 0, 88, 56, 648, 488, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 const u32 gCaveExits[] = {
@@ -1079,7 +1079,7 @@ const u32 gCaveExits[] = {
 };
 
 const struct ActorTemplate gCaveNoActorTemplates[] = {
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 const struct ActorTemplate gCaveActorTemplates[] = {
@@ -1095,7 +1095,7 @@ const struct ActorTemplate gCaveActorTemplates[] = {
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 /// Unused: an empty trigger table nothing returns.

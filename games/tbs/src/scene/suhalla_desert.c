@@ -67,7 +67,7 @@
 #include "actor.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "djinn_ids.h"
 #include "battle.h"
 #include "debug.h"
@@ -1001,7 +1001,7 @@ s32 gSuhallaDesertFourthStormScript[] = {
 struct SceneEntrance gSuhallaDesertEntrancesOther[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gSuhallaDesertNorthEntrances[] = {
@@ -1009,7 +1009,7 @@ struct SceneEntrance gSuhallaDesertNorthEntrances[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SUHALLA_DESERT_NORTH_FROM_SUHALLA_DESERT_SOUTH, CONDITION_ALWAYS, 24, 0,
      936, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gSuhallaDesertSouthEntrances[] = {
@@ -1021,7 +1021,7 @@ struct SceneEntrance gSuhallaDesertSouthEntrances[] = {
      0, 624, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_CAVES_WEST, CONDITION_ALWAYS, 56,
      0, 624, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gSuhallaDesertCavesEntrances[] = {
@@ -1033,7 +1033,7 @@ struct SceneEntrance gSuhallaDesertCavesEntrances[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SUHALLA_DESERT_CAVES_FROM_SUHALLA_DESERT_SOUTH_EAST, CONDITION_ALWAYS, 648,
      0, 280, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gSuhallaDesertExits[] = {
@@ -1068,7 +1068,7 @@ u32 gSuhallaDesertExits[] = {
 };
 
 struct ActorTemplate gSuhallaDesertActorTemplatesOther[] = {
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off
@@ -1085,7 +1085,7 @@ struct ActorTemplate gSuhallaDesertNorthActorTemplates[] = {
         PIXELS(440), 0, PIXELS(744), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_IODEM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gSuhallaDesertSouthActorTemplates[] = {
@@ -1105,11 +1105,11 @@ struct ActorTemplate gSuhallaDesertSouthActorTemplates[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MARS_DJINNI, FLAG_DJINNI(DJINNI_FLASH), MOVEMENT_TYPE_STAND,
         PIXELS(72), 0, PIXELS(696), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gSuhallaDesertCavesActorTemplates[] = {
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 s32 gSuhallaDesertChaseScript[] = {

@@ -5,7 +5,7 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "flags.h"
 #include "item_ids.h"
 

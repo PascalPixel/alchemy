@@ -102,7 +102,7 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   return 1;
 }
 
-// UB: no value is returned, and run_map.c ignores it; as void, the epilogue
+// UB: no value is returned, and run_scene.c ignores it; as void, the epilogue
 // changes.
 /// Sets up the world map's perspective view: BG2 and BG3 in affine mode, the
 /// camera work, the projection, the per-scanline ground plane routine in RAM
@@ -110,7 +110,7 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
 /// HBlank updates.
 ///
 /// Called through WorldMap_InitializePerspectiveFar when the world map
-/// starts (run_map.c). Allocates and clears the perspective work in
+/// starts (run_scene.c). Allocates and clears the perspective work in
 /// HEAP_SLOT_MAP_GRID, the camera in HEAP_SLOT_CAMERA and the affine pages in
 /// HEAP_SLOT_WORLD_MAP_FRAME; loads the default cells, metatile attributes and
 /// tileset animations; writes the blend, BG and affine registers and
@@ -319,7 +319,7 @@ void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
 /// 26-28.
 ///
 /// Called through WorldMap_LoadGraphicsFar when the world map starts,
-/// with the party's position (run_map.c). Sets perspective->resources,
+/// with the party's position (run_scene.c). Sets perspective->resources,
 /// which WorldMap_LoadAreaGraphics reloads from; writes BG palette colours 1 to
 /// 223 (keeping the backdrop), char blocks 2 and 3, gMapGridAnimTiles and
 /// screen blocks 5 and 6.

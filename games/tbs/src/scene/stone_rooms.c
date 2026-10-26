@@ -41,7 +41,7 @@
 #include "types.h"
 #include "ability_ids.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "flags.h"
 #include "item_ids.h"
 #include "songs.h"
@@ -267,7 +267,7 @@ const struct SceneEntrance gStoneRooms_Entrances[] = {
     { STONE_ROOMS_FROM_VAULT, CONDITION_ALWAYS, 80, 0, 232, FACING_NORTH, 0, 16, 48, 304, 256, 0 },
     { STONE_ROOMS_FROM_LUNPA, CONDITION_ALWAYS, 544, 0, 280, FACING_NORTH, 0, 440, 48, 680, 312, 0 },
     { STONE_ROOMS_FROM_VAULT_REVISIT, CONDITION_ALWAYS, 80, 0, 232, FACING_NORTH, 0, 16, 48, 304, 256, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 const u32 gStoneRooms_Exits[] = {
@@ -285,13 +285,13 @@ const struct ActorTemplate gStoneRooms_ThiefActorTemplates[] = {
       PIXELS(88), 0, PIXELS(144), FACING_SOUTH - FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_PERSON_IN_PURPLE, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), MOVEMENT_TYPE_STAND,
       PIXELS(248), 0, PIXELS(144), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 const struct ActorTemplate gStoneRooms_PrisonerActorTemplates[] = {
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(168), 0, PIXELS(144), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 const struct Trigger gStoneRooms_ThiefTriggers[] = {

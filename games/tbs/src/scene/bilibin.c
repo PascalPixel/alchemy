@@ -108,7 +108,7 @@
 #include "types.h"
 #include "script_layer.h"
 #include "field_service.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "call.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
@@ -1050,7 +1050,7 @@ struct SceneEntrance gBilibinEntrances[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {BILIBIN_FROM_BILIBIN_TREASURY_EAST, CONDITION_ALWAYS, 264, 0, 200,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gBilibinBarricadeEntrances[] = {
@@ -1059,7 +1059,7 @@ struct SceneEntrance gBilibinBarricadeEntrances[] = {
      FACING_EAST, 0, 16, 16, 400, 400, 0},
     {BILIBIN_BARRICADE_FROM_WORLD_MAP_EAST, CONDITION_ALWAYS, 376, 0, 184,
      FACING_WEST, 0, 16, 16, 400, 400, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gBilibinTreasuryEntrances[] = {
@@ -1072,7 +1072,7 @@ struct SceneEntrance gBilibinTreasuryEntrances[] = {
      FACING_NORTH, 0, 32, 32, 384, 304, 0},
     {BILIBIN_TREASURY_FROM_BILIBIN_NORTH, CONDITION_ALWAYS, 296, 4, 224,
      FACING_NORTH, 0, 32, 32, 384, 304, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off
@@ -1107,7 +1107,7 @@ u32 gBilibinExits[] = {
 };
 
 struct ActorTemplate gBilibinActorTemplatesOther[] = {
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gBilibinActorTemplates[] = {
@@ -1139,7 +1139,7 @@ struct ActorTemplate gBilibinActorTemplates[] = {
         PIXELS(264), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(264), 0, PIXELS(432), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gBilibinBarricadeActorTemplates[] = {
@@ -1161,7 +1161,7 @@ struct ActorTemplate gBilibinBarricadeActorTemplates[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gBilibinTreasuryActorTemplates[] = {
@@ -1169,7 +1169,7 @@ struct ActorTemplate gBilibinTreasuryActorTemplates[] = {
         PIXELS(232), 0, PIXELS(100), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { JUPITER_DJINNI, FLAG_DJINNI(DJINNI_GUST), MOVEMENT_TYPE_STAND,
         PIXELS(328), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gBilibinTriggersOther[] = {

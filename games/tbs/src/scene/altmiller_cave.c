@@ -75,7 +75,7 @@
 #include "system.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "djinn_ids.h"
 #include "pushed_object.h"
 #include "edition.h"
@@ -2354,7 +2354,7 @@ struct SceneEntrance gAltmillerCave_Entrances[] = {
      FACING_SOUTH, 0, 384, 64, 624, 240, 0},
     {ALTMILLER_CAVE_DRAUGHT_CHEST_FROM_ROCKS, CONDITION_ALWAYS, 184, 0, 216,
      FACING_NORTH, 0, 64, 64, 304, 240, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gAltmillerCave_Exits[] = {
@@ -2413,7 +2413,7 @@ u32 gAltmillerCave_Exits[] = {
 };
 
 struct ActorTemplate gAltmillerCave_ActorTemplatesOther[] = {
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct ActorTemplate gAltmillerCave_BabiActorTemplates[] = {
@@ -2431,7 +2431,7 @@ struct ActorTemplate gAltmillerCave_BabiActorTemplates[] = {
      -PIXELS(64), 0, -PIXELS(64), FACING_NORTH, TALK_FACING_KEEP, 0},
     {SPRITE_SOLDIER_WITH_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
      -PIXELS(64), 0, -PIXELS(64), FACING_NORTH, TALK_FACING_KEEP, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct ActorTemplate gAltmillerCave_SquallActorTemplates[] = {
@@ -2450,7 +2450,7 @@ struct ActorTemplate gAltmillerCave_SquallActorTemplates[] = {
      PIXELS(328), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {JUPITER_DJINNI, FLAG_DJINNI(DJINNI_SQUALL), MOVEMENT_TYPE_STAND,
      PIXELS(264), 0, PIXELS(200), FACING_SOUTHWEST, TALK_FACING_PARTY, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct ActorTemplate gAltmillerCave_DraughtActorTemplates[] = {
@@ -2483,7 +2483,7 @@ struct ActorTemplate gAltmillerCave_DraughtActorTemplates[] = {
      PIXELS(174), FACING_SOUTH, TALK_FACING_PARTY, 0},
     {SPRITE_TURNING_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(568), 0,
      PIXELS(190), FACING_SOUTH, TALK_FACING_PARTY, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 /// The sizes the light at the top pulses through.

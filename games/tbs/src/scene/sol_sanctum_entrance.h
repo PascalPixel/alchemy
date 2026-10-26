@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "flags.h"
 
 /// In Sol Sanctum (SceneId_SolSanctumReliefs), Kraden follows the party; Garet

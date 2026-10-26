@@ -56,7 +56,7 @@
 #include "system.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "call.h"
 #include "scene_ids.h"
 #include "io_reg.h"
@@ -1528,7 +1528,7 @@ const struct SceneEntrance gTolbiSpring_Entrances[] = {
      FACING_NORTH, 0, 8, 288, 248, 456, 0},
     {STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE, CONDITION_ALWAYS, 120, 0, 152,
      FACING_WEST, 0, 8, 8, 248, 200, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 const u32 gTolbiSpring_Exits[] = {
@@ -1587,7 +1587,7 @@ const struct ActorTemplate gTolbiSpringActorTemplates[] = {
         PIXELS(24), 0, PIXELS(72), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(216), 0, PIXELS(96), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 const struct ActorTemplate gTolbiSpringActorTemplatesOther[] = {
@@ -1613,7 +1613,7 @@ const struct ActorTemplate gTolbiSpringActorTemplatesOther[] = {
         PIXELS(184), 0, PIXELS(152), FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(80), 0, PIXELS(88), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 const struct Trigger gTolbiSpringTriggersOther[] = {

@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 enum CollapseActorId {
   /// The shadow on the platform under each who leaves with Saturos: a

@@ -52,7 +52,7 @@
 #include "actor.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "create_configured_overlay_object.h"
 #include "battle.h"
 #include "debug.h"
@@ -2347,7 +2347,7 @@ s32 gSolSanctumElementalStarRoom_PresentItemScript[] = {
 struct SceneEntrance gSolSanctumElementalStarRoom_Entrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 472, 0, 322, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gSolSanctumElementalStarRoom_Exits[] = {
@@ -2398,7 +2398,7 @@ struct ActorTemplate gSolSanctumElementalStarRoom_ActorTemplates[] = {
         PIXELS(295), 0, PIXELS(210), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_FLOATING_LIGHT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(742), 0, PIXELS(310), FACING_EAST, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gSolSanctumElementalStarRoom_Triggers[] = {

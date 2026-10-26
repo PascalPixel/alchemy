@@ -56,7 +56,7 @@
 #include "system.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "field_service.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
@@ -978,18 +978,18 @@ struct SceneEntrance gLaliveroInteriors_Entrances[] = {
      FACING_SOUTH, 0, 280, 504, 912, 896, 0},
     {TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE, CONDITION_ALWAYS, 96, 0, 168,
      FACING_NORTH, 0, 8, 8, 312, 192, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off
 struct SceneExitRegion gTimberRoomsB_Regions[] = {
     {196, 28, 595, 204, 36, 603, CONDITION_ALWAYS, TIMBER_ROOMS_B_TO_LALIVERO_EAST_SOUTHEAST},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneExitRegion gTimberRoomsC_Regions[] = {
     {212, 28, 83, 220, 36, 91, CONDITION_ALWAYS, TIMBER_ROOMS_C_TO_LALIVERO_SOUTH},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gLaliveroInteriors_Exits[] = {
@@ -1049,7 +1049,7 @@ struct ActorTemplate gTimberRoomsB_ActorTemplates[] = {
         PIXELS(68), 0, PIXELS(340), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(432), 0, PIXELS(600), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gTimberRoomsC_ActorTemplates[] = {
@@ -1069,7 +1069,7 @@ struct ActorTemplate gTimberRoomsC_ActorTemplates[] = {
         PIXELS(136), 0, PIXELS(300), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(544), 0, PIXELS(368), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gTimberRoomsC_ActorTemplatesAfterLighthouse[] = {
@@ -1095,7 +1095,7 @@ struct ActorTemplate gTimberRoomsC_ActorTemplatesAfterLighthouse[] = {
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gTimberRoomsB_Triggers[] = {

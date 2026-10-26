@@ -1,7 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "field_effect.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "fixed_math.h"
 
 // Vale and its home, storm and Babi maps, Sol Sanctum's eruption, the world

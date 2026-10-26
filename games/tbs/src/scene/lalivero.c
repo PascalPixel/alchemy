@@ -43,7 +43,7 @@
 #include "system.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "field_service.h"
 #include "field_effect.h"
 #include "item_ids.h"
@@ -979,7 +979,7 @@ struct SceneEntrance gLaliveroEntrances[] = {
      0, -1, -1, -1, -1, 0},
     {LALIVERO_FROM_WORLD_MAP_WEST, CONDITION_ALWAYS, 248, 0, 64, FACING_SOUTH,
      0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gLaliveroExits[] = {
@@ -1047,7 +1047,7 @@ struct ActorTemplate gLaliveroActorTemplates[] = {
         PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACING_KEEP, 0 },
     { MARS_DJINNI, FLAG_DJINNI(DJINNI_TORCH), MOVEMENT_TYPE_STAND,
         PIXELS(200), 0, PIXELS(136), FACING_EAST, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gLaliveroActorTemplatesAfterLighthouse[] = {
@@ -1093,7 +1093,7 @@ struct ActorTemplate gLaliveroActorTemplatesAfterLighthouse[] = {
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 s16 gLaliveroDoorCells[][2] = {

@@ -38,7 +38,7 @@
 #include "io_write_queue.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "map_grid_scroll.h"
 #include "songs.h"
 #include "audio_engine_symbols.h"
@@ -381,7 +381,7 @@ static void Title_LoadBackground(void) {
 
 struct SceneEntrance gTitleEntrances[] = {
     {0, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gTitleExits[] = {
@@ -389,7 +389,7 @@ u32 gTitleExits[] = {
 };
 
 struct ActorTemplate gTitleActorTemplates[] = {
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct Trigger gTitleTriggers[] = {

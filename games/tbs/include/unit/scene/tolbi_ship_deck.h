@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MAP_TOLBI_SHIP_DECK_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "scene_header.h"
 
 const struct SceneEntrance *TolbiShipDeck_GetEntrances(void);

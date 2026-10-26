@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MAP_TUNNEL_RUINS_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "field_coordinate.h"
 #include "scene_header.h"
 

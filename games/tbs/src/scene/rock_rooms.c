@@ -71,7 +71,7 @@ const struct SceneEntrance gInteriorEntrances[] = {
     { ROOM_NINTH_UNUSED, CONDITION_ALWAYS, 672, 0, 888, FACING_NORTH, 0, 520, 656, 760, 896, 0 },
     { ROOM_GATE_TO_SUHALLA, CONDITION_ALWAYS, 832, 0, 848, FACING_NORTH, 0, 680, 656, 920, 896, 0 },
     { ROOM_TEMPLE_SECOND_ENTRANCE, CONDITION_ALWAYS, 688, 0, 184, FACING_NORTH, 0, 568, 32, 808, 288, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 const u32 gInteriorExits[] = {
@@ -125,7 +125,7 @@ const struct ActorTemplate gInteriorActorTemplates[] = {
       PIXELS(464), 0, PIXELS(544), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(720), 0, PIXELS(512), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 const struct Trigger gInteriorSealedTriggers[] = {

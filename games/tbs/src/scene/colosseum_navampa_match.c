@@ -71,7 +71,7 @@
 #include "unit/scene/common/colosso_item_icon.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "colosso_log_rolling_stage.h"
 #include "io_reg.h"
 #include "keystate.h"
@@ -2488,7 +2488,7 @@ struct SceneEntrance gColosseumNavampaMatchEntrances[] = {
     { COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH, CONDITION_ALWAYS, 136, 0, 392, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_LOST, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 u32 gColosseumNavampaMatchExits[] = {
@@ -2581,7 +2581,7 @@ struct ActorTemplate gColosseumNavampaMatchActorTemplates[] = {
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { 0x118, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 s32 gColosseumNavampaMatch_WallWedgePatternIndex = 0;

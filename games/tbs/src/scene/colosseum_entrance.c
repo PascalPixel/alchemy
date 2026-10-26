@@ -75,7 +75,7 @@
 #include "system.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "actor.h"
 #include "ability_ids.h"
@@ -2112,7 +2112,7 @@ struct SceneEntrance gColosseumEntranceEntrancesOther[] = {
      FACING_SOUTH, 0, 16, 16, 528, 256, 0},
     {COLOSSEUM_TUNNEL_FROM_COLOSSEUM, CONDITION_ALWAYS, 488, 0, 88,
      FACING_SOUTH, 0, 16, 16, 528, 256, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gColosseumEntrances[] = {
@@ -2151,14 +2151,14 @@ struct SceneEntrance gColosseumEntrances[] = {
      FACING_SOUTHEAST, 0, 272, 0, 656, 304, 0},
     {COLOSSEUM_CLEARED_TRIAL_FROM_STANDS, CONDITION_ALWAYS, 184, 0, 912,
      FACING_SOUTH, 0, 0, 736, 368, 1024, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gColosseumEntranceEntrances[] = {
     {COLOSSEUM_ENTRANCE_FROM_TOLBI, CONDITION_ALWAYS, 96, 0, 288, FACING_NORTH,
      0, 0, 0, 512, 320, 0},
     {2, CONDITION_ALWAYS, 272, 0, 88, FACING_SOUTH, 0, 0, 0, 512, 320, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gColosseumEntranceExits[] = {
@@ -2224,7 +2224,7 @@ struct ActorTemplate gColosseumEntranceActorTemplatesOther[] = {
         PIXELS(328), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(408), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gColosseumStandsActorTemplates[] = {
@@ -2276,7 +2276,7 @@ struct ActorTemplate gColosseumStandsActorTemplates[] = {
         PIXELS(344), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(608), 0, PIXELS(104), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gColosseumTrialGroundsActorTemplates[] = {
@@ -2308,7 +2308,7 @@ struct ActorTemplate gColosseumTrialGroundsActorTemplates[] = {
         PIXELS(264), 0, PIXELS(888), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_CAPPED_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(184), 0, PIXELS(902), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gColosseumActorTemplates[] = {
@@ -2318,7 +2318,7 @@ struct ActorTemplate gColosseumActorTemplates[] = {
         PIXELS(168), 0, PIXELS(72), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(128), 0, PIXELS(96), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gColosseumSoldiersActorTemplates[] = {
@@ -2336,7 +2336,7 @@ struct ActorTemplate gColosseumSoldiersActorTemplates[] = {
         PIXELS(832), 0, PIXELS(96), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(856), 0, PIXELS(120), FACING_WEST, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gColosseumActorTemplatesFromColosseumAzartMatchWest[] = {
@@ -2362,7 +2362,7 @@ struct ActorTemplate gColosseumActorTemplatesFromColosseumAzartMatchWest[] = {
         PIXELS(840), 0, PIXELS(120), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(856), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gColosseumActorTemplatesFromColosseumNavampaMatch[] = {
@@ -2378,7 +2378,7 @@ struct ActorTemplate gColosseumActorTemplatesFromColosseumNavampaMatch[] = {
         PIXELS(920), 0, PIXELS(408), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(1016), 0, PIXELS(408), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gColosseumEntranceActorTemplates[] = {
@@ -2414,7 +2414,7 @@ struct ActorTemplate gColosseumEntranceActorTemplates[] = {
         PIXELS(280), 0, PIXELS(64), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_GIRL_IN_PINK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(264), 0, PIXELS(72), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gColosseumEntranceActorTemplatesFinalsDay[] = {
@@ -2464,7 +2464,7 @@ struct ActorTemplate gColosseumEntranceActorTemplatesFinalsDay[] = {
         PIXELS(278), 0, PIXELS(142), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_GIRL_IN_PINK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(280), 0, PIXELS(160), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gColosseumEntranceActorTemplatesAfterColosso[] = {
@@ -2472,7 +2472,7 @@ struct ActorTemplate gColosseumEntranceActorTemplatesAfterColosso[] = {
         PIXELS(80), 0, PIXELS(238), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(286), 0, PIXELS(164), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gColosseumEntranceTriggersOther[] = {

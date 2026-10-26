@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_DEBUG_ROOMS_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 u8 *TestRoom_GetEntrances(void);
 s32 Scene_GetExitRegions(void);

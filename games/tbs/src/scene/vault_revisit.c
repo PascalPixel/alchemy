@@ -47,7 +47,7 @@
 #include "actor.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -802,7 +802,7 @@ struct SceneEntrance gVaultRevisit_Entrances[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {VAULT_REVISIT_FROM_VAULT_CAVE_MOUTH, CONDITION_ALWAYS, 420, 0, 136,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gVaultRevisit_Exits[] = {
@@ -863,7 +863,7 @@ struct ActorTemplate gVaultRevisit_ActorTemplates[] = {
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { 0x5a, 0x34, MOVEMENT_TYPE_STAND,
         PIXELS(344), 0, PIXELS(96), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 u16 gVaultRevisit_GemOwnersHouseDoorCells[] = {

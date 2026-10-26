@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MAP_VALE_KRADENS_COTTAGE_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 const struct SceneEntrance *ValeKradensCottage_GetEntrances(void);
 const struct SceneExitRegion *ValeKradensCottage_GetRegions(void);

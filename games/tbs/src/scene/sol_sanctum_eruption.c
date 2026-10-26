@@ -60,7 +60,7 @@
 #include "iwram_call.h"
 #include "field_effect.h"
 #include "text/msg_ids.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "objcmd.h"
 #include "actor.h"
 #include "heap_slots.h"
@@ -1896,7 +1896,7 @@ s32 gEruption_ArcOrigins[] = {
 
 struct SceneEntrance gSolSanctumEruption_Entrances[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 472, 0, 322, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 u32 gSolSanctumEruption_Exits[] = {
@@ -1958,7 +1958,7 @@ struct ActorTemplate gSolSanctumEruption_ActorTemplates[] = {
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gSolSanctumEruption_Triggers[] = {

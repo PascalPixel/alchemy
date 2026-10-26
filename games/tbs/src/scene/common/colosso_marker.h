@@ -9,7 +9,7 @@
 #include "sound.h"
 #include "system.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
 #include "types.h"

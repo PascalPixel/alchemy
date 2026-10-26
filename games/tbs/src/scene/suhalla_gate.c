@@ -54,7 +54,7 @@
 #include "sound.h"
 #include "system.h"
 #include "suhalla_gate.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "djinn_ids.h"
 #include "types.h"
 #include "script_layer.h"
@@ -537,7 +537,7 @@ struct SceneEntrance gSuhallaGateEntrancesOther[] = {
      0, 296, FACING_EAST, 0, 336, 32, 736, 496, 0},
     {SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST, CONDITION_ALWAYS, 664, 0, 424,
      FACING_WEST, 0, 336, 32, 736, 496, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gSuhallaGateDewEntrances[] = {
@@ -551,7 +551,7 @@ struct SceneEntrance gSuhallaGateDewEntrances[] = {
      0, 904, FACING_WEST, 0, 16, 608, 720, 1008, 0},
     {SUHALLA_GATE_DEW_FROM_GATEWAY_CAVE, CONDITION_ALWAYS, 616, 0, 920,
      FACING_SOUTH, 0, 16, 608, 720, 1008, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gGatewayCaveEntrances[] = {
@@ -563,7 +563,7 @@ struct SceneEntrance gGatewayCaveEntrances[] = {
      0, 208, 288, 704, 640, 0},
     {GATEWAY_CAVE_FROM_WORLD_MAP, CONDITION_ALWAYS, 664, 0, 616, FACING_NORTH,
      0, 208, 288, 704, 640, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gSuhallaGateExits[] = {
@@ -604,7 +604,7 @@ u32 gSuhallaGateExits[] = {
 };
 
 struct ActorTemplate gSuhallaGateActorTemplatesOther[] = {
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off
@@ -621,7 +621,7 @@ struct ActorTemplate gSuhallaGateDewActorTemplates[] = {
         PIXELS(552), 0, PIXELS(880), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { MERCURY_DJINNI, FLAG_DJINNI(DJINNI_DEW), MOVEMENT_TYPE_STAND,
         PIXELS(264), 0, PIXELS(888), FACING_SOUTHEAST, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gSuhallaGateCheckpointActorTemplates[] = {
@@ -629,7 +629,7 @@ struct ActorTemplate gSuhallaGateCheckpointActorTemplates[] = {
         PIXELS(120), 0, PIXELS(384), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(168), 0, PIXELS(384), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gSuhallaGateCheckpointActorTemplatesAfterAudience[] = {
@@ -650,7 +650,7 @@ struct ActorTemplate gSuhallaGateCheckpointActorTemplatesAfterAudience[] = {
 #endif
     { SPRITE_IODEM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gSuhallaGateTriggersOther[] = {

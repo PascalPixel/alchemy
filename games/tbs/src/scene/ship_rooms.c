@@ -107,7 +107,7 @@
 #include "unit/window/screens.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -4410,7 +4410,7 @@ struct Actor *gShipRooms_AnchorObject = 0;
 
 /// The other maps have no entrances.
 struct SceneEntrance gShipRooms_EntrancesOther[] = {
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 /// The passengers' hold, the cargo hold, the rowing deck and the captain's
@@ -4458,7 +4458,7 @@ struct SceneEntrance gShipRooms_Entrances[] = {
      408, 0, 136, FACING_WEST, 0, 315, 80, 555, 410, 0},
     {SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT, CONDITION_ALWAYS, 166, 0, 570,
      FACING_NORTH, 0, 30, 380, 270, 620, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gShipRooms_Exits[] = {
@@ -4501,7 +4501,7 @@ u32 gShipRooms_Exits[] = {
 };
 
 struct ActorTemplate gShipRooms_ActorTemplatesNone[] = {
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off
@@ -4512,7 +4512,7 @@ struct ActorTemplate gShipRooms_CaptainsQuartersActorTemplates[] = {
         PIXELS(472), 0, PIXELS(626), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SPRITE_MAN_IN_BLUE_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(454), 0, PIXELS(640), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 /// The captain's quarters once the warriors have come to see the captain, with the party's
@@ -4536,21 +4536,21 @@ struct ActorTemplate gShipRooms_CaptainsQuartersActorTemplatesWarriors[] = {
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 /// The captain's quarters once the ship has reached Tolbi.
 struct ActorTemplate gShipRooms_CaptainsQuartersActorTemplatesArrived[] = {
     { SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(462), 0, PIXELS(612), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 /// The hold before the party hears of the delay at Kalay.
 struct ActorTemplate gShipRooms_HoldActorTemplatesEmpty[] = {
     { 0xf4, CONDITION_ALWAYS, (s32)gShipRooms_LieFlatScript,
         PIXELS(150), 0, PIXELS(528), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 /// The hold while the ship waits at Kalay, and after it reaches Tolbi.
@@ -4575,7 +4575,7 @@ struct ActorTemplate gShipRooms_HoldActorTemplates[] = {
         0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { 0xf4, CONDITION_ALWAYS, (s32)gShipRooms_LieFlatScript,
         PIXELS(150), 0, PIXELS(528), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 /// The hold at sea, once the passengers row.
@@ -4604,7 +4604,7 @@ struct ActorTemplate gShipRooms_HoldActorTemplatesAtSea[] = {
         0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { 0xf4, CONDITION_ALWAYS, (s32)gShipRooms_LieFlatScript,
         PIXELS(150), 0, PIXELS(528), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 /// The rowing deck, in the order of enum TolbiShipRowingDeckActorId: the crewman
@@ -4667,7 +4667,7 @@ struct ActorTemplate gShipRooms_RowingDeckActorTemplates[] = {
         PIXELS(410), 0, PIXELS(316), FACING_EAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_RESTING_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(470), 0, PIXELS(316), FACING_WEST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 /// The party's followers, placed for an event.
@@ -4678,7 +4678,7 @@ struct ActorTemplate gShipRooms_PartyFollowerActorTemplates[] = {
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 /// The monsters of each attack, beside the seats.
@@ -4689,7 +4689,7 @@ struct ActorTemplate gShipRooms_FirstAttackMonsters[] = {
         PIXELS(458), 0, PIXELS(310), FACING_WEST, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(474), 0, PIXELS(332), FACING_WEST, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gShipRooms_SecondAttackMonsters[] = {
@@ -4699,7 +4699,7 @@ struct ActorTemplate gShipRooms_SecondAttackMonsters[] = {
         PIXELS(474), 0, PIXELS(332), FACING_WEST, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_LIZARD_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(458), 0, PIXELS(310), FACING_WEST, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gShipRooms_ThirdAttackMonsters[] = {
@@ -4709,7 +4709,7 @@ struct ActorTemplate gShipRooms_ThirdAttackMonsters[] = {
         PIXELS(474), 0, PIXELS(332), FACING_WEST, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLUE_WINGED_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(458), 0, PIXELS(310), FACING_WEST, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 /// The cargo hold, and the events.

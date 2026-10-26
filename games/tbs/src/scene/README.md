@@ -71,7 +71,7 @@ east, y up and z south, and a facing is one of eight headings
 
 These are `struct SceneEntrance`, the `SCENE_EXIT` rows of the exit
 table (named in `scene_exits.h`), `struct ActorTemplate`,
-`struct SceneExitRegion` and `struct Trigger`, all in `map_tables.h` and
+`struct SceneExitRegion` and `struct Trigger`, all in `scene_tables.h` and
 `scene_header.h`.
 
 ### Conditions
@@ -161,7 +161,7 @@ holds either a message or a script, since scripts live at addresses above any
 message number.
 
 The row is `struct Trigger`, its kinds and the `FIND_` values
-are in `map_tables.h`, and a script is written `EVENT_SCRIPT(function)` and a
+are in `scene_tables.h`, and a script is written `EVENT_SCRIPT(function)` and a
 message `MSGNO(name)`.
 
 ### Which triggers a cell starts

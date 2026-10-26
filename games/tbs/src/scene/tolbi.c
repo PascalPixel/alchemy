@@ -64,7 +64,7 @@
 #include "types.h"
 #include "ability_ids.h"
 #include "edition.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "item_ids.h"
 #include "objcmd.h"
 #include "songs.h"
@@ -763,7 +763,7 @@ struct SceneEntrance gTolbiEntrances[] = {
     {TOLBI_FROM_TOLBI_SPRING, CONDITION_ALWAYS, 304, 0, 304, FACING_SOUTH, 0,
      -1, -1, -1, -1, 0},
     {30, CONDITION_ALWAYS, 568, 0, 296, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gTolbiExits[] = {
@@ -846,7 +846,7 @@ struct ActorTemplate gTolbiActorTemplates[] = {
         PIXELS(584), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BABI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(-9), 0, PIXELS(488), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 /// During the festival, before the finals.

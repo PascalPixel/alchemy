@@ -113,7 +113,7 @@
 #include "types.h"
 #include "animspr.h"
 #include "ability_ids.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "objcmd.h"
 #include "actor.h"
 #include "field_effect.h"
@@ -2410,7 +2410,7 @@ struct SceneEntrance gValePlaza_Entrances[] = {
     { VALE_PLAZA_FROM_SANCTUM, CONDITION_ALWAYS, 180, 0, 618, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { VALE_PLAZA_GOMA_CAVE_STREAM_UNUSED, CONDITION_ALWAYS, 184, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { VALE_PLAZA_AFTER_TRAVELERS_BATTLE, CONDITION_ALWAYS, 27, 0, 338, FACING_EAST, 0, -1, -1, -1, -1, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 u32 gValePlaza_Exits[] = {
@@ -2492,7 +2492,7 @@ struct ActorTemplate gValePlaza_ActorTemplates[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { JENNA_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTHEAST, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gValePlaza_StormActorTemplates[] = {
@@ -2539,7 +2539,7 @@ struct ActorTemplate gValePlaza_StormActorTemplates[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { JENNA_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(234), 0, PIXELS(786), FACING_NORTHEAST, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gValePlaza_DepartureActorTemplates[] = {
@@ -2593,7 +2593,7 @@ struct ActorTemplate gValePlaza_DepartureActorTemplates[] = {
         0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_CAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_WEST + FACING_STEP, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gValePlaza_ActorTemplatesAfterKalay[] = {
@@ -2625,7 +2625,7 @@ struct ActorTemplate gValePlaza_ActorTemplatesAfterKalay[] = {
         PIXELS(287), 0, PIXELS(571), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(370), 0, PIXELS(319), FACING_WEST, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gValePlaza_Triggers[] = {

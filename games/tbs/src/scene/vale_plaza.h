@@ -8,7 +8,7 @@
 #include "task.h"
 
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "field_effect.h"
 
 #include "speaker.h"

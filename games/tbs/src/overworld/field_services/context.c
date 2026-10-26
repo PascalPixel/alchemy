@@ -51,7 +51,7 @@ s32 Actor_GetScreenPosition(s32 objectId, s32 *position) {
 
 UNUSED void Exit_NoOp(void) {}
 
-// UB: no value is returned, and run_map.c ignores it; as void, the epilogue
+// UB: no value is returned, and run_scene.c ignores it; as void, the epilogue
 // changes.
 /// Starts the transition into a random battle: plays the map's battle music
 /// and the encounter sounds, closes the screen and flashes the backdrop white,

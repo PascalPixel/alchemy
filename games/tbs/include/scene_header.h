@@ -8,7 +8,7 @@
 #include "types.h"
 #include "static_assert.h"
 #include "object.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "field_work.h"
 
 struct MapGridCell;

@@ -121,7 +121,7 @@
 #include "fxblend.h"
 #include "map_grid_scroll.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "resource.h"
@@ -1506,7 +1506,7 @@ struct SceneEntrance gCottageRoomsB_Entrances[] = {
      408, 0, 371, FACING_SOUTH, 0, 344, 272, 640, 560, 0},
     {COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG, CONDITION_ALWAYS,
      480, 0, 176, FACING_NORTH, 0, 264, 8, 560, 240, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gCottageRoomsB_Exits[] = {
@@ -1603,7 +1603,7 @@ struct ActorTemplate gCottageRoomsB_ActorTemplates[] = {
         0, 0, 0, FACING_NORTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gCottageRoomsB_ActorTemplatesAfterLeaving[] = {
@@ -1623,7 +1623,7 @@ struct ActorTemplate gCottageRoomsB_ActorTemplatesAfterLeaving[] = {
         PIXELS(159), 0, PIXELS(452), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(218), 0, PIXELS(373), FACING_EAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gCottageRoomsB_ActorTemplatesAfterKalay[] = {
@@ -1647,7 +1647,7 @@ struct ActorTemplate gCottageRoomsB_ActorTemplatesAfterKalay[] = {
         PIXELS(264), 0, PIXELS(373), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BLANK, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(252), 0, PIXELS(378), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gCottageRoomsB_BabiScholarsActorTemplates[] = {
@@ -1661,7 +1661,7 @@ struct ActorTemplate gCottageRoomsB_BabiScholarsActorTemplates[] = {
         PIXELS(728), 0, PIXELS(440), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(832), 0, PIXELS(424), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gCottageRoomsB_StormTriggers[] = {

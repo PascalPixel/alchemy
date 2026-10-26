@@ -51,7 +51,7 @@
 
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "item_ids.h"
 
 /// Kolima's shops and inn, as Shop_Run and Inn_CheckIn number them.
@@ -336,7 +336,7 @@ struct SceneEntrance gLogRoomsC_Entrances[] = {
      0, 664, FACING_SOUTHWEST, 0, 16, 552, 256, 712, 0},
     {LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR,
      CONDITION_ALWAYS, 400, 0, 688, FACING_NORTH, 0, 288, 552, 528, 712, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gLogRoomsC_Exits[] = {
@@ -410,7 +410,7 @@ struct ActorTemplate gLogRoomsC_ActorTemplates[] = {
         PIXELS(120), 0, PIXELS(656), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, 0, MOVEMENT_TYPE_STAND,
         PIXELS(144), 0, PIXELS(368), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gLogRoomsC_Triggers[] = {

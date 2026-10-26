@@ -50,7 +50,7 @@
 #include "field_service.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "objcmd.h"
 #include "flags.h"
 #include "songs.h"
@@ -473,7 +473,7 @@ s32 gGuardWatchesParty[] = {
 struct SceneEntrance gMcCoyPalaceGroundsEntrances[] = {
     { MCCOY_PALACE_GROUNDS_FROM_BILIBIN, CONDITION_ALWAYS, 320, 0, 328, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { MCCOY_PALACE_GROUNDS_FROM_MCCOY_PALACE, CONDITION_ALWAYS, 328, 0, 272, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 u32 gMcCoyPalaceGroundsExits[] = {
@@ -487,7 +487,7 @@ u32 gMcCoyPalaceGroundsExits[] = {
 /// Unused: the getters return it for any map but SceneId_McCoyPalaceGrounds,
 /// and the overlay serves no other.
 struct ActorTemplate gMcCoyPalaceGroundsNoActorTemplates[] = {
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gMcCoyPalaceGroundsActorTemplates[] = {
@@ -507,7 +507,7 @@ struct ActorTemplate gMcCoyPalaceGroundsActorTemplates[] = {
     { SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(132), 0, PIXELS(388), FACING_SOUTH, TALK_FACING_KEEP, 0 },
 #endif
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 /// Unused, as gMcCoyPalaceGroundsNoActorTemplates is.

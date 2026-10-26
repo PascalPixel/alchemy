@@ -32,7 +32,7 @@
 #include "tbs_edition.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "songs.h"
 #include "unit/sound/sound.h"
 
@@ -875,7 +875,7 @@ char gDebugItemFullLabel[20] = "ITEM FULL........";
 
 struct SceneEntrance gMenuTest_Entrances[] = {
     {0, CONDITION_ALWAYS, 60, 0, 94, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 /// No exits: 511 is SCENE_EXITS_END's value.
@@ -912,7 +912,7 @@ struct ActorTemplate gMenuTest_ActorTemplates[] = {
      FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
     {0x23, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(160), 0, PIXELS(80),
      FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 /// Who runs what: Garet levels, Jenna equipment, Ivan consumables, Mia

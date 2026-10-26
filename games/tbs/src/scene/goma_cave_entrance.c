@@ -42,7 +42,7 @@
 #include "actor.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "create_configured_overlay_object.h"
 #include "debug.h"
 #include "game.h"
@@ -682,7 +682,7 @@ struct SceneEntrance gGomaCaveEntranceEntrances[] = {
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {GOMA_CAVE_ENTRANCE_FROM_GOMA_CAVE_STREAM, CONDITION_ALWAYS, 200, 0, 184,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gGomaCaveEntranceExits[] = {
@@ -718,7 +718,7 @@ struct ActorTemplate gGomaCaveEntranceActorTemplates[] = {
         PIXELS(191), 0, PIXELS(194), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_IVY, FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY, (s32)gGomaCaveEntranceTallIvyScript,
         PIXELS(200), 0, PIXELS(168), FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gGomaCaveEntranceTriggers[] = {

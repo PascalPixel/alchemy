@@ -66,7 +66,7 @@
 #include "sol_sanctum_luna_sol_rooms.h"
 #include "call.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "field_service.h"
 #include "types.h"
 #include "io_reg.h"
@@ -1713,7 +1713,7 @@ struct SceneEntrance gSolSanctumLunaSolRoomsEntrances[] = {
      CONDITION_ALWAYS, 576, 0, 8, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
     {SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION, CONDITION_ALWAYS,
      297, 0, 119, FACING_NORTHWEST, 0, 0, 0, 752, 496, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gSolSanctumLunaSolRoomsExits[] = {
@@ -1769,7 +1769,7 @@ struct ActorTemplate gSolSanctumLunaSolRoomsActorTemplates[] = {
         PIXELS(1608), 0, PIXELS(1608), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(1608), 0, PIXELS(1608), FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 // clang-format on
 

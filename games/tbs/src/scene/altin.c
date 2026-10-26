@@ -65,7 +65,7 @@
 #include "types.h"
 #include "script_layer.h"
 #include "engine_call.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "field_effect.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
@@ -1017,7 +1017,7 @@ s32 gCottageRoomsD_CookScript[] = {
 
 struct SceneEntrance gAltin_NoEntrances[] = {
     {0, CONDITION_ALWAYS, 380, 0, 433, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gAltin_Entrances[] = {
@@ -1048,7 +1048,7 @@ struct SceneEntrance gAltin_Entrances[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_FROM_ALTIN_PEAK_SPRITZ, CONDITION_ALWAYS, 343, 0, 177, FACING_SOUTH,
      0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gCottageRoomsD_Entrances[] = {
@@ -1071,7 +1071,7 @@ struct SceneEntrance gCottageRoomsD_Entrances[] = {
      FACING_SOUTH, 0, 16, 638, 432, 912, 0},
     {ALTIN_FROM_COTTAGE_ROOMS_D_WEST, CONDITION_ALWAYS, 690, 0, 732,
      FACING_SOUTH, 0, 480, 626, 896, 882, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gAltin_Exits[] = {
@@ -1123,7 +1123,7 @@ u32 gAltin_Exits[] = {
 };
 
 struct ActorTemplate gAltin_NoActorTemplates[] = {
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct ActorTemplate gAltin_ActorTemplates[] = {
@@ -1173,7 +1173,7 @@ struct ActorTemplate gAltin_ActorTemplates[] = {
     {SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, PIXELS(332), 0,
      PIXELS(396), FACING_SOUTH, TALK_FACING_KEEP,
      ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off
@@ -1204,7 +1204,7 @@ struct ActorTemplate gCottageRoomsD_ActorTemplates[] = {
         FACING_SOUTHWEST + FACING_STEP, TALK_FACING_PARTY, 0},
     {SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, MOVEMENT_TYPE_STAND, PIXELS(646), 0, PIXELS(734), FACING_SOUTHEAST + FACING_STEP,
         TALK_FACING_PARTY, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct Trigger gAltin_NoTriggers[] = {

@@ -87,7 +87,7 @@
 #include "task.h"
 #include "item_ids.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "tbs_edition.h"
 #include "battle_party.h"
 #include "text/msg_ids.h"
@@ -3878,12 +3878,12 @@ struct SceneEntrance gLogRoomsA_Entrances[] = {
     { LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM, CONDITION_ALWAYS, 768, 0, 408, FACING_EAST, 0, 712, 288, 952, 496, 0 },
     { LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES, CONDITION_ALWAYS, 792, 0, 432, FACING_NORTH, 0, 712, 288, 952, 496, 0 },
     { LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED, CONDITION_ALWAYS, 792, 0, 432, FACING_NORTH, 0, 712, 288, 952, 496, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct SceneExitRegion gLogRoomsA_Regions[] = {
     {639, 33, 407, 657, 51, 425, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_WEST},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gLogRoomsA_Exits[] = {
@@ -3946,7 +3946,7 @@ struct ActorTemplate gLogRoomsA_ActorTemplates[] = {
         PIXELS(200), 0, PIXELS(680), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xdf, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(692), 0, PIXELS(411), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gLogRoomsA_LoftActorTemplates[] = {
@@ -3978,7 +3978,7 @@ struct ActorTemplate gLogRoomsA_LoftActorTemplates[] = {
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xdd, CONDITION_ALWAYS, 7,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gLogRoomsA_Triggers[] = {

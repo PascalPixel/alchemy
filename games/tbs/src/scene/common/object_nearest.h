@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 // Mercury and Venus Lighthouses' aeries.
 

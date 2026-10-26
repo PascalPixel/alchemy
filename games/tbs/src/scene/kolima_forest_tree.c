@@ -66,7 +66,7 @@
 #include "scene_ids.h"
 #include "palette_map.h"
 #include "io_reg.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "objcmd.h"
@@ -1097,7 +1097,7 @@ struct SceneEntrance gKolimaForestTreeEntrances[] = {
      424, FACING_NORTH, 0, 0, 0, 512, 448, 0},
     {KOLIMA_FOREST_TREE_FROM_TREE_ROOMS, CONDITION_ALWAYS, 328, 16, 200,
      FACING_SOUTH, 0, 0, 0, 512, 448, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off
@@ -1134,7 +1134,7 @@ struct ActorTemplate gKolimaForestTreeActorTemplates[] = {
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gKolimaForestTreeTriggers[] = {

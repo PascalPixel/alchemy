@@ -70,7 +70,7 @@
 #include "types.h"
 #include "script_layer.h"
 #include "engine_call.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "create_configured_overlay_object.h"
 #include "heap_slots.h"
 #include "battle.h"
@@ -1860,7 +1860,7 @@ struct SceneEntrance gMercuryLighthouseAerieEntrances[] = {
     {MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR,
      CONDITION_ALWAYS, 504, 0, 152, FACING_SOUTH, 0, 0, 0, 608, 424, 0},
     {51, CONDITION_ALWAYS, 504, 0, 168, FACING_SOUTH, 0, 0, 0, 608, 424, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gMercuryLighthouseAerieExits[] = {
@@ -1915,7 +1915,7 @@ struct ActorTemplate gMercuryLighthouseAerieActorTemplates[] = {
         PIXELS(104), 0, PIXELS(200), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_ALEX, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_EAST, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 // clang-format on
 

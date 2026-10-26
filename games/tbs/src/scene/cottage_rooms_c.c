@@ -52,7 +52,7 @@
 #include "system.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "call.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
@@ -461,7 +461,7 @@ struct SceneEntrance gCottageRoomsCEntrances[] = {
      FACING_WEST, 0, 432, 640, 848, 896, 0},
     {COTTAGE_ROOMS_C_INN_FROM_INN_UPSTAIRS, CONDITION_ALWAYS, 344, 0, 696,
      FACING_EAST, 0, 0, 640, 400, 896, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gCottageRoomsCExits[] = {
@@ -532,7 +532,7 @@ struct ActorTemplate gCottageRoomsCActorTemplates[] = {
         PIXELS(808), 0, PIXELS(774), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_WITH_LUTE, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(568), 0, PIXELS(768), FACING_SOUTHEAST, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gCottageRoomsCTriggers[] = {

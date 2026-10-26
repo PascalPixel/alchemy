@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MAP_LALIVERO_INTERIORS_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "scene_header.h"
 
 const struct SceneEntrance *LaliveroInteriors_GetEntrances(void);

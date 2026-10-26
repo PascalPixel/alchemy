@@ -64,7 +64,7 @@
 #include "field_effect.h"
 #include "script_layer.h"
 #include "engine_call.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "scene_header.h"
 #include "edition.h"
 #include "lunpa.h"
@@ -999,7 +999,7 @@ struct SceneEntrance gLunpaEntrances[] = {
     LUNPA_ENTRANCE(LUNPA_FROM_TEMPLE, 48, 168, FACING_SOUTH),
     LUNPA_ENTRANCE(LUNPA_FROM_CRATE_ROOM, 216, 344, FACING_SOUTH),
     LUNPA_ENTRANCE(LUNPA_FROM_STONE_ROOMS, 40, 328, FACING_SOUTH),
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gGateEntrances[] = {
@@ -1010,7 +1010,7 @@ struct SceneEntrance gGateEntrances[] = {
     GATE_ENTRANCE(LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA, 144, 104,
                   FACING_SOUTH),
     GATE_ENTRANCE(LUNPA_FORTRESS_GATES_AFTER_CAUGHT, 160, 224, FACING_EAST),
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 #define ROOM_EXIT(exit) SCENE_EXIT((exit), RockRooms, ROOM_ENTRANCE(exit))
@@ -1072,7 +1072,7 @@ struct ActorTemplate gLunpaActorTemplates[] = {
       PIXELS(520), 0, PIXELS(520), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, FLAG_LUNPA_NUT_CAUGHT, MOVEMENT_TYPE_RESET_ACTION,
       PIXELS(120), 0, PIXELS(472), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END, CONDITION_ALWAYS },
+    { SCENE_TABLE_END, CONDITION_ALWAYS },
 };
 
 struct ActorTemplate gGateActorTemplates[] = {
@@ -1081,7 +1081,7 @@ struct ActorTemplate gGateActorTemplates[] = {
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(176), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 // clang-format on
 

@@ -31,7 +31,7 @@
 #include "types.h"
 
 #include "resource_37de_map.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "actor.h"
 
 #include "script_layer.h"
@@ -64,7 +64,7 @@ struct SceneEntrance gSolSanctumMazeEntrances[] = {
      615, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_NORTH, CONDITION_ALWAYS, 376, 0,
      53, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gSolSanctumMazeExits[] = {
@@ -77,7 +77,7 @@ u32 gSolSanctumMazeExits[] = {
 };
 
 struct ActorTemplate gSolSanctumMazeActorTemplates[] = {
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct Trigger gSolSanctumMazeTriggers[] = {

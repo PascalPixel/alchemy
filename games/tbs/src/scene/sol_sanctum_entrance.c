@@ -62,7 +62,7 @@
 #include "system.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "field_service.h"
 #include "sol_sanctum_entrance.h"
 #include "scene_ids.h"
@@ -1305,7 +1305,7 @@ static void SolSanctumEntrance_UpdateEruptionRumbles(void) {
 struct SceneEntrance gSolSanctumEntrance_FallbackEntrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gSolEntrance_Entrances[] = {
@@ -1315,7 +1315,7 @@ struct SceneEntrance gSolEntrance_Entrances[] = {
      -1, -1, -1, 0},
     {SOL_ENTRANCE_FROM_SOL_SANCTUM_RELIEFS, CONDITION_ALWAYS, 120, 0, 112,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gSolSanctumReliefs_Entrances[] = {
@@ -1353,7 +1353,7 @@ struct SceneEntrance gSolSanctumReliefs_Entrances[] = {
      CONDITION_ALWAYS, 1672, 0, 520, FACING_SOUTH, 0, 1540, 440, 1995, 600, 0},
     {SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS, CONDITION_ALWAYS,
      1928, 0, 520, FACING_SOUTH, 0, 1540, 440, 1995, 600, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 // Sol Entrance (SceneId_SolEntrance), then Sol Sanctum
@@ -1429,7 +1429,7 @@ u32 gSolSanctumEntrance_Exits[] = {
 };
 
 struct ActorTemplate gSolSanctumEntrance_FallbackActorTemplates[] = {
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off
@@ -1442,7 +1442,7 @@ struct ActorTemplate gSolSanctumReliefs_ActorTemplates[] = {
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_STONE_STATUE, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(744), 0, PIXELS(56), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gSolSanctumReliefs_FirstReliefRoomActorTemplates[] = {
@@ -1474,7 +1474,7 @@ struct ActorTemplate gSolSanctumReliefs_FirstReliefRoomActorTemplates[] = {
         PIXELS(1704), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(1704), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gSolSanctumReliefs_SecondReliefRoomActorTemplates[] = {
@@ -1496,13 +1496,13 @@ struct ActorTemplate gSolSanctumReliefs_SecondReliefRoomActorTemplates[] = {
         PIXELS(1864), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(1928), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gSolEntrance_ActorTemplates[] = {
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gSolSanctumEntrance_FallbackTriggers[] = {

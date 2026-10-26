@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MAP_VALE_ERUPTION_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 const struct SceneEntrance *ValeEruption_GetEntrances(void);
 const struct SceneExitRegion *ValeEruption_GetRegions(void);

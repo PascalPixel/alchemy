@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MAP_CROSSBONE_ISLE_STEPPING_STONES_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 struct SceneEntrance;
 struct Trigger;

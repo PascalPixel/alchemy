@@ -103,7 +103,7 @@
 #include "types.h"
 
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "djinn_ids.h"
 
 #include "speaker.h"
@@ -2773,7 +2773,7 @@ s32 gAltinPeak_RejoinScript[] = {
 
 struct SceneEntrance gAltinPeak_EntrancesOther[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gAltinPeak_FirstWaterBeastEntrances[] = {
@@ -2781,14 +2781,14 @@ struct SceneEntrance gAltinPeak_FirstWaterBeastEntrances[] = {
     {ALTIN_PEAK_FIRST_WATER_BEAST_FROM_ALTIN, CONDITION_ALWAYS, 456, 0, 520, FACING_NORTH, 0, 0, 56, 506, 530, 0},
     {98, CONDITION_ALWAYS, 456, 0, 488, FACING_NORTH, 0, 0, 56, 506, 530, 0},
     {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 104, 0, 232, FACING_SOUTH, 0, 0, 56, 506, 530, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gAltinPeak_RailTunnelEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_RAIL_TUNNEL_FROM_ALTIN_PEAK_SOUTH_ENTRANCE, CONDITION_ALWAYS, 248, 0, 464, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_RAIL_TUNNEL_FROM_ALTIN_PEAK_SECOND_WATER_BEAST, CONDITION_ALWAYS, 56, 0, 72, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gAltinPeak_SecondWaterBeastEntrances[] = {
@@ -2798,7 +2798,7 @@ struct SceneEntrance gAltinPeak_SecondWaterBeastEntrances[] = {
     {ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_FROM_LAKE, CONDITION_ALWAYS, 904, 0, 214, FACING_NORTH, 0, 842, 40, 1016, 248, 0},
     {98, CONDITION_ALWAYS, 488, 0, 560, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 320, 0, 472, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gAltinPeak_SouthEntranceEntrances[] = {
@@ -2810,7 +2810,7 @@ struct SceneEntrance gAltinPeak_SouthEntranceEntrances[] = {
     {ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN_PEAK_POOL, CONDITION_ALWAYS, 791, 0, 679, FACING_SOUTH, 0, 712, 560, 960, 860, 0},
     {ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST, CONDITION_ALWAYS, 88, 0, 840, FACING_NORTH, 0, 32, 704, 272, 864, 0},
     {ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_EAST, CONDITION_ALWAYS, 216, 0, 840, FACING_NORTH, 0, 32, 704, 272, 864, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gAltinPeak_ThirdWaterBeastEntrances[] = {
@@ -2818,7 +2818,7 @@ struct SceneEntrance gAltinPeak_ThirdWaterBeastEntrances[] = {
     {ALTIN_PEAK_THIRD_WATER_BEAST_FROM_ALTIN_PEAK_POOL, CONDITION_ALWAYS, 585, 0, 501, FACING_NORTH, 0, 0, 0, 798, 530, 0},
     {98, CONDITION_ALWAYS, 585, 0, 501, FACING_NORTH, 0, 0, 0, 798, 530, 0},
     {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 747, 0, 258, FACING_SOUTH, 0, 0, 0, 798, 530, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gAltinPeak_PoolEntrances[] = {
@@ -2829,7 +2829,7 @@ struct SceneEntrance gAltinPeak_PoolEntrances[] = {
     {ALTIN_PEAK_POOL_SOUTHWEST_FROM_SOUTHEAST, CONDITION_ALWAYS, 72, 0, 870, FACING_NORTH, 0, 0, 530, 512, 948, 0},
     {ALTIN_PEAK_POOL_SOUTHEAST_FROM_SOUTHWEST, CONDITION_ALWAYS, 918, 0, 712, FACING_SOUTH, 0, 520, 570, 992, 786, 0},
     {ALTIN_PEAK_POOL_FROM_ALTIN_PEAK_THIRD_WATER_BEAST, CONDITION_ALWAYS, 615, 0, 684, FACING_SOUTH, 0, 520, 570, 992, 786, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gAltinPeak_SpritzEntrances[] = {
@@ -2837,7 +2837,7 @@ struct SceneEntrance gAltinPeak_SpritzEntrances[] = {
     {ALTIN_PEAK_SPRITZ_FROM_ALTIN_PEAK_JUNCTION, CONDITION_ALWAYS, 72, 0, 502, FACING_NORTH, 0, 0, 0, 820, 568, 0},
     {ALTIN_PEAK_SPRITZ_FROM_ALTIN_PEAK_FALLING_ROCKS, CONDITION_ALWAYS, 152, 0, 174, FACING_SOUTH, 0, 0, 0, 820, 568, 0},
     {ALTIN_PEAK_SPRITZ_FROM_ALTIN, CONDITION_ALWAYS, 264, 0, 890, FACING_NORTH, 0, 144, 720, 384, 908, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gAltinPeak_JunctionEntrances[] = {
@@ -2847,7 +2847,7 @@ struct SceneEntrance gAltinPeak_JunctionEntrances[] = {
     {ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_WEST_EXIT, CONDITION_ALWAYS, 520, 0, 616, FACING_SOUTH, 0, 244, 564, 1024, 1024, 0},
     {ALTIN_PEAK_JUNCTION_FROM_ALTIN, CONDITION_ALWAYS, 408, 0, 970, FACING_NORTH, 0, 244, 564, 1024, 1024, 0},
     {ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_FALLING_ROCKS_SOUTH, CONDITION_ALWAYS, 951, 0, 791, FACING_SOUTH, 0, 244, 564, 1024, 1024, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gAltinPeak_FallingRocksEntrances[] = {
@@ -2858,7 +2858,7 @@ struct SceneEntrance gAltinPeak_FallingRocksEntrances[] = {
     {ALTIN_PEAK_FALLING_ROCKS_EAST_FROM_WEST, CONDITION_ALWAYS, 935, 0, 493, FACING_SOUTH, 0, 618, 0, 990, 854, 0},
     {ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_JUNCTION_NORTH, CONDITION_ALWAYS, 791, 0, 566, FACING_SOUTH, 0, 618, 0, 990, 854, 0},
     {ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_HYDROS_STATUE, CONDITION_ALWAYS, 792, 16, 577, FACING_SOUTH, 0, 618, 0, 998, 854, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gAltinPeak_HydrosStatueEntrances[] = {
@@ -2866,7 +2866,7 @@ struct SceneEntrance gAltinPeak_HydrosStatueEntrances[] = {
     {ALTIN_PEAK_HYDROS_STATUE_FROM_ALTIN_PEAK_FALLING_ROCKS, CONDITION_ALWAYS, 88, 4, 424, FACING_SOUTH, 0, 0, 0, 448, 524, 0},
     {98, CONDITION_ALWAYS, 88, 4, 424, FACING_SOUTH, 0, 0, 0, 448, 524, 0},
     {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 328, 0, 118, FACING_NORTH, 0, 0, 0, 448, 524, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gAltinPeak_WestExitEntrances[] = {
@@ -2875,7 +2875,7 @@ struct SceneEntrance gAltinPeak_WestExitEntrances[] = {
     {ALTIN_PEAK_WEST_EXIT_TUNNEL_FROM_CHEST_ROOM, CONDITION_ALWAYS, 198, 0, 336, FACING_SOUTH, 0, 0, 0, 540, 590, 0},
     {ALTIN_PEAK_WEST_EXIT_CHEST_ROOM_FROM_TUNNEL, CONDITION_ALWAYS, 568, 0, 136, FACING_NORTH, 0, 480, 15, 684, 180, 0},
     {ALTIN_PEAK_WEST_EXIT_FROM_WORLD_MAP, CONDITION_ALWAYS, 73, 0, 190, FACING_NORTH, 0, 0, 0, 540, 590, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneExitRegion gAltinPeak_FallingRocksRegions[] = {
@@ -2885,7 +2885,7 @@ struct SceneExitRegion gAltinPeak_FallingRocksRegions[] = {
 #else
     {784, -116, 572, 800, -100, 588, CONDITION_ALWAYS, 6},
 #endif
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneExitRegion gAltinPeak_HydrosStatueRegions[] = {
@@ -2894,7 +2894,7 @@ struct SceneExitRegion gAltinPeak_HydrosStatueRegions[] = {
 #else
     {80, 34, 416, 96, 50, 432, CONDITION_ALWAYS, 1},
 #endif
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gAltinPeak_Exits[] = {
@@ -2952,7 +2952,7 @@ u32 gAltinPeak_Exits[] = {
 };
 
 struct ActorTemplate gAltinPeak_ActorTemplatesOther[] = {
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct ActorTemplate gAltinPeak_FirstWaterBeastActorTemplates[] = {
@@ -2962,7 +2962,7 @@ struct ActorTemplate gAltinPeak_FirstWaterBeastActorTemplates[] = {
         TALK_FACING_KEEP, 0},
     {SPRITE_WATER_BEAST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(296), 0, PIXELS(336), FACING_SOUTH,
         TALK_FACING_KEEP, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct ActorTemplate gAltinPeak_SecondWaterBeastActorTemplates[] = {
@@ -2972,7 +2972,7 @@ struct ActorTemplate gAltinPeak_SecondWaterBeastActorTemplates[] = {
         TALK_FACING_KEEP, 0},
     {SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(888), 0, PIXELS(172), FACING_SOUTH,
         TALK_FACING_KEEP, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct ActorTemplate gAltinPeak_ThirdWaterBeastActorTemplates[] = {
@@ -2982,7 +2982,7 @@ struct ActorTemplate gAltinPeak_ThirdWaterBeastActorTemplates[] = {
         TALK_FACING_KEEP, 0},
     {SPRITE_WATER_BEAST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(759), 0, PIXELS(285), FACING_WEST,
         TALK_FACING_KEEP, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct ActorTemplate gAltinPeak_PoolActorTemplates[] = {
@@ -2990,7 +2990,7 @@ struct ActorTemplate gAltinPeak_PoolActorTemplates[] = {
         TALK_FACING_KEEP, 0},
     {SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(696), 0, PIXELS(664), FACING_SOUTH,
         TALK_FACING_KEEP, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct ActorTemplate gAltinPeak_SpritzActorTemplates[] = {
@@ -3007,13 +3007,13 @@ struct ActorTemplate gAltinPeak_SpritzActorTemplates[] = {
     {SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(520), 0, PIXELS(632), FACING_SOUTH,
         TALK_FACING_KEEP, 0},
     {MERCURY_DJINNI, FLAG_DJINNI(DJINNI_SPRITZ), MOVEMENT_TYPE_STAND, PIXELS(56), 0, PIXELS(392), FACING_SOUTH, TALK_FACING_PARTY, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct ActorTemplate gAltinPeak_JunctionActorTemplates[] = {
     {SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(536), 0, PIXELS(636), FACING_SOUTH,
         TALK_FACING_KEEP, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct ActorTemplate gAltinPeak_FallingRocksActorTemplates[] = {
@@ -3024,7 +3024,7 @@ struct ActorTemplate gAltinPeak_FallingRocksActorTemplates[] = {
     {SPRITE_BLANK, CONDITION_ALWAYS, 7, PIXELS(774), 0, PIXELS(88), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_SIGNPOST, CONDITION_ALWAYS, 7, PIXELS(792), 0, PIXELS(88), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct ActorTemplate gAltinPeak_HydrosStatueActorTemplates[] = {
@@ -3035,7 +3035,7 @@ struct ActorTemplate gAltinPeak_HydrosStatueActorTemplates[] = {
     {ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0},
     {ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0},
     {ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct ActorTemplate gAltinPeak_WestExitActorTemplates[] = {
@@ -3043,7 +3043,7 @@ struct ActorTemplate gAltinPeak_WestExitActorTemplates[] = {
         TALK_FACING_KEEP, 0},
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(200), 0, PIXELS(328), FACING_SOUTH,
         TALK_FACING_KEEP, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct Trigger gAltinPeak_TriggersOther[] = {

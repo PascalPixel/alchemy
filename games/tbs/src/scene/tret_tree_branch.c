@@ -52,7 +52,7 @@
 #include "ability_ids.h"
 #include "script_layer.h"
 #include "engine_call.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "djinn_ids.h"
 #include "display_transition.h"
 #include "map_grid_scroll.h"
@@ -308,7 +308,7 @@ struct SceneEntrance gTretTreeBranch_Entrances[] = {
      152, FACING_WEST, 0, -1, -1, -1, -1, 0},
     {TRET_TREE_BRANCH_FROM_TREE_ROOMS_NORTH_NORTHEAST, CONDITION_ALWAYS, 424, 0,
      136, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gTretTreeBranch_Exits[] = {
@@ -336,7 +336,7 @@ u32 gTretTreeBranch_Exits[] = {
 struct ActorTemplate gTretTreeBranch_ActorTemplates[] = {
     { JUPITER_DJINNI, FLAG_DJINNI(DJINNI_BREEZE), MOVEMENT_TYPE_STAND,
         PIXELS(648), 0, PIXELS(88), FACING_WEST, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 // clang-format on
 

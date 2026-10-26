@@ -41,7 +41,7 @@
 #include "system.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "objcmd.h"
 #include "flags.h"
@@ -516,7 +516,7 @@ struct SceneEntrance gValeEruption_Entrances[] = {
      -1, -1, 0},
     {VALE_ERUPTION_FROM_SOL_ENTRANCE, CONDITION_ALWAYS, 103, 0, 284,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gValeEruption_Exits[] = {
@@ -553,7 +553,7 @@ struct ActorTemplate gValeEruption_ActorTemplates[] = {
         PIXELS(265), 0, PIXELS(561), FACING_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(247), 0, PIXELS(573), FACING_NORTHWEST, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 // clang-format on
 

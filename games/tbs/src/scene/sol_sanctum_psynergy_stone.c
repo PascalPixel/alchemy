@@ -23,7 +23,7 @@
 #include "types.h"
 
 #include "resource_37c_runtime.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 #include "script_layer.h"
 #include "flags.h"
@@ -78,7 +78,7 @@ struct SceneEntrance gSolSanctumPsynergyStoneEntrances[] = {
      -1, -1, 0},
     {SOL_SANCTUM_PSYNERGY_STONE_FROM_SOL_SANCTUM_STATUE, CONDITION_ALWAYS, 87,
      0, 142, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gSolSanctumPsynergyStoneExits[] = {
@@ -90,7 +90,7 @@ u32 gSolSanctumPsynergyStoneExits[] = {
 };
 
 struct ActorTemplate gSolSanctumPsynergyStoneActorTemplates[] = {
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct Trigger gSolSanctumPsynergyStoneTriggers[] = {

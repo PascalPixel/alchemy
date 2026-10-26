@@ -29,7 +29,7 @@
 #include "uiflow.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "fx_work.h"
 #include "songs.h"
 
@@ -584,7 +584,7 @@ char gIncreaseItemAndLevel_GlyphsMarks[12] = "! ? # $ %";
 
 struct SceneEntrance gIncreaseItemAndLevel_Entrances[] = {
     {0, CONDITION_ALWAYS, 824, 0, 864, FACING_NORTH, 0, 280, 504, 912, 896, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 /// No exits: 511 is SCENE_EXITS_END's value.
@@ -626,7 +626,7 @@ struct ActorTemplate gIncreaseItemAndLevel_ActorTemplates[] = {
     {0x15, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(816), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
         TALK_FACING_KEEP, 0},
 #endif
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 // clang-format on
 

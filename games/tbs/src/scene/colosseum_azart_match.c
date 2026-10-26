@@ -92,7 +92,7 @@
 #include "task.h"
 #include "script_layer.h"
 #include "field_service.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "pushed_object.h"
 #include "resource_ids.h"
 #include "text/msg_ids.h"
@@ -1705,7 +1705,7 @@ u32 gColosseumAzartMatch_DirectionSteps[] = {
 struct SceneEntrance gColosseumAzartMatch_Entrances[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 920, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND, CONDITION_ALWAYS, 312, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 u32 gColosseumAzartMatch_Exits[] = {
@@ -1762,7 +1762,7 @@ struct ActorTemplate gColosseumAzartMatch_ActorTemplates[] = {
         PIXELS(1304), 0, PIXELS(176), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(1304), 0, PIXELS(208), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 s32 gColosseumAzartMatch_Countdown = 0;

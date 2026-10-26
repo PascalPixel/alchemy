@@ -12,7 +12,7 @@
 #include "system.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "battle_unit.h"
 #include "flags.h"
 #include "djinn_ids.h"
@@ -97,7 +97,7 @@ u32 gTestRoom_EntrancesHead[] = {
 
 struct SceneEntrance gTestRoom_Entrances[] = {
     {0, CONDITION_ALWAYS, 192, 0, 192, FACING_WEST, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gTestRoom_Exits[] = {
@@ -114,7 +114,7 @@ struct ActorTemplate gTestRoom_ActorTemplates[] = {
      TALK_FACING_PARTY, 0},
     {0x5d, 0x6c, MOVEMENT_TYPE_STAND, PIXELS(528), 0, PIXELS(200), FACING_WEST,
      TALK_FACING_PARTY, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct Trigger gTestRoom_Triggers[] = {

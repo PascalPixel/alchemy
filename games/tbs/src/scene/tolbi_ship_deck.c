@@ -75,7 +75,7 @@
 #include "system.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "call.h"
 #include "field_service.h"
 #include "heap_slots.h"
@@ -3305,13 +3305,13 @@ const struct SceneEntrance gTolbiShipDeckEntrances[] = {
      FACING_SOUTH, 0, 65, -1, -1, -1, 0},
     {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE, CONDITION_ALWAYS, 212, 0,
      521, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off
 const struct SceneExitRegion gTolbiShipDeckRegions[] = {
     {208, 24, 634, 224, 40, 650, CONDITION_ALWAYS, TOLBI_SHIP_DECK_TO_TOLBI_SHIP_MAST},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 const u32 gTolbiShipDeckExits[] = {
@@ -3361,7 +3361,7 @@ const struct ActorTemplate gTolbiShipDeckActorTemplates[] = {
         PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_MAN_IN_BLUE_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(266), 0, PIXELS(703), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 // UB: the matching compiler places this writable overlay table with the
@@ -3411,7 +3411,7 @@ const struct ActorTemplate gTolbiShipDeckActorTemplatesWaiting[] = {
         PIXELS(236), 0, PIXELS(621), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(182), 0, PIXELS(556), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 const struct ActorTemplate gTolbiShipDeckActorTemplatesRowing[] = {
@@ -3439,7 +3439,7 @@ const struct ActorTemplate gTolbiShipDeckActorTemplatesRowing[] = {
         PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 const struct ActorTemplate gTolbiShipDeckActorTemplatesAtSea[] = {
@@ -3467,7 +3467,7 @@ const struct ActorTemplate gTolbiShipDeckActorTemplatesAtSea[] = {
         PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 const struct ActorTemplate gTolbiShipDeck_CrewActorTemplates[] = {
@@ -3479,13 +3479,13 @@ const struct ActorTemplate gTolbiShipDeck_CrewActorTemplates[] = {
         PIXELS(212), 0, PIXELS(521), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_YELLOW_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 const struct ActorTemplate gTolbiShipDeck_TourGuideActorTemplates[] = {
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 const struct ActorTemplate gTolbiShipDeck_MonstersBoardActorTemplates[] = {
@@ -3495,7 +3495,7 @@ const struct ActorTemplate gTolbiShipDeck_MonstersBoardActorTemplates[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 const struct ActorTemplate gTolbiShipDeck_SecondAttackActorTemplates[] = {
@@ -3515,7 +3515,7 @@ const struct ActorTemplate gTolbiShipDeck_SecondAttackActorTemplates[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPLASH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 const struct ActorTemplate gTolbiShipDeck_ThirdAttackActorTemplates[] = {
@@ -3535,7 +3535,7 @@ const struct ActorTemplate gTolbiShipDeck_ThirdAttackActorTemplates[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 const struct ActorTemplate gTolbiShipDeck_KrakenActorTemplates[] = {
@@ -3557,7 +3557,7 @@ const struct ActorTemplate gTolbiShipDeck_KrakenActorTemplates[] = {
         PIXELS(216), 0, PIXELS(540), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(216), 0, PIXELS(640), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 const struct ActorTemplate gTolbiShipDeckActorTemplatesArrived[] = {
@@ -3611,7 +3611,7 @@ const struct ActorTemplate gTolbiShipDeckActorTemplatesArrived[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 const struct Trigger gTolbiShipDeckTriggers[] = {

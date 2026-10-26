@@ -34,7 +34,7 @@
 #include "resource_ids.h"
 #include "io_write_queue.h"
 #include "io_reg.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "serial_runtime.h"
 #include "mem.h"
 #include "window.h"
@@ -1350,7 +1350,7 @@ static u16 MainMenu_CalculatePasswordCrc16(u32 byteCount, u8 *data) {
 
 struct SceneEntrance gMainMenu_Entrances[] = {
     {0, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gMainMenu_Exits[] = {
@@ -1358,7 +1358,7 @@ u32 gMainMenu_Exits[] = {
 };
 
 struct ActorTemplate gMainMenu_ActorTemplates[] = {
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct Trigger gMainMenu_Triggers[] = {

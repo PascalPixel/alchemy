@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MAP_SOL_SANCTUM_ELEMENTAL_STAR_ROOM_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 const struct SceneEntrance *SolSanctumElementalStarRoom_GetEntrances(void);
 const struct SceneExitRegion *SolSanctumElementalStarRoom_GetRegions(void);

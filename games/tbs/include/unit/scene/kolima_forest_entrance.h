@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MAP_KOLIMA_FOREST_ENTRANCE_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 struct SceneEntrance;
 struct Trigger;

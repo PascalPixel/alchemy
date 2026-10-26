@@ -64,7 +64,7 @@
 #include "types.h"
 #include "script_layer.h"
 #include "engine_call.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -2642,7 +2642,7 @@ struct SceneEntrance gFuchinTempleGroundsEntrances[] = {
      168, 0, 360, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {FUCHIN_TEMPLE_GROUNDS_AFTER_DEFEAT, CONDITION_ALWAYS, 232, 0, 328,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gFuchinTempleEntrancesOther[] = {
@@ -2655,7 +2655,7 @@ struct SceneEntrance gFuchinTempleEntrancesOther[] = {
      FACING_NORTH, 0, 352, 384, 592, 576, 0},
     {LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_HOUSE, CONDITION_ALWAYS, 304, 0, 248,
      FACING_SOUTH, 0, 48, 80, 368, 288, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gFuchinTempleExits[] = {
@@ -2693,7 +2693,7 @@ struct ActorTemplate gFuchinTempleGroundsActorTemplates[] = {
         PIXELS(312), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(232), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gFuchinTempleActorTemplates[] = {
@@ -2727,7 +2727,7 @@ struct ActorTemplate gFuchinTempleActorTemplates[] = {
         PIXELS(232), 0, PIXELS(168), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, (s32)gFuchinTemple_HiddenSpriteScript,
         PIXELS(232), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gFuchinTempleActorTemplatesFromLamaTemple[] = {
@@ -2744,7 +2744,7 @@ struct ActorTemplate gFuchinTempleActorTemplatesFromLamaTemple[] = {
         PIXELS(440), 0, PIXELS(536), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_FEIZHI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gFuchinTempleGroundsTriggers[] = {

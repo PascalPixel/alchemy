@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MAP_IMIL_FUCHIN_FALLS_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "field_effect.h"
 
 struct SceneEntrance;

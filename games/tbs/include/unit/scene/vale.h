@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MAP_VALE_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 const struct SceneEntrance *Vale_GetEntrances(void);
 const struct SceneExitRegion *Vale_GetRegions(void);

@@ -54,7 +54,7 @@
 #include "actor.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "map_effect_sequence.h"
 #include "iwram_call.h"
 #include "battle.h"
@@ -1005,7 +1005,7 @@ struct SceneEntrance gXian_Entrances[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {XIAN_FROM_SANCTUM_WEST, CONDITION_ALWAYS, 176, 0, 216, FACING_SOUTH, 0, -1,
      -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gXian_Exits[] = {
@@ -1062,7 +1062,7 @@ struct ActorTemplate gXian_ActorTemplates[] = {
         PIXELS(299), 0, PIXELS(222), FACING_WEST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(168), 0, PIXELS(280), FACING_WEST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gXian_Triggers[] = {

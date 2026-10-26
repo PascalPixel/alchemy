@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MAP_ALPINE_CROSSING_LAMA_TEMPLE_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 struct SceneEntrance;
 struct Trigger;

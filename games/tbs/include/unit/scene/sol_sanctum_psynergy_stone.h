@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MAP_SOL_SANCTUM_PSYNERGY_STONE_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 struct SceneExitRegion;
 

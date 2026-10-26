@@ -60,7 +60,7 @@
 #include "scroll.h"
 #include "resource.h"
 #include "ability_ids.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "objcmd.h"
 #include "item_ids.h"
 #include "songs.h"
@@ -975,7 +975,7 @@ struct SceneEntrance gLemurianShipEntrances[] = {
      -1, -1, 0},
     {LEMURIAN_SHIP_FROM_TIMBER_ROOMS_C, CONDITION_ALWAYS, 312, 0, 296,
      FACING_NORTH, 0, -1, -1, -1, 328, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gLemurianShipExits[] = {
@@ -996,7 +996,7 @@ struct ActorTemplate gLemurianShipActorTemplates[] = {
      PIXELS(248), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_GANGWAY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(312), 0,
      PIXELS(312), FACING_SOUTH, TALK_FACING_KEEP, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct Trigger gLemurianShipTriggers[] = {

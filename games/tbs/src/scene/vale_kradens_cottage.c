@@ -82,7 +82,7 @@
 #include "types.h"
 #include "script_layer.h"
 #include "field_service.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
@@ -1218,7 +1218,7 @@ struct SceneEntrance gValeKradensCottage_Entrances[] = {
      104, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH, CONDITION_ALWAYS, 232, 0,
      264, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gValeKradensCottage_Exits[] = {
@@ -1267,7 +1267,7 @@ struct ActorTemplate gValeKradensCottage_ActorTemplates[] = {
         PIXELS(200), 0, PIXELS(344), FACING_SOUTHEAST + FACING_STEP, 3, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gValeKradensCottage_Triggers[] = {

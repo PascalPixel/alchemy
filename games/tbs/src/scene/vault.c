@@ -54,7 +54,7 @@
 #include "actor.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -1286,7 +1286,7 @@ struct SceneEntrance gVault_Entrances[] = {
      -1, -1, -1, 0},
     {VAULT_FROM_LOG_ROOMS_A_WEST, CONDITION_ALWAYS, 152, 0, 272, FACING_SOUTH,
      0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gVault_Exits[] = {
@@ -1352,7 +1352,7 @@ struct ActorTemplate gVault_ActorTemplates[] = {
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { VENUS_DJINNI, FLAG_DJINNI(DJINNI_SAP), MOVEMENT_TYPE_STAND,
         PIXELS(344), 0, PIXELS(96), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gVault_ActorTemplatesAfterThieves[] = {
@@ -1388,7 +1388,7 @@ struct ActorTemplate gVault_ActorTemplatesAfterThieves[] = {
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { VENUS_DJINNI, FLAG_DJINNI(DJINNI_SAP), MOVEMENT_TYPE_STAND,
         PIXELS(344), 0, PIXELS(96), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gVault_Triggers[] = {

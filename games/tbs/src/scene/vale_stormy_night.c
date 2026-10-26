@@ -74,7 +74,7 @@
 #include "types.h"
 #include "task.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "call.h"
 #include "field_service.h"
 #include "actor.h"
@@ -3349,7 +3349,7 @@ struct SceneEntrance gValeStormyNight_Entrances[] = {
      908, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {VALE_STORMY_NIGHT_FROM_BOULDER_PASSED, CONDITION_ALWAYS, 181, 0, 1273,
      FACING_NORTHEAST, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gValeStormyNight_Exits[] = {
@@ -3425,7 +3425,7 @@ struct ActorTemplate gValeStormyNight_ActorTemplates[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0x120, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gValeStormyNight_BoulderWatchers[] = {
@@ -3441,7 +3441,7 @@ struct ActorTemplate gValeStormyNight_BoulderWatchers[] = {
         PIXELS(124), 0, PIXELS(375), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(100), 0, PIXELS(375), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 // clang-format on
 

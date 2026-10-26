@@ -79,7 +79,7 @@
 #include "map_grid.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
@@ -644,7 +644,7 @@ s32 gBilibinCave_ClearSpriteScript[] = {
 struct SceneEntrance gBilibinCaveEntrancesOther[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 72, 0, 488, FACING_NORTH, 0, -1, -1,
      -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gBilibinCaveEntranceEntrances[] = {
@@ -656,7 +656,7 @@ struct SceneEntrance gBilibinCaveEntranceEntrances[] = {
      342, 0, 254, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_RAPIER_NORTH, CONDITION_ALWAYS,
      440, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gBilibinCaveRapierEntrances[] = {
@@ -674,7 +674,7 @@ struct SceneEntrance gBilibinCaveRapierEntrances[] = {
      124, FACING_SOUTH, 0, 760, 65, 925, 330, 0},
     {BILIBIN_CAVE_RAPIER_TORCHES_FROM_BILIBIN_CAVE_RAPIER, CONDITION_ALWAYS,
      808, 0, 248, FACING_NORTH, 0, 760, 65, 925, 330, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gBilibinCaveIceEntrances[] = {
@@ -690,7 +690,7 @@ struct SceneEntrance gBilibinCaveIceEntrances[] = {
      0, 60, 60, 790, 600, 0},
     {BILIBIN_CAVE_ICE_CHESTS_FROM_BILIBIN_CAVE_ICE, CONDITION_ALWAYS, 856, 0,
      632, FACING_NORTH, 0, 740, 510, 980, 690, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gBilibinCaveExits[] = {
@@ -733,14 +733,14 @@ u32 gBilibinCaveExits[] = {
 };
 
 struct ActorTemplate gBilibinCaveActorTemplatesOther[] = {
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off
 struct ActorTemplate gBilibinCaveEntranceActorTemplates[] = {
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(136), 0, PIXELS(208), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gBilibinCaveRapierActorTemplates[] = {
@@ -750,7 +750,7 @@ struct ActorTemplate gBilibinCaveRapierActorTemplates[] = {
         PIXELS(856), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(872), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gBilibinCaveIceActorTemplates[] = {
@@ -792,7 +792,7 @@ struct ActorTemplate gBilibinCaveIceActorTemplates[] = {
         PIXELS(136), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(184), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gBilibinCaveTriggersOther[] = {

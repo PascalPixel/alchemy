@@ -53,7 +53,7 @@
 #include "system.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
@@ -1024,7 +1024,7 @@ s32 gHammetPalace_PartyActions[] = {
 
 struct SceneEntrance gHammetPalaceEntrancesOther[] = {
     {0, CONDITION_ALWAYS, 168, 0, 168, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gHammetPalaceEntrances[] = {
@@ -1059,7 +1059,7 @@ struct SceneEntrance gHammetPalaceEntrances[] = {
      FACING_SOUTH, 0, 20, 730, 260, 890, 0},
     {HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS, CONDITION_ALWAYS,
      864, 0, 576, FACING_NORTH, 0, 750, 370, 985, 635, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gHammetPalaceExits[] = {
@@ -1097,7 +1097,7 @@ u32 gHammetPalaceExits[] = {
 };
 
 struct ActorTemplate gHammetPalaceActorTemplatesOther[] = {
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 // clang-format off
@@ -1126,7 +1126,7 @@ struct ActorTemplate gHammetPalaceActorTemplates[] = {
         PIXELS(169), 0, PIXELS(114), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_IN_GREEN_KALAY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(104), 0, PIXELS(114), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gHammetPalaceTriggersOther[] = {

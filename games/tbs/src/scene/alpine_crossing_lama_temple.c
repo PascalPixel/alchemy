@@ -69,7 +69,7 @@
 #include "system.h"
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "scene_ids.h"
 #include "call.h"
 #include "text/msg_ids.h"
@@ -1094,7 +1094,7 @@ struct SceneEntrance gLamaTemple_Entrances[] = {
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {LAMA_TEMPLE_AFTER_DEFEAT, CONDITION_ALWAYS, 232, 0, 352, FACING_SOUTH, 0,
      -1, -1, -1, -1, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gAlpineCrossing_Entrances[] = {
@@ -1110,7 +1110,7 @@ struct SceneEntrance gAlpineCrossing_Entrances[] = {
      0, 248, FACING_SOUTH, 0, 16, 32, 520, 416, 0},
     {ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST, CONDITION_ALWAYS, 216,
      0, 248, FACING_SOUTH, 0, 16, 32, 520, 416, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gAlpineCrossingLamaTemple_Exits[] = {
@@ -1160,7 +1160,7 @@ struct ActorTemplate gLamaTemple_ActorTemplates[] = {
         PIXELS(344), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(232), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gAlpineCrossing_ActorTemplates[] = {
@@ -1180,7 +1180,7 @@ struct ActorTemplate gAlpineCrossing_ActorTemplates[] = {
         PIXELS(328), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(344), 0, PIXELS(194), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gLamaTemple_Triggers[] = {

@@ -5,7 +5,7 @@
 /// and returns the exit kind for Scene_TakeExit, or EXIT_NONE when gSaveBlock
 /// already holds the next map.
 s32 SceneManager_RunFar(s32 entrance);
-/// The game's main loop, which never returns; mode, an enum GameStart,
+/// The sequence manager, which never returns; mode, an enum GameStart,
 /// picks the first map. System_Initialize starts it at power-on with
 /// GAME_START_TITLE, and Game_Restart starts it again.
 void SequenceManager_RunFar(s32 mode);

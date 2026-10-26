@@ -57,7 +57,7 @@
 #include "types.h"
 #include "ability_ids.h"
 #include "edition.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "item_ids.h"
 #include "objcmd.h"
 #include "songs.h"
@@ -592,7 +592,7 @@ struct SceneEntrance gStuccoRoomsBEntrances[] = {
 
     {STUCCO_ROOMS_B_SANCTUM_NORTH, CONDITION_ALWAYS, 824, 0, 352, FACING_NORTH,
      0, 688, 248, 944, 568, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gStuccoRoomsBExits[] = {
@@ -684,7 +684,7 @@ struct ActorTemplate gStuccoRoomsBActorTemplates[] = {
         PIXELS(848), 0, PIXELS(864), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(824), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gStuccoRoomsBActorTemplatesAfterColosso[] = {
@@ -746,7 +746,7 @@ struct ActorTemplate gStuccoRoomsBActorTemplatesAfterColosso[] = {
         PIXELS(440), 0, PIXELS(864), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(416), 0, PIXELS(840), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct Trigger gStuccoRoomsBTriggersFestival[] = {

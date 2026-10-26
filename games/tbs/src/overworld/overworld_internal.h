@@ -41,7 +41,7 @@
 #include "resource_ids.h"
 #include "speaker.h"
 #include "resource.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "map_grid.h"
 #include "map_grid_scroll.h"
 #include "ram_buffer.h"

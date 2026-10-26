@@ -8,7 +8,7 @@
 #include "edition.h"
 #include "object.h"
 #include "scene_header.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "menu_list.h"
 #include "farcall.h"
 

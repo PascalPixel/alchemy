@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "lunpa_fortress.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "item_ids.h"
 
 #include "pushed_object.h"

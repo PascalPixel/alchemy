@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MAP_COTTAGE_ROOMS_B_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 const struct SceneEntrance *CottageRoomsB_GetEntrances(void);
 const struct SceneExitRegion *CottageRoomsB_GetRegions(void);

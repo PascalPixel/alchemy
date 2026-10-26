@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MAP_COLOSSEUM_AZART_MATCH_H
 
 #include "types.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 const struct SceneEntrance *ColosseumAzartMatch_GetEntrances(void);
 const struct SceneExitRegion *ColosseumAzartMatch_GetRegions(void);

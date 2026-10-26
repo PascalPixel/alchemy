@@ -1,7 +1,7 @@
 #include "types.h"
 #include "field_effect.h"
 #include "objdisp.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "fixed_math.h"
 
 // Twenty-four maps, and the main image's Psynergy effects (whirlwind.c, with

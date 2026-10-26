@@ -46,7 +46,7 @@
 #include "sound.h"
 #include "system.h"
 #include "map_grid_copy.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "scene_ids.h"
 #include "call.h"
 #include "fixed_math.h"
@@ -257,7 +257,7 @@ struct SceneEntrance gGomaCaveStreamEntrances[] = {
      FACING_NORTH, 0, 480, 605, 720, 900, 0},
     {ENTRANCE_BESIDE_STUMP, CONDITION_ALWAYS, 424, 0, 280, FACING_WEST, 0, 88,
      8, 664, 832, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gGomaCaveBridgeEntrances[] = {
@@ -265,7 +265,7 @@ struct SceneEntrance gGomaCaveBridgeEntrances[] = {
      FACING_NORTH, 0, 16, 48, 632, 360, 0},
     {GOMA_CAVE_BRIDGE_FROM_WORLD_MAP, CONDITION_ALWAYS, 552, 0, 312,
      FACING_NORTH, 0, 16, 48, 632, 360, 0},
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 u32 gGomaCaveStreamAndBridgeExits[] = {
@@ -292,12 +292,12 @@ u32 gGomaCaveStreamAndBridgeExits[] = {
 struct ActorTemplate gGomaCaveStreamActorTemplates[] = {
     { SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(400), 0, PIXELS(288), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 // clang-format on
 
 struct ActorTemplate gGomaCaveBridgeActorTemplates[] = {
-    {MAP_TABLE_END},
+    {SCENE_TABLE_END},
 };
 
 struct Trigger gGomaCaveStreamTriggers[] = {

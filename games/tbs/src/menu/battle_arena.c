@@ -39,7 +39,7 @@
 #include "battle_party.h"
 #include "irqlock.h"
 #include "audio_engine_symbols.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 #include "frame.h"
 #include "flags.h"
 #include "heap_slots.h"
@@ -1757,7 +1757,7 @@ struct SceneEntrance gBattleArenaEntrances[] = {
     { BATTLE_ARENA_AFTER_MONSTER_LOSS, CONDITION_ALWAYS, 216, 0, 200, FACING_WEST, 0, 16, 0, 416, 310, 0 },
     { BATTLE_ARENA_FROM_MAIN_MENU, CONDITION_ALWAYS, 216, 0, 288, FACING_NORTH, 0, 16, 0, 416, 310, 0 },
     { 0, CONDITION_ALWAYS, 216, 0, 208, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 u32 gBattleArenaExits[] = {
@@ -1807,7 +1807,7 @@ struct ActorTemplate gBattleArenaActorTemplates[] = {
         PIXELS(376), 0, PIXELS(136), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { JENNA, IF_FLAG_SET(0x5), MOVEMENT_TYPE_STAND,
         PIXELS(376), 0, PIXELS(136), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 
 struct ActorTemplate gBattleArenaBattleActorTemplates[] = {
@@ -1853,7 +1853,7 @@ struct ActorTemplate gBattleArenaBattleActorTemplates[] = {
         PIXELS(128), 0, PIXELS(124), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { JENNA, IF_FLAG_SET(0x5), MOVEMENT_TYPE_STAND,
         PIXELS(128), 0, PIXELS(124), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
-    { MAP_TABLE_END },
+    { SCENE_TABLE_END },
 };
 // clang-format on
 

@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "script_layer.h"
-#include "map_tables.h"
+#include "scene_tables.h"
 
 const struct SceneEntrance *Tolbi_GetEntrances(void);
 const struct SceneExitRegion *Tolbi_GetRegions(void);

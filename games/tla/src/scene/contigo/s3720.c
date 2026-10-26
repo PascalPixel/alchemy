@@ -1,10 +1,3 @@
-// Draft, differ 23 of 136: everything matches but the first two flag stores.
-// The native forms each address from the object (adds r1, r5; movs r3, #1; adds
-// r1, #98; strb r3, [r1]; adds r3, r5; adds r3, #99; movs r2, #0; strb r2,
-// [r3]) where this form steps the first address (adds r2, #1) as the native
-// itself does for object 15 further down, and it loads the callback before it
-// starts flag 0xa21. A one-pass block or an empty asm between the two stores
-// measured 21 to 23.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
@@ -35,23 +28,33 @@ void Func_020040d4(s32 actor, s32 x, s32 z);
 void Func_020041a4(s32 a, s32 x, s32 y, s32 z);
 
 static __inline__ void Func_020040d4_(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH(wrapper): forwarding keeps the call's own constants; called
+   * directly, 2 of 136 instructions differ in tla-en. */
   Func_020040d4(actor, x, z);
 }
 
 static __inline__ void Func_020041a4_(s32 a, s32 x, s32 y, s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; called
+   * directly, 27 of 136 instructions differ in tla-en. */
   Func_020041a4(a, x, y, z);
 }
 
+/// Schedules Func_020036f0 and gives objects 14 and 15 their flag bytes and
+/// Func_020006d0 as their update (object 15 brought in and placed while flag
+/// 0xa21 is set and 0x9b2 clear), places or hides object 17 by flags 0x9e7 and
+/// 0x9e6, sets flag 0x200 on entrances 1 to 4 unless flag 0x109 is set, and
+/// while flag 0x200 is set has the camera follow the leader; it ends with
+/// Func_02000038.
 void Func_02003720(void) {
   struct ObjectRuntime *object = Object_GetById(14);
+  s32 zero;
 
   Scheduler_AddOrUpdateCallback(Func_020036f0, 0x480);
+  /* FAKEMATCH(temporary): the second byte's 0 built after the first
+   * byte's address; as a plain 0, 21 of 136 instructions differ in tla-en. */
+  zero = 0;
   BYTE_AT(object, 98) = 1;
-  BYTE_AT(object, 99) = 0;
+  BYTE_AT(object, 99) = zero;
   *(void **)((u8 *)object + 108) = Func_020006d0;
   if (GameFlag_Test(0xa21) != 0 && GameFlag_Test(0x9b2) == 0) {
     ObjectMotion_EnableActionAndResetMotion(15);

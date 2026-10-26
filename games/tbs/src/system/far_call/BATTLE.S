@@ -1,6 +1,5 @@
 @ Battle state, unit motion and presentation services.
-@ Ordered 8-byte jumps into this bank. Named exports are callable symbols;
-@ bare veneers preserve entries that have no exported name.
+@ C2: aligned 8-byte far-call stubs: export and overlay_veneer emit ldr r4, bx r4 and a target word.
 #include "stub.inc"
 	.global FarCall_BattleTable
 FarCall_BattleTable:

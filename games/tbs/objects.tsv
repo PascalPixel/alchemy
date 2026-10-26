@@ -9,7 +9,6 @@ main	iwram_runtime	games/tbs/src/system/runtime_irq_table
 main	iwram_runtime	games/tbs/src/system/runtime_mul_q16_ip	.text .data .text.runtime_divide
 main	iwram_runtime	games/tbs/src/system/sound_mixer
 main	iwram_runtime	games/tbs/src/system/sound_mixer_interpolate	.text .data .text.sound_mixer_channel
-main	iwram_runtime	games/tbs/src/system/sound_mixer_mask
 main	iwram_runtime	games/tbs/src/system/sound_mixer_render	.text .data .text.runtime_copy_words
 main	iwram	games/tbs/src/system/iwram	.sym_iwram
 main	rom_main_00	games/tbs/src/system/resource/decode_byte_lz

@@ -8,9 +8,10 @@
 // (gData_02002a78 in r8, reused after it for the queue's value) and steps an
 // offset in r6;
 // - the counter is read through a volatile extern, so it is loaded again after
-// the capture stores zero, as the native does (plain, differ 33). Measured: the loop as a goto (no strength
-// reduction at all, 48); the destination as a pointer set in the loop and used
-// after it (32); the base computed inside the loop (51).
+// the capture stores zero, as the native does (plain, differ 33). Measured: the
+// loop as a goto (no strength reduction at all, 48); the destination as a
+// pointer set in the loop and used after it (32); the base computed inside the
+// loop (51).
 #include "../../../../games/tla/src/scene/apojii_islands/local.h"
 #include "io_write_queue.h"
 

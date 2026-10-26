@@ -1,12 +1,12 @@
-// Draft, differ 62 of 95: in mode 1, marks the 11-by-8 grid cell under the object the effect
-// work names (gSceneState's cells, four bytes each, from the grid's origin)
-// with the mode, redraws it (Func_0200566c), parks the object, and when no
-// cell is left marked 2 clears the grid's halfword after the origin. Written
-// through the scene state's struct with the cell's kind read before the mark
-// and the column search entered at its test (from 102). Left: allocation of x,
-// z and the origin's address (the native juggles the origin through lr), the
-// zero kept in r8 that also starts the row, and the first column's load, which
-// jump2 merges into the search's here.
+// Draft, differ 62 of 95: in mode 1, marks the 11-by-8 grid cell under the
+// object the effect work names (gSceneState's cells, four bytes each, from the
+// grid's origin) with the mode, redraws it (Func_0200566c), parks the object,
+// and when no cell is left marked 2 clears the grid's halfword after the
+// origin. Written through the scene state's struct with the cell's kind read
+// before the mark and the column search entered at its test (from 102). Left:
+// allocation of x, z and the origin's address (the native juggles the origin
+// through lr), the zero kept in r8 that also starts the row, and the first
+// column's load, which jump2 merges into the search's here.
 #include "types.h"
 #include "object_runtime.h"
 #include "ram_buffer.h"

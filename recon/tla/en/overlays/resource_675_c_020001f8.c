@@ -43,8 +43,8 @@ void Func_020001f8(void) {
     *(volatile u16 *)slot = b << 10 | g << 5 | r;
   }
   slot = (u16 *)0x05000000 + gData_02001a24[gData_02001a30];
-  colour = (gData_02001a14 ? gData_02001a28 : Data_02001a2c) +
-           gData_02001a30 * 3;
+  colour =
+      (gData_02001a14 ? gData_02001a28 : Data_02001a2c) + gData_02001a30 * 3;
   {
     s32 r, g, b;
 

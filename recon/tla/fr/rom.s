@@ -652,13 +652,6 @@ Item_GetEquipmentGroup:
 	.incbin "baserom.gba", 0x000b3c68, 0x0000003c
 	.section .rom.000b40e2, "ax"
 	.incbin "baserom.gba", 0x000b40e2, 0x00000002
-	.section .rom.000b4bec, "ax"
-	.balign 4
-	.global Func_080afbec
-	.type Func_080afbec, %function
-	.thumb_func
-Func_080afbec:
-	.incbin "baserom.gba", 0x000b4bec, 0x000001d0
 	.section .rom.000b5084, "ax"
 	.global Unit_CalculateBaseElements
 	.type Unit_CalculateBaseElements, %function

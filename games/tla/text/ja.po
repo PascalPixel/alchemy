@@ -4321,7 +4321,7 @@ msgctxt "message"
 msgid "01067"
 msgstr "マグマボール"
 
-msgctxt "message"
+msgctxt "MsgEnemyName"
 msgid "01068"
 msgstr "???"
 

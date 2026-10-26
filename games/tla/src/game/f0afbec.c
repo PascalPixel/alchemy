@@ -1,18 +1,3 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 219 in tla-en, instruction
-// order only. After a store the native builds a constant's first half before
-// the next load, where alchemy-gcc issues the load at once (AGENTS.md's
-// recurring row); no single empty asm lowers it.
-// Near miss, differ 2 of 219 (one reordered pair), 2026-10-18: The Broken
-// Seal's BattleUnit_Set (games/tbs/src/game/game.c) on this game's enemy
-// records: fills battle unit `unitId` (0x80 to 0x86) with enemy `enemyId`
-// and its suffix number; enemies 9 to 66 and 369 to 377 fight on side 2.
-// Message 1068 ("???", then the enemy names) is called MsgEnemyName here as
-// in The Broken Seal; the catalogs leave it unnamed, so adopting needs that
-// name in the six PO files. Remaining: before storing the enemy id the
-// native reloads it from the stack (add r2, sp, #8; ldrh) before it forms
-// the field address (movs r1, #165); this forms the address first. A
-// temporary behind an empty asm moves the add only (differ 2), an asm on a
-// promoted copy extends it (differ 12 to 30).
 #include "types.h"
 #include "battle_unit.h"
 #include "iwram_call.h"

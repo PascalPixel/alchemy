@@ -1,7 +1,8 @@
-// Draft, differ 69 of 92: overlay 699's copy of the function drafted in
-// resource_698_c_020007a4.c (overlay 698's Func_020007a4), whose
+// Draft, differ 10 of 92: overlay 699's copy of the function drafted in
+// resource_698_c_020007a4.c (overlay 698's Func_020007a4, differ 10 there), whose
 // header says what it is, what still differs and what was tried.
 #include "types.h"
+#include "call.h"
 #include "iwram_call.h"
 #include "object_runtime.h"
 #include "field_effect.h"
@@ -42,17 +43,19 @@ struct GustObject *Func_0200098c(struct GustObject *source) {
   struct GustObject *object;
 
   Func_02001d4c(222);
-  position.x = source->x + Iwram_MulQ16(0x80000, Math_Cosine(source->angle));
-  position.z = source->z + Iwram_MulQ16(0x80000, Math_Sine(source->angle));
+  position.x = source->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
+                                  Math_Cosine(source->angle));
+  position.z = source->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
+                                  Math_Sine(source->angle));
   object = Func_02001c04(280, position.x, source->y, position.z);
   Func_02001bec(object, 2);
   ObjectDispatch_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
-  object->angle = source->angle;
   object->unk64 = 0;
   object->unk62 = 0;
   object->unk63 = 0;
+  object->angle = source->angle;
   object->update = Func_020007cc;
   object->unk30 = 0x18000;
   options.priority = 1;

@@ -1,12 +1,16 @@
 // Draft of overlay 698's Func_020007a4, in 15 overlays of the 698 family:
-// differ 69 of 92. Plays sound 222, creates object 280 eight pixels from the
-// source along its angle and spawns an effect under it. Left: the native keeps
-// IwramMulQ16's address in r6 and builds 0x80000 again for the second product,
-// and the new object takes r7; here gcse keeps 0x80000 in r6 and the object
-// takes r10. Tried: the object pinned to r7 (40), the position's pointer
-// pinned as well (46), a function pointer for the product (72), a one-pass
-// block or barrier between the products (69).
+// differ 10 of 92. Plays sound 222, creates object 280 eight pixels from the
+// source along its angle and spawns an effect under it. Both products go
+// through the call layer (Value2), which keeps IwramMulQ16's address in r6 and
+// builds 0x80000 again for each, as the native does (directly, gcse kept
+// 0x80000 in r6: differ 69). The angle is stored after the three cleared
+// fields (16 in its first place). Left: two store-to-load rows: after the
+// first product's store the native copies the position's address before
+// reading the angle again, and after the priority store it loads the cleared
+// fields' pool zero, reads the angle and takes the options' address before
+// the angle store. Tried: permute 3 minutes and every one-line move (10).
 #include "types.h"
+#include "call.h"
 #include "iwram_call.h"
 #include "object_runtime.h"
 #include "field_effect.h"
@@ -47,17 +51,19 @@ struct GustObject *Func_020007a4(struct GustObject *source) {
   struct GustObject *object;
 
   Func_02001b44(222);
-  position.x = source->x + Iwram_MulQ16(0x80000, Math_Cosine(source->angle));
-  position.z = source->z + Iwram_MulQ16(0x80000, Math_Sine(source->angle));
+  position.x = source->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
+                                  Math_Cosine(source->angle));
+  position.z = source->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
+                                  Math_Sine(source->angle));
   object = Func_02001a14(280, position.x, source->y, position.z);
   Func_020019fc(object, 2);
   ObjectDispatch_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
-  object->angle = source->angle;
   object->unk64 = 0;
   object->unk62 = 0;
   object->unk63 = 0;
+  object->angle = source->angle;
   object->update = Func_020005e4;
   object->unk30 = 0x18000;
   options.priority = 1;

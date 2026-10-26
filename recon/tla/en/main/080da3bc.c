@@ -13,7 +13,7 @@
 #include "iwram_call.h"
 #include "mem.h"
 
-s16 ArcTan2(s32 y, s32 x);
+s32 ArcTan2(s32 y, s32 x);
 void WaitFrames(s32 frames);
 
 s32 Func_080da3bc(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {

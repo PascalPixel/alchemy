@@ -61,7 +61,7 @@ void BattleEffect_ApplyFlickerValue(struct ObjectRuntime *object, s32 value);
 struct WaveFxDescriptor *Scene_FindActorPlacement(s32 id);
 struct WaveFxMetadata *Resource_GetMetadataRecordFarFar(s32 sprite);
 struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-s16 ArcTan2(s32 y, s32 x);
+s32 ArcTan2(s32 y, s32 x);
 void BattleEffect_SetCallbackWhenTargetUnset(struct ObjectRuntime *object);
 
 // Each frame after the delay: rewrites the 160-line wave into the other

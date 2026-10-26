@@ -19,7 +19,7 @@
 #include "system.h"
 #include "object_runtime.h"
 
-s16 ArcTan2(s32 y, s32 x);
+s32 ArcTan2(s32 y, s32 x);
 
 struct BurstSprite {
   u8 unk00[5];

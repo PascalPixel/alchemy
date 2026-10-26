@@ -1,11 +1,13 @@
-// First draft, differ 225 of 208: the heap slot 0xa0 work's first per-frame
+// Draft, differ 185 of 208 (225 before, 2026-10-26): the heap slot 0xa0 work's first per-frame
 // callback (Func_080d9b08 schedules it at 0x480). For each of the eight slots
 // it builds an affine matrix from the slot's angle (when set) and draws a
 // sprite at the midpoint of each pair of neighbouring nodes in the slot's
 // chain, 4 pixels up, culled to the screen and sorted into the OAM buckets by
-// depth. Structure and data agree; the native keeps the slot pointer at the
-// angle (work + 16), prevX on the stack and started, prevY and prevZ in r11,
-// r10 and r7, so allocation and order differ throughout. Func_080d8a00 is
+// depth. The slots are indexed by a counter, which loop.c strength-reduces
+// to the native's pointer at the angle (work + 16) and counts down, and the
+// counter is declared first, as the native's spill slots order it. Left:
+// register choice in the node loop (the native keeps started, prevY and prevZ
+// in r11, r10 and r7). Func_080d8a00 is
 // the heap slot 0x9c sibling.
 #include "types.h"
 #include "animspr.h"
@@ -52,23 +54,22 @@ void Func_080140d8(void *entry, s32 slot);
 
 void Func_080d9b80(void) {
   struct ChainWork *work = Ram_HeapSlots->unk84[7];
+  s32 i;
   s32 prevX = 0;
-  s32 started = 0;
   s32 prevY = 0;
+  s32 started = 0;
   u32 tile = gResourceTableEntries[work->vramEntry].offset >> 5;
-  struct ChainSlot *slot = work->slots;
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  s32 prevZ = 0;
   s32 *view = &map->viewX;
   s32 viewX = view[0] & 0xffff0000;
+  s32 prevZ = 0;
   s32 viewZ = view[1] & 0xffff0000;
   s32 originY = map->origin[1];
   struct ChainTransform transform;
-  s32 i;
 
-  for (i = 7; i >= 0; i--) {
-    u32 angle = slot->angle;
-    struct ChainNode *node = slot->head;
+  for (i = 0; i < 8; i++) {
+    u32 angle = work->slots[i].angle;
+    struct ChainNode *node = work->slots[i].head;
     s32 affine;
     s32 matrix;
 
@@ -113,6 +114,5 @@ void Func_080d9b80(void) {
     prevY = 0;
     prevZ = 0;
     started = 0;
-    slot++;
   }
 }

@@ -14,7 +14,7 @@
 #include "mem.h"
 #include "ram_buffer.h"
 
-s16 ArcTan2(s32 y, s32 x);
+s32 ArcTan2(s32 y, s32 x);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
 

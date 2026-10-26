@@ -1,10 +1,11 @@
-// Draft, differ 47 of 162: announces a summon (message 0x32 with its name
-// from Data_0805f676, a jingle, held until it ends or a button), then shows
-// message 0x33 with the two elements it needs most (0x34 + element, then
-// 0x38) from the SummonDefinition's djinn counts, held until a button. The
+// Draft, differ 33 of 162 (47 before, 2026-10-26; counts declared with 11
+// words, which gives the native's 52-byte frame: a frame-gap device to tag
+// if it matches, since only four are used): announces a summon (message 0x32
+// with its name from Data_0805f676, a jingle, held until it ends or a button),
+// then shows message 0x33 with the two elements it needs most (0x34 + element,
+// then 0x38) from the SummonDefinition's djinn counts, held until a button. The
 // final Resource_ResetEntry takes a slot the function never sets, a stack
-// word in the native. Left: the native frame is 52 bytes, 28 more than the
-// draft's (an unused local the draft does not invent); register choice
+// word in the native. Left: register choice
 // (window and entries swap r9 and sl, the outer counter in r8 against r7);
 // the zero for the stack argument built in r2 rather than taken from r6; and
 // the order of the final queue call's stack store.
@@ -37,7 +38,7 @@ void Func_08044dc8(s32 summon) {
   struct UiWindow *window;
   s32 entries;
   u32 resource;
-  s32 counts[4];
+  s32 counts[11];
   const u8 *djinn;
   s32 i;
   s32 n;

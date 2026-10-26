@@ -1,3 +1,11 @@
+// 2026-10-26 (round 5): differ 129 of 1632 (1631 here). The sprite tiles are
+// copied through their own pointer, tile, set from tiles after the decode, so
+// tiles stays in a register from the prologue as the native's r8: 141 to 129
+// (tiles + i * 0x400 instead: 281). Moving or widening the palette copy's
+// one-pass block changes nothing (141 or 129); without either block 250. Left:
+// the palette copy's 0x200 is shared with the sheet's step here (the native
+// builds it twice), the tiles in sl rather than r8, one spill slot (sp+24
+// against the native's sp+28) and scheduling rows.
 // Draft, differ 141 of 1632 (1629 here; 2026-10-26: two tagged one-pass
 // blocks from a device sweep, before the serpent's palette copy and after
 // each tile copy, 270 to 153, and BattleEffect_LoadBlitter returning s32, as
@@ -178,6 +186,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   struct Scale scale;
   s32 ground = 112;
   u8 *tiles;
+  u8 *tile;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -210,6 +219,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     Iwram_CopyWords((void *)0x05000200, sheet, 0x200);
     sheet += 0x200;
     Resource_DecodeType01(sheet, tiles);
+    tile = tiles;
     for (i = 0; i != 8; i++) {
       struct SpriteObject *object = Func_0815b290(32, 32, 0x80002000, 0);
 
@@ -217,12 +227,12 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
       work->objects[i] = object;
       Iwram_CopyWords(
           (void *)(0x06010000 + gResourceTableEntries[object->slot].offset),
-          tiles, 0x400);
+          tile, 0x400);
       /* FAKEMATCH(one-pass): an empty one-pass block after each tile copy;
        * as plain C, 274 of 1632 instructions differ in tla-en (here 141). */
       do {
       } while (0);
-      tiles += 0x400;
+      tile += 0x400;
     }
   }
   gCameraSceneParameters[4] = 240;

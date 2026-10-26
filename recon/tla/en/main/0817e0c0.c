@@ -1,3 +1,6 @@
+// 2026-10-26 (round 5): differ 82 of 601 (draft 601). The flash's brightness
+// stored between its texture's two size bytes (a statement-move search): 127 to
+// 82.
 // 2026-10-26: differ 127 of 601, with Scheduler_AddOrUpdateCallback returning
 // s32 as defined.
 // Draft (tla-en): listing 601 instructions, draft 600, common 530, differ 141.
@@ -293,8 +296,8 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
       brightness = 32 - flashFrame * 8;
       if (brightness > 0)
         brightness = 0;
-      quad->brightness = brightness;
       texture.logWidth = 7;
+      quad->brightness = brightness;
       texture.logHeight = 7;
       quad->kind = 7;
       texture.pixels = Ram_MapCellBuffer;

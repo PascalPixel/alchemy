@@ -1,3 +1,5 @@
+// 2026-10-26 (round 5): differ 46 of 298. canvas read after work (a
+// statement-move search): 48 to 46.
 // Draft, differ 48 of 298 (2026-10-26; 95 before), from the listing (The
 // Broken Seal's BattleEffect_RunDrain is only a hint): a mote leaves the first
 // target as a ring of 24 sparks turning about it and is pulled toward the
@@ -67,8 +69,8 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleFxWork[1];
   view = Ram_HeapSlots->cameraWork;
   sheet = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);

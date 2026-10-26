@@ -1,8 +1,10 @@
-// Near miss, differ 58 of 302: in the palette loop the native keeps 0x7c00
-// in a register and reloads the palette address each pass, indexing it by
-// i * 2; this strength-reduces the address and loads 0x7c00 from the pool,
-// which also moves the blend work from r10 to r9. A volatile palette or an
-// integer address measured the same.
+// Near miss, differ 28 of 302 (54 before; 2026-10-26). The palette loop is a
+// goto loop, as the native rebuilds the palette address from i each pass and
+// loads it from the pool (a for loop strength-reduces it, 54), with 0x90000
+// and 0x7c00 held in registers across the loop as the native holds them; the
+// 0x90000 is set in two steps so that it is not rematerialized at each use
+// (assigned once, 62). Left: instruction order in the palette store and in
+// the switch's stores.
 // A scheduler callback for the heap slot 0x5c work. In state 1 it
 // cycles object palette 14's 32 colours, each a blue with red and green
 // waving on the same sine; while the sparkles are on, each of the 12
@@ -67,15 +69,24 @@ void Func_080e5a64(void) {
   struct ShineSprite *sprite;
   s32 red, green;
   s32 i;
+  s32 base, blue;
 
   work->fading = 0;
   if (work->state == 1) {
-    for (i = 0; i < 32; i++) {
-      red = Trig_Sin(((((blend->phase >> 1) + i) << 16) + 0x90000) >> 5) * 12;
-      green = Trig_Sin(((((blend->phase >> 1) + i) << 16) + 0x90000) >> 5) * 12;
-      *(u16 *)(0x050003c0 + i * 2) =
-          (((green >> 16) + 16) << 5) | 0x7c00 | ((red >> 16) + 16);
-    }
+    i = 0;
+    /* FAKEMATCH(temporary): the phase offset built in two steps, so it stays
+     * in a register across the loop; as base = 0x90000, 62 of 302
+     * instructions differ in tla-en. */
+    base = 9;
+    base <<= 16;
+    blue = 0x7c00;
+  palette:
+    red = Trig_Sin(((((blend->phase >> 1) + i) << 16) + base) >> 5) * 12;
+    green = Trig_Sin(((((blend->phase >> 1) + i) << 16) + base) >> 5) * 12;
+    *(u16 *)(0x050003c0 + i * 2) =
+        (((green >> 16) + 16) << 5) | blue | ((red >> 16) + 16);
+    if (++i < 32)
+      goto palette;
   }
   if (work->sparkles) {
     particle = work->particles;

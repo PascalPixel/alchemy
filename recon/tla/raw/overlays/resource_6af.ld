@@ -7,7 +7,7 @@ SECTIONS
         "*/games/tla/src/field/common/object/prepare_object.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s00d0.o"(.text)
         "*/games/tla/src/field/common/effect/move.o"(.text)
-        "*/resource_6af_overlay.o"(.text.x0200815c)
+        "*/games/tla/src/scene/treasure_isle/s015c.o"(.text)
         "*/games/tla/src/scene/treasure_isle/scene_tables.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s0350.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s03b4.o"(.text)

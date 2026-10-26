@@ -1,4 +1,10 @@
-// Near miss, differ 69 of 355 (the draft has 356).
+// Near miss, differ 34 of 355 (the draft has 356).
+//
+// Measured 2026-10-25 under -mthumb-slow-loads: differ 34. Most rows left are
+// loads from memory or the stack that alchemy-gcc issues one slot earlier than
+// the native, which issues only its pool loads early. The first is the
+// argument's spill, which the native stores before it starts the 0x03000000
+// base; an empty asm before the first statement closes that row (differ 32).
 
 // Effect kind 39. Twin: The Broken Seal's BattleEffect_RunHaunt, ported
 // call for call. The Lost Age's changes: work and canvas read directly, the

@@ -1,4 +1,7 @@
-// Near miss, differ 70 of 511.
+// Near miss, differ 44 of 511.
+//
+// Measured 2026-10-25 under -mthumb-slow-loads: differ 44; an empty asm before
+// the first statement does not help (differ 44).
 
 // The body of four effect kinds (BattleEffect_RunDemonNight and the next three
 // wrappers pass modes 0 to 3). Twin: The Broken Seal's BattleEffect_RunMemberBurst,

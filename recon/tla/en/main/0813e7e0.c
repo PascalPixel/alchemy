@@ -1,4 +1,4 @@
-// Near miss, differ 36 of 376.
+// Near miss, differ 4 of 376 (2026-10-25, under -mthumb-slow-loads).
 
 // No twin: an unused ⚓️ function that no handler or caller reaches. Its
 // set-up is 0813eb70's (The Broken Seal's
@@ -8,14 +8,15 @@
 // frames, until A is pressed; B starts the fade again. It reads as a viewer
 // left in from development.
 
-// Left: single rows where the native builds a constant or issues a load or
-// store one slot earlier (the BG2 registers, view->secondMode before the
-// scroll), and the literal pool offsets they move.
+// Left: two rows where alchemy-gcc issues a load one slot earlier than the
+// native: the background view's load before the effect argument's copy
+// (mov r2, fp), and the scroll's store before view->secondMode's.
 
 // Tried:
 // from the listing on 0813eb70's set-up                      46
 // the held keys read through a volatile (tagged): the native
 // reloads them for the second test                         36
+// under -mthumb-slow-loads, the two devices tagged below          4
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -95,6 +96,9 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
 
   work = Runtime_AllocateHeapBlock(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
   canvas = Runtime_AllocateHeapBlock(SLOT_BATTLE_CANVAS, 0x4000);
+  /* FAKEMATCH(barrier): the canvas pointer's spill is stored before the heap
+   * base starts; as plain C, 6 of 376 instructions differ in tla-en. */
+  __asm__ volatile("");
   battle = Ram_HeapSlots->battleWork;
   view = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
   work->effect = effect;
@@ -155,9 +159,9 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
 
   // Fade the colours up a shade every two frames; B starts again, A ends.
   for (frame = 0; frame != 32096; frame++) {
-    /* FAKEMATCH: the native reads the held keys afresh for each test (it
-     * keeps only gInput's address); read plainly, CSE keeps the first
-     * read for the second (differ 46 against 36). */
+    /* FAKEMATCH(volatile): the held keys are read afresh for each test, as
+     * the native reads them; as gInput.held, 14 of 376 instructions differ in
+     * tla-en. */
     if (*(volatile u32 *)&gInput.held & 2)
       frame = 0;
     if (*(volatile u32 *)&gInput.held & 1)

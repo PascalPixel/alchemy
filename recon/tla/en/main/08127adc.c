@@ -1,3 +1,8 @@
+// Near miss, differ 2 of 96 (2026-10-25, under -mthumb-slow-loads). Left: in
+// the retry loop the native starts the used mask's address (adds r3, r7) before
+// it stores the new channel (strb r0); here after the store. Tried: an empty
+// asm at the top (differ 4), an empty one-pass block there (2), alchemy permute
+// 4 minutes (2).
 #include "types.h"
 #include "ram_buffer.h"
 

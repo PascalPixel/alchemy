@@ -1,13 +1,7 @@
-// Near miss, differ 10 of 270: The Broken Seal's BattleEffect_StartCanvasLayer with
-// ⚓️'s Func_0813ba50 call, DISPCNT 0x1741, Palette_StepFadeTransfer at 0x480,
-// Func_0814355c for the display registers and one more work word cleared. The
-// BLDCNT and WININ rows take BattleEffect_OpenCanvasLayer's devices (canvas.c),
-// which match there. Left: the last block, where the native loads gBgScroll's
-// address and both scroll halves one instruction earlier, each between the two
-// halves of a work offset (movs r3, #240; ldr r1, =gBgScroll; lsls r3, r3, #7).
-// Tried: the scroll pointer as a local first, in a one-pass block, the x half
-// read ahead behind a loop note (differ 12 to 20); alchemy permute for 5
-// minutes (no better).
+// Twin: The Broken Seal's BattleEffect_StartCanvasLayer. The Lost Age's
+// changes: Func_0813ba50 for the display set-up, DISPCNT 0x1741,
+// Palette_StepFadeTransfer at 0x480, Func_0814355c for the display registers
+// and one more work word cleared.
 #include "types.h"
 #include "system.h"
 #include "io_reg.h"
@@ -57,29 +51,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   BattleEffect_ClearActorTimers();
   display->secondMode = 1;
   WaitFrames(1);
-  {
-    register u16 zero asm("r3") = 0;
-    struct IoWriteQueue *q;
-    u32 saved;
-    s32 count;
-    u16 *count_;
-
-    __asm__("" : "+l"(zero) : : "r2");
-    q = &gIoWriteQueue;
-    count_ = &q->count;
-    REG_BLDCNT = zero;
-    IRQ_LOCK(saved);
-    count = *count_;
-    if (count <= 31) {
-      u32 *entry = q->entries[count];
-
-      *count_ = count + 1;
-      *entry++ = 0x1741;
-      *entry++ = (u32)&REG_DISPCNT;
-      *entry = 0x20000;
-    }
-    IRQ_UNLOCK(saved);
-  }
+  REG_BLDCNT = 0;
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1741, 0x20000);
   gBgScroll[1].y = 32;
   WaitFrames(1);
 
@@ -97,12 +70,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   WaitFrames(1);
 
   Func_0814355c();
-  {
-    register u16 inside asm("r2") = 0x3537;
-
-    __asm__("" : "+l"(inside) : : "r3");
-    REG_WININ = inside;
-  }
+  REG_WININ = 0x3537;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7741, 0x20000);
 
   offset = 0;

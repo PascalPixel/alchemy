@@ -1,7 +1,7 @@
-// Near miss, differ 2 of 59 (2026-10-19; was 18). The native loads its pooled
-// values early: the DISPCNT and BLDALPHA halfwords before their register
-// addresses and the fill routine's entry before its arguments, each now held
-// by a tagged device below; with them the battle work also loads before the
+// Near miss, differ 2 of 59 (2026-10-25, under -mthumb-slow-loads; 6 as plain
+// C). The native loads the fill routine's entry before its arguments, held by
+// the tagged device below; the DISPCNT and BLDALPHA pins of 2026-10-19 are
+// no longer needed, and with the device the battle work also loads before the
 // canvas, as the native does. Left: the first fill sets r0 from the canvas
 // (adds r0, r6) before it starts the size in r1, where the native starts the
 // size first. An empty asm in place of the entry's one-pass block puts every
@@ -11,6 +11,8 @@
 // or the size shared in r6, 27 to 31), the forwarder's parameters in another
 // order (2), the second destination behind a block (2), alchemy permute 4
 // minutes (2).
+// 2026-10-25: an empty asm after or before the entry, also with the second
+// fill called directly, still moves the pool (differ 14 or more).
 // Earlier (differ 18): the two pool values pinned behind barriers and the
 // fills through a forwarder; the entry in a local behind a one-pass block
 // without the forwarder shares the size (differ 41); the two heap reads in
@@ -63,9 +65,9 @@ typedef s32 (*FillWordsFunc)(void *destination, s32 size, u32 value);
 static __inline__ void FillWords_(void *destination, s32 size, u32 value) {
   FillWordsFunc fill;
 
-  /* FAKEMATCH(one-pass block): the entry taken behind a one-pass block, so it
-   * loads before the arguments; as Iwram_FillWords(destination, size, value),
-   * 4 of 59 instructions differ in tla-en (the entry loads after the size). */
+  /* FAKEMATCH(one-pass): the entry taken behind a one-pass block, so it loads
+   * before the arguments; as Iwram_FillWords(destination, size, value), 6 of
+   * 59 instructions differ in tla-en (the entry loads after the size). */
   do {
     fill = Iwram_FillWords;
   } while (0);
@@ -76,33 +78,13 @@ void Func_0814cca8(void) {
   u8 *battle = Ram_HeapSlots->battleWork;
   void *buffer = Ram_HeapSlots->battleFxWork[1];
 
-  {
-    /* FAKEMATCH(fixed register, one-pass block): the halfword pinned to r3
-     * and set behind a one-pass block, so its pool load comes before the
-     * register's address; as REG_DISPCNT = 1, 12 of 59 instructions differ in
-     * tla-en (the canvas also loads before the battle work). */
-    register u16 value asm("r3");
-
-    do {
-      value = 1;
-    } while (0);
-    REG_DISPCNT = value;
-  }
+  REG_DISPCNT = 1;
   gBgScroll[0].y = 32;
   BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
   FillWords_(buffer, 0x4000, 0);
   FillWords_((void *)0x06004000, 0x4000, 0);
   WaitFrames(1);
-  {
-    /* FAKEMATCH(fixed register, one-pass block): as for REG_DISPCNT; as
-     * REG_BLDALPHA = 0x100e, 4 of 59 instructions differ in tla-en. */
-    register u16 value asm("r3");
-
-    do {
-      value = 0x100e;
-    } while (0);
-    REG_BLDALPHA = value;
-  }
+  REG_BLDALPHA = 0x100e;
   REG_BLDCNT = 0x3f46;
   REG_DISPCNT = 0x7741;
   gCameraSceneParameters[4] = 120;

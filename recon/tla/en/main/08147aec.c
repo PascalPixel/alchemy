@@ -1,4 +1,10 @@
-// Near miss, differ 40 of 1072.
+// Near miss, differ 10 of 1072.
+//
+// Measured 2026-10-25 under -mthumb-slow-loads: differ 10. Most rows left are
+// loads from memory or the stack that alchemy-gcc issues one slot earlier than
+// the native, which issues only its pool loads early. The first is the
+// argument's spill, which the native stores before it starts the 0x03000000
+// base; an empty asm before the first statement closes that row (differ 8).
 
 // Summon 7, mode 0 (the wrapper in series_e.c; mode 1 is the kind that
 // casts the same scene from the caster's side). Twin: The Broken Seal's

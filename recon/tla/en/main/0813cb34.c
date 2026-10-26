@@ -1,4 +1,7 @@
-// Near miss, differ 61 of 477.
+// Near miss, differ 47 of 477.
+//
+// Measured 2026-10-25 under -mthumb-slow-loads: differ 47; an empty asm before
+// the first statement does not help (differ 51).
 
 // Twin: The Broken Seal's BattleEffect_RunParticlePool, the body of two
 // effects there. ⚓️ adds a third mode: Slaver's green spray, thrown up in a

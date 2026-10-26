@@ -1,4 +1,4 @@
-// Near miss, differ 60 of 689 (88 without the one device below).
+// Near miss, differ 20 of 689 as plain C (2026-10-25, under -mthumb-slow-loads).
 
 // Summon 2 (BattleEffect_RunSceneEffect's case 2). Twin: The Broken Seal's
 // BattleEffect_RunNereid, ported call for call. The Lost Age's changes:
@@ -18,6 +18,10 @@
 // Tried (trial 2, 2026-10-15): the plain port 91; the hit loop through the
 // argument 88; the one-pass block around REG_BLDALPHA 60; alchemy permute
 // 8 + 6 minutes found nothing below 58 without a second block.
+// Under -mthumb-slow-loads (2026-10-25): plain C 20, the REG_BLDALPHA block 26,
+// an empty asm before the first statement 18 (the argument's spill then
+// comes first). Most rows left are loads from memory or the stack that
+// alchemy-gcc issues one slot earlier than the native.
 
 #include "battle.h"
 #include "graphics.h"
@@ -98,13 +102,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
   // spray band and the fire column into the work sheet, the sparks into the
   // sheet slot, and the transfer at three quarters.
   BattleEffect_StartCanvasLayer(0);
-  /* FAKEMATCH: the one-pass block places the first literal pool after the
-   * second Resource_LoadAndDecompress, as the native does; without it the
-   * pool lands one load later and every pooled offset after it shifts
-   * (differ 88, 60 with it). */
-  do {
-    REG_BLDALPHA = 0x1010;
-  } while (0);
+  REG_BLDALPHA = 0x1010;
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
                              1);

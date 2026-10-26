@@ -1,4 +1,8 @@
-// Near miss, differ 22 of 500 (effect kind 10, the vortex motes).
+// Near miss, differ 6 of 500 (effect kind 10, the vortex motes).
+//
+// Measured 2026-10-25 under -mthumb-slow-loads: differ 6. Most rows left are
+// loads from memory or the stack that alchemy-gcc issues one slot earlier than
+// the native, which issues only its pool loads early.
 
 // ☀️ twin: BattleEffect_RunFroth (games/tbs/src/effect/effect.c), shape
 // 0.879, structure 0.949. Ported with ⚓️'s checklist: the effect argument is

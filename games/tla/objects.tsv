@@ -3000,27 +3000,9 @@ main	rom_main_05	recon/tla/unidentified	.unidentified.080f3984	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000f3890	ja
 main	rom_main_05	games/tla/src/battle/effect/fademap	.rodata
 main	rom_main_06	games/tla/src/system/far_call/table_38
-main	rom_main_06	recon/tla/fr/rom	.rom.000fa028	fr
-main	rom_main_06	recon/tla/fr/rom	.rom.000fa030	fr
-main	rom_main_06	recon/tla/fr/rom	.rom.000fa038	fr
-main	rom_main_06	recon/tla/fr/rom	.rom.000fa040	fr
-main	rom_main_06	recon/tla/fr/rom	.rom.000fa048	fr
-main	rom_main_06	recon/tla/fr/rom	.rom.000fa050	fr
-main	rom_main_06	recon/tla/es/rom	.rom.000fe028	es
-main	rom_main_06	recon/tla/es/rom	.rom.000fe030	es
-main	rom_main_06	recon/tla/es/rom	.rom.000fe038	es
-main	rom_main_06	recon/tla/es/rom	.rom.000fe040	es
-main	rom_main_06	recon/tla/es/rom	.rom.000fe048	es
-main	rom_main_06	recon/tla/es/rom	.rom.000fe050	es
-main	rom_main_06	recon/tla/de/rom	.rom.00102028	de
-main	rom_main_06	recon/tla/de/rom	.rom.00102030	de
-main	rom_main_06	recon/tla/de/rom	.rom.00102038	de
-main	rom_main_06	recon/tla/de/rom	.rom.00102040	de
-main	rom_main_06	recon/tla/de/rom	.rom.00102048	de
-main	rom_main_06	recon/tla/de/rom	.rom.00102050	de
-main	rom_main_06	games/tla/src/system/far_call/uiicon_2		ja en it
+main	rom_main_06	games/tla/src/system/far_call/uiicon_2
 main	rom_main_06	games/tla/src/system/far_call/table_39
-main	rom_main_06	games/tla/src/system/far_call/table_40		ja en it
+main	rom_main_06	games/tla/src/system/far_call/table_40
 main	rom_main_06	games/tla/src/system/scheduler/disable_overlay_callbacks_with_flags	.text
 main	rom_main_06	games/tla/src/graphics/window/initialize_work	.text
 main	rom_main_06	games/tla/src/menu/lifecycle	.text

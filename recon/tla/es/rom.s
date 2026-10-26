@@ -2256,42 +2256,6 @@ Func_080db0b0:
 	.global Data_080f3984
 Data_080f3984:
 	.incbin "baserom.gba", 0x000fc978, 0x00000040
-	.section .rom.000fe028, "ax"
-	.global UiIcon_PrepareObjectFar
-	.type UiIcon_PrepareObjectFar, %function
-	.thumb_func
-UiIcon_PrepareObjectFar:
-	.incbin "baserom.gba", 0x000fe028, 0x00000008
-	.section .rom.000fe030, "ax"
-	.global DjinnMenu_Open
-	.type DjinnMenu_Open, %function
-	.thumb_func
-DjinnMenu_Open:
-	.incbin "baserom.gba", 0x000fe030, 0x00000008
-	.section .rom.000fe038, "ax"
-	.global ItemMenu_DrawItemDetailsFar
-	.type ItemMenu_DrawItemDetailsFar, %function
-	.thumb_func
-ItemMenu_DrawItemDetailsFar:
-	.incbin "baserom.gba", 0x000fe038, 0x00000008
-	.section .rom.000fe040, "ax"
-	.global Func_080f8040
-	.type Func_080f8040, %function
-	.thumb_func
-Func_080f8040:
-	.incbin "baserom.gba", 0x000fe040, 0x00000008
-	.section .rom.000fe048, "ax"
-	.global Palette_CopyObjectBankToBackground14Far
-	.type Palette_CopyObjectBankToBackground14Far, %function
-	.thumb_func
-Palette_CopyObjectBankToBackground14Far:
-	.incbin "baserom.gba", 0x000fe048, 0x00000008
-	.section .rom.000fe050, "ax"
-	.global Menu_UpdateEntryObjectTransformsFar
-	.type Menu_UpdateEntryObjectTransformsFar, %function
-	.thumb_func
-Menu_UpdateEntryObjectTransformsFar:
-	.incbin "baserom.gba", 0x000fe050, 0x00000020
 	.section .rom.000fe170, "ax"
 	.global Func_080f8170
 	.type Func_080f8170, %function

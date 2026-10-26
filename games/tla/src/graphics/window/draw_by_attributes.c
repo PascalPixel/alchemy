@@ -1,12 +1,3 @@
-// Draft, differ 14 of 68: the twin's order of reads with x and y read signed
-// (the native loads them with ldrsh) and the fill through a forwarding inline
-// (the native loads the routine's address first, as through ☀️'s IWRAM call
-// layer). The native reads x, height, the work, flags and y before it clears
-// duration and reads width last, with x in r5 and width in r7; read in that
-// order here x and width swap registers (differ 24). Measured: typed s16 and
-// u16 locals (differ 22 to 87), x and y first, three minutes of permuter
-// (differ 22).
-#include "types.h"
 #include "types.h"
 #include "window.h"
 #include "uiwindow.h"
@@ -22,9 +13,11 @@ static inline void FillWords(void *destination, s32 size, u32 value) {
   Iwram_FillWordsEntry(destination, size, value);
 }
 
+/// Draws a window as its flags ask: with flag 8 its inside is filled (with
+/// colour 4 under flag 0x20, which also draws the frame, else cleared), and
+/// without it only the frame is drawn. Clears the window's duration.
 void UiWork_DrawByAttributes(struct UiWindow *window) {
   u32 flags;
-  u32 value;
   s32 x;
   s32 y;
   u32 width;
@@ -32,14 +25,12 @@ void UiWork_DrawByAttributes(struct UiWindow *window) {
   struct UiRenderWork *work;
 
   work = UI_WORK;
-  value = window->height;
-  flags = window->flags;
-  height = value;
-  value = 0;
-  window->duration = value;
   x = (s16)window->x;
   y = (s16)window->y;
   width = window->width;
+  height = window->height;
+  flags = window->flags;
+  window->duration = 0;
   if (8 & flags) {
     if (0x20 & flags) {
       UiWindow_DrawFrame(x, y, width, height);

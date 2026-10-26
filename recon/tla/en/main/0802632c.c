@@ -1,11 +1,12 @@
-// Near miss, differ 330 of 535: script command 0x23, from the listing and
-// The Broken Seal's FieldObject_UpdatePlayerControl (its later layout: one
-// probe ahead and four 22.5 and 45 degrees off, six retry headings). Moves an
-// object on the field by the direction pad at a slow pace, stepping round
-// walls and stopping at other solid objects (no pushing); with no event work
-// it returns 0, a shortcut key pressed plays cue 113, otherwise the step
-// takes the ground's height and the script advances. Left: the native keeps
-// (u16)angle only in r1 for the first step and computes it again from the
+// Near miss, differ 56 of 535 (2026-10-26: movementAnimation set before
+// collision and four probes copying y after z, 72 to 56): script command 0x23,
+// from the listing and The Broken Seal's FieldObject_UpdatePlayerControl (its
+// later layout: one probe ahead and four 22.5 and 45 degrees off, six retry
+// headings). Moves an object on the field by the direction pad at a slow pace,
+// stepping round walls and stopping at other solid objects (no pushing); with
+// no event work it returns 0, a shortcut key pressed plays cue 113, otherwise
+// the step takes the ground's height and the script advances. Left: the native
+// keeps (u16)angle only in r1 for the first step and computes it again from the
 // spilled angle (kept shifted left 16) at the second probe, where agscc keeps
 // it in r7 from the top; registers shift from there, with r4 taking values
 // the native keeps in r0 to r2. The debug L key is written as ☀️'s (heading
@@ -41,8 +42,7 @@ void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
 s32 Func_0802d958(struct ObjectRuntime *object, struct FieldPosition *position);
 s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
-void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object,
-                                            s32 argument);
+void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object, s32 argument);
 s32 Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void *Unit_Get(s32 owner);
 s32 Func_0802d45c(s32 terrainId, s32 x, s32 z);
@@ -62,8 +62,8 @@ s32 Func_0802632c(struct ObjectRuntime *object) {
   struct ObjectRuntime *other;
   s32 pressed;
 
-  collision = 0;
   movementAnimation = 2;
+  collision = 0;
   object->motionFlags = 4;
   if (gInput.held & ((struct PartyKeys *)&gPartyState)->dashKeys) {
     object->speedLimit = 0x8000;
@@ -93,13 +93,13 @@ s32 Func_0802632c(struct ObjectRuntime *object) {
         Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &testPosition);
         if (Func_0802d958(object, &testPosition) == 0) {
           testPosition.x = object->x;
-          testPosition.y = object->y;
           testPosition.z = object->z;
+          testPosition.y = object->y;
           Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &testPosition);
           if (Func_0802d958(object, &testPosition) == 0) {
             testPosition.x = object->x;
-            testPosition.y = object->y;
             testPosition.z = object->z;
+            testPosition.y = object->y;
             Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &testPosition);
             if (Func_0802d958(object, &testPosition) == 0) {
               testPosition.x = object->x;
@@ -126,8 +126,8 @@ s32 Func_0802632c(struct ObjectRuntime *object) {
       for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
         heading = angleOffsets[angleIndex];
         position.x = object->x;
-        position.y = object->y;
         position.z = object->z;
+        position.y = object->y;
         Vector_AddPolarOffset(0x80000, (u16)heading, &position);
         if (Func_0802d958(object, &position) != 0)
           continue;
@@ -150,8 +150,8 @@ s32 Func_0802632c(struct ObjectRuntime *object) {
         if (Func_0802d958(object, &testPosition) != 0)
           continue;
         testPosition.x = object->x;
-        testPosition.y = object->y;
         testPosition.z = object->z;
+        testPosition.y = object->y;
         Vector_AddPolarOffset(0x80000, (u16)heading - 0x2000, &testPosition);
         if (Func_0802d958(object, &testPosition) == 0)
           goto check_objects;

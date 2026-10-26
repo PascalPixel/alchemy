@@ -1,23 +1,17 @@
-// Draft, differ 38 of 418 in tla-en under -mthumb-slow-loads (2026-10-26). A
-// device search (each statement followed by an empty asm or a one-pass block,
-// wrapped in one, or swapped with the next, kept when it helps) reaches 10
-// with an empty asm after `UiText_DrawCharacterAtOffset((s32)MsgSpeechLabel,
-// win, 8, 64);`; a one-pass block around `work->cursor.output = out;`; an
-// empty asm after `out = RenderOutput_Create(x, 0x40000000, win, 0, 0);`; an
-// empty asm after `work->marker[0].output = out;`; an empty asm after `out =
-// RenderOutput_Create(x, 0x40000000, win, 0, 0);`; an empty asm after
-// `work->marker[1].output = out;`, and finds nothing closer.
 // Draft of Func_0803fd28, the option screen's window (Menu_OpenWorkspaceOptions
-// here): differ 42 of 418 (tla-en, 2026-10-18). Its ☀️ twin is
-// games/tbs/src/window/window.c's OptionMenu_Open: the labels, the slider
-// tiles and palette, the two markers, the cursor and the setting frames. The
-// Lost Age's window is a column narrower (27), takes the cursor's tiles from
-// Resource_LoadFixedBlockBIntoFreeSlot, and reads the window position signed.
+// here): differ 8 of 418 (tla-en, 2026-10-26; 38 before). Its ☀️ twin is
+// games/tbs/src/window/window/options.c's OptionMenu_Open: the labels, the
+// slider tiles and palette, the two markers, the cursor and the setting frames.
+// The Lost Age's window is a column narrower (27), takes the cursor's tiles
+// from Resource_LoadFixedBlockBIntoFreeSlot, and reads the window position
+// signed. The cursor and markers are the twin's union MenuCursorRef (here
+// union OptionCursor): storing the output through the union keeps each store
+// ahead of the window reads that follow, as the native has them (38 to 8),
+// and the sprites' palettes are set through their OAM fields.
 //
-// Left: instruction order only. Each output pointer is stored into the work
-// just after RenderOutput_Create in the listing and after the window reads
-// here (the twin holds those stores in place with its shared cursor union, a
-// tagged device); the rest are single loads one place apart.
+// Left: instruction order only. Each marker's output store comes before the
+// copy of the window pointer the next read needs in the native, after it here;
+// in the slider block the palette byte's load is a row earlier here.
 
 #include "resource.h"
 #include "types.h"
@@ -57,9 +51,19 @@ void Func_08108048(void *object, s32 x, s32 y);
 
 // The option screen's work (heap slot 0xd0), as The Broken Seal's
 // workspace_options.h lays it out; the listing's offsets agree.
-struct OptionCursor {
+struct OptionCursorMove {
+  struct RenderOutput *anchor;
+  u16 x;
+  u16 y;
+  s16 targetX;
+  s16 targetY;
+  s8 active;
+  s8 kind;
+};
+
+union OptionCursor {
   struct RenderOutput *output;
-  u8 unk04[12];
+  struct OptionCursorMove cursor;
 };
 
 struct WorkspaceWork {
@@ -67,8 +71,8 @@ struct WorkspaceWork {
   s8 option[5];
   s8 optionCount[5];
   u8 unk59e[6];
-  struct OptionCursor cursor;
-  struct OptionCursor marker[2];
+  union OptionCursor cursor;
+  union OptionCursor marker[2];
   u8 unk5d4[0x18];
   struct RenderOutput *frame[3][3];
 };
@@ -112,23 +116,23 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void) {
     VramCache_Load(x, 256, gWorkspaceOptions_SliderTiles);
     y = 0;
     out = RenderOutput_Create(x, 0x40004000, win, 134, y);
-    ((u8 *)&out->oam)[5] = (((u8 *)&out->oam)[5] & 15) | 224;
+    out->oam.palette = SLIDER_PALETTE;
     out = RenderOutput_Create(x, 0x40004000, win, 166, y);
     out->oam.index += 4;
-    ((u8 *)&out->oam)[5] = (((u8 *)&out->oam)[5] & 15) | 224;
+    out->oam.palette = SLIDER_PALETTE;
     y = 16;
     out = RenderOutput_Create(x, 0x40004000, win, 134, y);
-    ((u8 *)&out->oam)[5] |= 240;
+    out->oam.palette = 15;
     out = RenderOutput_Create(x, 0x40004000, win, 166, y);
     out->oam.index += 4;
-    ((u8 *)&out->oam)[5] |= 240;
+    out->oam.palette = 15;
   }
 
   x = Resource_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 256, 0);
     out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
-    ((u8 *)&out->oam)[1] |= 32;
+    out->oam.palette256 = 1;
     work->marker[0].output = out;
     x = (s16)win->x * 8 + 140;
     x += __divsi3(work->option[0] * 60, work->optionCount[0]);
@@ -140,7 +144,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void) {
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 256, 0);
     out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
-    ((u8 *)&out->oam)[1] |= 32;
+    out->oam.palette256 = 1;
     work->marker[1].output = out;
     x = (s16)win->x * 8 + 140;
     x += __divsi3(work->option[1] * 60, work->optionCount[1]);

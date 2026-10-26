@@ -1,3 +1,5 @@
+// Draft, differ 27 of 458 (2026-10-26, 38 before): sprite->affine cleared
+// after affineIndex, as the device search found. Earlier notes follow.
 // Draft, differ 38 of 458 in tla-en under -mthumb-slow-loads (2026-10-26). A
 // device search (each statement followed by an empty asm or a one-pass block,
 // wrapped in one, or swapped with the next, kept when it helps) reaches 27
@@ -97,8 +99,8 @@ void UiWork_AnimateSpriteSlots(void) {
           sprite->shape = 2;
           sprite->y =
               output->y + gUiSprite_CursorBobOffsets[gFrameTick % 80] + 2;
-          sprite->affine = 0;
           sprite->affineIndex = 0;
+          sprite->affine = 0;
         }
         break;
       case 5:
@@ -135,8 +137,10 @@ void UiWork_AnimateSpriteSlots(void) {
         effect.plain.angle = output->animStep;
         sprite->affineIndex = AffineMatrix_BuildForEffect(&effect.plain);
         sprite->affine = 1;
-        sprite->x = output->x - (Trig_Sin(effect.plain.angle + 0xe800) >> 14) - 2;
-        sprite->y = output->y - (Trig_Cos(effect.plain.angle + 0x6800) >> 14) - 2;
+        sprite->x =
+            output->x - (Trig_Sin(effect.plain.angle + 0xe800) >> 14) - 2;
+        sprite->y =
+            output->y - (Trig_Cos(effect.plain.angle + 0x6800) >> 14) - 2;
         break;
       case 4:
         if (gFrameTick & 1)

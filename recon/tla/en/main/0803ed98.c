@@ -1,3 +1,5 @@
+// Draft, differ 12 of 206 (2026-10-26, 14 before): the nodes pointer read after
+// moreBelow is cleared. Earlier notes follow.
 // Draft, differ 14 of 206 (36 before, 2026-10-26): The Broken Seal's
 // SelectionScreen_StepLeft (games/tbs/src/window/window/selection.c), its
 // one variable i for the row offset, the count and the entry index, and its
@@ -72,8 +74,8 @@ void Menu_StepLeft(struct StepMenu *state) {
         state->cursor--;
       }
     } else {
-      node = state->nodes;
       state->moreBelow = i = 0;
+      node = state->nodes;
       i = 64;
       while (node->next != NULL) {
         node->targetY = node->y + i;

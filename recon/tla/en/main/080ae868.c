@@ -1,3 +1,5 @@
+// Draft, differ 16 of 206 (2026-10-26, 20 before): counts[3] cleared after the
+// count of 16 is set. Earlier notes follow.
 // Under -mthumb-slow-loads (2026-10-26): differ 20 of 206 in tla-en,
 // instruction order and register choice. As in Func_080ae6e4, the flag loop's
 // counter is unsigned (bls for the native's ble). Empty asms before counts[2] =
@@ -59,8 +61,8 @@ void Func_080ae868(void) {
   counts[0] = 1;
   counts[1] = 1;
   counts[2] = 0;
-  counts[3] = 0;
   remaining = 16;
+  counts[3] = 0;
   do {
     element = (Random16() * 4) >> 16;
     djinn = (Random16() * 7) >> 16;

@@ -3,5 +3,5 @@
 	overlay_veneer Kalay_GetEntrances
 	overlay_veneer Kalay_GetExits
 	overlay_veneer Kalay_GetActorTemplates
-	overlay_veneer Kalay_GetEvents
+	overlay_veneer Kalay_GetTriggers
 	overlay_veneer Kalay_GetRegions

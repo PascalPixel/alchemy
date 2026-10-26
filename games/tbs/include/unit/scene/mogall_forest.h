@@ -5,14 +5,14 @@
 #include "map_tables.h"
 
 struct SceneEntrance;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 
 const struct SceneEntrance *MogallForest_GetEntrances(void);
 const struct SceneExitRegion *MogallForest_GetRegions(void);
 const u32 *MogallForest_GetExits(void);
 const struct ActorTemplate *MogallForest_GetActorTemplates(void);
-const struct MapEvent *MogallForest_GetEvents(void);
+const struct Trigger *MogallForest_GetTriggers(void);
 s32 MogallForest_Initialize(void);
 extern s32 gPushedObject_DirectionSteps[];
 extern u32 gPushedObject_FootprintKinds[];
@@ -33,9 +33,9 @@ extern struct ActorTemplate gMogallForestSign_ActorTemplates[];
 extern struct ActorTemplate gMogallForestQuartz_ActorTemplates[];
 extern struct ActorTemplate gMogallForestKillerApe_ActorTemplates[];
 extern struct ActorTemplate gMogallForestSidePaths_ActorTemplates[];
-extern struct MapEvent gMogallForestSign_Events[];
-extern struct MapEvent gMogallForestQuartz_Events[];
-extern struct MapEvent gMogallForestKillerApe_Events[];
-extern struct MapEvent gMogallForestSidePaths_Events[];
+extern struct Trigger gMogallForestSign_Triggers[];
+extern struct Trigger gMogallForestQuartz_Triggers[];
+extern struct Trigger gMogallForestKillerApe_Triggers[];
+extern struct Trigger gMogallForestSidePaths_Triggers[];
 
 #endif

@@ -3,5 +3,5 @@
 	overlay_veneer TolbiShipDeck_GetEntrances
 	overlay_veneer TolbiShipDeck_GetExits
 	overlay_veneer TolbiShipDeck_GetActorTemplates
-	overlay_veneer TolbiShipDeck_GetEvents
+	overlay_veneer TolbiShipDeck_GetTriggers
 	overlay_veneer TolbiShipDeck_GetRegions

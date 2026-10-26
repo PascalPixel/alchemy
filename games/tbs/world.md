@@ -45,20 +45,20 @@ differently as the story moves on without the engine knowing any story: Vault
 gives one list of what can happen before its thieves are jailed and another
 after.
 
-What can happen is a table of [map events](glossary.md#map-event). Each row
+What can happen is a table of [triggers](glossary.md#trigger). Each row
 says what starts it (talking to someone, stepping on a spot, searching,
 using Psynergy), whom or where it answers, when it holds, and what it runs.
 This is the row for the young man above:
 
 ```c
-{ MAP_EVENT_TALK, ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgVaultWelcomeToVaultTheTownAt) },
+{ TRIGGER_TALK, ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgVaultWelcomeToVaultTheTownAt) },
 ```
 
 The game runs the first row that fits, so a scene lists its rows from the
 latest point in the story down to the default.
 
 The six questions are `struct SceneEntries` at the start of every
-overlay, and the rows are `struct MapEvent`. [Scenes](src/scene/README.md#the-entry-table)
+overlay, and the rows are `struct Trigger`. [Scenes](src/scene/README.md#the-entry-table)
 describes the [entry table](glossary.md#entry-table-and-import-table) and its
 tables, and [Engine](engine.md#overlays) how an overlay is loaded. The front
 page describes [how scenes depend on the story](README.md#how-scenes-depend-on-the-story),
@@ -129,8 +129,8 @@ of ground and [how high a step can go](src/field/README.md#how-high-a-step-can-g
 A map is a grid of 16-pixel squares, [cells](glossary.md#cell), and each
 cell says three things: what is drawn there, how high its ground is, and what
 standing there does. That last part, its [metatile
-behavior](glossary.md#metatile-behavior), is a number that walls and map
-events are keyed on. Most numbers belong to the scene, whose event table says
+behavior](glossary.md#metatile-behavior), is a number that walls and
+triggers are keyed on. Most numbers belong to the scene, whose trigger table says
 what each one does, so the same number is a door in one town and a chest in
 another. A few mean the same in every scene: the jars, barrels and wooden boxes
 anyone can search, as in the recording, ledges, the desert's sand and walls.

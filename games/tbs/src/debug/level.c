@@ -52,7 +52,7 @@
 
 /// The room's actors, numbering the rows of
 /// gIncreaseItemAndLevel_ActorTemplates; the game names none of them, so
-/// each is named for what talking to it opens (gIncreaseItemAndLevel_Events),
+/// each is named for what talking to it opens (gIncreaseItemAndLevel_Triggers),
 /// as a render of each talk shows it.
 enum IncreaseItemAndLevelActorId {
   /// IncreaseItemAndLevel_SelectItem.
@@ -123,8 +123,8 @@ static void IncreaseItemAndLevel_ShowEmoteThenMessage(void) {
 }
 #endif
 
-u8 *IncreaseItemAndLevel_GetEvents(void) {
-  return (u8 *)gIncreaseItemAndLevel_Events;
+u8 *IncreaseItemAndLevel_GetTriggers(void) {
+  return (u8 *)gIncreaseItemAndLevel_Triggers;
 }
 
 /// Raises one member's level by amount, then recalculates that unit.
@@ -638,26 +638,26 @@ struct ActorTemplate gIncreaseItemAndLevel_ActorTemplates[] = {
 /// same person, run before the cast (PSYNERGY_PHASE_BEFORE_CAST), sets the
 /// effect's child mode, so Force's shot leaves the portrait browser where it
 /// stands.
-struct MapEvent gIncreaseItemAndLevel_Events[] = {
-    {MAP_EVENT_TALK, ACTOR_ITEM_BROWSER, CONDITION_ALWAYS,
+struct Trigger gIncreaseItemAndLevel_Triggers[] = {
+    {TRIGGER_TALK, ACTOR_ITEM_BROWSER, CONDITION_ALWAYS,
      EVENT_SCRIPT(IncreaseItemAndLevel_SelectItem)},
-    {MAP_EVENT_TALK, ACTOR_ICON_BROWSER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_ICON_BROWSER, CONDITION_ALWAYS,
      EVENT_SCRIPT(IncreaseItemAndLevel_OpenIconBrowser)},
-    {MAP_EVENT_TALK, ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
      EVENT_SCRIPT(IncreaseItemAndLevel_OpenPortraitBrowser)},
-    {MAP_EVENT_TALK, ACTOR_LEVEL_EDITOR, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_LEVEL_EDITOR, CONDITION_ALWAYS,
      EVENT_SCRIPT(IncreaseItemAndLevel_RunLevelEditor)},
 #if !TBS_PATCH_1
     {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
      EVENT_SCRIPT(IncreaseItemAndLevel_RunMotionTest)},
 #else
 #if !TBS_PATCH_3
-    {MAP_EVENT_TALK, ACTOR_ABILITY_BROWSER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_ABILITY_BROWSER, CONDITION_ALWAYS,
      EVENT_SCRIPT(IncreaseItemAndLevel_SelectAbility)},
 #endif
-    {MAP_EVENT_TALK, ACTOR_FIRST_EMOTE_TESTER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_FIRST_EMOTE_TESTER, CONDITION_ALWAYS,
      EVENT_SCRIPT(IncreaseItemAndLevel_ShowMessageThenEmote)},
-    {MAP_EVENT_TALK, ACTOR_SECOND_EMOTE_TESTER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_SECOND_EMOTE_TESTER, CONDITION_ALWAYS,
      EVENT_SCRIPT(IncreaseItemAndLevel_ShowEmoteThenMessage)},
     {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
      EVENT_SCRIPT(IncreaseItemAndLevel_ShowGlyphCaptions)},
@@ -665,5 +665,5 @@ struct MapEvent gIncreaseItemAndLevel_Events[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
      EVENT_SCRIPT(IncreaseItemAndLevel_EnableEffectChildMode)},
-    {MAP_EVENTS_END},
+    {TRIGGERS_END},
 };

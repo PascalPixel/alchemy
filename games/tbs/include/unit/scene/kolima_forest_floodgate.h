@@ -25,7 +25,7 @@ const struct SceneEntrance *KolimaForestFloodgate_GetEntrances(void);
 const struct SceneExitRegion *KolimaForestFloodgate_GetRegions(void);
 const u32 *KolimaForestFloodgate_GetExits(void);
 const struct ActorTemplate *KolimaForestFloodgate_GetActorTemplates(void);
-const struct MapEvent *KolimaForestFloodgate_GetEvents(void);
+const struct Trigger *KolimaForestFloodgate_GetTriggers(void);
 s32 KolimaForestFloodgate_Initialize(void);
 // Native calls precede this definition; see MATCHING.md.
 #ifdef UBFIX
@@ -39,6 +39,6 @@ extern s8 gKolimaForestFloodgate_PushStepZ[];
 extern struct SceneEntrance gKolimaForestFloodgateEntrances[];
 extern u32 gKolimaForestFloodgateExits[];
 extern struct ActorTemplate gKolimaForestFloodgateActorTemplates[];
-extern struct MapEvent gKolimaForestFloodgateEvents[];
+extern struct Trigger gKolimaForestFloodgateTriggers[];
 
 #endif

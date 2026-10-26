@@ -5,7 +5,7 @@
 #include "map_tables.h"
 
 struct SceneEntrance;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 struct SceneExitRegion;
 
@@ -13,7 +13,7 @@ const struct SceneEntrance *LamakanDesert_GetEntrances(void);
 const struct SceneExitRegion *LamakanDesert_GetRegions(void);
 const u32 *LamakanDesert_GetExits(void);
 const struct ActorTemplate *LamakanDesert_GetActorTemplates(void);
-const struct MapEvent *LamakanDesert_GetEvents(void);
+const struct Trigger *LamakanDesert_GetTriggers(void);
 s32 LamakanDesert_Initialize(void);
 void HeatGauge_Start(void);
 extern const s32 gFieldEffect_ShortScript[];
@@ -33,7 +33,7 @@ extern struct ActorTemplate gLamakanDesertActorTemplatesOther[];
 extern struct ActorTemplate gLamakanDesertEastActorTemplates[];
 extern struct ActorTemplate gLamakanDesertSmogActorTemplates[];
 extern struct ActorTemplate gLamakanDesertManticoreActorTemplates[];
-extern struct MapEvent gLamakanDesertEvents[];
+extern struct Trigger gLamakanDesertTriggers[];
 extern s16 gHeatGaugeLevel;
 extern s16 gHeatGaugeSlide;
 extern s16 gHeatGaugeFlash;

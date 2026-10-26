@@ -10,7 +10,7 @@ const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ActorTemplate *Scene_GetActorTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gFieldEffect_ShortScript[];
 extern s32 gFieldEffect_MediumScript[];
@@ -28,7 +28,7 @@ extern struct ActorTemplate gSuhallaDesertNorthActorTemplates[];
 extern struct ActorTemplate gSuhallaDesertSouthActorTemplates[];
 extern struct ActorTemplate gSuhallaDesertCavesActorTemplates[];
 extern s32 gSuhallaDesertChaseScript[];
-extern struct MapEvent gSuhallaDesertEventsOther[];
-extern struct MapEvent gSuhallaDesertCavesEvents[];
+extern struct Trigger gSuhallaDesertTriggersOther[];
+extern struct Trigger gSuhallaDesertCavesTriggers[];
 
 #endif

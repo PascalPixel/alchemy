@@ -3,5 +3,5 @@
 	overlay_veneer SolSanctumStatue_GetEntrances
 	overlay_veneer SolSanctumStatue_GetExits
 	overlay_veneer SolSanctumStatue_GetActorTemplates
-	overlay_veneer SolSanctumStatue_GetEvents
+	overlay_veneer SolSanctumStatue_GetTriggers
 	overlay_veneer SolSanctumStatue_GetRegions

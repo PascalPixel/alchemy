@@ -1,5 +1,5 @@
 /// @file
-/// Map events, field Psynergy, objects and effect lifecycles.
+/// Triggers, field Psynergy, objects and effect lifecycles.
 
 /// Runs the field map the party entered by entrance until it leaves,
 /// and returns the exit kind for Scene_TakeExit, or EXIT_NONE when gSaveBlock
@@ -23,9 +23,9 @@ void FieldScript_CallWithLastActiveObjectIdFar(struct ActorTemplate *table);
 /// Gives each unconditional actor template a condition that shows it
 /// only while it lies inside the map's view bounds.
 void Scene_AssignViewFlagsFar(struct ActorTemplate *entry);
-/// Replaces the map's event table, the one the field checks as the leader
+/// Replaces the map's trigger table, the one the field checks as the leader
 /// moves.
-void FieldScript_SetMapEventsFar(const struct MapEvent *events);
+void FieldScript_SetTriggersFar(const struct Trigger *triggers);
 /// Adds a character to the party; a nonzero value also shows
 /// `<name> joined your party.`
 void FieldScript_PrepareObjectAndApplyValueFar(s32 event_id, s32 value);
@@ -324,12 +324,12 @@ void FieldEffect_StartMindReadWaveFar(s32 x, s32 y);
 void FieldEffect_FinishWaveAndReleaseHeapBlockFar(void);
 /// Stops BG0's scanline scroll and restores BG palette 15.
 void FieldEffect_RestoreMindReadPaletteFar(void);
-/// Returns whether the map has a Psynergy event of this group for what the
+/// Returns whether the map has a Psynergy trigger of this group for what the
 /// leader faces; nothing in ☀️ calls it.
-s32 Scene_HasFieldPsynergyEventFar(s32 group);
+s32 Scene_HasFieldPsynergyTriggerFar(s32 group);
 /// Returns whether the map has an event for this item and what the leader
 /// faces; the item menu then closes and the item is used on the field.
-u32 Scene_HasPsynergyEventFar(u16 item);
+u32 Scene_HasPsynergyTriggerFar(u16 item);
 /// Makes a sprite share another's VRAM block, so a chain of afterimages draws
 /// from one copy. Returns the sprite whose block is shared from now on, or
 /// NULL for no source.

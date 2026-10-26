@@ -18,7 +18,7 @@ void FieldEffect_RunCatchOnTarget(s32 unused) { FieldEffect_RunCatch(); }
 /// Abilities: Catch (FIELD_PSYNERGY_CATCH).
 ///
 /// Object 215 is the hand of Move and Carry. The goal is 32 pixels in front
-/// of the caster with effectWork->enabled (no map event named the target),
+/// of the caster with effectWork->enabled (no trigger named the target),
 /// otherwise the effect's position, 32 pixels up in both cases. Called by
 /// FieldEffect_Run and FieldEffect_RunCatchOnTarget. Moves the field effect's
 /// child to (-9, -9) when there is one, and releases object 215 at the end.

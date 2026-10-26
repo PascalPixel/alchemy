@@ -3,5 +3,5 @@
 	overlay_veneer MercuryLighthouse_GetEntrances
 	overlay_veneer MercuryLighthouse_GetExits
 	overlay_veneer MercuryLighthouse_GetActorTemplates
-	overlay_veneer MercuryLighthouse_GetEvents
+	overlay_veneer MercuryLighthouse_GetTriggers
 	overlay_veneer MercuryLighthouse_GetRegions

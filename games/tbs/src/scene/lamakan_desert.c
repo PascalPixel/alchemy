@@ -1,15 +1,15 @@
 /// @file
 /// Lamakan Desert (SceneId_LamakanDesertEast to SceneId_LamakanDesertCave):
 /// four maps that are all Lamakan Desert in the game's area names and share one
-/// map event table, built around a heat gauge and the secrets Reveal uncovers.
+/// trigger table, built around a heat gauge and the secrets Reveal uncovers.
 ///
 /// The heat is a count of steps on hazard ground (gSaveBlock.hazardSteps):
 /// LamakanDesert_Initialize sets a limit of 600 on every map, at which the
 /// party loses a quarter of its HP, and on all but LamakanDesertCave starts the
 /// heat gauge, a thermometer down the screen's left edge (HeatGauge_Draw). Each
 /// moving frame on the sand adds a step (HeatGauge_CountStep,
-/// MB_LAMAKAN_DESERT_SAND and the bg events' metatile behaviors 100 to 107).
-/// As the gauge passes a quarter, a half and three quarters,
+/// MB_LAMAKAN_DESERT_SAND and the examine triggers' metatile behaviors 100 to
+/// 107). As the gauge passes a quarter, a half and three quarters,
 /// HeatGauge_RaiseQuarterTriggers sets FLAG_HEAT_QUARTER to
 /// FLAG_HEAT_THREE_QUARTERS and raises LAMAKAN_DESERT_RAISED_HEAT_QUARTER to
 /// LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS, and Garet, Ivan or Mia complains
@@ -33,14 +33,14 @@
 ///
 /// In LamakanDesertManticore, until it is beaten
 /// (FLAG_LAMAKAN_MANTICORE_BEATEN), the Manticore rises out of the sand as the
-/// leader comes near (coord event 40, LamakanDesert_MeetManticore). Talking to
+/// leader comes near (step trigger 40, LamakanDesert_MeetManticore). Talking to
 /// it starts its battle, which ends at LamakanDesertManticore's
 /// LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE, and arriving there marks it
 /// beaten.
 ///
 /// LamakanDesertEast's LAMAKAN_DESERT_EAST_TO_WORLD_MAP and LamakanDesertCave's
 /// LAMAKAN_DESERT_CAVE_TO_WORLD_MAP lead out onto the world map;
-/// LamakanDesertCave, a cave, has no heat gauge. Coord event 9 takes
+/// LamakanDesertCave, a cave, has no heat gauge. Step trigger 9 takes
 /// LAMAKAN_DESERT_CAVE_TO_WORLD_MAP, and leaving that way while Hsu is still
 /// trapped (FLAG_HSU_RESCUED clear) sets FLAG_HSU_RESCUED and
 /// FLAG_HSU_RESCUED_WITHOUT_PARTY, which lacquer_rooms_b.c reads to have Feizhi
@@ -273,7 +273,7 @@ const struct ActorTemplate *LamakanDesert_GetActorTemplates(void) {
   return gLamakanDesertActorTemplatesOther;
 }
 
-/// Lamakan Desert, coord event 9: LAMAKAN_DESERT_CAVE_TO_WORLD_MAP. If
+/// Lamakan Desert, step trigger 9: LAMAKAN_DESERT_CAVE_TO_WORLD_MAP. If
 /// Master Hsu is still trapped, he is rescued without the party (see the file
 /// comment).
 static void LamakanDesert_LeaveForTheWorldMap(void) {
@@ -289,9 +289,9 @@ static void LamakanDesert_LeaveForTheWorldMap(void) {
   FieldScript_End();
 }
 
-/// The desert's map events, the same on every map.
-const struct MapEvent *LamakanDesert_GetEvents(void) {
-  return gLamakanDesertEvents;
+/// The desert's triggers, the same on every map.
+const struct Trigger *LamakanDesert_GetTriggers(void) {
+  return gLamakanDesertTriggers;
 }
 
 // Native event return forms: see MATCHING.md.
@@ -682,7 +682,7 @@ static void LamakanDesert_BatheInOasis(void) {
   HeatGauge_SetHeld(0);
 }
 
-/// Lamakan Desert, walking on sand (coord events 21 and 100 to 107): each
+/// Lamakan Desert, walking on sand (step triggers 21 and 100 to 107): each
 /// moving frame adds a step of heat and kicks up dust, faster on the run.
 static void HeatGauge_CountStep(void) {
   struct Actor *actor;
@@ -697,7 +697,7 @@ static void HeatGauge_CountStep(void) {
     return;
   }
   gSaveBlock.hazardSteps++;
-  if (work->coordEvent == MB_LAMAKAN_DESERT_SLOPE) {
+  if (work->stepTrigger == MB_LAMAKAN_DESERT_SLOPE) {
     return;
   }
   if (actor->speed <= 0x10000) {
@@ -736,9 +736,9 @@ static void HeatGauge_CountStep(void) {
   }
 }
 
-/// Lamakan Desert, coord event 22, stepping near a hidden pit: the leader looks
-/// at the nearest pit, is pulled backwards into it and a battle with an Ant
-/// Lion begins.
+/// Lamakan Desert, step trigger 22, stepping near a hidden pit: the leader
+/// looks at the nearest pit, is pulled backwards into it and a battle with an
+/// Ant Lion begins.
 static void LamakanDesert_FallIntoPit(void) {
   struct Actor *target;
   struct Actor *actor;
@@ -893,7 +893,7 @@ static void LamakanDesert_SlideDownDune(void) {
   actor->z.fixed += 0x18000;
 }
 
-/// Lamakan Desert, coord event 40 in LamakanDesertManticore, until the
+/// Lamakan Desert, step trigger 40 in LamakanDesertManticore, until the
 /// Manticore is beaten: the leader stops and backs away as the Manticore rises
 /// out of the sand.
 static void LamakanDesert_MeetManticore(void) {
@@ -1328,48 +1328,48 @@ struct ActorTemplate gLamakanDesertManticoreActorTemplates[] = {
     { MAP_TABLE_END },
 };
 
-/// The four maps' one map event table. Its exit rows keep their numbers: each
+/// The four maps' one trigger table. Its exit rows keep their numbers: each
 /// takes the exit of that number in whichever map the party is in, which is a
 /// different way out in each (LAMAKAN_DESERT_EAST_TO_WORLD_MAP,
 /// LAMAKAN_DESERT_SMOG_TO_LAMAKAN_DESERT_EAST and the others).
-struct MapEvent gLamakanDesertEvents[] = {
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
-    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, 1 },
-    { MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, 2 },
-    { MAP_EVENT_EXIT, 7, CONDITION_ALWAYS, 3 },
-    { MAP_EVENT_EXIT, 8, CONDITION_ALWAYS, 4 },
-    { MAP_EVENT_COORD, 9, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_LeaveForTheWorldMap) },
-    { MAP_EVENT_COORD, MB_LAMAKAN_DESERT_OASIS, FLAG_DESERT_EVENT_RUNNING, EVENT_SCRIPT(LamakanDesert_BatheInOasis) },
-    { MAP_EVENT_COORD, MB_LAMAKAN_DESERT_SAND, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
-    { MAP_EVENT_COORD, MB_LAMAKAN_DESERT_PIT, FLAG_DESERT_EVENT_RUNNING, EVENT_SCRIPT(LamakanDesert_FallIntoPit) },
-    { MAP_EVENT_COORD, MB_LAMAKAN_DESERT_SLOPE, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_SlideDownDune) },
-    { MAP_EVENT_COORD, 40, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_MeetManticore) },
-    { MAP_EVENT_TALK, ACTOR_MANTICORE, FLAG_LAMAKAN_MANTICORE_BEATEN, EVENT_SCRIPT(LamakanDesert_FightManticore) },
-    { MAP_EVENT_TALK, ACTOR_SMOG, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_TalkToSmog) },
-    { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_LAMAKAN_DESERT_VULCAN_AXE, FIND_ITEM(ITEM_VULCAN_AXE) },
-    { BG_EVENT(BG_EVENT_SILENT), 101, FLAG_LAMAKAN_DESERT_FIRST_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
-    { BG_EVENT(BG_EVENT_CHEST), 102, FLAG_LAMAKAN_DESERT_LUCKY_PEPPER, FIND_ITEM(ITEM_LUCKY_PEPPER) },
-    { BG_EVENT(BG_EVENT_SILENT), 103, FLAG_LAMAKAN_DESERT_SECOND_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
-    { BG_EVENT(BG_EVENT_CHEST), 105, FLAG_LAMAKAN_DESERT_777_COINS, FIND_COINS(777) },
-    { BG_EVENT(BG_EVENT_CHEST), 106, FLAG_LAMAKAN_DESERT_POTION, FIND_ITEM(ITEM_POTION) },
-    { BG_EVENT(BG_EVENT_CHEST), 107, FLAG_LAMAKAN_DESERT_MINT, FIND_ITEM(ITEM_MINT) },
+struct Trigger gLamakanDesertTriggers[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1 },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2 },
+    { TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3 },
+    { TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4 },
+    { TRIGGER_EXIT, 5, CONDITION_ALWAYS, 1 },
+    { TRIGGER_EXIT, 6, CONDITION_ALWAYS, 2 },
+    { TRIGGER_EXIT, 7, CONDITION_ALWAYS, 3 },
+    { TRIGGER_EXIT, 8, CONDITION_ALWAYS, 4 },
+    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_LeaveForTheWorldMap) },
+    { TRIGGER_STEP, MB_LAMAKAN_DESERT_OASIS, FLAG_DESERT_EVENT_RUNNING, EVENT_SCRIPT(LamakanDesert_BatheInOasis) },
+    { TRIGGER_STEP, MB_LAMAKAN_DESERT_SAND, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, MB_LAMAKAN_DESERT_PIT, FLAG_DESERT_EVENT_RUNNING, EVENT_SCRIPT(LamakanDesert_FallIntoPit) },
+    { TRIGGER_STEP, MB_LAMAKAN_DESERT_SLOPE, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_SlideDownDune) },
+    { TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_MeetManticore) },
+    { TRIGGER_TALK, ACTOR_MANTICORE, FLAG_LAMAKAN_MANTICORE_BEATEN, EVENT_SCRIPT(LamakanDesert_FightManticore) },
+    { TRIGGER_TALK, ACTOR_SMOG, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_TalkToSmog) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_LAMAKAN_DESERT_VULCAN_AXE, FIND_ITEM(ITEM_VULCAN_AXE) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), 101, FLAG_LAMAKAN_DESERT_FIRST_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_LAMAKAN_DESERT_LUCKY_PEPPER, FIND_ITEM(ITEM_LUCKY_PEPPER) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), 103, FLAG_LAMAKAN_DESERT_SECOND_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 105, FLAG_LAMAKAN_DESERT_777_COINS, FIND_COINS(777) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 106, FLAG_LAMAKAN_DESERT_POTION, FIND_ITEM(ITEM_POTION) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 107, FLAG_LAMAKAN_DESERT_MINT, FIND_ITEM(ITEM_MINT) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Reveal_ShowSecrets) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Reveal_HideSecrets) },
-    { MAP_EVENT_RAISED, LAMAKAN_DESERT_RAISED_HEAT_QUARTER, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(LamakanDesert_ComplainAboutHeat) },
-    { MAP_EVENT_RAISED, LAMAKAN_DESERT_RAISED_HEAT_HALF, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(LamakanDesert_ComplainAboutHeat) },
-    { MAP_EVENT_RAISED, LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(LamakanDesert_ComplainAboutHeat) },
-    { MAP_EVENT_COORD, 100, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
-    { MAP_EVENT_COORD, 101, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
-    { MAP_EVENT_COORD, 102, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
-    { MAP_EVENT_COORD, 103, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
-    { MAP_EVENT_COORD, 104, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
-    { MAP_EVENT_COORD, 105, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
-    { MAP_EVENT_COORD, 106, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
-    { MAP_EVENT_COORD, 107, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
-    { MAP_EVENTS_END },
+    { TRIGGER_RAISED, LAMAKAN_DESERT_RAISED_HEAT_QUARTER, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(LamakanDesert_ComplainAboutHeat) },
+    { TRIGGER_RAISED, LAMAKAN_DESERT_RAISED_HEAT_HALF, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(LamakanDesert_ComplainAboutHeat) },
+    { TRIGGER_RAISED, LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(LamakanDesert_ComplainAboutHeat) },
+    { TRIGGER_STEP, 100, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, 101, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, 102, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, 103, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, 104, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, 105, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, 106, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, 107, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
+    { TRIGGERS_END },
 };
 // clang-format on
 

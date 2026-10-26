@@ -17,7 +17,7 @@
 ///
 /// Three logs lie here, rolled by walking into them; the one pushed west to the
 /// water's edge tips into the river and floats there, cells the party can
-/// cross, and from the bank the leader can hop east (coord event 11,
+/// cross, and from the bank the leader can hop east (step trigger 11,
 /// KolimaForest_HopEast). KOLIMA_FOREST_ENTRANCE_TO_KOLIMA_FOREST_GLADE leads
 /// on into the forest (SceneId_KolimaForestGlade),
 /// KOLIMA_FOREST_ENTRANCE_TO_WORLD_MAP back to the world map.
@@ -209,8 +209,8 @@ static void KolimaForestEntrance_PushLog(void) {
 #include "common/kolima_jump.h"
 
 /// The logs, the hop east from the bank and the two ways out.
-const struct MapEvent *KolimaForestEntrance_GetEvents(void) {
-  return gKolimaForestEntrance_Events;
+const struct Trigger *KolimaForestEntrance_GetTriggers(void) {
+  return gKolimaForestEntrance_Triggers;
 }
 
 /// On entry a log already in the river floats there again and the logs mark
@@ -1343,7 +1343,7 @@ struct SceneEntrance gKolimaForestEntrance_Entrances[] = {
 };
 
 /// On into the forest (SceneId_KolimaForestGlade) and out to the world map
-/// (SceneId_WorldMap), with two exits no map event uses back into this map.
+/// (SceneId_WorldMap), with two exits no trigger uses back into this map.
 u32 gKolimaForestEntrance_Exits[] = {
     SCENE_EXITS(KolimaForestEntrance),
     SCENE_EXIT(KOLIMA_FOREST_ENTRANCE_TO_KOLIMA_FOREST_GLADE, KolimaForestGlade,
@@ -1397,15 +1397,15 @@ struct ActorTemplate gKolimaForestEntrance_ActorTemplates[] = {
 };
 // clang-format on
 
-struct MapEvent gKolimaForestEntrance_Events[] = {
-    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 10, CONDITION_ALWAYS,
+struct Trigger gKolimaForestEntrance_Triggers[] = {
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(KolimaForestEntrance_PushLog)},
-    {COORD_EVENT_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS,
      EVENT_SCRIPT(KolimaForest_HopEast)},
-    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
      KOLIMA_FOREST_ENTRANCE_TO_KOLIMA_FOREST_GLADE},
-    {MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, KOLIMA_FOREST_ENTRANCE_TO_WORLD_MAP},
-    {MAP_EVENTS_END},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, KOLIMA_FOREST_ENTRANCE_TO_WORLD_MAP},
+    {TRIGGERS_END},
 };
 
 s32 gKolimaForestEntrance_SparkleScript[] = {

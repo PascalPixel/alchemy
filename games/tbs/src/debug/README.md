@@ -71,13 +71,13 @@ clear. Talking to one runs a two-step script: give the party that
 capture the game uses everywhere (the Djinni goes to the member with the
 fewest), then clear the Djinni's flag again. Those two calls are all the room
 needs from the rest of the game, so its import table holds just the two. Each
-Djinni is one row of the room's event table, which says: when the player
+Djinni is one row of the room's trigger table, which says: when the player
 talks to Flint, always, run Flint's script.
 
 The room answers the field's six questions with `TestRoom_Initialize`,
 `TestRoom_GetEntrances`, `TestRoom_GetExits`,
-`TestRoom_GetActorTemplates`, `TestRoom_GetEvents` and
-`Scene_GetExitRegions` (none). The events are `gTestRoom_Events`, and each
+`TestRoom_GetActorTemplates`, `TestRoom_GetTriggers` and
+`Scene_GetExitRegions` (none). The events are `gTestRoom_Triggers`, and each
 script, such as `TestRoom_ReceiveFlint`, calls `Djinn_JoinParty` and
 `GameFlag_Clear`.
 
@@ -101,14 +101,14 @@ test in Japanese and shows the character-set captions elsewhere.
 
 The browsers are in [level.c](level.c), such as
 `IncreaseItemAndLevel_SelectItem`; the room's events are
-`gIncreaseItemAndLevel_Events`.
+`gIncreaseItemAndLevel_Triggers`.
 
 ## The menu test room
 
 ![In the menu test room Isaac talks to Felix from below him: a window with a weapon seller's portrait reads "Come in! Welcome! Take a look at our fine weapons." Talked to again from above, the same Felix answers "Welcome, weary wanderers. What aid do you seek?", the Sanctum's greeting](https://alchemy.pascalpixel.com/guides/debug/felix-facing.gif)
 
 Felix answers with a different keeper's lines depending on the side he
-is talked to from: a map event can ask which way the leader is facing, and the
+is talked to from: a trigger can ask which way the leader is facing, and the
 room uses that to fit four message tests into one person. The other people
 run the shop, message and inventory tests with the ready-made party.
 
@@ -129,7 +129,7 @@ or the Sanctum, and the second Felix the Warrior's shops in the same way.
 Facing the second Felix from above has no row in English; in the other four
 international editions it shows one line from Vale with no speaker.
 
-The facing a row asks for is carried in its first word, as `gMenuTest_Events`
+The facing a row asks for is carried in its first word, as `gMenuTest_Triggers`
 shows; the browsers are `MenuTest_BrowseWeaponShopMessages` and its kin, and
 the shop `Shop_OpenDebugShop`.
 

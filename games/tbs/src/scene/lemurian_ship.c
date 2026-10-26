@@ -124,10 +124,10 @@ const struct ActorTemplate *LemurianShip_GetActorTemplates(void) {
 }
 
 /// Lemurian ship, the way back to Lalivero: leaves and clears the backdrop
-/// colour. Reached by stepping on metatile behavior 1 (gLemurianShipEvents);
+/// colour. Reached by stepping on metatile behavior 1 (gLemurianShipTriggers);
 /// takes LEMURIAN_SHIP_TO_TIMBER_ROOMS_C.
 static void EventScript_LeaveTheShip(void) {
-  Import_ScriptRequestExit(gFieldWork->coordEvent);
+  Import_ScriptRequestExit(gFieldWork->stepTrigger);
   Io_Write16(0, &PLTT_BACKDROP);
 }
 
@@ -144,8 +144,8 @@ static void Ripple_Start(void) {
 
 /// The exit, Reveal and the Black Orb at the water's edge (metatile behavior
 /// 10).
-const struct MapEvent *LemurianShip_GetEvents(void) {
-  return gLemurianShipEvents;
+const struct Trigger *LemurianShip_GetTriggers(void) {
+  return gLemurianShipTriggers;
 }
 
 /// Slides a window of six colours along gShipGlowPalettes into palette 7's
@@ -999,16 +999,15 @@ struct ActorTemplate gLemurianShipActorTemplates[] = {
     {MAP_TABLE_END},
 };
 
-struct MapEvent gLemurianShipEvents[] = {
-    {MAP_EVENT_COORD, 1, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_LeaveTheShip)},
+struct Trigger gLemurianShipTriggers[] = {
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveTheShip)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0,
      CONDITION_ALWAYS, EVENT_SCRIPT(Ripple_StopForReveal)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0,
      CONDITION_ALWAYS, EVENT_SCRIPT(Ripple_Start)},
     {USE_ITEM(ITEM_BLACK_ORB), 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_RaiseTheShip)},
-    {MAP_EVENTS_END},
+    {TRIGGERS_END},
 };
 
 s32 gOrbGlowActive = 0;

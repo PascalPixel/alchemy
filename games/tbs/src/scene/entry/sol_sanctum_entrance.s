@@ -3,5 +3,5 @@
 	overlay_veneer SolSanctumEntrance_GetEntrances
 	overlay_veneer SolSanctumEntrance_GetExits
 	overlay_veneer SolSanctumEntrance_GetActorTemplates
-	overlay_veneer SolSanctumEntrance_GetEvents
+	overlay_veneer SolSanctumEntrance_GetTriggers
 	overlay_veneer SolSanctumEntrance_GetRegions

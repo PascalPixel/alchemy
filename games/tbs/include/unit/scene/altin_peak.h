@@ -6,7 +6,7 @@
 #include "scene_header.h"
 
 struct SceneEntrance;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 struct SceneExitRegion;
 
@@ -14,7 +14,7 @@ const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ActorTemplate *Scene_GetActorTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s8 gAltinPeak_PaletteScript[];
 extern s32 gAltinPeak_FaceLeaderScript[];
@@ -52,19 +52,19 @@ extern struct ActorTemplate gAltinPeak_JunctionActorTemplates[];
 extern struct ActorTemplate gAltinPeak_FallingRocksActorTemplates[];
 extern struct ActorTemplate gAltinPeak_HydrosStatueActorTemplates[];
 extern struct ActorTemplate gAltinPeak_WestExitActorTemplates[];
-extern struct MapEvent gAltinPeak_EventsOther[];
-extern struct MapEvent gAltinPeak_FirstWaterBeastEvents[];
-extern struct MapEvent gAltinPeak_FirstWaterBeastEventsDrained[];
-extern struct MapEvent gAltinPeak_RailTunnelEvents[];
-extern struct MapEvent gAltinPeak_SecondWaterBeastEvents[];
-extern struct MapEvent gAltinPeak_SouthEntranceEvents[];
-extern struct MapEvent gAltinPeak_ThirdWaterBeastEvents[];
-extern struct MapEvent gAltinPeak_PoolEvents[];
-extern struct MapEvent gAltinPeak_SpritzEvents[];
-extern struct MapEvent gAltinPeak_JunctionEvents[];
-extern struct MapEvent gAltinPeak_FallingRocksEvents[];
-extern struct MapEvent gAltinPeak_HydrosStatueEvents[];
-extern struct MapEvent gAltinPeak_WestExitEvents[];
+extern struct Trigger gAltinPeak_TriggersOther[];
+extern struct Trigger gAltinPeak_FirstWaterBeastTriggers[];
+extern struct Trigger gAltinPeak_FirstWaterBeastTriggersDrained[];
+extern struct Trigger gAltinPeak_RailTunnelTriggers[];
+extern struct Trigger gAltinPeak_SecondWaterBeastTriggers[];
+extern struct Trigger gAltinPeak_SouthEntranceTriggers[];
+extern struct Trigger gAltinPeak_ThirdWaterBeastTriggers[];
+extern struct Trigger gAltinPeak_PoolTriggers[];
+extern struct Trigger gAltinPeak_SpritzTriggers[];
+extern struct Trigger gAltinPeak_JunctionTriggers[];
+extern struct Trigger gAltinPeak_FallingRocksTriggers[];
+extern struct Trigger gAltinPeak_HydrosStatueTriggers[];
+extern struct Trigger gAltinPeak_WestExitTriggers[];
 extern s32 gAltinPeak_RumbleTicks;
 extern u32 gAltinPeak_RollRadii[];
 

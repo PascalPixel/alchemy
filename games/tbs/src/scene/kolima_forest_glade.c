@@ -96,8 +96,8 @@ static void KolimaForestGlade_CatchNut(void) {
 }
 
 /// The logs, the Nut and the two ways out.
-const struct MapEvent *KolimaForestGlade_GetEvents(void) {
-  return gKolimaForestGlade_Events;
+const struct Trigger *KolimaForestGlade_GetTriggers(void) {
+  return gKolimaForestGlade_Triggers;
 }
 
 /// Sets up the floating Nut and the logs on entry. The Nut floats until it is
@@ -184,16 +184,16 @@ struct ActorTemplate gKolimaForestGlade_ActorTemplates[] = {
 };
 // clang-format on
 
-struct MapEvent gKolimaForestGlade_Events[] = {
-    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS,
+struct Trigger gKolimaForestGlade_Triggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
      KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF},
-    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS,
      KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE},
-    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 10, CONDITION_ALWAYS,
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(KolimaForestGlade_PushLog)},
     {PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT, FLAG_KOLIMA_FOREST_NUT_CAUGHT,
      EVENT_SCRIPT(KolimaForestGlade_CatchNut)},
-    {MAP_EVENTS_END},
+    {TRIGGERS_END},
 };
 
 // The .bss order follows the first declarations (externs in field.h).

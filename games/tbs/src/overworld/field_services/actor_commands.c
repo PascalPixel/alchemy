@@ -920,7 +920,7 @@ UNUSED void Actor_ReservedNoOp(void) {}
 
 /// The script command "set message": the number of the script's next message,
 /// written to work->message. Map scripts reach it (MESSAGE_SET); the field's
-/// talk, coord event, item and Psynergy scripts call it too.
+/// talk, step trigger, item and Psynergy scripts call it too.
 void FieldScript_SetMessageId(s32 message) { gFieldWork->message = message; }
 
 /// Returns the sprite (the first animation's id) of the actor in the low

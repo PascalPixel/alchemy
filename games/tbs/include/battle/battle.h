@@ -45,7 +45,7 @@ struct BattleTurn;
 struct BattleBackgroundWork;
 struct BattleSummonState;
 struct Unit;
-struct MapEventView;
+struct TriggerView;
 struct FieldEffectSprite;
 struct EnemyDefinition;
 struct Actor;

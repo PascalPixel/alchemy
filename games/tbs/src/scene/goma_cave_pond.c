@@ -6,7 +6,7 @@
 /// The room is reached only from the room above (goma_cave_pillar.c): its
 /// three exits lead back up to that room's
 /// GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_WEST, _SOUTH and _EAST. It has no
-/// map events of its own. Its one placed actor is the stump the party
+/// triggers of its own. Its one placed actor is the stump the party
 /// pushes over the edge up there with Move: once it has fallen
 /// (FLAG_GOMA_CAVE_STUMP_FELL), entering finds it sunk in the pond until only
 /// its top shows (STUMP_ANIMATION_SINK), drawn underfoot with no collision
@@ -66,7 +66,7 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
   return gGomaCavePondActorTemplates;
 }
 
-const struct MapEvent *Scene_GetEvents(void) { return gGomaCavePondEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gGomaCavePondTriggers; }
 
 /// Sets up the room as the party enters. Once the stump in the room above has
 /// been pushed over, it lies here underfoot, and the cells it covers change.
@@ -119,12 +119,12 @@ struct ActorTemplate gGomaCavePondActorTemplates[] = {
 };
 // clang-format on
 
-struct MapEvent gGomaCavePondEvents[] = {
-    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS,
+struct Trigger gGomaCavePondTriggers[] = {
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS,
      GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_WEST},
-    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 6, CONDITION_ALWAYS,
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 6, CONDITION_ALWAYS,
      GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_SOUTH},
-    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS,
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS,
      GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_EAST},
-    {MAP_EVENTS_END},
+    {TRIGGERS_END},
 };

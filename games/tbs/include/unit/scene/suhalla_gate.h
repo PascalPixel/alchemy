@@ -10,7 +10,7 @@ const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ActorTemplate *Scene_GetActorTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gSuhallaGateWoundedNoCollision[];
 extern s32 gSuhallaGateWounded[];
@@ -24,8 +24,8 @@ extern struct ActorTemplate gSuhallaGateActorTemplatesOther[];
 extern struct ActorTemplate gSuhallaGateDewActorTemplates[];
 extern struct ActorTemplate gSuhallaGateCheckpointActorTemplates[];
 extern struct ActorTemplate gSuhallaGateCheckpointActorTemplatesAfterAudience[];
-extern struct MapEvent gSuhallaGateEventsOther[];
-extern struct MapEvent gSuhallaGateDewEvents[];
-extern struct MapEvent gGatewayCaveEvents[];
+extern struct Trigger gSuhallaGateTriggersOther[];
+extern struct Trigger gSuhallaGateDewTriggers[];
+extern struct Trigger gGatewayCaveTriggers[];
 
 #endif

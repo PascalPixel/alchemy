@@ -3,5 +3,5 @@
 	overlay_veneer ImilFuchinFalls_GetEntrances
 	overlay_veneer ImilFuchinFalls_GetExits
 	overlay_veneer ImilFuchinFalls_GetActorTemplates
-	overlay_veneer ImilFuchinFalls_GetEvents
+	overlay_veneer ImilFuchinFalls_GetTriggers
 	overlay_veneer ImilFuchinFalls_GetRegions

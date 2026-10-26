@@ -1,7 +1,7 @@
 /// @file
 /// The Sanctum of Vale and of four towns on the party's way, which holds six
 /// places in one map (SceneId_Sanctum): the entrance the party arrives
-/// at decides which, and Sanctum_GetActorTemplates and Sanctum_GetEvents
+/// at decides which, and Sanctum_GetActorTemplates and Sanctum_GetTriggers
 /// choose that place's tables by it. Spoken to from the front, each place's
 /// healer opens the Sanctum's services (Sanctum_Run); from any other side the
 /// healer talks. Each place's door leads back out to its own town.
@@ -24,7 +24,7 @@
 ///   (Sanctum_SpawnOrbitingEffect). Accepting plays
 ///   Sanctum_ReceiveWiseOnesMission and sets FLAG_SANCTUM_QUEST_ACCEPTED, and
 ///   SANCTUM_TO_VALE_PLAZA takes the two to SceneId_ValePlaza (vale_plaza.c).
-///   Refusing leaves the room to gSanctum_QuestEvents: the Great Healer asks
+///   Refusing leaves the room to gSanctum_QuestTriggers: the Great Healer asks
 ///   again when spoken to (EventScript_ReconsiderQuest), the door draws a
 ///   warning (FLAG_SANCTUM_WARNED_BEFORE_LEAVING), and leaving anyway ends the
 ///   game (EventScript_LeaveAfterRefusing): `And so the world began drifting
@@ -249,41 +249,41 @@ const struct ActorTemplate *Sanctum_GetActorTemplates(void) {
   }
 }
 
-/// Chooses the map events by entrance, and in Vale Sanctum before and
-/// after the quest by story flag: gSanctum_ValeEvents before the party has left
-/// Vale, gSanctum_ValeEventsAfterLeaving once it has (FLAG_VALE_PARTY_LEFT) and
-/// gSanctum_ValeEventsAfterKalay once it has reached Kalay
-/// (FLAG_KALAY_REACHED); gSanctum_QuestEvents for the quest's visits
-/// (SANCTUM_FROM_VALE_ERUPTION, SANCTUM_FROM_QUEST_RESTART and
+/// Chooses the triggers by entrance, and in Vale Sanctum before and
+/// after the quest by story flag: gSanctum_ValeTriggers before the party has
+/// left Vale, gSanctum_ValeTriggersAfterLeaving once it has
+/// (FLAG_VALE_PARTY_LEFT) and gSanctum_ValeTriggersAfterKalay once it has
+/// reached Kalay (FLAG_KALAY_REACHED); gSanctum_QuestTriggers for the quest's
+/// visits (SANCTUM_FROM_VALE_ERUPTION, SANCTUM_FROM_QUEST_RESTART and
 /// SANCTUM_QUEST_UNUSED).
-const struct MapEvent *Sanctum_GetEvents(void) {
+const struct Trigger *Sanctum_GetTriggers(void) {
   switch (gSaveBlock.entrance) {
   case SANCTUM_FROM_VAULT:
   case SANCTUM_FROM_LOG_ROOMS_A:
-    return gSanctum_VaultEvents;
+    return gSanctum_VaultTriggers;
   case SANCTUM_FROM_VAULT_REVISIT:
-    return gSanctum_VaultRevisitEvents;
+    return gSanctum_VaultRevisitTriggers;
   case SANCTUM_FROM_VALE_ERUPTION:
   case SANCTUM_FROM_QUEST_RESTART:
   case SANCTUM_QUEST_UNUSED:
-    return gSanctum_QuestEvents;
+    return gSanctum_QuestTriggers;
   case SANCTUM_FROM_XIAN:
-    return gSanctum_XianEvents;
+    return gSanctum_XianTriggers;
   case SANCTUM_FROM_ALTIN:
-    return gSanctum_AltinEvents;
+    return gSanctum_AltinTriggers;
   case SANCTUM_FROM_BILIBIN:
-    return gSanctum_BilibinEvents;
+    return gSanctum_BilibinTriggers;
   default:
     break;
   }
 
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
-    return gSanctum_ValeEventsAfterKalay;
+    return gSanctum_ValeTriggersAfterKalay;
   }
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
-    return gSanctum_ValeEventsAfterLeaving;
+    return gSanctum_ValeTriggersAfterLeaving;
   }
-  return gSanctum_ValeEvents;
+  return gSanctum_ValeTriggers;
 }
 
 /// Vault Sanctum: talking to ACTOR_SANCTUM_MEMBER, about the stolen gold
@@ -607,7 +607,7 @@ static inline void Sanctum_ShowAllEmotes(void) {
 /// Great Healer explains the Wise One's warning, and asks Isaac to accept
 /// responsibility for the fate of the land. Accepting plays
 /// Sanctum_ReceiveWiseOnesMission, sets FLAG_SANCTUM_QUEST_ACCEPTED and takes
-/// SANCTUM_TO_VALE_PLAZA; refusing leaves the room to gSanctum_QuestEvents.
+/// SANCTUM_TO_VALE_PLAZA; refusing leaves the room to gSanctum_QuestTriggers.
 static void Sanctum_RequestQuestAcceptance(void) {
   u32 effectIndex;
 
@@ -2096,7 +2096,7 @@ static void EventScript_TalkToHealer(void) {
 /// the later visit, of the earthquakes. Its case for the quest's
 /// entrances (SANCTUM_FROM_VALE_ERUPTION, SANCTUM_FROM_QUEST_RESTART and
 /// SANCTUM_QUEST_UNUSED) passes to EventScript_ReconsiderQuest, though their
-/// map events (gSanctum_QuestEvents) call that directly.
+/// triggers (gSanctum_QuestTriggers) call that directly.
 static void EventScript_TalkToHealerOnVisit(void) {
   s32 entrance;
 
@@ -2374,94 +2374,94 @@ struct ActorTemplate gSanctum_AltinXianActorTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct MapEvent gSanctum_ValeEvents[] = {
-    { MAP_EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
-    { MAP_EVENT_TALK, ACTOR_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumOurPsynergyWasGivenToUs) },
-    { MAP_EVENT_TALK, ACTOR_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumPsynergyIsAPowerThatShould) },
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VALE },
-    { MAP_EVENTS_END },
+struct Trigger gSanctum_ValeTriggers[] = {
+    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
+    { TRIGGER_TALK, ACTOR_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumOurPsynergyWasGivenToUs) },
+    { TRIGGER_TALK, ACTOR_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumPsynergyIsAPowerThatShould) },
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VALE },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gSanctum_VaultEvents[] = {
-    { MAP_EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealerOnVisit) },
-    { MAP_EVENT_TALK, ACTOR_SANCTUM_MEMBER, FLAG_VAULT_THIEVES_JAILED, EVENT_SCRIPT(EventScript_TalkAboutGoldenStatue) },
-    { MAP_EVENT_TALK, ACTOR_SANCTUM_MEMBER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutGoldenStatue) },
+struct Trigger gSanctum_VaultTriggers[] = {
+    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealerOnVisit) },
+    { TRIGGER_TALK, ACTOR_SANCTUM_MEMBER, FLAG_VAULT_THIEVES_JAILED, EVENT_SCRIPT(EventScript_TalkAboutGoldenStatue) },
+    { TRIGGER_TALK, ACTOR_SANCTUM_MEMBER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutGoldenStatue) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumGoOnIfThatEasesThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SANCTUM_MEMBER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindAboutGoldenStatue) },
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VAULT },
-    { MAP_EVENTS_END },
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VAULT },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gSanctum_VaultRevisitEvents[] = {
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VAULT_REVISIT },
-    { MAP_EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealerOnVisit) },
-    { MAP_EVENT_TALK, ACTOR_SANCTUM_MEMBER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutGoldenStatue) },
+struct Trigger gSanctum_VaultRevisitTriggers[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VAULT_REVISIT },
+    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealerOnVisit) },
+    { TRIGGER_TALK, ACTOR_SANCTUM_MEMBER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutGoldenStatue) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumIHopeTheEarthquakesArentA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SANCTUM_MEMBER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindAboutGoldenStatue) },
-    { MAP_EVENTS_END },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gSanctum_QuestEvents[] = {
-    { MAP_EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReconsiderQuest) },
-    { MAP_EVENT_TALK, ACTOR_GARET, CONDITION_ALWAYS, MSGNO(MsgSanctumItIsATerribleBurdenTo) },
-    { MAP_EVENT_TALK, ACTOR_DORA, CONDITION_ALWAYS, MSGNO(MsgSanctumMotherWouldNeverDoubtYourCourage) },
-    { MAP_EVENT_TALK, ACTOR_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgSanctumIDontBlameYouICouldnt) },
-    { MAP_EVENT_TALK, ACTOR_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumWasItRightToRefuseWhen) },
-    { MAP_EVENT_TALK, ACTOR_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumItsClearThatTheGreatHealer) },
-    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveAfterRefusing) },
-    { MAP_EVENT_COORD, 2, FLAG_SANCTUM_WARNED_BEFORE_LEAVING, EVENT_SCRIPT(EventScript_WarnBeforeLeaving) },
-    { MAP_EVENTS_END },
+struct Trigger gSanctum_QuestTriggers[] = {
+    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReconsiderQuest) },
+    { TRIGGER_TALK, ACTOR_GARET, CONDITION_ALWAYS, MSGNO(MsgSanctumItIsATerribleBurdenTo) },
+    { TRIGGER_TALK, ACTOR_DORA, CONDITION_ALWAYS, MSGNO(MsgSanctumMotherWouldNeverDoubtYourCourage) },
+    { TRIGGER_TALK, ACTOR_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgSanctumIDontBlameYouICouldnt) },
+    { TRIGGER_TALK, ACTOR_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumWasItRightToRefuseWhen) },
+    { TRIGGER_TALK, ACTOR_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumItsClearThatTheGreatHealer) },
+    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveAfterRefusing) },
+    { TRIGGER_STEP, 2, FLAG_SANCTUM_WARNED_BEFORE_LEAVING, EVENT_SCRIPT(EventScript_WarnBeforeLeaving) },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gSanctum_ValeEventsAfterLeaving[] = {
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VALE },
-    { MAP_EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
-    { MAP_EVENT_TALK, ACTOR_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumThePowerOfMtAlephStems) },
-    { MAP_EVENT_TALK, ACTOR_EAST_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutPsynergyChanges) },
+struct Trigger gSanctum_ValeTriggersAfterLeaving[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VALE },
+    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
+    { TRIGGER_TALK, ACTOR_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumThePowerOfMtAlephStems) },
+    { TRIGGER_TALK, ACTOR_EAST_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutPsynergyChanges) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumThePowerOfMyPsynergyHas) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumTheAngaranContinentWillCertainlySee) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumMyPsynergyHasntChangedAtAll) },
-    { MAP_EVENTS_END },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gSanctum_ValeEventsAfterKalay[] = {
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VALE },
-    { MAP_EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
-    { MAP_EVENT_TALK, ACTOR_WEST_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutNewAdepts) },
-    { MAP_EVENT_TALK, ACTOR_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumWhyIsItThatDifferentAdepts) },
+struct Trigger gSanctum_ValeTriggersAfterKalay[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VALE },
+    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
+    { TRIGGER_TALK, ACTOR_WEST_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutNewAdepts) },
+    { TRIGGER_TALK, ACTOR_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumWhyIsItThatDifferentAdepts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumItllBeDifficultToReachSol) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumISeeABeautifulGirlHas) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumItsNotFairIWantTo) },
-    { MAP_EVENTS_END },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gSanctum_AltinEvents[] = {
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_ALTIN },
-    { MAP_EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutAltinMonsters) },
+struct Trigger gSanctum_AltinTriggers[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_ALTIN },
+    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutAltinMonsters) },
     // Unused: a copy of the row above, which always answers first.
-    { MAP_EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutAltinMonsters) },
+    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutAltinMonsters) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgSanctumPleaseSaveTheHelplessInAltin) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumAlmightyFateMustHaveHeardMe) },
-    { MAP_EVENTS_END },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gSanctum_BilibinEvents[] = {
-    { MAP_EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutCurse) },
-    { MAP_EVENT_TALK, ACTOR_SANCTUM_MEMBER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgSanctumPleaseGiveMeStrengthAtTimes) },
+struct Trigger gSanctum_BilibinTriggers[] = {
+    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutCurse) },
+    { TRIGGER_TALK, ACTOR_SANCTUM_MEMBER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgSanctumPleaseGiveMeStrengthAtTimes) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgSanctumWillITurnIntoATree) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SANCTUM_MEMBER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgSanctumSomeoneWillSaveUsJustKeep) },
-    { MAP_EVENT_TALK, ACTOR_SANCTUM_MEMBER, CONDITION_ALWAYS, MSGNO(MsgSanctumHowAboutThatOurWishesHave) },
+    { TRIGGER_TALK, ACTOR_SANCTUM_MEMBER, CONDITION_ALWAYS, MSGNO(MsgSanctumHowAboutThatOurWishesHave) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumTheSignsOfDangerAreActually) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SANCTUM_MEMBER, CONDITION_ALWAYS, MSGNO(MsgSanctumPeaceWillBeKeptAsLong) },
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_BILIBIN },
-    { MAP_EVENTS_END },
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_BILIBIN },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gSanctum_XianEvents[] = {
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_XIAN },
-    { MAP_EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutJourneyFromXian) },
+struct Trigger gSanctum_XianTriggers[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_XIAN },
+    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutJourneyFromXian) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumWhenYouStayInXianFor) },
-    { MAP_EVENTS_END },
+    { TRIGGERS_END },
 };
 // clang-format on
 

@@ -135,7 +135,7 @@ void Exit_PrepareAnimation(s32 animation) {
 /// Leaves through a EXIT_STYLE_STAIRS_UP exit (ANIM_LEADER_LEAVE);
 /// FLAG_ARRIVAL_STAIRS_UP makes the next map play the matching arrival
 /// (Entrance_PlayArrival). Called by the exit handling in
-/// overworld/events.c, after it plays SE_STAIRS_UP.
+/// overworld/triggers.c, after it plays SE_STAIRS_UP.
 void Exit_StartStairsUp(void) {
   Exit_PrepareAnimation(ANIM_LEADER_LEAVE);
   GameFlag_SetFar(FLAG_ARRIVAL_STAIRS_UP);
@@ -144,7 +144,7 @@ void Exit_StartStairsUp(void) {
 /// Leaves through a EXIT_STYLE_STAIRS_DOWN exit
 /// (ANIM_LEADER_LEAVE_ALTERNATE), recorded in
 /// FLAG_ARRIVAL_STAIRS_DOWN. Called by the exit handling in
-/// overworld/events.c, after it plays SE_STAIRS_DOWN.
+/// overworld/triggers.c, after it plays SE_STAIRS_DOWN.
 void Exit_StartStairsDown(void) {
   Exit_PrepareAnimation(ANIM_LEADER_LEAVE_ALTERNATE);
   GameFlag_SetFar(FLAG_ARRIVAL_STAIRS_DOWN);

@@ -5,7 +5,7 @@
 #include "map_tables.h"
 
 struct SceneEntrance;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 struct SceneExitRegion;
 
@@ -13,11 +13,11 @@ const struct SceneEntrance *SolSanctumLunaSolRooms_GetEntrances(void);
 const struct SceneExitRegion *SolSanctumLunaSolRooms_GetRegions(void);
 const u32 *SolSanctumLunaSolRooms_GetExits(void);
 const struct ActorTemplate *SolSanctumLunaSolRooms_GetActorTemplates(void);
-const struct MapEvent *SolSanctumLunaSolRooms_GetEvents(void);
+const struct Trigger *SolSanctumLunaSolRooms_GetTriggers(void);
 s32 SolSanctumLunaSolRooms_Initialize(void);
 extern struct SceneEntrance gSolSanctumLunaSolRoomsEntrances[];
 extern u32 gSolSanctumLunaSolRoomsExits[];
 extern struct ActorTemplate gSolSanctumLunaSolRoomsActorTemplates[];
-extern struct MapEvent gSolSanctumLunaSolRoomsEvents[];
+extern struct Trigger gSolSanctumLunaSolRoomsTriggers[];
 
 #endif

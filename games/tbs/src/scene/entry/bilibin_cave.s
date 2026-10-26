@@ -3,5 +3,5 @@
 	overlay_veneer BilibinCave_GetEntrances
 	overlay_veneer BilibinCave_GetExits
 	overlay_veneer BilibinCave_GetActorTemplates
-	overlay_veneer BilibinCave_GetEvents
+	overlay_veneer BilibinCave_GetTriggers
 	overlay_veneer BilibinCave_GetRegions

@@ -3,5 +3,5 @@
 	overlay_veneer ColosseumEntrance_GetEntrances
 	overlay_veneer ColosseumEntrance_GetExits
 	overlay_veneer ColosseumEntrance_GetActorTemplates
-	overlay_veneer ColosseumEntrance_GetEvents
+	overlay_veneer ColosseumEntrance_GetTriggers
 	overlay_veneer ColosseumEntrance_GetRegions

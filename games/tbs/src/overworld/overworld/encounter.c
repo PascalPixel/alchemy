@@ -254,7 +254,7 @@ s32 Encounter_RollWorldMap(s32 pos, s32 steps) {
 
 /// Returns the formation in slot (0 to 7) of zone; 14 halfwords make a zone.
 /// Called by Field_RequestBattleFromEncounterTable,
-/// Encounter_GetDjinnFormation and the map event runner (events.c,
+/// Encounter_GetDjinnFormation and the trigger runner (triggers.c,
 /// ENCOUNTER_ZONE_MIMIC).
 u16 Encounter_GetFormationAtSlot(s32 zone, s32 slot) {
   // A zone's halfwords are rate, level, then the eight formations.
@@ -456,7 +456,7 @@ void BattleBackground_SelectForEnvironment(s32 behavior) {
 /// last before it. Link battles always use SONG_KEEP_BGM. Called by
 /// Encounter_CountStepsAndSelectFormation for a random battle, by the battle
 /// requests (Field_RequestBattleFromEncounterTable, Field_RequestDjinnBattle
-/// with zone 0) and by the map event runner (events.c).
+/// with zone 0) and by the trigger runner (triggers.c).
 void Encounter_SelectBattleMusic(s32 zone, s32 slot) {
   u16 key = (zone << 4) + slot;
   const u16 *table = gEncounter_BattleMusic;

@@ -6,14 +6,14 @@
 #include "scene_header.h"
 
 struct SceneEntrance;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *BabiPalace_GetRegions(void);
 const u32 *BabiPalace_GetExits(void);
 const struct ActorTemplate *Scene_GetActorTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 BabiPalace_ApplyEntryState(void);
 extern u16 gBabiPalace_DoorCells[];
 extern s32 gBabiPalace_IndigestionScript[];
@@ -25,11 +25,11 @@ extern struct ActorTemplate gBabiPalace_OutsideActorTemplates[];
 extern struct ActorTemplate gBabiPalace_ActorTemplatesBabiMissing[];
 extern struct ActorTemplate gBabiPalace_ActorTemplatesFinals[];
 extern struct ActorTemplate gBabiPalace_ActorTemplatesAfterColosso[];
-extern struct MapEvent gBabiPalace_EventsBabiMissing[];
-extern struct MapEvent gBabiPalace_EventsFinals[];
-extern struct MapEvent gBabiPalace_EventsAfterColosso[];
-extern struct MapEvent gBabiPalace_OutsideEventsBabiMissing[];
-extern struct MapEvent gBabiPalace_OutsideEventsFinals[];
-extern struct MapEvent gBabiPalace_OutsideEventsAfterColosso[];
+extern struct Trigger gBabiPalace_TriggersBabiMissing[];
+extern struct Trigger gBabiPalace_TriggersFinals[];
+extern struct Trigger gBabiPalace_TriggersAfterColosso[];
+extern struct Trigger gBabiPalace_OutsideTriggersBabiMissing[];
+extern struct Trigger gBabiPalace_OutsideTriggersFinals[];
+extern struct Trigger gBabiPalace_OutsideTriggersAfterColosso[];
 
 #endif

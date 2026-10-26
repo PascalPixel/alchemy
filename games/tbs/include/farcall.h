@@ -44,7 +44,7 @@ struct MenuSprite;
 struct PolarOffsetOutput;
 struct GlyphRect;
 struct WindowSprite;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 struct MenuCursor;
 struct SpritePlacement;

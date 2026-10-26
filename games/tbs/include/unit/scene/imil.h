@@ -5,14 +5,14 @@
 #include "map_tables.h"
 
 struct SceneEntrance;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 
 const struct SceneEntrance *Imil_GetEntrances(void);
 const struct SceneExitRegion *Imil_GetRegions(void);
 const u32 *Imil_GetExits(void);
 const struct ActorTemplate *Imil_GetActorTemplates(void);
-const struct MapEvent *Imil_GetEvents(void);
+const struct Trigger *Imil_GetTriggers(void);
 s32 Imil_Initialize(void);
 extern s16 gImil_KeyHeadings[];
 extern s16 gImil_SwayHeadings[];
@@ -32,8 +32,8 @@ extern u32 gImil_Exits[];
 extern struct ActorTemplate gImil_TownActorTemplates[];
 extern struct ActorTemplate gImil_TownActorTemplatesCured[];
 extern struct ActorTemplate gImil_InteriorActorTemplates[];
-extern struct MapEvent gImil_TownEvents[];
-extern struct MapEvent gImil_InteriorEvents[];
+extern struct Trigger gImil_TownTriggers[];
+extern struct Trigger gImil_InteriorTriggers[];
 extern u16 gImil_SanctumDoorSteps[];
 extern u16 gImil_InteriorsEastDoorSteps[];
 extern u16 gImil_InnDoorSteps[];

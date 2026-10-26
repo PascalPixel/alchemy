@@ -160,9 +160,9 @@ enum StuccoRoomsBActorId {
   ACTOR_STUCCO_ROOMS_B_CAVE_RUMOR_GUEST = ACTOR_STUCCO_ROOMS_B_CROWD_SICK_GUEST
 };
 
-/// The metatile behaviors the rooms' coord and bg events answer: the doors,
-/// counted from MB_STUCCO_ROOMS_B_FIRST_DOOR, and the things the party can
-/// search.
+/// The metatile behaviors the rooms' coord and examine triggers answer: the
+/// doors, counted from MB_STUCCO_ROOMS_B_FIRST_DOOR, and the things the party
+/// can search.
 enum StuccoRoomsBMetatileBehavior {
   MB_STUCCO_ROOMS_B_FIRST_DOOR = 14,
   /// The inn's sign.

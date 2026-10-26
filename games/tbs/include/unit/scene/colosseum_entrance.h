@@ -5,7 +5,7 @@
 #include "map_tables.h"
 
 struct SceneEntrance;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 struct SceneExitRegion;
 
@@ -13,7 +13,7 @@ const struct SceneEntrance *ColosseumEntrance_GetEntrances(void);
 const struct SceneExitRegion *ColosseumEntrance_GetRegions(void);
 const u32 *ColosseumEntrance_GetExits(void);
 const struct ActorTemplate *ColosseumEntrance_GetActorTemplates(void);
-const struct MapEvent *ColosseumEntrance_GetEvents(void);
+const struct Trigger *ColosseumEntrance_GetTriggers(void);
 s32 ColosseumEntrance_Initialize(void);
 extern s32 gColosseumEntrance_GatherIntoIsaacScript[];
 extern s32 gColosseumEntrance_GatherIntoGaretScript[];
@@ -39,10 +39,10 @@ extern struct ActorTemplate gColosseumActorTemplatesFromColosseumNavampaMatch[];
 extern struct ActorTemplate gColosseumEntranceActorTemplates[];
 extern struct ActorTemplate gColosseumEntranceActorTemplatesFinalsDay[];
 extern struct ActorTemplate gColosseumEntranceActorTemplatesAfterColosso[];
-extern struct MapEvent gColosseumEntranceEventsOther[];
-extern struct MapEvent gColosseumTunnelEvents[];
-extern struct MapEvent gColosseumEvents[];
-extern struct MapEvent gColosseumEntranceEvents[];
-extern struct MapEvent gColosseumEventsFromColosseumAzartMatchWest[];
+extern struct Trigger gColosseumEntranceTriggersOther[];
+extern struct Trigger gColosseumTunnelTriggers[];
+extern struct Trigger gColosseumTriggers[];
+extern struct Trigger gColosseumEntranceTriggers[];
+extern struct Trigger gColosseumTriggersFromColosseumAzartMatchWest[];
 
 #endif

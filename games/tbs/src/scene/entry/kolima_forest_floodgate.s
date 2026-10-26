@@ -3,5 +3,5 @@
 	overlay_veneer KolimaForestFloodgate_GetEntrances
 	overlay_veneer KolimaForestFloodgate_GetExits
 	overlay_veneer KolimaForestFloodgate_GetActorTemplates
-	overlay_veneer KolimaForestFloodgate_GetEvents
+	overlay_veneer KolimaForestFloodgate_GetTriggers
 	overlay_veneer KolimaForestFloodgate_GetRegions

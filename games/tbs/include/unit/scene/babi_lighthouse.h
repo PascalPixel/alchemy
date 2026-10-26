@@ -6,7 +6,7 @@
 #include "scene_header.h"
 
 struct SceneEntrance;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 struct SceneExitRegion;
 
@@ -14,7 +14,7 @@ const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *BabiLighthouse_GetExits(void);
 const struct ActorTemplate *Scene_GetActorTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 BabiLighthouse_SetupMap(void);
 extern s32 gPushedObject_DirectionSteps[];
 extern u32 gPushedObject_FootprintKinds[];
@@ -35,9 +35,9 @@ extern struct ActorTemplate gBabiLighthouse_EntryActorTemplates[];
 extern struct ActorTemplate gBabiLighthouse_LuffActorTemplates[];
 extern struct ActorTemplate gBabiLighthouse_StoneDoorActorTemplates[];
 extern struct ActorTemplate gBabiLighthouse_RoadActorTemplates[];
-extern struct MapEvent gBabiLighthouse_EntryEvents[];
-extern struct MapEvent gBabiLighthouse_LuffEvents[];
-extern struct MapEvent gBabiLighthouse_StoneDoorEvents[];
-extern struct MapEvent gBabiLighthouse_RoadEvents[];
+extern struct Trigger gBabiLighthouse_EntryTriggers[];
+extern struct Trigger gBabiLighthouse_LuffTriggers[];
+extern struct Trigger gBabiLighthouse_StoneDoorTriggers[];
+extern struct Trigger gBabiLighthouse_RoadTriggers[];
 
 #endif

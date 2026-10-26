@@ -358,7 +358,7 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
 static void EventScript_IgnoreMove(void) {}
 
 /// Walking into a stone pillar pushes it. In Colosseum Final 2, walking into
-/// one at coord event 21 pushes the obstacle immediately ahead of the selected
+/// one at step trigger 21 pushes the obstacle immediately ahead of the selected
 /// actor.
 static void EventScript_PushPillar(void) {
   ColosseumSatrageMatch_PushAdjacentObstacle();
@@ -385,7 +385,7 @@ static void EventScript_MoveWallPillar(void) {
   }
 }
 
-/// Walking into the stone pillar by The Wall (coord events 20 and 26) pushes
+/// Walking into the stone pillar by The Wall (step triggers 20 and 26) pushes
 /// it, then updates its cell.
 static void EventScript_PushWallPillar(void) {
   ColosseumSatrageMatch_PushAdjacentObstacle();
@@ -514,14 +514,14 @@ static void EventScript_GrowPlant(void) {
 }
 
 /// The selected actor jumps down off the ledge by an obstacle. Walking
-/// south into the obstacle at coord event 30 in Colosseum Final 2 plays the hop
-/// the field plays at any ledge (FieldActor_JumpDownLedge) for the
-/// actor touching it.
+/// south into the obstacle at step trigger 30 in Colosseum Final 2 plays the
+/// hop the field plays at any ledge (FieldActor_JumpDownLedge) for the actor
+/// touching it.
 static void EventScript_JumpDownLedge(void) {
   FieldActor_JumpDownLedge(gSaveBlock.leaderActorId, 6, 0);
 }
 
-/// Walking west into the obstacle at coord event 30 in Colosseum Final 2: the
+/// Walking west into the obstacle at step trigger 30 in Colosseum Final 2: the
 /// leader jumps forward where he can (Field_TryJumpForward).
 static void EventScript_JumpWestFromLedge(void) { Field_TryJumpForward(); }
 
@@ -578,8 +578,8 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
   FieldScript_End();
 }
 
-/// Standing on one of the Log-Rolling Stage's logs (coord event 22): it carries
-/// the rider across the water the way the player holds.
+/// Standing on one of the Log-Rolling Stage's logs (step trigger 22): it
+/// carries the rider across the water the way the player holds.
 static void EventScript_RideLog(void) {
   struct Actor *pusher = Actor_GetById(gSaveBlock.leaderActorId);
   s32 column = pusher->x.fixed >> 20;
@@ -679,36 +679,36 @@ static void ColosseumSatrageMatch_UpdateRollingLogCollision(void) {
 }
 
 /// Walking west into the Board Walk's western log rolls it west. Walking into
-/// the western log from the east (coord event 24) or the west (25), or into the
-/// eastern one from the east (28) or the west (27), rolls it the way the leader
-/// walks.
+/// the western log from the east (step trigger 24) or the west (25), or into
+/// the eastern one from the east (28) or the west (27), rolls it the way the
+/// leader walks.
 static void EventScript_RollWestLogWest(void) {
   ColosseumSatrageMatch_RollLogToCell(ACTOR_ROLLING_LOG_WEST, 29, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
-/// Walking east into the Board Walk's western log (coord event 25) rolls it
+/// Walking east into the Board Walk's western log (step trigger 25) rolls it
 /// east.
 static void EventScript_RollWestLogEast(void) {
   ColosseumSatrageMatch_RollLogToCell(ACTOR_ROLLING_LOG_WEST, 33, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
-/// Walking west into the Board Walk's eastern log (coord event 28) rolls it
+/// Walking west into the Board Walk's eastern log (step trigger 28) rolls it
 /// west.
 static void EventScript_RollEastLogWest(void) {
   ColosseumSatrageMatch_RollLogToCell(ACTOR_ROLLING_LOG_EAST, 45, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
-/// Walking east into the Board Walk's eastern log (coord event 27) rolls it
+/// Walking east into the Board Walk's eastern log (step trigger 27) rolls it
 /// east.
 static void EventScript_RollEastLogEast(void) {
   ColosseumSatrageMatch_RollLogToCell(ACTOR_ROLLING_LOG_EAST, 49, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
-/// Unused: no map event row calls it, so the Board Walk's center log never
+/// Unused: no trigger row calls it, so the Board Walk's center log never
 /// rolls. Walking into it would have rolled it north, as the western and
 /// eastern logs roll west and east (EventScript_RollWestLogWest and the rest).
 static UNUSED void ColosseumSatrageMatch_UnusedRollCenterLogNorth(void) {
@@ -887,9 +887,9 @@ static void EventScript_HaltLifts(void) {
 
 /// Reaching Colosseum Final 2's arena: the leader takes a prize (the Chain Mail
 /// if first, the Cotton Shirt if second), and he and Satrage face off and
-/// fight; the battle's group follows who took the mail. The arena's coord event
-/// row waits on FLAG_COLOSSEUM_ARENA_CLOSED being clear, which nothing in the
-/// game sets (colosseum_azart_match.c's EventScript_ReachArena).
+/// fight; the battle's group follows who took the mail. The arena's step
+/// trigger row waits on FLAG_COLOSSEUM_ARENA_CLOSED being clear, which nothing
+/// in the game sets (colosseum_azart_match.c's EventScript_ReachArena).
 static void EventScript_ReachArena(void) {
   s32 opponentFinishedFirst;
   s32 refreshCount;
@@ -939,8 +939,8 @@ static void EventScript_ReachArena(void) {
 }
 
 /// Returns Colosseum Final 2's obstacle interactions and attendant dialogue.
-const struct MapEvent *Scene_GetEvents(void) {
-  return gColosseumSatrageMatchEvents;
+const struct Trigger *Scene_GetTriggers(void) {
+  return gColosseumSatrageMatchTriggers;
 }
 
 /// Back from the battle (COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON or _LOST):
@@ -1992,7 +1992,7 @@ static void ColosseumSatrageMatch_PushAdjacentObstacle(void) {
 
 #include "common/colosso_occupant.h"
 
-/// Closes the arena's coord event; nothing in the game sets it.
+/// Closes the arena's step trigger; nothing in the game sets it.
 /// ★ Named from the game: "This is the battle arena. After getting here, the
 /// warriors do battle." (MsgColossoWarriorsEnterFinalsWithoutAny)
 #define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10
@@ -2190,21 +2190,21 @@ s32 gColosseumSatrageMatch_LiftPhase = 0;
 
 s32 gColosseumSatrageMatch_LiftTimer = 0;
 
-struct MapEvent gColosseumSatrageMatchEvents[] = {
-    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpDownLedge) },
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpWestFromLedge) },
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), 28, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollEastLogWest) },
-    { COORD_EVENT_WALKING_INTO(FACING_EAST), 27, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollEastLogEast) },
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollWestLogWest) },
-    { COORD_EVENT_WALKING_INTO(FACING_EAST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollWestLogEast) },
-    { COORD_EVENT_WALKING, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RideLog) },
-    { COORD_EVENT_WALKING, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
-    { COORD_EVENT_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWallPillar) },
-    { COORD_EVENT_WALKING, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWallPillar) },
-    { MAP_EVENT_COORD, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT_SCRIPT(EventScript_ReachArena) },
-    { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_AREA_TEMP_38, FIND_ITEM(ITEM_NUT) },
-    { BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_WEST, 102, FLAG_COLOSSEUM_SATRAGE_MATCH_SMOKE_BOMB_CHEST_OPENED, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { BG_EVENT(BG_EVENT_CHEST), 104, FLAG_AREA_TEMP_3B, FIND_ITEM(ITEM_NUT) },
+struct Trigger gColosseumSatrageMatchTriggers[] = {
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpDownLedge) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpWestFromLedge) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 28, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollEastLogWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 27, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollEastLogEast) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollWestLogWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollWestLogEast) },
+    { STEP_TRIGGER_WALKING, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RideLog) },
+    { STEP_TRIGGER_WALKING, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
+    { STEP_TRIGGER_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWallPillar) },
+    { STEP_TRIGGER_WALKING, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWallPillar) },
+    { TRIGGER_STEP, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT_SCRIPT(EventScript_ReachArena) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_AREA_TEMP_38, FIND_ITEM(ITEM_NUT) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | FACING_WEST, 102, FLAG_COLOSSEUM_SATRAGE_MATCH_SMOKE_BOMB_CHEST_OPENED, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 104, FLAG_AREA_TEMP_3B, FIND_ITEM(ITEM_NUT) },
     { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS), ACTOR_PUDDLE_WEST, FLAG_WEST_TARGET_FROZEN, EVENT_SCRIPT(EventScript_FreezeWestTarget) },
     { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS), ACTOR_PUDDLE_EAST, FLAG_EAST_TARGET_FROZEN, EVENT_SCRIPT(EventScript_FreezeEastTarget) },
     { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FORCE_TARGET, FLAG_OBSTACLE_KNOCKED_DOWN, EVENT_SCRIPT(EventScript_PrepareForce) },
@@ -2217,20 +2217,20 @@ struct MapEvent gColosseumSatrageMatchEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_MINI_MAZE_FIRST_PILLAR + 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveMiniMazePillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_MINI_MAZE_FIRST_PILLAR + 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveMiniMazePillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_LIFT_OPERATOR, FLAG_LIFTS_HALTED, EVENT_SCRIPT(EventScript_HaltLifts) },
-    { MAP_EVENT_TALK, ACTOR_GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },
-    { MAP_EVENT_TALK, ACTOR_MINI_MAZE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToMiniMazeAttendant) },
-    { MAP_EVENT_TALK, ACTOR_SHIFTING_FLOOR_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToShiftingFloorAttendant) },
-    { MAP_EVENT_TALK, ACTOR_LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToLogRollingAttendant) },
-    { MAP_EVENT_TALK, ACTOR_WALL_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWallAttendant) },
-    { MAP_EVENT_TALK, ACTOR_BOARD_WALK_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToBoardWalkAttendant) },
+    { TRIGGER_TALK, ACTOR_GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },
+    { TRIGGER_TALK, ACTOR_MINI_MAZE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToMiniMazeAttendant) },
+    { TRIGGER_TALK, ACTOR_SHIFTING_FLOOR_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToShiftingFloorAttendant) },
+    { TRIGGER_TALK, ACTOR_LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToLogRollingAttendant) },
+    { TRIGGER_TALK, ACTOR_WALL_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWallAttendant) },
+    { TRIGGER_TALK, ACTOR_BOARD_WALK_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToBoardWalkAttendant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUIDE, CONDITION_ALWAYS, MSGNO(MsgColossoRiverThisYearsFinalsAreIncredibleThis) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MINI_MAZE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallICantBelieveAnybodyEverGets) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHIFTING_FLOOR_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallHowDoTheyMakeThatFloor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallImAmazedPeopleCanActuallyCross) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WALL_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallBoyThatBitOverThereMust) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOARD_WALK_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallIHeardBabiGotTheLog) },
-    { MAP_EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_TakePlaceForMatch) },
-    { MAP_EVENTS_END },
+    { TRIGGER_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_TakePlaceForMatch) },
+    { TRIGGERS_END },
 };
 
 s16 gColosso_LetteringSlot = -1;

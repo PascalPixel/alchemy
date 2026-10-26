@@ -13,7 +13,7 @@ const struct SceneEntrance *TunnelRuins_GetEntrances(void);
 const struct SceneExitRegion *TunnelRuins_GetRegions(void);
 const u32 *TunnelRuins_GetExits(void);
 const struct ActorTemplate *TunnelRuins_GetActorTemplates(void);
-const struct MapEvent *TunnelRuins_GetEvents(void);
+const struct Trigger *TunnelRuins_GetTriggers(void);
 s32 TunnelRuins_Initialize(void);
 extern s32 gPushedObject_DirectionSteps[];
 extern u32 gPushedObject_FootprintKinds[];
@@ -35,7 +35,7 @@ extern struct SceneExitRegion gTunnelRuinsLadyStatuesRegions[];
 extern u32 gTunnelRuinsExits[];
 extern struct ActorTemplate gTunnelRuinsGreatStatueActorTemplates[];
 extern struct ActorTemplate gTunnelRuinsActorTemplatesOther[];
-extern struct MapEvent gTunnelRuinsGreatStatueEvents[];
-extern struct MapEvent gTunnelRuinsEventsOther[];
+extern struct Trigger gTunnelRuinsGreatStatueTriggers[];
+extern struct Trigger gTunnelRuinsTriggersOther[];
 
 #endif

@@ -4,7 +4,7 @@
 /// Alchemy sage" in his own words, came to Vale to study Mt. Aleph and Alchemy.
 /// One actor template table serves every visit:
 /// ValeKradensCottage_Initialize removes the people a visit does not use, and
-/// ValeKradensCottage_GetEvents picks the events for the time of the story.
+/// ValeKradensCottage_GetTriggers picks the events for the time of the story.
 ///
 /// - The stormy night of the prologue (FLAG_VALE_STORM). The storm's map (Vale,
 ///   SceneId_ValeStormyNight) leads here by
@@ -168,14 +168,14 @@ const struct ActorTemplate *ValeKradensCottage_GetActorTemplates(void) {
 /// Selects the events for the current visit to Vale: after Kalay
 /// (FLAG_KALAY_REACHED), on the stormy night (FLAG_VALE_STORM), else the day
 /// the story begins.
-const struct MapEvent *ValeKradensCottage_GetEvents(void) {
+const struct Trigger *ValeKradensCottage_GetTriggers(void) {
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
-    return gValeKradensCottage_EventsAfterKalay;
+    return gValeKradensCottage_TriggersAfterKalay;
   }
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
-    return gValeKradensCottage_StormEvents;
+    return gValeKradensCottage_StormTriggers;
   }
-  return gValeKradensCottage_Events;
+  return gValeKradensCottage_Triggers;
 }
 
 /// Finishes the party's nod together before the next line of dialogue.
@@ -1270,52 +1270,52 @@ struct ActorTemplate gValeKradensCottage_ActorTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct MapEvent gValeKradensCottage_Events[] = {
-    { MAP_EVENT_TALK, ACTOR_KRADEN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_KradenPlansSanctumVisit) },
-    { MAP_EVENT_TALK, ACTOR_BOY_BY_THE_FENCE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToBoyByTheFence) },
-    { MAP_EVENT_TALK, ACTOR_SATUROS, CONDITION_ALWAYS, MSGNO(MsgValeDoNotKeepKradenWaiting) },
-    { MAP_EVENT_TALK, ACTOR_MENARDI, CONDITION_ALWAYS, MSGNO(MsgValeLeaveBeforeWeChangeMinds) },
+struct Trigger gValeKradensCottage_Triggers[] = {
+    { TRIGGER_TALK, ACTOR_KRADEN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_KradenPlansSanctumVisit) },
+    { TRIGGER_TALK, ACTOR_BOY_BY_THE_FENCE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToBoyByTheFence) },
+    { TRIGGER_TALK, ACTOR_SATUROS, CONDITION_ALWAYS, MSGNO(MsgValeDoNotKeepKradenWaiting) },
+    { TRIGGER_TALK, ACTOR_MENARDI, CONDITION_ALWAYS, MSGNO(MsgValeLeaveBeforeWeChangeMinds) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_BY_THE_FENCE, CONDITION_ALWAYS, MSGNO(MsgValeCuriousBeyondFence) },
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_NORTH },
-    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_SOUTH },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterCottage) },
-    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST },
-    { MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST },
-    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OverhearKraden) },
-    { MAP_EVENT_COORD, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MeetSaturosAndMenardi) },
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_NORTH },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_SOUTH },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterCottage) },
+    { TRIGGER_EXIT, 4, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST },
+    { TRIGGER_EXIT, 6, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST },
+    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OverhearKraden) },
+    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MeetSaturosAndMenardi) },
     { PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FENCE_BOULDER, CONDITION_ALWAYS, 0 },
-    { BG_EVENT(BG_EVENT_JAR), 100, FLAG_VALE_KRADENS_COTTAGE_JAR_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },
-    { MAP_EVENTS_END },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 100, FLAG_VALE_KRADENS_COTTAGE_JAR_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gValeKradensCottage_StormEvents[] = {
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_STORMY_NIGHT_NORTH },
-    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_STORMY_NIGHT_SOUTH },
-    { MAP_EVENT_TALK, ACTOR_WEST_ROCK, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
-    { MAP_EVENT_TALK, ACTOR_EAST_ROCK, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
-    { MAP_EVENT_TALK, ACTOR_ROCKSLIDE_SURVIVOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToRockslideSurvivor) },
-    { MAP_EVENT_COORD, 20, FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP, EVENT_SCRIPT(EventScript_TalkToRockslideSurvivor) },
-    { MAP_EVENT_COORD, 10, FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT, EVENT_SCRIPT(EventScript_FightFirstMonster) },
-    { MAP_EVENT_COORD, 11, FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT, EVENT_SCRIPT(EventScript_FightSecondMonster) },
-    { BG_EVENT(BG_EVENT_JAR), 100, CONDITION_ALWAYS, 0 },
-    { MAP_EVENTS_END },
+struct Trigger gValeKradensCottage_StormTriggers[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_STORMY_NIGHT_NORTH },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_STORMY_NIGHT_SOUTH },
+    { TRIGGER_TALK, ACTOR_WEST_ROCK, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
+    { TRIGGER_TALK, ACTOR_EAST_ROCK, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
+    { TRIGGER_TALK, ACTOR_ROCKSLIDE_SURVIVOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToRockslideSurvivor) },
+    { TRIGGER_STEP, 20, FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP, EVENT_SCRIPT(EventScript_TalkToRockslideSurvivor) },
+    { TRIGGER_STEP, 10, FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT, EVENT_SCRIPT(EventScript_FightFirstMonster) },
+    { TRIGGER_STEP, 11, FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT, EVENT_SCRIPT(EventScript_FightSecondMonster) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 100, CONDITION_ALWAYS, 0 },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gValeKradensCottage_EventsAfterKalay[] = {
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_NORTH },
-    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_SOUTH },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterCottage) },
-    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST },
-    { MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST },
-    { MAP_EVENT_TALK, ACTOR_BOY_BY_THE_FENCE, CONDITION_ALWAYS, MSGNO(MsgValeWonderBeyondFence) },
-    { MAP_EVENT_TALK, ACTOR_COTTAGE_VISITOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToCottageVisitor) },
+struct Trigger gValeKradensCottage_TriggersAfterKalay[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_NORTH },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_SOUTH },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterCottage) },
+    { TRIGGER_EXIT, 4, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST },
+    { TRIGGER_EXIT, 6, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST },
+    { TRIGGER_TALK, ACTOR_BOY_BY_THE_FENCE, CONDITION_ALWAYS, MSGNO(MsgValeWonderBeyondFence) },
+    { TRIGGER_TALK, ACTOR_COTTAGE_VISITOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToCottageVisitor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_BY_THE_FENCE, CONDITION_ALWAYS, MSGNO(MsgValeAdventuresBeyondFence) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COTTAGE_VISITOR, CONDITION_ALWAYS, MSGNO(MsgValeLonelyWithoutKraden) },
     { PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FENCE_BOULDER, CONDITION_ALWAYS, 0 },
 #if TBS_PATCH_3
-    { BG_EVENT(BG_EVENT_JAR), 100, FLAG_VALE_KRADENS_COTTAGE_JAR_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 100, FLAG_VALE_KRADENS_COTTAGE_JAR_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },
 #endif
-    { MAP_EVENTS_END },
+    { TRIGGERS_END },
 };
 // clang-format on
 

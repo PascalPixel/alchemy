@@ -6,7 +6,7 @@
 #include "field_effect.h"
 
 struct SceneEntrance;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 struct SceneExitRegion;
 
@@ -15,7 +15,7 @@ const struct SceneEntrance *ImilFuchinFalls_GetEntrances(void);
 const struct SceneExitRegion *ImilFuchinFalls_GetRegions(void);
 const u32 *ImilFuchinFalls_GetExits(void);
 const struct ActorTemplate *ImilFuchinFalls_GetActorTemplates(void);
-const struct MapEvent *ImilFuchinFalls_GetEvents(void);
+const struct Trigger *ImilFuchinFalls_GetTriggers(void);
 s32 ImilFuchinFalls_Initialize(void);
 void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
                                s32 velocityY, s32 velocityZ, u32 flags,
@@ -39,14 +39,14 @@ extern struct ActorTemplate gImilFuchinFalls_ZephyrRoomActorTemplates[];
 extern struct ActorTemplate gImilFuchinFalls_DragonsEyeRoomActorTemplates[];
 extern struct ActorTemplate gImilFuchinFalls_ArcticBladeRoomActorTemplates[];
 extern struct ActorTemplate gImilFuchinFalls_DragonRoomActorTemplates[];
-extern struct MapEvent gImilFuchinFalls_NoEvents[];
-extern struct MapEvent gImilFuchinFalls_ImilFallsCaveEvents[];
-extern struct MapEvent gImilFuchinFalls_EntranceEvents[];
-extern struct MapEvent gImilFuchinFalls_ZephyrRoomEvents[];
-extern struct MapEvent gImilFuchinFalls_DragonsEyeRoomEvents[];
-extern struct MapEvent gImilFuchinFalls_ArcticBladeRoomEvents[];
-extern struct MapEvent gImilFuchinFalls_KiRoomEvents[];
-extern struct MapEvent gImilFuchinFalls_DragonRoomEvents[];
+extern struct Trigger gImilFuchinFalls_NoTriggers[];
+extern struct Trigger gImilFuchinFalls_ImilFallsCaveTriggers[];
+extern struct Trigger gImilFuchinFalls_EntranceTriggers[];
+extern struct Trigger gImilFuchinFalls_ZephyrRoomTriggers[];
+extern struct Trigger gImilFuchinFalls_DragonsEyeRoomTriggers[];
+extern struct Trigger gImilFuchinFalls_ArcticBladeRoomTriggers[];
+extern struct Trigger gImilFuchinFalls_KiRoomTriggers[];
+extern struct Trigger gImilFuchinFalls_DragonRoomTriggers[];
 extern s32 gImilFuchinFalls_ShortDustScript[];
 extern s32 gImilFuchinFalls_MediumDustScript[];
 extern s32 gImilFuchinFalls_LongDustScript[];

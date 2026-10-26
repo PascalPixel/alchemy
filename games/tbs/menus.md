@@ -88,7 +88,7 @@ The watcher is `Menu_CancelSoundTick`, and the flag
 Psynergy or an item used on a party member works inside the screen, but
 Psynergy meant for the world, such as Move, is cast by the field after the
 menu has closed. Only the running scene knows what the leader is facing and
-what its own [map events](glossary.md#map-event) do with it, so the screen
+what its own [triggers](glossary.md#trigger) do with it, so the screen
 writes down what was chosen and closes, and the scene decides what Move does to
 that pillar.
 

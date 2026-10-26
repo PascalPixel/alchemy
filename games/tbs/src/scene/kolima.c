@@ -29,11 +29,11 @@
 ///   into Kolima Tunnel.
 /// - Kolima Tunnel (SceneId_KolimaTunnel), a passage with no one in it from
 ///   one of the houses (LOG_ROOMS_C_FROM_KOLIMA_TUNNEL) to the village
-///   (KOLIMA_FROM_KOLIMA_TUNNEL). It shares the village's event table, whose
+///   (KOLIMA_FROM_KOLIMA_TUNNEL). It shares the village's trigger table, whose
 ///   exits KOLIMA_TO_WORLD_MAP and KOLIMA_TO_WORLD_MAP_EAST are, by the same
 ///   numbers, its two ways out (KOLIMA_TUNNEL_TO_LOG_ROOMS_C and
 ///   KOLIMA_TUNNEL_TO_KOLIMA). That table's two jars, an Apple and an Herb
-///   (bg events 100 and 101), are in the village: only Kolima's layout
+///   (examine triggers 100 and 101), are in the village: only Kolima's layout
 ///   (map_037's treasure_spots.tsv) places them, at cells (23, 8) and (13,
 ///   23).
 /// - Kolima Bridge (SceneId_KolimaBridge), "the grand bridge across the
@@ -42,7 +42,7 @@
 ///   posts. A villager stands beside it, a tree while the curse lasts
 ///   (ACTOR_BRIDGE_VILLAGER_AS_TREE) and a man afterwards
 ///   (ACTOR_BRIDGE_VILLAGER). The first time the party then steps up to the
-///   bridge (coord event 10), Kolima_LowerBridge plays: he asks whether they
+///   bridge (step trigger 10), Kolima_LowerBridge plays: he asks whether they
 ///   are going to cross, hops aside and lets the drawbridge down across the
 ///   river in front of the leader (FLAG_KOLIMA_BRIDGE_LOWERED; its recording,
 ///   places/kolima-bridge/events/Kolima_LowerBridge.gif). From then on
@@ -336,13 +336,13 @@ static void Kolima_GraniteJoins(void) {
   Djinn_JoinParty(ACTOR_GRANITE, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_GRANITE));
 }
 
-/// Selects Kolima Bridge's map events, or the table Kolima and Kolima Tunnel
+/// Selects Kolima Bridge's triggers, or the table Kolima and Kolima Tunnel
 /// share.
-const struct MapEvent *Kolima_GetEvents(void) {
+const struct Trigger *Kolima_GetTriggers(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_KolimaBridge) {
-    return gKolimaBridgeEvents;
+    return gKolimaBridgeTriggers;
   }
-  return gKolimaEvents;
+  return gKolimaTriggers;
 }
 
 /// Walks the leader north through a door of Kolima into the exit of the same
@@ -357,7 +357,7 @@ static void Kolima_WalkThroughExit(s32 exitNumber) {
 }
 
 /// Kolima: walking into one of the five doorways into the houses and shops,
-/// whose coord events are the numbers of the exits they take (KOLIMA_TO_INN to
+/// whose step triggers are the numbers of the exits they take (KOLIMA_TO_INN to
 /// KOLIMA_TO_HOUSE_NORTH). The door sound plays; the four entered walking
 /// north open their door (gKolima_DoorCells) and the leader walks in, while
 /// KOLIMA_TO_HOUSE_NORTH, entered walking south, has no door to draw.
@@ -368,7 +368,7 @@ static void Kolima_EnterDoor(void) {
 
   FieldScript_Start();
   Sound_PlaySong(SE_DOOR_OPEN);
-  switch (work->coordEvent) {
+  switch (work->stepTrigger) {
   case KOLIMA_TO_INN:
     x = 71;
     y = 9;
@@ -395,11 +395,11 @@ static void Kolima_EnterDoor(void) {
     return;
   }
   MapGrid_PlayMetatileCopySequence(gKolima_DoorCells, x, y);
-  Kolima_WalkThroughExit(work->coordEvent);
+  Kolima_WalkThroughExit(work->stepTrigger);
   FieldScript_End();
 }
 
-/// Kolima Bridge, the first time the party steps up to it (coord event 10,
+/// Kolima Bridge, the first time the party steps up to it (step trigger 10,
 /// until FLAG_KOLIMA_BRIDGE_LOWERED): the villager beside it
 /// (ACTOR_BRIDGE_VILLAGER) asks whether they are going to cross, and at the
 /// leader's nod says "Go right ahead!" and hops aside to the post. The
@@ -1635,7 +1635,7 @@ s32 gKolima_EffectActive __attribute__((section(".bss")));
 /// Sets up Kolima Bridge. While the curse lasts, the villager as a man
 /// (ACTOR_BRIDGE_VILLAGER) is put out of sight, leaving him a tree
 /// (ACTOR_BRIDGE_VILLAGER_AS_TREE), and the five cells from (9, 18), the
-/// cells of coord event 10, take the open ground of the row above them, so
+/// cells of step trigger 10, take the open ground of the row above them, so
 /// that walking up to the river does not start Kolima_LowerBridge, whose
 /// villager is still a tree; afterwards the tree is put out of sight instead.
 /// Once the bridge is down (FLAG_KOLIMA_BRIDGE_LOWERED), it is drawn down and
@@ -1913,33 +1913,33 @@ struct ActorTemplate gKolimaBridgeActorTemplates[] = {
     { MAP_TABLE_END },
 };
 
-/// The map events Kolima and Kolima Tunnel share: the exits and doorways, the
+/// The triggers Kolima and Kolima Tunnel share: the exits and doorways, the
 /// villagers' words once the curse is lifted and their thoughts before and
 /// after, the healer, Granite and two jars. Exits 1 and 2, which cell 99 takes
 /// too, keep their numbers, since each map's exit table gives them its own
 /// doors: KOLIMA_TO_WORLD_MAP and KOLIMA_TO_WORLD_MAP_EAST in Kolima,
 /// KOLIMA_TUNNEL_TO_LOG_ROOMS_C and KOLIMA_TUNNEL_TO_KOLIMA in Kolima
 /// Tunnel.
-struct MapEvent gKolimaEvents[] = {
-    { MAP_EVENT_EXIT, 99, CONDITION_ALWAYS, 1 },
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
-    { MAP_EVENT_EXIT, 10, CONDITION_ALWAYS, KOLIMA_TO_KOLIMA_TUNNEL },
-    { MAP_EVENT_TALK, ACTOR_YOUNG_MAN_VILLAGE_OF_LUMBERJACKS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaThisIsKolimaVillageOfLumberjacks) },
-    { MAP_EVENT_TALK, ACTOR_VILLAGER_RELYING_ON_FORESTS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaWeRelyOnTheForestsSo) },
-    { MAP_EVENT_TALK, ACTOR_VILLAGER_TIME_TO_THINK, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaYouKnowBeingATreeGives) },
-    { MAP_EVENT_TALK, ACTOR_VILLAGER_SPARKLES_FELL, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaITurnedIntoATreeRight) },
-    { MAP_EVENT_TALK, ACTOR_OLD_MAN_MCCOYS_MONEY, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaDontBlameTheVillagersForBeing) },
-    { MAP_EVENT_TALK, ACTOR_OLD_WOMAN_HOLY_TREE_PALACE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaWhoWouldTryToUseThe) },
-    { MAP_EVENT_TALK, ACTOR_BOY_DID_NOT_MIND_BEING_A_TREE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIDidntMindBeingATree) },
-    { MAP_EVENT_TALK, ACTOR_GIRL_SLEEPY_TREES, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaYawnTreesAreSoSleepy) },
-    { MAP_EVENT_TALK, ACTOR_HEALER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(Kolima_TalkToHealer) },
-    { MAP_EVENT_TALK, ACTOR_GRANITE, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_GraniteJoins) },
+struct Trigger gKolimaTriggers[] = {
+    { TRIGGER_EXIT, 99, CONDITION_ALWAYS, 1 },
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1 },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2 },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
+    { TRIGGER_EXIT, 10, CONDITION_ALWAYS, KOLIMA_TO_KOLIMA_TUNNEL },
+    { TRIGGER_TALK, ACTOR_YOUNG_MAN_VILLAGE_OF_LUMBERJACKS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaThisIsKolimaVillageOfLumberjacks) },
+    { TRIGGER_TALK, ACTOR_VILLAGER_RELYING_ON_FORESTS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaWeRelyOnTheForestsSo) },
+    { TRIGGER_TALK, ACTOR_VILLAGER_TIME_TO_THINK, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaYouKnowBeingATreeGives) },
+    { TRIGGER_TALK, ACTOR_VILLAGER_SPARKLES_FELL, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaITurnedIntoATreeRight) },
+    { TRIGGER_TALK, ACTOR_OLD_MAN_MCCOYS_MONEY, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaDontBlameTheVillagersForBeing) },
+    { TRIGGER_TALK, ACTOR_OLD_WOMAN_HOLY_TREE_PALACE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaWhoWouldTryToUseThe) },
+    { TRIGGER_TALK, ACTOR_BOY_DID_NOT_MIND_BEING_A_TREE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIDidntMindBeingATree) },
+    { TRIGGER_TALK, ACTOR_GIRL_SLEEPY_TREES, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaYawnTreesAreSoSleepy) },
+    { TRIGGER_TALK, ACTOR_HEALER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(Kolima_TalkToHealer) },
+    { TRIGGER_TALK, ACTOR_GRANITE, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_GraniteJoins) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_VILLAGE_OF_LUMBERJACKS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaForAWhileIThoughtId) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_RELYING_ON_FORESTS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaTheForestTreesAreAliveJust) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_TIME_TO_THINK, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIWonderIfIdLiveLonger) },
@@ -1958,19 +1958,19 @@ struct MapEvent gKolimaEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_DID_NOT_MIND_BEING_A_TREE, CONDITION_ALWAYS, MSGNO(MsgKolimaTheWaterAtMyFeetHuh) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_SLEEPY_TREES, CONDITION_ALWAYS, MSGNO(MsgKolimaIfICantMoveThenMom) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgKolimaMaybeIfIMeditateHarderIll) },
-    { BG_EVENT(BG_EVENT_JAR), 100, 0xf57, FIND_ITEM(ITEM_APPLE) },
-    { BG_EVENT(BG_EVENT_JAR), 101, 0xf58, FIND_ITEM(ITEM_HERB) },
-    { MAP_EVENTS_END },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 100, 0xf57, FIND_ITEM(ITEM_APPLE) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 101, 0xf58, FIND_ITEM(ITEM_HERB) },
+    { TRIGGERS_END },
 };
 
-/// Kolima Bridge's map events: its two ends, the bridge's fall and the villager.
-struct MapEvent gKolimaBridgeEvents[] = {
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, KOLIMA_BRIDGE_TO_WORLD_MAP_SOUTH },
-    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, KOLIMA_BRIDGE_TO_WORLD_MAP_NORTH },
-    { MAP_EVENT_COORD, 10, FLAG_KOLIMA_BRIDGE_LOWERED, EVENT_SCRIPT(Kolima_LowerBridge) },
-    { MAP_EVENT_TALK, ACTOR_BRIDGE_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgKolimaForAWhileIThoughtNo) },
+/// Kolima Bridge's triggers: its two ends, the bridge's fall and the villager.
+struct Trigger gKolimaBridgeTriggers[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, KOLIMA_BRIDGE_TO_WORLD_MAP_SOUTH },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, KOLIMA_BRIDGE_TO_WORLD_MAP_NORTH },
+    { TRIGGER_STEP, 10, FLAG_KOLIMA_BRIDGE_LOWERED, EVENT_SCRIPT(Kolima_LowerBridge) },
+    { TRIGGER_TALK, ACTOR_BRIDGE_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgKolimaForAWhileIThoughtNo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BRIDGE_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgKolimaYouWouldntUnderstandButItsTruly) },
-    { MAP_EVENTS_END },
+    { TRIGGERS_END },
 };
 // clang-format on
 

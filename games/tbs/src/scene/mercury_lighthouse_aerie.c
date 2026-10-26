@@ -200,8 +200,8 @@ const struct ActorTemplate *MercuryLighthouseAerie_GetActorTemplates(void) {
   return gMercuryLighthouseAerieActorTemplates;
 }
 
-const struct MapEvent *MercuryLighthouseAerie_GetEvents(void) {
-  return gMercuryLighthouseAerieEvents;
+const struct Trigger *MercuryLighthouseAerie_GetTriggers(void) {
+  return gMercuryLighthouseAerieTriggers;
 }
 
 /// Sets up the Lighthouse Aerie: the beacon flickers and the six platforms
@@ -1919,23 +1919,24 @@ struct ActorTemplate gMercuryLighthouseAerieActorTemplates[] = {
 };
 // clang-format on
 
-struct MapEvent gMercuryLighthouseAerieEvents[] = {
-    {MAP_EVENT_COORD, 5, FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED,
+struct Trigger gMercuryLighthouseAerieTriggers[] = {
+    {TRIGGER_STEP, 5, FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED,
      EVENT_SCRIPT(MercuryLighthouseAerie_ConfrontSaturos)},
-    {MAP_EVENT_COORD, 6, FLAG_LIFT_UP,
+    {TRIGGER_STEP, 6, FLAG_LIFT_UP,
      EVENT_SCRIPT(MercuryLighthouseAerie_CallLift)},
-    {COORD_EVENT_WALKING, 11, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING, 11, CONDITION_ALWAYS,
      EVENT_SCRIPT(MercuryLighthouseAerie_JumpToPlatform)},
-    {MAP_EVENT_COORD, 11, CONDITION_ALWAYS,
+    {TRIGGER_STEP, 11, CONDITION_ALWAYS,
      EVENT_SCRIPT(MercuryLighthouseAerie_SettlePlatforms)},
-    {COORD_EVENT_WALKING, 10, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING, 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(MercuryLighthouseAerie_JumpToPlatform)},
-    {MAP_EVENT_COORD, 10, FLAG_ON_PLATFORM,
+    {TRIGGER_STEP, 10, FLAG_ON_PLATFORM,
      EVENT_SCRIPT(MercuryLighthouseAerie_StepOntoPlatform)},
-    {BG_EVENT(BG_EVENT_SILENT), 100, FLAG_PSYNERGY_STONE, FIND_PSYNERGY_STONE},
-    {MAP_EVENT_COORD, 12, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER(EXAMINE_SILENT), 100, FLAG_PSYNERGY_STONE,
+     FIND_PSYNERGY_STONE},
+    {TRIGGER_STEP, 12, CONDITION_ALWAYS,
      EVENT_SCRIPT(MercuryLighthouseAerie_RideLiftDown)},
-    {MAP_EVENTS_END},
+    {TRIGGERS_END},
 };
 
 s32 gMercuryLighthouseAerie_PlatformUnderfoot = 0;

@@ -3,14 +3,14 @@
 /// at the edge of the Suhalla Desert, on the way from Gondowan Passage to
 /// Lalivero.
 ///
-/// Its people come in two sets, each an actor template table and a map
-/// event table, chosen by FLAG_BABI_SPOKE_AFTER_COLOSSO: before Babi's audience
-/// after Colosso the village talks of the sandstorms that close the desert, of
-/// its distrust of Angara and of Sheba, the hostage; after it, of the soldiers
-/// the storms caught on the way to Babi Lighthouse, who lie in one of its
-/// houses (timber_rooms_a.c). The same people stand in the same rows of both
-/// actor template tables, so one enum names them; the woman the
-/// sandstorms brought stands off the map until the audience.
+/// Its people come in two sets, each an actor template table and a
+/// trigger table, chosen by FLAG_BABI_SPOKE_AFTER_COLOSSO: before Babi's
+/// audience after Colosso the village talks of the sandstorms that close the
+/// desert, of its distrust of Angara and of Sheba, the hostage; after it, of
+/// the soldiers the storms caught on the way to Babi Lighthouse, who lie in one
+/// of its houses (timber_rooms_a.c). The same people stand in the same rows of
+/// both actor template tables, so one enum names them; the woman the sandstorms
+/// brought stands off the map until the audience.
 ///
 /// Five doors, whose metatile behaviors are their exits' numbers
 /// (SUHALLA_TO_INN to SUHALLA_TO_HOUSE_EAST), open as the leader walks north
@@ -177,7 +177,7 @@ static void EventScript_GrowSprout(void) {
 /// buildings.
 static void EventScript_EnterDoor(void) {
   struct FieldWork *work = gFieldWork;
-  s32 exitTrigger = work->coordEvent;
+  s32 exitTrigger = work->stepTrigger;
   u16 cellX = gSuhallaDoorCells[exitTrigger][0];
   u16 cellZ = gSuhallaDoorCells[exitTrigger][1];
 
@@ -192,7 +192,7 @@ static void EventScript_EnterDoor(void) {
 /// The same through the wide door of SUHALLA_TO_SANCTUM, into Suhalla Sanctum.
 static void EventScript_EnterWideDoor(void) {
   struct FieldWork *work = gFieldWork;
-  s32 exitTrigger = work->coordEvent;
+  s32 exitTrigger = work->stepTrigger;
   u16 cellX = gSuhallaDoorCells[exitTrigger][0];
   u16 cellZ = gSuhallaDoorCells[exitTrigger][1];
 
@@ -205,11 +205,11 @@ static void EventScript_EnterWideDoor(void) {
 
 /// Suhalla's doors, people, treasure and sprout, before or after Babi's
 /// audience.
-const struct MapEvent *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
-    return gSuhallaEventsLater;
+    return gSuhallaTriggersLater;
   }
-  return gSuhallaEvents;
+  return gSuhallaTriggers;
 }
 
 /// Sets Suhalla up as the party enters: the screen opens with the backdrop
@@ -328,22 +328,22 @@ u16 gSuhallaWideDoorOpenSteps[] = {
     MAPGRID_ANIMATION_STEP(26, 2, 2, 2, 8), MAPGRID_ANIMATION_STEP(28, 2, 2, 2, 1), MAPGRID_ANIMATION_STEPS_END,
 };
 
-struct MapEvent gSuhallaEvents[] = {
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), SUHALLA_TO_INN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), SUHALLA_TO_SANCTUM, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterWideDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_NORTHEAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { MAP_EVENT_EXIT, 10, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP },
-    { MAP_EVENT_EXIT, 11, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_NORTH },
-    { MAP_EVENT_EXIT, 12, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_EAST },
-    { MAP_EVENT_TALK, ACTOR_MAN_THIS_IS_SUHALLA, CONDITION_ALWAYS, MSGNO(MsgSuhallaThisIsSuhallaDontTryCrossing) },
-    { MAP_EVENT_TALK, ACTOR_WOMAN_ASKING_ABOUT_LALIVERO, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskIfGoingToLalivero) },
-    { MAP_EVENT_TALK, ACTOR_MAN_NEVER_TRUSTING_ANGARA, CONDITION_ALWAYS, MSGNO(MsgSuhallaWeGondowansWillNeverTrustAnyone) },
-    { MAP_EVENT_TALK, ACTOR_OLD_MAN_ON_DESERT_SPIRITS, CONDITION_ALWAYS, MSGNO(MsgSuhallaItHasBeenSaidForAges) },
-    { MAP_EVENT_TALK, ACTOR_OLD_WOMAN_ON_SOUTHERN_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaYouCantGetToSouthernGondowan) },
-    { MAP_EVENT_TALK, ACTOR_BOY_ON_TOLBI_FESTIVALS, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheWorkersSayTherereHugeFestivals) },
-    { MAP_EVENT_TALK, ACTOR_GIRL_SANDSTORMS_INCREASED, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheSandstormsSuddenlyIncreasedIHope) },
+struct Trigger gSuhallaTriggers[] = {
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_INN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_SANCTUM, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterWideDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_NORTHEAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { TRIGGER_EXIT, 10, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP },
+    { TRIGGER_EXIT, 11, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_NORTH },
+    { TRIGGER_EXIT, 12, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_EAST },
+    { TRIGGER_TALK, ACTOR_MAN_THIS_IS_SUHALLA, CONDITION_ALWAYS, MSGNO(MsgSuhallaThisIsSuhallaDontTryCrossing) },
+    { TRIGGER_TALK, ACTOR_WOMAN_ASKING_ABOUT_LALIVERO, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskIfGoingToLalivero) },
+    { TRIGGER_TALK, ACTOR_MAN_NEVER_TRUSTING_ANGARA, CONDITION_ALWAYS, MSGNO(MsgSuhallaWeGondowansWillNeverTrustAnyone) },
+    { TRIGGER_TALK, ACTOR_OLD_MAN_ON_DESERT_SPIRITS, CONDITION_ALWAYS, MSGNO(MsgSuhallaItHasBeenSaidForAges) },
+    { TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_SOUTHERN_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaYouCantGetToSouthernGondowan) },
+    { TRIGGER_TALK, ACTOR_BOY_ON_TOLBI_FESTIVALS, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheWorkersSayTherereHugeFestivals) },
+    { TRIGGER_TALK, ACTOR_GIRL_SANDSTORMS_INCREASED, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheSandstormsSuddenlyIncreasedIHope) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_THIS_IS_SUHALLA, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheSuhallaHasLongBeenKnown) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ASKING_ABOUT_LALIVERO, CONDITION_ALWAYS, MSGNO(MsgSuhallaThePeopleOfLaliveroHaveBeen) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_NEVER_TRUSTING_ANGARA, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheRulerOfTolbiTookA) },
@@ -351,30 +351,30 @@ struct MapEvent gSuhallaEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_SOUTHERN_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaSouthernGondowanIsGuardedByThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ON_TOLBI_FESTIVALS, CONDITION_ALWAYS, MSGNO(MsgSuhallaIveHeardThatTolbisColossoIs) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_SANDSTORMS_INCREASED, CONDITION_ALWAYS, MSGNO(MsgSuhallaNoneOfTheGrownUpsIn) },
-    { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_SUHALLA_CHEST_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
-    { BG_EVENT(BG_EVENT_JAR), 101, FLAG_SUHALLA_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { BG_EVENT(BG_EVENT_JAR), 102, FLAG_SUHALLA_JAR_COINS, FIND_COINS(5) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_SUHALLA_CHEST_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_SUHALLA_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 102, FLAG_SUHALLA_JAR_COINS, FIND_COINS(5) },
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_SUHALLA_SPROUT_GROWN, EVENT_SCRIPT(EventScript_GrowSprout) },
-    { MAP_EVENTS_END },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gSuhallaEventsLater[] = {
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), SUHALLA_TO_INN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), SUHALLA_TO_SANCTUM, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterWideDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_NORTHEAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { MAP_EVENT_EXIT, 10, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP },
-    { MAP_EVENT_EXIT, 11, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_NORTH },
-    { MAP_EVENT_EXIT, 12, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_EAST },
-    { MAP_EVENT_TALK, ACTOR_MAN_THIS_IS_SUHALLA, CONDITION_ALWAYS, MSGNO(MsgSuhallaWelcomeToSuhallaIBetThe) },
-    { MAP_EVENT_TALK, ACTOR_WOMAN_ASKING_ABOUT_LALIVERO, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheDesertIsEnvelopedInSandstorms) },
-    { MAP_EVENT_TALK, ACTOR_MAN_NEVER_TRUSTING_ANGARA, CONDITION_ALWAYS, MSGNO(MsgSuhallaSoldiersFromTolbiWereCaughtIn) },
-    { MAP_EVENT_TALK, ACTOR_WOMAN_BROUGHT_BY_SANDSTORMS, CONDITION_ALWAYS, MSGNO(MsgSuhallaWeWereBroughtHereByThe) },
-    { MAP_EVENT_TALK, ACTOR_OLD_MAN_ON_DESERT_SPIRITS, CONDITION_ALWAYS, MSGNO(MsgSuhallaThisSandstormIsTheFaultOf) },
-    { MAP_EVENT_TALK, ACTOR_OLD_WOMAN_ON_SOUTHERN_GONDOWAN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskIfBroughtBySandstorm) },
-    { MAP_EVENT_TALK, ACTOR_BOY_ON_TOLBI_FESTIVALS, CONDITION_ALWAYS, MSGNO(MsgSuhallaWhyAreTheSandstormsAttackingHumans) },
-    { MAP_EVENT_TALK, ACTOR_GIRL_SANDSTORMS_INCREASED, CONDITION_ALWAYS, MSGNO(MsgSuhallaThoseSoldiersKeptMumblingAboutMonsters) },
+struct Trigger gSuhallaTriggersLater[] = {
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_INN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_SANCTUM, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterWideDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_NORTHEAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { TRIGGER_EXIT, 10, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP },
+    { TRIGGER_EXIT, 11, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_NORTH },
+    { TRIGGER_EXIT, 12, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_EAST },
+    { TRIGGER_TALK, ACTOR_MAN_THIS_IS_SUHALLA, CONDITION_ALWAYS, MSGNO(MsgSuhallaWelcomeToSuhallaIBetThe) },
+    { TRIGGER_TALK, ACTOR_WOMAN_ASKING_ABOUT_LALIVERO, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheDesertIsEnvelopedInSandstorms) },
+    { TRIGGER_TALK, ACTOR_MAN_NEVER_TRUSTING_ANGARA, CONDITION_ALWAYS, MSGNO(MsgSuhallaSoldiersFromTolbiWereCaughtIn) },
+    { TRIGGER_TALK, ACTOR_WOMAN_BROUGHT_BY_SANDSTORMS, CONDITION_ALWAYS, MSGNO(MsgSuhallaWeWereBroughtHereByThe) },
+    { TRIGGER_TALK, ACTOR_OLD_MAN_ON_DESERT_SPIRITS, CONDITION_ALWAYS, MSGNO(MsgSuhallaThisSandstormIsTheFaultOf) },
+    { TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_SOUTHERN_GONDOWAN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskIfBroughtBySandstorm) },
+    { TRIGGER_TALK, ACTOR_BOY_ON_TOLBI_FESTIVALS, CONDITION_ALWAYS, MSGNO(MsgSuhallaWhyAreTheSandstormsAttackingHumans) },
+    { TRIGGER_TALK, ACTOR_GIRL_SANDSTORMS_INCREASED, CONDITION_ALWAYS, MSGNO(MsgSuhallaThoseSoldiersKeptMumblingAboutMonsters) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_THIS_IS_SUHALLA, CONDITION_ALWAYS, MSGNO(MsgSuhallaIBetTheseWarriorsWereBrought) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ASKING_ABOUT_LALIVERO, CONDITION_ALWAYS, MSGNO(MsgSuhallaIWonderWhyThereAreSo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_NEVER_TRUSTING_ANGARA, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheSoldiersFromTolbiWereCollapsing) },
@@ -383,10 +383,10 @@ struct MapEvent gSuhallaEventsLater[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_SOUTHERN_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaIfYouFightTheStormsYoull) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ON_TOLBI_FESTIVALS, CONDITION_ALWAYS, MSGNO(MsgSuhallaGrownUpsSayTheSandstormsAttack) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_SANDSTORMS_INCREASED, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheySayTheSoldiersWereRavaged) },
-    { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_SUHALLA_CHEST_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
-    { BG_EVENT(BG_EVENT_JAR), 101, FLAG_SUHALLA_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { BG_EVENT(BG_EVENT_JAR), 102, FLAG_SUHALLA_JAR_COINS, FIND_COINS(5) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_SUHALLA_CHEST_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_SUHALLA_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 102, FLAG_SUHALLA_JAR_COINS, FIND_COINS(5) },
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_SUHALLA_SPROUT_GROWN, EVENT_SCRIPT(EventScript_GrowSprout) },
-    { MAP_EVENTS_END },
+    { TRIGGERS_END },
 };
 // clang-format on

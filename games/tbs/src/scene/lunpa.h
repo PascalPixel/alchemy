@@ -24,7 +24,7 @@ enum { ROOM_ENTRANCE_FIRST = 1 };
 
 #define ROOM_ENTRANCE(exit) ((exit) - LUNPA_TO_FIRST_HOME + ROOM_ENTRANCE_FIRST)
 
-/// The metatile behaviors Lunpa's map events answer.
+/// The metatile behaviors Lunpa's triggers answer.
 enum LunpaMetatileBehavior {
   MB_LUNPA_WORLD_MAP_ROAD = 1,
   MB_LUNPA_GATE_ROAD,
@@ -48,7 +48,7 @@ enum LunpaMetatileBehavior {
   MB_LUNPA_PSYNERGY_STONE
 };
 
-/// The metatile behaviors the Lunpa Fortress Gates' map events answer.
+/// The metatile behaviors the Lunpa Fortress Gates' triggers answer.
 enum LunpaFortressGatesMetatileBehavior {
   MB_LUNPA_FORTRESS_GATES_FORTRESS_DOOR = 1,
   MB_LUNPA_FORTRESS_GATES_LUNPA_ROAD,

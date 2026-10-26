@@ -599,11 +599,11 @@ UNUSED static void ColosseumAzartMatch_SetCourseFlag(void) {
 
 /// Reaching Colosseum Final 1's arena: the leader takes a prize (the Iron
 /// Shield if first, the Padded Gloves if second), and he and Azart face off and
-/// fight; the battle's group follows who took the shield. The arena's coord
-/// event row, in all three finals stages, waits on FLAG_COLOSSEUM_ARENA_CLOSED
-/// being clear, and nothing in the game sets it: no map code, no object script
-/// (none uses SC_FLAG_ON) and none of the main image's flag writers reaches it,
-/// so the arena is never closed.
+/// fight; the battle's group follows who took the shield. The arena's
+/// step trigger row, in all three finals stages, waits on
+/// FLAG_COLOSSEUM_ARENA_CLOSED being clear, and nothing in the game sets it: no
+/// map code, no object script (none uses SC_FLAG_ON) and none of the main
+/// image's flag writers reaches it, so the arena is never closed.
 static void EventScript_ReachArena(void) {
   s32 approach;
   s32 n;
@@ -649,7 +649,7 @@ static void EventScript_ReachArena(void) {
   GameFlag_Set(FLAG_KEEP_MUSIC);
 }
 
-/// Walking into something in the Rock Challenge (coord event 90): a rock is
+/// Walking into something in the Rock Challenge (step trigger 90): a rock is
 /// pushed, anything else is checked.
 static void EventScript_PushRockOrCheckAhead(void) {
 
@@ -660,8 +660,8 @@ static void EventScript_PushRockOrCheckAhead(void) {
   }
 }
 
-const struct MapEvent *ColosseumAzartMatch_GetEvents(void) {
-  return gColosseumAzartMatch_Events;
+const struct Trigger *ColosseumAzartMatch_GetTriggers(void) {
+  return gColosseumAzartMatch_Triggers;
 }
 
 /// Back from the battle (COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON or _LOST): Isaac
@@ -1602,7 +1602,7 @@ static void ColosseumAzartMatch_PushObjectAhead(void) {
 
 #include "common/colosso_occupant.h"
 
-/// Closes the arena's coord event; nothing in the game sets it.
+/// Closes the arena's step trigger; nothing in the game sets it.
 /// ★ Named from the game: "This is the battle arena. After getting here, the
 /// warriors do battle." (MsgColossoWarriorsEnterFinalsWithoutAny)
 #define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10
@@ -1767,36 +1767,36 @@ struct ActorTemplate gColosseumAzartMatch_ActorTemplates[] = {
 
 s32 gColosseumAzartMatch_Countdown = 0;
 
-struct MapEvent gColosseumAzartMatch_Events[] = {
-    { COORD_EVENT_WALKING, 90, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushRockOrCheckAhead) },
-    { COORD_EVENT_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushRock) },
-    { COORD_EVENT_WALKING, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushRock) },
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), 12, FLAG_PIPEWORKS_PIPE_PUSHED, EVENT_SCRIPT(EventScript_PushPipeworksPillar) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogNorthSouth) },
-    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogNorthSouth) },
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogEastWest) },
-    { COORD_EVENT_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogEastWest) },
-    { MAP_EVENT_COORD, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT_SCRIPT(EventScript_ReachArena) },
-    { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_AREA_TEMP_08, FIND_ITEM(ITEM_NUT) },
-    { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_COLOSSEUM_AZART_MATCH_OIL_DROP_CHEST_OPENED, FIND_ITEM(ITEM_OIL_DROP) },
-    { BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_WEST, 103, FLAG_AREA_TEMP_0A, FIND_ITEM(ITEM_NUT) },
+struct Trigger gColosseumAzartMatch_Triggers[] = {
+    { STEP_TRIGGER_WALKING, 90, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushRockOrCheckAhead) },
+    { STEP_TRIGGER_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushRock) },
+    { STEP_TRIGGER_WALKING, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushRock) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 12, FLAG_PIPEWORKS_PIPE_PUSHED, EVENT_SCRIPT(EventScript_PushPipeworksPillar) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogNorthSouth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogNorthSouth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogEastWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLogEastWest) },
+    { TRIGGER_STEP, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT_SCRIPT(EventScript_ReachArena) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_AREA_TEMP_08, FIND_ITEM(ITEM_NUT) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_COLOSSEUM_AZART_MATCH_OIL_DROP_CHEST_OPENED, FIND_ITEM(ITEM_OIL_DROP) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | FACING_WEST, 103, FLAG_AREA_TEMP_0A, FIND_ITEM(ITEM_NUT) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK_A, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleRocks) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK_B, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleRocks) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK_C, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleRocks) },
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_GROWTH_PLANT, FLAG_PLANT_GROWN, EVENT_SCRIPT(EventScript_GrowPlant) },
     { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_PIPE_WEST, FLAG_PIPES_MOVED, EVENT_SCRIPT(EventScript_DousePipe) },
-    { MAP_EVENT_TALK, ACTOR_GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },
-    { MAP_EVENT_TALK, ACTOR_ROCK_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToRockAttendant) },
-    { MAP_EVENT_TALK, ACTOR_PIPEWORKS_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToPipeworksAttendant) },
-    { MAP_EVENT_TALK, ACTOR_BRIDGE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToBridgeAttendant) },
-    { MAP_EVENT_TALK, ACTOR_LUMBER_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToLumberAttendant) },
+    { TRIGGER_TALK, ACTOR_GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },
+    { TRIGGER_TALK, ACTOR_ROCK_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToRockAttendant) },
+    { TRIGGER_TALK, ACTOR_PIPEWORKS_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToPipeworksAttendant) },
+    { TRIGGER_TALK, ACTOR_BRIDGE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToBridgeAttendant) },
+    { TRIGGER_TALK, ACTOR_LUMBER_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToLumberAttendant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUIDE, CONDITION_ALWAYS, MSGNO(MsgColossoRiverThisYearsFinalsAreIncredibleThis) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROCK_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoRiverMovingSuchAHugeRockMust) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PIPEWORKS_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoRiverTheresOnlyOneFinalAndThis) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BRIDGE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoRiverDidYouSeeHisMovesOut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUMBER_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoRiverHowManyWarriorsHaveSwallowedTheir) },
-    { MAP_EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_TakePlaceForMatch) },
-    { MAP_EVENTS_END },
+    { TRIGGER_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_TakePlaceForMatch) },
+    { TRIGGERS_END },
 };
 
 s16 gColosso_LetteringSlot = -1;

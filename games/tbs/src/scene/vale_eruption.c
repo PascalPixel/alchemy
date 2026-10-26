@@ -11,7 +11,7 @@
 /// mayor, Isaac's mother Dora, Garet's sister and brother, and the guard who
 /// saw the two hanging around on his watch.
 ///
-/// The map has no map events. ValeEruption_Initialize plays the whole event on
+/// The map has no triggers. ValeEruption_Initialize plays the whole event on
 /// arrival by VALE_ERUPTION_FROM_SOL_ENTRANCE (EventScript_ReturnFromMtAleph):
 /// the ground shakes, the villagers wonder where the two are, Isaac and Garet
 /// come down the path and are called over, and Dora's question about Jenna and
@@ -113,9 +113,9 @@ const struct ActorTemplate *ValeEruption_GetActorTemplates(void) {
   return gValeEruption_ActorTemplates;
 }
 
-/// The map has no map events of its own: everything happens on arrival.
-const struct MapEvent *ValeEruption_GetEvents(void) {
-  return gValeEruption_Events;
+/// The map has no triggers of its own: everything happens on arrival.
+const struct Trigger *ValeEruption_GetTriggers(void) {
+  return gValeEruption_Triggers;
 }
 
 /// Arriving in Vale during the eruption: plays the return from the mountain
@@ -557,8 +557,8 @@ struct ActorTemplate gValeEruption_ActorTemplates[] = {
 };
 // clang-format on
 
-struct MapEvent gValeEruption_Events[] = {
-    {MAP_EVENTS_END},
+struct Trigger gValeEruption_Triggers[] = {
+    {TRIGGERS_END},
 };
 
 /// The sanctum's door, two cells wide, opening in two steps.

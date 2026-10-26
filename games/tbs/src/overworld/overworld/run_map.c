@@ -63,7 +63,7 @@ s32 SceneManager_Run(s32 entrance) {
   ObjectSystem_InitializeFar(mode);
   WindowSystem_InitFieldFar();
   Field_ClearRequests();
-  work->events = gOverlayArea.events();
+  work->triggers = gOverlayArea.triggers();
   Scene_ApplyEntrance();
   Actor_ResetForObject((struct ActorTemplate *)gOverlayArea.actorTemplates());
   if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) != 0)
@@ -230,11 +230,11 @@ s32 SceneManager_Run(s32 entrance) {
           work->encounterBias = 0;
           work->battle = 0;
           gSaveBlock.encounterSteps = 0;
-        } else if (work->coordEvent != 0) {
+        } else if (work->stepTrigger != 0) {
           work->busy = 1;
-          Scene_RunCoordEventOrExit(work->coordEvent);
+          Scene_RunStepTriggerOrExit(work->stepTrigger);
           work->busy = 0;
-          work->coordEvent = 0;
+          work->stepTrigger = 0;
         } else if (work->pushCell != 0) {
           Field_RunPushCellEvent(work->pushCell);
           work->pushCell = 0;
@@ -247,7 +247,7 @@ s32 SceneManager_Run(s32 entrance) {
           object = Field_FindNearbyTalkTarget(gSaveBlock.leaderActorId);
           mode = 0;
           if (object != -1) {
-            mode = Scene_FindActorTalkEvent(object) != 0;
+            mode = Scene_FindActorTalkTrigger(object) != 0;
           }
           if (mode != 0) {
             // 0x1000 keeps actor 0's request non-zero; the handler
@@ -399,8 +399,8 @@ done:
 /// Returns the metatile behavior of the map cell 16 pixels ahead of the party
 /// leader when there is something to search there: a fixed search spot
 /// (MB_JAR to MB_WELL) whose ground is level with the leader or up
-/// to 64 pixels above it, or a behavior the scene has a bg event for. Returns 0
-/// otherwise.
+/// to 64 pixels above it, or a behavior the scene has an examine trigger for.
+/// Returns 0 otherwise.
 ///
 /// Called by SceneManager_Run for the A button (a non-zero result becomes
 /// work->tile, for Field_SearchCell), and by FieldMenu_Run's search
@@ -447,7 +447,7 @@ s32 Actor_GetTriggerTileAheadOfCurrent(void) {
       if (groundHeight >= leader->y && groundHeight <= leader->y + 0x400000) {
         result = behavior;
       }
-    } else if (Scene_FindEvent(MAP_EVENT_BG, behavior) != 0) {
+    } else if (Scene_FindTrigger(TRIGGER_EXAMINE, behavior) != 0) {
       result = behavior;
     }
   }

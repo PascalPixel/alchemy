@@ -8,12 +8,12 @@ u8 *TestRoom_GetEntrances(void);
 s32 Scene_GetExitRegions(void);
 u8 *TestRoom_GetExits(void);
 u8 *TestRoom_GetActorTemplates(void);
-u8 *TestRoom_GetEvents(void);
+u8 *TestRoom_GetTriggers(void);
 s32 TestRoom_Initialize(void);
 extern u32 gTestRoom_EntrancesHead[];
 extern struct SceneEntrance gTestRoom_Entrances[];
 extern u32 gTestRoom_Exits[];
 extern struct ActorTemplate gTestRoom_ActorTemplates[];
-extern struct MapEvent gTestRoom_Events[];
+extern struct Trigger gTestRoom_Triggers[];
 
 #endif

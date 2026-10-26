@@ -1,4 +1,4 @@
-@ Map events, field Psynergy, objects and effect lifecycles.
+@ Triggers, field Psynergy, objects and effect lifecycles.
 #include "stub.inc"
 	.global FarCall_OverworldTable
 FarCall_OverworldTable:
@@ -10,7 +10,7 @@ FarCall_OverworldTable:
 	overlay_veneer FieldScript_RunObjectHookAndWait
 	export FieldScript_CallWithLastActiveObjectIdFar, FieldScript_CallWithLastActiveObjectId
 	export Scene_AssignViewFlagsFar, Scene_AssignViewFlags
-	export FieldScript_SetMapEventsFar, FieldScript_SetMapEvents
+	export FieldScript_SetTriggersFar, FieldScript_SetTriggers
 	export FieldScript_PrepareObjectAndApplyValueFar, FieldScript_PrepareObjectAndApplyValue
 	export FieldScript_PrepareTwoObjectsAndApplyFar, FieldScript_PrepareTwoObjectsAndApply
 	export Party_RemoveMemberRestoredFar, Party_RemoveMemberRestored
@@ -147,8 +147,8 @@ FarCall_OverworldTable:
 	export FieldEffect_FinishWaveAndReleaseHeapBlockFar, FieldEffect_FinishWaveAndReleaseHeapBlock
 	overlay_veneer FieldEffect_GreyMindReadPalette
 	export FieldEffect_RestoreMindReadPaletteFar, FieldEffect_RestoreMindReadPalette
-	export Scene_HasFieldPsynergyEventFar, Scene_HasFieldPsynergyEvent
-	export Scene_HasPsynergyEventFar, Scene_HasPsynergyEvent
+	export Scene_HasFieldPsynergyTriggerFar, Scene_HasFieldPsynergyTrigger
+	export Scene_HasPsynergyTriggerFar, Scene_HasPsynergyTrigger
 	export Sprite_ShareVramCacheEntryFar, Sprite_ShareVramCacheEntry
 	export FieldScript_GetSpecialValueFar, FieldScript_GetSpecialValue
 	overlay_veneer FieldEffect_StartItemBreak

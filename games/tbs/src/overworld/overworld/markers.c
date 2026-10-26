@@ -24,7 +24,7 @@ struct MapGridMarkers {
   s32 shakeX, shakeY, shakeDecay;
   ///@}
   /// MapGridScrollWork's markers, read here as (column, row, id) triples, ended
-  /// by 255, 255: a 16-pixel cell and the trigger of the map event there; NULL
+  /// by 255, 255: a 16-pixel cell and the subject of the trigger there; NULL
   /// for a map with none.
   u8 *markers;
 };
@@ -46,10 +46,10 @@ enum {
 /// Places an object at each of the map's treasure spots (ids 100 to 239) that
 /// the map has an event for, up to ten: a chest for a chest event, shown open
 /// once its flag is set and gone once its mimic was beaten, and a Psynergy
-/// Stone for a bg event giving one, until it is taken. A treasure spot with no
-/// such event takes no slot. The objects are kept in work->treasureSpots, not
-/// in actor slots. Called by SceneManager_Run on map load; clears and
-/// fills work->treasureSpots.
+/// Stone for an examine trigger giving one, until it is taken. A treasure spot
+/// with no such event takes no slot. The objects are kept in
+/// work->treasureSpots, not in actor slots. Called by SceneManager_Run on map
+/// load; clears and fills work->treasureSpots.
 void Field_PlaceTreasureSpots(void) {
   u32 id;
   struct MapGridMarkers *grid = gMapGridWork[0];
@@ -63,7 +63,7 @@ void Field_PlaceTreasureSpots(void) {
   s32 markerCount = 0;
   u8 *list = grid->markers;
   struct TreasureSpot *marker = work->treasureSpots;
-  const struct MapEvent *event;
+  const struct Trigger *trigger;
   struct Object *markerActor;
   u32 column;
   u32 row;
@@ -81,11 +81,11 @@ void Field_PlaceTreasureSpots(void) {
       // The first event with this trigger that places something wins; the
       // event's value says what the search gives (its FIND_ type, as
       // Field_SearchCell reads it).
-      event = gOverlayArea.events();
-      for (; event->kind != -1; event++) {
-        if (event->trigger != id)
+      trigger = gOverlayArea.triggers();
+      for (; trigger->kind != -1; trigger++) {
+        if (trigger->subject != id)
           continue;
-        if ((event->kind & 0x1ff) == BG_EVENT(BG_EVENT_CHEST)) {
+        if ((trigger->kind & 0x1ff) == EXAMINE_TRIGGER(EXAMINE_CHEST)) {
           // A chest, at the centre of its cell (cells are 16 pixels, and
           // positions 16.16).
           markerActor = (struct Object *)Object_CreateFar(
@@ -98,8 +98,8 @@ void Field_PlaceTreasureSpots(void) {
           // An opened chest shows open; an opened mimic's chest
           // is not placed at all. A mimic's flag is set only after its battle,
           // when the one enemy was defeated (Djinn_ResolvePendingEvent).
-          if (GameFlag_GetFar(event->condition)) {
-            if ((event->value & 0xfff00000) == 0x500000) {
+          if (GameFlag_GetFar(trigger->condition)) {
+            if ((trigger->value & 0xfff00000) == 0x500000) {
               Object_ReleaseFar((struct Object *)markerActor);
               continue;
             }
@@ -110,7 +110,7 @@ void Field_PlaceTreasureSpots(void) {
           markerActor->homeZ = markerActor->z / Q16_ONE;
           markerActor->priorityFlags = 1;
           markerActor->collisionFlags = 1;
-          marker->id = event->trigger;
+          marker->id = trigger->subject;
           marker->object = (struct Object *)markerActor;
           marker->column = markerActor->x / 0x100000;
           marker->row = markerActor->z / 0x100000;
@@ -118,11 +118,11 @@ void Field_PlaceTreasureSpots(void) {
           markerCount++;
           if (markerCount >= TREASURE_SPOT_MAX)
             return;
-        } else if ((event->kind & 0x1ff) == MAP_EVENT_BG) {
+        } else if ((trigger->kind & 0x1ff) == TRIGGER_EXAMINE) {
           // A Psynergy Stone not yet taken.
-          if ((event->value & 0xfff00000) != FIND_PSYNERGY_STONE)
+          if ((trigger->value & 0xfff00000) != FIND_PSYNERGY_STONE)
             continue;
-          if (GameFlag_GetFar(event->condition))
+          if (GameFlag_GetFar(trigger->condition))
             continue;
           markerActor = (struct Object *)Object_CreateFar(
               TREASURE_SPOT_PSYNERGY_STONE_SPRITE, (column << 20) + 0x80000, 0,
@@ -138,7 +138,7 @@ void Field_PlaceTreasureSpots(void) {
           markerActor->collisionFlags = 1;
           markerActor->priorityFlags = 1;
           marker->object = (struct Object *)markerActor;
-          marker->id = event->trigger;
+          marker->id = trigger->subject;
           marker->column = markerActor->x / 0x100000;
           marker->row = markerActor->z / 0x100000;
           marker++;

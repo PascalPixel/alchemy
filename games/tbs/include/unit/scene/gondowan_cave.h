@@ -5,7 +5,7 @@
 #include "map_tables.h"
 
 struct SceneEntrance;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 struct SceneExitRegion;
 
@@ -13,7 +13,7 @@ const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ActorTemplate *Scene_GetActorTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gFieldEffect_ShortScript[];
 extern s32 gFieldEffect_MediumScript[];
@@ -32,10 +32,10 @@ extern struct ActorTemplate gGondowanPassageActorTemplates[];
 extern struct ActorTemplate gGondowanPassageActorTemplatesWithIodem[];
 extern struct ActorTemplate gGondowanCaveRiverActorTemplates[];
 extern struct ActorTemplate gGondowanCaveActorTemplates[];
-extern struct MapEvent gGondowanCaveEventsOther[];
-extern struct MapEvent gGondowanPassageEvents[];
-extern struct MapEvent gGondowanPassageEventsWithIodem[];
-extern struct MapEvent gGondowanCaveRiverEvents[];
-extern struct MapEvent gGondowanCaveEvents[];
+extern struct Trigger gGondowanCaveTriggersOther[];
+extern struct Trigger gGondowanPassageTriggers[];
+extern struct Trigger gGondowanPassageTriggersWithIodem[];
+extern struct Trigger gGondowanCaveRiverTriggers[];
+extern struct Trigger gGondowanCaveTriggers[];
 
 #endif

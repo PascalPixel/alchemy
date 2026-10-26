@@ -167,7 +167,7 @@ enum TolbiShipMastEnsembleActorId {
   ACTOR_LANDING_MONSTER_SHADOW
 };
 
-/// The mast's coord event and bg event cells.
+/// The mast's step trigger and examine trigger cells.
 enum TolbiShipMastMetatileBehavior {
   MB_TOLBI_SHIP_MAST_LADDER = 10, ///< the top of the ladder down to the deck
   /// Where the crewman hid the captain's anchor charm.
@@ -311,9 +311,9 @@ const struct ActorTemplate *TolbiShipMast_GetActorTemplates(void) {
   return gTolbiShipMast_ActorTemplates;
 }
 
-/// Returns the ladder, lookout dialogue and Anchor Charm bg events.
-const struct MapEvent *TolbiShipMast_GetEvents(void) {
-  return gTolbiShipMast_Events;
+/// Returns the ladder, lookout dialogue and Anchor Charm examine triggers.
+const struct Trigger *TolbiShipMast_GetTriggers(void) {
+  return gTolbiShipMast_Triggers;
 }
 
 /// Walking south onto the ladder at the mast's top
@@ -1091,16 +1091,16 @@ struct ActorTemplate gTolbiShipMast_LandingActorTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct MapEvent gTolbiShipMast_Events[] = {
-    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), MB_TOLBI_SHIP_MAST_LADDER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipMast_ClimbDownLadder) },
-    { MAP_EVENT_TALK, ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF, MSGNO(MsgTolbiShipWatchSeasHelpKaja) },
-    { MAP_EVENT_TALK, ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipLookoutCannotRow) },
-    { MAP_EVENT_TALK, ACTOR_LOOKOUT, CONDITION_ALWAYS, MSGNO(MsgTolbiShipMonstersAnywhereAroundHere) },
+struct Trigger gTolbiShipMast_Triggers[] = {
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), MB_TOLBI_SHIP_MAST_LADDER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipMast_ClimbDownLadder) },
+    { TRIGGER_TALK, ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF, MSGNO(MsgTolbiShipWatchSeasHelpKaja) },
+    { TRIGGER_TALK, ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipLookoutCannotRow) },
+    { TRIGGER_TALK, ACTOR_LOOKOUT, CONDITION_ALWAYS, MSGNO(MsgTolbiShipMonstersAnywhereAroundHere) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF, MSGNO(MsgTolbiShipHiddenAnchorDiscovered) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipSeaTooVast) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOOKOUT, CONDITION_ALWAYS, MSGNO(MsgTolbiShipIslandTreasures) },
-    { BG_EVENT(BG_EVENT_SILENT), MB_TOLBI_SHIP_MAST_ANCHOR_CHARM, FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND, EVENT_SCRIPT(TolbiShipMast_FindAnchorCharm) },
-    { MAP_EVENTS_END },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_SHIP_MAST_ANCHOR_CHARM, FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND, EVENT_SCRIPT(TolbiShipMast_FindAnchorCharm) },
+    { TRIGGERS_END },
 };
 
 /// Each passenger's rowing value, in the order of enum TolbiShipPassenger

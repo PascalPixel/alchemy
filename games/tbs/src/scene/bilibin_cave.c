@@ -15,9 +15,9 @@
 /// cave beyond or out to the world map, since both are other areas. Two
 /// exits lead on into Bilibin Cave. The south one's exit cell, at the cave
 /// mouth, lies under the ledge path that runs above the mouth, since the map
-/// grid has one cell for both: coord event 10, the ledge cells either side of
-/// it, turns the exit off so the leader can walk the ledge across it, and coord
-/// event 11, a step further out, turns it back on
+/// grid has one cell for both: step trigger 10, the ledge cells either side of
+/// it, turns the exit off so the leader can walk the ledge across it, and
+/// step trigger 11, a step further out, turns it back on
 /// (EventScript_WalkOntoLedgeOverCaveMouth,
 /// EventScript_WalkOffLedgeOverCaveMouth; its recording,
 /// places/bilibin-cave-entrance/events/EventScript_WalkOntoLedgeOverCaveMouth.gif).
@@ -50,9 +50,9 @@
 /// coming back from SceneId_BilibinCaveRapier puts the torches and the pillar
 /// back; leaving Bilibin Cave resets them. Nine more pieces of ice only stand
 /// there: five pillars from ACTOR_FIRST_ICE_PILLAR and four lower pieces from
-/// ACTOR_FIRST_LOW_ICE. Coord event 20 covers the snow blown in at the cave's
+/// ACTOR_FIRST_LOW_ICE. Step trigger 20 covers the snow blown in at the cave's
 /// mouth to the world map, around BILIBIN_CAVE_ICE_FROM_WORLD_MAP, and makes
-/// the leader leave footprints; coord event 21, rimming it, stops them
+/// the leader leave footprints; step trigger 21, rimming it, stops them
 /// (EventScript_StartFootprints, EventScript_StopFootprints; the snow is in
 /// places/bilibin-cave-ice/map-1.png). Its chests hold a Vial, a Psy Crystal
 /// and Water of Life.
@@ -226,22 +226,22 @@ const struct ActorTemplate *BilibinCave_GetActorTemplates(void) {
   return gBilibinCaveActorTemplatesOther;
 }
 
-const struct MapEvent *BilibinCave_GetEvents(void) {
+const struct Trigger *BilibinCave_GetTriggers(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_BilibinCaveEntrance) {
-    return gBilibinCaveEntranceEvents;
+    return gBilibinCaveEntranceTriggers;
   }
   if (sceneId == (s32)&SceneId_BilibinCaveRapier) {
-    return gBilibinCaveRapierEvents;
+    return gBilibinCaveRapierTriggers;
   }
   if (sceneId == (s32)&SceneId_BilibinCaveIce) {
-    return gBilibinCaveIceEvents;
+    return gBilibinCaveIceTriggers;
   }
-  return gBilibinCaveEventsOther;
+  return gBilibinCaveTriggersOther;
 }
 
-/// Stepping on coord event 10 at the Bilibin Cave Entrance, on either side of
+/// Stepping on step trigger 10 at the Bilibin Cave Entrance, on either side of
 /// the way into Bilibin Cave: the way's cell (21, 14), the exit cell of
 /// BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH, takes the
 /// metatile behavior of source cell (1, 0), which has none.
@@ -249,8 +249,8 @@ static void EventScript_WalkOntoLedgeOverCaveMouth(void) {
   MapGrid_CopyCellAttributes(1, 0, 1, 1, 21, 14);
 }
 
-/// Stepping on coord event 11 at the Bilibin Cave Entrance, a cell further out:
-/// the way's cell (21, 14) takes back the exit, from source cell (0, 0).
+/// Stepping on step trigger 11 at the Bilibin Cave Entrance, a cell further
+/// out: the way's cell (21, 14) takes back the exit, from source cell (0, 0).
 static void EventScript_WalkOffLedgeOverCaveMouth(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 21, 14);
 }
@@ -412,14 +412,14 @@ static void EventScript_GrowPlant(void) {
   GameFlag_Set(FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN);
 }
 
-/// Stepping on coord event 20 in Bilibin Cave (SceneId_BilibinCaveIce): from
+/// Stepping on step trigger 20 in Bilibin Cave (SceneId_BilibinCaveIce): from
 /// here on the leader leaves footprints.
 static void EventScript_StartFootprints(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   grid->footprints = 1;
 }
 
-/// Stepping on coord event 21 in Bilibin Cave (SceneId_BilibinCaveIce): the
+/// Stepping on step trigger 21 in Bilibin Cave (SceneId_BilibinCaveIce): the
 /// leader leaves no more footprints.
 static void EventScript_StopFootprints(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
@@ -795,54 +795,54 @@ struct ActorTemplate gBilibinCaveIceActorTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct MapEvent gBilibinCaveEventsOther[] = {
-    { MAP_EVENTS_END },
+struct Trigger gBilibinCaveTriggersOther[] = {
+    { TRIGGERS_END },
 };
 
-struct MapEvent gBilibinCaveEntranceEvents[] = {
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_WORLD_MAP },
-    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH },
-    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_NORTH },
-    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WalkOntoLedgeOverCaveMouth) },
-    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WalkOffLedgeOverCaveMouth) },
+struct Trigger gBilibinCaveEntranceTriggers[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_WORLD_MAP },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH },
+    { TRIGGER_EXIT, 3, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_NORTH },
+    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WalkOntoLedgeOverCaveMouth) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WalkOffLedgeOverCaveMouth) },
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN, EVENT_SCRIPT(EventScript_GrowPlant) },
-    { MAP_EVENTS_END },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gBilibinCaveRapierEvents[] = {
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_WEST },
-    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_EAST },
-    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_WEST },
-    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_TORCHES },
-    { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_EAST },
-    { MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TORCHES_TO_BILIBIN_CAVE_RAPIER },
-    { BG_EVENT(BG_EVENT_CHEST), 100, 0xf5d, FIND_ITEM(ITEM_ELVEN_RAPIER) },
+struct Trigger gBilibinCaveRapierTriggers[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_WEST },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_EAST },
+    { TRIGGER_EXIT, 3, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_WEST },
+    { TRIGGER_EXIT, 4, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_TORCHES },
+    { TRIGGER_EXIT, 5, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_EAST },
+    { TRIGGER_EXIT, 6, CONDITION_ALWAYS, BILIBIN_CAVE_RAPIER_TORCHES_TO_BILIBIN_CAVE_RAPIER },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, 0xf5d, FIND_ITEM(ITEM_ELVEN_RAPIER) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealHiddenPath) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HideRevealedPath) },
     { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_RAPIER_ROOM_FIRE, FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED, EVENT_SCRIPT(EventScript_DouseRapierRoomFire) },
-    { MAP_EVENTS_END },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gBilibinCaveIceEvents[] = {
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_WEST },
-    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_EAST },
-    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_WORLD_MAP },
-    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_CHESTS },
-    { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_CHESTS_TO_BILIBIN_CAVE_ICE },
-    { MAP_EVENT_COORD, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StartFootprints) },
-    { MAP_EVENT_COORD, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StopFootprints) },
+struct Trigger gBilibinCaveIceTriggers[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_WEST },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_EAST },
+    { TRIGGER_EXIT, 3, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_WORLD_MAP },
+    { TRIGGER_EXIT, 4, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_TO_CHESTS },
+    { TRIGGER_EXIT, 5, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_CHESTS_TO_BILIBIN_CAVE_ICE },
+    { TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StartFootprints) },
+    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StopFootprints) },
     { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_ICE_ROOM_FIRE, FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED, EVENT_SCRIPT(EventScript_DouseIceRoomFire) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE, FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED, EVENT_SCRIPT(EventScript_FreezeFirstPuddle) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FreezeSecondPuddle) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_THIRD_PUDDLE, IF_FLAG_SET(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED), EVENT_SCRIPT(EventScript_FreezeThirdPuddle) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateThirdPuddleFromTorches) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FOURTH_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateThirdPuddleFromTorches) },
-    { COORD_EVENT_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushTorch) },
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushTorch) },
-    { BG_EVENT(BG_EVENT_CHEST), 100, 0xf5e, FIND_ITEM(ITEM_VIAL) },
-    { BG_EVENT(BG_EVENT_CHEST), 101, 0xfc6, FIND_ITEM(ITEM_PSY_CRYSTAL) },
-    { BG_EVENT(BG_EVENT_CHEST), 102, 0xfc7, FIND_ITEM(ITEM_WATER_OF_LIFE) },
-    { MAP_EVENTS_END },
+    { STEP_TRIGGER_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushTorch) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushTorch) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, 0xf5e, FIND_ITEM(ITEM_VIAL) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, 0xfc6, FIND_ITEM(ITEM_PSY_CRYSTAL) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, 0xfc7, FIND_ITEM(ITEM_WATER_OF_LIFE) },
+    { TRIGGERS_END },
 };
 // clang-format on
 

@@ -23,7 +23,7 @@ void Field_ClearRequests(void) {
   struct FieldWork *work;
   noRequest = 0;
   work = gFieldWork;
-  work->coordEvent = noRequest;
+  work->stepTrigger = noRequest;
   work->pushCell = 0;
   work->exit = 0;
   work->menu = 0;
@@ -46,16 +46,16 @@ s32 Field_CountRequests(void) {
 
   // BUG: a sum can be 0 with requests pending. Field_ProcessStep raises event
   // FIELD_RAISED_EVENT_PARTY_FELL (-1) on the frame a member falls to poison,
-  // and the action request is the cell's metatile behavior, 1 on coord event
+  // and the action request is the cell's metatile behavior, 1 on step trigger
   // 1's cells (154 maps have them); together they sum to 0, and both wait until
   // another request breaks the tie, by which time a later cell's behavior may
   // have replaced the action. BUGFIX tests each request instead.
 #ifdef BUGFIX
-  return work->coordEvent | work->pushCell | work->exit | work->menu |
+  return work->stepTrigger | work->pushCell | work->exit | work->menu |
          work->examine | work->start | (s16)work->talk | work->searchCell |
          work->battle | work->psynergy | work->item | work->raisedEvent;
 #else
-  return work->coordEvent + work->pushCell + work->exit + work->menu +
+  return work->stepTrigger + work->pushCell + work->exit + work->menu +
          work->examine + work->start + (s16)work->talk + work->searchCell +
          (s16)work->talk + work->battle + work->psynergy + work->item +
          work->raisedEvent;
@@ -65,8 +65,8 @@ s32 Field_CountRequests(void) {
 /// Returns the metatile behavior of the map cell 16 pixels ahead of the party
 /// leader (a world map metatile on the world map), or 0 without a leader.
 ///
-/// Called by Field_FindItemEvent and Scene_FindPsynergyEvent (items.c),
-/// which match an item or Psynergy event to the cell the leader faces.
+/// Called by Field_FindItemTrigger and Scene_FindPsynergyTrigger (items.c),
+/// which match an item or Psynergy trigger to the cell the leader faces.
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *work;
   struct Object *leader;
@@ -183,7 +183,7 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
 }
 
 /// Handles one step of the party leader onto the cell at (x, y, z) of map
-/// grid layer: records coord events and push cells, takes exits, and while
+/// grid layer: records step triggers and push cells, takes exits, and while
 /// walking advances the encounter counter, regenerates PP, hurts the party with
 /// poison and hazardous ground, and wears Avoid off. When this hurts the party,
 /// the leader flinches and characters who fall are listed in the field work.
@@ -248,7 +248,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   if (event != 0)
     Field_CheckExitRegions(x, y, z);
   if (event >= MB_EVENT_FIRST && event <= MB_EVENT_LAST)
-    work->coordEvent = event;
+    work->stepTrigger = event;
   if (event >= MB_LEDGE && event <= MB_JUMP_FORWARD)
     work->pushCell = event;
 

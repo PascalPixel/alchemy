@@ -2,13 +2,13 @@
 /// Kalay, the merchants' town Lord Hammet founded, the front of his palace, and
 /// the tunnel beneath them: four areas in six maps.
 ///
-/// - Kalay (SceneId_Kalay), the town. Eight doors (coord events 1 to 8) open
+/// - Kalay (SceneId_Kalay), the town. Eight doors (step triggers 1 to 8) open
 /// into
 ///   the houses, the weapon and armor shops, the inn and the Kalay Sanctum
 ///   (kalay_interiors.c), and KALAY_TO_WEAPON_SHOP_COUNTER and
 ///   KALAY_TO_ARMOR_SHOP_COUNTER into the same two shops from behind their
-///   counters; KALAY_TO_HAMMET_PALACE_GROUNDS leads to Hammet Palace, and coord
-///   events 9 and 10 out to the world map (KALAY_TO_WORLD_MAP and
+///   counters; KALAY_TO_HAMMET_PALACE_GROUNDS leads to Hammet Palace, and
+///   step triggers 9 and 10 out to the world map (KALAY_TO_WORLD_MAP and
 ///   KALAY_TO_WORLD_MAP_WEST, to its WORLD_MAP_FROM_KALAY_EAST and
 ///   WORLD_MAP_FROM_KALAY_WEST). The weapon, armor and item sellers open their
 ///   shops only when spoken to across the counter. A Nut circles in the air
@@ -31,7 +31,7 @@
 ///   guards recognize Ivan and take everyone in to Lady Layana
 ///   (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM, to
 ///   HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS); afterwards they
-///   have other lines. Walking into the door (coord event 2) opens it into the
+///   have other lines. Walking into the door (step trigger 2) opens it into the
 ///   palace (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE);
 ///   HAMMET_PALACE_GROUNDS_TO_KALAY leads back to town.
 /// - Kalay Tunnel Entrance (SceneId_KalayTunnelEntrance), outside the town (the
@@ -70,7 +70,7 @@
 ///   thinking `The things beyond these doors belong to you all.` The fade
 ///   overlay (overworld/overworld/fade_overlay.c) follows the leader through
 ///   the treasure room unless he comes down from the town
-///   (KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY); coord events 10 and 11 stop and
+///   (KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY); step triggers 10 and 11 stop and
 ///   restart it, and 18 and 19 fix and free his depth priority.
 ///   KALAY_TUNNEL_TREASURE_ROOM_TO_HAMMET_PALACE leads into Hammet Palace
 ///   (HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM),
@@ -454,28 +454,28 @@ static void Kalay_CatchTunnelEntranceNut(void) {
 }
 
 /// The conversations, exits and Psynergy targets of each map.
-const struct MapEvent *Kalay_GetEvents(void) {
+const struct Trigger *Kalay_GetTriggers(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_Kalay) {
-    return gKalay_TownEvents;
+    return gKalay_TownTriggers;
   }
   if (sceneId == (s32)&SceneId_HammetPalaceGrounds) {
-    return gKalay_HammetPalaceEvents;
+    return gKalay_HammetPalaceTriggers;
   }
   if (sceneId == (s32)&SceneId_KalayTunnelEntrance) {
-    return gKalay_TunnelEntranceEvents;
+    return gKalay_TunnelEntranceTriggers;
   }
   if (sceneId == (s32)&SceneId_KalayTunnelCave) {
-    return gKalay_TunnelCaveEvents;
+    return gKalay_TunnelCaveTriggers;
   }
   if (sceneId == (s32)&SceneId_KalayTunnelPassage) {
-    return gKalay_TunnelPassageEvents;
+    return gKalay_TunnelPassageTriggers;
   }
   if (sceneId == (s32)&SceneId_KalayTunnelTreasureRoom) {
-    return gKalay_TunnelEvents;
+    return gKalay_TunnelTriggers;
   }
-  return gKalay_NoEvents;
+  return gKalay_NoTriggers;
 }
 
 /// A man in Kalay tells why he moved there: he left Tolbi, afraid of Babi, who
@@ -582,7 +582,7 @@ static void Kalay_TalkToItemMerchant(void) {
   }
 }
 
-/// Walking north into one of Kalay's eight doors (coord events 1 to 8), into
+/// Walking north into one of Kalay's eight doors (step triggers 1 to 8), into
 /// the houses, the inn or the Sanctum: everyone stops, the door opens and the
 /// leader walks in.
 static void Kalay_OpenDoorAndExit(void) {
@@ -600,7 +600,7 @@ static void Kalay_OpenDoorAndExit(void) {
       actor->motionFlags = 0;
     }
   }
-  trigger = &work->coordEvent;
+  trigger = &work->stepTrigger;
   door = *trigger - 1;
   Sound_PlaySong(SE_DOOR_OPEN);
   {
@@ -630,8 +630,8 @@ static __inline__ void Kalay_AnimatePalaceDoor(void) {
   WaitFrames(5);
 }
 
-/// Walking north into the door of Hammet Palace (HammetPalaceGrounds, coord
-/// event 2): it opens and the leader walks in.
+/// Walking north into the door of Hammet Palace (HammetPalaceGrounds,
+/// step trigger 2): it opens and the leader walks in.
 static void Kalay_EnterPalace(void) {
   FieldScript_Start();
   Kalay_AnimatePalaceDoor();
@@ -646,7 +646,7 @@ static void Kalay_EnterPalace(void) {
   FieldScript_End();
 }
 
-/// Leaving Kalay (coord events 9 and 10) after hearing of the Colosso tour at
+/// Leaving Kalay (step triggers 9 and 10) after hearing of the Colosso tour at
 /// the inn, until the tour has left: the party watches the tour group stop. The
 /// guides count everyone, pace back and forth while the tourists grumble, give
 /// up on the missing man and lead the group off; the late tourist then runs
@@ -688,7 +688,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Script_PlaySong(MUS_DJINN_LESSON);
     FieldScript_WaitFrames(10);
     ObjectMotion_SetVarCbAndRefresh(ACTOR_PARTY_LEADER, 2);
-    if (work->coordEvent == 9) {
+    if (work->stepTrigger == 9) {
       FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
     } else {
@@ -1111,7 +1111,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_DestroyById(ACTOR_FIRST_TOURIST + 6);
     Actor_DestroyById(ACTOR_OURANOS);
     Script_PlaySong(SONG_FADE_OUT_BGM);
-    if (work->coordEvent == 9) {
+    if (work->stepTrigger == 9) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 224, 458);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       leader->facing = FACING_NORTH;
@@ -1124,14 +1124,14 @@ static void Kalay_WatchTourGroupDeparture(void) {
     GameFlag_Set(FLAG_KALAY_COLOSSO_TOUR_LEFT);
   } else {
     Script_PlaySong(SE_MAP_EXIT);
-    Import_ScriptRequestExit(work->coordEvent);
+    Import_ScriptRequestExit(work->stepTrigger);
     FieldScript_FinishScreenTransition();
     FieldScript_WaitTransitionFrames();
   }
   FieldScript_End();
 }
 
-/// Touching coord event 10 in the Kalay Tunnel (KalayTunnelTreasureRoom) stops
+/// Touching step trigger 10 in the Kalay Tunnel (KalayTunnelTreasureRoom) stops
 /// the fade overlay following the leader.
 static void Kalay_StopTrackingLeader(void) {
   if (Script_GetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER) != 0) {
@@ -1140,7 +1140,7 @@ static void Kalay_StopTrackingLeader(void) {
   }
 }
 
-/// Touching coord event 11 in the Kalay Tunnel (KalayTunnelTreasureRoom) makes
+/// Touching step trigger 11 in the Kalay Tunnel (KalayTunnelTreasureRoom) makes
 /// the fade overlay follow the leader.
 static void Kalay_StartTrackingLeader(void) {
   struct FadeOverlayWork *work;
@@ -1152,7 +1152,7 @@ static void Kalay_StartTrackingLeader(void) {
   }
 }
 
-/// Coord event 19 in the Kalay Tunnel (KalayTunnelTreasureRoom): the leader's
+/// Step trigger 19 in the Kalay Tunnel (KalayTunnelTreasureRoom): the leader's
 /// depth priority follows his position.
 static void Kalay_EnableLeaderAutomaticPriority(void) {
   u8 *priorityFlags;
@@ -1164,7 +1164,7 @@ static void Kalay_EnableLeaderAutomaticPriority(void) {
   *priorityFlags = flags;
 }
 
-/// Coord event 18 in the Kalay Tunnel (KalayTunnelTreasureRoom): the leader's
+/// Step trigger 18 in the Kalay Tunnel (KalayTunnelTreasureRoom): the leader's
 /// depth priority stays fixed.
 static void Kalay_DisableLeaderAutomaticPriority(void) {
   u8 *priorityFlags;
@@ -2861,43 +2861,43 @@ struct ActorTemplate gKalay_TunnelActorTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct MapEvent gKalay_NoEvents[] = {
-    { MAP_EVENTS_END },
+struct Trigger gKalay_NoTriggers[] = {
+    { TRIGGERS_END },
 };
 
-struct MapEvent gKalay_TownEvents[] = {
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_OpenDoorAndExit) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_OpenDoorAndExit) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_OpenDoorAndExit) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_OpenDoorAndExit) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_OpenDoorAndExit) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_OpenDoorAndExit) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_OpenDoorAndExit) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_OpenDoorAndExit) },
-    { MAP_EVENT_EXIT, 11, CONDITION_ALWAYS, KALAY_TO_HAMMET_PALACE_GROUNDS },
-    { MAP_EVENT_EXIT, 12, CONDITION_ALWAYS, KALAY_TO_WEAPON_SHOP_COUNTER },
-    { MAP_EVENT_EXIT, 13, CONDITION_ALWAYS, KALAY_TO_ARMOR_SHOP_COUNTER },
-    { MAP_EVENT_EXIT, 14, CONDITION_ALWAYS, KALAY_TO_KALAY_TUNNEL_TREASURE_ROOM },
-    { MAP_EVENT_COORD, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_WatchTourGroupDeparture) },
-    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_WatchTourGroupDeparture) },
-    { MAP_EVENT_TALK, ACTOR_WELCOMING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgKalayWelcomeInPeace) },
-    { MAP_EVENT_TALK, ACTOR_SOLDIER_PROTECTING_THE_PEACE, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersProtectPeace) },
-    { MAP_EVENT_TALK, ACTOR_YOUNG_MAN_ON_HAMMET_THE_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayHammetGenerousMerchant) },
-    { MAP_EVENT_TALK, ACTOR_WOMAN_ON_HAMMETS_CARAVANS, CONDITION_ALWAYS, MSGNO(MsgKalayHammetOnJourney) },
-    { MAP_EVENT_TALK, ACTOR_MAN_ON_THE_REBUILT_BRIDGE, CONDITION_ALWAYS, MSGNO(MsgKalayNorthernBridgeRebuilt) },
-    { MAP_EVENT_TALK, ACTOR_WOMAN_ON_LAMAKAN_DESERT, CONDITION_ALWAYS, MSGNO(MsgKalayLamakanTrouble) },
-    { MAP_EVENT_TALK, ACTOR_LATE_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayElderTownNews) },
-    { MAP_EVENT_TALK, ACTOR_WOULD_BE_TOURIST, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInnFestivalTourists) },
-    { MAP_EVENT_TALK, ACTOR_WOULD_BE_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayFormerInnFestivalTourists) },
-    { MAP_EVENT_TALK, ACTOR_BOY_DREAMING_OF_COLOSSO, CONDITION_ALWAYS, MSGNO(MsgKalayChildWantsFestival) },
-    { MAP_EVENT_TALK, ACTOR_GIRL_ON_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgKalayTraderTownNews) },
-    { MAP_EVENT_TALK, ACTOR_STRONGMAN_ON_HAMMETS_KNACK, CONDITION_ALWAYS, MSGNO(MsgKalayHammetBusinessSkill) },
-    { MAP_EVENT_TALK, ACTOR_MAN_WHO_LEFT_TOLBI, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkAboutLeavingHome) },
-    { MAP_EVENT_TALK, ACTOR_HEAD_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayHammetCapturedRumor) },
-    { MAP_EVENT_TALK, ACTOR_SECOND_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayHammetWentNorth) },
-    { MAP_EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkToWeaponMerchant) },
-    { MAP_EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkToArmorMerchant) },
-    { MAP_EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkToItemMerchant) },
+struct Trigger gKalay_TownTriggers[] = {
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_OpenDoorAndExit) },
+    { TRIGGER_EXIT, 11, CONDITION_ALWAYS, KALAY_TO_HAMMET_PALACE_GROUNDS },
+    { TRIGGER_EXIT, 12, CONDITION_ALWAYS, KALAY_TO_WEAPON_SHOP_COUNTER },
+    { TRIGGER_EXIT, 13, CONDITION_ALWAYS, KALAY_TO_ARMOR_SHOP_COUNTER },
+    { TRIGGER_EXIT, 14, CONDITION_ALWAYS, KALAY_TO_KALAY_TUNNEL_TREASURE_ROOM },
+    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_WatchTourGroupDeparture) },
+    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_WatchTourGroupDeparture) },
+    { TRIGGER_TALK, ACTOR_WELCOMING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgKalayWelcomeInPeace) },
+    { TRIGGER_TALK, ACTOR_SOLDIER_PROTECTING_THE_PEACE, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersProtectPeace) },
+    { TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_HAMMET_THE_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayHammetGenerousMerchant) },
+    { TRIGGER_TALK, ACTOR_WOMAN_ON_HAMMETS_CARAVANS, CONDITION_ALWAYS, MSGNO(MsgKalayHammetOnJourney) },
+    { TRIGGER_TALK, ACTOR_MAN_ON_THE_REBUILT_BRIDGE, CONDITION_ALWAYS, MSGNO(MsgKalayNorthernBridgeRebuilt) },
+    { TRIGGER_TALK, ACTOR_WOMAN_ON_LAMAKAN_DESERT, CONDITION_ALWAYS, MSGNO(MsgKalayLamakanTrouble) },
+    { TRIGGER_TALK, ACTOR_LATE_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayElderTownNews) },
+    { TRIGGER_TALK, ACTOR_WOULD_BE_TOURIST, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInnFestivalTourists) },
+    { TRIGGER_TALK, ACTOR_WOULD_BE_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayFormerInnFestivalTourists) },
+    { TRIGGER_TALK, ACTOR_BOY_DREAMING_OF_COLOSSO, CONDITION_ALWAYS, MSGNO(MsgKalayChildWantsFestival) },
+    { TRIGGER_TALK, ACTOR_GIRL_ON_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgKalayTraderTownNews) },
+    { TRIGGER_TALK, ACTOR_STRONGMAN_ON_HAMMETS_KNACK, CONDITION_ALWAYS, MSGNO(MsgKalayHammetBusinessSkill) },
+    { TRIGGER_TALK, ACTOR_MAN_WHO_LEFT_TOLBI, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkAboutLeavingHome) },
+    { TRIGGER_TALK, ACTOR_HEAD_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayHammetCapturedRumor) },
+    { TRIGGER_TALK, ACTOR_SECOND_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayHammetWentNorth) },
+    { TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkToWeaponMerchant) },
+    { TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkToArmorMerchant) },
+    { TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkToItemMerchant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WELCOMING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgKalayWarriorHonestEyes) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SOLDIER_PROTECTING_THE_PEACE, CONDITION_ALWAYS, MSGNO(MsgKalayGuardsJudgeVisitors) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ON_HAMMET_THE_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayHammetPeaceAndLiberty) },
@@ -2917,73 +2917,73 @@ struct MapEvent gKalay_TownEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayPalaceWaterSupply) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TOWN_STATUE, CONDITION_ALWAYS, 0 },
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_TOWN_NUT, FLAG_KALAY_TOWN_NUT_CAUGHT, EVENT_SCRIPT(Kalay_CatchTownNut) },
-    { BG_EVENT(BG_EVENT_JAR), 100, FLAG_KALAY_SLEEP_BOMB_JAR, FIND_ITEM(ITEM_SLEEP_BOMB) },
-    { BG_EVENT(BG_EVENT_JAR), 101, FLAG_KALAY_VIAL_JAR, FIND_ITEM(ITEM_VIAL) },
-    { BG_EVENT(BG_EVENT_SILENT), 90, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_SearchWell) },
-    { MAP_EVENTS_END },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 100, FLAG_KALAY_SLEEP_BOMB_JAR, FIND_ITEM(ITEM_SLEEP_BOMB) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_KALAY_VIAL_JAR, FIND_ITEM(ITEM_VIAL) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), 90, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_SearchWell) },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gKalay_HammetPalaceEvents[] = {
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, HAMMET_PALACE_GROUNDS_TO_KALAY },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_EnterPalace) },
-    { MAP_EVENT_TALK, ACTOR_PALACE_GUARD, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersHandleAffairs) },
-    { MAP_EVENT_TALK, ACTOR_SECOND_PALACE_GUARD, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersRescueHammet) },
+struct Trigger gKalay_HammetPalaceTriggers[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, HAMMET_PALACE_GROUNDS_TO_KALAY },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_EnterPalace) },
+    { TRIGGER_TALK, ACTOR_PALACE_GUARD, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersHandleAffairs) },
+    { TRIGGER_TALK, ACTOR_SECOND_PALACE_GUARD, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersRescueHammet) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PALACE_GUARD, CONDITION_ALWAYS, MSGNO(MsgKalayPrayForHammetSafety) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_PALACE_GUARD, CONDITION_ALWAYS, MSGNO(MsgKalayWarriorsWillSaveHammet) },
-    { MAP_EVENTS_END },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gKalay_TunnelEntranceEvents[] = {
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_TUNNEL_ENTRANCE_TO_KALAY_TUNNEL_CAVE },
-    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_NORTH },
-    { MAP_EVENT_TALK, ACTOR_TUNNEL_GUARD, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_AskAboutCaveAccess) },
+struct Trigger gKalay_TunnelEntranceTriggers[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, KALAY_TUNNEL_ENTRANCE_TO_KALAY_TUNNEL_CAVE },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_NORTH },
+    { TRIGGER_TALK, ACTOR_TUNNEL_GUARD, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_AskAboutCaveAccess) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TUNNEL_GUARD, CONDITION_ALWAYS, MSGNO(MsgKalayPassageClosedByOrders) },
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_TUNNEL_ENTRANCE_NUT, FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT, EVENT_SCRIPT(Kalay_CatchTunnelEntranceNut) },
-    { MAP_EVENTS_END },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gKalay_TunnelCaveEvents[] = {
-    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_PASSAGE },
-    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_ENTRANCE },
-    { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_KALAY_TUNNEL_APPLE_CHEST, FIND_ITEM(ITEM_APPLE) },
-    { MAP_EVENTS_END },
+struct Trigger gKalay_TunnelCaveTriggers[] = {
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_PASSAGE },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_ENTRANCE },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_KALAY_TUNNEL_APPLE_CHEST, FIND_ITEM(ITEM_APPLE) },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gKalay_TunnelPassageEvents[] = {
-    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_WEST },
-    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_EAST },
-    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_LONG_PATH_TO_NORTHEAST_ROOM },
-    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_TO_LONG_PATH },
-    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_CAVE },
-    { MAP_EVENTS_END },
+struct Trigger gKalay_TunnelPassageTriggers[] = {
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_WEST },
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_EAST },
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_LONG_PATH_TO_NORTHEAST_ROOM },
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_TO_LONG_PATH },
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_CAVE },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gKalay_TunnelEvents[] = {
-    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_HAMMET_PALACE },
-    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_WEST },
-    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_EAST },
-    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY },
-    { MAP_EVENT_TALK, ACTOR_WAITING_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkAboutLayana) },
+struct Trigger gKalay_TunnelTriggers[] = {
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_HAMMET_PALACE },
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_WEST },
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_EAST },
+    { TRIGGER_EXIT, 4, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY },
+    { TRIGGER_TALK, ACTOR_WAITING_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkAboutLayana) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WAITING_MAN, CONDITION_ALWAYS, MSGNO(MsgKalayTreasureBeyondDoors) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_STATUE, FLAG_TUNNEL_FIRST_PASSAGE_OPEN, EVENT_SCRIPT(Kalay_UpdateTunnelPassages) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_STATUE, FLAG_TUNNEL_SECOND_PASSAGE_OPEN, EVENT_SCRIPT(Kalay_UpdateTunnelPassages) },
-    { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelStatue) },
-    { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelStatue) },
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), 14, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelStatue) },
-    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelStatue) },
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), 15, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelStatue) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelStatue) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelStatue) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 14, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelStatue) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelStatue) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 15, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelStatue) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_TUNNEL_PUDDLE_FROZEN, EVENT_SCRIPT(Kalay_FreezePuddle) },
-    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_StopTrackingLeader) },
-    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_StartTrackingLeader) },
-    { MAP_EVENT_COORD, 18, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_DisableLeaderAutomaticPriority) },
-    { MAP_EVENT_COORD, 19, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_EnableLeaderAutomaticPriority) },
-    { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_KALAY_TUNNEL_SPIRIT_GLOVES_CHEST, FIND_ITEM(ITEM_SPIRIT_GLOVES) },
-    { MAP_EVENT_TALK, ACTOR_SCORCH, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_ScorchJoins) },
-    { BG_EVENT(BG_EVENT_CHEST), 102, FLAG_KALAY_TUNNEL_SLEEP_BOMB_CHEST, FIND_ITEM(ITEM_SLEEP_BOMB) },
-    { BG_EVENT(BG_EVENT_CHEST), 103, FLAG_KALAY_TUNNEL_LUCKY_MEDAL_CHEST, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { BG_EVENT(BG_EVENT_CHEST), 104, FLAG_KALAY_TUNNEL_COINS_CHEST, FIND_COINS(200) },
-    { BG_EVENT(BG_EVENT_CHEST), 105, FLAG_KALAY_TUNNEL_POTION_CHEST, FIND_ITEM(ITEM_POTION) },
-    { MAP_EVENTS_END },
+    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_StopTrackingLeader) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_StartTrackingLeader) },
+    { TRIGGER_STEP, 18, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_DisableLeaderAutomaticPriority) },
+    { TRIGGER_STEP, 19, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_EnableLeaderAutomaticPriority) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_KALAY_TUNNEL_SPIRIT_GLOVES_CHEST, FIND_ITEM(ITEM_SPIRIT_GLOVES) },
+    { TRIGGER_TALK, ACTOR_SCORCH, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_ScorchJoins) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_KALAY_TUNNEL_SLEEP_BOMB_CHEST, FIND_ITEM(ITEM_SLEEP_BOMB) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 103, FLAG_KALAY_TUNNEL_LUCKY_MEDAL_CHEST, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 104, FLAG_KALAY_TUNNEL_COINS_CHEST, FIND_COINS(200) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 105, FLAG_KALAY_TUNNEL_POTION_CHEST, FIND_ITEM(ITEM_POTION) },
+    { TRIGGERS_END },
 };
 // clang-format on
 

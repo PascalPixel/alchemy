@@ -218,7 +218,7 @@
 	import FieldScript_End, FieldScript_EndFar
 	import FieldScript_CallWithLastActiveObjectId, FieldScript_CallWithLastActiveObjectIdFar
 	import Scene_AssignViewFlags, Scene_AssignViewFlagsFar
-	import FieldScript_SetMapEvents, FieldScript_SetMapEventsFar
+	import FieldScript_SetTriggers, FieldScript_SetTriggersFar
 	import FieldScript_PrepareObjectAndApplyValue, FieldScript_PrepareObjectAndApplyValueFar
 	import FieldScript_PrepareTwoObjectsAndApply, FieldScript_PrepareTwoObjectsAndApplyFar
 	import Party_RemoveMemberRestored, Party_RemoveMemberRestoredFar

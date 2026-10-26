@@ -5,7 +5,7 @@
 #include "map_tables.h"
 
 struct SceneEntrance;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 struct SceneExitRegion;
 
@@ -13,7 +13,7 @@ const struct SceneEntrance *VenusLighthouseAerie_GetEntrances(void);
 const struct SceneExitRegion *VenusLighthouseAerie_GetRegions(void);
 const u32 *VenusLighthouseAerie_GetExits(void);
 const struct ActorTemplate *VenusLighthouseAerie_GetActorTemplates(void);
-const struct MapEvent *VenusLighthouseAerie_GetEvents(void);
+const struct Trigger *VenusLighthouseAerie_GetTriggers(void);
 s32 VenusLighthouseAerie_Initialize(void);
 extern s32 gFieldEffect_ShortScript[];
 extern s32 gFieldEffect_MediumScript[];
@@ -40,7 +40,7 @@ extern struct SceneEntrance gVenusLighthouseAerieEntrances[];
 extern u32 gVenusLighthouseAerieExits[];
 extern struct ActorTemplate gVenusLighthouseAerieActorTemplates[];
 extern s32 gVenusLighthouseAerie_LandedPlatform;
-extern struct MapEvent gVenusLighthouseAerieEvents[];
+extern struct Trigger gVenusLighthouseAerieTriggers[];
 extern s32 gVenusLighthouseAerie_BesideParticleScript[];
 
 #endif

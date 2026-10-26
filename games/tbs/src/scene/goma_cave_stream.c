@@ -114,11 +114,11 @@ static void EventScript_MoveStump(void) {
   }
 }
 
-const struct MapEvent *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_GomaCaveBridge) {
-    return gGomaCaveBridgeEvents;
+    return gGomaCaveBridgeTriggers;
   }
-  return gGomaCaveStreamEvents;
+  return gGomaCaveStreamTriggers;
 }
 
 /// Sets up SceneId_GomaCaveStream as the party enters (SceneId_GomaCaveBridge
@@ -300,23 +300,22 @@ struct ActorTemplate gGomaCaveBridgeActorTemplates[] = {
     {MAP_TABLE_END},
 };
 
-struct MapEvent gGomaCaveStreamEvents[] = {
-    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, GOMA_CAVE_STREAM_TO_VALE_PLAZA},
-    {MAP_EVENT_EXIT, 5, CONDITION_ALWAYS,
-     GOMA_CAVE_STREAM_TO_GOMA_CAVE_ENTRANCE},
-    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS,
+struct Trigger gGomaCaveStreamTriggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, GOMA_CAVE_STREAM_TO_VALE_PLAZA},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, GOMA_CAVE_STREAM_TO_GOMA_CAVE_ENTRANCE},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS,
      GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_WEST},
-    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS,
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS,
      GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_EAST},
-    {MAP_EVENT_EXIT, 8, CONDITION_ALWAYS, GOMA_CAVE_STREAM_TO_GOMA_CAVE_BRIDGE},
-    {BG_EVENT(BG_EVENT_CHEST), 100, 0xf28, FIND_ITEM(ITEM_POWER_BREAD)},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, GOMA_CAVE_STREAM_TO_GOMA_CAVE_BRIDGE},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, 0xf28, FIND_ITEM(ITEM_POWER_BREAD)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP,
      FLAG_GOMA_CAVE_STREAM_STUMP_MOVED, EVENT_SCRIPT(EventScript_MoveStump)},
-    {MAP_EVENTS_END},
+    {TRIGGERS_END},
 };
 
-struct MapEvent gGomaCaveBridgeEvents[] = {
-    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, GOMA_CAVE_BRIDGE_TO_GOMA_CAVE_STREAM},
-    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, GOMA_CAVE_BRIDGE_TO_WORLD_MAP},
-    {MAP_EVENTS_END},
+struct Trigger gGomaCaveBridgeTriggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, GOMA_CAVE_BRIDGE_TO_GOMA_CAVE_STREAM},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, GOMA_CAVE_BRIDGE_TO_WORLD_MAP},
+    {TRIGGERS_END},
 };

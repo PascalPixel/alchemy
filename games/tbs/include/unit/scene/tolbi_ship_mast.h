@@ -9,7 +9,7 @@ const struct SceneEntrance *TolbiShipMast_GetEntrances(void);
 const struct SceneExitRegion *TolbiShipMast_GetRegions(void);
 const u32 *TolbiShipMast_GetExits(void);
 const struct ActorTemplate *TolbiShipMast_GetActorTemplates(void);
-const struct MapEvent *TolbiShipMast_GetEvents(void);
+const struct Trigger *TolbiShipMast_GetTriggers(void);
 s32 TolbiShipMast_Initialize(void);
 extern s32 gTolbiShipMast_DriftY;
 extern s32 gTolbiShipMast_DriftX;
@@ -36,7 +36,7 @@ extern struct ActorTemplate gTolbiShipMast_ActorTemplates[];
 extern struct ActorTemplate gTolbiShipMast_FirstAttackActorTemplates[];
 extern struct ActorTemplate gTolbiShipMast_BirdActorTemplates[];
 extern struct ActorTemplate gTolbiShipMast_LandingActorTemplates[];
-extern struct MapEvent gTolbiShipMast_Events[];
+extern struct Trigger gTolbiShipMast_Triggers[];
 extern u32 gTolbiShipMast_PassengerRowValues[];
 
 #endif

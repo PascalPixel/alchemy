@@ -51,9 +51,9 @@ them back. The requests, in the order the loop takes them:
 | Order | Field | What it asks for |
 | --- | --- | --- |
 | 1 | `exit` | leave the scene |
-| 2 | `event` | run a map event the scene's code raised, or one of the codes below |
+| 2 | `event` | run a trigger the scene's code raised, or one of the codes below |
 | 3 | `battle` | a random or requested battle |
-| 4 | `action` | a [coord event](../../glossary.md#coord-event) or exit on the [cell](../../glossary.md#cell) stepped onto |
+| 4 | `action` | a [step trigger](../../glossary.md#step-trigger) or exit on the [cell](../../glossary.md#cell) stepped onto |
 | 5 | `pushCell` | a ledge, climbing spot or jump the leader pushes against |
 | 6 | `examine` | the A button: talking if someone is ahead, else searching, else the menu |
 | 7 | `menu` | the menu |
@@ -139,7 +139,7 @@ time, so casting it again frees the one held before.
 
 `Field_UsePsynergy` runs a cast, `FieldEffect_Run` plays the
 effect, and each Psynergy's effect is the part of `field_services/` named for
-it, whose comment names the abilities that reach it. A map event's moment is
+it, whose comment names the abilities that reach it. A trigger's moment is
 `enum PsynergyPhase`, and what an ability does on the field is
 `enum FieldPsynergy`, the `type` column of `games/tbs/src/game/abilities.tsv`.
 
@@ -250,7 +250,7 @@ sum, so a negative event code raised with a positive request can hide both.
 It can happen: `Field_ProcessStep` raises `FIELD_RAISED_EVENT_PARTY_FELL` (-1)
 on the frame a member falls to poison, and the `action` request is the cell's
 [metatile behavior](../../glossary.md#metatile-behavior), 1 on the cells of
-coord event 1, which 154 scenes have. Both then wait until another request makes
+step trigger 1, which 154 scenes have. Both then wait until another request makes
 the sum non-zero, by which time a later cell's behavior may have replaced the
 action. It is marked [`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix), and
 `BUGFIX` tests each request instead.

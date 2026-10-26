@@ -15,25 +15,27 @@
 ///   cave's two halves, with a boulder for Lift and two chests.
 ///
 /// One exit table serves every map; the other getters choose by
-/// gSaveBlock.sceneId, Gondowan Passage's actor templates and map events
+/// gSaveBlock.sceneId, Gondowan Passage's actor templates and triggers
 /// also by FLAG_BABI_SPOKE_AFTER_COLOSSO, and an empty set answers any other
-/// map number. Every map's event table carries GondowanCaveRiver's two chests.
+/// map number. Every map's trigger table carries GondowanCaveRiver's two
+/// chests.
 ///
 /// Gondowan Passage sets FLAG_RETREAT_BLOCKED on every entry. While Iodem
 /// travels with the party (FLAG_IODEM_FOLLOWING_PARTY) his actor is kept
-/// out of sight; talking to him or walking up to him while he waits (coord
-/// event 11) makes him come along (EventScript_IodemRejoins), and until he has
-/// reached Babi Lighthouse (FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) turning back
-/// (coord event 10) brings him out to ask why
+/// out of sight; talking to him or walking up to him while he waits (
+/// step trigger 11) makes him come along (EventScript_IodemRejoins), and until
+/// he has reached Babi Lighthouse (FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) turning
+/// back (step trigger 10) brings him out to ask why
 /// (EventScript_IodemAsksWhyTurningBack). If he stays to wait, the saved place
 /// becomes the Tolbi Sanctum, so a defeat returns the party there.
 ///
 /// GondowanCave's way across the water is two things that float in it, and
-/// coord events 10 and 11 jump the leader across them (EventScript_JumpAcross).
-/// Both are kept in story flags, so the cave stays solved and Scene_Initialize
-/// puts them back: FLAG_GONDOWAN_CAVE_STUMP_MOVED once the stump has leapt in,
-/// and FLAG_GONDOWAN_CAVE_PILLAR_DROPPED once the pillar has gone in past
-/// column 42, shown from then on by ACTOR_DROPPED_PILLAR.
+/// step triggers 10 and 11 jump the leader across them
+/// (EventScript_JumpAcross). Both are kept in story flags, so the cave stays
+/// solved and Scene_Initialize puts them back: FLAG_GONDOWAN_CAVE_STUMP_MOVED
+/// once the stump has leapt in, and FLAG_GONDOWAN_CAVE_PILLAR_DROPPED once the
+/// pillar has gone in past column 42, shown from then on by
+/// ACTOR_DROPPED_PILLAR.
 ///
 /// Cell (107, 17) of the map grid is cell (43, 17) of layout layer 2,
 /// whose window starts 64 columns in: the crevice east of the pillar,
@@ -42,7 +44,7 @@
 /// neighbour. The drop makes that copy, and so does every arrival by
 /// GONDOWAN_CAVE_FROM_WORLD_MAP_EAST, solved or not. Nothing the player sees
 /// depends on it: in tbs-en the screen is the same either way, the leader
-/// jumps the crevice at row 17 (coord events 10 and 11) from either side
+/// jumps the crevice at row 17 (step triggers 10 and 11) from either side
 /// either way, and the pillar settles at the same height in each of columns
 /// 41 to 44 either way.
 
@@ -98,7 +100,7 @@ enum GondowanPassageActorId {
 };
 
 /// GondowanCaveRiver's placed actor, the one row of
-/// gGondowanCaveRiverActorTemplates that a map event names.
+/// gGondowanCaveRiverActorTemplates that a trigger names.
 enum GondowanCaveRiverActorId {
   /// Raised by Lift.
   /// ★ Named from what the player sees: a round grey boulder by the river
@@ -193,30 +195,30 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
   return gGondowanCaveActorTemplatesOther;
 }
 
-/// The map events of each map, with Iodem's in Gondowan Passage when he is
+/// The triggers of each map, with Iodem's in Gondowan Passage when he is
 /// there.
-const struct MapEvent *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_GondowanPassage) {
     if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
-      return gGondowanPassageEventsWithIodem;
+      return gGondowanPassageTriggersWithIodem;
     }
-    return gGondowanPassageEvents;
+    return gGondowanPassageTriggers;
   }
   if (sceneId == (s32)&SceneId_GondowanCaveRiver) {
-    return gGondowanCaveRiverEvents;
+    return gGondowanCaveRiverTriggers;
   }
   if (sceneId == (s32)&SceneId_GondowanCave) {
-    return gGondowanCaveEvents;
+    return gGondowanCaveTriggers;
   }
-  return gGondowanCaveEventsOther;
+  return gGondowanCaveTriggersOther;
 }
 
-/// Turning back in Gondowan Passage (coord event 10) with Iodem in the party,
+/// Turning back in Gondowan Passage (step trigger 10) with Iodem in the party,
 /// until he has reached Babi Lighthouse: he steps out and asks why Isaac is
 /// going back. Yes: he waits here for the party's return. No: he rejoins the
-/// party and Isaac steps away from the coord event.
+/// party and Isaac steps away from the step trigger.
 static void EventScript_IodemAsksWhyTurningBack(void) {
   struct Actor *leader;
 
@@ -248,7 +250,7 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
       gSaveBlock.restartEntrance = STUCCO_ROOMS_B_SANCTUM_NORTH;
     } else {
       // "Then we should continue on our way to the lighthouse." He rejoins
-      // the party, and Isaac steps away from the coord event.
+      // the party, and Isaac steps away from the step trigger.
       gFieldWork->message += 1;
       Script_ShowMessage(ACTOR_IODEM, 0);
       Import_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
@@ -270,7 +272,7 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
 }
 
 /// Iodem comes along with the party from Gondowan Passage, where he waits. He
-/// comes along when he's talked to, or walked up to (coord event 11) while he
+/// comes along when he's talked to, or walked up to (step trigger 11) while he
 /// isn't with the party. `I've been waiting for you, Isaac! We should go to
 /// Babi Lighthouse soon.`
 static void EventScript_IodemRejoins(void) {
@@ -355,15 +357,15 @@ static void EventScript_LeaveToWorldMapEast(void) {
     GameFlag_Set(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
     GameFlag_Set(0x9a4);
   }
-  Import_ScriptRequestExit(work->coordEvent);
+  Import_ScriptRequestExit(work->stepTrigger);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_End();
 }
 
-/// Walking west or east into coord events 10 and 11 in GondowanCave: the leader
-/// jumps two cells forward where the map allows (Field_TryJumpForward), across
-/// the stump and the pillar once they float in the water.
+/// Walking west or east into step triggers 10 and 11 in GondowanCave: the
+/// leader jumps two cells forward where the map allows (Field_TryJumpForward),
+/// across the stump and the pillar once they float in the water.
 static void EventScript_JumpAcross(void) { Field_TryJumpForward(); }
 
 /// Move on the stump in GondowanCave, until it has leapt: from column 30 or
@@ -383,7 +385,7 @@ static void EventScript_MoveStump(void) {
   FieldScript_End();
 }
 
-/// Pushing the pillar in GondowanCave (coord event 50): it moves a
+/// Pushing the pillar in GondowanCave (step trigger 50): it moves a
 /// step, then may have reached its place.
 static void EventScript_PushPillar(void) {
   PushedObject_AdvancePair();
@@ -678,69 +680,69 @@ struct ActorTemplate gGondowanCaveActorTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct MapEvent gGondowanCaveEventsOther[] = {
-    { MAP_EVENTS_END },
+struct Trigger gGondowanCaveTriggersOther[] = {
+    { TRIGGERS_END },
 };
 
-struct MapEvent gGondowanPassageEvents[] = {
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_NORTH },
-    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_SOUTH },
-    { MAP_EVENT_TALK, ACTOR_FIRST_SOLDIER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SoldierAsksAboutCrossing) },
-    { MAP_EVENT_TALK, ACTOR_SECOND_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveUsWereTheSoldiersWhoGuard) },
-    { MAP_EVENT_TALK, ACTOR_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEvenIfYouHeadEastYou) },
+struct Trigger gGondowanPassageTriggers[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_NORTH },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_SOUTH },
+    { TRIGGER_TALK, ACTOR_FIRST_SOLDIER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SoldierAsksAboutCrossing) },
+    { TRIGGER_TALK, ACTOR_SECOND_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveUsWereTheSoldiersWhoGuard) },
+    { TRIGGER_TALK, ACTOR_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEvenIfYouHeadEastYou) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveThoseWhoGoToGondowanRarely) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_SOLDIER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadSoldierMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveYoudThinkYouCouldGetThrough) },
-    { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_GONDOWAN_CAVE_APPLE, FIND_ITEM(ITEM_APPLE) },
-    { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_GONDOWAN_CAVE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { MAP_EVENTS_END },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_GONDOWAN_CAVE_APPLE, FIND_ITEM(ITEM_APPLE) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_GONDOWAN_CAVE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gGondowanPassageEventsWithIodem[] = {
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_NORTH },
-    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_SOUTH },
-    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IodemAsksWhyTurningBack) },
-    { MAP_EVENT_COORD, 11, FLAG_IODEM_FOLLOWING_PARTY, EVENT_SCRIPT(EventScript_IodemRejoins) },
-    { MAP_EVENT_TALK, ACTOR_FIRST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWhyWouldIodemChooseToWait) },
-    { MAP_EVENT_TALK, ACTOR_SECOND_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWeHaventSeenAnybodyUnusualCrossing) },
-    { MAP_EVENT_TALK, ACTOR_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEvenIfYouGoEastFrom) },
-    { MAP_EVENT_TALK, ACTOR_IODEM, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IodemRejoins) },
+struct Trigger gGondowanPassageTriggersWithIodem[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_NORTH },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_SOUTH },
+    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IodemAsksWhyTurningBack) },
+    { TRIGGER_STEP, 11, FLAG_IODEM_FOLLOWING_PARTY, EVENT_SCRIPT(EventScript_IodemRejoins) },
+    { TRIGGER_TALK, ACTOR_FIRST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWhyWouldIodemChooseToWait) },
+    { TRIGGER_TALK, ACTOR_SECOND_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWeHaventSeenAnybodyUnusualCrossing) },
+    { TRIGGER_TALK, ACTOR_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEvenIfYouGoEastFrom) },
+    { TRIGGER_TALK, ACTOR_IODEM, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IodemRejoins) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveIodemIsGoingToBabiLighthouse) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveItsALotOfStressBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEveryoneComesDownThisWayWhen) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_IODEM, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWeHaveToHeadForThe) },
-    { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_GONDOWAN_CAVE_APPLE, FIND_ITEM(ITEM_APPLE) },
-    { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_GONDOWAN_CAVE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { MAP_EVENTS_END },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_GONDOWAN_CAVE_APPLE, FIND_ITEM(ITEM_APPLE) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_GONDOWAN_CAVE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gGondowanCaveRiverEvents[] = {
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_NORTH },
-    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_CAVE_RIVER_TO_BOULDER_PASSAGE },
-    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, GONDOWAN_CAVE_RIVER_BOULDER_PASSAGE_TO_RIVER },
-    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_SOUTH },
+struct Trigger gGondowanCaveRiverTriggers[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_NORTH },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_CAVE_RIVER_TO_BOULDER_PASSAGE },
+    { TRIGGER_EXIT, 3, CONDITION_ALWAYS, GONDOWAN_CAVE_RIVER_BOULDER_PASSAGE_TO_RIVER },
+    { TRIGGER_EXIT, 4, CONDITION_ALWAYS, GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_SOUTH },
     { PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_RIVER_BOULDER, CONDITION_ALWAYS, 0 },
-    { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_GONDOWAN_CAVE_APPLE, FIND_ITEM(ITEM_APPLE) },
-    { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_GONDOWAN_CAVE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { MAP_EVENTS_END },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_GONDOWAN_CAVE_APPLE, FIND_ITEM(ITEM_APPLE) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_GONDOWAN_CAVE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { TRIGGERS_END },
 };
 
 /// FLAG_SCENE_TEMP_05 ends Move on the pillar.
-struct MapEvent gGondowanCaveEvents[] = {
-    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToWorldMapEast) },
-    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_NORTH },
-    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_WEST_PASSAGE },
-    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, GONDOWAN_CAVE_WEST_PASSAGE_TO_EAST_CAVE },
-    { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_SOUTH },
-    { MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_WORLD_MAP_WEST },
+struct Trigger gGondowanCaveTriggers[] = {
+    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveToWorldMapEast) },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_NORTH },
+    { TRIGGER_EXIT, 3, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_WEST_PASSAGE },
+    { TRIGGER_EXIT, 4, CONDITION_ALWAYS, GONDOWAN_CAVE_WEST_PASSAGE_TO_EAST_CAVE },
+    { TRIGGER_EXIT, 5, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_SOUTH },
+    { TRIGGER_EXIT, 6, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_WORLD_MAP_WEST },
     { PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_BOULDER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LiftBoulder) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GONDOWAN_CAVE_STUMP_MOVED, EVENT_SCRIPT(EventScript_MoveStump) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, FLAG_SCENE_TEMP_05, EVENT_SCRIPT(EventScript_MovePillar) },
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpAcross) },
-    { COORD_EVENT_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpAcross) },
-    { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 50, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
-    { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_GONDOWAN_CAVE_APPLE, FIND_ITEM(ITEM_APPLE) },
-    { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_GONDOWAN_CAVE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { MAP_EVENTS_END },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpAcross) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpAcross) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 50, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_GONDOWAN_CAVE_APPLE, FIND_ITEM(ITEM_APPLE) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_GONDOWAN_CAVE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { TRIGGERS_END },
 };
 // clang-format on

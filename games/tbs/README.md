@@ -115,13 +115,13 @@ never call each other; code several scenes need is copied into each.
 The rest of the game knows a scene only through six questions it can ask the
 scene's code: set yourself up; where can the party arrive; where do your exits
 lead; who stands here; what happens when the player talks, searches or steps
-somewhere (the [map events](glossary.md#map-event)); and which areas of you
+somewhere (the [triggers](glossary.md#trigger)); and which areas of you
 lead out. Each answer is a function rather than a fixed table, so a scene can
 answer differently as the story moves on.
 
 The six questions are `struct SceneEntries`, at the start of every overlay.
 [Engine](engine.md#overlays) describes how an overlay is loaded and
-[Scenes](src/scene/README.md) how a map event is found.
+[Scenes](src/scene/README.md) how a trigger is found.
 
 ## The scene table and areas
 
@@ -183,7 +183,7 @@ recording's rows are `gSolSanctumEntrance_Exits` in
 ![In a small room of Sol Sanctum, Isaac searches the chest in front of him: a green Small Jewel rises out of it, he holds it over his head and a window reads "Isaac got a Small Jewel."](https://alchemy.pascalpixel.com/guides/front/chest.gif)
 
 The chest gives its Small Jewel once. Opening it sets a [game
-flag](glossary.md#game-flag), and the chest's row in the scene's event table
+flag](glossary.md#game-flag), and the chest's row in the scene's trigger table
 counts only while that flag is clear; from then on the chest is drawn open and
 searching it finds it empty. A scene keeps nothing of its own between visits:
 whatever the game must remember, a chest or the end of a chapter, is a flag
@@ -224,12 +224,12 @@ order](glossary.md#the-places-in-story-order).
   turn: has the party reached Kalay, has it left Vale, has it just come out
   of the Sanctum, is this the stormy night? The first yes picks the people
   and events; with no yes it is an ordinary day
-  (`ValePlaza_GetEvents` in [vale_plaza.c](src/scene/vale_plaza.c)).
+  (`ValePlaza_GetTriggers` in [vale_plaza.c](src/scene/vale_plaza.c)).
 - **One scene per point in the story.** The prologue's stormy night elsewhere
   in Vale is a scene of its own, on its own map
   ([vale_stormy_night.c](src/scene/vale_stormy_night.c)). A place that changes
   completely gets a scene; a place whose people change reads the flags.
-- **A scene with no map events.** Vale while Mt. Aleph erupts plays its whole
+- **A scene with no triggers.** Vale while Mt. Aleph erupts plays its whole
   event as it starts and leaves by its one exit
   ([vale_eruption.c](src/scene/vale_eruption.c)).
 - **A row that lasts until its flag is set.** Each pedestal in the room of the
@@ -305,11 +305,11 @@ and bank it goes in, and [Source](src/README.md) goes through every folder.
 - [Engine](engine.md): start-up, frame timing and tasks, banks and far calls,
   overlays and songs.
 - [Places](src/field/scene_headers.s): every scene in story order, with its
-  actor templates and map events.
+  actor templates and triggers.
 - [Game rules](src/game/README.md): stats, items, Djinn, classes, levels and
   the flags.
 - [Unused](https://alchemy.pascalpixel.com/tbs/unused): the scenes, scripts
   and lines the game keeps but never plays, and why each never runs.
 - [Source](src/README.md): every file of the code, with its comments.
 - [Glossary](glossary.md): the words every page uses, from Psynergy and Djinn
-  to banks, overlays and bg events.
+  to banks, overlays and examine triggers.

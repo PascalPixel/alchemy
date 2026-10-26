@@ -6,14 +6,14 @@
 #include "map_tables.h"
 
 struct SceneEntrance;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 
 const struct SceneEntrance *VenusLighthouse_GetEntrances(void);
 const struct SceneExitRegion *VenusLighthouse_GetRegions(void);
 const u32 *VenusLighthouse_GetExits(void);
 const struct ActorTemplate *VenusLighthouse_GetActorTemplates(void);
-const struct MapEvent *VenusLighthouse_GetEvents(void);
+const struct Trigger *VenusLighthouse_GetTriggers(void);
 s32 VenusLighthouse_Initialize(void);
 extern s32 gFieldEffect_ShortScript[];
 extern s32 gFieldEffect_MediumScript[];
@@ -80,12 +80,12 @@ extern struct ActorTemplate gVenusLighthouseFirstFloorActorTemplates[];
 extern struct ActorTemplate gVenusLighthouseSecondFloorActorTemplates[];
 extern struct ActorTemplate gVenusLighthouseThirdFloorActorTemplates[];
 extern struct ActorTemplate gVenusLighthouseFourthFloorActorTemplates[];
-extern struct MapEvent gVenusLighthouseEntryEvents[];
-extern struct MapEvent gVenusLighthouseGroundFloorEvents[];
-extern struct MapEvent gVenusLighthouseFirstFloorEvents[];
-extern struct MapEvent gVenusLighthouseSecondFloorEvents[];
-extern struct MapEvent gVenusLighthouseThirdFloorEvents[];
-extern struct MapEvent gVenusLighthouseFourthFloorEvents[];
+extern struct Trigger gVenusLighthouseEntryTriggers[];
+extern struct Trigger gVenusLighthouseGroundFloorTriggers[];
+extern struct Trigger gVenusLighthouseFirstFloorTriggers[];
+extern struct Trigger gVenusLighthouseSecondFloorTriggers[];
+extern struct Trigger gVenusLighthouseThirdFloorTriggers[];
+extern struct Trigger gVenusLighthouseFourthFloorTriggers[];
 extern const u8 *gVenusThirdFloorSocketTracks[];
 extern s32 *gVenusThirdFloorNorthwestPaths[];
 extern s32 *gVenusThirdFloorNortheastPaths[];

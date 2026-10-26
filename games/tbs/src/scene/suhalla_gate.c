@@ -16,7 +16,7 @@
 ///
 /// One exit table serves the three maps; the other getters choose by
 /// gSaveBlock.sceneId, and SuhallaGateCheckpoint's actor templates also
-/// by FLAG_BABI_SPOKE_AFTER_COLOSSO. Its event table answers any map not
+/// by FLAG_BABI_SPOKE_AFTER_COLOSSO. Its trigger table answers any map not
 /// otherwise named.
 ///
 /// Before Babi's audience after Colosso the guards turn the party away for want
@@ -162,16 +162,16 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
 /// The events of Suhalla Gate's second map (SceneId_SuhallaGateDew), of
 /// Gateway Cave (SceneId_GatewayCave), or of the gate itself
 /// (SceneId_SuhallaGateCheckpoint) for any other map.
-const struct MapEvent *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_SuhallaGateDew) {
-    return gSuhallaGateDewEvents;
+    return gSuhallaGateDewTriggers;
   }
   if (sceneId == (s32)&SceneId_GatewayCave) {
-    return gGatewayCaveEvents;
+    return gGatewayCaveTriggers;
   }
-  return gSuhallaGateEventsOther;
+  return gSuhallaGateTriggersOther;
 }
 
 /// Sets up whichever of the pass's maps is entered. Once Iodem has
@@ -251,7 +251,7 @@ static void EventScript_EnterHouse(void) {
   s32 exitTrigger;
   s32 cellSize;
 
-  exitTrigger = gFieldWork->coordEvent;
+  exitTrigger = gFieldWork->stepTrigger;
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   cellSize = 2;
   Script_PlaySong(SE_DOOR_OPEN);
@@ -268,7 +268,7 @@ static void EventScript_EnterHouse(void) {
 /// or the east one (SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_EAST), forgetting the
 /// side it came in by.
 static void EventScript_LeaveForWorldMap(void) {
-  s16 exitTrigger = gFieldWork->coordEvent;
+  s16 exitTrigger = gFieldWork->stepTrigger;
 
   Sound_PlaySong(SE_MAP_EXIT);
   GameFlag_Clear(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);
@@ -653,54 +653,54 @@ struct ActorTemplate gSuhallaGateCheckpointActorTemplatesAfterAudience[] = {
     { MAP_TABLE_END },
 };
 
-struct MapEvent gSuhallaGateEventsOther[] = {
-    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveForWorldMap) },
-    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_WEST },
-    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_EAST },
-    { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveForWorldMap) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterHouse) },
-    { MAP_EVENT_COORD, 10, FLAG_BABI_SPOKE_AFTER_COLOSSO, EVENT_SCRIPT(EventScript_GuardsBlockPassage) },
-    { MAP_EVENT_COORD, 10, FLAG_SUHALLA_GATE_ATTACK_SEEN, EVENT_SCRIPT(EventScript_IodemQuestionsGuards) },
-    { MAP_EVENT_TALK, ACTOR_WEST_GUARD, FLAG_SUHALLA_GATE_ATTACK_SEEN, MSGNO(MsgSuhallaTravelPapersRequired) },
-    { MAP_EVENT_TALK, ACTOR_WEST_GUARD, CONDITION_ALWAYS, MSGNO(MsgSuhallaSendHelpFromTower) },
-    { MAP_EVENT_TALK, ACTOR_EAST_GUARD, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToEastGuard) },
+struct Trigger gSuhallaGateTriggersOther[] = {
+    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveForWorldMap) },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_WEST },
+    { TRIGGER_EXIT, 4, CONDITION_ALWAYS, SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_EAST },
+    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveForWorldMap) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterHouse) },
+    { TRIGGER_STEP, 10, FLAG_BABI_SPOKE_AFTER_COLOSSO, EVENT_SCRIPT(EventScript_GuardsBlockPassage) },
+    { TRIGGER_STEP, 10, FLAG_SUHALLA_GATE_ATTACK_SEEN, EVENT_SCRIPT(EventScript_IodemQuestionsGuards) },
+    { TRIGGER_TALK, ACTOR_WEST_GUARD, FLAG_SUHALLA_GATE_ATTACK_SEEN, MSGNO(MsgSuhallaTravelPapersRequired) },
+    { TRIGGER_TALK, ACTOR_WEST_GUARD, CONDITION_ALWAYS, MSGNO(MsgSuhallaSendHelpFromTower) },
+    { TRIGGER_TALK, ACTOR_EAST_GUARD, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToEastGuard) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_GUARD, FLAG_SUHALLA_GATE_ATTACK_SEEN, MSGNO(MsgSuhallaObeyBabiOrders) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_GUARD, CONDITION_ALWAYS, MSGNO(MsgSuhallaAshamedBeforeIodem) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, FLAG_SUHALLA_GATE_ATTACK_SEEN, MSGNO(MsgSuhallaSeeColossoNextYear) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, CONDITION_ALWAYS, MSGNO(MsgSuhallaSurvivedAttack) },
-    { MAP_EVENT_TALK, ACTOR_VANISHING_SOLDIER, FLAG_SUHALLA_GATE_SOLDIER_VANISHED, EVENT_SCRIPT(EventScript_SoldierVanishes) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), MAP_EVENT_TRIGGER_OWN_EFFECT | ACTOR_VANISHING_SOLDIER, FLAG_SUHALLA_GATE_SOLDIER_VANISHED, EVENT_SCRIPT(EventScript_SoldierVanishes) },
-    { MAP_EVENTS_END },
+    { TRIGGER_TALK, ACTOR_VANISHING_SOLDIER, FLAG_SUHALLA_GATE_SOLDIER_VANISHED, EVENT_SCRIPT(EventScript_SoldierVanishes) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_VANISHING_SOLDIER, FLAG_SUHALLA_GATE_SOLDIER_VANISHED, EVENT_SCRIPT(EventScript_SoldierVanishes) },
+    { TRIGGERS_END },
 };
 // clang-format on
 
-struct MapEvent gSuhallaGateDewEvents[] = {
-    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS,
+struct Trigger gSuhallaGateDewTriggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
      SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_WEST},
-    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, SUHALLA_GATE_DEW_WEST_TO_EAST},
-    {MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, SUHALLA_GATE_DEW_EAST_TO_WEST},
-    {MAP_EVENT_EXIT, 4, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, SUHALLA_GATE_DEW_WEST_TO_EAST},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, SUHALLA_GATE_DEW_EAST_TO_WEST},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS,
      SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_EAST},
-    {MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, SUHALLA_GATE_DEW_TO_GATEWAY_CAVE},
-    {MAP_EVENT_TALK, ACTOR_DEW, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, SUHALLA_GATE_DEW_TO_GATEWAY_CAVE},
+    {TRIGGER_TALK, ACTOR_DEW, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_FightDew)},
-    {BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 100,
+    {EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | FACING_NORTH, 100,
      FLAG_SUHALLA_GATE_MINT, FIND_ITEM(ITEM_MINT)},
-    {BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_EAST, 100,
+    {EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | FACING_EAST, 100,
      FLAG_SUHALLA_GATE_MINT, FIND_ITEM(ITEM_MINT)},
-    {BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_WEST, 100,
+    {EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | FACING_WEST, 100,
      FLAG_SUHALLA_GATE_MINT, FIND_ITEM(ITEM_MINT)},
-    {MAP_EVENTS_END},
+    {TRIGGERS_END},
 };
 
-struct MapEvent gGatewayCaveEvents[] = {
-    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, GATEWAY_CAVE_TO_SUHALLA_GATE_DEW},
-    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS,
+struct Trigger gGatewayCaveTriggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, GATEWAY_CAVE_TO_SUHALLA_GATE_DEW},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS,
      GATEWAY_CAVE_NORTH_TO_SOUTH},
-    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS,
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS,
      GATEWAY_CAVE_SOUTH_TO_NORTH},
-    {MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, GATEWAY_CAVE_TO_WORLD_MAP},
-    {BG_EVENT(BG_EVENT_SILENT), 100, FLAG_GATEWAY_CAVE_PSYNERGY_STONE,
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, GATEWAY_CAVE_TO_WORLD_MAP},
+    {EXAMINE_TRIGGER(EXAMINE_SILENT), 100, FLAG_GATEWAY_CAVE_PSYNERGY_STONE,
      FIND_PSYNERGY_STONE},
-    {MAP_EVENTS_END},
+    {TRIGGERS_END},
 };

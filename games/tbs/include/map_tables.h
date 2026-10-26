@@ -3,7 +3,7 @@
 
 /// @file
 /// The scene table formats: entrances, exits, actor templates
-/// and map events, and the macros that write them.
+/// and triggers, and the macros that write them.
 
 #include "static_assert.h"
 #include "scene_ids.h"
@@ -52,7 +52,7 @@ enum {
 
 /// Set once the party has left Vale (WORLD_MAP_FROM_VALE_PLAZA): Vale's
 /// scenes then place their later actors and lines, the Sanctum takes
-/// another map event table and Healer line, and the Sol Sanctum approach moves
+/// another trigger table and Healer line, and the Sol Sanctum approach moves
 /// its sentry, changes metatile behaviors and stops sending its way down to
 /// SceneId_ValeEruption.
 /// ★ Named from its area name: Vale
@@ -197,53 +197,55 @@ enum ActorId {
 /// Whole pixels as 16.16 fixed point.
 #define PIXELS(value) ((value) << 16)
 
-/// A map event: its kind and detail, the trigger it answers, its condition
+/// A trigger: its kind and detail, the subject it answers, its condition
 /// and its value (a message or a script).
-struct MapEvent {
-  /// The kind and its detail, read by Scene_FindEvent and the item, Psynergy
-  /// and bg event lookups; -1 ends the table. The detail bits depend on the
-  /// kind. bits: 30..28 Psynergy phase | 15..12 coord facing | 15..8 item or
-  /// ability | 11 short push | 10 facing | 9 walking | 8..4 bg target | 7
+struct Trigger {
+  /// The kind and its detail, read by Scene_FindTrigger and the item, Psynergy
+  /// and examine trigger lookups; -1 ends the table. The detail bits depend on
+  /// the kind. bits: 30..28 Psynergy phase | 15..12 step facing | 15..8 item or
+  /// ability | 11 short push | 10 facing | 9 walking | 8..4 examine target | 7
   /// Psynergy anywhere | 5..4 exit sound | 4 on an actor | 3..0 kind
   u32 kind;
-  /// What the event answers: an actor id, a metatile behavior, a treasure
-  /// spot id or a raised value. Item and Psynergy events read it as bits below;
-  /// bit 10 also skips a bg event's checking message and a Psynergy's effect.
-  /// bits: 15..12 facing | 11 needs facing | 10 own message | 7..0 target
-  s16 trigger;
+  /// What the trigger answers: an actor id, a metatile behavior, a treasure
+  /// spot id or a raised value. Item and Psynergy triggers read it as bits
+  /// below; bit 10 also skips an examine trigger's checking message and a
+  /// Psynergy's effect. bits: 15..12 facing | 11 needs facing | 10 own message
+  /// | 7..0 target
+  s16 subject;
   s16 condition; ///< -1 always, a flag | 0x1000 set, else the flag clear
   /// A message below 0x10000, else a script function; for an exit, the exit
-  /// kind its scene's exit table matches, and for a bg event, a FIND_ value.
+  /// kind its scene's exit table matches, and for an examine trigger, a FIND_
+  /// value.
   u32 value;
 };
 
-STATIC_ASSERT(sizeof(struct MapEvent) == 12);
+STATIC_ASSERT(sizeof(struct Trigger) == 12);
 
-/// MapEvent.trigger bit 10: a Psynergy event runs in place of the
-/// Psynergy's effect, as Mind Read on someone who notices it does, and a
-/// bg event shows no checking message.
-#define MAP_EVENT_TRIGGER_OWN_EFFECT 0x400
+/// Trigger.subject bit 10: a Psynergy trigger runs in place of the
+/// Psynergy's effect, as Mind Read on someone who notices it does, and an
+/// examine trigger shows no checking message.
+#define TRIGGER_SUBJECT_OWN_EFFECT 0x400
 
-/// MapEvent.kind's low four bits: what the event answers.
-enum MapEventKind {
-  MAP_EVENT_TALK = 0, ///< the A button on an actor; trigger is its id
-  /// Stepping onto a cell whose metatile behavior is the trigger, when no coord
-  /// event answers it; value is the exit kind.
-  MAP_EVENT_EXIT = 1,
-  MAP_EVENT_COORD = 2, ///< stepping onto or pushing against a metatile behavior
-  MAP_EVENT_BG = 3,    ///< the A button on what is ahead, when it is no actor
-  MAP_EVENT_ITEM = 4,  ///< an item used on a cell or an actor
-  MAP_EVENT_PSYNERGY = 5,
-  MAP_EVENT_RAISED = 6, ///< raised by code through FieldWork.raisedEvent
+/// Trigger.kind's low four bits: what the trigger answers.
+enum TriggerKind {
+  TRIGGER_TALK = 0, ///< the A button on an actor; the subject is its id
+  /// Stepping onto a cell whose metatile behavior is the subject, when no
+  /// step trigger answers it; value is the exit kind.
+  TRIGGER_EXIT = 1,
+  TRIGGER_STEP = 2,    ///< stepping onto or pushing against a metatile behavior
+  TRIGGER_EXAMINE = 3, ///< the A button on what is ahead, when it is no actor
+  TRIGGER_ITEM = 4,    ///< an item used on a cell or an actor
+  TRIGGER_PSYNERGY = 5,
+  TRIGGER_RAISED = 6, ///< raised by code through FieldWork.raisedEvent
   /// Talking to an actor Halt has stopped
-  /// (Scene_FindActorTalkEvent).
-  MAP_EVENT_TALK_HALTED = 7
+  /// (Scene_FindActorTalkTrigger).
+  TRIGGER_TALK_HALTED = 7
 };
 
 // XXX: what leaving animations 26 and 25 and arrivals 24 and 23 show;
 // recordings of an exit of each style would settle it.
-/// An exit event's control bits 5..4: how the leader leaves
-/// (Scene_RunCoordEventOrExit).
+/// An exit trigger's control bits 5..4: how the leader leaves
+/// (Scene_RunStepTriggerOrExit).
 enum ExitStyle {
   EXIT_STYLE_NORMAL = 0x00, ///< with SE_MAP_EXIT
   EXIT_STYLE_SILENT = 0x10,
@@ -261,23 +263,22 @@ enum ExitStyle {
 /// party corners the suspects.
 #define FIELD_RAISED_EVENT_MENUS 250
 
-/// A coord event that needs the leader to have pushed against it for more
-/// than 12 frames, or 2 with COORD_EVENT_FLAG_QUICK.
-#define COORD_EVENT_FLAG_WALKING 0x200
-/// With COORD_EVENT_FLAG_WALKING, 2 frames of pushing are enough.
-#define COORD_EVENT_FLAG_QUICK 0x800
+/// A step trigger that needs the leader to have pushed against it for more
+/// than 12 frames, or 2 with STEP_TRIGGER_FLAG_QUICK.
+#define STEP_TRIGGER_FLAG_WALKING 0x200
+/// With STEP_TRIGGER_FLAG_WALKING, 2 frames of pushing are enough.
+#define STEP_TRIGGER_FLAG_QUICK 0x800
 /// An event that needs the leader to face within an eighth of a turn of the
-/// heading in control bits 15..12 (Scene_FindEvent).
-#define MAP_EVENT_FLAG_FACING 0x400
-#define COORD_EVENT_WALKING (MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING)
+/// heading in control bits 15..12 (Scene_FindTrigger).
+#define TRIGGER_FLAG_FACING 0x400
+#define STEP_TRIGGER_WALKING (TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING)
 /// facing is an enum Facing; only its top four bits are compared.
-#define COORD_EVENT_FACING(facing)                                             \
-  (MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | (facing))
-#define COORD_EVENT_WALKING_INTO(facing)                                       \
-  (MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING | MAP_EVENT_FLAG_FACING |        \
-   (facing))
+#define STEP_TRIGGER_FACING(facing)                                            \
+  (TRIGGER_STEP | TRIGGER_FLAG_FACING | (facing))
+#define STEP_TRIGGER_WALKING_INTO(facing)                                      \
+  (TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING | TRIGGER_FLAG_FACING | (facing))
 
-/// When a Psynergy event runs around its effect, control bits 30..28.
+/// When a Psynergy trigger runs around its effect, control bits 30..28.
 enum PsynergyPhase {
   /// After the effect (Field_UsePsynergy), PSYNERGY_ON_ACTOR's phase. With
   /// PSYNERGY_SCRIPT_PLAYS_EFFECT the event plays the effect itself.
@@ -296,93 +297,93 @@ enum PsynergyPhase {
   /// this phase also makes Field_UsePsynergy aim the effect at the actor
   /// ahead.
   PSYNERGY_PHASE_EFFECT_ACTS = 5,
-  PSYNERGY_PHASE_ANY = 7 ///< Scene_FindPsynergyEvent matches every phase
+  PSYNERGY_PHASE_ANY = 7 ///< Scene_FindPsynergyTrigger matches every phase
 };
 
-/// The control word of a Psynergy event (MAP_EVENT_PSYNERGY) in the given
-/// phase, as Scene_FindPsynergyEvent compares it (bits 30..28 phase
+/// The control word of a Psynergy trigger (TRIGGER_PSYNERGY) in the given
+/// phase, as Scene_FindPsynergyTrigger compares it (bits 30..28 phase
 /// | 3..0 kind).
-#define PSYNERGY_EVENT(phase) ((phase) << 28 | MAP_EVENT_PSYNERGY)
-#define PSYNERGY_EV_ANY PSYNERGY_EVENT(PSYNERGY_PHASE_ANY)
+#define PSYNERGY_TRIGGER(phase) ((phase) << 28 | TRIGGER_PSYNERGY)
+#define PSYNERGY_TRIGGER_ANY PSYNERGY_TRIGGER(PSYNERGY_PHASE_ANY)
 
-/// A Psynergy event on the actor the leader faces.
-#define MAP_EVENT_PSYNERGY_ON_ACTOR 0x10
+/// A Psynergy trigger on the actor the leader faces.
+#define TRIGGER_PSYNERGY_ON_ACTOR 0x10
 #define PSYNERGY_ON_ACTOR(ability)                                             \
-  (MAP_EVENT_PSYNERGY | MAP_EVENT_PSYNERGY_ON_ACTOR | (ability) << 8)
-/// Bits of an after-cast Psynergy event's target word, beside the
+  (TRIGGER_PSYNERGY | TRIGGER_PSYNERGY_ON_ACTOR | (ability) << 8)
+/// Bits of an after-cast Psynergy trigger's target word, beside the
 /// actor's number.
 enum PsynergyEventTarget {
   /// Field_UsePsynergy clears FLAG_PSYNERGY_EFFECT and plays no effect of its
   /// own, leaving it to the event's script.
   PSYNERGY_SCRIPT_PLAYS_EFFECT = 0x400
 };
-/// A Psynergy event on an actor at one phase of the cast, as
+/// A Psynergy trigger on an actor at one phase of the cast, as
 /// PSYNERGY_ANYWHERE is for any target.
 #define PSYNERGY_PHASE_ON_ACTOR(ability, phase)                                \
   ((u32)(phase) << 28 | PSYNERGY_ON_ACTOR(ability))
 
-/// A Psynergy event for any target, not a particular actor or cell.
-#define MAP_EVENT_PSYNERGY_ANYWHERE 0x80
+/// A Psynergy trigger for any target, not a particular actor or cell.
+#define TRIGGER_PSYNERGY_ANYWHERE 0x80
 #define PSYNERGY_ANYWHERE(ability, phase)                                      \
-  ((u32)(phase) << 28 | (ability) << 8 | MAP_EVENT_PSYNERGY_ANYWHERE |         \
-   MAP_EVENT_PSYNERGY)
+  ((u32)(phase) << 28 | (ability) << 8 | TRIGGER_PSYNERGY_ANYWHERE |           \
+   TRIGGER_PSYNERGY)
 
 // Using an item (one byte) on a metatile behavior, or on an actor, as
-// Field_FindItemEvent reads them.
-#define MAP_EVENT_ITEM_ON_ACTOR 0x10
-#define USE_ITEM(item) (MAP_EVENT_ITEM | (item) << 8)
+// Field_FindItemTrigger reads them.
+#define TRIGGER_ITEM_ON_ACTOR 0x10
+#define USE_ITEM(item) (TRIGGER_ITEM | (item) << 8)
 #define USE_ITEM_ON_ACTOR(item)                                                \
-  (MAP_EVENT_ITEM | MAP_EVENT_ITEM_ON_ACTOR | (item) << 8)
+  (TRIGGER_ITEM | TRIGGER_ITEM_ON_ACTOR | (item) << 8)
 
-#define BG_EVENT(target) (MAP_EVENT_BG | (target) << 4)
-/// A bg event searched while facing the given way, as a counter is searched
-/// across.
-#define BG_EVENT_FACING(facing)                                                \
-  (MAP_EVENT_BG | MAP_EVENT_FLAG_FACING | (facing))
-/// A talk event that answers only while the leader faces the given way, so one
-/// actor can answer differently from each side.
-#define TALK_EVENT_FACING(facing)                                              \
-  (MAP_EVENT_TALK | MAP_EVENT_FLAG_FACING | (facing))
+#define EXAMINE_TRIGGER(target) (TRIGGER_EXAMINE | (target) << 4)
+/// An examine trigger searched while facing the given way, as a counter is
+/// searched across.
+#define EXAMINE_TRIGGER_FACING(facing)                                         \
+  (TRIGGER_EXAMINE | TRIGGER_FLAG_FACING | (facing))
+/// A talk trigger that answers only while the leader faces the given way, so
+/// one actor can answer differently from each side.
+#define TALK_TRIGGER_FACING(facing)                                            \
+  (TRIGGER_TALK | TRIGGER_FLAG_FACING | (facing))
 
-/// What a bg event is on, BG_EVENT()'s control bits 8..4. Target n shows
-/// message MsgTileChecked + n as the leader checks it, unless the trigger has
-/// bit 10; target 0 shows nothing.
-enum BgEventTarget {
-  BG_EVENT_SILENT = 0,
-  BG_EVENT_CHEST = 1,
-  BG_EVENT_JAR,
-  BG_EVENT_BARREL,
-  BG_EVENT_WALL,
-  BG_EVENT_GROUND,
-  BG_EVENT_ROCK,
-  BG_EVENT_HOLE,
-  BG_EVENT_GRAVE,
-  BG_EVENT_TREE,
-  BG_EVENT_UNDERBRUSH,
-  BG_EVENT_DOOR,
-  BG_EVENT_CHIMNEY,
-  BG_EVENT_WOODEN_BOX,
-  BG_EVENT_BED,
-  BG_EVENT_BOOKCASE,
-  BG_EVENT_STONE_COFFIN,
-  BG_EVENT_FIREPLACE,
-  BG_EVENT_WATER,
-  BG_EVENT_STONE_PILLAR,
-  BG_EVENT_STALACTITE,
-  BG_EVENT_BOARDS,
-  BG_EVENT_FOUNTAIN,
-  BG_EVENT_OVEN,
-  BG_EVENT_TABLE,
-  BG_EVENT_STONE_STATUE,
-  BG_EVENT_STONE_TABLET,
-  BG_EVENT_SHELF,
-  BG_EVENT_WARDROBE,
-  BG_EVENT_FIREWOOD,
-  BG_EVENT_BOOKS,
-  BG_EVENT_WELL
+/// What an examine trigger is on, EXAMINE_TRIGGER()'s control bits 8..4. Target
+/// n shows message MsgTileChecked + n as the leader checks it, unless the
+/// trigger has bit 10; target 0 shows nothing.
+enum ExamineTarget {
+  EXAMINE_SILENT = 0,
+  EXAMINE_CHEST = 1,
+  EXAMINE_JAR,
+  EXAMINE_BARREL,
+  EXAMINE_WALL,
+  EXAMINE_GROUND,
+  EXAMINE_ROCK,
+  EXAMINE_HOLE,
+  EXAMINE_GRAVE,
+  EXAMINE_TREE,
+  EXAMINE_UNDERBRUSH,
+  EXAMINE_DOOR,
+  EXAMINE_CHIMNEY,
+  EXAMINE_WOODEN_BOX,
+  EXAMINE_BED,
+  EXAMINE_BOOKCASE,
+  EXAMINE_STONE_COFFIN,
+  EXAMINE_FIREPLACE,
+  EXAMINE_WATER,
+  EXAMINE_STONE_PILLAR,
+  EXAMINE_STALACTITE,
+  EXAMINE_BOARDS,
+  EXAMINE_FOUNTAIN,
+  EXAMINE_OVEN,
+  EXAMINE_TABLE,
+  EXAMINE_STONE_STATUE,
+  EXAMINE_STONE_TABLET,
+  EXAMINE_SHELF,
+  EXAMINE_WARDROBE,
+  EXAMINE_FIREWOOD,
+  EXAMINE_BOOKS,
+  EXAMINE_WELL
 };
 
-/// What a search finds, a bg event's value: a function when bits 27..24
+/// What a search finds, an examine trigger's value: a function when bits 27..24
 /// are set, else a type in its top twelve bits.
 #define FIND_ITEM(item) (0x00100000 | (item))
 #define FIND_COINS(coins) (0x00200000 | (coins))
@@ -393,10 +394,10 @@ enum BgEventTarget {
 /// ENCOUNTER_ZONE_MIMIC.
 #define FIND_MIMIC 0x00500000
 
-/// A script function as a MapEvent value; its address is above 0x10000, so
+/// A script function as a Trigger value; its address is above 0x10000, so
 /// it is never taken for a message.
 #define EVENT_SCRIPT(script) ((u32)(script))
-#define MAP_EVENTS_END 0xffffffff ///< ends a map event table
+#define TRIGGERS_END 0xffffffff ///< ends a trigger table
 
 struct SceneExitRegion;
 

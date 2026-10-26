@@ -8,7 +8,7 @@
 #include "flags.h"
 #include "songs.h"
 
-/// The metatile behaviors the cave's map events answer.
+/// The metatile behaviors the cave's triggers answer.
 enum WestLunpaCaveMetatileBehavior {
   MB_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE = 1,
   MB_WEST_LUNPA_CAVE_LUNPA_PASSAGE = 2,

@@ -33,7 +33,7 @@
 /// layers are drawn differently (AltmillerCave_InitializeDarkness). In an
 /// evenly dark room BG1 covers everything outside it and is only blended inside
 /// it. AltmillerCaveEntrance darkens by steps instead
-/// (FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS): coord events 60 to 65 each set a
+/// (FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS): step triggers 60 to 65 each set a
 /// level, kept in gSceneLocalState byte 4, from the lightest at the mouth to
 /// the darkest by the inner chamber, and blends outside the light while BG1 is
 /// left out inside it. AltmillerCave_ApplyFadeBlend gives BG1 no weight and the
@@ -371,35 +371,38 @@ static void AltmillerCave_SetFadeLevel(s32 level) {
 }
 
 /// Crossing the first darkness boundary sets the cave's lightest level.
-/// AltmillerCaveEntrance's boundaries are coord events 60 to 65:
+/// AltmillerCaveEntrance's boundaries are step triggers 60 to 65:
 /// crossing one sets its level, 0 to 5, each a step darker than the last.
 static void AltmillerCave_DarkenToLevel0(void) {
   AltmillerCave_SetFadeLevel(0);
 }
 
-/// Crossing the second darkness boundary (coord event 61) sets darkness level
+/// Crossing the second darkness boundary (step trigger 61) sets darkness level
 /// 1.
 static void AltmillerCave_DarkenToLevel1(void) {
   AltmillerCave_SetFadeLevel(1);
 }
 
-/// Crossing the third darkness boundary (coord event 62) sets darkness level 2.
+/// Crossing the third darkness boundary (step trigger 62) sets darkness
+/// level 2.
 static void AltmillerCave_DarkenToLevel2(void) {
   AltmillerCave_SetFadeLevel(2);
 }
 
-/// Crossing the fourth darkness boundary (coord event 63) sets darkness level
+/// Crossing the fourth darkness boundary (step trigger 63) sets darkness level
 /// 3.
 static void AltmillerCave_DarkenToLevel3(void) {
   AltmillerCave_SetFadeLevel(3);
 }
 
-/// Crossing the fifth darkness boundary (coord event 64) sets darkness level 4.
+/// Crossing the fifth darkness boundary (step trigger 64) sets darkness
+/// level 4.
 static void AltmillerCave_DarkenToLevel4(void) {
   AltmillerCave_SetFadeLevel(4);
 }
 
-/// Crossing the sixth darkness boundary (coord event 65) sets darkness level 5.
+/// Crossing the sixth darkness boundary (step trigger 65) sets darkness
+/// level 5.
 static void AltmillerCave_DarkenToLevel5(void) {
   AltmillerCave_SetFadeLevel(5);
 }
@@ -1980,7 +1983,7 @@ static void AltmillerCave_RepeatRockOrder(void) {
   FieldScript_End();
 }
 
-/// In AltmillerCaveBabi, walking away from Babi (coord event 19) the first
+/// In AltmillerCaveBabi, walking away from Babi (step trigger 19) the first
 /// time after meeting him: he calls the party back and says where the draught
 /// is. "Wait... The draught is... on a table behind the door."
 static void AltmillerCave_BabiCallsPartyBack(void) {
@@ -2004,25 +2007,25 @@ static void AltmillerCave_BabiCallsPartyBack(void) {
   FieldScript_End();
 }
 
-const struct MapEvent *AltmillerCave_GetEvents(void) {
+const struct Trigger *AltmillerCave_GetTriggers(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_AltmillerCaveBabi) {
-    return gAltmillerCave_BabiEvents;
+    return gAltmillerCave_BabiTriggers;
   }
   if (sceneId == (s32)&SceneId_AltmillerCaveVialChest) {
-    return gAltmillerCave_VialChestEvents;
+    return gAltmillerCave_VialChestTriggers;
   }
   if (sceneId == (s32)&SceneId_AltmillerCaveSquall) {
-    return gAltmillerCave_SquallEvents;
+    return gAltmillerCave_SquallTriggers;
   }
   if (sceneId == (s32)&SceneId_AltmillerCaveCookieChest) {
-    return gAltmillerCave_CookieChestEvents;
+    return gAltmillerCave_CookieChestTriggers;
   }
   if (sceneId == (s32)&SceneId_AltmillerCaveDraught) {
-    return gAltmillerCave_DraughtEvents;
+    return gAltmillerCave_DraughtTriggers;
   }
-  return gAltmillerCave_EventsOther;
+  return gAltmillerCave_TriggersOther;
 }
 
 /// Update callback of AltmillerCaveDraught's obstacles: drawn on the leader's
@@ -2546,108 +2549,106 @@ s32 gAltmillerCave_BabiLeavePath[] = {
 };
 
 // clang-format off
-struct MapEvent gAltmillerCave_EventsOther[] = {
-    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_WORLD_MAP},
-    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_TORCH_CHAMBER},
-    {MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TORCH_CHAMBER_TO_PASSAGE},
-    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_ALTMILLER_CAVE_BABI},
-    {MAP_EVENT_COORD, 60, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel0)},
-    {MAP_EVENT_COORD, 61, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel1)},
-    {MAP_EVENT_COORD, 62, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel2)},
-    {MAP_EVENT_COORD, 63, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel3)},
-    {MAP_EVENT_COORD, 64, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel4)},
-    {MAP_EVENT_COORD, 65, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel5)},
+struct Trigger gAltmillerCave_TriggersOther[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_WORLD_MAP},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_TORCH_CHAMBER},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TORCH_CHAMBER_TO_PASSAGE},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_ALTMILLER_CAVE_BABI},
+    {TRIGGER_STEP, 60, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel0)},
+    {TRIGGER_STEP, 61, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel1)},
+    {TRIGGER_STEP, 62, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel2)},
+    {TRIGGER_STEP, 63, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel3)},
+    {TRIGGER_STEP, 64, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel4)},
+    {TRIGGER_STEP, 65, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel5)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS,
         EVENT_SCRIPT(AltmillerCave_StartReveal)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS,
         EVENT_SCRIPT(AltmillerCave_EndReveal)},
     {PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_StartRetreat)},
-    {MAP_EVENTS_END},
+    {TRIGGERS_END},
 };
 
-struct MapEvent gAltmillerCave_BabiEvents[] = {
-    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 10, CONDITION_ALWAYS, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_ENTRANCE},
-    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 11, CONDITION_ALWAYS, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_VIAL_CHEST},
-    {MAP_EVENT_TALK, ACTOR_INVISIBLE_BABI, FLAG_MET_INVISIBLE_BABI, EVENT_SCRIPT(AltmillerCave_MeetInvisibleBabi)},
-    {MAP_EVENT_TALK, ACTOR_INVISIBLE_BABI, FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT, EVENT_SCRIPT(AltmillerCave_RepeatRockOrder)},
-    {MAP_EVENT_TALK, ACTOR_INVISIBLE_BABI, FLAG_BABI_SAVED, EVENT_SCRIPT(AltmillerCave_RestoreBabiAndInviteParty)},
-    {MAP_EVENT_COORD, 19, FLAG_BABI_CALLED_PARTY_BACK, EVENT_SCRIPT(AltmillerCave_BabiCallsPartyBack)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), MAP_EVENT_TRIGGER_OWN_EFFECT | ACTOR_INVISIBLE_BABI, FLAG_MET_INVISIBLE_BABI,
+struct Trigger gAltmillerCave_BabiTriggers[] = {
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 10, CONDITION_ALWAYS, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_ENTRANCE},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 11, CONDITION_ALWAYS, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_VIAL_CHEST},
+    {TRIGGER_TALK, ACTOR_INVISIBLE_BABI, FLAG_MET_INVISIBLE_BABI, EVENT_SCRIPT(AltmillerCave_MeetInvisibleBabi)},
+    {TRIGGER_TALK, ACTOR_INVISIBLE_BABI, FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT, EVENT_SCRIPT(AltmillerCave_RepeatRockOrder)},
+    {TRIGGER_TALK, ACTOR_INVISIBLE_BABI, FLAG_BABI_SAVED, EVENT_SCRIPT(AltmillerCave_RestoreBabiAndInviteParty)},
+    {TRIGGER_STEP, 19, FLAG_BABI_CALLED_PARTY_BACK, EVENT_SCRIPT(AltmillerCave_BabiCallsPartyBack)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_INVISIBLE_BABI, FLAG_MET_INVISIBLE_BABI,
         EVENT_SCRIPT(AltmillerCave_MeetInvisibleBabi)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INVISIBLE_BABI, FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT, MSGNO(MsgAltmillerNeedDraught)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), MAP_EVENT_TRIGGER_OWN_EFFECT | ACTOR_INVISIBLE_BABI, FLAG_BABI_SAVED,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_INVISIBLE_BABI, FLAG_BABI_SAVED,
         EVENT_SCRIPT(AltmillerCave_RestoreBabiAndInviteParty)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS,
         EVENT_SCRIPT(AltmillerCave_EndReveal)},
     {PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_StartRetreat)},
-    {BG_EVENT(BG_EVENT_CHEST), 100, FLAG_ALTMILLER_CAVE_MIMIC_BEATEN, FIND_MIMIC | 5},
-    {MAP_EVENTS_END},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTMILLER_CAVE_MIMIC_BEATEN, FIND_MIMIC | 5},
+    {TRIGGERS_END},
 };
 
-struct MapEvent gAltmillerCave_VialChestEvents[] = {
-    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 20, CONDITION_ALWAYS, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_BABI},
-    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 21, CONDITION_ALWAYS, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_SQUALL},
+struct Trigger gAltmillerCave_VialChestTriggers[] = {
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 20, CONDITION_ALWAYS, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_BABI},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 21, CONDITION_ALWAYS, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_SQUALL},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS,
         EVENT_SCRIPT(AltmillerCave_EndReveal)},
     {PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_StartRetreat)},
-    {BG_EVENT(BG_EVENT_CHEST), 100, FLAG_ALTMILLER_CAVE_VIAL, FIND_ITEM(ITEM_VIAL)},
-    {MAP_EVENTS_END},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTMILLER_CAVE_VIAL, FIND_ITEM(ITEM_VIAL)},
+    {TRIGGERS_END},
 };
 
-struct MapEvent gAltmillerCave_SquallEvents[] = {
-    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 30, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_VIAL_CHEST},
-    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 31, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_COOKIE_CHEST},
-    {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 72, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedActor)},
-    {COORD_EVENT_WALKING_INTO(FACING_WEST), 73, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedActor)},
-    {COORD_EVENT_WALKING_INTO(FACING_NORTH), 74, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedActor)},
-    {COORD_EVENT_WALKING_INTO(FACING_EAST), 75, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedActor)},
-    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 71, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_MoveStagedActorToClearPosition)},
-    {COORD_EVENT_WALKING_INTO(FACING_EAST), 77, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_AdvanceObstacleAndCheckPassage)},
+struct Trigger gAltmillerCave_SquallTriggers[] = {
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 30, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_VIAL_CHEST},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 31, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_COOKIE_CHEST},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 72, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedActor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 73, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedActor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 74, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedActor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 75, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedActor)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 71, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_MoveStagedActorToClearPosition)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 77, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_AdvanceObstacleAndCheckPassage)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SQUALL_ROOM_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_UpdateMovedObstacle)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_SQUALL_ROOM_PUDDLE, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_CheckFrostTargetCollision)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SQUALL_ROOM_PUDDLE, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_FreezePuddle)},
-    {MAP_EVENT_TALK, ACTOR_SQUALL, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_StartDjinnBattle)},
-    {MAP_EVENTS_END},
+    {TRIGGER_TALK, ACTOR_SQUALL, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_StartDjinnBattle)},
+    {TRIGGERS_END},
 };
 
-struct MapEvent gAltmillerCave_CookieChestEvents[] = {
-    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 40, CONDITION_ALWAYS, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_SQUALL},
-    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 41, CONDITION_ALWAYS, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_DRAUGHT},
+struct Trigger gAltmillerCave_CookieChestTriggers[] = {
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 40, CONDITION_ALWAYS, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_SQUALL},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 41, CONDITION_ALWAYS, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_DRAUGHT},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS,
         EVENT_SCRIPT(AltmillerCave_EndReveal)},
     {PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_StartRetreat)},
-    {BG_EVENT(BG_EVENT_CHEST), 100, FLAG_ALTMILLER_CAVE_COOKIE, FIND_ITEM(ITEM_COOKIE)},
-    {MAP_EVENTS_END},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTMILLER_CAVE_COOKIE, FIND_ITEM(ITEM_COOKIE)},
+    {TRIGGERS_END},
 };
 // clang-format on
 
-struct MapEvent gAltmillerCave_DraughtEvents[] = {
-    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 50, CONDITION_ALWAYS,
+struct Trigger gAltmillerCave_DraughtTriggers[] = {
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 50, CONDITION_ALWAYS,
      ALTMILLER_CAVE_DRAUGHT_TO_ALTMILLER_CAVE_COOKIE_CHEST},
-    {MAP_EVENT_EXIT, 51, CONDITION_ALWAYS, ALTMILLER_CAVE_DRAUGHT_TO_ROCKS},
-    {MAP_EVENT_EXIT, 52, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, 51, CONDITION_ALWAYS, ALTMILLER_CAVE_DRAUGHT_TO_ROCKS},
+    {TRIGGER_EXIT, 52, CONDITION_ALWAYS,
      ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_PILLAR_CAVE},
-    {MAP_EVENT_EXIT, 53, CONDITION_ALWAYS,
-     ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_CHEST},
-    {MAP_EVENT_EXIT, 54, CONDITION_ALWAYS,
-     ALTMILLER_CAVE_DRAUGHT_CHEST_TO_ROCKS},
-    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 70, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, 53, CONDITION_ALWAYS, ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_CHEST},
+    {TRIGGER_EXIT, 54, CONDITION_ALWAYS, ALTMILLER_CAVE_DRAUGHT_CHEST_TO_ROCKS},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 70, CONDITION_ALWAYS,
      EVENT_SCRIPT(AltmillerCave_MoveStagedActorToClearPosition)},
-    {MAP_EVENT_TALK, ACTOR_BLUE_ROCK, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_BLUE_ROCK, CONDITION_ALWAYS,
      EVENT_SCRIPT(AltmillerCave_TurnRock)},
-    {MAP_EVENT_TALK, ACTOR_GREEN_ROCK, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_GREEN_ROCK, CONDITION_ALWAYS,
      EVENT_SCRIPT(AltmillerCave_TurnRock)},
-    {MAP_EVENT_TALK, ACTOR_WHITE_ROCK, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_WHITE_ROCK, CONDITION_ALWAYS,
      EVENT_SCRIPT(AltmillerCave_TurnRock)},
-    {MAP_EVENT_TALK, ACTOR_YELLOW_ROCK, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_YELLOW_ROCK, CONDITION_ALWAYS,
      EVENT_SCRIPT(AltmillerCave_TurnRock)},
-    {MAP_EVENT_TALK, ACTOR_RED_ROCK, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_RED_ROCK, CONDITION_ALWAYS,
      EVENT_SCRIPT(AltmillerCave_TurnRock)},
-    {BG_EVENT(BG_EVENT_CHEST), 100, FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT,
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT,
      FIND_ITEM(ITEM_MYSTIC_DRAUGHT)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0,
      CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_StartReveal)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0,
      CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_EndReveal)},
-    {MAP_EVENTS_END},
+    {TRIGGERS_END},
 };

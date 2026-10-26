@@ -13,7 +13,7 @@
 
 struct FieldPosition;
 struct Object;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 struct Window;
 

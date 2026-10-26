@@ -321,7 +321,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
 
   action = Ability_Get(PSYNERGY_ABILITY_MASK &
                        ((struct PsynergyMenuWork *)gMenuWork)->sideAction[0]);
-  if (Scene_HasFieldPsynergyEventFar(action->fieldPsynergy) != 0) {
+  if (Scene_HasFieldPsynergyTriggerFar(action->fieldPsynergy) != 0) {
     return 0;
   }
   classification = 2;

@@ -5,14 +5,14 @@
 #include "map_tables.h"
 
 struct SceneEntrance;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 
 const struct SceneEntrance *MercuryLighthouse_GetEntrances(void);
 const struct SceneExitRegion *MercuryLighthouse_GetRegions(void);
 const u32 *MercuryLighthouse_GetExits(void);
 const struct ActorTemplate *MercuryLighthouse_GetActorTemplates(void);
-const struct MapEvent *MercuryLighthouse_GetEvents(void);
+const struct Trigger *MercuryLighthouse_GetTriggers(void);
 s32 MercuryLighthouse_Initialize(void);
 extern s32 gFieldEffect_ShortScript[];
 extern s32 gFieldEffect_MediumScript[];
@@ -50,9 +50,9 @@ extern struct ActorTemplate gMercuryLighthouseLowerActorTemplates[];
 extern struct ActorTemplate gMercuryLighthouseMiddleActorTemplates[];
 extern struct ActorTemplate gMercuryLighthouseUpperActorTemplates[];
 extern struct ActorTemplate gMercuryLighthouseExteriorActorTemplates[];
-extern struct MapEvent gMercuryLighthouseLowerEvents[];
-extern struct MapEvent gMercuryLighthouseMiddleEvents[];
-extern struct MapEvent gMercuryLighthouseUpperEvents[];
-extern struct MapEvent gMercuryLighthouseEventsOther[];
+extern struct Trigger gMercuryLighthouseLowerTriggers[];
+extern struct Trigger gMercuryLighthouseMiddleTriggers[];
+extern struct Trigger gMercuryLighthouseUpperTriggers[];
+extern struct Trigger gMercuryLighthouseTriggersOther[];
 
 #endif

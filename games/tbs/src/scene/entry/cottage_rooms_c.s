@@ -3,5 +3,5 @@
 	overlay_veneer CottageRoomsC_GetEntrances
 	overlay_veneer CottageRoomsC_GetExits
 	overlay_veneer CottageRoomsC_GetActorTemplates
-	overlay_veneer CottageRoomsC_GetEvents
+	overlay_veneer CottageRoomsC_GetTriggers
 	overlay_veneer CottageRoomsC_GetRegions

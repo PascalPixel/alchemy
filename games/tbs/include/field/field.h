@@ -47,7 +47,7 @@ struct ModeRecord;
 struct FieldRecord;
 struct SceneEntrance;
 struct MapEntry;
-struct MapEvent;
+struct Trigger;
 struct MapObject;
 struct ActorTemplate;
 struct SceneExitRegion;
@@ -87,7 +87,7 @@ extern u32 gWorldMap_GraphicsResources[][6];
 extern const u8 gObjectMotion_WaitScript[];
 /// The sparkles' 16 by 16 tiles, packed (FieldEffect_InitializeSparkles).
 extern const u8 gFieldEffect_SparkleTiles[];
-extern const u8 gField_BgEventMessageOffsets[];
+extern const u8 gField_ExamineTriggerMessageOffsets[];
 /// The motes of light's 16 by 16 tiles, packed (FieldMotes_Start).
 extern const u8 gFieldEffect_MoteTiles[];
 extern s32 gDjinnFigures_SpriteIds[];

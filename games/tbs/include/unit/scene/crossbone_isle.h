@@ -5,7 +5,7 @@
 #include "map_tables.h"
 
 struct SceneEntrance;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 struct SceneExitRegion;
 
@@ -13,7 +13,7 @@ const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ActorTemplate *Scene_GetActorTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gPushedObject_DirectionSteps[];
 extern u32 gPushedObject_FootprintKinds[];
@@ -33,11 +33,11 @@ extern struct ActorTemplate gCrossboneIsle_NoActorTemplates[];
 extern struct ActorTemplate gCrossboneIsle_IsleActorTemplates[];
 extern struct ActorTemplate gCrossboneIsle_FloatingLogsActorTemplates[];
 extern struct ActorTemplate gCrossboneIsle_CorridorActorTemplates[];
-extern struct MapEvent gCrossboneIsle_CorridorEvents[];
-extern struct MapEvent gCrossboneIsle_CaveEntranceEvents[];
-extern struct MapEvent gCrossboneIsle_IsleEvents[];
-extern struct MapEvent gCrossboneIsle_FloatingLogsEvents[];
-extern struct MapEvent gCrossboneIsle_PierEvents[];
-extern struct MapEvent gCrossboneIsle_PirateShipEvents[];
+extern struct Trigger gCrossboneIsle_CorridorTriggers[];
+extern struct Trigger gCrossboneIsle_CaveEntranceTriggers[];
+extern struct Trigger gCrossboneIsle_IsleTriggers[];
+extern struct Trigger gCrossboneIsle_FloatingLogsTriggers[];
+extern struct Trigger gCrossboneIsle_PierTriggers[];
+extern struct Trigger gCrossboneIsle_PirateShipTriggers[];
 
 #endif

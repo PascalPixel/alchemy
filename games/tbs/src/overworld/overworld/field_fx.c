@@ -374,14 +374,14 @@ s32 Field_IsRevealActive(struct Object *interpreter) {
 
 /// Reveal: marks with sparkles the hidden things within 8 cells left or right
 /// and 5 up or down of the leader: treasure spots (ids 100 to 239) with no
-/// object placed, whose bg event (MAP_EVENT_BG) gives an item, coins, a
-/// Psynergy Stone or a mimic and whose flag is not yet set. Each mark is an
+/// object placed, whose examine trigger (TRIGGER_EXAMINE) gives an item, coins,
+/// a Psynergy Stone or a mimic and whose flag is not yet set. Each mark is an
 /// object of sprite 22 running gFieldEffect_MarkerParticleScript. Called by
 /// Reveal's effect (field_services/reveal.c).
 void FieldEffect_SpawnNearbyMarkers(void) {
   u8 *markerData;
   struct Object *actor;
-  const struct MapEvent *entry;
+  const struct Trigger *entry;
   s32 leaderColumn;
   s32 leaderRow;
   s32 column;
@@ -412,11 +412,11 @@ void FieldEffect_SpawnNearbyMarkers(void) {
           continue;
       } else if (row - leaderRow > 5)
         continue;
-      entry = gOverlayArea.events();
+      entry = gOverlayArea.triggers();
       if (entry->kind == (u32)-1)
         continue;
       do {
-        if (entry->trigger == id && (entry->kind & 15) == MAP_EVENT_BG) {
+        if (entry->subject == id && (entry->kind & 15) == TRIGGER_EXAMINE) {
           switch (entry->value & 0xfff00000) {
           case 0:
           case FIND_ITEM(0):

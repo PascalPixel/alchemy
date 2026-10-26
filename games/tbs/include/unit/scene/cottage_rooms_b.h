@@ -8,7 +8,7 @@ const struct SceneEntrance *CottageRoomsB_GetEntrances(void);
 const struct SceneExitRegion *CottageRoomsB_GetRegions(void);
 const u32 *CottageRoomsB_GetExits(void);
 const struct ActorTemplate *CottageRoomsB_GetActorTemplates(void);
-const struct MapEvent *CottageRoomsB_GetEvents(void);
+const struct Trigger *CottageRoomsB_GetTriggers(void);
 s32 CottageRoomsB_Initialize(void);
 extern s32 gCottageRoomsB_LeaveHouseScript[];
 extern s32 gCottageRoomsB_DoraLeavesScript[];
@@ -30,11 +30,11 @@ extern struct ActorTemplate gCottageRoomsB_ActorTemplates[];
 extern struct ActorTemplate gCottageRoomsB_ActorTemplatesAfterLeaving[];
 extern struct ActorTemplate gCottageRoomsB_ActorTemplatesAfterKalay[];
 extern struct ActorTemplate gCottageRoomsB_BabiScholarsActorTemplates[];
-extern struct MapEvent gCottageRoomsB_StormEvents[];
-extern struct MapEvent gCottageRoomsB_Events[];
-extern struct MapEvent gCottageRoomsB_EventsAfterLeaving[];
-extern struct MapEvent gCottageRoomsB_EventsAfterKalay[];
-extern struct MapEvent gCottageRoomsB_BabiScholarsEvents[];
-extern struct MapEvent gCottageRoomsB_BabiScholarsLaterEvents[];
+extern struct Trigger gCottageRoomsB_StormTriggers[];
+extern struct Trigger gCottageRoomsB_Triggers[];
+extern struct Trigger gCottageRoomsB_TriggersAfterLeaving[];
+extern struct Trigger gCottageRoomsB_TriggersAfterKalay[];
+extern struct Trigger gCottageRoomsB_BabiScholarsTriggers[];
+extern struct Trigger gCottageRoomsB_BabiScholarsLaterTriggers[];
 
 #endif

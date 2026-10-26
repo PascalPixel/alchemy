@@ -33,7 +33,7 @@
 	.set import.FieldScript_WaitFrames, 1
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
-	.set import.FieldScript_SetMapEvents, 1
+	.set import.FieldScript_SetTriggers, 1
 	.set import.PartyInventory_GiveItem, 1
 	.set import.FieldScript_AskYesNoWithActorAnimation, 1
 	.set import.Actor_GetById, 1

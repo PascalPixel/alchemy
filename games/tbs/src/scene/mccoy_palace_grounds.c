@@ -8,7 +8,7 @@
 /// Talking to the east guard (EventScript_TalkToEastGuard) is the way in: on
 /// yes the guards confer, the gate opens (McCoyPalaceGrounds_OpenGate) and the
 /// west guard goes in ahead (FLAG_MCCOY_PALACE_ADMITTED). Walking north into
-/// the gate (coord event 2, EventScript_EnterPalace) takes
+/// the gate (step trigger 2, EventScript_EnterPalace) takes
 /// MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE into the palace. The guard's scolding
 /// for keeping McCoy waiting is unused (EventScript_TalkToEastGuard).
 ///
@@ -24,7 +24,7 @@
 /// MCCOY_PALACE_GROUNDS_TO_BILIBIN leads back to Bilibin. From TBS_PATCH_3 on
 /// a patch of ivy (SPRITE_IVY) stands at (132, 388), over a dark opening at the
 /// foot of the cliff on the grounds' south edge, which the earlier editions
-/// show bare (renders of tbs-en and tbs-fr); no exit or map event answers that
+/// show bare (renders of tbs-en and tbs-fr); no exit or trigger answers that
 /// opening, so the ivy only hides a way in that leads nowhere.
 
 #include "save_block.h"
@@ -165,11 +165,11 @@ static void EventScript_SearchWell(void) {
 }
 
 /// What the party can talk to, search and catch outside McCoy's Palace.
-const struct MapEvent *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (gSaveBlock.sceneId == (s32)&SceneId_McCoyPalaceGrounds) {
-    return gMcCoyPalaceGroundsEvents;
+    return gMcCoyPalaceGroundsTriggers;
   }
-  return gMcCoyPalaceGroundsNoEvents;
+  return gMcCoyPalaceGroundsNoTriggers;
 }
 
 /// McCoy's Palace, outside, before the curse is lifted: the north worker asks
@@ -290,7 +290,7 @@ static void EventScript_TalkToEastGuard(void) {
   FieldScript_End();
 }
 
-/// McCoy's Palace, outside, coord event 2: walking north into the palace gate
+/// McCoy's Palace, outside, step trigger 2: walking north into the palace gate
 /// opens it if it is still shut, and the leader walks into the palace.
 static void EventScript_EnterPalace(void) {
   FieldScript_Start();
@@ -511,25 +511,25 @@ struct ActorTemplate gMcCoyPalaceGroundsActorTemplates[] = {
 };
 
 /// Unused, as gMcCoyPalaceGroundsNoActorTemplates is.
-struct MapEvent gMcCoyPalaceGroundsNoEvents[] = {
-    { MAP_EVENTS_END },
+struct Trigger gMcCoyPalaceGroundsNoTriggers[] = {
+    { TRIGGERS_END },
 };
 
-struct MapEvent gMcCoyPalaceGroundsEvents[] = {
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, MCCOY_PALACE_GROUNDS_TO_BILIBIN },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterPalace) },
-    { MAP_EVENT_TALK, ACTOR_WEST_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheLumberIOrderedFromKolima) },
-    { MAP_EVENT_TALK, ACTOR_WEST_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinNowThatTheCurseIsBroken) },
-    { MAP_EVENT_TALK, ACTOR_NORTH_WORKER, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(EventScript_TalkToNorthWorker) },
-    { MAP_EVENT_TALK, ACTOR_NORTH_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinItsOverOverMilordDecidedNot) },
-    { MAP_EVENT_TALK, ACTOR_LADY_MCCOY, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(EventScript_TalkToLadyMcCoy) },
-    { MAP_EVENT_TALK, ACTOR_LADY_MCCOY, CONDITION_ALWAYS, MSGNO(MsgBilibinHmphMyPalaceIsNotFinished) },
-    { MAP_EVENT_TALK, ACTOR_WEST_GUARD, FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, MSGNO(MsgBilibinLordMccoyIsSoUpsetAbout) },
-    { MAP_EVENT_TALK, ACTOR_WEST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinICantTellYouAnythingElse) },
-    { MAP_EVENT_TALK, ACTOR_WEST_GUARD, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWestGuard) },
-    { MAP_EVENT_TALK, ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, EVENT_SCRIPT(EventScript_TalkToEastGuard) },
-    { MAP_EVENT_TALK, ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinWhatAShameHuhIGuess) },
-    { MAP_EVENT_TALK, ACTOR_EAST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBilibinICouldNeverHaveGoneTo) },
+struct Trigger gMcCoyPalaceGroundsTriggers[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, MCCOY_PALACE_GROUNDS_TO_BILIBIN },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterPalace) },
+    { TRIGGER_TALK, ACTOR_WEST_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheLumberIOrderedFromKolima) },
+    { TRIGGER_TALK, ACTOR_WEST_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinNowThatTheCurseIsBroken) },
+    { TRIGGER_TALK, ACTOR_NORTH_WORKER, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(EventScript_TalkToNorthWorker) },
+    { TRIGGER_TALK, ACTOR_NORTH_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinItsOverOverMilordDecidedNot) },
+    { TRIGGER_TALK, ACTOR_LADY_MCCOY, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(EventScript_TalkToLadyMcCoy) },
+    { TRIGGER_TALK, ACTOR_LADY_MCCOY, CONDITION_ALWAYS, MSGNO(MsgBilibinHmphMyPalaceIsNotFinished) },
+    { TRIGGER_TALK, ACTOR_WEST_GUARD, FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, MSGNO(MsgBilibinLordMccoyIsSoUpsetAbout) },
+    { TRIGGER_TALK, ACTOR_WEST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinICantTellYouAnythingElse) },
+    { TRIGGER_TALK, ACTOR_WEST_GUARD, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWestGuard) },
+    { TRIGGER_TALK, ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, EVENT_SCRIPT(EventScript_TalkToEastGuard) },
+    { TRIGGER_TALK, ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinWhatAShameHuhIGuess) },
+    { TRIGGER_TALK, ACTOR_EAST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBilibinICouldNeverHaveGoneTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIfThingsLikeThisAreGoing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinWedStillBeWorkingIfWe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_NORTH_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIAmGladIDidntKnow) },
@@ -543,8 +543,8 @@ struct MapEvent gMcCoyPalaceGroundsEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, MSGNO(MsgBilibinLordMccoyWouldNeverHireAnyone) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinIDidntThinkTheydLetYou) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBilibinDontLeaveIsaacBeMyMentor) },
-    { BG_EVENT(BG_EVENT_SILENT), 90, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchWell) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), 90, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchWell) },
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_FLOATING_NUT, FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT, EVENT_SCRIPT(EventScript_CatchFloatingNut) },
-    { MAP_EVENTS_END },
+    { TRIGGERS_END },
 };
 // clang-format on

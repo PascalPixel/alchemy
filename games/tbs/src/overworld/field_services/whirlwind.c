@@ -213,7 +213,7 @@ void FieldEffect_RunWhirlwind(void) {
   ball->scaleY = 0x14ccc; // 1.3 high
   Sound_PlaySongFar(SE_RUSH);
   WaitFrames(20);
-  // Cleared by FieldEffect_DispatchRequestKind: cast on a target a map event
+  // Cleared by FieldEffect_DispatchRequestKind: cast on a target a trigger
   // names, the target is blown away.
   if (effectWork->enabled == 0) {
     if (target != 0)

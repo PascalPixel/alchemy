@@ -9,7 +9,7 @@ const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ActorTemplate *Scene_GetActorTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gGomaCavePillar_WitnessFrames;
 extern s32 gPushedObject_DirectionSteps[];
@@ -22,6 +22,6 @@ extern s32 gGomaCavePillar_FragmentScriptLong[];
 extern struct SceneEntrance gGomaCavePillar_Entrances[];
 extern u32 gGomaCavePillar_Exits[];
 extern struct ActorTemplate gGomaCavePillar_ActorTemplates[];
-extern struct MapEvent gGomaCavePillar_Events[];
+extern struct Trigger gGomaCavePillar_Triggers[];
 
 #endif

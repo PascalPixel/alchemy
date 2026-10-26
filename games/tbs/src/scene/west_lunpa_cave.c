@@ -108,9 +108,9 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
   return gCaveNoActorTemplates;
 }
 
-/// Routes switches, Frost targets and the reunion coord event to their
+/// Routes switches, Frost targets and the reunion step trigger to their
 /// handlers.
-const struct MapEvent *Scene_GetEvents(void) { return gCaveEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gCaveTriggers; }
 
 /// Unused: Frost can never target the puddle placed at (0, 0, 0), outside the
 /// cave's camera bounds. It would freeze, and no flag would remember it.
@@ -1098,19 +1098,19 @@ const struct ActorTemplate gCaveActorTemplates[] = {
     { MAP_TABLE_END },
 };
 
-/// Unused: an empty event table nothing returns.
-const struct MapEvent gCaveNoEvents[] = {
-    { MAP_EVENTS_END },
+/// Unused: an empty trigger table nothing returns.
+const struct Trigger gCaveNoTriggers[] = {
+    { TRIGGERS_END },
 };
 
-const struct MapEvent gCaveEvents[] = {
-    { MAP_EVENT_EXIT, MB_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_WORLD_MAP },
-    { MAP_EVENT_EXIT, MB_WEST_LUNPA_CAVE_LUNPA_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_LUNPA },
-    { MAP_EVENT_COORD, MB_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE, FLAG_LUNPA_CAVE_REUNION_SEEN,
+const struct Trigger gCaveTriggers[] = {
+    { TRIGGER_EXIT, MB_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_WORLD_MAP },
+    { TRIGGER_EXIT, MB_WEST_LUNPA_CAVE_LUNPA_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_LUNPA },
+    { TRIGGER_STEP, MB_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE, FLAG_LUNPA_CAVE_REUNION_SEEN,
       EVENT_SCRIPT(EventScript_HammetFindsBunza) },
-    { BG_EVENT(BG_EVENT_SILENT), MB_WEST_LUNPA_CAVE_LOWERING_SWITCH, CONDITION_ALWAYS,
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_WEST_LUNPA_CAVE_LOWERING_SWITCH, CONDITION_ALWAYS,
       EVENT_SCRIPT(EventScript_FlipLoweringSwitch) },
-    { BG_EVENT(BG_EVENT_SILENT), MB_WEST_LUNPA_CAVE_RAISING_SWITCH, CONDITION_ALWAYS,
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_WEST_LUNPA_CAVE_RAISING_SWITCH, CONDITION_ALWAYS,
       EVENT_SCRIPT(EventScript_FlipRaisingSwitch) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_UNUSED_PUDDLE, CONDITION_ALWAYS,
       EVENT_SCRIPT(EventScript_UnusedFreezePuddle) },
@@ -1120,6 +1120,6 @@ const struct MapEvent gCaveEvents[] = {
       EVENT_SCRIPT(EventScript_FreezeGatePuddle) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_NORTH_PUDDLE, CONDITION_ALWAYS,
       EVENT_SCRIPT(EventScript_FreezeNorthPuddle) },
-    { MAP_EVENTS_END },
+    { TRIGGERS_END },
 };
 // clang-format on

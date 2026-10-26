@@ -21,7 +21,7 @@
 #include "overworld/step.c"
 #include "overworld/run_map.c"
 #include "overworld/palette_editor.c"
-#include "overworld/events.c"
+#include "overworld/triggers.c"
 #include "overworld/targets.c"
 #include "overworld/items.c"
 #include "overworld/psynergy.c"

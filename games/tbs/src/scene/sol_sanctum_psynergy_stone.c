@@ -49,8 +49,8 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
 }
 
 /// The exit and the Psynergy Stone.
-const struct MapEvent *Scene_GetEvents(void) {
-  return gSolSanctumPsynergyStoneEvents;
+const struct Trigger *Scene_GetTriggers(void) {
+  return gSolSanctumPsynergyStoneTriggers;
 }
 
 /// Opens the map with the window transition and blocks Retreat. Once Mt.
@@ -93,10 +93,10 @@ struct ActorTemplate gSolSanctumPsynergyStoneActorTemplates[] = {
     {MAP_TABLE_END},
 };
 
-struct MapEvent gSolSanctumPsynergyStoneEvents[] = {
-    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS,
+struct Trigger gSolSanctumPsynergyStoneTriggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
      SOL_SANCTUM_PSYNERGY_STONE_TO_SOL_SANCTUM_STATUE},
-    {BG_EVENT(BG_EVENT_SILENT), 100, FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN,
-     FIND_PSYNERGY_STONE},
-    {MAP_EVENTS_END},
+    {EXAMINE_TRIGGER(EXAMINE_SILENT), 100,
+     FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN, FIND_PSYNERGY_STONE},
+    {TRIGGERS_END},
 };

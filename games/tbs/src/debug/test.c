@@ -45,7 +45,7 @@
 /// gMenuTest_ActorTemplates
 /// after its four party rows, which keep their characters' ids. Each is drawn
 /// with the sprite of someone or something in the game and named for it; what
-/// talking to each does is in gMenuTest_Events.
+/// talking to each does is in gMenuTest_Triggers.
 enum MenuTestActorId {
   /// Kraden's sprite, 0x1e (ACTOR_KRADEN in
   /// sol_sanctum_elemental_star_room.c);
@@ -163,7 +163,7 @@ end:
 }
 
 // The shop message browsers, run by talking to ACTOR_FELIX and
-// ACTOR_SECOND_FELIX while the leader faces a given way (gMenuTest_Events).
+// ACTOR_SECOND_FELIX while the leader faces a given way (gMenuTest_Triggers).
 // Each runs for the weapon shop's 43 messages; the Sanctum's count is its own,
 // also 43.
 static void MenuTest_BrowseWeaponShopMessages(void) {
@@ -251,7 +251,7 @@ UNUSED static void MenuTest_GiveItemToParty(void) {
 }
 #endif
 
-s32 MenuTest_GetEvents(void) { return (s32)gMenuTest_Events; }
+s32 MenuTest_GetTriggers(void) { return (s32)gMenuTest_Triggers; }
 
 /// Levels the four heroes to the current debug target, then raises it by ten.
 /// Talking to Garet: `You went up a level!`, then Isaac, Garet, Mia and Ivan
@@ -918,63 +918,62 @@ struct ActorTemplate gMenuTest_ActorTemplates[] = {
 /// Who runs what: Garet levels, Jenna equipment, Ivan consumables, Mia
 /// Isaac's name, and the placed actors (enum MenuTestActorId) the rest.
 /// Outside Japanese, ACTOR_FELIX and ACTOR_SECOND_FELIX run a different
-/// browser for each way the leader faces (TALK_EVENT_FACING); in Japanese they
-/// open the character selector and the item browser.
-struct MapEvent gMenuTest_Events[] = {
-    {MAP_EVENT_TALK, GARET, CONDITION_ALWAYS,
+/// browser for each way the leader faces (TALK_TRIGGER_FACING); in Japanese
+/// they open the character selector and the item browser.
+struct Trigger gMenuTest_Triggers[] = {
+    {TRIGGER_TALK, GARET, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_RaisePartyLevels)},
-    {MAP_EVENT_TALK, JENNA, CONDITION_ALWAYS,
+    {TRIGGER_TALK, JENNA, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_GiveEquipmentTestStock)},
-    {MAP_EVENT_TALK, IVAN, CONDITION_ALWAYS,
+    {TRIGGER_TALK, IVAN, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_GiveConsumableTestStock)},
-    {MAP_EVENT_TALK, MIA, CONDITION_ALWAYS,
-     EVENT_SCRIPT(MenuTest_EditIsaacName)},
-    {MAP_EVENT_TALK, ACTOR_KRADEN, CONDITION_ALWAYS,
+    {TRIGGER_TALK, MIA, CONDITION_ALWAYS, EVENT_SCRIPT(MenuTest_EditIsaacName)},
+    {TRIGGER_TALK, ACTOR_KRADEN, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_TestItemSelection)},
-    {MAP_EVENT_TALK, ACTOR_DORA, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_DORA, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_GivePartyDjinn)},
-    {MAP_EVENT_TALK, ACTOR_SATUROS, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_SATUROS, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_DamageAndAfflictParty)},
-    {MAP_EVENT_TALK, ACTOR_MENARDI, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_MENARDI, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_GiveTreasureTestStock)},
-    {MAP_EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
      EVENT_SCRIPT(DebugMenu_RunPresetShop)},
 #if TBS_PATCH_3 && !TBS_PATCH_4
-    {MAP_EVENT_TALK, ACTOR_SECOND_DORA, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_SECOND_DORA, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_GiveItemToParty)},
 #elif TBS_PATCH_4
-    {MAP_EVENT_TALK, ACTOR_SECOND_DORA, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_SECOND_DORA, CONDITION_ALWAYS,
      MSGNO(MsgTolbiTolbiShipThenTheyAreDangerous)},
 #else
-    {MAP_EVENT_TALK, ACTOR_SECOND_DORA, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_SECOND_DORA, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_ConfirmShopAction)},
 #endif
-    {MAP_EVENT_TALK, ACTOR_SECOND_SATUROS, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_SECOND_SATUROS, CONDITION_ALWAYS,
      MSGNO(MsgValeKyleAbleStop)},
-    {MAP_EVENT_TALK, ACTOR_IVY, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_IVY, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_OpenIconBrowser)},
 #if !TBS_PATCH_1
-    {MAP_EVENT_TALK, ACTOR_FELIX, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_SelectCharacter)},
-    {MAP_EVENT_TALK, ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_OpenItemBrowser)},
 #else
-    {TALK_EVENT_FACING(FACING_NORTH), ACTOR_FELIX, CONDITION_ALWAYS,
+    {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_BrowseWeaponShopMessages)},
-    {TALK_EVENT_FACING(FACING_WEST), ACTOR_FELIX, CONDITION_ALWAYS,
+    {TALK_TRIGGER_FACING(FACING_WEST), ACTOR_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_BrowseArmorShopMessages)},
-    {TALK_EVENT_FACING(FACING_EAST), ACTOR_FELIX, CONDITION_ALWAYS,
+    {TALK_TRIGGER_FACING(FACING_EAST), ACTOR_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_BrowseItemShopMessages)},
-    {TALK_EVENT_FACING(FACING_SOUTH), ACTOR_FELIX, CONDITION_ALWAYS,
+    {TALK_TRIGGER_FACING(FACING_SOUTH), ACTOR_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_BrowseSanctumMessages)},
-    {TALK_EVENT_FACING(FACING_NORTH), ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
+    {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_BrowseWarriorShopMessages)},
-    {TALK_EVENT_FACING(FACING_WEST), ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
+    {TALK_TRIGGER_FACING(FACING_WEST), ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_BrowseWarriorArmorShopMessages)},
-    {TALK_EVENT_FACING(FACING_EAST), ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
+    {TALK_TRIGGER_FACING(FACING_EAST), ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_BrowseWarriorItemShopMessages)},
 #if TBS_PATCH_2
-    {TALK_EVENT_FACING(FACING_SOUTH), ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
+    {TALK_TRIGGER_FACING(FACING_SOUTH), ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(MenuTest_RunMessageTest)},
 #endif
 #endif
@@ -986,7 +985,7 @@ struct MapEvent gMenuTest_Events[] = {
      EVENT_SCRIPT(MenuTest_IgnorePsynergy)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_IVY, CONDITION_ALWAYS, EVENT_SCRIPT(MenuTest_EnableEffectChildMode)},
-    {MAP_EVENTS_END},
+    {TRIGGERS_END},
 };
 
 /// The level MenuTest_RaisePartyLevels levels the four to next: 10 at first,

@@ -101,7 +101,7 @@ void FieldEffect_RunFrostOnTarget(s32 unused) {
 ///
 /// Abilities: Frost (FIELD_PSYNERGY_FROST).
 ///
-/// The target's part runs only when a map event named the target
+/// The target's part runs only when a trigger named the target
 /// (FieldEffect_DispatchRequestKind clears enabled) and no map script set
 /// childMode: it flashes, takes animation 2 with SE_SHIMMER unless childOption
 /// is set, keeps glinting (FieldEffect_UpdateOrbitingParticleMain) and runs
@@ -181,8 +181,9 @@ void FieldEffect_RunFrost(void) {
     }
 
     target->update = FieldEffect_UpdateOrbitingParticleMain;
-    event = Scene_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ACTS),
-                                    FIELD_PSYNERGY_FROST, &eventTarget);
+    event =
+        Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_EFFECT_ACTS),
+                                  FIELD_PSYNERGY_FROST, &eventTarget);
     if (event != NULL) {
       Field_RunEventAction(event, gSaveBlock.leaderActorId, eventTarget);
     }

@@ -6,7 +6,7 @@
 #include "map_tables.h"
 
 struct SceneEntrance;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 struct SceneExitRegion;
 
@@ -14,7 +14,7 @@ const struct SceneEntrance *Kalay_GetEntrances(void);
 const struct SceneExitRegion *Kalay_GetRegions(void);
 const u32 *Kalay_GetExits(void);
 const struct ActorTemplate *Kalay_GetActorTemplates(void);
-const struct MapEvent *Kalay_GetEvents(void);
+const struct Trigger *Kalay_GetTriggers(void);
 s32 Kalay_Initialize(void);
 extern s32 gKalay_TileStepByFacing[];
 extern s32 gKalay_TourGroupWalkScript[];
@@ -43,13 +43,13 @@ extern struct ActorTemplate gKalay_TourGroupActorTemplates[];
 extern struct ActorTemplate gKalay_HammetPalaceActorTemplates[];
 extern struct ActorTemplate gKalay_TunnelEntranceActorTemplates[];
 extern struct ActorTemplate gKalay_TunnelActorTemplates[];
-extern struct MapEvent gKalay_NoEvents[];
-extern struct MapEvent gKalay_TownEvents[];
-extern struct MapEvent gKalay_HammetPalaceEvents[];
-extern struct MapEvent gKalay_TunnelEntranceEvents[];
-extern struct MapEvent gKalay_TunnelCaveEvents[];
-extern struct MapEvent gKalay_TunnelPassageEvents[];
-extern struct MapEvent gKalay_TunnelEvents[];
+extern struct Trigger gKalay_NoTriggers[];
+extern struct Trigger gKalay_TownTriggers[];
+extern struct Trigger gKalay_HammetPalaceTriggers[];
+extern struct Trigger gKalay_TunnelEntranceTriggers[];
+extern struct Trigger gKalay_TunnelCaveTriggers[];
+extern struct Trigger gKalay_TunnelPassageTriggers[];
+extern struct Trigger gKalay_TunnelTriggers[];
 extern u16 gKalay_DoorCellSteps[];
 extern struct MapGridCellAnimation gKalay_DoorCells[];
 extern s32 gKalay_TunnelParticleScript[];

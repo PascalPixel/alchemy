@@ -35,7 +35,7 @@ struct FieldEffectDouseView {
   struct Object *caster; ///< mainObject
   s32 targetObject;      ///< child: the target's object, 0 for none
   u8 reserved18[8];
-  /// enabled: set at the start, cleared when a map event names the target
+  /// enabled: set at the start, cleared when a trigger names the target
   /// (FieldEffect_DispatchRequestKind). Set, 10 particles fall; cleared, 24
   /// drops, or 30 swaying particles in Mercury Lighthouse.
   u8 highArc;

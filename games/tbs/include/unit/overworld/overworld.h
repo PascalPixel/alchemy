@@ -8,7 +8,7 @@ struct SpeakerDefinition;
 struct Object;
 struct ScreenTransitionState;
 struct ActorDouseView;
-struct MapEventView;
+struct TriggerView;
 struct FieldEffectSprite;
 struct Vector3;
 struct Actor;
@@ -136,9 +136,9 @@ void FieldEffect_ShrinkObjectAndDestroyFast(union ActorOrEffect *fieldObject);
 void FieldEffect_RunLift(void);
 void FieldEffect_RunCarry(void);
 
-/// One of the map's events (the same 12 bytes as struct MapEvent).
-struct MapEventView {
-  s32 flags; ///< the low 4 bits are the kind (MapEventKind; 7 talks to
+/// One of the map's events (the same 12 bytes as struct Trigger).
+struct TriggerView {
+  s32 flags; ///< the low 4 bits are the kind (TriggerKind; 7 talks to
              ///< the actor the party stopped)
   u8 value;  ///< the target (an actor id or a metatile behavior)
   u8 unused05;
@@ -185,13 +185,13 @@ void PaletteEditor_Run(void);
 
 struct ActorTemplate *Scene_FindActorTemplate(s32 id);
 s32 GameFlag_IsConditionActive(s32 condition);
-u32 Scene_BgEventIgnoresCondition(s32 flags, s32 result);
-struct MapEventView *Scene_FindEvent(s32 kind, s32 target);
+u32 Scene_ExamineTriggerIgnoresCondition(s32 flags, s32 result);
+struct TriggerView *Scene_FindTrigger(s32 kind, s32 target);
 void Overlay_CallInitialize(void);
-s32 Scene_FindActorTalkEvent(s32 id);
+s32 Scene_FindActorTalkTrigger(s32 id);
 s32 Scene_TalkToActor(s32 id);
 s32 Scene_RunRaisedEvent(s32 value);
-s32 Scene_RunCoordEventOrExit(s32 value);
+s32 Scene_RunStepTriggerOrExit(s32 value);
 s32 Field_RunPushCellEvent(s32 behavior);
 s32 Field_SearchCell(s32 tile);
 s32 Field_GetPsynergyTargetRange(s32 kind);
@@ -201,13 +201,13 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
                                                s32 itemId);
 void Anim_ApplyChildPalette(struct Object *object, s32 palette);
 void Field_EndBusyAndReveal(void);
-s32 Field_FindItemEvent(s32 item);
+s32 Field_FindItemTrigger(s32 item);
 s32 Field_UseItem(s32 packedItem, s32 slot);
-void *Scene_FindPsynergyEvent(s32 eventFlags, s32 group, void *target);
+void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, void *target);
 s32 Field_RunPsynergyEvents(s32 packed);
 s32 Field_UsePsynergy(u32 code);
-s32 Scene_HasFieldPsynergyEvent(s32 group);
-u32 Scene_HasPsynergyEvent(u16 item);
+s32 Scene_HasFieldPsynergyTrigger(s32 group);
+u32 Scene_HasPsynergyTrigger(u16 item);
 
 void ObjectMotion_SnapToTerrain(void *object);
 void Field_PlaceTreasureSpots(void);

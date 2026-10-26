@@ -141,7 +141,7 @@ enum TolbiActorId {
   ACTOR_TOLBI_MISSING_PERSON_POSTER = 32,
 };
 
-/// The metatile behaviors Tolbi's coord and bg events answer besides the
+/// The metatile behaviors Tolbi's coord and examine triggers answer besides the
 /// doors, whose own cells carry the numbers of their exits (Tolbi_EnterDoor,
 /// Tolbi_RequestTouchedExit).
 enum TolbiMetatileBehavior {

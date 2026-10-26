@@ -3,5 +3,5 @@
 	overlay_veneer LacquerRoomsB_GetEntrances
 	overlay_veneer LacquerRoomsB_GetExits
 	overlay_veneer LacquerRoomsB_GetActorTemplates
-	overlay_veneer LacquerRoomsB_GetEvents
+	overlay_veneer LacquerRoomsB_GetTriggers
 	overlay_veneer LacquerRoomsB_GetRegions

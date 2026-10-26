@@ -5,7 +5,7 @@
 #include "map_tables.h"
 
 struct SceneEntrance;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 struct SceneExitRegion;
 
@@ -13,7 +13,7 @@ const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ActorTemplate *Scene_GetActorTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gFieldEffect_ShortScript[];
 extern s32 gFieldEffect_MediumScript[];
@@ -41,11 +41,11 @@ extern struct ActorTemplate gCrossboneIsleIcePillarsActorTemplates[];
 extern struct ActorTemplate gCrossboneIsleFloodgateActorTemplates[];
 extern struct ActorTemplate gCrossboneIsleSteppingStonesActorTemplatesOther[];
 extern struct ActorTemplate gCrossboneIsleDragonStatueActorTemplates[];
-extern struct MapEvent gCrossboneIsleSteppingStonesEventsOther[];
-extern struct MapEvent gCrossboneIsleSteppingStonesEvents[];
-extern struct MapEvent gCrossboneIsleIcePillarsEvents[];
-extern struct MapEvent gCrossboneIsleFloodgateEvents[];
-extern struct MapEvent gCrossboneIsleStackedPillarsEvents[];
-extern struct MapEvent gCrossboneIsleDragonStatueEvents[];
+extern struct Trigger gCrossboneIsleSteppingStonesTriggersOther[];
+extern struct Trigger gCrossboneIsleSteppingStonesTriggers[];
+extern struct Trigger gCrossboneIsleIcePillarsTriggers[];
+extern struct Trigger gCrossboneIsleFloodgateTriggers[];
+extern struct Trigger gCrossboneIsleStackedPillarsTriggers[];
+extern struct Trigger gCrossboneIsleDragonStatueTriggers[];
 
 #endif

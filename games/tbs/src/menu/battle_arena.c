@@ -902,7 +902,7 @@ check:
   return result;
 }
 
-/// Coord event 10, the circle: starts the battle. A monster battle starts at
+/// Step trigger 10, the circle: starts the battle. A monster battle starts at
 /// once. A linked one needs the attendant's call
 /// (FLAG_BATTLE_ARENA_ATTENDANT_ASKED) and no lost link waiting to be reported
 /// (FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED); it publishes LOBBY_SLOT_IN_CIRCLE
@@ -1366,8 +1366,8 @@ static s32 BattleArena_TalkByProgress(s32 actorId) {
 #endif
 }
 
-/// Coord event 1, the way out: stops the link, loads the normal reverb code and
-/// goes back to the main menu (its entrance MAIN_MENU_FROM_SANCTUM).
+/// Step trigger 1, the way out: stops the link, loads the normal reverb code
+/// and goes back to the main menu (its entrance MAIN_MENU_FROM_SANCTUM).
 static s32 BattleArena_LeaveArena(void) {
   Serial_RemoveIrqHandlers();
   Sound_LoadReverbCode(SOUND_REVERB_NORMAL);
@@ -1464,7 +1464,7 @@ static s32 BattleArena_ReportMonsterRecord(s32 actorId) {
 #endif
 }
 
-u8 *BattleArena_GetEvents(void) { return (u8 *)gBattleArenaEvents; }
+u8 *BattleArena_GetTriggers(void) { return (u8 *)gBattleArenaTriggers; }
 
 /// Saves the battle results between saving and saved messages, through
 /// Save_ProcessSelectedFile, which writes the first 16 bytes of the save
@@ -1857,56 +1857,54 @@ struct ActorTemplate gBattleArenaBattleActorTemplates[] = {
 };
 // clang-format on
 
-struct MapEvent gBattleArenaEvents[] = {
-    {MAP_EVENT_TALK, GARET, CONDITION_ALWAYS,
+struct Trigger gBattleArenaTriggers[] = {
+    {TRIGGER_TALK, GARET, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_TalkByProgress)},
-    {MAP_EVENT_TALK, IVAN, CONDITION_ALWAYS,
+    {TRIGGER_TALK, IVAN, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_TalkByProgress)},
-    {MAP_EVENT_TALK, MIA, CONDITION_ALWAYS,
+    {TRIGGER_TALK, MIA, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_TalkByProgress)},
-    {MAP_EVENT_TALK, JENNA, CONDITION_ALWAYS,
+    {TRIGGER_TALK, JENNA, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_TalkByProgress)},
-    {MAP_EVENT_TALK, ACTOR_ATTENDANT, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_ATTENDANT, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_ChooseBattleMode)},
-    {MAP_EVENT_TALK, ACTOR_LINKED_WINS_TELLER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_LINKED_WINS_TELLER, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_ReportWinTallies)},
-    {MAP_EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_OpenSanctum)},
-    {MAP_EVENT_TALK, ACTOR_GREETER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_GREETER, CONDITION_ALWAYS,
      MSGNO(MsgFieldWelcomeToBattleArenaWherePeople)},
-    {MAP_EVENT_TALK, ACTOR_TRAVELING_WARRIOR, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_TRAVELING_WARRIOR, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_TalkToVisitor)},
-    {MAP_EVENT_TALK, ACTOR_FINALS_VISITOR, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_FINALS_VISITOR, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_TalkToVisitor)},
-    {MAP_EVENT_TALK, ACTOR_OLD_MANS_ARENA_VISITOR, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_OLD_MANS_ARENA_VISITOR, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_TalkToVisitor)},
-    {MAP_EVENT_TALK, ACTOR_DEBUG_HELPER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_DEBUG_HELPER, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_ChooseDebugPartyPreset)},
-    {MAP_EVENT_TALK, ACTOR_PARTY_ORDER_VISITOR, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_PARTY_ORDER_VISITOR, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_ExplainPartyOrder)},
-    {MAP_EVENT_TALK, ACTOR_COMMAND_TIME_VISITOR, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_COMMAND_TIME_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgFieldInTheLinkedFinalsYouCant)},
-    {MAP_EVENT_TALK, ACTOR_SUMMON_VISITOR, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_SUMMON_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgFieldToUseSummonQuicklyDjinnMust)},
-    {MAP_EVENT_TALK, ACTOR_SET_DJINN_VISITOR, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_SET_DJINN_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgFieldDoYouPutDjinnOnStandby)},
-    {MAP_EVENT_TALK, ACTOR_STANDBY_DJINN_VISITOR, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_STANDBY_DJINN_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgFieldRemoveDjinnYouRarelyUseSo)},
-    {MAP_EVENT_TALK, ACTOR_MONSTER_RULES_VISITOR, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_MONSTER_RULES_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgFieldMonsterBattleRulesSayYouAll)},
-    {MAP_EVENT_TALK, ACTOR_MONSTER_WINS_TELLER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_MONSTER_WINS_TELLER, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_ReportMonsterRecord)},
-    {MAP_EVENT_TALK, ACTOR_EDGY_VISITOR, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_EDGY_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgFieldAllTheWarriorsAreImpressiveSo)},
-    {MAP_EVENT_TALK, ACTOR_WARY_VISITOR, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_WARY_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgFieldICouldEnterButIdJust)},
-    {MAP_EVENT_COORD, 10, CONDITION_ALWAYS,
-     EVENT_SCRIPT(BattleArena_EnterBattle)},
-    {MAP_EVENT_COORD, 1, CONDITION_ALWAYS,
-     EVENT_SCRIPT(BattleArena_LeaveArena)},
-    {MAP_EVENT_RAISED, 1, CONDITION_ALWAYS,
+    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT_SCRIPT(BattleArena_EnterBattle)},
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT_SCRIPT(BattleArena_LeaveArena)},
+    {TRIGGER_RAISED, 1, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_PromptToParticipate)},
-    {MAP_EVENT_RAISED, 2, CONDITION_ALWAYS,
+    {TRIGGER_RAISED, 2, CONDITION_ALWAYS,
      EVENT_SCRIPT(BattleArena_ReportDisconnection)},
-    {MAP_EVENTS_END},
+    {TRIGGERS_END},
 };

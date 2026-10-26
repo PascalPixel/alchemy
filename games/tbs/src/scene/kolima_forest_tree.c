@@ -169,20 +169,20 @@ const struct ActorTemplate *KolimaForestTree_GetActorTemplates(void) {
 }
 
 /// Unused: takes the touched exit after the leader's current movement; no
-/// map event row names it.
+/// trigger row names it.
 UNUSED static void KolimaForestTree_ExitTouchedRegion(void) {
   struct FieldWork *work;
 
   work = gFieldWork;
   FieldScript_Start();
   ObjectMotion_CommitPositionAndActivate(ACTOR_PARTY_LEADER, 0, 0);
-  Import_ScriptRequestExit(work->coordEvent);
+  Import_ScriptRequestExit(work->stepTrigger);
   FieldScript_End();
 }
 
 /// Talking to Tret and Laurel, reading their minds, and Hermes' Water on Tret.
-const struct MapEvent *KolimaForestTree_GetEvents(void) {
-  return gKolimaForestTreeEvents;
+const struct Trigger *KolimaForestTree_GetTriggers(void) {
+  return gKolimaForestTreeTriggers;
 }
 
 /// Kolima Forest (SceneId_KolimaForestTree), talking to Laurel
@@ -228,7 +228,7 @@ static void KolimaForestTree_TalkToLaurel(void) {
 
 /// Kolima Forest (SceneId_KolimaForestTree), talking to Tret
 /// (ACTOR_TRET_STAND_IN); until FLAG_TRET_DEFEATED Mind Read on him runs this
-/// too, with no effect of its own (trigger bit 10). Before the Tret Tree, he is
+/// too, with no effect of its own (subject bit 10). Before the Tret Tree, he is
 /// silent and his wrathful side answers, the screen darkening around its words;
 /// after it he is silent, and if anyone carries Hermes' Water the main menu
 /// opens. Once the curse is lifted, no axe shall touch him again.
@@ -1137,15 +1137,15 @@ struct ActorTemplate gKolimaForestTreeActorTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct MapEvent gKolimaForestTreeEvents[] = {
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_FLOODGATE },
+struct Trigger gKolimaForestTreeTriggers[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_FLOODGATE },
     { USE_ITEM_ON_ACTOR(ITEM_HERMES_WATER), ACTOR_TRET_STAND_IN, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(KolimaForestTree_UseHermesWater) },
-    { MAP_EVENT_TALK, ACTOR_LAUREL_STAND_IN, CONDITION_ALWAYS, EVENT_SCRIPT(KolimaForestTree_TalkToLaurel) },
-    { MAP_EVENT_TALK, ACTOR_TRET_STAND_IN, CONDITION_ALWAYS, EVENT_SCRIPT(KolimaForestTree_TalkToTret) },
+    { TRIGGER_TALK, ACTOR_LAUREL_STAND_IN, CONDITION_ALWAYS, EVENT_SCRIPT(KolimaForestTree_TalkToLaurel) },
+    { TRIGGER_TALK, ACTOR_TRET_STAND_IN, CONDITION_ALWAYS, EVENT_SCRIPT(KolimaForestTree_TalkToTret) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LAUREL_STAND_IN, CONDITION_ALWAYS, EVENT_SCRIPT(KolimaForestTree_ReadLaurelThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_TRET_STAND_IN, FLAG_TRET_DEFEATED, EVENT_SCRIPT(KolimaForestTree_TalkToTret) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRET_STAND_IN, CONDITION_ALWAYS, EVENT_SCRIPT(KolimaForestTree_ReadTretThoughts) },
-    { MAP_EVENTS_END },
+    { TRIGGERS_END },
 };
 // clang-format on
 

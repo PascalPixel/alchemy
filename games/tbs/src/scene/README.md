@@ -13,7 +13,7 @@ to do; the overlay drives the engine back through its
 main-program functions it may call. Each overlay has a generated page of its
 own, listed in [Places](../field/scene_headers.s) in
 [story order](../../glossary.md#the-places-in-story-order), with its
-[map](../../glossary.md#map), its [map events](../../glossary.md#map-event)
+[map](../../glossary.md#map), its [triggers](../../glossary.md#trigger)
 and a recording of each event.
 
 ## The entry table
@@ -25,8 +25,8 @@ questions, always the same ones, and the answers are the scene. In the
 recording, the house's code says where its north door leads, and Vale's code
 says where the party then stands and who else is there.
 
-When the party arrives, the engine asks what can happen here (the map
-events, kept for the whole visit), where the party arrives (the [
+When the party arrives, the engine asks what can happen here (the
+triggers, kept for the whole visit), where the party arrives (the [
 entrances](../../glossary.md#entrance)), who stands where (the
 [actor](../../glossary.md#actor) templates), and whether
 anything needs setting up. At every step it asks whether the leader is
@@ -45,7 +45,7 @@ The six are `struct SceneEntries`, in a fixed order at the start of
 every overlay (`entry/<map>.s`), each behind an 8-byte
 [veneer](../../glossary.md#veneer). Vault names them `Scene_Initialize`,
 `Scene_GetEntrances`, `Scene_GetExits`, `Scene_GetActorTemplates`,
-`Scene_GetEvents` and `Scene_GetExitRegions`; some overlays give them names of
+`Scene_GetTriggers` and `Scene_GetExitRegions`; some overlays give them names of
 their own (`BabiLighthouse_GetExits`), since only the order is fixed.
 
 ## The tables
@@ -66,17 +66,17 @@ east, y up and z south, and a facing is one of eight headings
   own), a position, a facing and how they turn when spoken to.
 - **Regions**: boxes in which the leader takes an exit, each with a condition.
   Most scenes have none.
-- **Map events**: what answers each thing the player does
-  ([below](#what-a-map-event-row-says)).
+- **Triggers**: what answers each thing the player does
+  ([below](#what-a-trigger-row-says)).
 
 These are `struct SceneEntrance`, the `SCENE_EXIT` rows of the exit
 table (named in `scene_exits.h`), `struct ActorTemplate`,
-`struct SceneExitRegion` and `struct MapEvent`, all in `map_tables.h` and
+`struct SceneExitRegion` and `struct Trigger`, all in `map_tables.h` and
 `scene_header.h`.
 
 ### Conditions
 
-The actor templates and the map events carry a condition, which says
+The actor templates and the triggers carry a condition, which says
 whether the row holds. Most often it is a [game flag](../../glossary.md#game-flag),
 and the row holds until that flag is set: "until this has happened" is the
 common case.
@@ -110,42 +110,42 @@ Each scene names its actors in an enum in row order,
 starting from `ACTOR_FIRST_PLACED`; `ACTOR_PARTY_LEADER` is the one the
 player moves, and `FieldScript_SpawnActorTemplates` places the rows.
 
-### What a map event row says
+### What a trigger row says
 
 ![Isaac talks to his mother Dora outside their house in Vale: "It looks like it won't rain for some time... so I guess I'll just have you fix it later."](https://alchemy.pascalpixel.com/places/vale/events/Event_DoraFretsAboutTheRoof.gif)
 
 Each thing the player can do in a scene that the scene answers, talking to Dora
-here, is one row of its event table: what starts it, whom or where it
+here, is one row of its trigger table: what starts it, whom or where it
 answers, when it holds, and what runs. These are four rows of Vale's table on
 the day the story begins:
 
 ```c
-{ MAP_EVENT_TALK, ACTOR_DORA, CONDITION_ALWAYS,
+{ TRIGGER_TALK, ACTOR_DORA, CONDITION_ALWAYS,
   EVENT_SCRIPT(EventScript_DoraFretsAboutTheRoof) },
-{ COORD_EVENT_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
+{ STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
   EVENT_SCRIPT(EventScript_EnterIsaacsHouse) },
 { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT, FLAG_VALE_NUT_CAUGHT,
   EVENT_SCRIPT(EventScript_CatchNut) },
-{ BG_EVENT(BG_EVENT_SILENT), 24, CONDITION_ALWAYS,
+{ EXAMINE_TRIGGER(EXAMINE_SILENT), 24, CONDITION_ALWAYS,
   EVENT_SCRIPT(EventScript_SearchTheLockedDoor) },
 ```
 
 Talking to Dora, Isaac's mother, runs a script; walking north into the
-doorstep of Isaac's house, a [coord event](../../glossary.md#coord-event),
+doorstep of Isaac's house, a [step trigger](../../glossary.md#step-trigger),
 takes him in; Catch on the nut works until the nut has been caught; and A
-facing the locked door, a [bg event](../../glossary.md#bg-event), searches it.
+facing the locked door, an [examine trigger](../../glossary.md#examine-trigger), searches it.
 What starts a row also says what it answers:
 
 | Kind | Started by | Answers |
 | --- | --- | --- |
-| `MAP_EVENT_TALK` | the A button on someone | that actor |
-| `MAP_EVENT_TALK_HALTED` | talking to someone Halt has stopped | that actor |
-| `MAP_EVENT_COORD` and its forms | stepping onto a spot, facing a way, or pushing against it | the spot's [metatile behavior](../../glossary.md#metatile-behavior) |
-| `MAP_EVENT_EXIT` | stepping onto a spot no coord event answers | the spot's metatile behavior |
-| `BG_EVENT(target)` | the A button on what is ahead, when it is nobody | the spot's metatile behavior |
+| `TRIGGER_TALK` | the A button on someone | that actor |
+| `TRIGGER_TALK_HALTED` | talking to someone Halt has stopped | that actor |
+| `TRIGGER_STEP` and its forms | stepping onto a spot, facing a way, or pushing against it | the spot's [metatile behavior](../../glossary.md#metatile-behavior) |
+| `TRIGGER_EXIT` | stepping onto a spot no step trigger answers | the spot's metatile behavior |
+| `EXAMINE_TRIGGER(target)` | the A button on what is ahead, when it is nobody | the spot's metatile behavior |
 | `USE_ITEM(item)` and its form | using an item | a spot or an actor |
 | `PSYNERGY_ON_ACTOR(ability)` and its form | using Psynergy on someone, or anywhere | that actor, or anywhere |
-| `MAP_EVENT_RAISED` | the scene's code asking for it | a number the code gives |
+| `TRIGGER_RAISED` | the scene's code asking for it | a number the code gives |
 
 A Psynergy row also says when it runs around the effect: before it plays,
 after it, or from inside it, as Force strikes, Frost freezes or Reveal shows
@@ -160,11 +160,11 @@ item, coins, a Psynergy Stone, a line of text or a mimic's battle. One word
 holds either a message or a script, since scripts live at addresses above any
 message number.
 
-The row is `struct MapEvent`, its kinds and the `FIND_` values
+The row is `struct Trigger`, its kinds and the `FIND_` values
 are in `map_tables.h`, and a script is written `EVENT_SCRIPT(function)` and a
 message `MSGNO(name)`.
 
-### Which map events a cell starts
+### Which triggers a cell starts
 
 ![In Vale, Isaac walks north into the ladder beside his house and climbs onto the roof](https://alchemy.pascalpixel.com/places/vale/events/Event_ClimbLadderOntoRoof.gif)
 
@@ -173,30 +173,30 @@ leads into a house when the leader walks into it, the edge of a village leads
 on to the next scene, a ladder climbs to a roof, and a chest or a bookcase
 answers the A button. The map marks each spot by the [metatile
 behavior](../../glossary.md#metatile-behavior) of its
-[cell](../../glossary.md#cell), and the scene's event table says what that
+[cell](../../glossary.md#cell), and the scene's trigger table says what that
 number does. The same number means different things in different scenes.
 
-In Vale on the day the story begins, each door is a coord event rather than an
+In Vale on the day the story begins, each door is a step trigger rather than an
 exit: walking north into the doorstep runs a script that opens the door,
 walks the leader in and only then asks for the exit, and that can refuse
-instead, as Dora does once the party has left Vale. Coord events also climb
+instead, as Dora does once the party has left Vale. Step triggers also climb
 the ladder beside Isaac's house and put the bridge's cells back when the
 leader steps off it. Three cells of the path at the top carry a number no row
 answers, and do nothing.
 
-Stepping on or walking into a cell runs the first coord event that answers
+Stepping on or walking into a cell runs the first step trigger that answers
 its number and whose condition holds, or failing one the first such exit;
-pressing A facing it runs the first such bg event.
+pressing A facing it runs the first such examine trigger.
 
-`Scene_RunCoordEventOrExit` runs the stepping, and the numbers a
+`Scene_RunStepTriggerOrExit` runs the stepping, and the numbers a
 scene owns are `MB_EVENT_FIRST` to `MB_EVENT_LAST`; the numbers above them mean
 the same in every scene ([Maps](../map/README.md#cells)).
 
-## How a map event is chosen
+## How a trigger is chosen
 
 ![Isaac talks to the mayor of Vault in his house twice: the first time the mayor welcomes him back and tells him the thieves have escaped from jail, the second time he only warns that they want revenge](https://alchemy.pascalpixel.com/guides/map/talk-twice.gif)
 
-When the player talks to someone, the game reads the scene's event table from
+When the player talks to someone, the game reads the scene's trigger table from
 the top and runs the first row that fits. That one rule is how a person says
 something new as the story moves on. A scene lists its rows from the latest
 point in the story down to the default. In Vault's houses after Kalay, the
@@ -205,8 +205,8 @@ that always holds, so the first talk welcomes Isaac and every later one warns
 of the thieves ([`log_rooms_b.c`](log_rooms_b.c)):
 
 ```c
-{ MAP_EVENT_TALK, ACTOR_MAYOR, FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, EVENT_SCRIPT(EventScript_WelcomeIsaacBack) },
-{ MAP_EVENT_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarnOfThievesRevenge) },
+{ TRIGGER_TALK, ACTOR_MAYOR, FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, EVENT_SCRIPT(EventScript_WelcomeIsaacBack) },
+{ TRIGGER_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarnOfThievesRevenge) },
 ```
 
 A row behind one that always fits is never reached.
@@ -217,7 +217,7 @@ still answers. The game finds the row whatever its condition, shows the
 chest gives what it holds and is marked opened, and an opened one adds "but
 the chest was empty." A chest that hides a mimic starts its battle instead.
 
-`Scene_FindEvent` finds the row and `Field_SearchCell` runs a
+`Scene_FindTrigger` finds the row and `Field_SearchCell` runs a
 search. Rows these rules make unreachable keep a
 [`// Unused:`](../../glossary.md#unused) tag in their table, and
 [Unused](https://alchemy.pascalpixel.com/tbs/unused) describes every such
@@ -321,8 +321,8 @@ its rooms are drawn in, never for a place, and its file lists its rooms and the
 places they belong to.
 
 A scene's functions take its name (`Vault_`, `VaultRevisit_`,
-`ColosseumNavampaMatch_`) and say what the player sees; most functions a map
-event table names are `EventScript_` instead. Shared helpers take their
+`ColosseumNavampaMatch_`) and say what the player sees; most functions a
+trigger table names are `EventScript_` instead. Shared helpers take their
 family's prefix (`Colosso_`, `MercuryLighthouse_`, `KolimaPalette_`,
 `PushedObject_`, and `FieldEffect_` for the field effects), and some keep
 older descriptive names (`Scene_`) until the scenes that call them are humanized.

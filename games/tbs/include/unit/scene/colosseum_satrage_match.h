@@ -5,7 +5,7 @@
 #include "map_tables.h"
 
 struct SceneEntrance;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 struct SceneExitRegion;
 
@@ -13,7 +13,7 @@ const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ActorTemplate *Scene_GetActorTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 ColosseumSatrageMatch_Initialize(void);
 // The native call precedes this definition; see MATCHING.md.
 #ifdef UBFIX
@@ -34,7 +34,7 @@ extern u32 gColosseumSatrageMatchExits[];
 extern struct ActorTemplate gColosseumSatrageMatchActorTemplates[];
 extern s32 gColosseumSatrageMatch_LiftPhase;
 extern s32 gColosseumSatrageMatch_LiftTimer;
-extern struct MapEvent gColosseumSatrageMatchEvents[];
+extern struct Trigger gColosseumSatrageMatchTriggers[];
 extern s16 gColosso_LetteringSlot;
 extern s16 gColosseumSatrageMatch_LetteringTitle[];
 extern s16 gColosseumSatrageMatch_LetteringGo[];

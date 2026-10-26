@@ -161,7 +161,7 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void);
 static void
 VenusLighthouseAerie_UpdateOrbitingEffect(union ActorOrEffect *fieldObject);
 
-/// The metatile behaviors the aerie's coord events answer.
+/// The metatile behaviors the aerie's step triggers answer.
 enum VenusLighthouseAerieMetatileBehavior {
   MB_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON =
       5, ///< where the party confronts Saturos and Menardi
@@ -423,9 +423,9 @@ static void EventScript_FloatPlatforms(void) {
   Actor_GetById(ACTOR_LAST_PLATFORM)->motionFlags = flags;
 }
 
-/// Returns the platform and confrontation coord events.
-const struct MapEvent *VenusLighthouseAerie_GetEvents(void) {
-  return gVenusLighthouseAerieEvents;
+/// Returns the platform and confrontation step triggers.
+const struct Trigger *VenusLighthouseAerie_GetTriggers(void) {
+  return gVenusLighthouseAerieTriggers;
 }
 
 /// Sets up the beacon's statues and the six platforms.
@@ -3500,20 +3500,20 @@ struct ActorTemplate gVenusLighthouseAerieActorTemplates[] = {
 
 s32 gVenusLighthouseAerie_LandedPlatform = 0;
 
-struct MapEvent gVenusLighthouseAerieEvents[] = {
-    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING,
+struct Trigger gVenusLighthouseAerieTriggers[] = {
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
      MB_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_JumpToNextPlatform)},
-    {MAP_EVENT_COORD, MB_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS,
+    {TRIGGER_STEP, MB_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS,
      CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FloatPlatforms)},
-    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING,
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
      MB_VENUS_LIGHTHOUSE_AERIE_PLATFORM, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_JumpToNextPlatform)},
-    {MAP_EVENT_COORD, MB_VENUS_LIGHTHOUSE_AERIE_PLATFORM,
+    {TRIGGER_STEP, MB_VENUS_LIGHTHOUSE_AERIE_PLATFORM,
      FLAG_VENUS_AERIE_ON_PLATFORM, EVENT_SCRIPT(EventScript_LandOnPlatform)},
-    {MAP_EVENT_COORD, MB_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON, CONDITION_ALWAYS,
+    {TRIGGER_STEP, MB_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_ConfrontSaturosAndMenardi)},
-    {MAP_EVENTS_END},
+    {TRIGGERS_END},
 };
 
 s32 gVenusLighthouseAerie_BesideParticleScript[] = {

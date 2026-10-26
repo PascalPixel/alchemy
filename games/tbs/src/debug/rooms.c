@@ -73,7 +73,7 @@ static void TestRoom_ReceiveGust(void) {
 
 /// The room's events: talking to Flint, Fizz, Forge or Gust gives that
 /// Djinni.
-u8 *TestRoom_GetEvents(void) { return (u8 *)gTestRoom_Events; }
+u8 *TestRoom_GetTriggers(void) { return (u8 *)gTestRoom_Triggers; }
 
 /// The room's initialize entry, which SceneManager_Run runs on entry: nothing
 /// to set up.
@@ -117,14 +117,14 @@ struct ActorTemplate gTestRoom_ActorTemplates[] = {
     {MAP_TABLE_END},
 };
 
-struct MapEvent gTestRoom_Events[] = {
-    {MAP_EVENT_TALK, ACTOR_FLINT, CONDITION_ALWAYS,
+struct Trigger gTestRoom_Triggers[] = {
+    {TRIGGER_TALK, ACTOR_FLINT, CONDITION_ALWAYS,
      EVENT_SCRIPT(TestRoom_ReceiveFlint)},
-    {MAP_EVENT_TALK, ACTOR_FIZZ, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_FIZZ, CONDITION_ALWAYS,
      EVENT_SCRIPT(TestRoom_ReceiveFizz)},
-    {MAP_EVENT_TALK, ACTOR_FORGE, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_FORGE, CONDITION_ALWAYS,
      EVENT_SCRIPT(TestRoom_ReceiveForge)},
-    {MAP_EVENT_TALK, ACTOR_GUST, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_GUST, CONDITION_ALWAYS,
      EVENT_SCRIPT(TestRoom_ReceiveGust)},
-    {MAP_EVENTS_END},
+    {TRIGGERS_END},
 };

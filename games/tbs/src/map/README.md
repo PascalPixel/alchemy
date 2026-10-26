@@ -28,13 +28,13 @@ number, a row of the map's table of pictures.
 
 **What standing on it does.** The [metatile
 behavior](../../glossary.md#metatile-behavior) is a number that walls and
-[map events](../../glossary.md#map-event) are keyed on. One number is a wall
-whatever the heights. Most belong to the scene: a [coord
-event](../../glossary.md#coord-event) runs when the leader steps onto or
-pushes against a cell with that number, and a [bg
-event](../../glossary.md#bg-event) when the player presses A facing one, so
+[triggers](../../glossary.md#trigger) are keyed on. One number is a wall
+whatever the heights. Most belong to the scene: a [
+step trigger](../../glossary.md#step-trigger) runs when the leader steps onto or
+pushes against a cell with that number, and a [
+examine trigger](../../glossary.md#examine-trigger) when the player presses A facing one, so
 the same number can be a door in one town and a chest in another
-([Scenes](../scene/README.md#which-map-events-a-cell-starts)). The rest mean the
+([Scenes](../scene/README.md#which-triggers-a-cell-starts)). The rest mean the
 same in every scene: ground with random battles of its own, the jars, barrels,
 wooden boxes, graves, books and wells anyone can search, the Lamakan Desert's
 burning sand, and the ledges, climbing spots and gaps the leader jumps when
@@ -61,7 +61,7 @@ the behavior and a byte the shape. The behaviors are
 | Name | Value | Meaning |
 | --- | --- | --- |
 | (open ground) | 0 | nothing happens |
-| `MB_EVENT_FIRST` to `MB_EVENT_LAST` | 1 to 239 | the scene's own coord events, [exits](../../glossary.md#exit) and bg events |
+| `MB_EVENT_FIRST` to `MB_EVENT_LAST` | 1 to 239 | the scene's own step triggers, [exits](../../glossary.md#exit) and examine triggers |
 | `MB_ENCOUNTER_GROUND_1`, `_2` | 240, 241 | ground with random battles of its own |
 | `MB_JAR` to `MB_WELL` | 242 to 247 | search spots with lines every scene shares: a jar, a barrel, a wooden box, a grave, books, a well |
 | `MB_DESERT_SAND` | 250 | ground that hurts the [party](../../glossary.md#the-party) over time: the Lamakan Desert's sand |
@@ -259,18 +259,18 @@ mimic has been beaten; a Psynergy Stone stands until it is taken, and taking
 it fills every member's PP.
 
 Crossbone Isle's keys room and its Bane room share `map_110`, whose eight
-treasure spots carry the [triggers](../../glossary.md#trigger) 100 to 107: the
-keys room has chest events for 100 to 103, and the Bane room for 104 to 107.
+treasure spots carry the [trigger](../../glossary.md#trigger) subjects 100 to 107: the
+keys room has chest triggers for 100 to 103, and the Bane room for 104 to 107.
 The Bane room moves the Demon Axe's chest out of the way until the stone
 pillar carrying it reaches the ladder, since its treasure spot's cell lies
 past the room's east wall.
 
-The treasure spot list is (column, row, trigger) rows ended by 255, 255, and
-`Field_PlaceTreasureSpots` places an object at each spot whose trigger the scene
-has an event for, up to `TREASURE_SPOT_MAX` (10); a spot the scene has no event
+The treasure spot list is (column, row, subject) rows ended by 255, 255, and
+`Field_PlaceTreasureSpots` places an object at each spot whose subject the scene
+has a trigger for, up to `TREASURE_SPOT_MAX` (10); a spot the scene has no trigger
 for takes none of the ten. 76 maps use `map_000`'s list, which holds
-only the end row. Opening a chest and taking a stone are the scene's search
-events ([Scenes](../scene/README.md#how-a-map-event-is-chosen)).
+only the end row. Opening a chest and taking a stone are the scene's examine
+triggers ([Scenes](../scene/README.md#how-a-trigger-is-chosen)).
 
 ### Tileset animation and blend scripts
 

@@ -9,7 +9,7 @@
 /// two others, pushed in front of the centre statue, shine a beam at it; the
 /// last two never move. Walking into a statue pushes it a cell
 /// (SolSanctumStatue_PushStatue), and Move ends in a check of where it stands.
-/// Each move's map event carries the flag of what it achieves (a seal open, a
+/// Each move's trigger carries the flag of what it achieves (a seal open, a
 /// beam shining, the centre statue moved), so a statue stops answering once it
 /// has done its part, and SolSanctumStatue_Initialize redraws the room from
 /// those story flags on every entry.
@@ -114,7 +114,7 @@
 #define SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT 9
 #define SOL_SANCTUM_STATUE_SPRITE_WIDTH 32
 
-/// The metatile behaviors the coord events answer: the jump spots,
+/// The metatile behaviors the step triggers answer: the jump spots,
 /// the four seal statues' and the centre statue's cells. The beam statues'
 /// rows answer the behaviors of the cells each can stand in, 20 to 29.
 enum SolSanctumStatueMetatileBehavior {
@@ -249,8 +249,8 @@ const struct ActorTemplate *SolSanctumStatue_GetActorTemplates(void) {
 
 /// Returns the statues' Move and push events, each row only until its seal or
 /// beam is done.
-const struct MapEvent *SolSanctumStatue_GetEvents(void) {
-  return gSolSanctumStatue_Events;
+const struct Trigger *SolSanctumStatue_GetTriggers(void) {
+  return gSolSanctumStatue_Triggers;
 }
 
 /// Chooses the event in the Luna and Sol rooms that a newly opened
@@ -1784,14 +1784,14 @@ struct ActorTemplate gSolSanctumStatue_ActorTemplates[] = {
 };
 // clang-format on
 
-struct MapEvent gSolSanctumStatue_Events[] = {
-    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS,
+struct Trigger gSolSanctumStatue_Triggers[] = {
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS,
      SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS},
-    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS,
      SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_PSYNERGY_STONE},
-    {COORD_EVENT_WALKING, MB_SOL_SANCTUM_STATUE_JUMP_NORTH, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING, MB_SOL_SANCTUM_STATUE_JUMP_NORTH, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_JumpNorth)},
-    {COORD_EVENT_WALKING, MB_SOL_SANCTUM_STATUE_JUMP_SOUTH, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING, MB_SOL_SANCTUM_STATUE_JUMP_SOUTH, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_JumpSouth)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_NORTHWEST_STATUE,
      FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN,
@@ -1805,19 +1805,19 @@ struct MapEvent gSolSanctumStatue_Events[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SOUTHEAST_STATUE,
      FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN,
      EVENT_SCRIPT(EventScript_SoutheastStatueMoved)},
-    {COORD_EVENT_WALKING_INTO(FACING_EAST),
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST),
      MB_SOL_SANCTUM_STATUE_NORTHWEST_STATUE,
      FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN,
      EVENT_SCRIPT(EventScript_PushNorthwestStatue)},
-    {COORD_EVENT_WALKING_INTO(FACING_WEST),
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST),
      MB_SOL_SANCTUM_STATUE_NORTHEAST_STATUE,
      FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN,
      EVENT_SCRIPT(EventScript_PushNortheastStatue)},
-    {COORD_EVENT_WALKING_INTO(FACING_EAST),
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST),
      MB_SOL_SANCTUM_STATUE_SOUTHWEST_STATUE,
      FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN,
      EVENT_SCRIPT(EventScript_PushSouthwestStatue)},
-    {COORD_EVENT_WALKING_INTO(FACING_WEST),
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST),
      MB_SOL_SANCTUM_STATUE_SOUTHEAST_STATUE,
      FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN,
      EVENT_SCRIPT(EventScript_PushSoutheastStatue)},
@@ -1833,34 +1833,34 @@ struct MapEvent gSolSanctumStatue_Events[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RIGHT_BEAM_STATUE,
      FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT_SCRIPT(EventScript_RightBeamStatueMoved)},
-    {COORD_EVENT_WALKING_INTO(FACING_EAST), 20,
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 20,
      FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT_SCRIPT(EventScript_PushLeftBeamStatueEast)},
-    {COORD_EVENT_WALKING_INTO(FACING_EAST), 21,
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 21,
      FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT_SCRIPT(EventScript_PushLeftBeamStatueEast)},
-    {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 21,
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 21,
      FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT_SCRIPT(EventScript_PushLeftBeamStatueSouth)},
-    {COORD_EVENT_WALKING_INTO(FACING_NORTH), 23,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 23,
      FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT_SCRIPT(EventScript_PushLeftBeamStatueNorth)},
-    {COORD_EVENT_WALKING_INTO(FACING_NORTH), 24,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 24,
      FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT_SCRIPT(EventScript_PushLeftBeamStatueNorth)},
-    {COORD_EVENT_WALKING_INTO(FACING_WEST), 25,
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 25,
      FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT_SCRIPT(EventScript_PushRightBeamStatueWest)},
-    {COORD_EVENT_WALKING_INTO(FACING_WEST), 26,
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 26,
      FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT_SCRIPT(EventScript_PushRightBeamStatueWest)},
-    {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 26,
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 26,
      FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT_SCRIPT(EventScript_PushRightBeamStatueSouth)},
-    {COORD_EVENT_WALKING_INTO(FACING_NORTH), 28,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 28,
      FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT_SCRIPT(EventScript_PushRightBeamStatueNorth)},
-    {COORD_EVENT_WALKING_INTO(FACING_NORTH), 29,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 29,
      FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT_SCRIPT(EventScript_PushRightBeamStatueNorth)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
@@ -1869,10 +1869,10 @@ struct MapEvent gSolSanctumStatue_Events[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CENTER_STATUE,
      FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
      EVENT_SCRIPT(EventScript_CenterStatueMoved)},
-    {COORD_EVENT_WALKING_INTO(FACING_NORTH),
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
      MB_SOL_SANCTUM_STATUE_CENTER_STATUE, FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
      EVENT_SCRIPT(EventScript_PushCenterStatueNorth)},
-    {MAP_EVENTS_END},
+    {TRIGGERS_END},
 };
 
 s32 gSolSanctumStatue_ScrollPhase = 0;

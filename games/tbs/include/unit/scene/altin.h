@@ -6,14 +6,14 @@
 #include "map_tables.h"
 
 struct SceneEntrance;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 struct SceneExitRegion;
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ActorTemplate *Scene_GetActorTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gCottageRoomsD_CookScript[];
 extern struct SceneEntrance gAltin_NoEntrances[];
@@ -23,9 +23,9 @@ extern u32 gAltin_Exits[];
 extern struct ActorTemplate gAltin_NoActorTemplates[];
 extern struct ActorTemplate gAltin_ActorTemplates[];
 extern struct ActorTemplate gCottageRoomsD_ActorTemplates[];
-extern struct MapEvent gAltin_NoEvents[];
-extern struct MapEvent gAltin_Events[];
-extern struct MapEvent gCottageRoomsD_Events[];
+extern struct Trigger gAltin_NoTriggers[];
+extern struct Trigger gAltin_Triggers[];
+extern struct Trigger gCottageRoomsD_Triggers[];
 extern u16 gAltin_SanctumDoorCells[];
 extern u16 gAltin_SouthwestDoorCells[];
 extern u16 gAltin_SoutheastDoorCells[];

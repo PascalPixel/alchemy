@@ -136,7 +136,7 @@ static s32 MainMenu_EncodePassword(u8 *data, s32 size, u8 *out);
 static u16 MainMenu_CalculatePasswordCrc16(u32 byteCount, u8 *data);
 
 /// The main menu overlay's map tables, for the map loader: one
-/// entrance, the exit, and no actor templates or map events.
+/// entrance, the exit, and no actor templates or triggers.
 u8 *MainMenu_GetEntrances(void) { return (u8 *)gMainMenu_Entrances; }
 
 /// The exit regions entry: the main menu has no exit boxes.
@@ -146,7 +146,7 @@ u8 *MainMenu_GetExits(void) { return (u8 *)gMainMenu_Exits; }
 
 u8 *MainMenu_GetActorTemplates(void) { return (u8 *)gMainMenu_ActorTemplates; }
 
-u8 *MainMenu_GetEvents(void) { return (u8 *)gMainMenu_Events; }
+u8 *MainMenu_GetTriggers(void) { return (u8 *)gMainMenu_Triggers; }
 
 /// Loads the Golden Sun logo onto BG2 as Title_LoadBackground (title.c) does,
 /// and stops the leader's motion. MainMenu_Run calls it first.
@@ -1361,8 +1361,8 @@ struct ActorTemplate gMainMenu_ActorTemplates[] = {
     {MAP_TABLE_END},
 };
 
-struct MapEvent gMainMenu_Events[] = {
-    {MAP_EVENTS_END},
+struct Trigger gMainMenu_Triggers[] = {
+    {TRIGGERS_END},
 };
 
 /// Frames since MainMenu_UpdateBlend began; the blend level is half of it.

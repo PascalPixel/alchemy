@@ -3,5 +3,5 @@
 	overlay_veneer TolbiSpring_GetEntrances
 	overlay_veneer TolbiSpring_GetExits
 	overlay_veneer TolbiSpring_GetActorTemplates
-	overlay_veneer TolbiSpring_GetEvents
+	overlay_veneer TolbiSpring_GetTriggers
 	overlay_veneer TolbiSpring_GetRegions

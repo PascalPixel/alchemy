@@ -6,7 +6,7 @@
 #include "scene_header.h"
 #include "static_assert.h"
 
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 
 /// Each stop links to up to three others, with a heading for each connection.
@@ -31,7 +31,7 @@ const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ActorTemplate *Scene_GetActorTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern struct LogRoomsAStop gLogRoomsA_Stops[];
 extern s32 gLogRoomsA_ActionTable[];
@@ -65,9 +65,9 @@ extern struct SceneExitRegion gLogRoomsA_Regions[];
 extern u32 gLogRoomsA_Exits[];
 extern struct ActorTemplate gLogRoomsA_ActorTemplates[];
 extern struct ActorTemplate gLogRoomsA_LoftActorTemplates[];
-extern struct MapEvent gLogRoomsA_Events[];
-extern struct MapEvent gLogRoomsA_LoftEvents[];
-extern struct MapEvent gLogRoomsA_EventsAfterThieves[];
+extern struct Trigger gLogRoomsA_Triggers[];
+extern struct Trigger gLogRoomsA_LoftTriggers[];
+extern struct Trigger gLogRoomsA_TriggersAfterThieves[];
 extern s32 *gLogRoomsA_StepActions[];
 extern s32 *gLogRoomsA_IdleActions[];
 extern s32 *gLogRoomsA_ResponseScripts[];

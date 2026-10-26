@@ -3,5 +3,5 @@
 	overlay_veneer MogallForest_GetEntrances
 	overlay_veneer MogallForest_GetExits
 	overlay_veneer MogallForest_GetActorTemplates
-	overlay_veneer MogallForest_GetEvents
+	overlay_veneer MogallForest_GetTriggers
 	overlay_veneer MogallForest_GetRegions

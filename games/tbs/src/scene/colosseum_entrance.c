@@ -16,14 +16,14 @@
 ///   talk of the heats and of the Lucky Guess, a bet on which warrior will win
 ///   the finals, and Mind Read hears what they hope for. On the finals day
 ///   ColosseumEntrance_GetActorTemplates places a second crowd, with
-///   Isaac's companions and four of the colosseum's soldiers, and the map
-///   events' flag conditions give everyone new lines: the scalpers sell seats,
-///   and the Lucky Guess man recognizes Isaac and will not let a finalist play
-///   (FLAG_LUCKY_GUESS_REFUSED_ISAAC remembers that he said so). Stepping
-///   toward the gates (EventScript_CrowdRecognizesIsaac) plays the soldiers'
-///   quarrel over the boy Babi picked; they lead the party in, and if Isaac
-///   will not go, they and his companions talk him round, Garet leading the way
-///   if he still refuses. The party arrives at the Colosseum's
+///   Isaac's companions and four of the colosseum's soldiers, and the
+///   triggers' flag conditions give everyone new lines: the scalpers sell
+///   seats, and the Lucky Guess man recognizes Isaac and will not let a
+///   finalist play (FLAG_LUCKY_GUESS_REFUSED_ISAAC remembers that he said so).
+///   Stepping toward the gates (EventScript_CrowdRecognizesIsaac) plays the
+///   soldiers' quarrel over the boy Babi picked; they lead the party in, and if
+///   Isaac will not go, they and his companions talk him round, Garet leading
+///   the way if he still refuses. The party arrives at the Colosseum's
 ///   COLOSSEUM_FROM_COLOSSEUM_ENTRANCE. Once Colosso is over,
 ///   ColosseumEntrance_UpdateEntranceCells changes the layout's cells before
 ///   the gates, and two people linger to say the colosseum is closed until next
@@ -309,13 +309,13 @@ enum ColosseumWaitingRoomActorId {
   ACTOR_BUFORD
 };
 
-/// The metatile behaviors the Colosseum Entrance's map events answer.
+/// The metatile behaviors the Colosseum Entrance's triggers answer.
 enum ColosseumEntranceMetatileBehavior {
   /// Before the gates (EventScript_CrowdRecognizesIsaac).
   MB_COLOSSEUM_ENTRANCE_BEFORE_GATES = 10
 };
 
-/// The metatile behaviors the Colosseum's map events answer.
+/// The metatile behaviors the Colosseum's triggers answer.
 enum ColosseumMetatileBehavior {
   /// The line before the waiting room's east passage (EventScript_FinalsStart).
   MB_COLOSSEUM_FINALS_LINE = 12,
@@ -340,7 +340,7 @@ enum {
   /// ★ Named from the game: "If you win there, you advance to the finals."
   /// (MsgTolbiTheTrialsAreStartingAtThe)
   FLAG_FINALS_LINE_ARMED = FLAG_SCENE_TEMP_34,
-  /// The leader has stepped onto the line since; its coord event is off.
+  /// The leader has stepped onto the line since; its step trigger is off.
   /// ★ Named from the game: "If you win there, you advance to the finals."
   /// (MsgTolbiTheTrialsAreStartingAtThe)
   FLAG_FINALS_LINE_REACHED = FLAG_SCENE_TEMP_35
@@ -416,22 +416,22 @@ const struct ActorTemplate *ColosseumEntrance_GetActorTemplates(void) {
   return table;
 }
 
-const struct MapEvent *ColosseumEntrance_GetEvents(void) {
+const struct Trigger *ColosseumEntrance_GetTriggers(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_ColosseumTunnel) {
-    return gColosseumTunnelEvents;
+    return gColosseumTunnelTriggers;
   }
   if (sceneId == (s32)&SceneId_Colosseum) {
     if (gSaveBlock.entrance == COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST) {
-      return gColosseumEventsFromColosseumAzartMatchWest;
+      return gColosseumTriggersFromColosseumAzartMatchWest;
     }
-    return gColosseumEvents;
+    return gColosseumTriggers;
   }
   if (sceneId == (s32)&SceneId_ColosseumEntrance) {
-    return gColosseumEntranceEvents;
+    return gColosseumEntranceTriggers;
   }
-  return gColosseumEntranceEventsOther;
+  return gColosseumEntranceTriggersOther;
 }
 
 /// At the Colosseum Entrance: during the trials, a burly grey-haired man asks
@@ -2475,53 +2475,53 @@ struct ActorTemplate gColosseumEntranceActorTemplatesAfterColosso[] = {
     { MAP_TABLE_END },
 };
 
-struct MapEvent gColosseumEntranceEventsOther[] = {
-    { MAP_EVENTS_END },
+struct Trigger gColosseumEntranceTriggersOther[] = {
+    { TRIGGERS_END },
 };
 
-struct MapEvent gColosseumTunnelEvents[] = {
-    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, COLOSSEUM_TUNNEL_TO_BABI_PALACE },
-    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, COLOSSEUM_TUNNEL_TO_COLOSSEUM },
-    { MAP_EVENTS_END },
+struct Trigger gColosseumTunnelTriggers[] = {
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, COLOSSEUM_TUNNEL_TO_BABI_PALACE },
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, COLOSSEUM_TUNNEL_TO_COLOSSEUM },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gColosseumEvents[] = {
-    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, COLOSSEUM_STONE_PASSAGE_TO_STANDS_NORTH },
-    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, COLOSSEUM_STONE_PASSAGE_TO_STANDS_WEST },
-    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, COLOSSEUM_TO_COLOSSEUM_TUNNEL },
-    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 5, CONDITION_ALWAYS, COLOSSEUM_STANDS_TO_STONE_PASSAGE_WEST },
-    { MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, COLOSSEUM_STANDS_TO_STONE_PASSAGE_NORTH },
-    { MAP_EVENT_TALK, ACTOR_SPECTATOR_CHEERING, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceGoForItThatsItIm) },
-    { MAP_EVENT_TALK, ACTOR_SPECTATOR_EXCITED, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceWatchingTheTrialsMakesMeReally) },
-    { MAP_EVENT_TALK, ACTOR_SPECTATOR_ENCHANTED, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceWatchingSuchProudSkilledWarriorsIn) },
-    { MAP_EVENT_TALK, ACTOR_SPECTATOR_WAITED_A_YEAR, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceIveWaitedAWholeYearTo) },
-    { MAP_EVENT_TALK, ACTOR_TRIAL_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToTrialAttendant) },
+struct Trigger gColosseumTriggers[] = {
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, COLOSSEUM_STONE_PASSAGE_TO_STANDS_NORTH },
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, COLOSSEUM_STONE_PASSAGE_TO_STANDS_WEST },
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, COLOSSEUM_TO_COLOSSEUM_TUNNEL },
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 5, CONDITION_ALWAYS, COLOSSEUM_STANDS_TO_STONE_PASSAGE_WEST },
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, COLOSSEUM_STANDS_TO_STONE_PASSAGE_NORTH },
+    { TRIGGER_TALK, ACTOR_SPECTATOR_CHEERING, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceGoForItThatsItIm) },
+    { TRIGGER_TALK, ACTOR_SPECTATOR_EXCITED, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceWatchingTheTrialsMakesMeReally) },
+    { TRIGGER_TALK, ACTOR_SPECTATOR_ENCHANTED, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceWatchingSuchProudSkilledWarriorsIn) },
+    { TRIGGER_TALK, ACTOR_SPECTATOR_WAITED_A_YEAR, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceIveWaitedAWholeYearTo) },
+    { TRIGGER_TALK, ACTOR_TRIAL_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToTrialAttendant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SPECTATOR_CHEERING, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceEvenTheSmallerWarriorsCanWin) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SPECTATOR_EXCITED, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceTheseTrialsAreBasedOnPersonal) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SPECTATOR_ENCHANTED, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceWhatFantasticPhysiquesWhyIfI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SPECTATOR_WAITED_A_YEAR, CONDITION_ALWAYS, MSGNO(MsgColossoDidntThinkBattles) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRIAL_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceNoMatterHowGoodAWarrior) },
-    { BG_EVENT(BG_EVENT_SILENT), 50, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgXianItIsLocked)) },
-    { MAP_EVENTS_END },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), 50, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgXianItIsLocked)) },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gColosseumEntranceEvents[] = {
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, COLOSSEUM_ENTRANCE_TO_TOLBI },
-    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, COLOSSEUM_ENTRANCE_TO_COLOSSEUM },
-    { MAP_EVENT_TALK, ACTOR_VILLAGER_PRELIMINARY_HEATS, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceTheyreHoldingThePreliminaryColossoHeats) },
-    { MAP_EVENT_TALK, ACTOR_VILLAGER_PRELIMINARY_HEATS, FLAG_COLOSSO_OVER, MSGNO(MsgColosseumEntranceTheFinalsAreFinallyHereI) },
-    { MAP_EVENT_TALK, ACTOR_VILLAGER_PRELIMINARY_HEATS, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceColossoIsOverAndTheColosseum) },
-    { MAP_EVENT_TALK, ACTOR_WOMAN_CANNOT_GET_IN, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceSighTheColosseumIsPackedWith) },
-    { MAP_EVENT_TALK, ACTOR_WOMAN_CANNOT_GET_IN, FLAG_COLOSSO_OVER, MSGNO(MsgColosseumEntranceIHeardBabiHasPickedSome) },
-    { MAP_EVENT_TALK, ACTOR_WOMAN_CANNOT_GET_IN, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceTheColosseumIsClosedUntilNext) },
-    { MAP_EVENT_TALK, ACTOR_VILLAGER_SEATING, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DiscussSeating) },
-    { MAP_EVENT_TALK, ACTOR_WOMAN_PRETTY_PENNY, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceIfYouHitItBigIn) },
-    { MAP_EVENT_TALK, ACTOR_WOMAN_PRETTY_PENNY, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceAWarriorNamedIsaacWasSelected) },
-    { MAP_EVENT_TALK, ACTOR_OLD_MAN_BETTING_FOR_YEARS, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceIveBeenBettingOnTheLucky) },
-    { MAP_EVENT_TALK, ACTOR_OLD_MAN_BETTING_FOR_YEARS, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceHavingAWarriorWhoWasntIn) },
-    { MAP_EVENT_TALK, ACTOR_OLD_WOMAN_GOOD_SPOT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DiscussLuckyGuessSeats) },
-    { MAP_EVENT_TALK, ACTOR_SCALPER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DiscussLuckyGuessWinnings) },
-    { MAP_EVENT_TALK, ACTOR_LUCKY_GUESS_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OfferLuckyGuess) },
+struct Trigger gColosseumEntranceTriggers[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, COLOSSEUM_ENTRANCE_TO_TOLBI },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, COLOSSEUM_ENTRANCE_TO_COLOSSEUM },
+    { TRIGGER_TALK, ACTOR_VILLAGER_PRELIMINARY_HEATS, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceTheyreHoldingThePreliminaryColossoHeats) },
+    { TRIGGER_TALK, ACTOR_VILLAGER_PRELIMINARY_HEATS, FLAG_COLOSSO_OVER, MSGNO(MsgColosseumEntranceTheFinalsAreFinallyHereI) },
+    { TRIGGER_TALK, ACTOR_VILLAGER_PRELIMINARY_HEATS, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceColossoIsOverAndTheColosseum) },
+    { TRIGGER_TALK, ACTOR_WOMAN_CANNOT_GET_IN, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceSighTheColosseumIsPackedWith) },
+    { TRIGGER_TALK, ACTOR_WOMAN_CANNOT_GET_IN, FLAG_COLOSSO_OVER, MSGNO(MsgColosseumEntranceIHeardBabiHasPickedSome) },
+    { TRIGGER_TALK, ACTOR_WOMAN_CANNOT_GET_IN, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceTheColosseumIsClosedUntilNext) },
+    { TRIGGER_TALK, ACTOR_VILLAGER_SEATING, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DiscussSeating) },
+    { TRIGGER_TALK, ACTOR_WOMAN_PRETTY_PENNY, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceIfYouHitItBigIn) },
+    { TRIGGER_TALK, ACTOR_WOMAN_PRETTY_PENNY, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceAWarriorNamedIsaacWasSelected) },
+    { TRIGGER_TALK, ACTOR_OLD_MAN_BETTING_FOR_YEARS, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceIveBeenBettingOnTheLucky) },
+    { TRIGGER_TALK, ACTOR_OLD_MAN_BETTING_FOR_YEARS, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceHavingAWarriorWhoWasntIn) },
+    { TRIGGER_TALK, ACTOR_OLD_WOMAN_GOOD_SPOT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DiscussLuckyGuessSeats) },
+    { TRIGGER_TALK, ACTOR_SCALPER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DiscussLuckyGuessWinnings) },
+    { TRIGGER_TALK, ACTOR_LUCKY_GUESS_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OfferLuckyGuess) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PRELIMINARY_HEATS, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceIWonderWhichWarriorWillBe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PRELIMINARY_HEATS, FLAG_COLOSSO_OVER, MSGNO(MsgColosseumEntranceTheRealBattlesAreAboutTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PRELIMINARY_HEATS, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceWhenTheColosseumGatesFinallyShut) },
@@ -2540,37 +2540,37 @@ struct MapEvent gColosseumEntranceEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCALPER, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceImGoingToBeInTrouble) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_GUESS_MAN, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceOnceTheTrialsAreOverIts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_GUESS_MAN, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceAllOfTheProfitsFromThe) },
-    { MAP_EVENT_COORD, MB_COLOSSEUM_ENTRANCE_BEFORE_GATES, FLAG_COLOSSO_OVER, EVENT_SCRIPT(EventScript_CrowdRecognizesIsaac) },
-    { MAP_EVENTS_END },
+    { TRIGGER_STEP, MB_COLOSSEUM_ENTRANCE_BEFORE_GATES, FLAG_COLOSSO_OVER, EVENT_SCRIPT(EventScript_CrowdRecognizesIsaac) },
+    { TRIGGERS_END },
 };
 // clang-format on
 
-struct MapEvent gColosseumEventsFromColosseumAzartMatchWest[] = {
-    {MAP_EVENT_TALK, ACTOR_MORGAN, CONDITION_ALWAYS,
+struct Trigger gColosseumTriggersFromColosseumAzartMatchWest[] = {
+    {TRIGGER_TALK, ACTOR_MORGAN, CONDITION_ALWAYS,
      MSGNO(MsgColosseumEntranceIAmMorganIAmThe)},
-    {MAP_EVENT_TALK, ACTOR_AZART, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_AZART, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_TalkToAzart)},
-    {MAP_EVENT_TALK, ACTOR_GALAHAD, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_GALAHAD, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_TalkToGalahad)},
-    {MAP_EVENT_TALK, ACTOR_SATRAGE, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_SATRAGE, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_TalkToSatrage)},
-    {MAP_EVENT_TALK, ACTOR_DEKKA, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_DEKKA, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_TalkToDekka)},
-    {MAP_EVENT_TALK, ACTOR_NAVAMPA, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_NAVAMPA, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_TalkToNavampa)},
-    {MAP_EVENT_TALK, ACTOR_BUFORD, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_BUFORD, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_TalkToBuford)},
-    {MAP_EVENT_TALK, ACTOR_FINALS_SOLDIER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_FINALS_SOLDIER, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_AskIfReadyForFinals)},
-    {MAP_EVENT_TALK, ACTOR_EXIT_SOLDIER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_EXIT_SOLDIER, CONDITION_ALWAYS,
      MSGNO(MsgColosseumEntranceYouCannotLeaveUntilTheFinals)},
-    {MAP_EVENT_TALK, ACTOR_WAITING_SOLDIER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_WAITING_SOLDIER, CONDITION_ALWAYS,
      MSGNO(MsgColosseumEntranceIFeelWeveBeenWaitingForever)},
-    {MAP_EVENT_TALK, ACTOR_GONG_SOLDIER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_GONG_SOLDIER, CONDITION_ALWAYS,
      MSGNO(MsgColosseumEntranceWhenTheGongSoundsTheFinals)},
-    {MAP_EVENT_COORD, MB_COLOSSEUM_FINALS_LINE, FLAG_FINALS_LINE_REACHED,
+    {TRIGGER_STEP, MB_COLOSSEUM_FINALS_LINE, FLAG_FINALS_LINE_REACHED,
      EVENT_SCRIPT(EventScript_FinalsStart)},
-    {MAP_EVENT_COORD, MB_COLOSSEUM_BEHIND_FINALS_LINE, CONDITION_ALWAYS,
+    {TRIGGER_STEP, MB_COLOSSEUM_BEHIND_FINALS_LINE, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_StepBackFromFinalsLine)},
-    {MAP_EVENTS_END},
+    {TRIGGERS_END},
 };

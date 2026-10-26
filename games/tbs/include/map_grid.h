@@ -13,16 +13,16 @@
 /// on, pushing against or searching the cell does.
 enum MetatileBehavior {
   MB_NORMAL = 0, ///< open ground: nothing happens there
-  /// 1 to 239: the map's own events, coord event or exit when stepped on
-  /// (Scene_RunCoordEventOrExit), bg event when the player presses A facing the
-  /// cell.
+  /// 1 to 239: the map's own events, step trigger or exit when stepped on
+  /// (Scene_RunStepTriggerOrExit), examine trigger when the player presses A
+  /// facing the cell.
   MB_EVENT_FIRST = 1,
   MB_EVENT_LAST = 239,
   /// Ground with encounters of its own: grounds 1 and 2 of the map's zones.
   MB_ENCOUNTER_GROUND_1 = 240,
   MB_ENCOUNTER_GROUND_2 = 241,
-  /// 242 to 247: bg events with lines of their own, the same on every map
-  /// (Field_SearchCell, gField_BgEventMessageOffsets).
+  /// 242 to 247: examine triggers with lines of their own, the same on every
+  /// map (Field_SearchCell, gField_ExamineTriggerMessageOffsets).
   MB_JAR = 242,
   MB_BARREL = 243,
   MB_WOODEN_BOX = 244,

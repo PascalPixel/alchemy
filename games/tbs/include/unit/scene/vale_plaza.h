@@ -8,7 +8,7 @@ const struct SceneEntrance *ValePlaza_GetEntrances(void);
 const struct SceneExitRegion *ValePlaza_GetRegions(void);
 const u32 *ValePlaza_GetExits(void);
 const struct ActorTemplate *ValePlaza_GetActorTemplates(void);
-const struct MapEvent *ValePlaza_GetEvents(void);
+const struct Trigger *ValePlaza_GetTriggers(void);
 s32 ValePlaza_Initialize(void);
 extern u8 gValePlaza_UnusedPaletteSteps[];
 extern s32 gValePlaza_ChargedUpStrongmanActions[];
@@ -35,11 +35,11 @@ extern struct ActorTemplate gValePlaza_ActorTemplates[];
 extern struct ActorTemplate gValePlaza_StormActorTemplates[];
 extern struct ActorTemplate gValePlaza_DepartureActorTemplates[];
 extern struct ActorTemplate gValePlaza_ActorTemplatesAfterKalay[];
-extern struct MapEvent gValePlaza_Events[];
-extern struct MapEvent gValePlaza_StormEvents[];
-extern struct MapEvent gValePlaza_DepartureEvents[];
-extern struct MapEvent gValePlaza_EventsAfterLeaving[];
-extern struct MapEvent gValePlaza_EventsAfterKalay[];
+extern struct Trigger gValePlaza_Triggers[];
+extern struct Trigger gValePlaza_StormTriggers[];
+extern struct Trigger gValePlaza_DepartureTriggers[];
+extern struct Trigger gValePlaza_TriggersAfterLeaving[];
+extern struct Trigger gValePlaza_TriggersAfterKalay[];
 extern u16 gValePlaza_DoorOpens[];
 
 #endif

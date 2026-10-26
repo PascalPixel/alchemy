@@ -6,7 +6,7 @@
 #include "unit/overworld/overworld.h"
 
 struct Sprite;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 union ActorOrEffect;
 
@@ -59,7 +59,7 @@ void FieldScript_NoOpHookA(void);
 void FieldScript_NoOpHook(void);
 void FieldScript_RunObjectHookAndWait(struct ActorTemplate *table);
 void FieldScript_CallWithLastActiveObjectId(struct ActorTemplate *table);
-void FieldScript_SetMapEvents(const struct MapEvent *events);
+void FieldScript_SetTriggers(const struct Trigger *triggers);
 void FieldScript_PrepareObjectAndApplyValue(s32 unit, s32 announce);
 void FieldScript_PrepareTwoObjectsAndApply(s32 first, s32 second);
 s32 FieldScript_ValidatePackedId(u32 shortcut);

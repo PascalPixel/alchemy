@@ -25,10 +25,10 @@ enum InteriorRoom {
   ROOM_TEMPLE_SECOND_ENTRANCE
 };
 
-#define ROOM_DOOR(room) {MAP_EVENT_EXIT, (room), CONDITION_ALWAYS, (room)}
+#define ROOM_DOOR(room) {TRIGGER_EXIT, (room), CONDITION_ALWAYS, (room)}
 
-/// The metatile behaviors the rooms' bg events answer; each door's cells carry
-/// the number of its exit.
+/// The metatile behaviors the rooms' examine triggers answer; each door's cells
+/// carry the number of its exit.
 enum RockRoomsMetatileBehavior {
   MB_ROCK_ROOMS_WOODEN_BOX = 100,
   /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)

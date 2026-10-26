@@ -5,7 +5,7 @@
 #include "map_tables.h"
 
 struct SceneEntrance;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 struct SceneExitRegion;
 
@@ -13,7 +13,7 @@ const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ActorTemplate *Scene_GetActorTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gFieldEffect_ShortScript[];
 extern s32 gFieldEffect_MediumScript[];
@@ -30,9 +30,9 @@ extern u32 gFuchinTempleExits[];
 extern struct ActorTemplate gFuchinTempleGroundsActorTemplates[];
 extern struct ActorTemplate gFuchinTempleActorTemplates[];
 extern struct ActorTemplate gFuchinTempleActorTemplatesFromLamaTemple[];
-extern struct MapEvent gFuchinTempleGroundsEvents[];
-extern struct MapEvent gFuchinTempleEvents[];
-extern struct MapEvent gFuchinTempleEventsFromLamaTemple[];
+extern struct Trigger gFuchinTempleGroundsTriggers[];
+extern struct Trigger gFuchinTempleTriggers[];
+extern struct Trigger gFuchinTempleTriggersFromLamaTemple[];
 extern s32 gFuchinTemple_ShotScript[];
 
 #endif

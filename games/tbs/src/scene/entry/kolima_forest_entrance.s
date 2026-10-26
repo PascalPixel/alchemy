@@ -3,5 +3,5 @@
 	overlay_veneer KolimaForestEntrance_GetEntrances
 	overlay_veneer KolimaForestEntrance_GetExits
 	overlay_veneer KolimaForestEntrance_GetActorTemplates
-	overlay_veneer KolimaForestEntrance_GetEvents
+	overlay_veneer KolimaForestEntrance_GetTriggers
 	overlay_veneer KolimaForestEntrance_GetRegions

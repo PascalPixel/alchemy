@@ -9,7 +9,7 @@ const struct SceneEntrance *TolbiShipDeck_GetEntrances(void);
 const struct SceneExitRegion *TolbiShipDeck_GetRegions(void);
 const u32 *TolbiShipDeck_GetExits(void);
 const struct ActorTemplate *TolbiShipDeck_GetActorTemplates(void);
-const struct MapEvent *TolbiShipDeck_GetEvents(void);
+const struct Trigger *TolbiShipDeck_GetTriggers(void);
 s32 TolbiShipDeck_Initialize(void);
 extern const s32 gTolbiShipDeck_KajaLeavesActions[];
 extern const s32 gTolbiShipDeck_CaptainStepsAsideActions[];
@@ -47,10 +47,10 @@ extern const struct ActorTemplate gTolbiShipDeck_SecondAttackActorTemplates[];
 extern const struct ActorTemplate gTolbiShipDeck_ThirdAttackActorTemplates[];
 extern const struct ActorTemplate gTolbiShipDeck_KrakenActorTemplates[];
 extern const struct ActorTemplate gTolbiShipDeckActorTemplatesArrived[];
-extern const struct MapEvent gTolbiShipDeckEvents[];
-extern const struct MapEvent gTolbiShipDeckEventsAtSea[];
-extern const struct MapEvent gTolbiShipDeckEventsArrived[];
-extern const struct MapEvent gTolbiShipDeckEventsAtIsland[];
+extern const struct Trigger gTolbiShipDeckTriggers[];
+extern const struct Trigger gTolbiShipDeckTriggersAtSea[];
+extern const struct Trigger gTolbiShipDeckTriggersArrived[];
+extern const struct Trigger gTolbiShipDeckTriggersAtIsland[];
 extern const s32 gTolbiShipDeckRowerStrokes[];
 
 #endif

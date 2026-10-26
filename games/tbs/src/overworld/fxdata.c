@@ -22,7 +22,7 @@
 
 /// The message of each searchable metatile behavior from 242 to 247, as an
 /// offset from MsgTileChecked and MsgTileResult.
-const u8 gField_BgEventMessageOffsets[6] = {
+const u8 gField_ExamineTriggerMessageOffsets[6] = {
     2,  // a jar
     3,  // a barrel
     13, // a wooden box

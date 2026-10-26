@@ -107,7 +107,7 @@ void Scene_QueueMusic(s32 soundId) {
 }
 
 /// Plays the sound Scene_QueueMusic remembered, if any. Called
-/// by maps, by the event runner (overworld/events.c), by setup.c and by an
+/// by maps, by the event runner (overworld/triggers.c), by setup.c and by an
 /// actor's landing (actor_commands.c).
 void Scene_PlayQueuedMusic(void) {
   s16 soundId = gFieldWork->queuedSound;

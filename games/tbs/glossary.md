@@ -281,7 +281,7 @@ The picture of one cell: 2 by 2 of the console's 8-pixel tiles.
 
 The byte of a cell that says what standing on it, walking into it or searching
 it does: a wall, a ledge, a jar. One range of behaviors means whatever the
-scene's own event table says
+scene's own trigger table says
 ([World](world.md#cells-and-metatile-behaviors)).
 
 ### Object
@@ -302,27 +302,27 @@ An actor's number in its scene: 0 to 7 the party, the leader at 0, and
 from 8 (`ACTOR_FIRST_PLACED`) the actor templates' rows in order; each
 scene names its own in an enum.
 
-### Map event
+### Trigger
 
-A row of a scene's event table (`struct MapEvent`): a kind, a trigger, a
+A row of a scene's trigger table (`struct Trigger`): a kind, a trigger, a
 condition and the event it runs. When the player talks, searches, steps on a
 marked cell or uses Psynergy, the first row that fits runs
-([Scenes](src/scene/README.md#what-a-map-event-row-says)).
+([Scenes](src/scene/README.md#what-a-trigger-row-says)).
 
 ### Trigger
 
-What a map event row answers: an actor's actor id for talking, a
+What a trigger row answers: an actor's actor id for talking, a
 metatile behavior for a cell, or a value the scene's code raises. Object,
-coord and bg events are the triggers.
+coord and examine triggers are the triggers.
 
-### Coord event
+### Step trigger
 
-A map event that runs when the leader steps onto, or walks into, a cell with a
+A trigger that runs when the leader steps onto, or walks into, a cell with a
 given metatile behavior: a doorstep, a ladder, the edge of a path.
 
-### Bg event
+### Examine trigger
 
-A map event that runs when the player presses A facing a cell: a jar, a chest,
+A trigger that runs when the player presses A facing a cell: a jar, a chest,
 a bookcase. "Bg" is pret's word and has nothing to do with the background
 layers.
 
@@ -346,7 +346,7 @@ draws no line between them, so each is an event, and its code an event script.
 
 ### Script
 
-A function a map event names (`EventScript_EnterIsaacsHouse`), written one step
+A function a trigger names (`EventScript_EnterIsaacsHouse`), written one step
 to a line as calls into the script layer, each step that takes time running its
 frames before the next starts. An object script is the list of `SC_` commands
 an [object](#object) runs each frame ([Scenes](src/scene/README.md#scripts)).

@@ -23,12 +23,13 @@
 ///   eruption (EventScript_TakeMarsStar, SceneId_SolSanctumEruption,
 ///   sol_sanctum_eruption.c).
 ///
-/// Each pedestal's bg event row holds only until its flag is set, so a star is
-/// taken once. On every entry SolSanctumElementalStarRoom_Initialize redraws
-/// the crossings each bagged star opened and, once Alex holds the stars, lines
-/// up the captors again (SolSanctumElementalStarRoom_LineUpCaptors), so a
-/// return after a battle finds the room as it was. Ten lights float about the
-/// room (SolSanctum_StartFloatingLights), and Retreat does not work here.
+/// Each pedestal's examine trigger row holds only until its flag is set, so a
+/// star is taken once. On every entry SolSanctumElementalStarRoom_Initialize
+/// redraws the crossings each bagged star opened and, once Alex holds the
+/// stars, lines up the captors again
+/// (SolSanctumElementalStarRoom_LineUpCaptors), so a return after a battle
+/// finds the room as it was. Ten lights float about the room
+/// (SolSanctum_StartFloatingLights), and Retreat does not work here.
 ///
 /// Whoever arrives on the platform appears 40 pixels above it at a tenth of
 /// his size, grows to full size and floats down onto it, over a shadow that
@@ -175,10 +176,10 @@ SolSanctumElementalStarRoom_GetActorTemplates(void) {
   return gSolSanctumElementalStarRoom_ActorTemplates;
 }
 
-/// Returns the pedestals' bg events, the talk and Mind Read rows, and the cells
-/// that call the party back or check the way ahead.
-const struct MapEvent *SolSanctumElementalStarRoom_GetEvents(void) {
-  return gSolSanctumElementalStarRoom_Events;
+/// Returns the pedestals' examine triggers, the talk and Mind Read rows, and
+/// the cells that call the party back or check the way ahead.
+const struct Trigger *SolSanctumElementalStarRoom_GetTriggers(void) {
+  return gSolSanctumElementalStarRoom_Triggers;
 }
 
 /// Elemental Star Room: searching the Venus Star's pedestal. The
@@ -2400,26 +2401,26 @@ struct ActorTemplate gSolSanctumElementalStarRoom_ActorTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct MapEvent gSolSanctumElementalStarRoom_Events[] = {
-    { MAP_EVENT_TALK, ACTOR_KRADEN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToKraden) },
-    { MAP_EVENT_TALK, ACTOR_JENNA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToJenna) },
-    { MAP_EVENT_TALK, ACTOR_SATUROS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToSaturos) },
-    { MAP_EVENT_TALK, ACTOR_MENARDI, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToMenardi) },
-    { MAP_EVENT_TALK, ACTOR_FELIX, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToFelix) },
-    { MAP_EVENT_TALK, ACTOR_ALEX, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToAlex) },
+struct Trigger gSolSanctumElementalStarRoom_Triggers[] = {
+    { TRIGGER_TALK, ACTOR_KRADEN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToKraden) },
+    { TRIGGER_TALK, ACTOR_JENNA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToJenna) },
+    { TRIGGER_TALK, ACTOR_SATUROS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToSaturos) },
+    { TRIGGER_TALK, ACTOR_MENARDI, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToMenardi) },
+    { TRIGGER_TALK, ACTOR_FELIX, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToFelix) },
+    { TRIGGER_TALK, ACTOR_ALEX, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToAlex) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KRADEN, CONDITION_ALWAYS, MSGNO(MsgSolSanctumKradenIAmResponsible) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JENNA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToJenna) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SATUROS, CONDITION_ALWAYS, MSGNO(MsgSolSanctumSaturosBringTheFinalStar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MENARDI, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToMenardi) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ALEX, CONDITION_ALWAYS, MSGNO(MsgSolSanctumAlexOnlyOneLeft) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), MB_SOL_SANCTUM_ELEMENTAL_STAR_ROOM_WAY_BACK, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_KradenStopsPartyLeaving) },
-    { COORD_EVENT_WALKING_INTO(FACING_EAST), MB_SOL_SANCTUM_ELEMENTAL_STAR_ROOM_JUMP_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpAhead) },
-    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), MB_SOL_SANCTUM_ELEMENTAL_STAR_ROOM_JUMP_SOUTH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpAhead) },
-    { BG_EVENT(BG_EVENT_SILENT), MB_SOL_SANCTUM_ELEMENTAL_STAR_ROOM_VENUS_PEDESTAL, FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED, EVENT_SCRIPT(EventScript_BagVenusStar) },
-    { BG_EVENT(BG_EVENT_SILENT), MB_SOL_SANCTUM_ELEMENTAL_STAR_ROOM_MERCURY_PEDESTAL, FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED, EVENT_SCRIPT(EventScript_BagMercuryStar) },
-    { BG_EVENT(BG_EVENT_SILENT), MB_SOL_SANCTUM_ELEMENTAL_STAR_ROOM_JUPITER_PEDESTAL, FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX, EVENT_SCRIPT(EventScript_BagJupiterStarAndMeetSaturos) },
-    { BG_EVENT(BG_EVENT_SILENT), MB_SOL_SANCTUM_ELEMENTAL_STAR_ROOM_MARS_PEDESTAL, FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED, EVENT_SCRIPT(EventScript_TakeMarsStar) },
-    { MAP_EVENTS_END },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_SOL_SANCTUM_ELEMENTAL_STAR_ROOM_WAY_BACK, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_KradenStopsPartyLeaving) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), MB_SOL_SANCTUM_ELEMENTAL_STAR_ROOM_JUMP_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpAhead) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), MB_SOL_SANCTUM_ELEMENTAL_STAR_ROOM_JUMP_SOUTH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpAhead) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_SOL_SANCTUM_ELEMENTAL_STAR_ROOM_VENUS_PEDESTAL, FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED, EVENT_SCRIPT(EventScript_BagVenusStar) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_SOL_SANCTUM_ELEMENTAL_STAR_ROOM_MERCURY_PEDESTAL, FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED, EVENT_SCRIPT(EventScript_BagMercuryStar) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_SOL_SANCTUM_ELEMENTAL_STAR_ROOM_JUPITER_PEDESTAL, FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX, EVENT_SCRIPT(EventScript_BagJupiterStarAndMeetSaturos) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_SOL_SANCTUM_ELEMENTAL_STAR_ROOM_MARS_PEDESTAL, FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED, EVENT_SCRIPT(EventScript_TakeMarsStar) },
+    { TRIGGERS_END },
 };
 
 u16 gSolSanctumElementalStarRoom_StarCells[] = {

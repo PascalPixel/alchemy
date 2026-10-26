@@ -103,14 +103,14 @@
 /// wish to try to recover from a Sanctum?".
 #define FLAG_SAVE_RECOVERED_AT_SANCTUM 0x13f
 /// Play the kind's usual effect. Field_UsePsynergy sets it for each use and
-/// clears it when the after event has trigger bit 0x400 and plays its own; the
-/// before event's script may clear it too.
+/// clears it when the after trigger has subject bit 0x400 and plays its own;
+/// the before event's script may clear it too.
 #define FLAG_PSYNERGY_EFFECT 0x140
 /// Aim the effect at the actor ahead (FieldEffect_DispatchRequestKind)
 /// rather than run the kind's untargeted body (FieldEffect_Run, where Halt
-/// still stops the nearest actor when it has a talk event, and Force and
+/// still stops the nearest actor when it has a talk trigger, and Force and
 /// Reveal run their PSYNERGY_PHASE_EFFECT_ACTS event). Field_UsePsynergy keeps
-/// it set only when a map event applies to what the leader faces.
+/// it set only when a trigger applies to what the leader faces.
 #define FLAG_PSYNERGY_TARGET 0x141
 /// Set before an action on the field; still set afterwards, nothing came of it
 /// and the game says so. A script that acts clears it.
@@ -424,7 +424,7 @@
 /// GondowanCave's stone pillar has dropped into its place for good.
 /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
 #define FLAG_GONDOWAN_CAVE_PILLAR_DROPPED 0x9a5
-// GondowanCaveRiver's two chests, whose bg events every map of the
+// GondowanCaveRiver's two chests, whose examine triggers every map of the
 // overlay carries.
 /// ★ Named from the game: "Apple" (MsgItemName)
 #define FLAG_GONDOWAN_CAVE_APPLE 0xfa0
@@ -513,7 +513,7 @@
 /// AltinPeakPool's chest, a Mimic (FIND_MIMIC).
 /// ★ Named from the game: "really a Mimic!" (MsgChestWasMimic)
 #define FLAG_ALTIN_PEAK_POOL_MIMIC_BEATEN 0xef2
-/// Unused: the Herb chest in AltinPeakSecondWaterBeast's map event table, past
+/// Unused: the Herb chest in AltinPeakSecondWaterBeast's trigger table, past
 /// its end marker, where no lookup reaches. ★ Named from the game: "Herb"
 /// (MsgItemName)
 #define FLAG_ALTIN_PEAK_UNUSED_HERB 0xf05

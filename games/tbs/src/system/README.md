@@ -107,7 +107,7 @@ An overlay meets the rest of the game at two tables:
   questions the field asks a scene, for its set-up and for its
   [entrances](../../glossary.md#entrance),
   [exits](../../glossary.md#exit), [actors](../../glossary.md#actor),
-  [map events](../../glossary.md#map-event) and exit regions (the areas of the
+  [triggers](../../glossary.md#trigger) and exit regions (the areas of the
   scene that lead out).
 - At its end, the import table: one entrance for each function of the main
   image the overlay calls. The overlay area is too far from the cartridge for

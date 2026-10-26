@@ -3,5 +3,5 @@
 	overlay_veneer IncreaseItemAndLevel_GetEntrances
 	overlay_veneer IncreaseItemAndLevel_GetExits
 	overlay_veneer IncreaseItemAndLevel_GetActorTemplates
-	overlay_veneer IncreaseItemAndLevel_GetEvents
+	overlay_veneer IncreaseItemAndLevel_GetTriggers
 	overlay_veneer Scene_GetExitRegions

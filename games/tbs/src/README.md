@@ -23,7 +23,7 @@ one scene on that engine, from its set-up to the [exit](../glossary.md#exit) the
 by, with random encounters, field [Psynergy](../glossary.md#psynergy-and-pp) and the commands scene scripts
 use; `SequenceManager_Run`, the loop that runs one scene after another, is there too.
 [Scenes](scene/README.md) holds the scenes, one [overlay](../glossary.md#overlay) each: [actor](../glossary.md#actor)
-templates, [map events](../glossary.md#map-event), [scripts](../glossary.md#script) and events. [Maps](map/README.md)
+templates, [triggers](../glossary.md#trigger), [scripts](../glossary.md#script) and events. [Maps](map/README.md)
 holds the [maps](../glossary.md#map) as data.
 
 [Battles](battle/README.md) runs a fight: turn order, the enemies' choices,

@@ -5,8 +5,8 @@
 /// The metatile behaviors of Vault's layout, which SceneId_Vault (vault.c) and
 /// SceneId_VaultRevisit (vault_revisit.c) both draw and answer.
 
-/// The metatile behaviors Vault's coord and bg events answer; the exits have
-/// behaviors of their own.
+/// The metatile behaviors Vault's coord and examine triggers answer; the exits
+/// have behaviors of their own.
 enum VaultMetatileBehavior {
   /// Either end of the rope bridge in the town's south-east, where stepping
   /// on raises the path that runs under the bridge to the bridge's deck

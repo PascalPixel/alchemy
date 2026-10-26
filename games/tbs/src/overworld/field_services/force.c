@@ -116,7 +116,7 @@ void FieldEffect_RunForce(void) {
   resourceSlot = sharedAnimation->slot;
 
   // Destination: 56 pixels in front of the caster with effectWork->enabled set
-  // (no map event named the target), otherwise the effect's position.
+  // (no trigger named the target), otherwise the effect's position.
   // The shot's script waits to arrive and makes the impact
   // (gFieldEffect_BurstParticleObjectScript + 4 is
   // gFieldEffect_HeavyImpactScript); each afterimage follows 3 frames apart and
@@ -172,8 +172,9 @@ void FieldEffect_RunForce(void) {
   }
 
   // Run the map's event for it, if there is one.
-  event = Scene_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ACTS),
-                                  FIELD_PSYNERGY_FORCE, &eventTarget);
+  event =
+      Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_EFFECT_ACTS),
+                                FIELD_PSYNERGY_FORCE, &eventTarget);
   if (event != NULL)
     Field_RunEventAction(event, gSaveBlock.leaderActorId, eventTarget);
   WaitFrames(10);

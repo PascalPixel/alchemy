@@ -253,9 +253,9 @@ struct Window *FieldMessage_ShowAtObject(s32 actorId, s32 unused) {
 /// window has closed; the speaker's portrait is closed once the text is typed
 /// out. The message closes by itself after 600 frames, or at once while
 /// Select, L, R and A are all held. About 70 maps reach it (Script_ShowMessage,
-/// MESSAGE_PUT); the map event runner (overworld/events.c),
-/// Field_RunEventAction (dispatch.c), Field_UseItem for an item event that is a
-/// message (overworld/items.c) and the debug menu's message test call it too.
+/// MESSAGE_PUT); the trigger runner (overworld/triggers.c),
+/// Field_RunEventAction (dispatch.c), Field_UseItem for an item trigger that is
+/// a message (overworld/items.c) and the debug menu's message test call it too.
 void FieldScript_ShowMessageAndWait(s32 actorId, s32 flags) {
   s32 member;
   struct FieldWork *runtime = gFieldWork;

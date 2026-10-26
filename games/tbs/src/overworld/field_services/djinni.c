@@ -240,7 +240,7 @@ void Actor_PlaceMapActors(void) {
 /// Otherwise the first call sets the Djinni's FLAG_DJINNI_HIDING flag, which
 /// hides the Djinni's actor until the map
 /// is entered normally again (overworld/actors.c), and drops the event.
-/// A mimic chest's event (kind 0x1000, overworld/events.c) sets the chest's
+/// A mimic chest's event (kind 0x1000, overworld/triggers.c) sets the chest's
 /// flag when the battle ended with exactly one enemy defeated, and is dropped.
 void Djinn_ResolvePendingEvent(s32 shown) {
   struct SaveBlock *st = &gSaveBlock;

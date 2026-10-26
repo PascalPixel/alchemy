@@ -8,7 +8,7 @@ const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ActorTemplate *Scene_GetActorTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gVaultRevisit_ShortEffectScript[];
 extern s32 gVaultRevisit_MediumEffectScript[];
@@ -26,6 +26,6 @@ extern u16 gVaultRevisit_ItemShopDoorCells[];
 extern u16 gVaultRevisit_WeaponAndArmorShopDoorCells[];
 extern u16 gVaultRevisit_MayorsHouseDoorCells[];
 extern u16 gVaultRevisit_JailDoorCells[];
-extern struct MapEvent gVaultRevisit_Events[];
+extern struct Trigger gVaultRevisit_Triggers[];
 
 #endif

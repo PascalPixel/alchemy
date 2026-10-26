@@ -6,7 +6,7 @@
 /// Floodgate Switch!", raises and lowers the river: with the water high the
 /// logs float (26 pixels up) and can be rolled along it; with it low they lie
 /// on the riverbed. A short log slides between two places, the leader can jump
-/// south across a gap (coord event 10), and a chest holds a Fur Coat. The
+/// south across a gap (step trigger 10), and a chest holds a Fur Coat. The
 /// forest keeps its cursed colours until Tret lifts the curse
 /// (FLAG_KOLIMA_CURSE_LIFTED).
 ///
@@ -110,8 +110,8 @@ const struct ActorTemplate *KolimaForestFloodgate_GetActorTemplates(void) {
 }
 
 /// The logs, the switch, the sign, the jump and the chest.
-const struct MapEvent *KolimaForestFloodgate_GetEvents(void) {
-  return gKolimaForestFloodgateEvents;
+const struct Trigger *KolimaForestFloodgate_GetTriggers(void) {
+  return gKolimaForestFloodgateTriggers;
 }
 
 /// Kolima Forest (SceneId_KolimaForestFloodgate), walking into a log: it rolls
@@ -124,7 +124,7 @@ static void KolimaForestFloodgate_PushLog(void) {
 }
 
 /// Kolima Forest (SceneId_KolimaForestFloodgate), walking south into the gap
-/// (coord event 10): the leader jumps across.
+/// (step trigger 10): the leader jumps across.
 static void KolimaForestFloodgate_JumpSouth(void) { Field_TryJumpForward(); }
 
 #include "common/map_grid_panel.h"
@@ -658,23 +658,23 @@ struct ActorTemplate gKolimaForestFloodgateActorTemplates[] = {
 };
 // clang-format on
 
-struct MapEvent gKolimaForestFloodgateEvents[] = {
-    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS,
+struct Trigger gKolimaForestFloodgateTriggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
      KOLIMA_FOREST_FLOODGATE_TO_KOLIMA_FOREST_CLIFF},
-    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS,
      KOLIMA_FOREST_FLOODGATE_TO_KOLIMA_FOREST_TREE},
-    {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(KolimaForestFloodgate_JumpSouth)},
-    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 11, CONDITION_ALWAYS,
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 11, CONDITION_ALWAYS,
      EVENT_SCRIPT(KolimaForestFloodgate_PushLog)},
-    {COORD_EVENT_WALKING_INTO(FACING_WEST), 13, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 13, CONDITION_ALWAYS,
      EVENT_SCRIPT(KolimaForestFloodgate_PushShortLogWest)},
-    {COORD_EVENT_WALKING_INTO(FACING_EAST), 12, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 12, CONDITION_ALWAYS,
      EVENT_SCRIPT(KolimaForestFloodgate_PushShortLogEast)},
-    {MAP_EVENT_TALK, ACTOR_SIGN, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_SIGN, CONDITION_ALWAYS,
      MSGNO(MsgKolimaDoNotTouchFloodgate)},
-    {BG_EVENT(BG_EVENT_SILENT), MB_KOLIMA_FOREST_FLOODGATE_SWITCH,
+    {EXAMINE_TRIGGER(EXAMINE_SILENT), MB_KOLIMA_FOREST_FLOODGATE_SWITCH,
      CONDITION_ALWAYS, EVENT_SCRIPT(KolimaForestFloodgate_FlipFloodgateSwitch)},
-    {BG_EVENT(BG_EVENT_CHEST), 100, 0xf00, FIND_ITEM(ITEM_FUR_COAT)},
-    {MAP_EVENTS_END},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, 0xf00, FIND_ITEM(ITEM_FUR_COAT)},
+    {TRIGGERS_END},
 };

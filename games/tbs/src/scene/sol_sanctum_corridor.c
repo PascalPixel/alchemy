@@ -42,8 +42,8 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
 }
 
 /// Returns the passage's two exits, its only events.
-const struct MapEvent *Scene_GetEvents(void) {
-  return gSolSanctumCorridorEvents;
+const struct Trigger *Scene_GetTriggers(void) {
+  return gSolSanctumCorridorTriggers;
 }
 
 #include "common/sol_sanctum_init_zoom.h"
@@ -73,10 +73,10 @@ struct ActorTemplate gSolSanctumCorridorActorTemplates[] = {
     {MAP_TABLE_END},
 };
 
-struct MapEvent gSolSanctumCorridorEvents[] = {
-    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS,
+struct Trigger gSolSanctumCorridorTriggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
      SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST},
-    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS,
      SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_WEST},
-    {MAP_EVENTS_END},
+    {TRIGGERS_END},
 };

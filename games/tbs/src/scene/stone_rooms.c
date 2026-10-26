@@ -20,7 +20,7 @@
 ///   (FLAG_LUNPA_HIDDEN_ROOM_CHEST_*), MB_LUNPA_HIDDEN_ROOM_DOOR leads back up
 ///   into Lunpa, and arriving this way clears FLAG_SHOW_LOCATION_NAME, so no
 ///   area name is shown. The room uses the thieves' tables, so its chests and
-///   exit sit in the same map event table as the thieves' talk and the Vault
+///   exit sit in the same trigger table as the thieves' talk and the Vault
 ///   door.
 ///   ★ Named from what the player sees: a hidden stone room of six chests
 ///   behind barred windows (its render)
@@ -47,7 +47,7 @@
 #include "songs.h"
 #include "text/msg_ids.h"
 
-/// The metatile behaviors the jail's map events answer.
+/// The metatile behaviors the jail's triggers answer.
 enum StoneRoomsMetatileBehavior {
   MB_VAULT_JAIL_DOOR = 1,
   MB_LUNPA_HIDDEN_ROOM_DOOR = 2,
@@ -118,14 +118,14 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
   return gStoneRooms_ThiefActorTemplates;
 }
 
-/// Returns the thieves' map events, which also hold the Lunpa room's chests and
+/// Returns the thieves' triggers, which also hold the Lunpa room's chests and
 /// exit, or the prisoner's when the party came in from Vault's revisit map,
 /// matching Scene_GetActorTemplates.
-const struct MapEvent *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (gSaveBlock.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
-    return gStoneRooms_PrisonerEvents;
+    return gStoneRooms_PrisonerTriggers;
   }
-  return gStoneRooms_ThiefEvents;
+  return gStoneRooms_ThiefTriggers;
 }
 
 /// In Vault's jail, the thieves' leader glares at each of his men and snaps
@@ -294,14 +294,14 @@ const struct ActorTemplate gStoneRooms_PrisonerActorTemplates[] = {
     { MAP_TABLE_END },
 };
 
-const struct MapEvent gStoneRooms_ThiefEvents[] = {
-    { MAP_EVENT_COORD, MB_VAULT_JAIL_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveForVault) },
-    { MAP_EVENT_EXIT, MB_LUNPA_HIDDEN_ROOM_DOOR, CONDITION_ALWAYS, STONE_ROOMS_TO_LUNPA },
-    { MAP_EVENT_TALK, ACTOR_THIEF_LEADER, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
+const struct Trigger gStoneRooms_ThiefTriggers[] = {
+    { TRIGGER_STEP, MB_VAULT_JAIL_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveForVault) },
+    { TRIGGER_EXIT, MB_LUNPA_HIDDEN_ROOM_DOOR, CONDITION_ALWAYS, STONE_ROOMS_TO_LUNPA },
+    { TRIGGER_TALK, ACTOR_THIEF_LEADER, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
       EVENT_SCRIPT(EventScript_LeaderSilencesThieves) },
-    { MAP_EVENT_TALK, ACTOR_LEFT_THIEF, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
+    { TRIGGER_TALK, ACTOR_LEFT_THIEF, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
       EVENT_SCRIPT(EventScript_LeftThiefRegretsEscape) },
-    { MAP_EVENT_TALK, ACTOR_RIGHT_THIEF, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
+    { TRIGGER_TALK, ACTOR_RIGHT_THIEF, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
       EVENT_SCRIPT(EventScript_RightThiefRegretsStaying) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIEF_LEADER,
       IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(EventScript_ReadLeaderMind) },
@@ -309,27 +309,27 @@ const struct MapEvent gStoneRooms_ThiefEvents[] = {
       IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(EventScript_ReadLeftThiefMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_RIGHT_THIEF,
       IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(EventScript_ReadRightThiefMind) },
-    { BG_EVENT(BG_EVENT_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE, FLAG_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE,
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE, FLAG_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE,
       FIND_ITEM(ITEM_WATER_OF_LIFE) },
-    { BG_EVENT(BG_EVENT_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_SMOKE_BOMB, FLAG_LUNPA_HIDDEN_ROOM_CHEST_SMOKE_BOMB,
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_SMOKE_BOMB, FLAG_LUNPA_HIDDEN_ROOM_CHEST_SMOKE_BOMB,
       FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { BG_EVENT(BG_EVENT_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_LUCKY_MEDAL, FLAG_LUNPA_HIDDEN_ROOM_CHEST_LUCKY_MEDAL,
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_LUCKY_MEDAL, FLAG_LUNPA_HIDDEN_ROOM_CHEST_LUCKY_MEDAL,
       FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { BG_EVENT(BG_EVENT_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_ANTIDOTE, FLAG_LUNPA_HIDDEN_ROOM_CHEST_ANTIDOTE,
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_ANTIDOTE, FLAG_LUNPA_HIDDEN_ROOM_CHEST_ANTIDOTE,
       FIND_ITEM(ITEM_ANTIDOTE) },
-    { BG_EVENT(BG_EVENT_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_COINS, FLAG_LUNPA_HIDDEN_ROOM_CHEST_COINS, FIND_COINS(44) },
-    { BG_EVENT(BG_EVENT_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_ELIXIR, FLAG_LUNPA_HIDDEN_ROOM_CHEST_ELIXIR,
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_COINS, FLAG_LUNPA_HIDDEN_ROOM_CHEST_COINS, FIND_COINS(44) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_ELIXIR, FLAG_LUNPA_HIDDEN_ROOM_CHEST_ELIXIR,
       FIND_ITEM(ITEM_ELIXIR) },
-    { MAP_EVENTS_END },
+    { TRIGGERS_END },
 };
 // clang-format on
 
-const struct MapEvent gStoneRooms_PrisonerEvents[] = {
-    {MAP_EVENT_EXIT, MB_VAULT_JAIL_DOOR, CONDITION_ALWAYS,
+const struct Trigger gStoneRooms_PrisonerTriggers[] = {
+    {TRIGGER_EXIT, MB_VAULT_JAIL_DOOR, CONDITION_ALWAYS,
      STONE_ROOMS_TO_VAULT_REVISIT},
-    {MAP_EVENT_TALK, ACTOR_PRISONER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_PRISONER, CONDITION_ALWAYS,
      MsgVaultPrisonerRegretsFight},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRISONER, CONDITION_ALWAYS,
      MsgVaultPrisonerThoughts},
-    {MAP_EVENTS_END},
+    {TRIGGERS_END},
 };

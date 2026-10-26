@@ -5,7 +5,7 @@
 #include "map_tables.h"
 
 struct SceneEntrance;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 struct SceneExitRegion;
 
@@ -13,7 +13,7 @@ const struct SceneEntrance *ValeCave_GetEntrances(void);
 const struct SceneExitRegion *ValeCave_GetRegions(void);
 const u32 *ValeCave_GetExits(void);
 const struct ActorTemplate *ValeCave_GetActorTemplates(void);
-const struct MapEvent *ValeCave_GetEvents(void);
+const struct Trigger *ValeCave_GetTriggers(void);
 s32 ValeCave_Initialize(void);
 extern s32 gValeCave_ShortEffectScript[];
 extern s32 gValeCave_MediumEffectScript[];
@@ -31,9 +31,9 @@ extern u32 gValeCave_Exits[];
 extern struct ActorTemplate gValeCave_MouthActorTemplates[];
 extern struct ActorTemplate gValeCave_KiteActorTemplates[];
 extern struct ActorTemplate gValeCave_LogsActorTemplates[];
-extern struct MapEvent gValeCave_EventsOther[];
-extern struct MapEvent gValeCave_MouthEvents[];
-extern struct MapEvent gValeCave_KiteEvents[];
-extern struct MapEvent gValeCave_LogsEvents[];
+extern struct Trigger gValeCave_TriggersOther[];
+extern struct Trigger gValeCave_MouthTriggers[];
+extern struct Trigger gValeCave_KiteTriggers[];
+extern struct Trigger gValeCave_LogsTriggers[];
 
 #endif

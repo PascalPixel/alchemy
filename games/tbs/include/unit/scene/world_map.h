@@ -4,14 +4,14 @@
 #include "types.h"
 #include "map_tables.h"
 
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 
 const struct SceneEntrance *WorldMap_GetEntrances(void);
 const struct SceneExitRegion *WorldMap_GetRegions(void);
 const u32 *WorldMap_GetExits(void);
 const struct ActorTemplate *WorldMap_GetActorTemplates(void);
-const struct MapEvent *WorldMap_GetEvents(void);
+const struct Trigger *WorldMap_GetTriggers(void);
 s32 WorldMap_Initialize(void);
 extern s32 gWorldMapIodem;
 extern u16 gWorldMapBlend;
@@ -54,7 +54,7 @@ extern struct ActorTemplate
 extern struct ActorTemplate gWorldMapActorTemplatesJennaAndKradenAdrift[];
 extern struct ActorTemplate gWorldMapActorTemplatesFromClear[];
 extern struct ActorTemplate gWorldMapActorTemplatesBeforeShebasFall[];
-extern struct MapEvent gWorldMapEvents[];
+extern struct Trigger gWorldTriggers[];
 extern u32 gWorldMapPassengerRowValues[];
 extern s32 gIslandWakeScript[];
 

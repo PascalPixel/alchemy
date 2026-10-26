@@ -6,14 +6,14 @@
 
 struct SceneEntrance;
 struct SceneExitRegion;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ActorTemplate *Scene_GetActorTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gLunpaFortressRandomPick;
 extern s32 gSecondPatrolRoute[];
@@ -34,11 +34,11 @@ extern struct ActorTemplate gLunpaFortressGroundFloorActorTemplates[];
 extern struct ActorTemplate gLunpaFortressUpperFloorActorTemplates[];
 extern struct ActorTemplate gLunpaFortressCaveActorTemplates[];
 extern struct ActorTemplate gLunpaFortressToadonpaActorTemplates[];
-extern struct MapEvent gLunpaFortressNoEvents[];
-extern struct MapEvent gLunpaFortressGroundFloorEvents[];
-extern struct MapEvent gLunpaFortressUpperFloorEvents[];
-extern struct MapEvent gLunpaFortressCaveEvents[];
-extern struct MapEvent gLunpaFortressEventsOther[];
+extern struct Trigger gLunpaFortressNoTriggers[];
+extern struct Trigger gLunpaFortressGroundFloorTriggers[];
+extern struct Trigger gLunpaFortressUpperFloorTriggers[];
+extern struct Trigger gLunpaFortressCaveTriggers[];
+extern struct Trigger gLunpaFortressTriggersOther[];
 extern u32 gLunpaFortressToadonpaDoorCells[];
 extern u32 gLunpaFortressCaveDoorCells[];
 extern u32 gLunpaFortressUpperFloorDoorCells[];

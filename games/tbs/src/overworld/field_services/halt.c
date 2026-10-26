@@ -74,7 +74,7 @@ void FieldEffect_RunHaltOnTarget(s32 unused) {
 
 /// Throws an object from the caster to the effect's position over 10 frames
 /// and scatters it into 16 particles. Halt's visible effect: called by
-/// FieldEffect_Run when no target with a talk event is near, and through
+/// FieldEffect_Run when no target with a talk trigger is near, and through
 /// FieldEffect_RunHaltOnTarget otherwise. Fills field effect sprites 0
 /// to 15 and sets effectWork->y to the caster's height.
 ///

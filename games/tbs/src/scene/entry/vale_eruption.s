@@ -3,5 +3,5 @@
 	overlay_veneer ValeEruption_GetEntrances
 	overlay_veneer ValeEruption_GetExits
 	overlay_veneer ValeEruption_GetActorTemplates
-	overlay_veneer ValeEruption_GetEvents
+	overlay_veneer ValeEruption_GetTriggers
 	overlay_veneer ValeEruption_GetRegions

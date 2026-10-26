@@ -1,7 +1,7 @@
 /// @file
 /// Elemental Star Room (SceneId_SolSanctumEruption), the chamber of
 /// SceneId_SolSanctumElementalStarRoom (sol_sanctum_elemental_star_room.c) as
-/// it collapses once the Mars Star is taken: one event, with no map events of
+/// it collapses once the Mars Star is taken: one event, with no triggers of
 /// its own.
 ///
 /// SolSanctumEruption_Initialize plays it on arrival at
@@ -154,9 +154,9 @@ const struct ActorTemplate *SolSanctumEruption_GetActorTemplates(void) {
   return gSolSanctumEruption_ActorTemplates;
 }
 
-/// Returns the empty event table: the map is one event.
-const struct MapEvent *SolSanctumEruption_GetEvents(void) {
-  return gSolSanctumEruption_Events;
+/// Returns the empty trigger table: the map is one event.
+const struct Trigger *SolSanctumEruption_GetTriggers(void) {
+  return gSolSanctumEruption_Triggers;
 }
 
 /// Stages Saturos, Menardi, Alex and Felix around Jenna and Kraden.
@@ -1961,8 +1961,8 @@ struct ActorTemplate gSolSanctumEruption_ActorTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct MapEvent gSolSanctumEruption_Events[] = {
-    { MAP_EVENTS_END },
+struct Trigger gSolSanctumEruption_Triggers[] = {
+    { TRIGGERS_END },
 };
 
 /// Unused: a copy of the Elemental Star room's cell animation

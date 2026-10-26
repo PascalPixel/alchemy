@@ -10,7 +10,7 @@
 #include "static_assert.h"
 
 struct ActorTemplate;
-struct MapEvent;
+struct Trigger;
 struct Actor;
 struct Object;
 struct MapGridCell;
@@ -18,7 +18,7 @@ struct MapGridCell;
 /// A treasure spot placed as an actor: a chest or a Psynergy Stone.
 struct TreasureSpot {
   struct Object *object; ///< the actor placed for it
-  u8 id;                 ///< the trigger of its map event, 100 to 239
+  u8 id;                 ///< the subject of its trigger, 100 to 239
   u8 unused;             ///< cleared with the slot; no code names it
   u8 column;             ///< its 16-pixel cell
   u8 row;                ///< its 16-pixel cell
@@ -44,13 +44,13 @@ enum FieldRaisedEvent {
 /// A field map's work: SceneManager_Run allocates it in heap slot
 /// HEAP_SLOT_FIELD, zeroes it and frees it on the way out, and the field loop,
 /// the field services and the map overlays all reach it through gFieldWork. The
-/// twelve requests from coordEvent to raisedEvent are handled by the field
+/// twelve requests from stepTrigger to raisedEvent are handled by the field
 /// loop.
 struct FieldWork {
   /// The actor template tables placed so far, recorded by
   /// FieldScript_SpawnActorTemplates.
   struct ActorTemplate *tables[4];
-  const struct MapEvent *events; ///< the map's event table
+  const struct Trigger *triggers; ///< the map's trigger table
   /// The actors by actor id: 0 to 7 the party's characters, 8 on the
   /// placed actors.
   struct Actor *actors[66];
@@ -59,13 +59,13 @@ struct FieldWork {
   /// The twelve requests: each nonzero value asks the field loop for one
   /// thing; Field_ClearRequests clears them and Field_CountRequests sums them.
   ///@{
-  s16 coordEvent; ///< a step event (1 to 239) for Scene_RunCoordEventOrExit
+  s16 stepTrigger; ///< a step trigger (1 to 239) for Scene_RunStepTriggerOrExit
   s16 pushCell; ///< a metatile behavior (252 to 254) for Field_RunPushCellEvent
   s16 exit;     ///< the exit taken, which ends the map
   s16 menu;     ///< open the field menu
   s16 examine;  ///< the A button: examine what is ahead
   s16 start;    ///< the Start button: open the pause menu
-  u16 talk;     ///< an actor's talk event, as actor id | 0x1000
+  u16 talk;     ///< an actor's talk trigger, as actor id | 0x1000
   s16 searchCell; ///< a cell's metatile behavior, for Field_SearchCell
   s16 battle;     ///< the formation of a random encounter
   s16 psynergy;   ///< a field Psynergy to use, as unit << 10 | Psynergy
@@ -78,7 +78,7 @@ struct FieldWork {
   s16 fallenOwners[9]; ///< the characters who fell, from the active party
   s16 itemArgument;    ///< the inventory slot Field_UseItem receives
   /// Frames the leader has pushed against something, counted by the player
-  /// controls; coord events and push cells need more than 12.
+  /// controls; step triggers and push cells need more than 12.
   s16 blockedSteps;
   s16 mode;               ///< an enum ObjectSystemMode
   u8 encounterZones[8];   ///< encounter zone for each kind of ground
@@ -113,7 +113,7 @@ struct FieldWork {
   /// row), which Actor_ResetForObject builds through its offset.
   u8 leaderTemplates[0x30];
   u8 unusedAfterTemplates[0xa86]; ///< no code names it
-  /// Set while a raised or coord event runs; FieldScript_Start then resets the
+  /// Set while a raised or step trigger runs; FieldScript_Start then resets the
   /// effect counter.
   u16 busy;
   s16 revealActive;  ///< nonzero while Reveal is active
@@ -134,10 +134,10 @@ struct FieldWork {
 
 STATIC_ASSERT(sizeof(struct FieldWork) == 0xccc);
 STATIC_ASSERT(offsetof(struct FieldWork, tables) == 0);
-STATIC_ASSERT(offsetof(struct FieldWork, events) == 0x10);
+STATIC_ASSERT(offsetof(struct FieldWork, triggers) == 0x10);
 STATIC_ASSERT(offsetof(struct FieldWork, actors) == 0x14);
 STATIC_ASSERT(offsetof(struct FieldWork, treasureSpots) == 0x11c);
-STATIC_ASSERT(offsetof(struct FieldWork, coordEvent) == 0x16c);
+STATIC_ASSERT(offsetof(struct FieldWork, stepTrigger) == 0x16c);
 STATIC_ASSERT(offsetof(struct FieldWork, talk) == 0x178);
 STATIC_ASSERT(offsetof(struct FieldWork, battle) == 0x17c);
 STATIC_ASSERT(offsetof(struct FieldWork, raisedEvent) == 0x182);

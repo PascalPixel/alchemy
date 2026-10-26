@@ -88,7 +88,7 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct Object *object) {
 /// value as the script to run itself. The built-in scripts are in scripts.s
 /// (field.h). Reached from an actor template's behavior column
 /// (overworld/actors.c), from Scene_TalkToActor after a talk
-/// (overworld/events.c), from the actor commands and from Lalivero's
+/// (overworld/triggers.c), from the actor commands and from Lalivero's
 /// interiors.
 void Actor_SetMovementType(struct Object *object, s32 action) {
   switch (action) {

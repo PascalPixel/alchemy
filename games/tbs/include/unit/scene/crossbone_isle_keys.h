@@ -5,7 +5,7 @@
 #include "map_tables.h"
 
 struct SceneEntrance;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 struct SceneExitRegion;
 
@@ -13,7 +13,7 @@ const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ActorTemplate *Scene_GetActorTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gPushedObject_DirectionSteps[];
 extern u32 gPushedObject_FootprintKinds[];
@@ -29,10 +29,10 @@ extern struct ActorTemplate gCrossboneIsleKeysActorTemplatesOther[];
 extern struct ActorTemplate gCrossboneIsleKeysRoomActorTemplates[];
 extern struct ActorTemplate gCrossboneIsleStatuesActorTemplates[];
 extern struct ActorTemplate gCrossboneIsleBaneActorTemplates[];
-extern struct MapEvent gCrossboneIsleKeysEventsOther[];
-extern struct MapEvent gCrossboneIsleKeysRoomEvents[];
-extern struct MapEvent gCrossboneIsleStatuesEvents[];
-extern struct MapEvent gCrossboneIsleBaneEvents[];
+extern struct Trigger gCrossboneIsleKeysTriggersOther[];
+extern struct Trigger gCrossboneIsleKeysRoomTriggers[];
+extern struct Trigger gCrossboneIsleStatuesTriggers[];
+extern struct Trigger gCrossboneIsleBaneTriggers[];
 extern u32 gCrossboneIsleKeys_SlotColumns[];
 extern s32 gCrossboneIsleKeys_IconTimer;
 

@@ -36,7 +36,7 @@ enum HazardMode {
 enum BattleType {
   BATTLE_TYPE_NORMAL = 0,
   /// A battle the party cannot run from: a Mimic's
-  /// (overworld/overworld/events.c) and the travelers' fight in Vale
+  /// (overworld/overworld/triggers.c) and the travelers' fight in Vale
   /// (ValePlaza_FightTravelers, scene/vale_plaza.c).
   BATTLE_TYPE_NO_ESCAPE = 2,
   /// The battles a script starts. Here and in a link battle the command menu

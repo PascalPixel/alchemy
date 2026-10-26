@@ -28,7 +28,7 @@ void _call_via_r3(s32, s32);
 /// Casts the current Psynergy effect with no target: runs the body of its
 /// kind (effectWork->fieldPsynergy).
 ///
-/// Called by Field_UsePsynergy when no map event names a target
+/// Called by Field_UsePsynergy when no trigger names a target
 /// (FLAG_PSYNERGY_TARGET clear), by Field_UseItem for an item with a field
 /// action, and by Field_DispatchTypeHandler(PSYNERGY_STEP_UNTARGETED). Halt
 /// also moves gSaveBlock.pausedObject to the actor it stops.
@@ -85,7 +85,7 @@ void FieldEffect_Run(void) {
     nearestTargetId =
         Field_FindNearbyPsynergyTarget(gSaveBlock.leaderActorId, kind);
     nearestTargetId = FieldEffect_FilterObjectIdByFlags(nearestTargetId);
-    if (Scene_FindActorTalkEvent(nearestTargetId) != 0) {
+    if (Scene_FindActorTalkTrigger(nearestTargetId) != 0) {
       FieldEffect_SetupObjectPair(gSaveBlock.leaderActorId, nearestTargetId);
       FieldEffect_RunHaltOnTarget(nearestTargetId);
       FieldEffect_PauseObject(nearestTargetId);
@@ -118,11 +118,11 @@ void FieldEffect_Run(void) {
 /// Casts the current Psynergy effect on its target (secondObjectId): runs the
 /// handler of its kind.
 ///
-/// Called by Field_UsePsynergy when a map event names the target
+/// Called by Field_UsePsynergy when a trigger names the target
 /// (FLAG_PSYNERGY_TARGET still set after the before event), and by
 /// Field_DispatchTypeHandler(PSYNERGY_STEP_ON_TARGET). Clears
 /// effectWork->enabled first: that is how the runners FieldEffect_Run shares
-/// (Force, Frost, Ply, Whirlwind, Catch) tell that a map event decides what
+/// (Force, Frost, Ply, Whirlwind, Catch) tell that a trigger decides what
 /// happens to the target. Halt also moves gSaveBlock.pausedObject to the
 /// target.
 void FieldEffect_DispatchRequestKind(void) {
@@ -245,11 +245,11 @@ s32 Field_RunEventAction(const void *event, s32 param, s32 target) {
 
   if (event != NULL) {
     // Every routine's address is above 0x10000, so one word holds either.
-    script = ((const struct MapEventView *)event)->result;
+    script = ((const struct TriggerView *)event)->result;
     if (script != 0) {
       if (script < 0x10000) {
         FieldScript_Start();
-        FieldScript_SetMessageId(((const struct MapEventView *)event)->result);
+        FieldScript_SetMessageId(((const struct TriggerView *)event)->result);
         FieldScript_ShowMessageAndWait(target, 0);
         FieldScript_End();
       } else {

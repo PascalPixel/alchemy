@@ -6,14 +6,14 @@
 #include "scene_header.h"
 
 struct SceneEntrance;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ActorTemplate *Scene_GetActorTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern const s16 gVaultCave_DirectionSteps[];
 extern const s32 gVaultCave_PuffScript[];
@@ -30,10 +30,10 @@ extern struct ActorTemplate gVaultCave_FallbackActorTemplates[];
 extern struct ActorTemplate gVaultCavePassage_ActorTemplates[];
 extern struct ActorTemplate gVaultCaveVambrace_ActorTemplates[];
 extern struct ActorTemplate gVaultCaveMouth_ActorTemplates[];
-extern struct MapEvent gVaultCave_FallbackEvents[];
-extern struct MapEvent gVaultCavePassage_Events[];
-extern struct MapEvent gVaultCaveVambrace_Events[];
-extern struct MapEvent gVaultCaveMouth_Events[];
+extern struct Trigger gVaultCave_FallbackTriggers[];
+extern struct Trigger gVaultCavePassage_Triggers[];
+extern struct Trigger gVaultCaveVambrace_Triggers[];
+extern struct Trigger gVaultCaveMouth_Triggers[];
 extern u32 gVaultCave_ScheduleFrames[];
 extern s32 gVaultCave_ScheduleTimer;
 extern s32 gVaultCave_ScheduleIndex;

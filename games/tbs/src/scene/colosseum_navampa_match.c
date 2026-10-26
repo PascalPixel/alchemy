@@ -33,9 +33,9 @@
 ///   the Hunter's Sword, and the battle is ENCOUNTER_ZONE_COLOSSO's fifth or
 ///   sixth group, the Navampa with or without the Claymore.
 ///
-/// Stepping onto the Scales of Justice's western ledge (coord event 15,
+/// Stepping onto the Scales of Justice's western ledge (step trigger 15,
 /// EventScript_StepOnScales) sends it, with the rider, down towards 4 pixels
-/// high and the eastern ledge up towards 32, and stepping off (coord event 16)
+/// high and the eastern ledge up towards 32, and stepping off (step trigger 16)
 /// swings them back; the weight Move sets on the western ledge does the same.
 ///
 /// Win or lose, the third match ends Colosso:
@@ -406,7 +406,7 @@ static void ColosseumNavampaMatch_WaitForWallWedgeOpening(void) {
   }
 }
 
-/// The Moving Sidewalk Stage's belt carries the party west. It's coord event
+/// The Moving Sidewalk Stage's belt carries the party west. It's step trigger
 /// 11, and until FLAG_SIDEWALK_LOG_KNOCKED_OFF is set the belt carries the
 /// controlled actor and the camera west.
 static void EventScript_RideMovingSidewalk(void) {
@@ -580,7 +580,7 @@ static void EventScript_MoveStone(void) {
 /// Move on ACTOR_ROCK in Colosseum Final 3 needs nothing more.
 static void EventScript_IgnoreMove(void) {}
 
-/// Walking into a rock on Colosseum Final 3's stages (coord event 22) pushes
+/// Walking into a rock on Colosseum Final 3's stages (step trigger 22) pushes
 /// it.
 static void EventScript_PushRock(void) {
   ColosseumNavampaMatch_PushActorAhead();
@@ -671,7 +671,7 @@ static s32 ColosseumNavampaMatch_CheckLongLogPath(s32 x, s32 z) {
 }
 
 /// The long log carries the leader until something stops it. Walking into the
-/// log-rolling area's long log (coord event 23) rolls it, with the leader, the
+/// log-rolling area's long log (step trigger 23) rolls it, with the leader, the
 /// way the pad is held; at the east end it drops into place and the path is
 /// made (FLAG_LONG_LOG_IN_PLACE). Away from the log, a stone ahead is pushed
 /// instead.
@@ -939,9 +939,9 @@ UNUSED static void ColosseumNavampaMatch_UnusedWarriorTalk(s32 warriorId) {
 
 /// Reaching Colosseum Final 3's arena: the leader takes a prize (the Claymore
 /// if first, the Hunter's Sword if second), and he and Navampa face off and
-/// fight; the battle's group follows who took the Claymore. The arena's coord
-/// event row waits on FLAG_COLOSSEUM_ARENA_CLOSED being clear, which nothing in
-/// the game sets (colosseum_azart_match.c's EventScript_ReachArena).
+/// fight; the battle's group follows who took the Claymore. The arena's
+/// step trigger row waits on FLAG_COLOSSEUM_ARENA_CLOSED being clear, which
+/// nothing in the game sets (colosseum_azart_match.c's EventScript_ReachArena).
 static void EventScript_ReachArena(void) {
   s32 place;
   s32 i;
@@ -985,7 +985,7 @@ static void EventScript_ReachArena(void) {
   GameFlag_Set(FLAG_KEEP_MUSIC);
 }
 
-/// Walking into something on Colosseum Final 3's stages (coord event 90):
+/// Walking into something on Colosseum Final 3's stages (step trigger 90):
 /// unless it is an actor, the leader jumps forward where he can
 /// (Field_TryJumpForward).
 static void EventScript_JumpAtLogAreaEnd(void) {
@@ -994,8 +994,8 @@ static void EventScript_JumpAtLogAreaEnd(void) {
   }
 }
 
-/// Walking into something by the Scales of Justice (coord event 91): the weight
-/// is pushed, anything else is checked.
+/// Walking into something by the Scales of Justice (step trigger 91): the
+/// weight is pushed, anything else is checked.
 static void EventScript_PushWeightOrCheckAhead(void) {
   if (Colosso_FindActorAhead() == 0) {
     Field_TryJumpForward();
@@ -1004,8 +1004,8 @@ static void EventScript_PushWeightOrCheckAhead(void) {
   }
 }
 
-const struct MapEvent *ColosseumNavampaMatch_GetEvents(void) {
-  return gColosseumNavampaMatchEvents;
+const struct Trigger *ColosseumNavampaMatch_GetTriggers(void) {
+  return gColosseumNavampaMatchTriggers;
 }
 
 /// Sets up Colosseum Final 3: restores obstacle progress, then by the arrival:
@@ -2342,7 +2342,7 @@ static void ColosseumNavampaMatch_PushActorAhead(void) {
 
 #include "common/colosso_occupant.h"
 
-/// Closes the arena's coord event; nothing in the game sets it.
+/// Closes the arena's step trigger; nothing in the game sets it.
 /// ★ Named from the game: "This is the battle arena. After getting here, the
 /// warriors do battle." (MsgColossoWarriorsEnterFinalsWithoutAny)
 #define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10
@@ -2588,38 +2588,38 @@ s32 gColosseumNavampaMatch_WallWedgePatternIndex = 0;
 
 s32 gColosseumNavampaMatch_WallWedgeTimer = 0;
 
-struct MapEvent gColosseumNavampaMatchEvents[] = {
-    { COORD_EVENT_WALKING, 90, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpAtLogAreaEnd) },
-    { COORD_EVENT_WALKING, 91, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWeightOrCheckAhead) },
-    { MAP_EVENT_COORD, 11, FLAG_SIDEWALK_LOG_KNOCKED_OFF, EVENT_SCRIPT(EventScript_RideMovingSidewalk) },
-    { COORD_EVENT_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWeight) },
+struct Trigger gColosseumNavampaMatchTriggers[] = {
+    { STEP_TRIGGER_WALKING, 90, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpAtLogAreaEnd) },
+    { STEP_TRIGGER_WALKING, 91, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWeightOrCheckAhead) },
+    { TRIGGER_STEP, 11, FLAG_SIDEWALK_LOG_KNOCKED_OFF, EVENT_SCRIPT(EventScript_RideMovingSidewalk) },
+    { STEP_TRIGGER_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWeight) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SCALES_WEIGHT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetWeightOnScales) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveStone) },
-    { COORD_EVENT_WALKING, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushRock) },
+    { STEP_TRIGGER_WALKING, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushRock) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IgnoreMove) },
-    { COORD_EVENT_WALKING, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLongLog) },
+    { STEP_TRIGGER_WALKING, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollLongLog) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_A, FLAG_FIRST_LOG_AREA_STONE_SETTLED, EVENT_SCRIPT(EventScript_SettleStones) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_B, FLAG_FIRST_LOG_AREA_STONE_SETTLED + 1, EVENT_SCRIPT(EventScript_SettleStones) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_C, FLAG_FIRST_LOG_AREA_STONE_SETTLED + 2, EVENT_SCRIPT(EventScript_SettleStones) },
-    { MAP_EVENT_COORD, 15, FLAG_ON_SCALES, EVENT_SCRIPT(EventScript_StepOnScales) },
-    { MAP_EVENT_COORD, 16, IF_FLAG_SET(FLAG_ON_SCALES), EVENT_SCRIPT(EventScript_StepOffScales) },
-    { MAP_EVENT_COORD, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT_SCRIPT(EventScript_ReachArena) },
-    { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_COLOSSEUM_NAVAMPA_MATCH_SMOKE_BOMB_CHEST_OPENED, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { BG_EVENT(BG_EVENT_CHEST), 102, FLAG_COLOSSEUM_NAVAMPA_MATCH_NUT_CHEST_OPENED, FIND_ITEM(ITEM_NUT) },
-    { BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_WEST, 103, FLAG_COLOSSEUM_NAVAMPA_MATCH_SLEEP_BOMB_CHEST_OPENED, FIND_ITEM(ITEM_SLEEP_BOMB) },
+    { TRIGGER_STEP, 15, FLAG_ON_SCALES, EVENT_SCRIPT(EventScript_StepOnScales) },
+    { TRIGGER_STEP, 16, IF_FLAG_SET(FLAG_ON_SCALES), EVENT_SCRIPT(EventScript_StepOffScales) },
+    { TRIGGER_STEP, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT_SCRIPT(EventScript_ReachArena) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_COLOSSEUM_NAVAMPA_MATCH_SMOKE_BOMB_CHEST_OPENED, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_COLOSSEUM_NAVAMPA_MATCH_NUT_CHEST_OPENED, FIND_ITEM(ITEM_NUT) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | FACING_WEST, 103, FLAG_COLOSSEUM_NAVAMPA_MATCH_SLEEP_BOMB_CHEST_OPENED, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS), ACTOR_PUDDLE, FLAG_SCALES_FROZEN, EVENT_SCRIPT(EventScript_FreezeOnScales) },
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_GROWTH_PLANT, FLAG_PLANT_GROWN, EVENT_SCRIPT(EventScript_GrowPlant) },
     { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_WALL_OPERATOR, FLAG_WALL_WEDGE_HALTED, EVENT_SCRIPT(EventScript_HaltWall) },
     { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_EFFECT_ACTS), ACTOR_SIDEWALK_LOG, FLAG_SIDEWALK_LOG_KNOCKED_OFF, EVENT_SCRIPT(EventScript_ForceSidewalkLog) },
-    { MAP_EVENT_RAISED, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PassNorthWallOpening) },
-    { MAP_EVENT_RAISED, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PassSouthWallOpening) },
-    { MAP_EVENT_TALK, ACTOR_GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },
-    { MAP_EVENT_TALK, ACTOR_SCALES_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToScalesAttendant) },
-    { MAP_EVENT_TALK, ACTOR_STEPPING_STONE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToSteppingStoneAttendant) },
-    { MAP_EVENT_TALK, ACTOR_WALL_WEDGE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWallWedgeAttendant) },
-    { MAP_EVENT_TALK, ACTOR_FREE_CLIMB_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToFreeClimbAttendant) },
-    { MAP_EVENT_TALK, ACTOR_MOVING_SIDEWALK_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToMovingSidewalkAttendant) },
-    { MAP_EVENT_TALK, ACTOR_LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToLogRollingAttendant) },
+    { TRIGGER_RAISED, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PassNorthWallOpening) },
+    { TRIGGER_RAISED, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PassSouthWallOpening) },
+    { TRIGGER_TALK, ACTOR_GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },
+    { TRIGGER_TALK, ACTOR_SCALES_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToScalesAttendant) },
+    { TRIGGER_TALK, ACTOR_STEPPING_STONE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToSteppingStoneAttendant) },
+    { TRIGGER_TALK, ACTOR_WALL_WEDGE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWallWedgeAttendant) },
+    { TRIGGER_TALK, ACTOR_FREE_CLIMB_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToFreeClimbAttendant) },
+    { TRIGGER_TALK, ACTOR_MOVING_SIDEWALK_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToMovingSidewalkAttendant) },
+    { TRIGGER_TALK, ACTOR_LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToLogRollingAttendant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUIDE, CONDITION_ALWAYS, MSGNO(MsgColossoRiverThisYearsFinalsAreIncredibleThis) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCALES_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogTheStreetVendorsCornOnThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STEPPING_STONE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogICantSeeAnythingWhenIm) },
@@ -2627,8 +2627,8 @@ struct MapEvent gColosseumNavampaMatchEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FREE_CLIMB_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogStandingForLongPeriodsOfTime) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MOVING_SIDEWALK_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogIWasUpAllNightTrying) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogSomeTouristToldMeILook) },
-    { MAP_EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_TakePlaceForMatch) },
-    { MAP_EVENTS_END },
+    { TRIGGER_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_TakePlaceForMatch) },
+    { TRIGGERS_END },
 };
 
 /// Navampa after the last battle (ColosseumNavampaMatch_PlayPostBattleReunion): his

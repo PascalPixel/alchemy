@@ -124,7 +124,7 @@ void Colosso_ControlCharacterAlone(s32 id) {
 
 /// A map callback while a friend looks around the stages alone (the visit to
 /// lend a hand): when the Psynergy request names that friend and
-/// FLAG_PSYNERGY_TARGET is set, raise map event 99, Colosso_TakePlaceForMatch.
+/// FLAG_PSYNERGY_TARGET is set, raise trigger 99, Colosso_TakePlaceForMatch.
 void Colosso_RaiseTakePlaceOnPsynergy(void) {
   struct FieldWork *work = gFieldWork;
   s32 selection = gSaveBlock.leaderActorId;
@@ -138,7 +138,7 @@ void Colosso_RaiseTakePlaceOnPsynergy(void) {
   }
 }
 
-/// Raised map event 99: the nearest actor with animation 165 level with
+/// Raised trigger 99: the nearest actor with animation 165 level with
 /// or below the friend on the map calls the warriors to their places, and the
 /// friend's cell becomes their place to cheer from. "The match is about to
 /// begin. Please take your places." The next friend then looks around, or,

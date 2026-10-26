@@ -3,7 +3,7 @@
 /// maps, between SceneId_KolimaForestGlade and SceneId_KolimaForestFloodgate.
 /// Of its three logs, rolled by walking into them, the one pushed west to the
 /// water's edge tips into the river and floats there, cells the party can cross
-/// to the far side, and from the bank the leader can hop east (coord event 11,
+/// to the far side, and from the bank the leader can hop east (step trigger 11,
 /// KolimaForest_HopEast). The forest keeps its cursed colours until Tret lifts
 /// the curse (FLAG_KOLIMA_CURSE_LIFTED).
 ///
@@ -106,8 +106,8 @@ static void KolimaForestCliff_PushLog(void) {
 #include "common/kolima_jump.h"
 
 /// The logs, the two ways out and the hop east from the bank.
-const struct MapEvent *KolimaForestCliff_GetEvents(void) {
-  return gKolimaForestCliffEvents;
+const struct Trigger *KolimaForestCliff_GetTriggers(void) {
+  return gKolimaForestCliffTriggers;
 }
 
 /// Sets up the logs and the forest's colours on entry. A log already in the
@@ -191,16 +191,16 @@ struct ActorTemplate gKolimaForestCliffActorTemplates[] = {
 };
 // clang-format on
 
-struct MapEvent gKolimaForestCliffEvents[] = {
-    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS,
+struct Trigger gKolimaForestCliffTriggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
      KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_FLOODGATE},
-    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS,
      KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_GLADE},
-    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 10, CONDITION_ALWAYS,
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(KolimaForestCliff_PushLog)},
-    {COORD_EVENT_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS,
      EVENT_SCRIPT(KolimaForest_HopEast)},
-    {MAP_EVENTS_END},
+    {TRIGGERS_END},
 };
 
 // The .bss order follows the first declarations (externs in field.h).

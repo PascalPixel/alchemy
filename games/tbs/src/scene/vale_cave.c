@@ -236,7 +236,7 @@ static void ValeCave_ApplyEntryState(void);
 /// In Vale Cave's second room, talking to Kite once Halt has stopped it: Kite,
 /// a Jupiter Djinni, joins the party.
 ///
-/// Scene_TalkToActor selects this MAP_EVENT_TALK_HALTED event while Kite
+/// Scene_TalkToActor selects this TRIGGER_TALK_HALTED event while Kite
 /// is the paused actor. Djinn_JoinParty gives the Jupiter Djinni Kite
 /// and sets FLAG_KITE, so neither room places Kite again.
 static void EventScript_TalkToKite(void) {
@@ -599,7 +599,7 @@ static void EventScript_KiteKeepsAway(void) {
   if (GameFlag_Get(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) != 0) {
     if (gSaveBlock.pausedObject != ACTOR_KITE) {
       // Preserve the speed reads before resolving this route point.
-      routeIndex = work->coordEvent;
+      routeIndex = work->stepTrigger;
       djinni = Actor_GetById(ACTOR_KITE);
       leader = Actor_GetById(ACTOR_PARTY_LEADER);
       djinni->speed = leader->speed;
@@ -772,20 +772,20 @@ static void EventScript_PushLogNorth(void) {
   FieldScript_End();
 }
 
-/// Selects the current room's coord, Psynergy and bg events.
-const struct MapEvent *ValeCave_GetEvents(void) {
+/// Selects the current room's coord, Psynergy and examine triggers.
+const struct Trigger *ValeCave_GetTriggers(void) {
   s16 sceneId = gSaveBlock.sceneId;
 
   if (sceneId == (s32)&SceneId_ValeCaveMouth) {
-    return gValeCave_MouthEvents;
+    return gValeCave_MouthTriggers;
   }
   if (sceneId == (s32)&SceneId_ValeCaveKite) {
-    return gValeCave_KiteEvents;
+    return gValeCave_KiteTriggers;
   }
   if (sceneId == (s32)&SceneId_ValeCaveLogs) {
-    return gValeCave_LogsEvents;
+    return gValeCave_LogsTriggers;
   }
-  return gValeCave_EventsOther;
+  return gValeCave_TriggersOther;
 }
 
 /// Arriving in any of the three rooms: chooses the entry transition and
@@ -818,7 +818,7 @@ s32 ValeCave_Initialize(void) {
 /// VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE or
 /// VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_EAST).
 static void EventScript_LeaveRoom(void) {
-  s32 exitNumber = gFieldWork->coordEvent;
+  s32 exitNumber = gFieldWork->stepTrigger;
 
   Sound_PlaySong(SE_MAP_EXIT);
   Import_ScriptRequestExit(exitNumber);
@@ -1177,74 +1177,71 @@ struct ActorTemplate gValeCave_LogsActorTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct MapEvent gValeCave_EventsOther[] = {
-    { MAP_EVENTS_END },
+struct Trigger gValeCave_TriggersOther[] = {
+    { TRIGGERS_END },
 };
 
-struct MapEvent gValeCave_MouthEvents[] = {
-    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveRoom) },
-    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveRoom) },
-    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveRoom) },
-    { MAP_EVENTS_END },
+struct Trigger gValeCave_MouthTriggers[] = {
+    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveRoom) },
+    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveRoom) },
+    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveRoom) },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gValeCave_KiteEvents[] = {
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_MOUTH },
-    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, VALE_CAVE_KITE_WEST_TO_EAST },
-    { MAP_EVENT_EXIT, 3, CONDITION_ALWAYS, VALE_CAVE_KITE_WEST_TO_SOUTH },
-    { MAP_EVENT_EXIT, 4, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_WEST },
-    { MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, VALE_CAVE_KITE_EAST_TO_WEST },
-    { MAP_EVENT_EXIT, 6, CONDITION_ALWAYS, VALE_CAVE_KITE_EAST_TO_SOUTH },
-    { MAP_EVENT_EXIT, 7, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_EAST },
-    { MAP_EVENT_EXIT, 8, CONDITION_ALWAYS, VALE_CAVE_KITE_SOUTH_TO_WEST },
-    { MAP_EVENT_EXIT, 9, CONDITION_ALWAYS, VALE_CAVE_KITE_SOUTH_TO_EAST },
-    { MAP_EVENT_EXIT, 10, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_SOUTH },
-    { COORD_EVENT_WALKING_INTO(FACING_EAST), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RideLogEast) },
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RideLogWest) },
-    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopDownLedge) },
-    { MAP_EVENT_COORD, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TouchRidingLog) },
-    { MAP_EVENT_COORD, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TouchRidingLog) },
-    { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 24, FLAG_VALE_CAVE_EAST_CRATES_SUNK, EVENT_SCRIPT(EventScript_PushEastCratesIntoHole) },
-    { MAP_EVENT_COORD, 40, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteRunsOff) },
-    { MAP_EVENT_COORD, 41, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteRunsBehindLedge) },
-    { MAP_EVENT_COORD, 45, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
-    { MAP_EVENT_COORD, 46, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
-    { MAP_EVENT_COORD, 47, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
-    { MAP_EVENT_COORD, 48, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
-    { MAP_EVENT_COORD, 49, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
-    { MAP_EVENT_COORD, 50, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
-    { MAP_EVENT_COORD, 51, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
-    { MAP_EVENT_COORD, 52, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
-    { MAP_EVENT_COORD, 53, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
-    { MAP_EVENT_COORD, 54, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
-    { MAP_EVENT_COORD, 55, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
-    { MAP_EVENT_COORD, 56, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
-    { MAP_EVENT_TALK_HALTED, ACTOR_KITE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToKite) },
-    { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_VALE_CAVE_HALT_GEM, FIND_ITEM(ITEM_HALT_GEM) },
-    { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_VALE_CAVE_NUT, FIND_ITEM(ITEM_NUT) },
+struct Trigger gValeCave_KiteTriggers[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_MOUTH },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, VALE_CAVE_KITE_WEST_TO_EAST },
+    { TRIGGER_EXIT, 3, CONDITION_ALWAYS, VALE_CAVE_KITE_WEST_TO_SOUTH },
+    { TRIGGER_EXIT, 4, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_WEST },
+    { TRIGGER_EXIT, 5, CONDITION_ALWAYS, VALE_CAVE_KITE_EAST_TO_WEST },
+    { TRIGGER_EXIT, 6, CONDITION_ALWAYS, VALE_CAVE_KITE_EAST_TO_SOUTH },
+    { TRIGGER_EXIT, 7, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_EAST },
+    { TRIGGER_EXIT, 8, CONDITION_ALWAYS, VALE_CAVE_KITE_SOUTH_TO_WEST },
+    { TRIGGER_EXIT, 9, CONDITION_ALWAYS, VALE_CAVE_KITE_SOUTH_TO_EAST },
+    { TRIGGER_EXIT, 10, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_SOUTH },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RideLogEast) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RideLogWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopDownLedge) },
+    { TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TouchRidingLog) },
+    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TouchRidingLog) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 24, FLAG_VALE_CAVE_EAST_CRATES_SUNK, EVENT_SCRIPT(EventScript_PushEastCratesIntoHole) },
+    { TRIGGER_STEP, 40, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteRunsOff) },
+    { TRIGGER_STEP, 41, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteRunsBehindLedge) },
+    { TRIGGER_STEP, 45, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
+    { TRIGGER_STEP, 46, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
+    { TRIGGER_STEP, 47, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
+    { TRIGGER_STEP, 48, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
+    { TRIGGER_STEP, 49, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
+    { TRIGGER_STEP, 50, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
+    { TRIGGER_STEP, 51, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
+    { TRIGGER_STEP, 52, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
+    { TRIGGER_STEP, 53, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
+    { TRIGGER_STEP, 54, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
+    { TRIGGER_STEP, 55, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
+    { TRIGGER_STEP, 56, FLAG_KITE, EVENT_SCRIPT(EventScript_KiteKeepsAway) },
+    { TRIGGER_TALK_HALTED, ACTOR_KITE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToKite) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_VALE_CAVE_HALT_GEM, FIND_ITEM(ITEM_HALT_GEM) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_VALE_CAVE_NUT, FIND_ITEM(ITEM_NUT) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealHiddenTile) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HideRevealedTile) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_CRATES, FLAG_VALE_CAVE_WEST_CRATES_SUNK, EVENT_SCRIPT(EventScript_MoveWestCratesIntoHole) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_CRATES, FLAG_VALE_CAVE_EAST_CRATES_SUNK, EVENT_SCRIPT(EventScript_MoveEastCratesIntoHole) },
     { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_KITE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HaltKite) },
-    { MAP_EVENTS_END },
+    { TRIGGERS_END },
 };
 // clang-format on
 
-struct MapEvent gValeCave_LogsEvents[] = {
-    {MAP_EVENT_EXIT, 1, CONDITION_ALWAYS,
-     VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_WEST},
-    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, VALE_CAVE_LOGS_NORTH_TO_SOUTH},
-    {MAP_EVENT_EXIT, 3, CONDITION_ALWAYS,
-     VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_EAST},
-    {MAP_EVENT_EXIT, 4, CONDITION_ALWAYS,
-     VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_SOUTH},
-    {MAP_EVENT_EXIT, 5, CONDITION_ALWAYS, VALE_CAVE_LOGS_SOUTH_TO_NORTH},
-    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 20, CONDITION_ALWAYS,
+struct Trigger gValeCave_LogsTriggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_WEST},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, VALE_CAVE_LOGS_NORTH_TO_SOUTH},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_EAST},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_SOUTH},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, VALE_CAVE_LOGS_SOUTH_TO_NORTH},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 20, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_PushLogOverEdge)},
-    {COORD_EVENT_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_PushLogOffLedge)},
-    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 22, CONDITION_ALWAYS,
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 22, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_PushLogNorth)},
-    {MAP_EVENTS_END},
+    {TRIGGERS_END},
 };

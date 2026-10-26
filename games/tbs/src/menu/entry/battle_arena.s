@@ -3,5 +3,5 @@
 	overlay_veneer BattleArena_GetEntrances
 	overlay_veneer BattleArena_GetExits
 	overlay_veneer BattleArena_SelectActorTemplates
-	overlay_veneer BattleArena_GetEvents
+	overlay_veneer BattleArena_GetTriggers
 	overlay_veneer Scene_GetExitRegions

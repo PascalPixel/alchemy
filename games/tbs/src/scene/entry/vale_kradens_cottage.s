@@ -3,5 +3,5 @@
 	overlay_veneer ValeKradensCottage_GetEntrances
 	overlay_veneer ValeKradensCottage_GetExits
 	overlay_veneer ValeKradensCottage_GetActorTemplates
-	overlay_veneer ValeKradensCottage_GetEvents
+	overlay_veneer ValeKradensCottage_GetTriggers
 	overlay_veneer ValeKradensCottage_GetRegions

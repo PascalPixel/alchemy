@@ -1,7 +1,7 @@
 /// @file Lalivero, the town by Babi Lighthouse, one map with the area name
 /// Lalivero: SceneId_Lalivero. Its buildings are lalivero_interiors.c. The
 /// story brings the party here twice, and Lalivero_GetActorTemplates and
-/// Lalivero_GetEvents choose the town's people and map events for each visit by
+/// Lalivero_GetTriggers choose the town's people and triggers for each visit by
 /// FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, set at Venus Lighthouse's aerie.
 ///
 /// On the first visit the party comes in from the world map with Iodem, and
@@ -12,17 +12,17 @@
 /// guard at the wharf lets no one by.
 ///
 /// On the second visit the party comes back through Faran's house. Its first
-/// step onto coord event 50 plays EventScript_IodemGivesBlackOrb
+/// step onto step trigger 50 plays EventScript_IodemGivesBlackOrb
 /// (FLAG_IODEM_FAREWELL_SEEN), in which Iodem comes out of the house and gives
 /// the party the Black Orb that sails Babi's ship;
 /// Lalivero_TalkAboutIdejimaShip adds a few lines when FLAG_SAW_SHIP_AT_IDEJIMA
 /// is set. The wharf's guard then lets the party through
-/// (FLAG_LALIVERO_WHARF_OPEN), coord event 51 turns it back toward the ship,
+/// (FLAG_LALIVERO_WHARF_OPEN), step trigger 51 turns it back toward the ship,
 /// and a sign and three blocked cells close the north exit.
 ///
 /// On both visits Torch, a Mars Djinni, waits until it joins;
 /// EventScript_EnterDoor opens the door or the Sanctum's gate before the leader
-/// leaves by the touched coord event's exit into SceneId_TimberRoomsB or
+/// leaves by the touched step trigger's exit into SceneId_TimberRoomsB or
 /// SceneId_TimberRoomsC; the world map lies east and west; and a jar, a
 /// stone pillar and a chest hold a Water of Life, a Psy Crystal and a Warrior's
 /// Helm.
@@ -125,7 +125,7 @@ enum LaliveroActorId {
   ACTOR_WHARF_GUARD,
   /// Three plants, SPRITE_SPROUT, the sprout Growth grows at Alpine Crossing
   /// and Suhalla Gate. Here they stand in animation 3, block nothing and no
-  /// map event answers them.
+  /// trigger answers them.
   /// ★ Named from what the player sees: small green sprouts on the edges of
   /// the rooftops (its render)
   ACTOR_FIRST_PLANT,
@@ -153,8 +153,8 @@ enum LaliveroMetatileBehavior { MB_LALIVERO_SANCTUM_GATE = 6 };
 enum { WALL_CELL_X = 20, WALL_CELL_Y = 23 };
 
 /// A chest searched while facing the given way.
-#define BG_EVENT_CHEST_FACING(facing)                                          \
-  (BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | (facing))
+#define EXAMINE_CHEST_FACING(facing)                                           \
+  (EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | (facing))
 
 /// An item icon's tiles: a 16-pixel square at 4 bits a pixel.
 #define ICON_TILE_BYTES (16 * 16 / 2)
@@ -231,9 +231,9 @@ static void EventScript_WharfGuardLetsPartyThrough(void) {
 
 /// The leader walks through one of Lalivero's doors. As the leader walks into a
 /// doorway, the door (or the Sanctum's gate) swings open, the leader steps in
-/// and the exit of the touched coord event is taken.
+/// and the exit of the touched step trigger is taken.
 static void EventScript_EnterDoor(void) {
-  s32 door = gFieldWork->coordEvent;
+  s32 door = gFieldWork->stepTrigger;
   s32 x = gLaliveroDoorCells[door][0];
   s32 y = gLaliveroDoorCells[door][1];
 
@@ -251,11 +251,11 @@ static void EventScript_EnterDoor(void) {
   Import_ScriptRequestExit(door);
 }
 
-/// Lalivero: a doorway with no door (coord events 8 and 11); leave by the
-/// touched coord event's exit.
+/// Lalivero: a doorway with no door (step triggers 8 and 11); leave by the
+/// touched step trigger's exit.
 static void EventScript_EnterDoorway(void) {
   struct FieldWork *work = gFieldWork;
-  s16 *trigger = (s16 *)&work->coordEvent;
+  s16 *trigger = (s16 *)&work->stepTrigger;
   s32 exit = *trigger;
 
   work->transitionFrames = 16;
@@ -460,7 +460,7 @@ static void EventScript_WatchWoundedSoldiers(void) {
   FieldScript_End();
 }
 
-/// Lalivero, coord event 50 after Venus Lighthouse, until Iodem has spoken
+/// Lalivero, step trigger 50 after Venus Lighthouse, until Iodem has spoken
 /// (FLAG_IODEM_FAREWELL_SEEN): Garet stops the leader, for Iodem asked them to
 /// wait. Iodem comes out of Faran's house and tells the party that the misty
 /// island they saw from the lighthouse may be Lemuria, which could save Babi's
@@ -803,8 +803,8 @@ static void Lalivero_TalkAboutIdejimaShip(void) {
   Script_ShowMessage(ACTOR_IVAN, 0);
 }
 
-/// Lalivero, coord event 51 after Venus Lighthouse: Garet turns the leader back
-/// toward Babi's ship and the wharf the guard was keeping.
+/// Lalivero, step trigger 51 after Venus Lighthouse: Garet turns the leader
+/// back toward Babi's ship and the wharf the guard was keeping.
 static void EventScript_TurnBackToTheShip(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgLaliveroWhereGoingArentWeTaking);
@@ -815,11 +815,11 @@ static void EventScript_TurnBackToTheShip(void) {
 
 /// What the party can talk to, touch and search, which changes once they are
 /// back from Venus Lighthouse.
-const struct MapEvent *Lalivero_GetEvents(void) {
+const struct Trigger *Lalivero_GetTriggers(void) {
   if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
-    return gLaliveroEventsAfterLighthouse;
+    return gLaliveroTriggersAfterLighthouse;
   }
-  return gLaliveroEvents;
+  return gLaliveroTriggers;
 }
 
 /// Sets Lalivero up as the party enters: the Black Orb Iodem will hold out,
@@ -1109,31 +1109,31 @@ u16 gLaliveroGateOpenSteps[] = {
     MAPGRID_ANIMATION_STEP(34, 2, 2, 2, 8), MAPGRID_ANIMATION_STEP(36, 2, 2, 2, 1), MAPGRID_ANIMATION_STEPS_END,
 };
 
-struct MapEvent gLaliveroEvents[] = {
-    { MAP_EVENT_EXIT, 20, CONDITION_ALWAYS, LALIVERO_TO_WORLD_MAP_EAST },
-    { MAP_EVENT_EXIT, 21, CONDITION_ALWAYS, LALIVERO_TO_WORLD_MAP_WEST },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoorway) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoorway) },
-    { MAP_EVENT_TALK, ACTOR_WEST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroUhhnnWeWereTakenBySurprise) },
-    { MAP_EVENT_TALK, ACTOR_EAST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheyWereTerribleWeWereNo) },
-    { MAP_EVENT_TALK, ACTOR_VILLAGER_THEY_TOOK_SHEBA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToVillagerTheyTookSheba) },
-    { MAP_EVENT_TALK, ACTOR_WOMAN_OUR_ONLY_HOPE, CONDITION_ALWAYS, MSGNO(MsgLaliveroActorIsOurOnlyHopeIf) },
-    { MAP_EVENT_TALK, ACTOR_VILLAGER_BLAMING_TOLBI, CONDITION_ALWAYS, MSGNO(MsgLaliveroThisAllHappenedBecauseTolbiTook) },
-    { MAP_EVENT_TALK, ACTOR_WOMAN_TRUSTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroFaranFollowedActorImSureHell) },
-    { MAP_EVENT_TALK, ACTOR_OLD_MAN_RUMBLING_WARNING, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheRumblingAtTheRuinsMust) },
-    { MAP_EVENT_TALK, ACTOR_OLD_WOMAN_EARLIER_EARTHQUAKE, CONDITION_ALWAYS, MSGNO(MsgLaliveroThereWasAnEarthquakeAtThe) },
-    { MAP_EVENT_TALK, ACTOR_BOY_IF_I_WERE_BIGGER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIfIWereBiggerIWould) },
-    { MAP_EVENT_TALK, ACTOR_GIRL_SHEBAS_POWERS, CONDITION_ALWAYS, MSGNO(MsgLaliveroIBetActorCanUseHer) },
-    { MAP_EVENT_TALK, ACTOR_WHARF_GUARD, CONDITION_ALWAYS, MSGNO(MsgLaliveroBabisMostPreciousBelongingIsKept) },
+struct Trigger gLaliveroTriggers[] = {
+    { TRIGGER_EXIT, 20, CONDITION_ALWAYS, LALIVERO_TO_WORLD_MAP_EAST },
+    { TRIGGER_EXIT, 21, CONDITION_ALWAYS, LALIVERO_TO_WORLD_MAP_WEST },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoorway) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoorway) },
+    { TRIGGER_TALK, ACTOR_WEST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroUhhnnWeWereTakenBySurprise) },
+    { TRIGGER_TALK, ACTOR_EAST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheyWereTerribleWeWereNo) },
+    { TRIGGER_TALK, ACTOR_VILLAGER_THEY_TOOK_SHEBA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToVillagerTheyTookSheba) },
+    { TRIGGER_TALK, ACTOR_WOMAN_OUR_ONLY_HOPE, CONDITION_ALWAYS, MSGNO(MsgLaliveroActorIsOurOnlyHopeIf) },
+    { TRIGGER_TALK, ACTOR_VILLAGER_BLAMING_TOLBI, CONDITION_ALWAYS, MSGNO(MsgLaliveroThisAllHappenedBecauseTolbiTook) },
+    { TRIGGER_TALK, ACTOR_WOMAN_TRUSTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroFaranFollowedActorImSureHell) },
+    { TRIGGER_TALK, ACTOR_OLD_MAN_RUMBLING_WARNING, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheRumblingAtTheRuinsMust) },
+    { TRIGGER_TALK, ACTOR_OLD_WOMAN_EARLIER_EARTHQUAKE, CONDITION_ALWAYS, MSGNO(MsgLaliveroThereWasAnEarthquakeAtThe) },
+    { TRIGGER_TALK, ACTOR_BOY_IF_I_WERE_BIGGER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIfIWereBiggerIWould) },
+    { TRIGGER_TALK, ACTOR_GIRL_SHEBAS_POWERS, CONDITION_ALWAYS, MSGNO(MsgLaliveroIBetActorCanUseHer) },
+    { TRIGGER_TALK, ACTOR_WHARF_GUARD, CONDITION_ALWAYS, MSGNO(MsgLaliveroBabisMostPreciousBelongingIsKept) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIfOnlyTheyDidntHaveActor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheyUsedFireOnUsThats) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_THEY_TOOK_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroCursesWeCouldntStopActorAnd) },
@@ -1145,44 +1145,44 @@ struct MapEvent gLaliveroEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_IF_I_WERE_BIGGER, CONDITION_ALWAYS, MSGNO(MsgLaliveroITriedToStepInFront) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_SHEBAS_POWERS, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheyAllHaveALessonComing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WHARF_GUARD, CONDITION_ALWAYS, MSGNO(MsgLaliveroIWonderWhatBabisMostPrecious) },
-    { MAP_EVENT_TALK, ACTOR_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToTorch) },
-    { BG_EVENT(BG_EVENT_JAR), 100, FLAG_LALIVERO_WATER_OF_LIFE, FIND_ITEM(ITEM_WATER_OF_LIFE) },
-    { BG_EVENT(BG_EVENT_STONE_PILLAR), 101, FLAG_LALIVERO_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
+    { TRIGGER_TALK, ACTOR_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToTorch) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 100, FLAG_LALIVERO_WATER_OF_LIFE, FIND_ITEM(ITEM_WATER_OF_LIFE) },
+    { EXAMINE_TRIGGER(EXAMINE_STONE_PILLAR), 101, FLAG_LALIVERO_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
     // XXX (no evidence): why this chest opens only facing west, when
-    // gLaliveroEventsAfterLighthouse opens it from any side; the chest and the
+    // gLaliveroTriggersAfterLighthouse opens it from any side; the chest and the
     // ground around it are the same on both visits.
-    { BG_EVENT_CHEST_FACING(FACING_WEST), 102, FLAG_LALIVERO_WARRIORS_HELM, FIND_ITEM(ITEM_WARRIORS_HELM) },
-    { MAP_EVENTS_END },
+    { EXAMINE_CHEST_FACING(FACING_WEST), 102, FLAG_LALIVERO_WARRIORS_HELM, FIND_ITEM(ITEM_WARRIORS_HELM) },
+    { TRIGGERS_END },
 };
 
-struct MapEvent gLaliveroEventsAfterLighthouse[] = {
-    { MAP_EVENT_COORD, 50, FLAG_IODEM_FAREWELL_SEEN, EVENT_SCRIPT(EventScript_IodemGivesBlackOrb) },
-    { MAP_EVENT_COORD, 51, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TurnBackToTheShip) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoorway) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoorway) },
-    { MAP_EVENT_TALK, ACTOR_WHARF_GUARD, FLAG_LALIVERO_WHARF_OPEN, EVENT_SCRIPT(EventScript_WharfGuardLetsPartyThrough) },
+struct Trigger gLaliveroTriggersAfterLighthouse[] = {
+    { TRIGGER_STEP, 50, FLAG_IODEM_FAREWELL_SEEN, EVENT_SCRIPT(EventScript_IodemGivesBlackOrb) },
+    { TRIGGER_STEP, 51, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TurnBackToTheShip) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoorway) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoorway) },
+    { TRIGGER_TALK, ACTOR_WHARF_GUARD, FLAG_LALIVERO_WHARF_OPEN, EVENT_SCRIPT(EventScript_WharfGuardLetsPartyThrough) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_WHARF_GUARD, FLAG_LALIVERO_WHARF_OPEN, EVENT_SCRIPT(EventScript_WharfGuardLetsPartyThrough) },
-    { MAP_EVENT_TALK, ACTOR_WEST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroHaHaIThoughtTheyHad) },
-    { MAP_EVENT_TALK, ACTOR_EAST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIWillNeverLetMyGuard) },
-    { MAP_EVENT_TALK, ACTOR_VILLAGER_THEY_TOOK_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroWhereCouldActorBeNowIm) },
-    { MAP_EVENT_TALK, ACTOR_WOMAN_OUR_ONLY_HOPE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WomanAsksIfLeaving) },
-    { MAP_EVENT_TALK, ACTOR_VILLAGER_BLAMING_TOLBI, CONDITION_ALWAYS, MSGNO(MsgLaliveroISawTheBeaconOfVenus) },
-    { MAP_EVENT_TALK, ACTOR_WOMAN_TRUSTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheExplosionInTheVenusRuins) },
-    { MAP_EVENT_TALK, ACTOR_OLD_MAN_RUMBLING_WARNING, CONDITION_ALWAYS, MSGNO(MsgLaliveroThePeninsulaBehindVenusLighthouseIs) },
-    { MAP_EVENT_TALK, ACTOR_OLD_WOMAN_EARLIER_EARTHQUAKE, CONDITION_ALWAYS, MSGNO(MsgLaliveroICantBelieveYouEscapedVenus) },
-    { MAP_EVENT_TALK, ACTOR_BOY_IF_I_WERE_BIGGER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIfYouDefeatedThatEvilBunch) },
-    { MAP_EVENT_TALK, ACTOR_GIRL_SHEBAS_POWERS, CONDITION_ALWAYS, MSGNO(MsgLaliveroActorJumpedIntoTheOceanFrom) },
-    { MAP_EVENT_TALK, ACTOR_NORTH_EXIT_SIGN, CONDITION_ALWAYS, MSGNO(MsgLaliveroNoTrespassingDangerBeyondThisPoint) },
-    { MAP_EVENT_TALK, ACTOR_WHARF_GUARD, CONDITION_ALWAYS, MSGNO(MsgLaliveroApparentlyAShipHasBeenDocked) },
+    { TRIGGER_TALK, ACTOR_WEST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroHaHaIThoughtTheyHad) },
+    { TRIGGER_TALK, ACTOR_EAST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIWillNeverLetMyGuard) },
+    { TRIGGER_TALK, ACTOR_VILLAGER_THEY_TOOK_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroWhereCouldActorBeNowIm) },
+    { TRIGGER_TALK, ACTOR_WOMAN_OUR_ONLY_HOPE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WomanAsksIfLeaving) },
+    { TRIGGER_TALK, ACTOR_VILLAGER_BLAMING_TOLBI, CONDITION_ALWAYS, MSGNO(MsgLaliveroISawTheBeaconOfVenus) },
+    { TRIGGER_TALK, ACTOR_WOMAN_TRUSTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheExplosionInTheVenusRuins) },
+    { TRIGGER_TALK, ACTOR_OLD_MAN_RUMBLING_WARNING, CONDITION_ALWAYS, MSGNO(MsgLaliveroThePeninsulaBehindVenusLighthouseIs) },
+    { TRIGGER_TALK, ACTOR_OLD_WOMAN_EARLIER_EARTHQUAKE, CONDITION_ALWAYS, MSGNO(MsgLaliveroICantBelieveYouEscapedVenus) },
+    { TRIGGER_TALK, ACTOR_BOY_IF_I_WERE_BIGGER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIfYouDefeatedThatEvilBunch) },
+    { TRIGGER_TALK, ACTOR_GIRL_SHEBAS_POWERS, CONDITION_ALWAYS, MSGNO(MsgLaliveroActorJumpedIntoTheOceanFrom) },
+    { TRIGGER_TALK, ACTOR_NORTH_EXIT_SIGN, CONDITION_ALWAYS, MSGNO(MsgLaliveroNoTrespassingDangerBeyondThisPoint) },
+    { TRIGGER_TALK, ACTOR_WHARF_GUARD, CONDITION_ALWAYS, MSGNO(MsgLaliveroApparentlyAShipHasBeenDocked) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIAmAllHealedNowBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIWantedToBeAPart) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_THEY_TOOK_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroIfActorUsedHerGreatPowers) },
@@ -1194,10 +1194,10 @@ struct MapEvent gLaliveroEventsAfterLighthouse[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_IF_I_WERE_BIGGER, CONDITION_ALWAYS, MSGNO(MsgLaliveroYouMustBeGreatWarriorsTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_SHEBAS_POWERS, CONDITION_ALWAYS, MSGNO(MsgLaliveroActorWouldBeFineEvenAfter) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WHARF_GUARD, CONDITION_ALWAYS, MSGNO(MsgLaliveroThisSureSeemsLikeAStrange) },
-    { MAP_EVENT_TALK, ACTOR_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToTorch) },
-    { BG_EVENT(BG_EVENT_JAR), 100, FLAG_LALIVERO_WATER_OF_LIFE, FIND_ITEM(ITEM_WATER_OF_LIFE) },
-    { BG_EVENT(BG_EVENT_STONE_PILLAR), 101, FLAG_LALIVERO_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
-    { BG_EVENT(BG_EVENT_CHEST), 102, FLAG_LALIVERO_WARRIORS_HELM, FIND_ITEM(ITEM_WARRIORS_HELM) },
-    { MAP_EVENTS_END },
+    { TRIGGER_TALK, ACTOR_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToTorch) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), 100, FLAG_LALIVERO_WATER_OF_LIFE, FIND_ITEM(ITEM_WATER_OF_LIFE) },
+    { EXAMINE_TRIGGER(EXAMINE_STONE_PILLAR), 101, FLAG_LALIVERO_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_LALIVERO_WARRIORS_HELM, FIND_ITEM(ITEM_WARRIORS_HELM) },
+    { TRIGGERS_END },
 };
 // clang-format on

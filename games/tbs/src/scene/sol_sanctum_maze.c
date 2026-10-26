@@ -51,7 +51,9 @@ const struct ActorTemplate *Scene_GetActorTemplates(void) {
 }
 
 /// The exits, and the Small Jewel's chest.
-const struct MapEvent *Scene_GetEvents(void) { return gSolSanctumMazeEvents; }
+const struct Trigger *Scene_GetTriggers(void) {
+  return gSolSanctumMazeTriggers;
+}
 
 #include "common/sol_sanctum_init_zoom.h"
 
@@ -78,12 +80,12 @@ struct ActorTemplate gSolSanctumMazeActorTemplates[] = {
     {MAP_TABLE_END},
 };
 
-struct MapEvent gSolSanctumMazeEvents[] = {
-    {MAP_EVENT_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS,
+struct Trigger gSolSanctumMazeTriggers[] = {
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS,
      SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_SOUTH},
-    {MAP_EVENT_EXIT, 2, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS,
      SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_NORTH},
-    {BG_EVENT(BG_EVENT_CHEST), 100, FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND,
-     FIND_ITEM(ITEM_SMALL_JEWEL)},
-    {MAP_EVENTS_END},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100,
+     FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND, FIND_ITEM(ITEM_SMALL_JEWEL)},
+    {TRIGGERS_END},
 };

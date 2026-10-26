@@ -153,12 +153,12 @@ void FieldScript_CallWithLastActiveObjectId(struct ActorTemplate *table) {
   FieldScript_SpawnActorTemplates(table, Actor_FindLastActiveId());
 }
 
-/// Sets the map's event table, which the field checks as the leader moves:
+/// Sets the map's trigger table, which the field checks as the leader moves:
 /// writes work->events. Altin Peak's map script calls it.
-void FieldScript_SetMapEvents(const struct MapEvent *events) {
+void FieldScript_SetTriggers(const struct Trigger *triggers) {
   struct FieldWork *work = gFieldWork;
 
-  work->events = events;
+  work->triggers = triggers;
 }
 
 /// Adds unit to the party. With announce nonzero it also shows

@@ -7,9 +7,9 @@
 ///
 /// Its eight exits (TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHWEST and
 /// the seven after it) lead back into SceneId_TreeRooms; walking into
-/// one for two frames (COORD_EVENT_FLAG_QUICK) plays the exit sound and leaves
+/// one for two frames (STEP_TRIGGER_FLAG_QUICK) plays the exit sound and leaves
 /// at once, the cells' metatile behaviors being the exits' own numbers.
-/// Coord events on metatile behaviors 10 to 15 lie in pairs at the top and
+/// Step triggers on metatile behaviors 10 to 15 lie in pairs at the top and
 /// bottom of the vines that hang from one branch to the one below (cells
 /// (7, 12) and (8, 17), (37, 11) and (36, 16), (41, 20) and (40, 26) in
 /// map_047's map.txt): each moves the leader and the camera five
@@ -176,7 +176,7 @@ static void EventScript_EnterTretTreeRooms(void) {
   s16 *touchedExit;
 
   Script_PlaySong(SE_MAP_EXIT);
-  touchedExit = &state->coordEvent;
+  touchedExit = &state->stepTrigger;
   Import_ScriptRequestExit(*touchedExit);
 }
 
@@ -203,8 +203,8 @@ static void EventScript_CastReveal(void) {
 }
 
 /// Returns the map's exit, coord, talk and Reveal events.
-const struct MapEvent *TretTreeBranch_GetEvents(void) {
-  return gTretTreeBranch_Events;
+const struct Trigger *TretTreeBranch_GetTriggers(void) {
+  return gTretTreeBranch_Triggers;
 }
 
 /// Unused script hook: begins and immediately ends a script.
@@ -340,40 +340,40 @@ struct ActorTemplate gTretTreeBranch_ActorTemplates[] = {
 };
 // clang-format on
 
-struct MapEvent gTretTreeBranch_Events[] = {
-    {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 1, CONDITION_ALWAYS,
+struct Trigger gTretTreeBranch_Triggers[] = {
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 1, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
-    {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 2, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 2, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
-    {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 3, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 3, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
-    {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 4, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 4, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
-    {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 5, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 5, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
-    {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 6, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 6, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
-    {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 7, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 7, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
-    {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 8, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 8, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
-    {MAP_EVENT_COORD, 10, CONDITION_ALWAYS,
+    {TRIGGER_STEP, 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_GoDownWestVine)},
-    {MAP_EVENT_COORD, 11, CONDITION_ALWAYS,
+    {TRIGGER_STEP, 11, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_GoUpWestVine)},
-    {MAP_EVENT_COORD, 12, CONDITION_ALWAYS,
+    {TRIGGER_STEP, 12, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_GoDownNortheastVine)},
-    {MAP_EVENT_COORD, 13, CONDITION_ALWAYS,
+    {TRIGGER_STEP, 13, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_GoUpNortheastVine)},
-    {MAP_EVENT_COORD, 14, CONDITION_ALWAYS,
+    {TRIGGER_STEP, 14, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_GoDownSoutheastVine)},
-    {MAP_EVENT_COORD, 15, CONDITION_ALWAYS,
+    {TRIGGER_STEP, 15, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_GoUpSoutheastVine)},
-    {MAP_EVENT_TALK, ACTOR_BREEZE, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_BREEZE, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_TalkToBreeze)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_AFTER_END), 0,
      CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CastReveal)},
-    {MAP_EVENTS_END},
+    {TRIGGERS_END},
 };
 
 /// Unused: the two steps of a door opening, as Vale's doors have them

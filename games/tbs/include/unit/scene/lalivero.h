@@ -10,7 +10,7 @@ const struct SceneEntrance *Lalivero_GetEntrances(void);
 const struct SceneExitRegion *Lalivero_GetRegions(void);
 const u32 *Lalivero_GetExits(void);
 const struct ActorTemplate *Lalivero_GetActorTemplates(void);
-const struct MapEvent *Lalivero_GetEvents(void);
+const struct Trigger *Lalivero_GetTriggers(void);
 s32 Lalivero_Initialize(void);
 extern s32 gLalivero_CryingScript[];
 extern struct SceneEntrance gLaliveroEntrances[];
@@ -20,7 +20,7 @@ extern struct ActorTemplate gLaliveroActorTemplatesAfterLighthouse[];
 extern s16 gLaliveroDoorCells[][2];
 extern u16 gLaliveroDoorOpenSteps[];
 extern u16 gLaliveroGateOpenSteps[];
-extern struct MapEvent gLaliveroEvents[];
-extern struct MapEvent gLaliveroEventsAfterLighthouse[];
+extern struct Trigger gLaliveroTriggers[];
+extern struct Trigger gLaliveroTriggersAfterLighthouse[];
 
 #endif

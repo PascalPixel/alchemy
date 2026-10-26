@@ -5,7 +5,7 @@
 #include "map_tables.h"
 
 struct SceneEntrance;
-struct MapEvent;
+struct Trigger;
 struct ActorTemplate;
 struct SceneExitRegion;
 
@@ -13,13 +13,13 @@ const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ActorTemplate *Scene_GetActorTemplates(void);
-const struct MapEvent *Scene_GetEvents(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern const struct SceneEntrance gStoneRooms_Entrances[];
 extern const u32 gStoneRooms_Exits[];
 extern const struct ActorTemplate gStoneRooms_ThiefActorTemplates[];
 extern const struct ActorTemplate gStoneRooms_PrisonerActorTemplates[];
-extern const struct MapEvent gStoneRooms_ThiefEvents[];
-extern const struct MapEvent gStoneRooms_PrisonerEvents[];
+extern const struct Trigger gStoneRooms_ThiefTriggers[];
+extern const struct Trigger gStoneRooms_PrisonerTriggers[];
 
 #endif

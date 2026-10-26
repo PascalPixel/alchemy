@@ -171,9 +171,9 @@ static void EventScript_MoveEastPillar(void) {
   }
 }
 
-/// Walking into the west pillar at Goma Cave Entrance from the west (coord
-/// event 5) or the east (coord event 6): the leader leans on it and pushes it
-/// one step.
+/// Walking into the west pillar at Goma Cave Entrance from the west (
+/// step trigger 5) or the east (step trigger 6): the leader leans on it and
+/// pushes it one step.
 static void EventScript_PushWestPillar(void) {
   struct FieldWork *work;
   s32 offsetX;
@@ -185,8 +185,8 @@ static void EventScript_PushWestPillar(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   Actor_SetSpeed(ACTOR_WEST_PILLAR, PIXELS(1) / 5, PIXELS(1) / 10);
   Script_PlaySong(SE_PUSH);
-  // 16 pixels east from coord event 5, west from coord event 6.
-  offsetX = (11 - (work->coordEvent << 1)) << 4;
+  // 16 pixels east from step trigger 5, west from step trigger 6.
+  offsetX = (11 - (work->stepTrigger << 1)) << 4;
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, offsetX, 0);
   Actor_SetDestinationOffset(ACTOR_WEST_PILLAR, offsetX, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
@@ -211,7 +211,9 @@ static void EventScript_BlowAwayIvy(void) {
   FieldScript_End();
 }
 
-const struct MapEvent *Scene_GetEvents(void) { return gGomaCaveEntranceEvents; }
+const struct Trigger *Scene_GetTriggers(void) {
+  return gGomaCaveEntranceTriggers;
+}
 
 /// Sets up Goma Cave Entrance: Retreat is blocked, and the stump and pillars
 /// stand where the party left them, the stump's ivy gone once Ivan has blown
@@ -719,16 +721,16 @@ struct ActorTemplate gGomaCaveEntranceActorTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct MapEvent gGomaCaveEntranceEvents[] = {
-    { MAP_EVENT_EXIT, 1, CONDITION_ALWAYS, GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM },
-    { MAP_EVENT_EXIT, 2, CONDITION_ALWAYS, GOMA_CAVE_ENTRANCE_TO_WORLD_MAP },
-    { COORD_EVENT_WALKING_INTO(FACING_EAST), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWestPillar) },
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWestPillar) },
+struct Trigger gGomaCaveEntranceTriggers[] = {
+    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM },
+    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, GOMA_CAVE_ENTRANCE_TO_WORLD_MAP },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWestPillar) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWestPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GOMA_CAVE_IVAN_JOINED, EVENT_SCRIPT(EventScript_IvanRejoins) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED, EVENT_SCRIPT(EventScript_MoveStump) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveWestPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_PILLAR, FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE, EVENT_SCRIPT(EventScript_MoveEastPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY, EVENT_SCRIPT(EventScript_BlowAwayIvy) },
-    { MAP_EVENTS_END },
+    { TRIGGERS_END },
 };
 // clang-format on

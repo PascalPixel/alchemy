@@ -48,7 +48,7 @@ static void Title_LoadBackground(void);
 
 /// The title overlay's scene tables, which SceneManager_Run reads through
 /// entry/title.s: one entrance row, the exit, and no actor
-/// templates or map events.
+/// templates or triggers.
 u8 *Title_GetEntrances(void) { return (u8 *)gTitleEntrances; }
 
 /// The exit regions entry: the title has no exit boxes.
@@ -59,8 +59,8 @@ u8 *Title_GetExits(void) { return (u8 *)gTitleExits; }
 /// The title overlay has no actors.
 u8 *Title_GetActorTemplates(void) { return (u8 *)gTitleActorTemplates; }
 
-/// The title overlay has no map events.
-u8 *Title_GetEvents(void) { return (u8 *)gTitleEvents; }
+/// The title overlay has no triggers.
+u8 *Title_GetTriggers(void) { return (u8 *)gTitleTriggers; }
 
 /// The overlay's initialize entry: plays what the entrance asks for,
 /// sets the next destination and returns 0.
@@ -392,8 +392,8 @@ struct ActorTemplate gTitleActorTemplates[] = {
     {MAP_TABLE_END},
 };
 
-struct MapEvent gTitleEvents[] = {
-    {MAP_EVENTS_END},
+struct Trigger gTitleTriggers[] = {
+    {TRIGGERS_END},
 };
 
 /// The VRAM cache entry holding the lettering's tiles; -1 until

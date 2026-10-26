@@ -1,6 +1,6 @@
 /// @file
 /// Vault's interiors, before and after the thieves are caught: whether the
-/// leader stands beside the Bone on the floor, which the maps' event tables
+/// leader stands beside the Bone on the floor, which the maps' trigger tables
 /// test through FLAG_VAULT_LEADER_BESIDE_BONE.
 #include "types.h"
 #include "actor.h"

@@ -351,3 +351,95 @@ grid(const Buffer *input)
 	freeStrings(&lines);
 	return out;
 }
+
+/*
+ * A background's tile map as the screen shows it: a `palette:N` header, then
+ * one text row per row of the screen, one cell per 8x8 square, the tile's
+ * number in hex followed by `h` and `v` where it is flipped. Blank lines may
+ * separate screens. Each cell becomes the hardware's halfword; the width, when
+ * asked for, is the number of cells in a row.
+ */
+Buffer
+tilemap(const Buffer *input, size_t *width)
+{
+	Strings lines = linesOf(input);
+	if (!lines.len || strncmp(lines.items[0], "palette:", 8))
+		fail("tile map needs a palette:N header");
+	unsigned palette = number(trim(lines.items[0] + 8), 10, 15);
+	size_t wide = 0;
+	Buffer out = {0};
+	for (size_t y = 1; y < lines.len; y++)
+	{
+		Strings row = words(lines.items[y]);
+		if (y == 1)
+			wide = row.len;
+		if (row.len != wide)
+			fail("tile map rows differ");
+		for (size_t x = 0; x < row.len; x++)
+		{
+			char *cell = row.items[x];
+			unsigned flips = 0;
+			size_t len = strlen(cell);
+			if (len && cell[len - 1] == 'v')
+			{
+				flips |= 2;
+				cell[--len] = 0;
+			}
+			if (len && cell[len - 1] == 'h')
+			{
+				flips |= 1;
+				cell[--len] = 0;
+			}
+			half(&out, number(cell, 16, 1023) | flips << 10 | palette << 12);
+		}
+		freeStrings(&row);
+	}
+	if (width)
+		*width = wide;
+	freeStrings(&lines);
+	return out;
+}
+
+/*
+ * The world map's collision tiles as the game reads them: each tile is 4x4
+ * values of 4 bits, written as four words of four hex digits, one under the
+ * other, each word a row of the tile. Tiles run left to right, then down;
+ * blank lines are ignored. Each row packs into two bytes, the left value in
+ * the low nibble.
+ */
+Buffer
+collision(const Buffer *input)
+{
+	Strings lines = linesOf(input);
+	if (!lines.len || lines.len % 4)
+		fail("collision tiles need whole rows of four");
+	Strings *rows = allocate(lines.len, sizeof(Strings));
+	for (size_t y = 0; y < lines.len; y++)
+	{
+		rows[y] = words(lines.items[y]);
+		if (!rows[y].len || rows[y].len != rows[0].len)
+			fail("collision rows differ");
+	}
+	Buffer out = {0};
+	for (size_t band = 0; band < lines.len; band += 4)
+		for (size_t x = 0; x < rows[0].len; x++)
+			for (size_t y = band; y < band + 4; y++)
+			{
+				const char *s = rows[y].items[x];
+				if (strlen(s) != 4)
+					fail("collision tile row needs four values");
+				unsigned values[4];
+				for (unsigned i = 0; i < 4; i++)
+				{
+					char digit[2] = {s[i], 0};
+					values[i] = number(digit, 16, 15);
+				}
+				byte(&out, values[0] | values[1] << 4);
+				byte(&out, values[2] | values[3] << 4);
+			}
+	for (size_t y = 0; y < lines.len; y++)
+		freeStrings(rows + y);
+	free(rows);
+	freeStrings(&lines);
+	return out;
+}

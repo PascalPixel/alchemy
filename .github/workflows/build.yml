@@ -147,7 +147,10 @@ jobs:
           make devtools
 
       - name: Download the durable report archive
-        run: gh release download decomp-reports --dir "$RUNNER_TEMP/measured" --pattern '*.tsv' --pattern '*.pb'
+        run: |
+          for tag in $(alchemy-devtools/target/release/alchemy-devtools progress --volumes); do
+            gh release download "$tag" --dir "$RUNNER_TEMP/measured" --pattern '*.tsv' --pattern '*.pb'
+          done
 
       - name: Receive the build's ☀️ measurement
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
@@ -167,14 +170,7 @@ jobs:
             -C "$RUNNER_TEMP/publication" -cf - PROGRESS.png PROGRESS_CHART.png history.tsv source.tsv \
             | gzip -n > "$RUNNER_TEMP/publication/${GITHUB_SHA}.site.tar.gz"
           for name in "${GITHUB_SHA}.site.tar.gz" "${GITHUB_SHA}.accepted.tsv"; do
-            path="$RUNNER_TEMP/publication/$name"
-            expected="sha256:$(sha256sum "$path" | cut -d' ' -f1)"
-            actual=$(gh api "repos/$GH_REPO/releases/tags/decomp-reports" --jq ".assets[] | select(.name == \"$name\") | .digest")
-            if test -z "$actual"; then
-              gh release upload decomp-reports "$path"
-              actual=$(gh api "repos/$GH_REPO/releases/tags/decomp-reports" --jq ".assets[] | select(.name == \"$name\") | .digest")
-            fi
-            test "$actual" = "$expected" || { echo "Refusing to replace changed archive $name" >&2; exit 1; }
+            alchemy-devtools/target/release/alchemy-devtools progress --archive "$RUNNER_TEMP/publication/$name"
           done
 
       # decomp.dev reads all twelve editions, which only a receipt holds:

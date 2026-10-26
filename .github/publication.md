@@ -14,8 +14,15 @@ For a landing, stage every source change and run `make land`. The receipt
 records the staged source tree, measurement time and hashes of the TSV and
 decomp.dev report; measurement refuses unstaged or untracked source. The
 pre-push hook uploads that receipt and both reports, named for the pushed
-commit, to the `decomp-reports` release. A changed measurement can never
-overwrite an existing commit's report. No ROM, executable or map is uploaded.
+commit, to the report archive. A changed measurement can never overwrite an
+existing commit's report.
+
+The archive is the `decomp-reports` release and its numbered successors,
+`decomp-reports-2` and on: GitHub holds at most 1,000 assets in a release.
+Every reader (CI, alchemy-devtools, the docs site) searches all of them, and
+every writer adds to the newest, opening the next while the newest still has
+room for a whole landing (`alchemy-devtools progress --volumes` and
+`--archive`). No ROM, executable or map is uploaded.
 
 After the main build succeeds, the `publish` job admits the commit as
 `<commit>.accepted.tsv`, with or without a receipt:
@@ -68,5 +75,5 @@ If the build fails before reports are archived, fix the build first.
 
 The old `progress` branch remains as a frozen, recoverable archive. Its
 baseline is also preserved in the release, checked against a fixed digest
-by alchemy-devtools. Do not remove the release or its report assets: they
+by alchemy-devtools. Do not remove the releases or their report assets: they
 are the durable publication history.

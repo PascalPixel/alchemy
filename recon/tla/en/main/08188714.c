@@ -1,3 +1,7 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 28 of
+// 636 with a one-pass block and two empty asm the greedy device search
+// placed (36 without them); the rest is the instruction order described
+// below.
 // Near miss: listing 636 instructions, draft 636, differ 66. ☀️ twin:
 // BattleEffect_RunDeathPlunge (effect.c, call order 0.675): the leap, the flip
 // and the flash ring are ☀️'s; ⚓️ added a second variant that bursts sparks and
@@ -138,6 +142,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
   struct Model *model;
   void *vertices;
   s32 i;
+  __asm__("");
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -291,7 +296,9 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
           model->kind = 7;
           model->texture = &texture;
           model->vertices = vertices;
+  do {
           texture.pixels = Ram_MapCellBuffer;
+  } while (0);
           model->alpha = alpha;
           for (i = 0, angle = 0x2000; i != 2; angle += 0x4000, i++) {
             Render_ResetTransformState();
@@ -324,6 +331,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
     }
     if (frame == 0) {
       Audio_PlayCue(136);
+  __asm__("");
       work->shakeFrames = 6;
     }
     if (frame == 53)

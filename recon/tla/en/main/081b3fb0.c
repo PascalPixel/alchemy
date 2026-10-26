@@ -1,3 +1,8 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 2 of
+// 31 as below. An empty asm after the byte store with the for loop's own
+// step: the pointer step comes before the store (2); a do-while with the
+// index stepped before the asm: 18. A greedy device search and six permuter
+// minutes found nothing lower.
 // Near miss: differ 2 of 31, The Broken Seal's LzPack_CopyBufferedBytes. In
 // the loop the native steps the source pointer (adds r1, #1) before it reloads
 // outTotal after the byte store; sched2 here reloads first, as the

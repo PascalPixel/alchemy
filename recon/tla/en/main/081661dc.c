@@ -1,3 +1,6 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 10 of
+// 427; a greedy search over an empty asm after, or a one-pass block around,
+// each statement found nothing lower.
 // Draft, differ 26 of 427: BattleEffect_RunAnnihilation, effect kind 55, The Broken Seal's
 // BattleEffect_RunAnnihilation.
 

@@ -1,3 +1,5 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 12 of
+// 131; a greedy device search found nothing lower.
 // Draft, differ 12 of 131: the credits' per-frame update. It lays the 16 rows
 // of six text sprites at the scroll's fine offset, copies the sprite table to
 // OAM by DMA, ends a page pause on A or B, and advances the scroll every

@@ -1,12 +1,3 @@
-// Near miss: differ 10 of 166, The Broken Seal's PaletteFade_Update on heap
-// slot 0x80 (block32), ported fresh. Every remaining difference is a scheduling
-// swap where the native issues a load before a split constant; a block
-// temporary for the first queued write's address, found by a greedy search over
-// one-pass blocks, barriers and block temporaries, fixes two of the five
-// (differ 14 without it).
-// 2026-10-24: an empty asm on work that clobbers r2 (delta set after it) puts
-// the work load before 0x3001 is started, but work and delta swap r4 and r5
-// (44); with work pinned to r5 as well, the allocation moves (135).
 #include "types.h"
 #include "io_reg.h"
 #include "dma.h"
@@ -14,6 +5,10 @@
 #include "palbuf.h"
 #include "ram_buffer.h"
 
+/// Steps the palette fade on heap slot 0x80 by one frame, as The Broken Seal's
+/// PaletteFade_Update does: adds each channel's step until the last frame,
+/// which copies the target instead, packs the channels into the hidden page
+/// of RGB555 colours and queues that page for the BG and OBJ palettes.
 void PaletteFade_Update(void) {
   struct PaletteFade *work = Ram_HeapSlots->block32;
   u16 *delta = work->delta;
@@ -22,10 +17,17 @@ void PaletteFade_Update(void) {
   s32 i;
   u16 *bank;
   s32 blue;
+  u32 step;
 
   if (work->duration == 0)
     return;
-  if ((s8)++work->step < work->duration) {
+  step = ++work->step << 24;
+  /* FAKEMATCH(barrier): an empty asm after the step's store, which keeps its
+   * sign extension's first shift ahead of the duration's reload; as
+   * (s8)++work->step < work->duration, 2 of 166 instructions differ in
+   * tla-en. */
+  __asm__("");
+  if ((s32)step >> 24 < work->duration) {
     current = work->current;
     for (i = 0; i <= 0x5ff; i++)
       *current++ += *delta++;
@@ -50,6 +52,10 @@ void PaletteFade_Update(void) {
 
     IO_WRITE_QUEUE_PUSH(({
                           s32 t;
+                          /* FAKEMATCH(one-pass): the BG palette's address in
+                           * a one-pass block; as IO_WRITE_QUEUE_PUSH(
+                           * 0x05000000, ...), 4 of 166 instructions differ in
+                           * tla-en. */
                           do {
                             t = (s32)(0x05000000);
                           } while (0);

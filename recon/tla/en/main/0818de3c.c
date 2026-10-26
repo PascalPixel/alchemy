@@ -1,3 +1,7 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 14 of
+// 142: the native interleaves the preheader's stack loads with the stores
+// where this draft issues the loads first. A greedy device search found
+// nothing lower.
 // Near miss: listing 142 instructions, draft 142, differ 20 (-mtune=arm7tdmi as
 // an analysis: 18). Registers and stores all match; what is left is sched2
 // order: the inner loop's preheader loads row * columns (sp+8) before row *

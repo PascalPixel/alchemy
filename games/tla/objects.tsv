@@ -5126,17 +5126,12 @@ main	rom_main_11	recon/tla/raw/081a76f8	.text	en
 main	rom_main_11	recon/tla/ja/rom	.rom.001a76f8	ja
 main	rom_main_11	recon/tla/ja/rom	.rom.001a786c	ja
 main	rom_main_11	games/tla/src/graphics/palette/interpolate_buffers	.text
-main	rom_main_11	recon/tla/it/rom	.rom.001a78c0	it
+main	rom_main_11	games/tla/src/graphics/palette/f1a78c0	.text
 main	rom_main_11	recon/tla/it/rom	.rom.001a7a28	it
-main	rom_main_11	recon/tla/fr/rom	.rom.001a78c0	fr
 main	rom_main_11	recon/tla/fr/rom	.rom.001a7a28	fr
-main	rom_main_11	recon/tla/es/rom	.rom.001a78c0	es
 main	rom_main_11	recon/tla/es/rom	.rom.001a7a28	es
-main	rom_main_11	recon/tla/de/rom	.rom.001a78e0	de
 main	rom_main_11	recon/tla/de/rom	.rom.001a7a48	de
-main	rom_main_11	recon/tla/raw/081a78c0	.text	en
 main	rom_main_11	recon/tla/raw/081a7a28	.text	en
-main	rom_main_11	recon/tla/ja/rom	.rom.001a78c0	ja
 main	rom_main_11	recon/tla/ja/rom	.rom.001a7a28	ja
 main	rom_main_11	games/tla/src/graphics/palette/title	.text
 main	rom_main_11	games/tla/src/battle/effect/color_buffer	.text

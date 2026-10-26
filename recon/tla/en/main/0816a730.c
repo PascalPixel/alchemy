@@ -1,3 +1,9 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 6 of
+// 320: the canvas spill before movs r0, #0, movs r4, #0 after the REG_BG2X
+// store and mov r9, r4 after the stores to sp+12 and sp+8, each a store the
+// native issues one row earlier. A greedy search over an empty asm after, or
+// a one-pass block around, each statement, and six permuter minutes: nothing
+// lower.
 // Draft, differ 10 of 320: BattleEffect_RunUndeadSword, effect kind 320, The Broken Seal's
 // BattleEffect_RunUndeadSword.
 

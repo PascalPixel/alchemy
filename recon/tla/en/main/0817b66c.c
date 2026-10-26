@@ -1,3 +1,5 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 14 of
+// 326; a greedy device search found nothing lower.
 // Draft (tla-en): listing 326 instructions, draft 326, common 318, differ 16.
 // Effect kind 76, written from the listing (☀️'s nearest shapes are
 // BattleEffect_RunUndeadSword, 0.55, and BattleEffect_RunEruption; neither is

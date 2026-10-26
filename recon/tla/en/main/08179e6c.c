@@ -1,3 +1,7 @@
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 2 of
+// 74 as below. With BG2PA's value pinned in a one-pass block instead of
+// behind its asm, the pool is right but the 7 is no longer hoisted before
+// the call (differ 6).
 // Draft (tla-en): listing 74 instructions, draft 74, common 73, differ 2.
 // After the call the native loads 0x784 from the pool before it starts
 // BG2CNT's three-instruction address, and 0x4e before BG2PA's: sched2 ranks

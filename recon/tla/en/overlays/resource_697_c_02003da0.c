@@ -1,10 +1,14 @@
-// Draft, differ 96 of 213: the Trial Road movers' update (Func_02004224 sets them
-// up): for each of the 16 slots with a placed object, its phase counts up to
-// its period (unless flag 260 is set); at the up phase it rises 4 a frame
+// Draft, differ 88 of 213: the Trial Road movers' update (Func_02004224 sets
+// them up): for each of the 16 slots with a placed object, its phase counts up
+// to its period (unless flag 260 is set); at the up phase it rises 4 a frame
 // (sound 206), at the down phase it sinks 8 a frame (sound 395), stopping at
 // its high and low marks; its cell takes the mover's shape and a collision
 // height from the object's height plus its offset, is marked moving or
-// raised, and its marker object follows it, bobbing while raised.
+// raised, and its marker object follows it, bobbing while raised. The collision
+// pointer is taken first, as the native reads the shape before the map. Left:
+// the phase is read as a halfword for its increment at both compares, the cell
+// flags are written once after a join and read back from the register where the
+// native reads them again, and register choice from there on.
 #include "../../../../games/tla/src/scene/trial_road/trial_road.h"
 #include "iwram_call.h"
 
@@ -37,10 +41,10 @@ s32 Math_Sine(s32 angle);
 void Func_02003da0(void) {
   struct TrialRoadMovers *work =
       (struct TrialRoadMovers *)(gData_020023c4 + 0x188);
+  s32 *collision = &gMapCollision[work->shape];
   struct TrialRoadMapWork *map = Ram_HeapSlots->mapWork;
   u8 *shapes = *(u8 **)((u8 *)map + 316);
   u8 *cells = map->layers[0].cells;
-  s32 *collision = &gMapCollision[work->shape];
   struct TrialRoadMover *mover = work->movers;
   struct ObjectRuntime *object;
   struct ObjectRuntime *marker;

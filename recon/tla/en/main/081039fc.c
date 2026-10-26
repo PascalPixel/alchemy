@@ -1,3 +1,4 @@
+// Near miss, differ 148 (2026-10-26, statements reordered).
 // First draft of Func_081039fc, the Djinn change preview, the twin of The
 // Broken Seal's PsynergyList_RunCompareLoop
 // (games/tbs/src/menu/menu/djinn_preview.c). mode is 0 for a trade, 1 for a
@@ -520,8 +521,8 @@ s32 Func_081039fc(u32 mode) {
       break;
     }
     if ((pressed & 8) != 0) {
-      Audio_PlayCue(113);
       result = -2;
+      Audio_PlayCue(113);
       break;
     } else if ((pressed & 2) != 0) {
       Audio_PlayCue(113);

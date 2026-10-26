@@ -1,4 +1,7 @@
-// Draft, differ 142 of 176: updates the 64 ground particles of the heap slot
+// Draft, differ 47 of 176 (142 before; 2026-10-26: the bitfield y stored after
+// the shape and the new z after the timer, plain reorders that give the
+// native's invariants and allocation; left, instruction order and the new
+// position's sum, which the native forms through r1 and a spill): updates the 64 ground particles of the heap slot
 // 0x74 workspace. Each counts down its frame (held a frame longer while flag
 // 358 is set), is drawn from its frame's offsets, tile, shape and size when on
 // screen, and when its count runs out is placed again at a random point within
@@ -70,9 +73,9 @@ void Func_080d64f0(void) {
     if ((u32)(x + 16) < 256 && y >= -32 && y < 160) {
       particle->priority = 1;
       particle->x = x;
-      particle->y = y;
       particle->tile = work->tile + *frame++;
       particle->shape = *frame;
+      particle->y = y;
       particle->size = frame[1];
       Func_080140d8(particle, 240);
     }
@@ -82,9 +85,9 @@ void Func_080d64f0(void) {
       s32 newZ = focus[2] + (Random16() << 8) - 0x800000;
 
       particle->posX = newX;
-      particle->posZ = newZ;
       particle->posY = Map_GetTerrainHeightFar(0, newX, newZ);
       particle->timer = 16;
+      particle->posZ = newZ;
     }
   }
 }

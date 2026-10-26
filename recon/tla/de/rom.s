@@ -774,12 +774,6 @@ Graphics_MergeShiftedTileRows:
 	.thumb_func
 Func_0804bc08:
 	.incbin "baserom.gba", 0x0004be14, 0x000011a0
-	.section .rom.0004cfb4, "ax"
-	.global Func_0804cda8
-	.type Func_0804cda8, %function
-	.thumb_func
-Func_0804cda8:
-	.incbin "baserom.gba", 0x0004cfb4, 0x00000334
 	.section .rom.0004d378, "ax"
 	.global Menu_RunResourceSelectionLoop
 	.type Menu_RunResourceSelectionLoop, %function
@@ -800,12 +794,6 @@ Func_0804d7fc:
 	.incbin "baserom.gba", 0x0004da08, 0x0000016c
 	.section .rom.0004dcc6, "ax"
 	.incbin "baserom.gba", 0x0004dcc6, 0x00000002
-	.section .rom.0004de78, "ax"
-	.global Menu_HandleSelectionRowInput
-	.type Menu_HandleSelectionRowInput, %function
-	.thumb_func
-Menu_HandleSelectionRowInput:
-	.incbin "baserom.gba", 0x0004de78, 0x0000015c
 	.section .rom.0004e0ac, "ax"
 	.global Menu_DrawFlagBitTable
 	.type Menu_DrawFlagBitTable, %function
@@ -1128,12 +1116,6 @@ UiText_OpenMessageAtObject:
 	.incbin "baserom.gba", 0x000e0c88, 0x00000328
 	.section .rom.000e11e6, "ax"
 	.incbin "baserom.gba", 0x000e11e6, 0x00000002
-	.section .rom.000e1330, "ax"
-	.global Func_080d4330
-	.type Func_080d4330, %function
-	.thumb_func
-Func_080d4330:
-	.incbin "baserom.gba", 0x000e1330, 0x00000054
 	.section .rom.000e140c, "ax"
 	.balign 4
 	.global Camera_MoveWithinMapBounds

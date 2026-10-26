@@ -1,11 +1,15 @@
-// Draft, differ 1062 of 984: the battle summon menu, The Broken Seal's
-// BattleSummonMenu_Run (games/tbs/src/window/screens/summon_menu.c) on this
-// game's work and messages. The list window stands at column 13, 17 tiles
-// wide; the standby counts above it are tiles (counts of ten and more from
-// tile 0xf196), and each summon's cost is drawn from column 11. Structure
-// follows the listing; left: the native reloads the list window from its stack
-// slot inside the sprite setup loop where the draft hoists it, and keeps
-// drawnFirstEntry in r9, so the allocation differs throughout.
+// Draft, differ 812 of 984 (1049 before, 2026-10-26): the battle summon menu,
+// The Broken Seal's BattleSummonMenu_Run (games/tbs/src/window/screens/
+// summon_menu.c) on this game's work and messages. The list window stands at
+// column 13, 17 tiles wide; the standby counts above it are tiles (counts of
+// ten and more from tile 0xf196), and each summon's cost is drawn from column
+// 11. Written again from the twin's C: its MenuSprite and CursorSprite forms,
+// the cursor reached through cur and pushed through sprite, the cursor get,
+// set and tilemap row mark in once-only blocks as its macros are, one call
+// for a standby count with the tile chosen before it (as the listing has),
+// and the declaration order searched. Left: the frame is 12 bytes larger than
+// the native's (384 for 372), so the stack slots and allocation differ from
+// there.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -48,19 +52,45 @@ struct SummonDefinition {
 };
 
 struct SummonMenuSprite {
-  u8 unk00[4];
-  u32 attr01;
-  u32 attr23;
+  struct SummonMenuSprite *next;
+  union {
+    struct {
+      unsigned long attr01;
+      unsigned long attr23;
+    } word;
+    struct {
+      u16 y : 8;
+      u16 affine : 2;
+      u16 mode : 2;
+      u16 mosaic : 1;
+      u16 colors : 1;
+      u16 shape : 2;
+      u16 x : 9;
+      u16 affineIndex : 5;
+      u16 size : 2;
+      u16 tile : 10;
+      u16 priority : 2;
+      u16 palette : 4;
+      u16 unused;
+    } f;
+  } oam;
 };
 
 struct SummonMenuOam {
-  u8 unk00[4];
-  u8 y;
-  u8 attr0high;
+  struct SummonMenuOam *next;
+  u16 y : 8;
+  u16 affine : 2;
+  u16 mode : 2;
+  u16 mosaic : 1;
+  u16 colors : 1;
+  u16 shape : 2;
   u16 x : 9;
-  u16 attr1high : 7;
+  u16 affineIndex : 5;
+  u16 size : 2;
   u16 tile : 10;
-  u16 attr2high : 6;
+  u16 priority : 2;
+  u16 palette : 4;
+  u16 unused;
 };
 
 #define NAVIGATION ((struct SummonMenuNavigation *)Ram_HeapSlots->unke4[0])
@@ -96,30 +126,31 @@ void Resource_ResetEntry(s32 slot);
 void UiWork_Finalize(void *window, s32 mode);
 
 s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
-  struct SummonMenuOam cursorSprite;
-  struct SummonMenuOam sprites[4];
+  struct SummonMenuOam cursorStorage;
+  struct SummonMenuSprite sprites[4];
   u8 learnedSummons[33];
   u8 orderedSummons[33];
-  u16 text[64];
   s32 iconSlots[4];
   u8 visibleSummons[4];
+  u16 text[64];
   s32 glyph;
-  s32 count;
-  struct SummonMenuWindow *window;
   struct SummonMenuWork *work;
   s32 drawnRow;
   s32 drawnFirstEntry;
   s32 selectedRow;
   s32 firstEntry;
   s32 cursorHandle;
+  s32 count;
+  struct SummonMenuWindow *window;
   struct SummonMenuWindow *description;
   struct SummonMenuWindow *counts;
   s32 mask;
   s32 preferredRow;
-  s32 cursorY;
-  s32 cursorX;
+  struct { s32 x, y; } cursorPosition;
   const struct SummonDefinition *summon;
   struct SummonMenuNavigation *navigation;
+  struct SummonMenuSprite *sprite;
+  struct SummonMenuOam *cur;
   s32 orderedCount;
   s32 id;
   s32 tile;
@@ -136,23 +167,29 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
   description = UiWindow_Create(0, 4, 30, 4, 42);
   counts = UiWindow_Create(20, 8, 10, 3, 6);
   mask = 0;
-  navigation = NAVIGATION;
-  firstEntry = navigation->page;
-  selectedRow = navigation->row;
-  preferredRow = navigation->preferredRow;
+  do {
+    firstEntry = NAVIGATION->page;
+    selectedRow = NAVIGATION->row;
+    preferredRow = NAVIGATION->preferredRow;
+  } while (0);
   window = UiWindow_Create(13, 11, 17, 9, 6);
 
   for (index = 0; index < 4; index++) {
-    ((struct SummonMenuSprite *)&sprites[index])->attr01 = 0x40000000;
-    ((struct SummonMenuSprite *)&sprites[index])->attr23 = 0;
-    sprites[index].x = window->x * 8 + 8;
-    sprites[index].y = (index * 2 + window->y) * 8 + 4;
+    s32 y = index * 2;
+
+    sprite = &sprites[index];
+    do {
+      sprites[index].oam.word.attr01 = 0x40000000;
+      sprites[index].oam.word.attr23 = 0;
+    } while (0);
+    sprite->oam.f.x = window->x * 8 + 8;
+    sprite->oam.f.y = (y + window->y) * 8 + 4;
   }
   for (index = 0; index < 4; index++) {
     s32 slot = VramCache_AllocEntry(128);
 
     iconSlots[index] = slot;
-    sprites[index].tile = VramCache_Reload(slot, (const void *)-1);
+    sprites[index].oam.f.tile = VramCache_Reload(slot, (const void *)-1);
   }
 
   count = Summon_ListLearnedFar(learnedSummons);
@@ -192,6 +229,8 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
   orderedSummons[orderedCount] = SUMMON_END;
 
   for (;;) {
+    cur = &cursorStorage;
+
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
       Ui_SetRectHighlight(window->x + 1, window->y + drawnRow * 2 + 1,
@@ -223,12 +262,10 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
             UiWindow_SetTilemapEntry(counts, element + 0x5001, element * 2, 0,
                                      0);
             if (standby[element] > 9)
-              UiWindow_SetTilemapEntry(counts, standby[element] + 0xf196,
-                                       element * 2 + 1, 0, 0);
+              tile = standby[element] + 0xf196;
             else
-              UiWindow_SetTilemapEntry(counts,
-                                       (standby[element] + '0') | 0xf000,
-                                       element * 2 + 1, 0, 0);
+              tile = (standby[element] + '0') | 0xf000;
+            UiWindow_SetTilemapEntry(counts, tile, element * 2 + 1, 0, 0);
           }
         }
         {
@@ -248,7 +285,7 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
             Ability_LoadGlyph(summon->abilityId & 0x3fff, 0, &iconSlots[index],
                               &glyph, 1);
             y = index * 2;
-            sprites[index].tile = glyph;
+            sprites[index].oam.f.tile = glyph;
             if (!affordable)
               Func_08041f70(2);
             UiText_DrawCharacterAtOffset(SummonDefinition_Get(id)->abilityId +
@@ -296,15 +333,16 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
         Runtime_PushSlotEntry(&sprites[index], 240);
     }
 
-    cursorX = window->x * 8 - 2;
-    cursorY = (selectedRow * 2 + window->y) * 8 + 20;
-    ((struct SummonMenuSprite *)&cursorSprite)->attr01 = 0x40000000;
-    ((struct SummonMenuSprite *)&cursorSprite)->attr23 = 0;
-    cursorSprite.tile =
+    cursorPosition.x = window->x * 8 - 2;
+    ((u32 *)cur)[1] = 0x40000000;
+    cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
+    ((u32 *)cur)[2] = 0;
+    cur->tile =
         VramCache_Reload((u16)cursorHandle, gResource_FixedBlockBTiles);
-    cursorSprite.x = cursorX + ((gFrameCount & 4) >> 1) - 4;
-    cursorSprite.y = cursorY - ((gFrameCount & 4) >> 2) - 8;
-    Runtime_PushSlotEntry(&cursorSprite, 242);
+    cur->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
+    cur->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
+    sprite = (struct SummonMenuSprite *)&cursorStorage;
+    Runtime_PushSlotEntry(sprite, 242);
 
     {
       s32 element;
@@ -331,13 +369,17 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
       UiWindow_SetTilemapEntry(window, 0xf334,
                                window->width - (count + 3) / 4 - 3, -1, 0);
       UiWindow_SetTilemapEntry(window, 0xf335, window->width - 2, -1, 0);
-      work->dirty |= 2 << ((u32)(window->y - 1) >> 2);
+      do {
+        work->dirty |= 2 << ((u32)(window->y - 1) >> 2);
+      } while (0);
     }
 
+    do {
+      NAVIGATION->page = firstEntry;
+      NAVIGATION->row = selectedRow;
+      NAVIGATION->preferredRow = preferredRow;
+    } while (0);
     navigation = NAVIGATION;
-    navigation->page = firstEntry;
-    navigation->row = selectedRow;
-    navigation->preferredRow = preferredRow;
     pressed = gInput.pressed;
     repeated = gInput.repeat;
     if (navigation->tutorialStep != 0) {

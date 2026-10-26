@@ -1,11 +1,6 @@
-// Draft, differ 198 of 386, 2026-10-15: The Broken Seal's
-// AffineEffect_UpdateFrame on this game's work: the display transition is
-// read from its heap slot at the start, the window lines are left alone
-// while the transition's byte at 0x53f is set, and the pages are inline in
-// the transition. Every instruction's form is the native's; the register
-// allocation differs from the first statement (the slot base in r2 where
-// the native has r0, the count's address and the zero index registers)
-// and cascades. Orders of the work and transition reads tried: 192 to 204.
+// The command icon menu's frame task (The Broken Seal's IconMenu_DrawIcons):
+// pulses the selected icon with one affine matrix, draws the others plain,
+// and while the display transition runs widens window 1 over the icon row.
 #include "types.h"
 #include "ram_buffer.h"
 #include "resource_menu.h"
@@ -41,7 +36,7 @@ struct WindowBuffer {
 // are left alone.
 #define TRANSITION_BUSY(state) (((s8 *)(state))[0x53f])
 
-void AffineEffect_UpdateFrame(void) {
+void Func_0804cda8(void) {
   struct ResourceMenuWork *work;
   struct ResourceMenuEntry *sprite;
   struct AffineTransform effect;
@@ -57,9 +52,9 @@ void AffineEffect_UpdateFrame(void) {
   s32 span;
 
   work = Ram_HeapSlots->menuSelectWork;
-  buffers = Ram_HeapSlots->displayTransition;
   sprite = work->entries;
   scale = gUi_BounceScales[(gFrameCount * 2) & 31];
+  buffers = Ram_HeapSlots->displayTransition;
   scale = (scale - 256) / 4 + 304;
   effect.scaleX = scale;
   effect.scaleY = scale;
@@ -150,7 +145,10 @@ void AffineEffect_UpdateFrame(void) {
     edge <<= 8;
     line = &window->lines[136].span;
     for (i = 136; i <= 159; i++) {
-      *line = (*line & 0xff) | edge;
+      /* FAKEMATCH(temporary): the mask through start; as (*line & 0xff), 194 of
+       * 386 instructions differ in tla-en. */
+      start = 0xff;
+      *line = (*line & start) | edge;
       line += 2;
     }
   }

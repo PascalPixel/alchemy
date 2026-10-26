@@ -1057,32 +1057,6 @@ Func_080d1f20:
 	.thumb_func
 PartyInventory_GiveItem:
 	.incbin "baserom.gba", 0x000df60c, 0x000001e0
-	.section .rom.000e0116, "ax"
-	.incbin "baserom.gba", 0x000e0116, 0x00000002
-	.section .rom.000e0118, "ax"
-	.global ObjectMotion_SetHorizontalPositionWithTerrain
-	.type ObjectMotion_SetHorizontalPositionWithTerrain, %function
-	.thumb_func
-ObjectMotion_SetHorizontalPositionWithTerrain:
-	.incbin "baserom.gba", 0x000e0118, 0x0000004c
-	.section .rom.000e0164, "ax"
-	.global ObjectMotion_SetHorizontalPositionAndAngleWithTerrain
-	.type ObjectMotion_SetHorizontalPositionAndAngleWithTerrain, %function
-	.thumb_func
-ObjectMotion_SetHorizontalPositionAndAngleWithTerrain:
-	.incbin "baserom.gba", 0x000e0164, 0x0000005c
-	.section .rom.000e01c0, "ax"
-	.global ObjectMotion_SetPositionWithTerrain
-	.type ObjectMotion_SetPositionWithTerrain, %function
-	.thumb_func
-ObjectMotion_SetPositionWithTerrain:
-	.incbin "baserom.gba", 0x000e01c0, 0x00000054
-	.section .rom.000e0214, "ax"
-	.global ObjectMotion_MoveToObject
-	.type ObjectMotion_MoveToObject, %function
-	.thumb_func
-ObjectMotion_MoveToObject:
-	.incbin "baserom.gba", 0x000e0214, 0x0000002c
 	.section .rom.000e0376, "ax"
 	.incbin "baserom.gba", 0x000e0376, 0x00000002
 	.section .rom.000e0378, "ax"
@@ -1319,25 +1293,6 @@ Func_080db0b0:
 	.global Func_080dbb78
 Func_080dbb78:
 	.incbin "baserom.gba", 0x000e8b78, 0x0000008c
-	.section .rom.000e8c04, "ax"
-	.global Func_080dbc04
-Func_080dbc04:
-	.incbin "baserom.gba", 0x000e8c04, 0x000000a4
-	.section .rom.000e8ca8, "ax"
-	.global Func_080dbca8
-	.type Func_080dbca8, %function
-	.thumb_func
-Func_080dbca8:
-	.incbin "baserom.gba", 0x000e8ca8, 0x00000018
-	.section .rom.000e8cc0, "ax"
-	.global Func_080dbcc0
-Func_080dbcc0:
-	.incbin "baserom.gba", 0x000e8cc0, 0x00000018
-	.section .rom.000e8d5c, "ax"
-	.balign 4
-	.global Func_080dbd5c
-Func_080dbd5c:
-	.incbin "baserom.gba", 0x000e8d5c, 0x0000004c
 	.section .rom.000e8ed0, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000e8ed0, 0x00000174

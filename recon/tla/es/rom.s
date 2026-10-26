@@ -287,13 +287,6 @@ Object_SetMoveTarget:
 	.thumb_func
 Func_0802493c:
 	.incbin "baserom.gba", 0x0002493c, 0x00000314
-	.section .rom.00024efe, "ax"
-	.incbin "baserom.gba", 0x00024efe, 0x00000002
-	.global Script_CallWithOperand
-	.type Script_CallWithOperand, %function
-	.thumb_func
-Script_CallWithOperand:
-	.incbin "baserom.gba", 0x00024f00, 0x00000020
 	.section .rom.00025160, "ax"
 	.global Func_08025160
 	.type Func_08025160, %function
@@ -1442,14 +1435,6 @@ Func_080cda84:
 	.global Func_080cdac0
 Func_080cdac0:
 	.incbin "baserom.gba", 0x000d6ac0, 0x00000138
-	.section .rom.000d6c72, "ax"
-	.incbin "baserom.gba", 0x000d6c72, 0x00000002
-	.section .rom.000d6c74, "ax"
-	.global Func_080eab98
-	.type Func_080eab98, %function
-	.thumb_func
-Func_080eab98:
-	.incbin "baserom.gba", 0x000d6c74, 0x0000010c
 	.section .rom.000d6d80, "ax"
 	.global Func_080cdd80
 	.type Func_080cdd80, %function
@@ -1474,9 +1459,8 @@ Func_080ce458:
 	.incbin "baserom.gba", 0x000d761c, 0x000004e0
 	.section .rom.000d7c34, "ax"
 	.incbin "baserom.gba", 0x000d7c34, 0x0000020c
-	.section .rom.000d7eac, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x000d7eac, 0x00000078
+	.section .rom.000d7f22, "ax"
+	.incbin "baserom.gba", 0x000d7f22, 0x00000002
 	.section .rom.000d8050, "ax"
 	.incbin "baserom.gba", 0x000d8050, 0x00000080
 	.section .rom.000d8554, "ax"
@@ -1594,32 +1578,6 @@ Func_080d1e18:
 	.thumb_func
 Func_080d2d70:
 	.incbin "baserom.gba", 0x000dbd64, 0x00000014
-	.section .rom.000dc10a, "ax"
-	.incbin "baserom.gba", 0x000dc10a, 0x00000002
-	.section .rom.000dc10c, "ax"
-	.global ObjectMotion_SetHorizontalPositionWithTerrain
-	.type ObjectMotion_SetHorizontalPositionWithTerrain, %function
-	.thumb_func
-ObjectMotion_SetHorizontalPositionWithTerrain:
-	.incbin "baserom.gba", 0x000dc10c, 0x0000004c
-	.section .rom.000dc158, "ax"
-	.global ObjectMotion_SetHorizontalPositionAndAngleWithTerrain
-	.type ObjectMotion_SetHorizontalPositionAndAngleWithTerrain, %function
-	.thumb_func
-ObjectMotion_SetHorizontalPositionAndAngleWithTerrain:
-	.incbin "baserom.gba", 0x000dc158, 0x0000005c
-	.section .rom.000dc1b4, "ax"
-	.global ObjectMotion_SetPositionWithTerrain
-	.type ObjectMotion_SetPositionWithTerrain, %function
-	.thumb_func
-ObjectMotion_SetPositionWithTerrain:
-	.incbin "baserom.gba", 0x000dc1b4, 0x00000054
-	.section .rom.000dc208, "ax"
-	.global ObjectMotion_MoveToObject
-	.type ObjectMotion_MoveToObject, %function
-	.thumb_func
-ObjectMotion_MoveToObject:
-	.incbin "baserom.gba", 0x000dc208, 0x0000002c
 	.section .rom.000dc36a, "ax"
 	.incbin "baserom.gba", 0x000dc36a, 0x00000002
 	.section .rom.000dc36c, "ax"
@@ -1628,13 +1586,8 @@ ObjectMotion_MoveToObject:
 	.thumb_func
 Func_080d3378:
 	.incbin "baserom.gba", 0x000dc36c, 0x000000e8
-	.section .rom.000dc91c, "ax"
-	.balign 4
-	.global Func_080d5d70
-	.type Func_080d5d70, %function
-	.thumb_func
-Func_080d5d70:
-	.incbin "baserom.gba", 0x000dc91c, 0x00000018
+	.section .rom.000dc932, "ax"
+	.incbin "baserom.gba", 0x000dc932, 0x00000002
 	.section .rom.000dc934, "ax"
 	.global Func_080eb960
 	.type Func_080eb960, %function
@@ -1647,12 +1600,6 @@ Func_080eb960:
 	.thumb_func
 Func_080d3928:
 	.incbin "baserom.gba", 0x000dca04, 0x00000118
-	.section .rom.000dcb1c, "ax"
-	.global Func_080dbe08
-	.type Func_080dbe08, %function
-	.thumb_func
-Func_080dbe08:
-	.incbin "baserom.gba", 0x000dcb1c, 0x000000c0
 	.section .rom.000dcc7c, "ax"
 	.balign 4
 	.global UiText_OpenMessageAtObject
@@ -1669,12 +1616,6 @@ UiText_OpenMessageAtObject:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	.incbin "baserom.gba", 0x000dd400, 0x00000100
-	.section .rom.000ddaa8, "ax"
-	.global Func_080da908
-	.type Func_080da908, %function
-	.thumb_func
-Func_080da908:
-	.incbin "baserom.gba", 0x000ddaa8, 0x00000058
 	.section .rom.000ddcfc, "ax"
 	.balign 4
 	.global Func_080d4d08
@@ -1773,12 +1714,6 @@ BattleEffect_UpdatePhasedRadialParticle:
 	.incbin "baserom.gba", 0x000e12d4, 0x0000042c
 	.section .rom.000e1734, "ax"
 	.incbin "baserom.gba", 0x000e1734, 0x0000023c
-	.section .rom.000e1970, "ax"
-	.global Func_080d2c9c
-	.type Func_080d2c9c, %function
-	.thumb_func
-Func_080d2c9c:
-	.incbin "baserom.gba", 0x000e1970, 0x00000084
 	.section .rom.000e19f4, "ax"
 	.global Func_080d8a00
 	.type Func_080d8a00, %function
@@ -1822,37 +1757,12 @@ Func_080d8d68:
 	.thumb_func
 Func_080d9104:
 	.incbin "baserom.gba", 0x000e2704, 0x00000268
-	.section .rom.000e2aa4, "ax"
-	.balign 4
-	.global Func_080d9b08
-	.type Func_080d9b08, %function
-	.thumb_func
-Func_080d9b08:
-	.incbin "baserom.gba", 0x000e2aa4, 0x00000020
-	.section .rom.000e2ac4, "ax"
-	.global Func_080d9e98
-	.type Func_080d9e98, %function
-	.thumb_func
-Func_080d9e98:
-	.incbin "baserom.gba", 0x000e2ac4, 0x00000038
-	.section .rom.000e2afc, "ax"
-	.global Func_080d92d4
-	.type Func_080d92d4, %function
-	.thumb_func
-Func_080d92d4:
-	.incbin "baserom.gba", 0x000e2afc, 0x00000078
 	.section .rom.000e2b74, "ax"
 	.global Func_080d9b80
 	.type Func_080d9b80, %function
 	.thumb_func
 Func_080d9b80:
 	.incbin "baserom.gba", 0x000e2b74, 0x000001c0
-	.section .rom.000e2d34, "ax"
-	.global Func_080d9d40
-	.type Func_080d9d40, %function
-	.thumb_func
-Func_080d9d40:
-	.incbin "baserom.gba", 0x000e2d34, 0x00000134
 	.section .rom.000e2e8c, "ax"
 	.global Func_080d9710
 	.type Func_080d9710, %function
@@ -1865,18 +1775,8 @@ Func_080d9710:
 	.thumb_func
 Func_080da060:
 	.incbin "baserom.gba", 0x000e3054, 0x000008a8
-	.section .rom.000e38fc, "ax"
-	.global Func_080dbe44
-	.type Func_080dbe44, %function
-	.thumb_func
-Func_080dbe44:
-	.incbin "baserom.gba", 0x000e38fc, 0x00000030
-	.section .rom.000e392c, "ax"
-	.global Func_080d3b28
-	.type Func_080d3b28, %function
-	.thumb_func
-Func_080d3b28:
-	.incbin "baserom.gba", 0x000e392c, 0x00000030
+	.section .rom.000e395a, "ax"
+	.incbin "baserom.gba", 0x000e395a, 0x00000002
 	.section .rom.000e3aa4, "ax"
 	.balign 4
 	.global Func_080daab0
@@ -1901,12 +1801,6 @@ Func_080cdf5c:
 	.thumb_func
 Func_080db444:
 	.incbin "baserom.gba", 0x000e40a4, 0x00000394
-	.section .rom.000e4438, "ax"
-	.global Func_080dbd48
-	.type Func_080dbd48, %function
-	.thumb_func
-Func_080dbd48:
-	.incbin "baserom.gba", 0x000e4438, 0x00000048
 	.section .rom.000e44aa, "ax"
 	.incbin "baserom.gba", 0x000e44aa, 0x00000002
 	.section .rom.000e44ac, "ax"
@@ -1953,30 +1847,12 @@ Func_080dbb78:
 	.thumb_func
 Map_GetCellAtPosition:
 	.incbin "baserom.gba", 0x000e4b6c, 0x0000008c
-	.section .rom.000e4bf8, "ax"
-	.global Func_080dbc04
-Func_080dbc04:
-	.incbin "baserom.gba", 0x000e4bf8, 0x000000a4
-	.section .rom.000e4c9c, "ax"
-	.global Func_080dbca8
-	.type Func_080dbca8, %function
-	.thumb_func
-Func_080dbca8:
-	.incbin "baserom.gba", 0x000e4c9c, 0x00000018
-	.section .rom.000e4cb4, "ax"
-	.global Func_080dbcc0
-Func_080dbcc0:
-	.incbin "baserom.gba", 0x000e4cb4, 0x00000018
 	.section .rom.000e4d3c, "ax"
 	.global Func_080e25e8
 	.type Func_080e25e8, %function
 	.thumb_func
 Func_080e25e8:
 	.incbin "baserom.gba", 0x000e4d3c, 0x00000014
-	.section .rom.000e4d50, "ax"
-	.global Func_080dbd5c
-Func_080dbd5c:
-	.incbin "baserom.gba", 0x000e4d50, 0x0000004c
 	.section .rom.000e4d9c, "ax"
 	.global Func_080dbda8
 	.type Func_080dbda8, %function

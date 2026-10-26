@@ -1,5 +1,13 @@
 #include "types.h"
 #include "object_runtime.h"
+#include "edition.h"
+
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
+// The Spanish and Italian far-call tables reach this function and the one it
+// calls under the names of other entries.
+#define Func_080db444 Func_080dbd48
+#define Func_080daecc Func_080cdf5c
+#endif
 
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_080daecc(s32 id, s32 a1);

@@ -58,8 +58,8 @@ void Djinn_ActivateOfferedForParty(void) {
   }
 }
 
-#if (LANGUAGE != LANGUAGE_JAPANESE) /* the Japanese copy differs and stays on its     \
-                                scaffold (S4) */
+// The Japanese release has no such function.
+#if LANGUAGE != LANGUAGE_JAPANESE
 s32 Func_080b106c(s32 id) {
   switch (id & 0x1ff) {
   case 191:

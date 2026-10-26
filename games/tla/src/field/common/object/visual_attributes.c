@@ -12,6 +12,12 @@
 #include "field_sprite.h"
 #include "edition.h"
 
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
+// The Spanish and Italian far-call tables reach this function under the
+// name of another entry.
+#define Func_080d3928 Func_080d5d70
+#endif
+
 struct ObjectRuntime *Object_GetById(u32);
 
 void Object_ResetTargetAndSetMode1(u32 objectId) {
@@ -84,7 +90,6 @@ void Func_080d390c(u32 id) {
   ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
 }
 
-#if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_ITALIAN)
 void Func_080d3928(u32 id, s32 rotation) {
   struct ObjectRuntime *object = Object_GetById(id);
   struct FieldSprite *sprite = object->animation;
@@ -92,4 +97,3 @@ void Func_080d3928(u32 id, s32 rotation) {
   if (object != NULL && sprite != NULL)
     sprite->rotation = rotation;
 }
-#endif

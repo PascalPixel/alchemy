@@ -1,4 +1,11 @@
 #include "work9c.h"
+#include "edition.h"
+
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
+// The Spanish and Italian far-call tables reach this function under the
+// name of another entry.
+#define Func_080d9ab0 Func_080d9b08
+#endif
 
 /// Returns the state of slot index of the heap slot 0x9c work, or -1 while the
 /// work is not allocated.

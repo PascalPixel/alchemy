@@ -1146,12 +1146,6 @@ UiText_OpenMessageAtObject:
 	.incbin "baserom.gba", 0x000d8c7c, 0x00000328
 	.section .rom.000d91da, "ax"
 	.incbin "baserom.gba", 0x000d91da, 0x00000002
-	.section .rom.000d9324, "ax"
-	.global Func_080d4330
-	.type Func_080d4330, %function
-	.thumb_func
-Func_080d4330:
-	.incbin "baserom.gba", 0x000d9324, 0x00000054
 	.section .rom.000d9400, "ax"
 	.balign 4
 	.global Camera_MoveWithinMapBounds

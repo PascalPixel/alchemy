@@ -5044,13 +5044,12 @@ main	rom_main_10	recon/tla/de/rom	.rom.001a0be8	de
 main	rom_main_10	recon/tla/raw/081a0be8	.text	en
 main	rom_main_10	recon/tla/ja/rom	.rom.001a0bd4	ja
 main	rom_main_10	games/tla/src/graphics/display/scrolobj	.text
-main	rom_main_10	recon/tla/it/rom	.rom.001a0d78	it
-main	rom_main_10	recon/tla/fr/rom	.rom.001a0d78	fr
-main	rom_main_10	recon/tla/es/rom	.rom.001a0d78	es
-main	rom_main_10	recon/tla/de/rom	.rom.001a0d78	de
-main	rom_main_10	recon/tla/raw/081a0d78	.text	en
+main	rom_main_10	recon/tla/it/rom	.rom.001a0e0c	it
+main	rom_main_10	recon/tla/fr/rom	.rom.001a0e0c	fr
+main	rom_main_10	recon/tla/es/rom	.rom.001a0e0c	es
+main	rom_main_10	recon/tla/de/rom	.rom.001a0e0c	de
 main	rom_main_10	recon/tla/raw/081a0e0c	.text	en
-main	rom_main_10	recon/tla/ja/rom	.rom.001a0d64	ja
+main	rom_main_10	recon/tla/ja/rom	.rom.001a0df8	ja
 main	rom_main_10	games/tla/src/graphics/display/scroll_close	.text
 main	rom_main_10	recon/tla/it/rom	.rom.001a101c	it
 main	rom_main_10	recon/tla/fr/rom	.rom.001a101c	fr

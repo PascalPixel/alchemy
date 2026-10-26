@@ -1302,7 +1302,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   menu->sideIndex[1] = memberIndex;
   Icon_PrepareObject(targetMarker);
   targetMarker->motion = ICON_HIDDEN;
-  EquipmentMenu_StartCompatibilityIndicators();
+  EquipmentMenu_StopCompatibilityIndicators();
   WaitFrames(1);
   menu->sideIndex[1] = memberIndex;
   menu->selectedMember = menu->memberIds[memberIndex];
@@ -1313,7 +1313,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
 /// Task while ItemMenu_SelectTarget chooses a member to use or
 /// give the item to, and while the command grid's cursor is on Give: every 32
 /// frames, sets each party figure's animation by whether that member can
-/// equip the item (3) or not (1). EquipmentMenu_StartCompatibilityIndicators
+/// equip the item (3) or not (1). EquipmentMenu_StopCompatibilityIndicators
 /// removes it.
 void EquipmentMenu_UpdateCompatibilityIndicators(void) {
   struct ItemMenuWork *menu;
@@ -1338,10 +1338,9 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void) {
 }
 
 /// Ends EquipmentMenu_UpdateCompatibilityIndicators: puts every party figure
-/// back to animation 1 and removes the callback. Despite the name, it starts
-/// nothing; removing a task that is not running is harmless, so the
-/// command grid calls it at each cursor move.
-void EquipmentMenu_StartCompatibilityIndicators(void) {
+/// back to animation 1 and removes the task. Removing a task that is not
+/// running is harmless, so the command grid calls it at each cursor move.
+void EquipmentMenu_StopCompatibilityIndicators(void) {
   struct ItemMenuWork *menu;
   s8 memberIndex;
 
@@ -1766,7 +1765,7 @@ s32 ItemMenu_ChooseCommand(void) {
       column = (column + 3) % 3;
       row = (row + 2) % 2;
       commandIndex = row * 3 + column;
-      EquipmentMenu_StartCompatibilityIndicators();
+      EquipmentMenu_StopCompatibilityIndicators();
       // Preview the item in the status panel for the command under the cursor:
       // the bottom row (Give, Remove, Drop) without it, Equip and Details with
       // it, Use the member's status.
@@ -1850,7 +1849,7 @@ s32 ItemMenu_ChooseCommand(void) {
   }
 
   menu->equipPreview = 0;
-  EquipmentMenu_StartCompatibilityIndicators();
+  EquipmentMenu_StopCompatibilityIndicators();
   return commandIndex;
 }
 

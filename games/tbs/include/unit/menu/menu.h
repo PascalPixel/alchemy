@@ -107,7 +107,7 @@ s32 ItemMenu_RunMemberSelection(u16 *memberIds, u16 *items);
 void ItemMenu_OpenCategory(s32 memberId);
 s32 ItemMenu_SelectTarget(s32 mode);
 void EquipmentMenu_UpdateCompatibilityIndicators(void);
-void EquipmentMenu_StartCompatibilityIndicators(void);
+void EquipmentMenu_StopCompatibilityIndicators(void);
 s32 ItemMenu_IsSpecial(s32 itemId);
 void ItemMenu_DrawMessage(s32 unused, s32 message);
 void Menu_HideEmptyEntryIcons(const u16 *items);

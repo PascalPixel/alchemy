@@ -1,3 +1,8 @@
+// 26 October 2026, under -mthumb-slow-loads: differ 4 of 341: two calls' first
+// argument after a byte store, where the native issues a load one slot later
+// after a store, where alchemy-gcc issues it at once; alchemy permute (5 to 6
+// minutes) and an empty asm or one-pass block after any one statement do not
+// move it.
 // Draft of Func_0200063c (overlay 66F, 341 instructions; the English branch of
 // the listing, the Japanese one differs), differ 6: the overlay's entry, which
 // restores rooms 1 and 2 (SceneId_Ov66fRoom1/2, ids 0x6b and 0x6c) from their

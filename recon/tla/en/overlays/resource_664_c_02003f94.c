@@ -1,3 +1,7 @@
+// 26 October 2026, under -mthumb-slow-loads: differ 2 of 75: the pool load for
+// lr's call, which the native issues after the call before it; alchemy permute
+// (5 to 6 minutes) and an empty asm or one-pass block after any one statement
+// do not move it.
 // Near miss, differ 2 of 75: overlay 664's copy of overlay 681's
 // Func_0200142c (the same listing), whose draft holds its notes.
 #include "types.h"

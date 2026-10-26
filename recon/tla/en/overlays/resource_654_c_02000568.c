@@ -1,3 +1,7 @@
+// 26 October 2026, under -mthumb-slow-loads: differ 4 of 78: the native issues
+// a load one slot later after a store, where alchemy-gcc issues it at once;
+// alchemy permute (5 to 6 minutes) and an empty asm or one-pass block after any
+// one statement do not move it.
 // Near miss, differ 12: the layer pointers and the -0x8000 constant are
 // scheduled a few instructions away from the listing; same instructions.
 #include "../../../../games/tla/src/scene/shrine_of_the_sea_god/shrine_of_the_sea_god.h"

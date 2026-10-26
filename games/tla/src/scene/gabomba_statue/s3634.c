@@ -1,12 +1,3 @@
-// Draft of overlay 671's Func_02003634, translated from its listing: differ 8
-// of 211. Left: instruction order around
-//   ldr r3, [pc, #208]
-//   lsls r0, r0, #2
-//   + ldr r2, [r0, r3]
-//   - ldr r2, [r3, r0]
-//   movs r1, #11
-// (- the listing, + this draft). Tried: Call, Value and direct forms of each
-// call, empty asms and one-pass blocks between statements.
 #include "types.h"
 #include "party_state.h"
 #include "call.h"
@@ -48,6 +39,7 @@ extern u8 gData_02005d8c[];
 void Func_02003634(void) {
   s32 t1, t4, t6, t8, t10, t12, t14, t16, t18, t20, t22, t24, t26, t27, t29,
       t30, t42, t43, t46, t50, t53, t59, t60, p_r3, v_r5;
+  const u8 *table;
 
   t1 = Value1((s32 (*)())Object_GetById, 10);
   Call2((void (*)())Object_SetPartAttribute, t1, 3);
@@ -111,8 +103,11 @@ L_0200b762:
   Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02001ac0, 0x480);
 L_0200b78e:
   t46 = Value0((s32 (*)())Func_02003604);
-  Call4((void (*)())Func_020048a4, 19, 11,
-        FIELD_AT(((s32)&gData_02005d8c + (t46 << 2)), s32, 0), 16);
+  /* FAKEMATCH(temporary): the table's address in a local set after the call,
+   * which makes it the load's base register; as gData_02005d8c's address
+   * added in place, 2 of 211 instructions differ in tla-en. */
+  table = gData_02005d8c;
+  Call4((void (*)())Func_020048a4, 19, 11, *(s32 *)(table + (t46 << 2)), 16);
   Call2((void (*)())Object_SetModeById, 15, 5);
   if (FIELD_AT(&gPartyState, s16, 482) != 2)
     goto L_0200b7c0;
@@ -141,11 +136,6 @@ L_0200b7e4:
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  /* FAKEMATCH(one-pass): an empty one-pass block ends the scheduling block
-   * here, as the listing orders it; without it, 10 of 211 instructions
-   * differ in tla-en. */
-  do {
-  } while (0);
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x209;
   Call1((void (*)())GameFlag_ClearBit, 0x8fc);
   t59 = Value1((s32 (*)())GameFlag_Test, 0x9eb);

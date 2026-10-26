@@ -1,10 +1,3 @@
-// Near miss, differ 4 (was 56): two pairs in the other order. The listing loads
-// the record table (ldr r5) before it starts the flag id and the counter, where
-// this draft starts both first; a barrier after the table load would also hold
-// the frame's sub sp ahead of them, which the listing has after. And the
-// listing builds the 1 for the two stack arguments after it reads the first
-// origin halfword (ldrh r0; movs r4, #1), this draft before. Func_020018a8,
-// Func_02001930 and Func_020019b8 are the same loop over other tables.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -54,8 +47,8 @@ struct CellRecord {
   u16 unk06[3];
 };
 
-extern const u16 gData_02003fd2[];
-extern const struct CellRecord gData_02004066[];
+extern const u16 gData_02003fe2[];
+extern const struct CellRecord gData_0200416e[];
 
 static __inline__ s32 Flag_Test(s32 flag) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
@@ -88,21 +81,26 @@ static __inline__ void Wait(s32 frames) {
   WaitFrames(frames);
 }
 
-void Func_02001820(void) {
-  const u16 *cell = &gData_02004066[0].present;
+void Func_02001930(void) {
+  const u16 *cell = &gData_0200416e[0].present;
   s32 flag = 0x240;
   u32 i;
+  const u16 *dest;
 
-  for (i = 0; i <= 13; i++) {
+  for (i = 0; i <= 5; i++) {
     if (Flag_Test(0x109) != 0) {
       if (Flag_Test(flag) != 0) {
         s32 x;
         s32 y;
 
-        cell = &gData_02004066[i].x;
+        cell = &gData_0200416e[i].x;
         x = *cell++;
         y = *cell++;
-        Func_02003be0(gData_02003fd2[0], gData_02003fd2[1], x, y, 1, 1);
+        /* FAKEMATCH(temporary): the destination table through a local set here,
+         * which loads its first halfword before the 1 is built; as
+         * gData_02003fe2[0], 2 of 56 instructions differ in tla-en. */
+        dest = gData_02003fe2;
+        Func_02003be0(dest[0], dest[1], x, y, 1, 1);
       }
     } else {
       if (*cell != 0)

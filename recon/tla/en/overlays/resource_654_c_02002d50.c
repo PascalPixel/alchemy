@@ -1,3 +1,7 @@
+// 26 October 2026, under -mthumb-slow-loads: differ 6 of 106: the native issues
+// a load one slot later after a store, where alchemy-gcc issues it at once
+// (one-pass after the work pointer leaves 4); alchemy permute (5 to 6 minutes)
+// and an empty asm or one-pass block after any one statement do not move it.
 // Near miss, differ 6 of 106: the touch dispatch of the wall room (☀️'s
 // EV13_TOUCH shape): by the exit touched, 13 to 20, it runs one of the
 // room's events when object 14's state allows. Left: the native loads the

@@ -1,7 +1,4 @@
-// near miss: differ 20 (listing 470 instructions, draft 470); the wait loop:
-// the native loads gData_02007950's address inside the loop; loop.c hoists it
-// in the draft
-#include "../../../../games/tla/src/scene/kibombo/kibombo.h"
+#include "kibombo.h"
 
 void Func_02005c7c(void);
 void Func_02002eb0(void);
@@ -61,10 +58,13 @@ void Func_02000d74(void) {
   Func_02005b0c(27, 0, 0);
   Kibombo_ObjArm(17, 0xd000, 0);
   if (gData_02007950 != 0) {
-    while (gData_02007950->y > 0x240000) {
+    if (gData_02007950->y > 0x240000) {
+    wait:
       Kibombo_ObjArm(17, 0xd000, 0);
       gData_02007950->y += 0xffffc000;
       Kibombo_WaitFrames(1);
+      if (gData_02007950->y > 0x240000)
+        goto wait;
     }
   }
   Kibombo_ObjTurn(17, 0x3000);

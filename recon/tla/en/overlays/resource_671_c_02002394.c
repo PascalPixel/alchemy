@@ -1,3 +1,8 @@
+// 26 October 2026, under -mthumb-slow-loads: differ 4 of 177: the velocity
+// array's address, which the native builds after the cosine call in each pass
+// and the draft hoists out of the loop (also as a goto loop); alchemy permute
+// (5 to 6 minutes) and an empty asm or one-pass block after any one statement
+// do not move it.
 // Draft, differ 10 of 177 (was 22): written from the listing (☀️'s
 // FieldScene_RunSupplementalSequenceOne is its twin). i pinned to r10 gives the
 // options pointer r8, as the native has them; a pinned i needs the do-while

@@ -1,3 +1,8 @@
+// 26 October 2026, under -mthumb-slow-loads: differ 6 of 65: the native issues
+// a load one slot later after a store, where alchemy-gcc issues it at once (an
+// empty asm after the motion flags store leaves 4); alchemy permute (5 to 6
+// minutes) and an empty asm or one-pass block after any one statement do not
+// move it.
 // near miss: differ 6 (listing 65 instructions, draft 65); scheduling after
 // Func_02005bbc: the native loads the owner's address (ldr r5) between the
 // zero's offset and its store; the task add now goes through KIBOMBO_TASK_ADD

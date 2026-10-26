@@ -1,10 +1,4 @@
-// Draft, differ 8 of 279: a Yampi Desert scene with actor 21 after flag
-// 0x88b: the camera target shrinks, actor 21 lands in a ring of effects and
-// both sink away. Left: in each scale loop the native loads the scale before
-// it finishes the constant, and it addresses priorityFlags after storing the
-// velocity (permute reached 6 only with a one-pass block over half the
-// function).
-#include "../../../../games/tla/src/scene/yampi_desert/scene.h"
+#include "scene.h"
 #include "object_runtime.h"
 #include "call.h"
 
@@ -59,6 +53,10 @@ loop_3:
   Func_02000b84(232 << 16, 0, 184 << 16);
   Func_020041f8(176);
   partner->velocityY = 0x60000;
+  /* FAKEMATCH(barrier): an empty asm after the velocity store, which
+   * addresses priorityFlags after it as the native does; without it, 2 of 279
+   * instructions differ in tla-en. */
+  asm("");
   partner->priorityFlags &= ~2;
   ObjectMotion_SetActionVariant(21, 2);
   Object_SetPartAttribute(Object_GetById(21), 0);

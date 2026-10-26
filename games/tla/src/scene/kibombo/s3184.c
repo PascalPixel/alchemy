@@ -1,13 +1,4 @@
-// Near miss, differ 4 of 43 (was 10): x as a local and the first four calls
-// through an inline put each x copy (adds r0, r5) ahead of the y and z halves,
-// as the native does; the fifth matches only called directly. Left: the native
-// loads 0x0c08 before it builds the register address, and starts x (movs r5)
-// before the second store but shifts it after. Pinning 0x0c08 to r3 behind a
-// barrier that clobbers r2 orders the head, but the barrier's 4 estimated
-// bytes move the mid-function pool island two instructions earlier (differ 10);
-// the pin alone, a one-pass block around a u32 copy (20) and the original
-// leading one-pass block (10) do not help.
-#include "../../../../games/tla/src/scene/kibombo/kibombo.h"
+#include "kibombo.h"
 
 extern struct KibomboObject *gData_02007950;
 
@@ -63,5 +54,9 @@ void Func_02003184(void) {
   Kibombo_Spawn(x, 0x2e0000, 0x1b60000);
   Kibombo_Spawn(x, 0x340000, 0x1aa0000);
   Kibombo_Spawn(x, 0x3a0000, 0x19e0000);
+  /* FAKEMATCH(barrier): an empty asm before the last spawn, which shifts x's
+   * shift after the second register store as the native has it; without it,
+   * 2 of 43 instructions differ in tla-en. */
+  asm("");
   Func_02003104(x, 0x400000, 0x1920000);
 }

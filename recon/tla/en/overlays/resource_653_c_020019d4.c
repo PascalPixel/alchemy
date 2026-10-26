@@ -1,3 +1,8 @@
+// 26 October 2026, under -mthumb-slow-loads: differ 4 of 157: the native issues
+// a load one slot later after a store, where alchemy-gcc issues it at once; its
+// four empty asms are gone, since they no longer change anything; alchemy
+// permute (5 to 6 minutes)
+// and an empty asm or one-pass block after any one statement do not move it.
 // Draft of overlay 653's Func_020019d4, translated from its listing: differ 4
 // of 157. Left: instruction order around
 //   adds r5, r0, #0
@@ -64,18 +69,10 @@ L_02009a4c:
     goto L_02009a8c;
   if (FIELD_AT(v_r5_1, s32, 12) != 0)
     goto L_02009a8c;
-  /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
-   * the listing orders it; without it, 6 of 157 instructions differ in
-   * tla-en. */
-  asm("");
   if (FIELD_AT(v_r5_1, s32, 8) <= 0x11c0000)
     goto L_02009a8c;
   if (FIELD_AT(v_r5_1, s32, 8) >= 0x1340000)
     goto L_02009a8c;
-  /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
-   * the listing orders it; without it, 6 of 157 instructions differ in
-   * tla-en. */
-  asm("");
   if (FIELD_AT(v_r5_1, s32, 16) >= 0xc80000)
     goto L_02009a8c;
   t8 = Value1((s32 (*)())GameFlag_Test, 0x20b);
@@ -87,18 +84,10 @@ L_02009a8c:
     goto L_02009aca;
   if (FIELD_AT(v_r5_1, s32, 12) != 0)
     goto L_02009aca;
-  /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
-   * the listing orders it; without it, 6 of 157 instructions differ in
-   * tla-en. */
-  asm("");
   if (FIELD_AT(v_r5_1, s32, 8) <= 0x14a0000)
     goto L_02009aca;
   if (FIELD_AT(v_r5_1, s32, 8) > 0x165ffff)
     goto L_02009aca;
-  /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
-   * the listing orders it; without it, 6 of 157 instructions differ in
-   * tla-en. */
-  asm("");
   if (FIELD_AT(v_r5_1, s32, 16) >= 0xd80000)
     goto L_02009aca;
   t10 = Value1((s32 (*)())GameFlag_Test, 0x20b);

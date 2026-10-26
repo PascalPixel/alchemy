@@ -1,3 +1,7 @@
+// 26 October 2026, under -mthumb-slow-loads: differ 4 of 641: the native copies
+// a byte's address into r8 (and r10) after storing through it, the draft
+// before; alchemy permute (5 to 6 minutes) and an empty asm or one-pass block
+// after any one statement do not move it.
 // Draft, differ 12 of 641: actors 13, 14 and 15 rise in turn after
 // MsgKandoreanTemple04. Calls go through call.h except those whose
 // constants the native shares. Left: each rise loop's y load is issued

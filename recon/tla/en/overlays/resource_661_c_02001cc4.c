@@ -1,3 +1,7 @@
+// 26 October 2026, under -mthumb-slow-loads: differ 4 of 174: the native issues
+// a load one slot later after a store, where alchemy-gcc issues it at once (two
+// sites; an empty asm after the sprite mode store fixes one); alchemy permute
+// (5 to 6 minutes) and a second asm or block does not move it.
 // Draft, differ 4 of 174: pushing a block through sand: on even frames a
 // dust effect rises at the block, thrown faster while a key is held, then the
 // block steps on and is pulled toward its cell centre across the push. Left:

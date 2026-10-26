@@ -1,3 +1,6 @@
+// 26 October 2026, under -mthumb-slow-loads: differ 4 of 102: the call's
+// constants in another order; alchemy permute (5 to 6 minutes) and an empty asm
+// or one-pass block after any one statement do not move it.
 // Draft, differ 6 of 102: the leader steps through the opened cell and
 // leaves by exit 23. Left: two constants built in another order.
 #include "types.h"

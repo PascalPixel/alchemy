@@ -1,3 +1,8 @@
+// 26 October 2026, under -mthumb-slow-loads: differ 2 of 170: the 0x100000 step
+// after the priority byte store, where the native issues a load one slot later
+// after a store, where alchemy-gcc issues it at once; the step is read plainly
+// again, since reading it as long no longer changes anything; alchemy permute (5 to 6 minutes) and an empty asm or
+// one-pass block after any one statement do not move it.
 // Draft, differ 2 of 170: the scene setup of overlay 669, written from the
 // listing (its ☀️ twin by shape, vale_interiors.c's
 // Scene_RunSupplementalSequenceOne, is a different scene). Left: one scheduling
@@ -70,9 +75,7 @@ s32 Func_02000250(void) {
       Object_GetById(14)->priorityFlags |= 128;
       object = Object_GetById(15);
       object->priorityFlags |= 64;
-      /* FAKEMATCH: as long, so the y load does not depend on the priority byte
-       * store. */
-      *(long *)&object->y += 0x100000;
+      object->y += 0x100000;
       object->terrainHeight += 0x100000;
     }
   } else {

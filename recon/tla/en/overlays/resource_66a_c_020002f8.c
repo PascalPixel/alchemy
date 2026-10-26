@@ -1,3 +1,7 @@
+// 26 October 2026, under -mthumb-slow-loads: differ 6 of 223: the native issues
+// a load one slot later after a store, where alchemy-gcc issues it at once
+// (three sites); alchemy permute (5 to 6 minutes) and an empty asm or one-pass
+// block after any one statement do not move it.
 // Near miss, differ 10 of 223, from the listing: the rooms' second setup.
 // Left: (1) the native loads gPartyState's address before it builds the
 // 0x214 offset (a one-pass block fixes it but pulls the frame's sub sp

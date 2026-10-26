@@ -1,12 +1,3 @@
-// Draft of overlay 653's Func_02002c1c, translated from its listing: differ 7
-// of 214. Left: instruction order around
-//   lsls r2, r2, #16
-//   bl
-//   - ldr r3, [pc, #60]
-//   movs r2, #128
-//   + ldr r3, [pc, #56]
-// (- the listing, + this draft). Tried: Call, Value and direct forms of each
-// call, empty asms and one-pass blocks between statements.
 #include "types.h"
 #include "party_state.h"
 #include "call.h"
@@ -88,9 +79,7 @@ L_0200ad0a:
   Value2((s32 (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02000bf4, 0x480);
   Value2((s32 (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02000c34, 0x480);
   Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02001cc4, 0x480);
-  goto L_0200ad64;
-L_0200ad64:
-  Func_02000b78();
+  Call1((void (*)())Func_02000b78, 9);
   Call1((void (*)())Func_02000b78, 10);
   Call1((void (*)())Func_02000bac, 11);
   Call1((void (*)())Func_02000bac, 13);

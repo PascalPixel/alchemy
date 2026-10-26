@@ -1,3 +1,8 @@
+// 26 October 2026, under -mthumb-slow-loads: differ 6 of 993: the polar
+// offset's position vector, where the native issues a load one slot later after
+// a store, where alchemy-gcc issues it at once; alchemy permute (5 to 6
+// minutes) and an empty asm or one-pass block after any one statement do not
+// move it.
 // Draft of overlay 66a's Func_02000818, differ 4 of 993: the scene where the
 // item breaks. The only difference is in the polar offset's position vector:
 // the native starts the angle (movs r1, #192) before it loads object 15's z,

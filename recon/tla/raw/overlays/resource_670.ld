@@ -10,7 +10,7 @@ SECTIONS
         "*/games/tla/src/scene/kibombo/exits.o"(.text)
         "*/games/tla/src/scene/kibombo/events_a.o"(.text)
         "*/games/tla/src/scene/kibombo/s0c90.o"(.text)
-        "*/resource_670_overlay.o"(.text.x02008d74)
+        "*/games/tla/src/scene/kibombo/s0d74.o"(.text)
         "*/games/tla/src/scene/kibombo/s1218.o"(.text)
         "*/games/tla/src/scene/kibombo/s1318.o"(.text)
         "*/games/tla/src/scene/kibombo/s2050.o"(.text)

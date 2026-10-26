@@ -1,3 +1,7 @@
+// 26 October 2026, under -mthumb-slow-loads: differ 4 of 105: two calls' first
+// argument, which the native builds before the other constants; alchemy permute
+// (5 to 6 minutes) and an empty asm or one-pass block after any one statement
+// do not move it.
 // Draft, differ 4 of 105 (was 30; English: the Japanese listing lacks the block
 // under #if). An empty asm after the second placement call keeps the two
 // calls' tails apart (cross-jumping shared them, 30 to 12), and the angle

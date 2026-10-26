@@ -1,3 +1,8 @@
+// 26 October 2026, under -mthumb-slow-loads: differ 2 of 934: the leader's id
+// after the 314 it is placed at, where the native issues a load one slot later
+// after a store, where alchemy-gcc issues it at once; alchemy permute (5 to 6
+// minutes) and an empty asm or one-pass block after any one statement do not
+// move it.
 // Draft, differ 6 of 934: Idejima: the scene after MsgIdejimaThoughtTheyWere-
 // InsideLighthouse, with actors 5, 6, 8, 10 and the leader, ending in
 // countdown 13. Calls go through call.h; the four headings the native keeps

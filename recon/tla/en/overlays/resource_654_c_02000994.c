@@ -1,3 +1,8 @@
+// 26 October 2026, under -mthumb-slow-loads: differ 8 of 360: the frame's sub
+// sp and its store at the start, and the native issues a load one slot later
+// after a store, where alchemy-gcc issues it at once; alchemy permute (5 to 6
+// minutes) and an empty asm or one-pass block after any one statement do not
+// move it.
 // Draft, differ 8 of 360: the Shrine of the Sea God's descent: the map's
 // three layers and the party move down while the blend steps from 0x80c to
 // 0x1000 and Func_0200094c draws the steps. Left: the frame's sub sp and

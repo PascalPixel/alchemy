@@ -1,3 +1,6 @@
+// 26 October 2026, under -mthumb-slow-loads: differ 58 of 2142: the constant 1
+// the native keeps in r8 is rebuilt in r5 at several sites, which moves pool
+// offsets; not reworked.
 #include "types.h"
 #include "ram_buffer.h"
 

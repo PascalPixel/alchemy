@@ -38,7 +38,7 @@ SECTIONS
         "*/games/tla/src/scene/kandorean_temple/prepare.o"(.text)
         "*/games/tla/src/scene/kandorean_temple/s2a5c.o"(.text)
         "*/resource_653_overlay.o"(.text.x0200aa84)
-        "*/resource_653_overlay.o"(.text.x0200ac1c)
+        "*/games/tla/src/scene/kandorean_temple/s2c1c.o"(.text)
         "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
         "*/resource_653_overlay.o"(.text.x0200aec2)
         "*/resource_653_overlay.o"(.text.x0200aec4)

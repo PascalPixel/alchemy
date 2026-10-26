@@ -273,10 +273,10 @@ Resource_DirectoryTable:
 	resource , Resource_Data104
 	resource , BattleEffect_CloudPuffSheet
 	resource , BattleEffect_TileAnimationMask
-	resource , BattleEffect_CyanSparkSheet
-	resource , BattleEffect_VioletPaletteA
-	resource , BattleEffect_RedPaletteA
-	resource , BattleEffect_YellowPaletteA
+	resource CyanSparkSheet, BattleEffect_CyanSparkSheet
+	resource VioletPaletteA, BattleEffect_VioletPaletteA
+	resource RedPaletteA, BattleEffect_RedPaletteA
+	resource YellowPaletteA, BattleEffect_YellowPaletteA
 	resource , BattleEffect_GreyCrescentSheet
 	resource , BattleEffect_StarCrescentSheet
 	resource , BattleEffect_RevealMaskA
@@ -291,7 +291,7 @@ Resource_DirectoryTable:
 	resource , BattleEffect_DemonFaceSheet
 	resource , BattleEffect_FlameBladeSheet
 	resource , BattleEffect_SwordSheet
-	resource , BattleEffect_IceTileSheet
+	resource IceTileSheet, BattleEffect_IceTileSheet
 	resource , BattleEffect_FiveModeImage
 	resource , BattleEffect_SpiderWebSheet
 	resource , BattleEffect_VioletLightningSheetA

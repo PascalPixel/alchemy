@@ -1,14 +1,14 @@
-// Draft, differ 52 of 146: ☀️'s BattlePresentation_WaitForAdvance
-// (games/tbs/src/battle/battle.c), ported: shows the bobbing arrow at the
-// message window and waits for B held, or A, B, L or R pressed (or held after
-// 16 frames); plays the cursor sound. Left: instruction order (the frame
-// tiles' shift and add, the window loads and the REG_WINOUT constant's
-// halves sit several slots from the native's), the window and offset
-// swapping r9 and r10, and in the key test the native keeps gInput's address
-// in r1 and the mask in r2 and reloads held for the frame > 15 test, where
-// here held stays in r1 and is reused. Tried: a for loop or while (1) with
-// the frame++ at the end (same), the BLDALPHA store as a volatile constant
-// (104: the halfword 16 pooled; Io_Write16 gives the native's movs).
+// Draft, differ 36 of 146 (2026-10-26; 50 before): ☀️'s
+// BattleMessage_WaitForAdvance (games/tbs/src/battle/battle/events.c), ported:
+// shows the bobbing arrow at the message window and waits for B held, or A,
+// B, L or R pressed (or held after 16 frames); plays the cursor sound. The
+// arrow is ☀️'s bitfield sprite (tile, x and y stored through their fields).
+// The native reads gInput.held again for the frame > 15 test where alchemy-gcc
+// reuses the first read; read through a volatile view there (tagged) the key
+// test matches. Left: the frame tiles' address (the arrow sheet plus 128 a
+// frame) is added after the message window's loads in the native, so the
+// window and offset pointers and the sheet take other registers, and the
+// window and offset reads in the x and y sums trade r9 and r10.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -16,10 +16,13 @@
 
 struct AdvanceSprite {
   struct AdvanceSprite *next;
-  u16 attr0;
-  u16 attr1;
-  u16 attr2;
-  u16 attr3;
+  u16 y : 8;
+  u16 flags : 8;
+  u16 x : 9;
+  u16 size : 7;
+  u16 tile : 10;
+  u16 palette : 6;
+  u16 affineParam;
 };
 
 struct AdvanceWindow {
@@ -61,42 +64,32 @@ void BattlePresentation_WaitForAdvance(void) {
   s32 frameTiles;
   struct AdvanceWindow *window;
   struct AdvanceOffset *offset;
-  s32 attr2;
-  s32 attr1;
-  s32 x;
-  s16 tile;
 
   while (!UiWork_IsCompleteFar())
     WaitFrames(1);
   prompt = &promptStorage;
   tileSlot = VramCache_AllocEntry(128);
-  frame = 0;
-  while (1) {
-    struct AdvanceDisplay *display;
-
+  for (frame = 0;; frame++) {
     frameTiles = ((gFrameCount >> 2) & 7) * 128 + (s32)Data_0812996c;
-    display = Ram_HeapSlots->unk84[4];
-    window = display->window;
-    offset = display->offset;
+    window = ((struct AdvanceDisplay *)Ram_HeapSlots->unk84[4])->window;
+    offset = ((struct AdvanceDisplay *)Ram_HeapSlots->unk84[4])->offset;
     QueueIoWriteDelay10(0x0400004a, 4);
     QueueIoWriteDelay6(0x0400004a, 16);
     Io_Write16(16, (volatile u16 *)0x04000052);
-    *(u32 *)&prompt->attr0 = 0xa400;
-    *(u32 *)&prompt->attr2 = 0;
-    tile = VramCache_Reload(tileSlot, frameTiles) & 0x3ff;
-    attr2 = prompt->attr2;
-    prompt->attr2 = (attr2 & ~0x3ff) | tile;
-    x = (u16)((window->x * 8 + (offset->x >> 8) + 4) & 0x1ff);
-    attr1 = prompt->attr1;
-    prompt->attr1 = (attr1 & ~0x1ff) | x;
-    *(u8 *)&prompt->attr0 = Trig_Sin(gFrameCount << 12) / 32768 +
-                            window->y * 8 + (offset->y >> 8) + 6;
+    ((u32 *)prompt)[1] = 0xa400;
+    ((u32 *)prompt)[2] = 0;
+    prompt->tile = VramCache_Reload(tileSlot, frameTiles);
+    prompt->x = window->x * 8 + (offset->x >> 8) + 4;
+    prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
+                (offset->y >> 8) + 6;
     Runtime_PushSlotEntry(prompt, 240);
+    /* FAKEMATCH(volatile): held read afresh for the third test, as the
+     * native reloads it; as plain gInput.held, the draft differs in 50 of
+     * 146 instructions in tla-en rather than 36. */
     if ((gInput.held & 2) || (gInput.pressed & 0x303) ||
-        (frame > 15 && (gInput.held & 0x303)))
+        (frame > 15 && (*(volatile u32 *)&gInput.held & 0x303)))
       break;
     WaitFrames(1);
-    frame++;
   }
   Audio_PlayCue(111);
   Resource_ResetEntry(tileSlot);

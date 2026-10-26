@@ -6,9 +6,15 @@
 // quantity, Func_0810a03c), Shop_RepairItem (Func_0810a2d8) or
 // Forge_OfferItem (Func_0810b6cc), each followed by its "anything else?"
 // message. SELECT held shows the item's details until it is released.
-// Draft, differ 296 of 374 (2026-10-19), the shape following the listing:
-// here the shop work spills to the stack where the native keeps it in r11,
-// which shifts every stack slot (unit, count and windows) by one.
+// Near miss, differ 4 of 374. The locals declared in reverse of their native
+// stack slots give those slots (84 to 46); the plain-name message as a
+// symbol, which the native loads from the pool (32); slot set before the
+// count gives their constants' registers (24); the item window read in
+// place keeps the inventory offset in r7 (10); a barrier before the shop
+// work's load keeps it after sub sp (6), and one after the details are shown
+// reloads the input's address after the store (4). Left: the native stores
+// the name window one row after its call returns (a barrier there stores it
+// at once: 6; an operand barrier on it, 24).
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
@@ -64,18 +70,27 @@ s32 Func_0810b6cc(s32 unitId, s32 slot);
 void Func_081084f4(s32 message);
 
 s32 Func_08109cac(s32 unitId) {
-  struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
-  struct ShopUnit *unit = Unit_Get(unitId);
-  s32 inventoryCount = 1;
-  s32 slot = 0;
-  void *priceWindow = UiWindow_CreateFar(15, 8, 15, 4, 2);
+  struct ShopRuntime *shop;
   void *nameWindow;
+  void *priceWindow;
+  struct ShopUnit *unit;
+  s32 inventoryCount;
+  s32 slot;
   void *window;
   s32 redraw;
   s32 itemId;
   s32 result;
   s32 count;
 
+  /* FAKEMATCH(barrier): the shop work loads after sub sp and the unit's
+   * spill; as its declaration's initializer, 4 of 374 instructions differ
+   * in tla-en. */
+  __asm__ volatile("");
+  shop = Ram_HeapSlots->menuRuntime;
+  unit = Unit_Get(unitId);
+  slot = 0;
+  inventoryCount = 1;
+  priceWindow = UiWindow_CreateFar(15, 8, 15, 4, 2);
   do {
     nameWindow = UiWindow_CreateFar(0, 5, 30, 3, 2);
     shop->cursorAnchor->active = 18;
@@ -88,8 +103,7 @@ s32 Func_08109cac(s32 unitId) {
         if (slot > inventoryCount - 1)
           slot = inventoryCount - 1;
         itemId = 0x1ff & unit->inventory[slot];
-        window = shop->itemWindow;
-        Shop_PlaceCursor(window, slot % 5 * 16, slot / 5 * 16 + 8);
+        Shop_PlaceCursor(shop->itemWindow, slot % 5 * 16, slot / 5 * 16 + 8);
         shop->mode = 3;
         if (shop->partyAction == 1)
           Func_081091cc(priceWindow, itemId,
@@ -100,7 +114,7 @@ s32 Func_08109cac(s32 unitId) {
         else
           Func_081091cc(priceWindow, itemId, Forge_GetMaterialChance(itemId),
                         3);
-        Shop_DrawMsg(nameWindow, itemId + MSGNO(MsgItemPlainName));
+        Shop_DrawMsg(nameWindow, itemId + (s32)MsgItemPlainName);
       }
       if (gInput.pressed & 1) {
         Audio_PlayCue(112);
@@ -119,6 +133,9 @@ s32 Func_08109cac(s32 unitId) {
         window = UiWindow_CreateFar(0, 9, 16, 10, 2);
         ItemMenu_DrawItemDetailsFar(window, item);
         shop->detailsHidden = 0;
+        /* FAKEMATCH(barrier): the input's address reloads after the store;
+         * as plain statements, 2 of 374 instructions differ in tla-en. */
+        __asm__ volatile("");
         while (gInput.held & 4)
           WaitFrames(1);
         shop->detailsHidden = 1;

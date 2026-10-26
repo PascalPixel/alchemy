@@ -1,15 +1,13 @@
 // Draft of overlay 6A8's falling rocks: Func_02004114 (update, differ 44 of
-// 57), Func_02004198 (spawn, differ 9 of 88) and Func_02004254 (start, differ
-// 83 of 83); diff each with --symbol. The work is overlay 6B9's SparkWork
-// (sparks.c): 0x500 bytes of tiles, 64 particles of 28 bytes, 64 sprites of
-// 40, then next, tileBase and resource.
+// 57) and Func_02004254 (start, differ 83 of 83; the spawn between them,
+// Func_02004198, is adopted as prox/s4198.c); diff each with --symbol. The
+// work is overlay 6B9's SparkWork (sparks.c): 0x500 bytes of tiles, 64
+// particles of 28 bytes, 64 sprites of 40, then next, tileBase and resource.
 // The native rebuilds every offset and mask inside each loop and counts in
 // r8 (add r8, r3 with -1 in r3); for loops hoist them (differ 60, 48, 84),
 // so the loops are goto loops here.
 // Update: the timer sits in r3 and the constants in r2 in the native, the
 // other way round here, with or without a timer local.
-// Spawn: the native spills z, x, y in that order (here x, y, z) and masks
-// next with movs r2, #63 where this loads a halfword 63 from the pool.
 // Start: the native keeps the count in r8 and the tile in r10; here the
 // count is in r4, saved around the call, and the tile in r8. VramLoad as an
 // inline keeps 0x500 from being reused for the particle offset (the work
@@ -91,38 +89,6 @@ loop:
   i--;
   if (i >= 0)
     goto loop;
-}
-
-void Func_02004198(s32 x, s32 y, s32 z, s32 count) {
-  struct RockWork *work = Ram_HeapSlots->menuRuntime;
-  s32 i;
-
-  /* FAKEMATCH: the loop is written with goto so that it carries no loop notes:
-   * the bytes rebuild the offsets on every pass, and a for loop hoists them. */
-  if (count > 0) {
-    i = count;
-  loop:;
-    {
-      s32 angle = Random16Far();
-      struct Rock *rock = &work->rocks[work->next];
-
-      rock->timer = 0;
-      rock->position[0] = x;
-      rock->position[1] = y;
-      rock->position[2] = z;
-      Vector_AddPolarOffsetFar((Random16Far() << 3) + 0x80000, angle,
-                               rock->position);
-      rock->velocity[0] = 0;
-      rock->velocity[1] = 0x50000;
-      rock->velocity[2] = 0;
-      Vector_AddPolarOffsetFar((Random16Far() << 1) + 0x20000, angle,
-                               rock->velocity);
-      work->next = (work->next + 1) & 63U;
-    }
-    i--;
-    if (i != 0)
-      goto loop;
-  }
 }
 
 void Func_02004254(void) {

@@ -1,12 +1,13 @@
-// Draft, differ 488 of 977: the window transition's frame callback, ported from
+// Draft, differ 198 of 977 (441 before; 2026-10-26: in the circle case the
+// value is read before the camera's y, which gives the map work r6 as the
+// native has it): the window transition's frame callback, ported from
 // ☀️'s ScreenTransition_UpdateScanlineTable (games/tbs/src/overworld/
 // overworld/transition.c) with this game's state (heap slot 0x7c, s8
 // steps), its map work's view at 0xe4, the controlled owner in place of the
 // leader, the scheduler, and one addition: a transition that ends with no
 // next mode also opens WINOUT's layers when the object window is on.
-// Left: the native keeps the map work in r6 where this keeps it in r7 (and
-// the state at sp 20 both ways), which renames most rows, and the DISPCNT
-// masks load REG_DISPCNT before the end test.
+// Left: the draft is six instructions shorter, the DISPCNT masks load
+// REG_DISPCNT before the end test, and instruction order.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -261,13 +262,13 @@ void Func_080cf78c(void) {
 
   case 8:
     cameraX = grid->viewX & 0xffff0000;
-    cameraY = grid->viewY & 0xffff0000;
     centerX = (state->centreX - cameraX) / 0x10000;
+    value = state->value;
+    cameraY = grid->viewY & 0xffff0000;
     centerY = (state->centreY - cameraY) / 0x10000 - 16;
     k = -centerY * 2 + gFrameCount;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
-    value = state->value;
     if (value & 32)
       value = 32 - (value & 31);
     else

@@ -1,7 +1,6 @@
-// Near miss, differ 37 of 151, instruction order and register choice: the
-// argument spills, the three shifted deltas (the native shifts each delta
-// as soon as it is built and keeps them in r9, r8, r10 in that order) and
-// the slot offset's two loads of the index.
+// Near miss, differ 6 of 151 (2026-10-26), each delta shifted as soon as it is
+// built. Left: the argument spills; the native stores r1, r2, r3 and r0 before it
+// builds the work's address in r3, where this stores r3 first.
 // Builds a slot's chain of nodes in the heap slot 0xa0 work, one node
 // for each 6 units of the distance between two points, spread evenly along
 // the line; the last node is kind 2, the others kind 1, and each records its
@@ -44,10 +43,10 @@ s32 Func_080d9f1c(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   struct LineWork *work = Ram_HeapSlots->unk84[7];
   s32 result = 0;
   s32 dx = toX - x;
-  s32 dy = toY - y;
-  s32 dz = toZ - z;
   s32 sx = dx >> 8;
+  s32 dy = toY - y;
   s32 sy = dy >> 8;
+  s32 dz = toZ - z;
   s32 sz = dz >> 8;
   s32 segments = Iwram_SqrtEntry(Iwram_MulQ16(sx, sx) + Iwram_MulQ16(sy, sy) +
                                  Iwram_MulQ16(sz, sz)) /

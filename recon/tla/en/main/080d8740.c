@@ -1,8 +1,15 @@
+// Near miss, differ 10 of 237 (2026-10-26): the twin of The Broken Seal's
+// FieldEffect_RunMercuryDjinnCapture, with The Lost Age's effect work
+// (Ram_HeapSlots->effectWork), leader (gPartyState.currentOwner), droplet
+// object 301, sprite slots from 80 and the cache slot byte at 16. Only
+// instruction order is left: after each store the native issues another
+// instruction before the next load (the afterimage setup, the position copy).
 #include "resource.h"
 #include "types.h"
 #include "object_dispatch.h"
+#include "ram_buffer.h"
+#include "party_state.h"
 
-extern u8 gEffectWork[];
 
 void BattleEffect_HalveDistanceToTarget(void);
 void BattleEffect_UpdateRandomTargetParticle(void);
@@ -36,11 +43,10 @@ struct CaptureObject {
 };
 
 struct CaptureResource {
-  u8 unk00[28];
+  u8 unk00[16];
   u8 id;
 };
 
-extern s32 gGameState[];
 
 struct CaptureObject *Object_GetById(s32 id);
 void BattleEffect_InitializeSlots(void);
@@ -88,7 +94,7 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
     return;
 
   BattleEffect_InitializeSlots();
-  effectSlots = *(void **)gEffectWork;
+  effectSlots = Ram_HeapSlots->effectWork;
   Shop_RestoreSceneTilesFar(0x204084);
   WaitFrames(30);
   djinni->visible = 0;
@@ -143,9 +149,9 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
   if (resourceId != 96)
     Resource_ResetEntry(resourceId);
   WaitFrames(10);
-  ObjectMotion_ArmCallback(gGameState[125], 0x4000, 0);
+  ObjectMotion_ArmCallback(gPartyState.currentOwner, 0x4000, 0);
   WaitFrames(20);
-  Object_SetMode(Object_GetById(gGameState[125]), 28);
+  Object_SetMode(Object_GetById(gPartyState.currentOwner), 28);
   WaitFrames(20);
 
   position.x = djinni->x;
@@ -153,10 +159,10 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
   position.z = djinni->z;
   Camera_WorldToScreen(&position.x);
 
-  slot = (u8 *)effectSlots + 88;
+  slot = (u8 *)effectSlots + 80;
   remaining = 23;
   do {
-    EffectSlot_Initialize(slot, 240, position.x, position.z);
+    EffectSlot_Initialize(slot, 301, position.x, position.z);
     EffectSlot_SetCallback(slot, (void *)BattleEffect_UpdateRandomTargetParticle);
     EffectSlot_SetObjectMode(slot, 7);
     Animation_ApplyChildValuesToRecordFar(*(struct DispatchChild **)slot, 9);
@@ -171,7 +177,7 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
 
     nextState = 2;
     slotState = effectSlots;
-    slotState += 152;
+    slotState += 144;
     remaining = 23;
     do {
       if (slotState[5] != 0)

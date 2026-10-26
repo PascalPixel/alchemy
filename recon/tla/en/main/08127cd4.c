@@ -4,16 +4,16 @@
 // level adjustment, or else, when flag 0x173 is clear and flag 46 set, its
 // base stats through Func_08127a0c, and sets the battle work's byte at 0x868
 // for enemies 101 to 103 while flag 0x173 is clear.
-// Near miss, differ 59 of 456 (2026-10-19, first draft). Left: the native
-// compares the enemy id with 101 (cmp r0, #101; blt) where this draft compares
-// with 100 (ble); spill-slot and scheduling order in the setup (the work's
-// summon count cleared after the level adjustment's slot, the record copied
-// to the stack before the loop's other setup); register choice in the
-// battle-type cases. Tried: the range test as one condition (68, folded to a
-// subtraction), with 100 written out (68), as a negated test (59). Kept:
-// freeSpriteSlots declared before enemyCount (108 to 76: their stack slots),
-// the range test nested through an s32 local (76 to 59). Six minutes of
-// permute: 55, only with a new temporary.
+// Near miss, differ 28 of 456. The enemy-id range is a switch on 101 to 103,
+// which gives the native's cmp r0, #101; blt (as a nested if it was
+// cmp r0, #100; ble). Left: spill-slot and scheduling order in the setup (the
+// work's summon count cleared after the level adjustment's slot, the record
+// copied to the stack before the loop's other setup). The copy loops share
+// spriteSlots as their index (45 to 28, found by permute), which gives the
+// native's copy of the count to count down, though in the default case that
+// copy and the destination swap r1 and r2. Tried there: the count in a local
+// first, a loop counting the count down (67). Kept: freeSpriteSlots declared
+// before enemyCount (their stack slots).
 #include "types.h"
 #include "battle.h"
 #include "battle_calc.h"
@@ -58,7 +58,6 @@ s32 Func_08127cd4(s32 recordId) {
   s32 spriteSlots;
   s32 fittingCount;
   s32 classId;
-  s32 memberOrCopyIndex;
   s32 remainingKinds;
   s32 copies;
   u32 memberOrEnemyIndex;
@@ -168,17 +167,17 @@ s32 Func_08127cd4(s32 recordId) {
       }
       if (remainingKinds == 0)
         break;
-      memberOrCopyIndex = memberOrder[(Random16() * remainingKinds) >> 16];
-      enemyClasses[enemyCount++] = record->memberIds[memberOrCopyIndex] + 8;
-      memberCounts[memberOrCopyIndex]--;
+      spriteSlots = memberOrder[(Random16() * remainingKinds) >> 16];
+      enemyClasses[enemyCount++] = record->memberIds[spriteSlots] + 8;
+      memberCounts[spriteSlots]--;
     }
     break;
   default:
     for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4;
          memberOrEnemyIndex++) {
-      for (memberOrCopyIndex = 0;
-           memberOrCopyIndex < memberCounts[memberOrEnemyIndex];
-           memberOrCopyIndex++)
+      for (spriteSlots = 0;
+           spriteSlots < memberCounts[memberOrEnemyIndex];
+           spriteSlots++)
         enemyClasses[enemyCount++] = record->memberIds[memberOrEnemyIndex] + 8;
     }
     break;
@@ -211,9 +210,13 @@ assign_enemy:
       Func_08127a0c(memberOrEnemyIndex + 128);
     battle->unk868 = 0;
     enemyId = unit->enemyId;
-    if (enemyId <= 103) {
-      if (enemyId >= 101 && !GameFlag_Test(0x173))
+    switch (enemyId) {
+    case 101:
+    case 102:
+    case 103:
+      if (!GameFlag_Test(0x173))
         battle->unk868 = 1;
+      break;
     }
   }
   memberOrEnemyIndex++;

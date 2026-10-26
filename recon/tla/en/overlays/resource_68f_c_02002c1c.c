@@ -1,9 +1,10 @@
-// Draft, differ 11 of 60: the native subtracts the cell buffer base (pool
+// Draft, differ 6 of 60: the native subtracts the cell buffer base (pool
 // 0xfdff0000) before it loads gMapShapeGrid and adds the grid after the shift;
-// this draft loads the grid first, and copies the height before its shift (adds
-// r2, r0, #0; asrs r2, r2, #19 for asrs r2, r0, #19). Tried: the index as a
+// this draft loads the grid after it, into the register the base freed. The
+// shift in the height's initializer shifts the result in place (as its own
+// statement it copied it first: 11). Tried: the index as a
 // local (36), a cells local, array indexing, the grid added later (15), permute
-// 1 minute.
+// 7 minutes in all.
 // Measured against its copies: overlay 67F's Func_02000bc0 (differ 11 of 60),
 // overlay 691's Func_020036f8 (differ 11 of 60).
 #include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
@@ -20,9 +21,9 @@ void Func_02002c1c(s32 level, s32 layer, s32 owner) {
   u8 *shape = gMapShapeGrid + (Ram_HeapSlots->mapWork->layers[layer].cells -
                                (struct MapCell *)Ram_MapCellBuffer);
   s32 value = Func_02003010(object->terrainId, object->x, object->z);
-  s32 height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
+  s32 height =
+      Map_GetTerrainHeight(object->terrainId, object->x, object->z) >> 19;
 
-  height >>= 19;
   height += level;
 
   shape += object->x / 0x100000 + object->z / 0x100000 * 128;

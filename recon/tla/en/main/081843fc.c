@@ -1,5 +1,6 @@
-// Draft of BattleEffect_RunCatastrophe, decompiled from the listing: differ 4844 of
-// 4580 (draft 4586), the same 321 calls and control flow; allocation differs.
+// Draft of BattleEffect_RunCatastrophe, decompiled from the listing: differ 4796 of
+// 4580 (draft 4586; 2026-10-26, with the loaders' and the scheduler's s32
+// returns as defined), the same 321 calls and control flow; allocation differs.
 // The function runs on through listing 081848ec, whose Func_081848ec and
 // Func_08185b9c are labels inside it (the second the loop's test, which
 // this listing branches to); compare both: alchemy-devtools diff
@@ -36,7 +37,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void); // BattleEffect_EndCanvasLayer
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // ObjectGroup_UpdateMembers
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -72,8 +73,8 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
-void Scheduler_RemoveCallback(void (*callback)(void));
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
 void WaitFrames(s32 frames);
@@ -170,7 +171,7 @@ void Func_08163c2c(s32 a, s32 b);
 void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
-void Resource_DecodeType01(const void *source, void *destination);
+s32 Resource_DecodeType01(const void *source, void *destination);
 void Palette_LoadBasicObjColors(void);
 void Graphics_LoadGreyRamp(void);
 void Func_0815f0a0(s32 resource); // BattleEffect_StepPaletteToResource

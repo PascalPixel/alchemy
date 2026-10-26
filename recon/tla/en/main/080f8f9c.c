@@ -1,8 +1,11 @@
+// Near miss, differ 2 of 170 (2026-10-26): the twin of The Broken Seal's
+// PagedList_HandleInput, the keys read from gInput.repeat. Left: on a step
+// forward the native sets the result 0 straight after storing the cursor, before
+// the page's load; here it comes after the multiply.
 #include "types.h"
 #include "io_reg.h"
 #include "fixed_math.h"
-
-extern volatile u32 gKeysRepeat;
+#include "input.h"
 
 void Link_DrawShiftedTilePairFar(s32 addr);
 void Audio_PlayCue(s32 cue);
@@ -24,15 +27,15 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor,
   if (__modsi3(count, per_page) != 0)
     pages++;
   if (horizontal) {
-    next = gKeysRepeat & KEY_RIGHT;
-    previous = gKeysRepeat & KEY_LEFT;
-    horizontal = gKeysRepeat & KEY_UP;
-    page_forward = gKeysRepeat & KEY_DOWN;
+    next = gInput.repeat & KEY_RIGHT;
+    previous = gInput.repeat & KEY_LEFT;
+    horizontal = gInput.repeat & KEY_UP;
+    page_forward = gInput.repeat & KEY_DOWN;
   } else {
-    next = gKeysRepeat & KEY_DOWN;
-    previous = gKeysRepeat & KEY_UP;
-    horizontal = gKeysRepeat & KEY_LEFT;
-    page_forward = gKeysRepeat & KEY_RIGHT;
+    next = gInput.repeat & KEY_DOWN;
+    previous = gInput.repeat & KEY_UP;
+    horizontal = gInput.repeat & KEY_LEFT;
+    page_forward = gInput.repeat & KEY_RIGHT;
   }
   if (horizontal) {
     Audio_PlayCue(111);

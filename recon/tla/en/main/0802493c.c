@@ -1,7 +1,9 @@
-// Draft, differ 166 of 382: the native keeps x in r11 and z in r9 and
-// spills y and the arrival flag; here x is spilled and the MulQ16 entry takes
-// r9, one frame word more. Tried: the list's object pointer through object
-// (173), the loop as while ((object = *next++) != NULL) (same).
+// Draft, differ 6 of 382 (166 before, 2026-10-26): the work pointer goes
+// through object before the list is collected, and the steering adds to the
+// velocities in place and reads them back into dx and dz, as the native does
+// (166 to 6). Left: three rows each issue a load (or the z store) one row
+// before the native, after a store; a barrier after the z store reaches 4,
+// and no single device more.
 // ☀️'s Object_UpdateAllMotion (games/tbs/src/field/field.c) over The
 // Lost Age's list of the active objects among the first 14.
 #include "types.h"
@@ -55,12 +57,12 @@ void Func_0802493c(void) {
   s32 z;
   s32 dx;
   s32 dz;
-  s32 velocityX;
   s32 distance;
   s32 ratio;
   s32 facingStep;
 
-  ObjectList_CollectActive(Ram_HeapSlots->scriptObjects, list);
+  object = Ram_HeapSlots->scriptObjects;
+  ObjectList_CollectActive(object, list);
   object = list[0];
   next = &list[1];
   while (object != NULL) {
@@ -84,17 +86,17 @@ void Func_0802493c(void) {
           z = object->targetZ;
         } else {
           ratio = Iwram_RatioMulQ14(distance, object->acceleration);
-          velocityX = object->velocityX + Iwram_MulQ16(dx, ratio);
-          object->velocityX = velocityX;
-          dx = object->velocityZ + Iwram_MulQ16(dz, ratio);
-          object->velocityZ = dx;
-          distance = Iwram_Sqrt(Iwram_MulQ16(velocityX, velocityX) +
-                                Iwram_MulQ16(dx, dx))
+          object->velocityX += Iwram_MulQ16(dx, ratio);
+          object->velocityZ += Iwram_MulQ16(dz, ratio);
+          dx = object->velocityX;
+          dz = object->velocityZ;
+          distance = Iwram_Sqrt(Iwram_MulQ16(dx, dx) +
+                                Iwram_MulQ16(dz, dz))
                      << 8;
           if (distance > object->speedLimit) {
             ratio = Iwram_RatioMulQ14(distance, object->speedLimit);
-            object->velocityX = Iwram_MulQ16(velocityX, ratio);
-            object->velocityZ = Iwram_MulQ16(dx, ratio);
+            object->velocityX = Iwram_MulQ16(dx, ratio);
+            object->velocityZ = Iwram_MulQ16(dz, ratio);
           }
         }
       } else {

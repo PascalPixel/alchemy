@@ -6,7 +6,7 @@ SECTIONS
         "*/games/tla/src/scene/mercury_lighthouse/s0038.o"(.text)
         "*/games/tla/src/scene/mercury_lighthouse/s0060.o"(.text)
         "*/games/tla/src/scene/mercury_lighthouse/scene_tables.o"(.text)
-        "*/resource_6b2_overlay.o"(.text.x020080f4)
+        "*/games/tla/src/scene/mercury_lighthouse/s00f4.o"(.text)
         "*/games/tla/src/scene/mercury_lighthouse/s01b0.o"(.text)
         "*/games/tla/src/scene/mercury_lighthouse/s04c4.o"(.text)
         "*/games/tla/src/scene/mercury_lighthouse/prepare.o"(.text)

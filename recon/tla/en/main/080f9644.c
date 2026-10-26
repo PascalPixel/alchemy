@@ -1,17 +1,18 @@
-// Draft, differ 445 of 1355 (draft 1364): the item menu's command loop (use,
-// give, drop, equip, swap, trade, remove), ported from ☀️'s twin in
-// games/tbs/src/menu/menu.c. Not an order difference yet: the work block keeps
-// ☀️'s layout, and ⚓️'s fields sit at other offsets (0x2c for 0x30, the
-// window and slot fields 4 bytes off), the listing builds the work pointer's
-// address 0x030000dc with split constants where this loads gData_03001f2c from
-// the pool, and the frame layout differs. ⚓️'s messages are numbered here
-// (Msg04103 ...), their ☀️ names beside them.
+// Near miss, differ 52 of 1355 (2026-10-26): the item menu's command loop (use,
+// give, drop, equip, swap, trade, remove), the twin of The Broken Seal's
+// ItemMenu_RunCommands (games/tbs/src/menu/menu/item.c), with The Lost Age's
+// work layout (Ram_HeapSlots->menuRuntime), its calls and its own steps. Left:
+// the trade's restoring copies rebuild their 0x14c size for each call (the
+// native keeps IwramCopyWords in r5, not the size), and instruction order in
+// the argument setups (the message number after the window height). Its
+// messages are numbered here (Msg04103 ...), their names in The Broken Seal
+// beside them; they need names in the catalogs before it links.
 #include "mem.h"
 #include "types.h"
 #include "iwram_call.h"
 #include "item.h"
 #include "owner_state.h"
-extern u8 gData_03001f2c[];
+#include "ram_buffer.h"
 
 struct ItemMenuIcon {
   u8 unk00[5];
@@ -28,30 +29,30 @@ struct ItemCommandWork {
     struct ItemMenuIcon *icon;
     u32 word;
   } list;
-  u8 unk018[0x0c];
+  u8 unk018[0x10];
   s32 statusWindow;
-  u8 unk028[4];
+  u8 unk02c[4];
   s32 infoWindow;
-  u8 unk030[4];
+  u8 unk034[4];
   s32 previewWindow;
-  u8 unk038[0xd4];
+  u8 unk03c[0xb4];
   s32 messageWindow;
-  u8 unk110[0x64];
+  u8 unk0f4[0x74];
   u16 selectedSlot;
   u16 targetSlot;
   u16 selectedItem;
   u16 targetItem;
-  u8 unk17c[0x4c];
+  u8 unk170[0x54];
   u16 items[32];
-  u8 unk208[0x10];
+  u8 unk204[0x10];
   u8 itemCount;
   u8 partyCount;
   u8 itemOwner;
   u8 targetOwner;
   struct ItemMenuIcon *volatile selectedItemIcon;
-  u8 unk220[2];
+  u8 unk21c[2];
   s16 completionFlag;
-  u8 unk224[0x36];
+  u8 unk220[0x3e];
   s16 messageOffset;
   u8 equipPreview;
   u8 listMode;
@@ -74,6 +75,7 @@ extern u8 Msg04278[]; // "Can't hold more!" (MsgCannotHoldMore)
 extern u8 Msg04384[]; // the first item-use result (MsgItemUseResult)
 
 struct OwnerInventoryState *Unit_GetFar(s32 unit);
+void Unit_RefreshPsynergyFar(s32 unit);
 
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 
@@ -105,7 +107,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   selection = 0;
   ret = 0;
   state = 0;
-  menu = *(struct ItemCommandWork **)((u32)&gData_03001f2c);
+  menu = Ram_HeapSlots->menuRuntime;
 
   while (done == 0 && GameFlag_TestFar(0x150) == 0) {
     switch (state) {
@@ -259,7 +261,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         qty = (menu->selectedItem >> 11) + 1;
         if (qty > 1) {
           ItemMenu_DrawItemHead();
-          result = Func_080a4f08(0, qty, 1);
+          result = Func_080fbe6c(0, qty, 1);
         }
       }
       if (result == -1) {
@@ -283,6 +285,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           Inventory_RemoveFar(command, menu->selectedSlot);
           Func_08077240(menu->selectedItem & 0x1ff, 1);
         }
+        Unit_RefreshPsynergyFar(command);
         Unit_CalculateFar(command);
         ItemMenu_SetItemWindowRow3();
         ItemMenu_RefreshOwner(menu->itemOwner, 0);
@@ -290,7 +293,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         menu->list.icon->state = 13;
         WaitFrames(1);
         RenderOutput_ClearListFar(menu->infoWindow);
-        InventoryMenu_ShowModalMessage((s32)&Msg04270, 14, 13);
+        InventoryMenu_ShowModalMessage((s32)&Msg04270, 15, 13);
         menu->completionFlag = 1;
         state = 1;
       } else {
@@ -325,7 +328,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
             amount = 30 - qty;
           }
           if (stack > 1) {
-            result = Func_080a4f08(0, amount, 0);
+            result = Func_080fbe6c(0, amount, 0);
           } else {
             result = 0;
           }
@@ -357,15 +360,14 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           aborted = 1;
         }
       }
+      Unit_RefreshPsynergyFar(menu->itemOwner);
+      Unit_RefreshPsynergyFar(menu->targetOwner);
       Unit_CalculateFar(menu->itemOwner);
       Unit_CalculateFar(menu->targetOwner);
-      Func_080772c0(menu->itemOwner);
-      Func_080772c0(menu->targetOwner);
       result = 1;
       if (aborted == 0) {
         menu->itemOwner = menu->targetOwner;
         menu->selectedItem &= 0x1ff;
-        ItemMenu_SetMessageWindowHeight6();
         RenderOutput_RedrawSavedRectFar(menu->messageWindow);
         ItemMenu_DrawItemHead();
         result = ItemMenu_ConfirmEquip(0);
@@ -404,8 +406,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_SetMessageWindowHeight3();
       ItemMenu_SetItemWindowRow3();
       ItemMenu_DrawMessage(0, (s32)&Msg04108);
-      selection = ItemMenu_RunList(1);
-      if (selection == -1) {
+      if (ItemMenu_RunList(1) == -1) {
         state = 6;
         break;
       }
@@ -413,8 +414,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       target = Unit_GetFar(menu->targetOwner);
       sourceCopy = MemAlloc(0x14c);
       targetCopy = MemAlloc(0x14c);
-      CopyWords(IWRAM_COPY_WORDS, sourceCopy, source, 0x14c);
-      CopyWords(IWRAM_COPY_WORDS, targetCopy, target, 0x14c);
+      Iwram_CopyWords(sourceCopy, source, 0x14c);
+      Iwram_CopyWords(targetCopy, target, 0x14c);
       movedSource = 0;
       while (movedSource <= 29) {
         result = Inventory_RemoveFar(menu->itemOwner, menu->selectedSlot);
@@ -469,18 +470,16 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       WaitFrames(1);
       if (aborted == 1) {
-        CopyWords(IWRAM_COPY_WORDS, source, sourceCopy, 0x14c);
-        CopyWords(IWRAM_COPY_WORDS, target, targetCopy, 0x14c);
+        Iwram_CopyWords(source, sourceCopy, 0x14c);
+        Iwram_CopyWords(target, targetCopy, 0x14c);
         RenderOutput_ClearListFar(menu->infoWindow);
         InventoryMenu_ShowModalMessage((s32)&Msg04277, 15, 14);
       } else {
+        Unit_RefreshPsynergyFar(menu->itemOwner);
+        Unit_RefreshPsynergyFar(menu->targetOwner);
         Unit_CalculateFar(menu->itemOwner);
         Unit_CalculateFar(menu->targetOwner);
-        Func_080772c0(menu->itemOwner);
-        Func_080772c0(menu->targetOwner);
         ItemMenu_SetMessageWindowHeight5();
-        ItemMenu_SetMessageWindowHeight6();
-        ItemMenu_HidePageIcons();
         RenderOutput_RedrawSavedRectFar(menu->messageWindow);
         menu->itemOwner = menu->targetOwner;
         menu->selectedItem &= 0x1ff;
@@ -573,10 +572,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       break;
 
     case 12:
-      result = Func_080a4f08(0, 30, 0);
-      if (result != -1) {
-        qty = result;
-      }
+      Func_080fbe6c(0, 30, 0);
       state = 1;
       break;
 

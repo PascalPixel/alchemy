@@ -1,7 +1,8 @@
 // Draft of overlay 668's falling rocks, copied from overlay 6a8's
 // Func_02004114, Func_02004198 and Func_02004254 (the same listings), whose
-// draft holds the notes: Func_02003ec4 (differ 44 of 57), Func_02003f48 (9 of
-// 88) and Func_02004004 (83 of 83); diff each with --symbol.
+// draft holds the notes: Func_02003ec4 (differ 44 of 57) and Func_02004004 (83 of
+// 83); the spawn between them, Func_02003f48, is adopted as
+// eastern_alhafra/s3f48.c; diff each with --symbol.
 #include "types.h"
 #include "ram_buffer.h"
 
@@ -79,38 +80,6 @@ loop:
   i--;
   if (i >= 0)
     goto loop;
-}
-
-void Func_02003f48(s32 x, s32 y, s32 z, s32 count) {
-  struct RockWork *work = Ram_HeapSlots->menuRuntime;
-  s32 i;
-
-  /* FAKEMATCH: the loop is written with goto so that it carries no loop notes:
-   * the bytes rebuild the offsets on every pass, and a for loop hoists them. */
-  if (count > 0) {
-    i = count;
-  loop:;
-    {
-      s32 angle = Random16Far();
-      struct Rock *rock = &work->rocks[work->next];
-
-      rock->timer = 0;
-      rock->position[0] = x;
-      rock->position[1] = y;
-      rock->position[2] = z;
-      Vector_AddPolarOffsetFar((Random16Far() << 3) + 0x80000, angle,
-                               rock->position);
-      rock->velocity[0] = 0;
-      rock->velocity[1] = 0x50000;
-      rock->velocity[2] = 0;
-      Vector_AddPolarOffsetFar((Random16Far() << 1) + 0x20000, angle,
-                               rock->velocity);
-      work->next = (work->next + 1) & 63U;
-    }
-    i--;
-    if (i != 0)
-      goto loop;
-  }
 }
 
 void Func_02004004(void) {

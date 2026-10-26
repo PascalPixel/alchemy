@@ -14837,7 +14837,7 @@ msgctxt "message"
 msgid "03688"
 msgstr "{argument_actor_name:1} fuit!"
 
-msgctxt "message"
+msgctxt "MsgNoEscape"
 msgid "03689"
 msgstr "Impossible de s'échapper!"
 
@@ -15731,35 +15731,35 @@ msgctxt "message"
 msgid "03895"
 msgstr "Gains:"
 
-msgctxt "message"
+msgctxt "MsgSlotsChangeBet"
 msgid "03896"
 msgstr "Haut ou bas pour changer valeur"
 
-msgctxt "message"
+msgctxt "MsgSlotsControls"
 msgid "03897"
 msgstr "{button_icon:1}:Jouer      {button_icon:2}:Quitter"
 
-msgctxt "message"
+msgctxt "MsgSlotsStopReels"
 msgid "03898"
 msgstr "{button_icon:4}:Stopper"
 
-msgctxt "message"
+msgctxt "MsgSlotsChooseHeld"
 msgid "03899"
 msgstr "Quand vous aurez choisi quelles"
 
-msgctxt "message"
+msgctxt "MsgSlotsPullLever"
 msgid "03900"
 msgstr "roues bloquer, tirez le levier!"
 
-msgctxt "message"
+msgctxt "MsgSlotsHold"
 msgid "03901"
 msgstr "{button_icon:1}:Stop"
 
-msgctxt "message"
+msgctxt "MsgSlotsRelease"
 msgid "03902"
 msgstr "{button_icon:1}:Joue"
 
-msgctxt "message"
+msgctxt "MsgSlotsStart"
 msgid "03903"
 msgstr "{button_icon:1}:Jouer"
 
@@ -15771,11 +15771,11 @@ msgctxt "message"
 msgid "03905"
 msgstr "{button_icon:2}:Quitter"
 
-msgctxt "message"
+msgctxt "MsgSlotsAllHeld"
 msgid "03906"
 msgstr "En les bloquant toutes,"
 
-msgctxt "message"
+msgctxt "MsgSlotsCannotPull"
 msgid "03907"
 msgstr "vous ne jouerez pas!"
 
@@ -18530,7 +18530,7 @@ msgctxt "message"
 msgid "04559"
 msgstr "C'est un objet maudit."
 
-msgctxt "message"
+msgctxt "MsgConfirmDrop"
 msgid "04560"
 msgstr "Voulez-vous vraiment"
 
@@ -18674,7 +18674,7 @@ msgctxt "MsgStatLabel"
 msgid "04595"
 msgstr "Attaque"
 
-msgctxt "message"
+msgctxt "MsgDefenseLabel"
 msgid "04596"
 msgstr "Défense"
 
@@ -18882,7 +18882,7 @@ msgctxt "message"
 msgid "04647"
 msgstr "Anneau"
 
-msgctxt "message"
+msgctxt "MsgYes"
 msgid "04648"
 msgstr "Oui"
 
@@ -18942,7 +18942,7 @@ msgctxt "message"
 msgid "04662"
 msgstr "Modification équipement"
 
-msgctxt "message"
+msgctxt "MsgEquipEffectName"
 msgid "04663"
 msgstr "Sans effet"
 
@@ -19102,7 +19102,7 @@ msgctxt "message"
 msgid "04702"
 msgstr "Multi-usage"
 
-msgctxt "message"
+msgctxt "MsgSingleUse"
 msgid "04703"
 msgstr "Une utilisation"
 
@@ -19110,7 +19110,7 @@ msgctxt "message"
 msgid "04704"
 msgstr "Util. casse l'objet"
 
-msgctxt "message"
+msgctxt "MsgBestowsPsynergy"
 msgid "04705"
 msgstr "Donne de la Psynergie"
 
@@ -19126,11 +19126,11 @@ msgctxt "message"
 msgid "04708"
 msgstr "Impossible à enlever"
 
-msgctxt "message"
+msgctxt "MsgRareItem"
 msgid "04709"
 msgstr "Objet rare"
 
-msgctxt "message"
+msgctxt "MsgImportantItem"
 msgid "04710"
 msgstr "Objet important"
 
@@ -19138,19 +19138,19 @@ msgctxt "message"
 msgid "04711"
 msgstr "Portez-en jusqu'à 30"
 
-msgctxt "message"
+msgctxt "MsgDetailsUnknown"
 msgid "04712"
 msgstr "Détails inconnus"
 
-msgctxt "message"
+msgctxt "MsgEquipEffectHeading"
 msgid "04713"
 msgstr "Effet"
 
-msgctxt "message"
+msgctxt "MsgUsesHeading"
 msgid "04714"
 msgstr "Nbre d'utilisations"
 
-msgctxt "message"
+msgctxt "MsgNumberHeading"
 msgid "04715"
 msgstr "Nombre"
 
@@ -19158,7 +19158,7 @@ msgctxt "message"
 msgid "04716"
 msgstr "J'en ai {argument_signed_number}."
 
-msgctxt "message"
+msgctxt "MsgMightBreak"
 msgid "04717"
 msgstr "Peut se briser avec"
 
@@ -19166,7 +19166,7 @@ msgctxt "message"
 msgid "04718"
 msgstr "utilisation en combat"
 
-msgctxt "message"
+msgctxt "MsgBrokenNotice"
 msgid "04719"
 msgstr "C'est cassé, donc"
 
@@ -19178,7 +19178,7 @@ msgctxt "message"
 msgid "04721"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgItemCursed"
 msgid "04722"
 msgstr "C'est maudit"
 

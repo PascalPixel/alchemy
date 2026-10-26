@@ -7,7 +7,14 @@
 // finishes it at the test, loading the word between the halves; it reads the
 // list word before the id; and it copies the count to r10 after the mode. An
 // end mark pinned to r1 and set before the jump and at the end of the body
-// loses the first set and swaps r2 and r3 (18).
+// loses the first set and swaps r2 and r3 (18). The native's entry is a
+// first test (if (*list == 0xffff) return; before a goto loop, or a loop with
+// its exit test copied) that jump2's cross-jumping merged into the loop's own
+// test after sched2 had moved the table pointer load between its first two
+// rows: written so, this draft gets the same entry jump, but gcse then hoists
+// the id load out of the loop (ldrh before it, the sign extension apart,
+// 27); with the id read through a volatile pointer it stays inside (25, its
+// extension still apart).
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"

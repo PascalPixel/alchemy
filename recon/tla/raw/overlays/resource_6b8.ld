@@ -8,7 +8,7 @@ SECTIONS
         "*/games/tla/src/debug/psynergy_test/scene_events.o"(.text)
         "*/games/tla/src/debug/psynergy_test/s079c.o"(.text)
         "*/games/tla/src/debug/psynergy_test/prepare.o"(.text)
-        "*/resource_6b8_overlay.o"(.text.x02008a10)
+        "*/games/tla/src/debug/psynergy_test/s0a10.o"(.text)
         "*/resource_6b8_overlay.o"(.text.x02008ad0)
         "*/resource_6b8_overlay.o"(.text.x02008c4c)
         "*/games/tla/src/debug/psynergy_test/glow_end.o"(.text)

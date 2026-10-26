@@ -4,8 +4,9 @@
 
 // Twin: The Broken Seal's BattleEffect_RunBolt (effect.c), the same
 // kind, with the same tables, frame counts and cues.
-// Listing 552 instructions, draft 556, differ 144 (204 without the tagged
-// glint pointers).
+// Listing 552 instructions, draft 555, differ 101 (2026-10-26: 114 before the
+// tagged one-pass block between the spread and the widths, found by a
+// device sweep; 204 without the tagged glint pointers).
 
 // Changes from the twin: the effect argument is read directly (the Lost
 // Age never stores work->effect), the blitter loads through BattleEffect_LoadBlitter
@@ -67,9 +68,9 @@ void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode);
-s32 BattleEffect_ProcessPendingGraphicsTransfer(void);
-s32 Scheduler_AddOrUpdateCallback(s32 (*callback)(void), s32 order);
-s32 Scheduler_RemoveCallback(s32 (*callback)(void));
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Audio_PlayCue(s32 cue);
 void Func_081180e8(s32 phase);
@@ -204,6 +205,11 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
           s32 x = pos.x;
 
           x += r % spread;
+          /* FAKEMATCH(one-pass): an empty one-pass block between the spread
+           * and the widths; as plain C, 114 of 552 instructions differ in
+           * tla-en (here 101). */
+          do {
+          } while (0);
           x -= spread / 2;
           x -= (widths = gData_08197492)[kind] >> 1;
 

@@ -1,7 +1,13 @@
-// Draft, differ 24 of 93: sets up one rising platform entry (timer, limits
-// in order, a 360-frame period) unless flag 0x109 is set, and spawns its
-// rider object. Left: register choice; the native folds the entries' offset
-// apart from the table address and stores motionFlags from a pool zero.
+// Draft, differ 2 of 93 (was 22): sets up one rising platform entry (timer,
+// limits in order, a 360-frame period) unless flag 0x109 is set, and spawns
+// its rider object. Measured: the work pointer as a local keeps the entries'
+// offset apart from the table address (adds r5, r3, #4), the swap saves the
+// low limit, and the height and max stores sit where the native's allocation
+// follows (alchemy permute found the last). Left: the native builds the
+// priority byte's address (adds r1, r6, #0) after the collision byte's store,
+// as Aqua Rock's Func_02002020 does; a one-pass block around that store, as
+// there, moves the halfword stores before it (6), and with the stores
+// reordered around it the allocation changes (25).
 #include "types.h"
 #include "object_runtime.h"
 
@@ -39,8 +45,8 @@ struct ObjectRuntime *Func_02003fc0(s32 kind, s32 x, s32 y, s32 z);
 
 struct RideEntry *Func_02003e3c(s32 slot, s32 id, s32 timer, s32 low,
                                 s32 high) {
-  struct RideEntry *entry =
-      &((struct RideWork *)(gData_020023c4 + 0x188))->entries[slot];
+  struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
+  struct RideEntry *entry = &work->entries[slot];
   struct ObjectRuntime *object = Object_GetById(id);
   struct ObjectRuntime *rider;
 
@@ -48,22 +54,22 @@ struct RideEntry *Func_02003e3c(s32 slot, s32 id, s32 timer, s32 low,
   ObjectDispatch_SetSingleChildFlags(object, 0);
   if (!GameFlag_Test(0x109)) {
     if (high < low) {
-      s32 swap = high;
+      s32 swap = low;
 
-      high = low;
-      low = swap;
+      low = high;
+      high = swap;
     }
     entry->id = id;
+    entry->height = 0;
     entry->timer = timer;
     entry->period = 360;
+    entry->max = high;
     entry->riseAt = 60;
     entry->fallAt = 240;
     entry->min = low;
     entry->unk10 = 1;
     object->motionFlags = 0;
     object->collisionFlags = 8;
-    entry->height = 0;
-    entry->max = high;
     entry->step = 0;
     entry->phase = 0;
     entry->unk14 = 0;

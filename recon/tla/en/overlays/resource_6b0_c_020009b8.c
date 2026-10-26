@@ -1,4 +1,4 @@
-// Draft, differ 14 of 83: spawns the eight objects of a ring around (x, y),
+// Draft, differ 10 of 83: spawns the eight objects of a ring around (x, y),
 // each at its own angle, with the turn rate and part that overlay 6b0's
 // Func_02000660 (the orbit callback) reads back: radius in unk4c, angle in
 // action, turn in unk66, centre in bounce and gravity. Written from the listing
@@ -8,7 +8,8 @@
 // store (as the native rebuilds it). Left: the native converts the part to u16
 // with lsls/lsrs inside the loop; (u16)part (or a u16 prototype) has gcse's PRE
 // hoist the lsls before the loop, which takes fp and spills the turn (37); part
-// & 0xffff, used here, stays in the loop but builds a mask (and 14). Measured:
+// & 0xffff stays in the loop but builds a mask (12); the part passed as it
+// is, used here, leaves out only the two conversion instructions (10). Measured:
 // a copy of the part behind an in-out barrier (24), an in-out barrier on the
 // part itself (36, part and the index swap registers), the conversion through
 // an inline (37).
@@ -53,7 +54,7 @@ loop:
     object->gravity = y;
     object->motionFlags = 0;
     Animation_SetStateFlags(object, 1);
-    Object_SetPartAttribute(object, part & 0xffff);
+    Object_SetPartAttribute(object, part);
     Object_SetSpritePriority(object, 2);
     Func_020032e0(object, 7);
     ObjectDispatch_SetSingleChildFlags(object, 0);

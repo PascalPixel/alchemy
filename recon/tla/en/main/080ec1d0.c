@@ -1,4 +1,4 @@
-// First draft of Func_080ec1d0, differ 27 of 92 (draft 93 instructions),
+// First draft of Func_080ec1d0, differ 19 of 92 (2026-10-26, statements reordered) (draft 93 instructions),
 // written from the listing: the controlled owner's cell is turned into two
 // screen values, with flag 286 set in one quadrant. The registers match once x
 // reuses the owner's variable (differ 28 with its own). Left, all instruction
@@ -40,8 +40,8 @@ void Func_080ec1d0(s32 *screenX, s32 *screenY) {
         shift = 1966;
         x += 65;
       } else {
-        shift = 6084;
         x -= 627;
+        shift = 6084;
       }
       z += shift;
     }

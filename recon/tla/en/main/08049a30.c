@@ -1,10 +1,17 @@
-// Draft, differ 545 of 790: the battle item menu, The Broken Seal's
-// BattleItemMenu_Run (games/tbs/src/window/screens/item_menu.c) on this
-// game's work, messages and tiles; the frame tees are copied with
-// Func_08049a04 (The Broken Seal's Vram_CopyTile). Structure follows the
-// listing; left: the native reloads the list window inside the sprite setup
-// loop (here its x is hoisted), its frame is 8 bytes larger, and the stack
-// slots and allocation differ from there.
+// Draft, differ 20 of 790 (545 before, 2026-10-26): the battle item menu, The
+// Broken Seal's BattleItemMenu_Run (games/tbs/src/window/screens/item_menu.c)
+// on this game's work, messages and tiles; the frame tees are copied with
+// Func_08049a04 (The Broken Seal's Vram_CopyTile). Written again from the
+// twin's C: the sprites as its MenuSprite and CursorSprite (u16 bitfields,
+// which let loop.c hoist the window reads as the native does: 541 to 66), the
+// cursor reached through sprite, the cursor get, set and tilemap row mark in
+// once-only blocks as the twin's macros are, pageTile (58). The cursor pointer
+// set once more in the item branch is a dead store that orders the spill
+// slots of the sprite and cursor addresses as the native frame does (58 to
+// 20); it would be tagged FAKEMATCH(dead). Left, instruction order only: the
+// native stores the three parameters before it builds the heap base, issues
+// two pool loads later, and a few stores one slot later. No single device or
+// pair, no declaration order and 15 minutes of permute move them.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -42,19 +49,45 @@ struct ItemMenuNavigation {
 };
 
 struct ItemMenuSprite {
-  u8 unk00[4];
-  u32 attr01;
-  u32 attr23;
+  struct ItemMenuSprite *next;
+  union {
+    struct {
+      unsigned long attr01;
+      unsigned long attr23;
+    } word;
+    struct {
+      u16 y : 8;
+      u16 affine : 2;
+      u16 mode : 2;
+      u16 mosaic : 1;
+      u16 colors : 1;
+      u16 shape : 2;
+      u16 x : 9;
+      u16 affineIndex : 5;
+      u16 size : 2;
+      u16 tile : 10;
+      u16 priority : 2;
+      u16 palette : 4;
+      u16 unused;
+    } f;
+  } oam;
 };
 
 struct ItemMenuOam {
-  u8 unk00[4];
-  u8 y;
-  u8 attr0high;
+  struct ItemMenuOam *next;
+  u16 y : 8;
+  u16 affine : 2;
+  u16 mode : 2;
+  u16 mosaic : 1;
+  u16 colors : 1;
+  u16 shape : 2;
   u16 x : 9;
-  u16 attr1high : 7;
+  u16 affineIndex : 5;
+  u16 size : 2;
   u16 tile : 10;
-  u16 attr2high : 6;
+  u16 priority : 2;
+  u16 palette : 4;
+  u16 unused;
 };
 
 #define NAVIGATION ((struct ItemMenuNavigation *)Ram_HeapSlots->unke4[0])
@@ -64,8 +97,8 @@ struct ItemMenuOam {
 // MenuSprite_Initialize.
 #define MENU_SPRITE_INITIALIZE(sprite, shape)                                  \
   do {                                                                         \
-    ((struct ItemMenuSprite *)&(sprite))->attr01 = (shape);                    \
-    ((struct ItemMenuSprite *)&(sprite))->attr23 = 0;                          \
+    (sprite).oam.word.attr01 = (shape);                    \
+    (sprite).oam.word.attr23 = 0;                          \
   } while (0)
 
 extern const u8 gResource_FixedBlockBTiles[];
@@ -104,21 +137,23 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
   struct ItemMenuWindow *messageWindow;
   s32 iconCount;
   s32 preferredRow;
-  s32 cursorX;
-  s32 cursorY;
+  struct { s32 x, y; } cursorPosition;
   struct ItemMenuNavigation *navigation;
   struct ItemMenuWindow *window;
   s32 firstEntry;
   s32 selectedRow;
   s32 item;
   s32 iconTile;
+  s32 pageTile;
   s32 unusableReason;
   s32 result;
   s32 i;
-  struct ItemMenuOam cursorSprite;
+  struct ItemMenuOam cursorStorage;
+  struct ItemMenuSprite *iconSprite;
+  struct ItemMenuOam *sprite;
   u16 messageText[64];
   s32 iconSlots[5];
-  struct ItemMenuOam sprites[5];
+  struct ItemMenuSprite sprites[5];
 
   work = (struct ItemMenuWork *)Ram_HeapSlots->windowTiles;
   drawnFirstEntry = -1;
@@ -126,23 +161,24 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
   cursorHandle = VramCache_AllocEntry(128);
   messageWindow = UiWindow_Create(0, 5, 30, 4, 42);
   iconCount = 0;
-  navigation = NAVIGATION;
-  firstEntry = navigation->page;
-  selectedRow = navigation->row;
-  preferredRow = navigation->preferredRow;
+  do {
+    firstEntry = NAVIGATION->page;
+    selectedRow = NAVIGATION->row;
+    preferredRow = NAVIGATION->preferredRow;
+  } while (0);
   window = UiWindow_Create(15, 9, 15, 11, 6);
 
   for (i = 0; i < 5; i++) {
     s32 y = i * 2;
-    struct ItemMenuOam *iconSprite = &sprites[i];
 
+    iconSprite = &sprites[i];
     MENU_SPRITE_INITIALIZE(sprites[i], 0x40000000);
-    iconSprite->x = window->x * 8 + 8;
-    iconSprite->y = (y + window->y) * 8 + 4;
+    iconSprite->oam.f.x = window->x * 8 + 8;
+    iconSprite->oam.f.y = (y + window->y) * 8 + 4;
   }
   for (i = 0; i < 5; i++) {
     iconSlots[i] = VramCache_AllocEntry(128);
-    sprites[i].tile = VramCache_Reload(iconSlots[i], (const void *)-1);
+    sprites[i].oam.f.tile = VramCache_Reload(iconSlots[i], (const void *)-1);
   }
   Func_08049a04(0xf018, 0x200);
   Func_08049a04(0xf018, 0x201);
@@ -163,6 +199,7 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
           UiText_CopyMessageString((entries[firstEntry + selectedRow] & 0x1ff) +
                                        (s32)MsgItemPlainName,
                                    messageText, 52);
+        sprite = &cursorStorage;
       } else {
         UiText_CopyMessageString((s32)Msg_0d46, messageText, 52);
       }
@@ -183,7 +220,7 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
           UiText_DrawCharacterAtOffset((item & 0x1ff) + (s32)MsgItemName,
                                        window, 16, i * 16);
           Func_08041f70(15);
-          sprites[i].tile = ItemIcon_LoadIntoSlot(item, iconSlots[i]);
+          sprites[i].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[i]);
         }
         iconCount = i;
         drawnFirstEntry = firstEntry;
@@ -213,30 +250,39 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
         UiWindow_SetTilemapEntry(
             window, iconTile, window->width - (count + 4) / 5 + i - 2, -1, 0);
       }
+      pageTile = -1;
       UiWindow_SetTilemapEntry(window, 0xf334,
-                               window->width - (count + 4) / 5 - 3, -1, 0);
-      UiWindow_SetTilemapEntry(window, 0xf335, window->width - 2, -1, 0);
-      work->dirty |= 2 << ((u32)(window->y - 1) >> 2);
+                               window->width - (count + 4) / 5 - 3, pageTile, 0);
+      UiWindow_SetTilemapEntry(window, 0xf335, window->width - 2, pageTile, 0);
+      do {
+        work->dirty |= 2 << ((u32)(window->y - 1) >> 2);
+      } while (0);
     }
 
     for (i = 0; i < iconCount; i++)
-      Runtime_PushSlotEntry(&sprites[i], 240);
+      {
+      iconSprite = &sprites[i];
+      Runtime_PushSlotEntry(iconSprite, 240);
+    }
 
-    cursorX = window->x * 8 - 2;
-    cursorY = (selectedRow * 2 + window->y) * 8 + 20;
-    ((struct ItemMenuSprite *)&cursorSprite)->attr01 = 0x40000000;
-    ((struct ItemMenuSprite *)&cursorSprite)->attr23 = 0;
-    cursorSprite.tile =
+    cursorPosition.x = window->x * 8 - 2;
+    cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
+    sprite = &cursorStorage;
+    ((u32 *)sprite)[1] = 0x40000000;
+    ((u32 *)sprite)[2] = 0;
+    sprite->tile =
         VramCache_Reload(cursorHandle, gResource_FixedBlockBTiles);
-    cursorSprite.x = cursorX + ((gFrameCount & 4) >> 1) - 4;
-    cursorSprite.y = cursorY - ((gFrameCount & 4) >> 2) - 8;
+    sprite->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
+    sprite->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     if (count != 0)
-      Runtime_PushSlotEntry(&cursorSprite, 242);
+      Runtime_PushSlotEntry(sprite, 242);
 
+    do {
+      NAVIGATION->page = firstEntry;
+      NAVIGATION->row = selectedRow;
+      NAVIGATION->preferredRow = preferredRow;
+    } while (0);
     navigation = NAVIGATION;
-    navigation->page = firstEntry;
-    navigation->row = selectedRow;
-    navigation->preferredRow = preferredRow;
     if (gInput.pressed & 1) {
       if (count != 0) {
         result = firstEntry + selectedRow;

@@ -14836,7 +14836,7 @@ msgctxt "message"
 msgid "03688"
 msgstr "{argument_actor_name:1} flüchtet!"
 
-msgctxt "message"
+msgctxt "MsgNoEscape"
 msgid "03689"
 msgstr "Doch es gibt kein Entrinnen!"
 
@@ -15782,35 +15782,35 @@ msgctxt "message"
 msgid "03895"
 msgstr "Gewinn:"
 
-msgctxt "message"
+msgctxt "MsgSlotsChangeBet"
 msgid "03896"
 msgstr "Ändere Wert mit Oben/Unten."
 
-msgctxt "message"
+msgctxt "MsgSlotsControls"
 msgid "03897"
 msgstr "{button_icon:1}:Starten     {button_icon:2}:Stopp"
 
-msgctxt "message"
+msgctxt "MsgSlotsStopReels"
 msgid "03898"
 msgstr "{button_icon:4}:Anhalten"
 
-msgctxt "message"
+msgctxt "MsgSlotsChooseHeld"
 msgid "03899"
 msgstr "Wähle Slots, die stehen blei-"
 
-msgctxt "message"
+msgctxt "MsgSlotsPullLever"
 msgid "03900"
 msgstr "ben sollen und zieh am Hebel!"
 
-msgctxt "message"
+msgctxt "MsgSlotsHold"
 msgid "03901"
 msgstr "{button_icon:1}:Stopp"
 
-msgctxt "message"
+msgctxt "MsgSlotsRelease"
 msgid "03902"
 msgstr "{button_icon:1}:Drehen"
 
-msgctxt "message"
+msgctxt "MsgSlotsStart"
 msgid "03903"
 msgstr "{button_icon:1}:Starten"
 
@@ -15822,11 +15822,11 @@ msgctxt "message"
 msgid "03905"
 msgstr "{button_icon:2}:Aufhören"
 
-msgctxt "message"
+msgctxt "MsgSlotsAllHeld"
 msgid "03906"
 msgstr "Alle Slots stehen!"
 
-msgctxt "message"
+msgctxt "MsgSlotsCannotPull"
 msgid "03907"
 msgstr "Du kannst nicht drehen!"
 
@@ -18595,7 +18595,7 @@ msgctxt "message"
 msgid "04559"
 msgstr "Ein verfluchtes Item."
 
-msgctxt "message"
+msgctxt "MsgConfirmDrop"
 msgid "04560"
 msgstr "Willst du das"
 
@@ -18947,7 +18947,7 @@ msgctxt "message"
 msgid "04647"
 msgstr "Ring"
 
-msgctxt "message"
+msgctxt "MsgYes"
 msgid "04648"
 msgstr "Ja"
 

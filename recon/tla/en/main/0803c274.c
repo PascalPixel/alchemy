@@ -1,8 +1,7 @@
-// Draft, differ 26 of 116 (2026-10-18; the old draft here was 54): left are
-// load-earlier schedules (the index constant, the row bytes, the slot reload
-// after Resource_FindFreeEntry), the store of the index after y where the
-// native stores it before, and the literal pool placed after the active test
-// rather than before it.
+// Draft, differ 8 of 116 (26 before, 2026-10-26): the index stored before y,
+// and a barrier after the x copy (without it, 16). Left: the active store
+// and the slot's store after Resource_FindFreeEntry each come a row after
+// the native's, and the y byte's load a row before the index store.
 // ☀️'s UiWindow_PutGlyph (the international form) on this game's
 // UiRenderWork, the tilemap address taken up front.
 #include "types.h"
@@ -70,9 +69,10 @@ void Func_0803c274(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
     row = (u8)win->y + (row = (u8)win->height + 254);
     attr->y = row * 8 - 1;
     out->x = attr->x;
+    asm("");
+    out->index = idx;
     out->y = attr->y;
     out->next = NULL;
-    out->index = idx;
     if (out->active == 0)
       out->active = mode;
     RenderOutput_AppendToList(&win->output, (struct RenderOutput *)out);

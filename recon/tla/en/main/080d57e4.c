@@ -1,4 +1,5 @@
-// Near miss, differ 22 of 146: the leader lets go of a grabbed item
+// Near miss, differ 14 of 146 (16 before; 2026-10-26, the scale reset before
+// the priority flag): the leader lets go of a grabbed item
 // (Func_080d5720) toward the held direction: with no direction it returns 0; it
 // snaps to its cell's centre, and if the cell one step ahead is free it faces
 // that way, its saved motion flags, frame and priority come back, cue 152 plays
@@ -49,9 +50,9 @@ s32 Func_080d57e4(void) {
       Func_08020210(leader, position))
     return 0;
   leader->angle = angle;
+  leader->scaleX = 0x10000;
   leader->priorityFlags |= 1;
   leader->motionFlags = leader->action;
-  leader->scaleX = 0x10000;
   sprite->nextFrame = leader->unk66;
   sprite->rotation = 0;
   Audio_PlayCue(152);

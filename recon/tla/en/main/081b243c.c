@@ -1,14 +1,23 @@
-// Draft, differ 514 of 1707: the slot machine's frame callback, The Broken
-// Seal's ReelGame_RunFrame (games/tbs/src/object/colorfx.c) in its patched
-// form (the hint windows and phases), on this game's work: the sprite count
-// lives in the work (0xa8) for Func_081b3294, which restarts the scanline DMA
-// and copies the sprites; the sprite words are volatile, as ☀️'s OAM shadow;
-// the held keys are read twice through a volatile word, as the native's two
-// loads show (514 against 551 plainly). Messages are numbers here (0xd68 the
-// bet, 0xd6d to 0xd76 the hints): adopting needs their msgctxt names. Left:
-// the native's frame is 40 bytes, not 36 (&work->state sits in two stack
-// slots), and keeps &work->spriteCount in r11 where this has r9, so most
-// sprite stores rotate registers; control flow and constants match.
+// Draft, differ 169 of 1707 (tla-en): the slot machine's frame callback, The
+// Broken Seal's LuckyWheels_RunFrame (games/tbs/src/overworld/lucky_wheels.c)
+// in its patched form (the hint windows and phases), on this game's work: the
+// sprite count lives in the work (0xa8) for Func_081b3294, which restarts the
+// scanline DMA and copies the sprites; the sprite words are volatile, as The
+// Broken Seal's OAM shadow; the held keys are read twice through a volatile
+// word, as the native's two loads show (514 against 551 plainly). Measured
+// in order from 494 under K2's -mthumb-slow-loads: the messages by their
+// linker names (MsgSlotsStopReels to MsgSlotsCannotPull), which the native
+// loads from the pool where a number is built in three instructions: 417; the
+// wheel symbols' first word computed before its store's index, through v:
+// 233 (the frame then matches, 40 bytes); its x, y and attribute bits ORed in
+// at the store, v holding only the column's x: 189; the state test after the
+// debug block through k (k = work->state == 5): 169. That k is a forced
+// temporary: it needs a FAKEMATCH(temporary) tag if this is adopted (as a
+// plain if, 189). Left: register rotations in the wheel symbols' loop, two
+// reload blocks the native keeps apart where this shares one (after the
+// spinning state's timer and the choosing state's A test), which moves the
+// literal pools, and scheduling rows. permute (30 minutes from 169) found
+// only devices (a volatile local, 164).
 #include "types.h"
 #include "io_reg.h"
 #include "input.h"
@@ -79,6 +88,16 @@ void UiText_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x,
 void UiWork_FinalizeFar(s32 window, s32 mode);
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+
+extern char MsgSlotsBet[];
+extern char MsgSlotsStopReels[];
+extern char MsgSlotsChooseHeld[];
+extern char MsgSlotsPullLever[];
+extern char MsgSlotsHold[];
+extern char MsgSlotsRelease[];
+extern char MsgSlotsStart[];
+extern char MsgSlotsAllHeld[];
+extern char MsgSlotsCannotPull[];
 
 void Func_081b243c(void) {
   struct ReelWork *work;
@@ -211,17 +230,17 @@ void Func_081b243c(void) {
             if (work->phase != 1 && work->phase != 2) {
               UiWork_FinalizeFar(work->window, 1);
               work->window = UiWindow_CreateFar(11, 0, 19, 4, 6);
-              UiText_DrawCharacterAtOffsetFar(0xd75, work->window, 0, 0);
+              UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsAllHeld, work->window, 0, 0);
               work->phase = 1;
             } else if (work->phase == 1) {
-              UiText_DrawCharacterAtOffsetFar(0xd76, work->window, 0, 8);
+              UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsCannotPull, work->window, 0, 8);
               work->phase = 2;
             }
           } else {
             if (work->phase != 3) {
               UiWork_FinalizeFar(work->window, 1);
               work->window = UiWindow_CreateFar(16, 0, 14, 3, 6);
-              UiText_DrawCharacterAtOffsetFar(0xd72, work->window, 0, 0);
+              UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsStart, work->window, 0, 0);
             }
             work->phase = 3;
           }
@@ -229,14 +248,14 @@ void Func_081b243c(void) {
           if (work->phase != 4) {
             UiWork_FinalizeFar(work->window, 1);
             work->window = UiWindow_CreateFar(23, 0, 7, 3, 6);
-            UiText_DrawCharacterAtOffsetFar(0xd70, work->window, 0, 0);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsHold, work->window, 0, 0);
           }
           work->phase = 4;
         } else {
           if (work->phase != 5) {
             UiWork_FinalizeFar(work->window, 1);
             work->window = UiWindow_CreateFar(23, 0, 7, 3, 6);
-            UiText_DrawCharacterAtOffsetFar(0xd71, work->window, 0, 0);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsRelease, work->window, 0, 0);
           }
           work->phase = 5;
         }
@@ -265,7 +284,7 @@ void Func_081b243c(void) {
     } else if (work->state == 11) {
       if (work->phase == 0) {
         work->phase = 1;
-        UiText_DrawCharacterAtOffsetFar(0xd6f, work->window, 0, 8);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsPullLever, work->window, 0, 8);
       }
       if (work->pressed & KEY_A) {
         work->state = 5;
@@ -280,7 +299,7 @@ void Func_081b243c(void) {
     } else if (work->state != 10) {
       if (work->timer == 4) {
         work->window = UiWindow_CreateFar(18, 17, 12, 3, 6);
-        UiText_DrawCharacterAtOffsetFar(0xd6d, work->window, 0, 0);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsStopReels, work->window, 0, 0);
       }
       if (work->timer == 16)
         Audio_PlayCue(306);
@@ -369,7 +388,7 @@ void Func_081b243c(void) {
             s32 message;
 
             work->window = UiWindow_CreateFar(3, 16, 24, 4, 6);
-            message = 0xd6e;
+            message = (s32)MsgSlotsChooseHeld;
             UiText_DrawCharacterAtOffsetFar(message, work->window, 0, 0);
             UiText_DrawCharacterAtOffsetFar(message + 1, work->window, 0, 8);
           }
@@ -395,7 +414,7 @@ void Func_081b243c(void) {
             REG_BLDCNT = 0;
             window = UiWindow_CreateFar(18, 0, 12, 4, 6);
             work->subWindow = window;
-            message = 0xd68;
+            message = (s32)MsgSlotsBet;
             UiText_DrawCharacterAtOffsetFar(message, window, 0, 8);
             UiText_DrawCharacterAtOffsetFar(message - 1, work->subWindow, 0, 0);
           }
@@ -421,7 +440,8 @@ void Func_081b243c(void) {
     }
   }
 
-  if (work->state == 5) {
+  k = work->state == 5;
+  if (k) {
     x = work->cursor * 36 + 36;
     y = 128;
     v = 0;
@@ -518,9 +538,8 @@ void Func_081b243c(void) {
     struct Reel *reel = &work->reels[i];
 
     for (col = 0; col != 7; col++) {
-      work->obj[work->spriteCount].attr01 =
-          (col * 16 + reel->position % 16 + 4) | ((i * 32 + 40) << 16) |
-          0x80006000;
+      v = col * 16 + reel->position % 16 + 4;
+      work->obj[work->spriteCount].attr01 = v | ((i * 32 + 40) << 16) | 0x80006000;
       work->obj[work->spriteCount].attr2 =
           (reel->symbols[(col - reel->position / 16 + 21) % 21] << 4) | 0x800;
       work->spriteCount++;

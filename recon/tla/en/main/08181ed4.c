@@ -32,6 +32,9 @@
 // Resources 0xc0 (BattleEffect_CrossTextureSheet), 0xd2 (Resource_Data0D2) and
 // the Djinn sheets 0x154, 0x150 and 0x152 need names in
 // system/resource/directory.s when this is adopted.
+// 2026-10-26: 127 under K2's -mthumb-slow-loads; the target's actor read
+// into its own local before Func_081180e8 at frame 20: 122 (permute, 20
+// minutes, found nothing better that was plain C).
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
@@ -140,6 +143,7 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   s16 *actors;
+  s16 actor;
   void *canvas = Ram_HeapSlots->battleFxWork[1];
   u8 *sparkCels = Ram_HeapSlots->unk64[0];
   struct EffectStep *drop;
@@ -186,8 +190,9 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == GEYSER_PEAK_FRAME) {
       work->shakeFrames = 8;
       actors = effect->actors;
+      actor = actors[0];
       Func_081180e8(134);
-      Func_08118088(actors[0], 1);
+      Func_08118088(actor, 1);
     }
 
     // The first frame clears every drop.

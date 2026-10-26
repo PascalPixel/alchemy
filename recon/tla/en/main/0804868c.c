@@ -1,11 +1,16 @@
-// Draft, differ 1009 of 1246: the battle Djinn menu, The Broken Seal's
-// BattleDjinnMenu_Run (games/tbs/src/window/screens/djinn_menu.c) on this
-// game's work, messages and change preview (Func_080464dc). The list window
-// is 10 tiles wide from column 20, a recovering Djinni's turns take two
-// digits at x 48, and letting go of R redraws the list as well as the stats
-// page. Structure follows the listing; left: the frame (220 bytes here, the
-// native 224 with the text and sprite addresses spilled) and the stack slots,
-// so allocation differs from the first spill on.
+// Draft, differ 678 of 1246 (1009 before, 2026-10-26): the battle Djinn menu,
+// The Broken Seal's BattleDjinnMenu_Run
+// (games/tbs/src/window/screens/djinn_menu.c) on this game's work, messages and
+// change preview (Func_080464dc). The list window is 10 tiles wide from column
+// 20, a recovering Djinni's turns take two digits at x 48, and letting go of R
+// redraws the list as well as the stats page. Rewritten toward the twin: the
+// cursor through a sprite pointer set before the loop and again in it, the
+// cursor position as a two-word struct (spilled whole, as the native's sp 12
+// and 16), the twin's chosen-Djinn search, x block, barrier and entry packing
+// (1009 to 678; the twin's devices are untagged here until it matches). Left:
+// the frame is 228 bytes, one stack word more than the native's, and held,
+// repeated and pressed take other registers (the native: r8, r7 and r1), so
+// allocation differs from the input reads on.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -144,7 +149,6 @@ void WaitFrames(s32 frames);
 s32 Func_0804868c(s32 member) {
   struct DjinnMenuOam cursorSprite;
   u16 messageText[64];
-  s32 previewPages;
   struct DjinnMenuWork *work;
   struct DjinnMenuWindow *previewWindow;
   s32 drawnRow;
@@ -158,15 +162,22 @@ s32 Func_0804868c(s32 member) {
   s32 previewPage;
   s32 redraw;
   s32 alreadySelected;
+  s32 previewPages;
   s32 redrawList;
-  s32 cursorY;
-  s32 cursorX;
+  struct DjinnMenuNavigation *navigation;
+  struct DjinnMenuUnit *unit;
+  struct DjinnRecoveryList *list;
   struct DjinnMenuWindow *listWindow;
+  struct DjinnMenuPartyStatus *partyStatus;
+  u32 *entryCursor;
+  u32 selectedDjinn;
+  u32 blinkPhase;
   s32 firstEntry;
   s32 selectedRow;
-  struct DjinnMenuUnit *unit;
-  u32 selectedDjinn;
   u32 encodedDjinn;
+  struct {
+    s32 x, y;
+  } cursorPos;
   s32 pressed;
   s32 repeated;
   s32 held;
@@ -174,9 +185,7 @@ s32 Func_0804868c(s32 member) {
   s32 djinnIndex;
   s32 i;
   s32 j;
-  struct DjinnMenuNavigation *navigation;
-  struct DjinnMenuPartyStatus *partyStatus;
-  u32 blinkPhase;
+  struct DjinnMenuOam *sprite;
 
   work = (struct DjinnMenuWork *)Ram_HeapSlots->windowTiles;
   previewWindow = NULL;
@@ -185,6 +194,7 @@ s32 Func_0804868c(s32 member) {
   djinnEntries = Runtime_BumpAllocateAlternatePool(84 * sizeof(*djinnEntries));
   djinnCount = 0;
   drawnFirstEntry = drawnRow;
+  encodedDjinn = 0;
   standbyElements = 0;
   previewPage = 0;
   previewPages = 0;
@@ -201,38 +211,40 @@ s32 Func_0804868c(s32 member) {
   unit = Unit_Get(member);
 
   for (element = 0; element <= 3; element++) {
-    u32 *entryCursor = &djinnEntries[djinnCount];
-
-    for (djinnIndex = 0; djinnIndex <= 19; djinnIndex++) {
-      if (unit->djinnSet[element] & (1 << djinnIndex)) {
-        *entryCursor++ = (element << 8) | djinnIndex;
+    for (djinnIndex = 0,
+        entryCursor = (u32 *)((djinnCount << 2) + (u32)djinnEntries);
+         djinnIndex <= 19; djinnIndex++) {
+      if (unit->djinnSet[element] & (u32)(1 << djinnIndex)) {
+        *entryCursor = (u32)((element << 8) | djinnIndex);
+        entryCursor++;
         djinnCount++;
-      } else if (unit->djinnHeld[element] & (1 << djinnIndex)) {
-        struct DjinnRecoveryList *list =
-            &Djinn_GetRecoveryTableFar((u32)member > 7)->list;
+      } else if (unit->djinnHeld[element] & (u32)(1 << djinnIndex)) {
         u32 v;
         s32 k;
 
+        list = &Djinn_GetRecoveryTableFar((u32)member > 7 ? 1 : 0)->list;
         for (k = 0; k < list->count; k++) {
           if (list->entries[k].unitId == member &&
               list->entries[k].element == element &&
-              list->entries[k].index == djinnIndex)
+              list->entries[k].index == djinnIndex) {
             break;
+          }
         }
-        v = (element << 8) | djinnIndex | DJINN_ENTRY_STANDBY;
+        v = (u32)((element << 8) | djinnIndex | DJINN_ENTRY_STANDBY);
         *entryCursor = v;
         if (list->entries[k].turns > 0) {
-          v |= list->entries[k].turns << DJINN_ENTRY_RECOVERY_SHIFT;
+          v |= (u32)(list->entries[k].turns << DJINN_ENTRY_RECOVERY_SHIFT);
           *entryCursor = v;
         }
-        entryCursor++;
         djinnCount++;
+        entryCursor++;
       }
     }
   }
   djinnEntries[djinnCount] = DJINN_ENTRY_END;
   work->dirty = 1;
 
+  sprite = &cursorSprite;
   for (;;) {
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow ||
         redraw != 0) {
@@ -249,15 +261,20 @@ s32 Func_0804868c(s32 member) {
       redraw = 0;
       if (djinnCount != 0) {
         s32 k;
+        u32 selected;
 
         UiWork_ClearValueNameTables();
         alreadySelected = 0;
-        k = redraw;
-        if (NAVIGATION->chosenDjinn[0] == selectedDjinn) {
+        selected = NAVIGATION->chosenDjinn[redraw];
+        for (k = redraw; k == redraw;) {
+          k = redraw;
+          break;
+        }
+        if (selected == selectedDjinn) {
           alreadySelected = 1;
         } else {
           for (;;) {
-            k++;
+            k += 1 - alreadySelected;
             if (k > 7)
               break;
             if (NAVIGATION->chosenDjinn[k] == selectedDjinn) {
@@ -537,16 +554,24 @@ s32 Func_0804868c(s32 member) {
       }
     }
 
-    cursorX = listWindow->x * 8 - 2;
-    cursorY = (selectedRow * 2 + listWindow->y) * 8 + 20;
-    ((struct DjinnMenuSprite *)&cursorSprite)->attr01 = 0x40000000;
-    ((struct DjinnMenuSprite *)&cursorSprite)->attr23 = 0;
-    cursorSprite.tile =
-        VramCache_Reload(cursorSlot, gResource_FixedBlockBTiles);
-    cursorSprite.x = cursorX + ((gFrameCount & 4) >> 1) - 6;
-    cursorSprite.y = cursorY - ((gFrameCount & 4) >> 2) - 8;
+    {
+      s32 cx;
+
+      do {
+        cx = listWindow->x * 8;
+      } while (0);
+      asm("" : : "l"(selectedRow));
+      cursorPos.x = cx - 2;
+    }
+    cursorPos.y = (selectedRow * 2 + listWindow->y) * 8 + 20;
+    sprite = &cursorSprite;
+    ((struct DjinnMenuSprite *)sprite)->attr01 = 0x40000000;
+    ((struct DjinnMenuSprite *)sprite)->attr23 = 0;
+    sprite->tile = VramCache_Reload(cursorSlot, gResource_FixedBlockBTiles);
+    sprite->x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;
+    sprite->y = cursorPos.y - ((gFrameCount & 4) >> 2) - 8;
     if (djinnCount != 0)
-      Runtime_PushSlotEntry(&cursorSprite, 242);
+      Runtime_PushSlotEntry(sprite, 242);
 
     partyStatus = Ram_HeapSlots->windowLayout;
     blinkPhase = gFrameCount & 4;

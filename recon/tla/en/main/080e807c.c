@@ -1,4 +1,4 @@
-// Near miss, differ 51 of 272 (2026-10-18, written from the listing; ☀️ has
+// Near miss, differ 48 of 272 (2026-10-26, statements reordered) (2026-10-18, written from the listing; ☀️ has
 // no twin): the frame callback of the effect Func_080e87c4 ends, with the
 // ring picture of graphics/field_fx/ring_arcs.s. The position is reached
 // through a pointer, as the ROM keeps sp + 4 in r7 (221 -> 167). The colour
@@ -84,8 +84,8 @@ void Func_080e807c(void) {
   Func_080e7fec(x - 64, y - 64);
 
   if (work->cycling != 0) {
-    phase = &work->phase;
     i = 0;
+    phase = &work->phase;
   cycle:
     {
       s32 red = Trig_Sin(((*phase >> 1) + i) << 11) * 8;
@@ -120,12 +120,12 @@ void Func_080e807c(void) {
         timer = mote->timer;
       }
       if (timer >= 0) {
+        timer = mote->timer;
         sprite->oam.index = work->tile + ((timer >> 2) & 3) * 4;
         pos[0] = object->x + mote->x;
         pos[1] = object->y + mote->y;
         pos[2] = object->z + mote->z;
         Func_080eb298(sprite, pos);
-        timer = mote->timer;
       }
       if ((mote->timer = timer + 1) == 16)
         mote->timer = 0;

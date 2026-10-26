@@ -1,10 +1,16 @@
-// Draft, differ 34 of 122: a marker of type 288 at (x, y) blends in over 8
-// frames and out over 16 inside an event with cue 106, then its 1 by 2
-// cells are copied from (65, 1) to the marked place, the cell's kind is
-// set to 0xff00 and the marker removed. The same listing as overlay 692's
-// Func_020026a4. Left: the native splits its literal pool across the fades
-// (pc offsets), keeps the cell arguments' order and loads the first blend
-// value later.
+// Draft, differ 4 of 122 (was 18): a marker of type 288 at (x, y) blends in
+// over 8 frames and out over 16 inside an event with cue 106, then its 1 by 2
+// cells are copied from (65, 1) to the marked place, the cell's kind is set to
+// 0xff00 and the marker removed. The same listing as overlay 692's
+// Func_020026a4. Measured: each fade steps its counter after the wait (sched2
+// lifts the step above the call, as the native has it; 18 to 14), and the cell
+// copy forwarded through an inline gives its two stack arguments their own
+// registers (14 to 4). Left: after the REG_WINOUT and REG_BLDCNT stores the
+// native builds REG_DISPCNT's address only after the store, where this draft
+// starts it before. Tried: a one-pass block around either store, as Anemos
+// Inner Sanctum's Func_020019a8 has (the WINOUT one moves the literal pool, 16;
+// the BLDCNT one 6), an empty asm after the WINOUT store (16), both statements
+// in one block (20), 10 minutes of alchemy permute.
 #include "types.h"
 #include "object_runtime.h"
 #include "field_sprite.h"
@@ -23,6 +29,11 @@ void Func_02005d9c(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                    s32 height);
 void Func_0200062c(s32 layer, s32 x, s32 z, s32 cell);
 void Func_02005d7c(struct ObjectRuntime *object);
+
+static inline void CopyCells(s32 srcX, s32 srcY, s32 destX, s32 destY,
+                             s32 width, s32 height) {
+  Func_02005d9c(srcX, srcY, destX, destY, width, height);
+}
 
 void Func_02003b7c(s32 x, s32 y) {
   struct ObjectRuntime *marker;
@@ -44,20 +55,20 @@ void Func_02003b7c(s32 x, s32 y) {
   i = 0;
 fadeIn:
   REG_BLDALPHA = (i << 9) | 16;
-  i++;
   WaitFrames(1);
+  i++;
   if (i != 8)
     goto fadeIn;
   i = 0;
 fadeOut:
   REG_BLDALPHA = (16 - i) | 0x1000;
-  i++;
   WaitFrames(1);
+  i++;
   if (i != 16)
     goto fadeOut;
   cellX = x >> 4;
   cellY = (y >> 4) - 1;
-  Func_02005d9c(65, 1, cellX + 64, cellY, 1, 2);
+  CopyCells(65, 1, cellX + 64, cellY, 1, 2);
   Func_0200062c(0, cellX, cellY, 0xff00);
   Func_02005d7c(marker);
   Func_02005e1c();

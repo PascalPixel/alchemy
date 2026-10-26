@@ -1,4 +1,6 @@
-// Draft, differ 44 of 180 (100 before, 2026-10-25), ported from The Broken
+// Draft, differ 26 of 180 (44 before; 2026-10-26: the enemies as s16, a trial:
+// the native reads the group with ldrh, but the signed read gives the pick
+// loop the native's registers; as u16, 44) (100 before, 2026-10-25), ported from The Broken
 // Seal's Encounter_CountStepsAndSelectFormation
 // (games/tbs/src/overworld/overworld/encounter.c); this game drops the
 // Jenna experience check, reads the cloak byte at 0x26d and the encounter
@@ -18,7 +20,7 @@
 struct EncounterZone {
   u16 rate;
   u16 level;
-  u16 enemies[8];
+  s16 enemies[8];
   u8 weights[8];
 };
 

@@ -1,4 +1,7 @@
-// Draft, differ 149 of 863 (864 here): Func_08166b10, the body of two effect
+// Draft, differ 48 of 863 (863 here; 2026-10-26: 91 before the column blits
+// were reordered as the listing has them, the second, lower one first, with
+// the sheet local before the blitter, 91 to 52; BattleEffect_LoadBlitter
+// returns s32, as nibble_pair.c defines it, 52 to 48): Func_08166b10, the body of two effect
 // kinds (series_h.c's BattleEffect_RunTitanBlade and BattleEffect_RunAcheronsGrief pass modes 0 and 1),
 // The Broken Seal's BattleEffect_RunTitanBlade.
 
@@ -69,7 +72,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
                                                 // 7, 7, flags, mode)
 void Func_0815f0a0(s32 resourceId); // BattleEffect_StepPaletteToResource
 void Func_0815b634(void);
@@ -298,13 +301,13 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
       s32 phase = frame * 16;
       s32 x = centerX - 17;
       s32 width = 34;
-      DrawRectangle blit = draw[0];
       u8 *src = work->sheet;
+      DrawRectangle blit = draw[0];
       s32 high = 104;
       s32 size = (phase - 256) % high;
 
-      blit(canvas, src, x, 4 - size, width, high);
       blit(canvas, src, x, 108 - size, width, size);
+      blit(canvas, src, x, 4 - size, width, high);
     }
 
     // The dust grows as it falls and toward the end.

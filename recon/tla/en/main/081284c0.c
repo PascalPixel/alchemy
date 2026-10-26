@@ -1,16 +1,16 @@
-// Draft, differ 41 of 308 (draft 307): the battle's spoils. Reports the
+// Draft, differ 21 of 308 (draft 307): the battle's spoils. Reports the
 // experience, gives it to each living member (and half of it to the members
 // Func_0811a24c adds, who did not fight), reports each level gained with its
 // new psynergy and stat rises, then the coins and the dropped items, best
 // first, keeping one that does not fit in Data_0200049c. ☀️'s Battle_AwardSpoils
 // in games/tbs/src/battle/battle.c, rewritten from the listing with ⚓️'s calls
 // (Unit_Get, UiText_DrawQuantity, Func_080ad0b0 for the level-up check) and
-// numbered messages. Other: the listing's frame is 4 bytes larger (64 against
-// 60), with 4 bytes between the unit list (sp+28) and the gains (sp+48) that no
-// local here explains, so the gains' address takes movs and add there and one
-// add here; the spill slots of the member count and the list pointer swap
-// (sp+12 and sp+16); the rest is a few moves out of order and the pool offsets
-// that follow.
+// numbered messages. Left (differ 21 of 308, all from one row): the native
+// builds the gains' address before the member loop as movs r2, #48; add r2,
+// sp, where this draft takes add r2, sp, #48, one instruction fewer, so every
+// pool offset after it is 4 short. The unit list is ten halfwords (the
+// frame's 64 bytes), and list declared before count gives their spill slots.
+// Tried: gains first, gains inside the member loop (23).
 #include "types.h"
 #include "mem.h"
 #include "iwram_call.h"
@@ -50,8 +50,8 @@ s32 PartyInventory_AddFar(s32 item);
 void Battle_AwardSpoils(void) {
   struct BattleSpoils *spoils;
   s32 living;
-  s32 count;
   u16 *list;
+  s32 count;
   s32 i;
   s32 unitId;
   struct BattleUnit *unit;
@@ -65,7 +65,7 @@ void Battle_AwardSpoils(void) {
   u16 *found;
   s32 value;
   s16 gains[8];
-  u16 units[8];
+  u16 units[10];
 
   spoils = (struct BattleSpoils *)((u8 *)Ram_HeapSlots->battleWork + 0x550);
   if (spoils->experience != 0) {

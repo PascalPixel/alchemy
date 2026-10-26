@@ -1,5 +1,5 @@
-// Draft, differ 49 of 197: overlay 6a4's copy of the function drafted in
-// resource_698_c_020005e4.c (overlay 698's Func_020005e4, differ 49 there), whose
+// Draft, differ 16 of 197: overlay 6a4's copy of the function drafted in
+// resource_698_c_020005e4.c (overlay 698's Func_020005e4, differ 16 there), whose
 // header says what it is, what still differs and what was tried.
 #include "types.h"
 #include "ram_buffer.h"
@@ -61,7 +61,10 @@ void Func_02000b48(struct ObjectRuntime *self) {
           leader->angle = self->angle;
           leader->linkedObject = self;
           leader->priorityFlags &= ~1;
-          *(u16 *)(work + 362) = 200;
+          {
+            s32 delay = 200;
+            *(u16 *)(work + 362) = delay;
+          }
           gPartyState.renderMode = 0;
           *((u8 *)self + 0x62) = 1;
           *((u8 *)self + 0x63) = 1;
@@ -73,8 +76,8 @@ void Func_02000b48(struct ObjectRuntime *self) {
     }
   }
 stop:
-  *((u8 *)self + 0x63) = 0;
   self->update = 0;
+  *((u8 *)self + 0x63) = 0;
   Func_02002a00(self, gData_0200331c);
   Func_02002b68(228);
   gData_0200333c = 0;

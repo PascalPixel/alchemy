@@ -1,9 +1,8 @@
-// Draft, differ 38 of 237: ☀️'s Object_SetMoveTarget (games/tbs/src/field/
-// field.c) on The Lost Age's object. Left: the distance takes r4 and is
-// spilled across the calls where the native keeps it in r5 (most rows), and
-// the first x load comes a row early. Measured: the braking ratio in its own
-// variable (51 sharing distance); the final y difference in its own variable
-// (49).
+// Draft, differ 4 of 237 (38 before, 2026-10-26): the y differences of the
+// sub-pixel measure and of the arrival axis in dy, their own variable, so
+// distance keeps r5 across the calls as in the native (38 to 4). Left: the
+// first x load is issued before object's copy into r10; no single device
+// and six permuter minutes move it.
 #include "types.h"
 #include "object_runtime.h"
 #include "iwram_call.h"
@@ -16,19 +15,20 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
   s32 distance;
   s32 dz;
   s32 squaredZ;
+  s32 dy;
   u8 *arrivalAxis;
 
   dx = (x - object->x) / 0x10000;
-  distance = (y - object->y) / 0x10000;
+  dy = (y - object->y) / 0x10000;
   dz = (z - object->z) / 0x10000;
   squaredZ = dz * dz;
-  distance = Iwram_Sqrt(dx * dx + distance * distance + squaredZ) << 16;
+  distance = Iwram_Sqrt(dx * dx + dy * dy + squaredZ) << 16;
   if (distance < 0x100000) {
     dx = x - object->x;
-    distance = y - object->y;
+    dy = y - object->y;
     dz = z - object->z;
     distance =
-        FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(distance, distance) +
+        FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) +
                   Iwram_MulQ16(dz, dz));
   }
   if (distance < 0x10000) {
@@ -60,7 +60,7 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
   object->targetY = y;
   object->targetZ = z;
   dx = x - object->x;
-  distance = y - object->y;
+  dy = y - object->y;
   dz = z - object->z;
   arrivalAxis = &object->unk56;
   *arrivalAxis = 16;
@@ -71,7 +71,7 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
   if (object->motionFlags == 0) {
     if (dx < 0)
       dx = -dx;
-    if (dx < (distance < 0 ? -distance : distance))
+    if (dx < (dy < 0 ? -dy : dy))
       *arrivalAxis = 17;
   }
 }

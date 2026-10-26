@@ -1,4 +1,6 @@
-// Draft, differ 801 of 1647: battle target selection, The Broken Seal's
+// Draft, differ 650 of 1647 (777 before; 2026-10-26: the selected position and
+// the candidate count declared earlier, the target count later, the eased
+// track x stored first): battle target selection, The Broken Seal's
 // BattleTarget_RunSelection (games/tbs/src/window/screens/targets.c) on this
 // game's work and messages. The modes are numbered differently (2 the
 // party, 4 the acting unit alone, 1 the enemies, whose downed ones a link
@@ -147,27 +149,27 @@ void Resource_ResetEntry(s32 slot);
   ((x) / 8 + (width) > 29 ? (last) : (x) / 8 - (back))
 
 s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
+  struct TargetPoint selectedPosition;
   u16 candidateIds[8];
   struct TargetSprite cursorSprites[6];
   struct TargetTrack cursorTracks[6];
   struct TargetPoint actorPosition;
   u16 spreadActorIds[14];
   u8 spreadTrackIndices[8];
-  struct TargetPoint selectedPosition;
   u16 targetName[15];
   struct TargetPoint namePosition;
   struct TargetPoint markerPosition;
   struct TargetAffine effect;
   struct TargetBattle *battle;
-  s32 targetCount;
   s32 redraw;
+  s32 targetCount;
+  s32 candidateCount;
   s32 cursorSlot;
   /* FAKEMATCH(pin): the condition window in r9, where the native keeps it, as
    * The Broken Seal's; as an ordinary local it is spilled and 952 of 1647
    * instructions differ in tla-en (937 with the pin). */
   register struct TargetWindow *conditionWindow asm("r9");
   s32 targetIndex;
-  s32 candidateCount;
   s32 drawCursors;
   s32 matrix;
   s32 found;
@@ -302,9 +304,9 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
                ? -(selectedPosition.x - cursorX)
                : selectedPosition.x - cursorX) <= 7)
         drawCursors = 1;
+      cursorTracks[0].x = cursorX;
       selectedPosition.x = cursorX;
       selectedPosition.y = cursorY;
-      cursorTracks[0].x = cursorX;
       cursorTracks[0].y = cursorY;
     } else if (cursorTracks[0].flags <= 3) {
       selectedPosition.y = y;

@@ -21,8 +21,12 @@ struct InputState {
    * and Menu_SelectionLoop: 15. The six tbs editions build the same bytes
    * without it: no tbs code reads gInput. */
   volatile u32 repeat;
-  u32 direction;
-  u32 previousDirection;
+  /* FAKEMATCH(volatile): direction and previousDirection read afresh at each
+   * use, as The Broken Seal's gKeysRepeatDirected and gKeysDirection are
+   * declared; as plain u32, Input_UpdateKeyRepeatAndDirection: 74 of 113
+   * instructions differ in tla-en. */
+  volatile u32 direction;
+  volatile u32 previousDirection;
   u32 previousHeld;
   u32 pendingPressed;
   s32 repeatTimer;

@@ -27,6 +27,10 @@
 // speed += 32 after the y store                              82 (count right)
 // the masked speed in its own local before the store         106
 // speed = 0x3ff; speed &= Random16(), as the twin            113
+// the plain arm as masked = Random16() & 0x3ff; mote->y = ...;
+// speed = masked + 32, which gives the native's copy before the y store
+// and the add after it, every pc offset and branch right, but rotates
+// the scratch registers of the loop and the code after it         96
 
 #include "types.h"
 #include "ram_buffer.h"

@@ -1964,8 +1964,6 @@ MenuIcon_UpdateTransforms:
 	.thumb_func
 Func_081051a8:
 	.incbin "baserom.gba", 0x00107300, 0x000000c4
-	.section .rom.00107500, "ax"
-	.incbin "baserom.gba", 0x00107500, 0x000000c0
 	.section .rom.00107638, "ax"
 	.incbin "baserom.gba", 0x00107638, 0x000000a0
 	.section .rom.00108b70, "ax"

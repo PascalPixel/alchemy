@@ -1,3 +1,4 @@
+// Draft, differ 72 (74 before statements reordered 2026-10-26).
 // Draft, differ 76 of 208 (2026-10-18; was 239), ported from ☀️'s
 // BattleEffect_SpawnBurstParticleField: ⚓️ spawns object 672, its sprite's
 // second part sits 28 bytes in (☀️: 12), the target goes through
@@ -102,11 +103,11 @@ void Func_080ddbd8(void) {
       Object_SetMode(obj, 7);
       ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
                                    gBattleEffect_CommonParticleScript + 1);
-      ObjectDispatch_SetSingleChildFlagsFar(obj, 1);
 
       pos[0] = work->x;
       pos[1] = work->y;
       pos[2] = work->z;
+      ObjectDispatch_SetSingleChildFlagsFar(obj, 1);
       if ((u16)work->angle == 0xc000)
         Vector_AddPolarOffset(0xe0000, (u16)work->angle, pos);
       dist = Random16() * 6 + 0x40000;

@@ -1,4 +1,4 @@
-// Draft, differ 363 of 319 (2026-10-25): the heap slot 0xa0 work's twin of
+// Draft, differ 306 (363 before statements reordered 2026-10-26) of 319 (2026-10-25): the heap slot 0xa0 work's twin of
 // Func_080d9498, which Func_080da334 calls: stretches slot `index`'s chain
 // between (x, y, z) and the target point for twice its segment count of frames,
 // one segment per 6 units of the distance plus one. The last node rides the
@@ -19,11 +19,11 @@ void WaitFrames(s32 frames);
 s32 Func_080da3bc(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   struct WorkA0 *work = WORK_A0;
   s32 dx = toX - x;
-  s32 dy = toY - y;
   s32 dz = toZ - z;
+  s32 shiftedZ = dz >> 8;
+  s32 dy = toY - y;
   s32 shiftedX = dx >> 8;
   s32 shiftedY = dy >> 8;
-  s32 shiftedZ = dz >> 8;
   s32 segments = Iwram_SqrtEntry(Iwram_MulQ16(shiftedX, shiftedX) +
                                  Iwram_MulQ16(shiftedY, shiftedY) +
                                  Iwram_MulQ16(shiftedZ, shiftedZ)) /
@@ -63,9 +63,9 @@ s32 Func_080da3bc(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
         node->y = lastY = y + dy * frame / 2 / i + offset;
         node->z = lastZ = z + dz * frame / 2 / i;
       } else {
-        s32 ex = (lastX - node->x) >> 8;
         s32 ey = (lastY - node->y) >> 8;
         s32 ez = (lastZ - node->z) >> 8;
+        s32 ex = (lastX - node->x) >> 8;
         s32 distance = Iwram_SqrtEntry(
             Iwram_MulQ16(ex, ex) + Iwram_MulQ16(ey, ey) + Iwram_MulQ16(ez, ez));
 

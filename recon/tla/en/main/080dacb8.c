@@ -1,3 +1,4 @@
+// Draft, differ 36 (74 before statements reordered 2026-10-26).
 // Draft, differ 80 of 178, first pass (2026-10-15). The per-frame routine
 // Func_080da9a8 schedules second: for each of the eight chains in the heap-
 // offset-164 work (worka0.h's WorkA4 slots), advance its phase and hang its
@@ -43,11 +44,11 @@ void Func_080dacb8(void) {
   struct ChainWork *work = CHAIN_WORK;
   struct ChainSlot *slot;
   struct ObjectRuntime *leader;
+  s32 x, y, z;
   struct ChainLink *link;
   s32 i;
   s32 target;
   s32 phase;
-  s32 x, y, z;
   s32 swing;
   s32 sway;
   s32 radius;
@@ -88,8 +89,8 @@ void Func_080dacb8(void) {
       sway += swing;
       link->y = y - Iwram_MulQ16(Trig_Cos(angle), radius);
       link->z = z;
-      phase += 800;
       link = link->next;
+      phase += 800;
     }
 
     // Ease the swing towards the target.

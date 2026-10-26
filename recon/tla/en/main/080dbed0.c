@@ -1,4 +1,4 @@
-// Near miss, differ 28 of 91 (2026-10-18; 40 before), Func_080dbf94's mirror:
+// Near miss, differ 20 (28 before statements reordered 2026-10-26) of 91 (2026-10-18; 40 before), Func_080dbf94's mirror:
 // moves the object from 16 pixels above the effect's main object to (x, y,
 // z), growing it from 0.25. The products written (x - start) * i and scaleX
 // stored first took it from 40. Left: the frame opens after mov r9, r3 in
@@ -39,10 +39,10 @@ void Func_080dbed0(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
 
   if (scene->mode != 0xc000)
     ObjectDispatch_SetSpritePriorityFar(object, 0);
+  scale = 0;
   start[0] = mainObject->x;
   start[1] = mainObject->y + 0x100000;
   start[2] = mainObject->z;
-  scale = 0;
   do {
     object->x = start[0] + (x - start[0]) * i / 10;
     object->y = start[1] + (y - start[1]) * i / 10;

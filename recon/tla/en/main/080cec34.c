@@ -1,4 +1,4 @@
-// Draft, differ 150 of 241 (167 before, 2026-10-25), from the listing: spawns
+// Draft, differ 142 (150 before statements reordered 2026-10-26) of 241 (167 before, 2026-10-25), from the listing: spawns
 // the current scene's item objects (chests, jars, buried items) from the rows
 // Func_080ceba8 finds, at most 16. The loop is a for whose condition reads
 // the next row's type, as the native's test at its foot shows (its i > 15
@@ -65,8 +65,8 @@ void Func_080cec34(void) {
       else if (type == 131)
         kind = 489;
       else {
-        kind = 489;
         buried = 1;
+        kind = 489;
       }
       object = Func_080200c0(kind, position[0], position[1], position[2]);
       if (object != NULL) {
@@ -90,8 +90,8 @@ void Func_080cec34(void) {
             object->y = object->terrainHeight;
             map = Ram_HeapSlots->mapWork;
             cells = (struct MapCell *)gMapCellBuffer;
-            x = object->x >> 20;
             z = object->z >> 20;
+            x = object->x >> 20;
             if (map != NULL)
               cells = map->layers[0].cells;
             cell = &cells[x + (z << 7)];

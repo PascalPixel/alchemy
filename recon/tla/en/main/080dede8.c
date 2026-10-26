@@ -1,4 +1,4 @@
-// Near miss, differ 206 of 409 (2026-10-15): ⚓️'s FieldEffect_RunDouse, the
+// Near miss, differ 196 of 409 (206 before statements reordered 2026-10-26) (2026-10-15): ⚓️'s FieldEffect_RunDouse, the
 // form of ☀️'s: an orb grows from the target to the effect's point over
 // eleven frames, sheds falling motes (10 or 24) or drifting ones (10 or
 // 30), and shrinks back. The native's frame is 52 bytes, this one 56 (one
@@ -67,13 +67,13 @@ void FieldEffect_RunDouse(void) {
   struct Effect05State *work = Ram_HeapSlots->effectWork;
   struct ObjectRuntime *anchor = work->anchor;
   struct ObjectRuntime *target = work->target;
+  s32 count;
   struct ObjectRuntime *orb;
   s32 raised;
   struct EffectVector *from;
   struct EffectVector *to;
   s32 i;
   s32 steps = 11;
-  s32 count;
   s32 y;
   s32 n;
   struct ObjectRuntime *mote;
@@ -114,8 +114,8 @@ void FieldEffect_RunDouse(void) {
       struct EffectVector *b = &end;
       s32 e, t;
 
-      e = b->x;
       t = a->x;
+      e = b->x;
       t += (e - t) * i / 10;
       orb->x = t;
       e = b->y;

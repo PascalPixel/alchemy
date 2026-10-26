@@ -1,3 +1,4 @@
+// Draft, differ 177 (201 before statements reordered 2026-10-26).
 // Draft, differ 196 of 211 (2026-10-18), from the listing: reads the map's
 // entrance stream (gData_0202e000) for the current entrance, places the
 // party there unless flag 0x109 keeps its position, then sets the camera
@@ -22,16 +23,16 @@ s32 GameFlag_Test(s32 flag);
 
 s32 Func_080cc7c4(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  s32 entrance = gPartyState.entrance;
   u8 *cursor = gData_0202e000;
+  s32 entrance = gPartyState.entrance;
   s32 height;
   s32 x;
   s32 z;
   s32 flags;
   s32 left;
   s32 top;
-  s32 right;
   s32 bottom;
+  s32 right;
 
   cursor = gData_0202e000 + (u16)Stream_ReadU16(&cursor);
   for (;; cursor += 6) {

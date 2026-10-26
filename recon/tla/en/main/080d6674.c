@@ -1,4 +1,4 @@
-// Draft, differ 157 of 167: Func_080d64f0's sibling for the same 64 ground
+// Draft, differ 153 (157 before statements reordered 2026-10-26) of 167: Func_080d64f0's sibling for the same 64 ground
 // particles with fixed sprites: each counts down its frame (held while flag
 // 358 is set), is drawn at its frame's offset (Data_080f0b50, pairs) with the
 // work's tile, shape 1 and size 2 when on screen, and when its count runs out
@@ -47,8 +47,8 @@ extern const s16 Data_080f0b50[];
 
 void Func_080d6674(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
-  struct GroundParticleWork *work = Ram_HeapSlots->unk70[1];
   s32 *origin = (s32 *)(map + 228);
+  struct GroundParticleWork *work = Ram_HeapSlots->unk70[1];
   s32 originX = origin[0];
   s32 originZ = origin[1];
   struct GroundParticle *particle = work->particles;

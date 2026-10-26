@@ -1,4 +1,4 @@
-// Draft, differ 144 of 228 (252 before, 2026-10-26). Turns an object into a
+// Draft, differ 138 (144 before statements reordered 2026-10-26) of 228 (252 before, 2026-10-26). Turns an object into a
 // chain of links hanging from its cell: starts the chain work
 // (Func_080da9a8) if none is running, takes a chain slot for the object
 // (none if it already has one, or none is free), clears the tile flags of
@@ -105,18 +105,18 @@ void Func_080daecc(s32 objectId, s32 grow) {
 
   x = (object->x & CELL_MASK) + (8 << 16);
   y = object->y & CELL_MASK;
-  top = y + (8 << 16);
   z = (object->z & CELL_MASK) + (16 << 16);
   Object_SetMode((struct ObjectRuntime *)object, 0);
   object->motionFlags = 0;
+  top = y + (8 << 16);
   object->collisionFlags = 0;
   object->z += 16 << 16;
   object->y -= 64 << 16;
   ObjectDispatch_SetSingleChildFlagsFar(object, 0);
 
   // Hang the links.
-  tail = &slot->root;
   last = 6;
+  tail = &slot->root;
   y += 15 << 16;
   for (i = 0; i <= last && (link = Func_080daea8()) != 0; i++) {
     link->x = x;

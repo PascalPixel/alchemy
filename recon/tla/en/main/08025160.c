@@ -1,4 +1,4 @@
-// Draft, differ 378 of 345: logic in place (the region push decoded from
+// Draft, differ 332 (378 before statements reordered 2026-10-26) of 345: logic in place (the region push decoded from
 // the listing), allocation far: the native spills the camera object to sp+4
 // and keeps x, y and z in r10, r11 and r9 with an 8-byte frame; here x and z
 // take r8 and r10 and the frame is 12 bytes.
@@ -44,11 +44,11 @@ s32 Func_08025160(struct ObjectRuntime *cameraObject) {
   cameraObject->motionFlags = 0;
   if (leader != NULL && leader->script != NULL) {
     x = leader->x;
-    y = leader->y;
     z = leader->z;
     cameraObject->targetX = TARGET_UNSET;
     cameraObject->targetY = TARGET_UNSET;
     cameraObject->targetZ = TARGET_UNSET;
+    y = leader->y;
     if (x < minX)
       x = minX;
     if (z < minZ)
@@ -62,8 +62,8 @@ s32 Func_08025160(struct ObjectRuntime *cameraObject) {
       while (region[0] != -1) {
         minX = (region[0] << 16) - 0x780000;
         minZ = (region[1] << 16) + leader->y - 0x400000;
-        maxX = (region[2] << 16) + 0x780000;
         maxZ = (region[3] << 16) + leader->y + 0x600000;
+        maxX = (region[2] << 16) + 0x780000;
         if (x >= minX && z >= minZ && x <= maxX && z <= maxZ) {
           nearX = minX;
           if (DISTANCE(minX, x) > DISTANCE(maxX, x))

@@ -1,3 +1,4 @@
+// Draft, differ 33 (48 before statements reordered 2026-10-26).
 // Draft, differ 50 of 99: reserves a glyph sprite for the window as
 // Func_0803c068 does, without drawing a glyph, and returns the address of its
 // tiles in OBJ VRAM for the caller to fill. The 128-byte frame is the unused
@@ -36,12 +37,12 @@ void *Func_0803c198(struct UiWindow *window, s32 character, s32 x, s32 y) {
   index = (output - work->outputs) * 4;
   output->active = 1;
   output->kind = 0;
+  sprite = (struct GlyphSprite *)output->unk10;
   vram = (void *)(0x06010000 + (work->glyphTiles + index) * 32);
   ((u16 *)&output->oam)[0] = y + (spacingY >> 1) + window->y * 8 - 2;
   ((u16 *)&output->oam)[1] =
       (x + (spacingX >> 1) + window->x * 8 + 2) | 0x4000;
   ((u16 *)&output->oam)[2] = work->glyphTiles + index;
-  sprite = (struct GlyphSprite *)output->unk10;
   output->sentinel = 253;
   output->x = sprite->x;
   output->y = sprite->y;

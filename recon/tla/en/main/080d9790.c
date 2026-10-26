@@ -1,4 +1,4 @@
-// Draft, differ 227 of 225 (2026-10-24): grows a slot's chain of nodes (heap
+// Draft, differ 213 (227 before statements reordered 2026-10-26) of 225 (2026-10-24): grows a slot's chain of nodes (heap
 // slot 0x9c work) out from (x, y, z) a node a frame. It clears the slot's
 // active halfword and its flag, copies the node list into a 0x200-byte
 // buffer, puts both ends in mode 3, waits 4 frames, then each frame lays the
@@ -53,13 +53,13 @@ s32 Func_080d9790(s32 index, s32 x, s32 y, s32 z) {
   struct ChainWork *work = Ram_HeapSlots->unk84[6];
   struct ChainSlot *slot = &work->slots[index];
   struct ChainNode *node = slot->head;
-  struct ChainNode **nodes;
   struct ChainNode **cursor;
   s32 segments;
   s32 frame;
   s32 i;
   s32 angle;
   s32 radius;
+  struct ChainNode **nodes;
   s32 lastX;
   s32 lastY;
   s32 lastZ;

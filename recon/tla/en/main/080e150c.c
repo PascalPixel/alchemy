@@ -1,4 +1,4 @@
-// Draft, differ 111 of 112: register allocation differs throughout. The
+// Draft, differ 103 of 112 (111 before statements reordered 2026-10-26): register allocation differs throughout. The
 // native keeps the position array's address in r7 and the group counter
 // on the stack, computes each group's sprites as group * 80 inside the loop
 // and spills the inner counter around every call (r2 via sp 0); this keeps
@@ -40,10 +40,10 @@ s32 BattleEffect_GetObjectDepth(struct ObjectRuntime *object);
 void Func_080eb01c(struct ArcSprite *sprite);
 
 void BattleEffect_UpdateArcEffect(void) {
+  s32 group;
   struct ArcWork *work = Ram_HeapSlots->block62;
   struct ObjectRuntime *target = work->target;
   s32 position[3];
-  s32 group;
   s32 i;
 
   for (group = 0; group < 2; group++) {

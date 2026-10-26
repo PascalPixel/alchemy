@@ -1,3 +1,4 @@
+// Draft, differ 96 (246 before statements reordered 2026-10-26).
 // Near miss, differ 250 of 376 (2026-10-18), first pass: The Broken Seal's
 // Map_InitializePerspectiveScene on this game's map work (0x978 bytes, heap
 // slot offset 32) and frame work (offset 28), with the world map's update
@@ -109,13 +110,13 @@ void Func_0802b998(void) {
   distance = (s32 *)(perspective + 0x960);
   *distance = farPlane;
   *(s32 *)(perspective + 0x964) = 0x10000;
+  cameraPosition = (s32 *)(camera + 12);
   *(u16 *)(perspective + 0x968) = 0;
   *(s32 *)(camera + 24) = 0;
   *(s32 *)(camera + 28) = 0;
   gCameraSceneParameters[3] = 120;
   gCameraSceneParameters[4] = 96;
   Projection_Set(farPlane, farPlane >> 1, farPlane << 1);
-  cameraPosition = (s32 *)(camera + 12);
   cameraPosition[0] = 0;
   cameraPosition[1] = 0;
   cameraPosition[2] = 0;
@@ -124,10 +125,10 @@ void Func_0802b998(void) {
   yaw = (u16 *)(perspective + 0x11e);
   SceneTransform_ApplyYaw(*yaw);
   pitch = (u16 *)(perspective + 0x11c);
-  SceneTransform_ApplyPitch(*pitch);
   eyeOffset.x = 0;
   eyeOffset.y = 0;
   eyeOffset.z = farPlane;
+  SceneTransform_ApplyPitch(*pitch);
   Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   Render_ResetTransformState();
   Transform_SetLookAt((s32 *)camera, cameraPosition);

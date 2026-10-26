@@ -1,3 +1,4 @@
+// Draft, differ 50 (52 before statements reordered 2026-10-26).
 // Near miss, differ 66 of 143: draws heading picture `heading` of resource
 // 0x26 (Ui_Headings in the directory; ResourceId_Headings is not defined
 // yet) into a 26x5-cell window and opens the window from the centre. The
@@ -22,8 +23,8 @@ void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 amount);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 
 void Func_080d1f20(s32 heading) {
-  s32 *headings = Resource_GetTableEntry((s32)&ResourceId_Headings);
   s16 tile = 16;
+  s32 *headings = Resource_GetTableEntry((s32)&ResourceId_Headings);
   u8 *tiles;
   u16 *cell;
   u32 row, column;

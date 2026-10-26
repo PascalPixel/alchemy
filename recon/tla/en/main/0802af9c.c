@@ -1,4 +1,4 @@
-// Near miss, differ 170 of 238 (2026-10-18), first pass: The Broken Seal's
+// Near miss, differ 133 (170 before statements reordered 2026-10-26) of 238 (2026-10-18), first pass: The Broken Seal's
 // Map_SetCameraCenter for this game's layers: no phase masks, and the layer
 // window (masks and origins at layer +40 to +46) of the renderers 0802abbc
 // and 0802ac90; it draws 11 block rows. Left: the frame slots (the work at
@@ -22,9 +22,9 @@ struct MapLayerWindow {
 };
 
 void Func_0802af9c(s32 x, s32 y) {
+  u32 layerIndex;
   struct MapWork *work = Ram_HeapSlots->mapWork;
   struct MapLayerWindow *layer = (struct MapLayerWindow *)work->layers;
-  u32 layerIndex;
 
   x -= 0x780000;
   y -= 0x600000;
@@ -65,12 +65,12 @@ void Func_0802af9c(s32 x, s32 y) {
       y += layer->offsetY;
       x /= 0x80000;
       y /= 0x80000;
-      screenMap = (u8 *)0x06002800 + (layerIndex << 11);
       maskY = layer->maskY;
       maskX = layer->maskX;
       originX = layer->originX;
       originY = layer->originY;
       cells = (u32 *)Ram_MapCellBuffer;
+      screenMap = (u8 *)0x06002800 + (layerIndex << 11);
       if (maskX != 0x7f)
         cells = (u32 *)Ram_MapCellBuffer + originX;
       if (maskY != 0x3f80)
@@ -94,10 +94,10 @@ void Func_0802af9c(s32 x, s32 y) {
 
           *(u32 *)screenTile = *(u32 *)((u8 *)0x02020000 + metatileOffset);
           sourceColumn++;
+          sourceColumn &= maskX;
           *(u32 *)(screenTile + 64) =
               *(u32 *)((u8 *)0x02020004 + metatileOffset);
           screenColumnOffset += 2;
-          sourceColumn &= maskX;
           screenColumnOffset &= 30;
         }
         sourceRow = (sourceRow + 128) & maskY;

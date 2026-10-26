@@ -1,3 +1,4 @@
+// Draft, differ 106 (121 before statements reordered 2026-10-26).
 // Near miss, differ 125 of 219 (146 before gPartyState's byte pointer was
 // taken just before the coins, where the native loads it, 2026-10-25), written from the listing: takes
 // over a The Broken Seal save (`save`, laid out as that game's: flag bits at
@@ -40,9 +41,9 @@ struct SavedUnit {
 extern const u16 Data_080b1284[6];
 
 void Func_080ae410(u8 *save, s32 keepSettings) {
-  struct SavedUnit *units = (struct SavedUnit *)(save + 0x520);
-  u8 *party = save + 0x240;
   u8 *flags = save + 0x40;
+  u8 *party = save + 0x240;
+  struct SavedUnit *units = (struct SavedUnit *)(save + 0x520);
   u8 *state;
   u8 name[16];
   s32 i;

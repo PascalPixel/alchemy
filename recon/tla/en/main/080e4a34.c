@@ -1,3 +1,4 @@
+// Draft, differ 86 (104 before statements reordered 2026-10-26).
 // Draft, differ 118 of 387: the sibling of Func_080e4730, in the same heap slot
 // 0x5c work (0x192c bytes), run only when the owner's animation is kind
 // 0x2020. The other objects of the owner's group pause; whether the owner
@@ -66,10 +67,10 @@ void Func_080e4a34(void) {
   u8 *event = Ram_HeapSlots->eventWork;
   struct ObjectRuntime *owner = *(struct ObjectRuntime **)(effect + 16);
   s32 savedY = owner->y;
-  u8 *motionFlags = &owner->motionFlags;
-  u8 savedFlags = *motionFlags;
   s32 particleEntry;
   s32 particleTiles;
+  u8 *motionFlags = &owner->motionFlags;
+  u8 savedFlags = *motionFlags;
   s32 pictureEntry;
   s32 pictureTiles;
   u8 *sprite;
@@ -128,8 +129,8 @@ void Func_080e4a34(void) {
     ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->unk4c[2])(
         work + 0x400, 32, 32, (u8 *)0x06010000 + pictureTiles * 32);
     Func_080e45a0(work + 0x1900);
-    sprite = work + 0x800;
     particle = work + 0x1200;
+    sprite = work + 0x800;
     for (i = 0; i <= 32; i++) {
       Func_080e46ac(sprite, particle, i, particleTiles);
       sprite += 40;

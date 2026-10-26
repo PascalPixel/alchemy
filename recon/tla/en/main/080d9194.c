@@ -1,4 +1,4 @@
-// Near miss, differ 34 of 126: builds a slot's chain of nodes for the heap
+// Near miss, differ 18 (34 before statements reordered 2026-10-26) of 126: builds a slot's chain of nodes for the heap
 // slot 0x9c work, one node for each 6 units of the distance between two
 // points, laid out as a flat spiral around the first point. Func_080d9104
 // calls it with two objects' positions; Func_080d8ff8 later moves the nodes
@@ -47,8 +47,8 @@ s32 Func_080d9194(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   s32 segments = length / 6 + 1;
   struct ChainSlot *slot = &work->slots[index];
   struct ChainNode **link = &slot->head;
-  s32 radius = 0x40000;
   s32 angle = 0;
+  s32 radius = 0x40000;
   s32 i;
 
   slot->segments = segments;
@@ -64,11 +64,11 @@ s32 Func_080d9194(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
     node->y = y;
     node->z = z + Iwram_MulQ16(Trig_Sin(angle), radius);
     node->visible = 2;
-    *link = node;
     step = ArcTan2(0x60000, radius);
+    *link = node;
     angle += step;
-    radius += step * 4;
     link = &node->next;
+    radius += step * 4;
   }
   *link = NULL;
   return result;

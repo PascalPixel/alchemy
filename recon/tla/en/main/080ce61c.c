@@ -1,3 +1,4 @@
+// Draft, differ 199 (231 before statements reordered 2026-10-26).
 // Draft, differ 243 of 543: uses Psynergy on the field, this game's form of
 // ☀️'s Field_UsePsynergy (games/tbs/src/overworld/overworld/psynergy.c).
 // code holds the Psynergy (bits 0 to 9), its user (10 to 13, 15 for the
@@ -71,12 +72,12 @@ void BattleEffect_CleanupSceneObjects(void);
    UiText_ShowPositionedMessageAndWaitFar((s32)&(message), 1))
 
 s32 Func_080ce61c(u32 code) {
-  s32 abilityId = code & 0x3ff;
   u8 *event = Ram_HeapSlots->eventWork;
+  s32 abilityId = code & 0x3ff;
+  struct PendingEvent *before;
   s32 group = BattleAction_Get(abilityId)->group;
   s32 userId = (code >> 10) & 15;
   s32 retreat = 0;
-  struct PendingEvent *before;
   struct PendingEvent *after;
   struct PendingEvent *during;
   struct PendingEvent *pending;

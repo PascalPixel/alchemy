@@ -1,4 +1,4 @@
-// Draft, differ 179 of 463: The Broken Seal twin (Field_TryJumpForward), with
+// Draft, differ 167 of 463 (179 before statements reordered 2026-10-26): The Broken Seal twin (Field_TryJumpForward), with
 // this game's checks: the leader jumps two tiles forward, over the tile in front, when
 // it faces a quarter turn, the map allows it (Func_080d4ccc and the step
 // check) or a platform object (flag 0x80) waits 16 pixels below the landing,
@@ -51,11 +51,11 @@ s32 GetMapCellCollisionFar(s32 layer, s32 x, s32 z);
 
 s32 Func_080d4d08(void) {
   struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
-  s32 result = -1;
-  s32 angle = leader->angle;
   u8 *flags = &leader->motionFlags;
+  s32 result = -1;
   u8 saved = *flags;
   struct JumpEventWork *work = Ram_HeapSlots->eventWork;
+  s32 angle = leader->angle;
   s16 spriteFlags = 1;
   s32 position[3];
   struct ObjectRuntime *entry;

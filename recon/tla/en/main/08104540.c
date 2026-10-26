@@ -52,7 +52,7 @@ void UiWindow_SetTilemapEntryFar(struct UiWindow *window, s32 tile, s32 x,
                                  s32 y, s32 mode);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void MemFree(void *block);
-s32 OwnerAction_DiffSlots(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
+s32 Func_08101860(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
                           u16 *out, s32 *firstCount, s32 *secondCount);
 void Func_08103218(s32 window, s32 x, s32 y, s32 owner, s32 a, s32 b, s32 c,
                    s32 param, s32 d);
@@ -103,7 +103,7 @@ s32 Func_08104540(void) {
   listedActions = Runtime_BumpAllocateAlternatePool(96);
   saved = Runtime_BumpAllocateAlternatePool(332);
   unit = Unit_Get(menu->shownOwner[0]);
-  counts[1] = counts[0] = OwnerAction_DiffSlots(
+  counts[1] = counts[0] = Func_08101860(
       unit->actionSlots, unit->actionSlots, listedActions, &gained, &lost);
   MemFree(saved);
   MemFree(listedActions);

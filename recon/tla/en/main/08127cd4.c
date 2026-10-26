@@ -4,16 +4,16 @@
 // level adjustment, or else, when flag 0x173 is clear and flag 46 set, its
 // base stats through Func_08127a0c, and sets the battle work's byte at 0x868
 // for enemies 101 to 103 while flag 0x173 is clear.
-// Near miss, differ 59 of 456 (2026-10-19, first draft). Left: the native
-// compares the enemy id with 101 (cmp r0, #101; blt) where this draft compares
-// with 100 (ble); spill-slot and scheduling order in the setup (the work's
-// summon count cleared after the level adjustment's slot, the record copied
-// to the stack before the loop's other setup); register choice in the
-// battle-type cases. Tried: the range test as one condition (68, folded to a
-// subtraction), with 100 written out (68), as a negated test (59). Kept:
-// freeSpriteSlots declared before enemyCount (108 to 76: their stack slots),
-// the range test nested through an s32 local (76 to 59). Six minutes of
-// permute: 55, only with a new temporary.
+// Near miss, differ 45 of 456. The enemy-id range is a switch on 101 to 103,
+// which gives the native's cmp r0, #101; blt (as a nested if it was
+// cmp r0, #100; ble). Left: spill-slot and scheduling order in the setup (the
+// work's summon count cleared after the level adjustment's slot, the record
+// copied to the stack before the loop's other setup); in the default case the
+// native counts the copies down in a copy of the count (adds r1, r3, #0)
+// where this draft counts the count's own register down, one instruction
+// fewer. Tried there: the count in a local first (45), a loop counting the
+// count down (67). Kept: freeSpriteSlots declared before enemyCount (their
+// stack slots).
 #include "types.h"
 #include "battle.h"
 #include "battle_calc.h"
@@ -211,9 +211,13 @@ assign_enemy:
       Func_08127a0c(memberOrEnemyIndex + 128);
     battle->unk868 = 0;
     enemyId = unit->enemyId;
-    if (enemyId <= 103) {
-      if (enemyId >= 101 && !GameFlag_Test(0x173))
+    switch (enemyId) {
+    case 101:
+    case 102:
+    case 103:
+      if (!GameFlag_Test(0x173))
         battle->unk868 = 1;
+      break;
     }
   }
   memberOrEnemyIndex++;

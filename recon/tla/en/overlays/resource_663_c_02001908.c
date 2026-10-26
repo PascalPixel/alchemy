@@ -1,12 +1,13 @@
-// Draft, differ 230 of 266: the update Func_02001b54 gives its shots, overlay
-// 664's Func_02000d48 with one more ending: it stops while the event work
-// is busy or the leader's movement is 5; it ends (cue 539, one of two end
-// scripts by its angle) on a cell of kind 212 or when it reaches any of
-// objects 8 to 63 (the event work's object table) that is live and not
-// where its launcher stands; the first time it reaches the leader with
-// flag 0x104 clear it carries the leader along; it moves 1.5 pixels a frame
-// along its angle, upward when its angle is 0xc000. Left: registers from the
-// start (the native keeps the shot in r6, gPartyState in r7 and the event
+// Draft, differ 226 of 266 (was 230): the update Func_02001b54 gives its
+// shots, overlay 664's Func_02000d48 with one more ending: it stops while the
+// event work is busy or the leader's movement is 5; it ends (cue 539, one of
+// two end scripts by its angle) on a cell of kind 212 or when it reaches any
+// of objects 8 to 63 (the event work's object table) that is live and not
+// where its launcher stands; the first time it reaches the leader with flag
+// 0x104 clear it carries the leader along; it moves 1.5 pixels a frame along
+// its angle, upward when its angle is 0xc000. The counter's 200 goes through
+// an s32 (as a halfword constant it comes from the pool). Left: registers from
+// the start (the native keeps the shot in r6, gPartyState in r7 and the event
 // work in r8; this draft the shot in r7 and the work in r6), which moves
 // nearly every row; the code is the native's otherwise.
 #include "types.h"
@@ -72,7 +73,12 @@ void Func_02001908(struct ObjectRuntime *shot) {
       leader->priorityFlags &= ~1;
       ((struct FieldSprite *)leader->animation)->priority =
           ((struct FieldSprite *)shot->animation)->priority;
-      *(s16 *)(work + 0x16a) = 200;
+      {
+        s16 *counter = (s16 *)(work + 0x16a);
+        s32 value = 200;
+
+        *counter = value;
+      }
       gPartyState.renderMode = 0;
       *hit = 1;
       ((u8 *)shot)[0x63] = 1;

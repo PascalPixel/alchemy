@@ -1,7 +1,10 @@
-// Draft, differ 48 of 124: the twin of Func_020012dc for the other room
-// (row 89): resets the stone, copies the four blocks and moves the leader
-// off the cells the blocks cover. Left: the last three moves keep the cell in
-// r6 and recompute the leader id address into r5.
+// Draft, differ 30 of 124 (was 48): the twin of Func_020012dc for the other
+// room (row 89): resets the stone, copies the four blocks and moves the
+// leader off the cells the blocks cover. The last three moves shift the
+// column in place (row <<= 16), as the native keeps the shifted value in r6.
+// Left: the native forms &gPartyState.currentOwner in r2 at the start (r1
+// here) and, for the last two moves, in r5 from the pool with the offset in
+// r3 (here r3 and r1).
 #include "../../../../games/tla/src/scene/yampi_desert/scene.h"
 #include "object_runtime.h"
 
@@ -15,11 +18,12 @@ s32 Func_020012d4(s32 cell);
     Func_02004090(gPartyState.currentOwner, x_ << 16, z_ << 16);               \
   }
 
-#define MOVE_LEADER_AGAIN(column, row_)                                        \
-  {                                                                            \
-    row = Func_020012d4(column);                                               \
-    Func_02004090(gPartyState.currentOwner, row << 16,                         \
-                  Func_020012d4(row_) << 16);                                  \
+#define MOVE_LEADER_AGAIN(column, row_) \
+  { \
+    row = Func_020012d4(column); \
+    row <<= 16; \
+    Func_02004090(gPartyState.currentOwner, row, \
+                  Func_020012d4(row_) << 16); \
   }
 
 void Func_020013f8(void) {

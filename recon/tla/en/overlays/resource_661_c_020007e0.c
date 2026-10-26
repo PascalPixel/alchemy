@@ -1,6 +1,13 @@
-// Draft, differ 70 of 130: the reverse of Func_020006ac, lowering each
-// listed pillar whose flag is clear and clearing flag 0x20b. Left: register
-// choice and the flag kept on the stack.
+// Draft, differ 34 of 130 (was 81): the reverse of Func_020006ac, lowering
+// each listed pillar whose flag is clear and clearing flag 0x20b. The walk is
+// a goto loop entered by a first test of the end mark, as the native has the
+// test at the top and at the bottom. Left: registers inside the lowering (the
+// native keeps the cells in r6, the shape grid's pointer in r5, the cell
+// index in r10 and the shape in r9; here the pairs are swapped) and the final
+// store, which the native makes through the shape grid's pointer advanced by
+// the index. Measured: the declarations in other orders (no change), the
+// pointer advanced in the source (43), the cell indexed in place (84). The
+// same entry test gives Func_020006ac 107 (its list goes to the stack).
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -35,7 +42,10 @@ void Func_020007e0(void) {
     list = gData_020047ec;
   if (list == NULL)
     return;
-  while (*list != 0xffff) {
+  if (*list == 0xffff)
+    goto done;
+next:
+  {
     struct ObjectRuntime *object = Object_GetById(*list);
     s32 set;
 
@@ -55,7 +65,10 @@ void Func_020007e0(void) {
       cell->attributeB &= 127;
       shapes[index] = Func_020041e8(layer, shape, (height >> 19) - 4);
     }
-    list++;
   }
+  list++;
+  if (*list != 0xffff)
+    goto next;
+done:
   GameFlag_ClearBit(0x20b);
 }

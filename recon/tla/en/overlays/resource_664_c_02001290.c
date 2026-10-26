@@ -1,10 +1,14 @@
-// Draft, differ 67 of 184: an object's update: while none of the event
-// work's four busy counters (0x15a, 0x15e, 0x166, 0x168) is set it counts
-// frames in its action parameter, and at 240 (playing cue 202 unless flag
-// 0x250 is set) it launches the first free one of objects 13 to 15 from 8
-// pixels ahead along its angle, with Func_020010b4 as its update, and a
-// dust effect below it. Left: the native's loops are goto loops (the search
-// enters at its test), and registers and order differ around them.
+// Draft, differ 63 of 184 (was 65): an object's update: while none of the
+// event work's four busy counters (0x15a, 0x15e, 0x166, 0x168) is set it
+// counts frames in its action parameter, and at 240 (playing cue 202 unless
+// flag 0x250 is set) it launches the first free one of objects 13 to 15 from
+// 8 pixels ahead along its angle, with Func_020010b4 as its update, and a
+// dust effect below it. The position is declared before the options, so the
+// frame matches (position at sp+56, options at sp+16). Left: the native keeps
+// the action field's address in r10 and IwramMulQ16's in r5, builds 0x80000
+// afresh for each product and the position's address once; this draft keeps
+// 0x80000 in r5 and the routine in r10, and saves r9 too. Measured: Value2
+// for the products (67).
 #include "types.h"
 #include "object_runtime.h"
 #include "ram_buffer.h"
@@ -29,8 +33,8 @@ void Func_020010b4(void);
 void Func_02001290(struct ObjectRuntime *object) {
   u8 *work = Ram_HeapSlots->eventWork;
   struct ObjectRuntime *shot;
-  struct EffectOptions options;
   struct Vector3 position;
+  struct EffectOptions options;
   s32 i;
 
   if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||

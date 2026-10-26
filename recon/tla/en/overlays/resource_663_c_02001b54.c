@@ -1,11 +1,14 @@
-// Draft, differ 107 of 153: a launcher's update, overlay 664's Func_02001290
-// with a new shot each time: while none of the event work's four busy counters
-// is set it counts frames in its action parameter, and at 240 (cue 202
-// unless flag 0x250 is set) it creates a shot of type 280 8 pixels ahead
-// along its angle, with Func_02001908 as its update, and a dust effect
-// below it. The same listing as overlay 664's Func_02000f34. Left: the
-// native keeps the launcher in r7 and the position at sp+56 behind the
-// options, and builds the position's address once; most rows move with it.
+// Draft, differ 63 of 153 (was 107): a launcher's update, overlay 664's
+// Func_02001290 with a new shot each time: while none of the event work's
+// four busy counters is set it counts frames in its action parameter, and at
+// 240 (cue 202 unless flag 0x250 is set) it creates a shot of type 280 8
+// pixels ahead along its angle, with Func_02001908 as its update, and a dust
+// effect below it. The same listing as overlay 664's Func_02000f34. The
+// position and the options are read through pointers taken at the top of the
+// launch, as the native forms both addresses there (sp+56 in r6, sp+16 in
+// r8). Left: the native builds 0x80000 afresh for each product and keeps
+// IwramMulQ16's address in r5; this draft keeps 0x80000 in r5, the routine in
+// r8 and the options' address in r9.
 #include "types.h"
 #include "object_runtime.h"
 #include "ram_buffer.h"
@@ -36,18 +39,21 @@ void Func_02001b54(struct ObjectRuntime *object) {
       *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0)
     return;
   if (object->action == 240) {
+    struct Vector3 *pos = &position;
+    struct EffectOptions *opt = &options;
+
     if (!GameFlag_Test(0x250))
       Func_02003cd0(object, 202);
     if (object->angle == 0xc000) {
-      position.x = object->x;
-      position.z = object->z;
+      pos->x = object->x;
+      pos->z = object->z;
     } else {
-      position.x =
+      pos->x =
           object->x + Iwram_MulQ16(0x80000, Math_Cosine(object->angle));
-      position.z = object->z + Iwram_MulQ16(0x80000, Math_Sine(object->angle));
+      pos->z = object->z + Iwram_MulQ16(0x80000, Math_Sine(object->angle));
     }
-    shot = (struct ObjectRuntime *)Engine_ObjectCreate(280, position.x,
-                                                       object->y, position.z);
+    shot = (struct ObjectRuntime *)Engine_ObjectCreate(280, pos->x,
+                                                       object->y, pos->z);
     Func_02003b28(shot, 2);
     ObjectDispatch_SetSingleChildFlags(shot, 0);
     ((struct FieldSprite *)shot->animation)->priority = 1;
@@ -58,10 +64,10 @@ void Func_02001b54(struct ObjectRuntime *object) {
     shot->update = Func_02001908;
     shot->linkedObject = object;
     object->action = 0;
-    options.priority = 1;
-    options.palette = 7;
-    Func_0200015c(position.x, object->y, position.z - 0x60000, 0, 0, 0,
-                  EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
+    opt->priority = 1;
+    opt->palette = 7;
+    Func_0200015c(pos->x, object->y, pos->z - 0x60000, 0, 0, 0,
+                  EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, opt);
   }
   object->action++;
 }

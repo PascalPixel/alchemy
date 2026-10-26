@@ -1,10 +1,11 @@
-// Draft, differ 82 of 200 (the English listing; the Japanese one does not
-// save and restore the leader's priority flags): inside an event, the
-// leader is carried up 80 pixels with a lift object (type 280, cue 137),
-// spinning and flickering until it stops, then drops (cues 288 and 152)
-// onto the ground below the lift and walks off it; the lift and the
-// prepared object are removed. Left: mostly the choice among r1, r2 and r3
-// for the field addresses and constants, and the pool offsets that follow.
+// Draft, differ 78 of 200 (was 82; the English listing; the Japanese one
+// does not save and restore the leader's priority flags): inside an event,
+// the leader is carried up 80 pixels with a lift object (type 280, cue 137),
+// spinning and flickering until it stops, then drops (cues 288 and 152) onto
+// the ground below the lift and walks off it; the lift and the prepared
+// object are removed. The speed and acceleration are stored in that order.
+// Left: mostly the choice among r1, r2 and r3 for the field addresses and
+// constants, and the pool offsets that follow.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
@@ -46,12 +47,14 @@ void Func_02004cc8(void) {
   prepared = OverlayObject_PrepareObject(0xd80000, -0x200000, 0x2200000, 286);
   leader->motionFlags = 0;
   ObjectDispatch_SetSingleChildFlags(leader, 0);
-  leader->speedLimit = leader->acceleration = 0x18000;
+  leader->speedLimit = 0x18000;
+  leader->acceleration = 0x18000;
   lift = Engine_ObjectCreate(280, leader->x, leader->y - 0x80000, leader->z);
   Func_02005d5c(lift, 2);
   ObjectDispatch_SetSingleChildFlags(lift, 0);
   lift->motionFlags = 0;
-  lift->speedLimit = lift->acceleration = 0x16666;
+  lift->speedLimit = 0x16666;
+  lift->acceleration = 0x16666;
   Func_02005d8c(leader, leader->x, leader->y + 0x500000, leader->z);
   Func_02005d8c(lift, lift->x, lift->y + 0x480000, lift->z);
   Func_02005f94(137);

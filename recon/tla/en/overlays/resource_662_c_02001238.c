@@ -1,7 +1,11 @@
-// Draft, differ 28 of 95 (ja 28 of 92): the chest that follows the step
-// count: when the tracked object stands on its cell, mode 1 stops the
-// follower and mode 2 drops the chest. Left: register choice, and the native
-// stores 17 from a move rather than the pool.
+// Draft, differ 18 of 95 (was 24; ja 28 of 92 before): the chest that
+// follows the step count: when the tracked object stands on its cell, mode 1
+// stops the follower and mode 2 drops the chest. The 17 stored at 0x160 of
+// the event work goes through an s32 and a pointer, so it is built with a
+// move as the native does (as a halfword constant it comes from the pool).
+// Left: register choice: the native keeps the pixel column and row in r0 and
+// r5 and the tracked object's cell in r1 and r4 (here r1, r0, r4 and r5).
+// Measured: the declarations in other orders (18 to 41).
 #include "../../../../games/tla/src/scene/yampi_desert_cave/yampi_desert_cave.h"
 #include "object_runtime.h"
 #include "game/edition.h"
@@ -45,7 +49,12 @@ void Func_02001238(s32 mode) {
     chest->motionFlags = 3;
     chest->gravity = 0x170a;
     WaitFrames(50);
-    *(s16 *)(work + 0x160) = 17;
+    {
+      s16 *counter = (s16 *)(work + 0x160);
+      s32 value = 17;
+
+      *counter = value;
+    }
 #if (LANGUAGE != LANGUAGE_JAPANESE)
     GameFlag_ClearBit(0x270);
 #endif

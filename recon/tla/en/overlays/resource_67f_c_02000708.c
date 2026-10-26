@@ -1,9 +1,12 @@
-// Draft, differ 77 of 191: Func_020002f8 with person 8 taking part: it steps
+// Draft, differ 65 of 191: Func_020002f8 with person 8 taking part: it steps
 // into the pillar and back while the pillar flashes, or before the pillar
 // sinks. The same function is overlay 68F's Func_02002764 and 691's
 // Func_02003240.
-// Measured against its copies: overlay 68F's Func_02002764 (differ 77 of 191),
-// overlay 691's Func_02003240 (differ 77 of 191).
+// The motion flags go through one pointer and the pillar test takes the
+// native's branch order, as in Func_020002f8's draft. Left: allocation (the
+// native has the leader in r5, person 8 in r7, the pillar in r10 and the id
+// in r8; pins of those alone make it worse, 69 to 91) and the store-then-load
+// row before the search's 0 argument.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
@@ -41,9 +44,9 @@ void Func_02000708(u16 *list) {
   position[1] = leader->y;
   position[2] = leader->z;
   pillar = Func_02001530(position, 0);
-  if (pillar == 0)
-    return;
-  goto test;
+  if (pillar != 0)
+    goto test;
+  return;
 body:
   {
     u32 id = list[0];
@@ -75,10 +78,13 @@ body:
         WaitFrames(1);
         GameFlag_SetBit(flag);
       } else if (!GameFlag_Test(flag + 1)) {
+        u8 *flags;
+
         Func_02001428(helper, 0);
         Func_020006ec(helper, pillar);
         WaitFrames(1);
-        leader->motionFlags = 0;
+        flags = &leader->motionFlags;
+        *flags = 0;
         Func_02001538(185);
         Call3((void (*)())Func_02001470, 0x10000, 0x40000, 0x10000);
         Func_02000974(0);
@@ -91,7 +97,7 @@ body:
         WaitFrames(4);
         Call3((void (*)())Func_02001470, -1, -1, 0xe666);
         WaitFrames(8);
-        leader->motionFlags = 3;
+        *flags = 3;
         WaitFrames(5);
         Object_SetPositionAndResetMotion(helper, 0, 0, 0);
         WaitFrames(2);

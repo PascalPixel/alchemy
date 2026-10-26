@@ -209,7 +209,7 @@ s32 SummaryScreen_Run(void) {
   // Close, and put the palettes and tiles back.
   Menu_EnsureCancelSound();
   WindowSprite_ClearListFar(menu->statusWindow);
-  DjinnFigures_ClearSlotsAndSchedule();
+  DjinnFigures_ReleaseTopRow();
   Menu_ResumeFieldTasks();
   Window_DrawFrameFar(0, 0, 30, 20);
   WaitFrames(1);

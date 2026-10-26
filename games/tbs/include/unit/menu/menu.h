@@ -89,8 +89,8 @@ void Menu_EnsureCancelSound(void);
 void WindowPalette_SetNormalTextColor(void);
 void WindowPalette_SetNoHpTextColor(void);
 void WindowPalette_SetLowHpTextColor(void);
-void DjinnFigures_ClearSlotsAndSchedule(void);
-void DjinnFigures_ClearSlotsAndScheduleAlt(void);
+void DjinnFigures_ReleaseTopRow(void);
+void DjinnFigures_ReleaseBottomRow(void);
 
 #define LIST_PAGE_SIZE 5
 

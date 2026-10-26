@@ -3716,9 +3716,6 @@ Func_081a08c4:
 	.thumb_func
 DisplayScroll_DrawMessageLine:
 	.incbin "baserom.gba", 0x001a0bd4, 0x000000c4
-	.section .rom.001a0df8, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x001a0df8, 0x000001ac
 	.section .rom.001a1008, "ax"
 	.global DisplayScroll_DrawLine
 	.type DisplayScroll_DrawLine, %function

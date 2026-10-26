@@ -29,10 +29,10 @@ BattleEffect_ApplyColorToSourceBufferFar:
 	.thumb_func
 BattleEffect_InterpolateBuffersFar:
 .ifdef TLA_EDITION_ES
-	overlay_veneer Func_080d0c50
+	overlay_veneer BattlePalette_StopBlendAndReleaseBuffer
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Func_080d0c50
+	overlay_veneer BattlePalette_StopBlendAndReleaseBuffer
 .else
 	overlay_veneer BattleEffect_InterpolateBuffers
 .endif

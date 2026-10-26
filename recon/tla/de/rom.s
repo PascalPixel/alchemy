@@ -202,7 +202,12 @@ Func_08020248:
 Animation_SetDisplayFlagFar:
 	.incbin "baserom.gba", 0x00020250, 0x00000008
 	.section .rom.00020308, "ax"
-	.incbin "baserom.gba", 0x00020308, 0x00000010
+	.incbin "baserom.gba", 0x00020308, 0x00000008
+	.global Func_0802d71cFar
+	.type Func_0802d71cFar, %function
+	.thumb_func
+Func_0802d71cFar:
+	.incbin "baserom.gba", 0x00020310, 0x00000008
 	.section .rom.00020318, "ax"
 	.global Func_0802db64Far
 	.type Func_0802db64Far, %function
@@ -964,11 +969,6 @@ Func_080ccec8:
 	.thumb_func
 Func_080cd808:
 	.incbin "baserom.gba", 0x000da808, 0x00000114
-	.section .rom.000daa84, "ax"
-	.balign 4
-	.global Func_080cda84
-Func_080cda84:
-	.incbin "baserom.gba", 0x000daa84, 0x0000003c
 	.section .rom.000daac0, "ax"
 	.global Func_080cdac0
 Func_080cdac0:

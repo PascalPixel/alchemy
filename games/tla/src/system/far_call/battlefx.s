@@ -125,10 +125,10 @@ Encounter_GetDjinnEnemyGroupFar:
 	.thumb_func
 Party_PlaySavedMusicFar:
 .ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c9dc8
+	overlay_veneer Func_080d7788
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c9dc8
+	overlay_veneer Func_080d7788
 .else
 	overlay_veneer Party_PlaySavedMusic
 .endif

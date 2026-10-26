@@ -9,10 +9,10 @@ Func_080c8770:
 	.thumb_func
 EventRuntime_GetControlledOwnerFar:
 .ifdef TLA_EDITION_ES
-	overlay_veneer Func_080cdf5c
+	overlay_veneer Func_080daecc
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Func_080cdf5c
+	overlay_veneer Func_080daecc
 .else
 	overlay_veneer EventRuntime_GetControlledOwner
 .endif
@@ -24,7 +24,15 @@ Func_080c8780:
 	.global Func_080c8788
 	.thumb_func
 Func_080c8788:
+.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080d5d70
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080d5d70
+.else
 	overlay_veneer Func_080daecc
+.endif
+.endif
 	.global Func_080c8790
 	.thumb_func
 Func_080c8790:
@@ -32,7 +40,15 @@ Func_080c8790:
 	.global Func_080c8798
 	.thumb_func
 Func_080c8798:
+.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080d3928
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080d3928
+.else
 	overlay_veneer Func_080d5d70
+.endif
+.endif
 	.global Func_080c87a0
 	.thumb_func
 Func_080c87a0:
@@ -40,7 +56,15 @@ Func_080c87a0:
 	.global Func_080c87a8
 	.thumb_func
 Func_080c87a8:
+.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080d3a10
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080d3a10
+.else
 	overlay_veneer Func_080d3928
+.endif
+.endif
 	.global Func_080c87b0
 	.thumb_func
 Func_080c87b0:
@@ -56,7 +80,15 @@ Func_080c87b0:
 	.global Func_080c87b8
 	.thumb_func
 Func_080c87b8:
+.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080eb01c
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080eb01c
+.else
 	overlay_veneer Func_080d3a10
+.endif
+.endif
 	.global Func_080c87c0
 	.thumb_func
 Func_080c87c0:
@@ -97,10 +129,10 @@ Func_080c87d0:
 	.thumb_func
 BattleEffect_StepVector2Far:
 .ifdef TLA_EDITION_ES
-	overlay_veneer Func_080eb2c8
+	overlay_veneer BattleEffect_GetObjectPriority
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Func_080eb2c8
+	overlay_veneer BattleEffect_GetObjectPriority
 .else
 	overlay_veneer BattleEffect_StepVector2
 .endif
@@ -109,10 +141,10 @@ BattleEffect_StepVector2Far:
 	.thumb_func
 BattleEffect_StepVector3Far:
 .ifdef TLA_EDITION_ES
-	overlay_veneer Func_080eb2d0
+	overlay_veneer BattleEffect_GetObjectDepth
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Func_080eb2d0
+	overlay_veneer BattleEffect_GetObjectDepth
 .else
 	overlay_veneer BattleEffect_StepVector3
 .endif
@@ -120,7 +152,15 @@ BattleEffect_StepVector3Far:
 	.global Func_080c87e8
 	.thumb_func
 Func_080c87e8:
+.ifdef TLA_EDITION_ES
+	overlay_veneer Field_StartColorTransition
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Field_StartColorTransition
+.else
 	overlay_veneer BattleEffect_GetObjectPriority
+.endif
+.endif
 	.ifdef TLA_EDITION_ES
 	.global Field_StartPaletteTransitionFar
 	.thumb_func

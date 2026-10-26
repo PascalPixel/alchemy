@@ -4,7 +4,6 @@
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"
-#include "edition.h"
 
 struct MenuFlagWork {
   u8 unk000[0x506];
@@ -39,9 +38,6 @@ s32 Inn_RoomPrice(s32 innId);
 void Func_0810824c(void);
 s32 ArcTan2(s32 y, s32 x);
 
-// The Spanish and Italian far-call tables reach this function under another
-// slot's name; those two editions keep it on their scaffold.
-#if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_ITALIAN)
 /// Picks the object nearest object id, under 32 pixels away and 48 pixels in
 /// height. Distances to ids above 63 count double and to objects with
 /// collision flag 4 ten thirteenths; beyond 11 pixels the object must also lie
@@ -113,7 +109,6 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
   }
   return best;
 }
-#endif
 
 /// Returns the row of gData_080eff28 for an animation: its range, height
 /// and facing width. A row not found returns the -1 terminator.

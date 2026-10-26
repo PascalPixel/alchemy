@@ -5,10 +5,10 @@
 	.thumb_func
 BattleEffect_StartBufferInterpolationFar:
 .ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_SetBufferWord
+	overlay_veneer BattleEffect_SetPrimaryBufferValue
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_SetBufferWord
+	overlay_veneer BattleEffect_SetPrimaryBufferValue
 .else
 	overlay_veneer BattleEffect_StartBufferInterpolation
 .endif

@@ -5,10 +5,10 @@
 	.thumb_func
 EventRuntime_ResolveAllPendingActionsFar:
 .ifdef TLA_EDITION_ES
-	overlay_veneer Func_080cdec8
+	overlay_veneer Func_080dc978
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Func_080cdec8
+	overlay_veneer Func_080dc978
 .else
 	overlay_veneer EventRuntime_ResolveAllPendingActions
 .endif

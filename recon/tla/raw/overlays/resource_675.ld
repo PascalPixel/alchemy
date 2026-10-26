@@ -3,7 +3,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/islet_cave/entry.o"(.text)
-        "*/resource_675_overlay.o"(.text.x02008038)
+        "*/games/tla/src/scene/islet_cave/s0038.o"(.text)
         "*/games/tla/src/scene/islet_cave/s0158.o"(.text)
         "*/resource_675_overlay.o"(.text.x020081d4)
         "*/resource_675_overlay.o"(.text.x020081f8)

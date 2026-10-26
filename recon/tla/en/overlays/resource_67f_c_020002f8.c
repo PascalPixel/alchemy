@@ -1,9 +1,14 @@
-// Draft, differ 68 of 158: the pillar the leader faces, when listed, either
+// Draft, differ 2 of 158: the pillar the leader faces, when listed, either
 // flashes once and sets its flag or, once that flag is set, sinks into the
 // floor with a shake and sets the second. The same function is overlay 68F's
 // Func_02002354 and 691's Func_02002e30.
-// Measured against its copies: overlay 68F's Func_02002354 (differ 68 of 158),
-// overlay 691's Func_02002e30 (differ 68 of 158).
+// With the leader pinned to r6 (a pin device to tag on adoption; without it the
+// leader takes r8 and 64 differ), the motion flags written through one pointer
+// (the native reuses leader + 85 for both stores) and the pillar test in the
+// native's branch order. Left: the known store-then-load row: the native sets
+// the search's 0 argument between the first position store and the second
+// load. Tried: empty asm and one-pass blocks around the copies, the 0 in an
+// asm-held local (all 2 or worse).
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
@@ -26,7 +31,7 @@ void Func_02000c4c(s32 level, s32 layer);
 void Func_02000aa8(void);
 
 void Func_020002f8(u16 *list) {
-  struct ObjectRuntime *leader;
+  register struct ObjectRuntime *leader asm("r6");
   struct ObjectRuntime *pillar;
   s32 position[3];
 
@@ -37,9 +42,9 @@ void Func_020002f8(u16 *list) {
   position[1] = leader->y;
   position[2] = leader->z;
   pillar = Func_02001530(position, 0);
-  if (pillar == 0)
-    return;
-  goto test;
+  if (pillar != 0)
+    goto test;
+  return;
 body:
   {
     u32 id = list[0];
@@ -65,7 +70,9 @@ body:
         Func_02000974(0);
         GameFlag_SetBit(flag);
       } else if (!GameFlag_Test(flag + 1)) {
-        leader->motionFlags = 0;
+        u8 *flags = &leader->motionFlags;
+
+        *flags = 0;
         Func_02001538(185);
         Call3((void (*)())Func_02001470, 0x10000, 0x40000, 0x10000);
         Func_02000974(0);
@@ -78,7 +85,7 @@ body:
         WaitFrames(4);
         Call3((void (*)())Func_02001470, -1, -1, 0xe666);
         WaitFrames(8);
-        leader->motionFlags = 3;
+        *flags = 3;
         WaitFrames(5);
         Object_SetPositionAndResetMotion(pillar, 0, 0, 0);
         WaitFrames(2);

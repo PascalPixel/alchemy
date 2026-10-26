@@ -1,5 +1,3 @@
-// Draft, differ 65 of 81: overlay 67b's copy of overlay 679's Func_02001ad8
-// (the same listing), whose draft holds its notes.
 #include "types.h"
 #include "mem.h"
 #include "dma.h"
@@ -32,14 +30,21 @@ void Func_020028b0(const void *source, void *destination);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 
+/// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
+/// decoded into VRAM, and Func_020025d4 scheduled at priority 0x480 to move
+/// them; the overlay's copy of FieldEffect_InitializeSparkles.
 void Func_0200276c(void) {
-  u32 size = sizeof(struct DustWork);
-  struct DustWork *work = Runtime_AllocateBlock(116, size);
+  struct DustWork *work = Runtime_AllocateBlock(116, sizeof(struct DustWork));
   struct DustParticle *p = work->particles;
   u8 *buf;
   u32 i;
+  u32 size;
   volatile u32 zero;
 
+  /* FAKEMATCH(temporary): one local is the fill word, the end word and each
+   * particle's attribute cursor, so it lives on the stack and every step of
+   * the cursor is stored there, as the native's; with a separate cursor, 55 of
+   * 81 instructions differ in tla-en. */
   size = 0;
   zero = size;
   Dma_Set((const void *)&zero, work, 0x85000205, REG_DMA3);
@@ -49,17 +54,21 @@ void Func_0200276c(void) {
   work->tileBase = VramCache_Load(work->vramEntry, 0x300, buf);
   Runtime_ReleaseHeapBlock(56);
   work->field808 = size;
-  for (i = 0; i < 64; i++, p++) {
-    size = (u32)p;
-    *(u32 *)size = 0;
-    size += 4;
-    *(u32 *)size = 0x40000400;
-    size += 4;
-    *(u32 *)size = 0xb400;
-    p->posX = 0;
-    p->posZ = 0;
-    p->posY = Map_GetTerrainHeight(0, 0, 0) << 16;
-    p->timer = (i & 15) + 1;
-  }
+  i = 0;
+loop:
+  size = (u32)p;
+  *(u32 *)size = 0;
+  size += 4;
+  *(u32 *)size = 0x40000400;
+  size += 4;
+  *(u32 *)size = 0xb400;
+  p->posX = 0;
+  p->posZ = 0;
+  p->posY = Map_GetTerrainHeight(0, 0, 0) << 16;
+  p->timer = (i & 15) + 1;
+  i++;
+  p++;
+  if (i < 64)
+    goto loop;
   Scheduler_AddOrUpdateCallback(Func_020025d4, 0x480);
 }

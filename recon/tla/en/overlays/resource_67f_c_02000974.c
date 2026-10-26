@@ -1,11 +1,14 @@
-// Draft, differ 81 of 122: eight dust clouds in a row across the leader, thrown
+// Draft, differ 79 of 122: eight dust clouds in a row across the leader, thrown
 // out in a ring when spread is set and straight up otherwise. Overlay 68F's
 // Func_020029d0 and 691's Func_020034ac are copies with small changes.
-// Measured against its copies: overlay 68F's Func_020029d0 (differ 81 of 122),
-// overlay 691's Func_020034ac (differ 81 of 122).
+// The ring's outward speed is the cosine scaled by Iwram_MulQ16 by 0x13333,
+// which the earlier draft left out. Left, allocation: the native keeps the
+// leader in r7, spread in r8 and the count in r10 (here r8, r10 and r7), and
+// its bitfield mask comes from r0 through a copy.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
+#include "iwram_call.h"
 
 extern const u8 gData_02001540[];
 
@@ -52,7 +55,7 @@ loop:
       if (spread != 0) {
         s32 angle = i << 13;
 
-        dust->bounce = Math_Cosine(angle);
+        dust->bounce = Iwram_MulQ16(Math_Cosine(angle), 0x13333);
         dust->unk4c = Math_Sine(angle);
       } else {
         dust->bounce = spread;

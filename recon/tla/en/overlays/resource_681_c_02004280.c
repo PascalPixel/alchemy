@@ -1,8 +1,14 @@
-// Draft, differ 85 of 229: Gaia Rock's entry setup. In the first room (scene
+// Draft, differ 49 of 229: Gaia Rock's entry setup. In the first room (scene
 // 0xb1) from entrances up to 4 it hides the leader's sprite layer, sets the
 // sky cell window, places the statues by the stage and, once that stage's flag
 // is set, starts person 8's climbing; from entrances past 8 it resets layer
-// 2's scroll; in the next rooms it picks the music for the entrance.
+// 2's scroll; in the next rooms it picks the music for the entrance. The sum
+// is a signed indexed loop with its total set before Unit_Get (so it lives in
+// r5), the angle is unsigned, and the second room's cases run 102 before 103
+// (the 100 and 101 blocks cross-jump into the third room's). Left, ordering:
+// the BG0CNT address is begun before the sky byte's store, *stage is loaded
+// into r0 rather than r3, the scroll reset's 0x3f80 is built early, and
+// Data_0202de00 stays in r5 where the native loads it from the pool twice.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
@@ -45,14 +51,16 @@ s32 Func_02004280(void) {
     u8 *map = (u8 *)Ram_HeapSlots->mapWork;
 
     if (gPartyState.entrance <= 4) {
-      u8 *unit = Unit_Get(gPartyState.currentOwner);
-      u8 *end = unit + 13;
-      s32 total = 0;
+      u8 *unit;
+      s32 total;
       s32 *stage;
+      s32 i;
 
-      do {
-        total += *unit++;
-      } while (unit <= end);
+      total = 0;
+      unit = Unit_Get(gPartyState.currentOwner);
+
+      for (i = 0; i <= 13; i++)
+        total += unit[i];
       Func_020044f8(total);
       Object_GetById(Func_02004fe4())->priorityFlags |= 32;
       map[261] = 1;
@@ -69,7 +77,7 @@ s32 Func_02004280(void) {
         Func_02004ebc(65, 0x680000, 0x480000);
       if (GameFlag_Test(*stage + 0xa50)) {
         struct ObjectRuntime *climber = Object_GetById(8);
-        s32 angle = Func_02004904();
+        u32 angle = Func_02004904();
 
         climber->collisionFlags = 0;
         Func_02004d9c(climber, ((angle & 0xc000) >> 14) + 2);
@@ -110,6 +118,10 @@ s32 Func_02004280(void) {
     case 8:
       Func_02004274(100);
       break;
+    case 9:
+    case 10:
+      Func_02004274(102);
+      break;
     case 3:
     case 4:
       Func_02004274(103);
@@ -117,10 +129,6 @@ s32 Func_02004280(void) {
     case 6:
     case 7:
       Func_02004274(101);
-      break;
-    case 9:
-    case 10:
-      Func_02004274(102);
       break;
     }
   } else if (gPartyState.scene == (s32)&SceneId_Ov681Room5) {

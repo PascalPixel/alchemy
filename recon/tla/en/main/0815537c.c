@@ -4,9 +4,7 @@
 
 // Twin: The Broken Seal's BattleEffect_RunBolt (effect.c), the same
 // kind, with the same tables, frame counts and cues.
-// Listing 552 instructions, draft 555, differ 101 (2026-10-26: 114 before the
-// tagged one-pass block between the spread and the widths, found by a
-// device sweep; 204 without the tagged glint pointers).
+// Listing 552 instructions, draft 552, differ 6 (tla-en, 2026-10-26).
 
 // Changes from the twin: the effect argument is read directly (the Lost
 // Age never stores work->effect), the blitter loads through BattleEffect_LoadBlitter
@@ -14,23 +12,31 @@
 // through Func_08196404 (the twin's BattleEffect_BuildBlitter), the callback
 // order is 0xc80.
 
-// What remains:
-// - the glint draw: here the pointers fold the index in (heights + kind
-// is kept in r10, widths + kind in r5); the native keeps the bare bases
-// and reloads kind from the stack before each read. That is the four
-// extra instructions and about 30 rows.
-// - order rows elsewhere: pool loads before the constants they sit
-// beside (the prologue's canvas read, the sheet offsets 0x700 and 0xc56,
-// the free-spark fill, the spark velocity), one row each, with the
-// branch and pool offsets that follow.
+// What moved it: the glints written as the twin writes them, with one
+// tagged one-pass block between the glint's position and its blitter. As
+// plain C (174), cse1 merges each size table's two address reads and
+// loop.c then treats the merged address as an invariant; with the block
+// they stay apart until loop.c has run, cse2 merges them within the
+// iteration, and the bases stay in sl and r5 across the calls with kind
+// reloaded from the stack, as the native has them (101 with the earlier
+// glint-pointer device, 6 now).
+
+// What remains, one row each: the prologue's canvas read after the
+// argument for the canvas layer, the spread's subtraction after kind's
+// reload, and the glint's height read after its stacked width; the known
+// store-then-load scheduling limit (spill and argument stores before
+// loads).
 
 // Tried (differ):
 // the twin as is, with the Lost Age's names                    204
 // declaration order, greedy scan of every local                no gain
 // glint table pointers declared and set at the top of the body 240
-// glint pointers assigned where first read (kept)              144
+// glint pointers assigned where first read                     144
 // the same, heights only                                       157
 // the same, draw indexed by j & 3                              144
+// 2026-10-26, from 6: barriers (plain, and on each local) and one-pass
+// blocks at every statement, statement moves, const on each table, x's
+// steps merged: no gain.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -106,8 +112,9 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
   void *canvas;
   s32 i;
   s32 frame;
-  /* FAKEMATCH: frame local, as the twin: only draw[0] is used; the unused
-   * second word fills four bytes of the native frame. */
+  /* FAKEMATCH(dead): a pair, as the twin has, of which only draw[0] is used:
+   * the unused second word fills four bytes of the native frame; as one
+   * blitter, 82 of 552 instructions differ in tla-en. */
   DrawRectangle draw[2];
   u8 *sprites;
   struct EffectPosition pos;
@@ -189,36 +196,27 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
       if (frame >= start + 2 && frame < start + 24) {
         for (j = 0; j != Data_08198462[effect->variant * 4 + 1]; j++) {
           s32 kind = j & 3;
-          /* FAKEMATCH: the glint size tables are taken as pointers where
-           * they are first read: the native keeps both bases in r10 and r5
-           * across the calls and indexes them again for the draw, which
-           * also frees r9 and r10 for the loop counters as the native has
-           * them (differ 204 -> 144, four instructions more). Pointers set
-           * at the top of the block give 240; read through the globals the
-           * bases reload from the pool (204). */
-          u8 *heights;
-          u8 *widths;
           s32 drop = Random16() % Data_08198462[effect->variant * 4 + 2];
           s32 spread = Data_08198462[effect->variant * 4 + 2] - drop + 1;
-          s32 y = pos.y - drop - ((heights = gData_08197498)[kind] >> 1) + 8;
+          s32 y = pos.y - drop - (gData_08197498[kind] >> 1) + 8;
           u32 r = Random16();
           s32 x = pos.x;
 
           x += r % spread;
-          /* FAKEMATCH(one-pass): an empty one-pass block between the spread
-           * and the widths; as plain C, 114 of 552 instructions differ in
-           * tla-en (here 101). */
+          x -= spread / 2;
+          x -= gData_08197492[kind] >> 1;
+
+          /* FAKEMATCH(one-pass): the block ends cse1's block, so the two reads
+           * of each size table's address stay apart until loop.c has run; as
+           * plain C, 174 of 552 instructions differ in tla-en. */
           do {
           } while (0);
-          x -= spread / 2;
-          x -= (widths = gData_08197492)[kind] >> 1;
-
           Func_08196404(188, 7, 7,
                         Data_0819846e[Random16() & 3] | COMPOSITE_CLIP_X |
                             COMPOSITE_CLIP_Y,
                         Data_08198472[effect->variant]);
           DRAW_GLINT(canvas, work->sheet + gData_08197486[kind], x, y,
-                     widths[kind], heights[kind]);
+                     gData_08197492[kind], gData_08197498[kind]);
           Runtime_ReleaseHeapBlock(188);
         }
       }

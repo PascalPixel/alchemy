@@ -22,6 +22,10 @@ void Func_02002a30(struct ObjectRuntime *object);
 void Camera_FollowActor(s32 id, s32 flag);
 void Func_02002a90(void);
 
+static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z, s32 mode) {
+  Camera_MoveWithinMapBounds(x, y, z, mode);
+}
+
 void Func_02000930(void) {
   u8 *work = Ram_HeapSlots->eventWork;
   struct ObjectRuntime *actor = Object_GetById(gPartyState.currentOwner);
@@ -58,7 +62,7 @@ void Func_02000930(void) {
   actor->priorityFlags = 1;
   actor->motionFlags = 3;
   ObjectDispatch_SetSingleChildFlags(actor, 1);
-  Camera_MoveWithinMapBounds(-1, -1, -1, 0);
+  Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
   shadow = Func_02002af8();
   shadow->speedLimit = 0x80000;
   shadow->acceleration = 0x10000;

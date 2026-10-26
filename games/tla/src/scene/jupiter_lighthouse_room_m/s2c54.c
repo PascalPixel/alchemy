@@ -1,11 +1,4 @@
-// Draft, differ 58 of 203: Jupiter Lighthouse room M's map setup: event work word
-// 0x1ac to 516; objects 8 to 15 take mode 1; objects 24 and 25 stand at
-// heights 0 and 32 with motion off; flags 514 and 2591 stamp the opened cells
-// (Func_0200474c, Func_02004744); with 2591 set, object 23 is placed and the
-// scene picks its arrival by flags 2595, 2593 and 2596 and the entrance (3, 5,
-// 77 or others); object 23's motion is cleared and placed again with flag
-// 2573, and entrance 99 runs Func_02001ed0. Returns 0.
-#include "../../../../games/tla/src/scene/jupiter_lighthouse_room_m/jupiter_lighthouse_room_m.h"
+#include "jupiter_lighthouse_room_m.h"
 
 extern s32 gData_02005a3c;
 
@@ -25,6 +18,16 @@ void Func_02001c7c(void);
 void Func_02001ed0(void);
 void Func_02000b48(void);
 
+static __inline__ s32 GameFlag_Test_(s32 flag) {
+  /* FAKEMATCH(wrapper): forwarded inline; as plain calls, 58 of 203
+   * instructions differ in tla-en. */
+  return GameFlag_Test(flag);
+}
+
+/// Sets up Jupiter Lighthouse room M: objects 8 to 15 take mode 1, objects 24
+/// and 25 stand at heights 0 and 32, the cells flags 514 and 2591 opened are
+/// stamped again, and with 2591 set the arrival is chosen by flags 2595, 2593
+/// and 2596 and the entrance.
 s32 Func_02002c54(void) {
   struct ObjectRuntime *object;
 
@@ -48,20 +51,20 @@ s32 Func_02002c54(void) {
   object->motionFlags = 0;
   object->y = 0x200000;
   object->terrainHeight = 0x200000;
-  if (GameFlag_Test(514)) {
+  if (GameFlag_Test_(514)) {
     Func_0200474c(49, 106, 4, 3, 49, 76);
     Func_02004744(49, 45, 4, 1, 49, 44);
   }
-  if (GameFlag_Test(2591)) {
+  if (GameFlag_Test_(2591)) {
     Func_0200474c(49, 106, 4, 3, 49, 76);
     Func_02004744(49, 45, 4, 1, 49, 44);
     Func_02004844(23, 0, 0);
-    if (GameFlag_Test(2595)) {
-      if (!GameFlag_Test(2593)) {
+    if (GameFlag_Test_(2595)) {
+      if (!GameFlag_Test_(2593)) {
         Func_02000c08();
         Func_02001e38();
       }
-    } else if (!GameFlag_Test(2596)) {
+    } else if (!GameFlag_Test_(2596)) {
       if (gPartyState.entrance == 3) {
         Func_02000c08();
         GameFlag_SetBit(2596);
@@ -81,7 +84,7 @@ s32 Func_02002c54(void) {
     }
   }
   Object_GetById(23)->motionFlags = 0;
-  if (GameFlag_Test(2573))
+  if (GameFlag_Test_(2573))
     Func_02004844(23, 0, 0);
   if (gPartyState.entrance == 99)
     Func_02001ed0();

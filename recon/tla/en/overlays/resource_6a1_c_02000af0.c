@@ -16,6 +16,10 @@ void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 width, s32 height,
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
+static __inline__ void Func_020021b0_(s32 x, s32 z, s32 width, s32 height, s32 toX, s32 toZ) {
+  Func_020021b0(x, z, width, height, toX, toZ);
+}
+
 s32 Func_02000af0(s32 id) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   struct ObjectRuntime *object = Object_GetById(id);
@@ -40,7 +44,7 @@ s32 Func_02000af0(s32 id) {
   height = (ABS(rect[1]) + ABS(rect[3])) >> 4;
   x = (object->x + (rect[0] << 16)) >> 20;
   z = (object->z + (rect[1] << 16)) >> 20;
-  Func_020021b0(x, z, width, height,
+  Func_020021b0_(x, z, width, height,
                 x + (u16)(*(s32 *)(map + 328) >> 20),
                 z + (u16)(*(s32 *)(map + 332) >> 20));
   Map_FillCellRectByte2(0, x, z, width, height, 255);

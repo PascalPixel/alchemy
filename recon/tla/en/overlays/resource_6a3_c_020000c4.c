@@ -9,6 +9,8 @@
 #include "dma.h"
 
 extern u8 gCpuLoadDisplayEnabled;
+extern char ResourceId_LightningTiles;
+extern char ResourceId_LightningMap;
 extern s16 gBgScroll[];
 
 void *MemAlloc(s32 size);
@@ -29,6 +31,22 @@ void Func_020046a4(void);
 void Func_02004784(s32 hue, s32 brightness);
 void Func_0200354c(void);
 
+static __inline__ void Func_0200474c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
+  Func_0200474c(a, b, c, d, e, f);
+}
+
+static __inline__ void Func_0200475c_(s32 a, s32 b, s32 c) {
+  Func_0200475c(a, b, c);
+}
+
+static __inline__ void Func_0200491c_(s32 a, s32 b) {
+  Func_0200491c(a, b);
+}
+
+static __inline__ void Func_02004924_(s32 a, s32 b) {
+  Func_02004924(a, b);
+}
+
 void Func_020000c4(void) {
   u16 *buffer;
   u16 zero;
@@ -38,13 +56,13 @@ void Func_020000c4(void) {
   REG_DISPCNT &= ~0x100;
   *(volatile u16 *)0x04000008 = 0x400;
   buffer = MemAlloc(0x800);
-  Func_0200468c(Resource_GetTableEntry(0x1c0), buffer);
+  Func_0200468c(Resource_GetTableEntry((s32)&ResourceId_LightningTiles), buffer);
   Dma_Set(buffer, (void *)(0x06000000), 0x84000200, REG_DMA3);
   MemFree(buffer);
   zero = 0;
   Dma_Set(&zero, (void *)(0x06002000), 0x81000400, REG_DMA3);
   buffer = MemAlloc(128);
-  Func_0200468c(Resource_GetTableEntry(0x1c1), buffer);
+  Func_0200468c(Resource_GetTableEntry((s32)&ResourceId_LightningMap), buffer);
   for (i = 0; i != 64; i++)
     buffer[i] &= 0xfcff;
   for (i = 0; i != 16; i++)
@@ -56,17 +74,17 @@ void Func_020000c4(void) {
   gBgScroll[0] = -104;
   gBgScroll[1] = 16;
   WaitFrames(30);
-  Func_02004924(0x10003, 0);
-  Func_0200491c(0x7fff, 0);
+  Func_02004924_(0x10003, 0);
+  Func_0200491c_(0x7fff, 0);
   Func_0200492c(1);
   WaitFrames(1);
-  Func_02004924(0x7fff, 0);
-  Func_0200491c(0x10003, 0);
+  Func_02004924_(0x7fff, 0);
+  Func_0200491c_(0x10003, 0);
   Func_0200492c(8);
   REG_DISPCNT |= 0x100;
   Func_020049c4(144);
-  Func_0200475c(0x50000, 0x70000, 0x10000);
-  Func_0200475c(-1, -1, 0xe666);
+  Func_0200475c_(0x50000, 0x70000, 0x10000);
+  Func_0200475c_(-1, -1, 0xe666);
   ObjectMotion_SetSpeedParameters(gPartyState.currentOwner, 0x20000, 0x10000);
   ObjectMotion_Launch(4, 6, 0);
   Object_GetById(4)->actionFlags &= ~1;
@@ -76,11 +94,11 @@ void Func_020000c4(void) {
     REG_BLDALPHA = (16 - (i >> 1)) | 0x1000;
     WaitFrames(1);
   }
-  Func_0200474c(104, 42, 5, 11, 61, 42);
-  Func_0200474c(106, 52, 1, 1, 63, 84);
+  Func_0200474c_(104, 42, 5, 11, 61, 42);
+  Func_0200474c_(106, 52, 1, 1, 63, 84);
   Func_020049ac(130 << 19, 160 << 16, 2, 236);
-  Func_02004924(0x10003, 0);
-  Func_0200491c(0x10000, 0);
+  Func_02004924_(0x10003, 0);
+  Func_0200491c_(0x10000, 0);
   Func_0200492c(60);
   Func_020046b4();
   Func_020046a4();
@@ -92,5 +110,5 @@ void Func_020000c4(void) {
   gBgScroll[1] = 0;
   WaitFrames(1);
   gCpuLoadDisplayEnabled = 1;
-  Func_0200475c(0, 0, 0);
+  Func_0200475c_(0, 0, 0);
 }

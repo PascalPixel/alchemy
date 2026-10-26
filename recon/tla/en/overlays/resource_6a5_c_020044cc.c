@@ -1,6 +1,10 @@
-// Draft of overlay 6a5's Func_020044cc, the twin of overlay 698's
-// Func_020007a4: its draft (resource_698_c_020007a4.c) with this overlay's
-// symbols: differ 69 of 92. Left: what that draft's header records.
+// Draft, differ 10 of 92 (was 69): overlay 6a5's copy of overlay 698's
+// Func_020007a4. The two polar offsets go through inline helpers, as the
+// native rebuilds the 0x80000 radius for each call. Left: scheduling; the
+// native loads the pool zero for unk62 and unk63 before the angle and
+// builds the options address between the angle's load and store. Tried:
+// every order of the five stores (10 is best), a chained zero, one-pass
+// blocks around them (16 to 18), permute 10 minutes.
 #include "types.h"
 #include "iwram_call.h"
 #include "object_runtime.h"
@@ -36,23 +40,31 @@ void Func_0200430c(struct GustObject *object);
 void Func_02004bd4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
+static __inline__ s32 Gust_PolarX(u16 angle, s32 radius) {
+  return Iwram_MulQ16(radius, Math_Cosine(angle));
+}
+
+static __inline__ s32 Gust_PolarZ(u16 angle, s32 radius) {
+  return Iwram_MulQ16(radius, Math_Sine(angle));
+}
+
 struct GustObject *Func_020044cc(struct GustObject *source) {
   struct Vector3 position;
   struct EffectOptions options;
   struct GustObject *object;
 
   Func_020059f4(222);
-  position.x = source->x + Iwram_MulQ16(0x80000, Math_Cosine(source->angle));
-  position.z = source->z + Iwram_MulQ16(0x80000, Math_Sine(source->angle));
+  position.x = source->x + Gust_PolarX(source->angle, 0x80000);
+  position.z = source->z + Gust_PolarZ(source->angle, 0x80000);
   object = Func_0200576c(280, position.x, source->y, position.z);
   Func_02005754(object, 2);
   ObjectDispatch_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
-  object->angle = source->angle;
   object->unk64 = 0;
   object->unk62 = 0;
   object->unk63 = 0;
+  object->angle = source->angle;
   object->update = Func_0200430c;
   object->unk30 = 0x18000;
   options.priority = 1;

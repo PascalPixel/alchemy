@@ -3414,8 +3414,7 @@ main	rom_main_07	recon/tla/de/rom	.rom.001122dc	de
 main	rom_main_07	recon/tla/raw/0810a2d8	.text	en
 main	rom_main_07	recon/tla/raw/0810a490	.text	en
 main	rom_main_07	games/tla/src/menu/shop/rowlimit	.text
-main	rom_main_07	recon/tla/ja/rom	.rom.0010a678	ja
-main	rom_main_07	games/tla/src/menu/shop/f10a670	.text	en de es fr it
+main	rom_main_07	games/tla/src/menu/shop/f10a670	.text
 main	rom_main_07	games/tla/src/menu/shop/f10a6b8	.text
 main	rom_main_07	games/tla/src/menu/shop/rowtype	.text
 main	rom_main_07	games/tla/src/menu/shop/forge	.text

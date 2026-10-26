@@ -1838,12 +1838,6 @@ Func_0810a108:
 	.incbin "baserom.gba", 0x0010a110, 0x000001a4
 	.section .rom.0010a2e0, "ax"
 	.incbin "baserom.gba", 0x0010a2e0, 0x00000394
-	.section .rom.0010a678, "ax"
-	.global EventTable_ApplyRowAbilities
-	.type EventTable_ApplyRowAbilities, %function
-	.thumb_func
-EventTable_ApplyRowAbilities:
-	.incbin "baserom.gba", 0x0010a678, 0x00000050
 	.section .rom.0010ac00, "ax"
 	.global Func_0810abf0
 	.type Func_0810abf0, %function

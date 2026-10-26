@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 32 of 352 in tla-en,
+// instruction order and register choice. No empty asm before any one statement
+// lowers it.
 // Draft, differ 42 of 352 (2026-10-18), rewritten from ☀️'s
 // DisplayTransition_Start in place of a draft whose headers no longer exist:
 // this game's map work (dispcnt at 0x14, the centre lines at 0x104), its

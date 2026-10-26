@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 151 in tla-en, instruction
+// order only. No empty asm before any one statement lowers it.
 // Near miss, differ 2 of 151 (ported from The Broken Seal's radpart.c): the
 // native starts the acceleration constant (movs r5, #192) before it loads z
 // for the target; with the acceleration in a local it is one row late (plain,

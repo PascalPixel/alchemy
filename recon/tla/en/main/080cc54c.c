@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 8 of 138 in tla-en, instruction
+// order and register choice. No empty asm before any one statement lowers it.
 // Near miss, differ 8 of 138: ☀️'s Object_GetTriggerTileAheadOfCurrent
 // (far stub Object_GetTriggerTileAheadOfCurrentFar in table_26), with ⚓️'s
 // leader lookup Func_080cb8e8, a 16-pixel height window, the search event

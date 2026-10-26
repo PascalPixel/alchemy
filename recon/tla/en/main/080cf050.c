@@ -1,3 +1,7 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 55 in tla-en, instruction
+// order only. After a store the native copies the call's argument (adds r1, r6)
+// before the next load, where alchemy-gcc issues the load at once (AGENTS.md's
+// recurring row); no single empty asm lowers it.
 #include "types.h"
 #include "object_runtime.h"
 

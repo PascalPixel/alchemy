@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 86 in tla-en, instruction
+// order only. No empty asm before any one statement lowers it.
 // Draft of Unit_CalculateBaseElements: differ 8 of 86 (tla-en, 2026-10-18).
 // Ported from The Broken Seal's function of the same name
 // (games/tbs/src/game/game.c): a unit's base power and resistance in each

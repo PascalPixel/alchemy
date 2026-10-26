@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 6 of 135 in tla-en, instruction
+// order only. No empty asm before any one statement lowers it.
 // Draft of Party_ShowPairJoinedMessage: differ 8 of 135 (tla-en, 2026-10-18).
 // Its ☀️ twin is games/tbs/src/window/battle_command.c's function of the
 // same name. It opens a message window with the two joining characters'

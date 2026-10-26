@@ -1,3 +1,7 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 85 in tla-en, instruction
+// order only. Without the two barriers it differs 33; no placement of one to
+// three empty asms does better than the draft's two. Copying position to a
+// second variable after the workspace load changes nothing.
 // Near miss, differ 6 of 85: finds the used item of the heap slot 0x9c workspace
 // nearest to a position, within a squared distance of 0x400 (coordinates taken
 // in 1/256 units, squared with the IWRAM Q16 multiply); NULL when none. No ☀️

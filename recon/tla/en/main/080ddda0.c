@@ -1,3 +1,7 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 113 in tla-en, instruction
+// order only. After a store the native builds a constant's half before the next
+// load, where alchemy-gcc issues the load at once (AGENTS.md's recurring row);
+// no empty asm placement lowers it.
 // Near miss, differ 4 of 113 (was 16 through a gEffectWork symbol; this game
 // reads the effect work from its heap slot): two scheduling pairs. The native
 // starts the 0x100000 lift before it loads y, and reloads the first anchor

@@ -1,3 +1,7 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 75 in tla-en, instruction
+// order only. After a store the native builds the raise's second half before
+// the next load (AGENTS.md's recurring row); an empty asm before the call
+// lowers it to 2. Func_080d9104, Func_080d9e98 and Func_080da1b8 are the same.
 // Near miss, differ 6 of 75: links two objects into workspace slot `index`
 // of heap slot 0x9c: records their ids and the first one's sprite priority
 // (2 for a many-part object), builds the link between their positions raised

@@ -1,3 +1,7 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 122 in tla-en, instruction
+// order only. After a store the native builds a constant's half before the next
+// load, where alchemy-gcc issues the load at once (AGENTS.md's recurring row);
+// no empty asm placement lowers it.
 #include "types.h"
 
 struct Vec {

@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 8 of 81 in tla-en, instruction
+// order only. Empty asms before the z start and the z step lower it to 4.
 // Near miss, differ 8 of 81 (2026-10-18; 38 before): order only. Moves the
 // object over 11 frames from (x, y, z) to 16 pixels above the effect's main
 // object, shrinking it from 1.0 by 0.075 a frame. The products are

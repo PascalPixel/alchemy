@@ -1,3 +1,8 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 8 of 311 in tla-en, instruction
+// order and register choice. The same temporary as Func_080d50f8's (ground)
+// gives the native's registers (24 before). Left: as in Func_080d50f8, plus the
+// gPartyState pool load before the action flags' store, which an empty asm
+// before ObjectMotion_SetPositionAndCommit fixes (differ 6).
 // Near miss, differ 34 of 311: The Broken Seal twin (Field_ClimbUp), with this
 // game's checks. On the ground, when the leader's map cell and the one north
 // of it are both climbable (attribute 0x40), the cell above is not a wall
@@ -42,6 +47,7 @@ s32 Func_080d53b8(void) {
   struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s16 spriteFlags = 1;
+  struct MapCell *ground;
   s32 gridX = 8 + ((leader->x >> 16) & 0xfff0);
   s32 gridY = 8 + ((leader->y >> 16) & ~15);
   s32 gridZ = 8 + ((leader->z >> 16) & 0xfff0);
@@ -58,7 +64,8 @@ s32 Func_080d53b8(void) {
     s32 cellY = gridY >> 4;
     s32 cellZ = gridZ >> 4;
 
-    cell = &map->layers[leader->terrainId].cells[cellX + cellZ * 128];
+    ground = &map->layers[leader->terrainId].cells[cellX + cellZ * 128];
+    cell = ground;
     north = cell - 128;
     if (!(cell->attributeB & 0x40) || !(north->attributeB & 0x40))
       goto failure;

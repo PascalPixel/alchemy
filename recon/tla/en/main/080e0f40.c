@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 49 in tla-en, instruction
+// order and register choice. The native issues a pool load after the field load
+// where this issues it before; no single empty asm lowers it.
 // Near miss, differ 2 of 49 (one reordered pair): the twin of The Broken Seal's
 // BattleEffect_UpdateDescendingParticlePositiveArc, on object_runtime.h's fields.
 // The listing loads the 0xfffe0000 literal before source->x (ldr r4, =-0x20000;

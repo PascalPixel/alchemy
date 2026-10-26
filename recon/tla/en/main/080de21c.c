@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 28 of 364 in tla-en,
+// instruction order only. No empty asm before any one statement lowers it.
 // Near miss, differ 32 of 364 (2026-10-15): ⚓️'s form of ☀️'s
 // FieldEffect_RunForce. Every instruction and register is the native's; the
 // 32 differ only in order: in the five position copies the next field's

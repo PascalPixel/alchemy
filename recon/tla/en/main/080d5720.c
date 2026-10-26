@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 87 in tla-en, instruction
+// order only. No empty asm before any one statement lowers it.
 // Near miss, differ 2 of 87: the leader grabs the nearest workspace item
 // (Func_080d5670): with none it returns 0; otherwise cue 152, the leader is
 // moved onto the item and linked to it, its motion flags, sprite frame and

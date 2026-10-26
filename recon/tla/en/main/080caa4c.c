@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 26 of 292 in tla-en,
+// instruction order and register choice. Empty asms before `entry->sprite =
+// leader;` and the cell's load lower it to 14.
 // Draft, differ 36 of 292 (38 before Event_SpawnObjectTable was declared void,
 // as its listing returns nothing), written from the listing in the form of The
 // Broken Seal's ObjectEvent_ResetForObject: the leader's placement row from

@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 68 in tla-en, instruction
+// order only. No empty asm before any one statement lowers it.
 // Near miss: listing 68 instructions, draft 68, common 66, differ 4; the rest
 // differs in instruction order.
 #include "types.h"

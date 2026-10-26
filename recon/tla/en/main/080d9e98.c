@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 60 in tla-en, instruction
+// order only. As Func_080d8d68: an empty asm before the call lowers it to 2.
 // Near miss, differ 6 of 60, instruction order only (8 without the tagged
 // barrier). As in Func_080da1b8: the native copies the first id to r8 after
 // the work's load, loads the second end's y after building 0x80000, and adds

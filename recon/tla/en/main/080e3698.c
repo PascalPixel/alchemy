@@ -1,3 +1,7 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 141 in tla-en, instruction
+// order only. After a store the native builds a constant's half before the next
+// load, where alchemy-gcc issues the load at once (AGENTS.md's recurring row);
+// no empty asm placement lowers it.
 // Near miss, differ 4 of 141, instruction order only: in the loop the
 // native loads the new y before the 0x400 step's shift and sets up
 // WaitFrames' 1 before the z copy; here a row later and earlier. The saved

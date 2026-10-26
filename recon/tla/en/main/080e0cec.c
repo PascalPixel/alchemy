@@ -1,3 +1,7 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 105 in tla-en, instruction
+// order only. After a store the native builds a constant's half before the next
+// load, where alchemy-gcc issues the load at once (AGENTS.md's recurring row);
+// no single empty asm lowers it.
 // Near miss, differ 2 of 105 (2026-10-18; plainly 4): the twin of The Broken
 // Seal's BattleEffect_UpdateRadialLaunch; this game stores x and z to the slot's
 // origin and position together and does not write them back to pos. After a

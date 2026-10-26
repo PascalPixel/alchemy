@@ -1,3 +1,6 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 232 in tla-en, instruction
+// order only. An empty asm before `spawnZ = 0;` lowers it to 2; no second one
+// closes it. Permute (4 minutes) best differ 4.
 #include "types.h"
 #include "mem.h"
 #include "ram_buffer.h"

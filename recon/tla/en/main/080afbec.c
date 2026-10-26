@@ -1,3 +1,7 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 219 in tla-en, instruction
+// order only. After a store the native builds a constant's first half before
+// the next load, where alchemy-gcc issues the load at once (AGENTS.md's
+// recurring row); no single empty asm lowers it.
 // Near miss, differ 2 of 219 (one reordered pair), 2026-10-18: The Broken
 // Seal's BattleUnit_Set (games/tbs/src/game/game.c) on this game's enemy
 // records: fills battle unit `unitId` (0x80 to 0x86) with enemy `enemyId`

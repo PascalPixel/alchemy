@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 85 in tla-en, instruction
+// order only. No empty asm before any one statement lowers it.
 // Near miss, differ 2 of 85 (ported from The Broken Seal's
 // DjinnRecovery_Remove): in the loop's second copy of the found branch the
 // native stores the lowered count before it sets found to 1 in r2; this draft

@@ -1,3 +1,7 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 6 of 125 in tla-en, instruction
+// order only. After a store the native builds a constant's half before the next
+// load, where alchemy-gcc issues the load at once (AGENTS.md's recurring row);
+// no empty asm placement lowers it.
 // Near miss, differ 8 of 125 (2026-10-15), ported from ☀️'s
 // BattleEffect_RunSparkEmitter (object 673, update BattleEffect_SwayParticle). The amplitude 6
 // << 16 as a block local gives the listing's r5 and the phase pointer's r8

@@ -1,3 +1,5 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 94 in tla-en, instruction
+// order and register choice. No empty asm before any one statement lowers it.
 // Near miss, differ 6 of 94 (2026-10-18; plainly 24): The Broken Seal's
 // ResetSceneTransitionEffect with this game's offsets. The opening matches
 // behind three tagged devices: a barrier after the two heap slot loads, the

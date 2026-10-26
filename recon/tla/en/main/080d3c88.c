@@ -1,3 +1,7 @@
+// Under -mthumb-slow-loads (2026-10-26): differ 4 of 385 in tla-en, instruction
+// order only. Setting handle and portrait before loading the event work changes
+// nothing; no empty asm placement lowers it; permute (4 minutes) found nothing
+// lower.
 // Near miss, differ 18 of 385 (2026-10-24): The Broken Seal's
 // FieldMessage_ShowAtObject (TBS_PATCH_1's portrait placement) on this game's
 // heap slots and event work. Left: instruction order only, in the run up to

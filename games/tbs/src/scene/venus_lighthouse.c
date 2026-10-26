@@ -2652,7 +2652,7 @@ static void EventScript_MoveSocketPillar(void) {
       Script_Wait(30);
       FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
       FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(632), 1);
-      Object_WaitForValue16(firstGateEffect);
+      Object_WaitForScriptEnd(firstGateEffect);
       ObjectEvent_SetScript(firstGateEffect, gVenusFourthFloorLightToSoutheast);
       secondGateEffect = VenusLighthouse_CreateLight(
           216, 760, gVenusFourthFloorLightToSouthwest);

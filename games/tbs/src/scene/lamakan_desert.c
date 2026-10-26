@@ -976,8 +976,8 @@ static void LamakanDesert_MeetManticore(void) {
 /// Entering Lamakan Desert: the heat gauge (600 steps) starts on all but
 /// LamakanDesertCave, the patches Reveal uncovers are saved to the spare cells
 /// at 64, 126 or 64, 124, and the secrets are hidden.
-s32 LamakanDesert_Initialize(s32 a0, s32 a1) {
-  s32 v5;
+s32 LamakanDesert_Initialize(void) {
+  s32 spareRow;
 
   gSaveBlock.hazardLimit = 600;
   gSaveBlock.hazardMode = HAZARD_COUNT_ON_CELLS;
@@ -1011,11 +1011,11 @@ s32 LamakanDesert_Initialize(s32 a0, s32 a1) {
       MapGrid_CopyCells(27, 55, 4, 2, 112, 126);
       MapGrid_CopyCells(43, 56, 4, 2, 116, 126);
     } else if (gSaveBlock.sceneId == (s32)&SceneId_LamakanDesertManticore) {
-      v5 = 124;
+      spareRow = 124;
       Scene_QueueMusic(SE_AMBIENT_WIND);
-      MapGrid_CopyCells(8, 14, 4, 4, 64, v5);
-      MapGrid_CopyCells(6, 18, 4, 4, 68, v5);
-      MapGrid_CopyCells(10, 21, 4, 4, 72, v5);
+      MapGrid_CopyCells(8, 14, 4, 4, 64, spareRow);
+      MapGrid_CopyCells(6, 18, 4, 4, 68, spareRow);
+      MapGrid_CopyCells(10, 21, 4, 4, 72, spareRow);
     }
     Reveal_HideSecrets();
   }

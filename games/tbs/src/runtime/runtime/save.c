@@ -146,14 +146,14 @@ u32 Save_SelectWriteSector(s32 mode) {
 /// Save_WriteRecord and Save_InvalidateSector. Returns 0 on success
 /// and 1 on failure.
 u32 Save_WriteSector(s32 sector) {
-  s32 *param = &gFlash_Handler0;
+  s32 *param = &gProgramFlashSector;
   s32 result;
   struct SaveWork *work;
   s32 value;
 
   work = gSaveWork;
   value = (u16)sector;
-  // The chip's program routine, from gFlash_Handler0, reports an error in
+  // The chip's program routine, from gProgramFlashSector, reports an error in
   // its result's low halfword
   if ((_call_via_r3(value, (s32)&work->slot, (s32)param, *param) << 0x10) !=
       0) {

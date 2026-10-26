@@ -86,7 +86,7 @@
 	import Object_StartCamera, Object_StartCameraFar
 	import MapGrid_CenterOnFollowedPoint, MapGrid_CenterOnFollowedPointFar
 	import Object_StartIdle, Object_StartIdleFar
-	import Object_WaitForValue16, Object_WaitForValue16Far
+	import Object_WaitForScriptEnd, Object_WaitForScriptEndFar
 	import Object_SetMoveTarget, Object_SetMoveTargetFar
 	import Object_WaitForMove, Object_WaitForMoveFar
 	import WorldMap_LoadDefaultCellsAndUpdateBlock, WorldMap_LoadDefaultCellsAndUpdateBlockFar

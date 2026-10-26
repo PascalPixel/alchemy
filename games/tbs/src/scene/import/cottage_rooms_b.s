@@ -13,7 +13,7 @@
 	.set import.Object_CreateField, 1
 	.set import.Object_Release, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
-	.set import.Object_WaitForValue16, 1
+	.set import.Object_WaitForScriptEnd, 1
 	.set import.MapGrid_CopyMetatileIndicesRect, 1
 	.set import.TilesetAnim_Resume, 1
 	.set import.TilesetAnim_Pause, 1

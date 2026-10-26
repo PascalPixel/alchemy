@@ -1212,9 +1212,9 @@ static void EventScript_ShowMythrilBag(void) {
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 326, 185);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH, 10);
   ObjectEvent_SetScript(objectEvent, gCottageRoomsB_MythrilBagRisesScript);
-  Object_WaitForValue16(objectEvent);
+  Object_WaitForScriptEnd(objectEvent);
   ObjectEvent_SetScript(objectEvent, gCottageRoomsB_MythrilBagWobblesScript);
-  Object_WaitForValue16(objectEvent);
+  Object_WaitForScriptEnd(objectEvent);
   FieldScript_WaitFrames(20);
   ObjectEvent_Release(objectEvent);
   ObjectMotion_Launch(LOCALID_KRADEN, 2, 20);

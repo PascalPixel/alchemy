@@ -102,7 +102,7 @@ void WorldMap_LoadGraphicsFar(s32 x, s32 z);
 void Object_StartIdleFar(struct Object *object);
 /// Waits until an object's script reaches SC_END, giving up after 300 frames
 /// (five seconds).
-void Object_WaitForValue16Far(void *raw);
+void Object_WaitForScriptEndFar(void *raw);
 #ifndef OWN_Object_SetMoveTargetFar
 /// Sends an object towards (x, y, z) in 16.16 pixels, pulling the target in so
 /// it coasts to a stop there; within a pixel it arrives at once.

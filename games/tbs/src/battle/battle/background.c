@@ -473,10 +473,9 @@ void BattleBackground_FadeAlphaIn(void) {
 /// What BattleTransition_InitializeEntries treats as an array of
 /// these; Transform_SetIdentity writes over it as a matrix.
 struct BattleTransitionEntry {
-  u32 value; ///< the first word, read before and after the identity is set
-  u32 sum;   ///< set to the first word's old value plus its new one
-  u32 field8;
-  u32 fieldc;
+  u32 value;   ///< the first word, read before and after the identity is set
+  u32 sum;     ///< set to the first word's old value plus its new one
+  u32 rest[2]; ///< never read
 };
 
 /// Sets REG_BLDCNT to lighten every layer by REG_BLDY; nothing calls it.

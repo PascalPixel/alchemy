@@ -78,7 +78,7 @@ void ObjectEvent_RefreshSelectorById(u32 objectId) {
   struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL)
-    Object_WaitForValue16Far(object);
+    Object_WaitForScriptEndFar(object);
 }
 
 /// Starts a built-in action or supplied script, as
@@ -93,7 +93,7 @@ void ObjectEvent_SetActionCallbackAndRefreshById(u32 objectId, s32 action) {
     value |= object->steeringFlags;
     object->steeringFlags = value;
     ObjectEvent_SetMovementType(object, action);
-    Object_WaitForValue16Far(object);
+    Object_WaitForScriptEndFar(object);
   }
 }
 

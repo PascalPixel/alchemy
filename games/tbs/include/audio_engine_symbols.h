@@ -84,7 +84,7 @@ struct MusicPlayerInfo;
 struct LzPackWork;
 /// A flash library cell the LZ packer borrows as its work pointer (lzpack.h);
 /// IdentifyFlash sets it again before the flash code reads it.
-extern struct LzPackWork *gFlash_Handler3;
+extern struct LzPackWork *gWaitForFlashWrite;
 /// Plays music; song 17 fades it and a fanfare silences it until it ends.
 extern struct MusicPlayerInfo gMPlayInfo_BGM;
 /// Plays fanfares; the music returns once it stops.

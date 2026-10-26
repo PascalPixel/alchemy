@@ -22,7 +22,7 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount);
 void BattleUnit_Collect(void);
 s32 Battle_ShiftVramTiles(void);
 void Battle_ClearBg0Vofs(void);
-void Party_ReservedNoOp5B14(s32 unused);
+void Party_BattleSetupNoOp(s32 unused);
 #ifdef UBFIX
 void BattleParty_ResetActiveRuntimeFields(void);
 #else
@@ -156,7 +156,7 @@ void BattleMotion_ApplyKnockback(s32 unitId, s32 variant);
 void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
                                  s32 initialVelocityY);
 void BattleMotion_RestartLeap(s32 unitId);
-void BattleMotion_ReservedNoOp83B0();
+void BattleMotion_MidpointNoOp();
 void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId);
 void BattleMotion_PlayHitFlash(s32 unitId);
 s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected);
@@ -188,7 +188,7 @@ void Palette_CopyBanksWithBrightnessOffset(s32 offset);
 s32 Battle_GatherActions(struct BattleAction *actions);
 s32 Battle_GetTaggedSlotValue(s32 taggedPlace);
 s32 Battle_FindTaggedSlotByValue(u32 unitId);
-void Battle_ReservedNoOp9B2C(void);
+void Battle_RoundStartNoOp(void);
 
 s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay);
 #ifdef UBFIX
@@ -389,6 +389,6 @@ u32 BattleSpoils_RankItem(u32 inventoryEntry);
 void BattleSpoils_Clear(void);
 s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus);
 void Battle_AwardSpoils(void);
-void Battle_ReservedNoOp2A08(void);
+void Battle_DebugSelectNoOp(void);
 
 #endif

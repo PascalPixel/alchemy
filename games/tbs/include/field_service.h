@@ -181,27 +181,30 @@ static inline s32 Vram_Load(s32 block, s32 size, const void *data) {
 
 /// The walk and wait of ObjectEvent_WalkByAndWait, by a second inline over the
 /// same routine.
-static inline void FieldObjectMotion_CommitPositionAndActivate(s32 a0, s32 a1,
-                                                               s32 a2) {
-  ObjectMotion_CommitPositionAndActivate(a0, a1, a2);
+static inline void FieldObjectMotion_CommitPositionAndActivate(s32 localId,
+                                                               s32 xOffset,
+                                                               s32 zOffset) {
+  ObjectMotion_CommitPositionAndActivate(localId, xOffset, zOffset);
 }
 
 /// ObjectEvent_SetDestinationOffset, by a second inline over the same routine.
-static inline void
-FieldObjectMotion_OffsetPositionAndResetMotion(s32 a0, s32 a1, s32 a2) {
-  ObjectMotion_OffsetPositionAndResetMotion(a0, a1, a2);
+static inline void FieldObjectMotion_OffsetPositionAndResetMotion(s32 localId,
+                                                                  s32 xOffset,
+                                                                  s32 zOffset) {
+  ObjectMotion_OffsetPositionAndResetMotion(localId, xOffset, zOffset);
 }
 
 /// ObjectEvent_CenterAndWalk, by a second inline over the same routine.
-static inline void FieldObjectMotion_CenterOnColumn(s32 a0, s32 a1, s32 a2) {
-  ObjectMotion_CenterOnColumn(a0, a1, a2);
+static inline void FieldObjectMotion_CenterOnColumn(s32 localId, s32 priority,
+                                                    s32 zOffset) {
+  ObjectMotion_CenterOnColumn(localId, priority, zOffset);
 }
 
 /// ObjectEvent_SetDestination as ObjectMotion_ResetAndSetPosition, the name of
 /// the routine behind it.
-static inline void FieldObjectMotion_ResetAndSetPosition(s32 a0, s32 a1,
-                                                         s32 a2) {
-  ObjectMotion_ResetAndSetPosition(a0, a1, a2);
+static inline void FieldObjectMotion_ResetAndSetPosition(s32 localId, s32 x,
+                                                         s32 z) {
+  ObjectMotion_ResetAndSetPosition(localId, x, z);
 }
 
 /// ObjectEvent_MoveToAndWait, written with ObjectMotion_SetPositionAndCommit's
@@ -219,15 +222,16 @@ static inline s32 FieldScheduler_AddOrUpdateCallback(TaskFunc callback,
 
 /// Changes the metatile behavior of the cell at (x, y), in 16.16 pixels,
 /// opening or closing the way (MapGrid_SetMetatileBehaviorAt).
-static inline void Field_SetMetatileBehaviorAt(s32 a0, s32 a1, s32 a2, s32 a3) {
-  MapGrid_SetMetatileBehaviorAt(a0, a1, a2, a3);
+static inline void Field_SetMetatileBehaviorAt(s32 layer, s32 x, s32 y,
+                                               s32 behavior) {
+  MapGrid_SetMetatileBehaviorAt(layer, x, y, behavior);
 }
 
 /// Changes one 512-pixel tile of the world map, drawn at once when it's next to
 /// the view (WorldMap_SetWindowCellTile).
-static inline void Field_SetWorldMapWindowCellTile(s32 a0, s32 a1, s32 a2,
-                                                   s32 a3) {
-  WorldMap_SetWindowCellTile(a0, a1, a2, a3);
+static inline void Field_SetWorldMapWindowCellTile(s32 x, s32 y, s32 px,
+                                                   s32 py) {
+  WorldMap_SetWindowCellTile(x, y, px, py);
 }
 
 /// Puts an object event on the leader and sends it walking off by (dx, dz),

@@ -29,12 +29,12 @@ struct FlashSetupInfo;
 extern struct FlashSetupInfo gFlash_ChipAtmel;
 extern const struct FlashSetupInfo gFlash_ChipDefault;
 /// The chip's erase-all routine (FlashSetupInfo.handlers[1]).
-extern u32 gFlash_Handler1;
+extern u32 gEraseFlashChip;
 /// The chip's erase-sector routine (handlers[2]).
 extern u32 gEraseFlashSector;
-#ifndef OWN_Flash_Handler4
+#ifndef OWN_gFlashMaxTime
 /// The chip's wait-time table (FlashSetupInfo.maxTime).
-extern u16 *gFlash_Handler4;
+extern u16 *gFlashMaxTime;
 #endif
 #ifndef OWN_gFlash
 extern const struct FlashType *gFlash;
@@ -83,10 +83,10 @@ struct SelectionNode;
 /// 0x03007000) that Sound_LoadReverbCode overwrites with a reverb code
 /// from IwramSoundReverbCodes.
 extern u8 IwramSoundReverbCode[];
-#ifndef OWN_Flash_Handler0
+#ifndef OWN_gProgramFlashSector
 /// The chip's program routine (FlashSetupInfo.handlers[0]), which
 /// Save_WriteSector calls.
-extern u32 gFlash_Handler0;
+extern u32 gProgramFlashSector;
 #endif
 /// HEAP_SLOT_SPRITE_ANIMS: the sprite anims (struct
 /// SpriteAnim) that SpriteAnim_Alloc takes from.

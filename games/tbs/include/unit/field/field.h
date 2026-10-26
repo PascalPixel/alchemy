@@ -301,7 +301,7 @@ void Object_StartPlayerControl(struct Object *object);
 void Object_StartWorldMapControl(struct Object *object);
 void Object_StartIdle(struct Object *object);
 void Object_StartCamera(struct Object *object, s32 linkedObjectHandle);
-void Object_WaitForValue16(void *rawObject);
+void Object_WaitForScriptEnd(void *rawObject);
 void Object_SetSpriteFlags(struct Object *object, u32 flags);
 void Object_SetSpriteBlendMode(struct Object *object, u32 mode);
 void Object_SetSpriteScale(struct Object *object, u32 fixedScale);

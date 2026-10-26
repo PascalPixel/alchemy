@@ -14,7 +14,7 @@ const struct MapWarpRegion *LamakanDesert_GetRegions(void);
 const u32 *LamakanDesert_GetWarps(void);
 const struct ObjectEventTemplate *LamakanDesert_GetObjectEventTemplates(void);
 const struct MapEvent *LamakanDesert_GetEvents(void);
-s32 LamakanDesert_Initialize(s32 a0, s32 a1);
+s32 LamakanDesert_Initialize(void);
 void HeatGauge_Start(void);
 extern const s32 gFieldEffect_ShortScript[];
 extern const s32 gFieldEffect_MediumScript[];

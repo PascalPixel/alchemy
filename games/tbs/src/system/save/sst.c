@@ -5,13 +5,13 @@
 s32 CountRemainingErasedFlashBytes(u8 *ptr);
 s32 RunFlashEraseVerifier(u8 *ptr, s32 (*verify)(u8 *));
 
-extern FlashWaitProc gFlash_Handler3;
+extern FlashWaitProc gWaitForFlashWrite;
 
 u16 _call_via_r3(s32 mode, u8 *address, u8 expected, FlashWaitProc wait);
 
 /// Issues the chip-erase command and waits for an erased byte. Returns 0, or
 /// 0xc003 when byte 0 has not read 0xff within the chip-erase time. The
-/// erase-chip routine (gFlash_Handler1) of every chip but Atmel; nothing in
+/// erase-chip routine (gEraseFlashChip) of every chip but Atmel; nothing in
 /// ☀️ calls through that cell.
 u16 EraseFlashChip(void) {
   u8 savedCode[64];
@@ -29,7 +29,7 @@ u16 EraseFlashChip(void) {
 
   CopyFlashReadRoutineToRam(savedCode);
 
-  wait = &gFlash_Handler3;
+  wait = &gWaitForFlashWrite;
   result = _call_via_r3(3, (u8 *)0x0E000000, 255, *wait);
 
   REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | 3;
@@ -76,7 +76,7 @@ u16 EraseFlashSector(u16 sector) {
 
   CopyFlashReadRoutineToRam(savedCode);
 
-  wait = &gFlash_Handler3;
+  wait = &gWaitForFlashWrite;
   result = _call_via_r3(2, (u8 *)target, 255, *wait);
 
   *waitcnt = (*waitcnt & 0xFFFC) | 3;
@@ -94,14 +94,14 @@ u16 ProgramFlashByte(u8 *source, u8 *destination) {
   *(volatile u8 *)0x0e002aaa = 0x55;
   *(volatile u8 *)0x0e005555 = 0xa0;
   *destination = *source;
-  wait = &gFlash_Handler3;
+  wait = &gWaitForFlashWrite;
   return (*wait)(1, destination, *source);
 }
 
 extern u16 gFlashNumRemainingBytes;
 
 /// Erases and verifies a sector with retries, then programs its bytes. The
-/// program routine (gFlash_Handler0) of the SST and unknown chips, which
+/// program routine (gProgramFlashSector) of the SST and unknown chips, which
 /// Save_WriteSector calls with 4 KB at `source`. Returns 0,
 /// 0x80ff for a sector above 15, the last erase or check error after 81
 /// failed tries (0x8004 for a sector that would not read blank), or 0xc001

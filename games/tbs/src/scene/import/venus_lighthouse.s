@@ -14,7 +14,7 @@
 	.set import.Object_CreateField, 1
 	.set import.Object_Release, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
-	.set import.Object_WaitForValue16, 1
+	.set import.Object_WaitForScriptEnd, 1
 	.set import.Object_SetMoveTarget, 1
 	.set import.Object_WaitForMove, 1
 	.set import.MapGrid_PlayMetatileCopySequence, 1

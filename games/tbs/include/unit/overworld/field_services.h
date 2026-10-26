@@ -243,7 +243,7 @@ s32 Field_TryJumpForward(void);
 s32 Field_ClimbDown(void);
 s32 Field_ClimbUp(void);
 s32 ObjectEvent_GetScreenPosition(s32 objectId, s32 *position);
-void Warp_ReservedNoOp941DC(void);
+void Warp_NoOp(void);
 #ifdef UBFIX
 void Field_StartEncounterTransition(s32 unused);
 #else

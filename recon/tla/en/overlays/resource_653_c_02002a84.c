@@ -1,6 +1,11 @@
 // Draft, differ 41 of 171 (6 of 160 in tla-ja): the Kandorean Temple's
 // prepare step. Japanese lacks the final flag 0x12f clear. Left: the native
 // reloads gPartyState's address for the final test; this draft keeps it.
+// Measured: gcse inserts the address load on the path that skips the inner
+// tests and keeps it in r5 across their calls, where the native loads it into
+// r2 there and again at the join. The final entrance read through a volatile
+// pointer reloads it (differ 21) but reads it as ldrh and compares it shifted;
+// a switch over the inner tests (46).
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 #include "edition.h"
 #include "flag_call.h"

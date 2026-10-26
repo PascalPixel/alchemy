@@ -355,13 +355,6 @@ Func_0803a8fc:
 	.thumb_func
 UiText_RenderWideStringAtOffset:
 	.incbin "baserom.gba", 0x0003aa84, 0x00000144
-	.section .rom.0003ac3c, "ax"
-	.balign 4
-	.global UiText_RenderWideStringInWindow
-	.type UiText_RenderWideStringInWindow, %function
-	.thumb_func
-UiText_RenderWideStringInWindow:
-	.incbin "baserom.gba", 0x0003ac3c, 0x00000138
 	.section .rom.0003ae38, "ax"
 	.global UiText_BuildRenderEntries
 	.type UiText_BuildRenderEntries, %function
@@ -392,7 +385,12 @@ Func_0803c068:
 	.type Func_0803c198, %function
 	.thumb_func
 Func_0803c198:
-	.incbin "baserom.gba", 0x0003c204, 0x0000022c
+	.incbin "baserom.gba", 0x0003c204, 0x000000d4
+	.global Func_0803c274
+	.type Func_0803c274, %function
+	.thumb_func
+Func_0803c274:
+	.incbin "baserom.gba", 0x0003c2d8, 0x00000158
 	.section .rom.0003c4c4, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0003c4c4, 0x0000013c
@@ -404,13 +402,11 @@ UiWork_AnimateSpriteSlots:
 	.incbin "baserom.gba", 0x0003c600, 0x00000464
 	.section .rom.0003d088, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x0003d088, 0x000000c0
-	.section .rom.0003d148, "ax"
-	.global Func_0803d020
-	.type Func_0803d020, %function
+	.global Func_0803cfd0
+	.type Func_0803cfd0, %function
 	.thumb_func
-Func_0803d020:
-	.incbin "baserom.gba", 0x0003d148, 0x00000164
+Func_0803cfd0:
+	.incbin "baserom.gba", 0x0003d088, 0x000000c0
 	.section .rom.0003d7b4, "ax"
 	.global ItemIcon_Compose
 	.type ItemIcon_Compose, %function

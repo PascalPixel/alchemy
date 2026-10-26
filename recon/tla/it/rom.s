@@ -2024,10 +2024,10 @@ Func_080dbdf4:
 Func_080dbe80:
 	.incbin "baserom.gba", 0x000dbe74, 0x000001c4
 	.section .rom.000dc1a4, "ax"
-	.global BattleEffect_GetObjectPriority
-	.type BattleEffect_GetObjectPriority, %function
+	.global Field_StartColorTransition
+	.type Field_StartColorTransition, %function
 	.thumb_func
-BattleEffect_GetObjectPriority:
+Field_StartColorTransition:
 	.incbin "baserom.gba", 0x000dc1a4, 0x00000094
 	.section .rom.000dc404, "ax"
 	.global BattleEffect_LoadActionEffectResources

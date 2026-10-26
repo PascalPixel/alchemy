@@ -120,7 +120,15 @@ BattleEffect_StepVector3Far:
 	.global Func_080c87e8
 	.thumb_func
 Func_080c87e8:
+.ifdef TLA_EDITION_ES
+	overlay_veneer Field_StartColorTransition
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Field_StartColorTransition
+.else
 	overlay_veneer BattleEffect_GetObjectPriority
+.endif
+.endif
 	.ifdef TLA_EDITION_ES
 	.global Field_StartPaletteTransitionFar
 	.thumb_func

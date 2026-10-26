@@ -284,7 +284,7 @@ restart:
         if (gKeysRepeat & KEY_START)
           DebugBattle_ViewMessages();
         if (gKeysRepeat & KEY_SELECT)
-          Battle_ReservedNoOp2A08();
+          Battle_DebugSelectNoOp();
         if ((gKeysRepeat & KEY_B) || startModeSet) {
           startModeSet = 1;
           Battle_SetType(BATTLE_TYPE_DEBUG);

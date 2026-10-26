@@ -178,11 +178,11 @@ gMPlayTrack_SE6:
 gMPlayTrack_SE7:
 	.space 0x000000a0
 	.space 0x00000040
-	.global gFlash_Handler3
-gFlash_Handler3:
+	.global gWaitForFlashWrite
+gWaitForFlashWrite:
 	.space 0x00000004
-	.global gFlash_Handler0
-gFlash_Handler0:
+	.global gProgramFlashSector
+gProgramFlashSector:
 	.space 0x00000004
 	.global gFlash
 gFlash:
@@ -190,14 +190,14 @@ gFlash:
 	.global gFlashNumRemainingBytes
 gFlashNumRemainingBytes:
 	.space 0x00000004
-	.global gFlash_Handler1
-gFlash_Handler1:
+	.global gEraseFlashChip
+gEraseFlashChip:
 	.space 0x00000004
 	.global gEraseFlashSector
 gEraseFlashSector:
 	.space 0x00000004
-	.global gFlash_Handler4
-gFlash_Handler4:
+	.global gFlashMaxTime
+gFlashMaxTime:
 	.space 0x00000004
 	.global gFlashReadRoutine
 gFlashReadRoutine:

@@ -1846,7 +1846,7 @@ static s32 ColosseumSatrageMatch_ApproachFinishAndTakeItem(s32 firstItem,
   gameState = (u8 *)&gSaveBlock;
   MessageArgument_Push(((struct SaveBlock *)gameState)->leaderLocalId, 1);
   FieldMessage_Show(MsgColossoIsaacGotItem, 3);
-  Object_WaitForValue16(warrior);
+  Object_WaitForScriptEnd(warrior);
 
   return finishAlreadyReached;
 }

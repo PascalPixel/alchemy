@@ -443,10 +443,10 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
       // The seven orbit sparks, 8x8, turning with the frame and lifting
       // with it. Angles are in 1/65536 turns: the orbit is tilted 1/32 turn
       // and turns once every 256 frames.
-      // XXX: likely the sparks lie outside the projection's depth range,
-      // because each result is read back as a 16.16 point and centred by hand;
-      // Transform_ProjectPoint leaves the transformed point when it cannot
-      // project.
+      // The sparks never project: moved 512 pixels along z, with the yaw
+      // turning them at most 43 pixels from that, they lie behind the view,
+      // nearer than gProjection's near depth, so Transform_ProjectPoint
+      // leaves the transformed point, read back as 16.16 and centred by hand.
       screen.x = 0;
       screen.y = 0;
       screen.depth = 0x2000000;

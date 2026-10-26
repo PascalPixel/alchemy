@@ -757,4 +757,4 @@ s32 Battle_FindTaggedSlotByValue(u32 unitId) {
 DEFINE_ADJUST_CAMERA(BattleCamera_AdjustByShoulderKeysAlt)
 
 /// Does nothing; Battle_Run calls it at the start of each round.
-void Battle_ReservedNoOp9B2C(void) {}
+void Battle_RoundStartNoOp(void) {}

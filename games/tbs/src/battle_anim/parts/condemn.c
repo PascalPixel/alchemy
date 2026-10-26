@@ -246,9 +246,13 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
     ANIM_PRESENT_FRAME(work);
   }
   // Finish: the callbacks, then the battle background reloaded into
-  // character blocks 2 and 3, its palettes darkened to level 24.
-  // XXX: why it is reloaded, when nothing in this animation writes those
-  // blocks; a VRAM view after the panel breaks would show what it repairs.
+  // character blocks 2 and 3, its palettes darkened to level 24, as
+  // BattleAnim_SetupBlendedDisplay does after a summon. It repairs nothing:
+  // this animation writes neither those blocks nor the battle's palette, and
+  // BattleAnim_EndCanvasLayer rebuilds the background's maps and fades its
+  // palette back from level 21 itself.
+  // XXX (no evidence): why Condemn reloads the background; the reload puts
+  // back the picture already there, so nothing the game shows says why.
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleAnim_ArmBg2AffineHBlankDma);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, gBattleWork->background,

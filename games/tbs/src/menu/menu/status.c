@@ -67,19 +67,19 @@
 // The equipment page's item list: its page icons, the item names, and the
 // Attack and Defense figures.
 #if LANGUAGE != LANGUAGE_JAPANESE
-#define SHOP_PAGE_ICONS_X 119
-#define SHOP_ITEM_NAME_X 128
-#define SHOP_STAT_X 80
+#define STATUS_ITEM_PAGE_ICONS_X 119
+#define STATUS_ITEM_NAME_X 128
+#define STATUS_ITEM_STAT_X 80
 #else
-#define SHOP_PAGE_ICONS_X 123
-#define SHOP_ITEM_NAME_X 136
-#define SHOP_STAT_X 72
+#define STATUS_ITEM_PAGE_ICONS_X 123
+#define STATUS_ITEM_NAME_X 136
+#define STATUS_ITEM_STAT_X 72
 #endif
 
 #if LANGUAGE == LANGUAGE_GERMAN
-#define SHOP_EMPTY_MESSAGE_X 112
+#define STATUS_ITEM_EMPTY_MESSAGE_X 112
 #else
-#define SHOP_EMPTY_MESSAGE_X 120
+#define STATUS_ITEM_EMPTY_MESSAGE_X 120
 #endif
 
 // The equipment window, and the equipped items' names in it.
@@ -209,7 +209,7 @@ s32 SummaryScreen_Run(void) {
   // Close, and put the palettes and tiles back.
   Menu_EnsureCancelSound();
   WindowSprite_ClearListFar(menu->statusWindow);
-  DjinnFigures_ClearSlotsAndSchedule();
+  DjinnFigures_ReleaseTopRow();
   Menu_ResumeFieldTasks();
   Window_DrawFrameFar(0, 0, 30, 20);
   WaitFrames(1);
@@ -1739,11 +1739,10 @@ s32 ItemMenu_DrawEquipPage(struct Window *window, s32 unused,
 
 /// Draws one page of the Status menu's equipment page into window: up to
 /// PAGE_ROWS item names with their icons and the page numbers, or "no items",
-/// and the member's name with their Attack and Defense. Returns 1.
-/// Despite its name, no shop calls it: ItemMenu_SelectItem draws each page with
-/// it.
-s32 Shop_DrawItemPage(struct Window *window, s32 unused,
-                      struct PagedList *state) {
+/// and the member's name with their Attack and Defense. Returns 1. Called by
+/// ItemMenu_SelectItem for each page.
+s32 ItemMenu_DrawItemPage(struct Window *window, s32 unused,
+                          struct PagedList *state) {
   struct ItemMenuWork *menu = gMenuWork;
   struct Unit *unit;
   u16 *inventoryEntry;
@@ -1758,12 +1757,13 @@ s32 Shop_DrawItemPage(struct Window *window, s32 unused,
   rowCount = (u8)(state->entryCount - firstEntry);
   if (rowCount > PAGE_ROWS)
     rowCount = PAGE_ROWS;
-  Menu_SetPageIcons(PAGE_ROWS, firstEntry, window, SHOP_PAGE_ICONS_X, 52);
+  Menu_SetPageIcons(PAGE_ROWS, firstEntry, window, STATUS_ITEM_PAGE_ICONS_X,
+                    52);
   PagedList_DrawPageNumbers(window, state->entryCount, PAGE_ROWS, state->page,
                             28);
   if (menu->itemCount == 0) {
-    Text_DrawMessageAsTilesFar(MsgItemMenuEmpty, window, SHOP_EMPTY_MESSAGE_X,
-                               8);
+    Text_DrawMessageAsTilesFar(MsgItemMenuEmpty, window,
+                               STATUS_ITEM_EMPTY_MESSAGE_X, 8);
   } else {
     rowIndex = 0;
     if (rowCount > rowIndex) {
@@ -1771,7 +1771,7 @@ s32 Shop_DrawItemPage(struct Window *window, s32 unused,
       do {
         Text_DrawMessageAsTilesFar(
             (*inventoryEntry & INVENTORY_ITEM_ID_MASK) + MsgItemName, window,
-            SHOP_ITEM_NAME_X, (rowIndex << 4) + 8);
+            STATUS_ITEM_NAME_X, (rowIndex << 4) + 8);
         rowIndex = (u8)(rowIndex + 1);
         inventoryEntry++;
       } while (rowCount > rowIndex);
@@ -1781,8 +1781,8 @@ s32 Shop_DrawItemPage(struct Window *window, s32 unused,
   message = MsgStatLabel;
   Text_DrawMessageAsTilesFar(message, window, 32, 16);
   Text_DrawMessageAsTilesFar(message + 1, window, 32, 24);
-  Text_DrawNumberInWindowFar(unit->atk, 3, window, SHOP_STAT_X, 16);
-  Text_DrawNumberInWindowFar(unit->def, 3, window, SHOP_STAT_X, 24);
+  Text_DrawNumberInWindowFar(unit->atk, 3, window, STATUS_ITEM_STAT_X, 16);
+  Text_DrawNumberInWindowFar(unit->def, 3, window, STATUS_ITEM_STAT_X, 24);
   return 1;
 }
 
@@ -1856,7 +1856,7 @@ s32 ItemMenu_SelectItem(void) {
         redraw = 0;
         if (listNeedsRedraw != 0) {
           listNeedsRedraw = 0;
-          Shop_DrawItemPage(menu->statusWindow, 0, &state);
+          ItemMenu_DrawItemPage(menu->statusWindow, 0, &state);
         }
         ItemMenu_DrawEquipPage(menu->statusWindow, 0, &state);
       }
@@ -2260,9 +2260,9 @@ s32 SummaryScreen_UpdateSelectionIcons(const u8 *enabled) {
 #undef STATUS_PSYNERGY_CURSOR_Y
 #undef STATUS_EQUIP_SLOT_X
 #undef STATUS_EQUIP_SLOT_WIDTH
-#undef SHOP_PAGE_ICONS_X
-#undef SHOP_ITEM_NAME_X
-#undef SHOP_STAT_X
-#undef SHOP_EMPTY_MESSAGE_X
+#undef STATUS_ITEM_PAGE_ICONS_X
+#undef STATUS_ITEM_NAME_X
+#undef STATUS_ITEM_STAT_X
+#undef STATUS_ITEM_EMPTY_MESSAGE_X
 #undef STATUS_EQUIP_WINDOW_WIDTH
 #undef STATUS_EQUIPPED_NAME_X

@@ -187,7 +187,7 @@ s32 Battle_Run(s32 enemyGroup) {
   // sets at most BG1's horizontal scroll from the camera's yaw.
   BattleCamera_SetRange(0xa00000, 0x500000, 0, 0, 0x20000);
   BattleCamera_SetView(0, 0, 0, 190);
-  Party_ReservedNoOp5B14(1);
+  Party_BattleSetupNoOp(1);
   REG_BLDCNT = 0;
   BattleSpoils_Clear();
   // 128 bytes of VRAM cache for the advance arrow's tiles, which
@@ -214,7 +214,7 @@ s32 Battle_Run(s32 enemyGroup) {
 
   // The rounds.
   for (;;) {
-    Battle_ReservedNoOp9B2C();
+    Battle_RoundStartNoOp();
     BattleSummon_UpdateAvailability();
     if (((struct BattleSummonState *)Djinn_GetRecoveryTableFar(
              DJINN_RECOVERY_PARTY))

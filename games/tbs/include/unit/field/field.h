@@ -301,7 +301,7 @@ void Object_StartPlayerControl(struct Object *object);
 void Object_StartWorldMapControl(struct Object *object);
 void Object_StartIdle(struct Object *object);
 void Object_StartCamera(struct Object *object, s32 linkedObjectHandle);
-void Object_WaitForValue16(void *rawObject);
+void Object_WaitForScriptEnd(void *rawObject);
 void Object_SetSpriteFlags(struct Object *object, u32 flags);
 void Object_SetSpriteBlendMode(struct Object *object, u32 mode);
 void Object_SetSpriteScale(struct Object *object, u32 fixedScale);
@@ -477,6 +477,6 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
                                  struct SpritePlacement *positions);
 void SpriteViewer_StartStaggeredAnims(s32 layerIndex, s32 animationIndex);
 void SpriteViewer_SetGridColumnNumber(s32 layerIndex, s32 spriteId);
-void Battle_PlaceActorsByFormationKind(void);
+void SpriteViewer_PlaceRing(void);
 
 #endif

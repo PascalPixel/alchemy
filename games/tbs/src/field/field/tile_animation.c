@@ -177,7 +177,7 @@ void BlendScript_Run(void) {
   u16 *commands;
   u32 instruction;
   u32 delayOrJumpIndex;
-  u16 delay16;
+  u16 delay;
 
   blend = &gridState->blend;
   if (blend->script == 0)
@@ -189,8 +189,8 @@ void BlendScript_Run(void) {
   // sets a wait; a BLDCNT command and the jumps take no time.
 again:
   delayOrJumpIndex = blend->delay;
-  delay16 = delayOrJumpIndex;
-  if (delay16 == 0) {
+  delay = delayOrJumpIndex;
+  if (delay == 0) {
     commands = blend->cursor;
     instruction = *commands;
     commands++;

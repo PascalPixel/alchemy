@@ -3,7 +3,7 @@
 
 /// @file
 /// The LZ packer's work: hash chains over a 1024-byte window, one chain per
-/// byte value, and the output it is building. It borrows gFlash_Handler3 as
+/// byte value, and the output it is building. It borrows gWaitForFlashWrite as
 /// its work pointer.
 
 #include "edition.h"

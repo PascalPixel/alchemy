@@ -273,10 +273,10 @@ s32 BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
 /// later ones take the next free letter, wrapping. Returns -1 when five classes
 /// are already listed. Called by BattleFormation_BuildEnemyList for each enemy
 /// and by BattleAbility_ApplyToTarget for an enemy called into the battle.
-/// Changes BattleWork's enemyKinds, the up to five classes listed, and fields
-/// that despite their names hold the letters: lastNameLetter each class's last
-/// letter given (-1 for none yet), nameLetterMasks its letters in use (bit n
-/// for letter n), and enemyKindCount how many classes are listed.
+/// Changes BattleWork's enemyKinds, the up to five classes listed, and their
+/// letters: lastNameLetter each class's last letter given (-1 for none yet),
+/// nameLetterMasks its letters in use (bit n for letter n), and enemyKindCount
+/// how many classes are listed.
 s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
   struct BattleWork *battle;
   s32 classCount;
@@ -623,29 +623,25 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
     Iwram_ClearWords(Unit_GetFar(memberOrEnemyIndex), BATTLE_UNIT_SIZE);
 
   memberOrEnemyIndex = 0;
-  if (enemyKinds[0] == 0)
-    goto assigned;
-assign_enemy:
   // Each enemy unit, with its name letter (BattleEnemy_ClaimNameLetter) and,
   // in a monster battle, the level margin.
-  {
-    s32 suffixCode =
-        BattleEnemy_ClaimNameLetter(enemyKinds[memberOrEnemyIndex], 1);
+  if (enemyKinds[0] != 0) {
+    for (;;) {
+      s32 suffixCode =
+          BattleEnemy_ClaimNameLetter(enemyKinds[memberOrEnemyIndex], 1);
 
-    if (suffixCode & 0x8000)
-      BattleEnemy_LetterFirstOfKind(enemyKinds[memberOrEnemyIndex]);
-    BattleUnit_SetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
-                      enemyKinds[memberOrEnemyIndex], suffixCode & 0x7fff);
-    Unit_GetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT);
-    if (levelAdjustment != 0)
-      BattleEnemy_AdjustLevel(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
-                              levelAdjustment);
+      if (suffixCode & 0x8000)
+        BattleEnemy_LetterFirstOfKind(enemyKinds[memberOrEnemyIndex]);
+      BattleUnit_SetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
+                        enemyKinds[memberOrEnemyIndex], suffixCode & 0x7fff);
+      Unit_GetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT);
+      if (levelAdjustment != 0)
+        BattleEnemy_AdjustLevel(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
+                                levelAdjustment);
+      memberOrEnemyIndex++;
+      if (memberOrEnemyIndex > 5 || enemyKinds[memberOrEnemyIndex] == 0)
+        break;
+    }
   }
-  memberOrEnemyIndex++;
-  if (memberOrEnemyIndex > 5)
-    goto assigned;
-  if (enemyKinds[memberOrEnemyIndex] != 0)
-    goto assign_enemy;
-assigned:
   return memberOrEnemyIndex;
 }

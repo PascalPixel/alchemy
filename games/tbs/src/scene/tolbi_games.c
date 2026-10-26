@@ -1545,13 +1545,13 @@ const struct MapWarpDest gTolbiSpring_WarpDests[] = {
 
 const u32 gTolbiSpring_Warps[] = {
     MAP_WARPS(TolbiSpring),
-    MAP_WARP_IF(TOLBI_SPRING_TO_TOLBI, Tolbi, TOLBI_FROM_TOLBI_SPRING,
-                0xffffffff),
+    MAP_WARP_UNLESS(TOLBI_SPRING_TO_TOLBI, Tolbi, TOLBI_FROM_TOLBI_SPRING,
+                    0xffffffff),
     MAP_WARPS(StuccoRoomsC),
-    MAP_WARP_IF(STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI, Tolbi,
-                TOLBI_FROM_LUCKY_DICE, 0xffffffff),
-    MAP_WARP_IF(STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI, Tolbi,
-                TOLBI_FROM_HOUSE_NORTHEAST, 0xffffffff),
+    MAP_WARP_UNLESS(STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI, Tolbi,
+                    TOLBI_FROM_LUCKY_DICE, 0xffffffff),
+    MAP_WARP_UNLESS(STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI, Tolbi,
+                    TOLBI_FROM_HOUSE_NORTHEAST, 0xffffffff),
     MAP_WARPS_END,
 };
 

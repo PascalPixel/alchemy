@@ -50,7 +50,7 @@ s32 ObjectEvent_GetScreenPosition(s32 objectId, s32 *position) {
 }
 
 /// Unused: an empty function nothing calls.
-UNUSED void Warp_ReservedNoOp941DC(void) {}
+UNUSED void Warp_NoOp(void) {}
 
 // UB: no value is returned, and run_map.c ignores it; as void, the epilogue
 // changes.

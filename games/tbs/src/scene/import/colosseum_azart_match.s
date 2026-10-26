@@ -26,7 +26,7 @@
 	.set import.Object_CreateField, 1
 	.set import.Object_StartCamera, 1
 	.set import.Object_StartIdle, 1
-	.set import.Object_WaitForValue16, 1
+	.set import.Object_WaitForScriptEnd, 1
 	.set import.Object_SetMoveTarget, 1
 	.set import.Object_WaitForMove, 1
 	.set import.MapGrid_GetTerrainHeight, 1

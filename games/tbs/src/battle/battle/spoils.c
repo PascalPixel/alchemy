@@ -328,4 +328,4 @@ void Battle_AwardSpoils(void) {
 }
 
 /// Does nothing; the debug battle menu (DebugBattle_RunMenu) calls it.
-void Battle_ReservedNoOp2A08(void) {}
+void Battle_DebugSelectNoOp(void) {}

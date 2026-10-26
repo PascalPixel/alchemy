@@ -239,47 +239,47 @@ void BattleMotion_RestartLeap(s32 unitId) {
 
 /// Does nothing; BattleMotion_ApplyPairMidpoint, its only caller, passes it
 /// a position and a distance.
-void BattleMotion_ReservedNoOp83B0() {}
+void BattleMotion_MidpointNoOp() {}
 
 /// Works out the point halfway between two units, at their move targets
-/// where they have one, and hands it to BattleMotion_ReservedNoOp83B0,
+/// where they have one, and hands it to BattleMotion_MidpointNoOp,
 /// which does nothing. Nothing in the source calls it.
 void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
   struct BattleObject *secondSlot;
   struct Object *first;
   struct Object *second;
-  s32 x1;
-  s32 x2;
-  s32 z1;
-  s32 z2;
+  s32 firstX;
+  s32 secondX;
+  s32 firstZ;
+  s32 secondZ;
   struct FixedPointPosition position;
 
   first = BattleObject_Get(firstId)->object;
   secondSlot = BattleObject_Get(secondId);
   second = secondSlot->object;
 
-  x1 = first->targetX;
-  if (x1 == NO_MOVE_TARGET) {
-    x1 = first->x;
+  firstX = first->targetX;
+  if (firstX == NO_MOVE_TARGET) {
+    firstX = first->x;
   }
-  z1 = first->targetZ;
-  if (z1 == NO_MOVE_TARGET) {
-    z1 = first->z;
+  firstZ = first->targetZ;
+  if (firstZ == NO_MOVE_TARGET) {
+    firstZ = first->z;
   }
-  x2 = second->targetX;
-  if (x2 == NO_MOVE_TARGET) {
-    x2 = second->x;
+  secondX = second->targetX;
+  if (secondX == NO_MOVE_TARGET) {
+    secondX = second->x;
   }
-  z2 = second->targetZ;
-  if (z2 == NO_MOVE_TARGET) {
-    z2 = second->z;
+  secondZ = second->targetZ;
+  if (secondZ == NO_MOVE_TARGET) {
+    secondZ = second->z;
   }
 
-  position.x = (x1 + x2) / 2;
+  position.x = (firstX + secondX) / 2;
   position.y = 0;
-  position.z = (z1 + z2) / 2;
+  position.z = (firstZ + secondZ) / 2;
 
-  BattleMotion_ReservedNoOp83B0(&position, 0x1000);
+  BattleMotion_MidpointNoOp(&position, 0x1000);
 }
 
 /// The hit flash's sprite layer, sprite 283: a star burst that grows and

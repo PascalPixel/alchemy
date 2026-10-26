@@ -191,7 +191,7 @@ void Battle_ClearBg0Vofs(void) {
 
 /// Does nothing; Battle_Run calls it with 1 as the battle is set
 /// up.
-void Party_ReservedNoOp5B14(s32 unused) {}
+void Party_BattleSetupNoOp(s32 unused) {}
 
 /// Clears every battle-only state of the party members (stat stages and
 /// their turns, statuses, Djinn element boosts, the countdowns) and

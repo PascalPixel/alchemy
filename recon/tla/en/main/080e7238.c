@@ -1,4 +1,4 @@
-// Draft, differ 105 (245 before statements reordered 2026-10-26).
+// Draft, differ 103 (245 before statements reordered 2026-10-26).
 // Draft, differ 247 of 306 (2026-10-19, written from the listing; ☀️ has no
 // twin): the controlled actor grows out of a whirl of 100 sparks that
 // spiral in to it (resource 0x1ef, FieldEffect_ColouredOrbs, as Func_080e74d8
@@ -82,8 +82,8 @@ void Func_080e7238(void) {
   ObjectDispatch_SetSingleChildFlagsFar(object, 0);
 
   count = 2;
-  state = 0;
   next = 0;
+  state = 0;
   frame = 0;
   do {
     for (i = count; i != 0; i--) {

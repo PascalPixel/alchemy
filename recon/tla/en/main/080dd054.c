@@ -1,4 +1,4 @@
-// Draft, differ 410 (501 before statements reordered 2026-10-26) of 444 (2026-10-25): Move cast on a target, The Broken
+// Draft, differ 403 (501 before statements reordered 2026-10-26) of 444 (2026-10-25): Move cast on a target, The Broken
 // Seal's FieldEffect_SteerPushedTarget with this game's calls. The hand
 // (BattleEffect_StartItemBreak) appears 16 pixels above the target on the
 // caster's side and pushes it 16 pixels the way the d-pad points, for as long
@@ -133,8 +133,8 @@ void Func_080dd054(void) {
       continue;
     }
 
-    value = 0x100000;
     position.x = target->x;
+    value = 0x100000;
     position.y = target->y + value;
     position.z = target->z;
     Vector_AddPolarOffset(value, angle, &position);
@@ -163,8 +163,8 @@ void Func_080dd054(void) {
           Audio_PlayCue(114);
         continue;
       }
-      cellX = user->x & MOVE_CELL_MASK;
       cellZ = user->z & MOVE_CELL_MASK;
+      cellX = user->x & MOVE_CELL_MASK;
       if (cellX == (position.x & MOVE_CELL_MASK) &&
           cellZ == (position.z & MOVE_CELL_MASK)) {
         Object_SetMode(pusher, 4);

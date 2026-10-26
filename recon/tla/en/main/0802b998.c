@@ -1,12 +1,16 @@
-// Draft, differ 96 (246 before statements reordered 2026-10-26).
-// Near miss, differ 250 of 376 (2026-10-18), first pass: The Broken Seal's
+// Near miss, differ 56 of 376 (250 before, 2026-10-26): The Broken Seal's
 // Map_InitializePerspectiveScene on this game's map work (0x978 bytes, heap
 // slot offset 32) and frame work (offset 28), with the world map's update
 // (0802c240) and affine frame (0802c088) callbacks. Resource ids 0x197 to
 // 0x199: PerspectiveDataA and DefaultMapCells as ☀️ names them, the third a
-// placeholder. Left: a mid-function literal pool here, the frame (36 bytes
-// native, 40 here), and the halfword constants the native builds in
-// registers (0x1f00).
+// placeholder. The ARM routine is copied by its linker size
+// (Data_0802146cSize, to define in constants.ld as Render_ConvertMapCode -
+// Data_0802146c when this adopts), the halfword constants the native builds
+// in registers go through int stores (Io_Set16, Store16), and the frame
+// fields are at 0x968 and 0x96c. Left: scheduling: the native copies the zero
+// from r9 after each register address step, loads Func_0802c240's address
+// before the scroll stores, and builds 0x106 afresh where this adds 2 to
+// 0x104.
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -26,6 +30,7 @@ extern u8 gMapCellBuffer[];
 extern u8 gData_0202e000[];
 extern u32 gCameraSceneParameters[];
 extern const u8 Data_0802146c[];
+extern u8 Data_0802146cSize[];
 extern u32 gData_03001144;
 extern u32 Data_03001244;
 
@@ -44,6 +49,7 @@ void Func_0802c240(void);
 void Func_0802c088(void);
 
 static __inline__ void Io_Set16(s32 value, volatile u16 *reg) { *reg = value; }
+static __inline__ void Store16(s32 value, u16 *field) { *field = value; }
 
 struct EyeOffset {
   s32 x, y, z;
@@ -82,7 +88,7 @@ void Func_0802b998(void) {
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells),
       gMapCellBuffer);
-  *(u16 *)(perspective + 0x14) = 0x1f00;
+  Store16(0x1f00, (u16 *)(perspective + 0x14));
   perspective[0x16] = 0x80;
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Data199),
                         gData_0202e000);
@@ -109,9 +115,9 @@ void Func_0802b998(void) {
   *(s32 *)(perspective + 0x95c) = farPlane;
   distance = (s32 *)(perspective + 0x960);
   *distance = farPlane;
-  *(s32 *)(perspective + 0x964) = 0x10000;
+  *(s32 *)(perspective + 0x968) = 0x10000;
   cameraPosition = (s32 *)(camera + 12);
-  *(u16 *)(perspective + 0x968) = 0;
+  *(u16 *)(perspective + 0x96c) = 0;
   *(s32 *)(camera + 24) = 0;
   *(s32 *)(camera + 28) = 0;
   gCameraSceneParameters[3] = 120;
@@ -127,12 +133,12 @@ void Func_0802b998(void) {
   pitch = (u16 *)(perspective + 0x11c);
   eyeOffset.x = 0;
   eyeOffset.y = 0;
-  eyeOffset.z = farPlane;
   SceneTransform_ApplyPitch(*pitch);
+  eyeOffset.z = farPlane;
   Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   Render_ResetTransformState();
   Transform_SetLookAt((s32 *)camera, cameraPosition);
-  RamCode_LoadSlot(104, Data_0802146c, 0x298);
+  RamCode_LoadSlot(104, Data_0802146c, Data_0802146cSize);
   Func_0802dd70(Iwram_RatioMulQ14(Trig_Cos(*pitch), Trig_Sin(*pitch)),
                 cameraPosition, frameWork);
   Data_03001244 = 0;
@@ -157,7 +163,7 @@ void Func_0802b998(void) {
     Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   }
   REG_MOSAIC = 0;
-  REG_DISPCNT = 0x42;
+  Io_Set16(0x42, &REG_DISPCNT);
   gBgScroll[1].x = 0;
   gBgScroll[2].x = 0;
   gBgScroll[3].x = 0;
@@ -165,7 +171,7 @@ void Func_0802b998(void) {
   gBgScroll[2].y = 0;
   gBgScroll[3].y = 0;
   *(u16 *)(perspective + 0x104) = 0;
-  *(u16 *)(perspective + 0x106) = 159;
+  Store16(159, (u16 *)(perspective + 0x106));
   Scheduler_AddOrUpdateCallback(Func_0802c240, 0x485);
   Scheduler_AddOrUpdateCallback(Func_0802c088, 0xc80);
   for (tileIndex = 0; tileIndex <= 0x3ff; tileIndex++)

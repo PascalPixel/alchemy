@@ -1,4 +1,4 @@
-// Draft, differ 94 (141 before statements reordered 2026-10-26) of 193: builds the rope of workspace slot `index` (heap
+// Draft, differ 76 (141 before statements reordered 2026-10-26) of 193: builds the rope of workspace slot `index` (heap
 // slot 0x9c) between two points: one node per 6 units of length plus one,
 // spaced evenly along the line and bowed sideways by a half sine across the
 // span, each tagged with the slot (index + 1) and its kind (2 for the last),
@@ -51,6 +51,7 @@ struct RopeNode *Func_080d8d40(void);
 s32 ArcTan2(s32 x, s32 y);
 
 s32 Func_080d8e08(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
+  s32 cos;
   struct RopeWork *work = Ram_HeapSlots->unk84[6];
   s32 result = 0;
   s32 dx = x2 - x1;
@@ -59,7 +60,6 @@ s32 Func_080d8e08(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
   s32 sy = dy >> 8;
   s32 dz = z2 - z1;
   s32 sz = dz >> 8;
-  s32 cos;
   s32 count;
   struct RopeSlot *slot;
   struct RopeNode **link;
@@ -101,9 +101,9 @@ s32 Func_080d8e08(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
       node->kind = 2;
     else
       node->kind = 1;
+    alongZ += dz;
     *link = node;
     link = &node->next;
-    alongZ += dz;
     alongY += dy;
     alongX += dx;
   }

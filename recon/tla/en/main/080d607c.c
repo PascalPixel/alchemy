@@ -1,4 +1,4 @@
-// Draft, differ 144 (318 before statements reordered 2026-10-26).
+// Draft, differ 140 (318 before statements reordered 2026-10-26).
 // Draft, differ 322 of 447: The Broken Seal twin
 // (DisplayScroll_BuildAndSwapHBlankPage) for the heap slot 0x88 workspace:
 // fills the hidden page with each scanline's BG1, BG2 and BG3 offsets, the
@@ -60,8 +60,8 @@ void Func_080d607c(void) {
       }
     } else {
       u16 a = x1;
-      u16 b = x2;
       u16 c = x3;
+      u16 b = x2;
 
       amplitude = work->ampX;
       for (scanline = 0; scanline != 160; scanline++) {

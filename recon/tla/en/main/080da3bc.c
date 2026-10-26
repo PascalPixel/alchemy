@@ -1,4 +1,4 @@
-// Draft, differ 306 (363 before statements reordered 2026-10-26) of 319 (2026-10-25): the heap slot 0xa0 work's twin of
+// Draft, differ 286 (363 before statements reordered 2026-10-26) of 319 (2026-10-25): the heap slot 0xa0 work's twin of
 // Func_080d9498, which Func_080da334 calls: stretches slot `index`'s chain
 // between (x, y, z) and the target point for twice its segment count of frames,
 // one segment per 6 units of the distance plus one. The last node rides the
@@ -18,26 +18,26 @@ void WaitFrames(s32 frames);
 
 s32 Func_080da3bc(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   struct WorkA0 *work = WORK_A0;
-  s32 dx = toX - x;
   s32 dz = toZ - z;
   s32 shiftedZ = dz >> 8;
+  s32 dx = toX - x;
   s32 dy = toY - y;
   s32 shiftedX = dx >> 8;
   s32 shiftedY = dy >> 8;
+  s32 frame;
   s32 segments = Iwram_SqrtEntry(Iwram_MulQ16(shiftedX, shiftedX) +
                                  Iwram_MulQ16(shiftedY, shiftedY) +
                                  Iwram_MulQ16(shiftedZ, shiftedZ)) /
                      6 +
                  1;
+  s32 sine;
+  s32 cosine;
   struct WorkA0Node *node = work->slots[index].head;
   struct WorkA0Node **nodes;
   struct WorkA0Node **cursor;
   struct WorkA0Slot *slot;
-  s32 frame;
   s32 i;
   u16 angle;
-  s32 sine;
-  s32 cosine;
   s32 lastX, lastY, lastZ;
 
   cursor = nodes = MemAlloc(0x200);

@@ -1,4 +1,4 @@
-// Near miss, differ 169 (244 before statements reordered 2026-10-26) of 332: the native keeps resource 0x1e1 in the pool,
+// Near miss, differ 163 (244 before statements reordered 2026-10-26) of 332: the native keeps resource 0x1e1 in the pool,
 // hoists the picture's VRAM offset (tiles << 5) out of the frame loop and
 // keeps the effect pointer and the frame counter in other registers; the
 // rest follows from those.
@@ -64,13 +64,13 @@ void Func_080e4730(void) {
   struct ObjectRuntime *owner = *(struct ObjectRuntime **)(effect + 16);
   s32 particleEntry;
   s32 particleTiles;
-  s32 pictureTiles;
   u8 *motionFlags;
   u8 *sprite;
   u8 *particle;
   u8 *animation;
   u8 *party;
   s32 ripple;
+  s32 pictureTiles;
   s32 frame;
   s32 i;
   s32 delay;
@@ -83,8 +83,8 @@ void Func_080e4730(void) {
   particleEntry = Resource_FindFreeEntry();
   particleTiles = VramCache_Load(particleEntry, 0x800, work);
   particle = work + 0x1200;
-  sprite = work + 0x800;
   delay = 0;
+  sprite = work + 0x800;
   for (i = 0; i < 64; i++) {
     Func_080e45a8(sprite, particle, i, particleTiles, *(s16 *)(event + 0xd48));
     *(s32 *)(particle + 24) = delay;

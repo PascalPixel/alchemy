@@ -10,6 +10,12 @@
 #include "types.h"
 #include "object_runtime.h"
 #include "script_object_runtime.h"
+#include "edition.h"
+
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
+// The Spanish and Italian far-call tables name the anchor drop differently.
+#define BattleEffect_DropObjectAtAnchor Func_080e3698
+#endif
 
 struct ObjectSprite {
   u8 unk00[5];

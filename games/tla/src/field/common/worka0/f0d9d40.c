@@ -2,6 +2,13 @@
 #include "fixed_math.h"
 #include "iwram_call.h"
 #include "party_state.h"
+#include "edition.h"
+
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
+// The Spanish and Italian far-call tables name the talk target search
+// differently.
+#define Field_FindNearbyTalkTarget Func_080cc54c
+#endif
 
 struct WobbleEvent {
   u8 unk000[362];

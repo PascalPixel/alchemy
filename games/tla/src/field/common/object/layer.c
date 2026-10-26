@@ -1,6 +1,13 @@
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
+#include "edition.h"
+
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
+// The Spanish and Italian far-call tables reach this function under the
+// name of another entry.
+#define Func_080d4ab4 Func_080da908
+#endif
 
 struct ObjectLayerAnimation {
   u8 unk00[9];

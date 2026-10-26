@@ -3,6 +3,13 @@
 #include "resource.h"
 #include "callback_scheduler.h"
 #include "dma.h"
+#include "edition.h"
+
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
+// The Spanish and Italian far-call tables reach this function under the
+// name of another entry.
+#define Func_080d897c Func_080d2c9c
+#endif
 
 // XXX: what the work block in heap slot 39 holds, and what this family does;
 // its callers and the block's readers would settle it.

@@ -9,8 +9,7 @@ s32 Func_0803c274(struct UiWindow *window, u32 c, s32 x, s32 y, s32 flags);
 /// Draws a string of 16-bit character codes straight into the UI tilemap, as
 /// tiles, inside a window at tile (offsetX, offsetY) of its interior, writing
 /// both the work block's copy and VRAM. A NULL buffer draws the decoded text
-/// in UiRenderWork.entries. The window's position is read signed. Not in
-/// tla-ja, which keeps an older layout.
+/// in UiRenderWork.entries. The window's position is read signed.
 // As ☀️'s function of the same name, which passes the VRAM base where this
 // one passes offsetX & 7.
 void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
@@ -52,6 +51,10 @@ void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
   }
 }
 
+// The Japanese release's version tests codes from 30 down without code 176 or
+// code 29's argument, and places its literal pool before the switch dispatch,
+// where alchemy-gcc places it after the first test: it stays on its scaffold.
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 /// Draws a string of wide (16-bit) codes into the window, one glyph per cell,
 /// skipping the control codes and their arguments; code 3 starts a new line.
 /// With no text, the render work's own entries are drawn, closed with a 0.
@@ -116,3 +119,4 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
     } while (c != 0);
   work->dirty = 1;
 }
+#endif

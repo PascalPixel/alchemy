@@ -489,9 +489,6 @@ UiText_QueueRenderEntries:
 	.incbin "baserom.gba", 0x0003954c, 0x000000b0
 	.section .rom.0003972a, "ax"
 	.incbin "baserom.gba", 0x0003972a, 0x0000002a
-	.section .rom.0003975c, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x0003975c, 0x00000084
 	.section .rom.000397e0, "ax"
 	.global UiWork_ProcessRenderChannels
 	.type UiWork_ProcessRenderChannels, %function
@@ -506,18 +503,6 @@ Func_08039f94:
 	.incbin "baserom.gba", 0x00039f78, 0x000000c0
 	.section .rom.0003a42a, "ax"
 	.incbin "baserom.gba", 0x0003a42a, 0x00000002
-	.section .rom.0003a680, "ax"
-	.global UiText_OpenMessageWindow
-	.type UiText_OpenMessageWindow, %function
-	.thumb_func
-UiText_OpenMessageWindow:
-	.incbin "baserom.gba", 0x0003a680, 0x00000110
-	.section .rom.0003a790, "ax"
-	.global UiText_ShowPositionedMessageAndWait
-	.type UiText_ShowPositionedMessageAndWait, %function
-	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	.incbin "baserom.gba", 0x0003a790, 0x0000011c
 	.section .rom.0003a8e0, "ax"
 	.balign 4
 	.global Func_0803a8fc
@@ -919,6 +904,10 @@ Func_080b1088:
 Func_080b11f8:
 	.incbin "baserom.gba", 0x000ba204, 0x00000084
 	.section .rom.000d12a8, "ax"
+	.global Func_080d5becFar
+	.type Func_080d5becFar, %function
+	.thumb_func
+Func_080d5becFar:
 	.incbin "baserom.gba", 0x000d12a8, 0x00000010
 	.section .rom.000d13b8, "ax"
 	.global Event_DelayEffectFramesFar
@@ -1488,12 +1477,6 @@ Func_080ce458:
 	.thumb_func
 Func_080cf78c:
 	.incbin "baserom.gba", 0x000d878c, 0x0000096c
-	.section .rom.000d90f8, "ax"
-	.global Func_080d6b90
-	.type Func_080d6b90, %function
-	.thumb_func
-Func_080d6b90:
-	.incbin "baserom.gba", 0x000d90f8, 0x0000008c
 	.section .rom.000d91cc, "ax"
 	.global DisplayTransition_Start
 	.type DisplayTransition_Start, %function
@@ -3899,8 +3882,6 @@ LuckyDice_Run:
 	.section .rom.001b243c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x001b243c, 0x00000e98
-	.section .rom.001b33ac, "ax"
-	.incbin "baserom.gba", 0x001b33ac, 0x0000013c
 	.section .rom.001b34e8, "ax"
 	.global ReelGame_Run
 	.type ReelGame_Run, %function

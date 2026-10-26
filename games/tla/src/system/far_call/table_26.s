@@ -176,7 +176,15 @@ Func_080c8328:
 	.global Func_080c8330
 	.thumb_func
 Func_080c8330:
+.ifdef TLA_EDITION_ES
+	overlay_veneer DisplayTransition_InitializeBattleEffectState
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer DisplayTransition_InitializeBattleEffectState
+.else
 	overlay_veneer Func_080d6b90
+.endif
+.endif
 	.global Func_080c8338
 	.thumb_func
 Func_080c8338:

@@ -328,9 +328,6 @@ UiText_QueueRenderEntries:
 	.incbin "baserom.gba", 0x00039540, 0x000000b0
 	.section .rom.0003971e, "ax"
 	.incbin "baserom.gba", 0x0003971e, 0x0000002a
-	.section .rom.00039750, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x00039750, 0x00000084
 	.section .rom.000397d4, "ax"
 	.global UiWork_ProcessRenderChannels
 	.type UiWork_ProcessRenderChannels, %function
@@ -357,8 +354,9 @@ Func_0803a8fc:
 	.type UiText_RenderWideStringAtOffset, %function
 	.thumb_func
 UiText_RenderWideStringAtOffset:
-	.incbin "baserom.gba", 0x0003aa84, 0x000001b8
+	.incbin "baserom.gba", 0x0003aa84, 0x00000144
 	.section .rom.0003ac3c, "ax"
+	.balign 4
 	.global UiText_RenderWideStringInWindow
 	.type UiText_RenderWideStringInWindow, %function
 	.thumb_func
@@ -404,8 +402,9 @@ Func_0803c198:
 	.thumb_func
 UiWork_AnimateSpriteSlots:
 	.incbin "baserom.gba", 0x0003c600, 0x00000464
-	.section .rom.0003d056, "ax"
-	.incbin "baserom.gba", 0x0003d056, 0x000000f2
+	.section .rom.0003d088, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0003d088, 0x000000c0
 	.section .rom.0003d148, "ax"
 	.global Func_0803d020
 	.type Func_0803d020, %function
@@ -521,24 +520,9 @@ UiText_DrawCharacterAtOffset:
 	.thumb_func
 UiText_DrawStringAtOffset:
 	.incbin "baserom.gba", 0x00042240, 0x0000008c
-	.section .rom.00042328, "ax"
-	.global UiText_DrawNumber
-	.type UiText_DrawNumber, %function
-	.thumb_func
-UiText_DrawNumber:
-	.incbin "baserom.gba", 0x00042328, 0x00000030
-	.section .rom.00042358, "ax"
-	.global UiText_DrawNumberAtOffset
-	.type UiText_DrawNumberAtOffset, %function
-	.thumb_func
-UiText_DrawNumberAtOffset:
-	.incbin "baserom.gba", 0x00042358, 0x00000030
-	.section .rom.00042388, "ax"
-	.global UiText_DrawNumberInWindow
-	.type UiText_DrawNumberInWindow, %function
-	.thumb_func
-UiText_DrawNumberInWindow:
-	.incbin "baserom.gba", 0x00042388, 0x000000d0
+	.section .rom.000423b8, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000423b8, 0x000000a0
 	.section .rom.000426be, "ax"
 	.incbin "baserom.gba", 0x000426be, 0x00000002
 	.section .rom.00042824, "ax"

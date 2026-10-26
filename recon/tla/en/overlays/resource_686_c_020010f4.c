@@ -1,76 +1,61 @@
-// Draft, differ 55 of 95: translated from its listing; names and structure still
-// to do.
-#include "iwram_call.h"
-#include "lib/call.h"
+// Draft, differ 6 of 95: while flag 0x104 is clear and the leader stands on a
+// cell whose ground and upper layers read 236, pushes the leader and the event
+// work's companion object down by half a pixel, raising cue 66 when
+// Func_02002e0c refuses the step. Left: the native builds 0x80000 around the
+// load of the leader's y and puts the argument copy between the next store and
+// load (the known store-then-load order); barriers after either store and a
+// four-minute permute do not reproduce it.
+#include "types.h"
+#include "ram_buffer.h"
 #include "object_runtime.h"
 #include "party_state.h"
-#include "ram_buffer.h"
-#include "text/msg_ids.h"
-#include "types.h"
+#include "map.h"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+struct AnkohlRuinsEventWork {
+  u8 unk000[0x154];
+  s16 cue;
+  u8 unk156[0x76];
+  struct ObjectRuntime *companion;
+};
 
-extern u8 gMapCellBuffer[];
-s32 Object_GetById();
-s32 GameFlag_Test();
-s32 Func_02002e0c();
+extern struct MapCell gMapCellBuffer[];
 
-s32 Func_020010f4(s32 a0) {
-  s32 v0, r7, r5, r6, r8, v1, r0, r1, r4, r3, v2;
-  s32 stack[3];
+s32 GameFlag_Test(s32 flag);
+struct ObjectRuntime *Object_GetById(s32 id);
+s32 Func_02002e0c(struct ObjectRuntime *object, s32 *position);
 
-  /* sub (s32)stack, #12 */
-  v0 = Object_GetById(FIELD_AT((s32)(s32)&gPartyState, s32, 532));
-  r7 = (s32)Ram_HeapSlots->eventWork;
-  r5 = (s32)Ram_HeapSlots->mapWork;
-  r6 = v0;
-  r8 = FIELD_AT(r7, s32, 460);
-  v1 = GameFlag_Test(0x104);
-  r0 = v1;
-  if (v1 != 0)
-    goto L_020091b0;
-  if (r5 == 0) {
-    r1 = (s32)gMapCellBuffer;
-    r0 = (s32)gMapCellBuffer;
+void Func_020010f4(void) {
+  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
+  struct AnkohlRuinsEventWork *work =
+      (struct AnkohlRuinsEventWork *)Ram_HeapSlots->eventWork;
+  struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapWork;
+  struct ObjectRuntime *companion = work->companion;
+  struct MapCell *ground;
+  struct MapCell *upper;
+  s32 index;
+  s32 position[3];
+
+  if (GameFlag_Test(0x104))
+    return;
+  if (map == NULL) {
+    upper = gMapCellBuffer;
+    ground = gMapCellBuffer;
   } else {
-    r1 = FIELD_AT(r5, s32, 424);
-    r0 = FIELD_AT(r5, s32, 312);
+    ground = map->layers[0].cells;
+    upper = map->layers[2].cells;
   }
-  r4 = FIELD_AT(r6, s32, 8);
-  r0 = r0 + (((r4 >> 20) + (((FIELD_AT(r6, s32, 16)) >> 20) << 7)) << 2);
-  r3 = 232 &
-       (FIELD_AT(
-           r1 + (((r4 >> 20) + (((FIELD_AT(r6, s32, 16)) >> 20) << 7)) << 2),
-           u8, 2));
-  if (((4 &
-        (FIELD_AT(
-            r0 + (((r4 >> 20) + (((FIELD_AT(r6, s32, 16)) >> 20) << 7)) << 2),
-            u8, 3))) |
-       (232 &
-        (FIELD_AT(
-            r1 + (((r4 >> 20) + (((FIELD_AT(r6, s32, 16)) >> 20) << 7)) << 2),
-            u8, 2)))) != 236)
-    goto L_020091b0;
-  r3 = FIELD_AT((s32)(s32)&gPartyState, u8, 530);
-  if ((FIELD_AT((s32)(s32)&gPartyState, u8, 530)) == 5)
-    goto L_020091b0;
-  FIELD_AT((s32)stack, s32, 0) = r4;
-  FIELD_AT((s32)stack, s32, 4) = FIELD_AT(r6, s32, 12);
-  FIELD_AT((s32)stack, s32, 8) = (FIELD_AT(r6, s32, 16)) + 524288;
-  v2 = Func_02002e0c(r6);
-  r0 = v2;
-  if (v2 < 0) {
-    FIELD_AT(r7, u16, 340) = 66;
-  }
-  FIELD_AT(r6, s32, 16) = (FIELD_AT(r6, s32, 16)) + 32768;
-  FIELD_AT(r8, s32, 16) = (FIELD_AT(r8, s32, 16)) + 32768;
-  r3 = (FIELD_AT(r8, s32, 16)) + 32768;
-L_020091b0:
-  /* add (s32)stack, #12 */
-  return r0;
+  index = (leader->x >> 20) + ((leader->z >> 20) << 7);
+  ground += index;
+  upper += index;
+  if (((ground->attributeB & 4) | (upper->collisionCode & 232)) != 236)
+    return;
+  if (gPartyState.renderMode == 5)
+    return;
+  position[0] = leader->x;
+  position[1] = leader->y;
+  position[2] = leader->z + 0x80000;
+  if (Func_02002e0c(leader, position) < 0)
+    work->cue = 66;
+  leader->z += 0x8000;
+  companion->z += 0x8000;
 }

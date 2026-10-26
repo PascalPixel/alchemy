@@ -64,7 +64,7 @@ SECTIONS
         "*/resource_68f_overlay.o"(.text.x0200ac1c)
         "*/games/tla/src/scene/tundaria_tower/events_i.o"(.text)
         "*/resource_68f_overlay.o"(.text.x0200acc0)
-        "*/resource_68f_overlay.o"(.text.x0200ad44)
+        "*/games/tla/src/scene/tundaria_tower/s2d44.o"(.text)
         "*/resource_68f_overlay.o"(.text.x0200ae00)
         "*/games/tla/src/scene/tundaria_tower/sparks.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/import.o"(.text)

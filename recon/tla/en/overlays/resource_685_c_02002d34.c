@@ -1,22 +1,36 @@
-// Draft of overlay 685's Func_02002d34, differ 61 of 78: loads resource 0x1f7
-// into the work in heap slot 55, moves every tile byte with the high nibble 0xf
-// to 0x6n, loads 0x800 bytes of it into VRAM and sets up the second sprite.
-// Func_02002c88 before it does the same for resource 0x1d9 and the first
-// sprite. Left: the native's loop is not touched by loop.c (0xf0 and 0xf
-// rebuilt each pass, the count kept upward beside the byte pointer and compared
-// with 0x1000); here loop.c hoists both masks and reverses the count. The
-// pool's 0x1f7 wants a ResourceId_Data1F7 name in system/resource/directory.s
-// (not added while this is a draft). The work then lands in r6, not r7, and the
-// closing zeros take r6's place.
+// Draft of overlay 685's Func_02002d34, differ 24 of 78: Func_02002c88's twin for
+// resource 0x1f7 (which wants a ResourceId_Data1F7 name in
+// system/resource/directory.s) and the second sprite, loading 0x800 bytes.
+// The sprites are 0x28 bytes, not FieldSprite's 0x2c, and the loop is a goto
+// loop (as a for loop loop.c hoists both masks and reverses the count, 61).
+// Left: the native keeps the pointer in r2 and the byte in r1, as in
+// Func_02002c88.
 #include "../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
+
+struct ChampaCliffCavesSprite {
+  u8 unk00[4];
+  u16 y : 8;
+  u16 affine : 2;
+  u16 blendMode : 2;
+  u16 mosaic : 1;
+  u16 fullColor : 1;
+  u16 shape : 2;
+  u16 attr1;
+  u16 tile : 10;
+  u16 priority : 2;
+  u16 palette : 4;
+  u8 unk0a[0x14];
+  u16 unk1e;
+  u8 unk20[8];
+};
 
 struct ChampaCliffCavesWork {
   u8 tiles[0x1000];
   s32 originX;
   s32 originY;
   s32 originZ;
-  struct FieldSprite spriteA;
-  struct FieldSprite spriteB;
+  struct ChampaCliffCavesSprite spriteA;
+  struct ChampaCliffCavesSprite spriteB;
   u16 entryA;
   u16 vramA;
   u16 entryB;
@@ -29,27 +43,35 @@ struct ChampaCliffCavesWork {
   u8 unk1076[2];
 };
 
-extern char ResourceId_Data1F7;
 
 void *Resource_GetTableEntry(s32 id);
 void Func_020033dc(void *resource, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(s32 entry, s32 size, void *source);
-void Func_020035fc(struct FieldSprite *sprite, s32 width, s32 height,
+void Func_020035fc(struct ChampaCliffCavesSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 vram);
+
+
+extern char ResourceId_Data1F7;
 
 void Func_02002d34(void) {
   struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuRuntime;
-  struct FieldSprite *sprite;
+  struct ChampaCliffCavesSprite *sprite;
   s32 i;
+  u8 *tile;
   s32 entry;
   s32 vram;
 
   Func_020033dc(Resource_GetTableEntry((s32)&ResourceId_Data1F7), work);
-  for (i = 0; i < 0x1000; i++) {
-    if ((work->tiles[i] & 0xf0) == 0xf0)
-      work->tiles[i] = (work->tiles[i] & 0xf) + 0x60;
-  }
+  tile = work->tiles;
+  i = 0;
+next:
+  if ((*tile & 0xf0) == 0xf0)
+    *tile = (*tile & 0xf) + 0x60;
+  i++;
+  tile++;
+  if (i < 0x1000)
+    goto next;
   entry = Resource_FindFreeEntry();
   vram = VramCache_Load(entry, 0x800, work);
   work->entryB = entry;
@@ -59,7 +81,7 @@ void Func_02002d34(void) {
   sprite->fullColor = 1;
   sprite->palette = 1;
   sprite->priority = 1;
-  *(u16 *)((u8 *)sprite + 0x1e) = 1;
+  sprite->unk1e = 1;
   work->field106c = 0;
   work->field1070 = 0;
 }

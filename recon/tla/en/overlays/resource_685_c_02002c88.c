@@ -1,60 +1,88 @@
-// Draft, differ 46 of 78: loads resource 0x1d9's picture into the menu work,
-// moves its colour-15 pixels to palette 6, uploads it to a free video slot and
-// sets up its sprite. Translated from its listing; names and structure still to
-// do.
-#include "iwram_call.h"
-#include "lib/call.h"
-#include "object_runtime.h"
-#include "party_state.h"
-#include "ram_buffer.h"
-#include "text/msg_ids.h"
-#include "types.h"
+// Draft, differ 24 of 78: loads the glow disc picture (resource 0x1d9, which
+// would need a ResourceId_GlowDisc name in system/resource/directory.s) into
+// the work in heap slot 55, moves every tile byte with the high nibble 0xf to
+// 0x6n, loads it into VRAM and sets up the first sprite. The sprites are
+// 0x28 bytes, not FieldSprite's 0x2c. Left: in the goto loop the native keeps
+// the pointer in r2 and the byte in r1 (here the other way round); a
+// four-minute permute does not swap them.
+#include "../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+struct ChampaCliffCavesSprite {
+  u8 unk00[4];
+  u16 y : 8;
+  u16 affine : 2;
+  u16 blendMode : 2;
+  u16 mosaic : 1;
+  u16 fullColor : 1;
+  u16 shape : 2;
+  u16 attr1;
+  u16 tile : 10;
+  u16 priority : 2;
+  u16 palette : 4;
+  u8 unk0a[0x14];
+  u16 unk1e;
+  u8 unk20[8];
+};
 
-s32 Resource_GetTableEntry();
-void Func_020033dc();
-s32 Resource_FindFreeEntry();
-s32 VramCache_Load();
-s32 Func_020035fc();
+struct ChampaCliffCavesWork {
+  u8 tiles[0x1000];
+  s32 originX;
+  s32 originY;
+  s32 originZ;
+  struct ChampaCliffCavesSprite spriteA;
+  struct ChampaCliffCavesSprite spriteB;
+  u16 entryA;
+  u16 vramA;
+  u16 entryB;
+  u16 vramB;
+  s32 field1064;
+  s32 field1068;
+  s32 field106c;
+  s32 field1070;
+  u16 field1074;
+  u8 unk1076[2];
+};
 
-s32 Func_02002c88(s32 a0, s32 a1, s32 a2, s32 a3) {
-  s32 r7, v0, r2, r0, r1, v1, r5, v2, v3, r6;
-  s32 stack[1];
+extern char ResourceId_Data1F7;
 
-  r7 = FIELD_AT(50331868, s32, 0);
-  /* sub (s32)stack, #4 */
-  v0 = Resource_GetTableEntry(473);
-  Func_020033dc(v0, r7);
-  r2 = r7;
-  r0 = 0;
-L_0200aca4:
-  r1 = FIELD_AT(r2, u8, 0);
-  if ((240 & (FIELD_AT(r2, u8, 0))) == 240) {
-    FIELD_AT(r2, u8, 0) = (15 & r1) + 96;
-  }
-  r2 = r2 + 1;
-  r0 = r0 + 1;
-  if ((r0 + 1) < 0x1000)
-    goto L_0200aca4;
-  v1 = Resource_FindFreeEntry();
-  r5 = v1;
-  v2 = VramCache_Load(v1, 0x1000, r7);
-  FIELD_AT(r7, u16, 4188) = r5;
-  FIELD_AT(r7, u16, 4190) = v2;
-  r5 = r7 + 4108;
-  v3 = Func_020035fc(r5, 31, 31, -0x40000000, v2);
-  FIELD_AT(r5, u8, 5) = (FIELD_AT(r5, u8, 5)) | 32;
-  FIELD_AT(r5, u8, 9) = ((15 & (FIELD_AT(r5, u8, 9))) & -13) | 8;
-  FIELD_AT(r5, u16, 30) = 1;
-  r6 = 0;
-  FIELD_AT(r7, s32, 4196) = r6;
-  FIELD_AT(r7, s32, 4200) = r6;
-  /* add (s32)stack, #4 */
-  return v3;
+void *Resource_GetTableEntry(s32 id);
+void Func_020033dc(void *resource, void *destination);
+s32 Resource_FindFreeEntry(void);
+s32 VramCache_Load(s32 entry, s32 size, void *source);
+void Func_020035fc(struct ChampaCliffCavesSprite *sprite, s32 width, s32 height,
+                   u32 attributes, s32 vram);
+
+
+extern char ResourceId_GlowDisc;
+
+void Func_02002c88(void) {
+  struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuRuntime;
+  struct ChampaCliffCavesSprite *sprite;
+  s32 i;
+  u8 *tile;
+  s32 entry;
+  s32 vram;
+
+  Func_020033dc(Resource_GetTableEntry((s32)&ResourceId_GlowDisc), work);
+  tile = work->tiles;
+  i = 0;
+next:
+  if ((*tile & 0xf0) == 0xf0)
+    *tile = (*tile & 0xf) + 0x60;
+  tile++;
+  i++;
+  if (i < 0x1000)
+    goto next;
+  entry = Resource_FindFreeEntry();
+  vram = VramCache_Load(entry, 0x1000, work);
+  work->entryA = entry;
+  work->vramA = vram;
+  sprite = &work->spriteA;
+  Func_020035fc(sprite, 31, 31, 0xc0000000, vram);
+  sprite->fullColor = 1;
+  sprite->palette = 0;
+  sprite->priority = 2;
+  sprite->unk1e = 1;
+  work->field1064 = 0;
+  work->field1068 = 0;
 }

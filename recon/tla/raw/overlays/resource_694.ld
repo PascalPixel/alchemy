@@ -15,7 +15,7 @@ SECTIONS
         "*/games/tla/src/scene/contigo/s0430.o"(.text)
         "*/games/tla/src/scene/contigo/event0.o"(.text)
         "*/resource_694_overlay.o"(.text.x02008658)
-        "*/resource_694_overlay.o"(.text.x020086d0)
+        "*/games/tla/src/scene/contigo/s06d0.o"(.text)
         "*/games/tla/src/scene/contigo/event1.o"(.text)
         "*/games/tla/src/scene/contigo/scene_tables.o"(.text)
         "*/games/tla/src/scene/contigo/s07cc.o"(.text)

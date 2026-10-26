@@ -1,61 +1,80 @@
-// Draft, differ 92 of 83: translated from its listing; names and structure still
-// to do.
-#include "iwram_call.h"
-#include "lib/call.h"
-#include "object_runtime.h"
-#include "party_state.h"
-#include "ram_buffer.h"
-#include "text/msg_ids.h"
+// Draft, differ 82 of 83: the falling rocks' setup (Func_02002d44 spawns them):
+// loads ResourceId_FallingRock's tiles into heap slot 220 and resets the 64
+// sprites and timers. Left: the native counts in r8 and shares the -1 of the
+// timers with the count, and rebuilds 0x500 after the VRAM load; this form
+// keeps 0x500 and the work in saved registers. The same function is overlay
+// 668's Func_02004004 and 692's Func_02004b18, drafts with the same gap.
 #include "types.h"
+#include "ram_buffer.h"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+/// One falling rock: where it is, how it moves and how long it has fallen.
+struct Rock {
+  s32 position[3];
+  s32 velocity[3];
+  s32 timer;
+};
 
-extern u8 Func_02002cc0[];
-s32 Runtime_AllocateHeapBlockFar();
-s32 Resource_GetTableEntry();
-void Func_02002f40();
-s32 Resource_FindFreeEntry();
-s32 VramCache_Load();
-void Func_02003190();
-s32 Scheduler_AddOrUpdateCallback();
+/// A falling rock's sprite.
+struct RockSprite {
+  u8 unk00[5];
+  u8 unk05;
+  u8 unk06[2];
+  u16 tile : 10;
+  u16 priority : 2;
+  u16 palette : 4;
+  u8 unk0a[0x14];
+  u16 unk1e;
+  u8 unk20[8];
+};
 
-s32 Func_02002e00(s32 a0, s32 a1, s32 a2, s32 a3) {
-  s32 r5_1;
-  s32 v0, r6, v1, v2, r5, v3, r10, r7, r8, v4, r0;
-  s32 stack[16];
+/// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
+/// ring that next walks round.
+struct RockWork {
+  u8 tiles[0x500];
+  struct Rock rocks[64];
+  struct RockSprite sprites[64];
+  s16 next;
+  u16 tileBase;
+  s16 resource;
+};
 
-  /* sub (s32)stack, #4 */
-  v0 = Runtime_AllocateHeapBlockFar(220, 0x1608);
-  r6 = v0;
-  v1 = Resource_GetTableEntry(496);
-  Func_02002f40(v1, r6);
-  v2 = Resource_FindFreeEntry();
-  r5 = v2;
-  v3 = VramCache_Load(v2, 0x500, r6);
-  r10 = v3;
-  FIELD_AT(r6, u16, 5634) = r10;
-  FIELD_AT(r6, u16, 5636) = r5;
-  r7 = r6 + 1280;
-  r5_1 = r6 + 3072;
-  r8 = 63;
-L_0200ae58:
-  Func_02003190(r5_1, 8, 8, 0x40000000, r10);
-  FIELD_AT(r5_1, u8, 5) = (FIELD_AT(r5_1, u8, 5)) | 32;
-  FIELD_AT(r5_1, u8, 9) = (15 & (FIELD_AT(r5_1, u8, 9))) & -13;
-  FIELD_AT(r5_1, u16, 30) = 240;
-  r8 = r8 - 1;
-  FIELD_AT(r7, s32, 24) = -1;
-  r5_1 = r5_1 + 40;
-  r7 = r7 + 28;
-  if (r8 >= 0)
-    goto L_0200ae58;
-  FIELD_AT(r6, u16, 5632) = 0;
-  v4 = Scheduler_AddOrUpdateCallback((s32)Func_02002cc0, 0x480);
-  /* add (s32)stack, #4 */
-  return v4;
+void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
+void *Resource_GetTableEntry(s32 id);
+extern char ResourceId_FallingRock;
+void Func_02002f40(void *source, void *destination);
+s32 Resource_FindFreeEntry(void);
+s32 VramCache_Load(u32 slot, u32 size, const void *source);
+void Func_02003190(struct RockSprite *sprite, s32 width, s32 height, u32 attr,
+                   s32 tile);
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Func_02002cc0(void);
+
+void Func_02002e00(void) {
+  struct RockWork *work =
+      Runtime_AllocateHeapBlockFar(220, sizeof(struct RockWork));
+  s32 resource;
+  s32 tile;
+  struct Rock *rock;
+  struct RockSprite *sprite;
+  s32 i;
+
+  Func_02002f40(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
+  resource = Resource_FindFreeEntry();
+  tile = VramCache_Load(resource, sizeof(work->tiles), work);
+  work->tileBase = tile;
+  work->resource = resource;
+  rock = work->rocks;
+  sprite = work->sprites;
+  for (i = 63; i >= 0; i--) {
+    Func_02003190(sprite, 8, 8, 0x40000000, tile);
+    sprite->unk05 |= 32;
+    sprite->palette = 0;
+    sprite->priority = 0;
+    sprite->unk1e = 240;
+    rock->timer = -1;
+    sprite++;
+    rock++;
+  }
+  work->next = 0;
+  Scheduler_AddOrUpdateCallback(Func_02002cc0, 0x480);
 }

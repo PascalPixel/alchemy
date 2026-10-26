@@ -13869,35 +13869,35 @@ msgctxt "message"
 msgid "03434"
 msgstr "Winnings: "
 
-msgctxt "message"
+msgctxt "MsgSlotsChangeBet"
 msgid "03435"
 msgstr "Press up or down to change value"
 
-msgctxt "message"
+msgctxt "MsgSlotsControls"
 msgid "03436"
 msgstr "{button_icon:1}:Start machine      {button_icon:2}:Quit"
 
-msgctxt "message"
+msgctxt "MsgSlotsStopReels"
 msgid "03437"
 msgstr "{button_icon:4}:Stop slots"
 
-msgctxt "message"
+msgctxt "MsgSlotsChooseHeld"
 msgid "03438"
 msgstr "When you've chosen which slots"
 
-msgctxt "message"
+msgctxt "MsgSlotsPullLever"
 msgid "03439"
 msgstr "to lock, pull the lever!"
 
-msgctxt "message"
+msgctxt "MsgSlotsHold"
 msgid "03440"
 msgstr "{button_icon:1}:Stop"
 
-msgctxt "message"
+msgctxt "MsgSlotsRelease"
 msgid "03441"
 msgstr "{button_icon:1}:Spin"
 
-msgctxt "message"
+msgctxt "MsgSlotsStart"
 msgid "03442"
 msgstr "{button_icon:1}:Start machine"
 
@@ -13909,11 +13909,11 @@ msgctxt "message"
 msgid "03444"
 msgstr "{button_icon:2}:Quit"
 
-msgctxt "message"
+msgctxt "MsgSlotsAllHeld"
 msgid "03445"
 msgstr "If you lock all the slots,"
 
-msgctxt "message"
+msgctxt "MsgSlotsCannotPull"
 msgid "03446"
 msgstr "you can't pull the lever!"
 

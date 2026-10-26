@@ -1,13 +1,22 @@
-// Draft, differ 471 of 1016: the slot machine, The Broken Seal's
-// ReelGame_Run (games/tbs/src/object/colorfx.c) on this game's heap slots
-// (sheet 100, canvas 96, effect work 92, reel work 180), resources (by
-// number: 0x137 the sparks, 0x81 the frame, 0x82 the icons, 0x83 the
-// jackpot, 0x152 to 0x178 the win's palettes) and windows (messages 0xd6b
-// to 0xd6c by number), with a third callback, Func_081b3294, and
-// BattlePres_ProcessPendingTileTransfer as the canvas transfer. Written
-// straight from ☀️'s C, before any reshaping: the calls, constants and
-// control flow follow the listing; registers and the 120-byte frame's slot
-// order do not yet.
+// Draft, differ 8 of 1016 (tla-en): Lucky Wheels, The Broken Seal's matched
+// LuckyWheels_Run (games/tbs/src/overworld/lucky_wheels.c) on this game's
+// heap slots (sheet 100, canvas 96, effect work 92, wheel work 180), with a
+// third callback, Func_081b3294, and BattlePres_ProcessPendingTileTransfer
+// as the canvas transfer. Reshaped toward The Broken Seal's C, measured in
+// order from 436: resources and messages by their linker names, as the
+// native loads each from the pool (ResourceId_FarCall00C, the Slots_ and
+// Djinn sheets, MsgSlotsChangeBet and MsgSlotsControls): 403; the
+// background shade's address kept in its own local beside the sprites':
+// 184; the tile buffer as tiles = Ram_MapCellBuffer, a constant, as The
+// Broken Seal writes it: 51; the blitters read through Ram_HeapSlots'
+// fields, so the heap base stays in r5 across the second build: 28; the
+// scheduler, Resource_FarCall00C and Graphics_ScaleRgb555 returning s32:
+// 8. Left, both scheduling: the store of gRenderOamEnabled comes before the
+// loop constants load in the native (an empty asm after it gives 6), and
+// in the sparks' draw call the native stores both stack arguments before it
+// reloads the blitter pair's address; here after. Variants of the call (the
+// pointer through a local, (*draw[j & 1]), size << 1, d = size * 2) change
+// nothing or worsen it; permute (15 minutes) found nothing below 8.
 #include "types.h"
 #include "io_reg.h"
 #include "dma.h"
@@ -70,7 +79,6 @@ typedef void (*DrawRectangle)(void *canvas, const u8 *source, s32 x, s32 y,
                               s32 width, s32 height);
 
 extern u8 Data_0200024c[];
-extern u8 gMapCellBuffer[];
 extern const u16 gReelGame_SparkCellOffsets[];
 
 void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
@@ -78,11 +86,11 @@ void *Runtime_AllocateBlock(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Resource_ReservedNoOp(s32 id);
 void Scheduler_ResetTaskTable(void);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Scheduler_RemoveCallback(void (*callback)(void));
 u8 *Resource_GetTableEntry(s32 id);
 void Resource_DecodeType01(const void *source, void *destination);
-void Resource_FarCall00C(s32 slot, s32 a, s32 b, s32 c, s32 d);
+s32 Resource_FarCall00C(s32 slot, s32 a, s32 b, s32 c, s32 d);
 void UiWork_InitializeWithResourceCountersFar(void);
 void Func_081b336c(void);
 void Func_081b243c(void);
@@ -94,14 +102,27 @@ void Palette_DarkenSceneStep(void);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-void Graphics_ScaleRgb555(u16 *source, u16 *destination, s32 level,
+s32 Graphics_ScaleRgb555(u16 *source, u16 *destination, s32 level,
                           s32 count);
 s32 PartyInventory_CountItemFar(s32 item);
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void WaitFrames(s32 frames);
 
-#define SPARKS ((struct EffectStep *)gMapCellBuffer)
+extern char ResourceId_FarCall00C;
+extern char ResourceId_ParticleSpritesD;
+extern char ResourceId_SlotsFramePicture;
+extern char ResourceId_SlotsIcons;
+extern char ResourceId_SlotsJackpotBanner;
+extern char ResourceId_JupiterDjinnSheet;
+extern char ResourceId_MercuryDjinnSheet;
+extern char ResourceId_VenusDjinnSheet;
+extern char ResourceId_EmberStreakSheet;
+extern char ResourceId_LimePalette;
+extern char MsgSlotsChangeBet[];
+extern char MsgSlotsControls[];
+
+#define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 
 void ReelGame_Run(void) {
   s32 picks[8];
@@ -124,9 +145,9 @@ void ReelGame_Run(void) {
   canvas = Runtime_AllocateHeapBlock(96, 0x8000);
   work = Runtime_AllocateBlock(92, 0x7b7c);
   state = Runtime_AllocateBlock(180, 0x61c);
-  tiles = gMapCellBuffer;
+  tiles = Ram_MapCellBuffer;
   save = (struct ReelSave *)Data_0200024c;
-  Resource_ReservedNoOp(12);
+  Resource_ReservedNoOp((s32)&ResourceId_FarCall00C);
   save->wonPrizes[0] = -1;
   state->repeat = 0;
   state->bet = 1;
@@ -147,8 +168,8 @@ void ReelGame_Run(void) {
       }
     }
   }
-  Resource_DecodeType01(Resource_GetTableEntry(0x137), sheet);
-  entry = Resource_GetTableEntry(0x81);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD), sheet);
+  entry = Resource_GetTableEntry((s32)&ResourceId_SlotsFramePicture);
   Dma_Set(entry, (void *)0x05000140, 0x84000008, REG_DMA3);
   entry += 32;
   Resource_DecodeType01(entry, tiles);
@@ -196,6 +217,7 @@ void ReelGame_Run(void) {
   REG_WIN1V = 0xa0;
 
   {
+    u16 *bgShade = work->bgShade;
     u16 *shade = work->objShade;
     s32 size = 0x8000;
 
@@ -204,16 +226,16 @@ void ReelGame_Run(void) {
     state->spins = 0;
     work->frame = 0;
     state->timer = 0;
-    Dma_Set(Resource_GetTableEntry(0x152), (void *)0x05000000, 0x84000020,
+    Dma_Set(Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet), (void *)0x05000000, 0x84000020,
             REG_DMA3);
     *(u16 *)0x05000080 = 0x2f8b;
     *(u16 *)0x05000082 = 0x5bf6;
-    entry = Resource_GetTableEntry(0x82);
+    entry = Resource_GetTableEntry((s32)&ResourceId_SlotsIcons);
     Dma_Set(entry, (void *)0x05000200, 0x84000078, REG_DMA3);
     entry += 480;
     Resource_DecodeType01(entry, tiles);
     Dma_Set(tiles, (void *)0x06010000, 0x84001b30, REG_DMA3);
-    entry = Resource_GetTableEntry(0x83);
+    entry = Resource_GetTableEntry((s32)&ResourceId_SlotsJackpotBanner);
     Dma_Set(entry, (void *)0x050003e0, 0x84000008, REG_DMA3);
     entry += 32;
     Resource_DecodeType01(entry, tiles);
@@ -252,27 +274,27 @@ void ReelGame_Run(void) {
     }
 
     Resource_FarCall00C(104, 8, 7, 3, 1);
-    draw[0] = ((DrawRectangle *)Ram_HeapSlots)[26];
+    draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
     Resource_FarCall00C(188, 8, 7, 3, 0);
-    draw[1] = ((DrawRectangle *)Ram_HeapSlots)[47];
+    draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
     Iwram_FillWordsEntry(canvas, size, 0);
     Dma_Set(canvas, (void *)0x06003500, 0x84002000, REG_DMA3);
-    Dma_Set((void *)0x05000000, work->bgShade, 0x84000080, REG_DMA3);
+    Dma_Set((void *)0x05000000, bgShade, 0x84000080, REG_DMA3);
     Dma_Set((void *)0x05000200, shade, 0x84000080, REG_DMA3);
     Graphics_ScaleRgb555(shade, (u16 *)0x05000200, 0, 0x100);
-    Graphics_ScaleRgb555(work->bgShade, (u16 *)0x05000000, 0, 0x100);
+    Graphics_ScaleRgb555(bgShade, (u16 *)0x05000000, 0, 0x100);
     REG_DISPCNT = 0x3740;
     if (PartyInventory_CountItemFar(228) == 1) {
       s32 window = UiWindow_CreateFar(2, 16, 26, 4, 6);
 
       state->window = window;
-      UiText_DrawCharacterAtOffsetFar(0xd6c, window, 0, 0);
+      UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsControls, window, 0, 0);
     } else {
       s32 window = UiWindow_CreateFar(2, 16, 26, 4, 6);
       s32 message;
 
       state->window = window;
-      message = 0xd6b;
+      message = (s32)MsgSlotsChangeBet;
       UiText_DrawCharacterAtOffsetFar(message, window, 0, 0);
       UiText_DrawCharacterAtOffsetFar(message + 1, state->window, 0, 8);
     }
@@ -285,22 +307,22 @@ void ReelGame_Run(void) {
     for (frame = 0; state->state != 10; frame++) {
       if (frame <= 16) {
         Graphics_ScaleRgb555(shade, (u16 *)0x05000200, frame << 12, 0x100);
-        Graphics_ScaleRgb555(work->bgShade, (u16 *)0x05000000, frame << 12,
+        Graphics_ScaleRgb555(bgShade, (u16 *)0x05000000, frame << 12,
                              0x100);
       }
       if (state->state == 3) {
         s32 phase = frame % 80;
 
         if (phase <= 15)
-          Func_081b21ec(0x154);
+          Func_081b21ec((s32)&ResourceId_MercuryDjinnSheet);
         else if (phase <= 31)
-          Func_081b21ec(0x156);
+          Func_081b21ec((s32)&ResourceId_VenusDjinnSheet);
         else if (phase <= 47)
-          Func_081b21ec(0x178);
+          Func_081b21ec((s32)&ResourceId_EmberStreakSheet);
         else if (phase <= 63)
-          Func_081b21ec(0x163);
+          Func_081b21ec((s32)&ResourceId_LimePalette);
         else
-          Func_081b21ec(0x152);
+          Func_081b21ec((s32)&ResourceId_JupiterDjinnSheet);
         if (state->timer <= 15)
           Palette_DarkenSceneStep();
         if (state->timer > 16 && (frame & 7) == 0) {
@@ -401,7 +423,7 @@ void ReelGame_Run(void) {
     for (j = 0; j != 17; j++) {
       Graphics_ScaleRgb555(shade, (u16 *)0x05000200, 0x10000 - (j << 12),
                            0x100);
-      Graphics_ScaleRgb555(work->bgShade, (u16 *)0x05000000,
+      Graphics_ScaleRgb555(bgShade, (u16 *)0x05000000,
                            0x10000 - (j << 12), 0x100);
       WaitFrames(1);
     }

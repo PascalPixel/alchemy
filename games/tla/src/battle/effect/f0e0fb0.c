@@ -1,14 +1,3 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 50 in tla-en, instruction
-// order only. After a store the native issues the pool load before the next
-// field load; no single empty asm lowers it.
-// Near miss, differ 2 of 50 (one reordered pair): the twin of The Broken Seal's
-// BattleEffect_UpdateDescendingParticleNegativeArc, on object_runtime.h's fields;
-// 080e0f40 with the signs turned. The listing loads the 0xfffe0000 literal
-// before source->x (ldr r4, =-0x20000; ldr r3, [r6, #8]); this loads source->x
-// first. Measured: without the party pointer and its one-pass block, differ 4
-// (particle->terrainHeight is also loaded after 0x1fa is built); the floor in a
-// local, the -0x20000 in a local, and a one-pass block before the x store, each
-// the same 2.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"

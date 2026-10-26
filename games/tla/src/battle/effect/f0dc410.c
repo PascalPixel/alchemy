@@ -1,22 +1,3 @@
-// Near miss, differ 2 of 239 (34 before; 2026-10-26): the event work is read
-// through a struct, so its byte stores no longer make the animation reload
-// (through u8 indexing they alias it), the three shake values are copied in
-// field order, and a tagged once-only block keeps the work's copy right after
-// the allocation. Left: after the shake x store the native builds the map id
-// offset's second half before it loads the shake y (the store-then-load
-// pattern no C form reproduces; no single barrier or once-only block helps).
-// Earlier, differ 34 of 239 (2026-10-18): BattleEffect_LoadActionEffectResources,
-// from ☀️'s function of the same name (games/tbs/src/object/psynergy_effects.c)
-// with ⚓️'s 0x7f4-byte effect work and seven lit scenes (SceneId_ symbols:
-// the listing loads each id from the pool). Left: the native loads the event
-// and map work before it builds the resolving-flag offset, and each scene id
-// before it shifts the map; the pool sits one row earlier (b over it after
-// adds r3, #33); and the native reads the animation signed and unsigned at
-// once and tests the unsigned copy against 28 after the event store, where
-// this reloads it (a held u16 or s32 copy behind an empty asm moves every
-// register, differ 132). The map is kept in r1 across the first lit store
-// only when that store is a field and the later ones raw bytes (all fields:
-// differ 53, all bytes: differ 50).
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"

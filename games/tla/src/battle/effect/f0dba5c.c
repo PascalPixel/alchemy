@@ -1,18 +1,3 @@
-// Near miss, differ 4 of 103 (16 before; 2026-10-26): the active flag's
-// halfword store leaves a zero that CSE gave the frame store at the top of
-// the block; a tagged once-only block before the fill ends that, and the
-// frame takes the zero the slot's store leaves, after VramCache_Load, as the
-// native does (no zero local needed). Left: after the x store the native
-// builds the callback's arguments before it loads the y (the store-then-load
-// pattern no C form reproduces; no barrier or once-only block helps, and six
-// minutes of permute found nothing).
-// Earlier: differ 20 of 103 (2026-10-18; 46 before, counted with
-// Func_080dbb40, adopted as depthend.c and now dropped here). Order only. The
-// native builds the frame's zero in r2 after VramCache_Load (movs r2, #0; mov
-// sl, r2); a plain zero local is set at the top of the block instead, and
-// behind an empty asm (volatile or not) it measured 22. Also: the active flag's
-// address before the size, the fill's arguments, the frame store before
-// the bitfield loads and the last pair round the callback's literal.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"

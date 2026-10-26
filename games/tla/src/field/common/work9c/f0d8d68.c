@@ -1,14 +1,3 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 4 of 75 in tla-en, instruction
-// order only. After a store the native builds the raise's second half before
-// the next load (AGENTS.md's recurring row); an empty asm before the call
-// lowers it to 2. Func_080d9104, Func_080d9e98 and Func_080da1b8 are the same.
-// Near miss, differ 6 of 75: links two objects into workspace slot `index`
-// of heap slot 0x9c: records their ids and the first one's sprite priority
-// (2 for a many-part object), builds the link between their positions raised
-// 8 pixels (Func_080d8e08), and sets both to mode 2. No ☀️ twin found. Left:
-// instruction order only: the native copies id to r7 after loading the
-// work, loads the second end's y after building 0x80000 and adds the raise to
-// the first y straight after, as in Func_080da1b8.
 #include "types.h"
 #include "field_sprite.h"
 #include "object_runtime.h"

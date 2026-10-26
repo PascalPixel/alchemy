@@ -1,16 +1,3 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 137 in tla-en, instruction
-// order only. No empty asm before any one statement lowers it.
-// Near miss, differ 4 of 137 (2026-10-18; 8 on 2026-10-15), The Broken Seal's
-// FieldEffect_RunReveal: Reveal. ⚓️
-// centres the transition on the caster from the effect scene, clears the
-// active flag as ☀️'s non-English editions do, finds the Reveal event
-// through Func_080ce31c/Func_080ce458 and schedules the watch only while the
-// scene's mode byte is clear.
-// Left: order only, two pairs: the native loads the caster's x between the
-// halves of a split offset (after movs r0, #160), one slot earlier than
-// this, and its z after movs r1, #166, one slot later. The one-pass block
-// round the cue stores active = 1 before the centre is reloaded, as the
-// native does (found by five minutes of permuter).
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"

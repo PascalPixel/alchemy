@@ -1,19 +1,3 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 105 in tla-en, instruction
-// order only. After a store the native builds a constant's half before the next
-// load, where alchemy-gcc issues the load at once (AGENTS.md's recurring row);
-// no single empty asm lowers it.
-// Near miss, differ 2 of 105 (2026-10-18; plainly 4): the twin of The Broken
-// Seal's BattleEffect_UpdateRadialLaunch; this game stores x and z to the slot's
-// origin and position together and does not write them back to pos. After a
-// store, the listing puts one other instruction before the next load through
-// another base: it copies sp to r0 for the camera call before it loads y, and
-// shifts the 8-pixel constant before it loads pos.z. The camera argument
-// through an empty asm with a memory clobber fixes the first (tagged). Left:
-// the shift. Measured for it: the 8 << 16 forced through an empty asm after the
-// x stores, with a memory clobber, orders it but moves 0xc000 later to r2
-// (differ 6; pinned to r3 behind its own asm, differ 2 in the subtract); a
-// volatile barrier or a one-pass block there, differ 4; operand and store
-// order, 2. The same row is in 0811bd50.
 #include "types.h"
 #include "ram_buffer.h"
 #include "effect_slot.h"

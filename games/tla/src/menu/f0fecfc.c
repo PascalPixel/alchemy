@@ -1,16 +1,3 @@
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 2 of 129 in tla-en. First difference: this issues `ldrb r3, [r5, #0]` earlier
-// (row 55) than the native does (row 57). No single empty asm or one-pass block
-// reaches 0.
-// Draft of Func_080fecfc: moves the party member at selectedIndex one place
-// later (direction 1) or earlier (0) in the party order and returns 1, or 0
-// when it cannot move; the twin of The Broken Seal's
-// CharacterSelector_MoveEntry (games/tbs/src/menu/menu/status.c), with ⚓️'s
-// menu work (owners 0x204, count 0x215).
-// Near miss, differ 2 of 129 (2026-10-19): in the first copy loop the native
-// steps the owner pointer (adds r2, #2) before it reads the count again;
-// here the volatile read comes first. A while loop, a walking pointer for
-// the owners or an escaped count pointer is no nearer (2 to 20).
 #include "types.h"
 #include "ram_buffer.h"
 

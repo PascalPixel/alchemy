@@ -519,50 +519,6 @@ Func_020015d0:
 	pop {r5, r6, pc}
 .L_0200976c:
 	.4byte gPartyState
-	.section .text.x0200aa38,"ax",%progbits
-	.balign 4
-	.global Func_02002a38
-	.thumb_func
-Func_02002a38:
-	push {lr}
-	movs r0, #10
-	adds r0, #255
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_0200aa72
-	ldr r3, .L_0200aa84
-	movs r1, #241
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	ldrh r2, [r3]
-	movs r1, #0
-	ldrsh r3, [r3, r1]
-	cmp r3, #6
-	bne .L_0200aa60
-	movs r0, #0
-	bl Func_02001c24
-	b .L_0200aa72
-.L_0200aa60:
-	subs r3, r2, #7
-	movs r2, #128
-	lsls r3, r3, #16
-	lsls r2, r2, #9
-	cmp r3, r2
-	bhi .L_0200aa72
-	movs r0, #1
-	bl Func_02001c24
-.L_0200aa72:
-	movs r0, #0
-	bl Func_020045dc
-	movs r1, #144
-	lsls r1, r1, #3
-	ldr r0, .L_0200aa88
-	bl Scheduler_AddOrUpdateCallback
-	pop {pc}
-.L_0200aa84:
-	.4byte gPartyState
-.L_0200aa88:
-	.4byte Func_02002a08
 	.section .text.x0200b91c,"ax",%progbits
 	.balign 4
 	.global Func_0200391c

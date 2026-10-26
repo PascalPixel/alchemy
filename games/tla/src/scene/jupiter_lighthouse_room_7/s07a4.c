@@ -1,17 +1,12 @@
-// Draft, differ 6 of 230: Jupiter Lighthouse room 7's push handler for objects
-// 18 to 20: an object not on the ground falls into place (sound 188). Object 18
-// or 19 then checks its spot (Func_02000194), resets the room, plays sound 167
-// for the spots that count, and when all is set (Func_02000290 returns 2 with
-// flag 2582) clears that flag and shows object 17 changing (sound 151) from
-// the camera at (664, 136). Object 20 on cell (8, 12) sets flag 2586, plays
-// sound 167 and with flag 2583 shows object 9 changing; off that cell it
-// marks the cell it stands on. The landing wait is the rotated
-// loop (an if around a do-while), the flag and sound calls go through the
-// call layer and the count follows the wait, each as the native has it. Left:
-// for cell (8, 12) the native tests z from a fresh load into r3 and reloads z
-// on the way to the else part; here z stays in r1 and the jump from its test
-// lands past that reload. Tried: the test inverted with an early return (43),
-// z cast to s16, permute 6 minutes.
+// Jupiter Lighthouse room 7's push handler for objects 18 to 20: an object not
+// on the ground falls into place (sound 188). Object 18 or 19 then checks its
+// spot (Func_02000194), resets the room, plays sound 167 for the spots that
+// count, and when all is set (Func_02000290 returns 2 with flag 2582) clears
+// that flag and shows object 17 changing (sound 151) from the camera at (664,
+// 136). Object 20 on cell (8, 12) sets flag 2586, plays sound 167 and with flag
+// 2583 shows object 9 changing; off that cell it marks the cell it stands on.
+// The landing wait is the rotated loop (an if around a do-while), and the flag
+// and sound calls go through the call layer, each as the native has it.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"
@@ -106,7 +101,10 @@ void Func_020007a4(s32 unused, s32 id) {
   }
   if (id != 20)
     return;
-  if (object->x >> 20 == 8 && object->z >> 20 == 12) {
+  /* FAKEMATCH(volatile): z read for the test as volatile, so the failing test
+   * reloads it with the other; as object->z, 6 of 230 instructions differ in
+   * tla-en. */
+  if (object->x >> 20 == 8 && *(volatile s32 *)&object->z >> 20 == 12) {
     GameFlag_SetBit(2586);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(20), 0);
     FieldEvent_WaitFrames(30);

@@ -64,7 +64,7 @@ endif
 
 clean:
 	rm -rf out
-	find games recon -type f \( $(foreach suffix,$(ASSET_SUFFIXES),-name '*.$(suffix)' -o) -false \) -delete
+	find games recon -type f \( $(foreach suffix,$(ASSET_SUFFIXES),-name '*.$(suffix)' -o -name '*.$(suffix).d' -o) -false \) -delete
 
 # --- Tools ---------------------------------------------------------------
 
@@ -107,7 +107,9 @@ FORMS         := $(PICTURE_FORMS) $(TABLE_FORMS)
 ASSET_SUFFIXES := $(FORMS) $(foreach form,$(FORMS),$(addprefix $(form).,$(CODECS))) bin grid.lz
 
 # Every file an encoder reads is a prerequisite: a compressed asset's packer
-# patch (NAME_patch.tsv, W3) where it has one.
+# patch (NAME_patch.tsv, W3) where it has one, and whatever else a recipe
+# reads (a part list's parts, a sprite bank's sprites), which ags-graphics
+# lists in NAME.FORM[.CODEC].d beside what it writes, as a compiler's -MMD.
 .SECONDEXPANSION:
 PATCH := $$$$(wildcard $$$$(basename $$$$(basename $$$$@))_patch.tsv)
 
@@ -207,6 +209,7 @@ $(BUILD)/deps.mk: $(BUILD)/objects.mk $(SCANINC) $(SRCS)
 # Read once the object list is: the scan needs its sources.
 ifneq ($(wildcard $(BUILD)/objects.mk),)
 include $(BUILD)/deps.mk
+-include $(wildcard $(addsuffix .d,$(filter $(addprefix %.,$(ASSET_SUFFIXES)),$(DEPENDENCIES))))
 endif
 
 .PHONY: rom

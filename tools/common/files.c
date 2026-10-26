@@ -12,6 +12,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+static Strings sRead;
+
 /*
  * Read to EOF rather than trusting a size from stat, then keep a spare NUL
  * so the same buffer can be parsed as text.
@@ -31,7 +33,15 @@ readFile(const char *path)
 		fail("%s: read failed", path);
 	fclose(file);
 	reserve(&b, 0);
+	addUniqueString(&sRead, path);
 	return b;
+}
+
+/* An encoder lists these as its output's prerequisites (ags-graphics). */
+const Strings *
+filesRead(void)
+{
+	return &sRead;
 }
 
 bool

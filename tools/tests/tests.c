@@ -227,6 +227,16 @@ graphics(void)
 	RUN("graphics", true, "redrawn.png", "redrawn.4bpp16x16");
 	Buffer redrawn = readFile("redrawn.4bpp16x16");
 	equal(&tiles, &redrawn, "redrawing preserves the tile stream");
+	textFile("list.tsv", "TILES\t4bpp\n");
+	RUN("graphics", true, "list.tsv", "list.parts");
+	Buffer listed = readFile("list.parts"),
+		   rules = readFile("list.parts.d");
+	equal(&tiles, &listed, "a part list writes its parts in turn");
+	check(!strcmp((char *) rules.data, "list.parts: tiles.png\ntiles.png:\n"),
+		  "a part list names its parts as prerequisites");
+	check(!exists("tiles.4bpp.d"), "a single source needs no dependency file");
+	free(listed.data);
+	free(rules.data);
 	textFile("map.tsv", "cell:u8\tgrid:2x3\tat:0,0\tfill:ff\n01 02\n\n03 04\n");
 	RUN("graphics", true, "map.tsv", "map.plane");
 	Buffer plane = readFile("map.plane");
@@ -583,6 +593,8 @@ buildFiles(void)
 	check(strstr((char *) deps.data,
 				 "out/obj/a.o: a.h b.h out/text/messages.inc") != NULL,
 		  "include cycles terminate and generated dependencies remain");
+	check(strstr((char *) deps.data, "DEPENDENCIES := a.h b.h\n") != NULL,
+		  "the scan lists the sources it found, not generated files");
 	free(deps.data);
 	textFile("cycle.c", "#include \"b.h\"\n");
 	textFile("extra.h", "");

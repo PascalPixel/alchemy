@@ -59,6 +59,8 @@ void write32(uint8_t *data, uint32_t value);
 
 /* File contents and paths. Returned buffers and paths are owned. */
 Buffer readFile(const char *path);
+/* Every path readFile has read, in first-read order; owned by files.c. */
+const Strings *filesRead(void);
 void writeFile(const char *path, const Buffer *buffer);
 void writeChanged(const char *path, const Buffer *buffer);
 bool exists(const char *path);

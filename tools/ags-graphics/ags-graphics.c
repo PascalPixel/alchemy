@@ -24,6 +24,37 @@ option(int argc, char **argv, const char *name)
 	return NULL;
 }
 
+/*
+ * A recipe reads more than its INPUT: a part list its parts, a sprite bank its
+ * sprites. OUTPUT.d names them for make, as a compiler's -MMD -MP would, and
+ * is removed when nothing else was read.
+ */
+static void
+writeDependencies(const char *input, const char *output)
+{
+	const Strings *read = filesRead();
+	char *path = formatString("%s.d", output);
+	Buffer rules = {0};
+	bool other = false;
+	print(&rules, "%s:", output);
+	for (size_t i = 0; i < read->len; i++)
+		if (strcmp(read->items[i], input))
+		{
+			print(&rules, " %s", read->items[i]);
+			other = true;
+		}
+	byte(&rules, '\n');
+	for (size_t i = 0; i < read->len; i++)
+		if (strcmp(read->items[i], input))
+			print(&rules, "%s:\n", read->items[i]);
+	if (other)
+		writeFile(path, &rules);
+	else if (exists(path))
+		remove(path);
+	free(rules.data);
+	free(path);
+}
+
 int
 main(int argc, char **argv)
 {
@@ -102,6 +133,8 @@ main(int argc, char **argv)
 		freeStrings(&parts);
 	}
 	writeFile(output, &out);
+	if (strcmp(extension(output), "png"))
+		writeDependencies(input, output);
 	free(out.data);
 	return 0;
 }

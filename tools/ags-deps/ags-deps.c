@@ -226,6 +226,13 @@ main(int argc, char **argv)
 	}
 	byte(&out, '\n');
 	sortStrings(&every);
+	/* The sources every object reads, for the Makefile to find encoders' own
+	 * dependency files beside the assets among them. */
+	print(&out, "DEPENDENCIES :=");
+	for (size_t i = 0; i < every.len; i++)
+		if (strncmp(every.items[i], deps.build, strlen(deps.build)))
+			print(&out, " %s", every.items[i]);
+	byte(&out, '\n');
 	for (size_t i = 0; i < every.len; i++)
 		if (strncmp(every.items[i], deps.build, strlen(deps.build)))
 			print(&out, "%s:\n", every.items[i]);

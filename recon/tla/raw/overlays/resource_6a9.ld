@@ -7,7 +7,7 @@ SECTIONS
         "*/games/tla/src/field/common/object/prepare_object.o"(.text)
         "*/games/tla/src/scene/caverns/object.o"(.text)
         "*/games/tla/src/field/common/effect/move.o"(.text)
-        "*/resource_6a9_overlay.o"(.text.x0200815c)
+        "*/games/tla/src/scene/caverns/s015c.o"(.text)
         "*/games/tla/src/scene/caverns/scene_tables.o"(.text)
         "*/games/tla/src/scene/caverns/places.o"(.text)
         "*/games/tla/src/scene/caverns/exits.o"(.text)

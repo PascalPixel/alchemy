@@ -1,9 +1,3 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 63; left: as overlay 67c's
-// Func_02001598 (resource_67c_c_02001598.c), the object's first word loads
-// late.
-// Draft, differ 4 of 63: an object's update that, every eighth frame, spawns a
-// rising effect (type 673, palette 7, priority 1) at a random spot above and
-// beside the object.
 #include "types.h"
 #include "object_runtime.h"
 #include "frame.h"

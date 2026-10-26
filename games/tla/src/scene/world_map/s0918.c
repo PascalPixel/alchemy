@@ -1,10 +1,3 @@
-// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 2 of
-// 51 as below; an empty asm after the x store, plain or reading 636 (the
-// offset), does not help, nor a volatile read of z.
-// Draft, differ 2 of 51 under -mthumb-slow-loads: after storing x, the
-// compiler loads z (ldr r3, [r6, #16]) before it starts the saved z's offset
-// (lsls r1, r1, #2); the native starts the offset first. Adopted in
-// 043346b2e6, when it matched without the option; back on the listing since.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"

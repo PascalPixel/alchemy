@@ -593,64 +593,6 @@ Func_020006d0:
 	mov r10, r6
 	mov r11, r7
 	pop {r5, r6, r7, pc}
-	.section .text.x02008918,"ax",%progbits
-	.global Func_02000918
-	.thumb_func
-Func_02000918:
-	push {r5, r6, r7, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	movs r0, #8
-	ldr r7, [r3, #108]
-	bl Object_GetById
-	adds r6, r0, #0
-	bl Func_02004c20
-	movs r0, #0
-	bl Func_02004db8
-	ldr r5, .L_02008990
-	movs r1, #128
-	lsls r1, r1, #2
-	adds r1, #18
-	adds r3, r5, r1
-	ldrb r3, [r3]
-	cmp r3, #8
-	bne .L_02008946
-	bl Func_0200050c
-.L_02008946:
-	bl Event_FinishScreenTransition
-	bl Event_WaitTransitionFrames
-	movs r3, #158
-	lsls r3, r3, #2
-	adds r2, r5, r3
-	ldr r3, [r6, #8]
-	movs r1, #159
-	str r3, [r2]
-	lsls r1, r1, #2
-	ldr r3, [r6, #16]
-	adds r2, r5, r1
-	str r3, [r2]
-	movs r2, #160
-	lsls r2, r2, #2
-	subs r1, #6
-	adds r3, r5, r2
-	movs r2, #0
-	str r2, [r3]
-	movs r0, #187
-	adds r3, r5, r1
-	strh r2, [r3]
-	lsls r0, r0, #1
-	bl GameFlag_ClearBit
-	movs r0, #123
-	bl Func_02004e30
-	movs r2, #170
-	lsls r2, r2, #1
-	adds r3, r7, r2
-	movs r1, #0
-	ldrsh r0, [r3, r1]
-	bl Func_02004d40
-	pop {r5, r6, r7, pc}
-.L_02008990:
-	.4byte gPartyState
 	.section .text.x02008be0,"ax",%progbits
 	.balign 4
 	.global Func_02000be0
@@ -4055,50 +3997,6 @@ Func_020036a8:
 	.4byte IwramMulQ16
 .L_0200b8e0:
 	.4byte gPartyState
-	.section .text.x0200b9a8,"ax",%progbits
-	.balign 4
-	.global Func_020039a8
-	.thumb_func
-Func_020039a8:
-	push {r5, r6, lr}
-	adds r5, r0, #0
-	adds r2, r5, #0
-	adds r2, #100
-	ldrh r3, [r2]
-	ldr r6, [r5, #104]
-	adds r3, #1
-	strh r3, [r2]
-	lsls r3, r3, #16
-	asrs r0, r3, #16
-	cmp r0, #31
-	ble .L_0200b9c4
-	movs r0, #0
-	b .L_0200b9ec
-.L_0200b9c4:
-	lsls r0, r0, #10
-	bl Math_Sine
-	movs r1, #160
-	ldr r3, .L_0200b9f0
-	lsls r1, r1, #9
-	mov lr, r3
-	.2byte 0xf800
-	str r0, [r5, #24]
-	str r0, [r5, #28]
-	movs r2, #128
-	ldr r3, [r6, #8]
-	lsls r2, r2, #9
-	str r3, [r5, #8]
-	ldr r3, [r5, #12]
-	movs r0, #1
-	adds r3, r3, r2
-	str r3, [r5, #12]
-	ldr r3, [r6, #16]
-	str r3, [r5, #16]
-.L_0200b9ec:
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_0200b9f0:
-	.4byte IwramMulQ16
 	.section .text.x0200bd44,"ax",%progbits
 	.global Func_02003d44
 	.thumb_func

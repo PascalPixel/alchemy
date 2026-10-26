@@ -523,60 +523,6 @@ Func_02000ef8:
 	.4byte 0x00003f42
 .L_02008f54:
 	.4byte gData_02002a9e
-	.section .text.x020090d8,"ax",%progbits
-	.global Func_020010d8
-	.thumb_func
-Func_020010d8:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	adds r6, r0, #0
-	ldr r2, [r6, #12]
-	ldr r3, [r6, #16]
-	movs r0, #128
-	lsls r0, r0, #11
-	adds r2, r2, r0
-	adds r3, r3, r0
-	ldr r1, [r6, #8]
-	movs r0, #14
-	bl Engine_ObjectCreate
-	ldr r2, [r6, #80]
-	adds r5, r0, #0
-	mov r8, r2
-	cmp r5, #0
-	beq .L_02009134
-	ldr r3, [r6, #20]
-	ldr r7, [r5, #80]
-	str r3, [r5, #20]
-	ldr r1, .L_0200913c
-	bl Func_02001c74
-	adds r3, r5, #0
-	adds r3, #85
-	movs r5, #0
-	strb r5, [r3]
-	cmp r7, #0
-	beq .L_02009134
-	movs r1, #1
-	adds r0, r7, #0
-	bl Animation_ApplyChildArgument
-	strb r5, [r7, #26]
-	mov r2, r8
-	ldrb r3, [r2, #9]
-	ldrb r1, [r7, #9]
-	movs r2, #12
-	ands r2, r3
-	movs r3, #13
-	negs r3, r3
-	ands r3, r1
-	orrs r3, r2
-	strb r3, [r7, #9]
-.L_02009134:
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-.L_0200913c:
-	.4byte gData_02001ee8
 	.section .text.x020091a8,"ax",%progbits
 	.global Func_020011a8
 	.thumb_func

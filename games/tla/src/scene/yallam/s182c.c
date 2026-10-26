@@ -1,8 +1,3 @@
-// Draft: differ 48 (listing 96 instructions, draft 96), all reordered rows:
-// after each object's first store the native begins the destination address
-// before it loads the saved word, and sets the next id before the last byte
-// store; the draft loads each saved word first. Func_02001730, the saving
-// half, matches in this form (s1688.c).
 #include "../../../../games/tla/src/scene/yallam/yallam.h"
 
 void Func_0200182c(void) {

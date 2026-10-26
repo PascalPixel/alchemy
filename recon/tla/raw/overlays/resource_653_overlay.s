@@ -48,52 +48,6 @@ Func_02000668:
 	.2byte 0x0000
 .L_020086ac:
 	.4byte gData_02006294
-	.section .text.x02008930,"ax",%progbits
-	.global Func_02000930
-	.thumb_func
-Func_02000930:
-	push {r5, r6, lr}
-	adds r5, r0, #0
-	adds r3, r5, #0
-	movs r6, #0
-	adds r3, #85
-	strb r6, [r3]
-	adds r2, r5, #0
-	adds r3, #4
-	strb r6, [r3]
-	adds r2, #35
-	movs r3, #2
-	strb r3, [r2]
-	movs r3, #3
-	ldr r0, [r5, #80]
-	ands r1, r3
-	ldrb r2, [r0, #9]
-	movs r3, #13
-	negs r3, r3
-	ands r3, r2
-	lsls r1, r1, #2
-	orrs r3, r1
-	strb r3, [r0, #9]
-	movs r1, #0
-	adds r0, r5, #0
-	bl ObjectDispatch_SetSingleChildFlags
-	adds r0, r5, #0
-	movs r1, #2
-	bl Func_02005130
-	adds r0, r5, #0
-	ldr r1, .L_02008988
-	bl Func_02005138
-	adds r0, r5, #0
-	movs r1, #9
-	bl Object_SetPartAttribute
-	adds r3, r5, #0
-	adds r3, #100
-	strh r6, [r3]
-	str r6, [r5, #48]
-	str r6, [r5, #52]
-	pop {r5, r6, pc}
-.L_02008988:
-	.4byte gData_02005494
 	.section .text.x02008f60,"ax",%progbits
 	.global Func_02000f60
 	.thumb_func

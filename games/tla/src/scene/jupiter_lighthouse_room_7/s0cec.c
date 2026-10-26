@@ -1,12 +1,3 @@
-// Draft, differ 8 of 139: what the leader faces in Jupiter Lighthouse room 7: the
-// cell 16 pixels ahead (its facing rounded to a quarter turn) holding object 18
-// or 19 on the ground gives the push (Func_02002c24); otherwise, unless that
-// cell is one of the three spots (35, 15), (31, 16) or (33, 10) whose
-// pair of flags (2577/2576, 2578/2579, 2580/2581) has one set, the plain
-// check (Func_02002bec) runs. The facing is taken before the position is
-// copied, as the native builds it first. Left: the native puts an unrelated
-// instruction after each of the position's three stores before the next load
-// (the store-to-load gap no C form reproduces).
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"

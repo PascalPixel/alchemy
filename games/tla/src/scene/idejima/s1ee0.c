@@ -1,18 +1,3 @@
-// 26 October 2026, under -mthumb-slow-loads: differ 6 of 409: the action
-// pointer's add, where the native issues a load one slot later after a store,
-// where alchemy-gcc issues it at once; alchemy permute (5 to 6 minutes) and an
-// empty asm or one-pass block after any one statement do not move it.
-// Near miss, differ 6 of 409 (2 real), written from the listing in the
-// style of idejima's other scenes. Left: the native adds 100 to actor 5's
-// pointer (for the action wait at the end) right after the leader's
-// scaleX store; here sched2 sinks the add to just before the action
-// store, so three pool offsets move with it. The add is ready from the
-// start with priority 3 and never wins a cycle: in the native the load of
-// the owner after the store must have stalled a cycle. Tried 2026-10-15:
-// the action pointer taken at the native's place, in its own variable
-// (differ 25) or in the actor's (25, and the store's zero is pooled).
-// 2026-10-19: the action pointer behind an asm volatile after the scaleX
-// store (31: the barrier's estimated bytes move the literal pools).
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"

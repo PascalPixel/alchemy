@@ -21,7 +21,7 @@ SECTIONS
         "*/games/tla/src/scene/kandorean_temple/events_d.o"(.text)
         "*/games/tla/src/scene/kandorean_temple/s0778.o"(.text)
         "*/games/tla/src/scene/kandorean_temple/events_e.o"(.text)
-        "*/resource_653_overlay.o"(.text.x02008930)
+        "*/games/tla/src/scene/kandorean_temple/s0930.o"(.text)
         "*/games/tla/src/scene/kandorean_temple/s098c.o"(.text)
         "*/games/tla/src/scene/kandorean_temple/s0adc.o"(.text)
         "*/games/tla/src/scene/kandorean_temple/events_f.o"(.text)

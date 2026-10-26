@@ -1,7 +1,3 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 4 of 60; left: the third pool
-// address loads one row later than the native's.
-// Near miss, differ 4 of 60: the listing loads the address of gData_02005198
-// before the first object's z; this draft loads it after.
 #include "../../../../games/tla/src/scene/islets/islets.h"
 
 void Func_02002430(void) {

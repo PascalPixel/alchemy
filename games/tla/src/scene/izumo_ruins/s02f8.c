@@ -1,14 +1,3 @@
-// Draft, differ 2 of 158: the pillar the leader faces, when listed, either
-// flashes once and sets its flag or, once that flag is set, sinks into the
-// floor with a shake and sets the second. The same function is overlay 68F's
-// Func_02002354 and 691's Func_02002e30.
-// With the leader pinned to r6 (a pin device to tag on adoption; without it the
-// leader takes r8 and 64 differ), the motion flags written through one pointer
-// (the native reuses leader + 85 for both stores) and the pillar test in the
-// native's branch order. Left: the known store-then-load row: the native sets
-// the search's 0 argument between the first position store and the second
-// load. Tried: empty asm and one-pass blocks around the copies, the 0 in an
-// asm-held local (all 2 or worse).
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"

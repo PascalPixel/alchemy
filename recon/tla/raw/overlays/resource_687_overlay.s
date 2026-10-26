@@ -1805,58 +1805,6 @@ Func_02000ef0:
 	.4byte 0xfffc0000
 .L_02009064:
 	.4byte 0xffff8000
-	.section .text.x020090a8,"ax",%progbits
-	.balign 4
-	.global Func_020010a8
-	.thumb_func
-Func_020010a8:
-	push {r5, r6, r7, lr}
-	ldr r3, .L_02009100
-	movs r7, #1
-	ldr r5, [r3]
-	sub sp, #56
-	ands r5, r7
-	adds r6, r0, #0
-	cmp r5, #0
-	bne .L_020090fa
-	bl Random16Far
-	ldr r2, .L_02009104
-	movs r3, #31
-	ands r3, r0
-	lsls r3, r3, #16
-	adds r3, r3, r2
-	movs r2, #179
-	lsls r2, r2, #8
-	add r1, sp, #16
-	adds r2, #51
-	str r2, [r1, #8]
-	str r2, [r1, #12]
-	movs r2, #7
-	str r2, [r1, #4]
-	str r7, [r1]
-	str r1, [sp, #12]
-	ldr r0, [r6, #8]
-	ldr r2, [r6, #16]
-	adds r0, r0, r3
-	movs r3, #128
-	lsls r3, r3, #13
-	adds r2, r2, r3
-	movs r3, #176
-	lsls r3, r3, #12
-	str r3, [sp, #8]
-	movs r1, #0
-	movs r3, #0
-	str r5, [sp, #0]
-	str r5, [sp, #4]
-	bl Func_0200015c
-.L_020090fa:
-	add sp, #56
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-.L_02009100:
-	.4byte gFrameCount
-.L_02009104:
-	.4byte 0xfff20000
 	.section .text.x02009108,"ax",%progbits
 	.global Func_02001108
 	.thumb_func

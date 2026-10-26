@@ -1,19 +1,3 @@
-// 26 October 2026, under -mthumb-slow-loads: differ 2 of 206: the native issues
-// a load one slot later after a store, where alchemy-gcc issues it at once;
-// alchemy permute (5 to 6 minutes) and an empty asm or one-pass block after any
-// one statement do not move it.
-// Near miss, differ 2 of 206, from the listing (the twin, ☀️'s
-// Scene_RunTransitionCue, is a false match): the blend fades through
-// Io_Write16, the rectangle copies through shrine_of_the_sea_god.h. Left: after
-// the leader's motion flags are cleared, the native builds
-// ObjectMotion_SetActionVariant's 1 before it loads the leader id; here the
-// load goes first (equal priority, and the load comes first in insn order).
-// Measured: Call2 and Value2 (2), r1 pinned (2), the 1 held by an empty asm
-// (fixes it, but the rectangle copy's arguments before it reorder: 4), a second
-// barrier anywhere (4). Tried 2026-10-19: the 1 pinned to r1 and the id to r0
-// in that order (2), the 1 behind an asm volatile with or without a memory
-// clobber, or with the owner as a "+m" operand (4, 4 and 40), the first
-// rectangle copy called directly (11).
 #include "../../../../games/tla/src/scene/shrine_of_the_sea_god/shrine_of_the_sea_god.h"
 #include "io_reg.h"
 #include "iowrite.h"

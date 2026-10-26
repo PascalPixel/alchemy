@@ -1,10 +1,3 @@
-// Draft, differ 6 of 95: while flag 0x104 is clear and the leader stands on a
-// cell whose ground and upper layers read 236, pushes the leader and the event
-// work's companion object down by half a pixel, raising cue 66 when
-// Func_02002e0c refuses the step. Left: the native builds 0x80000 around the
-// load of the leader's y and puts the argument copy between the next store and
-// load (the known store-then-load order); barriers after either store and a
-// four-minute permute do not reproduce it.
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"

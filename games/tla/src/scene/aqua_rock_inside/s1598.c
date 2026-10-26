@@ -1,10 +1,3 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 63; left: the native loads
-// the object's first word (ldr r0, [r5, #0]) right after the position store;
-// here after the call's stack argument is built.
-// Draft, differ 4 of 63: an object's update that every eighth frame spawns a
-// rising effect (type 0x2a1, palette 7) at a random spot just above it.
-// Overlay 681's Func_02001548 is a copy.
-// Measured against its copies: overlay 681's Func_02001548 (differ 8 of 63).
 #include "types.h"
 #include "object_runtime.h"
 #include "system/field_effect.h"

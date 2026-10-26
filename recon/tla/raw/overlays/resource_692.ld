@@ -58,7 +58,7 @@ SECTIONS
         "*/resource_692_overlay.o"(.text.x0200ab2c)
         "*/games/tla/src/scene/magma_rock_inside/s2bd0.o"(.text)
         "*/games/tla/src/scene/magma_rock_inside/s2c1c.o"(.text)
-        "*/resource_692_overlay.o"(.text.x0200ac48)
+        "*/games/tla/src/scene/magma_rock_inside/s2c48.o"(.text)
         "*/resource_692_overlay.o"(.text.x0200acd0)
         "*/games/tla/src/scene/magma_rock_inside/s30cc.o"(.text)
         "*/games/tla/src/scene/magma_rock_inside/s32d8.o"(.text)

@@ -651,76 +651,6 @@ Func_0200147c:
 	.4byte IwramMulQ16
 .L_0200951c:
 	.4byte gFrameCount
-	.section .text.x02009598,"ax",%progbits
-	.global Func_02001598
-	.thumb_func
-Func_02001598:
-	push {r5, r6, r7, lr}
-	mov r7, r10
-	mov r6, r8
-	push {r6, r7}
-	ldr r3, .L_0200961c
-	sub sp, #68
-	ldr r7, [r3]
-	movs r3, #7
-	ands r7, r3
-	mov r10, r0
-	cmp r7, #0
-	bne .L_02009612
-	add r2, sp, #28
-	str r3, [r2, #4]
-	movs r3, #209
-	lsls r3, r3, #1
-	adds r3, #255
-	strh r3, [r2, #24]
-	movs r3, #1
-	str r3, [r2]
-	mov r8, r2
-	bl Random16Far
-	movs r6, #31
-	mov r2, r10
-	ldr r3, [r2, #8]
-	ands r0, r6
-	subs r0, #16
-	lsls r0, r0, #16
-	add r5, sp, #16
-	adds r3, r3, r0
-	str r3, [r5]
-	bl Random16Far
-	mov r3, r10
-	ldr r1, [r3, #12]
-	ands r0, r6
-	lsls r0, r0, #16
-	movs r2, #128
-	adds r1, r1, r0
-	lsls r2, r2, #12
-	adds r1, r1, r2
-	str r1, [r5, #4]
-	ldr r0, [r5]
-	ldr r2, [r3, #16]
-	movs r3, #128
-	lsls r3, r3, #11
-	str r2, [r5, #8]
-	adds r2, r2, r3
-	movs r3, #128
-	lsls r3, r3, #8
-	str r3, [sp, #0]
-	movs r3, #152
-	lsls r3, r3, #13
-	str r3, [sp, #8]
-	mov r3, r8
-	str r3, [sp, #12]
-	movs r3, #0
-	str r7, [sp, #4]
-	bl Func_0200015c
-.L_02009612:
-	add sp, #68
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6, r7, pc}
-.L_0200961c:
-	.4byte gFrameCount
 	.section .text.x02009620,"ax",%progbits
 	.global Func_02001620
 	.thumb_func
@@ -2196,60 +2126,6 @@ Func_02002340:
 	.2byte 0x0000
 .L_0200abd0:
 	.4byte 0x000000a9
-	.section .text.x0200abd4,"ax",%progbits
-	.global Func_02002bd4
-	.thumb_func
-Func_02002bd4:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	adds r6, r0, #0
-	ldr r2, [r6, #12]
-	ldr r3, [r6, #16]
-	movs r0, #128
-	lsls r0, r0, #11
-	adds r2, r2, r0
-	adds r3, r3, r0
-	ldr r1, [r6, #8]
-	movs r0, #14
-	bl Engine_ObjectCreate
-	ldr r2, [r6, #80]
-	adds r5, r0, #0
-	mov r8, r2
-	cmp r5, #0
-	beq .L_0200ac30
-	ldr r3, [r6, #20]
-	ldr r7, [r5, #80]
-	str r3, [r5, #20]
-	ldr r1, .L_0200ac38
-	bl Func_02003ccc
-	adds r3, r5, #0
-	adds r3, #85
-	movs r5, #0
-	strb r5, [r3]
-	cmp r7, #0
-	beq .L_0200ac30
-	movs r1, #1
-	adds r0, r7, #0
-	bl Animation_ApplyChildArgument
-	strb r5, [r7, #26]
-	mov r2, r8
-	ldrb r3, [r2, #9]
-	ldrb r1, [r7, #9]
-	movs r2, #12
-	ands r2, r3
-	movs r3, #13
-	negs r3, r3
-	ands r3, r1
-	orrs r3, r2
-	strb r3, [r7, #9]
-.L_0200ac30:
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-.L_0200ac38:
-	.4byte gData_0200411c
 	.section .text.x0200aca4,"ax",%progbits
 	.global Func_02002ca4
 	.thumb_func
@@ -3225,52 +3101,6 @@ Func_020036b8:
 	.4byte gData_02005970
 .L_0200b840:
 	.4byte gData_0200534c
-	.section .text.x0200b994,"ax",%progbits
-	.global Func_02003994
-	.thumb_func
-Func_02003994:
-	push {r5, r6, lr}
-	adds r5, r0, #0
-	adds r3, r5, #0
-	movs r6, #0
-	adds r3, #85
-	strb r6, [r3]
-	adds r2, r5, #0
-	adds r3, #4
-	strb r6, [r3]
-	adds r2, #35
-	movs r3, #2
-	strb r3, [r2]
-	movs r3, #3
-	ldr r0, [r5, #80]
-	ands r1, r3
-	ldrb r2, [r0, #9]
-	movs r3, #13
-	negs r3, r3
-	ands r3, r2
-	lsls r1, r1, #2
-	orrs r3, r1
-	strb r3, [r0, #9]
-	movs r1, #0
-	adds r0, r5, #0
-	bl ObjectDispatch_SetSingleChildFlags
-	adds r0, r5, #0
-	movs r1, #2
-	bl Func_02003cc4
-	adds r0, r5, #0
-	ldr r1, .L_0200b9ec
-	bl Func_02003ccc
-	adds r0, r5, #0
-	movs r1, #10
-	bl Object_SetPartAttribute
-	adds r3, r5, #0
-	adds r3, #100
-	strh r6, [r3]
-	str r6, [r5, #48]
-	str r6, [r5, #52]
-	pop {r5, r6, pc}
-.L_0200b9ec:
-	.4byte gData_020044c8
 	.section .text.x0200bab0,"ax",%progbits
 	.global Func_02003ab0
 	.thumb_func

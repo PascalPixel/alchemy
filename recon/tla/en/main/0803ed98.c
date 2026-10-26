@@ -1,5 +1,10 @@
-// Pin-free trial (tla-en): listing 206 instructions, draft 206, common 186,
-// differ 40. Earlier register-allocation notes describe the prior pinned form.
+// Draft, differ 14 of 206 (36 before, 2026-10-26): The Broken Seal's
+// SelectionScreen_StepLeft (games/tbs/src/window/window/selection.c), its
+// one variable i for the row offset, the count and the entry index, and its
+// entry loop over the two id arrays. Left: the zero for moreBelow comes from
+// i (with The Broken Seal's r0 pin, differ 12); three rows issue a load one
+// row early after a store (barriers after moreBelow and the last status
+// store reach 6).
 
 #include "types.h"
 
@@ -49,8 +54,6 @@ void Menu_OpenSelectionWindow(s32 type, u32 value);
 
 void Menu_StepLeft(struct StepMenu *state) {
   struct StepNode *node;
-  u16 *ids;
-  s32 y; /* Earlier pinned trial: keeps the row offset in r1 */
   s32 i;
 
   Menu_ReloadNodeResource(state, state->cursor);
@@ -70,16 +73,13 @@ void Menu_StepLeft(struct StepMenu *state) {
       }
     } else {
       node = state->nodes;
-      y = 64;
-      {
-        s32 z = 0; /* Earlier pinned trial: the zero goes through r0 */
-        state->moreBelow = i = z;
-      }
+      state->moreBelow = i = 0;
+      i = 64;
       while (node->next != NULL) {
-        node->targetY = node->y + y;
+        node->targetY = node->y + i;
         node->speed = 12;
         node = node->next;
-        y -= 16;
+        i -= 16;
       }
       node = state->nodes;
       while (node->y != node->targetY)
@@ -90,24 +90,19 @@ void Menu_StepLeft(struct StepMenu *state) {
       node = state->nodes;
       state->top = i;
       state->cursor = 4;
-      if (node != NULL) {
-        /* FAKEMATCH: the index is scaled and added to the base before the field
-         * offset */
-        ids = (u16 *)((i * 2 + (s32)state) +
-                      (s32)((struct StepMenu *)0)->entryIds);
-        do {
-          MenuSelection_SetupEntry(ids[0], ids[16], node, 1);
-          node = node->next;
-          ids++;
-        } while (node != NULL);
+      while (node != NULL) {
+        MenuSelection_SetupEntry(state->entryIds[i], state->entryKinds[i], node,
+                                 1);
+        node = node->next;
+        i++;
       }
       node = state->nodes;
-      y = state->baseY;
+      i = state->baseY;
       while (node->next != NULL) {
-        node->targetY = y;
+        node->targetY = i;
         node->speed = 0xfff4;
         node = node->next;
-        y += 16;
+        i += 16;
       }
       state->moreAbove = 1;
     }

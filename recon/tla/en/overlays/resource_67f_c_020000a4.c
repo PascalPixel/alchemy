@@ -1,4 +1,4 @@
-// Draft, differ 9 of 61: the copy of overlay 671's Func_02005428 (whose draft
+// Draft, differ 7 of 61: the copy of overlay 671's Func_02005428 (whose draft
 // holds the notes), calling Izumo Ruins' Func_02000128.
 #include "types.h"
 #include "ram_buffer.h"

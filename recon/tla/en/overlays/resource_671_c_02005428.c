@@ -1,4 +1,4 @@
-// Draft of overlay 671 Func_02005428, differ 9 of 61 (was 38); overlay 6a0's
+// Draft of overlay 671 Func_02005428, differ 7 of 61 (was 38); overlay 6a0's
 // Func_02001a48 is the same function with Func_02001acc for Func_020054ac.
 // Entered at its test through a goto into the do-while, as the native enters
 // it, and with the object pinned to r6 (as a plain local, 27), the loop has the

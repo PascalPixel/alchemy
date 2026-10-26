@@ -20,7 +20,7 @@ SECTIONS
         "*/resource_664_overlay.o"(.text.x0200868e)
         "*/games/tla/src/scene/airs_rock_inside/cell_get.o"(.text)
         "*/resource_664_overlay.o"(.text.x020086cc)
-        "*/resource_664_overlay.o"(.text.x020087b4)
+        "*/games/tla/src/scene/airs_rock_inside/s07b4.o"(.text)
         "*/resource_664_overlay.o"(.text.x02008908)
         "*/resource_664_overlay.o"(.text.x02008988)
         "*/games/tla/src/scene/airs_rock_inside/dist.o"(.text)

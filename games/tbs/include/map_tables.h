@@ -90,10 +90,9 @@ STATIC_ASSERT(offsetof(struct MapWarpDest, cameraLeft) == 14);
 /// destination | 11..0 scene
 #define MAP_WARP(warp, map, warpDest)                                          \
   (((u32)(warp) << 20) + ((u32)(warpDest) << 12) + (u32)&SceneId_##map)
-/// A warp with a flag word after it (bit 28). Despite the name, the warp is
-/// taken only while `flag` is clear; when it is set, the search goes on to
-/// the next warp.
-#define MAP_WARP_IF(warp, map, warpDest, flag)                                 \
+/// A warp with a flag word after it (bit 28): the warp is taken unless `flag`
+/// is set, and when it is set the search goes on to the next warp.
+#define MAP_WARP_UNLESS(warp, map, warpDest, flag)                             \
   (MAP_WARP(warp, map, warpDest) + 0x10000000), (u32)(flag)
 /// The last header word: it ends the last scene's warps and the table.
 #define MAP_WARPS_END 0x1ff

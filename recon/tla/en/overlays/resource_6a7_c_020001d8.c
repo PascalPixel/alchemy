@@ -1,5 +1,9 @@
-// Draft of overlay 6a7's Func_020001d8, translated from its listing: differ
-// 46 of 438. Left: its shape: 440 instructions against the listing's 438.
+// Draft of overlay Func_020001d8, translated from its listing: differ 12 of 438
+// in tla-en (was 44). The read-modify-write is a compound assignment and the
+// two vectors handed to Func_020006b0 are local arrays, which give the native's
+// 24-byte frame. Left: the native builds the heap slot base (0x3000000) in r5
+// before that call, where this builds it after the next two; and two argument
+// constants one row apart.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -45,7 +49,8 @@ extern u8 Func_02000064[];
 extern u8 MsgShipSafeFiringDistance[];
 
 void Func_020001d8(void) {
-  s32 sp_[1];
+  s32 from[3];
+  s32 to[3];
   s32 v_r5, v_r8, v_r6, v_r7, v_r10, t0, t1, t2, t3, t10;
   s32 t11, t12, t13, t14, t16, t18, t20, t26, t31, t36;
   s32 t37, t40, t41, t45, t52, t53, t59, t60, t61, t66;
@@ -113,8 +118,7 @@ L_0200832c:
   Call3((void (*)())Func_02000ad0, 11, 0, 5);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 8, 0x30000, 0x18000);
   t40 = Value1((s32 (*)())Object_GetById, 8);
-  t41 = FIELD_AT(t40, u8, 90);
-  FIELD_AT(t40, u8, 90) = (254 & t41);
+  FIELD_AT(t40, u8, 90) &= 254;
   Call3((void (*)())ObjectMotion_OffsetPositionAndReset, 8, 0, 16);
   Call1((void (*)())Func_02000b58, 144);
   Call1((void (*)())FieldEvent_WaitFrames, 4);
@@ -144,15 +148,15 @@ L_020083da:
   Call1((void (*)())ObjectMotion_CommitCurrentPositionAndActivate, 9);
   Call1((void (*)())Func_02000b58, 145);
   t59 = FIELD_AT(v_r6, s32, 8);
-  FIELD_AT(sp_, s32, 12) = (t59 - 0x20000);
+  from[0] = (t59 - 0x20000);
   t60 = FIELD_AT(v_r6, s32, 12);
-  FIELD_AT(sp_, s32, 16) = t60;
+  from[1] = t60;
   t61 = FIELD_AT(v_r6, s32, 16);
-  FIELD_AT(sp_, s32, 20) = (t61 - 0x80000);
-  *(s32 *)sp_ = 0x1900000;
-  FIELD_AT(sp_, s32, 4) = 0;
-  FIELD_AT(sp_, s32, 8) = 0x500000;
-  Call3((void (*)())Func_020006b0, ((s32)sp_ + 12), (s32)sp_,
+  from[2] = (t61 - 0x80000);
+  to[0] = 0x1900000;
+  to[1] = 0;
+  to[2] = 0x500000;
+  Call3((void (*)())Func_020006b0, (s32)from, (s32)to,
         (s32)Func_02000064);
   Call1((void (*)())FieldEvent_WaitFrames, 20);
   Call3((void (*)())Func_02000ab0, 10, 0, 0);

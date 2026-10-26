@@ -1,11 +1,14 @@
-// Draft, differ 41 of 171 (6 of 160 in tla-ja): the Kandorean Temple's
-// prepare step. Japanese lacks the final flag 0x12f clear. Left: the native
-// reloads gPartyState's address for the final test; this draft keeps it.
+// Draft, differ 37 of 171 (was 41; 6 of 160 in tla-ja before): the Kandorean
+// Temple's prepare step. Japanese lacks the final flag 0x12f clear. Left: the
+// native reloads gPartyState's address for the final test; this draft keeps it.
 // Measured: gcse inserts the address load on the path that skips the inner
 // tests and keeps it in r5 across their calls, where the native loads it into
 // r2 there and again at the join. The final entrance read through a volatile
 // pointer reloads it (differ 21) but reads it as ldrh and compares it shifted;
 // a switch over the inner tests (46).
+// Func_02005170's last argument goes through a local (41 to 37): the
+// native stores the 1 and the 4 on the stack in that order (a temporary device
+// if adopted).
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 #include "edition.h"
 #include "flag_call.h"
@@ -37,7 +40,11 @@ void Func_02002a84(void) {
   object->collisionFlags = 0;
   Func_02005338(0);
   if (Flag_IsSet(0x92d)) {
-    Func_02005170(41, 0, 20, 0, 1, 4);
+    {
+      s32 f = 4;
+
+      Func_02005170(41, 0, 20, 0, 1, f);
+    }
     Func_02005230_(11, 0, 0);
     Func_02005230_(12, 0, 0);
     Func_02005230_(13, 0, 0);

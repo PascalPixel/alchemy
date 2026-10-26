@@ -81,3 +81,7 @@ gBattle_UnusedActorKindIdPairs:
 	.2byte 65, 47
 	.2byte 70, 48
 	.2byte -1, -1
+	.balign 4
+	.global gBattleMessage_AdvanceArrowTiles
+gBattleMessage_AdvanceArrowTiles:
+	.incbin "games/tbs/src/battle/advarrow.8bpp8x16"

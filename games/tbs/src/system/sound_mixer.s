@@ -257,3 +257,8 @@ AlchemyUncreditedEnd_sound_mixer_9:
 	b	IwramSoundMixDone
 .L_audio_stack_floor:
 	.4byte 0x03007900
+.syntax unified
+	.section .data,"aw",%progbits
+	.arm
+.L_audio_template_cache:
+	.4byte 0x00000000

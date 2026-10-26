@@ -39,8 +39,15 @@ Title_IntroGraphicsB:
 	.endif
 	.endif
 	.balign 4, 0
-	.include "games/tbs/src/graphics/title/intro_peak.s"
-	.include "games/tbs/src/graphics/title/nintendo_splash.s"
+	.global Title_IntroGraphicsC
+Title_IntroGraphicsC:
+	.incbin "games/tbs/src/graphics/title/intro_peak.gbapal"
+	.incbin "games/tbs/src/graphics/title/intro_peak.parts.plz"
+	.balign 4, 0
+	.global Title_NintendoLogo
+Title_NintendoLogo:
+	.incbin "games/tbs/src/graphics/title/nintendo_splash.gbapal"
+	.incbin "games/tbs/src/graphics/title/nintendo_splash.8bpp.lz"
 	.global Title_CamelotLogo
 Title_CamelotLogo:
 	.ifeq EDITION_INTERNATIONAL

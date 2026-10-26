@@ -238,3 +238,6 @@ Tile_ExpandMasked:
 	bne .Lline
 	pop	{r5, r6, r7, r8, r9, sl}
 	bx	lr
+	.4byte 0x00ff00ff
+	.4byte 0x0000ffff
+	.4byte 0x11111111

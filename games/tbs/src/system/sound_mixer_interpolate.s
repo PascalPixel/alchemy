@@ -4,7 +4,7 @@
 @ Why IwramSoundEndChannel to IwramSoundNormalizeChannels are assembly:
 @ Mixer blocks save r4/r9 without lr, use fp as a sample multiplier and
 @ switch instruction mode; normalize-channel code stores the clip mask
-@ through pc, into gSoundMixerClipped, the word linked right after it.
+@ through pc, into gSoundMixerClipped, the word right after it.
 .syntax unified
 	.arm
 	asr	r9, r9, #22
@@ -225,3 +225,8 @@ IwramSoundNormalizeChannels:
 	orr	lr, lr, lr, lsr #16
 	str	lr, [pc]
 	b	IwramSoundRenderOutput
+@ The clip mask IwramSoundNormalizeChannels stores two instructions ahead with
+@ str lr, [pc].
+	.global gSoundMixerClipped
+gSoundMixerClipped:
+	.4byte 0x00000000

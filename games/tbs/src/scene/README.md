@@ -26,8 +26,8 @@ recording, the house's code says where its north door leads, and Vale's code
 says where the party then stands and who else is there.
 
 When the party arrives, the engine asks what can happen here (the
-triggers, kept for the whole visit), where the party arrives (the [
-entrances](../../glossary.md#entrance)), who stands where (the
+triggers, kept for the whole visit), where the party arrives (the
+[entrances](../../glossary.md#entrance)), who stands where (the
 [actor](../../glossary.md#actor) templates), and whether
 anything needs setting up. At every step it asks whether the leader is
 standing in an [exit](../../glossary.md#exit) area, and as the party leaves,

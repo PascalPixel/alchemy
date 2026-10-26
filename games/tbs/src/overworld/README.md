@@ -37,8 +37,8 @@ Leaving comes first, and a battle counts as leaving: the game remembers where
 everyone stood, loads the battle as the next scene, and then loads the scene again
 with everyone put back, as in the recording. Before the loop starts, the scene
 is set up: its [map](../../glossary.md#map) is loaded, its random
-battles chosen ([below](#random-battles)), the party placed at its [
-entrance](../../glossary.md#entrance), its people placed, and its
+battles chosen ([below](#random-battles)), the party placed at its
+[entrance](../../glossary.md#entrance), its people placed, and its
 own setup run, which may send the party on at once. Then the scene fades in, and
 the area's name is shown if the party has come into a new
 [area](../../glossary.md#area).

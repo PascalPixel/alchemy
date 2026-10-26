@@ -130,7 +130,7 @@ The six questions are `struct SceneEntries`, at the start of every overlay.
 Arriving at Vale from the world map shows the name "Vale" for a moment. The
 name belongs to Vale's [area](glossary.md#area), the group of
 scenes the village is made of: walking between Vale's houses shows nothing,
-because the party stays in the same section. A scene's code says what happens
+because the party stays in the same area. A scene's code says what happens
 there; its area chooses the music, the area name and which flags are
 kept while the party stays inside. The two are chosen separately: the Bilibin
 Barricade runs on Bilibin's code but is an area of its own. The name
@@ -151,7 +151,7 @@ scene by its row's symbol, `SceneId_<Place>`.
 | --------------------------------------------------------- | ----- |
 | scenes                                                    | 201   |
 | overlays, the scenes' code, some shared by several scenes | 96    |
-| areas                                              | 71    |
+| areas                                                     | 71    |
 
 ## Exits and entrances
 
@@ -160,8 +160,8 @@ scene by its row's symbol, `SceneId_<Place>`.
 The path down from Sol Sanctum's entrance is one exit, but where it leads
 depends on the story: to Vale, or, on the night Mt. Aleph erupts, to the
 village in flames. An exit only names where it goes. The scene's exit table
-turns that name into a scene and a [
-entrance](glossary.md#entrance), the spot where the party appears
+turns that name into a scene and an
+[entrance](glossary.md#entrance), the spot where the party appears
 and the way it faces, and a row of the table can be made to count only until
 a certain flag is set. The game takes the first row that counts.
 
@@ -172,7 +172,7 @@ often looks at the entrance too, to play the part of an event the
 last scene sent the party to.
 
 Every way between scenes has a name in [scene_exits.h](include/scene_exits.h).
-Destinations are named for where the party comes from
+Entrances are named for where the party comes from
 (`VALE_PLAZA_FROM_SANCTUM`) and exits for where they lead
 (`VALE_PLAZA_TO_WORLD_MAP`), so a door has the same name from both sides. The
 recording's rows are `gSolSanctumEntrance_Exits` in

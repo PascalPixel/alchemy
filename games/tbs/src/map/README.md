@@ -29,10 +29,10 @@ number, a row of the map's table of pictures.
 **What standing on it does.** The [metatile
 behavior](../../glossary.md#metatile-behavior) is a number that walls and
 [triggers](../../glossary.md#trigger) are keyed on. One number is a wall
-whatever the heights. Most belong to the scene: a [
-step trigger](../../glossary.md#step-trigger) runs when the leader steps onto or
-pushes against a cell with that number, and a [
-examine trigger](../../glossary.md#examine-trigger) when the player presses A facing one, so
+whatever the heights. Most belong to the scene: a
+[step trigger](../../glossary.md#step-trigger) runs when the leader steps onto or
+pushes against a cell with that number, and an
+[examine trigger](../../glossary.md#examine-trigger) when the player presses A facing one, so
 the same number can be a door in one town and a chest in another
 ([Scenes](../scene/README.md#which-triggers-a-cell-starts)). The rest mean the
 same in every scene: ground with random battles of its own, the jars, barrels,

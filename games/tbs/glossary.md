@@ -111,8 +111,9 @@ not Camelot's version numbers.
 ### pret
 
 The group behind the Pokémon decompilations, whose conventions Alchemy follows
-where they settle a question: naming, the `BUG` and `BUGFIX` markers, and the
-words for places, from pokeemerald.
+where they settle a question: the shape of names, the `BUG` and `BUGFIX`
+markers and the sound driver's routines. Alchemy's words for things are the
+game's own, not pret's; the entries below say where pret uses another word.
 
 ### The compilers
 
@@ -233,9 +234,10 @@ from 80 the fanfares, and from 100 the sound effects
 
 ## Scenes and maps
 
-The words for places are mostly pret's, from pokeemerald, so a reader of that
-project finds them in the same sense; pret has no word for the scene or the
-sequence, because its games have no such unit.
+The words for places are the game's own where it has one (its area names, its
+menus, its debug names), else a word of the game's time, else a plain
+description of the thing. A reader coming from pret's decompilations, such as
+pokeemerald, finds each entry saying what pret calls the nearest thing.
 
 ### Sequence
 
@@ -253,7 +255,9 @@ overlay's code and drawn on a map ([The front page](README.md#scenes-and-overlay
 
 A group of scenes, 71 in all, sharing their music, their area name and one
 range of [scratch flags](#game-flag)
-([The front page](README.md#the-scene-table-and-areas)).
+([The front page](README.md#the-scene-table-and-areas)). The game names each
+by its area name, the one the debug menu lists and the area name window shows;
+pret calls the nearest thing a map section.
 
 ### Map
 
@@ -294,49 +298,48 @@ footprints in snow ([World](world.md#objects-and-their-scripts)).
 
 A person or thing a scene knows by its actor id: the party, and everyone its
 actor templates place. The camera and the footprints are objects but
-not actors ([Scenes](src/scene/README.md#who-stands-where)).
+not actors ([Scenes](src/scene/README.md#who-stands-where)). pret calls an
+actor an object event, and its template an object event template.
 
 ### Actor id
 
 An actor's number in its scene: 0 to 7 the party, the leader at 0, and
 from 8 (`ACTOR_FIRST_PLACED`) the actor templates' rows in order; each
-scene names its own in an enum.
+scene names its own in an enum. pret calls it a local id.
 
 ### Trigger
 
-A row of a scene's trigger table (`struct Trigger`): a kind, a trigger, a
-condition and the event it runs. When the player talks, searches, steps on a
-marked cell or uses Psynergy, the first row that fits runs
-([Scenes](src/scene/README.md#what-a-trigger-row-says)).
-
-### Trigger
-
-What a trigger row answers: an actor's actor id for talking, a
-metatile behavior for a cell, or a value the scene's code raises. Object,
-coord and examine triggers are the triggers.
+A row of a scene's trigger table (`struct Trigger`): a kind, the subject it
+answers, a condition and the event it runs. The subject is an actor id for
+talking, a metatile behavior for a cell, a treasure spot, or a value the
+scene's code raises. When the player talks, searches, steps on a marked cell or
+uses Psynergy, the first row that fits runs
+([Scenes](src/scene/README.md#what-a-trigger-row-says)). pret calls a row a
+map event.
 
 ### Step trigger
 
 A trigger that runs when the leader steps onto, or walks into, a cell with a
-given metatile behavior: a doorstep, a ladder, the edge of a path.
+given metatile behavior: a doorstep, a ladder, the edge of a path. pret calls
+it a coord event.
 
 ### Examine trigger
 
 A trigger that runs when the player presses A facing a cell: a jar, a chest,
-a bookcase. "Bg" is pret's word and has nothing to do with the background
-layers.
+a bookcase. pret calls it a bg event.
 
 ### Exit
 
 A way out of a scene, named for where it leads (`VALE_PLAZA_TO_WORLD_MAP`); the
 first row for it in the scene's exit table whose condition holds gives the next
 scene and entrance
-([The front page](README.md#exits-and-entrances)).
+([The front page](README.md#exits-and-entrances)). pret calls it a warp.
 
 ### Entrance
 
 Where the party arrives in a scene, named for where it comes from
 (`VALE_PLAZA_FROM_SANCTUM`): a position, a facing and the camera's limits.
+pret calls it a warp destination.
 
 ### Event
 

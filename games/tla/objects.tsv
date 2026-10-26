@@ -1839,26 +1839,11 @@ main	rom_main_04	games/tla/src/system/resource/tables2	.rodata
 main	rom_main_04	games/tla/src/battle/effect/decode_frame
 main	rom_main_04	games/tla/src/battle/effect/decode_frame_data
 main	rom_main_04	games/tla/src/field/common/take_exit	.text
-main	rom_main_04	recon/tla/it/rom	.rom.000c977c	it
-main	rom_main_04	recon/tla/fr/rom	.rom.000ce77c	fr
-main	rom_main_04	recon/tla/es/rom	.rom.000d277c	es
-main	rom_main_04	recon/tla/de/rom	.rom.000d677c	de
-main	rom_main_04	recon/tla/raw/080c977c	.text	en
-main	rom_main_04	recon/tla/ja/rom	.rom.000c977c	ja
+main	rom_main_04	games/tla/src/field/common/return_from_battle	.text
 main	rom_main_04	games/tla/src/battle/effect/data_get_resource_group	.text
-main	rom_main_04	recon/tla/it/rom	.rom.000c9944	it
-main	rom_main_04	recon/tla/fr/rom	.rom.000ce944	fr
-main	rom_main_04	recon/tla/es/rom	.rom.000d2944	es
-main	rom_main_04	recon/tla/de/rom	.rom.000d6944	de
-main	rom_main_04	recon/tla/raw/080c9944	.text	en
-main	rom_main_04	recon/tla/ja/rom	.rom.000c9944	ja
+main	rom_main_04	games/tla/src/field/common/game_run	.text
 main	rom_main_04	games/tla/src/battle/effect/data_load_resource_group	.text
-main	rom_main_04	recon/tla/it/rom	.rom.000c9c38	it
-main	rom_main_04	recon/tla/fr/rom	.rom.000cec38	fr
-main	rom_main_04	recon/tla/es/rom	.rom.000d2c38	es
-main	rom_main_04	recon/tla/de/rom	.rom.000d6c38	de
-main	rom_main_04	recon/tla/raw/080c9c38	.text	en
-main	rom_main_04	recon/tla/ja/rom	.rom.000c9c38	ja
+main	rom_main_04	games/tla/src/field/common/reset_flags_on_enter	.text
 main	rom_main_04	games/tla/src/field/common/play_saved_music	.text
 main	rom_main_04	games/tla/src/field/common/find_entry_value	.text
 main	rom_main_04	recon/tla/it/rom	.rom.000c9e48	it
@@ -2368,8 +2353,7 @@ main	rom_main_05	recon/tla/it/rom	.rom.000d6c54	it
 main	rom_main_05	recon/tla/es/rom	.rom.000dfc54	es
 main	rom_main_05	recon/tla/fr/rom	.rom.000dbc54	fr
 main	rom_main_05	recon/tla/de/rom	.rom.000e3c60	de
-main	rom_main_05	recon/tla/raw/080d6c60	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000d6c40	ja
+main	rom_main_05	games/tla/src/field/common/effect/motes_update	.text	ja en
 main	rom_main_05	games/tla/src/field/common/effect/motes	.text
 main	rom_main_05	games/tla/src/field/common/effect/sparkoff	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000d7028	it

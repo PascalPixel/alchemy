@@ -1,11 +1,3 @@
-// Near miss, differ 66 of 294: ☀️'s Game_Run, with ⚓️'s four
-// debug starts, gRenderOamEnabled set after stopping DMA 0 and three
-// minigame scenes (0x1fb to 0x1fd) that keep BG palettes 14 and 15. Two
-// kinds of difference remain: the native issues each gPartyState and scene
-// id pool load before the offset's movs (so the mode branches cross-jump
-// one instruction earlier), and it keeps entrance in r6 and gPartyState in
-// r7 where agscc swaps them; the native reloads gPartyState for the map
-// store, which gives its pseudo fewer references.
 #include "types.h"
 #include "io_reg.h"
 #include "dma.h"
@@ -31,8 +23,8 @@ s32 Battle_RunEncounterFar(s32 entrance);
 s32 Runtime_BlankDisplayAndRunFar(s32 entrance);
 s32 Resource_FarCall00E(s32 entrance);
 s32 Resource_FarCall00F(s32 entrance);
-void Scene_ReturnFromBattle(s32 result);
-void Scene_ResetFlagsOnEnter(s32 unused, s32 keep);
+void Func_080c977c(s32 result);
+void Func_080c9c38(s32 unused, s32 keep);
 void Scene_ResolveInteractionResult(void);
 void Party_PlaySavedMusic(void);
 void BattleEffect_LoadResourceGroup(s32 unused);
@@ -63,6 +55,9 @@ enum { MINIGAME_PALETTE_FIRST = 14, MINIGAME_PALETTE_BYTES = 64 };
     MemFree(saved);                                                            \
   }
 
+/// The Broken Seal's Game_Run, with this game's four debug starts,
+/// gRenderOamEnabled set after stopping DMA 0, and three minigame scenes
+/// that keep BG palettes 14 and 15.
 void Game_Run(s32 mode) {
   const struct SceneRecord *table;
   const struct SceneRecord *record;
@@ -126,11 +121,11 @@ void Game_Run(s32 mode) {
         RUN_SAVING_PALETTES(Resource_FarCall00F);
         break;
       }
-      Scene_ReturnFromBattle(entrance);
+      Func_080c977c(entrance);
       continue;
     }
 
-    Scene_ResetFlagsOnEnter(gPartyState.scene, GameFlag_Test(0x109));
+    Func_080c9c38(gPartyState.scene, GameFlag_Test(0x109));
     Scene_ResolveInteractionResult();
     if (!GameFlag_Test(0x109)) {
       if (GameFlag_Test(0x11a) || GameFlag_Test(0x11b))
@@ -144,6 +139,7 @@ void Game_Run(s32 mode) {
     }
     gPartyState.map = record->mapIndex;
     BattleEffect_LoadResourceGroup(0);
-    Scene_TakeExit(Field_RunScene(entrance));
+    entrance = Field_RunScene(entrance);
+    Scene_TakeExit(entrance);
   }
 }

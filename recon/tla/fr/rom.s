@@ -925,16 +925,6 @@ Func_080b1088:
 	.thumb_func
 Func_080b11f8:
 	.incbin "baserom.gba", 0x000b61f8, 0x00000084
-	.section .rom.000ce77c, "ax"
-	.incbin "baserom.gba", 0x000ce77c, 0x000001a4
-	.section .rom.000ce944, "ax"
-	.global Game_Run
-	.type Game_Run, %function
-	.thumb_func
-Game_Run:
-	.incbin "baserom.gba", 0x000ce944, 0x000002cc
-	.section .rom.000cec38, "ax"
-	.incbin "baserom.gba", 0x000cec38, 0x00000190
 	.section .rom.000cee48, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000cee48, 0x000000e4

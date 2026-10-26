@@ -1,5 +1,6 @@
-// 2026-10-26 (round 5): differ 147 of 1251. The mouth's y declared before its x
-// in the frame loop's block: 173 to 147 (x keeps the native's slot, sp+32).
+// 2026-10-26 (round 5): differ 131 of 1251. The mouth's y declared before its x
+// in the frame loop's block: 173 to 147 (x keeps the native's slot, sp+32); the
+// beam's ring declared after its x and y (a statement-move search): 147 to 131.
 // Left: the loop's copy of the user's address and the mouth's y swap slots (the
 // native's copy at sp+36, y at sp+28); a block around the loop or a pointer to
 // the user's position changes nothing.
@@ -361,8 +362,8 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
       // From frame 56 the beam: four rings in a row, fading from frame 72.
       if (frame > 55) {
         s32 x = user.x / 2;
-        s32 ring = frame - 72;
         s32 y = user.y - 48;
+        s32 ring = frame - 72;
 
         if (ring < 0)
           ring = 0;

@@ -1,4 +1,10 @@
-// Near miss, differ 64 of 429 (effect kind 20, the tornado).
+// Near miss, differ 12 of 429 (effect kind 20, the tornado).
+//
+// Measured 2026-10-25 under -mthumb-slow-loads: differ 12. Most rows left are
+// loads from memory or the stack that alchemy-gcc issues one slot earlier than
+// the native, which issues only its pool loads early. The first is the
+// argument's spill, which the native stores before it starts the 0x03000000
+// base; an empty asm before the first statement closes that row (differ 10).
 
 // ☀️ twin: BattleEffect_RunWhirlwind (games/tbs/src/effect/effect.c), shape 0.835,
 // structure 0.941. Ported with ⚓️'s checklist: the effect argument read

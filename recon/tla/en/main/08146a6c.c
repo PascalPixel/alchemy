@@ -1,4 +1,10 @@
-// Near miss, differ 30 of 410.
+// Near miss, differ 12 of 410.
+//
+// Measured 2026-10-25 under -mthumb-slow-loads: differ 12. Most rows left are
+// loads from memory or the stack that alchemy-gcc issues one slot earlier than
+// the native, which issues only its pool loads early. The first is the
+// argument's spill, which the native stores before it starts the 0x03000000
+// base; an empty asm before the first statement closes that row (differ 10).
 
 // Twin: The Broken Seal's BattleEffect_RunShiningStar (effect kind 62 there and
 // here), ported call for call. The Lost Age's changes: the effect argument is

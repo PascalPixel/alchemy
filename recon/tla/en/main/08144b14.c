@@ -1,4 +1,7 @@
-// Near miss, differ 62 of 652.
+// Near miss, differ 28 of 652.
+//
+// Measured 2026-10-25 under -mthumb-slow-loads: differ 28; an empty asm before
+// the first statement does not help (differ 34).
 
 // The body of three effect kinds (the wrappers in series_c.c pass modes 0 to
 // 2). Twin: The Broken Seal's BattleEffect_RunMemberBeam, ported call for call.

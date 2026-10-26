@@ -1,4 +1,4 @@
-// Near miss, differ 12 of 168 (five reordered pairs): The Broken Seal's
+// Near miss, differ 8 of 168 (five reordered pairs): The Broken Seal's
 // BattleEffect_DrawStreaks, with this game's effect work, Random16's
 // values stored unmasked and Func_080150e4 for the roll. Left are ARM9
 // schedule swaps: the frame counter's load against the work pointer's
@@ -7,6 +7,10 @@
 // and the fade's add against the head's load. Measured: the counter as a
 // read and a store, or a ++ (same 12); the seed's two stores swapped (20);
 // the point's zeros after i (48).
+//
+// Measured 2026-10-25 under -mthumb-slow-loads: differ 8. Most rows left are
+// loads from memory or the stack that alchemy-gcc issues one slot earlier than
+// the native, which issues only its pool loads early.
 #include "types.h"
 #include "ram_buffer.h"
 #include "system.h"

@@ -1,5 +1,11 @@
-// Near miss, differ 150 of 1490 (summon 5, the thorn vines), with one
+// Near miss, differ 60 of 1490 (summon 5, the thorn vines), with one
 // tagged forced temporary (355 without).
+//
+// Measured 2026-10-25 under -mthumb-slow-loads: differ 60. Most rows left are
+// loads from memory or the stack that alchemy-gcc issues one slot earlier than
+// the native, which issues only its pool loads early. The first is the
+// argument's spill, which the native stores before it starts the 0x03000000
+// base; an empty asm before the first statement closes that row (differ 58).
 
 // ☀️ twin: BattleEffect_RunCybele
 // (games/tbs/src/effect/effect.c), shape 0.870, structure 0.986, ported line

@@ -1,5 +1,5 @@
-// Draft of overlay Func_0200065c, translated from its listing: differ 443 of
-// 2414 in tla-en (was 543). Read-modify-writes are compound assignments and
+// Draft of overlay 6ae's Func_0200065c, translated from its listing: differ 443
+// of 2414 in tla-en (was 543). Read-modify-writes are compound assignments and
 // scene numbers their SceneId symbols, as the native's pool shows. Left:
 // register choice and order through the function. The leader is read through a
 // pointer to gPartyState, which keeps its address in r5 as the native does.

@@ -1,7 +1,7 @@
-// Draft of overlay Func_02003ff4, translated from its listing: differ 183 of
-// 1176 in tla-en (was 201). Read-modify-writes are compound assignments where
-// that loads as the native does. Left: register choice and order through the
-// function.
+// Draft of overlay 6ae's Func_02003ff4, translated from its listing: differ 183
+// of 1176 in tla-en (was 201). Read-modify-writes are compound assignments
+// where that loads as the native does. Left: register choice and order through
+// the function.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \

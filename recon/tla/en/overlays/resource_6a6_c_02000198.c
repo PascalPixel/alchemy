@@ -1,7 +1,7 @@
-// Draft of overlay Func_02000198, translated from its listing: differ 178 of
-// 1050 in tla-en (was 181). Read-modify-writes are compound assignments where
-// that loads as the native does. Left: register choice and order through the
-// function.
+// Draft of overlay 6a6's Func_02000198, translated from its listing: differ 178
+// of 1050 in tla-en (was 181). Read-modify-writes are compound assignments
+// where that loads as the native does. Left: register choice and order through
+// the function.
 #include "types.h"
 #include "dma.h"
 #include "call.h"

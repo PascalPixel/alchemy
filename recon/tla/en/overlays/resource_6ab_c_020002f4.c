@@ -1,8 +1,8 @@
-// Draft of overlay Func_020002f4, translated from its listing: differ 18 of 255
-// in tla-en (was 33). The scene compared first is SceneId_Ov6abRoom1, as the
-// native's pool shows, and the second flag test reuses an earlier temporary,
-// which gives the native's registers there. Left: the order and registers of
-// the leader's position from the two saved cells.
+// Draft of overlay 6ab's Func_020002f4, translated from its listing: differ 18
+// of 255 in tla-en (was 33). The scene compared first is SceneId_Ov6abRoom1, as
+// the native's pool shows, and the second flag test reuses an earlier
+// temporary, which gives the native's registers there. Left: the order and
+// registers of the leader's position from the two saved cells.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \

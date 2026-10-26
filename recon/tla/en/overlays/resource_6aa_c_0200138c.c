@@ -1,8 +1,8 @@
-// Draft of overlay Func_0200138c, translated from its listing: differ 37 of 549
-// in tla-en (was 137). Read-modify-writes are compound assignments and scene
-// numbers their SceneId symbols, as the native's pool shows. Left: register
-// choice and order through the function. The last call goes through Call4, as
-// the native sets r0 first.
+// Draft of overlay 6aa's Func_0200138c, translated from its listing: differ 37
+// of 549 in tla-en (was 137). Read-modify-writes are compound assignments and
+// scene numbers their SceneId symbols, as the native's pool shows. Left:
+// register choice and order through the function. The last call goes through
+// Call4, as the native sets r0 first.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \

@@ -4327,7 +4327,7 @@ msgctxt "message"
 msgid "01067"
 msgstr "{article_class:2}Magma Ball"
 
-msgctxt "message"
+msgctxt "MsgEnemyName"
 msgid "01068"
 msgstr "???"
 

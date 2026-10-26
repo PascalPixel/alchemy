@@ -7,7 +7,7 @@ SECTIONS
         "*/resource_67f_overlay.o"(.text.x020080a4)
         "*/games/tla/src/scene/izumo_ruins/s0128.o"(.text)
         "*/resource_67f_overlay.o"(.text.x020081d0)
-        "*/resource_67f_overlay.o"(.text.x020082f8)
+        "*/games/tla/src/scene/izumo_ruins/s02f8.o"(.text)
         "*/resource_67f_overlay.o"(.text.x0200848c)
         "*/games/tla/src/scene/izumo_ruins/s056c.o"(.text)
         "*/resource_67f_overlay.o"(.text.x02008584)

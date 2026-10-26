@@ -35,7 +35,7 @@ SECTIONS
         "*/games/tla/src/scene/tundaria_tower/s0f0c.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/script5.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/events_c.o"(.text)
-        "*/resource_68f_overlay.o"(.text.x020090d4)
+        "*/games/tla/src/scene/tundaria_tower/s10d4.o"(.text)
         "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
         "*/resource_68f_overlay.o"(.text.x020091de)
         "*/resource_68f_overlay.o"(.text.x020091e0)

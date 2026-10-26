@@ -30,7 +30,7 @@ SECTIONS
         "*/resource_678_overlay.o"(.text.x0200a144)
         "*/games/tla/src/scene/taopo_swamp/events_k.o"(.text)
         "*/games/tla/src/scene/taopo_swamp/s23a8.o"(.text)
-        "*/resource_678_overlay.o"(.text.x0200a4f8)
+        "*/games/tla/src/scene/taopo_swamp/s24f8.o"(.text)
         "*/games/tla/src/scene/taopo_swamp/s2554.o"(.text)
         "*/resource_678_overlay.o"(.text.x0200a614)
         "*/games/tla/src/scene/taopo_swamp/s2708.o"(.text)

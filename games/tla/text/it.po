@@ -6173,7 +6173,7 @@ msgctxt "message"
 msgid "01528"
 msgstr "Sfere di magma"
 
-msgctxt "message"
+msgctxt "MsgEnemyName"
 msgid "01529"
 msgstr "???"
 

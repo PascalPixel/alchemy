@@ -6181,7 +6181,7 @@ msgctxt "message"
 msgid "01528"
 msgstr "Boules magma"
 
-msgctxt "message"
+msgctxt "MsgEnemyName"
 msgid "01529"
 msgstr "???"
 

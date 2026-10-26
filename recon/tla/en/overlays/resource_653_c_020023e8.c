@@ -1,6 +1,10 @@
-// Draft, differ 41 of 260: the scene in which actor 12 gives the party
-// item 198 and leaps away. Left: register choice (r8 and r10 swapped) and
-// the literal pool placed after the function.
+// Draft, differ 10 of 260 (was 41): the scene in which actor 12 gives the
+// party item 198 and leaps away. Its motion flags are cleared after the
+// sprite's rotation is set: the native stores that zero from the pool (CSE does
+// not reach the earlier zero), and in the other order the zero is shared and
+// every register after it moves. Left: instruction order only, the motion
+// flags' address formed before the scale store, and the rotation's closing
+// store issued before the mode call's argument.
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 #include "call.h"
 
@@ -55,8 +59,8 @@ void Func_020023e8(void) {
   Call3((void (*)())ObjectMotion_SetPositionAndCommit, 12, 444, 376);
   Call2((void (*)())Object_SetModeById, 12, 7);
   object->scaleX = 0xffff0000;
-  object->motionFlags = 0;
   sprite->rotation = 0xe000;
+  object->motionFlags = 0;
   object->y += 0x40000;
   ObjectDispatch_SetSingleChildFlags(Object_GetById(12), 0);
   Call3((void (*)())ObjectMotion_SetSpeedParameters, 12, 0x6666, 0x3333);
